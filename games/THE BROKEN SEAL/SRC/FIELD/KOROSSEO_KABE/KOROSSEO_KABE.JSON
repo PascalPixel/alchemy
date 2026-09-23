@@ -42,7 +42,6 @@
         "decoded_size": 4329,
         "encoded_size": 2764,
         "tilemap_length": 4328,
-        "lookahead": "0000",
         "component": "map-metatiles-2x2",
         "transform_mode": 1,
         "metatiles": 541,
@@ -58,7 +57,6 @@
           [0, 0, 0, 0], [0, 8, 0, 0], [0, 6, 0, 0], [0, 4, 0, 0], [3, 0, 6, 0], [4, 0, 6, 0], [1, 4, 6, 0],
           [1, 6, 4, 0], [0, 16, 0, 0], [4, 6, 0, 0], [3, 6, 0, 0], [7, 0, 6, 0], [7, 0, 8, 0]
         ],
-        "lookahead": "",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -121,7 +119,6 @@
           ],
           "0xffff"
         ],
-        "lookahead": "",
         "component": "map-animation-queues",
         "word_size": 2,
         "terminators": ["0xfe00", "0xffff"]
@@ -133,7 +130,6 @@
         "decoded_size": 2,
         "encoded_size": 8,
         "words": [["0xffff"]],
-        "lookahead": "0000",
         "component": "map-blend-animation",
         "word_size": 2
       },
@@ -141,7 +137,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x086fffe8",
-        "size": "0x10",
+        "size": "0xf",
         "record_size": 3,
         "segments": [
           {
@@ -159,8 +155,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x086ffff7", "end": "0x086ffff8", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_KABE/KOROSSEO_KABE.BIN",

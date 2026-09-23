@@ -1,5 +1,10 @@
-@ 呼出側の転送元と転送長により境界を確定した再配置アーム処理。
-@ 承認済みコンパイラはサム専用のため構造化アセンブリで保持する。
+@ Unpacks a map for drawing: it spreads 16,384 halfword cells to every other
+@ halfword of the output, numbering the cells marked 0xfff consecutively, then
+@ fills the gaps by interleaving two 16 KB byte planes. It runs from a heap
+@ copy of exactly these 156 bytes. It saves r5-r8 without lr and stores with
+@ strh ip, [r1], #4, a post-increment larger than the access, which GCC 2.96
+@ does not emit for halfwords. Every TBS and TLA edition has these bytes.
+@ credit: library — TBS/TLA common ARM graphics and runtime kernel bank
 .syntax unified
 	.arm
 	.global Func_0800a37c

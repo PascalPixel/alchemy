@@ -42,7 +42,6 @@
         "decoded_size": 2009,
         "encoded_size": 852,
         "tilemap_length": 2008,
-        "lookahead": "00",
         "component": "map-metatiles-2x2",
         "transform_mode": 2,
         "metatiles": 251,
@@ -55,7 +54,6 @@
         "decoded_size": 24,
         "encoded_size": 16,
         "records": [[0, 0, 0, 0], [0, 4, 0, 0], [3, 4, 0, 0], [4, 4, 0, 0], [3, 0, 4, 0], [4, 0, 4, 0]],
-        "lookahead": "00",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -121,7 +119,6 @@
           ],
           "0xffff"
         ],
-        "lookahead": "",
         "component": "map-animation-queues",
         "word_size": 2,
         "terminators": ["0xfe00", "0xffff"]
@@ -133,7 +130,6 @@
         "decoded_size": 2,
         "encoded_size": 8,
         "words": [["0xffff"]],
-        "lookahead": "0000",
         "component": "map-blend-animation",
         "word_size": 2
       },
@@ -141,7 +137,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x08711a98",
-        "size": "0x4",
+        "size": "0x3",
         "record_size": 3,
         "segments": [
           {
@@ -151,8 +147,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x08711a9b", "end": "0x08711a9c", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/ARUTAMIRA_DOU/ARUTAMIRA_DOU.BIN",
@@ -203,7 +198,6 @@
         "decoded_size": 1593,
         "encoded_size": 596,
         "tilemap_length": 1592,
-        "lookahead": "0000",
         "component": "map-metatiles-2x2",
         "transform_mode": 2,
         "metatiles": 199,
@@ -216,7 +210,6 @@
         "decoded_size": 24,
         "encoded_size": 16,
         "records": [[0, 0, 0, 0], [0, 4, 0, 0], [3, 4, 0, 0], [4, 4, 0, 0], [4, 0, 4, 0], [3, 0, 4, 0]],
-        "lookahead": "",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -238,7 +231,6 @@
           ],
           "0xffff"
         ],
-        "lookahead": "00",
         "component": "map-animation-queues",
         "word_size": 2,
         "terminators": ["0xfe00", "0xffff"]
@@ -250,7 +242,6 @@
         "decoded_size": 2,
         "encoded_size": 8,
         "words": [["0xffff"]],
-        "lookahead": "0000",
         "component": "map-blend-animation",
         "word_size": 2
       },
@@ -258,7 +249,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x08712b98",
-        "size": "0x8",
+        "size": "0x6",
         "record_size": 3,
         "segments": [
           {
@@ -276,8 +267,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x08712b9e", "end": "0x08712ba0", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/ARUTAMIRA_DOU/ARUTAMIRA_DOU.BIN",
@@ -328,7 +318,6 @@
         "decoded_size": 3729,
         "encoded_size": 1740,
         "tilemap_length": 3728,
-        "lookahead": "00",
         "component": "map-metatiles-2x2",
         "transform_mode": 1,
         "metatiles": 466,
@@ -341,7 +330,6 @@
         "decoded_size": 24,
         "encoded_size": 16,
         "records": [[0, 0, 0, 0], [0, 4, 0, 0], [3, 4, 0, 0], [4, 4, 0, 0], [3, 0, 4, 0], [4, 0, 4, 0]],
-        "lookahead": "00",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -363,7 +351,6 @@
           ],
           "0xffff"
         ],
-        "lookahead": "00",
         "component": "map-animation-queues",
         "word_size": 2,
         "terminators": ["0xfe00", "0xffff"]
@@ -375,7 +362,6 @@
         "decoded_size": 2,
         "encoded_size": 8,
         "words": [["0xffff"]],
-        "lookahead": "0000",
         "component": "map-blend-animation",
         "word_size": 2
       },
@@ -383,7 +369,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x08714214",
-        "size": "0x8",
+        "size": "0x6",
         "record_size": 3,
         "segments": [
           {
@@ -401,8 +387,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x0871421a", "end": "0x0871421c", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/ARUTAMIRA_DOU/ARUTAMIRA_DOU.BIN",
@@ -453,7 +438,6 @@
         "decoded_size": 1601,
         "encoded_size": 744,
         "tilemap_length": 1600,
-        "lookahead": "00",
         "component": "map-metatiles-2x2",
         "transform_mode": 2,
         "metatiles": 200,
@@ -469,7 +453,6 @@
           [0, 0, 0, 0], [0, 8, 0, 0], [3, 8, 4, 0], [0, 4, 0, 0], [4, 8, 4, 0], [3, 4, 0, 0], [1, 0, 2, 0],
           [1, 2, 4, 0], [3, 8, 0, 0], [4, 4, 0, 0], [3, 0, 4, 0], [4, 0, 4, 0]
         ],
-        "lookahead": "0000",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -486,7 +469,6 @@
           ],
           "0xffff"
         ],
-        "lookahead": "000000",
         "component": "map-animation-queues",
         "word_size": 2,
         "terminators": ["0xfe00", "0xffff"]
@@ -500,7 +482,6 @@
           ["0x3f42"], ["0x1003", 46], ["0x1002", 36], ["0x1003", 50], ["0x1002", 45], ["0x1006", 6], ["0x1005", 6],
           ["0x1004", 6], ["0x1005", 6], ["0xfe00"], ["0xffff"]
         ],
-        "lookahead": "0000",
         "component": "map-blend-animation",
         "word_size": 2
       },
@@ -508,7 +489,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x087150f0",
-        "size": "0x4",
+        "size": "0x3",
         "record_size": 3,
         "segments": [
           {
@@ -518,8 +499,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x087150f3", "end": "0x087150f4", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/ARUTAMIRA_DOU/ARUTAMIRA_DOU.BIN",
@@ -570,7 +550,6 @@
         "decoded_size": 3345,
         "encoded_size": 1484,
         "tilemap_length": 3344,
-        "lookahead": "000000",
         "component": "map-metatiles-2x2",
         "transform_mode": 1,
         "metatiles": 418,
@@ -583,7 +562,6 @@
         "decoded_size": 24,
         "encoded_size": 16,
         "records": [[0, 0, 0, 0], [0, 4, 0, 0], [3, 4, 0, 0], [4, 4, 0, 0], [3, 0, 4, 0], [4, 0, 4, 0]],
-        "lookahead": "00",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -667,7 +645,6 @@
           ],
           "0xffff"
         ],
-        "lookahead": "000000",
         "component": "map-animation-queues",
         "word_size": 2,
         "terminators": ["0xfe00", "0xffff"]
@@ -679,7 +656,6 @@
         "decoded_size": 2,
         "encoded_size": 8,
         "words": [["0xffff"]],
-        "lookahead": "0000",
         "component": "map-blend-animation",
         "word_size": 2
       },
@@ -687,7 +663,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x08716c10",
-        "size": "0x8",
+        "size": "0x6",
         "record_size": 3,
         "segments": [
           {
@@ -705,8 +681,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x08716c16", "end": "0x08716c18", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/ARUTAMIRA_DOU/ARUTAMIRA_DOU.BIN",
@@ -757,7 +732,6 @@
         "decoded_size": 1561,
         "encoded_size": 696,
         "tilemap_length": 1560,
-        "lookahead": "00",
         "component": "map-metatiles-2x2",
         "transform_mode": 2,
         "metatiles": 195,
@@ -774,7 +748,6 @@
           [3, 0, 4, 0], [3, 8, 4, 0], [1, 4, 2, 0], [1, 2, 0, 0], [4, 8, 4, 0], [3, 0, 2, 0], [3, 4, 8, 0],
           [3, 4, 6, 0], [4, 0, 2, 0], [4, 4, 6, 0]
         ],
-        "lookahead": "0000",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -791,7 +764,6 @@
           ],
           "0xffff"
         ],
-        "lookahead": "000000",
         "component": "map-animation-queues",
         "word_size": 2,
         "terminators": ["0xfe00", "0xffff"]
@@ -803,7 +775,6 @@
         "decoded_size": 2,
         "encoded_size": 8,
         "words": [["0xffff"]],
-        "lookahead": "0000",
         "component": "map-blend-animation",
         "word_size": 2
       },
@@ -811,7 +782,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x08717b84",
-        "size": "0x8",
+        "size": "0x6",
         "record_size": 3,
         "segments": [
           {
@@ -829,8 +800,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x08717b8a", "end": "0x08717b8c", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/ARUTAMIRA_DOU/ARUTAMIRA_DOU.BIN",

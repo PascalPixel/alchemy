@@ -1,0 +1,284 @@
+{
+  "format": 1,
+  "kind": "typed-table-package",
+  "regions": [
+    {
+      "name": "range_081a8378",
+      "address": "0x081a8378",
+      "end": "0x081ac000",
+      "format": 1,
+      "kind": "typed-table",
+      "size": 15496,
+      "segments": [
+        {
+          "name": "ugoki_hyou",
+          "address": "0x081a8378",
+          "end": "0x081a84e0",
+          "role": "sprite_steps",
+          "consumers": ["recon/tla/raw/081a6030.s"],
+          "values": [
+            [0, 3, 3, 0, 0], [24, 4, 3, 0, -4], [56, 4, 3, 0, 1], [88, 5, 3, 0, -2], [128, 4, 3, 0, 1],
+            [160, 4, 3, 0, -4], [192, 5, 3, 0, -4], [232, 5, 4, 0, -4], [272, 5, 4, 0, -4], [312, 5, 4, 0, -4],
+            [352, 5, 4, 0, -4], [392, 3, 4, 0, 4], [416, 4, 4, 0, 0], [448, 4, 4, 0, 0], [480, 4, 6, 0, 0],
+            [512, 4, 6, 0, 0], [544, 4, 6, 0, 0], [576, 4, 6, 0, 0], [608, 4, 8, 0, 0], [640, 3, 8, 0, 0],
+            [664, 3, 8, 0, 0], [688, 2, 8, 0, 0], [704, 2, 6, 0, 0], [720, 2, 6, 0, 0], [736, 2, 6, 0, 0],
+            [752, 2, 3, 0, 0], [768, 2, 3, 0, 0], [784, 2, 3, 0, 0], [800, 1, 2, 0, 0], [808, 1, 2, 0, 0],
+            [816, 1, 2, 0, 0], [824, 1, 1, 0, 0], [832, 1, 1, 0, 0], [840, 1, 1, 0, 0], [848, 1, 1, 0, 0],
+            [856, 1, 1, 0, 0]
+          ],
+          "source_kind": "s16_table",
+          "count": 36,
+          "element": "le-s16",
+          "stride": 10
+        },
+        {
+          "name": "ugoki_hyou_owari",
+          "address": "0x081a84e0",
+          "end": "0x081a84e6",
+          "role": "sprite_steps_end",
+          "consumers": ["recon/tla/raw/081a6030.s"],
+          "values": [-1, -1, -1],
+          "source_kind": "s16_table",
+          "count": 3,
+          "element": "le-s16",
+          "stride": 2
+        },
+        {
+          "name": "kiseki_hyou",
+          "address": "0x081a84e6",
+          "end": "0x081a8738",
+          "role": "sprite_path",
+          "consumers": ["recon/tla/raw/081a6030.s"],
+          "values": [
+            [101, 150, 1], [103, 150, 1], [105, 149, 1], [107, 149, 1], [109, 149, 1], [111, 148, 1], [113, 148, 1],
+            [115, 147, 1], [117, 147, 1], [119, 147, 1], [120, 146, 1], [122, 146, 1], [124, 145, 1], [126, 145, 1],
+            [127, 144, 1], [129, 144, 1], [131, 143, 1], [132, 143, 1], [134, 142, 1], [136, 141, 1], [137, 140, 1],
+            [139, 140, 1], [140, 139, 1], [142, 138, 1], [143, 137, 1], [145, 136, 1], [146, 136, 1], [148, 135, 1],
+            [149, 134, 1], [151, 133, 1], [152, 132, 1], [153, 131, 1], [154, 130, 1], [156, 128, 1], [157, 127, 1],
+            [158, 126, 1], [158, 124, 1], [159, 123, 1], [160, 121, 1], [161, 120, 1], [162, 118, 1], [162, 116, 1],
+            [163, 115, 1], [163, 113, 1], [164, 111, 1], [164, 109, 1], [164, 108, 1], [165, 106, 1], [165, 104, 1],
+            [165, 103, 1], [165, 101, 1], [165, 99, 1], [165, 98, 1], [165, 96, 1], [165, 95, 1], [165, 94, 1],
+            [165, 92, 1], [165, 91, 1], [165, 90, 1], [164, 88, 1], [164, 87, 1], [163, 86, 1], [163, 85, 1],
+            [162, 84, 1], [162, 83, 1], [161, 82, 1], [160, 81, 2], [159, 80, 1], [158, 80, 1], [157, 79, 1],
+            [156, 79, 1], [155, 78, 1], [154, 78, 1], [153, 78, 1], [152, 77, 1], [151, 77, 1], [150, 77, 1],
+            [149, 77, 1], [148, 76, 1], [147, 76, 1], [146, 76, 1], [145, 76, 1], [144, 76, 1], [143, 76, 1],
+            [142, 75, 1], [140, 75, 1], [139, 75, 1], [138, 75, 1], [136, 75, 1], [135, 75, 1], [134, 75, 1],
+            [133, 75, 1], [131, 75, 1], [130, 75, 1], [129, 75, 1], [128, 75, 1], [127, 75, 1], [125, 75, 1],
+            [124, 75, 2]
+          ],
+          "source_kind": "s16_table",
+          "count": 99,
+          "element": "le-s16",
+          "stride": 6
+        },
+        {
+          "name": "kiseki_hyou_owari",
+          "address": "0x081a8738",
+          "end": "0x081a873e",
+          "role": "sprite_path_end",
+          "consumers": ["recon/tla/raw/081a6030.s"],
+          "values": [-1, -1, -1],
+          "source_kind": "s16_table",
+          "count": 3,
+          "element": "le-s16",
+          "stride": 2
+        },
+        {
+          "name": "henka_hyou",
+          "address": "0x081a873e",
+          "end": "0x081a877a",
+          "role": "envelope_table",
+          "consumers": ["recon/tla/raw/081a729c.s"],
+          "values": [
+            1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16,
+            16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2,
+            1, 0
+          ],
+          "source_kind": "u8_table",
+          "count": 60,
+          "element": "u8",
+          "stride": 1
+        },
+        {
+          "name": "iro_henka_00",
+          "address": "0x081a877a",
+          "end": "0x081a87ba",
+          "role": "color_curve",
+          "consumers": ["recon/tla/raw/081a7870.s"],
+          "values": [
+            0, 524, 1071, 1643, 2240, 2863, 3513, 4191, 4898, 5635, 6403, 7202, 8035, 8901, 9803, 10740, 11715, 12729,
+            13783, 14877, 16014, 17195, 18422, 19694, 21015, 22386, 23808, 25283, 26812, 28397, 30041, 31744
+          ],
+          "source_kind": "u16_table",
+          "count": 32,
+          "element": "le-u16",
+          "stride": 2
+        },
+        {
+          "name": "iro_henka_01",
+          "address": "0x081a87ba",
+          "end": "0x081a87fa",
+          "role": "color_curve",
+          "consumers": ["recon/tla/raw/081a7870.s"],
+          "values": [
+            0, 613, 1247, 1902, 2580, 3281, 4005, 4753, 5526, 6324, 7148, 7999, 8876, 9782, 10716, 11680, 12674, 13699,
+            14755, 15843, 16965, 18121, 19312, 20538, 21801, 23101, 24440, 25818, 27237, 28697, 30199, 31744
+          ],
+          "source_kind": "u16_table",
+          "count": 32,
+          "element": "le-u16",
+          "stride": 2
+        },
+        {
+          "name": "iro_henka_02",
+          "address": "0x081a87fa",
+          "end": "0x081a883a",
+          "role": "color_curve",
+          "consumers": ["recon/tla/raw/081a7870.s"],
+          "values": [
+            0, 360, 759, 1201, 1689, 2226, 2817, 3466, 4178, 4957, 5808, 6738, 7752, 8856, 10058, 11365, 12784, 14325,
+            15996, 17806, 19767, 21888, 24183, 26662, 29340, 31744, 31744, 31744, 31744, 31744, 31744, 31744
+          ],
+          "source_kind": "u16_table",
+          "count": 32,
+          "element": "le-u16",
+          "stride": 2
+        },
+        {
+          "name": "aki_081a883a",
+          "address": "0x081a883a",
+          "end": "0x081ac000",
+          "role": "tail_fill_candidate",
+          "source_kind": "unresolved_fill",
+          "fill": 0,
+          "element": "u8",
+          "stride": 1
+        }
+      ]
+    },
+    {
+      "name": "range_081ad386",
+      "address": "0x081ad386",
+      "end": "0x081b2000",
+      "format": 1,
+      "kind": "typed-table",
+      "size": 19578,
+      "segments": [
+        {
+          "name": "hantei_dankai",
+          "address": "0x081ad386",
+          "end": "0x081ad392",
+          "role": "comparison_thresholds",
+          "consumers": ["recon/tla/raw/081ac0f8.s"],
+          "values": [147, 80, 15, -42, -95, -32767],
+          "source_kind": "s16_table",
+          "count": 6,
+          "element": "le-s16",
+          "stride": 2
+        },
+        {
+          "name": "aki_081ad392",
+          "address": "0x081ad392",
+          "end": "0x081b2000",
+          "role": "tail_fill_candidate",
+          "source_kind": "unresolved_fill",
+          "fill": 0,
+          "element": "u8",
+          "stride": 1
+        }
+      ]
+    },
+    {
+      "name": "range_081b4888",
+      "address": "0x081b4888",
+      "end": "0x081b8000",
+      "format": 1,
+      "kind": "typed-table",
+      "size": 14200,
+      "segments": [
+        {
+          "name": "zahyoubisei_hyou",
+          "address": "0x081b4888",
+          "end": "0x081b489c",
+          "role": "coordinate_adjustments",
+          "consumers": ["recon/tla/raw/081b22b8.s"],
+          "values": [0, 4, 20, 56, 120, 220, 364, 560, 816, 1140],
+          "source_kind": "u16_table",
+          "count": 10,
+          "element": "le-u16",
+          "stride": 2
+        },
+        {
+          "name": "hyouji_shoki_hyou",
+          "address": "0x081b489c",
+          "end": "0x081b48a2",
+          "role": "display_setup",
+          "consumers": ["recon/tla/raw/081b22b8.s"],
+          "values": [0, 3, 1, 4, 2, 5],
+          "source_kind": "u8_table",
+          "count": 6,
+          "element": "u8",
+          "stride": 1
+        },
+        {
+          "name": "haba_hyou_00",
+          "address": "0x081b48a2",
+          "end": "0x081b48aa",
+          "role": "display_widths",
+          "consumers": ["recon/tla/raw/081b22b8.s"],
+          "values": [0, 1, 2, 3, 4, 5, 6, 7],
+          "source_kind": "u8_table",
+          "count": 8,
+          "element": "u8",
+          "stride": 1
+        },
+        {
+          "name": "haichi_hyou_00",
+          "address": "0x081b48aa",
+          "end": "0x081b48b8",
+          "role": "display_positions",
+          "consumers": ["recon/tla/raw/081b22b8.s"],
+          "values": [2, 0, 232, 232, 32, 32, 200, 200, 28, 28, 208, 208, 219, 219],
+          "source_kind": "u8_table",
+          "count": 14,
+          "element": "u8",
+          "stride": 1
+        },
+        {
+          "name": "haichi_hyou_01",
+          "address": "0x081b48b8",
+          "end": "0x081b48c6",
+          "role": "display_positions",
+          "consumers": ["recon/tla/raw/081b22b8.s"],
+          "values": [2, 152, 0, 152, 8, 104, 8, 104, 118, 140, 118, 140, 6, 108],
+          "source_kind": "u8_table",
+          "count": 14,
+          "element": "u8",
+          "stride": 1
+        },
+        {
+          "name": "haba_hyou_01",
+          "address": "0x081b48c6",
+          "end": "0x081b48ce",
+          "role": "display_widths",
+          "consumers": ["recon/tla/raw/081b22b8.s"],
+          "values": [28, 28, 26, 26, 28, 28, 20, 24],
+          "source_kind": "u8_table",
+          "count": 8,
+          "element": "u8",
+          "stride": 1
+        },
+        {
+          "name": "aki_081b48ce",
+          "address": "0x081b48ce",
+          "end": "0x081b8000",
+          "role": "tail_fill_candidate",
+          "source_kind": "unresolved_fill",
+          "fill": 0,
+          "element": "u8",
+          "stride": 1
+        }
+      ]
+    }
+  ]
+}

@@ -42,7 +42,6 @@
         "decoded_size": 9913,
         "encoded_size": 5764,
         "tilemap_length": 9912,
-        "lookahead": "0000",
         "component": "map-metatiles-2x2",
         "transform_mode": 1,
         "metatiles": 1239,
@@ -60,7 +59,6 @@
           [12, 0, 4, 4], [13, 0, 2, 2], [1, 3, 2, 0], [1, 2, 1, 0], [1, 1, 0, 0], [1, 0, 255, 0], [1, 255, 254, 0],
           [12, 4, 4, 0], [4, 4, 0, 0], [3, 4, 0, 0], [3, 0, 2, 0]
         ],
-        "lookahead": "000000",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -96,7 +94,6 @@
           ],
           "0xffff"
         ],
-        "lookahead": "0000",
         "component": "map-animation-queues",
         "word_size": 2,
         "terminators": ["0xfe00", "0xffff"]
@@ -108,7 +105,6 @@
         "decoded_size": 10,
         "encoded_size": 16,
         "words": [["0x3f42"], ["0x1006", 43210], ["0xfe00"], ["0xffff"]],
-        "lookahead": "00",
         "component": "map-blend-animation",
         "word_size": 2
       },
@@ -116,7 +112,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x08591904",
-        "size": "0x24",
+        "size": "0x21",
         "record_size": 3,
         "segments": [
           {
@@ -137,8 +133,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x08591925", "end": "0x08591928", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_HEYA/BIRIBINO_HEYA.BIN",

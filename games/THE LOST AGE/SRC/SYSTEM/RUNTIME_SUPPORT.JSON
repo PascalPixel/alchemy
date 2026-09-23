@@ -1,0 +1,403 @@
+{
+  "format": 1,
+  "kind": "typed-table-package",
+  "regions": [
+    {
+      "name": "number_format",
+      "format": 1,
+      "kind": "typed-table",
+      "address": "0x08017cd0",
+      "size": "0x14",
+      "segments": [
+        {
+          "name": "hexadecimal_digits",
+          "address": "0x08017cd0",
+          "end": "0x08017ce4",
+          "consumers": ["recon/tla/raw/08014840.s"],
+          "element": "ascii-fixed",
+          "stride": 1,
+          "text": "0123456789ABCDEF"
+        }
+      ]
+    },
+    {
+      "name": "transfer_test",
+      "format": 1,
+      "kind": "typed-table",
+      "address": "0x08017d08",
+      "size": "0x70",
+      "segments": [
+        {
+          "name": "identity",
+          "address": "0x08017d08",
+          "end": "0x08017d10",
+          "consumers": ["recon/tla/raw/08015778.s"],
+          "element": "ascii-fixed",
+          "stride": 1,
+          "text": "CAMELOT"
+        },
+        {
+          "name": "record_marker",
+          "address": "0x08017d10",
+          "end": "0x08017d1c",
+          "consumers": ["recon/tla/raw/08015ca4.s", "recon/tla/raw/08015f0c.s"],
+          "element": "ascii-fixed",
+          "stride": 1,
+          "text": "CAMELOTT"
+        },
+        {
+          "name": "packet_a",
+          "address": "0x08017d1c",
+          "end": "0x08017d3c",
+          "element": "ascii-fixed",
+          "stride": 1,
+          "text": "Trans Data A: This is a pen."
+        },
+        {
+          "name": "packet_b",
+          "address": "0x08017d3c",
+          "end": "0x08017d58",
+          "element": "ascii-fixed",
+          "stride": 1,
+          "text": "Trans Data B: Hello world."
+        },
+        {
+          "name": "flash_version",
+          "address": "0x08017d58",
+          "end": "0x08017d64",
+          "element": "ascii-fixed",
+          "stride": 1,
+          "text": "FLASH_V123"
+        },
+        {
+          "name": "flash_directory",
+          "address": "0x08017d64",
+          "end": "0x08017d78",
+          "consumers": ["recon/tla/raw/08016ea4.s"],
+          "element": "le-u32",
+          "stride": 4,
+          "values": ["0x08017e40", "0x08017f3c", "0x08017ec4", "0x08017ef0", "0x08017e14"]
+        }
+      ]
+    },
+    {
+      "name": "flash_region_a",
+      "format": 1,
+      "kind": "typed-table",
+      "address": "0x08017dfc",
+      "size": "0x70",
+      "segments": [
+        {
+          "name": "flash_common",
+          "address": "0x08017dfc",
+          "end": "0x08017e14",
+          "element": "le-s16",
+          "stride": 6,
+          "values": [[10, -67, 194], [10, -67, 194], [40, -67, 194], [200, -67, 194]]
+        },
+        {
+          "name": "generic_callbacks",
+          "address": "0x08017e14",
+          "end": "0x08017e24",
+          "consumers": ["recon/tla/raw/0801713c.s", "recon/tla/raw/080171fc.s"],
+          "element": "thumb-pointer",
+          "stride": 4,
+          "values": ["0x080173b8", "0x08017270", "0x080172e4", "0x0801708c"]
+        },
+        {
+          "name": "generic",
+          "address": "0x08017e24",
+          "end": "0x08017e40",
+          "element": "record",
+          "stride": 28,
+          "fields": [
+            {"name": "timing", "element": "le-u32"},
+            {"name": "total_bytes", "element": "le-u32"},
+            {"name": "sector_bytes", "element": "le-u16"},
+            {"name": "reserved_26", "element": "le-u16", "max": 0},
+            {"name": "sector_shift", "element": "le-u16", "max": 31},
+            {"name": "sector_count", "element": "le-u16"},
+            {"name": "top_sector", "element": "le-u32"},
+            {"name": "wait_control", "element": "le-u16", "capacity": 2},
+            {"name": "manufacturer_id", "element": "u8"},
+            {"name": "device_id", "element": "u8"},
+            {"name": "reserved_42", "element": "u8", "max": 0}
+          ],
+          "records": [
+            {
+              "timing": "flash_common",
+              "total_bytes": 65536,
+              "sector_bytes": 4096,
+              "reserved_26": 0,
+              "sector_shift": 12,
+              "sector_count": 16,
+              "top_sector": 0,
+              "wait_control": [3, 3],
+              "manufacturer_id": "0x00",
+              "device_id": "0x00",
+              "reserved_42": [0, 0]
+            }
+          ]
+        },
+        {
+          "name": "bf_d4_callbacks",
+          "address": "0x08017e40",
+          "end": "0x08017e50",
+          "element": "thumb-pointer",
+          "stride": 4,
+          "values": ["0x080173b8", "0x08017270", "0x080172e4", "0x0801708c"]
+        },
+        {
+          "name": "bf_d4",
+          "address": "0x08017e50",
+          "end": "0x08017e6c",
+          "element": "record",
+          "stride": 28,
+          "fields": [
+            {"name": "timing", "element": "le-u32"},
+            {"name": "total_bytes", "element": "le-u32"},
+            {"name": "sector_bytes", "element": "le-u16"},
+            {"name": "reserved_26", "element": "le-u16", "max": 0},
+            {"name": "sector_shift", "element": "le-u16", "max": 31},
+            {"name": "sector_count", "element": "le-u16"},
+            {"name": "top_sector", "element": "le-u32"},
+            {"name": "wait_control", "element": "le-u16", "capacity": 2},
+            {"name": "manufacturer_id", "element": "u8"},
+            {"name": "device_id", "element": "u8"},
+            {"name": "reserved_42", "element": "u8", "max": 0}
+          ],
+          "records": [
+            {
+              "timing": "flash_common",
+              "total_bytes": 65536,
+              "sector_bytes": 4096,
+              "reserved_26": 0,
+              "sector_shift": 12,
+              "sector_count": 16,
+              "top_sector": 0,
+              "wait_control": [1, 2],
+              "manufacturer_id": "0xbf",
+              "device_id": "0xd4",
+              "reserved_42": [0, 0]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "flash_region_b",
+      "format": 1,
+      "kind": "typed-table",
+      "address": "0x08017e94",
+      "size": "0x88",
+      "segments": [
+        {
+          "name": "flash_c2_1c",
+          "address": "0x08017e94",
+          "end": "0x08017eac",
+          "element": "le-s16",
+          "stride": 6,
+          "values": [[10, -67, 194], [10, -67, 194], [2000, -67, 194], [2000, -67, 194]]
+        },
+        {
+          "name": "flash_32_1b",
+          "address": "0x08017eac",
+          "end": "0x08017ec4",
+          "element": "le-s16",
+          "stride": 6,
+          "values": [[10, -67, 194], [10, -67, 194], [500, -67, 194], [500, -67, 194]]
+        },
+        {
+          "name": "c2_1c_callbacks",
+          "address": "0x08017ec4",
+          "end": "0x08017ed4",
+          "element": "thumb-pointer",
+          "stride": 4,
+          "values": ["0x08017518", "0x08017270", "0x080172e4", "0x0801708c"]
+        },
+        {
+          "name": "c2_1c",
+          "address": "0x08017ed4",
+          "end": "0x08017ef0",
+          "element": "record",
+          "stride": 28,
+          "fields": [
+            {"name": "timing", "element": "le-u32"},
+            {"name": "total_bytes", "element": "le-u32"},
+            {"name": "sector_bytes", "element": "le-u16"},
+            {"name": "reserved_26", "element": "le-u16", "max": 0},
+            {"name": "sector_shift", "element": "le-u16", "max": 31},
+            {"name": "sector_count", "element": "le-u16"},
+            {"name": "top_sector", "element": "le-u32"},
+            {"name": "wait_control", "element": "le-u16", "capacity": 2},
+            {"name": "manufacturer_id", "element": "u8"},
+            {"name": "device_id", "element": "u8"},
+            {"name": "reserved_42", "element": "u8", "max": 0}
+          ],
+          "records": [
+            {
+              "timing": "flash_c2_1c",
+              "total_bytes": 65536,
+              "sector_bytes": 4096,
+              "reserved_26": 0,
+              "sector_shift": 12,
+              "sector_count": 16,
+              "top_sector": 0,
+              "wait_control": [3, 1],
+              "manufacturer_id": "0xc2",
+              "device_id": "0x1c",
+              "reserved_42": [0, 0]
+            }
+          ]
+        },
+        {
+          "name": "32_1b_callbacks",
+          "address": "0x08017ef0",
+          "end": "0x08017f00",
+          "element": "thumb-pointer",
+          "stride": 4,
+          "values": ["0x08017518", "0x08017270", "0x080172e4", "0x0801708c"]
+        },
+        {
+          "name": "32_1b",
+          "address": "0x08017f00",
+          "end": "0x08017f1c",
+          "element": "record",
+          "stride": 28,
+          "fields": [
+            {"name": "timing", "element": "le-u32"},
+            {"name": "total_bytes", "element": "le-u32"},
+            {"name": "sector_bytes", "element": "le-u16"},
+            {"name": "reserved_26", "element": "le-u16", "max": 0},
+            {"name": "sector_shift", "element": "le-u16", "max": 31},
+            {"name": "sector_count", "element": "le-u16"},
+            {"name": "top_sector", "element": "le-u32"},
+            {"name": "wait_control", "element": "le-u16", "capacity": 2},
+            {"name": "manufacturer_id", "element": "u8"},
+            {"name": "device_id", "element": "u8"},
+            {"name": "reserved_42", "element": "u8", "max": 0}
+          ],
+          "records": [
+            {
+              "timing": "flash_32_1b",
+              "total_bytes": 65536,
+              "sector_bytes": 4096,
+              "reserved_26": 0,
+              "sector_shift": 12,
+              "sector_count": 16,
+              "top_sector": 0,
+              "wait_control": [0, 2],
+              "manufacturer_id": "0x32",
+              "device_id": "0x1b",
+              "reserved_42": [0, 0]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "flash_region_c",
+      "format": 1,
+      "kind": "typed-table",
+      "address": "0x08017f24",
+      "size": "0x70",
+      "segments": [
+        {
+          "name": "flash_1f_3d",
+          "address": "0x08017f24",
+          "end": "0x08017f3c",
+          "element": "le-s16",
+          "stride": 6,
+          "values": [[10, -67, 194], [40, -67, 194], [0, 0, 0], [40, -67, 194]]
+        },
+        {
+          "name": "1f_3d_4k_callbacks",
+          "address": "0x08017f3c",
+          "end": "0x08017f4c",
+          "consumers": ["recon/tla/raw/08017500.s"],
+          "element": "thumb-pointer",
+          "stride": 4,
+          "values": ["0x080177b4", "0x080175bc", "0x080176b0", "0x0801708c"]
+        },
+        {
+          "name": "1f_3d_4k",
+          "address": "0x08017f4c",
+          "end": "0x08017f68",
+          "element": "record",
+          "stride": 28,
+          "fields": [
+            {"name": "timing", "element": "le-u32"},
+            {"name": "total_bytes", "element": "le-u32"},
+            {"name": "sector_bytes", "element": "le-u16"},
+            {"name": "reserved_26", "element": "le-u16", "max": 0},
+            {"name": "sector_shift", "element": "le-u16", "max": 31},
+            {"name": "sector_count", "element": "le-u16"},
+            {"name": "top_sector", "element": "le-u32"},
+            {"name": "wait_control", "element": "le-u16", "capacity": 2},
+            {"name": "manufacturer_id", "element": "u8"},
+            {"name": "device_id", "element": "u8"},
+            {"name": "reserved_42", "element": "u8", "max": 0}
+          ],
+          "records": [
+            {
+              "timing": "flash_1f_3d",
+              "total_bytes": 65536,
+              "sector_bytes": 4096,
+              "reserved_26": 0,
+              "sector_shift": 12,
+              "sector_count": 16,
+              "top_sector": 0,
+              "wait_control": [3, 3],
+              "manufacturer_id": "0x1f",
+              "device_id": "0x3d",
+              "reserved_42": [0, 0]
+            }
+          ]
+        },
+        {
+          "name": "1f_3d_128_callbacks",
+          "address": "0x08017f68",
+          "end": "0x08017f78",
+          "element": "thumb-pointer",
+          "stride": 4,
+          "values": ["0x0801773c", "0x080175bc", "0x0801762c", "0x0801708c"]
+        },
+        {
+          "name": "1f_3d_128",
+          "address": "0x08017f78",
+          "end": "0x08017f94",
+          "element": "record",
+          "stride": 28,
+          "fields": [
+            {"name": "timing", "element": "le-u32"},
+            {"name": "total_bytes", "element": "le-u32"},
+            {"name": "sector_bytes", "element": "le-u16"},
+            {"name": "reserved_26", "element": "le-u16", "max": 0},
+            {"name": "sector_shift", "element": "le-u16", "max": 31},
+            {"name": "sector_count", "element": "le-u16"},
+            {"name": "top_sector", "element": "le-u32"},
+            {"name": "wait_control", "element": "le-u16", "capacity": 2},
+            {"name": "manufacturer_id", "element": "u8"},
+            {"name": "device_id", "element": "u8"},
+            {"name": "reserved_42", "element": "u8", "max": 0}
+          ],
+          "records": [
+            {
+              "timing": "flash_1f_3d",
+              "total_bytes": 65536,
+              "sector_bytes": 128,
+              "reserved_26": 0,
+              "sector_shift": 7,
+              "sector_count": 512,
+              "top_sector": 0,
+              "wait_control": [3, 3],
+              "manufacturer_id": "0x1f",
+              "device_id": "0x3d",
+              "reserved_42": [0, 0]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

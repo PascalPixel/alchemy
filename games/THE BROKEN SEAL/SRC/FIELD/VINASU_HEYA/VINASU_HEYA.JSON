@@ -42,7 +42,6 @@
         "decoded_size": 12433,
         "encoded_size": 6544,
         "tilemap_length": 12432,
-        "lookahead": "0000",
         "component": "map-metatiles-2x2",
         "transform_mode": 1,
         "metatiles": 1554,
@@ -58,7 +57,6 @@
           [0, 0, 0, 0], [0, 4, 0, 0], [8, 4, 0, 0], [8, 0, 4, 0], [3, 4, 0, 0], [4, 4, 0, 0], [4, 0, 4, 0],
           [3, 0, 4, 0], [9, 4, 0, 0]
         ],
-        "lookahead": "000000",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -66,7 +64,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x087603d8",
-        "size": "0x4",
+        "size": "0x3",
         "record_size": 3,
         "segments": [
           {
@@ -76,8 +74,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x087603db", "end": "0x087603dc", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/VINASU_HEYA/VINASU_HEYA.BIN",
@@ -128,7 +125,6 @@
         "decoded_size": 3633,
         "encoded_size": 2032,
         "tilemap_length": 3632,
-        "lookahead": "000000",
         "component": "map-metatiles-2x2",
         "transform_mode": 1,
         "metatiles": 454,
@@ -141,7 +137,6 @@
         "decoded_size": 20,
         "encoded_size": 16,
         "records": [[0, 0, 0, 0], [0, 248, 0, 0], [0, 252, 0, 0], [0, 2, 0, 0], [0, 4, 0, 0]],
-        "lookahead": "00",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -211,7 +206,6 @@
           ],
           "0xffff"
         ],
-        "lookahead": "000000",
         "component": "map-animation-queues",
         "word_size": 2,
         "terminators": ["0xfe00", "0xffff"]
@@ -226,7 +220,6 @@
           ["0x100b", 4], ["0x100c", 4], ["0x100b", 4], ["0x100a", 4], ["0x1009", 4], ["0x1008", 4], ["0x1007", 4],
           ["0x1006", 4], ["0xfe00"], ["0xffff"]
         ],
-        "lookahead": "000000",
         "component": "map-blend-animation",
         "word_size": 2
       },
@@ -234,7 +227,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x087620ac",
-        "size": "0xc",
+        "size": "0x9",
         "record_size": 3,
         "segments": [
           {
@@ -252,8 +245,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x087620b5", "end": "0x087620b8", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/VINASU_HEYA/VINASU_HEYA.BIN",
@@ -304,7 +296,6 @@
         "decoded_size": 3273,
         "encoded_size": 1916,
         "tilemap_length": 3272,
-        "lookahead": "0000",
         "component": "map-metatiles-2x2",
         "transform_mode": 2,
         "metatiles": 409,
@@ -320,7 +311,6 @@
           [0, 0, 0, 0], [0, 2, 0, 0], [0, 6, 0, 0], [0, 252, 0, 0], [0, 4, 0, 0], [0, 254, 0, 0], [0, 244, 0, 0],
           [0, 248, 0, 0]
         ],
-        "lookahead": "000000",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -384,7 +374,6 @@
           ],
           "0xffff"
         ],
-        "lookahead": "000000",
         "component": "map-animation-queues",
         "word_size": 2,
         "terminators": ["0xfe00", "0xffff"]
@@ -396,7 +385,6 @@
         "decoded_size": 10,
         "encoded_size": 16,
         "words": [["0x3f42"], ["0x1005", 4], ["0xfe00"], ["0xffff"]],
-        "lookahead": "00",
         "component": "map-blend-animation",
         "word_size": 2
       },
@@ -404,7 +392,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x08763b5c",
-        "size": "0xc",
+        "size": "0x9",
         "record_size": 3,
         "segments": [
           {
@@ -422,8 +410,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x08763b65", "end": "0x08763b68", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/VINASU_HEYA/VINASU_HEYA.BIN",
@@ -474,7 +461,6 @@
         "decoded_size": 2745,
         "encoded_size": 1660,
         "tilemap_length": 2744,
-        "lookahead": "00",
         "component": "map-metatiles-2x2",
         "transform_mode": 2,
         "metatiles": 343,
@@ -487,7 +473,6 @@
         "decoded_size": 24,
         "encoded_size": 20,
         "records": [[0, 0, 0, 0], [0, 2, 0, 0], [0, 6, 0, 0], [0, 4, 0, 0], [0, 252, 0, 0], [0, 254, 0, 0]],
-        "lookahead": "000000",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -551,7 +536,6 @@
           ],
           "0xffff"
         ],
-        "lookahead": "000000",
         "component": "map-animation-queues",
         "word_size": 2,
         "terminators": ["0xfe00", "0xffff"]
@@ -563,7 +547,6 @@
         "decoded_size": 10,
         "encoded_size": 16,
         "words": [["0x3f42"], ["0x1005", 4], ["0xfe00"], ["0xffff"]],
-        "lookahead": "00",
         "component": "map-blend-animation",
         "word_size": 2
       },
@@ -571,7 +554,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x0876519c",
-        "size": "0x4",
+        "size": "0x3",
         "record_size": 3,
         "segments": [
           {
@@ -581,8 +564,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x0876519f", "end": "0x087651a0", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/VINASU_HEYA/VINASU_HEYA.BIN",
@@ -633,7 +615,6 @@
         "decoded_size": 2217,
         "encoded_size": 1348,
         "tilemap_length": 2216,
-        "lookahead": "00",
         "component": "map-metatiles-2x2",
         "transform_mode": 2,
         "metatiles": 277,
@@ -646,7 +627,6 @@
         "decoded_size": 20,
         "encoded_size": 16,
         "records": [[0, 0, 0, 0], [0, 2, 0, 0], [0, 254, 0, 0], [0, 252, 0, 0], [0, 4, 0, 0]],
-        "lookahead": "00",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -710,7 +690,6 @@
           ],
           "0xffff"
         ],
-        "lookahead": "000000",
         "component": "map-animation-queues",
         "word_size": 2,
         "terminators": ["0xfe00", "0xffff"]
@@ -722,7 +701,6 @@
         "decoded_size": 10,
         "encoded_size": 16,
         "words": [["0x3f42"], ["0x1005", 4], ["0xfe00"], ["0xffff"]],
-        "lookahead": "00",
         "component": "map-blend-animation",
         "word_size": 2
       },
@@ -730,7 +708,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x087666e8",
-        "size": "0x8",
+        "size": "0x6",
         "record_size": 3,
         "segments": [
           {
@@ -748,8 +726,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x087666ee", "end": "0x087666f0", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/VINASU_HEYA/VINASU_HEYA.BIN",
@@ -800,7 +777,6 @@
         "decoded_size": 3873,
         "encoded_size": 2280,
         "tilemap_length": 3872,
-        "lookahead": "",
         "component": "map-metatiles-2x2",
         "transform_mode": 2,
         "metatiles": 484,
@@ -816,7 +792,6 @@
           [0, 0, 0, 0], [0, 2, 0, 0], [0, 252, 0, 0], [0, 248, 0, 0], [0, 254, 0, 0], [0, 249, 0, 0], [0, 4, 0, 0],
           [0, 250, 0, 0]
         ],
-        "lookahead": "000000",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -880,7 +855,6 @@
           ],
           "0xffff"
         ],
-        "lookahead": "000000",
         "component": "map-animation-queues",
         "word_size": 2,
         "terminators": ["0xfe00", "0xffff"]
@@ -892,7 +866,6 @@
         "decoded_size": 10,
         "encoded_size": 16,
         "words": [["0x3f42"], ["0x1005", 4], ["0xfe00"], ["0xffff"]],
-        "lookahead": "00",
         "component": "map-blend-animation",
         "word_size": 2
       },
@@ -900,7 +873,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x087685a8",
-        "size": "0xc",
+        "size": "0x9",
         "record_size": 3,
         "segments": [
           {
@@ -918,8 +891,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x087685b1", "end": "0x087685b4", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/VINASU_HEYA/VINASU_HEYA.BIN",

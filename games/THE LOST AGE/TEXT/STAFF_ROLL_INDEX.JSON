@@ -1,0 +1,115 @@
+{
+  "format": 1,
+  "kind": "typed-table",
+  "id": "staff_roll",
+  "address": "0x081a1928",
+  "end": "0x081a2400",
+  "size": 2776,
+  "segments": [
+    {
+      "id": "unreferenced_preload_resource_table",
+      "address": "0x081a1928",
+      "end": "0x081a19a8",
+      "element": "le-u32",
+      "stride": 4,
+      "min": 1,
+      "max": 65535,
+      "terminated_capacity": 32,
+      "values": [
+        62, 67, 66, 58, 68, 56, 57, 63, 65, 61, 53, 55, 52, 59, 51, 60, 54, 64, 43, 48, 47, 42, 41, 40, 49, 50, 46, 45,
+        44, 116, 69
+      ]
+    },
+    {
+      "id": "preload_resource_table",
+      "address": "0x081a19a8",
+      "end": "0x081a1a0c",
+      "element": "le-u32",
+      "stride": 4,
+      "min": 1,
+      "max": 65535,
+      "terminated_capacity": 25,
+      "values": [62, 67, 58, 56, 63, 65, 61, 55, 52, 59, 51, 60, 54, 64, 43, 47, 49, 50, 46, 45, 116]
+    },
+    {
+      "id": "text_pool",
+      "address": "0x081a1a0c",
+      "end": "0x081a2059",
+      "element": "ascii-pool",
+      "name": "strings",
+      "alignment": 4,
+      "stride": 1,
+      "texts": [
+        "", "and Music reserved by", "Copyrights of All Characters", "CAMELOT", "and", "NINTENDO",
+        " and Program reserved by", "Copyrights of Game, Scenario,", "Hiroshi Yamauchi", "Executive Producer",
+        "Shinji Hatano", "Produced by", "Jeffrey Storbo", "Tim Casey", "Todd Buechele", "Eric Bush", "Michael Kelbaugh",
+        "NOA Product Testing", "Jeff Miller", "Leslie Swan", " Management", "Localization", "Shawn Seavers",
+        "Richard Amtower", " & Editing", "Writing", "Bill Trinen", "Scot Ritchey", "Tim O'Leary", "Reiko Ninomiya",
+        "William Barnes", "Translation", " Localization", "North American", "Kenichi Nishida", "Toshiharu Izuno",
+        "Coordination", "Yoichi Kotabe", "Graphic Support", "Masanori Sato", "Illustration", "Staff Coordination",
+        "Masaaki Uno", "Sound Direction", "Hiroyuki Hamada", "Sound Effects", "Motoi Sakuraba", "Music",
+        "Hiroshi Kajiyama", "Monster Design", "Shin Yamanouchi", "Character Design", "Fumihide Aoki",
+        "Graphics Direction", "Kanako Horiguchi", "Mieko Koguchi", "Map Characters", "Natsuko Takeuchi",
+        "Shinichiro Sugimoto", "Akihito Kimura", "Mitsuru Fukumoto", "Mitsumasa Muraishi", "Masayuki Hashimoto", "Maps",
+        "Hiroto Nakashima", "Battle Backgrounds", "Junichi Ochiai", "& Faces", "Battle Effects", "Kaori Matsunaga",
+        "Junko Nakamura", "Battle Characters", "Graphic Art", "Yutaka Yamamoto", "User Interface", "P.E. Jareth Hein",
+        "Kenji Numaya", "Akiko Sato", "Hiroyuki Ichikawa", "Kaoru Shimada", "Field", "Toru Takamatsu", "Haruki Kodera",
+        "Battle", "Yasuhiro Taguchi", "System ", "Programming", "Masato Kawamura", "Norisumi Osawa", "Kentaro Sakou",
+        "Ayumu Shindo", "Shuji Shimizu", "Game Design", "Yusuke Sugimoto", "Assistant Director", "Director", "Scenario",
+        "Shugo Takahashi", "Hiroyuki Takahashi", "Game Planning", "STAFF", "GOLDEN SUN: THE LOST AGE"
+      ]
+    },
+    {
+      "id": "glyph_widths",
+      "address": "0x081a2059",
+      "end": "0x081a20b9",
+      "first_code": 32,
+      "element": "u8",
+      "stride": 1,
+      "min": 1,
+      "max": 8,
+      "values": [
+        7, 4, 7, 7, 8, 8, 8, 4, 5, 5, 5, 6, 4, 6, 4, 6, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 4, 4, 5, 6, 5, 7, 8, 8, 8, 8, 8,
+        8, 8, 8, 8, 5, 6, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 7, 8, 5, 6, 5, 7, 7, 6, 7, 7, 7, 7, 7, 5, 7, 7, 4,
+        4, 6, 4, 8, 7, 7, 7, 7, 7, 7, 5, 7, 6, 8, 6, 6, 6, 5, 4, 5, 7, 1
+      ]
+    },
+    {
+      "id": "glyph_width_alignment",
+      "address": "0x081a20b9",
+      "end": "0x081a20bc",
+      "element": "u8",
+      "stride": 1,
+      "fill": 0
+    },
+    {
+      "id": "lines",
+      "address": "0x081a20bc",
+      "end": "0x081a2400",
+      "element": "pool-pointer",
+      "pool": "strings",
+      "stride": 4,
+      "names": {"section_break": 255},
+      "terminated_capacity": 209,
+      "values": [
+        0, 101, 100, 0, 99, 0, 98, 97, 0, 0, 96, 0, 98, 0, 0, 95, 0, 97, 0, 0, 94, 0, 93, 0, 0, 92, 0, 93, 91, 90, 89,
+        88, 87, "section_break", 86, 0, 0, 85, 0, 84, 0, 0, 83, 0, 82, 81, 0, 0, 80, 0, 79, 78, 77, 76, 75, 0, 0, 74, 0,
+        73, "section_break", 72, 0, 0, 71, 0, 70, 69, 0, 0, 68, 67, 0, 66, 0, 0, 65, 0, 64, 0, 0, 63, 0, 62, 61, 60, 59,
+        58, 57, 0, 0, 56, 0, 55, 54, 0, 0, 53, 0, 52, "section_break", 51, 0, 50, 0, 0, 49, 0, 48, 0, 0, 47, 0, 46, 0,
+        0, 45, 0, 44, 0, 0, 43, 0, 42, 0, 0, 41, 0, 77, 76, "section_break", 40, 0, 50, 48, 39, 0, 0, 38, 0, 37, 39, 0,
+        0, 36, 0, 42, 35, 34, 0, 0, 33, 32, 0, 31, 0, 30, 29, 28, 27, 26, 0, 25, 24, 0, 23, 22, 0, 21, 20, 0, 19, 18, 0,
+        0, 17, 16, 15, 14, 13, 12, 0, "section_break", 11, 0, 10, 98, 97, 0, 0, 9, 0, 8, 0, 0, 7, 6, 0, 5, 4, 3, 0, 2,
+        1, 0, 5, 0, "section_break"
+      ]
+    }
+  ],
+  "font": {
+    "address": "0x081a2400",
+    "end": "0x081a2700",
+    "kind": "1bpp-tiles",
+    "source": "STAFF_ROLL_MOJI.1BPP.PNG",
+    "first_code": 32,
+    "glyphs": 96,
+    "columns": 16
+  }
+}

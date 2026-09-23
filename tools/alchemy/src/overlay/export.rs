@@ -11,7 +11,7 @@ use serde_json::json;
 use std::io::Write;
 use std::path::{Path, PathBuf};
 
-pub const USAGE: &str = "usage: alchemy overlay export RESOURCE... [--target GAME-EDITION] [--output DIR]\n       alchemy overlay export --all [--target GAME-EDITION] [--output DIR]\n       alchemy overlay export --list [--target GAME-EDITION]\nWrites resource_XXX_overlay.s without a compression sidecar (default DIR: the target's raw/overlays)\nand prints each recon/assets.json thumb-overlay series tuple [id, address, size, decoded_size].\n--all discovers and exports every code overlay using the host's available cores.\n--list prints every resource whose decoded image has the target's entry-veneer shape.";
+pub const USAGE: &str = "usage: alchemy overlay export RESOURCE... [--target GAME-EDITION] [--output DIR]\n       alchemy overlay export --all [--target GAME-EDITION] [--output DIR]\n       alchemy overlay export --list [--target GAME-EDITION]\nWrites resource_XXX_overlay.s without a compression sidecar (default DIR: the target's raw/overlays)\nand prints each recon/<game>/assets.json thumb-overlay series tuple [id, address, size, decoded_size].\n--all discovers and exports every code overlay using the host's available cores.\n--list prints every resource whose decoded image has the target's entry-veneer shape.";
 
 struct Options {
     target: DecompTarget,
@@ -73,6 +73,7 @@ pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
         }
         return Ok(0);
     }
+    let general = crate::build_assets::target_general_lz(root, &options.target)?;
     let names = if options.all {
         rom.overlay_resources(options.target.overlay_entry_veneers)
             .into_iter()
@@ -96,13 +97,14 @@ pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
             let results = &results;
             let names = &names;
             let rom = &rom;
+            let general = &general;
             scope.spawn(move || loop {
                 let index = next.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
                 let Some(name) = names.get(index) else { break };
                 results
                     .lock()
                     .unwrap()
-                    .push((index, export(root, rom, options.target, name)));
+                    .push((index, export(root, rom, options.target, general, name)));
             });
         }
     });
@@ -155,6 +157,7 @@ fn export(
     root: &Path,
     rom: &CanonicalRom,
     target: DecompTarget,
+    general: &crate::build_assets::GeneralLz,
     name: &str,
 ) -> Result<Exported, String> {
     let stream = rom.stream(resource_id(name)?)?;
@@ -166,7 +169,7 @@ fn export(
         ));
     }
     let compressed = &rom.bytes()[stream.start..stream.end];
-    verify_compression(&stream.decoded, compressed)?;
+    verify_compression(&stream.decoded, compressed, general)?;
     let lookahead = compressed.len() - stream.encoded()?.len();
 
     let veneer_macro = target.overlay_macro();
@@ -175,6 +178,7 @@ fn export(
         OVERLAY_BASE,
         &veneer_macro,
         target.overlay_entry_veneers,
+        &std::collections::BTreeSet::new(),
     )
     .map_err(|error| format!("{name}: {error}"))?;
     // The macro is one fixed Thumb veneer in both games. A game that has not
@@ -214,14 +218,18 @@ fn export(
     })
 }
 
-fn verify_compression(decoded: &[u8], expected: &[u8]) -> Result<(), String> {
-    if crate::build_assets::encode_overlay_stream(decoded)? != expected {
+fn verify_compression(
+    decoded: &[u8],
+    expected: &[u8],
+    general: &crate::build_assets::GeneralLz,
+) -> Result<(), String> {
+    if crate::build_assets::encode_overlay_stream(decoded, general)? != expected {
         return Err("automatic overlay compression or packing differs; export refuses a saved-answer exception".into());
     }
     Ok(())
 }
 
-/// `[id, address, size, decoded_size]`, exactly as a recon/assets.json
+/// `[id, address, size, decoded_size]`, exactly as a recon/<game>/assets.json
 /// `golden-sun-thumb-overlay-series` lists one resource.
 fn series_tuple(stream: &Stream) -> String {
     json!([
@@ -249,14 +257,15 @@ mod tests {
     #[test]
     fn automatic_export_refuses_padding_and_changed_bytes() {
         let decoded = b"ABABABAB";
-        let compressed = crate::build_assets::encode_overlay_stream(decoded).unwrap();
-        verify_compression(decoded, &compressed).unwrap();
+        let general = crate::build_assets::GeneralLz::synthetic(64, 8, 72);
+        let compressed = crate::build_assets::encode_overlay_stream(decoded, &general).unwrap();
+        verify_compression(decoded, &compressed, &general).unwrap();
         let mut padded = compressed.clone();
         padded.push(0);
-        assert!(verify_compression(decoded, &padded).is_err());
+        assert!(verify_compression(decoded, &padded, &general).is_err());
         let mut changed = compressed;
         changed[0] ^= 1;
-        assert!(verify_compression(decoded, &changed).is_err());
+        assert!(verify_compression(decoded, &changed, &general).is_err());
     }
 
     #[test]

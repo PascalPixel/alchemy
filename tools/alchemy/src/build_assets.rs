@@ -1,10 +1,12 @@
 //! Native entry point for the asset build stage.
 mod compression_plan;
 mod derive_index;
+pub(crate) use compression_plan::GeneralLz;
 pub(crate) use derive_index::{live_scene, network::live_family, tagged_extent};
 mod gba_header;
 mod native;
-use crate::compiler::build_io::relative;
+mod packer;
+use crate::compiler::build_io::{relative, text};
 use crate::compiler::bundle::{
     compiler_bundle_signature, executable_signature, host_executable_signature,
 };
@@ -12,7 +14,7 @@ use crate::compiler::canonical_json::canonical_json;
 use crate::compiler::routing::{cflags_for_target_source, CompilerTarget};
 use crate::compiler::sha256;
 use crate::compiler::source_inputs::compiler_source_tree_signature;
-use crate::compiler::source_paths::{SourcePaths, SOURCE_PATHS_MANIFEST};
+use crate::compiler::source_paths::{source_paths_manifest, SourcePaths};
 use crate::generated_files::{prune_files, unconsumed_tracked_material};
 use crate::overlay::compile::assemble_overlay;
 use crate::overlay::source::OverlaySource;
@@ -21,17 +23,16 @@ use psynergy::assets::lz::{PaletteGroup, PaletteOperation};
 use psynergy::assets::text::import_tilemap;
 use psynergy::assets::{
     image::{gba_graphics, gba_palette_rgba, indexed_png, one_bit_tiles, rgba_png, GbaBpp},
-    midi::{append_conductor_meta, midi_events, EventBody, MidiEvent},
+    midi::{midi_events, EventBody, MidiEvent},
 };
 use psynergy::cache::write_cache_entry_atomically;
 use serde_json::Value;
-use sha1::{Digest, Sha1};
 use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::env;
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
-const USAGE: &str = "usage: alchemy build assets [-h] [--source-only] [--target TARGET] [--manifest MANIFEST] [-o OUTPUT] [rom] | --extract-text [TARGET] | --verify-text [TARGET] | --review-images OUTPUT [--update-baseline | --target TARGET] | --audit-characters OUTPUT [--target TARGET] | --extract-sources ROM [--target TARGET] | --extract-missing-sources ROM [--target TARGET] | --derive-index ROM --target TARGET --scenes N[=NAME],... [-o OUTPUT] [--stage DIR] [--preview DIR] | --network ROM --target TARGET -o DIR [--from WORLD_MAP_EXIT | --scenes LIST] [--mark SCENE] [--packed] | --verify-smsh-source ROM SOURCE | --adopt-smsh-midi SOURCE INPUT OUTPUT | --verify-smsh-midi ROM MIDI | --self-test";
+const USAGE: &str = "usage: alchemy build assets [-h] [--source-only] [--target TARGET] [--manifest MANIFEST] [-o OUTPUT] [rom] | --extract-text [TARGET] | --verify-text [TARGET] | --review-images OUTPUT [--update-baseline | --target TARGET] | --audit-characters OUTPUT [--target TARGET] | --extract-sources ROM [--target TARGET] | --extract-missing-sources ROM [--target TARGET] | --derive-index ROM --target TARGET --scenes N[=NAME],... [--leave ID,...] [-o OUTPUT] [--stage DIR] [--preview DIR] | --network ROM --target TARGET -o DIR [--from WORLD_MAP_EXIT | --scenes LIST] [--mark SCENE] [--packed] | --verify-smsh-source ROM SOURCE | --adopt-smsh-midi SOURCE INPUT OUTPUT | --verify-smsh-midi ROM MIDI | --self-test";
 const ROM_BASE: usize = 0x0800_0000;
 pub(crate) fn identified_regions(
     root: &Path,
@@ -51,7 +52,7 @@ fn sound_inventory(
     rom: &[u8],
     target: &crate::targets::DecompTarget,
 ) -> Result<Vec<Value>, String> {
-    let registry = format!("{}/recon/translation-units.json", target.game_dir());
+    let registry = format!("{}/translation-units.json", target.recon_dir());
     let units = json(&root.join(&registry))?;
     let units = units
         .as_array()
@@ -198,7 +199,7 @@ fn sound_inventory(
 fn sound_index_follows_registered_voices_and_checks_sample_extents() {
     let root = tempfile::tempdir().unwrap();
     let target = crate::targets::decomp_target(Some("tla-en")).unwrap();
-    let registry = root.path().join(format!("{}/recon", target.game_dir()));
+    let registry = root.path().join(target.recon_dir());
     fs::create_dir_all(&registry).unwrap();
     fs::write(
         registry.join("translation-units.json"),
@@ -293,21 +294,6 @@ fn parse_group(value: &Value) -> Result<PaletteGroup, String> {
         }
         _ => Err("unsupported palette token group".to_string()),
     }
-}
-fn hex_bytes(value: &Value, label: &str) -> Result<Vec<u8>, String> {
-    let text = value
-        .as_str()
-        .ok_or_else(|| format!("{label} is not hexadecimal text"))?;
-    if text.len() % 2 != 0 {
-        return Err(format!("{label} has odd length"));
-    }
-    (0..text.len())
-        .step_by(2)
-        .map(|index| {
-            u8::from_str_radix(&text[index..index + 2], 16)
-                .map_err(|_| format!("{label} is not hexadecimal text"))
-        })
-        .collect()
 }
 fn json(path: &Path) -> Result<Value, String> {
     serde_json::from_slice(&fs::read(path).map_err(|error| format!("{}: {error}", path.display()))?)
@@ -692,6 +678,33 @@ fn component_frames(
     }
     Ok(output)
 }
+/// The frames of a sheet component that store no bytes at all: the source
+/// never gave them pixels, so their cells stay blank. Only a component that
+/// is built one frame per stream can name them.
+fn absent_frames(entry: &Value) -> Result<BTreeSet<usize>, String> {
+    let Some(frames) = entry.get("absent_frames") else {
+        return Ok(BTreeSet::new());
+    };
+    let frames = frames
+        .as_array()
+        .ok_or("absent frames are not an array")?
+        .iter()
+        .map(|frame| number(frame, "absent frame"))
+        .collect::<Result<Vec<_>, _>>()?;
+    let set = frames.iter().copied().collect::<BTreeSet<_>>();
+    if set.is_empty() || set.len() != frames.len() || !frames.windows(2).all(|w| w[0] < w[1]) {
+        return Err("absent frames must be a nonempty ascending list".into());
+    }
+    Ok(set)
+}
+fn is_absent_frame(entry: &Value) -> Result<bool, String> {
+    let absent = absent_frames(entry)?;
+    match entry.get("frame") {
+        Some(frame) => Ok(absent.contains(&number(frame, "frame")?)),
+        None if absent.is_empty() => Ok(false),
+        None => Err("absent frames need one stream per frame".into()),
+    }
+}
 /// Check an indexed image against the shared palette its component declares:
 /// `{"source", "offset", "entries"}` name the colors that the pixels
 /// `offset..offset + entries` of an indexed palette image select.
@@ -1039,6 +1052,20 @@ fn build_component_cached(ctx: &Context, entry: &Value) -> Result<ComponentResul
                 vec![source_name.to_string()],
             )
         }
+        // A typed table inside a compressed stream: its segment addresses
+        // are offsets in the decoded stream.
+        "typed-table" => {
+            let document = ctx.document(&source)?;
+            let pointer = json_string(&entry["pointer"], "typed table pointer")?;
+            let table = document
+                .pointer(pointer)
+                .ok_or("typed table pointer is absent")?;
+            (
+                typed_table(table)?,
+                serde_json::json!({"pointer":pointer}),
+                vec![source_name.to_string()],
+            )
+        }
         "gba-4bpp-object-bank" => {
             let result = build_object_bank(root, &source)?;
             return Ok(result);
@@ -1267,7 +1294,7 @@ fn build_component_cached(ctx: &Context, entry: &Value) -> Result<ComponentResul
         "indexed-bytes" | "raw-lz-bytes" | "zero-skip-bytes" | "zero-skip-bank" | "mtf4-bytes" => {
             let image = ctx.indexed(&source)?;
             let mut sources = vec![source_name.to_string()];
-            sources.extend(check_shared_palette(root, entry, &image)?);
+            sources.extend(ctx.shared_palette(&source, entry, &image)?);
             let (width, height, pixels) = indexed_rect(&image, entry)?;
             let built = if kind == "zero-skip-bank" {
                 let frames = component_frames(entry, width, height, &pixels, 1)?;
@@ -1285,6 +1312,16 @@ fn build_component_cached(ctx: &Context, entry: &Value) -> Result<ComponentResul
                     number(&entry["size"], "component size")?,
                 )
                 .map_err(|error| error.to_string())?
+            } else if kind == "zero-skip-bytes" && is_absent_frame(entry)? {
+                // An absent frame stores no zero-skip bytes; its cell is blank.
+                if component_frames(entry, width, height, &pixels, 1)?
+                    .iter()
+                    .flatten()
+                    .any(|pixel| *pixel != 0)
+                {
+                    return Err("absent frame has pixels".into());
+                }
+                Vec::new()
             } else {
                 let mut built = Vec::new();
                 for frame in component_frames(entry, width, height, &pixels, 1)? {
@@ -1539,6 +1576,34 @@ fn atlas_frames_select_order_and_feed_pixel_codecs() {
     assert!(build_component(root.path(), &bad).is_err());
 }
 #[test]
+fn typed_table_components_serialize_tables_inside_streams() {
+    let root = tempfile::tempdir().unwrap();
+    let table = serde_json::json!({"format":1,"kind":"typed-table","address":"0x0","size":"0x7","segments":[
+        {"name":"offsets","address":"0x0","end":"0x2","stride":2,"element":"le-u16","values":["entries_end"]},
+        {"name":"entries","address":"0x2","end":"0x6","stride":2,"element":"record",
+            "fields":[{"name":"entry","element":"s8"},{"name":"value","element":"u8"}],
+            "records":[{"entry":-1,"value":7},{"entry":2,"value":9}]},
+        {"name":"entries_end","address":"0x6","end":"0x7","stride":1,"element":"u8","values":[255]}]});
+    fs::write(
+        root.path().join("map.json"),
+        serde_json::to_vec(&serde_json::json!({"maps":{"1":{"table":table}}})).unwrap(),
+    )
+    .unwrap();
+    let entry = serde_json::json!({"kind":"typed-table","source":"map.json","pointer":"/maps/1/table","size":7});
+    assert_eq!(
+        build_component(root.path(), &entry).unwrap().data,
+        [6, 0, 255, 7, 2, 9, 255]
+    );
+    for (key, value) in [
+        ("pointer", serde_json::json!("/maps/1/absent")),
+        ("size", serde_json::json!(8)),
+    ] {
+        let mut wrong = entry.clone();
+        wrong[key] = value;
+        assert!(build_component(root.path(), &wrong).is_err(), "{key}");
+    }
+}
+#[test]
 fn component_regions_concatenate_parts_at_running_addresses() {
     let root = tempfile::tempdir().unwrap();
     fs::write(
@@ -1634,6 +1699,67 @@ fn general_lz_sequences_encode_one_stream_per_frame() {
     let mut bad = entry.clone();
     bad["plan_section"] = Value::from("/missing");
     assert!(build_general_lz(root.path(), &bad).is_err());
+    // Arena controls come from the compressor; a stored plan is refused.
+    let stored =
+        serde_json::json!({"codec":"golden-sun-arena-lz","decoded_size":4,"tokens":[["l",4]]});
+    assert!(encode_lz_stream(&[3, 0xff, 0xfe, 0], &stored, &[], None)
+        .unwrap_err()
+        .contains("stored controls are refused"));
+    // A tagged stream derives its tag; a stored choice is refused.
+    for stored in [
+        serde_json::json!({"codec":"golden-sun-tagged-lz","decoded_size":4,"tag":1}),
+        serde_json::json!({"codec":"golden-sun-tagged-lz","decoded_size":4,"tokens":[["l",4]]}),
+    ] {
+        assert!(encode_lz_stream(&[3, 0xff, 0xfe, 0], &stored, &[], None)
+            .unwrap_err()
+            .contains("stored choices are refused"));
+    }
+}
+#[test]
+fn absent_frames_store_no_bytes_and_keep_blank_cells() {
+    let root = tempfile::tempdir().unwrap();
+    let mut pixels = vec![0u8; 16 * 8];
+    pixels[0] = 3;
+    let palette = [0, 0, 0, 8, 8, 8, 16, 16, 16, 24, 24, 24];
+    fs::write(
+        root.path().join("atlas.png"),
+        test_png(16, 8, &palette, &pixels),
+    )
+    .unwrap();
+    fs::write(
+        root.path().join("plan.json"),
+        r#"{"streams":[{"codec":"golden-sun-arena-lz","decoded_size":4,"encoded_size":6},{"codec":"golden-sun-arena-lz","decoded_size":0,"encoded_size":2}],
+            "components":[{"kind":"zero-skip-bytes","source":"atlas.png","frame_width":8,"frame_height":8,"columns":2,"absent_frames":[1]}]}"#,
+    )
+    .unwrap();
+    let entry = serde_json::json!({"address":0,"size":8,"kind":"golden-sun-general-lz","plan":"plan.json","plan_section":"/streams"});
+    let (built, _, _) = build_general_lz(root.path(), &entry).unwrap();
+    // The absent frame is a bare raw split after the first frame's stream.
+    assert_eq!(built, [0, 0, 3, 0xff, 0xfe, 0, 0, 0]);
+    // An absent cell that holds pixels is refused.
+    pixels[8] = 2;
+    fs::write(
+        root.path().join("atlas.png"),
+        test_png(16, 8, &palette, &pixels),
+    )
+    .unwrap();
+    assert!(build_general_lz(root.path(), &entry)
+        .unwrap_err()
+        .contains("absent frame has pixels"));
+    // Only a component built one frame per stream can name absent frames.
+    let whole = serde_json::json!({"kind":"zero-skip-bytes","source":"atlas.png","frame_width":8,
+        "frame_height":8,"columns":2,"frames":2,"absent_frames":[1]});
+    assert!(build_component(root.path(), &whole).is_err());
+    for bad in [
+        serde_json::json!([]),
+        serde_json::json!([1, 1]),
+        serde_json::json!([1, 0]),
+    ] {
+        let mut entry = whole.clone();
+        entry["absent_frames"] = bad;
+        entry["frame"] = Value::from(1);
+        assert!(absent_frames(&entry).is_err());
+    }
 }
 fn integer_array(value: &Value, kind: &str) -> Result<Vec<u8>, String> {
     let mut output = Vec::new();
@@ -1888,6 +2014,36 @@ fn typed_pointer_tables_use_the_owner_register() {
     assert!(typed_table(&resolved).is_err());
 }
 
+#[test]
+fn typed_pointer_tables_use_their_own_games_register() {
+    let directory = tempfile::tempdir().unwrap();
+    let root = directory.path();
+    for (game, address) in [("tbs", "08001000"), ("tla", "08002000")] {
+        let recon = root.join("recon").join(game);
+        fs::create_dir_all(&recon).unwrap();
+        fs::write(
+            recon.join("source-paths.json"),
+            format!(r#"{{"format":3,"owners":{{"main:{address}":{{"name":"Callback_Run"}}}}}}"#),
+        )
+        .unwrap();
+    }
+    fs::write(
+        root.join("TABLE.JSON"),
+        r#"{"format":1,"kind":"typed-table","address":0,"size":4,"segments":[
+            {"address":0,"end":4,"stride":4,"element":"thumb-pointer","values":["Callback_Run"]}]}"#,
+    )
+    .unwrap();
+    let entry =
+        serde_json::json!({"kind":"typed-table","source":"TABLE.JSON","address":0,"size":4});
+    for (id, expected) in [
+        (crate::targets::DecompTargetId::TbsEn, [1, 16, 0, 8]),
+        (crate::targets::DecompTargetId::TlaEn, [1, 32, 0, 8]),
+    ] {
+        let mut ctx = Context::for_game(root, crate::targets::target_for(id));
+        assert_eq!(build_entry(&mut ctx, &entry).unwrap().0, expected, "{id}");
+    }
+}
+
 /// Derive a stream directory: one `le-u32` word per index giving where that
 /// index's stream starts relative to the directory, or zero when it has none.
 /// The streams named by `stream_offsets.streams` (a pointer into the table's
@@ -2069,6 +2225,11 @@ fn typed_table(document: &Value) -> Result<Vec<u8>, String> {
                 return Err("fill requires an unsigned byte segment without values".into());
             }
             vec![u8::try_from(number(fill, "fill")?).map_err(|_| "fill exceeds u8")?; size]
+        } else if let Some(generator) = segment.get("generator") {
+            if segment.get("values").is_some() {
+                return Err("a generated segment lists no values".into());
+            }
+            generated_values(generator, kind, width, size / width)?
         } else if kind == "record" {
             let fields = segment["fields"]
                 .as_array()
@@ -2158,14 +2319,25 @@ fn typed_table(document: &Value) -> Result<Vec<u8>, String> {
             let pool = pools
                 .get(json_string(&segment["pool"], "pointer pool")?)
                 .ok_or("pointer pool is not an earlier text pool")?;
+            // An entry is a string's pool index or, for a reader that also
+            // accepts a marker word in place of a pointer, a constant named
+            // by the segment's or the table's `names`.
             let addresses = segment["values"]
                 .as_array()
                 .ok_or("pointer values missing")?
                 .iter()
-                .map(|index| {
-                    pool.get(number(index, "pool index")?)
+                .map(|index| match index.as_str() {
+                    Some(name) => segment
+                        .get("names")
+                        .and_then(|names| names.get(name))
+                        .or_else(|| labels.names.get(name))
+                        .and_then(Value::as_u64)
+                        .and_then(|value| usize::try_from(value).ok())
+                        .ok_or_else(|| format!("pool pointer {name} names no constant")),
+                    None => pool
+                        .get(number(index, "pool index")?)
                         .copied()
-                        .ok_or_else(|| "pool index is outside its pool".to_string())
+                        .ok_or_else(|| "pool index is outside its pool".to_string()),
                 })
                 .collect::<Result<Vec<_>, String>>()?;
             let mut spec = segment.clone();
@@ -2211,6 +2383,72 @@ fn typed_table(document: &Value) -> Result<Vec<u8>, String> {
         return Err("table size differs".into());
     }
     Ok(output)
+}
+
+/// Values a typed-table segment computes from its formula instead of listing.
+/// `ceiling-reciprocal` gives entry `i` the ceiling of 2^`numerator_bits` / `i`
+/// reduced to the unsigned element width, the multiplier an unsigned divide by
+/// `i` reads: a 32-bit numerator leaves entry 1 as 0, and entry 0 has no
+/// reciprocal and holds 0.
+fn generated_values(
+    generator: &Value,
+    kind: &str,
+    width: usize,
+    count: usize,
+) -> Result<Vec<u8>, String> {
+    if generator["formula"] != "ceiling-reciprocal" {
+        return Err("unknown table generator".into());
+    }
+    if !matches!(kind, "u8-array" | "le-u16-array" | "le-u32-array") {
+        return Err("reciprocals need an unsigned element".into());
+    }
+    let bits = number(&generator["numerator_bits"], "numerator bits")?;
+    if bits == 0 || bits > 64 {
+        return Err("reciprocal numerator exceeds 64 bits".into());
+    }
+    let numerator = 1u128 << bits;
+    let modulus = 1u128 << (width * 8);
+    let values = (0..count)
+        .map(|i| match i {
+            0 => Value::from(0),
+            i => Value::from((numerator.div_ceil(i as u128) % modulus) as u64),
+        })
+        .collect();
+    integer_array(&Value::Array(values), kind)
+}
+
+#[test]
+fn generated_reciprocals_follow_their_formula_and_width() {
+    let source = serde_json::json!({"format":1,"kind":"typed-table","address":0,"size":24,"segments":[
+        {"name":"divide_reciprocals","address":0,"end":24,"element":"le-u32","stride":4,
+         "generator":{"formula":"ceiling-reciprocal","numerator_bits":32}}
+    ]});
+    let words: Vec<u32> = typed_table(&source)
+        .unwrap()
+        .chunks_exact(4)
+        .map(|word| u32::from_le_bytes(word.try_into().unwrap()))
+        .collect();
+    assert_eq!(
+        words,
+        [0, 0, 0x8000_0000, 0x5555_5556, 0x4000_0000, 0x3333_3334]
+    );
+    for (key, value) in [
+        ("formula", serde_json::json!("floor-reciprocal")),
+        ("numerator_bits", serde_json::json!(65)),
+        ("numerator_bits", serde_json::json!(0)),
+    ] {
+        let mut changed = source.clone();
+        changed["segments"][0]["generator"][key] = value;
+        assert!(typed_table(&changed).is_err(), "{key}");
+    }
+    for (key, value) in [
+        ("element", serde_json::json!("le-s32")),
+        ("values", serde_json::json!([0, 0, 0, 0, 0, 0])),
+    ] {
+        let mut changed = source.clone();
+        changed["segments"][0][key] = value;
+        assert!(typed_table(&changed).is_err(), "{key}");
+    }
 }
 
 /// Symbolic integer values of one typed table. A string value is a named
@@ -2631,6 +2869,12 @@ fn typed_text_pools_resolve_aligned_string_pointers() {
         *invalid.pointer_mut(pointer).unwrap() = value;
         assert!(typed_table(&invalid).is_err(), "{pointer}");
     }
+    let mut marked = source.clone();
+    marked["segments"][1]["names"] = serde_json::json!({"section_break": 255});
+    marked["segments"][1]["values"] = serde_json::json!([2, "section_break"]);
+    assert_eq!(typed_table(&marked).unwrap()[18..22], [255, 0, 0, 0]);
+    marked["segments"][1]["values"] = serde_json::json!([2, "page_break"]);
+    assert!(typed_table(&marked).is_err());
     let mut reversed = source.clone();
     reversed["segments"].as_array_mut().unwrap().reverse();
     reversed["segments"][0]["address"] = Value::from(256);
@@ -2741,10 +2985,6 @@ fn parse_halfword_tokens(
         })
         .collect()
 }
-fn parse_hex_text(value: &Value, label: &str) -> Result<Vec<u8>, String> {
-    json_string(value, label)?;
-    hex_bytes(value, label)
-}
 /// The plan an entry selects inside its plan document: `plan_section` names
 /// a top-level key or, starting with `/`, a JSON pointer.
 fn select_plan<'a>(document: &'a Value, entry: &Value) -> Result<&'a Value, String> {
@@ -2757,23 +2997,46 @@ fn select_plan<'a>(document: &'a Value, entry: &Value) -> Result<&'a Value, Stri
     }
 }
 /// Encode one stream from its plan. `arena` holds the bytes that precede the
-/// stream in its container for codecs whose copies read from them.
-fn encode_lz_stream(decoded: &[u8], plan: &Value, arena: &[u8]) -> Result<Vec<u8>, String> {
+/// stream in its container for codecs whose copies read from them; `general`
+/// is the target machine's general-LZ compressor, which general LZ requires.
+fn encode_lz_stream(
+    decoded: &[u8],
+    plan: &Value,
+    arena: &[u8],
+    general: Option<&GeneralLz>,
+) -> Result<Vec<u8>, String> {
     let codec = json_string(&plan["codec"], "codec")?;
     if codec == "golden-sun-overlay-lz" {
-        return encode_overlay_stream(decoded);
+        return encode_overlay_stream(
+            decoded,
+            general.ok_or("overlay compression needs the target's reference machine definition")?,
+        );
     }
     if decoded.len() != number(&plan["decoded_size"], "decoded_size")? {
         return Err("decoded components do not match plan size".to_string());
     }
-    let materialized = if codec != "golden-sun-arena-lz" || plan.get("tokens").is_some() {
-        Some(compression_plan::materialize(decoded, plan, arena)?)
-    } else {
-        None
-    };
+    if codec == "golden-sun-tagged-lz" {
+        // A tagged stream's leading byte names its codec: the smaller of the
+        // general and palette encodings, palette on ties, as for overlays.
+        if plan.get("tokens").is_some() || plan.get("tag").is_some() {
+            return Err("tagged streams derive their codec; stored choices are refused".into());
+        }
+        let built = encode_overlay_stream(
+            decoded,
+            general.ok_or("tagged compression needs the target's reference machine definition")?,
+        )?;
+        check_stored_extent(plan, built.len())?;
+        return Ok(built);
+    }
+    let arena_codec = codec == "golden-sun-arena-lz";
+    if arena_codec && (plan.get("tokens").is_some() || plan.get("final_flags").is_some()) {
+        return Err(
+            "arena streams are compressed from their input; stored controls are refused".into(),
+        );
+    }
     let mut expanded = plan.clone();
-    if let Some(tokens) = materialized {
-        expanded["tokens"] = tokens;
+    if !arena_codec {
+        expanded["tokens"] = compression_plan::materialize(decoded, plan, general)?;
     }
     let plan = &expanded;
     let mut built = match codec {
@@ -2805,19 +3068,7 @@ fn encode_lz_stream(decoded: &[u8], plan: &Value, arena: &[u8]) -> Result<Vec<u8
             psynergy::assets::lz::encode_palette(decoded, &groups).map_err(|e| e.to_string())?
         }
         "golden-sun-arena-lz" => {
-            let tokens = plan.get("tokens").map(parse_general_tokens).transpose()?;
-            let final_flags = plan
-                .get("final_flags")
-                .map(|value| number(value, "final_flags"))
-                .transpose()?
-                .unwrap_or(0);
-            psynergy::assets::lz::encode_arena(
-                decoded,
-                tokens.as_deref(),
-                u8::try_from(final_flags).map_err(|_| "final flags exceed a byte")?,
-                arena,
-            )
-            .map_err(|e| e.to_string())?
+            psynergy::assets::lz::compress_arena(decoded, arena).map_err(|e| e.to_string())?
         }
         _ => return Err("unsupported custom-LZ plan".to_string()),
     };
@@ -2827,30 +3078,55 @@ fn encode_lz_stream(decoded: &[u8], plan: &Value, arena: &[u8]) -> Result<Vec<u8
         }
         built.insert(0, 1);
     }
-    if let Some(lookahead) = plan.get("lookahead") {
-        built.extend(parse_hex_text(lookahead, "lookahead")?);
+    check_stored_extent(plan, built.len())?;
+    Ok(built)
+}
+/// A plan's `encoded_size` is its stream's stored extent: the stream and the
+/// up to three alignment bytes that the file's writer, never the encoder,
+/// leaves after it (see `packer`). Recorded alignment bytes are refused.
+fn check_stored_extent(plan: &Value, stream: usize) -> Result<(), String> {
+    if plan.get("lookahead").is_some() {
+        return Err(
+            "stored lookahead is refused; the packer replay supplies stream alignment".into(),
+        );
     }
-    if let Some(expected) = plan.get("encoded_size") {
-        let expected = number(expected, "encoded_size")?;
-        if built.len() != expected {
+    if let Some(extent) = plan.get("encoded_size") {
+        let extent = number(extent, "encoded_size")?;
+        if stream > extent || extent - stream > 3 {
             return Err(format!(
-                "encoded stream is 0x{:x} bytes, plan expects 0x{expected:x}",
-                built.len()
+                "encoded stream is 0x{stream:x} bytes, plan expects a stored extent of 0x{extent:x}"
             ));
         }
     }
-    Ok(built)
+    Ok(())
+}
+#[test]
+fn stored_extents_leave_alignment_to_the_writer_and_refuse_recorded_bytes() {
+    assert!(check_stored_extent(&serde_json::json!({"encoded_size": 8}), 5).is_ok());
+    assert!(check_stored_extent(&serde_json::json!({"encoded_size": 8}), 8).is_ok());
+    assert!(check_stored_extent(&serde_json::json!({"encoded_size": 8}), 4).is_err());
+    assert!(check_stored_extent(&serde_json::json!({"encoded_size": 8}), 9).is_err());
+    for recorded in ["", "00", "4e"] {
+        let plan = serde_json::json!({"encoded_size": 8, "lookahead": recorded});
+        assert!(check_stored_extent(&plan, 7)
+            .unwrap_err()
+            .contains("stored lookahead is refused"));
+    }
 }
 
 /// Overlay streams select the smaller of the two encodings, palette on ties.
 /// Legacy sidecars are explicit exceptions; this path consumes no saved choices.
-pub(crate) fn encode_overlay_stream(decoded: &[u8]) -> Result<Vec<u8>, String> {
+pub(crate) fn encode_overlay_stream(
+    decoded: &[u8],
+    general: &GeneralLz,
+) -> Result<Vec<u8>, String> {
     let general = encode_lz_stream(
         decoded,
         &serde_json::json!({
             "codec":"golden-sun-general-lz", "decoded_size":decoded.len()
         }),
         &[],
+        Some(general),
     )?;
     let palette = encode_lz_stream(
         decoded,
@@ -2858,12 +3134,45 @@ pub(crate) fn encode_overlay_stream(decoded: &[u8]) -> Result<Vec<u8>, String> {
             "codec":"golden-sun-tagged-palette-lz", "decoded_size":decoded.len(), "tag":1
         }),
         &[],
+        None,
     )?;
     Ok(if palette.len() <= general.len() {
         palette
     } else {
         general
     })
+}
+/// Every ROM range `manifest` declares, expanded as the asset build expands
+/// it: its regions, closure packages and series, as `(start, end)` addresses.
+/// Nothing is built or read from a ROM.
+pub(crate) fn declared_ranges(root: &Path, manifest: &str) -> Result<Vec<(usize, usize)>, String> {
+    let mut ctx = Context::new(root);
+    let manifest = json(&ctx.source(manifest)?)?;
+    let mut entries = manifest
+        .get("regions")
+        .and_then(Value::as_array)
+        .cloned()
+        .unwrap_or_default();
+    expand_closure_packages(&mut ctx, &manifest, &mut entries)?;
+    expand_series(&mut ctx, &manifest, &mut entries)?;
+    entries
+        .iter()
+        .map(|entry| {
+            let address = number(&entry["address"], "asset address")?;
+            let size = number(&entry["size"], "asset size")?;
+            Ok((address, address + size))
+        })
+        .collect()
+}
+/// The general-LZ compressor of the reference machine that `target`'s asset
+/// manifest names.
+pub(crate) fn target_general_lz(
+    root: &Path,
+    target: &crate::targets::DecompTarget,
+) -> Result<GeneralLz, String> {
+    let manifest = json(&root.join(target.asset_manifest))?;
+    let name = json_string(&manifest["machine"], "reference machine definition")?;
+    GeneralLz::of(&json(&root_path(root, name)?)?).map_err(|error| format!("{name}: {error}"))
 }
 /// Build an LZ entry: its components are concatenated and encoded with the
 /// selected plan. A plan array describes a sequence of streams: stream `i`
@@ -2955,7 +3264,7 @@ fn build_general_lz_cached(
             .get("tokens")
             .and_then(Value::as_array)
             .map_or(0, Vec::len);
-        let mut stream = encode_lz_stream(&decoded, plan, &built)?;
+        let mut stream = encode_lz_stream(&decoded, plan, &built, ctx.general_lz.as_ref())?;
         stream.resize(stream.len().div_ceil(alignment) * alignment, 0);
         built.extend(stream);
     }
@@ -2977,16 +3286,23 @@ fn closure_self_test() -> Result<String, String> {
     if missing.exists() {
         return Err("closure package self-test path exists".to_string());
     }
-    let index = root.join("games/THE BROKEN SEAL/SOUND/SAMPLE/SAMPLES.TSV");
-    let text =
-        fs::read_to_string(index).map_err(|error| format!("PCM self-test index: {error}"))?;
-    let mut rows = text.lines().filter(|line| !line.starts_with('#'));
-    if rows.next() != Some("sample\taddress\tfrequency\tloop_start\tsample_count\tsource") {
-        return Err("PCM self-test index differs".to_string());
-    }
-    let present_regions = rows.count();
-    if present_regions == 0 {
-        return Err("PCM self-test index is empty".to_string());
+    let mut present_regions = 0;
+    for game in ["THE BROKEN SEAL", "THE LOST AGE"] {
+        let index = root
+            .join("games")
+            .join(game)
+            .join("SOUND/SAMPLE/SAMPLES.TSV");
+        let text = fs::read_to_string(index)
+            .map_err(|error| format!("{game} PCM self-test index: {error}"))?;
+        let mut rows = text.lines().filter(|line| !line.starts_with('#'));
+        if rows.next() != Some("sample\taddress\tfrequency\tloop_start\tsample_count\tsource") {
+            return Err(format!("{game} PCM self-test index differs"));
+        }
+        let count = rows.count();
+        if count == 0 {
+            return Err(format!("{game} PCM self-test index is empty"));
+        }
+        present_regions += count;
     }
     let overlapping = serde_json::json!([
         {"address": "0x08001000", "size": 16},
@@ -3001,20 +3317,57 @@ fn closure_self_test() -> Result<String, String> {
 }
 struct Context {
     root: PathBuf,
+    /// The game being built: its owner register names the Thumb functions
+    /// typed tables point at, and its retained listings hold the overlays
+    /// an overlay series names.
+    game: crate::targets::DecompTarget,
+    /// The general-LZ compressor of the reference machine the build's
+    /// manifest names; general-LZ streams cannot be encoded without it.
+    general_lz: Option<GeneralLz>,
     documents: std::cell::RefCell<HashMap<PathBuf, std::rc::Rc<Value>>>,
     images:
         std::cell::RefCell<HashMap<PathBuf, std::rc::Rc<psynergy::assets::image::IndexedImage>>>,
     /// Every input path the build resolved or read, for the consumer audit.
     opened: std::cell::RefCell<BTreeSet<PathBuf>>,
+    /// Shared-palette checks already passed, by image and declared palette.
+    palettes: std::cell::RefCell<HashMap<(PathBuf, String), Option<String>>>,
 }
 impl Context {
     fn new(root: &Path) -> Self {
+        Self::for_game(
+            root,
+            crate::targets::target_for(crate::targets::DEFAULT_TARGET),
+        )
+    }
+    fn for_game(root: &Path, game: crate::targets::DecompTarget) -> Self {
         Self {
             root: root.to_path_buf(),
+            game,
+            general_lz: None,
             documents: Default::default(),
             images: Default::default(),
             opened: Default::default(),
+            palettes: Default::default(),
         }
+    }
+    /// [`check_shared_palette`] once per image and declared palette: an atlas
+    /// holds many components, and the check reads every pixel of the image.
+    fn shared_palette(
+        &self,
+        path: &Path,
+        entry: &Value,
+        image: &psynergy::assets::image::IndexedImage,
+    ) -> Result<Option<String>, String> {
+        let key = (
+            self.resolved(path)?,
+            format!("{}{}", entry["palette"], entry["pixel_format"]),
+        );
+        if let Some(checked) = self.palettes.borrow().get(&key) {
+            return Ok(checked.clone());
+        }
+        let checked = check_shared_palette(&self.root, entry, image)?;
+        self.palettes.borrow_mut().insert(key, checked.clone());
+        Ok(checked)
     }
     fn source(&self, name: &str) -> Result<PathBuf, String> {
         let path = root_path(&self.root, name)?;
@@ -3091,6 +3444,70 @@ fn manifest_fill_is_a_byte_value_not_a_rom_lookup() {
     assert!(build_entry(&mut context, &entry).is_err());
     entry["value"] = Value::from(-1);
     assert!(build_entry(&mut context, &entry).is_err());
+}
+/// A fill the manifest lists by itself is the linker's zero padding before a
+/// fixed placement: it must end at a module base the resource directory
+/// names (a slot below the directory table), at the directory table, or at
+/// the end of the cartridge image. Where it starts is the end of the last
+/// linked owner before it; a fill cannot stand for bytes after a placement.
+fn check_fill_placements(
+    regions: &[Value],
+    directory: Option<&Value>,
+    image_end: usize,
+) -> Result<(), String> {
+    let mut bases = BTreeSet::from([image_end]);
+    if let Some(directory) = directory {
+        let table = number(&directory["address"], "resource directory address")?;
+        bases.insert(table);
+        for slot in directory["slots"]
+            .as_array()
+            .ok_or("resource directory slots are not an array")?
+        {
+            if let Some(text) = slot.as_str().filter(|text| text.starts_with("0x")) {
+                let address = number(&Value::from(text), "module base")?;
+                if address < table {
+                    bases.insert(address);
+                }
+            }
+        }
+    }
+    for region in regions
+        .iter()
+        .filter(|region| region["kind"] == "byte-fill")
+    {
+        let address = number(&region["address"], "fill address")?;
+        let end = address
+            .checked_add(number(&region["size"], "fill size")?)
+            .ok_or("fill region overflows")?;
+        if !bases.contains(&end) {
+            return Err(format!(
+                "fill at 0x{address:08x} ends at 0x{end:08x}, which is no module base, resource directory or image end"
+            ));
+        }
+    }
+    Ok(())
+}
+#[test]
+fn manifest_fills_end_at_fixed_placements() {
+    let directory = serde_json::json!({
+        "address":"0x08100000","slots":["base","self","0x08100100","0x08010000","alias:0x003","null"]
+    });
+    let fill = |address: &str, size: &str| serde_json::json!({"address":address,"size":size,"kind":"byte-fill","value":0});
+    for fill in [
+        fill("0x0800f000", "0x1000"),
+        fill("0x080ff000", "0x1000"),
+        fill("0x081f0000", "0x10000"),
+    ] {
+        check_fill_placements(&[fill], Some(&directory), 0x0820_0000).unwrap();
+    }
+    // A fill cannot end inside a module or after a resource of the archive.
+    for fill in [fill("0x0800f000", "0xfff"), fill("0x08100100", "0x10")] {
+        assert!(check_fill_placements(&[fill], Some(&directory), 0x0820_0000).is_err());
+    }
+    // Without a directory only the image end is a fixed placement.
+    assert!(check_fill_placements(&[fill("0x0800f000", "0x1000")], None, 0x0820_0000).is_err());
+    let typed = serde_json::json!({"address":"0x08000000","size":"0x10","kind":"typed-table"});
+    check_fill_placements(&[typed], None, 0x0820_0000).unwrap();
 }
 fn expand_series(
     ctx: &mut Context,
@@ -3267,14 +3684,16 @@ fn expand_series(
                         .as_array()
                         .ok_or("overlay resource tuple malformed")?;
                     let name = json_string(&tuple[0], "overlay id")?.to_ascii_lowercase();
-                    // The Broken Seal's manifest predates the prefix; every
-                    // other game names its own overlay directory.
+                    // Overlays are the game's retained overlay listings
+                    // unless the series names another directory.
                     let prefix = match series.get("source_prefix") {
-                        Some(prefix) => json_string(prefix, "overlay series source prefix")?,
-                        None => "games/THE BROKEN SEAL/raw/overlays/resource_",
+                        Some(prefix) => json_string(prefix, "overlay series source prefix")?.into(),
+                        None => format!("{}/resource_", ctx.game.overlay_dir()),
                     };
                     let directory = format!("{prefix}{name}");
-                    entries.push(serde_json::json!({"address":tuple[1],"size":tuple[2],"kind":"golden-sun-general-lz","stream_alignment":4,"components":[{"kind":"golden-sun-thumb-overlay","size":tuple[3],"source":format!("{directory}_overlay.s"),"base":series.get("base")}] }));
+                    // Each overlay is a stream file: the packer, replayed
+                    // over the manifest's resource directory, aligns it.
+                    entries.push(serde_json::json!({"address":tuple[1],"size":tuple[2],"kind":"golden-sun-general-lz","components":[{"kind":"golden-sun-thumb-overlay","size":tuple[3],"source":format!("{directory}_overlay.s"),"base":series.get("base")}] }));
                 }
             }
             "golden-sun-map-component-series" => {
@@ -3468,8 +3887,14 @@ fn map_component_slots(header_size: usize) -> Result<usize, String> {
         )),
     }
 }
-/// The document section of one slot. The Lost Age inserts a 0x4000-byte layer
-/// after the grid, so its later slots keep neutral names until identified.
+/// The document section of one slot, named after the engine's reader. The Lost
+/// Age loader (0x0802a6b8) decompresses a 128x128 grid of descriptor indices
+/// after the cell grid, which the cell readers from 0x0802d45c onward use to
+/// index the descriptors at 0x0202c000; The Broken Seal keeps that index in
+/// each grid cell. Its animation queues and blend animation follow in The
+/// Broken Seal's formats, and its last slot replaces the sparse cells with the
+/// lists of points, entrances, flagged cell patches and camera bounds that
+/// 0x080ca9cc, 0x080cc7c4 and 0x0802b63c read at 0x0202e000.
 fn map_component_section(slots: usize, slot: usize) -> &'static str {
     const BROKEN_SEAL: [&str; 6] = [
         "metatiles",
@@ -3483,10 +3908,10 @@ fn map_component_section(slots: usize, slot: usize) -> &'static str {
         "metatiles",
         "descriptors",
         "grid",
-        "component3",
-        "component4",
-        "component5",
-        "component6",
+        "descriptor_grid",
+        "animation_queues",
+        "blend_animation",
+        "positions",
     ];
     if slots == 7 {
         LOST_AGE[slot]
@@ -3502,7 +3927,9 @@ fn map_headers_hold_six_or_seven_component_offsets() {
         assert!(map_component_slots(invalid).is_err());
     }
     assert_eq!(map_component_section(6, 5), "sparse_cells");
-    assert_eq!(map_component_section(7, 6), "component6");
+    assert_eq!(map_component_section(7, 3), "descriptor_grid");
+    assert_eq!(map_component_section(7, 4), "animation_queues");
+    assert_eq!(map_component_section(7, 6), "positions");
 }
 fn series_values<'a>(value: &'a Value, key: &str) -> Result<&'a Vec<Value>, String> {
     value
@@ -3511,7 +3938,7 @@ fn series_values<'a>(value: &'a Value, key: &str) -> Result<&'a Vec<Value>, Stri
         .ok_or_else(|| format!("{key} is missing or is not an array"))
 }
 #[test]
-fn overlay_series_uses_four_byte_alignment_and_automatic_compression() {
+fn overlay_series_leave_alignment_to_the_packer_and_compress_automatically() {
     let directory = tempfile::tempdir().unwrap();
     let mut ctx = Context::new(directory.path());
     let manifest = serde_json::json!({"series":[{
@@ -3520,7 +3947,7 @@ fn overlay_series_uses_four_byte_alignment_and_automatic_compression() {
     }]});
     let mut entries = Vec::new();
     expand_series(&mut ctx, &manifest, &mut entries).unwrap();
-    assert_eq!(entries[0]["stream_alignment"], 4);
+    assert!(entries[0].get("stream_alignment").is_none());
     assert!(entries[0].get("plan").is_none());
     fs::create_dir(directory.path().join("overlay")).unwrap();
     fs::write(
@@ -3530,11 +3957,37 @@ fn overlay_series_uses_four_byte_alignment_and_automatic_compression() {
     .unwrap();
     entries.clear();
     expand_series(&mut ctx, &manifest, &mut entries).unwrap();
-    assert_eq!(entries[0]["stream_alignment"], 4);
+    assert!(entries[0].get("stream_alignment").is_none());
     assert!(entries[0].get("plan").is_none());
     assert!(build_general_lz_cached(&ctx, &serde_json::json!({"components":[]})).is_err());
 }
 
+#[test]
+fn overlay_series_default_to_the_games_own_listings() {
+    let directory = tempfile::tempdir().unwrap();
+    let manifest = serde_json::json!({"series":[{
+        "kind":"golden-sun-thumb-overlay-series", "base":"0x02000000",
+        "resources":[["64a", "0x08ec3d08", "0x1d10", "0x274a"]]
+    }]});
+    for (id, directory_name) in [
+        (
+            crate::targets::DecompTargetId::TbsEn,
+            "recon/tbs/raw/overlays",
+        ),
+        (
+            crate::targets::DecompTargetId::TlaEn,
+            "recon/tla/raw/overlays",
+        ),
+    ] {
+        let mut ctx = Context::for_game(directory.path(), crate::targets::target_for(id));
+        let mut entries = Vec::new();
+        expand_series(&mut ctx, &manifest, &mut entries).unwrap();
+        assert_eq!(
+            entries[0]["components"][0]["source"],
+            format!("{directory_name}/resource_64a_overlay.s")
+        );
+    }
+}
 #[test]
 fn sound_series_use_only_the_canonical_tables() {
     let directory = tempfile::tempdir().unwrap();
@@ -3829,7 +4282,8 @@ fn build_entry(ctx: &mut Context, entry: &Value) -> Result<(Vec<u8>, Vec<String>
             if decoded.len() != number(&plan["decoded_size"], "decoded_size")? {
                 return Err("decoded tag-2 components do not match plan".to_string());
             }
-            let materialized = compression_plan::materialize(&decoded, plan, &[])?;
+            // Tag-2 keeps its own greedy window; no machine setting applies.
+            let materialized = compression_plan::materialize(&decoded, plan, None)?;
             let tokens = materialized
                 .as_array()
                 .ok_or("tag-2 tokens must be an array")?
@@ -3850,21 +4304,9 @@ fn build_entry(ctx: &mut Context, entry: &Value) -> Result<(Vec<u8>, Vec<String>
                     }
                 })
                 .collect::<Result<Vec<_>, _>>()?;
-            let mut built = psynergy::assets::lz::encode_mtf4_lz(&decoded, &tokens)
+            let built = psynergy::assets::lz::encode_mtf4_lz(&decoded, &tokens)
                 .map_err(|error| error.to_string())?;
-            let lookahead = hex_bytes(
-                plan.get("lookahead").unwrap_or(&Value::from("")),
-                "tag-2 lookahead",
-            )?;
-            if lookahead.len() > 3 {
-                return Err("tag-2 lookahead is too long".to_string());
-            }
-            built.extend(lookahead);
-            if let Some(size) = plan.get("encoded_size") {
-                if number(size, "encoded_size")? != built.len() {
-                    return Err("tag-2 stream has the wrong encoded size".to_string());
-                }
-            }
+            check_stored_extent(plan, built.len())?;
             sources.push(plan_name.to_string());
             if let Some(source) = compression_plan::table_source(&plan_document) {
                 sources.push(source.to_string());
@@ -4362,7 +4804,86 @@ fn sequence_emission_resolves_forward_and_backward_labels_and_rejects_invalid_la
         .unwrap_err()
         .contains("unused sequence externals"));
 }
+/// Prefix of the retired per-event sequence sidecars. The converter derives
+/// every encoding choice, so a MIDI still carrying one is refused.
 const MIDI_BUILD_DIRECTIVE: &[u8] = b"alchemy-mid2agb\0";
+/// Bar lengths, in sequence ticks, tried in order when a playback MIDI is
+/// adopted: four, three, two and one 24-tick beats, then one, seven, five and
+/// three 12-tick half beats.
+const ADOPTION_BARS: [i64; 8] = [96, 72, 48, 24, 12, 84, 60, 36];
+/// Bar lines of a sequence MIDI: every time signature in the conductor track
+/// starts bars of its length at its tick; before the first one, MIDI's 4/4.
+fn sequence_meter(conductor: &[MidiEvent], division: u16) -> Result<Vec<(i64, i64)>, String> {
+    let whole = i64::from(division) * 4;
+    let mut meter = Vec::<(i64, i64)>::new();
+    for event in conductor {
+        let EventBody::Meta { meta: 0x58, data } = &event.body else {
+            continue;
+        };
+        let [numerator, power, ..] = data.as_slice() else {
+            return Err("MIDI time signature is truncated".to_string());
+        };
+        let span = i64::from(*numerator) * whole;
+        if *numerator == 0 || *power > 7 || span % (1i64 << power) != 0 {
+            return Err(format!(
+                "MIDI time signature {numerator}/2^{power} does not fit the tick grid"
+            ));
+        }
+        if meter.last().is_some_and(|(tick, _)| *tick >= event.tick) {
+            return Err("MIDI time signatures share or reverse a tick".to_string());
+        }
+        meter.push((event.tick, span >> power));
+    }
+    if meter.first().is_none_or(|(tick, _)| *tick != 0) {
+        meter.insert(0, (0, whole));
+    }
+    Ok(meter)
+}
+/// The time signature whose bars last `bar` sequence ticks, counted in 24-tick
+/// beats, or in 12-tick half beats when the bar is not whole beats.
+fn time_signature(bar: i64, division: u16) -> Result<[u8; 4], String> {
+    let whole = i64::from(division) * 4;
+    for unit in [24, 12] {
+        let note = whole / unit;
+        if bar % unit == 0 && note * unit == whole && note.count_ones() == 1 && bar / unit <= 0xff {
+            return Ok([(bar / unit) as u8, note.trailing_zeros() as u8, 24, 8]);
+        }
+    }
+    Err(format!(
+        "a {bar}-tick bar has no time signature at {division} ticks per quarter"
+    ))
+}
+/// A rest as the converter writes it: cut at every bar line, then into the
+/// longest wait commands within each bar.
+fn rest_waits(start: i64, length: i64, meter: &[(i64, i64)]) -> Result<Vec<usize>, String> {
+    if start < 0 || length < 0 {
+        return Err("MIDI rest lies before the stream start".to_string());
+    }
+    let mut waits = Vec::new();
+    let (mut at, end) = (start, start + length);
+    while at < end {
+        let index = meter.partition_point(|(tick, _)| *tick <= at) - 1;
+        let (origin, bar) = meter[index];
+        let mut line = origin + ((at - origin) / bar + 1) * bar;
+        if let Some((next, _)) = meter.get(index + 1) {
+            line = line.min(*next);
+        }
+        let stop = line.min(end);
+        let mut gap = (stop - at) as usize;
+        while gap > 0 {
+            let wait = SEQUENCE_DURATIONS
+                .iter()
+                .rev()
+                .copied()
+                .find(|duration| *duration != 0 && *duration <= gap)
+                .ok_or("MIDI wait cannot be tokenized")?;
+            waits.push(wait);
+            gap -= wait;
+        }
+        at = stop;
+    }
+    Ok(waits)
+}
 #[derive(Clone)]
 struct MidiNode {
     compact_tick: i64,
@@ -4370,7 +4891,10 @@ struct MidiNode {
     order: usize,
     event: Value,
 }
-fn reconstruct_midi_stream(events: &[MidiEvent]) -> Result<Vec<Value>, String> {
+fn reconstruct_midi_stream(
+    events: &[MidiEvent],
+    meter: &[(i64, i64)],
+) -> Result<Vec<Value>, String> {
     let mut nodes = Vec::<MidiNode>::new();
     let mut grid = Vec::<usize>::new();
     let mut pending = HashMap::<u8, Vec<usize>>::new();
@@ -4462,103 +4986,123 @@ fn reconstruct_midi_stream(events: &[MidiEvent]) -> Result<Vec<Value>, String> {
         return Err("MIDI pattern bracket is not closed".to_string());
     }
     grid.sort_by_key(|index| (nodes[*index].compact_tick, nodes[*index].order));
-    let durations = [
-        96usize, 92, 90, 88, 84, 80, 78, 76, 72, 68, 66, 64, 60, 56, 54, 52, 48, 44, 42, 40, 36,
-        32, 30, 28, 24, 23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4,
-        3, 2, 1,
-    ];
     let mut output = Vec::new();
     let mut cursor = 0i64;
     for index in grid {
-        let tick = nodes[index].compact_tick;
-        if tick < cursor {
+        let node = &nodes[index];
+        if node.compact_tick < cursor {
             return Err("MIDI event order moves backwards".to_string());
         }
-        let mut gap = (tick - cursor) as usize;
-        while gap > 0 {
-            let duration = durations
-                .iter()
-                .copied()
-                .find(|duration| *duration <= gap)
-                .ok_or("MIDI wait cannot be tokenized")?;
-            output.push(serde_json::json!(["wait", duration]));
-            gap -= duration;
+        // The rest ends at this event in played time; pattern calls before it
+        // have already advanced the bar position.
+        let gap = node.compact_tick - cursor;
+        for wait in rest_waits(node.raw_tick - gap, gap, meter)? {
+            output.push(serde_json::json!(["wait", wait]));
         }
-        cursor = tick;
-        output.push(nodes[index].event.clone());
+        cursor = node.compact_tick;
+        output.push(node.event.clone());
     }
     Ok(output)
 }
-fn sha1_hex(data: &[u8]) -> String {
-    format!("{:x}", Sha1::digest(data))
-}
-fn greedy_sequence(events: &[Value]) -> Result<Vec<Value>, String> {
+/// The converter's encoding of a reconstructed stream. A note, or a control
+/// that sets running status, continues the running command only as the first
+/// event after a rest; chords and events after other commands repeat it. An
+/// end of tie that names a key continues a running end of tie. Key and
+/// velocity are written when they change. A label, pattern call, repeat or
+/// jump forgets the running command, key and velocity, because another path
+/// reaches the event after it; a pattern end changes nothing.
+fn default_sequence(events: &[Value]) -> Result<Vec<Value>, String> {
     let mut output = Vec::new();
     let mut running: Option<u8> = None;
-    let (mut key, mut velocity) = (0usize, 0usize);
+    let (mut key, mut velocity) = (None::<usize>, None::<usize>);
+    let mut after_rest = false;
     for event in events {
         let values = event.as_array().ok_or("sequence event is malformed")?;
         let kind = values
             .first()
             .and_then(Value::as_str)
             .ok_or("sequence event has no kind")?;
-        if kind == "note" || kind == "note_running" {
-            let duration = number(
-                values.get(1).ok_or("note duration is missing")?,
-                "note duration",
-            )?;
-            let effective_key = number(values.get(2).ok_or("note key is missing")?, "note key")?;
-            let effective_velocity = number(
-                values.get(3).ok_or("note velocity is missing")?,
-                "note velocity",
-            )?;
-            let opcode = SEQUENCE_DURATIONS
-                .iter()
-                .position(|candidate| *candidate == duration)
-                .map(|index| 0xcf + index as u8);
-            let params = if effective_velocity != velocity {
-                vec![effective_key, effective_velocity]
-            } else if effective_key != key {
-                vec![effective_key]
-            } else {
-                Vec::new()
-            };
-            let mut rebuilt = vec![
-                Value::String(
-                    if opcode.is_some_and(|opcode| running == Some(opcode)) && !params.is_empty() {
-                        "note_running"
-                    } else {
-                        "note"
-                    }
-                    .to_string(),
-                ),
-                Value::from(duration),
-            ];
-            rebuilt.extend(params.into_iter().map(Value::from));
-            output.push(Value::Array(rebuilt));
-            running = opcode;
-            key = effective_key;
-            velocity = effective_velocity;
-        } else if let Some(opcode) = sequence_control_opcode(kind) {
-            output.push(event.clone());
-            if sequence_sets_running_status(opcode) {
-                running = Some(opcode);
+        match kind {
+            "note" | "note_running" => {
+                let duration = number(
+                    values.get(1).ok_or("note duration is missing")?,
+                    "note duration",
+                )?;
+                let note_key = number(values.get(2).ok_or("note key is missing")?, "note key")?;
+                let note_velocity = number(
+                    values.get(3).ok_or("note velocity is missing")?,
+                    "note velocity",
+                )?;
+                let opcode = SEQUENCE_DURATIONS
+                    .iter()
+                    .position(|candidate| *candidate == duration)
+                    .map(|index| 0xcf + index as u8);
+                let params = if velocity != Some(note_velocity) {
+                    vec![note_key, note_velocity]
+                } else if key != Some(note_key) {
+                    vec![note_key]
+                } else {
+                    Vec::new()
+                };
+                let continues =
+                    after_rest && opcode.is_some() && running == opcode && !params.is_empty();
+                let mut rebuilt = vec![
+                    Value::from(if continues { "note_running" } else { "note" }),
+                    Value::from(duration),
+                ];
+                rebuilt.extend(params.into_iter().map(Value::from));
+                output.push(Value::Array(rebuilt));
+                running = opcode;
+                key = Some(note_key);
+                velocity = Some(note_velocity);
             }
-        } else if kind == "control_running" {
-            output.push(event.clone());
-            running = Some(
-                sequence_control_opcode(json_string(
-                    values.get(1).ok_or("running control name is missing")?,
-                    "running control name",
-                )?)
-                .ok_or("unknown running control")?,
-            );
-        } else if kind == "note_end" || kind == "note_end_running" {
-            output.push(event.clone());
-            running = Some(0xce);
-        } else {
-            output.push(event.clone());
+            "wait" => output.push(event.clone()),
+            "label" | "pattern" | "repeat" | "goto" => {
+                output.push(event.clone());
+                running = None;
+                key = None;
+                velocity = None;
+            }
+            "pattern_end" => {
+                output.push(event.clone());
+                continue;
+            }
+            "control_running" | "note_end_running" => {
+                return Err(format!(
+                    "{kind} spells running status the converter derives"
+                ));
+            }
+            "note_end" => {
+                let continues = running == Some(0xce) && values.len() == 2;
+                output.push(if continues {
+                    serde_json::json!(["note_end_running", values[1]])
+                } else {
+                    event.clone()
+                });
+                running = Some(0xce);
+            }
+            _ => match sequence_control_opcode(kind)
+                .filter(|opcode| sequence_sets_running_status(*opcode))
+            {
+                Some(opcode) => {
+                    let value = values
+                        .get(1)
+                        .ok_or_else(|| format!("{kind} value is missing"))?;
+                    let continues = after_rest
+                        && running == Some(opcode)
+                        && values.len() == 2
+                        && sequence_parameter(value, kind)? < 0x80;
+                    output.push(if continues {
+                        serde_json::json!(["control_running", kind, value])
+                    } else {
+                        event.clone()
+                    });
+                    running = Some(opcode);
+                }
+                None => output.push(event.clone()),
+            },
         }
+        after_rest = kind == "wait";
     }
     Ok(output)
 }
@@ -4589,54 +5133,6 @@ fn native_sequence_self_test() -> Result<(), String> {
         return Err("tempo incorrectly accepts running status".to_string());
     }
     Ok(())
-}
-fn apply_sequence_deviations(
-    default: &[Value],
-    track: &Value,
-    name: &str,
-) -> Result<Vec<Value>, String> {
-    let events = number(&track["events"], "sidecar events")?;
-    let hash = json_string(&track["hash"], "sidecar hash")?;
-    let encoded = serde_json::to_vec(default).map_err(|e| e.to_string())?;
-    if default.len() != events || hash.len() < 16 || sha1_hex(&encoded)[..16] != hash[..16] {
-        return Err(format!("sidecar {name} default stream drift"));
-    }
-    let deviations = track
-        .get("deviations")
-        .and_then(Value::as_array)
-        .ok_or("sidecar deviations are missing")?;
-    if deviations.is_empty() {
-        return Err(format!("sidecar {name} has no deviations"));
-    }
-    let mut ordered = deviations.clone();
-    ordered.sort_by_key(|deviation| {
-        deviation
-            .get(0)
-            .and_then(Value::as_u64)
-            .unwrap_or(usize::MAX as u64)
-    });
-    let mut output = Vec::new();
-    let mut cursor = 0usize;
-    let mut previous_end = 0usize;
-    for deviation in ordered {
-        let items = deviation
-            .as_array()
-            .ok_or("sidecar deviation is malformed")?;
-        if items.len() < 2 {
-            return Err("sidecar deviation is too short".to_string());
-        }
-        let start = number(&items[0], "sidecar deviation start")?;
-        let count = number(&items[1], "sidecar deviation length")?;
-        if count == 0 || start < previous_end || start + count > default.len() {
-            return Err("sidecar deviation span is invalid".to_string());
-        }
-        output.extend_from_slice(&default[cursor..start]);
-        output.extend(items.iter().skip(2).cloned());
-        cursor = start + count;
-        previous_end = cursor;
-    }
-    output.extend_from_slice(&default[cursor..]);
-    Ok(output)
 }
 fn midi_variable(mut value: usize) -> Vec<u8> {
     let mut bytes = vec![(value & 0x7f) as u8];
@@ -4758,34 +5254,64 @@ fn repack_midi_tracks(midi: &[u8], native_tracks: usize) -> Result<Vec<u8>, Stri
     }
     Ok(output)
 }
-fn build_midi_sequence(_root: &Path, source: &Path) -> Result<(Vec<u8>, Value), String> {
-    let report = midi_events(&fs::read(source).map_err(|e| format!("{}: {e}", source.display()))?)
-        .map_err(|e| e.to_string())?;
-    let mut by_track = HashMap::<usize, Vec<MidiEvent>>::new();
+/// A sequence MIDI's events by track, its stream skeleton and its bar lines.
+struct SequenceMidi {
+    tracks: HashMap<usize, Vec<MidiEvent>>,
+    skeleton: Option<Value>,
+    meter: Vec<(i64, i64)>,
+}
+/// A MIDI file's events by track and its ticks per quarter note.
+fn midi_tracks(midi: &[u8]) -> Result<(HashMap<usize, Vec<MidiEvent>>, u16), String> {
+    let report = midi_events(midi).map_err(|error| error.to_string())?;
+    let mut tracks = HashMap::<usize, Vec<MidiEvent>>::new();
     for event in report.events {
-        by_track.entry(event.track).or_default().push(event);
+        tracks.entry(event.track).or_default().push(event);
     }
-    let conductor = by_track.get(&0).cloned().unwrap_or_default();
-    let midi_directive_data = conductor.iter().find_map(|event| match &event.body {
-        EventBody::Meta { meta: 0x7f, data } => Some(data.as_slice()),
-        _ => None,
-    });
-    let midi_directive = midi_directive_data
-        .and_then(|data| data.strip_prefix(MIDI_BUILD_DIRECTIVE))
-        .map(|source| {
-            serde_json::from_slice::<Value>(source)
-                .map_err(|error| format!("MIDI build directive: {error}"))
-        })
-        .transpose()?;
-    let marker = conductor
-        .iter()
-        .find_map(|event| match &event.body {
-            EventBody::Meta { meta: 0x01, data } => Some(data),
-            _ => None,
-        })
+    Ok((tracks, report.ticks_per_quarter))
+}
+fn read_sequence_midi(midi: &[u8]) -> Result<SequenceMidi, String> {
+    let (tracks, division) = midi_tracks(midi)?;
+    let conductor = tracks.get(&0).map(Vec::as_slice).unwrap_or(&[]);
+    let mut skeleton = None;
+    for event in conductor {
+        match &event.body {
+            EventBody::Meta { meta: 0x7f, data } if data.starts_with(MIDI_BUILD_DIRECTIVE) => {
+                return Err("MIDI carries a retired sequence sidecar directive".to_string())
+            }
+            EventBody::Meta { meta: 0x01, data } if skeleton.is_none() => {
+                skeleton = Some(
+                    serde_json::from_slice::<Value>(data)
+                        .map_err(|e| format!("MIDI conductor skeleton: {e}"))?,
+                );
+            }
+            _ => {}
+        }
+    }
+    let meter = sequence_meter(conductor, division)?;
+    Ok(SequenceMidi {
+        tracks,
+        skeleton,
+        meter,
+    })
+}
+/// The converter's reading of one MIDI stream track under the given bar lines.
+fn read_midi_stream(
+    midi: &SequenceMidi,
+    track: usize,
+    meter: &[(i64, i64)],
+) -> Result<Vec<Value>, String> {
+    default_sequence(&reconstruct_midi_stream(
+        midi.tracks.get(&track).map(Vec::as_slice).unwrap_or(&[]),
+        meter,
+    )?)
+}
+fn build_midi_sequence(_root: &Path, source: &Path) -> Result<(Vec<u8>, Value), String> {
+    let midi =
+        read_sequence_midi(&fs::read(source).map_err(|e| format!("{}: {e}", source.display()))?)?;
+    let skeleton = midi
+        .skeleton
+        .as_ref()
         .ok_or("MIDI conductor skeleton is missing")?;
-    let skeleton: Value =
-        serde_json::from_slice(marker).map_err(|e| format!("MIDI conductor skeleton: {e}"))?;
     let skeleton_layout = skeleton
         .get("layout")
         .and_then(Value::as_array)
@@ -4799,45 +5325,11 @@ fn build_midi_sequence(_root: &Path, source: &Path) -> Result<(Vec<u8>, Value), 
         }
         stream_index += 1;
         let label = json_string(&segment["label"], "MIDI stream label")?.to_string();
-        let events = reconstruct_midi_stream(
-            by_track
-                .get(&stream_index)
-                .map(Vec::as_slice)
-                .unwrap_or(&[]),
-        )?;
-        let canonical = greedy_sequence(&events)?;
         layout.push(serde_json::json!({
             "kind": "stream",
             "label": label,
-            "events": canonical
+            "events": read_midi_stream(&midi, stream_index, &midi.meter)?
         }));
-    }
-    if let Some(sidecar) = midi_directive {
-        if number(&sidecar["format"], "sidecar format")? != 1
-            || sidecar.get("engine").and_then(Value::as_str) != Some("smsh-sequence-sidecar")
-        {
-            return Err("invalid sequence sidecar".to_string());
-        }
-        let tracks = sidecar
-            .get("tracks")
-            .and_then(Value::as_object)
-            .ok_or("sidecar tracks are missing")?;
-        if tracks.is_empty() {
-            return Err("empty sequence sidecar should be omitted".to_string());
-        }
-        for segment in layout
-            .iter_mut()
-            .filter(|segment| segment.get("kind").and_then(Value::as_str) == Some("stream"))
-        {
-            let label = json_string(&segment["label"], "sidecar stream label")?;
-            if let Some(track) = tracks.get(label) {
-                let defaults = segment["events"]
-                    .as_array()
-                    .ok_or("sidecar stream is not in MIDI")?;
-                let applied = apply_sequence_deviations(defaults, track, label)?;
-                segment["events"] = Value::Array(applied);
-            }
-        }
     }
     let source = serde_json::json!({
         "format": skeleton["format"],
@@ -4848,85 +5340,325 @@ fn build_midi_sequence(_root: &Path, source: &Path) -> Result<(Vec<u8>, Value), 
     });
     build_sequence_source(&source)
 }
-
+/// Adopt a playback MIDI as the source of a native sequence. Its conductor
+/// becomes the sequence skeleton and the first time signature, in
+/// `ADOPTION_BARS` order, under which the converter reads every native stream
+/// back exactly; without one, adoption refuses and names the first difference.
 fn adopt_smsh_midi(source: &Value, midi: &[u8]) -> Result<Vec<u8>, String> {
-    let native_tracks = source
-        .get("layout")
-        .and_then(Value::as_array)
-        .ok_or("sequence source layout is missing")?
-        .iter()
-        .filter(|segment| segment.get("kind").and_then(Value::as_str) == Some("stream"))
-        .count();
-    let midi = repack_midi_tracks(midi, native_tracks)?;
-    let report = midi_events(&midi).map_err(|error| error.to_string())?;
-    let mut by_track = HashMap::<usize, Vec<MidiEvent>>::new();
-    for event in report.events {
-        by_track.entry(event.track).or_default().push(event);
-    }
     let source_layout = source
         .get("layout")
         .and_then(Value::as_array)
         .ok_or("sequence source layout is missing")?;
+    let mut streams = Vec::new();
     let mut skeleton_layout = Vec::new();
-    let mut sidecar_tracks = serde_json::Map::new();
-    let mut stream_index = 0usize;
     for segment in source_layout {
         if segment.get("kind").and_then(Value::as_str) != Some("stream") {
             skeleton_layout.push(segment.clone());
             continue;
         }
-        stream_index += 1;
         let label = json_string(&segment["label"], "stream label")?;
         let native = segment
             .get("events")
             .and_then(Value::as_array)
             .ok_or("sequence stream events missing")?;
-        let defaults = greedy_sequence(&reconstruct_midi_stream(
-            by_track
-                .get(&stream_index)
-                .map(Vec::as_slice)
-                .unwrap_or(&[]),
-        )?)?;
-        if defaults.is_empty() {
-            return Err(format!(
-                "MIDI track {stream_index} has no reconstructible events"
-            ));
-        }
-        let encoded = serde_json::to_vec(&defaults).map_err(|error| error.to_string())?;
-        let mut replacement = vec![Value::from(0), Value::from(defaults.len())];
-        replacement.extend(native.iter().cloned());
-        sidecar_tracks.insert(
-            label.to_string(),
-            serde_json::json!({
-                "events":defaults.len(),
-                "hash":&sha1_hex(&encoded)[..16],
-                "deviations":[replacement]
-            }),
-        );
+        streams.push((label, native));
         skeleton_layout.push(serde_json::json!({"kind":"stream", "label":label}));
     }
-    if by_track.keys().copied().max().unwrap_or(0) != stream_index {
+    let midi = repack_midi_tracks(midi, streams.len())?;
+    // The conductor is replaced, so nothing it carried is read.
+    let (tracks, division) = midi_tracks(&midi)?;
+    if tracks.keys().copied().max().unwrap_or(0) != streams.len() {
         return Err("MIDI and native sequence track counts differ".to_string());
     }
+    let playback = SequenceMidi {
+        tracks,
+        skeleton: None,
+        meter: Vec::new(),
+    };
+    let mut first_difference = None;
+    let mut adopted = None;
+    'bars: for bar in ADOPTION_BARS {
+        for (index, (label, native)) in streams.iter().enumerate() {
+            let read = read_midi_stream(&playback, index + 1, &[(0, bar)])?;
+            if read != **native {
+                if first_difference.is_none() {
+                    let at = read
+                        .iter()
+                        .zip(native.iter())
+                        .take_while(|(a, b)| a == b)
+                        .count();
+                    first_difference = Some(format!(
+                        "{label} event {at}: native {} but MIDI reads {}",
+                        native
+                            .get(at)
+                            .map_or("nothing".to_string(), Value::to_string),
+                        read.get(at).map_or("nothing".to_string(), Value::to_string)
+                    ));
+                }
+                continue 'bars;
+            }
+        }
+        adopted = Some(bar);
+        break;
+    }
+    let bar = adopted.ok_or_else(|| {
+        format!(
+            "no time signature reproduces the native sequence; {}",
+            first_difference.unwrap_or_default()
+        )
+    })?;
     let mut skeleton = source.clone();
     skeleton["layout"] = Value::Array(skeleton_layout);
-    let skeleton = serde_json::to_vec(&skeleton).map_err(|error| error.to_string())?;
-    let sidecar = serde_json::to_vec(&serde_json::json!({
-        "format":1,
-        "engine":"smsh-sequence-sidecar",
-        "tracks":sidecar_tracks
-    }))
-    .map_err(|error| error.to_string())?;
-    if midi
-        .windows(MIDI_BUILD_DIRECTIVE.len())
-        .any(|part| part == MIDI_BUILD_DIRECTIVE)
-    {
-        return Err("MIDI already has build directives".to_string());
-    }
-    let mut directive = MIDI_BUILD_DIRECTIVE.to_vec();
-    directive.extend(sidecar);
-    let midi = append_conductor_meta(&midi, 0x01, &skeleton).map_err(|error| error.to_string())?;
-    append_conductor_meta(&midi, 0x7f, &directive).map_err(|error| error.to_string())
+    let conductor = encode_midi_track(&[
+        MidiEvent {
+            tick: 0,
+            track: 0,
+            order: 0,
+            body: EventBody::Meta {
+                meta: 0x01,
+                data: serde_json::to_vec(&skeleton).map_err(|error| error.to_string())?,
+            },
+        },
+        MidiEvent {
+            tick: 0,
+            track: 0,
+            order: 1,
+            body: EventBody::Meta {
+                meta: 0x58,
+                data: time_signature(bar, division)?.to_vec(),
+            },
+        },
+    ])?;
+    let header = 8 + u32::from_be_bytes(midi[4..8].try_into().map_err(|_| "MIDI header")?) as usize;
+    let old_conductor = midi
+        .get(header + 4..header + 8)
+        .map(|size| u32::from_be_bytes(size.try_into().unwrap()) as usize)
+        .ok_or("MIDI conductor track is missing")?;
+    let mut output = midi[..header].to_vec();
+    output.extend_from_slice(b"MTrk");
+    output.extend_from_slice(
+        &u32::try_from(conductor.len())
+            .map_err(|_| "MIDI conductor is too large")?
+            .to_be_bytes(),
+    );
+    output.extend(conductor);
+    output.extend_from_slice(
+        midi.get(header + 8 + old_conductor..)
+            .ok_or("MIDI conductor track is truncated")?,
+    );
+    Ok(output)
+}
+#[test]
+fn sequence_midi_reading_follows_bar_lines_time_slots_and_jump_targets() {
+    let marker = |tick, order, event: Value| MidiEvent {
+        tick,
+        track: 1,
+        order,
+        body: EventBody::Meta {
+            meta: 0x06,
+            data: serde_json::to_vec(&event).unwrap(),
+        },
+    };
+    let note = |tick, order, status: u8, key| MidiEvent {
+        tick,
+        track: 1,
+        order,
+        body: EventBody::Channel {
+            status,
+            data: vec![key, 100],
+        },
+    };
+    let events = [
+        note(0, 0, 0x90, 60),
+        note(0, 1, 0x90, 64),
+        note(5, 2, 0x80, 60),
+        note(5, 3, 0x80, 64),
+        note(12, 4, 0x90, 67),
+        note(17, 5, 0x80, 67),
+        marker(24, 6, serde_json::json!(["label", "loop"])),
+        note(24, 7, 0x90, 67),
+        note(29, 8, 0x80, 67),
+        marker(200, 9, serde_json::json!(["goto", "loop"])),
+    ];
+    let read = |bar| {
+        Value::Array(
+            default_sequence(&reconstruct_midi_stream(&events, &[(0, bar)]).unwrap()).unwrap(),
+        )
+    };
+    let opening = serde_json::json!([
+        ["note", 5, 60, 100],
+        ["note", 5, 64],
+        ["wait", 12],
+        ["note_running", 5, 67],
+        ["wait", 12],
+        ["label", "loop"],
+        ["note", 5, 67, 100]
+    ]);
+    let with_rest = |waits: &[usize]| {
+        let mut expected = opening.as_array().unwrap().clone();
+        expected.extend(waits.iter().map(|wait| serde_json::json!(["wait", wait])));
+        expected.push(serde_json::json!(["goto", "loop"]));
+        Value::Array(expected)
+    };
+    assert_eq!(read(96), with_rest(&[72, 96, 8]));
+    assert_eq!(read(72), with_rest(&[48, 72, 56]));
+    let signature = |numerator: u8, power: u8| MidiEvent {
+        tick: 0,
+        track: 0,
+        order: 0,
+        body: EventBody::Meta {
+            meta: 0x58,
+            data: vec![numerator, power, 24, 8],
+        },
+    };
+    assert_eq!(sequence_meter(&[signature(3, 4)], 96).unwrap(), [(0, 72)]);
+    assert_eq!(sequence_meter(&[], 96).unwrap(), [(0, 384)]);
+    assert!(sequence_meter(&[signature(1, 5)], 100).is_err());
+    assert_eq!(time_signature(96, 96).unwrap(), [4, 4, 24, 8]);
+    assert_eq!(time_signature(84, 96).unwrap(), [7, 5, 24, 8]);
+    assert_eq!(time_signature(12, 96).unwrap(), [1, 5, 24, 8]);
+}
+#[test]
+fn sequence_midi_reading_derives_control_running_status() {
+    let marker = |tick, order, event: Value| MidiEvent {
+        tick,
+        track: 1,
+        order,
+        body: EventBody::Meta {
+            meta: 0x06,
+            data: serde_json::to_vec(&event).unwrap(),
+        },
+    };
+    let events = [
+        marker(0, 0, serde_json::json!(["volume", 80])),
+        marker(12, 1, serde_json::json!(["volume", 90])),
+        marker(12, 2, serde_json::json!(["pan", 64])),
+        marker(12, 3, serde_json::json!(["pan", 60])),
+        marker(24, 4, serde_json::json!(["note_end", 60])),
+        marker(24, 5, serde_json::json!(["note_end", 64])),
+        marker(36, 6, serde_json::json!(["note_end", 62])),
+        marker(36, 7, serde_json::json!(["note_end"])),
+        marker(48, 8, serde_json::json!(["fine"])),
+    ];
+    let read = default_sequence(&reconstruct_midi_stream(&events, &[(0, 96)]).unwrap()).unwrap();
+    assert_eq!(
+        Value::Array(read),
+        serde_json::json!([
+            ["volume", 80],
+            ["wait", 12],
+            ["control_running", "volume", 90],
+            ["pan", 64],
+            ["pan", 60],
+            ["wait", 12],
+            ["note_end", 60],
+            ["note_end_running", 64],
+            ["wait", 12],
+            ["note_end_running", 62],
+            ["note_end"],
+            ["wait", 12],
+            ["fine"]
+        ])
+    );
+    let spelled = [marker(
+        0,
+        0,
+        serde_json::json!(["control_running", "volume", 1]),
+    )];
+    assert!(
+        default_sequence(&reconstruct_midi_stream(&spelled, &[(0, 96)]).unwrap())
+            .unwrap_err()
+            .contains("derives")
+    );
+}
+#[test]
+fn midi_adoption_records_the_meter_and_refuses_unreproducible_streams() {
+    let track = |events: &[MidiEvent]| {
+        let data = encode_midi_track(events).unwrap();
+        [
+            b"MTrk".as_slice(),
+            &(data.len() as u32).to_be_bytes(),
+            &data,
+        ]
+        .concat()
+    };
+    let at = |tick, order, body| MidiEvent {
+        tick,
+        track: 1,
+        order,
+        body,
+    };
+    let playback = [
+        b"MThd\0\0\0\x06\0\x01\0\x02\0\x60".as_slice(),
+        &track(&[]),
+        &track(&[
+            at(
+                0,
+                0,
+                EventBody::Channel {
+                    status: 0x90,
+                    data: vec![60, 100],
+                },
+            ),
+            at(
+                5,
+                1,
+                EventBody::Channel {
+                    status: 0x80,
+                    data: vec![60, 64],
+                },
+            ),
+            at(
+                96,
+                2,
+                EventBody::Meta {
+                    meta: 0x06,
+                    data: br#"["fine"]"#.to_vec(),
+                },
+            ),
+        ]),
+    ]
+    .concat();
+    let source = |waits: Value| {
+        let mut events = vec![serde_json::json!(["note", 5, 60, 100])];
+        events.extend(
+            waits
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|wait| serde_json::json!(["wait", wait])),
+        );
+        events.push(serde_json::json!(["fine"]));
+        serde_json::json!({
+            "format": 1, "engine": "smsh-sequence", "base": "0x08000000", "externals": {},
+            "layout": [{"kind": "stream", "label": "track_1", "events": events}]
+        })
+    };
+    let adopted = read_sequence_midi(
+        &adopt_smsh_midi(&source(serde_json::json!([72, 24])), &playback).unwrap(),
+    )
+    .unwrap();
+    assert_eq!(adopted.meter, [(0, 72)]);
+    assert_eq!(
+        adopted.skeleton.unwrap()["layout"],
+        serde_json::json!([{"kind": "stream", "label": "track_1"}])
+    );
+    let refusal = adopt_smsh_midi(&source(serde_json::json!([50, 46])), &playback).unwrap_err();
+    assert!(refusal.contains("no time signature"), "{refusal}");
+    let directive = [MIDI_BUILD_DIRECTIVE, b"{}"].concat();
+    let retired = [
+        b"MThd\0\0\0\x06\0\x01\0\x01\0\x60".as_slice(),
+        &track(&[MidiEvent {
+            tick: 0,
+            track: 0,
+            order: 0,
+            body: EventBody::Meta {
+                meta: 0x7f,
+                data: directive,
+            },
+        }]),
+    ]
+    .concat();
+    assert!(read_sequence_midi(&retired).is_err());
 }
 
 fn build_pcm_record(entry: &Value, wav: &[u8]) -> Result<(Vec<u8>, Value), String> {
@@ -5332,7 +6064,7 @@ fn build_entry_native_tail(
                 .as_array()
                 .is_some_and(|segments| segments.iter().any(|s| s["element"] == "thumb-pointer"));
             if has_symbols {
-                let symbols = SourcePaths::load(&ctx.root)?;
+                let symbols = SourcePaths::load_for_game(&ctx.root, ctx.game.compiler.as_str())?;
                 resolve_table_symbols(&mut document, &symbols)?;
             }
             let mut sources = vec![entry_source.to_string()];
@@ -5348,6 +6080,7 @@ fn build_entry_native_tail(
     }
 }
 struct BuildOptions {
+    target: crate::targets::DecompTargetId,
     rom: String,
     /// The target's cartridge size; a source-only build has no ROM to measure.
     rom_size: usize,
@@ -5358,6 +6091,7 @@ struct BuildOptions {
 fn parse_build_options(arguments: &[String], root: &Path) -> Result<BuildOptions, String> {
     let target = crate::targets::decomp_target(option_value(arguments, "--target")?.as_deref())?;
     let mut options = BuildOptions {
+        target: target.id,
         rom: target.rom.to_string(),
         rom_size: target.rom_size as usize,
         manifest: root.join(target.asset_manifest),
@@ -5458,17 +6192,11 @@ fn build_options_follow_the_target_and_explicit_paths_override_it() {
     let arguments = |items: &[&str]| items.iter().map(|s| s.to_string()).collect::<Vec<_>>();
     let tla = parse_build_options(&arguments(&["--target", "tla-en"]), root).unwrap();
     assert_eq!(tla.rom, "roms/tla-en.gba");
-    assert_eq!(
-        tla.manifest,
-        root.join("games/THE LOST AGE/recon/assets.json")
-    );
+    assert_eq!(tla.manifest, root.join("recon/tla/assets.json"));
     assert_eq!(tla.output, root.join("out/tla-en/assets"));
     let tbs = parse_build_options(&arguments(&["-o", "out/x", "roms/a.gba"]), root).unwrap();
     assert_eq!(tbs.rom, "roms/a.gba");
-    assert_eq!(
-        tbs.manifest,
-        root.join("games/THE BROKEN SEAL/recon/assets.json")
-    );
+    assert_eq!(tbs.manifest, root.join("recon/tbs/assets.json"));
     assert_eq!(tbs.output, root.join("out/x"));
     assert!(parse_build_options(&arguments(&["--target=tla"]), root).is_err());
     assert!(
@@ -5533,39 +6261,37 @@ fn stage_stamp_with_signature(
     });
     let mut files = BTreeMap::new();
     for game in native::games() {
-        for directory in [
-            "SRC",
-            "GRAPHICS",
-            "SOUND",
-            "TEXT",
-            "raw/overlays",
-            "raw/battle",
-        ] {
+        for directory in ["SRC", "GRAPHICS", "SOUND", "TEXT"] {
             stamp_files(
                 root,
                 &root.join(game.game_dir()).join(directory),
                 &mut files,
             )?;
         }
+        for directory in ["overlays", "battle"] {
+            stamp_files(root, &root.join(game.asm_dir).join(directory), &mut files)?;
+        }
     }
-    let source_paths = SourcePaths::load(root)?;
-    let overlay_sources = source_paths
-        .all_sources()?
-        .into_iter()
-        .filter(|source| source.owner.overlay_id().is_some())
-        .map(|source| source.path)
-        .collect::<BTreeSet<_>>();
-    for source in overlay_sources {
-        let name = relative(root, &source);
-        let flags = cflags_for_target_source(CompilerTarget::Tbs, &name);
-        let signature = compiler_source_tree_signature(root, &source, &[flags])?;
-        stamp_record(&mut stream, &name, &signature);
-    }
-    let mut names = vec![SOURCE_PATHS_MANIFEST.to_string()];
+    let mut names = Vec::new();
     for game in native::games() {
+        let register = SourcePaths::load_for_game(root, game.compiler.as_str())?;
+        let overlay_sources = register
+            .all_sources()?
+            .into_iter()
+            .filter(|source| source.owner.overlay_id().is_some())
+            .map(|source| source.path)
+            .collect::<BTreeSet<_>>();
+        for source in overlay_sources {
+            let name = relative(root, &source);
+            let flags = cflags_for_target_source(game.compiler, &name);
+            let signature = compiler_source_tree_signature(root, &source, &[flags])?;
+            stamp_record(&mut stream, &name, &signature);
+        }
+        names.push(text(source_paths_manifest(game.compiler.as_str())?));
         names.push(native::NativePaths::of(&game).index);
-        names.push(format!("{}/recon/translation-units.json", game.game_dir()));
-        names.push(format!("{}/recon/text.json", game.game_dir()));
+        names.push(format!("{}/translation-units.json", game.recon_dir()));
+        names.push(format!("{}/text.json", game.recon_dir()));
+        names.push(format!("{}/machine.json", game.recon_dir()));
     }
     for name in names {
         let path = root.join(&name);
@@ -5655,22 +6381,23 @@ fn asset_stamp_tracks_sound_and_included_overlay_sources() {
     let directory = tempfile::tempdir().unwrap();
     let root = directory.path();
     for name in [
-        "SRC/SYSTEM",
-        "SOUND/SEQUENCE/out",
-        "raw/overlays",
-        "raw/battle",
-        "SRC",
-        "recon",
+        "games/THE BROKEN SEAL/SRC/SYSTEM",
+        "games/THE BROKEN SEAL/SOUND/SEQUENCE/out",
+        "recon/tbs/raw/overlays",
+        "recon/tbs/raw/battle",
     ] {
-        fs::create_dir_all(root.join("games/THE BROKEN SEAL").join(name)).unwrap();
+        fs::create_dir_all(root.join(name)).unwrap();
     }
-    let manifest = root.join("games/THE BROKEN SEAL/recon/assets.json");
+    let manifest = root.join("recon/tbs/assets.json");
     let sound = root.join("games/THE BROKEN SEAL/SOUND/SEQUENCE/SEQUENCES.TSV");
     let header = root.join("games/THE BROKEN SEAL/SRC/shared.h");
-    let unit = root.join("games/THE BROKEN SEAL/recon/translation-units.json");
-    let overlay = root.join("games/THE BROKEN SEAL/raw/overlays/fixture.s");
-    let battle = root.join("games/THE BROKEN SEAL/raw/battle/fixture.s");
-    for path in [&manifest, &sound, &header, &unit, &overlay, &battle] {
+    let unit = root.join("recon/tbs/translation-units.json");
+    let machine = root.join("recon/tbs/machine.json");
+    let overlay = root.join("recon/tbs/raw/overlays/fixture.s");
+    let battle = root.join("recon/tbs/raw/battle/fixture.s");
+    for path in [
+        &manifest, &sound, &header, &unit, &machine, &overlay, &battle,
+    ] {
         fs::write(path, "before").unwrap();
     }
     fs::write(
@@ -5704,7 +6431,7 @@ fn asset_stamp_tracks_sound_and_included_overlay_sources() {
         assert_ne!(previous, next, "{}", path.display());
         previous = next;
     }
-    for path in [&sound, &header, &unit, &overlay, &battle] {
+    for path in [&sound, &header, &unit, &machine, &overlay, &battle] {
         fs::write(path, "after").unwrap();
         let next = stamp().unwrap();
         assert_ne!(previous, next, "{}", path.display());
@@ -5729,9 +6456,9 @@ fn asset_stamp_tracks_sound_and_included_overlay_sources() {
 fn material_audit_reports_only_game_material_no_build_read() {
     let directory = tempfile::tempdir().unwrap();
     let root = directory.path();
-    let game = native::broken_seal();
-    let game = game.index.strip_suffix("/SOURCE.JSON").unwrap();
-    let manifest = root.join(format!("{game}/recon/assets.json"));
+    let [target, _] = native::games();
+    let game = target.game_dir();
+    let manifest = root.join(target.asset_manifest);
     let git = |args: &[&str]| {
         let output = std::process::Command::new("git")
             .args(args)
@@ -5742,17 +6469,17 @@ fn material_audit_reports_only_game_material_no_build_read() {
     };
     git(&["init", "--quiet"]);
     for name in [
-        "recon/assets.json",
-        "SRC/A.JSON",
-        "SRC/B.JSON",
-        "SRC/X.C",
-        "source-paths.json",
+        target.asset_manifest.to_string(),
+        format!("{game}/SRC/A.JSON"),
+        format!("{game}/SRC/B.JSON"),
+        format!("{game}/SRC/X.C"),
+        format!("{}/source-paths.json", target.recon_dir()),
     ] {
-        let path = root.join(game).join(name);
+        let path = root.join(name);
         fs::create_dir_all(path.parent().unwrap()).unwrap();
         fs::write(path, "{}\n").unwrap();
     }
-    git(&["add", "games"]);
+    git(&["add", "games", "recon"]);
     let read = || [format!("{game}/SRC/A.JSON")];
     let error = audit_material_consumers(root, &manifest, read()).unwrap_err();
     assert!(error.contains("has no build consumer"), "{error}");
@@ -5855,8 +6582,8 @@ fn reusable_asset_manifest(
     Some((regions.len(), total, inputs))
 }
 /// Every piece of game material tracked under the manifest's game must be an
-/// input this build read, or named by the game's declared review plan. Code,
-/// tooling metadata, registries and the coverage figure are exempt by
+/// input this build read, or named by the game's declared review plan. Code
+/// and the registries of the game's `recon` scaffolding are exempt by
 /// category (`generated_files::unconsumed_material`); nothing else is.
 fn audit_material_consumers(
     root: &Path,
@@ -5875,8 +6602,13 @@ fn audit_material_consumers(
     let mut consumed = inputs.into_iter().collect::<BTreeSet<_>>();
     consumed.insert(game.asset_manifest.to_string());
     consumed.extend(native::review_plan_inputs(root, directory)?);
-    let unconsumed = unconsumed_tracked_material(root, directory, &consumed)
-        .map_err(|error| format!("tracked material audit: {error}"))?;
+    let mut unconsumed = Vec::new();
+    for tree in [directory, game.recon_dir()] {
+        unconsumed.extend(
+            unconsumed_tracked_material(root, tree, &consumed)
+                .map_err(|error| format!("tracked material audit: {error}"))?,
+        );
+    }
     if unconsumed.is_empty() {
         return Ok(());
     }
@@ -5888,6 +6620,118 @@ fn audit_material_consumers(
 fn record_asset_failure(failures: &mut Vec<String>, failure: String) {
     eprintln!("diagnostic {failure}");
     failures.push(failure);
+}
+struct BuiltRegion {
+    address: usize,
+    bytes: Vec<u8>,
+    sources: Vec<String>,
+    details: Value,
+}
+/// Check one built region against its declared size and the reference ROM,
+/// then write it. Returns its manifest record and inputs, or the failure.
+fn finish_region(
+    ctx: &Context,
+    entry: &Value,
+    built: BuiltRegion,
+    rom: Option<&[u8]>,
+    output_directory: &Path,
+) -> Result<(Value, Vec<String>), String> {
+    let BuiltRegion {
+        address,
+        bytes,
+        sources,
+        details,
+    } = built;
+    let size = number(&entry["size"], "asset size")?;
+    if bytes.len() != size {
+        return Err(format!(
+            "asset at 0x{address:08x}: built 0x{:x}, expected 0x{size:x}",
+            bytes.len()
+        ));
+    }
+    if let Some(rom) = rom {
+        let start = address - ROM_BASE;
+        let expected = rom
+            .get(start..start + size)
+            .ok_or("asset region lies beyond ROM")?;
+        if let Some(first) = bytes.iter().zip(expected).position(|(l, r)| l != r) {
+            return Err(format!(
+                "asset at 0x{address:08x}: encoded bytes differ at +0x{first:x} of 0x{size:x}"
+            ));
+        }
+    }
+    let sources = closure_sources(ctx, entry, sources)
+        .map_err(|error| format!("asset at 0x{address:08x}: {error}"))?;
+    let output = output_directory.join(format!("{address:08x}.bin"));
+    let output_sha256 = sha256::hex(&bytes);
+    write_cache_entry_atomically(&output, &bytes)
+        .map_err(|error| format!("{}: {error}", output.display()))?;
+    Ok((
+        serde_json::json!({
+            "address": address,
+            "size": size,
+            "output_size": bytes.len(),
+            "output_sha256": output_sha256,
+            "end": address + size,
+            "kind": entry.get("kind"),
+            "sources": sources,
+            "output": output.to_string_lossy(),
+            "details": details,
+        }),
+        sources,
+    ))
+}
+/// Complete every region that stops short of its size with the alignment
+/// bytes the archive's writers left after its stream: the packer heap,
+/// replayed on the target's reference machine, for a stream file; zeros for
+/// a stream inside a container file. Without a resource directory nothing
+/// supplies them, and a short region fails its size check.
+fn align_streams<'a>(
+    ctx: &Context,
+    manifest: &Value,
+    target: crate::targets::DecompTargetId,
+    built: Vec<(&'a Value, BuiltRegion)>,
+    failures: &mut Vec<String>,
+) -> Result<Vec<(&'a Value, BuiltRegion)>, String> {
+    let mut aligned = match manifest.get("resource_directory") {
+        Some(name) => {
+            let directory = json(&ctx.source(json_string(name, "resource directory")?)?)?;
+            let machine = json(&ctx.source(json_string(
+                &manifest["machine"],
+                "reference machine definition",
+            )?)?)?;
+            let host = packer::Host::of(&machine, target.as_str())?;
+            let regions = built
+                .iter()
+                .map(|(entry, region)| {
+                    Ok((
+                        region.address,
+                        packer::Region {
+                            bytes: &region.bytes,
+                            size: number(&entry["size"], "asset size")?,
+                        },
+                    ))
+                })
+                .collect::<Result<BTreeMap<_, _>, String>>()?;
+            packer::alignment(&host, &packer::resource_starts(&directory)?, &regions)
+        }
+        None => packer::Alignment::new(),
+    };
+    let mut ready = Vec::new();
+    for (entry, mut region) in built {
+        match aligned.remove(&region.address) {
+            None => ready.push((entry, region)),
+            Some(Ok(padding)) => {
+                region.bytes.extend(padding);
+                ready.push((entry, region));
+            }
+            Some(Err(error)) => record_asset_failure(
+                failures,
+                format!("asset at 0x{:08x}: {error}", region.address),
+            ),
+        }
+    }
+    Ok(ready)
 }
 fn native_asset_main(arguments: &[String]) -> Result<(), String> {
     let root = repository_root();
@@ -5937,7 +6781,14 @@ fn native_asset_main(arguments: &[String]) -> Result<(), String> {
             }
         }
     }
-    let mut ctx = Context::new(&root);
+    let mut ctx = Context::for_game(&root, crate::targets::target_for(options.target));
+    if let Some(name) = manifest.get("machine") {
+        let name = json_string(name, "reference machine definition")?;
+        ctx.general_lz = Some(
+            GeneralLz::of(&json(&ctx.source(name)?)?)
+                .map_err(|error| format!("{name}: {error}"))?,
+        );
+    }
     let edition_catalogs = manifest
         .get("edition_catalogs")
         .and_then(Value::as_array)
@@ -5957,6 +6808,13 @@ fn native_asset_main(arguments: &[String]) -> Result<(), String> {
         .and_then(Value::as_array)
         .cloned()
         .unwrap_or_default();
+    let directory = match manifest.get("resource_directory") {
+        Some(name) => Some(json(
+            &ctx.source(json_string(name, "resource directory")?)?,
+        )?),
+        None => None,
+    };
+    check_fill_placements(&entries, directory.as_ref(), ROM_BASE + rom_size)?;
     expand_closure_packages(&mut ctx, &manifest, &mut entries)?;
     expand_series(&mut ctx, &manifest, &mut entries)?;
     entries.sort_unstable_by_key(|entry| {
@@ -5973,6 +6831,8 @@ fn native_asset_main(arguments: &[String]) -> Result<(), String> {
         .iter()
         .map(|catalog| json_string(catalog, "edition catalog").map(str::to_string))
         .collect::<Result<Vec<_>, _>>()?;
+    // Every built region, streams without their alignment, for the replay.
+    let mut built = Vec::new();
     for entry in &entries {
         let address = number(&entry["address"], "asset address")?;
         let size = number(&entry["size"], "asset size")?;
@@ -5984,7 +6844,7 @@ fn native_asset_main(arguments: &[String]) -> Result<(), String> {
             return Err(format!("asset region outside ROM at 0x{address:08x}"));
         }
         previous_end = end;
-        let (built, source_names, details) = match build_entry(&mut ctx, entry) {
+        let (bytes, sources, details) = match build_entry(&mut ctx, entry) {
             Ok(result) => result,
             Err(error) => {
                 record_asset_failure(
@@ -6000,58 +6860,26 @@ fn native_asset_main(arguments: &[String]) -> Result<(), String> {
                 continue;
             }
         };
-        if built.len() != size {
-            record_asset_failure(
-                &mut failures,
-                format!(
-                    "asset at 0x{address:08x}: built 0x{:x}, expected 0x{:x}",
-                    built.len(),
-                    size
-                ),
-            );
-            continue;
-        }
-        if let Some(rom) = rom.as_ref() {
-            let start = address
-                .checked_sub(ROM_BASE)
-                .ok_or("asset address precedes ROM")?;
-            let expected = rom
-                .get(start..start + size)
-                .ok_or("asset region lies beyond ROM")?;
-            if built != expected {
-                record_asset_failure(
-                    &mut failures,
-                    format!("asset at 0x{address:08x}: encoded bytes differ"),
-                );
-                continue;
-            }
-        }
-        let sources = match closure_sources(&ctx, entry, source_names) {
-            Ok(sources) => sources,
-            Err(error) => {
-                record_asset_failure(&mut failures, format!("asset at 0x{address:08x}: {error}"));
-                continue;
-            }
-        };
-        all_sources.extend(sources.iter().cloned());
-        let output = options.output.join(format!("{address:08x}.bin"));
-        let output_sha256 = sha256::hex(&built);
-        if let Err(error) = write_cache_entry_atomically(&output, &built) {
-            record_asset_failure(&mut failures, format!("{}: {error}", output.display()));
-            continue;
-        }
-        regions.push(serde_json::json!({
-            "address": address,
-            "size": size,
-            "output_size": built.len(),
-            "output_sha256": output_sha256,
-            "end": end,
-            "kind": entry.get("kind"),
-            "sources": sources,
-            "output": output.to_string_lossy(),
-            "details": details,
-        }));
+        built.push((
+            entry,
+            BuiltRegion {
+                address,
+                bytes,
+                sources,
+                details,
+            },
+        ));
     }
+    for (entry, built) in align_streams(&ctx, &manifest, options.target, built, &mut failures)? {
+        match finish_region(&ctx, entry, built, rom.as_deref(), &options.output) {
+            Ok((region, sources)) => {
+                all_sources.extend(sources);
+                regions.push(region);
+            }
+            Err(failure) => record_asset_failure(&mut failures, failure),
+        }
+    }
+    regions.sort_by_key(|region| region["address"].as_u64());
     let inputs = all_sources
         .iter()
         .map(|source| root_relative(&root, Path::new(source)).unwrap_or_else(|_| source.clone()))
@@ -6134,7 +6962,7 @@ fn run(arguments: Vec<String>) -> Result<ExitCode, String> {
             return Err(USAGE.into());
         }
         // The Broken Seal keeps its registered review plan; other games review
-        // the field maps their SOURCE.JSON scenes load.
+        // the field maps their private-inputs.json scenes load.
         match target.filter(|t| t.source_dir != native::broken_seal().source) {
             Some(target) => {
                 native::export_field_review(&repository_root(), Path::new(&arguments[1]), &target)?

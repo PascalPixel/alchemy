@@ -42,7 +42,6 @@
         "decoded_size": 10569,
         "encoded_size": 6256,
         "tilemap_length": 10568,
-        "lookahead": "0000",
         "component": "map-metatiles-2x2",
         "transform_mode": 1,
         "metatiles": 1321,
@@ -61,7 +60,6 @@
           [12, 4, 4, 0], [12, 0, 0, 4], [2, 3, 2, 0], [2, 2, 1, 0], [2, 0, 255, 0], [2, 255, 254, 0], [3, 0, 4, 0],
           [13, 0, 0, 4]
         ],
-        "lookahead": "000000",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -112,7 +110,6 @@
           ],
           "0xffff"
         ],
-        "lookahead": "0000",
         "component": "map-animation-queues",
         "word_size": 2,
         "terminators": ["0xfe00", "0xffff"]
@@ -124,7 +121,6 @@
         "decoded_size": 10,
         "encoded_size": 16,
         "words": [["0x3f44"], ["0x1008", 43210], ["0xfe00"], ["0xffff"]],
-        "lookahead": "00",
         "component": "map-blend-animation",
         "word_size": 2
       },
@@ -132,7 +128,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x086e6150",
-        "size": "0x24",
+        "size": "0x21",
         "record_size": 3,
         "segments": [
           {
@@ -153,8 +149,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x086e6171", "end": "0x086e6174", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/TOREBI_HEYA/TOREBI_HEYA.BIN",

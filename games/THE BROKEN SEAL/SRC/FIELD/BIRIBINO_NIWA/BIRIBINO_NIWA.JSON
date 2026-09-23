@@ -42,7 +42,6 @@
         "decoded_size": 4985,
         "encoded_size": 3108,
         "tilemap_length": 4984,
-        "lookahead": "0000",
         "component": "map-metatiles-2x2",
         "transform_mode": 1,
         "metatiles": 623,
@@ -59,7 +58,6 @@
           [0, 4, 0, 0], [3, 4, 8, 0], [7, 4, 8, 0], [4, 8, 4, 0], [4, 4, 8, 0], [4, 8, 12, 0], [1, 8, 6, 0],
           [1, 6, 4, 0], [2, 4, 2, 0], [2, 2, 0, 0]
         ],
-        "lookahead": "",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -67,7 +65,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x0859f988",
-        "size": "0x4",
+        "size": "0x3",
         "record_size": 3,
         "segments": [
           {
@@ -77,8 +75,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x0859f98b", "end": "0x0859f98c", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_NIWA/BIRIBINO_NIWA.BIN",

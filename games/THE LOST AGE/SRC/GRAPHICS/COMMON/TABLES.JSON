@@ -1,0 +1,1088 @@
+{
+  "format": 1,
+  "kind": "typed-table-catalog",
+  "tables": {
+    "0x086aa06c": {
+      "format": 1,
+      "kind": "typed-table",
+      "address": "0x086aa06c",
+      "end": "0x086aa0c8",
+      "size": 92,
+      "segments": [
+        {
+          "name": "member_offsets",
+          "address": "0x086aa06c",
+          "end": "0x086aa0c8",
+          "element": "le-u32",
+          "stride": 4,
+          "values": [
+            92, 572, 1591, 2625, 3920, 5431, 6834, 8240, 9775, 11322, 12742, 14064, 15415, 16704, 18103, 19456, 20720,
+            22155, 23590, 24926, 26238, 27733, 29109
+          ]
+        }
+      ]
+    },
+    "0x086b1688": {
+      "format": 1,
+      "kind": "typed-table",
+      "address": "0x086b1688",
+      "end": "0x086b174c",
+      "size": 196,
+      "segments": [
+        {
+          "name": "member_offsets",
+          "address": "0x086b1688",
+          "end": "0x086b174c",
+          "element": "le-u32",
+          "stride": 4,
+          "values": [
+            196, 676, 1516, 2767, 4312, 5925, 8052, 10320, 12644, 15137, 17496, 19843, 22396, 25072, 28008, 30959,
+            34121, 37065, 40072, 42783, 45365, 47880, 50317, 52737, 55377, 57953, 60448, 63019, 65644, 68376, 71005,
+            73458, 75793, 78333, 81257, 84059, 86840, 89715, 92493, 95043, 97412, 99817, 102158, 104618, 107359, 109685,
+            111569, 112979, 114014
+          ]
+        }
+      ]
+    },
+    "0x086cd8c8": {
+      "format": 1,
+      "kind": "typed-table",
+      "address": "0x086cd8c8",
+      "end": "0x086cd910",
+      "size": 72,
+      "segments": [
+        {
+          "name": "member_offsets",
+          "address": "0x086cd8c8",
+          "end": "0x086cd910",
+          "element": "le-u32",
+          "stride": 4,
+          "values": [
+            72, 548, 884, 1428, 1852, 2164, 2692, 3192, 3252, 3312, 3372, 3432, 3492, 3552, 3612, 3672, 3732, 3792
+          ]
+        }
+      ]
+    },
+    "0x088f154c": {
+      "format": 1,
+      "kind": "golden-sun-motion-path",
+      "resource_id": "0x195",
+      "address": "0x088f154c",
+      "size": "0x01a8",
+      "consumer": {"initial_encoding": "be-s16-pair", "delta_encoding": "s8-pair", "boundary_delta_pairs": 1},
+      "initial": [160, 95],
+      "deltas": [
+        [-5, -3], [-4, -3], [-4, -3], [-4, -2], [-4, -3], [-4, -3], [-4, -3], [-4, -3], [-4, -4], [-5, -3], [-4, -3],
+        [-4, -3], [-4, -3], [-4, -3], [-4, -3], [-3, -3], [-4, -3], [-4, -3], [-4, -3], [-3, -3], [-4, -3], [-3, -3],
+        [-4, -3], [-4, -2], [-3, -3], [-3, -3], [-4, -2], [-3, -3], [-4, -2], [-3, -2], [-3, -3], [-3, -2], [-3, -2],
+        [-4, -2], [-3, -1], [-3, -2], [-3, -1], [-2, -2], [-3, -1], [-3, -2], [-3, -1], [-3, -1], [-3, -1], [-3, -1],
+        [-2, -1], [-3, -1], [-2, -1], [-3, 0], [-3, -1], [-2, -1], [-3, 0], [-2, -1], [-2, 0], [-3, -1], [-2, 0],
+        [-2, 0], [-2, -1], [-2, 0], [-2, 0], [-2, 0], [-2, 0], [-2, -1], [-2, 0], [-2, 0], [-1, 0], [-2, 0], [-1, 0],
+        [-1, 0], [-2, 0], [-1, 0], [-1, 0], [-1, 0], [-1, 0], [-1, 1], [-1, 0], [-1, 1], [-1, 0], [-1, 1], [-1, 1],
+        [0, 1], [-1, 1], [0, 1], [-1, 1], [0, 1], [0, 2], [0, 1], [0, 1], [0, 1], [0, 2], [0, 1], [1, 2], [0, 1],
+        [1, 3], [1, 0], [1, 1], [2, 1], [1, 2], [2, 1], [2, 1], [2, 1], [3, 1], [2, 2], [3, 1], [2, 1], [3, 0], [3, 1],
+        [3, 1], [3, 0], [3, 1], [3, 0], [3, 1], [3, 0], [2, 0], [3, 0], [3, 0], [3, -1], [3, 0], [2, -1], [2, -1],
+        [3, -1], [2, -1], [2, -2], [1, -1], [2, -2], [1, -1], [1, -2], [1, -1], [1, -2], [1, -1], [1, -1], [0, -1],
+        [0, -1], [1, -2], [0, -1], [0, -1], [0, -1], [-1, -1], [0, -1], [0, 0], [-1, -1], [0, -1], [-1, -1], [-1, 0],
+        [0, -1], [-1, -1], [-1, 0], [-1, -1], [-1, 0], [0, -1], [-1, 0], [-1, -1], [-1, 0], [-1, 0], [-1, 0], [-1, -1],
+        [-1, 0], [-1, 0], [-1, 0], [-1, 0], [0, 0], [-1, 0], [-1, 0], [0, 0], [-1, 0], [0, 0], [1, 1], [-2, 0], [0, 0],
+        [0, 1], [0, 0], [0, 1], [0, 0], [0, 1], [2, 0], [-1, 1], [0, 0], [1, 0], [0, 1], [1, 0], [0, 1], [0, 0], [1, 0],
+        [1, 1], [1, 1], [1, 0], [2, 1], [3, 1], [3, 2], [4, 1], [5, 2], [5, 2], [6, 1], [6, 3], [6, 2], [7, 3], [7, 3],
+        [7, 3], [6, 3], [7, 4], [7, 4], [7, 4], [7, 5], [7, 6], [8, 6], [7, 6], [8, 6], [7, 6], [8, 6], [7, 6]
+      ],
+      "boundary_deltas": [[8, 6]]
+    },
+    "0x088f16f4": {
+      "format": 1,
+      "kind": "golden-sun-motion-path",
+      "resource_id": "0x196",
+      "address": "0x088f16f4",
+      "size": "0x0054",
+      "consumer": {"initial_encoding": "be-s16-pair", "delta_encoding": "s8-pair", "boundary_delta_pairs": 0},
+      "initial": [17, -39],
+      "deltas": [
+        [6, 5], [6, 5], [6, 6], [6, 5], [6, 6], [6, 5], [6, 5], [5, 5], [5, 4], [5, 4], [4, 4], [5, 4], [5, 3], [5, 4],
+        [4, 3], [4, 3], [3, 3], [2, 2], [0, 2], [0, 1], [-2, 1], [-3, 0], [-4, -1], [-5, -1], [-6, -3], [-7, -4],
+        [-8, -7], [-11, -8], [-13, -9], [-17, -9], [-18, -9], [-20, -8], [-21, -7], [-21, -4], [-20, -1], [-20, 1],
+        [-20, 7], [-18, 13], [-18, 29], [0, 0]
+      ],
+      "boundary_deltas": []
+    }
+  },
+  "streams": {
+    "system_images": {
+      "0x015": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 704, "encoded_size": 192},
+      "0x016": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 38400, "encoded_size": 22704},
+      "0x018": {"format": 1, "codec": "golden-sun-palette-lz", "decoded_size": 39936, "encoded_size": 20560},
+      "0x019": {"format": 1, "codec": "golden-sun-palette-lz", "decoded_size": 92160, "encoded_size": 47016},
+      "0x01a": {"format": 1, "codec": "golden-sun-palette-lz", "decoded_size": 27904, "encoded_size": 4560},
+      "0x01c": {"format": 1, "codec": "golden-sun-palette-lz", "decoded_size": 12288, "encoded_size": 1904},
+      "0x01d": {"format": 1, "codec": "golden-sun-palette-lz", "decoded_size": 12288, "encoded_size": 2436},
+      "0x01e": {"format": 1, "codec": "golden-sun-palette-lz", "decoded_size": 12288, "encoded_size": 2168},
+      "0x01f": {"format": 1, "codec": "golden-sun-palette-lz", "decoded_size": 12288, "encoded_size": 1492},
+      "0x020": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 38400,
+        "encoded_size": 1640,
+        "tag": 1
+      },
+      "0x022": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 38400,
+        "encoded_size": 5112,
+        "tag": 1
+      },
+      "0x021": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 22976, "encoded_size": 6252},
+      "0x025": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 1184, "encoded_size": 692}
+    },
+    "tile_bundles": {
+      "0x023_1": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 1920, "encoded_size": 1019},
+      "0x023_2": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 1920, "encoded_size": 1034},
+      "0x023_3": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 1920, "encoded_size": 1295},
+      "0x023_4": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 1920, "encoded_size": 1511},
+      "0x023_5": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 1920, "encoded_size": 1403},
+      "0x023_6": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 1920, "encoded_size": 1406},
+      "0x023_7": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 1920, "encoded_size": 1535},
+      "0x023_8": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 1920, "encoded_size": 1547},
+      "0x023_9": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 1920, "encoded_size": 1420},
+      "0x023_10": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 1920, "encoded_size": 1322},
+      "0x023_11": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 1920, "encoded_size": 1351},
+      "0x023_12": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 1920, "encoded_size": 1289},
+      "0x023_13": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 1920, "encoded_size": 1399},
+      "0x023_14": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 1920, "encoded_size": 1353},
+      "0x023_15": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 1920, "encoded_size": 1264},
+      "0x023_16": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 1920, "encoded_size": 1435},
+      "0x023_17": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 1920, "encoded_size": 1435},
+      "0x023_18": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 1920, "encoded_size": 1336},
+      "0x023_19": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 1920, "encoded_size": 1312},
+      "0x023_20": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 1920, "encoded_size": 1495},
+      "0x023_21": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 1920, "encoded_size": 1376},
+      "0x023_22": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 1920, "encoded_size": 1127},
+      "0x024_1": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 4096, "encoded_size": 840},
+      "0x024_2": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 4096, "encoded_size": 1251},
+      "0x024_3": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 4096, "encoded_size": 1545},
+      "0x024_4": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 4096, "encoded_size": 1613},
+      "0x024_5": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 4096, "encoded_size": 2127},
+      "0x024_6": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 4096, "encoded_size": 2268},
+      "0x024_7": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 4096, "encoded_size": 2324},
+      "0x024_8": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 4096, "encoded_size": 2493},
+      "0x024_9": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 4096, "encoded_size": 2359},
+      "0x024_10": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 4096, "encoded_size": 2347},
+      "0x024_11": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 4096, "encoded_size": 2553},
+      "0x024_12": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 4096, "encoded_size": 2676},
+      "0x024_13": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 4096, "encoded_size": 2936},
+      "0x024_14": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 4096, "encoded_size": 2951},
+      "0x024_15": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 4096, "encoded_size": 3162},
+      "0x024_16": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 4096, "encoded_size": 2944},
+      "0x024_17": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 4096, "encoded_size": 3007},
+      "0x024_18": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 4096, "encoded_size": 2711},
+      "0x024_19": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 4096, "encoded_size": 2582},
+      "0x024_20": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 4096, "encoded_size": 2515},
+      "0x024_21": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 4096, "encoded_size": 2437},
+      "0x024_22": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 4096, "encoded_size": 2420},
+      "0x024_23": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 4096, "encoded_size": 2640},
+      "0x024_24": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 4096, "encoded_size": 2576},
+      "0x024_25": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 4096, "encoded_size": 2495},
+      "0x024_26": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 4096, "encoded_size": 2571},
+      "0x024_27": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 4096, "encoded_size": 2625},
+      "0x024_28": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 4096, "encoded_size": 2732},
+      "0x024_29": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 4096, "encoded_size": 2629},
+      "0x024_30": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 4096, "encoded_size": 2453},
+      "0x024_31": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 4096, "encoded_size": 2335},
+      "0x024_32": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 4096, "encoded_size": 2540},
+      "0x024_33": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 4096, "encoded_size": 2924},
+      "0x024_34": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 4096, "encoded_size": 2802},
+      "0x024_35": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 4096, "encoded_size": 2781},
+      "0x024_36": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 4096, "encoded_size": 2875},
+      "0x024_37": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 4096, "encoded_size": 2778},
+      "0x024_38": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 4096, "encoded_size": 2550},
+      "0x024_39": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 4096, "encoded_size": 2369},
+      "0x024_40": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 4096, "encoded_size": 2405},
+      "0x024_41": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 4096, "encoded_size": 2341},
+      "0x024_42": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 4096, "encoded_size": 2460},
+      "0x024_43": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 4096, "encoded_size": 2741},
+      "0x024_44": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 4096, "encoded_size": 2326},
+      "0x024_45": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 4096, "encoded_size": 1884},
+      "0x024_46": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 4096, "encoded_size": 1410},
+      "0x024_47": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 4096, "encoded_size": 1035},
+      "0x024_48": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 4096,
+        "encoded_size": 558,
+        "tag": 1
+      },
+      "0x026_0": {"format": 1, "codec": "golden-sun-palette-lz", "decoded_size": 4160, "encoded_size": 476},
+      "0x026_1": {"format": 1, "codec": "golden-sun-palette-lz", "decoded_size": 4160, "encoded_size": 336},
+      "0x026_2": {"format": 1, "codec": "golden-sun-palette-lz", "decoded_size": 4160, "encoded_size": 544},
+      "0x026_3": {"format": 1, "codec": "golden-sun-palette-lz", "decoded_size": 4160, "encoded_size": 424},
+      "0x026_4": {"format": 1, "codec": "golden-sun-palette-lz", "decoded_size": 4160, "encoded_size": 312},
+      "0x026_5": {"format": 1, "codec": "golden-sun-palette-lz", "decoded_size": 4160, "encoded_size": 528},
+      "0x026_6": {"format": 1, "codec": "golden-sun-palette-lz", "decoded_size": 4160, "encoded_size": 500},
+      "0x026_7": {"format": 1, "codec": "golden-sun-palette-lz", "decoded_size": 4160, "encoded_size": 60},
+      "0x026_8": {"format": 1, "codec": "golden-sun-palette-lz", "decoded_size": 4160, "encoded_size": 60},
+      "0x026_9": {"format": 1, "codec": "golden-sun-palette-lz", "decoded_size": 4160, "encoded_size": 60},
+      "0x026_10": {"format": 1, "codec": "golden-sun-palette-lz", "decoded_size": 4160, "encoded_size": 60},
+      "0x026_11": {"format": 1, "codec": "golden-sun-palette-lz", "decoded_size": 4160, "encoded_size": 60},
+      "0x026_12": {"format": 1, "codec": "golden-sun-palette-lz", "decoded_size": 4160, "encoded_size": 60},
+      "0x026_13": {"format": 1, "codec": "golden-sun-palette-lz", "decoded_size": 4160, "encoded_size": 60},
+      "0x026_14": {"format": 1, "codec": "golden-sun-palette-lz", "decoded_size": 4160, "encoded_size": 60},
+      "0x026_15": {"format": 1, "codec": "golden-sun-palette-lz", "decoded_size": 4160, "encoded_size": 60},
+      "0x026_16": {"format": 1, "codec": "golden-sun-palette-lz", "decoded_size": 4160, "encoded_size": 60},
+      "0x026_17": {"format": 1, "codec": "golden-sun-palette-lz", "decoded_size": 4160, "encoded_size": 60}
+    },
+    "battle_effects": {
+      "0x081": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 19200,
+        "encoded_size": 1889,
+        "tag": 1
+      },
+      "0x082": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 27136, "encoded_size": 4436},
+      "0x083": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 4096, "encoded_size": 1532},
+      "0x084": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 38400, "encoded_size": 11357},
+      "0x085": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 38400, "encoded_size": 15698},
+      "0x086": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 31744, "encoded_size": 11812},
+      "0x087": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 4864, "encoded_size": 2364},
+      "0x088": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 4096, "encoded_size": 1080},
+      "0x089": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 4096, "encoded_size": 1008},
+      "0x08a": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 1536, "encoded_size": 712},
+      "0x08b": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 1536, "encoded_size": 600},
+      "0x08c": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 2560, "encoded_size": 1140},
+      "0x08d": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 2560, "encoded_size": 1136},
+      "0x08e": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 1280, "encoded_size": 848},
+      "0x08f": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 2560, "encoded_size": 1128},
+      "0x090": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 5120, "encoded_size": 1812},
+      "0x091": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 384, "encoded_size": 192},
+      "0x092": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 512, "encoded_size": 412},
+      "0x093": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 4096, "encoded_size": 940},
+      "0x094": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 4096, "encoded_size": 940},
+      "0x095": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 4096, "encoded_size": 888},
+      "0x096": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 4096, "encoded_size": 1604},
+      "0x097": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 1024, "encoded_size": 628},
+      "0x098": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 12768, "encoded_size": 4800},
+      "0x099": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 8672, "encoded_size": 4096},
+      "0x09a": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 4320, "encoded_size": 1884},
+      "0x09b": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 12768, "encoded_size": 5316},
+      "0x09c": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 4576, "encoded_size": 1004},
+      "0x09d": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 4576, "encoded_size": 1388},
+      "0x09e": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 1504, "encoded_size": 572},
+      "0x09f": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 4576, "encoded_size": 1368},
+      "0x0a0": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 8672, "encoded_size": 5920},
+      "0x0a1": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 24032, "encoded_size": 11528},
+      "0x0a2": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 608, "encoded_size": 660},
+      "0x0a3": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 8672, "encoded_size": 4608},
+      "0x0a4": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 32224, "encoded_size": 18011},
+      "0x0a5": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 16864, "encoded_size": 7992},
+      "0x0a6": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 11744, "encoded_size": 5232},
+      "0x0a7": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 12768, "encoded_size": 6948},
+      "0x0a8": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 16864, "encoded_size": 7424},
+      "0x0a9": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 16864, "encoded_size": 6060},
+      "0x0aa": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 13792, "encoded_size": 4984},
+      "0x0ab": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 29152, "encoded_size": 13600},
+      "0x0ac": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 3040, "encoded_size": 1396},
+      "0x0ad": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 3552, "encoded_size": 832},
+      "0x0ae": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 3040, "encoded_size": 1228},
+      "0x0af": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 1956, "encoded_size": 656},
+      "0x0b0": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 17894, "encoded_size": 7120},
+      "0x0b1": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 8960,
+        "encoded_size": 1088,
+        "tag": 1
+      },
+      "0x0b2": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 4096,
+        "encoded_size": 588,
+        "tag": 1
+      },
+      "0x0b3": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 1814,
+        "encoded_size": 280,
+        "tag": 1
+      },
+      "0x0b4": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 4096, "encoded_size": 2092},
+      "0x0b5": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 14720,
+        "encoded_size": 3704,
+        "tag": 1
+      },
+      "0x0b6": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 4096, "encoded_size": 1464},
+      "0x0b7": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 18432, "encoded_size": 8428},
+      "0x0ba": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 1728, "encoded_size": 588},
+      "0x0bb": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 3072,
+        "encoded_size": 388,
+        "tag": 1
+      },
+      "0x0bc": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 4096,
+        "encoded_size": 2108,
+        "tag": 1
+      },
+      "0x0bd": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 16384,
+        "encoded_size": 7012,
+        "tag": 1
+      },
+      "0x0be": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 16384, "encoded_size": 6876},
+      "0x0bf": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 1024, "encoded_size": 960},
+      "0x0c0": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 1024, "encoded_size": 916},
+      "0x0c1": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 2048, "encoded_size": 824},
+      "0x0c2": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 16384,
+        "encoded_size": 4300,
+        "tag": 1
+      },
+      "0x0c3": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 4096,
+        "encoded_size": 744,
+        "tag": 1
+      },
+      "0x0c4": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 1024, "encoded_size": 340},
+      "0x0c5": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 24000,
+        "encoded_size": 9356,
+        "tag": 1
+      },
+      "0x0c6": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 6960,
+        "encoded_size": 2364,
+        "tag": 1
+      },
+      "0x0c7": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 16384,
+        "encoded_size": 4292,
+        "tag": 1
+      },
+      "0x0c8": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 28672,
+        "encoded_size": 3196,
+        "tag": 1
+      },
+      "0x0c9": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 128, "encoded_size": 44},
+      "0x0ca": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 128, "encoded_size": 44},
+      "0x0cb": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 4096, "encoded_size": 1984},
+      "0x0cc": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 16384,
+        "encoded_size": 5372,
+        "tag": 1
+      },
+      "0x0cd": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 1024, "encoded_size": 684},
+      "0x0ce": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 2755, "encoded_size": 1320},
+      "0x0cf": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 4096,
+        "encoded_size": 1328,
+        "tag": 1
+      },
+      "0x0d0": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 4096, "encoded_size": 1520},
+      "0x0d1": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 4096, "encoded_size": 1804},
+      "0x0d2": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 1024, "encoded_size": 512},
+      "0x0d3": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 4096,
+        "encoded_size": 1056,
+        "tag": 1
+      },
+      "0x0d4": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 4096, "encoded_size": 1452},
+      "0x0d5": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 4096,
+        "encoded_size": 380,
+        "tag": 1
+      },
+      "0x0d6": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 4096,
+        "encoded_size": 396,
+        "tag": 1
+      },
+      "0x0d7": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 3072,
+        "encoded_size": 601,
+        "tag": 1
+      },
+      "0x0d8": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 2048, "encoded_size": 1404},
+      "0x0d9": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 1024, "encoded_size": 556},
+      "0x0da": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 4096, "encoded_size": 2396},
+      "0x0db": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 4096, "encoded_size": 1600},
+      "0x0dc": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 29213,
+        "encoded_size": 10800,
+        "tag": 1
+      },
+      "0x0dd": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 32220,
+        "encoded_size": 4428,
+        "tag": 1
+      },
+      "0x0de": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 2048, "encoded_size": 1504},
+      "0x0df": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 14336, "encoded_size": 4028},
+      "0x0e0": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 2048, "encoded_size": 1492},
+      "0x0e1": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 2048, "encoded_size": 1536},
+      "0x0e2": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 2048, "encoded_size": 1440},
+      "0x0e3": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 6144, "encoded_size": 3172},
+      "0x0e4": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 2048, "encoded_size": 1640},
+      "0x0e5": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 2048, "encoded_size": 1444},
+      "0x0e6": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 4096, "encoded_size": 2464},
+      "0x0e7": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 3200, "encoded_size": 856},
+      "0x0e8": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 4096, "encoded_size": 1584},
+      "0x0e9": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 2048, "encoded_size": 716},
+      "0x0ea": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 4992, "encoded_size": 3260},
+      "0x0eb": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 4096, "encoded_size": 2100},
+      "0x0ec": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 4096, "encoded_size": 2312},
+      "0x0ed": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 4096, "encoded_size": 2248},
+      "0x0ee": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 4096, "encoded_size": 1628},
+      "0x0ef": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 4096, "encoded_size": 1324},
+      "0x0f0": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 29229,
+        "encoded_size": 8764,
+        "tag": 1
+      },
+      "0x0f1": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 28839,
+        "encoded_size": 5908,
+        "tag": 1
+      },
+      "0x0f2": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 4096, "encoded_size": 1764},
+      "0x0f3": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 20688,
+        "encoded_size": 8012,
+        "tag": 1
+      },
+      "0x0f4": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 2048, "encoded_size": 1204},
+      "0x0f5": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 23403,
+        "encoded_size": 4440,
+        "tag": 1
+      },
+      "0x0f6": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 1536, "encoded_size": 1136},
+      "0x0f7": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 4096,
+        "encoded_size": 1608,
+        "tag": 1
+      },
+      "0x0f8": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 12288,
+        "encoded_size": 3108,
+        "tag": 1
+      },
+      "0x0f9": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 3072, "encoded_size": 964},
+      "0x0fa": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 1024, "encoded_size": 456},
+      "0x0fb": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 4096,
+        "encoded_size": 1356,
+        "tag": 1
+      },
+      "0x0fc": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 2048, "encoded_size": 844},
+      "0x0fd": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 3000, "encoded_size": 1900},
+      "0x0fe": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 28800,
+        "encoded_size": 1476,
+        "tag": 1
+      },
+      "0x0ff": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 34, "encoded_size": 40},
+      "0x100": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 4096,
+        "encoded_size": 664,
+        "tag": 1
+      },
+      "0x101": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 8848, "encoded_size": 2344},
+      "0x102": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 3200, "encoded_size": 760},
+      "0x103": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 5120, "encoded_size": 2736},
+      "0x104": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 2048,
+        "encoded_size": 256,
+        "tag": 1
+      },
+      "0x105": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 8192, "encoded_size": 3057},
+      "0x106": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 27946,
+        "encoded_size": 1992,
+        "tag": 1
+      },
+      "0x107": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 21248,
+        "encoded_size": 4480,
+        "tag": 1
+      },
+      "0x10b": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 32768,
+        "encoded_size": 3252,
+        "tag": 1
+      },
+      "0x10c": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 28800,
+        "encoded_size": 2652,
+        "tag": 1
+      },
+      "0x10d": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 28800,
+        "encoded_size": 1604,
+        "tag": 1
+      },
+      "0x10e": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 28800,
+        "encoded_size": 616,
+        "tag": 1
+      },
+      "0x10f": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 28800,
+        "encoded_size": 1276,
+        "tag": 1
+      },
+      "0x110": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 28800,
+        "encoded_size": 1640,
+        "tag": 1
+      },
+      "0x111": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 28800,
+        "encoded_size": 1664,
+        "tag": 1
+      },
+      "0x112": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 28800,
+        "encoded_size": 876,
+        "tag": 1
+      },
+      "0x113": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 1120, "encoded_size": 848},
+      "0x114": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 21760,
+        "encoded_size": 2080,
+        "tag": 1
+      },
+      "0x115": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 2048, "encoded_size": 1060},
+      "0x116": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 2048, "encoded_size": 1204},
+      "0x117": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 8192, "encoded_size": 3076},
+      "0x118": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 4320,
+        "encoded_size": 984,
+        "tag": 1
+      },
+      "0x119": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 7448, "encoded_size": 4076},
+      "0x11a": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 14400,
+        "encoded_size": 4040,
+        "tag": 1
+      },
+      "0x11b": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 1024, "encoded_size": 476},
+      "0x11c": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 13824, "encoded_size": 5852},
+      "0x11d": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 997, "encoded_size": 640},
+      "0x11e": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 768, "encoded_size": 436},
+      "0x11f": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 4608,
+        "encoded_size": 792,
+        "tag": 1
+      },
+      "0x120": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 22092,
+        "encoded_size": 7432,
+        "tag": 1
+      },
+      "0x121": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 1152, "encoded_size": 632},
+      "0x123": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 15796,
+        "encoded_size": 964,
+        "tag": 1
+      },
+      "0x124": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 15552, "encoded_size": 6996},
+      "0x125": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 19200, "encoded_size": 7040},
+      "0x126": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 1152, "encoded_size": 416},
+      "0x127": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 2224, "encoded_size": 1084},
+      "0x128": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 288, "encoded_size": 148},
+      "0x129": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 2560, "encoded_size": 1376},
+      "0x12a": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 2560, "encoded_size": 1184},
+      "0x12b": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 7659,
+        "encoded_size": 3220,
+        "tag": 1
+      },
+      "0x12c": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 4608, "encoded_size": 1216},
+      "0x12d": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 6912,
+        "encoded_size": 2112,
+        "tag": 1
+      },
+      "0x12e": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 1536, "encoded_size": 784},
+      "0x12f": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 17152, "encoded_size": 4568},
+      "0x130": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 3978, "encoded_size": 2672},
+      "0x131": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 6912, "encoded_size": 3416},
+      "0x132": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 25536,
+        "encoded_size": 1964,
+        "tag": 1
+      },
+      "0x133": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 12672,
+        "encoded_size": 880,
+        "tag": 1
+      },
+      "0x134": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 770, "encoded_size": 444},
+      "0x135": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 770, "encoded_size": 444},
+      "0x136": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 3080, "encoded_size": 2368},
+      "0x137": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 1540, "encoded_size": 1048},
+      "0x139": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 4096, "encoded_size": 1172},
+      "0x13a": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 1152, "encoded_size": 860},
+      "0x13b": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 2048,
+        "encoded_size": 812,
+        "tag": 1
+      },
+      "0x13c": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 5860, "encoded_size": 2644},
+      "0x13e": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 12288, "encoded_size": 5068},
+      "0x13f": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 11375, "encoded_size": 3356},
+      "0x140": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 768, "encoded_size": 412},
+      "0x141": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 1152, "encoded_size": 636},
+      "0x142": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 1536, "encoded_size": 800},
+      "0x143": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 10048, "encoded_size": 5680},
+      "0x144": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 6603, "encoded_size": 1760},
+      "0x145": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 11557,
+        "encoded_size": 3404,
+        "tag": 1
+      },
+      "0x146": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 5016, "encoded_size": 3060},
+      "0x14b": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 1804, "encoded_size": 872},
+      "0x14c": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 2560, "encoded_size": 1240},
+      "0x14d": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 4731, "encoded_size": 2968},
+      "0x14e": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 3840, "encoded_size": 3156},
+      "0x14f": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 3080, "encoded_size": 2080},
+      "0x150": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 1600, "encoded_size": 860},
+      "0x151": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 800, "encoded_size": 524},
+      "0x152": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 1600, "encoded_size": 804},
+      "0x153": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 800,
+        "encoded_size": 476,
+        "tag": 1
+      },
+      "0x154": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 1600, "encoded_size": 824},
+      "0x155": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 800, "encoded_size": 492},
+      "0x156": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 1600, "encoded_size": 960},
+      "0x157": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 800, "encoded_size": 564},
+      "0x158": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 6144, "encoded_size": 2824},
+      "0x159": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 20736,
+        "encoded_size": 5444,
+        "tag": 1
+      },
+      "0x15a": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 3795, "encoded_size": 2540},
+      "0x15b": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 2880,
+        "encoded_size": 836,
+        "tag": 1
+      },
+      "0x15c": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 11520,
+        "encoded_size": 2452,
+        "tag": 1
+      },
+      "0x15d": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 2064,
+        "encoded_size": 772,
+        "tag": 1
+      },
+      "0x15e": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 9600,
+        "encoded_size": 3120,
+        "tag": 1
+      },
+      "0x15f": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 6720,
+        "encoded_size": 2760,
+        "tag": 1
+      },
+      "0x160": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 696, "encoded_size": 408},
+      "0x161": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 6912,
+        "encoded_size": 2060,
+        "tag": 1
+      },
+      "0x16a": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 12288,
+        "encoded_size": 1840,
+        "tag": 1
+      },
+      "0x16c": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 2392, "encoded_size": 1442},
+      "0x16d": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 1728, "encoded_size": 932},
+      "0x16e": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 924, "encoded_size": 536},
+      "0x16f": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 24065,
+        "encoded_size": 5248,
+        "tag": 1
+      },
+      "0x170": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 24638,
+        "encoded_size": 1052,
+        "tag": 1
+      },
+      "0x171": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 27648, "encoded_size": 6412},
+      "0x172": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 26240,
+        "encoded_size": 876,
+        "tag": 1
+      },
+      "0x173": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 8192, "encoded_size": 4712},
+      "0x174": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 12288,
+        "encoded_size": 3084,
+        "tag": 1
+      },
+      "0x175": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 2880, "encoded_size": 1104},
+      "0x176": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 4495, "encoded_size": 1556},
+      "0x177": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 6401,
+        "encoded_size": 2484,
+        "tag": 1
+      },
+      "0x178": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 6017, "encoded_size": 2940},
+      "0x179": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 20736,
+        "encoded_size": 1880,
+        "tag": 1
+      },
+      "0x17a": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 20736,
+        "encoded_size": 2640,
+        "tag": 1
+      },
+      "0x17b": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 9600,
+        "encoded_size": 2748,
+        "tag": 1
+      },
+      "0x17c": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 2564, "encoded_size": 1472},
+      "0x17d": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 9367, "encoded_size": 5384},
+      "0x17e": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 257, "encoded_size": 100},
+      "0x17f": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 1536, "encoded_size": 748},
+      "0x180": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 3072, "encoded_size": 1312},
+      "0x181": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 1024, "encoded_size": 516},
+      "0x182": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 1024, "encoded_size": 700},
+      "0x183": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 9117, "encoded_size": 3992},
+      "0x184": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 14556,
+        "encoded_size": 5612,
+        "tag": 1
+      },
+      "0x185": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 8064, "encoded_size": 3360},
+      "0x186": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 6696, "encoded_size": 4480},
+      "0x187": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 3072, "encoded_size": 1828},
+      "0x188": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 11520,
+        "encoded_size": 3988,
+        "tag": 1
+      },
+      "0x189": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 4211,
+        "encoded_size": 892,
+        "tag": 1
+      },
+      "0x18a": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 3456,
+        "encoded_size": 1072,
+        "tag": 1
+      },
+      "0x18b": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 9492,
+        "encoded_size": 4172,
+        "tag": 1
+      },
+      "0x18d": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 4174,
+        "encoded_size": 1128,
+        "tag": 1
+      },
+      "0x190": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 2916, "encoded_size": 1592},
+      "0x191": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 3360, "encoded_size": 2196},
+      "0x192": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 14678,
+        "encoded_size": 6836,
+        "tag": 1
+      },
+      "0x193": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 5835, "encoded_size": 4048},
+      "0x194": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 10752,
+        "encoded_size": 4136,
+        "tag": 1
+      }
+    },
+    "unassigned": {
+      "0x1be": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 1664, "encoded_size": 760},
+      "0x1bf": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 576, "encoded_size": 220},
+      "0x1c0": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 2048, "encoded_size": 752},
+      "0x1c1": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 128, "encoded_size": 148},
+      "0x1c2": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 14400, "encoded_size": 2996},
+      "0x1c3": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 14400, "encoded_size": 3244},
+      "0x1c4": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 14400, "encoded_size": 2820},
+      "0x1c5": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 14400, "encoded_size": 3904},
+      "0x1c6": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 14400, "encoded_size": 2108},
+      "0x1c7": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 14400, "encoded_size": 3104},
+      "0x1c8": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 14400, "encoded_size": 2180},
+      "0x1c9": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 14400, "encoded_size": 2744},
+      "0x1ca": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 14400,
+        "encoded_size": 360,
+        "tag": 1
+      },
+      "0x1cb": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 14400,
+        "encoded_size": 452,
+        "tag": 1
+      },
+      "0x1cc": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 8352, "encoded_size": 3844},
+      "0x1d9": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 4096, "encoded_size": 1224},
+      "0x1da": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 4096, "encoded_size": 616},
+      "0x1db": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 8192,
+        "encoded_size": 456,
+        "tag": 1
+      },
+      "0x1dc": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 4096,
+        "encoded_size": 568,
+        "tag": 1
+      },
+      "0x1dd": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 4096,
+        "encoded_size": 560,
+        "tag": 1
+      },
+      "0x1de": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 4096,
+        "encoded_size": 524,
+        "tag": 1
+      },
+      "0x1df": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 4096,
+        "encoded_size": 516,
+        "tag": 1
+      },
+      "0x1e0": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 384, "encoded_size": 144},
+      "0x1e1": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 2048, "encoded_size": 624},
+      "0x1e2": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 2048, "encoded_size": 624},
+      "0x1e3": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 1024, "encoded_size": 112},
+      "0x1e4": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 256, "encoded_size": 92},
+      "0x1e5": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 256, "encoded_size": 52},
+      "0x1e6": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 256, "encoded_size": 52},
+      "0x1e7": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 6144,
+        "encoded_size": 408,
+        "tag": 1
+      },
+      "0x1e8": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 1024, "encoded_size": 588},
+      "0x1e9": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 1024, "encoded_size": 228},
+      "0x1ea": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 256, "encoded_size": 92},
+      "0x1eb": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 256, "encoded_size": 96},
+      "0x1ec": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 2048, "encoded_size": 466},
+      "0x1ed": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 512, "encoded_size": 152},
+      "0x1ee": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 64, "encoded_size": 36},
+      "0x1ef": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 1024, "encoded_size": 340},
+      "0x1f0": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 1280, "encoded_size": 228},
+      "0x1f1": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 1024, "encoded_size": 208},
+      "0x1f2": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 1024, "encoded_size": 291},
+      "0x1f3": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 128, "encoded_size": 48},
+      "0x1f4": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 2048, "encoded_size": 612},
+      "0x1f5": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 1024, "encoded_size": 156},
+      "0x1f6": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 512, "encoded_size": 100},
+      "0x1f7": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 2048, "encoded_size": 1024},
+      "0x1f8": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 2048, "encoded_size": 176},
+      "0x1f9_0": {"format": 1, "codec": "golden-sun-palette-lz", "decoded_size": 128, "encoded_size": 113},
+      "0x1f9_1": {"format": 1, "codec": "golden-sun-palette-lz", "decoded_size": 128, "encoded_size": 72},
+      "0x1f9_2": {"format": 1, "codec": "golden-sun-palette-lz", "decoded_size": 128, "encoded_size": 78},
+      "0x1f9_3": {"format": 1, "codec": "golden-sun-palette-lz", "decoded_size": 128, "encoded_size": 79},
+      "0x1f9_4": {"format": 1, "codec": "golden-sun-palette-lz", "decoded_size": 128, "encoded_size": 87},
+      "0x1f9_5": {"format": 1, "codec": "golden-sun-palette-lz", "decoded_size": 128, "encoded_size": 87},
+      "0x1f9_6": {"format": 1, "codec": "golden-sun-palette-lz", "decoded_size": 128, "encoded_size": 62},
+      "0x1f9_7": {"format": 1, "codec": "golden-sun-palette-lz", "decoded_size": 128, "encoded_size": 67},
+      "0x1f9_8": {"format": 1, "codec": "golden-sun-palette-lz", "decoded_size": 128, "encoded_size": 113},
+      "0x1f9_9": {"format": 1, "codec": "golden-sun-palette-lz", "decoded_size": 128, "encoded_size": 72},
+      "0x1f9_10": {"format": 1, "codec": "golden-sun-palette-lz", "decoded_size": 128, "encoded_size": 78},
+      "0x1f9_11": {"format": 1, "codec": "golden-sun-palette-lz", "decoded_size": 128, "encoded_size": 79},
+      "0x1f9_12": {"format": 1, "codec": "golden-sun-palette-lz", "decoded_size": 128, "encoded_size": 87},
+      "0x1f9_13": {"format": 1, "codec": "golden-sun-palette-lz", "decoded_size": 128, "encoded_size": 87},
+      "0x1f9_14": {"format": 1, "codec": "golden-sun-palette-lz", "decoded_size": 128, "encoded_size": 62},
+      "0x1f9_15": {"format": 1, "codec": "golden-sun-palette-lz", "decoded_size": 128, "encoded_size": 67},
+      "0x1f9_16": {"format": 1, "codec": "golden-sun-palette-lz", "decoded_size": 128, "encoded_size": 84},
+      "0x1fa": {"format": 1, "codec": "golden-sun-palette-lz", "decoded_size": 128, "encoded_size": 116},
+      "0x1fb": {"format": 1, "codec": "golden-sun-palette-lz", "decoded_size": 128, "encoded_size": 72},
+      "0x1fc": {"format": 1, "codec": "golden-sun-palette-lz", "decoded_size": 128, "encoded_size": 80},
+      "0x1fd": {"format": 1, "codec": "golden-sun-palette-lz", "decoded_size": 128, "encoded_size": 80},
+      "0x1fe": {"format": 1, "codec": "golden-sun-palette-lz", "decoded_size": 128, "encoded_size": 88},
+      "0x1ff": {"format": 1, "codec": "golden-sun-palette-lz", "decoded_size": 128, "encoded_size": 88},
+      "0x200": {"format": 1, "codec": "golden-sun-palette-lz", "decoded_size": 128, "encoded_size": 64},
+      "0x201": {"format": 1, "codec": "golden-sun-palette-lz", "decoded_size": 128, "encoded_size": 68},
+      "0x202": {"format": 1, "codec": "golden-sun-palette-lz", "decoded_size": 128, "encoded_size": 84}
+    }
+  }
+}

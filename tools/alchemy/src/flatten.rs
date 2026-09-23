@@ -88,7 +88,7 @@ fn run(args: &[String]) -> Result<(), String> {
     ) else {
         return Err(USAGE.into());
     };
-    let directory = crate::compiler::routing::game_directory(&game);
+    let recon = crate::compiler::routing::recon_directory(&game);
     let root = std::env::current_dir().map_err(|e| e.to_string())?;
     let source_root = root
         .join("games")
@@ -96,9 +96,9 @@ fn run(args: &[String]) -> Result<(), String> {
         .join("SRC");
     let inventory: Value =
         read_json(&root.join(format!("out/{game}-en/full/rebuilt.owner-inventory.json")))?;
-    let register_path = root.join(format!("games/{directory}/source-paths.json"));
+    let register_path = root.join(format!("{recon}/source-paths.json"));
     let mut register: Value = read_json(&register_path)?;
-    let manifest_path = root.join(format!("games/{directory}/recon/translation-units.json"));
+    let manifest_path = root.join(format!("{recon}/translation-units.json"));
     let mut manifest: Value = read_json(&manifest_path)?;
 
     let mut owners = Vec::new();

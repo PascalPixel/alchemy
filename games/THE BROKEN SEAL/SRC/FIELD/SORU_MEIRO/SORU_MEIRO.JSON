@@ -42,7 +42,6 @@
         "decoded_size": 1729,
         "encoded_size": 904,
         "tilemap_length": 1728,
-        "lookahead": "00",
         "component": "map-metatiles-2x2",
         "transform_mode": 1,
         "metatiles": 216,
@@ -55,7 +54,6 @@
         "decoded_size": 4,
         "encoded_size": 8,
         "records": [[0, 0, 0, 0]],
-        "lookahead": "0000",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -73,7 +71,6 @@
           ["0xfd01", [1702, 1], [592, 15], [1703, 1], [592, 15], [1704, 1], [592, 15], [1703, 1], [592, 15], "0xfe00"],
           "0xffff"
         ],
-        "lookahead": "0000",
         "component": "map-animation-queues",
         "word_size": 2,
         "terminators": ["0xfe00", "0xffff"]
@@ -88,7 +85,6 @@
           ["0x100e", 10], ["0x100d", 10], ["0x100c", 10], ["0x100b", 10], ["0x100a", 10], ["0x1009", 10],
           ["0x1008", 10], ["0x1007", 10], ["0xfe00"], ["0xffff"]
         ],
-        "lookahead": "000000",
         "component": "map-blend-animation",
         "word_size": 2
       },
@@ -96,7 +92,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x0851d28c",
-        "size": "0x8",
+        "size": "0x6",
         "record_size": 3,
         "segments": [
           {
@@ -114,8 +110,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x0851d292", "end": "0x0851d294", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/SORU_MEIRO/SORU_MEIRO.BIN",

@@ -42,7 +42,6 @@
         "decoded_size": 5137,
         "encoded_size": 3168,
         "tilemap_length": 5136,
-        "lookahead": "000000",
         "component": "map-metatiles-2x2",
         "transform_mode": 0,
         "metatiles": 642,
@@ -63,7 +62,6 @@
           [1, 10, 12, 0], [3, 12, 0, 0], [4, 0, 2, 0], [3, 0, 2, 0], [4, 4, 0, 0], [0, 4, 0, 0], [3, 4, 0, 0],
           [3, 0, 4, 0]
         ],
-        "lookahead": "0000",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -79,7 +77,6 @@
           ],
           "0xffff"
         ],
-        "lookahead": "0000",
         "component": "map-animation-queues",
         "word_size": 2,
         "terminators": ["0xfe00", "0xffff"]
@@ -91,7 +88,6 @@
         "decoded_size": 2,
         "encoded_size": 8,
         "words": [["0xffff"]],
-        "lookahead": "0000",
         "component": "map-blend-animation",
         "word_size": 2
       },
@@ -99,7 +95,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x0874a500",
-        "size": "0x4",
+        "size": "0x3",
         "record_size": 3,
         "segments": [
           {
@@ -109,8 +105,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x0874a503", "end": "0x0874a504", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/SUHARA_GATE/SUHARA_GATE.BIN",
@@ -161,7 +156,6 @@
         "decoded_size": 4233,
         "encoded_size": 2604,
         "tilemap_length": 4232,
-        "lookahead": "0000",
         "component": "map-metatiles-2x2",
         "transform_mode": 0,
         "metatiles": 529,
@@ -180,7 +174,6 @@
           [3, 8, 254, 0], [7, 16, 18, 0], [3, 16, 12, 0], [3, 12, 0, 0], [7, 4, 6, 0], [7, 12, 14, 0], [0, 12, 0, 0],
           [4, 16, 12, 0], [4, 12, 4, 0], [3, 12, 4, 0], [3, 0, 254, 0], [4, 4, 254, 0], [3, 4, 254, 0], [3, 16, 18, 0]
         ],
-        "lookahead": "",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -190,7 +183,6 @@
         "decoded_size": 14,
         "encoded_size": 20,
         "words": [["0xfd00", [1802, 10], [1514, 10], "0xfe00"], "0xffff"],
-        "lookahead": "0000",
         "component": "map-animation-queues",
         "word_size": 2,
         "terminators": ["0xfe00", "0xffff"]
@@ -202,7 +194,6 @@
         "decoded_size": 2,
         "encoded_size": 8,
         "words": [["0xffff"]],
-        "lookahead": "0000",
         "component": "map-blend-animation",
         "word_size": 2
       },
@@ -210,7 +201,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x0874bde0",
-        "size": "0x8",
+        "size": "0x6",
         "record_size": 3,
         "segments": [
           {
@@ -228,8 +219,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x0874bde6", "end": "0x0874bde8", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/SUHARA_GATE/SUHARA_GATE.BIN",
@@ -280,7 +270,6 @@
         "decoded_size": 3857,
         "encoded_size": 2148,
         "tilemap_length": 3856,
-        "lookahead": "00",
         "component": "map-metatiles-2x2",
         "transform_mode": 1,
         "metatiles": 482,
@@ -297,7 +286,6 @@
           [1, 4, 2, 0], [1, 2, 0, 0], [4, 8, 0, 0], [3, 4, 0, 0], [7, 0, 2, 0], [3, 0, 8, 0], [4, 0, 8, 0],
           [4, 4, 0, 0], [0, 2, 0, 0], [4, 0, 4, 0], [3, 0, 4, 0]
         ],
-        "lookahead": "0000",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -377,7 +365,6 @@
           ],
           "0xffff"
         ],
-        "lookahead": "0000",
         "component": "map-animation-queues",
         "word_size": 2,
         "terminators": ["0xfe00", "0xffff"]
@@ -388,7 +375,6 @@
         "decoded_size": 22,
         "encoded_size": 20,
         "words": [["0x3f42"], ["0x1006", 12], ["0x1005", 12], ["0x1004", 12], ["0x1005", 12], ["0xfe00"], ["0xffff"]],
-        "lookahead": "",
         "component": "map-blend-animation",
         "word_size": 2
       },
@@ -396,7 +382,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x0874d67c",
-        "size": "0x8",
+        "size": "0x6",
         "record_size": 3,
         "segments": [
           {
@@ -414,8 +400,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x0874d682", "end": "0x0874d684", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/SUHARA_GATE/SUHARA_GATE.BIN",

@@ -162,7 +162,11 @@ struct FieldActor {
     s32 velocity_z;
     s32 speed;
     s32 acceleration;
-    u8 unknown_38[0x18];
+    /* The fixed-point point the actor moves toward, or ACTOR_NO_TARGET. */
+    s32 target_x;
+    s32 target_y;
+    s32 target_z;
+    u8 unknown_44[0x0c];
     struct FieldSprite *sprite;
     /* Cleared while the actor is outside the area where actors are active. */
     u8 active;
@@ -192,8 +196,12 @@ LAYOUT_OFFSET_GUARD(FieldActor_CollisionFlags, struct FieldActor, collision_flag
 LAYOUT_OFFSET_GUARD(FieldActor_RiseEnabled, struct FieldActor, rise_enabled, 0x63);
 LAYOUT_OFFSET_GUARD(FieldActor_VelocityY, struct FieldActor, velocity_y, 0x28);
 LAYOUT_OFFSET_GUARD(FieldActor_Speed, struct FieldActor, speed, 0x30);
+LAYOUT_OFFSET_GUARD(FieldActor_TargetX, struct FieldActor, target_x, 0x38);
 LAYOUT_OFFSET_GUARD(FieldActor_Sprite, struct FieldActor, sprite, 0x50);
 LAYOUT_OFFSET_GUARD(FieldActor_Update, struct FieldActor, update, 0x6c);
+
+/* A target coordinate that names no point. */
+#define ACTOR_NO_TARGET ((s32)0x80000000)
 
 /* An actor's priority flags. */
 enum ActorPriorityFlag {
@@ -343,10 +351,25 @@ void Engine_MapRenderSetValues(s32 value0, s32 value1, s32 value2);
 void Engine_ColorBufferApplySource(s32 value, s32 mode);
 void Engine_ColorBufferApplyTarget(s32 value, s32 mode);
 void Engine_ColorBufferInterpolate(s32 frames);
+void Engine_ActorMoveToAndWait(s32 actor, s32 x, s32 z);
+void Engine_ActorWalkToAndWait(s32 actor, s32 x, s32 z);
+void Engine_ActorJump(s32 actor, s32 height, s32 frames);
+void Engine_EventShowTwoMessagesAndWait(s32 speaker, s32 x, s32 y, s32 arg, s32 extra,
+                                        s32 other_speaker, s32 other_x, s32 other_y,
+                                        s32 other_arg, s32 other_extra, s32 flags);
+void Engine_PartyAddMembers(s32 first, s32 second);
+void Engine_MapRenderWaitForValues(void);
 
 /* Loader-imported object-motion services shared by field-scene overlays. */
 s32 Engine_UiWorkWaitThenFinalizeCapacity(s32 first, s32 second);
 void Engine_ObjectMotionArmCallback(s32 actor, s32 angle, s32 frames);
+void Engine_ObjectMotionSetPositionAndCommit(s32 actor, s32 x, s32 z);
+void Engine_ObjectMotionSetPositionAndReset(s32 actor, s32 x, s32 z);
+/* Throws the actor upward at the given speed, then waits the given frames. */
+void Engine_ObjectMotionLaunch(s32 actor, s32 speed, s32 frames);
+void Engine_ObjectDispatchRelease(struct FieldActor *object);
+void Engine_MapWaitWorkValuesBelow256(void);
+void Engine_RunRisingObjectSequence(struct FieldActor *object, s32 mode);
 
 /* Holding the party still while an event plays; waits count frames. */
 static inline void Event_Begin(void)
@@ -804,6 +827,12 @@ static inline void Actor_SetChildValue(s32 actor, s32 value)
     Engine_ActorSetChildValue(actor, value);
 }
 
+/*
+ * Starts an actor's action table. Passing ACTION_TABLE_STOP in place of a
+ * table stops the action that is playing.
+ */
+#define ACTION_TABLE_STOP ((const u8 *)1)
+
 static inline void Actor_EnableActionCallback(s32 actor, const u8 *table)
 {
     Engine_ActorEnableActionCallback(actor, table);
@@ -850,6 +879,47 @@ static inline void ColorBuffer_ApplyTarget(s32 value, s32 mode)
 static inline void ColorBuffer_Interpolate(s32 frames)
 {
     Engine_ColorBufferInterpolate(frames);
+}
+
+/*
+ * Moves an actor to a whole-pixel position and waits until it arrives.
+ * Walking plays the walk animation on the way and stands the actor still.
+ */
+static inline void Actor_MoveToAndWait(s32 actor, s32 x, s32 z)
+{
+    Engine_ActorMoveToAndWait(actor, x, z);
+}
+
+static inline void Actor_WalkToAndWait(s32 actor, s32 x, s32 z)
+{
+    Engine_ActorWalkToAndWait(actor, x, z);
+}
+
+/* Throws the actor upward, plays the jump sound and waits the given frames. */
+static inline void Actor_Jump(s32 actor, s32 height, s32 frames)
+{
+    Engine_ActorJump(actor, height, frames);
+}
+
+/* Two speakers say their next messages at once; waits until both close. */
+static inline void Event_ShowTwoMessagesAndWait(s32 speaker, s32 x, s32 y, s32 arg, s32 extra,
+                                                s32 other_speaker, s32 other_x, s32 other_y,
+                                                s32 other_arg, s32 other_extra, s32 flags)
+{
+    Engine_EventShowTwoMessagesAndWait(speaker, x, y, arg, extra, other_speaker, other_x,
+                                       other_y, other_arg, other_extra, flags);
+}
+
+/* Adds two characters to the party. */
+static inline void Party_AddMembers(s32 first, s32 second)
+{
+    Engine_PartyAddMembers(first, second);
+}
+
+/* Waits until the first two map render values settle, then clears the third. */
+static inline void MapRender_WaitForValues(void)
+{
+    Engine_MapRenderWaitForValues();
 }
 
 #endif

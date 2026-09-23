@@ -42,7 +42,6 @@
         "decoded_size": 5081,
         "encoded_size": 3360,
         "tilemap_length": 5080,
-        "lookahead": "",
         "component": "map-metatiles-2x2",
         "transform_mode": 0,
         "metatiles": 635,
@@ -59,7 +58,6 @@
           [3, 0, 2, 0], [3, 16, 8, 0], [0, 2, 0, 0], [8, 16, 8, 0], [3, 8, 0, 0], [4, 254, 0, 0], [3, 8, 4, 0],
           [4, 8, 0, 0], [7, 0, 4, 0], [4, 4, 0, 0]
         ],
-        "lookahead": "",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -99,7 +97,6 @@
           ["0xfd05", [1944, 2], [1494, 0], [1976, 2], [1526, 10], [2008, 2], [1494, 0], [2040, 2], [1526, 10], "0xfe00"],
           "0xffff"
         ],
-        "lookahead": "0000",
         "component": "map-animation-queues",
         "word_size": 2,
         "terminators": ["0xfe00", "0xffff"]
@@ -111,7 +108,6 @@
         "decoded_size": 2,
         "encoded_size": 8,
         "words": [["0xffff"]],
-        "lookahead": "0000",
         "component": "map-blend-animation",
         "word_size": 2
       },
@@ -119,7 +115,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x085f60f4",
-        "size": "0x4",
+        "size": "0x3",
         "record_size": 3,
         "segments": [
           {
@@ -129,8 +125,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x085f60f7", "end": "0x085f60f8", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_DOU/BIRIBINO_DOU.BIN",
@@ -181,7 +176,6 @@
         "decoded_size": 2017,
         "encoded_size": 1064,
         "tilemap_length": 2016,
-        "lookahead": "",
         "component": "map-metatiles-2x2",
         "transform_mode": 2,
         "metatiles": 252,
@@ -198,7 +192,6 @@
           [0, 8, 0, 0], [0, 4, 0, 0], [4, 8, 4, 0], [4, 4, 0, 0], [3, 2, 4, 0], [3, 4, 6, 0], [3, 6, 8, 0],
           [4, 4, 6, 0], [4, 6, 8, 0], [0, 6, 0, 0]
         ],
-        "lookahead": "0000",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -273,7 +266,6 @@
           ],
           "0xffff"
         ],
-        "lookahead": "0000",
         "component": "map-animation-queues",
         "word_size": 2,
         "terminators": ["0xfe00", "0xffff"]
@@ -282,7 +274,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x085f8ba8",
-        "size": "0x8",
+        "size": "0x6",
         "record_size": 3,
         "segments": [
           {
@@ -300,8 +292,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x085f8bae", "end": "0x085f8bb0", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_DOU/BIRIBINO_DOU.BIN",
@@ -352,7 +343,6 @@
         "decoded_size": 2041,
         "encoded_size": 1048,
         "tilemap_length": 2040,
-        "lookahead": "00",
         "component": "map-metatiles-2x2",
         "transform_mode": 2,
         "metatiles": 255,
@@ -369,7 +359,6 @@
           [3, 4, 6, 0], [4, 4, 6, 0], [1, 0, 2, 0], [1, 2, 4, 0], [3, 0, 2, 0], [4, 0, 2, 0], [0, 2, 0, 0],
           [3, 2, 4, 0], [3, 2, 0, 0], [4, 2, 0, 0]
         ],
-        "lookahead": "000000",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -444,7 +433,6 @@
           ],
           "0xffff"
         ],
-        "lookahead": "0000",
         "component": "map-animation-queues",
         "word_size": 2,
         "terminators": ["0xfe00", "0xffff"]

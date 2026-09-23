@@ -6,9 +6,20 @@
 //!
 //! A main-image owner's extent is declared by its unit, inside the executable
 //! inventory. An overlay owner's extent is its reviewed span in
-//! `games/THE LOST AGE/semantic/regions.json`; its retained listing must hold
+//! `recon/tla/semantic/regions.json`; its retained listing must hold
 //! an `AlchemyC_` placeholder of exactly that span, and the listing assembled
 //! with every placeholder compiled must reproduce the overlay the ROM loads.
+//!
+//! The main image's retained listings, maintained SRC assembly and container
+//! runtime are assembled and compared with the ROM as the TBS assembly stage
+//! does; the receipt then credits the maintained modules whose headers declare
+//! library or handwritten provenance, and the registered runtime links.
+//!
+//! Credit needs the audited executable denominator. While the TLA inventory
+//! is absent, pending or not the independently verified automatic count, as
+//! it stays until The Lost Age has a supported full ROM build,
+//! every other verification still runs and the check passes without writing
+//! a receipt.
 use crate::compiler::overlay::placeholder_extent;
 use crate::compiler::routing::CompilerTarget;
 use crate::compiler::source_paths::{SourceOwner, SourcePaths, SHARED_SOURCE_ROOT};
@@ -18,6 +29,7 @@ use crate::overlay::compile::assemble_overlay;
 use crate::overlay::owners::{production_target, register_path, reviewed_spans};
 use crate::overlay::rom::CanonicalRom;
 use crate::overlay::source::OverlaySource;
+use crate::targets::DecompTarget;
 use serde_json::Value;
 use std::collections::{BTreeMap, BTreeSet};
 use std::path::{Path, PathBuf};
@@ -26,6 +38,8 @@ use std::process::ExitCode;
 const USAGE: &str = "usage: alchemy check tla-owners ROM";
 /// The TLA executable inventory containing the declared main-owner extents.
 const INVENTORY: &str = "out/tla-en/reports/executable.json";
+/// The check's result while no authoritative inventory exists.
+const WITHHELD: &str = "tla owners ok (receipt withheld: executable audit pending)";
 
 pub(super) fn entry(arguments: &[String]) -> ExitCode {
     let [rom] = arguments else {
@@ -48,12 +62,22 @@ struct ScoredOwner {
     extent: usize,
 }
 
+/// The authoritative inventory's main-image ranges, or `None` while that
+/// inventory is absent, pending or not the verified automatic count, which
+/// needs a supported full ROM build of `target`.
+fn audited_main_ranges(
+    root: &Path,
+    target: DecompTarget,
+) -> Result<Option<Vec<(u32, u32)>>, String> {
+    crate::coverage::pipeline::authoritative_inventory(root, target)?
+        .map(|inventory| inventory_ranges(&inventory))
+        .transpose()
+}
+
 /// Complete audited main-image executable ranges. Function boundaries belong
 /// to translation-unit manifests; denominator intervals may contain many
 /// owners and must never be mistaken for owner extents.
-fn inventory_ranges(text: &str) -> Result<Vec<(u32, u32)>, String> {
-    let inventory: Value =
-        serde_json::from_str(text).map_err(|error| format!("{INVENTORY}: {error}"))?;
+fn inventory_ranges(inventory: &Value) -> Result<Vec<(u32, u32)>, String> {
     if inventory.pointer("/main/audit").and_then(Value::as_str) != Some("complete") {
         return Err(format!("{INVENTORY}: main executable audit is incomplete"));
     }
@@ -83,12 +107,13 @@ fn inventory_ranges(text: &str) -> Result<Vec<(u32, u32)>, String> {
 
 /// Every sourced owner, including named unit members: a main owner's complete
 /// declared extent or an overlay owner's reviewed span. An owner
-/// without one, or a shared source no owner compiles, fails.
+/// without one, or a shared source no owner compiles, fails. A main extent
+/// must lie inside the audited executable ranges when they are known.
 fn scored_owners(
     root: &Path,
     register: &SourcePaths,
     unit_extents: &BTreeMap<SourceOwner, (usize, PathBuf)>,
-    executable: &[(u32, u32)],
+    executable: Option<&[(u32, u32)]>,
     reviewed: &BTreeMap<SourceOwner, usize>,
     shared: &BTreeSet<PathBuf>,
 ) -> Result<Vec<ScoredOwner>, String> {
@@ -111,10 +136,11 @@ fn scored_owners(
                 .ok()
                 .and_then(|extent| owner.address().checked_add(extent))
                 .ok_or_else(|| format!("{}: invalid translation-unit owner extent", owner.id()))?;
-            if !executable
-                .iter()
-                .any(|&(start, bound)| start <= owner.address() && end <= bound)
-            {
+            if executable.is_some_and(|executable| {
+                !executable
+                    .iter()
+                    .any(|&(start, bound)| start <= owner.address() && end <= bound)
+            }) {
                 return Err(format!(
                     "{}: translation-unit extent lies outside the audited main executable ranges in {INVENTORY}",
                     owner.id()
@@ -249,8 +275,7 @@ fn check(root: &Path, rom: &Path) -> Result<String, String> {
     }
     let register = SourcePaths::load_for_game(root, "tla")?;
     let units = TranslationUnits::load_game(root, CompilerTarget::Tla)?;
-    let inventory = std::fs::read_to_string(root.join(INVENTORY))
-        .map_err(|error| format!("{INVENTORY}: {error}"))?;
+    let main_ranges = audited_main_ranges(root, production_target(CompilerTarget::Tla))?;
     let shared = shared_sources(root)?;
     let reviewed = reviewed_spans(root, production_target(CompilerTarget::Tla))?;
     let unit_extents = register
@@ -273,7 +298,7 @@ fn check(root: &Path, rom: &Path) -> Result<String, String> {
         root,
         &register,
         &unit_extents,
-        &inventory_ranges(&inventory)?,
+        main_ranges.as_deref(),
         &reviewed,
         &shared,
     )?;
@@ -281,11 +306,21 @@ fn check(root: &Path, rom: &Path) -> Result<String, String> {
         owners.iter().partition(|scored| scored.owner.is_main());
     let mut mismatches = Vec::new();
     let tree = crate::coverage::tree::work_tree_at(root.to_path_buf());
-    let assembly = crate::coverage::pipeline::overlay_assembly_to_verify(
-        &tree,
-        &production_target(CompilerTarget::Tla),
-    )?;
-    let assembly_images = assembly.keys().cloned().collect::<Vec<_>>();
+    let target = production_target(CompilerTarget::Tla);
+    // Crediting overlay assembly needs audited intervals; comparing the
+    // images that carry it with the ROM does not.
+    let assembly = match main_ranges {
+        Some(_) => Some(crate::coverage::pipeline::overlay_assembly_to_verify(
+            &tree, &target,
+        )?),
+        None => None,
+    };
+    let assembly_images = match &assembly {
+        Some(assembly) => assembly.keys().cloned().collect::<Vec<_>>(),
+        None => crate::coverage::pipeline::overlay_assembly_images(&tree, &target)?
+            .into_iter()
+            .collect(),
+    };
     if !overlays.is_empty() || !assembly_images.is_empty() {
         let canonical = CanonicalRom::from_file(rom, production_target(CompilerTarget::Tla))?;
         mismatches.extend(overlay_mismatches(
@@ -349,6 +384,16 @@ fn check(root: &Path, rom: &Path) -> Result<String, String> {
             mismatches.join("\n")
         ));
     }
+    assemble_main(root, rom, &target)?;
+    let Some(assembly) = assembly else {
+        return Ok(format!(
+            "{WITHHELD}: {} exact owners ({} overlay), {} shared sources",
+            owners.len(),
+            overlays.len(),
+            shared.len()
+        ));
+    };
+    let assembly_main = crate::coverage::pipeline::main_assembly_credits(&tree, &target)?;
     let mut credits: Vec<_> = owners
         .iter()
         .map(|owner| crate::coverage::proof::Credit {
@@ -359,7 +404,17 @@ fn check(root: &Path, rom: &Path) -> Result<String, String> {
             kind: "c".into(),
         })
         .collect();
-    let target = production_target(CompilerTarget::Tla);
+    let assembly_bytes: i64 = assembly_main.iter().map(|(span, _)| span.bytes()).sum();
+    let assembly_ranges = assembly_main.len();
+    for (span, source) in assembly_main {
+        credits.push(crate::coverage::proof::Credit {
+            image: "main".into(),
+            start: span.start,
+            end: span.end,
+            source,
+            kind: "assembly".into(),
+        });
+    }
     for (image, spans) in assembly {
         for span in spans {
             credits.push(crate::coverage::proof::Credit {
@@ -379,11 +434,32 @@ fn check(root: &Path, rom: &Path) -> Result<String, String> {
         credits,
     )?;
     Ok(format!(
-        "tla owners ok: {} exact owners ({} overlay), {} shared sources",
+        "tla owners ok: {} exact owners ({} overlay), {} shared sources, {assembly_ranges} credited main assembly ranges ({assembly_bytes} bytes)",
         owners.len(),
         overlays.len(),
         shared.len()
     ))
+}
+
+/// The main image's retained and maintained assembly, and its container
+/// runtime, assembled and compared with the ROM exactly as the TBS build's
+/// assembly stage does. Its manifest then names the ranges a receipt credits.
+fn assemble_main(
+    root: &Path,
+    rom: &Path,
+    target: &crate::targets::DecompTarget,
+) -> Result<(), String> {
+    let rom = std::fs::canonicalize(rom).map_err(|error| format!("{}: {error}", rom.display()))?;
+    let options = crate::build_asm::Options {
+        rom: rom.to_string_lossy().into_owned(),
+        output: format!("{}/full/asm", target.output_dir),
+        source: None,
+        source_only: false,
+        asm_dir: target.asm_dir.into(),
+    };
+    crate::build_asm::build(root, root, &options)
+        .map(|_| ())
+        .map_err(|error| format!("TLA main assembly: {error}"))
 }
 
 #[cfg(test)]
@@ -393,26 +469,80 @@ mod tests {
     const REGISTER: &str = r#"{"format":3,"owners":{"main:081c2a3c":{"name":"Channel_Mute","source":"../../COMMON/SRC/SOUND/CHANNEL_MUTE.C"},"main:08001000":{"name":"Named_Only"}}}"#;
 
     fn fixture(register: &str, shared: &[&str]) -> tempfile::TempDir {
-        let mut files = vec![("games/THE LOST AGE/source-paths.json", register, true)];
+        let mut files = vec![("recon/tla/source-paths.json", register, true)];
         files.extend(shared.iter().map(|path| (*path, "void f(void) {}\n", true)));
         super::super::fixture_repository(&files)
     }
 
     #[test]
     fn inventory_intervals_give_audited_ranges() {
-        let ranges = inventory_ranges(
-            r#"{"main":{"audit":"complete","intervals":[{"start":136063548,"end":136063628},{"start":136065856,"end":136065928}]}}"#,
-        )
-        .unwrap();
+        let ranges = |text: &str| inventory_ranges(&serde_json::from_str(text).unwrap());
         assert_eq!(
-            ranges,
+            ranges(
+                r#"{"main":{"audit":"complete","intervals":[{"start":136063548,"end":136063628},{"start":136065856,"end":136065928}]}}"#,
+            )
+            .unwrap(),
             [(0x081c_2a3c, 0x081c_2a8c), (0x081c_3340, 0x081c_3388)]
         );
-        assert!(inventory_ranges(
-            r#"{"main":{"audit":"complete","intervals":[{"start":8,"end":8}]}}"#
+        assert!(
+            ranges(r#"{"main":{"audit":"complete","intervals":[{"start":8,"end":8}]}}"#).is_err()
+        );
+        assert!(ranges(r#"{"main":{"audit":"incomplete","intervals":[]}}"#).is_err());
+    }
+
+    /// Only the independently verified inventory bounds owners and unlocks
+    /// the receipt. A pending, hand-made or copied one is withheld; a verified
+    /// one inconsistent in itself fails. The Lost Age has no supported full
+    /// ROM build, so even the verified one is withheld from it until then.
+    #[test]
+    fn only_the_verified_inventory_bounds_owners() {
+        let root = fixture(REGISTER, &[]);
+        let lost_age = production_target(CompilerTarget::Tla);
+        // The Lost Age as it will be once its full ROM build is supported.
+        let target = crate::coverage::proof::fully_buildable(lost_age);
+        let ranges = |target| audited_main_ranges(root.path(), target);
+        assert_eq!(ranges(target).unwrap(), None);
+        let path = root.path().join(INVENTORY);
+        std::fs::create_dir_all(path.parent().unwrap()).unwrap();
+        std::fs::write(
+            &path,
+            r#"{"format":1,"metric":"full-c-byte-share","target":"tla-en","state":"pending","audit":"incomplete","main":{"id":"main","audit":"incomplete"},"overlay_count":0,"overlays":[]}"#,
         )
-        .is_err());
-        assert!(inventory_ranges(r#"{"main":{"audit":"incomplete","intervals":[]}}"#).is_err());
+        .unwrap();
+        assert_eq!(ranges(target).unwrap(), None);
+        let hand_made = r#"{"format":1,"metric":"full-c-byte-share","target":"tla-en","state":"audited","audit":"complete","main":{"id":"main","audit":"complete","executable_bytes":80,"intervals":[{"start":136063548,"end":136063628}]},"overlay_count":0,"overlays":[],"total_union_bytes":80}"#;
+        std::fs::write(&path, hand_made).unwrap();
+        assert_eq!(ranges(target).unwrap(), None);
+
+        let (_, mut genuine) = crate::coverage::audit::authoritative_fixture(
+            root.path(),
+            target,
+            &[(0x081c_2a3c, 0x081c_2a8c)],
+            serde_json::json!([]),
+        );
+        assert_eq!(
+            ranges(target).unwrap(),
+            Some(vec![(0x081c_2a3c, 0x081c_2a8c)])
+        );
+        // Until then the same files bound nothing.
+        assert_eq!(ranges(lost_age).unwrap(), None);
+        genuine["total_union_bytes"] = serde_json::json!(8);
+        std::fs::write(&path, genuine.to_string()).unwrap();
+        assert!(ranges(target).unwrap_err().contains("stale"));
+
+        // The committed ledger beside the real verification record and a
+        // byte-identical full build is still not the verified count.
+        let checkout = crate::compiler::routing::root();
+        for (from, to) in [
+            (
+                "recon/tla/metrics/audit-verification.json",
+                "recon/tla/metrics/audit-verification.json",
+            ),
+            ("recon/tla/metrics/executable.json", INVENTORY),
+        ] {
+            std::fs::copy(checkout.join(from), root.path().join(to)).unwrap();
+        }
+        assert_eq!(ranges(target).unwrap(), None);
     }
 
     #[test]
@@ -430,7 +560,7 @@ mod tests {
             root.path(),
             &register,
             &extents,
-            &ranges,
+            Some(&ranges),
             &BTreeMap::new(),
             &shared,
         )
@@ -443,11 +573,36 @@ mod tests {
                 extent: 80,
             }]
         );
+        // Audited ranges bound a main extent; a pending audit bounds nothing
+        // but still needs every extent.
+        let elsewhere = [(0x0800_0000, 0x0800_1000)];
+        assert!(scored_owners(
+            root.path(),
+            &register,
+            &extents,
+            Some(&elsewhere),
+            &BTreeMap::new(),
+            &shared,
+        )
+        .unwrap_err()
+        .contains("outside the audited main executable ranges"));
+        assert_eq!(
+            scored_owners(
+                root.path(),
+                &register,
+                &extents,
+                None,
+                &BTreeMap::new(),
+                &shared
+            )
+            .unwrap(),
+            owners
+        );
         let missing = scored_owners(
             root.path(),
             &register,
             &BTreeMap::new(),
-            &ranges,
+            None,
             &BTreeMap::new(),
             &shared,
         );
@@ -468,7 +623,7 @@ mod tests {
             orphan.path(),
             &register,
             &extents,
-            &ranges,
+            Some(&ranges),
             &BTreeMap::new(),
             &shared,
         )
@@ -493,7 +648,7 @@ mod tests {
             root.path(),
             &register,
             &members,
-            &[(0x081c0000, 0x081c4000)],
+            Some(&[(0x081c0000, 0x081c4000)]),
             &BTreeMap::new(),
             &BTreeSet::from([PathBuf::from(source)]),
         )
@@ -514,7 +669,7 @@ mod tests {
             root.path(),
             &register,
             &BTreeMap::new(),
-            &[],
+            None,
             &BTreeMap::new(),
             &BTreeSet::new(),
         )
@@ -527,7 +682,7 @@ mod tests {
             root.path(),
             &register,
             &BTreeMap::new(),
-            &[],
+            None,
             &BTreeMap::from([(owner, 8)]),
             &BTreeSet::new(),
         )
@@ -585,7 +740,9 @@ mod tests {
         assert!(error.contains("TLA ROM not found"));
     }
 
-    /// With the local ROM present, the tracked register and shared sources pass.
+    /// With the local ROM present, the tracked register and shared sources
+    /// pass. Without an authoritative inventory every owner, shared source and
+    /// assembly comparison still runs; only the receipt is withheld.
     #[test]
     fn tracked_tla_owners_score_exact_against_the_local_rom() {
         let root = crate::compiler::routing::root();
@@ -594,7 +751,47 @@ mod tests {
             return;
         }
         crate::compiler::routing::prefer_installed_binutils();
+        let receipt = root.join("out/tla-en/reports/verified-code.json");
+        // Whether a receipt exists, when it was last written and what it says.
+        let state = || {
+            std::fs::metadata(&receipt).ok().map(|metadata| {
+                (
+                    metadata.modified().unwrap(),
+                    std::fs::read(&receipt).unwrap(),
+                )
+            })
+        };
+        let before = state();
+        let audited = audited_main_ranges(root, production_target(CompilerTarget::Tla))
+            .unwrap()
+            .is_some();
         let summary = check(root, &rom).unwrap();
+        if !audited {
+            assert!(summary.starts_with(WITHHELD), "{summary}");
+            match before {
+                None => assert!(
+                    !receipt.exists(),
+                    "a withheld executable audit wrote a progress receipt"
+                ),
+                Some(before) => assert!(
+                    state() == Some(before),
+                    "a withheld executable audit rewrote the progress receipt"
+                ),
+            }
+            return;
+        }
         assert!(summary.starts_with("tla owners ok: "), "{summary}");
+        // The receipt credits maintained main assembly and the container
+        // runtime exactly as the assembly stage verified them.
+        let receipt = crate::coverage::proof::read(root, "tla-en").unwrap();
+        let assembly = |source: &str| {
+            receipt.credits.iter().any(|credit| {
+                credit.kind == "assembly" && credit.image == "main" && credit.source == source
+            })
+        };
+        assert!(assembly("games/THE LOST AGE/SRC/SOUND/UPDATE.S"));
+        assert!(assembly(&crate::compiler::runtime::registry_path(
+            CompilerTarget::Tla
+        )));
     }
 }

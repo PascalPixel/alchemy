@@ -1,0 +1,1434 @@
+{
+  "format": 1,
+  "maps": {
+    "619": {
+      "format": 1,
+      "kind": "golden-sun-map-container",
+      "header": {
+        "format": 1,
+        "kind": "typed-table",
+        "address": "0x08ebd648",
+        "size": "0x40",
+        "segments": [
+          {
+            "name": "parameters",
+            "address": "0x08ebd648",
+            "end": "0x08ebd654",
+            "stride": 12,
+            "element": "u8",
+            "values": [0, 0, 64, 64, 3, 0, 0, 0, 2, 2, 0, 0]
+          },
+          {
+            "name": "records",
+            "address": "0x08ebd654",
+            "end": "0x08ebd66c",
+            "stride": 8,
+            "element": "le-u16",
+            "values": [[0, 4112, 0, 65535], [0, 4112, 0, 65535], [0, 4112, 0, 65535]]
+          },
+          {
+            "name": "component_offsets",
+            "address": "0x08ebd66c",
+            "end": "0x08ebd688",
+            "stride": 4,
+            "element": "le-u32",
+            "values": ["0x40", "0x48", "0x64", "0x3d8", "0x0", "0x0", "0x590"]
+          }
+        ]
+      },
+      "metatiles": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 9,
+        "encoded_size": 8,
+        "tilemap_length": 8,
+        "component": "map-metatiles-2x2",
+        "transform_mode": 0,
+        "metatiles": 1,
+        "tilemap_source": "games/THE LOST AGE/SRC/DEBUG/TEST_ROOMS/TEST_ROOMS.BIN",
+        "tilemap_offset": 65536
+      },
+      "descriptors": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 40,
+        "encoded_size": 28,
+        "records": [
+          [0, 0, 0, 0], [0, 4, 0, 0], [3, 4, 0, 0], [4, 4, 0, 0], [0, 2, 0, 0], [3, 0, 2, 0], [4, 0, 2, 0],
+          [3, 0, 252, 0], [0, 252, 0, 0], [4, 0, 252, 0]
+        ],
+        "component": "map-descriptors-4byte",
+        "record_size": 4
+      },
+      "descriptor_grid": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "tag": 1,
+        "decoded_size": 16384,
+        "encoded_size": 440,
+        "component": "map-descriptor-grid",
+        "width": 128,
+        "height": 128
+      },
+      "positions": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 13,
+        "encoded_size": 16,
+        "table": {
+          "format": 1,
+          "kind": "typed-table",
+          "address": "0x0",
+          "size": "0xd",
+          "segments": [
+            {
+              "name": "offsets",
+              "address": "0x0",
+              "end": "0x6",
+              "stride": 2,
+              "element": "le-u16",
+              "values": ["entrances_end", "cell_patches_end", "camera_bounds_end"]
+            },
+            {"name": "reserved", "address": "0x6", "end": "0x8", "stride": 2, "element": "le-u16", "values": [0]},
+            {"name": "points_end", "address": "0x8", "end": "0x9", "stride": 1, "element": "u8", "values": [255]},
+            {"name": "entrances_end", "address": "0x9", "end": "0xa", "stride": 1, "element": "u8", "values": [255]},
+            {
+              "name": "cell_patches_end",
+              "address": "0xa",
+              "end": "0xc",
+              "stride": 2,
+              "element": "le-u16",
+              "values": [65535]
+            },
+            {"name": "camera_bounds_end", "address": "0xc", "end": "0xd", "stride": 1, "element": "u8", "values": [255]}
+          ]
+        },
+        "component": "map-positions"
+      },
+      "grid_source": "games/THE LOST AGE/SRC/DEBUG/TEST_ROOMS/TEST_ROOMS.BIN",
+      "grid_offset": 0,
+      "grid_compression": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "tag": 1,
+        "decoded_size": 65536,
+        "encoded_size": 884
+      }
+    },
+    "625": {
+      "format": 1,
+      "kind": "golden-sun-map-container",
+      "header": {
+        "format": 1,
+        "kind": "typed-table",
+        "address": "0x08ebed38",
+        "size": "0x40",
+        "segments": [
+          {
+            "name": "parameters",
+            "address": "0x08ebed38",
+            "end": "0x08ebed44",
+            "stride": 12,
+            "element": "u8",
+            "values": [0, 0, 64, 64, 3, 0, 0, 0, 2, 2, 0, 0]
+          },
+          {
+            "name": "records",
+            "address": "0x08ebed44",
+            "end": "0x08ebed5c",
+            "stride": 8,
+            "element": "le-u16",
+            "values": [[0, 4112, 0, 65535], [0, 4112, 0, 65535], [0, 4112, 0, 65535]]
+          },
+          {
+            "name": "component_offsets",
+            "address": "0x08ebed5c",
+            "end": "0x08ebed78",
+            "stride": 4,
+            "element": "le-u32",
+            "values": ["0x40", "0x48", "0x138", "0x608", "0x0", "0x0", "0xbb4"]
+          }
+        ]
+      },
+      "metatiles": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 9,
+        "encoded_size": 8,
+        "tilemap_length": 8,
+        "component": "map-metatiles-2x2",
+        "transform_mode": 0,
+        "metatiles": 1,
+        "tilemap_source": "games/THE LOST AGE/SRC/DEBUG/TEST_ROOMS/TEST_ROOMS.BIN",
+        "tilemap_offset": 196624
+      },
+      "descriptors": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 396,
+        "encoded_size": 240,
+        "records": [
+          [0, 0, 0, 0], [2, 10, 8, 0], [0, 4, 0, 0], [0, 8, 0, 0], [3, 8, 4, 0], [7, 8, 10, 0], [0, 12, 0, 0],
+          [4, 8, 4, 0], [13, 12, 14, 1], [12, 12, 14, 1], [4, 2, 4, 0], [4, 12, 8, 0], [0, 14, 0, 0], [4, 4, 8, 0],
+          [7, 4, 6, 0], [7, 8, 14, 0], [3, 12, 8, 0], [7, 4, 8, 0], [7, 4, 10, 0], [0, 6, 0, 0], [0, 32, 0, 0],
+          [3, 12, 4, 0], [3, 32, 16, 0], [0, 16, 0, 0], [4, 32, 16, 0], [3, 32, 20, 0], [0, 20, 0, 0], [4, 32, 20, 0],
+          [3, 32, 24, 0], [0, 24, 0, 0], [4, 32, 8, 0], [3, 32, 22, 0], [0, 22, 0, 0], [4, 32, 22, 0], [4, 20, 16, 0],
+          [4, 24, 20, 0], [3, 24, 0, 0], [3, 32, 8, 0], [4, 22, 0, 0], [3, 22, 8, 0], [3, 32, 12, 0], [7, 12, 14, 0],
+          [3, 4, 0, 0], [7, 0, 2, 0], [3, 16, 12, 0], [7, 12, 18, 0], [1, 4, 2, 0], [0, 2, 0, 0], [1, 2, 0, 0],
+          [3, 0, 2, 0], [7, 0, 6, 0], [1, 0, 2, 0], [3, 2, 4, 0], [4, 8, 10, 0], [7, 8, 12, 0], [3, 8, 10, 0],
+          [6, 2, 0, 0], [2, 2, 0, 0], [5, 2, 0, 0], [13, 4, 6, 6], [12, 4, 6, 6], [4, 10, 12, 0], [3, 10, 12, 0],
+          [13, 12, 14, 14], [12, 12, 14, 14], [4, 4, 0, 0], [0, 10, 0, 0], [7, 0, 4, 0], [4, 0, 2, 0], [4, 12, 4, 0],
+          [10, 4, 4, 6], [10, 6, 4, 4], [10, 0, 0, 2], [10, 2, 0, 0], [13, 8, 10, 10], [12, 8, 10, 10], [11, 4, 4, 6],
+          [11, 6, 4, 4], [12, 8, 0, 0], [9, 8, 0, 0], [13, 8, 8, 0], [11, 0, 0, 2], [11, 2, 0, 0], [4, 4, 6, 0],
+          [4, 6, 8, 0], [1, 4, 6, 0], [1, 6, 8, 0], [6, 6, 4, 4], [2, 6, 4, 0], [6, 6, 6, 4], [9, 12, 8, 0],
+          [1, 6, 4, 0], [5, 6, 4, 4], [9, 8, 4, 0], [4, 8, 6, 0], [13, 0, 2, 2], [12, 0, 2, 2], [3, 4, 2, 0],
+          [5, 2, 2, 0]
+        ],
+        "component": "map-descriptors-4byte",
+        "record_size": 4
+      },
+      "descriptor_grid": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "tag": 1,
+        "decoded_size": 16384,
+        "encoded_size": 1452,
+        "component": "map-descriptor-grid",
+        "width": 128,
+        "height": 128
+      },
+      "positions": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 13,
+        "encoded_size": 16,
+        "table": {
+          "format": 1,
+          "kind": "typed-table",
+          "address": "0x0",
+          "size": "0xd",
+          "segments": [
+            {
+              "name": "offsets",
+              "address": "0x0",
+              "end": "0x6",
+              "stride": 2,
+              "element": "le-u16",
+              "values": ["entrances_end", "cell_patches_end", "camera_bounds_end"]
+            },
+            {"name": "reserved", "address": "0x6", "end": "0x8", "stride": 2, "element": "le-u16", "values": [0]},
+            {"name": "points_end", "address": "0x8", "end": "0x9", "stride": 1, "element": "u8", "values": [255]},
+            {"name": "entrances_end", "address": "0x9", "end": "0xa", "stride": 1, "element": "u8", "values": [255]},
+            {
+              "name": "cell_patches_end",
+              "address": "0xa",
+              "end": "0xc",
+              "stride": 2,
+              "element": "le-u16",
+              "values": [65535]
+            },
+            {"name": "camera_bounds_end", "address": "0xc", "end": "0xd", "stride": 1, "element": "u8", "values": [255]}
+          ]
+        },
+        "component": "map-positions"
+      },
+      "grid_source": "games/THE LOST AGE/SRC/DEBUG/TEST_ROOMS/TEST_ROOMS.BIN",
+      "grid_offset": 131088,
+      "grid_compression": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "tag": 1,
+        "decoded_size": 65536,
+        "encoded_size": 1232
+      }
+    },
+    "631": {
+      "format": 1,
+      "kind": "golden-sun-map-container",
+      "header": {
+        "format": 1,
+        "kind": "typed-table",
+        "address": "0x08ec0904",
+        "size": "0x40",
+        "segments": [
+          {
+            "name": "parameters",
+            "address": "0x08ec0904",
+            "end": "0x08ec0910",
+            "stride": 12,
+            "element": "u8",
+            "values": [0, 0, 64, 64, 3, 0, 0, 0, 2, 2, 0, 0]
+          },
+          {
+            "name": "records",
+            "address": "0x08ec0910",
+            "end": "0x08ec0928",
+            "stride": 8,
+            "element": "le-u16",
+            "values": [[0, 4112, 0, 65535], [0, 4112, 0, 65535], [0, 4112, 0, 65535]]
+          },
+          {
+            "name": "component_offsets",
+            "address": "0x08ec0928",
+            "end": "0x08ec0944",
+            "stride": 4,
+            "element": "le-u32",
+            "values": ["0x40", "0x48", "0xdc", "0x654", "0x0", "0x0", "0x970"]
+          }
+        ]
+      },
+      "metatiles": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 9,
+        "encoded_size": 8,
+        "tilemap_length": 8,
+        "component": "map-metatiles-2x2",
+        "transform_mode": 0,
+        "metatiles": 1,
+        "tilemap_source": "games/THE LOST AGE/SRC/DEBUG/TEST_ROOMS/TEST_ROOMS.BIN",
+        "tilemap_offset": 327712
+      },
+      "descriptors": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 232,
+        "encoded_size": 148,
+        "records": [
+          [0, 0, 0, 0], [0, 254, 0, 0], [4, 254, 0, 0], [0, 28, 0, 0], [0, 24, 0, 0], [4, 28, 24, 0], [0, 32, 0, 0],
+          [0, 20, 0, 0], [4, 32, 24, 0], [0, 36, 0, 0], [4, 32, 28, 0], [4, 24, 20, 0], [3, 36, 32, 0], [4, 36, 32, 0],
+          [7, 0, 3, 0], [3, 0, 254, 0], [0, 8, 0, 0], [3, 0, 20, 0], [1, 20, 22, 0], [1, 22, 24, 0], [3, 28, 24, 0],
+          [3, 32, 24, 0], [0, 4, 0, 0], [0, 16, 0, 0], [3, 32, 28, 0], [0, 26, 0, 0], [4, 36, 28, 0], [4, 14, 8, 0],
+          [4, 20, 16, 0], [1, 20, 18, 0], [1, 18, 16, 0], [3, 24, 28, 0], [4, 24, 28, 0], [4, 4, 0, 0], [1, 8, 10, 0],
+          [1, 10, 12, 0], [1, 12, 14, 0], [1, 14, 16, 0], [3, 24, 20, 0], [4, 8, 0, 0], [1, 8, 6, 0], [1, 6, 4, 0],
+          [4, 16, 4, 0], [3, 20, 28, 0], [4, 20, 28, 0], [1, 0, 2, 0], [1, 2, 4, 0], [3, 28, 32, 0], [3, 26, 28, 0],
+          [4, 26, 28, 0], [4, 0, 254, 0], [4, 16, 0, 0], [3, 24, 26, 0], [4, 28, 32, 0], [4, 24, 16, 0], [4, 28, 20, 0],
+          [3, 16, 0, 0], [3, 32, 36, 0]
+        ],
+        "component": "map-descriptors-4byte",
+        "record_size": 4
+      },
+      "descriptor_grid": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "tag": 1,
+        "decoded_size": 16384,
+        "encoded_size": 796,
+        "component": "map-descriptor-grid",
+        "width": 128,
+        "height": 128
+      },
+      "positions": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 13,
+        "encoded_size": 16,
+        "table": {
+          "format": 1,
+          "kind": "typed-table",
+          "address": "0x0",
+          "size": "0xd",
+          "segments": [
+            {
+              "name": "offsets",
+              "address": "0x0",
+              "end": "0x6",
+              "stride": 2,
+              "element": "le-u16",
+              "values": ["entrances_end", "cell_patches_end", "camera_bounds_end"]
+            },
+            {"name": "reserved", "address": "0x6", "end": "0x8", "stride": 2, "element": "le-u16", "values": [0]},
+            {"name": "points_end", "address": "0x8", "end": "0x9", "stride": 1, "element": "u8", "values": [255]},
+            {"name": "entrances_end", "address": "0x9", "end": "0xa", "stride": 1, "element": "u8", "values": [255]},
+            {
+              "name": "cell_patches_end",
+              "address": "0xa",
+              "end": "0xc",
+              "stride": 2,
+              "element": "le-u16",
+              "values": [65535]
+            },
+            {"name": "camera_bounds_end", "address": "0xc", "end": "0xd", "stride": 1, "element": "u8", "values": [255]}
+          ]
+        },
+        "component": "map-positions"
+      },
+      "grid_source": "games/THE LOST AGE/SRC/DEBUG/TEST_ROOMS/TEST_ROOMS.BIN",
+      "grid_offset": 262176,
+      "grid_compression": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "tag": 1,
+        "decoded_size": 65536,
+        "encoded_size": 1400
+      }
+    },
+    "637": {
+      "format": 1,
+      "kind": "golden-sun-map-container",
+      "header": {
+        "format": 1,
+        "kind": "typed-table",
+        "address": "0x08ec17a0",
+        "size": "0x40",
+        "segments": [
+          {
+            "name": "parameters",
+            "address": "0x08ec17a0",
+            "end": "0x08ec17ac",
+            "stride": 12,
+            "element": "u8",
+            "values": [0, 0, 64, 64, 3, 0, 0, 0, 2, 2, 0, 0]
+          },
+          {
+            "name": "records",
+            "address": "0x08ec17ac",
+            "end": "0x08ec17c4",
+            "stride": 8,
+            "element": "le-u16",
+            "values": [[0, 4112, 0, 65535], [0, 4112, 0, 65535], [0, 4112, 0, 65535]]
+          },
+          {
+            "name": "component_offsets",
+            "address": "0x08ec17c4",
+            "end": "0x08ec17e0",
+            "stride": 4,
+            "element": "le-u32",
+            "values": ["0x40", "0x48", "0x54", "0x358", "0x0", "0x0", "0x41c"]
+          }
+        ]
+      },
+      "metatiles": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 9,
+        "encoded_size": 8,
+        "tilemap_length": 8,
+        "component": "map-metatiles-2x2",
+        "transform_mode": 0,
+        "metatiles": 1,
+        "tilemap_source": "games/THE LOST AGE/SRC/DEBUG/TEST_ROOMS/TEST_ROOMS.BIN",
+        "tilemap_offset": 393256
+      },
+      "descriptors": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 8,
+        "encoded_size": 12,
+        "records": [[0, 0, 0, 0], [32, 32, 0, 0]],
+        "component": "map-descriptors-4byte",
+        "record_size": 4
+      },
+      "descriptor_grid": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "tag": 1,
+        "decoded_size": 16384,
+        "encoded_size": 196,
+        "component": "map-descriptor-grid",
+        "width": 128,
+        "height": 128
+      },
+      "positions": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 13,
+        "encoded_size": 16,
+        "table": {
+          "format": 1,
+          "kind": "typed-table",
+          "address": "0x0",
+          "size": "0xd",
+          "segments": [
+            {
+              "name": "offsets",
+              "address": "0x0",
+              "end": "0x6",
+              "stride": 2,
+              "element": "le-u16",
+              "values": ["entrances_end", "cell_patches_end", "camera_bounds_end"]
+            },
+            {"name": "reserved", "address": "0x6", "end": "0x8", "stride": 2, "element": "le-u16", "values": [0]},
+            {"name": "points_end", "address": "0x8", "end": "0x9", "stride": 1, "element": "u8", "values": [255]},
+            {"name": "entrances_end", "address": "0x9", "end": "0xa", "stride": 1, "element": "u8", "values": [255]},
+            {
+              "name": "cell_patches_end",
+              "address": "0xa",
+              "end": "0xc",
+              "stride": 2,
+              "element": "le-u16",
+              "values": [65535]
+            },
+            {"name": "camera_bounds_end", "address": "0xc", "end": "0xd", "stride": 1, "element": "u8", "values": [255]}
+          ]
+        },
+        "component": "map-positions"
+      },
+      "grid_source": "games/THE LOST AGE/SRC/DEBUG/TEST_ROOMS/TEST_ROOMS.BIN",
+      "grid_offset": 327720,
+      "grid_compression": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "tag": 1,
+        "decoded_size": 65536,
+        "encoded_size": 772
+      }
+    },
+    "643": {
+      "format": 1,
+      "kind": "golden-sun-map-container",
+      "header": {
+        "format": 1,
+        "kind": "typed-table",
+        "address": "0x08ec2c30",
+        "size": "0x40",
+        "segments": [
+          {
+            "name": "parameters",
+            "address": "0x08ec2c30",
+            "end": "0x08ec2c3c",
+            "stride": 12,
+            "element": "u8",
+            "values": [0, 0, 64, 64, 3, 0, 0, 0, 2, 2, 0, 0]
+          },
+          {
+            "name": "records",
+            "address": "0x08ec2c3c",
+            "end": "0x08ec2c54",
+            "stride": 8,
+            "element": "le-u16",
+            "values": [[0, 4112, 0, 65535], [0, 4112, 0, 65535], [0, 4112, 0, 65535]]
+          },
+          {
+            "name": "component_offsets",
+            "address": "0x08ec2c54",
+            "end": "0x08ec2c70",
+            "stride": 4,
+            "element": "le-u32",
+            "values": ["0x40", "0x48", "0xb4", "0x4f0", "0x0", "0x0", "0x71c"]
+          }
+        ]
+      },
+      "metatiles": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 9,
+        "encoded_size": 8,
+        "tilemap_length": 8,
+        "component": "map-metatiles-2x2",
+        "transform_mode": 0,
+        "metatiles": 1,
+        "tilemap_source": "games/THE LOST AGE/SRC/DEBUG/TEST_ROOMS/TEST_ROOMS.BIN",
+        "tilemap_offset": 524344
+      },
+      "descriptors": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 180,
+        "encoded_size": 108,
+        "records": [
+          [0, 2, 0, 0], [0, 4, 0, 0], [0, 0, 0, 0], [3, 4, 0, 0], [3, 0, 4, 0], [0, 9, 0, 0], [0, 1, 0, 0],
+          [4, 0, 4, 0], [4, 4, 0, 0], [3, 9, 0, 0], [4, 9, 0, 0], [3, 12, 8, 0], [0, 10, 0, 0], [4, 8, 4, 0],
+          [0, 7, 0, 0], [9, 9, 0, 0], [0, 8, 0, 0], [12, 0, 0, 4], [9, 12, 4, 0], [15, 12, 4, 12], [2, 1, 0, 0],
+          [1, 8, 6, 0], [1, 6, 4, 0], [8, 0, 4, 0], [10, 0, 4, 4], [3, 2, 0, 0], [11, 0, 0, 4], [4, 0, 252, 0],
+          [9, 6, 4, 0], [10, 2, 2, 0], [9, 4, 0, 0], [11, 2, 0, 0], [3, 0, 2, 0], [4, 0, 2, 0], [13, 2, 2, 0],
+          [12, 2, 2, 0], [1, 0, 2, 0], [1, 2, 4, 0], [4, 252, 0, 0], [3, 0, 252, 0], [13, 4, 0, 0], [0, 252, 0, 0],
+          [8, 0, 252, 0], [13, 4, 4, 0], [7, 0, 4, 0]
+        ],
+        "component": "map-descriptors-4byte",
+        "record_size": 4
+      },
+      "descriptor_grid": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "tag": 1,
+        "decoded_size": 16384,
+        "encoded_size": 556,
+        "component": "map-descriptor-grid",
+        "width": 128,
+        "height": 128
+      },
+      "positions": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 13,
+        "encoded_size": 16,
+        "table": {
+          "format": 1,
+          "kind": "typed-table",
+          "address": "0x0",
+          "size": "0xd",
+          "segments": [
+            {
+              "name": "offsets",
+              "address": "0x0",
+              "end": "0x6",
+              "stride": 2,
+              "element": "le-u16",
+              "values": ["entrances_end", "cell_patches_end", "camera_bounds_end"]
+            },
+            {"name": "reserved", "address": "0x6", "end": "0x8", "stride": 2, "element": "le-u16", "values": [0]},
+            {"name": "points_end", "address": "0x8", "end": "0x9", "stride": 1, "element": "u8", "values": [255]},
+            {"name": "entrances_end", "address": "0x9", "end": "0xa", "stride": 1, "element": "u8", "values": [255]},
+            {
+              "name": "cell_patches_end",
+              "address": "0xa",
+              "end": "0xc",
+              "stride": 2,
+              "element": "le-u16",
+              "values": [65535]
+            },
+            {"name": "camera_bounds_end", "address": "0xc", "end": "0xd", "stride": 1, "element": "u8", "values": [255]}
+          ]
+        },
+        "component": "map-positions"
+      },
+      "grid_source": "games/THE LOST AGE/SRC/DEBUG/TEST_ROOMS/TEST_ROOMS.BIN",
+      "grid_offset": 458808,
+      "grid_compression": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "tag": 1,
+        "decoded_size": 65536,
+        "encoded_size": 1084
+      }
+    },
+    "61f": {
+      "format": 1,
+      "kind": "golden-sun-map-container",
+      "header": {
+        "format": 1,
+        "kind": "typed-table",
+        "address": "0x08ebe104",
+        "size": "0x40",
+        "segments": [
+          {
+            "name": "parameters",
+            "address": "0x08ebe104",
+            "end": "0x08ebe110",
+            "stride": 12,
+            "element": "u8",
+            "values": [0, 0, 64, 64, 3, 0, 0, 0, 2, 2, 0, 0]
+          },
+          {
+            "name": "records",
+            "address": "0x08ebe110",
+            "end": "0x08ebe128",
+            "stride": 8,
+            "element": "le-u16",
+            "values": [[0, 4112, 0, 65535], [0, 4112, 0, 65535], [0, 4112, 0, 65535]]
+          },
+          {
+            "name": "component_offsets",
+            "address": "0x08ebe128",
+            "end": "0x08ebe144",
+            "stride": 4,
+            "element": "le-u32",
+            "values": ["0x40", "0x48", "0x90", "0x580", "0x0", "0x0", "0x708"]
+          }
+        ]
+      },
+      "metatiles": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 9,
+        "encoded_size": 8,
+        "tilemap_length": 8,
+        "component": "map-metatiles-2x2",
+        "transform_mode": 0,
+        "metatiles": 1,
+        "tilemap_source": "games/THE LOST AGE/SRC/DEBUG/TEST_ROOMS/TEST_ROOMS.BIN",
+        "tilemap_offset": 131080
+      },
+      "descriptors": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 116,
+        "encoded_size": 72,
+        "records": [
+          [0, 0, 0, 0], [0, 2, 0, 0], [15, 0, 0, 252], [9, 0, 252, 0], [8, 2, 0, 0], [14, 0, 252, 252],
+          [13, 0, 252, 252], [12, 2, 0, 0], [10, 0, 252, 252], [10, 252, 252, 0], [15, 0, 0, 2], [8, 0, 252, 0],
+          [12, 0, 2, 2], [13, 0, 0, 2], [8, 0, 2, 0], [3, 252, 0, 0], [10, 252, 0, 0], [9, 0, 4, 0], [13, 2, 2, 0],
+          [4, 252, 0, 0], [9, 0, 2, 0], [13, 2, 0, 2], [0, 4, 0, 0], [11, 2, 0, 0], [13, 2, 0, 0], [10, 0, 0, 2],
+          [8, 0, 4, 0], [9, 4, 0, 0], [4, 0, 4, 0]
+        ],
+        "component": "map-descriptors-4byte",
+        "record_size": 4
+      },
+      "descriptor_grid": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "tag": 1,
+        "decoded_size": 16384,
+        "encoded_size": 392,
+        "component": "map-descriptor-grid",
+        "width": 128,
+        "height": 128
+      },
+      "positions": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 13,
+        "encoded_size": 16,
+        "table": {
+          "format": 1,
+          "kind": "typed-table",
+          "address": "0x0",
+          "size": "0xd",
+          "segments": [
+            {
+              "name": "offsets",
+              "address": "0x0",
+              "end": "0x6",
+              "stride": 2,
+              "element": "le-u16",
+              "values": ["entrances_end", "cell_patches_end", "camera_bounds_end"]
+            },
+            {"name": "reserved", "address": "0x6", "end": "0x8", "stride": 2, "element": "le-u16", "values": [0]},
+            {"name": "points_end", "address": "0x8", "end": "0x9", "stride": 1, "element": "u8", "values": [255]},
+            {"name": "entrances_end", "address": "0x9", "end": "0xa", "stride": 1, "element": "u8", "values": [255]},
+            {
+              "name": "cell_patches_end",
+              "address": "0xa",
+              "end": "0xc",
+              "stride": 2,
+              "element": "le-u16",
+              "values": [65535]
+            },
+            {"name": "camera_bounds_end", "address": "0xc", "end": "0xd", "stride": 1, "element": "u8", "values": [255]}
+          ]
+        },
+        "component": "map-positions"
+      },
+      "grid_source": "games/THE LOST AGE/SRC/DEBUG/TEST_ROOMS/TEST_ROOMS.BIN",
+      "grid_offset": 65544,
+      "grid_compression": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "tag": 1,
+        "decoded_size": 65536,
+        "encoded_size": 1264
+      }
+    },
+    "62b": {
+      "format": 1,
+      "kind": "golden-sun-map-container",
+      "header": {
+        "format": 1,
+        "kind": "typed-table",
+        "address": "0x08ebfe18",
+        "size": "0x40",
+        "segments": [
+          {
+            "name": "parameters",
+            "address": "0x08ebfe18",
+            "end": "0x08ebfe24",
+            "stride": 12,
+            "element": "u8",
+            "values": [0, 0, 64, 64, 3, 0, 0, 0, 2, 2, 0, 0]
+          },
+          {
+            "name": "records",
+            "address": "0x08ebfe24",
+            "end": "0x08ebfe3c",
+            "stride": 8,
+            "element": "le-u16",
+            "values": [[0, 4112, 0, 65535], [0, 4112, 0, 65535], [0, 4112, 0, 65535]]
+          },
+          {
+            "name": "component_offsets",
+            "address": "0x08ebfe3c",
+            "end": "0x08ebfe58",
+            "stride": 4,
+            "element": "le-u32",
+            "values": ["0x40", "0x48", "0x6c", "0x418", "0x0", "0x0", "0x5c0"]
+          }
+        ]
+      },
+      "metatiles": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 9,
+        "encoded_size": 8,
+        "tilemap_length": 8,
+        "component": "map-metatiles-2x2",
+        "transform_mode": 0,
+        "metatiles": 1,
+        "tilemap_source": "games/THE LOST AGE/SRC/DEBUG/TEST_ROOMS/TEST_ROOMS.BIN",
+        "tilemap_offset": 262168
+      },
+      "descriptors": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 56,
+        "encoded_size": 36,
+        "records": [
+          [0, 0, 0, 0], [0, 8, 0, 0], [0, 4, 0, 0], [3, 8, 4, 0], [4, 8, 4, 0], [3, 4, 0, 0], [4, 4, 0, 0],
+          [4, 0, 252, 0], [7, 4, 6, 0], [4, 252, 4, 0], [4, 4, 8, 0], [3, 0, 4, 0], [4, 0, 4, 0], [4, 0, 8, 0]
+        ],
+        "component": "map-descriptors-4byte",
+        "record_size": 4
+      },
+      "descriptor_grid": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "tag": 1,
+        "decoded_size": 16384,
+        "encoded_size": 424,
+        "component": "map-descriptor-grid",
+        "width": 128,
+        "height": 128
+      },
+      "positions": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 13,
+        "encoded_size": 16,
+        "table": {
+          "format": 1,
+          "kind": "typed-table",
+          "address": "0x0",
+          "size": "0xd",
+          "segments": [
+            {
+              "name": "offsets",
+              "address": "0x0",
+              "end": "0x6",
+              "stride": 2,
+              "element": "le-u16",
+              "values": ["entrances_end", "cell_patches_end", "camera_bounds_end"]
+            },
+            {"name": "reserved", "address": "0x6", "end": "0x8", "stride": 2, "element": "le-u16", "values": [0]},
+            {"name": "points_end", "address": "0x8", "end": "0x9", "stride": 1, "element": "u8", "values": [255]},
+            {"name": "entrances_end", "address": "0x9", "end": "0xa", "stride": 1, "element": "u8", "values": [255]},
+            {
+              "name": "cell_patches_end",
+              "address": "0xa",
+              "end": "0xc",
+              "stride": 2,
+              "element": "le-u16",
+              "values": [65535]
+            },
+            {"name": "camera_bounds_end", "address": "0xc", "end": "0xd", "stride": 1, "element": "u8", "values": [255]}
+          ]
+        },
+        "component": "map-positions"
+      },
+      "grid_source": "games/THE LOST AGE/SRC/DEBUG/TEST_ROOMS/TEST_ROOMS.BIN",
+      "grid_offset": 196632,
+      "grid_compression": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "tag": 1,
+        "decoded_size": 65536,
+        "encoded_size": 940
+      }
+    },
+    "63d": {
+      "format": 1,
+      "kind": "golden-sun-map-container",
+      "header": {
+        "format": 1,
+        "kind": "typed-table",
+        "address": "0x08ec20e8",
+        "size": "0x40",
+        "segments": [
+          {
+            "name": "parameters",
+            "address": "0x08ec20e8",
+            "end": "0x08ec20f4",
+            "stride": 12,
+            "element": "u8",
+            "values": [0, 0, 64, 64, 3, 0, 0, 0, 2, 2, 0, 0]
+          },
+          {
+            "name": "records",
+            "address": "0x08ec20f4",
+            "end": "0x08ec210c",
+            "stride": 8,
+            "element": "le-u16",
+            "values": [[0, 4112, 0, 65535], [0, 4112, 0, 65535], [0, 4112, 0, 65535]]
+          },
+          {
+            "name": "component_offsets",
+            "address": "0x08ec210c",
+            "end": "0x08ec2128",
+            "stride": 4,
+            "element": "le-u32",
+            "values": ["0x40", "0x48", "0x60", "0x434", "0x0", "0x0", "0x61c"]
+          }
+        ]
+      },
+      "metatiles": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 9,
+        "encoded_size": 8,
+        "tilemap_length": 8,
+        "component": "map-metatiles-2x2",
+        "transform_mode": 0,
+        "metatiles": 1,
+        "tilemap_source": "games/THE LOST AGE/SRC/DEBUG/TEST_ROOMS/TEST_ROOMS.BIN",
+        "tilemap_offset": 458800
+      },
+      "descriptors": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 36,
+        "encoded_size": 24,
+        "records": [
+          [0, 0, 0, 0], [0, 2, 0, 0], [0, 250, 0, 0], [0, 252, 0, 0], [0, 4, 0, 0], [2, 4, 2, 0], [2, 2, 0, 0],
+          [0, 254, 0, 0], [0, 248, 0, 0]
+        ],
+        "component": "map-descriptors-4byte",
+        "record_size": 4
+      },
+      "descriptor_grid": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "tag": 1,
+        "decoded_size": 16384,
+        "encoded_size": 488,
+        "component": "map-descriptor-grid",
+        "width": 128,
+        "height": 128
+      },
+      "positions": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 13,
+        "encoded_size": 16,
+        "table": {
+          "format": 1,
+          "kind": "typed-table",
+          "address": "0x0",
+          "size": "0xd",
+          "segments": [
+            {
+              "name": "offsets",
+              "address": "0x0",
+              "end": "0x6",
+              "stride": 2,
+              "element": "le-u16",
+              "values": ["entrances_end", "cell_patches_end", "camera_bounds_end"]
+            },
+            {"name": "reserved", "address": "0x6", "end": "0x8", "stride": 2, "element": "le-u16", "values": [0]},
+            {"name": "points_end", "address": "0x8", "end": "0x9", "stride": 1, "element": "u8", "values": [255]},
+            {"name": "entrances_end", "address": "0x9", "end": "0xa", "stride": 1, "element": "u8", "values": [255]},
+            {
+              "name": "cell_patches_end",
+              "address": "0xa",
+              "end": "0xc",
+              "stride": 2,
+              "element": "le-u16",
+              "values": [65535]
+            },
+            {"name": "camera_bounds_end", "address": "0xc", "end": "0xd", "stride": 1, "element": "u8", "values": [255]}
+          ]
+        },
+        "component": "map-positions"
+      },
+      "grid_source": "games/THE LOST AGE/SRC/DEBUG/TEST_ROOMS/TEST_ROOMS.BIN",
+      "grid_offset": 393264,
+      "grid_compression": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "tag": 1,
+        "decoded_size": 65536,
+        "encoded_size": 980
+      }
+    }
+  },
+  "palettes": {
+    "620": {"format": 1, "codec": "golden-sun-tagged-palette-lz", "tag": 1, "decoded_size": 448, "encoded_size": 12},
+    "626": {"format": 1, "codec": "golden-sun-tagged-palette-lz", "tag": 1, "decoded_size": 448, "encoded_size": 12},
+    "632": {"format": 1, "codec": "golden-sun-tagged-palette-lz", "tag": 1, "decoded_size": 448, "encoded_size": 12},
+    "638": {"format": 1, "codec": "golden-sun-tagged-palette-lz", "tag": 1, "decoded_size": 448, "encoded_size": 12},
+    "644": {"format": 1, "codec": "golden-sun-tagged-palette-lz", "tag": 1, "decoded_size": 448, "encoded_size": 12},
+    "61a": {"format": 1, "codec": "golden-sun-tagged-palette-lz", "tag": 1, "decoded_size": 448, "encoded_size": 12},
+    "62c": {"format": 1, "codec": "golden-sun-tagged-palette-lz", "tag": 1, "decoded_size": 448, "encoded_size": 12},
+    "63e": {"format": 1, "codec": "golden-sun-tagged-palette-lz", "tag": 1, "decoded_size": 448, "encoded_size": 12}
+  },
+  "charblocks": {
+    "621": {
+      "format": 1,
+      "codec": "golden-sun-kind2-lz",
+      "decoded_size": 16384,
+      "encoded_size": 336,
+      "layout": {
+        "format": "sequential-gba-4bpp-tiles",
+        "purpose": "map-charblock-source",
+        "tile_count": 512,
+        "tile_width": 8,
+        "tile_height": 8,
+        "columns": 32,
+        "rows": 16
+      }
+    },
+    "622": {
+      "format": 1,
+      "codec": "golden-sun-kind2-lz",
+      "decoded_size": 16384,
+      "encoded_size": 320,
+      "layout": {
+        "format": "sequential-gba-4bpp-tiles",
+        "purpose": "map-charblock-source",
+        "tile_count": 512,
+        "tile_width": 8,
+        "tile_height": 8,
+        "columns": 32,
+        "rows": 16
+      }
+    },
+    "623": {
+      "format": 1,
+      "codec": "golden-sun-kind2-lz",
+      "decoded_size": 16384,
+      "encoded_size": 320,
+      "layout": {
+        "format": "sequential-gba-4bpp-tiles",
+        "purpose": "map-charblock-source",
+        "tile_count": 512,
+        "tile_width": 8,
+        "tile_height": 8,
+        "columns": 32,
+        "rows": 16
+      }
+    },
+    "624": {
+      "format": 1,
+      "codec": "golden-sun-kind2-lz",
+      "decoded_size": 16384,
+      "encoded_size": 320,
+      "layout": {
+        "format": "sequential-gba-4bpp-tiles",
+        "purpose": "map-charblock-source",
+        "tile_count": 512,
+        "tile_width": 8,
+        "tile_height": 8,
+        "columns": 32,
+        "rows": 16
+      }
+    },
+    "627": {
+      "format": 1,
+      "codec": "golden-sun-kind2-lz",
+      "decoded_size": 16384,
+      "encoded_size": 336,
+      "layout": {
+        "format": "sequential-gba-4bpp-tiles",
+        "purpose": "map-charblock-source",
+        "tile_count": 512,
+        "tile_width": 8,
+        "tile_height": 8,
+        "columns": 32,
+        "rows": 16
+      }
+    },
+    "628": {
+      "format": 1,
+      "codec": "golden-sun-kind2-lz",
+      "decoded_size": 16384,
+      "encoded_size": 320,
+      "layout": {
+        "format": "sequential-gba-4bpp-tiles",
+        "purpose": "map-charblock-source",
+        "tile_count": 512,
+        "tile_width": 8,
+        "tile_height": 8,
+        "columns": 32,
+        "rows": 16
+      }
+    },
+    "629": {
+      "format": 1,
+      "codec": "golden-sun-kind2-lz",
+      "decoded_size": 16384,
+      "encoded_size": 320,
+      "layout": {
+        "format": "sequential-gba-4bpp-tiles",
+        "purpose": "map-charblock-source",
+        "tile_count": 512,
+        "tile_width": 8,
+        "tile_height": 8,
+        "columns": 32,
+        "rows": 16
+      }
+    },
+    "630": {
+      "format": 1,
+      "codec": "golden-sun-kind2-lz",
+      "decoded_size": 16384,
+      "encoded_size": 320,
+      "layout": {
+        "format": "sequential-gba-4bpp-tiles",
+        "purpose": "map-charblock-source",
+        "tile_count": 512,
+        "tile_width": 8,
+        "tile_height": 8,
+        "columns": 32,
+        "rows": 16
+      }
+    },
+    "633": {
+      "format": 1,
+      "codec": "golden-sun-kind2-lz",
+      "decoded_size": 16384,
+      "encoded_size": 336,
+      "layout": {
+        "format": "sequential-gba-4bpp-tiles",
+        "purpose": "map-charblock-source",
+        "tile_count": 512,
+        "tile_width": 8,
+        "tile_height": 8,
+        "columns": 32,
+        "rows": 16
+      }
+    },
+    "634": {
+      "format": 1,
+      "codec": "golden-sun-kind2-lz",
+      "decoded_size": 16384,
+      "encoded_size": 320,
+      "layout": {
+        "format": "sequential-gba-4bpp-tiles",
+        "purpose": "map-charblock-source",
+        "tile_count": 512,
+        "tile_width": 8,
+        "tile_height": 8,
+        "columns": 32,
+        "rows": 16
+      }
+    },
+    "635": {
+      "format": 1,
+      "codec": "golden-sun-kind2-lz",
+      "decoded_size": 16384,
+      "encoded_size": 320,
+      "layout": {
+        "format": "sequential-gba-4bpp-tiles",
+        "purpose": "map-charblock-source",
+        "tile_count": 512,
+        "tile_width": 8,
+        "tile_height": 8,
+        "columns": 32,
+        "rows": 16
+      }
+    },
+    "636": {
+      "format": 1,
+      "codec": "golden-sun-kind2-lz",
+      "decoded_size": 16384,
+      "encoded_size": 320,
+      "layout": {
+        "format": "sequential-gba-4bpp-tiles",
+        "purpose": "map-charblock-source",
+        "tile_count": 512,
+        "tile_width": 8,
+        "tile_height": 8,
+        "columns": 32,
+        "rows": 16
+      }
+    },
+    "639": {
+      "format": 1,
+      "codec": "golden-sun-kind2-lz",
+      "decoded_size": 16384,
+      "encoded_size": 336,
+      "layout": {
+        "format": "sequential-gba-4bpp-tiles",
+        "purpose": "map-charblock-source",
+        "tile_count": 512,
+        "tile_width": 8,
+        "tile_height": 8,
+        "columns": 32,
+        "rows": 16
+      }
+    },
+    "640": {
+      "format": 1,
+      "codec": "golden-sun-kind2-lz",
+      "decoded_size": 16384,
+      "encoded_size": 320,
+      "layout": {
+        "format": "sequential-gba-4bpp-tiles",
+        "purpose": "map-charblock-source",
+        "tile_count": 512,
+        "tile_width": 8,
+        "tile_height": 8,
+        "columns": 32,
+        "rows": 16
+      }
+    },
+    "641": {
+      "format": 1,
+      "codec": "golden-sun-kind2-lz",
+      "decoded_size": 16384,
+      "encoded_size": 320,
+      "layout": {
+        "format": "sequential-gba-4bpp-tiles",
+        "purpose": "map-charblock-source",
+        "tile_count": 512,
+        "tile_width": 8,
+        "tile_height": 8,
+        "columns": 32,
+        "rows": 16
+      }
+    },
+    "642": {
+      "format": 1,
+      "codec": "golden-sun-kind2-lz",
+      "decoded_size": 16384,
+      "encoded_size": 320,
+      "layout": {
+        "format": "sequential-gba-4bpp-tiles",
+        "purpose": "map-charblock-source",
+        "tile_count": 512,
+        "tile_width": 8,
+        "tile_height": 8,
+        "columns": 32,
+        "rows": 16
+      }
+    },
+    "645": {
+      "format": 1,
+      "codec": "golden-sun-kind2-lz",
+      "decoded_size": 16384,
+      "encoded_size": 336,
+      "layout": {
+        "format": "sequential-gba-4bpp-tiles",
+        "purpose": "map-charblock-source",
+        "tile_count": 512,
+        "tile_width": 8,
+        "tile_height": 8,
+        "columns": 32,
+        "rows": 16
+      }
+    },
+    "646": {
+      "format": 1,
+      "codec": "golden-sun-kind2-lz",
+      "decoded_size": 16384,
+      "encoded_size": 320,
+      "layout": {
+        "format": "sequential-gba-4bpp-tiles",
+        "purpose": "map-charblock-source",
+        "tile_count": 512,
+        "tile_width": 8,
+        "tile_height": 8,
+        "columns": 32,
+        "rows": 16
+      }
+    },
+    "647": {
+      "format": 1,
+      "codec": "golden-sun-kind2-lz",
+      "decoded_size": 16384,
+      "encoded_size": 320,
+      "layout": {
+        "format": "sequential-gba-4bpp-tiles",
+        "purpose": "map-charblock-source",
+        "tile_count": 512,
+        "tile_width": 8,
+        "tile_height": 8,
+        "columns": 32,
+        "rows": 16
+      }
+    },
+    "648": {
+      "format": 1,
+      "codec": "golden-sun-kind2-lz",
+      "decoded_size": 16384,
+      "encoded_size": 320,
+      "layout": {
+        "format": "sequential-gba-4bpp-tiles",
+        "purpose": "map-charblock-source",
+        "tile_count": 512,
+        "tile_width": 8,
+        "tile_height": 8,
+        "columns": 32,
+        "rows": 16
+      }
+    },
+    "61b": {
+      "format": 1,
+      "codec": "golden-sun-kind2-lz",
+      "decoded_size": 16384,
+      "encoded_size": 336,
+      "layout": {
+        "format": "sequential-gba-4bpp-tiles",
+        "purpose": "map-charblock-source",
+        "tile_count": 512,
+        "tile_width": 8,
+        "tile_height": 8,
+        "columns": 32,
+        "rows": 16
+      }
+    },
+    "61c": {
+      "format": 1,
+      "codec": "golden-sun-kind2-lz",
+      "decoded_size": 16384,
+      "encoded_size": 320,
+      "layout": {
+        "format": "sequential-gba-4bpp-tiles",
+        "purpose": "map-charblock-source",
+        "tile_count": 512,
+        "tile_width": 8,
+        "tile_height": 8,
+        "columns": 32,
+        "rows": 16
+      }
+    },
+    "61d": {
+      "format": 1,
+      "codec": "golden-sun-kind2-lz",
+      "decoded_size": 16384,
+      "encoded_size": 320,
+      "layout": {
+        "format": "sequential-gba-4bpp-tiles",
+        "purpose": "map-charblock-source",
+        "tile_count": 512,
+        "tile_width": 8,
+        "tile_height": 8,
+        "columns": 32,
+        "rows": 16
+      }
+    },
+    "61e": {
+      "format": 1,
+      "codec": "golden-sun-kind2-lz",
+      "decoded_size": 16384,
+      "encoded_size": 320,
+      "layout": {
+        "format": "sequential-gba-4bpp-tiles",
+        "purpose": "map-charblock-source",
+        "tile_count": 512,
+        "tile_width": 8,
+        "tile_height": 8,
+        "columns": 32,
+        "rows": 16
+      }
+    },
+    "62a": {
+      "format": 1,
+      "codec": "golden-sun-kind2-lz",
+      "decoded_size": 16384,
+      "encoded_size": 320,
+      "layout": {
+        "format": "sequential-gba-4bpp-tiles",
+        "purpose": "map-charblock-source",
+        "tile_count": 512,
+        "tile_width": 8,
+        "tile_height": 8,
+        "columns": 32,
+        "rows": 16
+      }
+    },
+    "62d": {
+      "format": 1,
+      "codec": "golden-sun-kind2-lz",
+      "decoded_size": 16384,
+      "encoded_size": 336,
+      "layout": {
+        "format": "sequential-gba-4bpp-tiles",
+        "purpose": "map-charblock-source",
+        "tile_count": 512,
+        "tile_width": 8,
+        "tile_height": 8,
+        "columns": 32,
+        "rows": 16
+      }
+    },
+    "62e": {
+      "format": 1,
+      "codec": "golden-sun-kind2-lz",
+      "decoded_size": 16384,
+      "encoded_size": 320,
+      "layout": {
+        "format": "sequential-gba-4bpp-tiles",
+        "purpose": "map-charblock-source",
+        "tile_count": 512,
+        "tile_width": 8,
+        "tile_height": 8,
+        "columns": 32,
+        "rows": 16
+      }
+    },
+    "62f": {
+      "format": 1,
+      "codec": "golden-sun-kind2-lz",
+      "decoded_size": 16384,
+      "encoded_size": 320,
+      "layout": {
+        "format": "sequential-gba-4bpp-tiles",
+        "purpose": "map-charblock-source",
+        "tile_count": 512,
+        "tile_width": 8,
+        "tile_height": 8,
+        "columns": 32,
+        "rows": 16
+      }
+    },
+    "63a": {
+      "format": 1,
+      "codec": "golden-sun-kind2-lz",
+      "decoded_size": 16384,
+      "encoded_size": 320,
+      "layout": {
+        "format": "sequential-gba-4bpp-tiles",
+        "purpose": "map-charblock-source",
+        "tile_count": 512,
+        "tile_width": 8,
+        "tile_height": 8,
+        "columns": 32,
+        "rows": 16
+      }
+    },
+    "63b": {
+      "format": 1,
+      "codec": "golden-sun-kind2-lz",
+      "decoded_size": 16384,
+      "encoded_size": 320,
+      "layout": {
+        "format": "sequential-gba-4bpp-tiles",
+        "purpose": "map-charblock-source",
+        "tile_count": 512,
+        "tile_width": 8,
+        "tile_height": 8,
+        "columns": 32,
+        "rows": 16
+      }
+    },
+    "63c": {
+      "format": 1,
+      "codec": "golden-sun-kind2-lz",
+      "decoded_size": 16384,
+      "encoded_size": 320,
+      "layout": {
+        "format": "sequential-gba-4bpp-tiles",
+        "purpose": "map-charblock-source",
+        "tile_count": 512,
+        "tile_width": 8,
+        "tile_height": 8,
+        "columns": 32,
+        "rows": 16
+      }
+    },
+    "63f": {
+      "format": 1,
+      "codec": "golden-sun-kind2-lz",
+      "decoded_size": 16384,
+      "encoded_size": 336,
+      "layout": {
+        "format": "sequential-gba-4bpp-tiles",
+        "purpose": "map-charblock-source",
+        "tile_count": 512,
+        "tile_width": 8,
+        "tile_height": 8,
+        "columns": 32,
+        "rows": 16
+      }
+    }
+  }
+}

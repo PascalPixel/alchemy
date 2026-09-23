@@ -15,10 +15,7 @@
           "address": "0x08013254",
           "end": "0x08013274",
           "source_state": "typed_values_pending",
-          "consumers": [
-            "games/THE BROKEN SEAL/raw/0800ebec.s", "games/THE BROKEN SEAL/raw/0800f2f8.s",
-            "games/THE BROKEN SEAL/raw/0800f7f4.s"
-          ],
+          "consumers": ["recon/tbs/raw/0800ebec.s", "recon/tbs/raw/0800f2f8.s", "recon/tbs/raw/0800f7f4.s"],
           "element": "le-s16",
           "stride": 2,
           "values": [-1, 0, -32768, -1, -16384, -8192, -24576, -16384, 16384, 8192, 24576, 16384, -1, 0, -32768, -1]
@@ -38,7 +35,7 @@
           "address": "0x080132cc",
           "end": "0x080132fc",
           "source_state": "typed_values_pending",
-          "consumers": ["games/THE BROKEN SEAL/raw/08010e14.s"],
+          "consumers": ["recon/tbs/raw/08010e14.s"],
           "element": "le-u32",
           "stride": 24,
           "values": [[216, 217, 218, 219, 220, 221], [222, 223, 224, 225, 226, 227]]
@@ -48,7 +45,7 @@
           "address": "0x080132fc",
           "end": "0x080133fc",
           "source_state": "typed_values_pending",
-          "consumers": ["games/THE BROKEN SEAL/raw/08011e2c.s"],
+          "consumers": ["recon/tbs/raw/08011e2c.s"],
           "element": "u8",
           "stride": 16,
           "values": [
@@ -86,7 +83,7 @@
           "address": "0x080134fc",
           "end": "0x0801353c",
           "source_state": "typed_values_pending",
-          "consumers": ["games/THE BROKEN SEAL/raw/08011f54.s", "games/THE BROKEN SEAL/raw/080120dc.s"],
+          "consumers": ["recon/tbs/raw/08011f54.s", "recon/tbs/raw/080120dc.s"],
           "element": "le-u32",
           "stride": 4,
           "values": [
@@ -99,7 +96,7 @@
           "address": "0x0801353c",
           "end": "0x0801356c",
           "source_state": "typed_values_pending",
-          "consumers": ["games/THE BROKEN SEAL/raw/080122c8.s"],
+          "consumers": ["recon/tbs/raw/080122c8.s"],
           "element": "u8",
           "stride": 1,
           "values": [
@@ -122,7 +119,7 @@
           "address": "0x08013584",
           "end": "0x0801358c",
           "source_state": "typed_values_pending",
-          "consumers": ["games/THE BROKEN SEAL/raw/08012e28.s"],
+          "consumers": ["recon/tbs/raw/08012e28.s"],
           "element": "le-s32",
           "stride": 4,
           "values": [65536, 65536]
@@ -133,8 +130,8 @@
           "end": "0x08013590",
           "source_state": "typed_values_pending",
           "consumers": [
-            "games/THE BROKEN SEAL/raw/0800c150.s", "src/0800c46c.c", "src/0800c47c.c", "src/0800c48c.c",
-            "src/0800c49c.c", "src/0800c4bc.c", "src/0800c454.c", "src/0800c4ac.c"
+            "recon/tbs/raw/0800c150.s", "src/0800c46c.c", "src/0800c47c.c", "src/0800c48c.c", "src/0800c49c.c",
+            "src/0800c4bc.c", "src/0800c454.c", "src/0800c4ac.c"
           ],
           "element": "le-u32",
           "stride": 4,
@@ -146,8 +143,8 @@
           "end": "0x080135a8",
           "source_state": "typed_values_pending",
           "consumers": [
-            "games/THE BROKEN SEAL/raw/0800c150.s", "src/0800c46c.c", "src/0800c47c.c", "src/0800c48c.c",
-            "src/0800c49c.c", "src/0800c4bc.c", "src/0800c454.c", "src/0800c4ac.c"
+            "recon/tbs/raw/0800c150.s", "src/0800c46c.c", "src/0800c47c.c", "src/0800c48c.c", "src/0800c49c.c",
+            "src/0800c4bc.c", "src/0800c454.c", "src/0800c4ac.c"
           ],
           "element": "le-u32",
           "stride": 4,
@@ -159,8 +156,8 @@
           "end": "0x080135c0",
           "source_state": "typed_values_pending",
           "consumers": [
-            "games/THE BROKEN SEAL/raw/0800c150.s", "src/0800c46c.c", "src/0800c47c.c", "src/0800c48c.c",
-            "src/0800c49c.c", "src/0800c4bc.c", "src/0800c454.c", "src/0800c4ac.c"
+            "recon/tbs/raw/0800c150.s", "src/0800c46c.c", "src/0800c47c.c", "src/0800c48c.c", "src/0800c49c.c",
+            "src/0800c4bc.c", "src/0800c454.c", "src/0800c4ac.c"
           ],
           "element": "le-u32",
           "stride": 4,
@@ -172,8 +169,8 @@
           "end": "0x080135d8",
           "source_state": "typed_values_pending",
           "consumers": [
-            "games/THE BROKEN SEAL/raw/0800c150.s", "src/0800c46c.c", "src/0800c47c.c", "src/0800c48c.c",
-            "src/0800c49c.c", "src/0800c4bc.c", "src/0800c454.c", "src/0800c4ac.c"
+            "recon/tbs/raw/0800c150.s", "src/0800c46c.c", "src/0800c47c.c", "src/0800c48c.c", "src/0800c49c.c",
+            "src/0800c4bc.c", "src/0800c454.c", "src/0800c4ac.c"
           ],
           "element": "le-u32",
           "stride": 4,
@@ -185,8 +182,8 @@
           "end": "0x080135f0",
           "source_state": "typed_values_pending",
           "consumers": [
-            "games/THE BROKEN SEAL/raw/0800c150.s", "src/0800c46c.c", "src/0800c47c.c", "src/0800c48c.c",
-            "src/0800c49c.c", "src/0800c4bc.c", "src/0800c454.c", "src/0800c4ac.c"
+            "recon/tbs/raw/0800c150.s", "src/0800c46c.c", "src/0800c47c.c", "src/0800c48c.c", "src/0800c49c.c",
+            "src/0800c4bc.c", "src/0800c454.c", "src/0800c4ac.c"
           ],
           "element": "le-u32",
           "stride": 4,
@@ -198,8 +195,8 @@
           "end": "0x08013608",
           "source_state": "typed_values_pending",
           "consumers": [
-            "games/THE BROKEN SEAL/raw/0800c150.s", "src/0800c46c.c", "src/0800c47c.c", "src/0800c48c.c",
-            "src/0800c49c.c", "src/0800c4bc.c", "src/0800c454.c", "src/0800c4ac.c"
+            "recon/tbs/raw/0800c150.s", "src/0800c46c.c", "src/0800c47c.c", "src/0800c48c.c", "src/0800c49c.c",
+            "src/0800c4bc.c", "src/0800c454.c", "src/0800c4ac.c"
           ],
           "element": "le-u32",
           "stride": 4,
@@ -211,8 +208,8 @@
           "end": "0x08013620",
           "source_state": "typed_values_pending",
           "consumers": [
-            "games/THE BROKEN SEAL/raw/0800c150.s", "src/0800c46c.c", "src/0800c47c.c", "src/0800c48c.c",
-            "src/0800c49c.c", "src/0800c4bc.c", "src/0800c454.c", "src/0800c4ac.c"
+            "recon/tbs/raw/0800c150.s", "src/0800c46c.c", "src/0800c47c.c", "src/0800c48c.c", "src/0800c49c.c",
+            "src/0800c4bc.c", "src/0800c454.c", "src/0800c4ac.c"
           ],
           "element": "le-u32",
           "stride": 4,
@@ -224,8 +221,8 @@
           "end": "0x08013624",
           "source_state": "typed_values_pending",
           "consumers": [
-            "games/THE BROKEN SEAL/raw/0800c150.s", "src/0800c46c.c", "src/0800c47c.c", "src/0800c48c.c",
-            "src/0800c49c.c", "src/0800c4bc.c", "src/0800c454.c", "src/0800c4ac.c"
+            "recon/tbs/raw/0800c150.s", "src/0800c46c.c", "src/0800c47c.c", "src/0800c48c.c", "src/0800c49c.c",
+            "src/0800c4bc.c", "src/0800c454.c", "src/0800c4ac.c"
           ],
           "element": "le-u32",
           "stride": 4,
@@ -237,7 +234,7 @@
           "end": "0x08013724",
           "source_state": "typed_values_pending",
           "consumers": [
-            "games/THE BROKEN SEAL/SRC/OBJECT/UPDATE_ALL.S", "games/THE BROKEN SEAL/raw/0800cacc.s", "src/0800e9a0.c",
+            "games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/UPDATE_ALL.S", "recon/tbs/raw/0800cacc.s", "src/0800e9a0.c",
             "src/0800e9dc.c", "src/0800ea18.c"
           ],
           "element": "thumb-pointer",

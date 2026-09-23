@@ -1,0 +1,204 @@
+{
+  "format": 1,
+  "maps": {
+    "613": {
+      "format": 1,
+      "kind": "golden-sun-map-container",
+      "header": {
+        "format": 1,
+        "kind": "typed-table",
+        "address": "0x08eb70cc",
+        "size": "0x40",
+        "segments": [
+          {
+            "name": "parameters",
+            "address": "0x08eb70cc",
+            "end": "0x08eb70d8",
+            "stride": 12,
+            "element": "u8",
+            "values": [0, 0, 100, 64, 3, 1, 3, 0, 2, 2, 0, 0]
+          },
+          {
+            "name": "records",
+            "address": "0x08eb70d8",
+            "end": "0x08eb70f0",
+            "stride": 8,
+            "element": "le-u16",
+            "values": [[0, 4112, 0, 65535], [100, 4112, 0, 65535], [16384, 4112, 0, 65535]]
+          },
+          {
+            "name": "component_offsets",
+            "address": "0x08eb70f0",
+            "end": "0x08eb710c",
+            "stride": 4,
+            "element": "le-u32",
+            "values": ["0x40", "0x2f8", "0x324", "0x9ec", "0xb44", "0xb4c", "0xb54"]
+          }
+        ]
+      },
+      "metatiles": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 1305,
+        "encoded_size": 696,
+        "tilemap_length": 1304,
+        "component": "map-metatiles-2x2",
+        "transform_mode": 1,
+        "metatiles": 163,
+        "tilemap_source": "games/THE LOST AGE/SRC/DEBUG/SHOPPU_TEST/SHOPPU_TEST.BIN",
+        "tilemap_offset": 65536
+      },
+      "descriptors": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 76,
+        "encoded_size": 44,
+        "records": [
+          [0, 0, 0, 0], [0, 4, 0, 0], [0, 8, 0, 0], [1, 4, 2, 0], [1, 2, 0, 0], [8, 0, 250, 0], [0, 250, 0, 0],
+          [8, 250, 0, 0], [9, 0, 1, 0], [0, 1, 0, 0], [0, 2, 0, 0], [1, 2, 1, 0], [1, 1, 0, 0], [5, 2, 2, 1],
+          [2, 2, 1, 0], [5, 2, 1, 1], [5, 1, 1, 0], [2, 1, 0, 0], [5, 1, 0, 0]
+        ],
+        "component": "map-descriptors-4byte",
+        "record_size": 4
+      },
+      "descriptor_grid": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "tag": 1,
+        "decoded_size": 16384,
+        "encoded_size": 344,
+        "component": "map-descriptor-grid",
+        "width": 128,
+        "height": 128
+      },
+      "animation_queues": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "tag": 1,
+        "decoded_size": 2,
+        "encoded_size": 8,
+        "words": ["0xffff"],
+        "component": "map-animation-queues",
+        "word_size": 2,
+        "terminators": ["0xfe00", "0xffff"]
+      },
+      "blend_animation": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "tag": 1,
+        "decoded_size": 2,
+        "encoded_size": 8,
+        "words": [["0xffff"]],
+        "component": "map-blend-animation",
+        "word_size": 2
+      },
+      "positions": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 13,
+        "encoded_size": 16,
+        "table": {
+          "format": 1,
+          "kind": "typed-table",
+          "address": "0x0",
+          "size": "0xd",
+          "segments": [
+            {
+              "name": "offsets",
+              "address": "0x0",
+              "end": "0x6",
+              "stride": 2,
+              "element": "le-u16",
+              "values": ["entrances_end", "cell_patches_end", "camera_bounds_end"]
+            },
+            {"name": "reserved", "address": "0x6", "end": "0x8", "stride": 2, "element": "le-u16", "values": [0]},
+            {"name": "points_end", "address": "0x8", "end": "0x9", "stride": 1, "element": "u8", "values": [255]},
+            {"name": "entrances_end", "address": "0x9", "end": "0xa", "stride": 1, "element": "u8", "values": [255]},
+            {
+              "name": "cell_patches_end",
+              "address": "0xa",
+              "end": "0xc",
+              "stride": 2,
+              "element": "le-u16",
+              "values": [65535]
+            },
+            {"name": "camera_bounds_end", "address": "0xc", "end": "0xd", "stride": 1, "element": "u8", "values": [255]}
+          ]
+        },
+        "component": "map-positions"
+      },
+      "grid_source": "games/THE LOST AGE/SRC/DEBUG/SHOPPU_TEST/SHOPPU_TEST.BIN",
+      "grid_offset": 0,
+      "grid_compression": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "tag": 1,
+        "decoded_size": 65536,
+        "encoded_size": 1736
+      }
+    }
+  },
+  "palettes": {"614": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 448, "encoded_size": 336}},
+  "charblocks": {
+    "615": {
+      "format": 1,
+      "codec": "golden-sun-kind2-lz",
+      "decoded_size": 16384,
+      "encoded_size": 9812,
+      "layout": {
+        "format": "sequential-gba-4bpp-tiles",
+        "purpose": "map-charblock-source",
+        "tile_count": 512,
+        "tile_width": 8,
+        "tile_height": 8,
+        "columns": 32,
+        "rows": 16
+      }
+    },
+    "616": {
+      "format": 1,
+      "codec": "golden-sun-kind2-lz",
+      "decoded_size": 16384,
+      "encoded_size": 6004,
+      "layout": {
+        "format": "sequential-gba-4bpp-tiles",
+        "purpose": "map-charblock-source",
+        "tile_count": 512,
+        "tile_width": 8,
+        "tile_height": 8,
+        "columns": 32,
+        "rows": 16
+      }
+    },
+    "617": {
+      "format": 1,
+      "codec": "golden-sun-kind2-lz",
+      "decoded_size": 16384,
+      "encoded_size": 4796,
+      "layout": {
+        "format": "sequential-gba-4bpp-tiles",
+        "purpose": "map-charblock-source",
+        "tile_count": 512,
+        "tile_width": 8,
+        "tile_height": 8,
+        "columns": 32,
+        "rows": 16
+      }
+    },
+    "618": {
+      "format": 1,
+      "codec": "golden-sun-kind2-lz",
+      "decoded_size": 16384,
+      "encoded_size": 2116,
+      "layout": {
+        "format": "sequential-gba-4bpp-tiles",
+        "purpose": "map-charblock-source",
+        "tile_count": 512,
+        "tile_width": 8,
+        "tile_height": 8,
+        "columns": 32,
+        "rows": 16
+      }
+    }
+  }
+}

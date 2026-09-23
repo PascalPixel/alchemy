@@ -42,7 +42,6 @@
         "decoded_size": 2753,
         "encoded_size": 1560,
         "tilemap_length": 2752,
-        "lookahead": "000000",
         "component": "map-metatiles-2x2",
         "transform_mode": 2,
         "metatiles": 344,
@@ -55,7 +54,6 @@
         "decoded_size": 28,
         "encoded_size": 20,
         "records": [[0, 0, 0, 0], [0, 4, 0, 0], [3, 4, 0, 0], [4, 4, 0, 0], [3, 0, 4, 0], [4, 0, 4, 0], [7, 0, 1, 0]],
-        "lookahead": "00",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -127,7 +125,6 @@
           ["0xfd0f", [970, 2], [900, 0], [1002, 2], [932, 18], [908, 2], [900, 0], [940, 2], [932, 18], "0xfe00"],
           "0xffff"
         ],
-        "lookahead": "00",
         "component": "map-animation-queues",
         "word_size": 2,
         "terminators": ["0xfe00", "0xffff"]
@@ -139,7 +136,6 @@
         "decoded_size": 14,
         "encoded_size": 20,
         "words": [["0x3f42"], ["0x1002", 15], ["0x1003", 50], ["0xfe00"], ["0xffff"]],
-        "lookahead": "00",
         "component": "map-blend-animation",
         "word_size": 2
       },
@@ -147,7 +143,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x085511d0",
-        "size": "0x4",
+        "size": "0x3",
         "record_size": 3,
         "segments": [
           {
@@ -157,8 +153,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x085511d3", "end": "0x085511d4", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/GOMA_IKE/GOMA_IKE.BIN",

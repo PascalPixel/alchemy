@@ -1,0 +1,292 @@
+{
+  "format": 1,
+  "maps": {
+    "4ec": {
+      "format": 1,
+      "kind": "golden-sun-map-container",
+      "header": {
+        "format": 1,
+        "kind": "typed-table",
+        "address": "0x08d79378",
+        "size": "0x40",
+        "segments": [
+          {
+            "name": "parameters",
+            "address": "0x08d79378",
+            "end": "0x08d79384",
+            "stride": 12,
+            "element": "u8",
+            "values": [0, 0, 30, 22, 3, 1, 2, 1, 1, 2, 0, 0]
+          },
+          {
+            "name": "records",
+            "address": "0x08d79384",
+            "end": "0x08d7939c",
+            "stride": 8,
+            "element": "le-u16",
+            "values": [[0, 4112, 0, 65535], [128, 4112, 0, 65535], [33792, 4112, 0, 65535]]
+          },
+          {
+            "name": "component_offsets",
+            "address": "0x08d7939c",
+            "end": "0x08d793b8",
+            "stride": 4,
+            "element": "le-u32",
+            "values": ["0x40", "0x6e0", "0x6fc", "0xe90", "0xf78", "0x1088", "0x1090"]
+          }
+        ]
+      },
+      "metatiles": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "tag": 1,
+        "decoded_size": 8753,
+        "encoded_size": 1696,
+        "tilemap_length": 8752,
+        "component": "map-metatiles-2x2",
+        "transform_mode": 1,
+        "metatiles": 1094,
+        "tilemap_source": "games/THE LOST AGE/SRC/FIELD/REMURIA_IZUMI/REMURIA_IZUMI.BIN",
+        "tilemap_offset": 65536
+      },
+      "descriptors": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 40,
+        "encoded_size": 28,
+        "records": [
+          [0, 0, 0, 0], [0, 2, 0, 0], [12, 2, 0, 0], [13, 2, 2, 0], [12, 2, 2, 0], [13, 2, 0, 0], [0, 3, 0, 0],
+          [8, 0, 1, 0], [0, 1, 0, 0], [8, 1, 0, 0]
+        ],
+        "component": "map-descriptors-4byte",
+        "record_size": 4
+      },
+      "descriptor_grid": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "tag": 1,
+        "decoded_size": 16384,
+        "encoded_size": 232,
+        "component": "map-descriptor-grid",
+        "width": 128,
+        "height": 128
+      },
+      "animation_queues": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 1482,
+        "encoded_size": 272,
+        "words": [
+          [
+            "0xfd00", [1536, 24], [1472, 0], [1568, 24], [1504, 4], [1600, 24], [1472, 0], [1632, 24], [1504, 4],
+            [1664, 24], [1472, 0], [1696, 24], [1504, 4], [1728, 24], [1472, 0], [1760, 24], [1504, 4], [1792, 24],
+            [1472, 0], [1824, 24], [1504, 4], [1856, 24], [1472, 0], [1888, 24], [1504, 4], [1920, 24], [1472, 0],
+            [1952, 24], [1504, 4], [1984, 24], [1472, 0], [2016, 24], [1504, 4], "0xfe00"
+          ],
+          [
+            "0xfd01", [1560, 2], [516, 0], [1592, 2], [548, 0], [1624, 2], [580, 0], [1656, 2], [612, 160], [1562, 2],
+            [516, 0], [1594, 2], [548, 0], [1626, 2], [580, 0], [1658, 2], [612, 6], "0xfe00"
+          ],
+          [
+            "0xfd02", [1564, 2], [518, 0], [1596, 2], [550, 0], [1628, 2], [582, 0], [1660, 2], [614, 180], [1566, 2],
+            [518, 0], [1598, 2], [550, 0], [1630, 2], [582, 0], [1662, 2], [614, 6], "0xfe00"
+          ],
+          [
+            "0xfd03", [1690, 2], [520, 0], [1722, 2], [552, 0], [1754, 2], [584, 0], [1786, 2], [616, 6], [1688, 2],
+            [520, 0], [1720, 2], [552, 0], [1752, 2], [584, 0], [1784, 2], [616, 170], "0xfe00"
+          ],
+          [
+            "0xfd04", [1692, 2], [522, 0], [1724, 2], [554, 0], [1756, 2], [586, 0], [1788, 2], [618, 80], [1694, 2],
+            [522, 0], [1726, 2], [554, 0], [1758, 2], [586, 0], [1790, 2], [618, 6], [1692, 2], [522, 0], [1724, 2],
+            [554, 0], [1756, 2], [586, 0], [1788, 2], [618, 80], "0xfe00"
+          ],
+          [
+            "0xfd05", [1816, 2], [578, 0], [1848, 2], [610, 2], [1818, 2], [578, 0], [1850, 2], [610, 2], [1820, 2],
+            [578, 0], [1852, 2], [610, 2], [1822, 2], [578, 0], [1854, 2], [610, 2], [1816, 2], [578, 0], [1848, 2],
+            [610, 2], [1818, 2], [578, 0], [1850, 2], [610, 2], [1820, 2], [578, 0], [1852, 2], [610, 2], [1822, 2],
+            [578, 0], [1854, 2], [610, 2], [1816, 2], [578, 0], [1848, 2], [610, 2], [1818, 2], [578, 0], [1850, 2],
+            [610, 2], [1820, 2], [578, 0], [1852, 2], [610, 2], [1822, 2], [578, 0], [1854, 2], [610, 2], [1816, 2],
+            [578, 0], [1848, 2], [610, 2], [1818, 2], [578, 0], [1850, 2], [610, 2], [1820, 2], [578, 0], [1852, 2],
+            [610, 2], [1822, 2], [578, 0], [1854, 2], [610, 2], [1816, 2], [578, 0], [1848, 2], [610, 2], [1818, 2],
+            [578, 0], [1850, 2], [610, 2], [1820, 2], [578, 0], [1852, 2], [610, 2], [1822, 2], [578, 0], [1854, 2],
+            [610, 2], [1816, 2], [578, 0], [1848, 2], [610, 2], [1818, 2], [578, 0], [1850, 2], [610, 2], [1820, 2],
+            [578, 0], [1852, 2], [610, 2], [1822, 2], [578, 0], [1854, 2], [610, 2], [1816, 2], [578, 0], [1848, 2],
+            [610, 2], [1818, 2], [578, 0], [1850, 2], [610, 2], [1820, 2], [578, 0], [1852, 2], [610, 2], [1822, 2],
+            [578, 0], [1854, 2], [610, 2], [1816, 2], [578, 0], [1848, 2], [610, 2], [1818, 2], [578, 0], [1850, 2],
+            [610, 2], [1820, 2], [578, 0], [1852, 2], [610, 2], [1822, 2], [578, 0], [1854, 2], [610, 2], [1816, 2],
+            [578, 0], [1848, 2], [610, 2], [1818, 2], [578, 0], [1850, 2], [610, 2], [1820, 2], [578, 0], [1852, 2],
+            [610, 2], [1822, 2], [578, 0], [1854, 2], [610, 2], [1816, 2], [578, 0], [1848, 2], [610, 2], [1818, 2],
+            [578, 0], [1850, 2], [610, 2], [1820, 2], [578, 0], [1852, 2], [610, 2], [1822, 2], [578, 0], [1854, 2],
+            [610, 2], [1816, 2], [578, 0], [1848, 2], [610, 2], [1818, 2], [578, 0], [1850, 2], [610, 2], [1820, 2],
+            [578, 0], [1852, 2], [610, 2], [1822, 2], [578, 0], [1854, 2], [610, 2], [1816, 2], [578, 0], [1848, 2],
+            [610, 2], [1818, 2], [578, 0], [1850, 2], [610, 2], [1820, 2], [578, 0], [1852, 2], [610, 2], [1822, 2],
+            [578, 0], [1854, 2], [610, 2], [1816, 2], [578, 0], [1848, 2], [610, 2], [1818, 2], [578, 0], [1850, 2],
+            [610, 2], [1820, 2], [578, 0], [1852, 2], [610, 2], [1822, 2], [578, 0], [1854, 2], [610, 2], [1816, 2],
+            [578, 0], [1848, 2], [610, 2], [1818, 2], [578, 0], [1850, 2], [610, 2], [1820, 2], [578, 0], [1852, 2],
+            [610, 2], [1822, 2], [578, 0], [1854, 2], [610, 2], [1816, 2], [578, 0], [1848, 2], [610, 2], [1818, 2],
+            [578, 0], [1850, 2], [610, 2], [1820, 2], [578, 0], [1852, 2], [610, 2], [1822, 2], [578, 0], [1854, 2],
+            [610, 2], [1816, 2], [578, 0], [1848, 2], [610, 2], [1818, 2], [578, 0], [1850, 2], [610, 2], [1820, 2],
+            [578, 0], [1852, 2], [610, 2], [1822, 2], [578, 0], [1854, 2], [610, 2], [1880, 2], [578, 0], [1912, 2],
+            [610, 65535], "0xfe00"
+          ],
+          "0xffff"
+        ],
+        "component": "map-animation-queues",
+        "word_size": 2,
+        "terminators": ["0xfe00", "0xffff"]
+      },
+      "blend_animation": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "tag": 1,
+        "decoded_size": 2,
+        "encoded_size": 8,
+        "words": [["0xffff"]],
+        "component": "map-blend-animation",
+        "word_size": 2
+      },
+      "positions": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 23,
+        "encoded_size": 28,
+        "table": {
+          "format": 1,
+          "kind": "typed-table",
+          "address": "0x0",
+          "size": "0x17",
+          "segments": [
+            {
+              "name": "offsets",
+              "address": "0x0",
+              "end": "0x6",
+              "stride": 2,
+              "element": "le-u16",
+              "values": ["entrances", "cell_patches_end", "camera_bounds"]
+            },
+            {"name": "reserved", "address": "0x6", "end": "0x8", "stride": 2, "element": "le-u16", "values": [0]},
+            {"name": "points_end", "address": "0x8", "end": "0x9", "stride": 1, "element": "u8", "values": [255]},
+            {
+              "name": "entrances",
+              "address": "0x9",
+              "end": "0xf",
+              "stride": 6,
+              "element": "record",
+              "fields": [
+                {"name": "entrance", "element": "s8"},
+                {"name": "x", "element": "le-s16"},
+                {"name": "y", "element": "le-s16"},
+                {"name": "arrival", "element": "u8", "bits": {"facing": 4, "options": 4}}
+              ],
+              "records": [{"entrance": 1, "x": 120, "y": 168, "arrival": [12, 0]}]
+            },
+            {"name": "entrances_end", "address": "0xf", "end": "0x10", "stride": 1, "element": "u8", "values": [255]},
+            {
+              "name": "cell_patches_end",
+              "address": "0x10",
+              "end": "0x12",
+              "stride": 2,
+              "element": "le-u16",
+              "values": [65535]
+            },
+            {
+              "name": "camera_bounds",
+              "address": "0x12",
+              "end": "0x16",
+              "stride": 4,
+              "element": "record",
+              "fields": [
+                {"name": "left", "element": "s8"},
+                {"name": "top", "element": "s8"},
+                {"name": "right", "element": "s8"},
+                {"name": "bottom", "element": "s8"}
+              ],
+              "records": [{"left": 0, "top": 0, "right": 15, "bottom": 11}]
+            },
+            {
+              "name": "camera_bounds_end",
+              "address": "0x16",
+              "end": "0x17",
+              "stride": 1,
+              "element": "u8",
+              "values": [255]
+            }
+          ]
+        },
+        "component": "map-positions"
+      },
+      "grid_source": "games/THE LOST AGE/SRC/FIELD/REMURIA_IZUMI/REMURIA_IZUMI.BIN",
+      "grid_offset": 0,
+      "grid_compression": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "tag": 1,
+        "decoded_size": 65536,
+        "encoded_size": 1940
+      }
+    }
+  },
+  "palettes": {"4ed": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 448, "encoded_size": 428}},
+  "charblocks": {
+    "4ee": {
+      "format": 1,
+      "codec": "golden-sun-kind2-lz",
+      "decoded_size": 16384,
+      "encoded_size": 6924,
+      "layout": {
+        "format": "sequential-gba-4bpp-tiles",
+        "purpose": "map-charblock-source",
+        "tile_count": 512,
+        "tile_width": 8,
+        "tile_height": 8,
+        "columns": 32,
+        "rows": 16
+      }
+    },
+    "4ef": {
+      "format": 1,
+      "codec": "golden-sun-kind2-lz",
+      "decoded_size": 16384,
+      "encoded_size": 2980,
+      "layout": {
+        "format": "sequential-gba-4bpp-tiles",
+        "purpose": "map-charblock-source",
+        "tile_count": 512,
+        "tile_width": 8,
+        "tile_height": 8,
+        "columns": 32,
+        "rows": 16
+      }
+    },
+    "4f0": {
+      "format": 1,
+      "codec": "golden-sun-kind2-lz",
+      "decoded_size": 16384,
+      "encoded_size": 3704,
+      "layout": {
+        "format": "sequential-gba-4bpp-tiles",
+        "purpose": "map-charblock-source",
+        "tile_count": 512,
+        "tile_width": 8,
+        "tile_height": 8,
+        "columns": 32,
+        "rows": 16
+      }
+    },
+    "4f1": {
+      "format": 1,
+      "codec": "golden-sun-kind2-lz",
+      "decoded_size": 16384,
+      "encoded_size": 3716,
+      "layout": {
+        "format": "sequential-gba-4bpp-tiles",
+        "purpose": "map-charblock-source",
+        "tile_count": 512,
+        "tile_width": 8,
+        "tile_height": 8,
+        "columns": 32,
+        "rows": 16
+      }
+    }
+  }
+}

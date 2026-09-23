@@ -42,7 +42,6 @@
         "decoded_size": 5225,
         "encoded_size": 2864,
         "tilemap_length": 5224,
-        "lookahead": "000000",
         "component": "map-metatiles-2x2",
         "transform_mode": 1,
         "metatiles": 653,
@@ -55,7 +54,6 @@
         "decoded_size": 28,
         "encoded_size": 20,
         "records": [[0, 0, 0, 0], [0, 4, 0, 0], [3, 4, 0, 0], [4, 4, 0, 0], [4, 0, 4, 0], [3, 0, 4, 0], [0, 2, 0, 0]],
-        "lookahead": "0000",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -107,7 +105,6 @@
           ],
           "0xffff"
         ],
-        "lookahead": "00",
         "component": "map-animation-queues",
         "word_size": 2,
         "terminators": ["0xfe00", "0xffff"]
@@ -119,7 +116,6 @@
         "decoded_size": 10,
         "encoded_size": 16,
         "words": [["0x3f42"], ["0x0b0e", 46], ["0xfe00"], ["0xffff"]],
-        "lookahead": "00",
         "component": "map-blend-animation",
         "word_size": 2
       },
@@ -127,7 +123,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x08720000",
-        "size": "0x14",
+        "size": "0x12",
         "record_size": 3,
         "segments": [
           {
@@ -145,8 +141,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x08720012", "end": "0x08720014", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/RUNPA_JO/RUNPA_JO.BIN",
@@ -197,7 +192,6 @@
         "decoded_size": 5937,
         "encoded_size": 3220,
         "tilemap_length": 5936,
-        "lookahead": "",
         "component": "map-metatiles-2x2",
         "transform_mode": 1,
         "metatiles": 742,
@@ -210,7 +204,6 @@
         "decoded_size": 24,
         "encoded_size": 16,
         "records": [[0, 0, 0, 0], [0, 4, 0, 0], [3, 4, 0, 0], [4, 4, 0, 0], [4, 0, 4, 0], [3, 0, 4, 0]],
-        "lookahead": "",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -262,7 +255,6 @@
           ],
           "0xffff"
         ],
-        "lookahead": "00",
         "component": "map-animation-queues",
         "word_size": 2,
         "terminators": ["0xfe00", "0xffff"]
@@ -274,7 +266,6 @@
         "decoded_size": 10,
         "encoded_size": 16,
         "words": [["0x3f42"], ["0x0b0e", 46], ["0xfe00"], ["0xffff"]],
-        "lookahead": "00",
         "component": "map-blend-animation",
         "word_size": 2
       },
@@ -282,7 +273,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x08722b94",
-        "size": "0x4",
+        "size": "0x3",
         "record_size": 3,
         "segments": [
           {
@@ -292,8 +283,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x08722b97", "end": "0x08722b98", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/RUNPA_JO/RUNPA_JO.BIN",
@@ -344,7 +334,6 @@
         "decoded_size": 2657,
         "encoded_size": 1416,
         "tilemap_length": 2656,
-        "lookahead": "000000",
         "component": "map-metatiles-2x2",
         "transform_mode": 2,
         "metatiles": 332,
@@ -360,7 +349,6 @@
           [0, 0, 0, 0], [4, 4, 8, 0], [0, 4, 0, 0], [3, 4, 8, 0], [0, 8, 0, 0], [3, 8, 4, 0], [4, 8, 4, 0],
           [3, 4, 0, 0], [4, 4, 0, 0], [1, 0, 2, 0], [1, 2, 4, 0], [4, 0, 4, 0], [3, 0, 4, 0], [1, 4, 2, 0], [1, 2, 0, 0]
         ],
-        "lookahead": "0000",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -412,7 +400,6 @@
           ],
           "0xffff"
         ],
-        "lookahead": "00",
         "component": "map-animation-queues",
         "word_size": 2,
         "terminators": ["0xfe00", "0xffff"]
@@ -424,7 +411,6 @@
         "decoded_size": 10,
         "encoded_size": 16,
         "words": [["0x3f42"], ["0x0b0e", 46], ["0xfe00"], ["0xffff"]],
-        "lookahead": "00",
         "component": "map-blend-animation",
         "word_size": 2
       },
@@ -432,7 +418,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x08723f80",
-        "size": "0x4",
+        "size": "0x3",
         "record_size": 3,
         "segments": [
           {
@@ -442,8 +428,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x08723f83", "end": "0x08723f84", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/RUNPA_JO/RUNPA_JO.BIN",
@@ -494,7 +479,6 @@
         "decoded_size": 2921,
         "encoded_size": 1484,
         "tilemap_length": 2920,
-        "lookahead": "0000",
         "component": "map-metatiles-2x2",
         "transform_mode": 2,
         "metatiles": 365,
@@ -507,7 +491,6 @@
         "decoded_size": 24,
         "encoded_size": 16,
         "records": [[0, 0, 0, 0], [0, 4, 0, 0], [3, 4, 0, 0], [4, 4, 0, 0], [4, 0, 4, 0], [3, 0, 4, 0]],
-        "lookahead": "",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -559,7 +542,6 @@
           ],
           "0xffff"
         ],
-        "lookahead": "00",
         "component": "map-animation-queues",
         "word_size": 2,
         "terminators": ["0xfe00", "0xffff"]
@@ -571,7 +553,6 @@
         "decoded_size": 10,
         "encoded_size": 16,
         "words": [["0x3f42"], ["0x0b0e", 46], ["0xfe00"], ["0xffff"]],
-        "lookahead": "00",
         "component": "map-blend-animation",
         "word_size": 2
       },
@@ -579,7 +560,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x08725484",
-        "size": "0x8",
+        "size": "0x6",
         "record_size": 3,
         "segments": [
           {
@@ -597,8 +578,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x0872548a", "end": "0x0872548c", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/RUNPA_JO/RUNPA_JO.BIN",

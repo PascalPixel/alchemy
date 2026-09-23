@@ -42,7 +42,6 @@
         "decoded_size": 6393,
         "encoded_size": 3668,
         "tilemap_length": 6392,
-        "lookahead": "0000",
         "component": "map-metatiles-2x2",
         "transform_mode": 0,
         "metatiles": 799,
@@ -55,7 +54,6 @@
         "decoded_size": 16,
         "encoded_size": 16,
         "records": [[0, 0, 0, 0], [0, 116, 0, 0], [0, 12, 0, 0], [7, 0, 4, 0]],
-        "lookahead": "00",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -63,7 +61,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x085de134",
-        "size": "0x4",
+        "size": "0x3",
         "record_size": 3,
         "segments": [
           {
@@ -73,8 +71,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x085de137", "end": "0x085de138", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/KORIMA_KI/KORIMA_KI.BIN",

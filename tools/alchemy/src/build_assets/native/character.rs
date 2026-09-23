@@ -85,6 +85,7 @@ fn pixels(ctx: &Context, input: &Value, rom: &[u8]) -> Result<Vec<u8>, String> {
         return raw::pixels(input, component(&bank), rom);
     }
     let component = component(&bank);
+    let absent = absent_frames(component)?;
     // Uncompressed frames (The Lost Age codec 0) lie back to back in the bank.
     let raw = bank["components"][0]["kind"] == "zero-skip-bytes";
     let width = address(&input["width"])?;
@@ -139,6 +140,8 @@ fn pixels(ctx: &Context, input: &Value, rom: &[u8]) -> Result<Vec<u8>, String> {
         .checked_sub(ROM_BASE)
         .and_then(|v| v.checked_add(address(&bank["size"]).ok()?))
         .ok_or("character extent overflows")?;
+    // A general-LZ reader may fetch past its stream's stored extent.
+    let whole = rom;
     let rom = rom.get(..end).ok_or("character bank outside ROM")?;
     let mut output = vec![0; width.checked_mul(height).ok_or("sheet extent overflows")?];
     let ends = pointers
@@ -152,6 +155,19 @@ fn pixels(ctx: &Context, input: &Value, rom: &[u8]) -> Result<Vec<u8>, String> {
         let start = slot
             .checked_sub(ROM_BASE)
             .ok_or("character frame precedes ROM")?;
+        // An absent frame stores no zero-skip bytes: its arena stream is a
+        // bare raw split, and its sheet cell stays blank.
+        if absent.contains(&frame) {
+            if stream["codec"] != "golden-sun-arena-lz"
+                || address(&stream["decoded_size"])? != 0
+                || address(&stream["encoded_size"])? != 2
+                || rom.get(start..start + 2) != Some(&[0u8, 0][..])
+                || ends[frame] != start + 2
+            {
+                return Err("absent character frame is not a bare arena split".into());
+            }
+            continue;
+        }
         let (data, size) = match stream["codec"].as_str() {
             None if raw => {
                 let data = rom
@@ -180,6 +196,10 @@ fn pixels(ctx: &Context, input: &Value, rom: &[u8]) -> Result<Vec<u8>, String> {
                     return Err("sprite lookahead exceeds stream boundary".into());
                 }
                 (data, address(&stream["encoded_size"])?)
+            }
+            // The leading tag names each frame's stream: 0 general, 1 palette.
+            Some("golden-sun-tagged-lz") => {
+                crate::build_assets::derive_index::tagged_extent(whole, start, whole.len())?
             }
             Some("golden-sun-tagged-palette-lz" | "golden-sun-palette-lz") => {
                 let offset = if stream["codec"] == "golden-sun-tagged-palette-lz" {
@@ -292,7 +312,8 @@ pub(super) fn check(ctx: &mut Context, input: &Value) -> Result<(), String> {
     if component["source"] != name || component["pixel_format"] != "indices" {
         return Err("character registry differs from pixel component".into());
     }
-    let img = ctx.indexed(&root_path(&root, name)?)?;
+    let sheet = root_path(&root, name)?;
+    let img = ctx.indexed(&sheet)?;
     let (width, height, data) = indexed_rect(&img, component)?;
     if width != address(&input["width"])?
         || height != address(&input["height"])?
@@ -300,7 +321,7 @@ pub(super) fn check(ctx: &mut Context, input: &Value) -> Result<(), String> {
     {
         return Err(format!("private character input differs: {name}"));
     }
-    check_shared_palette(&root, component, &img)?;
+    ctx.shared_palette(&sheet, component, &img)?;
     if component.get("source_rect") != input.get("source_rect") {
         return Err("private character rectangle differs from component".into());
     }
@@ -320,6 +341,52 @@ fn sprite_zero_runs_require_exact_frame_and_terminator() {
     assert!(zero_skip(&encoded[..encoded.len() - 1], pixels.len()).is_err());
     assert!(zero_skip(&[0, 1], 0).is_err());
     assert!(zero_skip(&[0xe0, 0], 32).is_err());
+}
+
+#[test]
+fn absent_arena_frames_are_bare_splits_with_blank_cells() {
+    let root = tempfile::tempdir().unwrap();
+    let frame = [vec![3; 4], vec![0; 12]].concat();
+    let zero_skip = psynergy::assets::compression::encode_zero_skip(&frame).unwrap();
+    let stream = psynergy::assets::lz::compress_arena(&zero_skip, &[]).unwrap();
+    let mut rom = vec![0xaa; 8];
+    let first = ROM_BASE + rom.len();
+    rom.extend(&stream);
+    let second = ROM_BASE + rom.len();
+    rom.extend([0, 0]);
+    let size = rom.len() - 8;
+    rom.extend([0, 0xaa]);
+    let document = |absent: Value| {
+        json!({"banks":{"field":{"format":1,"kind":"components","address":first,"size":size,
+            "components":[{"kind":"golden-sun-general-lz","plan":"BANK.JSON","plan_section":"/banks/field/streams",
+                "size":size,"components":[{"kind":"zero-skip-bytes","source":"CHAR.PNG","frame_width":4,
+                "frame_height":4,"columns":2,"pixel_format":"indices","absent_frames":absent}]}],
+            "streams":[{"codec":"golden-sun-arena-lz","decoded_size":zero_skip.len(),"encoded_size":stream.len()},
+                {"codec":"golden-sun-arena-lz","decoded_size":0,"encoded_size":2}],
+            "directory":{"format":1,"kind":"pointer-table","base_address":first,"address":ROM_BASE,
+                "slot_count":2,"slots":[format!("{first:#x}"), format!("{second:#x}")]}}}})
+    };
+    fs::write(
+        root.path().join("BANK.JSON"),
+        document(json!([1])).to_string(),
+    )
+    .unwrap();
+    let expected = (0..4)
+        .flat_map(|row| [&frame[row * 4..row * 4 + 4], &[0; 4][..]].concat())
+        .collect::<Vec<_>>();
+    let input = json!({"metadata":"BANK.JSON","pointer":"/banks/field","width":8,"height":4,
+        "decoded_sha256": sha256::hex(&expected)});
+    assert_eq!(
+        pixels(&Context::new(root.path()), &input, &rom).unwrap(),
+        expected
+    );
+    // Unnamed, the bare split has no stream of its own inside the bank.
+    fs::write(
+        root.path().join("BANK.JSON"),
+        document(json!([0])).to_string(),
+    )
+    .unwrap();
+    assert!(pixels(&Context::new(root.path()), &input, &rom).is_err());
 }
 
 #[test]

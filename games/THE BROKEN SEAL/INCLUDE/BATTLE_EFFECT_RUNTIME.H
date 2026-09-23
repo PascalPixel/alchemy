@@ -51,7 +51,10 @@ struct BattleRuntime {
 };
 
 struct BattleWork {
-    u8 unknown_000[0x1f2];
+    u8 unknown_000[0x1ee];
+    /* Audio cue the battle-start transition plays first. */
+    u16 battle_cue;
+    u8 unknown_1f0[2];
     u8 mode_1f2;
     u8 unknown_1f3;
     s32 object_id;

@@ -42,7 +42,6 @@
         "decoded_size": 7513,
         "encoded_size": 4840,
         "tilemap_length": 7512,
-        "lookahead": "00",
         "component": "map-metatiles-2x2",
         "transform_mode": 1,
         "metatiles": 939,
@@ -60,7 +59,6 @@
           [1, 4, 6, 0], [1, 6, 8, 0], [3, 4, 0, 0], [7, 0, 4, 0], [4, 4, 0, 0], [3, 0, 4, 0], [4, 0, 4, 0],
           [1, 4, 2, 0], [1, 2, 0, 0]
         ],
-        "lookahead": "0000",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -68,7 +66,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x084e60f4",
-        "size": "0x8",
+        "size": "0x6",
         "record_size": 3,
         "segments": [
           {
@@ -86,8 +84,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x084e60fa", "end": "0x084e60fc", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_SUKURETA/HAIDIA_SUKURETA.BIN",

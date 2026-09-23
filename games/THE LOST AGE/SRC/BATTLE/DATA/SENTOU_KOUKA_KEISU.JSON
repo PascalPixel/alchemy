@@ -1,0 +1,396 @@
+{
+  "format": 1,
+  "kind": "typed-table",
+  "address": "0x08196dd8",
+  "end": "0x08196fdc",
+  "size": 516,
+  "segments": [
+    {
+      "name": "keisu_000",
+      "address": "0x08196dd8",
+      "end": "0x08196de0",
+      "consumers": ["recon/tla/raw/0813fa88.s"],
+      "element": "le-s32",
+      "stride": 4,
+      "values": [65536, 65536]
+    },
+    {
+      "name": "keisu_001",
+      "address": "0x08196de0",
+      "end": "0x08196df8",
+      "consumers": ["recon/tla/raw/0813fa88.s"],
+      "element": "le-s32",
+      "stride": 4,
+      "values": [65536, 65536, 1431655766, 1431655766, 1431655766, 1431655766]
+    },
+    {
+      "name": "keisu_002",
+      "address": "0x08196df8",
+      "end": "0x08196e0c",
+      "consumers": ["recon/tla/raw/0814627c.s"],
+      "element": "le-s32",
+      "stride": 4,
+      "values": [65536, 65536, 119304648, 47721859, 47721859]
+    },
+    {
+      "name": "keisu_003",
+      "address": "0x08196e0c",
+      "end": "0x08196e14",
+      "consumers": ["recon/tla/raw/0814b9e8.s"],
+      "element": "le-s32",
+      "stride": 4,
+      "values": [65536, 65536]
+    },
+    {
+      "name": "keisu_004",
+      "address": "0x08196e14",
+      "end": "0x08196e1c",
+      "consumers": ["recon/tla/raw/0814ce30.s"],
+      "element": "le-s32",
+      "stride": 4,
+      "values": [65536, 65536]
+    },
+    {
+      "name": "keisu_005",
+      "address": "0x08196e1c",
+      "end": "0x08196e2c",
+      "consumers": ["recon/tla/raw/08150c74.s"],
+      "element": "le-s32",
+      "stride": 4,
+      "values": [-32, -32, -32, -32]
+    },
+    {
+      "name": "keisu_006",
+      "address": "0x08196e2c",
+      "end": "0x08196e44",
+      "consumers": ["recon/tla/raw/08157638.s"],
+      "element": "le-s16",
+      "stride": 2,
+      "values": [8, 135, 184, 135, 128, 135, 96, 32, 96, 32, 64, 135]
+    },
+    {
+      "name": "keisu_007",
+      "address": "0x08196e44",
+      "end": "0x08196e4c",
+      "consumers": ["recon/tla/raw/0815a0ec.s"],
+      "element": "le-s32",
+      "stride": 4,
+      "values": [65536, 65536]
+    },
+    {
+      "name": "keisu_008",
+      "address": "0x08196e4c",
+      "end": "0x08196e54",
+      "consumers": ["recon/tla/raw/0815b290.s"],
+      "element": "le-s32",
+      "stride": 4,
+      "values": [65536, 65536]
+    },
+    {
+      "name": "keisu_009",
+      "address": "0x08196e54",
+      "end": "0x08196e5c",
+      "consumers": ["recon/tla/raw/0815b290.s"],
+      "element": "le-s32",
+      "stride": 4,
+      "values": [65536, 65536]
+    },
+    {
+      "name": "keisu_010",
+      "address": "0x08196e5c",
+      "end": "0x08196e64",
+      "consumers": ["recon/tla/raw/08163e14.s"],
+      "element": "le-s32",
+      "stride": 4,
+      "values": [65536, 65536]
+    },
+    {
+      "name": "keisu_011",
+      "address": "0x08196e64",
+      "end": "0x08196e6c",
+      "consumers": ["recon/tla/raw/08163e14.s"],
+      "element": "le-s32",
+      "stride": 4,
+      "values": [81920, 81920]
+    },
+    {
+      "name": "keisu_012",
+      "address": "0x08196e6c",
+      "end": "0x08196e74",
+      "consumers": ["recon/tla/raw/08164cc4.s"],
+      "element": "le-s32",
+      "stride": 4,
+      "values": [65536, 65536]
+    },
+    {
+      "name": "keisu_013",
+      "address": "0x08196e74",
+      "end": "0x08196e7c",
+      "consumers": ["recon/tla/raw/08166b10.s"],
+      "element": "le-s32",
+      "stride": 4,
+      "values": [65536, 65536]
+    },
+    {
+      "name": "keisu_014",
+      "address": "0x08196e7c",
+      "end": "0x08196e84",
+      "consumers": ["recon/tla/raw/08166b10.s"],
+      "element": "le-s32",
+      "stride": 4,
+      "values": [65536, 65536]
+    },
+    {
+      "name": "keisu_015",
+      "address": "0x08196e84",
+      "end": "0x08196e8c",
+      "consumers": ["recon/tla/raw/08166b10.s"],
+      "element": "le-s32",
+      "stride": 4,
+      "values": [65536, 65536]
+    },
+    {
+      "name": "keisu_016",
+      "address": "0x08196e8c",
+      "end": "0x08196e94",
+      "consumers": ["recon/tla/raw/081693d0.s"],
+      "element": "le-s32",
+      "stride": 4,
+      "values": [98304, 98304]
+    },
+    {
+      "name": "keisu_017",
+      "address": "0x08196e94",
+      "end": "0x08196e9c",
+      "consumers": ["recon/tla/raw/0816fca8.s"],
+      "element": "le-s32",
+      "stride": 4,
+      "values": [98304, 98304]
+    },
+    {
+      "name": "keisu_018",
+      "address": "0x08196e9c",
+      "end": "0x08196ea8",
+      "consumers": ["recon/tla/raw/08170dac.s"],
+      "element": "s8",
+      "stride": 1,
+      "values": [40, -40, 0, 40, -40, -40, 40, 40, 0, -40, -40, 40]
+    },
+    {
+      "name": "keisu_019",
+      "address": "0x08196ea8",
+      "end": "0x08196eb0",
+      "consumers": ["recon/tla/raw/08173aac.s"],
+      "element": "le-s32",
+      "stride": 4,
+      "values": [65536, 65536]
+    },
+    {
+      "name": "keisu_020",
+      "address": "0x08196eb0",
+      "end": "0x08196eb8",
+      "consumers": ["recon/tla/raw/08173aac.s"],
+      "element": "le-s32",
+      "stride": 4,
+      "values": [65536, 65536]
+    },
+    {
+      "name": "keisu_021",
+      "address": "0x08196eb8",
+      "end": "0x08196ec0",
+      "consumers": ["recon/tla/raw/08173aac.s"],
+      "element": "le-s32",
+      "stride": 4,
+      "values": [65536, 65536]
+    },
+    {
+      "name": "keisu_022",
+      "address": "0x08196ec0",
+      "end": "0x08196ec8",
+      "consumers": ["recon/tla/raw/08173aac.s"],
+      "element": "le-s32",
+      "stride": 4,
+      "values": [65536, 65536]
+    },
+    {
+      "name": "keisu_023",
+      "address": "0x08196ec8",
+      "end": "0x08196ed0",
+      "consumers": ["recon/tla/raw/08179f18.s"],
+      "element": "le-s32",
+      "stride": 4,
+      "values": [65536, 65536]
+    },
+    {
+      "name": "keisu_024",
+      "address": "0x08196ed0",
+      "end": "0x08196ed8",
+      "consumers": ["recon/tla/raw/0817e698.s"],
+      "element": "le-s32",
+      "stride": 4,
+      "values": [65536, 65536]
+    },
+    {
+      "name": "keisu_025",
+      "address": "0x08196ed8",
+      "end": "0x08196ee0",
+      "consumers": ["recon/tla/raw/0817e698.s"],
+      "element": "le-s32",
+      "stride": 4,
+      "values": [65536, 65536]
+    },
+    {
+      "name": "keisu_026",
+      "address": "0x08196ee0",
+      "end": "0x08196ee8",
+      "consumers": ["recon/tla/raw/0817e698.s"],
+      "element": "le-s32",
+      "stride": 4,
+      "values": [72089, 72089]
+    },
+    {
+      "name": "keisu_027",
+      "address": "0x08196ee8",
+      "end": "0x08196ef0",
+      "consumers": ["recon/tla/raw/0817e698.s"],
+      "element": "le-s32",
+      "stride": 4,
+      "values": [131072, 131072]
+    },
+    {
+      "name": "keisu_028",
+      "address": "0x08196ef0",
+      "end": "0x08196ef8",
+      "consumers": ["recon/tla/raw/08182898.s"],
+      "element": "le-s32",
+      "stride": 4,
+      "values": [65536, 65536]
+    },
+    {
+      "name": "keisu_029",
+      "address": "0x08196ef8",
+      "end": "0x08196f00",
+      "consumers": ["recon/tla/raw/08182898.s"],
+      "element": "le-s32",
+      "stride": 4,
+      "values": [65536, 65536]
+    },
+    {
+      "name": "keisu_030",
+      "address": "0x08196f00",
+      "end": "0x08196f08",
+      "consumers": ["recon/tla/raw/08182898.s"],
+      "element": "le-s32",
+      "stride": 4,
+      "values": [65536, 65536]
+    },
+    {
+      "name": "keisu_031",
+      "address": "0x08196f08",
+      "end": "0x08196f10",
+      "consumers": ["recon/tla/raw/08182898.s"],
+      "element": "le-s32",
+      "stride": 4,
+      "values": [65536, 65536]
+    },
+    {
+      "name": "keisu_032",
+      "address": "0x08196f10",
+      "end": "0x08196f18",
+      "consumers": ["recon/tla/raw/08182898.s"],
+      "element": "le-s32",
+      "stride": 4,
+      "values": [65536, 65536]
+    },
+    {
+      "name": "keisu_033",
+      "address": "0x08196f18",
+      "end": "0x08196f20",
+      "consumers": ["recon/tla/raw/0818c7b8.s"],
+      "element": "le-s32",
+      "stride": 4,
+      "values": [65536, 65536]
+    },
+    {
+      "name": "keisu_034",
+      "address": "0x08196f20",
+      "end": "0x08196f28",
+      "consumers": ["recon/tla/raw/0818d5a8.s"],
+      "element": "le-s32",
+      "stride": 4,
+      "values": [131072, 131072]
+    },
+    {
+      "name": "keisu_035",
+      "address": "0x08196f28",
+      "end": "0x08196f30",
+      "consumers": ["recon/tla/raw/08191c20.s"],
+      "element": "u8",
+      "stride": 1,
+      "values": [2, 3, 5, 8, 7, 6, 4, 0]
+    },
+    {
+      "name": "keisu_036",
+      "address": "0x08196f30",
+      "end": "0x08196f48",
+      "consumers": ["recon/tla/raw/08191c20.s"],
+      "element": "le-s32",
+      "stride": 4,
+      "values": [61680, 61456, 3312, 3088, 240, 16]
+    },
+    {
+      "name": "keisu_037",
+      "address": "0x08196f48",
+      "end": "0x08196f50",
+      "consumers": ["recon/tla/raw/081929fc.s"],
+      "element": "le-s32",
+      "stride": 4,
+      "values": [65536, 65536]
+    },
+    {
+      "name": "keisu_038",
+      "address": "0x08196f50",
+      "end": "0x08196f64",
+      "consumers": ["recon/tla/raw/081929fc.s"],
+      "element": "le-s32",
+      "stride": 4,
+      "values": [2, 3, 4, 5, 6]
+    },
+    {
+      "name": "keisu_039",
+      "address": "0x08196f64",
+      "end": "0x08196f80",
+      "consumers": ["recon/tla/raw/081929fc.s"],
+      "element": "le-s32",
+      "stride": 4,
+      "values": [2, 3, 4, 5, 6, 7, 8]
+    },
+    {
+      "name": "keisu_040",
+      "address": "0x08196f80",
+      "end": "0x08196f9c",
+      "consumers": ["recon/tla/raw/081929fc.s"],
+      "element": "le-s32",
+      "stride": 4,
+      "values": [8, 7, 6, 5, 4, 3, 2]
+    },
+    {
+      "name": "keisu_041",
+      "address": "0x08196f9c",
+      "end": "0x08196fbc",
+      "consumers": ["recon/tla/raw/081929fc.s"],
+      "element": "le-s32",
+      "stride": 4,
+      "values": [112, 27, 104, 28, 92, 27, 74, 27]
+    },
+    {
+      "name": "keisu_042",
+      "address": "0x08196fbc",
+      "end": "0x08196fdc",
+      "consumers": ["recon/tla/raw/081929fc.s"],
+      "element": "le-s32",
+      "stride": 4,
+      "values": [196, 44, 176, 48, 152, 45, 116, 45]
+    }
+  ]
+}

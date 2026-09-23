@@ -43,7 +43,6 @@
         "decoded_size": 9113,
         "encoded_size": 4844,
         "tilemap_length": 9112,
-        "lookahead": "000000",
         "component": "map-metatiles-2x2",
         "transform_mode": 1,
         "metatiles": 1139,
@@ -56,7 +55,6 @@
         "decoded_size": 8,
         "encoded_size": 8,
         "records": [[0, 0, 0, 0], [0, 6, 0, 0]],
-        "lookahead": "",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -67,7 +65,6 @@
         "decoded_size": 2,
         "encoded_size": 8,
         "words": ["0xffff"],
-        "lookahead": "0000",
         "component": "map-animation-queues",
         "word_size": 2,
         "terminators": ["0xfe00", "0xffff"]
@@ -81,7 +78,6 @@
           ["0x3fc8"], ["0x0003", 120], ["0x0004", 120], ["0x0005", 120], ["0x0006", 120], ["0x0005", 120],
           ["0x0004", 120], ["0xffff"]
         ],
-        "lookahead": "000000",
         "component": "map-blend-animation",
         "word_size": 2
       },

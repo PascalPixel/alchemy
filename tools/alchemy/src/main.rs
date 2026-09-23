@@ -107,7 +107,7 @@ fn make_target(target: &str, arguments: &[String]) -> ExitCode {
     if arguments == ["--help"] || arguments == ["-h"] {
         if target == "coverage" {
             println!(
-                "usage: alchemy coverage\n       alchemy coverage audit --target tbs-en|tla-en [--output out/...json] [--calibrate]\nRebuilds published coverage, or inventories executable overlay spans."
+                "usage: alchemy coverage\n       alchemy coverage audit --target TARGET [--output out/...json] [--calibrate --expected LEDGER.json | --inventory]\nRebuilds published coverage, or inventories executable overlay spans."
             );
         } else {
             println!("usage: alchemy {target}\nRuns the repository's make {target} contract.");

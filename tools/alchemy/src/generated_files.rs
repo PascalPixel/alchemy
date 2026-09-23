@@ -6,8 +6,6 @@ use std::process::Command;
 
 /// Source code a game tree tracks beside its material; builds compile it.
 const CODE_EXTENSIONS: &[&str] = &["c", "h", "inc", "s"];
-/// Game-root registries of owner names, addresses and locations.
-const GAME_REGISTRIES: &[&str] = &["locations.tsv", "project.json", "source-paths.json"];
 
 /// Match a filename against an anchored `*`/`?` glob.
 pub fn glob_matches(pattern: &str, name: &str) -> bool {
@@ -53,39 +51,42 @@ pub fn prune_files(
     Ok(removed)
 }
 
-/// Whether a tracked file under `games/<game>/` carries no game data by
-/// category, so no build needs to read it. Everything else there is game
-/// material: pictures, samples, music, text, maps, tables and their indexes.
-fn carries_no_game_data(game_relative: &str) -> bool {
-    let components: Vec<_> = game_relative.split('/').collect();
-    let leaf = components.last().copied().unwrap_or("");
+/// The structured registries reconstruction tooling keeps under `recon/<game>`.
+const REGISTRY_EXTENSIONS: &[&str] = &["json", "tsv"];
+
+/// Whether a tracked file carries no game data by category, so no build needs
+/// to read it. Under `games/<game>/` only code is exempt; everything else there
+/// is game material: pictures, samples, music, text, maps, tables and their
+/// indexes. Under `recon/<game>/` the registries, drafts and metrics that
+/// describe the reconstruction are exempt too, but any other file there, such
+/// as a data package beside the retained listings, is material a build must
+/// read.
+fn carries_no_game_data(relative: &str, registries: bool) -> bool {
+    let leaf = relative.rsplit('/').next().unwrap_or("");
     let suffix = leaf.rsplit_once('.').map_or("", |(_, suffix)| suffix);
-    let is = |value: &str, choices: &[&str]| {
+    let is = |choices: &[&str]| {
         choices
             .iter()
-            .any(|choice| value.eq_ignore_ascii_case(choice))
+            .any(|choice| suffix.eq_ignore_ascii_case(choice))
     };
-    match components.as_slice() {
-        // Code the builds compile.
-        _ if leaf == ".gitkeep" || is(suffix, CODE_EXTENSIONS) => true,
-        // Owner names, addresses and locations.
-        [registry] => is(registry, GAME_REGISTRIES),
-        _ => false,
-    }
+    // Code the builds compile.
+    leaf == ".gitkeep" || is(CODE_EXTENSIONS) || (registries && is(REGISTRY_EXTENSIONS))
 }
-/// Tracked game material under `game_dir` that is in no consumer's input set.
+/// Tracked game material under `game_dir` (a `games/<game>` tree or its
+/// `recon/<game>` scaffolding) that is in no consumer's input set.
 pub fn unconsumed_material(
     tracked: impl IntoIterator<Item = impl AsRef<str>>,
     game_dir: &str,
     consumed: &BTreeSet<String>,
 ) -> Vec<String> {
     let prefix = format!("{game_dir}/");
+    let registries = game_dir.starts_with("recon/");
     tracked
         .into_iter()
         .filter_map(|path| {
             let path = path.as_ref();
             let game_relative = path.strip_prefix(&prefix)?;
-            (!carries_no_game_data(game_relative) && !consumed.contains(path))
+            (!carries_no_game_data(game_relative, registries) && !consumed.contains(path))
                 .then(|| path.to_string())
         })
         .collect()
@@ -138,6 +139,8 @@ fn only_game_material_needs_a_consumer_and_exemptions_are_categories() {
         "games/X/TEXT/MESSAGE_ARCHIVE.JSON",
         "games/X/SOUND/SEQUENCE/A.MID",
         "games/XY/SRC/C.JSON",
+        "recon/x/raw/manifest.json",
+        "recon/x/source-paths.json",
         "tools/alchemy/src/main.rs",
     ];
     let consumed: BTreeSet<String> = [
@@ -158,9 +161,29 @@ fn only_game_material_needs_a_consumer_and_exemptions_are_categories() {
             "games/X/semantic/regions.json",
             "games/X/metrics/x-en-executable.json",
             "games/X/PREVIEW/TITLE.PNG",
+            "games/X/source-paths.json",
+            "games/X/PROJECT.JSON",
+            "games/X/locations.tsv",
             "games/X/TEXT/MESSAGE_ARCHIVE.JSON",
             "games/X/SOUND/SEQUENCE/A.MID",
         ]
+    );
+    let recon = [
+        "recon/x/raw/manifest.json",
+        "recon/x/raw/0800a000.s",
+        "recon/x/raw/overlays/resource_001_stream.lz.json",
+        "recon/x/raw/PACKAGE.BIN",
+        "recon/x/raw/battle/TABLE.BIN",
+        "recon/x/source-paths.json",
+        "recon/x/locations.tsv",
+        "recon/x/en/main/08000100.c",
+        "recon/x/PORTRAIT.PNG",
+        "recon/xy/raw/OTHER.BIN",
+    ];
+    let consumed = BTreeSet::from(["recon/x/raw/battle/TABLE.BIN".to_string()]);
+    assert_eq!(
+        unconsumed_material(recon, "recon/x", &consumed),
+        ["recon/x/raw/PACKAGE.BIN", "recon/x/PORTRAIT.PNG"]
     );
 }
 #[test]

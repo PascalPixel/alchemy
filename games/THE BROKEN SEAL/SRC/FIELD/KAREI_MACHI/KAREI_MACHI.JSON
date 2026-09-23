@@ -42,7 +42,6 @@
         "decoded_size": 7329,
         "encoded_size": 4788,
         "tilemap_length": 7328,
-        "lookahead": "00",
         "component": "map-metatiles-2x2",
         "transform_mode": 1,
         "metatiles": 916,
@@ -59,7 +58,6 @@
           [7, 0, 8, 0], [2, 4, 2, 0], [4, 4, 0, 0], [2, 2, 0, 0], [3, 4, 0, 0], [7, 0, 2, 0], [1, 0, 2, 0],
           [1, 2, 4, 0], [7, 0, 4, 0], [4, 8, 0, 0]
         ],
-        "lookahead": "00",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -89,7 +87,6 @@
           ["0xfd03", [1668, 2], [669, 10], [1670, 2], [669, 10], [1672, 2], [669, 10], [1674, 2], [669, 10], "0xfe00"],
           "0xffff"
         ],
-        "lookahead": "000000",
         "component": "map-animation-queues",
         "word_size": 2,
         "terminators": ["0xfe00", "0xffff"]
@@ -101,7 +98,6 @@
         "decoded_size": 2,
         "encoded_size": 8,
         "words": [["0xffff"]],
-        "lookahead": "0000",
         "component": "map-blend-animation",
         "word_size": 2
       },
@@ -109,7 +105,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x0868f004",
-        "size": "0xc",
+        "size": "0x9",
         "record_size": 3,
         "segments": [
           {
@@ -127,8 +123,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x0868f00d", "end": "0x0868f010", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/KAREI_MACHI/KAREI_MACHI.BIN",
@@ -179,7 +174,6 @@
         "decoded_size": 3489,
         "encoded_size": 2244,
         "tilemap_length": 3488,
-        "lookahead": "00",
         "component": "map-metatiles-2x2",
         "transform_mode": 1,
         "metatiles": 436,
@@ -195,7 +189,6 @@
           [0, 0, 0, 0], [4, 2, 0, 0], [0, 2, 0, 0], [7, 0, 4, 0], [3, 0, 2, 0], [7, 0, 2, 0], [7, 0, 1, 0],
           [2, 0, 254, 0], [2, 254, 252, 0], [2, 252, 250, 0], [0, 252, 0, 0], [2, 250, 248, 0], [4, 0, 252, 0]
         ],
-        "lookahead": "00",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -225,7 +218,6 @@
           ["0xfd03", [1668, 2], [669, 10], [1670, 2], [669, 10], [1672, 2], [669, 10], [1674, 2], [669, 10], "0xfe00"],
           "0xffff"
         ],
-        "lookahead": "000000",
         "component": "map-animation-queues",
         "word_size": 2,
         "terminators": ["0xfe00", "0xffff"]
@@ -237,7 +229,6 @@
         "decoded_size": 2,
         "encoded_size": 8,
         "words": [["0xffff"]],
-        "lookahead": "0000",
         "component": "map-blend-animation",
         "word_size": 2
       },
@@ -245,7 +236,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x086a1f20",
-        "size": "0x4",
+        "size": "0x3",
         "record_size": 3,
         "segments": [
           {
@@ -255,8 +246,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x086a1f23", "end": "0x086a1f24", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/KAREI_MACHI/KAREI_MACHI.BIN",
@@ -307,7 +297,6 @@
         "decoded_size": 16625,
         "encoded_size": 10264,
         "tilemap_length": 16624,
-        "lookahead": "000000",
         "component": "map-metatiles-2x2",
         "transform_mode": 0,
         "metatiles": 2078,
@@ -323,7 +312,6 @@
           [0, 0, 0, 0], [0, 8, 0, 0], [0, 4, 0, 0], [4, 8, 4, 0], [4, 4, 0, 0], [3, 4, 0, 0], [1, 4, 2, 0],
           [1, 2, 0, 0], [8, 0, 254, 0], [13, 4, 4, 0], [4, 0, 4, 0], [3, 0, 4, 0], [7, 0, 4, 0], [8, 254, 0, 0]
         ],
-        "lookahead": "000000",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -366,7 +354,6 @@
           ],
           "0xffff"
         ],
-        "lookahead": "000000",
         "component": "map-animation-queues",
         "word_size": 2,
         "terminators": ["0xfe00", "0xffff"]
@@ -378,7 +365,6 @@
         "decoded_size": 2,
         "encoded_size": 8,
         "words": [["0xffff"]],
-        "lookahead": "0000",
         "component": "map-blend-animation",
         "word_size": 2
       },
@@ -386,7 +372,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x08729348",
-        "size": "0x4",
+        "size": "0x3",
         "record_size": 3,
         "segments": [
           {
@@ -396,8 +382,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x0872934b", "end": "0x0872934c", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/KAREI_MACHI/KAREI_MACHI.BIN",
@@ -448,7 +433,6 @@
         "decoded_size": 2889,
         "encoded_size": 1672,
         "tilemap_length": 2888,
-        "lookahead": "000000",
         "component": "map-metatiles-2x2",
         "transform_mode": 2,
         "metatiles": 361,
@@ -461,7 +445,6 @@
         "decoded_size": 24,
         "encoded_size": 16,
         "records": [[0, 0, 0, 0], [0, 4, 0, 0], [4, 0, 4, 0], [4, 4, 0, 0], [3, 0, 4, 0], [3, 4, 0, 0]],
-        "lookahead": "00",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -520,7 +503,6 @@
           ],
           "0xffff"
         ],
-        "lookahead": "",
         "component": "map-animation-queues",
         "word_size": 2,
         "terminators": ["0xfe00", "0xffff"]
@@ -531,7 +513,6 @@
         "decoded_size": 22,
         "encoded_size": 28,
         "words": [["0x3f42"], ["0x1003", 46], ["0x1003", 36], ["0x1004", 50], ["0x1003", 45], ["0xfe00"], ["0xffff"]],
-        "lookahead": "000000",
         "component": "map-blend-animation",
         "word_size": 2
       },
@@ -539,7 +520,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x0872a674",
-        "size": "0x8",
+        "size": "0x6",
         "record_size": 3,
         "segments": [
           {
@@ -557,8 +538,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x0872a67a", "end": "0x0872a67c", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/KAREI_MACHI/KAREI_MACHI.BIN",
@@ -609,7 +589,6 @@
         "decoded_size": 2233,
         "encoded_size": 1232,
         "tilemap_length": 2232,
-        "lookahead": "00",
         "component": "map-metatiles-2x2",
         "transform_mode": 1,
         "metatiles": 279,
@@ -622,7 +601,6 @@
         "decoded_size": 8,
         "encoded_size": 8,
         "records": [[0, 0, 0, 0], [0, 4, 0, 0]],
-        "lookahead": "",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -661,7 +639,6 @@
           ["0xfd08", [594, 1], [563, 8], [595, 1], [563, 8], "0xfe00"],
           "0xffff"
         ],
-        "lookahead": "00",
         "component": "map-animation-queues",
         "word_size": 2,
         "terminators": ["0xfe00", "0xffff"]
@@ -676,7 +653,6 @@
           ["0x100e", 10], ["0x100f", 10], ["0x100f", 10], ["0x100e", 10], ["0x100d", 10], ["0x100c", 10],
           ["0x100b", 10], ["0x100a", 10], ["0x1009", 10], ["0x1008", 10], ["0x1007", 10], ["0xfe00"], ["0xffff"]
         ],
-        "lookahead": "0000",
         "component": "map-blend-animation",
         "word_size": 2
       },
@@ -684,7 +660,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x0872b870",
-        "size": "0x4",
+        "size": "0x3",
         "record_size": 3,
         "segments": [
           {
@@ -694,8 +670,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x0872b873", "end": "0x0872b874", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/KAREI_MACHI/KAREI_MACHI.BIN",
@@ -746,7 +721,6 @@
         "decoded_size": 1761,
         "encoded_size": 984,
         "tilemap_length": 1760,
-        "lookahead": "00",
         "component": "map-metatiles-2x2",
         "transform_mode": 1,
         "metatiles": 220,
@@ -759,7 +733,6 @@
         "decoded_size": 16,
         "encoded_size": 16,
         "records": [[0, 4, 0, 0], [0, 0, 0, 0], [0, 8, 0, 0], [0, 12, 0, 0]],
-        "lookahead": "000000",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -798,7 +771,6 @@
           ["0xfd08", [594, 1], [563, 8], [595, 1], [563, 8], "0xfe00"],
           "0xffff"
         ],
-        "lookahead": "00",
         "component": "map-animation-queues",
         "word_size": 2,
         "terminators": ["0xfe00", "0xffff"]
@@ -813,7 +785,6 @@
           ["0x100e", 10], ["0x100f", 10], ["0x100f", 10], ["0x100e", 10], ["0x100d", 10], ["0x100c", 10],
           ["0x100b", 10], ["0x100a", 10], ["0x1009", 10], ["0x1008", 10], ["0x1007", 10], ["0xfe00"], ["0xffff"]
         ],
-        "lookahead": "0000",
         "component": "map-blend-animation",
         "word_size": 2
       },

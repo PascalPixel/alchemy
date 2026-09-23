@@ -6,10 +6,10 @@ In Golden Sun, lighting the four Elemental Lighthouses releases Alchemy upon the
 
 The two games share much of the same code, so Alchemy recovers them side by side.
 
-## Status: ☀️ ? · ⚓️ ?
+## Status: ☀️ 55.87% · ⚓️ pending
 
-Completion is withheld while the executable inventories are regenerated from
-the ROMs and verified build outputs.
+⚓️ stays pending until a full build of The Lost Age reproduces its ROM byte for
+byte, which proves its executable inventory.
 
 <img src="PROGRESS.svg" width="830" alt="Alchemy repository files sized by bytes on disk">
 
@@ -48,3 +48,7 @@ Thank you to:
 - [pret](https://github.com/pret), whose decompilations set the standard Alchemy
   measures itself against, and whose [agbcc](https://github.com/pret/agbcc)
   Alchemy builds with.
+- Brankale and Pokefan531, for the
+  [Handheld Color Space Project](https://github.com/Brankale/Handheld-Color-Space-Project),
+  whose screen measurements drive the map viewer's GBA, GBA SP and Game Boy
+  Micro colour filters.

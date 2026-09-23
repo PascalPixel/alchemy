@@ -42,7 +42,6 @@
         "decoded_size": 8137,
         "encoded_size": 5200,
         "tilemap_length": 8136,
-        "lookahead": "000000",
         "component": "map-metatiles-2x2",
         "transform_mode": 0,
         "metatiles": 1017,
@@ -60,7 +59,6 @@
           [3, 8, 0, 0], [4, 8, 0, 0], [7, 8, 10, 0], [7, 0, 2, 0], [0, 4, 0, 0], [3, 4, 0, 0], [4, 0, 2, 0],
           [7, 0, 4, 0], [3, 0, 2, 0], [0, 2, 0, 0], [0, 20, 0, 0], [0, 10, 0, 0], [0, 60, 0, 0], [1, 22, 20, 0]
         ],
-        "lookahead": "000000",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -97,7 +95,6 @@
           ],
           "0xffff"
         ],
-        "lookahead": "00",
         "component": "map-animation-queues",
         "word_size": 2,
         "terminators": ["0xfe00", "0xffff"]
@@ -175,7 +172,6 @@
         "decoded_size": 2105,
         "encoded_size": 1164,
         "tilemap_length": 2104,
-        "lookahead": "",
         "component": "map-metatiles-2x2",
         "transform_mode": 2,
         "metatiles": 263,
@@ -188,7 +184,6 @@
         "decoded_size": 16,
         "encoded_size": 12,
         "records": [[0, 0, 0, 0], [0, 4, 0, 0], [4, 0, 4, 0], [3, 0, 4, 0]],
-        "lookahead": "00",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -263,7 +258,6 @@
           ],
           "0xffff"
         ],
-        "lookahead": "0000",
         "component": "map-animation-queues",
         "word_size": 2,
         "terminators": ["0xfe00", "0xffff"]
@@ -274,7 +268,6 @@
         "decoded_size": 22,
         "encoded_size": 28,
         "words": [["0x3f42"], ["0x1003", 46], ["0x1003", 36], ["0x1004", 50], ["0x1003", 45], ["0xfe00"], ["0xffff"]],
-        "lookahead": "000000",
         "component": "map-blend-animation",
         "word_size": 2
       },
@@ -282,7 +275,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x086d9b14",
-        "size": "0x10",
+        "size": "0xf",
         "record_size": 3,
         "segments": [
           {
@@ -300,8 +293,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x086d9b23", "end": "0x086d9b24", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/TAKARA_SHIMA/TAKARA_SHIMA.BIN",
@@ -352,7 +344,6 @@
         "decoded_size": 10393,
         "encoded_size": 6596,
         "tilemap_length": 10392,
-        "lookahead": "000000",
         "component": "map-metatiles-2x2",
         "transform_mode": 1,
         "metatiles": 1299,
@@ -370,7 +361,6 @@
           [1, 2, 1, 0], [0, 1, 0, 0], [4, 0, 2, 0], [0, 20, 0, 0], [0, 10, 0, 0], [0, 60, 0, 0], [1, 22, 20, 0],
           [0, 4, 0, 0]
         ],
-        "lookahead": "00",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -398,7 +388,6 @@
           ],
           "0xffff"
         ],
-        "lookahead": "0000",
         "component": "map-animation-queues",
         "word_size": 2,
         "terminators": ["0xfe00", "0xffff"]
@@ -407,7 +396,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x086dc77c",
-        "size": "0x8",
+        "size": "0x6",
         "record_size": 3,
         "segments": [
           {
@@ -425,8 +414,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x086dc782", "end": "0x086dc784", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/TAKARA_SHIMA/TAKARA_SHIMA.BIN",
@@ -477,7 +465,6 @@
         "decoded_size": 6105,
         "encoded_size": 2760,
         "tilemap_length": 6104,
-        "lookahead": "000000",
         "component": "map-metatiles-2x2",
         "transform_mode": 1,
         "metatiles": 763,
@@ -494,7 +481,6 @@
           [2, 1, 0, 0], [3, 2, 0, 0], [4, 2, 0, 0], [9, 0, 5, 0], [0, 6, 0, 0], [8, 0, 1, 0], [1, 1, 0, 0],
           [1, 0, 255, 0], [1, 255, 254, 0], [1, 254, 253, 0], [4, 0, 2, 0], [9, 0, 6, 0], [3, 0, 2, 0], [1, 254, 0, 0]
         ],
-        "lookahead": "000000",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -512,7 +498,6 @@
           ],
           "0xffff"
         ],
-        "lookahead": "00",
         "component": "map-animation-queues",
         "word_size": 2,
         "terminators": ["0xfe00", "0xffff"]
@@ -521,7 +506,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x086ddcd4",
-        "size": "0xc",
+        "size": "0x9",
         "record_size": 3,
         "segments": [
           {
@@ -539,8 +524,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x086ddcdd", "end": "0x086ddce0", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/TAKARA_SHIMA/TAKARA_SHIMA.BIN",
@@ -592,7 +576,6 @@
         "decoded_size": 6209,
         "encoded_size": 2516,
         "tilemap_length": 6208,
-        "lookahead": "000000",
         "component": "map-metatiles-2x2",
         "transform_mode": 2,
         "metatiles": 776,
@@ -610,7 +593,6 @@
           [0, 252, 0, 0], [1, 0, 2, 0], [1, 2, 4, 0], [1, 4, 6, 0], [1, 6, 8, 0], [1, 8, 10, 0], [1, 10, 12, 0],
           [1, 12, 14, 0], [3, 0, 16, 0], [0, 250, 0, 0], [4, 0, 16, 0], [0, 254, 0, 0], [3, 4, 0, 0], [3, 0, 4, 0]
         ],
-        "lookahead": "00",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -657,7 +639,6 @@
           ["0xfd08", [1160, 4], [1088, 0], [1192, 4], [1120, 2], [1164, 4], [1088, 0], [1196, 4], [1120, 2], "0xfe00"],
           "0xffff"
         ],
-        "lookahead": "0000",
         "component": "map-animation-queues",
         "word_size": 2,
         "terminators": ["0xfe00", "0xffff"]
@@ -669,7 +650,6 @@
         "decoded_size": 10,
         "encoded_size": 16,
         "words": [["0x3f42"], ["0x0a09", 45678], ["0xfe00"], ["0xffff"]],
-        "lookahead": "00",
         "component": "map-blend-animation",
         "word_size": 2
       },
@@ -677,7 +657,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x086e07b4",
-        "size": "0xc",
+        "size": "0x9",
         "record_size": 3,
         "segments": [
           {
@@ -695,8 +675,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x086e07bd", "end": "0x086e07c0", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/TAKARA_SHIMA/TAKARA_SHIMA.BIN",

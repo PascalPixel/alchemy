@@ -1,0 +1,201 @@
+{
+  "format": 1,
+  "machine": {
+    "cpu": "i386",
+    "os": {
+      "value": "Linux",
+      "confidence": "inferred",
+      "evidence": [
+        "stream alignment bytes hold heap addresses 0x0805xxxx: a brk heap just above the i386 ELF executable base 0x08048000",
+        "stream alignment bytes hold libc addresses 0x40xxxxxx, where Linux on i386 maps shared objects (TASK_UNMAPPED_BASE)",
+        "the stream alignment bytes follow GNU libc malloc and stdio behaviour"
+      ]
+    },
+    "distribution": {
+      "value": "Red Hat Linux",
+      "confidence": "assumed",
+      "evidence": ["the ARM cross-compiler is Red Hat's GCC 2.96; no packer byte names a distribution"]
+    },
+    "compiler": {
+      "value": "agscc, Red Hat GCC 2.96-based ARM cross-compiler",
+      "confidence": "identified",
+      "evidence": ["the credited Tarpman/Karathan compiler-and-flags identification; routes in tools/alchemy/src/compiler/routing.rs"]
+    }
+  },
+  "editions": {
+    "tla-ja": {
+      "libc": {
+        "value": "GNU libc 2.1",
+        "layout": "glibc-2.1",
+        "confidence": "inferred",
+        "evidence": [
+          "the packer heap replay with glibc 2.1's struct locked_FILE (0xb0 bytes) contradicts none of the 790 stream tails it derives; glibc 2.2's contradicts 3"
+        ]
+      }
+    },
+    "tla-en": {
+      "libc": {
+        "value": "GNU libc 2.2",
+        "layout": "glibc-2.2",
+        "confidence": "inferred",
+        "evidence": [
+          "glibc 2.1's struct locked_FILE (0xb0 bytes) contradicts 7 stream tails; glibc 2.2's (0x16c bytes: _wide_data and struct _IO_wide_data) contradicts none of the 786 it derives"
+        ]
+      }
+    },
+    "tla-de": {
+      "libc": {
+        "value": "GNU libc 2.2",
+        "layout": "glibc-2.2",
+        "confidence": "inferred",
+        "evidence": [
+          "glibc 2.1's struct locked_FILE contradicts 7 stream tails; glibc 2.2's contradicts none of the 784 it derives"
+        ]
+      }
+    },
+    "tla-es": {
+      "libc": {
+        "value": "GNU libc 2.2",
+        "layout": "glibc-2.2",
+        "confidence": "inferred",
+        "evidence": [
+          "glibc 2.1's struct locked_FILE contradicts 7 stream tails; glibc 2.2's contradicts none of the 783 it derives"
+        ]
+      }
+    },
+    "tla-fr": {
+      "libc": {
+        "value": "GNU libc 2.2",
+        "layout": "glibc-2.2",
+        "confidence": "inferred",
+        "evidence": [
+          "glibc 2.1's struct locked_FILE contradicts 7 stream tails; glibc 2.2's contradicts none of the 784 it derives"
+        ]
+      }
+    },
+    "tla-it": {
+      "libc": {
+        "value": "GNU libc 2.2",
+        "layout": "glibc-2.2",
+        "confidence": "inferred",
+        "evidence": [
+          "glibc 2.1's struct locked_FILE contradicts 7 stream tails; glibc 2.2's contradicts none of the 787 it derives"
+        ]
+      }
+    }
+  },
+  "compressors": {
+    "general_lz": {
+      "window": {
+        "value": 4123,
+        "allowed": {"lowest": 4123, "highest": 4123},
+        "confidence": "observed",
+        "evidence": [
+          "the general-LZ window already observed before read-ahead was recorded: with it, nearest-longest matching and one lazy deferral reproduced 10,732 of the 10,755 general streams in the twelve ROMs",
+          "with the read-ahead and maximum distance below, window 4,122 breaks 178 of the 6,883 TLA general streams, first tla-ja 203: a 4-byte copy at distance 4,123 at decoded offset 9,844 of 32,651",
+          "window 4,124 breaks 172 TLA streams, first tla-ja 198: a 2-byte copy at distance 2,144 at decoded offset 24,800 of 43,920 where a 3-byte copy at distance 4,124 was in reach"
+        ],
+        "credit": "none"
+      },
+      "read_ahead": {
+        "value": 485,
+        "allowed": {"lowest": 389, "highest": 509},
+        "confidence": "observed",
+        "evidence": [
+          "tla 1b2 and tbs 0e2, every edition: a 3-byte copy at distance 4,124 at decoded offset 7,804 of 8,192, 388 bytes before the end, needs at least 389",
+          "TLA's streams alone allow up to 582 (tla 24c: a 4-byte copy at distance 98 at decoded offset 4,342 of 4,922, where 583 would reach a 5-byte copy at 4,126); tbs-es and tbs-it 370 allow at most 509: a literal at decoded offset 5,389 of 5,898 where a 2-byte copy at distance 4,124 was in reach",
+          "485 is the value in 389..509 that makes the ring, window plus read-ahead, 4,608 = 4,096 + 512 bytes; the streams do not distinguish it from the rest of the range"
+        ],
+        "credit": "none"
+      },
+      "max_distance": {
+        "value": 4126,
+        "allowed": {"lowest": 4125, "highest": 4126},
+        "confidence": "observed",
+        "evidence": [
+          "tla 216 and 232, every edition: at decoded offset 13,818 of 14,155 a 2-byte copy at distance 529 where a 3-byte copy at distance 4,127 was in the ring, and at 12,447 of 12,545 a literal where a 2-byte copy at distance 4,127 was, allow at most 4,126",
+          "TLA's streams alone need at least 4,124 (tla 1b2); Western tbs 3b4's 2-byte copies at distance 4,125 at decoded offsets 12,092 and 12,104 of 12,164 need at least 4,125",
+          "SYSTEM/RESOURCE/DECODE_01.S decodes distances up to 4,128; 4,125 and 4,126 both reproduce every general stream, and the larger is recorded"
+        ],
+        "credit": "none"
+      }
+    }
+  },
+  "host_facts": [
+    {
+      "name": "libc main_arena",
+      "address": "main_arena",
+      "editions": ["tla-en"],
+      "value": {"lowest": "0x4011fe28", "highest": "0x4012fe27"},
+      "confidence": "observed",
+      "observed_from": [
+        "tla-en resource 1ad (0x08949e94) alignment bytes +0x6..+0x7: bytes 2-3 of the bin link, main_arena + 0x1d8, of the 0x1d8-byte buffer freed before it"
+      ],
+      "predicts": [
+        "no tla-en alignment byte beyond those it was observed from",
+        "tla-de, tla-es, tla-fr and tla-it store the same two bytes at the same field of their resource 1ad"
+      ],
+      "credit": "none"
+    },
+    {
+      "name": "packer heap buffer",
+      "address": "heap_buffer",
+      "editions": ["tla-en"],
+      "value": {"lowest": "0x0804d4a8", "highest": "0x0805d4a7"},
+      "confidence": "observed",
+      "observed_from": [
+        "tla-en resource 371 (0x08baab2c) alignment bytes +0x2b0a..+0x2b0b: bytes 2-3 of the _lock, heap_buffer + 0x2b58, of the FILE closed before it"
+      ],
+      "predicts": [
+        "no tla-en alignment byte beyond those it was observed from",
+        "tla-de, tla-es, tla-fr and tla-it store the same two bytes at the same field of their resource 371"
+      ],
+      "credit": "none"
+    },
+    {
+      "name": "libc stream list head",
+      "address": "chain",
+      "editions": ["tla-en"],
+      "value": {"lowest": "0x08050000", "highest": "0x0805ffff"},
+      "confidence": "observed",
+      "observed_from": [
+        "tla-en resource 4d4 (0x08d57d74) alignment bytes +0x13e..+0x13f: bytes 2-3 of the _chain of the FILE closed before it, a heap stream"
+      ],
+      "predicts": [
+        "no tla-en alignment byte beyond those it was observed from",
+        "tla-de, tla-es, tla-fr and tla-it store the same two bytes at the same field of their resource 4d4"
+      ],
+      "credit": "none"
+    },
+    {
+      "name": "libc _IO_file_jumps",
+      "address": "file_jumps",
+      "editions": ["tla-en"],
+      "value": {"lowest": "0x4012ef00", "highest": "0x4012efff"},
+      "confidence": "observed",
+      "observed_from": [
+        "tla-en resource 3d1 (0x08c2ba50) alignment bytes +0x2945..+0x2947: bytes 1-3 of the jump table of the FILE closed before it"
+      ],
+      "predicts": [
+        "no tla-en alignment byte beyond those it was observed from",
+        "tla-de, tla-es, tla-fr and tla-it store the same three bytes at the same field of their resource 3d1"
+      ],
+      "credit": "none"
+    },
+    {
+      "name": "libc _IO_wfile_jumps",
+      "address": "wide_file_jumps",
+      "editions": ["tla-en"],
+      "value": {"lowest": "0x40000000", "highest": "0x40ffffff"},
+      "confidence": "observed",
+      "observed_from": [
+        "tla-en resource 4c3 (0x08d3da7c) alignment byte +0x20bb: byte 3 of the wide jump table of the FILE closed before it"
+      ],
+      "predicts": [
+        "no tla-en alignment byte beyond the one it was observed from",
+        "tla-de, tla-es, tla-fr and tla-it store the same byte at the same field of their resource 4c3"
+      ],
+      "credit": "none"
+    }
+  ]
+}

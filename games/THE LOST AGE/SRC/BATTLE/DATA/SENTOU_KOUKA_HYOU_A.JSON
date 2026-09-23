@@ -1,0 +1,1174 @@
+{
+  "format": 1,
+  "kind": "typed-table",
+  "address": "0x08197410",
+  "end": "0x08197aa0",
+  "size": 1680,
+  "segments": [
+    {
+      "name": "hyou_a_000",
+      "address": "0x08197410",
+      "end": "0x08197424",
+      "consumers": [
+        "recon/tla/raw/0813cb34.s", "recon/tla/raw/0813d098.s", "recon/tla/raw/0813fa88.s", "recon/tla/raw/0814627c.s",
+        "recon/tla/raw/08147aec.s", "recon/tla/raw/08149bac.s", "recon/tla/raw/0814b9e8.s", "recon/tla/raw/0814ce30.s",
+        "recon/tla/raw/0814ea58.s", "recon/tla/raw/0814ef44.s", "recon/tla/raw/08150c74.s", "recon/tla/raw/08151ff0.s",
+        "recon/tla/raw/0815265c.s", "recon/tla/raw/08153ebc.s", "recon/tla/raw/081548d0.s", "recon/tla/raw/08156140.s",
+        "recon/tla/raw/08157638.s", "recon/tla/raw/0815a0ec.s", "recon/tla/raw/0815f16c.s", "recon/tla/raw/08163e14.s",
+        "recon/tla/raw/08164cc4.s", "recon/tla/raw/08166b10.s", "recon/tla/raw/081693d0.s", "recon/tla/raw/0816a2d8.s",
+        "recon/tla/raw/0816b6ec.s", "recon/tla/raw/0816e65c.s", "recon/tla/raw/0816fca8.s", "recon/tla/raw/08170dac.s",
+        "recon/tla/raw/08171bb0.s", "recon/tla/raw/08172b00.s", "recon/tla/raw/08173aac.s", "recon/tla/raw/08179f18.s",
+        "recon/tla/raw/0817b9b8.s", "recon/tla/raw/0817d724.s", "recon/tla/raw/0817e0c0.s", "recon/tla/raw/0817e698.s",
+        "recon/tla/raw/08181ed4.s", "recon/tla/raw/081823a8.s", "recon/tla/raw/08182898.s", "recon/tla/raw/0818a220.s",
+        "recon/tla/raw/0818ad40.s", "recon/tla/raw/0818bc98.s", "recon/tla/raw/0818c7b8.s", "recon/tla/raw/0818d5a8.s",
+        "recon/tla/raw/0818f620.s", "recon/tla/raw/08191c20.s", "recon/tla/raw/081929fc.s"
+      ],
+      "element": "le-u16",
+      "stride": 2,
+      "values": [0, 2, 10, 28, 60, 110, 182, 280, 408, 570]
+    },
+    {
+      "name": "hyou_a_001",
+      "address": "0x08197424",
+      "end": "0x08197438",
+      "consumers": [
+        "recon/tla/raw/0813bba0.s", "recon/tla/raw/0813e3d0.s", "recon/tla/raw/0813eb70.s", "recon/tla/raw/08145df8.s",
+        "recon/tla/raw/0814627c.s", "recon/tla/raw/0814fab8.s", "recon/tla/raw/0815b290.s", "recon/tla/raw/0815e3ac.s",
+        "recon/tla/raw/081693d0.s"
+      ],
+      "element": "le-u16",
+      "stride": 2,
+      "values": [0, 4, 20, 56, 120, 220, 364, 560, 816, 1140]
+    },
+    {
+      "name": "hyou_a_002",
+      "address": "0x08197438",
+      "end": "0x0819744c",
+      "consumers": ["recon/tla/raw/0813fa88.s"],
+      "element": "le-u16",
+      "stride": 2,
+      "values": [0, 8, 40, 112, 240, 440, 728, 1120, 1632, 2280]
+    },
+    {
+      "name": "hyou_a_003",
+      "address": "0x0819744c",
+      "end": "0x0819745e",
+      "consumers": [
+        "recon/tla/raw/0813bba0.s", "recon/tla/raw/0814ce30.s", "recon/tla/raw/0814ef44.s", "recon/tla/raw/08150c74.s",
+        "recon/tla/raw/0816fca8.s"
+      ],
+      "element": "le-u16",
+      "stride": 2,
+      "values": [0, 25, 74, 123, 172, 221, 246, 255, 256]
+    },
+    {
+      "name": "hyou_a_004",
+      "address": "0x0819745e",
+      "end": "0x08197467",
+      "consumers": [
+        "recon/tla/raw/0813bba0.s", "recon/tla/raw/0814ce30.s", "recon/tla/raw/0814ef44.s", "recon/tla/raw/08150c74.s",
+        "recon/tla/raw/0816fca8.s"
+      ],
+      "element": "u8",
+      "stride": 1,
+      "values": [5, 7, 7, 7, 7, 5, 3, 1, 1]
+    },
+    {
+      "name": "hyou_a_005",
+      "address": "0x08197467",
+      "end": "0x0819746d",
+      "consumers": [
+        "recon/tla/raw/081504d8.s", "recon/tla/raw/08153ebc.s", "recon/tla/raw/08157638.s", "recon/tla/raw/0815b290.s",
+        "recon/tla/raw/0815f16c.s", "recon/tla/raw/08182898.s"
+      ],
+      "element": "u8",
+      "stride": 1,
+      "values": [24, 29, 30, 27, 24, 16]
+    },
+    {
+      "name": "hyou_a_006",
+      "address": "0x0819746d",
+      "end": "0x08197473",
+      "consumers": [
+        "recon/tla/raw/081504d8.s", "recon/tla/raw/08153ebc.s", "recon/tla/raw/08157638.s", "recon/tla/raw/0815b290.s",
+        "recon/tla/raw/0815f16c.s", "recon/tla/raw/08182898.s"
+      ],
+      "element": "u8",
+      "stride": 1,
+      "values": [23, 32, 37, 49, 53, 52]
+    },
+    {
+      "name": "hyou_a_007",
+      "address": "0x08197473",
+      "end": "0x0819747a",
+      "consumers": [
+        "recon/tla/raw/081504d8.s", "recon/tla/raw/08153ebc.s", "recon/tla/raw/08157638.s", "recon/tla/raw/0815b290.s",
+        "recon/tla/raw/0815f16c.s", "recon/tla/raw/08182898.s"
+      ],
+      "element": "u8",
+      "stride": 1,
+      "values": [41, 32, 26, 11, 4, 2, 0]
+    },
+    {
+      "name": "hyou_a_008",
+      "address": "0x0819747a",
+      "end": "0x08197486",
+      "consumers": [
+        "recon/tla/raw/081504d8.s", "recon/tla/raw/08153ebc.s", "recon/tla/raw/08157638.s", "recon/tla/raw/0815b290.s",
+        "recon/tla/raw/0815f16c.s", "recon/tla/raw/08182898.s"
+      ],
+      "element": "le-u16",
+      "stride": 2,
+      "values": [0, 552, 1480, 2590, 3913, 5185]
+    },
+    {
+      "name": "hyou_a_009",
+      "address": "0x08197486",
+      "end": "0x08197492",
+      "consumers": [
+        "recon/tla/raw/0813d098.s", "recon/tla/raw/0813fa88.s", "recon/tla/raw/08147aec.s", "recon/tla/raw/0814a814.s",
+        "recon/tla/raw/0815265c.s", "recon/tla/raw/081548d0.s", "recon/tla/raw/08156140.s", "recon/tla/raw/08157638.s",
+        "recon/tla/raw/0815a0ec.s", "recon/tla/raw/0815f16c.s", "recon/tla/raw/0816fca8.s", "recon/tla/raw/08182898.s",
+        "recon/tla/raw/0818c7b8.s"
+      ],
+      "element": "le-u16",
+      "stride": 2,
+      "values": [0, 589, 1302, 2015, 2414, 2750]
+    },
+    {
+      "name": "hyou_a_010",
+      "address": "0x08197492",
+      "end": "0x08197498",
+      "consumers": [
+        "recon/tla/raw/0813d098.s", "recon/tla/raw/0813fa88.s", "recon/tla/raw/08147aec.s", "recon/tla/raw/0814a814.s",
+        "recon/tla/raw/0815265c.s", "recon/tla/raw/081548d0.s", "recon/tla/raw/08156140.s", "recon/tla/raw/08157638.s",
+        "recon/tla/raw/0815a0ec.s", "recon/tla/raw/0815f16c.s", "recon/tla/raw/0816fca8.s", "recon/tla/raw/08182898.s",
+        "recon/tla/raw/0818c7b8.s"
+      ],
+      "element": "u8",
+      "stride": 1,
+      "values": [19, 23, 23, 19, 16, 17]
+    },
+    {
+      "name": "hyou_a_011",
+      "address": "0x08197498",
+      "end": "0x0819749e",
+      "consumers": [
+        "recon/tla/raw/0813d098.s", "recon/tla/raw/0813fa88.s", "recon/tla/raw/08147aec.s", "recon/tla/raw/0814a814.s",
+        "recon/tla/raw/0815265c.s", "recon/tla/raw/081548d0.s", "recon/tla/raw/08156140.s", "recon/tla/raw/08157638.s",
+        "recon/tla/raw/0815a0ec.s", "recon/tla/raw/0815f16c.s", "recon/tla/raw/0816fca8.s", "recon/tla/raw/08182898.s",
+        "recon/tla/raw/0818c7b8.s"
+      ],
+      "element": "u8",
+      "stride": 1,
+      "values": [31, 31, 31, 21, 21, 24]
+    },
+    {
+      "name": "hyou_a_012",
+      "address": "0x0819749e",
+      "end": "0x081974ad",
+      "consumers": [
+        "recon/tla/raw/0815265c.s", "recon/tla/raw/08157638.s", "recon/tla/raw/0815f16c.s", "recon/tla/raw/0816b6ec.s"
+      ],
+      "element": "u8",
+      "stride": 1,
+      "values": [5, 11, 10, 7, 7, 12, 13, 9, 19, 12, 17, 22, 15, 16, 14]
+    },
+    {
+      "name": "hyou_a_013",
+      "address": "0x081974ad",
+      "end": "0x081974bc",
+      "consumers": [
+        "recon/tla/raw/0815265c.s", "recon/tla/raw/08157638.s", "recon/tla/raw/0815f16c.s", "recon/tla/raw/0816b6ec.s"
+      ],
+      "element": "u8",
+      "stride": 1,
+      "values": [11, 6, 10, 11, 10, 7, 17, 21, 12, 21, 17, 13, 16, 16, 15]
+    },
+    {
+      "name": "hyou_a_014",
+      "address": "0x081974bc",
+      "end": "0x081974dc",
+      "consumers": [
+        "recon/tla/raw/0815265c.s", "recon/tla/raw/08157638.s", "recon/tla/raw/0815f16c.s", "recon/tla/raw/0816b6ec.s"
+      ],
+      "element": "le-u16",
+      "stride": 2,
+      "values": [0, 55, 121, 221, 298, 368, 452, 673, 862, 1090, 1342, 1631, 1917, 2157, 2413, 2623]
+    },
+    {
+      "name": "hyou_a_015",
+      "address": "0x081974dc",
+      "end": "0x081974f4",
+      "consumers": ["recon/tla/raw/081504d8.s", "recon/tla/raw/0818ad40.s"],
+      "element": "le-u16",
+      "stride": 2,
+      "values": [0, 120, 180, 258, 298, 352, 408, 471, 567, 607, 631, 661]
+    },
+    {
+      "name": "hyou_a_016",
+      "address": "0x081974f4",
+      "end": "0x08197500",
+      "consumers": ["recon/tla/raw/081504d8.s", "recon/tla/raw/0818ad40.s"],
+      "element": "u8",
+      "stride": 1,
+      "values": [10, 5, 6, 5, 6, 7, 9, 8, 4, 6, 6, 7]
+    },
+    {
+      "name": "hyou_a_017",
+      "address": "0x08197500",
+      "end": "0x0819750c",
+      "consumers": ["recon/tla/raw/081504d8.s", "recon/tla/raw/0818ad40.s"],
+      "element": "u8",
+      "stride": 1,
+      "values": [12, 12, 13, 8, 9, 8, 7, 12, 10, 4, 5, 5]
+    },
+    {
+      "name": "hyou_a_018",
+      "address": "0x0819750c",
+      "end": "0x0819751a",
+      "consumers": ["recon/tla/raw/0815f16c.s", "recon/tla/raw/0818ad40.s"],
+      "element": "u8",
+      "stride": 1,
+      "values": [10, 30, 0, 0, 0, 6, 52, 60, 0, 0, 0, 0, 0, 0]
+    },
+    {
+      "name": "hyou_a_019",
+      "address": "0x0819751a",
+      "end": "0x08197521",
+      "consumers": ["recon/tla/raw/0815f16c.s", "recon/tla/raw/0818ad40.s"],
+      "element": "u8",
+      "stride": 1,
+      "values": [0, 20, 2, 2, 34, 64, 68]
+    },
+    {
+      "name": "hyou_a_020",
+      "address": "0x08197521",
+      "end": "0x08197527",
+      "consumers": ["recon/tla/raw/0813bba0.s"],
+      "element": "u8",
+      "stride": 1,
+      "values": [16, 46, 20, 52, 32, 80]
+    },
+    {
+      "name": "hyou_a_021",
+      "address": "0x08197527",
+      "end": "0x08197533",
+      "consumers": ["recon/tla/raw/0813bba0.s"],
+      "element": "u8",
+      "stride": 1,
+      "values": [6, 8, 32, 80, 8, 16, 24, 80, 32, 4, 8, 80]
+    },
+    {
+      "name": "hyou_a_022",
+      "address": "0x08197533",
+      "end": "0x08197547",
+      "consumers": ["recon/tla/raw/0813c5f4.s"],
+      "element": "s8",
+      "stride": 1,
+      "values": [0, 1, 0, 0, 0, 1, 4, 0, 0, 1, -1, 1, 1, 1, -1, 1, 1, 1, 4, 0]
+    },
+    {
+      "name": "hyou_a_023",
+      "address": "0x08197547",
+      "end": "0x0819754f",
+      "consumers": ["recon/tla/raw/0813c5f4.s"],
+      "element": "u8",
+      "stride": 1,
+      "values": [255, 255, 1, 1, 1, 1, 255, 255]
+    },
+    {
+      "name": "hyou_a_024",
+      "address": "0x0819754f",
+      "end": "0x081975e2",
+      "consumers": ["recon/tla/raw/0813d098.s"],
+      "element": "u8",
+      "stride": 1,
+      "values": [
+        1, 2, 8, 0, 6, 0, 70, 1, 1, 1, 1, 6, 1, 54, 1, 3, 1, 2, 6, 1, 96, 1, 3, 2, 3, 4, 1, 96, 1, 3, 2, 4, 4, 1, 96, 1,
+        3, 4, 5, 4, 0, 60, 0, 1, 4, 5, 4, 0, 38, 0, 2, 8, 5, 2, 0, 48, 0, 1, 24, 4, 2, 0, 50, 0, 1, 1, 1, 2, 0, 46, 1,
+        1, 1, 4, 6, 1, 54, 1, 3, 2, 4, 4, 0, 96, 0, 4, 8, 5, 2, 1, 64, 0, 8, 8, 5, 1, 0, 64, 0, 1, 44, 6, 2, 0, 50, 1,
+        3, 2, 4, 4, 0, 96, 0, 1, 40, 6, 2, 1, 50, 1, 1, 24, 4, 6, 0, 50, 1, 1, 40, 6, 2, 1, 50, 0, 1, 64, 4, 2, 0, 22,
+        1, 1, 8, 0, 6, 0, 70
+      ]
+    },
+    {
+      "name": "hyou_a_025",
+      "address": "0x081975e2",
+      "end": "0x081975e8",
+      "consumers": ["recon/tla/raw/0813d098.s"],
+      "element": "u8",
+      "stride": 1,
+      "values": [38, 54, 71, 74, 77, 65]
+    },
+    {
+      "name": "hyou_a_026",
+      "address": "0x081975e8",
+      "end": "0x081975ee",
+      "consumers": ["recon/tla/raw/0813d098.s"],
+      "element": "u8",
+      "stride": 1,
+      "values": [7, 9, 11, 13, 13, 11]
+    },
+    {
+      "name": "hyou_a_027",
+      "address": "0x081975ee",
+      "end": "0x081975fa",
+      "consumers": ["recon/tla/raw/0813d098.s"],
+      "element": "le-u16",
+      "stride": 2,
+      "values": [3200, 3466, 3952, 4733, 5695, 6696]
+    },
+    {
+      "name": "hyou_a_028",
+      "address": "0x081975fa",
+      "end": "0x08197600",
+      "consumers": ["recon/tla/raw/0813d098.s"],
+      "element": "u8",
+      "stride": 1,
+      "values": [58, 42, 25, 13, 5, 0]
+    },
+    {
+      "name": "hyou_a_029",
+      "address": "0x08197600",
+      "end": "0x08197605",
+      "consumers": ["recon/tla/raw/0813d098.s"],
+      "element": "u8",
+      "stride": 1,
+      "values": [0, 1, 2, 3, 2]
+    },
+    {
+      "name": "hyou_a_030",
+      "address": "0x08197605",
+      "end": "0x08197609",
+      "consumers": ["recon/tla/raw/0813d098.s"],
+      "element": "u8",
+      "stride": 1,
+      "values": [0, 4, 8, 12]
+    },
+    {
+      "name": "hyou_a_031",
+      "address": "0x08197609",
+      "end": "0x0819762a",
+      "consumers": ["recon/tla/raw/0813eb70.s"],
+      "element": "u8",
+      "stride": 1,
+      "values": [
+        21, 20, 24, 30, 35, 69, 19, 23, 9, 22, 33, 10, 18, 9, 7, 9, 17, 55, 30, 25, 40, 29, 10, 28, 14, 5, 32, 23, 19,
+        32, 8, 43, 15
+      ]
+    },
+    {
+      "name": "hyou_a_032",
+      "address": "0x0819762a",
+      "end": "0x0819764c",
+      "consumers": ["recon/tla/raw/0813eb70.s"],
+      "element": "u8",
+      "stride": 1,
+      "values": [
+        23, 47, 25, 40, 20, 53, 28, 29, 23, 14, 35, 17, 18, 14, 15, 12, 13, 37, 38, 41, 60, 41, 15, 45, 59, 41, 26, 50,
+        21, 35, 12, 57, 11, 0
+      ]
+    },
+    {
+      "name": "hyou_a_033",
+      "address": "0x0819764c",
+      "end": "0x08197690",
+      "consumers": ["recon/tla/raw/0813eb70.s"],
+      "element": "le-u16",
+      "stride": 2,
+      "values": [
+        0, 483, 1423, 2023, 3223, 3923, 7580, 8112, 8779, 8986, 9294, 10449, 10619, 10943, 11069, 11174, 11282, 11503,
+        13538, 14678, 15703, 18103, 19292, 19442, 20702, 21528, 21733, 22565, 23715, 24114, 25234, 25330, 27781, 27946
+      ]
+    },
+    {
+      "name": "hyou_a_034",
+      "address": "0x08197690",
+      "end": "0x081976b1",
+      "consumers": ["recon/tla/raw/0813eb70.s"],
+      "element": "u8",
+      "stride": 1,
+      "values": [
+        0, 21, 28, 46, 70, 51, 0, 13, 37, 77, 87, 19, 25, 35, 44, 45, 48, 65, 0, 0, 0, 5, 33, 15, 36, 46, 47, 50, 53,
+        65, 72, 77, 105
+      ]
+    },
+    {
+      "name": "hyou_a_035",
+      "address": "0x081976b1",
+      "end": "0x081976d2",
+      "consumers": ["recon/tla/raw/0813eb70.s"],
+      "element": "u8",
+      "stride": 1,
+      "values": [
+        0, 0, 0, 0, 0, 0, 19, 17, 23, 28, 8, 36, 43, 43, 40, 47, 48, 37, 42, 67, 60, 79, 62, 75, 61, 62, 60, 70, 74, 85,
+        108, 63, 74
+      ]
+    },
+    {
+      "name": "hyou_a_036",
+      "address": "0x081976d2",
+      "end": "0x081976d6",
+      "consumers": ["recon/tla/raw/0813eb70.s"],
+      "element": "s8",
+      "stride": 1,
+      "values": [0, 32, 0, 32]
+    },
+    {
+      "name": "hyou_a_037",
+      "address": "0x081976d6",
+      "end": "0x081976da",
+      "consumers": ["recon/tla/raw/0813eb70.s"],
+      "element": "s8",
+      "stride": 1,
+      "values": [0, 0, 32, 32]
+    },
+    {
+      "name": "hyou_a_038",
+      "address": "0x081976da",
+      "end": "0x081976e0",
+      "consumers": ["recon/tla/raw/0813eb70.s"],
+      "element": "u8",
+      "stride": 1,
+      "values": [0, 4, 8, 12, 0, 0]
+    },
+    {
+      "name": "hyou_a_039",
+      "address": "0x081976e0",
+      "end": "0x081976f0",
+      "consumers": ["recon/tla/raw/0813fa88.s"],
+      "element": "u8",
+      "stride": 1,
+      "values": [252, 127, 0, 0, 4, 127, 0, 0, 250, 0, 0, 0, 6, 0, 0, 0]
+    },
+    {
+      "name": "hyou_a_040",
+      "address": "0x081976f0",
+      "end": "0x081976f8",
+      "consumers": ["recon/tla/raw/0813fa88.s"],
+      "element": "le-u16",
+      "stride": 2,
+      "values": [10240, 56579, 56579, 58880]
+    },
+    {
+      "name": "hyou_a_041",
+      "address": "0x081976f8",
+      "end": "0x08197700",
+      "consumers": ["recon/tla/raw/0813fa88.s"],
+      "element": "le-u16",
+      "stride": 2,
+      "values": [39680, 42496, 32768, 22016]
+    },
+    {
+      "name": "hyou_a_042",
+      "address": "0x08197700",
+      "end": "0x08197702",
+      "consumers": ["recon/tla/raw/0813fa88.s"],
+      "element": "u8",
+      "stride": 1,
+      "values": [24, 48]
+    },
+    {
+      "name": "hyou_a_043",
+      "address": "0x08197702",
+      "end": "0x08197704",
+      "consumers": ["recon/tla/raw/0813fa88.s"],
+      "element": "u8",
+      "stride": 1,
+      "values": [24, 32]
+    },
+    {
+      "name": "hyou_a_044",
+      "address": "0x08197704",
+      "end": "0x0819770a",
+      "consumers": ["recon/tla/raw/0813fa88.s"],
+      "element": "u8",
+      "stride": 1,
+      "values": [7, 37, 45, 58, 74, 80]
+    },
+    {
+      "name": "hyou_a_045",
+      "address": "0x0819770a",
+      "end": "0x08197710",
+      "consumers": ["recon/tla/raw/0813fa88.s"],
+      "element": "u8",
+      "stride": 1,
+      "values": [96, 48, 64, 64, 96, 128]
+    },
+    {
+      "name": "hyou_a_046",
+      "address": "0x08197710",
+      "end": "0x08197716",
+      "consumers": ["recon/tla/raw/0813fa88.s"],
+      "element": "u8",
+      "stride": 1,
+      "values": [48, 48, 32, 0, 0, 24]
+    },
+    {
+      "name": "hyou_a_047",
+      "address": "0x08197716",
+      "end": "0x0819771c",
+      "consumers": ["recon/tla/raw/0813fa88.s"],
+      "element": "u8",
+      "stride": 1,
+      "values": [96, 96, 96, 96, 120, 120]
+    },
+    {
+      "name": "hyou_a_048",
+      "address": "0x0819771c",
+      "end": "0x08197720",
+      "consumers": ["recon/tla/raw/0813fa88.s"],
+      "element": "u8",
+      "stride": 1,
+      "values": [2, 26, 104, 150]
+    },
+    {
+      "name": "hyou_a_049",
+      "address": "0x08197720",
+      "end": "0x08197724",
+      "consumers": ["recon/tla/raw/0813fa88.s"],
+      "element": "u8",
+      "stride": 1,
+      "values": [32, 16, 24, 64]
+    },
+    {
+      "name": "hyou_a_050",
+      "address": "0x08197724",
+      "end": "0x08197728",
+      "consumers": ["recon/tla/raw/0813fa88.s"],
+      "element": "u8",
+      "stride": 1,
+      "values": [96, 48, 24, 16]
+    },
+    {
+      "name": "hyou_a_051",
+      "address": "0x08197728",
+      "end": "0x0819772c",
+      "consumers": ["recon/tla/raw/0813fa88.s"],
+      "element": "u8",
+      "stride": 1,
+      "values": [16, 8, 12, 8]
+    },
+    {
+      "name": "hyou_a_052",
+      "address": "0x0819772c",
+      "end": "0x08197730",
+      "consumers": ["recon/tla/raw/0813fa88.s"],
+      "element": "u8",
+      "stride": 1,
+      "values": [16, 4, 16, 24]
+    },
+    {
+      "name": "hyou_a_053",
+      "address": "0x08197730",
+      "end": "0x08197734",
+      "consumers": ["recon/tla/raw/0813fa88.s"],
+      "element": "u8",
+      "stride": 1,
+      "values": [96, 96, 96, 120]
+    },
+    {
+      "name": "hyou_a_054",
+      "address": "0x08197734",
+      "end": "0x08197744",
+      "consumers": ["recon/tla/raw/0813fa88.s"],
+      "element": "le-s32",
+      "stride": 4,
+      "values": [36864, 40960, 36864, 36864]
+    },
+    {
+      "name": "hyou_a_055",
+      "address": "0x08197744",
+      "end": "0x08197748",
+      "consumers": ["recon/tla/raw/0813fa88.s"],
+      "element": "u8",
+      "stride": 1,
+      "values": [0, 4, 8, 12]
+    },
+    {
+      "name": "hyou_a_056",
+      "address": "0x08197748",
+      "end": "0x0819774f",
+      "consumers": ["recon/tla/raw/0813fa88.s"],
+      "element": "u8",
+      "stride": 1,
+      "values": [8, 9, 25, 14, 15, 20, 21]
+    },
+    {
+      "name": "hyou_a_057",
+      "address": "0x0819774f",
+      "end": "0x08197760",
+      "consumers": ["recon/tla/raw/0813fa88.s"],
+      "element": "u8",
+      "stride": 1,
+      "values": [148, 160, 162, 164, 170, 174, 178, 182, 188, 194, 196, 200, 202, 206, 208, 210, 220]
+    },
+    {
+      "name": "hyou_a_058",
+      "address": "0x08197760",
+      "end": "0x081977a4",
+      "consumers": ["recon/tla/raw/0813fa88.s"],
+      "element": "le-s32",
+      "stride": 4,
+      "values": [
+        404232216, 269488144, 269488144, 404232216, 741092396, 741092396, 741092396, 741092396, 741092396, 741092396,
+        269488144, 269488144, 269488144, 741092396, 741092396, 269488144, 269488144
+      ]
+    },
+    {
+      "name": "hyou_a_059",
+      "address": "0x081977a4",
+      "end": "0x081977c4",
+      "consumers": ["recon/tla/raw/0813fa88.s"],
+      "element": "u8",
+      "stride": 1,
+      "values": [
+        0, 32, 64, 96, 160, 192, 0, 32, 64, 96, 128, 160, 192, 224, 64, 96, 128, 160, 192, 224, 64, 96, 128, 160, 192,
+        224, 64, 96, 128, 160, 192, 224
+      ]
+    },
+    {
+      "name": "hyou_a_060",
+      "address": "0x081977c4",
+      "end": "0x081977e4",
+      "consumers": ["recon/tla/raw/0813fa88.s"],
+      "element": "u8",
+      "stride": 1,
+      "values": [
+        0, 0, 0, 0, 0, 0, 32, 32, 32, 32, 32, 32, 32, 32, 64, 64, 64, 64, 64, 64, 96, 96, 96, 96, 96, 96, 128, 128, 128,
+        128, 128, 128
+      ]
+    },
+    {
+      "name": "hyou_a_061",
+      "address": "0x081977e4",
+      "end": "0x081977e8",
+      "consumers": ["recon/tla/raw/0813fa88.s"],
+      "element": "u8",
+      "stride": 1,
+      "values": [4, 3, 5, 3]
+    },
+    {
+      "name": "hyou_a_062",
+      "address": "0x081977e8",
+      "end": "0x081977ec",
+      "consumers": ["recon/tla/raw/0813fa88.s"],
+      "element": "s8",
+      "stride": 1,
+      "values": [16, 12, 4, -8]
+    },
+    {
+      "name": "hyou_a_063",
+      "address": "0x081977ec",
+      "end": "0x081977f0",
+      "consumers": ["recon/tla/raw/08142944.s"],
+      "element": "u8",
+      "stride": 1,
+      "values": [0, 4, 9, 10]
+    },
+    {
+      "name": "hyou_a_064",
+      "address": "0x081977f0",
+      "end": "0x081977f4",
+      "consumers": ["recon/tla/raw/08142944.s"],
+      "element": "u8",
+      "stride": 1,
+      "values": [3, 4, 3, 5]
+    },
+    {
+      "name": "hyou_a_065",
+      "address": "0x081977f4",
+      "end": "0x081977f8",
+      "consumers": ["recon/tla/raw/08142944.s"],
+      "element": "u8",
+      "stride": 1,
+      "values": [3, 4, 5, 6]
+    },
+    {
+      "name": "hyou_a_066",
+      "address": "0x081977f8",
+      "end": "0x0819781a",
+      "consumers": ["recon/tla/raw/08147aec.s", "recon/tla/raw/0815f16c.s"],
+      "element": "u8",
+      "stride": 1,
+      "values": [
+        32, 60, 33, 82, 49, 94, 41, 89, 49, 76, 32, 99, 54, 69, 34, 82, 45, 71, 31, 91, 32, 69, 26, 80, 40, 68, 41, 60,
+        46, 60, 36, 63, 0, 0
+      ]
+    },
+    {
+      "name": "hyou_a_067",
+      "address": "0x0819781a",
+      "end": "0x08197826",
+      "consumers": [
+        "recon/tla/raw/08147aec.s", "recon/tla/raw/08156140.s", "recon/tla/raw/0815f16c.s", "recon/tla/raw/0816b6ec.s",
+        "recon/tla/raw/0818a220.s"
+      ],
+      "element": "u8",
+      "stride": 1,
+      "values": [5, 10, 11, 14, 12, 11, 19, 18, 23, 12, 22, 22]
+    },
+    {
+      "name": "hyou_a_068",
+      "address": "0x08197826",
+      "end": "0x08197834",
+      "consumers": [
+        "recon/tla/raw/08147aec.s", "recon/tla/raw/08156140.s", "recon/tla/raw/0815f16c.s", "recon/tla/raw/0816b6ec.s",
+        "recon/tla/raw/0818a220.s"
+      ],
+      "element": "u8",
+      "stride": 1,
+      "values": [14, 10, 7, 13, 14, 14, 32, 30, 24, 38, 20, 20, 0, 0]
+    },
+    {
+      "name": "hyou_a_069",
+      "address": "0x08197834",
+      "end": "0x08197864",
+      "consumers": [
+        "recon/tla/raw/08147aec.s", "recon/tla/raw/08156140.s", "recon/tla/raw/0815f16c.s", "recon/tla/raw/0816b6ec.s",
+        "recon/tla/raw/0818a220.s"
+      ],
+      "element": "le-s32",
+      "stride": 4,
+      "values": [0, 70, 170, 247, 429, 597, 751, 1359, 1899, 2451, 2907, 3347]
+    },
+    {
+      "name": "hyou_a_070",
+      "address": "0x08197864",
+      "end": "0x0819786c",
+      "consumers": ["recon/tla/raw/08144628.s"],
+      "element": "u8",
+      "stride": 1,
+      "values": [16, 88, 8, 72, 12, 80, 16, 88]
+    },
+    {
+      "name": "hyou_a_071",
+      "address": "0x0819786c",
+      "end": "0x08197874",
+      "consumers": ["recon/tla/raw/08144b14.s"],
+      "element": "u8",
+      "stride": 1,
+      "values": [2, 1, 0, 1, 2, 3, 4, 3]
+    },
+    {
+      "name": "hyou_a_072",
+      "address": "0x08197874",
+      "end": "0x0819787a",
+      "consumers": ["recon/tla/raw/08144b14.s"],
+      "element": "le-u16",
+      "stride": 2,
+      "values": [2702, 3535, 4580]
+    },
+    {
+      "name": "hyou_a_073",
+      "address": "0x0819787a",
+      "end": "0x0819787d",
+      "consumers": ["recon/tla/raw/08144b14.s"],
+      "element": "u8",
+      "stride": 1,
+      "values": [17, 19, 20]
+    },
+    {
+      "name": "hyou_a_074",
+      "address": "0x0819787d",
+      "end": "0x08197880",
+      "consumers": ["recon/tla/raw/08144b14.s"],
+      "element": "u8",
+      "stride": 1,
+      "values": [49, 55, 64]
+    },
+    {
+      "name": "hyou_a_075",
+      "address": "0x08197880",
+      "end": "0x081978a8",
+      "consumers": ["recon/tla/raw/0814512c.s"],
+      "element": "s8",
+      "stride": 1,
+      "values": [
+        0, 0, 1, 72, 0, 0, 1, 72, 0, 0, 1, 72, 1, 0, 1, 40, 1, 0, 1, 56, 0, 0, 1, 56, 0, 0, 1, 72, 1, 0, 4, 52, 0, 1, 1,
+        72, 0, 0, 1, 72
+      ]
+    },
+    {
+      "name": "hyou_a_076",
+      "address": "0x081978a8",
+      "end": "0x081978ba",
+      "consumers": ["recon/tla/raw/0814512c.s"],
+      "element": "u8",
+      "stride": 1,
+      "values": [9, 10, 9, 9, 9, 11, 11, 11, 12, 6, 7, 7, 7, 6, 6, 8, 8, 8]
+    },
+    {
+      "name": "hyou_a_077",
+      "address": "0x081978ba",
+      "end": "0x081978cc",
+      "consumers": ["recon/tla/raw/0814512c.s"],
+      "element": "u8",
+      "stride": 1,
+      "values": [12, 12, 12, 12, 12, 12, 12, 12, 12, 8, 7, 6, 6, 8, 6, 4, 3, 3]
+    },
+    {
+      "name": "hyou_a_078",
+      "address": "0x081978cc",
+      "end": "0x081978f0",
+      "consumers": ["recon/tla/raw/0814512c.s"],
+      "element": "le-u16",
+      "stride": 2,
+      "values": [0, 108, 228, 336, 444, 552, 684, 816, 948, 1092, 1140, 1189, 1231, 1273, 1321, 1357, 1389, 1413]
+    },
+    {
+      "name": "hyou_a_079",
+      "address": "0x081978f0",
+      "end": "0x081978fe",
+      "consumers": ["recon/tla/raw/0814512c.s"],
+      "element": "u8",
+      "stride": 1,
+      "values": [10, 30, 0, 0, 0, 6, 52, 60, 0, 0, 0, 0, 0, 0]
+    },
+    {
+      "name": "hyou_a_080",
+      "address": "0x081978fe",
+      "end": "0x0819790c",
+      "consumers": ["recon/tla/raw/0814512c.s"],
+      "element": "u8",
+      "stride": 1,
+      "values": [0, 20, 2, 2, 34, 64, 68, 0, 9, 4, 4, 4, 4, 4]
+    },
+    {
+      "name": "hyou_a_081",
+      "address": "0x0819790c",
+      "end": "0x08197918",
+      "consumers": ["recon/tla/raw/08145df8.s"],
+      "element": "u8",
+      "stride": 1,
+      "values": [0, 0, 0, 0, 24, 0, 0, 0, 0, 0, 0, 0]
+    },
+    {
+      "name": "hyou_a_082",
+      "address": "0x08197918",
+      "end": "0x08197924",
+      "consumers": ["recon/tla/raw/0814627c.s"],
+      "element": "u8",
+      "stride": 1,
+      "values": [0, 0, 0, 0, 24, 0, 0, 0, 0, 0, 0, 0]
+    },
+    {
+      "name": "hyou_a_083",
+      "address": "0x08197924",
+      "end": "0x0819793c",
+      "consumers": ["recon/tla/raw/0814627c.s"],
+      "element": "u8",
+      "stride": 1,
+      "values": [0, 0, 0, 0, 0, 0, 48, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 28, 0, 0, 0, 0, 0]
+    },
+    {
+      "name": "hyou_a_084",
+      "address": "0x0819793c",
+      "end": "0x0819793e",
+      "consumers": ["recon/tla/raw/0814627c.s"],
+      "element": "u8",
+      "stride": 1,
+      "values": [32, 16]
+    },
+    {
+      "name": "hyou_a_085",
+      "address": "0x0819793e",
+      "end": "0x08197947",
+      "consumers": ["recon/tla/raw/0814627c.s"],
+      "element": "u8",
+      "stride": 1,
+      "values": [0, 32, 64, 0, 32, 64, 0, 32, 64]
+    },
+    {
+      "name": "hyou_a_086",
+      "address": "0x08197947",
+      "end": "0x08197950",
+      "consumers": ["recon/tla/raw/0814627c.s"],
+      "element": "u8",
+      "stride": 1,
+      "values": [0, 0, 0, 32, 32, 32, 64, 64, 64]
+    },
+    {
+      "name": "hyou_a_087",
+      "address": "0x08197950",
+      "end": "0x08197958",
+      "consumers": ["recon/tla/raw/0814627c.s"],
+      "element": "le-u16",
+      "stride": 2,
+      "values": [334, 347, 359, 372]
+    },
+    {
+      "name": "hyou_a_088",
+      "address": "0x08197958",
+      "end": "0x0819795b",
+      "consumers": ["recon/tla/raw/0814627c.s"],
+      "element": "u8",
+      "stride": 1,
+      "values": [14, 24, 48]
+    },
+    {
+      "name": "hyou_a_089",
+      "address": "0x0819795b",
+      "end": "0x0819795e",
+      "consumers": ["recon/tla/raw/0814627c.s"],
+      "element": "u8",
+      "stride": 1,
+      "values": [14, 19, 24]
+    },
+    {
+      "name": "hyou_a_090",
+      "address": "0x0819795e",
+      "end": "0x08197962",
+      "consumers": ["recon/tla/raw/0814627c.s"],
+      "element": "u8",
+      "stride": 1,
+      "values": [8, 12, 17, 0]
+    },
+    {
+      "name": "hyou_a_091",
+      "address": "0x08197962",
+      "end": "0x08197968",
+      "consumers": ["recon/tla/raw/0814627c.s"],
+      "element": "le-u16",
+      "stride": 2,
+      "values": [13824, 14020, 14476]
+    },
+    {
+      "name": "hyou_a_092",
+      "address": "0x08197968",
+      "end": "0x0819796c",
+      "consumers": ["recon/tla/raw/08147aec.s"],
+      "element": "u8",
+      "stride": 1,
+      "values": [0, 8, 12, 16]
+    },
+    {
+      "name": "hyou_a_093",
+      "address": "0x0819796c",
+      "end": "0x0819796e",
+      "consumers": ["recon/tla/raw/08147aec.s"],
+      "element": "u8",
+      "stride": 1,
+      "values": [32, 32]
+    },
+    {
+      "name": "hyou_a_094",
+      "address": "0x0819796e",
+      "end": "0x08197972",
+      "consumers": ["recon/tla/raw/08147aec.s"],
+      "element": "u8",
+      "stride": 1,
+      "values": [1, 1, 2, 3]
+    },
+    {
+      "name": "hyou_a_095",
+      "address": "0x08197972",
+      "end": "0x08197978",
+      "consumers": ["recon/tla/raw/08147aec.s"],
+      "element": "u8",
+      "stride": 1,
+      "values": [24, 29, 30, 27, 24, 16]
+    },
+    {
+      "name": "hyou_a_096",
+      "address": "0x08197978",
+      "end": "0x0819797e",
+      "consumers": ["recon/tla/raw/08147aec.s"],
+      "element": "u8",
+      "stride": 1,
+      "values": [23, 32, 37, 49, 53, 52]
+    },
+    {
+      "name": "hyou_a_097",
+      "address": "0x0819797e",
+      "end": "0x08197984",
+      "consumers": ["recon/tla/raw/08147aec.s"],
+      "element": "u8",
+      "stride": 1,
+      "values": [41, 32, 26, 11, 4, 2]
+    },
+    {
+      "name": "hyou_a_098",
+      "address": "0x08197984",
+      "end": "0x08197990",
+      "consumers": ["recon/tla/raw/08147aec.s"],
+      "element": "le-u16",
+      "stride": 2,
+      "values": [0, 552, 1480, 2590, 3913, 5185]
+    },
+    {
+      "name": "hyou_a_099",
+      "address": "0x08197990",
+      "end": "0x08197998",
+      "consumers": ["recon/tla/raw/08147aec.s"],
+      "element": "u8",
+      "stride": 1,
+      "values": [16, 104, 32, 104, 48, 104, 64, 104]
+    },
+    {
+      "name": "hyou_a_100",
+      "address": "0x08197998",
+      "end": "0x081979a8",
+      "consumers": ["recon/tla/raw/08147aec.s"],
+      "element": "le-s32",
+      "stride": 4,
+      "values": [32768, 16384, 16384, 8192]
+    },
+    {
+      "name": "hyou_a_101",
+      "address": "0x081979a8",
+      "end": "0x081979ae",
+      "consumers": ["recon/tla/raw/08147aec.s"],
+      "element": "u8",
+      "stride": 1,
+      "values": [6, 140, 12, 160, 30, 200]
+    },
+    {
+      "name": "hyou_a_102",
+      "address": "0x081979ae",
+      "end": "0x081979b7",
+      "consumers": ["recon/tla/raw/08147aec.s"],
+      "element": "u8",
+      "stride": 1,
+      "values": [1, 16, 2, 2, 24, 2, 4, 32, 4]
+    },
+    {
+      "name": "hyou_a_103",
+      "address": "0x081979b7",
+      "end": "0x081979c0",
+      "consumers": ["recon/tla/raw/08147aec.s"],
+      "element": "u8",
+      "stride": 1,
+      "values": [1, 85, 30, 4, 124, 54, 12, 166, 86]
+    },
+    {
+      "name": "hyou_a_104",
+      "address": "0x081979c0",
+      "end": "0x081979cc",
+      "consumers": ["recon/tla/raw/08147aec.s"],
+      "element": "le-u16",
+      "stride": 2,
+      "values": [384, 2, 256, 3, 192, 4]
+    },
+    {
+      "name": "hyou_a_105",
+      "address": "0x081979cc",
+      "end": "0x081979da",
+      "consumers": ["recon/tla/raw/08147aec.s"],
+      "element": "u8",
+      "stride": 1,
+      "values": [32, 64, 16, 48, 72, 96, 64, 88, 56, 104, 72, 48, 24, 56]
+    },
+    {
+      "name": "hyou_a_106",
+      "address": "0x081979da",
+      "end": "0x081979de",
+      "consumers": ["recon/tla/raw/08147aec.s"],
+      "element": "u8",
+      "stride": 1,
+      "values": [1, 3, 7, 0]
+    },
+    {
+      "name": "hyou_a_107",
+      "address": "0x081979de",
+      "end": "0x08197a1a",
+      "consumers": ["recon/tla/raw/08149bac.s"],
+      "element": "le-u16",
+      "stride": 2,
+      "values": [
+        128, 1, 16, 0, 0, 255, 1, 16, 0, 0, 192, 3, 0, 24, 48, 340, 1, 16, 24, 48, 32, 1, 16, 0, 0, 200, 1, 16, 24, 48
+      ]
+    },
+    {
+      "name": "hyou_a_108",
+      "address": "0x08197a1a",
+      "end": "0x08197a20",
+      "consumers": ["recon/tla/raw/08149bac.s"],
+      "element": "u8",
+      "stride": 1,
+      "values": [5, 5, 4, 3, 2, 1]
+    },
+    {
+      "name": "hyou_a_109",
+      "address": "0x08197a20",
+      "end": "0x08197a23",
+      "consumers": ["recon/tla/raw/08149bac.s"],
+      "element": "u8",
+      "stride": 1,
+      "values": [1, 2, 4]
+    },
+    {
+      "name": "hyou_a_110",
+      "address": "0x08197a23",
+      "end": "0x08197a2f",
+      "consumers": ["recon/tla/raw/08149bac.s"],
+      "element": "s8",
+      "stride": 1,
+      "values": [0, 0, 0, 0, 24, -24, 0, 0, -20, 20, -60, 60]
+    },
+    {
+      "name": "hyou_a_111",
+      "address": "0x08197a2f",
+      "end": "0x08197a34",
+      "consumers": ["recon/tla/raw/08149bac.s"],
+      "element": "u8",
+      "stride": 1,
+      "values": [8, 18, 24, 30, 34]
+    },
+    {
+      "name": "hyou_a_112",
+      "address": "0x08197a34",
+      "end": "0x08197a38",
+      "consumers": ["recon/tla/raw/0814a814.s"],
+      "element": "u8",
+      "stride": 1,
+      "values": [0, 4, 8, 12]
+    },
+    {
+      "name": "hyou_a_113",
+      "address": "0x08197a38",
+      "end": "0x08197a64",
+      "consumers": ["recon/tla/raw/0814b9e8.s"],
+      "element": "le-u16",
+      "stride": 2,
+      "values": [0, 0, 0, 32, 32, 0, 32, 32, 32, 64, 64, 0, 64, 32, 64, 64, 96, 0, 96, 32, 96, 64]
+    },
+    {
+      "name": "hyou_a_114",
+      "address": "0x08197a64",
+      "end": "0x08197a94",
+      "consumers": ["recon/tla/raw/0814b9e8.s"],
+      "element": "le-u16",
+      "stride": 2,
+      "values": [0, 16, 0, 48, 32, 0, 32, 32, 32, 64, 64, 0, 64, 32, 64, 64, 64, 96, 96, 0, 96, 64, 96, 96]
+    },
+    {
+      "name": "hyou_a_115",
+      "address": "0x08197a94",
+      "end": "0x08197a98",
+      "consumers": ["recon/tla/raw/0814b9e8.s"],
+      "element": "u8",
+      "stride": 1,
+      "values": [0, 6, 8, 9]
+    },
+    {
+      "name": "hyou_a_116",
+      "address": "0x08197a98",
+      "end": "0x08197a9c",
+      "consumers": ["recon/tla/raw/0814b9e8.s"],
+      "element": "u8",
+      "stride": 1,
+      "values": [5, 8, 7, 3]
+    },
+    {
+      "name": "hyou_a_117",
+      "address": "0x08197a9c",
+      "end": "0x08197aa0",
+      "consumers": ["recon/tla/raw/0814b9e8.s"],
+      "element": "s8",
+      "stride": 1,
+      "values": [32, 12, -24, 0]
+    }
+  ]
+}

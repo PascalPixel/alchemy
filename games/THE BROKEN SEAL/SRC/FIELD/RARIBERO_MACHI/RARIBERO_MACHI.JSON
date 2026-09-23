@@ -44,7 +44,6 @@
         "decoded_size": 10337,
         "encoded_size": 2752,
         "tilemap_length": 10336,
-        "lookahead": "",
         "component": "map-metatiles-2x2",
         "transform_mode": 1,
         "metatiles": 1292,
@@ -61,7 +60,6 @@
           [0, 2, 0, 0], [0, 10, 0, 0], [0, 8, 0, 0], [7, 8, 10, 0], [7, 0, 2, 0], [13, 4, 6, 6], [12, 4, 6, 6],
           [7, 4, 6, 0], [3, 0, 254, 0], [0, 6, 0, 0], [4, 254, 0, 0], [0, 1, 0, 0], [7, 0, 4, 0]
         ],
-        "lookahead": "00",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -158,7 +156,6 @@
           ],
           "0xffff"
         ],
-        "lookahead": "000000",
         "component": "map-animation-queues",
         "word_size": 2,
         "terminators": ["0xfe00", "0xffff"]

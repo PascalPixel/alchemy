@@ -42,7 +42,6 @@
         "decoded_size": 4049,
         "encoded_size": 2068,
         "tilemap_length": 4048,
-        "lookahead": "0000",
         "component": "map-metatiles-2x2",
         "transform_mode": 2,
         "metatiles": 506,
@@ -60,7 +59,6 @@
           [3, 0, 2, 0], [5, 255, 0, 0], [12, 0, 0, 4], [13, 0, 4, 4], [13, 0, 0, 4], [8, 0, 2, 0], [9, 2, 0, 0],
           [13, 4, 4, 0], [12, 0, 4, 4], [0, 4, 0, 0]
         ],
-        "lookahead": "",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -102,7 +100,6 @@
           ],
           "0xffff"
         ],
-        "lookahead": "",
         "component": "map-animation-queues",
         "word_size": 2,
         "terminators": ["0xfe00", "0xffff"]
@@ -114,7 +111,6 @@
         "decoded_size": 10,
         "encoded_size": 16,
         "words": [["0x3f44"], ["0x1008", 43210], ["0xfe00"], ["0xffff"]],
-        "lookahead": "00",
         "component": "map-blend-animation",
         "word_size": 2
       },
@@ -122,7 +118,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x085b9d94",
-        "size": "0x24",
+        "size": "0x21",
         "record_size": 3,
         "segments": [
           {
@@ -143,8 +139,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x085b9db5", "end": "0x085b9db8", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/KORIMA_HEYA/KORIMA_HEYA.BIN",

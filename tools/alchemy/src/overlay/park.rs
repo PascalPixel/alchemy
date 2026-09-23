@@ -30,7 +30,7 @@ fn number(row: &serde_json::Value, key: &str) -> Option<i64> {
 }
 fn audit_multi_register_evidence(root: &Path, overlays: &[String]) -> Result<Vec<String>, String> {
     let evidence: serde_json::Value = serde_json::from_slice(
-        &fs::read(root.join("games/THE BROKEN SEAL/semantic/overlay-assembly.json"))
+        &fs::read(root.join("recon/tbs/semantic/overlay-assembly.json"))
             .map_err(|e| e.to_string())?,
     )
     .map_err(|e| e.to_string())?;
@@ -134,7 +134,7 @@ fn git(root: &Path, arguments: &[&str]) -> Result<String, String> {
 fn pre_adoption_text(root: &Path, target: SourceOwner) -> Result<String, String> {
     let overlay = target.overlay_id().expect("overlay owner");
     let address = i64::from(target.address());
-    let relative = format!("games/THE BROKEN SEAL/raw/overlays/{overlay}_overlay.s");
+    let relative = format!("recon/tbs/raw/overlays/{overlay}_overlay.s");
     let tag = format!("AlchemyC_{address:08x}:");
     let log = git(
         root,
@@ -747,9 +747,9 @@ fn retire_instance(
     text: &str,
     reason: &str,
 ) -> Result<(), String> {
-    let units = root.join("games/THE BROKEN SEAL/recon/translation-units.json");
-    let evidence = root.join("games/THE BROKEN SEAL/semantic/overlay-assembly.json");
-    let register = root.join("games/THE BROKEN SEAL/source-paths.json");
+    let units = root.join("recon/tbs/translation-units.json");
+    let evidence = root.join("recon/tbs/semantic/overlay-assembly.json");
+    let register = root.join("recon/tbs/source-paths.json");
     let snapshot = crate::compiler::build_io::Snapshot::take(&[
         units.clone(),
         evidence.clone(),
@@ -878,15 +878,15 @@ fn retire_owner(
     // The unit register mirrors the adoption edit in place rather than
     // losing the unit: a unit pointing at a moved file is unscoreable,
     // and rebuilding it later drops its absolute symbols.
-    let units = root.join("games/THE BROKEN SEAL/recon/translation-units.json");
-    let evidence = root.join("games/THE BROKEN SEAL/semantic/overlay-assembly.json");
+    let units = root.join("recon/tbs/translation-units.json");
+    let evidence = root.join("recon/tbs/semantic/overlay-assembly.json");
     let snapshot = crate::compiler::build_io::Snapshot::take(&[
         units.clone(),
         evidence.clone(),
         assembly.to_path_buf(),
         installed.clone(),
         parked.clone(),
-        root.join("games/THE BROKEN SEAL/source-paths.json"),
+        root.join("recon/tbs/source-paths.json"),
     ])?;
     let parked_relative = parked
         .strip_prefix(root)
@@ -993,8 +993,9 @@ mod tests {
         let repository = Repository::new();
         let root = repository.0.path();
         let game = root.join("games/THE BROKEN SEAL");
+        let recon = root.join("recon/tbs");
         repository.write(
-            "games/THE BROKEN SEAL/semantic/overlay-assembly.json",
+            "recon/tbs/semantic/overlay-assembly.json",
             r#"{"format":1,"regions":[]}"#,
         );
         let owner = |id: &str| SourceOwner::parse(id).unwrap();
@@ -1019,7 +1020,7 @@ mod tests {
             [(standalone, None)]
         );
 
-        let listing = game.join("raw/overlays/resource_39b_overlay.s");
+        let listing = recon.join("raw/overlays/resource_39b_overlay.s");
         let spans = [
             (owner("resource_39b:02000630"), 296),
             (owner("resource_39b:02000ba4"), 284),
@@ -1027,10 +1028,10 @@ mod tests {
         let files = [
             "raw/overlays/resource_39b_overlay.s",
             "source-paths.json",
-            "recon/translation-units.json",
+            "translation-units.json",
             "semantic/overlay-assembly.json",
         ];
-        let contents = || files.map(|file| fs::read_to_string(game.join(file)).unwrap());
+        let contents = || files.map(|file| fs::read_to_string(recon.join(file)).unwrap());
         // A failure restores every register it touched.
         let before = contents();
         let error = super::retire_instance(
@@ -1063,7 +1064,7 @@ mod tests {
         assert_eq!(fs::read_to_string(&listing).unwrap(), "restored\n");
         assert!(game.join("SRC").join(STAGED_ACTOR).is_file());
         let register: serde_json::Value =
-            serde_json::from_str(&fs::read_to_string(game.join("source-paths.json")).unwrap())
+            serde_json::from_str(&fs::read_to_string(recon.join("source-paths.json")).unwrap())
                 .unwrap();
         for id in ["resource_39b:02000630", "resource_39b:02000ba4"] {
             assert!(register["owners"][id].get("source").is_none(), "{id}");
@@ -1073,7 +1074,7 @@ mod tests {
             assert_eq!(register["owners"][id]["source"], STAGED_ACTOR, "{id}");
         }
         let evidence: serde_json::Value = serde_json::from_str(
-            &fs::read_to_string(game.join("semantic/overlay-assembly.json")).unwrap(),
+            &fs::read_to_string(recon.join("semantic/overlay-assembly.json")).unwrap(),
         )
         .unwrap();
         let rows = evidence["regions"].as_array().unwrap();
@@ -1095,7 +1096,7 @@ mod tests {
         );
         assert_eq!(unit.owners.len(), 2);
         // Parking the last instance leaves no empty instances map behind.
-        let listing = game.join("raw/overlays/resource_389_overlay.s");
+        let listing = recon.join("raw/overlays/resource_389_overlay.s");
         let spans = [
             (owner("resource_389:0200034c"), 296),
             (owner("resource_389:020008c0"), 284),
@@ -1110,7 +1111,7 @@ mod tests {
             "not exact",
         )
         .unwrap();
-        let manifest = fs::read_to_string(game.join("recon/translation-units.json")).unwrap();
+        let manifest = fs::read_to_string(recon.join("translation-units.json")).unwrap();
         assert!(!manifest.contains("\"instances\""), "{manifest}");
         assert!(repository.load().unwrap().units[0].instances.is_empty());
     }
@@ -1127,17 +1128,14 @@ mod tests {
             &units,
             "resource_37a",
             0x02001be8,
-            "games/THE BROKEN SEAL/recon/en/overlays/x.c",
+            "recon/tbs/en/overlays/x.c",
         )
         .unwrap();
         let after: serde_json::Value =
             serde_json::from_str(&fs::read_to_string(&units).unwrap()).unwrap();
         let unit = &after["units"][0];
         assert_eq!(unit["id"], "overlay-37a-actor");
-        assert_eq!(
-            unit["source"],
-            "games/THE BROKEN SEAL/recon/en/overlays/x.c"
-        );
+        assert_eq!(unit["source"], "recon/tbs/en/overlays/x.c");
         assert_eq!(unit["owners"][0]["state"], "retained-assembly");
         assert_eq!(
             unit["absolute_symbols"]["Func_02004698_a"]["address"],
@@ -1178,7 +1176,7 @@ mod tests {
     #[test]
     fn audit_reports_a_placeholder_without_exact_source() {
         let root = tempdir().unwrap();
-        let code = root.path().join("games/THE BROKEN SEAL/raw/overlays");
+        let code = root.path().join("recon/tbs/raw/overlays");
         fs::create_dir_all(&code).unwrap();
         fs::write(
             code.join("resource_382_overlay.s"),
@@ -1192,7 +1190,7 @@ mod tests {
     #[test]
     fn literal_pool_address_is_not_adoptable() {
         let root = tempdir().unwrap();
-        let semantic = root.path().join("games/THE BROKEN SEAL/semantic");
+        let semantic = root.path().join("recon/tbs/semantic");
         fs::create_dir_all(&semantic).unwrap();
         fs::write(
             semantic.join("regions.json"),

@@ -1,6 +1,9 @@
-@ 音響処理用IWRAM転送領域内の64バイト零埋め処理。
-@ 四回のstmiaを展開し、スタックを使わずr4をipへ退避する速度優先処理。
-@ 通常のCコンパイラ出力ではないためアセンブリとして保持する。
+@ Clears 64 bytes at r0 with four stmia of r1-r4 set to zero, keeping the
+@ caller's r4 in ip instead of on the stack. The game route treats r4 as
+@ scratch and old_agbcc would push {r4, lr}; neither parks a register in ip.
+@ It is entry 35 of the sound jump table at 0x080fb7a0. Every TBS and TLA
+@ edition has these bytes.
+@ credit: library — TBS/TLA common sound-driver mixer and clear-buffer module
 .syntax unified
 	.thumb
 	.global Func_080f9a18

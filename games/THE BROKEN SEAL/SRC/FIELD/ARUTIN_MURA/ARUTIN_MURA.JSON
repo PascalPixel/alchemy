@@ -42,7 +42,6 @@
         "decoded_size": 5081,
         "encoded_size": 3436,
         "tilemap_length": 5080,
-        "lookahead": "0000",
         "component": "map-metatiles-2x2",
         "transform_mode": 1,
         "metatiles": 635,
@@ -63,7 +62,6 @@
           [2, 1, 255, 0], [3, 252, 248, 0], [4, 252, 248, 0], [6, 254, 252, 252], [2, 254, 252, 0], [5, 254, 252, 252],
           [3, 252, 244, 0], [0, 244, 0, 0], [4, 8, 244, 0], [3, 0, 244, 0], [3, 4, 244, 0], [4, 4, 244, 0]
         ],
-        "lookahead": "0000",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -105,7 +103,6 @@
           ],
           "0xffff"
         ],
-        "lookahead": "000000",
         "component": "map-animation-queues",
         "word_size": 2,
         "terminators": ["0xfe00", "0xffff"]
@@ -117,7 +114,6 @@
         "decoded_size": 10,
         "encoded_size": 16,
         "words": [["0x3f42"], ["0x080e", 10000], ["0xfe00"], ["0xffff"]],
-        "lookahead": "00",
         "component": "map-blend-animation",
         "word_size": 2
       },
@@ -125,7 +121,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x08658874",
-        "size": "0x4",
+        "size": "0x3",
         "record_size": 3,
         "segments": [
           {
@@ -135,8 +131,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x08658877", "end": "0x08658878", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_MURA/ARUTIN_MURA.BIN",
@@ -187,7 +182,6 @@
         "decoded_size": 9873,
         "encoded_size": 5684,
         "tilemap_length": 9872,
-        "lookahead": "0000",
         "component": "map-metatiles-2x2",
         "transform_mode": 1,
         "metatiles": 1234,
@@ -205,7 +199,6 @@
           [4, 0, 2, 0], [9, 0, 5, 0], [4, 2, 0, 0], [13, 0, 0, 4], [12, 0, 4, 4], [8, 252, 4, 0], [8, 4, 252, 0],
           [1, 0, 1, 0], [1, 1, 2, 0], [1, 254, 255, 0], [1, 255, 0, 0], [3, 2, 0, 0]
         ],
-        "lookahead": "00",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -241,7 +234,6 @@
           ],
           "0xffff"
         ],
-        "lookahead": "0000",
         "component": "map-animation-queues",
         "word_size": 2,
         "terminators": ["0xfe00", "0xffff"]
@@ -253,7 +245,6 @@
         "decoded_size": 10,
         "encoded_size": 16,
         "words": [["0x3f42"], ["0x1006", 43210], ["0xfe00"], ["0xffff"]],
-        "lookahead": "00",
         "component": "map-blend-animation",
         "word_size": 2
       },

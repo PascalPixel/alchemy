@@ -355,7 +355,8 @@ fn run(argv: &[String]) -> Result<String, String> {
                 ));
             }
         }
-        if read(&root().join("PROGRESS.svg"))? != rendered[0].1 {
+        // The published figure is drawn from tracked files only.
+        if read(&root().join("PROGRESS.svg"))? != files_svg(830.0) {
             return Err("README file-size figure is stale; run: make coverage".into());
         }
         let readme = read(&root().join("README.md"))?;
@@ -369,7 +370,7 @@ fn run(argv: &[String]) -> Result<String, String> {
         for (id, svg) in &rendered {
             write(&box_tree_path(&o.target, id), svg)?;
         }
-        write(&root().join("PROGRESS.svg"), &rendered[0].1)?;
+        write(&root().join("PROGRESS.svg"), &files_svg(830.0))?;
         let readme = read(&root().join("README.md"))?;
         write(
             &root().join("README.md"),

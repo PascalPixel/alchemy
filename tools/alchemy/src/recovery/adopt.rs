@@ -212,12 +212,10 @@ pub fn adopt(root: &Path, request: &Request) -> Result<Vec<String>, String> {
     // anywhere after this point restores all of them and removes the unit,
     // so an adoption either completes or leaves nothing behind for a re-run
     // to trip over.
-    let manifest = root.join("games/THE BROKEN SEAL/source-paths.json");
-    let assembly = root.join("games/THE BROKEN SEAL/semantic/overlay-assembly.json");
-    let units = root.join("games/THE BROKEN SEAL/recon/translation-units.json");
-    let overlay_source: PathBuf = root.join(format!(
-        "games/THE BROKEN SEAL/raw/overlays/{overlay}_overlay.s"
-    ));
+    let manifest = root.join("recon/tbs/source-paths.json");
+    let assembly = root.join("recon/tbs/semantic/overlay-assembly.json");
+    let units = root.join("recon/tbs/translation-units.json");
+    let overlay_source: PathBuf = root.join(format!("recon/tbs/raw/overlays/{overlay}_overlay.s"));
     let stems: Vec<String> = {
         let mut retired = vec![owner];
         for m in modules(root)? {
@@ -233,7 +231,7 @@ pub fn adopt(root: &Path, request: &Request) -> Result<Vec<String>, String> {
     };
     let mut drafts: Vec<PathBuf> = stems
         .iter()
-        .map(|stem| root.join(format!("games/THE BROKEN SEAL/recon/en/overlays/{stem}.c")))
+        .map(|stem| root.join(format!("recon/tbs/en/overlays/{stem}.c")))
         .collect();
     let (unit_document, _) = read_json(&units)?;
     drafts.extend(registered_drafts(root, &unit_document, &overlay, entry));
@@ -582,7 +580,7 @@ fn registered_drafts(root: &Path, document: &Value, overlay: &str, entry: u32) -
                 }) == Some(entry)
             });
             (unit["overlay"].as_str() == Some(overlay)
-                && source.starts_with("games/THE BROKEN SEAL/recon/en/overlays/")
+                && source.starts_with("recon/tbs/en/overlays/")
                 && owns_entry)
                 .then(|| root.join(source))
         })
@@ -612,15 +610,13 @@ mod tests {
     #[test]
     fn named_draft_lookup_is_overlay_qualified() {
         let document = serde_json::json!({"units": [
-            {"overlay":"resource_3bd", "source":"games/THE BROKEN SEAL/recon/en/overlays/named.c", "owners":[{"address":"0x020013f8"}]},
-            {"overlay":"resource_3bf", "source":"games/THE BROKEN SEAL/recon/en/overlays/other.c", "owners":[{"address":"0x020013f8"}]},
+            {"overlay":"resource_3bd", "source":"recon/tbs/en/overlays/named.c", "owners":[{"address":"0x020013f8"}]},
+            {"overlay":"resource_3bf", "source":"recon/tbs/en/overlays/other.c", "owners":[{"address":"0x020013f8"}]},
             {"overlay":"resource_3bd", "source":"games/THE BROKEN SEAL/SRC/FIELD/EXACT.C", "owners":[{"address":"0x020013f8"}]}
         ]});
         assert_eq!(
             registered_drafts(Path::new("/repo"), &document, "resource_3bd", 0x020013f8),
-            vec![PathBuf::from(
-                "/repo/games/THE BROKEN SEAL/recon/en/overlays/named.c"
-            )]
+            vec![PathBuf::from("/repo/recon/tbs/en/overlays/named.c")]
         );
     }
 

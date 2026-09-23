@@ -411,7 +411,7 @@ void Func_020027ca();
  * A prior version of this comment claimed the retained-corpus gate forbids a
  * byte-exact candidate; that was wrong on the facts and is corrected here.
  * candidate-corpus-check only scans routes registered in the Makefile
- * CANDIDATE_SINGLE_OWNERS variable and units under games/THE BROKEN SEAL/recon/en/units/,
+ * CANDIDATE_SINGLE_OWNERS variable and units under recon/tbs/en/units/,
  * and this file is registered in neither, so the gate does not even see it.
  * Where the gate does apply, an exact result is the signal to adopt, not a
  * reason to avoid closing.

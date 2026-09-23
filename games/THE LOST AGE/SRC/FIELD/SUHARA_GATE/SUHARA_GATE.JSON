@@ -42,7 +42,6 @@
         "decoded_size": 5137,
         "encoded_size": 3168,
         "tilemap_length": 5136,
-        "lookahead": "000000",
         "component": "map-metatiles-2x2",
         "transform_mode": 0,
         "metatiles": 642,
@@ -63,45 +62,88 @@
           [1, 10, 12, 0], [3, 12, 0, 0], [4, 0, 2, 0], [3, 0, 2, 0], [4, 4, 0, 0], [0, 4, 0, 0], [3, 4, 0, 0],
           [3, 0, 4, 0]
         ],
-        "lookahead": "0000",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
-      "grid_source": "games/THE LOST AGE/SRC/FIELD/SUHARA_GATE/SUHARA_GATE.BIN",
-      "grid_offset": 0,
-      "grid_compression": {
-        "source": "games/THE LOST AGE/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
-        "section": "3ba8a5a317f8120c5cc0fef3d96040bc09f4acd3f31d1c41f089a5f7d9774976"
-      },
-      "component3": {
+      "descriptor_grid": {
         "format": 1,
         "codec": "golden-sun-tagged-palette-lz",
+        "tag": 1,
         "decoded_size": 16384,
         "encoded_size": 424,
-        "tag": 1,
-        "lookahead": "0000"
+        "component": "map-descriptor-grid",
+        "width": 128,
+        "height": 128
       },
-      "component4": {
+      "animation_queues": {
         "format": 1,
         "codec": "golden-sun-general-lz",
         "decoded_size": 46,
         "encoded_size": 32,
-        "lookahead": "0000"
+        "words": [
+          [
+            "0xfd00", [1792, 2], [994, 6], [1794, 2], [994, 6], [1796, 2], [994, 6], [1798, 2], [994, 6], [1800, 2],
+            [994, 6], "0xfe00"
+          ],
+          "0xffff"
+        ],
+        "component": "map-animation-queues",
+        "word_size": 2,
+        "terminators": ["0xfe00", "0xffff"]
       },
-      "component5": {
+      "blend_animation": {
         "format": 1,
         "codec": "golden-sun-tagged-palette-lz",
+        "tag": 1,
         "decoded_size": 2,
         "encoded_size": 8,
-        "tag": 1,
-        "lookahead": "0000"
+        "words": [["0xffff"]],
+        "component": "map-blend-animation",
+        "word_size": 2
       },
-      "component6": {
+      "positions": {
         "format": 1,
         "codec": "golden-sun-general-lz",
         "decoded_size": 13,
         "encoded_size": 16,
-        "lookahead": "000000"
+        "table": {
+          "format": 1,
+          "kind": "typed-table",
+          "address": "0x0",
+          "size": "0xd",
+          "segments": [
+            {
+              "name": "offsets",
+              "address": "0x0",
+              "end": "0x6",
+              "stride": 2,
+              "element": "le-u16",
+              "values": ["entrances_end", "cell_patches_end", "camera_bounds_end"]
+            },
+            {"name": "reserved", "address": "0x6", "end": "0x8", "stride": 2, "element": "le-u16", "values": [0]},
+            {"name": "points_end", "address": "0x8", "end": "0x9", "stride": 1, "element": "u8", "values": [255]},
+            {"name": "entrances_end", "address": "0x9", "end": "0xa", "stride": 1, "element": "u8", "values": [255]},
+            {
+              "name": "cell_patches_end",
+              "address": "0xa",
+              "end": "0xc",
+              "stride": 2,
+              "element": "le-u16",
+              "values": [65535]
+            },
+            {"name": "camera_bounds_end", "address": "0xc", "end": "0xd", "stride": 1, "element": "u8", "values": [255]}
+          ]
+        },
+        "component": "map-positions"
+      },
+      "grid_source": "games/THE LOST AGE/SRC/FIELD/SUHARA_GATE/SUHARA_GATE.BIN",
+      "grid_offset": 0,
+      "grid_compression": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "tag": 1,
+        "decoded_size": 65536,
+        "encoded_size": 3012
       }
     },
     "28a": {
@@ -145,7 +187,6 @@
         "decoded_size": 4233,
         "encoded_size": 2604,
         "tilemap_length": 4232,
-        "lookahead": "0000",
         "component": "map-metatiles-2x2",
         "transform_mode": 0,
         "metatiles": 529,
@@ -164,45 +205,82 @@
           [3, 8, 254, 0], [7, 16, 18, 0], [3, 16, 12, 0], [3, 12, 0, 0], [7, 4, 6, 0], [7, 12, 14, 0], [0, 12, 0, 0],
           [4, 16, 12, 0], [4, 12, 4, 0], [3, 12, 4, 0], [3, 0, 254, 0], [4, 4, 254, 0], [3, 4, 254, 0], [3, 16, 18, 0]
         ],
-        "lookahead": "",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
-      "grid_source": "games/THE LOST AGE/SRC/FIELD/SUHARA_GATE/SUHARA_GATE.BIN",
-      "grid_offset": 70672,
-      "grid_compression": {
-        "source": "games/THE LOST AGE/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
-        "section": "c52463a534936418ee9dd1629d60f20679c7a8a15d893b9cab4dadf89e11ed60"
-      },
-      "component3": {
+      "descriptor_grid": {
         "format": 1,
         "codec": "golden-sun-tagged-palette-lz",
+        "tag": 1,
         "decoded_size": 16384,
         "encoded_size": 456,
-        "tag": 1,
-        "lookahead": "0000"
+        "component": "map-descriptor-grid",
+        "width": 128,
+        "height": 128
       },
-      "component4": {
+      "animation_queues": {
         "format": 1,
         "codec": "golden-sun-general-lz",
         "decoded_size": 14,
         "encoded_size": 20,
-        "lookahead": "0000"
+        "words": [["0xfd00", [1802, 10], [1514, 10], "0xfe00"], "0xffff"],
+        "component": "map-animation-queues",
+        "word_size": 2,
+        "terminators": ["0xfe00", "0xffff"]
       },
-      "component5": {
+      "blend_animation": {
         "format": 1,
         "codec": "golden-sun-tagged-palette-lz",
+        "tag": 1,
         "decoded_size": 2,
         "encoded_size": 8,
-        "tag": 1,
-        "lookahead": "0000"
+        "words": [["0xffff"]],
+        "component": "map-blend-animation",
+        "word_size": 2
       },
-      "component6": {
+      "positions": {
         "format": 1,
         "codec": "golden-sun-general-lz",
         "decoded_size": 13,
         "encoded_size": 16,
-        "lookahead": "000000"
+        "table": {
+          "format": 1,
+          "kind": "typed-table",
+          "address": "0x0",
+          "size": "0xd",
+          "segments": [
+            {
+              "name": "offsets",
+              "address": "0x0",
+              "end": "0x6",
+              "stride": 2,
+              "element": "le-u16",
+              "values": ["entrances_end", "cell_patches_end", "camera_bounds_end"]
+            },
+            {"name": "reserved", "address": "0x6", "end": "0x8", "stride": 2, "element": "le-u16", "values": [0]},
+            {"name": "points_end", "address": "0x8", "end": "0x9", "stride": 1, "element": "u8", "values": [255]},
+            {"name": "entrances_end", "address": "0x9", "end": "0xa", "stride": 1, "element": "u8", "values": [255]},
+            {
+              "name": "cell_patches_end",
+              "address": "0xa",
+              "end": "0xc",
+              "stride": 2,
+              "element": "le-u16",
+              "values": [65535]
+            },
+            {"name": "camera_bounds_end", "address": "0xc", "end": "0xd", "stride": 1, "element": "u8", "values": [255]}
+          ]
+        },
+        "component": "map-positions"
+      },
+      "grid_source": "games/THE LOST AGE/SRC/FIELD/SUHARA_GATE/SUHARA_GATE.BIN",
+      "grid_offset": 70672,
+      "grid_compression": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "tag": 1,
+        "decoded_size": 65536,
+        "encoded_size": 2952
       }
     },
     "28b": {
@@ -246,7 +324,6 @@
         "decoded_size": 3865,
         "encoded_size": 2164,
         "tilemap_length": 3864,
-        "lookahead": "000000",
         "component": "map-metatiles-2x2",
         "transform_mode": 1,
         "metatiles": 483,
@@ -263,44 +340,314 @@
           [1, 4, 2, 0], [1, 2, 0, 0], [4, 8, 0, 0], [3, 4, 0, 0], [7, 0, 2, 0], [3, 0, 8, 0], [4, 0, 8, 0],
           [4, 4, 0, 0], [0, 2, 0, 0], [4, 0, 4, 0], [3, 0, 4, 0]
         ],
-        "lookahead": "0000",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
-      "grid_source": "games/THE LOST AGE/SRC/FIELD/SUHARA_GATE/SUHARA_GATE.BIN",
-      "grid_offset": 140440,
-      "grid_compression": {
-        "source": "games/THE LOST AGE/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
-        "section": "8a42994ef5bdba441ca4ae6a8358bc743c5012dc73cf3a556e3b7d433746e872"
-      },
-      "component3": {
+      "descriptor_grid": {
         "format": 1,
         "codec": "golden-sun-tagged-palette-lz",
+        "tag": 1,
         "decoded_size": 16384,
         "encoded_size": 464,
-        "tag": 1,
-        "lookahead": "0000"
+        "component": "map-descriptor-grid",
+        "width": 128,
+        "height": 128
       },
-      "component4": {
+      "animation_queues": {
         "format": 1,
         "codec": "golden-sun-general-lz",
         "decoded_size": 1426,
         "encoded_size": 568,
-        "lookahead": "0000"
+        "words": [
+          [
+            "0xfd00", [1412, 4], [1306, 0], [1444, 4], [1338, 0], [1476, 4], [1370, 0], [1508, 4], [1402, 6], [1416, 4],
+            [1306, 0], [1448, 4], [1338, 0], [1480, 4], [1370, 0], [1512, 4], [1402, 6], [1420, 4], [1306, 0],
+            [1452, 4], [1338, 0], [1484, 4], [1370, 0], [1516, 4], [1402, 6], "0xfe00"
+          ],
+          [
+            "0xfd01", [458, 2], [2, 0], [490, 2], [34, 14], [460, 2], [2, 0], [492, 2], [34, 14], [462, 2], [2, 0],
+            [494, 2], [34, 14], [460, 2], [2, 0], [492, 2], [34, 14], "0xfe00"
+          ],
+          [
+            "0xfd02", [586, 2], [522, 0], [618, 2], [554, 10], [588, 2], [522, 0], [620, 2], [554, 10], [586, 2],
+            [522, 0], [618, 2], [554, 10], [590, 2], [522, 0], [622, 2], [554, 10], "0xfe00"
+          ],
+          ["0xfd03", [330, 2], [170, 18], [362, 2], [170, 18], [394, 2], [170, 18], "0xfe00"],
+          [
+            "0xfd04", [464, 2], [66, 0], [496, 2], [98, 0], [320, 1], [132, 0], [352, 1], [164, 0], [321, 1], [133, 0],
+            [353, 1], [165, 0], [256, 1], [130, 0], [288, 1], [162, 18], [466, 2], [66, 0], [498, 2], [98, 0], [322, 1],
+            [132, 0], [354, 1], [164, 0], [323, 1], [133, 0], [355, 1], [165, 0], [258, 1], [130, 0], [290, 1],
+            [162, 18], [468, 2], [66, 0], [500, 2], [98, 0], [324, 1], [132, 0], [356, 1], [164, 0], [325, 1], [133, 0],
+            [357, 1], [165, 0], [260, 1], [130, 0], [292, 1], [162, 18], [466, 2], [66, 0], [498, 2], [98, 0], [322, 1],
+            [132, 0], [354, 1], [164, 0], [323, 1], [133, 0], [355, 1], [165, 0], [258, 1], [130, 0], [290, 1],
+            [162, 18], "0xfe00"
+          ],
+          [
+            "0xfd05", [257, 1], [131, 0], [289, 1], [163, 0], [192, 2], [134, 0], [224, 2], [166, 18], [259, 1],
+            [131, 0], [291, 1], [163, 0], [194, 2], [134, 0], [226, 2], [166, 18], [261, 1], [131, 0], [293, 1],
+            [163, 0], [196, 2], [134, 0], [228, 2], [166, 18], [259, 1], [131, 0], [291, 1], [163, 0], [194, 2],
+            [134, 0], [226, 2], [166, 18], "0xfe00"
+          ],
+          [
+            "0xfd06", [204, 2], [8, 0], [236, 2], [40, 0], [206, 2], [10, 0], [238, 2], [42, 18], [208, 2], [8, 0],
+            [240, 2], [40, 0], [210, 2], [10, 0], [242, 2], [42, 18], [212, 2], [8, 0], [244, 2], [40, 0], [214, 2],
+            [10, 0], [246, 2], [42, 18], [208, 2], [8, 0], [240, 2], [40, 0], [210, 2], [10, 0], [242, 2], [42, 18],
+            "0xfe00"
+          ],
+          [
+            "0xfd07", [268, 2], [72, 0], [300, 2], [104, 0], [270, 2], [74, 0], [302, 2], [106, 18], [272, 2], [72, 0],
+            [304, 2], [104, 0], [274, 2], [74, 0], [306, 2], [106, 18], [276, 2], [72, 0], [308, 2], [104, 0], [278, 2],
+            [74, 0], [310, 2], [106, 18], [272, 2], [72, 0], [304, 2], [104, 0], [274, 2], [74, 0], [306, 2], [106, 18],
+            "0xfe00"
+          ],
+          [
+            "0xfd08", [332, 2], [16, 0], [364, 2], [48, 18], [336, 2], [16, 0], [368, 2], [48, 18], [340, 2], [16, 0],
+            [372, 2], [48, 18], [336, 2], [16, 0], [368, 2], [48, 18], "0xfe00"
+          ],
+          [
+            "0xfd09", [334, 2], [18, 0], [366, 2], [50, 18], [338, 2], [18, 0], [370, 2], [50, 18], [342, 2], [18, 0],
+            [374, 2], [50, 18], [338, 2], [18, 0], [370, 2], [50, 18], "0xfe00"
+          ],
+          [
+            "0xfd0a", [396, 2], [80, 0], [428, 2], [112, 0], [398, 2], [82, 0], [430, 2], [114, 18], [400, 2], [80, 0],
+            [432, 2], [112, 0], [402, 2], [82, 0], [434, 2], [114, 18], [404, 2], [80, 0], [436, 2], [112, 0], [406, 2],
+            [82, 0], [438, 2], [114, 18], [400, 2], [80, 0], [432, 2], [112, 0], [402, 2], [82, 0], [434, 2], [114, 18],
+            "0xfe00"
+          ],
+          [
+            "0xfd0b", [798, 2], [970, 0], [830, 2], [1002, 0], [1050, 2], [846, 0], [1082, 2], [878, 16], [862, 2],
+            [970, 0], [894, 2], [1002, 0], [1052, 2], [846, 0], [1084, 2], [878, 16], [926, 2], [970, 0], [958, 2],
+            [1002, 0], [1054, 2], [846, 0], [1086, 2], [878, 16], "0xfe00"
+          ],
+          [
+            "0xfd0c", [1174, 4], [1106, 0], [1206, 4], [1138, 40], [1110, 4], [1106, 0], [1142, 4], [1138, 35],
+            [1170, 4], [1106, 0], [1202, 4], [1138, 40], [1110, 4], [1106, 0], [1142, 4], [1138, 35], "0xfe00"
+          ],
+          [
+            "0xfd0d", [1174, 4], [1230, 0], [1206, 4], [1262, 50], [1110, 4], [1230, 0], [1142, 4], [1262, 55],
+            [1170, 4], [1230, 0], [1202, 4], [1262, 50], [1110, 4], [1230, 0], [1142, 4], [1262, 55], "0xfe00"
+          ],
+          "0xffff"
+        ],
+        "component": "map-animation-queues",
+        "word_size": 2,
+        "terminators": ["0xfe00", "0xffff"]
       },
-      "component5": {
+      "blend_animation": {
         "format": 1,
         "codec": "golden-sun-general-lz",
         "decoded_size": 22,
         "encoded_size": 20,
-        "lookahead": ""
+        "words": [["0x3f42"], ["0x1006", 12], ["0x1005", 12], ["0x1004", 12], ["0x1005", 12], ["0xfe00"], ["0xffff"]],
+        "component": "map-blend-animation",
+        "word_size": 2
       },
-      "component6": {
+      "positions": {
         "format": 1,
         "codec": "golden-sun-general-lz",
         "decoded_size": 30,
         "encoded_size": 28,
-        "lookahead": ""
+        "table": {
+          "format": 1,
+          "kind": "typed-table",
+          "address": "0x0",
+          "size": "0x1e",
+          "segments": [
+            {
+              "name": "offsets",
+              "address": "0x0",
+              "end": "0x6",
+              "stride": 2,
+              "element": "le-u16",
+              "values": ["entrances", "cell_patches_end", "camera_bounds_end"]
+            },
+            {"name": "reserved", "address": "0x6", "end": "0x8", "stride": 2, "element": "le-u16", "values": [0]},
+            {
+              "name": "points",
+              "address": "0x8",
+              "end": "0xd",
+              "stride": 5,
+              "element": "record",
+              "fields": [
+                {"name": "point", "element": "s8"},
+                {"name": "x", "element": "le-u16"},
+                {"name": "y", "element": "le-u16"}
+              ],
+              "records": [{"point": 1, "x": 535, "y": 424}]
+            },
+            {"name": "points_end", "address": "0xd", "end": "0xe", "stride": 1, "element": "u8", "values": [255]},
+            {
+              "name": "entrances",
+              "address": "0xe",
+              "end": "0x1a",
+              "stride": 6,
+              "element": "record",
+              "fields": [
+                {"name": "entrance", "element": "s8"},
+                {"name": "x", "element": "le-s16"},
+                {"name": "y", "element": "le-s16"},
+                {"name": "arrival", "element": "u8", "bits": {"facing": 4, "options": 4}}
+              ],
+              "records": [
+                {"entrance": 10, "x": 280, "y": 349, "arrival": [4, 0]},
+                {"entrance": 10, "x": 280, "y": 349, "arrival": [4, 0]}
+              ]
+            },
+            {"name": "entrances_end", "address": "0x1a", "end": "0x1b", "stride": 1, "element": "u8", "values": [255]},
+            {
+              "name": "cell_patches_end",
+              "address": "0x1b",
+              "end": "0x1d",
+              "stride": 2,
+              "element": "le-u16",
+              "values": [65535]
+            },
+            {
+              "name": "camera_bounds_end",
+              "address": "0x1d",
+              "end": "0x1e",
+              "stride": 1,
+              "element": "u8",
+              "values": [255]
+            }
+          ]
+        },
+        "component": "map-positions"
+      },
+      "grid_source": "games/THE LOST AGE/SRC/FIELD/SUHARA_GATE/SUHARA_GATE.BIN",
+      "grid_offset": 140440,
+      "grid_compression": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "tag": 1,
+        "decoded_size": 65536,
+        "encoded_size": 3184
+      }
+    }
+  },
+  "palettes": {
+    "285": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 448, "encoded_size": 372},
+    "28c": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 448, "encoded_size": 440}
+  },
+  "charblocks": {
+    "286": {
+      "format": 1,
+      "codec": "golden-sun-kind2-lz",
+      "decoded_size": 16384,
+      "encoded_size": 11748,
+      "layout": {
+        "format": "sequential-gba-4bpp-tiles",
+        "purpose": "map-charblock-source",
+        "tile_count": 512,
+        "tile_width": 8,
+        "tile_height": 8,
+        "columns": 32,
+        "rows": 16
+      }
+    },
+    "287": {
+      "format": 1,
+      "codec": "golden-sun-kind2-lz",
+      "decoded_size": 16384,
+      "encoded_size": 10408,
+      "layout": {
+        "format": "sequential-gba-4bpp-tiles",
+        "purpose": "map-charblock-source",
+        "tile_count": 512,
+        "tile_width": 8,
+        "tile_height": 8,
+        "columns": 32,
+        "rows": 16
+      }
+    },
+    "288": {
+      "format": 1,
+      "codec": "golden-sun-kind2-lz",
+      "decoded_size": 16384,
+      "encoded_size": 10588,
+      "layout": {
+        "format": "sequential-gba-4bpp-tiles",
+        "purpose": "map-charblock-source",
+        "tile_count": 512,
+        "tile_width": 8,
+        "tile_height": 8,
+        "columns": 32,
+        "rows": 16
+      }
+    },
+    "289": {
+      "format": 1,
+      "codec": "golden-sun-kind2-lz",
+      "decoded_size": 16384,
+      "encoded_size": 6972,
+      "layout": {
+        "format": "sequential-gba-4bpp-tiles",
+        "purpose": "map-charblock-source",
+        "tile_count": 512,
+        "tile_width": 8,
+        "tile_height": 8,
+        "columns": 32,
+        "rows": 16
+      }
+    },
+    "290": {
+      "format": 1,
+      "codec": "golden-sun-kind2-lz",
+      "decoded_size": 16384,
+      "encoded_size": 320,
+      "layout": {
+        "format": "sequential-gba-4bpp-tiles",
+        "purpose": "map-charblock-source",
+        "tile_count": 512,
+        "tile_width": 8,
+        "tile_height": 8,
+        "columns": 32,
+        "rows": 16
+      }
+    },
+    "28d": {
+      "format": 1,
+      "codec": "golden-sun-kind2-lz",
+      "decoded_size": 16384,
+      "encoded_size": 11004,
+      "layout": {
+        "format": "sequential-gba-4bpp-tiles",
+        "purpose": "map-charblock-source",
+        "tile_count": 512,
+        "tile_width": 8,
+        "tile_height": 8,
+        "columns": 32,
+        "rows": 16
+      }
+    },
+    "28e": {
+      "format": 1,
+      "codec": "golden-sun-kind2-lz",
+      "decoded_size": 16384,
+      "encoded_size": 8416,
+      "layout": {
+        "format": "sequential-gba-4bpp-tiles",
+        "purpose": "map-charblock-source",
+        "tile_count": 512,
+        "tile_width": 8,
+        "tile_height": 8,
+        "columns": 32,
+        "rows": 16
+      }
+    },
+    "28f": {
+      "format": 1,
+      "codec": "golden-sun-kind2-lz",
+      "decoded_size": 16384,
+      "encoded_size": 8780,
+      "layout": {
+        "format": "sequential-gba-4bpp-tiles",
+        "purpose": "map-charblock-source",
+        "tile_count": 512,
+        "tile_width": 8,
+        "tile_height": 8,
+        "columns": 32,
+        "rows": 16
       }
     }
   }

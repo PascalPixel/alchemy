@@ -31,6 +31,7 @@ pub enum PaletteGroup {
 /// implementations drop the same high bits.
 struct LsbBits<'a> {
     data: &'a [u8],
+    origin: usize,
     cursor: usize,
     end: usize,
     value: u32,
@@ -40,6 +41,7 @@ impl<'a> LsbBits<'a> {
     fn new(data: &'a [u8], cursor: usize, end: usize) -> Result<Self, AssetError> {
         let mut bits = LsbBits {
             data,
+            origin: cursor,
             cursor,
             end,
             value: 0,
@@ -71,6 +73,11 @@ impl<'a> LsbBits<'a> {
         self.cursor += 2;
         self.count += 16;
         Ok(())
+    }
+    /// One past the last byte holding a consumed bit. The reader fetches whole
+    /// words, so `cursor` can already stand one byte beyond the stream.
+    fn stored_end(&self) -> usize {
+        self.origin + ((self.cursor - self.origin) * 8 - self.count as usize).div_ceil(8)
     }
     fn get(&mut self, count: u32) -> Result<u32, AssetError> {
         while self.count < count {
@@ -145,7 +152,7 @@ fn decode_general_body(
     maximum: u64,
     prefill: usize,
     header: usize,
-) -> Result<(Vec<u8>, usize, Vec<GeneralToken>), AssetError> {
+) -> Result<(Vec<u8>, usize, Vec<GeneralToken>, usize), AssetError> {
     let mut bits = LsbBits::new(data, start + header, end)?;
     let mut output: Vec<u8> = vec![0; prefill];
     let mut tokens: Vec<GeneralToken> = Vec::new();
@@ -163,7 +170,14 @@ fn decode_general_body(
         }
         let length = match decode_length(&mut bits)? {
             Some(length) => length,
-            None => return Ok((output[prefill..].to_vec(), bits.cursor, tokens)),
+            None => {
+                return Ok((
+                    output[prefill..].to_vec(),
+                    bits.cursor,
+                    tokens,
+                    bits.stored_end(),
+                ))
+            }
         };
         let distance = if bits.get(1)? != 0 {
             bits.get(5)? + 1
@@ -190,6 +204,7 @@ pub fn decode_general_trace(
         return err("general stream is missing its kind-zero header");
     }
     decode_general_body(data, start, end, maximum, 0, 1)
+        .map(|(output, cursor, tokens, _)| (output, cursor, tokens))
 }
 pub fn decode_general(
     data: &[u8],
@@ -215,6 +230,7 @@ pub fn decode_general_prefill_trace(
         return err("general stream is missing its kind-zero header");
     }
     decode_general_body(data, start, end, maximum, prefill, header)
+        .map(|(output, cursor, tokens, _)| (output, cursor, tokens))
 }
 fn put(bits: &mut Vec<u8>, value: u32, count: u32) {
     for index in 0..count {
@@ -517,6 +533,22 @@ pub fn encode_palette(decoded: &[u8], groups: &[PaletteGroup]) -> Result<Vec<u8>
     }
     Ok(encoded)
 }
+/// Stored length of the tagged resource stream at `start` (tag 0 general,
+/// 1 palette, 2 move-to-front), counting only bytes that hold stream data.
+pub fn tagged_stream_length(
+    data: &[u8],
+    start: usize,
+    end: usize,
+    maximum: u64,
+) -> Result<usize, AssetError> {
+    let stored_end = match data.get(start) {
+        Some(0) => decode_general_body(data, start, end, maximum, 0, 1)?.3,
+        Some(1) => decode_palette_trace(data, start + 1, end, maximum)?.1,
+        Some(2) => decode_mtf4_body(data, start, end, maximum)?.2,
+        _ => return err("resource stream tag is not 0, 1 or 2"),
+    };
+    Ok(stored_end - start)
+}
 // ---------------------------------------------------------------------------
 // MTF4 LZ stream (tag 2)
 // ---------------------------------------------------------------------------
@@ -541,6 +573,14 @@ pub fn decode_mtf4_lz(
     end: usize,
     maximum: u64,
 ) -> Result<(Vec<u8>, usize), AssetError> {
+    decode_mtf4_body(data, start, end, maximum).map(|(output, cursor, _)| (output, cursor))
+}
+fn decode_mtf4_body(
+    data: &[u8],
+    start: usize,
+    end: usize,
+    maximum: u64,
+) -> Result<(Vec<u8>, usize, usize), AssetError> {
     if start >= end || data.get(start) != Some(&2) {
         return err("tag-2 stream header missing");
     }
@@ -569,7 +609,7 @@ pub fn decode_mtf4_lz(
             continue;
         }
         let Some(length) = decode_length(&mut bits)? else {
-            return Ok((output, bits.cursor));
+            return Ok((output, bits.cursor, bits.stored_end()));
         };
         let distance = if bits.get(1)? != 0 {
             bits.get(5)? + 1
@@ -804,7 +844,10 @@ pub fn encode_arena(
     arena: &[u8],
 ) -> Result<Vec<u8>, AssetError> {
     let Some(tokens) = tokens else {
-        if decoded.last() != Some(&0) || decoded[..decoded.len() - 1].contains(&0) {
+        // An empty input is a bare split: the writer adds no bytes after it.
+        if !decoded.is_empty()
+            && (decoded.last() != Some(&0) || decoded[..decoded.len() - 1].contains(&0))
+        {
             return err("raw arena stream must end with its only zero byte");
         }
         let mut output = vec![0, 0];
@@ -896,6 +939,163 @@ pub fn encode_arena(
         }
     }
     Ok(output)
+}
+/// Copies count back at most 0xfff bytes from the literal block.
+const ARENA_WINDOW: usize = 0xfff;
+const ARENA_MAX_COPY: usize = 273;
+/// A compressed stream longer than this work buffer is stored raw.
+const ARENA_WORK_BUFFER: usize = 0x400;
+/// Compress `decoded` against `arena`, the bytes that precede the stream.
+///
+/// Each position takes its longest match, the oldest source on ties. A match
+/// ends before the stream's split halfword, lies within the copy window and
+/// never reaches past the decoded offset equal to the arena's length. Token
+/// lengths are decided from the end: when a strictly longer match starts
+/// inside a copy, the parse from that match is walked while it stays inside
+/// the copy, and the first token longer than the copy cuts the copy there (a
+/// cut shorter than three bytes is a literal). The stream is stored raw when
+/// its compressed form exceeds the work buffer or saves less than a tenth of
+/// the payload before its terminator.
+pub fn compress_arena(decoded: &[u8], arena: &[u8]) -> Result<Vec<u8>, AssetError> {
+    let compressed = encode_arena(decoded, Some(&arena_tokens(decoded, arena)), 0, arena)?;
+    let payload = decoded.len().saturating_sub(1);
+    if compressed.len() > ARENA_WORK_BUFFER || compressed.len() * 10 >= payload * 9 {
+        return encode_arena(decoded, None, 0, arena);
+    }
+    Ok(compressed)
+}
+fn arena_tokens(decoded: &[u8], arena: &[u8]) -> Vec<GeneralToken> {
+    let n = decoded.len();
+    let base = arena.len() + 2;
+    let low = base.saturating_sub(ARENA_WINDOW).min(arena.len());
+    let mut sources = std::collections::HashMap::<u16, Vec<usize>>::new();
+    for (index, pair) in arena[low..].windows(2).enumerate() {
+        sources
+            .entry(u16::from_le_bytes([pair[0], pair[1]]))
+            .or_default()
+            .push(low + index);
+    }
+    let mut length = vec![0usize; n];
+    let mut source = vec![0usize; n];
+    for position in 0..n {
+        let limit = ARENA_MAX_COPY
+            .min(n - position)
+            .min(arena.len().saturating_sub(position));
+        if limit < 3 {
+            continue;
+        }
+        let pair = u16::from_le_bytes([decoded[position], decoded[position + 1]]);
+        for &start in sources.get(&pair).into_iter().flatten() {
+            let mut count = 2;
+            while count < limit
+                && start + count < arena.len()
+                && arena[start + count] == decoded[position + count]
+            {
+                count += 1;
+            }
+            if count > length[position] {
+                length[position] = count;
+                source[position] = start;
+            }
+        }
+        if length[position] < 3 {
+            length[position] = 0;
+        }
+    }
+    let mut token = vec![1usize; n];
+    for position in (0..n).rev() {
+        let own = length[position];
+        if own < 3 {
+            continue;
+        }
+        token[position] = own;
+        let Some(longer) = (position + 1..position + own).find(|next| length[*next] > own) else {
+            continue;
+        };
+        let mut next = longer;
+        while next < n && next - position < own {
+            if token[next] > own {
+                token[position] = if next - position < 3 {
+                    1
+                } else {
+                    next - position
+                };
+                break;
+            }
+            next += token[next];
+        }
+    }
+    let mut tokens = Vec::new();
+    let mut position = 0;
+    while position < n {
+        let step = token[position];
+        if step == 1 {
+            match tokens.last_mut() {
+                Some(GeneralToken::Literal(count)) => *count += 1,
+                _ => tokens.push(GeneralToken::Literal(1)),
+            }
+        } else {
+            tokens.push(GeneralToken::Copy {
+                length: step as u32,
+                distance: (base - source[position]) as u32,
+            });
+        }
+        position += step;
+    }
+    tokens
+}
+#[test]
+fn arena_parse_cuts_copies_at_longer_tokens_and_bounds_their_reach() {
+    let copy = |length, distance| GeneralToken::Copy { length, distance };
+    // "ABC" gives way to the longer "BCDEFG" one byte later: a literal first.
+    let arena = b"..ABC..BCDEFG.".to_vec();
+    assert_eq!(
+        arena_tokens(b"ABCDEFG\0", &arena),
+        [
+            GeneralToken::Literal(1),
+            copy(6, 9),
+            GeneralToken::Literal(1)
+        ]
+    );
+    // "WXYZ" is cut after three bytes where the longer "ZABCDE" starts.
+    let arena = b"WXYZ.ZABCDE.".to_vec();
+    assert_eq!(
+        arena_tokens(b"WXYZABCDE\0", &arena),
+        [copy(3, 14), copy(6, 9), GeneralToken::Literal(1)]
+    );
+    // Equal sources: the oldest wins. A copy never reaches past the decoded
+    // offset equal to the arena length, so the repeat is literal.
+    let arena = b"abcdefgh".to_vec();
+    assert_eq!(
+        arena_tokens(b"abcdefghabcdefgh\0", &arena),
+        [copy(8, 10), GeneralToken::Literal(9)]
+    );
+    assert_eq!(
+        arena_tokens(b"abc\0", b"xabcyabcz"),
+        [copy(3, 10), GeneralToken::Literal(1)]
+    );
+}
+#[test]
+fn arena_compression_stores_raw_unless_it_saves_a_tenth_within_the_buffer() {
+    assert_eq!(
+        compress_arena(&[1, 2, 3, 4, 0], &[]).unwrap(),
+        [0, 0, 1, 2, 3, 4, 0]
+    );
+    let arena: Vec<u8> = (1..=200).collect();
+    let mut decoded: Vec<u8> = (1..=200).collect();
+    decoded.push(0);
+    let encoded = compress_arena(&decoded, &arena).unwrap();
+    let mut data = arena.clone();
+    data.extend_from_slice(&encoded);
+    assert_eq!(decode_arena(&data, arena.len()).unwrap().0, decoded);
+    assert!(encoded.len() < 20);
+    // Five payload bytes: one copy of all of them saves too little.
+    let mut small: Vec<u8> = (1..=5).collect();
+    small.push(0);
+    assert_eq!(compress_arena(&small, &arena).unwrap()[..2], [0, 0]);
+    // No input at all is a bare raw split.
+    assert_eq!(compress_arena(&[], &arena).unwrap(), [0, 0]);
+    assert!(encode_arena(&[1, 2], None, 0, &arena).is_err());
 }
 #[test]
 fn arena_streams_round_trip_and_check_their_dictionary() {

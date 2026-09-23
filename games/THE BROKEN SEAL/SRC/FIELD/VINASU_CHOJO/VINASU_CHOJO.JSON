@@ -42,7 +42,6 @@
         "decoded_size": 3249,
         "encoded_size": 2012,
         "tilemap_length": 3248,
-        "lookahead": "0000",
         "component": "map-metatiles-2x2",
         "transform_mode": 0,
         "metatiles": 406,
@@ -60,7 +59,6 @@
           [3, 252, 248, 0], [2, 0, 254, 0], [2, 254, 252, 0], [2, 4, 2, 0], [2, 2, 0, 0], [4, 0, 248, 0],
           [3, 0, 248, 0], [0, 2, 0, 0]
         ],
-        "lookahead": "",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -126,7 +124,6 @@
           ],
           "0xffff"
         ],
-        "lookahead": "0000",
         "component": "map-animation-queues",
         "word_size": 2,
         "terminators": ["0xfe00", "0xffff"]
@@ -135,7 +132,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x08769f04",
-        "size": "0x4",
+        "size": "0x3",
         "record_size": 3,
         "segments": [
           {
@@ -145,8 +142,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x08769f07", "end": "0x08769f08", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/VINASU_CHOJO/VINASU_CHOJO.BIN",

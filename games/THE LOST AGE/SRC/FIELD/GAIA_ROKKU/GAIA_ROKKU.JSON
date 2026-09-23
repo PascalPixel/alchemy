@@ -1,0 +1,579 @@
+{
+  "format": 1,
+  "maps": {
+    "499": {
+      "format": 1,
+      "kind": "golden-sun-map-container",
+      "header": {
+        "format": 1,
+        "kind": "typed-table",
+        "address": "0x08d0d064",
+        "size": "0x40",
+        "segments": [
+          {
+            "name": "parameters",
+            "address": "0x08d0d064",
+            "end": "0x08d0d070",
+            "stride": 12,
+            "element": "u8",
+            "values": [0, 0, 128, 128, 3, 2, 1, 0, 2, 2, 0, 0]
+          },
+          {
+            "name": "records",
+            "address": "0x08d0d070",
+            "end": "0x08d0d088",
+            "stride": 8,
+            "element": "le-u16",
+            "values": [[0, 4112, 0, 65535], [128, 4112, 0, 65535], [32768, 4112, 0, 65535]]
+          },
+          {
+            "name": "component_offsets",
+            "address": "0x08d0d088",
+            "end": "0x08d0d0a4",
+            "stride": 4,
+            "element": "le-u32",
+            "values": ["0x40", "0xe20", "0xea0", "0x22fc", "0x24e4", "0x24ec", "0x24f4"]
+          }
+        ]
+      },
+      "metatiles": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 5393,
+        "encoded_size": 3552,
+        "tilemap_length": 5392,
+        "component": "map-metatiles-2x2",
+        "transform_mode": 2,
+        "metatiles": 674,
+        "tilemap_source": "games/THE LOST AGE/SRC/FIELD/GAIA_ROKKU/GAIA_ROKKU.BIN",
+        "tilemap_offset": 65536
+      },
+      "descriptors": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 216,
+        "encoded_size": 128,
+        "records": [
+          [0, 0, 0, 0], [3, 48, 40, 0], [0, 40, 0, 0], [4, 48, 40, 0], [3, 40, 28, 0], [0, 28, 0, 0], [4, 40, 28, 0],
+          [0, 24, 0, 0], [4, 28, 24, 0], [3, 40, 36, 0], [0, 36, 0, 0], [4, 40, 36, 0], [3, 24, 16, 0], [0, 16, 0, 0],
+          [0, 20, 0, 0], [4, 28, 20, 0], [0, 32, 0, 0], [4, 40, 32, 0], [3, 28, 20, 0], [0, 8, 0, 0], [4, 16, 8, 0],
+          [4, 20, 16, 0], [4, 32, 20, 0], [4, 36, 32, 0], [3, 36, 28, 0], [0, 80, 0, 0], [4, 36, 28, 0], [3, 28, 0, 0],
+          [4, 20, 0, 0], [3, 20, 12, 0], [0, 12, 0, 0], [4, 8, 248, 0], [3, 16, 4, 0], [0, 4, 0, 0], [4, 20, 4, 0],
+          [3, 32, 20, 0], [3, 28, 4, 0], [4, 28, 4, 0], [4, 12, 0, 0], [3, 8, 4, 0], [3, 4, 248, 0], [4, 4, 248, 0],
+          [3, 20, 4, 0], [4, 0, 248, 0], [3, 0, 248, 0], [0, 248, 0, 0], [3, 28, 16, 0], [4, 28, 16, 0], [4, 20, 12, 0],
+          [4, 16, 12, 0], [3, 12, 8, 0], [4, 12, 8, 0], [3, 8, 0, 0], [4, 8, 0, 0]
+        ],
+        "component": "map-descriptors-4byte",
+        "record_size": 4
+      },
+      "descriptor_grid": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "tag": 1,
+        "decoded_size": 16384,
+        "encoded_size": 488,
+        "component": "map-descriptor-grid",
+        "width": 128,
+        "height": 128
+      },
+      "animation_queues": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "tag": 1,
+        "decoded_size": 2,
+        "encoded_size": 8,
+        "words": ["0xffff"],
+        "component": "map-animation-queues",
+        "word_size": 2,
+        "terminators": ["0xfe00", "0xffff"]
+      },
+      "blend_animation": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "tag": 1,
+        "decoded_size": 2,
+        "encoded_size": 8,
+        "words": [["0xffff"]],
+        "component": "map-blend-animation",
+        "word_size": 2
+      },
+      "positions": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 62,
+        "encoded_size": 64,
+        "table": {
+          "format": 1,
+          "kind": "typed-table",
+          "address": "0x0",
+          "size": "0x3e",
+          "segments": [
+            {
+              "name": "offsets",
+              "address": "0x0",
+              "end": "0x6",
+              "stride": 2,
+              "element": "le-u16",
+              "values": ["entrances", "cell_patches_end", "camera_bounds"]
+            },
+            {"name": "reserved", "address": "0x6", "end": "0x8", "stride": 2, "element": "le-u16", "values": [0]},
+            {
+              "name": "points",
+              "address": "0x8",
+              "end": "0xd",
+              "stride": 5,
+              "element": "record",
+              "fields": [
+                {"name": "point", "element": "s8"},
+                {"name": "x", "element": "le-u16"},
+                {"name": "y", "element": "le-u16"}
+              ],
+              "records": [{"point": 1, "x": 808, "y": 440}]
+            },
+            {"name": "points_end", "address": "0xd", "end": "0xe", "stride": 1, "element": "u8", "values": [255]},
+            {
+              "name": "entrances",
+              "address": "0xe",
+              "end": "0x32",
+              "stride": 6,
+              "element": "record",
+              "fields": [
+                {"name": "entrance", "element": "s8"},
+                {"name": "x", "element": "le-s16"},
+                {"name": "y", "element": "le-s16"},
+                {"name": "arrival", "element": "u8", "bits": {"facing": 4, "options": 4}}
+              ],
+              "records": [
+                {"entrance": 1, "x": 24, "y": 408, "arrival": [0, 0]},
+                {"entrance": 2, "x": 776, "y": 472, "arrival": [12, 0]},
+                {"entrance": 3, "x": 776, "y": 712, "arrival": [4, 0]},
+                {"entrance": 4, "x": 768, "y": 776, "arrival": [4, 0]},
+                {"entrance": 5, "x": 768, "y": 952, "arrival": [12, 0]},
+                {"entrance": 99, "x": 330, "y": 198, "arrival": [12, 0]}
+              ]
+            },
+            {"name": "entrances_end", "address": "0x32", "end": "0x33", "stride": 1, "element": "u8", "values": [255]},
+            {
+              "name": "cell_patches_end",
+              "address": "0x33",
+              "end": "0x35",
+              "stride": 2,
+              "element": "le-u16",
+              "values": [65535]
+            },
+            {
+              "name": "camera_bounds",
+              "address": "0x35",
+              "end": "0x3d",
+              "stride": 4,
+              "element": "record",
+              "fields": [
+                {"name": "left", "element": "s8"},
+                {"name": "top", "element": "s8"},
+                {"name": "right", "element": "s8"},
+                {"name": "bottom", "element": "s8"}
+              ],
+              "records": [
+                {"left": 0, "top": 0, "right": 64, "bottom": 32},
+                {"left": 32, "top": 32, "right": 64, "bottom": 64}
+              ]
+            },
+            {
+              "name": "camera_bounds_end",
+              "address": "0x3d",
+              "end": "0x3e",
+              "stride": 1,
+              "element": "u8",
+              "values": [255]
+            }
+          ]
+        },
+        "component": "map-positions"
+      },
+      "grid_source": "games/THE LOST AGE/SRC/FIELD/GAIA_ROKKU/GAIA_ROKKU.BIN",
+      "grid_offset": 0,
+      "grid_compression": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "tag": 1,
+        "decoded_size": 65536,
+        "encoded_size": 5212
+      }
+    },
+    "49b": {
+      "format": 1,
+      "kind": "golden-sun-map-container",
+      "header": {
+        "format": 1,
+        "kind": "typed-table",
+        "address": "0x08d0f720",
+        "size": "0x40",
+        "segments": [
+          {
+            "name": "parameters",
+            "address": "0x08d0f720",
+            "end": "0x08d0f72c",
+            "stride": 12,
+            "element": "u8",
+            "values": [0, 0, 128, 128, 2, 3, 2, 0, 2, 2, 0, 0]
+          },
+          {
+            "name": "records",
+            "address": "0x08d0f72c",
+            "end": "0x08d0f744",
+            "stride": 8,
+            "element": "le-u16",
+            "values": [[0, 4112, 0, 65535], [41984, 1028, 0, 65535], [128, 4112, 0, 65535]]
+          },
+          {
+            "name": "component_offsets",
+            "address": "0x08d0f744",
+            "end": "0x08d0f760",
+            "stride": 4,
+            "element": "le-u32",
+            "values": ["0x40", "0x854", "0x8c8", "0x17b0", "0x196c", "0x1974", "0x197c"]
+          }
+        ]
+      },
+      "metatiles": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 3593,
+        "encoded_size": 2068,
+        "tilemap_length": 3592,
+        "component": "map-metatiles-2x2",
+        "transform_mode": 2,
+        "metatiles": 449,
+        "tilemap_source": "games/THE LOST AGE/SRC/FIELD/GAIA_ROKKU/GAIA_ROKKU.BIN",
+        "tilemap_offset": 136464
+      },
+      "descriptors": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 188,
+        "encoded_size": 116,
+        "records": [
+          [0, 0, 0, 0], [3, 24, 12, 0], [0, 12, 0, 0], [3, 24, 8, 0], [0, 8, 0, 0], [3, 24, 4, 0], [0, 4, 0, 0],
+          [3, 248, 12, 0], [0, 32, 0, 0], [4, 48, 32, 0], [0, 48, 0, 0], [4, 8, 4, 0], [4, 12, 8, 0], [0, 24, 0, 0],
+          [4, 32, 24, 0], [4, 24, 12, 0], [0, 40, 0, 0], [3, 48, 32, 0], [3, 24, 0, 0], [0, 20, 0, 0], [0, 28, 0, 0],
+          [3, 32, 16, 0], [0, 16, 0, 0], [4, 4, 0, 0], [4, 12, 248, 0], [3, 24, 20, 0], [4, 24, 20, 0], [4, 16, 12, 0],
+          [4, 20, 12, 0], [3, 20, 12, 0], [3, 12, 8, 0], [3, 12, 0, 0], [4, 8, 0, 0], [3, 8, 0, 0], [4, 0, 196, 0],
+          [3, 0, 226, 0], [0, 226, 0, 0], [4, 4, 226, 0], [4, 0, 248, 0], [3, 0, 248, 0], [0, 196, 0, 0],
+          [4, 226, 196, 0], [4, 196, 176, 0], [7, 196, 200, 0], [0, 176, 0, 0], [3, 196, 176, 0], [0, 192, 0, 0]
+        ],
+        "component": "map-descriptors-4byte",
+        "record_size": 4
+      },
+      "descriptor_grid": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "tag": 1,
+        "decoded_size": 16384,
+        "encoded_size": 444,
+        "component": "map-descriptor-grid",
+        "width": 128,
+        "height": 128
+      },
+      "animation_queues": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "tag": 1,
+        "decoded_size": 2,
+        "encoded_size": 8,
+        "words": ["0xffff"],
+        "component": "map-animation-queues",
+        "word_size": 2,
+        "terminators": ["0xfe00", "0xffff"]
+      },
+      "blend_animation": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "tag": 1,
+        "decoded_size": 2,
+        "encoded_size": 8,
+        "words": [["0xffff"]],
+        "component": "map-blend-animation",
+        "word_size": 2
+      },
+      "positions": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 51,
+        "encoded_size": 56,
+        "table": {
+          "format": 1,
+          "kind": "typed-table",
+          "address": "0x0",
+          "size": "0x33",
+          "segments": [
+            {
+              "name": "offsets",
+              "address": "0x0",
+              "end": "0x6",
+              "stride": 2,
+              "element": "le-u16",
+              "values": ["entrances", "cell_patches_end", "camera_bounds"]
+            },
+            {"name": "reserved", "address": "0x6", "end": "0x8", "stride": 2, "element": "le-u16", "values": [0]},
+            {"name": "points_end", "address": "0x8", "end": "0x9", "stride": 1, "element": "u8", "values": [255]},
+            {
+              "name": "entrances",
+              "address": "0x9",
+              "end": "0x27",
+              "stride": 6,
+              "element": "record",
+              "fields": [
+                {"name": "entrance", "element": "s8"},
+                {"name": "x", "element": "le-s16"},
+                {"name": "y", "element": "le-s16"},
+                {"name": "arrival", "element": "u8", "bits": {"facing": 4, "options": 4}}
+              ],
+              "records": [
+                {"entrance": 1, "x": 488, "y": 344, "arrival": [8, 0]},
+                {"entrance": 2, "x": 200, "y": 328, "arrival": [4, 0]},
+                {"entrance": 3, "x": 712, "y": 440, "arrival": [12, 0]},
+                {"entrance": 4, "x": 1000, "y": 280, "arrival": [8, 0]},
+                {"entrance": 99, "x": 330, "y": 198, "arrival": [12, 0]}
+              ]
+            },
+            {"name": "entrances_end", "address": "0x27", "end": "0x28", "stride": 1, "element": "u8", "values": [255]},
+            {
+              "name": "cell_patches_end",
+              "address": "0x28",
+              "end": "0x2a",
+              "stride": 2,
+              "element": "le-u16",
+              "values": [65535]
+            },
+            {
+              "name": "camera_bounds",
+              "address": "0x2a",
+              "end": "0x32",
+              "stride": 4,
+              "element": "record",
+              "fields": [
+                {"name": "left", "element": "s8"},
+                {"name": "top", "element": "s8"},
+                {"name": "right", "element": "s8"},
+                {"name": "bottom", "element": "s8"}
+              ],
+              "records": [
+                {"left": 0, "top": 0, "right": 32, "bottom": 32},
+                {"left": 32, "top": 0, "right": 64, "bottom": 64}
+              ]
+            },
+            {
+              "name": "camera_bounds_end",
+              "address": "0x32",
+              "end": "0x33",
+              "stride": 1,
+              "element": "u8",
+              "values": [255]
+            }
+          ]
+        },
+        "component": "map-positions"
+      },
+      "grid_source": "games/THE LOST AGE/SRC/FIELD/GAIA_ROKKU/GAIA_ROKKU.BIN",
+      "grid_offset": 70928,
+      "grid_compression": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "tag": 1,
+        "decoded_size": 65536,
+        "encoded_size": 3816
+      }
+    },
+    "49c": {
+      "format": 1,
+      "kind": "golden-sun-map-container",
+      "header": {
+        "format": 1,
+        "kind": "typed-table",
+        "address": "0x08d110d4",
+        "size": "0x40",
+        "segments": [
+          {
+            "name": "parameters",
+            "address": "0x08d110d4",
+            "end": "0x08d110e0",
+            "stride": 12,
+            "element": "u8",
+            "values": [0, 0, 128, 128, 2, 3, 2, 0, 2, 2, 0, 0]
+          },
+          {
+            "name": "records",
+            "address": "0x08d110e0",
+            "end": "0x08d110f8",
+            "stride": 8,
+            "element": "le-u16",
+            "values": [[0, 4112, 0, 65535], [41984, 1028, 0, 65535], [128, 4112, 0, 65535]]
+          },
+          {
+            "name": "component_offsets",
+            "address": "0x08d110f8",
+            "end": "0x08d11114",
+            "stride": 4,
+            "element": "le-u32",
+            "values": ["0x40", "0x558", "0x59c", "0x106c", "0x1218", "0x1220", "0x1228"]
+          }
+        ]
+      },
+      "metatiles": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 2441,
+        "encoded_size": 1304,
+        "tilemap_length": 2440,
+        "component": "map-metatiles-2x2",
+        "transform_mode": 2,
+        "metatiles": 305,
+        "tilemap_source": "games/THE LOST AGE/SRC/FIELD/GAIA_ROKKU/GAIA_ROKKU.BIN",
+        "tilemap_offset": 205592
+      },
+      "descriptors": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 116,
+        "encoded_size": 68,
+        "records": [
+          [0, 0, 0, 0], [0, 30, 0, 0], [3, 30, 0, 0], [4, 30, 0, 0], [3, 30, 8, 0], [0, 8, 0, 0], [4, 30, 8, 0],
+          [3, 30, 4, 0], [0, 4, 0, 0], [0, 252, 0, 0], [4, 8, 4, 0], [3, 8, 4, 0], [7, 0, 4, 0], [3, 0, 252, 0],
+          [7, 4, 12, 0], [4, 0, 252, 0], [3, 4, 0, 0], [4, 4, 0, 0], [4, 0, 226, 0], [0, 226, 0, 0], [0, 248, 0, 0],
+          [4, 252, 248, 0], [3, 252, 248, 0], [4, 0, 248, 0], [4, 248, 226, 0], [3, 0, 226, 0], [3, 248, 226, 0],
+          [4, 252, 226, 0], [3, 252, 226, 0]
+        ],
+        "component": "map-descriptors-4byte",
+        "record_size": 4
+      },
+      "descriptor_grid": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "tag": 1,
+        "decoded_size": 16384,
+        "encoded_size": 428,
+        "component": "map-descriptor-grid",
+        "width": 128,
+        "height": 128
+      },
+      "animation_queues": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "tag": 1,
+        "decoded_size": 2,
+        "encoded_size": 8,
+        "words": ["0xffff"],
+        "component": "map-animation-queues",
+        "word_size": 2,
+        "terminators": ["0xfe00", "0xffff"]
+      },
+      "blend_animation": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "tag": 1,
+        "decoded_size": 2,
+        "encoded_size": 8,
+        "words": [["0xffff"]],
+        "component": "map-blend-animation",
+        "word_size": 2
+      },
+      "positions": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 45,
+        "encoded_size": 52,
+        "table": {
+          "format": 1,
+          "kind": "typed-table",
+          "address": "0x0",
+          "size": "0x2d",
+          "segments": [
+            {
+              "name": "offsets",
+              "address": "0x0",
+              "end": "0x6",
+              "stride": 2,
+              "element": "le-u16",
+              "values": ["entrances", "cell_patches_end", "camera_bounds"]
+            },
+            {"name": "reserved", "address": "0x6", "end": "0x8", "stride": 2, "element": "le-u16", "values": [0]},
+            {
+              "name": "points",
+              "address": "0x8",
+              "end": "0x12",
+              "stride": 5,
+              "element": "record",
+              "fields": [
+                {"name": "point", "element": "s8"},
+                {"name": "x", "element": "le-u16"},
+                {"name": "y", "element": "le-u16"}
+              ],
+              "records": [{"point": 100, "x": 656, "y": 221}, {"point": 101, "x": 472, "y": 360}]
+            },
+            {"name": "points_end", "address": "0x12", "end": "0x13", "stride": 1, "element": "u8", "values": [255]},
+            {
+              "name": "entrances",
+              "address": "0x13",
+              "end": "0x25",
+              "stride": 6,
+              "element": "record",
+              "fields": [
+                {"name": "entrance", "element": "s8"},
+                {"name": "x", "element": "le-s16"},
+                {"name": "y", "element": "le-s16"},
+                {"name": "arrival", "element": "u8", "bits": {"facing": 4, "options": 4}}
+              ],
+              "records": [
+                {"entrance": 1, "x": 24, "y": 248, "arrival": [0, 0]},
+                {"entrance": 9, "x": 658, "y": 274, "arrival": [0, 0]},
+                {"entrance": 10, "x": 664, "y": 200, "arrival": [4, 0]}
+              ]
+            },
+            {"name": "entrances_end", "address": "0x25", "end": "0x26", "stride": 1, "element": "u8", "values": [255]},
+            {
+              "name": "cell_patches_end",
+              "address": "0x26",
+              "end": "0x28",
+              "stride": 2,
+              "element": "le-u16",
+              "values": [65535]
+            },
+            {
+              "name": "camera_bounds",
+              "address": "0x28",
+              "end": "0x2c",
+              "stride": 4,
+              "element": "record",
+              "fields": [
+                {"name": "left", "element": "s8"},
+                {"name": "top", "element": "s8"},
+                {"name": "right", "element": "s8"},
+                {"name": "bottom", "element": "s8"}
+              ],
+              "records": [{"left": 0, "top": 0, "right": 50, "bottom": 32}]
+            },
+            {
+              "name": "camera_bounds_end",
+              "address": "0x2c",
+              "end": "0x2d",
+              "stride": 1,
+              "element": "u8",
+              "values": [255]
+            }
+          ]
+        },
+        "component": "map-positions"
+      },
+      "grid_source": "games/THE LOST AGE/SRC/FIELD/GAIA_ROKKU/GAIA_ROKKU.BIN",
+      "grid_offset": 140056,
+      "grid_compression": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "tag": 1,
+        "decoded_size": 65536,
+        "encoded_size": 2768
+      }
+    }
+  },
+  "palettes": {"49a": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 448, "encoded_size": 392}}
+}

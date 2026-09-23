@@ -42,7 +42,6 @@
         "decoded_size": 5457,
         "encoded_size": 3076,
         "tilemap_length": 5456,
-        "lookahead": "",
         "component": "map-metatiles-2x2",
         "transform_mode": 2,
         "metatiles": 682,
@@ -59,7 +58,6 @@
           [8, 4, 0, 0], [9, 0, 5, 0], [9, 0, 4, 0], [8, 0, 5, 0], [8, 0, 4, 0], [13, 0, 4, 4], [0, 8, 0, 0],
           [12, 4, 0, 0], [0, 254, 0, 0], [12, 0, 0, 4]
         ],
-        "lookahead": "000000",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -111,7 +109,6 @@
           ],
           "0xffff"
         ],
-        "lookahead": "000000",
         "component": "map-animation-queues",
         "word_size": 2,
         "terminators": ["0xfe00", "0xffff"]
@@ -123,7 +120,6 @@
         "decoded_size": 10,
         "encoded_size": 16,
         "words": [["0x3f44"], ["0x1008", 43210], ["0xfe00"], ["0xffff"]],
-        "lookahead": "00",
         "component": "map-blend-animation",
         "word_size": 2
       },
@@ -131,7 +127,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x087419c8",
-        "size": "0x10",
+        "size": "0xf",
         "record_size": 3,
         "segments": [
           {
@@ -149,8 +145,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x087419d7", "end": "0x087419d8", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/SUHARA_HEYA/SUHARA_HEYA.BIN",

@@ -42,7 +42,6 @@
         "decoded_size": 1553,
         "encoded_size": 772,
         "tilemap_length": 1552,
-        "lookahead": "0000",
         "component": "map-metatiles-2x2",
         "transform_mode": 1,
         "metatiles": 194,
@@ -55,7 +54,6 @@
         "decoded_size": 8,
         "encoded_size": 8,
         "records": [[0, 0, 0, 0], [0, 2, 0, 0]],
-        "lookahead": "",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -121,7 +119,6 @@
           ],
           "0xffff"
         ],
-        "lookahead": "0000",
         "component": "map-animation-queues",
         "word_size": 2,
         "terminators": ["0xfe00", "0xffff"]
@@ -136,7 +133,6 @@
           ["0x100b", 4], ["0x100c", 4], ["0x100b", 4], ["0x100a", 4], ["0x1009", 4], ["0x1008", 4], ["0x1007", 4],
           ["0x1006", 4], ["0xfe00"], ["0xffff"]
         ],
-        "lookahead": "000000",
         "component": "map-blend-animation",
         "word_size": 2
       },
@@ -144,7 +140,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x086d0140",
-        "size": "0x10",
+        "size": "0xf",
         "record_size": 3,
         "segments": [
           {
@@ -162,8 +158,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x086d014f", "end": "0x086d0150", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/TAKARA_HASHIRA/TAKARA_HASHIRA.BIN",
@@ -214,7 +209,6 @@
         "decoded_size": 3873,
         "encoded_size": 2336,
         "tilemap_length": 3872,
-        "lookahead": "00",
         "component": "map-metatiles-2x2",
         "transform_mode": 0,
         "metatiles": 484,
@@ -233,7 +227,6 @@
           [3, 0, 2, 0], [3, 0, 4, 0], [4, 252, 0, 0], [3, 4, 6, 0], [0, 6, 0, 0], [3, 6, 8, 0], [4, 0, 4, 0],
           [3, 0, 254, 0], [0, 254, 0, 0], [4, 0, 254, 0], [3, 254, 0, 0], [4, 254, 0, 0]
         ],
-        "lookahead": "",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -304,7 +297,6 @@
           ],
           "0xffff"
         ],
-        "lookahead": "0000",
         "component": "map-animation-queues",
         "word_size": 2,
         "terminators": ["0xfe00", "0xffff"]
@@ -313,7 +305,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x086d5644",
-        "size": "0x10",
+        "size": "0xf",
         "record_size": 3,
         "segments": [
           {
@@ -331,8 +323,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x086d5653", "end": "0x086d5654", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/TAKARA_HASHIRA/TAKARA_HASHIRA.BIN",
@@ -383,7 +374,6 @@
         "decoded_size": 5073,
         "encoded_size": 3316,
         "tilemap_length": 5072,
-        "lookahead": "00",
         "component": "map-metatiles-2x2",
         "transform_mode": 1,
         "metatiles": 634,
@@ -400,7 +390,6 @@
           [0, 4, 0, 0], [4, 0, 254, 0], [3, 0, 254, 0], [0, 6, 0, 0], [4, 254, 0, 0], [7, 0, 2, 0], [9, 0, 1, 0],
           [0, 250, 0, 0], [0, 253, 0, 0]
         ],
-        "lookahead": "0000",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -411,7 +400,6 @@
         "decoded_size": 2,
         "encoded_size": 8,
         "words": ["0xffff"],
-        "lookahead": "0000",
         "component": "map-animation-queues",
         "word_size": 2,
         "terminators": ["0xfe00", "0xffff"]
@@ -422,7 +410,6 @@
         "decoded_size": 22,
         "encoded_size": 20,
         "words": [["0x3f42"], ["0x1005", 4], ["0x1006", 4], ["0x1007", 4], ["0x1006", 4], ["0xfe00"], ["0xffff"]],
-        "lookahead": "",
         "component": "map-blend-animation",
         "word_size": 2
       },
@@ -430,7 +417,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x086d778c",
-        "size": "0x10",
+        "size": "0xf",
         "record_size": 3,
         "segments": [
           {
@@ -448,8 +435,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x086d779b", "end": "0x086d779c", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/TAKARA_HASHIRA/TAKARA_HASHIRA.BIN",
@@ -500,7 +486,6 @@
         "decoded_size": 1601,
         "encoded_size": 816,
         "tilemap_length": 1600,
-        "lookahead": "",
         "component": "map-metatiles-2x2",
         "transform_mode": 2,
         "metatiles": 200,
@@ -516,7 +501,6 @@
           [0, 0, 0, 0], [0, 8, 0, 0], [0, 4, 0, 0], [4, 8, 4, 0], [3, 8, 0, 0], [4, 4, 0, 0], [3, 8, 4, 0],
           [0, 1, 0, 0], [7, 4, 6, 0], [4, 4, 8, 0], [3, 4, 0, 0], [3, 4, 8, 0], [4, 0, 8, 0], [3, 0, 8, 0]
         ],
-        "lookahead": "000000",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -591,7 +575,6 @@
           ],
           "0xffff"
         ],
-        "lookahead": "0000",
         "component": "map-animation-queues",
         "word_size": 2,
         "terminators": ["0xfe00", "0xffff"]
@@ -602,7 +585,6 @@
         "decoded_size": 20,
         "encoded_size": 16,
         "words": [["0x0003", 16], ["0x0003", 16], ["0x0004", 16], ["0x0003", 16], ["0xfe00"], ["0xffff"]],
-        "lookahead": "",
         "component": "map-blend-animation",
         "word_size": 2
       },
@@ -610,7 +592,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x086d8870",
-        "size": "0x10",
+        "size": "0xf",
         "record_size": 3,
         "segments": [
           {
@@ -628,8 +610,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x086d887f", "end": "0x086d8880", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/TAKARA_HASHIRA/TAKARA_HASHIRA.BIN",

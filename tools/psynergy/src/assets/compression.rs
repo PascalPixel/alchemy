@@ -219,6 +219,10 @@ pub fn encode_delta7(pixels: &[u8]) -> Result<Vec<u8>, AssetError> {
         bits.put(u32::from(value), value_bits);
         previous = pixel;
     }
+    // The writer flushes its pending halfword even when the last code filled
+    // the one before: a stream ending on a halfword boundary gains an empty
+    // halfword.
+    bits.put(0, 1);
     bits.align(16, 0);
     Ok(bits.bytes)
 }
@@ -285,6 +289,14 @@ fn delta7_inverse_covers_every_transition() {
         }
     }
     assert!(decode_delta7(&[], 1).is_err());
+}
+
+#[test]
+fn delta7_flushes_the_pending_halfword() {
+    // Seven unchanged pixels take fourteen bits, eight fill a halfword.
+    assert_eq!(encode_delta7(&[0; 7]).unwrap(), [0, 0]);
+    assert_eq!(encode_delta7(&[0; 8]).unwrap(), [0, 0, 0, 0]);
+    assert_eq!(decode_delta7(&[0, 0, 0, 0], 8).unwrap(), [0; 8]);
 }
 
 /// Delta-code little-endian 16-bit tile entries behind a mode byte: mode 0

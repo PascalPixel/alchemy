@@ -42,7 +42,6 @@
         "decoded_size": 6233,
         "encoded_size": 3992,
         "tilemap_length": 6232,
-        "lookahead": "000000",
         "component": "map-metatiles-2x2",
         "transform_mode": 0,
         "metatiles": 779,
@@ -60,7 +59,6 @@
           [3, 0, 4, 0], [3, 4, 0, 0], [4, 0, 12, 0], [4, 4, 8, 0], [3, 0, 12, 0], [4, 8, 4, 0], [4, 4, 6, 0],
           [3, 4, 6, 0], [0, 6, 0, 0]
         ],
-        "lookahead": "0000",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -99,7 +97,6 @@
           ["0xfd07", [1839, 2], [17, 0], [1841, 2], [49, 10], "0xfe00"],
           "0xffff"
         ],
-        "lookahead": "",
         "component": "map-animation-queues",
         "word_size": 2,
         "terminators": ["0xfe00", "0xffff"]
@@ -111,7 +108,6 @@
         "decoded_size": 2,
         "encoded_size": 8,
         "words": [["0xffff"]],
-        "lookahead": "0000",
         "component": "map-blend-animation",
         "word_size": 2
       },
@@ -119,7 +115,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x08656734",
-        "size": "0x8",
+        "size": "0x6",
         "record_size": 3,
         "segments": [
           {
@@ -137,8 +133,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x0865673a", "end": "0x0865673c", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/YAMA_RAMA/YAMA_RAMA.BIN",
@@ -189,7 +184,6 @@
         "decoded_size": 13425,
         "encoded_size": 8396,
         "tilemap_length": 13424,
-        "lookahead": "000000",
         "component": "map-metatiles-2x2",
         "transform_mode": 0,
         "metatiles": 1678,
@@ -207,7 +201,6 @@
           [8, 252, 0, 0], [3, 0, 252, 0], [4, 0, 4, 0], [13, 0, 0, 0], [12, 0, 0, 0], [4, 4, 0, 0], [9, 4, 0, 0],
           [3, 252, 0, 0], [4, 2, 0, 0], [8, 2, 0, 0], [3, 0, 4, 0], [8, 0, 2, 0]
         ],
-        "lookahead": "",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -250,7 +243,6 @@
           ],
           "0xffff"
         ],
-        "lookahead": "000000",
         "component": "map-animation-queues",
         "word_size": 2,
         "terminators": ["0xfe00", "0xffff"]
@@ -262,7 +254,6 @@
         "decoded_size": 2,
         "encoded_size": 8,
         "words": [["0xffff"]],
-        "lookahead": "0000",
         "component": "map-blend-animation",
         "word_size": 2
       },
@@ -270,7 +261,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x0867f334",
-        "size": "0xc",
+        "size": "0x9",
         "record_size": 3,
         "segments": [
           {
@@ -288,8 +279,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x0867f33d", "end": "0x0867f340", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/YAMA_RAMA/YAMA_RAMA.BIN",

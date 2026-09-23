@@ -1,0 +1,538 @@
+{
+  "format": 1,
+  "maps": {
+    "590": {
+      "format": 1,
+      "kind": "golden-sun-map-container",
+      "header": {
+        "format": 1,
+        "kind": "typed-table",
+        "address": "0x08e36a68",
+        "size": "0x40",
+        "segments": [
+          {
+            "name": "parameters",
+            "address": "0x08e36a68",
+            "end": "0x08e36a74",
+            "stride": 12,
+            "element": "u8",
+            "values": [0, 0, 128, 128, 3, 2, 1, 0, 2, 2, 0, 0]
+          },
+          {
+            "name": "records",
+            "address": "0x08e36a74",
+            "end": "0x08e36a8c",
+            "stride": 8,
+            "element": "le-u16",
+            "values": [[0, 4112, 0, 65535], [128, 4112, 0, 65535], [32768, 4112, 0, 65535]]
+          },
+          {
+            "name": "component_offsets",
+            "address": "0x08e36a8c",
+            "end": "0x08e36aa8",
+            "stride": 4,
+            "element": "le-u32",
+            "values": ["0x40", "0xea8", "0xee4", "0x1e00", "0x2054", "0x205c", "0x2064"]
+          }
+        ]
+      },
+      "metatiles": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 6169,
+        "encoded_size": 3688,
+        "tilemap_length": 6168,
+        "component": "map-metatiles-2x2",
+        "transform_mode": 0,
+        "metatiles": 771,
+        "tilemap_source": "games/THE LOST AGE/SRC/FIELD/ROHHO_MURA/ROHHO_MURA.BIN",
+        "tilemap_offset": 65536
+      },
+      "descriptors": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 100,
+        "encoded_size": 60,
+        "records": [
+          [0, 0, 0, 0], [0, 8, 0, 0], [3, 8, 4, 0], [0, 4, 0, 0], [4, 8, 4, 0], [3, 4, 0, 0], [4, 8, 0, 0],
+          [0, 252, 0, 0], [3, 8, 0, 0], [4, 4, 0, 0], [4, 12, 8, 0], [0, 6, 0, 0], [1, 4, 2, 0], [1, 2, 0, 0],
+          [3, 8, 12, 0], [4, 0, 252, 0], [4, 0, 4, 0], [3, 0, 252, 0], [4, 252, 4, 0], [0, 2, 0, 0], [13, 0, 2, 2],
+          [12, 0, 2, 2], [13, 2, 2, 0], [12, 2, 2, 0], [9, 0, 252, 0]
+        ],
+        "component": "map-descriptors-4byte",
+        "record_size": 4
+      },
+      "descriptor_grid": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "tag": 1,
+        "decoded_size": 16384,
+        "encoded_size": 596,
+        "component": "map-descriptor-grid",
+        "width": 128,
+        "height": 128
+      },
+      "animation_queues": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "tag": 1,
+        "decoded_size": 2,
+        "encoded_size": 8,
+        "words": ["0xffff"],
+        "component": "map-animation-queues",
+        "word_size": 2,
+        "terminators": ["0xfe00", "0xffff"]
+      },
+      "blend_animation": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "tag": 1,
+        "decoded_size": 2,
+        "encoded_size": 8,
+        "words": [["0xffff"]],
+        "component": "map-blend-animation",
+        "word_size": 2
+      },
+      "positions": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 79,
+        "encoded_size": 76,
+        "table": {
+          "format": 1,
+          "kind": "typed-table",
+          "address": "0x0",
+          "size": "0x4f",
+          "segments": [
+            {
+              "name": "offsets",
+              "address": "0x0",
+              "end": "0x6",
+              "stride": 2,
+              "element": "le-u16",
+              "values": ["entrances", "cell_patches_end", "camera_bounds"]
+            },
+            {"name": "reserved", "address": "0x6", "end": "0x8", "stride": 2, "element": "le-u16", "values": [0]},
+            {
+              "name": "points",
+              "address": "0x8",
+              "end": "0x1c",
+              "stride": 5,
+              "element": "record",
+              "fields": [
+                {"name": "point", "element": "s8"},
+                {"name": "x", "element": "le-u16"},
+                {"name": "y", "element": "le-u16"}
+              ],
+              "records": [
+                {"point": 1, "x": 232, "y": 536},
+                {"point": 2, "x": 520, "y": 216},
+                {"point": 3, "x": 0, "y": 0},
+                {"point": 4, "x": 376, "y": 488}
+              ]
+            },
+            {"name": "points_end", "address": "0x1c", "end": "0x1d", "stride": 1, "element": "u8", "values": [255]},
+            {
+              "name": "entrances",
+              "address": "0x1d",
+              "end": "0x47",
+              "stride": 6,
+              "element": "record",
+              "fields": [
+                {"name": "entrance", "element": "s8"},
+                {"name": "x", "element": "le-s16"},
+                {"name": "y", "element": "le-s16"},
+                {"name": "arrival", "element": "u8", "bits": {"facing": 4, "options": 4}}
+              ],
+              "records": [
+                {"entrance": 1, "x": 87, "y": 413, "arrival": [4, 0]},
+                {"entrance": 2, "x": 392, "y": 445, "arrival": [4, 0]},
+                {"entrance": 3, "x": 87, "y": 271, "arrival": [4, 0]},
+                {"entrance": 4, "x": 583, "y": 315, "arrival": [4, 0]},
+                {"entrance": 5, "x": 254, "y": 286, "arrival": [4, 0]},
+                {"entrance": 6, "x": 583, "y": 247, "arrival": [12, 0]},
+                {"entrance": 7, "x": 24, "y": 328, "arrival": [0, 0]}
+              ]
+            },
+            {"name": "entrances_end", "address": "0x47", "end": "0x48", "stride": 1, "element": "u8", "values": [255]},
+            {
+              "name": "cell_patches_end",
+              "address": "0x48",
+              "end": "0x4a",
+              "stride": 2,
+              "element": "le-u16",
+              "values": [65535]
+            },
+            {
+              "name": "camera_bounds",
+              "address": "0x4a",
+              "end": "0x4e",
+              "stride": 4,
+              "element": "record",
+              "fields": [
+                {"name": "left", "element": "s8"},
+                {"name": "top", "element": "s8"},
+                {"name": "right", "element": "s8"},
+                {"name": "bottom", "element": "s8"}
+              ],
+              "records": [{"left": 0, "top": 0, "right": 42, "bottom": 40}]
+            },
+            {
+              "name": "camera_bounds_end",
+              "address": "0x4e",
+              "end": "0x4f",
+              "stride": 1,
+              "element": "u8",
+              "values": [255]
+            }
+          ]
+        },
+        "component": "map-positions"
+      },
+      "grid_source": "games/THE LOST AGE/SRC/FIELD/ROHHO_MURA/ROHHO_MURA.BIN",
+      "grid_offset": 0,
+      "grid_compression": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "tag": 1,
+        "decoded_size": 65536,
+        "encoded_size": 3868
+      }
+    },
+    "596": {
+      "format": 1,
+      "kind": "golden-sun-map-container",
+      "header": {
+        "format": 1,
+        "kind": "typed-table",
+        "address": "0x08e3ded0",
+        "size": "0x40",
+        "segments": [
+          {
+            "name": "parameters",
+            "address": "0x08e3ded0",
+            "end": "0x08e3dedc",
+            "stride": 12,
+            "element": "u8",
+            "values": [0, 0, 120, 120, 3, 1, 2, 0, 2, 2, 0, 0]
+          },
+          {
+            "name": "records",
+            "address": "0x08e3dedc",
+            "end": "0x08e3def4",
+            "stride": 8,
+            "element": "le-u16",
+            "values": [[0, 4112, 0, 65535], [120, 4112, 0, 65535], [30720, 4112, 0, 65535]]
+          },
+          {
+            "name": "component_offsets",
+            "address": "0x08e3def4",
+            "end": "0x08e3df10",
+            "stride": 4,
+            "element": "le-u32",
+            "values": ["0x40", "0x1020", "0x1084", "0x2e08", "0x2fd0", "0x303c", "0x304c"]
+          }
+        ]
+      },
+      "metatiles": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 7049,
+        "encoded_size": 4064,
+        "tilemap_length": 7048,
+        "component": "map-metatiles-2x2",
+        "transform_mode": 1,
+        "metatiles": 881,
+        "tilemap_source": "games/THE LOST AGE/SRC/FIELD/ROHHO_MURA/ROHHO_MURA.BIN",
+        "tilemap_offset": 137240
+      },
+      "descriptors": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 172,
+        "encoded_size": 100,
+        "records": [
+          [0, 0, 0, 0], [0, 2, 0, 0], [1, 254, 255, 0], [1, 255, 0, 0], [1, 0, 1, 0], [1, 1, 2, 0], [12, 4, 0, 0],
+          [9, 4, 0, 0], [0, 4, 0, 0], [15, 4, 4, 0], [10, 4, 0, 0], [8, 4, 0, 0], [8, 0, 4, 0], [12, 2, 2, 0],
+          [14, 4, 0, 4], [15, 0, 4, 0], [11, 4, 0, 0], [14, 4, 0, 0], [15, 0, 0, 4], [9, 0, 4, 0], [11, 0, 0, 4],
+          [9, 2, 0, 0], [12, 0, 0, 4], [10, 4, 4, 0], [9, 0, 2, 0], [15, 2, 2, 0], [3, 0, 4, 0], [4, 0, 4, 0],
+          [13, 0, 4, 4], [13, 0, 0, 2], [13, 4, 0, 0], [10, 0, 0, 4], [8, 2, 0, 0], [11, 0, 4, 4], [13, 0, 4, 0],
+          [10, 2, 0, 0], [4, 2, 0, 0], [14, 2, 0, 0], [12, 0, 4, 4], [15, 0, 4, 4], [4, 4, 0, 0], [14, 0, 4, 0],
+          [0, 6, 0, 0]
+        ],
+        "component": "map-descriptors-4byte",
+        "record_size": 4
+      },
+      "descriptor_grid": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "tag": 1,
+        "decoded_size": 16384,
+        "encoded_size": 456,
+        "component": "map-descriptor-grid",
+        "width": 128,
+        "height": 128
+      },
+      "animation_queues": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 370,
+        "encoded_size": 108,
+        "words": [
+          [
+            "0xfd00", [1600, 3], [1444, 0], [1632, 3], [1476, 0], [1664, 3], [1508, 5], [1609, 3], [1444, 0], [1641, 3],
+            [1476, 0], [1673, 3], [1508, 5], [1606, 3], [1444, 0], [1638, 3], [1476, 0], [1670, 3], [1508, 5],
+            [1600, 3], [1444, 0], [1632, 3], [1476, 0], [1664, 3], [1508, 5], [1609, 3], [1444, 0], [1641, 3],
+            [1476, 0], [1673, 3], [1508, 5], [1603, 3], [1444, 0], [1635, 3], [1476, 0], [1667, 3], [1508, 5], "0xfe00"
+          ],
+          [
+            "0xfd01", [1600, 3], [1447, 0], [1632, 3], [1479, 0], [1664, 3], [1511, 4], [1609, 3], [1447, 0], [1641, 3],
+            [1479, 0], [1673, 3], [1511, 4], [1600, 3], [1447, 0], [1632, 3], [1479, 0], [1664, 3], [1511, 4],
+            [1606, 3], [1447, 0], [1638, 3], [1479, 0], [1670, 3], [1511, 4], [1600, 3], [1447, 0], [1632, 3],
+            [1479, 0], [1664, 3], [1511, 4], [1609, 3], [1447, 0], [1641, 3], [1479, 0], [1673, 3], [1511, 4],
+            [1600, 3], [1447, 0], [1632, 3], [1479, 0], [1664, 3], [1511, 4], [1609, 3], [1447, 0], [1641, 3],
+            [1479, 0], [1673, 3], [1511, 4], [1603, 3], [1447, 0], [1635, 3], [1479, 0], [1667, 3], [1511, 4], "0xfe00"
+          ],
+          "0xffff"
+        ],
+        "component": "map-animation-queues",
+        "word_size": 2,
+        "terminators": ["0xfe00", "0xffff"]
+      },
+      "blend_animation": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "tag": 1,
+        "decoded_size": 10,
+        "encoded_size": 16,
+        "words": [["0x3f44"], ["0x1008", 43210], ["0xfe00"], ["0xffff"]],
+        "component": "map-blend-animation",
+        "word_size": 2
+      },
+      "positions": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 101,
+        "encoded_size": 108,
+        "table": {
+          "format": 1,
+          "kind": "typed-table",
+          "address": "0x0",
+          "size": "0x65",
+          "segments": [
+            {
+              "name": "offsets",
+              "address": "0x0",
+              "end": "0x6",
+              "stride": 2,
+              "element": "le-u16",
+              "values": ["entrances", "cell_patches_end", "camera_bounds"]
+            },
+            {"name": "reserved", "address": "0x6", "end": "0x8", "stride": 2, "element": "le-u16", "values": [0]},
+            {"name": "points_end", "address": "0x8", "end": "0x9", "stride": 1, "element": "u8", "values": [255]},
+            {
+              "name": "entrances",
+              "address": "0x9",
+              "end": "0x45",
+              "stride": 6,
+              "element": "record",
+              "fields": [
+                {"name": "entrance", "element": "s8"},
+                {"name": "x", "element": "le-s16"},
+                {"name": "y", "element": "le-s16"},
+                {"name": "arrival", "element": "u8", "bits": {"facing": 4, "options": 4}}
+              ],
+              "records": [
+                {"entrance": 1, "x": 847, "y": 166, "arrival": [12, 0]},
+                {"entrance": 2, "x": 175, "y": 505, "arrival": [12, 0]},
+                {"entrance": 3, "x": 176, "y": 197, "arrival": [12, 0]},
+                {"entrance": 4, "x": 176, "y": 792, "arrival": [12, 0]},
+                {"entrance": 5, "x": 448, "y": 520, "arrival": [12, 0]},
+                {"entrance": 6, "x": 455, "y": 742, "arrival": [12, 1]},
+                {"entrance": 7, "x": 198, "y": 72, "arrival": [0, 0]},
+                {"entrance": 8, "x": 470, "y": 72, "arrival": [8, 0]},
+                {"entrance": 9, "x": 118, "y": 664, "arrival": [8, 0]},
+                {"entrance": 10, "x": 488, "y": 666, "arrival": [0, 0]}
+              ]
+            },
+            {"name": "entrances_end", "address": "0x45", "end": "0x46", "stride": 1, "element": "u8", "values": [255]},
+            {
+              "name": "cell_patches_end",
+              "address": "0x46",
+              "end": "0x48",
+              "stride": 2,
+              "element": "le-u16",
+              "values": [65535]
+            },
+            {
+              "name": "camera_bounds",
+              "address": "0x48",
+              "end": "0x64",
+              "stride": 4,
+              "element": "record",
+              "fields": [
+                {"name": "left", "element": "s8"},
+                {"name": "top", "element": "s8"},
+                {"name": "right", "element": "s8"},
+                {"name": "bottom", "element": "s8"}
+              ],
+              "records": [
+                {"left": 2, "top": 0, "right": 17, "bottom": 14},
+                {"left": 21, "top": 0, "right": 38, "bottom": 17},
+                {"left": 41, "top": 0, "right": 57, "bottom": 14},
+                {"left": 2, "top": 19, "right": 17, "bottom": 34},
+                {"left": 20, "top": 19, "right": 36, "bottom": 35},
+                {"left": 2, "top": 37, "right": 17, "bottom": 52},
+                {"left": 21, "top": 37, "right": 36, "bottom": 51}
+              ]
+            },
+            {
+              "name": "camera_bounds_end",
+              "address": "0x64",
+              "end": "0x65",
+              "stride": 1,
+              "element": "u8",
+              "values": [255]
+            }
+          ]
+        },
+        "component": "map-positions"
+      },
+      "grid_source": "games/THE LOST AGE/SRC/FIELD/ROHHO_MURA/ROHHO_MURA.BIN",
+      "grid_offset": 71704,
+      "grid_compression": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "tag": 1,
+        "decoded_size": 65536,
+        "encoded_size": 7556
+      }
+    }
+  },
+  "palettes": {
+    "591": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 448, "encoded_size": 288},
+    "597": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 448, "encoded_size": 488}
+  },
+  "charblocks": {
+    "592": {
+      "format": 1,
+      "codec": "golden-sun-kind2-lz",
+      "decoded_size": 16384,
+      "encoded_size": 9680,
+      "layout": {
+        "format": "sequential-gba-4bpp-tiles",
+        "purpose": "map-charblock-source",
+        "tile_count": 512,
+        "tile_width": 8,
+        "tile_height": 8,
+        "columns": 32,
+        "rows": 16
+      }
+    },
+    "593": {
+      "format": 1,
+      "codec": "golden-sun-kind2-lz",
+      "decoded_size": 16384,
+      "encoded_size": 8980,
+      "layout": {
+        "format": "sequential-gba-4bpp-tiles",
+        "purpose": "map-charblock-source",
+        "tile_count": 512,
+        "tile_width": 8,
+        "tile_height": 8,
+        "columns": 32,
+        "rows": 16
+      }
+    },
+    "594": {
+      "format": 1,
+      "codec": "golden-sun-kind2-lz",
+      "decoded_size": 16384,
+      "encoded_size": 2164,
+      "layout": {
+        "format": "sequential-gba-4bpp-tiles",
+        "purpose": "map-charblock-source",
+        "tile_count": 512,
+        "tile_width": 8,
+        "tile_height": 8,
+        "columns": 32,
+        "rows": 16
+      }
+    },
+    "595": {
+      "format": 1,
+      "codec": "golden-sun-kind2-lz",
+      "decoded_size": 16384,
+      "encoded_size": 320,
+      "layout": {
+        "format": "sequential-gba-4bpp-tiles",
+        "purpose": "map-charblock-source",
+        "tile_count": 512,
+        "tile_width": 8,
+        "tile_height": 8,
+        "columns": 32,
+        "rows": 16
+      }
+    },
+    "598": {
+      "format": 1,
+      "codec": "golden-sun-kind2-lz",
+      "decoded_size": 16384,
+      "encoded_size": 5372,
+      "layout": {
+        "format": "sequential-gba-4bpp-tiles",
+        "purpose": "map-charblock-source",
+        "tile_count": 512,
+        "tile_width": 8,
+        "tile_height": 8,
+        "columns": 32,
+        "rows": 16
+      }
+    },
+    "599": {
+      "format": 1,
+      "codec": "golden-sun-kind2-lz",
+      "decoded_size": 16384,
+      "encoded_size": 7112,
+      "layout": {
+        "format": "sequential-gba-4bpp-tiles",
+        "purpose": "map-charblock-source",
+        "tile_count": 512,
+        "tile_width": 8,
+        "tile_height": 8,
+        "columns": 32,
+        "rows": 16
+      }
+    },
+    "59a": {
+      "format": 1,
+      "codec": "golden-sun-kind2-lz",
+      "decoded_size": 16384,
+      "encoded_size": 7036,
+      "layout": {
+        "format": "sequential-gba-4bpp-tiles",
+        "purpose": "map-charblock-source",
+        "tile_count": 512,
+        "tile_width": 8,
+        "tile_height": 8,
+        "columns": 32,
+        "rows": 16
+      }
+    },
+    "59b": {
+      "format": 1,
+      "codec": "golden-sun-kind2-lz",
+      "decoded_size": 16384,
+      "encoded_size": 1100,
+      "layout": {
+        "format": "sequential-gba-4bpp-tiles",
+        "purpose": "map-charblock-source",
+        "tile_count": 512,
+        "tile_width": 8,
+        "tile_height": 8,
+        "columns": 32,
+        "rows": 16
+      }
+    }
+  }
+}

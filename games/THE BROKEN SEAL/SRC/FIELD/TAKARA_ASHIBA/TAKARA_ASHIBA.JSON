@@ -42,7 +42,6 @@
         "decoded_size": 2817,
         "encoded_size": 1744,
         "tilemap_length": 2816,
-        "lookahead": "000000",
         "component": "map-metatiles-2x2",
         "transform_mode": 1,
         "metatiles": 352,
@@ -55,7 +54,6 @@
         "decoded_size": 28,
         "encoded_size": 20,
         "records": [[0, 0, 0, 0], [0, 4, 0, 0], [0, 8, 0, 0], [0, 2, 0, 0], [0, 252, 0, 0], [0, 6, 0, 0], [0, 12, 0, 0]],
-        "lookahead": "00",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -127,7 +125,6 @@
           ],
           "0xffff"
         ],
-        "lookahead": "00",
         "component": "map-animation-queues",
         "word_size": 2,
         "terminators": ["0xfe00", "0xffff"]
@@ -136,7 +133,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x086d1b6c",
-        "size": "0x1c",
+        "size": "0x1b",
         "record_size": 3,
         "segments": [
           {
@@ -157,8 +154,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x086d1b87", "end": "0x086d1b88", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/TAKARA_ASHIBA/TAKARA_ASHIBA.BIN",
@@ -209,7 +205,6 @@
         "decoded_size": 3457,
         "encoded_size": 2068,
         "tilemap_length": 3456,
-        "lookahead": "000000",
         "component": "map-metatiles-2x2",
         "transform_mode": 2,
         "metatiles": 432,
@@ -222,7 +217,6 @@
         "decoded_size": 24,
         "encoded_size": 20,
         "records": [[0, 0, 0, 0], [0, 252, 0, 0], [0, 2, 0, 0], [0, 8, 0, 0], [0, 4, 0, 0], [0, 6, 0, 0]],
-        "lookahead": "000000",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -294,7 +288,6 @@
           ],
           "0xffff"
         ],
-        "lookahead": "00",
         "component": "map-animation-queues",
         "word_size": 2,
         "terminators": ["0xfe00", "0xffff"]
@@ -306,7 +299,6 @@
         "decoded_size": 2,
         "encoded_size": 8,
         "words": [["0xffff"]],
-        "lookahead": "0000",
         "component": "map-blend-animation",
         "word_size": 2
       },
@@ -314,7 +306,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x086d378c",
-        "size": "0x10",
+        "size": "0xf",
         "record_size": 3,
         "segments": [
           {
@@ -332,8 +324,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x086d379b", "end": "0x086d379c", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/TAKARA_ASHIBA/TAKARA_ASHIBA.BIN",

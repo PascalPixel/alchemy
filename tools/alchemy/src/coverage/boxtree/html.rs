@@ -198,17 +198,69 @@ fn disk_view_has_one_tile_per_real_file() {
     let dir = temp.path().join("games/test");
     std::fs::create_dir_all(&dir).unwrap();
     std::fs::write(dir.join("MAP.BIN"), [0u8; 123]).unwrap();
+    let recon = temp.path().join("recon/test");
+    std::fs::create_dir_all(&recon).unwrap();
+    std::fs::write(recon.join("source-paths.json"), [0u8; 45]).unwrap();
     let tiles = disk_tiles(temp.path());
-    assert_eq!(tiles.len(), 1);
+    assert_eq!(tiles.len(), 2);
     assert_eq!(tiles[0].bytes, 123);
     assert_eq!(tiles[0].source.as_deref(), Some("games/test/MAP.BIN"));
     assert_eq!(tiles[0].address, None);
+    assert_eq!(
+        tiles[1].source.as_deref(),
+        Some("recon/test/source-paths.json")
+    );
 }
 
-pub(super) fn disk_tiles(repository: &std::path::Path) -> Vec<Tile> {
-    walkdir::WalkDir::new(repository.join("games"))
-        .follow_links(false)
+#[test]
+fn published_view_leaves_out_untracked_private_inputs() {
+    let temp = tempfile::tempdir().unwrap();
+    let dir = temp.path().join("games/test");
+    std::fs::create_dir_all(&dir).unwrap();
+    std::fs::write(dir.join("MAP.BIN"), [0u8; 123]).unwrap();
+    std::fs::write(dir.join("MAP.JSON"), [0u8; 45]).unwrap();
+    let git = |args: &[&str]| {
+        assert!(std::process::Command::new("git")
+            .args(args)
+            .current_dir(temp.path())
+            .status()
+            .unwrap()
+            .success());
+    };
+    git(&["init", "--quiet"]);
+    git(&["add", "games/test/MAP.JSON"]);
+    let tiles = tracked_only(temp.path(), disk_tiles(temp.path()));
+    assert_eq!(tiles.len(), 1);
+    assert_eq!(tiles[0].source.as_deref(), Some("games/test/MAP.JSON"));
+}
+
+/// Keep only the tiles of files Git tracks, so a figure drawn from them is the
+/// same on every checkout whatever private inputs it has extracted.
+pub(super) fn tracked_only(repository: &std::path::Path, tiles: Vec<Tile>) -> Vec<Tile> {
+    let Ok(output) = std::process::Command::new("git")
+        .args(["ls-files", "-z", "--", "games", "recon"])
+        .current_dir(repository)
+        .output()
+    else {
+        return Vec::new();
+    };
+    let tracked: std::collections::BTreeSet<String> = String::from_utf8_lossy(&output.stdout)
+        .split('\0')
+        .filter(|name| !name.is_empty())
+        .map(str::to_owned)
+        .collect();
+    tiles
         .into_iter()
+        .filter(|tile| tile.source.as_ref().is_some_and(|s| tracked.contains(s)))
+        .collect()
+}
+
+/// Every file of the Camelot-shaped game trees and of the reconstruction
+/// scaffolding kept beside them under `recon/`.
+pub(super) fn disk_tiles(repository: &std::path::Path) -> Vec<Tile> {
+    ["games", "recon"]
+        .into_iter()
+        .flat_map(|tree| walkdir::WalkDir::new(repository.join(tree)).follow_links(false))
         .filter_map(Result::ok)
         .filter(|e| e.file_type().is_file())
         .filter_map(|entry| {
@@ -267,7 +319,7 @@ pub fn file_page(
         let path = file.source.as_deref()?;
         let mut details=format!("<aside><a href=\"{}\">Close</a><h2>{}</h2><p>{} bytes on disk. ROM regions below are separate build outputs, not additional files.</p>{}",url(folder),esc(path),commas(file.bytes),reveal_form(path));
         let mut regions = std::collections::BTreeMap::new();
-        let target = if path.starts_with("games/THE LOST AGE/") {
+        let target = if path.starts_with("games/THE LOST AGE/") || path.starts_with("recon/tla/") {
             "tla-en"
         } else {
             "tbs-en"
@@ -378,8 +430,8 @@ pub fn rom_page(target: &str) -> Option<String> {
             let end = row["end"].as_i64()?;
             let kind = row["kind"].as_str()?;
             let (label, color) = match kind {
-                "executable" => ("C", C_RED),
-                "encoded-overlay" => ("Assembly", UNKNOWN),
+                "executable" => ("C", C_TEAL),
+                "encoded-overlay" => ("Assembly", ASSEMBLY),
                 "unresolved-data" => ("Not yet identified", UNKNOWN),
                 _ => content_style(&Tile {
                     group: Some(kind.into()),

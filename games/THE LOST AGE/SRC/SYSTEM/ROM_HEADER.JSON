@@ -1,0 +1,20 @@
+{
+  "format": 4,
+  "kind": "gba-cartridge-header-standard-fields",
+  "address": "0x08000000",
+  "standard": {
+    "fixed_value": "0x96",
+    "unit_code": "0x00",
+    "device_type": "0x00",
+    "reserved_zero_ranges": [{"address": "0x080000b5", "size": 7}, {"address": "0x080000be", "size": 2}]
+  },
+  "edition": {
+    "entry_branch": {"instruction_set": "arm", "operation": "b", "target": "0x08000428"},
+    "title": {"text": "GOLDEN_SUN_B", "padding": "nul", "field_bytes": 12},
+    "game_code": "AGFE",
+    "maker_code": "01",
+    "software_version": 0,
+    "complement_checksum": "derived"
+  },
+  "unresolved_fields": []
+}

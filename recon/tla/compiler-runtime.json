@@ -1,0 +1,7 @@
+{
+  "format": 1,
+  "kind": "compiler-runtime-links",
+  "container": "agscc",
+  "members": {"_call_via_rX": "gcc/config/arm/lib1funcs.asm"},
+  "links": [{"image": "main", "text": "0x08017878", "members": ["_call_via_rX"]}]
+}

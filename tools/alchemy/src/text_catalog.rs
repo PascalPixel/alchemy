@@ -28,8 +28,8 @@ pub(crate) struct ArchiveSpec {
 pub(crate) static ARCHIVES: std::sync::LazyLock<Vec<ArchiveSpec>> =
     std::sync::LazyLock::new(|| {
         [
-            include_str!("../../../games/THE BROKEN SEAL/recon/text.json"),
-            include_str!("../../../games/THE LOST AGE/recon/text.json"),
+            include_str!("../../../recon/tbs/text.json"),
+            include_str!("../../../recon/tla/text.json"),
         ]
         .into_iter()
         .flat_map(|text| {

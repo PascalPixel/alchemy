@@ -42,7 +42,6 @@
         "decoded_size": 4857,
         "encoded_size": 3096,
         "tilemap_length": 4856,
-        "lookahead": "0000",
         "component": "map-metatiles-2x2",
         "transform_mode": 1,
         "metatiles": 607,
@@ -55,7 +54,6 @@
         "decoded_size": 20,
         "encoded_size": 16,
         "records": [[0, 0, 0, 0], [7, 0, 4, 0], [0, 2, 0, 0], [7, 0, 2, 0], [0, 4, 0, 0]],
-        "lookahead": "00",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -66,7 +64,6 @@
         "decoded_size": 2,
         "encoded_size": 8,
         "words": ["0xffff"],
-        "lookahead": "0000",
         "component": "map-animation-queues",
         "word_size": 2,
         "terminators": ["0xfe00", "0xffff"]
@@ -78,7 +75,6 @@
         "decoded_size": 2,
         "encoded_size": 8,
         "words": [["0xffff"]],
-        "lookahead": "0000",
         "component": "map-blend-animation",
         "word_size": 2
       },
@@ -86,7 +82,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x085b08f8",
-        "size": "0xc",
+        "size": "0x9",
         "record_size": 3,
         "segments": [
           {
@@ -104,8 +100,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x085b0901", "end": "0x085b0904", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/KORIMA_MURA/KORIMA_MURA.BIN",
@@ -157,7 +152,6 @@
         "decoded_size": 5297,
         "encoded_size": 3384,
         "tilemap_length": 5296,
-        "lookahead": "000000",
         "component": "map-metatiles-2x2",
         "transform_mode": 0,
         "metatiles": 662,
@@ -170,7 +164,6 @@
         "decoded_size": 24,
         "encoded_size": 20,
         "records": [[0, 0, 0, 0], [0, 4, 0, 0], [3, 4, 0, 0], [4, 4, 0, 0], [7, 0, 4, 0], [3, 0, 4, 0]],
-        "lookahead": "000000",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -205,7 +198,6 @@
           ],
           "0xffff"
         ],
-        "lookahead": "",
         "component": "map-animation-queues",
         "word_size": 2,
         "terminators": ["0xfe00", "0xffff"]
@@ -216,7 +208,6 @@
         "decoded_size": 12,
         "encoded_size": 16,
         "words": [["0x0010", 0], ["0x0010", 8], ["0xfe00"], ["0xffff"]],
-        "lookahead": "000000",
         "component": "map-blend-animation",
         "word_size": 2
       },
@@ -224,7 +215,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x085bd088",
-        "size": "0x4",
+        "size": "0x3",
         "record_size": 3,
         "segments": [
           {
@@ -234,8 +225,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x085bd08b", "end": "0x085bd08c", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/KORIMA_MURA/KORIMA_MURA.BIN",
@@ -286,7 +276,6 @@
         "decoded_size": 3201,
         "encoded_size": 1780,
         "tilemap_length": 3200,
-        "lookahead": "",
         "component": "map-metatiles-2x2",
         "transform_mode": 2,
         "metatiles": 400,
@@ -302,7 +291,6 @@
           [0, 0, 0, 0], [0, 4, 0, 0], [3, 4, 0, 0], [4, 4, 0, 0], [3, 0, 4, 0], [4, 0, 4, 0], [0, 12, 0, 0],
           [0, 254, 0, 0], [3, 0, 254, 0], [4, 0, 254, 0]
         ],
-        "lookahead": "",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -377,7 +365,6 @@
           ],
           "0xffff"
         ],
-        "lookahead": "0000",
         "component": "map-animation-queues",
         "word_size": 2,
         "terminators": ["0xfe00", "0xffff"]
@@ -388,7 +375,6 @@
         "decoded_size": 20,
         "encoded_size": 24,
         "words": [["0x3f42"], ["0x1003", 46], ["0x1003", 36], ["0x1004", 50], ["0x1003", 45], ["0xffff"]],
-        "lookahead": "0000",
         "component": "map-blend-animation",
         "word_size": 2
       },
@@ -396,7 +382,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x085c4ca8",
-        "size": "0x4",
+        "size": "0x3",
         "record_size": 3,
         "segments": [
           {
@@ -406,8 +392,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x085c4cab", "end": "0x085c4cac", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/KORIMA_MURA/KORIMA_MURA.BIN",

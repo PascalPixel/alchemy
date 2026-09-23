@@ -42,7 +42,6 @@
         "decoded_size": 10649,
         "encoded_size": 6872,
         "tilemap_length": 10648,
-        "lookahead": "000000",
         "component": "map-metatiles-2x2",
         "transform_mode": 1,
         "metatiles": 1331,
@@ -62,7 +61,6 @@
           [7, 2, 6, 0], [1, 2, 4, 0], [1, 4, 6, 0], [1, 6, 8, 0], [1, 8, 10, 0], [4, 6, 2, 0], [0, 1, 0, 0],
           [0, 4, 0, 0], [3, 2, 6, 0]
         ],
-        "lookahead": "",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -90,7 +88,6 @@
           ],
           "0xffff"
         ],
-        "lookahead": "",
         "component": "map-animation-queues",
         "word_size": 2,
         "terminators": ["0xfe00", "0xffff"]
@@ -99,7 +96,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x084db8c4",
-        "size": "0x8",
+        "size": "0x6",
         "record_size": 3,
         "segments": [
           {
@@ -117,8 +114,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x084db8ca", "end": "0x084db8cc", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_IE/HAIDIA_IE.BIN",

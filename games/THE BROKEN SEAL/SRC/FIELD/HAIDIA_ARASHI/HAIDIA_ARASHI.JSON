@@ -42,7 +42,6 @@
         "decoded_size": 17761,
         "encoded_size": 11708,
         "tilemap_length": 17760,
-        "lookahead": "0000",
         "component": "map-metatiles-2x2",
         "transform_mode": 1,
         "metatiles": 2220,
@@ -70,7 +69,6 @@
           [4, 0, 2, 0], [3, 2, 4, 0], [2, 2, 4, 0], [4, 2, 4, 0], [3, 4, 6, 0], [7, 4, 8, 0], [1, 0, 2, 0],
           [1, 2, 4, 0], [3, 0, 252, 0]
         ],
-        "lookahead": "000000",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -113,7 +111,6 @@
           ["0xfd05", [1808, 2], [950, 4], [1810, 2], [950, 4], [1812, 2], [950, 4], [1814, 2], [950, 4], "0xfe00"],
           "0xffff"
         ],
-        "lookahead": "00",
         "component": "map-animation-queues",
         "word_size": 2,
         "terminators": ["0xfe00", "0xffff"]
@@ -122,7 +119,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x084c03cc",
-        "size": "0x4",
+        "size": "0x3",
         "record_size": 3,
         "segments": [
           {
@@ -132,8 +129,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x084c03cf", "end": "0x084c03d0", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_ARASHI/HAIDIA_ARASHI.BIN",

@@ -5,7 +5,13 @@ use serde_json::{Map, Value};
 use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
 use std::path::{Component, Path, PathBuf};
-pub const SOURCE_PATHS_MANIFEST: &str = "games/THE BROKEN SEAL/source-paths.json";
+/// The Broken Seal's owner register, which test fixtures write.
+#[cfg(test)]
+pub const SOURCE_PATHS_MANIFEST: &str = "recon/tbs/source-paths.json";
+/// Each game's owner register: `recon/<game>/source-paths.json`.
+pub fn source_paths_manifest(game: &str) -> Result<PathBuf, String> {
+    game_paths(game).map(|(_, manifest)| manifest)
+}
 /// Source both games compile byte-exact from the same text lives here once.
 pub const SHARED_SOURCE_ROOT: &str = "games/COMMON/SRC";
 /// Each game's register spells a shared source relative to its own `SRC`.
@@ -728,7 +734,8 @@ fn game_paths(game: &str) -> Result<(PathBuf, PathBuf), String> {
         return Err(format!("invalid game id {game:?}"));
     }
     let root = Path::new("games").join(crate::compiler::routing::game_directory(game));
-    Ok((root.join("SRC"), root.join("source-paths.json")))
+    let recon = Path::new(&crate::compiler::routing::recon_directory(game)).to_path_buf();
+    Ok((root.join("SRC"), recon.join("source-paths.json")))
 }
 /// Several images at several addresses: one module linked into each image,
 /// rather than one image's unit or related overlays loaded at one address.
@@ -889,6 +896,18 @@ mod tests {
 
     use super::*;
     use tempfile::tempdir;
+    #[test]
+    fn each_game_names_its_own_owner_register() {
+        assert_eq!(
+            source_paths_manifest("tbs").unwrap(),
+            Path::new(SOURCE_PATHS_MANIFEST)
+        );
+        assert_eq!(
+            source_paths_manifest("tla").unwrap(),
+            Path::new("recon/tla/source-paths.json")
+        );
+        assert!(source_paths_manifest("TLA").is_err());
+    }
     fn manifest() -> &'static str {
         r#"{"format":3,"owners":{"main:080bbb0c":"battle/resolve_action.c","resource_39c:0200013c":{"source":"battle/effects/spawn_configured_effect.c","call_via":"020066d2"}}}"#
     }
@@ -1290,8 +1309,7 @@ mod tests {
         let register = |game: &str, owners: &str| {
             let manifest = root
                 .path()
-                .join("games")
-                .join(crate::compiler::routing::game_directory(game))
+                .join(crate::compiler::routing::recon_directory(game))
                 .join("source-paths.json");
             fs::create_dir_all(manifest.parent().unwrap()).unwrap();
             fs::write(manifest, format!(r#"{{"format":3,"owners":{{{owners}}}}}"#)).unwrap();
@@ -1344,7 +1362,7 @@ mod tests {
     #[test]
     fn each_game_owns_an_independent_descriptive_registry() {
         let root = tempdir().unwrap();
-        let manifest_path = root.path().join("games/THE LOST AGE/source-paths.json");
+        let manifest_path = root.path().join("recon/tla/source-paths.json");
         fs::create_dir_all(manifest_path.parent().unwrap()).unwrap();
         fs::write(
             &manifest_path,

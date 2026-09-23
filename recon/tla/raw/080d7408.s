@@ -1,0 +1,25 @@
+.syntax unified
+	.thumb
+	.set sub_08014d00, 0x08014d00
+	.global Func_080d7408
+	.thumb_func
+Func_080d7408:
+	push	{lr}
+	movs	r1, #248
+	lsls	r1, r1, #5
+	adds	r1, #136
+	movs	r0, #120
+	bl	sub_08014d00
+	movs	r3, #252
+	lsls	r3, r3, #5
+	adds	r2, r0, r3
+	movs	r3, #128
+	strh	r3, [r2, #0]
+	movs	r3, #248
+	lsls	r3, r3, #5
+	adds	r3, #130
+	adds	r0, r0, r3
+	movs	r3, #1
+	strh	r3, [r0, #0]
+	pop	{pc}
+	.align 2, 0

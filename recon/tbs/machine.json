@@ -1,0 +1,88 @@
+{
+  "format": 1,
+  "machine": {
+    "cpu": "i386",
+    "os": {
+      "value": "Linux",
+      "confidence": "inferred",
+      "evidence": [
+        "stream alignment bytes hold heap addresses 0x0805xxxx: a brk heap just above the i386 ELF executable base 0x08048000",
+        "the stream alignment bytes follow GNU libc malloc and stdio behaviour"
+      ]
+    },
+    "distribution": {
+      "value": "Red Hat Linux",
+      "confidence": "assumed",
+      "evidence": ["the ARM cross-compiler is Red Hat's GCC 2.96; no packer byte names a distribution"]
+    },
+    "libc": {
+      "value": "GNU libc 2.1",
+      "layout": "glibc-2.1",
+      "confidence": "inferred",
+      "evidence": [
+        "the packer heap replay with glibc 2.1 malloc and struct locked_FILE (0xb0 bytes) contradicts none of the stream tails it derives: ja 444, en 431, de 448, es 438, fr 442, it 439",
+        "glibc 2.2's struct locked_FILE (0x16c bytes) contradicts 2 or 3 stream tails in each edition"
+      ]
+    },
+    "compiler": {
+      "value": "agscc, Red Hat GCC 2.96-based ARM cross-compiler",
+      "confidence": "identified",
+      "evidence": ["the credited Tarpman/Karathan compiler-and-flags identification; routes in tools/alchemy/src/compiler/routing.rs"]
+    }
+  },
+  "compressors": {
+    "general_lz": {
+      "window": {
+        "value": 4123,
+        "allowed": {"lowest": 4123, "highest": 4123},
+        "confidence": "observed",
+        "evidence": [
+          "the general-LZ window already observed before read-ahead was recorded: with it, nearest-longest matching and one lazy deferral reproduced 10,732 of the 10,755 general streams in the twelve ROMs",
+          "with the read-ahead and maximum distance below, window 4,122 breaks 248 streams, first tbs-ja 0f6: a 2-byte copy at distance 4,123 at decoded offset 5,592 of 9,482",
+          "window 4,124 breaks 276 streams, first tbs-ja 0d9: a 2-byte copy at distance 26 at decoded offset 6,419 of 8,192 where a 3-byte copy at distance 4,124 was in reach"
+        ],
+        "credit": "none"
+      },
+      "read_ahead": {
+        "value": 485,
+        "allowed": {"lowest": 389, "highest": 509},
+        "confidence": "observed",
+        "evidence": [
+          "tbs 0e2 and tla 1b2, every edition: a 3-byte copy at distance 4,124 at decoded offset 7,804 of 8,192, 388 bytes before the end, needs at least 389",
+          "tbs-es and tbs-it 370: a literal at decoded offset 5,389 of 5,898, 509 bytes before the end, where a 2-byte copy at distance 4,124 was in reach, allows at most 509; The Lost Age's streams alone allow up to 582",
+          "also reproduced: tbs 1ed metatiles, a 3-byte copy at distance 4,124 at decoded offset 9,091 of 9,193; Western tbs 3b4, 2-byte copies at distance 4,125 at decoded offsets 12,092 and 12,104 of 12,164",
+          "485 is the value in 389..509 that makes the ring, window plus read-ahead, 4,608 = 4,096 + 512 bytes; the streams do not distinguish it from the rest of the range"
+        ],
+        "credit": "none"
+      },
+      "max_distance": {
+        "value": 4126,
+        "allowed": {"lowest": 4125, "highest": 4126},
+        "confidence": "observed",
+        "evidence": [
+          "Western tbs 3b4 (de, en, es, fr, it): 2-byte copies at distance 4,125 at decoded offsets 12,092 and 12,104 of 12,164 need at least 4,125",
+          "tla 216 and 232, every edition: at decoded offset 13,818 of 14,155 a 2-byte copy at distance 529 where a 3-byte copy at distance 4,127 was in the ring, and at 12,447 of 12,545 a literal where a 2-byte copy at distance 4,127 was, allow at most 4,126",
+          "SYSTEM/RESOURCE/DECODE_01.S decodes distances up to 4,128; 4,125 and 4,126 both reproduce every general stream, and the larger is recorded"
+        ],
+        "credit": "none"
+      }
+    }
+  },
+  "host_facts": [
+    {
+      "name": "packer heap buffer",
+      "address": "heap_buffer",
+      "editions": ["tbs-en"],
+      "value": {"lowest": "0x08053ba0", "highest": "0x08053c9f"},
+      "confidence": "observed",
+      "observed_from": [
+        "tbs-en resource 37b (0x0878c76c) alignment bytes +0x1511..+0x1513: bytes 1-3 of the _lock, heap_buffer + 0x1560, of the FILE closed after resource 37a"
+      ],
+      "predicts": [
+        "no tbs-en alignment byte beyond those it was observed from",
+        "tbs-es, tbs-fr and tbs-it store the same three bytes, and tbs-ja the upper two, at the same field of their resource 37b"
+      ],
+      "credit": "none"
+    }
+  ]
+}

@@ -194,7 +194,7 @@ fn overlay_owners_for(tree: &SourceTree, directory: &str, name: &str) -> Vec<Own
 }
 #[cfg(test)]
 pub fn overlay_ids(tree: &SourceTree) -> Vec<(String, String)> {
-    overlay_ids_for(tree, "games/THE BROKEN SEAL/raw/overlays")
+    overlay_ids_for(tree, "recon/tbs/raw/overlays")
 }
 fn overlay_ids_for(tree: &SourceTree, directory: &str) -> Vec<(String, String)> {
     let mut names: Vec<_> = tree
@@ -300,10 +300,28 @@ fn validated_executable(value: &Value) -> Result<Vec<Span>, String> {
     Ok(spans)
 }
 
+/// The audited main and overlay intervals of a target's executable
+/// inventory, the only way any reader scores one. An inventory that claims to
+/// be complete counts only while it is the independently verified automatic
+/// count ([`super::audit::authenticate`]); until then, like a pending one, it
+/// is withheld and DONE is `?`. A verified inventory that is inconsistent in
+/// itself is an error.
 pub(super) fn validated_inventory(
+    root: &Path,
     inventory: &Value,
-    target: &str,
+    target: DecompTarget,
 ) -> Result<(Vec<Span>, SpanMap), String> {
+    let id = target.id;
+    if text(inventory, "state") != "pending" {
+        super::audit::authenticate(root, target, inventory).map_err(|reason| {
+            format!("Full-C Byte Share withheld: the {id} executable inventory is not the independently verified automatic count: {reason}")
+        })?;
+    }
+    inventory_intervals(inventory, id.as_str())
+}
+
+/// An inventory's intervals when it is complete and consistent in itself.
+fn inventory_intervals(inventory: &Value, target: &str) -> Result<(Vec<Span>, SpanMap), String> {
     if integer(inventory, "format") != Some(1)
         || text(inventory, "metric") != "full-c-byte-share"
         || text(inventory, "target") != target
@@ -355,12 +373,55 @@ pub(super) fn validated_inventory(
     Ok((main, overlays))
 }
 
+/// A target's generated executable inventory when it is authoritative, or
+/// `None` while it is absent or withheld: pending its audit, or not the
+/// independently verified automatic count. A verified inventory that is
+/// inconsistent in itself is an error, never a reason to skip.
+pub(crate) fn authoritative_inventory(
+    root: &Path,
+    target: DecompTarget,
+) -> Result<Option<Value>, String> {
+    let path = format!("{}/reports/executable.json", target.output_dir);
+    let text = match std::fs::read(root.join(&path)) {
+        Ok(text) => text,
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => return Ok(None),
+        Err(error) => return Err(format!("{path}: {error}")),
+    };
+    let inventory: Value =
+        serde_json::from_slice(&text).map_err(|error| format!("{path}: {error}"))?;
+    match validated_inventory(root, &inventory, target) {
+        Ok(_) => Ok(Some(inventory)),
+        Err(error) if error.contains("withheld") => Ok(None),
+        Err(error) => Err(format!("{path}: {error}")),
+    }
+}
+
+/// A target's generated executable inventory in a checkout, with the
+/// intervals [`validated_inventory`] admits. A revision has none.
+fn read_inventory(
+    tree: &SourceTree,
+    target: DecompTarget,
+) -> Result<(Value, Vec<Span>, SpanMap), String> {
+    let SourceTree::Work { root, .. } = tree else {
+        return Err(format!(
+            "{}: a revision has no generated executable inventory",
+            tree.id()
+        ));
+    };
+    let inventory = read_json(
+        tree,
+        &format!("{}/reports/executable.json", target.output_dir),
+    )?;
+    let (main, overlays) = validated_inventory(root, &inventory, target)?;
+    Ok((inventory, main, overlays))
+}
+
 fn candidate_main(
     tree: &SourceTree,
     target: &DecompTarget,
     _executable: &[Span],
 ) -> (Vec<Span>, usize) {
-    let directory = format!("{}/recon/en/main", target.game_dir());
+    let directory = format!("{}/en/main", target.recon_dir());
     let mut sources = 0;
     for name in tree.list(&directory) {
         let Some(_) = name.strip_suffix(".c").or_else(|| name.strip_suffix(".C")) else {
@@ -381,10 +442,10 @@ fn candidate_overlay(
     target: &DecompTarget,
     executable: &SpanMap,
 ) -> (SpanMap, usize) {
-    let directory = format!("{}/recon/en/overlays", target.game_dir());
+    let directory = format!("{}/en/overlays", target.recon_dir());
     let reviewed = json(
         tree,
-        &format!("{}/semantic/regions.json", target.game_dir()),
+        &format!("{}/semantic/regions.json", target.recon_dir()),
     )
     .unwrap_or(Value::Null);
     let mut extents = BTreeMap::new();
@@ -399,7 +460,7 @@ fn candidate_overlay(
     let mut sources = BTreeSet::new();
     let units = json(
         tree,
-        &format!("{}/recon/translation-units.json", target.game_dir()),
+        &format!("{}/translation-units.json", target.recon_dir()),
     )
     .unwrap_or(Value::Null);
     let mut registered = BTreeSet::new();
@@ -479,7 +540,7 @@ fn exact_overlay_for(
     pairs: &[(String, String)],
     executable: &SpanMap,
 ) -> Result<(OwnerMap, SpanMap), String> {
-    let manifest_path = format!("{}/source-paths.json", target.game_dir());
+    let manifest_path = format!("{}/source-paths.json", target.recon_dir());
     let manifest = tree
         .read(&manifest_path)
         .ok_or_else(|| format!("missing canonical owner register {manifest_path}"))?;
@@ -519,7 +580,7 @@ fn exact_overlay_for(
             .into_iter()
             .filter(|owner| !owner.spans.is_empty())
             .collect::<Vec<_>>();
-        let units_path = format!("{}/recon/translation-units.json", target.game_dir());
+        let units_path = format!("{}/translation-units.json", target.recon_dir());
         if let Some(units) = json(tree, &units_path) {
             // Each placeholder already credits its owner once, in its own
             // overlay; an instance adds only the fill it declares there.
@@ -588,12 +649,9 @@ fn runtime_credit_for(
     main_exec: &[Span],
     overlay_exec: &SpanMap,
 ) -> Result<(Vec<Span>, SpanMap), String> {
-    // The runtime registry currently describes the TBS linked container.
-    // A TLA registry must be independently evidenced before it earns credit.
-    if target.compiler != crate::compiler::routing::CompilerTarget::Tbs {
-        return Ok((Vec::new(), SpanMap::new()));
-    }
-    let Some(registry) = json(tree, crate::compiler::runtime::REGISTRY) else {
+    // Each game's registry places the container library its own link used.
+    let registry_path = crate::compiler::runtime::registry_path(target.compiler);
+    let Some(registry) = json(tree, &registry_path) else {
         return Ok((Vec::new(), SpanMap::new()));
     };
     let placed = json(
@@ -604,7 +662,7 @@ fn runtime_credit_for(
         array(&manifest, "regions")
             .iter()
             .filter(|region| {
-                text(region, "source") == crate::compiler::runtime::REGISTRY
+                text(region, "source") == registry_path
                     && text(region, "retention") == "container_runtime"
             })
             .filter_map(|region| Some((integer(region, "address")?, integer(region, "size")?)))
@@ -615,12 +673,8 @@ fn runtime_credit_for(
     let mut overlays = SpanMap::new();
     for link in array(&registry, "links") {
         let image = text(link, "image");
-        let start = address(link, "text").ok_or_else(|| {
-            format!(
-                "{}: invalid runtime link",
-                crate::compiler::runtime::REGISTRY
-            )
-        })?;
+        let start = address(link, "text")
+            .ok_or_else(|| format!("{registry_path}: invalid runtime link"))?;
         if image == "main" {
             if let Some(size) = placed.get(&start) {
                 let span = Span::new(start, start + size);
@@ -656,11 +710,15 @@ fn runtime_credit_for(
 #[cfg(test)]
 const OVERLAY_VENEER_MACRO: &str = "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC";
 
+/// A maintained SRC module whose header declares library or handwritten
+/// provenance, with the byte-comparison evidence the assembly build adds only
+/// when the module reproduces the ROM.
 fn maintained_assembly_credit(region: &Value, target: &DecompTarget) -> bool {
     let source = text(region, "source");
     let provenance = &region["provenance"];
     let source_root = format!("{}/SRC/", target.game_dir());
-    source.starts_with(&source_root)
+    text(region, "kind") == "maintained_assembly"
+        && source.starts_with(&source_root)
         && matches!(
             text(provenance, "credit").as_str(),
             "handwritten" | "library"
@@ -670,6 +728,42 @@ fn maintained_assembly_credit(region: &Value, target: &DecompTarget) -> bool {
             .any(|item| item.as_str().is_some_and(|item| !item.trim().is_empty()))
         && (!text(provenance, "proof").trim().is_empty()
             || !text(provenance, "object").trim().is_empty())
+}
+
+/// Each credited maintained module of an assembly manifest built against the
+/// ROM, with its source: the complete assembled extent less the spans the
+/// module marks uncredited (padding, never-run filler, placeholder slots and
+/// words rewritten at run time), in ascending ranges. Both games read their
+/// assembly credit through this one rule.
+pub(crate) fn maintained_assembly_credits(
+    manifest: &Value,
+    target: &DecompTarget,
+) -> Vec<(Span, String)> {
+    if text(manifest, "verification") != "rom" {
+        return Vec::new();
+    }
+    array(manifest, "regions")
+        .iter()
+        .filter(|region| maintained_assembly_credit(region, target))
+        .flat_map(|region| {
+            let extent = integer(region, "address")
+                .zip(integer(region, "size"))
+                .map(|(address, size)| Span::new(address, address + size));
+            let cuts = array(region, "uncredited")
+                .iter()
+                .filter_map(|span| {
+                    let (address, size) = (integer(span, "address")?, integer(span, "size")?);
+                    Some(Span::new(address, address + size))
+                })
+                .collect::<Vec<_>>();
+            let source = text(region, "source");
+            extent
+                .map(|extent| subtract(&[extent], &cuts))
+                .unwrap_or_default()
+                .into_iter()
+                .map(move |span| (span, source.clone()))
+        })
+        .collect()
 }
 
 /// Proven retained and draft main assembly. Only byte-verified maintained
@@ -690,7 +784,15 @@ fn main_assembly_classification_for(
         tree,
         &format!("{}/full/asm/manifest.json", target.output_dir),
     ) {
+        credited.extend(
+            maintained_assembly_credits(&value, target)
+                .into_iter()
+                .map(|(span, _)| span),
+        );
         for region in array(&value, "regions") {
+            if text(region, "kind") == "maintained_assembly" {
+                continue;
+            }
             let retention = text(region, "retention");
             let kind = text(region, "kind");
             let evidence = text(region, "evidence");
@@ -716,8 +818,6 @@ fn main_assembly_classification_for(
                     let span = Span::new(address, address + size);
                     if text(region, "confidence") != "proven" {
                         draft.push(span);
-                    } else if maintained_assembly_credit(region, target) {
-                        credited.push(span);
                     } else {
                         proven.push(span);
                     }
@@ -727,7 +827,7 @@ fn main_assembly_classification_for(
     }
     if let Some(value) = json(
         tree,
-        &format!("{}/semantic/main-regions.json", target.game_dir()),
+        &format!("{}/semantic/main-regions.json", target.recon_dir()),
     ) {
         for region in array(&value, "non_c_ranges") {
             if matches!(
@@ -751,7 +851,7 @@ fn overlay_assembly_classification_for(
     inventory: &BTreeMap<String, Vec<Region>>,
     executable: &SpanMap,
 ) -> Result<(SpanMap, SpanMap, SpanMap), String> {
-    let classification_path = format!("{}/semantic/overlay-assembly.json", target.game_dir());
+    let classification_path = format!("{}/semantic/overlay-assembly.json", target.recon_dir());
     let veneer_macro = target.overlay_macro();
     let source = tree
         .read(&classification_path)
@@ -1144,7 +1244,7 @@ fn streams(tree: &SourceTree, target: &DecompTarget) -> Vec<Stream> {
     };
     let mut out = Vec::new();
     let locations = tree
-        .read(&format!("{}/locations.tsv", target.game_dir()))
+        .read(&format!("{}/locations.tsv", target.recon_dir()))
         .unwrap_or_default();
     for series in array(&manifest, "series") {
         if text(series, "kind") != "golden-sun-thumb-overlay-series" {
@@ -1179,7 +1279,7 @@ fn shared_map_assets(tree: &SourceTree, areas: &[Area]) -> Result<Value, String>
     let maps = read("games/THE BROKEN SEAL/SRC/FIELD/COMMON/LOAD_TABLE.JSON")?;
     let directory = read("games/THE BROKEN SEAL/SRC/SYSTEM/RESOURCE/DIRECTORY.JSON")?;
     let locations = tree
-        .read("games/THE BROKEN SEAL/locations.tsv")
+        .read("recon/tbs/locations.tsv")
         .ok_or("missing Atlas locations")?;
     let scenes = array(&scenes, "segments")
         .iter()
@@ -1522,7 +1622,7 @@ fn lost_age_tiles(tree: &SourceTree, credits: &[super::proof::Credit]) -> Vec<Ti
                 bytes: main_assembly,
                 categories: [0, 0, 0, main_assembly, 0, 0],
                 group: Some("main-image-code".into()),
-                source: Some("games/THE LOST AGE/raw/main.s".into()),
+                source: Some("recon/tla/raw/main.s".into()),
                 ..Tile::default()
             });
         }
@@ -1537,7 +1637,7 @@ fn lost_age_tiles(tree: &SourceTree, credits: &[super::proof::Credit]) -> Vec<Ti
                 continue;
             }
             let id = text(overlay, "id");
-            let source = format!("games/THE LOST AGE/raw/overlays/{id}_overlay.s");
+            let source = format!("recon/tla/raw/overlays/{id}_overlay.s");
             tiles.push(Tile {
                 label: format!("{id} · compressed code overlay"),
                 bytes: actual,
@@ -1827,8 +1927,7 @@ pub(crate) fn overlay_assembly_to_verify(
     tree: &SourceTree,
     target: &DecompTarget,
 ) -> Result<SpanMap, String> {
-    let inventory = read_json(tree, &format!("out/{}/reports/executable.json", target.id))?;
-    let (main_exec, overlay_exec) = validated_inventory(&inventory, target.id.as_str())?;
+    let (inventory, main_exec, overlay_exec) = read_inventory(tree, *target)?;
     let evidence = inventory.get("evidence").and_then(Value::as_object);
     let overlay_regions = array(&inventory, "overlays")
         .iter()
@@ -1844,13 +1943,80 @@ pub(crate) fn overlay_assembly_to_verify(
     Ok(retained)
 }
 
+/// The overlay images [`overlay_assembly_to_verify`] names, found without the
+/// executable inventory: the classification's reconstructed veneers and the
+/// registry's overlay runtime links placed in their listings. Comparing these
+/// images with the ROM needs no denominator; crediting their spans does.
+pub(crate) fn overlay_assembly_images(
+    tree: &SourceTree,
+    target: &DecompTarget,
+) -> Result<BTreeSet<String>, String> {
+    let classification_path = format!("{}/semantic/overlay-assembly.json", target.recon_dir());
+    let source = tree
+        .read(&classification_path)
+        .ok_or_else(|| "overlay assembly classification is missing".to_string())?;
+    let document: Value =
+        serde_json::from_str(&source).map_err(|error| format!("{classification_path}: {error}"))?;
+    let mut images = array(&document, "regions")
+        .iter()
+        .filter(|row| text(&row["provenance"], "credit") == "reconstructed_veneer")
+        .map(|row| text(row, "overlay"))
+        .collect::<BTreeSet<_>>();
+    let registry_path = crate::compiler::runtime::registry_path(target.compiler);
+    let Some(registry) = json(tree, &registry_path) else {
+        return Ok(images);
+    };
+    for link in array(&registry, "links") {
+        let image = text(link, "image");
+        if image == "main" {
+            continue;
+        }
+        let start = address(link, "text")
+            .ok_or_else(|| format!("{registry_path}: invalid runtime link"))?;
+        let listing = tree
+            .read(&target.overlay_assembly(&image))
+            .unwrap_or_default();
+        if crate::compiler::runtime::listing_windows(&listing)?
+            .into_iter()
+            .any(|(window, _)| i64::from(window) == start)
+        {
+            images.insert(image);
+        }
+    }
+    Ok(images)
+}
+
+/// Main-image assembly credit of a ROM-verified assembly manifest, with each
+/// range's source: maintained modules with declared provenance, then
+/// container-built runtime links. The caller has compared every region with
+/// the ROM; each credited range must meet the audited executable intervals.
+pub(crate) fn main_assembly_credits(
+    tree: &SourceTree,
+    target: &DecompTarget,
+) -> Result<Vec<(Span, String)>, String> {
+    let (_, main_exec, overlay_exec) = read_inventory(tree, *target)?;
+    let manifest = read_json(
+        tree,
+        &format!("{}/full/asm/manifest.json", target.output_dir),
+    )?;
+    let mut credits = maintained_assembly_credits(&manifest, target);
+    if let Some((_, source)) = credits
+        .iter()
+        .find(|(span, _)| intersect(&[*span], &main_exec).is_empty())
+    {
+        return Err(format!(
+            "{source} lies outside audited executable intervals"
+        ));
+    }
+    let (runtime, _) = runtime_credit_for(tree, target, &main_exec, &overlay_exec)?;
+    let registry = crate::compiler::runtime::registry_path(target.compiler);
+    credits.extend(runtime.into_iter().map(|span| (span, registry.clone())));
+    Ok(credits)
+}
+
 pub fn classify(options: &BuildOptions) -> Result<Classification, String> {
     let target = crate::targets::decomp_target(Some(&options.target))?;
-    let inventory = read_json(
-        options.exact,
-        &format!("out/{}/reports/executable.json", target.id),
-    )?;
-    validated_inventory(&inventory, &options.target)?;
+    let (inventory, _, _) = read_inventory(options.exact, target)?;
     let evidence = inventory.get("evidence").and_then(Value::as_object);
     let main = regions(&inventory["main"], evidence);
     let main_exec = normalize(&main.iter().map(|r| r.span).collect::<Vec<_>>());
@@ -2006,15 +2172,12 @@ pub fn build_coverage_map(options: &BuildOptions) -> Result<CoverageMap, String>
         .ok_or("coverage requires a complete executable inventory")?;
     let mut game_scores = Map::new();
     game_scores.insert(options.target.clone(), serde_json::to_value(done).unwrap());
+    // The Lost Age scores only once its own full build proves an inventory;
+    // until then it is absent and readers show it as pending.
     if options.target == "tbs-en" {
-        game_scores.insert(
-            "tla-en".into(),
-            serde_json::to_value(
-                super::progress::measured(root, "tla-en")?
-                    .ok_or("combined coverage requires TLA's executable inventory")?,
-            )
-            .unwrap(),
-        );
+        if let Some(tla) = super::progress::measured(root, "tla-en")? {
+            game_scores.insert("tla-en".into(), serde_json::to_value(tla).unwrap());
+        }
     }
     let rom = rom_size(&options.target)?;
     let target = crate::targets::decomp_target(Some(&options.target))?;
@@ -2175,11 +2338,18 @@ pub fn build_coverage_map(options: &BuildOptions) -> Result<CoverageMap, String>
         let SourceTree::Work { root, .. } = options.exact else {
             return Err("combined coverage requires current source verification".into());
         };
-        let receipt = super::proof::read(root, "tla-en")?;
+        // A withheld receipt, while The Lost Age awaits its inventory, shows
+        // no verified code; a receipt that exists must still be current.
+        let withheld = !root.join("out/tla-en/reports/verified-code.json").exists();
+        let credits = if withheld {
+            Vec::new()
+        } else {
+            super::proof::read(root, "tla-en")?.credits
+        };
         rom_areas.push(area(
             "rom-lost-age",
             "The Lost Age ROM",
-            lost_age_tiles(options.exact, &receipt.credits),
+            lost_age_tiles(options.exact, &credits),
         ));
     }
     let executable = bytes(&main_exec) + mapped_bytes(&overlay_exec);
@@ -2241,7 +2411,7 @@ pub fn build_coverage_map(options: &BuildOptions) -> Result<CoverageMap, String>
             "credited_assembly_bytes": bytes(&retained_main) + mapped_bytes(&retained_overlay),
             "withdrawn_assembly_bytes": withdrawn_assembly,
             "main_assembly_classification": format!("{}/full/asm/manifest.json", target.output_dir),
-            "overlay_assembly_classification": format!("{}/semantic/overlay-assembly.json", target.game_dir()),
+            "overlay_assembly_classification": format!("{}/semantic/overlay-assembly.json", target.recon_dir()),
             "draft_superseded_bytes": 0,
             "draft_outside_extent_bytes": 0,
             "draft_unresolved": []
@@ -2285,26 +2455,26 @@ mod tests {
     #[test]
     fn executable_inventory_requires_a_complete_partition_before_scoring() {
         let inventory = inventory_fixture();
-        let (main, overlays) = validated_inventory(&inventory, "tla-en").unwrap();
+        let (main, overlays) = inventory_intervals(&inventory, "tla-en").unwrap();
         assert_eq!(bytes(&main), 4);
         assert_eq!(mapped_bytes(&overlays), 4);
 
         let mut pending = inventory.clone();
         pending["state"] = json!("pending");
         pending["audit"] = json!("incomplete");
-        assert!(validated_inventory(&pending, "tla-en")
+        assert!(inventory_intervals(&pending, "tla-en")
             .unwrap_err()
             .contains("withheld"));
 
         let mut contradictory = inventory.clone();
         contradictory["state"] = json!("pending");
-        assert!(validated_inventory(&contradictory, "tla-en")
+        assert!(inventory_intervals(&contradictory, "tla-en")
             .unwrap_err()
             .contains("state and audit disagree"));
 
         let mut missing_overlay = inventory.clone();
         missing_overlay["overlay_count"] = json!(2);
-        assert!(validated_inventory(&missing_overlay, "tla-en")
+        assert!(inventory_intervals(&missing_overlay, "tla-en")
             .unwrap_err()
             .contains("overlay count"));
 
@@ -2313,7 +2483,7 @@ mod tests {
         outside_decoded["overlays"][0]["intervals"] = json!([
             {"start": 0x02000000, "end": 0x0200000c}
         ]);
-        assert!(validated_inventory(&outside_decoded, "tla-en")
+        assert!(inventory_intervals(&outside_decoded, "tla-en")
             .unwrap_err()
             .contains("outside its decoded image"));
     }
@@ -2325,7 +2495,7 @@ mod tests {
             .as_array_mut()
             .unwrap()
             .push(json!({"start": 12, "end": 8}));
-        assert!(validated_inventory(&inventory, "tla-en").is_err());
+        assert!(inventory_intervals(&inventory, "tla-en").is_err());
     }
 
     #[test]
@@ -2359,7 +2529,7 @@ mod tests {
             std::fs::write(path, source).unwrap();
         };
         write(
-            "games/THE BROKEN SEAL/locations.tsv",
+            "recon/tbs/locations.tsv",
             "resource_3a0\tXian\t\t\t\t\tSRC/FIELD/XIAN\n".into(),
         );
         write(
@@ -2420,17 +2590,9 @@ mod tests {
             std::fs::create_dir_all(path.parent().unwrap()).unwrap();
             std::fs::write(path, serde_json::to_vec(&value).unwrap()).unwrap();
         };
-        write(
-            "out/tla-en/reports/executable.json",
-            json!({
-                "format":1, "metric":"full-c-byte-share", "target":"tla-en",
-                "state":"verified", "audit":"complete", "overlay_count":1,
-                "total_union_bytes":32,
-                "main":{"id":"main", "audit":"complete", "executable_bytes":0, "intervals":[]},
-                "overlays":[{"id":"resource_test", "audit":"complete", "executable_bytes":32,
-                    "intervals":[{"start":0x02000120, "end":0x02000140, "kind":"veneer", "evidence":"fixture"}]}]
-            }),
-        );
+        // The Lost Age as it will be once its full ROM build is supported.
+        let lost_age = crate::targets::decomp_target(Some("tla-en")).unwrap();
+        let target = crate::coverage::proof::fully_buildable(lost_age);
         let mut row = region(
             "0x02000120",
             "0x02000140",
@@ -2452,11 +2614,22 @@ mod tests {
             json!("fixture"),
         );
         write(
-            "games/THE LOST AGE/semantic/overlay-assembly.json",
+            "recon/tla/semantic/overlay-assembly.json",
             classification(json!([row])),
         );
+        crate::coverage::audit::authoritative_fixture(
+            directory.path(),
+            target,
+            &[],
+            json!([{"id": "resource_test", "decoded_bytes": 0x140, "intervals": [
+                {"start": 0x02000120, "end": 0x02000140, "kind": "veneer"}
+            ]}]),
+        );
         let tree = crate::coverage::tree::work_tree_at(directory.path().to_path_buf());
-        let target = crate::targets::decomp_target(Some("tla-en")).unwrap();
+        // Until then its inventory credits nothing.
+        assert!(overlay_assembly_to_verify(&tree, &lost_age)
+            .unwrap_err()
+            .contains("no supported full ROM build"));
         let expected = SpanMap::from([(
             "resource_test".into(),
             vec![Span::new(0x02000120, 0x02000140)],
@@ -2485,7 +2658,7 @@ mod tests {
         };
         let row = |address, provenance| {
             json!({
-                "source": format!("games/THE BROKEN SEAL/raw/{address:08x}.s"),
+                "source": format!("recon/tbs/raw/{address:08x}.s"),
                 "address": address,
                 "size": 8,
                 "kind": "legacy_group_credit",
@@ -2495,13 +2668,6 @@ mod tests {
                 "provenance": provenance
             })
         };
-        write(
-            "games/THE BROKEN SEAL/raw/classification.json",
-            json!({"groups": [{
-                "kind": "legacy_group_credit",
-                "provenance": {"credit": "library", "proof": "legacy group proof"}
-            }]}),
-        );
         write(
             "out/tbs-en/full/asm/manifest.json",
             json!({"regions": [
@@ -2544,13 +2710,101 @@ mod tests {
     }
 
     #[test]
+    fn verified_maintained_modules_earn_their_declared_credit() {
+        let directory = tempfile::tempdir().unwrap();
+        let module = |address: i64, source: &str, credit: Value| {
+            json!({
+                "source": source,
+                "address": address,
+                "size": 16,
+                "kind": "maintained_assembly",
+                "retention": "keep_asm",
+                "confidence": "verified",
+                "evidence": "",
+                "provenance": credit
+            })
+        };
+        let declared = |evidence: &[&str]| {
+            json!({"credit": "handwritten", "proof": "software interrupts have no C form",
+                   "object": "bios wrapper", "evidence": evidence})
+        };
+        let manifest = |verification: &str| {
+            json!({"verification": verification, "regions": [
+                module(0x0800_0100, "games/THE BROKEN SEAL/SRC/SYSTEM/BIOS/A.S",
+                       declared(&["maintained source reproduces its ROM bytes"])),
+                // Declared, but assembled without a ROM comparison.
+                module(0x0800_0200, "games/THE BROKEN SEAL/SRC/SYSTEM/BIOS/B.S", declared(&[])),
+                // Maintained but undeclared: kept, never credited.
+                module(0x0800_0300, "games/THE BROKEN SEAL/SRC/SYSTEM/IWRAM/C.S", Value::Null),
+                // Raw listings cannot carry maintained credit.
+                module(0x0800_0400, "recon/tbs/raw/08000400.s",
+                       declared(&["maintained source reproduces its ROM bytes"])),
+                // Another game's source does not credit this one.
+                module(0x0800_0500, "games/THE LOST AGE/SRC/SYSTEM/D.S",
+                       declared(&["maintained source reproduces its ROM bytes"])),
+            ]})
+        };
+        let target = crate::targets::target_for(crate::targets::DEFAULT_TARGET);
+        assert_eq!(
+            maintained_assembly_credits(&manifest("rom"), &target),
+            [(
+                Span::new(0x0800_0100, 0x0800_0110),
+                "games/THE BROKEN SEAL/SRC/SYSTEM/BIOS/A.S".to_string()
+            )]
+        );
+        assert!(maintained_assembly_credits(&manifest("source_only"), &target).is_empty());
+        let path = directory.path().join("out/tbs-en/full/asm/manifest.json");
+        std::fs::create_dir_all(path.parent().unwrap()).unwrap();
+        std::fs::write(&path, serde_json::to_vec(&manifest("rom")).unwrap()).unwrap();
+        let tree = crate::coverage::tree::work_tree_at(directory.path().into());
+        let (proven, draft, credited) = main_assembly_classification(&tree);
+        assert!(proven.is_empty() && draft.is_empty());
+        assert_eq!(credited, [Span::new(0x0800_0100, 0x0800_0110)]);
+    }
+
+    #[test]
+    fn marked_uncredited_spans_leave_a_module_credit() {
+        let source = "games/THE BROKEN SEAL/SRC/SYSTEM/A.S";
+        let manifest = json!({"verification": "rom", "regions": [{
+            "source": source, "address": 0x0800_0100, "size": 0x20,
+            "kind": "maintained_assembly",
+            "provenance": {"credit": "library", "proof": "shared object", "object": "a",
+                           "evidence": ["maintained source reproduces its ROM bytes"]},
+            "uncredited": [{"address": 0x0800_0100, "size": 4},
+                           {"address": 0x0800_0110, "size": 2},
+                           {"address": 0x0800_011c, "size": 4}]
+        }]});
+        let target = crate::targets::target_for(crate::targets::DEFAULT_TARGET);
+        assert_eq!(
+            maintained_assembly_credits(&manifest, &target),
+            [
+                (Span::new(0x0800_0104, 0x0800_0110), source.to_string()),
+                (Span::new(0x0800_0112, 0x0800_011c), source.to_string())
+            ]
+        );
+    }
+
+    #[test]
     fn runtime_credit_stays_separate_from_range_credits() {
         // No tracked assembly carries the compiler runtime: the call_via bank
         // at 0x080072e4 is a container-built link, credited exactly where the
         // built manifest placed it.
+        // Both inputs are generated: the executable inventory by `alchemy
+        // coverage audit --inventory` and the manifest by the full build.
+        let root = crate::compiler::routing::root();
+        let manifest = "out/tbs-en/full/asm/manifest.json";
+        let tbs = crate::targets::target_for(crate::targets::DEFAULT_TARGET);
+        let Some(inventory) = authoritative_inventory(root, tbs).unwrap() else {
+            eprintln!("skipped: out/tbs-en/reports/executable.json is absent or pending, so no audited overlay intervals exist");
+            return;
+        };
+        if !root.join(manifest).is_file() {
+            eprintln!("skipped: {manifest} is absent; the full TBS build generates it");
+            return;
+        }
         let tree = crate::coverage::tree::work_tree();
         let rom = [Span::new(0x0800_0000, 0x0880_0000)];
-        let overlays = BTreeMap::new();
+        let (_, overlays) = validated_inventory(root, &inventory, tbs).unwrap();
         let (main, _) = runtime_credit(&tree, &rom, &overlays).unwrap();
         assert!(
             main.contains(&Span::new(0x0800_72e4, 0x0800_7320)),
@@ -2566,8 +2820,10 @@ mod tests {
             std::fs::create_dir_all(path.parent().unwrap()).unwrap();
             std::fs::write(path, text).unwrap();
         };
+        let registry =
+            crate::compiler::runtime::registry_path(crate::compiler::routing::CompilerTarget::Tbs);
         write(
-            crate::compiler::runtime::REGISTRY,
+            &registry,
             json!({"links": [
                 {"image": "main", "text": "0x080072e4", "members": ["_m"]},
                 {"image": "main", "text": "0x08001000", "members": ["_m"]},
@@ -2579,17 +2835,17 @@ mod tests {
         write(
             "out/tbs-en/full/asm/manifest.json",
             json!({"regions": [
-                {"address": 0x0800_72e4, "size": 60, "source": crate::compiler::runtime::REGISTRY, "retention": "container_runtime"},
-                {"address": 0x0800_1000, "size": 60, "source": "games/THE BROKEN SEAL/raw/08001000.s", "retention": "keep_asm"}
+                {"address": 0x0800_72e4, "size": 60, "source": registry, "retention": "container_runtime"},
+                {"address": 0x0800_1000, "size": 60, "source": "recon/tbs/raw/08001000.s", "retention": "keep_asm"}
             ]})
             .to_string(),
         );
         write(
-            "games/THE BROKEN SEAL/raw/overlays/resource_3bf_overlay.s",
+            "recon/tbs/raw/overlays/resource_3bf_overlay.s",
             "AlchemyRuntime_020057b0:\n\t.space 0x728\n\t.4byte 1\nAlchemyRuntime_02005f90:\n\t.space 0x14\n".into(),
         );
         write(
-            "games/THE BROKEN SEAL/raw/overlays/resource_373_overlay.s",
+            "recon/tbs/raw/overlays/resource_373_overlay.s",
             "\t.4byte 0\n".into(),
         );
         let tree = crate::coverage::tree::work_tree_at(root.to_path_buf());
@@ -2625,6 +2881,429 @@ mod tests {
         );
         assert!(mapped(&overlays, "resource_373").is_empty());
     }
+    #[test]
+    fn overlay_assembly_images_are_named_without_the_inventory() {
+        let directory = tempfile::tempdir().unwrap();
+        let root = directory.path();
+        let write = |path: &str, text: String| {
+            let path = root.join(path);
+            std::fs::create_dir_all(path.parent().unwrap()).unwrap();
+            std::fs::write(path, text).unwrap();
+        };
+        let target = crate::targets::target_for(crate::targets::DEFAULT_TARGET);
+        write(
+            &format!("{}/semantic/overlay-assembly.json", target.recon_dir()),
+            json!({"format": 1, "regions": [
+                {"overlay": "resource_370", "provenance": {"credit": "reconstructed_veneer"}},
+                {"overlay": "resource_371", "provenance": {}}
+            ]})
+            .to_string(),
+        );
+        write(
+            &crate::compiler::runtime::registry_path(target.compiler),
+            json!({"links": [
+                {"image": "main", "text": "0x080072e4", "members": ["_m"]},
+                {"image": "resource_3bf", "text": "0x020057b0", "members": ["_m"]},
+                {"image": "resource_373", "text": "0x02006154", "members": ["_m"]}
+            ]})
+            .to_string(),
+        );
+        write(
+            &target.overlay_assembly("resource_3bf"),
+            "AlchemyRuntime_020057b0:\n\t.space 0x728\n".into(),
+        );
+        write(
+            &target.overlay_assembly("resource_373"),
+            "\t.4byte 0\n".into(),
+        );
+        let tree = crate::coverage::tree::work_tree_at(root.to_path_buf());
+        assert_eq!(
+            overlay_assembly_images(&tree, &target).unwrap(),
+            BTreeSet::from(["resource_370".to_string(), "resource_3bf".to_string()])
+        );
+    }
+    /// The Broken Seal, the game whose full ROM build is supported.
+    fn tbs_en() -> DecompTarget {
+        crate::targets::target_for(crate::targets::DecompTargetId::TbsEn)
+    }
+
+    /// An authoritative inventory written as `--inventory` writes it, for
+    /// tests to break: the main image 0x08000100..0x08000104 and one overlay.
+    fn authoritative_fixture(root: &Path) -> Value {
+        crate::coverage::audit::authoritative_fixture(
+            root,
+            tbs_en(),
+            &[(0x0800_0100, 0x0800_0104)],
+            json!([{"id": "resource_test", "decoded_bytes": 8, "intervals": [
+                {"start": 0x0200_0000, "end": 0x0200_0004, "kind": "thumb"}
+            ]}]),
+        )
+        .1
+    }
+
+    /// Writes `inventory` as the TBS inventory. When every reader refuses to
+    /// score it, treating it as pending, returns why; `None` when scored.
+    fn withheld_by_every_reader(root: &Path, inventory: &Value) -> Option<String> {
+        let path = root.join("out/tbs-en/reports/executable.json");
+        std::fs::write(&path, inventory.to_string()).unwrap();
+        let tree = crate::coverage::tree::work_tree_at(root.to_path_buf());
+        let authoritative = authoritative_inventory(root, tbs_en()).unwrap().is_some();
+        let intervals = read_inventory(&tree, tbs_en());
+        assert_eq!(authoritative, intervals.is_ok());
+        if authoritative {
+            return None;
+        }
+        assert!(super::super::progress::measured(root, "tbs-en")
+            .unwrap()
+            .is_none());
+        let reason = intervals.unwrap_err();
+        assert!(reason.contains("withheld"), "{reason}");
+        Some(reason)
+    }
+
+    /// Asserts that every reader withholds `inventory` for `reason`.
+    fn withheld_for(root: &Path, inventory: &Value, reason: &str) {
+        let found = withheld_by_every_reader(root, inventory).expect("scored");
+        assert!(found.contains(reason), "{found}");
+    }
+
+    #[test]
+    fn only_a_validated_inventory_is_authoritative() {
+        let directory = tempfile::tempdir().unwrap();
+        let root = directory.path();
+        assert!(authoritative_inventory(root, tbs_en()).unwrap().is_none());
+        // An absent inventory is pending, never an error.
+        assert!(super::super::progress::measured(root, "tbs-en")
+            .unwrap()
+            .is_none());
+        let genuine = authoritative_fixture(root);
+        assert!(authoritative_inventory(root, tbs_en()).unwrap().is_some());
+        let pending = json!({
+            "format": 1, "metric": "full-c-byte-share", "target": "tbs-en",
+            "state": "pending", "audit": "incomplete", "pending": ["main unproven"],
+            "overlay_count": 0, "main": {"id": "main", "audit": "incomplete"}, "overlays": []
+        });
+        withheld_for(root, &pending, "executable audit is incomplete");
+        // A verified inventory inconsistent in itself is an error.
+        let mut stale = genuine;
+        stale["total_union_bytes"] = json!(9);
+        let path = root.join("out/tbs-en/reports/executable.json");
+        std::fs::write(path, stale.to_string()).unwrap();
+        assert!(authoritative_inventory(root, tbs_en())
+            .unwrap_err()
+            .contains("stale"));
+    }
+
+    /// Every reader recomputes an inventory's provenance: a well-formed
+    /// inventory is scored only while its overlay intervals hash to the
+    /// verified digest and its main intervals are the complement of the
+    /// byte-identical full build it records.
+    #[test]
+    fn copied_tampered_or_unproven_inventories_are_never_scored() {
+        let directory = tempfile::tempdir().unwrap();
+        let root = directory.path();
+        let genuine = authoritative_fixture(root);
+        assert_eq!(withheld_by_every_reader(root, &genuine), None);
+
+        // Hand-made: consistent in itself, with no provenance.
+        let mut hand_made = inventory_fixture();
+        hand_made["target"] = json!("tbs-en");
+        assert!(inventory_intervals(&hand_made, "tbs-en").is_ok());
+        withheld_for(
+            root,
+            &hand_made,
+            "not the independently verified automatic count",
+        );
+        // Carrying the genuine provenance and overlay intervals, its main
+        // image is still not the proven asset complement.
+        hand_made["verification"] = genuine["verification"].clone();
+        hand_made["overlays"][0]["intervals"] = genuine["overlays"][0]["intervals"].clone();
+        hand_made["main"]["intervals"][0]["kind"] = json!("thumb");
+        withheld_for(
+            root,
+            &hand_made,
+            "audits a ROM other than the one the full build reproduced",
+        );
+        hand_made["rom_sha256"] = genuine["rom_sha256"].clone();
+        withheld_for(
+            root,
+            &hand_made,
+            "main intervals are not the asset complement",
+        );
+
+        // A tampered overlay interval, its totals kept consistent.
+        let mut tampered = genuine.clone();
+        tampered["overlays"][0]["intervals"][0]["end"] = json!(0x0200_0008);
+        tampered["overlays"][0]["executable_bytes"] = json!(8);
+        tampered["total_union_bytes"] = json!(12);
+        assert!(inventory_intervals(&tampered, "tbs-en").is_ok());
+        withheld_for(root, &tampered, "its overlay intervals hash to");
+        // A tampered interval kind.
+        let mut tampered = genuine.clone();
+        tampered["overlays"][0]["intervals"][0]["kind"] = json!("veneer");
+        withheld_for(root, &tampered, "its overlay intervals hash to");
+        // A tampered main interval.
+        let mut tampered = genuine.clone();
+        tampered["main"]["intervals"][0]["end"] = json!(0x0800_0108);
+        tampered["main"]["executable_bytes"] = json!(8);
+        tampered["total_union_bytes"] = json!(12);
+        assert!(inventory_intervals(&tampered, "tbs-en").is_ok());
+        withheld_for(
+            root,
+            &tampered,
+            "main intervals are not the asset complement",
+        );
+        // A decoded size the digest does not cover.
+        let mut tampered = genuine.clone();
+        tampered["overlays"][0]["decoded_bytes"] = json!(16);
+        withheld_for(root, &tampered, "recorded totals");
+        // A recorded digest the intervals do not have.
+        let mut tampered = genuine.clone();
+        tampered["verification"]["overlay_sha256"] = json!("0".repeat(64));
+        withheld_for(root, &tampered, "does not record the provenance");
+
+        // A missing main-image proof.
+        let mut unproven = genuine.clone();
+        unproven["verification"]
+            .as_object_mut()
+            .unwrap()
+            .remove("main");
+        withheld_for(root, &unproven, "records no main-image proof");
+        let mut unproven = genuine.clone();
+        unproven["verification"]["main"] = json!({"state": "unproven"});
+        withheld_for(root, &unproven, "records no main-image proof");
+        // A recorded proof the last full build no longer supports.
+        let report = root.join("out/tbs-en/full/rebuilt.json");
+        let built = std::fs::read(&report).unwrap();
+        std::fs::write(&report, r#"{"byte_identical":false}"#).unwrap();
+        withheld_for(root, &genuine, "main-image proof no longer holds");
+        std::fs::remove_file(&report).unwrap();
+        withheld_for(root, &genuine, "main-image proof no longer holds");
+        // A hand-written report with every flag a byte-identical build sets,
+        // but no proof the readers can recompute.
+        std::fs::write(
+            &report,
+            r#"{"format":1,"target":"tbs-en","verification":"rom","byte_identical":true,"unowned_bytes":0,"rom_fallback_bytes":0}"#,
+        )
+        .unwrap();
+        withheld_for(root, &genuine, "records no main-image proof");
+        std::fs::write(&report, &built).unwrap();
+        assert_eq!(withheld_by_every_reader(root, &genuine), None);
+        // A rebuilt ROM that is not the reference ROM.
+        let rebuilt = root.join("out/tbs-en/full/rebuilt.gba");
+        let rom = std::fs::read(&rebuilt).unwrap();
+        std::fs::write(&rebuilt, b"another ROM").unwrap();
+        withheld_for(root, &genuine, "is not the ROM the build recorded");
+        std::fs::write(&rebuilt, &rom).unwrap();
+        // An asset manifest changed after the build, even to one that would
+        // leave the same complement.
+        let manifest = root.join("out/tbs-en/full/assets/manifest.json");
+        let assets = std::fs::read(&manifest).unwrap();
+        std::fs::write(&manifest, r#"{"regions": []}"#).unwrap();
+        withheld_for(
+            root,
+            &genuine,
+            "is not the asset manifest the build recorded",
+        );
+        let mut reordered: Value = serde_json::from_slice(&assets).unwrap();
+        reordered["regions"].as_array_mut().unwrap().reverse();
+        std::fs::write(&manifest, reordered.to_string()).unwrap();
+        withheld_for(
+            root,
+            &genuine,
+            "is not the asset manifest the build recorded",
+        );
+        std::fs::remove_file(&manifest).unwrap();
+        withheld_for(root, &genuine, "full/assets/manifest.json");
+        std::fs::write(&manifest, &assets).unwrap();
+        assert_eq!(withheld_by_every_reader(root, &genuine), None);
+        // An encoder changed after the build: the proof is stale.
+        let encoder = root.join("tools/alchemy/src/build_assets/packer.rs");
+        std::fs::create_dir_all(encoder.parent().unwrap()).unwrap();
+        std::fs::write(&encoder, "fn pack() {}").unwrap();
+        withheld_for(root, &genuine, "build inputs changed after the build");
+        std::fs::remove_file(&encoder).unwrap();
+        assert_eq!(withheld_by_every_reader(root, &genuine), None);
+        // The verification record withdrawn.
+        let record = root.join("recon/tbs/metrics/audit-verification.json");
+        std::fs::remove_file(&record).unwrap();
+        withheld_for(root, &genuine, "no independent verification");
+    }
+
+    /// The exploit an adversarial verification found: each game's committed
+    /// ledger copied into its inventory path, beside that game's real
+    /// verification record and a byte-identical full build, earns no score.
+    #[test]
+    fn a_copied_ledger_is_never_scored() {
+        let checkout = crate::compiler::routing::root();
+        for (target, game) in [("tbs-en", "tbs"), ("tla-en", "tla")] {
+            let game_target = crate::targets::decomp_target(Some(target)).unwrap();
+            let directory = tempfile::tempdir().unwrap();
+            let root = directory.path();
+            let copy = |from: String, to: String| {
+                std::fs::create_dir_all(root.join(&to).parent().unwrap()).unwrap();
+                std::fs::copy(checkout.join(from), root.join(to)).unwrap();
+            };
+            let record = format!("recon/{game}/metrics/audit-verification.json");
+            copy(record.clone(), record);
+            copy(
+                format!("recon/{game}/metrics/executable.json"),
+                format!("out/{target}/reports/executable.json"),
+            );
+            let report = root.join(format!("out/{target}/full/rebuilt.json"));
+            std::fs::create_dir_all(report.parent().unwrap()).unwrap();
+            std::fs::write(
+                &report,
+                r#"{"byte_identical":true,"unowned_bytes":0,"rom_fallback_bytes":0}"#,
+            )
+            .unwrap();
+            assert!(
+                authoritative_inventory(root, game_target)
+                    .unwrap()
+                    .is_none(),
+                "{target}"
+            );
+            assert!(
+                super::super::progress::measured(root, target)
+                    .unwrap()
+                    .is_none(),
+                "{target}"
+            );
+            let tree = crate::coverage::tree::work_tree_at(root.to_path_buf());
+            let reason = read_inventory(&tree, game_target).unwrap_err();
+            assert!(
+                reason.contains("not the independently verified automatic count"),
+                "{target}: {reason}"
+            );
+        }
+    }
+    /// The Lost Age has no supported full ROM build, so no files, however
+    /// complete, give it a main image: every reader withholds an inventory
+    /// that would be authoritative once that build exists.
+    #[test]
+    fn a_game_without_a_full_build_is_never_scored() {
+        let directory = tempfile::tempdir().unwrap();
+        let root = directory.path();
+        let lost_age = crate::targets::target_for(crate::targets::DecompTargetId::TlaEn);
+        crate::coverage::audit::authoritative_fixture(
+            root,
+            crate::coverage::proof::fully_buildable(lost_age),
+            &[(0x0800_0100, 0x0800_0104)],
+            json!([{"id": "resource_test", "decoded_bytes": 8, "intervals": [
+                {"start": 0x0200_0000, "end": 0x0200_0004, "kind": "thumb"}
+            ]}]),
+        );
+        assert!(authoritative_inventory(root, lost_age).unwrap().is_none());
+        assert!(super::super::progress::measured(root, "tla-en")
+            .unwrap()
+            .is_none());
+        let tree = crate::coverage::tree::work_tree_at(root.to_path_buf());
+        let reason = read_inventory(&tree, lost_age).unwrap_err();
+        assert!(reason.contains("no supported full ROM build"), "{reason}");
+    }
+    #[test]
+    fn lost_age_main_assembly_credit_reads_its_verified_manifest() {
+        let directory = tempfile::tempdir().unwrap();
+        let root = directory.path();
+        let write = |path: &str, value: Value| {
+            let path = root.join(path);
+            std::fs::create_dir_all(path.parent().unwrap()).unwrap();
+            std::fs::write(path, value.to_string()).unwrap();
+        };
+        let registry =
+            crate::compiler::runtime::registry_path(crate::compiler::routing::CompilerTarget::Tla);
+        // The Lost Age as it will be once its full ROM build is supported.
+        let lost_age = crate::targets::target_for(crate::targets::DecompTargetId::TlaEn);
+        let target = crate::coverage::proof::fully_buildable(lost_age);
+        write(
+            &registry,
+            json!({"links": [{"image": "main", "text": "0x08017878", "members": ["_m"]}]}),
+        );
+        crate::coverage::audit::authoritative_fixture(
+            root,
+            target,
+            &[(0x0801_7800, 0x0801_7900)],
+            json!([]),
+        );
+        let credit = json!({"credit": "handwritten", "proof": "software interrupts have no C form",
+                            "object": "bios wrapper", "evidence": ["maintained source reproduces its ROM bytes"]});
+        let manifest = |module_address: i64| {
+            json!({"verification": "rom", "regions": [
+                {"address": module_address, "size": 8, "kind": "maintained_assembly",
+                 "source": "games/THE LOST AGE/SRC/SYSTEM/BIOS/CPU_SET.S", "retention": "keep_asm",
+                 "confidence": "verified", "evidence": "", "provenance": credit},
+                {"address": 0x0801_7800, "size": 8, "kind": "raw_assembly",
+                 "source": "recon/tla/raw/08017800.s", "retention": "c_candidate",
+                 "confidence": "unknown", "evidence": ""},
+                {"address": 0x0801_7878, "size": 60, "kind": "compiler_runtime", "source": registry,
+                 "retention": "container_runtime", "confidence": "proven",
+                 "evidence": "built_from_licensed_compiler_container"}
+            ]})
+        };
+        write("out/tla-en/full/asm/manifest.json", manifest(0x0801_7808));
+        let tree = crate::coverage::tree::work_tree_at(root.to_path_buf());
+        // Until then its inventory credits nothing.
+        assert!(main_assembly_credits(&tree, &lost_age)
+            .unwrap_err()
+            .contains("no supported full ROM build"));
+        assert_eq!(
+            main_assembly_credits(&tree, &target).unwrap(),
+            [
+                (
+                    Span::new(0x0801_7808, 0x0801_7810),
+                    "games/THE LOST AGE/SRC/SYSTEM/BIOS/CPU_SET.S".to_string()
+                ),
+                (Span::new(0x0801_7878, 0x0801_78b4), registry.clone()),
+            ]
+        );
+        // A credited module entirely outside the audited intervals is refused.
+        write("out/tla-en/full/asm/manifest.json", manifest(0x0802_0000));
+        let tree = crate::coverage::tree::work_tree_at(root.to_path_buf());
+        assert!(main_assembly_credits(&tree, &target)
+            .unwrap_err()
+            .contains("CPU_SET.S lies outside audited executable intervals"));
+    }
+    #[test]
+    fn each_game_credits_runtime_from_its_own_registry() {
+        let directory = tempfile::tempdir().unwrap();
+        let root = directory.path();
+        let write = |path: &str, value: Value| {
+            let path = root.join(path);
+            std::fs::create_dir_all(path.parent().unwrap()).unwrap();
+            std::fs::write(path, value.to_string()).unwrap();
+        };
+        let tla =
+            crate::compiler::runtime::registry_path(crate::compiler::routing::CompilerTarget::Tla);
+        let tbs =
+            crate::compiler::runtime::registry_path(crate::compiler::routing::CompilerTarget::Tbs);
+        write(
+            &tla,
+            json!({"links": [{"image": "main", "text": "0x08017878", "members": ["_m"]}]}),
+        );
+        write(
+            "out/tla-en/full/asm/manifest.json",
+            json!({"regions": [
+                {"address": 0x0801_7878, "size": 60, "source": tla, "retention": "container_runtime"},
+                // A region attributed to the other game's registry is not this game's runtime.
+                {"address": 0x0801_78b4, "size": 60, "source": tbs, "retention": "container_runtime"}
+            ]}),
+        );
+        let tree = crate::coverage::tree::work_tree_at(root.to_path_buf());
+        let target = crate::targets::target_for(crate::targets::DecompTargetId::TlaEn);
+        let exec = [Span::new(0x0801_7000, 0x0801_8000)];
+        let (main, overlays) = runtime_credit_for(&tree, &target, &exec, &SpanMap::new()).unwrap();
+        assert_eq!(main, [Span::new(0x0801_7878, 0x0801_78b4)]);
+        assert!(overlays.is_empty());
+        let outside = [Span::new(0x0801_7880, 0x0801_8000)];
+        assert!(
+            runtime_credit_for(&tree, &target, &outside, &SpanMap::new())
+                .unwrap_err()
+                .contains("lies outside audited executable intervals")
+        );
+        let tbs_target = crate::targets::target_for(crate::targets::DEFAULT_TARGET);
+        let (main, _) = runtime_credit_for(&tree, &tbs_target, &exec, &SpanMap::new()).unwrap();
+        assert!(main.is_empty());
+    }
     fn region(start: &str, end: &str, confidence: &str, evidence: Value) -> Value {
         json!({
             "overlay": "resource_test",
@@ -2655,7 +3334,7 @@ mod tests {
             std::fs::write(path, text).unwrap();
         };
         write(
-            "games/THE LOST AGE/source-paths.json",
+            "recon/tla/source-paths.json",
             &json!({"format": 3, "owners": {
                 "resource_64a:02000100": "FIELD/TEST.C"
             }})
@@ -2666,7 +3345,7 @@ mod tests {
             "void Test(void) {}\n",
         );
         write(
-            "games/THE LOST AGE/raw/overlays/resource_64a_overlay.s",
+            "recon/tla/raw/overlays/resource_64a_overlay.s",
             "AlchemyC_02000100:\n\t.space 0x20\n",
         );
         let tree = crate::coverage::tree::work_tree_at(root.path().to_path_buf());
@@ -2693,7 +3372,7 @@ mod tests {
             std::fs::write(path, text).unwrap();
         };
         write(
-            "games/THE LOST AGE/source-paths.json",
+            "recon/tla/source-paths.json",
             &json!({"format": 3, "owners": {
                 "resource_64a:02000100": "FIELD/TEST.C"
             }})
@@ -2704,7 +3383,7 @@ mod tests {
             "void Test(void) {}\n",
         );
         write(
-            "games/THE LOST AGE/raw/overlays/resource_64a_overlay.s",
+            "recon/tla/raw/overlays/resource_64a_overlay.s",
             "AlchemyC_02000100:\n\t.space 0x20\n",
         );
         let tree = crate::coverage::tree::work_tree_at(root.path().to_path_buf());
@@ -2817,11 +3496,11 @@ mod tests {
         );
         // A 1394-byte first member leaves one halfword of fill in each image.
         write(
-            "games/THE BROKEN SEAL/raw/overlays/resource_3bf_overlay.s",
+            "recon/tbs/raw/overlays/resource_3bf_overlay.s",
             "AlchemyC_0200034c:\n\t.space 0x572\n\t.short 0\nAlchemyC_020008c0:\n\t.space 0x11c\n",
         );
         write(
-            "games/THE BROKEN SEAL/raw/overlays/resource_39b_overlay.s",
+            "recon/tbs/raw/overlays/resource_39b_overlay.s",
             "AlchemyC_02000630:\n\t.space 0x572\n\t.short 0\nAlchemyC_02000ba4:\n\t.space 0x11c\n",
         );
         let units = |gap: (&str, &str)| {
@@ -2842,7 +3521,7 @@ mod tests {
             .to_string()
         };
         write(
-            "games/THE BROKEN SEAL/recon/translation-units.json",
+            "recon/tbs/translation-units.json",
             &units(("0x02000ba2", "0x02000ba4")),
         );
         let tree = crate::coverage::tree::work_tree_at(root.path().to_path_buf());
@@ -2883,7 +3562,7 @@ mod tests {
         assert_eq!(spans["resource_39b"], [Span::new(0x0200_0630, 0x0200_0cc0)]);
         // Fill that no two adjacent exact owners bound is refused.
         write(
-            "games/THE BROKEN SEAL/recon/translation-units.json",
+            "recon/tbs/translation-units.json",
             &units(("0x020008be", "0x020008c0")),
         );
         let error = exact_overlay(&tree, &overlay_ids(&tree), &executable).unwrap_err();
@@ -2895,7 +3574,7 @@ mod tests {
     #[test]
     fn overlay_drafts_follow_declared_units() {
         let root = tempfile::tempdir().unwrap();
-        let directory = "games/THE BROKEN SEAL/recon/en/overlays";
+        let directory = "recon/tbs/en/overlays";
         let write = |path: &str, source: &str| {
             let path = root.path().join(path);
             std::fs::create_dir_all(path.parent().unwrap()).unwrap();
@@ -2929,7 +3608,7 @@ mod tests {
                 owner("0x02000140", 0x20, "exact-c")
             ]),
         );
-        write("games/THE BROKEN SEAL/recon/translation-units.json", &json!({"units": [
+        write("recon/tbs/translation-units.json", &json!({"units": [
             named.clone(), named,
             unit("resource_test_c_02000160", json!([owner("0x02000160", 0x10, "retained-assembly")])),
             unit("resource_test_c_02000180", json!([owner("0x02000180", 0x10, "exact-c")])),

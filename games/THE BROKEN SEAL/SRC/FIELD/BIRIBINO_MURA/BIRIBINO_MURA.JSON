@@ -42,7 +42,6 @@
         "decoded_size": 6441,
         "encoded_size": 4204,
         "tilemap_length": 6440,
-        "lookahead": "000000",
         "component": "map-metatiles-2x2",
         "transform_mode": 1,
         "metatiles": 805,
@@ -61,7 +60,6 @@
           [12, 0, 4, 4], [4, 0, 2, 0], [7, 0, 4, 0], [4, 2, 4, 0], [4, 8, 0, 0], [3, 0, 2, 0], [3, 0, 4, 0],
           [7, 4, 8, 0]
         ],
-        "lookahead": "",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -77,7 +75,6 @@
           ],
           "0xffff"
         ],
-        "lookahead": "0000",
         "component": "map-animation-queues",
         "word_size": 2,
         "terminators": ["0xfe00", "0xffff"]
@@ -89,7 +86,6 @@
         "decoded_size": 2,
         "encoded_size": 8,
         "words": [["0xffff"]],
-        "lookahead": "0000",
         "component": "map-blend-animation",
         "word_size": 2
       },
@@ -97,7 +93,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x08585170",
-        "size": "0xc",
+        "size": "0x9",
         "record_size": 3,
         "segments": [
           {
@@ -115,8 +111,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x08585179", "end": "0x0858517c", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_MURA/BIRIBINO_MURA.BIN",
@@ -167,7 +162,6 @@
         "decoded_size": 1817,
         "encoded_size": 1024,
         "tilemap_length": 1816,
-        "lookahead": "0000",
         "component": "map-metatiles-2x2",
         "transform_mode": 2,
         "metatiles": 227,
@@ -183,7 +177,6 @@
           [0, 0, 0, 0], [0, 4, 0, 0], [3, 4, 0, 0], [4, 4, 0, 0], [0, 254, 0, 0], [0, 8, 0, 0], [3, 0, 4, 0],
           [4, 0, 4, 0]
         ],
-        "lookahead": "",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -258,7 +251,6 @@
           ],
           "0xffff"
         ],
-        "lookahead": "0000",
         "component": "map-animation-queues",
         "word_size": 2,
         "terminators": ["0xfe00", "0xffff"]
@@ -269,7 +261,6 @@
         "decoded_size": 22,
         "encoded_size": 28,
         "words": [["0x3f42"], ["0x1003", 46], ["0x1003", 36], ["0x1004", 50], ["0x1003", 45], ["0xfe00"], ["0xffff"]],
-        "lookahead": "000000",
         "component": "map-blend-animation",
         "word_size": 2
       },
@@ -277,7 +268,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x08594840",
-        "size": "0x4",
+        "size": "0x3",
         "record_size": 3,
         "segments": [
           {
@@ -287,8 +278,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x08594843", "end": "0x08594844", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_MURA/BIRIBINO_MURA.BIN",
@@ -339,7 +329,6 @@
         "decoded_size": 5889,
         "encoded_size": 3552,
         "tilemap_length": 5888,
-        "lookahead": "000000",
         "component": "map-metatiles-2x2",
         "transform_mode": 0,
         "metatiles": 736,
@@ -356,7 +345,6 @@
           [0, 6, 0, 0], [4, 6, 2, 0], [3, 6, 2, 0], [4, 1, 0, 0], [0, 1, 0, 0], [0, 4, 0, 0], [3, 2, 6, 0],
           [4, 2, 6, 0], [0, 8, 0, 0], [4, 2, 4, 0]
         ],
-        "lookahead": "0000",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -392,7 +380,6 @@
           ],
           "0xffff"
         ],
-        "lookahead": "",
         "component": "map-animation-queues",
         "word_size": 2,
         "terminators": ["0xfe00", "0xffff"]
@@ -401,7 +388,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x08597e94",
-        "size": "0x4",
+        "size": "0x3",
         "record_size": 3,
         "segments": [
           {
@@ -411,8 +398,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x08597e97", "end": "0x08597e98", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_MURA/BIRIBINO_MURA.BIN",

@@ -1,0 +1,833 @@
+{
+  "format": 3,
+  "owners": {
+    "resource_64d:020026f4": {
+      "name": "Scene_CreateSpriteField"
+    },
+    "main:080dc244": {
+      "name": "Field_BeginPaletteTransition"
+    },
+    "resource_64d:02000510": {
+      "name": "Scene_PlayApproachEvent"
+    },
+    "main:08016d5c": {
+      "name": "GameFlag_GetByte",
+      "source": "GAME/FLAGS/GET_BYTE.C"
+    },
+    "main:08016d6c": {
+      "name": "GameFlag_SetByte",
+      "source": "GAME/FLAGS/SET_BYTE.C"
+    },
+    "main:08016db4": {
+      "name": "GameFlag_GetNibble",
+      "source": "GAME/FLAGS/GET_NIBBLE.C"
+    },
+    "main:080132cc": "SYSTEM/CONSTANT_ZERO_RESULT.C",
+    "main:080caf70": {
+      "name": "BattleFx_ResetCounters",
+      "source": "BATTLE/EFFECT/COUNTERS.C"
+    },
+    "main:081c0428": {
+      "name": "Pcm_KeyToFrequencyWorkCopy"
+    },
+    "main:081c048c": {
+      "name": "Audio_NoopStubWorkCopy"
+    },
+    "main:081c1b94": {
+      "name": "MusicTrack_Stop"
+    },
+    "main:081c1e08": {
+      "name": "MusicTrack_ReleaseKey"
+    },
+    "main:081c1e70": {
+      "name": "MusicTrack_SetLfoSpeedFromCommand"
+    },
+    "main:081c1e84": {
+      "name": "MusicTrack_SetModulationFromCommand"
+    },
+    "main:081c1e98": {
+      "name": "Pcm_KeyToFrequency",
+      "source": "../../COMMON/SRC/SOUND/PCM_KEY_TO_FREQUENCY.C"
+    },
+    "main:081c1efc": {
+      "name": "Audio_NoopStub"
+    },
+    "main:081c1f00": {
+      "name": "Audio_ResumePlayer"
+    },
+    "main:081c1f1c": {
+      "name": "MusicPlayer_BeginFadeOut"
+    },
+    "main:081c1f3c": {
+      "name": "Audio_Initialize",
+      "source": "../../COMMON/SRC/SOUND/SOUND.C"
+    },
+    "main:081c128c": {
+      "name": "AudioEngine_RunMixerTick"
+    },
+    "main:081c1fb4": {
+      "name": "AudioEngine_RunMixer"
+    },
+    "main:081c1fc0": {
+      "name": "Audio_PlaySound"
+    },
+    "main:081c1fec": {
+      "name": "Audio_PlaySoundIfInactive"
+    },
+    "main:081c2038": {
+      "name": "Audio_PlayOrResumeSound"
+    },
+    "main:081c208c": {
+      "name": "Audio_StopSound"
+    },
+    "main:081c20c0": {
+      "name": "Audio_ResumeSound"
+    },
+    "main:081c20f4": {
+      "name": "Audio_StopAllPlayers"
+    },
+    "main:081c2120": {
+      "name": "MusicPlayer_Resume"
+    },
+    "main:081c212c": {
+      "name": "Audio_ResumeAllPlayers"
+    },
+    "main:081c2158": {
+      "name": "MusicPlayer_FadeOut"
+    },
+    "main:081c21f8": {
+      "name": "CgbAudio_Initialize",
+      "source": "../../COMMON/SRC/SOUND/INITIALIZE_CGB.C"
+    },
+    "main:081c09d0": {
+      "name": "MusicPlayer_Tick"
+    },
+    "main:081c07a2": {
+      "name": "MusicTrack_HandleNote"
+    },
+    "main:081c171c": {
+      "name": "Sound_LoadCommandTable"
+    },
+    "main:081c2328": {
+      "name": "AudioCommand_InvokeSlot35"
+    },
+    "main:081c233c": {
+      "name": "AudioEngine_Initialize",
+      "source": "../../COMMON/SRC/SOUND/ENGINE_INITIALIZE.C"
+    },
+    "main:081c2434": {
+      "name": "AudioEngine_SetPcmRate"
+    },
+    "main:081c24d8": {
+      "name": "AudioEngine_SetMode"
+    },
+    "main:081c2570": {
+      "name": "AudioEngine_StopAllChannels"
+    },
+    "main:081c25c4": {
+      "name": "AudioEngine_SuspendDirectSound"
+    },
+    "main:081c267c": {
+      "name": "MusicPlayer_Initialize",
+      "source": "../../COMMON/SRC/SOUND/MUSIC_PLAYER.C"
+    },
+    "main:081c26f4": {
+      "name": "MusicPlayer_StartSong"
+    },
+    "main:081c27d8": {
+      "name": "MusicPlayer_Stop"
+    },
+    "main:081c31b4": {
+      "name": "MusicTrack_OperateWorkByte",
+      "source": "SOUND/MUSIC_TRACK_OPERATE_WORK_BYTE.C"
+    },
+    "main:081c330c": {
+      "name": "MusicTrack_DispatchStreamCommand",
+      "source": "../../COMMON/SRC/SOUND/MUSIC_TRACK_DISPATCH_STREAM_COMMAND.C"
+    },
+    "main:081c33b0": {
+      "name": "MusicTrack_SetVoiceDecay",
+      "source": "../../COMMON/SRC/SOUND/MUSIC_TRACK_SET_VOICE_DECAY.C"
+    },
+    "main:081c33c4": {
+      "name": "MusicTrack_SetVoiceSustain",
+      "source": "../../COMMON/SRC/SOUND/MUSIC_TRACK_SET_VOICE_SUSTAIN.C"
+    },
+    "main:081c33d8": {
+      "name": "MusicTrack_SetVoiceRelease",
+      "source": "../../COMMON/SRC/SOUND/MUSIC_TRACK_SET_VOICE_RELEASE.C"
+    },
+    "main:081c33ec": {
+      "name": "MusicTrack_SetTailLevel",
+      "source": "../../COMMON/SRC/SOUND/MUSIC_TRACK_SET_TAIL_LEVEL.C"
+    },
+    "main:081c33f8": {
+      "name": "MusicTrack_SetTailLength",
+      "source": "../../COMMON/SRC/SOUND/MUSIC_TRACK_SET_TAIL_LENGTH.C"
+    },
+    "main:081c342c": {
+      "name": "Audio_EmptyCallback"
+    },
+    "main:081c2640": {
+      "name": "AudioEngine_ResumeDirectSound",
+      "source": "../../COMMON/SRC/SOUND/AUDIO_ENGINE_RESUME_DIRECT_SOUND.C"
+    },
+    "main:081c2818": {
+      "name": "MusicPlayer_StepFade",
+      "source": "../../COMMON/SRC/SOUND/MUSIC_PLAYER_STEP_FADE.C"
+    },
+    "main:081c28e0": {
+      "name": "MusicTrack_CalcOutput",
+      "source": "../../COMMON/SRC/SOUND/MUSIC_TRACK_CALC_OUTPUT.C"
+    },
+    "main:081c2af4": {
+      "name": "CgbAudio_Update"
+    },
+    "main:081c2994": {
+      "name": "Cgb_KeyToFrequency",
+      "source": "../../COMMON/SRC/SOUND/CGB_KEY_TO_FREQUENCY.C"
+    },
+    "main:081c2a3c": {
+      "name": "CgbChannel_Mute",
+      "source": "../../COMMON/SRC/SOUND/CGB_CHANNEL_MUTE.C"
+    },
+    "main:081c2a8c": {
+      "name": "CgbNote_UpdatePanEnvelope",
+      "source": "../../COMMON/SRC/SOUND/CGB_NOTE_UPDATE_PAN_ENVELOPE.C"
+    },
+    "main:081c2f68": {
+      "name": "MusicPlayer_SetVolume",
+      "source": "../../COMMON/SRC/SOUND/MUSIC_PLAYER_SET_VOLUME.C"
+    },
+    "main:081c2fd0": {
+      "name": "MusicPlayer_SetPitch",
+      "source": "../../COMMON/SRC/SOUND/MUSIC_PLAYER_SET_PITCH.C"
+    },
+    "main:081c3044": {
+      "name": "MusicPlayer_SetPan",
+      "source": "../../COMMON/SRC/SOUND/MUSIC_PLAYER_SET_PAN.C"
+    },
+    "main:081c30ac": {
+      "name": "MusicTrack_ClearModulation",
+      "source": "../../COMMON/SRC/SOUND/MUSIC_TRACK_CLEAR_MODULATION.C"
+    },
+    "main:081c30cc": {
+      "name": "MusicPlayer_SetModulationDepth",
+      "source": "../../COMMON/SRC/SOUND/MUSIC_PLAYER_SET_MODULATION_DEPTH.C"
+    },
+    "main:081c3140": {
+      "name": "MusicPlayer_SetLfoSpeed",
+      "source": "../../COMMON/SRC/SOUND/MUSIC_PLAYER_SET_LFO_SPEED.C"
+    },
+    "main:081c3340": {
+      "name": "MusicTrack_ReadVoiceTarget",
+      "source": "../../COMMON/SRC/SOUND/MUSIC_TRACK_READ_VOICE_TARGET.C"
+    },
+    "resource_64e:02000038": {
+      "name": "Object_SetSpritePriority",
+      "source": "FIELD/VINASU_CHOJO/AERIE.C"
+    },
+    "resource_64e:02000650": {
+      "name": "Scene_GetEntrances",
+      "source": "FIELD/VINASU_CHOJO/AERIE.C"
+    },
+    "resource_64e:02000658": {
+      "name": "Scene_GetRegions",
+      "source": "FIELD/VINASU_CHOJO/AERIE.C"
+    },
+    "resource_64e:0200065c": {
+      "name": "Scene_GetExits",
+      "source": "FIELD/VINASU_CHOJO/AERIE.C"
+    },
+    "resource_64e:02000664": {
+      "name": "SceneActor_CyclePalette",
+      "source": "FIELD/VINASU_CHOJO/AERIE.C"
+    },
+    "resource_64e:02000678": {
+      "name": "SceneActor_ClearSpriteFlags",
+      "source": "FIELD/VINASU_CHOJO/AERIE.C"
+    },
+    "resource_64e:02000684": {
+      "name": "Scene_GetPlacements",
+      "source": "FIELD/VINASU_CHOJO/AERIE.C"
+    },
+    "resource_64e:02000874": {
+      "name": "Scene_LowerActor10AtColumn42",
+      "source": "FIELD/VINASU_CHOJO/AERIE.C"
+    },
+    "resource_64e:020008d4": {
+      "name": "Search_ReadRelief",
+      "source": "FIELD/VINASU_CHOJO/AERIE.C"
+    },
+    "resource_64e:020008fc": {
+      "name": "Search_ReadTrueRoadInscription",
+      "source": "FIELD/VINASU_CHOJO/AERIE.C"
+    },
+    "resource_64e:02000924": {
+      "name": "SceneMap_ApplyFirstCellSet",
+      "source": "FIELD/VINASU_CHOJO/AERIE.C"
+    },
+    "resource_64e:02000998": {
+      "name": "SceneMap_ApplySecondCellSet",
+      "source": "FIELD/VINASU_CHOJO/AERIE.C"
+    },
+    "resource_64e:02000a0c": {
+      "name": "Scene_GetEvents",
+      "source": "FIELD/VINASU_CHOJO/AERIE.C"
+    },
+    "resource_64e:02000a14": {
+      "name": "SceneEvent_Idle",
+      "source": "FIELD/VINASU_CHOJO/AERIE.C"
+    },
+    "resource_64e:02000b28": {
+      "name": "Scene_PrepareMap",
+      "source": "FIELD/VINASU_CHOJO/AERIE.C"
+    },
+    "resource_650:02000038": {
+      "name": "Scene_GetEntrances",
+      "source": "FIELD/IDEJIMA/ISLAND.C"
+    },
+    "resource_650:02000040": {
+      "name": "Scene_GetRegions",
+      "source": "FIELD/IDEJIMA/ISLAND.C"
+    },
+    "resource_650:02000044": {
+      "name": "Scene_GetExits",
+      "source": "FIELD/IDEJIMA/ISLAND.C"
+    },
+    "resource_650:0200004c": {
+      "name": "Scene_GetPlacements",
+      "source": "FIELD/IDEJIMA/ISLAND.C"
+    },
+    "resource_650:02000054": {
+      "name": "Scene_GetEvents",
+      "source": "FIELD/IDEJIMA/ISLAND.C"
+    },
+    "resource_650:0200153c": {
+      "name": "ScanlineWave_Reset",
+      "source": "FIELD/IDEJIMA/ISLAND.C"
+    },
+    "resource_650:02001650": {
+      "name": "DriftScene_Prepare",
+      "source": "FIELD/IDEJIMA/ISLAND.C"
+    },
+    "resource_650:0200168c": {
+      "name": "SceneObject_Spawn",
+      "source": "FIELD/IDEJIMA/ISLAND.C"
+    },
+    "resource_650:02002c30": {
+      "name": "FelixWake_BeginStep",
+      "source": "FIELD/IDEJIMA/ISLAND.C"
+    },
+    "resource_650:02002c34": {
+      "name": "FelixWake_EndStep",
+      "source": "FIELD/IDEJIMA/ISLAND.C"
+    },
+    "resource_650:02002c38": {
+      "name": "FelixWake_WaitForButton",
+      "source": "FIELD/IDEJIMA/ISLAND.C"
+    },
+    "resource_650:02002f84": {
+      "name": "Scene_PrepareMap",
+      "source": "FIELD/IDEJIMA/ISLAND.C"
+    },
+    "resource_64d:02000038": {
+      "name": "Scene_GetEntrances",
+      "source": "FIELD/VINASU_IRIGUCHI/ENTRANCE.C"
+    },
+    "resource_64d:02000040": {
+      "name": "Scene_GetRegions",
+      "source": "FIELD/VINASU_IRIGUCHI/ENTRANCE.C"
+    },
+    "resource_64d:02000044": {
+      "name": "Scene_GetExits",
+      "source": "FIELD/VINASU_IRIGUCHI/ENTRANCE.C"
+    },
+    "resource_64d:0200004c": {
+      "name": "Scene_GetPlacements",
+      "source": "FIELD/VINASU_IRIGUCHI/ENTRANCE.C"
+    },
+    "resource_64d:0200009c": {
+      "name": "Actor_UpdateParticleTrail",
+      "source": "FIELD/VINASU_IRIGUCHI/ENTRANCE.C"
+    },
+    "resource_64d:02000120": {
+      "name": "Scene_GetEvents",
+      "source": "FIELD/VINASU_IRIGUCHI/ENTRANCE.C"
+    },
+    "resource_64d:02000308": {
+      "name": "Scene_PrepareMap",
+      "source": "FIELD/VINASU_IRIGUCHI/ENTRANCE.C"
+    },
+    "main:08025b58": {
+      "name": "Script_SetOrCompareAddress",
+      "source": "FIELD/COMMON/SCRIPT/OPERANDS.C"
+    },
+    "main:08025b84": {
+      "name": "Script_SetOrCompareCursor"
+    },
+    "main:08025bb4": {
+      "name": "Script_SetOrCompareUnsignedHalfword"
+    },
+    "main:08025be4": {
+      "name": "Script_SetOrCompareWord08"
+    },
+    "main:08025c0c": {
+      "name": "Script_SetOrCompareWord0c"
+    },
+    "main:08025c34": {
+      "name": "Script_SetOrCompareWord10"
+    },
+    "main:08025c5c": {
+      "name": "Script_SetOrCompareHalfword20"
+    },
+    "main:08025c8c": {
+      "name": "Script_SetOrCompareWord18"
+    },
+    "main:08025cb4": {
+      "name": "Script_SetOrCompareWord1c"
+    },
+    "main:08025cdc": {
+      "name": "Script_SetOrCompareWord24"
+    },
+    "main:08025d04": {
+      "name": "Script_SetOrCompareWord28"
+    },
+    "main:08025d2c": {
+      "name": "Script_SetOrCompareWord2c"
+    },
+    "main:08025d54": {
+      "name": "Script_SetOrCompareWord30"
+    },
+    "main:08025d7c": {
+      "name": "Script_SetOrCompareWord34"
+    },
+    "main:08025da4": {
+      "name": "Script_SetOrCompareWord38"
+    },
+    "main:08025dcc": {
+      "name": "Script_SetOrCompareWord3c"
+    },
+    "main:08025df4": {
+      "name": "Script_SetOrCompareWord40"
+    },
+    "main:08025e1c": {
+      "name": "Script_SetOrCompareWord44"
+    },
+    "main:08025e44": {
+      "name": "Script_SetOrCompareWord48"
+    },
+    "main:08025e6c": {
+      "name": "Script_SetOrCompareWord14"
+    },
+    "main:08025e94": {
+      "name": "Script_SetOrCompareWord4c"
+    },
+    "main:08025ebc": {
+      "name": "Script_SetOrCompareAddress50"
+    },
+    "main:08025ee8": {
+      "name": "Script_SetOrCompareByte54"
+    },
+    "main:08025f24": {
+      "name": "Script_SetOrCompareByte55"
+    },
+    "main:08025f60": {
+      "name": "Script_SetOrCompareByte56"
+    },
+    "main:08025f9c": {
+      "name": "Script_SetOrCompareComparisonResult"
+    },
+    "main:08025fd0": {
+      "name": "Script_SetOrCompareByte58"
+    },
+    "main:0802600c": {
+      "name": "Script_SetOrCompareByte59"
+    },
+    "main:08026048": {
+      "name": "Script_SetOrCompareByte5a"
+    },
+    "main:08026084": {
+      "name": "Script_SetOrCompareByte5b"
+    },
+    "main:080260c0": {
+      "name": "Script_SetOrCompareByte5d"
+    },
+    "main:080260fc": {
+      "name": "Script_SetOrCompareHalfword5e"
+    },
+    "main:08026138": {
+      "name": "Script_SetOrCompareSignedHalfword64"
+    },
+    "main:08026174": {
+      "name": "Script_SetOrCompareSignedHalfword66"
+    },
+    "main:080261b0": {
+      "name": "Script_SetOrCompareWord68"
+    },
+    "main:080261d8": {
+      "name": "Script_SetOrCompareWord6c"
+    },
+    "main:08026200": {
+      "name": "Script_SetOrCompareByte62"
+    },
+    "main:0802623c": {
+      "name": "Script_SetOrCompareByte63"
+    },
+    "main:08026278": {
+      "name": "Script_ApplyOperandSet"
+    },
+    "main:080262b0": {
+      "name": "Script_ApplyOperandAdd"
+    },
+    "main:080262e8": {
+      "name": "Script_ApplyOperandCompare"
+    },
+    "main:08024c50": {
+      "name": "Script_StoreLookupResult",
+      "source": "FIELD/COMMON/SCRIPT/INTERPRETER_CONTROL.C"
+    },
+    "main:08024ed4": {
+      "name": "Script_SkipCommand",
+      "source": "FIELD/COMMON/SCRIPT/SKIP_COMMAND.C"
+    },
+    "main:0802d23c": {
+      "name": "Curve_GetFirstSampleA",
+      "source": "LIB/CURVE.C"
+    },
+    "main:0802d248": {
+      "name": "Curve_LerpTwoSamples"
+    },
+    "main:0802d268": {
+      "name": "Curve_LerpTwoSamplesB"
+    },
+    "main:0802d288": {
+      "name": "Curve_StepAtSummedPosition"
+    },
+    "main:08023f14": {
+      "name": "Script_ClearByte54",
+      "source": "FIELD/COMMON/SCRIPT/OPERANDS_CLEAR_BYTE54.C"
+    },
+    "main:08023f28": {
+      "name": "Script_SetByte54",
+      "source": "FIELD/COMMON/SCRIPT/OPERANDS_SET_BYTE54.C"
+    },
+    "main:0802471c": {
+      "name": "Object_SetPositionAndResetMotion",
+      "source": "FIELD/COMMON/OBJECT/MOTION_SET_POSITION_AND_RESET_MOTION.C"
+    },
+    "main:081201b4": {
+      "name": "Battle_SetRuntimeFlagBit0",
+      "source": "BATTLE/EVENT_QUEUE_SET_FLAG_BIT0.C"
+    },
+    "main:08015768": {
+      "name": "Camera_StoreSceneParameters",
+      "source": "GRAPHICS/CAMERA_STORE_SCENE_PARAMETERS.C"
+    },
+    "main:0803d4bc": {
+      "name": "Ui_CountIconTableEntries",
+      "source": "GRAPHICS/TILE/COUNT_TABLE_ENTRIES.C"
+    },
+    "main:0803d4d0": {
+      "name": "Ui_CountSecondTableEntries",
+      "source": "GRAPHICS/WINDOW/COUNT_SECOND_TABLE_ENTRIES.C"
+    },
+    "main:080b0288": {
+      "name": "Owner_GetRecordStride84",
+      "source": "GAME/CHARACTER/GET_RECORD_STRIDE84.C"
+    },
+    "main:0802d3ec": {
+      "name": "Curve_LookupSampleByTable",
+      "source": "LIB/CURVE_LOOKUP.C"
+    },
+    "main:080d74f0": {
+      "name": "ObjectMotion_MoveHalfwayTowardTarget",
+      "source": "FIELD/COMMON/OBJECT/MOTION_MOVE_HALFWAY_TOWARD_TARGET.C"
+    },
+    "main:080d870c": {
+      "name": "ObjectMotion_MoveHalfwayTowardTargetCopy",
+      "source": "FIELD/COMMON/OBJECT/MOTION_MOVE_HALFWAY_TOWARD_TARGET_COPY.C"
+    },
+    "main:0811b16c": {
+      "name": "BattlePlacement_GetStepPair",
+      "source": "BATTLE/PARTY/GET_STEP_PAIR.C"
+    },
+    "main:080c9920": {
+      "name": "BattleFx_GetResourceGroup",
+      "source": "BATTLE/EFFECT/DATA_GET_RESOURCE_GROUP.C"
+    },
+    "main:08024ddc": {
+      "name": "Script_LoadMainScript",
+      "source": "FIELD/COMMON/SCRIPT/LOAD_MAIN_SCRIPT.C"
+    },
+    "main:081a1288": {
+      "name": "SceneState_SetHalfwordB030",
+      "source": "SYSTEM/SCENE_STATE_SET_HALFWORD.C"
+    },
+    "main:08013300": {
+      "name": "Resource_GetTableEntry",
+      "source": "SYSTEM/RESOURCE/TABLE_ENTRY.C"
+    },
+    "main:080ebe94": {
+      "name": "EffectSlot_SetPosition",
+      "source": "BATTLE/EFFECT/SLOT_SET_POSITION.C"
+    },
+    "main:080233a8": {
+      "name": "ObjectDispatch_Initialize"
+    },
+    "main:080233d0": {
+      "name": "ObjectDispatch_ApplyArgumentToChildren",
+      "source": "FIELD/COMMON/OBJECT/DISPATCH.C"
+    },
+    "main:08023410": {
+      "name": "ObjectDispatch_ApplyValueToChildren"
+    },
+    "main:08023450": {
+      "name": "ObjectDispatch_ApplyPairToChildren"
+    },
+    "main:080234b0": {
+      "name": "ObjectDispatch_SetChildField12"
+    },
+    "main:080234cc": {
+      "name": "Animation_SetIndexAndInitObjects"
+    },
+    "main:080234f0": {
+      "name": "ObjectDispatch_RegisterChildMetadata"
+    },
+    "main:080d2d84": {
+      "name": "Object_GetById",
+      "source": "FIELD/COMMON/OBJECT/BY_ID.C"
+    },
+    "main:080d2d94": {
+      "name": "ObjectMotion_SetSpeedParameters"
+    },
+    "main:080d2da8": {
+      "name": "ObjectMotion_EnableActionAndSetCallback"
+    },
+    "main:080d2dc8": {
+      "name": "ObjectMotion_EnableActionAndResetMotion"
+    },
+    "main:080d2e1c": {
+      "name": "Object_LinkObjectAndSetCallback"
+    },
+    "main:080d2e40": {
+      "name": "Object_RefreshSelectorById"
+    },
+    "main:080d2e50": {
+      "name": "Object_SetActionCallbackAndRefreshById"
+    },
+    "main:080d2e78": {
+      "name": "ObjectMotion_ResetAndSetPosition"
+    },
+    "main:080d2ea4": {
+      "name": "ObjectMotion_SetPositionAndCommit"
+    },
+    "main:080d2ed4": {
+      "name": "ObjectMotion_ResetAndSetPositionInMode2"
+    },
+    "main:080d2f08": {
+      "name": "ObjectMotion_SetPositionAndReset"
+    },
+    "main:080d2f48": {
+      "name": "ObjectMotion_SnapHeadingAndOffset"
+    },
+    "main:080d2fc8": {
+      "name": "ObjectMotion_OffsetPositionAndResetMotion"
+    },
+    "main:080d2ffc": {
+      "name": "ObjectMotion_OffsetPositionAndReset"
+    },
+    "main:080d303c": {
+      "name": "ObjectMotion_CommitPositionAndActivate"
+    },
+    "main:080d30fc": {
+      "name": "ObjectMotion_CommitCurrentPositionAndActivate"
+    },
+    "main:080d3240": {
+      "name": "Object_SetModeById"
+    },
+    "main:080d3254": {
+      "name": "Object_SetActionById"
+    },
+    "main:080d32b8": {
+      "name": "Motion_SetModeAndWaitAnimation",
+      "source": "FIELD/COMMON/OBJECT/MOTION_EVENTS.C"
+    },
+    "main:080d32c8": {
+      "name": "ObjectMotion_Launch"
+    },
+    "main:080d3300": {
+      "name": "ObjectMotion_SetVariantCallback"
+    },
+    "main:080d332c": {
+      "name": "Motion_SetVarCbAndRefresh"
+    },
+    "main:080d2de4": {
+      "name": "ObjectMotion_ResetTargetsAndVelocity"
+    },
+    "main:080d4bc4": {
+      "name": "Object_FindNearestFacingTarget"
+    },
+    "main:080235f8": {
+      "name": "ObjectDispatch_InitFromTable6",
+      "source": "FIELD/COMMON/OBJECT/CHILD_STATE.C"
+    },
+    "main:08023608": {
+      "name": "ObjectDispatch_InitFromTable4WithArgument"
+    },
+    "main:08023634": {
+      "name": "ObjectDispatch_WaitForCommandEnd"
+    },
+    "main:08023664": {
+      "name": "ObjectDispatch_SetSingleChildField1a"
+    },
+    "main:08023680": {
+      "name": "Animation_SetStateFlags"
+    },
+    "main:080236a8": {
+      "name": "Animation_SetDisplayFlag"
+    },
+    "main:080236d0": {
+      "name": "Animation_ApplyChildValues"
+    },
+    "resource_64e:02000314": {
+      "name": "FixedPoint_Distance"
+    },
+    "resource_64e:0200034c": {
+      "name": "StagedActor_FindAtTile"
+    },
+    "resource_64e:0200038c": {
+      "name": "StagedActor_AdvancePair"
+    },
+    "resource_64e:02000510": {
+      "name": "StagedActor_FillGridAttributeRectangle"
+    },
+    "main:080b0a94": {
+      "name": "Djinn_GetDefinition",
+      "source": "GAME/DJINN/MANAGEMENT.C"
+    },
+    "main:080b0ab8": {
+      "name": "Djinn_AddToLeastLoadedOwner"
+    },
+    "main:080b0b78": {
+      "name": "Djinn_AddToOwner"
+    },
+    "main:080b0bb8": {
+      "name": "Trade_CanOfferDjinn"
+    },
+    "main:080b0c78": {
+      "name": "Djinn_IsActive"
+    },
+    "main:080b0c9c": {
+      "name": "Djinn_Activate"
+    },
+    "main:080b0d04": {
+      "name": "Djinn_Deactivate"
+    },
+    "main:080b0d58": {
+      "name": "Trade_RemoveOffer"
+    },
+    "main:080b0e04": {
+      "name": "Trade_AddOffer"
+    },
+    "main:080b0e40": {
+      "name": "Djinn_Transfer"
+    },
+    "main:080b0ef4": {
+      "name": "Trade_CountPendingOffers"
+    },
+    "main:080b0f50": {
+      "name": "Djinn_GetDefinitionHeader"
+    },
+    "main:080b0f5c": {
+      "name": "Owner_SumDjinnCounts"
+    },
+    "main:080b0f9c": {
+      "name": "Party_SumDjinnCounts"
+    },
+    "main:080aeca4": {
+      "name": "Inventory_GetQuantity"
+    },
+    "main:080aecc8": {
+      "name": "Inventory_Count",
+      "source": "GAME/INVENTORY/ITEMS.C"
+    },
+    "main:080aecec": {
+      "name": "PartyInventory_HasSpace"
+    },
+    "main:080aed38": {
+      "name": "PartyInventory_CountFreeSlots"
+    },
+    "main:080aed6c": {
+      "name": "Inventory_Add"
+    },
+    "main:080aedf8": {
+      "name": "PartyInventory_Add"
+    },
+    "main:080aee98": {
+      "name": "Inventory_Find"
+    },
+    "main:080aeec8": {
+      "name": "PartyInventory_FindOwner",
+      "source": "GAME/INVENTORY/FIND.C"
+    },
+    "main:080af008": {
+      "name": "Inventory_FindEquipped",
+      "source": "GAME/INVENTORY/EQUIPPED.C"
+    },
+    "main:080af054": {
+      "name": "Inventory_GetEquippedDefinition"
+    },
+    "main:080af094": {
+      "name": "Inventory_GetEquippedItem"
+    },
+    "main:08041fa4": {
+      "name": "UiText_DrawResource"
+    },
+    "main:08042010": {
+      "name": "UiText_DrawCharacterAtOffset"
+    },
+    "main:080420a8": {
+      "name": "UiText_DrawString"
+    },
+    "main:080420fc": {
+      "name": "UiText_DrawStringAtOffset"
+    },
+    "main:08042188": {
+      "name": "UiText_DrawStringInWindow"
+    },
+    "main:080421e4": {
+      "name": "UiText_DrawNumber"
+    },
+    "main:08042214": {
+      "name": "UiText_DrawNumberAtOffset"
+    },
+    "main:08042244": {
+      "name": "UiText_DrawNumberInWindow"
+    },
+    "main:08042274": {
+      "name": "UiText_DrawPrefixedNumberAtOffset"
+    },
+    "resource_650:02000d14": {
+      "name": "Scene_RunActorConversation"
+    },
+    "main:0804d484": {
+      "name": "Menu_LayoutResourceEntries"
+    },
+    "main:0804d4f8": {
+      "name": "Menu_SelectTopEntry"
+    },
+    "main:0804d570": {
+      "name": "Menu_AnimateSelectionToEntry"
+    },
+    "main:0804d5ac": {
+      "name": "Menu_SelectSaveSlotAction"
+    },
+    "main:0804d678": {
+      "name": "Menu_DrawModeLabel"
+    },
+    "main:0804d754": {
+      "name": "Menu_DrawModeIndicator"
+    }
+  }
+}

@@ -42,7 +42,6 @@
         "decoded_size": 2945,
         "encoded_size": 1432,
         "tilemap_length": 2944,
-        "lookahead": "00",
         "component": "map-metatiles-2x2",
         "transform_mode": 2,
         "metatiles": 368,
@@ -59,7 +58,6 @@
           [4, 0, 4, 0], [4, 8, 0, 0], [8, 4, 252, 0], [0, 252, 0, 0], [3, 8, 0, 0], [1, 4, 2, 0], [1, 2, 0, 0],
           [9, 255, 0, 0], [3, 0, 4, 0]
         ],
-        "lookahead": "0000",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -104,7 +102,6 @@
           ["0xfd0b", [1056, 2], [188, 20], [1072, 2], [188, 20], "0xfe00"],
           "0xffff"
         ],
-        "lookahead": "0000",
         "component": "map-animation-queues",
         "word_size": 2,
         "terminators": ["0xfe00", "0xffff"]
@@ -116,7 +113,6 @@
         "decoded_size": 18,
         "encoded_size": 24,
         "words": [["0x3f42"], ["0x1004", 12], ["0x1003", 8], ["0x1005", 18], ["0xfe00"], ["0xffff"]],
-        "lookahead": "",
         "component": "map-blend-animation",
         "word_size": 2
       },
@@ -124,7 +120,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x085580b0",
-        "size": "0xc",
+        "size": "0x9",
         "record_size": 3,
         "segments": [
           {
@@ -142,8 +138,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x085580b9", "end": "0x085580bc", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/GOMA_HASHIRA/GOMA_HASHIRA.BIN",

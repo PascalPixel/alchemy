@@ -1,9 +1,0 @@
-.syntax unified
-	.thumb
-	.set sub_0814fab8, 0x0814fab8
-	.global Overlay_0814fa50
-Overlay_0814fa50:
-	push	{lr}
-	movs	r1, #3
-	bl	sub_0814fab8
-	pop	{pc}

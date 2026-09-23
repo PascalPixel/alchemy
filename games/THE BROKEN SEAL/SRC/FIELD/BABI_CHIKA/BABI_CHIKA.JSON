@@ -42,7 +42,6 @@
         "decoded_size": 2937,
         "encoded_size": 1852,
         "tilemap_length": 2936,
-        "lookahead": "00",
         "component": "map-metatiles-2x2",
         "transform_mode": 2,
         "metatiles": 367,
@@ -58,7 +57,6 @@
           [0, 0, 0, 0], [0, 8, 0, 0], [0, 2, 0, 0], [0, 252, 0, 0], [0, 4, 0, 0], [0, 6, 0, 0], [1, 4, 2, 0],
           [1, 2, 0, 0], [1, 0, 2, 0], [1, 2, 4, 0]
         ],
-        "lookahead": "00",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -124,7 +122,6 @@
           ],
           "0xffff"
         ],
-        "lookahead": "0000",
         "component": "map-animation-queues",
         "word_size": 2,
         "terminators": ["0xfe00", "0xffff"]
@@ -139,7 +136,6 @@
           ["0x100b", 4], ["0x100c", 4], ["0x100b", 4], ["0x100a", 4], ["0x1009", 4], ["0x1008", 4], ["0x1007", 4],
           ["0x1006", 4], ["0xfe00"], ["0xffff"]
         ],
-        "lookahead": "000000",
         "component": "map-blend-animation",
         "word_size": 2
       },
@@ -147,7 +143,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x0874f0a8",
-        "size": "0x4",
+        "size": "0x3",
         "record_size": 3,
         "segments": [
           {
@@ -157,8 +153,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x0874f0ab", "end": "0x0874f0ac", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/BABI_CHIKA/BABI_CHIKA.BIN",
@@ -209,7 +204,6 @@
         "decoded_size": 3329,
         "encoded_size": 1960,
         "tilemap_length": 3328,
-        "lookahead": "",
         "component": "map-metatiles-2x2",
         "transform_mode": 1,
         "metatiles": 416,
@@ -225,7 +219,6 @@
           [0, 0, 0, 0], [0, 2, 0, 0], [0, 8, 0, 0], [1, 0, 254, 0], [1, 254, 252, 0], [0, 252, 0, 0], [0, 246, 0, 0],
           [0, 240, 0, 0], [0, 250, 0, 0], [1, 252, 250, 0], [0, 248, 0, 0], [0, 4, 0, 0], [1, 2, 0, 0], [0, 254, 0, 0]
         ],
-        "lookahead": "000000",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -291,7 +284,6 @@
           ],
           "0xffff"
         ],
-        "lookahead": "0000",
         "component": "map-animation-queues",
         "word_size": 2,
         "terminators": ["0xfe00", "0xffff"]
@@ -306,7 +298,6 @@
           ["0x100b", 4], ["0x100c", 4], ["0x100b", 4], ["0x100a", 4], ["0x1009", 4], ["0x1008", 4], ["0x1007", 4],
           ["0x1006", 4], ["0xfe00"], ["0xffff"]
         ],
-        "lookahead": "000000",
         "component": "map-blend-animation",
         "word_size": 2
       },
@@ -314,7 +305,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x08750b4c",
-        "size": "0xc",
+        "size": "0x9",
         "record_size": 3,
         "segments": [
           {
@@ -332,8 +323,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x08750b55", "end": "0x08750b58", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/BABI_CHIKA/BABI_CHIKA.BIN",

@@ -1,0 +1,192 @@
+{
+  "format": 1,
+  "maps": {
+    "542": {
+      "format": 1,
+      "kind": "golden-sun-map-container",
+      "header": {
+        "format": 1,
+        "kind": "typed-table",
+        "address": "0x08ddc448",
+        "size": "0x40",
+        "segments": [
+          {
+            "name": "parameters",
+            "address": "0x08ddc448",
+            "end": "0x08ddc454",
+            "stride": 12,
+            "element": "u8",
+            "values": [0, 0, 128, 128, 3, 2, 1, 0, 2, 2, 0, 0]
+          },
+          {
+            "name": "records",
+            "address": "0x08ddc454",
+            "end": "0x08ddc46c",
+            "stride": 8,
+            "element": "le-u16",
+            "values": [[0, 4112, 0, 65535], [32768, 4112, 0, 65535], [128, 4112, 0, 65535]]
+          },
+          {
+            "name": "component_offsets",
+            "address": "0x08ddc46c",
+            "end": "0x08ddc488",
+            "stride": 4,
+            "element": "le-u32",
+            "values": ["0x40", "0x79c", "0x7c8", "0x1608", "0x190c", "0x1914", "0x191c"]
+          }
+        ]
+      },
+      "metatiles": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 3505,
+        "encoded_size": 1884,
+        "tilemap_length": 3504,
+        "component": "map-metatiles-2x2",
+        "transform_mode": 0,
+        "metatiles": 438,
+        "tilemap_source": "games/THE LOST AGE/SRC/FIELD/SHAMAN_DOU/SHAMAN_DOU.BIN",
+        "tilemap_offset": 65536
+      },
+      "descriptors": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 80,
+        "encoded_size": 44,
+        "records": [
+          [0, 0, 0, 0], [0, 8, 0, 0], [3, 8, 4, 0], [0, 4, 0, 0], [4, 8, 4, 0], [4, 8, 0, 0], [3, 8, 0, 0],
+          [4, 0, 254, 0], [0, 254, 0, 0], [3, 0, 254, 0], [3, 4, 0, 0], [4, 4, 0, 0], [4, 0, 252, 0], [3, 0, 252, 0],
+          [0, 252, 0, 0], [4, 4, 252, 0], [3, 254, 4, 0], [4, 254, 4, 0], [3, 0, 4, 0], [4, 0, 4, 0]
+        ],
+        "component": "map-descriptors-4byte",
+        "record_size": 4
+      },
+      "descriptor_grid": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "tag": 1,
+        "decoded_size": 16384,
+        "encoded_size": 772,
+        "component": "map-descriptor-grid",
+        "width": 128,
+        "height": 128
+      },
+      "animation_queues": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "tag": 1,
+        "decoded_size": 2,
+        "encoded_size": 8,
+        "words": ["0xffff"],
+        "component": "map-animation-queues",
+        "word_size": 2,
+        "terminators": ["0xfe00", "0xffff"]
+      },
+      "blend_animation": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "tag": 1,
+        "decoded_size": 2,
+        "encoded_size": 8,
+        "words": [["0xffff"]],
+        "component": "map-blend-animation",
+        "word_size": 2
+      },
+      "positions": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 85,
+        "encoded_size": 92,
+        "table": {
+          "format": 1,
+          "kind": "typed-table",
+          "address": "0x0",
+          "size": "0x55",
+          "segments": [
+            {
+              "name": "offsets",
+              "address": "0x0",
+              "end": "0x6",
+              "stride": 2,
+              "element": "le-u16",
+              "values": ["entrances", "cell_patches_end", "camera_bounds"]
+            },
+            {"name": "reserved", "address": "0x6", "end": "0x8", "stride": 2, "element": "le-u16", "values": [0]},
+            {"name": "points_end", "address": "0x8", "end": "0x9", "stride": 1, "element": "u8", "values": [255]},
+            {
+              "name": "entrances",
+              "address": "0x9",
+              "end": "0x45",
+              "stride": 6,
+              "element": "record",
+              "fields": [
+                {"name": "entrance", "element": "s8"},
+                {"name": "x", "element": "le-s16"},
+                {"name": "y", "element": "le-s16"},
+                {"name": "arrival", "element": "u8", "bits": {"facing": 4, "options": 4}}
+              ],
+              "records": [
+                {"entrance": 1, "x": 215, "y": 392, "arrival": [12, 0]},
+                {"entrance": 2, "x": 39, "y": 117, "arrival": [4, 0]},
+                {"entrance": 3, "x": 199, "y": 145, "arrival": [4, 0]},
+                {"entrance": 4, "x": 359, "y": 234, "arrival": [4, 0]},
+                {"entrance": 5, "x": 71, "y": 936, "arrival": [12, 0]},
+                {"entrance": 6, "x": 231, "y": 938, "arrival": [12, 0]},
+                {"entrance": 7, "x": 423, "y": 873, "arrival": [12, 0]},
+                {"entrance": 8, "x": 534, "y": 310, "arrival": [4, 0]},
+                {"entrance": 9, "x": 502, "y": 394, "arrival": [12, 0]},
+                {"entrance": 10, "x": 933, "y": 376, "arrival": [12, 0]}
+              ]
+            },
+            {"name": "entrances_end", "address": "0x45", "end": "0x46", "stride": 1, "element": "u8", "values": [255]},
+            {
+              "name": "cell_patches_end",
+              "address": "0x46",
+              "end": "0x48",
+              "stride": 2,
+              "element": "le-u16",
+              "values": [65535]
+            },
+            {
+              "name": "camera_bounds",
+              "address": "0x48",
+              "end": "0x54",
+              "stride": 4,
+              "element": "record",
+              "fields": [
+                {"name": "left", "element": "s8"},
+                {"name": "top", "element": "s8"},
+                {"name": "right", "element": "s8"},
+                {"name": "bottom", "element": "s8"}
+              ],
+              "records": [
+                {"left": 0, "top": 1, "right": 25, "bottom": 27},
+                {"left": 1, "top": 32, "right": 29, "bottom": 60},
+                {"left": 29, "top": 8, "right": 61, "bottom": 27}
+              ]
+            },
+            {
+              "name": "camera_bounds_end",
+              "address": "0x54",
+              "end": "0x55",
+              "stride": 1,
+              "element": "u8",
+              "values": [255]
+            }
+          ]
+        },
+        "component": "map-positions"
+      },
+      "grid_source": "games/THE LOST AGE/SRC/FIELD/SHAMAN_DOU/SHAMAN_DOU.BIN",
+      "grid_offset": 0,
+      "grid_compression": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "tag": 1,
+        "decoded_size": 65536,
+        "encoded_size": 3648
+      }
+    }
+  },
+  "palettes": {"543": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 448, "encoded_size": 312}}
+}

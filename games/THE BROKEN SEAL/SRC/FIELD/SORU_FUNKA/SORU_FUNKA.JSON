@@ -42,7 +42,6 @@
         "decoded_size": 6553,
         "encoded_size": 3836,
         "tilemap_length": 6552,
-        "lookahead": "000000",
         "component": "map-metatiles-2x2",
         "transform_mode": 1,
         "metatiles": 819,
@@ -55,7 +54,6 @@
         "decoded_size": 8,
         "encoded_size": 8,
         "records": [[0, 0, 0, 0], [0, 4, 0, 0]],
-        "lookahead": "",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -72,7 +70,6 @@
           ],
           "0xffff"
         ],
-        "lookahead": "000000",
         "component": "map-animation-queues",
         "word_size": 2,
         "terminators": ["0xfe00", "0xffff"]
@@ -87,7 +84,6 @@
           ["0x100f", 10], ["0x100e", 10], ["0x100d", 10], ["0x100c", 10], ["0x100b", 10], ["0x100a", 10], ["0xfe00"],
           ["0xffff"]
         ],
-        "lookahead": "0000",
         "component": "map-blend-animation",
         "word_size": 2
       },
@@ -95,7 +91,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x08527934",
-        "size": "0x4",
+        "size": "0x3",
         "record_size": 3,
         "segments": [
           {
@@ -105,8 +101,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x08527937", "end": "0x08527938", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/SORU_FUNKA/SORU_FUNKA.BIN",

@@ -1,0 +1,19 @@
+{
+  "format": 1,
+  "kind": "typed-table",
+  "address": "0x0812ce54",
+  "size": 32,
+  "segments": [
+    {
+      "name": "blend_phases",
+      "address": "0x0812ce54",
+      "end": "0x0812ce74",
+      "consumers": ["recon/tla/raw/08126b64.s"],
+      "element": "s8",
+      "stride": 16,
+      "values": [
+        [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0], [4, 6, 7, 8, 8, 8, 8, 8, 4, 2, 1, 0, 0, 0, 0, 0]
+      ]
+    }
+  ]
+}

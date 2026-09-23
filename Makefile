@@ -1,5 +1,5 @@
 # Alchemy's build and contributor workflows share the alchemy executable.
-# Asset packages are described by data under games/; the shared codecs behind
+# Asset packages are described by manifests under recon/; the shared codecs behind
 # `alchemy build assets` are named for their formats, not for any resource.
 
 GCC296_CFLAGS := -O2 -mthumb -mthumb-interwork -mcpu=arm7tdmi \
@@ -59,7 +59,6 @@ help:
 		'make owner-inventory-check prove registered owner production coverage' \
 		'make strict-tu-check  prove strict production TU composition and owner coverage' \
 		'make siblings-check   report twin families; reject address names in instanced sources' \
-		'make classification-check prove retained-assembly classifications' \
 		'make source-tracking-check reject ignored or untracked Proven C' \
 		'make build-assets     rebuild source assets' \
 		'make test             focused Rust tests and policy checks' \
@@ -219,21 +218,29 @@ check-owners: source-tracking-check
 	$(CHECK) owners
 
 corpus-check:
-	@test -f "games/THE BROKEN SEAL/project.json"
-	@test -f "games/THE LOST AGE/PROJECT.JSON"
+	@test -f "recon/tbs/project.json"
+	@test -f "recon/tla/project.json"
 	@if test -d draft; then \
-		printf 'legacy draft/ directory found; use games/THE BROKEN SEAL/recon/<edition>/\n'; \
+		printf 'legacy draft/ directory found; use recon/tbs/<edition>/\n'; \
 		exit 1; \
 	fi
-	@if find "games/THE BROKEN SEAL/semantic" -maxdepth 1 -name '*.c' -print | grep -q .; then \
-		printf 'source hypotheses belong in games/THE BROKEN SEAL/recon/, not games/THE BROKEN SEAL/semantic/ metadata\n'; \
+	@if find "recon/tbs/semantic" -maxdepth 1 -name '*.c' -print | grep -q .; then \
+		printf 'source hypotheses belong in recon/tbs/<edition>/, not recon/tbs/semantic/ metadata\n'; \
 		exit 1; \
 	fi
 	@roots=$$(git ls-files -- games | cut -d/ -f2 | grep -vx COMMON | LC_ALL=C sort -u | tr '\n' '|'); \
 	test "$$roots" = 'THE BROKEN SEAL|THE LOST AGE|' || { \
 		printf 'games/ holds only the two game roots and the COMMON shared source root, found: %s\n' "$$roots"; exit 1; \
 	}
-	@printf 'corpus ok: two shared-source games, 12 edition targets, games/COMMON shared source only\n'
+	@scaffolding=$$(git ls-files -- games | cut -d/ -f3 | grep '[a-z]' | LC_ALL=C sort -u | tr '\n' '|'); \
+	test -z "$$scaffolding" || { \
+		printf 'games/ holds only the uppercase Camelot-shaped tree; move reconstruction scaffolding to recon/<game>/: %s\n' "$$scaffolding"; exit 1; \
+	}
+	@roots=$$(git ls-files -- recon | cut -d/ -f2 | LC_ALL=C sort -u | tr '\n' '|'); \
+	test "$$roots" = 'tbs|tla|' || { \
+		printf 'recon/ holds only the tbs and tla scaffolding roots, found: %s\n' "$$roots"; exit 1; \
+	}
+	@printf 'corpus ok: two shared-source games, 12 edition targets, games/COMMON shared source only, scaffolding under recon/\n'
 
 build-tools:
 	@set -e; for host in $(HOSTS); do \
@@ -267,10 +274,10 @@ tooling-index-check:
 # Restore one game from the current commit when a local experiment needs to be discarded.
 verified-restore:
 	@set -eu; tree=$$(git rev-parse 'HEAD^{tree}'); \
-	git checkout "$$tree" -- "games/$(TARGET_GAME_DIR)"; \
-	git diff --cached --name-only -z --diff-filter=A "$$tree" -- "games/$(TARGET_GAME_DIR)" | xargs -0 -r git rm -q -f --cached; \
-	git diff --name-only -z --diff-filter=A "$$tree" -- "games/$(TARGET_GAME_DIR)" | xargs -0 -r rm -f; \
-	printf 'games/%s restored to HEAD tree %s\n' '$(TARGET_GAME_DIR)' "$$tree"
+	git checkout "$$tree" -- "games/$(TARGET_GAME_DIR)" "recon/$(TARGET_GAME)"; \
+	git diff --cached --name-only -z --diff-filter=A "$$tree" -- "games/$(TARGET_GAME_DIR)" "recon/$(TARGET_GAME)" | xargs -0 -r git rm -q -f --cached; \
+	git diff --name-only -z --diff-filter=A "$$tree" -- "games/$(TARGET_GAME_DIR)" "recon/$(TARGET_GAME)" | xargs -0 -r rm -f; \
+	printf 'games/%s and recon/%s restored to HEAD tree %s\n' '$(TARGET_GAME_DIR)' '$(TARGET_GAME)' "$$tree"
 
 # Tooling and dashboard behavior are Rust.
 # Asset and game source directories carry no scripts.

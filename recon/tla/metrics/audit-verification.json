@@ -1,0 +1,40 @@
+{
+  "format": 1,
+  "verified": {
+    "target": "tla-en",
+    "subject": "overlay executable intervals",
+    "serialization": "alchemy-overlay-intervals-v1",
+    "sha256": "b2fcdda660c894baa61990df3edf1aaa5a7626924c1c98dc10ff573064f6e18e",
+    "overlays": 114,
+    "decoded_bytes": 1378112,
+    "executable_bytes": 1053552,
+    "excluded_bytes": 324560
+  },
+  "date": "2026-09-23",
+  "verdict": "accepted",
+  "runs": [
+    {
+      "id": "wf_d59c752e-204",
+      "scope": "four independent lenses (far jumps, gap fill, samples, structure) and a judge over both games' generated overlay counts",
+      "result": "acceptable as the executable denominator; far-jump, owner-entry and gap-stub rule fixes required, seven unreferenced lone bx lr stubs unproven"
+    },
+    {
+      "id": "wf_c9e9d994-255",
+      "scope": "the required rules applied, then two independent verifiers rebuilt the audit and compared every byte and kind",
+      "result": "both reproduced the output byte for byte with only the required changes; one flagged rule conditions no unit test isolates, not bytes"
+    }
+  ],
+  "residual": {
+    "bytes": 20,
+    "counted": false,
+    "reason": "a lone bx lr with its alignment that no pointer word, BL or branch names: probably an empty function, but only its position says so",
+    "items": [
+      {"overlay": "resource_64e", "entry": "0x0200056c", "bytes": 4},
+      {"overlay": "resource_652", "entry": "0x020000a8", "bytes": 4},
+      {"overlay": "resource_697", "entry": "0x02005704", "bytes": 4},
+      {"overlay": "resource_6b1", "entry": "0x02000710", "bytes": 4},
+      {"overlay": "resource_6b5", "entry": "0x02000fb8", "bytes": 4}
+    ]
+  },
+  "credit": "none"
+}

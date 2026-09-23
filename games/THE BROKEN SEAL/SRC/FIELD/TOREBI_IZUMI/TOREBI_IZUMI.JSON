@@ -42,7 +42,6 @@
         "decoded_size": 3033,
         "encoded_size": 1664,
         "tilemap_length": 3032,
-        "lookahead": "",
         "component": "map-metatiles-2x2",
         "transform_mode": 2,
         "metatiles": 379,
@@ -58,7 +57,6 @@
           [0, 0, 0, 0], [0, 4, 0, 0], [4, 4, 0, 0], [9, 0, 2, 0], [12, 2, 0, 0], [9, 2, 0, 0], [13, 4, 4, 0],
           [8, 4, 0, 0], [9, 0, 4, 0], [9, 4, 0, 0], [12, 4, 0, 0], [13, 4, 0, 0], [8, 0, 4, 0]
         ],
-        "lookahead": "000000",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -109,7 +107,6 @@
           ],
           "0xffff"
         ],
-        "lookahead": "0000",
         "component": "map-animation-queues",
         "word_size": 2,
         "terminators": ["0xfe00", "0xffff"]
@@ -121,7 +118,6 @@
         "decoded_size": 10,
         "encoded_size": 16,
         "words": [["0x3f44"], ["0x1008", 43210], ["0xfe00"], ["0xffff"]],
-        "lookahead": "00",
         "component": "map-blend-animation",
         "word_size": 2
       },
@@ -129,7 +125,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x086e725c",
-        "size": "0x4",
+        "size": "0x3",
         "record_size": 3,
         "segments": [
           {
@@ -139,8 +135,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x086e725f", "end": "0x086e7260", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/TOREBI_IZUMI/TOREBI_IZUMI.BIN",
@@ -192,7 +187,6 @@
         "decoded_size": 8577,
         "encoded_size": 1612,
         "tilemap_length": 8576,
-        "lookahead": "",
         "component": "map-metatiles-2x2",
         "transform_mode": 1,
         "metatiles": 1072,
@@ -208,7 +202,6 @@
           [0, 0, 0, 0], [0, 2, 0, 0], [12, 2, 0, 0], [13, 2, 2, 0], [12, 2, 2, 0], [13, 2, 0, 0], [0, 3, 0, 0],
           [8, 0, 1, 0], [0, 1, 0, 0], [8, 1, 0, 0]
         ],
-        "lookahead": "",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -272,7 +265,6 @@
           ],
           "0xffff"
         ],
-        "lookahead": "",
         "component": "map-animation-queues",
         "word_size": 2,
         "terminators": ["0xfe00", "0xffff"]
@@ -284,7 +276,6 @@
         "decoded_size": 2,
         "encoded_size": 8,
         "words": [["0xffff"]],
-        "lookahead": "0000",
         "component": "map-blend-animation",
         "word_size": 2
       },
@@ -292,7 +283,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x0877034c",
-        "size": "0x4",
+        "size": "0x3",
         "record_size": 3,
         "segments": [
           {
@@ -302,8 +293,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x0877034f", "end": "0x08770350", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/TOREBI_IZUMI/TOREBI_IZUMI.BIN",

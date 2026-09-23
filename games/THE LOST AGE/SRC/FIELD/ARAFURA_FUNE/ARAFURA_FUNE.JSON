@@ -1,0 +1,201 @@
+{
+  "format": 1,
+  "maps": {
+    "3a0": {
+      "format": 1,
+      "kind": "golden-sun-map-container",
+      "header": {
+        "format": 1,
+        "kind": "typed-table",
+        "address": "0x08beb5fc",
+        "size": "0x40",
+        "segments": [
+          {
+            "name": "parameters",
+            "address": "0x08beb5fc",
+            "end": "0x08beb608",
+            "stride": 12,
+            "element": "u8",
+            "values": [0, 0, 90, 90, 3, 1, 2, 0, 2, 2, 0, 0]
+          },
+          {
+            "name": "records",
+            "address": "0x08beb608",
+            "end": "0x08beb620",
+            "stride": 8,
+            "element": "le-u16",
+            "values": [[0, 4112, 0, 65535], [90, 4112, 0, 65535], [23040, 4112, 0, 65535]]
+          },
+          {
+            "name": "component_offsets",
+            "address": "0x08beb620",
+            "end": "0x08beb63c",
+            "stride": 4,
+            "element": "le-u32",
+            "values": ["0x40", "0x3d4", "0x408", "0x135c", "0x1498", "0x14a0", "0x14b0"]
+          }
+        ]
+      },
+      "metatiles": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 1585,
+        "encoded_size": 916,
+        "tilemap_length": 1584,
+        "component": "map-metatiles-2x2",
+        "transform_mode": 1,
+        "metatiles": 198,
+        "tilemap_source": "games/THE LOST AGE/SRC/FIELD/ARAFURA_FUNE/ARAFURA_FUNE.BIN",
+        "tilemap_offset": 65536
+      },
+      "descriptors": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 72,
+        "encoded_size": 52,
+        "records": [
+          [0, 0, 0, 0], [0, 2, 0, 0], [1, 0, 254, 0], [1, 254, 252, 0], [9, 0, 4, 0], [1, 4, 2, 0], [1, 2, 0, 0],
+          [13, 0, 0, 4], [12, 0, 0, 2], [9, 0, 2, 0], [13, 0, 0, 2], [0, 4, 0, 0], [12, 0, 0, 4], [9, 4, 254, 0],
+          [0, 254, 0, 0], [1, 254, 0, 0], [4, 254, 4, 0], [3, 254, 4, 0]
+        ],
+        "component": "map-descriptors-4byte",
+        "record_size": 4
+      },
+      "descriptor_grid": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "tag": 1,
+        "decoded_size": 16384,
+        "encoded_size": 316,
+        "component": "map-descriptor-grid",
+        "width": 128,
+        "height": 128
+      },
+      "animation_queues": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "tag": 1,
+        "decoded_size": 2,
+        "encoded_size": 8,
+        "words": ["0xffff"],
+        "component": "map-animation-queues",
+        "word_size": 2,
+        "terminators": ["0xfe00", "0xffff"]
+      },
+      "blend_animation": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "tag": 1,
+        "decoded_size": 10,
+        "encoded_size": 16,
+        "words": [["0x3f44"], ["0x1008", 43210], ["0xfe00"], ["0xffff"]],
+        "component": "map-blend-animation",
+        "word_size": 2
+      },
+      "positions": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 66,
+        "encoded_size": 76,
+        "table": {
+          "format": 1,
+          "kind": "typed-table",
+          "address": "0x0",
+          "size": "0x42",
+          "segments": [
+            {
+              "name": "offsets",
+              "address": "0x0",
+              "end": "0x6",
+              "stride": 2,
+              "element": "le-u16",
+              "values": ["entrances", "cell_patches_end", "camera_bounds"]
+            },
+            {"name": "reserved", "address": "0x6", "end": "0x8", "stride": 2, "element": "le-u16", "values": [0]},
+            {
+              "name": "points",
+              "address": "0x8",
+              "end": "0xd",
+              "stride": 5,
+              "element": "record",
+              "fields": [
+                {"name": "point", "element": "s8"},
+                {"name": "x", "element": "le-u16"},
+                {"name": "y", "element": "le-u16"}
+              ],
+              "records": [{"point": 1, "x": 150, "y": 471}]
+            },
+            {"name": "points_end", "address": "0xd", "end": "0xe", "stride": 1, "element": "u8", "values": [255]},
+            {
+              "name": "entrances",
+              "address": "0xe",
+              "end": "0x32",
+              "stride": 6,
+              "element": "record",
+              "fields": [
+                {"name": "entrance", "element": "s8"},
+                {"name": "x", "element": "le-s16"},
+                {"name": "y", "element": "le-s16"},
+                {"name": "arrival", "element": "u8", "bits": {"facing": 4, "options": 4}}
+              ],
+              "records": [
+                {"entrance": 1, "x": 406, "y": 189, "arrival": [12, 0]},
+                {"entrance": 99, "x": 456, "y": 392, "arrival": [4, 0]},
+                {"entrance": 2, "x": 425, "y": 88, "arrival": [8, 0]},
+                {"entrance": 3, "x": 470, "y": 261, "arrival": [0, 0]},
+                {"entrance": 4, "x": 377, "y": 646, "arrival": [4, 0]},
+                {"entrance": 5, "x": 118, "y": 523, "arrival": [12, 0]}
+              ]
+            },
+            {"name": "entrances_end", "address": "0x32", "end": "0x33", "stride": 1, "element": "u8", "values": [255]},
+            {
+              "name": "cell_patches_end",
+              "address": "0x33",
+              "end": "0x35",
+              "stride": 2,
+              "element": "le-u16",
+              "values": [65535]
+            },
+            {
+              "name": "camera_bounds",
+              "address": "0x35",
+              "end": "0x41",
+              "stride": 4,
+              "element": "record",
+              "fields": [
+                {"name": "left", "element": "s8"},
+                {"name": "top", "element": "s8"},
+                {"name": "right", "element": "s8"},
+                {"name": "bottom", "element": "s8"}
+              ],
+              "records": [
+                {"left": 18, "top": 2, "right": 33, "bottom": 13},
+                {"left": 18, "top": 13, "right": 33, "bottom": 45},
+                {"left": 0, "top": 24, "right": 15, "bottom": 35}
+              ]
+            },
+            {
+              "name": "camera_bounds_end",
+              "address": "0x41",
+              "end": "0x42",
+              "stride": 1,
+              "element": "u8",
+              "values": [255]
+            }
+          ]
+        },
+        "component": "map-positions"
+      },
+      "grid_source": "games/THE LOST AGE/SRC/FIELD/ARAFURA_FUNE/ARAFURA_FUNE.BIN",
+      "grid_offset": 0,
+      "grid_compression": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "tag": 1,
+        "decoded_size": 65536,
+        "encoded_size": 3924
+      }
+    }
+  },
+  "palettes": {"3a1": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 448, "encoded_size": 456}}
+}

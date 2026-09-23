@@ -26,16 +26,21 @@ pub use html::{file_page, rom_page};
 
 pub const BOX_TREES: [&str; 1] = ["files"];
 const CHART_BACKGROUND: &str = "#1f7f93";
+// One soft palette for the figure and dashboard: code in teal shades that sit
+// on the teal chart, data and media in muted pastels.
 const UNKNOWN: &str = "#d9d9d4";
-const TEXT_ORANGE: &str = "#e7a04f";
-const C_RED: &str = "#d85b5b";
-const DRAFT_C_PINK: &str = "#e8a6c8";
-const MIDI_GREEN: &str = "#63c78c";
-const WAV_PINE: &str = "#3f785e";
+const C_TEAL: &str = "#326b7d";
+const DRAFTED: &str = "#96c8c9";
+const ASSEMBLY: &str = "#6cafb2";
+const DRAFT_ASSEMBLY: &str = "#b4ccd2";
+const TEXT_CYAN: &str = "#85cbd2";
+const MIDI_GREEN: &str = "#81d6b2";
+const PCM_ORANGE: &str = "#efbb82";
+const OTHER_TAN: &str = "#bda995";
 const SOUND_TYPES: [(&str, &str); 5] = [
     ("MIDI music", MIDI_GREEN),
     ("SFX", "#f29b91"),
-    ("PCM samples", WAV_PINE),
+    ("PCM samples", PCM_ORANGE),
     ("Tables", "#9aa4c2"),
     ("Sound sequences", "#a8d4bc"),
 ];
@@ -64,16 +69,24 @@ fn content_style(tile: &Tile) -> (&'static str, &'static str) {
     let group = tile.group.as_deref().unwrap_or("");
     if let Some(extension) = group.strip_prefix("file:") {
         return match extension {
-            "c" => ("C", C_RED),
+            // Accepted C lives in SRC; complete but nonexact drafts in recon.
+            "c" if tile
+                .source
+                .as_deref()
+                .is_some_and(|source| source.contains("/recon/")) =>
+            {
+                ("Drafted C", DRAFTED)
+            }
+            "c" => ("C", C_TEAL),
             "h" | "inc" => ("Headers", "#eadb83"),
-            "s" => ("Assembly", UNKNOWN),
+            "s" => ("Assembly", ASSEMBLY),
             "png" => ("Images", "#8fb7ec"),
-            "wav" => ("WAV audio", WAV_PINE),
+            "wav" => ("WAV audio", PCM_ORANGE),
             "mid" => ("MIDI music", MIDI_GREEN),
-            "md" | "po" | "txt" => ("Text", TEXT_ORANGE),
+            "md" | "po" | "txt" => ("Text", TEXT_CYAN),
             "json" | "tsv" => ("Metadata", "#9aa4c2"),
             "bin" => ("Binary inputs", "#b5cc82"),
-            _ => ("Other files", UNKNOWN),
+            _ => ("Other files", OTHER_TAN),
         };
     }
     let kind = group.strip_prefix("indexed-").unwrap_or(group);
@@ -107,7 +120,7 @@ fn content_style(tile: &Tile) -> (&'static str, &'static str) {
         "compressed-resource" => ("Compressed data", "#c4b4b7"),
         "gba-palette" | "gba-palette-rgba" | "bgr555-banks" => ("Palettes", "#e8a6d3"),
         "golden-sun-kana-glyph-bank" | "golden-sun-namae-nyuuryoku" => ("Fonts", "#eadb83"),
-        "golden-sun-message-archive" | "golden-sun-staff-roll" => ("Text", TEXT_ORANGE),
+        "golden-sun-message-archive" | "golden-sun-staff-roll" => ("Text", TEXT_CYAN),
         _ if source.contains("/fonts_") || source.contains("/GRAPHICS/FONT/") => {
             ("Fonts", "#eadb83")
         }
@@ -117,6 +130,26 @@ fn content_style(tile: &Tile) -> (&'static str, &'static str) {
         "byte-fill" => ("Padding", "#bda995"),
         _ => (UNIDENTIFIED, UNKNOWN),
     }
+}
+/// The content types of a tile's files and their bytes, largest first.
+fn content_mix(tile: &Tile) -> Vec<(&'static str, &'static str, i64)> {
+    fn gather(tile: &Tile, mix: &mut Vec<(&'static str, &'static str, i64)>) {
+        if !tile.children.is_empty() {
+            for child in &tile.children {
+                gather(child, mix);
+            }
+            return;
+        }
+        let (name, color) = content_style(tile);
+        match mix.iter_mut().find(|(n, c, _)| *n == name && *c == color) {
+            Some(entry) => entry.2 += tile.bytes,
+            None => mix.push((name, color, tile.bytes)),
+        }
+    }
+    let mut mix = Vec::new();
+    gather(tile, &mut mix);
+    mix.sort_by(|a, b| b.2.cmp(&a.2).then(a.0.cmp(b.0)));
+    mix
 }
 fn asset_note(tile: &Tile, verification: Option<&str>) -> &'static str {
     if tile
@@ -338,8 +371,14 @@ fn draw_tiles(
             out.push(format!("<rect class=\"container-frame\" x=\"{}\" y=\"{}\" width=\"{}\" height=\"{}\" fill=\"{CHART_BACKGROUND}\"/>", rect.x, rect.y, rect.width, rect.height));
             bevel(out, rect);
         } else if tile.categories[Category::AssetData as usize] == tile.bytes {
-            let (name, color) = content_style(tile);
-            out.push(format!("<rect data-content-type=\"{name}\" x=\"{}\" y=\"{}\" width=\"{}\" height=\"{}\" style=\"fill:{color}\"/>", body.x, body.y, body.width, body.height));
+            // A folder too small to open shows the types of the files inside
+            // it by bytes, largest at the bottom, never its first file's type.
+            let mut y = body.y + body.height;
+            for (name, color, bytes) in content_mix(tile) {
+                let height = body.height * bytes as f64 / tile.bytes.max(1) as f64;
+                y -= height;
+                out.push(format!("<rect data-content-type=\"{name}\" x=\"{}\" y=\"{}\" width=\"{}\" height=\"{}\" style=\"fill:{color}\"/>", body.x, y, body.width, height));
+            }
         } else {
             let mut y = body.y + body.height;
             for (category, _) in DISPLAY_CATEGORIES {
@@ -526,10 +565,10 @@ pub(crate) fn esc(value: &str) -> String {
 fn color(category: Category) -> &'static str {
     match category {
         Category::Unknown => UNKNOWN,
-        Category::DraftAsm => UNKNOWN,
-        Category::DraftC => DRAFT_C_PINK,
-        Category::ProvenAsm => UNKNOWN,
-        Category::ProvenC => C_RED,
+        Category::DraftAsm => DRAFT_ASSEMBLY,
+        Category::DraftC => DRAFTED,
+        Category::ProvenAsm => ASSEMBLY,
+        Category::ProvenC => C_TEAL,
         Category::AssetData => "#92a8ac",
     }
 }
@@ -551,7 +590,17 @@ pub fn svg_at(tree: &str, map: &CoverageMap, width: f64, folder: &str) -> String
 }
 pub fn svg_sized(tree: &str, map: &CoverageMap, width: f64, height: f64, folder: &str) -> String {
     assert!(matches!(tree, "rom" | "files"));
-    let disk = (tree == "files").then(|| html::disk_tiles(&root()));
+    // The published figure shows only tracked files; the local dashboard also
+    // shows the private inputs this checkout extracted from its own ROM.
+    let published = map.document["published"].as_bool() == Some(true);
+    let disk = (tree == "files").then(|| {
+        let tiles = html::disk_tiles(&root());
+        if published {
+            html::tracked_only(&root(), tiles)
+        } else {
+            tiles
+        }
+    });
     let source_tiles = if let Some(disk) = &disk {
         disk.iter().collect::<Vec<_>>()
     } else {
@@ -704,7 +753,7 @@ pub fn render_box_trees(map: &CoverageMap) -> Vec<(&'static str, String)> {
 }
 pub fn files_svg(width: f64) -> String {
     let map = CoverageMap {
-        document: serde_json::json!({"view":"files"}),
+        document: serde_json::json!({"view":"files","published":true}),
         rom_areas: Vec::new(),
         executable_areas: Vec::new(),
     };
@@ -976,17 +1025,57 @@ mod tests {
             group: Some(format!("file:{extension}")),
             ..Tile::default()
         };
-        assert_eq!(content_style(&tile("s")), ("Assembly", super::UNKNOWN));
-        assert_eq!(content_style(&tile("c")), ("C", super::C_RED));
-        assert_eq!(content_style(&tile("po")), ("Text", super::TEXT_ORANGE));
+        assert_eq!(content_style(&tile("s")), ("Assembly", super::ASSEMBLY));
+        assert_eq!(content_style(&tile("c")), ("C", super::C_TEAL));
+        let draft = Tile {
+            source: Some("games/THE BROKEN SEAL/recon/en/main/08006878.c".into()),
+            ..tile("c")
+        };
+        assert_eq!(content_style(&draft), ("Drafted C", super::DRAFTED));
+        assert_eq!(content_style(&tile("po")), ("Text", super::TEXT_CYAN));
         assert_eq!(
             content_style(&tile("mid")),
             ("MIDI music", super::MIDI_GREEN)
         );
-        assert_eq!(content_style(&tile("wav")), ("WAV audio", super::WAV_PINE));
-        assert_eq!(super::color(Category::DraftC), super::DRAFT_C_PINK);
-        assert_eq!(super::color(Category::ProvenAsm), super::UNKNOWN);
-        assert_eq!(super::color(Category::ProvenC), super::C_RED);
+        assert_eq!(
+            content_style(&tile("wav")),
+            ("WAV audio", super::PCM_ORANGE)
+        );
+        assert_eq!(
+            content_style(&tile("xyz")),
+            ("Other files", super::OTHER_TAN)
+        );
+        // A collapsed folder is drawn by the bytes of what it holds.
+        let file = |name: &str, extension: &str, bytes| Tile {
+            label: name.into(),
+            bytes,
+            categories: [0, 0, 0, 0, 0, bytes],
+            source: Some(format!("games/X/SRC/FIELD/AREA/{name}")),
+            group: Some(format!("file:{extension}")),
+            ..Tile::default()
+        };
+        let folder = Tile {
+            bytes: 120,
+            categories: [0, 0, 0, 0, 0, 120],
+            children: vec![
+                file("ENTRY.INC", "inc", 5),
+                file("IMPORT.INC", "inc", 5),
+                file("AREA.JSON", "json", 40),
+                file("SCENE.C", "c", 70),
+            ],
+            ..Tile::default()
+        };
+        assert_eq!(
+            super::content_mix(&folder),
+            vec![
+                ("C", super::C_TEAL, 70),
+                ("Metadata", "#9aa4c2", 40),
+                ("Headers", "#eadb83", 10)
+            ]
+        );
+        assert_eq!(super::color(Category::DraftC), super::DRAFTED);
+        assert_eq!(super::color(Category::ProvenAsm), super::ASSEMBLY);
+        assert_eq!(super::color(Category::ProvenC), super::C_TEAL);
     }
     #[test]
     fn unidentified_has_one_shared_legend_entry_and_tables_have_a_type() {

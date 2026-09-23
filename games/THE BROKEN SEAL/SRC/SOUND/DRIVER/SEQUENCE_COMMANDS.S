@@ -1,5 +1,14 @@
-@ Sound sequence command interpreter and its private continuation entries.
-@ The module preserves its manual return-address and shared-stack contracts.
+@ Sound sequence command helpers. 0x080f9a80 copies the 36-entry command table
+@ at 0x080fb7a0 through the range check at 0x080f9a9a; the other entries read
+@ command bytes and words of the track in r1. They keep their return address
+@ in ip (mov ip, lr ... bx ip), let 0x080f9a98 fall through into 0x080f9a9a,
+@ hand results back in r3 and branch on flags from lsrs (0x080f9a9e). Neither
+@ approved compiler emits any of these. Every TBS and TLA edition has this
+@ code, differing only in the relocated table address.
+@ The zero halfwords of alignment at 0x080f9a96, 0x080f9abe, 0x080f9afa,
+@ 0x080f9b3e, 0x080f9b4a, 0x080f9b72, 0x080f9ba2, 0x080f9bb6, 0x080f9bf2 and
+@ 0x080f9bfe never run and carry no credit.
+@ credit: library — TBS/TLA common sound sequence command interpreter
 .syntax unified
 	.thumb
 .global Func_080f9a80
@@ -16,11 +25,13 @@ Func_080f9a80:
 	subs	r1, #1
 	bgt.n	.L_080f9a80_loop
 	bx	ip
+AlchemyUncredited_080f9a96:
 	.2byte 0
 
 	.global Func_080f9a98
 	.thumb_func
 Func_080f9a98:
+AlchemyUncreditedEnd_080f9a96:
 	ldrb	r3, [r2, #0]
 	.global Func_080f9a9a
 	.thumb_func
@@ -50,11 +61,13 @@ Func_080f9ab4:
 	str	r3, [r1, #64]
 	ldrb	r3, [r2, #0]
 	b.n	Func_080f9a9a
+AlchemyUncredited_080f9abe:
 	.2byte 0
 
 .global Func_080f9ac0
 	.thumb_func
 Func_080f9ac0:
+AlchemyUncreditedEnd_080f9abe:
 	push	{lr}
 	ldr	r2, [r1, #64]
 	ldrb	r0, [r2, #3]
@@ -88,11 +101,13 @@ Func_080f9ae0:
 	b.n	Func_080f9ac0
 .L_080f9ae0_full:
 	b.n	Func_080f9a50
+AlchemyUncredited_080f9afa:
 	.2byte 0
 
 .global Func_080f9afc
 	.thumb_func
 Func_080f9afc:
+AlchemyUncreditedEnd_080f9afa:
 	ldrb	r2, [r1, #2]
 	cmp	r2, #0
 	beq.n	.L_080f9afc_0
@@ -133,20 +148,24 @@ Func_080f9b10:
 	str	r2, [r1, #64]
 	pop	{r0}
 	bx	r0
+AlchemyUncredited_080f9b3e:
 	.2byte 0
 
 .global Func_080f9b40
 	.thumb_func
 Func_080f9b40:
+AlchemyUncreditedEnd_080f9b3e:
 	mov	ip, lr
 	bl	Func_080f9ab4
 	strb	r3, [r1, #29]
 	bx	ip
 
+AlchemyUncredited_080f9b4a:
 	.balign 4, 0
 .global Func_080f9b4c
 	.thumb_func
 Func_080f9b4c:
+AlchemyUncreditedEnd_080f9b4a:
 	mov	ip, lr
 	bl	Func_080f9ab4
 	lsls	r3, r3, #1
@@ -169,10 +188,12 @@ Func_080f9b60:
 	strb	r3, [r1, #0]
 	bx	ip
 
+AlchemyUncredited_080f9b72:
 	.balign 4, 0
 .global Func_080f9b74
 	.thumb_func
 Func_080f9b74:
+AlchemyUncreditedEnd_080f9b72:
 	mov	ip, lr
 	ldr	r2, [r1, #64]
 	ldrb	r3, [r2, #0]
@@ -194,10 +215,12 @@ Func_080f9b74:
 	str	r3, [r1, #44]
 	bx	ip
 
+AlchemyUncredited_080f9ba2:
 	.balign 4, 0
 .global Func_080f9ba4
 	.thumb_func
 Func_080f9ba4:
+AlchemyUncreditedEnd_080f9ba2:
 	mov	ip, lr
 	bl	Func_080f9ab4
 	strb	r3, [r1, #18]
@@ -207,10 +230,12 @@ Func_080f9ba4:
 	strb	r3, [r1, #0]
 	bx	ip
 
+AlchemyUncredited_080f9bb6:
 	.balign 4, 0
 .global Func_080f9bb8
 	.thumb_func
 Func_080f9bb8:
+AlchemyUncreditedEnd_080f9bb6:
 	mov	ip, lr
 	bl	Func_080f9ab4
 	subs	r3, #64
@@ -246,19 +271,23 @@ Func_080f9be0:
 	strb	r3, [r1, #0]
 	bx	ip
 
+AlchemyUncredited_080f9bf2:
 	.balign 4, 0
 .global Func_080f9bf4
 	.thumb_func
 Func_080f9bf4:
+AlchemyUncreditedEnd_080f9bf2:
 	mov	ip, lr
 	bl	Func_080f9ab4
 	strb	r3, [r1, #27]
 	bx	ip
 
+AlchemyUncredited_080f9bfe:
 	.balign 4, 0
 .global Func_080f9c00
 	.thumb_func
 Func_080f9c00:
+AlchemyUncreditedEnd_080f9bfe:
 	mov	ip, lr
 	bl	Func_080f9ab4
 	ldrb	r0, [r1, #24]

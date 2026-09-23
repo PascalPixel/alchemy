@@ -1,6 +1,21 @@
+@ ARM instruction templates for the battle-effect blitter generator. The C
+@ generator at 0x080ed408 copies chosen fragments word by word into a routine
+@ in a heap slot, adding to their immediate fields, and the battle effects
+@ later call the routine it built; the fragments never run where they lie.
+@ The short fragments on fixed registers (source r1, destination r9, byte r5)
+@ end without a return and come in forward (Jun) and backward (Gyaku) pairs;
+@ the Gousei template holds back-to-back alternatives (ldrb r5, [r1], #-1;
+@ ldrb r5, [r1], #1), zero placeholders (and r2, r2, #0; mov r6, #0 twice)
+@ and a pop that a bne skips before its bx lr. No compiler emits alternative
+@ instructions for a generator to choose from. TLA carries a revised copy of
+@ the bank in 0x0819705c..0x081973f0, with the colour-blend templates of
+@ SENTOU_KOUKA_GOUSEI_IRO.S at 0x08197230 inside it and its Gousei template
+@ as TLA BATTLE/EFFECT/PATCH_TEMPLATE.S (0x081972a0).
+@ credit: handwritten — ARM instruction templates for the battle-effect runtime blitter generator
 .syntax unified
 .text
 	.arm
+	.set AlchemyLoadAddress, 0x080edaf0
 	.global SentouKouka_YomiGyaku
 	.global SentouKouka_YomiJun
 	.global SentouKouka_NuriJun

@@ -1,5 +1,12 @@
-@ 呼出側の転送元と転送長により境界を確定した再配置アーム処理。
-@ 承認済みコンパイラはサム専用のため構造化アセンブリで保持する。
+@ Gathers 8-byte rows from a bitmap whose rows lie r1 bytes apart into
+@ consecutive 64-byte tiles: four rows (ldm of two registers each) per 32-byte
+@ stmia r3!, {r4-fp}, two per tile. It runs from a RAM copy of exactly these
+@ 124 bytes. It returns before saving anything when either
+@ dimension rounds down to zero (bics; bicsne; bxeq lr), saves r5-fp without
+@ lr and subtracts with sub r0, r0, r1; GCC saves lr with any register and
+@ writes register subtraction as rsb. Every TBS and TLA edition has these
+@ bytes.
+@ credit: library — TBS/TLA common ARM graphics and runtime kernel bank
 .syntax unified
 	.arm
 	.global Func_0800a418

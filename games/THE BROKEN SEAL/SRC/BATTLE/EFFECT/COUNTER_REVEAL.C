@@ -6,7 +6,7 @@
  * Battle-presentation sub-effect at 0x080cfef4, structurally related to the
  * "0x03001eec battle work" family already recovered in
  * games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/MEMBER_ORBIT.C (owner 080ce85c) and
- * games/THE BROKEN SEAL/recon/en/main/080e7404.c: same heap_cache/work/canvas prologue,
+ * recon/tbs/en/main/080e7404.c: same heap_cache/work/canvas prologue,
  * the same raw-offset field-access spelling, and the same
  * BG2-affine + rectangle-blit (BattleEffect_LoadWork heap kinds 46/47) setup.
  *

@@ -1,0 +1,166 @@
+{
+  "format": 1,
+  "kind": "typed-table-package",
+  "regions": [
+    {
+      "format": 1,
+      "kind": "typed-table",
+      "id": "range_0810c348",
+      "address": "0x0810c348",
+      "end": "0x0810c3ca",
+      "size": 130,
+      "segments": [
+        {
+          "name": "cell_offsets",
+          "address": "0x0810c348",
+          "end": "0x0810c384",
+          "consumers": ["recon/tla/raw/08108690.s"],
+          "element": "le-u16",
+          "stride": 2,
+          "values": [
+            0, 1, 2, 3, 32, 33, 34, 35, 64, 65, 66, 67, 96, 97, 98, 99, 128, 129, 130, 131, 160, 161, 162, 163, 192,
+            193, 194, 195, 224, 225
+          ]
+        },
+        {
+          "name": "row_offsets",
+          "address": "0x0810c384",
+          "end": "0x0810c38e",
+          "consumers": ["recon/tla/raw/08108690.s"],
+          "element": "le-u16",
+          "stride": 2,
+          "values": [192, 144, 128, 80, 64]
+        },
+        {
+          "name": "thresholds",
+          "address": "0x0810c38e",
+          "end": "0x0810c3ca",
+          "consumers": ["recon/tla/raw/0810a2c8.s"],
+          "element": "le-s16",
+          "stride": 2,
+          "values": [
+            300, 300, 300, 300, 300, 500, 500, 500, 500, 500, 1000, 1000, 1000, 1000, 1000, 2000, 2000, 2000, 2000,
+            2000, 4000, 4000, 4000, 4000, 4000, 8000, 8000, 8000, 8000, 8000
+          ]
+        }
+      ]
+    },
+    {
+      "format": 1,
+      "kind": "typed-table",
+      "id": "range_0810c3f4",
+      "address": "0x0810c3f4",
+      "end": "0x08118000",
+      "size": 48140,
+      "segments": [
+        {
+          "name": "loadouts",
+          "address": "0x0810c3f4",
+          "end": "0x0810cc34",
+          "consumers": ["recon/tla/raw/0810a2c8.s"],
+          "element": "record",
+          "stride": 66,
+          "fields": [
+            {"name": "listed_ids", "element": "le-s16", "capacity": 24, "default": []},
+            {"name": "counted_items", "element": "le-s16", "capacity": 8, "default": []},
+            {"name": "group", "element": "le-s16", "default": 0}
+          ],
+          "records": [
+            {},
+            {"listed_ids": [1, 16, 43, 55], "group": 1},
+            {"listed_ids": [89, 90, 103, 118, 127, 156], "group": 2},
+            {"listed_ids": [180, 187]},
+            {"listed_ids": [1, 16, 31, 43], "counted_items": [56], "group": 1},
+            {"listed_ids": [90, 118, 127, 136, 156, 166, 402], "group": 2},
+            {"listed_ids": [180, 187]},
+            {"listed_ids": [1, 2, 17, 31, 44], "group": 1},
+            {"listed_ids": [75, 90, 104, 118, 128, 136, 145, 156, 166, 402], "group": 2},
+            {"listed_ids": [180, 187, 188, 236]},
+            {"listed_ids": [2, 17, 31, 44], "counted_items": [57], "group": 1},
+            {"listed_ids": [75, 92, 104, 119, 128, 136, 145, 157, 166], "counted_items": [404], "group": 2},
+            {"listed_ids": [180, 187, 188, 236]},
+            {"listed_ids": [32, 76, 137, 146, 180, 187, 188, 236], "counted_items": [58, 182], "group": 3},
+            {"listed_ids": [2, 18, 32, 45], "counted_items": [59], "group": 1},
+            {"listed_ids": [92, 105, 120, 137, 146, 157, 167], "group": 2},
+            {"listed_ids": [180, 187, 188, 236]},
+            {"listed_ids": [3, 18, 32, 45], "counted_items": [60], "group": 1},
+            {"listed_ids": [77, 92, 105, 120, 129, 137, 147, 167], "group": 2},
+            {"listed_ids": [180, 181, 187, 188, 236]},
+            {"listed_ids": [3, 18, 32, 45], "group": 1},
+            {"listed_ids": [107, 138, 158], "group": 2},
+            {"listed_ids": [180, 181, 187, 188, 236]},
+            {"listed_ids": [4, 78, 121, 148, 168, 180, 181, 187, 188, 236], "counted_items": [34, 61, 189], "group": 3},
+            {"listed_ids": [46, 94, 169, 180, 181, 187, 188, 236], "counted_items": [5, 20, 131, 182, 186], "group": 3},
+            {"listed_ids": [19, 33, 79, 139, 149, 180, 181, 187, 188, 236], "counted_items": [62, 109, 183], "group": 3},
+            {"listed_ids": [4, 19, 33, 46], "counted_items": [21, 47], "group": 1},
+            {"listed_ids": [80, 94, 139, 150, 169], "counted_items": [122, 159], "group": 2},
+            {"listed_ids": [180, 181, 187, 188, 236], "counted_items": [182, 189, 190]},
+            {"listed_ids": [180, 181, 187, 188, 236], "counted_items": [6, 63, 110, 0, 182, 183, 186], "group": 3},
+            {"listed_ids": [180, 181, 182, 187, 188, 236], "counted_items": [140, 0, 0, 0, 183, 190, 186], "group": 3},
+            {
+              "listed_ids": [180, 181, 182, 190, 187, 188, 236],
+              "counted_items": [111, 0, 0, 0, 183, 186, 189],
+              "group": 3
+            }
+          ]
+        },
+        {
+          "name": "weighted_item_results",
+          "address": "0x0810cc34",
+          "end": "0x0810cf28",
+          "consumers": ["recon/tla/raw/0810a2c8.s", "recon/tla/raw/0810a760.s"],
+          "element": "record",
+          "stride": 36,
+          "fields": [
+            {"name": "item", "element": "le-s16"},
+            {"name": "halfword_2", "element": "le-s16", "default": 0},
+            {"name": "results", "element": "le-s16", "capacity": 8, "default": []},
+            {"name": "weights", "element": "le-s16", "capacity": 8, "default": []}
+          ],
+          "records": [
+            {"item": 429, "results": [313, 368, 390, 409], "weights": [25, 30, 25, 20]},
+            {"item": 430, "results": [305, 328, 353, 391, 410], "weights": [20, 20, 20, 20, 20]},
+            {"item": 431, "results": [285, 338, 361, 382], "weights": [25, 25, 25, 25]},
+            {"item": 432, "results": [329, 347, 354, 374, 403], "weights": [20, 15, 25, 25, 15]},
+            {"item": 433, "results": [314, 295, 286, 348, 355], "weights": [20, 15, 15, 25, 25]},
+            {"item": 434, "results": [272, 296, 306, 330, 362], "weights": [15, 15, 15, 30, 25]},
+            {"item": 435, "results": [273, 339, 369, 375, 274, 392], "weights": [20, 20, 20, 15, 10, 15]},
+            {"item": 436, "results": [275, 331, 356, 376, 393], "weights": [10, 30, 25, 20, 15]},
+            {"item": 437, "results": [276, 297, 315, 332, 357, 363, 377], "weights": [5, 10, 15, 20, 15, 15, 20]},
+            {"item": 417, "halfword_2": 1, "results": [288], "weights": [100]},
+            {"item": 418, "halfword_2": 1, "results": [277], "weights": [100]},
+            {"item": 419, "halfword_2": 1, "results": [289], "weights": [100]},
+            {"item": 420, "halfword_2": 1, "results": [278], "weights": [100]},
+            {"item": 421, "halfword_2": 1, "results": [298], "weights": [100]},
+            {"item": 422, "halfword_2": 1, "results": [299], "weights": [100]},
+            {"item": 423, "halfword_2": 1, "results": [307], "weights": [100]},
+            {"item": 424, "halfword_2": 1, "results": [308], "weights": [100]},
+            {"item": 425, "halfword_2": 1, "results": [316], "weights": [100]},
+            {"item": 426, "halfword_2": 1, "results": [317], "weights": [100]},
+            {"item": 427, "halfword_2": 1, "results": [318], "weights": [100]},
+            {"item": -1}
+          ]
+        },
+        {
+          "name": "sound_ids",
+          "address": "0x0810cf28",
+          "end": "0x0810cf2c",
+          "consumers": ["recon/tla/raw/0810b1b4.s"],
+          "element": "s8",
+          "stride": 1,
+          "values": [82, 84, 88, 87]
+        },
+        {
+          "name": "multipliers",
+          "address": "0x0810cf2c",
+          "end": "0x0810cf3b",
+          "consumers": ["recon/tla/raw/0810b1b4.s"],
+          "element": "s8",
+          "stride": 1,
+          "values": [2, 4, 7, 8, 8, 10, 12, 16, 14, 15, 18, 20, 20, 22, 25]
+        },
+        {"name": "alignment", "address": "0x0810cf3b", "end": "0x08118000", "element": "u8", "stride": 1, "fill": 0}
+      ]
+    }
+  ]
+}

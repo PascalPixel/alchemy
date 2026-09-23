@@ -30,9 +30,8 @@ pub(in crate::build_assets) struct NativePaths {
 }
 impl NativePaths {
     pub fn of(target: &DecompTarget) -> Self {
-        let game = target.game_dir();
         Self {
-            index: format!("{game}/SOURCE.JSON"),
+            index: format!("{}/private-inputs.json", target.recon_dir()),
             colors: format!("{}/GRAPHICS/COMMON/PALETTE.JSON", target.source_dir),
             recipes: format!("{}/GRAPHICS/COMMON/COMPRESSION.JSON", target.source_dir),
             source: target.source_dir,
@@ -110,7 +109,8 @@ fn decode_buffer(input: &Value, rom: &[u8], fallback: usize) -> Result<Vec<u8>, 
 }
 
 /// Decode the stream of `plan` that starts at `stored[start]`. The extent is
-/// the stored bytes the stream occupies, trailing lookahead included.
+/// the stored bytes the stream occupies, its alignment included when the
+/// plan names its stored extent.
 fn decode_stream(stored: &[u8], start: usize, plan: &Value) -> Result<(Vec<u8>, usize), String> {
     use psynergy::assets::lz;
     let maximum = address(&plan["decoded_size"])? as u64;
@@ -139,13 +139,7 @@ fn decode_stream(stored: &[u8], start: usize, plan: &Value) -> Result<(Vec<u8>, 
     let (decoded, cursor) = decoded.map_err(|e| e.to_string())?;
     let extent = match plan.get("encoded_size") {
         Some(size) => address(size)?,
-        None => {
-            cursor - start
-                + plan
-                    .get("lookahead")
-                    .and_then(Value::as_str)
-                    .map_or(0, |text| text.len() / 2)
-        }
+        None => cursor - start,
     };
     Ok((decoded, extent))
 }

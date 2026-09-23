@@ -42,7 +42,6 @@
         "decoded_size": 3465,
         "encoded_size": 1600,
         "tilemap_length": 3464,
-        "lookahead": "000000",
         "component": "map-metatiles-2x2",
         "transform_mode": 1,
         "metatiles": 433,
@@ -55,7 +54,6 @@
         "decoded_size": 4,
         "encoded_size": 8,
         "records": [[0, 0, 0, 0]],
-        "lookahead": "0000",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -71,7 +69,6 @@
           ],
           "0xffff"
         ],
-        "lookahead": "00",
         "component": "map-animation-queues",
         "word_size": 2,
         "terminators": ["0xfe00", "0xffff"]
@@ -85,7 +82,6 @@
           ["0x3f42"], ["0x1009", 20], ["0x100a", 20], ["0x100b", 20], ["0x100c", 20], ["0x100d", 20], ["0x100e", 20],
           ["0x100d", 20], ["0x100c", 20], ["0x100b", 20], ["0x100a", 20], ["0xfe00"], ["0xffff"]
         ],
-        "lookahead": "0000",
         "component": "map-blend-animation",
         "word_size": 2
       },
@@ -93,7 +89,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x08518cd4",
-        "size": "0x8",
+        "size": "0x6",
         "record_size": 3,
         "segments": [
           {
@@ -111,8 +107,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x08518cda", "end": "0x08518cdc", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/SORU_DOU/SORU_DOU.BIN",

@@ -4,7 +4,7 @@
 
 /*
  * Field names/offsets for name/name_flags/hp_ratio/pp_ratio come from the
- * sibling draft games/THE BROKEN SEAL/recon/en/main/08079460.c (BattleUnit_Assign),
+ * sibling draft recon/tbs/en/main/08079460.c (BattleUnit_Assign),
  * which zero-inits the same OWNER_STATE_SIZE (332-byte) record through the
  * same Owner_GetState allocator and sets the same two fields to the same
  * 0x4000 constant at these exact offsets. inventory[15]/class_id reuse the

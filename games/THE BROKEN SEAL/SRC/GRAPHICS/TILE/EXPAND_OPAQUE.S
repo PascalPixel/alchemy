@@ -1,3 +1,10 @@
+@ Packs 8-bit pixels into 4bpp tile rows, overwriting the destination. It runs
+@ from a 124-byte RAM copy of these 112 bytes and the three mask words after
+@ them (EXPAND_OPAQUE_MASKS.S, a data table without credit), loads those
+@ masks with add sl, pc, #100 and saves r5-sl without lr; GCC addresses
+@ constants through its literal pool and saves lr with any register. Every
+@ TBS and TLA edition has these bytes.
+@ credit: library — TBS/TLA common ARM text and tile kernel bank
 .syntax unified
 .text
 	.arm
@@ -34,6 +41,3 @@ Func_08015e10:
 	bne .L_08015e1c
 	pop	{r5, r6, r7, r8, r9, sl}
 	bx	lr
-	.4byte 0x00ff00ff
-	.4byte 0x0000ffff
-	.4byte 0x11111111

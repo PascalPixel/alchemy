@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "kind": "typed-table",
+  "address": "0x080028a8",
+  "size": 65536,
+  "segments": [
+    {
+      "name": "unsigned_divide_reciprocals",
+      "address": "0x080028a8",
+      "end": "0x080128a8",
+      "consumers": ["SRC/SYSTEM/IWRAM_RUNTIME.S"],
+      "element": "le-u32",
+      "stride": 4,
+      "generator": {"formula": "ceiling-reciprocal", "numerator_bits": 32}
+    }
+  ]
+}

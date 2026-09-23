@@ -42,7 +42,6 @@
         "decoded_size": 3745,
         "encoded_size": 2072,
         "tilemap_length": 3744,
-        "lookahead": "00",
         "component": "map-metatiles-2x2",
         "transform_mode": 1,
         "metatiles": 468,
@@ -55,7 +54,6 @@
         "decoded_size": 16,
         "encoded_size": 12,
         "records": [[0, 0, 0, 0], [0, 4, 0, 0], [0, 2, 0, 0], [0, 252, 0, 0]],
-        "lookahead": "",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -121,7 +119,6 @@
           ],
           "0xffff"
         ],
-        "lookahead": "0000",
         "component": "map-animation-queues",
         "word_size": 2,
         "terminators": ["0xfe00", "0xffff"]
@@ -136,7 +133,6 @@
           ["0x100b", 4], ["0x100c", 4], ["0x100b", 4], ["0x100a", 4], ["0x1009", 4], ["0x1008", 4], ["0x1007", 4],
           ["0x1006", 4], ["0xfe00"], ["0xffff"]
         ],
-        "lookahead": "000000",
         "component": "map-blend-animation",
         "word_size": 2
       },
@@ -144,7 +140,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x086136b8",
-        "size": "0xc",
+        "size": "0x9",
         "record_size": 3,
         "segments": [
           {
@@ -162,8 +158,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x086136c1", "end": "0x086136c4", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_IRIGUCHI/MAKYURI_IRIGUCHI.BIN",

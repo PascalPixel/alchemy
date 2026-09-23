@@ -1,0 +1,2760 @@
+{
+  "format": 5,
+  "kind": "reconstruction-composition-contracts",
+  "original_translation_units": "unknown",
+  "units": [
+    {
+      "id": "tla-audio-resume-direct-sound",
+      "game": "tla",
+      "source": "games/COMMON/SRC/SOUND/AUDIO_ENGINE_RESUME_DIRECT_SOUND.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x081c2640",
+          "extent": 60,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "tla-audio-track-calc-output",
+      "game": "tla",
+      "source": "games/COMMON/SRC/SOUND/MUSIC_TRACK_CALC_OUTPUT.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x081c28e0",
+          "extent": 180,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "tla-audio-cgb-channel-mute",
+      "game": "tla",
+      "source": "games/COMMON/SRC/SOUND/CGB_CHANNEL_MUTE.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x081c2a3c",
+          "extent": 80,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "tla-audio-cgb-note-pan-envelope",
+      "game": "tla",
+      "source": "games/COMMON/SRC/SOUND/CGB_NOTE_UPDATE_PAN_ENVELOPE.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x081c2a8c",
+          "extent": 104,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "tla-audio-player-set-volume",
+      "game": "tla",
+      "source": "games/COMMON/SRC/SOUND/MUSIC_PLAYER_SET_VOLUME.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x081c2f68",
+          "extent": 104,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "tla-audio-player-set-pitch",
+      "game": "tla",
+      "source": "games/COMMON/SRC/SOUND/MUSIC_PLAYER_SET_PITCH.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x081c2fd0",
+          "extent": 116,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "tla-audio-player-set-pan",
+      "game": "tla",
+      "source": "games/COMMON/SRC/SOUND/MUSIC_PLAYER_SET_PAN.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x081c3044",
+          "extent": 104,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "tla-audio-track-read-voice-target",
+      "game": "tla",
+      "source": "games/COMMON/SRC/SOUND/MUSIC_TRACK_READ_VOICE_TARGET.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x081c3340",
+          "extent": 72,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "tla-system-constant-zero-result",
+      "game": "tla",
+      "source": "games/THE LOST AGE/SRC/SYSTEM/CONSTANT_ZERO_RESULT.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x080132cc",
+          "extent": 4,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "tla-game-flag-get-byte",
+      "game": "tla",
+      "source": "games/THE LOST AGE/SRC/GAME/FLAGS/GET_BYTE.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {
+        "GameFlagBytes": {
+          "address": "0x02000040",
+          "kind": "data"
+        }
+      },
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x08016d5c",
+          "extent": 16,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "tla-game-flag-set-byte",
+      "game": "tla",
+      "source": "games/THE LOST AGE/SRC/GAME/FLAGS/SET_BYTE.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {
+        "GameFlagBytes": {
+          "address": "0x02000040",
+          "kind": "data"
+        }
+      },
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x08016d6c",
+          "extent": 16,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "tla-game-flag-get-nibble",
+      "game": "tla",
+      "source": "games/THE LOST AGE/SRC/GAME/FLAGS/GET_NIBBLE.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {
+        "GameFlagBytes": {
+          "address": "0x02000040",
+          "kind": "data"
+        }
+      },
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x08016db4",
+          "extent": 28,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "tla-battle-effect-counters",
+      "game": "tla",
+      "source": "games/THE LOST AGE/SRC/BATTLE/EFFECT/COUNTERS.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x080caf70",
+          "extent": 84,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "tla-audio-pcm-key-to-frequency",
+      "game": "tla",
+      "source": "games/COMMON/SRC/SOUND/PCM_KEY_TO_FREQUENCY.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {
+        "Audio_UmulHigh32": {
+          "address": "0x081c127c",
+          "kind": "thumb"
+        },
+        "Sound_PcmFrequencySteps": {
+          "address": "0x081c3580",
+          "kind": "data"
+        },
+        "Sound_PcmPitchCodes": {
+          "address": "0x081c34cc",
+          "kind": "data"
+        }
+      },
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x081c1e98",
+          "extent": 100,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x081c1efc",
+          "extent": 2,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "tla-audio-music-track-dispatch-stream-command",
+      "game": "tla",
+      "source": "games/COMMON/SRC/SOUND/MUSIC_TRACK_DISPATCH_STREAM_COMMAND.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {
+        "Runtime_InvokeWorkEntryWithArgs": {
+          "address": "0x08017880",
+          "kind": "thumb"
+        },
+        "Sound_ExtendedCommandTable": {
+          "address": "0x081c36e4",
+          "kind": "data"
+        }
+      },
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x081c330c",
+          "extent": 32,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "tla-audio-initialize-cgb",
+      "game": "tla",
+      "source": "games/COMMON/SRC/SOUND/INITIALIZE_CGB.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {
+        "AudioEngine_SetPcmRate": {
+          "address": "0x081c2434",
+          "kind": "thumb"
+        },
+        "Bios_CpuSet": {
+          "address": "0x08016df8",
+          "kind": "thumb"
+        },
+        "CgbAudio_Update": {
+          "address": "0x081c2af4",
+          "kind": "thumb"
+        },
+        "CgbChannel_Mute": {
+          "address": "0x081c2a3c",
+          "kind": "thumb"
+        },
+        "Cgb_KeyToFrequency": {
+          "address": "0x081c2994",
+          "kind": "thumb"
+        },
+        "MusicPlayer_StepFade": {
+          "address": "0x081c2818",
+          "kind": "thumb"
+        },
+        "MusicTrack_CalcOutput": {
+          "address": "0x081c28e0",
+          "kind": "thumb"
+        },
+        "MusicTrack_DispatchStreamCommand": {
+          "address": "0x081c330c",
+          "kind": "thumb"
+        },
+        "MusicTrack_OperateWorkByte": {
+          "address": "0x081c31b4",
+          "kind": "thumb"
+        },
+        "MusicTrack_ReleaseKey": {
+          "address": "0x081c1e08",
+          "kind": "thumb"
+        },
+        "MusicTrack_SetLfoSpeedFromCommand": {
+          "address": "0x081c1e70",
+          "kind": "thumb"
+        },
+        "MusicTrack_SetModulationFromCommand": {
+          "address": "0x081c1e84",
+          "kind": "thumb"
+        },
+        "MusicTrack_Stop": {
+          "address": "0x081c1b94",
+          "kind": "thumb"
+        },
+        "Sound_CommandTable": {
+          "address": "0x02006800",
+          "kind": "data"
+        },
+        "Value_00000000": {
+          "address": "0x00000000",
+          "kind": "data"
+        }
+      },
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x081c21f8",
+          "extent": 280,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "tla-audio-sound",
+      "game": "tla",
+      "source": "games/COMMON/SRC/SOUND/SOUND.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {
+        "AudioEngine_Initialize": {
+          "address": "0x081c233c",
+          "kind": "thumb"
+        },
+        "AudioEngine_RunMixerTick": {
+          "address": "0x081c128c",
+          "kind": "thumb"
+        },
+        "AudioEngine_SetMode": {
+          "address": "0x081c24d8",
+          "kind": "thumb"
+        },
+        "Audio_ResumePlayer": {
+          "address": "0x081c1f00",
+          "kind": "thumb"
+        },
+        "Bios_CpuSet": {
+          "address": "0x08016df8",
+          "kind": "thumb"
+        },
+        "CgbAudio_Initialize": {
+          "address": "0x081c21f8",
+          "kind": "thumb"
+        },
+        "MusicPlayer_BeginFadeOut": {
+          "address": "0x081c1f1c",
+          "kind": "thumb"
+        },
+        "MusicPlayer_Initialize": {
+          "address": "0x081c267c",
+          "kind": "thumb"
+        },
+        "MusicPlayer_StartSong": {
+          "address": "0x081c26f4",
+          "kind": "thumb"
+        },
+        "MusicPlayer_Stop": {
+          "address": "0x081c27d8",
+          "kind": "thumb"
+        },
+        "Sound_CgbNotes": {
+          "address": "0x02006890",
+          "kind": "data"
+        },
+        "Sound_Mixer": {
+          "address": "0x081c1310",
+          "kind": "thumb"
+        },
+        "Sound_PlayerCount": {
+          "address": "0x00000008",
+          "kind": "data"
+        },
+        "Sound_PlayerSlots": {
+          "address": "0x081c44d0",
+          "kind": "data"
+        },
+        "Sound_SongTable": {
+          "address": "0x081c4530",
+          "kind": "data"
+        },
+        "Sound_Work": {
+          "address": "0x02005850",
+          "kind": "data"
+        },
+        "Sound_WorkBytes": {
+          "address": "0x02006b50",
+          "kind": "data"
+        }
+      },
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x081c1f3c",
+          "extent": 120,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x081c1fb4",
+          "extent": 10,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x081c1fc0",
+          "extent": 44,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x081c1fec",
+          "extent": 76,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x081c2038",
+          "extent": 84,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x081c208c",
+          "extent": 52,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x081c20c0",
+          "extent": 52,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x081c20f4",
+          "extent": 44,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x081c2120",
+          "extent": 10,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x081c212c",
+          "extent": 44,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x081c2158",
+          "extent": 14,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "tla-audio-engine-initialize",
+      "game": "tla",
+      "source": "games/COMMON/SRC/SOUND/ENGINE_INITIALIZE.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {
+        "AudioEngine_ResumeDirectSound": {
+          "address": "0x081c2640",
+          "kind": "thumb"
+        },
+        "Audio_EmptyCallback": {
+          "address": "0x081c342c",
+          "kind": "thumb"
+        },
+        "Bios_CpuSet": {
+          "address": "0x08016df8",
+          "kind": "thumb"
+        },
+        "Math_Div": {
+          "address": "0x08002054",
+          "kind": "thumb"
+        },
+        "MusicTrack_HandleNote": {
+          "address": "0x081c07a2",
+          "kind": "thumb"
+        },
+        "Sound_CommandTable": {
+          "address": "0x02006800",
+          "kind": "data"
+        },
+        "Sound_FrameLengths": {
+          "address": "0x081c35b0",
+          "kind": "data"
+        },
+        "Sound_LoadCommandTable": {
+          "address": "0x081c171c",
+          "kind": "thumb"
+        },
+        "_call_via_r1": {
+          "address": "0x0801787c",
+          "kind": "thumb"
+        }
+      },
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x081c233c",
+          "extent": 248,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x081c2434",
+          "extent": 164,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x081c24d8",
+          "extent": 152,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x081c2570",
+          "extent": 84,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x081c25c4",
+          "extent": 124,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "tla-music-player",
+      "game": "tla",
+      "source": "games/COMMON/SRC/SOUND/MUSIC_PLAYER.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {
+        "AudioCommand_InvokeSlot35": {
+          "address": "0x081c2328",
+          "kind": "thumb"
+        },
+        "MusicPlayer_Tick": {
+          "address": "0x081c09d0",
+          "kind": "thumb"
+        },
+        "MusicTrack_Stop": {
+          "address": "0x081c1b94",
+          "kind": "thumb"
+        },
+        "AudioEngine_SetMode": {
+          "address": "0x081c24d8",
+          "kind": "thumb"
+        }
+      },
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x081c267c",
+          "extent": 120,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x081c26f4",
+          "extent": 228,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x081c27d8",
+          "extent": 64,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "tla-music-player-step-fade",
+      "game": "tla",
+      "source": "games/COMMON/SRC/SOUND/MUSIC_PLAYER_STEP_FADE.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {
+        "MusicTrack_Stop": {
+          "address": "0x081c1b94",
+          "kind": "thumb"
+        }
+      },
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x081c2818",
+          "extent": 200,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "tla-cgb-key-to-frequency",
+      "game": "tla",
+      "source": "games/COMMON/SRC/SOUND/CGB_KEY_TO_FREQUENCY.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {
+        "Sound_CgbPitchCodes": {
+          "address": "0x081c35c8",
+          "kind": "data"
+        },
+        "Sound_CgbFrequencySteps": {
+          "address": "0x081c364c",
+          "kind": "data"
+        },
+        "Sound_NoisePitchCodes": {
+          "address": "0x081c3664",
+          "kind": "data"
+        }
+      },
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x081c2994",
+          "extent": 168,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "tla-music-player-set-modulation-depth",
+      "game": "tla",
+      "source": "games/COMMON/SRC/SOUND/MUSIC_PLAYER_SET_MODULATION_DEPTH.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {
+        "MusicTrack_ClearModulation": {
+          "address": "0x081c30ac",
+          "kind": "thumb"
+        }
+      },
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x081c30cc",
+          "extent": 116,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "tla-music-player-set-lfo-speed",
+      "game": "tla",
+      "source": "games/COMMON/SRC/SOUND/MUSIC_PLAYER_SET_LFO_SPEED.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {
+        "MusicTrack_ClearModulation": {
+          "address": "0x081c30ac",
+          "kind": "thumb"
+        }
+      },
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x081c3140",
+          "extent": 116,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "tla-music-track-clear-modulation",
+      "game": "tla",
+      "source": "games/COMMON/SRC/SOUND/MUSIC_TRACK_CLEAR_MODULATION.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x081c30ac",
+          "extent": 30,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "tla-music-track-set-voice-decay",
+      "game": "tla",
+      "source": "games/COMMON/SRC/SOUND/MUSIC_TRACK_SET_VOICE_DECAY.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x081c33b0",
+          "extent": 18,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "tla-music-track-set-voice-sustain",
+      "game": "tla",
+      "source": "games/COMMON/SRC/SOUND/MUSIC_TRACK_SET_VOICE_SUSTAIN.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x081c33c4",
+          "extent": 18,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "tla-music-track-set-voice-release",
+      "game": "tla",
+      "source": "games/COMMON/SRC/SOUND/MUSIC_TRACK_SET_VOICE_RELEASE.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x081c33d8",
+          "extent": 18,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "tla-music-track-set-tail-level",
+      "game": "tla",
+      "source": "games/COMMON/SRC/SOUND/MUSIC_TRACK_SET_TAIL_LEVEL.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x081c33ec",
+          "extent": 12,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "tla-music-track-set-tail-length",
+      "game": "tla",
+      "source": "games/COMMON/SRC/SOUND/MUSIC_TRACK_SET_TAIL_LENGTH.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x081c33f8",
+          "extent": 12,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "tla-music-track-operate-work-byte",
+      "game": "tla",
+      "source": "games/THE LOST AGE/SRC/SOUND/MUSIC_TRACK_OPERATE_WORK_BYTE.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {
+        "Sound_JumpCommand": {
+          "address": "0x02006804",
+          "kind": "data"
+        },
+        "_call_via_r2": {
+          "address": "0x08017880",
+          "kind": "thumb"
+        }
+      },
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x081c31b4",
+          "extent": 344,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "venus-lighthouse-top-scene",
+      "game": "tla",
+      "source": "games/THE LOST AGE/SRC/FIELD/VINASU_CHOJO/AERIE.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_64e",
+      "absolute_symbols": {
+        "Actor_Get": {
+          "address": "0x02009ba4",
+          "kind": "thumb"
+        },
+        "Actor_SetAnimation": {
+          "address": "0x02009bec",
+          "kind": "thumb"
+        },
+        "Actor_SetSpriteFlags": {
+          "address": "0x02009b6c",
+          "kind": "thumb"
+        },
+        "Audio_PlayCue": {
+          "address": "0x02009cdc",
+          "kind": "thumb"
+        },
+        "Event_Begin": {
+          "address": "0x02009b94",
+          "kind": "thumb"
+        },
+        "Event_End": {
+          "address": "0x02009b9c",
+          "kind": "thumb"
+        },
+        "Event_SetMode": {
+          "address": "0x02009ca4",
+          "kind": "thumb"
+        },
+        "Event_Wait": {
+          "address": "0x02009b8c",
+          "kind": "thumb"
+        },
+        "GameFlag_Set": {
+          "address": "0x02009b1c",
+          "kind": "thumb"
+        },
+        "Map_CopyCellAttributes": {
+          "address": "0x02009b5c",
+          "kind": "thumb"
+        },
+        "Map_CopyCellsTo": {
+          "address": "0x02009b54",
+          "kind": "thumb"
+        },
+        "Message_Show": {
+          "address": "0x02009b7c",
+          "kind": "thumb"
+        },
+        "Object_SetPalette": {
+          "address": "0x02009c14",
+          "kind": "thumb"
+        },
+        "Party_GetLeaderActor": {
+          "address": "0x02009cc4",
+          "kind": "thumb"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
+        },
+        "gSceneEntrances": {
+          "address": "0x02009e58",
+          "kind": "data"
+        },
+        "gSceneEvents": {
+          "address": "0x0200a408",
+          "kind": "data"
+        },
+        "gSceneExits": {
+          "address": "0x0200a0f8",
+          "kind": "data"
+        },
+        "gScenePlacements": {
+          "address": "0x0200a1b0",
+          "kind": "data"
+        },
+        "gScenePlacementsEntrance99": {
+          "address": "0x0200a378",
+          "kind": "data"
+        }
+      },
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x02000038",
+          "extent": 70,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02000650",
+          "extent": 8,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02000658",
+          "extent": 4,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0200065c",
+          "extent": 8,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02000664",
+          "extent": 20,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02000678",
+          "extent": 12,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02000684",
+          "extent": 40,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02000874",
+          "extent": 96,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x020008d4",
+          "extent": 40,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x020008fc",
+          "extent": 40,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02000924",
+          "extent": 116,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02000998",
+          "extent": 116,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02000a0c",
+          "extent": 8,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02000a14",
+          "extent": 4,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02000b28",
+          "extent": 4,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "idejima-island-scene",
+      "game": "tla",
+      "source": "games/THE LOST AGE/SRC/FIELD/IDEJIMA/ISLAND.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_650",
+      "absolute_symbols": {
+        "Actor_SetAnimation": {
+          "address": "0x0200b240",
+          "kind": "thumb"
+        },
+        "Audio_PlayCue": {
+          "address": "0x0200b328",
+          "kind": "thumb"
+        },
+        "Map_CopyCellsTo": {
+          "address": "0x0200b188",
+          "kind": "thumb"
+        },
+        "Object_Create": {
+          "address": "0x0200b178",
+          "kind": "thumb"
+        },
+        "Object_SetMode": {
+          "address": "0x0200b168",
+          "kind": "thumb"
+        },
+        "Object_SetScript": {
+          "address": "0x0200b170",
+          "kind": "thumb"
+        },
+        "Task_Wait": {
+          "address": "0x0200b138",
+          "kind": "thumb"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
+        },
+        "gInput": {
+          "address": "0x03001150",
+          "kind": "data"
+        },
+        "gScanlineWaveCount": {
+          "address": "0x0200bc10",
+          "kind": "data"
+        },
+        "gScanlineWavePage": {
+          "address": "0x0200bc14",
+          "kind": "data"
+        },
+        "gSceneEntrances": {
+          "address": "0x0200b7f8",
+          "kind": "data"
+        },
+        "gSceneEvents": {
+          "address": "0x0200b8ec",
+          "kind": "data"
+        },
+        "gSceneEventsEntrance1": {
+          "address": "0x0200b8f8",
+          "kind": "data"
+        },
+        "gSceneEventsWake": {
+          "address": "0x0200b910",
+          "kind": "data"
+        },
+        "gSceneExits": {
+          "address": "0x0200b828",
+          "kind": "data"
+        },
+        "gScenePlacements": {
+          "address": "0x0200b844",
+          "kind": "data"
+        },
+        "gSpawnedObjectScript": {
+          "address": "0x0200b97c",
+          "kind": "data"
+        }
+      },
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x02000038",
+          "extent": 8,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02000040",
+          "extent": 4,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02000044",
+          "extent": 8,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0200004c",
+          "extent": 8,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02000054",
+          "extent": 68,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0200153c",
+          "extent": 28,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02001650",
+          "extent": 58,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0200168c",
+          "extent": 76,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02002c30",
+          "extent": 2,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02002c34",
+          "extent": 2,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02002c38",
+          "extent": 44,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02002f84",
+          "extent": 4,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "venus-lighthouse-approach-scene",
+      "game": "tla",
+      "source": "games/THE LOST AGE/SRC/FIELD/VINASU_IRIGUCHI/ENTRANCE.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_64d",
+      "absolute_symbols": {
+        "Audio_PlayCue": {
+          "address": "0x0200aa64",
+          "kind": "thumb"
+        },
+        "ParticleTrail_Spawn": {
+          "address": "0x0200a60c",
+          "kind": "thumb"
+        },
+        "__modsi3": {
+          "address": "0x0200a7dc",
+          "kind": "thumb"
+        },
+        "gSceneEntrances": {
+          "address": "0x0200ad20",
+          "kind": "data"
+        },
+        "gSceneEvents": {
+          "address": "0x0200af88",
+          "kind": "data"
+        },
+        "gSceneExits": {
+          "address": "0x0200adf8",
+          "kind": "data"
+        },
+        "gScenePlacements": {
+          "address": "0x0200ae08",
+          "kind": "data"
+        }
+      },
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x02000038",
+          "extent": 8,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02000040",
+          "extent": 4,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02000044",
+          "extent": 8,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0200004c",
+          "extent": 8,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0200009c",
+          "extent": 42,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02000120",
+          "extent": 8,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02000308",
+          "extent": 4,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "tla-script-operands",
+      "game": "tla",
+      "source": "games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/OPERANDS.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {
+        "Data_0802f2dc": {
+          "address": "0x0802f2dc",
+          "kind": "data"
+        }
+      },
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x08025b58",
+          "extent": 42,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08025b84",
+          "extent": 48,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08025bb4",
+          "extent": 46,
+          "state": "retained-assembly"
+        },
+        {
+          "address": "0x08025be4",
+          "extent": 40,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08025c0c",
+          "extent": 40,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08025c34",
+          "extent": 40,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08025c5c",
+          "extent": 46,
+          "state": "retained-assembly"
+        },
+        {
+          "address": "0x08025c8c",
+          "extent": 40,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08025cb4",
+          "extent": 40,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08025cdc",
+          "extent": 40,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08025d04",
+          "extent": 40,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08025d2c",
+          "extent": 40,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08025d54",
+          "extent": 40,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08025d7c",
+          "extent": 40,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08025da4",
+          "extent": 40,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08025dcc",
+          "extent": 40,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08025df4",
+          "extent": 40,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08025e1c",
+          "extent": 40,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08025e44",
+          "extent": 40,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08025e6c",
+          "extent": 40,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08025e94",
+          "extent": 40,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08025ebc",
+          "extent": 42,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08025ee8",
+          "extent": 58,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08025f24",
+          "extent": 58,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08025f60",
+          "extent": 58,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08025f9c",
+          "extent": 52,
+          "state": "retained-assembly"
+        },
+        {
+          "address": "0x08025fd0",
+          "extent": 58,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0802600c",
+          "extent": 58,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08026048",
+          "extent": 58,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08026084",
+          "extent": 58,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080260c0",
+          "extent": 58,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080260fc",
+          "extent": 60,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08026138",
+          "extent": 60,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08026174",
+          "extent": 60,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080261b0",
+          "extent": 40,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080261d8",
+          "extent": 40,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08026200",
+          "extent": 58,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0802623c",
+          "extent": 58,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08026278",
+          "extent": 56,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080262b0",
+          "extent": 56,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080262e8",
+          "extent": 56,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "tla-script-interpreter-control",
+      "game": "tla",
+      "source": "games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/INTERPRETER_CONTROL.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x08024c50",
+          "extent": 30,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "tla-math-curve",
+      "game": "tla",
+      "source": "games/THE LOST AGE/SRC/LIB/CURVE.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x0802d23c",
+          "extent": 10,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0802d248",
+          "extent": 32,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0802d268",
+          "extent": 32,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0802d288",
+          "extent": 40,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "tla-math-curve-lookup",
+      "game": "tla",
+      "source": "games/THE LOST AGE/SRC/LIB/CURVE_LOOKUP.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x0802d3ec",
+          "extent": 20,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "tla-script-skip-command",
+      "game": "tla",
+      "source": "games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/SKIP_COMMAND.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x08024ed4",
+          "extent": 10,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "tla-script-operands-clear-byte54",
+      "game": "tla",
+      "source": "games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/OPERANDS_CLEAR_BYTE54.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x08023f14",
+          "extent": 18,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "tla-script-operands-set-byte54",
+      "game": "tla",
+      "source": "games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/OPERANDS_SET_BYTE54.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x08023f28",
+          "extent": 18,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "tla-object-set-position-and-reset-motion",
+      "game": "tla",
+      "source": "games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/MOTION_SET_POSITION_AND_RESET_MOTION.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x0802471c",
+          "extent": 26,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "tla-battle-set-runtime-flag-bit0",
+      "game": "tla",
+      "source": "games/THE LOST AGE/SRC/BATTLE/EVENT_QUEUE_SET_FLAG_BIT0.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x081201b4",
+          "extent": 16,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "tla-camera-store-scene-parameters",
+      "game": "tla",
+      "source": "games/THE LOST AGE/SRC/GRAPHICS/CAMERA_STORE_SCENE_PARAMETERS.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x08015768",
+          "extent": 16,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "tla-ui-count-icon-table-entries",
+      "game": "tla",
+      "source": "games/THE LOST AGE/SRC/GRAPHICS/TILE/COUNT_TABLE_ENTRIES.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {
+        "Data_0804f124": {
+          "address": "0x0804f124",
+          "kind": "data"
+        },
+        "Data_0804eb58": {
+          "address": "0x0804eb58",
+          "kind": "data"
+        }
+      },
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x0803d4bc",
+          "extent": 20,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "tla-ui-count-second-table-entries",
+      "game": "tla",
+      "source": "games/THE LOST AGE/SRC/GRAPHICS/WINDOW/COUNT_SECOND_TABLE_ENTRIES.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {
+        "Data_08054e24": {
+          "address": "0x08054e24",
+          "kind": "data"
+        },
+        "Data_08054a14": {
+          "address": "0x08054a14",
+          "kind": "data"
+        }
+      },
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x0803d4d0",
+          "extent": 20,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "tla-owner-get-record-stride84",
+      "game": "tla",
+      "source": "games/THE LOST AGE/SRC/GAME/CHARACTER/GET_RECORD_STRIDE84.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {
+        "Data_080c15f4": {
+          "address": "0x080c15f4",
+          "kind": "data"
+        }
+      },
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x080b0288",
+          "extent": 16,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "tla-object-motion-move-halfway",
+      "game": "tla",
+      "source": "games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/MOTION_MOVE_HALFWAY_TOWARD_TARGET.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x080d74f0",
+          "extent": 52,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "tla-object-motion-move-halfway-copy",
+      "game": "tla",
+      "source": "games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/MOTION_MOVE_HALFWAY_TOWARD_TARGET_COPY.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x080d870c",
+          "extent": 52,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "tla-battle-placement-get-step-pair",
+      "game": "tla",
+      "source": "games/THE LOST AGE/SRC/BATTLE/PARTY/GET_STEP_PAIR.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x0811b16c",
+          "extent": 20,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "tla-battle-effects-data-get-resource-group",
+      "game": "tla",
+      "source": "games/THE LOST AGE/SRC/BATTLE/EFFECT/DATA_GET_RESOURCE_GROUP.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x080c9920",
+          "extent": 20,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "tla-script-load-main-script",
+      "game": "tla",
+      "source": "games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/LOAD_MAIN_SCRIPT.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x08024ddc",
+          "extent": 16,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "tla-scene-state-set-halfword",
+      "game": "tla",
+      "source": "games/THE LOST AGE/SRC/SYSTEM/SCENE_STATE_SET_HALFWORD.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x081a1288",
+          "extent": 12,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "tla-resource-table-entry",
+      "game": "tla",
+      "source": "games/THE LOST AGE/SRC/SYSTEM/RESOURCE/TABLE_ENTRY.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x08013300",
+          "extent": 12,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "tla-effect-slot-set-position",
+      "game": "tla",
+      "source": "games/THE LOST AGE/SRC/BATTLE/EFFECT/SLOT_SET_POSITION.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x080ebe94",
+          "extent": 18,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "candidate-resource-64d-020026f4",
+      "game": "tla",
+      "source": "recon/tla/en/overlays/resource_64d_c_020026f4.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_64d",
+      "absolute_symbols": {
+        "Func_0200a7ec": {
+          "address": "0x0200a7ec",
+          "kind": "thumb"
+        },
+        "Func_0200a814": {
+          "address": "0x0200a814",
+          "kind": "thumb"
+        },
+        "Func_0200a824": {
+          "address": "0x0200a824",
+          "kind": "thumb"
+        },
+        "Func_0200a834": {
+          "address": "0x0200a834",
+          "kind": "thumb"
+        },
+        "Func_0200a83c": {
+          "address": "0x0200a83c",
+          "kind": "thumb"
+        },
+        "Func_0200a844": {
+          "address": "0x0200a844",
+          "kind": "thumb"
+        },
+        "Func_0200aa0c": {
+          "address": "0x0200aa0c",
+          "kind": "thumb"
+        }
+      },
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x020026f4",
+          "extent": 188,
+          "state": "retained-assembly"
+        }
+      ]
+    },
+    {
+      "id": "candidate-resource-64d-02000510",
+      "game": "tla",
+      "source": "recon/tla/en/overlays/resource_64d_c_02000510.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_64d",
+      "absolute_symbols": {
+        "Func_020023a4": {
+          "address": "0x0200a3a4",
+          "kind": "thumb"
+        },
+        "Func_020026f4": {
+          "address": "0x0200a6f4",
+          "kind": "thumb"
+        },
+        "Func_020027b0": {
+          "address": "0x0200a7b0",
+          "kind": "thumb"
+        },
+        "Func_02002854": {
+          "address": "0x0200a854",
+          "kind": "thumb"
+        },
+        "Func_020028ac": {
+          "address": "0x0200a8ac",
+          "kind": "thumb"
+        },
+        "Func_020028b4": {
+          "address": "0x0200a8b4",
+          "kind": "thumb"
+        },
+        "Func_020028bc": {
+          "address": "0x0200a8bc",
+          "kind": "thumb"
+        },
+        "Func_020028c4": {
+          "address": "0x0200a8c4",
+          "kind": "thumb"
+        },
+        "Func_020028cc": {
+          "address": "0x0200a8cc",
+          "kind": "thumb"
+        },
+        "Func_020028d4": {
+          "address": "0x0200a8d4",
+          "kind": "thumb"
+        },
+        "Func_020028dc": {
+          "address": "0x0200a8dc",
+          "kind": "thumb"
+        },
+        "Func_020028e4": {
+          "address": "0x0200a8e4",
+          "kind": "thumb"
+        },
+        "Func_020028ec": {
+          "address": "0x0200a8ec",
+          "kind": "thumb"
+        },
+        "Func_020028f4": {
+          "address": "0x0200a8f4",
+          "kind": "thumb"
+        },
+        "Func_020028fc": {
+          "address": "0x0200a8fc",
+          "kind": "thumb"
+        },
+        "Func_02002904": {
+          "address": "0x0200a904",
+          "kind": "thumb"
+        },
+        "Func_0200290c": {
+          "address": "0x0200a90c",
+          "kind": "thumb"
+        },
+        "Func_02002914": {
+          "address": "0x0200a914",
+          "kind": "thumb"
+        },
+        "Func_0200291c": {
+          "address": "0x0200a91c",
+          "kind": "thumb"
+        },
+        "Func_02002924": {
+          "address": "0x0200a924",
+          "kind": "thumb"
+        },
+        "Func_0200292c": {
+          "address": "0x0200a92c",
+          "kind": "thumb"
+        },
+        "Func_02002934": {
+          "address": "0x0200a934",
+          "kind": "thumb"
+        },
+        "Func_0200293c": {
+          "address": "0x0200a93c",
+          "kind": "thumb"
+        },
+        "Func_02002944": {
+          "address": "0x0200a944",
+          "kind": "thumb"
+        },
+        "Func_0200294c": {
+          "address": "0x0200a94c",
+          "kind": "thumb"
+        },
+        "Func_02002954": {
+          "address": "0x0200a954",
+          "kind": "thumb"
+        },
+        "Func_0200295c": {
+          "address": "0x0200a95c",
+          "kind": "thumb"
+        },
+        "Func_02002964": {
+          "address": "0x0200a964",
+          "kind": "thumb"
+        },
+        "Func_0200296c": {
+          "address": "0x0200a96c",
+          "kind": "thumb"
+        },
+        "Func_02002974": {
+          "address": "0x0200a974",
+          "kind": "thumb"
+        },
+        "Func_02002984": {
+          "address": "0x0200a984",
+          "kind": "thumb"
+        },
+        "Func_0200298c": {
+          "address": "0x0200a98c",
+          "kind": "thumb"
+        },
+        "Func_02002994": {
+          "address": "0x0200a994",
+          "kind": "thumb"
+        },
+        "Func_020029cc": {
+          "address": "0x0200a9cc",
+          "kind": "thumb"
+        },
+        "Func_020029d4": {
+          "address": "0x0200a9d4",
+          "kind": "thumb"
+        },
+        "Func_020029e4": {
+          "address": "0x0200a9e4",
+          "kind": "thumb"
+        },
+        "Func_02002a34": {
+          "address": "0x0200aa34",
+          "kind": "thumb"
+        },
+        "Func_02002a3c": {
+          "address": "0x0200aa3c",
+          "kind": "thumb"
+        },
+        "Func_02002a44": {
+          "address": "0x0200aa44",
+          "kind": "thumb"
+        },
+        "Func_02002a4c": {
+          "address": "0x0200aa4c",
+          "kind": "thumb"
+        },
+        "Func_02002a54": {
+          "address": "0x0200aa54",
+          "kind": "thumb"
+        },
+        "Func_02002a5c": {
+          "address": "0x0200aa5c",
+          "kind": "thumb"
+        },
+        "Func_02002a64": {
+          "address": "0x0200aa64",
+          "kind": "thumb"
+        }
+      },
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x02000510",
+          "extent": 5404,
+          "state": "retained-assembly"
+        }
+      ]
+    },
+    {
+      "id": "tla-object-dispatch",
+      "game": "tla",
+      "source": "games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/DISPATCH.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {
+        "Animation_ApplyChildArgument": {
+          "address": "0x08022b04",
+          "kind": "thumb"
+        },
+        "Animation_ApplyChildValue": {
+          "address": "0x08022bac",
+          "kind": "thumb"
+        },
+        "InitializeAnimationObjects": {
+          "address": "0x080228e0",
+          "kind": "thumb"
+        },
+        "ResourceMetadata_Register": {
+          "address": "0x080229ac",
+          "kind": "thumb"
+        }
+      },
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x080233d0",
+          "extent": 62,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08023410",
+          "extent": 62,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08023450",
+          "extent": 96,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080234b0",
+          "extent": 26,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080234cc",
+          "extent": 36,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080234f0",
+          "extent": 32,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "tla-object-by-id",
+      "game": "tla",
+      "source": "games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/BY_ID.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {
+        "ObjectTable_Get": {
+          "address": "0x080cad84",
+          "kind": "thumb"
+        },
+        "Object_ResetMotion": {
+          "address": "0x08020138",
+          "kind": "thumb"
+        },
+        "Object_SetPosition": {
+          "address": "0x08020148",
+          "kind": "thumb"
+        },
+        "Object_CommitPosition": {
+          "address": "0x08020150",
+          "kind": "thumb"
+        },
+        "Object_SetMode": {
+          "address": "0x08020090",
+          "kind": "thumb"
+        },
+        "Object_SetAction": {
+          "address": "0x08020098",
+          "kind": "thumb"
+        },
+        "Object_SetCallback": {
+          "address": "0x080200a8",
+          "kind": "thumb"
+        },
+        "Object_RefreshSelector": {
+          "address": "0x08020140",
+          "kind": "thumb"
+        },
+        "Object_SetActionCallback": {
+          "address": "0x080d4b0c",
+          "kind": "thumb"
+        },
+        "ObjectMotion_SetActionVariant": {
+          "address": "0x080d3888",
+          "kind": "thumb"
+        },
+        "Object_LinkedMotionScript": {
+          "address": "0x080f3780",
+          "kind": "data"
+        },
+        "Object_OffsetMotionScript": {
+          "address": "0x080f32d0",
+          "kind": "data"
+        }
+      },
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x080d2d84",
+          "extent": 14,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080d2d94",
+          "extent": 20,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080d2da8",
+          "extent": 32,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080d2dc8",
+          "extent": 28,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080d2de4",
+          "extent": 54,
+          "state": "retained-assembly"
+        },
+        {
+          "address": "0x080d2e1c",
+          "extent": 36,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080d2e40",
+          "extent": 16,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080d2e50",
+          "extent": 40,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080d2e78",
+          "extent": 42,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080d2ea4",
+          "extent": 48,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080d2ed4",
+          "extent": 50,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080d2f08",
+          "extent": 64,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080d2f48",
+          "extent": 128,
+          "state": "retained-assembly"
+        },
+        {
+          "address": "0x080d2fc8",
+          "extent": 50,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080d2ffc",
+          "extent": 64,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080d303c",
+          "extent": 52,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "tla-object-motion-events",
+      "game": "tla",
+      "source": "games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/MOTION_EVENTS.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {
+        "ObjectTable_Get": {
+          "address": "0x080cad84",
+          "kind": "thumb"
+        },
+        "Object_SetMode": {
+          "address": "0x08020090",
+          "kind": "thumb"
+        },
+        "Object_SetCallback": {
+          "address": "0x080200a8",
+          "kind": "thumb"
+        },
+        "Object_RefreshSelector": {
+          "address": "0x08020140",
+          "kind": "thumb"
+        },
+        "ObjectMotion_WaitForAnimationChange": {
+          "address": "0x080d3268",
+          "kind": "thumb"
+        },
+        "Battle_WaitMode0": {
+          "address": "0x080d2240",
+          "kind": "thumb"
+        },
+        "Audio_PlayCue": {
+          "address": "0x081c0010",
+          "kind": "thumb"
+        },
+        "Object_VariantMotionScripts": {
+          "address": "0x080f06d8",
+          "kind": "data"
+        },
+        "Object_SetModeById": {
+          "address": "0x080d3240",
+          "kind": "thumb"
+        },
+        "Object_RefreshSelectorById": {
+          "address": "0x080d2e40",
+          "kind": "thumb"
+        }
+      },
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x080d32b8",
+          "extent": 16,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080d32c8",
+          "extent": 56,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080d3300",
+          "extent": 44,
+          "state": "retained-assembly"
+        },
+        {
+          "address": "0x080d332c",
+          "extent": 16,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "tla-object-child-state",
+      "game": "tla",
+      "source": "games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/CHILD_STATE.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {
+        "ObjectDispatch_Initialize": {
+          "address": "0x080233a8",
+          "kind": "thumb"
+        },
+        "Animation_ApplyChildValuesToRecord": {
+          "address": "0x080227b0",
+          "kind": "thumb"
+        },
+        "WaitFrames": {
+          "address": "0x08013560",
+          "kind": "thumb"
+        },
+        "ObjectDispatch_Table4": {
+          "address": "0x0802f1d0",
+          "kind": "data"
+        },
+        "ObjectDispatch_Table6": {
+          "address": "0x0802f200",
+          "kind": "data"
+        }
+      },
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x080235f8",
+          "extent": 16,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08023608",
+          "extent": 44,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08023634",
+          "extent": 48,
+          "state": "retained-assembly"
+        },
+        {
+          "address": "0x08023664",
+          "extent": 26,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08023680",
+          "extent": 38,
+          "state": "retained-assembly"
+        },
+        {
+          "address": "0x080236a8",
+          "extent": 38,
+          "state": "retained-assembly"
+        },
+        {
+          "address": "0x080236d0",
+          "extent": 24,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "tla-staged-actor",
+      "game": "tla",
+      "source": "recon/tla/en/overlays/resource_64e_c_02000314.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_64e",
+      "absolute_symbols": {
+        "gGameState": {
+          "address": "0x2000240",
+          "kind": "data"
+        },
+        "StagedActor_DirectionSteps": {
+          "address": "0x2009d8c",
+          "kind": "data"
+        },
+        "WaitFrames": {
+          "address": "0x2009b04",
+          "kind": "thumb"
+        },
+        "Object_SetMode": {
+          "address": "0x2009b2c",
+          "kind": "thumb"
+        },
+        "Object_SetPosition": {
+          "address": "0x2009b44",
+          "kind": "thumb"
+        },
+        "Object_CommitPosition": {
+          "address": "0x2009b4c",
+          "kind": "thumb"
+        },
+        "Object_CheckMovementCollision": {
+          "address": "0x2009b64",
+          "kind": "thumb"
+        },
+        "BattleFx_PlayQueuedSound": {
+          "address": "0x2009cbc",
+          "kind": "thumb"
+        },
+        "Audio_PlayCue": {
+          "address": "0x2009cdc",
+          "kind": "thumb"
+        }
+      },
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x02000314",
+          "extent": 56,
+          "state": "retained-assembly"
+        },
+        {
+          "address": "0x0200034c",
+          "extent": 64,
+          "state": "retained-assembly"
+        },
+        {
+          "address": "0x0200038c",
+          "extent": 388,
+          "state": "retained-assembly"
+        },
+        {
+          "address": "0x02000510",
+          "extent": 92,
+          "state": "retained-assembly"
+        }
+      ]
+    },
+    {
+      "id": "tla-djinn-management",
+      "game": "tla",
+      "source": "games/THE LOST AGE/SRC/GAME/DJINN/MANAGEMENT.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {
+        "OwnerState_Get": {
+          "address": "0x8016ca4",
+          "kind": "thumb"
+        },
+        "GameFlag_Test": {
+          "address": "0x8016ce4",
+          "kind": "thumb"
+        },
+        "GameFlag_Set": {
+          "address": "0x8016cfc",
+          "kind": "thumb"
+        },
+        "Party_CountActiveOwners": {
+          "address": "0x80afdbc",
+          "kind": "thumb"
+        },
+        "Trade_GetOfferState": {
+          "address": "0x80ad348",
+          "kind": "thumb"
+        },
+        "Owner_RefreshDerivedData": {
+          "address": "0x80b0298",
+          "kind": "thumb"
+        },
+        "gPartyState": {
+          "address": "0x2000240",
+          "kind": "data"
+        },
+        "Djinn_Definitions": {
+          "address": "0x80c6bb0",
+          "kind": "data"
+        }
+      },
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x080b0a94",
+          "extent": 36,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080b0ab8",
+          "extent": 192,
+          "state": "retained-assembly"
+        },
+        {
+          "address": "0x080b0b78",
+          "extent": 62,
+          "state": "retained-assembly"
+        },
+        {
+          "address": "0x080b0bb8",
+          "extent": 190,
+          "state": "retained-assembly"
+        },
+        {
+          "address": "0x080b0c78",
+          "extent": 34,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080b0c9c",
+          "extent": 102,
+          "state": "retained-assembly"
+        },
+        {
+          "address": "0x080b0d04",
+          "extent": 84,
+          "state": "retained-assembly"
+        },
+        {
+          "address": "0x080b0d58",
+          "extent": 172,
+          "state": "retained-assembly"
+        },
+        {
+          "address": "0x080b0e04",
+          "extent": 58,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080b0e40",
+          "extent": 178,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080b0ef4",
+          "extent": 90,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080b0f50",
+          "extent": 10,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "tla-inventory-items",
+      "game": "tla",
+      "source": "games/THE LOST AGE/SRC/GAME/INVENTORY/ITEMS.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {
+        "OwnerState_Get": {
+          "address": "0x8016ca4",
+          "kind": "thumb"
+        },
+        "Party_ListActiveOwners": {
+          "address": "0x80afe78",
+          "kind": "thumb"
+        },
+        "Item_GetDirect": {
+          "address": "0x80aec04",
+          "kind": "thumb"
+        },
+        "gPartyState": {
+          "address": "0x2000240",
+          "kind": "data"
+        }
+      },
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x080aecc8",
+          "extent": 36,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080aecec",
+          "extent": 76,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080aed38",
+          "extent": 50,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080aed6c",
+          "extent": 140,
+          "state": "retained-assembly"
+        },
+        {
+          "address": "0x080aedf8",
+          "extent": 72,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "tla-inventory-find",
+      "game": "tla",
+      "source": "games/THE LOST AGE/SRC/GAME/INVENTORY/FIND.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {
+        "OwnerState_Get": {
+          "address": "0x8016ca4",
+          "kind": "thumb"
+        },
+        "Party_ListActiveOwners": {
+          "address": "0x80afe78",
+          "kind": "thumb"
+        },
+        "gPartyState": {
+          "address": "0x2000240",
+          "kind": "data"
+        },
+        "Inventory_Find": {
+          "address": "0x080aee98",
+          "kind": "thumb"
+        }
+      },
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x080aeec8",
+          "extent": 108,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "tla-inventory-equipped",
+      "game": "tla",
+      "source": "games/THE LOST AGE/SRC/GAME/INVENTORY/EQUIPPED.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {
+        "OwnerState_Get": {
+          "address": "0x8016ca4",
+          "kind": "thumb"
+        },
+        "Item_GetDirect": {
+          "address": "0x80aec04",
+          "kind": "thumb"
+        }
+      },
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x080af008",
+          "extent": 76,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080af054",
+          "extent": 62,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080af094",
+          "extent": 80,
+          "state": "retained-assembly"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "tla-idejima-actor-sequence",
+      "game": "tla",
+      "source": "recon/tla/en/overlays/resource_650_c_02000d14.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_650",
+      "absolute_symbols": {
+        "Func_0200b138": {
+          "address": "0x0200b138",
+          "kind": "thumb"
+        },
+        "Func_0200b158": {
+          "address": "0x0200b158",
+          "kind": "thumb"
+        },
+        "Func_0200b1b0": {
+          "address": "0x0200b1b0",
+          "kind": "thumb"
+        },
+        "Func_0200b1b8": {
+          "address": "0x0200b1b8",
+          "kind": "thumb"
+        },
+        "Func_0200b1c0": {
+          "address": "0x0200b1c0",
+          "kind": "thumb"
+        },
+        "Func_0200b1d0": {
+          "address": "0x0200b1d0",
+          "kind": "thumb"
+        },
+        "Func_0200b220": {
+          "address": "0x0200b220",
+          "kind": "thumb"
+        },
+        "Func_0200b288": {
+          "address": "0x0200b288",
+          "kind": "thumb"
+        },
+        "Func_0200b290": {
+          "address": "0x0200b290",
+          "kind": "thumb"
+        },
+        "Func_0200b2a0": {
+          "address": "0x0200b2a0",
+          "kind": "thumb"
+        },
+        "Func_0200b2a8": {
+          "address": "0x0200b2a8",
+          "kind": "thumb"
+        },
+        "Func_0200b2b0": {
+          "address": "0x0200b2b0",
+          "kind": "thumb"
+        },
+        "Func_0200b2c0": {
+          "address": "0x0200b2c0",
+          "kind": "thumb"
+        },
+        "Func_0200b2c8": {
+          "address": "0x0200b2c8",
+          "kind": "thumb"
+        },
+        "Func_0200b2d0": {
+          "address": "0x0200b2d0",
+          "kind": "thumb"
+        },
+        "Func_0200b2d8": {
+          "address": "0x0200b2d8",
+          "kind": "thumb"
+        },
+        "Func_0200b310": {
+          "address": "0x0200b310",
+          "kind": "thumb"
+        },
+        "Func_0200b320": {
+          "address": "0x0200b320",
+          "kind": "thumb"
+        },
+        "gPartyState": {
+          "address": "0x02000240",
+          "kind": "data"
+        },
+        "gActorExitScript": {
+          "address": "0x0200b7c4",
+          "kind": "data"
+        },
+        "ObjectMotion_CopyPosition": {
+          "address": "0x0200b238",
+          "kind": "thumb"
+        }
+      },
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x02000d14",
+          "extent": 2088,
+          "state": "retained-assembly"
+        }
+      ]
+    }
+  ]
+}

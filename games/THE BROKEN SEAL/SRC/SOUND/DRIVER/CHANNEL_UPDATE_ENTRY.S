@@ -1,3 +1,16 @@
+@ Guarded entry from the sound driver into the resident mixer
+@ (SYSTEM/RUNTIME_MIX.S). The guard at 0x080006fc loads the SoundInfo pointer
+@ held at 0x03007ff0 and returns unless the SoundInfo it points to starts
+@ with the driver's 'Smsh' ID; otherwise it branches to 0x0800070c. That
+@ routine pushes r5-r7 and lr, then r0 with r8-fp moved through r1-r4 in
+@ ascending order, calls the driver hooks through the bx r3 at 0x0800070a and
+@ jumps to 0x03000659 with ldr r3; bx r3 without returning: the IWRAM code
+@ unwinds the frame. A frame left for another routine, the ascending
+@ high-register save and the branch on flags from subs r7, r4, #1
+@ (0x0800073c) are beyond both approved compilers. The pool word
+@ 0x04000006 at 0x08000764 is loaded by no instruction and carries no
+@ credit. TLA links its own revision (TLA SOUND/CHANNEL_UPDATE_ENTRY.S).
+@ credit: handwritten — TBS sound driver guarded ROM-to-IWRAM mixer entry
 .syntax unified
 .text
 	.thumb
@@ -13,8 +26,7 @@ Func_080006fc:
 	beq sub_0800070c
 	bx	lr
 	.inst.n 0x4718
-@ IWRAMの音響処理入口03000659を呼ぶ常駐側制御。
-@ 転送先との呼出し契約を保ったC一致は未達。build_asm.tsで確認する。
+@ Builds the frame the IWRAM mixer at 0x03000659 unwinds, then jumps there.
 .syntax unified
 	.thumb
 	.global Func_0800070c
@@ -62,3 +74,8 @@ Func_0800070c:
 	bx	r3
 	.4byte 0x03000659
 	.4byte 0x00000350
+AlchemyUncredited_08000764:
+	.4byte 0x04000006
+AlchemyUncreditedEnd_08000764:
+	.4byte 0x68736d53
+	.4byte 0x03007ff0

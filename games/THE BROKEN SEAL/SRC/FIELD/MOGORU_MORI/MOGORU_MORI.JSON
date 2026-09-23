@@ -42,7 +42,6 @@
         "decoded_size": 12281,
         "encoded_size": 7056,
         "tilemap_length": 12280,
-        "lookahead": "00",
         "component": "map-metatiles-2x2",
         "transform_mode": 0,
         "metatiles": 1535,
@@ -58,7 +57,6 @@
           [0, 0, 0, 0], [7, 0, 4, 0], [9, 0, 2, 0], [9, 2, 0, 0], [0, 4, 0, 0], [3, 0, 2, 0], [0, 2, 0, 0],
           [4, 0, 2, 0], [7, 0, 1, 0], [12, 2, 0, 0], [13, 2, 0, 0], [0, 1, 0, 0], [7, 0, 2, 0]
         ],
-        "lookahead": "00",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -88,7 +86,6 @@
           ["0xfd03", [1688, 2], [366, 15], [1690, 2], [366, 25], [1692, 2], [366, 15], [1694, 2], [366, 25], "0xfe00"],
           "0xffff"
         ],
-        "lookahead": "000000",
         "component": "map-animation-queues",
         "word_size": 2,
         "terminators": ["0xfe00", "0xffff"]
@@ -97,7 +94,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x08638b24",
-        "size": "0x4",
+        "size": "0x3",
         "record_size": 3,
         "segments": [
           {
@@ -107,8 +104,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x08638b27", "end": "0x08638b28", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/MOGORU_MORI/MOGORU_MORI.BIN",
@@ -159,7 +155,6 @@
         "decoded_size": 13065,
         "encoded_size": 7660,
         "tilemap_length": 13064,
-        "lookahead": "0000",
         "component": "map-metatiles-2x2",
         "transform_mode": 0,
         "metatiles": 1633,
@@ -175,7 +170,6 @@
           [0, 0, 0, 0], [7, 0, 4, 0], [0, 2, 0, 0], [4, 0, 2, 0], [3, 0, 2, 0], [12, 2, 0, 0], [9, 2, 0, 0],
           [13, 2, 0, 0], [7, 0, 1, 0], [0, 4, 0, 0], [0, 1, 0, 0], [4, 0, 254, 0], [13, 4, 4, 0], [12, 4, 4, 0]
         ],
-        "lookahead": "",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -205,7 +199,6 @@
           ["0xfd03", [1688, 2], [366, 15], [1690, 2], [366, 25], [1692, 2], [366, 15], [1694, 2], [366, 25], "0xfe00"],
           "0xffff"
         ],
-        "lookahead": "000000",
         "component": "map-animation-queues",
         "word_size": 2,
         "terminators": ["0xfe00", "0xffff"]
@@ -214,7 +207,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x086424a8",
-        "size": "0x8",
+        "size": "0x6",
         "record_size": 3,
         "segments": [
           {
@@ -232,8 +225,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x086424ae", "end": "0x086424b0", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/MOGORU_MORI/MOGORU_MORI.BIN",
@@ -284,7 +276,6 @@
         "decoded_size": 13985,
         "encoded_size": 8376,
         "tilemap_length": 13984,
-        "lookahead": "000000",
         "component": "map-metatiles-2x2",
         "transform_mode": 0,
         "metatiles": 1748,
@@ -301,7 +292,6 @@
           [12, 0, 0, 2], [9, 0, 2, 0], [13, 0, 0, 2], [4, 2, 0, 0], [3, 2, 0, 0], [0, 1, 0, 0], [3, 0, 2, 0],
           [4, 0, 2, 0], [0, 4, 0, 0]
         ],
-        "lookahead": "00",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -331,7 +321,6 @@
           ["0xfd03", [1688, 2], [366, 15], [1690, 2], [366, 25], [1692, 2], [366, 15], [1694, 2], [366, 25], "0xfe00"],
           "0xffff"
         ],
-        "lookahead": "000000",
         "component": "map-animation-queues",
         "word_size": 2,
         "terminators": ["0xfe00", "0xffff"]
@@ -340,7 +329,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x08645fb0",
-        "size": "0x8",
+        "size": "0x6",
         "record_size": 3,
         "segments": [
           {
@@ -358,8 +347,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x08645fb6", "end": "0x08645fb8", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/MOGORU_MORI/MOGORU_MORI.BIN",
@@ -410,7 +398,6 @@
         "decoded_size": 14257,
         "encoded_size": 8396,
         "tilemap_length": 14256,
-        "lookahead": "0000",
         "component": "map-metatiles-2x2",
         "transform_mode": 0,
         "metatiles": 1782,
@@ -423,7 +410,6 @@
         "decoded_size": 8,
         "encoded_size": 12,
         "records": [[0, 0, 0, 0], [7, 0, 4, 0]],
-        "lookahead": "0000",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -431,7 +417,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x08649cc0",
-        "size": "0x8",
+        "size": "0x6",
         "record_size": 3,
         "segments": [
           {
@@ -449,8 +435,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x08649cc6", "end": "0x08649cc8", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/MOGORU_MORI/MOGORU_MORI.BIN",

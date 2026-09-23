@@ -42,7 +42,6 @@
         "decoded_size": 5345,
         "encoded_size": 3512,
         "tilemap_length": 5344,
-        "lookahead": "",
         "component": "map-metatiles-2x2",
         "transform_mode": 1,
         "metatiles": 668,
@@ -59,7 +58,6 @@
           [0, 8, 0, 0], [0, 4, 0, 0], [4, 0, 254, 0], [3, 0, 254, 0], [0, 6, 0, 0], [4, 254, 0, 0], [7, 0, 2, 0],
           [9, 0, 1, 0], [9, 1, 0, 0]
         ],
-        "lookahead": "000000",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -70,7 +68,6 @@
         "decoded_size": 2,
         "encoded_size": 8,
         "words": ["0xffff"],
-        "lookahead": "0000",
         "component": "map-animation-queues",
         "word_size": 2,
         "terminators": ["0xfe00", "0xffff"]
@@ -82,7 +79,6 @@
         "decoded_size": 2,
         "encoded_size": 8,
         "words": [["0xffff"]],
-        "lookahead": "0000",
         "component": "map-blend-animation",
         "word_size": 2
       },
@@ -90,7 +86,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x08752a24",
-        "size": "0x10",
+        "size": "0xf",
         "record_size": 3,
         "segments": [
           {
@@ -108,8 +104,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x08752a33", "end": "0x08752a34", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/BABI_IRIGUCHI/BABI_IRIGUCHI.BIN",
@@ -160,7 +155,6 @@
         "decoded_size": 1257,
         "encoded_size": 672,
         "tilemap_length": 1256,
-        "lookahead": "000000",
         "component": "map-metatiles-2x2",
         "transform_mode": 2,
         "metatiles": 157,
@@ -176,7 +170,6 @@
           [0, 0, 0, 0], [0, 2, 0, 0], [3, 2, 0, 0], [4, 2, 0, 0], [4, 0, 2, 0], [3, 0, 2, 0], [9, 0, 4, 0],
           [0, 4, 0, 0], [9, 4, 0, 0]
         ],
-        "lookahead": "0000",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -251,7 +244,6 @@
           ],
           "0xffff"
         ],
-        "lookahead": "0000",
         "component": "map-animation-queues",
         "word_size": 2,
         "terminators": ["0xfe00", "0xffff"]
@@ -260,7 +252,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x0875396c",
-        "size": "0x4",
+        "size": "0x3",
         "record_size": 3,
         "segments": [
           {
@@ -270,8 +262,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x0875396f", "end": "0x08753970", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/BABI_IRIGUCHI/BABI_IRIGUCHI.BIN",
@@ -322,7 +313,6 @@
         "decoded_size": 1617,
         "encoded_size": 936,
         "tilemap_length": 1616,
-        "lookahead": "000000",
         "component": "map-metatiles-2x2",
         "transform_mode": 0,
         "metatiles": 202,
@@ -335,7 +325,6 @@
         "decoded_size": 20,
         "encoded_size": 16,
         "records": [[0, 0, 0, 0], [0, 4, 0, 0], [0, 12, 0, 0], [0, 8, 0, 0], [0, 6, 0, 0]],
-        "lookahead": "00",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -346,7 +335,6 @@
         "decoded_size": 2,
         "encoded_size": 8,
         "words": ["0xffff"],
-        "lookahead": "0000",
         "component": "map-animation-queues",
         "word_size": 2,
         "terminators": ["0xfe00", "0xffff"]
@@ -358,7 +346,6 @@
         "decoded_size": 2,
         "encoded_size": 8,
         "words": [["0xffff"]],
-        "lookahead": "0000",
         "component": "map-blend-animation",
         "word_size": 2
       },
@@ -366,7 +353,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x0875bdd0",
-        "size": "0x8",
+        "size": "0x6",
         "record_size": 3,
         "segments": [
           {
@@ -384,8 +371,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x0875bdd6", "end": "0x0875bdd8", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/BABI_IRIGUCHI/BABI_IRIGUCHI.BIN",

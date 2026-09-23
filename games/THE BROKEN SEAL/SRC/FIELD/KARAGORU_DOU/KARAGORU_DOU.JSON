@@ -42,7 +42,6 @@
         "decoded_size": 3561,
         "encoded_size": 2168,
         "tilemap_length": 3560,
-        "lookahead": "000000",
         "component": "map-metatiles-2x2",
         "transform_mode": 1,
         "metatiles": 445,
@@ -58,7 +57,6 @@
           [0, 0, 0, 0], [0, 4, 0, 0], [0, 2, 0, 0], [3, 4, 0, 0], [0, 254, 0, 0], [4, 0, 254, 0], [4, 4, 0, 0],
           [4, 254, 0, 0]
         ],
-        "lookahead": "",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -98,7 +96,6 @@
           ],
           "0xffff"
         ],
-        "lookahead": "000000",
         "component": "map-animation-queues",
         "word_size": 2,
         "terminators": ["0xfe00", "0xffff"]
@@ -110,7 +107,6 @@
         "decoded_size": 2,
         "encoded_size": 8,
         "words": [["0xffff"]],
-        "lookahead": "0000",
         "component": "map-blend-animation",
         "word_size": 2
       },
@@ -118,7 +114,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x08718cec",
-        "size": "0x4",
+        "size": "0x3",
         "record_size": 3,
         "segments": [
           {
@@ -128,8 +124,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x08718cef", "end": "0x08718cf0", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/KARAGORU_DOU/KARAGORU_DOU.BIN",
@@ -180,7 +175,6 @@
         "decoded_size": 2817,
         "encoded_size": 1496,
         "tilemap_length": 2816,
-        "lookahead": "00",
         "component": "map-metatiles-2x2",
         "transform_mode": 2,
         "metatiles": 352,
@@ -197,7 +191,6 @@
           [4, 0, 10, 0], [0, 254, 0, 0], [4, 0, 254, 0], [0, 250, 0, 0], [3, 254, 0, 0], [4, 254, 0, 0], [0, 2, 0, 0],
           [3, 0, 4, 0], [4, 0, 4, 0], [0, 246, 0, 0]
         ],
-        "lookahead": "",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -242,7 +235,6 @@
           ["0xfd0b", [1056, 2], [188, 20], [1072, 2], [188, 20], "0xfe00"],
           "0xffff"
         ],
-        "lookahead": "0000",
         "component": "map-animation-queues",
         "word_size": 2,
         "terminators": ["0xfe00", "0xffff"]
@@ -254,7 +246,6 @@
         "decoded_size": 18,
         "encoded_size": 24,
         "words": [["0x3f42"], ["0x1004", 12], ["0x1003", 8], ["0x1005", 18], ["0xfe00"], ["0xffff"]],
-        "lookahead": "",
         "component": "map-blend-animation",
         "word_size": 2
       },
@@ -262,7 +253,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x0871a4cc",
-        "size": "0xc",
+        "size": "0x9",
         "record_size": 3,
         "segments": [
           {
@@ -280,8 +271,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x0871a4d5", "end": "0x0871a4d8", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/KARAGORU_DOU/KARAGORU_DOU.BIN",
@@ -332,7 +322,6 @@
         "decoded_size": 4361,
         "encoded_size": 2604,
         "tilemap_length": 4360,
-        "lookahead": "000000",
         "component": "map-metatiles-2x2",
         "transform_mode": 2,
         "metatiles": 545,
@@ -350,7 +339,6 @@
           [0, 2, 0, 0], [7, 4, 6, 0], [0, 248, 0, 0], [0, 252, 0, 0], [3, 4, 0, 0], [3, 0, 8, 0], [0, 1, 0, 0],
           [3, 0, 4, 0], [8, 4, 0, 0], [0, 246, 0, 0]
         ],
-        "lookahead": "",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -395,7 +383,6 @@
           ["0xfd0b", [1056, 2], [188, 20], [1072, 2], [188, 20], "0xfe00"],
           "0xffff"
         ],
-        "lookahead": "0000",
         "component": "map-animation-queues",
         "word_size": 2,
         "terminators": ["0xfe00", "0xffff"]
@@ -407,7 +394,6 @@
         "decoded_size": 18,
         "encoded_size": 24,
         "words": [["0x3f42"], ["0x1004", 12], ["0x1003", 8], ["0x1005", 18], ["0xfe00"], ["0xffff"]],
-        "lookahead": "",
         "component": "map-blend-animation",
         "word_size": 2
       },
@@ -415,7 +401,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x0871c3d0",
-        "size": "0x4",
+        "size": "0x3",
         "record_size": 3,
         "segments": [
           {
@@ -425,8 +411,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x0871c3d3", "end": "0x0871c3d4", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/KARAGORU_DOU/KARAGORU_DOU.BIN",

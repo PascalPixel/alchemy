@@ -31,8 +31,8 @@ fn exact(root: &Path) -> Result<HashSet<String>, String> {
 fn validate_registered_main_symbols(root: &Path) -> Result<usize, String> {
     let register = SourcePaths::load(root)?;
     let mut count = 0;
-    for entry in std::fs::read_dir(root.join("games/THE BROKEN SEAL/raw"))
-        .map_err(|error| format!("games/THE BROKEN SEAL/raw: {error}"))?
+    for entry in std::fs::read_dir(root.join("recon/tbs/raw"))
+        .map_err(|error| format!("recon/tbs/raw: {error}"))?
     {
         let path = entry.map_err(|error| error.to_string())?.path();
         let Some(stem) = path.file_stem().and_then(|value| value.to_str()) else {
@@ -80,9 +80,7 @@ fn audited(root: &Path) -> Result<HashSet<String>, String> {
         .map(|owner| owner.legacy_stem())
         .collect();
     if stems.is_empty() {
-        return Err(
-            "games/THE BROKEN SEAL/semantic/regions.json contains no audited owners".into(),
-        );
+        return Err("recon/tbs/semantic/regions.json contains no audited owners".into());
     }
     Ok(stems)
 }

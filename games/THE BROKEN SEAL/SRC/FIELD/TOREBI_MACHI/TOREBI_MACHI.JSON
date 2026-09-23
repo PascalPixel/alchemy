@@ -42,7 +42,6 @@
         "decoded_size": 7697,
         "encoded_size": 5084,
         "tilemap_length": 7696,
-        "lookahead": "000000",
         "component": "map-metatiles-2x2",
         "transform_mode": 1,
         "metatiles": 962,
@@ -63,7 +62,6 @@
           [2, 254, 252, 0], [7, 0, 2, 0], [3, 0, 252, 0], [7, 4, 6, 0], [1, 1, 1, 0], [1, 1, 0, 0], [1, 0, 1, 0],
           [0, 1, 0, 0], [4, 4, 0, 0], [4, 0, 252, 0]
         ],
-        "lookahead": "",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -99,7 +97,6 @@
           ["0xfd05", [1556, 5], [1044, 10], [1588, 5], [1044, 10], "0xfe00"],
           "0xffff"
         ],
-        "lookahead": "00",
         "component": "map-animation-queues",
         "word_size": 2,
         "terminators": ["0xfe00", "0xffff"]
@@ -111,7 +108,6 @@
         "decoded_size": 2,
         "encoded_size": 8,
         "words": [["0xffff"]],
-        "lookahead": "0000",
         "component": "map-blend-animation",
         "word_size": 2
       },
@@ -119,7 +115,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x086e2d50",
-        "size": "0x14",
+        "size": "0x12",
         "record_size": 3,
         "segments": [
           {
@@ -137,8 +133,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x086e2d62", "end": "0x086e2d64", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/TOREBI_MACHI/TOREBI_MACHI.BIN",

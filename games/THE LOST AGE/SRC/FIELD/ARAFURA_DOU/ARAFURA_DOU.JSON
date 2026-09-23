@@ -1,0 +1,557 @@
+{
+  "format": 1,
+  "maps": {
+    "3a6": {
+      "format": 1,
+      "kind": "golden-sun-map-container",
+      "header": {
+        "format": 1,
+        "kind": "typed-table",
+        "address": "0x08bf3a88",
+        "size": "0x40",
+        "segments": [
+          {
+            "name": "parameters",
+            "address": "0x08bf3a88",
+            "end": "0x08bf3a94",
+            "stride": 12,
+            "element": "u8",
+            "values": [0, 0, 90, 100, 3, 2, 1, 0, 2, 2, 0, 0]
+          },
+          {
+            "name": "records",
+            "address": "0x08bf3a94",
+            "end": "0x08bf3aac",
+            "stride": 8,
+            "element": "le-u16",
+            "values": [[0, 4112, 0, 65535], [25600, 4112, 0, 65535], [100, 4112, 0, 65535]]
+          },
+          {
+            "name": "component_offsets",
+            "address": "0x08bf3aac",
+            "end": "0x08bf3ac8",
+            "stride": 4,
+            "element": "le-u32",
+            "values": ["0x40", "0x6cc", "0x6ec", "0x114c", "0x13b8", "0x1588", "0x1590"]
+          }
+        ]
+      },
+      "metatiles": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 2689,
+        "encoded_size": 1676,
+        "tilemap_length": 2688,
+        "component": "map-metatiles-2x2",
+        "transform_mode": 2,
+        "metatiles": 336,
+        "tilemap_source": "games/THE LOST AGE/SRC/FIELD/ARAFURA_DOU/ARAFURA_DOU.BIN",
+        "tilemap_offset": 65536
+      },
+      "descriptors": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 52,
+        "encoded_size": 32,
+        "records": [
+          [0, 0, 0, 0], [0, 4, 0, 0], [0, 8, 0, 0], [3, 8, 4, 0], [4, 8, 4, 0], [3, 4, 0, 0], [4, 4, 0, 0],
+          [0, 2, 0, 0], [4, 0, 2, 0], [3, 0, 4, 0], [9, 4, 0, 0], [3, 0, 2, 0], [4, 0, 4, 0]
+        ],
+        "component": "map-descriptors-4byte",
+        "record_size": 4
+      },
+      "descriptor_grid": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "tag": 1,
+        "decoded_size": 16384,
+        "encoded_size": 620,
+        "component": "map-descriptor-grid",
+        "width": 128,
+        "height": 128
+      },
+      "animation_queues": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 990,
+        "encoded_size": 464,
+        "words": [
+          [
+            "0xfd00", [1538, 4], [212, 1], [1570, 4], [244, 11], [1542, 4], [212, 1], [1574, 4], [244, 11], [1546, 4],
+            [212, 1], [1578, 4], [244, 11], [1550, 4], [212, 1], [1582, 4], [244, 11], "0xfe00"
+          ],
+          [
+            "0xfd01", [1664, 4], [276, 1], [1696, 4], [308, 4], [1668, 4], [276, 1], [1700, 4], [308, 4], [1672, 4],
+            [276, 1], [1704, 4], [308, 4], [1676, 4], [276, 1], [1708, 4], [308, 4], "0xfe00"
+          ],
+          [
+            "0xfd02", [1680, 4], [342, 1], [1712, 4], [374, 4], [1684, 4], [342, 1], [1716, 4], [374, 4], [1688, 4],
+            [342, 1], [1720, 4], [374, 4], [1692, 4], [342, 1], [1724, 4], [374, 4], "0xfe00"
+          ],
+          ["0xfd03", [1640, 2], [1196, 3], [1642, 2], [1196, 3], [1644, 2], [1196, 3], [1646, 2], [1196, 3], "0xfe00"],
+          [
+            "0xfd04", [1600, 2], [262, 1], [1632, 2], [294, 11], [1602, 2], [262, 1], [1634, 2], [294, 11], [1604, 2],
+            [262, 1], [1636, 2], [294, 11], [1606, 2], [262, 1], [1638, 2], [294, 11], "0xfe00"
+          ],
+          ["0xfd05", [1608, 2], [130, 11], [1610, 2], [130, 11], [1612, 2], [130, 11], [1614, 2], [130, 11], "0xfe00"],
+          [
+            "0xfd06", [1746, 2], [394, 1], [1778, 2], [426, 4], [1748, 2], [394, 1], [1780, 2], [426, 4], [1750, 2],
+            [394, 1], [1782, 2], [426, 4], [1752, 2], [394, 1], [1784, 2], [426, 4], "0xfe00"
+          ],
+          [
+            "0xfd07", [1808, 2], [466, 1], [1840, 2], [468, 4], [1810, 2], [466, 1], [1842, 2], [468, 4], [1812, 2],
+            [466, 1], [1844, 2], [468, 4], [1814, 2], [466, 1], [1846, 2], [468, 4], "0xfe00"
+          ],
+          [
+            "0xfd08", [1757, 1], [1097, 1], [1789, 1], [1129, 1], [1821, 1], [1161, 4], [1758, 1], [1097, 1], [1790, 1],
+            [1129, 1], [1822, 1], [1161, 4], [1759, 1], [1097, 1], [1791, 1], [1129, 1], [1823, 1], [1161, 4],
+            [1816, 1], [1097, 1], [1848, 1], [1129, 1], [1880, 1], [1161, 4], "0xfe00"
+          ],
+          [
+            "0xfd09", [1834, 2], [1232, 1], [1849, 1], [1195, 4], [1836, 2], [1232, 1], [1850, 1], [1195, 4], [1838, 2],
+            [1232, 1], [1851, 1], [1195, 4], "0xfe00"
+          ],
+          [
+            "0xfd0a", [1824, 1], [457, 1], [1825, 1], [458, 1], [1826, 1], [459, 1], [1827, 1], [460, 1], [1828, 1],
+            [461, 6], [1856, 1], [457, 1], [1857, 1], [458, 1], [1858, 1], [459, 1], [1859, 1], [460, 1], [1860, 1],
+            [461, 6], [1888, 1], [457, 1], [1889, 1], [458, 1], [1890, 1], [459, 1], [1891, 1], [460, 1], [1892, 1],
+            [461, 6], [1856, 1], [457, 1], [1857, 1], [458, 1], [1858, 1], [459, 1], [1859, 1], [460, 1], [1860, 1],
+            [461, 6], "0xfe00"
+          ],
+          [
+            "0xfd0b", [1730, 4], [386, 1], [1762, 4], [418, 11], [1734, 4], [386, 1], [1766, 4], [418, 11], [1738, 4],
+            [386, 1], [1770, 4], [418, 11], [1742, 4], [386, 1], [1774, 4], [418, 11], "0xfe00"
+          ],
+          [
+            "0xfd0d", [1984, 2], [1152, 11], [1986, 2], [1152, 11], [1988, 2], [1152, 11], [1990, 2], [1152, 11],
+            "0xfe00"
+          ],
+          ["0xfd0e", [1792, 4], [320, 10], [1796, 4], [320, 10], [1800, 4], [320, 10], [1804, 4], [320, 10], "0xfe00"],
+          [
+            "0xfd0f", [1624, 2], [450, 1], [1656, 2], [482, 11], [1626, 2], [450, 1], [1658, 2], [482, 11], [1628, 2],
+            [450, 1], [1660, 2], [482, 11], "0xfe00"
+          ],
+          "0xffff"
+        ],
+        "component": "map-animation-queues",
+        "word_size": 2,
+        "terminators": ["0xfe00", "0xffff"]
+      },
+      "blend_animation": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "tag": 1,
+        "decoded_size": 2,
+        "encoded_size": 8,
+        "words": [["0xffff"]],
+        "component": "map-blend-animation",
+        "word_size": 2
+      },
+      "positions": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 66,
+        "encoded_size": 68,
+        "table": {
+          "format": 1,
+          "kind": "typed-table",
+          "address": "0x0",
+          "size": "0x42",
+          "segments": [
+            {
+              "name": "offsets",
+              "address": "0x0",
+              "end": "0x6",
+              "stride": 2,
+              "element": "le-u16",
+              "values": ["entrances", "cell_patches_end", "camera_bounds"]
+            },
+            {"name": "reserved", "address": "0x6", "end": "0x8", "stride": 2, "element": "le-u16", "values": [0]},
+            {
+              "name": "points",
+              "address": "0x8",
+              "end": "0x17",
+              "stride": 5,
+              "element": "record",
+              "fields": [
+                {"name": "point", "element": "s8"},
+                {"name": "x", "element": "le-u16"},
+                {"name": "y", "element": "le-u16"}
+              ],
+              "records": [
+                {"point": 1, "x": 264, "y": 376},
+                {"point": 2, "x": 248, "y": 360},
+                {"point": 3, "x": 232, "y": 360}
+              ]
+            },
+            {"name": "points_end", "address": "0x17", "end": "0x18", "stride": 1, "element": "u8", "values": [255]},
+            {
+              "name": "entrances",
+              "address": "0x18",
+              "end": "0x36",
+              "stride": 6,
+              "element": "record",
+              "fields": [
+                {"name": "entrance", "element": "s8"},
+                {"name": "x", "element": "le-s16"},
+                {"name": "y", "element": "le-s16"},
+                {"name": "arrival", "element": "u8", "bits": {"facing": 4, "options": 4}}
+              ],
+              "records": [
+                {"entrance": 1, "x": 568, "y": 755, "arrival": [12, 0]},
+                {"entrance": 2, "x": 488, "y": 660, "arrival": [4, 0]},
+                {"entrance": 3, "x": 151, "y": 104, "arrival": [4, 0]},
+                {"entrance": 4, "x": 70, "y": 550, "arrival": [12, 0]},
+                {"entrance": 5, "x": 294, "y": 517, "arrival": [12, 0]}
+              ]
+            },
+            {"name": "entrances_end", "address": "0x36", "end": "0x37", "stride": 1, "element": "u8", "values": [255]},
+            {
+              "name": "cell_patches_end",
+              "address": "0x37",
+              "end": "0x39",
+              "stride": 2,
+              "element": "le-u16",
+              "values": [65535]
+            },
+            {
+              "name": "camera_bounds",
+              "address": "0x39",
+              "end": "0x41",
+              "stride": 4,
+              "element": "record",
+              "fields": [
+                {"name": "left", "element": "s8"},
+                {"name": "top", "element": "s8"},
+                {"name": "right", "element": "s8"},
+                {"name": "bottom", "element": "s8"}
+              ],
+              "records": [
+                {"left": 26, "top": 38, "right": 41, "bottom": 49},
+                {"left": 0, "top": 0, "right": 37, "bottom": 35}
+              ]
+            },
+            {
+              "name": "camera_bounds_end",
+              "address": "0x41",
+              "end": "0x42",
+              "stride": 1,
+              "element": "u8",
+              "values": [255]
+            }
+          ]
+        },
+        "component": "map-positions"
+      },
+      "grid_source": "games/THE LOST AGE/SRC/FIELD/ARAFURA_DOU/ARAFURA_DOU.BIN",
+      "grid_offset": 0,
+      "grid_compression": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "tag": 1,
+        "decoded_size": 65536,
+        "encoded_size": 2656
+      }
+    },
+    "3ac": {
+      "format": 1,
+      "kind": "golden-sun-map-container",
+      "header": {
+        "format": 1,
+        "kind": "typed-table",
+        "address": "0x08bfb7a0",
+        "size": "0x40",
+        "segments": [
+          {
+            "name": "parameters",
+            "address": "0x08bfb7a0",
+            "end": "0x08bfb7ac",
+            "stride": 12,
+            "element": "u8",
+            "values": [0, 0, 128, 128, 3, 2, 1, 0, 2, 2, 0, 0]
+          },
+          {
+            "name": "records",
+            "address": "0x08bfb7ac",
+            "end": "0x08bfb7c4",
+            "stride": 8,
+            "element": "le-u16",
+            "values": [[0, 4112, 0, 65535], [32768, 4112, 0, 65535], [128, 4112, 0, 65535]]
+          },
+          {
+            "name": "component_offsets",
+            "address": "0x08bfb7c4",
+            "end": "0x08bfb7e0",
+            "stride": 4,
+            "element": "le-u32",
+            "values": ["0x40", "0x3f8", "0x418", "0xebc", "0x114c", "0x0", "0x12dc"]
+          }
+        ]
+      },
+      "metatiles": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 1609,
+        "encoded_size": 952,
+        "tilemap_length": 1608,
+        "component": "map-metatiles-2x2",
+        "transform_mode": 2,
+        "metatiles": 201,
+        "tilemap_source": "games/THE LOST AGE/SRC/FIELD/ARAFURA_DOU/ARAFURA_DOU.BIN",
+        "tilemap_offset": 133760
+      },
+      "descriptors": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 52,
+        "encoded_size": 32,
+        "records": [
+          [0, 0, 0, 0], [0, 4, 0, 0], [3, 4, 0, 0], [3, 0, 252, 0], [4, 0, 252, 0], [4, 4, 0, 0], [0, 2, 0, 0],
+          [3, 252, 0, 0], [3, 0, 2, 0], [4, 0, 2, 0], [9, 4, 0, 0], [0, 252, 0, 0], [4, 252, 0, 0]
+        ],
+        "component": "map-descriptors-4byte",
+        "record_size": 4
+      },
+      "descriptor_grid": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "tag": 1,
+        "decoded_size": 16384,
+        "encoded_size": 656,
+        "component": "map-descriptor-grid",
+        "width": 128,
+        "height": 128
+      },
+      "animation_queues": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 866,
+        "encoded_size": 400,
+        "words": [
+          [
+            "0xfd00", [1538, 4], [212, 1], [1570, 4], [244, 11], [1542, 4], [212, 1], [1574, 4], [244, 11], [1546, 4],
+            [212, 1], [1578, 4], [244, 11], [1550, 4], [212, 1], [1582, 4], [244, 11], "0xfe00"
+          ],
+          [
+            "0xfd01", [1664, 4], [276, 1], [1696, 4], [308, 4], [1668, 4], [276, 1], [1700, 4], [308, 4], [1672, 4],
+            [276, 1], [1704, 4], [308, 4], [1676, 4], [276, 1], [1708, 4], [308, 4], "0xfe00"
+          ],
+          [
+            "0xfd02", [1680, 4], [342, 1], [1712, 4], [374, 4], [1684, 4], [342, 1], [1716, 4], [374, 4], [1688, 4],
+            [342, 1], [1720, 4], [374, 4], [1692, 4], [342, 1], [1724, 4], [374, 4], "0xfe00"
+          ],
+          ["0xfd03", [1640, 2], [1196, 3], [1642, 2], [1196, 3], [1644, 2], [1196, 3], [1646, 2], [1196, 3], "0xfe00"],
+          [
+            "0xfd04", [1600, 2], [262, 1], [1632, 2], [294, 11], [1602, 2], [262, 1], [1634, 2], [294, 11], [1604, 2],
+            [262, 1], [1636, 2], [294, 11], [1606, 2], [262, 1], [1638, 2], [294, 11], "0xfe00"
+          ],
+          ["0xfd05", [1608, 2], [130, 11], [1610, 2], [130, 11], [1612, 2], [130, 11], [1614, 2], [130, 11], "0xfe00"],
+          [
+            "0xfd06", [1746, 2], [394, 1], [1778, 2], [426, 4], [1748, 2], [394, 1], [1780, 2], [426, 4], [1750, 2],
+            [394, 1], [1782, 2], [426, 4], [1752, 2], [394, 1], [1784, 2], [426, 4], "0xfe00"
+          ],
+          [
+            "0xfd07", [1808, 2], [466, 1], [1840, 2], [468, 4], [1810, 2], [466, 1], [1842, 2], [468, 4], [1812, 2],
+            [466, 1], [1844, 2], [468, 4], [1814, 2], [466, 1], [1846, 2], [468, 4], "0xfe00"
+          ],
+          [
+            "0xfd08", [1757, 1], [1097, 1], [1789, 1], [1129, 1], [1821, 1], [1161, 4], [1758, 1], [1097, 1], [1790, 1],
+            [1129, 1], [1822, 1], [1161, 4], [1759, 1], [1097, 1], [1791, 1], [1129, 1], [1823, 1], [1161, 4],
+            [1816, 1], [1097, 1], [1848, 1], [1129, 1], [1880, 1], [1161, 4], "0xfe00"
+          ],
+          [
+            "0xfd09", [1834, 2], [1232, 1], [1849, 1], [1195, 4], [1836, 2], [1232, 1], [1850, 1], [1195, 4], [1838, 2],
+            [1232, 1], [1851, 1], [1195, 4], "0xfe00"
+          ],
+          [
+            "0xfd0a", [1824, 1], [457, 1], [1825, 1], [458, 1], [1826, 1], [459, 1], [1827, 1], [460, 1], [1828, 1],
+            [461, 6], [1856, 1], [457, 1], [1857, 1], [458, 1], [1858, 1], [459, 1], [1859, 1], [460, 1], [1860, 1],
+            [461, 6], [1888, 1], [457, 1], [1889, 1], [458, 1], [1890, 1], [459, 1], [1891, 1], [460, 1], [1892, 1],
+            [461, 6], [1856, 1], [457, 1], [1857, 1], [458, 1], [1858, 1], [459, 1], [1859, 1], [460, 1], [1860, 1],
+            [461, 6], "0xfe00"
+          ],
+          [
+            "0xfd0b", [1730, 4], [386, 1], [1762, 4], [418, 11], [1734, 4], [386, 1], [1766, 4], [418, 11], [1738, 4],
+            [386, 1], [1770, 4], [418, 11], [1742, 4], [386, 1], [1774, 4], [418, 11], "0xfe00"
+          ],
+          "0xffff"
+        ],
+        "component": "map-animation-queues",
+        "word_size": 2,
+        "terminators": ["0xfe00", "0xffff"]
+      },
+      "positions": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 71,
+        "encoded_size": 76,
+        "table": {
+          "format": 1,
+          "kind": "typed-table",
+          "address": "0x0",
+          "size": "0x47",
+          "segments": [
+            {
+              "name": "offsets",
+              "address": "0x0",
+              "end": "0x6",
+              "stride": 2,
+              "element": "le-u16",
+              "values": ["entrances", "cell_patches_end", "camera_bounds"]
+            },
+            {"name": "reserved", "address": "0x6", "end": "0x8", "stride": 2, "element": "le-u16", "values": [0]},
+            {
+              "name": "points",
+              "address": "0x8",
+              "end": "0x1c",
+              "stride": 5,
+              "element": "record",
+              "fields": [
+                {"name": "point", "element": "s8"},
+                {"name": "x", "element": "le-u16"},
+                {"name": "y", "element": "le-u16"}
+              ],
+              "records": [
+                {"point": 1, "x": 248, "y": 279},
+                {"point": 2, "x": 262, "y": 266},
+                {"point": 3, "x": 278, "y": 280},
+                {"point": 4, "x": 776, "y": 200}
+              ]
+            },
+            {"name": "points_end", "address": "0x1c", "end": "0x1d", "stride": 1, "element": "u8", "values": [255]},
+            {
+              "name": "entrances",
+              "address": "0x1d",
+              "end": "0x3b",
+              "stride": 6,
+              "element": "record",
+              "fields": [
+                {"name": "entrance", "element": "s8"},
+                {"name": "x", "element": "le-s16"},
+                {"name": "y", "element": "le-s16"},
+                {"name": "arrival", "element": "u8", "bits": {"facing": 4, "options": 4}}
+              ],
+              "records": [
+                {"entrance": 6, "x": 247, "y": 147, "arrival": [4, 0]},
+                {"entrance": 7, "x": 471, "y": 150, "arrival": [4, 0]},
+                {"entrance": 8, "x": 871, "y": 424, "arrival": [12, 0]},
+                {"entrance": 9, "x": 727, "y": 184, "arrival": [4, 0]},
+                {"entrance": 10, "x": 360, "y": 248, "arrival": [12, 0]}
+              ]
+            },
+            {"name": "entrances_end", "address": "0x3b", "end": "0x3c", "stride": 1, "element": "u8", "values": [255]},
+            {
+              "name": "cell_patches_end",
+              "address": "0x3c",
+              "end": "0x3e",
+              "stride": 2,
+              "element": "le-u16",
+              "values": [65535]
+            },
+            {
+              "name": "camera_bounds",
+              "address": "0x3e",
+              "end": "0x46",
+              "stride": 4,
+              "element": "record",
+              "fields": [
+                {"name": "left", "element": "s8"},
+                {"name": "top", "element": "s8"},
+                {"name": "right", "element": "s8"},
+                {"name": "bottom", "element": "s8"}
+              ],
+              "records": [
+                {"left": 2, "top": 2, "right": 34, "bottom": 28},
+                {"left": 40, "top": 7, "right": 59, "bottom": 29}
+              ]
+            },
+            {
+              "name": "camera_bounds_end",
+              "address": "0x46",
+              "end": "0x47",
+              "stride": 1,
+              "element": "u8",
+              "values": [255]
+            }
+          ]
+        },
+        "component": "map-positions"
+      },
+      "grid_source": "games/THE LOST AGE/SRC/FIELD/ARAFURA_DOU/ARAFURA_DOU.BIN",
+      "grid_offset": 68224,
+      "grid_compression": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "tag": 1,
+        "decoded_size": 65536,
+        "encoded_size": 2724
+      }
+    }
+  },
+  "palettes": {
+    "3a7": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 448, "encoded_size": 412},
+    "3ad": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 448, "encoded_size": 412}
+  },
+  "charblocks": {
+    "3a8": {
+      "format": 1,
+      "codec": "golden-sun-kind2-lz",
+      "decoded_size": 16384,
+      "encoded_size": 11404,
+      "layout": {
+        "format": "sequential-gba-4bpp-tiles",
+        "purpose": "map-charblock-source",
+        "tile_count": 512,
+        "tile_width": 8,
+        "tile_height": 8,
+        "columns": 32,
+        "rows": 16
+      }
+    },
+    "3a9": {
+      "format": 1,
+      "codec": "golden-sun-kind2-lz",
+      "decoded_size": 16384,
+      "encoded_size": 4172,
+      "layout": {
+        "format": "sequential-gba-4bpp-tiles",
+        "purpose": "map-charblock-source",
+        "tile_count": 512,
+        "tile_width": 8,
+        "tile_height": 8,
+        "columns": 32,
+        "rows": 16
+      }
+    },
+    "3aa": {
+      "format": 1,
+      "codec": "golden-sun-kind2-lz",
+      "decoded_size": 16384,
+      "encoded_size": 4348,
+      "layout": {
+        "format": "sequential-gba-4bpp-tiles",
+        "purpose": "map-charblock-source",
+        "tile_count": 512,
+        "tile_width": 8,
+        "tile_height": 8,
+        "columns": 32,
+        "rows": 16
+      }
+    },
+    "3ab": {
+      "format": 1,
+      "codec": "golden-sun-kind2-lz",
+      "decoded_size": 16384,
+      "encoded_size": 6100,
+      "layout": {
+        "format": "sequential-gba-4bpp-tiles",
+        "purpose": "map-charblock-source",
+        "tile_count": 512,
+        "tile_width": 8,
+        "tile_height": 8,
+        "columns": 32,
+        "rows": 16
+      }
+    }
+  }
+}

@@ -43,7 +43,6 @@
         "decoded_size": 7001,
         "encoded_size": 3096,
         "tilemap_length": 7000,
-        "lookahead": "00",
         "component": "map-metatiles-2x2",
         "transform_mode": 2,
         "metatiles": 875,
@@ -61,7 +60,6 @@
           [1, 0, 2, 0], [1, 2, 4, 0], [1, 4, 6, 0], [0, 8, 0, 0], [13, 0, 0, 2], [12, 0, 0, 2], [12, 4, 0, 0],
           [3, 2, 0, 0], [4, 2, 0, 0]
         ],
-        "lookahead": "000000",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -106,7 +104,6 @@
           ],
           "0xffff"
         ],
-        "lookahead": "000000",
         "component": "map-animation-queues",
         "word_size": 2,
         "terminators": ["0xfe00", "0xffff"]
@@ -118,7 +115,6 @@
         "decoded_size": 2,
         "encoded_size": 8,
         "words": [["0xffff"]],
-        "lookahead": "0000",
         "component": "map-blend-animation",
         "word_size": 2
       },
@@ -126,7 +122,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x086a3ccc",
-        "size": "0x1c",
+        "size": "0x1b",
         "record_size": 3,
         "segments": [
           {
@@ -147,8 +143,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x086a3ce7", "end": "0x086a3ce8", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/KAREI_KYUDEN/KAREI_KYUDEN.BIN",

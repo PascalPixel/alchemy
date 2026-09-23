@@ -1,0 +1,104 @@
+{
+  "format": 1,
+  "kind": "components",
+  "address": "0x0896428c",
+  "size": "0x3c86",
+  "offset_table": {
+    "format": 1,
+    "kind": "typed-table",
+    "address": "0x0896428c",
+    "size": 102,
+    "segments": [
+      {
+        "address": "0x0896428c",
+        "end": "0x089642f2",
+        "stride": 2,
+        "element": "le-u16",
+        "values": [
+          102, 486, 902, 1190, 1542, 1862, 2182, 2534, 2854, 2886, 3238, 3270, 3558, 3590, 3622, 3974, 4358, 4678, 4998,
+          5318, 5638, 5958, 6246, 6438, 6790, 7078, 7398, 7686, 8070, 8454, 8838, 9190, 9606, 9926, 10214, 10502, 10790,
+          11142, 11462, 11782, 12166, 12518, 12870, 13222, 13446, 13734, 14022, 14278, 14534, 14790, 15142
+        ]
+      }
+    ]
+  },
+  "streams": [
+    {"codec": "golden-sun-palette-lz", "decoded_size": 1024, "encoded_size": 365},
+    {"codec": "golden-sun-palette-lz", "decoded_size": 1024, "encoded_size": 409},
+    {"codec": "golden-sun-palette-lz", "decoded_size": 1024, "encoded_size": 267},
+    {"codec": "golden-sun-palette-lz", "decoded_size": 1024, "encoded_size": 342},
+    {"codec": "golden-sun-palette-lz", "decoded_size": 1024, "encoded_size": 308},
+    {"codec": "golden-sun-palette-lz", "decoded_size": 1024, "encoded_size": 308},
+    {"codec": "golden-sun-palette-lz", "decoded_size": 1024, "encoded_size": 324},
+    {"codec": "golden-sun-palette-lz", "decoded_size": 1024, "encoded_size": 314},
+    {"codec": "golden-sun-palette-lz", "decoded_size": 1024, "encoded_size": 16},
+    {"codec": "golden-sun-palette-lz", "decoded_size": 1024, "encoded_size": 323},
+    {"codec": "golden-sun-palette-lz", "decoded_size": 1024, "encoded_size": 16},
+    {"codec": "golden-sun-palette-lz", "decoded_size": 1024, "encoded_size": 287},
+    {"codec": "golden-sun-palette-lz", "decoded_size": 1024, "encoded_size": 16},
+    {"codec": "golden-sun-palette-lz", "decoded_size": 1024, "encoded_size": 16},
+    {"codec": "golden-sun-palette-lz", "decoded_size": 1024, "encoded_size": 323},
+    {"codec": "golden-sun-palette-lz", "decoded_size": 1024, "encoded_size": 354},
+    {"codec": "golden-sun-palette-lz", "decoded_size": 1024, "encoded_size": 313},
+    {"codec": "golden-sun-palette-lz", "decoded_size": 1024, "encoded_size": 310},
+    {"codec": "golden-sun-palette-lz", "decoded_size": 1024, "encoded_size": 311},
+    {"codec": "golden-sun-palette-lz", "decoded_size": 1024, "encoded_size": 292},
+    {"codec": "golden-sun-palette-lz", "decoded_size": 1024, "encoded_size": 301},
+    {"codec": "golden-sun-palette-lz", "decoded_size": 1024, "encoded_size": 262},
+    {"codec": "golden-sun-palette-lz", "decoded_size": 1024, "encoded_size": 187},
+    {"codec": "golden-sun-palette-lz", "decoded_size": 1024, "encoded_size": 333},
+    {"codec": "golden-sun-palette-lz", "decoded_size": 1024, "encoded_size": 283},
+    {"codec": "golden-sun-palette-lz", "decoded_size": 1024, "encoded_size": 297},
+    {"codec": "golden-sun-palette-lz", "decoded_size": 1024, "encoded_size": 286},
+    {"codec": "golden-sun-palette-lz", "decoded_size": 1024, "encoded_size": 355},
+    {"codec": "golden-sun-palette-lz", "decoded_size": 1024, "encoded_size": 370},
+    {"codec": "golden-sun-palette-lz", "decoded_size": 1024, "encoded_size": 364},
+    {"codec": "golden-sun-palette-lz", "decoded_size": 1024, "encoded_size": 322},
+    {"codec": "golden-sun-palette-lz", "decoded_size": 1024, "encoded_size": 385},
+    {"codec": "golden-sun-palette-lz", "decoded_size": 1024, "encoded_size": 304},
+    {"codec": "golden-sun-palette-lz", "decoded_size": 1024, "encoded_size": 269},
+    {"codec": "golden-sun-palette-lz", "decoded_size": 1024, "encoded_size": 259},
+    {"codec": "golden-sun-palette-lz", "decoded_size": 1024, "encoded_size": 266},
+    {"codec": "golden-sun-palette-lz", "decoded_size": 1024, "encoded_size": 326},
+    {"codec": "golden-sun-palette-lz", "decoded_size": 1024, "encoded_size": 304},
+    {"codec": "golden-sun-palette-lz", "decoded_size": 1024, "encoded_size": 293},
+    {"codec": "golden-sun-palette-lz", "decoded_size": 1024, "encoded_size": 353},
+    {"codec": "golden-sun-palette-lz", "decoded_size": 1024, "encoded_size": 333},
+    {"codec": "golden-sun-palette-lz", "decoded_size": 1024, "encoded_size": 326},
+    {"codec": "golden-sun-palette-lz", "decoded_size": 1024, "encoded_size": 351},
+    {"codec": "golden-sun-palette-lz", "decoded_size": 1024, "encoded_size": 221},
+    {"codec": "golden-sun-palette-lz", "decoded_size": 1024, "encoded_size": 286},
+    {"codec": "golden-sun-palette-lz", "decoded_size": 1024, "encoded_size": 283},
+    {"codec": "golden-sun-palette-lz", "decoded_size": 1024, "encoded_size": 249},
+    {"codec": "golden-sun-palette-lz", "decoded_size": 1024, "encoded_size": 241},
+    {"codec": "golden-sun-palette-lz", "decoded_size": 1024, "encoded_size": 249},
+    {"codec": "golden-sun-palette-lz", "decoded_size": 1024, "encoded_size": 336},
+    {"codec": "golden-sun-palette-lz", "decoded_size": 1024, "encoded_size": 328}
+  ],
+  "components": [
+    {
+      "kind": "typed-table",
+      "source": "games/THE LOST AGE/SRC/GRAPHICS/COMMON/UI.JSON",
+      "pointer": "/offset_table",
+      "size": 102
+    },
+    {
+      "kind": "golden-sun-general-lz",
+      "plan": "games/THE LOST AGE/SRC/GRAPHICS/COMMON/UI.JSON",
+      "plan_section": "/streams",
+      "size": 15392,
+      "components": [
+        {
+          "kind": "indexed-bytes",
+          "source": "games/THE LOST AGE/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+          "frame_width": 32,
+          "frame_height": 32,
+          "columns": 7,
+          "size": 1024,
+          "source_rect": {"x": 0, "y": 17440, "width": 224, "height": 256}
+        }
+      ],
+      "stream_alignment": 32
+    }
+  ]
+}

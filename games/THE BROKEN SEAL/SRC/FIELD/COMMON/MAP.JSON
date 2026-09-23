@@ -42,7 +42,6 @@
         "decoded_size": 9,
         "encoded_size": 8,
         "tilemap_length": 8,
-        "lookahead": "",
         "component": "map-metatiles-2x2",
         "transform_mode": 0,
         "metatiles": 1,
@@ -55,7 +54,6 @@
         "decoded_size": 4,
         "encoded_size": 8,
         "records": [[0, 0, 0, 0]],
-        "lookahead": "0000",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -63,7 +61,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x084baaa0",
-        "size": "0x4",
+        "size": "0x3",
         "record_size": 3,
         "segments": [
           {
@@ -73,8 +71,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x084baaa3", "end": "0x084baaa4", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAP.BIN",
@@ -125,7 +122,6 @@
         "decoded_size": 2241,
         "encoded_size": 1240,
         "tilemap_length": 2240,
-        "lookahead": "000000",
         "component": "map-metatiles-2x2",
         "transform_mode": 2,
         "metatiles": 280,
@@ -140,7 +136,6 @@
         "records": [
           [0, 0, 0, 0], [0, 252, 0, 0], [0, 2, 0, 0], [0, 240, 0, 0], [0, 250, 0, 0], [0, 248, 0, 0], [0, 4, 0, 0]
         ],
-        "lookahead": "00",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -151,7 +146,6 @@
         "decoded_size": 2,
         "encoded_size": 8,
         "words": ["0xffff"],
-        "lookahead": "0000",
         "component": "map-animation-queues",
         "word_size": 2,
         "terminators": ["0xfe00", "0xffff"]
@@ -163,7 +157,6 @@
         "decoded_size": 10,
         "encoded_size": 16,
         "words": [["0x3f42"], ["0x1007", 20], ["0xfe00"], ["0xffff"]],
-        "lookahead": "00",
         "component": "map-blend-animation",
         "word_size": 2
       },
@@ -171,7 +164,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x086cab04",
-        "size": "0x10",
+        "size": "0xf",
         "record_size": 3,
         "segments": [
           {
@@ -189,8 +182,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x086cab13", "end": "0x086cab14", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAP.BIN",
@@ -241,7 +233,6 @@
         "decoded_size": 18001,
         "encoded_size": 11772,
         "tilemap_length": 18000,
-        "lookahead": "0000",
         "component": "map-metatiles-2x2",
         "transform_mode": 1,
         "metatiles": 2250,
@@ -269,7 +260,6 @@
           [2, 0, 8, 0], [4, 0, 2, 0], [3, 2, 4, 0], [2, 2, 4, 0], [4, 2, 4, 0], [3, 4, 6, 0], [7, 4, 8, 0],
           [1, 0, 2, 0], [1, 2, 4, 0], [3, 0, 252, 0]
         ],
-        "lookahead": "0000",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -302,7 +292,6 @@
           ["0xfd03", [1730, 1], [722, 8], [1734, 1], [722, 8], [1738, 1], [722, 8], [1742, 1], [722, 8], "0xfe00"],
           "0xffff"
         ],
-        "lookahead": "00",
         "component": "map-animation-queues",
         "word_size": 2,
         "terminators": ["0xfe00", "0xffff"]
@@ -311,7 +300,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x084cece8",
-        "size": "0xc",
+        "size": "0x9",
         "record_size": 3,
         "segments": [
           {
@@ -329,8 +318,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x084cecf1", "end": "0x084cecf4", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAP.BIN",
@@ -381,7 +369,6 @@
         "decoded_size": 6921,
         "encoded_size": 4464,
         "tilemap_length": 6920,
-        "lookahead": "",
         "component": "map-metatiles-2x2",
         "transform_mode": 1,
         "metatiles": 865,
@@ -399,7 +386,6 @@
           [1, 6, 8, 0], [3, 8, 0, 0], [0, 12, 0, 0], [4, 4, 0, 0], [3, 4, 0, 0], [1, 4, 2, 0], [1, 2, 0, 0],
           [2, 0, 8, 0], [0, 3, 0, 0], [0, 2, 0, 0], [9, 2, 0, 0], [3, 0, 2, 0], [7, 0, 4, 0], [7, 0, 2, 0]
         ],
-        "lookahead": "0000",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -407,7 +393,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x0852ff84",
-        "size": "0x8",
+        "size": "0x6",
         "record_size": 3,
         "segments": [
           {
@@ -425,8 +411,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x0852ff8a", "end": "0x0852ff8c", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAP.BIN",
@@ -477,7 +462,6 @@
         "decoded_size": 7625,
         "encoded_size": 4392,
         "tilemap_length": 7624,
-        "lookahead": "0000",
         "component": "map-metatiles-2x2",
         "transform_mode": 1,
         "metatiles": 953,
@@ -494,7 +478,6 @@
           [12, 4, 0, 0], [13, 4, 4, 0], [0, 8, 0, 0], [8, 0, 2, 0], [4, 0, 5, 0], [0, 4, 0, 0], [2, 2, 1, 0],
           [12, 4, 4, 0], [13, 4, 0, 0], [1, 255, 0, 0], [2, 1, 0, 0]
         ],
-        "lookahead": "0000",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -536,7 +519,6 @@
           ],
           "0xffff"
         ],
-        "lookahead": "",
         "component": "map-animation-queues",
         "word_size": 2,
         "terminators": ["0xfe00", "0xffff"]
@@ -548,7 +530,6 @@
         "decoded_size": 10,
         "encoded_size": 16,
         "words": [["0x3f44"], ["0x1008", 43210], ["0xfe00"], ["0xffff"]],
-        "lookahead": "00",
         "component": "map-blend-animation",
         "word_size": 2
       },
@@ -556,7 +537,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x0853b9b0",
-        "size": "0x24",
+        "size": "0x21",
         "record_size": 3,
         "segments": [
           {
@@ -577,8 +558,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x0853b9d1", "end": "0x0853b9d4", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAP.BIN",

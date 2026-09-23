@@ -903,6 +903,6 @@ mod tests {
     fn exact_route_is_owner_qualified_and_not_a_corpus_wide_write() {
         let command = ResidualClass::Exact.next_command();
         assert!(command.starts_with("alchemy adopt {owner} --source {source}"));
-        assert!(!command.contains("recon/en/main"));
+        assert!(!command.contains("en/main"));
     }
 }

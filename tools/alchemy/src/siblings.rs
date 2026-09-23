@@ -394,13 +394,13 @@ impl<'a> Model<'a> {
         }
         let owner = SourceOwner::parse(&self.edition.id(site)).expect("edition ids parse");
         let draft = match owner {
-            SourceOwner::Main(address) => format!("recon/en/main/{address:08x}.c"),
-            _ => format!("recon/en/overlays/{}.c", owner.legacy_stem()),
+            SourceOwner::Main(address) => format!("en/main/{address:08x}.c"),
+            _ => format!("en/overlays/{}.c", owner.legacy_stem()),
         };
-        let draft = format!("games/THE BROKEN SEAL/{draft}");
+        let draft = format!("recon/tbs/{draft}");
         match owner.overlay_id() {
             _ if self.root.join(&draft).is_file() => draft,
-            Some(overlay) => format!("games/THE BROKEN SEAL/raw/overlays/{overlay}_overlay.s"),
+            Some(overlay) => format!("recon/tbs/raw/overlays/{overlay}_overlay.s"),
             None => String::new(),
         }
     }

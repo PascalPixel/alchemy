@@ -119,7 +119,7 @@ fn classify(
         }
         if !private.contains(file) && extracted_input_shape(file) {
             return Err(format!(
-                "unregistered extracted input: register it in the game's SOURCE.JSON private_inputs or remove it: {file}"
+                "unregistered extracted input: register it in the game's private-inputs.json private_inputs or remove it: {file}"
             ));
         }
         if private.contains(file) {
@@ -139,13 +139,20 @@ fn classify(
 pub(in crate::build_assets) fn check(root: &Path) -> Result<(), String> {
     let mut private = BTreeSet::new();
     let mut bytes: BTreeMap<String, Vec<u8>> = BTreeMap::new();
-    let mut ctx = Context::new(root);
     for game in games() {
         let paths = NativePaths::of(&game);
         if !root.join(&paths.index).is_file() {
             continue;
         }
+        // Each game's inputs re-encode on its own reference machine.
+        let mut ctx = Context::for_game(root, game);
+        if root.join(game.asset_manifest).is_file() {
+            ctx.general_lz = Some(target_general_lz(root, &game)?);
+        }
         let index = &json(&root.join(&paths.index))?;
+        // The context is shared across both games; each game's general-LZ
+        // streams encode with the compressor of its own reference machine.
+        ctx.general_lz = Some(crate::build_assets::target_general_lz(root, &game)?);
         // A clone without this game's reference ROM cannot restore its private
         // inputs; their registration is still checked, their absent bytes are not.
         let restorable = root.join(game.rom).is_file();
@@ -324,15 +331,17 @@ pub(in crate::build_assets) fn check(root: &Path) -> Result<(), String> {
             }
         }
     }
-    let files = walkdir::WalkDir::new(root.join("games"))
+    // The Camelot-shaped game trees and the reconstruction scaffolding beside them.
+    let files = ["games", "recon"]
         .into_iter()
+        .flat_map(|tree| walkdir::WalkDir::new(root.join(tree)))
         .filter_map(Result::ok)
         .filter(|f| f.file_type().is_file() && f.file_name() != ".DS_Store")
         .map(|f| root_relative(root, f.path()))
         .collect::<Result<BTreeSet<_>, _>>()?;
     let tracked = paths(&git(
         root,
-        &["ls-files", "-z", "--cached", "--", "games"],
+        &["ls-files", "-z", "--cached", "--", "games", "recon"],
         None,
     )?);
     let input = files

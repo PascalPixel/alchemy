@@ -42,7 +42,6 @@
         "decoded_size": 3665,
         "encoded_size": 1132,
         "tilemap_length": 3664,
-        "lookahead": "",
         "component": "map-metatiles-2x2",
         "transform_mode": 1,
         "metatiles": 458,
@@ -55,7 +54,6 @@
         "decoded_size": 16,
         "encoded_size": 16,
         "records": [[0, 0, 0, 0], [0, 12, 0, 0], [0, 14, 0, 0], [1, 254, 0, 0]],
-        "lookahead": "000000",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -71,7 +69,6 @@
           ],
           "0xffff"
         ],
-        "lookahead": "00",
         "component": "map-animation-queues",
         "word_size": 2,
         "terminators": ["0xfe00", "0xffff"]
@@ -80,7 +77,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x086bfc3c",
-        "size": "0x4",
+        "size": "0x3",
         "record_size": 3,
         "segments": [
           {
@@ -90,8 +87,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x086bfc3f", "end": "0x086bfc40", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/FUNE_HOBASHIRA/FUNE_HOBASHIRA.BIN",

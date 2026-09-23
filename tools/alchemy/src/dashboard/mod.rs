@@ -20,22 +20,15 @@ use walkdir::WalkDir;
 const STYLES: &str = include_str!("style.css");
 const TREES: [(&str, &str); 1] = [("rom", "ROM contents")];
 const COVERAGE_DIRS: &[&str] = &[
-    "games/THE BROKEN SEAL/locations.tsv",
-    "games/THE BROKEN SEAL/raw",
-    "games/THE BROKEN SEAL/SOURCE.JSON",
     "games/THE BROKEN SEAL/SRC/GRAPHICS",
     "games/THE BROKEN SEAL/SOUND",
     "games/THE BROKEN SEAL/TEXT",
-    "games/THE BROKEN SEAL/metrics",
-    "games/THE BROKEN SEAL/semantic",
     "games/THE BROKEN SEAL/SRC",
     "games/THE BROKEN SEAL/INCLUDE",
     "games/COMMON",
-    "games/THE BROKEN SEAL/source-paths.json",
-    "games/THE BROKEN SEAL/recon",
-    "games/THE BROKEN SEAL/project.json",
     "games/THE LOST AGE",
-    "games/THE LOST AGE/PROJECT.JSON",
+    "recon/tbs",
+    "recon/tla",
     "out/tbs-en/reports",
     "out/tla-en/reports/verified-code.json",
 ];

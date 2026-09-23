@@ -42,7 +42,6 @@
         "decoded_size": 3905,
         "encoded_size": 1872,
         "tilemap_length": 3904,
-        "lookahead": "00",
         "component": "map-metatiles-2x2",
         "transform_mode": 1,
         "metatiles": 488,
@@ -58,7 +57,6 @@
           [0, 0, 0, 0], [0, 8, 0, 0], [0, 4, 0, 0], [7, 4, 6, 0], [8, 4, 0, 0], [8, 0, 4, 0], [1, 4, 2, 0],
           [1, 2, 0, 0], [1, 0, 2, 0], [1, 2, 4, 0], [0, 2, 0, 0]
         ],
-        "lookahead": "000000",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -108,7 +106,6 @@
           ],
           "0xffff"
         ],
-        "lookahead": "00",
         "component": "map-animation-queues",
         "word_size": 2,
         "terminators": ["0xfe00", "0xffff"]
@@ -120,7 +117,6 @@
         "decoded_size": 2,
         "encoded_size": 8,
         "words": [["0xffff"]],
-        "lookahead": "0000",
         "component": "map-blend-animation",
         "word_size": 2
       },
@@ -128,7 +124,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x08774c7c",
-        "size": "0x4",
+        "size": "0x3",
         "record_size": 3,
         "segments": [
           {
@@ -138,8 +134,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x08774c7f", "end": "0x08774c80", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/MENU/LINK_LOBBY/LINK_LOBBY.BIN",

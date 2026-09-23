@@ -1,0 +1,364 @@
+{
+  "format": 1,
+  "kind": "typed-table-package",
+  "regions": [
+    {
+      "format": 1,
+      "kind": "typed-table",
+      "id": "range_0802ec5c",
+      "address": "0x0802ec5c",
+      "end": "0x0802ec7c",
+      "size": 32,
+      "segments": [
+        {
+          "id": "signed_mode_table",
+          "address": "0x0802ec5c",
+          "end": "0x0802ec7c",
+          "source_state": "typed_values_pending",
+          "consumers": ["recon/tla/raw/0802632c.s", "recon/tla/raw/080279b0.s", "recon/tla/raw/08027e20.s"],
+          "element": "le-s16",
+          "stride": 2,
+          "values": [-1, 0, -32768, -1, -16384, -8192, -24576, -16384, 16384, 8192, 24576, 16384, -1, 0, -32768, -1]
+        }
+      ]
+    },
+    {
+      "format": 1,
+      "kind": "typed-table",
+      "id": "range_0802ed34",
+      "address": "0x0802ed34",
+      "end": "0x0802f078",
+      "size": 836,
+      "segments": [
+        {
+          "id": "resource_slot_descriptors",
+          "address": "0x0802ed34",
+          "end": "0x0802edc4",
+          "source_state": "typed_values_pending",
+          "consumers": ["recon/tla/raw/0802be4c.s"],
+          "element": "le-u32",
+          "stride": 36,
+          "values": [
+            [410, 411, 412, 413, 414, 415, 416, 417, 418], [428, 429, 430, 431, 432, 433, 434, 435, 436],
+            [419, 420, 421, 422, 423, 424, 425, 426, 427], [437, 438, 439, 440, 441, 442, 443, 444, 445]
+          ]
+        },
+        {
+          "id": "grid_lookup_a",
+          "address": "0x0802edc4",
+          "end": "0x0802eec4",
+          "source_state": "typed_values_pending",
+          "consumers": ["recon/tla/raw/0802d370.s"],
+          "element": "u8",
+          "stride": 16,
+          "values": [
+            [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0], [0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0],
+            [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0], [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+            [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+            [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0], [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0],
+            [0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0], [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0]
+          ]
+        },
+        {
+          "id": "grid_lookup_b",
+          "address": "0x0802eec4",
+          "end": "0x0802efc4",
+          "source_state": "typed_values_pending",
+          "consumers": [
+            "games/THE LOST AGE/SRC/LIB/CURVE_LOOKUP.C", "recon/tla/raw/0802d370.s", "recon/tla/raw/0802d400.s"
+          ],
+          "element": "u8",
+          "stride": 16,
+          "values": [
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0],
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2],
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2], [1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2],
+            [1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2], [1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
+            [1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2], [1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2]
+          ]
+        },
+        {
+          "id": "interpolation_coefficients",
+          "address": "0x0802efc4",
+          "end": "0x0802f004",
+          "source_state": "typed_values_pending",
+          "consumers": ["recon/tla/raw/0802d400.s", "recon/tla/raw/0802d600.s"],
+          "element": "thumb-pointer",
+          "stride": 4,
+          "values": [
+            "Curve_GetFirstSampleA", "Curve_LerpTwoSamples", "Curve_LerpTwoSamplesB", "Curve_StepAtSummedPosition",
+            "0x0802d2b0", "0x0802d2e0", "0x0802d324", "0x0802d370", "0x0802d394", "0x0802d3ac", "0x0802d3c4",
+            "0x0802d3d8", "Curve_LookupSampleByTable", "0x0802d400", "0x0802d414", "0x0802d438"
+          ]
+        },
+        {
+          "id": "surface_lookup",
+          "address": "0x0802f004",
+          "end": "0x0802f054",
+          "source_state": "typed_values_pending",
+          "consumers": ["recon/tla/raw/0802dc48.s"],
+          "element": "u8",
+          "stride": 16,
+          "values": [
+            [0, 8, 8, 8, 10, 1, 7, 1, 1, 2, 1, 1, 1, 1, 0, 0], [0, 8, 8, 8, 10, 4, 7, 1, 1, 2, 1, 1, 1, 1, 0, 0],
+            [0, 9, 9, 9, 9, 5, 5, 5, 5, 6, 5, 5, 5, 5, 0, 0], [0, 8, 8, 8, 10, 3, 7, 1, 1, 2, 1, 1, 1, 1, 0, 0],
+            [0, 9, 9, 9, 9, 11, 11, 11, 11, 12, 11, 11, 11, 11, 0, 0]
+          ]
+        },
+        {
+          "id": "surface_colors",
+          "address": "0x0802f054",
+          "end": "0x0802f064",
+          "source_state": "typed_values_pending",
+          "consumers": ["recon/tla/raw/0802dd08.s"],
+          "element": "le-u16",
+          "stride": 2,
+          "values": [0, 31744, 992, 31, 7399, 15855, 32767, 15]
+        },
+        {
+          "id": "surface_thresholds",
+          "address": "0x0802f064",
+          "end": "0x0802f078",
+          "source_state": "typed_values_pending",
+          "consumers": ["recon/tla/raw/0802dd08.s"],
+          "element": "le-u16",
+          "stride": 2,
+          "values": [0, 16, 243, 247, 250, 490, 526, 642, 671, 65535]
+        }
+      ]
+    },
+    {
+      "format": 1,
+      "kind": "typed-table",
+      "id": "range_0802f090",
+      "address": "0x0802f090",
+      "end": "0x0802f380",
+      "size": 752,
+      "segments": [
+        {
+          "id": "render_limits",
+          "address": "0x0802f090",
+          "end": "0x0802f098",
+          "source_state": "typed_values_pending",
+          "consumers": ["recon/tla/raw/0802e7a8.s"],
+          "element": "le-s32",
+          "stride": 4,
+          "values": [65536, 65536]
+        },
+        {
+          "id": "program_00",
+          "address": "0x0802f098",
+          "end": "0x0802f0b0",
+          "source_state": "typed_values_pending",
+          "consumers": ["recon/tla/raw/08023510.s"],
+          "element": "le-u32",
+          "stride": 4,
+          "values": [37, 0, 1, 13, 65535, 0]
+        },
+        {
+          "id": "program_01",
+          "address": "0x0802f0b0",
+          "end": "0x0802f0c8",
+          "source_state": "typed_values_pending",
+          "consumers": ["recon/tla/raw/08023510.s"],
+          "element": "le-u32",
+          "stride": 4,
+          "values": [27, 0, 1, 13, 65535, 0]
+        },
+        {
+          "id": "program_02",
+          "address": "0x0802f0c8",
+          "end": "0x0802f0e0",
+          "source_state": "typed_values_pending",
+          "consumers": ["recon/tla/raw/08023510.s"],
+          "element": "le-u32",
+          "stride": 4,
+          "values": [28, 0, 1, 13, 65535, 0]
+        },
+        {
+          "id": "program_03",
+          "address": "0x0802f0e0",
+          "end": "0x0802f0f8",
+          "source_state": "typed_values_pending",
+          "consumers": ["recon/tla/raw/08023510.s"],
+          "element": "le-u32",
+          "stride": 4,
+          "values": [29, 0, 1, 13, 65535, 0]
+        },
+        {
+          "id": "program_04",
+          "address": "0x0802f0f8",
+          "end": "0x0802f110",
+          "source_state": "typed_values_pending",
+          "consumers": ["recon/tla/raw/08023510.s"],
+          "element": "le-u32",
+          "stride": 4,
+          "values": [30, 0, 1, 13, 65535, 0]
+        },
+        {
+          "id": "program_05",
+          "address": "0x0802f110",
+          "end": "0x0802f128",
+          "source_state": "typed_values_pending",
+          "consumers": ["recon/tla/raw/08023510.s"],
+          "element": "le-u32",
+          "stride": 4,
+          "values": [35, 0, 1, 13, 65535, 0]
+        },
+        {
+          "id": "program_06",
+          "address": "0x0802f128",
+          "end": "0x0802f140",
+          "source_state": "typed_values_pending",
+          "consumers": ["recon/tla/raw/08023510.s"],
+          "element": "le-u32",
+          "stride": 4,
+          "values": [36, 0, 1, 13, 65535, 0]
+        },
+        {
+          "id": "program_07",
+          "address": "0x0802f140",
+          "end": "0x0802f158",
+          "source_state": "typed_values_pending",
+          "consumers": ["recon/tla/raw/08023510.s"],
+          "element": "le-u32",
+          "stride": 4,
+          "values": [25, 0, 1, 13, 65535, 0]
+        },
+        {
+          "id": "program_08",
+          "address": "0x0802f158",
+          "end": "0x0802f170",
+          "source_state": "typed_values_pending",
+          "consumers": ["recon/tla/raw/08023510.s"],
+          "element": "le-u32",
+          "stride": 4,
+          "values": [26, 0, 1, 13, 65535, 0]
+        },
+        {
+          "id": "program_09",
+          "address": "0x0802f170",
+          "end": "0x0802f188",
+          "source_state": "typed_values_pending",
+          "consumers": ["recon/tla/raw/08023510.s"],
+          "element": "le-u32",
+          "stride": 4,
+          "values": [31, 0, 1, 13, 65535, 0]
+        },
+        {
+          "id": "program_10",
+          "address": "0x0802f188",
+          "end": "0x0802f1a0",
+          "source_state": "typed_values_pending",
+          "consumers": ["recon/tla/raw/08023510.s"],
+          "element": "le-u32",
+          "stride": 4,
+          "values": [32, 0, 1, 13, 65535, 0]
+        },
+        {
+          "id": "program_11",
+          "address": "0x0802f1a0",
+          "end": "0x0802f1b8",
+          "source_state": "typed_values_pending",
+          "consumers": ["recon/tla/raw/08023510.s"],
+          "element": "le-u32",
+          "stride": 4,
+          "values": [33, 0, 1, 13, 65535, 0]
+        },
+        {
+          "id": "program_12",
+          "address": "0x0802f1b8",
+          "end": "0x0802f1d0",
+          "source_state": "typed_values_pending",
+          "consumers": ["recon/tla/raw/08023510.s"],
+          "element": "le-u32",
+          "stride": 4,
+          "values": [34, 0, 1, 13, 65535, 0]
+        },
+        {
+          "id": "program_13",
+          "address": "0x0802f1d0",
+          "end": "0x0802f1e8",
+          "source_state": "typed_values_pending",
+          "consumers": ["games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/CHILD_STATE.C"],
+          "element": "le-u32",
+          "stride": 4,
+          "values": [12, 0, 1, 13, 65535, 0]
+        },
+        {
+          "id": "program_14",
+          "address": "0x0802f1e8",
+          "end": "0x0802f200",
+          "source_state": "typed_values_pending",
+          "consumers": ["recon/tla/raw/08023510.s"],
+          "element": "le-u32",
+          "stride": 4,
+          "values": [11, 0, 1, 13, 65535, 0]
+        },
+        {
+          "id": "program_15",
+          "address": "0x0802f200",
+          "end": "0x0802f204",
+          "source_state": "typed_values_pending",
+          "consumers": [
+            "games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/CHILD_STATE.C", "recon/tla/raw/08023220.s",
+            "recon/tla/raw/08023510.s"
+          ],
+          "element": "le-u32",
+          "stride": 4,
+          "values": [17]
+        },
+        {
+          "id": "object_handlers",
+          "address": "0x0802f204",
+          "end": "0x0802f2dc",
+          "source_state": "typed_values_pending",
+          "consumers": ["recon/tla/raw/08023f64.s"],
+          "element": "thumb-pointer",
+          "stride": 4,
+          "values": [
+            "Script_StoreLookupResult", "0x08024c70", "0x08024fe0", "0x08025038", "0x08025078", "0x080250c0",
+            "0x080250f4", "0x08025118", "0x08025134", "0x08025698", "0x08025830", "0x08025608", "0x08025160",
+            "0x08024d14", "0x08024d60", "0x08024d7c", "0x08024dac", "Script_LoadMainScript", "0x08024dec", "0x08024e10",
+            "0x08024e3c", "0x08024e68", "Script_ApplyOperandSet", "Script_ApplyOperandAdd",
+            "Script_ApplyOperandCompare", "0x08027064", "0x080279b0", "0x080290f4", "0x080292fc", "0x08029570",
+            "0x080298c0", "0x08027e20", "0x08028534", "0x08028aac", "0x0802a124", "0x0802632c", "0x080267bc",
+            "0x08027e0c", "0x08024ec8", "0x08024ea8", "Script_SkipCommand", "0x08024ee0", "0x08024f00", "0x08023efc",
+            "Script_ClearByte54", "Script_SetByte54", "0x08024cac", "0x08025428", "0x0802509c", "Script_LoadMainScript",
+            "Script_LoadMainScript", "Script_LoadMainScript", "Script_LoadMainScript", "Script_LoadMainScript"
+          ]
+        },
+        {
+          "id": "object_operand_handlers",
+          "address": "0x0802f2dc",
+          "end": "0x0802f380",
+          "source_state": "typed_values_pending",
+          "consumers": ["games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/OPERANDS.C"],
+          "element": "thumb-pointer",
+          "stride": 4,
+          "values": [
+            "Script_SetOrCompareAddress", "Script_SetOrCompareCursor", "0x08025bb4", "0x08025bb4", "0x08025bb4",
+            "Script_SetOrCompareWord08", "Script_SetOrCompareWord0c", "Script_SetOrCompareWord10", "0x08025c5c",
+            "Script_SetOrCompareWord18", "Script_SetOrCompareWord1c", "Script_SetOrCompareWord1c",
+            "Script_SetOrCompareWord24", "Script_SetOrCompareWord28", "Script_SetOrCompareWord2c",
+            "Script_SetOrCompareWord30", "Script_SetOrCompareWord34", "Script_SetOrCompareWord38",
+            "Script_SetOrCompareWord3c", "Script_SetOrCompareWord40", "Script_SetOrCompareWord44",
+            "Script_SetOrCompareWord48", "Script_SetOrCompareWord14", "Script_SetOrCompareWord4c",
+            "Script_SetOrCompareAddress50", "Script_SetOrCompareByte54", "Script_SetOrCompareByte55",
+            "Script_SetOrCompareByte56", "0x08025f9c", "Script_SetOrCompareByte58", "Script_SetOrCompareByte59",
+            "Script_SetOrCompareByte5a", "Script_SetOrCompareByte5b", "Script_SetOrCompareByte5d",
+            "Script_SetOrCompareHalfword5e", "Script_SetOrCompareSignedHalfword64",
+            "Script_SetOrCompareSignedHalfword66", "Script_SetOrCompareWord68", "Script_SetOrCompareWord6c",
+            "Script_SetOrCompareByte62", "Script_SetOrCompareByte63"
+          ]
+        }
+      ]
+    }
+  ]
+}

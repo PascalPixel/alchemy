@@ -157,7 +157,7 @@ fn edition(target: &DecompTarget) -> Edition {
             japanese: DecompTargetId::TlaJa,
             archive: "games/THE LOST AGE/TEXT/EN.PO",
             catalog_source: None,
-            character_dir: None,
+            character_dir: Some("games/THE LOST AGE/SRC/GRAPHICS/CHARACTER"),
             japanese_contexts: 0x0806_4c3c,
             japanese_banks: 0x0809_cf40,
             party_names: 131,
@@ -211,18 +211,27 @@ fn party_names(rom: &[u8], edition: &Edition) -> Result<Vec<Value>, String> {
 
 /// Identities reviewed for The Lost Age descriptors: descriptor, the Japanese
 /// message that spells the name, the English message that spells it, and the
-/// binding. A name message proves only the spelling; every binding below comes
-/// from reviewing the decoded ROM sheet (SHEETS/NNN.PNG), because no runtime
-/// actor placement naming these descriptors has been read yet.
+/// binding. A name message proves only the spelling. Party actors 0-7 draw
+/// descriptors 0-7 through the party descriptor table 0x0805f666 that
+/// 0x08044b80 reads; 0x038 and 0x039 are bound by actor placement rows (see
+/// their character documents); the others come from reviewing the decoded ROM
+/// sheet (SHEETS/NNN.PNG) alone.
 const SHEET_REVIEW: &str = "sheet review; runtime actor binding not established";
+const PARTY_TABLE: &str = "party descriptor table 0x0805f666 read by 0x08044b80";
+const PLACEMENT_ROWS: &str = "actor placement rows in the opening overlays";
 const LOST_AGE_IDENTITIES: &[(usize, usize, usize, &str)] = &[
-    (4, 135, 135, SHEET_REVIEW),
-    (5, 136, 136, SHEET_REVIEW),
-    (6, 137, 137, SHEET_REVIEW),
+    (0, 131, 131, PARTY_TABLE),
+    (1, 132, 132, PARTY_TABLE),
+    (2, 133, 133, PARTY_TABLE),
+    (3, 134, 134, PARTY_TABLE),
+    (4, 135, 135, PARTY_TABLE),
+    (5, 136, 136, PARTY_TABLE),
+    (6, 137, 137, PARTY_TABLE),
+    (7, 138, 138, PARTY_TABLE),
     (22, 1413, 1413, SHEET_REVIEW),
     (23, 1416, 1416, SHEET_REVIEW),
-    (28, 4953, 4967, SHEET_REVIEW),
-    (31, 4952, 4966, SHEET_REVIEW),
+    (0x38, 4953, 4967, PLACEMENT_ROWS),
+    (0x39, 4952, 4966, PLACEMENT_ROWS),
 ];
 
 pub fn audit(root: &Path, arguments: &[String]) -> Result<(), String> {

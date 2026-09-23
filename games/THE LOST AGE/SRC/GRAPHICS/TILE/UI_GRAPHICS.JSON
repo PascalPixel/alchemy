@@ -1,0 +1,457 @@
+{
+  "format": 1,
+  "kind": "components",
+  "address": "0x0804e584",
+  "size": "0x0000dba8",
+  "components": [
+    {"kind": "gba-4bpp-tiles", "source": "games/THE LOST AGE/SRC/GRAPHICS/TILE/UI_TILE_08029910.4BPP.PNG", "size": 256},
+    {
+      "kind": "pointer-table",
+      "source": "games/THE LOST AGE/SRC/GRAPHICS/TILE/UI_GRAPHICS.JSON",
+      "pointer": "/mtf_banks/0/header",
+      "size": 16
+    },
+    {
+      "kind": "mtf4-bytes",
+      "source": "games/THE LOST AGE/SRC/GRAPHICS/TILE/UI_MTF_00.INDEXED.PNG",
+      "frame_width": 16,
+      "frame_height": 16,
+      "columns": 3,
+      "frames": 3,
+      "size": 169
+    },
+    {"kind": "byte-fill", "value": 0, "size": 3},
+    {
+      "kind": "pointer-table",
+      "source": "games/THE LOST AGE/SRC/GRAPHICS/TILE/UI_GRAPHICS.JSON",
+      "pointer": "/mtf_banks/1/header",
+      "size": 12
+    },
+    {
+      "kind": "mtf4-bytes",
+      "source": "games/THE LOST AGE/SRC/GRAPHICS/TILE/UI_MTF_01.INDEXED.PNG",
+      "frame_width": 16,
+      "frame_height": 16,
+      "columns": 3,
+      "frames": 3,
+      "size": 141
+    },
+    {"kind": "byte-fill", "value": 0, "size": 3},
+    {
+      "kind": "pointer-table",
+      "source": "games/THE LOST AGE/SRC/GRAPHICS/TILE/UI_GRAPHICS.JSON",
+      "pointer": "/mtf_banks/2/header",
+      "size": 56
+    },
+    {
+      "kind": "mtf4-bytes",
+      "source": "games/THE LOST AGE/SRC/GRAPHICS/TILE/UI_MTF_02.INDEXED.PNG",
+      "frame_width": 16,
+      "frame_height": 16,
+      "columns": 13,
+      "frames": 13,
+      "size": 608
+    },
+    {
+      "kind": "pointer-table",
+      "source": "games/THE LOST AGE/SRC/GRAPHICS/TILE/UI_GRAPHICS.JSON",
+      "pointer": "/mtf_banks/3/header",
+      "size": 172
+    },
+    {
+      "kind": "mtf4-bytes",
+      "source": "games/THE LOST AGE/SRC/GRAPHICS/TILE/UI_MTF_03.INDEXED.PNG",
+      "frame_width": 16,
+      "frame_height": 16,
+      "columns": 1,
+      "frames": 1,
+      "size": 53
+    },
+    {"kind": "byte-fill", "value": 0, "size": 3},
+    {
+      "kind": "pointer-table",
+      "source": "games/THE LOST AGE/SRC/GRAPHICS/TILE/UI_GRAPHICS.JSON",
+      "pointer": "/mtf_banks/4/header",
+      "size": 1488
+    },
+    {
+      "kind": "mtf4-bytes",
+      "source": "games/THE LOST AGE/SRC/GRAPHICS/TILE/UI_MTF_04.INDEXED.PNG",
+      "frame_width": 16,
+      "frame_height": 16,
+      "columns": 16,
+      "frames": 370,
+      "size": 22763
+    },
+    {"kind": "byte-fill", "value": 0, "size": 1},
+    {
+      "kind": "pointer-table",
+      "source": "games/THE LOST AGE/SRC/GRAPHICS/TILE/UI_GRAPHICS.JSON",
+      "pointer": "/mtf_banks/5/header",
+      "size": 1044
+    },
+    {
+      "kind": "mtf4-bytes",
+      "source": "games/THE LOST AGE/SRC/GRAPHICS/TILE/UI_MTF_05.INDEXED.PNG",
+      "frame_width": 16,
+      "frame_height": 16,
+      "columns": 16,
+      "frames": 260,
+      "size": 16841
+    },
+    {"kind": "byte-fill", "value": 0, "size": 3},
+    {
+      "kind": "pointer-table",
+      "source": "games/THE LOST AGE/SRC/GRAPHICS/TILE/UI_GRAPHICS.JSON",
+      "pointer": "/mtf_banks/6/header",
+      "size": 132
+    },
+    {
+      "kind": "mtf4-bytes",
+      "source": "games/THE LOST AGE/SRC/GRAPHICS/TILE/UI_MTF_06.INDEXED.PNG",
+      "frame_width": 16,
+      "frame_height": 16,
+      "columns": 16,
+      "frames": 32,
+      "size": 1915
+    },
+    {"kind": "byte-fill", "value": 0, "size": 5},
+    {"kind": "gba-4bpp-tiles", "source": "games/THE LOST AGE/SRC/GRAPHICS/TILE/UI_TILE_080310A4.4BPP.PNG", "size": 384},
+    {
+      "kind": "pointer-table",
+      "source": "games/THE LOST AGE/SRC/GRAPHICS/TILE/UI_GRAPHICS.JSON",
+      "pointer": "/packed_images/header",
+      "size": 36
+    },
+    {
+      "kind": "golden-sun-general-lz",
+      "plan": "games/THE LOST AGE/SRC/GRAPHICS/TILE/UI_GRAPHICS.JSON",
+      "plan_section": "/packed_images/streams",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "source": "games/THE LOST AGE/SRC/GRAPHICS/TILE/UI_MENU_LABELS.INDEXED.PNG",
+          "frames": 18,
+          "frames_per_image": 2,
+          "columns": 18,
+          "frame_tiles_wide": 4,
+          "frame_tiles_high": 2,
+          "size": 512
+        }
+      ],
+      "size": 2881
+    },
+    {"kind": "byte-fill", "value": 0, "size": 3},
+    {"kind": "typed-table", "source": "games/THE LOST AGE/SRC/GRAPHICS/FONT/LOCALIZATION_GLYPHS.JSON", "size": 7168},
+    {
+      "kind": "typed-table",
+      "source": "games/THE LOST AGE/SRC/GRAPHICS/TILE/UI_GRAPHICS.JSON",
+      "pointer": "/kana_marks",
+      "size": 16
+    },
+    {
+      "kind": "typed-table",
+      "source": "games/THE LOST AGE/SRC/GRAPHICS/TILE/UI_GRAPHICS.JSON",
+      "pointer": "/articles/data",
+      "size": 28
+    },
+    {
+      "kind": "pointer-table",
+      "source": "games/THE LOST AGE/SRC/GRAPHICS/TILE/UI_GRAPHICS.JSON",
+      "pointer": "/articles/table",
+      "size": 32
+    }
+  ],
+  "mtf_banks": [
+    {
+      "address": "0x0804e684",
+      "end": "0x0804e740",
+      "images": 3,
+      "source": "games/THE LOST AGE/SRC/GRAPHICS/TILE/UI_MTF_00.INDEXED.PNG",
+      "header": {
+        "format": 1,
+        "kind": "pointer-table",
+        "base_address": "0x0804e684",
+        "address": "0x0804e684",
+        "slot_count": 4,
+        "slots": ["0x0804e694", "0x0804e6d0", "0x0804e70c", "0xffffffff"]
+      }
+    },
+    {
+      "address": "0x0804e740",
+      "end": "0x0804e7dc",
+      "images": 3,
+      "source": "games/THE LOST AGE/SRC/GRAPHICS/TILE/UI_MTF_01.INDEXED.PNG",
+      "header": {
+        "format": 1,
+        "kind": "pointer-table",
+        "base_address": "0x0804e740",
+        "address": "0x0804e740",
+        "slot_count": 3,
+        "slots": ["0x0804e74c", "0x0804e777", "0x0804e7ac"]
+      }
+    },
+    {
+      "address": "0x0804e7dc",
+      "end": "0x0804ea74",
+      "images": 13,
+      "source": "games/THE LOST AGE/SRC/GRAPHICS/TILE/UI_MTF_02.INDEXED.PNG",
+      "header": {
+        "format": 1,
+        "kind": "pointer-table",
+        "base_address": "0x0804e7dc",
+        "address": "0x0804e7dc",
+        "slot_count": 14,
+        "slots": [
+          "0x0804e814", "0x0804e844", "0x0804e871", "0x0804e8a1", "0x0804e8cf", "0x0804e8fe", "0x0804e92c",
+          "0x0804e95b", "0x0804e989", "0x0804e9b9", "0x0804e9e9", "0x0804ea16", "0x0804ea46", "0xffffffff"
+        ]
+      }
+    },
+    {
+      "address": "0x0804ea74",
+      "end": "0x0804eb58",
+      "images": 1,
+      "source": "games/THE LOST AGE/SRC/GRAPHICS/TILE/UI_MTF_03.INDEXED.PNG",
+      "header": {
+        "format": 1,
+        "kind": "pointer-table",
+        "base_address": "0x0804ea74",
+        "address": "0x0804ea74",
+        "slot_count": 43,
+        "slots": [
+          "0x0804eb20", "0x0804eb20", "0x0804eb20", "0x0804eb20", "0x0804eb20", "0x0804eb20", "0x0804eb20",
+          "0x0804eb20", "0x0804eb20", "0x0804eb20", "0x0804eb20", "0x0804eb20", "0x0804eb20", "0x0804eb20",
+          "0x0804eb20", "0x0804eb20", "0x0804eb20", "0x0804eb20", "0x0804eb20", "0x0804eb20", "0x0804eb20",
+          "0x0804eb20", "0x0804eb20", "0x0804eb20", "0x0804eb20", "0x0804eb20", "0x0804eb20", "0x0804eb20",
+          "0x0804eb20", "0x0804eb20", "0x0804eb20", "0x0804eb20", "0x0804eb20", "0x0804eb20", "0x0804eb20",
+          "0x0804eb20", "0x0804eb20", "0x0804eb20", "0x0804eb20", "0x0804eb20", "0x0804eb20", "0x0804eb20", "0x0804eb20"
+        ]
+      }
+    },
+    {
+      "address": "0x0804eb58",
+      "end": "0x08054a14",
+      "images": 370,
+      "source": "games/THE LOST AGE/SRC/GRAPHICS/TILE/UI_MTF_04.INDEXED.PNG",
+      "header": {
+        "format": 1,
+        "kind": "pointer-table",
+        "base_address": "0x0804eb58",
+        "address": "0x0804eb58",
+        "slot_count": 372,
+        "slots": [
+          "0x0804f128", "0x0804f157", "0x0804f190", "0x0804f1cb", "0x0804f205", "0x0804f23e", "0x0804f277",
+          "0x0804f2b1", "0x0804f2ee", "0x0804f333", "0x0804f36d", "0x0804f3b8", "0x0804f408", "0x0804f438",
+          "0x0804f469", "0x0804f49b", "0x0804f4d0", "0x0804f504", "0x0804f546", "0x0804f57e", "0x0804f5be",
+          "0x0804f602", "0x0804f63b", "0x0804f67c", "0x0804f6b4", "0x0804f6ef", "0x0804f729", "0x0804f766",
+          "0x0804f7a5", "0x0804f7ef", "0x0804f83c", "0x0804f886", "0x0804f8bb", "0x0804f8ef", "0x0804f92a",
+          "0x0804f964", "0x0804f9ac", "0x0804f9e8", "0x0804fa37", "0x0804fa88", "0x0804fabe", "0x0804faf7",
+          "0x0804fb34", "0x0804fb6b", "0x0804fba0", "0x0804fbe4", "0x0804fc1e", "0x0804fc5f", "0x0804fc9b",
+          "0x0804fcd1", "0x0804fd0d", "0x0804fd51", "0x0804fd8c", "0x0804fdcc", "0x0804fe11", "0x0804fe56",
+          "0x0804fe9c", "0x0804fee4", "0x0804ff25", "0x0804ff58", "0x0804ff8d", "0x0804ffcc", "0x08050007",
+          "0x08050044", "0x0805007d", "0x080500c2", "0x08050105", "0x0805013d", "0x0805017d", "0x080501b7",
+          "0x080501ed", "0x08050229", "0x0805025e", "0x0805029e", "0x080502d6", "0x08050313", "0x08050354",
+          "0x08050395", "0x080503d3", "0x08050422", "0x0805045c", "0x08050495", "0x080504cc", "0x08050513",
+          "0x08050552", "0x08050596", "0x080505c9", "0x08050603", "0x0805063e", "0x08050679", "0x080506ba",
+          "0x08050711", "0x08050746", "0x0805077c", "0x080507b9", "0x080507f6", "0x08050842", "0x08050898",
+          "0x080508cc", "0x08050905", "0x0805093f", "0x08050979", "0x080509b7", "0x080509f3", "0x08050a39",
+          "0x08050a7f", "0x08050ab6", "0x08050aee", "0x08050b2d", "0x08050b72", "0x08050bb0", "0x08050bea",
+          "0x08050c3c", "0x08050c6d", "0x08050c9a", "0x08050cca", "0x08050cf8", "0x08050d32", "0x08050d70",
+          "0x08050dac", "0x08050ddb", "0x08050e0a", "0x08050e3b", "0x08050e6a", "0x08050eb1", "0x08050ef5",
+          "0x08050f2c", "0x08050f67", "0x08050fa0", "0x08050fd8", "0x08051016", "0x08051050", "0x08051082",
+          "0x080510b6", "0x080510f0", "0x08051124", "0x0805115c", "0x08051192", "0x080511cc", "0x08051201",
+          "0x08051237", "0x0805126f", "0x080512a6", "0x080512dc", "0x08051318", "0x08051348", "0x08051381",
+          "0x080513b3", "0x080513e4", "0x08051418", "0x0805144a", "0x0805147c", "0x080514c0", "0x080514eb",
+          "0x0805152b", "0x0805155b", "0x08051596", "0x080515cf", "0x08051604", "0x08051634", "0x0805166b",
+          "0x080516a4", "0x080516db", "0x08051716", "0x0805174d", "0x08051782", "0x080517b7", "0x080517f5",
+          "0x08051830", "0x0805186c", "0x080518a7", "0x080518dc", "0x08051912", "0x08051941", "0x08051974",
+          "0x080519ab", "0x080519da", "0x08051a10", "0x08051a4b", "0x08051a97", "0x08051ac8", "0x08051b0f",
+          "0x08051b42", "0x08051b72", "0x08051bad", "0x08051bd9", "0x08051c12", "0x08051c51", "0x08051c99",
+          "0x08051cd2", "0x08051d0d", "0x08051d46", "0x08051d80", "0x08051dbb", "0x08051e00", "0x08051e3d",
+          "0x08051e84", "0x08051ecc", "0x08051f02", "0x08051f40", "0x08051f7b", "0x08051fbd", "0x08052007",
+          "0x08052051", "0x08052095", "0x080520cd", "0x0805210a", "0x08052145", "0x08052182", "0x080521c3",
+          "0x08052206", "0x08052243", "0x0805227c", "0x080522ba", "0x08052302", "0x08052346", "0x08052389",
+          "0x080523ce", "0x08052416", "0x0805245a", "0x0805249a", "0x080524dc", "0x08052526", "0x08052573",
+          "0x080525b9", "0x080525f6", "0x08052639", "0x0805267c", "0x080526c1", "0x0805270e", "0x08052754",
+          "0x08052790", "0x080527c8", "0x0805280a", "0x0805284c", "0x08052894", "0x080528cf", "0x0805291e",
+          "0x0805296a", "0x080529ac", "0x080529ef", "0x08052a2a", "0x08052a6f", "0x08052ab3", "0x08052af2",
+          "0x08052b2b", "0x08052b7a", "0x08052bc5", "0x08052c0c", "0x08052c54", "0x08052ca0", "0x08052ce4",
+          "0x08052d25", "0x08052d73", "0x08052db7", "0x08052e02", "0x08052e4b", "0x08052e91", "0x08052ee2",
+          "0x08052f33", "0x08052f80", "0x08052fce", "0x08053013", "0x08053059", "0x080530a4", "0x080530ed",
+          "0x08053131", "0x08053171", "0x080531bc", "0x08053202", "0x08053254", "0x0805329b", "0x080532dc",
+          "0x08053325", "0x0805336f", "0x080533b6", "0x08053401", "0x08053442", "0x0805347d", "0x080534bf",
+          "0x080534fd", "0x08053538", "0x0805357d", "0x080535c8", "0x08053610", "0x08053661", "0x080536a5",
+          "0x080536f0", "0x0805373d", "0x08053784", "0x080537bd", "0x080537f2", "0x0805383a", "0x0805387d",
+          "0x080538ca", "0x08053913", "0x08053957", "0x08053989", "0x080539be", "0x080539ef", "0x08053a28",
+          "0x08053a60", "0x08053a96", "0x08053acc", "0x08053b09", "0x08053b41", "0x08053b83", "0x08053bc5",
+          "0x08053c01", "0x08053c40", "0x08053c84", "0x08053ccf", "0x08053d06", "0x08053d45", "0x08053d82",
+          "0x08053dba", "0x08053dfe", "0x08053e37", "0x08053e72", "0x08053ea5", "0x08053ee3", "0x08053f18",
+          "0x08053f4f", "0x08053f84", "0x08053faf", "0x08053feb", "0x08054021", "0x0805405d", "0x08054095",
+          "0x080540d5", "0x0805410d", "0x08054149", "0x0805417d", "0x080541b0", "0x080541e3", "0x0805422d",
+          "0x0805426e", "0x080542a9", "0x080542e6", "0x08054321", "0x0805435a", "0x08054395", "0x080543c9",
+          "0x080543fc", "0x0805442c", "0x08054469", "0x0805449d", "0x080544d5", "0x08054508", "0x08054538",
+          "0x0805456b", "0x0805459e", "0x080545dc", "0x08054619", "0x08054647", "0x08054687", "0x080546c5",
+          "0x08054700", "0x0805473a", "0x08054772", "0x080547b1", "0x080547eb", "0x08054820", "0x0805485f",
+          "0x0805489f", "0x080548da", "0x0805491c", "0x08054959", "0x08054996", "0x080549d5", "0x0804f128", "0xffffffff"
+        ]
+      }
+    },
+    {
+      "address": "0x08054a14",
+      "end": "0x08058ff4",
+      "images": 260,
+      "source": "games/THE LOST AGE/SRC/GRAPHICS/TILE/UI_MTF_05.INDEXED.PNG",
+      "header": {
+        "format": 1,
+        "kind": "pointer-table",
+        "base_address": "0x08054a14",
+        "address": "0x08054a14",
+        "slot_count": 261,
+        "slots": [
+          "0x08054e28", "0x08054e60", "0x08054e90", "0x08054ec7", "0x08054f09", "0x08054f4a", "0x08054f96",
+          "0x08054fe4", "0x0805501b", "0x08055054", "0x080550a3", "0x080550d2", "0x08055106", "0x0805513a",
+          "0x08055167", "0x080551a1", "0x080551e1", "0x08055218", "0x08055257", "0x08055296", "0x080552c8",
+          "0x080552fd", "0x0805533d", "0x08055372", "0x080553af", "0x080553f1", "0x08055429", "0x08055460",
+          "0x080554a0", "0x080554df", "0x0805551d", "0x08055566", "0x0805559b", "0x080555d3", "0x08055614",
+          "0x08055641", "0x08055675", "0x080556b3", "0x080556f4", "0x0805573b", "0x08055783", "0x080557b6",
+          "0x080557eb", "0x08055834", "0x0805586a", "0x080558a8", "0x080558e7", "0x0805590f", "0x08055944",
+          "0x0805597c", "0x080559b3", "0x080559f7", "0x08055a3a", "0x08055a75", "0x08055abf", "0x08055b01",
+          "0x08055b38", "0x08055b72", "0x08055bb5", "0x08055beb", "0x08055c30", "0x08055c6d", "0x08055caa",
+          "0x08055ce6", "0x08055d2c", "0x08055d69", "0x08055dad", "0x08055df3", "0x08055e43", "0x08055e98",
+          "0x08055ede", "0x08055f1a", "0x08055f56", "0x08055f94", "0x08055fd4", "0x08056010", "0x0805604d",
+          "0x08056089", "0x080560c8", "0x08056105", "0x08056146", "0x08056186", "0x080561bd", "0x080561f2",
+          "0x08056229", "0x08056260", "0x080562aa", "0x080562e1", "0x0805632b", "0x0805636c", "0x080563b4",
+          "0x080563f8", "0x08056439", "0x0805647a", "0x080564b6", "0x080564ef", "0x0805652d", "0x0805656c",
+          "0x080565a0", "0x080565f0", "0x0805662d", "0x08056675", "0x080566af", "0x080566f9", "0x08056732",
+          "0x08056778", "0x080567c3", "0x08056808", "0x0805684b", "0x08056891", "0x080568da", "0x0805691e",
+          "0x08056960", "0x08056998", "0x080569cf", "0x08056a0d", "0x08056a49", "0x08056a95", "0x08056ad7",
+          "0x08056b25", "0x08056b63", "0x08056b98", "0x08056bd9", "0x08056c24", "0x08056c66", "0x08056caa",
+          "0x08056cef", "0x08056d30", "0x08056d73", "0x08056db9", "0x08056dff", "0x08056e4d", "0x08056e95",
+          "0x08056edd", "0x08056f2a", "0x08056f79", "0x08056fc9", "0x08056ffe", "0x0805704f", "0x0805708a",
+          "0x080570d0", "0x0805710f", "0x08057142", "0x08057180", "0x080571bc", "0x080571fd", "0x0805723e",
+          "0x08057271", "0x080572b8", "0x080572fc", "0x08057339", "0x08057372", "0x080573ab", "0x080573e7",
+          "0x0805742f", "0x08057474", "0x080574b1", "0x080574f8", "0x08057547", "0x08057583", "0x080575c6",
+          "0x08057605", "0x08057638", "0x0805767a", "0x080576c4", "0x08057701", "0x08057743", "0x0805777c",
+          "0x080577bf", "0x080577f9", "0x0805783d", "0x0805787b", "0x080578be", "0x08057905", "0x08057938",
+          "0x08057977", "0x080579bf", "0x08057a00", "0x08057a3d", "0x08057a7f", "0x08057aae", "0x08057ae0",
+          "0x08057b1b", "0x08057b59", "0x08057b9a", "0x08057bef", "0x08057c33", "0x08057c74", "0x08057cb5",
+          "0x08057cfe", "0x08057d40", "0x08057d90", "0x08057ddb", "0x08057e21", "0x08057e61", "0x08057ea4",
+          "0x08057ed8", "0x08057f12", "0x08057f5f", "0x08057fb1", "0x08057fe6", "0x08058020", "0x08058069",
+          "0x0805809e", "0x080580e1", "0x0805812c", "0x0805815f", "0x08058195", "0x080581cf", "0x0805820c",
+          "0x0805824b", "0x08058280", "0x080582c4", "0x080582f9", "0x08058339", "0x08058384", "0x080583c3",
+          "0x0805840b", "0x08058456", "0x0805849a", "0x080584e5", "0x0805852f", "0x08058575", "0x080585c0",
+          "0x08058604", "0x08058649", "0x08058696", "0x080586e5", "0x08058735", "0x0805878a", "0x080587ce",
+          "0x0805881a", "0x08058853", "0x0805889a", "0x080588e3", "0x0805892f", "0x0805897e", "0x080589c6",
+          "0x08058a0d", "0x08058a55", "0x08058aa1", "0x08058aed", "0x08058b3e", "0x08058b85", "0x08058bc4",
+          "0x08058c00", "0x08058c45", "0x08058c8b", "0x08058ccf", "0x08058d15", "0x08058d5a", "0x08058d9d",
+          "0x08058de4", "0x08058e24", "0x08058e75", "0x08058ebd", "0x08058eec", "0x08058f25", "0x08058f6b",
+          "0x08058faf", "0xffffffff"
+        ]
+      }
+    },
+    {
+      "address": "0x08058ff4",
+      "end": "0x080597f4",
+      "images": 32,
+      "source": "games/THE LOST AGE/SRC/GRAPHICS/TILE/UI_MTF_06.INDEXED.PNG",
+      "header": {
+        "format": 1,
+        "kind": "pointer-table",
+        "base_address": "0x08058ff4",
+        "address": "0x08058ff4",
+        "slot_count": 33,
+        "slots": [
+          "0x08059078", "0x080590ac", "0x080590e0", "0x08059126", "0x0805915e", "0x08059198", "0x080591cf",
+          "0x08059217", "0x08059253", "0x0805928d", "0x080592ce", "0x0805930f", "0x0805934e", "0x0805938e",
+          "0x080593d2", "0x08059417", "0x0805944a", "0x08059498", "0x080594d8", "0x0805951b", "0x08059553",
+          "0x0805958b", "0x080595c3", "0x080595fb", "0x08059633", "0x0805966b", "0x080596a3", "0x080596db",
+          "0x08059713", "0x0805974b", "0x08059783", "0x080597bb", "0xffffffff"
+        ]
+      }
+    }
+  ],
+  "packed_images": {
+    "address": "0x08059978",
+    "end": "0x0805a4e0",
+    "images": 9,
+    "source": "games/THE LOST AGE/SRC/GRAPHICS/TILE/UI_MENU_LABELS.INDEXED.PNG",
+    "header": {
+      "format": 1,
+      "kind": "pointer-table",
+      "base_address": "0x08059978",
+      "address": "0x08059978",
+      "slot_count": 9,
+      "slots": [
+        "0x0805999c", "0x08059a9e", "0x08059c0a", "0x08059d39", "0x08059e5e", "0x08059f98", "0x0805a0f1", "0x0805a23c",
+        "0x0805a35a"
+      ]
+    },
+    "streams": [
+      {"codec": "golden-sun-palette-lz", "decoded_size": 512, "encoded_size": 258},
+      {"codec": "golden-sun-palette-lz", "decoded_size": 512, "encoded_size": 364},
+      {"codec": "golden-sun-palette-lz", "decoded_size": 512, "encoded_size": 303},
+      {"codec": "golden-sun-palette-lz", "decoded_size": 512, "encoded_size": 293},
+      {"codec": "golden-sun-palette-lz", "decoded_size": 512, "encoded_size": 314},
+      {"codec": "golden-sun-palette-lz", "decoded_size": 512, "encoded_size": 345},
+      {"codec": "golden-sun-palette-lz", "decoded_size": 512, "encoded_size": 331},
+      {"codec": "golden-sun-palette-lz", "decoded_size": 512, "encoded_size": 286},
+      {"codec": "golden-sun-palette-lz", "decoded_size": 512, "encoded_size": 387}
+    ]
+  },
+  "kana_marks": {
+    "format": 1,
+    "kind": "typed-table",
+    "address": "0x0805c0e0",
+    "size": 16,
+    "segments": [
+      {
+        "address": "0x0805c0e0",
+        "end": "0x0805c0e8",
+        "stride": 2,
+        "consumers": [],
+        "element": "le-u16",
+        "values": [0, 222, 223, 0]
+      },
+      {
+        "address": "0x0805c0e8",
+        "end": "0x0805c0f0",
+        "stride": 4,
+        "consumers": [],
+        "element": "le-u32",
+        "values": [429496730, 429496730]
+      }
+    ]
+  },
+  "articles": {
+    "data": {
+      "format": 1,
+      "kind": "typed-table",
+      "address": "0x0805c0f0",
+      "size": 28,
+      "segments": [
+        {"address": "0x0805c0f0", "end": "0x0805c0f4", "stride": 1, "element": "ascii-fixed", "text": ""},
+        {"address": "0x0805c0f4", "end": "0x0805c0f8", "stride": 1, "element": "ascii-fixed", "text": "a "},
+        {"address": "0x0805c0f8", "end": "0x0805c0fc", "stride": 1, "element": "ascii-fixed", "text": "an "},
+        {"address": "0x0805c0fc", "end": "0x0805c104", "stride": 1, "element": "ascii-fixed", "text": "some "},
+        {"address": "0x0805c104", "end": "0x0805c10c", "stride": 1, "element": "ascii-fixed", "text": "the "}
+      ]
+    },
+    "table": {
+      "format": 1,
+      "kind": "pointer-table",
+      "base_address": "0x0805c0f0",
+      "address": "0x0805c10c",
+      "slot_count": 8,
+      "slots": [
+        "0x0805c0f0", "0x0805c0f4", "0x0805c0f8", "0x0805c0fc", "0x0805c0f0", "0x0805c104", "0x0805c0f0", "0x0805c0f0"
+      ]
+    }
+  },
+  "save_progress": {
+    "address": "0x0805f585",
+    "end": "0x0805f5ec",
+    "source": "games/THE LOST AGE/SRC/GRAPHICS/TILE/UI_SAVE_PROGRESS.4BPP.PNG",
+    "stream": {"codec": "golden-sun-general-lz", "decoded_size": 256, "encoded_size": 103}
+  }
+}

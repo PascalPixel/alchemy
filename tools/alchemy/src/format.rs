@@ -2,19 +2,45 @@ use crate::compiler::{canonical_json::canonical_json, routing::root};
 use serde_json::Value;
 use std::path::Path;
 
-pub const NATIVE_ROOTS: [&str; 11] = [
+/// Camelot-shaped roots: uppercase names and canonical JSON.
+pub const NATIVE_ROOTS: [&str; 9] = [
     "games/COMMON/SRC",
     "games/THE LOST AGE/SRC",
     "games/THE LOST AGE/INCLUDE",
+    "games/THE LOST AGE/SOUND",
     "games/THE LOST AGE/TEXT",
-    "games/THE LOST AGE/PROJECT.JSON",
-    "games/THE LOST AGE/SOURCE.JSON",
     "games/THE BROKEN SEAL/SRC",
     "games/THE BROKEN SEAL/INCLUDE",
     "games/THE BROKEN SEAL/SOUND",
     "games/THE BROKEN SEAL/TEXT",
-    "games/THE BROKEN SEAL/SOURCE.JSON",
 ];
+/// Reconstruction registries under `recon/` keep the same canonical JSON
+/// under their lowercase scaffolding names.
+pub const RECONSTRUCTION_JSON: [&str; 3] = [
+    "recon/tla/project.json",
+    "recon/tla/private-inputs.json",
+    "recon/tbs/private-inputs.json",
+];
+
+/// Rewrite, or under `check` record, one JSON file that is not canonical.
+fn canonical_file(
+    path: &Path,
+    name: &str,
+    check: bool,
+    changed: &mut Vec<String>,
+) -> Result<(), String> {
+    let original = std::fs::read_to_string(path).map_err(|e| e.to_string())?;
+    let value: Value = serde_json::from_str(&original).map_err(|e| format!("{name}: {e}"))?;
+    let formatted = format!("{}\n", canonical_json(&value));
+    if original != formatted {
+        if check {
+            changed.push(name.to_string());
+        } else {
+            std::fs::write(path, formatted).map_err(|e| e.to_string())?;
+        }
+    }
+    Ok(())
+}
 
 fn exact_file(path: &Path) -> bool {
     let mut current = std::path::PathBuf::new();
@@ -62,7 +88,7 @@ fn check_table_sources(path: &Path) -> Result<(), String> {
             .extension()
             .and_then(|e| e.to_str())
             .unwrap_or("");
-        if !["mid", "wav", "png"]
+        if !["mid", "wav", "png", "json"]
             .iter()
             .any(|e| suffix.eq_ignore_ascii_case(e))
         {
@@ -128,19 +154,19 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
             if path.extension().and_then(|e| e.to_str()) != Some("JSON") {
                 continue;
             }
-            let original = std::fs::read_to_string(path).map_err(|e| e.to_string())?;
-            let value: Value =
-                serde_json::from_str(&original).map_err(|e| format!("{name}: {e}"))?;
-            let formatted = format!("{}\n", canonical_json(&value));
-            if original != formatted {
-                if check {
-                    changed.push(name.to_string());
-                } else {
-                    std::fs::write(path, formatted).map_err(|e| e.to_string())?;
-                }
-            }
+            canonical_file(path, name, check, &mut changed)?;
             count += 1;
         }
+    }
+    for name in RECONSTRUCTION_JSON {
+        let path = root().join(name);
+        if !exact_file(&path) {
+            return Err(format!(
+                "reconstruction registry must exist with exact spelling: {name}"
+            ));
+        }
+        canonical_file(&path, name, check, &mut changed)?;
+        count += 1;
     }
     if !changed.is_empty() {
         return Err(format!(

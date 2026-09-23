@@ -42,7 +42,6 @@
         "decoded_size": 7977,
         "encoded_size": 4816,
         "tilemap_length": 7976,
-        "lookahead": "0000",
         "component": "map-metatiles-2x2",
         "transform_mode": 0,
         "metatiles": 997,
@@ -58,7 +57,6 @@
           [0, 4, 0, 0], [7, 4, 8, 0], [0, 0, 0, 0], [3, 4, 0, 0], [7, 0, 4, 0], [4, 4, 0, 0], [3, 0, 4, 0],
           [4, 0, 4, 0], [1, 4, 2, 0], [1, 2, 0, 0], [10, 4, 4, 3]
         ],
-        "lookahead": "000000",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -131,7 +129,6 @@
           ],
           "0xffff"
         ],
-        "lookahead": "",
         "component": "map-animation-queues",
         "word_size": 2,
         "terminators": ["0xfe00", "0xffff"]
@@ -140,7 +137,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x085d48d0",
-        "size": "0xc",
+        "size": "0x9",
         "record_size": 3,
         "segments": [
           {
@@ -158,8 +155,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x085d48d9", "end": "0x085d48dc", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/KORIMA_MAGARI/KORIMA_MAGARI.BIN",

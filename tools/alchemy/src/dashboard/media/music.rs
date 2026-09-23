@@ -206,16 +206,15 @@ pub(super) fn render(root: &Path, game: &str, source: &Path) -> Result<Vec<u8>, 
         let target = number(&voice["target"])?;
         if kind & 7 == 0 && !samples.contains_key(&target) {
             if reference.is_none() {
-                let id = if game == "THE BROKEN SEAL" {
-                    "tbs-en"
+                let (id, recon) = if game == "THE BROKEN SEAL" {
+                    ("tbs-en", "recon/tbs")
                 } else {
-                    "tla-en"
+                    ("tla-en", "recon/tla")
                 };
                 let bytes = read(&root.join(format!("roms/{id}.gba")))?;
-                let source: Value = serde_json::from_slice(&read(
-                    &root.join("games").join(game).join("SOURCE.JSON"),
-                )?)
-                .map_err(|e| e.to_string())?;
+                let source: Value =
+                    serde_json::from_slice(&read(&root.join(recon).join("private-inputs.json"))?)
+                        .map_err(|e| e.to_string())?;
                 if source["reference_sha256"] != crate::compiler::sha256::hex(&bytes) {
                     return Err("Reference ROM checksum differs".into());
                 }

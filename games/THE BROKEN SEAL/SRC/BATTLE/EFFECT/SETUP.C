@@ -148,3 +148,15 @@ void Battle_Reset(void)
         runtime->unknown_1f8 = zero;
     }
 }
+
+void ScheduleCallback(u32);
+void Func_080772f0(void);
+void Func_0809335c(s32 value, s32 enabled);
+#define Object_AttachWorkTargetToObject Func_0809335c
+
+void BattleFx_FinishAction(void)
+{
+    ScheduleCallback((u32)Battle_UpdateModeFromShoulderButtons);
+    Object_AttachWorkTargetToObject(PARTY_STATE.object_id, 1);
+    Func_080772f0();
+}

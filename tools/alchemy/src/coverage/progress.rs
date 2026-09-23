@@ -41,23 +41,6 @@ fn pending_json(target: &str) -> Value {
     })
 }
 
-fn check_build(root: &Path, target: &str) -> Result<(), String> {
-    let path = root.join("out").join(target).join("full/rebuilt.json");
-    let file = std::fs::File::open(&path)
-        .map_err(|error| format!("cannot read {}: {error}", path.display()))?;
-    let value: Value =
-        serde_json::from_reader(file).map_err(|error| format!("{}: {error}", path.display()))?;
-    if value["byte_identical"].as_bool() != Some(true) {
-        return Err("the last full build was not byte-identical".into());
-    }
-    for field in ["rom_fallback_bytes", "unowned_bytes"] {
-        if value[field].as_i64().unwrap_or(0) > 0 {
-            return Err(format!("the last full build has non-zero {field}"));
-        }
-    }
-    Ok(())
-}
-
 /// Where a game's credited bytes live: source shared by both games under
 /// `games/COMMON/`, or the game's own.
 const COMMON_SOURCE: &str = "games/COMMON/";
@@ -156,15 +139,19 @@ fn tally(
     Ok(done)
 }
 
-/// A game's DONE, or `None` while its executable audit is incomplete and its
-/// denominator therefore unknown.
+/// A game's DONE, or `None` while its executable audit is incomplete or not
+/// the independently verified automatic count, and its denominator therefore
+/// unknown.
 pub fn measured(root: &Path, target: &str) -> Result<Option<GameDone>, String> {
-    crate::targets::decomp_target(Some(target))?;
+    let game = crate::targets::decomp_target(Some(target))?;
     let path = root.join(format!("out/{target}/reports/executable.json"));
-    let inventory: Value =
-        serde_json::from_slice(&std::fs::read(&path).map_err(|e| e.to_string())?)
-            .map_err(|e| e.to_string())?;
-    let (main, mut images) = match validated_inventory(&inventory, target) {
+    let text = match std::fs::read(&path) {
+        Ok(text) => text,
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => return Ok(None),
+        Err(error) => return Err(format!("{}: {error}", path.display())),
+    };
+    let inventory: Value = serde_json::from_slice(&text).map_err(|e| e.to_string())?;
+    let (main, mut images) = match validated_inventory(root, &inventory, game) {
         Err(error) if error.contains("withheld") => return Ok(None),
         Err(error) => return Err(error),
         Ok(images) => images,
@@ -291,12 +278,9 @@ fn run(argv: &[String]) -> Result<String, String> {
     }
     let report = report.ok_or("executable audit is incomplete")?;
     match action {
-        "--check" => {
-            if target == "tbs-en" {
-                check_build(&root, &target)?;
-            }
-            Ok(display(&report))
-        }
+        // A measured report already rests on the proof of a byte-identical
+        // full build ([`super::proof::full_build`]).
+        "--check" => Ok(display(&report)),
         "--json" => {
             serde_json::to_string(&report_json(&report, &target)).map_err(|error| error.to_string())
         }
@@ -348,7 +332,7 @@ mod tests {
         let rows = vec![
             common.clone(),
             common,
-            credit("main", 0, 40, "assembly", "games/THE LOST AGE/raw/sound.s"),
+            credit("main", 0, 40, "assembly", "recon/tla/raw/sound.s"),
             credit("resource_a", 0, 10, "c", "games/THE LOST AGE/SRC/FIELD.C"),
         ];
         let done = tally(&rows, &images).unwrap();

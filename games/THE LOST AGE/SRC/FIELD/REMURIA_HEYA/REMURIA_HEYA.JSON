@@ -1,0 +1,272 @@
+{
+  "format": 1,
+  "maps": {
+    "4e6": {
+      "format": 1,
+      "kind": "golden-sun-map-container",
+      "header": {
+        "format": 1,
+        "kind": "typed-table",
+        "address": "0x08d71890",
+        "size": "0x40",
+        "segments": [
+          {
+            "name": "parameters",
+            "address": "0x08d71890",
+            "end": "0x08d7189c",
+            "stride": 12,
+            "element": "u8",
+            "values": [0, 0, 120, 120, 3, 1, 2, 0, 2, 2, 0, 0]
+          },
+          {
+            "name": "records",
+            "address": "0x08d7189c",
+            "end": "0x08d718b4",
+            "stride": 8,
+            "element": "le-u16",
+            "values": [[0, 4112, 0, 65535], [120, 4112, 0, 65535], [30720, 4112, 0, 65535]]
+          },
+          {
+            "name": "component_offsets",
+            "address": "0x08d718b4",
+            "end": "0x08d718d0",
+            "stride": 4,
+            "element": "le-u32",
+            "values": ["0x40", "0xcfc", "0xd54", "0x258c", "0x271c", "0x0", "0x27a8"]
+          }
+        ]
+      },
+      "metatiles": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 6265,
+        "encoded_size": 3260,
+        "tilemap_length": 6264,
+        "component": "map-metatiles-2x2",
+        "transform_mode": 1,
+        "metatiles": 783,
+        "tilemap_source": "games/THE LOST AGE/SRC/FIELD/REMURIA_HEYA/REMURIA_HEYA.BIN",
+        "tilemap_offset": 65536
+      },
+      "descriptors": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 144,
+        "encoded_size": 88,
+        "records": [
+          [0, 0, 0, 0], [12, 0, 0, 4], [8, 4, 0, 0], [8, 0, 4, 0], [9, 0, 4, 0], [13, 0, 0, 4], [9, 4, 0, 0],
+          [12, 4, 0, 0], [14, 4, 0, 0], [4, 0, 4, 0], [3, 4, 0, 0], [0, 2, 0, 0], [1, 4, 2, 0], [1, 2, 4, 0],
+          [12, 8, 8, 0], [2, 2, 0, 0], [13, 8, 8, 0], [10, 4, 0, 0], [10, 0, 0, 4], [11, 0, 0, 4], [11, 4, 0, 0],
+          [14, 0, 4, 0], [15, 0, 0, 4], [15, 0, 4, 0], [15, 4, 4, 0], [2, 254, 255, 0], [0, 6, 0, 0], [15, 4, 0, 4],
+          [2, 255, 0, 0], [10, 4, 4, 0], [13, 4, 0, 0], [10, 0, 4, 4], [0, 254, 0, 0], [14, 4, 0, 4], [14, 0, 4, 4],
+          [0, 4, 0, 0]
+        ],
+        "component": "map-descriptors-4byte",
+        "record_size": 4
+      },
+      "descriptor_grid": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "tag": 1,
+        "decoded_size": 16384,
+        "encoded_size": 400,
+        "component": "map-descriptor-grid",
+        "width": 128,
+        "height": 128
+      },
+      "animation_queues": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 330,
+        "encoded_size": 140,
+        "words": [
+          [
+            "0xfd00", [1664, 4], [796, 0], [1696, 4], [828, 0], [1728, 4], [860, 0], [1760, 4], [892, 15], [1668, 4],
+            [796, 0], [1700, 4], [828, 0], [1732, 4], [860, 0], [1764, 4], [892, 15], [1672, 4], [796, 0], [1704, 4],
+            [828, 0], [1736, 4], [860, 0], [1768, 4], [892, 15], [1668, 4], [796, 0], [1700, 4], [828, 0], [1732, 4],
+            [860, 0], [1764, 4], [892, 15], "0xfe00"
+          ],
+          [
+            "0xfd01", [1540, 4], [364, 0], [1572, 4], [396, 0], [1604, 4], [428, 0], [1636, 4], [460, 10], [1544, 4],
+            [364, 0], [1576, 4], [396, 0], [1608, 4], [428, 0], [1640, 4], [460, 10], [1548, 4], [364, 0], [1580, 4],
+            [396, 0], [1612, 4], [428, 0], [1644, 4], [460, 10], [1552, 4], [364, 0], [1584, 4], [396, 0], [1616, 4],
+            [428, 0], [1648, 4], [460, 10], [1556, 4], [364, 0], [1588, 4], [396, 0], [1620, 4], [428, 0], [1652, 4],
+            [460, 10], [1560, 4], [364, 0], [1592, 4], [396, 0], [1624, 4], [428, 0], [1656, 4], [460, 10], "0xfe00"
+          ],
+          "0xffff"
+        ],
+        "component": "map-animation-queues",
+        "word_size": 2,
+        "terminators": ["0xfe00", "0xffff"]
+      },
+      "positions": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 141,
+        "encoded_size": 140,
+        "table": {
+          "format": 1,
+          "kind": "typed-table",
+          "address": "0x0",
+          "size": "0x8d",
+          "segments": [
+            {
+              "name": "offsets",
+              "address": "0x0",
+              "end": "0x6",
+              "stride": 2,
+              "element": "le-u16",
+              "values": ["entrances", "cell_patches_end", "camera_bounds"]
+            },
+            {"name": "reserved", "address": "0x6", "end": "0x8", "stride": 2, "element": "le-u16", "values": [0]},
+            {"name": "points_end", "address": "0x8", "end": "0x9", "stride": 1, "element": "u8", "values": [255]},
+            {
+              "name": "entrances",
+              "address": "0x9",
+              "end": "0x69",
+              "stride": 6,
+              "element": "record",
+              "fields": [
+                {"name": "entrance", "element": "s8"},
+                {"name": "x", "element": "le-s16"},
+                {"name": "y", "element": "le-s16"},
+                {"name": "arrival", "element": "u8", "bits": {"facing": 4, "options": 4}}
+              ],
+              "records": [
+                {"entrance": 1, "x": 144, "y": 164, "arrival": [12, 0]},
+                {"entrance": 2, "x": 432, "y": 164, "arrival": [12, 0]},
+                {"entrance": 3, "x": 128, "y": 350, "arrival": [12, 0]},
+                {"entrance": 4, "x": 64, "y": 326, "arrival": [4, 0]},
+                {"entrance": 5, "x": 192, "y": 326, "arrival": [4, 0]},
+                {"entrance": 6, "x": 96, "y": 615, "arrival": [12, 0]},
+                {"entrance": 7, "x": 88, "y": 872, "arrival": [12, 0]},
+                {"entrance": 8, "x": 422, "y": 312, "arrival": [0, 0]},
+                {"entrance": 9, "x": 440, "y": 312, "arrival": [8, 0]},
+                {"entrance": 10, "x": 392, "y": 610, "arrival": [4, 0]},
+                {"entrance": 11, "x": 456, "y": 610, "arrival": [4, 0]},
+                {"entrance": 12, "x": 424, "y": 708, "arrival": [12, 0]},
+                {"entrance": 13, "x": 424, "y": 606, "arrival": [4, 0]},
+                {"entrance": 14, "x": 696, "y": 592, "arrival": [12, 0]},
+                {"entrance": 15, "x": 696, "y": 642, "arrival": [12, 0]},
+                {"entrance": 16, "x": 432, "y": 420, "arrival": [12, 0]}
+              ]
+            },
+            {"name": "entrances_end", "address": "0x69", "end": "0x6a", "stride": 1, "element": "u8", "values": [255]},
+            {
+              "name": "cell_patches_end",
+              "address": "0x6a",
+              "end": "0x6c",
+              "stride": 2,
+              "element": "le-u16",
+              "values": [65535]
+            },
+            {
+              "name": "camera_bounds",
+              "address": "0x6c",
+              "end": "0x8c",
+              "stride": 4,
+              "element": "record",
+              "fields": [
+                {"name": "left", "element": "s8"},
+                {"name": "top", "element": "s8"},
+                {"name": "right", "element": "s8"},
+                {"name": "bottom", "element": "s8"}
+              ],
+              "records": [
+                {"left": 0, "top": 1, "right": 16, "bottom": 11},
+                {"left": 18, "top": 1, "right": 34, "bottom": 11},
+                {"left": 0, "top": 15, "right": 16, "bottom": 25},
+                {"left": 19, "top": 16, "right": 35, "bottom": 27},
+                {"left": 0, "top": 29, "right": 15, "bottom": 39},
+                {"left": 0, "top": 45, "right": 15, "bottom": 55},
+                {"left": 19, "top": 33, "right": 34, "bottom": 45},
+                {"left": 36, "top": 31, "right": 51, "bottom": 41}
+              ]
+            },
+            {
+              "name": "camera_bounds_end",
+              "address": "0x8c",
+              "end": "0x8d",
+              "stride": 1,
+              "element": "u8",
+              "values": [255]
+            }
+          ]
+        },
+        "component": "map-positions"
+      },
+      "grid_source": "games/THE LOST AGE/SRC/FIELD/REMURIA_HEYA/REMURIA_HEYA.BIN",
+      "grid_offset": 0,
+      "grid_compression": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "tag": 1,
+        "decoded_size": 65536,
+        "encoded_size": 6200
+      }
+    }
+  },
+  "palettes": {"4e7": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 448, "encoded_size": 468}},
+  "charblocks": {
+    "4e8": {
+      "format": 1,
+      "codec": "golden-sun-kind2-lz",
+      "decoded_size": 16384,
+      "encoded_size": 8256,
+      "layout": {
+        "format": "sequential-gba-4bpp-tiles",
+        "purpose": "map-charblock-source",
+        "tile_count": 512,
+        "tile_width": 8,
+        "tile_height": 8,
+        "columns": 32,
+        "rows": 16
+      }
+    },
+    "4e9": {
+      "format": 1,
+      "codec": "golden-sun-kind2-lz",
+      "decoded_size": 16384,
+      "encoded_size": 5112,
+      "layout": {
+        "format": "sequential-gba-4bpp-tiles",
+        "purpose": "map-charblock-source",
+        "tile_count": 512,
+        "tile_width": 8,
+        "tile_height": 8,
+        "columns": 32,
+        "rows": 16
+      }
+    },
+    "4ea": {
+      "format": 1,
+      "codec": "golden-sun-kind2-lz",
+      "decoded_size": 16384,
+      "encoded_size": 2876,
+      "layout": {
+        "format": "sequential-gba-4bpp-tiles",
+        "purpose": "map-charblock-source",
+        "tile_count": 512,
+        "tile_width": 8,
+        "tile_height": 8,
+        "columns": 32,
+        "rows": 16
+      }
+    },
+    "4eb": {
+      "format": 1,
+      "codec": "golden-sun-kind2-lz",
+      "decoded_size": 16384,
+      "encoded_size": 4460,
+      "layout": {
+        "format": "sequential-gba-4bpp-tiles",
+        "purpose": "map-charblock-source",
+        "tile_count": 512,
+        "tile_width": 8,
+        "tile_height": 8,
+        "columns": 32,
+        "rows": 16
+      }
+    }
+  }
+}

@@ -42,7 +42,6 @@
         "decoded_size": 5889,
         "encoded_size": 2328,
         "tilemap_length": 5888,
-        "lookahead": "00",
         "component": "map-metatiles-2x2",
         "transform_mode": 1,
         "metatiles": 736,
@@ -60,7 +59,6 @@
           [4, 2, 0, 0], [9, 0, 5, 0], [0, 6, 0, 0], [8, 0, 1, 0], [1, 1, 0, 0], [1, 0, 255, 0], [1, 255, 254, 0],
           [1, 254, 253, 0], [1, 254, 0, 0], [4, 0, 2, 0], [3, 0, 2, 0]
         ],
-        "lookahead": "0000",
         "component": "map-descriptors-4byte",
         "record_size": 4
       },
@@ -78,7 +76,6 @@
           ],
           "0xffff"
         ],
-        "lookahead": "00",
         "component": "map-animation-queues",
         "word_size": 2,
         "terminators": ["0xfe00", "0xffff"]
@@ -87,7 +84,7 @@
         "format": 1,
         "kind": "typed-table",
         "address": "0x086b8238",
-        "size": "0x4",
+        "size": "0x3",
         "record_size": 3,
         "segments": [
           {
@@ -97,8 +94,7 @@
             "stride": 1,
             "element": "u8",
             "fill": 255
-          },
-          {"name": "alignment", "address": "0x086b823b", "end": "0x086b823c", "stride": 1, "element": "u8", "fill": 0}
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/FUNE_KANPAN.BIN",

@@ -12,9 +12,9 @@
     "rom_sha256": "19dd48b74726f323cd829e226b60aa1b373c51fb2e840804efe2d2dc2891a890"
   },
   "association_evidence": {
-    "field": "descriptor 4: sheet review of the decoded ROM frames against Japanese name message 135; no runtime actor placement naming this descriptor has been read",
+    "field": "party actor 4: 0x08044b80 reads the party descriptor table 0x0805f666 (0, 1, 2, 3, 4, 5, 6, 7) so actor 4 draws descriptor 4",
     "battle": "descriptor 508: sheet review of the 64x64 body frames; the sheet directly precedes the weapon-layer sheets 509-512 that pose row 5 at 0x081287d4 names",
-    "scope": "names come from the dense party-name messages 131-138; descriptor bindings are sheet-review associations, not runtime evidence"
+    "scope": "names come from the dense party-name messages 131-138; the field binding is runtime evidence, the battle binding a sheet-review association"
   },
   "banks": {
     "field": {

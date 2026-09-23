@@ -5,7 +5,7 @@
 //! those tables, traces every stream into a token plan, stages the native
 //! sources the plans encode, rebuilds each region through `build_entry`, and
 //! prints the rows only when every rebuilt region equals the ROM. It never
-//! writes a game's SOURCE.JSON; the registrar merges the printed rows.
+//! writes a game's private-inputs.json; the registrar merges the printed rows.
 use super::native::NativePaths;
 use super::*;
 use crate::targets::{decomp_target, DecompTarget, DecompTargetId};
@@ -26,7 +26,7 @@ struct FieldTables {
     loads: usize,
     /// The first map container's resource id; load fields are relative to it.
     bias: usize,
-    /// Whether the game's committed SOURCE.JSON indexes this edition's ROM.
+    /// Whether the game's committed private-inputs.json indexes this edition's ROM.
     /// Another edition's rows are derived without consulting its placements.
     indexed: bool,
 }
@@ -99,9 +99,6 @@ fn small_hex(value: usize) -> String {
 }
 fn resource_name(id: usize) -> String {
     format!("{id:03x}")
-}
-fn hex_text(bytes: &[u8]) -> String {
-    bytes.iter().map(|b| format!("{b:02x}")).collect()
 }
 
 /// The resource directory: each id's ROM offset and the extent to the next
@@ -300,7 +297,7 @@ pub(super) fn inventory(
     // Try only layouts already reconstructed in the sibling game's index.
     // Exact re-encoding up to the next directory pointer establishes a format
     // match, not the image's scene or purpose.
-    let sibling = json(&root.join("games/THE BROKEN SEAL/SOURCE.JSON"))?;
+    let sibling = json(&root.join("recon/tbs/private-inputs.json"))?;
     let sibling_layouts = sibling["private_inputs"]
         .as_array()
         .ok_or("missing private input index")?
@@ -550,9 +547,9 @@ pub(super) fn inventory(
                 continue;
             };
             let tail = size - palette - encoded;
-            // The bit reader refills whole words and may consume up to three
-            // nonzero bytes beyond the encoder's end marker. The tail pass
-            // below records those bytes explicitly as bounded lookahead.
+            // The packer rounds the file up to four bytes, so up to three
+            // alignment bytes follow the encoder's end marker. The tail pass
+            // below counts them with the payload.
             if pixels.is_empty() || tail > 3 {
                 continue;
             }
@@ -631,7 +628,7 @@ pub(super) fn inventory(
         if pixels.is_empty() || tail > 3 {
             continue;
         }
-        rows.push(json!({"start":start+ROM_BASE,"end":start+ROM_BASE+encoded,"kind":"gba-4bpp-tiles","label":"MTF4 indexed graphics","resource":format!("{id:03x}"),"evidence":format!("tag 2; {} packed 4bpp bytes; exact re-encoding with at most three bounded lookahead bytes",pixels.len())}));
+        rows.push(json!({"start":start+ROM_BASE,"end":start+ROM_BASE+encoded,"kind":"gba-4bpp-tiles","label":"MTF4 indexed graphics","resource":format!("{id:03x}"),"evidence":format!("tag 2; {} packed 4bpp bytes; exact re-encoding with at most three packer alignment bytes",pixels.len())}));
     }
     // TLA's early system loader at 0x081a6b90 establishes one indexed-image
     // family independently of byte shape. It copies resource 01b whole to BG
@@ -674,11 +671,11 @@ pub(super) fn inventory(
         }
     }
 
-    // Exact encoders stop at the end marker, while the decoder's word reader
-    // can consume up to three lookahead bytes before the next resource. Once
-    // a resource has an identified payload, retain nonzero lookahead as that
-    // payload's storage and zero lookahead as alignment. An unowned tail or
-    // an internal gap remains unidentified.
+    // Exact encoders stop at the end marker, and the packer rounds each file
+    // up to four bytes: zeros where the file's writer aligned it, otherwise
+    // whatever its heap held, which the packer replay (`packer`) derives.
+    // Once a resource has an identified payload, count those one to three
+    // bytes with it. An unowned tail or an internal gap remains unidentified.
     for id in 0..directory.offsets.len() {
         let resource = resource_name(id);
         let last = rows
@@ -715,12 +712,12 @@ pub(super) fn inventory(
             "start":end+ROM_BASE,
             "end":boundary+ROM_BASE,
             "kind":kind,
-            "label":if zeros {"Resource alignment"} else {"Compression lookahead"},
+            "label":if zeros {"Resource alignment"} else {"Packer alignment"},
             "resource":resource,
             "evidence":if zeros {
                 "one-to-three zero bytes after an exactly identified resource payload, ending at the next directory pointer"
             } else {
-                "one-to-three bounded bytes read past an exactly decoded and re-encoded stream before the next directory pointer; inherits the stream payload type"
+                "one-to-three bytes the packer's heap left after an exactly decoded and re-encoded stream before the next directory pointer, derived by the packer replay; inherits the stream payload type"
             }
         }));
     }
@@ -897,8 +894,8 @@ fn trace_mtf4(
         tokens.push(Mtf4LzToken::Copy { length, distance });
     }
 }
-/// Trace the stream at `start` whose extent is `span` bytes. The plan's
-/// encoding must reproduce the ROM bytes, including trailing lookahead.
+/// Trace the stream at `start` whose extent is `span` bytes, at most three
+/// of them alignment. The plan's encoding must reproduce the stream bytes.
 fn trace_stream(rom: &[u8], start: usize, span: usize) -> Result<Stream, String> {
     let end = start + span;
     let bytes = rom.get(start..end).ok_or("stream lies beyond the ROM")?;
@@ -950,24 +947,218 @@ fn trace_stream(rom: &[u8], start: usize, span: usize) -> Result<Stream, String>
     if body.len() > span || bytes[..body.len()] != body[..] {
         return Err(format!("{codec} tokens do not re-encode the stream"));
     }
-    let lookahead = &bytes[body.len()..];
-    if codec == "golden-sun-kind2-lz" && lookahead.len() > 3 {
-        return Err("tag-2 stream is followed by more than three bytes".into());
+    // The bytes after the stream are its file's alignment, which the packer
+    // replay derives; the plan records only the extent they complete.
+    if span - body.len() > 3 {
+        return Err(format!(
+            "{codec} stream is followed by more than three alignment bytes"
+        ));
     }
-    let mut plan = json!({"format":1,"codec":codec,"decoded_size":decoded.len(),"encoded_size":span,"tokens":tokens,"lookahead":hex_text(lookahead)});
+    // The Broken Seal's plans name the tag right after the codec.
+    let mut plan = json!({"format":1,"codec":codec});
     if codec == "golden-sun-tagged-palette-lz" {
         plan["tag"] = json!(1);
     }
+    plan["decoded_size"] = json!(decoded.len());
+    plan["encoded_size"] = json!(span);
+    plan["tokens"] = tokens;
     Ok(Stream { plan, decoded })
 }
-/// Export only controls independently reproduced by the compressor.
-fn shared_plan(stream: &Stream) -> Result<Value, String> {
-    compression_plan::checked_plan(&stream.decoded, &stream.plan)
+/// A stream's plan names only its codec and extents. The build compresses the
+/// source input with the target's compressor; the traced tokens only proved
+/// the stored extent and are never exported.
+fn stream_plan(stream: &Stream) -> Value {
+    let mut plan = stream.plan.clone();
+    if let Some(plan) = plan.as_object_mut() {
+        plan.remove("tokens");
+    }
+    plan
+}
+fn little_words(decoded: &[u8]) -> Option<Vec<u16>> {
+    (decoded.len() % 2 == 0).then(|| {
+        decoded
+            .chunks_exact(2)
+            .map(|w| u16::from_le_bytes([w[0], w[1]]))
+            .collect()
+    })
+}
+fn hex_word(word: u16) -> Value {
+    json!(format!("0x{word:04x}"))
+}
+/// Animation queue words as the queue reader (The Lost Age 0x0802cc9c) walks
+/// them: each 0xfdNN header opens queue N, pairs of words follow until a
+/// 0xfeNN control word, and 0xffff ends the list. The reader only records
+/// headers, so a body without one is kept as the pairs it stores.
+fn queue_words(words: &[u16]) -> Option<Value> {
+    let (&last, body) = words.split_last()?;
+    if last != 0xffff {
+        return None;
+    }
+    let mut groups = Vec::new();
+    let mut at = 0;
+    while at < body.len() {
+        let mut group = Vec::new();
+        if body[at] >> 8 == 0xfd {
+            group.push(hex_word(body[at]));
+            at += 1;
+        }
+        loop {
+            let word = *body.get(at)?;
+            if word >> 8 == 0xfe {
+                group.push(hex_word(word));
+                at += 1;
+                break;
+            }
+            group.push(json!([word, *body.get(at + 1)?]));
+            at += 2;
+        }
+        groups.push(Value::Array(group));
+    }
+    groups.push(hex_word(last));
+    Some(Value::Array(groups))
+}
+/// Blend animation commands: a 0x3xxx blend control, 0xfeNN control and
+/// 0xffff reset stand alone; any other word is a blend value and its duration.
+fn blend_words(words: &[u16]) -> Option<Value> {
+    let mut commands = Vec::new();
+    let mut at = 0;
+    while at < words.len() {
+        let word = words[at];
+        if word == 0xffff || word >> 8 == 0xfe || word & 0xf000 == 0x3000 {
+            commands.push(json!([hex_word(word)]));
+            at += 1;
+        } else {
+            commands.push(json!([hex_word(word), *words.get(at + 1)?]));
+            at += 2;
+        }
+    }
+    Some(Value::Array(commands))
+}
+/// The Lost Age's last container slot as the typed lists its readers walk.
+/// Three u16 offsets and an unread zero word precede four lists, each ending
+/// at the next offset: the points 0x080ca9cc finds by number (a signed
+/// number, u16 x and y in pixels, ended by 0xff); the entrances 0x080cc7c4
+/// finds by number (a signed number, signed x and y in pixels, and a byte
+/// whose low four bits are the arrival facing), whose 0xff number ends the
+/// reader's search but not the stored list; the flag-gated cell patches of
+/// 0x0802b63c (eight-byte records ended by 0xffff); and the camera bounds
+/// (four signed 16-pixel cell coordinates, ended by 0xff).
+fn positions_table(decoded: &[u8]) -> Option<Value> {
+    let word = |at: usize| {
+        Some(u16::from_le_bytes([
+            *decoded.get(at)?,
+            *decoded.get(at + 1)?,
+        ]))
+    };
+    let offsets = [word(0)?, word(2)?, word(4)?].map(usize::from);
+    if word(6)? != 0 {
+        return None;
+    }
+    let bounds = [8, offsets[0], offsets[1], offsets[2], decoded.len()];
+    let signed = |byte: u8| i64::from(byte as i8);
+    let s16 = |at: usize| i64::from(i16::from_le_bytes([decoded[at], decoded[at + 1]]));
+    let u16_at = |at: usize| i64::from(u16::from_le_bytes([decoded[at], decoded[at + 1]]));
+    struct List {
+        name: &'static str,
+        stride: usize,
+        terminator: &'static [u8],
+        fields: Value,
+    }
+    let lists = [
+        List {
+            name: "points",
+            stride: 5,
+            terminator: &[0xff],
+            fields: json!([{"name":"point","element":"s8"},{"name":"x","element":"le-u16"},{"name":"y","element":"le-u16"}]),
+        },
+        List {
+            name: "entrances",
+            stride: 6,
+            terminator: &[0xff],
+            fields: json!([{"name":"entrance","element":"s8"},{"name":"x","element":"le-s16"},{"name":"y","element":"le-s16"},
+                {"name":"arrival","element":"u8","bits":{"facing":4,"options":4}}]),
+        },
+        List {
+            name: "cell_patches",
+            stride: 8,
+            terminator: &[0xff, 0xff],
+            fields: json!([{"name":"condition","element":"le-u16","bits":{"flag":12,"mode":4}},{"name":"cells","element":"u8"}]),
+        },
+        List {
+            name: "camera_bounds",
+            stride: 4,
+            terminator: &[0xff],
+            fields: json!([{"name":"left","element":"s8"},{"name":"top","element":"s8"},{"name":"right","element":"s8"},{"name":"bottom","element":"s8"}]),
+        },
+    ];
+    let hex = |at: usize| json!(format!("0x{at:x}"));
+    let mut segments = vec![
+        json!({"name":"offsets","address":hex(0),"end":hex(6),"stride":2,"element":"le-u16","values":[]}),
+        json!({"name":"reserved","address":hex(6),"end":hex(8),"stride":2,"element":"le-u16","values":[0]}),
+    ];
+    let mut starts = Vec::new();
+    for (list, window) in lists.iter().zip(bounds.windows(2)) {
+        let (start, end) = (window[0], window[1]);
+        let body = end.checked_sub(start + list.terminator.len())?;
+        if body % list.stride != 0 || decoded.get(start + body..end)? != list.terminator {
+            return None;
+        }
+        let end_name = format!("{}_end", list.name);
+        if body == 0 {
+            starts.push(json!(end_name));
+        } else {
+            starts.push(json!(list.name));
+            let records = decoded[start..start + body]
+                .chunks_exact(list.stride)
+                .enumerate()
+                .map(|(index, record)| {
+                    let at = start + index * list.stride;
+                    match list.name {
+                        "points" => json!({"point":signed(record[0]),"x":u16_at(at + 1),"y":u16_at(at + 3)}),
+                        "entrances" => json!({"entrance":signed(record[0]),"x":s16(at + 1),"y":s16(at + 3),
+                            "arrival":[record[5] & 15, record[5] >> 4]}),
+                        "cell_patches" => json!({"condition":[u16_at(at) & 0xfff, u16_at(at) >> 12],"cells":&record[2..]}),
+                        _ => json!({"left":signed(record[0]),"top":signed(record[1]),"right":signed(record[2]),"bottom":signed(record[3])}),
+                    }
+                })
+                .collect::<Vec<_>>();
+            segments.push(json!({"name":list.name,"address":hex(start),"end":hex(start + body),"stride":list.stride,
+                "element":"record","fields":list.fields,"records":records}));
+        }
+        let (element, value) = if list.terminator.len() == 2 {
+            ("le-u16", 0xffff)
+        } else {
+            ("u8", 0xff)
+        };
+        segments.push(json!({"name":end_name,"address":hex(start + body),"end":hex(end),"stride":list.terminator.len(),
+            "element":element,"values":[value]}));
+    }
+    // The first list follows the header; the offsets name the other three.
+    segments[0]["values"] = json!(starts[1..]);
+    Some(
+        json!({"format":1,"kind":"typed-table","address":hex(0),"size":hex(decoded.len()),"segments":segments}),
+    )
 }
 
+/// The table record a request derives from: a scene, or a map load record no
+/// scene selects.
+#[derive(Clone, Copy)]
+enum Record {
+    Scene(usize),
+    Load(usize),
+}
 struct SceneRequest {
-    index: usize,
+    record: Record,
+    /// The source folder: a name under FIELD, or a path under SRC.
     name: Option<String>,
+}
+impl SceneRequest {
+    pub(super) fn scene(index: usize) -> Self {
+        Self {
+            record: Record::Scene(index),
+            name: None,
+        }
+    }
 }
 fn parse_scenes(text: &str) -> Result<Vec<SceneRequest>, String> {
     text.split(',')
@@ -977,29 +1168,70 @@ fn parse_scenes(text: &str) -> Result<Vec<SceneRequest>, String> {
                 .map_or((item, None), |(index, name)| (index, Some(name)));
             let name = name
                 .map(|name| {
-                    if name.is_empty()
-                        || !name
-                            .bytes()
-                            .all(|b| b.is_ascii_uppercase() || b.is_ascii_digit() || b == b'_')
-                    {
+                    if name.split('/').any(|part| {
+                        part.is_empty()
+                            || !part
+                                .bytes()
+                                .all(|b| b.is_ascii_uppercase() || b.is_ascii_digit() || b == b'_')
+                    }) {
                         Err(format!("scene name {name:?} must be upper-case romaji"))
                     } else {
                         Ok(name.to_string())
                     }
                 })
                 .transpose()?;
+            let index = index.trim();
+            let (load, number) = match index.strip_prefix('L') {
+                Some(number) => (true, number),
+                None => (false, index),
+            };
+            let number = number
+                .parse()
+                .map_err(|_| format!("invalid scene index {index:?}"))?;
             Ok(SceneRequest {
-                index: index
-                    .trim()
-                    .parse()
-                    .map_err(|_| format!("invalid scene index {index:?}"))?,
+                record: if load {
+                    Record::Load(number)
+                } else {
+                    Record::Scene(number)
+                },
                 name,
             })
         })
         .collect()
 }
 
-/// An unidentified map component awaiting its place in the private map binary.
+/// Hexadecimal resource ids, as `--leave` lists them.
+fn parse_resources(text: &str) -> Result<BTreeSet<usize>, String> {
+    text.split(',')
+        .map(|item| {
+            let item = item.trim();
+            usize::from_str_radix(item, 16)
+                .ok()
+                .filter(|_| !item.is_empty() && item.len() <= 3)
+                .ok_or_else(|| format!("invalid resource id {item:?}"))
+        })
+        .collect()
+}
+
+/// Where one area keeps its map document, map binary and tile sheet.
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord)]
+struct Home {
+    directory: String,
+    stem: String,
+}
+impl Home {
+    fn document(&self) -> String {
+        format!("{}/{}.JSON", self.directory, self.stem)
+    }
+    fn map(&self) -> String {
+        format!("{}/{}.BIN", self.directory, self.stem)
+    }
+    fn tiles(&self) -> String {
+        format!("{}/{}_CHR.PNG", self.directory, self.stem)
+    }
+}
+
+/// A private map component awaiting its place in the private map binary.
 struct Layer {
     map: String,
     /// Index of its region in `Output::regions`.
@@ -1013,9 +1245,9 @@ struct Staged {
     binaries: BTreeMap<String, Vec<u8>>,
     tiles: BTreeMap<String, Vec<u8>>,
     documents: BTreeMap<String, Value>,
-    compression: serde_json::Map<String, Value>,
     banks: Vec<Vec<u16>>,
 }
+#[derive(Default)]
 struct Output {
     scenes: Vec<Value>,
     layouts: Vec<Value>,
@@ -1033,7 +1265,8 @@ struct Preview {
     metatile_length: usize,
     /// The twelve header bytes: sizes, BG priorities and charblock bases.
     parameters: Vec<u8>,
-    tiles: Vec<(String, usize)>,
+    /// Each loaded bank's sheet and first tile, or none for a bank left out.
+    tiles: Vec<Option<(String, usize)>>,
     banks: Vec<usize>,
     /// Header record origins: each layer's (x | y << 8) in half-cell units.
     origins: [usize; 3],
@@ -1044,15 +1277,37 @@ struct Deriver<'a> {
     target: DecompTarget,
     paths: NativePaths,
     directory: Directory,
-    index: Option<Value>,
     staged: Staged,
     seen: BTreeSet<usize>,
     chr_banks: BTreeMap<String, usize>,
+    /// The homes of every derived request that names each resource. A
+    /// resource named from more than one home is shared: containers go to the
+    /// common field map, tile banks to the common tile sheet, and both keep
+    /// their plans, with shared palettes', in the common field document.
+    consumers: BTreeMap<usize, BTreeSet<Home>>,
+    /// Resources the derivation leaves unregistered: streams the target's
+    /// compressor or packer replay does not reproduce, and the resources whose
+    /// alignment only their unreproduced bytes would supply.
+    leave: BTreeSet<usize>,
     output: Output,
 }
-impl Deriver<'_> {
-    /// Append unidentified layers after every container's grid and metatiles,
-    /// so a map binary's layouts keep their adjacent, derivation-order extents.
+impl<'a> Deriver<'a> {
+    fn new(rom: &'a [u8], target: DecompTarget) -> Result<Self, String> {
+        Ok(Self {
+            rom,
+            directory: Directory::read(rom)?,
+            paths: NativePaths::of(&target),
+            target,
+            staged: Staged::default(),
+            seen: BTreeSet::new(),
+            chr_banks: BTreeMap::new(),
+            consumers: BTreeMap::new(),
+            leave: BTreeSet::new(),
+            output: Output::default(),
+        })
+    }
+    /// Append private layers after every container's grid and metatiles, so a
+    /// map binary's layouts keep their adjacent, derivation-order extents.
     fn place_layers(&mut self) -> Result<(), String> {
         for layer in std::mem::take(&mut self.staged.layers) {
             let binary = self
@@ -1074,34 +1329,6 @@ impl Deriver<'_> {
         }
         Ok(())
     }
-    fn existing_region(&self, address: usize) -> Option<&Value> {
-        let address = hex_address(address + ROM_BASE);
-        self.index.as_ref()?["regions"]
-            .as_array()?
-            .iter()
-            .find(|r| r["address"] == address.as_str())
-    }
-    fn existing_input(&self, address: usize) -> Option<&Value> {
-        let address = hex_address(address + ROM_BASE);
-        self.index.as_ref()?["private_inputs"]
-            .as_array()?
-            .iter()
-            .find(|r| r["region_address"] == address.as_str())
-    }
-    /// A shared compression section keeps its committed key; a new one is
-    /// named by the digest of the stream it plans.
-    fn section(&mut self, offset: usize, span: usize, stream: &Stream) -> Result<String, String> {
-        let key = self
-            .existing_region(offset)
-            .and_then(|r| r["plan_section"].as_str())
-            .filter(|key| !key.starts_with('/'))
-            .map(str::to_string)
-            .unwrap_or_else(|| sha256::hex(&self.rom[offset..offset + span]));
-        self.staged
-            .compression
-            .insert(key.clone(), shared_plan(stream)?);
-        Ok(key)
-    }
     fn bank_index(&mut self, values: Vec<u16>) -> usize {
         if let Some(index) = self.staged.banks.iter().position(|b| *b == values) {
             return index;
@@ -1109,36 +1336,98 @@ impl Deriver<'_> {
         self.staged.banks.push(values);
         self.staged.banks.len() - 1
     }
-    fn scene(&mut self, request: &SceneRequest) -> Result<(), String> {
+    /// The shared field map document and binary.
+    fn common(&self) -> Home {
+        Home {
+            directory: format!("{}/FIELD/COMMON", self.paths.source),
+            stem: "MAP".into(),
+        }
+    }
+    fn common_tiles(&self) -> String {
+        format!("{}/GRAPHICS/COMMON/CHR.PNG", self.paths.source)
+    }
+    fn shared(&self, id: usize) -> bool {
+        self.consumers.get(&id).is_some_and(|homes| homes.len() > 1)
+    }
+    /// A request's load record index.
+    fn load_index(&self, record: Record) -> Result<usize, String> {
+        match record {
+            Record::Load(load) => Ok(load),
+            Record::Scene(index) => {
+                let tables = field_tables(&self.target)?;
+                Ok(u16_at(self.rom, tables.scenes - ROM_BASE + index * 8 + 4)? as usize)
+            }
+        }
+    }
+    /// The six resources a load record names: container, palette, then the
+    /// four tile banks.
+    fn load_row(&self, load: usize) -> Result<Vec<usize>, String> {
         let tables = field_tables(&self.target)?;
-        let record = tables.scenes - ROM_BASE + request.index * 8;
-        let overlay = u16_at(self.rom, record)? as usize;
-        let load = u16_at(self.rom, record + 4)? as usize;
-        let row = (0..6)
+        (0..6)
             .map(|k| {
                 Ok(
                     u16_at(self.rom, tables.loads - ROM_BASE + load * 12 + k * 2)? as usize
                         + tables.bias,
                 )
             })
-            .collect::<Result<Vec<_>, String>>()?;
-        let container = row[0];
+            .collect()
+    }
+    /// A named request lives in FIELD/NAME, or at a path under SRC; COMMON
+    /// names the common field map, for maps no proved place owns. An unnamed
+    /// request is named after its container.
+    fn home(&self, request: &SceneRequest, container: usize) -> Home {
         let name = request
             .name
             .clone()
-            .unwrap_or_else(|| format!("MAP_{:03X}", container));
-        let mut loader = serde_json::Map::new();
-        loader.insert("map_index".into(), json!(load));
-        loader.insert("container".into(), json!(resource_name(container)));
-        loader.insert("palette".into(), json!(resource_name(row[1])));
-        for (field, id) in loader_fields(&self.target).iter().zip(&row[2..]) {
-            loader.insert((*field).into(), json!(resource_name(*id)));
+            .unwrap_or_else(|| format!("MAP_{container:03X}"));
+        if name == "COMMON" {
+            return self.common();
         }
-        self.output.scenes.push(
-            json!({"scene_index":request.index,"overlay":resource_name(overlay),"loader":loader}),
-        );
-        let owner = format!("{}/FIELD/{name}", self.paths.source);
-        let banks = self.palette(row[1])?;
+        let directory = if name.contains('/') {
+            format!("{}/{name}", self.paths.source)
+        } else {
+            format!("{}/FIELD/{name}", self.paths.source)
+        };
+        let stem = name.rsplit('/').next().unwrap_or(&name).to_string();
+        Home { directory, stem }
+    }
+    /// Record which homes name each resource before any is placed.
+    fn plan_homes(&mut self, requests: &[SceneRequest]) -> Result<(), String> {
+        for request in requests {
+            let row = self.load_row(self.load_index(request.record)?)?;
+            let home = self.home(request, row[0]);
+            for id in row {
+                self.consumers.entry(id).or_default().insert(home.clone());
+            }
+        }
+        Ok(())
+    }
+    fn document(&mut self, name: &str) -> &mut Value {
+        self.staged
+            .documents
+            .entry(name.to_string())
+            .or_insert_with(|| json!({"format":1,"maps":{}}))
+    }
+    fn scene(&mut self, request: &SceneRequest) -> Result<(), String> {
+        let load = self.load_index(request.record)?;
+        let row = self.load_row(load)?;
+        if let Record::Scene(index) = request.record {
+            let tables = field_tables(&self.target)?;
+            let record = tables.scenes - ROM_BASE + index * 8;
+            let overlay = u16_at(self.rom, record)? as usize;
+            let mut loader = serde_json::Map::new();
+            loader.insert("map_index".into(), json!(load));
+            loader.insert("container".into(), json!(resource_name(row[0])));
+            loader.insert("palette".into(), json!(resource_name(row[1])));
+            for (field, id) in loader_fields(&self.target).iter().zip(&row[2..]) {
+                loader.insert((*field).into(), json!(resource_name(*id)));
+            }
+            self.output.scenes.push(
+                json!({"scene_index":index,"overlay":resource_name(overlay),"loader":loader}),
+            );
+        }
+        let home = self.home(request, row[0]);
+        let banks = self.palette(row[1], &home)?;
         let mut tiles = Vec::new();
         for (bank, id) in row[2..].iter().enumerate() {
             let purpose = if loader_fields(&self.target)[bank] == "animation_source" {
@@ -1146,11 +1435,15 @@ impl Deriver<'_> {
             } else {
                 "map-charblock-source"
             };
-            tiles.push(self.tiles(*id, &owner, &name, purpose)?);
+            tiles.push(self.tiles(*id, &home, purpose)?);
         }
-        self.container(container, &owner, &name, tiles, banks)
+        self.container(row[0], &home, tiles, banks)
     }
-    fn palette(&mut self, id: usize) -> Result<Vec<usize>, String> {
+    /// The palette's colour banks, none when the palette is left out.
+    fn palette(&mut self, id: usize, home: &Home) -> Result<Vec<usize>, String> {
+        if self.leave.contains(&id) {
+            return Ok(Vec::new());
+        }
         let (offset, span) = self.directory.resource(id)?;
         let stream = trace_stream(self.rom, offset, span)?;
         if stream.decoded.is_empty() || stream.decoded.len() % 32 != 0 {
@@ -1170,95 +1463,108 @@ impl Deriver<'_> {
         if !self.seen.insert(offset) {
             return Ok(banks);
         }
-        let key = self.section(offset, span, &stream)?;
+        let document = if self.shared(id) {
+            self.common().document()
+        } else {
+            home.document()
+        };
+        let key = resource_name(id);
+        let pointer = format!("/palettes/{key}");
+        let plan = stream_plan(&stream);
+        let sections = self.document(&document);
+        if sections.get("palettes").is_none() {
+            sections["palettes"] = json!({});
+        }
+        sections["palettes"][&key] = plan;
         let colors = self.paths.colors.clone();
         let address = hex_address(offset + ROM_BASE);
-        self.output.regions.push(json!({"address":address,"size":small_hex(span),"kind":"golden-sun-general-lz","plan":self.paths.recipes,"plan_section":key,
+        self.output.regions.push(json!({"address":address,"size":small_hex(span),"kind":"golden-sun-general-lz","plan":document,"plan_section":pointer,
             "components":banks.iter().map(|bank| json!({"kind":"le-u16-array","source":colors,"pointer":format!("/banks/{bank}"),"size":32})).collect::<Vec<_>>()}));
-        self.output.bindings.push(json!({"address":address,"compression":self.paths.recipes,"compression_section":key,"sources":[colors],"palette_source":colors,"palette_banks":banks,"resource":resource_name(id)}));
+        self.output.bindings.push(json!({"address":address,"compression":document,"compression_section":pointer,"sources":[colors],"palette_source":colors,"palette_banks":banks,"resource":key}));
         self.output.private_inputs.push(json!({"kind":"palette","source":colors,"banks":banks,"region_address":address,"decoded_sha256":sha256::hex(&stream.decoded)}));
         Ok(banks)
     }
+    /// The bank's sheet and first tile, none when the bank is left out.
     fn tiles(
         &mut self,
         id: usize,
-        owner: &str,
-        name: &str,
+        home: &Home,
         purpose: &str,
-    ) -> Result<(String, usize), String> {
+    ) -> Result<Option<(String, usize)>, String> {
+        if self.leave.contains(&id) {
+            return Ok(None);
+        }
         let (offset, span) = self.directory.resource(id)?;
+        let address = hex_address(offset + ROM_BASE);
+        if self.seen.contains(&offset) {
+            return self
+                .output
+                .private_inputs
+                .iter()
+                .find(|input| input["region_address"] == address.as_str())
+                .and_then(|input| {
+                    Some((
+                        input["source"].as_str()?.to_string(),
+                        input["tile_offset"].as_u64()? as usize,
+                    ))
+                })
+                .map(Some)
+                .ok_or_else(|| format!("tile bank {id:03x} lost its placement"));
+        }
         let stream = trace_stream(self.rom, offset, span)?;
         if stream.plan["codec"] != "golden-sun-kind2-lz" || stream.decoded.len() != TILE_BANK {
             return Err(format!("tile bank {id:03x} is not one tag-2 charblock"));
         }
-        let placed = self.existing_input(offset).and_then(|input| {
-            Some((
-                input["source"].as_str()?.to_string(),
-                input["tile_offset"].as_u64()? as usize,
-            ))
-        });
-        let fresh = !self.seen.contains(&offset);
-        let (source, tile_offset) = match placed {
-            Some(placed) => placed,
-            None if fresh => {
-                let source = format!("{owner}/{name}_CHR.PNG");
-                let next = self.chr_banks.entry(source.clone()).or_default();
-                let tile_offset = *next * TILES_PER_BANK;
-                *next += 1;
-                (source, tile_offset)
-            }
-            None => self
-                .output
-                .private_inputs
-                .iter()
-                .find(|input| input["region_address"] == hex_address(offset + ROM_BASE).as_str())
-                .map(|input| {
-                    (
-                        input["source"].as_str().unwrap().to_string(),
-                        input["tile_offset"].as_u64().unwrap() as usize,
-                    )
-                })
-                .ok_or("shared tile bank lost its placement")?,
+        self.seen.insert(offset);
+        let (source, document) = if self.shared(id) || *home == self.common() {
+            (self.common_tiles(), self.common().document())
+        } else {
+            (home.tiles(), home.document())
         };
-        if !self.seen.insert(offset) {
-            return Ok((source, tile_offset));
-        }
-        let mut plan = stream.plan.clone();
+        let next = self.chr_banks.entry(source.clone()).or_default();
+        let tile_offset = *next * TILES_PER_BANK;
+        *next += 1;
+        let key = resource_name(id);
+        let pointer = format!("/charblocks/{key}");
         let layout = json!({"format":"sequential-gba-4bpp-tiles","purpose":purpose,"tile_count":TILES_PER_BANK,"tile_width":8,"tile_height":8,"columns":32,"rows":16});
+        let mut plan = stream_plan(&stream);
         plan["layout"] = layout.clone();
-        let key = self.section(
-            offset,
-            span,
-            &Stream {
-                plan,
-                decoded: stream.decoded.clone(),
-            },
-        )?;
+        let sections = self.document(&document);
+        if sections.get("charblocks").is_none() {
+            sections["charblocks"] = json!({});
+        }
+        sections["charblocks"][&key] = plan;
         let sheet = self.staged.tiles.entry(source.clone()).or_default();
         let start = tile_offset * 32;
         if sheet.len() < start + TILE_BANK {
             sheet.resize(start + TILE_BANK, 0);
         }
         sheet[start..start + TILE_BANK].copy_from_slice(&stream.decoded);
-        let address = hex_address(offset + ROM_BASE);
-        self.output.regions.push(json!({"address":address,"size":small_hex(span),"kind":"golden-sun-kind2-lz","plan":self.paths.recipes,"plan_section":key,"layout":layout,
+        self.output.regions.push(json!({"address":address,"size":small_hex(span),"kind":"golden-sun-kind2-lz","plan":document,"plan_section":pointer,"layout":layout,
             "components":[{"kind":"gba-4bpp-tiles","source":source,"tile_offset":tile_offset,"tile_count":TILES_PER_BANK,"size":TILE_BANK}]}));
-        self.output.bindings.push(json!({"address":address,"compression":self.paths.recipes,"compression_section":key,"sources":[source],"tile_offset":tile_offset,"tile_count":TILES_PER_BANK,"resource":resource_name(id)}));
+        self.output.bindings.push(json!({"address":address,"compression":document,"compression_section":pointer,"sources":[source],"tile_offset":tile_offset,"tile_count":TILES_PER_BANK,"resource":key}));
         self.output.private_inputs.push(json!({"kind":"tiles","source":source,"tile_offset":tile_offset,"region_address":address,"decoded_sha256":sha256::hex(&stream.decoded)}));
-        Ok((source, tile_offset))
+        Ok(Some((source, tile_offset)))
     }
     fn container(
         &mut self,
         id: usize,
-        owner: &str,
-        name: &str,
-        tiles: Vec<(String, usize)>,
+        home: &Home,
+        tiles: Vec<Option<(String, usize)>>,
         banks: Vec<usize>,
     ) -> Result<(), String> {
+        if self.leave.contains(&id) {
+            return Ok(());
+        }
         let (base, size) = self.directory.resource(id)?;
         if !self.seen.insert(base) {
             return Ok(());
         }
+        let home = if self.shared(id) {
+            self.common()
+        } else {
+            home.clone()
+        };
         let slots = component_slots(&self.target);
         let header = 0x24 + 4 * slots;
         let offsets = (0..slots)
@@ -1288,8 +1594,8 @@ impl Deriver<'_> {
                 - offset
         };
         let key = resource_name(id);
-        let source = format!("{owner}/{name}.JSON");
-        let map = format!("{owner}/{name}.BIN");
+        let source = home.document();
+        let map = home.map();
         let at = |offset: usize| hex_address(base + offset + ROM_BASE);
         let rom = self.rom;
         let params = &rom[base..base + 12];
@@ -1313,6 +1619,7 @@ impl Deriver<'_> {
         let binary = self.staged.binaries.entry(map.clone()).or_default();
         let grid_offset = binary.len();
         let (mut metatile_offset, mut metatile_length) = (0, 0);
+        let mut grid = None;
         for (slot, offset) in offsets.iter().copied().enumerate() {
             if offset == 0 {
                 continue;
@@ -1336,9 +1643,11 @@ impl Deriver<'_> {
                 (_, Ok(stream)) => stream,
             };
             let decoded = &stream.decoded;
-            let mut plan = stream.plan.clone();
-            match slot {
-                0 => {
+            let mut plan = stream_plan(&stream);
+            let region = |components: Value| json!({"address":at(offset),"size":small_hex(span),"kind":"golden-sun-general-lz","plan":source,"plan_section":pointer,"components":components});
+            let words = little_words(decoded);
+            match section {
+                "metatiles" => {
                     let mode = *decoded.first().ok_or("empty metatile stream")?;
                     let words = native::decode_metatile_words(decoded, mode)?;
                     if words.is_empty() || words.len() % 8 != 0 {
@@ -1351,85 +1660,119 @@ impl Deriver<'_> {
                     metatile_offset = binary.len();
                     metatile_length = words.len();
                     binary.extend(&words);
+                    plan["tilemap_length"] = json!(metatile_length);
                     plan["component"] = json!("map-metatiles-2x2");
                     plan["transform_mode"] = json!(mode);
                     plan["metatiles"] = json!(words.len() / 8);
                     plan["tilemap_source"] = json!(map);
                     plan["tilemap_offset"] = json!(metatile_offset);
-                    plan["tilemap_length"] = json!(metatile_length);
-                    regions.push(json!({"address":at(offset),"size":small_hex(span),"kind":"golden-sun-general-lz","plan":source,"plan_section":pointer,
-                        "components":[{"kind":"gba-tilemap16","size":decoded.len(),"delta_mode":mode,"source":map,"format":"binary","source_offset":metatile_offset,"source_length":metatile_length}]}));
+                    regions.push(region(
+                        json!([{"kind":"gba-tilemap16","size":decoded.len(),"delta_mode":mode,"source":map,"format":"binary","source_offset":metatile_offset,"source_length":metatile_length}]),
+                    ));
                     self.output.private_inputs.push(json!({"kind":"metatiles","source":map,"source_offset":metatile_offset,"region_address":at(offset),"transform_mode":mode,"decoded_sha256":sha256::hex(&words)}));
                 }
-                2 => {
+                "grid" => {
                     if decoded.len() != 65536 {
                         return Err(format!("container {id:03x} grid is not 128x128 cells"));
                     }
-                    let section_key = self.section(base + offset, span, &stream)?;
                     let binary = self.staged.binaries.get_mut(&map).unwrap();
                     binary.resize(binary.len().max(grid_offset + 65536), 0);
                     binary[grid_offset..grid_offset + 65536].copy_from_slice(decoded);
-                    document.insert("grid_source".into(), json!(map));
-                    document.insert("grid_offset".into(), json!(grid_offset));
-                    document.insert(
-                        "grid_compression".into(),
-                        json!({"source":self.paths.recipes,"section":section_key}),
-                    );
-                    regions.push(json!({"address":at(offset),"size":small_hex(span),"kind":"golden-sun-general-lz","plan":self.paths.recipes,"plan_section":section_key,
+                    let pointer = format!("/maps/{key}/grid_compression");
+                    grid = Some(plan);
+                    regions.push(json!({"address":at(offset),"size":small_hex(span),"kind":"golden-sun-general-lz","plan":source,"plan_section":pointer,
                         "components":[{"kind":"golden-sun-map-grid","source":map,"width":128,"height":128,"source_offset":grid_offset,"source_length":65536,"size":65536}]}));
                     self.output.private_inputs.push(json!({"kind":"grid","source":map,"source_offset":grid_offset,"region_address":at(offset),"decoded_sha256":sha256::hex(decoded)}));
                     continue;
                 }
-                1 => {
+                "descriptors" => {
                     let size = if decoded.len() % 4 == 0 { 4 } else { 1 };
+                    plan["records"] = json!(decoded.chunks(size).collect::<Vec<_>>());
                     plan["component"] = json!("map-descriptors-4byte");
                     plan["record_size"] = json!(size);
-                    plan["records"] = json!(decoded.chunks(size).collect::<Vec<_>>());
-                    regions.push(json!({"address":at(offset),"size":small_hex(span),"kind":"golden-sun-general-lz","plan":source,"plan_section":pointer,
-                        "components":[{"kind":"u8-array","pointer":format!("{pointer}/records"),"source":source,"size":decoded.len()}]}));
+                    regions.push(region(
+                        json!([{"kind":"u8-array","pointer":format!("{pointer}/records"),"source":source,"size":decoded.len()}]),
+                    ));
                 }
-                _ if slots == 6 && decoded.len() % 2 == 0 => {
-                    plan["word_size"] = json!(2);
-                    plan["words"] = json!(decoded
-                        .chunks_exact(2)
-                        .map(|w| u16::from_le_bytes([w[0], w[1]]))
-                        .collect::<Vec<_>>());
-                    regions.push(json!({"address":at(offset),"size":small_hex(span),"kind":"golden-sun-general-lz","plan":source,"plan_section":pointer,
-                        "components":[{"kind":"le-u16-array","pointer":format!("{pointer}/words"),"source":source,"size":decoded.len()}]}));
+                "animation_queues" | "blend_animation"
+                    if words
+                        .as_deref()
+                        .and_then(|words| {
+                            if section == "animation_queues" {
+                                queue_words(words)
+                            } else {
+                                blend_words(words)
+                            }
+                        })
+                        .is_some() =>
+                {
+                    let words = words.as_deref().unwrap();
+                    if section == "animation_queues" {
+                        plan["words"] = queue_words(words).unwrap();
+                        plan["component"] = json!("map-animation-queues");
+                        plan["word_size"] = json!(2);
+                        plan["terminators"] = json!(["0xfe00", "0xffff"]);
+                    } else {
+                        plan["words"] = blend_words(words).unwrap();
+                        plan["component"] = json!("map-blend-animation");
+                        plan["word_size"] = json!(2);
+                    }
+                    regions.push(region(
+                        json!([{"kind":"le-u16-array","pointer":format!("{pointer}/words"),"source":source,"size":decoded.len()}]),
+                    ));
+                }
+                "positions" if positions_table(decoded).is_some() => {
+                    plan["table"] = positions_table(decoded).unwrap();
+                    plan["component"] = json!("map-positions");
+                    regions.push(region(
+                        json!([{"kind":"typed-table","pointer":format!("{pointer}/table"),"source":source,"size":decoded.len()}]),
+                    ));
                 }
                 _ => {
-                    // Bytes of unknown structure are not source: the layer is a
-                    // private input placed in the map binary once every
-                    // container's grid and metatiles have their offsets.
+                    // The descriptor grid, like the cell grid, is private map
+                    // payload placed in the map binary once every container's
+                    // grid and metatiles have their offsets; so are bytes whose
+                    // structure is still unknown.
+                    if section == "descriptor_grid" {
+                        if decoded.len() != 128 * 128 {
+                            return Err(format!(
+                                "container {id:03x} descriptor grid is not 128x128 cells"
+                            ));
+                        }
+                        plan["component"] = json!("map-descriptor-grid");
+                        plan["width"] = json!(128);
+                        plan["height"] = json!(128);
+                    }
                     self.staged.layers.push(Layer {
                         map: map.clone(),
                         region: self.output.regions.len() + regions.len(),
                         address: at(offset),
                         bytes: decoded.clone(),
                     });
-                    regions.push(json!({"address":at(offset),"size":small_hex(span),"kind":"golden-sun-general-lz","plan":source,"plan_section":pointer,
-                        "components":[{"kind":"u8-array","format":"binary","source":map,"size":decoded.len()}]}));
+                    regions.push(region(
+                        json!([{"kind":"u8-array","format":"binary","source":map,"size":decoded.len()}]),
+                    ));
                 }
             }
             document.insert(section.into(), plan);
         }
-        if metatile_length == 0 || !document.contains_key("grid_source") {
+        let Some(grid) = grid.filter(|_| metatile_length != 0) else {
             return Err(format!("container {id:03x} lacks metatiles or a grid"));
-        }
+        };
+        // The grid's fields close the map, as in The Broken Seal's documents.
+        document.insert("grid_source".into(), json!(map));
+        document.insert("grid_offset".into(), json!(grid_offset));
+        document.insert("grid_compression".into(), grid);
         let (width, height) = (params[2] as usize * 8, params[3] as usize * 8);
         let bytes = &self.staged.binaries[&map];
         let payload = sha256::hex(&bytes[grid_offset..metatile_offset + metatile_length]);
-        self.output.layouts.push(json!({"container":key,"name":name,"owner":owner,"source":source,"source_pointer":format!("/maps/{key}"),
+        self.output.layouts.push(json!({"container":key,"name":home.stem,"owner":home.directory,"source":source,"source_pointer":format!("/maps/{key}"),
             "map":map,"grid_offset":grid_offset,"grid_length":65536,"metatiles":map,"metatile_offset":metatile_offset,"metatile_length":metatile_length,
             "width":width,"height":height,"payload_sha256":payload}));
-        self.staged
-            .documents
-            .entry(source)
-            .or_insert_with(|| json!({"format":1,"maps":{}}))["maps"][&key] =
-            Value::Object(document);
+        self.document(&source)["maps"][&key] = Value::Object(document);
         self.output.regions.extend(regions);
         self.output.previews.push(Preview {
-            name: name.into(),
+            name: home.stem.clone(),
             container: key,
             map,
             grid_offset,
@@ -1444,8 +1787,19 @@ impl Deriver<'_> {
     }
 }
 
+/// A derived region the target's compressor does not reproduce from its input.
+struct Failure {
+    address: String,
+    reason: String,
+}
 /// Write the staged native sources under `stage` and rebuild every region.
-fn verify(deriver: &Deriver, stage: &Path) -> Result<usize, String> {
+/// A region matches when its build equals the stored stream and leaves at most
+/// the three alignment bytes the packer replay supplies in the complete build.
+fn verify(
+    deriver: &Deriver,
+    stage: &Path,
+    general: GeneralLz,
+) -> Result<(usize, Vec<Failure>), String> {
     let staged = &deriver.staged;
     for (name, bytes) in &staged.binaries {
         native::write_source(stage, name, bytes)?;
@@ -1470,34 +1824,44 @@ fn verify(deriver: &Deriver, stage: &Path) -> Result<usize, String> {
         &deriver.paths.colors,
         format!("{}\n", canonical_json(&json!({"format":"bgr555-banks","colors_per_bank":16,"banks":staged.banks,"tables":{}}))).as_bytes(),
     )?;
-    native::write_source(
-        stage,
-        &deriver.paths.recipes,
-        format!(
-            "{}\n",
-            canonical_json(&Value::Object(staged.compression.clone()))
-        )
-        .as_bytes(),
-    )?;
     native::validate(
         &json!({"format":"camelot-style-golden-sun-native","layouts":deriver.output.layouts,"regions":deriver.output.regions}),
     )?;
     let mut ctx = Context::new(stage);
+    ctx.general_lz = Some(general);
     let mut matched = 0;
+    let mut failures = Vec::new();
     for region in &deriver.output.regions {
         let address = number(&region["address"], "region address")? - ROM_BASE;
         let size = number(&region["size"], "region size")?;
-        let (built, _, _) = build_entry(&mut ctx, region)
-            .map_err(|e| format!("region {}: {e}", region["address"]))?;
-        if deriver.rom.get(address..address + size) != Some(built.as_slice()) {
-            return Err(format!(
-                "region {} does not rebuild byte-exactly",
-                region["address"]
-            ));
+        let stored = deriver
+            .rom
+            .get(address..address + size)
+            .ok_or("region lies beyond the ROM")?;
+        let reason = match build_entry(&mut ctx, region) {
+            Err(error) => Some(error),
+            Ok((built, _, _))
+                if built.len() > size
+                    || size - built.len() > 3
+                    || stored[..built.len()] != built[..] =>
+            {
+                let first = built.iter().zip(stored).position(|(l, r)| l != r);
+                Some(match first {
+                    Some(at) => format!("encoded bytes differ at +0x{at:x} of 0x{size:x}"),
+                    None => format!("built 0x{:x} of stored 0x{size:x}", built.len()),
+                })
+            }
+            Ok(_) => None,
+        };
+        match reason {
+            None => matched += 1,
+            Some(reason) => failures.push(Failure {
+                address: region["address"].as_str().unwrap_or_default().to_string(),
+                reason,
+            }),
         }
-        matched += 1;
     }
-    Ok(matched)
+    Ok((matched, failures))
 }
 
 fn rgba_color(color: u16) -> [u8; 4] {
@@ -1680,30 +2044,10 @@ pub(crate) fn live_scene(root: &Path, target: &str, scene: usize) -> Result<Vec<
     }
     let rom = fs::read(root.join(target.rom)).map_err(|e| e.to_string())?;
     if index["reference_sha256"] != sha256::hex(&rom) {
-        return Err("ROM differs from SOURCE.JSON checksum".into());
+        return Err("ROM differs from private-inputs.json checksum".into());
     }
-    let mut deriver = Deriver {
-        rom: &rom,
-        directory: Directory::read(&rom)?,
-        target,
-        paths,
-        index: None,
-        staged: Staged::default(),
-        seen: BTreeSet::new(),
-        chr_banks: BTreeMap::new(),
-        output: Output {
-            scenes: vec![],
-            layouts: vec![],
-            regions: vec![],
-            bindings: vec![],
-            private_inputs: vec![],
-            previews: vec![],
-        },
-    };
-    deriver.scene(&SceneRequest {
-        index: scene,
-        name: None,
-    })?;
+    let mut deriver = Deriver::new(&rom, target)?;
+    deriver.scene(&SceneRequest::scene(scene))?;
     let preview = deriver
         .output
         .previews
@@ -1733,13 +2077,17 @@ fn decoded_field(
     let binary = &staged.binaries[&preview.map];
     let unpacked = preview.tiles[..3]
         .iter()
-        .map(|(source, offset)| {
-            staged.tiles[source][offset * 32..offset * 32 + TILE_BANK]
+        .map(|bank| {
+            let (source, offset) = bank.as_ref().ok_or("a loaded charblock is left out")?;
+            Ok(staged.tiles[source][offset * 32..offset * 32 + TILE_BANK]
                 .iter()
                 .flat_map(|byte| [byte & 15, byte >> 4])
-                .collect::<Vec<u8>>()
+                .collect::<Vec<u8>>())
         })
-        .collect::<Vec<_>>();
+        .collect::<Result<Vec<_>, String>>()?;
+    if preview.banks.is_empty() {
+        return Err("the loaded palette is left out".into());
+    }
     let field = render_field(&FieldMap {
         parameters: &preview.parameters,
         origins: preview.origins,
@@ -1784,8 +2132,8 @@ fn render(deriver: &Deriver, preview: &Preview) -> Result<Vec<u8>, String> {
 
 pub(super) fn run(root: &Path, arguments: &[String]) -> Result<(), String> {
     let mut rom_path = None;
-    let (mut target, mut scenes, mut output, mut stage, mut preview) =
-        (None, None, None, None, None);
+    let (mut target, mut scenes, mut output, mut stage, mut preview, mut leave) =
+        (None, None, None, None, None, None);
     let mut index = 0;
     while index < arguments.len() {
         let argument = arguments[index].as_str();
@@ -1795,6 +2143,7 @@ pub(super) fn run(root: &Path, arguments: &[String]) -> Result<(), String> {
             "-o" | "--output" => &mut output,
             "--stage" => &mut stage,
             "--preview" => &mut preview,
+            "--leave" => &mut leave,
             _ if !argument.starts_with('-') && rom_path.is_none() => {
                 rom_path = Some(argument.to_string());
                 index += 1;
@@ -1841,24 +2190,13 @@ pub(super) fn run(root: &Path, arguments: &[String]) -> Result<(), String> {
             ));
         }
     }
-    let mut deriver = Deriver {
-        rom: &rom,
-        directory: Directory::read(&rom)?,
-        target,
-        paths,
-        index,
-        staged: Staged::default(),
-        seen: BTreeSet::new(),
-        chr_banks: BTreeMap::new(),
-        output: Output {
-            scenes: vec![],
-            layouts: vec![],
-            regions: vec![],
-            bindings: vec![],
-            private_inputs: vec![],
-            previews: vec![],
-        },
-    };
+    let general = super::target_general_lz(root, &target)?;
+    let mut deriver = Deriver::new(&rom, target)?;
+    deriver.leave = leave
+        .as_deref()
+        .map(parse_resources)
+        .transpose()?
+        .unwrap_or_default();
     // Existing palette banks keep their indices so derived rows merge in place.
     if let Some(colors) = root
         .join(&deriver.paths.colors)
@@ -1876,15 +2214,24 @@ pub(super) fn run(root: &Path, arguments: &[String]) -> Result<(), String> {
             );
         }
     }
-    for request in parse_scenes(&scenes)? {
-        deriver
-            .scene(&request)
-            .map_err(|e| format!("scene {}: {e}", request.index))?;
+    let requests = parse_scenes(&scenes)?;
+    deriver.plan_homes(&requests)?;
+    for request in &requests {
+        deriver.scene(request).map_err(|e| match request.record {
+            Record::Scene(index) => format!("scene {index}: {e}"),
+            Record::Load(load) => format!("load record {load}: {e}"),
+        })?;
     }
     deriver.place_layers()?;
     let temporary = tempfile::tempdir().map_err(|e| e.to_string())?;
     let stage_root = stage.unwrap_or_else(|| temporary.path().to_path_buf());
-    let matched = verify(&deriver, &stage_root)?;
+    let (matched, failures) = verify(&deriver, &stage_root, general)?;
+    for failure in &failures {
+        eprintln!(
+            "unreproduced region {}: {}",
+            failure.address, failure.reason
+        );
+    }
     if let Some(directory) = preview {
         fs::create_dir_all(&directory).map_err(|e| e.to_string())?;
         for item in &deriver.output.previews {
@@ -1893,8 +2240,13 @@ pub(super) fn run(root: &Path, arguments: &[String]) -> Result<(), String> {
                 item.name,
                 item.container.to_ascii_uppercase()
             ));
-            fs::write(&path, render(&deriver, item)?).map_err(|e| e.to_string())?;
-            eprintln!("preview={}", path.display());
+            match render(&deriver, item) {
+                Ok(png) => {
+                    fs::write(&path, png).map_err(|e| e.to_string())?;
+                    eprintln!("preview={}", path.display());
+                }
+                Err(error) => eprintln!("no preview for {}: {error}", path.display()),
+            }
         }
     }
     let result = json!({
@@ -1909,8 +2261,9 @@ pub(super) fn run(root: &Path, arguments: &[String]) -> Result<(), String> {
         "regions":deriver.output.regions,
         "private_inputs":deriver.output.private_inputs,
         "documents":deriver.staged.documents,
-        "compression":deriver.staged.compression,
-        "verification":{"regions":deriver.output.regions.len(),"byte_exact":matched},
+        "left":deriver.leave.iter().map(|id| resource_name(*id)).collect::<Vec<_>>(),
+        "verification":{"regions":deriver.output.regions.len(),"byte_exact":matched,
+            "unreproduced":failures.iter().map(|f| json!({"address":f.address,"reason":f.reason})).collect::<Vec<_>>()},
     });
     let text = format!("{}\n", canonical_json(&result));
     match output {
@@ -1920,9 +2273,10 @@ pub(super) fn run(root: &Path, arguments: &[String]) -> Result<(), String> {
             }
             fs::write(&path, text).map_err(|e| e.to_string())?;
             eprintln!(
-                "derived scenes={} regions={} byte_exact={matched} output={}",
+                "derived scenes={} regions={} byte_exact={matched} unreproduced={} output={}",
                 deriver.output.scenes.len(),
                 deriver.output.regions.len(),
+                failures.len(),
                 path.display()
             );
         }
@@ -1989,21 +2343,130 @@ mod tests {
 
     #[test]
     fn scene_requests_accept_optional_romaji_names() {
-        let rows = parse_scenes("4,187=VINASU_CHOJO").unwrap();
-        assert_eq!((rows[0].index, rows[0].name.as_deref()), (4, None));
+        let rows = parse_scenes("4,187=VINASU_CHOJO,L321=DEBUG/TEST_ROOMS,9=COMMON").unwrap();
+        let record = |row: &SceneRequest| match row.record {
+            Record::Scene(index) => (false, index),
+            Record::Load(load) => (true, load),
+        };
         assert_eq!(
-            (rows[1].index, rows[1].name.as_deref()),
-            (187, Some("VINASU_CHOJO"))
+            (record(&rows[0]), rows[0].name.as_deref()),
+            ((false, 4), None)
         );
-        for invalid in ["", "x", "4=vinasu", "4="] {
+        assert_eq!(
+            (record(&rows[1]), rows[1].name.as_deref()),
+            ((false, 187), Some("VINASU_CHOJO"))
+        );
+        // An L-prefixed number names a load record that no scene selects.
+        assert_eq!(
+            (record(&rows[2]), rows[2].name.as_deref()),
+            ((true, 321), Some("DEBUG/TEST_ROOMS"))
+        );
+        assert_eq!(record(&rows[3]), (false, 9));
+        for invalid in [
+            "", "x", "4=vinasu", "4=", "L", "4=DEBUG/", "4=/FIELD", "4=A//B",
+        ] {
             assert!(parse_scenes(invalid).is_err(), "{invalid}");
         }
+    }
+    #[test]
+    fn animation_queues_group_by_their_headers_and_controls() {
+        let words = [
+            0xfd00, 1600, 2, 520, 0, 0xfe00, 0xfd01, 7, 1, 0xfe03, 0xffff,
+        ];
+        assert_eq!(
+            queue_words(&words).unwrap(),
+            json!([
+                ["0xfd00", [1600, 2], [520, 0], "0xfe00"],
+                ["0xfd01", [7, 1], "0xfe03"],
+                "0xffff"
+            ])
+        );
+        // A body without a header keeps the pairs it stores.
+        assert_eq!(
+            queue_words(&[3, 4, 0xfe00, 0xffff]).unwrap(),
+            json!([[[3, 4], "0xfe00"], "0xffff"])
+        );
+        // The list ends with 0xffff and every group with a control word.
+        assert!(queue_words(&[0xfd00, 1, 2]).is_none());
+        assert!(queue_words(&[0xfd00, 1, 2, 0xffff]).is_none());
+        assert!(queue_words(&[0xfd00, 1, 0xffff]).is_none());
+    }
+    #[test]
+    fn blend_animation_pairs_values_with_durations() {
+        assert_eq!(
+            blend_words(&[0x3f44, 0x0e08, 10, 0xfe00, 0xffff]).unwrap(),
+            json!([["0x3f44"], ["0x0e08", 10], ["0xfe00"], ["0xffff"]])
+        );
+        assert!(blend_words(&[0x0e08]).is_none());
+    }
+    #[test]
+    fn positions_split_into_the_four_lists_their_readers_walk() {
+        let mut data = vec![0u8; 8];
+        // Points: one record and its 0xff end.
+        data.extend([2, 0x10, 0, 0x20, 0, 0xff]);
+        let entrances = data.len();
+        // Entrances: one record facing 3 with option 1.
+        data.extend([0xfe, 0xf0, 0xff, 8, 0, 0x13, 0xff]);
+        let patches = data.len();
+        // Cell patches: flag 0x123 in mode 2, then the two-byte end.
+        data.extend([0x23, 0x21, 1, 2, 3, 4, 5, 6, 0xff, 0xff]);
+        let bounds = data.len();
+        data.extend([0xff, 1, 30, 20, 0xff]);
+        for (at, value) in [(0, entrances), (2, patches), (4, bounds)] {
+            data[at..at + 2].copy_from_slice(&(value as u16).to_le_bytes());
+        }
+        let table = positions_table(&data).unwrap();
+        let segments = table["segments"].as_array().unwrap();
+        let named = |name: &str| segments.iter().find(|s| s["name"] == name).unwrap();
+        assert_eq!(
+            named("offsets")["values"],
+            json!(["entrances", "cell_patches", "camera_bounds"])
+        );
+        assert_eq!(
+            named("points")["records"],
+            json!([{"point":2,"x":16,"y":32}])
+        );
+        assert_eq!(
+            named("entrances")["records"],
+            json!([{"entrance":-2,"x":-16,"y":8,"arrival":[3,1]}])
+        );
+        assert_eq!(
+            named("cell_patches")["records"],
+            json!([{"condition":[0x123,2],"cells":[1,2,3,4,5,6]}])
+        );
+        assert_eq!(named("cell_patches_end")["values"], json!([0xffff]));
+        assert_eq!(
+            named("camera_bounds")["records"],
+            json!([{"left":-1,"top":1,"right":30,"bottom":20}])
+        );
+        // The typed table serializes back to the same bytes.
+        assert_eq!(typed_table(&table).unwrap(), data);
+        // An empty list's offset names its end marker.
+        let mut empty = data[..patches].to_vec();
+        empty.extend([0xff, 0xff]);
+        let moved = empty.len();
+        empty.extend([0xff]);
+        empty[2..4].copy_from_slice(&(patches as u16).to_le_bytes());
+        empty[4..6].copy_from_slice(&(moved as u16).to_le_bytes());
+        let table = positions_table(&empty).unwrap();
+        assert_eq!(
+            table["segments"][0]["values"],
+            json!(["entrances", "cell_patches_end", "camera_bounds_end"])
+        );
+        assert_eq!(typed_table(&table).unwrap(), empty);
+        // A list that does not end at the next offset is not this layout.
+        let mut wrong = data.clone();
+        wrong[bounds - 1] = 0;
+        assert!(positions_table(&wrong).is_none());
+        let mut reserved = data;
+        reserved[6] = 1;
+        assert!(positions_table(&reserved).is_none());
     }
     #[test]
     fn traced_tag2_tokens_reencode_their_stream() {
         let decoded = (0..400u32).map(|i| (i * 7 % 23) as u8).collect::<Vec<_>>();
         let plan = json!({"codec":"golden-sun-kind2-lz","tokens":{"predictor":"greedy-lz-v1","exceptions":[]}});
-        let tokens = compression_plan::materialize(&decoded, &plan, &[]).unwrap();
+        let tokens = compression_plan::materialize(&decoded, &plan, None).unwrap();
         let tokens = tokens
             .as_array()
             .unwrap()
@@ -2034,6 +2497,33 @@ mod tests {
         assert!(trace_stream(&stream, 0, stream.len())
             .map(|s| s.decoded != decoded)
             .unwrap_or(true));
+    }
+    #[test]
+    fn exported_plans_name_the_tag_after_the_codec_and_keep_no_tokens() {
+        use psynergy::assets::lz::{
+            PaletteGroup,
+            PaletteOperation::{End, Literal},
+        };
+        let decoded = [1u8, 2, 3, 4];
+        let mut stream = vec![1];
+        stream.extend(
+            psynergy::assets::lz::encode_palette(
+                &decoded,
+                &[PaletteGroup::Group(vec![
+                    Literal, Literal, Literal, Literal, End,
+                ])],
+            )
+            .unwrap(),
+        );
+        stream.resize(stream.len().next_multiple_of(4), 0);
+        let traced = trace_stream(&stream, 0, stream.len()).unwrap();
+        assert_eq!(traced.decoded, decoded);
+        let plan = stream_plan(&traced);
+        assert_eq!(
+            plan.as_object().unwrap().keys().collect::<Vec<_>>(),
+            ["format", "codec", "tag", "decoded_size", "encoded_size"]
+        );
+        assert_eq!(plan["encoded_size"], stream.len());
     }
     #[test]
     fn field_layers_follow_loader_charblocks_priorities_and_sequential_cells() {
@@ -2091,6 +2581,52 @@ mod tests {
             palettes: 14,
         })
         .is_err());
+    }
+    #[test]
+    fn left_resources_leave_no_rows_sections_or_sheet_slots() {
+        assert_eq!(
+            parse_resources("274, 3cc,2ef").unwrap(),
+            BTreeSet::from([0x274, 0x3cc, 0x2ef])
+        );
+        for invalid in ["", "x", "1000", "3cc,"] {
+            assert!(parse_resources(invalid).is_err(), "{invalid}");
+        }
+        // A directory whose resource 2 is one blank tag-2 charblock.
+        let decoded = vec![0u8; TILE_BANK];
+        let mut tokens = vec![Mtf4LzToken::Literal { width: 2 }];
+        let mut covered = 1;
+        while covered < TILE_BANK {
+            let length = (TILE_BANK - covered).min(137) as u32;
+            tokens.push(Mtf4LzToken::Copy {
+                length,
+                distance: 1,
+            });
+            covered += length as usize;
+        }
+        let mut rom = vec![0u8; 0x40];
+        for (slot, value) in [(0usize, 0x0800_0000u32), (1, 0x0800_0000), (2, 0x0800_0040)] {
+            rom[slot * 4..slot * 4 + 4].copy_from_slice(&value.to_le_bytes());
+        }
+        rom.extend(psynergy::assets::lz::encode_mtf4_lz(&decoded, &tokens).unwrap());
+        rom.resize(rom.len().next_multiple_of(4), 0);
+        let target = decomp_target(Some("tla-en")).unwrap();
+        let home = Home {
+            directory: "SRC/FIELD/AREA".into(),
+            stem: "AREA".into(),
+        };
+        let mut left = Deriver::new(&rom, target).unwrap();
+        left.leave = BTreeSet::from([2]);
+        assert_eq!(left.tiles(2, &home, "map-charblock-source").unwrap(), None);
+        assert_eq!(left.palette(2, &home).unwrap(), Vec::<usize>::new());
+        assert!(left.output.regions.is_empty() && left.output.private_inputs.is_empty());
+        assert!(left.staged.tiles.is_empty() && left.staged.documents.is_empty());
+        let mut derived = Deriver::new(&rom, target).unwrap();
+        assert_eq!(
+            derived.tiles(2, &home, "map-charblock-source").unwrap(),
+            Some((home.tiles(), 0))
+        );
+        assert_eq!(derived.output.regions.len(), 1);
+        assert!(derived.staged.documents[&home.document()]["charblocks"]["002"].is_object());
     }
     #[test]
     fn directory_extents_run_to_the_next_greater_address() {

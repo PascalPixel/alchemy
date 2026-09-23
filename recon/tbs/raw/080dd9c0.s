@@ -1,0 +1,61 @@
+.syntax unified
+	.thumb
+	.set sub_080cd594, 0x080cd594
+	.set sub_080dda3c, 0x080dda3c
+	.set sub_080e0524, 0x080e0524
+	.global FunctionHead_080dd9c0
+	.global Func_080dd9c0
+	.thumb_func
+FunctionHead_080dd9c0:
+Func_080dd9c0:
+	push	{r5, r6, r7, lr}
+	mov	r7, fp
+	mov	r6, sl
+	mov	r5, r9
+	push	{r5, r6, r7}
+	mov	r7, r8
+	push	{r7}
+	ldr	r7, [pc, #84]
+	adds	r3, r7, #0
+	ldmia	r3!, {r1}
+	ldr	r6, [pc, #80]
+	mov	r9, r1
+	ldr	r3, [r3, #0]
+	sub	sp, #52
+	add	r6, r9
+	str	r3, [sp, #48]
+	str	r0, [r6, #0]
+	movs	r0, #1
+	bl	sub_080cd594
+	ldr	r2, [pc, #64]
+	ldr	r3, [pc, #44]
+	strh	r3, [r2, #0]
+	ldr	r3, [pc, #44]
+	adds	r2, #48
+	strh	r3, [r2, #0]
+	ldr	r3, [pc, #40]
+	adds	r2, #2
+	strh	r3, [r2, #0]
+	ldr	r0, [pc, #52]
+	movs	r3, #1
+	mov	r1, r9
+	movs	r2, #1
+	bl	sub_080e0524
+	ldr	r3, [r6, #0]
+	ldr	r3, [r3, #4]
+	cmp	r3, #1
+	bne.n	sub_080dda3c
+	ldr	r2, [pc, #36]
+	ldr	r3, [pc, #36]
+	str	r3, [r2, #0]
+	b.n	sub_080dda3c
+	movs	r0, r0
+	.4byte 0x00000100
+	.4byte 0x00000000
+	.4byte 0x00001010
+	.4byte 0x03001eec
+	.4byte 0x00007828
+	.4byte 0x04000020
+	.4byte 0x0000007e
+	.4byte 0x04000028
+	.4byte 0xffff9000

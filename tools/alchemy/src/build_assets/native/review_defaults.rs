@@ -51,7 +51,7 @@ fn sheet(
 
 /// Ordinary contact sheets follow their native owners; only curated exceptions are serialized.
 pub(super) fn defaults(root: &Path, palettes: &mut Vec<Value>) -> Result<Vec<Value>, String> {
-    let source = read(root, "games/THE BROKEN SEAL/SOURCE.JSON")?;
+    let source = read(root, "recon/tbs/private-inputs.json")?;
     let common = read(root, &format!("{GRAPHICS}/CHARACTER/COMMON.JSON"))?;
     let compression = read(root, &format!("{GRAPHICS}/COMMON/COMPRESSION.JSON"))?;
     let portrait = read(root, &format!("{GRAPHICS}/COMMON/PORTRAIT.JSON"))?;
@@ -363,6 +363,51 @@ pub(super) fn expand(root: &Path, plan: &mut Value) -> Result<(), String> {
         })
         .collect::<Vec<_>>();
     let mut images = defaults(root, &mut palettes)?;
+    // An exclusion names a default sheet the curated review replaced. If the
+    // default is renamed, as when its stream extent changes, a stale exclusion
+    // would silently bring it back, so it fails instead.
+    let generated: std::collections::BTreeSet<&str> =
+        images.iter().filter_map(|i| i["file"].as_str()).collect();
+    let stale: Vec<&str> = plan["exclude"]
+        .as_array()
+        .ok_or("missing exclude")?
+        .iter()
+        .filter_map(Value::as_str)
+        .filter(|name| !generated.contains(name))
+        .collect();
+    if !stale.is_empty() {
+        return Err(format!(
+            "review exclusions name no default sheet: {}",
+            stale.join(", ")
+        ));
+    }
+    // A curated sheet replaces the default of the same name. A default that
+    // starts where a curated sheet starts but is neither that sheet nor
+    // excluded is a renamed default showing beside its replacement.
+    let head = |name: &str| name.split_once("-0x").map(|(start, _)| start.to_owned());
+    let curated = plan["exceptions"]
+        .as_array()
+        .ok_or("missing exceptions")?
+        .iter()
+        .filter_map(|row| row[0].as_str())
+        .collect::<std::collections::BTreeSet<_>>();
+    let heads = curated
+        .iter()
+        .filter_map(|name| head(name))
+        .collect::<std::collections::BTreeSet<_>>();
+    let excluded = plan["exclude"].as_array().ok_or("missing exclude")?;
+    let shadowed: Vec<&str> = generated
+        .iter()
+        .copied()
+        .filter(|name| !curated.contains(name) && !excluded.iter().any(|e| e == *name))
+        .filter(|name| head(name).is_some_and(|start| heads.contains(&start)))
+        .collect();
+    if !shadowed.is_empty() {
+        return Err(format!(
+            "default review sheets start where a curated sheet starts: {}",
+            shadowed.join(", ")
+        ));
+    }
     images.retain(|image| {
         !plan["exclude"].as_array().unwrap().contains(&image["file"])
             && !plan["exceptions"]

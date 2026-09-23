@@ -1579,7 +1579,7 @@ impl Family {
         };
         let result = (|| -> Result<(), String> {
             let before = deriver.output.previews.len();
-            deriver.scene(&SceneRequest { index, name: None })?;
+            deriver.scene(&SceneRequest::scene(index))?;
             let preview = deriver
                 .output
                 .previews
@@ -2762,26 +2762,9 @@ pub(crate) fn live_family(root: &Path, target: &str, scene: usize) -> Result<Vec
     let index = json(&root.join(&paths.index))?;
     let rom = fs::read(root.join(target.rom)).map_err(|e| e.to_string())?;
     if index["reference_sha256"] != sha256::hex(&rom) {
-        return Err("ROM differs from SOURCE.JSON checksum".into());
+        return Err("ROM differs from private-inputs.json checksum".into());
     }
-    let mut deriver = Deriver {
-        rom: &rom,
-        directory: Directory::read(&rom)?,
-        target,
-        paths,
-        index: None,
-        staged: Staged::default(),
-        seen: BTreeSet::new(),
-        chr_banks: BTreeMap::new(),
-        output: Output {
-            scenes: vec![],
-            layouts: vec![],
-            regions: vec![],
-            bindings: vec![],
-            private_inputs: vec![],
-            previews: vec![],
-        },
-    };
+    let mut deriver = Deriver::new(&rom, target)?;
     let scope = Some(BTreeSet::from([scene]));
     let mut overview_family =
         Family::gather(&mut deriver, (scene, -1), Vec::new(), scope.clone(), true);
@@ -2903,24 +2886,7 @@ pub(in crate::build_assets) fn run(root: &Path, arguments: &[String]) -> Result<
         .transpose()?;
     let target = decomp_target(Some(&target))?;
     let rom = fs::read(&rom_path).map_err(|e| format!("{rom_path}: {e}"))?;
-    let mut deriver = Deriver {
-        rom: &rom,
-        directory: Directory::read(&rom)?,
-        paths: NativePaths::of(&target),
-        target,
-        index: None,
-        staged: Staged::default(),
-        seen: BTreeSet::new(),
-        chr_banks: BTreeMap::new(),
-        output: Output {
-            scenes: vec![],
-            layouts: vec![],
-            regions: vec![],
-            bindings: vec![],
-            private_inputs: vec![],
-            previews: vec![],
-        },
-    };
+    let mut deriver = Deriver::new(&rom, target)?;
     if let Some(list) = scenes {
         let mut scope = BTreeSet::new();
         for item in list.split(',') {

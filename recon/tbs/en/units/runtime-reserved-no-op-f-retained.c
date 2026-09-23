@@ -8,6 +8,6 @@
 #include "../main/080039bc.c"
 #include "../main/080039fc.c"
 #include "../main/08003a3c.c"
-#include "../main/08003a7c.c"
+#include "../../../../games/THE BROKEN SEAL/SRC/SYSTEM/IO_WRITE_QUEUE.C"
 #include "../../../../games/THE BROKEN SEAL/SRC/SYSTEM/MEMORY/COPY_AND_CALL_ROUTINE.C"
 #include "../main/08003e58.c"

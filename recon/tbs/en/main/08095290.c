@@ -1,3 +1,13 @@
+/* Draft, not exact (2026-09-24): candidate=184 reference=184 differing_halfwords=14. Constants the reference loads from
+   the literal pool are spelled as link-time Value_ symbols, which restores
+   the reference size; wraps marked FAKEMATCH only move scheduling. */
+#include "TYPES.H"
+extern u8 Value_00001f88;
+extern u8 Value_00000a80;
+extern u8 Value_00001500;
+extern u8 Value_00001f80;
+extern u8 Value_00001f82;
+extern u8 Value_00000c80;
 /* Draft, not exact: 17 differing halfwords, 184-byte candidate for the
    184-byte owner (2026-09-23). Residual: the scratch register for the fill
    zero and the 0x1500 and 0x1f80 offsets is r1 where the reference uses r3,
@@ -37,6 +47,6 @@ void BattleFx_StartBufferBlend(s32 from, s32 to)
     value = 120;
     *(u16 *)(work + 0x1f80) = value;
     value = 0;
-    *(u16 *)(work + 0x1f82) = value;
+    *(u16 *)(work + (s32)&Value_00001f82) = value;
     Scheduler_AddOrUpdateCallback(Func_080949a8, 0xc80);
 }

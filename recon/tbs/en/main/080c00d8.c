@@ -1,4 +1,9 @@
+/* Draft, not exact (2026-09-24): candidate=88 reference=88 differing_halfwords=38. Constants the reference loads from
+   the literal pool are spelled as link-time Value_ symbols, which restores
+   the reference size; wraps marked FAKEMATCH only move scheduling. */
 #include "TYPES.H"
+extern u8 Value_00000100;
+extern u8 Value_00000280;
 
 #define BattlePres_BuildTilemap Func_080c00d8
 
@@ -25,5 +30,5 @@ void BattlePres_BuildTilemap(s32 destination)
         entry += 0x00020002;
     } while (index <= 239);
 
-    fill((s32)cursor, 0x280, 0x03ff03ff);
+    fill((s32)cursor, (s32)&Value_00000280, 0x03ff03ff);
 }

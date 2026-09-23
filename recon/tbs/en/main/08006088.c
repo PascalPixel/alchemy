@@ -1,4 +1,9 @@
+/* Draft, not exact (2026-09-24): candidate=96 reference=96 differing_halfwords=26. Constants the reference loads from
+   the literal pool are spelled as link-time Value_ symbols, which restores
+   the reference size; wraps marked FAKEMATCH only move scheduling. */
 #include "TYPES.H"
+extern u8 Value_00001000;
+extern u8 Value_00002000;
 
 #ifndef SERIAL_RUNTIME_TU
 struct SerialRuntime {
@@ -49,6 +54,6 @@ s32 Func_08006088(s32 arg0, s32 arg1)
     if (state->is_parent != 0)
         result |= 0x1000;
     if (((control << 26) >> 30) > 1)
-        result |= 0x2000;
+        result |= (s32)&Value_00002000;
     return result;
 }

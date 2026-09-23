@@ -5115,6 +5115,10 @@
       "name": "Shop_StepCursor",
       "source": "MENU/SHOP/ADVANCE_WORK_CURSOR.C"
     },
+    "main:080b010c": {
+      "name": "Shop_InitializeCursorWork",
+      "source": "MENU/SHOP/INITIALIZE_CURSOR_WORK.C"
+    },
     "main:080b0444": {
       "name": "Battle_ApplyPresetItemsAndFlags",
       "source": "BATTLE/APPLY_PRESET_ITEMS_AND_FLAGS.C"
@@ -18969,6 +18973,17 @@
     },
     "main:080be18c": {
       "name": "BattleCommand_SelectTargets"
+    },
+    "main:080a6ccc": {
+      "name": "PsynergyMenu_RunList",
+      "source": "MENU/ABILITY/RUN_LIST.C"
+    },
+    "main:080bf678": {
+      "name": "Battle_ProcessRoundEnd",
+      "source": "BATTLE/PARTY/PROCESS_ROUND_END.C"
+    },
+    "main:080bfba4": {
+      "name": "BattleUnit_ProcessTurnEnd"
     }
   },
   "symbols": {

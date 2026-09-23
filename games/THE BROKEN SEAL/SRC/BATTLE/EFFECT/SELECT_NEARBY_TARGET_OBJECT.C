@@ -12,7 +12,6 @@ struct BattleTargetObject {
 };
 
 s32 Func_0808ddb8(s32 battleMode);
-s32 Func_080072f0(s32 value, s32 unused1, s32 unused2, s32 iwramRoutine);
 s32 Func_080022ec(s32 numerator, s32 denominator);
 s32 Func_080044d0(s32 deltaZ, s32 deltaX);
 
@@ -29,13 +28,9 @@ s32 BattleFx_SelectNearbyTargetObject(s32 sourceId, s32 battleMode)
     s32 deltaX;
     s32 deltaZ;
     s32 cellZ;
-    s32 zSquared;
-    s32 xSquared;
-    s32 squaredDistance;
     s32 distance;
     s32 angle;
     s32 angleTolerance;
-    s32 squareRoot = 0x030001d8;
 
     bestId = -1;
     bestDistance = Func_0808ddb8(battleMode);
@@ -80,12 +75,7 @@ s32 BattleFx_SelectNearbyTargetObject(s32 sourceId, s32 battleMode)
             deltaZ += 0xffff;
         cellZ = deltaZ >> 16;
 
-        zSquared = cellZ * cellZ;
-        xSquared = deltaX * deltaX;
-        squaredDistance = xSquared;
-        squaredDistance += zSquared;
-        distance = Func_080072f0(squaredDistance, zSquared, xSquared,
-                                 squareRoot);
+        distance = ((s32 (*)(s32))0x030001d8)(deltaX * deltaX + cellZ * cellZ);
         if ((candidate->flags & 0x10) != 0)
             distance = Func_080022ec(distance * 2, 3);
         if (distance >= bestDistance)

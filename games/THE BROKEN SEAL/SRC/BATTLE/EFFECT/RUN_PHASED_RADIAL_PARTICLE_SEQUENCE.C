@@ -4,6 +4,8 @@
 #define BattleFx_RunPhasedRadialParticleSequence Func_08095dd0
 
 extern s32 Data_02000240[];
+void Func_080925cc(s32, s32);
+void Func_08009248(s32, s32);
 
 struct PhasedRadialSequenceObject {
     u8 unknown_00[8];

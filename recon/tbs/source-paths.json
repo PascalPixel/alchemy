@@ -1553,7 +1553,8 @@
       "source": "BATTLE/EFFECT/RUN_EFFECT.C"
     },
     "main:0808df1c": {
-      "name": "BattleEffect_SelectNearbyTargetObject"
+      "name": "BattleEffect_SelectNearbyTargetObject",
+      "source": "BATTLE/EFFECT/SELECT_NEARBY_TARGET_OBJECT.C"
     },
     "main:08097b70": {
       "name": "BattleFx_UpdateItemBreakFragment",

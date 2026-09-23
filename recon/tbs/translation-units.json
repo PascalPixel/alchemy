@@ -73955,11 +73955,6 @@
       "compiler_route": "canonical-gcc296",
       "owners": [
         {
-          "address": "0x0808df1c",
-          "extent": 348,
-          "state": "retained-assembly"
-        },
-        {
           "address": "0x0808e23c",
           "extent": 632,
           "state": "retained-assembly"

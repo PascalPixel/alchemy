@@ -19378,6 +19378,14 @@
     "main:08097a10": {
       "name": "Fixed_Remainder",
       "source": "LIB/FIXED_REMAINDER.C"
+    },
+    "main:080979a4": {
+      "name": "BattleFx_HueChannelRamp",
+      "source": "BATTLE/EFFECT/HUE_CHANNEL_RAMP.C"
+    },
+    "main:0801cbd4": {
+      "name": "Palette_ScaleTintChannels",
+      "source": "GRAPHICS/PALETTE/SCALE_TINT_CHANNELS.C"
     }
   },
   "symbols": {

@@ -379,8 +379,14 @@ fn append_metadata_state(stream: &mut Vec<u8>, path: &Path, follow_links: bool) 
         }
     }
 }
+/// A bundle path as the signature names it: from the checkout's root when
+/// inside it, so every worktree of one bundle has one signature and shares
+/// the caches keyed by it. The bytes and modes are hashed as they are.
+fn portable_path(path: &Path) -> Vec<u8> {
+    path_bytes(path.strip_prefix(root()).unwrap_or(path))
+}
 fn append_bundle_path_signature(stream: &mut Vec<u8>, path: &Path) {
-    append_signature_frame(stream, &path_bytes(path));
+    append_signature_frame(stream, &portable_path(path));
     append_metadata_state(stream, path, false);
     append_metadata_state(stream, path, true);
     match fs::read(path) {
@@ -396,7 +402,7 @@ fn compiler_bundle_signature_for_paths(paths: &[PathBuf], includes: &[PathBuf]) 
     }
     append_signature_frame(&mut stream, b"alchemy compiler include trees v2");
     for include in includes {
-        append_signature_frame(&mut stream, &path_bytes(include));
+        append_signature_frame(&mut stream, &portable_path(include));
         append_compiler_input_tree(&mut stream, include, include);
     }
     sha256::hex(&stream)

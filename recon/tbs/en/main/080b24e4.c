@@ -1,3 +1,16 @@
+/* Draft, not exact (2026-09-24): candidate=484 reference=484 differing_halfwords=223. Constants the reference loads from
+   the literal pool are spelled as link-time Value_ symbols, which restores
+   the reference size; wraps marked FAKEMATCH only move scheduling. */
+#include "TYPES.H"
+extern u8 Value_0000039e;
+extern u8 Value_0000011c;
+extern u8 Value_00000118;
+extern u8 Value_00000cc3;
+extern u8 Value_00000cc4;
+extern u8 Value_00000ca6;
+extern u8 Value_00000c9e;
+extern u8 Value_00000ca1;
+extern u8 Value_00000cc5;
 #include "SHOP.H"
 
 s32 Modulo(s32 value, s32 divisor);
@@ -36,7 +49,7 @@ void Shop_ConfirmItemPurchase(s32 list_window, s32 item_window)
     if (price > money)
         return;
 
-    *(u16 *)((u8 *)shop + 0x39e) = 0xe4;
+    do { *(u16 *)((u8 *)shop + 0x39e) = 0xe4; } while (0); /* FAKEMATCH */
     Func_08015120(0xe4, 2);
     Func_080b0574(0xcc3);
     Func_08015120(*(u16 *)((u8 *)shop + 0x39e), 2);
@@ -63,9 +76,9 @@ void Shop_ConfirmItemPurchase(s32 list_window, s32 item_window)
                 Func_08015120(unit_id, 1);
                 Func_08015120(*(u16 *)((u8 *)shop + 0xc9e), 2);
                 if (Func_08077248(unit_id) == 15) {
-                    Func_080b04dc(0xc9e);
+                    Func_080b04dc((s32)&Value_00000c9e);
                 } else {
-                    Func_080b04dc(0xca6);
+                    Func_080b04dc((s32)&Value_00000ca6);
                 }
                 continue;
             }
@@ -96,5 +109,5 @@ void Shop_ConfirmItemPurchase(s32 list_window, s32 item_window)
         WaitFrames(1);
     }
 
-    *(u16 *)((u8 *)shop + 0x39e) = saved_field;
+    *(u16 *)((u8 *)shop + (s32)&Value_0000039e) = saved_field;
 }

@@ -1,4 +1,24 @@
+/* Draft, not exact (2026-09-24): candidate=832 reference=832 differing_halfwords=385. Constants the reference loads from
+   the literal pool are spelled as link-time Value_ symbols, which restores
+   the reference size; wraps marked FAKEMATCH only move scheduling. */
 #include "TYPES.H"
+extern u8 Value_00007828;
+extern u8 Value_00001010;
+extern u8 Value_00000320;
+extern u8 Value_00007780;
+extern u8 Value_00007784;
+extern u8 Value_00000480;
+extern u8 Value_00007080;
+extern u8 Value_00000200;
+extern u8 Value_00008000;
+extern u8 Value_0000ffff;
+extern u8 Value_000001ff;
+extern u8 Value_00000100;
+extern u8 Value_000077a8;
+extern u8 Value_00000380;
+extern u8 Value_00002000;
+extern u8 Value_00007824;
+extern u8 Value_00000800;
 #include "BATTLE_EFX.H"
 
 /*
@@ -62,7 +82,7 @@ s32 Func_080e01e4(void *object)
     work = *cursor++;
     draw_destination = *cursor;
     extra_target = heap_cache[2];
-    M2C_FIELD(work, s32 *, 0x7828) = (s32) object;
+    M2C_FIELD(work, s32 *, (s32)&Value_00007828) = (s32) object;
     Func_080cd594(0);
     M2C_FIELD((void *)0x04000052, s16 *, 0) = 0x1010;
     callback_ptr = callbacks;
@@ -118,7 +138,7 @@ s32 Func_080e01e4(void *object)
                 draw_destination, work, x, y, 20, 40);
         }
 
-        ring = (u8 *) work + 0x7080;
+        ring = (u8 *) work + (s32)&Value_00007080;
         member_offset = 0;
         member = 0;
         do {
@@ -129,7 +149,7 @@ s32 Func_080e01e4(void *object)
                 rx = M2C_FIELD(ring, s32 *, 0) - 20;
                 ry = M2C_FIELD(ring, s32 *, 4) - 32;
                 callbacks[0](
-                    draw_destination, (u8 *) work + 800, rx, ry, 40, 64);
+                    draw_destination, (u8 *) work + (s32)&Value_00000320, rx, ry, 40, 64);
 
                 M2C_FIELD(ring, s32 *, 0) =
                     M2C_FIELD(ring, s32 *, 0) - 6;
@@ -199,7 +219,7 @@ s32 Func_080e01e4(void *object)
         } while (member != 8);
 
         particle = (u8 *) 0x02010000;
-        for (i = 0; i != 512; i++) {
+        for (i = 0; i != (s32)&Value_00000200; i++) {
             if (M2C_FIELD(particle, s32 *, 24) != -1) {
                 s32 lifetime;
                 s32 idx;
@@ -229,7 +249,7 @@ s32 Func_080e01e4(void *object)
         Func_080030f8(1);
 
         fp++;
-        accumulator -= 2048;
+        accumulator -= (s32)&Value_00000800;
     } while (fp != 96);
 
     Func_08004278((void *) 0x080CD261);

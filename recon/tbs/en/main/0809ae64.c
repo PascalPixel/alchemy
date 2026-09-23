@@ -1,4 +1,9 @@
+/* Draft, not exact (2026-09-24): candidate=588 reference=588 differing_halfwords=282. Constants the reference loads from
+   the literal pool are spelled as link-time Value_ symbols, which restores
+   the reference size; wraps marked FAKEMATCH only move scheduling. */
 #include "TYPES.H"
+extern u8 Value_00004000;
+extern u8 Value_0000c000;
 
 struct EffectVector { s32 x, y, z; };
 
@@ -79,7 +84,7 @@ void RunBattleEffect13(void)
         value = origin_cursor->z;
         value += Func_080022ec(step * (target_cursor->z - value), 10);
         *(s32 *)(object + 16) = value;
-        value = 0x4000 + Func_080022ec(step * 0xc000, 10);
+        value = 0x4000 + Func_080022ec(step * (s32)&Value_0000c000, 10);
         *(s32 *)(object + 24) = value;
         *(s32 *)(object + 28) = value;
         step++;
@@ -123,7 +128,7 @@ void RunBattleEffect13(void)
         value = target_cursor->z;
         value += Func_080022ec(step * (origin_cursor->z - value), 10);
         *(s32 *)(object + 16) = value;
-        value = 0x10000 + Func_080022ec(step * -0xc000, 10);
+        value = 0x10000 + Func_080022ec(step * -(s32)&Value_0000c000, 10);
         *(s32 *)(object + 24) = value;
         *(s32 *)(object + 28) = value;
         step++;

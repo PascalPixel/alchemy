@@ -1,4 +1,14 @@
+/* Draft, not exact (2026-09-24): candidate=516 reference=516 differing_halfwords=147. Constants the reference loads from
+   the literal pool are spelled as link-time Value_ symbols, which restores
+   the reference size; wraps marked FAKEMATCH only move scheduling. */
 #include "TYPES.H"
+extern u8 Value_00000129;
+extern u8 Value_00000644;
+extern u8 Value_0000c000;
+extern u8 Value_00002000;
+extern u8 Value_00000654;
+extern u8 Value_000006a8;
+extern u8 Value_00000648;
 
 #define BattlePres_DispatchAction Func_080b9b30
 
@@ -40,14 +50,14 @@ s32 BattlePres_DispatchAction(s16 *action, s32 delay)
     render_state = *(transition_slot - 32);
     Func_080049ac();
     Func_080051d8(render_state, render_state + 12);
-    Func_08005258(0x01fe0000, Func_080072f0(0x01fe0000, 0xc000), 0x7fff0000);
+    do { Func_08005258(0x01fe0000, Func_080072f0(0x01fe0000, 0xc000), 0x7fff0000); } while (0); /* FAKEMATCH */
 
     if (delay != 0) {
         transition->blend = 0x2000;
         Func_080030f8(delay);
     }
     unit_stack[14] = action[0];
-    unit_stack[15] = 0xff;
+    do { unit_stack[15] = 0xff; } while (0); /* FAKEMATCH */
     Func_080c10e8(unit_stack + 14, 1);
 
     result = Func_080be378(action, battle + 0x654);
@@ -60,9 +70,9 @@ s32 BattlePres_DispatchAction(s16 *action, s32 delay)
         case 5: Func_080ba978(battle + 0x654, 0); break;
         case 6: Func_080ba978(battle + 0x654, 1); break;
         case 7: Func_080ba978(battle + 0x654, 2); break;
-        case 8: Func_080ba6ac(battle + 0x654, 0, action); break;
+        case 8: Func_080ba6ac(battle + (s32)&Value_00000654, 0, action); break;
         case 9:
-            if (Func_080b9dc4(battle + 0x654) != 0)
+            if (Func_080b9dc4(battle + (s32)&Value_00000654) != 0)
                 preserve_action = 1;
             break;
         }
@@ -85,6 +95,6 @@ s32 BattlePres_DispatchAction(s16 *action, s32 delay)
     action[0] = 0xff;
 
 finish:
-    Func_080c0774(2, *(u16 *)(battle + 0x648), 0);
+    Func_080c0774(2, *(u16 *)(battle + (s32)&Value_00000648), 0);
     return preserve_action;
 }

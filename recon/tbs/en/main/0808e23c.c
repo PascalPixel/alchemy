@@ -1,4 +1,24 @@
+/* Draft, not exact (2026-09-24): candidate=632 reference=632 differing_halfwords=255. Constants the reference loads from
+   the literal pool are spelled as link-time Value_ symbols, which restores
+   the reference size; wraps marked FAKEMATCH only move scheduling. */
 #include "TYPES.H"
+extern u8 Value_000003ff;
+extern u8 Value_000001f8;
+extern u8 Value_000001ff;
+extern u8 Value_00000927;
+extern u8 Value_00000143;
+extern u8 Value_00000142;
+extern u8 Value_00000400;
+extern u8 Value_0000091c;
+extern u8 Value_00000145;
+extern u8 Value_00000144;
+extern u8 Value_00000924;
+extern u8 Value_00000480;
+extern u8 Value_00000402;
+extern u8 Value_00000482;
+extern u8 Value_00000170;
+extern u8 Value_000003e7;
+extern u8 Value_00000cc6;
 #include "ITEM.H"
 #include "BATTLE_EFFECT_RUNTIME.H"
 
@@ -141,7 +161,7 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
 
                     if (best < matches) {
                         best = matches;
-                        actor = ids[i];
+                        do { actor = ids[i]; } while (0); /* FAKEMATCH */
                     }
                     i++;
                 } while (i < count);
@@ -167,10 +187,10 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
     if (event != 0 && event->effect != 0) {
         GameFlag_Clear(0x143);
         GameFlag_Clear(0x142);
-        if (!(event->metadata & 0x400)) {
+        if (!(event->metadata & (s32)&Value_00000400)) {
             UiText_DrawQuantity(actor, 1);
             UiText_DrawQuantity(item_id, 2);
-            UiText_DrawMessage(0x91c, 1);
+            UiText_DrawMessage((s32)&Value_0000091c, 1);
         }
         if (event->effect < 0x10000) {
             s32 objref = Func_0808ddec(Data_02000240.object_id);
@@ -186,7 +206,7 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
         s32 action_id;
         u8 *rt;
 
-        GameFlag_Clear(0x143);
+        GameFlag_Clear((s32)&Value_00000143);
         GameFlag_Set(0x142);
         action_id = Item_GetData(item_id)->action_id;
         rt = (u8 *)Data_03001ebc;
@@ -209,7 +229,7 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
                     *(u16 *)((u8 *)&Data_02000240 + 0x480);
                 *(u16 *)((u8 *)&Data_02000240 + 0x402) =
                     *(u16 *)((u8 *)&Data_02000240 + 0x482);
-                *(s16 *)(rt + 0x170) = 999;
+                *(s16 *)(rt + (s32)&Value_00000170) = (s32)&Value_000003e7;
             }
 
             UiText_DrawQuantity(actor, 1);

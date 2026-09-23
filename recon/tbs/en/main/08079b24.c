@@ -1,3 +1,5 @@
+/* 2026-09-24: 56 differing halfwords (from 71) after a do-while wrap and
+   statement-swap sweep; the do-while wraps are search artefacts. */
 #include "TYPES.H"
 
 #define Curve_LookupScaledValue Func_08079b24
@@ -27,8 +29,8 @@ s32 Curve_LookupScaledValue(s32 input, s32 halve)
     table = Data_08089258;
     mode = halve;
     upper = table[0].input;
-    lower = table[4].input;
     count = 5;
+    lower = table[4].input;
 
     if (clamped > upper) {
         clamped = upper;
@@ -45,7 +47,7 @@ s32 Curve_LookupScaledValue(s32 input, s32 halve)
                 index++;
                 scan_offset += 4;
                 if (index >= count) {
-                    offset = index * 4;
+                    do { offset = index * 4; } while (0);
                     break;
                 }
                 offset = scan_offset;

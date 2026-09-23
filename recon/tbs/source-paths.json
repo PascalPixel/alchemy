@@ -11959,7 +11959,8 @@
       "name": "FieldScene_RunScene37aSequenceG"
     },
     "resource_37a:02001ca8": {
-      "name": "FieldScene_RunScene37aSequenceH"
+      "name": "FieldScene_RunSanctumRiseAndShrink",
+      "source": "FIELD/SORU_NICHIGETSU/RISE_AND_SHRINK.C"
     },
     "resource_382:02001754": {
       "name": "SceneEffect_UpdateMotionWithDamping",

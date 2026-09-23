@@ -78569,7 +78569,7 @@
     {
       "id": "retained-overlay-37a-02001ca8",
       "game": "tbs",
-      "source": "recon/tbs/en/overlays/resource_37a_c_02001ca8.c",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/SORU_NICHIGETSU/RISE_AND_SHRINK.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_37a",
       "absolute_symbols": {
@@ -78630,7 +78630,7 @@
         {
           "address": "0x02001ca8",
           "extent": 1120,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ]
     },

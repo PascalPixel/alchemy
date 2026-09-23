@@ -23,3 +23,6 @@ tempfile = "3"
 [[bin]]
 name = "alchemy"
 path = "src/main.rs"
+
+[build-dependencies]
+sha2 = "0.10"

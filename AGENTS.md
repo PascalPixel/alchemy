@@ -59,15 +59,23 @@ enables the reconstructed `-mgs2` lowering in agscc. Code the ROM copies into
 RAM and runs in ARM state uses `-marm -mno-apcs-frame` (Pascal, 2026-09-23).
 Compiler source changes, new binaries and new digests need Pascal's approval.
 
-The build must always reproduce both English ROMs byte for byte:
+The build must always reproduce both English ROMs byte for byte. The loop is
+pret's `make compare`:
 
 ```sh
-./alchemy build full                 # TBS English
-./alchemy build full --target tla-en # TLA English
-make verify                          # the commit gate
+make compare       # TBS English: rebuild what changed, check rom.sha1
+make compare-tla   # TLA English (make compare-all for both)
+make verify        # the landing gate on main and before every push
 ```
 
-Other editions compile but do not rebuild yet.
+Every stage caches by content: keys name each input, the compiler and the
+tool code that can change an output, never the checkout's path, so one edited
+C file recompiles alone and a new worktree starts from a clone of the main
+checkout's `out/cache`. The checksum is the proof. A byte-identical build also writes the receipt DONE reads, and derives
+the executable inventory again only when it is absent or its own inputs (the
+reference ROM, the verified overlay record, the build's asset layout)
+changed. Until the current tree has such a build, DONE is `?`. Other editions
+compile but do not rebuild yet.
 
 ## Assets and compression
 
@@ -155,10 +163,14 @@ veneers. Only Pascal changes credit standards.
 - The lead lands verified work on `main` at least daily as one squash commit
   through `make verify`, then removes landed branches. `main` is the only
   long-lived branch.
-- Any tooling or input change invalidates both games' build proofs. Before a
-  commit: re-extract private inputs that moved, then per game `build full`,
-  `coverage audit --target <target> --inventory`, `build full`, then
-  `make coverage`.
+- Start a worktree with `git worktree add ../alchemy-worktrees/<name> -b
+  <branch> main` and `make worktree-setup` inside it: it links the ROMs and
+  toolchain, clones the compiler submodules locally, clones the caches and
+  restores private inputs.
+- Loop on `make compare`. The pre-commit hook runs `make precommit` (compare
+  of each game the staged change reaches, formatting, ordinary C and
+  publication checks); `make verify` gates landing and pushing. `make test`
+  runs the unit tests; `make test-integration` the ones reading local ROMs.
 - Commit subjects start with `make progress-subject`'s prefix; agent commits
   end with their Co-Authored-By trailer. Push only when Pascal asks, only
   `main`.
@@ -236,8 +248,9 @@ are open work below, not permission to invent a third host.
 git submodule update --init
 git config core.hooksPath .hooks
 make bootstrap           # pinned agscc/agbcc and binutils under tools/out
+make compare-all         # both ROMs, incrementally, against rom.sha1
 make verify              # staged tree: both ROMs, owners, publication, documents
-make test                # tooling
+make test                # tooling unit tests; make test-integration for ROM tests
 make coverage            # progress figure and README status
 ```
 

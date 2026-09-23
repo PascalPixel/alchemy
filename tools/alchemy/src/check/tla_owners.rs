@@ -698,6 +698,7 @@ mod tests {
     /// writes or rewrites the receipt, nor the full build's stage output
     /// that the receipt is written from.
     #[test]
+    #[ignore = "reads the local ROMs and compiles real owners; make test-integration"]
     fn tracked_tla_owners_score_exact_against_the_local_rom() {
         let root = crate::compiler::routing::root();
         let rom = root.join("roms/tla-en.gba");

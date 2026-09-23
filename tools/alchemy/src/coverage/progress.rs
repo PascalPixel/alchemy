@@ -139,32 +139,50 @@ fn tally(
     Ok(done)
 }
 
-/// A game's DONE, or `None` while its executable audit is incomplete or not
-/// the independently verified automatic count, and its denominator therefore
-/// unknown.
+/// A game's DONE, or `None` while it is unmeasured: its executable audit is
+/// incomplete or not the independently verified automatic count, so its
+/// denominator is unknown, or no byte-identical full build of the current
+/// tree has left a receipt, so nothing is credited.
 pub fn measured(root: &Path, target: &str) -> Result<Option<GameDone>, String> {
+    Ok(status(root, target)?.ok())
+}
+
+/// A game's DONE, or why it is unmeasured.
+fn status(root: &Path, target: &str) -> Result<Result<GameDone, String>, String> {
     let game = crate::targets::decomp_target(Some(target))?;
     let path = root.join(format!("out/{target}/reports/executable.json"));
     let text = match std::fs::read(&path) {
         Ok(text) => text,
-        Err(error) if error.kind() == std::io::ErrorKind::NotFound => return Ok(None),
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => {
+            return Ok(Err(AUDIT_PENDING.into()))
+        }
         Err(error) => return Err(format!("{}: {error}", path.display())),
     };
     let inventory: Value = serde_json::from_slice(&text).map_err(|e| e.to_string())?;
     let (main, mut images) = match validated_inventory(root, &inventory, game) {
-        Err(error) if error.contains("withheld") => return Ok(None),
+        // A build that started or failed leaves no proof of the main image.
+        Err(error) if error.contains("main-image proof no longer holds") => {
+            return Ok(Err(BUILD_PENDING.into()))
+        }
+        Err(error) if error.contains("withheld") => return Ok(Err(AUDIT_PENDING.into())),
         Err(error) => return Err(error),
         Ok(images) => images,
     };
     images.insert("main".into(), main);
-    let receipt = super::proof::read(root, target)?;
+    // The denominator holds across source changes; credit needs a receipt
+    // from a byte-identical build of exactly this tree.
+    let Ok(receipt) = super::proof::read(root, target) else {
+        return Ok(Err(BUILD_PENDING.into()));
+    };
     if inventory["rom_sha256"].as_str() != Some(&receipt.rom_sha256) {
         return Err(format!(
             "{target}: executable inventory and verified source name different ROMs"
         ));
     }
-    tally(&receipt.credits, &images).map(Some)
+    tally(&receipt.credits, &images).map(Ok)
 }
+const AUDIT_PENDING: &str = "pending its executable audit";
+const BUILD_PENDING: &str = "pending a byte-identical build of the current tree";
 
 /// The commit prefix: both games' whole DONE percentages, `?` for a game whose
 /// executable audit is incomplete.
@@ -179,20 +197,20 @@ fn subject(root: &Path) -> Result<String, String> {
 
 /// Each game's DONE with its four parts, or why it is not measured yet.
 fn done_lines(root: &Path) -> Result<String, String> {
-    let line = |mark: &str, game: &str, done: Option<GameDone>| {
+    let line = |mark: &str, game: &str, done: Result<GameDone, String>| {
         match done {
-        Some(d) => format!(
+        Ok(d) => format!(
             "{mark} {game} DONE: {} / {} executable bytes ({:.2}%) = common assembly {} + common C {} + game assembly {} + game C {}",
             commas(d.bytes()), commas(d.executable), d.percent(),
             commas(d.common_asm), commas(d.common_c), commas(d.game_asm), commas(d.game_c)
         ),
-        None => format!("{mark} {game} DONE: pending its executable audit"),
+        Err(reason) => format!("{mark} {game} DONE: {reason}"),
     }
     };
     Ok(format!(
         "{}\n{}",
-        line("☀️", "The Broken Seal", measured(root, "tbs-en")?),
-        line("⚓️", "The Lost Age", measured(root, "tla-en")?)
+        line("☀️", "The Broken Seal", status(root, "tbs-en")?),
+        line("⚓️", "The Lost Age", status(root, "tla-en")?)
     ))
 }
 
@@ -367,10 +385,9 @@ mod tests {
                 {"start": 0x0200_0000, "end": 0x0200_0004, "kind": "thumb"}
             ]}]),
         );
-        // A proven inventory without the build's receipt is an error, never
+        // A proven inventory without the build's receipt is pending, never
         // a score.
-        let error = measured(root, "tla-en").unwrap_err();
-        assert!(error.contains("verified-code.json"), "{error}");
+        assert_eq!(status(root, "tla-en").unwrap(), Err(BUILD_PENDING.into()));
         let rom = std::fs::read(root.join(target.rom)).unwrap();
         let inputs = super::super::proof::identity(root, "tla-en").unwrap();
         let credit = |image: &str, start, end, kind: &str, source: &str| Credit {
@@ -413,6 +430,19 @@ mod tests {
                 ..GameDone::default()
             }
         );
+        assert_eq!(subject(root).unwrap(), "☀️ ?% ⚓️ 75% –");
+        // A changed source keeps the inventory but makes the receipt stale.
+        let source = root.join("games/THE LOST AGE/SRC/A.C");
+        std::fs::create_dir_all(source.parent().unwrap()).unwrap();
+        std::fs::write(&source, "void A(void) {}\n").unwrap();
+        assert!(
+            crate::coverage::pipeline::authoritative_inventory(root, target)
+                .unwrap()
+                .is_some()
+        );
+        assert_eq!(status(root, "tla-en").unwrap(), Err(BUILD_PENDING.into()));
+        assert_eq!(subject(root).unwrap(), "☀️ ?% ⚓️ ?% –");
+        std::fs::remove_file(&source).unwrap();
         assert_eq!(subject(root).unwrap(), "☀️ ?% ⚓️ 75% –");
         crate::coverage::proof::withdraw_full_build(root, target).unwrap();
         assert_eq!(measured(root, "tla-en").unwrap(), None);

@@ -19422,6 +19422,14 @@
     "main:080993b0": {
       "name": "BattleFx_RunSparkEmitter",
       "source": "BATTLE/EFFECT/SPARK_EMITTER.C"
+    },
+    "main:08021be0": {
+      "name": "Ui_RunCopiedRoutine",
+      "source": "GRAPHICS/WINDOW/RUN_COPIED_ROUTINE.C"
+    },
+    "main:080d66cc": {
+      "name": "BattleFx_BuildWindowEdgeTable",
+      "source": "BATTLE/EFFECT/BUILD_WINDOW_EDGE_TABLE.C"
     }
   },
   "symbols": {

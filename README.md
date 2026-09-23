@@ -2,36 +2,56 @@
 
 # Golden Sun Decompilation
 
-In Golden Sun, lighting the four Elemental Lighthouses releases Alchemy upon the world. This project hopes to do something similar for fans: recovering the source code of both games (The Broken Seal and The Lost Age) using AI, for video game preservation, and opening the door to fan projects built on it.
+Alchemy is a decompilation of both Golden Sun games for the Game Boy Advance:
+**The Broken Seal** ☀️ and **The Lost Age** ⚓️.
 
-The two games share much of the same code, so Alchemy recovers them side by side.
+In Golden Sun, lighting the four Elemental Lighthouses releases Alchemy upon
+the world. This project hopes to do something similar for fans.
+
+## What is a decompilation?
+
+Camelot wrote Golden Sun in a programming language and turned it into the
+machine code on the cartridge. The original source code was never released. A
+decompilation works backwards: it rewrites the game as readable source code
+that turns back into the exact same game, byte for byte.
+
+It is **not** a remake, a mod, an emulator or a download of the games. It
+contains no ROMs, and you need your own copy of each game to build it.
+
+## Why?
+
+Once a game exists as readable source, it can be changed and rebuilt like any
+other program. That is the path to a **recompilation**: Golden Sun running
+natively on modern systems, and a base for everything fans have dreamed of:
+
+- new storylines, quests and Djinn
+- quality-of-life fixes
+- widescreen and other aspect ratios
+- higher frame rates, new translations and more
+
+Alchemy is the foundation those projects can build on.
 
 ## Status: ☀️ 55.87% · ⚓️ 2.14%
 
-Each game scores only from a full build that reproduces its ROM byte for byte,
-which proves its executable inventory.
+<img src="PROGRESS.svg" width="830" alt="Alchemy progress for The Broken Seal and The Lost Age, above a map of the repository's files">
 
-<img src="PROGRESS.svg" width="830" alt="Alchemy repository files sized by bytes on disk">
+The gauges show how much of each game's code has been recovered and proven:
+bright gold is code rewritten as readable source that rebuilds exactly, pale
+gold is code proven to have been written by hand in machine language. Both
+games already rebuild byte for byte from this repository and your own copy of
+each game. A few compressed graphics are still restored from your copy rather
+than rebuilt; they earn no credit, and recreating them is ongoing work.
 
-**DONE** measures recovered code: byte-exact C and evidenced permanent
-assembly, divided by each game's audited executable bytes. ☀️ is The Broken
-Seal; ⚓️ is The Lost Age. Shared code counts in each game only where it has
-been verified for that game. Assets appear in the viewer but do not raise DONE.
-
-The Broken Seal's English ROM rebuilds byte for byte. The Lost Age's English
-ROM has a full build too, but it does not yet reproduce every byte; its
-recovered functions are checked individually.
-
-Alchemy is not a remake, a mod, an emulator or a download of the games, and you
-need your own copy of the games to build it. Build instructions are in
-[AGENTS.md](AGENTS.md), which also holds the recovery methods and remaining work.
+The numbers are strict: anything found to match only through a trick is
+withdrawn, even when that lowers the percentage.
 
 ## Clean room
 
-Alchemy follows a documented clean-room policy modelled on long-running
-decompilations such as pret's. It is written from the games themselves, public
-documentation and its own recovery work, and records where each file comes
-from. It will open to outside contributions when it reaches 100%.
+Alchemy is written from the games themselves, public documentation and its own
+recovery work, following the clean-room practices of long-running
+decompilations such as pret's. It opens to outside contributions when it
+reaches 100%. Build instructions and the working rules are in
+[AGENTS.md](AGENTS.md).
 
 ## Acknowledgements
 

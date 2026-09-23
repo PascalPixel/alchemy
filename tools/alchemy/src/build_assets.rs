@@ -5,6 +5,7 @@ pub(crate) use compression_plan::LzMachine;
 pub(crate) use derive_index::{live_scene, network::live_family, tagged_extent};
 mod gba_header;
 mod native;
+pub(crate) use native::{icon_bank_source, raw_palette_bank, ICON_BANKS, ICON_PALETTE_BANK};
 mod packer;
 use crate::compiler::build_io::{relative, text};
 use crate::compiler::bundle::{

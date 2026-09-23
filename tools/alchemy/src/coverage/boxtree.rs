@@ -1,7 +1,7 @@
 use super::jsnum::commas;
 use crate::coverage::model::{treemap, Category, Rect, Tile, UNIDENTIFIED};
 
-const DISPLAY_CATEGORIES: [(Category, &str); 5] = [
+pub(crate) const DISPLAY_CATEGORIES: [(Category, &str); 5] = [
     (Category::Unknown, UNIDENTIFIED),
     (Category::DraftC, "Drafted"),
     (Category::ProvenAsm, "Assembly"),
@@ -9,7 +9,7 @@ const DISPLAY_CATEGORIES: [(Category, &str); 5] = [
     (Category::AssetData, "Data"),
 ];
 
-fn display_bytes(categories: &[i64; 6], category: Category) -> i64 {
+pub(crate) fn display_bytes(categories: &[i64; 6], category: Category) -> i64 {
     categories[category as usize]
         + if category == Category::ProvenAsm {
             categories[Category::DraftAsm as usize]
@@ -20,23 +20,36 @@ fn display_bytes(categories: &[i64; 6], category: Category) -> i64 {
 use crate::coverage::pipeline::{source_container, CoverageMap};
 use crate::coverage::tree::root;
 use sha1::{Digest, Sha1};
-mod html;
-pub use html::{decode_folder, page as html_page};
-pub use html::{file_page, rom_page};
 
 pub const BOX_TREES: [&str; 1] = ["files"];
 const CHART_BACKGROUND: &str = "#1f7f93";
 // One soft palette for the figure and dashboard: code in teal shades that sit
 // on the teal chart, data and media in muted pastels.
-const UNKNOWN: &str = "#d9d9d4";
-const C_TEAL: &str = "#326b7d";
+pub(crate) const UNKNOWN: &str = "#d9d9d4";
+pub(crate) const C_TEAL: &str = "#326b7d";
 const DRAFTED: &str = "#96c8c9";
-const ASSEMBLY: &str = "#6cafb2";
+pub(crate) const ASSEMBLY: &str = "#6cafb2";
 const DRAFT_ASSEMBLY: &str = "#b4ccd2";
 const TEXT_CYAN: &str = "#85cbd2";
 const MIDI_GREEN: &str = "#81d6b2";
 const PCM_ORANGE: &str = "#efbb82";
 const OTHER_TAN: &str = "#bda995";
+const HEADER_GOLD: &str = "#eadb83";
+const BEVEL_LIGHT: &str = "#c9e1dc";
+const BEVEL_DARK: &str = "#103840";
+/// The figure's frame and label tones, named for the dashboard's window
+/// chrome so both draw from this one palette.
+pub(crate) const CHROME: [(&str, &str); 9] = [
+    ("face", CHART_BACKGROUND),
+    ("light", BEVEL_LIGHT),
+    ("soft", ASSEMBLY),
+    ("shadow", BEVEL_DARK),
+    ("title", C_TEAL),
+    ("gold", HEADER_GOLD),
+    ("hover", "#fff3ac"),
+    ("unknown", UNKNOWN),
+    ("mist", DRAFT_ASSEMBLY),
+];
 const SOUND_TYPES: [(&str, &str); 5] = [
     ("MIDI music", MIDI_GREEN),
     ("SFX", "#f29b91"),
@@ -65,20 +78,21 @@ fn sound_type(tile: &Tile) -> usize {
         _ => 4,
     }
 }
-fn content_style(tile: &Tile) -> (&'static str, &'static str) {
+pub(crate) fn content_style(tile: &Tile) -> (&'static str, &'static str) {
     let group = tile.group.as_deref().unwrap_or("");
     if let Some(extension) = group.strip_prefix("file:") {
         return match extension {
-            // Accepted C lives in SRC; complete but nonexact drafts in recon.
+            // Accepted C lives in SRC; complete but nonexact drafts in the
+            // `recon/<game>` scaffolding beside the game trees.
             "c" if tile
                 .source
                 .as_deref()
-                .is_some_and(|source| source.contains("/recon/")) =>
+                .is_some_and(|source| source.starts_with("recon/")) =>
             {
                 ("Drafted C", DRAFTED)
             }
             "c" => ("C", C_TEAL),
-            "h" | "inc" => ("Headers", "#eadb83"),
+            "h" | "inc" => ("Headers", HEADER_GOLD),
             "s" => ("Assembly", ASSEMBLY),
             "png" => ("Images", "#8fb7ec"),
             "wav" => ("WAV audio", PCM_ORANGE),
@@ -119,20 +133,20 @@ fn content_style(tile: &Tile) -> (&'static str, &'static str) {
         "gba-4bpp-tiles" | "gba-8bpp-tiles" | "golden-sun-delta7-still" => ("Images", "#8fb7ec"),
         "compressed-resource" => ("Compressed data", "#c4b4b7"),
         "gba-palette" | "gba-palette-rgba" | "bgr555-banks" => ("Palettes", "#e8a6d3"),
-        "golden-sun-kana-glyph-bank" | "golden-sun-namae-nyuuryoku" => ("Fonts", "#eadb83"),
+        "golden-sun-kana-glyph-bank" | "golden-sun-namae-nyuuryoku" => ("Fonts", HEADER_GOLD),
         "golden-sun-message-archive" | "golden-sun-staff-roll" => ("Text", TEXT_CYAN),
         _ if source.contains("/fonts_") || source.contains("/GRAPHICS/FONT/") => {
-            ("Fonts", "#eadb83")
+            ("Fonts", HEADER_GOLD)
         }
         _ if source.to_ascii_lowercase().ends_with(".png") => ("Images", "#8fb7ec"),
         "typed-table" | "record-table" | "pointer-table" => ("Tables", "#9aa4c2"),
-        "gba-cartridge-header-standard-fields" => ("ROM header", "#eadb83"),
+        "gba-cartridge-header-standard-fields" => ("ROM header", HEADER_GOLD),
         "byte-fill" => ("Padding", "#bda995"),
         _ => (UNIDENTIFIED, UNKNOWN),
     }
 }
 /// The content types of a tile's files and their bytes, largest first.
-fn content_mix(tile: &Tile) -> Vec<(&'static str, &'static str, i64)> {
+pub(crate) fn content_mix(tile: &Tile) -> Vec<(&'static str, &'static str, i64)> {
     fn gather(tile: &Tile, mix: &mut Vec<(&'static str, &'static str, i64)>) {
         if !tile.children.is_empty() {
             for child in &tile.children {
@@ -186,7 +200,7 @@ fn indexed_formats_have_colors_without_claiming_reconstructed_assets() {
         assert!(asset_note(&tile, Some("rom")).contains("no reconstructed source"));
     }
 }
-fn leaves<'a>(tiles: &[&'a Tile]) -> Vec<&'a Tile> {
+pub(crate) fn leaves<'a>(tiles: &[&'a Tile]) -> Vec<&'a Tile> {
     tiles
         .iter()
         .flat_map(|tile| {
@@ -199,7 +213,7 @@ fn leaves<'a>(tiles: &[&'a Tile]) -> Vec<&'a Tile> {
         .collect()
 }
 /// One vocabulary, palette and byte total for the HTML and README legends.
-fn legend_items(tiles: &[&Tile]) -> Vec<(&'static str, &'static str, i64)> {
+pub(crate) fn legend_items(tiles: &[&Tile]) -> Vec<(&'static str, &'static str, i64)> {
     let tiles = leaves(tiles);
     let mut items = Vec::new();
     for (category, name) in DISPLAY_CATEGORIES {
@@ -230,7 +244,7 @@ fn legend_items(tiles: &[&Tile]) -> Vec<(&'static str, &'static str, i64)> {
     items
 }
 // Keep single-child directories: their path is part of the displayed hierarchy.
-fn directories(tiles: Vec<Tile>, base: &str) -> Vec<Tile> {
+pub(crate) fn directories(tiles: Vec<Tile>, base: &str) -> Vec<Tile> {
     let base = if tiles
         .iter()
         .filter_map(|tile| tile.source.as_deref())
@@ -288,7 +302,7 @@ fn directories(tiles: Vec<Tile>, base: &str) -> Vec<Tile> {
     }
     out
 }
-fn source_name(source: &str) -> &str {
+pub(crate) fn source_name(source: &str) -> &str {
     let trimmed = source.trim_end_matches('/');
     trimmed.rsplit('/').next().unwrap_or(trimmed)
 }
@@ -455,7 +469,7 @@ fn draw_tiles(
 const LABEL_ADVANCE: f64 = 8.0;
 const FILE_LABEL_ADVANCE: f64 = 5.5;
 
-fn label_width(name: &str) -> f64 {
+pub(crate) fn label_width(name: &str) -> f64 {
     name.chars().count() as f64 * LABEL_ADVANCE
 }
 fn caption(name: &str, bytes: i64, body: Rect, folder: bool) -> Option<(String, Rect)> {
@@ -551,8 +565,8 @@ fn caption(name: &str, bytes: i64, body: Rect, folder: bool) -> Option<(String, 
 }
 
 fn bevel(out: &mut Vec<String>, rect: Rect) {
-    out.push(format!("<path class=\"bevel-light\" d=\"M{} {} V{} H{}\" fill=\"none\" stroke=\"#c9e1dc\" stroke-width=\"1\" vector-effect=\"non-scaling-stroke\"/>", rect.x, rect.y + rect.height, rect.y, rect.x + rect.width));
-    out.push(format!("<path class=\"bevel-dark\" d=\"M{} {} H{} V{}\" fill=\"none\" stroke=\"#103840\" stroke-width=\"1\" vector-effect=\"non-scaling-stroke\"/>", rect.x, rect.y + rect.height, rect.x + rect.width, rect.y));
+    out.push(format!("<path class=\"bevel-light\" d=\"M{} {} V{} H{}\" fill=\"none\" stroke=\"{BEVEL_LIGHT}\" stroke-width=\"1\" vector-effect=\"non-scaling-stroke\"/>", rect.x, rect.y + rect.height, rect.y, rect.x + rect.width));
+    out.push(format!("<path class=\"bevel-dark\" d=\"M{} {} H{} V{}\" fill=\"none\" stroke=\"{BEVEL_DARK}\" stroke-width=\"1\" vector-effect=\"non-scaling-stroke\"/>", rect.x, rect.y + rect.height, rect.x + rect.width, rect.y));
 }
 
 pub(crate) fn esc(value: &str) -> String {
@@ -562,7 +576,7 @@ pub(crate) fn esc(value: &str) -> String {
         .replace('>', "&gt;")
         .replace('"', "&quot;")
 }
-fn color(category: Category) -> &'static str {
+pub(crate) fn color(category: Category) -> &'static str {
     match category {
         Category::Unknown => UNKNOWN,
         Category::DraftAsm => DRAFT_ASSEMBLY,
@@ -594,9 +608,9 @@ pub fn svg_sized(tree: &str, map: &CoverageMap, width: f64, height: f64, folder:
     // shows the private inputs this checkout extracted from its own ROM.
     let published = map.document["published"].as_bool() == Some(true);
     let disk = (tree == "files").then(|| {
-        let tiles = html::disk_tiles(&root());
+        let tiles = disk_tiles(&root());
         if published {
-            html::tracked_only(&root(), tiles)
+            tracked_only(&root(), tiles)
         } else {
             tiles
         }
@@ -749,6 +763,85 @@ pub fn render_box_trees(map: &CoverageMap) -> Vec<(&'static str, String)> {
     BOX_TREES
         .iter()
         .map(|tree| (*tree, svg(tree, map, 830.0)))
+        .collect()
+}
+/// Every nonempty file of the Camelot-shaped game trees and of the
+/// Keep only the tiles of files Git tracks, so a figure drawn from them is the
+/// same on every checkout whatever private inputs it has extracted.
+pub(crate) fn tracked_only(repository: &std::path::Path, tiles: Vec<Tile>) -> Vec<Tile> {
+    let Ok(output) = std::process::Command::new("git")
+        .args(["ls-files", "-z", "--", "games", "recon"])
+        .current_dir(repository)
+        .output()
+    else {
+        return Vec::new();
+    };
+    let tracked: std::collections::BTreeSet<String> = String::from_utf8_lossy(&output.stdout)
+        .split('\0')
+        .filter(|name| !name.is_empty())
+        .map(str::to_owned)
+        .collect();
+    tiles
+        .into_iter()
+        .filter(|tile| tile.source.as_ref().is_some_and(|s| tracked.contains(s)))
+        .collect()
+}
+
+#[test]
+fn published_view_leaves_out_untracked_private_inputs() {
+    let temp = tempfile::tempdir().unwrap();
+    let dir = temp.path().join("games/test");
+    std::fs::create_dir_all(&dir).unwrap();
+    std::fs::write(dir.join("MAP.BIN"), [0u8; 123]).unwrap();
+    std::fs::write(dir.join("MAP.JSON"), [0u8; 45]).unwrap();
+    let git = |args: &[&str]| {
+        assert!(std::process::Command::new("git")
+            .args(args)
+            .current_dir(temp.path())
+            .status()
+            .unwrap()
+            .success());
+    };
+    git(&["init", "--quiet"]);
+    git(&["add", "games/test/MAP.JSON"]);
+    let tiles = tracked_only(temp.path(), disk_tiles(temp.path()));
+    assert_eq!(tiles.len(), 1);
+    assert_eq!(tiles[0].source.as_deref(), Some("games/test/MAP.JSON"));
+}
+
+/// reconstruction scaffolding kept beside them under `recon/`.
+pub(crate) fn disk_tiles(repository: &std::path::Path) -> Vec<Tile> {
+    ["games", "recon"]
+        .into_iter()
+        .flat_map(|tree| walkdir::WalkDir::new(repository.join(tree)).follow_links(false))
+        .filter_map(Result::ok)
+        .filter(|e| e.file_type().is_file())
+        .filter_map(|entry| {
+            let bytes = i64::try_from(entry.metadata().ok()?.len()).ok()?;
+            if bytes == 0 {
+                return None;
+            }
+            let source = entry
+                .path()
+                .strip_prefix(repository)
+                .ok()?
+                .to_str()?
+                .to_string();
+            let extension = entry
+                .path()
+                .extension()
+                .and_then(|e| e.to_str())
+                .unwrap_or("")
+                .to_ascii_lowercase();
+            Some(Tile {
+                label: entry.file_name().to_string_lossy().into(),
+                bytes,
+                categories: [0, 0, 0, 0, 0, bytes],
+                source: Some(source),
+                group: Some(format!("file:{extension}")),
+                ..Tile::default()
+            })
+        })
         .collect()
 }
 pub fn files_svg(width: f64) -> String {
@@ -1028,7 +1121,7 @@ mod tests {
         assert_eq!(content_style(&tile("s")), ("Assembly", super::ASSEMBLY));
         assert_eq!(content_style(&tile("c")), ("C", super::C_TEAL));
         let draft = Tile {
-            source: Some("games/THE BROKEN SEAL/recon/en/main/08006878.c".into()),
+            source: Some("recon/tbs/en/main/08006878.c".into()),
             ..tile("c")
         };
         assert_eq!(content_style(&draft), ("Drafted C", super::DRAFTED));
@@ -1119,16 +1212,13 @@ mod tests {
         let svg = svg("rom", &map, 540.0);
         assert_eq!(svg.matches("Unidentified 30.0%").count(), 1);
         assert!(svg.contains("Tables 70.0%"));
-        let html = super::html_page(&map, "", None, false).unwrap();
-        let footer = html.split("<footer").nth(1).unwrap();
-        assert_eq!(footer.matches(">Unidentified</span>").count(), 1);
         for obsolete in [
             "Unknown",
             "Unclassified",
             "Unreconstructed data",
             "Other data",
         ] {
-            assert!(!footer.contains(obsolete), "{obsolete}");
+            assert!(!svg.contains(obsolete), "{obsolete}");
         }
     }
 

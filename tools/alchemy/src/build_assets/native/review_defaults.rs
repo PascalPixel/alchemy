@@ -242,7 +242,7 @@ pub(super) fn defaults(root: &Path, palettes: &mut Vec<Value>) -> Result<Vec<Val
             transparent,
         );
     }
-    for bank in [4, 5, 6, 0] {
+    for bank in ICON_BANKS.into_iter().chain([0]) {
         let (name, path, category, palette) = if bank == 0 {
             (
                 "FONT_0x032224-0x033e24_CODES_0020_00FF_SHEET.PNG".to_string(),
@@ -253,9 +253,9 @@ pub(super) fn defaults(root: &Path, palettes: &mut Vec<Value>) -> Result<Vec<Val
         } else {
             (
                 format!("ICON_BANK_{bank:02}_SHEET.PNG"),
-                format!("{GRAPHICS}/TILE/UI_MTF_{bank:02}.INDEXED.PNG"),
+                icon_bank_source(bank),
                 "icon-sheet",
-                banks(&json!([877])),
+                banks(&json!([ICON_PALETTE_BANK])),
             )
         };
         let png = psynergy::assets::image::indexed_png(

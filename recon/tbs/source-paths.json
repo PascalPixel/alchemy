@@ -748,10 +748,12 @@
       "name": "SerialRuntime_Initialize"
     },
     "main:08005ee0": {
-      "name": "SerialRuntime_PollAndTransfer"
+      "name": "SerialRuntime_PollAndTransfer",
+      "source": "SYSTEM/LINK/SERIAL_POLL_AND_TRANSFER.C"
     },
     "main:08005fcc": {
-      "name": "SerialRuntime_PollStatus"
+      "name": "SerialRuntime_PollStatus",
+      "source": "SYSTEM/LINK/SERIAL_POLL_STATUS.C"
     },
     "main:080060e8": {
       "name": "SerialRuntime_PrepareSendPacket",

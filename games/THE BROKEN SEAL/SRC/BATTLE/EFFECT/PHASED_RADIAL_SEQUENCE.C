@@ -1,5 +1,22 @@
 #include "TYPES.H"
 #include "FIXED_MATH.H"
+int Func_08092054(int);
+void Func_080958a8(void);
+void Func_080b0048(int);
+void Func_080030f8(int);
+void Func_08092adc(int, int, int);
+void Func_080f9010(int);
+void Func_080925cc(int, int);
+void Func_08009080(int, int);
+void Func_080974d8(int);
+void Func_0809ba90(int, int, int, int);
+void Func_0809ba7c(int, int);
+void Func_0809ba70(int, int);
+void Func_08009248(int, int);
+int Func_080022f4(int, int);
+int Func_08004458(void);
+void Func_080b0050(void);
+void Func_080958e4(void);
 
 #define BattleFx_RunPhasedRadialParticleSequence Func_08095dd0
 

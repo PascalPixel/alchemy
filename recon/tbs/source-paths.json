@@ -19414,6 +19414,14 @@
     "main:0809a7f4": {
       "name": "BattleFx_CircleAnchor",
       "source": "BATTLE/EFFECT/CIRCLE_ANCHOR.C"
+    },
+    "main:080982dc": {
+      "name": "FieldEffect_WatchLeaderDistance",
+      "source": "FIELD/COMMON/EFFECT/WATCH_LEADER_DISTANCE.C"
+    },
+    "main:080993b0": {
+      "name": "BattleFx_RunSparkEmitter",
+      "source": "BATTLE/EFFECT/SPARK_EMITTER.C"
     }
   },
   "symbols": {

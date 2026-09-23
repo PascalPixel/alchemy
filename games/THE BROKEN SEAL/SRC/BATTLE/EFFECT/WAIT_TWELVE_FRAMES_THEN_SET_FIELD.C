@@ -1,7 +1,7 @@
 #include "TYPES.H"
 
 s32 WaitFrames(s32);
-s32 Func_080b5078(s32, s16, s32, s32);
+void Func_080b5078(s32, s16, s32, s32);
 s32 Func_080d4604(void *, s32);
 
 struct Object080eceac {

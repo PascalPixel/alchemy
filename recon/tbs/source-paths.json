@@ -5632,7 +5632,8 @@
       "source": "BATTLE/EFFECT/WAIT_THEN_SET_FIELD.C"
     },
     "main:080eceac": {
-      "name": "Object_WaitTwelveFramesThenSetField18"
+      "name": "Object_WaitTwelveFramesThenSetField18",
+      "source": "BATTLE/EFFECT/WAIT_TWELVE_FRAMES_THEN_SET_FIELD.C"
     },
     "main:080ecedc": {
       "name": "BattleFx_RunRevealColumnMode1",

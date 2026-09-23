@@ -1,166 +1,49 @@
-//! Local source, coverage and asset debugging views.
+//! Local source, ROM, music, map and text debugging views in one window.
+//! Background jobs fill the dashboard cache under `out/dashboard/`; views
+//! read it and show a progress bar while it builds.
+mod cache;
+mod chrome;
+mod files;
+mod fonts;
+mod glyphs;
 mod maps;
 mod media;
+mod roms;
+mod status;
 mod text;
 use super::http::{self, root, Response};
-use crate::coverage::{
-    boxtree::{render_box_trees, svg_cache_version, BOX_TREES},
-    pipeline::{build_coverage_map, BuildOptions},
-    tree::work_tree_at,
-};
-use serde_json::{json, Map, Value};
+use serde_json::{json, Value};
 use std::{
     net::TcpListener,
     path::{Component, Path, PathBuf},
     process::Command,
-    sync::Mutex,
     time::{Duration, SystemTime, UNIX_EPOCH},
 };
 use walkdir::WalkDir;
-const STYLES: &str = include_str!("style.css");
-const TREES: [(&str, &str); 1] = [("rom", "ROM contents")];
-const COVERAGE_DIRS: &[&str] = &[
-    "games/THE BROKEN SEAL/SRC/GRAPHICS",
-    "games/THE BROKEN SEAL/SOUND",
-    "games/THE BROKEN SEAL/TEXT",
-    "games/THE BROKEN SEAL/SRC",
-    "games/THE BROKEN SEAL/INCLUDE",
-    "games/COMMON",
-    "games/THE LOST AGE",
-    "recon/tbs",
-    "recon/tla",
-    "out/tbs-en/reports",
-    "out/tla-en/reports/verified-code.json",
-];
-fn page_version() -> String {
-    svg_cache_version(STYLES)
-}
-pub struct Live {
-    revision: String,
-    generated: String,
-    trees: Vec<(&'static str, String)>,
-    map: Option<crate::coverage::pipeline::CoverageMap>,
-    summary: Value,
-}
-#[derive(Default)]
-pub struct State {
-    coverage: Option<Live>,
-    error: Option<String>,
-    scanning: bool,
-}
-static STATE: Mutex<Option<State>> = Mutex::new(None);
-fn state<R>(f: impl FnOnce(&mut State) -> R) -> R {
-    f(STATE
-        .lock()
-        .unwrap_or_else(|e| e.into_inner())
-        .get_or_insert_with(State::default))
-}
-fn document_number(document: &Value, path: &[&str]) -> Option<f64> {
-    path.iter()
-        .try_fold(document, |v, key| v.get(key))?
-        .as_f64()
-}
-fn compute() -> Result<Live, String> {
-    let tree = work_tree_at(root());
-    let map = build_coverage_map(&BuildOptions {
-        target: "tbs-en".into(),
-        exact: &tree,
-        recon: Some(&tree),
-    })?;
-    let trees = render_box_trees(&map);
-    let mut live = live_from(map.document.clone(), trees)?;
-    live.map = Some(map);
-    Ok(live)
-}
-fn cached() -> Result<Live, String> {
-    let report = root().join("out/tbs-en/reports/coverage-map.json");
-    // Published charts survive removal of disposable build reports. They are
-    // a fallback display, never proof of the current checkout's coverage.
-    let document = std::fs::read(&report)
-        .ok()
-        .and_then(|bytes| serde_json::from_slice(&bytes).ok())
-        .unwrap_or(Value::Null);
-    let trees = BOX_TREES
-        .iter()
-        .map(|name| {
-            let path = crate::coverage::boxtree::box_tree_path("tbs-en", name);
-            std::fs::read_to_string(&path)
-                .map(|svg| (*name, svg))
-                .map_err(|error| format!("{}: {error}", path.display()))
-        })
-        .collect::<Result<Vec<_>, _>>()?;
-    let mut live = live_from(document, trees)?;
-    live.generated.clear();
-    Ok(live)
+
+/// Inputs every view reads: the game and scaffolding trees, generated
+/// reports and manifests, the local ROMs and the receipt identity's tooling.
+fn watched(root: &Path) -> Vec<PathBuf> {
+    let mut paths = [
+        "games",
+        "recon",
+        "roms",
+        "tools/alchemy/src",
+        "tools/psynergy/src",
+        "out/tbs-en/full/asm/manifest.json",
+        "out/tbs-en/full/assets/manifest.json",
+        "out/tbs-en/assets/manifest.json",
+        "out/tla-en/assets/manifest.json",
+    ]
+    .iter()
+    .map(|path| root.join(path))
+    .collect::<Vec<_>>();
+    for id in crate::targets::TARGET_IDS {
+        paths.push(root.join(format!("out/{}/reports", id.as_str())));
+    }
+    paths
 }
 
-impl Live {
-    fn chart_at(&self, id: &str, size: Option<(u16, u16)>, folder: &str) -> Option<String> {
-        if let (Some(map), Some((width, height))) = (&self.map, size) {
-            return Some(crate::coverage::boxtree::svg_sized(
-                id,
-                map,
-                f64::from(width),
-                if height == 0 {
-                    f64::from(width) * 16.0 / 9.0
-                } else {
-                    f64::from(height)
-                },
-                folder,
-            ));
-        }
-        if !folder.is_empty() {
-            return None;
-        }
-        self.trees
-            .iter()
-            .find(|(key, _)| *key == id)
-            .map(|(_, svg)| svg.clone())
-    }
-}
-fn live_from(document: Value, trees: Vec<(&'static str, String)>) -> Result<Live, String> {
-    let revision = trees
-        .iter()
-        .map(|(_, svg)| svg_cache_version(svg))
-        .collect::<Vec<_>>()
-        .join("-");
-    let n = |key| document_number(&document, key).unwrap_or(0.0);
-    let done = document
-        .get("done")
-        .cloned()
-        .map(serde_json::from_value::<crate::coverage::progress::GameDone>)
-        .transpose()
-        .map_err(|e| e.to_string())?;
-    let summary = json!({
-        "games": document.get("games").and_then(Value::as_object)
-            .into_iter().flatten().map(|(target, score)| {
-                let done: crate::coverage::progress::GameDone =
-                    serde_json::from_value(score.clone()).map_err(|e| e.to_string())?;
-                Ok((target.clone(), json!({
-                    "doneBytes": done.bytes(), "executableBytes": done.executable,
-                    "donePercent": done.percent(),
-                    "exactCBytes": done.common_c + done.game_c,
-                    "permanentAssemblyBytes": done.common_asm + done.game_asm,
-                    "parts": done
-                })))
-            }).collect::<Result<Map<String, Value>, String>>()?,
-        "executableBytes": done.map(|d| d.executable),
-        "provenCBytes": done.map(|d| d.common_c + d.game_c),
-        "provenCPercent": number(n(&["categories", "proven_c", "percent_of_executable"])),
-        "draftCBytes": number(n(&["categories", "draft_c", "bytes"])),
-        "draftCPercent": number(n(&["categories", "draft_c", "percent_of_executable"])),
-        "provenAsmBytes": done.map(|d| d.common_asm + d.game_asm),
-        "doneBytes": done.map(|d| d.bytes()),
-        "donePercent": done.map(|d| number(d.percent()))
-    });
-    Ok(Live {
-        revision,
-        generated: iso_now(),
-        trees,
-        map: None,
-        summary,
-    })
-}
 fn iso_now() -> String {
     let ms = SystemTime::now()
         .duration_since(UNIX_EPOCH)
@@ -189,41 +72,32 @@ fn iso_now() -> String {
         rest % 1000
     )
 }
-fn number(value: f64) -> Value {
-    serde_json::from_str(&crate::coverage::jsnum::number(value)).unwrap_or(Value::Null)
-}
-fn snapshot_from(state: &State) -> Value {
-    let mut document = json!({
-            "page": page_version(),
-            "revision": state.coverage.as_ref().map_or("starting", |live| live.revision.as_str()),
-            "generatedAt": state.coverage.as_ref().map(|live| live.generated.as_str()),
-            "scanning": state.scanning,
-            "trees": TREES.into_iter()
-                .map(|(key, title)| (key.into(), Value::String(title.into())))
-                .collect::<Map<_, _>>(),
-            "project": {
-                "title": "Golden Sun · The Lost Age",
-                "tbs": "ja · en · de · es · fr · it",
-                "tla": "ja · en · de · es · fr · it",
-                "fullTarget": "tbs-en"
-            }
-    });
-    let object = document.as_object_mut().expect("dashboard snapshot object");
-    if let Some(error) = &state.error {
-        object.insert("error".into(), json!(error));
-    }
-    if let Some(live) = &state.coverage {
-        object.insert("hasCharts".into(), json!(!live.trees.is_empty()));
-        let published = live.map.is_none() || state.error.is_some();
-        object.insert("published".into(), json!(published));
-        if !published {
-            object.insert("summary".into(), live.summary.clone());
-        }
-    }
-    document
-}
+static REFRESHED: std::sync::Mutex<Option<String>> = std::sync::Mutex::new(None);
+
 fn snapshot() -> Value {
-    state(|state| snapshot_from(state))
+    let jobs = cache::jobs();
+    json!({
+        "page": crate::coverage::boxtree::svg_cache_version(chrome::styles()),
+        "revision": cache::generation().to_string(),
+        "generatedAt": REFRESHED.lock().unwrap_or_else(|e| e.into_inner()).clone(),
+        "scanning": jobs.iter().any(|job| job.phase == cache::Phase::Running),
+        "done": status::snapshot(),
+        "jobs": jobs.iter().map(|job| json!({
+            "id": job.id, "label": job.label, "done": job.done, "total": job.total,
+            "state": match job.phase {
+                cache::Phase::Running => "running",
+                cache::Phase::Ready => "ready",
+                cache::Phase::Failed => "failed",
+            },
+            "note": job.note, "milliseconds": job.millis as u64
+        })).collect::<Vec<_>>(),
+        "project": {
+            "title": "Golden Sun · The Lost Age",
+            "tbs": "ja · en · de · es · fr · it",
+            "tla": "ja · en · de · es · fr · it",
+            "fullTarget": "tbs-en"
+        }
+    })
 }
 fn snapshot_text() -> String {
     serde_json::to_string(&snapshot()).expect("dashboard snapshot serializes")
@@ -237,23 +111,21 @@ fn event_stream() -> Response {
         format!("event: update\ndata: {}\nretry: 1000\n\n", snapshot_text()),
     )
 }
-fn rebuild() -> bool {
-    state(|state| state.scanning = true);
-    let result = compute();
-    state(|state| {
-        let succeeded = result.is_ok();
-        match result {
-            Ok(coverage) => {
-                state.coverage = Some(coverage);
-                state.error = None;
-            }
-            Err(error) => {
-                state.error = Some(error);
-            }
-        }
-        state.scanning = false;
-        succeeded
-    })
+
+/// Run every cache job once: the quick ones first, then the receipts, whose
+/// verification hashes every build input.
+fn refresh(root: &Path) {
+    cache::begin("assets", "Building font and icons", 1);
+    cache::finish("assets", glyphs::refresh(root));
+    cache::begin(
+        "roms",
+        "Reading ROM indexes",
+        crate::targets::TARGET_IDS.len(),
+    );
+    cache::finish("roms", roms::refresh(root));
+    cache::begin("progress", "Reading receipts", status::GAMES.len());
+    cache::finish("progress", status::refresh(root));
+    *REFRESHED.lock().unwrap_or_else(|e| e.into_inner()) = Some(iso_now());
 }
 
 fn reveal_path(repo: &Path, encoded: &str) -> Result<PathBuf, String> {
@@ -328,38 +200,31 @@ fn reveal(path: &str) -> Response {
         Err(message) => (400, "Bad Request", message),
     };
     Response::new(status, reason, Some("text/html; charset=utf-8"), "no-store",
-        format!("<!doctype html><style>body{{margin:0;background:#1f7f93;color:white;font:14px monospace}}</style>{}", crate::coverage::boxtree::esc(&message)))
+        format!("<!doctype html><style>body{{margin:0;padding:2px 4px;background:#1f7f93;color:white;font:13px -apple-system,BlinkMacSystemFont,sans-serif}}</style>{}", crate::coverage::boxtree::esc(&message)))
+}
+fn cached_file(path: &str) -> Option<Response> {
+    let name = path.strip_prefix("/cache/")?;
+    Some(match glyphs::file(&root(), name) {
+        Some((mime, bytes)) => Response::new(
+            200,
+            "OK",
+            Some(mime),
+            "public, max-age=31536000, immutable",
+            bytes,
+        ),
+        None => http::not_found(),
+    })
 }
 fn response(path: &str) -> Response {
-    if let Some(response) = maps::response(path) {
-        return response;
-    }
-    if let Some(response) = media::response(path) {
-        return response;
-    }
-    if let Some(content) = text::page(path) {
-        return match content {
-            Ok(content) => document(path, &content),
-            Err(error) => Response::new(
-                404,
-                "Not Found",
-                Some("text/plain; charset=utf-8"),
-                "no-store",
-                error.into_bytes(),
-            ),
-        };
-    }
-    if path == "/"
-        || path == "/rom"
-        || path.starts_with("/rom/")
-        || path == "/roms"
-        || path.starts_with("/roms/")
-        || path.starts_with("/file/")
-        || path.starts_with("/view/")
-        || path.starts_with("/inspect/")
-        || path.starts_with("/shared/")
+    let root = root();
+    if let Some(response) = cached_file(path)
+        .or_else(|| maps::response(path))
+        .or_else(|| media::response(path))
+        .or_else(|| text::response(path))
+        .or_else(|| roms::page(path))
+        .or_else(|| files::page(&root, path))
     {
-        return page(path);
+        return response;
     }
     match path {
         "/snapshot" => Response::new(
@@ -370,72 +235,6 @@ fn response(path: &str) -> Response {
             snapshot_text(),
         ),
         "/events" => event_stream(),
-        path if path.starts_with("/svg/") => {
-            let mut parts = path[5..].split('/');
-            let id = parts.next().unwrap_or("");
-            let width = match parts.next() {
-                None => None,
-                Some(value) => match value.split_once('x').map_or_else(
-                    || value.parse::<u16>().map(|w| (w, 0)),
-                    |(w, h)| {
-                        w.parse::<u16>()
-                            .and_then(|w| h.parse::<u16>().map(|h| (w, h)))
-                    },
-                ) {
-                    Ok((width @ 240..=10000, height @ 0..=10000)) => Some((width, height)),
-                    _ => {
-                        return Response::new(
-                            400,
-                            "Bad Request",
-                            None,
-                            "no-store",
-                            b"Invalid chart width".to_vec(),
-                        )
-                    }
-                },
-            };
-            let folder = parts.collect::<Vec<_>>().join("/");
-            if (!folder.is_empty()
-                && (!folder.ends_with('/') || folder.split('/').any(|part| part == "..")))
-                || !TREES.iter().any(|(key, _)| *key == id)
-            {
-                return Response::new(
-                    404,
-                    "Not Found",
-                    None,
-                    "no-store",
-                    b"Unknown chart".to_vec(),
-                );
-            }
-            state(|s| {
-                s.coverage
-                    .as_ref()
-                    .and_then(|c| c.chart_at(id, width, &folder))
-                    .ok_or_else(|| {
-                        s.error
-                            .clone()
-                            .unwrap_or_else(|| "Coverage is still being read".into())
-                    })
-                    .map(|s| {
-                        Response::new(
-                            200,
-                            "OK",
-                            Some("image/svg+xml; charset=utf-8"),
-                            "no-store",
-                            s.into_bytes(),
-                        )
-                    })
-                    .unwrap_or_else(|e| {
-                        Response::new(
-                            503,
-                            "Service Unavailable",
-                            Some("text/plain; charset=utf-8"),
-                            "no-store",
-                            e.into_bytes(),
-                        )
-                    })
-            })
-        }
         _ => Response::new(
             404,
             "Not Found",
@@ -471,175 +270,61 @@ fn fingerprint(path: &Path) -> Fingerprint {
     }
     out
 }
+/// Rebuilds the cache after watched inputs change and then stay still for two
+/// ticks, so a build writing many files triggers one refresh.
 struct Watcher {
-    coverage: Vec<(PathBuf, Fingerprint)>,
+    inputs: Vec<(PathBuf, Fingerprint)>,
     dirty: bool,
     stable_ticks: u8,
 }
 impl Watcher {
-    fn new(retry_initial_scan: bool) -> Self {
-        let r = root();
-        let mut coverage = COVERAGE_DIRS
-            .iter()
-            .map(|d| r.join(d))
-            .map(|p| (p.clone(), fingerprint(&p)))
-            .collect::<Vec<_>>();
-        for p in [
-            "out/tbs-en/full/asm/manifest.json",
-            "out/tbs-en/full/assets/manifest.json",
-            "out/tla-en/assets/manifest.json",
-            "out/decomp/diagnose/.revision",
-        ]
-        .iter()
-        .map(|p| r.join(p))
-        {
-            coverage.push((p.clone(), fingerprint(&p)))
-        }
-        for id in crate::targets::TARGET_IDS {
-            let p = r.join(format!("out/{}/reports/rom-index.json", id.as_str()));
-            coverage.push((p.clone(), fingerprint(&p)));
-        }
+    fn new(root: &Path) -> Self {
         Self {
-            coverage,
-            dirty: retry_initial_scan,
+            inputs: watched(root)
+                .into_iter()
+                .map(|path| {
+                    let print = fingerprint(&path);
+                    (path, print)
+                })
+                .collect(),
+            dirty: false,
             stable_ticks: 0,
         }
     }
-    fn tick(&mut self) {
+    fn tick(&mut self, root: &Path) {
         let mut changed = false;
-        for (p, old) in &mut self.coverage {
-            let now = fingerprint(p);
+        for (path, old) in &mut self.inputs {
+            let now = fingerprint(path);
             changed |= now != *old;
             *old = now
         }
         if changed {
             self.dirty = true;
             self.stable_ticks = 0;
+            cache::invalidate();
         } else if self.dirty {
             self.stable_ticks = self.stable_ticks.saturating_add(1);
             if self.stable_ticks >= 2 {
-                if rebuild() {
-                    self.dirty = false;
-                }
+                self.dirty = false;
                 self.stable_ticks = 0;
+                refresh(root);
             }
         }
     }
 }
 
-fn page(path: &str) -> Response {
-    let file = path
-        .strip_prefix("/file/")
-        .and_then(crate::coverage::boxtree::decode_folder)
-        .map(|s| s.trim_end_matches('/').to_string());
-    if path.starts_with("/file/") && file.is_none() {
-        return http::not_found();
-    }
-    let (encoded, selected, shared) = if let Some(path) = path.strip_prefix("/inspect/") {
-        let Some((address, folder)) = path.split_once('/') else {
-            return http::not_found();
-        };
-        let Ok(address) = i64::from_str_radix(address, 16) else {
-            return http::not_found();
-        };
-        (folder, Some(address), false)
-    } else if let Some(folder) = path.strip_prefix("/shared/") {
-        (folder, None, true)
-    } else {
-        (path.strip_prefix("/view/").unwrap_or(""), None, false)
-    };
-    let Some(mut folder) = crate::coverage::boxtree::decode_folder(encoded) else {
-        return http::not_found();
-    };
-    if let Some(file) = &file {
-        folder = file
-            .rsplit_once('/')
-            .map_or(String::new(), |(dir, _)| format!("{dir}/"));
-    }
-    let rom_target = path
-        .strip_prefix("/roms/")
-        .or_else(|| path.strip_prefix("/rom/"))
-        .or_else(|| matches!(path, "/roms" | "/rom").then_some("tla-en"));
-    let content = if let Some(target) = rom_target {
-        Some(crate::coverage::boxtree::rom_page(target))
-    } else {
-        state(|s| {
-            s.coverage
-                .as_ref()
-                .and_then(|live| live.map.as_ref())
-                .map(|map| {
-                    if selected.is_some() {
-                        crate::coverage::boxtree::html_page(map, &folder, selected, shared)
-                    } else {
-                        crate::coverage::boxtree::file_page(map, &folder, file.as_deref(), shared)
-                    }
-                })
-        })
-    };
-    let (refresh, content) = match content {
-        Some(Some(content)) => ("", content),
-        Some(None) => return http::not_found(),
-        None => (
-            "<meta http-equiv=\"refresh\" content=\"2\">",
-            "<main class=\"loading\">Reading ROM coverage…</main>".into(),
-        ),
-    };
-    document(path, &format!("{refresh}{content}"))
-}
-fn document(path: &str, content: &str) -> Response {
-    let active = if path.starts_with("/rom") {
-        "ROM coverage"
-    } else if path.starts_with("/music") {
-        "Music"
-    } else if path.starts_with("/maps") {
-        "Maps"
-    } else if path.starts_with("/text") {
-        "Text"
-    } else {
-        "Files"
-    };
-    let tabs = [
-        ("/", "Files"),
-        ("/roms", "ROM coverage"),
-        ("/music", "Music"),
-        ("/maps", "Maps"),
-        ("/text", "Text"),
-    ]
-    .into_iter()
-    .map(|(url, name)| {
-        format!(
-            "<a href=\"{url}\"{}>{name}</a>",
-            if active == name {
-                " aria-current=\"page\""
-            } else {
-                ""
-            }
-        )
-    })
-    .collect::<String>();
-    let mut response=Response::new(200,"OK",Some("text/html; charset=utf-8"),"no-store",format!("<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>Alchemy · {active}</title><style>{STYLES}</style></head><body><nav class=\"tabs\" aria-label=\"Views\">{tabs}</nav>{content}</body></html>"));
-    let scripts = if path == "/maps" || path.starts_with("/maps/") {
-        "'self'"
-    } else {
-        "'none'"
-    };
-    response.headers.push(("Content-Security-Policy",format!("default-src 'self'; script-src {scripts}; style-src 'self' 'unsafe-inline'; font-src 'self'; object-src 'none'; base-uri 'none'")));
-    response
-}
 pub fn entry(args: &[String]) -> Result<(), String> {
     let Some(bind) = http::bind(args, "dashboard", 4650)? else {
         return Ok(());
     };
     let listener = TcpListener::bind(bind).map_err(|e| e.to_string())?;
-    if let Ok(coverage) = cached() {
-        state(|state| state.coverage = Some(coverage));
-    }
     std::thread::spawn(|| {
-        let retry = !rebuild();
-        let mut watcher = Watcher::new(retry);
+        let root = root();
+        let mut watcher = Watcher::new(&root);
+        refresh(&root);
         loop {
             std::thread::sleep(Duration::from_secs(1));
-            watcher.tick();
+            watcher.tick(&root);
         }
     });
     println!(
@@ -685,82 +370,20 @@ mod tests {
     }
 
     #[test]
-    fn published_charts_survive_missing_reports_without_claiming_live_progress() {
-        let live = live_from(Value::Null, vec![("code", "<svg/>".into())]).unwrap();
-        assert_eq!(
-            live.chart_at("code", Some((800, 0)), "").as_deref(),
-            Some("<svg/>")
-        );
-        let snapshot = snapshot_from(&State {
-            coverage: Some(live),
-            error: Some("missing build manifest".into()),
-            scanning: false,
-        });
-        assert_eq!(snapshot["hasCharts"], true);
-        assert_eq!(snapshot["published"], true);
-        assert!(snapshot.get("summary").is_none());
-        assert_eq!(snapshot["error"], "missing build manifest");
-    }
-
-    #[test]
-    fn summary_comes_only_from_coverage_document() {
-        let live = live_from(
-            json!({"done":{"executable":1000,"common_c":0,"game_c":400,
-                "common_asm":0,"game_asm":100},"executable_bytes":1000,"categories":{
-                "proven_c":{"bytes":400,"percent_of_executable":40},
-                "proven_asm":{"bytes":100},"draft_c":{"bytes":200,"percent_of_executable":20}
-            }}),
-            Vec::new(),
-        )
-        .unwrap();
-        assert_eq!(live.summary["donePercent"], 50);
-        assert_eq!(live.summary["doneBytes"], 500);
-        assert_eq!(live.summary["provenCBytes"], 400);
-        assert_eq!(live.summary["draftCBytes"], 200);
-        assert!(live.summary.get("correspondenceAvailable").is_none());
-        assert!(live.summary.get("tbsJaSources").is_none());
-    }
-
-    #[test]
-    fn old_map_without_a_verified_score_does_not_invent_done() {
-        let live = live_from(
-            json!({"executable_bytes":1000,
-            "categories":{"proven_c":{"bytes":1000}}}),
-            Vec::new(),
-        )
-        .unwrap();
-        assert!(live.summary["donePercent"].is_null());
-        assert!(live.summary["doneBytes"].is_null());
-    }
-
-    #[test]
-    fn snapshot_preserves_javascript_numbers_and_omits_absent_fields() {
-        assert_eq!(number(1.0), json!(1));
-        let snapshot = snapshot_from(&State::default());
-        assert_eq!(snapshot["revision"], "starting");
-        assert!(snapshot["generatedAt"].is_null());
-        for field in ["error", "summary"] {
-            assert!(snapshot.get(field).is_none(), "unexpected {field}");
+    fn snapshot_reports_jobs_and_never_invents_done() {
+        let snapshot = snapshot();
+        for game in ["tbs-en", "tla-en"] {
+            let state = snapshot["done"][game]["state"].as_str().unwrap();
+            assert!(
+                matches!(state, "checking" | "pending" | "verified"),
+                "{state}"
+            );
+            if state != "verified" {
+                assert!(snapshot["done"][game]["donePercent"].is_null());
+            }
         }
-    }
-
-    #[test]
-    fn snapshot_and_event_stream_preserve_public_compatibility() {
-        let state = State {
-            coverage: Some(Live {
-                revision: "revision".into(),
-                generated: "2001-08-27T12:34:56.789Z".into(),
-                trees: Vec::new(),
-                map: None,
-                summary: json!({"donePercent":100}),
-            }),
-            error: None,
-            scanning: false,
-        };
-        assert_eq!(
-            snapshot_from(&state)["generatedAt"],
-            "2001-08-27T12:34:56.789Z"
-        );
+        assert!(snapshot["jobs"].is_array());
+        assert_eq!(snapshot["project"]["fullTarget"], "tbs-en");
         let response = event_stream();
         assert!(
             response
@@ -775,61 +398,80 @@ mod tests {
     }
 
     #[test]
-    fn dashboard_rejects_retired_playback_routes_and_needs_no_client_script() {
-        assert_eq!(response("/").status, 200);
+    fn views_need_no_script_except_maps_and_retired_routes_stay_gone() {
         for path in [
             "/music/catalog",
             "/music/soundfont",
             "/music/tla/soundfont",
             "/music/bgm_000.mid",
+            "/client.js",
+            "/weyard.otf",
+            "/svg/rom/800",
+            "/inspect/8001000/",
+            "/shared/",
+            "/cache/font.ttf",
+            "/cache/../roms/tbs-en.gba",
         ] {
-            assert_eq!(response(path).status, 404);
+            assert_eq!(response(path).status, 404, "{path}");
         }
-        assert_eq!(response("/client.js").status, 404);
-        let page = response("/");
-        assert!(!String::from_utf8(page.body).unwrap().contains("<script"));
-        assert!(page
-            .headers
-            .iter()
-            .any(|(key, value)| *key == "Content-Security-Policy"
-                && value.contains("script-src 'none'")));
-        assert!(!STYLES.contains(".music-player"));
+        for path in ["/", "/roms", "/text", "/music"] {
+            let page = response(path);
+            assert_eq!(page.status, 200, "{path}");
+            let html = String::from_utf8(page.body).unwrap();
+            assert!(!html.contains("<script"), "{path}");
+            assert!(page
+                .headers
+                .iter()
+                .any(|(key, value)| *key == "Content-Security-Policy"
+                    && value.contains("script-src 'none'")
+                    && value.contains("font-src 'self'")));
+            assert_eq!(html.matches("class=\"tab\"").count(), 5, "{path}");
+            assert!(html.contains("class=\"statusbar\""), "{path}");
+        }
     }
+
     #[test]
-    fn rom_coverage_always_lists_all_twelve_registered_targets() {
-        let page = response("/roms");
-        assert_eq!(page.status, 200);
-        let html = String::from_utf8(page.body).unwrap();
+    fn the_stylesheet_is_golden_sun_chrome_on_one_pixel_grid_without_remote_assets() {
+        let styles = chrome::styles();
+        assert!(!styles.contains("underline"));
+        assert!(!styles.contains("@font-face"));
+        assert!(!styles.contains("url("));
+        assert!(!styles.contains("http"));
+        assert!(styles.contains(".tab {"));
         assert!(
-            html.len() < 2_000_000,
-            "ROM overview must remain browser-sized"
+            styles.contains("border-radius:6px 6px 0 0")
+                && styles.contains("box-shadow:var(--frame)")
         );
-        assert_eq!(html.matches("<article class=\"rom-target").count(), 12);
-        for id in crate::targets::TARGET_IDS {
-            assert!(html.contains(&format!("href=\"/roms/{}\"", id.as_str())));
+        assert!(styles.contains("--text: 32px/32px var(--game)"));
+        assert!(styles.contains(".translation-table td {") && styles.contains("font-style:italic"));
+        // Every length is a whole number of 2px game pixels.
+        for (at, _) in styles.match_indices("px") {
+            let digits = styles[..at]
+                .chars()
+                .rev()
+                .take_while(|c| c.is_ascii_digit())
+                .collect::<String>();
+            if let Ok(value) = digits.chars().rev().collect::<String>().parse::<u32>() {
+                assert!(
+                    value % 2 == 0,
+                    "odd length {value}px near {}",
+                    &styles[at.saturating_sub(40)..at + 2]
+                );
+            }
         }
-        assert!(html.contains("Not audited") || html.contains("%"));
-        assert_eq!(response("/rom").status, 200);
-        assert_eq!(response("/rom/tbs-en").status, 200);
+        assert!(!styles.contains(".music-player"));
     }
-    #[test]
-    fn dashboard_serves_no_font_and_styles_labels_like_the_figure() {
-        assert_eq!(response("/weyard.otf").status, 404);
-        assert!(!STYLES.contains("@font-face"));
-        assert!(!STYLES.contains("url("));
-        assert!(STYLES.contains("13px/20px -apple-system"));
-        assert!(STYLES.contains("header,.legend,.folder-label,.leaf-label { font:inherit; line-height:16px; text-shadow:1px 1px #000; }"));
-        assert_eq!(STYLES.matches("text-shadow:").count(), 1);
-    }
+
     #[test]
     fn navigation_rejects_invalid_paths() {
         for path in [
             "/view/ff",
             "/view/2e2e2f",
-            "/inspect/not-an-address/",
-            "/inspect/42/ff",
+            "/file/",
+            "/file/zz",
+            "/roms/gs3-en",
         ] {
-            assert_eq!(response(path).status, 404);
+            assert_eq!(response(path).status, 404, "{path}");
         }
     }
 }

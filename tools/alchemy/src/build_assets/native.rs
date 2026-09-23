@@ -38,6 +38,67 @@ impl NativePaths {
         }
     }
 }
+/// The indexed UI banks the graphics review identifies as icon sheets, and the
+/// palette bank that review colours all three with.
+pub(crate) const ICON_BANKS: [u8; 3] = [4, 5, 6];
+pub(crate) const ICON_PALETTE_BANK: usize = 877;
+pub(crate) fn icon_bank_source(bank: u8) -> String {
+    format!(
+        "{}/GRAPHICS/TILE/UI_MTF_{bank:02}.INDEXED.PNG",
+        broken_seal().source
+    )
+}
+/// One raw palette bank read straight from the verified ROM, located and
+/// checksummed by the game's private-input registry. Local viewers colour
+/// tracked indexed art with it without restoring private inputs into the tree.
+pub(crate) fn raw_palette_bank(
+    root: &Path,
+    target: &DecompTarget,
+    rom: &[u8],
+    bank: usize,
+) -> Result<[u16; 16], String> {
+    let index = json(&root.join(NativePaths::of(target).index))?;
+    let input = index["private_inputs"]
+        .as_array()
+        .ok_or("missing private inputs")?
+        .iter()
+        .find(|input| {
+            input["kind"] == "palette-raw"
+                && input["banks"]
+                    .as_array()
+                    .is_some_and(|banks| banks.iter().any(|slot| address(slot).ok() == Some(bank)))
+        })
+        .ok_or_else(|| format!("no raw palette input supplies bank {bank}"))?;
+    let start = address(&input["region_address"])?;
+    let region = index["regions"]
+        .as_array()
+        .ok_or("missing regions")?
+        .iter()
+        .find(|region| address(&region["address"]).ok() == Some(start))
+        .ok_or("missing input region")?;
+    let offset = start.checked_sub(ROM_BASE).ok_or("input precedes ROM")?;
+    let data = rom
+        .get(offset..offset + address(&region["size"])?)
+        .ok_or("palette outside ROM")?;
+    if sha256::hex(data) != json_string(&input["decoded_sha256"], "palette digest")? {
+        return Err("raw palette differs from its registered checksum".into());
+    }
+    let position = input["banks"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .position(|slot| address(slot).ok() == Some(bank))
+        .unwrap();
+    let bytes = data
+        .chunks_exact(32)
+        .nth(position)
+        .ok_or("palette bank outside its region")?;
+    let mut colors = [0u16; 16];
+    for (color, pair) in colors.iter_mut().zip(bytes.chunks_exact(2)) {
+        *color = u16::from_le_bytes([pair[0], pair[1]]);
+    }
+    Ok(colors)
+}
 /// The review sheets, atlases and UI frames are still Broken Seal documents.
 pub(in crate::build_assets) fn broken_seal() -> NativePaths {
     NativePaths::of(&target_for(DecompTargetId::TbsEn))

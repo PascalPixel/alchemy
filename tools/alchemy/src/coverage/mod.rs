@@ -1,5 +1,6 @@
 pub(crate) mod audit;
 pub(crate) mod boxtree;
+pub(crate) mod figure;
 pub(crate) mod jsnum;
 pub(crate) mod model;
 pub(crate) mod pipeline;
@@ -7,7 +8,7 @@ pub(crate) mod progress;
 pub(crate) mod proof;
 pub(crate) mod tree;
 
-use self::boxtree::{box_tree_path, files_svg, render_box_trees, BOX_TREES};
+use self::boxtree::{box_tree_path, render_box_trees, BOX_TREES};
 use crate::compiler::canonical_json::canonical_json;
 use crate::coverage::jsnum::{commas, number};
 use crate::coverage::pipeline::{build_coverage_map, BuildOptions, CoverageMap};
@@ -285,7 +286,8 @@ fn run(argv: &[String]) -> Result<String, String> {
         if o.exact.is_some() || o.recon.is_some() || o.assembly_spans {
             return Err("--files accepts only --write or --check".into());
         }
-        let rendered = files_svg(830.0);
+        let rendered =
+            figure::progress_svg(measured(&root(), "tbs-en")?, measured(&root(), "tla-en")?);
         let path = root().join("PROGRESS.svg");
         if o.check {
             if read(&path)? != rendered {
@@ -356,7 +358,7 @@ fn run(argv: &[String]) -> Result<String, String> {
             }
         }
         // The published figure is drawn from tracked files only.
-        if read(&root().join("PROGRESS.svg"))? != files_svg(830.0) {
+        if read(&root().join("PROGRESS.svg"))? != figure::progress_svg(sun, anchor) {
             return Err("README file-size figure is stale; run: make coverage".into());
         }
         let readme = read(&root().join("README.md"))?;
@@ -370,7 +372,10 @@ fn run(argv: &[String]) -> Result<String, String> {
         for (id, svg) in &rendered {
             write(&box_tree_path(&o.target, id), svg)?;
         }
-        write(&root().join("PROGRESS.svg"), &files_svg(830.0))?;
+        write(
+            &root().join("PROGRESS.svg"),
+            &figure::progress_svg(sun, anchor),
+        )?;
         let readme = read(&root().join("README.md"))?;
         write(
             &root().join("README.md"),

@@ -69,10 +69,19 @@ function composite() {
 function fit(){zoom=Math.min(canvas.width/bounds.width,canvas.height/bounds.height)*.94;x=(canvas.width-bounds.width*zoom)/2;y=(canvas.height-bounds.height*zoom)/2;draw()}
 function scale(next,px=canvas.width/2,py=canvas.height/2){next=Math.max(.03,Math.min(16,next));x=px-(px-x)*next/zoom;y=py-(py-y)*next/zoom;zoom=next;draw()}
 function sceneControls(show){for(const control of document.querySelectorAll('.scene-control'))control.hidden=!show}
+const progress=document.querySelector('#map-progress');
+// The bar sweeps while the server assembles, then fills as the payload arrives.
+async function download(url,signal,label){
+  progress.hidden=false;progress.classList.add('busy');progress.firstElementChild.style.width='';status.textContent=`${label}…`;
+  const response=await fetch(url,{signal,cache:'no-store'});if(!response.ok)throw Error(await response.text());
+  const total=Number(response.headers.get('Content-Length'))||0;if(!total||!response.body)return response.arrayBuffer();
+  progress.classList.remove('busy');const bytes=new Uint8Array(total),reader=response.body.getReader();let at=0;
+  for(;;){const {done,value}=await reader.read();if(done)break;if(at+value.length>total)throw Error('Payload exceeds its length');bytes.set(value,at);at+=value.length;const percent=Math.round(at*100/total);progress.firstElementChild.style.width=`${percent}%`;progress.setAttribute('aria-valuenow',String(percent));status.textContent=`${label}… ${percent}%`}
+  return bytes.buffer;
+}
 
 async function loadScene(signal) {
-  status.textContent='Decoding current scene…';const response=await fetch(`/maps/${game}/${scene.value}/layers`,{signal,cache:'no-store'});if(!response.ok)throw Error(await response.text());
-  const bytes=await response.arrayBuffer(),size=new DataView(bytes).getUint32(0,true);map=JSON.parse(new TextDecoder().decode(new Uint8Array(bytes,4,size)));const count=map.width*map.height;
+  const bytes=await download(`/maps/${game}/${scene.value}/layers`,signal,'Decoding scene'),size=new DataView(bytes).getUint32(0,true);map=JSON.parse(new TextDecoder().decode(new Uint8Array(bytes,4,size)));const count=map.width*map.height;
   if(map.format!==1||!count||count>16777216||4+size+count*map.layers.length!==bytes.byteLength)throw Error('Invalid live layer payload');
   pixels=map.layers.map((_,i)=>new Uint8Array(bytes,4+size+i*count,count));const order=map.layers.map((_,i)=>i).sort((a,b)=>map.layers[b].priority-map.layers[a].priority||map.layers[b].bg-map.layers[a].bg),backdrop=order.find(i=>map.layers[i].opaque);
   visible=map.layers.map((l,i)=>!l.opaque||i===backdrop||Boolean(map.blend&&((map.blend.control>>l.bg)&1)));palette.replaceChildren(new Option('Loaded palettes','-1'),...map.palettes.map((_,i)=>new Option(`Bank ${i}`,String(i))));document.querySelector('#layers').replaceChildren();
@@ -80,13 +89,12 @@ async function loadScene(signal) {
   bounds={left:0,top:0,width:map.width,height:map.height};status.textContent=`Scene ${map.scene} · map ${map.container} · ${map.width} × ${map.height} · ${map.unresolved} unresolved tile references.`;composite();
 }
 async function loadFamily(signal) {
-  status.textContent='Cutting rooms and following doors…';const response=await fetch(`/maps/${game}/${scene.value}/family`,{signal,cache:'no-store'});if(!response.ok)throw Error(await response.text());
-  const bytes=await response.arrayBuffer(),size=new DataView(bytes).getUint32(0,true);family=JSON.parse(new TextDecoder().decode(new Uint8Array(bytes,4,size)));if(family.format!==1)throw Error('Invalid assembled map payload');
+  const bytes=await download(`/maps/${game}/${scene.value}/family`,signal,'Assembling rooms'),size=new DataView(bytes).getUint32(0,true);family=JSON.parse(new TextDecoder().decode(new Uint8Array(bytes,4,size)));if(family.format!==1)throw Error('Invalid assembled map payload');
   const base=4+size,overviewBytes=new Uint8Array(bytes,base,family.overview_bytes);overviewSource=await createImageBitmap(new Blob([overviewBytes],{type:'image/png'}));overview=filterImage(overviewSource);const roomBase=base+family.overview_bytes;
   for(const room of family.rooms){const imageBytes=new Uint8Array(bytes,roomBase+room.offset,room.bytes);room.source=await createImageBitmap(new Blob([imageBytes],{type:'image/png'}));room.image=filterImage(room.source);room.label=`${room.scenes.join(' ')} · L${room.floor??'?'}`}
   bounds=mode.value==='network'?{left:0,top:0,width:overview.width,height:overview.height}:worldBounds(family.rooms);const report=family.report;status.textContent=`Scene ${family.scene} · ${family.rooms.length} cut rooms · ${report.links.length} door links · ${new Set(family.rooms.map(r=>r.floor)).size} floors.`;
 }
-async function load(){request?.abort();request=new AbortController();const current=request;map=undefined;family=undefined;overview=undefined;overviewSource=undefined;draw();sceneControls(mode.value==='scene');try{if(mode.value==='scene')await loadScene(current.signal);else await loadFamily(current.signal);if(current!==request)return;history.replaceState(null,'',`/maps/${game}/${scene.value}`);document.querySelector('.refresh').href=`/maps/${game}/${scene.value}`;fit()}catch(error){if(error.name!=='AbortError')status.textContent=`Cannot render map: ${error.message}`}}
+async function load(){request?.abort();request=new AbortController();const current=request;map=undefined;family=undefined;overview=undefined;overviewSource=undefined;draw();sceneControls(mode.value==='scene');try{if(mode.value==='scene')await loadScene(current.signal);else await loadFamily(current.signal);if(current!==request)return;history.replaceState(null,'',`/maps/${game}/${scene.value}`);document.querySelector('.refresh').href=`/maps/${game}/${scene.value}`;fit()}catch(error){if(error.name!=='AbortError')status.textContent=`Cannot render map: ${error.message}`}finally{if(current===request)progress.hidden=true}}
 
 async function selectFilter() {
   const id=filter.value;try{localStorage.setItem('alchemy-map-filter',id)}catch{}

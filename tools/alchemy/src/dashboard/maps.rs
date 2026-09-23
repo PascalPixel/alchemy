@@ -1,21 +1,23 @@
 //! Live field layers from the maintained scene index and verified local ROM.
 mod client;
 mod filter;
-use super::{document, http, root, Response};
+use super::{chrome, http, root, Response};
 use crate::coverage::boxtree::esc;
 use serde_json::Value;
 use std::sync::Mutex;
 
-static FAMILY_CACHE: Mutex<Vec<(String, Vec<u8>)>> = Mutex::new(Vec::new());
+/// The last few assembled room families, dropped when a watched input changes.
+static FAMILY_CACHE: Mutex<Vec<(String, u64, Vec<u8>)>> = Mutex::new(Vec::new());
 
 fn family(game: &str, scene: usize) -> Result<Vec<u8>, String> {
     let key = format!("{game}:{scene}");
+    let generation = super::cache::generation();
     if let Some(bytes) = FAMILY_CACHE
         .lock()
         .unwrap_or_else(|error| error.into_inner())
         .iter()
-        .find(|(cached, _)| cached == &key)
-        .map(|(_, bytes)| bytes.clone())
+        .find(|(cached, made, _)| cached == &key && *made == generation)
+        .map(|(_, _, bytes)| bytes.clone())
     {
         return Ok(bytes);
     }
@@ -23,7 +25,8 @@ fn family(game: &str, scene: usize) -> Result<Vec<u8>, String> {
     let mut cache = FAMILY_CACHE
         .lock()
         .unwrap_or_else(|error| error.into_inner());
-    cache.push((key, bytes.clone()));
+    cache.retain(|(cached, made, _)| cached != &key && *made == generation);
+    cache.push((key, generation, bytes.clone()));
     if cache.len() > 4 {
         cache.remove(0);
     }
@@ -136,11 +139,21 @@ pub(super) fn response(path: &str) -> Option<Response> {
         .iter()
         .map(|p| format!("<option value=\"{}\">{}</option>", p.id, esc(p.label)))
         .collect::<String>();
-    Some(document(
+    let pressed = |id: &str| {
+        if id == game {
+            " aria-pressed=\"true\""
+        } else {
+            ""
+        }
+    };
+    Some(chrome::page(
         path,
         &format!(
-            r#"<main class="map-live" data-game="{game}"><header><span>{title} · Live map viewer</span><a class="refresh" href="{path}">Reload data</a></header><section class="map-tools"><a href="/maps/tbs">TBS</a><a href="/maps/tla">TLA</a><label>View <select id="mode"><option value="network">Connected rooms</option><option value="world">Stacked floors</option><option value="scene">Scene layers</option></select></label><label>Scene <select id="scene">{options}</select></label><button id="fit">Fit</button><button id="actual">1×</button><button id="smaller" aria-label="Zoom out">−</button><button id="larger" aria-label="Zoom in">+</button><label title="Measured screen colours from the Handheld Color Space Project">Filter <select id="filter"><option value="">None</option>{filters}</select></label><label class="scene-control"><input id="grid" type="checkbox">16px grid</label><label class="scene-control">Palette <select id="palette"><option value="-1">Loaded palettes</option></select></label><span class="scene-control" id="layers"></span></section><p id="map-status" role="status">Assembling rooms from the current ROM…</p><div class="map-stage"><canvas id="map" tabindex="0" aria-label="Interactive map: drag to pan; wheel or plus/minus to zoom; zero to fit"></canvas></div><footer class="map-inspector" id="inspect">Local verified ROM · decoded and assembled live · no saved map images.</footer></main><script type="module" src="/maps/client.js"></script>"#
+            r#"<main class="map-live" data-game="{game}" aria-label="{title} maps"><div class="toolbar"><a class="button" href="/maps/tbs"{}>The Broken Seal</a><a class="button" href="/maps/tla"{}>The Lost Age</a><span class="separator"></span><label>View <select id="mode"><option value="network">Connected rooms</option><option value="world">Stacked floors</option><option value="scene">Scene layers</option></select></label><label>Scene <select id="scene">{options}</select></label><span class="separator"></span><button id="fit">Fit</button><button id="actual">1×</button><button id="smaller" aria-label="Zoom out">−</button><button id="larger" aria-label="Zoom in">+</button><span class="separator"></span><label title="Measured screen colours from the Handheld Color Space Project">Filter <select id="filter"><option value="">None</option>{filters}</select></label><label class="scene-control"><input id="grid" type="checkbox">Grid</label><label class="scene-control">Palette <select id="palette"><option value="-1">Loaded palettes</option></select></label><span class="scene-control" id="layers"></span><a class="button refresh" href="{path}">Reload</a></div><div class="map-stage well"><canvas id="map" tabindex="0" aria-label="Interactive map: drag to pan; wheel or plus/minus to zoom; zero to fit"></canvas></div><div class="map-status"><span id="map-progress" class="progress busy" role="progressbar" aria-label="Map loading"><span></span></span><span id="map-status" role="status">Assembling rooms…</span><span class="map-inspector" id="inspect"></span></div></main><script type="module" src="/maps/client.js"></script>"#,
+            pressed("tbs"),
+            pressed("tla"),
         ),
+        "Decoded and assembled live from the local verified ROM",
     ))
 }
 

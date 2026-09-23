@@ -415,13 +415,16 @@ pub(crate) fn available(tree: &SourceTree, target: &str) -> Option<(Value, bool)
         return None;
     }
     let current = doc["inputs"].as_object()?.iter().all(|(path, digest)| {
-        tree.read(path).is_some_and(|text| {
-            digest
-                .as_str()
-                .is_some_and(|expected| sha256::hex(text.as_bytes()) == expected)
-        })
+        digest
+            .as_str()
+            .is_some_and(|expected| input_current(tree, path, expected))
     });
     Some((doc, current))
+}
+/// Whether one recorded index input still has the digest the index names.
+pub(crate) fn input_current(tree: &SourceTree, path: &str, digest: &str) -> bool {
+    tree.read(path)
+        .is_some_and(|text| sha256::hex(text.as_bytes()) == digest)
 }
 pub(crate) fn current(tree: &SourceTree, target: &str) -> Option<Value> {
     available(tree, target).and_then(|(doc, current)| current.then_some(doc))

@@ -4,10 +4,9 @@ Alchemy reconstructs Golden Sun: **The Broken Seal (TBS)** and **The Lost Age
 (TLA)** as readable C and editable assets that rebuild the shipped games byte
 for byte. Japanese releases are the source editions; localizations are measured
 differences. Build IDs use `tbs` and `tla`; the physical roots are
-`games/THE BROKEN SEAL` and `games/THE LOST AGE`. Both English editions have
-a full ROM build, but only TBS English's is byte-identical, so only it gates
-production. Twelve successful compilation checks do not mean twelve rebuilt
-ROMs. Outside contributions open at 100%.
+`games/THE BROKEN SEAL` and `games/THE LOST AGE`. Both English editions rebuild
+byte for byte and gate production; the other ten editions compile but do not
+yet rebuild. Outside contributions open at 100%.
 
 Read this file in full. It is the **only working guide**, including priorities,
 recovery methods, constraints and tooling. `README.md` introduces the project
@@ -25,87 +24,151 @@ publicly. There are no topic documents or separate task lists.
 Evidence can correct a reconstruction rule, never waive the publication rule.
 A refusing tool or failed gate names a problem to fix, not a route around it.
 
+## Where we stand and the next 25%
+
+On 2026-09-23 (`6a646bab8`) both games score from byte-identical full builds and
+audited executable counts. `make progress` and `alchemy check progress --json
+[--target tla-en]` are the only sources of these numbers; commit prefixes are
+rounded and never measure progress.
+
+| Game | DONE bytes | Executable bytes | DONE | Exact C | Permanent assembly |
+| --- | --- | --- | --- | --- | --- |
+| ☀️ TBS | 768,710 | 1,375,934 | 55.87% | 703,174 | 65,536 |
+| ⚓️ TLA | 42,186 | 1,975,640 | 2.14% | 9,458 | 32,728 |
+
+The next 25 points need **343,984 new DONE bytes in TBS** (to 80.87%) and
+**493,910 in TLA** (to 27.14%). The week to 2026-09-23 added 38,104 bytes of
+exact TBS C while most effort went to measurement, compression and the TLA full
+build; 2026-09-10 added 39,574 in 11 hours. Those foundations are now in place,
+so effort goes back to C:
+
+1. **One shared engine, two games.** TLA reuses most of TBS's engine. Every
+   exact TBS module whose TLA twin compiles exact under the TLA route counts in
+   both games. First measure how much exact TBS C has a relocation-masked TLA
+   twin (`alchemy inspect OWNER --siblings`, `alchemy check siblings`), then
+   move proven pairs into `games/COMMON` by module, largest first.
+2. **Largest unresolved functions**, by the recovery loop below. TBS holds
+   100,650 bytes of complete nonexact drafts; finish and tighten them by shared
+   cause before drafting new owners.
+3. **Credit only evidence.** Permanent-assembly credit is for proven library or
+   handwritten code; unmatched assembly is debt, not DONE.
+
+Measure every batch in new verified bytes per hour for each game. Anything that
+does not add exact C or evidenced assembly to one of the two counts is overhead
+and needs a reason.
+
 ## AI cheating
 
 An agent cheats when it records the expected answer or changes the test instead
 of reconstructing the mechanism. Byte equality alone cannot distinguish those
 approaches. A smaller exception file, a clever name, or a green gate does not
-make an answer table an implementation.
+make an answer table an implementation. Every cheat below was found in this
+repository and cost real credit when it was removed; percentages reported
+before each removal were not real.
 
-Confirmed examples include the binary COMPRESSION.TOKENS table, hash-selected
-recipes in GRAPHICS/COMMON/COMPRESSION.JSON, and the former explicit compression
-token lists under TLA WORLD_MAP.JSON's `chunks`. Splitting saved encoding choices
-among short JSON arrays does not make them editable map source. Audit these by
-their readers and writers, not just file extension or individual array length.
-The publication gate rejects known JSON compression token arrays, packed-table
-references, nonempty predictor exceptions and captured trailing padding at any
-nesting depth.
-Input-derived compression settings remain valid. This check covers the known
-recipe schemas; it does not certify that arbitrary differently encoded data is
-honest. The larger source-and-consumer audit still applies.
+| Cheat | What it looked like | Found and removed |
+| --- | --- | --- |
+| Broken build | Claimed credit from a build that did not pass | 2026-08-17 `3cec47862`: 27% was 20%, 103,548 bytes withdrawn |
+| Compiler flag routes | Per-file or per-function switch combinations, real or invented, picked because they matched | 2026-09-04 `579b71488`: every per-file route removed, 33,720 bytes withdrawn |
+| Scheduling tricks in C | `volatile` ordinary RAM, `do { } while (0)` barriers, dummy or duplicate stores, statement wrappers | 2026-09-17 and 2026-09-21: spelled out or withdrawn to retained assembly |
+| Unsupported assembly credit | Retained code counted as permanent without library or handwritten proof | 2026-09-21: about 30 KB withdrawn |
+| Compression answers | Token lists, hash-selected recipes, predictor exceptions, copied padding, the COMPRESSION.TOKENS table | 8,728 token lists on 2026-09-16, 90 on 2026-09-23; the rest are frozen below |
 
-For cleanup, Pascal explicitly permits existing compression debt at commit
-`d08ee3a28fc92afe15c6215d0997a05659395f1c`. The publication gate admits only
-unchanged answers at the same file and JSON position, and the identical
-COMPRESSION.TOKENS file. It rejects new, changed or relocated answers and fails
-closed if the checkpoint is unavailable. Removing answers or replacing them
-with input-derived settings is allowed. This temporary exception grants no
-recovery credit; remove it and the legacy readers when the encoder and packer
-are recovered. Do not compact, expand or disguise the retained debt.
+Never do these, however a candidate is disguised:
 
-**Temporary sync exception (Pascal, 2026-09-22).** Pascal has explicitly
-authorized retaining the frozen compression answers while this staged wave is
-synced to `origin`. This is an administrative exception, not recovered source:
-it may only preserve records already admitted by the checkpoint above, earns no
-DONE or exact-C credit, and must remain identifiable by that checkpoint and the
-publication-gate reason `stored compression decisions or padding`. Remove this
-paragraph's exception, the checkpoint allowlist, and every legacy reader as one
-change once the input-derived encoder and packer reproduce the complete TBS and
-TLA asset builds (including overlay body bytes, stream padding, and shared
-arena/buffer lifetime). A later exception needs Pascal's explicit authorization
-and a new dated marker; it must never be inferred from a failing build.
-
-**Build-machine facts (Pascal, 2026-09-22).** Bytes that only Camelot's build
-machine knew, such as heap or C-library addresses left in the packer's stream
-alignment, may be recorded as observed host facts in the reference machine
-definition (see [The original machine](#the-original-machine)), each with the
-bytes it was observed from, what else it predicts, and no credit. The replay
-derives every byte from those facts. Nothing the machine's documented behaviour
-derives may be recorded, and nothing else may be recorded this way.
-
-**Observed compressor settings (Pascal, 2026-09-23).** The general-LZ
-compressor's window (4,123 bytes), read-ahead (485 bytes, a 4,608-byte ring)
-and maximum copy distance (4,126) are observed settings of the reference
-machine, recorded in each game's `machine.json` with the streams and positions
-that bound them and no credit. The data bound them (window exactly 4,123,
-read-ahead 389–509, maximum distance 4,125–4,126) but do not derive them. So
-is the palette-LZ read-ahead (Pascal delegated the decision, 2026-09-23): 272
-bytes recorded, 239–403 bounded, no value in that range singled out. Each
-setting serves only its own codec. Recording any further observed setting needs
-Pascal's explicit authorization.
-
-- Do not add or move compression answers under this exception. Do not replay
-  tokens, retain new per-resource overrides, or copy unexplained padding to make
-  a compressor match. Retire `.lz.json` plans by recovering the encoder and
-  packer. Moving their contents into manifests, source constants, binary tables,
-  caches or generated files is the same cheat.
-- Do not invent compiler switches, accumulate per-function flag combinations,
-  patch generated output, or select a lucky compilation. The approved compiler
-  contract belongs in [Compiler integrity](#compiler-integrity).
-- Do not special-case an owner, input hash, ROM address, byte offset or expected
+- Record encoder decisions, padding or expected bytes anywhere: manifests,
+  source constants, binary tables, caches or generated files. Retire stored
+  plans by recovering the encoder and packer.
+- Invent compiler switches, accumulate per-function flags or routes, patch
+  generated output, force registers or select a lucky compilation. The approved
+  contract is in [Compiler integrity](#compiler-integrity).
+- Special-case an owner, input hash, ROM address, byte offset or expected
   output to close a mismatch. A general rule needs evidence for its mechanism
   and checks on inputs beyond the example that suggested it.
-- Do not shrink extents, relabel unexplained assembly, restore reference bytes,
-  weaken gates or alter accounting to claim progress. The authority for credit
-  is [Completion](#completion-and-measurement), not the desired percentage.
+- Shrink extents, relabel unexplained assembly, restore reference bytes, weaken
+  gates or alter accounting to claim progress. The authority for credit is
+  [Completion](#completion-and-measurement), not the desired percentage.
 
 Expected output bytes may be an independent test oracle, never an encoder input
 or production fallback. Source-built inputs must determine the output without a
 reference ROM or recorded decisions. Historical buffer reuse, if demonstrated,
 must be reproduced from real build inputs and their order; seeding a buffer with
-captured bytes is not recovery. Existing recipes are unresolved reconstruction
-debt, not permission to add more. Do not claim their removal until the actual
-replacement passes the complete build. Name remaining failures honestly.
+captured bytes is not recovery. The publication gate rejects known JSON
+compression token arrays, packed-table references, nonempty predictor exceptions
+and captured trailing padding at any nesting depth; it covers the known recipe
+schemas, not arbitrary disguised data, so audit stored material by its readers
+and writers. Name remaining failures honestly.
+
+### Exceptions Pascal has granted
+
+Only Pascal grants an exception, each with a dated marker here. None earns
+exact-C or DONE credit, and none may be inferred from a failing build or
+extended to new material without a new dated authorization.
+
+- **Frozen compression answers (Pascal, 2026-09-22).** The answers present at
+  commit `d08ee3a28fc92afe15c6215d0997a05659395f1c` stay: the 777 recipe
+  references and the identical COMPRESSION.TOKENS file. The publication gate
+  admits only unchanged answers at the same file and JSON position, rejects new,
+  changed or relocated ones, fails closed without the checkpoint, and reports
+  them as `stored compression decisions or padding`. Removing answers or
+  replacing them with input-derived settings is always allowed; do not compact,
+  expand or disguise them.
+- **Stored TLA streams (Pascal, 2026-09-23).** So that both games score on the
+  same terms, TLA holds the streams its compressor does not yet reproduce the
+  way TBS holds its frozen answers: six private raw `DATA.BIN` regions restored
+  from the registered ROM, never committed. They are resource 017 (0x0868a400,
+  34,552 bytes) and the field-map resources 276, 3cc–3ce, 4b3–4b5, 2ef and 57b
+  (40,048 bytes in five ranges). No recipe or token record is added.
+- Retire both of the above, the checkpoint allowlist and every legacy reader as
+  one change once the input-derived encoder and packer reproduce the complete
+  TBS and TLA asset builds, including stream padding and shared buffer lifetime.
+- **Build-machine facts (Pascal, 2026-09-22).** Bytes that only Camelot's build
+  machine knew, such as heap or C-library addresses left in the packer's stream
+  alignment, may be recorded as observed host facts in the reference machine
+  definition (see [The original machine](#the-original-machine)), each with the
+  bytes it was observed from, what else it predicts, and no credit. The replay
+  derives every byte from those facts. Nothing the machine's documented
+  behaviour derives may be recorded, and nothing else may be recorded this way.
+- **Observed compressor settings (Pascal, 2026-09-23).** General LZ's window
+  (4,123 bytes, bounded exactly), read-ahead (485, bounded 389–509) and maximum
+  copy distance (4,126, bounded 4,125–4,126), and palette LZ's read-ahead (272,
+  bounded 239–403; Pascal delegated that decision) are recorded in each game's
+  `machine.json` with the streams that bound them. Each serves only its codec.
+  Recording any further setting needs Pascal's explicit authorization.
+- **Compiler and assembly exceptions** are listed where they apply: TLA's
+  `-mgs2` lowering and the ARM route in [Compiler integrity](#compiler-integrity),
+  `Dma_Set` and the camera macro there too, and overlay veneers in
+  [Assembly credit](#assembly-credit).
+
+## Working without getting stuck
+
+These rules come from what went wrong in September: stalled workflows,
+ninety-odd abandoned branches, broken gates and proofs that went stale.
+
+- **Workflows need Pascal's approval before launch.** Run at most three agents
+  at once so a usage limit cannot kill a whole wave. Each agent commits a
+  salvage commit before it stops. Largest-function workflows have no adversarial
+  verify stage: the lead verifies every adoption by rebuilding.
+- **One integration branch.** Agents work on short-lived branches off it; the
+  lead merges finished tracks into it, verifies, and lands it on `main` at least
+  once a day as one squash commit that passes `make verify`. Delete a branch as
+  soon as its work lands; a branch older than a day with no plan to land is
+  salvaged into `recon/` or deleted. `main` is the only long-lived branch.
+- **Worktrees live only while their agent runs.** Nested worktrees carry their
+  own AGENTS.md and README.md and fail the document gate; remove every one before
+  running gates on the main checkout.
+- **Timebox research.** After three source attempts per function, or two
+  bounded searches without a new structural fact, park it with a concrete
+  residual and take the next largest owner. Research that cannot raise DONE,
+  such as the compressor tails below, never blocks the score or a commit.
+- **Refresh proofs in order.** Any tooling or input change invalidates both
+  games' proofs. Before committing: `./alchemy build assets --extract-sources
+  roms/<rom>.gba --target <target>` for each game whose private inputs moved,
+  then for each game `build full`, `coverage audit --target <target>
+  --inventory`, `build full` again, then `make coverage` and the commit hook.
+- **Report bytes, not prefixes.** Close every batch with starting and ending
+  exact-C and DONE bytes per game, accepted owners, parked causes and the checks
+  actually run.
 
 ## One home for knowledge
 
@@ -473,8 +536,8 @@ becomes authoritative when independently verified (Pascal, 2026-09-22).
 digest; a changed output returns to `?` until re-verified. The committed
 `metrics/executable.json` ledgers are diagnostic references only. Each game's
 main image counts once a byte-identical full ROM build of that game proves its
-asset complement. Both English editions have supported full builds, the other
-ten none; TLA's does not yet own every byte, so TLA stays `?`. Every reader
+asset complement; both English editions have byte-identical full builds, the
+other ten none. Every reader
 recomputes the overlay digest, the main complement and that build's proof
 (rebuilt ROM against the registered reference, asset manifest digest, input
 fingerprint) and scores nothing else, so a copied ledger, hand-made file or
@@ -486,9 +549,8 @@ region fails it too. A failed `--inventory` run leaves the inventory pending.
 source, category and credited ranges. A receipt needs the game's authoritative
 inventory and is withheld while that is absent or pending. Each game's
 canonical full build writes its receipt, from its own claimed and assembly
-stages and inventory. TLA's owner check verifies every sourced owner and
-assembles its main listings, maintained assembly and runtime against the ROM
-in its own directory, and writes no receipt. Changed inputs invalidate a
+stages and inventory. TLA's owner check additionally verifies every sourced
+owner against the ROM without writing a receipt. Changed inputs invalidate a
 receipt. Coverage, dashboard, README and prefixes read these same receipts;
 rendering cannot create credit. Current receipts cannot score old refs.
 
@@ -920,9 +982,11 @@ private sheets; `make review-images-check` checks sorted names, dimensions,
 indices and RGBA independently of PNG compression. Deliberate presentation
 changes require visual review before `--update-baseline`. All previews remain
 under stable ignored output directories, never tracked or published. Root
-PROGRESS.svg is the sole public repository-size figure: an 830-wide 9:16
-Spacemonger tree of the files and folders Git tracks, with no ROM-address or
-completion coverage and no embedded game font, image or sound. Private inputs
+PROGRESS.svg is the sole public figure (Pascal, 2026-09-23): a window in the
+dashboard's Golden Sun style holding a gauge per game, bright for exact C and
+pale for evidenced assembly, read from the same verified receipts as the README
+status, above an 830-wide 9:16 Spacemonger tree of the files and folders Git
+tracks. It has no ROM-address coverage and embeds no game font, image or sound. Private inputs
 extracted from a local ROM appear only in the local dashboard (Pascal,
 2026-09-23), so every checkout draws the same figure.
 
@@ -936,6 +1000,23 @@ executable inventory. Current inputs invalidate stale reports. The dashboard
 watches inputs, not its executable: restart after tooling changes with
 `make dashboard-restart`.
 
+The dashboard follows the game's own menu windows (Pascal, 2026-09-23): the
+frame repeats the rings of the window tiles, and one game pixel is two CSS
+pixels, so every text line, border, gap and box is a whole number of them.
+Treemaps keep the PROGRESS.svg palette that `coverage/boxtree.rs` owns. All
+text uses the upright game face; translated messages use the italic one. The
+upright face is the Western menu font (resource 0x13, ink in colour 1, width
+table 0x080370d4); the italic face is the Western 15-row dialogue font; both
+add the Japanese 12-row font for kana, kanji and full-width Latin, which the
+games never slant. Glyphs come from all twelve registered ROMs, Western codes
+as Windows-1252 and Japanese ones through each text layout's character map.
+Background jobs build both faces, the icon strip, ROM-index summaries and the
+status bar's DONE into the disposable `out/dashboard/` cache, and views show
+progress bars while it fills. Faces and icons exist only in that cache and are
+never committed. DONE comes
+only from the verified receipts and executable inventories; anything pending
+shows `?` with its reason.
+
 Music playback is bounded, approximate synthesis, not fidelity proof; missing
 instruments refuse rather than substitute General MIDI. Text compares build PO
 catalogs by physical key. Maps decode from the checksummed ROM through the shared
@@ -943,8 +1024,9 @@ assembler, not saved renders; actors, animation and script scrolling are not
 simulated. Its Filter models measured GBA-family screens from the credited
 Handheld Color Space Project data; it is a viewing aid, not palette evidence.
 Same-origin routes do not expose arbitrary paths. Only Maps uses a
-local browser module; other pages prohibit scripts, remote scripts/fonts are
-never loaded. Labels use fixed 13px system text and addresses stay in details.
+local browser module; other pages prohibit scripts and refresh themselves
+while jobs run; remote scripts and fonts are never loaded. Addresses stay in
+details.
 
 `alchemy build assets --network ROM --target TARGET -o OUTPUT --scenes LIST
 --expand --world` follows exits and assembles rooms until story-dependent exits
@@ -994,7 +1076,7 @@ owners or compiler routes in Psynergy, no aliases exposing an operation in both.
 | `alchemy check` | `publication`, `commit-progress`, `source-tracking`, `owners`, `tla-owners`, `coverage`, `integrate`, `no-asm`, `progress`, `routes` and `siblings`: repository contracts, not portable file operations. `progress` combines the generated executable inventory with the current verified build receipt ([Completion](#completion-and-measurement)); `--json` reports DONE and exact C separately, and `--write-report` writes that same result under `out/`. |
 | `alchemy cross-edition` | Compare reviewed owner correspondence across Golden Sun editions. |
 | `alchemy overlay` | `adopt`, `park`, `audit` and `export`: Golden Sun loader, resource integration and byte-identical retained-source export. |
-| `alchemy dashboard` | Serve Files, ROM coverage, Music, Maps and six-edition Text debugging tabs locally. |
+| `alchemy dashboard` | Serve Files, ROM coverage, Music, Maps and six-edition Text debugging tabs locally from its `out/dashboard` cache. |
 | `alchemy format` | Format native JSON; `--check` gates formatting and uppercase names. |
 
 Retired entry points are rejected, not forwarded. Use Psynergy for `decompile`,
@@ -1087,10 +1169,15 @@ current state; detailed experiments are disposable. Never preserve an old blanke
 
 ### TBS recovery
 
-- Pursue the active percentage goal through the ranked largest unresolved
-  functions and their exact dependencies, using the recovery loop above. Read
-  the current count with `make progress`; no second manually maintained total.
-  Main recovery is required; the remaining overlays alone cannot reach 75%.
+- Pursue the next 25 points (see [Where we stand](#where-we-stand-and-the-next-25))
+  through the ranked largest unresolved functions and their exact dependencies,
+  using the recovery loop above. Main recovery is required; the remaining
+  overlays alone cannot reach 75%.
+- Seven branches hold complete nonexact drafts from the stopped September 23
+  largest-function wave: `wf/close-tbs-main-080ab5e4` (Djinn select),
+  `wf/close-tbs-resource-3bd-020013f8`, `-3c8-02003068`, `-3c9-02002360`,
+  `wf/close-tla-main-0815f16c`, `-08175f74` and `-0817ea58` (summons). Salvage
+  each draft into `recon/` with its current score, then delete the branch.
 - Finish credible complete drafts across coherent modules, then tighten them by
   shared causes. Missing drafts count as uncovered, but audit retired/surviving
   C before claiming a function was never drafted. Discard misleading drafts,
@@ -1138,12 +1225,13 @@ current state; detailed experiments are disposable. Never preserve an old blanke
   0x08197230 and 40 bytes at 0x08013174) as data words until an ARM listing
   writer exists. Sixteen undeciphered tables (33,166 bytes, among them the 18,064
   at 0x081287c4) are private SYSTEM/RESIDUALS.BIN regions until their readers
-  type them. The owner inventory stops at overlay 64d, which has no overlay
-  assembly evidence. The packer replay derives every
-  padding byte, and the fill before the directory starts where resource 012's
-  character data ends (0x086322b2). Not reproduced yet: the nine map-range
-  resources field maps leave unregistered (40,048) and the stream of 017
-  (34,552), so ⚓️ stays `?`.
+  type them. The packer replay derives every padding byte, and the fill before
+  the directory starts where resource 012's character data ends (0x086322b2).
+  The six ranges the compressor does not yet reproduce are stored TLA streams
+  (see [Exceptions](#exceptions-pascal-has-granted)); with them the build is
+  byte-identical and ⚓️ is measured. Seven retained overlay owners (64d
+  02000510 and 020026f4, 64e 02000314–02000510, 650 02000d14) carry uncredited
+  `unclassified_retained_module` evidence in `recon/tla/semantic`.
 - TBS EN and TLA EN support full-ROM builds. Preserve guards on the other ten
   targets until each has complete edition link layouts, source/assembly bindings
   and regional asset manifests and an independently byte-identical full image.
@@ -1174,13 +1262,15 @@ current state; detailed experiments are disposable. Never preserve an old blanke
 - TLA field maps derive through `--derive-index` from every scene and the load
   records no scene selects: 299 containers, 478 tag-2 banks and 203 palettes
   in FIELD, MENU and DEBUG documents with private map binaries and tile sheets.
-  Nine resources stay unregistered with `--leave`. Tag-2 banks 276, 3cc and
-  4b3 and the tagged palette-LZ grids of containers 2ef and 57b are compressor
-  gaps near their input ends. Banks 3cd, 3ce, 4b4 and 4b5 reproduce, but
-  their alignment reads memory banks 3cc and 4b3 last wrote. Bank 311's
+  Nine resources stay out of the derived index with `--leave` and are stored
+  TLA streams instead. Tag-2 banks 276, 3cc and 4b3 and the tagged palette-LZ
+  grids of containers 2ef and 57b are compressor gaps near their input ends.
+  Banks 3cd, 3ce, 4b4 and 4b5 reproduce, but their alignment reads memory banks
+  3cc and 4b3 last wrote. Bank 311's
   alignment, the heap's top chunk size, follows from the recorded heap
-  buffer; 312's and 274's read memory 311 and character resource 26a wrote. The complete build's only failures are resource 198
-  and overlay 64d, which were already unresolved.
+  buffer; 312's and 274's read memory 311 and character resource 26a wrote.
+- The three compressor-tail questions below are timeboxed research. They retire
+  the stored streams and frozen answers when solved but never block DONE.
 - Tag-2 history growth at the input end is not a function of position: every
   bank decodes to 16,384 bytes, yet banks 1b7, 1da and 221 (TBS) and 276, 3cc
   and 4b3 (TLA) copy from beyond 4,123 bytes 157–389 bytes before the end,
@@ -1197,6 +1287,9 @@ current state; detailed experiments are disposable. Never preserve an old blanke
   input continuing into another bank, which map layouts do not predict (221
   grows though 222 follows; 162 and 286 decline before animation banks). That
   is a per-resource fact, not derivable or admissible; find its source first.
+  Load-record slot position and trailing blank tiles do not separate them
+  either; TLA 276 is TBS 1da and behaves identically in both games, which points
+  at a property of the original tileset files.
 - The tagged palette-LZ grid failures (TBS 2ee and 326, TLA 278, 2ef and 57b)
   lie 34–128 bytes before the input end. Three emit a literal and then a copy
   one byte shorter where a copy reaches the end, although English streams take
@@ -1221,6 +1314,14 @@ current state; detailed experiments are disposable. Never preserve an old blanke
   actual readers and byte proofs, not broad AI guesses or copied source trees.
 
 ### Remaining project work
+
+- Land or drop the two remaining tooling branches: `wf/tla-main-holes` (TLA's
+  `bx pc` kernels as ARM listings) and `wf/main-flow` (counting the main image
+  by control flow, possibly superseded). Rebase each on `main`, prove it, land it, delete it.
+- An agscc experiment splitting `-mgs2` constant synthesis after reload
+  (scratch commit `c8450be`, not in the approved bundle) gained two exact TLA
+  owners and lost none among 164 compared. Adopting it needs Pascal's approval
+  of new compiler digests and a full rescore of both games.
 
 - Complete the Alchemy-builds/Psynergy-reads boundary for encoders and source
   repair operations still in Psynergy, updating callers and this tooling index.

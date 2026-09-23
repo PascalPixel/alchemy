@@ -1,8 +1,11 @@
-//! Optional local previews. Only catalogued media are served, never arbitrary paths.
+//! Local music previews. Only catalogued media are served, never arbitrary paths.
 mod music;
-use super::{document, http, root, Response};
+use super::{cache, chrome, http, root, Response};
 use crate::coverage::boxtree::esc;
-use std::path::{Path, PathBuf};
+use std::{
+    path::{Path, PathBuf},
+    sync::Mutex,
+};
 
 fn game(id: &str) -> Option<&'static str> {
     match id {
@@ -49,16 +52,104 @@ fn selected(root: &Path, paths: &[PathBuf], key: &str) -> Option<PathBuf> {
         })
         .cloned()
 }
-fn bytes(path: &Path, mime: &'static str) -> Response {
-    match std::fs::read(path) {
-        Ok(data) => Response::new(200, "OK", Some(mime), "no-store", data),
-        Err(_) => http::not_found(),
+fn is_midi(path: &Path) -> bool {
+    path.extension()
+        .is_some_and(|e| e.eq_ignore_ascii_case("mid"))
+}
+/// The last few rendered previews, dropped whenever a watched input changes.
+static AUDIO: Mutex<Vec<(PathBuf, u64, Result<Vec<u8>, Vec<u8>>)>> = Mutex::new(Vec::new());
+fn audio(root: &Path, title: &str, file: &Path) -> Result<Vec<u8>, Vec<u8>> {
+    let generation = cache::generation();
+    let mut previews = AUDIO.lock().unwrap_or_else(|e| e.into_inner());
+    previews.retain(|(_, made, _)| *made == generation);
+    if let Some((_, _, audio)) = previews.iter().find(|(path, _, _)| path == file) {
+        return audio.clone();
     }
+    let audio = if is_midi(file) {
+        music::render(root, title, file).map_err(String::into_bytes)
+    } else {
+        std::fs::read(file).map_err(|error| error.to_string().into_bytes())
+    };
+    previews.push((file.to_path_buf(), generation, audio.clone()));
+    if previews.len() > 4 {
+        let _ = previews.remove(0);
+    }
+    audio
+}
+fn button(href: &str, label: &str, pressed: bool) -> String {
+    format!(
+        "<a class=\"button\" href=\"{href}\"{}>{label}</a>",
+        if pressed {
+            " aria-pressed=\"true\""
+        } else {
+            ""
+        }
+    )
+}
+fn render(
+    root: &Path,
+    target: &str,
+    title: &str,
+    paths: &[PathBuf],
+    chosen: Option<(&Path, &str)>,
+    repeat: bool,
+) -> (String, String) {
+    let mut html = format!(
+        "<main class=\"music\"><div class=\"toolbar\">{}{}</div><div class=\"split\"><nav class=\"well list\" aria-label=\"Music catalog\">",
+        button("/music/tbs", "The Broken Seal", target == "tbs"),
+        button("/music/tla", "The Lost Age", target == "tla"),
+    );
+    for file in paths {
+        let key = encode(&file.strip_prefix(root).unwrap().to_string_lossy());
+        html.push_str(&format!(
+            "<a href=\"/music/{target}/{key}\"{}>{}</a>",
+            if chosen.is_some_and(|(path, _)| path == file) {
+                " aria-current=\"page\""
+            } else {
+                ""
+            },
+            esc(&file.file_name().unwrap().to_string_lossy())
+        ));
+    }
+    html.push_str("</nav><section class=\"player\">");
+    let note = match chosen {
+        Some((file, key)) => {
+            let name = file.file_name().unwrap().to_string_lossy();
+            let base = format!("/music/{target}/{key}");
+            html.push_str(&format!(
+                "<fieldset class=\"group\"><legend>{}</legend>",
+                esc(&name)
+            ));
+            match audio(root, title, file) {
+                Err(error) => html.push_str(&format!(
+                    "<p class=\"error\" role=\"alert\">Cannot preview: {}</p>",
+                    esc(&String::from_utf8_lossy(&error))
+                )),
+                Ok(_) => html.push_str(&format!(
+                    "<audio controls preload=\"none\"{} src=\"{base}/media\"></audio><div class=\"buttons\">{}</div>",
+                    if repeat { " loop" } else { "" },
+                    button(
+                        &if repeat { base.clone() } else { format!("{base}/repeat") },
+                        "Repeat",
+                        repeat
+                    )
+                )),
+            }
+            html.push_str("</fieldset>");
+            if is_midi(file) {
+                "MIDI · approximate synthesis from recovered instruments · first 60 s"
+            } else {
+                "Sample · played as stored"
+            }
+        }
+        None => "Select a sequence or sample",
+    };
+    html.push_str("</section></div></main>");
+    (html, format!("{} · {} files", note, paths.len()))
 }
 pub(super) fn response(path: &str) -> Option<Response> {
     let parts = path.trim_start_matches('/').split('/').collect::<Vec<_>>();
-    let view = *parts.first()?;
-    if view != "music" {
+    if parts.first() != Some(&"music") {
         return None;
     }
     let target = parts.get(1).copied().unwrap_or("tbs");
@@ -77,99 +168,69 @@ pub(super) fn response(path: &str) -> Option<Response> {
     }
     if parts.get(3) == Some(&"media") {
         let file = chosen.as_ref()?;
-        return Some(
-            if file
-                .extension()
-                .is_some_and(|e| e.eq_ignore_ascii_case("wav"))
-            {
-                bytes(file, "audio/wav")
-            } else {
-                match music::render(&root, game(target).unwrap(), file) {
-                    Ok(data) => Response::new(200, "OK", Some("audio/wav"), "no-store", data),
-                    Err(error) => Response::new(
-                        422,
-                        "Unprocessable Content",
-                        Some("text/plain; charset=utf-8"),
-                        "no-store",
-                        error,
-                    ),
-                }
-            },
-        );
+        return Some(match audio(&root, title, file) {
+            Ok(data) => Response::new(200, "OK", Some("audio/wav"), "no-store", data),
+            Err(error) => Response::new(
+                422,
+                "Unprocessable Content",
+                Some("text/plain; charset=utf-8"),
+                "no-store",
+                error,
+            ),
+        });
     }
     let repeat = parts.get(3) == Some(&"repeat");
     if parts.len() == 4 && !repeat {
         return Some(http::not_found());
     }
-    let mut html=format!("<main><header><span>{title} · {} debugging</span><a class=\"refresh\" href=\"{path}\">Refresh</a></header><div class=\"debug-body\"><section class=\"debug-list\" aria-label=\"{} catalog\"><a href=\"/{view}/tbs\">The Broken Seal</a><a href=\"/{view}/tla\">The Lost Age</a><hr>",if view=="music" {"Music"} else {"Map"},view);
-    for file in &paths {
-        let key = encode(&file.strip_prefix(&root).unwrap().to_string_lossy());
-        html.push_str(&format!(
-            "<a href=\"/{view}/{target}/{key}\"{}>{}</a>",
-            if chosen.as_ref() == Some(file) {
-                " aria-current=\"page\""
-            } else {
-                ""
-            },
-            esc(&file.file_name().unwrap().to_string_lossy())
-        ));
-    }
-    html.push_str("</section><section class=\"debug-detail\">");
-    if let Some(file) = chosen {
-        let base = format!("/{view}/{target}/{}", key.unwrap());
-        let src = format!("{base}/media");
-        html.push_str(&format!(
-            "<h2>{}</h2>",
-            esc(&file.file_name().unwrap().to_string_lossy())
-        ));
-        html.push_str("<p>Local audio preview. MIDI uses recovered instruments and local ROM samples where needed, but envelopes, modulation and mixing are approximate—not the in-game engine. Preview is limited to 60 seconds. Samples play directly.</p>");
-        let error = if file
-            .extension()
-            .is_some_and(|e| e.eq_ignore_ascii_case("mid"))
-        {
-            music::render(&root, title, &file).err()
-        } else {
-            None
-        };
-        if let Some(error) = error {
-            html.push_str(&format!(
-                "<p role=\"alert\">Cannot preview this sequence: {}</p>",
-                esc(&error)
-            ));
-        } else {
-            html.push_str(&format!("<audio controls preload=\"none\"{} src=\"{src}\">Your browser does not support audio playback.</audio><p><a href=\"{}\">Repeat: {}</a> · Use the player to play, pause and seek. No autoplay.</p>",if repeat {" loop"}else{""},if repeat {base.clone()}else{format!("{base}/repeat")},if repeat {"on"}else{"off"}));
-        }
-    } else if paths.is_empty() {
-        html.push_str("<p>No recovered sequence or sample files are currently present for this game. No substitute soundtrack is used.</p>");
-    } else {
-        html.push_str(&format!("<p>Select {} from the list. {} local files.</p><p>Previews stay private; they do not change DONE.</p>",if view=="music" {"a sequence or sample"}else{"a map"},paths.len()));
-    }
-    html.push_str("</section></div></main>");
-    Some(document(path, &html))
+    let (html, note) = cache::view::<()>(path, || {
+        Ok(render(
+            &root,
+            target,
+            title,
+            &paths,
+            chosen.as_deref().zip(key),
+            repeat,
+        ))
+    })
+    .ok()?;
+    Some(chrome::page(path, &html, &note))
 }
 
-#[test]
-fn catalog_selection_cannot_escape_allowlist() {
-    let tmp = tempfile::tempdir().unwrap();
-    let root = tmp.path();
-    let dir = root.join("games/THE BROKEN SEAL/SOUND/SAMPLE");
-    std::fs::create_dir_all(&dir).unwrap();
-    std::fs::write(dir.join("WAVE.WAV"), b"fixture").unwrap();
-    std::fs::write(dir.join("PRIVATE.JSON"), b"private").unwrap();
-    let list = catalog(root, "tbs");
-    assert_eq!(list.len(), 1);
-    assert!(selected(
-        root,
-        &list,
-        &encode("games/THE BROKEN SEAL/SOUND/SAMPLE/WAVE.WAV")
-    )
-    .is_some());
-    assert!(selected(
-        root,
-        &list,
-        &encode("games/THE BROKEN SEAL/SOUND/SAMPLE/PRIVATE.JSON")
-    )
-    .is_none());
-    assert!(selected(root, &list, &encode("../../roms/tbs-en.gba")).is_none());
-    assert!(game("../tbs").is_none());
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn catalog_selection_cannot_escape_allowlist() {
+        let tmp = tempfile::tempdir().unwrap();
+        let root = tmp.path();
+        let dir = root.join("games/THE BROKEN SEAL/SOUND/SAMPLE");
+        std::fs::create_dir_all(&dir).unwrap();
+        std::fs::write(dir.join("WAVE.WAV"), b"fixture").unwrap();
+        std::fs::write(dir.join("PRIVATE.JSON"), b"private").unwrap();
+        let list = catalog(root, "tbs");
+        assert_eq!(list.len(), 1);
+        let key = encode("games/THE BROKEN SEAL/SOUND/SAMPLE/WAVE.WAV");
+        assert!(selected(root, &list, &key).is_some());
+        assert!(selected(
+            root,
+            &list,
+            &encode("games/THE BROKEN SEAL/SOUND/SAMPLE/PRIVATE.JSON")
+        )
+        .is_none());
+        assert!(selected(root, &list, &encode("../../roms/tbs-en.gba")).is_none());
+        assert!(game("../tbs").is_none());
+        let (html, note) = render(
+            root,
+            "tbs",
+            "THE BROKEN SEAL",
+            &list,
+            Some((&list[0], &key)),
+            true,
+        );
+        assert!(html.contains("<audio controls preload=\"none\" loop"));
+        assert!(html.contains("aria-pressed=\"true\">Repeat</a>"));
+        assert!(!html.contains("autoplay"));
+        assert_eq!(note, "Sample · played as stored · 1 files");
+    }
 }

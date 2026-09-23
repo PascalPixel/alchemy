@@ -76293,7 +76293,7 @@
         {
           "address": "0x0808df1c",
           "extent": 348,
-          "state": "retained-assembly"
+          "state": "exact-c"
         },
         {
           "address": "0x0808e23c",
@@ -76345,7 +76345,7 @@
         {
           "address": "0x08095dd0",
           "extent": 460,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ],
       "overlay": null

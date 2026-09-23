@@ -1691,7 +1691,8 @@
       "name": "BattleEffect_UpdatePhasedRadialParticle"
     },
     "main:08095dd0": {
-      "name": "BattleEffect_RunPhasedRadialParticleSequence"
+      "name": "BattleEffect_RunPhasedRadialParticleSequence",
+      "source": "BATTLE/EFFECT/PHASED_RADIAL_SEQUENCE.C"
     },
     "main:080e0c84": {
       "name": "BattleFx_RunParticleReveal",

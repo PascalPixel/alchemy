@@ -74005,11 +74005,6 @@
           "address": "0x08095c08",
           "extent": 456,
           "state": "retained-assembly"
-        },
-        {
-          "address": "0x08095dd0",
-          "extent": 460,
-          "state": "retained-assembly"
         }
       ],
       "overlay": null

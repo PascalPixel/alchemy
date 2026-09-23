@@ -252,9 +252,6 @@
 #define BattleRuntime_ScheduleShoulderButtonModeUpdate_1() Call0(Func_02007164)
 #define RECORD_COORD_X_OFFSET 10
 #define RECORD_COORD_Y_OFFSET 18
-#define FieldScene_SetActor13Value41 Func_020009dc
-#define FieldScene_RunBranchingCutsceneSequence Func_02002c44
-#define FieldScene_RunFlagGatedActorEightDialogue Func_02003518
 #define RuntimeSelectorTable Data_02000240
 #define PrimaryRuntimeSelector Value_00000093
 #define SecondaryRuntimeSelector Value_00000095
@@ -263,30 +260,7 @@
 #define SecondaryOverlayData Data_0200c270
 #define TertiaryOverlayData Data_0200c318
 #define DefaultOverlayData Data_0200c198
-#define SceneData_GetTablebf70 Func_020009ec
-#define SceneData_ReturnZero Func_020009f4
-#define SceneData_GetTablec138 Func_020009f8
-#define SceneData_SelectDataByRuntimeSelector Func_02000a00
-#define SceneData_SelectTableBySceneId Func_02003598
-#define SceneState_SetByte1004AndRunWhenIdle Func_02000abc
-#define FieldScene_RunIndexedStep0 Func_02000ae8
-#define FieldScene_RunIndexedStep1 Func_02000af4
-#define FieldScene_RunIndexedStep2 Func_02000b00
-#define FieldScene_RunIndexedStep3 Func_02000b0c
-#define FieldScene_RunIndexedStep4 Func_02000b18
-#define FieldScene_RunIndexedStep5 Func_02000b24
-#define FieldScene_RunTwoCallSequence Func_02000d48
-#define FieldScene_RunGuardedSixWordStep Func_02000eac
-#define FieldScene_RunTwoArmSequenceWithValue217f Func_020034bc
-#define SceneEffect_SetupBlendByFlag201 Func_02000b30
-#define SceneState_RunFlag200SetupAndPlaceActors16To20 Func_02000c2c
-#define SceneState_MarkObjectWhenActorElevenAhead Func_02000d58
-#define FieldScene_RunActorElevenCellSetup Func_02000d90
-#define SceneActor_SetPositionFromTransformedBase Func_02000f10
 #define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
-#define SceneActor_PlaceFiveActorsInRow Func_02000f6c
-#define SceneEffect_UpdateStateMachine Func_02000f94
-#define OverlayObject_UpdateThreeStateMotion Func_02003a30
 
 #include "STAGED_ACTOR.H"
 #include "SELECT_OVERLAY_DATA_BY_RUNTIME_SELECTOR.H"

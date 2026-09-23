@@ -1051,10 +1051,6 @@ static __inline__ void Call1(void (*f)(), s32 a0)
 
 #include "TYPES.H"
 
-#define SceneData_SelectTablec614ByState Func_02000030
-#define SceneData_GetTableca7c Func_02000060
-#define SceneData_GetTableca8c Func_02000068
-#define SceneData_SelectDataBySelectorAndFlags Func_02000070
 extern u8 Value_0000008b;
 extern u8 Data_0200ca1c[];
 extern u8 Data_0200c614[];
@@ -1072,10 +1068,6 @@ s32 Func_0200443c(s32);
 
 #include "TYPES.H"
 
-#define FieldScene_RunBranchedSteps1FF1 Func_020000c8
-#define FieldScene_RunBranchedSteps2006 Func_02000348
-#define FieldScene_RunStepWithValue29e0 Func_0200400c
-#define SceneData_SelectTableD004ByStateAndFlags Func_02004034
 extern u8 Value_00001ff1;
 extern u8 Value_00002006;
 extern u8 Value_00000105;
@@ -1117,8 +1109,6 @@ s32 Func_0200841e(s32);
 
 #include "TYPES.H"
 
-#define RunOpeningAuxiliarySequence Func_02000108
-#define RunMiddleAuxiliarySequence Func_020003b0
 extern u8 Value_00001ff8;
 extern u8 Data_0200c570[];
 
@@ -1490,7 +1480,6 @@ static __inline__ void Call3_scene_effect_sequence_head(void (*f)(), s32 a0, s32
 
 #include "TYPES.H"
 
-#define FieldScene_RunScene3b8SequenceB Func_02000674
 
 extern u8 Value_00002280[];
 void Func_020049da();
@@ -1630,7 +1619,6 @@ void Func_02004f20();
 
 
 
-#define FieldScene_RunScene3b8SequenceA Func_02000af8
 extern u8 Value_00001ffb[];
 s32 Func_02004eda();
 void Func_02004ef2();
@@ -1768,11 +1756,6 @@ void Func_0200542e();
 
 #include "TYPES.H"
 
-#define FieldScene_RunScene3b8_02000264 Func_02000264
-#define FieldScene_RunScene3b8_0200049c Func_0200049c
-#define SceneDialogue_RunChoiceSequence22ab Func_02000564
-#define SceneDialogue_RunChoiceSequence2352 Func_020005a4
-#define FieldScene_RunScene3b8_02003d40 Func_02003d40
 extern u8 Data_00002241[];
 extern u8 Value_000022ab;
 extern u8 Value_00002352;
@@ -1896,8 +1879,6 @@ static __inline__ void Call3_02003d40(void (*f)(), s32 a0, s32 a1, s32 a2)
 
 #include "TYPES.H"
 
-#define SceneDialogue_ShowMessage22a8Branch Func_02000524
-#define SceneDialogue_ShowMessage22a3Branch Func_02003fc4
 extern u8 Value_000022a8;
 extern u8 Value_000022a3;
 
@@ -1917,7 +1898,6 @@ void Func_020084a8(s32, s32);
 
 #include "TYPES.H"
 
-#define SceneDialogue_ShowLine2239Or223A Func_02003f84
 
 s32 Func_0200832a();
 void Func_0200833c();

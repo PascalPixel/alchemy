@@ -2,37 +2,7 @@
 #include "FIELD_EFFECT.H"
 #define OverlayObject_IntegrateVelocities Effect_Move
 
-#define OverlayObject_CreateAndInitialize Func_020009f4
-#define SceneEffect_SpawnNineRadialEffects Func_020011e0
-#define OverlayObject_PrepareSpawnedObjectMode4 Func_02000a4c
 #define OverlayObject_IntegrateVelocities Func_02000ab0
-#define OverlayObject_SetYAboveLinkedActor Func_02001a98
-#define SceneState_ApplyArgMode0AndReturnZero Func_02000cc0
-#define SceneState_SwapSlotPairByRank Func_02000f10
-#define SceneState_RunRect73x38Step Func_02001318
-#define SceneState_ApplyTwoRectsAndRunThree Func_020013e0
-#define SceneActor_MirrorFlag201IntoSlot14 Func_02001458
-#define SceneState_ApplyFlag970 Func_02001500
-#define SceneState_RunUnlessActorZeroAt30_52 Func_02001530
-#define SceneState_SetValue202ThenCall Func_02001924
-#define SceneActor_ConfigureSlot21AndSetFlag201 Func_02001938
-#define SceneState_SetSlot17And18Selectors Func_02001f70
-#define SceneState_SetValue268bInScene Func_02002330
-#define SceneActor_PassRaisedPointOfActorZero Func_02000dc8
-#define SceneActor_PassActorZeroOffsetPoint Func_02000df4
-#define SceneActor_CopyActor8PositionWhenAtRow10 Func_02000fe8
-#define SceneActor_ApplyPointLeftOfActorZero Func_02001348
-#define SceneActor_PassPointTwoRightOfActorZero Func_020013b4
-#define SceneActor_LandOnHighestPlatform Func_02001c2c
-#define SceneActor_SetFlagBitByRelativeDepth Func_02000ec8
-#define SceneData_SelectDataByRuntimeSelector Func_02001270
-#define SceneData_SelectTableB81cByWord224 Func_020012b0
-#define SceneData_GetTableB85c Func_020012d8
-#define SceneData_SelectAndApplyTableBySceneId Func_020012e0
-#define SceneData_SelectTableByWord224 Func_02002370
-#define FieldScene_RunLayoutAt93By30 Func_02001374
-#define FieldScene_RunLayoutAt83By45 Func_02002300
-#define FieldScene_PlaceAndPinSlots10And11 Func_02002410
 #define EffectRuntime_SetCurrentPosition_1(a0, a1, a2) Call3(Func_020051a2, a0, a1, a2)
 #define EffectRuntime_SetCurrentPosition_2(a0, a1, a2) Call3(Func_020051ac, a0, a1, a2)
 #define ObjectMotion_SetHorizontalPositionWithTerrain_1(a0, a1, a2) Call3(Func_02005162, a0, a1, a2)
@@ -41,32 +11,6 @@
 #define EffectRuntime_SetCurrentPosition_2_02002040(a0, a1, a2) Call3(Func_02005218, a0, a1, a2)
 #define ObjectMotion_SetHorizontalPositionWithTerrain_1_02002040(a0, a1, a2) Call3(Func_020051ca, a0, a1, a2)
 #define ObjectMotion_SetHorizontalPositionWithTerrain_2_02002040(a0, a1, a2) Call3(Func_020051d4, a0, a1, a2)
-#define FieldScene_RunStepWith6 Func_020013a4
-#define FieldScene_RunSupplementalSequenceTwo Func_02001550
-#define FieldScene_RunSupplementalSequenceOne Func_02001744
-#define FieldScene_SetActor19TableB3B8 Func_02001910
-#define FieldScene_RunMiddleSequence Func_02001d04
-#define FieldScene_RunLateSequenceHead Func_02001fdc
-#define FieldScene_RunLateSequenceSecond Func_02002040
-#define FieldScene_RunScene3c4SequenceA Func_020020a4
-#define FieldScene_RunScriptedStep953 Func_02002354
-#define FieldScene_RunScene3c4_02002480 Func_02002480
-#define SceneActor_CheckTwoUnitsAboveActorZero Func_02001424
-#define SceneActor_SetActor14Field98ByFlag200 Func_020014ac
-#define ActorPresentation_ConfigureActorTwentyAndFlag200 Func_0200170c
-#define SceneState_RunUnlessActorZeroAtTile32x50 Func_02001510
-#define FieldScene_RunFourCallSequenceB Func_020016f4
-#define FieldScene_RunFourStepSequenceA Func_020018f8
-#define FieldScene_RunTwoStepSequence Func_020019bc
-#define FieldScene_RunFourStepSequenceB Func_020019cc
-#define SceneActor_InstallSlotNineHandler Func_020019e4
-#define SceneActor_SetupSlotNineAndInstallHandler Func_02001a10
-#define FieldScene_RunThreeStepSequence Func_02001f5c
-#define FieldScene_RunFourCallSequence Func_02001fc4
-#define FieldScene_PlaceAndPinSlots8And9 Func_020023a0
-#define SceneDialogue_RunFlag982Or983Dialogue Func_02001970
-#define SceneActor_MoveActorZeroToTarget Func_02000cd0
-#define SceneActor_WaitValueBelowLimit Func_02001038
 
 #include "STAGED_ACTOR.H"
 #include "SPAWN_CONFIGURED_EFFECT.H"

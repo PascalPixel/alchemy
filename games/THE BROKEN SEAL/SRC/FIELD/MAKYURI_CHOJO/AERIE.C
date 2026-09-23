@@ -1123,8 +1123,6 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
 #define CreateOverlayObject Func_02003722
 #define SetOverlayObjectMode Func_0200376c
 #define SetOverlayObjectSlot Func_02003844
-#define SetOverlayObjectRecordField1 Func_02000030
-#define OverlayObject_CreateConfiguredObject Func_020000a0
 void Effect_Move(union Slot *object);
 #define OverlayObject_ApplyVelocity Effect_Move
 
@@ -1159,7 +1157,6 @@ void Func_020037e8(void *, s32);
 
 #include "TYPES.H"
 
-#define SceneData_GetTableB938 Func_02000314
 extern u8 Data_0200b938[];
 
 
@@ -1170,11 +1167,6 @@ extern u8 Data_0200b938[];
 
 #include "TYPES.H"
 
-#define SceneData_GetTableb9c8 Func_02000320
-#define SceneData_GetTableB9d4AfterStateCheck Func_02000328
-#define SceneData_GetTablebbe4 Func_02000354
-#define SceneActor_SetMode55OnSevenRecords Func_02000ad0
-#define FieldScene_ConfigureValue93Scene Func_02003438
 /*
  * resource_39d owner at 0x02000ad0, 82 bytes.
  *
@@ -1308,10 +1300,6 @@ void Func_02006c82(void);
 #define SCENE_PHASE (*(s32 *)(*(u8 **)0x03001ebc + 0x1c0))
 #define ACTOR_FIELD_0XA(record) (*(s16 *)((record) + 10))
 #define ACTOR_FIELD_0X12(record) (*(s16 *)((record) + 18))
-#define FieldScene_RunFourActorPresentation Func_0200056c
-#define FieldScene_RunScene39d_020009fc Func_020009fc
-#define FieldScene_RunScene39d_02002ddc Func_02002ddc
-#define FieldScene_RunScene39d_02002eb8 Func_02002eb8
 
 extern u8 Data_0200bc50[];
 
@@ -1515,7 +1503,6 @@ static __inline__ void Call3_02002eb8(void (*f)(), s32 a0, s32 a1, s32 a2)
 
 #include "TYPES.H"
 
-#define MeasureFixedPointPositionDistance Func_02000890
 typedef s32(*IwramIntegerSquareRoot)(s32);
 
 
@@ -1524,7 +1511,6 @@ typedef s32(*IwramIntegerSquareRoot)(s32);
 
 #define GetActor Func_02003fd0
 #define MeasurePositionDistance Func_02001196
-#define FindNearestF2Actor Func_020008cc
 
 typedef struct {
     u8 pad_to_kind[0x28];

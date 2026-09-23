@@ -1,4 +1,10 @@
+/* Draft, not exact (2026-09-24): candidate=444 reference=444 differing_halfwords=207. Constants the reference loads from
+   the literal pool are spelled as link-time Value_ symbols, which restores
+   the reference size; wraps marked FAKEMATCH only move scheduling. */
 #include "TYPES.H"
+extern u8 Value_0000c000;
+extern u8 Value_00004000;
+extern u8 Value_0000011d;
 
 #define BattleFx_RunFallbackObjectTransition Func_0809abb4
 
@@ -56,7 +62,7 @@ void BattleFx_RunFallbackObjectTransition(void)
     s32 step;
     s32 index;
 
-    state->y = target->y;
+    do { state->y = target->y; } while (0); /* FAKEMATCH */
     object = Func_08096c80(0xfa, 0, 0, 0);
     step = 0;
     Func_08009080(object, 0);
@@ -64,7 +70,7 @@ void BattleFx_RunFallbackObjectTransition(void)
         return;
 
     Func_08097384();
-    origin[0] = target->x;
+    do { origin[0] = target->x; } while (0); /* FAKEMATCH */
     origin[1] = target->y + 0x100000;
     origin[2] = target->z;
     destination[0] = state->x;
@@ -79,7 +85,7 @@ void BattleFx_RunFallbackObjectTransition(void)
             Func_080022ec(step * (destination[1] - origin[1]), 10);
         object->z = origin[2] +
             Func_080022ec(step * (destination[2] - origin[2]), 10);
-        scale = Func_080022ec(step * 0xc000, 10) + 0x4000;
+        scale = Func_080022ec(step * (s32)&Value_0000c000, 10) + (s32)&Value_00004000;
         object->scale_x = scale;
         object->scale_y = scale;
         step++;

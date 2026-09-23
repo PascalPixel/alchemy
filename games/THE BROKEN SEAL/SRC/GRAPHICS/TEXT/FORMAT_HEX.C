@@ -20,7 +20,9 @@ void Text_FormatHex(u32 value, u32 count, u8 *output) {
             else
                 digit += 'A' - 10;
             *cursor = digit;
-            index++;
+            /* FAKEMATCH: an empty do-while around the increment; it only
+               changes where the scheduler places it after the store. */
+            do { index++; } while (0);
             value >>= 4;
             cursor++;
         } while (index != count);

@@ -1,3 +1,6 @@
+/* Draft, not exact (2026-09-24): 186 differing halfwords at equal size (was 8 bytes short).
+   FAKEMATCH marks below are empty do-while wraps that only move scheduling
+   or register choice; they stay tagged until a real spelling replaces them. */
 #include "TYPES.H"
 
 #define RunBattleEffect03 Func_080994d0
@@ -71,13 +74,13 @@ void RunBattleEffect03(void)
     s32 flash_index;
 
     Func_08097384();
-    last = 0;
+    do { last = 0; } while (0); /* FAKEMATCH */
     spawn_index = 0;
     do {
         object = Func_08096c80(
             0xe9, target->x, target->y + 0x200000, target->z);
         if (object != 0) {
-            object->scale_y = 0xb333;
+            do { object->scale_y = 0xb333; } while (0); /* FAKEMATCH */
             object->scale_x = 0xb333;
             object->callback = &Data_08099341;
             object->angle = 0x78;
@@ -130,7 +133,7 @@ void RunBattleEffect03(void)
     }
     if (object != 0) {
         object->angle = -1;
-        object->velocity_x = 0x50000;
+        do { object->velocity_x = 0x50000; } while (0); /* FAKEMATCH */
         object->velocity_y = 0x6666;
         object->unknown_5a = 0;
         Func_08096bec(object, 0xc00000, 0xe800);

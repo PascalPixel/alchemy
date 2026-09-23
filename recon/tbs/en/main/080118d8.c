@@ -1,3 +1,11 @@
+/* Draft, not exact (2026-09-24): candidate=172 reference=172 differing_halfwords=65. Constants the reference loads from
+   the literal pool are spelled as link-time Value_ symbols, which restores
+   the reference size; wraps marked FAKEMATCH only move scheduling. */
+#include "TYPES.H"
+extern u8 Value_0000ffff;
+extern u8 Value_0000ff00;
+extern u8 Value_0000fd00;
+extern u8 Value_00000c80;
 /* Draft, not exact: 65 differing halfwords, 168-byte candidate for the
    172-byte owner (2026-09-23). Residual: the reference builds the looping
    flag with a branch (movs r0, #0; beq; movs r0, #1) and hoists all five
@@ -47,5 +55,5 @@ void MapAnimation_Start(const u16 *script)
         command = *script++;
     }
     if (count != 0)
-        Scheduler_AddOrUpdateCallback(MapAnimation_Update, 0xc80);
+        Scheduler_AddOrUpdateCallback(MapAnimation_Update, (s32)&Value_00000c80);
 }

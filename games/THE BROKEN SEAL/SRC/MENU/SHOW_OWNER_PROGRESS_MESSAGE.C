@@ -24,6 +24,9 @@ void Func_08015030(s32 message_id, void *buffer, s32 length);
 void Func_08015258(void *buffer, void *destination, s32 offset, s32 terminator);
 void Func_08002df0(void *buffer);
 
+/* The message id base is a link-time symbol, loaded from the literal pool. */
+extern u8 Value_00000be6;
+
 #define StatusMenu_ShowOwnerProgressMessage Func_080a8578
 
 void StatusMenu_ShowOwnerProgressMessage(
@@ -51,7 +54,7 @@ void StatusMenu_ShowOwnerProgressMessage(
     }
 
     buffer = Func_08004938(0x100);
-    Func_08015030(message_variant + 0x0be6, buffer, 0x80);
+    Func_08015030(message_variant + (s32)&Value_00000be6, buffer, 0x80);
     Func_08015258(buffer, destination, 0, -1);
     Func_08002df0(buffer);
 }

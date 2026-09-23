@@ -1,3 +1,6 @@
+/* Draft, not exact (2026-09-24): 305 differing halfwords at equal size (was 8 bytes short): the wrap reproduces the reference's early literal pool; the body still differs.
+   FAKEMATCH marks below are empty do-while wraps that only move scheduling
+   or register choice; they stay tagged until a real spelling replaces them. */
 #include "TYPES.H"
 
 void Func_080030f8();
@@ -154,12 +157,12 @@ void Func_08098cd8(void) {
         Func_0800447c(0x380000, M2C_FIELD(temp_r3_16, s32 *, 0), position);
     } else {
         position[0] = M2C_FIELD(temp_r3_16, s32 *, 4);
-        position[1] = M2C_FIELD(temp_r3_16, s32 *, 8) + 0x100000;
+        do { position[1] = M2C_FIELD(temp_r3_16, s32 *, 8) + 0x100000; } while (0); /* FAKEMATCH */
         position[2] = M2C_FIELD(temp_r3_16, s32 *, 0xC);
     }
     Func_08009150(temp_r0_95, position[0], position[1], position[2]);
     Func_08009098(temp_r0_95, 0x0809F12C);
-    spawn_read_cursor = spawn_start;
+    do { spawn_read_cursor = spawn_start; } while (0); /* FAKEMATCH */
     index = 2;
     do {
         temp_r5_263 = *spawn_read_cursor;

@@ -1,3 +1,6 @@
+/* Draft, not exact (2026-09-24): 109 differing halfwords at equal size (was 4 bytes short).
+   FAKEMATCH marks below are empty do-while wraps that only move scheduling
+   or register choice; they stay tagged until a real spelling replaces them. */
 #include "TYPES.H"
 
 struct UiWork {
@@ -48,10 +51,10 @@ struct UiWork *Func_080162d4(s32 kind, s32 id, s32 x, s32 y, s32 attrs)
 done:
     if (found != 0) {
         found->id = id;
-        found->x = x;
+        do { found->x = x; } while (0); /* FAKEMATCH */
         found->y = y;
         found->kind = kind;
-        found->state = 0;
+        do { found->state = 0; } while (0); /* FAKEMATCH */
         found->f20 = 0;
         found->self = slot;
         found->f16 = 1;

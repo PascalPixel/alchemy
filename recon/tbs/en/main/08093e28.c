@@ -1,3 +1,6 @@
+/* Draft, not exact (2026-09-24): 5 differing halfwords. The cell index is grid_x / 16 + (grid_z / 16) * 128 (the draft had the divide idiom spelled out); the residual is the r0/r2 choice for the two tile-table bases in the kind comparison.
+   FAKEMATCH marks below are empty do-while wraps that only move scheduling
+   or register choice; they stay tagged until a real spelling replaces them. */
 #include "TYPES.H"
 
 #define TILE_HI(ptr, offset) (*(s16 *)((u8 *)(ptr) + (offset) + 2))
@@ -58,20 +61,7 @@ s32 FieldEffect_UpdateGridPlacement(void)
     Func_080916b0();
 
     if (ACTIVE_FLAG == 0) {
-        s32 index_x = grid_x;
-        s32 index_z;
-        s32 index;
-
-        if (index_x < 0)
-            index_x = tile_x + 23;
-        index_x >>= 4;
-
-        index_z = grid_z;
-        if (index_z < 0)
-            index_z = tile_z + 23;
-        index_z >>= 4;
-
-        index = index_x + (index_z << 7);
+        s32 index = grid_x / 16 + (grid_z / 16) * 128;
 
         if (Data_02010000[index].kind == Data_02010200[index].kind) {
             s32 position[6];

@@ -1864,7 +1864,21 @@ AlchemyC_02000f94:
 	.2byte 0x8f95
 	.2byte 0x0200
 AlchemyC_020013f8:
-	.space 0xc98
+	.space 0x130
+.L_02001528:
+	.space 0x82
+.L_020015aa:
+	.space 0x18
+.L_020015c2:
+	.space 0x18
+.L_020015da:
+	.space 0xc
+.L_020015e6:
+	.space 0x18a
+.L_02001770:
+	.space 0x71e
+.L_02001e8e:
+	.space 0x202
 .L_02002090:
 	.space 0x1ee
 .L_0200227e:

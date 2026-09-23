@@ -6,7 +6,7 @@
 /*
  * Psynergy / action list selection loop.
  *
- * Called from Func_080a5cc0 (recon/tbs/en/main/080a5cc0.c) with a pane
+ * Called from Menu_ResolveSelectedAction (0x080a5cc0) with a pane
  * index of 0.  It opens the list window, collects the current owner's usable
  * actions through PsynergyMenu_CollectActions, and then runs an input loop:
  *
@@ -37,9 +37,8 @@
  * pane 0 is witnessed at a call site.  The role of field_008, field_024 and
  * the 20-byte buffer handed to Func_080a6a98 is unresolved.
  *
- * This is a draft, not an adoption: it reproduces the reference extent and
- * every reference branch, call and store, but it is not byte-exact.  The
- * residual is basic-block placement plus register naming, not missing work.
+ * Func_080a6a98 returns a value its caller discards: its epilogue returns
+ * through r1, and the call sets r0 last.
  */
 
 struct MenuEntryIcon {
@@ -104,7 +103,7 @@ s32 Func_080a65e4(s32 owner, s32 psynergy, s32 shortcut);
 void Func_080a68a8(u16 *psynergies);
 u8 Func_080a68ec(struct BattleUnit *owner, u16 *actions, s32 mode);
 s32 Func_080a6a00(struct MenuResult *result, s32 pane);
-void Func_080a6a98(s32 window, s32 *work, struct MenuResult *result);
+s32 Func_080a6a98(s32 window, s32 *work, struct MenuResult *result);
 s32 Func_080a6b64(s32 window, s32 unused, struct MenuResult *result);
 s32 Func_080a735c(s32 encoded_action);
 void Func_080f9010(s32 cue);
@@ -138,9 +137,7 @@ void Func_080f9010(s32 cue);
 #define ACTION_ID_MASK 0x3fff
 #define LIST_PAGE_SIZE 5
 
-#define PsynergyMenu_SelectAction Func_080a6ccc
-
-s32 PsynergyMenu_SelectAction(s32 pane)
+s32 PsynergyMenu_RunList(s32 pane)
 {
     struct PsynergyListWork *menu;
     struct BattleAction *ability;
@@ -150,7 +147,6 @@ s32 PsynergyMenu_SelectAction(s32 pane)
     s32 nav;
     s8 mode;
     s32 tab;
-    s32 cue;
     u8 i;
     s32 result;
     s32 redraw;
@@ -191,7 +187,8 @@ s32 PsynergyMenu_SelectAction(s32 pane)
             if (changed != 0) {
                 changed = 0;
                 if (menu->psynergies[prev] != 0) {
-                    UiIcon_PrepareObject(menu->entry_icons[prev]);
+                    icon = menu->entry_icons[prev];
+                    UiIcon_PrepareObject(icon);
                 }
                 if (redraw != 0) {
                     redraw = 0;
@@ -266,27 +263,27 @@ s32 PsynergyMenu_SelectAction(s32 pane)
              * one exit the reference shares.
              */
             if ((INPUT_NEW_KEYS & KEY_A) != 0) {
-                if (menu->mode == 0) {
-                    if (menu->psynergies[state.selected_index] == 0) {
-                        goto no_accept;
-                    }
-                    if (PsynergyMenu_IsActionRestricted(
-                            menu->psynergies[state.selected_index]) != 0) {
-                        Audio_PlayCue(114);
-                        continue;
-                    }
-                    ability = Ability_GetData(
-                        menu->psynergies[state.selected_index] &
-                        ACTION_ID_MASK);
-                    if (ability->pp_cost > owner->pp) {
-                        Audio_PlayCue(114);
-                        goto no_accept;
-                    }
-                    cue = 173;
-                } else {
-                    cue = 130;
+                if (menu->mode != 0) {
+                    Audio_PlayCue(130);
+                    result = menu->psynergies[state.selected_index];
+                    done = 1;
+                    break;
                 }
-                Audio_PlayCue(cue);
+                if (menu->psynergies[state.selected_index] == 0) {
+                    goto no_accept;
+                }
+                if (PsynergyMenu_IsActionRestricted(
+                        menu->psynergies[state.selected_index]) != 0) {
+                    Audio_PlayCue(114);
+                    continue;
+                }
+                ability = Ability_GetData(
+                    menu->psynergies[state.selected_index] & ACTION_ID_MASK);
+                if (ability->pp_cost > owner->pp) {
+                    Audio_PlayCue(114);
+                    goto no_accept;
+                }
+                Audio_PlayCue(173);
                 result = menu->psynergies[state.selected_index];
                 done = 1;
                 break;

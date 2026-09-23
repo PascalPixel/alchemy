@@ -73,7 +73,9 @@ struct BattleAction {
  * offset-based names until their meanings are independently witnessed.
  */
 struct BattleUnit {
-    u8 unknown_000[0x34];
+    u8 name[0x0f];                  /* 0x000 */
+    u8 level;                       /* 0x00f */
+    u8 unknown_010[0x24];
     s16 max_hp;                     /* 0x034 */
     s16 max_pp;                     /* 0x036 */
     s16 hp;                         /* 0x038 */
@@ -83,11 +85,21 @@ struct BattleUnit {
     u16 agility;                    /* 0x040 */
     u8 luck;                        /* 0x042 */
     u8 action_entry_count;          /* 0x043 */
-    u8 unknown_044[0x94];
+    u8 hp_regen;                    /* 0x044 */
+    u8 pp_regen;                    /* 0x045 */
+    u8 unknown_046[2];
+    /* Elemental power by element, each followed by an unresolved word. */
+    struct {
+        s16 power;
+        s16 unknown_2;
+    } elements[4];                  /* 0x048 */
+    u8 unknown_058[0x80];
     u16 inventory[15];              /* 0x0d8 */
-    u8 unknown_0f6[0x32];
+    u8 unknown_0f6[0x2e];
+    u32 experience;                 /* 0x124 */
     u8 class_id;                    /* 0x128 */
-    u8 class_bonus_disabled;        /* 0x129 */
+    /* Offset of the class name among the class-name messages. */
+    u8 class_index;                 /* 0x129 */
     u8 status_12a;                  /* 0x12a */
     /* Nonzero levels reduce incoming damage to 1/2 or 1/10. */
     u8 guard_level;                 /* 0x12b */

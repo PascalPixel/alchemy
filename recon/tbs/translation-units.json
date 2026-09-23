@@ -173962,38 +173962,6 @@
       "overlay": null
     },
     {
-      "id": "djinn-menu-select-djinn",
-      "game": "tbs",
-      "source": "recon/tbs/en/units/djinn-menu-select-djinn.c",
-      "compiler_route": "canonical-gcc296",
-      "overlay": null,
-      "absolute_symbols": {
-        "__udivsi3": {
-          "address": "0x080022f4",
-          "kind": "thumb"
-        },
-        "__umodsi3": {
-          "address": "0x08002304",
-          "kind": "thumb"
-        },
-        "LinkedMessage_DjinnSetAll": {
-          "address": "0x00000b98",
-          "kind": "data"
-        },
-        "LinkedMessage_DjinnTutorialGive": {
-          "address": "0x00000c40",
-          "kind": "data"
-        }
-      },
-      "owners": [
-        {
-          "address": "0x080ab5e4",
-          "extent": 4888,
-          "state": "retained-assembly"
-        }
-      ]
-    },
-    {
       "id": "link-serial-test",
       "game": "tbs",
       "source": "games/THE BROKEN SEAL/SRC/SYSTEM/LINK/SERIAL_TEST.C",

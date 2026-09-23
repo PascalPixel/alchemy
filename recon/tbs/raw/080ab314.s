@@ -1,46 +1,22 @@
 .syntax unified
 	.thumb
-	.set sub_080022f4, 0x080022f4
-	.set sub_08002304, 0x08002304
 	.set sub_080030f8, 0x080030f8
 	.set sub_08003f3c, 0x08003f3c
 	.set sub_080041d8, 0x080041d8
 	.set sub_08015010, 0x08015010
 	.set sub_08015018, 0x08015018
-	.set sub_08015038, 0x08015038
 	.set sub_08015048, 0x08015048
 	.set sub_08015060, 0x08015060
-	.set sub_08015068, 0x08015068
 	.set sub_08015078, 0x08015078
 	.set sub_08015080, 0x08015080
-	.set sub_08015090, 0x08015090
-	.set sub_080150b0, 0x080150b0
-	.set sub_08015120, 0x08015120
-	.set sub_08015270, 0x08015270
 	.set sub_08015278, 0x08015278
-	.set sub_08015280, 0x08015280
 	.set sub_080152a8, 0x080152a8
 	.set sub_080153f8, 0x080153f8
-	.set sub_08077008, 0x08077008
-	.set sub_08077010, 0x08077010
-	.set sub_080771b0, 0x080771b0
-	.set sub_080771b8, 0x080771b8
-	.set sub_080771c0, 0x080771c0
-	.set sub_080771c8, 0x080771c8
-	.set sub_08077208, 0x08077208
-	.set sub_08077210, 0x08077210
 	.set sub_080a1a40, 0x080a1a40
-	.set sub_080a1ac0, 0x080a1ac0
 	.set sub_080aa538, 0x080aa538
-	.set sub_080aafb8, 0x080aafb8
 	.set sub_080ab1f4, 0x080ab1f4
 	.set sub_080ab21c, 0x080ab21c
 	.set sub_080ab2ec, 0x080ab2ec
-	.set sub_080ad5b4, 0x080ad5b4
-	.set sub_080ad5f4, 0x080ad5f4
-	.set sub_080ad608, 0x080ad608
-	.set sub_080ae714, 0x080ae714
-	.set sub_080b50f8, 0x080b50f8
 	.set sub_080f9010, 0x080f9010
 	.global Func_080ab314
 	.thumb_func
@@ -363,5 +339,4 @@ Func_080ab314:
 	.4byte 0x03001e8c
 	.4byte 0x000012f8
 	.4byte 0x00000ea6
-	.2byte 0x19a1
-	.2byte 0x080a
+	.4byte 0x080a19a1

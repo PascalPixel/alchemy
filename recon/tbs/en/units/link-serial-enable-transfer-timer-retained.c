@@ -4,6 +4,6 @@
 #include "../main/08005fcc.c"
 #include "../../../../games/THE BROKEN SEAL/SRC/SYSTEM/LINK/SERIAL_PREPARE_SEND_PACKET.C"
 #include "../main/0800615c.c"
-#include "../main/080063bc.c"
+#include "../../../../games/THE BROKEN SEAL/SRC/SYSTEM/LINK/SERIAL_BEGIN_TRANSFER_A.C"
 #include "../main/08006408.c"
-#include "../main/0800651c.c"
+#include "../../../../games/THE BROKEN SEAL/SRC/SYSTEM/LINK/SERIAL_RESET_TRANSFER_STATE.C"

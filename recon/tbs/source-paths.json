@@ -19386,6 +19386,22 @@
     "main:0801cbd4": {
       "name": "Palette_ScaleTintChannels",
       "source": "GRAPHICS/PALETTE/SCALE_TINT_CHANNELS.C"
+    },
+    "main:0800447c": {
+      "name": "Vector_AddPolarOffset",
+      "source": "LIB/POLAR_OFFSET.C"
+    },
+    "main:080992f0": {
+      "name": "BattleFx_SwayParticle",
+      "source": "BATTLE/EFFECT/SWAY_PARTICLE.C"
+    },
+    "main:08005268": {
+      "name": "Render_ProjectPoint",
+      "source": "GRAPHICS/RENDER/PROJECT_POINT.C"
+    },
+    "main:080e3994": {
+      "name": "BattleUnit_ProjectToScreen",
+      "source": "BATTLE/PRESENTATION/PROJECT_UNIT_TO_SCREEN.C"
     }
   },
   "symbols": {

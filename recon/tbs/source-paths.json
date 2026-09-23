@@ -19354,6 +19354,18 @@
     "main:080b1614": {
       "name": "Shop_SelectQuantity",
       "source": "MENU/SHOP/SELECT_QUANTITY.C"
+    },
+    "main:08011b54": {
+      "name": "PaletteQueue_Add",
+      "source": "GRAPHICS/PALETTE/QUEUE_ADD.C"
+    },
+    "main:08011a84": {
+      "name": "DisplayBlend_StartScript",
+      "source": "GRAPHICS/DISPLAY/BLEND_START_SCRIPT.C"
+    },
+    "main:0801fd34": {
+      "name": "PaletteGlow_UpdateSine",
+      "source": "GRAPHICS/PALETTE/GLOW_UPDATE_SINE.C"
     }
   },
   "symbols": {

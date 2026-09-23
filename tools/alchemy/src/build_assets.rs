@@ -1044,7 +1044,7 @@ fn build_component_cached(ctx: &Context, entry: &Value) -> Result<ComponentResul
             )
         }
         "u8-array" | "s8-array" | "be-s16-array" | "le-u16-array" | "le-u32-array" => {
-            let document = json(&source)?;
+            let document = ctx.raw_document(&source)?;
             let pointer = json_string(&entry["pointer"], "array pointer")?;
             let values = document.pointer(pointer).ok_or("array pointer is absent")?;
             (
@@ -1258,7 +1258,7 @@ fn build_component_cached(ctx: &Context, entry: &Value) -> Result<ComponentResul
             let text = if binary {
                 String::new()
             } else if let Some(pointer) = entry.get("pointer") {
-                let document = json(&source)?;
+                let document = ctx.raw_document(&source)?;
                 json_string(
                     document
                         .pointer(json_string(pointer, "tilemap pointer")?)
@@ -3372,6 +3372,9 @@ struct Context {
     /// names; general- and palette-LZ streams cannot be encoded without them.
     lz_machine: Option<LzMachine>,
     documents: std::cell::RefCell<HashMap<PathBuf, std::rc::Rc<Value>>>,
+    /// Source documents read as written, for components that select one
+    /// value from a large file: each is parsed once per build.
+    raw_documents: std::cell::RefCell<HashMap<PathBuf, std::rc::Rc<Value>>>,
     images:
         std::cell::RefCell<HashMap<PathBuf, std::rc::Rc<psynergy::assets::image::IndexedImage>>>,
     /// Every input path the build resolved or read, for the consumer audit.
@@ -3392,6 +3395,7 @@ impl Context {
             game,
             lz_machine: None,
             documents: Default::default(),
+            raw_documents: Default::default(),
             images: Default::default(),
             opened: Default::default(),
             palettes: Default::default(),
@@ -3452,6 +3456,16 @@ impl Context {
         );
         self.images.borrow_mut().insert(path, image.clone());
         Ok(image)
+    }
+    fn raw_document(&self, path: &Path) -> Result<std::rc::Rc<Value>, String> {
+        if let Some(value) = self.raw_documents.borrow().get(path) {
+            return Ok(value.clone());
+        }
+        let value = std::rc::Rc::new(json(path)?);
+        self.raw_documents
+            .borrow_mut()
+            .insert(path.to_path_buf(), value.clone());
+        Ok(value)
     }
     fn document(&self, path: &Path) -> Result<std::rc::Rc<Value>, String> {
         let path = self.resolved(path)?;

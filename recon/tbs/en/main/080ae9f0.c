@@ -1,3 +1,7 @@
+/* NONMATCHING: 13 halfwords, register allocation only. The reference keeps
+ * tile in r2 and copies variant to r5 and y to r6; here variant ties to r3 and
+ * tile moves to r4. Testing variant twice keeps tile in r2 but gives variant r1.
+ */
 #include "TYPES.H"
 
 extern u8 *Data_03001f2c;

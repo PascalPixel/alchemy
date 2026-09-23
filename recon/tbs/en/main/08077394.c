@@ -1,3 +1,7 @@
+/* NONMATCHING: 16 halfwords. The reference opens with a dead "mov r3, lr" and
+ * loads the 0x02000500 base before the first test; the single-return form
+ * below keeps its register order closer than early returns (27 halfwords).
+ */
 #include "TYPES.H"
 
 #define OWNER_STATE_SIZE 0x14c

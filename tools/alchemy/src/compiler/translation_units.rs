@@ -1840,7 +1840,7 @@ mod tests {
     #[test]
     fn edition_layouts_preserve_names_extents_and_symbol_kinds() {
         let document = TranslationUnits::load(crate::compiler::routing::root()).unwrap();
-        let unit = document.unit("heidia-village-scene").unwrap();
+        let unit = document.unit("lunpa-fortress-scene").unwrap();
         assert_eq!(
             unit.edition_owner("resource_3bf", "ja", 0x02001e94)
                 .unwrap()

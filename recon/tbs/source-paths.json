@@ -17930,27 +17930,27 @@
       "source": "FIELD/RUNPA_JO/FORTRESS.C"
     },
     "resource_3bf:02000f94": {
-      "name": "ShowLockedDoorMessageOnce",
+      "name": "CellDoor_Touch",
       "source": "FIELD/RUNPA_JO/FORTRESS.C"
     },
     "resource_3bf:02000fb4": {
-      "name": "ShowLockedDoorMessage",
+      "name": "LockedDoor_Touch",
       "source": "FIELD/RUNPA_JO/FORTRESS.C"
     },
     "resource_3bf:02000fc8": {
-      "name": "ShowGeraldDontMessage",
+      "name": "Actor8_Interact",
       "source": "FIELD/RUNPA_JO/FORTRESS.C"
     },
     "resource_3bf:02000fe4": {
-      "name": "ShowThatWasExcitingMessage",
+      "name": "Actor9_Interact",
       "source": "FIELD/RUNPA_JO/FORTRESS.C"
     },
     "resource_3bf:02001000": {
-      "name": "ShowSorryIScaredYouMessage",
+      "name": "Actor10_Interact",
       "source": "FIELD/RUNPA_JO/FORTRESS.C"
     },
     "resource_3bf:0200101c": {
-      "name": "ShowWellMessage",
+      "name": "Actor11_Interact",
       "source": "FIELD/RUNPA_JO/FORTRESS.C"
     },
     "resource_3bf:02001038": {
@@ -17974,7 +17974,7 @@
       "source": "FIELD/RUNPA_JO/FORTRESS.C"
     },
     "resource_3bf:020010a8": {
-      "name": "StartDoraHouseAccidentScene",
+      "name": "CellKey_PickUp",
       "source": "FIELD/RUNPA_JO/FORTRESS.C"
     },
     "resource_3bf:02001108": {

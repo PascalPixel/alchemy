@@ -11,6 +11,7 @@ enum ItemId {
     ITEM_SMOKE_BOMB = 0xe2,
     ITEM_SLEEP_BOMB = 0xe3,
     ITEM_LUCKY_MEDAL = 0xe5,
+    ITEM_CELL_KEY = 0xea,
     ITEM_BLACK_ORB = 0xf2
 };
 

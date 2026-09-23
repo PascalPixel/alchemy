@@ -17,6 +17,15 @@ struct IoWriteQueue {
 extern struct IoWriteQueue Data_02002090;
 #define gIoWriteQueue Data_02002090
 
+void QueueIoWriteDelay1(u32 address, u32 value);
+void QueueIoWriteDelay2(u32 address, u32 value);
+void QueueIoWriteDelay3(u32 address, u32 value);
+void QueueIoWriteDelay5(u32 address, u32 value);
+void QueueIoWriteDelay6(u32 address, u32 value);
+void QueueIoWriteDelay7(u32 address, u32 value);
+void QueueIoWriteDelay9(u32 address, u32 value);
+void QueueIoWriteDelay10(u32 address, u32 value);
+void QueueIoWriteDelay11(u32 address, u32 value);
 void IoWriteQueue_FlushPending(void);
 
 #endif

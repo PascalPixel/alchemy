@@ -1,13 +1,3 @@
 /* Retained owners split from runtime-reserved-no-op-f. */
-#include "../main/0800383c.c"
-#include "../main/0800387c.c"
-#include "../main/080038bc.c"
-#include "../main/080038fc.c"
-#include "../main/0800393c.c"
-#include "../main/0800397c.c"
-#include "../main/080039bc.c"
-#include "../main/080039fc.c"
-#include "../main/08003a3c.c"
-#include "../../../../games/THE BROKEN SEAL/SRC/SYSTEM/IO_WRITE_QUEUE.C"
 #include "../../../../games/THE BROKEN SEAL/SRC/SYSTEM/MEMORY/COPY_AND_CALL_ROUTINE.C"
 #include "../main/08003e58.c"

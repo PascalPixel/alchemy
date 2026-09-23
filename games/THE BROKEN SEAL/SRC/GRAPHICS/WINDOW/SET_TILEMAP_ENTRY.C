@@ -1,8 +1,7 @@
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
 
-#define UiWindow_SetTilemapEntry Func_08019000
-
+/* Writes one tile into a window's tilemap; modes 2-4 add palette bits. */
 void UiWindow_SetTilemapEntry(
     u8 *window, s32 value, s32 x, s32 y, u32 mode)
 {
@@ -11,27 +10,26 @@ void UiWindow_SetTilemapEntry(
     s32 index;
 
     y += 1;
+    x += 1;
     if ((u32)y > (u32)(*(u16 *)(window + 10) - 1))
         return;
 
-    x += 1;
     if ((u32)x > (u32)(*(u16 *)(window + 8) - 1))
         return;
 
-    if (mode == 3) {
+    switch (mode) {
+    case 3:
         mask = 0xf000;
-    } else if (mode <= 3) {
-        if (mode == 2) {
-            mask = 0xe000;
-        } else {
-            mask = 0;
-        }
-    } else {
-        if (mode == 4) {
-            mask = 0x1000;
-        } else {
-            mask = 0;
-        }
+        break;
+    case 2:
+        mask = 0xe000;
+        break;
+    case 4:
+        mask = 0x1000;
+        break;
+    default:
+        mask = 0;
+        break;
     }
 
     switch (mode) {
@@ -51,7 +49,7 @@ void UiWindow_SetTilemapEntry(
         + (*(u16 *)(window + 12) + x);
     if ((u32)index >= 640)
         return;
-    map[index] = (u16)(mask | value);
+    *(u16 *)((u8 *)map + (index << 1)) = (u16)(mask | value);
     return;
 
 plain:
@@ -59,5 +57,5 @@ plain:
         + (*(u16 *)(window + 12) + x);
     if ((u32)index >= 640)
         return;
-    map[index] = (u16)value;
+    *(u16 *)((u8 *)map + (index << 1)) = (u16)value;
 }

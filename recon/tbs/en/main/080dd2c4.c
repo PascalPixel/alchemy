@@ -1,3 +1,5 @@
+/* 2026-09-24: 71 differing halfwords (from 73) after a do-while wrap and
+   statement-swap sweep; the do-while wraps are search artefacts. */
 #include "TYPES.H"
 #include "BATTLE_EFX.H"
 
@@ -266,7 +268,7 @@ void Func_080dd2c4(void *object, s32 arg1)
                                 var_r5_297 = temp_r3_298;
                             }
                             if (mode == 0) {
-                                temp_r4_315 = Data_080eeb48[texture_index];
+                                do { temp_r4_315 = Data_080eeb48[texture_index]; } while (0);
                                 ((DrawRectangleFn)
                                     slot_pair[1 & i])(
                                     draw_destination,
@@ -281,7 +283,7 @@ void Func_080dd2c4(void *object, s32 arg1)
                                 if (var_r5_297 > temp_r3_335) {
                                     var_r5_297 = temp_r3_335;
                                 }
-                                temp_r4_348 = Data_080eeb54[texture_index];
+                                do { temp_r4_348 = Data_080eeb54[texture_index]; } while (0);
                                 ((DrawRectangleFn)
                                     slot_pair[1 & i])(
                                     draw_destination,

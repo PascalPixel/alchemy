@@ -76134,7 +76134,7 @@
         {
           "address": "0x080063bc",
           "extent": 76,
-          "state": "retained-assembly"
+          "state": "exact-c"
         },
         {
           "address": "0x08006408",
@@ -76144,7 +76144,7 @@
         {
           "address": "0x0800651c",
           "extent": 64,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ],
       "overlay": null

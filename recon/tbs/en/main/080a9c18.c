@@ -1,3 +1,5 @@
+/* 2026-09-24: 61 differing halfwords (from 64) after a do-while wrap and
+   statement-swap sweep; the do-while wraps are search artefacts. */
 #include "ITEM.H"
 #include "LAYOUT_GUARD.H"
 #include "TYPES.H"
@@ -35,10 +37,10 @@ void ItemMenu_ArrangeCategoryItemIcons(const u16 *items)
     const u16 *item_entry;
     s32 remaining;
 
+    do { remaining = 14; } while (0);
     ItemMenu_PosCategory();
-    remaining = 14;
-    icon_entry = state->icons;
     item_entry = items;
+    icon_entry = state->icons;
     do {
         u16 encoded_item = *item_entry++;
 

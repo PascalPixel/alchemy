@@ -19379,6 +19379,102 @@
     "resource_3b2:020012b4": {
       "name": "FieldScene_HandleEscapeColumn",
       "source": "FIELD/TAKARA_SHIMA/ESCAPE_COLUMN.C"
+    },
+    "main:080175c0": {
+      "name": "UiText_OpenEntryMessage",
+      "source": "GRAPHICS/TEXT/OPEN_ENTRY_MESSAGE.C"
+    },
+    "main:0808f32c": {
+      "name": "FieldEffect_SpawnNearbyMarkers",
+      "source": "FIELD/COMMON/EFFECT/SPAWN_NEARBY_MARKERS.C"
+    },
+    "main:080b1614": {
+      "name": "Shop_SelectQuantity",
+      "source": "MENU/SHOP/SELECT_QUANTITY.C"
+    },
+    "main:08011b54": {
+      "name": "PaletteQueue_Add",
+      "source": "GRAPHICS/PALETTE/QUEUE_ADD.C"
+    },
+    "main:08011a84": {
+      "name": "DisplayBlend_StartScript",
+      "source": "GRAPHICS/DISPLAY/BLEND_START_SCRIPT.C"
+    },
+    "main:0801fd34": {
+      "name": "PaletteGlow_UpdateSine",
+      "source": "GRAPHICS/PALETTE/GLOW_UPDATE_SINE.C"
+    },
+    "main:08012388": {
+      "name": "Resource_RunCopiedDecoder",
+      "source": "SYSTEM/RESOURCE/RUN_COPIED_DECODER.C"
+    },
+    "main:08021e28": {
+      "name": "Graphics_InstallBg1VCountHandler",
+      "source": "GRAPHICS/DISPLAY/INSTALL_BG1_VCOUNT_HANDLER.C"
+    },
+    "main:08097a10": {
+      "name": "Fixed_Remainder",
+      "source": "LIB/FIXED_REMAINDER.C"
+    },
+    "main:080979a4": {
+      "name": "BattleFx_HueChannelRamp",
+      "source": "BATTLE/EFFECT/HUE_CHANNEL_RAMP.C"
+    },
+    "main:0801cbd4": {
+      "name": "Palette_ScaleTintChannels",
+      "source": "GRAPHICS/PALETTE/SCALE_TINT_CHANNELS.C"
+    },
+    "main:0800447c": {
+      "name": "Vector_AddPolarOffset",
+      "source": "LIB/POLAR_OFFSET.C"
+    },
+    "main:080992f0": {
+      "name": "BattleFx_SwayParticle",
+      "source": "BATTLE/EFFECT/SWAY_PARTICLE.C"
+    },
+    "main:08005268": {
+      "name": "Render_ProjectPoint",
+      "source": "GRAPHICS/RENDER/PROJECT_POINT.C"
+    },
+    "main:080e3994": {
+      "name": "BattleUnit_ProjectToScreen",
+      "source": "BATTLE/PRESENTATION/PROJECT_UNIT_TO_SCREEN.C"
+    },
+    "main:0809b86c": {
+      "name": "BattleFx_DrawScaledObject",
+      "source": "BATTLE/EFFECT/DRAW_SCALED_OBJECT.C"
+    },
+    "main:0809a738": {
+      "name": "BattleFx_WanderAroundAnchor",
+      "source": "BATTLE/EFFECT/WANDER_AROUND_ANCHOR.C"
+    },
+    "main:0809a7f4": {
+      "name": "BattleFx_CircleAnchor",
+      "source": "BATTLE/EFFECT/CIRCLE_ANCHOR.C"
+    },
+    "main:080982dc": {
+      "name": "FieldEffect_WatchLeaderDistance",
+      "source": "FIELD/COMMON/EFFECT/WATCH_LEADER_DISTANCE.C"
+    },
+    "main:080993b0": {
+      "name": "BattleFx_RunSparkEmitter",
+      "source": "BATTLE/EFFECT/SPARK_EMITTER.C"
+    },
+    "main:08021be0": {
+      "name": "Ui_RunCopiedRoutine",
+      "source": "GRAPHICS/WINDOW/RUN_COPIED_ROUTINE.C"
+    },
+    "main:080d66cc": {
+      "name": "BattleFx_BuildWindowEdgeTable",
+      "source": "BATTLE/EFFECT/BUILD_WINDOW_EDGE_TABLE.C"
+    },
+    "main:080f0254": {
+      "name": "Graphics_ClearCharacterBlockAndPalette",
+      "source": "GRAPHICS/TILE/CLEAR_CHARACTER_BLOCK_AND_PALETTE.C"
+    },
+    "main:080935d4": {
+      "name": "BattleFx_StepRatioTransition",
+      "source": "BATTLE/EFFECT/STEP_RATIO_TRANSITION.C"
     }
   },
   "symbols": {

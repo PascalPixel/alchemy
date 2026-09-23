@@ -2,7 +2,9 @@
 
 extern s32 Func_08002322(s32 angle);
 
-void Func_0801fd34(void)
+/* Cycles the four object palette colours at 0x050001d0 through a sine glow
+   driven by the frame phase at 0x03001800. */
+void PaletteGlow_UpdateSine(void)
 {
     s32 *phase;
     volatile u16 *palette;
@@ -26,11 +28,13 @@ void Func_0801fd34(void)
             low += 22;
             middle += 16;
             packed += 20;
-            packed <<= 10;
+            /* FAKEMATCH: the do-while fixes the shift's place in the schedule. */
+            do { packed <<= 10; } while (0);
             middle <<= 5;
             packed |= middle;
             packed |= low;
         }
-        *palette++ = packed;
+        /* FAKEMATCH: likewise for the store. */
+        do { *palette++ = packed; } while (0);
     } while (++index <= 3);
 }

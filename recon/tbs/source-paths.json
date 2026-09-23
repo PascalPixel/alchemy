@@ -19053,7 +19053,8 @@
       "name": "ItemIcon_Compose"
     },
     "main:08029274": {
-      "name": "Text_FormatHex"
+      "name": "Text_FormatHex",
+      "source": "GRAPHICS/TEXT/FORMAT_HEX.C"
     },
     "main:080037d4": {
       "name": "Sound_LoadPresetParameters"

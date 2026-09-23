@@ -1,8 +1,10 @@
 .syntax unified
 	.thumb
 	.set sub_080072f0, 0x080072f0
+	.global UiWork_ShiftPanelRowsLeft
 	.global Func_080167e0
 	.thumb_func
+UiWork_ShiftPanelRowsLeft:
 Func_080167e0:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

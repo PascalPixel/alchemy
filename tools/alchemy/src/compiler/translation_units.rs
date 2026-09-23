@@ -2017,7 +2017,7 @@ mod tests {
         let root = crate::compiler::routing::root();
         let names = SourcePaths::load_for_game(root, "tbs").unwrap();
         let candidate = manifest
-            .unit("retained-scene-extended-actor-presentation-3bd")
+            .unit("retained-multi-phase-presentation-3a4")
             .unwrap();
         assert!(!candidate.exact());
         let invalid_state = |unit: &TranslationUnit| {

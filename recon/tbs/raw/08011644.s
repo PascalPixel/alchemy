@@ -6,8 +6,10 @@
 	.set sub_08005340, 0x08005340
 	.set sub_080053e8, 0x080053e8
 	.set sub_080113e4, 0x080113e4
+	.global Map_LoadAreaGraphics
 	.global Func_08011644
 	.thumb_func
+Map_LoadAreaGraphics:
 Func_08011644:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl

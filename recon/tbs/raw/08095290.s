@@ -4,8 +4,10 @@
 	.set sub_080048f4, 0x080048f4
 	.set sub_0809088c, 0x0809088c
 	.set sub_08090a5c, 0x08090a5c
+	.global BattleFx_StartBufferBlend
 	.global Func_08095290
 	.thumb_func
+BattleFx_StartBufferBlend:
 Func_08095290:
 	push	{r5, r6, lr}
 	mov	r6, sl

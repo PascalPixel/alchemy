@@ -1,7 +1,9 @@
 .syntax unified
 	.thumb
+	.global MapAnimation_Update
 	.global Func_0801179c
 	.thumb_func
+MapAnimation_Update:
 Func_0801179c:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl

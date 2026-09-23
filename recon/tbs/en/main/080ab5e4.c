@@ -1,1449 +1,727 @@
 #include "TYPES.H"
+#include "TBS_EDITION.H"
 
-/* Division/modulo pair used to split packedPos-style base-10 values. */
-s32 Func_08002304(s32 numerator, s32 denominator);
-#define Math_Div Func_08002304
-s32 Func_080022f4(s32 numerator, s32 denominator);
-#define Math_Mod Func_080022f4                     /* same address as games/THE BROKEN SEAL/src/battle/resolve_action.c's Math_Mod */
+/* Packed Djinn list entry: owner, element and number, bit 15 set = Set. */
+#define DJINN_OWNER(v) (((v) & 0xf00) >> 8)
+#define DJINN_ELEMENT(v) (((v) & 0xe0) >> 5)
+#define DJINN_NUMBER(v) ((v) & 0x1f)
+
+struct DjinnMenuLists {
+    u16 djinn[8][10];                 /* 0x000 */
+    s8 counts[8];                     /* 0x0a0 */
+    u8 unknown_0a8[0x2080];
+    s32 tutorial_timer;               /* 0x2128 */
+    s32 tutorial_step;                /* 0x212c */
+};
+
+struct DjinnMenuIcon {
+    u8 unknown_00[5];
+    u8 state;                         /* 0x05 */
+};
+
+struct DjinnMenuState {
+    u8 unknown_000[0x10];
+    s32 status_window;                /* 0x010 */
+    struct DjinnMenuIcon *cursor_icon; /* 0x014 */
+    u8 unknown_018[4];
+    s8 column[2];                     /* 0x01c */
+    u8 unknown_01e[0x12];
+    s32 djinn_window;                 /* 0x030 */
+    u8 unknown_034[0xd8];
+    s32 message_window;               /* 0x10c */
+    u8 unknown_110[0x64];
+    u16 cursor[2];                    /* 0x174 */
+    u16 djinn[2];                     /* 0x178 */
+    u8 unknown_17c[8];
+    struct DjinnMenuLists *lists;     /* 0x184 */
+    u8 unknown_188[0x80];
+    u16 owner_ids[8];                 /* 0x208 */
+    u8 unknown_218;
+    u8 party_count;                   /* 0x219 */
+    u8 source_owner;                  /* 0x21a */
+    u8 target_owner;                  /* 0x21b */
+    u8 unknown_21c[0x38];
+    u8 djinn_number[2];               /* 0x254 */
+    u8 djinn_element[2];              /* 0x256 */
+    u8 djinn_owner[2];                /* 0x258 */
+};
+
+struct DjinnMenuOwner {
+    char name[15];                    /* 0x000 */
+    u8 level;                         /* 0x00f */
+    u8 unknown_010[0x119];
+    u8 class_id;                      /* 0x129 */
+};
 
 /*
- * Colosso tournament selection and progression handler.
- *
- * This draft was reconstructed mechanically from the owner's complete
- * reference assembly, including its jump table and literal pools.  Most
- * locals are still m2c's raw sp/temp/reg names; renaming the rest needs the
- * same per-site tracing this file has already had for a growing set:
- *
- *   - ctx: the save/session pointer loaded from 0x03001F2C once at entry
- *     and reused for every M2C_FIELD access below.
- *   - events: ctx's substructure at +0x184. +0x2128 holds the current event
- *     code (0 means none pending, dispatched through the 28-way switch
- *     below via eventCode/switchIndex once it's nonzero); +0x212C is a
- *     counter incremented per handled event; +0xA0 is a per-slot enable
- *     byte array indexed the same way as status[].
- *   - statusPtr: a write cursor over the local status[8] array (one byte
- *     per tournament slot), cleared to 0 in the entry loop.
- *   - slotFlags: an 8-byte per-slot flag buffer filled by Func_080ae714
- *     from ctx's +0x1C count field; checked per slot as a boolean.
- *   - mode: arg0, compared against 0 and 1 to select which per-slot status
- *     pass and layout call run; a third mode is handled by the fallback
- *     path further down.
- *   - windowPtr: ctx's field at +0x10C, used through one dereference as a
- *     window-handle argument to the Func_08015xxx layout calls.  The first
- *     call reads the field directly; the address is retained only from the
- *     second call onward.  Both EN and JA emit that two-stage lifetime.
- *   - packedPos: a per-mode u16 field at ctx + mode*2 + 0x174, decomposed
- *     via Math_Div/Math_Mod(packedPos, 10) into sp38 (quotient) and
- *     sp30-then-temp_r0_47 (remainder). Corrected from an earlier,
- *     backwards labeling of this pair (main:b33ebf347 merge) once
- *     games/THE BROKEN SEAL/src/battle/resolve_action.c's own Math_Div/Math_Mod naming confirmed Func_08002304
- *     is the divide and Func_080022f4 (the address 080bbb0c calls Math_Mod)
- *     is the modulo. sp38 and sp30 both get mutated later, so the tail's
- *     sp38 + sp30*0xA recombination is a new value, not a round-trip of the
- *     original packedPos.
- *   - result: the function's return value, set to a small status code
- *     (1/2/3/4/7/0xA/or 0-var_r5_1785) on each exit path.
- *   - statusFlags: *(s32*)0x03001B04, read once at entry and tested
- *     bit-by-bit (0x10/0x20/0x40/0x80) later to pick a message ID.
- *
- *   - colorHighFieldOffset/windowFlagsFieldOffset: the M2C_FIELD offsets
- *     0x258/0x178 hoisted into named temps by the
- *     r18 permuter adoption. Every other M2C_FIELD offset in this file is a
- *     bare hex literal, so keeping these as literals would be the honest
- *     choice -- but measured: inlining them regresses differing_halfwords
- *     2177->2312, so they're load-bearing for the reference's register
- *     pressure. Named rather than inlined for that reason, not because
- *     they carry independent meaning beyond the field offset itself.
- *   - colorHigh/pixelColorHigh: (value & 0xF00) >> 8, the same
- *     high-nibble decomposition used throughout this file (paired with
- *     0xE0>>5 and 0x1F low-nibble extractions at other call sites, not
- *     consolidated here since each is a separately compiled instance).
- *     NAMING CAVEAT: called into Func_08077210/Func_08077208/
- *     Func_080771b0 etc, on the same 0x08077xxx page as
- *     games/THE BROKEN SEAL/src/battle/resolve_action.c's Battle_HitCheck/Battle_CalcAttack/
- *     Battle_CalcPower/Battle_CalcRestore. That's page-adjacency, not
- *     proof, but it's reason enough to doubt the "color/tile" reading
- *     this whole file assumed -- these could be decomposing a packed
- *     stat/ability value instead. Not renaming on adjacency alone; flagging
- *     so a future pass checks this before trusting the color framing.
- *
- * differing_halfwords=2293 and wrong_instructions=1671 at 4804/4888 bytes;
- * not byte-exact. The frame, high stack boundary, two local-array addresses,
- * and first 20 instructions are admitted invariants. r18/r19 (two permuter
- * adoptions after the 39ad6a9a5/8a658af50 hand-humanization pass) reintroduced
- * ~90 new_varN locals from the permuter's own preprocessing.
- * Checked a sample: most are pure address-of captures embedded in a
- * dereference (*(new_varN = &something)), used exactly once beyond their
- * declaration -- pointer aliases with no independent meaning, not distinct
- * program state. Renaming those with invented names would misrepresent
- * them as meaningful; they're left as new_varN pending either a systematic
- * naming convention for "redundant register-pressure capture" or their
- * removal once the owner no longer needs the pressure they add (removal is
- * NOT safe right now -- verified it regresses the score, see above). The
- * remaining new_varN/temp_rN/var_rN locals with real computed values or
- * field-offset roles are candidates for the same treatment given above;
- * this is a partial pass, not a finished one. Keep every edit tied to
- * local evidence and score it through agscc.
+ * The menu and tutorial texts are linked message identities: every edition
+ * numbers them differently, while their order inside each block is fixed.
  */
-s32 Func_080ab5e4(s32 arg0)
+extern u8 LinkedMessage_DjinnSetAll;
+extern u8 LinkedMessage_DjinnTutorialGive;
+
+enum DjinnMenuMessage {
+    DJINN_MSG_SET_ALL = 0x00,
+    DJINN_MSG_ALL_STANDBY = 0x01,
+    DJINN_MSG_CHOOSE = 0x02,
+    DJINN_MSG_STANDBY_HELP = 0x04,
+    DJINN_MSG_SET_HELP = 0x05,
+    DJINN_MSG_RECOVERING = 0x06,
+    DJINN_MSG_CHARACTER_STATUS = 0x11,
+    DJINN_MSG_UNLEASH_EFFECT = 0x15,
+    DJINN_MSG_GIVE = 0x16,
+    DJINN_MSG_SET = 0x17,
+    DJINN_MSG_STANDBY = 0x18,
+    DJINN_MSG_TRADE = 0x19,
+    DJINN_MSG_OWNER = 0x1a,
+    DJINN_MSG_ABILITY = 0x1b,
+    DJINN_MSG_WHAT_WILL_YOU_DO = 0x1c,
+    DJINN_MSG_NOW_RECOVERING = 0x26
+};
+
+enum DjinnTutorialMessage {
+    TUTORIAL_MSG_GIVE = 0x0,
+    TUTORIAL_MSG_SET_AFTER_GIVE = 0x1,
+    TUTORIAL_MSG_POWERS = 0x4,
+    TUTORIAL_MSG_UNLEASH = 0x5,
+    TUTORIAL_MSG_DEMONSTRATE = 0x6,
+    TUTORIAL_MSG_RECOVERY = 0xc,
+    TUTORIAL_MSG_SET_AGAIN = 0xd
+};
+
+#define DJINN_MESSAGE(n) ((s32)&LinkedMessage_DjinnSetAll + (n))
+#define TUTORIAL_MESSAGE(n) ((s32)&LinkedMessage_DjinnTutorialGive + (n))
+
+#define gDjinnMenu (*(struct DjinnMenuState **)ADDR_03001F2C)
+#define gUiWork (*(u8 **)ADDR_03001E8C)
+#define gKeysHeld (*(u32 *)ADDR_03001AE8)
+#define gKeysShoulderLatch (*(u32 *)ADDR_03001AF8)
+#define gKeysRepeat (*(u32 *)ADDR_03001B04)
+#define gKeysPressed (*(u32 *)ADDR_03001C94)
+extern const char Data_080af28c[];
+extern u8 Data_02000240[];
+#define gGameState Data_02000240
+
+struct DjinnMenuOwner *Runtime_GetObject(s32 owner);
+void BattleUnit_Recalculate(s32 owner);
+s32 Func_08077210(s32 owner, s32 element, s32 number);
+s32 Func_08077208(s32 owner, s32 element, s32 number);
+s32 Func_080771b0(s32 owner, s32 element, s32 number);
+s32 Func_080771b8(s32 owner, s32 element, s32 number);
+void Func_080771c0(s32 owner, s32 element, s32 number);
+void Func_080771c8(s32 owner, s32 element, s32 number);
+void UiWindow_Commit(s32 window);
+void Func_08015278(s32 window);
+void Func_08015068(s32 window, s32 x, s32 y, s32 width, s32 height);
+void UiText_DrawAt(s32 message, s32 window, s32 x, s32 y);
+void UiText_DrawMessageAt(s32 message, s32 window, s32 x, s32 y);
+void UiText_DrawStringAtOffsetFar(const char *text, s32 window, s32 x, s32 y);
+void UiNumber_DrawAt(s32 value, s32 digits, s32 window, s32 x, s32 y);
+void UiText_DrawQuantity(s32 value, s32 kind);
+void UiWindow_SetTilemapEntryFar(s32 window, s32 tile, s32 x, s32 y, s32 flags);
+s32 UiWork_Create(s32 message, s32 x, s32 y, s32 flags);
+s32 UiWork_IsCompleteFar(void);
+void UiWindow_Close(s32 work, s32 mode);
+void WaitFrames(s32 frames);
+void Audio_PlayCue(s32 cue);
+void UiMenu_PositionCursor(s32 x, s32 y);
+s32 Func_080a1ac0(s32 x, s32 y);
+s32 Menu_GetModuloOfSum(s32 value, s32 count);
+void Menu_DrawAtWindowOffset(s32 window, s32 x, s32 y, s32 width, s32 kind, s32 tile);
+void UiWindow_ApplyRectAtObjectOrigin(s32 window, s32 x, s32 y, s32 width, s32 height, s32 kind);
+void Func_080aafb8(struct DjinnMenuLists *lists);
+s32 Djinn_MarkBalancedEntries(u8 *balanced, s32 self);
+void FourObjectMotion_SetSlotPosition(s32 slot, s32 x, s32 y, s32 hidden);
+void FourObjectMotion_SetSlotPhase(s32 slot, s32 phase);
+void FourObjectMotion_ReplaceSlot(s32 slot, s32 element, s32 kind);
+void Func_080b50f8(void);
+
+s32 DjinnMenu_SelectDjinn(s32 mode)
 {
-    struct {
-        u8 slotFlags[8];
-        u8 unk8[8];
-        s8 status[8];
-    } slotWork;
-    s32 *windowPtr;
-    int new_var45;
-    s32 sp0;
-    void *new_var66;
-    s32 *new_var91;
-    s32 sp4;
-    u32 sp8;
-    s8 *new_var22;
-    s32 sp14;
-    s32 sp18;
-    s8 *statusPtr;
-    s32 sp44;
-    int new_var17;
-    s32 sp20;
-    s32 *new_var12;
-    u32 new_var54;
-    u32 sp28;
-    void *new_var73;
-    s32 sp38;
-    int new_var36;
-    s32 sp3C;
-    s32 sp2C;
-    s32 sp34;
-    u32 new_var81;
-    s32 sp30;
-    s32 sp40;
-    s32 sp48;
-    s32 new_var80;
-    void *ctx;
-    s32 mode;
-    s8 *new_var48;
-    s8 *new_var75;
-    s8 *new_var6;
-    s32 *var_r2_1122;
-    s32 temp_r0_119;
-    s8 *new_var37;
-    int new_var68;
-    s32 temp_r0_2083;
-    s8 new_var47;
-    s32 temp_r0_2233;
-    s32 temp_r0_2301;
-    s32 temp_r0_2363;
-    s32 temp_r1_126;
-    s32 temp_r1_1953;
-    s32 *new_var32;
-    u32 new_var30;
-    s32 temp_r1_1966;
-    s8 **new_var31;
-    s32 temp_r1_2240;
-    s32 temp_r1_2308;
-    int colorHighFieldOffset;
-    s32 sp24;
-    s32 sp10;
-    u32 pixelColorHigh;
-    s32 eventCode;
-    s32 packedPosOffset;
-    short new_var52;
-    int new_var60;
-    s32 *new_var76;
-    s32 temp_r3_1572;
-    s8 *new_var28;
-    int new_var55;
-    int new_var69;
-    int new_var74;
-    s32 temp_r3_1597;
-    s32 new_var49;
-    s32 temp_r3_1908;
-    s32 temp_r3_1936;
-    s32 temp_r3_2211;
-    s32 temp_r3_2279;
-    s32 temp_r3_88;
-    s32 temp_r5_1001;
-    s32 temp_r5_1029;
-    u32 new_var21;
-    int new_var67;
-    int new_var15;
-    s32 temp_r5_1083;
-    s32 temp_r5_1163;
-    s32 new_var3;
-    s32 temp_r5_1278;
-    s32 temp_r5_1327;
-    s8 *new_var56;
-    int new_var58;
-    s32 temp_r5_1374;
-    s8 **new_var24;
-    s32 temp_r5_1702;
-    s32 temp_r5_1817;
-    s32 temp_r5_1872;
-    u32 new_var33;
-    s32 temp_r5_95;
-    int new_var39;
-    int new_var25;
-    s32 temp_r6_1509;
-    s32 temp_r6_216;
-    s32 temp_r6_339;
-    s32 temp_r6_601;
-    s32 temp_r7_312;
-    s32 temp_r7_514;
-    s32 temp_r7_723;
-    s32 statusFlags;
-    u32 *new_var8;
-    s32 var_r0_255;
-    int new_var88;
-    s32 var_r3_1124;
-    s32 new_var9;
-    int new_var82;
+    s8 buf[8];
+    u8 balanced[16];
+    s8 *status;
+    struct DjinnMenuState *state;
+    struct DjinnMenuLists *lists;
+    struct DjinnMenuOwner *owner;
+    s32 window;
+    s32 redraw;
+    u32 refresh;
+    s32 x;
+    s32 y;
+    s32 savedY;
+    s32 sel;
+    u32 djinn;
+    s32 groupMode;
+    s32 setAll;
+    s32 i;
+    s32 j;
+    s32 ok;
     s32 result;
-    int new_var77;
-    s32 var_r5_1785;
-    s32 var_r5_237;
-    s32 var_r6_240;
-    int new_var71;
-    s32 var_r8_1869;
-    s8 *var_r0_148;
-    s8 *var_r1_151;
-    int new_var29;
-    void *new_var79;
-    s8 *new_var19;
-    u32 new_var63;
-    s8 *new_var42;
-    s8 *var_r2_152;
-    s8 *var_r3_61;
-    s8 var_r1_2077;
-    int new_var38;
-    s8 var_r1_2127;
-    s8 *var_r1_82;
-    s8 var_r1_2319;
-    u16 *var_sl_1853;
-    u16 temp_r0_47;
-    u16 temp_r2_218;
-    s8 *new_var7;
-    u16 temp_r2_2357;
-    u16 temp_r2_424;
-    int new_var51;
-    int new_var34;
-    u16 temp_r5_204;
-    u32 new_var40;
-    s32 *new_var11;
-    u16 packedPos;
-    s32 new_var;
-    u16 temp_r6_199;
-    int new_var50;
-    u16 temp_r7_1856;
-    u32 switchIndex;
-    u32 temp_r4_1863;
-    u32 temp_r5_1508;
-    u32 temp_r5_1573;
-    int new_var65;
-    u32 temp_r5_1598;
-    u32 temp_r5_1909;
-    int new_var44;
-    u32 temp_r5_1937;
-    u32 temp_r5_515;
-    u32 temp_r5_596;
-    u32 temp_r5_724;
-    u32 temp_r6_1574;
-    s32 *new_var20;
-    s8 *new_var10;
-    u32 temp_r6_1599;
-    u32 temp_r6_1701;
-    int new_var62;
-    u32 temp_r6_1871;
-    u32 temp_r6_1910;
-    u32 temp_r6_1938;
-    u32 new_var83;
-    u32 temp_r6_509;
-    u32 temp_r6_719;
-    u32 temp_r7_1504;
-    u32 temp_r7_1696;
-    int new_var64;
-    u32 temp_r7_600;
-    u32 var_r3_581;
-    u32 var_r4_1290;
-    s8 *new_var90;
-    u32 var_r4_1337;
-    int new_var4;
-    int new_var87;
-    u32 *new_var61;
-    int new_var43;
-    u32 var_r4_1384;
-    u32 var_r4_1515;
-    u32 var_r4_606;
-    int new_var46;
-    u32 var_r4_907;
-    s8 *new_var57;
-    u8 *var_r2_85;
-    u8 temp_r2_2035;
-    u8 temp_r2_2137;
-    int new_var72;
-    u32 colorHigh;
-    u8 temp_r2_2165;
-    void *temp_r3_18;
-    int windowFlagsFieldOffset;
-    int new_var26;
-    int new_var35;
-    void *events;
-    void *temp_r5_343;
-    s8 *new_var84;
-    s8 *new_var85;
-    s32 *new_var78;
-    mode = arg0;
-    temp_r3_18 = (new_var66 = (*((void **)0x03001F2C)));
-    ctx = temp_r3_18;
-    events = (*((void **)(((s8 *)temp_r3_18) + 0x184)));
-    sp48 = 1;
-    sp34 = mode * 2;
-    packedPosOffset = sp34 + 0x174;
-    packedPos = (*((u16 *)(((s8 *)ctx) + packedPosOffset)));
-    sp38 = ((u16)Math_Div(packedPos, 0xA));
-    temp_r0_47 = Math_Mod(packedPos, 0xA);
-    statusPtr = (new_var85 = (new_var56 = slotWork.status));
-    sp30 = ((s32)temp_r0_47);
-    sp3C = ((-1) & 0xFFFF);
-    sp20 = 0;
-    sp24 = 0;
-    sp28 = 0;
-    sp2C = 0;
-    var_r3_61 = (&slotWork.status[7]);
-    do
-    {
-        (*var_r3_61) = 0;
-        var_r3_61 -= 1;
-    }
-    while (((s32)var_r3_61) >= ((s32)statusPtr));
-    if (mode == 0)
-    {
-        Func_080aafb8(events);
-        sp44 = 0;
-        if (mode < ((s32)(*((s8 *)(((s8 *)ctx) + 0x219)))))
-        {
-            var_r1_82 = statusPtr;
-            do
-            {
-                var_r2_85 = (events + 0xA0);
-                do
-                {
-                    temp_r3_88 = (*var_r2_85);
-                    temp_r3_88 <<= 0x18;
-                    var_r2_85 += 1;
-                    if (temp_r3_88 == 0)
-                    {
-                        (*var_r1_82) = 4;
-                    }
-                    temp_r5_95 = (sp44 + 1);
-                    sp44 = temp_r5_95;
-                    var_r1_82 += 1;
-                }
-                while (temp_r5_95 < ((s32)(*((s8 *)(((s8 *)ctx) + 0x219)))));
-            }
-            while (0);
+    s32 count;
+    s32 message;
+    u32 pressed;
+    u32 repeat;
+    s32 work;
+    s32 step;
+
+    state = gDjinnMenu;
+    lists = state->lists;
+    redraw = 1;
+    x = state->cursor[mode] % 10;
+    y = state->cursor[mode] / 10;
+    status = buf;
+    savedY = 0;
+    djinn = 0;
+    groupMode = 0;
+    setAll = 0;
+    sel = -1;
+    for (i = 7; i >= 0; i--)
+        status[i] = 0;
+
+    if (mode == 0) {
+        Func_080aafb8(lists);
+        for (i = 0; i < state->party_count; i++) {
+            if (lists->counts[i] == 0)
+                status[i] = 4;
         }
-        sp44 = 0;
-        sp2C = sp30;
-        if (((s32)(*((s8 *)(((s8 *)ctx) + 0x219)))) > 0)
-        {
-            do
-            {
-                do
-                {
-                    if (statusPtr[sp38] == 4)
-                    {
-                        temp_r0_119 = 1;
-                        temp_r0_119 = (sp38 + temp_r0_119);
-                        sp38 = temp_r0_119;
-                        sp38 = Func_080aa538(temp_r0_119, *((u8 *)(((s8 *)ctx) + 0x219)));
-                    }
-                    temp_r1_126 = (sp44 + 1);
-                    sp44 = temp_r1_126;
-                }
-                while (temp_r1_126 < ((s32)(*((s8 *)(((s8 *)ctx) + 0x219)))));
+        savedY = y;
+        for (i = 0; i < state->party_count; i++) {
+            if (status[x] == 4) {
+                x++;
+                x = Menu_GetModuloOfSum(x, state->party_count);
             }
-            while (0);
+        }
+    } else {
+        Djinn_MarkBalancedEntries(balanced, state->column[0]);
+        for (i = 0; i < state->party_count; i++) {
+            if (i == state->column[0]) {
+                status[i] = 7;
+            } else if (balanced[i] != 0) {
+                status[i] = 0;
+            } else {
+                status[i] = 3;
+                if (lists->counts[i] == 0)
+                    status[i] |= 4;
+            }
         }
     }
-    else
-    {
-        Func_080ae714(slotWork.slotFlags, new_var47 = (*((s8 *)(((s8 *)ctx) + 0x1C))));
-        do
-        {
-        }
-        while (0);
-        sp44 = 0;
-        if (((s32)(*((s8 *)(((s8 *)ctx) + 0x219)))) > 0)
-        {
-            var_r0_148 = statusPtr;
-            var_r1_151 = (0xA0 + events);
-            var_r2_152 = var_r0_148;
-            do
-            {
-                if (sp44 == (*((s8 *)(((s8 *)ctx) + 0x1C))))
-                {
-                    (*var_r2_152) = 7;
-                }
+
+    if (mode == 1) {
+        s32 fromX;
+        s32 fromY;
+
+        fromX = state->cursor[0] % 10;
+        fromY = state->cursor[0] / 10;
+        Menu_DrawAtWindowOffset(state->djinn_window, fromX * 7 + 1, fromY + 2, 6, 1, 14);
+        UiWindow_ApplyRectAtObjectOrigin(state->djinn_window, fromX * 7 + 1, 2, 6, 7, 6);
+        for (i = 0; i < state->party_count; i++) {
+            if (i == state->column[0]) {
+                if (state->djinn[0] & 0x8000)
+                    message = DJINN_MESSAGE(DJINN_MSG_STANDBY);
                 else
-                {
-                    if (slotWork.slotFlags[(short)sp44] != 0)
-                    {
-                        (*var_r2_152) = 0;
-                    }
-                    else
-                    {
-                        (*var_r2_152) = 3;
-                        if ((*var_r1_151) == 0)
-                        {
-                            (*(*(new_var31 = (&var_r0_148)))) = 7;
-                        }
-                    }
-                }
-                sp44 = (sp44 + 1);
-                var_r0_148 += 1;
-                var_r1_151 += 1;
-                var_r2_152 += 1;
+                    message = DJINN_MESSAGE(DJINN_MSG_SET);
+            } else if (buf[i] & 2) {
+                message = DJINN_MESSAGE(DJINN_MSG_GIVE);
+            } else {
+                message = DJINN_MESSAGE(DJINN_MSG_TRADE);
             }
-            while (sp44 < ((s32)(*((s8 *)(((s8 *)ctx) + 0x219)))));
+            UiText_DrawAt(message, state->djinn_window, i * 56 + 8, 8);
         }
     }
-    if (mode == 1)
-    {
-        temp_r6_199 = (*((u16 *)(((s8 *)ctx) + 0x174)));
-        temp_r5_204 = Math_Div(temp_r6_199, 0xA);
-        ;
-        temp_r2_218 = Math_Mod(temp_r6_199, 0xA);
-        sp0 = mode;
-        sp4 = 0xE;
-        Func_080ab1f4(*((s32 *)(((s8 *)ctx) + 0x30)), (temp_r5_204 * 7) + 1, temp_r2_218 + 2, (double)6);
-        do
-        {
-        }
-        while (0);
-        sp0 = 7;
-        sp4 = 6;
-        Func_080ab2ec(new_var52 = ((char)((short)(*((s32 *)(new_var6 = (((s8 *)(new_var73 = ctx)) + 0x30)))))), (char)((temp_r5_204 * 7) + 1), 2);
-        var_r5_237 = 0;
-        if (((s32)(*((s8 *)(((s8 *)ctx) + 0x219)))) > 0)
-        {
-            var_r6_240 = 8;
-            do
-            {
-                if (var_r5_237 == (*((s8 *)(((s8 *)ctx) + 0x1C))))
-                {
-                    if ((*((u16 *)(((s8 *)ctx) + 0x178))) & 0x8000)
-                    {
-                        var_r0_255 = 0xBB0;
-                    }
-                    else
-                    {
-                        var_r0_255 = 0xBAF;
-                    }
-                }
-                else
-                {
-                    if (2 & ((u8)statusPtr[var_r5_237]))
-                    {
-                        var_r0_255 = 0xBAE;
-                    }
-                    else
-                    {
-                        var_r0_255 = 0xBB1;
-                    }
-                }
-                Func_08015080(var_r0_255, *((s32 *)(((s8 *)ctx) + 0x30)), var_r6_240, 8);
-                var_r5_237 += 1;
-                var_r6_240 += 0x38;
-            }
-            while (var_r5_237 < ((s32)(*((s8 *)(((s8 *)ctx) + 0x219)))));
-        }
-    }
-    Func_08015270(*((s32 *)(((s8 *)temp_r3_18) + 0x10C)));
-    (*((s8 *)(((s8 *)(*((void **)(((s8 *)ctx) + 0x14)))) + 5))) = 1;
-    sp18 = sp38 * 8;
-    loop_36:
-        temp_r7_312 = sp48;
-    if (temp_r7_312 == 0)
-    {
-    }
-    else
-    {
-        sp48 = 0;
-        sp3C = (-1);
-        if (!(1 & ((u8)statusPtr[sp38])))
-        {
-            sp3C = sp30;
-        }
-        temp_r6_339 = (*((s32 *)(((s8 *)ctx) + 0x10)));
-        new_var34 = 0x208;
-        temp_r5_343 = Func_08077008(*((u16 *)((new_var84 = ((s8 *)ctx)) + ((sp38 * 2) + new_var34))));
-        Func_08015270(temp_r6_339);
-        do
-        {
-            Func_08015090(temp_r5_343, temp_r6_339, 0, 0);
-            new_var15 = 0x129;
-            if (1)
-            {
-                do
-                {
-                    do
-                    {
-                        Func_08015080((*((u8 *)(((s8 *)temp_r5_343) + new_var15))) + 0x741, temp_r6_339, 0, 8);
-                    }
-                    while (0);
-                    Func_08015090((void *)0x080AF28C, temp_r6_339, 0x30, 0);
-                    sp0 = sp48;
-                }
-                while (0);
-                Func_080150b0(*((u8 *)(((s8 *)temp_r5_343) + 0xF)), 2, temp_r6_339, 0x48);
-            }
+
+    UiWindow_Commit(state->message_window);
+    state->cursor_icon->state = 1;
+
+    for (;;) {
+        if (redraw != 0) {
+            refresh = redraw;
+            redraw = 0;
+            sel = -1;
+            if (!(buf[x] & 1))
+                sel = y;
+            window = state->status_window;
+            owner = Runtime_GetObject(state->owner_ids[x]);
+            UiWindow_Commit(window);
+            UiText_DrawStringAtOffsetFar(owner->name, window, 0, 0);
+            UiText_DrawAt(owner->class_id + 0x741, window, 0, 8);
+            UiText_DrawStringAtOffsetFar(Data_080af28c, window, 48, 0);
+            UiNumber_DrawAt(owner->level, 2, window, 72, 0);
             if (mode == 0)
-            {
-                Func_08015080(0xBA9, temp_r6_339, 0, 0x10);
+                UiText_DrawAt(DJINN_MESSAGE(DJINN_MSG_CHARACTER_STATUS), window, 0, 16);
+            if (sel != -1)
+                djinn = lists->djinn[x][sel];
+            UiWindow_Commit(state->message_window);
+            if (mode == 1) {
+                UiText_DrawQuantity(state->source_owner, 1);
+                UiText_DrawAt(DJINN_MESSAGE(DJINN_MSG_OWNER), state->message_window, 0, 0);
+                UiText_DrawQuantity(DJINN_ELEMENT(state->djinn[0]) * 20 + DJINN_NUMBER(state->djinn[0]) + 300, 4);
+                UiWindow_SetTilemapEntryFar(state->message_window, DJINN_ELEMENT(state->djinn[0]) + 0x5001, 6, 0, 0);
+                UiText_DrawAt(DJINN_MESSAGE(DJINN_MSG_ABILITY), state->message_window, 56, 0);
+                UiText_DrawAt(DJINN_MESSAGE(DJINN_MSG_WHAT_WILL_YOU_DO), state->message_window, 0, 8);
             }
-            if (sp3C != (-1))
-            {
-                sp28 = ((u32)(*((u16 *)(((s8 *)events) + (new_var43 = (((sp38 * 0xA) + sp3C) * 2))))));
+            if (sel == -1) {
+                FourObjectMotion_SetSlotPosition(mode, 0, 200, 0);
+            } else if (mode == 0) {
+                if (groupMode) {
+                    if (setAll == 0)
+                        UiText_DrawAt(DJINN_MESSAGE(DJINN_MSG_SET_ALL), state->message_window, 0, 0);
+                    else
+                        UiText_DrawAt(DJINN_MESSAGE(DJINN_MSG_ALL_STANDBY), state->message_window, 0, 0);
+                    if (Func_08077210(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn), DJINN_NUMBER(djinn))
+                        || Func_08077208(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn), DJINN_NUMBER(djinn))) {
+                        if (Func_08077210(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn), DJINN_NUMBER(djinn)))
+                            FourObjectMotion_ReplaceSlot(mode, DJINN_ELEMENT(djinn), 1);
+                        else
+                            FourObjectMotion_ReplaceSlot(mode, DJINN_ELEMENT(djinn), 2);
+                        FourObjectMotion_SetSlotPosition(mode, x * 56 + 48, 62, 0);
+                    } else {
+                        UiText_DrawAt(DJINN_MESSAGE(DJINN_MSG_RECOVERING), state->message_window, 0, 16);
+                        FourObjectMotion_ReplaceSlot(mode, DJINN_ELEMENT(djinn), 1);
+                        FourObjectMotion_SetSlotPosition(mode, x * 56 + 48, 62, 1);
+                    }
+                    if (refresh & 2)
+                        FourObjectMotion_SetSlotPhase(mode, 0);
+                } else {
+                    UiText_DrawAt(DJINN_MESSAGE(DJINN_MSG_CHOOSE), state->message_window, 0, 0);
+                    if (Func_08077210(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn), DJINN_NUMBER(djinn))
+                        || Func_08077208(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn), DJINN_NUMBER(djinn))) {
+                        if (Func_08077210(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn), DJINN_NUMBER(djinn))) {
+                            UiText_DrawAt(DJINN_MESSAGE(DJINN_MSG_SET_HELP), state->message_window, 0, 16);
+                            FourObjectMotion_ReplaceSlot(mode, DJINN_ELEMENT(djinn), 1);
+                        } else {
+                            UiText_DrawAt(DJINN_MESSAGE(DJINN_MSG_STANDBY_HELP), state->message_window, 0, 16);
+                            FourObjectMotion_ReplaceSlot(mode, DJINN_ELEMENT(djinn), 2);
+                        }
+                        FourObjectMotion_SetSlotPosition(mode, x * 56 + 48, 62, 0);
+                    } else {
+                        UiText_DrawAt(DJINN_MESSAGE(DJINN_MSG_RECOVERING), state->message_window, 0, 16);
+                        FourObjectMotion_ReplaceSlot(mode, DJINN_ELEMENT(djinn), 1);
+                        FourObjectMotion_SetSlotPosition(mode, x * 56 + 48, 62, 1);
+                    }
+                    if (refresh & 2)
+                        FourObjectMotion_SetSlotPhase(mode, 0);
+                }
+            } else {
+                if (Func_08077210(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn), DJINN_NUMBER(djinn))
+                    || Func_08077208(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn), DJINN_NUMBER(djinn))) {
+                    if (Func_08077210(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn), DJINN_NUMBER(djinn)))
+                        FourObjectMotion_ReplaceSlot(mode, DJINN_ELEMENT(djinn), 1);
+                    else
+                        FourObjectMotion_ReplaceSlot(mode, DJINN_ELEMENT(djinn), 2);
+                    FourObjectMotion_SetSlotPosition(mode, x * 56 + 48, 54, 0);
+                } else {
+                    FourObjectMotion_ReplaceSlot(mode, DJINN_ELEMENT(djinn), 1);
+                    FourObjectMotion_SetSlotPosition(mode, x * 56 + 48, 54, 1);
+                }
+                if (refresh & 2)
+                    FourObjectMotion_SetSlotPhase(mode, 0);
             }
-            windowPtr = ((s32 *)(((s8 *)temp_r3_18) + 0x10C));
-            Func_08015270(*windowPtr);
+            Func_08015278(state->djinn_window);
+            if (sel != -1) {
+                UiText_DrawAt(DJINN_MESSAGE(DJINN_MSG_UNLEASH_EFFECT), state->djinn_window, 0, 80);
+                Func_08015068(state->djinn_window, 0, 96, 224, 104);
+                UiText_DrawAt(DJINN_ELEMENT(djinn) * 20 + DJINN_NUMBER(djinn) + 0x666, state->djinn_window, 0, 96);
+            }
+            if (!(buf[x] & 1))
+                Menu_DrawAtWindowOffset(state->djinn_window, x * 7 + 1, y + 2, 6, 1, 14);
+            gUiWork[RENDER_DIRTY_OFS] = 1;
         }
-        while (0);
-        if (mode == 1)
-        {
-            Func_08015120(*((u8 *)(((s8 *)ctx) + 0x21A)), 1);
-            new_var67 = 0x5001;
-            sp8 = 0xBB2;
-            Func_08015080(0xBB2, *windowPtr, 0, 0);
-            windowFlagsFieldOffset = 0x178;
-            temp_r2_424 = (*((u16 *)(((s8 *)(new_var79 = ctx)) + windowFlagsFieldOffset)));
-            Func_08015120((((((u32)(0xE0 & temp_r2_424)) >> 5) * 0x14) + (0x1F & temp_r2_424)) + 0x12C, 4);
-            new_var65 = 0xE0;
-            sp0 = sp48;
-            Func_08015280(*windowPtr, (((u32)(new_var65 & ((unsigned char)(*((u16 *)(((s8 *)ctx) + 0x178)))))) >> 5) + new_var67, 6, 0);
-            new_var64 = 0xBB4;
-            Func_08015080(0xBB3, *windowPtr, 0x38, (float)0);
-            Func_08015080(new_var64, *windowPtr, 0, (long long)8);
-        }
-        if (sp3C == (-1))
-        {
-            Func_080ad5b4(mode, 0, 0xC8, 0);
-        }
+
+        if (buf[x] & 1)
+            UiMenu_PositionCursor(x * 56 - 8, 52);
         else
-        {
-            if (mode == 0)
-            {
-                if (sp24 != 0)
-                {
-                    if (sp20 == 0)
-                    {
-                        Func_08015080(0xB98, *windowPtr, 0, 0);
-                        do
-                        {
-                        }
-                        while (0);
-                    }
-                    else
-                    {
-                        Func_08015080(0xB99, *windowPtr, 0, (double)0);
-                    }
-                    temp_r6_509 = (((u32)(0xF00 & sp28)) >> 8);
-                    new_var38 = (0xE0 & sp28);
-                    temp_r7_514 = (0x1F & sp28);
-                    temp_r5_515 = (((u32)new_var38) >> 5);
-                    if ((Func_08077210(temp_r6_509, temp_r5_515, temp_r7_514) != 0) || (Func_08077208(temp_r6_509, temp_r5_515, temp_r7_514) != 0))
-                    {
-                        if (Func_08077210(temp_r6_509, temp_r5_515, temp_r7_514) != 0)
-                        {
-                            Func_080ad608(mode, temp_r5_515, 1);
-                        }
-                        else
-                        {
-                            Func_080ad608(mode, temp_r5_515, 2);
-                        }
-                        Func_080ad5b4(mode, ((sp18 - sp38) * 8) + 0x30, 0x3E, 0);
-                    }
-                    else
-                    {
-                        Func_08015080(0xB9E, *windowPtr, 0, 0x10);
-                        new_var9 = mode;
-                        new_var21 = temp_r5_515;
-                        new_var82 = 1;
-                        new_var26 = new_var82;
-                        Func_080ad608(new_var9, new_var21, new_var26);
-                        Func_080ad5b4(new_var9, ((sp18 - sp38) * 8) + 0x30, 0x3E, new_var26);
-                    }
-                    new_var83 = (((u32)temp_r7_312) >> 1);
-                    var_r3_581 = new_var83;
-                }
-                else
-                {
-                    new_var77 = 0;
-                    sp8 = 0xB9A;
-                    Func_08015080(0xB9A, *windowPtr, new_var77, 0);
-                    temp_r5_596 = (((u32)(0xF00 & sp28)) >> 8);
-                    do
-                    {
-                        temp_r7_600 = ((new_var54 = ((u32)(0xE0 & sp28))) >> 5);
-                    }
-                    while (0);
-                    temp_r6_601 = (0x1F & sp28);
-                    var_r4_606 = 0xB9A;
-                    if ((Func_08077210(temp_r5_596, temp_r7_600, temp_r6_601) != 0) || (var_r4_606 = sp8, Func_08077208(temp_r5_596, temp_r7_600, temp_r6_601) != 0))
-                    {
-                        sp8 = (*(new_var8 = (&var_r4_606)));
-                        if (Func_08077210(temp_r5_596, temp_r7_600, temp_r6_601) != 0)
-                        {
-                            Func_08015080(var_r4_606 + 3, *windowPtr, 0, 0x10);
-                            Func_080ad608((unsigned long long)0, temp_r7_600, 1);
-                        }
-                        else
-                        {
-                            Func_08015080(var_r4_606 + 2, *windowPtr, 0, 0x10);
-                            Func_080ad608(0, temp_r7_600, 2);
-                            do
-                            {
-                            }
-                            while (0);
-                        }
-                        Func_080ad5b4(mode, ((sp18 - sp38) * 8) + 0x30, 0x3E, 0);
-                    }
-                    else
-                    {
-                        Func_08015080(var_r4_606 + 4, *windowPtr, 0, 0x10);
-                        Func_080ad608(0, temp_r7_600, 1);
-                        do
-                        {
-                            Func_080ad5b4(0, ((new_var71 = (sp18 - sp38)) * 8) + 0x30, 0x3E, 1);
-                        }
-                        while (0);
-                    }
-                    var_r3_581 = (((u32)temp_r7_312) >> 1);
-                }
-                if (var_r3_581 != 0)
-                {
-                    Func_080ad5f4(mode, 0);
-                }
-            }
-            else
-            {
-                temp_r6_719 = (((u32)(0xF00 & sp28)) >> 8);
-                new_var30 = ((u32)(0xE0 & sp28));
-                temp_r7_723 = (0x1F & sp28);
-                temp_r5_724 = (new_var30 >> 5);
-                if ((Func_08077210(temp_r6_719, temp_r5_724, temp_r7_723) != 0) || (Func_08077208(temp_r6_719, temp_r5_724, temp_r7_723) != 0))
-                {
-                    if (0 != Func_08077210(temp_r6_719, temp_r5_724, temp_r7_723))
-                    {
-                        new_var33 = temp_r5_724;
-                        Func_080ad608(mode, new_var33, 1);
-                    }
-                    else
-                    {
-                        Func_080ad608(mode, *(new_var61 = (&new_var33)), 2);
-                    }
-                    Func_080ad5b4(mode, ((sp18 - sp38) * 8) + 0x30, 0x36, 0);
-                }
-                else
-                {
-                    Func_080ad608(mode, temp_r5_724, 1);
-                    Func_080ad5b4(mode, ((sp18 - sp38) * 8) + 0x30, 0x36, 1);
-                }
-                if ((((u32)temp_r7_312) >> 1) != 0)
-                {
-                    Func_080ad5f4(*(new_var12 = (&mode)), 0);
-                }
-            }
+            UiMenu_PositionCursor(x * 56 - 8, y * 8 + 60);
+        WaitFrames(1);
+        if (!(gKeysHeld & 0x100) || (gKeysShoulderLatch & 0x100)) {
+            if (groupMode)
+                redraw = 1;
+            groupMode = 0;
+            setAll = 0;
         }
-        Func_08015278(*((s32 *)(((s8 *)ctx) + 0x30)));
-        if (sp3C != (-1))
-        {
-            Func_08015080(0xBAD, *((s32 *)(((s8 *)ctx) + ((char)0x30))), 0, 0x50);
-            sp0 = 0x68;
-            new_var36 = (0x1F & sp28);
-            Func_08015068(*((s32 *)(0x30 + ((s8 *)ctx))), 0, 0x60, 0xE0);
-            new_var88 = (-0x30);
-            Func_08015080((((((u32)(0xE0 & sp28)) >> 5) * 0x14) + new_var36) + 0x666, new_var = (*((s32 *)(((s8 *)ctx) - new_var88))), 0, 0x60);
-        }
-        if (!(1 & ((u8)statusPtr[sp38])))
-        {
-            sp4 = 0xE;
-            sp0 = 1;
-            Func_080ab1f4(*(new_var11 = (&(*((s32 *)(((s8 *)ctx) + 0x30))))), (sp18 - sp38) + 1, sp30 + 2, 6);
-        }
-        (*((s8 *)(((s8 *)(*((void **)((int)((unsigned short)0x03001E8C))))) + 0xEA3))) = 1;
-    }
-    if (1 & ((u8)statusPtr[sp38]))
-    {
-        Func_080a1a40(((sp18 - sp38) * 8) - 8, 0x34);
-    }
-    else
-    {
-        new_var72 = 8;
-        Func_080a1a40(((sp18 - sp38) * new_var72) - new_var72, (sp30 * new_var72) + 0x3C);
-    }
-    Func_080030f8(1);
-    if ((!((*((s32 *)0x03001AE8)) & 0x100)) || ((*((s32 *)0x03001AF8)) & 0x100))
-    {
-        if (sp24 != 0)
-        {
-            sp48 = 1;
-        }
-        sp24 = 0;
-        sp20 = 0;
-    }
-    statusFlags = (*((s32 *)0x03001B04));
-    new_var4 = 0x03001C94;
-    var_r4_907 = (new_var81 = (*((u32 *)new_var4)));
-    do
-    {
-        eventCode = (*((s32 *)(((s8 *)events) + 0x212C)));
-        if (eventCode == 0)
-        {
-        }
-        else
-        {
-            var_r4_907 = 0;
-            (*((s32 *)(((s8 *)events) + 0x2128))) = ((s32)((*((s32 *)(((s8 *)events) + 0x2128))) + 1));
-            switchIndex = (eventCode - 1);
-            statusFlags = 0;
-            switch (switchIndex)
-            {
-                case 27:
-                    if (!((*((u32 *)0x03001C94)) & 1))
-                    {
-                        do
-                        {
-                            Func_080a1a40(0x96, 0x1A);
-                            Func_080030f8(1);
-                        }
-                        while (!((*((u32 *)0x03001C94)) & 1));
-                    }
-                var_r4_907 = 2;
-                statusFlags = 2;
+
+        repeat = gKeysRepeat;
+        pressed = gKeysPressed;
+        step = lists->tutorial_step;
+        if (step != 0) {
+            lists->tutorial_timer++;
+            pressed = 0;
+            repeat = 0;
+            switch (step) {
+            case 28:
+                while (!(gKeysPressed & 1)) {
+                    UiMenu_PositionCursor(150, 26);
+                    WaitFrames(1);
+                }
+                repeat = 2;
+                pressed = 2;
                 break;
-                case 26:
-                    if ((*((s32 *)(((s8 *)events) + 0x2128))) != 0x3C)
-                    {
-                    }
-                    else
-                    {
-                        temp_r5_1001 = Func_08015038(0xC4C, 9, 9, 1);
-                        (*((s8 *)0x0200044C)) = 1;
-                        while (Func_08015048() == 0)
-                        {
-                            Func_080030f8(1);
-                        }
-                        Func_08015018(temp_r5_1001, 1);
-                        Func_080aafb8(events);
-                        Func_080030f8(1);
-                        temp_r5_1029 = Func_08015038(0xC4D, 9, 9, 1);
-                        (*((u8 *)((short)0x0200044C))) = 1;
-                        while (Func_08015048() == 0)
-                        {
-                            Func_080030f8(1);
-                        }
-                        Func_08015018(temp_r5_1029, 1);
-                        new_var87 = 2;
-                        Func_080aafb8(events);
-                        (*((s32 *)(((s8 *)events) + 0x2128))) = 0;
-                        Func_080b50f8();
-                        Func_080b50f8();
-                        Func_080b50f8();
-                        Func_080771b8(0u, 0u, 0);
-                        Func_080771c8(0u, 0u, 0);
-                        Func_08077010(0u);
-                        statusFlags = new_var87;
-                        block_167:
-                            var_r4_907 = 2;
-                    }
+            case 27:
+                if (lists->tutorial_timer == 60) {
+                    work = UiWork_Create(TUTORIAL_MESSAGE(TUTORIAL_MSG_RECOVERY), 9, 9, 1);
+                    gGameState[0x20c] = 1;
+                    while (UiWork_IsCompleteFar() == 0)
+                        WaitFrames(1);
+                    UiWindow_Close(work, 1);
+                    Func_080aafb8(lists);
+                    WaitFrames(1);
+                    work = UiWork_Create(TUTORIAL_MESSAGE(TUTORIAL_MSG_SET_AGAIN), 9, 9, 1);
+                    gGameState[0x20c] = 1;
+                    while (UiWork_IsCompleteFar() == 0)
+                        WaitFrames(1);
+                    UiWindow_Close(work, 1);
+                    Func_080aafb8(lists);
+                    lists->tutorial_timer = 0;
+                    Func_080b50f8();
+                    Func_080b50f8();
+                    Func_080b50f8();
+                    Func_080771b8(0, 0, 0);
+                    Func_080771c8(0, 0, 0);
+                    BattleUnit_Recalculate(0);
+                    repeat = 2;
+                    pressed = 2;
+                }
                 break;
-                case 0:
-                    if ((*((s32 *)(((s8 *)events) + 0x2128))) != 0x3C)
-                    {
-                    }
-                    else
-                    {
-                        do
-                        {
-                            sp8 = 0;
-                            temp_r5_1083 = Func_08015038((char)0xC40, 9, 9, 1);
-                            (*((u8 *)0x0200044C)) = 1;
-                            while (Func_08015048() == 0)
-                            {
-                                Func_080030f8(1);
-                            }
-                            Func_08015018(temp_r5_1083, 1);
-                        }
-                        while (0);
-                        Func_080aafb8(events);
-                        (*((s32 *)(((s8 *)events) + 0x2128))) = 0;
-                        (*((s32 *)((new_var90 = ((s8 *)events)) + 0x212C))) = 2;
-                        var_r4_907 = sp8;
-                    }
+            case 1:
+                if (lists->tutorial_timer == 60) {
+                    work = UiWork_Create(TUTORIAL_MESSAGE(TUTORIAL_MSG_GIVE), 9, 9, 1);
+                    gGameState[0x20c] = 1;
+                    while (UiWork_IsCompleteFar() == 0)
+                        WaitFrames(1);
+                    UiWindow_Close(work, 1);
+                    Func_080aafb8(lists);
+                    lists->tutorial_timer = 0;
+                    lists->tutorial_step = 2;
+                }
                 break;
-                case 1:
-                    case 3:
-                        case 7:
-                            case 8:
-                                case 21:
-                                    if ((*((s32 *)(((s8 *)events) + 0x2128))) != 0x5A)
-                                    {
-                                    }
-                                    else
-                                    {
-                                        new_var29 = 0x2128;
-                                        statusFlags = 1;
-                                        (*(new_var76 = ((s32 *)((new_var42 = ((s8 *)events)) + new_var29)))) = 0;
-                                        var_r2_1122 = (events + 0x212C);
-                                        var_r3_1124 = ((*((s32 *)(new_var28 = (((s8 *)events) + 0x212C)))) + 1);
-                                        block_162:
-                                            var_r4_907 = 1;
-                                        (*var_r2_1122) = var_r3_1124;
-                                    }
+            case 2:
+            case 4:
+            case 8:
+            case 9:
+            case 22:
+                if (lists->tutorial_timer == 90) {
+                    repeat = 1;
+                    pressed = 1;
+                    lists->tutorial_timer = 0;
+                    lists->tutorial_step++;
+                }
                 break;
-                case 2:
-                    if ((*((s32 *)(((s8 *)events) + 0x2128))) != 0x5A)
-                    {
-                    }
-                    else
-                    {
-                        (*((s32 *)(((s8 *)events) + 0x2128))) = 0;
-                        statusFlags = 0x10;
-                        var_r4_907 = 0x10;
-                        (*((s32 *)(((s8 *)events) + 0x212C))) = 4;
-                    }
+            case 3:
+                if (lists->tutorial_timer == 90) {
+                    lists->tutorial_timer = 0;
+                    repeat = 16;
+                    pressed = 16;
+                    lists->tutorial_step = 4;
+                }
                 break;
-                case 5:
-                    case 6:
-                        if ((*((s32 *)(((s8 *)events) + 0x2128))) != 0x3C)
-                        {
-                        }
-                        else
-                        {
-                            sp8 = 0;
-                            temp_r5_1163 = Func_08015038(0xC41, 9, 9, 1);
-                            (*((u8 *)0x0200044C)) = 1;
-                            do
-                            {
-                                while (Func_08015048() == 0)
-                                {
-                                    Func_080030f8(1);
-                                }
-                                Func_08015018(temp_r5_1163, 1);
-                            }
-                            while (0);
-                            Func_080aafb8(events);
-                            (*((s32 *)(((s8 *)events) + 0x2128))) = 0;
-                            (*((s32 *)(((s8 *)events) + 0x212C))) = 8;
-                            var_r4_907 = sp8;
-                        }
+            case 6:
+            case 7:
+                if (lists->tutorial_timer == 60) {
+                    work = UiWork_Create(TUTORIAL_MESSAGE(TUTORIAL_MSG_SET_AFTER_GIVE), 9, 9, 1);
+                    gGameState[0x20c] = 1;
+                    while (UiWork_IsCompleteFar() == 0)
+                        WaitFrames(1);
+                    UiWindow_Close(work, 1);
+                    Func_080aafb8(lists);
+                    lists->tutorial_timer = 0;
+                    lists->tutorial_step = 8;
+                }
                 break;
-                case 12:
-                    if ((*((s32 *)(((s8 *)events) + 0x2128))) != 0x28)
-                    {
-                    }
-                    else
-                    {
-                        (*((s32 *)(((s8 *)events) + 0x2128))) = 0;
-                        var_r4_907 = 2;
-                        statusFlags = 2;
-                        (*((s32 *)(((s8 *)events) + 0x212C))) = ((s32)((*((s32 *)(((s8 *)events) + 0x212C))) + 1));
-                    }
+            case 13:
+                if (lists->tutorial_timer == 40) {
+                    lists->tutorial_timer = 0;
+                    lists->tutorial_step++;
+                    repeat = 2;
+                    pressed = 2;
+                }
                 break;
-                case 13:
-                    case 15:
-                        case 16:
-                            if ((*((s32 *)(((s8 *)events) + 0x2128))) != 0x28)
-                            {
-                            }
-                            else
-                            {
-                                (*((s32 *)(((s8 *)events) + 0x2128))) = 0;
-                                new_var45 = 0x212C;
-                                (*((s32 *)(((s8 *)events) + 0x212C))) = (new_var3 = ((s32)((*((s32 *)(((s8 *)events) + new_var45))) + 1)));
-                            }
+            case 14:
+            case 16:
+            case 17:
+                if (lists->tutorial_timer == 40) {
+                    lists->tutorial_timer = 0;
+                    lists->tutorial_step++;
+                }
                 break;
-                case 14:
-                    if ((*((s32 *)(((s8 *)events) + 0x2128))) != 0x3C)
-                    {
+            case 15:
+                if (lists->tutorial_timer == 60) {
+                    gGameState[0x20c] = 1;
+                    work = UiWork_Create(TUTORIAL_MESSAGE(TUTORIAL_MSG_POWERS), 9, 9, 1);
+                    Func_080a1ac0(2, 146);
+                    while (UiWork_IsCompleteFar() == 0)
+                        WaitFrames(1);
+                    while (!(gKeysPressed & 1)) {
+                        UiMenu_PositionCursor(2, 146);
+                        WaitFrames(1);
                     }
-                    else
-                    {
-                        (*((u8 *)0x0200044C)) = 1;
-                        sp8 = 0;
-                        temp_r5_1278 = Func_08015038(0xC44, 9, 9, 1);
-                        Func_080a1ac0(2, 0x92);
-                        var_r4_1290 = sp8;
-                        while (Func_08015048() == 0)
-                        {
-                            Func_080030f8(1);
-                        }
-                        if (!((*((u32 *)0x03001C94)) & 1))
-                        {
-                            do
-                            {
-                                sp8 = var_r4_1290;
-                                Func_080a1a40((unsigned long long)2, 0x92);
-                                Func_080030f8(1);
-                            }
-                            while (!((*((u32 *)0x03001C94)) & 1));
-                        }
-                        sp8 = var_r4_1290;
-                        Func_08015018(temp_r5_1278, 1);
-                        Func_080aafb8(events);
-                        Func_080030f8(1);
-                        temp_r5_1327 = Func_08015038(0xC45, 9, 9, 1);
-                        do
-                        {
-                            var_r4_1337 = sp8;
-                            while (Func_08015048() == 0)
-                            {
-                                Func_080030f8(1);
-                            }
-                            if (!(1 & (*((u32 *)0x03001C94))))
-                            {
-                                do
-                                {
-                                    sp8 = var_r4_1337;
-                                    Func_080a1a40(2, 0x92);
-                                    Func_080030f8(1);
-                                }
-                                while (!((*((u32 *)0x03001C94)) & 1));
-                            }
-                            sp8 = var_r4_1337;
-                            Func_08015018(temp_r5_1327, 1);
-                            Func_080aafb8(events);
-                        }
-                        while (0);
-                        Func_080030f8(1);
-                        temp_r5_1374 = Func_08015038(0xC46, 9, 9, 1);
-                        var_r4_1384 = sp8;
-                        while (Func_08015048() == 0)
-                        {
-                            Func_080030f8(1);
-                        }
-                        if (!((*((u32 *)0x03001C94)) & 1))
-                        {
-                            do
-                            {
-                                new_var63 = var_r4_1384;
-                                sp8 = new_var63;
-                                Func_080a1a40(((((2 & 0xFFFFFFFFFFFFFFFFu) & 0xFFFFFFFFFFFFFFFFu) & 0xFFFFFFFFFFFFFFFFu) & 0xFFFFFFFFFFFFFFFFu) & 0xFFFFFFFFFFFFFFFFu, 0x92);
-                                Func_080030f8(1);
-                            }
-                            while (!((*((u32 *)0x03001C94)) & 1));
-                        }
-                        sp8 = var_r4_1384;
-                        Func_08015018(temp_r5_1374, 1);
-                        Func_080aafb8(events);
-                        Func_080030f8(1);
-                        (*((s32 *)(((s8 *)events) + 0x2128))) = 0;
-                        (*((s32 *)((new_var37 = ((s8 *)events)) + 0x212C))) = 0x10;
-                        var_r4_907 = sp8;
+                    UiWindow_Close(work, 1);
+                    Func_080aafb8(lists);
+                    WaitFrames(1);
+                    work = UiWork_Create(TUTORIAL_MESSAGE(TUTORIAL_MSG_UNLEASH), 9, 9, 1);
+                    while (UiWork_IsCompleteFar() == 0)
+                        WaitFrames(1);
+                    while (!(gKeysPressed & 1)) {
+                        UiMenu_PositionCursor(2, 146);
+                        WaitFrames(1);
                     }
+                    UiWindow_Close(work, 1);
+                    Func_080aafb8(lists);
+                    WaitFrames(1);
+                    work = UiWork_Create(TUTORIAL_MESSAGE(TUTORIAL_MSG_DEMONSTRATE), 9, 9, 1);
+                    while (UiWork_IsCompleteFar() == 0)
+                        WaitFrames(1);
+                    while (!(gKeysPressed & 1)) {
+                        UiMenu_PositionCursor(2, 146);
+                        WaitFrames(1);
+                    }
+                    UiWindow_Close(work, 1);
+                    Func_080aafb8(lists);
+                    WaitFrames(1);
+                    lists->tutorial_timer = 0;
+                    lists->tutorial_step = 16;
+                }
                 break;
-                case 17:
-                    case 19:
-                        if ((*((s32 *)(((s8 *)events) + 0x2128))) == 0x5A)
-                        {
-                            statusFlags = 1;
-                            do
-                            {
-                            }
-                            while (0);
-                            (*((s32 *)(((s8 *)events) + 0x2128))) = 0;
-                            var_r3_1124 = 0x15;
-                            var_r2_1122 = events;
-                            var_r2_1122 = (var_r2_1122 + 0x212C);
-                            goto block_162;
-                        }
+            case 18:
+            case 20:
+                if (lists->tutorial_timer == 90) {
+                    repeat = 1;
+                    lists->tutorial_timer = 0;
+                    lists->tutorial_step = 21;
+                    pressed = 1;
+                }
                 break;
-                case 20:
-                    if ((*((s32 *)(0x2128 + ((s8 *)events)))) == 0x5A)
-                    {
-                        (*((s32 *)(((s8 *)events) + 0x2128))) = 0;
-                        statusFlags = 0x20;
-                        var_r4_907 = 0x20;
-                        (*((s32 *)(0x212C + (new_var75 = ((s8 *)events))))) = 0x16;
-                    }
+            case 21:
+                if (lists->tutorial_timer == 90) {
+                    lists->tutorial_timer = 0;
+                    repeat = 32;
+                    pressed = 32;
+                    lists->tutorial_step = 22;
+                }
                 break;
-                case 23:
-                    if ((*((s32 *)(((s8 *)events) + 0x2128))) == 0x3C)
-                    {
-                        (*((s32 *)(((s8 *)events) + 0x2128))) = 0;
-                        (*((s32 *)(((s8 *)events) + 0x212C))) = 0x19;
-                        statusFlags = 2;
-                        goto block_167;
-                    }
+            case 24:
+                if (lists->tutorial_timer == 60) {
+                    lists->tutorial_timer = 0;
+                    lists->tutorial_step = 25;
+                    repeat = 2;
+                    pressed = 2;
+                }
                 break;
             }
         }
-        if (mode != 0)
-        {
-            goto block_186;
+
+        if (mode == 0 && (pressed & 0x100)) {
+            if (sel == -1) {
+                Audio_PlayCue(114);
+                continue;
+            }
+            ok = 0;
+            if (Func_08077210(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn), DJINN_NUMBER(djinn))
+                || Func_08077208(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn), DJINN_NUMBER(djinn)))
+                ok = 1;
+            groupMode = 1;
+            gKeysShoulderLatch = 0;
+            if (ok == 0) {
+                Audio_PlayCue(114);
+                Func_08015278(state->djinn_window);
+                Func_08015068(state->djinn_window, 0, 80, 216, 104);
+                UiText_DrawMessageAt(DJINN_MESSAGE(DJINN_MSG_NOW_RECOVERING), state->djinn_window, 0, 96);
+                redraw = 1;
+                continue;
+            }
+            if (djinn & 0x8000) {
+                Audio_PlayCue(175);
+                Func_080771b8(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn), DJINN_NUMBER(djinn));
+                Func_080771c8(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn), DJINN_NUMBER(djinn));
+            } else {
+                Audio_PlayCue(139);
+                Func_080771b0(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn), DJINN_NUMBER(djinn));
+                Func_080771c0(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn), DJINN_NUMBER(djinn));
+            }
+            BattleUnit_Recalculate(DJINN_OWNER(djinn));
+            Func_080aafb8(lists);
+            redraw = 1;
         }
-        if (!(0x100 & var_r4_907))
-        {
-            goto block_183;
-        }
-        if (sp3C == (-1))
-        {
-            goto block_193;
-        }
-        sp44 = 0;
-    }
-    while (0);
-    temp_r7_1504 = (((u32)(0xF00 & sp28)) >> 8);
-    temp_r5_1508 = (((u32)(0xE0 & sp28)) >> 5);
-    temp_r6_1509 = (0x1F & sp28);
-    sp8 = var_r4_907;
-    var_r4_1515 = var_r4_907;
-    if ((Func_08077210(temp_r7_1504, temp_r5_1508, temp_r6_1509) != 0) || (var_r4_1515 = sp8, Func_08077208(temp_r7_1504, temp_r5_1508, temp_r6_1509) != 0))
-    {
-        sp44 = 1;
-    }
-    sp24 = 1;
-    (*((u32 *)0x03001AF8)) = 0;
-    if (sp44 == 0)
-    {
-        Func_080f9010(0x72);
-        Func_08015278(*((s32 *)(((s8 *)ctx) + 0x30)));
-        sp0 = 0x68;
-        Func_08015068(*(new_var32 = (&(*((s32 *)(new_var19 = ((new_var10 = ((s8 *)ctx)) + 0x30)))))), 0, 0x50, 0xD8);
-        Func_08015078(0xBBE, *((s32 *)(((s8 *)ctx) + 0x30)), 0, 0x60);
-        sp48 = 1;
-        goto loop_36;
-    }
-    if ((sp28 >> 0xF) != 0)
-    {
-        sp8 = var_r4_1515;
-        Func_080f9010(0xAF);
-        new_var74 = 8;
-        new_var58 = 0x1F;
-        ;
-        colorHigh = (((u32)(0xF00 & sp28)) >> new_var74);
-        new_var60 = new_var58;
-        temp_r3_1572 = (new_var60 & sp28);
-        temp_r5_1573 = colorHigh;
-        temp_r6_1574 = (((u32)(0xE0 & sp28)) >> 5);
-        Func_080771b8(temp_r5_1573, temp_r6_1574, temp_r3_1572);
-        Func_080771c8(temp_r5_1573, temp_r6_1574, temp_r3_1572);
-    }
-    else
-    {
-        new_var44 = 0xF00;
-        sp8 = var_r4_1515;
-        new_var62 = 5;
-        Func_080f9010(0x8B);
-        temp_r3_1597 = (0x1F & sp28);
-        temp_r5_1598 = (((u32)(new_var44 & sp28)) >> new_var74);
-        temp_r6_1599 = (((u32)(0xE0 & sp28)) >> new_var62);
-        Func_080771b0(temp_r5_1598, temp_r6_1599, temp_r3_1597);
-        Func_080771c0(temp_r5_1598, temp_r6_1599, temp_r3_1597);
-    }
-    Func_08077010(((u32)(0xF00 & sp28)) >> 8);
-    Func_080aafb8(events);
-    sp48 = 1;
-    var_r4_907 = sp8;
-    block_183:
-        if ((mode == 0) && (0x200 & var_r4_907))
-        {
+        if (mode == 0 && (pressed & 0x200)) {
+            Audio_PlayCue(112);
             result = 7;
-            Func_080f9010(0x70);
+            break;
         }
-        else
-        {
-            block_186:
-                if (!(1 & var_r4_907))
-                {
-                    if (mode != 1)
-                    {
-                        goto block_208;
-                    }
-                    if (!(0x100 & var_r4_907))
-                    {
-                        block_208:
-                            if (8 & var_r4_907)
-                            {
-                                var_r5_1785 = 2;
-                                goto block_212;
-                            }
-                        if (2 & var_r4_907)
-                        {
-                            do
-                            {
-                                var_r5_1785 = 1;
-                                block_212:
-                                    Func_080f9010(0x71);
-                                result = var_r5_1785;
-                                result = 0;
-                                result = (result - result);
-                            }
-                            while (0);
-                        }
-                        else
-                        {
-                            if (mode != 0)
-                            {
-                                goto block_241;
-                            }
-                            if (!(4 & var_r4_907))
-                            {
-                                goto block_241;
-                            }
-                            if (sp24 == 0)
-                            {
-                                sp0 = 1;
-                                sp4 = 0xF;
-                                Func_080ab1f4(*((s32 *)(((s8 *)ctx) + 0x30)), (new_var46 = (sp18 - sp38)) + 1, sp30 + 2, 6);
-                                result = 0xA;
-                                Func_080f9010(0x70);
-                            }
-                            else
-                            {
-                                temp_r5_1817 = (sp20 ^ 1);
-                                sp20 = temp_r5_1817;
-                                if (temp_r5_1817 != 0)
-                                {
-                                    Func_080f9010(0x8B);
-                                }
-                                else
-                                {
-                                    Func_080f9010(0xAF);
-                                }
-                                sp44 = 0;
-                                if (((s32)(*((s8 *)(((s8 *)ctx) + 0x219)))) <= 0)
-                                {
-                                }
-                                else
-                                {
-                                    sp14 = 0xA0;
-                                    sp10 = 0;
-                                    loop_225:
-                                        sp40 = 0;
-                                    if (((s32)(*((s8 *)(((s8 *)events) + sp14)))) > 0)
-                                    {
-                                        var_sl_1853 = ((sp10 * 2) + events);
-                                        do
-                                        {
-                                            temp_r7_1856 = (*var_sl_1853);
-                                            var_sl_1853 = (var_sl_1853 + 1);
-                                            temp_r4_1863 = (((u32)(temp_r7_1856 & 0xF00)) >> 8);
-                                            var_r8_1869 = 0;
-                                            temp_r6_1871 = (((u32)(temp_r7_1856 & 0xE0)) >> 5);
-                                            temp_r5_1872 = (temp_r7_1856 & 0x1F);
-                                            if ((Func_08077210(temp_r4_1863, temp_r6_1871, temp_r5_1872) != 0) || (Func_08077208(temp_r4_1863, temp_r6_1871, temp_r5_1872) != 0))
-                                            {
-                                                var_r8_1869 = 1;
-                                            }
-                                            if (var_r8_1869 != 0)
-                                            {
-                                                if (sp20 != 0)
-                                                {
-                                                    if ((temp_r7_1856 >> 0xF) == 0)
-                                                    {
-                                                        ;
-                                                        temp_r5_1909 = (((u32)(temp_r7_1856 & 0xF00)) >> 8);
-                                                        temp_r6_1910 = 5;
-                                                        temp_r6_1910 = (((u32)(temp_r7_1856 & 0xE0)) >> temp_r6_1910);
-                                                        Func_080771b0(temp_r5_1909, temp_r6_1910, 0x1F & temp_r7_1856);
-                                                        Func_080771c0(temp_r5_1909, temp_r6_1910, 0x1F & temp_r7_1856);
-                                                        Func_08077010(temp_r5_1909);
-                                                    }
-                                                }
-                                                else
-                                                {
-                                                    if ((temp_r7_1856 >> 0xF) != 0)
-                                                    {
-                                                        pixelColorHigh = (((u32)(temp_r7_1856 & 0xF00)) >> 8);
-                                                        temp_r6_1938 = (((u32)(temp_r7_1856 & 0xE0)) >> 5);
-                                                        temp_r3_1936 = (0x1F & temp_r7_1856);
-                                                        temp_r5_1937 = pixelColorHigh;
-                                                        Func_080771b8(temp_r5_1937, temp_r6_1938, temp_r3_1936);
-                                                        Func_080771c8(temp_r5_1937, temp_r6_1938, temp_r3_1936);
-                                                        Func_08077010(temp_r5_1937);
-                                                    }
-                                                }
-                                            }
-                                            temp_r1_1953 = (sp40 + 1);
-                                            new_var49 = temp_r1_1953;
-                                            sp40 = new_var49;
-                                        }
-                                        while (new_var49 < ((((s32)(*((s8 *)(((s8 *)events) + sp14)))) - 1) + 1));
-                                    }
-                                    temp_r1_1966 = (sp44 + 1);
-                                    sp44 = temp_r1_1966;
-                                    sp14 += 1;
-                                    sp10 += 0xA;
-                                    if (temp_r1_1966 < ((s32)(*((s8 *)(((s8 *)ctx) + 0x219)))))
-                                    {
-                                        goto loop_225;
-                                    }
-                                }
-                                Func_080aafb8(events);
-                                sp48 = 1;
-                                block_241:
-                                    if (0x40 & statusFlags)
-                                    {
-                                        Func_080f9010(0x6F);
-                                        if (!(4 & ((u8)statusPtr[sp38])))
-                                        {
-                                            do
-                                            {
-                                                sp4 = 0xF;
-                                                new_var39 = (sp30 + 2);
-                                                sp0 = 1;
-                                                Func_080ab1f4(*((s32 *)(((s8 *)ctx) + 0x30)), (new_var51 = (sp18 - sp38)) + 1, new_var39, 6);
-                                            }
-                                            while (0);
-                                            temp_r2_2035 = ((u8)(*(new_var24 = (&statusPtr)))[sp38]);
-                                            if (!(4 & temp_r2_2035))
-                                            {
-                                                if (1 & temp_r2_2035)
-                                                {
-                                                    statusPtr[sp38] = temp_r2_2035;
-                                                    statusPtr[sp38] = ((-2) & statusPtr[sp38]);
-                                                    sp30 = 0;
-                                                    goto block_249;
-                                                }
-                                                if ((sp30 == 0) && (2 & temp_r2_2035))
-                                                {
-                                                    statusPtr[sp38] = (temp_r2_2035 | 1);
-                                                    sp48 = 2;
-                                                }
-                                                else
-                                                {
-                                                    block_249:
-                                                        sp30 -= 1;
-                                                    var_r1_2077 = (*((s8 *)(((s8 *)events) + (sp38 + (new_var35 = 0xA0)))));
-                                                    if (0 == var_r1_2077)
-                                                    {
-                                                        var_r1_2077 = 1;
-                                                    }
-                                                    temp_r0_2083 = Func_080aa538(sp30, (u8)var_r1_2077);
-                                                    sp30 = temp_r0_2083;
-                                                    sp2C = temp_r0_2083;
-                                                    sp48 = 2;
-                                                }
-                                            }
-                                        }
-                                    }
-                                    else
-                                    {
-                                        do
-                                        {
-                                            if (0x80 & statusFlags)
-                                            {
-                                                if (1)
-                                                {
-                                                    Func_080f9010(0x6F);
-                                                }
-                                                if (!(4 & ((u8)statusPtr[sp38])))
-                                                {
-                                                    sp4 = 0xF;
-                                                    sp0 = 1;
-                                                    Func_080ab1f4(*((s32 *)(((s8 *)ctx) + 0x30)), ((new_var80 = sp18) - sp38) + 1, sp30 + 2, 6);
-                                                    sp30 += 1;
-                                                    do
-                                                    {
-                                                        var_r1_2127 = (*((s8 *)(((s8 *)events) + (new_var17 = (sp38 + 0xA0)))));
-                                                        if (var_r1_2127 == 0)
-                                                        {
-                                                            var_r1_2127 = 1;
-                                                        }
-                                                    }
-                                                    while (0);
-                                                    sp30 = Func_080aa538(sp30, (u8)var_r1_2127);
-                                                    temp_r2_2137 = ((u8)statusPtr[sp38]);
-                                                    if ((1 & temp_r2_2137) && (!(4 & temp_r2_2137)))
-                                                    {
-                                                        statusPtr[sp38] = (-2);
-                                                        statusPtr[sp38] = (statusPtr[sp38] & temp_r2_2137);
-                                                        sp30 = 0;
-                                                    }
-                                                    else
-                                                    {
-                                                        if (sp30 == 0)
-                                                        {
-                                                            temp_r2_2165 = ((u8)statusPtr[sp38]);
-                                                            if (2 & temp_r2_2165)
-                                                            {
-                                                                do
-                                                                {
-                                                                }
-                                                                while (0);
-                                                                statusPtr[sp38] = (1 | temp_r2_2165);
-                                                            }
-                                                        }
-                                                    }
-                                                    sp2C = sp30;
-                                                    sp48 = 2;
-                                                }
-                                            }
-                                            else
-                                            {
-                                                if (0x20 & statusFlags)
-                                                {
-                                                    Func_080f9010(0x6F);
-                                                    if (!(4 & ((u8)statusPtr[sp38])))
-                                                    {
-                                                        sp0 = 1;
-                                                        sp4 = 0xF;
-                                                        Func_080ab1f4(*((s32 *)(((s8 *)ctx) + 0x30)), (sp18 - sp38) + 1, sp30 + 2, 6);
-                                                    }
-                                                    temp_r3_2211 = (sp38 - 1);
-                                                    sp38 = temp_r3_2211;
-                                                    sp38 = Func_080aa538(temp_r3_2211, *((u8 *)(((s8 *)ctx) + 0x219)));
-                                                    if (mode == 0)
-                                                    {
-                                                        sp44 = 0;
-                                                        if (mode < ((s32)(*((s8 *)(((s8 *)ctx) + 0x219)))))
-                                                        {
-                                                            do
-                                                            {
-                                                                if (statusPtr[sp38] == 4)
-                                                                {
-                                                                    temp_r0_2233 = (sp38 - 1);
-                                                                    sp38 = temp_r0_2233;
-                                                                    sp38 = Func_080aa538(temp_r0_2233, *((u8 *)(((s8 *)ctx) + 0x219)));
-                                                                }
-                                                                temp_r1_2240 = (sp44 + 1);
-                                                                sp44 = temp_r1_2240;
-                                                            }
-                                                            while (temp_r1_2240 < ((s32)(*((s8 *)(((s8 *)ctx) + 0x219)))));
-                                                        }
-                                                    }
-                                                    goto block_281;
-                                                }
-                                                if (0x10 & statusFlags)
-                                                {
-                                                    Func_080f9010(0x6F);
-                                                    if (!(4 & ((u8)statusPtr[sp38])))
-                                                    {
-                                                        sp0 = 1;
-                                                        sp4 = 0xF;
-                                                        Func_080ab1f4(*((s32 *)(((s8 *)ctx) + 0x30)), (sp18 - sp38) + 1, sp30 + 2, 6);
-                                                    }
-                                                    temp_r3_2279 = (sp38 + 1);
-                                                    sp38 = temp_r3_2279;
-                                                    sp38 = Func_080aa538(temp_r3_2279, *((u8 *)(((s8 *)ctx) + 0x219)));
-                                                    if (mode == 0)
-                                                    {
-                                                        sp44 = 0;
-                                                        if (mode < ((s32)(*((s8 *)(((s8 *)ctx) + 0x219)))))
-                                                        {
-                                                            do
-                                                            {
-                                                                if (statusPtr[sp38] == 4)
-                                                                {
-                                                                    temp_r0_2301 = (sp38 + 1);
-                                                                    sp38 = temp_r0_2301;
-                                                                    sp38 = Func_080aa538(temp_r0_2301, *((u8 *)(((s8 *)ctx) + 0x219)));
-                                                                }
-                                                                temp_r1_2308 = (sp44 - (-1));
-                                                                sp44 = temp_r1_2308;
-                                                            }
-                                                            while (temp_r1_2308 < ((s32)(*((s8 *)(((s8 *)ctx) + 0x219)))));
-                                                        }
-                                                    }
-                                                    block_281:
-                                                        sp30 = sp2C;
-                                                    var_r1_2319 = (*((s8 *)(((s8 *)events) + (new_var25 = (sp38 + 0xA0)))));
-                                                    if (var_r1_2319 == 0)
-                                                    {
-                                                        var_r1_2319 = 1;
-                                                    }
-                                                    sp30 = Func_080aa538(sp30, (u8)var_r1_2319);
-                                                    sp48 = 2;
-                                                    sp18 = (sp38 * 8);
-                                                }
-                                            }
-                                        }
-                                        while (0);
-                                    }
-                                goto loop_36;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        goto block_191;
-                    }
+        if ((pressed & 1) || (mode == 1 && (pressed & 0x100))) {
+            ok = 1;
+            if (!(buf[x] & 1)) {
+                if (sel == -1) {
+                    Audio_PlayCue(114);
+                    continue;
                 }
+                ok = 0;
+                if (Func_08077210(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn), DJINN_NUMBER(djinn))
+                    || Func_08077208(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn), DJINN_NUMBER(djinn)))
+                    ok = 1;
+            }
+            if (ok == 0) {
+                Audio_PlayCue(114);
+                Func_08015278(state->djinn_window);
+                Func_08015068(state->djinn_window, 0, 80, 216, 104);
+                UiText_DrawMessageAt(DJINN_MESSAGE(DJINN_MSG_NOW_RECOVERING), state->djinn_window, 0, 96);
+                continue;
+            }
+            if (mode == 1) {
+                if (!(buf[x] & 1))
+                    result = 4;
+                else if (x != state->column[0])
+                    result = 3;
+                else if (state->djinn[0] & 0x8000)
+                    result = 2;
                 else
-                {
-                    block_191:
-                        sp44 = 1;
-                    if (!(1 & ((u8)statusPtr[sp38])))
-                    {
-                        if (sp3C == (-1))
-                        {
-                            block_193:
-                                Func_080f9010(0x72);
-                            goto loop_36;
-                        }
-                        temp_r7_1696 = (((u32)(((unsigned char)0xF00) & sp28)) >> 8);
-                        temp_r6_1701 = 5;
-                        temp_r6_1701 = (((u32)(0xE0 & sp28)) >> temp_r6_1701);
-                        temp_r5_1702 = (0x1F & sp28);
-                        sp44 = 0;
-                        if ((Func_08077210(temp_r7_1696, temp_r6_1701, temp_r5_1702) != 0) || (Func_08077208(temp_r7_1696, temp_r6_1701, temp_r5_1702) != 0))
-                        {
-                            sp44 = 1;
-                        }
-                    }
-                    if (sp44 == 0)
-                    {
-                        Func_080f9010(0x72);
-                        Func_08015278(*(new_var78 = (new_var20 = ((s32 *)(((s8 *)ctx) + 0x30)))));
-                        sp0 = 0x68;
-                        new_var69 = 0x30;
-                        Func_08015068(*(new_var91 = ((s32 *)(((s8 *)ctx) + new_var69))), 0, 0x50, 0xD8);
-                        Func_08015078(0xBBE, *((s32 *)(new_var22 = (((s8 *)ctx) + 0x30))), 0, 0x60);
-                        goto loop_36;
-                    }
-                    if (mode == 1)
-                    {
-                        result = 4;
-                        if (mode & ((u8)statusPtr[sp38]))
-                        {
-                            if (sp38 == ((char)(*((s8 *)(((s8 *)ctx) + 0x1C)))))
-                            {
-                                result = 2;
-                                if (!(((short)0x8000) & (*((u16 *)(((s8 *)ctx) + 0x178)))))
-                                {
-                                    goto block_206;
-                                }
-                            }
-                            else
-                            {
-                                result = 3;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        block_206:
-                            result = 1;
-                    }
-                    Func_080f9010(0x70);
-                }
+                    result = 1;
+            } else {
+                result = 1;
+            }
+            Audio_PlayCue(112);
+            break;
         }
-    (*((s8 *)((new_var7 = ((s8 *)ctx)) + (mode + 0x1C)))) = sp38;
-    if (sp3C != (-1))
-    {
-        temp_r2_2357 = (*((u16 *)(new_var57 = ((new_var48 = ((s8 *)events)) + (((sp38 * 0xA) + sp3C) * 2)))));
-        (*((u16 *)(((s8 *)ctx) + (sp34 + (new_var68 = 0x178))))) = temp_r2_2357;
-        temp_r0_2363 = (mode + 0x254);
-        new_var55 = (temp_r0_2363 + 2);
-        (*((s8 *)(((s8 *)ctx) + temp_r0_2363))) = (0x1F & temp_r2_2357);
-        ;
-        (*((s8 *)(((s8 *)ctx) + new_var55))) = ((s8)(((u32)(0xE0 & temp_r2_2357)) >> 5));
-        colorHighFieldOffset = 0x258;
-        (*((s8 *)(((s8 *)ctx) + (mode + colorHighFieldOffset)))) = ((s8)(((u32)(0xF00 & temp_r2_2357)) >> 8));
+        if (pressed & 8) {
+            Audio_PlayCue(113);
+            result = -2;
+            break;
+        }
+        if (pressed & 2) {
+            Audio_PlayCue(113);
+            result = -1;
+            break;
+        }
+        if (mode == 0 && (pressed & 4)) {
+            if (groupMode) {
+                setAll ^= 1;
+                if (setAll)
+                    Audio_PlayCue(139);
+                else
+                    Audio_PlayCue(175);
+                for (i = 0; i < state->party_count; i++) {
+                    for (j = 0; j < lists->counts[i]; j++) {
+                        u32 entry = lists->djinn[i][j];
+                        s32 usable;
+
+                        usable = 0;
+                        if (Func_08077210(DJINN_OWNER(entry), DJINN_ELEMENT(entry), DJINN_NUMBER(entry))
+                            || Func_08077208(DJINN_OWNER(entry), DJINN_ELEMENT(entry), DJINN_NUMBER(entry)))
+                            usable = 1;
+                        if (usable) {
+                            if (setAll) {
+                                if (!(entry & 0x8000)) {
+                                    Func_080771b0(DJINN_OWNER(entry), DJINN_ELEMENT(entry), DJINN_NUMBER(entry));
+                                    Func_080771c0(DJINN_OWNER(entry), DJINN_ELEMENT(entry), DJINN_NUMBER(entry));
+                                    BattleUnit_Recalculate(DJINN_OWNER(entry));
+                                }
+                            } else if (entry & 0x8000) {
+                                Func_080771b8(DJINN_OWNER(entry), DJINN_ELEMENT(entry), DJINN_NUMBER(entry));
+                                Func_080771c8(DJINN_OWNER(entry), DJINN_ELEMENT(entry), DJINN_NUMBER(entry));
+                                BattleUnit_Recalculate(DJINN_OWNER(entry));
+                            }
+                        }
+                    }
+                }
+                Func_080aafb8(lists);
+                redraw = 1;
+            } else {
+                Menu_DrawAtWindowOffset(state->djinn_window, x * 7 + 1, y + 2, 6, 1, 15);
+                Audio_PlayCue(112);
+                result = 10;
+                break;
+            }
+        }
+
+        if (repeat & 0x40) {
+            Audio_PlayCue(111);
+            if (!(buf[x] & 4))
+                Menu_DrawAtWindowOffset(state->djinn_window, x * 7 + 1, y + 2, 6, 1, 15);
+            if (buf[x] & 4)
+                continue;
+            if (buf[x] & 1) {
+                buf[x] &= ~1;
+                y = 0;
+            } else if (y == 0 && (buf[x] & 2)) {
+                buf[x] |= 1;
+                redraw = 2;
+                continue;
+            }
+            y--;
+            count = lists->counts[x];
+            if (count == 0)
+                count = 1;
+            y = Menu_GetModuloOfSum(y, count);
+            savedY = y;
+            redraw = 2;
+            continue;
+        }
+        if (repeat & 0x80) {
+            Audio_PlayCue(111);
+            if (buf[x] & 4)
+                continue;
+            Menu_DrawAtWindowOffset(state->djinn_window, x * 7 + 1, y + 2, 6, 1, 15);
+            y++;
+            count = lists->counts[x];
+            if (count == 0)
+                count = 1;
+            y = Menu_GetModuloOfSum(y, count);
+            if ((buf[x] & 1) && !(buf[x] & 4)) {
+                buf[x] &= ~1;
+                y = 0;
+            } else if (y == 0 && (buf[x] & 2)) {
+                buf[x] |= 1;
+            }
+            savedY = y;
+            redraw = 2;
+            continue;
+        }
+        if (repeat & 0x20) {
+            Audio_PlayCue(111);
+            if (!(buf[x] & 4))
+                Menu_DrawAtWindowOffset(state->djinn_window, x * 7 + 1, y + 2, 6, 1, 15);
+            x--;
+            x = Menu_GetModuloOfSum(x, state->party_count);
+            if (mode == 0) {
+                for (i = 0; i < state->party_count; i++) {
+                    if (buf[x] == 4) {
+                        x--;
+                        x = Menu_GetModuloOfSum(x, state->party_count);
+                    }
+                }
+            }
+        } else if (repeat & 0x10) {
+            Audio_PlayCue(111);
+            if (!(buf[x] & 4))
+                Menu_DrawAtWindowOffset(state->djinn_window, x * 7 + 1, y + 2, 6, 1, 15);
+            x++;
+            x = Menu_GetModuloOfSum(x, state->party_count);
+            if (mode == 0) {
+                for (i = 0; i < state->party_count; i++) {
+                    if (buf[x] == 4) {
+                        x++;
+                        x = Menu_GetModuloOfSum(x, state->party_count);
+                    }
+                }
+            }
+        } else {
+            continue;
+        }
+        y = savedY;
+        count = lists->counts[x];
+        if (count == 0)
+            count = 1;
+        y = Menu_GetModuloOfSum(y, count);
+        redraw = 2;
     }
-    (*((u16 *)(((s8 *)ctx) + (sp34 + 0x174)))) = (sp38 + (sp30 * 0xA));
+
+    state->column[mode] = x;
+    if (sel != -1) {
+        u16 entry = lists->djinn[x][sel];
+
+        state->djinn[mode] = entry;
+        state->djinn_number[mode] = DJINN_NUMBER(entry);
+        state->djinn_element[mode] = DJINN_ELEMENT(entry);
+        state->djinn_owner[mode] = DJINN_OWNER(entry);
+    }
+    state->cursor[mode] = x + y * 10;
     return result;
 }

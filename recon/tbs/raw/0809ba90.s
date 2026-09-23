@@ -4,8 +4,10 @@
 	.set sub_08009030, 0x08009030
 	.set sub_0809ba5c, 0x0809ba5c
 	.set sub_0809ba70, 0x0809ba70
+	.global EffectSlot_Initialize
 	.global Func_0809ba90
 	.thumb_func
+EffectSlot_Initialize:
 Func_0809ba90:
 	push	{r5, r6, r7, lr}
 	mov	r7, r8

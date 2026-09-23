@@ -1,3 +1,11 @@
+/* Draft, not exact: 304 differing halfwords, 1588-byte candidate for the
+   1588-byte owner (2026-09-23). Residual: the six stat labels now load one
+   linked message base (Data_000008ae) and add 1..5, which brings the
+   candidate to the owner's exact 1588 bytes; a declaration-order search then
+   gave 304. What remains is spill-slot assignment (the reference keeps the
+   five old stat values at sp+28..44 and the list and total at sp+20..24) and
+   register choice in the ability-list loop. */
+
 #include "RENDER_INPUT.H"
 
 /* Preview a pending ability change, then restore the original unit record.
@@ -59,6 +67,7 @@ struct RenderOutput *Func_08015e8c(void);
 s32 Func_080040b4(s32);
 s32 Func_080040d0(s32, const void *);
 void Func_08016584(struct RenderInput *, struct RenderOutput *);
+extern u8 Data_000008ae[];
 extern u8 Data_080313a4[];
 extern u8 Data_08031424[];
 s32 UiText_FormatNumberToHalfwords(s16 *out, s32 value);
@@ -88,10 +97,10 @@ struct RenderInput *Ui_ShowAbilityChangePreview(
     struct BattleUnitRecord *snap;
     struct AbilityData *info;
     s16 *buf;
-    u16 *list;
+    s32 oldHp;
+    s32 oldPp;
     s32 col;
     s32 row;
-    s32 total;
     s32 pages;
     s32 rows;
     s32 marks;
@@ -101,8 +110,8 @@ struct RenderInput *Ui_ShowAbilityChangePreview(
     s32 dir;
     s32 i;
     s32 n;
-    s32 oldHp;
-    s32 oldPp;
+    u16 *list;
+    s32 total;
     s32 oldAtk;
     s32 oldDef;
     s32 oldAgi;
@@ -162,12 +171,12 @@ struct RenderInput *Ui_ShowAbilityChangePreview(
 
     if (page == 0) {
         /* Stat labels down the left edge, then the pre-change column. */
-        UiText_DrawCharacterAtOffset(0x8ae, win, 0, 8);
-        UiText_DrawCharacterAtOffset(0x8af, win, 0, 16);
-        UiText_DrawCharacterAtOffset(0x8b0, win, 0, 24);
-        UiText_DrawCharacterAtOffset(0x8b1, win, 0, 32);
-        UiText_DrawCharacterAtOffset(0x8b2, win, 0, 40);
-        UiText_DrawCharacterAtOffset(0x8b3, win, 0, 48);
+        UiText_DrawCharacterAtOffset((s32)Data_000008ae, win, 0, 8);
+        UiText_DrawCharacterAtOffset((s32)Data_000008ae + 1, win, 0, 16);
+        UiText_DrawCharacterAtOffset((s32)Data_000008ae + 2, win, 0, 24);
+        UiText_DrawCharacterAtOffset((s32)Data_000008ae + 3, win, 0, 32);
+        UiText_DrawCharacterAtOffset((s32)Data_000008ae + 4, win, 0, 40);
+        UiText_DrawCharacterAtOffset((s32)Data_000008ae + 5, win, 0, 48);
 
         oldHp = snap->hp;
         UiText_FormatNumberToHalfwords(buf, oldHp);

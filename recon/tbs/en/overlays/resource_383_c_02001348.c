@@ -5,7 +5,19 @@
 extern u8 Value_00000015[];
 
 /* AUDITED GENERATED SCENE SCRIPT for Scene_RunClosingSequence:
- * all 169 calls and arguments are represented in machine order. */
+ * all 169 calls and arguments are represented in machine order.
+ *
+ * The two message runs are linked message identities (4805, 4828 in the
+ * English build; the Japanese catalog holds other text at those numbers):
+ * as plain integers their pool loads were scheduled two calls early.
+ *
+ * Score 2026-09-23: 1,608 of 1,608 bytes, 6 halfword edits. Remaining
+ * residual: before the final call the reference loads Data_02000240 before
+ * the 0x22b offset (pool words in that order); this draft loads the offset
+ * first. Reload materialises the offset and sched2 prefers it; array,
+ * struct-field, pointer-variable and inline-helper spellings did not change
+ * the order. The same store is followed by a late scene load in 374, 3bb and
+ * 3c9 owners. */
 
 void Func_020059cc();
 void Func_020059e4();
@@ -203,7 +215,9 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
     f(a0, a1, a2, a3);
 }
 
-extern u16 Data_02000240[];
+extern u8 Data_02000240[];
+extern u8 LinkedMessage_VaultCutFree;
+extern u8 LinkedMessage_VaultThievesCaught;
 
 void Func_02001348(void)
 {
@@ -215,7 +229,7 @@ void Func_02001348(void)
     Call3(Func_020060ee, 2, 52428, 26214);
     Func_0200616e(0, 3);
     Func_020060b4(20);
-    base = 4805;
+    base = (s32)&LinkedMessage_VaultCutFree;
     Func_02006078(base, 1);
     base = base + 1;
     Func_0200619e(base);
@@ -354,7 +368,7 @@ void Func_02001348(void)
         Func_02006594_a(40);
         Func_02006666(1, 10, 0);
         Func_02006670(2, 10, 0);
-        base = 4828;
+        base = (s32)&LinkedMessage_VaultThievesCaught;
         Func_02006688(base);
         Func_02006678(10, 2);
         Func_020065be(20);
@@ -384,7 +398,7 @@ void Func_02001348(void)
     base = (s32)Value_00000015;
     Func_020067ca(base, 17);
     Func_020067da(base, 16);
-    ((u8 *)Data_02000240)[555] = 3;
+    Data_02000240[0x22b] = 3;
     Func_020067dc(12, 5, 3);
     Func_020066b8();
 }

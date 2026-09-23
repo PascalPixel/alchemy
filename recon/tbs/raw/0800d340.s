@@ -4,8 +4,10 @@
 	.set sub_080072ec, 0x080072ec
 	.set sub_080072f0, 0x080072f0
 	.set sub_080072f4, 0x080072f4
+	.global Object_UpdateAllMotion
 	.global Func_0800d340
 	.thumb_func
+Object_UpdateAllMotion:
 Func_0800d340:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

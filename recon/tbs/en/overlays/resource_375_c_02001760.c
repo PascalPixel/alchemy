@@ -4,6 +4,20 @@
 
 #define Scene_RunProgressDependentActorSequence Func_02001760
 
+/*
+ * The injured villager lines are one linked message run (3717, +2, +3 and
+ * +6 in the English build): the reference keeps the base in r5 and adds the
+ * offsets, as the Mercury Lighthouse dialogue does.
+ *
+ * Score 2026-09-23: 596 bytes against 580, 121 halfword edits (117 before the
+ * linked base, when every message was its own pool word). Remaining
+ * residual: this draft shares the flag constants 0x839 and 0x82f and the
+ * 0xa000 angle across calls in callee-saved registers (CSE follows the
+ * branches from the first flag check); the reference reloads each from the
+ * pool at every use, which saves the r6-r8 frame. The branch structure that
+ * ends the constant sharing is not recovered.
+ */
+
 s32 Func_020031ca();
 s32 Func_020031d6();
 void Func_020031fe();
@@ -65,23 +79,27 @@ void Func_02003470();
 void Func_02003482();
 void Func_0200348c();
 
+extern u8 LinkedMessage_ValeInjuredVillager;
+
 void Scene_RunProgressDependentActorSequence(void)
 {
     void *actor;
+    s32 message;
 
     if (Func_020031ca(0x839) != 0) {
     } else {
         if (Func_020031d6(0x82f) != 0) {
             Func_020031fe();
             Func_0200328e_a(11, 2);
-            Func_020032b4_a(0xe8b);
+            Func_020032b4_a((s32)&LinkedMessage_ValeInjuredVillager + 6);
             Func_020032cc(11, 0);
             Func_02003220();
         } else {
             Func_0200321e();
             Func_02003254(11);
             Func_020032b4_b(11, 1);
-            Func_020032dc(0xe85);
+            message = (s32)&LinkedMessage_ValeInjuredVillager;
+            Func_020032dc(message);
             Func_020032fe(11, 0, 20);
             Func_02003322(0, 256, 30);
             Func_02003352(6422528, -1, 0x011b0000, 1);
@@ -100,13 +118,13 @@ void Scene_RunProgressDependentActorSequence(void)
             if (Func_020032c8(0, 0) == 0) {
                 Func_0200334c(11, 2);
                 Func_020032c2(20);
-                Func_02003378_a(0xe87);
+                Func_02003378_a(message + 2);
                 Func_02003390(11, 0);
                 Func_020032c6(0x82f);
             } else {
                 Func_02003370(11, 2);
                 Func_020032e6(20);
-                Func_0200339c(0xe88);
+                Func_0200339c(message + 3);
                 Func_020033be(11, 0, 40);
                 Func_02003398(11, 0, 0);
                 Func_02003378_b(11, 1);

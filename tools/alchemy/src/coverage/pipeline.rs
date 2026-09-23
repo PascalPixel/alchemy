@@ -1981,7 +1981,20 @@ pub(crate) fn overlay_assembly_images(
 
 pub fn classify(options: &BuildOptions) -> Result<Classification, String> {
     let target = crate::targets::decomp_target(Some(&options.target))?;
-    let (inventory, _, _) = read_inventory(options.exact, target)?;
+    // Classifying owners needs only where the code lies, not a fresh proof of
+    // DONE: an adoption changes inputs before its twin check runs, so the
+    // inventory must be complete and consistent, not re-authenticated.
+    let SourceTree::Work { .. } = options.exact else {
+        return Err(format!(
+            "{}: a revision has no generated executable inventory",
+            options.exact.id()
+        ));
+    };
+    let inventory = read_json(
+        options.exact,
+        &format!("{}/reports/executable.json", target.output_dir),
+    )?;
+    inventory_intervals(&inventory, target.id.as_str())?;
     let evidence = inventory.get("evidence").and_then(Value::as_object);
     let main = regions(&inventory["main"], evidence);
     let main_exec = normalize(&main.iter().map(|r| r.span).collect::<Vec<_>>());

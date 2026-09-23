@@ -1,8 +1,10 @@
 .syntax unified
 	.thumb
 	.set sub_080041d8, 0x080041d8
+	.global MapAnimation_Start
 	.global Func_080118d8
 	.thumb_func
+MapAnimation_Start:
 Func_080118d8:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl

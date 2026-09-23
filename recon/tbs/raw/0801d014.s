@@ -2,8 +2,10 @@
 	.thumb
 	.set sub_080041d8, 0x080041d8
 	.set sub_080048f4, 0x080048f4
+	.global OptionMenu_InitializeWork
 	.global Func_0801d014
 	.thumb_func
+OptionMenu_InitializeWork:
 Func_0801d014:
 	push	{lr}
 	movs	r1, #197

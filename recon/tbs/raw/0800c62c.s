@@ -4,8 +4,10 @@
 	.set sub_08003f78, 0x08003f78
 	.set sub_080048b0, 0x080048b0
 	.set sub_0800b168, 0x0800b168
+	.global ObjectSystem_UpdateCamera
 	.global Func_0800c62c
 	.thumb_func
+ObjectSystem_UpdateCamera:
 Func_0800c62c:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

@@ -13,8 +13,10 @@
 	.set sub_0800fd5c, 0x0800fd5c
 	.set sub_080118d8, 0x080118d8
 	.set sub_08011a84, 0x08011a84
+	.global Tilemap_ConvertBuffer
 	.global Func_0800fac8
 	.thumb_func
+Tilemap_ConvertBuffer:
 Func_0800fac8:
 .L_0800fac8:
 	push	{r5, r6, lr}

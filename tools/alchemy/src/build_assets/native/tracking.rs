@@ -78,8 +78,8 @@ fn presentation_file(path: &str) -> bool {
         || (readme && listed(suffix, &["png", "svg"]))
 }
 /// A path of the shape `alchemy build assets --extract-sources` writes: pixel
-/// sheets, packed bytes and palettes restored from the local ROM, which
-/// must be registered private inputs whatever their ignore status.
+/// sheets, packed bytes and palettes restored from the local ROM. Tracked, as
+/// pret tracks its graphics and data, or else a registered private input.
 fn extracted_input_shape(path: &str) -> bool {
     let upper = path.to_ascii_uppercase();
     let components: Vec<_> = upper.split('/').collect();
@@ -117,15 +117,17 @@ fn classify(
                 "presentation material under games/: write previews, fonts and exports to ignored out/: {file}"
             ));
         }
-        if !private.contains(file) && extracted_input_shape(file) {
+        if !private.contains(file) && extracted_input_shape(file) && !tracked.contains(file) {
             return Err(format!(
                 "unregistered extracted input: register it in the game's private-inputs.json private_inputs or remove it: {file}"
             ));
         }
         if private.contains(file) {
-            if tracked.contains(file) || !ignored.contains(file) {
+            // Tracked, as pret tracks its assets, or ignored and restored
+            // from the local ROM; never both.
+            if tracked.contains(file) == ignored.contains(file) {
                 return Err(format!(
-                    "private native input must be ignored and untracked: {file}"
+                    "native input must be either tracked or ignored: {file}"
                 ));
             }
         } else if !tracked.contains(file) || ignored.contains(file) {
@@ -416,6 +418,7 @@ fn private_inputs_require_registration_ignoring_and_nonpublication() {
     let private = ignored.clone();
     classify(&files, &tracked, &ignored, &private).unwrap();
     assert!(classify(&files, &tracked, &ignored, &BTreeSet::new()).is_err());
+    classify(&files, &files, &BTreeSet::new(), &private).unwrap();
     assert!(classify(&files, &files, &ignored, &private).is_err());
     assert!(classify(&files, &tracked, &BTreeSet::new(), &private).is_err());
     assert!(classify(&files, &BTreeSet::new(), &ignored, &private).is_err());
@@ -459,14 +462,15 @@ fn private_inputs_require_registration_ignoring_and_nonpublication() {
         ),
     ] {
         let files = set(&[tile.clone(), name.clone()]);
-        // Tracked and not ignored, ignored and untracked: either way it fails.
-        for (tracked, ignored) in [
-            (set(&[tile.clone(), name.clone()]), BTreeSet::new()),
-            (set(&[tile.clone()]), set(&[name.clone()])),
-        ] {
-            let error = classify(&files, &tracked, &ignored, &BTreeSet::new()).unwrap_err();
-            assert!(error.contains(fragment) && error.contains(&name), "{error}");
-        }
+        // Ignored and unregistered, an extracted-shape input fails.
+        let error = classify(
+            &files,
+            &set(&[tile.clone()]),
+            &set(&[name.clone()]),
+            &BTreeSet::new(),
+        )
+        .unwrap_err();
+        assert!(error.contains(fragment) && error.contains(&name), "{error}");
     }
     // A registered private sheet under PREVIEW is still presentation material.
     let preview_sheet = format!("{tbs}/PREVIEW/CHR.PNG");

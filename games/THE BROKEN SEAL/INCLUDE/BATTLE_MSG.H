@@ -27,9 +27,11 @@ extern char Value_00000831;
 extern char Value_00000834;
 extern char Value_00000843;
 extern char Value_00000844;
+extern char Value_0000084b;
 extern char Value_0000084c;
 extern char Value_0000084f;
 extern char Value_00000850;
+extern char Value_00000851;
 extern char Value_00000854;
 extern char Value_0000085e;
 extern char Value_0000085f;
@@ -56,6 +58,7 @@ extern char Value_00000875;
 extern char Value_00000876;
 extern char Value_00000877;
 extern char Value_00000878;
+extern char Value_00000879;
 extern char Value_0000087d;
 extern char Value_0000087e;
 extern char Value_0000087f;
@@ -63,12 +66,21 @@ extern char Value_00000881;
 extern char Value_00000882;
 extern char Value_00000883;
 extern char Value_00000884;
+extern char Value_00000886;
+extern char Value_00000887;
+extern char Value_00000888;
+extern char Value_00000889;
+extern char Value_0000088a;
 extern char Value_0000088b;
 extern char Value_0000088c;
 extern char Value_0000088d;
+extern char Value_0000088e;
 extern char Value_0000088f;
+extern char Value_00000891;
+extern char Value_00000892;
 extern char Value_00000894;
 extern char Value_00000896;
+extern char Value_00000897;
 extern char Value_000008f3;
 extern char Value_000008f4;
 extern char Value_000008f5;
@@ -134,5 +146,17 @@ extern char Value_000008f6;
 #define MSG_SPLIT_FAIL ((s32)&Value_000008f4) /* 「ぶんれつに しっぱいした！」 */
 #define MSG_APPEARS ((s32)&Value_000008f5) /* 「あらわれた！！」 */
 #define MSG_NO_ONE_CAME ((s32)&Value_000008f6) /* 「しかし だれもこなかった！」 */
+#define MSG_RES_NORMAL ((s32)&Value_00000886) /* Resistances return to normal (English text) */
+#define MSG_ATK_NORMAL ((s32)&Value_00000887) /* Attack returns to normal (English text) */
+#define MSG_DEF_NORMAL ((s32)&Value_00000888) /* Defense returns to normal (English text) */
+#define MSG_AGI_NORMAL ((s32)&Value_00000889) /* Agility returns to normal (English text) */
+#define MSG_CONSCIOUS ((s32)&Value_0000088a) /* regains consciousness (English text) */
+#define MSG_CONSCIOUS_2 ((s32)&Value_0000088e) /* same English text as MSG_CONSCIOUS (English text) */
+#define MSG_REFRAIN_END ((s32)&Value_00000891) /* Refrain no longer affects (English text) */
+#define MSG_REFLECT_END ((s32)&Value_00000892) /* Reflect no longer affects (English text) */
+#define MSG_DJINN_SET ((s32)&Value_00000897) /* Djinni is set to its owner again (English text) */
+#define MSG_CURSE_DAMAGE ((s32)&Value_0000084b) /* A curse does N damage (English text) */
+#define MSG_POISON_DAMAGE ((s32)&Value_00000851) /* The poison does N damage (English text) */
+#define MSG_EARTH_POWER_UP ((s32)&Value_00000879) /* Earth Power rises by N; the other elements follow (English text) */
 
 #endif

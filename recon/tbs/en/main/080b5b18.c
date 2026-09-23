@@ -1,12 +1,18 @@
+/*
+ * Draft, 240 of 240 bytes, three halfword edits: the copy of the zero byte
+ * into r9 issues before the two hoisted loop zeros instead of after them.
+ * Returns int: its epilogue returns through r1.
+ */
 #include "TYPES.H"
+#include "BATTLE_TYPES.H"
 
 s32 Func_080b6a60(u16 *owners);
-u8 *Func_08077008(s32 owner);
+struct BattleUnit *Func_08077008(s32 owner);
 void Func_08077010(s32 owner);
 
 #define BattleParty_ResetActiveRuntimeFields Func_080b5b18
 
-void BattleParty_ResetActiveRuntimeFields(void)
+s32 BattleParty_ResetActiveRuntimeFields(void)
 {
     u16 owners[10];
     s32 count;
@@ -17,14 +23,14 @@ void BattleParty_ResetActiveRuntimeFields(void)
 
     i = 0;
     if (i < count) {
-        u8 *state;
+        struct BattleUnit *unit;
         u8 *cursor;
         s32 remaining;
 
         zero = 0;
         do {
-            state = Func_08077008(owners[i]);
-            cursor = state + 0x12f;
+            unit = Func_08077008(owners[i]);
+            cursor = &unit->status_12f;
             remaining = 3;
 
             do {
@@ -32,28 +38,28 @@ void BattleParty_ResetActiveRuntimeFields(void)
                 *cursor-- = zero;
             } while (remaining >= 0);
 
-            state[0x132] = 0;
-            state[0x133] = 0;
-            state[0x134] = 0;
-            state[0x135] = 0;
-            state[0x136] = 0;
-            state[0x137] = 0;
-            state[0x138] = 0;
-            state[0x139] = 0;
-            state[0x13a] = 0;
-            state[0x13b] = 0;
-            state[0x13c] = 0;
-            state[0x13d] = 0;
-            state[0x13e] = 0;
-            state[0x13f] = 0;
-            state[0x141] = 0;
-            state[0x142] = 0;
-            state[0x143] = 0;
-            state[0x144] = 0;
-            state[0x145] = 0;
-            state[0x146] = 0;
-            state[0x147] = 0;
-            state[0x148] = 0;
+            unit->attack_modifier_turns = 0;
+            unit->attack_modifier = 0;
+            unit->defense_modifier_turns = 0;
+            unit->defense_modifier = 0;
+            unit->res_modifier_turns = 0;
+            unit->res_modifier = 0;
+            unit->delusion = 0;
+            unit->confusion = 0;
+            unit->charm = 0;
+            unit->stun = 0;
+            unit->sleep = 0;
+            unit->psy_seal = 0;
+            unit->refrain = 0;
+            unit->reflect = 0;
+            unit->death_count = 0;
+            unit->unknown_142[0] = 0;
+            unit->unknown_142[1] = 0;
+            unit->ready_pose = 0;
+            unit->cannot_move = 0;
+            unit->agility_modifier_turns = 0;
+            unit->agility_modifier = 0;
+            unit->battle_end_state = 0;
 
             Func_08077010(owners[i]);
             i++;

@@ -1,3 +1,10 @@
+/*
+ * Draft, 828 of 832 bytes, 400 halfword edits from the prologue: the
+ * reference builds the command-state address as movs #8 / add sp into r1,
+ * which also forces a second zero for the row, and the register choices
+ * cascade from there. Func_080a3ef0 takes four arguments; the caller
+ * passes the owner twice.
+ */
 #include "TYPES.H"
 #include "ITEM_MENU.H"
 #include "EQUIPMENT_MENU.H"
@@ -8,7 +15,7 @@
 void Func_08015070(s32 window, s32 x, s32 width, s32 height, s32 style);
 void Func_080a1ac0(s32 x, s32 y);
 void Func_080a1a40(s32 x, s32 y);
-void Func_080a3ef0(s32 owner, s32 slot, s32 unused);
+void Func_080a3ef0(s32 owner, s32 slot, s32 mode, s32 arg3);
 void Func_080a112c(s32 window, s32 owner, s32 unused1, s32 unused2);
 
 extern u8 Value_00000075;
@@ -105,14 +112,14 @@ s32 Func_080a414c(void)
             EquipmentMenu_StartCompatibilityIndicators();
             if (index > 2) {
                 FIELD(menu, s8 *, 0x25c) = 1;
-                Func_080a3ef0(menu->item_owner, menu->selected_slot, 0);
+                Func_080a3ef0(menu->item_owner, menu->selected_slot, 0, menu->item_owner);
                 if (index == 3) {
                     ScheduleCallbackAfterFrames(
                         &EquipmentMenu_CompatibilityUpdateEntry, 0xc80);
                 }
             } else if (index != 0) {
                 FIELD(menu, s8 *, 0x25c) = 0;
-                Func_080a3ef0(menu->item_owner, menu->selected_slot, 0);
+                Func_080a3ef0(menu->item_owner, menu->selected_slot, 0, menu->item_owner);
             } else {
                 Func_080a112c(
                     FIELD(menu, s32 *, 0x24), menu->item_owner, 0, 0);

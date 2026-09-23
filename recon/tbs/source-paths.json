@@ -222,7 +222,8 @@
       "name": "GraphicsPalette_AdjustSelectionCounter"
     },
     "main:08021d88": {
-      "name": "UiText_DrawCharacter"
+      "name": "UiText_DrawCharacter",
+      "source": "GRAPHICS/TEXT/DRAW_CHARACTER.C"
     },
     "main:0801faa8": {
       "name": "SaveState_ProcessSelectedSlot"

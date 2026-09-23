@@ -19346,6 +19346,14 @@
     "main:080a93a4": {
       "name": "ItemMenu_DrawEquipPage",
       "source": "MENU/ITEM/DRAW_EQUIP_PAGE.C"
+    },
+    "resource_3b0:02000030": {
+      "name": "Object_PlaceFromCameraOffset",
+      "source": "FIELD/FUNE_HOBASHIRA/CAMERA_OFFSET.C"
+    },
+    "resource_3cb:02001050": {
+      "name": "LinkLobby_StartExchange",
+      "source": "MENU/LINK_LOBBY/START_EXCHANGE.C"
     }
   },
   "symbols": {

@@ -17,7 +17,7 @@ extern s32 **Data_03001e70;
 extern s32 Data_02009938[];
 extern s32 Data_02009930[];
 
-s32 Func_02000030(struct Object *object)
+s32 Object_PlaceFromCameraOffset(struct Object *object)
 {
     s32 *position = *Data_03001e70;
     s32 *origin = Data_02009938;
@@ -26,7 +26,10 @@ s32 Func_02000030(struct Object *object)
     s32 q1 = *position;
 
     object->x = center[0] + (q0 - origin[0]);
-    object->z = center[1] + (q1 - origin[1]) / 2;
+    /* FAKEMATCH: the do/while keeps the z store ahead of the other load. */
+    do {
+        object->z = center[1] + (q1 - origin[1]) / 2;
+    } while (0);
     object->other->x += 0x600;
     return 0;
 }

@@ -1,3 +1,7 @@
+/* NONMATCHING: 19 differing halfwords. The ROM keeps the first loop as
+ * placement + byte offset (ldrh [base, off]) where GCC here strength-reduces
+ * it to a pointer; explicit offsets let CSE merge the pre-check and copy
+ * loads instead. The second loop and the int return (pop {r1}) match. */
 #include "TYPES.H"
 
 struct BattleMotionObject {
@@ -24,29 +28,23 @@ struct BattleMotionObject *Func_080b7dd0(s32 actor_id);
 
 #define Summon_Refresh Func_080b7548
 
-void Summon_Refresh(void)
+s32 Summon_Refresh(void)
 {
-    s32 slot;
     struct BattlePlacementPayload *placement = &BattlePlacement->placement;
     u16 actor_ids[14];
     s32 x_positions[6];
     s32 z_positions[6];
     s32 count = 0;
-    s32 first_actor_id;
 
-    slot = 0;
-    first_actor_id = (s16)placement->summon_slots[slot];
-    if (first_actor_id != 0xff) {
-        do {
-            actor_ids[count] = placement->summon_slots[count];
-            count++;
-        } while (count <= 5 && (s16)placement->summon_slots[count] != 0xff);
+    while (count < 6 && (s16)placement->summon_slots[count] != 0xff) {
+        actor_ids[count] = placement->summon_slots[count];
+        count++;
     }
 
     Func_080b7424(actor_ids, count, x_positions, z_positions);
 
     if (count > 0) {
-        s32 position_offset = 0;
+        s32 index = 0;
         s32 source_offset = 100;
 
         do {
@@ -55,11 +53,11 @@ void Summon_Refresh(void)
             if (actor_id != 0xfe) {
                 struct BattleMotionObject *object = Func_080b7dd0(actor_id);
 
-                object->x = *(s32 *)((u8 *)x_positions + position_offset) << 16;
-                object->z = *(s32 *)((u8 *)z_positions + position_offset) << 16;
+                object->x = x_positions[index] << 16;
+                object->z = z_positions[index] << 16;
             }
             count--;
-            position_offset += 4;
+            index++;
             source_offset += 2;
         } while (count != 0);
     }

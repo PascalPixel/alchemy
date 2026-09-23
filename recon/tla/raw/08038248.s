@@ -41,4 +41,8 @@ Func_08038248:
 	.2byte 0x0803
 	ldr	r4, [pc, #0]
 	bx	r4
-	.4byte 0x08041b69
+	.2byte 0x1b69
+	.2byte 0x0804
+	ldr	r4, [pc, #0]
+	bx	r4
+	.4byte 0x0803d681

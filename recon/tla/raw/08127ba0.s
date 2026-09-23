@@ -123,4 +123,4 @@ Func_08127ba0:
 	ble.n	.L_08127c34
 .L_08127c7c:
 	pop	{r5, r6, r7, pc}
-	.align 2, 0
+	.2byte 0x0000

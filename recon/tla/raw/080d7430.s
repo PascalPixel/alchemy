@@ -88,4 +88,11 @@ Func_080d7430:
 	mov	sl, r6
 	pop	{r5, r6, pc}
 	.4byte 0x850007e2
-	.4byte 0x080d67e9
+	.2byte 0x67e9
+	.2byte 0x080d
+	ldrh	r3, [r0, #6]
+	movs	r2, #128
+	lsls	r2, r2, #6
+	adds	r3, r3, r2
+	strh	r3, [r0, #6]
+	bx	lr

@@ -28,4 +28,4 @@ Func_08024dac:
 .L_08024dd6:
 	movs	r0, #1
 	pop	{r5, pc}
-	.align 2, 0
+	.2byte 0x0000

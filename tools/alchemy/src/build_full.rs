@@ -1423,6 +1423,26 @@ fn build_stages(root: &Path, cwd: &Path, options: &Options) -> Result<String, St
     let unowned_path = sidecar_path(&output, "unowned.json")?;
     let fallback_path = sidecar_path(&output, "fallback.json")?;
     let inventory_path = sidecar_path(&output, "owner-inventory.json")?;
+    // The unowned ranges are written before anything that needs a complete
+    // image, so a build that fails for them names every one.
+    write_canonical(
+        &unowned_path,
+        &json!({"format":1,"semantics":"source_ownership","verification":if options.source_only{"source_only"}else{"rom"},"rom_base":ROM_BASE,"rom_size":mask.len(),"regions":gap_values(&gaps,"unowned","unowned")}),
+    )?;
+    write_canonical(
+        &fallback_path,
+        &json!({"format":1,"semantics":if options.source_only{"compatibility_alias_for_unowned_ranges"}else{"private_rom_fallback"},"rom_base":ROM_BASE,"rom_size":mask.len(),"regions":gap_values(&gaps,"rom-fallback","rom_fallback")}),
+    )?;
+    require_source_ownership(options.source_only, unowned_bytes).map_err(|error| {
+        format!(
+            "{error}; its {} unowned ranges are listed in {}",
+            gaps.len(),
+            unowned_path
+                .strip_prefix(root)
+                .unwrap_or(&unowned_path)
+                .display()
+        )
+    })?;
     let inventory = owner_inventory(
         root,
         game,
@@ -1433,15 +1453,6 @@ fn build_stages(root: &Path, cwd: &Path, options: &Options) -> Result<String, St
     )?;
     let inventory_summary = inventory["summary"].clone();
     write_canonical(&inventory_path, &inventory)?;
-    write_canonical(
-        &unowned_path,
-        &json!({"format":1,"semantics":"source_ownership","verification":if options.source_only{"source_only"}else{"rom"},"rom_base":ROM_BASE,"rom_size":mask.len(),"regions":gap_values(&gaps,"unowned","unowned")}),
-    )?;
-    write_canonical(
-        &fallback_path,
-        &json!({"format":1,"semantics":if options.source_only{"compatibility_alias_for_unowned_ranges"}else{"private_rom_fallback"},"rom_base":ROM_BASE,"rom_size":mask.len(),"regions":gap_values(&gaps,"rom-fallback","rom_fallback")}),
-    )?;
-    require_source_ownership(options.source_only, unowned_bytes)?;
     if let Some(parent) = output.parent() {
         std::fs::create_dir_all(parent)
             .map_err(|error| format!("{}: {error}", parent.display()))?;
@@ -1685,35 +1696,56 @@ mod tests {
     }
     /// A full build withdraws the proof an earlier build left before it runs
     /// and again when it fails, so a failed build never leaves that proof
-    /// standing, nor does a build of a game without a supported full build.
+    /// standing, in either game, nor does a build of an edition without a
+    /// supported full build.
     #[test]
     fn a_failed_full_build_leaves_no_earlier_proof() {
         use crate::coverage::proof::{full_build, full_build_fixture, fully_buildable};
         let directory = tempfile::tempdir().unwrap();
         let root = directory.path();
-        let target = target_for(DecompTargetId::TbsEn);
-        full_build_fixture(root, target, &json!({"regions": []}));
-        assert!(full_build(root, target).is_ok());
-        let options = Options {
-            rom: "roms/absent.gba".into(),
-            ..defaults(target.id)
-        };
-        let error = build(root, root, &options).unwrap_err();
-        assert!(error.contains("absent.gba"), "{error}");
-        let reason = full_build(root, target).map(|_| ()).unwrap_err();
-        assert!(
-            reason.contains("cannot read out/tbs-en/full/rebuilt.json"),
-            "{reason}"
-        );
-        assert!(!root.join("out/tbs-en/full/rebuilt.gba").exists());
+        for id in [DecompTargetId::TbsEn, DecompTargetId::TlaEn] {
+            let target = target_for(id);
+            full_build_fixture(root, target, &json!({"regions": []}));
+            assert!(full_build(root, target).is_ok(), "{id}");
+            let options = Options {
+                rom: "roms/absent.gba".into(),
+                ..defaults(target.id)
+            };
+            let error = build(root, root, &options).unwrap_err();
+            assert!(error.contains("absent.gba"), "{id}: {error}");
+            let reason = full_build(root, target).map(|_| ()).unwrap_err();
+            assert!(
+                reason.contains(&format!("cannot read out/{id}/full/rebuilt.json")),
+                "{reason}"
+            );
+            assert!(!root.join(format!("out/{id}/full/rebuilt.gba")).exists());
+        }
 
-        let lost_age = target_for(DecompTargetId::TlaEn);
-        full_build_fixture(root, fully_buildable(lost_age), &json!({"regions": []}));
-        let error = build(root, root, &defaults(lost_age.id)).unwrap_err();
+        let edition = target_for(DecompTargetId::TlaJa);
+        full_build_fixture(root, fully_buildable(edition), &json!({"regions": []}));
+        let error = build(root, root, &defaults(edition.id)).unwrap_err();
         assert!(error.contains("compile-only"), "{error}");
         for artifact in ["rebuilt.json", "rebuilt.gba"] {
-            assert!(!root.join("out/tla-en/full").join(artifact).exists());
+            assert!(!root.join("out/tla-ja/full").join(artifact).exists());
         }
+    }
+
+    /// A full build that leaves any ROM byte without a source fails: it
+    /// writes the ranges it could not own, never a rebuilt ROM or a proof,
+    /// so the game's main image and DONE stay pending.
+    #[test]
+    fn unowned_bytes_fail_the_build_after_naming_them() {
+        let mask = [1, 1, 0, 0, 1, 0];
+        let gaps = unowned_regions(&mask, ROM_BASE).unwrap();
+        assert_eq!(
+            gaps.iter()
+                .map(|gap| (gap.address, gap.size))
+                .collect::<Vec<_>>(),
+            [(ROM_BASE + 2, 2), (ROM_BASE + 5, 1)]
+        );
+        let error = require_source_ownership(false, 3).unwrap_err();
+        assert!(error.contains("leaves 3 ROM bytes unowned"), "{error}");
+        require_source_ownership(false, 0).unwrap();
     }
     #[test]
     fn output_sidecars_preserve_multi_dot_stems() {

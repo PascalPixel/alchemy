@@ -22,4 +22,4 @@ Func_080db9a8:
 	lsls	r0, r0, #28
 	lsrs	r0, r0, #30
 	bx	lr
-	.align 2, 0
+	.2byte 0x0000

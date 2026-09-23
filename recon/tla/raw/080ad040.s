@@ -21,4 +21,8 @@ Func_080ad040:
 	.2byte 0x080a
 	ldr	r4, [pc, #0]
 	bx	r4
-	.4byte 0x080af311
+	.2byte 0xf311
+	.2byte 0x080a
+	ldr	r4, [pc, #0]
+	bx	r4
+	.4byte 0x080af339

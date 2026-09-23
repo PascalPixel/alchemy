@@ -1735,4 +1735,7 @@ Func_081a04d0:
 	.4byte 0x06010010
 	.4byte 0x06010014
 	.4byte 0x06010018
-	.4byte 0x0601001c
+	.2byte 0x001c
+	.2byte 0x0601
+	bx	lr
+	.2byte 0x0000

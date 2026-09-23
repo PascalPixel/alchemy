@@ -93,8 +93,9 @@ full-rom-check: build-full
 	@grep -Fq '"rom_fallback_bytes": 0' $(FULL_REPORT)
 	@printf 'full ROM contract ok: %s\n' '$(TARGET)'
 
-# The Lost Age has no full ROM contract yet; every asset region its manifest
-# owns is rebuilt from source and compared with the tla-en ROM.
+# The Lost Age's full ROM build (make full-rom-check TARGET=tla-en) does not
+# yet own every byte; every asset region its manifest owns is rebuilt from
+# source and compared with the tla-en ROM.
 TLA_ASSETS = out/tla-en/assets
 tla-assets-check: prepare-inputs
 	$(ASSETS) --target tla-en -o $(TLA_ASSETS) roms/tla-en.gba

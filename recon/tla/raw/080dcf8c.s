@@ -25,6 +25,8 @@
 	.set sub_080dd528, 0x080dd528
 	.set sub_080dd63c, 0x080dd63c
 	.set sub_080dd668, 0x080dd668
+	.set sub_080ebe70, 0x080ebe70
+	.set sub_080ebf68, 0x080ebf68
 	.set sub_081c0010, 0x081c0010
 	.global Func_080dcf8c
 	.thumb_func
@@ -592,4 +594,92 @@ Func_080dcf8c:
 	.4byte 0xfff00000
 	.4byte 0x0300122c
 	.4byte 0x080f0ee4
-	.4byte 0x03001150
+	.2byte 0x1150
+	.2byte 0x0300
+	push	{r5, r6, r7, lr}
+	mov	r7, r8
+	push	{r7}
+	adds	r6, r0, #0
+	movs	r2, #64
+	adds	r2, r2, r6
+	sub	sp, #12
+	mov	r8, r2
+.L_080dd44c:
+	mov	r3, r8
+	movs	r7, #0
+	ldrsb	r7, [r3, r7]
+	cmp	r7, #0
+	bne.n	.L_080dd48e
+	ldr	r3, [r6, #20]
+	mov	r5, sp
+	str	r3, [r5, #0]
+	ldr	r3, [r6, #24]
+	str	r3, [r5, #8]
+	bl	sub_08014878
+	adds	r1, r0, #0
+	lsls	r1, r1, #16
+	movs	r0, #240
+	adds	r2, r5, #0
+	lsls	r0, r0, #13
+	lsrs	r1, r1, #16
+	bl	sub_0801489c
+	ldr	r3, [r5, #0]
+	mov	r2, r8
+	str	r3, [r6, #12]
+	ldr	r3, [r5, #8]
+	str	r3, [r6, #16]
+	movs	r3, #128
+	lsls	r3, r3, #11
+	str	r3, [r6, #36]
+	str	r3, [r6, #32]
+	adds	r3, r6, #0
+	adds	r3, #66
+	strb	r7, [r3, #0]
+	b.n	.L_080dd4c2
+.L_080dd48e:
+	cmp	r7, #1
+	bne.n	.L_080dd4a6
+	adds	r0, r6, #0
+	bl	sub_080ebe70
+	cmp	r0, #0
+	bne.n	.L_080dd4de
+	mov	r2, r8
+	ldrb	r3, [r2, #0]
+	adds	r3, #1
+	strb	r3, [r2, #0]
+	b.n	.L_080dd44c
+.L_080dd4a6:
+	cmp	r7, #2
+	bne.n	.L_080dd4ca
+	ldr	r3, [r6, #20]
+	adds	r2, r6, #0
+	str	r3, [r6, #12]
+	ldr	r3, [r6, #24]
+	adds	r2, #66
+	str	r3, [r6, #16]
+	movs	r3, #128
+	lsls	r3, r3, #3
+	strh	r3, [r6, #50]
+	movs	r3, #1
+	strb	r3, [r2, #0]
+	mov	r2, r8
+.L_080dd4c2:
+	ldrb	r3, [r2, #0]
+	adds	r3, #1
+	strb	r3, [r2, #0]
+	b.n	.L_080dd4de
+.L_080dd4ca:
+	cmp	r7, #3
+	bne.n	.L_080dd4de
+	adds	r0, r6, #0
+	bl	sub_080ebe70
+	cmp	r0, #0
+	bne.n	.L_080dd4de
+	adds	r0, r6, #0
+	bl	sub_080ebf68
+.L_080dd4de:
+	add	sp, #12
+	pop	{r3}
+	mov	r8, r3
+	pop	{r5, r6, r7, pc}
+	.2byte 0x0000

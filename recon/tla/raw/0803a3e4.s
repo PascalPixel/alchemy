@@ -21,4 +21,4 @@ Func_0803a3e4:
 	movs	r0, #0
 .L_0803a400:
 	pop	{pc}
-	.align 2, 0
+	.2byte 0x0000

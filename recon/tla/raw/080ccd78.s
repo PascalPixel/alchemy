@@ -147,4 +147,12 @@ Func_080ccd78:
 	pop	{r5, r6, r7, pc}
 	movs	r0, r0
 	.4byte 0x02000240
-	.4byte 0x02000452
+	.2byte 0x0452
+	.2byte 0x0200
+	push	{lr}
+	ldr	r3, [pc, #8]
+	ldr	r0, [r3, #4]
+	mov	lr, r0
+	.2byte 0xf800
+	.2byte 0xbd00
+	.4byte 0x02008000

@@ -315,4 +315,7 @@ Func_0804de54:
 .L_0804e098:
 	pop	{r5, r6, pc}
 	movs	r0, r0
-	.4byte 0x03001150
+	.2byte 0x1150
+	.2byte 0x0300
+	bx	lr
+	.2byte 0x0000

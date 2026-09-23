@@ -504,4 +504,8 @@ Func_080d2414:
 	negs	r0, r0
 .L_080d2804:
 	pop	{r5, pc}
-	.align 2, 0
+	movs	r0, r0
+	bx	lr
+	movs	r0, r0
+	bx	lr
+	.2byte 0x0000

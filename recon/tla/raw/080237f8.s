@@ -52,4 +52,7 @@ Func_080237f8:
 	strh	r3, [r1, #0]
 	pop	{pc}
 	.4byte 0x0802386d
-	.4byte 0x08023e19
+	.2byte 0x3e19
+	.2byte 0x0802
+	movs	r0, #1
+	bx	lr

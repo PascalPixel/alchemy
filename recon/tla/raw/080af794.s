@@ -162,4 +162,6 @@ Func_080af794:
 	mov	r9, r5
 	mov	sl, r6
 	pop	{r5, r6, r7, pc}
-	.align 2, 0
+	movs	r0, r0
+	bx	lr
+	.2byte 0x0000

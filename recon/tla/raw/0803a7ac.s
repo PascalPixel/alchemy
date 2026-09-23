@@ -177,4 +177,4 @@ Func_0803a7ac:
 	bl	sub_080397e0
 .L_0803a8f8:
 	pop	{pc}
-	.align 2, 0
+	.2byte 0x0000

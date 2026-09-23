@@ -178,4 +178,4 @@ Func_080dc978:
 	.2byte 0x080d
 .L_080dcad8:
 	pop	{pc}
-	.align 2, 0
+	.2byte 0x0000

@@ -359,4 +359,26 @@ Func_080171fc:
 	pop	{r1}
 	bx	r1
 	.4byte 0x04000204
-	.4byte 0x0000fffc
+	.2byte 0xfffc
+	.2byte 0x0000
+	adds	r2, r0, #0
+	ldr	r0, [pc, #8]
+	ldr	r0, [r0, #0]
+	ldr	r1, [r0, #4]
+	b.n	.L_080174ee
+	movs	r0, r0
+	.2byte 0x7408
+	.2byte 0x0200
+.L_080174ec:
+	subs	r1, #1
+.L_080174ee:
+	cmp	r1, #0
+	beq.n	.L_080174fa
+	ldrb	r0, [r2, #0]
+	adds	r2, #1
+	cmp	r0, #255
+	beq.n	.L_080174ec
+.L_080174fa:
+	adds	r0, r1, #0
+	bx	lr
+	.2byte 0x0000

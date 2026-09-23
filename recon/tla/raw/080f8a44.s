@@ -54,4 +54,4 @@ Func_080f8a44:
 	.2byte 0x0810
 .L_080f8ab0:
 	pop	{r5, r6, pc}
-	.align 2, 0
+	.2byte 0x0000

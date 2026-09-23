@@ -4,7 +4,9 @@
 	.set sub_080142d4, 0x080142d4
 	.set sub_080143ac, 0x080143ac
 	.set sub_08014cc0, 0x08014cc0
+	.set sub_0803d5c4, 0x0803d5c4
 	.set sub_0803db54, 0x0803db54
+	.set sub_080ad078, 0x080ad078
 	.global Func_0803d4e4
 	.thumb_func
 Func_0803d4e4:
@@ -88,4 +90,27 @@ Func_0803d4e4:
 	mov	fp, r7
 	pop	{r5, r6, r7, pc}
 	.4byte 0x0804e684
-	.4byte 0x0804ea74
+	.2byte 0xea74
+	.2byte 0x0804
+	push	{r5, r6, lr}
+	mov	r6, sl
+	mov	r5, r8
+	push	{r5, r6}
+	sub	sp, #4
+	ldr	r5, [sp, #24]
+	adds	r6, r1, #0
+	mov	r8, r2
+	mov	sl, r3
+	bl	sub_080ad078
+	adds	r1, r6, #0
+	ldrh	r0, [r0, #4]
+	mov	r2, r8
+	mov	r3, sl
+	str	r5, [sp, #0]
+	bl	sub_0803d5c4
+	add	sp, #4
+	pop	{r3, r5}
+	mov	r8, r3
+	mov	sl, r5
+	pop	{r5, r6, pc}
+	.2byte 0x0000

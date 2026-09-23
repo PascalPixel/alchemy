@@ -66,4 +66,4 @@ Func_080cacec:
 	bne.n	.L_080cad1c
 .L_080cad60:
 	pop	{r5, r6, r7, pc}
-	.align 2, 0
+	.2byte 0x0000

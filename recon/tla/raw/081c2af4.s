@@ -594,4 +594,4 @@ Func_081c2af4:
 	pop	{r4, r5, r6, r7}
 	pop	{r0}
 	bx	r0
-	.align 2, 0
+	.2byte 0x0000

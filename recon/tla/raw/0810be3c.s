@@ -58,4 +58,4 @@ Func_0810be3c:
 	.2byte 0xffff
 .L_0810bea4:
 	bx	lr
-	.align 2, 0
+	.2byte 0x0000

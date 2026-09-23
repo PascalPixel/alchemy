@@ -97,4 +97,4 @@ Func_080affac:
 .L_080b0056:
 	add	sp, #16
 	pop	{r5, r6, pc}
-	.align 2, 0
+	.2byte 0x0000

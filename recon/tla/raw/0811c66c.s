@@ -891,4 +891,4 @@ Func_0811c66c:
 .L_0811cd76:
 	add	sp, #28
 	pop	{r5, r6, pc}
-	.align 2, 0
+	.2byte 0x0000

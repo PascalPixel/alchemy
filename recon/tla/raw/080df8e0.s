@@ -287,4 +287,4 @@ Func_080df8e0:
 	adds	r3, r3, r2
 	strh	r3, [r1, #18]
 	pop	{r5, r6, r7, pc}
-	.align 2, 0
+	.2byte 0x0000

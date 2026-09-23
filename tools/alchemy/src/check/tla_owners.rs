@@ -11,15 +11,15 @@
 //! with every placeholder compiled must reproduce the overlay the ROM loads.
 //!
 //! The main image's retained listings, maintained SRC assembly and container
-//! runtime are assembled and compared with the ROM as the TBS assembly stage
-//! does; the receipt then credits the maintained modules whose headers declare
-//! library or handwritten provenance, and the registered runtime links.
+//! runtime are assembled and compared with the ROM as the full build's
+//! assembly stage does.
 //!
-//! Credit needs the audited executable denominator. While the TLA inventory
-//! is absent, pending or not the independently verified automatic count, as
-//! it stays until The Lost Age has a supported full ROM build,
-//! every other verification still runs and the check passes without writing
-//! a receipt.
+//! The check credits nothing. The Lost Age's receipt, like The Broken Seal's,
+//! is written only by its canonical full ROM build once that build is byte
+//! identical and the executable inventory it proves is authoritative. While
+//! that inventory is absent, pending or not the independently verified
+//! automatic count, main extents are checked against nothing but their units,
+//! and every other verification still runs.
 use crate::compiler::overlay::placeholder_extent;
 use crate::compiler::routing::CompilerTarget;
 use crate::compiler::source_paths::{SourceOwner, SourcePaths, SHARED_SOURCE_ROOT};
@@ -38,8 +38,8 @@ use std::process::ExitCode;
 const USAGE: &str = "usage: alchemy check tla-owners ROM";
 /// The TLA executable inventory containing the declared main-owner extents.
 const INVENTORY: &str = "out/tla-en/reports/executable.json";
-/// The check's result while no authoritative inventory exists.
-const WITHHELD: &str = "tla owners ok (receipt withheld: executable audit pending)";
+/// How the check's result ends while no authoritative inventory exists.
+const UNBOUNDED: &str = "; main extents unbounded: executable audit pending";
 
 pub(super) fn entry(arguments: &[String]) -> ExitCode {
     let [rom] = arguments else {
@@ -269,7 +269,6 @@ fn overlay_mismatches(
 }
 
 fn check(root: &Path, rom: &Path) -> Result<String, String> {
-    let progress_inputs = crate::coverage::proof::identity(root, "tla-en")?;
     if !rom.is_file() {
         return Err(format!("{}: TLA ROM not found", rom.display()));
     }
@@ -307,20 +306,11 @@ fn check(root: &Path, rom: &Path) -> Result<String, String> {
     let mut mismatches = Vec::new();
     let tree = crate::coverage::tree::work_tree_at(root.to_path_buf());
     let target = production_target(CompilerTarget::Tla);
-    // Crediting overlay assembly needs audited intervals; comparing the
-    // images that carry it with the ROM does not.
-    let assembly = match main_ranges {
-        Some(_) => Some(crate::coverage::pipeline::overlay_assembly_to_verify(
-            &tree, &target,
-        )?),
-        None => None,
-    };
-    let assembly_images = match &assembly {
-        Some(assembly) => assembly.keys().cloned().collect::<Vec<_>>(),
-        None => crate::coverage::pipeline::overlay_assembly_images(&tree, &target)?
-            .into_iter()
-            .collect(),
-    };
+    // Comparing the images that carry reconstructed assembly with the ROM
+    // needs no executable denominator.
+    let assembly_images = crate::coverage::pipeline::overlay_assembly_images(&tree, &target)?
+        .into_iter()
+        .collect::<Vec<_>>();
     if !overlays.is_empty() || !assembly_images.is_empty() {
         let canonical = CanonicalRom::from_file(rom, production_target(CompilerTarget::Tla))?;
         mismatches.extend(overlay_mismatches(
@@ -385,65 +375,19 @@ fn check(root: &Path, rom: &Path) -> Result<String, String> {
         ));
     }
     assemble_main(root, rom, &target)?;
-    let Some(assembly) = assembly else {
-        return Ok(format!(
-            "{WITHHELD}: {} exact owners ({} overlay), {} shared sources",
-            owners.len(),
-            overlays.len(),
-            shared.len()
-        ));
-    };
-    let assembly_main = crate::coverage::pipeline::main_assembly_credits(&tree, &target)?;
-    let mut credits: Vec<_> = owners
-        .iter()
-        .map(|owner| crate::coverage::proof::Credit {
-            image: owner.owner.overlay_id().unwrap_or_else(|| "main".into()),
-            start: i64::from(owner.owner.address()),
-            end: i64::from(owner.owner.address()) + owner.extent as i64,
-            source: owner.source.clone(),
-            kind: "c".into(),
-        })
-        .collect();
-    let assembly_bytes: i64 = assembly_main.iter().map(|(span, _)| span.bytes()).sum();
-    let assembly_ranges = assembly_main.len();
-    for (span, source) in assembly_main {
-        credits.push(crate::coverage::proof::Credit {
-            image: "main".into(),
-            start: span.start,
-            end: span.end,
-            source,
-            kind: "assembly".into(),
-        });
-    }
-    for (image, spans) in assembly {
-        for span in spans {
-            credits.push(crate::coverage::proof::Credit {
-                source: target.overlay_assembly(&image),
-                image: image.clone(),
-                start: span.start,
-                end: span.end,
-                kind: "assembly".into(),
-            });
-        }
-    }
-    crate::coverage::proof::write(
-        root,
-        "tla-en",
-        &std::fs::read(rom).map_err(|e| e.to_string())?,
-        &progress_inputs,
-        credits,
-    )?;
     Ok(format!(
-        "tla owners ok: {} exact owners ({} overlay), {} shared sources, {assembly_ranges} credited main assembly ranges ({assembly_bytes} bytes)",
+        "tla owners ok: {} exact owners ({} overlay), {} shared sources{}",
         owners.len(),
         overlays.len(),
-        shared.len()
+        shared.len(),
+        if main_ranges.is_some() { "" } else { UNBOUNDED }
     ))
 }
 
 /// The main image's retained and maintained assembly, and its container
-/// runtime, assembled and compared with the ROM exactly as the TBS build's
-/// assembly stage does. Its manifest then names the ranges a receipt credits.
+/// runtime, assembled and compared with the ROM exactly as the full build's
+/// assembly stage does, in the check's own directory so the full build's
+/// stage output, which its receipt reads, is never replaced.
 fn assemble_main(
     root: &Path,
     rom: &Path,
@@ -452,7 +396,7 @@ fn assemble_main(
     let rom = std::fs::canonicalize(rom).map_err(|error| format!("{}: {error}", rom.display()))?;
     let options = crate::build_asm::Options {
         rom: rom.to_string_lossy().into_owned(),
-        output: format!("{}/full/asm", target.output_dir),
+        output: format!("{}/owners/asm", target.output_dir),
         source: None,
         source_only: false,
         asm_dir: target.asm_dir.into(),
@@ -490,16 +434,14 @@ mod tests {
         assert!(ranges(r#"{"main":{"audit":"incomplete","intervals":[]}}"#).is_err());
     }
 
-    /// Only the independently verified inventory bounds owners and unlocks
-    /// the receipt. A pending, hand-made or copied one is withheld; a verified
-    /// one inconsistent in itself fails. The Lost Age has no supported full
-    /// ROM build, so even the verified one is withheld from it until then.
+    /// Only the independently verified inventory bounds owners. A pending,
+    /// hand-made or copied one is withheld; a verified one inconsistent in
+    /// itself fails, and one whose full build no longer proves it bounds
+    /// nothing.
     #[test]
     fn only_the_verified_inventory_bounds_owners() {
         let root = fixture(REGISTER, &[]);
-        let lost_age = production_target(CompilerTarget::Tla);
-        // The Lost Age as it will be once its full ROM build is supported.
-        let target = crate::coverage::proof::fully_buildable(lost_age);
+        let target = production_target(CompilerTarget::Tla);
         let ranges = |target| audited_main_ranges(root.path(), target);
         assert_eq!(ranges(target).unwrap(), None);
         let path = root.path().join(INVENTORY);
@@ -524,8 +466,18 @@ mod tests {
             ranges(target).unwrap(),
             Some(vec![(0x081c_2a3c, 0x081c_2a8c)])
         );
-        // Until then the same files bound nothing.
-        assert_eq!(ranges(lost_age).unwrap(), None);
+        // A failed rebuild withdraws the proof the inventory rests on.
+        let artifacts = [
+            "out/tla-en/full/rebuilt.json",
+            "out/tla-en/full/rebuilt.gba",
+        ]
+        .map(|path| (path, std::fs::read(root.path().join(path)).unwrap()));
+        crate::coverage::proof::withdraw_full_build(root.path(), target).unwrap();
+        assert_eq!(ranges(target).unwrap(), None);
+        for (path, bytes) in artifacts {
+            std::fs::write(root.path().join(path), bytes).unwrap();
+        }
+        assert!(ranges(target).unwrap().is_some());
         genuine["total_union_bytes"] = serde_json::json!(8);
         std::fs::write(&path, genuine.to_string()).unwrap();
         assert!(ranges(target).unwrap_err().contains("stale"));
@@ -741,8 +693,10 @@ mod tests {
     }
 
     /// With the local ROM present, the tracked register and shared sources
-    /// pass. Without an authoritative inventory every owner, shared source and
-    /// assembly comparison still runs; only the receipt is withheld.
+    /// pass, and every owner, shared source and assembly comparison runs
+    /// whether or not an authoritative inventory exists. The check never
+    /// writes or rewrites the receipt, nor the full build's stage output
+    /// that the receipt is written from.
     #[test]
     fn tracked_tla_owners_score_exact_against_the_local_rom() {
         let root = crate::compiler::routing::root();
@@ -751,47 +705,27 @@ mod tests {
             return;
         }
         crate::compiler::routing::prefer_installed_binutils();
-        let receipt = root.join("out/tla-en/reports/verified-code.json");
-        // Whether a receipt exists, when it was last written and what it says.
-        let state = || {
-            std::fs::metadata(&receipt).ok().map(|metadata| {
-                (
-                    metadata.modified().unwrap(),
-                    std::fs::read(&receipt).unwrap(),
-                )
-            })
+        // Whether a file exists, when it was last written and what it says.
+        let state = |path: &str| {
+            let path = root.join(path);
+            std::fs::metadata(&path)
+                .ok()
+                .map(|metadata| (metadata.modified().unwrap(), std::fs::read(&path).unwrap()))
         };
-        let before = state();
+        let written = [
+            "out/tla-en/reports/verified-code.json",
+            "out/tla-en/full/asm/manifest.json",
+        ];
+        let before = written.map(state);
         let audited = audited_main_ranges(root, production_target(CompilerTarget::Tla))
             .unwrap()
             .is_some();
         let summary = check(root, &rom).unwrap();
-        if !audited {
-            assert!(summary.starts_with(WITHHELD), "{summary}");
-            match before {
-                None => assert!(
-                    !receipt.exists(),
-                    "a withheld executable audit wrote a progress receipt"
-                ),
-                Some(before) => assert!(
-                    state() == Some(before),
-                    "a withheld executable audit rewrote the progress receipt"
-                ),
-            }
-            return;
-        }
         assert!(summary.starts_with("tla owners ok: "), "{summary}");
-        // The receipt credits maintained main assembly and the container
-        // runtime exactly as the assembly stage verified them.
-        let receipt = crate::coverage::proof::read(root, "tla-en").unwrap();
-        let assembly = |source: &str| {
-            receipt.credits.iter().any(|credit| {
-                credit.kind == "assembly" && credit.image == "main" && credit.source == source
-            })
-        };
-        assert!(assembly("games/THE LOST AGE/SRC/SOUND/UPDATE.S"));
-        assert!(assembly(&crate::compiler::runtime::registry_path(
-            CompilerTarget::Tla
-        )));
+        assert_eq!(summary.ends_with(UNBOUNDED), !audited, "{summary}");
+        assert!(
+            written.map(state) == before,
+            "the owner check wrote a receipt or the full build's assembly stage"
+        );
     }
 }

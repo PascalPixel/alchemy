@@ -1,7 +1,9 @@
 .syntax unified
 	.thumb
 	.set sub_08002054, 0x08002054
+	.set sub_0801314c, 0x0801314c
 	.set sub_080145a8, 0x080145a8
+	.set sub_08014644, 0x08014644
 	.set sub_08014d00, 0x08014d00
 	.set sub_081a8264, 0x081a8264
 	.set sub_081a8278, 0x081a8278
@@ -1202,4 +1204,12 @@ Func_081a7870:
 	movs	r0, r0
 	.4byte 0x85000c01
 	.4byte 0x05000200
+	.2byte 0x78c1
+	.2byte 0x081a
+	push	{lr}
+	ldr	r0, [pc, #12]
+	bl	sub_08014644
+	movs	r0, #128
+	bl	sub_0801314c
+	pop	{pc}
 	.4byte 0x081a78c1

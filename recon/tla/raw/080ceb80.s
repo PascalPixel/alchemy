@@ -424,4 +424,4 @@ Func_080ceb80:
 	strb	r2, [r0, #7]
 .L_080ceea8:
 	pop	{pc}
-	.align 2, 0
+	.2byte 0x0000

@@ -33,4 +33,16 @@ Func_08108030:
 	.2byte 0x0810
 	ldr	r4, [pc, #0]
 	bx	r4
-	.4byte 0x0810b7a9
+	.2byte 0xb7a9
+	.2byte 0x0810
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0xb79d
+	.2byte 0x0810
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x84e1
+	.2byte 0x0810
+	ldr	r4, [pc, #0]
+	bx	r4
+	.4byte 0x0810b521

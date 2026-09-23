@@ -8,4 +8,4 @@ Func_080dbde8:
 	bl	sub_080dbb78
 	ldrb	r0, [r0, #3]
 	pop	{pc}
-	.align 2, 0
+	.2byte 0x0000

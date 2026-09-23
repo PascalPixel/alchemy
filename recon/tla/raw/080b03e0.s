@@ -23,4 +23,4 @@ Func_080b03e0:
 .L_080b0402:
 	asrs	r0, r0, #16
 	pop	{r5, r6, pc}
-	.align 2, 0
+	.2byte 0x0000

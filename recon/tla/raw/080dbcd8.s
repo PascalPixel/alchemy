@@ -70,4 +70,4 @@ Func_080dbcd8:
 	lsls	r0, r0, #24
 	lsrs	r0, r0, #24
 	pop	{pc}
-	.align 2, 0
+	.2byte 0x0000

@@ -9,4 +9,8 @@ Func_08118070:
 	.2byte 0x0811
 	ldr	r4, [pc, #0]
 	bx	r4
-	.4byte 0x0811c121
+	.2byte 0xc121
+	.2byte 0x0811
+	ldr	r4, [pc, #0]
+	bx	r4
+	.4byte 0x0811c01d

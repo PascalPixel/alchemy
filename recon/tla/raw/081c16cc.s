@@ -49,4 +49,4 @@ Func_081c16cc:
 	pop	{r4, r5}
 	pop	{r0}
 	bx	r0
-	.align 2, 0
+	.2byte 0x0000

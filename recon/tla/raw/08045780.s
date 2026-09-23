@@ -12,4 +12,4 @@ Func_08045780:
 	ands	r3, r2
 	strh	r3, [r1, #0]
 	bx	lr
-	.align 2, 0
+	.2byte 0x0000

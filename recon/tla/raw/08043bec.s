@@ -960,4 +960,7 @@ Func_08043bec:
 	mov	sl, r6
 	mov	fp, r7
 	pop	{r5, r6, r7, pc}
-	.4byte 0x02000240
+	.2byte 0x0240
+	.2byte 0x0200
+	movs	r0, #1
+	bx	lr

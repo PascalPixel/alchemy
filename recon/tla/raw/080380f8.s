@@ -41,4 +41,64 @@ Func_080380f8:
 	.2byte 0x0804
 	ldr	r4, [pc, #0]
 	bx	r4
-	.4byte 0x0803ce1d
+	.2byte 0xce1d
+	.2byte 0x0803
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0xcb1d
+	.2byte 0x0803
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0xdc1d
+	.2byte 0x0803
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0xdd25
+	.2byte 0x0803
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0xdd69
+	.2byte 0x0803
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0xdf01
+	.2byte 0x0803
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0xdf15
+	.2byte 0x0803
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0xe5a9
+	.2byte 0x0803
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0xe6d9
+	.2byte 0x0803
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0xe7ad
+	.2byte 0x0803
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0xe919
+	.2byte 0x0803
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0xe999
+	.2byte 0x0803
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0xf611
+	.2byte 0x0803
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0xf615
+	.2byte 0x0803
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0xdd99
+	.2byte 0x0803
+	ldr	r4, [pc, #0]
+	bx	r4
+	.4byte 0x0803dea9

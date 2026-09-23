@@ -76,4 +76,4 @@ Func_080db9cc:
 	adds	r0, r0, r3
 	bl	sub_080eb01c
 	pop	{pc}
-	.align 2, 0
+	.2byte 0x0000

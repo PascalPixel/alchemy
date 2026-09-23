@@ -36,4 +36,4 @@ Func_08108aa8:
 	.2byte 0xffff
 .L_08108aec:
 	pop	{r5, r6, pc}
-	.align 2, 0
+	.2byte 0x0000

@@ -15,4 +15,4 @@ Func_080dbcc0:
 .L_080dbcd2:
 	adds	r0, r2, #0
 	pop	{pc}
-	.align 2, 0
+	.2byte 0x0000

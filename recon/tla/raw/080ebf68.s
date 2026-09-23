@@ -1,5 +1,6 @@
 .syntax unified
 	.thumb
+	.set sub_08002054, 0x08002054
 	.set sub_08013164, 0x08013164
 	.set sub_08014274, 0x08014274
 	.set sub_080142d4, 0x080142d4
@@ -10,6 +11,7 @@
 	.set sub_08038010, 0x08038010
 	.set sub_08038018, 0x08038018
 	.set sub_08038398, 0x08038398
+	.set sub_080cad84, 0x080cad84
 	.set sub_080cdf5c, 0x080cdf5c
 	.set sub_080d2d84, 0x080d2d84
 	.set sub_080ec1d0, 0x080ec1d0
@@ -258,4 +260,51 @@ Func_080ebf68:
 	bl	sub_08038018
 	pop	{r5, pc}
 	movs	r0, r0
-	.4byte 0x0202a000
+	.2byte 0xa000
+	.2byte 0x0202
+	push	{r5, r6, r7, lr}
+	mov	r7, r8
+	push	{r7}
+	adds	r7, r1, #0
+	adds	r5, r0, #0
+	bl	sub_080cdf5c
+	movs	r3, #192
+	lsls	r3, r3, #18
+	ldr	r3, [r3, #32]
+	ldr	r3, [r3, #0]
+	mov	r8, r3
+	bl	sub_080cad84
+	adds	r6, r0, #0
+	cmp	r6, #0
+	beq.n	.L_080ec1c4
+	ldr	r2, [pc, #60]
+	asrs	r5, r5, #16
+	movs	r1, #192
+	lsls	r0, r5, #14
+	lsls	r1, r1, #2
+	adds	r0, r0, r2
+	adds	r1, #85
+	bl	sub_08002054
+	asrs	r7, r7, #16
+	adds	r5, r0, #0
+	movs	r3, #224
+	lsls	r3, r3, #13
+	lsls	r5, r5, #16
+	lsls	r0, r7, #14
+	movs	r1, #160
+	adds	r0, r0, r3
+	str	r5, [r6, #8]
+	lsls	r1, r1, #2
+	bl	sub_08002054
+	mov	r2, r8
+	lsls	r0, r0, #16
+	str	r0, [r6, #16]
+	str	r5, [r2, #0]
+	ldr	r3, [r6, #16]
+	str	r3, [r2, #8]
+.L_080ec1c4:
+	pop	{r3}
+	mov	r8, r3
+	pop	{r5, r6, r7, pc}
+	movs	r0, r0
+	.4byte 0x00434000

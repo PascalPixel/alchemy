@@ -354,4 +354,14 @@ Func_0811bf18:
 	mov	sl, r6
 	mov	fp, r7
 	pop	{r5, r6, r7, pc}
-	.4byte 0x030002d4
+	.2byte 0x02d4
+	.2byte 0x0300
+	push	{r5, lr}
+	bl	sub_0811be3c
+	ldr	r5, [r0, #0]
+	adds	r0, r5, #0
+	bl	sub_08020138
+	adds	r0, r5, #0
+	movs	r1, #2
+	bl	sub_08020090
+	pop	{r5, pc}

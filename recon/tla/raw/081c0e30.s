@@ -158,4 +158,13 @@ Func_081c0e30:
 	bl	sub_081c2fd0
 	pop	{pc}
 	movs	r0, r0
-	.4byte 0x02006a90
+	.2byte 0x6a90
+	.2byte 0x0200
+	ldr	r3, [pc, #8]
+	strh	r0, [r3, #0]
+	ldr	r3, [pc, #8]
+	strh	r1, [r3, #0]
+	bx	lr
+	movs	r0, r0
+	.4byte 0x02005834
+	.4byte 0x0200580c

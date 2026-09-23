@@ -44,4 +44,4 @@ Func_0811a490:
 	orrs	r0, r3
 	lsrs	r0, r0, #31
 	pop	{r5, pc}
-	.align 2, 0
+	.2byte 0x0000

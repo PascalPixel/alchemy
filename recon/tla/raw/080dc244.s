@@ -180,4 +180,4 @@ Func_080dc244:
 	movs	r0, #8
 	bl	.L_080dc244
 	pop	{pc}
-	.align 2, 0
+	.2byte 0x0000

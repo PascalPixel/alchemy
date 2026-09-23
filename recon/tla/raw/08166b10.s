@@ -5162,4 +5162,20 @@ Func_08166b10:
 	.4byte 0x08198ae3
 	.4byte 0x02010000
 	.4byte 0x08197410
-	.4byte 0x08143001
+	.2byte 0x3001
+	.2byte 0x0814
+	ldr	r3, [pc, #8]
+	movs	r2, #128
+	lsls	r2, r2, #19
+	adds	r2, #32
+	strh	r3, [r2, #0]
+	bx	lr
+	.2byte 0x0100
+	.2byte 0x0000
+	ldr	r3, [pc, #8]
+	movs	r2, #128
+	lsls	r2, r2, #19
+	adds	r2, #32
+	strh	r3, [r2, #0]
+	bx	lr
+	.4byte 0x00000080

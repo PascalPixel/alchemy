@@ -433,4 +433,4 @@ Func_08013b40:
 	.2byte 0x0300
 .L_08013eb0:
 	bx	lr
-	.align 2, 0
+	.2byte 0x0000

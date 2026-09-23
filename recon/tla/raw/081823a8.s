@@ -28,6 +28,7 @@
 	.set sub_0815e1ec, 0x0815e1ec
 	.set sub_0815f0a0, 0x0815f0a0
 	.set sub_0818253e, 0x0818253e
+	.set sub_08182898, 0x08182898
 	.set sub_081963ec, 0x081963ec
 	.global Func_081823a8
 	.thumb_func
@@ -621,4 +622,41 @@ Func_081823a8:
 	mov	fp, r7
 	pop	{r5, r6, r7, pc}
 	.4byte 0x08197410
-	.4byte 0x08143001
+	.2byte 0x3001
+	.2byte 0x0814
+	push	{r5, r6, lr}
+	movs	r3, #192
+	adds	r6, r0, #0
+	lsls	r3, r3, #18
+	movs	r0, #0
+	ldr	r5, [r3, #92]
+	bl	sub_081435e0
+	ldr	r3, [pc, #44]
+	movs	r2, #128
+	lsls	r2, r2, #19
+	adds	r2, #80
+	strh	r3, [r2, #0]
+	ldr	r3, [pc, #40]
+	adds	r2, #2
+	strh	r3, [r2, #0]
+	movs	r3, #238
+	lsls	r3, r3, #7
+	adds	r3, #180
+	adds	r2, r5, r3
+	movs	r3, #24
+	str	r3, [r2, #0]
+	movs	r3, #238
+	lsls	r3, r3, #7
+	adds	r3, #184
+	adds	r5, r5, r3
+	movs	r3, #0
+	str	r3, [r5, #0]
+	adds	r0, r6, #0
+	bl	sub_08182898
+	b.n	.L_08182894
+	.4byte 0x00003f44
+	.2byte 0x1010
+	.2byte 0x0000
+.L_08182894:
+	pop	{r5, r6, pc}
+	.2byte 0x0000

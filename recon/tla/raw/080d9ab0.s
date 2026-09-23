@@ -20,4 +20,4 @@ Func_080d9ab0:
 	ldrsh	r0, [r3, r2]
 .L_080d9acc:
 	pop	{pc}
-	.align 2, 0
+	.2byte 0x0000

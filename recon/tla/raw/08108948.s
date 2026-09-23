@@ -193,4 +193,4 @@ Func_08108948:
 	.2byte 0x0000
 .L_08108aa4:
 	pop	{r5, r6, pc}
-	.align 2, 0
+	.2byte 0x0000

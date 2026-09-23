@@ -270,4 +270,4 @@ Func_0803e5a8:
 	bne.n	.L_0803e798
 .L_0803e7a8:
 	pop	{pc}
-	.align 2, 0
+	.2byte 0x0000

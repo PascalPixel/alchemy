@@ -421,4 +421,4 @@ Func_080c9e48:
 	ldrb	r0, [r3, r0]
 	bl	.L_080c9fd8
 	pop	{pc}
-	.align 2, 0
+	.2byte 0x0000

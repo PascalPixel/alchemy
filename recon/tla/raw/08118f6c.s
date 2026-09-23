@@ -121,4 +121,7 @@ Func_08118f6c:
 	mov	fp, r7
 	pop	{r5, r6, r7, pc}
 	movs	r0, r0
-	.4byte 0xffff0000
+	.2byte 0x0000
+	.2byte 0xffff
+	.2byte 0x4770
+	.2byte 0x0000

@@ -48,4 +48,4 @@ Func_080af244:
 	adds	r0, r1, #0
 .L_080af294:
 	pop	{r5, r6, r7, pc}
-	.align 2, 0
+	.2byte 0x0000

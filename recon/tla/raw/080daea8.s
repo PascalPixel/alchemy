@@ -802,4 +802,4 @@ Func_080daea8:
 	bl	sub_080db884
 .L_080db4b4:
 	pop	{pc}
-	.align 2, 0
+	.2byte 0x0000

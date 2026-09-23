@@ -53,4 +53,8 @@ Func_080ad248:
 	.2byte 0x080a
 	ldr	r4, [pc, #0]
 	bx	r4
-	.4byte 0x080af405
+	.2byte 0xf405
+	.2byte 0x080a
+	ldr	r4, [pc, #0]
+	bx	r4
+	.4byte 0x080af2c1

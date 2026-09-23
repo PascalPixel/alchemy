@@ -135,4 +135,4 @@ Func_080143f8:
 	.2byte 0x0200
 .L_08014500:
 	pop	{pc}
-	.align 2, 0
+	.2byte 0x0000

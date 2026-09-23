@@ -136,4 +136,4 @@ Func_081049c8:
 	ldrh	r0, [r5, #0]
 	bl	sub_08014274
 	pop	{r5, pc}
-	.align 2, 0
+	.2byte 0x0000

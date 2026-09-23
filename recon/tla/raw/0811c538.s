@@ -166,4 +166,4 @@ Func_0811c538:
 	negs	r0, r0
 .L_0811c668:
 	pop	{pc}
-	.align 2, 0
+	.2byte 0x0000

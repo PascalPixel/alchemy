@@ -1098,4 +1098,4 @@ Func_0811cfd0:
 	.2byte 0xd7b0
 	.2byte 0x0811
 	bx	lr
-	.align 2, 0
+	.2byte 0x0000

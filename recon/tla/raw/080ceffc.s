@@ -428,3 +428,5 @@ Func_080ceffc:
 	bl	sub_080200c8
 .L_080cf34a:
 	pop	{pc}
+	bx	lr
+	.2byte 0x0000

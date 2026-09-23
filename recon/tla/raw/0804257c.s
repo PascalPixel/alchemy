@@ -151,4 +151,4 @@ Func_0804257c:
 	strh	r7, [r5, #10]
 	strh	r6, [r5, #12]
 	pop	{r5, r6, r7, pc}
-	.align 2, 0
+	.2byte 0x0000

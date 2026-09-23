@@ -28,4 +28,4 @@ Func_080ccd48:
 	subs	r0, r0, r3
 .L_080ccd74:
 	pop	{pc}
-	.align 2, 0
+	.2byte 0x0000

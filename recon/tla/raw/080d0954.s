@@ -116,4 +116,4 @@ Func_080d0954:
 	b.n	.L_080d0968
 .L_080d0a24:
 	pop	{pc}
-	.align 2, 0
+	.2byte 0x0000

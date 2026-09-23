@@ -12,4 +12,4 @@ Func_080d5e64:
 	adds	r0, #255
 	bl	sub_08016cfc
 	pop	{pc}
-	.align 2, 0
+	.2byte 0x0000

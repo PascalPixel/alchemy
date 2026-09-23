@@ -28,4 +28,4 @@ Func_08126944:
 	cmp	r5, #16
 	ble.n	.L_08126964
 	pop	{r5, r6, r7, pc}
-	.align 2, 0
+	.2byte 0x0000

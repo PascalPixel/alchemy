@@ -13,4 +13,12 @@ Func_080f8000:
 	.2byte 0x080f
 	ldr	r4, [pc, #0]
 	bx	r4
-	.4byte 0x080fe275
+	.2byte 0xe275
+	.2byte 0x080f
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0xe185
+	.2byte 0x080f
+	ldr	r4, [pc, #0]
+	bx	r4
+	.4byte 0x080f8841

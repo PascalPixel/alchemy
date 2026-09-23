@@ -198,4 +198,4 @@ Func_081051a8:
 	strh	r2, [r4, r3]
 .L_08105328:
 	pop	{r5, pc}
-	.align 2, 0
+	.2byte 0x0000

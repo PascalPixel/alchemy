@@ -625,4 +625,4 @@ Func_08144628:
 	str	r3, [r6, #4]
 	add	sp, #4
 	pop	{r5, r6, pc}
-	.align 2, 0
+	.2byte 0x0000

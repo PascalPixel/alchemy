@@ -22,4 +22,4 @@ Func_0803f698:
 	.2byte 0xffff
 .L_0803f6bc:
 	pop	{pc}
-	.align 2, 0
+	.2byte 0x0000

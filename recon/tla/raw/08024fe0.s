@@ -47,4 +47,4 @@ Func_08024fe0:
 	adds	r3, #4
 	strh	r3, [r6, #4]
 	pop	{r5, r6, pc}
-	.align 2, 0
+	.2byte 0x0000

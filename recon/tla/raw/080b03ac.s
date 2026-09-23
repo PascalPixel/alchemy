@@ -31,4 +31,4 @@ Func_080b03ac:
 	movs	r0, #0
 .L_080b03dc:
 	pop	{r5, r6, pc}
-	.align 2, 0
+	.2byte 0x0000

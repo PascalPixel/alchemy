@@ -98,6 +98,10 @@ enum Cell {
     },
     /// A value only the packer's host knew that is not an address.
     Host(&'static str),
+    /// A byte of a size that depends on where the host's heap buffer lies in
+    /// its page, on which the host heap addresses the recorded facts allow
+    /// disagree.
+    Paged(&'static str),
     /// Memory last written by a file the build does not produce.
     Unbuilt,
     /// Nonzero memory the heap returned to the system at some of the host
@@ -420,6 +424,9 @@ impl<'a> Heap<'a> {
                     Cell::Host(what) => Err(unknown(format!(
                         "{what}, which only the packer's host knew"
                     ))),
+                    Cell::Paged(what) => Err(unknown(format!(
+                        "{what}, whose byte the recorded bits of the host's heap_buffer do not fix"
+                    ))),
                     Cell::Unbuilt => Err(unknown(
                         "memory last written by a resource file the build does not produce".into(),
                     )),
@@ -432,7 +439,11 @@ impl<'a> Heap<'a> {
             .collect()
     }
     /// The closed `FILE` object whose user data starts at `at`, and the size
-    /// field of the top chunk that `malloc` split off after it.
+    /// field of the top chunk that `malloc` split off after it: the rest of
+    /// the top, with `PREV_INUSE` set. `fclose` merges the chunk back into
+    /// the top below it and leaves that word in place. Where the heap buffer
+    /// lies in its page decides the top's size; a byte on which the host
+    /// addresses the recorded facts allow disagree is unknown.
     fn file_object(&mut self, at: usize) {
         for &(start, end, value) in self.host.libc.fields {
             match value {
@@ -444,8 +455,23 @@ impl<'a> Heap<'a> {
                 }
             }
         }
-        let top = at - 8 + self.file_chunk();
-        self.fill(top + 4, top + 8, Cell::Host("the heap's top chunk size"));
+        let used = at + self.file_chunk();
+        let sizes = self
+            .tops
+            .iter()
+            .map(|&top| ((top - used) | 1) as u32)
+            .collect::<BTreeSet<_>>();
+        for byte in 0..4 {
+            let values = sizes
+                .iter()
+                .map(|size| (size >> (8 * byte)) as u8)
+                .collect::<BTreeSet<_>>();
+            let cell = match values.first() {
+                Some(&value) if values.len() == 1 => Cell::Byte(value),
+                _ => Cell::Paged("the heap's top chunk size"),
+            };
+            self.set(used - 4 + byte, cell);
+        }
     }
     /// The heap chunk a file of `extent` bytes takes before its `FILE`, and
     /// the heap's growth for both: none for a mapped buffer.
@@ -462,15 +488,42 @@ impl<'a> Heap<'a> {
     }
     /// Replay one file: `malloc`, `fopen`, `fread`, write, `free`, `fclose`.
     fn pack(&mut self, file: &[u8]) {
-        let buffer = self.allocate(file.len());
+        self.replay(file.len(), Some(file));
+    }
+    /// A file the build could not produce, in a resource of `extent` bytes.
+    /// The packer wrote it rounded up to four bytes, so it is the extent less
+    /// at most three bytes, and when every such length takes one chunk its
+    /// `FILE` and the heap around it follow as for a built file: only the
+    /// bytes it read, or may have read, are unknown. Otherwise everything up
+    /// to the latest place of its `FILE` is.
+    fn pack_unbuilt(&mut self, extent: usize) {
+        let lengths = extent.saturating_sub(ALIGNMENT - 1)..=extent;
+        let chunks = lengths.map(chunk).collect::<BTreeSet<_>>();
+        if chunks.len() == 1 {
+            self.replay(extent, None);
+            return;
+        }
+        let end = self.allocate(extent) + self.file_chunk() + 8;
+        self.fill(0, end, Cell::Unbuilt);
+        self.trim();
+    }
+    /// `malloc` a buffer for a file of `length` bytes, read the file into
+    /// it, `free` it and close the file.
+    fn replay(&mut self, length: usize, file: Option<&[u8]>) {
+        let buffer = self.allocate(length);
         if buffer == 0 {
             // The mapped buffer leaves the heap; the FILE takes the heap top.
             self.file_object(0);
             self.trim();
             return;
         }
-        for (at, byte) in file.iter().enumerate() {
-            self.set(at, Cell::Byte(*byte));
+        match file {
+            Some(file) => {
+                for (at, byte) in file.iter().enumerate() {
+                    self.set(at, Cell::Byte(*byte));
+                }
+            }
+            None => self.fill(0, length, Cell::Unbuilt),
         }
         self.file_object(buffer);
         // free(buf) while the FILE is open links the buffer to its empty bin
@@ -482,13 +535,6 @@ impl<'a> Heap<'a> {
         }
         self.word(buffer - 8, buffer);
         self.word(buffer - 4, self.file_chunk());
-        self.trim();
-    }
-    /// A file the build could not produce: everything up to the latest place
-    /// of its `FILE` is unknown.
-    fn pack_unbuilt(&mut self, extent: usize) {
-        let end = self.allocate(extent) + self.file_chunk() + 8;
-        self.fill(0, end, Cell::Unbuilt);
         self.trim();
     }
 }
@@ -810,6 +856,51 @@ mod tests {
             .unwrap_err()
             .contains("kept or returned to the system"));
         assert_eq!(heap.tail(PAGE + 8, PAGE + 12), Ok(vec![0; 4]));
+    }
+
+    #[test]
+    fn the_top_chunk_size_is_known_where_every_allowed_heap_agrees() {
+        // The buffer's chunk lies 0x100 bytes below a page boundary: the
+        // 0x48-byte buffer and the 0x170-byte FILE outgrow that top, which
+        // grows by a page and keeps 0xf48 bytes after them.
+        let mut exact = host(&GLIBC_2_2);
+        exact
+            .addresses
+            .insert(Base::HeapBuffer, (0x0805_0f08, 0x0805_0f08));
+        let mut heap = Heap::new(&exact);
+        heap.pack(&[7; 0x40]);
+        assert_eq!(heap.tail(0x1b4, 0x1b8), Ok(vec![0x49, 0x0f, 0, 0]));
+        // Unknown page offsets agree only on the size's high bytes.
+        let unknown = host(&GLIBC_2_2);
+        let mut heap = Heap::new(&unknown);
+        heap.pack(&[7; 0x40]);
+        assert_eq!(heap.tail(0x1b6, 0x1b8), Ok(vec![0, 0]));
+        assert!(heap
+            .tail(0x1b4, 0x1b8)
+            .unwrap_err()
+            .contains("the heap's top chunk size"));
+    }
+
+    #[test]
+    fn an_unbuilt_file_of_one_chunk_leaves_only_its_bytes_unknown() {
+        let host = host(&GLIBC_2_1);
+        // Every length the packer could have rounded up to 0x44 takes a
+        // 0x48-byte chunk: the FILE after it is placed as for a built file.
+        let mut heap = Heap::new(&host);
+        heap.pack_unbuilt(0x44);
+        assert!(heap
+            .tail(0x10, 0x14)
+            .unwrap_err()
+            .contains("does not produce"));
+        assert_eq!(heap.tail(0x48 + 0x38, 0x48 + 0x3c), Ok(vec![0xff; 4]));
+        // Lengths up to 0x45 straddle two chunk sizes: where the FILE lies
+        // is unknown too.
+        let mut heap = Heap::new(&host);
+        heap.pack_unbuilt(0x45);
+        assert!(heap
+            .tail(0x48 + 0x38, 0x48 + 0x3c)
+            .unwrap_err()
+            .contains("does not produce"));
     }
 
     #[test]

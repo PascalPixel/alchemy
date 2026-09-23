@@ -160,4 +160,4 @@ Func_080d476c:
 	lsrs	r0, r0, #31
 .L_080d4898:
 	pop	{pc}
-	.align 2, 0
+	.2byte 0x0000

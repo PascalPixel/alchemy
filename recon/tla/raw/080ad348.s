@@ -68,4 +68,35 @@ Func_080ad348:
 	ldr	r3, [pc, #4]
 	adds	r0, r0, r3
 	pop	{pc}
-	.4byte 0x080b9e7c
+	.2byte 0x9e7c
+	.2byte 0x080b
+	push	{lr}
+	cmp	r3, #0
+	beq.n	.L_080ad3e0
+	movs	r4, #0
+	cmp	r4, r2
+	bge.n	.L_080ad3f4
+.L_080ad3d0:
+	ldrb	r3, [r0, #0]
+	adds	r4, #1
+	strb	r3, [r1, #0]
+	adds	r0, #1
+	adds	r1, #1
+	cmp	r4, r2
+	blt.n	.L_080ad3d0
+	b.n	.L_080ad3f4
+.L_080ad3e0:
+	cmp	r2, #0
+	ble.n	.L_080ad3f4
+	adds	r4, r2, #0
+.L_080ad3e6:
+	ldrb	r3, [r1, #0]
+	subs	r4, #1
+	strb	r3, [r0, #0]
+	adds	r1, #1
+	adds	r0, #1
+	cmp	r4, #0
+	bne.n	.L_080ad3e6
+.L_080ad3f4:
+	pop	{pc}
+	.2byte 0x0000

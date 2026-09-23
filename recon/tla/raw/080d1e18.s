@@ -81,4 +81,4 @@ Func_080d1e18:
 	ldrsh	r0, [r0, r3]
 .L_080d1ea8:
 	pop	{pc}
-	.align 2, 0
+	.2byte 0x0000

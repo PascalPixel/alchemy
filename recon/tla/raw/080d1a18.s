@@ -509,4 +509,4 @@ Func_080d1a18:
 	bl	sub_080eb01c
 	add	sp, #12
 	pop	{r5, r6, pc}
-	.align 2, 0
+	.2byte 0x0000

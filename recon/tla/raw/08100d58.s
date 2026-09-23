@@ -82,4 +82,4 @@ Func_08100d58:
 	adds	r0, r0, r1
 	bl	sub_08002064
 	pop	{pc}
-	.align 2, 0
+	.2byte 0x0000

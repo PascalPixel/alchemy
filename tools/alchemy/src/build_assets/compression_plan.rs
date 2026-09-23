@@ -3,7 +3,7 @@
 use super::*;
 use serde_json::json;
 mod predictor;
-pub(crate) use predictor::{materialize, GeneralLz};
+pub(crate) use predictor::{materialize, LzMachine};
 
 const MAGIC: &[u8; 8] = b"ALCHTOK1";
 const FORMAT: &str = "alchemy-lz-controls-v1";

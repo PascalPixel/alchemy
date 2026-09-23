@@ -16,4 +16,4 @@ Func_080cc9ac:
 	asrs	r0, r0, #16
 	str	r2, [r1, #0]
 	bx	lr
-	.align 2, 0
+	.2byte 0x0000

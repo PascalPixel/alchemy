@@ -23,4 +23,4 @@ Func_080d2c9c:
 	bl	sub_081c0010
 .L_080d2cc0:
 	pop	{pc}
-	.align 2, 0
+	.2byte 0x0000

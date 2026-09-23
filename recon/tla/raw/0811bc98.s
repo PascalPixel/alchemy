@@ -49,4 +49,22 @@ Func_0811bc98:
 	cmp	r6, #13
 	ble.n	.L_0811bc9c
 	pop	{r5, r6, pc}
-	.align 2, 0
+	movs	r0, r0
+	movs	r3, #192
+	lsls	r3, r3, #18
+	ldr	r4, [r3, #36]
+	movs	r3, #44
+	adds	r2, r0, #0
+	muls	r2, r3
+	adds	r3, r2, #0
+	adds	r3, #144
+	ldr	r3, [r4, r3]
+	adds	r2, #148
+	str	r3, [r1, #0]
+	movs	r3, #0
+	str	r3, [r1, #4]
+	movs	r0, #0
+	ldr	r3, [r4, r2]
+	str	r3, [r1, #8]
+	bx	lr
+	.2byte 0x0000

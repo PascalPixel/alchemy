@@ -50,4 +50,4 @@ Func_08104ba8:
 .L_08104bfa:
 	add	sp, #4
 	pop	{r5, r6, pc}
-	.align 2, 0
+	.2byte 0x0000

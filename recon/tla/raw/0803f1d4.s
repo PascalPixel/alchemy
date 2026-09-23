@@ -556,4 +556,17 @@ Func_0803f1d4:
 	mov	sl, r6
 	pop	{r5, r6, r7, pc}
 	movs	r0, r0
-	.4byte 0xfffffc00
+	.2byte 0xfc00
+	.2byte 0xffff
+	bx	lr
+	movs	r0, r0
+	bx	lr
+	movs	r0, r0
+	bx	lr
+	movs	r0, r0
+	bx	lr
+	movs	r0, r0
+	bx	lr
+	movs	r0, r0
+	bx	lr
+	.2byte 0x0000

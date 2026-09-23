@@ -169,4 +169,4 @@ Func_0813ba50:
 	str	r3, [r5, #0]
 .L_0813bb9c:
 	pop	{r5, pc}
-	.align 2, 0
+	.2byte 0x0000

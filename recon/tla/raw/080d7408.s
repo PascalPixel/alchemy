@@ -22,4 +22,4 @@ Func_080d7408:
 	movs	r3, #1
 	strh	r3, [r0, #0]
 	pop	{pc}
-	.align 2, 0
+	.2byte 0x0000

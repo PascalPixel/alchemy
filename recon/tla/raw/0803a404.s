@@ -36,4 +36,4 @@ Func_0803a404:
 	movs	r3, #1
 	strh	r3, [r2, #0]
 	bx	lr
-	.align 2, 0
+	.2byte 0x0000

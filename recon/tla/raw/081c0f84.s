@@ -68,3 +68,9 @@ Func_081c0f84:
 	push	{lr}
 	bl	sub_081c25c4
 	pop	{pc}
+	svc	27
+	bx	lr
+	svc	35
+	bx	lr
+	bx	lr
+	.2byte 0x0000

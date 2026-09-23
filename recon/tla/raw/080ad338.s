@@ -10,4 +10,4 @@ Func_080ad338:
 	movs	r0, #0
 	bl	sub_080c8008
 	pop	{pc}
-	.align 2, 0
+	.2byte 0x0000

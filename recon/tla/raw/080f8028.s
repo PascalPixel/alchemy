@@ -21,4 +21,8 @@ Func_080f8028:
 	.2byte 0x080f
 	ldr	r4, [pc, #0]
 	bx	r4
-	.4byte 0x080f92ad
+	.2byte 0x92ad
+	.2byte 0x080f
+	ldr	r4, [pc, #0]
+	bx	r4
+	.4byte 0x08104da9

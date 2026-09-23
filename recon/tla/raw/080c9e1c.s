@@ -28,4 +28,4 @@ Func_080c9e1c:
 	movs	r0, #1
 .L_080c9e44:
 	pop	{r5, pc}
-	.align 2, 0
+	.2byte 0x0000

@@ -161,4 +161,4 @@ Func_080dd528:
 	bl	sub_08020150
 .L_080dd664:
 	pop	{pc}
-	.align 2, 0
+	.2byte 0x0000

@@ -475,4 +475,4 @@ Func_081185c4:
 	.2byte 0xa176
 	.2byte 0x0812
 	bx	lr
-	.align 2, 0
+	.2byte 0x0000

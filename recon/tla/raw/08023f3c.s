@@ -25,4 +25,4 @@ Func_08023f3c:
 	beq.n	.L_08023f44
 .L_08023f60:
 	pop	{r5, r6, pc}
-	.align 2, 0
+	.2byte 0x0000

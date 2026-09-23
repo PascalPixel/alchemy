@@ -2468,4 +2468,4 @@ Func_080fcf14:
 .L_080fe26e:
 	adds	r0, r2, #0
 	pop	{r5, pc}
-	.align 2, 0
+	.2byte 0x0000

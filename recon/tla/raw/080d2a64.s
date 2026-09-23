@@ -22,4 +22,4 @@ Func_080d2a64:
 	movs	r3, #0
 	strh	r3, [r2, #0]
 	pop	{r5, pc}
-	.align 2, 0
+	.2byte 0x0000

@@ -22,4 +22,4 @@ Func_0803c170:
 	subs	r3, #12
 	add	sp, #128
 	pop	{r5, r6, pc}
-	.align 2, 0
+	.2byte 0x0000

@@ -25,8 +25,8 @@ const USAGE: &str = "usage: alchemy raw status --target tbs-en|tla-en\n\
        alchemy raw rebuild --target tbs-en|tla-en\n\
 status reports discovery and receipt state. rebuild recreates raw/overlays from\n\
 the ROM, omitting only ranges declared as exact C, and the main listings; with a\n\
-full ROM contract it compiles the claimed C and gives every other unowned main\n\
-byte a listing.";
+full ROM contract it compiles the claimed C and gives every other unowned byte\n\
+of the main image, which ends at the first declared resource, a listing.";
 
 struct Options<'a> {
     command: &'a str,
@@ -616,7 +616,13 @@ fn rebuild_main(
     // Only a full ROM contract defines every other owner, so only there can
     // the remaining bytes be completed without guessing what C owns.
     let ranges = if claimed.is_some() {
-        complete_listings(ranges, &retained, &cuts, ROM_BASE, discovery.limit)
+        complete_listings(
+            ranges,
+            &retained,
+            &cuts,
+            ROM_BASE,
+            main_image_end(root, target, &bytes)?.min(discovery.limit),
+        )
     } else {
         ranges
             .into_iter()
@@ -624,9 +630,8 @@ fn rebuild_main(
             .collect()
     };
     // Alignment halfwords are read from the final listings. Completion leaves
-    // no unowned byte, so under a full ROM contract a zero halfword after a
-    // listing is already the tail of that listing; only walk-estimated
-    // listings can still take one as `.align 2, 0`.
+    // no unowned byte before the resource directory, so a zero halfword after
+    // a listing there is already the tail of that listing.
     let spans = ranges
         .iter()
         .map(|&(start, end, _)| (start, end))
@@ -729,6 +734,29 @@ fn rebuild_main(
             .map_err(|error| error.to_string())?;
     }
     Ok(ranges.len())
+}
+
+/// Where the main image ends and the resources the asset build owns begin:
+/// the resource directory itself (its first entry names the ROM base and its
+/// second the directory), or any earlier resource a later entry points at
+/// that the asset build declares. Bytes beyond it are never a listing's; an
+/// unreproduced asset byte there stays unowned rather than copied.
+fn main_image_end(root: &Path, target: DecompTarget, bytes: &[u8]) -> Result<i64, String> {
+    let table = crate::overlay::rom::resource_table(bytes)?;
+    let rom = CanonicalRom::load_target(root, target)?;
+    let assets = declared_asset_ranges(root, target)?
+        .into_iter()
+        .map(|(start, _)| start)
+        .collect::<std::collections::BTreeSet<_>>();
+    let mut end = ROM_BASE + i64::try_from(table).map_err(|error| error.to_string())?;
+    for resource in 2..rom.resource_count() {
+        let address = ROM_BASE
+            + i64::try_from(rom.resource_pointer(resource)?).map_err(|error| error.to_string())?;
+        if assets.contains(&address) {
+            end = end.min(address);
+        }
+    }
+    Ok(end)
 }
 
 /// Name a main-image listing's entry as the owner register does: the

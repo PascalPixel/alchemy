@@ -15,4 +15,4 @@ Func_080d3928:
 	strh	r5, [r3, #18]
 .L_080d393c:
 	pop	{r5, pc}
-	.align 2, 0
+	.2byte 0x0000

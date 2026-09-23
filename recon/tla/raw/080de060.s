@@ -1431,4 +1431,4 @@ Func_080de060:
 	strh	r3, [r2, #0]
 .L_080debd4:
 	pop	{r5, pc}
-	.align 2, 0
+	.2byte 0x0000

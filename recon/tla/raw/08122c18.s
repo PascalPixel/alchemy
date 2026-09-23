@@ -28,4 +28,4 @@ Func_08122c18:
 	stmia	r3!, {r0, r1, r2}
 	subs	r3, #12
 	pop	{pc}
-	.align 2, 0
+	.2byte 0x0000

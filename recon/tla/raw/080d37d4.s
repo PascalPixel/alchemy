@@ -132,4 +132,4 @@ Func_080d37d4:
 	strb	r3, [r1, #0]
 .L_080d38d0:
 	pop	{r5, r6, pc}
-	.align 2, 0
+	.2byte 0x0000

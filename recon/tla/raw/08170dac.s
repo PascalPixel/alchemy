@@ -1757,4 +1757,4 @@ Func_08170dac:
 	movs	r1, #0
 	bl	sub_08171bb0
 	pop	{pc}
-	.align 2, 0
+	.2byte 0x0000

@@ -1,5 +1,6 @@
 .syntax unified
 	.thumb
+	.set sub_081c06e6, 0x081c06e6
 	.set sub_081c0c84, 0x081c0c84
 	.global Func_081c0550
 	.thumb_func
@@ -62,3 +63,19 @@ Func_081c0550:
 .L_081c05c4:
 	pop	{r0}
 	bx	r0
+	push	{lr}
+	lsls	r0, r0, #16
+	ldr	r2, [pc, #36]
+	ldr	r1, [pc, #40]
+	lsrs	r0, r0, #13
+	adds	r0, r0, r1
+	ldrh	r3, [r0, #4]
+	lsls	r1, r3, #1
+	adds	r1, r1, r3
+	lsls	r1, r1, #2
+	bx	pc
+	nop
+	adds	r0, #145
+	b.n	sub_081c06e6
+	.2byte 0xff1e
+	.2byte 0xe12f

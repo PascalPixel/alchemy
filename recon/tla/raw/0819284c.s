@@ -41,4 +41,4 @@ Func_0819284c:
 	pop	{r3}
 	mov	r9, r3
 	pop	{r5, pc}
-	.align 2, 0
+	.2byte 0x0000

@@ -1928,16 +1928,12 @@ Func_08123648:
 	lsls	r3, r3, #2
 	ldr	r3, [r3, r2]
 	mov	pc, r3
-	.2byte 0x45f8
-	lsrs	r2, r2, #32
-	.2byte 0x45fc
-	lsrs	r2, r2, #32
-	.2byte 0x4600
-	lsrs	r2, r2, #32
-	.2byte 0x4604
-	lsrs	r2, r2, #32
+	.4byte 0x081245f8
+	.4byte 0x081245fc
+	.4byte 0x08124600
+	.4byte 0x08124604
 	.2byte 0x4608
-	lsrs	r2, r2, #32
+	.2byte 0x0812
 	movs	r5, #63
 	b.n	.L_0812460a
 	movs	r5, #31
@@ -2214,4 +2210,9 @@ Func_08123648:
 	mov	sl, r6
 	mov	fp, r7
 	pop	{r5, r6, r7, pc}
-	.align 2, 0
+	movs	r0, r0
+	.4byte 0x081245e4
+	.4byte 0x0812896c
+	.4byte 0x08128c50
+	.4byte 0xfffff000
+	.4byte 0x08128972

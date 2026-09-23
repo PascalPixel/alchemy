@@ -967,4 +967,4 @@ Func_080ea14c:
 	bl	sub_080dbdf4
 .L_080ea8d0:
 	pop	{r5, r6, r7, pc}
-	.align 2, 0
+	.2byte 0x0000

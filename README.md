@@ -4,7 +4,7 @@ In Golden Sun, lighting the four Elemental Lighthouses releases Alchemy upon the
 
 The two games share much of the same code, so Alchemy recovers them side by side.
 
-## Status: ☀️ 55.87% · ⚓️ pending
+## Status: ☀️ 55.87% · ⚓️ 2.14%
 
 <img src="PROGRESS.svg" width="830" alt="Alchemy repository files sized by bytes on disk">
 

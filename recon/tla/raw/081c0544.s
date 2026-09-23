@@ -8,4 +8,4 @@ Func_081c0544:
 	bl	sub_081bf81c
 	pop	{r0}
 	bx	r0
-	.align 2, 0
+	.2byte 0x0000

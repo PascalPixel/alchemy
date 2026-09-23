@@ -17,4 +17,4 @@ Func_080ceeac:
 .L_080ceec2:
 	adds	r0, r5, #0
 	pop	{r5, pc}
-	.align 2, 0
+	.2byte 0x0000

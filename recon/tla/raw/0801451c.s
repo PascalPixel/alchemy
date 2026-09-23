@@ -154,4 +154,8 @@ Func_0801451c:
 	.2byte 0x0400
 .L_08014638:
 	pop	{r5, r6, pc}
-	.align 2, 0
+	movs	r0, r0
+	bx	lr
+	movs	r0, r0
+	bx	lr
+	.2byte 0x0000

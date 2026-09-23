@@ -1687,4 +1687,4 @@ Func_0803f82c:
 	ldr	r0, [r5, r3]
 	bl	sub_080450fc
 	pop	{r5, pc}
-	.align 2, 0
+	.2byte 0x0000

@@ -802,4 +802,4 @@ Func_080fb780:
 	bl	sub_080f93a4
 	add	sp, #4
 	pop	{pc}
-	.align 2, 0
+	.2byte 0x0000

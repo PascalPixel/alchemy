@@ -278,4 +278,4 @@ Func_08022d1c:
 	adds	r0, r7, #0
 .L_08022f20:
 	pop	{r5, r6, r7, pc}
-	.align 2, 0
+	.2byte 0x0000

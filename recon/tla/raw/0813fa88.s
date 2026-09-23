@@ -5711,4 +5711,9 @@ Func_0813fa88:
 	.4byte 0x03001120
 	.4byte 0x030011e0
 	.4byte 0x02020202
-	.4byte 0x08143001
+	.2byte 0x3001
+	.2byte 0x0814
+	bx	lr
+	movs	r0, r0
+	bx	lr
+	.2byte 0x0000

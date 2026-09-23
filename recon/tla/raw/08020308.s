@@ -9,4 +9,12 @@ Func_08020308:
 	.2byte 0x0802
 	ldr	r4, [pc, #0]
 	bx	r4
-	.4byte 0x0802d71d
+	.2byte 0xd71d
+	.2byte 0x0802
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0xdb65
+	.2byte 0x0802
+	ldr	r4, [pc, #0]
+	bx	r4
+	.4byte 0x0802db89

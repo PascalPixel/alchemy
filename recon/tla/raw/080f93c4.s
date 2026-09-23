@@ -5,6 +5,7 @@
 	.set sub_08016ce4, 0x08016ce4
 	.set sub_08016cfc, 0x08016cfc
 	.set sub_08016d18, 0x08016d18
+	.set sub_080380b8, 0x080380b8
 	.set sub_080f93f4, 0x080f93f4
 	.set sub_081c0010, 0x081c0010
 	.global Func_080f93c4
@@ -92,4 +93,10 @@ Func_080f93c4:
 .L_080f9478:
 	pop	{pc}
 	movs	r0, r0
-	.4byte 0x080f93c5
+	.2byte 0x93c5
+	.2byte 0x080f
+	push	{lr}
+	movs	r0, #15
+	bl	sub_080380b8
+	pop	{pc}
+	.2byte 0x0000

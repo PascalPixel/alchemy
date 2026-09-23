@@ -979,4 +979,6 @@ Func_08126b64:
 	.2byte 0x0812
 .L_08127300:
 	pop	{pc}
-	.align 2, 0
+	movs	r0, r0
+	bx	lr
+	.2byte 0x0000

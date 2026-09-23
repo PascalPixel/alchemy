@@ -13,4 +13,16 @@ Func_080ad2e8:
 	.2byte 0x080a
 	ldr	r4, [pc, #0]
 	bx	r4
-	.4byte 0x080aff95
+	.2byte 0xff95
+	.2byte 0x080a
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x1005
+	.2byte 0x080b
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0xf0e5
+	.2byte 0x080a
+	ldr	r4, [pc, #0]
+	bx	r4
+	.4byte 0x080add5d

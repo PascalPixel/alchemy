@@ -25,4 +25,8 @@ Func_080200e8:
 	.2byte 0x0802
 	ldr	r4, [pc, #0]
 	bx	r4
-	.4byte 0x0802b999
+	.2byte 0xb999
+	.2byte 0x0802
+	ldr	r4, [pc, #0]
+	bx	r4
+	.4byte 0x0802af9d

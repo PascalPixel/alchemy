@@ -42,4 +42,4 @@ Func_080143ac:
 	bl	sub_080142d4
 	adds	r0, r5, #0
 	pop	{r5, r6, pc}
-	.align 2, 0
+	.2byte 0x0000

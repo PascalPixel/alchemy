@@ -1798,7 +1798,7 @@ struct Failure {
 fn verify(
     deriver: &Deriver,
     stage: &Path,
-    general: GeneralLz,
+    machine: LzMachine,
 ) -> Result<(usize, Vec<Failure>), String> {
     let staged = &deriver.staged;
     for (name, bytes) in &staged.binaries {
@@ -1828,7 +1828,7 @@ fn verify(
         &json!({"format":"camelot-style-golden-sun-native","layouts":deriver.output.layouts,"regions":deriver.output.regions}),
     )?;
     let mut ctx = Context::new(stage);
-    ctx.general_lz = Some(general);
+    ctx.lz_machine = Some(machine);
     let mut matched = 0;
     let mut failures = Vec::new();
     for region in &deriver.output.regions {
@@ -2190,7 +2190,7 @@ pub(super) fn run(root: &Path, arguments: &[String]) -> Result<(), String> {
             ));
         }
     }
-    let general = super::target_general_lz(root, &target)?;
+    let machine = super::target_lz_machine(root, &target)?;
     let mut deriver = Deriver::new(&rom, target)?;
     deriver.leave = leave
         .as_deref()
@@ -2225,7 +2225,7 @@ pub(super) fn run(root: &Path, arguments: &[String]) -> Result<(), String> {
     deriver.place_layers()?;
     let temporary = tempfile::tempdir().map_err(|e| e.to_string())?;
     let stage_root = stage.unwrap_or_else(|| temporary.path().to_path_buf());
-    let (matched, failures) = verify(&deriver, &stage_root, general)?;
+    let (matched, failures) = verify(&deriver, &stage_root, machine)?;
     for failure in &failures {
         eprintln!(
             "unreproduced region {}: {}",

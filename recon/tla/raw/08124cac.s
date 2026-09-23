@@ -13,4 +13,4 @@ Func_08124cac:
 	bge.n	.L_08124cb0
 	movs	r0, #0
 	pop	{r5, pc}
-	.align 2, 0
+	.2byte 0x0000

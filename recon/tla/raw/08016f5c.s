@@ -111,4 +111,7 @@ Func_08016f5c:
 	.4byte 0x04000208
 	.4byte 0x04000200
 	.4byte 0x02007420
-	.4byte 0x0200742c
+	.2byte 0x742c
+	.2byte 0x0200
+	ldrb	r0, [r0, #0]
+	bx	lr

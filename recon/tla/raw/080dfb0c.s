@@ -634,4 +634,4 @@ Func_080dfb0c:
 	adds	r3, r2, #1
 	strh	r3, [r5, #0]
 	pop	{r5, pc}
-	.align 2, 0
+	.2byte 0x0000

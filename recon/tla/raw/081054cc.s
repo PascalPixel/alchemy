@@ -160,4 +160,4 @@ Func_081054cc:
 	adds	r0, #1
 .L_081055f4:
 	pop	{r5, r6, pc}
-	.align 2, 0
+	.2byte 0x0000

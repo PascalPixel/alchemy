@@ -235,4 +235,4 @@ Func_080d0788:
 	strh	r3, [r2, #0]
 .L_080d0950:
 	pop	{r5, r6, r7, pc}
-	.align 2, 0
+	.2byte 0x0000

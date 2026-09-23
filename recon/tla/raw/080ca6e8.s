@@ -803,4 +803,4 @@ Func_080ca6e8:
 	negs	r0, r0
 .L_080cace8:
 	pop	{pc}
-	.align 2, 0
+	.2byte 0x0000

@@ -1582,3 +1582,6 @@ Func_080cb8e8:
 	mov	sl, r6
 	mov	fp, r7
 	pop	{r5, r6, r7, pc}
+	.4byte 0x00001167
+	.4byte 0x020004ac
+	.4byte 0x03001238

@@ -178,4 +178,4 @@ Func_08015f0c:
 	cmp	r4, #14
 	bls.n	.L_08016032
 	pop	{r5, pc}
-	.align 2, 0
+	.2byte 0x0000

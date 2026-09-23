@@ -34,4 +34,4 @@ Func_080d1eac:
 	bl	sub_080d1e60
 	ldrb	r0, [r0, #3]
 	pop	{pc}
-	.align 2, 0
+	.2byte 0x0000

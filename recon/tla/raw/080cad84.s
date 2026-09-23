@@ -256,4 +256,7 @@ Func_080cad84:
 	mov	sl, r6
 	mov	fp, r7
 	pop	{r5, r6, r7, pc}
-	.4byte 0x02001024
+	.2byte 0x1024
+	.2byte 0x0200
+	movs	r0, #0
+	bx	lr

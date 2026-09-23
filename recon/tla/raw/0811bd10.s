@@ -182,4 +182,4 @@ Func_0811bd10:
 	adds	r0, r1, r0
 .L_0811be64:
 	pop	{pc}
-	.align 2, 0
+	.2byte 0x0000

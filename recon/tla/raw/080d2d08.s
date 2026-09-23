@@ -59,4 +59,13 @@ Func_080d2d08:
 	bl	sub_081c0010
 .L_080d2d6c:
 	pop	{r5, pc}
-	.align 2, 0
+	movs	r0, r0
+	ldr	r2, [pc, #12]
+	movs	r3, #157
+	lsls	r3, r3, #2
+	adds	r2, r2, r3
+	ldrb	r3, [r2, #0]
+	adds	r3, #1
+	strb	r3, [r2, #0]
+	bx	lr
+	.4byte 0x02000240

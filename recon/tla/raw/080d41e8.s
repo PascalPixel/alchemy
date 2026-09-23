@@ -270,4 +270,4 @@ Func_080d41e8:
 	str	r5, [r3, #48]
 	str	r6, [r3, #52]
 	pop	{r5, r6, pc}
-	.align 2, 0
+	.2byte 0x0000

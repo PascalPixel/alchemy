@@ -12,4 +12,4 @@ Func_080dbdd4:
 	lsrs	r5, r5, #24
 	adds	r0, r5, #0
 	pop	{r5, pc}
-	.align 2, 0
+	.2byte 0x0000

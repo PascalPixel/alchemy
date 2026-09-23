@@ -155,4 +155,4 @@ Func_080d440c:
 	bl	.L_080d440c
 .L_080d4528:
 	pop	{r5, pc}
-	.align 2, 0
+	.2byte 0x0000

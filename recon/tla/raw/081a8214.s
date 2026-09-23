@@ -13,4 +13,4 @@ Func_081a8214:
 	strh	r0, [r3, #0]
 .L_081a8224:
 	pop	{pc}
-	.align 2, 0
+	.2byte 0x0000

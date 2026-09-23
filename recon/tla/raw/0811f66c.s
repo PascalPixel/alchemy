@@ -1084,4 +1084,4 @@ Func_0811f66c:
 	adds	r0, r5, #0
 	bl	sub_0811b4d8
 	pop	{r5, pc}
-	.align 2, 0
+	.2byte 0x0000

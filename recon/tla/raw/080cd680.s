@@ -790,4 +790,4 @@ Func_080cd680:
 	bl	sub_080cf17c
 .L_080cdc70:
 	pop	{r5, r6, r7, pc}
-	.align 2, 0
+	.2byte 0x0000

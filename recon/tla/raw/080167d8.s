@@ -518,4 +518,4 @@ Func_080167d8:
 	.2byte 0x55d0
 	.2byte 0x0200
 	bx	lr
-	.align 2, 0
+	.2byte 0x0000

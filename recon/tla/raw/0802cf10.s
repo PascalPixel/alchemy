@@ -1,6 +1,7 @@
 .syntax unified
 	.thumb
 	.set sub_0801314c, 0x0801314c
+	.set sub_080145a8, 0x080145a8
 	.set sub_08014644, 0x08014644
 	.global Func_0802cf10
 	.thumb_func
@@ -67,4 +68,13 @@ Func_0802cf10:
 	movs	r0, #112
 	bl	sub_0801314c
 	pop	{pc}
+	.2byte 0xcfa5
+	.2byte 0x0802
+	push	{lr}
+	movs	r1, #144
+	lsls	r1, r1, #3
+	ldr	r0, [pc, #8]
+	bl	sub_080145a8
+	pop	{pc}
+	movs	r0, r0
 	.4byte 0x0802cfa5

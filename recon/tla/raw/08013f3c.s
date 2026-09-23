@@ -31,4 +31,4 @@ Func_08013f3c:
 	.2byte 0x0300
 .L_08013f7c:
 	bx	lr
-	.align 2, 0
+	.2byte 0x0000

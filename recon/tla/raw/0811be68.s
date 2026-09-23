@@ -51,4 +51,4 @@ Func_0811be68:
 	adds	r0, r0, r3
 	strh	r0, [r5, #6]
 	pop	{r5, r6, pc}
-	.align 2, 0
+	.2byte 0x0000

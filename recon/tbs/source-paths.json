@@ -5047,7 +5047,8 @@
       "source": "MENU/CREATE_WINDOW_AND_ENTRY_OBJECTS.C"
     },
     "main:080a8578": {
-      "name": "StatusMenu_ShowOwnerProgressMessage"
+      "name": "StatusMenu_ShowOwnerProgressMessage",
+      "source": "MENU/SHOW_OWNER_PROGRESS_MESSAGE.C"
     },
     "main:080a8cc0": {
       "name": "PsynergyMenu_DrawRange",

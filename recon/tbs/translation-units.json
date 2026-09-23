@@ -7024,7 +7024,7 @@
     {
       "id": "retained-overlay-383-02001348",
       "game": "tbs",
-      "source": "recon/tbs/en/overlays/resource_383_c_02001348.c",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_HEYA/CLOSING_SEQUENCE.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_383",
       "absolute_symbols": {
@@ -7089,7 +7089,7 @@
         {
           "address": "0x02001348",
           "extent": 1608,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ]
     },
@@ -79771,7 +79771,7 @@
     {
       "id": "retained-scene-event-sequence-3af",
       "game": "tbs",
-      "source": "recon/tbs/en/overlays/resource_3af_c_02001db0.c",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/DECK_EVENT_SCRIPT.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3af",
       "absolute_symbols": {
@@ -79796,7 +79796,7 @@
         {
           "address": "0x02001db0",
           "extent": 480,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ]
     },

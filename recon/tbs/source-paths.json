@@ -6098,7 +6098,8 @@
       "name": "Scene_RunMainSequence"
     },
     "resource_383:02001348": {
-      "name": "Scene_RunClosingSequence"
+      "name": "FieldScene_RunVaultClosingSequence",
+      "source": "FIELD/KUUPUAPPU_HEYA/CLOSING_SEQUENCE.C"
     },
     "resource_381:02000054": {
       "name": "Scene_RunTwoPhaseActorSequence",
@@ -14539,7 +14540,8 @@
       "source": "FIELD/FUNE_KANPAN/MULTI_ENCOUNTER.C"
     },
     "resource_3af:02001db0": {
-      "name": "RunEventScript01"
+      "name": "FieldScene_RunShipDeckEventScript",
+      "source": "FIELD/FUNE_KANPAN/DECK_EVENT_SCRIPT.C"
     },
     "resource_3af:02003a0c": {
       "name": "FieldScene_ConfigureFourActorPresentation",

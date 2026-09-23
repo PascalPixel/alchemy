@@ -1300,7 +1300,7 @@
     {
       "id": "retained-actor-entry-sequence-3c9",
       "game": "tbs",
-      "source": "recon/tbs/en/overlays/actor_entry_sequence.c",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/VINASU_CHOJO/ACTOR_ENTRY_SEQUENCE.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c9",
       "absolute_symbols": {
@@ -1489,7 +1489,7 @@
         {
           "address": "0x020012c8",
           "extent": 3604,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ]
     },

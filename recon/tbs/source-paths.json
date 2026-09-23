@@ -25,7 +25,8 @@
       "name": "Scene_RunActorGroupDepartureSequence"
     },
     "resource_3c9:020012c8": {
-      "name": "Scene_RunActorEntrySequence"
+      "name": "Scene_RunActorEntrySequence",
+      "source": "FIELD/VINASU_CHOJO/ACTOR_ENTRY_SEQUENCE.C"
     },
     "resource_3c8:02003068": {
       "name": "Scene_RunEntrySetup"

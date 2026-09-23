@@ -5,7 +5,6 @@ extern u8 Value_000027ba[];
 
 extern u8 Value_000000bb[];
 
-#define Scene_RunActorEntrySequence Func_020012c8
 
 /* Complete scene owner 020012c8..020020db. The object effect loop runs
  * forty frames; flag-dependent branches preserve the shared step increments.
@@ -527,8 +526,11 @@ void Scene_RunActorEntrySequence(void)
     Func_02005d64(21, groupActions);
     Func_02005d7c(6, groupActions);
     /* These tables are shared by the final actor-action assignments. */
-    sharedData = (s32)Data_02000240;
-    *(u8 *)((sharedData + 0x22b)) = 3;
+    /* FAKEMATCH: an empty do-while around these statements; it only changes instruction scheduling. */
+    do {
+        sharedData = (s32)Data_02000240;
+        *(u8 *)((sharedData + 0x22b)) = 3;
+    } while (0);
     {
         s32 actor = (s32)Value_000000bb;
 

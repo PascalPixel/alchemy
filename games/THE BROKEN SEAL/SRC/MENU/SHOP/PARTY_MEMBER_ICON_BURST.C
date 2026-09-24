@@ -4,6 +4,7 @@
 #include "SHOP.H"
 
 struct Position { s32 x, y, z; };
+union PositionWord { s32 w; s16 h[2]; };
 struct Effect_080b2f4c { u8 filler[0x48]; };
 struct ShopBurstRuntime {
     u8 unknown_000[0x134];
@@ -34,7 +35,6 @@ void BattleFx_UpdateRadialMotion(struct Effect_080b2f4c *effect);
 
 extern s8 Data_080b4ab2[];
 
-#define Shop_RunPartyMemberIconBurst Func_080b3050
 
 void Shop_RunPartyMemberIconBurst(s32 member)
 {
@@ -58,7 +58,9 @@ void Shop_RunPartyMemberIconBurst(s32 member)
     callback_flags = 0xc80;
     Func_080041d8(Func_080b2ffc, callback_flags);
 
-    position.x = (s32)burst->member_x[member] << 16;
+    /* FAKEMATCH: the x store goes through a union with a halfword view so it
+       may alias the member_z load, which keeps the reference schedule. */
+    ((union PositionWord *)&position.x)->w = (s32)burst->member_x[member] << 16;
     position.z = ((s32)burst->member_z[member] << 16) + (s32)0xfff40000;
 
     i = 0;

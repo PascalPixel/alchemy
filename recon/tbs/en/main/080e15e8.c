@@ -1,10 +1,14 @@
-/* Draft, not exact (2026-09-24): candidate=3900 reference=3920,
-   binary similarity 52.9%. First reconstruction of
-   BattleFx_InitializeMode12, semantics read from the listing. Phase one
-   (170 frames, A or B skips it) draws three dotted beams between six
-   projected points, a ring of dots and a falling column; phase two (192
-   frames) bursts sparks, flashes and smoke and pans the camera. Stack
-   layout and loop shapes are not matched yet. */
+/* Draft, not exact (2026-09-24): candidate=3908 reference=3920,
+   binary similarity 58.3%. Phase one (170 frames, A or B skips it) draws
+   three dotted beams between six projected points, a ring of dots and a
+   falling column; phase two (192 frames) bursts sparks, flashes and smoke
+   and pans the camera. Residual: the reference frame is 336 bytes, 4 more
+   than this one. It keeps an unreferenced slot at sp+112 between frame and
+   blit46, and a slot at sp+92 holding the beam loop y offset (24k + 4)
+   between the scale pointer and blit47; the ring offset lvl * 0x302 is
+   spilled at sp+84. Every later stack offset shifts, which accounts for
+   most differing halfwords. count = frame << 1 keeps count a user variable
+   (frame * 2 is strength-reduced away). */
 #include "TYPES.H"
 #include "BATTLE_EFFECT_WORK.H"
 #include "BATTLE_EFX.H"
@@ -120,6 +124,9 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
     DrawRectangle blit46;
     s32 size;
     s32 count;
+    s32 *sc;
+    DrawRectangle blit47;
+    s32 lvl;
     s32 cam_x;
     s32 cam_y;
     s32 vel_x;
@@ -145,9 +152,10 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
     Resource_LoadAndDecompress((s32)&Value_00000075, work->sheet + 0x1800, 0, 0);
     Resource_LoadAndDecompress((s32)&Value_00000073, aux, 0, 0);
 
-    for (i = 0; i != 8; i++) {
-        s32 lim = 64 - i * 7;
+    for (i = 0, n = 0, count = 64; i != 8; i++) {
+        s32 lim = count;
         u8 *src = aux;
+        u8 *out = work->sheet + n + 0x2710;
         for (j = 0; j != 0x302; j++) {
             s32 v = *src++;
             if (v > lim) {
@@ -156,8 +164,10 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
             if (v < 0) {
                 v = 0;
             }
-            work->sheet[0x2710 + i * 0x302 + j] = v;
+            *out++ = v;
         }
+        n += j;
+        count -= 7;
     }
 
     BattlePres_ConfigureEffectDisplay();
@@ -197,10 +207,11 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
         }
     }
     *(u16 *)0x0400000c = 0x784;
+    sc = scale;
 
     for (frame = 0; frame != 170; frame++) {
         size = 2;
-        count = frame * 2;
+        count = frame << 1;
         if (frame == 16) {
             Audio_PlayCue(140);
         }
@@ -242,17 +253,17 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
             SceneTransform_ApplyYaw(a << 12);
             if (frame > 150) {
                 s32 s = frame * 0x1800 - 0xd9400;
-                scale[0] = s;
-                scale[1] = s;
-                scale[2] = s;
+                sc[0] = s;
+                sc[1] = s;
+                sc[2] = s;
                 size = 5;
             } else {
                 s32 s = 0x10000 - a * 3 * 0x400;
-                scale[0] = s;
-                scale[1] = s;
-                scale[2] = s;
+                sc[0] = s;
+                sc[1] = s;
+                sc[2] = s;
             }
-            SceneTransform_ApplyScale(scale);
+            SceneTransform_ApplyScale(sc);
         } else {
             pos[0] = 0;
             pos[1] = 0;
@@ -288,8 +299,7 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
         }
 
         if (frame <= 179) {
-            s32 lvl = 0;
-            DrawRectangle blit47;
+            lvl = 0;
             if (frame > 155) {
                 lvl = frame - 156;
             }

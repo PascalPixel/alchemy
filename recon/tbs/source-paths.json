@@ -759,6 +759,10 @@
       "name": "System_Initialize",
       "source": "SYSTEM/INITIALIZE.C"
     },
+    "main:0800479c": {
+      "name": "Ui_LoadWindowGraphics",
+      "source": "GRAPHICS/WINDOW/LOAD_GRAPHICS.C"
+    },
     "main:080d67dc": {
       "name": "BattleEffect_SetupBlendedDisplay",
       "source": "BATTLE/EFFECT/SETUP_BLENDED_DISPLAY.C"

@@ -3,5 +3,5 @@
 
 void BattlePres_RunWithZeroArguments(void)
 {
-  Unnamed_080c0700((unsigned long) 0, 0);
+  BattlePresentation_SetPaletteLevel((unsigned long) 0, 0);
 }

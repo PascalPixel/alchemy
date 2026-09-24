@@ -1,5 +1,25 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+/* Set once the Boulder has come down. */
+enum {
+    FLAG_BOULDER_FELL = 0x838
+};
+
+enum StormNightMessage {
+    MSG_GO_ON_YOUR_OWN = 0xe65,
+    MSG_GO_SOUTH_TO_THE_PLAZA = 0xe66,
+    MSG_UGH_HRNGHHH = 0xe6c,
+    MSG_DUMP_MY_STUFF = 0xe6e,
+    MSG_DONT_LEAVE_ME_HERE = 0xe71,
+    MSG_NORTH_LEADS_TO_MT_ALEPH = 0xe7b,
+    MSG_CANT_GET_AROUND_THIS_ROCK = 0xe7d,
+    MSG_THE_BOULDER_IS_FALLING = 0xe7f,
+    MSG_ILL_GO = 0xed1,
+    MSG_I_CANT_MOVE_GET_HELP = 0xed2,
+    MSG_ROBIN = 0xed3,
+    MSG_THE_DOOR_WONT_OPEN = 0xee4
+};
+
 
 #define UnsignedRemainder Func_020046fa
 #define ACTOR_ID 22
@@ -96,7 +116,7 @@ extern u8 Value_00000831;
 extern u8 Value_00000832;
 extern u8 Value_00000833;
 extern u8 Value_00000837;
-extern u8 Value_00000838;
+extern u8 LinkedFlag_BoulderFell;
 extern u8 Value_00000841;
 extern u8 Value_00000842;
 extern u8 Value_0000083a;
@@ -619,7 +639,7 @@ s32 FieldScene_RunFlagGatedActorSetup(void)
         *(s32 *)(q + 0x18) = 0x20000;
         *(s32 *)(q + 0x1C) = 0x20000;
     }
-    if (GameFlag_IsSet((s32)&Value_00000838) != 0) {
+    if (GameFlag_IsSet((s32)&LinkedFlag_BoulderFell) != 0) {
         Actor_SetPosition(19, w7, p3);
     } else {
         Actor_EnableActionCallback(19, Data_0200c9f4);
@@ -886,11 +906,11 @@ void FieldScene_RunScene372_02000a10(void)
     Actor_FaceDirection(0, 0xc000, 0);
     while (Event_ChooseYesNo(0, 0) == 1) {
         Actor_RunRepeatedMotion(9, 1);
-        Event_SetMessage(0xe65);
+        Event_SetMessage(MSG_GO_ON_YOUR_OWN);
         Event_OpenMessage(9, 0);
     }
     Actor_SetAnimationAndWait(9, 3);
-    Event_SetMessage(0xe66);
+    Event_SetMessage(MSG_GO_SOUTH_TO_THE_PLAZA);
     Event_ShowMessageAndWait(9, 0, 10);
     Actor_SetAnimationAndWait(0, 3);
     Actor_SetSpeed(10, 0x18000, 0xc000);
@@ -1066,7 +1086,7 @@ void FieldScene_RunScene372SequenceB(void)
     if (GameFlag_IsSet(0x836) == 0) {
         if (GameFlag_IsSet(0x837) == 0) {
             Event_Begin();
-            Event_SetMessage(0xe6c);
+            Event_SetMessage(MSG_UGH_HRNGHHH);
             Event_ShowMessageAndWait(22, 0, 20);
             Actor_ShowEmote(0, 0x101, 40);
             Actor_WalkToAndWait(0, 0x17e, 0x26b);
@@ -1086,7 +1106,7 @@ void FieldScene_RunActor22SceneWhenFlag836Only(void)
         Event_Begin();
         Actor_RunRepeatedMotion(22, 2);
         Event_Wait(20);
-        Event_SetMessage(0xe71);
+        Event_SetMessage(MSG_DONT_LEAVE_ME_HERE);
         Func_02002df0();
         Event_End();
     }
@@ -1108,7 +1128,7 @@ void FieldScene_RunScene372SequenceC(void)
     } else {
         if (GameFlag_IsSet(0x837) == 0) {
             Event_Begin();
-            Event_SetMessage(0xe6e);
+            Event_SetMessage(MSG_DUMP_MY_STUFF);
             Func_02002e5e();
             Event_End();
         }
@@ -1182,7 +1202,7 @@ void FieldScene_RunScene372SequenceD(void)
     Actor_WalkToAndWait(22, 0x119, 0x1fb);
     Actor_FaceEachOther(22, 0, 0);
     Event_Wait(30);
-    Event_SetMessage(0xe7b);
+    Event_SetMessage(MSG_NORTH_LEADS_TO_MT_ALEPH);
     Event_ShowMessage(22, 0);
     Actor_FaceActor(0, 22, 0);
     Event_Wait(10);
@@ -1218,7 +1238,7 @@ void SceneActor_RunActor22PlacementSequence(s32 x, s32 y)
     Event_Wait(20);
     Actor_SetAttachedEffect(0, 0x102);
     Event_Wait(40);
-    Event_SetMessage(0xe7d);
+    Event_SetMessage(MSG_CANT_GET_AROUND_THIS_ROCK);
     Event_ShowMessage(22, 0);
     Actor_RunRepeatedMotion(22, 2);
     Event_ShowMessage(22, 0);
@@ -1232,7 +1252,7 @@ void SceneActor_RunActor22PlacementSequence(s32 x, s32 y)
     Actor_SetPosition(22, 0, 0);
 }
 
-void FieldScene_RunReturnScript(void)
+void Scene_BoulderFalls(void)
 {
     extern s32 Data_0200d7fc;
 
@@ -1244,7 +1264,7 @@ void FieldScene_RunReturnScript(void)
     s32 base_200c5a9;
     s32 shifted;
 
-    if (GameFlag_IsSet(0x838) == 0) {
+    if (GameFlag_IsSet(FLAG_BOULDER_FELL) == 0) {
         Event_Begin();
         Call1_02001828(Func_02006246, 0x200d4b0);
         SceneState_SetValue140Mode0();
@@ -1284,7 +1304,7 @@ void FieldScene_RunReturnScript(void)
         Actor_SetSpritePriority(33, 2);
         Actor_SetSpritePriority(30, 3);
         Actor_SetSpritePriority(29, 3);
-        Event_SetMessage(0xe7f);
+        Event_SetMessage(MSG_THE_BOULDER_IS_FALLING);
         Event_ShowMessageAndWait(28, 0, 20);
         Actor_FaceDirection(0, 0xc000, 0);
         Actor_FaceDirection(22, 0xc000, 20);
@@ -1401,7 +1421,7 @@ void FieldScene_RunReturnScript(void)
         Actor_Destroy(29);
         Actor_Destroy(32);
         Actor_Destroy(33);
-        GameFlag_Set(0x838);
+        GameFlag_Set(FLAG_BOULDER_FELL);
         Event_End();
     }
 }
@@ -2058,7 +2078,7 @@ void FieldScene_RunScene372_02003e48(void)
         }
         Actor_RunRepeatedMotion(8, 2);
         Event_Wait(20);
-        Event_SetMessage(0xed2);
+        Event_SetMessage(MSG_I_CANT_MOVE_GET_HELP);
         Event_ShowMessage(8, 0);
         Value2(Engine_ActorEnableActionCallback, 8, 0x200cec8);
         Actor_SetAnimation(8, 6);
@@ -2073,7 +2093,7 @@ void FieldScene_RunScene372_02003e48(void)
             Actor_SetAnimation(8, 8);
         }
         Event_Wait(20);
-        Event_SetMessage(0xed1);
+        Event_SetMessage(MSG_ILL_GO);
         Event_ShowMessageAndWait(8, 0, 20);
         Actor_SetAnimation(8, 1);
         Actor_Jump(8, 4, 0);
@@ -2113,7 +2133,7 @@ void FieldScene_ConfigureActorTwentyTwoScene(void)
     Actor_Get(ACTOR_ID)->priority_flags |= ACTOR_PRIORITY_AUTOMATIC;
     Actor_SetPosition(ACTOR_ID, 0xf90000, 0x4d80000);
     Task_Wait(1);
-    Event_SetMessage(0xed3);
+    Event_SetMessage(MSG_ROBIN);
     Event_ShowMessage(0x1016, 0);
     Actor_SetPosition(ACTOR_ID, 0xac0000, 0x4fe0000);
     Task_Wait(1);
@@ -2335,7 +2355,7 @@ void SceneState_SetValueEe4(void)
 {
 
     Event_Begin();
-    Message_ShowCentered(0xee4, 1);
+    Message_ShowCentered(MSG_THE_DOOR_WONT_OPEN, 1);
     Event_End();
 }
 

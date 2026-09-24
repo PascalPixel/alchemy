@@ -4,6 +4,24 @@
   "original_translation_units": "unknown",
   "units": [
     {
+      "id": "djinn-menu-show-change-preview",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/MENU/DJINN_CHANGE_PREVIEW.C",
+      "compiler_route": "canonical-gcc296",
+      "owners": [
+        {
+          "address": "0x08022a7c",
+          "extent": 200,
+          "state": "retained-assembly"
+        },
+        {
+          "address": "0x08022b44",
+          "extent": 1588,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
       "id": "lunpa-scene-position-pairs",
       "game": "tbs",
       "source": "games/THE BROKEN SEAL/SRC/FIELD/RUNPA_JO/SET_POSITION_PAIRS.C",

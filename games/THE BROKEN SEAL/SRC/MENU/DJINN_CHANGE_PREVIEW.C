@@ -1,8 +1,8 @@
-/* Draft (2026-09-24): main:08022b44 is exact (1588 bytes, 0 halfwords differ)
- * and passes alchemy check integrate, but it cannot be installed alone: the
- * nested arrow renderer main:08022a7c is emitted first in the same object, so
- * the build links the file at 0x08022a7c and needs the nested function exact
- * too (the unit's two owners must be declared together). The nested
+/* DjinnMenu_ShowChangePreview (main:08022b44, 1588 bytes) is exact. Its
+ * nested arrow renderer DjinnMenu_DrawStatArrow (main:08022a7c) is emitted
+ * first in the same object and is not exact yet, so the unit keeps it as
+ * retained assembly (NONMATCHING) and links the parent alone; the parent's
+ * calls to Func_08022a7c.0 are aliased to the retained owner. The nested
  * function is 198+2 bytes with 7 halfwords off: in the reference the
  * word/zero stores of the sprite attributes follow the sentinel and scale
  * stores through the entry pointer, and its zero is materialised late in r5;

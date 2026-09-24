@@ -1,6 +1,6 @@
 #include "TYPES.H"
 
-#define Function Func_0200173c
+#define HaidiaArashi_RunCallOutSequence Func_0200173c
 
 extern u8 Data_00000e70[];
 void Func_02005e66();
@@ -54,22 +54,19 @@ static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
 void Func_02005f9a_a();
 void Func_02005f9a_b();
 
-/* NONMATCHING: 236 of 236 bytes, 6 halfword edits (2026-09-24), psynergy
- * decompile with disambiguated call words; not yet reviewed by hand. */
-void Function(void)
+void HaidiaArashi_RunCallOutSequence(void)
 {
-    u32 i;
     s32 record;
     s32 v5;
 
     Value2(Func_02005f20, 22, 0);
     Func_02005f12(0, 22, 0);
+    v5 = 0;
     if (Value2(Func_02005e7c, 0, 0) == 0) {
         Call1(Func_02005f36, 0xee5);
         v5 = 1;
     } else {
         Call1(Func_02005f40, 0xee6);
-        v5 = 0;
     }
     Func_02005e66(20);
     Func_02005f68(22, 0, 40);
@@ -81,6 +78,7 @@ void Function(void)
     Func_02005ea0(20);
     Func_02005f50(22, 3);
     if (v5 != 0) {
+        /* FAKEMATCH: 0xe70 comes from the literal pool through a link symbol. */
         Func_02005f92((s32)Data_00000e70);
     } else {
         Call1(Func_02005f9a_b, 0xee7);

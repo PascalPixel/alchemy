@@ -33,7 +33,8 @@
       "name": "Scene_RunOverlay373Sequence32B0"
     },
     "resource_372:0200173c": {
-      "name": "Scene_RunOverlay372Sequence173C"
+      "name": "HaidiaArashi_RunCallOutSequence",
+      "source": "FIELD/HAIDIA_ARASHI/CALL_OUT_SEQUENCE.C"
     },
     "resource_3bb:02000160": {
       "name": "KorosseoKabe_SpinActorAway",

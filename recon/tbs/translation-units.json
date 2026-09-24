@@ -68797,7 +68797,7 @@
     {
       "id": "retained-overlay-372-0200173c",
       "game": "tbs",
-      "source": "recon/tbs/en/overlays/resource_372_c_0200173c.c",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_ARASHI/CALL_OUT_SEQUENCE.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_372",
       "absolute_symbols": {
@@ -68814,7 +68814,7 @@
         {
           "address": "0x0200173c",
           "extent": 236,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ]
     },

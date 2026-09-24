@@ -1,3 +1,7 @@
+/* Draft, not exact (2026-09-24): 1 differing halfword. The re-read of the entry
+   for the result addresses [index, table] where the reference has [table,
+   index]; plain indexing reuses the loaded entry (52 bytes), and every cast,
+   offset temporary and pointer spelling tried keeps the swapped operands. */
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
 #undef Resource_FindFreeSlot

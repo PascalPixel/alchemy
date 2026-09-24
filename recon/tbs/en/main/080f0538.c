@@ -1,16 +1,17 @@
-/* Draft, not exact (2026-09-24): 103 differing halfwords, 212 of 220 bytes.
-   Residual: the reference keeps the 0x40004000, 0x300 and 0x20000 loop
-   constants in sl/r8/r7, writes each OAM pair through a stmia copy of the
-   entry pointer, and computes frame & 7 before sign-extending frame. */
-
+/* Draft, not exact (2026-09-24): 89 differing halfwords, 216 of 220 bytes.
+   Rewritten on the DisplayScroll_InitObjectTable pattern (each OAM pair through
+   a copied entry pointer, the column step is 0x200000). Residual: the
+   reference loads the frame with ldrh and masks it with 7 before sign-extending
+   it for the group, and keeps x in lr (copied to ip per row), 0x40004000 in sl,
+   0x300 in r8 and the column step in r7. */
 #include "TYPES.H"
 #include "DMA.H"
 
 void Func_080f0538(void)
 {
-    u16 frame = *(volatile u16 *)0x02004c00;
+    u16 frame = *(u16 *)0x02004c00;
     u32 fine = frame & 7;
-    s32 offset = (((s16)frame / 8) & 0x1f) * 24;
+    s32 tile = (((s16)frame / 8) & 0x1f) * 3 * 8;
     u32 *entry = (u32 *)(*(u8 **)0x02004c0c + 192);
     s32 x = 16 - fine;
     s32 row;
@@ -20,13 +21,15 @@ void Func_080f0538(void)
         s32 col;
 
         for (col = 5; col >= 0; col--) {
-            entry[0] = x | y | 0x40004000;
-            entry[1] = offset;
-            offset += 4;
+            u32 *q = entry;
+
+            *q++ = x | y | 0x40004000;
+            *q = tile;
+            tile += 4;
             entry += 2;
-            if (offset == 0x300)
-                offset = 0;
-            y += 0x20000;
+            if (tile == 0x300)
+                tile = 0;
+            y += 0x200000;
         }
         x += 8;
     }

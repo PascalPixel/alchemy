@@ -16,6 +16,35 @@
 
 #include "FACING_OBJECT.H"
 #include "FIELD_EVENT.H"
+enum ValeHouseFlag {
+    /* The villagers speak of the party having left Vale. */
+    FLAG_PARTY_LEFT_VALE = 0x815,
+    FLAG_GOT_FAREWELL_HERB = 0x81b
+};
+
+enum {
+    /* Message 0x182 + 180. */
+    ITEM_HERB = 180
+};
+
+enum ValeHouseMessage {
+    MSG_GOOD_WEAPONS_DRAW_OUT_STRENGTH = 0xf53,
+    MSG_GOOD_ARMOR_DRAWS_OUT_STRENGTH = 0xf54,
+    MSG_A_WISE_MAN_FLEES_WHEN_INJURED = 0xf55,
+    MSG_SUKURETA_CAME_TO_STUDY_MT_ALEPH = 0xf6d,
+    MSG_LETS_SCARE_SUKURETAS_VISITORS = 0xf73,
+    MSG_VALE_FEELS_EMPTY = 0x11a2,
+    MSG_IM_NOT_SAD_JUST_GO = 0x11a3,
+    MSG_YOU_MUST_SAVE_JASMINE = 0x11a6,
+    MSG_THE_CULPRITS_HAD_STRANGE_POWERS = 0x11be,
+    MSG_YOU_CAME_BACK = 0x1c06,
+    MSG_THE_RUMOR_WAS_TRUE = 0x1c09,
+    MSG_WHEN_DID_YOU_COME_BACK = 0x1c0a,
+    MSG_HEY = 0x1c1e,
+    MSG_YOURE_LEAVING_AGAIN_SOON = 0x1c33,
+    MSG_DID_YOU_HEAR_ABOUT_DORA = 0x1c3d
+};
+
 
 typedef struct {
     u8 pad_to_position[8];
@@ -46,7 +75,7 @@ union SceneField {
 extern u8 Data_020098b8[];
 extern u8 Data_02009738[];
 extern u8 Data_020095b8[];
-extern u8 Data_000011a4[];
+extern u8 LinkedMessage_ThisIsMyFarewellGift[];
 extern u8 Data_00001c40[];
 extern s16 Data_02000240_t[][1];
 extern u8 Data_020092fc[];
@@ -193,7 +222,7 @@ void *SceneData_SelectFlaggedTable(void)
 
     if (GameFlag_IsSet(0x87a)) {
         tbl = Data_020098b8;
-    } else if (GameFlag_IsSet(0x815)) {
+    } else if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE)) {
         tbl = Data_02009738;
     } else {
         tbl = Data_020095b8;
@@ -209,67 +238,67 @@ void *SceneData_SelectTable9c00ByFlags(void)
         return (void *)0x02009ac8;
     if (GameFlag_IsSet(0x87a) != 0)
         return (void *)0x02009ffc;
-    if (GameFlag_IsSet(0x815) != 0)
+    if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE) != 0)
         return (void *)0x02009da4;
     return (void *)0x02009c00;
 }
 
 /* The 44-byte actor-15 scene owner includes its one pool word. */
-void SceneDialogue_RunActor15Message0f6d(void)
+void Villager_AskWhySukuretaCame(void)
 {
     Event_Begin();
-    Event_SetMessage(0xf6d);
+    Event_SetMessage(MSG_SUKURETA_CAME_TO_STUDY_MT_ALEPH);
     Actor_FaceEachOther(0, 15, 6);
     Event_AskYesNo(15, 0);
     Event_End();
 }
 
 /* The 44-byte actor-19 scene owner includes its one pool word. */
-void SceneDialogue_RunActor19Message0f73(void)
+void Villager_PlanToScareVisitors(void)
 {
     Event_Begin();
-    Event_SetMessage(0xf73);
+    Event_SetMessage(MSG_LETS_SCARE_SUKURETAS_VISITORS);
     Actor_FaceEachOther(0, 19, 6);
     Event_AskYesNo(19, 0);
     Event_End();
 }
 
-void FieldScene_RunScene376_020001e8(void)
+void Scene_GiveFarewellHerb(void)
 {
     s32 callback;
     s32 base5_11a4;
 
     Event_Begin();
-    if (GameFlag_IsSet(0x81b) != 0) {
-        Event_SetMessage(0x11a6);
+    if (GameFlag_IsSet(FLAG_GOT_FAREWELL_HERB) != 0) {
+        Event_SetMessage(MSG_YOU_MUST_SAVE_JASMINE);
         Event_ShowMessage(20, 0);
         callback = 0x20092fc;
         Call3(Func_0200144c, 20, 0x10000, callback);
     } else {
-        base5_11a4 = (s32)Data_000011a4;
+        base5_11a4 = (s32)LinkedMessage_ThisIsMyFarewellGift;
         Event_SetMessage(base5_11a4);
         Event_ShowMessageAndWait(20, 0, 20);
         Message_ShowCentered((base5_11a4 + 1), 1);
-        Party_GiveItem(180, 0);
-        GameFlag_Set(0x81b);
+        Party_GiveItem(ITEM_HERB, 0);
+        GameFlag_Set(FLAG_GOT_FAREWELL_HERB);
     }
     Event_End();
 }
 
 /* The 32-byte actor-16 dialogue owner includes its one pool word. */
-void SceneDialogue_RunActor16Message11be(void)
+void Villager_AskAboutStrangePowers(void)
 {
     Event_Begin();
-    Event_SetMessage(0x11be);
+    Event_SetMessage(MSG_THE_CULPRITS_HAD_STRANGE_POWERS);
     Event_AskYesNo(16, 0);
     Event_End();
 }
 
 /* The 32-byte actor-10 dialogue owner includes its one pool word. */
-void SceneDialogue_RunActor10Message1c3d(void)
+void Villager_AskAboutDora(void)
 {
     Event_Begin();
-    Event_SetMessage(0x1c3d);
+    Event_SetMessage(MSG_DID_YOU_HEAR_ABOUT_DORA);
     Event_AskYesNo(10, 0);
     Event_End();
 }
@@ -390,7 +419,7 @@ s32 Func_02000368(void)
         Actor_Get(10)->collision_flags |= 0x80;
     }
     if (Data_02000240_t[225][0] == 2) {
-        if (GameFlag_IsSet(0x815) != 0) {
+        if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE) != 0) {
             Actor_SetPosition(13, 0x1c60000, 0x960000);
             record = Actor_Get(13);
             Actor_SetSpriteFlags((s32)record, 0);
@@ -425,13 +454,13 @@ void FieldScene_RunByActorDirectionAndFlags(void)
 
     Event_Begin();
     if (GameFlag_IsSet(0x87a) != 0) {
-        Event_SetMessage(0x1c06);
+        Event_SetMessage(MSG_YOU_CAME_BACK);
         Event_AskYesNo(21, 0);
     } else {
-        if (GameFlag_IsSet(0x815) != 0) {
-            Event_SetMessage(0x11a2);
+        if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE) != 0) {
+            Event_SetMessage(MSG_VALE_FEELS_EMPTY);
         } else {
-            Event_SetMessage(0x0f53);
+            Event_SetMessage(MSG_GOOD_WEAPONS_DRAW_OUT_STRENGTH);
         }
         Event_ShowMessage(21, 0);
     }
@@ -448,12 +477,12 @@ void FieldScene_RunScene376_0200055c(void)
     } else {
         ((void (*)())Engine_EventBegin)();
         if (GameFlag_IsSet(0x87a) != 0) {
-            Event_SetMessage(0x1c09);
+            Event_SetMessage(MSG_THE_RUMOR_WAS_TRUE);
         } else {
-            if (GameFlag_IsSet(0x815) != 0) {
-                Event_SetMessage(0x11a3);
+            if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE) != 0) {
+                Event_SetMessage(MSG_IM_NOT_SAD_JUST_GO);
             } else {
-                Event_SetMessage(0xf54);
+                Event_SetMessage(MSG_GOOD_ARMOR_DRAWS_OUT_STRENGTH);
             }
         }
         Event_ShowMessage(22, 0);
@@ -471,15 +500,15 @@ void FieldScene_RunScene376_020005d4(void)
     } else {
         if (GameFlag_IsSet(0x87a) != 0) {
             Event_Begin();
-            Event_SetMessage(0x1c0a);
+            Event_SetMessage(MSG_WHEN_DID_YOU_COME_BACK);
             Event_ShowMessage(20, 0);
             Event_End();
         } else {
-            if (GameFlag_IsSet(0x815) != 0) {
-                FieldScene_RunScene376_020001e8();
+            if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE) != 0) {
+                Scene_GiveFarewellHerb();
             } else {
                 Event_Begin();
-                Event_SetMessage(0xf55);
+                Event_SetMessage(MSG_A_WISE_MAN_FLEES_WHEN_INJURED);
                 Event_ShowMessage(20, 0);
                 Event_End();
             }
@@ -562,7 +591,7 @@ void FieldScene_RunLongPresentationSequence(void)
     Actor_SetAnimationAndWait(10, 4);
     Event_Wait(40);
     Actor_FaceDirection(10, 0xd000, 20);
-    Event_SetMessage(0x1c1e);
+    Event_SetMessage(MSG_HEY);
     Event_ShowMessageAndWait(0x900a, 0, 20);
     Actor_Stop(0);
     Actor_Stop(1);
@@ -673,7 +702,7 @@ void FieldScene_RunLongPresentationSequence(void)
     Event_ShowMessage(10, 0);
     Actor_SetAnimationAndWait(11, 4);
     Event_Wait(20);
-    Event_SetMessage(0x1c33);
+    Event_SetMessage(MSG_YOURE_LEAVING_AGAIN_SOON);
     Event_ShowMessage(0x200b, 0);
     Camera_MoveTo(0x3090000, 0, 0x1d40000, 1);
     Event_Wait(20);

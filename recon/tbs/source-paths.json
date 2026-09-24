@@ -803,7 +803,7 @@
     },
     "main:0800d654": {
       "name": "Script_StoreLookupResult",
-      "source": "FIELD/COMMON/SCRIPT/INTERPRETER_CONTROL.C"
+      "source": "FIELD/COMMON/SCRIPT/INTERPRETER.C"
     },
     "main:0800c300": {
       "name": "ObjectDispatch_ApplyArgumentToChildren"
@@ -864,8 +864,7 @@
       "name": "Script_ApplyObjectArgument"
     },
     "main:0800d9f0": {
-      "name": "Script_SetPositionAndResetMotion",
-      "source": "FIELD/COMMON/SCRIPT/INTERPRETER_POSITION.C"
+      "name": "Script_SetPositionAndResetMotion"
     },
     "main:0800e220": {
       "name": "Script_SetOrCompareAddress",
@@ -3832,12 +3831,10 @@
       "name": "ObjectDispatch_RunHookAndReturnZero"
     },
     "main:0800d924": {
-      "name": "ScriptObject_CheckOverlap",
-      "source": "FIELD/COMMON/SCRIPT/OBJECT_CHECK_OVERLAP.C"
+      "name": "ScriptObject_CheckOverlap"
     },
     "main:0800d98c": {
-      "name": "ScriptObject_FindOverlappingEntry",
-      "source": "FIELD/COMMON/SCRIPT/OBJECT_FIND_OVERLAPPING_ENTRY.C"
+      "name": "ScriptObject_FindOverlappingEntry"
     },
     "main:0800da18": {
       "name": "Script_ApplyAbsolutePosition"
@@ -3852,8 +3849,7 @@
       "name": "Script_ApplyLinkedObjectPosition"
     },
     "main:0800dac0": {
-      "name": "Script_ApplyLocalOffsetPosition",
-      "source": "FIELD/COMMON/SCRIPT/INTERPRETER_APPLY_LOCAL_OFFSET_POSITION.C"
+      "name": "Script_ApplyLocalOffsetPosition"
     },
     "main:0800dcdc": {
       "name": "Object_ApproachLinkedObject",

@@ -78229,118 +78229,6 @@
       ]
     },
     {
-      "id": "script-interpreter-control",
-      "game": "tbs",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/SCRIPT/INTERPRETER_CONTROL.C",
-      "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {
-        "GameFlag_IsSet": {
-          "address": "0x080770c0",
-          "kind": "thumb"
-        },
-        "GameFlag_Set": {
-          "address": "0x080770c8",
-          "kind": "thumb"
-        },
-        "GameFlag_Clear": {
-          "address": "0x080770d0",
-          "kind": "thumb"
-        },
-        "Audio_PlayCue": {
-          "address": "0x080f9010",
-          "kind": "thumb"
-        }
-      },
-      "owners": [
-        {
-          "address": "0x0800d654",
-          "extent": 30,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0800d674",
-          "extent": 48,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0800d6a4",
-          "extent": 50,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0800d6d8",
-          "extent": 56,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0800d710",
-          "extent": 80,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0800d760",
-          "extent": 30,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0800d780",
-          "extent": 50,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0800d7b4",
-          "extent": 50,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0800d7e8",
-          "extent": 16,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0800d7f8",
-          "extent": 40,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0800d820",
-          "extent": 48,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0800d850",
-          "extent": 48,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0800d880",
-          "extent": 66,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0800d8c4",
-          "extent": 34,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0800d8e8",
-          "extent": 12,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0800d8f4",
-          "extent": 10,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0800d900",
-          "extent": 34,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
       "id": "script-operands",
       "game": "tbs",
       "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/SCRIPT/OPERANDS.C",
@@ -79363,40 +79251,6 @@
         {
           "address": "0x08028ea8",
           "extent": 50,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
-      "id": "script-position",
-      "game": "tbs",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/SCRIPT/INTERPRETER_POSITION.C",
-      "compiler_route": "canonical-gcc296",
-      "owners": [
-        {
-          "address": "0x0800d9f0",
-          "extent": 40,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0800da18",
-          "extent": 40,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0800da40",
-          "extent": 54,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0800da78",
-          "extent": 38,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0800daa0",
-          "extent": 30,
           "state": "exact-c"
         }
       ],
@@ -124833,6 +124687,158 @@
         {
           "address": "0x080798e0",
           "extent": 208,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "script-interpreter-position",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/SCRIPT/INTERPRETER.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {
+        "GameFlag_IsSet": {
+          "address": "0x080770c0",
+          "kind": "thumb"
+        },
+        "GameFlag_Set": {
+          "address": "0x080770c8",
+          "kind": "thumb"
+        },
+        "GameFlag_Clear": {
+          "address": "0x080770d0",
+          "kind": "thumb"
+        },
+        "Audio_PlayCue": {
+          "address": "0x080f9010",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x0800d654",
+          "extent": 30,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0800d674",
+          "extent": 48,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0800d6a4",
+          "extent": 50,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0800d6d8",
+          "extent": 56,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0800d710",
+          "extent": 80,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0800d760",
+          "extent": 30,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0800d780",
+          "extent": 50,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0800d7b4",
+          "extent": 50,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0800d7e8",
+          "extent": 16,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0800d7f8",
+          "extent": 40,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0800d820",
+          "extent": 48,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0800d850",
+          "extent": 48,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0800d880",
+          "extent": 66,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0800d8c4",
+          "extent": 34,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0800d8e8",
+          "extent": 12,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0800d8f4",
+          "extent": 10,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0800d900",
+          "extent": 34,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0800d924",
+          "extent": 104,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0800d98c",
+          "extent": 100,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0800d9f0",
+          "extent": 40,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0800da18",
+          "extent": 40,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0800da40",
+          "extent": 54,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0800da78",
+          "extent": 38,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0800daa0",
+          "extent": 30,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0800dac0",
+          "extent": 48,
           "state": "exact-c"
         }
       ],

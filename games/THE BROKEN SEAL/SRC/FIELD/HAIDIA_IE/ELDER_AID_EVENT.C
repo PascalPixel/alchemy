@@ -1,6 +1,5 @@
 #include "TYPES.H"
 
-#define FieldScene_RunElderAidEvent Func_02000bbc
 
 extern u8 Data_0200aef0[];
 extern u8 Data_0200af50[];
@@ -121,7 +120,6 @@ void Func_0200372e();
 void Func_0200373c();
 void Func_0200374e();
 void Func_020037a2();
-
 
 static __inline__ void Call1(void (*f)(), s32 a0)
 {

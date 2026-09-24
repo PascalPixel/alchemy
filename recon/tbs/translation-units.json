@@ -80476,6 +80476,34 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "scene-3b0-020000c0",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/FUNE_HOBASHIRA/F_000C0.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3b0",
+      "absolute_symbols": {
+        "Engine_RandomNext": {
+          "address": "0x020091c4",
+          "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x020000c0",
+          "extent": 192,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

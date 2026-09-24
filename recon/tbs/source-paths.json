@@ -1003,7 +1003,8 @@
       "name": "ResourceTable_AllocateBlocks"
     },
     "main:08003ed4": {
-      "name": "ResourceTable_GetLongestFreeBlockRun"
+      "name": "ResourceTable_GetLongestFreeBlockRun",
+      "source": "SYSTEM/RESOURCE/TABLE_LONGEST_FREE_RUN.C"
     },
     "main:08002f40": {
       "name": "Resource_GetTableEntry"

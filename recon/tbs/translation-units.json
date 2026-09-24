@@ -124782,6 +124782,30 @@
         }
       ],
       "overlay": null
+    },
+    {
+      "id": "text-message",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/MESSAGE.C",
+      "compiler_route": "canonical-gcc296",
+      "owners": [
+        {
+          "address": "0x080174f8",
+          "extent": 168,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080175a0",
+          "extent": 32,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080175c0",
+          "extent": 96,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
     }
   ]
 }

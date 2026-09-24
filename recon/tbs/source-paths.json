@@ -1295,11 +1295,10 @@
     },
     "main:080174f8": {
       "name": "UiText_PrepareMessageWork",
-      "source": "GRAPHICS/TEXT/PREPARE_MESSAGE_WORK.C"
+      "source": "GRAPHICS/TEXT/MESSAGE.C"
     },
     "main:080175a0": {
-      "name": "UiText_ShowMessageAndWaitCore",
-      "source": "GRAPHICS/TEXT/SHOW_MESSAGE_AND_WAIT.C"
+      "name": "UiText_ShowMessageAndWaitCore"
     },
     "main:08019a54": {
       "name": "UiWork_FinalizePendingCore",
@@ -19366,8 +19365,7 @@
       "source": "FIELD/TAKARA_SHIMA/ESCAPE_COLUMN.C"
     },
     "main:080175c0": {
-      "name": "UiText_OpenEntryMessage",
-      "source": "GRAPHICS/TEXT/OPEN_ENTRY_MESSAGE.C"
+      "name": "UiText_OpenEntryMessage"
     },
     "main:0808f32c": {
       "name": "FieldEffect_SpawnNearbyMarkers",

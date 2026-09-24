@@ -1,9 +1,9 @@
-/* Draft, not exact (2026-09-24): 22 differing halfwords, 132 of 132 bytes.
-   The quantity test, the -0x800 halfword pool constant and the zero fill
-   now match (a literal 0 fill pools its halfword zero as the ROM does).
-   Residual: the reference computes the slot base into r6 before storing
-   the cleared slot and loads items with ldrh; here the base reuses r0 and
-   the items load with ldrsh, which renumbers the compaction loop. */
+/* Draft, not exact (2026-09-24): 16 differing halfwords, 132 of 132 bytes.
+   The slot base is taken before the cleared slot is stored and the
+   compaction loop tests *src directly, which gives the reference registers
+   through the first loop. Residual: the reference tests the item with
+   lsls #16 (here a register copy), and the fill loop takes r0/r2/r5 for
+   pointer, zero and counter (here r2/r3/r0). */
 #include "INVENTORY.H"
 
 void Func_08077428(s32 owner);
@@ -30,18 +30,17 @@ s32 Inventory_Remove(s32 owner, s32 slot)
             s32 count;
             s32 i;
 
-            inv->inventory[slot] = quantity;
             base = inv->inventory;
+            inv->inventory[slot] = quantity;
             src = base;
             count = 0;
             dst = base;
             for (i = 14; i >= 0; i--) {
-                u16 item = *src++;
-
-                if (item != 0) {
-                    *dst++ = item;
+                if (*src != 0) {
+                    *dst++ = *src;
                     count++;
                 }
+                src++;
             }
             if (count <= 14) {
                 fill = base + count;

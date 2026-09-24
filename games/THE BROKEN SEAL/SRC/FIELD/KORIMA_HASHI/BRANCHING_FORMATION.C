@@ -74,12 +74,10 @@ s32 Func_02000d3c_grid(s32, s32, s32, s32, s32, s32);
 u8 *Func_0200372a(s32);
 struct StagedActorEffect *Func_0200374e(s32 actor_index);
 struct Struct3848 *Func_02003848(s32 arg0);
-void Func_0200176a(u32 *arg0);
 s32 Func_02000ef4();
 void Func_02001530();
 void Func_02001582();
 void Func_02001588();
-void Func_02001a22();
 s32 Func_020038a6();
 s32 Func_020038da();
 struct Obj *Func_020053a6(s32, s32, s32, s32);
@@ -254,7 +252,7 @@ void SceneActor_PassSubjectOffsetPosition(void)
     buf[1] = p->field0c;
     buf[2] = (p->field10 & 0xfff00000) + 0x80000;
     buf[0] = base + 0x280000;
-    Func_0200176a(buf);
+    StagedActor_RunStepEffect(buf);
 }
 
 u8 *SceneData_GetTableB294(void) { return (u8 *)0x0200b294; }
@@ -279,7 +277,7 @@ s32 FieldScene_RunScene391_02000c68(void)
     Func_02001588(9);
     if (SceneTransition_Phase == 4) {
         if (GameFlag_IsSet(0x843) == 0) {
-            Func_02001a22();
+            FieldScene_RunBranchingFormationPresentation();
         }
     }
     if (GameFlag_IsSet(0x845) != 0) {

@@ -46,49 +46,19 @@ struct Slot {
 
 extern s32 Data_0200af74[];
 
-void Func_020090b8(s32);
-u8 *Func_0200a540(s32);
 void Func_02002fd6(s32 actor, s32 mode, s32 frames);
 u8 *Func_02003fa2(s32);
-void Func_02003b9e();
-s32 *Func_02004344();
-s32 *Func_02004368();
-s32 *Func_02004422();
-s32 *Func_02004432();
-s32 *Func_0200443e();
-s32 *Func_0200444a();
-s32 *Func_02004454();
-s32 *Func_0200445c();
-s32 *Func_02004468();
-s32 *Func_02004490();
-s32 *Func_0200449c();
-s32 *Func_020044a8();
-u8 *Func_02002ff0();
 s32 Func_02002f42();
-s32 Func_02003078();
-s32 Func_02003122();
 void Func_02003156_a();
-s32 Func_020031d4();
 void Func_020031b0();
 s32 Func_02003236();
-s32 Func_0200324c();
-s32 Func_02003290();
-s32 Func_02003366();
-void Func_02002082();
 s32 Func_02003588();
 void Func_020035ac();
-s32 Func_020035b6();
-s32 Func_020038f0();
-s32 Func_02003a00();
-s32 Func_02003b62();
-s32 Func_02003d9c();
-void Func_02003ace();
 void Func_02004044();
 void Func_02003168_a();
 void Func_02003178();
 void Func_02003188();
 void Func_02003198();
-void Func_02003244();
 void Func_0200425a();
 void Func_02004262();
 void Func_0200426a();
@@ -101,78 +71,38 @@ s32 Func_020047d6();
 s32 Func_020047e2();
 s32 Func_020047ec();
 s32 Func_020047f6();
-s32 Func_02004800();
-s32 Func_0200480a();
-s32 Func_02004812();
-s32 Func_0200481a();
-s32 Func_02004822();
-void Func_02003d38();
 void Func_02003e3c();
-void Func_02003fa0();
 void Func_02004074();
-void Func_0200419c();
-void Func_020041d4();
-void Func_020041f8();
 void Func_020047ba();
 s32 Func_020047c4();
 s32 Func_0200487a();
 void Func_020048c4();
 s32 Func_020048d2();
 s32 Func_020048dc();
-s32 Func_02004926();
-s32 Func_0200494a();
 s32 Func_020033bc();
 s32 Func_020033c4();
 s32 Func_020033ce();
 s32 Func_020033d6();
-s32 *Func_02003a7a(s32);
-s32 *Func_0200416e(s32);
-void Func_02003816(void);
-struct Actor *Func_020043da(s32);
-struct Actor *Func_020043e2(s32);
-struct Frame *Func_02004406(s32);
-void Func_02002afe(s32);
-void Func_02002b0a(s32);
-void Func_02002b16(s32);
 u8 *Func_02003ff8(s32);
 void Func_02001d24(void);
-void Func_0200388c(void);
 u8 *Func_020041fc(s32);
-void Func_020039d4(void);
 void Func_02001e30(void);
 void Func_02003a68(void);
-void Func_02003c04(void);
 void Func_02001f2c(void);
-void Func_02003cc0(void);
-void Func_02003c24(void);
 void Func_02001f4c(void);
-void Func_02003d00(void);
-void Func_02003c70(void);
-u8 *Func_02003600(s32);
 s32 Func_020035d8(s32);
 void Func_02002038(s32);
-u8 *Func_02003ecc(s32);
 u8 *Func_02003eec(s32);
 u8 *Func_02003f78(s32);
 u8 *Func_02004228(s32);
-s32 *Func_02003e28();
 void Func_02003ef2();
 void Func_02003ef8_a();
-void Func_020034ca();
 u8 *Func_02003fcc(s32);
-struct Slot *Func_02003f12(s32);
-void Func_02003542(void);
-s32 *Func_020040a6();
-s32 *Func_020040ae();
 void Func_02004174();
 void Func_0200417a();
-void Func_02003598();
 void Func_02001c78();
 void Func_02003680();
-struct Slot *Func_020042be(s32);
 void Func_02004322(s32, s32, s32);
-void Func_02003afc(void);
-void Func_02003c50_a(void);
 
 /*
  * Distance between two three-component 16.16 fixed-point positions.
@@ -371,7 +301,7 @@ void Resource3b4_EmptyHookB(void)
  */
 s32 SceneActor_FaceTowardActorZero(u8 *obj)
 {
-    u8 *p = Func_02002ff0(0);
+    u8 *p = Engine_GetTriggerActor(0);
     *(u16 *)(obj + 6) = (u16)Func_02002f42(
         *(s32 *)(p + 16) - *(s32 *)(obj + 16),
         *(s32 *)(p + 8) - *(s32 *)(obj + 8));
@@ -394,7 +324,7 @@ void FieldScene_RunScene3b4_02000ad0(void)
         Event_Wait(20);
         Actor_SetSpeed(15, 0x10000, 0x8000);
         Audio_PlayCue(152);
-        record = Func_02003078(15);
+        record = Engine_GetTriggerActor(15);
         *(s32 *)(record + 40) = 0x80000;
         Actor_WalkToAndWait(15, 0x248, 0x2a8);
         Actor_FaceDirection(15, 0x4000, 20);
@@ -422,7 +352,7 @@ void FieldScene_RunScene3b4_02000b68(void)
             Event_Wait(20);
             Actor_SetSpeed(15, 0x10000, 0x8000);
             Audio_PlayCue(152);
-            record = Func_02003122(15);
+            record = Engine_GetTriggerActor(15);
             *(s32 *)(record + 40) = 0xa0000;
             Actor_WalkToAndWait(15, 0x248, 0x298);
             Actor_FaceDirection(15, 0x4000, 20);
@@ -439,7 +369,7 @@ void FieldScene_RunScene3b4_02000b68(void)
             Work_SetValuesIfNonNegative(-1, -1, 0xe666);
             Event_Wait(30);
             Actor_SetPosition(15, 0x3780000, 0x2980000);
-            rec7 = Value1(Func_020031d4, 15);
+            rec7 = Value1(Engine_GetTriggerActor, 15);
             {
                 s32 target = *(s32 *)(rec7 + 80);
                 s32 shown = 0xf800;
@@ -465,7 +395,7 @@ void FieldScene_RunScene3b4_02000ccc(void)
         *(u16 *)(*(s32 *)(record + 80) + 30) = 0;
         Func_020031b0(record, 16);
         Audio_PlayCue(152);
-        record = Func_0200324c(15);
+        record = Engine_GetTriggerActor(15);
         *(s32 *)(record + 40) = 0x80000;
         Actor_FaceDirection(15, 0x8000, 30);
         Actor_SetAttachedEffect(15, 0x102);
@@ -473,7 +403,7 @@ void FieldScene_RunScene3b4_02000ccc(void)
         Event_Wait(20);
         Actor_SetSpeed(15, 0x10000, 0x8000);
         Audio_PlayCue(152);
-        record = Func_02003290(15);
+        record = Engine_GetTriggerActor(15);
         *(s32 *)(record + 40) = 0x40000;
         Actor_WalkToAndWait(15, 0x370, 0x2a8);
         Event_Wait(10);
@@ -492,7 +422,7 @@ void FieldScene_RunScene3b4_02000ccc(void)
         Event_Wait(10);
         Actor_FaceDirection(15, 0xc000, 20);
         Actor_SetAttachedEffect(15, 0x100);
-        record = Func_02003366(15);
+        record = Engine_GetTriggerActor(15);
         *(s32 *)(record + 108) = 0x2008aa9;
         Event_End();
     }
@@ -584,12 +514,12 @@ void FieldScene_RunScene3b4SequenceC(void)
     u32 i;
     s32 record;
 
-    record = Func_020035b6(0);
+    record = Engine_GetTriggerActor(0);
     if (*(u16 *)(record + 6) == 0xc000) {
         if (GameFlag_IsSet(0x9c4) == 0) {
             if (Func_02003588(243) != -1) {
                 GameFlag_Set(0x9c4);
-                Call1(Func_02002082, 0x100);
+                Call1(FieldScene_RunScene3b4_02000fdc, 0x100);
                 Func_020035ac(243);
             }
         }
@@ -599,7 +529,7 @@ void FieldScene_RunScene3b4SequenceC(void)
 /* Four sites of one import, so four names. */
 void SceneState_SetSelectorFlagWhenFacingC000(s32 selector)
 {
-    u8 *slot = Func_02003600(0);
+    u8 *slot = Engine_GetTriggerActor(0);
     s32 flag;
 
     if (*(u16 *)(slot + 6) != 0xC000) {
@@ -619,12 +549,12 @@ void SceneState_SetSelectorFlagWhenFacingC000(s32 selector)
 
 void FieldScene_RunIndexedStep0(void)
 {
-    Func_020090b8(0);
+    SceneState_SetSelectorFlagWhenFacingC000(0);
 }
 
 void FieldScene_RunIndexedStep1(void)
 {
-    Func_020090b8(1);
+    SceneState_SetSelectorFlagWhenFacingC000(1);
 }
 
 void SceneState_ResetCounter412OnHeading4000B(void)
@@ -635,8 +565,8 @@ void SceneState_ResetCounter412OnHeading4000B(void)
     s16 *cnt;
     s32 reset;
 
-    Func_020090b8(2);
-    slot = Func_0200a540(0);
+    SceneState_SetSelectorFlagWhenFacingC000(2);
+    slot = Engine_GetTriggerActor(0);
     if (*(u16 *)(slot + 6) == 0x4000) {
         cnt = (s16 *)(Data_03001ebc + 412);
         if (*cnt > 12) {
@@ -655,8 +585,8 @@ void SceneState_ResetCounter412OnHeading4000(void)
     s16 *cnt;
     s32 zero;
 
-    Func_020090b8(3);
-    p = Func_0200a540(0);
+    SceneState_SetSelectorFlagWhenFacingC000(3);
+    p = Engine_GetTriggerActor(0);
     if (*(u16 *)(p + 6) == 0x4000) {
         cnt = (s16 *)(Data_03001ebc + 412);
         if (*cnt > 12) {
@@ -751,7 +681,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
     Actor_SetSpeed(0, 0x1e666, 0xf333);
     Actor_SetSpeed(8, 0x1e666, 0xf333);
     Audio_PlayCue(188);
-    record = Value1(Func_020038f0, 0);
+    record = Value1(Engine_GetTriggerActor, 0);
     if (record != 0) {
         Actor_SetDestination(8, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
@@ -793,7 +723,7 @@ void FieldScene_RunScene3b4SequenceA(void)
     Actor_SetSpeed(0, 0x1b333, 0xd999);
     Actor_SetSpeed(9, 0x1b333, 0xd999);
     Audio_PlayCue(188);
-    record = Value1(Func_02003a00, 0);
+    record = Value1(Engine_GetTriggerActor, 0);
     if (record != 0) {
         Actor_SetDestination(9, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
@@ -813,7 +743,7 @@ void SceneActor_TrackOriginColumnForSlot(s32 no)
 {
     extern s16 Data_02000240[];
 
-    s32 *pos = Func_02003a7a(0);
+    s32 *pos = Engine_GetTriggerActor(0);
     s32 col = pos[2] / 0x100000;   /* +8  */
     s32 row = pos[4] / 0x100000;      /* +16 */
     s32 slot = no + 10;
@@ -835,17 +765,17 @@ void SceneActor_TrackOriginColumnForSlot(s32 no)
 
 void FieldScene_RunLateIndexedStep0(void)
 {
-    Func_02002afe(0);
+    SceneActor_TrackOriginColumnForSlot(0);
 }
 
 void FieldScene_RunLateIndexedStep1(void)
 {
-    Func_02002b0a(1);
+    SceneActor_TrackOriginColumnForSlot(1);
 }
 
 void FieldScene_RunLateIndexedStep2(void)
 {
-    Func_02002b16(2);
+    SceneActor_TrackOriginColumnForSlot(2);
 }
 
 void FieldScene_RunPrimarySequence(void)
@@ -860,7 +790,7 @@ void FieldScene_RunPrimarySequence(void)
         Actor_SetSpeed(0, 0x1b333, 0xd999);
         Actor_SetSpeed(10, 0x1b333, 0xd999);
         Audio_PlayCue(188);
-        record = Value1_020015f0(Func_02003b62, 0);
+        record = Value1_020015f0(Engine_GetTriggerActor, 0);
         if (record != 0) {
             Actor_SetDestination(10, *(s16 *)(record + 10), *(s16 *)(record + 18));
         }
@@ -903,7 +833,7 @@ void FieldScene_RunScene3b4SequenceB(void)
     Actor_SetSpeed(0, 0x1b333, 0xd999);
     Actor_SetSpeed(12, 0x1b333, 0xd999);
     Audio_PlayCue(188);
-    record = Value1(Func_02003d9c, 0);
+    record = Value1(Engine_GetTriggerActor, 0);
     if (record != 0) {
         Actor_SetDestination(12, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
@@ -956,7 +886,7 @@ void SceneEffect_SetBlendAlpha0607(void)
  */
 void FieldScene_DispatchBySlotZeroFacing(void)
 {
-    s32 *slot = Func_02003e28(0);
+    s32 *slot = Engine_GetTriggerActor(0);
     u16 facing = *(u16 *)((u8 *)slot + 6);
 
     if (facing == 0xc000) {
@@ -975,7 +905,7 @@ void FieldScene_DispatchBySlotZeroFacing(void)
         Leader_CheckAhead();
     } else if (facing == 0x8000) {
         if (slot[3] == 0) {          /* +12 */
-            Func_020034ca();
+            SceneActor_BranchOnSlotZeroAtTile38();
         } else {
             Leader_CheckAhead();
         }
@@ -987,7 +917,7 @@ void FieldScene_NoOpCallback(void) {}
 
 void SceneActor_MarkSlot13AndSetFlag200(void)
 {
-    u8 *slot = Func_02003ecc(13);
+    u8 *slot = Engine_GetTriggerActor(13);
     s32 fifth = 40;
     s32 sixth = 55;
 
@@ -1015,12 +945,12 @@ void SceneActor_MarkSlot13AndSetFlag200(void)
 /* Slot record lookup, then the notification and step imports. */
 void SceneState_BranchOnActorZeroFacing(void)
 {
-    struct Slot *slot = Func_02003f12(0);
+    struct Slot *slot = Engine_GetTriggerActor(0);
 
     if (slot->f06 == 0) {
         Leader_CheckAhead();
     } else {
-        Func_02003542();
+        SceneActor_BranchOnSlotZeroAtTile38();
     }
 }
 
@@ -1076,8 +1006,8 @@ void SceneState_ApplyRectAndSetSlotEightByte35(void)
  */
 void SceneActor_BranchOnSlotZeroAtTile38(void)
 {
-    s32 *slot0 = Func_020040a6(0);
-    s32 *slot8 = Func_020040ae(8);
+    s32 *slot0 = Engine_GetTriggerActor(0);
+    s32 *slot8 = Engine_GetTriggerActor(8);
     s32 x0 = slot0[2] / 0x100000;
     s32 x8 = slot8[2] / 0x100000;
 
@@ -1098,7 +1028,7 @@ void SceneActor_BranchOnSlotZeroAtTile38(void)
         }
     }
 
-    Func_02003598();
+    SceneState_ApplyFourRectsAndSetActor8Byte85();
     Func_02001c78();
     Func_02003680();
 }
@@ -1115,25 +1045,25 @@ void FieldScene_RunScene3b4_02001bc4(void)
     } else {
         Map_CopyCellAttributes(46, 43, 1, 1, 45, 43);
     }
-    Func_02003ace();
+    SceneActor_PassActorNinePositionWithId107();
     GameFlag_Set(0x206);
 }
 
 void SceneActor_RunWhenActor9AtTile45x43(void)
 {
-    s32 *slot = Func_0200416e(9);
+    s32 *slot = Engine_GetTriggerActor(9);
     s32 x = slot[2] / 0x100000;
     s32 z = slot[4] / 0x100000;
 
     if (x == 45 && z == 43) {
-        Func_02003816();
+        FieldScene_RunScene3b4_02001bc4();
     }
 }
 
 void FieldScene_RunTwoStepSequence(void)
 {
     Func_02001d24();
-    Func_0200388c();
+    SceneActor_RunWhenActor9AtTile45x43();
 }
 
 void SceneState_ApplyTwoRectsAtRow56(void)
@@ -1168,19 +1098,19 @@ void SceneState_ApplyRectAndClearActor10Byte85(void)
 
 void FieldScene_RunThreeCallSequenceB(void)
 {
-    Func_020039d4();
+    SceneState_ApplyTwoRectsAtRow56();
     Func_02001e30();
     Func_02003a68();
 }
 
 void FieldScene_DispatchByActorZeroFacing(void)
 {
-    struct Slot *slot = Func_020042be(0);
+    struct Slot *slot = Engine_GetTriggerActor(0);
 
     if (slot->f06 == 0x4000) {
         Func_02004322(0, 6, 0);
     } else {
-        Func_02003afc();
+        FieldScene_RunThreeCallSequenceB();
     }
 }
 
@@ -1206,44 +1136,44 @@ void ActorPresentation_RepaintCellsAtActorsElevenAndTwelve(void)
     s32 *slot;
     s32 tile;
 
-    Func_02003b9e();
+    SceneState_ApplyFourRectsAt48_55();
 
-    slot = Func_02004344(11);
+    slot = Engine_GetTriggerActor(11);
     tile = slot[2] / 0x100000;
     Map_CopyCellAttributes(53, 55, 1, 1, tile, 55);
-    slot = Func_02004368(12);
+    slot = Engine_GetTriggerActor(12);
     tile = slot[2] / 0x100000;
     Map_CopyCellAttributes(53, 55, 1, 1, tile, 55);
 }
 
 void FieldScene_RunSingleStep(void)
 {
-    Func_02003c50_a();
+    ActorPresentation_RepaintCellsAtActorsElevenAndTwelve();
 }
 
 void FieldScene_RunThreeCallSequence(void)
 {
-    Func_02003c04();
+    SceneState_ApplyFourRectsAt48_55();
     Func_02001f2c();
-    Func_02003cc0();
+    FieldScene_RunSingleStep();
 }
 
 void FieldScene_CallHelper3c70(void)
 {
-    Func_02003c70();
+    ActorPresentation_RepaintCellsAtActorsElevenAndTwelve();
 }
 
 void FieldScene_RunThreeStepSequence(void)
 {
-    Func_02003c24();
+    SceneState_ApplyFourRectsAt48_55();
     Func_02001f4c();
-    Func_02003d00();
+    FieldScene_CallHelper3c70();
 }
 
 void ActorPresentation_PlaceActorFourteenOnActorNine(void)
 {
-    struct Actor *target = Func_020043da(14);
-    struct Actor *source = Func_020043e2(9);
+    struct Actor *target = Engine_GetTriggerActor(14);
+    struct Actor *source = Engine_GetTriggerActor(9);
 
     target->f0c = 0x200000;
     target->f08 = source->f08;
@@ -1252,7 +1182,7 @@ void ActorPresentation_PlaceActorFourteenOnActorNine(void)
 
 void SceneActor_PassActorNinePositionWithId107(void)
 {
-    struct Frame *frame = Func_02004406(9);
+    struct Frame *frame = Engine_GetTriggerActor(9);
 
     MapObject_SetPosition(107, frame->f08, frame->f10 + 0x10000);
 }
@@ -1267,29 +1197,29 @@ void SceneActor_PassActorNinePositionWithId107(void)
  */
 void SceneActor_PublishMarkerBySlotZeroHeight(void)
 {
-    s32 *slot0 = Func_02004422(0);
+    s32 *slot0 = Engine_GetTriggerActor(0);
     u8 marker;
 
     if (slot0[3] > 0x100000) {                 /* +12 */
         marker = 2;
-        ((u8 *)Func_02004432(8))[35] = marker;
-        if (Func_0200443e(10)[3] == 0) {
-            ((u8 *)Func_0200444a(10))[35] = marker;
+        ((u8 *)Engine_GetTriggerActor(8))[35] = marker;
+        if (Engine_GetTriggerActor(10)[3] == 0) {
+            ((u8 *)Engine_GetTriggerActor(10))[35] = marker;
         }
-        ((u8 *)Func_02004454(11))[35] = marker;
+        ((u8 *)Engine_GetTriggerActor(11))[35] = marker;
     } else {
-        if (Func_0200445c(10)[3] == 0 &&
-            Func_02004468(0)[4] / 0x100000 > 56) {   /* +16 */
+        if (Engine_GetTriggerActor(10)[3] == 0 &&
+            Engine_GetTriggerActor(0)[4] / 0x100000 > 56) {   /* +16 */
             Actor_SetSpritePriority(10, 3);
         } else {
             Actor_SetSpritePriority(10, 1);
-            ((u8 *)Func_02004490(10))[35] = 1;
+            ((u8 *)Engine_GetTriggerActor(10))[35] = 1;
         }
         marker = 0;
-        ((u8 *)Func_0200449c(11))[35] = marker;
+        ((u8 *)Engine_GetTriggerActor(11))[35] = marker;
     }
 
-    ((u8 *)Func_020044a8(12))[35] = marker;
+    ((u8 *)Engine_GetTriggerActor(12))[35] = marker;
 }
 
 void FieldScene_RunScene3b4_02002188(void);
@@ -1350,7 +1280,7 @@ void FieldScene_RunScene3b4_02002188(void)
         Func_02003198(3);
     }
     if (GameFlag_IsSet(0x9c4) != 0) {
-        Func_02003244(0);
+        FieldScene_RunScene3b4_02000fdc(0);
     }
 }
 
@@ -1362,15 +1292,15 @@ void FieldScene_RunScene3b4_02002290(void)
     *(u8 *)(Func_020047e2(9) + 89) = 1;
     *(u8 *)(Func_020047ec(10) + 89) = 1;
     *(u8 *)(Func_020047f6(11) + 89) = 1;
-    record = Func_02004800(8);
+    record = Engine_GetTriggerActor(8);
     *(s32 *)(record + 24) = 0xb333;
-    record = Value1_02002290(Func_0200480a, 9);
+    record = Value1_02002290(Engine_GetTriggerActor, 9);
     *(s32 *)(record + 24) = 0xb333;
-    record = Value1_02002290(Func_02004812, 10);
+    record = Value1_02002290(Engine_GetTriggerActor, 10);
     *(s32 *)(record + 24) = 0xb333;
-    record = Value1_02002290(Func_0200481a, 11);
+    record = Value1_02002290(Engine_GetTriggerActor, 11);
     *(s32 *)(record + 24) = 0xb333;
-    record = Func_02004822(12);
+    record = Engine_GetTriggerActor(12);
     *(s32 *)(record + 24) = 0xb333;
     Call2(Func_0200475e_a, 0x20097ad, 0xc80);
     Value2(Func_02004768, 0x200941d, 0xc80);
@@ -1396,26 +1326,26 @@ void FieldScene_RunScene3b4_02002334(void)
         Actor_SetAnimation(14, 2);
     }
     Func_02003e3c();
-    Func_02003fa0();
+    SceneActor_RunWhenActor9AtTile45x43();
     Func_02004074();
-    Func_020041d4();
-    Func_020041f8();
+    FieldScene_RunSingleStep();
+    FieldScene_CallHelper3c70();
     Actor_SetSpritePriority(8, 3);
     *(u8 *)(Func_020048d2(11) + 85) = 0;
     *(u8 *)(Func_020048dc(12) + 85) = 0;
-    Func_0200419c();
+    ActorPresentation_RepaintCellsAtActorsElevenAndTwelve();
     if (GameFlag_IsSet(0x200) != 0) {
-        Func_02003d38();
+        SceneActor_MarkSlot13AndSetFlag200();
         Actor_SetAnimation(13, 5);
     }
     if (GameFlag_IsSet(0x109) == 0) {
         if (GameFlag_IsSet(0x9ca) != 0) {
             Actor_SetPosition(15, 0x3580000, 0x3380000);
-            record = Func_02004926(15);
+            record = Engine_GetTriggerActor(15);
             *(s32 *)(record + 108) = 0x2008aa9;
         } else if (GameFlag_IsSet(0x9c9) != 0) {
             Actor_SetPosition(15, 0x3780000, 0x2980000);
-            record = Value1_02002334(Func_0200494a, 15);
+            record = Value1_02002334(Engine_GetTriggerActor, 15);
             *(u16 *)(*(s32 *)(record + 80) + 30) = 0;
             Func_020048c4(record, 16);
         } else if (GameFlag_IsSet(0x9c8) != 0) {

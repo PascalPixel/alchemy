@@ -26012,10 +26012,6 @@
           "address": "0x0200cb28",
           "kind": "thumb"
         },
-        "Func_02008784": {
-          "address": "0x0200cbec",
-          "kind": "thumb"
-        },
         "Func_020090a2": {
           "address": "0x0200d688",
           "kind": "thumb"
@@ -26070,6 +26066,10 @@
         },
         "OverlayObject_SetValue1": {
           "address": "0x0200dcb4",
+          "kind": "thumb"
+        },
+        "Scene_RunExtendedActorTransition": {
+          "address": "0x0200cbec",
           "kind": "thumb"
         },
         "SceneEffect_SpawnParticlesAboveActor": {

@@ -1,7 +1,7 @@
 #include "DMA.H"
 
-extern u16 Data_03001ad0[];
-extern s32 Data_03001ce0[];
+extern u16 gBgScroll[];
+extern s32 gProjection[];
 
 
 void WaitFrames(s32 frames);
@@ -18,7 +18,7 @@ void BattleEffect_SetupBlendedDisplay(void)
     volatile u32 zero;
 
     *(u16 *)0x04000000 = 1;
-    Data_03001ad0[3] = 32;
+    gBgScroll[3] = 32;
     BattleBackground_LoadFar(1, *(u16 *)(work + 0x648), 24);
     zero = 0;
     Dma_Set((const void *)&zero, buffer, 0x85001000, (volatile u32 *)0x040000d4);
@@ -28,5 +28,5 @@ void BattleEffect_SetupBlendedDisplay(void)
     *(u16 *)0x04000052 = 0x100e;
     *(u16 *)0x04000050 = 0x3f46;
     *(u16 *)0x04000000 = 0x7741;
-    Data_03001ce0[4] = 120;
+    gProjection[4] = 120;
 }

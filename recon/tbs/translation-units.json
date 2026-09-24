@@ -37341,36 +37341,12 @@
           "address": "0x02008dc4",
           "kind": "thumb"
         },
-        "Func_02000e7a": {
-          "address": "0x02008474",
+        "FieldScene_RedrawActorFootprint": {
+          "address": "0x020088c0",
           "kind": "thumb"
         },
         "Func_02001026": {
           "address": "0x02008608",
-          "kind": "thumb"
-        },
-        "Func_0200134c": {
-          "address": "0x020088c0",
-          "kind": "thumb"
-        },
-        "Func_02001352": {
-          "address": "0x020088c0",
-          "kind": "thumb"
-        },
-        "Func_02001358": {
-          "address": "0x020088c0",
-          "kind": "thumb"
-        },
-        "Func_0200164e": {
-          "address": "0x02008b8c",
-          "kind": "thumb"
-        },
-        "Func_020016b6": {
-          "address": "0x02008bac",
-          "kind": "thumb"
-        },
-        "Func_020016d2": {
-          "address": "0x02008bcc",
           "kind": "thumb"
         },
         "Func_02001aec": {
@@ -37384,6 +37360,22 @@
         "gEventWork": {
           "address": "0x03001ebc",
           "kind": "data"
+        },
+        "KorimaPalette_Capture": {
+          "address": "0x02008bcc",
+          "kind": "thumb"
+        },
+        "KorimaPalette_SaveFirst": {
+          "address": "0x02008b8c",
+          "kind": "thumb"
+        },
+        "KorimaPalette_SaveSecond": {
+          "address": "0x02008bac",
+          "kind": "thumb"
+        },
+        "StagedActor_FindClearPosition": {
+          "address": "0x02008474",
+          "kind": "thumb"
         }
       },
       "owners": [

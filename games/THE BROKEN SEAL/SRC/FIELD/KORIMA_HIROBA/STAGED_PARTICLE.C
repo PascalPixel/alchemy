@@ -65,11 +65,7 @@ typedef struct OrbitingSceneObject {
 
 extern u8 Value_02008c4d;
 
-s32 Func_02000e7a(Query *result);
 void Func_02001026(Query result);
-void Func_0200164e();
-void Func_020016d2();
-void Func_020016b6();
 OrbitingSceneObject *Func_02001af4(void);
 u8 *Func_02001aec(s32, s32);
 
@@ -89,6 +85,8 @@ u8 *Func_02001aec(s32, s32);
 
 u8 *SceneData_GetTable8f80(void) { return (u8 *)0x02008f80; }
 
+s32 StagedActor_FindClearPosition(struct StagedActorProbe *probe);
+
 s32 SceneData_ReturnZero(void)
 {
     return 0;
@@ -105,7 +103,7 @@ void SceneActor_RunPlacementQuery(void)
 {
     Query result;
     Event_Begin();
-    if (Func_02000e7a(&result))
+    if (StagedActor_FindClearPosition(&result))
         Func_02001026(result);
     Event_End();
 }
@@ -140,9 +138,9 @@ s32 FieldScene_SetupEntryActors8To11(void)
     if (GameFlag_IsSet(0xfd3) == 0) {
         SceneEffect_InitOrbitingParticle(11);
     }
-    Func_0200134c(8);
-    Func_02001352(9);
-    Func_02001358(10);
+    FieldScene_RedrawActorFootprint(8);
+    FieldScene_RedrawActorFootprint(9);
+    FieldScene_RedrawActorFootprint(10);
     if (GameFlag_IsSet(0x845) == 0) {
         SceneEffect_AdjustPaletteWindow(11);
     }
@@ -155,7 +153,7 @@ void SceneEffect_AdjustPaletteWindow(s32 adj)
     volatile u16 *pal = (volatile u16 *)0x05000000;
     u32 phase;
     u32 next;
-    Func_0200164e();
+    KorimaPalette_SaveFirst();
     phase = 0;
     do {
         u32 idx = phase >> 16;
@@ -169,7 +167,7 @@ void SceneEffect_AdjustPaletteWindow(s32 adj)
         next = phase + 0x10000;
         phase = next;
     } while (next <= 0x00df0000);
-    Func_020016d2(); Func_020016b6(); ColorBuffer_ApplyTarget(0x10000, 0);
+    KorimaPalette_Capture(); KorimaPalette_SaveSecond(); ColorBuffer_ApplyTarget(0x10000, 0);
 }
 
 /*

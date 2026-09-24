@@ -33,7 +33,7 @@ use std::env;
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
-const USAGE: &str = "usage: alchemy build assets [-h] [--source-only] [--target TARGET] [--manifest MANIFEST] [-o OUTPUT] [rom] | --extract-text [TARGET] | --verify-text [TARGET] | --review-images OUTPUT [--update-baseline | --target TARGET] | --audit-characters OUTPUT [--target TARGET] | --extract-sources ROM [--target TARGET] | --extract-missing-sources ROM [--target TARGET] | --derive-index ROM --target TARGET --scenes N[=NAME],... [--leave ID,...] [-o OUTPUT] [--stage DIR] [--preview DIR] | --network ROM --target TARGET -o DIR [--from WORLD_MAP_EXIT | --scenes LIST] [--mark SCENE] [--packed] | --verify-smsh-source ROM SOURCE | --adopt-smsh-midi SOURCE INPUT OUTPUT | --verify-smsh-midi ROM MIDI | --self-test";
+const USAGE: &str = "usage: alchemy build assets [-h] [--source-only] [--target TARGET] [--manifest MANIFEST] [-o OUTPUT] [rom] | --extract-text [TARGET] | --verify-text [TARGET] | --audit-characters OUTPUT [--target TARGET] | --extract-sources ROM [--target TARGET] | --extract-missing-sources ROM [--target TARGET] | --derive-index ROM --target TARGET --scenes N[=NAME],... [--leave ID,...] [-o OUTPUT] [--stage DIR] [--preview DIR] | --network ROM --target TARGET -o DIR [--from WORLD_MAP_EXIT | --scenes LIST] [--mark SCENE] [--packed] | --verify-smsh-source ROM SOURCE | --adopt-smsh-midi SOURCE INPUT OUTPUT | --verify-smsh-midi ROM MIDI | --self-test";
 const ROM_BASE: usize = 0x0800_0000;
 pub(crate) fn identified_regions(
     root: &Path,
@@ -6696,9 +6696,8 @@ fn reusable_asset_manifest(
     Some((regions.len(), total, inputs))
 }
 /// Every piece of game material tracked under the manifest's game must be an
-/// input this build read, or named by the game's declared review plan. Code
-/// and the registries of the game's `recon` scaffolding are exempt by
-/// category (`generated_files::unconsumed_material`); nothing else is.
+/// input this build read. Code and the registries of the game's `recon`
+/// scaffolding are exempt by category (`generated_files::unconsumed_material`); nothing else is.
 /// Another edition's own asset, such as a Japanese font: built from its
 /// tracked sources by the same rules as a region and compared byte for byte
 /// with that edition's ROM, which the game's own ROM does not contain.
@@ -6745,7 +6744,6 @@ fn audit_material_consumers(
     let directory = game.game_dir();
     let mut consumed = inputs.into_iter().collect::<BTreeSet<_>>();
     consumed.insert(game.asset_manifest.to_string());
-    consumed.extend(native::review_plan_inputs(root, directory)?);
     let mut unconsumed = Vec::new();
     for tree in [directory, game.recon_dir()] {
         unconsumed.extend(
@@ -7106,24 +7104,6 @@ fn run(arguments: Vec<String>) -> Result<ExitCode, String> {
             "{}",
             crate::text_catalog::extract(&repository_root(), arguments.get(1).map(String::as_str))?
         );
-        return Ok(ExitCode::SUCCESS);
-    }
-    if arguments.first().map(String::as_str) == Some("--review-images") {
-        let update = arguments.len() == 3 && arguments[2] == "--update-baseline";
-        let target = (arguments.len() == 4 && arguments[2] == "--target")
-            .then(|| crate::targets::decomp_target(Some(&arguments[3])))
-            .transpose()?;
-        if arguments.len() != 2 && !update && target.is_none() {
-            return Err(USAGE.into());
-        }
-        // The Broken Seal keeps its registered review plan; other games review
-        // the field maps their private-inputs.json scenes load.
-        match target.filter(|t| t.source_dir != native::broken_seal().source) {
-            Some(target) => {
-                native::export_field_review(&repository_root(), Path::new(&arguments[1]), &target)?
-            }
-            None => native::export_review(&repository_root(), Path::new(&arguments[1]), update)?,
-        }
         return Ok(ExitCode::SUCCESS);
     }
     if arguments.first().map(String::as_str) == Some("--network") {

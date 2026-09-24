@@ -592,11 +592,9 @@ fn rebuild_main(
             maintained.push(range);
         }
     }
-    let gaps = executable_gap_ranges(root, target)?;
     let mut cuts = maintained;
     cuts.extend(declared_asset_ranges(root, target)?);
     cuts.extend(retained.iter().copied());
-    cuts.extend(gaps);
     let mut ranges = subtract_ranges(unresolved, cuts.clone());
     ranges.extend(retained.iter().copied());
     ranges.sort_unstable();
@@ -835,32 +833,6 @@ fn declared_asset_ranges(root: &Path, target: DecompTarget) -> Result<Vec<(i64, 
         }
     }
     Ok(ranges)
-}
-
-fn executable_gap_ranges(root: &Path, target: DecompTarget) -> Result<Vec<(i64, i64)>, String> {
-    let directory = root.join(target.asm_dir).join("executable_gaps");
-    if !directory.is_dir() {
-        return Ok(Vec::new());
-    }
-    let mut ranges = Vec::new();
-    for entry in walkdir::WalkDir::new(directory) {
-        let entry = entry.map_err(|e| e.to_string())?;
-        if !entry.file_type().is_file()
-            || entry.path().extension().and_then(|e| e.to_str()) != Some("s")
-        {
-            continue;
-        }
-        let stem = entry
-            .path()
-            .file_stem()
-            .and_then(|s| s.to_str())
-            .ok_or("executable gap has no address name")?;
-        let start = i64::from_str_radix(stem, 16).map_err(|e| e.to_string())?;
-        let source = std::fs::read_to_string(entry.path()).map_err(|e| e.to_string())?;
-        let bytes = assemble_overlay_raw(&OverlaySource::text(source), start)?;
-        ranges.push((start, start + bytes.len() as i64));
-    }
-    Ok(merge_ranges(ranges))
 }
 
 fn veneer_includes(root: &Path, target: DecompTarget) -> Result<Vec<(String, String)>, String> {

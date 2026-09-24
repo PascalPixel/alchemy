@@ -107836,6 +107836,10 @@
           "address": "0x0200c2fc",
           "kind": "thumb"
         },
+        "Engine_ActorSetSpriteFlags": {
+          "address": "0x0200c244",
+          "kind": "thumb"
+        },
         "Engine_AudioPlayCue": {
           "address": "0x0200c4a4",
           "kind": "thumb"
@@ -107844,20 +107848,24 @@
           "address": "0x0200c3f4",
           "kind": "thumb"
         },
+        "Engine_EventCloseScreen": {
+          "address": "0x0200c444",
+          "kind": "thumb"
+        },
         "Engine_EventEnd": {
           "address": "0x0200c2dc",
+          "kind": "thumb"
+        },
+        "Engine_EventWaitForScreen": {
+          "address": "0x0200c44c",
           "kind": "thumb"
         },
         "Engine_GameFlagSet": {
           "address": "0x0200c294",
           "kind": "thumb"
         },
-        "Func_0200c184": {
+        "Engine_TaskWait": {
           "address": "0x0200c184",
-          "kind": "thumb"
-        },
-        "Func_0200c244": {
-          "address": "0x0200c244",
           "kind": "thumb"
         },
         "Func_0200c2e4": {
@@ -107866,14 +107874,6 @@
         },
         "Func_0200c404": {
           "address": "0x0200c404",
-          "kind": "thumb"
-        },
-        "Func_0200c444": {
-          "address": "0x0200c444",
-          "kind": "thumb"
-        },
-        "Func_0200c44c": {
-          "address": "0x0200c44c",
           "kind": "thumb"
         },
         "gGameState": {

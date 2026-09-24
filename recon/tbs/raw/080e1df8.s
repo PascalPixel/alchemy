@@ -15,10 +15,8 @@
 	.set sub_080e22e0, 0x080e22e0
 	.set sub_080ed408, 0x080ed408
 	.set sub_080f9010, 0x080f9010
-	.global Region_080e1df8
 	.global Func_080e1df8
 	.thumb_func
-Region_080e1df8:
 Func_080e1df8:
 .L_080e1df8:
 	bl	sub_08004458

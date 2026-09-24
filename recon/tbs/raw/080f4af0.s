@@ -6,10 +6,8 @@
 	.set sub_080f4f04, 0x080f4f04
 	.set sub_080f4fea, 0x080f4fea
 	.set sub_080f5260, 0x080f5260
-	.global Region_080f4af0
 	.global Func_080f4af0
 	.thumb_func
-Region_080f4af0:
 Func_080f4af0:
 	mov	r5, sl
 	lsls	r0, r5, #2

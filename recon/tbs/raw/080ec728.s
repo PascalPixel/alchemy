@@ -12,10 +12,8 @@
 	.set sub_080ec3c2, 0x080ec3c2
 	.set sub_080ec6c8, 0x080ec6c8
 	.set sub_080ecae8, 0x080ecae8
-	.global Region_080ec728
 	.global Func_080ec728
 	.thumb_func
-Region_080ec728:
 Func_080ec728:
 	adds	r3, #4
 	str	r3, [r5, #4]

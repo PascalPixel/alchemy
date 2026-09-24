@@ -9,10 +9,8 @@
 	.set sub_080e5afc, 0x080e5afc
 	.set sub_080e640e, 0x080e640e
 	.set sub_080ed408, 0x080ed408
-	.global Region_080e57b4
 	.global Func_080e57b4
 	.thumb_func
-Region_080e57b4:
 Func_080e57b4:
 	ldr	r1, [sp, #96]
 	cmp	r1, #21

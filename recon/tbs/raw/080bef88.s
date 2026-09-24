@@ -7,10 +7,8 @@
 	.set sub_080772b8, 0x080772b8
 	.set sub_080772f8, 0x080772f8
 	.set sub_080bd3c8, 0x080bd3c8
-	.global Region_080bef88
 	.global Func_080bef88
 	.thumb_func
-Region_080bef88:
 Func_080bef88:
 	ldr	r3, [sp, #12]
 	ldr	r0, [r3, #0]

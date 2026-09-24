@@ -19,10 +19,8 @@
 	.set sub_080e3908, 0x080e3908
 	.set sub_080e396c, 0x080e396c
 	.set sub_080f9010, 0x080f9010
-	.global Region_080ecae8
 	.global Func_080ecae8
 	.thumb_func
-Region_080ecae8:
 Func_080ecae8:
 	add	r2, fp
 	movs	r3, #2

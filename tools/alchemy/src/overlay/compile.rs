@@ -2160,7 +2160,7 @@ mod source_activation_tests {
         assert!(check(&[]).is_err());
         assert!(check(std::slice::from_ref(&unit)).is_ok());
         let mut retained = unit.clone();
-        retained.owners[1].state = OwnerState::RetainedAssembly;
+        retained.owners[1].state = OwnerState::NotYetC;
         assert!(check(&[retained]).is_err());
 
         // A module linked into resource_385 as well compiles there only as

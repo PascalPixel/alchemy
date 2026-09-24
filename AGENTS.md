@@ -53,7 +53,15 @@ most plausibly had on disk in 2001.
    ROMs, the cartridge logo, raw dumps, another project's Golden Sun work, or
    SDK or leaked code. Evidence comes from our own ROMs, this repository and
    public documentation.
-5. **Only Pascal** changes credit standards, approves compiler source,
+5. **Everything uncredited is C not yet written.** Camelot wrote the game in
+   C; only SDK library code, genuinely hand-written routines and the veneer
+   stubs are assembly, and only a credited `.S` module may say so. An owner
+   still built from its disassembly is `not-yet-c` (`not_yet_c` in the
+   overlay registry), never "assembly". No registry, gate, draft header or
+   report may classify C as assembly because it resisted: not a hard
+   instruction (`stmia` comes from `Dma_Set`), not a register wall, not a
+   size. Label it by what remains to be done.
+6. **Only Pascal** changes credit standards, approves compiler source,
    binaries and digests, and authorises pushes. Record each decision here with
    its date.
 
@@ -69,7 +77,7 @@ yield, not by the size of the target alone.
 | Library identification | 13 routines at once | Nintendo SDK code (sound driver, flash) |
 | Credit decisions from Pascal | 5.6 KB at once | whole classes of proven assembly |
 | Batch lifting in the main image | about 30% similarity, almost no matches | nothing; don't |
-| Re-sweeping 1–3 halfword main-image walls | zero | nothing, until a new structural fact appears |
+| Re-sweeping the same 1–3 halfword residual with the same spellings | zero | only with a new structural idea; the owner stays a normal target |
 
 **The overlay recipe.** `psynergy decompile` the owner; rename every call to
 its `Engine_*` service in `FIELD_EVENT.H` or to the overlay's own function;

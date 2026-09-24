@@ -108,11 +108,7 @@ fn run(args: &[String]) -> Result<(), String> {
         rows.push(Row {
             address,
             include,
-            state: if exact {
-                "exact-c"
-            } else {
-                "retained-assembly"
-            },
+            state: if exact { "exact-c" } else { "not-yet-c" },
             extent: production["extent_bytes"].as_u64().unwrap_or(0),
         });
     }

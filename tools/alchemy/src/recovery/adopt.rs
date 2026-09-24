@@ -625,7 +625,7 @@ mod tests {
         let mut unit = serde_json::json!({
             "source": "draft.c",
             "absolute_symbols": {"CallAlias": {"address": "0x02009c84", "kind": "thumb"}},
-            "owners": [{"address": "0x0200161c", "extent": 420, "state": "retained-assembly"}]
+            "owners": [{"address": "0x0200161c", "extent": 420, "state": "not-yet-c"}]
         });
         let bindings = unit["absolute_symbols"].clone();
         adopt_unit_source(

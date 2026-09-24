@@ -1238,7 +1238,7 @@
         {
           "address": "0x08025bb4",
           "extent": 46,
-          "state": "retained-assembly"
+          "state": "not-yet-c"
         },
         {
           "address": "0x08025be4",
@@ -1258,7 +1258,7 @@
         {
           "address": "0x08025c5c",
           "extent": 46,
-          "state": "retained-assembly"
+          "state": "not-yet-c"
         },
         {
           "address": "0x08025c8c",
@@ -1353,7 +1353,7 @@
         {
           "address": "0x08025f9c",
           "extent": 52,
-          "state": "retained-assembly"
+          "state": "not-yet-c"
         },
         {
           "address": "0x08025fd0",
@@ -1832,7 +1832,7 @@
         {
           "address": "0x020026f4",
           "extent": 188,
-          "state": "retained-assembly"
+          "state": "not-yet-c"
         }
       ]
     },
@@ -2021,7 +2021,7 @@
         {
           "address": "0x02000510",
           "extent": 5404,
-          "state": "retained-assembly"
+          "state": "not-yet-c"
         }
       ]
     },
@@ -2163,7 +2163,7 @@
         {
           "address": "0x080d2de4",
           "extent": 54,
-          "state": "retained-assembly"
+          "state": "not-yet-c"
         },
         {
           "address": "0x080d2e1c",
@@ -2203,7 +2203,7 @@
         {
           "address": "0x080d2f48",
           "extent": 128,
-          "state": "retained-assembly"
+          "state": "not-yet-c"
         },
         {
           "address": "0x080d2fc8",
@@ -2285,7 +2285,7 @@
         {
           "address": "0x080d3300",
           "extent": 44,
-          "state": "retained-assembly"
+          "state": "not-yet-c"
         },
         {
           "address": "0x080d332c",
@@ -2337,7 +2337,7 @@
         {
           "address": "0x08023634",
           "extent": 48,
-          "state": "retained-assembly"
+          "state": "not-yet-c"
         },
         {
           "address": "0x08023664",
@@ -2347,12 +2347,12 @@
         {
           "address": "0x08023680",
           "extent": 38,
-          "state": "retained-assembly"
+          "state": "not-yet-c"
         },
         {
           "address": "0x080236a8",
           "extent": 38,
-          "state": "retained-assembly"
+          "state": "not-yet-c"
         },
         {
           "address": "0x080236d0",
@@ -2411,22 +2411,22 @@
         {
           "address": "0x02000314",
           "extent": 56,
-          "state": "retained-assembly"
+          "state": "not-yet-c"
         },
         {
           "address": "0x0200034c",
           "extent": 64,
-          "state": "retained-assembly"
+          "state": "not-yet-c"
         },
         {
           "address": "0x0200038c",
           "extent": 388,
-          "state": "retained-assembly"
+          "state": "not-yet-c"
         },
         {
           "address": "0x02000510",
           "extent": 92,
-          "state": "retained-assembly"
+          "state": "not-yet-c"
         }
       ]
     },
@@ -2479,17 +2479,17 @@
         {
           "address": "0x080b0ab8",
           "extent": 192,
-          "state": "retained-assembly"
+          "state": "not-yet-c"
         },
         {
           "address": "0x080b0b78",
           "extent": 62,
-          "state": "retained-assembly"
+          "state": "not-yet-c"
         },
         {
           "address": "0x080b0bb8",
           "extent": 190,
-          "state": "retained-assembly"
+          "state": "not-yet-c"
         },
         {
           "address": "0x080b0c78",
@@ -2499,17 +2499,17 @@
         {
           "address": "0x080b0c9c",
           "extent": 102,
-          "state": "retained-assembly"
+          "state": "not-yet-c"
         },
         {
           "address": "0x080b0d04",
           "extent": 84,
-          "state": "retained-assembly"
+          "state": "not-yet-c"
         },
         {
           "address": "0x080b0d58",
           "extent": 172,
-          "state": "retained-assembly"
+          "state": "not-yet-c"
         },
         {
           "address": "0x080b0e04",
@@ -2577,7 +2577,7 @@
         {
           "address": "0x080aed6c",
           "extent": 140,
-          "state": "retained-assembly"
+          "state": "not-yet-c"
         },
         {
           "address": "0x080aedf8",
@@ -2650,7 +2650,7 @@
         {
           "address": "0x080af094",
           "extent": 80,
-          "state": "retained-assembly"
+          "state": "not-yet-c"
         }
       ],
       "overlay": null
@@ -2752,7 +2752,7 @@
         {
           "address": "0x02000d14",
           "extent": 2088,
-          "state": "retained-assembly"
+          "state": "not-yet-c"
         }
       ]
     },
@@ -2784,7 +2784,7 @@
         {
           "address": "0x0815f16c",
           "extent": 10584,
-          "state": "retained-assembly"
+          "state": "not-yet-c"
         }
       ],
       "overlay": null
@@ -2817,7 +2817,7 @@
         {
           "address": "0x08175f74",
           "extent": 9996,
-          "state": "retained-assembly"
+          "state": "not-yet-c"
         }
       ],
       "overlay": null
@@ -2918,7 +2918,7 @@
         {
           "address": "0x0817ea58",
           "extent": 8764,
-          "state": "retained-assembly"
+          "state": "not-yet-c"
         }
       ],
       "overlay": null

@@ -1,3 +1,5 @@
+/* 2026-09-24: 69 differing halfwords (from 70) after a do-while wrap and
+   statement-swap sweep; the do-while wraps are search artefacts. */
 #include "TYPES.H"
 #include "BATTLE_EFX.H"
 
@@ -224,7 +226,7 @@ void Func_080cc5d8(void *object)
         }
 
         Func_080cd52c();
-        M2C_FIELD(work, s32 *, 0x7824) = 1;
+        do { M2C_FIELD(work, s32 *, 0x7824) = 1; } while (0);
         Func_080030f8(1);
     }
 

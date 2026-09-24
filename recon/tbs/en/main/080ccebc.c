@@ -1,4 +1,14 @@
+/* Draft, not exact (2026-09-24): candidate=584 reference=584 differing_halfwords=240. Constants the reference loads from
+   the literal pool are spelled as link-time Value_ symbols, which restores
+   the reference size; wraps marked FAKEMATCH only move scheduling. */
 #include "TYPES.H"
+extern u8 Value_00007828;
+extern u8 Value_00000100;
+extern u8 Value_00001000;
+extern u8 Value_00007780;
+extern u8 Value_00007784;
+extern u8 Value_00000480;
+extern u8 Value_000077a4;
 #include "GLOBAL_CELLS.H"
 #include "EFFECT_STEP.H"
 #include "BATTLE_EFX.H"
@@ -46,8 +56,8 @@ void Func_080ccebc(void *arg0)
     Resource_LoadAndDecompress(0x59, base, 1, 1);
 
     M2C_FIELD(base, s32 *, 0x7780) = 1;
-    M2C_FIELD(base, s32 *, 0x7784) = 0;
-    Func_080041d8(0x080cd261, 0x480);
+    M2C_FIELD(base, s32 *, (s32)&Value_00007784) = 0;
+    Func_080041d8(0x080cd261, (s32)&Value_00000480);
 
     Func_080f9010(0x8f);
 
@@ -63,12 +73,12 @@ void Func_080ccebc(void *arg0)
         BattleEffect_LoadWork(0x2e, 7, 7, 3, flash);
         (*(DrawRectangleFn *)0x03001F08)(
             second, (void *)base, 33, 41, shade, shade);
-        Func_08002dd8(0x2e);
+        do { Func_08002dd8(0x2e); } while (0); /* FAKEMATCH */
 
         BattleEffect_LoadWork(0x2e, 7, 7, 7, flash);
         (*(DrawRectangleFn *)0x03001F08)(
             second, (void *)base, 64, 41, shade, shade);
-        Func_08002dd8(0x2e);
+        do { Func_08002dd8(0x2e); } while (0); /* FAKEMATCH */
 
         BattleEffect_LoadWork(0x2e, 7, 7, 11, flash);
         (*(DrawRectangleFn *)0x03001F08)(
@@ -96,7 +106,7 @@ void Func_080ccebc(void *arg0)
         }
 
         Func_080cd52c();
-        M2C_FIELD(base, s32 *, 0x77a4) = flash;
+        M2C_FIELD(base, s32 *, (s32)&Value_000077a4) = flash;
         Func_080030f8(1);
 
         frame++;

@@ -1,26 +1,8 @@
 #include "TYPES.H"
 
-#define SceneActor_PushObjectAheadIfLevel Func_020026fc
-#define OverlayObject_SpawnConfiguredObject Func_020009f4
-#define OverlayObject_PrepareObjectWithCommand15 Func_02000a4c
 #define OverlayObject_IntegrateVelocities Func_02000ab0
-#define OverlayObject_WaitUntilIdle Func_02000cd0
 #define NULL ((void *)0)
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
-#define SceneState_SetValue8Mode66 Func_02000cc0
-#define SceneState_ApplyRectAt32x78 Func_020024b0
-#define SceneState_SetRuntimeByte34 Func_020026a8
-#define SceneState_ApplyRectsAtActors8And9 Func_02002820
-#define FieldScene_RunSupplementalSequenceOne Func_02000d4c
-#define FieldScene_RunScene3c5SequenceA Func_02000eac
-#define FieldScene_RunStep11 Func_02001184
-#define FieldScene_RunStep12WithPosition Func_0200119c
-#define FieldScene_RunStep13WithTwoPositions Func_020011c4
-#define FieldScene_RunStep15 Func_020011fc
-#define FieldScene_RunStepWithValue2693 Func_02001214
-#define FieldScene_RunScene3c5_020024d0 Func_020024d0
-#define FieldScene_RunScene3c5_02002548 Func_02002548
-#define FieldScene_RunFlag985DialogueBranch Func_020025c8
 #define RuntimeSelectorTable Data_02000240
 #define PrimaryRuntimeSelector Value_000000b0
 #define SecondaryRuntimeSelector Value_000000af
@@ -29,28 +11,14 @@
 #define SecondaryOverlayData Data_0200b330
 #define TertiaryOverlayData Data_0200b4f8
 #define DefaultOverlayData Data_0200b558
-#define SceneData_SelectByRuntimeSelector Func_02000f58
-#define SceneData_SelectTableB5b8ByState Func_02000fac
-#define SceneData_GetTableb5f8 Func_02000fd4
 #define PrimaryOverlayData_02000fdc Data_0200b694
 #define SecondaryOverlayData_02000fdc Data_0200b754
 #define TertiaryOverlayData_02000fdc Data_0200b784
 #define DefaultOverlayData_02000fdc Data_0200b88c
-#define FieldScene_RunFourCallSequence Func_020010f4
-#define ResetSceneParametersAndFinishSetup Func_02001158
-#define SceneState_ConfigureRegion82_7AndApply768 Func_020027f4
-#define SceneState_BranchOnActorEightOrNineTile Func_0200110c
-#define FieldScene_RunBranchingActorSequence Func_02001238
-#define FieldScene_RunActorEventSequence Func_02001b10
-#define ActorPresentation_SetSceneCellByFlag985 Func_0200246c
-#define ActorPresentation_PlaceActorTwelveAtTile20And12 Func_020026b8
-#define SceneActor_RunSlotZeroFacingCheck Func_02002738
 #define PrimaryOverlayData_020027a0 Data_0200b91c
 #define SecondaryOverlayData_020027a0 Data_0200b9e8
 #define TertiaryOverlayData_020027a0 Data_0200bac0
 #define DefaultOverlayData_020027a0 Data_0200bc28
-#define SceneData_SelectDataByRuntimeSelector Func_02000fdc
-#define SceneData_SelectTableB91cByRuntimeSelector Func_020027a0
 
 #include "FIELD_EFFECT.H"
 #define OverlayObject_IntegrateVelocities Effect_Move

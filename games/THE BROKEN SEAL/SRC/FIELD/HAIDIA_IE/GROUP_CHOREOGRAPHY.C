@@ -1,5 +1,5 @@
 #include "TYPES.H"
-
+#include "FIELD_EVENT.H"
 
 /*
  * Exact 2026-09-23 (832 bytes), a tagged fake match. The callback passed
@@ -46,13 +46,9 @@ void Func_02003a4c();
 void Func_02003a58();
 void Func_02003a5a();
 void Func_02003a5e();
-void Func_02003a6a();
-void Func_02003a6a_a();
 s32 Func_02003a70();
 void Func_02003a80();
 void Func_02003a92();
-void Func_02003a98();
-void Func_02003a98_a();
 void Func_02003a9a();
 void Func_02003aa0();
 void Func_02003aa2();
@@ -61,8 +57,6 @@ void Func_02003ab2();
 void Func_02003abe();
 void Func_02003ac2();
 void Func_02003ad0();
-void Func_02003ad4();
-void Func_02003ad4_a();
 void Func_02003aec();
 void Func_02003afa();
 void Func_02003b02();
@@ -160,17 +154,17 @@ void FieldScene_RunGroupChoreography(void)
     Func_0200399c(40);
     Call3(Func_02003aa0, 23, 0xe000, 0);
     Value3(Func_02003600, 24, 0x7000, 40);
-    Call2(Func_02003ad4, 0xcccc, 0x1999);
+    Camera_SetSpeed(0xcccc, 0x1999);
     Call4(Func_02003aec, 0x640000, 0x900000, 0x14d0000, 1);
     Call3(Func_02003a12, 23, 0x10000, 0x8000);
     Call3(Func_02003a20, 24, 0x10000, 0x8000);
     Call3(Func_02003a5a, 23, 105, 0x149);
     Func_020039f8(10);
-    Call3(Func_02003a6a, 24, 124, 0x149);
+    Actor_WalkTo(24, 124, 0x149);
     Func_02003a80(23);
-    Func_02003a98(23, 1);
+    Actor_SetAnimation(23, 1);
     Func_02003b12(23, walk_speed, 0);
-    Func_02003a98_a(24);
+    Actor_WaitForMove(24);
     Func_02003ab0(24, 1);
     Value3(Func_02003b2a, 24, walk_speed, 0);
     Func_02003afa(25, 0);
@@ -178,8 +172,8 @@ void FieldScene_RunGroupChoreography(void)
     Func_02003a06(record, 1);
     Call3(Func_02003ad0, 25, 0, 0x14b0000);
     Call3(Func_02003a92, 25, 0x13333, 0x9999);
-    Call3(Func_02003ad4_a, 25, 37, 0x153);
-    Func_02003a6a_a(20);
+    Actor_WalkToAndWait(25, 37, 0x153);
+    Event_Wait(20);
     Func_02003b02(23, 3);
     Value2(Func_02003b54, 23, 0);
     Call3(Func_02003b90, 25, 0x101, 0);

@@ -1,3 +1,5 @@
+/* 2026-09-24: 7 differing halfwords (from 8) after a do-while wrap and
+   statement-swap sweep; the do-while wraps are search artefacts. */
 #include "TYPES.H"
 #include "TBS_EDITION.H"
 
@@ -23,7 +25,7 @@ void UiTimedNotice_Create(void)
     u16 *field;
 
     base = Data_03001ebc;
-    x = 8;
+    do { x = 8; } while (0);
     y = 8;
     resource = Func_0808a5d0(Data_02000240[224], Data_02000240[225])
              + RENDER_RESOURCE_BASE;

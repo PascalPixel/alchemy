@@ -1,3 +1,15 @@
+/* Draft, not exact (2026-09-24): candidate=1796 reference=1796 differing_halfwords=796. Constants the reference loads from
+   the literal pool are spelled as link-time Value_ symbols, which restores
+   the reference size; wraps marked FAKEMATCH only move scheduling. */
+#include "TYPES.H"
+extern u8 Value_00000200;
+extern u8 Value_00008000;
+extern u8 Value_00000100;
+extern u8 Value_00000300;
+extern u8 Value_00007c00;
+extern u8 Value_000003e0;
+extern u8 Value_0000f800;
+extern u8 Value_00000600;
 #include "video_dma_family.h"
 #include "IWRAM_CALL.H"
 
@@ -105,7 +117,7 @@ void Graphics_TransformPaletteBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
 
     if (mode < 0x8000) {
         *dst++ = mode & 0x7c00;
-        *dst++ = (mode & 0x03e0) << 5;
+        *dst++ = (mode & (s32)&Value_000003e0) << 5;
         *dst++ = (mode & 0x001f) << 10;
         StartDmaTransfer(dst - 3, dst, (((cnt - 1) * 6) >> 1) | 0x80000000);
     } else if (mode < 0x100000) {
@@ -270,7 +282,7 @@ void Graphics_TransformPaletteBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
         for (i = 0; i < cnt; i++) {
             c = *src++;
             v = divide(((c << 11) & 0xf800) + ((c << 7) & 0x1f000) +
-                           (c & 0x7c00),
+                           (c & (s32)&Value_00007c00),
                        96);
             r = tint_r * v;
             g = tint_g * v;
@@ -314,7 +326,7 @@ void Graphics_TransformPaletteBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
         }
     } else {
         if (half == 2) {
-            mode += 0x600;
+            mode += (s32)&Value_00000600;
         }
         StartDmaTransfer((const void *)mode, dst, ((cnt * 6) >> 2) | 0x84000000);
     }

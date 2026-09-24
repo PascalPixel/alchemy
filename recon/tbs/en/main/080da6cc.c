@@ -1,4 +1,18 @@
+/* Draft, not exact (2026-09-24): candidate=1192 reference=1192 differing_halfwords=534. Constants the reference loads from
+   the literal pool are spelled as link-time Value_ symbols, which restores
+   the reference size; wraps marked FAKEMATCH only move scheduling. */
 #include "TYPES.H"
+extern u8 Value_00007828;
+extern u8 Value_00001010;
+extern u8 Value_000077ac;
+extern u8 Value_000077b0;
+extern u8 Value_00000480;
+extern u8 Value_00007780;
+extern u8 Value_00007784;
+extern u8 Value_00000100;
+extern u8 Value_0000031f;
+extern u8 Value_000077a8;
+extern u8 Value_00007824;
 #include "BATTLE_EFX.H"
 
 /*
@@ -140,10 +154,10 @@ void Func_080da6cc(void *object)
         star++;
     } while (n != 64);
 
-    M2C_FIELD(work, s32 *, 0x77AC) = 0;
+    M2C_FIELD(work, s32 *, (s32)&Value_000077ac) = 0;
     M2C_FIELD(work, s32 *, 0x77B0) = 0;
     Func_080041d8((void *) 0x080D6505, 0x480);
-    M2C_FIELD(work, s32 *, 0x7780) = 2;
+    M2C_FIELD(work, s32 *, (s32)&Value_00007780) = 2;
     M2C_FIELD(work, s32 *, 0x7784) = 0x4B;
     Func_080041d8((void *) 0x080CD261, 0x480);
 
@@ -155,7 +169,7 @@ void Func_080da6cc(void *object)
         do {
             s32 variant;
 
-            M2C_FIELD(work, s32 *, 0x77AC) =
+            M2C_FIELD(work, s32 *, (s32)&Value_000077ac) =
                 ((u32) (frame - 17) <= 62) ? 256 : 0;
 
             variant = M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 0x18);
@@ -194,7 +208,7 @@ void Func_080da6cc(void *object)
                                 screen[2] = 160;
                             }
                             if (dist > 799) {
-                                screen[2] = 799;
+                                screen[2] = (s32)&Value_0000031f;
                                 dist = 799;
                             }
                             size = 10 - ((dist - 160) / 64);
@@ -311,7 +325,7 @@ void Func_080da6cc(void *object)
             }
 
             if (M2C_FIELD(work, s32 *, 0x77B0) == 0) {
-                M2C_FIELD(work, s32 *, 0x77B0) = 1;
+                M2C_FIELD(work, s32 *, (s32)&Value_000077b0) = 1;
             }
             Func_080e155c(8, 8);
             Func_080cd52c();
@@ -321,7 +335,7 @@ void Func_080da6cc(void *object)
             frame++;
         } while (frame != (
             (Data_080eea41[
-                M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 0x18)] >> 1)
+                M2C_FIELD(M2C_FIELD(work, void **, (s32)&Value_00007828), s32 *, 0x18)] >> 1)
             + 132));
     }
 

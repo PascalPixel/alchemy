@@ -1,4 +1,18 @@
+/* Draft, not exact (2026-09-24): candidate=1036 reference=1036 differing_halfwords=418. Constants the reference loads from
+   the literal pool are spelled as link-time Value_ symbols, which restores
+   the reference size; wraps marked FAKEMATCH only move scheduling. */
 #include "TYPES.H"
+extern u8 Value_00007828;
+extern u8 Value_00000100;
+extern u8 Value_00001000;
+extern u8 Value_00007780;
+extern u8 Value_00007784;
+extern u8 Value_00000480;
+extern u8 Value_0000aaab;
+extern u8 Value_00005555;
+extern u8 Value_00000600;
+extern u8 Value_00007080;
+extern u8 Value_00007824;
 #include "EFFECT_STEP.H"
 #include "BATTLE_EFX.H"
 
@@ -175,7 +189,7 @@ loop_11:
                     M2C_FIELD(var_r5_253, s32 *, 0x10) =
                         vector_work.position[1] + vector_work.projected[1] + 0x10;
                     var_r7_258 += 1;
-                    sp14 += 0x5555;
+                    sp14 += (s32)&Value_00005555;
                     var_r5_253 += 0x1C;
                 } while (var_r7_258 != 3);
                 sp1C = sp10;

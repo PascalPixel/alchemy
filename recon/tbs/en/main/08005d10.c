@@ -1,3 +1,12 @@
+/* Draft, not exact (2026-09-24): candidate=350 reference=350 differing_halfwords=94. Constants the reference loads from
+   the literal pool are spelled as link-time Value_ symbols, which restores
+   the reference size; wraps marked FAKEMATCH only move scheduling. */
+#include "TYPES.H"
+extern u8 Value_0000ff3f;
+extern u8 Value_00008000;
+extern u8 Value_00001000;
+extern u8 Value_00002000;
+extern u8 Value_00004003;
 #include "serial_runtime_family.h"
 #include "DMA.H"
 
@@ -10,7 +19,7 @@ void Func_08005d10(void)
     volatile u16 *ime_reg;
 
     interrupt_enable = REG_IME;
-    ime_reg = &REG_IME;
+    do { ime_reg = &REG_IME; } while (0); /* FAKEMATCH */
     *ime_reg = (u32)ime_reg;
     Func_0800307c(7, 0, Func_08006240);
     Func_0800307c(6, 0, Func_08006240);
@@ -22,7 +31,7 @@ void Func_08005d10(void)
     if ((REG_IF & 0x40) != 0)
         REG_IF = 0x40;
 
-    REG_RCNT = 0x8000;
+    REG_RCNT = (s32)&Value_00008000;
     REG_RCNT = 0;
     REG_SIOCNT = 0x1000;
     REG_RCNT = 0;
@@ -43,7 +52,7 @@ void Func_08005d10(void)
 
     REG_IME = 0;
     REG_IE |= 0x80;
-    REG_IME = 1;
+    do { REG_IME = 1; } while (0); /* FAKEMATCH */
     *(volatile u16 *)ADDR_03001CB0 = 1;
     *(u8 *)0x020023a0 = 0;
     SERIAL_ACTIVE_A = 0;

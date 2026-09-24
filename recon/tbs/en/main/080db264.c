@@ -1,4 +1,24 @@
+/* Draft, not exact (2026-09-24): candidate=1124 reference=1124 differing_halfwords=490. Constants the reference loads from
+   the literal pool are spelled as link-time Value_ symbols, which restores
+   the reference size; wraps marked FAKEMATCH only move scheduling. */
 #include "TYPES.H"
+extern u8 Value_00007828;
+extern u8 Value_00000100;
+extern u8 Value_0000060e;
+extern u8 Value_00001000;
+extern u8 Value_000003ff;
+extern u8 Value_00007fff;
+extern u8 Value_00004000;
+extern u8 Value_00007000;
+extern u8 Value_00000400;
+extern u8 Value_00007780;
+extern u8 Value_00007784;
+extern u8 Value_00000480;
+extern u8 Value_00000b40;
+extern u8 Value_000001ff;
+extern u8 Value_000077a8;
+extern u8 Value_00000800;
+extern u8 Value_00007824;
 #include "BATTLE_EFX.H"
 
 #define FIELD(p, type, off) (*(type *)((u8 *)(p) + (off)))
@@ -187,7 +207,7 @@ void Func_080db264(void *object)
             member_frame = 4;
             while (member != FIELD(FIELD(work, void *, 0x7828), s32, 20)) {
                 if (frame == member_frame)
-                    Func_080d6888(FIELD(FIELD(work, void *, 0x7828), s16, member_offset), 7, 5, member, 10);
+                    Func_080d6888(FIELD(FIELD(work, void *, (s32)&Value_00007828), s16, member_offset), 7, 5, member, 10);
                 member++;
                 member_offset += 2;
                 member_frame += 4;

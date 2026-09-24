@@ -2,35 +2,7 @@
 
 #define NULL ((void *)0)
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
-#define SceneState_SetValue14Mode23 Func_02000030
-#define SceneState_SetWorkByte22bTo3 Func_02000388
-#define SceneState_SetByte22bTo3 Func_020003b4
-#define SceneState_ApplyRectAndSetActor9Byte55 Func_020004cc
-#define SceneState_ApplyRectAndLowerActor9 Func_020005ac
-#define SceneActor_AdjustSlot12AndSetFlag204 Func_02000650
-#define SceneState_ForwardByRuntimeSelector Func_02002ce0
-#define SceneState_SetWorkspaceHalfword382To1018 Func_02003410
 #define CalculateFacingAngle Func_02003afa
-#define OverlayObject_UpdateFacingTowardTarget Func_02000040
-#define SceneActor_CopyActor8PositionWithFixedY Func_02000098
-#define SceneActor_UpdateSlot10ByTileX Func_0200040c
-#define SceneActor_RaiseSlot9StepA Func_0200050c
-#define SceneActor_RaiseSlot9StepB Func_0200055c
-#define SceneActor_RaiseSlot11AndSetFlag201 Func_020005fc
-#define SceneActor_ClearCollisionFlagAndPlaceMarker Func_02003460
-#define OverlayObject_IntegrateAndDamp Func_020000bc
-#define SceneData_SelectTableByWord224 Func_020000e4
-#define SceneData_SelectTableC80cOrC83c Func_020001c8
-#define SceneData_GetTableC85c Func_02000204
-#define SceneData_SelectDataByRuntimeSelector Func_0200020c
-#define SceneState_SetByte22bTo3AndSend51 Func_020003e0
-#define ActorPresentation_SetCellAndLowerActorEight Func_0200047c
-#define SceneActor_SetActor10Byte23To3 Func_02000c74
-#define SceneActor_SetActor10Byte23To1 Func_02000c88
-#define SceneActor_SetMode3AndRate4ccc Func_02002a10
-#define SceneActor_SetActor8ModeByCounterBit Func_02002ffc
-#define SceneActor_SetActor12ModeByActorZeroHeight Func_02003428
-#define SceneState_SetDispcntBit9ByThreshold Func_020006a0
 #define BattleRuntime_Reset_1() Value0(Func_02006a84)
 #define ObjectMotion_SetSpeedLimitAndAcceleration_1(a0, a1) Call2(Func_02006b94, a0, a1)
 #define ObjectMotion_PlaceWithinCameraBounds_1(a0, a1, a2, a3) Call4(Func_02006bae, a0, a1, a2, a3)
@@ -49,33 +21,6 @@
 #define SharedWorkData_SetFirstAndSecondFields_1(a0, a1) Call2(Func_02006c72, a0, a1)
 #define BattleEffect_ComputeWeightedResultAndDispatch_1(a0, a1) Call2(Func_02006c6a_a, a0, a1)
 #define WORK_BYTE_22B (Data_02000240[0x22B])
-#define FieldScene_RunEarlySequence Func_020006dc
-#define FieldScene_RunScene3a4SequenceB Func_020009ec
-#define FieldScene_RunScene3a4SequenceA Func_02000a94
-#define FieldScene_RunLine1528Sequence Func_02000b0c
-#define FieldScene_RunScene3a4SequenceC Func_02000b3c
-#define FieldScene_RunScene3a4SequenceD Func_02000bd8
-#define FieldScene_RunScene3a4_02000c9c Func_02000c9c
-#define FieldScene_RunSharedSetPiece Func_02000ec0
-#define FieldScene_RunScene3a4_02001398 Func_02001398
-#define FieldScene_RunScene3a4_02002310 Func_02002310
-#define FieldScene_RunScene3a4_02002428 Func_02002428
-#define FieldScene_RunScene3a4_02002490 Func_02002490
-#define FieldScene_RunScene3a4_020025c0 Func_020025c0
-#define FieldScene_RunScene3a4_020026c0 Func_020026c0
-#define FieldScene_RunScene3a4_02002934 Func_02002934
-#define FieldScene_RunScene3a4_020029dc Func_020029dc
-#define FieldScene_RunScene3a4SequenceG Func_02002be0
-#define FieldScene_RunOpeningAuxiliarySequence Func_02002d58
-#define FieldScene_RunScene3a4SequenceF Func_02002e1c
-#define FieldScene_RunScene3a4SequenceE Func_02002e84
-#define FieldScene_RunLateAuxiliarySequence Func_02002f10
-#define FieldScene_RunValue1528Scene Func_02000a64
-#define SceneState_StoreParamsAndInstallTask Func_02002bb0
-#define SceneEffect_SpawnObject222 Func_02002b58
-#define FieldScene_RunActorTenFourStepSequence Func_02002d08
-#define SceneAudio_PlayCue183EverySixtyTicks Func_02002eec
-#define SceneState_SetRecordWord102AndPlayCue288 Func_02003724
 #define BattleRuntime_Reset_1_02003028(args...) Func_02006b9c(args)
 #define ObjectMotion_SetHorizontalPositionWithTerrain_1(a0, a1, a2) Call3(Func_02006c22, a0, a1, a2)
 #define ObjectMotion_SetHorizontalPositionWithTerrain_2(a0, a1, a2) Call3(Func_02006c30, a0, a1, a2)
@@ -172,7 +117,6 @@
 #define BattleRuntime_ScheduleShoulderButtonModeUpdate_1(args...) Func_02006f42(args)
 #define SCENE_PHASE (*(s32 *)(work + 0x1c0))
 #define SCENE_FIELD_1C8 (*(s32 *)(work + 0x1c8))
-#define RunEventScript01 Func_02003028
 
 #include "FACING_OBJECT.H"
 #include "FIELD_EVENT.H"

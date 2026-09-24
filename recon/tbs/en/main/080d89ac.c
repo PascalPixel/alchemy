@@ -1,3 +1,20 @@
+/* Draft, not exact (2026-09-24): candidate=2024 reference=2024 differing_halfwords=947. Constants the reference loads from
+   the literal pool are spelled as link-time Value_ symbols, which restores
+   the reference size; wraps marked FAKEMATCH only move scheduling. */
+#include "TYPES.H"
+extern u8 Value_00007828;
+extern u8 Value_00000100;
+extern u8 Value_00001000;
+extern u8 Value_00000200;
+extern u8 Value_00007780;
+extern u8 Value_00007784;
+extern u8 Value_00000480;
+extern u8 Value_00000139;
+extern u8 Value_0000013a;
+extern u8 Value_0000027a;
+extern u8 Value_00000700;
+extern u8 Value_00007824;
+extern u8 Value_00000800;
 #include "shared-aggregates.h"
 #include "BATTLE_EFX.H"
 
@@ -374,9 +391,9 @@ loop_90:
                                 var_r3_825 = 0x13A;
                                 M2C_FIELD(&sp68, s32 *, 8) = 0x13A;
                             }
-                            if (var_r3_825 > 0x27A) {
+                            if (var_r3_825 > (s32)&Value_0000027a) {
                                 M2C_FIELD(&sp68, s32 *, 8) = 0x27A;
-                                var_r3_825 = 0x27A;
+                                var_r3_825 = (s32)&Value_0000027a;
                             }
                             var_r2_839 = var_r3_825 + 0xFFFFFEC6;
                             if (var_r2_839 < 0) {

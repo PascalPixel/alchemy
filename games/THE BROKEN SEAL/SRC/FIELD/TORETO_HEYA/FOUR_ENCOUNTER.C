@@ -1,6 +1,5 @@
 #include "TYPES.H"
 
-#define SetEffectRecordMode Func_02000030
 #define NULL ((void *)0)
 #define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 #define AcquireOverlayObject      Func_02001aca
@@ -10,38 +9,6 @@
 #define CreateOverlayObject Func_02001b22
 #define SetOverlayObjectMode Func_02001b7c
 #define SetOverlayObjectSlot Func_02001c2c
-#define OverlayObject_PrepareSpawnedObject Func_02000048
-#define OverlayObject_CreateConfigured Func_020000a0
-#define SceneData_GetTablea5cc Func_02000314
-#define SceneData_GetTablea9d4 Func_0200031c
-#define SceneData_GetTableaa14 Func_02000324
-#define SceneData_GetTableaa58 Func_0200032c
-#define SceneData_GetTableAae8 Func_02000694
-#define FieldScene_RunStep200 Func_02000494
-#define FieldScene_RunStep201 Func_020004a8
-#define FieldScene_RunStep202 Func_020004c0
-#define FieldScene_RunStep203 Func_020004d8
-#define FieldScene_RunStep204 Func_020004f0
-#define FieldScene_RunStep205 Func_02000504
-#define FieldScene_RunStep206 Func_0200051c
-#define FieldScene_RunStep207 Func_02000534
-#define FieldScene_RunStep208 Func_0200054c
-#define FieldScene_RunStep209 Func_02000560
-#define FieldScene_RunStep20a Func_02000578
-#define FieldScene_RunStep20b Func_02000590
-#define FieldScene_RunStep20c Func_020005a8
-#define FieldScene_RunStep20d Func_020005bc
-#define FieldScene_RunStep20e Func_020005d4
-#define FieldScene_RunStep20f Func_020005ec
-#define FieldScene_RunStep210 Func_02000604
-#define FieldScene_RunStep211 Func_02000618
-#define FieldScene_RunStep212 Func_02000630
-#define FieldScene_RunStep213 Func_02000648
-#define FieldScene_RunStep214 Func_02000660
-#define SceneState_ClearStoryVariantWhenIdle Func_02000674
-#define SceneState_ApplyRectsByFlag844 Func_02000f58
-#define FieldScene_RunFourActorEncounter Func_02000918
-#define SceneEffect_RegisterPaletteFadeCallback Func_0200184c
 
 #include "CREATE_CONFIGURED_OVERLAY_OBJECT.H"
 #include "CONFIGURED_EFFECT_SPAWN.H"

@@ -1,6 +1,5 @@
 #include "FIELD_EVENT.H"
 
-
 /*
  * Exact 2026-09-23 (1,120 bytes), with two tagged fake matches for the
  * zero stores of the two presentations. Both rise-and-shrink loops of each
@@ -16,11 +15,6 @@ void Func_02004708();
 void Func_02004712();
 s32 Func_0200471a();
 void Func_02004722();
-void Func_0200472c();
-void Func_0200472c_a();
-void Func_0200472c_b();
-s32 Func_02004730();
-s32 Func_02004730_a();
 void Func_0200473e();
 void Func_02004742();
 void Func_02004744();
@@ -43,8 +37,6 @@ void Func_020047de();
 void Func_020047ee();
 void Func_02004804();
 void Func_02004814();
-void Func_0200482c();
-void Func_0200482c_a();
 void Func_02004840();
 void Func_02004846();
 void Func_02004852();
@@ -55,15 +47,9 @@ void Func_02004898();
 void Func_020048a4();
 void Func_020048dc();
 void Func_020048e6();
-void Func_020048f6();
-void Func_020048f6_a();
 void Func_020048fe();
 void Func_02004900();
-struct FieldActor *Func_02004902();
-void Func_02004902_a();
 void Func_0200490e();
-void Func_0200491e();
-void Func_0200491e_a();
 void Func_02004926();
 void Func_0200492e();
 void Func_02004936();
@@ -150,11 +136,11 @@ void FieldScene_RunSanctumRiseAndShrink(void)
         Call4(Func_02004776, 0x11f0000, -1, 0x940000, 1);
         Call3(Func_020046f2, 0, 0x120, 120);
         Func_02004712(0, 0);
-        Func_0200472c(0, 4, 30);
+        Actor_Jump(0, 4, 30);
         Call3(Func_02004722, 16, 0x1200000, 0x780000);
         Call3(Func_02004708, 16, 0x10000, 0x8000);
-        Call3(Func_0200472c_a, 16, 0x114, 136);
-        Call3(Func_02004730, 16, 0x108, 136);
+        Actor_WalkToAndWait(16, 0x114, 136);
+        Actor_WalkTo(16, 0x108, 136);
         Call3(Func_02004744, 0, 0x138, 136);
         Func_02004764(0, 1);
         Func_0200476c(16, 1);
@@ -164,9 +150,9 @@ void FieldScene_RunSanctumRiseAndShrink(void)
             Func_02004864(220);
         }
         Func_02004742(40);
-        if (Value1(Func_02004730_a, 0x819) != 0) {
+        if (GameFlag_IsSet(0x819) != 0) {
         } else {
-            Call6(Func_0200472c_b, 36, 62, 17, 36, 2, 3);
+            Map_CopyCellsTo(36, 62, 17, 36, 2, 3);
             Call6(Func_0200473e, 44, 59, 17, 38, 2, 1);
             Func_0200477c(10);
             Call6(Func_02004756, 38, 62, 17, 36, 2, 3);
@@ -181,11 +167,11 @@ void FieldScene_RunSanctumRiseAndShrink(void)
             Call6(Func_020047ce, 42, 62, 17, 36, 2, 3);
             Call6(Func_020047de, 0, 32, 17, 40, 2, 1);
             Call6(Func_020047ee, 44, 59, 17, 41, 2, 1);
-            Func_0200482c(10);
+            Event_Wait(10);
             Call6(Func_02004804, 0, 32, 17, 41, 2, 1);
             Call6(Func_02004814, 44, 59, 17, 42, 2, 1);
             Func_02004852(10);
-            Call6(Func_0200482c_a, 0, 32, 17, 42, 2, 3);
+            Map_CopyCellsTo(0, 32, 17, 42, 2, 3);
             Func_0200486a(80);
             Func_02004840(9);
             Func_02004846(10);
@@ -193,18 +179,18 @@ void FieldScene_RunSanctumRiseAndShrink(void)
         }
         Func_020048fe(16, 0, 30);
         Func_020048e6(16, 3);
-        Func_020048f6(0, 3);
-        Func_020048f6_a(16, 1);
+        Actor_SetAnimationAndWait(0, 3);
+        Actor_SetAnimation(16, 1);
         base5_8010 = 0x8010;
         Func_02004900(0, 0);
         Call1(Func_02004936, 0x102e);
         Func_020044e6(base5_8010, 6);
-        Func_0200491e(16, 3);
-        Func_0200491e_a(16, 1);
+        Actor_SetAnimationAndWait(16, 3);
+        Actor_SetAnimation(16, 1);
         Func_02004966(base5_8010, 0);
         Func_0200492e(0, 3);
         Func_020048dc(60);
-        actor = Func_02004902(0);
+        actor = Actor_Get(0);
         Call2(Func_020049b4, 0x9999, 0x1333);
         Call4(Func_020049cc, 0x11f0000, -1, 0x720000, 1);
         Call3(Func_02004948, 0, 0x120, 120);
@@ -222,7 +208,7 @@ void FieldScene_RunSanctumRiseAndShrink(void)
         sprite->flags = 0;
         do {
             actor->y.fixed += 0x3333;
-            Call1(Func_02004902_a, 1);
+            Task_Wait(1);
             base5_0++;
         } while (base5_0 != 120);
         Func_02004a94(190);

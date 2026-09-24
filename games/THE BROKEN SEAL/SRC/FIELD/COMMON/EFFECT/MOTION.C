@@ -1,7 +1,7 @@
 #include "EFFECT_STEP.H"
 
-s32 Camera_ProjectPoint(s32, struct EffectPosition *);
-void EffectPosition_ResolveAnimatedAnchor(s32, struct EffectPosition *);
+s32 Render_ProjectPoint(s32, struct EffectPosition *);
+void BattleUnit_ProjectToScreen(s32, struct EffectPosition *);
 void BattleMotion_ProjectScaledPositionFar(s32, struct EffectPosition *);
 void BattleMotion_ProjectPositionFar(s32, struct EffectPosition *);
 
@@ -27,14 +27,14 @@ void EffectStep_AdvanceWithGravity2D(struct EffectStep *step, s32 damping, s32 g
 
 s32 EffectPosition_ApplyBaseAndYOffset(s32 id, struct EffectPosition *position)
 {
-    s32 result = Camera_ProjectPoint(id, position);
+    s32 result = Render_ProjectPoint(id, position);
     position->y = (s32)((u32)position->y - 0x10);
     return result;
 }
 
 void EffectPosition_ApplyAnimationAndYOffset(s32 id, struct EffectPosition *position)
 {
-    EffectPosition_ResolveAnimatedAnchor(id, position);
+    BattleUnit_ProjectToScreen(id, position);
     position->y = (s32)((u32)position->y - 0x10);
 }
 

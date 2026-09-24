@@ -1,6 +1,5 @@
 #include "MAKYURI_HEYA.H"
 
-#define FieldScene_RunColumnChoreography Func_020028b0
 
 void Func_020029b8();
 void Func_020029c4();
@@ -45,7 +44,6 @@ void Func_0200857c();
 void Func_02008580();
 void Func_02008586();
 void Func_02008592();
-void Func_02008592_a();
 void Func_0200859e();
 void Func_020085a2();
 void Func_020085a4();
@@ -58,7 +56,6 @@ void Func_020085ca();
 void Func_020085d0();
 void Func_020085d6();
 s32 Func_020085e6();
-s32 Func_020085e6_a();
 void Func_020085f2();
 void Func_020085f8();
 void Func_02008604();
@@ -101,8 +98,6 @@ void Func_020087b2();
 void Func_020087c2();
 void Func_020087ca();
 void Func_020087ce();
-void Func_020087e6();
-void Func_020087e6_a();
 void Func_020087e8();
 void Func_020087f0();
 void Func_020087fc();
@@ -118,8 +113,6 @@ void Func_0200885a();
 void Func_0200885c();
 void Func_02008862();
 void Func_0200886a();
-void Func_02008870();
-void Func_02008870_a();
 void Func_02008880();
 void Func_02008890();
 void Func_02008894();
@@ -244,7 +237,7 @@ void FieldScene_RunColumnChoreography(void)
         Func_020085aa(20);
         Call3(Func_0200869e, 1, 0xc000, 20);
         Value2(Func_02008696, 1, 0);
-        if (Value2(Func_020085e6_a, 0, 0) == 0) {
+        if (Value2(Engine_EventChooseYesNo, 0, 0) == 0) {
             Func_020085d0(20);
             Func_02008660(1, 3);
             Func_020086c2(1, 0, 20);
@@ -268,10 +261,10 @@ void FieldScene_RunColumnChoreography(void)
         Func_02007b30();
         Func_0200869e_a(50);
         Func_0200885c(131);
-        Call2(Func_020087e6, 0x10000, 0);
-        Call2(Func_020087e6_a, 0x207e9f, 0);
+        Call2(Engine_ColorBufferApplySource, 0x10000, 0);
+        Call2(Engine_ColorBufferApplyTarget, 0x207e9f, 0);
         Func_020087fc(10);
-        Func_02008592_a(1);
+        Engine_TaskWait(1);
         Func_02008880(220);
         Func_0200859e(40);
         Call2(Func_02008808, 0x10000, 0);
@@ -303,7 +296,7 @@ void FieldScene_RunColumnChoreography(void)
         Func_0200885a(1, 3);
         Func_0200886a(2, 3);
         Func_020087e8(20);
-        Func_02008870(1, 2);
+        Engine_ActorSetAnimation(1, 2);
         record = Value1(Func_0200881e_a, 0);
         if (record != 0) {
             Func_02008850(1, *(s16 *)(record + 10), *(s16 *)(record + 18));
@@ -311,7 +304,7 @@ void FieldScene_RunColumnChoreography(void)
         Func_02008890(2, 2);
         record = Value1(Func_0200883e, 0);
         if (record != 0) {
-            Func_02008870_a(2, *(s16 *)(record + 10), *(s16 *)(record + 18));
+            Engine_ActorSetDestination(2, *(s16 *)(record + 10), *(s16 *)(record + 18));
         }
         Func_0200889e(1);
         Func_020088b0(1, 0, 0);

@@ -29,7 +29,9 @@ pub(crate) const MAP: &str = "PROGRESS.png";
 pub(crate) fn chart(letters: &Letters, history: &Value) -> Canvas {
     let days = history["days"].as_array().cloned().unwrap_or_default();
     let models = models_shown(&days);
-    let height = 296 + (legend_rows(letters, &models) - 1) * KEY_ROW;
+    // 16:9 (Pascal, 2026-09-24): the plot grows to fill what the strip and key leave.
+    let height = WIDTH * 9 / 16;
+    let footer = 72 + (legend_rows(letters, &models) - 1) * KEY_ROW;
     let mut canvas = Canvas::new(WIDTH, height, FACE);
     canvas.bevel(0, 0, WIDTH, height, LIGHT, DARK);
     let began = history["began"]
@@ -77,7 +79,7 @@ pub(crate) fn chart(letters: &Letters, history: &Value) -> Canvas {
         .unwrap_or(0)
         + 12;
     let (left, top) = (40, 32);
-    let (right, bottom) = (WIDTH - 8 - label_room, 224);
+    let (right, bottom) = (WIDTH - 8 - label_room, height - footer);
     let (plot_w, plot_h) = (right - left, bottom - top);
     let span = (last - began) as i32;
     let x_of = |day: i64| left + ((day - began) as i32 * (plot_w - 1) + span / 2) / span;
@@ -191,7 +193,7 @@ const MODEL_COLOURS: [(&str, &str); 14] = [
     ("Sol 5.6", "#9fabf5"),
     ("Astra 6", "#c8a6f7"),
     ("Grok 4.6", "#000000"),
-    ("Cursor", "#c6c6c6"),
+    ("Grok", "#000000"),
 ];
 fn model_colour(model: &str) -> &'static str {
     let known = |name: &str| {
@@ -290,17 +292,23 @@ fn models_strip(
     x_of: &dyn Fn(i64) -> i32,
 ) {
     canvas.fill(left - 1, top - 1, right - left + 2, STRIP + 2, DARK);
-    for row in days {
-        let (Some(day), Some(counts)) = (
-            row["date"].as_str().and_then(day_number),
-            row["models"].as_object(),
-        ) else {
-            continue;
-        };
-        // Each column spans halfway to its neighbouring days.
+    // Only days with commits draw; each column reaches halfway to the next
+    // such day on either side, so a day without commits leaves no hole.
+    let present: Vec<(i64, &serde_json::Map<String, Value>)> = days
+        .iter()
+        .filter_map(|row| {
+            let day = row["date"].as_str().and_then(day_number)?;
+            let counts = row["models"].as_object()?;
+            (counts.values().filter_map(Value::as_u64).sum::<u64>() > 0).then_some((day, counts))
+        })
+        .collect();
+    for (index, (day, counts)) in present.iter().enumerate() {
+        let day = *day;
+        let before = index.checked_sub(1).map_or(day - 1, |i| present[i].0);
+        let after = present.get(index + 1).map_or(day + 1, |next| next.0);
         let (from, to) = (
-            ((x_of(day - 1) + x_of(day)) / 2 + 1).max(left),
-            ((x_of(day) + x_of(day + 1)) / 2 + 1).min(right),
+            ((x_of(before) + x_of(day)) / 2 + 1).max(left),
+            ((x_of(day) + x_of(after)) / 2 + 1).min(right),
         );
         let total: u64 = counts.values().filter_map(Value::as_u64).sum();
         let mut below = 0u64;
@@ -664,10 +672,10 @@ mod tests {
             {"date": "2026-09-24", "tbs": {"done": 6486, "executable": 10000}, "tla": {"done": 213, "executable": 10000}, "models": {"Opus 5.5": 3, "Untagged": 1}}
         ]});
         let canvas = chart(&letters, &history);
-        assert_eq!((canvas.width, canvas.height), (838, 296));
+        assert_eq!((canvas.width, canvas.height), (838, 471));
         let gold = super::super::raster::rgb(GOLD);
         let blue = super::super::raster::rgb(BLUE);
-        let column = |x: i32, ink| (0..224).any(|y| canvas.get(x, y) == Some(ink));
+        let column = |x: i32, ink| (0..399).any(|y| canvas.get(x, y) == Some(ink));
         // Gold runs from the first day; blue only from 18 September.
         assert!(column(41, gold));
         assert!(!column(41, blue) && !column(300, blue));
@@ -678,9 +686,9 @@ mod tests {
         let grey = super::super::raster::rgb(model_colour(UNTAGGED));
         let strip = (0..WIDTH)
             .rev()
-            .find(|x| (248..256).any(|y| canvas.get(*x, y) == Some(pink)))
+            .find(|x| (423..431).any(|y| canvas.get(*x, y) == Some(pink)))
             .unwrap();
-        let shades = (248..256).map(|y| canvas.get(strip, y)).collect::<Vec<_>>();
+        let shades = (423..431).map(|y| canvas.get(strip, y)).collect::<Vec<_>>();
         assert_eq!(shades.iter().filter(|c| **c == Some(pink)).count(), 6);
         assert_eq!(shades.iter().filter(|c| **c == Some(grey)).count(), 2);
     }

@@ -9,9 +9,7 @@ extern u8 *Data_03001ebc;
 #define SCENE_SETUP_WORD (*(u32 *)(Data_03001ebc + 0x1c8))
 #define SKIP_BEATS (*(u16 *)(Data_03001ebc + 0x1d8))
 
-void Func_0200187c();
 void Func_020025c4();
-void Func_02002660();
 void Func_02002750();
 void Func_0200290c();
 u8 *Func_0808a080();
@@ -114,16 +112,12 @@ ActorState *Func_020068be(s32 actor_id);
 #include "TYPES.H"
 
 /* Close through scene 8 when facing inward; otherwise select the story line. */
-extern s32 Func_0200657c(void);
 
 #include "TYPES.H"
 
 /* Close scene 8 when facing inward; otherwise choose its story line. */
-extern s32 Func_02006708(void);
 /* Close scene 8 when facing inward; otherwise emit its conditional follow-up. */
-extern s32 Func_02006754(void);
 /* Close scene 8 when facing inward; otherwise emit its fixed story line. */
-extern s32 Func_0200679c(void);
 
 #include "TYPES.H"
 
@@ -135,7 +129,6 @@ extern s32 Func_0200679c(void);
 #define ObjectMotion_SetSpeedParameters_5(a0, a1, a2) Call3_scene_primary_script(Engine_ActorSetSpeed, a0, a1, a2)
 #define ObjectMotion_SetSpeedParameters_6(a0, a1, a2) Call3_scene_primary_script(Engine_ActorSetSpeed, a0, a1, a2)
 #define ObjectMotion_SetSpeedParameters_7(a0, a1, a2) Call3_scene_primary_script(Engine_ActorSetSpeed, a0, a1, a2)
-#define ObjectMotion_SetVariantCallback_1(args...) Func_02005050(args)
 #define BattleEffect_SpawnLinkedResourceObject_1(a0, a1, a2) Call3_scene_primary_script(Engine_ActorShowEmote, a0, a1, a2)
 #define ObjectMotion_ArmCallback_1(a0, a1, a2) Call3_scene_primary_script(Engine_ActorFaceDirection, a0, a1, a2)
 #define BattleRuntime_WaitIfModeZero_19(a0, a1) Call2_scene_primary_script(Engine_ColorBufferApplyTarget, a0, a1)
@@ -254,12 +247,11 @@ extern s32 Func_0200679c(void);
 #define ObjectMotion_ArmCallback_26(a0, a1, a2) Call3_scene_primary_script(Engine_ActorFaceDirection, a0, a1, a2)
 #define ObjectMotion_ArmCallback_27(a0, a1, a2) Call3_scene_primary_script(Engine_ActorFaceDirection, a0, a1, a2)
 #define Engine_ActorFaceDirection(args...) Actor_FaceDirection(args)
-#define ObjectMotion_SetVariantCallback_5_0200290c(a0, a1) Call2_scene_primary_script((void (*)())Func_02005fe8, a0, a1)
-#define ObjectMotion_SetPositionAndReset_10(a0, a1, a2) Call3_scene_primary_script((void (*)())Func_02005fe8_a, a0, a1, a2)
+#define ObjectMotion_SetVariantCallback_5_0200290c(a0, a1) Call2_scene_primary_script((void (*)())Engine_ActorStartRepeatedMotion, a0, a1)
+#define ObjectMotion_SetPositionAndReset_10(a0, a1, a2) Call3_scene_primary_script((void (*)())Engine_ActorWalkToAndWait, a0, a1, a2)
 
 extern s16 Data_02000240[];
 
-void Func_02001d28();
 struct FacingObject *Func_020039e2();
 struct FacingObject *Func_020039f2_b();
 struct FacingObject *Func_02003a20();
@@ -267,7 +259,6 @@ struct FacingObject *Func_02003a40();
 void Func_02003af4();
 void Func_02003c02();
 void Func_020040c0();
-void Func_020042a8();
 void Func_02004d8c();
 struct FacingObject *Func_02005f7e();
 u8 *Func_020051f0();
@@ -282,14 +273,8 @@ u8 *Func_020062a4();
 u8 *Func_0200632a();
 void Func_020064f4();
 void Func_020064fa();
-u8 *Func_02005fe8();
-u8 *Func_02005fe8_a();
 struct FacingObject *Func_02005fe8_b();
-u8 *Func_02005fe8_c();
-u8 *Func_0200632a_a();
 u8 *Func_02006334();
-s32 Func_020065e0();
-void Func_02003790();
 
 /*
  * Each Func_ symbol names the pre-relocation call word the image holds, not
@@ -312,7 +297,6 @@ void Func_02003790();
 
 static __inline__ void Call2_scene_primary_script(void (*f)(), s32 a0, s32 a1)
 {
-    void Func_02005050();
     u8 *Func_02005f9e();
 
     f(a0, a1);
@@ -320,7 +304,6 @@ static __inline__ void Call2_scene_primary_script(void (*f)(), s32 a0, s32 a1)
 
 static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 {
-    void Func_02005050();
     u8 *Func_02005f9e();
 
     f(a0, a1, a2, a3);
@@ -328,7 +311,6 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 
 static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
 {
-    u8 *Func_02005050();
     s32 Func_02005f9e();
 
     return f(a0, a1, a2);
@@ -336,7 +318,6 @@ static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
 
 static __inline__ s32 Value4(s32 (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 {
-    u8 *Func_02005050();
     s32 Func_02005f9e();
 
     return f(a0, a1, a2, a3);
@@ -548,7 +529,6 @@ void FieldScene_RunActorNineFlagDialogueA(void)
 void FieldScene_RunActorNineFlagDialogueB(void)
 {
     void Actor_Stop(s32 id);
-    void Func_020039f2(s32 id, s32 arg1);
 
     Event_Begin();
 
@@ -565,7 +545,7 @@ void FieldScene_RunActorNineFlagDialogueB(void)
     Actor_Stop(9);
     Actor_SetAnimation(9, 1);
     Event_Wait(2);
-    Func_020039f2(9, 0);
+    Event_ShowMessage(9, 0);
     Actor_EnableActionCallback(9, 2);
     Event_End();
 }
@@ -609,7 +589,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
                     Call3_scene_primary_script(Engine_ActorFaceDirection, 8, 0x3000, 0);
                     Actor_WaitForMove(0);
                 }
-                Func_02001d28();
+                FieldScene_RunActorUpdateSequence();
                 ColorBuffer_ApplyTarget(0, 0);
                 ColorBuffer_Interpolate(120);
                 Event_Wait(120);
@@ -626,7 +606,6 @@ void FieldScene_RunSupplementalSequenceOne(void)
 void FieldScene_RunScene378SequenceB(void)
 {
     void Actor_Stop();
-    u8 *Func_020039f2();
 
     u32 i;
     s32 record;
@@ -910,7 +889,7 @@ void FieldScene_RunScriptedSceneSequence(void)
     Event_Wait(0x20);
     Actor_SetChildValue(8, 0);
     Event_Wait(0x1e);
-    Func_02002660();
+    SceneState_ResetObject14Word108();
     Actor_SetAnimation(8, 1);
     Actor_RunRepeatedMotion(8, 2);
     Event_Wait(0x14);
@@ -987,7 +966,7 @@ void FieldScene_RunScriptedSceneSequence(void)
     Event_Wait(0x80);
     Actor_SetChildValue(8, 0);
     Event_Wait(0x1e);
-    Func_02002660();
+    SceneState_ResetObject14Word108();
     Actor_SetAnimation(8, 1);
     Actor_RunRepeatedMotion(8, 2);
     Event_Wait(0x1e);
@@ -1176,7 +1155,7 @@ dialogue:
     Event_Wait(0x14);
     Event_OpenMessage(8, 0);
     if (Event_ChooseYesNo(0, 0) == 0) {
-        Func_0200187c();
+        FieldScene_RunActorUpdateSequence();
         ColorBuffer_ApplyTarget(0, 0);
         ColorBuffer_Interpolate(0x78);
         Event_Wait(0x78);
@@ -1207,7 +1186,6 @@ dialogue:
 
 void FieldScene_RunActorUpdateSequence(void)
 {
-    void Func_02005050();
     u8 *Func_02005f9e();
 
     u32 i;
@@ -1251,7 +1229,7 @@ void FieldScene_RunActorUpdateSequence(void)
     Event_ShowMessage(1, 0);
     Event_Wait(20);
     Actor_FaceActor(12, 1, 0);
-    ObjectMotion_SetVariantCallback_1(12, 2);
+    Actor_StartRepeatedMotion(12, 2);
     BattleEffect_SpawnLinkedResourceObject_1(12, 0x103, 0);
     Event_Wait(60);
     Event_ShowMessage(12, 0);
@@ -1332,7 +1310,7 @@ void FieldScene_RunActorUpdateSequence(void)
     BattleRuntime_WaitIfModeZero_30(0x10000, 0);
     ColorBuffer_Interpolate(60);
     Event_Wait(120);
-    Func_020042a8();
+    SceneState_ResetObject14Word108();
     Actor_SetAnimation(8, 1);
     Audio_PlayCue(2);
     Event_Wait(60);
@@ -1653,7 +1631,6 @@ void SceneEffect_StepEllipseOrbit(u8 *obj)
 
 void FieldScene_RunPairedActorChoreography(void)
 {
-    u8 *Func_02005050();
     struct FacingObject *Func_02005f9e();
 
     ObjectMotion_SetSpeedParameters_1_0200290c(0, 0x18000, 0xc000);
@@ -1679,7 +1656,7 @@ void FieldScene_RunPairedActorChoreography(void)
     Actor_Jump(1, 2, 0);
     Event_Wait(15);
     Actor_FaceActor(1, 8, 0);
-    Call1((void (*)())Func_02005fe8_c, 5); /* main:0808a080 */
+    Call1((void (*)())Engine_EventWait, 5); /* main:0808a080 */
     Actor_Jump(1, 2, 0);
     Event_Wait(25);
     Actor_RunRepeatedMotion(1, 2);
@@ -1776,7 +1753,7 @@ void FieldScene_RunPairedActorChoreography(void)
     *(s32 *)(Scene_GetRecord_11(8) + 108) = 0;
     ObjectMotion_SetVariantCallback_1_0200290c(8, 2);
     BattleEffect_SpawnLinkedResourceObject_3_0200290c(8, 0x100, 0);
-    Call1((void (*)())Func_0200632a_a, 60); /* main:0808a080 */
+    Call1((void (*)())Engine_EventWait, 60); /* main:0808a080 */
     Actor_SetAnimation(8, 0);
     BattleEffect_SpawnLinkedResourceObject_4_0200290c(0, 0x102, 0);
     Event_Wait(60);
@@ -1904,7 +1881,7 @@ s32 IsActorFacingInward(void)
 
 void FieldScene_RunActorEightFacingDialogue(void)
 {
-    if (Func_0200657c() != 0) {
+    if (IsActorFacingInward() != 0) {
         Sanctum_Open(8);
         return;
     }
@@ -1925,7 +1902,7 @@ void FieldScene_DispatchBySceneId(void)
     s16 *tbl;
     s32 no;
 
-    if (Func_020065e0() != 0) {
+    if (IsActorFacingInward() != 0) {
         Sanctum_Open(8);
         return;
     }
@@ -1951,7 +1928,7 @@ void FieldScene_DispatchBySceneId(void)
     case 21:
     case 50:
         Event_End();
-        Func_02003790();
+        FieldScene_RunSupplementalSequenceOne();
         return;
     default:
         break;
@@ -1963,7 +1940,7 @@ void FieldScene_DispatchBySceneId(void)
 
 void SceneDialogue_RunActorEightFlaggedDialogue(void)
 {
-    if (Func_02006708() != 0) {
+    if (IsActorFacingInward() != 0) {
         Sanctum_Open(8);
         return;
     }
@@ -1979,7 +1956,7 @@ void SceneDialogue_RunActorEightFlaggedDialogue(void)
 
 void SceneDialogue_RunActorEightFollowupDialogue(void)
 {
-    if (Func_02006754() != 0) {
+    if (IsActorFacingInward() != 0) {
         Sanctum_Open(8);
         return;
     }
@@ -1994,7 +1971,7 @@ void SceneDialogue_RunActorEightFollowupDialogue(void)
 
 void SceneDialogue_RunActorEightDialogue(void)
 {
-    if (Func_0200679c() != 0) {
+    if (IsActorFacingInward() != 0) {
         Sanctum_Open(8);
         return;
     }

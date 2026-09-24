@@ -67,18 +67,13 @@ extern u8 Data_02009d9c[];
 extern u8 Data_03001ebc[];
 
 void Func_02001d58(void);
-void Func_020005c2(void);
-void Func_02000764(void);
-void Func_020012b4(void);
 void Func_020015a0(void);
-u8 *Func_020019b0();
 void Func_020019c8();
 void Func_020018b8();
 s32 Func_02001910();
 s32 Func_02001918();
 void Func_020012f4();
 void Func_020019d0();
-void Func_0200172c();
 struct PaletteEffect *Func_02002b84(s32, s32, s32, s32);
 void Func_02002be4(struct PaletteEffect *, s32, s32, s32);
 void Func_02002b7a(s32);
@@ -89,7 +84,6 @@ s32 Func_020030b0();
 s32 Func_020030b8();
 struct PaletteSceneRecord *Func_020030bc();
 void Func_02002fa6();
-u16 Func_02002f6c(u16, s32);
 void Func_0200302a();
 void Func_0200300e();
 void Func_02001462();
@@ -98,15 +92,15 @@ void Func_0200148c();
 s32 Func_020014a2();
 s32 Func_02001b2c();
 void Func_02001c3a();
-s32 Func_02001ca2();
 void Func_02001cea();
 s32 Func_02001d04();
-u8 *Func_02001d92();
 void Func_02001ebc();
 
 /* One symbol per call site, named at the site's decoded address. All three
  * reach the same helper, which scales one channel by the adjustment, and each
  * site still needs its own name. */
+
+void PaletteScene_AdvanceTransition(void);
 
 static __inline__ void Call1(void (*f)(), s32 a0)
 {
@@ -295,9 +289,9 @@ void PaletteScene_RunFlaggedBranch(void)
     Event_Begin();
     Func_02001d58();
     if (GameFlag_IsSet(0x844) == 0) {
-        Func_020005c2();
+        RunEventScript01();
     } else {
-        Func_02000764();
+        PaletteScene_RunActorTransitionSequence();
     }
     Event_End();
 }
@@ -309,7 +303,7 @@ void RunEventScript01(void)
     u32 i;
     s32 rec8;
 
-    rec8 = Func_02001ca2(0);
+    rec8 = Actor_Get(0);
     Value3(Engine_ActorFaceDirection, 0, 0xc000, 0);
     ColorBuffer_ApplyTarget(0x406218, 1);
     ColorBuffer_Interpolate(20);
@@ -342,7 +336,7 @@ void RunEventScript01(void)
     Task_Wait(40);
     *(s32 *)(rec8 + 68) = 0x4000;
     {
-        u8 *record = Func_02001d92(0);
+        u8 *record = Actor_Get(0);
         u8 flags = record[90] | 1;
 
         record[90] = flags;
@@ -391,11 +385,11 @@ void PaletteScene_RunActorTransitionSequence(void)
     Message_ShowCentered(0x14ed, 1);
     Actor_SetSpeed(1, 0x10000, 0x8000);
     Actor_SetSpeed(2, 0x10000, 0x8000);
-    object = Func_020019b0(0);
+    object = Actor_Get(0);
     if (object != 0) {
         Actor_SetPosition(1, *(s32 *)(object + 8), *(s32 *)(object + 16));
     }
-    object = Func_020019b0(0);
+    object = Actor_Get(0);
     if (object != 0) {
         Actor_SetPosition(2, *(s32 *)(object + 8), *(s32 *)(object + 16));
     }
@@ -403,7 +397,7 @@ void PaletteScene_RunActorTransitionSequence(void)
     Actor_EnableActionCallback(2, SceneAction_ActorTwoEntry);
     if (actorThreeEnabled != 0) {
         Actor_SetSpeed(3, 0x10000, 0x8000);
-        object = Func_020019b0(0);
+        object = Actor_Get(0);
         if (object != 0) {
             Actor_SetPosition(3, *(s32 *)(object + 8), *(s32 *)(object + 16));
         }
@@ -416,7 +410,7 @@ void PaletteScene_RunActorTransitionSequence(void)
     Task_Wait(40);
     transitionState = &Data_02009dd4;
     *transitionState = 0;
-    Value2(Func_02001910, (s32)Func_020012b4, 0xc80);
+    Value2(Func_02001910, (s32)PaletteScene_AdvanceTransition, 0xc80);
     Event_Wait(40);
     Actor_FaceDirection(1, 0x6000, 20);
     Camera_SetSpeed(0x33333, 0x6666);
@@ -439,7 +433,7 @@ void PaletteScene_RunActorTransitionSequence(void)
             Task_Wait(1);
         } while (*transitionState != 24);
     }
-    Value1(Func_02001918, (s32)Func_020012b4);
+    Value1(Func_02001918, (s32)PaletteScene_AdvanceTransition);
     Task_Wait(10);
     cycle = 0;
     do {
@@ -746,7 +740,7 @@ void PaletteScene_RunActorTransitionSequence(void)
     Actor_SetAnimationAndWait(0, 3);
     GameFlag_Set(0x845);
     Audio_PlayCue(1);
-    Func_0200172c(184, 185);
+    PaletteScene_SetRecordValue(184, 185);
 }
 
 s32 PaletteScene_AdvanceEffectFrame(struct PaletteEffectFrame *frame)
@@ -874,7 +868,7 @@ void PaletteScene_AdjustPaletteWindow(s32 adjustment)
         if ((u32)(phase + 0xffef0000) > 0x60000) {
             second_window = (index + 0xff3f) << 16;
             if (second_window > 0x70000)
-                palette[index] = Func_02002f6c(palette[index], adjustment);
+                palette[index] = PaletteScene_AdjustColor(palette[index], adjustment);
         }
         next_phase = phase + 0x10000;
         phase = next_phase;

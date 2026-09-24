@@ -80,57 +80,30 @@ s32 Func_02004d98();
 s32 Func_02004de0();
 s32 Func_02004e40();
 s32 Func_02004d38();
-void Func_02001c00();
-void Func_020046f0();
-void Func_0200470a();
-void Func_02004724();
-void Func_02004740();
-void Func_0200474e();
-void Func_0200475e();
 void Func_02004764();
-void Func_0200477a();
-void Func_02004790();
 void Func_02004796();
-void Func_020047aa();
-void Func_020047b8();
 void Func_020047da();
-void Func_0200480a_a();
-void Func_0200480a_b();
-void Func_02004822();
-void Func_0200484a();
-s32 Func_02004868();
-void Func_02004880();
-void Func_02004896();
 void Func_0200489c();
-void Func_020048d2();
-void Func_020048fa();
 void Func_0200497e();
 void Func_02004a04();
 void Func_02005114();
 u8 *Func_020052d2();
 u8 *Func_02005336();
 s32 Func_02005342();
-void Func_020023b0();
-void Func_02004afe();
 s32 Func_020053dc();
 s32 Func_02005400();
 s32 Func_0200542e();
 u8 *Func_0200544e();
 void Func_02005510();
-void Func_020024d8();
-void Func_02004c26();
 s32 Func_02005504();
 s32 Func_02005528();
 s32 Func_02005556();
 u8 *Func_02005576();
 void Func_02005638();
-void Func_02001f0a();
-void Func_02005b02();
 void Func_02005b62();
 u8 *Func_02005ba0();
 s32 Func_02005bac();
 u8 *Func_02005bce();
-void Func_02005bac_a();
 void Func_02005c26();
 u8 *Func_02005c64();
 u8 *Func_02005c76();
@@ -147,18 +120,10 @@ void Func_02006b1a(s32, s32, s32);
 void Func_02006b24(s32, s32, s32);
 void Func_02006b2e(s32, s32, s32);
 void Func_02006b38(s32, s32, s32);
-s32 *Func_02007aac_a();
 s32 *Func_02007aac_b();
-void Func_02006ae4(s32);
-void Func_02006aea(s32);
-void Func_02006af0(s32);
 s32 *Func_02007a90(s32);
 s32 *Func_02007aa0(s32);
 s32 *Func_02007ab8(s32);
-void Func_02006b38_a(s32);
-void Func_02006b3e(s32);
-void Func_02006b44(s32);
-void Func_02006b4a(s32);
 s32 *Func_02007adc(s32);
 s32 *Func_02007ae6(s32);
 s32 *Func_02007aee(s32);
@@ -167,7 +132,6 @@ s32 *Func_02007b08(s32);
 s32 *Func_02007b14(s32);
 s32 *Func_02007b20(s32);
 s32 *Func_02007b2c_a();
-s32 *Func_02007b2c_b();
 s32 *Func_02007b38(s32);
 void Func_02007c44(s32, s32);
 void Func_02007c4c(s32, s32);
@@ -184,14 +148,6 @@ u8 *Func_02007bb4(s32);
 u8 *Func_02007bbe(s32);
 u8 *Func_02007bc8(s32);
 u8 *Func_02007bd2(s32);
-void Func_02006eda(s32, s32, s32);
-void Func_02006ee4(s32, s32, s32);
-void Func_02006eee(s32, s32, s32);
-void Func_02006ef8(s32, s32, s32);
-void Func_02006f02(s32, s32, s32);
-void Func_02006f0c(s32, s32, s32);
-void Func_02006f16(s32, s32, s32);
-void Func_02006f20(s32, s32, s32);
 u8 *Func_02005abe(s32);
 u8 *Func_02005ad8(s32);
 u8 *Func_02005af6(s32);
@@ -205,23 +161,15 @@ void Func_02005e5e();
 s32 Func_02005e90();
 s32 Func_02005ee4();
 s32 Func_02005efc();
-void Func_020027fa();
 void Func_020056ac();
 void Func_02006012(s32);
 s32 Func_02006036(s32);
-void Func_0200576e(s32, s32);
-void Func_020036be();
 void Func_02006476();
 s32 Func_02006480_a();
 s32 Func_02006480_b();
-void Func_020064bc();
-void Func_020064ca();
-void Func_02006502();
 void Func_02006cda();
 u8 *Func_02006d1a();
 u8 *Func_02006d2c();
-void Func_0200661a();
-void Func_02006652();
 void Func_02006e96();
 s32 Func_02006e9a();
 s32 Func_02006ec0();
@@ -231,22 +179,10 @@ u8 *Func_02007596(s32);
 u8 *Func_020075a2(s32);
 u8 *Func_020075ac(s32);
 u8 *Func_020075b6(s32);
-void Func_02006634(s32);
-void Func_0200663a(s32);
-void Func_02006640(s32);
-void Func_02006646(s32);
-void Func_0200664c(s32);
-void Func_02006652_a(s32);
-void Func_02006658(s32);
-void Func_0200665e(s32);
 s32 *Func_020075f0(s32);
 s32 *Func_020075fc(s32);
 s32 *Func_02007606(s32);
 s32 *Func_02007610(s32);
-void Func_0200668e(s32);
-void Func_02006694(s32);
-void Func_0200669a(s32);
-void Func_020066a0(s32);
 s32 *Func_02007632(s32);
 s32 *Func_0200763c(s32);
 s32 *Func_02007644(s32);
@@ -255,44 +191,14 @@ s32 *Func_02007654(s32);
 s32 *Func_0200765e(s32);
 s32 *Func_02007668(s32);
 s32 *Func_02007672(s32);
-void Func_02006726(void);
 s32 Func_0200790e_a(s32);
 void Func_02007a40(s32, s32);
 void Func_02007a54(s32, s32);
 void Func_02007a68(s32, s32);
 void Func_02007a7c(s32, s32);
-s32 Func_02006514(s32);
-s32 Func_02006832(s32);
-s32 Func_02006532(s32);
-s32 Func_02006850(s32);
-s32 Func_0200654e(s32);
-s32 Func_0200686c(s32);
-s32 Func_02006572(s32);
-s32 Func_02006890(s32);
-s32 Func_02006588(s32);
-s32 Func_020068a6(s32);
-void Func_020074c2();
-void Func_020074da();
-void Func_02007514();
-void Func_020075a8();
-s32 Func_020075ae();
-void Func_020075c0();
-void Func_020075ce();
-void Func_020075da();
 void Func_02007d20();
 s32 Func_02007d7a();
 s32 Func_02007d94();
-s32 Func_02007768_a();
-void Func_02007768_b();
-void Func_02007770();
-s32 Func_02007786();
-void Func_020077b2();
-void Func_020077ca();
-s32 Func_020077d0();
-s32 Func_020077e8();
-void Func_02007822();
-void Func_020078ba();
-void Func_020078c8();
 s32 Func_02007fc2();
 s32 Func_02007fd6();
 s32 Func_02007fea();
@@ -300,22 +206,6 @@ s32 Func_02008164();
 u8 *Func_02008186();
 s32 Func_02008196();
 u8 *Func_020081b6();
-void Func_02004b8a();
-void Func_02007982();
-void Func_0200799a();
-s32 Func_02007a2e();
-void Func_02007a6e();
-void Func_02007a9e();
-void Func_02007aac();
-void Func_02007ac4();
-void Func_02007adc_a();
-void Func_02007afa();
-void Func_02007b14_a();
-void Func_02007b32();
-void Func_02007b38_a();
-void Func_02007b88();
-void Func_02007b96_a();
-s32 Func_02007ba6_a();
 void Func_0200823a();
 s32 Func_0200854e();
 
@@ -513,7 +403,6 @@ static __inline__ void Call3_02004218(void (*f)(), s32 a0, s32 a1, s32 a2)
 #define Data_0200db90 Data_0200dbd0
 #endif
 
-extern void Func_02006ab6(s32);
 
 #if defined(TBS_EDITION_JA)
 #define SCENE_STEP_VALUE 0x20ac
@@ -796,67 +685,67 @@ void FieldScene_RunActorAndEffectPresentationSetup(void)
         Event_Wait(40);
         Actor_RunRepeatedMotion(22, 1);
         Event_SetMessage(0x1d26);
-        Func_020046f0(0x4016);
+        FieldScene_RunStepThen10(0x4016);
         Actor_ShowEmote(20, 0x102, 60);
         Actor_StartRepeatedMotion(20, 2);
-        Func_0200470a(20);
+        FieldScene_RunStepThen10(20);
         Actor_RunRepeatedMotion(22, 1);
         Actor_FaceDirection(22, 0x5000, 0);
-        Func_02004724(0x4016);
+        FieldScene_RunStepThen10(0x4016);
         Actor_RunRepeatedMotion(20, 1);
-        Func_0200474e(20, 0xb000);
-        Func_02004740(20);
+        FieldScene_CallPairWith10(20, 0xb000);
+        FieldScene_RunStepThen10(20);
         Func_02004764(23, 0x3000);
         Actor_SetAnimation(23, 3);
-        Func_0200475e(0x4017);
+        FieldScene_RunStepThen10(0x4017);
         Actor_ShowEmote(22, 0x101, 40);
         Actor_FaceDirection(22, 0x8000, 20);
-        Func_0200477a(0x4016);
+        FieldScene_RunStepThen10(0x4016);
         Func_02004796(23, 0);
         Actor_SetAnimationAndWait(23, 4);
-        Func_02004790(0x4017);
+        FieldScene_RunStepThen10(0x4017);
         Actor_ShowEmote(20, 0x100, 40);
         Actor_StartRepeatedMotion(20, 2);
-        Func_020047aa(20);
+        FieldScene_RunStepThen10(20);
         Actor_SetAnimationAndWait(22, 3);
-        Func_020047b8(0x4016);
+        FieldScene_RunStepThen10(0x4016);
         Func_020047da(20, 0xd000);
         Actor_SetAnimation(23, 3);
         Actor_SetAnimationAndWait(20, 3);
         Event_Wait(60);
         Actor_ShowEmote(22, 0x106, 40);
-        Func_0200480a_a(22, 0x5000);
+        FieldScene_CallPairWith10(22, 0x5000);
         Event_SetMessage((s32)Data_00001d40);
         Actor_StartRepeatedMotion(22, 1);
-        Func_0200480a_b(0x4016);
+        FieldScene_RunStepThen10(0x4016);
         Actor_ShowEmote(20, 0x101, 40);
         Actor_StartRepeatedMotion(20, 2);
-        Func_02004822(20);
+        FieldScene_RunStepThen10(20);
         Actor_ShowEmote(22, 0x108, 20);
         Event_ShowMessageAndWait(0x4016, 0, 20);
         Actor_ShowEmote(23, 0x102, 60);
-        Func_0200484a(0x4017);
-        Value2(Func_02004868, 22, 0x8000);
+        FieldScene_RunStepThen10(0x4017);
+        Value2(FieldScene_CallPairWith10, 22, 0x8000);
         Actor_SetAnimationAndWait(22, 3);
         Event_ShowMessageAndWait(0x4016, 0, 20);
         Actor_ShowEmote(20, 0x102, 40);
         Actor_StartRepeatedMotion(20, 2);
-        Func_02004880(20);
+        FieldScene_RunStepThen10(20);
         Func_0200489c(22, 0x5000);
         Actor_SetAnimation(22, 4);
-        Func_02004896(22);
+        FieldScene_RunStepThen10(22);
         Actor_FaceDirection(20, 0xb000, 0);
         Actor_FaceDirection(23, 0x3000, 40);
         Actor_FaceDirection(23, 0, 0);
         Actor_FaceDirection(20, 0xd000, 20);
         Actor_RunRepeatedMotion(22, 2);
         Event_Wait(20);
-        Func_020048d2(0x4016);
+        FieldScene_RunStepThen10(0x4016);
         Actor_SetAttachedEffect(23, 0x102);
         Actor_SetAttachedEffect(20, 0x102);
         Event_Wait(40);
         Actor_SetAnimationAndWait(22, 3);
-        Func_020048fa(0x4016);
+        FieldScene_RunStepThen10(0x4016);
         Camera_SetSpeed(0xcccc, 0x1999);
         Camera_MoveTo(0xb60000, -1, 0x2f80000, 1);
         Actor_SetSpeed(23, 0xcccc, 0x6666);
@@ -888,7 +777,7 @@ void FieldScene_RunActorAndEffectPresentationSetup(void)
         Actor_WalkToAndWait(20, 216, 0x328);
         Func_02004a04(20, 0xd000);
         Actor_RunRepeatedMotion(20, 2);
-        Func_02001c00();
+        FieldScene_RunScene3af_02000bf0();
         Actor_WalkToAndWait(20, 216, 0x31e);
         Actor_SetPosition(20, 0, 0);
         /* Set the fixed-point word at +24 of actor 20's record to 1.0. */
@@ -910,7 +799,7 @@ void FieldScene_RunScene3af_020010a0(void)
         if (GameFlag_IsSet(0x922) == 0) {
             Event_Begin();
             Func_02005510();
-            Func_020023b0();
+            FieldScene_RunScene3af_020012f0();
             Actor_SetSpeed(20, 0x6666, 0x3333);
             *(u8 *)(Func_020053dc(20) + 90) &= 254;
             Actor_WalkToAndWait(20, 232, 0x330);
@@ -924,7 +813,7 @@ void FieldScene_RunScene3af_020010a0(void)
             }
             Event_Wait(20);
             Actor_StartRepeatedMotion(20, 2);
-            Func_02004afe(20);
+            FieldScene_RunStepThen10(20);
             Actor_SetSpeed(20, 0x13333, 0x9999);
             *(u8 *)(Func_0200542e(20) + 90) &= 254;
             Actor_WalkToAndWait(20, 244, 0x324);
@@ -955,7 +844,7 @@ void FieldScene_RunScene3af_020011c8(void)
         if (GameFlag_IsSet(0x922) == 0) {
             Event_Begin();
             Func_02005638();
-            Func_020024d8();
+            FieldScene_RunScene3af_020012f0();
             Actor_SetSpeed(20, 0x6666, 0x3333);
             *(u8 *)(Func_02005504(20) + 90) &= 254;
             Actor_WalkToAndWait(20, 202, 0x330);
@@ -969,7 +858,7 @@ void FieldScene_RunScene3af_020011c8(void)
             }
             Event_Wait(20);
             Actor_StartRepeatedMotion(20, 2);
-            Func_02004c26(20);
+            FieldScene_RunStepThen10(20);
             Actor_SetSpeed(20, 0x13333, 0x9999);
             *(u8 *)(Func_02005556(20) + 90) &= 254;
             Actor_WalkToAndWait(20, 192, 0x324);
@@ -1001,7 +890,7 @@ void FieldScene_RunScene3af_020012f0(void)
     Camera_MoveTo(0xd80000, -1, 0x3380000, 1);
     Camera_WaitForMove();
     Event_Wait(20);
-    Func_02001f0a();
+    FieldScene_RunScene3af_02000bf0();
     Map_CopyCellsTo(30, 108, 13, 108, 1, 2);
     Event_Wait(10);
     Actor_SetPosition(20, 0xd80000, 0x3200000);
@@ -1104,7 +993,7 @@ void FieldScene_RunScene3af_0200185c(void)
     Actor_SetSpeed(21, 0xcccc, 0x6666);
     Actor_EnableActionCallback(21, 0x200c628);
     if (GameFlag_IsSet(0x109) != 0) {
-        Func_02005b02();
+        FieldScene_RunScene3af_02004218();
     }
     Event_End();
 }
@@ -1136,7 +1025,7 @@ void FieldScene_RunScene3af_02001920(void)
     Actor_SetSpeed(21, 0xcccc, 0x6666);
     Actor_EnableActionCallback(21, 0x200c628);
     if (GameFlag_IsSet(0x109) != 0) {
-        Func_02005bac_a();
+        FieldScene_RunScene3af_02004218();
     }
     Event_End();
 }
@@ -1219,7 +1108,7 @@ void FieldScene_RunScene3af_02001c14(s32 a0, s32 a1)
     Event_OpenScreen();
     Event_WaitForScreen();
     Event_Wait(20);
-    Func_020027fa();
+    FieldScene_RunScene3af_02000bb8();
     Actor_SetPosition(a0, 0xd80000, 0x24c0000);
     Actor_SetSpeed(a0, 0xcccc, 0x6666);
     Actor_WalkToAndWait(a0, 216, 0x258);
@@ -1256,7 +1145,7 @@ void FieldScene_RunActorTwentyDialogueSequence(void)
     Actor_RunRepeatedMotion(20, 1);
     Event_SetMessage(0x1e41);
     Event_ShowMessageAndWait(20, 0, 10);
-    Func_0200576e(22, 0x5000);
+    FieldScene_CallPairWith10(22, 0x5000);
     Actor_Jump(22, 4, 20);
     Actor_StartRepeatedMotion(22, 2);
     Event_ShowMessageAndWait(0x6016, 0, 20);
@@ -1311,14 +1200,14 @@ void FieldScene_ConfigureLeadActors(void)
     Actor_FaceDirection(20, 0x5000, 20);
     Actor_ShowEmote(20, 0x105, 60);
     Event_ShowMessageAndWait(20, 0, 40);
-    Func_020064ca(20, 0);
-    Func_020064bc(20);
+    FieldScene_CallPairWith10(20, 0);
+    FieldScene_RunStepThen10(20);
     Actor_SetAnimationAndWait(0, 3);
     Actor_SetAnimationAndWait(20, 3);
     Actor_WalkToAndWait(20, 182, 0x258);
     Actor_WalkToAndWait(20, 216, 0x258);
-    Call2(Func_02006502, 20, 0xc000);
-    Func_020036be();
+    Call2(FieldScene_CallPairWith10, 20, 0xc000);
+    FieldScene_RunScene3af_02000bb8();
     Event_Wait(10);
     Actor_WalkToAndWait(20, 216, 0x244);
     Actor_SetPosition(20, 0, 0);
@@ -1375,13 +1264,13 @@ void FieldScene_ConfigureThreeActors(void)
     Actor_Jump(22, 4, 10);
     Actor_Jump(22, 6, 20);
     Event_SetMessage(0x1ee5);
-    Func_0200661a(22);
+    FieldScene_RunStepThen10(22);
     Actor_SetAnimationAndWait(20, 3);
     Actor_SetSpeed(21, 0x30000, 0x18000);
     Actor_WalkToAndWait(21, 180, 0x222);
     ObjectMotion_ArmCallback_1_02002b7c(21, 0xb000, 40);
     Actor_RunRepeatedMotion(21, 1);
-    Func_02006652(21);
+    FieldScene_RunStepThen10(21);
     Event_RequestExit(15);
 }
 
@@ -1424,23 +1313,23 @@ void SceneEffect_InitSlotsEightToNineteen(void)
         *(Func_020075ac(10) + 89) = z;
         *(Func_020075b6(11) + 89) = z;
     }
-    Func_02006634(8);
-    Func_0200663a(9);
-    Func_02006640(10);
-    Func_02006646(11);
-    Func_0200664c(12);
-    Func_02006652_a(13);
-    Func_02006658(14);
-    Func_0200665e(15);
+    OverlayObject_ActivateSlotWithMode3(8);
+    OverlayObject_ActivateSlotWithMode3(9);
+    OverlayObject_ActivateSlotWithMode3(10);
+    OverlayObject_ActivateSlotWithMode3(11);
+    OverlayObject_ActivateSlotWithMode3(12);
+    OverlayObject_ActivateSlotWithMode3(13);
+    OverlayObject_ActivateSlotWithMode3(14);
+    OverlayObject_ActivateSlotWithMode3(15);
     {
         Data_0200db90[0] = Func_020075f0(12)[4];
         Data_0200db90[1] = Func_020075fc(13)[4];
         Data_0200db90[2] = Func_02007606(14)[4];
         Data_0200db90[3] = Func_02007610(15)[4];
-        Func_0200668e(16);
-        Func_02006694(17);
-        Func_0200669a(18);
-        Func_020066a0(19);
+        OverlayObject_ActivateSlotWithMode3(16);
+        OverlayObject_ActivateSlotWithMode3(17);
+        OverlayObject_ActivateSlotWithMode3(18);
+        OverlayObject_ActivateSlotWithMode3(19);
         {
             s32 v = 0xFFFF0000;
 
@@ -1454,7 +1343,7 @@ void SceneEffect_InitSlotsEightToNineteen(void)
         Data_0200db90[6] = Func_02007668(18)[4];
         Data_0200db90[7] = Func_02007672(19)[4];
     }
-    Func_02006726();
+    SceneState_FillTableDb70ByChecks();
 }
 
 void OverlayObject_ActivateSlotWithMode3(s32 a)
@@ -1483,13 +1372,13 @@ void SceneState_FillTableDb70ByChecks(void)
         s32 t = 3;
 
         for (i = 0; i < 4; i++) {
-            if (Func_02006514(i)!= 0) p[i] = Func_02006832(i);
+            if (SceneState_FindFirstSetFlagOfGroup(i)!= 0) p[i] = SceneData_SelectTableEntryByFlagGroup(i);
             else p[i] = t;
         }
     }
-    if (Func_02006532(0) != 0) Data_0200db70[0] = Func_02006850(0);
+    if (SceneState_FindFirstSetFlagOfGroup(0) != 0) Data_0200db70[0] = SceneData_SelectTableEntryByFlagGroup(0);
     else Data_0200db70[0] = 3;
-    if (Func_0200654e(2) != 0) Data_0200db70[1] = Func_0200686c(2);
+    if (SceneState_FindFirstSetFlagOfGroup(2) != 0) Data_0200db70[1] = SceneData_SelectTableEntryByFlagGroup(2);
     else Data_0200db70[1] = 3;
     {
         s32 *q = Data_0200db70;
@@ -1497,10 +1386,10 @@ void SceneState_FillTableDb70ByChecks(void)
 
         q[2] = t;
         q[3] = t;
-        if (Func_02006572(1) != 0) q[4] = Func_02006890(1);
+        if (SceneState_FindFirstSetFlagOfGroup(1) != 0) q[4] = SceneData_SelectTableEntryByFlagGroup(1);
         else q[4] = t;
     }
-    if (Func_02006588(3) != 0) Data_0200db70[5] = Func_020068a6(3);
+    if (SceneState_FindFirstSetFlagOfGroup(3) != 0) Data_0200db70[5] = SceneData_SelectTableEntryByFlagGroup(3);
     else Data_0200db70[5] = 3;
     Data_0200db70[6] = 3;
     Data_0200db70[7] = 3;
@@ -1634,14 +1523,14 @@ void SceneState_InitActorSlots8To19(void)
 
         for (i = 0; i < 8; i++) p[i] = 0xC000;
     }
-    Func_02006ab6(8);
-    ((void (*)())Func_02007aac_a)(9, 0, 0);
+    OverlayObject_ActivateSlotWithMode3(8);
+    ((void (*)())Engine_ActorSetPosition)(9, 0, 0);
     Actor_SetPosition(10, 0, 0);
     Actor_SetPosition(11, 0, 0);
     Actor_SetPosition(12, 0, 0);
-    Func_02006ae4(13);
-    Func_02006aea(14);
-    Func_02006af0(15);
+    OverlayObject_ActivateSlotWithMode3(13);
+    OverlayObject_ActivateSlotWithMode3(14);
+    OverlayObject_ActivateSlotWithMode3(15);
     {
         s32 *t = Data_0200db70;
         s32 z = 0;
@@ -1653,10 +1542,10 @@ void SceneState_InitActorSlots8To19(void)
         Data_0200db90[1] = Func_02007aa0(13)[4];
         Data_0200db90[2] = Func_02007aac_b(14)[4];
         Data_0200db90[3] = Func_02007ab8(15)[4];
-        Func_02006b38_a(16);
-        Func_02006b3e(17);
-        Func_02006b44(18);
-        Func_02006b4a(19);
+        OverlayObject_ActivateSlotWithMode3(16);
+        OverlayObject_ActivateSlotWithMode3(17);
+        OverlayObject_ActivateSlotWithMode3(18);
+        OverlayObject_ActivateSlotWithMode3(19);
         {
             s32 v = 0xFFFF0000;
 
@@ -1699,17 +1588,17 @@ void SceneState_InitActorSlots8To19(void)
         Func_02007bc8(18)[92] = o;
         Func_02007bd2(19)[92] = o;
     }
-    Func_02007b2c_b(1);
+    Task_Wait(1);
     Actor_SetPosition(8, 0x840000, 0x2780000);
     Task_Wait(1);
-    Func_02006eda(8, 0, 2);
-    Func_02006ee4(13, 1, 2);
-    Func_02006eee(14, 2, 2);
-    Func_02006ef8(15, 3, 2);
-    Func_02006f02(16, 4, 3);
-    Func_02006f0c(17, 5, 3);
-    Func_02006f16(18, 6, 3);
-    Func_02006f20(19, 7, 3);
+    SceneEffect_SelectSlotValueAndPosition(8, 0, 2);
+    SceneEffect_SelectSlotValueAndPosition(13, 1, 2);
+    SceneEffect_SelectSlotValueAndPosition(14, 2, 2);
+    SceneEffect_SelectSlotValueAndPosition(15, 3, 2);
+    SceneEffect_SelectSlotValueAndPosition(16, 4, 3);
+    SceneEffect_SelectSlotValueAndPosition(17, 5, 3);
+    SceneEffect_SelectSlotValueAndPosition(18, 6, 3);
+    SceneEffect_SelectSlotValueAndPosition(19, 7, 3);
 }
 
 void SceneState_ApplyFiveRectsAtColumn78(void)
@@ -1791,17 +1680,17 @@ void FieldScene_ConfigureFourActorPresentation(void)
     Actor_WalkToAndWait(21, 182, 0x214);
     Actor_FaceDirection(21, 0xb000, 40);
     Event_SetMessage(SCENE_STEP_VALUE);
-    Func_020074c2(21);
+    FieldScene_RunStepThen10(21);
     base6_6014 = (s32)Data_00006014;
     Actor_RunRepeatedMotion(20, 2);
     Actor_SetAnimation(20, 4);
-    Func_020074da(base6_6014);
+    FieldScene_RunStepThen10(base6_6014);
     Actor_FaceDirection(21, 0xd000, 0);
     Actor_FaceDirection(22, 0xd000, 0);
     Actor_ShowEmote(21, 0x101, 0);
     Actor_ShowEmote(22, 0x101, 60);
     Actor_SetAnimation(20, 3);
-    Func_02007514(base6_6014);
+    FieldScene_RunStepThen10(base6_6014);
     Actor_SetAttachedEffect(21, 0x102);
     Actor_SetAttachedEffect(22, 0x102);
     Event_Wait(80);
@@ -1814,15 +1703,15 @@ void FieldScene_ConfigureFourActorPresentation(void)
     Actor_FaceDirection(22, 0xb000, 0);
     Actor_SetSpeed(20, 0x10000, 0x8000);
     Actor_WalkToAndWait(20, 210, 0x1fc);
-    Value2(Func_020075ae, 20, 0xb000);
+    Value2(FieldScene_CallPairWith10, 20, 0xb000);
     Actor_RunRepeatedMotion(21, 1);
-    Call1_02003a0c(Func_020075a8, 0x5015);
+    Call1_02003a0c(FieldScene_RunStepThen10, 0x5015);
     Actor_SetAnimationAndWait(20, 3);
-    Call2(Func_020075ce, 22, 0xd000);
-    Call1_02003a0c(Func_020075c0, 0x9016);
+    Call2(FieldScene_CallPairWith10, 22, 0xd000);
+    Call1_02003a0c(FieldScene_RunStepThen10, 0x9016);
     Actor_FaceDirection(20, 0x8000, 20);
     Actor_SetAnimation(20, 4);
-    Call1_02003a0c(Func_020075da, 0xa014);
+    Call1_02003a0c(FieldScene_RunStepThen10, 0xa014);
     Actor_WalkToAndWait(20, 204, 0x218);
     Actor_FaceDirection(22, 0xb000, 0);
     Actor_WalkToAndWait(20, 182, 0x224);
@@ -1871,11 +1760,11 @@ void FieldScene_RunThreeActorEncounter(void)
     Event_Wait(10);
     Actor_FaceDirection(1, 0x8000, 0);
     Actor_FaceDirection(2, 0x8000, 0);
-    Value2(Func_02007768_a, 3, 0x8000);
-    Func_02007770(22, 0);
+    Value2(FieldScene_CallPairWith10, 3, 0x8000);
+    FieldScene_CallPairWith10(22, 0);
     Event_SetMessage(0x1f55);
-    Call1_02003c88(Func_02007768_b, 22);
-    Value2(Func_02007786, 21, 0xd000);
+    Call1_02003c88(FieldScene_RunStepThen10, 22);
+    Value2(FieldScene_CallPairWith10, 21, 0xd000);
     Event_ShowMessageAndWait(21, 0, 40);
     Actor_ShowEmote(22, 0x100, 20);
     Actor_RunRepeatedMotion(22, 1);
@@ -1884,11 +1773,11 @@ void FieldScene_RunThreeActorEncounter(void)
      * then spin, re-checking actor 0, while a condition on actor 2 holds. */
     if (Event_ChooseYesNo(0, 0) == 1) {
         Actor_SetAnimationAndWait(2, 4);
-        Func_020077b2(2);
-        Value2(Func_020077d0, 3, 0xa000);
+        FieldScene_RunStepThen10(2);
+        Value2(FieldScene_CallPairWith10, 3, 0xa000);
         Actor_SetAnimation(3, 3);
-        Func_020077ca(3);
-        Value2(Func_020077e8, 1, 0x6000);
+        FieldScene_RunStepThen10(3);
+        Value2(FieldScene_CallPairWith10, 1, 0x6000);
         Actor_RunRepeatedMotion(1, 1);
         Event_OpenMessage(1, 0);
         L_02003dfa:;
@@ -1902,7 +1791,7 @@ void FieldScene_RunThreeActorEncounter(void)
     Event_Wait(20);
     Actor_SetAnimationAndWait(22, 3);
     Event_SetMessage(0x1f5b);
-    Func_02007822(22);
+    FieldScene_RunStepThen10(22);
     Actor_SetSpeed(22, 0x10000, 0x8000);
     Actor_SetSpeed(21, 0x10000, 0x8000);
     /* Clear the low bit of the flag byte on actor 22. */
@@ -1929,8 +1818,8 @@ void FieldScene_RunThreeActorEncounter(void)
         record[ACTOR_FLAGS_OFFSET] = bits;
     }
     Actor_FaceDirection(22, 0x3000, 0);
-    Call2(Func_020078c8, 21, 0xd000);
-    Func_020078ba(22);
+    Call2(FieldScene_CallPairWith10, 21, 0xd000);
+    FieldScene_RunStepThen10(22);
     /* Finish actors 1, 2, and 3 with the same target values used earlier. */
     Actor_WalkTo(1, 180, 0x28e);
     Actor_WalkTo(2, 180, 0x28e);
@@ -1961,17 +1850,17 @@ void FieldScene_RunEncounterClosingSequence(void)
     Actor_WalkToAndWait(0, 148, 0x290);
     Actor_ShowEmote(22, 0x100, 0);
     Actor_RunRepeatedMotion(22, 1);
-    Func_02007982(22, 0x5000);
+    FieldScene_CallPairWith10(22, 0x5000);
     Event_SetMessage(0x1f69);
     Event_OpenMessage(0x2016, 0);
     Actor_FaceDirection(0, 0xe000, 0);
     if (Event_ChooseYesNo(0, 0) == 1) {
-        Call1_02003f30(Func_0200799a, 0x2016);
+        Call1_02003f30(FieldScene_RunStepThen10, 0x2016);
         Event_End();
     } else {
         bump_step(1);
         Event_AskYesNo(0x2016, 0);
-        Func_02004b8a();
+        FieldScene_RunScene3af_02000bb8();
         Actor_SetPosition(26, 0xd80000, 0x24c0000);
         Actor_SetSpeed(26, 0x13333, 0x9999);
         Actor_WalkToAndWait(26, 216, 0x254);
@@ -1979,7 +1868,7 @@ void FieldScene_RunEncounterClosingSequence(void)
         Actor_FaceDirection(0, 0xe000, 0);
         Actor_FaceDirection(21, 0xd000, 0);
         Actor_FaceDirection(22, 0xd000, 0);
-        Value2(Func_02007a2e, 26, 0x5000);
+        Value2(FieldScene_CallPairWith10, 26, 0x5000);
         Actor_Jump(26, 2, 0);
         Actor_SetAnimation(26, 4);
         Event_ShowMessage(26, 0);
@@ -1988,30 +1877,30 @@ void FieldScene_RunEncounterClosingSequence(void)
         Actor_WalkToAndWait(20, 180, 0x298);
         data_00002014_addr = (s32)Data_00002014;
         Actor_FaceDirection(20, 0xd000, 0);
-        Func_02007a6e(data_00002014_addr);
+        FieldScene_RunStepThen10(data_00002014_addr);
         Actor_FaceDirection(0, 0x2000, 0);
         Actor_FaceDirection(22, 0x3000, 0);
         Actor_ShowEmote(26, 0x101, 60);
         Actor_RunRepeatedMotion(20, 1);
-        Func_02007a9e(data_00002014_addr);
+        FieldScene_RunStepThen10(data_00002014_addr);
         Actor_StartRepeatedMotion(21, 2);
-        Func_02007aac(21);
+        FieldScene_RunStepThen10(21);
         ObjectMotion_ArmCallback_8(20, 0x5000, 20);
         Actor_SetAnimation(20, 3);
-        Call1_02003f30(Func_02007ac4, 0x6014);
+        Call1_02003f30(FieldScene_RunStepThen10, 0x6014);
         Actor_Jump(26, 2, 20);
         Actor_SetAnimation(26, 4);
-        Func_02007adc_a(26);
+        FieldScene_RunStepThen10(26);
         Actor_WalkToAndWait(20, 182, 0x280);
         Actor_FaceDirection(20, 0xd000, 0);
-        Call1_02003f30(Func_02007afa, 0x8014);
+        Call1_02003f30(FieldScene_RunStepThen10, 0x8014);
         Actor_ShowEmote(26, 0x100, 20);
         Actor_StartRepeatedMotion(26, 2);
-        Func_02007b14_a(26);
+        FieldScene_RunStepThen10(26);
         Actor_SetAnimationAndWait(20, 3);
-        Func_02007b38_a(22, 0);
+        FieldScene_CallPairWith10(22, 0);
         Actor_RunRepeatedMotion(22, 1);
-        Func_02007b32(22);
+        FieldScene_RunStepThen10(22);
         Actor_SetSpeed(22, 0x19999, 0xcccc);
         data_0200c918_addr = (s32)Data_0200c918;
         Actor_EnableActionCallback(22, data_0200c918_addr);
@@ -2021,9 +1910,9 @@ void FieldScene_RunEncounterClosingSequence(void)
         Event_Wait(80);
         Actor_EnableActionCallback(26, data_0200c918_addr);
         Event_Wait(40);
-        Call2(Func_02007b96_a, 20, 0x8000);
-        Func_02007b88(data_00002014_addr);
-        Value2(Func_02007ba6_a, 0, 0xe000);
+        Call2(FieldScene_CallPairWith10, 20, 0x8000);
+        FieldScene_RunStepThen10(data_00002014_addr);
+        Value2(FieldScene_CallPairWith10, 0, 0xe000);
         Actor_SetAnimationAndWait(0, 3);
         Actor_SetAnimationAndWait(20, 3);
         SCENE_PHASE_02003f30 = 0x201;

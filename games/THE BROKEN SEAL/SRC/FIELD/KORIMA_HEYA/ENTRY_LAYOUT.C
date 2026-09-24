@@ -20,7 +20,6 @@ struct Approach390Subject {
 /* The cross-overlay map selector block, in RAM rather than in the image. */
 extern u8 Data_02000240[];
 
-void Func_020000b0(u8 *);
 void Func_02000368(u8 *);
 struct Approach390Subject *Func_0200038a(s32);
 struct Approach390Subject *Func_020003d2(s32);
@@ -80,7 +79,7 @@ u8 *SceneData_PrepareTable84d8(void)
     u8 *buf;
 
     if (GameFlag_IsSet(0x845) == 0) {
-        Func_020000b0((u8 *)0x020084D8);
+        SceneData_InitRecordTable((u8 *)0x020084D8);
     }
     buf = (u8 *)0x020084D8;
     Func_02000368(buf);

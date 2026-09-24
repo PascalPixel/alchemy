@@ -70,7 +70,6 @@ struct AnchoredEffect {
 };
 
 extern u32 Data_03001e40;
-u32 Func_02007a76_b(void);
 u32 Func_02007a3e(void);
 u32 Func_02007aac(void);
 void Func_02002214(s32, s32, s32, s32, s32, s32, s32, s32 *);
@@ -79,7 +78,6 @@ void Func_02002288(s32, s32, s32, s32, s32, s32, s32, s32 *);
 u32 Func_0200923a(void);
 u32 Func_0200924e(void);
 void Func_02003a32(s32, s32, s32, s32, s32, s32, s32, s32 *);
-s32 *Func_02009548(s32);
 u32 Func_02009426(void);
 u32 Func_02009440(void);
 u32 Func_02009452(void);
@@ -108,21 +106,8 @@ void Func_02003e2e(s32, s32, s32, s32, s32, s32, s32, s32 *);
 
 extern u8 Value_02008cd1;
 
-u8 *Func_02006a60(s32);
-s32 Func_02006a9c(s32);
-
 extern u8 Data_0200e010[];
 extern u8 Value_00000874;
-
-u8 *Func_02006efc(s32);
-u8 *Func_02006f0e(s32);
-u8 *Func_02006f2c(s32);
-u8 *Func_02006f3a_a(s32);
-u8 *Func_02006f3a_b(s32);
-u8 *Func_02006f42(s32);
-s32 *Func_02007d9e(s32);
-u32 Func_02007c64(void);
-void Func_02005e06(s32, s32, s32);
 
 extern s32 **Data_03001edc;
 
@@ -144,7 +129,6 @@ extern s32 **Data_03001edc;
 #define NULL ((void *)0)
 #define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 #define OverlayObject_PrepareSpawnedObject      Func_02000048
-#define AcquireOverlayObject      Func_02005a2e
 #define CreateOverlayObject Func_02005a86
 #define SetOverlayObjectMode Func_02005b08
 #define SetOverlayObjectSlot Func_02005c58
@@ -153,8 +137,6 @@ void *CreateOverlayObject(s32, s32, s32, s32);
 void SetOverlayObjectMode(void *, s32);
 void SetOverlayObjectSlot(void *, s32);
 
-void *Func_02005a2e(s32, s32, s32, s32);
-u8 *Func_0200ab38(s32 kind, s32 arg1, s32 arg2, s32 arg3);
 void Func_0200ab50(u8 *rec, s32 arg1);
 u8 **Func_0200b304(s32 group, s32 slot);
 
@@ -173,13 +155,9 @@ extern u8 *Data_03001ebc;
 extern u8 Data_0200e064[];
 
 void Func_0200689c(s32, s32);
-void Func_02001ff8(s32);
-void Func_02002018(s32);
-void Func_02002038(s32);
 s32 *Func_020076cc(s32);
 s32 *Func_020076de(s32);
 s32 *Func_020076fc(s32);
-s32 *Func_0200770a(s32);
 s32 *Func_02007712(s32);
 s32 *Func_020080e0(s32);
 
@@ -200,7 +178,6 @@ s32 *Func_020080e0(s32);
 
 extern u8 Data_02b20000[];
 void Func_020017b8(void);
-void Func_02002838(void);
 void Func_020052c0(s32, s32, s32);
 void Func_020028b4(void);
 void Func_02004a2c(void);
@@ -531,7 +508,7 @@ void *OverlayObject_PrepareSpawnedObject(s32 first, s32 second, s32 third, s32 f
     void *rec;
     s32 mask;
 
-    obj = AcquireOverlayObject(fourth, first, second, third);
+    obj = Object_Create(fourth, first, second, third);
     if (obj != NULL) {
         rec = FIELD_AT_OFFSET(obj, void *, 0x50);
         mask = -0xD;
@@ -691,7 +668,7 @@ s32 SceneData_SelectDataByRuntimeSelector(void)
 
 void SceneActor_RunActorZeroHandledMotion(s32 a)
 {
-    u8 *v = Func_02006a60(0);
+    u8 *v = Actor_Get(0);
     Event_Begin();
     Audio_PlayCue(0xe4);
     FIELD_AT_OFFSET(v, s32, 0x6c) = (s32)&Value_02008cd1;
@@ -700,7 +677,7 @@ void SceneActor_RunActorZeroHandledMotion(s32 a)
     Actor_SetDestinationOffset(0, 0, -6);
     Actor_WaitForMove(0);
     Actor_SetChildValue(0, 15);
-    Actor_SetSpriteFlags(Func_02006a9c(0), 0);
+    Actor_SetSpriteFlags(Actor_Get(0), 0);
     FIELD_AT_OFFSET(v, s32, 0x6c) = 0;
     Event_Wait(30);
     Event_CloseScreen();
@@ -728,17 +705,17 @@ void FieldScene_RunScene39c_02000ffc(s32 a0)
 
 void SceneState_ApplyWork16cMinus50A(void)
 {
-    Func_02001ff8(*(s16 *)(Data_03001ebc + 0x16c) - 50);
+    SceneActor_RunActorZeroHandledMotion(*(s16 *)(Data_03001ebc + 0x16c) - 50);
 }
 
 void SceneState_ApplyWork16cMinus50(void)
 {
-    Func_02002018(*(s16 *)(Data_03001ebc + 0x16c) - 50);
+    SceneActor_RunActorZeroHandledMotion(*(s16 *)(Data_03001ebc + 0x16c) - 50);
 }
 
 void SceneState_ApplyWork16cMinus50B(void)
 {
-    Func_02002038(*(s16 *)(Data_03001ebc + 0x16c) - 50);
+    SceneActor_RunActorZeroHandledMotion(*(s16 *)(Data_03001ebc + 0x16c) - 50);
 }
 
 void FieldScene_RunScene39c_020010c0(void)
@@ -801,7 +778,7 @@ void FieldScene_RunFourCallSequence(void)
     Event_Begin();
     Func_020017b8();
     Event_End();
-    Func_02002838();
+    FieldScene_RunActorElevenAtTile5And13();
 }
 
 void FieldScene_RunActorElevenAtTile5And13(void)
@@ -810,13 +787,13 @@ void FieldScene_RunActorElevenAtTile5And13(void)
     s32 y;
     u8 *p;
 
-    x = FIELD_AT_OFFSET(Func_02006efc(11), s32, 8) / 0x100000;
-    y = FIELD_AT_OFFSET(Func_02006f0e(11), s32, 16) / 0x100000;
+    x = FIELD_AT_OFFSET(Actor_Get(11), s32, 8) / 0x100000;
+    y = FIELD_AT_OFFSET(Actor_Get(11), s32, 16) / 0x100000;
     Event_Begin();
     if (x == 5 && y == 13) {
-        FIELD_AT_OFFSET(Func_02006f2c(11), s32, 12) += 0xfffe0000;
-        p = Func_02006f3a_a(11);
-        FIELD_AT_OFFSET(p, s32, 0x3c) = FIELD_AT_OFFSET(Func_02006f42(11), s32, 12);
+        FIELD_AT_OFFSET(Actor_Get(11), s32, 12) += 0xfffe0000;
+        p = Actor_Get(11);
+        FIELD_AT_OFFSET(p, s32, 0x3c) = FIELD_AT_OFFSET(Actor_Get(11), s32, 12);
         Map_CopyCellsTo(5, 2, 5, 11, 1, 1);
         Audio_PlayCue(0xd9);
         Map_AnimateCells((s32)Data_0200e010, 9, 7);
@@ -825,7 +802,7 @@ void FieldScene_RunActorElevenAtTile5And13(void)
             s32 s1 = 10;
             Map_CopyCellAttributes(9, 5, 1, 1, s0, s1);
         }
-        Func_02006f3a_b((s32)&Value_00000874);
+        GameFlag_Set((s32)&Value_00000874);
     }
     Event_End();
 }
@@ -1112,7 +1089,7 @@ void SceneState_RunWhenActor8AtTile10x23(void)
     if (x == 10 && y == 23) {
         s32 *p;
         Func_020076fc(8)[3] += 0xfffe0000;
-        p = Func_0200770a(8);
+        p = Actor_Get(8);
         p[15] = Func_02007712(8)[3];
         Map_CopyCellsTo(6, 29, 10, 23, 1, 1);
         Audio_PlayCue(0xd9);
@@ -1162,7 +1139,7 @@ void SceneEffect_SpawnParticleRowsByMode(s32 mode)
                                   mode, 0x4000, 0x90000, buf);
                 } else if (mode == 1) {
                     Func_0200224e((((j << 2) + i) << 17) + 0x03120000, 0,
-                                  (((((u32 (*)(void))Func_02007a76_b)() * 5) >> 16) << 16) + 0x2e80000, 0x4000,
+                                  (((((u32 (*)(void))Engine_RandomNext)() * 5) >> 16) << 16) + 0x2e80000, 0x4000,
                                   0, 0, 0x90000, buf);
                 } else {
                     Func_02002288(0x3380000 - (i << 17) - (j << 19), 0,
@@ -1183,13 +1160,13 @@ void SceneEffect_SpawnParticleRowsByMode(s32 mode)
 
 void SceneActor_UseActorNinePositionWithYOffset(void)
 {
-    s32 *p = Func_02007d9e(9);
-    u32 v = Func_02007c64();
+    s32 *p = Actor_Get(9);
+    u32 v = Random_Next();
 
     s32 b = p[3] + (((v << 2) >> 16) << 16);
     s32 c = p[4];
 
-    Func_02005e06(p[2], b, c);
+    SceneEffect_SpawnRandomEveryFourFrames(p[2], b, c);
 }
 
 s32 SceneData_LoadBlockA2c5(void)
@@ -1469,7 +1446,7 @@ void SceneEffect_SpawnParticleRowsAndDrawTiles(void)
 void SceneEffect_SpawnParticleEveryFourthFrame(void)
 {
     s32 buf[10];
-    s32 *p = Func_02009548(0);
+    s32 *p = Actor_Get(0);
     s32 m = Data_03001e40 & 3;
 
     if (m == 0) {
@@ -1591,7 +1568,7 @@ void OverlayObject_SpawnKind24AtObject(u8 *src)
     u8 *obj;
     u8 *rec;
 
-    obj = Func_0200ab38(24, *(s32 *)(src + 8), *(s32 *)(src + 12), *(s32 *)(src + 16));
+    obj = Object_Create(24, *(s32 *)(src + 8), *(s32 *)(src + 12), *(s32 *)(src + 16));
     if (obj == 0) {
         return;
     }

@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_3ca:02000100": {
+      "name": "BabiFune_UpdateDriftingObject",
+      "source": "FIELD/BABI_FUNE/DRIFTING_OBJECT.C"
+    },
     "resource_3a5:02000344": {
       "name": "RamakanSabaku_EmitSandEffect",
       "source": "FIELD/RAMAKAN_SABAKU/SAND_EFFECT.C"

@@ -73546,6 +73546,34 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "babi-fune-drifting-object",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/BABI_FUNE/DRIFTING_OBJECT.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3ca",
+      "absolute_symbols": {
+        "Engine_RandomNext": {
+          "address": "0x02009334",
+          "kind": "thumb"
+        },
+        "Engine_ObjectSetAnimation": {
+          "address": "0x0200936c",
+          "kind": "thumb"
+        },
+        "Engine_ObjectSetScript": {
+          "address": "0x02009374",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02000100",
+          "extent": 104,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

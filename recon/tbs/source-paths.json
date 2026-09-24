@@ -19365,7 +19365,8 @@
       "name": "Object_UpdateAllThumb"
     },
     "main:0800c880": {
-      "name": "ObjectSystem_UpdateCameraFixed"
+      "name": "ObjectSystem_UpdateCameraFixed",
+      "source": "FIELD/COMMON/OBJECT/UPDATE_CAMERA_FIXED.C"
     },
     "main:0800c62c": {
       "name": "ObjectSystem_UpdateCamera"

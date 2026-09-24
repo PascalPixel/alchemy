@@ -79498,6 +79498,44 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "scene-3a0-02000500",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/SHIAN_MURA/F_00500.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3a0",
+      "absolute_symbols": {
+        "Engine_ActorGet": {
+          "address": "0x020093d0",
+          "kind": "thumb"
+        },
+        "SceneActor_UpdateTracking": {
+          "address": "0x02008408",
+          "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02000500",
+          "extent": 154,
+          "state": "exact-c"
+        }
+      ],
+      "compiler_gaps": [
+        {
+          "start": "0x0200059a",
+          "end": "0x0200059c"
+        }
+      ]
     }
   ]
 }

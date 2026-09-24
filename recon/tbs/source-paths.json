@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_3a0:02000500": {
+      "name": "ShianMura_Func02000500",
+      "source": "FIELD/SHIAN_MURA/F_00500.C"
+    },
     "resource_3b7:02000880": {
       "name": "TorebiIzumi_RiseAndFadeIn",
       "source": "FIELD/TOREBI_IZUMI/RISE_AND_FADE.C"

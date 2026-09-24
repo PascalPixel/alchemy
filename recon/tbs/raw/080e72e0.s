@@ -1,10 +1,10 @@
 .syntax unified
-.text
 	.thumb
-	.global Fragment_080e72de
+	.global BattleFx_ArmPaletteHBlankDma
+	.global Func_080e72e0
 	.thumb_func
-Fragment_080e72de:
-	movs	r0, r0
+BattleFx_ArmPaletteHBlankDma:
+Func_080e72e0:
 	ldr	r3, [pc, #40]
 	ldr	r0, [r3, #0]
 	ldr	r3, [pc, #40]
@@ -26,7 +26,7 @@ Fragment_080e72de:
 	stmia	r3!, {r0, r1, r2}
 	subs	r3, #12
 	bx	lr
-	.inst.n 0x0000
+	movs	r0, r0
 	.4byte 0x03001eec
 	.4byte 0x040000b0
 	.4byte 0x0000c5ff

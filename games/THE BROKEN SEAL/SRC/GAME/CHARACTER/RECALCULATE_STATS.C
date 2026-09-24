@@ -1,11 +1,3 @@
-/* Draft, not exact (2026-09-24): 2,024 bytes, 4 halfwords differ. Every
-   branch, call, pool and store matches except the second equipment loop's
-   switch: the reference stores the effect kind, then computes kind - 7 in
-   the kind's own register (subs r1, #7) and only then stores the amount;
-   here the amount is stored first and the index goes to r3. Locals and the
-   two do-while barriers (tagged below) got it from 919 to 4; declaration
-   order and local types move nothing. */
-
 #include "TYPES.H"
 #include "ITEM.H"
 #include "GAME_FLAGS.H"
@@ -113,8 +105,12 @@ struct ClassRecord *Owner_GetRecordStride84(s32 class_id);
 struct DjinnDefinition *Djinn_GetDefinition(s32 element, s32 djinn);
 s32 Math_Div(s32 numerator, s32 denominator);
 
+/* Distance between a stored value and one recomputed from its ratio. */
 #define STAT_DIFF(a, b) ((a) - (b) < 0 ? (b) - (a) : (a) - (b))
 
+/* Rebuilds a party member's derived statistics from the base values,
+   equipped items, set Djinn, class multipliers and levels, clamps them and
+   rescales current HP and PP to the new maxima. */
 void Owner_RecalculateStats(s32 owner)
 {
     struct StatWork *work;
@@ -172,7 +168,8 @@ void Owner_RecalculateStats(s32 owner)
             work->item = Item_GetDirect(st->equipment[i]);
             if (work->item->flags & 1)
                 st->curse |= 3;
-            /* FAKEMATCH: the barrier keeps the defense load after the bonus load */
+            /* FAKEMATCH: a do-while barrier keeps the defense load after the
+               item bonus load, as the ROM schedules it */
             do {
                 work->attack += work->item->primary_bonus;
             } while (0);
@@ -280,34 +277,32 @@ void Owner_RecalculateStats(s32 owner)
             for (j = 0; j < 4; j++) {
                 kind = work->item->effects[j].kind;
                 amount = work->item->effects[j].amount;
-                /* FAKEMATCH: the barrier keeps the kind store before the amount store */
-                do {
-                    work->kind = kind;
-                } while (0);
+                work->kind = kind;
+                kind -= 7; /* rate effects 7..14 scale a statistic in tenths */
                 work->amount = amount;
                 switch (kind) {
-                case 7:
+                case 0:
                     work->hp = Math_Div(work->hp * work->amount, 10);
                     break;
-                case 8:
+                case 1:
                     work->stat_20 = Math_Div(work->stat_20 * work->amount, 10);
                     break;
-                case 9:
+                case 2:
                     work->pp = Math_Div(work->pp * work->amount, 10);
                     break;
-                case 10:
+                case 3:
                     work->stat_24 = Math_Div(work->stat_24 * work->amount, 10);
                     break;
-                case 11:
+                case 4:
                     work->attack = Math_Div(work->attack * work->amount, 10);
                     break;
-                case 12:
+                case 5:
                     work->defense = Math_Div(work->defense * work->amount, 10);
                     break;
-                case 13:
+                case 6:
                     work->agility = Math_Div(work->agility * work->amount, 10);
                     break;
-                case 14:
+                case 7:
                     work->luck = Math_Div(work->luck * work->amount, 10);
                     break;
                 }

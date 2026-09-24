@@ -10296,7 +10296,8 @@
       "name": "Runtime_ReleaseHeapBlock"
     },
     "main:08077428": {
-      "name": "Owner_RecalculateStats"
+      "name": "Owner_RecalculateStats",
+      "source": "GAME/CHARACTER/RECALCULATE_STATS.C"
     },
     "main:080a2324": {
       "name": "Menu_SetPageIcons"

@@ -483,8 +483,7 @@
       "source": "GAME/CHARACTER/RECORD.C"
     },
     "main:080797fc": {
-      "name": "Owner_GetDigitValues",
-      "source": "GAME/CHARACTER/ELEMENTS.C"
+      "name": "Owner_GetDigitValues"
     },
     "main:0807987c": {
       "name": "Owner_GetResistanceValue"
@@ -2102,8 +2101,7 @@
     },
     "main:0801c7fc": "FIELD/COMMON/OBJECT/COLLECT_RESOURCES.C",
     "main:080798e0": {
-      "name": "Owner_BuildDigitTiles",
-      "source": "GAME/CHARACTER/BUILD_DIGIT_TILES.C"
+      "name": "Owner_BuildDigitTiles"
     },
     "main:08016670": {
       "name": "UiWork_ActivateChannel",
@@ -4559,7 +4557,7 @@
     },
     "main:080797ec": {
       "name": "Owner_LookupFourColumnTable",
-      "source": "GAME/CHARACTER/LOOKUP_FOUR_COLUMN_TABLE.C"
+      "source": "GAME/CHARACTER/ELEMENT.C"
     },
     "main:08079ad8": {
       "name": "Owner_GetRecordStride84",

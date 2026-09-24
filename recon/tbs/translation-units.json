@@ -78661,30 +78661,6 @@
       "overlay": null
     },
     {
-      "id": "owner-elements",
-      "game": "tbs",
-      "source": "games/THE BROKEN SEAL/SRC/GAME/CHARACTER/ELEMENTS.C",
-      "compiler_route": "canonical-gcc296",
-      "owners": [
-        {
-          "address": "0x080797fc",
-          "extent": 128,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0807987c",
-          "extent": 54,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080798b4",
-          "extent": 44,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
       "id": "battle-effects-object-state",
       "game": "tbs",
       "source": "games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/OBJECT_STATE.C",
@@ -124823,6 +124799,40 @@
         {
           "address": "0x08079008",
           "extent": 84,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "character-element",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/GAME/CHARACTER/ELEMENT.C",
+      "compiler_route": "canonical-gcc296",
+      "owners": [
+        {
+          "address": "0x080797ec",
+          "extent": 16,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080797fc",
+          "extent": 128,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0807987c",
+          "extent": 54,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080798b4",
+          "extent": 44,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080798e0",
+          "extent": 208,
           "state": "exact-c"
         }
       ],

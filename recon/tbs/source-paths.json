@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_39f:020015d0": {
+      "name": "MogoruMori_RunBranchHopScene",
+      "source": "FIELD/MOGORU_MORI/BRANCH_HOP_SCENE.C"
+    },
     "resource_3b4:02001694": {
       "name": "TakaraAshiba_RunActorElevenFollowScene",
       "source": "FIELD/TAKARA_ASHIBA/ACTOR_ELEVEN_FOLLOW.C"

@@ -1,6 +1,6 @@
 /* NONMATCHING: 848 of 848 bytes, 145 halfword edits (2026-09-24). Hand-written from the
  * resolved jump-table disassembly as a single-overlay unit binding Engine_* at
- * their import veneers. Remaining: register allocation only: the reference keeps the beam in r6, the spark in r7, the pool zero (sprite flags) in r8 and the sprite in sl; this draft gives the beam r7 and the spark r8. Offsets, pool and switch layout match (848 bytes). */
+ * their import veneers. Remaining: register allocation only: the reference keeps the beam in r6, the spark in r7, the pool zero (sprite flags) in r8 and the sprite in sl; this draft gives the beam r7 and the spark r8. Offsets, pool and switch layout match (848 bytes). The -dl dump shows sprite and fade local-allocated in the spark block (r6, r5); in the reference they are global (r8, sl) after frame r5, beam r6 and spark r7, so they must span more than one basic block. Rebinding the unit now needs gFrameCount, Data_00000000, Data_0200e2d0 and Data_0200e1cc as data symbols. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 

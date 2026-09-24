@@ -1,7 +1,7 @@
 /* NONMATCHING: 184 bytes, candidate 186 (2026-09-24). Unit symbol:
  * Local_030003e0 (IWRAM modulo) at its veneer 0x0200b520. Remaining: the
  * HImode zero for the spark frame is loaded after the delay store and lands in
- * r8 in the reference (actor in r6); here actor takes r8. */
+ * r8 in the reference (actor in r6); here actor takes r8. The -dl dump shows the zero (reg 38) and the sprite are local-allocated in the spark block (r6, r5), leaving actor r8; the reference's zero is a global pseudo in r8, so it must span more than one basic block. */
 #include "TYPES.H"
 
 s32 Engine_ActorGet();

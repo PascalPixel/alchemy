@@ -1,6 +1,6 @@
 /* NONMATCHING: 96 of 100 bytes, 18 halfword edits (2026-09-24). Hand-written from the
  * resolved jump-table disassembly as a single-overlay unit binding Engine_* at
- * their import veneers. Remaining: 49 halfwords: the reference loads the map id twice, once zero-extended into r1 for the second test and once sign-extended for the first; ours shares one load */
+ * their import veneers. Remaining: 49 halfwords: the reference loads the map id twice, once zero-extended into r1 for the second test and once sign-extended for the first; ours shares one load A u16 counts[] view of the row still folds (s16)map into the first compare's ldrsh (gcse); a volatile read keeps two loads but folds the base into one pool constant and extends right after the load. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 

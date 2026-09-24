@@ -22,21 +22,35 @@ use crate::coverage::tree::root;
 use sha1::{Digest, Sha1};
 
 pub const BOX_TREES: [&str; 1] = ["files"];
-const CHART_BACKGROUND: &str = "#1f7f93";
-// One soft palette for the figure and dashboard: code in teal shades that sit
-// on the teal chart, data and media in muted pastels.
+pub(crate) const CHART_BACKGROUND: &str = "#1f7f93";
+// One palette for the figure and dashboard: each kind of file has its own
+// clear pastel on the teal chart; assembly and executable code sit in teal.
 pub(crate) const UNKNOWN: &str = "#d9d9d4";
 pub(crate) const C_TEAL: &str = "#326b7d";
 const DRAFTED: &str = "#96c8c9";
 pub(crate) const ASSEMBLY: &str = "#6cafb2";
 const DRAFT_ASSEMBLY: &str = "#b4ccd2";
 const TEXT_CYAN: &str = "#85cbd2";
+/// C source and its headers in rose-greys, drafts paler; sprite sheets purple,
+/// stills blue, maps green; registries a quiet lavender. Translation text (a
+/// grey that recedes into the chart) and the frozen compression answers are
+/// calm so the code and art lead the eye.
+const SOURCE_ROSE: &str = "#c4b4b7";
+const DRAFT_ROSE: &str = "#e2d6d7";
+const HEADER_ROSE: &str = "#a8959a";
+const SPRITE_PURPLE: &str = "#b5a0de";
+const IMAGE_BLUE: &str = "#8fb7ec";
+const MAP_GREEN: &str = "#b5cc82";
+const TABLE_LAVENDER: &str = "#9aa4c2";
+const REGISTRY_LAVENDER: &str = "#bcc1d4";
+const TRANSLATION_GREY: &str = "#8eaab0";
+const ANSWER_TAUPE: &str = "#a0968d";
 const MIDI_GREEN: &str = "#81d6b2";
 const PCM_ORANGE: &str = "#efbb82";
 const OTHER_TAN: &str = "#bda995";
 const HEADER_GOLD: &str = "#eadb83";
-const BEVEL_LIGHT: &str = "#c9e1dc";
-const BEVEL_DARK: &str = "#103840";
+pub(crate) const BEVEL_LIGHT: &str = "#c9e1dc";
+pub(crate) const BEVEL_DARK: &str = "#103840";
 /// The figure's frame and label tones, named for the dashboard's window
 /// chrome so both draw from this one palette.
 pub(crate) const CHROME: [(&str, &str); 9] = [
@@ -81,27 +95,7 @@ fn sound_type(tile: &Tile) -> usize {
 pub(crate) fn content_style(tile: &Tile) -> (&'static str, &'static str) {
     let group = tile.group.as_deref().unwrap_or("");
     if let Some(extension) = group.strip_prefix("file:") {
-        return match extension {
-            // Accepted C lives in SRC; complete but nonexact drafts in the
-            // `recon/<game>` scaffolding beside the game trees.
-            "c" if tile
-                .source
-                .as_deref()
-                .is_some_and(|source| source.starts_with("recon/")) =>
-            {
-                ("Drafted C", DRAFTED)
-            }
-            "c" => ("C", C_TEAL),
-            "h" | "inc" => ("Headers", HEADER_GOLD),
-            "s" => ("Assembly", ASSEMBLY),
-            "png" => ("Images", "#8fb7ec"),
-            "wav" => ("WAV audio", PCM_ORANGE),
-            "mid" => ("MIDI music", MIDI_GREEN),
-            "md" | "po" | "txt" => ("Text", TEXT_CYAN),
-            "json" | "tsv" => ("Metadata", "#9aa4c2"),
-            "bin" => ("Binary inputs", "#b5cc82"),
-            _ => ("Other files", OTHER_TAN),
-        };
+        return file_style(extension, tile.source.as_deref().unwrap_or(""));
     }
     let kind = group.strip_prefix("indexed-").unwrap_or(group);
     let source = tile.source.as_deref().unwrap_or("");
@@ -144,6 +138,39 @@ pub(crate) fn content_style(tile: &Tile) -> (&'static str, &'static str) {
         "byte-fill" => ("Padding", "#bda995"),
         _ => (UNIDENTIFIED, UNKNOWN),
     }
+}
+/// A tracked file's kind from its extension and the module that holds it:
+/// accepted C lives in SRC, complete but nonexact drafts in the
+/// `recon/<game>` scaffolding; data takes the colour of what it describes.
+fn file_style(extension: &str, source: &str) -> (&'static str, &'static str) {
+    let recon = source.starts_with("recon/");
+    let data = matches!(extension, "json" | "tsv" | "bin" | "png");
+    let name = source_name(source);
+    match extension {
+        "c" if recon => ("Drafted C", DRAFT_ROSE),
+        "c" => ("C", SOURCE_ROSE),
+        "h" | "inc" => ("Headers", HEADER_ROSE),
+        "s" => ("Assembly", ASSEMBLY),
+        "wav" => ("WAV audio", PCM_ORANGE),
+        "mid" => ("MIDI music", MIDI_GREEN),
+        "po" | "md" | "txt" => ("Translations", TRANSLATION_GREY),
+        "tokens" => (COMPRESSION_ANSWERS, ANSWER_TAUPE),
+        _ if data && name.starts_with("COMPRESSION.") => (COMPRESSION_ANSWERS, ANSWER_TAUPE),
+        _ if data && recon => ("Registries", REGISTRY_LAVENDER),
+        _ if data && source.contains("/GRAPHICS/CHARACTER/") => ("Sprite sheets", SPRITE_PURPLE),
+        _ if data && source.contains("/GRAPHICS/") => ("Images", IMAGE_BLUE),
+        _ if data && source.contains("/FIELD/") => ("Maps", MAP_GREEN),
+        "png" => ("Images", IMAGE_BLUE),
+        _ if data => ("Tables", TABLE_LAVENDER),
+        _ => ("Other files", OTHER_TAN),
+    }
+}
+/// Kinds drawn without a label on each file: the translation catalogs, read
+/// as one box per game under its TEXT heading, and the frozen compression
+/// answers, which wait to be replaced by encoder options.
+const COMPRESSION_ANSWERS: &str = "Compression answers";
+fn quiet(tile: &Tile) -> bool {
+    matches!(content_style(tile).0, "Translations" | COMPRESSION_ANSWERS)
 }
 /// The content types of a tile's files and their bytes, largest first.
 pub(crate) fn content_mix(tile: &Tile) -> Vec<(&'static str, &'static str, i64)> {
@@ -417,14 +444,15 @@ fn draw_tiles(
             Some(_) => &tile.label,
             None => "",
         };
-        let caption = caption(name, tile.bytes, body, folder).filter(|(_, bounds)| {
-            (tile.source.is_none()
-                || tile.source.as_deref() != parent_source
-                || (!container
-                    && tile
-                        .source
-                        .as_deref()
-                        .is_some_and(|path| path.ends_with('/'))))
+        let caption = caption(name, body, folder).filter(|(_, bounds)| {
+            (folder || container || !quiet(tile))
+                && (tile.source.is_none()
+                    || tile.source.as_deref() != parent_source
+                    || (!container
+                        && tile
+                            .source
+                            .as_deref()
+                            .is_some_and(|path| path.ends_with('/'))))
                 && !reserved.iter().any(|r| {
                     bounds.x < r.x + r.width
                         && bounds.x + bounds.width > r.x
@@ -467,12 +495,11 @@ fn draw_tiles(
 /// One advance per character for 13px system sans labels, wide enough for
 /// the upper-case folder names; SF Pro capitals average about 8px.
 const LABEL_ADVANCE: f64 = 8.0;
-const FILE_LABEL_ADVANCE: f64 = 5.5;
 
 pub(crate) fn label_width(name: &str) -> f64 {
     name.chars().count() as f64 * LABEL_ADVANCE
 }
-fn caption(name: &str, bytes: i64, body: Rect, folder: bool) -> Option<(String, Rect)> {
+fn caption(name: &str, body: Rect, folder: bool) -> Option<(String, Rect)> {
     if folder {
         let width = label_width(name);
         if name.is_empty() || body.width < width + 4.0 || body.height < 20.0 {
@@ -484,18 +511,10 @@ fn caption(name: &str, bytes: i64, body: Rect, folder: bool) -> Option<(String, 
             width,
             height: 18.0,
         };
-        return Some((
-            format!(
-                "<text class=\"label rectangle-label folder-label\" x=\"{}\" y=\"{}\" pointer-events=\"none\">{}</text>",
-                bounds.x,
-                body.y + 14.0,
-                esc(name)
-            ),
-            bounds,
-        ));
+        return Some((format!("<text class=\"label rectangle-label folder-label\" x=\"{}\" y=\"{}\" pointer-events=\"none\">{}</text>", bounds.x, body.y + 14.0, esc(name)), bounds));
     }
-    let columns = ((body.width - 4.0) / FILE_LABEL_ADVANCE).max(0.0) as usize;
-    if columns == 0 || name.is_empty() || body.height < 13.0 {
+    let columns = ((body.width - 8.0) / LABEL_ADVANCE).max(0.0) as usize;
+    if columns == 0 || name.is_empty() || body.height < 28.0 || (!folder && body.width < 64.0) {
         return None;
     }
     let mut lines = Vec::new();
@@ -512,15 +531,8 @@ fn caption(name: &str, bytes: i64, body: Rect, folder: bool) -> Option<(String, 
     if !line.is_empty() {
         lines.push(line);
     }
-    let size = format!("{} bytes", commas(bytes));
-    if !folder
-        && size.chars().count() <= columns
-        && (lines.len() + 1) as f64 * 11.0 + 4.0 <= body.height
-    {
-        lines.push(size);
-    }
     let rows = lines.len();
-    if (folder && rows > 1) || rows as f64 * 11.0 + 4.0 > body.height {
+    if (folder && rows > 1) || rows as f64 * 18.0 + 8.0 > body.height {
         return None;
     }
     let width = lines
@@ -528,8 +540,8 @@ fn caption(name: &str, bytes: i64, body: Rect, folder: bool) -> Option<(String, 
         .map(|line| line.chars().count())
         .max()
         .unwrap_or(0) as f64
-        * FILE_LABEL_ADVANCE;
-    let height = rows as f64 * 11.0;
+        * LABEL_ADVANCE;
+    let height = rows as f64 * 18.0;
     let bounds = Rect {
         x: if folder {
             body.x + 2.0
@@ -554,7 +566,7 @@ fn caption(name: &str, bytes: i64, body: Rect, folder: bool) -> Option<(String, 
             .map(|(row, line)| {
                 format!(
                     "<tspan x=\"{x}\" y=\"{}\">{}</tspan>",
-                    bounds.y + row as f64 * 11.0 + 5.5,
+                    bounds.y + row as f64 * 18.0 + 9.0,
                     esc(line)
                 )
             })
@@ -683,7 +695,7 @@ pub fn svg_sized(tree: &str, map: &CoverageMap, width: f64, height: f64, folder:
         height: height - 44.0 - rows as f64 * 24.0 - if shared.is_empty() { 0.0 } else { 24.0 },
     };
     let mut out = vec![format!("<title>{}</title>", esc(&title))];
-    out.push("<style>.label{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:13px;fill:#fff;text-shadow:1px 1px 0 #000;}.rectangle-label.folder-label{font-size:11px}.rectangle-label.file-label{font-size:9px}</style>".into());
+    out.push("<style>.label{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:13px;fill:#fff;text-shadow:1px 1px 0 #000;}</style>".into());
     out.push(format!(
         "<svg x=\"{}\" y=\"0\" width=\"{}\" height=\"30\" overflow=\"hidden\"><text class=\"label\" x=\"0\" y=\"22\">{}</text></svg>",
         if folder.is_empty() { 8 } else { 36 },
@@ -874,17 +886,13 @@ mod tests {
             width: 28.0,
             height: 20.0,
         };
-        let (text, bounds) = super::caption("LIB", 100, body, true).unwrap();
+        let (text, bounds) = super::caption("LIB", body, true).unwrap();
         assert_eq!(bounds.width, 24.0);
         assert!(text.contains(">LIB</text>"));
-        assert_eq!(
-            super::caption("WWW", 100, body, true).unwrap().1.width,
-            24.0
-        );
-        assert!(super::caption("LIBS", 100, body, true).is_none());
+        assert_eq!(super::caption("WWW", body, true).unwrap().1.width, 24.0);
+        assert!(super::caption("LIBS", body, true).is_none());
         assert!(super::caption(
             "LIB",
-            100,
             super::Rect {
                 height: 19.0,
                 ..body
@@ -892,7 +900,14 @@ mod tests {
             true
         )
         .is_none());
-        assert!(super::caption("LIB", 100, body, false).is_some());
+        assert!(super::caption("LIB", body, false).is_none());
+        // Files are named only on boxes large enough to read at a glance.
+        let large = super::Rect {
+            width: 96.0,
+            height: 40.0,
+            ..body
+        };
+        assert!(super::caption("STILL.PNG", large, false).is_some());
     }
     use super::{
         content_style, directories, draw_tiles, leaves, sound_type, svg, tree_tiles, BOX_TREES,
@@ -1119,13 +1134,49 @@ mod tests {
             ..Tile::default()
         };
         assert_eq!(content_style(&tile("s")), ("Assembly", super::ASSEMBLY));
-        assert_eq!(content_style(&tile("c")), ("C", super::C_TEAL));
+        assert_eq!(content_style(&tile("c")), ("C", super::SOURCE_ROSE));
         let draft = Tile {
             source: Some("recon/tbs/en/main/08006878.c".into()),
             ..tile("c")
         };
-        assert_eq!(content_style(&draft), ("Drafted C", super::DRAFTED));
-        assert_eq!(content_style(&tile("po")), ("Text", super::TEXT_CYAN));
+        assert_eq!(content_style(&draft), ("Drafted C", super::DRAFT_ROSE));
+        assert_eq!(
+            content_style(&tile("po")),
+            ("Translations", super::TRANSLATION_GREY)
+        );
+        let placed = |source: &str, extension: &str| Tile {
+            source: Some(source.into()),
+            ..tile(extension)
+        };
+        for (source, extension, kind) in [
+            (
+                "games/X/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
+                "json",
+                "Sprite sheets",
+            ),
+            ("games/X/SRC/GRAPHICS/COMMON/STILL.JSON", "json", "Images"),
+            ("games/X/SRC/FIELD/AREA/AREA.JSON", "json", "Maps"),
+            ("games/X/SRC/GAME/DATABASES.JSON", "json", "Tables"),
+            ("recon/tbs/source-paths.json", "json", "Registries"),
+            (
+                "games/X/SRC/GRAPHICS/COMMON/COMPRESSION.TOKENS",
+                "tokens",
+                "Compression answers",
+            ),
+            (
+                "games/X/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+                "json",
+                "Compression answers",
+            ),
+        ] {
+            assert_eq!(
+                content_style(&placed(source, extension)).0,
+                kind,
+                "{source}"
+            );
+        }
+        assert!(super::quiet(&placed("games/X/TEXT/DE.PO", "po")));
+        assert!(!super::quiet(&placed("games/X/SRC/FIELD/A/A.JSON", "json")));
         assert_eq!(
             content_style(&tile("mid")),
             ("MIDI music", super::MIDI_GREEN)
@@ -1161,9 +1212,9 @@ mod tests {
         assert_eq!(
             super::content_mix(&folder),
             vec![
-                ("C", super::C_TEAL, 70),
-                ("Metadata", "#9aa4c2", 40),
-                ("Headers", "#eadb83", 10)
+                ("C", super::SOURCE_ROSE, 70),
+                ("Maps", super::MAP_GREEN, 40),
+                ("Headers", super::HEADER_ROSE, 10)
             ]
         );
         assert_eq!(super::color(Category::DraftC), super::DRAFTED);

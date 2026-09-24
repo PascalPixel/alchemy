@@ -128,12 +128,12 @@ struct RenderInput *Ui_ShowAbilityChangePreview(
             output->one5 = 1;
             output->one4 = 1;
             output->index = Func_080040b4(128);
-            output->sentinel = 240;
-            output->x = 120;
-            output->y = 120;
             entry = (struct PreviewSprite *)((u8 *)output + 16);
+            output->table.value = 0;
+            output->sentinel = 240;
+            output->y = 120;
+            output->x = 120;
             entry->attributes.word = 0x40000400;
-            entry->tile.value = 0;
             entry->attributes.bits.x = win->x * 8 + x;
             entry->attributes.bits.y = win->y * 8 + y;
             entry->tile.bits.index = Func_080040d0((u8)output->index, rising ? Data_080313a4 : Data_08031424);

@@ -9,12 +9,12 @@ void Engine_ObjectSetAnimation();
 void Engine_TaskWait();
 
 
-extern u8 Data_00000000[];
+extern u8 Korosseo_LinkedZero[];
 extern s32 Korosseo_CompetitorStartX;
 extern s32 Korosseo_CompetitorStartZ;
 extern s32 Korosseo_CompetitorStartAngle;
-extern u8 Data_02000240[];
-extern u8 Data_02000240_t[][2];
+extern u8 gGameStateBytes[];
+extern u8 gGameStateRows[][2];
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
@@ -36,8 +36,8 @@ void Korosseo_RestoreCompetitor(s32 a0)
 
     p7 = *(s32 *)0x03001e68;
     rec7 = Engine_ActorGet(a0);
-    if (Data_02000240_t[249][0] == 1) {
-        Data_02000240_t[249][0] = 0;
+    if (gGameStateRows[249][0] == 1) {
+        gGameStateRows[249][0] = 0;
         Engine_ActorSetAnimation(a0, 1);
     } else {
         Call3(Engine_ActorFaceDirection, a0, 0x4000, 30);
@@ -58,7 +58,7 @@ void Korosseo_RestoreCompetitor(s32 a0)
         /* FAKEMATCH: the zero at +34 is a halfword pool constant through a link
          * symbol; its short pool range places the literal pool before the
          * epilogue. */
-        s32 z = (u16)(u32)Data_00000000;
+        s32 z = (u16)(u32)Korosseo_LinkedZero;
 
         rec7[85] = 3;
         rec7[34] = z;

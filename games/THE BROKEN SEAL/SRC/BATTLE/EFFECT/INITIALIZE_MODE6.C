@@ -10,10 +10,6 @@
 #include "EFFECT_STEP.H"
 #include "FIXED_MATH.H"
 
-/* Mode 6 declares its blitters with a return value it ignores: a call that
-   sets r0 changes how the scheduler orders the argument loads. */
-typedef s32 (*DrawRectangleResult)(void *, const void *, s32, s32, s32, s32);
-
 void WaitFrames(s32);
 u32 Random16(void);
 s32 Trig_Sin(s32);
@@ -123,7 +119,7 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
     struct EffectStep *q2;
     struct EffectStep *q3;
     struct EffectStep *q4;
-    DrawRectangleResult blit[2];
+    DrawRectangle blit[2];
     Scale scale;
     s32 ground = 112;
 
@@ -166,9 +162,9 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
     work->transfer_value = 75;
     spot[4] = 1;
     BattleEffect_LoadWork(46, 7, 7, 3, 3);
-    blit[0] = (DrawRectangleResult)cache[46 - 40];
+    blit[0] = (DrawRectangle)cache[46 - 40];
     BattleEffect_LoadWork(47, 7, 7, 3, 2);
-    blit[1] = (DrawRectangleResult)cache[47 - 40];
+    blit[1] = (DrawRectangle)cache[47 - 40];
     *(u16 *)0x0400000c = 0x784;
 
     for (i = 0; i != 1024; i++) {
@@ -416,7 +412,7 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
         }
 
         if (frame > 27) {
-            DrawRectangleResult draw = blit[1];
+            DrawRectangle draw = blit[1];
             for (i = 0; i != 1024; i++) {
                 s32 m = 3;
                 if (PARTICLES[i].variant >= 0) {

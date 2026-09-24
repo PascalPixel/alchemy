@@ -1,5 +1,5 @@
 /* Draft, not exact (2026-09-24): candidate=3920 reference=3920,
-   differing_halfwords=1010, binary similarity 76.4%. Phase one (170
+   differing_halfwords=838, binary similarity 77.3%. Phase one (170
    frames, A or B skips it) draws three dotted beams between six projected
    points, a ring of dots and a falling column; phase two (192 frames)
    bursts sparks, flashes and smoke and pans the camera. Residual: the
@@ -17,7 +17,18 @@
    by reload, where the reference leaves it unallocated),
    gWorkSlot read through a base pointer for blit[0] (sym + 184), masks
    loaded into the result register (speed = 0x3ff; speed &= Random16()),
-   and Trig_Sin(angle) * speed operand order. */
+   Trig_Sin(angle) * speed operand order, gWorkSlot read again after
+   BattleEffect_LoadWork rather than kept in a register from the prologue,
+   and the ramp limit copied before top -= 7 (the reference keeps limit
+   and top in separate registers; it still reloads 0x2710 inside the outer
+   loop where we hoist it). The whole second phase from 0x7c2 on now
+   differs only in scattered register choices. The first-phase residual
+   is one missing induction variable: the reference strength-reduces the
+   beam's count * 2 over frames into its own spilled slot (+4 a frame, at
+   sp+24, beside frame * 2 at sp+20, the column height at sp+28 and the
+   scale at sp+16), where we compute count * 2 from the spilled count; no
+   spelling of the beam length (frame * 4, (count - 128) * 2, count +
+   count) changed that. */
 #include "TYPES.H"
 #include "BATTLE_EFFECT_WORK.H"
 #include "BATTLE_EFX.H"
@@ -155,7 +166,6 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
     work = (struct Mode12Work *)SLOT(39);
     dst = (void *)SLOT(40);
     aux = (u8 *)SLOT(41);
-    cache = (u32 *)gWorkSlot;
     work->effect = efx;
     BattleFx_BeginCanvasLayer(0x2000);
     *(u16 *)0x04000020 = 0x100;
@@ -170,6 +180,7 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
         s32 lim = top;
         u8 *src = aux;
         u8 *out = work->sheet + n + 0x2710;
+        top -= 7;
         for (j = 0; j != 0x302; j++) {
             s32 v = *src++;
             if (v > lim) {
@@ -181,7 +192,6 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
             *out++ = v;
         }
         n += j;
-        top -= 7;
     }
     }
 
@@ -203,6 +213,7 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
     Unnamed_080cd104(0, 1);
     *(u16 *)0x04000020 = 0x80;
     BattleEffect_LoadWork(46, 7, 7, 3, 3);
+    cache = (u32 *)gWorkSlot;
     blit[0] = (DrawRectangle)cache[46];
     *(u16 *)0x04000000 = 0x7741;
     *(u16 *)0x04000020 = 0x80;

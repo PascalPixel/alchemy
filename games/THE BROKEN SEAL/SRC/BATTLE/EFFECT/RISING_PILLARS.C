@@ -1,17 +1,16 @@
-/* Draft, not exact (2026-09-24): candidate=1056 reference=1056
-   differing_halfwords=200 (was 341 at 1052 bytes). The cue test written as
-   frame - 4 == i * 8 + 8 keeps the 8i + 12 counter from merging into 8i + 8,
-   which brings the size to 1056; a temporary for a * 6 stops the a * 3
-   reduction. Earlier notes: prologue, frame (52 bytes), the X-table pointer
-   (sp+16), a = frame - 8 - 8i in r8, the in-body spawn pointer and the puff
-   loop match; the reference keeps 8i+8 (sp+12) and 8i+12 (sp+20) as
-   separate spilled inductions. */
+/* Battle effect: a row of pillars rises out of the ground one after another,
+   eight frames apart, each kicking up a puff of dust and shaking the camera
+   while the targets flinch; the screen fades back over the last 16 frames.
+   Kinds 0 and 1 are tall columns that slide outwards as they grow, kinds 2
+   and 3 short stumps; odd kinds slide left.
+
+   The pillar loop keeps the reference's inductions: the start frame is its
+   own variable (the frame tests are start, start + 1, start + 3 and
+   start + 4), the pillar's age is computed before the start test, and the
+   kind is read from its table at each test. */
 #include "TYPES.H"
 #include "BATTLE_EFFECT_WORK.H"
 #include "BATTLE_EFX.H"
-/* As in mode 6, the blitters return a value the effect ignores. */
-typedef s32 (*DrawRectangleResult)(void *, const void *, s32, s32, s32, s32);
-#define DrawRectangle DrawRectangleResult
 #include "CALLBACK_SCHEDULER.H"
 #include "EFFECT_STEP.H"
 
@@ -61,9 +60,8 @@ void FunctionHead_080dd9c0(struct BattleEffectArgument *efx)
     struct PillarWork *work;
     s32 i;
     s32 j;
-    s32 a;
-    s8 *xp;
-    s32 st;
+    s32 age;
+    s32 start;
 
     cache = (u32 *)(gWorkSlot + 39 * 4);
     cursor = cache;
@@ -79,11 +77,11 @@ void FunctionHead_080dd9c0(struct BattleEffectArgument *efx)
         *(u32 *)0x04000028 = 0xffff9000;
     }
     BattleEffect_LoadWork(46, 7, 7, 3, 1);
-    blit46 = (DrawRectangle)cache[46 - 39];
+    blit46 = ((DrawRectangle *)cache)[46 - 39];
     BattleEffect_LoadWork(47, 7, 7, 7, 1);
     work->transfer_mode = 1;
     work->transfer_value = 0;
-    blit47 = (DrawRectangle)cache[47 - 39];
+    blit47 = ((DrawRectangle *)cache)[47 - 39];
     Scheduler_AddOrUpdateCallback(0x080CD261, 0x480);
     total = BattleFxPillar_Counts[work->effect->variant] * 8 + 56;
 
@@ -101,48 +99,45 @@ void FunctionHead_080dd9c0(struct BattleEffectArgument *efx)
         }
 
         for (i = 0; i != BattleFxPillar_Counts[work->effect->variant]; i++) {
-            if (frame > i * 8 + 8) {
-                s32 kind = BattleFxPillar_Kinds[i];
+            start = i * 8 + 8;
+            age = frame - (i * 8 + 8);
+            if (frame > start) {
                 s32 h;
                 s32 w;
-                a = frame - (i * 8 + 8);
-                if ((u32)kind < 2) {
-                    h = a * 16;
-                    /* FAKEMATCH: a temporary for a * 6 keeps loop.c from reducing a * 3. */
-                    {
-                        s32 t = a * 6;
-                        w = t;
-                    }
+
+                if (BattleFxPillar_Kinds[i] < 2) {
+                    h = age * 16;
+                    w = age * 6;
                     if (h > 80) {
                         h = 80;
                     }
                     if (w > 30) {
                         w = 30;
                     }
-                    if (kind & 1) {
+                    if (BattleFxPillar_Kinds[i] & 1) {
                         blit47(dst, work->sheet, BattleFxPillar_X[i] - w, 108 - h, 48, h);
                     } else {
                         blit46(dst, work->sheet, BattleFxPillar_X[i] + w, 108 - h, 48, h);
                     }
                 } else {
-                    h = a * 8;
-                    w = a;
+                    h = age * 8;
+                    w = age;
                     if (h > 64) {
                         h = 64;
                     }
-                    if (a > 8) {
+                    if (age > 8) {
                         w = 8;
                     }
-                    if (kind & 1) {
+                    if (BattleFxPillar_Kinds[i] & 1) {
                         blit47(dst, work->sheet + 0xf00, BattleFxPillar_X[i] - w, 108 - h, 32, h);
                     } else {
                         blit46(dst, work->sheet + 0xf00, BattleFxPillar_X[i] + w, 108 - h, 32, h);
                     }
                 }
-                if (frame == i * 8 + 8 + 1) {
+                if (frame == start + 1) {
                     work->shake = 3;
                 }
-                if (frame < i * 8 + 8 + 3) {
+                if (frame < start + 3) {
                     s32 y = (Random16() & 31) + 72;
                     struct EffectStep *p;
                     for (j = 0; j != 64; j++) {
@@ -159,25 +154,21 @@ void FunctionHead_080dd9c0(struct BattleEffectArgument *efx)
                     }
                 }
             }
-            {
             for (j = 0; j != work->effect->count; j++) {
-                /* frame - 4 keeps 8i + 12 apart from the 8i + 8 induction. */
-                if (frame - 4 == i * 8 + 8) {
+                if (frame == start + 4) {
                     Audio_PlayCue(132);
                     ObjectGroup_UpdateMembers(work->effect->actors[j], 7, 5, j, 3);
                 }
             }
-            }
         }
 
         for (i = 0; i != 64; i++) {
-            u8 *hts = BattleFxPillar_PuffHeights;
             if (PARTICLES[i].variant >= 0) {
                 s32 n = PARTICLES[i].variant / 2;
                 blit46(dst, work->sheet + BattleFxPillar_PuffCells[n], PARTICLES[i].x - BattleFxPillar_PuffWidths[n],
-                    PARTICLES[i].y - (s8)hts[n] / 2, BattleFxPillar_PuffWidths[n], (s8)hts[n]);
+                    PARTICLES[i].y - (s8)BattleFxPillar_PuffHeights[n] / 2, BattleFxPillar_PuffWidths[n], (s8)BattleFxPillar_PuffHeights[n]);
                 blit47(dst, work->sheet + BattleFxPillar_PuffCells[n], PARTICLES[i].x,
-                    PARTICLES[i].y - (s8)hts[n] / 2, BattleFxPillar_PuffWidths[n], (s8)hts[n]);
+                    PARTICLES[i].y - (s8)BattleFxPillar_PuffHeights[n] / 2, BattleFxPillar_PuffWidths[n], (s8)BattleFxPillar_PuffHeights[n]);
                 if (++PARTICLES[i].variant == 14) {
                     PARTICLES[i].variant = -1;
                 }

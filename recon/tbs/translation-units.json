@@ -72707,6 +72707,58 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "imiru-mura-f-00974",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/IMIRU_MURA/F_00974.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_399",
+      "absolute_symbols": {
+        "Engine_ActorGet": {
+          "address": "0x0200a248",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagIsSet": {
+          "address": "0x0200a210",
+          "kind": "thumb"
+        },
+        "Engine_ShopOpen": {
+          "address": "0x0200a3d0",
+          "kind": "thumb"
+        },
+        "Engine_EventBegin": {
+          "address": "0x0200a230",
+          "kind": "thumb"
+        },
+        "Engine_ActorFaceActor": {
+          "address": "0x0200a2e0",
+          "kind": "thumb"
+        },
+        "Engine_EventSetMessage": {
+          "address": "0x0200a300",
+          "kind": "thumb"
+        },
+        "Engine_EventShowMessage": {
+          "address": "0x0200a308",
+          "kind": "thumb"
+        },
+        "Engine_ActorFaceDirection": {
+          "address": "0x0200a320",
+          "kind": "thumb"
+        },
+        "Engine_EventEnd": {
+          "address": "0x0200a238",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02000974",
+          "extent": 200,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

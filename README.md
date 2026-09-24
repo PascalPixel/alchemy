@@ -34,7 +34,7 @@ the technical details in [AGENTS.md](AGENTS.md).
 
 ## Progress
 
-**☀️ 65.32% · ⚓️ 2.13%**
+**☀️ 65.52% · ⚓️ 2.13%**
 
 <img src="PROGRESS.svg" width="830" alt="Alchemy progress for The Broken Seal and The Lost Age, above a map of the project's files">
 

@@ -1,3 +1,7 @@
+/* NONMATCHING: 172 bytes, candidate 176, 36 differing halfwords (2026-09-24).
+ * The byte-5 clear is a one-bit field (reference ands with -33). Remaining:
+ * the loop's stored zero is copied from the counter's initial zero in r8 in
+ * the reference; here it is a separate constant, which shifts the pool. */
 #include "TYPES.H"
 
 
@@ -34,6 +38,8 @@ static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
  * as 380:02004260. Remaining: the -33 mask is folded to 0xdf (a word mask
  * variable grows the function), the sprite[28] load is scheduled late, and
  * the loop zero is not shared with the counter in r5. */
+struct Spr5 { u8 pad[5]; u8 lo:5; u8 bit5:1; u8 hi:2; };
+
 void Func_02003098(s32 item)
 {
     u8 *obj;
@@ -49,7 +55,7 @@ void Func_02003098(s32 item)
         spr = *(u8 **)(obj + 80);
         spr[38] = zero;
         spr[39] = zero;
-        spr[5] &= -33;
+        ((struct Spr5 *)spr)->bit5 = 0;
         spr[9] &= 15;
         *(s32 *)(obj + 40) = 0x20000;
         *(s32 *)(obj + 72) = 0x4000;

@@ -1,6 +1,3 @@
-/* NONMATCHING: 786 of 784 bytes, 43 halfword edits (2026-09-24). Hand-written from the
- * resolved jump-table disassembly as a single-overlay unit binding Engine_* at
- * their import veneers. Remaining: the Sol Sanctum light scene is written in full with its constants passed through call wrappers; left: the 0x1c8 frame offset and the event-globals address swap r0/r1 at the first store, the three halfword clears derive 0xe04 from 0xe00 instead of 0xe02, and the end block and mid-function pool shift by 2 bytes (43 edits). */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
@@ -31,13 +28,12 @@ struct EventGlobals {
 };
 
 extern struct EventGlobals Data_03001ebc;
-extern u8 Data_00000000[];
 
-void Local_02002614(void)
+/* Sol Sanctum: the two actors walk up, the light rises, and the scene clears the light tables and backdrop before handing back to the map. */
+void SoruNichigetsu_RunLightScene(void)
 {
     struct FieldActor *leader;
     u8 *field;
-    u8 zero;
     s32 frames;
 
     Engine_EventBegin();
@@ -120,12 +116,12 @@ void Local_02002614(void)
     *(u16 *)(field + 0xe00) = 0;
     *(u16 *)(field + 0xe02) = 0;
     *(u16 *)(field + 0xe04) = 0;
-    zero = (u32)Data_00000000;
-    field[0x2a00] = zero;
+    field[0x2a00] = 0;
     field[0x2a01] = 1;
     field[0x2a02] = 1;
     field[0x2a03] = 1;
-    *(u16 *)0x05000000 = 0;
+    /* FAKEMATCH: the do/while keeps the backdrop-colour clear ahead of the event-work load. */
+    do { *(u16 *)0x05000000 = 0; } while (0);
     Data_03001ebc.event->start_transition = 0x204;
     *(s32 *)((u8 *)Data_03001ebc.event + frames) = 16;
     Engine_EventEnd();

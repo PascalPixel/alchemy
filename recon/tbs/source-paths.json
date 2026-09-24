@@ -1,6 +1,14 @@
 {
   "format": 3,
   "owners": {
+    "resource_37a:02002614": {
+      "name": "SoruNichigetsu_RunLightScene",
+      "source": "FIELD/SORU_NICHIGETSU/LIGHT_SCENE.C"
+    },
+    "resource_370:02000cfc": {
+      "name": "SaveMenu_FillTileGrid",
+      "source": "MENU/CLEAR/TILE_GRID.C"
+    },
     "resource_39c:02005388": {
       "name": "MakyuriHeya_SpawnSparkPair",
       "source": "FIELD/COMMON/MAKYURI/SPARK_PAIR.C"

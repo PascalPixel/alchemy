@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_383:02002564": {
+      "name": "KuupuappuHeya_Func02002564",
+      "source": "FIELD/KUUPUAPPU_HEYA/F_02564.C"
+    },
     "resource_387:02000dd8": {
       "name": "GomaIriguchi_Func02000dd8",
       "source": "FIELD/GOMA_IRIGUCHI/F_00DD8.C"

@@ -72435,6 +72435,26 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "kuupuappu-heya-f-02564",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_HEYA/F_02564.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_383",
+      "absolute_symbols": {
+        "SceneActor_UpdateAnimationOnStateMatch": {
+          "address": "0x0200a6e4",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02002564",
+          "extent": 384,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

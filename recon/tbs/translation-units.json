@@ -70574,6 +70574,58 @@
           }
         }
       }
+    },
+    {
+      "id": "ramakan-sabaku-area-layout",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/RAMAKAN_SABAKU/AREA_LAYOUT.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3a5",
+      "absolute_symbols": {
+        "Engine_GameFlagClear": {
+          "address": "0x02009d54",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagSet": {
+          "address": "0x02009d4c",
+          "kind": "thumb"
+        },
+        "Main_080091b8": {
+          "address": "0x02009d14",
+          "kind": "thumb"
+        },
+        "Engine_MapCopyCellAttributes": {
+          "address": "0x02009d1c",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetPosition": {
+          "address": "0x02009da4",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagIsSet": {
+          "address": "0x02009d44",
+          "kind": "thumb"
+        },
+        "Engine_MapObjectSetPosition": {
+          "address": "0x02009e24",
+          "kind": "thumb"
+        },
+        "Main_0808a3d0": {
+          "address": "0x02009e2c",
+          "kind": "thumb"
+        },
+        "Main_0808a380": {
+          "address": "0x02009e1c",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x0200088c",
+          "extent": 940,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

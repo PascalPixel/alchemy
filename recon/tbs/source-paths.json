@@ -18028,7 +18028,8 @@
       "source": "FIELD/RAMAKAN_SABAKU/ENTRY_STATE.C"
     },
     "resource_3a5:0200088c": {
-      "name": "FieldScene_ConfigureAlternateActorLayout"
+      "name": "RamakanSabaku_ConfigureAreaLayout",
+      "source": "FIELD/RAMAKAN_SABAKU/AREA_LAYOUT.C"
     },
     "resource_3a5:02001874": {
       "name": "FieldScene_RunScene3a5_02001874",

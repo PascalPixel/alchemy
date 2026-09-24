@@ -4,7 +4,6 @@
 extern u8 Data_02008cb4[];
 extern u8 Data_03001ebc[];
 
-s32 Func_020000dc(void);
 void Func_02000cbc();
 void Func_02000cc0();
 void Func_02000d2c();
@@ -86,7 +85,7 @@ u8 *ConditionalSceneSetup_GetEffectData(void)
 s32 ConditionalSceneSetup_InitForScene15(void)
 {
     if (gGameState.entrance == 15) {
-        Func_020000dc();
+        RunEventScript01();
     }
     return 0;
 }

@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "main:080a1f74": {
+      "name": "Menu_CopyListOrder",
+      "source": "MENU/COPY_LIST_ORDER.C"
+    },
     "main:080c0130": {
       "name": "BattlePres_UpdateHBlankScroll",
       "source": "BATTLE/PRESENTATION/UPDATE_HBLANK_SCROLL.C"

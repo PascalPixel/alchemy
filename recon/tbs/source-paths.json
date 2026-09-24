@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_39d:02002f18": {
+      "name": "MakyuriChojo_Func02002f18",
+      "source": "FIELD/MAKYURI_CHOJO/F_02F18.C"
+    },
     "resource_39c:02002e6c": {
       "name": "MakyuriHeya_Func02002e6c",
       "source": "FIELD/MAKYURI_HEYA/F_02E6C.C"

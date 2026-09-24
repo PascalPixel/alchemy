@@ -5703,7 +5703,7 @@
       "source": "FIELD/TORETO_EDA/BACKGROUND_SCROLL.C"
     },
     "resource_383:0200059c": {
-      "name": "Dialogue_ShowLine128E",
+      "name": "SceneDialogue_ShowLine128E",
       "source": "FIELD/KUUPUAPPU_HEYA/PROMPT.C"
     },
     "resource_390:020000e4": {
@@ -5815,7 +5815,7 @@
       "source": "MENU/TITLE/MINIMAL.C"
     },
     "resource_383:02002f98": {
-      "name": "OvObj_RunObjectTwoWhenFlagged",
+      "name": "OverlayObject_RunObjectTwoWhenFlagged",
       "source": "FIELD/KUUPUAPPU_HEYA/PROMPT.C"
     },
     "resource_3b1:02001720": {
@@ -6048,7 +6048,7 @@
       "source": "FIELD/SORU_SEKIZO/GUARDED_STEP.C"
     },
     "resource_383:02001e64": {
-      "name": "Scene_RunSteps107And250",
+      "name": "FieldScene_RunSteps107And250",
       "source": "FIELD/KUUPUAPPU_HEYA/PROMPT.C"
     },
     "resource_3c8:020005ac": {
@@ -6103,7 +6103,7 @@
       "source": "FIELD/RARIBERO_MACHI/FLAGGED_CUE.C"
     },
     "resource_383:02000b48": {
-      "name": "Scene_RunSetupSequence",
+      "name": "FieldScene_RunSetupSequence",
       "source": "FIELD/KUUPUAPPU_HEYA/PROMPT.C"
     },
     "resource_383:02000de4": {
@@ -6214,7 +6214,7 @@
       "source": "FIELD/SUHARA_HEYA/RECORD_SETUP.C"
     },
     "resource_383:020045cc": {
-      "name": "State_SetWord1c0To209AndRun",
+      "name": "SceneState_SetWord1c0To209AndRun",
       "source": "FIELD/KUUPUAPPU_HEYA/PROMPT.C"
     },
     "resource_374:02002590": {
@@ -6418,7 +6418,7 @@
       "source": "FIELD/VINASU_HEYA/ENTRY_SETUP.C"
     },
     "resource_383:0200460c": {
-      "name": "Scene_RunSplitTripleSteps",
+      "name": "FieldScene_RunSplitTripleSteps",
       "source": "FIELD/KUUPUAPPU_HEYA/PROMPT.C"
     },
     "resource_39e:02000abc": {
@@ -6474,7 +6474,7 @@
       "source": "FIELD/KORASHIAMU_IRIGUCHI/STATUS_DISPATCH.C"
     },
     "resource_383:020002a4": {
-      "name": "Dialogue_ShowLine12BB",
+      "name": "SceneDialogue_ShowLine12BB",
       "source": "FIELD/KUUPUAPPU_HEYA/PROMPT.C"
     },
     "resource_39e:02002508": {
@@ -6739,7 +6739,7 @@
       "source": "FIELD/KUUPUAPPU_MURA_SAI/MOTION_EVENT.C"
     },
     "resource_383:0200019c": {
-      "name": "Scene_RunActorTwentyAngleDialogue",
+      "name": "FieldScene_RunActorTwentyAngleDialogue",
       "source": "FIELD/KUUPUAPPU_HEYA/PROMPT.C"
     },
     "resource_3b1:020063ac": {
@@ -6775,7 +6775,7 @@
       "source": "FIELD/BABI_FUNE/TABLE_AUDIO.C"
     },
     "resource_383:02000a84": {
-      "name": "Dialogue_ShowLine124EOr135E",
+      "name": "SceneDialogue_ShowLine124EOr135E",
       "source": "FIELD/KUUPUAPPU_HEYA/PROMPT.C"
     },
     "resource_3ba:02000954": {
@@ -6811,7 +6811,7 @@
       "source": "FIELD/TORETO_EDA/BACKGROUND_SCROLL.C"
     },
     "resource_383:0200271c": {
-      "name": "State_SetFlagByActorPosition",
+      "name": "SceneState_SetFlagByActorPosition",
       "source": "FIELD/KUUPUAPPU_HEYA/PROMPT.C"
     },
     "resource_3cd:02000070": {
@@ -7107,7 +7107,7 @@
       "source": "FIELD/TOREBI_HEYA/FACING_EVENTS.C"
     },
     "resource_383:0200080c": {
-      "name": "Dialogue_RunActor14Line",
+      "name": "SceneDialogue_RunActor14Line",
       "source": "FIELD/KUUPUAPPU_HEYA/PROMPT.C"
     },
     "resource_3c3:02000080": {
@@ -7179,7 +7179,7 @@
       "source": "FIELD/COMMON/SHIAN_JIIN/TEMPLE_ROOMS.C"
     },
     "resource_383:020048a4": {
-      "name": "Actor_ApplyScaledBytePairPosition",
+      "name": "SceneActor_ApplyScaledBytePairPosition",
       "source": "FIELD/KUUPUAPPU_HEYA/PROMPT.C"
     },
     "resource_3c7:0200004c": {
@@ -7239,7 +7239,7 @@
       "source": "FIELD/SORU_DOU/TABLE_UPDATE.C"
     },
     "resource_383:020007ec": {
-      "name": "Dialogue_RunActor11Line",
+      "name": "SceneDialogue_RunActor11Line",
       "source": "FIELD/KUUPUAPPU_HEYA/PROMPT.C"
     },
     "resource_3b6:020008cc": {
@@ -7375,7 +7375,7 @@
       "source": "FIELD/SHIAN_HEYA/FLAGGED_OBJECT.C"
     },
     "resource_383:020045f4": {
-      "name": "Actor_SetModeZeroAndValue",
+      "name": "SceneActor_SetModeZeroAndValue",
       "source": "FIELD/KUUPUAPPU_HEYA/PROMPT.C"
     },
     "resource_38e:020001a4": {
@@ -7467,7 +7467,7 @@
       "source": "FIELD/FUNE_HEYA/EXTENDED_CHOREOGRAPHY.C"
     },
     "resource_383:02000080": {
-      "name": "ActorDraw_SetSceneCellByAngle",
+      "name": "ActorPresentation_SetSceneCellByAngle",
       "source": "FIELD/KUUPUAPPU_HEYA/PROMPT.C"
     },
     "resource_394:02000ecc": {
@@ -7503,7 +7503,7 @@
       "source": "FIELD/COMMON/SHIAN_JIIN/TEMPLE_ROOMS.C"
     },
     "resource_383:0200052c": {
-      "name": "Scene_RunFlag856DialogueBranch",
+      "name": "FieldScene_RunFlag856DialogueBranch",
       "source": "FIELD/KUUPUAPPU_HEYA/PROMPT.C"
     },
     "resource_3a3:020004bc": {
@@ -7531,7 +7531,7 @@
       "source": "FIELD/FUNE_HOBASHIRA/OBJECT_SCALE.C"
     },
     "resource_383:02004698": {
-      "name": "OvObj_ConfigureObject22WithResource17",
+      "name": "OverlayObject_ConfigureObject22WithResource17",
       "source": "FIELD/KUUPUAPPU_HEYA/PROMPT.C"
     },
     "resource_384:0200003c": {
@@ -7563,7 +7563,7 @@
       "source": "FIELD/KUUPUAPPU_MURA_SAI/MOTION_EVENT.C"
     },
     "resource_383:0200013c": {
-      "name": "Scene_RunActorNineteenAngleDialogue",
+      "name": "FieldScene_RunActorNineteenAngleDialogue",
       "source": "FIELD/KUUPUAPPU_HEYA/PROMPT.C"
     },
     "resource_37b:02001be8": {
@@ -7671,7 +7671,7 @@
       "source": "FIELD/KORASHIAMU_IRIGUCHI/STATUS_DISPATCH.C"
     },
     "resource_383:020004bc": {
-      "name": "Dialogue_RunActor9FlaggedLine",
+      "name": "SceneDialogue_RunActor9FlaggedLine",
       "source": "FIELD/KUUPUAPPU_HEYA/PROMPT.C"
     },
     "resource_3cb:02000f88": {
@@ -7871,7 +7871,7 @@
       "source": "FIELD/COMMON/KUUPUAPPU_RUNPA/JAIL.C"
     },
     "resource_383:02000378": {
-      "name": "State_RunGuardedActorStep",
+      "name": "SceneState_RunGuardedActorStep",
       "source": "FIELD/KUUPUAPPU_HEYA/PROMPT.C"
     },
     "resource_3b9:020002a0": {
@@ -7879,7 +7879,7 @@
       "source": "FIELD/KORASHIAMU_IRIGUCHI/STATUS_DISPATCH.C"
     },
     "resource_383:020005bc": {
-      "name": "Actor_StepActor24AnimationByFacing",
+      "name": "SceneActor_StepActor24AnimationByFacing",
       "source": "FIELD/KUUPUAPPU_HEYA/PROMPT.C"
     },
     "resource_3c9:020006c0": {
@@ -7907,7 +7907,7 @@
       "source": "FIELD/HAIDIA_FUNKA/CONDITIONAL_SETUP.C"
     },
     "resource_383:02000abc": {
-      "name": "Dialogue_RunActor16FlaggedLine",
+      "name": "SceneDialogue_RunActor16FlaggedLine",
       "source": "FIELD/KUUPUAPPU_HEYA/PROMPT.C"
     },
     "resource_3c8:02000e88": {
@@ -7975,7 +7975,7 @@
       "source": "FIELD/KOROSSEO_KAWA/COORDINATOR.C"
     },
     "resource_383:02004624": {
-      "name": "Actor_SetPairZeroAndValue",
+      "name": "SceneActor_SetPairZeroAndValue",
       "source": "FIELD/KUUPUAPPU_HEYA/PROMPT.C"
     },
     "resource_386:02000458": {
@@ -8119,7 +8119,7 @@
       "source": "FIELD/COMMON/RUNPA_SUHARA/INTERIORS.C"
     },
     "resource_383:020007cc": {
-      "name": "Dialogue_RunActor10Line",
+      "name": "SceneDialogue_RunActor10Line",
       "source": "FIELD/KUUPUAPPU_HEYA/PROMPT.C"
     },
     "resource_3ca:02000070": {
@@ -8131,7 +8131,7 @@
       "source": "FIELD/HAIDIA_ARASHI/GROUP_DEPARTURE.C"
     },
     "resource_383:02002f84": {
-      "name": "OvObj_GetObjectTwoByte118",
+      "name": "OverlayObject_GetObjectTwoByte118",
       "source": "FIELD/KUUPUAPPU_HEYA/PROMPT.C"
     },
     "resource_376:02000314": {
@@ -8147,7 +8147,7 @@
       "source": "FIELD/VINASU_HEYA/ENTRY_SETUP.C"
     },
     "resource_383:020001fc": {
-      "name": "Scene_RunActorTwentyThreeAngleDialogue",
+      "name": "FieldScene_RunActorTwentyThreeAngleDialogue",
       "source": "FIELD/KUUPUAPPU_HEYA/PROMPT.C"
     },
     "resource_397:02000138": {
@@ -8187,7 +8187,7 @@
       "source": "FIELD/FUNE_HEYA/EXTENDED_CHOREOGRAPHY.C"
     },
     "resource_383:02004840": {
-      "name": "Actor_CheckTileFreeOfKinds",
+      "name": "SceneActor_CheckTileFreeOfKinds",
       "source": "FIELD/KUUPUAPPU_HEYA/PROMPT.C"
     },
     "resource_399:020001e0": {
@@ -8243,11 +8243,11 @@
       "source": "FIELD/KOROSSEO_KAWA/COORDINATOR.C"
     },
     "resource_383:0200025c": {
-      "name": "Scene_RunActorEighteenConditionalScene",
+      "name": "FieldScene_RunActorEighteenConditionalScene",
       "source": "FIELD/KUUPUAPPU_HEYA/PROMPT.C"
     },
     "resource_383:02000a4c": {
-      "name": "Dialogue_RunActorElevenFlaggedDialogue",
+      "name": "SceneDialogue_RunActorElevenFlaggedDialogue",
       "source": "FIELD/KUUPUAPPU_HEYA/PROMPT.C"
     },
     "resource_398:02000424": {
@@ -8279,7 +8279,7 @@
       "source": "FIELD/KAREI_KYUDEN/PARTY_EVENTS.C"
     },
     "resource_383:020002e8": {
-      "name": "State_SetFlags929And949",
+      "name": "SceneState_SetFlags929And949",
       "source": "FIELD/KUUPUAPPU_HEYA/PROMPT.C"
     },
     "resource_3aa:02000114": {
@@ -8299,7 +8299,7 @@
       "source": "FIELD/ARUTIN_MURA/MOTION_PARTICLE.C"
     },
     "resource_383:020000fc": {
-      "name": "Scene_RunObjectTwentySixPositionCheck",
+      "name": "FieldScene_RunObjectTwentySixPositionCheck",
       "source": "FIELD/KUUPUAPPU_HEYA/PROMPT.C"
     },
     "resource_3c8:02001a50": {
@@ -8323,7 +8323,7 @@
       "source": "FIELD/SORU_STAR/PARTY_INTRO.C"
     },
     "resource_383:020003bc": {
-      "name": "Dialogue_PromptAndCountSkip",
+      "name": "SceneDialogue_PromptAndCountSkip",
       "source": "FIELD/KUUPUAPPU_HEYA/PROMPT.C"
     },
     "resource_374:020025b0": {
@@ -8531,7 +8531,7 @@
       "source": "FIELD/ARUTIN_MURA/MOTION_PARTICLE.C"
     },
     "resource_383:02001990": {
-      "name": "State_SetValue123Mode11",
+      "name": "SceneState_SetValue123Mode11",
       "source": "FIELD/KUUPUAPPU_HEYA/PROMPT.C"
     },
     "resource_387:020004ec": {
@@ -8639,7 +8639,7 @@
       "source": "FIELD/SORU_SEKIZO/GUARDED_STEP.C"
     },
     "resource_383:02000354": {
-      "name": "ActorDraw_RunActorModeOneThenZeroWithStep",
+      "name": "ActorPresentation_RunActorModeOneThenZeroWithStep",
       "source": "FIELD/KUUPUAPPU_HEYA/PROMPT.C"
     },
     "resource_3a1:02000314": {
@@ -8667,7 +8667,7 @@
       "source": "FIELD/SORU_STAR/PARTY_INTRO.C"
     },
     "resource_383:0200463c": {
-      "name": "Effect_ApplyThreeValuesAndFinish",
+      "name": "SceneEffect_ApplyThreeValuesAndFinish",
       "source": "FIELD/KUUPUAPPU_HEYA/PROMPT.C"
     },
     "resource_37e:02000030": {
@@ -8715,7 +8715,7 @@
       "source": "FIELD/IMIRU_MURA/FLAGGED_CHOREOGRAPHY.C"
     },
     "resource_383:020026e4": {
-      "name": "Actor_UpdateAnimationOnStateMatch",
+      "name": "SceneActor_UpdateAnimationOnStateMatch",
       "source": "FIELD/KUUPUAPPU_HEYA/PROMPT.C"
     },
     "resource_399:020002b8": {
@@ -8759,7 +8759,7 @@
       "source": "FIELD/BIRIBINO_HEYA/MESSAGE_BRANCH.C"
     },
     "resource_383:02004684": {
-      "name": "State_SetValue2ThenFinish",
+      "name": "SceneState_SetValue2ThenFinish",
       "source": "FIELD/KUUPUAPPU_HEYA/PROMPT.C"
     },
     "resource_3cd:02000768": {
@@ -8883,7 +8883,7 @@
       "source": "FIELD/KUUPUAPPU_MURA_SAI/MOTION_EVENT.C"
     },
     "resource_383:02000400": {
-      "name": "Dialogue_RunActorElevenDialogue",
+      "name": "SceneDialogue_RunActorElevenDialogue",
       "source": "FIELD/KUUPUAPPU_HEYA/PROMPT.C"
     },
     "resource_39e:02004140": {
@@ -8947,7 +8947,7 @@
       "source": "FIELD/HAIDIA_HEYA/TIMED_EVENTS.C"
     },
     "resource_383:02002ba0": {
-      "name": "Actor_FaceActors24And25TowardActorZero",
+      "name": "SceneActor_FaceActors24And25TowardActorZero",
       "source": "FIELD/KUUPUAPPU_HEYA/PROMPT.C"
     },
     "resource_388:02000038": {
@@ -9039,7 +9039,7 @@
       "source": "FIELD/KOROSSEO_KAWA/COORDINATOR.C"
     },
     "resource_383:020002c0": {
-      "name": "State_SetFlags92bAnd94b",
+      "name": "SceneState_SetFlags92bAnd94b",
       "source": "FIELD/KUUPUAPPU_HEYA/PROMPT.C"
     },
     "resource_387:020000a0": {
@@ -9059,7 +9059,7 @@
       "source": "FIELD/COMMON/SHIAN_JIIN/TEMPLE_ROOMS.C"
     },
     "resource_383:02000a14": {
-      "name": "Dialogue_RunActorNineFlaggedDialogue",
+      "name": "SceneDialogue_RunActorNineFlaggedDialogue",
       "source": "FIELD/KUUPUAPPU_HEYA/PROMPT.C"
     },
     "resource_3cb:02001228": {
@@ -9075,7 +9075,7 @@
       "source": "FIELD/SORU_SEKIZO/GUARDED_STEP.C"
     },
     "resource_383:02000454": {
-      "name": "State_BranchOnSlotZeroFacingAndFlag855",
+      "name": "SceneState_BranchOnSlotZeroFacingAndFlag855",
       "source": "FIELD/KUUPUAPPU_HEYA/PROMPT.C"
     },
     "resource_3a1:02000104": {
@@ -9111,7 +9111,7 @@
       "source": "FIELD/WORLD_MAP/ACTOR_TRANSFER.C"
     },
     "resource_383:02000af4": {
-      "name": "Dialogue_RunActorEighteenBranchedDialogue",
+      "name": "SceneDialogue_RunActorEighteenBranchedDialogue",
       "source": "FIELD/KUUPUAPPU_HEYA/PROMPT.C"
     },
     "resource_394:0200008c": {
@@ -9159,7 +9159,7 @@
       "source": "FIELD/SORU_FUNKA/EXTENDED_EFFECT.C"
     },
     "resource_383:02004658": {
-      "name": "Effect_ApplyPairWithValue141",
+      "name": "SceneEffect_ApplyPairWithValue141",
       "source": "FIELD/KUUPUAPPU_HEYA/PROMPT.C"
     },
     "resource_37b:020015a4": {
@@ -9287,7 +9287,7 @@
       "source": "FIELD/ARUTIN_MURA/MOTION_PARTICLE.C"
     },
     "resource_383:020004f4": {
-      "name": "Dialogue_RunActorTwelveFlaggedDialogue",
+      "name": "SceneDialogue_RunActorTwelveFlaggedDialogue",
       "source": "FIELD/KUUPUAPPU_HEYA/PROMPT.C"
     },
     "resource_385:02000640": {
@@ -9846,7 +9846,7 @@
       "name": "Scene_ClosePresentationSequence"
     },
     "resource_383:02001e80": {
-      "name": "Scene_ConfigurePairedActors",
+      "name": "FieldScene_ConfigurePairedActors",
       "source": "FIELD/KUUPUAPPU_HEYA/PROMPT.C"
     },
     "resource_383:02001f50": {
@@ -10036,7 +10036,7 @@
       "source": "FIELD/HAIDIA_ARASHI/GROUP_DEPARTURE.C"
     },
     "resource_383:02002bf0": {
-      "name": "Scene_RunLateSequence",
+      "name": "FieldScene_RunLateSequence",
       "source": "FIELD/KUUPUAPPU_HEYA/PROMPT.C"
     },
     "resource_3b9:02001688": {
@@ -10222,15 +10222,15 @@
       "source": "FIELD/HAIDIA_IE/EXTENDED.C"
     },
     "resource_383:020019a4": {
-      "name": "Scene_RunOpeningSequenceHead",
+      "name": "FieldScene_RunOpeningSequenceHead",
       "source": "FIELD/KUUPUAPPU_HEYA/PROMPT.C"
     },
     "resource_383:020019e4": {
-      "name": "Scene_RunOpeningSequenceSecond",
+      "name": "FieldScene_RunOpeningSequenceSecond",
       "source": "FIELD/KUUPUAPPU_HEYA/PROMPT.C"
     },
     "resource_383:02001a4c": {
-      "name": "Scene_RunOpeningSequenceThird",
+      "name": "FieldScene_RunOpeningSequenceThird",
       "source": "FIELD/KUUPUAPPU_HEYA/PROMPT.C"
     },
     "resource_3c6:02001090": {
@@ -10238,7 +10238,7 @@
       "source": "FIELD/RARIBERO_MACHI/FLAGGED_CUE.C"
     },
     "resource_383:02001ba0": {
-      "name": "Scene_RunScene383SequenceB",
+      "name": "FieldScene_RunScene383SequenceB",
       "source": "FIELD/KUUPUAPPU_HEYA/PROMPT.C"
     },
     "resource_3c8:02002f30": {
@@ -10301,7 +10301,7 @@
       "source": "FIELD/SORU_SEKIZO/GUARDED_STEP.C"
     },
     "resource_383:0200091c": {
-      "name": "Scene_RunScene383",
+      "name": "FieldScene_RunScene383_0200091c",
       "source": "FIELD/KUUPUAPPU_HEYA/PROMPT.C"
     },
     "resource_385:020009f8": {
@@ -10581,7 +10581,7 @@
       "source": "FIELD/HAIDIA_HEYA/TIMED_EVENTS.C"
     },
     "resource_383:02000428": {
-      "name": "Scene_RunScene383",
+      "name": "FieldScene_RunScene383_02000428",
       "source": "FIELD/KUUPUAPPU_HEYA/PROMPT.C"
     },
     "resource_399:020005dc": {
@@ -10633,7 +10633,7 @@
       "source": "FIELD/KORIMA_MAGARI/PRESET_LAYOUT.C"
     },
     "resource_383:02004b2c": {
-      "name": "Scene_RunScene383",
+      "name": "FieldScene_RunScene383_02004b2c",
       "source": "FIELD/KUUPUAPPU_HEYA/PROMPT.C"
     },
     "resource_3c9:02005b90": {
@@ -10701,7 +10701,7 @@
       "source": "FIELD/GOMA_IRIGUCHI/DEPTH.C"
     },
     "resource_383:0200082c": {
-      "name": "Scene_RunScene383SequenceC",
+      "name": "FieldScene_RunScene383SequenceC",
       "source": "FIELD/KUUPUAPPU_HEYA/PROMPT.C"
     },
     "resource_398:02000214": {

@@ -14,13 +14,7 @@ extern s16 Data_02000240[];
 
 void Func_020006d4(u8 *);
 void Func_020006da(s32);
-void Func_0200016a(s32);
-void Func_0200018a(s32);
-void Func_020001aa(s32);
-void Func_02000272(s32);
-void Func_02000292(s32);
 s32 Func_02000898();
-void Func_02000438(void);
 s32 Func_0200096c(void);
 u8 *Func_020009ea(s32);
 u8 *Func_02000a32(s32);
@@ -133,21 +127,21 @@ void SceneDialogue_RunActor9Line(void)
 {
     Event_SetMessage(0x1CC9);
     Actor_FaceEachOther(9, 0, 2);
-    Func_0200016a(9);
+    SceneActor_RunActorStep(9);
 }
 
 void SceneDialogue_RunActor11Line(void)
 {
     Event_SetMessage(0x1CCD);
     Actor_FaceEachOther(11, 0, 2);
-    Func_0200018a(11);
+    SceneActor_RunActorStep(11);
 }
 
 void SceneDialogue_RunActor12Line(void)
 {
     Event_SetMessage(0x1CD0);
     Actor_FaceEachOther(12, 0, 2);
-    Func_020001aa(12);
+    SceneActor_RunActorStep(12);
 }
 
 void FieldScene_RunActor16Sequence(void)
@@ -181,7 +175,7 @@ void SceneDialogue_RunActor16Line(void)
 
     Event_SetMessage(0x1CDA);
     Actor_FaceEachOther(16, 0, 2);
-    Func_02000272(16);
+    SceneActor_RunActorStep(16);
 }
 
 void SceneDialogue_RunActor23Line(void)
@@ -190,7 +184,7 @@ void SceneDialogue_RunActor23Line(void)
 
     Event_SetMessage(0x1CEE);
     Actor_FaceEachOther(23, 0, 2);
-    Func_02000292(23);
+    SceneActor_RunActorStep(23);
 }
 
 void FieldScene_RunActor18FlaggedSequence(void)
@@ -252,7 +246,7 @@ void SceneActor_RunActor16StepWithFlag91(void)
     Event_End();
     slot = Func_02000976_a(16) + 91;
     *slot = 1;
-    Func_02000438();
+    FieldScene_RunActor16Sequence();
     slot = Func_02000986(16) + 91;
     *slot = clear;
     Actor_EnableActionCallback(16, 2);

@@ -215,7 +215,7 @@ pub(crate) fn render_options(
         None
     };
     let span = resolve_overlay_span(
-        &crate::overlay::owners::reviewed_spans(root, game)?,
+        &crate::overlay::owners::owner_spans(root, game)?,
         resolved,
         installed,
         options.size,
@@ -307,7 +307,7 @@ pub fn audit_corpus(root: &Path) -> Result<i32, String> {
         return Err("overlay reconstruction corpus is empty".into());
     }
     let paths = SourcePaths::load(root)?;
-    let reviewed = crate::overlay::reviewed_spans(root)?;
+    let reviewed = crate::overlay::owner_spans(root)?;
     // registered, nonowner, installed, nonexact, ordinary, nonordinary, exact-unmapped, placeholders, unregistered
     let mut count = [0usize; 9];
     for source in &sources {

@@ -56,8 +56,8 @@ most plausibly had on disk in 2001.
 5. **Everything uncredited is C not yet written.** Camelot wrote the game in
    C; only SDK library code, genuinely hand-written routines and the veneer
    stubs are assembly, and only a credited `.S` module may say so. An owner
-   still built from its disassembly is `not-yet-c` (`not_yet_c` in the
-   overlay registry), never "assembly". No registry, gate, draft header or
+   still built from its disassembly is `not-yet-c` (a plain label in its
+   overlay listing), never "assembly". No registry, gate, draft header or
    report may classify C as assembly because it resisted: not a hard
    instruction (`stmia` comes from `Dma_Set`), not a register wall, not a
    size. Label it by what remains to be done.
@@ -92,7 +92,10 @@ reusing existing headers, structs and registered names. Fix one hypothesis at
 a time. After about 30 minutes, or three attempts without a new idea, commit
 the draft and take the next owner. An owner registered as pieces
 (`Region_`, `Fragment_`, `Continuation_`) or bundled with a neighbour must be
-made whole first: one complete function, one listing, one owner.
+made whole first: one complete function, one listing, one owner. A not-yet-C
+overlay owner is its label in `recon/<game>/raw/overlays`, running to the
+next label, placeholder or veneer table, or to its `.size Name, .-Name` line;
+move the label to rebound it.
 
 **Library code.** SDK objects keep their own compiler family and flags,
 recorded with the reason in `tools/alchemy/src/compiler/routing_data.rs`, as

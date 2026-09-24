@@ -10,50 +10,6 @@ use std::path::{Component, Path, PathBuf};
 pub const FORMAT: u32 = 5;
 const EDITIONS: [&str; 6] = ["ja", "en", "de", "es", "fr", "it"];
 
-#[derive(Deserialize)]
-struct ReviewedRegions {
-    manual_regions: Vec<ReviewedRegion>,
-}
-#[derive(Deserialize)]
-struct ReviewedRegion {
-    overlay: String,
-    entry: String,
-    span_bytes: usize,
-}
-pub fn reviewed_overlay_spans(root: &Path) -> Result<BTreeMap<SourceOwner, usize>, String> {
-    reviewed_overlay_spans_for_game(root, CompilerTarget::Tbs.recon())
-}
-
-/// The reviewed owner register under one game's `recon/<game>` directory.
-pub fn reviewed_overlay_spans_for_game(
-    root: &Path,
-    recon_dir: &str,
-) -> Result<BTreeMap<SourceOwner, usize>, String> {
-    let path = root.join(recon_dir).join("semantic/regions.json");
-    let document: ReviewedRegions = crate::compiler::build_io::read_json(path)?;
-    let mut spans = BTreeMap::new();
-    for region in document.manual_regions {
-        let owner = SourceOwner::parse(&format!(
-            "{}:{}",
-            region.overlay,
-            region.entry.trim_start_matches("0x")
-        ))?;
-        if region.span_bytes == 0 {
-            return Err(format!(
-                "{} has no positive reviewed span_bytes",
-                owner.id()
-            ));
-        }
-        if spans.insert(owner, region.span_bytes).is_some() {
-            return Err(format!(
-                "{} has duplicate reviewed owner entries",
-                owner.id()
-            ));
-        }
-    }
-    Ok(spans)
-}
-
 /// A requested span is a constraint, never evidence of a function boundary.
 /// `installed_span` must come from a source-backed production C placeholder.
 pub fn resolve_overlay_span(
@@ -1136,9 +1092,9 @@ fn validate_production_state(
         })
         .transpose()?;
     let reviewed = if retained_overlay_candidate {
-        reviewed_overlay_spans_for_game(
+        crate::overlay::owners::owner_spans(
             root,
-            &crate::compiler::routing::recon_directory(&unit.game),
+            crate::overlay::owners::production_target(unit.target()?),
         )?
     } else {
         BTreeMap::new()
@@ -1927,27 +1883,6 @@ mod tests {
             .unwrap()
             .kind = AbsoluteSymbolKind::Thumb;
         assert!(invalid.validate_editions().is_err());
-    }
-    #[test]
-    fn reviewed_owner_duplicates_never_select_the_last_extent() {
-        let root = tempfile::tempdir().unwrap();
-        let path = root.path().join("recon/tbs/semantic/regions.json");
-        std::fs::create_dir_all(path.parent().unwrap()).unwrap();
-        for sizes in [[4, 4], [4, 8]] {
-            let rows = sizes.map(|span| {
-                serde_json::json!({
-                    "overlay": "resource_371", "entry": "0x02000100", "span_bytes": span
-                })
-            });
-            std::fs::write(
-                &path,
-                serde_json::json!({"manual_regions": rows}).to_string(),
-            )
-            .unwrap();
-            assert!(reviewed_overlay_spans(root.path())
-                .unwrap_err()
-                .contains("duplicate"));
-        }
     }
     #[test]
     fn supplied_overlay_spans_cannot_establish_or_resize_owners() {

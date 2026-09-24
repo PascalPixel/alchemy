@@ -522,6 +522,7 @@ AlchemyC_020003e4:
 	.2byte 0x0000
 AlchemyC_020003f8:
 	.space 0x180
+FieldScene_RunComplexActorSequence:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r9
@@ -988,6 +989,7 @@ AlchemyC_020003f8:
 	.4byte 0x02009b04
 	.2byte 0x9b34
 	.2byte 0x0200
+FieldScene_RunPaletteRampSequence:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r8

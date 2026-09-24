@@ -1182,6 +1182,7 @@ AlchemyC_02001b5c:
 	.space 0xac
 AlchemyC_02001c08:
 	.space 0x9c
+Func_02001ca4:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -1802,6 +1803,7 @@ AlchemyC_02002858:
 	.space 0x50
 AlchemyC_020028a8:
 	.space 0x40
+Scene_RunActorPresentation:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r8
@@ -2223,6 +2225,7 @@ AlchemyC_020038fc:
 	.space 0x60
 AlchemyC_0200395c:
 	.space 0xa0
+Scene_RunScene371SequenceA:
 	.2byte 0xb5e0
 	mov	r7, fp
 	mov	r6, sl

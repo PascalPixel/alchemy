@@ -3,6 +3,7 @@ pub mod assembly;
 pub mod compile;
 pub mod export;
 pub mod flow;
+pub mod listing;
 pub mod owners;
 pub mod park;
 pub mod rom;
@@ -235,8 +236,8 @@ pub fn audited_kind(root: &Path, overlay: &str, entry: i64) -> Result<Option<Str
             .map(|interval| interval.kind)
     }))
 }
-pub(crate) fn reviewed_spans(root: &Path) -> Result<BTreeMap<SourceOwner, usize>, String> {
-    owners::reviewed_spans(
+pub(crate) fn owner_spans(root: &Path) -> Result<BTreeMap<SourceOwner, usize>, String> {
+    owners::owner_spans(
         root,
         crate::targets::target_for(crate::targets::DEFAULT_TARGET),
     )

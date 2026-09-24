@@ -787,6 +787,7 @@ AlchemyC_0200042c:
 	.space 0x64
 AlchemyC_02000490:
 	.space 0xb0
+Func_02000540:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r9
@@ -1113,6 +1114,7 @@ AlchemyC_02000db8:
 	.space 0x45c
 AlchemyC_02001214:
 	.space 0x1d0
+Func_020013e4:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r8
@@ -1354,6 +1356,7 @@ AlchemyC_020020e8:
 	.space 0x3c
 AlchemyC_02002124:
 	.space 0x94
+CommandInterpolationRenderer_Update:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -1978,6 +1981,7 @@ AlchemyC_02002738:
 	.space 0x10c
 AlchemyC_02002844:
 	.space 0xcc
+Func_02002910:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -2206,6 +2210,7 @@ AlchemyC_02002bac:
 	.space 0x20
 AlchemyC_02002bcc:
 	.space 0x20
+Func_02002bec:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -2391,6 +2396,7 @@ AlchemyC_020030ac:
 	.space 0x4e
 AlchemyC_020031c0:
 	.space 0x1e0
+Scene_RunScene3baSequenceA:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl

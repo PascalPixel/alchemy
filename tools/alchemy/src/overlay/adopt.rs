@@ -81,7 +81,7 @@ pub(crate) fn audited_span(
     span_bytes: i64,
 ) -> Result<(), String> {
     crate::compiler::translation_units::resolve_overlay_span(
-        &crate::overlay::owners::reviewed_spans(root, target)?,
+        &crate::overlay::owners::owner_spans(root, target)?,
         owner,
         None,
         Some(usize::try_from(span_bytes).map_err(|_| "invalid overlay span")?),
@@ -365,11 +365,13 @@ pub fn run(root: &Path, args: &[String]) -> Result<i32, String> {
         return Err(format!("{} is already adopted as C", options.id));
     }
     let aliases = internal_aliases(&lines, first, last, offset, span)?;
-    let mut replaced_lines: Vec<String> = Vec::with_capacity(lines.len());
-    replaced_lines.extend(lines[..(first - 1) as usize].iter().cloned());
-    replaced_lines.extend(placeholder_lines(&stem, span, &aliases));
-    replaced_lines.extend(lines[last as usize..].iter().cloned());
-    let replaced = replaced_lines.join("\n");
+    let replaced = splice_placeholder(
+        &lines,
+        (first - 1) as usize,
+        last as usize,
+        placeholder_lines(&stem, span, &aliases),
+    )
+    .join("\n");
     let preexisting = if installed.exists() {
         Some(fs::read(&installed).map_err(|error| error.to_string())?)
     } else {
@@ -474,6 +476,39 @@ pub fn run(root: &Path, args: &[String]) -> Result<i32, String> {
     Ok(0)
 }
 
+/// `lines` with the rows `first..last` replaced by a C placeholder. The
+/// owner's listing label and `.size` end bounded it as not-yet-C; exact C is
+/// bounded by its placeholder instead, so both leave with the assembly.
+fn splice_placeholder(
+    lines: &[String],
+    first: usize,
+    last: usize,
+    placeholder: Vec<String>,
+) -> Vec<String> {
+    let mut head = first;
+    let mut kept_labels = Vec::new();
+    while head > 0 && lines[head - 1].trim_end().ends_with(':') {
+        head -= 1;
+        if !crate::overlay::listing::is_owner_label(&lines[head]) {
+            kept_labels.push(lines[head].clone());
+        }
+    }
+    kept_labels.reverse();
+    let mut tail = last;
+    while lines
+        .get(tail)
+        .is_some_and(|line| line.trim_start().starts_with(".size "))
+    {
+        tail += 1;
+    }
+    let mut replaced = Vec::with_capacity(lines.len());
+    replaced.extend(lines[..head].iter().cloned());
+    replaced.extend(kept_labels);
+    replaced.extend(placeholder);
+    replaced.extend(lines[tail..].iter().cloned());
+    replaced
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -483,6 +518,30 @@ mod tests {
 
     fn arguments(values: &[&str]) -> Vec<String> {
         values.iter().map(|value| value.to_string()).collect()
+    }
+
+    #[test]
+    fn adoption_retires_the_owner_label_and_its_size_end() {
+        let lines = arguments(&[
+            "\t.2byte 0x0000",
+            "Scene_Run:",
+            ".L_02000004:",
+            "\tpush\t{lr}",
+            "\tpop\t{r0}",
+            "\t.size Scene_Run, .-Scene_Run",
+            "\tbx\tlr",
+        ]);
+        let placeholder = arguments(&["AlchemyC_02000004:", "\t.space 0x4"]);
+        assert_eq!(
+            splice_placeholder(&lines, 3, 5, placeholder),
+            arguments(&[
+                "\t.2byte 0x0000",
+                ".L_02000004:",
+                "AlchemyC_02000004:",
+                "\t.space 0x4",
+                "\tbx\tlr",
+            ])
+        );
     }
 
     #[test]

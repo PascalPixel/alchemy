@@ -4,7 +4,6 @@
  * again at the tail after the intervening calls. Runtime veneer bindings
  * belong to this module's translation-unit declaration. */
 
-#define FieldScene_RunStagedActorScene Func_02000614
 
 extern u8 Data_03001ebc[];
 
@@ -175,7 +174,6 @@ void Func_020030b2();
 void Func_020030ba();
 void Func_020030c8();
 void Func_020030da();
-
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant

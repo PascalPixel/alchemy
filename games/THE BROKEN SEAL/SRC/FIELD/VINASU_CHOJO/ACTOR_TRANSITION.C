@@ -3,12 +3,11 @@
 #define Engine_ObjectMotionArmCallback Func_0200a0ce
 #include "FIELD_EVENT.H"
 
-#define FieldScene_RunActorTransition Func_0200423c
-
 extern u8 Data_0200e088[];
 extern u8 Data_0200e0d0[];
 extern u8 Data_0200e0f4[];
-extern u8 Data_00000000[];
+/* FAKEMATCH: the reference loads 2 from the literal pool; a link symbol at
+ * that value reproduces the load. */
 extern u8 Data_00000002[];
 void Func_0200a11a();
 void Func_0200a122();
@@ -160,14 +159,16 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2) { f(a0, a1, a2
 static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3) { f(a0, a1, a2, a3); }
 static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5) { f(a0, a1, a2, a3, a4, a5); }
 
-/* NONMATCHING: 1692 of 1692 bytes, 6 halfword edits (2026-09-24). The
- * lone Data_00000000 pool after the Func_0200a502 block lands 4 bytes early:
- * the zero load is thumb_zero_extendhisi2 (pool range 60); the reference
- * behaves like a movhi load (range 64). s16/u16/u8 spellings of zero move
- * it to an SImode load and re-allocate the whole tail. */
-void FieldScene_RunActorTransition(void)
+/* FAKEMATCH: the shared zero lives in a one-halfword struct so it is a
+ * HImode register; its pool load then has the movhi reach of 64 bytes the
+ * reference pool placement needs. */
+struct Half {
+    u16 v;
+};
+
+void VinasuChojo_RunActorTransition(void)
 {
-    s32 zero;
+    struct Half zero;
     struct FieldActor *actor26;
     struct FieldActor *actor27;
     struct FieldActor *actor28;
@@ -340,14 +341,14 @@ void FieldScene_RunActorTransition(void)
     record[98] = none;
     *(u8 *)((record + 98) + 1) = 1;
     *(s32 *)(record + 76) = *(s32 *)(record + 12);
-    zero = (u16)(u32)Data_00000000;
+    zero.v = 0;
     {
         s32 shown = 0xa000;
 
         *(u16 *)(record + 6) = shown;
     }
     record = Pointer1(Func_0200a4e8, 1);
-    record[98] = zero;
+    record[98] = zero.v;
     *(u8 *)((record + 98) + 1) = 1;
     {
         s32 shown = 0xa000;
@@ -356,7 +357,7 @@ void FieldScene_RunActorTransition(void)
     }
     *(s32 *)(record + 76) = *(s32 *)(record + 12);
     record = Pointer1(Func_0200a502, 2);
-    record[98] = zero;
+    record[98] = zero.v;
     *(u8 *)((record + 98) + 1) = 1;
     {
         s32 shown = 0xa000;
@@ -365,7 +366,7 @@ void FieldScene_RunActorTransition(void)
     }
     *(s32 *)(record + 76) = *(s32 *)(record + 12);
     record = Pointer1(Func_0200a522, 3);
-    record[98] = zero;
+    record[98] = zero.v;
     *(u8 *)((record + 98) + 1) = 1;
     {
         s32 shown = 0xa000;
@@ -374,14 +375,14 @@ void FieldScene_RunActorTransition(void)
     }
     *(s32 *)(record + 76) = *(s32 *)(record + 12);
     record = Pointer1(Func_0200a53c, 21);
-    record[98] = zero;
+    record[98] = zero.v;
     *(u8 *)((record + 98) + 1) = 1;
     *(s32 *)(record + 76) = *(s32 *)(record + 12);
     record = Pointer1(Func_0200a554, 6);
-    record[98] = zero;
+    record[98] = zero.v;
     *(u8 *)((record + 98) + 1) = 1;
     *(s32 *)(record + 76) = *(s32 *)(record + 12);
-    *(u8 *)(Func_0200a56c_a(23) + 85) = zero;
+    *(u8 *)(Func_0200a56c_a(23) + 85) = zero.v;
     record = Func_0200a578(23);
     Func_0200a4de(record, 0);
     Func_0200a61e(23, 7);

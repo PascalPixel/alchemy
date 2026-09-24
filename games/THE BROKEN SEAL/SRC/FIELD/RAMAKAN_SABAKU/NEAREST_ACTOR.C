@@ -15,8 +15,7 @@
  *   Engine_ActorShowEmote = 0x02009dec (thumb)
  *   Engine_Import0808a250 = 0x02009e04 (thumb)
  */
-extern u8 Data_02000240[];
-extern s16 Data_02000240_t[][1];
+extern s32 Data_02000240_t[][1];
 
 s32 Engine_ActorGet();
 void Engine_GameFlagSet();
@@ -58,10 +57,9 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
     f(a0, a1, a2);
 }
 
-/* NONMATCHING: 382 of 380 bytes, 36 halfword edits (2026-09-24). The
- * reference adds 0x1f4 to the Data_02000240 base at run time; every spelling
- * tried folds it into one literal, and the nearest-actor loop spills min. */
-void Func_02001180(void)
+/* Lamakan Desert: face the nearest of actors 9 to 12, then walk the leader
+ * towards it with the search emote. */
+void RamakanSabaku_FaceNearestActor(void)
 {
     u8 *target;
     u8 *actor;
@@ -72,24 +70,29 @@ void Func_02001180(void)
     s32 dx;
     s32 dz;
 
-    target = Value1(Engine_ActorGet, *(s32 *)&Data_02000240_t[250][0]);
+    target = Value1(Engine_ActorGet, Data_02000240_t[125][0]);
     best = 9;
     Call1(Engine_GameFlagSet, 0x200);
     min = 0x100000;
     for (id = 9; id <= 12; id++) {
-        actor = Value1(Engine_ActorGet, id);
-        if (actor != 0) {
-            dx = (*(s32 *)(target + 8) - *(s32 *)(actor + 8)) / 0x10000;
-            dz = (*(s32 *)(target + 16) - *(s32 *)(actor + 16)) / 0x10000;
-            if (dx < 0) {
-                dx = -dx;
-            }
-            if (dz < 0) {
-                dz = -dz;
-            }
-            if (dx + dz < min) {
-                best = id;
-                min = dx + dz;
+        u8 *other = Value1(Engine_ActorGet, id);
+
+        if (other != 0) {
+            dx = (*(s32 *)(target + 8) - *(s32 *)(other + 8)) / 0x10000;
+            dz = (*(s32 *)(target + 16) - *(s32 *)(other + 16)) / 0x10000;
+            {
+                s32 ax = dx;
+
+                if (ax < 0) {
+                    ax = -ax;
+                }
+                if (dz < 0) {
+                    dz = -dz;
+                }
+                if (ax + dz < min) {
+                    best = id;
+                    min = ax + dz;
+                }
             }
         }
     }
@@ -103,7 +106,7 @@ void Func_02001180(void)
     Call2(Engine_ActorSetAttachedEffect, 0, 0x101);
     actor = Value1(Engine_ActorGet, 0);
     record = Engine_ActorGet(0);
-    *(u16 *)(actor + 6) = (*(u16 *)(record + 6) + 0x8000) & 0xfffff000;
+    *(u16 *)(actor + 6) = (*(u16 *)(record + 6) + 0x8000) & -0x1000;
     Engine_ActorSetAnimation(0, 5);
     Main_0808a108(0, 24);
     Call3(Engine_ActorSetSpeed, 0, 0x1999, 0xccc);

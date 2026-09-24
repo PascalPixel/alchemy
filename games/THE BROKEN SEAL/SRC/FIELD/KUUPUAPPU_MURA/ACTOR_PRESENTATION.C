@@ -76,7 +76,7 @@ struct OverlayEffectMotion {
 };
 
 extern u8 *Data_03001e8c[];
-extern u8 Data_000012c0[];
+extern u8 LinkedMessage_HeShouldFixingRoofNow[];
 
 u8 *Func_02001dc6(int);
 void Func_02001f28(void);
@@ -565,7 +565,7 @@ void FieldScene_RunActor21Sequence(void)
     s32 record;
 
     Event_Begin();
-    Event_SetMessage((s32)Data_000012c0);
+    Event_SetMessage((s32)LinkedMessage_HeShouldFixingRoofNow);
     Func_0200201c(21, 0, 2);
     Actor_ShowEmote(21, 0x103, 0);
     Event_Wait(30);

@@ -67,9 +67,9 @@ extern u8 Data_0200bb3c[];
 extern u8 Data_0200bb30[];
 extern u8 Data_0200ba64[];
 extern u8 Data_0200b938[];
-extern u8 Data_00001197[];
+extern u8 LinkedMessage_ArentYouWorriedAboutCrossing[];
 extern u8 Value_0200beb4;
-extern u8 Value_00000eb0;
+extern u8 LinkedMessage_JasmineWentOffWay;
 extern u8 Data_0200ae34[];
 
 s32 Func_02002656(s32, s32);
@@ -326,7 +326,7 @@ void Villager_ShowOffPsynergy(void)
 
     Event_Begin();
     if (GameFlag_IsSet(0x815) != 0) {
-        base5_1197 = (s32)Data_00001197;
+        base5_1197 = (s32)LinkedMessage_ArentYouWorriedAboutCrossing;
         Event_SetMessage(base5_1197);
         if (GameFlag_IsSet(2) != 0) {
             bump_step(1);
@@ -476,7 +476,7 @@ void SceneDialogue_ShowLineEB1OrEB0(void)
         Event_SetMessage(MSG_BE_SURE_TO_HELP_GARCIA);
         Event_ShowMessage(16, 0);
     } else {
-        Event_SetMessage((s32)&Value_00000eb0);
+        Event_SetMessage((s32)&LinkedMessage_JasmineWentOffWay);
         Event_ShowMessage(16, 0);
     }
     Event_End();

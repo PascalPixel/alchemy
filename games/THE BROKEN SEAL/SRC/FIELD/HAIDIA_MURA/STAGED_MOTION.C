@@ -186,13 +186,13 @@ extern s32 Data_0200f100[];
 extern s32 Data_0200ef38[];
 extern u8 Value_0200f570;
 extern u8 Value_0200f55a;
-extern u8 Data_00000f4d[];
-extern u8 Data_00001c45[];
-extern u8 Data_00001c60[]; /* Buffer passed by address to Engine_EventSetMessage. */
+extern u8 LinkedMessage_RrruffRrrruff[];
+extern u8 LinkedMessage_Ah[];
+extern u8 LinkedMessage_WhatEverYouDoYou[]; /* Buffer passed by address to Engine_EventSetMessage. */
 extern u8 Data_0200e65c[];
 extern u8 Data_00000ee8[];
 extern u8 Data_0200e590[];
-extern u8 Value_00000ee4;
+extern u8 LinkedMessage_DoorWontOpenForceImpact;
 extern s32 Data_0200f63c[];
 extern s32 Data_0200f6cc[];
 extern s32 Data_0200f748[];
@@ -806,7 +806,7 @@ void FieldScene_RunScene373SequenceD(void)
     if (GameFlag_IsSet(0x808) == 0) {
         Event_Begin();
         Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
-        base5_f4d = (s32)Data_00000f4d;
+        base5_f4d = (s32)LinkedMessage_RrruffRrrruff;
         Event_SetMessage(base5_f4d);
         Event_ShowMessageAndWait(15, 0, 2);
         Event_ShowMessageAndWait(16, 0, 2);
@@ -975,7 +975,7 @@ void FieldScene_RunSecondaryActorSequence(void)
     Event_Begin();
     Actor_SetChildValue(ACTOR_PARTY_LEADER, 0);
     Actor_FaceActor(8, ACTOR_PARTY_LEADER, 20);
-    slot_table = (s32)Data_00001c45;
+    slot_table = (s32)LinkedMessage_Ah;
     Event_SetMessage(slot_table);
     Actor_StartRepeatedMotion(8, 2);
     Event_ShowMessageAndWait(8, 0, 20);
@@ -1107,7 +1107,7 @@ void FieldScene_RunPrimaryActorSequence(void)
     }
     Event_ShowMessageAndWait(ACTOR_GERALD, 0, 20);
     Actor_FaceDirection(ACTOR_GERALD, 0xd000, 10);
-    Event_SetMessage((s32)Data_00001c60);
+    Event_SetMessage((s32)LinkedMessage_WhatEverYouDoYou);
     Event_ShowMessage(ACTOR_GERALD, 0);
     Actor_SetAnimationAndWait(9, 3);
     Event_ShowMessageAndWait(9, 0, 20);
@@ -2327,7 +2327,7 @@ void Effect_PlayStepSound(void)
 void FieldScene_RunScriptedStepEE4(void)
 {
     Event_Begin();
-    Message_ShowCentered((s32)&Value_00000ee4, 1);
+    Message_ShowCentered((s32)&LinkedMessage_DoorWontOpenForceImpact, 1);
     Event_End();
 }
 

@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_3b3:02001578": {
+      "name": "TakaraHashira_JitterBackgroundScroll",
+      "source": "FIELD/TAKARA_HASHIRA/SCROLL_JITTER.C"
+    },
     "resource_3cb:02000e10": {
       "name": "LinkLobby_RunChoicePrompt",
       "source": "MENU/LINK_LOBBY/CHOICE_PROMPT.C"

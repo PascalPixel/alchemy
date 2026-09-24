@@ -1,10 +1,12 @@
-/* Draft, not exact: 304 differing halfwords, 1588-byte candidate for the
-   1588-byte owner (2026-09-23). Residual: the six stat labels now load one
-   linked message base (Data_000008ae) and add 1..5, which brings the
-   candidate to the owner's exact 1588 bytes; a declaration-order search then
-   gave 304. What remains is spill-slot assignment (the reference keeps the
-   five old stat values at sp+28..44 and the list and total at sp+20..24) and
-   register choice in the ability-list loop. */
+/* Draft, not exact (2026-09-24): 1588 of 1588 bytes, 295 halfwords differ.
+   The six stat labels load one linked message base (Data_000008ae) and add
+   1..5, which brings the candidate to the owner's exact size. The locals are
+   declared in the reference's spill-slot order (unit 56, snap 52, buf 48,
+   the five old stats 44..28, list 24, total 20, n 16, marks 12, rows 8), so
+   every stack slot now agrees. What remains is reload's register choice: in
+   the ability-list loop and the page-0 tail the reference picks r2/r3/r4
+   where this build picks r3/r4/r1, and it loads unit before snap for the
+   first Func_080072f0. */
 
 #include "RENDER_INPUT.H"
 
@@ -99,22 +101,22 @@ struct RenderInput *Ui_ShowAbilityChangePreview(
     s16 *buf;
     s32 oldHp;
     s32 oldPp;
+    s32 oldAtk;
+    s32 oldDef;
+    s32 oldAgi;
+    u16 *list;
+    s32 total;
+    s32 n;
+    s32 marks;
+    s32 rows;
     s32 col;
     s32 row;
     s32 pages;
-    s32 rows;
-    s32 marks;
     s32 gained;
     s32 lost;
     s32 tile;
     s32 dir;
     s32 i;
-    s32 n;
-    u16 *list;
-    s32 total;
-    s32 oldAtk;
-    s32 oldDef;
-    s32 oldAgi;
 
 
     void Func_08022a7c(s32 x, s32 y, s32 rising)

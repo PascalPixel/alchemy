@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_387:02000d68": {
+      "name": "GomaIriguchi_SetEntranceFlag",
+      "source": "FIELD/GOMA_IRIGUCHI/SET_ENTRANCE_FLAG.C"
+    },
     "resource_383:02002db4": {
       "name": "KuupuappuHeya_RunVaultEvent",
       "source": "FIELD/KUUPUAPPU_HEYA/VAULT_EVENT.C"

@@ -80952,6 +80952,78 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "scene-3bb-020004c0",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_KABE/F_004C0.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3bb",
+      "absolute_symbols": {
+        "Engine_ActorGet": {
+          "address": "0x0200bf50",
+          "kind": "thumb"
+        },
+        "Engine_EventBegin": {
+          "address": "0x0200bf38",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetAnimation": {
+          "address": "0x0200bf98",
+          "kind": "thumb"
+        },
+        "Engine_EventWait": {
+          "address": "0x0200bf30",
+          "kind": "thumb"
+        },
+        "Engine_ObjectSetAnimation": {
+          "address": "0x0200be48",
+          "kind": "thumb"
+        },
+        "Engine_ObjectSetPosition": {
+          "address": "0x0200be78",
+          "kind": "thumb"
+        },
+        "Engine_AllocateBlock": {
+          "address": "0x0200bdd8",
+          "kind": "thumb"
+        },
+        "Main_080090e0": {
+          "address": "0x0200be60",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpeed": {
+          "address": "0x0200bf60",
+          "kind": "thumb"
+        },
+        "Engine_AudioPlayCue": {
+          "address": "0x0200c0b0",
+          "kind": "thumb"
+        },
+        "Engine_ObjectCommitPosition": {
+          "address": "0x0200be80",
+          "kind": "thumb"
+        },
+        "Engine_EventEnd": {
+          "address": "0x0200bf40",
+          "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x020004c0",
+          "extent": 364,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

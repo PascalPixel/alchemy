@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_39c:020021cc": {
+      "name": "MakyuriHeya_StartPillarPush",
+      "source": "FIELD/MAKYURI_HEYA/PUSH_PILLAR.C"
+    },
     "resource_3b2:02002700": {
       "name": "TakaraShima_SettleSecondBlockNorth",
       "source": "FIELD/TAKARA_SHIMA/SETTLE_BLOCK_NORTH_B.C"

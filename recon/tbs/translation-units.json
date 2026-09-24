@@ -77968,6 +77968,74 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "scene-39c-020021cc",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_HEYA/PUSH_PILLAR.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_39c",
+      "absolute_symbols": {
+        "Engine_ActorGet": {
+          "address": "0x0200dad4",
+          "kind": "thumb"
+        },
+        "Engine_CameraSetSpeed": {
+          "address": "0x0200dbac",
+          "kind": "thumb"
+        },
+        "Engine_CameraMoveTo": {
+          "address": "0x0200dbb4",
+          "kind": "thumb"
+        },
+        "Engine_CameraWaitForMove": {
+          "address": "0x0200dbbc",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagIsSet": {
+          "address": "0x0200da84",
+          "kind": "thumb"
+        },
+        "Engine_ActorEnableActionCallback": {
+          "address": "0x0200dae4",
+          "kind": "thumb"
+        },
+        "Engine_EventWait": {
+          "address": "0x0200daac",
+          "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
+        },
+        "MakyuriHeya_PushScriptA": {
+          "address": "0x0200df20",
+          "kind": "data"
+        },
+        "MakyuriHeya_PushScriptB": {
+          "address": "0x0200df60",
+          "kind": "data"
+        },
+        "MakyuriHeya_PushScriptC": {
+          "address": "0x0200dff0",
+          "kind": "data"
+        },
+        "MakyuriHeya_PushScriptD": {
+          "address": "0x0200dfa8",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x020021cc",
+          "extent": 248,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

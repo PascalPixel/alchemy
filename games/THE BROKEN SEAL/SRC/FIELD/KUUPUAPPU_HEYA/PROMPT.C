@@ -121,21 +121,21 @@ struct Rec_383 {
 extern s16 Data_02000240[];
 extern u8 Data_0200dcc8[];
 extern u8 Data_0200dab8[];
-extern u8 Value_00001280;
+extern u8 LinkedMessage_MasterHammetIsntOnlyOne;
 extern u8 Data_0200e1fc[];
 extern u8 Data_0200e250[];
 extern u8 Data_0200de30[];
 extern u8 Data_0200cf2c[];
-extern u8 Data_00001360[];
+extern u8 LinkedMessage_YouWereSuchGreatHelp[];
 extern u8 Value_00000854;
 extern u8 Value_000012c3;
 extern s32 Data_0200e4a8[];
 extern s32 Data_0200e4c0[];
-extern u8 Data_00001299[];
-extern u8 Data_000012a0[];
+extern u8 LinkedMessage_TheyreActingSuspiciousSomethingsNot[];
+extern u8 LinkedMessage_TheyreBack[];
 extern u8 Data_0200d17c[];
-extern u8 Data_000012fc[];
-extern u8 Data_00001324[];
+extern u8 LinkedMessage_YouRobinRightWontForget[];
+extern u8 LinkedMessage_IvanGotShamansRod[];
 extern u8 Data_0200d354[];
 extern u8 Data_0200d4c8[];
 extern u16 Data_0200e4f8;
@@ -676,7 +676,7 @@ void FieldScene_RunActorNineteenAngleDialogue(void)
         Shop_Open(4, 19);
     } else {
         if (GameFlag_IsSet(0x855) == 0) {
-            Event_SetMessage((s32)&Value_00001280);
+            Event_SetMessage((s32)&LinkedMessage_MasterHammetIsntOnlyOne);
         } else {
             Event_SetMessage(MSG_WE_FOUND_OUR_STOLEN_WEAPONS);
         }
@@ -976,7 +976,7 @@ void FieldScene_RunScene383SequenceC(void)
 
     Event_Begin();
     if (GameFlag_IsSet(0x857) == 0) {
-        Event_SetMessage((s32)Data_00001360);
+        Event_SetMessage((s32)LinkedMessage_YouWereSuchGreatHelp);
         Func_02004e3e_a(16, 20);
         Func_02004e90(16, 3, 20);
         Func_02004e50(16, 30);
@@ -988,7 +988,7 @@ void FieldScene_RunScene383SequenceC(void)
         SceneEffect_ApplyThreeValuesAndFinish(16, 3, 20);
         bump_step(1);
         if (Value0(Func_020055d6) == 0) {
-            Event_SetMessage(((s32)Data_00001360 + 3));
+            Event_SetMessage(((s32)LinkedMessage_YouWereSuchGreatHelp + 3));
             Func_02004ea8_a(16, 20);
             Event_End();
             goto L_02000906;
@@ -1332,7 +1332,7 @@ void FieldScene_RunScene383SequenceB(void)
     Actor_FaceActor(ACTOR_GERALD, ACTOR_PARTY_LEADER, 0);
     Func_02006290(2, 0, 30);
     Actor_RunRepeatedMotion(ACTOR_IVAN, 1);
-    record_00001299 = (s32)Data_00001299;
+    record_00001299 = (s32)LinkedMessage_TheyreActingSuspiciousSomethingsNot;
     Event_SetMessage(record_00001299);
     Event_ShowMessage(ACTOR_IVAN, 0);
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_IVAN, 0);
@@ -1397,7 +1397,7 @@ void FieldScene_ConfigurePairedActors(void)
     Event_Wait(30);
     Actor_RunRepeatedMotion(24, 1);
     Event_Wait(20);
-    Event_SetMessage((s32)Data_000012a0);
+    Event_SetMessage((s32)LinkedMessage_TheyreBack);
     Func_02006498(24, 20);
     Actor_FaceDirection(25, 0, 20);
     Actor_SetAttachedEffect(25, 0x102);
@@ -1826,7 +1826,7 @@ void RunDialoguePromptScene(void)
     Event_WaitForScreen();
     Event_Wait(40);
     Actor_RunRepeatedMotion(10, 2);
-    base6_12fc = (s32)Data_000012fc;
+    base6_12fc = (s32)LinkedMessage_YouRobinRightWontForget;
     Event_SetMessage(base6_12fc);
     Func_02007ea2(10, 20);
     Actor_RunRepeatedMotion(9, 1);
@@ -2156,7 +2156,7 @@ void RunDialoguePromptScene(void)
     Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
     rec8 = Value3(Func_02009278, 2, 17, 65);
     Event_Wait(60);
-    base5_1324 = (s32)Data_00001324;
+    base5_1324 = (s32)LinkedMessage_IvanGotShamansRod;
     Message_ShowCentered(base5_1324, 1);
     Engine_ObjectDispatchRelease((s32)rec8);
     Actor_SetAnimation(17, 2);

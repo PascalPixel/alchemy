@@ -1197,7 +1197,7 @@ void Func_0200542e();
 
 #include "TYPES.H"
 
-extern u8 Data_00002241[];
+extern u8 LinkedMessage_YouAllCameRestUp[];
 extern u8 Value_000022ab;
 extern u8 Value_00002352;
 extern u8 Value_00000f31;
@@ -1395,7 +1395,7 @@ void FieldScene_RunScene3b8_02000264(s32 a0)
         Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 120, 96);
         Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
         Event_Wait(20);
-        base6_2241 = (s32)Data_00002241;
+        base6_2241 = (s32)LinkedMessage_YouAllCameRestUp;
         Event_SetMessage(base6_2241);
         Event_OpenMessage(a0, 0);
         if (Event_ChooseYesNo(0, 0) == 0) {

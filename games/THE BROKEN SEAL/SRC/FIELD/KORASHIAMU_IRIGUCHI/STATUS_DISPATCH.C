@@ -56,7 +56,7 @@ extern u8 Data_0200be94[];
 extern u8 Data_0200bf60[];
 extern u8 Data_0200be64[];
 extern u8 Data_0200adac[];
-extern u8 Value_00002125[];
+extern u8 LinkedMessage_YouReadyForFinals[];
 s32 Func_0200307a();
 void Func_020021ee();
 void Func_0200222e();
@@ -615,7 +615,7 @@ void FieldScene_RunScene3b9_020006bc(void)
 {
     Event_Begin();
     Actor_FaceEachOther(8, ACTOR_PARTY_LEADER, 20);
-    Event_SetMessage((s32)&Value_00002125);
+    Event_SetMessage((s32)&LinkedMessage_YouReadyForFinals);
     Event_OpenMessage(8, 0);
     if (Event_ChooseYesNo(0, 0) != 0)
         bump_step_020006bc(1);

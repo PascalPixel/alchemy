@@ -129,7 +129,7 @@ extern const u8 Data_02009756[];
 extern struct Actor_02000754 *Func_02001860(s32 actor);  /* Scene_GetRecord */
 extern struct Actor_02000754 *Func_02001872(s32 actor);  /* Scene_GetRecord */
 extern u8 Data_00000002[];
-extern u8 Data_00001cc0[];
+extern u8 LinkedMessage_WatchingYouGuysMakesMe[];
 extern const u8 Data_02009740[];
 extern const u8 Data_0200976c[];
 extern const u8 Data_020097ae[];
@@ -627,7 +627,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
     }
     Event_Begin();
     if (GameFlag_IsSet(0x307) != 0) {
-        Event_SetMessage((s32)Data_00001cc0);
+        Event_SetMessage((s32)LinkedMessage_WatchingYouGuysMakesMe);
         ActorPresentation_RunActorModeOneThenZero(14);
     } else {
         SceneDialogue_RunActorFourteenFlagDialogue();

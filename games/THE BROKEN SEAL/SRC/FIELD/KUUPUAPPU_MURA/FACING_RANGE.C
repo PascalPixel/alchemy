@@ -12,7 +12,6 @@
  * reads, so the spelling is kept as-is.
  */
 
-#define SceneActor_CheckFacingAndRange Func_02001674
 
 struct SceneActor {
     u8 unk_00[6];

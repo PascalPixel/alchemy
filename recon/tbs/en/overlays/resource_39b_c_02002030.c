@@ -1,11 +1,14 @@
-/* NONMATCHING: 832 bytes, candidate 832, 3 differing halfwords (2026-09-24).
+/* NONMATCHING: 832 bytes, candidate 832, 1 differing halfword (2026-09-24).
  * Hand-written; twin of resource_39c:020055c0. Unit symbols beyond the resolved
- * Engine_ veneers: gPushAngles = 0x0200a7f4 (data). Remaining: (1) the
+ * Engine_ veneers: gPushAngles = 0x0200a7f4, Data_03001c94 (keys newly
+ * pressed) and Data_03001ae8 (data). Reading the key latch through the
+ * Data_03001c94 symbol fixed the spark-loop 15/address order. Remaining: the
  * collision call passes pos as add r1, sp, #16 in the reference, here as the
- * fp copy of &pos that the earlier stores use (pointer variables and casts do
- * not change it); (2) before the spark loop the reference loads 15 (for sl)
- * before the 0x03001c94 address: sched2 ties them at priority 3 and prefers
- * the address because the reload of 15 into r1 depends on the preceding call. */
+ * fp copy of &pos: PRE (gcse) turns insn "r131 = sfp-12" into a copy of the
+ * first &pos pseudo, then cse2 propagates it (-fno-gcse removes the copy but
+ * changes the allocation). Pointer variables, casts and every shape of the
+ * early-return condition leave it; the reference's later pos uses (the
+ * spawn position, the motion commit) are merged into fp as here. */
 #include "TYPES.H"
 #include "FIELD_EFFECT.H"
 #include "IWRAM_CALL.H"
@@ -30,6 +33,8 @@ struct EventActors {
 };
 
 extern s16 gPushAngles[];
+extern u32 Data_03001c94;
+extern u32 Data_03001ae8;
 
 struct PushState {
     s32 count;
@@ -66,8 +71,8 @@ void Local_02002030(void)
     actor = ((struct EventActors *)work)->actors[gGameState.selected_actor];
     flags = &actor->motion_flags;
     saved = *flags;
-    angle = (u16)gPushAngles[(*(u32 *)0x03001ae8 >> 4) & 15];
-    if (gPushAngles[(*(u32 *)0x03001ae8 >> 4) & 15] == -1)
+    angle = (u16)gPushAngles[(Data_03001ae8 >> 4) & 15];
+    if (gPushAngles[(Data_03001ae8 >> 4) & 15] == -1)
         return;
     pos[0].fixed = (actor->x.fixed & -0x100000) + 0x80000;
     pos[1].fixed = *(s32 *)((u8 *)actor + 20);
@@ -142,7 +147,7 @@ void Local_02002030(void)
         for (i = 0;; i++) {
             if ((i & 15) == 0)
                 OverlayObject_SpawnKind24AtActor(actor);
-            if (i > 31 && *(s32 *)0x03001c94 != 0)
+            if (i > 31 && Data_03001c94 != 0)
                 break;
             Engine_TaskWait(1);
         }

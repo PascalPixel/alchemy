@@ -19,7 +19,7 @@ struct EffectChild {
     void (*callback)(void);
 };
 
-extern struct BattleEffectScene *Data_03001f30;
+extern struct BattleEffectScene *gEffectWork;
 
 void BattleEffect_InitializeSharedScene(void);
 void *SpawnItemBreakEffectMode3(s32 x, s32 y, s32 z, s32 angle);
@@ -48,7 +48,7 @@ void BattleEffect_RunTargetedItemBreak(void)
     s32 index;
     s32 start_y;
 
-    scene = Data_03001f30;
+    scene = gEffectWork;
     child = scene->child;
     main_object = scene->main_object;
     if (child == 0)

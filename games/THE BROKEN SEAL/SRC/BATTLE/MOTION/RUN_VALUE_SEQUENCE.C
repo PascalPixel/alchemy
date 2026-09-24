@@ -9,7 +9,7 @@ struct Runtime_080babdc {
     u8 mode;
 };
 
-extern struct Runtime_080babdc *Data_03001e74;
+extern struct Runtime_080babdc *gBattleWork;
 
 void *Runtime_GetObject(s32 id);
 struct ObjectSlot_080babdc *GetBattleObjectSlot(s32 id);
@@ -47,5 +47,5 @@ void BattleMotion_RunValueSequence(s32 id)
         remaining--;
     } while (remaining >= 0);
 
-    Func_08015130(Data_03001e74->mode);
+    Func_08015130(gBattleWork->mode);
 }

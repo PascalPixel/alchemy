@@ -13,8 +13,8 @@ struct GlobalData {
     u32 value_1F4;
 };
 
-extern struct GlobalData Data_02000240;
-#define PARTY_STATE Data_02000240
+extern struct GlobalData gGameState;
+#define PARTY_STATE gGameState
 extern char Value_fff80000;
 extern char Value_001ffffe;
 

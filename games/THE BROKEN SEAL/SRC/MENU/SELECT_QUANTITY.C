@@ -3,9 +3,9 @@
 #define MENU_SUBOBJECT(menu, offset) (*(u8 **)((u8 *)(menu) + (offset)))
 
 struct InventoryMenuState;
-extern struct InventoryMenuState *Data_03001f2c;
+extern struct InventoryMenuState *gMenuWork;
 extern volatile s32 Data_03001b04;
-extern volatile u32 Data_03001c94;
+extern volatile u32 gKeyState;
 void Menu_UpdateEntryObjectTransforms(void);
 
 s32 UiWindow_CreateFar(s32, s32, s32, s32, s32);
@@ -24,7 +24,7 @@ void Func_08015408(s32, s32, s32, s32);
 s32 Menu_SelectQuantity(s32 value)
 {
     s32 changed = 1;
-    u8 *menu = (u8 *)Data_03001f2c;
+    u8 *menu = (u8 *)gMenuWork;
     u8 *confirmState = MENU_SUBOBJECT(menu, 540);
     s32 window;
     s32 quantity = 0;
@@ -68,7 +68,7 @@ check_exit:
     }
 
     {
-        volatile u32 *keys = &Data_03001c94;
+        volatile u32 *keys = &gKeyState;
 
         if (*keys & 1)
             goto done;

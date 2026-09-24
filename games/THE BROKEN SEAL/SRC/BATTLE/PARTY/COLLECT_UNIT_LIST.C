@@ -1,6 +1,6 @@
 #include "INVENTORY.H"
 
-extern u8 *Data_03001e74;
+extern u8 *gBattleWork;
 extern s8 Data_080c2a10[];
 
 s32 BattleParty_PrepareActiveOwners(u16 *out);
@@ -18,7 +18,7 @@ void BattleParty_CollectUnitList(void)
     s32 kind;
     u16 *out;
 
-    state = Data_03001e74;
+    state = gBattleWork;
     count = BattleParty_PrepareActiveOwners(buf);
     for (i = 0; i < count; i++) {
         *(u16 *)(state + 88 + i * 2) = buf[i];

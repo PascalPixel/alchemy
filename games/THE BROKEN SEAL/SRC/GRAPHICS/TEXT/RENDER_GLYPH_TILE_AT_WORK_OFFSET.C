@@ -6,7 +6,7 @@ struct Work_08017c1c {
     u16 y;
 };
 
-extern u8 *Data_03001e8c;
+extern u8 *gWindowWork;
 
 s32 Func_0801de5c(u16 *, s32, s32, s32);
 
@@ -16,7 +16,7 @@ void UiText_RenderGlyphTileAtWorkOffset(
     s32 offset_x,
     s32 offset_y)
 {
-    u8 *base = Data_03001e8c;
+    u8 *base = gWindowWork;
     s32 index;
     u32 cell;
 

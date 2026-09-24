@@ -1,6 +1,6 @@
 #include "TYPES.H"
 
-extern s16 Data_02000240[];
+extern s16 gGameState[];
 extern u8 Value_00000002;
 
 s32 Func_020017e0();
@@ -14,12 +14,12 @@ s32 Scene_GetModeMask(void)
     if (Func_020017e0(324) == 0) {
         return 0;
     }
-    if (Data_02000240[287] == 2) {
+    if (gGameState[287] == 2) {
         return 0;
     }
 
     /* Return 0 for mode 2 and -1 for every other mode. */
-    mode = Data_02000240[224] ^ (s32)&Value_00000002;
+    mode = gGameState[224] ^ (s32)&Value_00000002;
     normalized = (unsigned int)(-mode | mode) >> 31;
     return -normalized;
 }

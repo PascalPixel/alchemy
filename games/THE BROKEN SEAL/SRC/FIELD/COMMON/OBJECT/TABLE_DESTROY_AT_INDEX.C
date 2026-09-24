@@ -5,13 +5,13 @@ struct ObjectTableWork {
     void *objects[192];
 };
 
-extern struct ObjectTableWork *Data_03001ebc;
+extern struct ObjectTableWork *gEventWork;
 void *ObjectTable_Get(s32);
 void Object_Destroy(void *);
 
 void ObjectTable_DestroyAtIndex(s32 index)
 {
-    struct ObjectTableWork *state = Data_03001ebc;
+    struct ObjectTableWork *state = gEventWork;
     void *object = ObjectTable_Get(index);
 
     if (object != NULL) {

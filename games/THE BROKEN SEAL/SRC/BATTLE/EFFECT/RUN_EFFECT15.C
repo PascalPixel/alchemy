@@ -56,8 +56,8 @@ struct EffectSceneWork {
     struct EffectPositionSource *position_source;
 };
 
-extern struct EffectSceneWork *Data_03001f30;
-extern u32 Data_03001e40;
+extern struct EffectSceneWork *gEffectWork;
+extern u32 gFrameCount;
 
 void NormalizeVector(struct Output *);
 u32 Random16(void);
@@ -73,7 +73,7 @@ void BattleFx_UpdateRadialLaunch(struct EffectSlot *effect)
     s32 state;
     u32 first_random;
 
-    source = Data_03001f30->position_source;
+    source = gEffectWork->position_source;
     state = effect->state;
 
     if (state == 0) {
@@ -104,7 +104,7 @@ void BattleFx_UpdateRadialLaunch(struct EffectSlot *effect)
         effect->flag42 = state;
         effect->state++;
 
-        if ((Data_03001e40 & 2) != 0)
+        if ((gFrameCount & 2) != 0)
             Audio_PlayCue(0xf6);
     } else if (state == 1) {
         if (EffectSlot_HasReachedTarget(effect) == 0)
@@ -123,7 +123,7 @@ struct EffectObject {
 };
 
 
-extern u8 Data_02000240[];
+extern u8 gGameState[];
 
 void Battle_Reset(void);
 void place_within_camera_bounds(s32, s32, s32, s32);
@@ -145,7 +145,7 @@ void apply_random_child_values(void);
 
 void BattleFx_RunEffect15(void)
 {
-    u8 *scene = (u8 *)Data_03001f30;
+    u8 *scene = (u8 *)gEffectWork;
     u8 *main_object = *(u8 **)(scene + 16);
     struct EffectObject *effect = (struct EffectObject *)main_object;
     struct Output position;

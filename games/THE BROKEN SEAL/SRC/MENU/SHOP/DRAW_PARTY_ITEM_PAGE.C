@@ -3,7 +3,7 @@
 /* Main-image symbols: every pool word inside the ROM or the work RAM. */
 extern u8 Data_00000182[];
 extern u8 Data_00000af7[];
-extern u8 Data_03001f2c[];
+extern u8 gMenuWork[];
 void Func_08015068();
 void UiText_DrawCharacterAtOffsetFar();
 void UiText_DrawStringAtOffsetFar();
@@ -40,7 +40,7 @@ s32 Shop_DrawItemPage(s32 a0, s32 a1, s32 a2)
     s32 v6;
     s32 base5_af7;
 
-    p9 = *(s32 *)Data_03001f2c;
+    p9 = *(s32 *)gMenuWork;
     rec5 = Owner_GetStateFar(*(u8 *)((0x21a + p9)));
     Func_08015068(a0, 128, 8, 224, 96);
     p8 = ((*(s32 *)(a2 + 8) << 2) + *(s32 *)(a2 + 8));

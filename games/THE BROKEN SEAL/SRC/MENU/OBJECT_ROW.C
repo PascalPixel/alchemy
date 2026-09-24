@@ -20,7 +20,7 @@ struct RuntimeObject {
     s8 field_26;
 };
 
-extern struct PlacementState *Data_03001f2c;
+extern struct PlacementState *gMenuWork;
 extern const s32 Data_08073854[4];
 
 struct RuntimeObject *Func_08009030(s32);
@@ -30,7 +30,7 @@ void Menu_UpdateSecondObjectRowPositions(void);
 
 void Menu_SpawnFourObjectsAtOrigin(struct PlacementOrigin *origin, s32 x, s32 y)
 {
-    struct PlacementState *state = Data_03001f2c;
+    struct PlacementState *state = gMenuWork;
     s32 i;
 
     if (origin != 0) {
@@ -58,7 +58,7 @@ void ResourceObject_ReleaseFar(void *);
 
 void Menu_ClearSecondObjectRowAndScheduleUpdate(void)
 {
-    u8 *base = (u8 *)Data_03001f2c;
+    u8 *base = (u8 *)gMenuWork;
     s32 offset = 137;
     s32 zero;
     s32 count;
@@ -85,7 +85,7 @@ void Func_08009008(void *object, s32 *position, s32 *scale, s32 flags);
 
 void Menu_UpdateSecondObjectRowPositions(void)
 {
-    struct PlacementState *root = Data_03001f2c;
+    struct PlacementState *root = gMenuWork;
     s32 scale[2];
     s32 position[4];
     s32 index;

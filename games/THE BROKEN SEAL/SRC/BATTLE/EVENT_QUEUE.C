@@ -66,7 +66,7 @@ struct BattleEventRuntime {
     u32 actor_auxiliary;
 };
 
-extern u8 *Data_03001e74;
+extern u8 *gBattleWork;
 extern u8 *Data_03001ee4;
 
 
@@ -87,7 +87,7 @@ u32 BattleEventRuntime_Reset(void);
 
 u32 BattleEv_DispatchQueued(void)
 {
-    struct BattleEventRuntime *runtime = (void *)(Data_03001e74 + 0x6b8);
+    struct BattleEventRuntime *runtime = (void *)(gBattleWork + 0x6b8);
     struct BattleEventQueue *queue = &runtime->queue;
     s32 i;
 
@@ -124,7 +124,7 @@ u32 BattleEv_DispatchQueued(void)
             BattleMotion_InitializeActorRecords(FIELD(queue, u32, operand_offset));
             break;
         }
-        case 10: Func_08015130(Data_03001e74[65]); break;
+        case 10: Func_08015130(gBattleWork[65]); break;
         case 11:
             BattleUnit_BuildStatusFlags(queue->operands[i], (u32)GetBattleObjectSlot(queue->operands[i]));
             BattlePres_SetActorModeAndAction(queue->operands[i]);

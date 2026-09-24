@@ -1,7 +1,7 @@
 #include "EVENT_RUNTIME.H"
 #include "OBJECT_LOOKUP.H"
 
-extern struct EventValueWork Data_02000240;
+extern struct EventValueWork gGameState;
 
 void WaitFrames(s32);
 void FunctionHead_0808b674(s32);
@@ -19,7 +19,7 @@ void Event_RunObjectHookAndWait(s32 object_id)
     Event_NoOpHook();
     FunctionHead_0808b674(object_id);
     WaitFrames(1);
-    ObjectTable_Get(Data_02000240.value);
+    ObjectTable_Get(gGameState.value);
 }
 
 void Event_CallWithLastActiveObjectId(s32 event_id)

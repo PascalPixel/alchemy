@@ -19,7 +19,7 @@ struct Snd_080c1df4 {
     u8 num;         /* 0x40 */
 };
 
-extern struct Snd_080c1df4 *Data_03001e74;
+extern struct Snd_080c1df4 *gBattleWork;
 
 s32 Modulo(s32, s32);
 
@@ -31,7 +31,7 @@ s32 Summon_TakeCharge(s32 no)
     s32 retry;
     s32 ch;
 
-    w = Data_03001e74;
+    w = gBattleWork;
     num = w->num;
     for (i = 0; i < num; i++) {
         if (w->no[i] == no)

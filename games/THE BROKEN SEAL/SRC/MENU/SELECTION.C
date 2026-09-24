@@ -1,7 +1,7 @@
 #include "TYPES.H"
 
 struct MenuModeLabelState;
-extern struct MenuModeLabelState *Data_03001f38;
+extern struct MenuModeLabelState *gMenuSelectWork;
 
 s32 UiWindow_Create(s32, s32, s32, s32, s32);
 
@@ -10,7 +10,7 @@ void Menu_LayoutResourceEntries(s32 x, s32 y, s32 w, s32 h)
     u8 *state;
     s32 i;
 
-    state = (u8 *)Data_03001f38;
+    state = (u8 *)gMenuSelectWork;
 
     *(u16 *)(state + 144) = (u16)((u32)w + 2);
     *(u16 *)(state + 146) = (u16)h;
@@ -168,7 +168,7 @@ extern void UiText_DrawCharacterAtOffset(s32, void *, s32, s32);
 
 void Menu_DrawModeLabel(void)
 {
-    struct MenuModeLabelState *state = Data_03001f38;
+    struct MenuModeLabelState *state = gMenuSelectWork;
 
     if (state->previous_mode != state->mode) {
         state->previous_mode = state->mode;
@@ -223,7 +223,7 @@ extern u8 Value_00000c73;
 
 void Menu_DrawModeIndicator(void)
 {
-    u8 *state = (u8 *)Data_03001f38;
+    u8 *state = (u8 *)gMenuSelectWork;
     s16 *shown = (s16 *)(state + 150);
     s16 *current = (s16 *)(state + 140);
 

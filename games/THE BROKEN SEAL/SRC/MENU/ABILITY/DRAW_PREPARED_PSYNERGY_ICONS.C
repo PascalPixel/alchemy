@@ -5,7 +5,7 @@ void ItemMenu_HideAllIcons(void);
 
 void PsynergyMenu_DrawPreparedPsynergyIcons(s32 unused, s32 owner_id)
 {
-    struct PsynergyMenuState *menu = Data_03001f2c;
+    struct PsynergyMenuState *menu = gMenuWork;
 
     OwnerState_GetFar(owner_id);
     ItemMenu_HideAllIcons();

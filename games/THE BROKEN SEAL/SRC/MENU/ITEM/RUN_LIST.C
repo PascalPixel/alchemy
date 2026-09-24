@@ -45,7 +45,7 @@ struct ItemListWork {
     u8 mode;                                  /* 0x268 */
 };
 
-extern struct ItemListWork *Data_03001f2c;
+extern struct ItemListWork *gMenuWork;
 
 void WaitFrames(s32 frames);
 s32 Math_Mod(s32 value, s32 divisor);
@@ -79,7 +79,7 @@ void Audio_PlayCue(s32 cue);
 #define KEY_R 0x100
 #define KEY_L 0x200
 
-extern u32 Data_03001e40;
+extern u32 gFrameCount;
 extern u8 Value_00000b89;
 
 u8 ItemMenu_Collect(struct BattleUnit *owner, u16 *items, s32 mode);
@@ -115,7 +115,7 @@ s32 ItemMenu_RunList(s32 pane)
     s32 work[5];
     struct MenuResult state;
 
-    menu = Data_03001f2c;
+    menu = gMenuWork;
     result = 0;
     prev = 0;
     *((u8 *)menu + 0x25c) = result;
@@ -164,7 +164,7 @@ s32 ItemMenu_RunList(s32 pane)
                 }
             }
 
-            if ((Data_03001e40 & 31) == 0) {
+            if ((gFrameCount & 31) == 0) {
                 for (i = 0; i < menu->owner_count; i++) {
                     if (Item_CanOwnerEquip(menu->owner_table[i],
                             ITEM_ID_MASK & menu->items[state.selected_index]) != 0) {

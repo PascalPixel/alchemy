@@ -1,6 +1,6 @@
 #include "TYPES.H"
 
-extern void *Data_03001f2c;
+extern void *gMenuWork;
 extern u8 Value_00000075;
 
 void RenderOutput_RedrawSavedRectFar(s32);
@@ -17,7 +17,7 @@ s32 ItemMenu_DrawItemDetailPage(s32 arg0, s32 arg1, void *state)
     s32 row;
 
     page = *(s32 *)(state + 8);
-    menu = Data_03001f2c;
+    menu = gMenuWork;
     combined = page * 5;
     combined += *(s32 *)(state + 16);
     *(s32 *)(state + 24) = combined;

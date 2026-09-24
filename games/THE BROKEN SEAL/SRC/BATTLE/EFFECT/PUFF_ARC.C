@@ -8,9 +8,9 @@
    The reference calls it through the r4 bx bank, so it is an indirect
    call through the cached kind-46 entry rather than a fixed callee. */
 
-/* Heap-allocation cache: Data_03001e50[kind] holds kind's block address.
+/* Heap-allocation cache: gWorkSlot[kind] holds kind's block address.
    This owner reads kinds 39 (its work block), 40 and 46. */
-extern u8 Data_03001e50[];
+extern u8 gWorkSlot[];
 
 /* Value_ symbols carry a literal the reference loads from its pool rather
    than materializing with a mov. */
@@ -62,7 +62,7 @@ typedef struct Puff {
  * sequence, four frames per cell, staggered four frames apart, and is drawn
  * once, twice or three times depending on the layer count the caller set.
  * The rectangle blitter is the kind-46 block BattleEffect_LoadWork loads, so every
- * draw goes through the entry cached in Data_03001e50[46].
+ * draw goes through the entry cached in gWorkSlot[46].
  *
  * Aggregate names remain provisional; byte offsets into the kind-39 work
  * block are retained where no evidence-backed structure exists yet.
@@ -85,7 +85,7 @@ void BattleFx_RunPuffArc(struct BattleEffectArgument *efx)
     Puff *puff;
     Puff *cur;
 
-    cache = (u32 *)(Data_03001e50 + 39 * 4);
+    cache = (u32 *)(gWorkSlot + 39 * 4);
     entry = cache;
     work = (struct BattleEffectWork *)*entry++;
     dst = (void *)*entry;

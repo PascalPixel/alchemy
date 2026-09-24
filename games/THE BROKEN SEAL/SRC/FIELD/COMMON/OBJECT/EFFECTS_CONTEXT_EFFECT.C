@@ -34,9 +34,9 @@ struct EffectKindObject {
     u8 kind;
 };
 
-extern u32 Data_02000240[];
+extern u32 gGameState[];
 
-/* Object table: 192 pointers at Data_03001ebc + 0x14 (see ObjectTable_Get). */
+/* Object table: 192 pointers at gEventWork + 0x14 (see ObjectTable_Get). */
 void *ResourceMetadata_RegisterFar(void *, s32);
 void Object_SetMode(void *, s32);
 void WaitFrames(s32);
@@ -49,7 +49,7 @@ void ObjectEffect_PrepareContextEffect(s32 value)
     struct EffectMotionObject *context;
     struct EffectKindObject *effect;
 
-    object = ObjectTable_Get(Data_02000240[125]);
+    object = ObjectTable_Get(gGameState[125]);
     context = object->context;
     effect = ResourceMetadata_RegisterFar(context, 27);
     zero = 0;
@@ -112,7 +112,7 @@ void ObjectEffect_EndContextEffect(s32 arg0)
 {
     s32 zero;
     s32 mask;
-    EffectCleanupObject *obj = ObjectTable_Get(Data_02000240[125]);
+    EffectCleanupObject *obj = ObjectTable_Get(gGameState[125]);
     EffectCleanupContext *ctx = obj->ctx;
     struct EffectKindObject *eff = ResourceMetadata_RegisterFar(ctx, 27);
 
@@ -165,7 +165,7 @@ s32 ObjectEffect_RunPendingFlagEvent(void)
                 void *obj;
 
                 GameFlag_Clear(flag);
-                id = Data_02000240[125];
+                id = gGameState[125];
                 obj = ObjectTable_Get(id);
                 *(s32 *)((u8 *)obj + 12) += 0x00a00000;
                 place_within_camera_bounds(-1, -1, -1, 0);

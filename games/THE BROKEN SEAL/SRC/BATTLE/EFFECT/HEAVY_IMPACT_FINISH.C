@@ -1,8 +1,8 @@
 #include "TYPES.H"
 #include "FIXED_MATH.H"
 
-extern s32 Data_02000240[];
-#define PARTY_STATE Data_02000240
+extern s32 gGameState[];
+#define PARTY_STATE gGameState
 int BattleFx_ClearActiveSlotsAndScheduleUpdates();
 int ObjectMotion_ArmCallback();
 int ObjectMotion_Launch();

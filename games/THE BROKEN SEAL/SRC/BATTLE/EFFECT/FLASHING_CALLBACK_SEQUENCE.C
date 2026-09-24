@@ -1,8 +1,8 @@
 #include "CALLBACK_SCHEDULER.H"
 
-extern u8 *Data_03001ebc;
-extern s16 Data_02000240[];
-#define PARTY_STATE Data_02000240
+extern u8 *gEventWork;
+extern s16 gGameState[];
+#define PARTY_STATE gGameState
 
 void *ObjectTable_Get(u32);
 void Audio_PlayCue(s32);
@@ -20,7 +20,7 @@ typedef struct {
 
 void BattleFx_RunFlashingCallbackSequence(void)
 {
-    u8 *state = Data_03001ebc;
+    u8 *state = gEventWork;
     s32 index = 250;
     u8 *object = ObjectTable_Get(*(u32 *)&PARTY_STATE[index]);
     EffectSprite *record = *(EffectSprite **)(object + 80);

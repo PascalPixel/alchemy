@@ -57,14 +57,14 @@ s32 Func_08015038(s32 a, s32 b, s32 c, s32 d);
 s32 UiWork_IsCompleteFar(void);
 void WaitFrames(s32 frames);
 
-extern struct ShopRuntime *Data_03001f2c;
+extern struct ShopRuntime *gMenuWork;
 extern char Value_00000ca2;
 extern char Value_00000ca3;
 extern u8 Value_00000ad0[];
 
 s32 Shop_ConfirmEquip(s32 unit_id, s32 slot)
 {
-    struct ShopRuntime *menu = Data_03001f2c;
+    struct ShopRuntime *menu = gMenuWork;
     struct BattleUnit *unit = (struct BattleUnit *)BattleUnit_Get(unit_id);
     s32 item_id = unit->inventory[slot] & 0x1ff;
     struct ItemDefinition *info = Item_Get(item_id);

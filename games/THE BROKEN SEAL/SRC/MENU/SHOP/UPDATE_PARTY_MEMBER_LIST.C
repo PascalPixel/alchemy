@@ -3,7 +3,7 @@
 void Object_InitializeMode(void *, s32);
 s32 Item_IsCompatibleWithOwnerFar(s16, s32);
 
-extern u8 *Data_03001f2c;
+extern u8 *gMenuWork;
 
 union ShopPartyMemberId {
     s32 word;
@@ -19,7 +19,7 @@ void Shop_DrawParty(s32 window, s32 selected, s32 requirement)
     s32 offset;
     s16 unit_id;
 
-    shop = Data_03001f2c;
+    shop = gMenuWork;
     if (window != 0) {
         index = 0;
         if (index < *(s8 *)(shop + 0x3a7)) {

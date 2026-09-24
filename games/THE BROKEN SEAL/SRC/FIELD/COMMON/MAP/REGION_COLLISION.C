@@ -18,8 +18,8 @@ struct MapFocusPosition {
 
 void RotateVectorByMagnitude(s32, u32, struct MapFocusPosition *);
 
-extern struct EventPairWork1d6 Data_02000240;
-extern struct EventRuntime *Data_03001ebc;
+extern struct EventPairWork1d6 gGameState;
+extern struct EventRuntime *gEventWork;
 
 u8 GetFocusedObjectCollision(void)
 {
@@ -33,9 +33,9 @@ u8 GetFocusedObjectCollision(void)
     s32 x;
     s32 y;
 
-    runtime_slot_address = (u32)&Data_03001ebc;
-    runtime = Data_03001ebc;
-    offset = (Data_02000240.object_id * 4) + 0x14;
+    runtime_slot_address = (u32)&gEventWork;
+    runtime = gEventWork;
+    offset = (gGameState.object_id * 4) + 0x14;
     object = *(struct MapFocusObject **)((u8 *)runtime + offset);
 
     map = *(struct MapState **)(runtime_slot_address - 76);
@@ -132,7 +132,7 @@ void UpdateMapRegionAtPosition(s32 position_x, s32 position_y, s32 position_z)
     z = position_z;
     region = Data_02008000.region_provider();
     if (region != 0 &&
-        (runtime = Data_03001ebc, min_x = region->min_x, min_x != -1)) {
+        (runtime = gEventWork, min_x = region->min_x, min_x != -1)) {
 loop:
         min_y = region->min_y;
         min_z = region->min_z;
@@ -153,7 +153,7 @@ loop:
             Battle_InitializeRenderObject();
             return;
         }
-        runtime = Data_03001ebc;
+        runtime = gEventWork;
         region++;
         min_x = region->min_x;
         if (min_x != -1)

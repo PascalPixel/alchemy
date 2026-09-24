@@ -11,7 +11,7 @@ struct EventCellPairs {
 };
 
 extern s32 gCell[];
-extern struct EventRuntime *Data_03001ebc;
+extern struct EventRuntime *gEventWork;
 
 void Event_SetPair1d4(u16 first, u16 second)
 {
@@ -21,7 +21,7 @@ void Event_SetPair1d4(u16 first, u16 second)
 
 void Event_SetPair1c0AndSetValue170(u16 first, u16 second)
 {
-    struct EventRuntime *work = Data_03001ebc;
+    struct EventRuntime *work = gEventWork;
     ((struct EventCellPairs *)gCell)->first_1c0 = first;
     ((struct EventCellPairs *)gCell)->second_1c2 = second;
     work->value_170 = 999;

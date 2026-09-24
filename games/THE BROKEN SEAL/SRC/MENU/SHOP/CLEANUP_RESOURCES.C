@@ -10,7 +10,7 @@ void Inn_Cleanup(void)
 {
     struct InnRuntimeState *state;
 
-    state = Data_03001f2c;
+    state = gMenuWork;
     ScheduleCallback((s32)&Data_080b00f5);
     UiWork_FinalizePending();
     Resource_ResetEntry(state->resource_entries[0]);

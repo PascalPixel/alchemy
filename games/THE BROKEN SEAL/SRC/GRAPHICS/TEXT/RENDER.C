@@ -3,7 +3,7 @@
 #include "GLOBAL_CELLS.H"
 #include "TBS_EDITION.H"
 
-extern u8 *Data_03001e8c;
+extern u8 *gWindowWork;
 
 s32 UiText_BuildRenderEntries(s32 character, s32 count);
 s16 *Runtime_BumpAllocateAlternatePool(s32 size);
@@ -42,7 +42,7 @@ void UiText_DrawCharacterAtOffset(
     u8 *base;
     u16 *counter;
 
-    base = Data_03001e8c;
+    base = gWindowWork;
     counter = (u16 *)(base + RENDER_ENTRY_COUNT_OFS);
     zero = 0;
     *counter = zero;
@@ -103,7 +103,7 @@ void UiText_DrawStringAtOffset(
     s32 phase;
 
     buffer = Runtime_BumpAllocateAlternatePool(0x200);
-    base = Data_03001e8c;
+    base = gWindowWork;
     output = buffer;
     if (*text != 0) {
         do {
@@ -196,7 +196,7 @@ void UiText_DrawPrefixedNumberAtOffset(
     s32 dst;
     s32 phase;
 
-    base = Data_03001e8c;
+    base = gWindowWork;
     text = Text_FormatNumber(formatted, value, 4);
     if (variant == 0) {
         output[0] = 0xf01d;

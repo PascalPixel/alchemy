@@ -5,8 +5,8 @@
 extern void ScheduleCallback(s32);
 extern void BattleFx_ArmBg0HBlankDma(void);
 extern s32 PaletteGlow_UpdateFar(s32, s32);
-extern u8 Data_02000240[];
-#define PARTY_STATE Data_02000240
+extern u8 gGameState[];
+#define PARTY_STATE gGameState
 
 void Ui_SetBank15PaletteAndClearRenderMode(void)
 {

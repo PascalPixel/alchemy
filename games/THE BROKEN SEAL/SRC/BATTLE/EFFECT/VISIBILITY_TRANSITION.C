@@ -4,9 +4,9 @@
 
 s32 Object_GetById(u32);
 
-extern s32 Data_02000240[];
-#define PARTY_STATE Data_02000240
-extern u8 Data_03001ebc[];
+extern s32 gGameState[];
+#define PARTY_STATE gGameState
+extern u8 gEventWork[];
 
 s32 WaitFrames(s32);
 s32 Scheduler_EnableUnmaskedOverlayCallbacks(void);
@@ -28,7 +28,7 @@ void BattleFx_UpdateObjectVisibilityBounds(void)
 
     object = PARTY_STATE[125];
     Object_GetById(object);
-    object = *(s32 *)(*(u8 **)Data_03001ebc + 480);
+    object = *(s32 *)(*(u8 **)gEventWork + 480);
     x = *(s32 *)(object + 8);
     left = x + 0xFEC00000;
     right = x + 0x01400000;

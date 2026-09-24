@@ -5,8 +5,8 @@ struct Runtime_080931ec {
     s16 effect_count;
 };
 
-extern struct Runtime_080931ec *Data_03001ebc;
-extern volatile u32 Data_03001c94;
+extern struct Runtime_080931ec *gEventWork;
+extern volatile u32 gKeyState;
 
 s32 ObjectTable_ReadActiveValue(s32);
 s32 BattleFx_GetResourceId(u32);
@@ -23,7 +23,7 @@ void Battle_ShowPairedUnitWorkAndWait(
     s32 first_extra, s32 second, s32 second_x, s32 second_y,
     s32 second_arg, s32 second_extra)
 {
-    struct Runtime_080931ec *rt = Data_03001ebc;
+    struct Runtime_080931ec *rt = gEventWork;
     s32 id0 = ObjectTable_ReadActiveValue(first);
     s32 id1 = ObjectTable_ReadActiveValue(second);
     s32 h0;
@@ -43,7 +43,7 @@ void Battle_ShowPairedUnitWorkAndWait(
         WaitFrames(1);
 
     WaitFrames(1);
-    while ((Data_03001c94 & 0x303) == 0)
+    while ((gKeyState & 0x303) == 0)
         WaitFrames(1);
 
     WaitFrames(1);

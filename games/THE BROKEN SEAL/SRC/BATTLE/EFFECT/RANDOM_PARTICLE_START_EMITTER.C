@@ -42,7 +42,7 @@ struct EfxObj {
     void (*proc)(void);
 };
 
-extern u8 *Data_03001ebc;
+extern u8 *gEventWork;
 extern const u8 Data_0809e6c0[];
 extern const u8 Data_0809e87c[];
 
@@ -58,10 +58,10 @@ void Runtime_ReleaseHeapBlock(s32 kind);
 void EmitRandomParticleEffect(void);
 void BattleFx_SpawnRandomParticleAtPosition(const void *src);
 
-#define EfxWork Data_03001ebc
+#define EfxWork gEventWork
 #define EmitterData Data_0809e6c0
 #define ParticleData Data_0809e87c
-#define EfxPool (*(struct EfxObj **)((u8 *)&Data_03001ebc - 88))
+#define EfxPool (*(struct EfxObj **)((u8 *)&gEventWork - 88))
 #define BATTLE_ACTIVE_OFS 0xcb8
 
 struct EfxObj *BattleFx_StartRandomParticleEmitter(s32 obj_id, s32 item)

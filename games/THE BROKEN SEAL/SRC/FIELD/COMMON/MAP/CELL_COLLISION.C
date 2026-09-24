@@ -1,7 +1,7 @@
 #include "MAP.H"
 #include "GLOBAL_CELLS.H"
 
-extern struct MapState *Data_03001e70;
+extern struct MapState *gMapWork;
 
 u8 GetMapCellCollision(s32 layer, s32 x, s32 y)
 {
@@ -23,7 +23,7 @@ u8 GetMapCellCollision(s32 layer, s32 x, s32 y)
 
 void SetMapCellCollision(u32 layer, s32 x, s32 y, u32 collision_code)
 {
-    struct MapState *state = Data_03001e70;
+    struct MapState *state = gMapWork;
 
     x >>= 20;
     y >>= 20;

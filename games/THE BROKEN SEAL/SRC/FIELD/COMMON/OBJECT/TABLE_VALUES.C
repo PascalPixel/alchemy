@@ -16,13 +16,13 @@ struct ObjectValueTable {
     struct ObjectValueEntry *objects[4096];
 };
 
-extern struct ObjectValueTable *Data_03001ebc;
+extern struct ObjectValueTable *gEventWork;
 
 s32 ObjectTable_ReadActiveValue(s32 key)
 {
     s32 result = -1;
     struct ObjectValueEntry *entry =
-        Data_03001ebc->objects[(u32)key & 0x0fff];
+        gEventWork->objects[(u32)key & 0x0fff];
 
     if (entry != 0 && entry->active == 1)
         result = *entry->value_source->value;
@@ -31,7 +31,7 @@ s32 ObjectTable_ReadActiveValue(s32 key)
 
 s32 ObjectTable_FindActiveByValue(s32 value)
 {
-    struct ObjectValueTable *state = Data_03001ebc;
+    struct ObjectValueTable *state = gEventWork;
     s32 result = -1;
     s32 index = 8;
     struct ObjectValueEntry *object = state->objects[index];

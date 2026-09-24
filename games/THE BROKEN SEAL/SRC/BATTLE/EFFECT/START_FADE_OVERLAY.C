@@ -40,6 +40,6 @@ void BattleFx_StartFadeOverlay(void *object)
     fill = 0;
     Dma_Set((const void *)&fill, work, 0x85000007, (volatile u32 *)0x040000d4);
     if (object == NULL)
-        object = ObjectTable_Get(Data_02000240.object_id);
+        object = ObjectTable_Get(gGameState.object_id);
     work[6] = (u32)object;
 }

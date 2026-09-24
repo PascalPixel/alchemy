@@ -14,7 +14,7 @@ struct Object {
     u8 kind;
 };
 
-extern s32 Data_02000240[];
+extern s32 gGameState[];
 
 void Func_0800447c(s32, s32, struct Vec *);
 s32 Func_080091a8(s32, s32, s32);
@@ -34,7 +34,7 @@ s32 Object_GetTriggerTileAheadOfCurrent(void)
     s32 result;
 
     result = 0;
-    obj = ObjectTable_Get(Data_02000240[125]);
+    obj = ObjectTable_Get(gGameState[125]);
     state = *(u8 **)0x03001ebc;
     map = *(u8 **)0x03001e70;
     if (obj != 0) {

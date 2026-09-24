@@ -43,41 +43,41 @@ void ItemMenu_DrawStat(
 void ItemMenu_SetItemWin5(void)
 {
     WindowBounds_Set(
-        (struct WindowBounds *)Data_03001f2c->item_window,
+        (struct WindowBounds *)gMenuWork->item_window,
         13, 5, 17, 10);
 }
 
 void ItemMenu_SetItemWin3(void)
 {
     WindowBounds_Set(
-        (struct WindowBounds *)Data_03001f2c->item_window,
+        (struct WindowBounds *)gMenuWork->item_window,
         13, 3, 17, 10);
 }
 
 void ItemMenu_SetMsgWin5(void)
 {
     WindowBounds_Set(
-        (struct WindowBounds *)Data_03001f2c->message_window,
+        (struct WindowBounds *)gMenuWork->message_window,
         13, 0, 17, 5);
 }
 
 void ItemMenu_SetMsgWin6(void)
 {
     WindowBounds_Set(
-        (struct WindowBounds *)Data_03001f2c->message_window,
+        (struct WindowBounds *)gMenuWork->message_window,
         13, 0, 17, 6);
 }
 
 void ItemMenu_SetMsgWin7(void)
 {
     WindowBounds_Set(
-        (struct WindowBounds *)Data_03001f2c->message_window,
+        (struct WindowBounds *)gMenuWork->message_window,
         13, 0, 17, 7);
 }
 
 void ItemMenu_SetMsgWin3(void)
 {
     WindowBounds_Set(
-        (struct WindowBounds *)Data_03001f2c->message_window,
+        (struct WindowBounds *)gMenuWork->message_window,
         13, 0, 17, 3);
 }

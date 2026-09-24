@@ -10,7 +10,7 @@ extern void UiText_DrawAt(s32, void *, s32, s32);
 
 void ItemMenu_DrawItemHead(void)
 {
-    struct InventoryMenuState *menu = Data_03001f2c;
+    struct InventoryMenuState *menu = gMenuWork;
 
     InventoryMenu_DrawItemIcon(
         2, menu->selected_item, menu->selected_item_icon->render_target, 0);

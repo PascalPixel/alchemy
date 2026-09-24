@@ -208,7 +208,7 @@ void ObjectMotion_CommitPositionAndActivate(u32 object_id, s32 x_offset, s32 z_o
     }
 }
 
-extern s32 Data_02000240[];
+extern s32 gGameState[];
 extern u8 Data_0809fbcc;
 
 void Motion_LaunchFromFocusedObject(u32 arg0, s32 arg1, s32 arg2, s32 arg3)
@@ -219,7 +219,7 @@ void Motion_LaunchFromFocusedObject(u32 arg0, s32 arg1, s32 arg2, s32 arg3)
         struct ObjectRuntime *other;
 
         ObjectMotion_SetSpeedParameters(arg0, 0x9999, 0x4CCC);
-        other = Object_GetById(Data_02000240[125]);
+        other = Object_GetById(gGameState[125]);
         if (other != NULL)
             ObjectMotion_SetHorizontalPositionWithTerrain(arg0, other->x, other->z);
         object->movement_state = 0;

@@ -46,14 +46,14 @@ struct EffectObject {
 extern u32 BattleFx_CheckDescriptorKind3Result(s32 descriptor, s32 value);
 extern s32 GameFlag_IsConditionActive(s32 condition);
 extern struct EffectObject *ObjectTable_Get(s32 object);
-extern u8 Data_02000240;
-#define PARTY_STATE Data_02000240
-extern void *Data_03001ebc;
+extern u8 gGameState;
+#define PARTY_STATE gGameState
+extern void *gEventWork;
 
 struct EffectDescriptor *BattleFx_FindDescriptor(s32 kind, s32 value)
 {
     struct EffectDescriptorRuntime *runtime =
-        (struct EffectDescriptorRuntime *)Data_03001ebc;
+        (struct EffectDescriptorRuntime *)gEventWork;
     struct EffectDescriptor *descriptor = runtime->descriptors;
     s32 state_index = 250;
     s32 flags;
@@ -122,7 +122,7 @@ struct EffectSelectionWork {
     s16 value;
 };
 
-extern u8 Data_02000240;
+extern u8 gGameState;
 /* The shared runtime descriptor lookup; distinct from the local BattleFx_FindDescriptor. */
 struct EffectDescriptor *BattleFx_FindDescriptor(s32, s32);
 
@@ -178,7 +178,7 @@ extern void Battle_InitializeRenderObject(void);
 extern void ObjectMotion_SetActionCallback(struct BattleActionObject *, void *);
 extern void ObjectDispatch_InitializeFar(struct BattleActionObject *, void *);
 extern void BattleFx_ResumeObject(s32);
-extern u8 Data_02000240;
+extern u8 gGameState;
 
 s32 BattleFx_RunDescriptorAction(s32 id)
 {

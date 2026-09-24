@@ -1,7 +1,7 @@
 #include "TYPES.H"
 
-extern u8 Data_02000240[];
-#define PARTY_STATE Data_02000240
+extern u8 gGameState[];
+#define PARTY_STATE gGameState
 
 void Party_AdjustByte205ByDirection(s32 arg0)
 {

@@ -29,7 +29,7 @@ void ItemMenu_DrawIcons(u16 *items, s32 style)
     struct InventoryMenuIcon **icons;
     s32 item_id;
 
-    icons = Data_03001f2c->entry_icons;
+    icons = gMenuWork->entry_icons;
     entries = items;
     remaining = 14;
     do {
@@ -60,7 +60,7 @@ void ItemMenu_RefreshOwner(s32 owner_id, s32 mode)
     struct OwnerInventoryState *owner;
     u16 *items;
 
-    menu = Data_03001f2c;
+    menu = gMenuWork;
     owner = OwnerState_GetFar(owner_id);
     items = menu->items;
     menu->item_count = InventoryMenu_CollectItems(owner, items, 0);

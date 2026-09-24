@@ -5,7 +5,7 @@ struct BattleEffectScene {
     void *volatile main_object;
 };
 
-extern struct BattleEffectScene *Data_03001f30;
+extern struct BattleEffectScene *gEffectWork;
 
 void BattleEffect_InitializeSharedScene(void);
 void *BattleFx_StartItemBreak(void *object);
@@ -21,7 +21,7 @@ void BattleFx_RunItemBreakSequence(void)
     struct BattleEffectScene *scene;
     void *object;
 
-    scene = Data_03001f30;
+    scene = gEffectWork;
     object = scene->main_object;
 
     do {

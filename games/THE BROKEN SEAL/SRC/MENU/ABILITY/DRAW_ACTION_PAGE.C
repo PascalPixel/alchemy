@@ -21,7 +21,7 @@ s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused, const struct MenuResult 
     s32 cursor;
     struct BattleUnit *owner;
     struct BattleAction *ability;
-    struct PsynergyMenuState *menu = Data_03001f2c;
+    struct PsynergyMenuState *menu = gMenuWork;
 
     (void)unused;
 

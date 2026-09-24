@@ -30,7 +30,7 @@ struct UiCounterWorkJa {
 };
 #endif
 
-extern void *Data_03001e8c;
+extern void *gWindowWork;
 extern u8 Data_0801789d;
 
 s32 Resource_CopyData(s32, s32, s32);
@@ -48,7 +48,7 @@ s32 UiWork_IsIdle(void *arg0)
 
 void UiWork_ResetCounters(void)
 {
-    struct UiCounterWork *state = Data_03001e8c;
+    struct UiCounterWork *state = gWindowWork;
 
     state->fifteen = 15;
     state->ten = 10;
@@ -59,7 +59,7 @@ void UiWork_ResetCounters(void)
 
 void UiWork_InitCountersWithResourceAndScheduleRefresh(void)
 {
-    struct UiCounterWork *state = Data_03001e8c;
+    struct UiCounterWork *state = gWindowWork;
     s32 size;
 
     state->result = Resource_CopyData(95, 128 << 6, 0);
@@ -76,9 +76,9 @@ void UiWork_InitCountersWithResourceAndScheduleRefresh(void)
 void UiWork_InitCountersAndScheduleRefresh(s32 initialize)
 {
 #if defined(TBS_EDITION_JA)
-    struct UiCounterWorkJa *state = Data_03001e8c;
+    struct UiCounterWorkJa *state = gWindowWork;
 #else
-    struct UiCounterWork *state = Data_03001e8c;
+    struct UiCounterWork *state = gWindowWork;
 #endif
     s32 size;
 

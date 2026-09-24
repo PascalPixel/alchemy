@@ -2,8 +2,8 @@
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 s32 Modulo(s32, s32);
-extern u8 Data_02000240[];
-#define PARTY_STATE Data_02000240
+extern u8 gGameState[];
+#define PARTY_STATE gGameState
 extern u8 Data_08036750[];
 void GraphicsPalette_SetTintChannelsFromCounters(void *work)
 {

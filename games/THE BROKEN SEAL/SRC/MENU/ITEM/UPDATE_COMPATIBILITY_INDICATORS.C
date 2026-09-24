@@ -1,8 +1,8 @@
 #include "EQUIPMENT_MENU.H"
 #include "ITEM.H"
 
-extern u8 *Data_03001f2c;
-extern s32 Data_03001e40;
+extern u8 *gMenuWork;
+extern s32 gFrameCount;
 void Object_InitializeMode(void *, s32);
 
 void EquipmentMenu_UpdateCompatibilityIndicators(void)
@@ -10,8 +10,8 @@ void EquipmentMenu_UpdateCompatibilityIndicators(void)
     u8 *menu;
     s8 member_index;
 
-    menu = Data_03001f2c;
-    if ((Data_03001e40 & 31) == 0 && menu[0x219] != 0) {
+    menu = gMenuWork;
+    if ((gFrameCount & 31) == 0 && menu[0x219] != 0) {
         member_index = 0;
         do {
             s32 owner_offset = member_index * 2 + 520;

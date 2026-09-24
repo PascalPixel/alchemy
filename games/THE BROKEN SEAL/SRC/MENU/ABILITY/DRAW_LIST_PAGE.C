@@ -12,7 +12,7 @@ extern u8 Data_080af22c;
 #define MsgAction Value_00000333
 #define MsgClass Value_00000741
 #define StrLv Data_080af22c
-#define PsyMenuWork Data_03001f2c
+#define PsyMenuWork gMenuWork
 
 #define PSY_LIST_OFS 0x1c8
 #define ACT_ID_MASK 0x3fff

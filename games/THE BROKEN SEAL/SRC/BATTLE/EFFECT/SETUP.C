@@ -1,6 +1,6 @@
 #include "TYPES.H"
 #include "BATTLE_EFFECT_RUNTIME.H"
-#define PARTY_STATE Data_02000240
+#define PARTY_STATE gGameState
 
 s32 Scheduler_EnableCallbacks(u32 callback);
 void Func_080912b8(void);
@@ -65,11 +65,11 @@ u8 BattleFx_GetFlags(void)
 }
 
 extern volatile u8 Data_03001f54;
-extern volatile s32 Data_03001c94;
+extern volatile s32 gKeyState;
 
 void Battle_UpdateModeFromShoulderButtons(void)
 {
-    struct BattleRuntime *runtime = Data_03001ebc;
+    struct BattleRuntime *runtime = gEventWork;
 
     /*
      * 0x03001c94 is the button latch. 0x200 is L and 0x100 is R in the GBA
@@ -77,10 +77,10 @@ void Battle_UpdateModeFromShoulderButtons(void)
      * word either way round.
      */
     if (Data_03001f54 != 0) {
-        if (Data_03001c94 & 0x200) {
+        if (gKeyState & 0x200) {
             runtime->mode_1cc = 0;
         }
-        if (Data_03001c94 & 0x100) {
+        if (gKeyState & 0x100) {
             runtime->mode_1cc = -1;
         }
     }
@@ -90,7 +90,7 @@ void WaitFrames(void);
 
 void Battle_WaitMode0(s32 should_wait)
 {
-    if (Data_03001ebc->mode_1cc == 0 && should_wait != 0) {
+    if (gEventWork->mode_1cc == 0 && should_wait != 0) {
         WaitFrames();
     }
 }
@@ -123,7 +123,7 @@ u32 GameFlag_Clear(s32);
 
 void Battle_Reset(void)
 {
-    struct BattleRuntime *runtime = Data_03001ebc;
+    struct BattleRuntime *runtime = gEventWork;
 
     UiTimedNotice_CloseIfActiveFar();
     Battle_InitializeRenderObject();

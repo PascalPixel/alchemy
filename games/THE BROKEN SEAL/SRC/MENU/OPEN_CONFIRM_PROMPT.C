@@ -7,7 +7,7 @@ struct MenuObjectControl {
     u16 suspended;
 };
 
-extern struct MenuObjectControl *Data_03001e68;
+extern struct MenuObjectControl *gMenuCtrlWork;
 
 s32 Runtime_AllocateHeapBlock(s32 kind, s32 size);
 void Func_08015408(s32 x, s32 y, s32 width, s32 height);
@@ -31,7 +31,7 @@ void Event_ClearInvalidPackedValuesFar(void);
 /*
  * Open a modal menu screen and run its blocking interaction body.
  *
- * The address of Data_03001e68, not the pointer it holds, is the base for the
+ * The address of gMenuCtrlWork, not the pointer it holds, is the base for the
  * two fixed-address fields at +0x24 and +0x54; only "suspended" is reached
  * through the pointer itself.  The field read at +0x178 is named by position
  * only and is not otherwise confirmed.
@@ -44,7 +44,7 @@ s32 Menu_OpenConfirmPrompt(void)
     s32 low;
     s32 result;
 
-    Data_03001e68->suspended = 1;
+    gMenuCtrlWork->suspended = 1;
     Func_08015408(0, 0, 30, 20);
     WaitFrames(1);
     UiWindow_InitializeWork(0);
@@ -58,21 +58,21 @@ s32 Menu_OpenConfirmPrompt(void)
         &high, &unused, &low);
     Menu_EnsureCancelSound();
     if (result == 1) {
-        void *target = FIELD(&Data_03001e68, void *, 0x54);
+        void *target = FIELD(&gMenuCtrlWork, void *, 0x54);
         u16 flags;
         Ability_GetData(0x3fff & FIELD(state, u16, 0x178));
         flags = (u16)(low | (high << 10));
         FIELD(target, u16, 0x17e) = flags;
     }
     RenderOutput_ClearListFar(FIELD(state, s32, 0x24));
-    FIELD(FIELD(&Data_03001e68, void *, 0x24), u8, 0xea6) = 1;
+    FIELD(FIELD(&gMenuCtrlWork, void *, 0x24), u8, 0xea6) = 1;
     ItemMenu_Close();
     Func_08015408(0, 0, 30, 20);
     Runtime_ReleaseHeapBlock(0x37);
-    Data_03001e68->suspended = 0;
+    gMenuCtrlWork->suspended = 0;
     WaitFrames(1);
     UiWindow_EraseBorderRectFar(0, 0, 30, 20);
-    FIELD(FIELD(&Data_03001e68, void *, 0x24), u8, 0xea6) = 0;
+    FIELD(FIELD(&gMenuCtrlWork, void *, 0x24), u8, 0xea6) = 0;
     Event_ClearInvalidPackedValuesFar();
     return result;
 }

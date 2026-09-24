@@ -7,13 +7,13 @@ struct Triple08099340 {
     s32 z;
 };
 
-extern s32 *Data_03001f30;
+extern s32 *gEffectWork;
 void RotateVectorByMagnitude(s32, s32, struct Triple08099340 *);
 void Object_SetCallback(void *, void *);
 
 void BattleFx_UpdateShrinkingOrbitObject(u8 *arg)
 {
-    s32 *global = Data_03001f30;
+    s32 *global = gEffectWork;
     struct Triple08099340 local;
     s16 value;
     s32 raw;

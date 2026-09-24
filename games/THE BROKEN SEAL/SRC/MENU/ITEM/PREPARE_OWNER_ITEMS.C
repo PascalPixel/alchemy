@@ -9,7 +9,7 @@ void WaitFrames(s32);
 
 s32 ItemMenu_PrepOwner(s32 party_slot)
 {
-    register void *menu = Data_03001f2c;
+    register void *menu = gMenuWork;
     register s32 offset = party_slot + 28;
     s32 result = 0;
     register s32 owner_index;

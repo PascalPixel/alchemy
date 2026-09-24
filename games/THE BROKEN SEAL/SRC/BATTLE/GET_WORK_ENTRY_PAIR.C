@@ -17,11 +17,11 @@ struct Output_080b7eb4 {
     s32 second;
 };
 
-extern struct State_080b7eb4 *volatile Data_03001e74;
+extern struct State_080b7eb4 *volatile gBattleWork;
 
 s32 Battle_GetWorkEntryPair(s32 no, struct Output_080b7eb4 *out)
 {
-    struct State_080b7eb4 *state = Data_03001e74;
+    struct State_080b7eb4 *state = gBattleWork;
 
     out->first = state->entries[no].first;
     out->middle = 0;

@@ -1,6 +1,6 @@
 #include "TYPES.H"
 
-extern void *Data_03001f2c;
+extern void *gMenuWork;
 extern u8 Value_0000053a;
 
 s32 GameFlag_TestFar(s32 flag);
@@ -20,7 +20,7 @@ s32 PsynergyMenu_DrawDetailPage(s32 arg0, s32 arg1, void *state)
     s32 off;
     s32 row;
 
-    menu = Data_03001f2c;
+    menu = gMenuWork;
     combined = *(s32 *)(state + 8) * 5;
     combined += *(s32 *)(state + 16);
     *(s32 *)(state + 24) = combined;

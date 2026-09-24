@@ -31,7 +31,7 @@ union EntrySlot {
 
 #define ENTRY_SLOT(base, offset) ((union EntrySlot *)((u8 *)(base) + (offset)))
 
-extern u8 *Data_03001f2c;
+extern u8 *gMenuWork;
 
 s32 Party_ListActiveOwnersFar(u16 *out);
 s32 Party_RemapCharacterIdByFlagsFar(u16 value);
@@ -43,7 +43,7 @@ void Menu_UpdateEntryObjectTransforms(void);
 void InitializeEntryObjects(void *source, s32 origin_x, s32 origin_y, s32 spacing)
 {
     u16 entry_ids[14];
-    u8 *entry_state = Data_03001f2c;
+    u8 *entry_state = gMenuWork;
     s32 entry_count = (u16)Party_ListActiveOwnersFar(entry_ids);
     s32 i;
 

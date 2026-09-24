@@ -8,14 +8,14 @@ struct SaveMenuTileBlock {
     u16 y;
 };
 
-extern u8 *Data_03001e8c;
+extern u8 *gWindowWork;
 
 s16 *Func_020020be(s32);
 void Func_0200211e(s16 *);
 
 void SaveMenu_FillTileBlock(const struct SaveMenuTileBlock *block)
 {
-    s16 *mirror = (s16 *)Data_03001e8c;
+    s16 *mirror = (s16 *)gWindowWork;
     s16 *buffer = Func_020020be(0x300);
     s16 *vram;
     s32 cell;

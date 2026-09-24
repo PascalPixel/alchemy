@@ -26,7 +26,7 @@ struct UiChannelSlot {
     u16 field26;
 };
 
-extern u8 *Data_03001e8c;
+extern u8 *gWindowWork;
 void UiWork_ResetChannelTransition(void *);
 
 struct UiChannelSlot *UiWork_ActivateChannel(struct UiChannelWork *work, s32 value, s32 preserve)
@@ -38,7 +38,7 @@ struct UiChannelSlot *UiWork_ActivateChannel(struct UiChannelWork *work, s32 val
     u16 zero;
     u32 index;
 
-    slot = (struct UiChannelSlot *)(Data_03001e8c + RENDER_CHANNEL_OFS);
+    slot = (struct UiChannelSlot *)(gWindowWork + RENDER_CHANNEL_OFS);
     selected = 0;
     for (index = 0; index != 3; slot++, index++) {
         if (slot->work == 0 || slot->work->state != 0) {
@@ -112,7 +112,7 @@ s32 Ui_ClearVramBlock(void);
 void UiWork_ResetFreeChannel(void)
 {
     struct UiChannelSlot *slot =
-        (struct UiChannelSlot *)(Data_03001e8c + RENDER_CHANNEL_OFS);
+        (struct UiChannelSlot *)(gWindowWork + RENDER_CHANNEL_OFS);
     struct UiChannelSlot *sel = 0;
     s32 i;
 

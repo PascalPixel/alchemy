@@ -3,7 +3,7 @@
 u16 ArcTan2(s32, s32);
 void *Object_GetById(u32);
 void Object_SetCallback(void *, void *);
-extern s16 Data_02000240[];
+extern s16 gGameState[];
 extern const u8 Data_0809fe00[];
 extern const u8 Data_0809fd44[];
 extern const u8 Data_0809fe10[];
@@ -100,7 +100,7 @@ void ObjectMotion_SetActionCallback(struct ObjectRuntime *object, s32 kind)
         break;
     case 5:
         index = 250;
-        object->linked_object = Object_GetById(*(u32 *)&Data_02000240[index]);
+        object->linked_object = Object_GetById(*(u32 *)&gGameState[index]);
         kind = (s32)Data_0809ff2c;
         break;
     case 6:

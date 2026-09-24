@@ -11,19 +11,19 @@ struct Data_08091e6c {
     u16 second;
 };
 
-extern struct State_08091e6c *Data_03001ebc;
-extern struct Data_08091e6c Data_02000240;
+extern struct State_08091e6c *gEventWork;
+extern struct Data_08091e6c gGameState;
 
 void Event_SetPair1c4AndResetValue170(u16 first, u16 second)
 {
-    struct State_08091e6c *state = Data_03001ebc;
+    struct State_08091e6c *state = gEventWork;
     state->value = 999;
-    Data_02000240.first = first;
-    Data_02000240.second = second;
+    gGameState.first = first;
+    gGameState.second = second;
 }
 
 void Func_08091e9c(u16 value)
 {
-    struct State_08091e6c *state = Data_03001ebc;
+    struct State_08091e6c *state = gEventWork;
     state->value = value;
 }

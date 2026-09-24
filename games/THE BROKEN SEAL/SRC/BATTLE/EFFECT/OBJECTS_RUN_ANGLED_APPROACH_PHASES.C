@@ -26,8 +26,8 @@ struct Target {
     struct Vec pos;
 };
 
-extern s32 Data_02000240[];
-#define PARTY_STATE Data_02000240
+extern s32 gGameState[];
+#define PARTY_STATE gGameState
 
 void Func_0800447c(s32, s32, struct Vec *);
 struct Target *Object_GetById(s32);

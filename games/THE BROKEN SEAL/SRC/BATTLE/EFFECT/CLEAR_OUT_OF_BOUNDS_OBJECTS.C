@@ -17,7 +17,7 @@ struct ObjectTableWork {
     struct FieldObject *anchor;
 };
 
-extern struct ObjectTableWork *Data_03001ebc;
+extern struct ObjectTableWork *gEventWork;
 
 void Object_Destroy(struct FieldObject *object);
 
@@ -28,7 +28,7 @@ void Object_Destroy(struct FieldObject *object);
  * removed, bit 0 of its sprite's byte 29 is cleared, and its slot emptied. */
 void BattleEffect_ClearOutOfBoundsObjects(void)
 {
-    struct ObjectTableWork *work = Data_03001ebc;
+    struct ObjectTableWork *work = gEventWork;
     struct FieldObject *anchor;
     s32 x;
     s32 z;

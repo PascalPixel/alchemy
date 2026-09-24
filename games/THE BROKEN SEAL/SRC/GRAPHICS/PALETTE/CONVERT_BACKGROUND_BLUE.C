@@ -11,7 +11,7 @@ static __inline__ void CopyWords(WordCopy copy, void *destination,
 {
     copy(destination, source, size);
 }
-extern u8 Data_03001e50[];
+extern u8 gWorkSlot[];
 #define PIXEL_BUFFER ((u8 *)0x02010000)
 void WaitFrames(s32);
 u32 Random16(void);
@@ -32,7 +32,7 @@ void Graphics_ConvertBackgroundToBlueRamp(void)
         *palette++ = (i << 10) | (half << 5) | half;
         i++;
     } while (i != 32);
-    delays = *(u8 **)(Data_03001e50 + 41 * 4);
+    delays = *(u8 **)(gWorkSlot + 41 * 4);
     end = 0;
     speed = 16;
     CopyWords((WordCopy)0x03001388, PIXEL_BUFFER, (void *)0x06008000, 0x7800);

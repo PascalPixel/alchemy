@@ -13,7 +13,7 @@ void ItemMenu_BuildCmd(s8 *command_states)
     struct InventoryMenuState *menu;
     struct ItemDefinition *item;
 
-    menu = Data_03001f2c;
+    menu = gMenuWork;
     item = Item_Get(0x1ff & menu->selected_item);
 
     if (item->type == 0) {

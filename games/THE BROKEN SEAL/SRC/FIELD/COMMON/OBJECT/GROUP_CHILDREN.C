@@ -1,7 +1,7 @@
 #include "OBJECT_LOOKUP.H"
 #include "OBJECT_DISPATCH.H"
 
-extern u8 *Data_03001ebc;
+extern u8 *gEventWork;
 void Object_Destroy(void *);
 void ObjectGroup_ApplyIndexedChildValue(struct DispatchObject *);
 void ObjectGroup_SetChildValue(struct DispatchObject *, s32);
@@ -9,7 +9,7 @@ void ObjectGroup_SetChildValue(struct DispatchObject *, s32);
 void ObjectTable_DestroyById(s32 index)
 {
     void *object = ObjectTable_Get(index);
-    u8 *base = Data_03001ebc;
+    u8 *base = gEventWork;
     s32 offset;
 
     if (object != 0) {
@@ -42,7 +42,7 @@ void ObjectGroup_ConfigureChildValue(s32 object_id, s32 value)
     }
 }
 
-extern u32 Data_03001e40;
+extern u32 gFrameCount;
 extern u8 Data_0809ed80[];
 
 void ObjectGroup_ApplyIndexedChildValue(struct DispatchObject *object)
@@ -52,7 +52,7 @@ void ObjectGroup_ApplyIndexedChildValue(struct DispatchObject *object)
         u8 *container;
         u8 child_count;
 
-        child_value = Data_0809ed80[(Data_03001e40 >> 1) & 3];
+        child_value = Data_0809ed80[(gFrameCount >> 1) & 3];
         container = object->target.child;
         child_count = *(container + 0x27);
         if (child_count != 0) {

@@ -1,6 +1,6 @@
 #include "FOUR_OBJECT_MOTION.H"
 
-extern struct FourObjectMotionState *Data_03001f2c;
+extern struct FourObjectMotionState *gMenuWork;
 extern s32 Data_080af304[];
 
 void ResourceObject_ReleaseFar(void *);
@@ -12,7 +12,7 @@ void Scheduler_RemoveCallback(void (*)(void));
 
 void FourObjectMotion_InitializeBottomRow(void)
 {
-    struct FourObjectMotionState *state = Data_03001f2c;
+    struct FourObjectMotionState *state = gMenuWork;
     s32 index;
 
     for (index = 0; index < 4; index++) {
@@ -38,7 +38,7 @@ void FourObjectMotion_InitializeBottomRow(void)
 
 s32 FourObjectMotion_SetSlotPosition(s32 index, s32 x, s32 y, s32 negative)
 {
-    struct FourObjectMotionState *state = Data_03001f2c;
+    struct FourObjectMotionState *state = gMenuWork;
 
     if (state->objects[index] != NULL) {
         state->positions_x[index] = x;
@@ -50,12 +50,12 @@ s32 FourObjectMotion_SetSlotPosition(s32 index, s32 x, s32 y, s32 negative)
 
 void FourObjectMotion_SetSlotPhase(s32 index, s32 phase)
 {
-    Data_03001f2c->phases[index] = phase;
+    gMenuWork->phases[index] = phase;
 }
 
 s32 FourObjectMotion_ReplaceSlot(s32 index, s32 kind, s32 value)
 {
-    struct FourObjectMotionState *state = Data_03001f2c;
+    struct FourObjectMotionState *state = gMenuWork;
 
     if (state->objects[index] != NULL) {
         ResourceObject_ReleaseFar(state->objects[index]);
@@ -73,7 +73,7 @@ s32 FourObjectMotion_ReplaceSlot(s32 index, s32 kind, s32 value)
 
 void FourObjectMotion_ClearSlotsAndScheduleAlt(void)
 {
-    struct FourObjectMotionState *state = Data_03001f2c;
+    struct FourObjectMotionState *state = gMenuWork;
     s32 index = 0;
 
     do {

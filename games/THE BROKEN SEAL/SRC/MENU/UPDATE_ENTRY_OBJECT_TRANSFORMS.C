@@ -1,6 +1,6 @@
 #include "TYPES.H"
 
-extern u8 *Data_03001f2c;
+extern u8 *gMenuWork;
 
 s32 Party_CountActiveOwnersFar(void);
 void Func_08009008(void *, s32 *, s32 *, s32);
@@ -16,7 +16,7 @@ void Menu_UpdateEntryObjectTransforms(void)
     s32 i;
     s32 cnt;
 
-    p = Data_03001f2c;
+    p = gMenuWork;
     cnt = (u16)Party_CountActiveOwnersFar();
     i = 0;
     if (i < cnt) {

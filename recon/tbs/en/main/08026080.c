@@ -196,6 +196,11 @@ s32 Func_08026080(s32 preferred, s32 mode, u32 spread, u32 kind)
     s32 pressed;
     s32 repeat;
     s32 result;
+    u8 *pd;
+    u8 *ps;
+    u8 *pl;
+    u8 *pp;
+    u8 *pc;
 
     runtime = Data_03001e74.runtime;
     cnt = 0;
@@ -472,15 +477,15 @@ step_back:
             goto frame_tail;
         case 4:
             count = 0;
-            if (unit->delusion != 0)
+            if (*(pd = &unit->delusion) != 0)
                 count = 1;
-            if (unit->stun != 0)
+            if (*(ps = &unit->stun) != 0)
                 count++;
-            if (unit->sleep != 0)
+            if (*(pl = &unit->sleep) != 0)
                 count++;
-            if (unit->psy_seal != 0)
+            if (*(pp = &unit->psy_seal) != 0)
                 count++;
-            if (unit->death_count != 0)
+            if (*(pc = &unit->death_count) != 0)
                 count++;
             if (count == 0)
                 count = 1;
@@ -492,23 +497,23 @@ step_back:
                 column = 14;
             infoWin = UiWindow_Create(column, rows, 16, count + 2, 6);
             count = 0;
-            if (unit->delusion != 0) {
+            if (*pd != 0) {
                 UiText_DrawCharacterAtOffset(0x8A5, infoWin, 0, 0);
                 count = 1;
             }
-            if (unit->stun != 0) {
+            if (*ps != 0) {
                 UiText_DrawCharacterAtOffset(0x8A6, infoWin, 0, count * 8);
                 count++;
             }
-            if (unit->sleep != 0) {
+            if (*pl != 0) {
                 UiText_DrawCharacterAtOffset(0x8A7, infoWin, 0, count * 8);
                 count++;
             }
-            if (unit->psy_seal != 0) {
+            if (*pp != 0) {
                 UiText_DrawCharacterAtOffset(0x8A8, infoWin, 0, count * 8);
                 count++;
             }
-            if (unit->death_count != 0) {
+            if (*pc != 0) {
                 UiText_DrawCharacterAtOffset(0x8A9, infoWin, 0, count * 8);
                 count++;
             }

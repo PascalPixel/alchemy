@@ -375,18 +375,19 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
             blit[1](dst, work->sheet + BattleFx6_FlareCells[z - 1] + 0x4e20, 108 - z, 60 - z, z * 2, z * 2);
         }
         if (frame > 199) {
+            s32 z;
             s32 u = frame - 200;
-            s = u / 4 + 5;
-            if (s > 8) {
-                s = 8;
+            z = u / 4 + 5;
+            if (z > 8) {
+                z = 8;
             }
-            blit[1](dst, work->sheet + BattleFx6_FlareCells[s - 1] + 0x4e20, 108 - s, 60 - s, s * 2, s * 2);
+            blit[1](dst, work->sheet + BattleFx6_FlareCells[z - 1] + 0x4e20, 108 - z, 60 - z, z * 2, z * 2);
             if (frame <= 213) {
-                s = u / 4 + 1;
-                if (s > 4) {
-                    s = 4;
+                z = u / 4 + 1;
+                if (z > 4) {
+                    z = 4;
                 }
-                blit[1](dst, work->sheet + BattleFx6_FlareCells[s - 1] + 0x4e20, 100 - s, 52 - s, s * 2, s * 2);
+                blit[1](dst, work->sheet + BattleFx6_FlareCells[z - 1] + 0x4e20, 100 - z, 52 - z, z * 2, z * 2);
             }
         }
         if (frame >= 214 && frame < 222) {

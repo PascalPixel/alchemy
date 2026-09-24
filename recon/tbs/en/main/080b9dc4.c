@@ -1,3 +1,8 @@
+/* Draft, not exact (2026-09-24): 1 differing halfword. The reference copies a
+   zero from another register (mov) where this spelling materialises movs #0.
+   cse.c picks src_folded on a cost tie and COST(const_int 0) is 0 against 1
+   for a pseudo, so the copy survives only where CSE cannot see the zero;
+   do/while, cast, reordered and conditional spellings all keep the movs. */
 #include "BATTLE_PARTY.H"
 #include "BATTLE_TYPES.H"
 #include "TYPES.H"

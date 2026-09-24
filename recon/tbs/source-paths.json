@@ -1,6 +1,14 @@
 {
   "format": 3,
   "owners": {
+    "resource_39f:020022c0": {
+      "name": "MogoruMori_Func020022c0",
+      "source": "FIELD/MOGORU_MORI/F_022C0.C"
+    },
+    "resource_3bd:02000a54": {
+      "name": "ArutamiraDou_Func02000a54",
+      "source": "FIELD/ARUTAMIRA_DOU/F_00A54.C"
+    },
     "resource_389:020010c8": {
       "name": "GomaHashira_Func020010c8",
       "source": "FIELD/GOMA_HASHIRA/F_010C8.C"
@@ -19417,7 +19425,8 @@
       "name": "SerialTest_Run"
     },
     "main:08015f30": {
-      "name": "UiWork_InitializeWithResourceCounters"
+      "name": "UiWork_InitializeWithResourceCounters",
+      "source": "GRAPHICS/RENDER/INITIALIZE_WITH_RESOURCE_COUNTERS.C"
     },
     "main:08092878": {
       "name": "FacingObject_TurnPairToFaceEachOther"
@@ -19426,7 +19435,8 @@
       "name": "EffectSlot_Initialize"
     },
     "main:0800c004": {
-      "name": "ObjectSystem_Initialize"
+      "name": "ObjectSystem_Initialize",
+      "source": "FIELD/COMMON/OBJECT/INITIALIZE_SYSTEM.C"
     },
     "main:0800bb20": {
       "name": "ObjectSystem_Configure",
@@ -19494,17 +19504,20 @@
       "name": "UiWork_ShiftPanelRowsLeft"
     },
     "main:08011644": {
-      "name": "Map_LoadAreaGraphics"
+      "name": "Map_LoadAreaGraphics",
+      "source": "FIELD/COMMON/MAP/LOAD_AREA_GRAPHICS.C"
     },
     "main:0801d014": {
-      "name": "OptionMenu_InitializeWork"
+      "name": "OptionMenu_InitializeWork",
+      "source": "MENU/OPTION_INITIALIZE_WORK.C"
     },
     "main:08091494": {
       "name": "BattleFx_StartFadeOverlay",
       "source": "BATTLE/EFFECT/START_FADE_OVERLAY.C"
     },
     "main:080118d8": {
-      "name": "MapAnimation_Start"
+      "name": "MapAnimation_StartChannels",
+      "source": "FIELD/COMMON/MAP/ANIMATION_START_CHANNELS.C"
     },
     "main:0801179c": {
       "name": "MapAnimation_Update"

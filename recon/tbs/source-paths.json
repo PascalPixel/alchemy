@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_380:02003f24": {
+      "name": "SoruStar_ApplyEntryState",
+      "source": "FIELD/SORU_STAR/ENTRY_STATE.C"
+    },
     "resource_38d:020006e0": {
       "name": "BiribinoKyuden_ApplyEntryState",
       "source": "FIELD/BIRIBINO_KYUDEN/ENTRY_STATE.C"

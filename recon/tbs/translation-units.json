@@ -69920,6 +69920,66 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "soru-star-entry-state",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/SORU_STAR/ENTRY_STATE.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_380",
+      "absolute_symbols": {
+        "Engine_ColorBufferApplySource": {
+          "address": "0x0200cad4",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagSet": {
+          "address": "0x0200c96c",
+          "kind": "thumb"
+        },
+        "Engine_ActorGet": {
+          "address": "0x0200c9bc",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpritePriority": {
+          "address": "0x0200ca84",
+          "kind": "thumb"
+        },
+        "SoruStar_StartActorRing": {
+          "address": "0x0200c78c",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagIsSet": {
+          "address": "0x0200c964",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetPosition": {
+          "address": "0x0200ca04",
+          "kind": "thumb"
+        },
+        "Engine_MapCopyCellsTo": {
+          "address": "0x0200c8ec",
+          "kind": "thumb"
+        },
+        "Engine_MapCopyCellAttributes": {
+          "address": "0x0200c8f4",
+          "kind": "thumb"
+        },
+        "Local_0200227c": {
+          "address": "0x0200a27c",
+          "kind": "thumb"
+        },
+        "Scene_EnterStarRoom": {
+          "address": "0x0200a7f8",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02003f24",
+          "extent": 804,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

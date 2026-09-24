@@ -782,7 +782,8 @@
       "source": "GRAPHICS/RENDER/TRANSFORM_APPLY_ROTATION_TRANSLATION.C"
     },
     "main:08004e54": {
-      "name": "Func_08004e54"
+      "name": "SceneTransform_ApplyScaledRotation",
+      "source": "GRAPHICS/RENDER/TRANSFORM_APPLY_SCALED_ROTATION.C"
     },
     "main:08004fe4": {
       "name": "Graphics_PrepareTransfer"

@@ -76379,6 +76379,38 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "scene-396-02001424",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/TORETO_HEYA/GESTURE.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_396",
+      "absolute_symbols": {
+        "Engine_ActorSetAnimation": {
+          "address": "0x02009b20",
+          "kind": "thumb"
+        },
+        "Engine_TaskWait": {
+          "address": "0x02009a20",
+          "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02001424",
+          "extent": 392,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

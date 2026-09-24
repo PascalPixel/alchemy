@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_396:02001424": {
+      "name": "ToretoHeya_PlayGesture",
+      "source": "FIELD/TORETO_HEYA/GESTURE.C"
+    },
     "resource_3b0:02000240": {
       "name": "FuneHobashira_ApplyEntryState",
       "source": "FIELD/FUNE_HOBASHIRA/ENTRY_STATE.C"

@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "FIELD_SCENE.H"
 
 enum ObjectScaleMessage {
     MSG_SHIPS_COURSE_CLEAR = 0x1e3a,
@@ -273,7 +274,7 @@ void FieldScene_RunScene3b0_0200040c(void)
     Call3(Engine_CameraMoveTo, 0xa40000, 0x400000, 0x1410000);
     Map_Redraw();
     Task_Wait(1);
-    Actor_SetPosition(0, 0, 0);
+    Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
     Func_02000908();
     Event_End();
 }
@@ -284,8 +285,8 @@ void FieldScene_RunScene3b0_02000468(void)
     s32 record;
 
     Event_Begin();
-    Actor_SetPosition(0, 0xa40000, 0x1410000);
-    Actor_SetChildValue(0, 15);
+    Actor_SetPosition(ACTOR_PARTY_LEADER, 0xa40000, 0x1410000);
+    Actor_SetChildValue(ACTOR_PARTY_LEADER, 15);
     record = Func_020016ba(0);
     Actor_SetSpriteFlags(record, 0);
     Task_Wait(1);
@@ -330,7 +331,7 @@ void FieldScene_RunActorNinePresentationCycles(void)
     u8 *record;
 
     Event_Begin();
-    Actor_SetChildValue(0, 15);
+    Actor_SetChildValue(ACTOR_PARTY_LEADER, 15);
     record = Scene_GetRecord_1(0);
     Actor_SetSpriteFlags(record, 0);
     Task_Wait(1);
@@ -457,7 +458,7 @@ void FieldScene_RunPrimarySequence(void)
     s32 id0_state;
 
     Event_Begin();
-    Actor_SetChildValue(0, 15);
+    Actor_SetChildValue(ACTOR_PARTY_LEADER, 15);
     id0_state = Scene_GetRecord_1_02000af8(0);
     Actor_SetSpriteFlags(id0_state, 0);
     Task_Wait(1);
@@ -584,7 +585,7 @@ void Func_02000e78(void)
     s32 selector;
 
     Event_Begin();
-    Actor_SetChildValue(0, 15);
+    Actor_SetChildValue(ACTOR_PARTY_LEADER, 15);
     ensemble = Func_020020be(0);
     Actor_SetSpriteFlags(ensemble, 0);
     Call1(Func_020020ba, 33593196);

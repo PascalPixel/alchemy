@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "FIELD_SCENE.H"
 
 /* Staged scene for actors 8, 5, 1 and 0. The shared work pointer is fetched
  * again at the tail after the intervening calls. Runtime veneer bindings
@@ -232,7 +233,7 @@ void FieldScene_RunStagedActorScene(void)
     Func_02002ba0(40);
     Func_02002c10(8, 3);
     Func_02002b08_a(8, 6);
-    Actor_SetAnimation(1, 3);
+    Actor_SetAnimation(ACTOR_GERALD, 3);
     Func_02002c20(5, 3);
     Func_02002c30(0, 3);
     Func_02002bce(40);
@@ -247,10 +248,10 @@ void FieldScene_RunStagedActorScene(void)
     Func_02002c92(8, 1);
     Func_02002c8a(8, 4);
     Func_02002b82(8, 6);
-    Actor_FaceEachOther(0, 5, 0);
+    Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_JASMINE, 0);
     Func_02002c3a(40);
     Func_02002cc4(8, 0, 0);
-    Actor_FaceActor(8, 5, 0);
+    Actor_FaceActor(8, ACTOR_JASMINE, 0);
     Func_02002c54(40);
     Actor_Jump(8, 6, 0);
     Call3(Func_02002cb2, 8, 0x240, 216);
@@ -273,7 +274,7 @@ void FieldScene_RunStagedActorScene(void)
     Func_02002d08(10);
     Call3(Func_02002dbc, 0, 0x4000, 0);
     Call3(Func_02002dc8, 5, 0x4000, 0);
-    Actor_FaceDirection(1, 0x4000, 0);
+    Actor_FaceDirection(ACTOR_GERALD, 0x4000, 0);
     Call2(Func_02002dfc, 0xcccc, 0x1999);
     Call4(Func_02002e14, 0x23e0000, -1, 0xab0000, 1);
     Func_02002dbe(8, 6, 0);
@@ -285,7 +286,7 @@ void FieldScene_RunStagedActorScene(void)
     Func_02002cde(8, 20);
     Call3(Func_02002e4a, 5, 0x102, 0);
     Func_02002d98(40);
-    Actor_RunRepeatedMotion(5, 2);
+    Actor_RunRepeatedMotion(ACTOR_JASMINE, 2);
     Func_02002d00(5, 6);
     Actor_SetAnimationAndWait(8, 3);
     Call3(Func_02002e64, 8, 0x8000, 0);
@@ -295,13 +296,13 @@ void FieldScene_RunStagedActorScene(void)
     Func_02002d34(8, 6);
     Call3(Func_02002e9e, 0, 0x101, 0);
     Call3(Func_02002ea8, 1, 0x101, 0);
-    Actor_ShowEmote(5, 0x101, 0);
+    Actor_ShowEmote(ACTOR_JASMINE, 0x101, 0);
     Func_02002e00(60);
     Func_02002e70(8, 4);
     Func_02002d68_a(8, 6);
     Func_02002ea2(1, 0, 0);
     Func_02002e20(40);
-    Actor_FaceEachOther(5, 0, 0);
+    Actor_FaceEachOther(ACTOR_JASMINE, ACTOR_PARTY_LEADER, 0);
     Func_02002e30(40);
     Value2(Func_02002ed0, 8, 0);
     Call3(Func_02002eec, 0, 0x4000, 0);
@@ -352,7 +353,7 @@ void FieldScene_RunStagedActorScene(void)
     Func_0200306e(5, 3);
     Call3(Func_0200303c, 1, 0x10000, 0x8000);
     Call3(Func_0200304a, 5, 0x10000, 0x8000);
-    Actor_SetAnimation(5, 2);
+    Actor_SetAnimation(ACTOR_JASMINE, 2);
     record = Value1(Func_02003050, 0);
     if (record != 0) {
         Func_02003072(5, *(s16 *)(record + 10), *(s16 *)(record + 18));

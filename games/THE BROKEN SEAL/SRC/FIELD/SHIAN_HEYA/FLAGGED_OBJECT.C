@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "FIELD_SCENE.H"
 
 enum FlaggedObjectMessage {
     MSG_XIAN_HAS_MARTIAL_ARTS_BUT = 0x1817,
@@ -122,7 +123,7 @@ s32 SceneData_SelectTable89c8Or8890(void)
 
 void SceneDialogue_RunActor14FlaggedDialogue(void)
 {
-    u16 *state = Actor_Get(0);
+    u16 *state = Actor_Get(ACTOR_PARTY_LEADER);
     u32 value = state[3];
 
     Event_Begin();
@@ -141,7 +142,7 @@ void SceneDialogue_RunActor14FlaggedDialogue(void)
 
 void SceneDialogue_RunActor15FlaggedDialogue(void)
 {
-    u16 *state = Actor_Get(0);
+    u16 *state = Actor_Get(ACTOR_PARTY_LEADER);
     u32 value = state[3];
 
     Event_Begin();
@@ -163,7 +164,7 @@ void SceneDialogue_RunActor16FlaggedDialogue(void)
     void Event_ShowMessage();
     void Event_SetMessage(s32);
 
-    u16 *state = Actor_Get(0);
+    u16 *state = Actor_Get(ACTOR_PARTY_LEADER);
     u32 value = state[3];
 
     Event_Begin();
@@ -183,7 +184,7 @@ void SceneDialogue_RunActor17FlaggedDialogue(void)
 {
     s32 GameFlag_IsSet(s32);
 
-    u16 *state = Actor_Get(0);
+    u16 *state = Actor_Get(ACTOR_PARTY_LEADER);
     u32 value = state[3];
 
     Event_Begin();
@@ -230,7 +231,7 @@ void SceneDialogue_RunActor9MotionDialogue(void)
     Event_ShowMessageAndWait(9, 0, 20);
     Actor_FaceActor(9, 10, 0);
     Event_Wait(60);
-    Actor_FaceActor(9, 0, 0);
+    Actor_FaceActor(9, ACTOR_PARTY_LEADER, 0);
     Event_Wait(20);
     Event_ShowMessage(9, 0);
     Event_End();

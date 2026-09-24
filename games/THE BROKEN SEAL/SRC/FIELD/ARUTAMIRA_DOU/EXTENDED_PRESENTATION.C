@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "FIELD_SCENE.H"
 
 #define Audio_PlayCue_1(a0) Value1(Engine_AudioPlayCue, a0)
 #define ObjectMotion_SetVariantCallbackAndInvokeObject_1(a0, a1) Value2(Engine_ActorRunRepeatedMotion, a0, a1)
@@ -646,9 +647,9 @@ void FieldScene_RunBranchingCutsceneSequence(void)
     BattleEvent_RunActionAndWait_1(8, 0);
     BattleRuntime_WaitIfModeZero_2(10);
     Camera_MoveTo(0xf80000, -1, 0xb80000, 1);
-    Actor_SetSpeed(0, 0xcccc, 0x6666);
-    Actor_WalkToAndWait(0, 248, 192);
-    Actor_FaceDirection(0, 0xc000, 0);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
+    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 248, 192);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
     ObjectMotion_RealignToTrackedObjectAndArmCallback_1(1, -16, 16, 0xc000);
     ObjectMotion_RealignToTrackedObjectAndArmCallback_2(3, 0, 16, 0xc000);
     ObjectMotion_RealignToTrackedObjectAndArmCallback_3(2, 16, 16, 0xc000);
@@ -656,7 +657,7 @@ void FieldScene_RunBranchingCutsceneSequence(void)
     BattleRuntime_WaitIfModeZero_3(20);
     BattleEffect_SpawnLinkedResourceObject_1(2, 0x102, 0);
     BattleRuntime_WaitIfModeZero_4(40);
-    Event_ShowMessage(2, 0);
+    Event_ShowMessage(ACTOR_IVAN, 0);
     ObjectMotion_SetVariantCallbackAndInvokeObject_2(3, 2);
     BattleRuntime_WaitIfModeZero_5(20);
     BattleEvent_RunActionAndWait_3(3, 0);
@@ -664,8 +665,8 @@ void FieldScene_RunBranchingCutsceneSequence(void)
     Actor_ShowEmote(8, 0x100, 40);
     BattleEvent_RunActionAndWait_4(8, 0);
     BattleRuntime_WaitIfModeZero_7(10);
-    Actor_FaceEachOther(1, 2, 50);
-    Actor_FaceDirection(1, 0xc000, 0);
+    Actor_FaceEachOther(ACTOR_GERALD, ACTOR_IVAN, 50);
+    Actor_FaceDirection(ACTOR_GERALD, 0xc000, 0);
     ObjectMotion_ArmCallback_3(2, 0xc000, 0);
     BattleRuntime_WaitIfModeZero_8(30);
     BattleEvent_RunActionAndWait_5(1, 0);
@@ -675,8 +676,8 @@ void FieldScene_RunBranchingCutsceneSequence(void)
     BattleRuntime_WaitIfModeZero_11(30);
     BattleEvent_RunActionAndWait_6(8, 0);
     BattleRuntime_WaitIfModeZero_12(20);
-    Actor_FaceEachOther(3, 2, 50);
-    Actor_FaceDirection(3, 0xc000, 0);
+    Actor_FaceEachOther(ACTOR_MIA, ACTOR_IVAN, 50);
+    Actor_FaceDirection(ACTOR_MIA, 0xc000, 0);
     ObjectMotion_ArmCallback_5(2, 0xc000, 0);
     BattleRuntime_WaitIfModeZero_13(30);
     BattleEvent_RunActionAndWait_7(2, 0);
@@ -684,16 +685,16 @@ void FieldScene_RunBranchingCutsceneSequence(void)
     Actor_ShowEmote(8, 0x100, 40);
     BattleEvent_RunActionAndWait_8(8, 0);
     BattleRuntime_WaitIfModeZero_15(10);
-    Actor_SetAnimationAndWait(3, 4);
+    Actor_SetAnimationAndWait(ACTOR_MIA, 4);
     BattleRuntime_WaitIfModeZero_16(20);
     BattleEvent_RunActionAndWait_9(3, 0);
     BattleRuntime_WaitIfModeZero_17(10);
     Actor_ShowEmote(8, 0x105, 40);
     BattleEvent_RunActionAndWait_10(8, 0);
     Event_Wait(10);
-    Actor_FaceActor(1, 0, 30);
-    Actor_ShowEmote(1, 0x101, 40);
-    Event_ShowMessage(1, 0);
+    Actor_FaceActor(ACTOR_GERALD, ACTOR_PARTY_LEADER, 30);
+    Actor_ShowEmote(ACTOR_GERALD, 0x101, 40);
+    Event_ShowMessage(ACTOR_GERALD, 0);
     ObjectMotion_ArmCallback_6(1, 0xc000, 0);
     Event_Wait(20);
     BattleEvent_RunActionAndWait_12(1, 0);
@@ -709,9 +710,9 @@ void FieldScene_RunBranchingCutsceneSequence(void)
     Actor_ShowEmote(8, 0x106, 40);
     BattleEvent_RunActionAndWait_15(8, 0);
     BattleRuntime_WaitIfModeZero_24(10);
-    Actor_ShowEmote(0, 0x101, 0);
-    Actor_ShowEmote(1, 0x101, 0);
-    Actor_ShowEmote(3, 0x101, 0);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 0);
+    Actor_ShowEmote(ACTOR_GERALD, 0x101, 0);
+    Actor_ShowEmote(ACTOR_MIA, 0x101, 0);
     BattleEffect_SpawnLinkedResourceObject_11(2, 0x101, 0);
     Event_Wait(60);
     ObjectMotion_SetVariantCallbackAndInvokeObject_5(2, 2);
@@ -720,7 +721,7 @@ void FieldScene_RunBranchingCutsceneSequence(void)
     BattleRuntime_WaitIfModeZero_27(20);
     BattleEvent_RunActionAndWait_17(8, 0);
     Event_Wait(10);
-    Actor_ShowEmote(1, 0x102, 40);
+    Actor_ShowEmote(ACTOR_GERALD, 0x102, 40);
     BattleEvent_RunActionAndWait_18(1, 0);
     BattleRuntime_WaitIfModeZero_29(10);
     ObjectMotion_SetVariantCallbackAndInvokeObject_6(8, 2);
@@ -732,48 +733,48 @@ void FieldScene_RunBranchingCutsceneSequence(void)
     BattleRuntime_WaitIfModeZero_32(10);
     Actor_ShowEmote(8, 0x102, 40);
     Event_OpenMessage(8, 0); /* main:0808a178 */
-    Actor_FaceActor(1, 0, 0);
-    Actor_FaceActor(2, 0, 0);
+    Actor_FaceActor(ACTOR_GERALD, ACTOR_PARTY_LEADER, 0);
+    Actor_FaceActor(ACTOR_IVAN, ACTOR_PARTY_LEADER, 0);
     if (Event_ChooseYesNo(0, 0) == 0) {
         SceneWork_SetStepValue_2(0x2164);
         BattleRuntime_WaitIfModeZero_33(20);
-        Actor_ShowEmote(1, 0x100, 40);
-        Actor_SetSpeed(1, 0x20000, 0x10000);
+        Actor_ShowEmote(ACTOR_GERALD, 0x100, 40);
+        Actor_SetSpeed(ACTOR_GERALD, 0x20000, 0x10000);
         ObjectMotion_CommitPositionAndActivate_1(1, 0, -16);
         BattleRuntime_WaitIfModeZero_34(10);
-        Actor_FaceEachOther(1, 0, 30);
+        Actor_FaceEachOther(ACTOR_GERALD, ACTOR_PARTY_LEADER, 30);
         BattleEvent_RunActionAndWait_21(1, 0);
     } else {
         SceneWork_SetStepValue_3(0x2168);
         BattleRuntime_WaitIfModeZero_35(10);
-        Actor_SetSpeed(1, 0x10000, 0x8000);
+        Actor_SetSpeed(ACTOR_GERALD, 0x10000, 0x8000);
         ObjectMotion_CommitPositionAndActivate_2(1, 0, -16);
         BattleRuntime_WaitIfModeZero_36(10);
-        Actor_FaceEachOther(1, 0, 30);
-        Actor_SetAnimationAndWait(1, 3);
+        Actor_FaceEachOther(ACTOR_GERALD, ACTOR_PARTY_LEADER, 30);
+        Actor_SetAnimationAndWait(ACTOR_GERALD, 3);
         BattleRuntime_WaitIfModeZero_37(20);
         BattleEvent_RunActionAndWait_22(1, 0);
     }
 
     line = 0x2165;
     SceneWork_SetStepValue_4(line);
-    Actor_ShowEmote(2, 0x103, 40);
-    Actor_SetSpeed(2, 0x20000, 0x10000);
+    Actor_ShowEmote(ACTOR_IVAN, 0x103, 40);
+    Actor_SetSpeed(ACTOR_IVAN, 0x20000, 0x10000);
     ObjectMotion_CommitPositionAndActivate_3(2, 0, -16);
     BattleRuntime_WaitIfModeZero_38(10);
-    Actor_FaceEachOther(2, 0, 30);
-    Event_ShowMessage(2, 0);
+    Actor_FaceEachOther(ACTOR_IVAN, ACTOR_PARTY_LEADER, 30);
+    Event_ShowMessage(ACTOR_IVAN, 0);
     ObjectMotion_CallThenWaitForAnimationChange_4(3, 3);
     BattleRuntime_WaitIfModeZero_39(10);
     ObjectMotion_CallThenWaitForAnimationChange_5(3, 3);
     BattleRuntime_WaitIfModeZero_40(20);
-    Actor_FaceActor(0, 3, 0);
-    Actor_FaceActor(1, 3, 0);
+    Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_MIA, 0);
+    Actor_FaceActor(ACTOR_GERALD, ACTOR_MIA, 0);
     ObjectMotion_SetAngleToward_6(2, 3, 0);
     BattleRuntime_WaitIfModeZero_41(20);
     BattleEvent_RunActionAndWait_24(3, 0);
     Event_Wait(20);
-    Actor_SetSpeed(1, 0x10000, 0x8000);
+    Actor_SetSpeed(ACTOR_GERALD, 0x10000, 0x8000);
     ObjectMotion_CommitPositionAndActivate_4(1, 0, 16);
     BattleRuntime_WaitIfModeZero_43(30);
     ObjectMotion_CallThenWaitForAnimationChange_6(1, 4);
@@ -782,16 +783,16 @@ void FieldScene_RunBranchingCutsceneSequence(void)
     BattleRuntime_WaitIfModeZero_45(20);
     BattleEvent_RunActionAndWait_25(1, 0);
     BattleRuntime_WaitIfModeZero_46(30);
-    Actor_FaceEachOther(3, 2, 30);
-    Actor_SetAnimationAndWait(2, 3);
-    Actor_SetAnimationAndWait(3, 3);
+    Actor_FaceEachOther(ACTOR_MIA, ACTOR_IVAN, 30);
+    Actor_SetAnimationAndWait(ACTOR_IVAN, 3);
+    Actor_SetAnimationAndWait(ACTOR_MIA, 3);
     BattleRuntime_WaitIfModeZero_47(30);
-    Actor_SetSpeed(2, 0x10000, 0x8000);
+    Actor_SetSpeed(ACTOR_IVAN, 0x10000, 0x8000);
     ObjectMotion_CommitPositionAndActivate_5(2, 0, 16);
     BattleRuntime_WaitIfModeZero_48(10);
-    Actor_FaceDirection(0, 0xc000, 0);
-    Actor_FaceDirection(1, 0xc000, 0);
-    Actor_FaceDirection(3, 0xc000, 0);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
+    Actor_FaceDirection(ACTOR_GERALD, 0xc000, 0);
+    Actor_FaceDirection(ACTOR_MIA, 0xc000, 0);
     ObjectMotion_ArmCallback_10(2, 0xc000, 0);
     line += 7;
     SceneWork_SetStepValue_5(line);
@@ -814,25 +815,25 @@ void FieldScene_RunBranchingCutsceneSequence(void)
     BattleRuntime_WaitIfModeZero_56(30);
     BattleEvent_RunActionAndWait_30(8, 0);
     BattleRuntime_WaitIfModeZero_57(10);
-    Actor_FaceEachOther(1, 0, 50);
-    Actor_FaceDirection(0, 0xc000, 0);
+    Actor_FaceEachOther(ACTOR_GERALD, ACTOR_PARTY_LEADER, 50);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
     ObjectMotion_ArmCallback_12(1, 0xc000, 0);
     BattleRuntime_WaitIfModeZero_58(30);
     BattleEvent_RunActionAndWait_31(8, 0);
     BattleRuntime_WaitIfModeZero_59(10);
-    Actor_ShowEmote(3, 0x101, 40);
+    Actor_ShowEmote(ACTOR_MIA, 0x101, 40);
     BattleEvent_RunActionAndWait_32(3, 0);
     BattleRuntime_WaitIfModeZero_60(30);
     BattleEvent_RunActionAndWait_33(8, 0);
     Event_Wait(10);
-    Actor_FaceEachOther(1, 0, 50);
-    Actor_FaceDirection(0, 0xc000, 0);
+    Actor_FaceEachOther(ACTOR_GERALD, ACTOR_PARTY_LEADER, 50);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
     ObjectMotion_ArmCallback_14(1, 0xc000, 0);
     BattleRuntime_WaitIfModeZero_62(30);
     BattleEvent_RunActionAndWait_34(8, 0);
     Event_Wait(10);
-    Actor_FaceEachOther(3, 2, 50);
-    Actor_FaceDirection(3, 0xc000, 0);
+    Actor_FaceEachOther(ACTOR_MIA, ACTOR_IVAN, 50);
+    Actor_FaceDirection(ACTOR_MIA, 0xc000, 0);
     ObjectMotion_ArmCallback_16(2, 0xc000, 0);
     BattleRuntime_WaitIfModeZero_64(30);
     BattleEvent_RunActionAndWait_35(8, 0);
@@ -850,7 +851,7 @@ void FieldScene_RunBranchingCutsceneSequence(void)
     Actor_ShowEmote(8, 0x108, 50);
     BattleEvent_RunActionAndWait_39(8, 0);
     BattleRuntime_WaitIfModeZero_71(10);
-    Actor_ShowEmote(1, 0x101, 40);
+    Actor_ShowEmote(ACTOR_GERALD, 0x101, 40);
     BattleEvent_RunActionAndWait_40(1, 0);
     BattleRuntime_WaitIfModeZero_72(10);
     Actor_ShowEmote(8, 0x102, 40);
@@ -862,19 +863,19 @@ void FieldScene_RunBranchingCutsceneSequence(void)
     BattleRuntime_WaitIfModeZero_75(20);
     BattleEvent_RunActionAndWait_42(3, 0);
     Event_Wait(10);
-    Actor_FaceActor(0, 3, 40);
+    Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_MIA, 40);
     ObjectMotion_CallThenWaitForAnimationChange_13(0, 3);
     BattleRuntime_WaitIfModeZero_77(30);
-    Actor_FaceActor(1, 3, 0);
+    Actor_FaceActor(ACTOR_GERALD, ACTOR_MIA, 0);
     ObjectMotion_SetAngleToward_10(2, 3, 0);
     BattleRuntime_WaitIfModeZero_78(20);
-    Actor_SetAnimation(1, 3);
-    Actor_SetAnimationAndWait(2, 3);
+    Actor_SetAnimation(ACTOR_GERALD, 3);
+    Actor_SetAnimationAndWait(ACTOR_IVAN, 3);
     BattleRuntime_WaitIfModeZero_79(30);
     Audio_PlayCue_2(17);
-    Actor_SetSpeed(1, 0x13333, 0x9999);
-    Actor_SetSpeed(2, 0x13333, 0x9999);
-    Actor_SetSpeed(3, 0x13333, 0x9999);
+    Actor_SetSpeed(ACTOR_GERALD, 0x13333, 0x9999);
+    Actor_SetSpeed(ACTOR_IVAN, 0x13333, 0x9999);
+    Actor_SetSpeed(ACTOR_MIA, 0x13333, 0x9999);
     Object_SetModeById_2(1, 2);
     /* If the id-1 record lookup succeeds, forward its stored coordinates. */
     record = Scene_GetRecord_1(0);
@@ -882,7 +883,7 @@ void FieldScene_RunBranchingCutsceneSequence(void)
         ObjectMotion_ResetAndSetPosition_1(1, *(s16 *)(record + RECORD_COORD_X_OFFSET), *(s16 *)(record + RECORD_COORD_Y_OFFSET));
     }
     ObjectMotion_CommitCurrentPositionAndActivate_2(1);
-    Actor_SetPosition(1, 0, 0);
+    Actor_SetPosition(ACTOR_GERALD, 0, 0);
     Object_SetModeById_3(2, 2);
     /* If the id-2 record lookup succeeds, forward its stored coordinates. */
     record = Scene_GetRecord_2(0);
@@ -890,7 +891,7 @@ void FieldScene_RunBranchingCutsceneSequence(void)
         ObjectMotion_ResetAndSetPosition_2(2, *(s16 *)(record + RECORD_COORD_X_OFFSET), *(s16 *)(record + RECORD_COORD_Y_OFFSET));
     }
     ObjectMotion_CommitCurrentPositionAndActivate_3(2);
-    Actor_SetPosition(2, 0, 0);
+    Actor_SetPosition(ACTOR_IVAN, 0, 0);
     Object_SetModeById_4(3, 2);
     /* If the id-3 record lookup succeeds, forward its stored coordinates. */
     record = Scene_GetRecord_3(0);
@@ -898,7 +899,7 @@ void FieldScene_RunBranchingCutsceneSequence(void)
         ObjectMotion_ResetAndSetPosition_3(3, *(s16 *)(record + RECORD_COORD_X_OFFSET), *(s16 *)(record + RECORD_COORD_Y_OFFSET));
     }
     ObjectMotion_CommitCurrentPositionAndActivate_4(3);
-    Actor_SetPosition(3, 0, 0);
+    Actor_SetPosition(ACTOR_MIA, 0, 0);
     Audio_PlayCueForPartyMember_1();
     Event_End();
 }
@@ -935,12 +936,12 @@ void FieldScene_RunFlagGatedActorEightDialogue(void)
     Event_SetMessage(0x217d);
     Event_ShowMessage(8, 0);
     Event_Wait(10);
-    Actor_RunRepeatedMotion(0, 2);
+    Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
     Event_Wait(30);
-    Actor_FaceActor(0, 8, 0);
+    Actor_FaceActor(ACTOR_PARTY_LEADER, 8, 0);
     Event_Wait(30);
     Event_ShowMessage(8, 0);
-    Actor_SetAnimationAndWait(0, 3);
+    Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
     Event_Wait(20);
     Event_End();
 }

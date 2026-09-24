@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "FIELD_SCENE.H"
 
 #define NULL ((void *)0)
 #define CalculateFacingAngle Func_02002656
@@ -293,7 +294,7 @@ void Villager_AskAboutMeditation(void)
 {
     Event_Begin();
     Event_SetMessage(MSG_MEDITATE_ON_MT_ALEPH_DAILY);
-    Actor_FaceEachOther(23, 0, 2);
+    Actor_FaceEachOther(23, ACTOR_PARTY_LEADER, 2);
     Event_AskYesNo(23, 0);
     Event_End();
 }
@@ -302,7 +303,7 @@ void Villager_RecallThreeYearsAgo(void)
 {
     Event_Begin();
     Event_SetMessage(MSG_A_DIFFICULT_TIME_THREE_YEARS_AGO);
-    Actor_FaceEachOther(24, 0, 2);
+    Actor_FaceEachOther(24, ACTOR_PARTY_LEADER, 2);
     Event_AskYesNo(24, 0);
     Event_End();
 }
@@ -311,7 +312,7 @@ void Villager_AskAboutTheTravelers(void)
 {
     Event_Begin();
     Event_SetMessage(MSG_DID_THE_TRAVELERS_MEET_THE_MAYOR);
-    Actor_FaceEachOther(15, 0, 2);
+    Actor_FaceEachOther(15, ACTOR_PARTY_LEADER, 2);
     Event_AskYesNo(15, 0);
     Event_End();
 }
@@ -343,7 +344,7 @@ void Villager_ShowOffPsynergy(void)
     } else {
         p6 = *(volatile s32 *)(*(volatile s32 *)0x03001e70);
         Event_SetMessage(MSG_HAVE_I_SHOWN_YOU_MY_ABILITY);
-        Actor_FaceEachOther(17, 0, 0);
+        Actor_FaceEachOther(17, ACTOR_PARTY_LEADER, 0);
         Event_AskYesNo(17, 0);
         Event_Wait(20);
         Actor_StartRepeatedMotion(17, 2);
@@ -406,7 +407,7 @@ void Scene_StoneFellOnTheHut(void)
 {
     Event_Begin();
     Actor_SetAnimation(26, 1);
-    Actor_FaceActor(26, 0, 20);
+    Actor_FaceActor(26, ACTOR_PARTY_LEADER, 20);
     Actor_FaceActor(26, 21, 40);
     Event_SetMessage(MSG_THE_STONE_FELL_ON_THE_HUT);
     Func_0200273a(26, 20);
@@ -415,7 +416,7 @@ void Scene_StoneFellOnTheHut(void)
     Event_Wait(20);
     Actor_RunRepeatedMotion(26, 2);
     Event_Wait(20);
-    Actor_FaceActor(26, 0, 10);
+    Actor_FaceActor(26, ACTOR_PARTY_LEADER, 10);
     Func_02002778(26, 40);
     Actor_EnableActionCallback(26, 2);
     Event_End();
@@ -430,8 +431,8 @@ void FieldScene_RunMiddleAuxiliarySequence(void)
     s32 v2;
 
     Event_Begin();
-    Actor_WalkToAndWait(0, 82, 0x2f8);
-    Actor_FaceEachOther(15, 0, 30);
+    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 82, 0x2f8);
+    Actor_FaceEachOther(15, ACTOR_PARTY_LEADER, 30);
     Event_SetMessage(MSG_I_HAVE_SOME_PSYNERGY_LEFT);
     Func_020027c8(15, 20);
     Value3(SceneActor_SetPairZeroAndValue, 15, 0xa000, 20);
@@ -444,7 +445,7 @@ void FieldScene_RunMiddleAuxiliarySequence(void)
     }
     Value2(Func_02002b36, 0x200a581, 0xc80);
     Value2(Func_02002b40, 0x200a5a1, 0xc80);
-    Actor_FaceDirection(0, 0xa000, 10);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xa000, 10);
     rec8 = Value1(Func_02002c22, 20);
     v2 = rec8[85];
     rec8[85] = 0;
@@ -462,7 +463,7 @@ void FieldScene_RunMiddleAuxiliarySequence(void)
     Actor_SetChildValue(20, 0);
     Event_Wait(40);
     FieldScene_Forward4dac();
-    Actor_FaceEachOther(0, 15, 30);
+    Actor_FaceEachOther(ACTOR_PARTY_LEADER, 15, 30);
     Event_ShowMessage(15, 0);
     Event_End();
 }
@@ -470,7 +471,7 @@ void FieldScene_RunMiddleAuxiliarySequence(void)
 void SceneDialogue_ShowLineEB1OrEB0(void)
 {
     Event_Begin();
-    Actor_FaceEachOther(16, 0, 10);
+    Actor_FaceEachOther(16, ACTOR_PARTY_LEADER, 10);
     if (GameFlag_IsSet(0x840) != 0) {
         Event_SetMessage(MSG_BE_SURE_TO_HELP_GARCIA);
         Event_ShowMessage(16, 0);
@@ -512,7 +513,7 @@ void Scene_PsynergyStoneIsGone(void)
     Actor_StartRepeatedMotion(21, 2);
     Event_SetMessage(MSG_THE_PSYNERGY_STONE_IS_GONE);
     Event_ShowMessageAndWait(21, 0, 40);
-    Actor_FaceActor(21, 0, 20);
+    Actor_FaceActor(21, ACTOR_PARTY_LEADER, 20);
     Actor_StartRepeatedMotion(21, 2);
     Event_ShowMessage(21, 0);
     GameFlag_Set(0x306);
@@ -540,7 +541,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
 {
     Audio_PlayCue(158);
     Map_AnimateCells((s32)&Value_0200beb4, 44, 7);
-    Actor_WalkTo(0, 248, 0x117);
+    Actor_WalkTo(ACTOR_PARTY_LEADER, 248, 0x117);
     Call1_02000750(SceneState_SetWork1c0AndRun, 1);
 }
 
@@ -555,9 +556,9 @@ void FieldScene_RunSupplementalSequenceTwo(void)
     Task_Wait(10);
     Map_CopyCellsTo(2, 63, 51, 8, 2, 2);
     Task_Wait(10);
-    Actor_WalkToAndWait(0, 352, 306);
-    Actor_SetSpritePriority(0, 3);
-    Actor_WalkToAndWait(0, 352, 296);
+    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 352, 306);
+    Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 3);
+    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 352, 296);
     Call1_02000780(SceneState_SetWork1c0AndRun, 2);
 }
 
@@ -567,7 +568,7 @@ void FieldScene_RunSupplementalSequenceThree(void)
 {
     Audio_PlayCue(158);
     Map_AnimateCells((s32)&Value_0200beb4, 43, 15); /* main:08009178 */
-    Actor_WalkTo(0, 230, 0x197);
+    Actor_WalkTo(ACTOR_PARTY_LEADER, 230, 0x197);
     Call1_020007ec(SceneState_SetWork1c0AndRun, 3);
 }
 
@@ -578,7 +579,7 @@ void FieldScene_RunSupplementalSequenceFour(void)
 {
     Audio_PlayCue(158);
     Map_AnimateCells((s32)&Value_0200beb4, 52, 18); /* main:08009178 */
-    Actor_WalkTo(0, 374, 0x1a3); /* object_id 0, x 374, z 0x1a3 */
+    Actor_WalkTo(ACTOR_PARTY_LEADER, 374, 0x1a3); /* object_id 0, x 374, z 0x1a3 */
     Call1_0200081c(SceneState_SetWork1c0AndRun, 4);
 }
 
@@ -589,7 +590,7 @@ void FieldScene_RunSupplementalSequenceFive(void)
 {
     Audio_PlayCue(158);
     Map_AnimateCells((s32)&Value_0200beb4, 41, 32); /* main:08009178 */
-    Actor_WalkTo(0, 200, 0x222);
+    Actor_WalkTo(ACTOR_PARTY_LEADER, 200, 0x222);
     Call1_0200081c(SceneState_SetWork1c0AndRun, 5);
 }
 
@@ -601,7 +602,7 @@ void FieldScene_RunSupplementalSequenceSix(void)
 {
     Audio_PlayCue(158);
     Map_AnimateCells((s32)&Value_0200beb4, 35, 36); /* main:08009178 */
-    Actor_WalkTo(0, 102, 0x263); /* object_id 0, x 102, z 611 */
+    Actor_WalkTo(ACTOR_PARTY_LEADER, 102, 0x263); /* object_id 0, x 102, z 611 */
     Call1_0200081c(SceneState_SetWork1c0AndRun, 6);
 }
 
@@ -611,7 +612,7 @@ void FieldScene_RunSupplementalSequenceSeven(void)
 {
     Audio_PlayCue(158);
     Map_AnimateCells((s32)&Value_0200beb4, 51, 39); /* main:08009178 */
-    Actor_WalkTo(0, 358, 0x29e);
+    Actor_WalkTo(ACTOR_PARTY_LEADER, 358, 0x29e);
     Call1_0200081c(SceneState_SetWork1c0AndRun, 7);
 }
 

@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "FIELD_SCENE.H"
 
 #define OverlayObject_IntegrateVelocities Func_02000ab0
 #define RuntimeSelectorTable Data_02000240
@@ -317,7 +318,7 @@ void SceneState_SetValue18Mode2(void)
  * zero-argument bracket close. */
 s32 SceneActor_TryRunSlotZeroMoveStep(s16 *arg)
 {
-    s32 *p = Actor_Get(0);
+    s32 *p = Actor_Get(ACTOR_PARTY_LEADER);
     u8 *f = (u8 *)p + 0x55;
     s32 saved = *f;
 
@@ -338,7 +339,7 @@ s32 SceneActor_TryRunSlotZeroMoveStep(s16 *arg)
         m &= *f;
         *f = m;
         Actor_SetSpriteFlags(p, 0);
-        Actor_MoveToAndWait(0, arg[1], arg[5]);
+        Actor_MoveToAndWait(ACTOR_PARTY_LEADER, arg[1], arg[5]);
         Object_SetAnimation(p, 6);
         Actor_SetSpriteFlags(p, 1);
         *f = saved;
@@ -446,7 +447,7 @@ s32 SceneData_SelectDataByRuntimeSelector(void)
 void SceneActor_PassOffsetPointOfActorZero(void)
 {
     s32 v[3];
-    s32 *p = Actor_Get(0);
+    s32 *p = Actor_Get(ACTOR_PARTY_LEADER);
 
     v[0] = (p[2] & 0xfff00000) + 0x80000;
     v[1] = p[3];
@@ -457,7 +458,7 @@ void SceneActor_PassOffsetPointOfActorZero(void)
 void SceneActor_BobActorZeroWhenAheadClear(void)
 {
     s32 pos[3];
-    s32 *actor = Actor_Get(0);
+    s32 *actor = Actor_Get(ACTOR_PARTY_LEADER);
     u8 *fp = (u8 *)actor + 0x55;
     s32 saved = *fp;
 
@@ -487,7 +488,7 @@ void SceneActor_BobActorZeroWhenAheadClear(void)
 void FieldScene_RunScriptedSteps0And17E6(void)
 {
     Event_Begin();
-    Actor_SetAnimation(0, 1);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
     Message_ShowCentered(MSG_BROKEN_SIGN_READS_NORTH_FUCHIN, 1);
     Event_End();
 }
@@ -509,7 +510,7 @@ void FieldScene_RunActor10WaypointSequence(void)
                   0, 0, 0, 1, 0);
 
     Camera_FollowActor(10, 1);
-    Actor_FaceEachOther(10, 0, 0);
+    Actor_FaceEachOther(10, ACTOR_PARTY_LEADER, 0);
     Event_Wait(20);
     Actor_StartRepeatedMotion(10, 2);
     Actor_SetAttachedEffect(10, 258);                     /* 129 << 1 */
@@ -517,15 +518,15 @@ void FieldScene_RunActor10WaypointSequence(void)
 
     /* Three waypoints, each at height 0x30000 (192 << 10). */
     FieldScene_RunScene39f_02000d90(10, 88, 152, 0x30000);
-    Actor_FaceActor(0, 10, 0);
+    Actor_FaceActor(ACTOR_PARTY_LEADER, 10, 0);
     Event_Wait(10);
 
     FieldScene_RunScene39f_02000d90(10, 120, 192, 0x30000);
-    Actor_FaceActor(0, 10, 0);
+    Actor_FaceActor(ACTOR_PARTY_LEADER, 10, 0);
     Event_Wait(10);
 
     FieldScene_RunScene39f_02000d90(10, 120, 240, 0x30000);
-    Actor_FaceActor(0, 10, 0);
+    Actor_FaceActor(ACTOR_PARTY_LEADER, 10, 0);
     Event_Wait(10);
 
     GameFlag_Set(768);                       /* 192 << 2 */
@@ -564,7 +565,7 @@ void FieldScene_RunActorElevenPresentationBeat(void)
                   0, 0, 0, 1, 0);
 
     Camera_FollowActor(11, 1);
-    Actor_FaceEachOther(11, 0, 0);
+    Actor_FaceEachOther(11, ACTOR_PARTY_LEADER, 0);
     Event_Wait(30);
     Actor_StartRepeatedMotion(11, 2);
     Actor_ShowEmote(11, 0x103, 0);
@@ -608,7 +609,7 @@ void SceneActor_RunActorTwelveThreeWaypointMotion(void)
                   0, 0, 0, 1, 0);
 
     Camera_FollowActor(12, 1);
-    Actor_FaceEachOther(12, 0, 0);
+    Actor_FaceEachOther(12, ACTOR_PARTY_LEADER, 0);
     Event_Wait(20);
     Actor_StartRepeatedMotion(12, 2);
     Actor_SetAttachedEffect(12, 258);                     /* 129 << 1 */
@@ -617,15 +618,15 @@ void SceneActor_RunActorTwelveThreeWaypointMotion(void)
     /* Three waypoints, each at height 0x30000 (192 << 10); the X literals are
      * 146 << 2, 158 << 2 and 170 << 2 and the Z is the same 172 << 1. */
     FieldScene_RunScene39f_02000d90(12, 584, 344, 0x30000);
-    Actor_FaceActor(0, 12, 0);
+    Actor_FaceActor(ACTOR_PARTY_LEADER, 12, 0);
     Event_Wait(6);
 
     FieldScene_RunScene39f_02000d90(12, 632, 344, 0x30000);
-    Actor_FaceActor(0, 12, 0);
+    Actor_FaceActor(ACTOR_PARTY_LEADER, 12, 0);
     Event_Wait(6);
 
     FieldScene_RunScene39f_02000d90(12, 680, 344, 0x30000);
-    Actor_FaceActor(0, 12, 0);
+    Actor_FaceActor(ACTOR_PARTY_LEADER, 12, 0);
     Event_Wait(6);
 
     GameFlag_Set(0x302);
@@ -737,26 +738,26 @@ void FieldScene_RunActorThirteenPresentationBeat(void)
                   0, 0, 0, 1, 0);
 
     Camera_FollowActor(13, 1);
-    Actor_FaceEachOther(13, 0, 0);
+    Actor_FaceEachOther(13, ACTOR_PARTY_LEADER, 0);
     Event_Wait(20);
     Actor_StartRepeatedMotion(13, 2);
     Actor_SetAttachedEffect(13, 258);                     /* 129 << 1 */
     Event_Wait(60);
 
     FieldScene_RunScene39f_02000d90(13, 472, 136, 0x30000);       /* 236 << 1, 192 << 10 */
-    Actor_FaceActor(0, 13, 0);
+    Actor_FaceActor(ACTOR_PARTY_LEADER, 13, 0);
     Event_Wait(6);
 
     FieldScene_RunScene39f_02000d90(13, 504, 136, 0x33333);       /* 252 << 1, pooled height */
-    Actor_FaceActor(0, 13, 0);
+    Actor_FaceActor(ACTOR_PARTY_LEADER, 13, 0);
     Event_Wait(6);
 
     FieldScene_RunScene39f_02000d90(13, 552, 136, 0x38000);       /* 138 << 2, 224 << 10 */
-    Actor_FaceActor(0, 13, 0);
+    Actor_FaceActor(ACTOR_PARTY_LEADER, 13, 0);
     Event_Wait(6);
 
     FieldScene_RunScene39f_02000d90(13, 584, 136, 0x38000);       /* 146 << 2 */
-    Actor_FaceActor(0, 13, 0);
+    Actor_FaceActor(ACTOR_PARTY_LEADER, 13, 0);
     Event_Wait(6);
 
     Actor_SetPosition(13, 0, 0);
@@ -804,7 +805,7 @@ void SceneActor_RunActorFourteenFourWaypointMotion(void)
                   0, 0, 0, 1, 0);
 
     Camera_FollowActor(14, 1);
-    Actor_FaceEachOther(14, 0, 0);
+    Actor_FaceEachOther(14, ACTOR_PARTY_LEADER, 0);
     Event_Wait(20);
     Actor_StartRepeatedMotion(14, 2);
     Actor_SetAttachedEffect(14, 258);                     /* 129 << 1 */
@@ -812,22 +813,22 @@ void SceneActor_RunActorFourteenFourWaypointMotion(void)
 
     /* Four waypoints; Z is 132 << 2 and the height 192 << 10 throughout. */
     FieldScene_RunScene39f_02000d90(14, 360, 528, 0x30000);
-    Actor_FaceActor(0, 14, 0);
+    Actor_FaceActor(ACTOR_PARTY_LEADER, 14, 0);
     Event_Wait(6);
 
     FieldScene_RunScene39f_02000d90(14, 328, 528, 0x30000);
-    Actor_FaceActor(0, 14, 0);
+    Actor_FaceActor(ACTOR_PARTY_LEADER, 14, 0);
     Event_Wait(6);
 
     FieldScene_RunScene39f_02000d90(14, 288, 528, 0x30000);
-    Actor_FaceActor(0, 14, 0);
+    Actor_FaceActor(ACTOR_PARTY_LEADER, 14, 0);
     Event_Wait(6);
 
     FieldScene_RunScene39f_02000d90(14, 256, 528, 0x30000);
-    Actor_FaceActor(0, 14, 0);
+    Actor_FaceActor(ACTOR_PARTY_LEADER, 14, 0);
     Event_Wait(6);
 
-    Camera_FollowActor(0, 1);
+    Camera_FollowActor(ACTOR_PARTY_LEADER, 1);
     Actor_SetPosition(14, 0, 0);
     Event_Wait(30);
     GameFlag_Set(0x306);
@@ -844,7 +845,7 @@ void SceneActor_BobActorZeroWhenTargetClear(void)
     u8 saved;
     s32 target[3];
 
-    record = Actor_Get(0);
+    record = Actor_Get(ACTOR_PARTY_LEADER);
     mode = record + 85;
     saved = *mode;
 
@@ -970,15 +971,15 @@ void FieldScene_RunScene39fSequenceA(void)
     Event_Wait(10);
     Func_02002834(*(s32 *)(rec7 + 8), *(s32 *)(rec7 + 12), (*(s32 *)(rec7 + 16) + big), 0, 0, 0, 1, 0);
     Camera_FollowActor(15, 1);
-    Actor_FaceEachOther(15, 0, 0);
+    Actor_FaceEachOther(15, ACTOR_PARTY_LEADER, 0);
     Event_Wait(30);
     Actor_StartRepeatedMotion(15, 2);
     Actor_ShowEmote(15, 0x103, 0);
     Audio_PlayCue(147);
     Event_Wait(60);
-    first = Actor_Get(0);
+    first = Actor_Get(ACTOR_PARTY_LEADER);
     shown = *(s16 *)(first + 10);
-    second = Actor_Get(0);
+    second = Actor_Get(ACTOR_PARTY_LEADER);
     Call4(FieldScene_RunScene39f_02000d90, 15, shown, *(s16 *)(second + 18), 0x60000);
     ((s64 (*)())Engine_EventWait)(10);
     GameFlag_Set(0x307);
@@ -1006,7 +1007,7 @@ void FieldScene_RunSlot16WaypointSequence(void)
                   0, 0, 0, 1, 0);
 
     Camera_FollowActor(16, 1);
-    Actor_FaceEachOther(16, 0, 0);
+    Actor_FaceEachOther(16, ACTOR_PARTY_LEADER, 0);
     Event_Wait(20);
     Actor_StartRepeatedMotion(16, 2);
     Actor_SetAttachedEffect(16, 258);                     /* 129 << 1 */
@@ -1014,18 +1015,18 @@ void FieldScene_RunSlot16WaypointSequence(void)
 
     /* Three waypoints at height 0x30000 (192 << 10). */
     FieldScene_RunScene39f_02000d90(16, 448, 192, 0x30000);       /* 224 << 1 */
-    Actor_FaceActor(0, 16, 0);
+    Actor_FaceActor(ACTOR_PARTY_LEADER, 16, 0);
     Event_Wait(6);
 
     FieldScene_RunScene39f_02000d90(16, 424, 208, 0x30000);       /* 212 << 1 */
-    Actor_FaceActor(0, 16, 0);
+    Actor_FaceActor(ACTOR_PARTY_LEADER, 16, 0);
     Event_Wait(6);
 
     FieldScene_RunScene39f_02000d90(16, 424, 224, 0x30000);
-    Actor_FaceActor(0, 16, 0);
+    Actor_FaceActor(ACTOR_PARTY_LEADER, 16, 0);
     Event_Wait(6);
 
-    Camera_FollowActor(0, 1);
+    Camera_FollowActor(ACTOR_PARTY_LEADER, 1);
     Actor_SetPosition(16, 0, 0);
     Event_Wait(30);
     GameFlag_Set(776);                         /* 194 << 2 */
@@ -1053,25 +1054,25 @@ void FieldScene_RunActor17CameraSequence(void)
                   0, 0, 0, 1, 0);
 
     Camera_FollowActor(17, 1);
-    Actor_FaceEachOther(17, 0, 0);
+    Actor_FaceEachOther(17, ACTOR_PARTY_LEADER, 0);
     Event_Wait(20);
     Actor_StartRepeatedMotion(17, 2);
     Actor_SetAttachedEffect(17, 258);                     /* 129 << 1 */
     Event_Wait(60);
 
     FieldScene_RunScene39f_02000d90(17, 376, 152, 0x60000);       /* 188 << 1 */
-    Actor_FaceActor(0, 17, 0);
+    Actor_FaceActor(ACTOR_PARTY_LEADER, 17, 0);
     Event_Wait(10);
 
     FieldScene_RunScene39f_02000d90(17, 328, 160, 0x30000);       /* 164 << 1, 192 << 10 */
-    Actor_FaceActor(0, 17, 0);
+    Actor_FaceActor(ACTOR_PARTY_LEADER, 17, 0);
     Event_Wait(6);
 
     FieldScene_RunScene39f_02000d90(17, 296, 160, 0x30000);       /* 148 << 1 */
-    Actor_FaceActor(0, 17, 0);
+    Actor_FaceActor(ACTOR_PARTY_LEADER, 17, 0);
     Event_Wait(6);
 
-    Camera_FollowActor(0, 1);
+    Camera_FollowActor(ACTOR_PARTY_LEADER, 1);
     Actor_SetPosition(17, 0, 0);
     Event_Wait(30);
     GameFlag_Set(0x309);
@@ -1118,29 +1119,29 @@ void FieldScene_RunActorEighteenEffectSequence(void)
                   0, 0, 0, 1, 0);
 
     Camera_FollowActor(18, 1);
-    Actor_FaceEachOther(18, 0, 0);
+    Actor_FaceEachOther(18, ACTOR_PARTY_LEADER, 0);
     Event_Wait(20);
     Actor_StartRepeatedMotion(18, 2);
     Actor_SetAttachedEffect(18, 258);                     /* 129 << 1 */
     Event_Wait(60);
 
     FieldScene_RunScene39f_02000d90(18, 712, 568, 0x60000);       /* 142 << 2 */
-    Actor_FaceActor(0, 18, 0);
+    Actor_FaceActor(ACTOR_PARTY_LEADER, 18, 0);
     Event_Wait(10);
 
     FieldScene_RunScene39f_02000d90(18, 712, 600, 0x30000);       /* 150 << 2, 192 << 10 */
-    Actor_FaceActor(0, 18, 0);
+    Actor_FaceActor(ACTOR_PARTY_LEADER, 18, 0);
     Event_Wait(6);
 
     FieldScene_RunScene39f_02000d90(18, 736, 640, 0x30000);       /* X += 24, 160 << 2 */
-    Actor_FaceActor(0, 18, 0);
+    Actor_FaceActor(ACTOR_PARTY_LEADER, 18, 0);
     Event_Wait(6);
 
     FieldScene_RunScene39f_02000d90(18, 736, 704, 0x30000);       /* 176 << 2 */
-    Actor_FaceActor(0, 18, 0);
+    Actor_FaceActor(ACTOR_PARTY_LEADER, 18, 0);
     Event_Wait(6);
 
-    Camera_FollowActor(0, 1);
+    Camera_FollowActor(ACTOR_PARTY_LEADER, 1);
     Actor_SetPosition(18, 0, 0);
     Event_Wait(30);
     GameFlag_Set(0x30b);
@@ -1165,15 +1166,15 @@ void FieldScene_RunScene39f_020021b0(void)
     Actor_RunRepeatedMotion(18, 2);
     Camera_FollowActor(18, 1);
     FieldScene_RunScene39f_02000d90(18, 136, 0x1b8, 0x60000);
-    Actor_FaceActor(0, 18, 0);
+    Actor_FaceActor(ACTOR_PARTY_LEADER, 18, 0);
     Event_Wait(10);
     FieldScene_RunScene39f_02000d90(18, 136, 0x1d8, 0x30000);
-    Actor_FaceActor(0, 18, 0);
+    Actor_FaceActor(ACTOR_PARTY_LEADER, 18, 0);
     Event_Wait(6);
     FieldScene_RunScene39f_02000d90(18, 136, 0x1f8, 0x30000);
-    Actor_FaceActor(0, 18, 0);
+    Actor_FaceActor(ACTOR_PARTY_LEADER, 18, 0);
     Event_Wait(6);
-    Camera_FollowActor(0, 1);
+    Camera_FollowActor(ACTOR_PARTY_LEADER, 1);
     Actor_SetPosition(18, 0, 0);
     Event_Wait(60);
     GameFlag_Set(0x89d);

@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "FIELD_SCENE.H"
 
 #define NULL ((void *)0)
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
@@ -546,7 +547,7 @@ void StagedActor_PushActorAhead(void)
     s32 tz;
     s32 pos[3];
 
-    player = Actor_Get(0);
+    player = Actor_Get(ACTOR_PARTY_LEADER);
     heading = *(u16 *)(player + 6) >> 12;
 
     tx = (*(s16 *)(player + 10)

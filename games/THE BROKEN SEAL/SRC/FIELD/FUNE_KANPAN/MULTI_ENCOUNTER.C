@@ -58,7 +58,6 @@ enum MultiEncounterMessage {
     MSG_HOW_WAS_ROBIN_DID_EXPLORE = 0x1f69
 };
 
-
 union Slot {
     s32 w;
     s16 h[2];
@@ -286,34 +285,9 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
     f(a0, a1, a2, a3);
 }
 
-static __inline__ s32 Value1_020010a0(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ s32 Value1_020011c8(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
 static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
 {
     return f(a0, a1, a2);
-}
-
-static __inline__ void Call3_02001a98(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-static __inline__ void Call1_02001b58(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ void Call1_02001c14(void (*f)(), s32 a0)
-{
-    f(a0);
 }
 
 static __inline__ void Call1_020029d4(void (*f)(), s32 a0)
@@ -321,11 +295,6 @@ static __inline__ void Call1_020029d4(void (*f)(), s32 a0)
     u8 *Func_02007d48();
     u8 *Func_02007d62();
 
-    f(a0);
-}
-
-static __inline__ void Call1_02002b7c(void (*f)(), s32 a0)
-{
     f(a0);
 }
 
@@ -337,21 +306,6 @@ static __inline__ void Call1_02003a0c(void (*f)(), s32 a0)
     s32 Func_02007d62();
 
     f(a0);
-}
-
-static __inline__ void Call1_02003c88(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ void Call1_02003f30(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ void Call3_02004218(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
 }
 
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
@@ -1025,7 +979,7 @@ void FieldScene_RunScene3af_02001b58(void)
     s32 record;
 
     Event_Begin();
-    Call1_02001b58(Func_02005e5e, 0x200d160);
+    Call1(Func_02005e5e, 0x200d160);
     Task_Wait(1);
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0xe80000, 0x27c0000);
     Actor_SetChildValue(ACTOR_PARTY_LEADER, 15);
@@ -1719,7 +1673,7 @@ void FieldScene_RunThreeActorEncounter(void)
     Value2(FieldScene_CallPairWith10, 3, 0x8000);
     FieldScene_CallPairWith10(22, 0);
     Event_SetMessage(MSG_ROBIN_TALKED_PASSENGERS_DIDNT_TOUR);
-    Call1_02003c88(FieldScene_RunStepThen10, 22);
+    Call1(FieldScene_RunStepThen10, 22);
     Value2(FieldScene_CallPairWith10, 21, 0xd000);
     Event_ShowMessageAndWait(21, 0, 40);
     Actor_ShowEmote(22, 0x100, 20);
@@ -1811,7 +1765,7 @@ void FieldScene_RunEncounterClosingSequence(void)
     Event_OpenMessage(0x2016, 0);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xe000, 0);
     if (Event_ChooseYesNo(0, 0) == 1) {
-        Call1_02003f30(FieldScene_RunStepThen10, 0x2016);
+        Call1(FieldScene_RunStepThen10, 0x2016);
         Event_End();
     } else {
         bump_step(1);
@@ -1843,13 +1797,13 @@ void FieldScene_RunEncounterClosingSequence(void)
         FieldScene_RunStepThen10(21);
         ObjectMotion_ArmCallback_8(20, 0x5000, 20);
         Actor_SetAnimation(20, 3);
-        Call1_02003f30(FieldScene_RunStepThen10, 0x6014);
+        Call1(FieldScene_RunStepThen10, 0x6014);
         Actor_Jump(26, 2, 20);
         Actor_SetAnimation(26, 4);
         FieldScene_RunStepThen10(26);
         Actor_WalkToAndWait(20, 182, 0x280);
         Actor_FaceDirection(20, 0xd000, 0);
-        Call1_02003f30(FieldScene_RunStepThen10, 0x8014);
+        Call1(FieldScene_RunStepThen10, 0x8014);
         Actor_ShowEmote(26, 0x100, 20);
         Actor_StartRepeatedMotion(26, 2);
         FieldScene_RunStepThen10(26);

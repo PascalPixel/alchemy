@@ -452,24 +452,9 @@ static __inline__ void Call1(void (*f)(), s32 a0)
     f(a0);
 }
 
-static __inline__ s32 Value1_02001218(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
 static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
 {
     f(a0, a1, a2, a3, a4, a5);
-}
-
-static __inline__ void Call3_02002f30(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-static __inline__ s32 Value1_02004a2c(s32 (*f)(), s32 a0)
-{
-    return f(a0);
 }
 
 static __inline__ void SetActorDirection(s32 actor, s32 direction, s32 duration)
@@ -1943,8 +1928,8 @@ void FieldScene_RunScene3c8_02004a2c(void)
     s32 v2;
     s32 slot0;
 
-    rec = Value1_02004a2c(Engine_ActorGet, ACTOR_PARTY_LEADER);
-    rec8 = Value1_02004a2c(Engine_ActorGet, 20);
+    rec = Value1(Engine_ActorGet, ACTOR_PARTY_LEADER);
+    rec8 = Value1(Engine_ActorGet, 20);
     Event_Begin();
     Camera_MoveTo(-1, -1, -1, 0);
     Map_Redraw();

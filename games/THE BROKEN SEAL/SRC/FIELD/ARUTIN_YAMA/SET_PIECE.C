@@ -206,13 +206,6 @@ static __inline__ void bump_step(s32 amount)
     *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
 }
 
-static __inline__ void Call3_02000c9c(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    extern u8 Data_0200d238[];
-
-    f(a0, a1, a2);
-}
-
 static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 {
     extern u8 Data_0200d238[];
@@ -225,48 +218,6 @@ static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
     extern u8 Data_0200d238[];
 
     return f(a0, a1);
-}
-
-static __inline__ s32 Value1_02002310(s32 (*f)(), s32 a0)
-{
-    extern u8 Data_0200d238[];
-
-    return f(a0);
-}
-
-static __inline__ s32 Value1_02002490(s32 (*f)(), s32 a0)
-{
-    extern u8 Data_0200d238[];
-
-    return f(a0);
-}
-
-static __inline__ s32 Value1_020025c0(s32 (*f)(), s32 a0)
-{
-    extern u8 Data_0200d238[];
-
-    return f(a0);
-}
-
-static __inline__ s32 Value1_020026c0(s32 (*f)(), s32 a0)
-{
-    extern u8 Data_0200d238[];
-
-    return f(a0);
-}
-
-static __inline__ s32 Value1_02002934(s32 (*f)(), s32 a0)
-{
-    extern u8 Data_0200d238[];
-
-    return f(a0);
-}
-
-static __inline__ void Call3_020029dc(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    extern u8 Data_0200d238[];
-
-    f(a0, a1, a2);
 }
 
 static __inline__ s32 Value0(s32 (*f)())
@@ -289,13 +240,6 @@ static __inline__ void Call0(void (*f)())
     extern u8 Data_0200d238[];
 
     f();
-}
-
-static __inline__ s32 Value0_02002f10(s32 (*f)())
-{
-    extern u8 Data_0200d238[];
-
-    return f();
 }
 
 static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
@@ -1417,7 +1361,7 @@ void FieldScene_RunScene3a4_02002934(void)
     flag = gGameState.entrance;
     if (flag == 1 || flag == 98) {
         if (GameFlag_IsSet(0x109) == 0) {
-            rec7 = Value1_02002934(Engine_ActorGet, ACTOR_PARTY_LEADER);
+            rec7 = Value1(Engine_ActorGet, ACTOR_PARTY_LEADER);
             Event_Begin();
             *(s32 *)(rec7 + 12) = 0x100000;
             Event_End();

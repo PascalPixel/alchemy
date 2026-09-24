@@ -187,11 +187,6 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
     f(a0, a1, a2, a3);
 }
 
-static __inline__ s32 Value1_0200263c(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
 void Func_020023f6(s32 x, s32 y, s32 z, s32 kind,
                           s32 arg4, s32 arg5, u32 flags, void *descriptor);
 

@@ -36,7 +36,6 @@ enum BranchingEventMessage {
     MSG_TRUTH_DOOR_OPEN_THOSE_SEEING = 0x2756
 };
 
-
 struct LevelCheckRecord {
     u8 unknown_00[12];
     s32 y;                          /* +0x0c */
@@ -161,29 +160,14 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
     f(a0, a1, a2, a3);
 }
 
-static __inline__ void Call4_02000eac(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    f(a0, a1, a2, a3);
-}
-
 static __inline__ void Call1(void (*f)(), s32 a0)
 {
     f(a0);
 }
 
-static __inline__ s32 Value1_020024d0(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
 static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
 {
     f(a0, a1, a2, a3, a4, a5);
-}
-
-static __inline__ s32 Value1_02002548(s32 (*f)(), s32 a0)
-{
-    return f(a0);
 }
 
 /*
@@ -201,34 +185,9 @@ static __inline__ void ResetSceneParameters(s32 a, s32 b, s32 c, s32 mode)
 
 /* The translation unit binds scene calls at the loader-runtime base. */
 
-static __inline__ void Call1_02001238(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ s32 Value1_02001238(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ void Call2_02001238(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
 static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
 {
     return f(a0, a1);
-}
-
-static __inline__ void Call3_02001238(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-static __inline__ void Call4_02001238(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    f(a0, a1, a2, a3);
 }
 
 /* The scene step counter at 0x1d8 of the shared scene work record. */
@@ -594,10 +553,10 @@ void FieldScene_RunBranchingActorSequence(void)
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x128, 0x160);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
     Event_Wait(10);
-    Call4_02001238(Func_020041fe, 10, 16, 0, 0xc000);
-    Call4_02001238(Func_0200420e, 1, -8, 16, 0xc000);
-    Call4_02001238(Func_0200421c, 2, 8, 16, 0xc000);
-    Call4_02001238(Func_0200422a, 3, 24, 16, 0xc000);
+    Call4(Func_020041fe, 10, 16, 0, 0xc000);
+    Call4(Func_0200420e, 1, -8, 16, 0xc000);
+    Call4(Func_0200421c, 2, 8, 16, 0xc000);
+    Call4(Func_0200422a, 3, 24, 16, 0xc000);
     Actor_WaitForMove(ACTOR_MIA);
     Event_Wait(20);
     Event_ShowMessage(14, 0);
@@ -832,21 +791,21 @@ void FieldScene_RunBranchingActorSequence(void)
     Actor_SetSpeed(ACTOR_IVAN, 0x13333, 0x9999);
     Actor_SetSpeed(ACTOR_MIA, 0x13333, 0x9999);
     Actor_SetAnimation(ACTOR_GERALD, 2);
-    record = Value1_02001238(Engine_ActorGet, ACTOR_PARTY_LEADER);
+    record = Value1(Engine_ActorGet, ACTOR_PARTY_LEADER);
     if (record != 0) {
         Actor_SetDestination(ACTOR_GERALD, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
     Actor_WaitForMove(ACTOR_GERALD);
     Actor_SetPosition(ACTOR_GERALD, 0, 0);
     Actor_SetAnimation(ACTOR_IVAN, 2);
-    record = Value1_02001238(Engine_ActorGet, ACTOR_PARTY_LEADER);
+    record = Value1(Engine_ActorGet, ACTOR_PARTY_LEADER);
     if (record != 0) {
         Actor_SetDestination(ACTOR_IVAN, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
     Actor_WaitForMove(ACTOR_IVAN);
     Actor_SetPosition(ACTOR_IVAN, 0, 0);
     Actor_SetAnimation(ACTOR_MIA, 2);
-    record = Value1_02001238(Engine_ActorGet, ACTOR_PARTY_LEADER);
+    record = Value1(Engine_ActorGet, ACTOR_PARTY_LEADER);
     if (record != 0) {
         Actor_SetDestination(ACTOR_MIA, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
@@ -869,8 +828,8 @@ void FieldScene_RunActorEventSequence(void)
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0, 0);
     Event_Wait(10);
     Func_02004acc(1, 0, 16, 0);
-    Call4_02001238(Func_02004adc, 2, -16, -8, 0);
-    Call4_02001238(Func_02004aea, 3, -16, 24, 0);
+    Call4(Func_02004adc, 2, -16, -8, 0);
+    Call4(Func_02004aea, 3, -16, 24, 0);
     Actor_WaitForMove(ACTOR_MIA);
     Event_Wait(20);
     Camera_SetSpeed(0x30000, 0x6000);
@@ -1108,21 +1067,21 @@ void FieldScene_RunActorEventSequence(void)
     Actor_SetSpeed(ACTOR_IVAN, 0x13333, 0x9999);
     Actor_SetSpeed(ACTOR_MIA, 0x13333, 0x9999);
     Actor_SetAnimation(ACTOR_GERALD, 2);
-    record = Value1_02001238(Engine_ActorGet, ACTOR_PARTY_LEADER);
+    record = Value1(Engine_ActorGet, ACTOR_PARTY_LEADER);
     if (record != 0) {
         Actor_SetDestination(ACTOR_GERALD, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
     Actor_WaitForMove(ACTOR_GERALD);
     Actor_SetPosition(ACTOR_GERALD, 0, 0);
     Actor_SetAnimation(ACTOR_IVAN, 2);
-    record = Value1_02001238(Engine_ActorGet, ACTOR_PARTY_LEADER);
+    record = Value1(Engine_ActorGet, ACTOR_PARTY_LEADER);
     if (record != 0) {
         Actor_SetDestination(ACTOR_IVAN, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
     Actor_WaitForMove(ACTOR_IVAN);
     Actor_SetPosition(ACTOR_IVAN, 0, 0);
     Actor_SetAnimation(ACTOR_MIA, 2);
-    record = Value1_02001238(Engine_ActorGet, ACTOR_PARTY_LEADER);
+    record = Value1(Engine_ActorGet, ACTOR_PARTY_LEADER);
     if (record != 0) {
         Actor_SetDestination(ACTOR_MIA, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }

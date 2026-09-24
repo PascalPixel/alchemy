@@ -10,6 +10,25 @@
 
 #include "RESOURCE_386_STATE.H"
 
+enum PlacementMessage {
+    MSG_HAVE_LOT_LEFTOVER_BONES_FROM = 0x137c,
+    MSG_GEE_ALWAYS_GET_HUNGRY_WHEN = 0x1382,
+    MSG_WOW_HAVE_MANY_THINGS_ARENT = 0x1384,
+    MSG_WANT_MORE_BONES = 0x1385,
+    MSG_THOUGHT_SAW_CAT_GET_UP = 0x1cc9,
+    MSG_DODONPAS_HENCHMEN_NEVER_ATTACKED_US = 0x1ccd,
+    MSG_ITS_NEAR_TIME_FOR_COLOSSO = 0x1cd0,
+    MSG_ROBIN_YOUVE_COME_BACK_VAULT = 0x1cd4,
+    MSG_THOSE_GUYS_REALLY_WANTED_REVENGE = 0x1cda,
+    MSG_THERES_RIVER_FIRE_ON_OTHER = 0x1ce2,
+    MSG_THEY_SAY_VOLCANO_ON_MT = 0x1ce4,
+    MSG_WE_HAVENT_BEEN_GETTING_MANY = 0x1ce6,
+    MSG_MMMM_NOTHING_DO_NOTHING_DO = 0x1cec,
+    MSG_DID_SOME_COOKING_NOW_IVE = 0x1cee,
+    MSG_HE_REALLY_LIKES_BONES_WONDER = 0x1cf4
+};
+
+
 extern s16 Data_02000240[];
 
 void Func_020006d4(u8 *);
@@ -125,21 +144,21 @@ void SceneActor_RunActorStep(s32 arg0)
 
 void SceneDialogue_RunActor9Line(void)
 {
-    Event_SetMessage(0x1CC9);
+    Event_SetMessage(MSG_THOUGHT_SAW_CAT_GET_UP);
     Actor_FaceEachOther(9, 0, 2);
     SceneActor_RunActorStep(9);
 }
 
 void SceneDialogue_RunActor11Line(void)
 {
-    Event_SetMessage(0x1CCD);
+    Event_SetMessage(MSG_DODONPAS_HENCHMEN_NEVER_ATTACKED_US);
     Actor_FaceEachOther(11, 0, 2);
     SceneActor_RunActorStep(11);
 }
 
 void SceneDialogue_RunActor12Line(void)
 {
-    Event_SetMessage(0x1CD0);
+    Event_SetMessage(MSG_ITS_NEAR_TIME_FOR_COLOSSO);
     Actor_FaceEachOther(12, 0, 2);
     SceneActor_RunActorStep(12);
 }
@@ -150,7 +169,7 @@ void FieldScene_RunActor16Sequence(void)
     s32 record;
 
     Event_Begin();
-    Event_SetMessage(0x1cd4);
+    Event_SetMessage(MSG_ROBIN_YOUVE_COME_BACK_VAULT);
     Actor_FaceEachOther(16, 0, 2);
     Actor_SetAnimation(16, 1);
     Event_ShowMessageAndWait(16, 0, 20);
@@ -173,7 +192,7 @@ void SceneDialogue_RunActor16Line(void)
 {
     void Actor_FaceEachOther(s32, s32, s32);
 
-    Event_SetMessage(0x1CDA);
+    Event_SetMessage(MSG_THOSE_GUYS_REALLY_WANTED_REVENGE);
     Actor_FaceEachOther(16, 0, 2);
     SceneActor_RunActorStep(16);
 }
@@ -182,7 +201,7 @@ void SceneDialogue_RunActor23Line(void)
 {
     void Actor_FaceEachOther(s32, s32, s32);
 
-    Event_SetMessage(0x1CEE);
+    Event_SetMessage(MSG_DID_SOME_COOKING_NOW_IVE);
     Actor_FaceEachOther(23, 0, 2);
     SceneActor_RunActorStep(23);
 }
@@ -199,10 +218,10 @@ void FieldScene_RunActor18FlaggedSequence(void)
     Event_Begin();
     Actor_FaceEachOther(18, 0, 0);
     if (GameFlag_IsSet(0x85b) == 0) {
-        Event_SetMessage(0x137c);
+        Event_SetMessage(MSG_HAVE_LOT_LEFTOVER_BONES_FROM);
         Event_OpenMessage(18, 0);
     } else {
-        Event_SetMessage(0x1385);
+        Event_SetMessage(MSG_WANT_MORE_BONES);
         Event_OpenMessage(18, 0);
     }
     if (Event_ChooseYesNo(0, 0) == 0) {
@@ -214,7 +233,7 @@ void FieldScene_RunActor18FlaggedSequence(void)
         if (Value0(Func_02000898) == 0) {
             Actor_SetAnimationAndWait(18, 4);
             Event_Wait(20);
-            Event_SetMessage(0x1384);
+            Event_SetMessage(MSG_WOW_HAVE_MANY_THINGS_ARENT);
             Event_ShowMessage(18, 0);
             goto L_020002d4;
         }
@@ -262,7 +281,7 @@ void FieldScene_RunActor18ConditionalCue(void)
     if (Func_0200096c() == 0) {
         Actor_SetAnimationAndWait(18, 4);
         Event_Wait(20);
-        Event_SetMessage(0x1384);
+        Event_SetMessage(MSG_WOW_HAVE_MANY_THINGS_ARENT);
         Event_ShowMessage(18, 0);
     } else {
         Item_ShowFound(0xE7, 3);
@@ -284,7 +303,7 @@ void FieldScene_RunActor19StepByPlace(void)
     if (place + 0xFFFF5FFF <= 0x3FFE) {
         Shop_Open(4, 19);
     } else {
-        Event_SetMessage(0x1CE2);
+        Event_SetMessage(MSG_THERES_RIVER_FIRE_ON_OTHER);
         Event_ShowMessage(19, 0);
     }
 
@@ -301,7 +320,7 @@ void FieldScene_RunActor20StepByPlace(void)
     if (place + 0xFFFF5FFF <= 0x3FFE) {
         Shop_Open(5, 20);
     } else {
-        Event_SetMessage(0x1CE4);
+        Event_SetMessage(MSG_THEY_SAY_VOLCANO_ON_MT);
         Event_ShowMessage(20, 0);
     }
 
@@ -318,7 +337,7 @@ void FieldScene_RunActor21StepByPlace(void)
     if (place + 0xFFFF5FFF <= 0x3FFE) {
         Shop_Open(6, 21);
     } else {
-        Event_SetMessage(0x1CE6);
+        Event_SetMessage(MSG_WE_HAVENT_BEEN_GETTING_MANY);
         Event_ShowMessage(21, 0);
     }
 
@@ -335,7 +354,7 @@ void FieldScene_RunActor22StepByPlace(void)
     if (place + 0xFFFF5FFF <= 0x3FFE) {
         Inn_Open(1, 22);
     } else {
-        Event_SetMessage(0x1CEC);
+        Event_SetMessage(MSG_MMMM_NOTHING_DO_NOTHING_DO);
         Event_ShowMessage(22, 0);
     }
 
@@ -348,9 +367,9 @@ void SceneDialogue_RunActor18FlaggedLine(void)
 
     Event_Begin();
     if (GameFlag_IsSet(0x85B) == 0) {
-        Event_SetMessage(0x1382);
+        Event_SetMessage(MSG_GEE_ALWAYS_GET_HUNGRY_WHEN);
     } else {
-        Event_SetMessage(0x1CF4);
+        Event_SetMessage(MSG_HE_REALLY_LIKES_BONES_WONDER);
     }
     Event_ShowMessage(18, 0);
     Event_End();

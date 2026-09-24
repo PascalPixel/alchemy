@@ -459,8 +459,10 @@ fn render(game: &'static str, page: usize) -> Result<(String, String), String> {
                         .map(readable)
                         .unwrap_or_else(|| "—".into());
                     html.push_str(&format!(
-                        "<td title=\"{} key {own}\">{}</td>",
+                        "<td title=\"{} key {own}\" data-face=\"{}\">{}</td>",
                         esc(&edition.label),
+                        // Quoted game text in its edition's own dialogue font.
+                        if edition.label == "JA" { "j" } else { "d" },
                         esc(&value)
                     ));
                 }

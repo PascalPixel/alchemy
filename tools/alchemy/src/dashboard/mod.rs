@@ -4,7 +4,6 @@
 mod cache;
 mod chrome;
 mod files;
-mod fonts;
 mod glyphs;
 mod maps;
 mod media;
@@ -77,7 +76,7 @@ static REFRESHED: std::sync::Mutex<Option<String>> = std::sync::Mutex::new(None)
 fn snapshot() -> Value {
     let jobs = cache::jobs();
     json!({
-        "page": crate::coverage::boxtree::svg_cache_version(chrome::styles()),
+        "page": crate::coverage::boxtree::content_version(chrome::styles()),
         "revision": cache::generation().to_string(),
         "generatedAt": REFRESHED.lock().unwrap_or_else(|e| e.into_inner()).clone(),
         "scanning": jobs.iter().any(|job| job.phase == cache::Phase::Running),
@@ -115,7 +114,7 @@ fn event_stream() -> Response {
 /// Run every cache job once: the quick ones first, then the receipts, whose
 /// verification hashes every build input.
 fn refresh(root: &Path) {
-    cache::begin("assets", "Building font and icons", 1);
+    cache::begin("assets", "Building lettering and icons", 1);
     cache::finish("assets", glyphs::refresh(root));
     cache::begin(
         "roms",
@@ -199,8 +198,13 @@ fn reveal(path: &str) -> Response {
         Ok(()) => (200, "OK", "Shown in Finder".into()),
         Err(message) => (400, "Bad Request", message),
     };
-    Response::new(status, reason, Some("text/html; charset=utf-8"), "no-store",
-        format!("<!doctype html><style>body{{margin:0;padding:2px 4px;background:#1f7f93;color:white;font:13px -apple-system,BlinkMacSystemFont,sans-serif}}</style>{}", crate::coverage::boxtree::esc(&message)))
+    Response::new(
+        status,
+        reason,
+        Some("text/html; charset=utf-8"),
+        "no-store",
+        chrome::fragment(&message),
+    )
 }
 fn cached_file(path: &str) -> Option<Response> {
     let name = path.strip_prefix("/cache/")?;
@@ -438,27 +442,34 @@ mod tests {
         assert!(!styles.contains("url("));
         assert!(!styles.contains("http"));
         assert!(styles.contains(".tab {"));
+        // The figures' chrome: flat faces, one-pixel bevels, no rounding.
+        assert!(!styles.contains("border-radius"));
         assert!(
-            styles.contains("border-radius:6px 6px 0 0")
-                && styles.contains("box-shadow:var(--frame)")
+            styles.contains("box-shadow:var(--raised)")
+                && styles.contains("box-shadow:var(--sunken)")
         );
-        assert!(styles.contains("--text: 32px/32px var(--game)"));
-        assert!(styles.contains(".translation-table td {") && styles.contains("font-style:italic"));
-        // Every length is a whole number of 2px game pixels.
-        for (at, _) in styles.match_indices("px") {
-            let digits = styles[..at]
-                .chars()
-                .rev()
-                .take_while(|c| c.is_ascii_digit())
-                .collect::<String>();
-            if let Ok(value) = digits.chars().rev().collect::<String>().parse::<u32>() {
-                assert!(
-                    value % 2 == 0,
-                    "odd length {value}px near {}",
-                    &styles[at.saturating_sub(40)..at + 2]
-                );
-            }
+        // Text is glyph sprites; the system face only fills in what the sheet lacks.
+        assert!(styles.contains(".t b {") && styles.contains("--text: 10px/16px var(--system)"));
+        assert!(!styles.contains("font-style:italic"));
+        // Every length is a whole number of game pixels, each PIXEL CSS pixels.
+        let source = include_str!("style.css");
+        for (at, _) in source.match_indices("px") {
+            let before = source[..at].trim_end_matches(|c: char| c.is_ascii_digit());
+            assert!(
+                before.len() < at && !before.ends_with('.'),
+                "fractional or empty length near {}",
+                &source[at.saturating_sub(40)..at + 2]
+            );
         }
+        let pixel = crate::coverage::letters::PIXEL;
+        assert_eq!(
+            chrome::pixels("inset -3px 12px var(--w3) #0c1830 1.5px 40%"),
+            format!(
+                "inset -{}px {}px var(--w3) #0c1830 1.5px 40%",
+                3 * pixel,
+                12 * pixel
+            )
+        );
         assert!(!styles.contains(".music-player"));
     }
 

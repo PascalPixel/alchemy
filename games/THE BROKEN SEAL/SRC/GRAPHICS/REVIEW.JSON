@@ -1319,8 +1319,8 @@
   ],
   "baseline": {
     "format": "indexed-rgba-v1",
-    "images": 839,
-    "pixels": 22763264,
-    "sha256": "18a7af7a7c8d2d0382252a2786be6dfb836cf75069006d1afa62cc0fac7c1a9f"
+    "images": 838,
+    "pixels": 22746880,
+    "sha256": "6e6bd1d233d9af80a71027bca961a83d394c67e542ccda1bde3cd7a8709ac0ef"
   }
 }

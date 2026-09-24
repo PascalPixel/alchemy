@@ -69,6 +69,22 @@
     },
     {"kind": "golden-sun-native-source-series", "index": "recon/tbs/private-inputs.json"}
   ],
+  "edition_regions": [
+    {
+      "rom": "tbs-ja",
+      "address": "0x08032470",
+      "size": "0x2170",
+      "kind": "typed-table",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/FONT/JAPANESE_GLYPHS.JSON"
+    },
+    {
+      "rom": "tbs-ja",
+      "address": "0x08317fb0",
+      "size": "0x2000",
+      "kind": "components",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/FONT/MENU_GLYPHS_JA.JSON"
+    }
+  ],
   "regions": [
     {
       "address": "0x087fcd20",
@@ -719,6 +735,12 @@
       "size": "0x10",
       "kind": "typed-table",
       "source": "games/THE BROKEN SEAL/SRC/SYSTEM/BUILD_STAMP.JSON"
+    },
+    {
+      "address": "0x08320fb0",
+      "size": "0x2000",
+      "kind": "components",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/FONT/MENU_GLYPHS.JSON"
     },
     {
       "address": "0x08322fb0",

@@ -1,0 +1,22 @@
+{
+  "format": 1,
+  "kind": "components",
+  "edition": "ja",
+  "address": "0x08317fb0",
+  "size": "0x00002000",
+  "resource": "0x013",
+  "components": [
+    {
+      "kind": "gba-4bpp-tiles",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/FONT/MENU_GLYPHS_JA_0000_00FF.4BPP.PNG",
+      "size": 8192
+    }
+  ],
+  "glyphs": {
+    "note": "The Japanese edition's menu and window font: Latin in the Western codes, kana from 0x80, ink in colour 1 and its shadow in colour 3 over colour 4.",
+    "first_code": 0,
+    "frame_width": 8,
+    "frame_height": 8,
+    "columns": 16
+  }
+}

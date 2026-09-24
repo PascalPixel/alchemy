@@ -10297,7 +10297,8 @@
       "source": "FIELD/COMMON/OBJECT/PLACE_SCENE_ACTORS.C"
     },
     "main:08095778": {
-      "name": "Unnamed_08095778"
+      "name": "Djinn_ResolvePendingEvent",
+      "source": "GAME/DJINN/RESOLVE_PENDING_EVENT.C"
     },
     "main:0809bcf8": {
       "name": "Unnamed_0809bcf8"

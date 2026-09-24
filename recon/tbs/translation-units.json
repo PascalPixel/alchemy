@@ -80216,6 +80216,46 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "scene-39a-02001fac",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/IMIRU_FUCHIN/FADE_IN.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_39a",
+      "absolute_symbols": {
+        "Engine_ColorBufferApplySource": {
+          "address": "0x0200a3b8",
+          "kind": "thumb"
+        },
+        "Engine_ColorBufferApplyTarget": {
+          "address": "0x0200a3b0",
+          "kind": "thumb"
+        },
+        "Engine_ColorBufferInterpolate": {
+          "address": "0x0200a3c0",
+          "kind": "thumb"
+        },
+        "Engine_TaskWait": {
+          "address": "0x0200a260",
+          "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02001fac",
+          "extent": 104,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

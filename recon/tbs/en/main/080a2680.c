@@ -64,7 +64,6 @@ extern char Value_00000b82;
 extern char Value_00000b84;
 extern char Value_00000b85;
 extern char Value_00000bef;
-extern char Value_00000200;
 
 void Func_080030f8(s32 frames);
 void *Func_08004938(s32 size);
@@ -125,21 +124,23 @@ s32 Func_080a5788(s32 mode);
  * still spelled as raw offsets. The named state numbers are the reference
  * jump-table order, not recovered constants.
  *
- * DRAFT, not yet C (2026-09-24): 1264 of 1294 listing lines, 68 lines differ
- * (42 once registers are normalised). Proven: the handlers set the next
+ * DRAFT, not yet C (2026-09-24): 1266 of 1294 listing lines, 58 lines differ
+ * (38 once registers are normalised). Proven: the handlers set the next
  * state inside each exit branch (if-conversion hoists it, so cse never sees
  * a redundant set); one result variable (r6) and one command variable (r7)
  * are shared across the handlers; clearing the command on cancel lets the
  * -1 compare register reach ret; the list icon at 0x14 is read through a
  * union so the selected-icon stores stay ordered before it; the give
  * handler needs a label between the stack count and its sign-extended use
- * (a FAKEMATCH do-while for now); the 0x03001388 copy routine goes through
- * _call_via with an inline wrapper; 0x200 comes from the pool. The drop
- * handler loads 0x1ff into the state variable and never reassigns it on
- * success, which ends the menu through the default case (FAKEMATCH
- * candidate). Remaining: the backup copy loads the routine address one slot
- * early, the 0x17a item lands in r0 instead of r2, and case 12 keeps its
- * result in r6 (which also moves the far-branch layout of case 7 and 3).
+ * (a FAKEMATCH do-while for now); the swap handler tests the 0x17a item
+ * directly, so both masks are halfword pool constants and force the pool
+ * into the loop; the 0x03001388 copy routine goes through _call_via with an
+ * inline wrapper. The drop handler loads 0x1ff into the state variable and
+ * never reassigns it on success, which ends the menu through the default
+ * case (FAKEMATCH candidate). Remaining: the backup copy loads the routine
+ * address one slot early, and case 12 keeps its result in r6 in the
+ * reference (a live copy this draft loses, so case 11 and 12 share their
+ * state = 1 tail and the final reload registers shift).
  */
 s32 ItemMenu_RunItemCommand(s32 *owner_out, s32 *target_out, s32 *item_out)
 {
@@ -159,7 +160,6 @@ s32 ItemMenu_RunItemCommand(s32 *owner_out, s32 *target_out, s32 *item_out)
     s32 amount;
     s32 aborted;
     s32 work;
-    s32 other;
     s32 n;
     u8 moved_source;
     u8 moved_target;
@@ -501,9 +501,8 @@ s32 ItemMenu_RunItemCommand(s32 *owner_out, s32 *target_out, s32 *item_out)
             moved_source++;
             moved_target = 0;
             while (moved_target <= 29) {
-                other = menu->target_item;
-                if ((other & (s32)&Value_00000200) != 0) {
-                    item = Item_Get(other & 0x1ff);
+                if ((menu->target_item & 0x200) != 0) {
+                    item = Item_Get(menu->target_item & 0x1ff);
                     if ((item->flags & 2) != 0) {
                         aborted = 1;
                     }

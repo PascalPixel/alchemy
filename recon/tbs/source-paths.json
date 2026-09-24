@@ -19618,7 +19618,8 @@
       "source": "BATTLE/EFFECT/START_FADE_OVERLAY.C"
     },
     "main:080118d8": {
-      "name": "MapAnimation_Start"
+      "name": "MapAnimation_StartChannels",
+      "source": "FIELD/COMMON/MAP/ANIMATION_START_CHANNELS.C"
     },
     "main:0801179c": {
       "name": "MapAnimation_Update"

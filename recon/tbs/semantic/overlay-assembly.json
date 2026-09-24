@@ -1651,7 +1651,7 @@
     {
       "overlay": "resource_3bb",
       "start": "0x02002ba8",
-      "end": "0x02002e44",
+      "end": "0x02002d84",
       "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
       "confidence": "strong",
@@ -1664,7 +1664,7 @@
     {
       "overlay": "resource_3ba",
       "start": "0x02002910",
-      "end": "0x02002bac",
+      "end": "0x02002aec",
       "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
       "confidence": "strong",

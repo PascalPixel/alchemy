@@ -1,6 +1,18 @@
 {
   "format": 3,
   "owners": {
+    "resource_3bb:02002d84": {
+      "name": "Korosseo_RestoreCompetitor",
+      "source": "FIELD/COMMON/KOROSSEO/RESTORE_COMPETITOR.C"
+    },
+    "resource_3ba:02002aec": {
+      "name": "Korosseo_RestoreCompetitor",
+      "source": "FIELD/COMMON/KOROSSEO/RESTORE_COMPETITOR.C"
+    },
+    "resource_3bc:0200381c": {
+      "name": "Korosseo_RestoreCompetitor",
+      "source": "FIELD/COMMON/KOROSSEO/RESTORE_COMPETITOR.C"
+    },
     "resource_3af:02001f90": {
       "name": "FuneKanpan_RunDeckCrewScene",
       "source": "FIELD/FUNE_KANPAN/DECK_CREW_SCENE.C"

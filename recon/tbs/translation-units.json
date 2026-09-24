@@ -70416,6 +70416,164 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "korosseo-restore-competitor",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/KOROSSEO/RESTORE_COMPETITOR.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3bc",
+      "absolute_symbols": {
+        "Engine_ActorGet": {
+          "address": "0x0200ca18",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetAnimation": {
+          "address": "0x0200ca70",
+          "kind": "thumb"
+        },
+        "Engine_ActorFaceDirection": {
+          "address": "0x0200cad0",
+          "kind": "thumb"
+        },
+        "Engine_EventWait": {
+          "address": "0x0200c9f8",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpriteFlags": {
+          "address": "0x0200c958",
+          "kind": "thumb"
+        },
+        "Engine_ObjectSetAnimation": {
+          "address": "0x0200c8e0",
+          "kind": "thumb"
+        },
+        "Engine_TaskWait": {
+          "address": "0x0200c840",
+          "kind": "thumb"
+        },
+        "Korosseo_CompetitorStartX": {
+          "address": "0x0200dc44",
+          "kind": "data"
+        },
+        "Korosseo_CompetitorStartZ": {
+          "address": "0x0200db9c",
+          "kind": "data"
+        },
+        "Korosseo_CompetitorStartAngle": {
+          "address": "0x0200dbc8",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x0200381c",
+          "extent": 190,
+          "state": "exact-c"
+        }
+      ],
+      "instances": {
+        "resource_3ba": {
+          "owners": {
+            "Korosseo_RestoreCompetitor": {
+              "address": "0x02002aec",
+              "extent": 192
+            }
+          },
+          "absolute_symbols": {
+            "Engine_ActorGet": {
+              "address": "0x0200bcb8",
+              "kind": "thumb"
+            },
+            "Engine_ActorSetAnimation": {
+              "address": "0x0200bd00",
+              "kind": "thumb"
+            },
+            "Engine_ActorFaceDirection": {
+              "address": "0x0200bd50",
+              "kind": "thumb"
+            },
+            "Engine_EventWait": {
+              "address": "0x0200bc98",
+              "kind": "thumb"
+            },
+            "Engine_ActorSetSpriteFlags": {
+              "address": "0x0200bc10",
+              "kind": "thumb"
+            },
+            "Engine_ObjectSetAnimation": {
+              "address": "0x0200bba8",
+              "kind": "thumb"
+            },
+            "Engine_TaskWait": {
+              "address": "0x0200bb08",
+              "kind": "thumb"
+            },
+            "Korosseo_CompetitorStartX": {
+              "address": "0x0200c804",
+              "kind": "data"
+            },
+            "Korosseo_CompetitorStartZ": {
+              "address": "0x0200c75c",
+              "kind": "data"
+            },
+            "Korosseo_CompetitorStartAngle": {
+              "address": "0x0200c788",
+              "kind": "data"
+            }
+          }
+        },
+        "resource_3bb": {
+          "owners": {
+            "Korosseo_RestoreCompetitor": {
+              "address": "0x02002d84",
+              "extent": 192
+            }
+          },
+          "absolute_symbols": {
+            "Engine_ActorGet": {
+              "address": "0x0200bf50",
+              "kind": "thumb"
+            },
+            "Engine_ActorSetAnimation": {
+              "address": "0x0200bf98",
+              "kind": "thumb"
+            },
+            "Engine_ActorFaceDirection": {
+              "address": "0x0200bff0",
+              "kind": "thumb"
+            },
+            "Engine_EventWait": {
+              "address": "0x0200bf30",
+              "kind": "thumb"
+            },
+            "Engine_ActorSetSpriteFlags": {
+              "address": "0x0200bea0",
+              "kind": "thumb"
+            },
+            "Engine_ObjectSetAnimation": {
+              "address": "0x0200be48",
+              "kind": "thumb"
+            },
+            "Engine_TaskWait": {
+              "address": "0x0200bda0",
+              "kind": "thumb"
+            },
+            "Korosseo_CompetitorStartX": {
+              "address": "0x0200cca4",
+              "kind": "data"
+            },
+            "Korosseo_CompetitorStartZ": {
+              "address": "0x0200cbfc",
+              "kind": "data"
+            },
+            "Korosseo_CompetitorStartAngle": {
+              "address": "0x0200cc28",
+              "kind": "data"
+            }
+          }
+        }
+      }
     }
   ]
 }

@@ -1,6 +1,3 @@
-/* NONMATCHING: 276 of 276 bytes, 14 differing halfwords (2026-09-24); the
- * descending twin of the adopted 39d:02003208. Remaining: the high registers
- * for work, speed and the count come out (sl, r9, fp) instead of (fp, sl, r9). The greg dump orders work (8 refs over 73 insns) above speed (14/142) and the count (10/140); the reference needs the count first and work last. Its twin matched because its closing loop over the count adds refs; here the count dies after the main loop. Goto loops, type and declaration changes left the order unchanged. */
 #include "TYPES.H"
 
 void Local_020031c0();
@@ -10,22 +7,13 @@ void Engine_TaskWait();
 void Engine_MapRedraw();
 
 
-
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
 struct Flags85 {
     u8 pad[85];
     u8 flags;
 };
 
+/* Slide the work position up while lowering the collected actors, easing
+ * the speed off over the last ten frames, then redraw the map. */
 void MakyuriChojo_Func02003324(void)
 {
     s32 ids[5];
@@ -41,7 +29,7 @@ void MakyuriChojo_Func02003324(void)
     n = 0;
     for (i = 0; i <= 4; i++)
         ids[i] = 66;
-    Local_020031c0(ids, *(s32 *)(work + 12), work);
+    Local_020031c0(ids, *(s32 *)(work + 12));
     for (i = 0; i <= 4; i++) {
         if (ids[i] == 66)
             break;

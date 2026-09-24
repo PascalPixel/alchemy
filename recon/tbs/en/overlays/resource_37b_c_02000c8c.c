@@ -7,7 +7,10 @@
  * dead after the last ones, so the copy coalesces), pos lands in r6 and the
  * counter in r5, and the flash loops keep 2 in r7. Loops count up with != so
  * they are not reversed; the pointer is passed as the array so the inline
- * copies it. */
+ * copies it. A shared p pointer variable (p = pos before each loop), a shared
+ * counter, and an explicit copy inside the inline all still give 96: cse
+ * folds p back into the frame address, so the copy never survives
+ * (2026-09-24, ovl8a). */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 

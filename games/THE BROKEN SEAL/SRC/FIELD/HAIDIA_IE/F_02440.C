@@ -1,7 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EFFECT.H"
 
-#define WorldMap_CreateLinkedEffects Func_02004058
 
 struct PairDetail {
     u8 unknown_00[22];
@@ -30,16 +29,14 @@ struct PairWork {
 LAYOUT_OFFSET_GUARD(PairSprite_Detail, struct PairSprite, detail, 0x28);
 LAYOUT_OFFSET_GUARD(PairObject_Parent, union PairObject, link.parent, 0x68);
 
-extern struct PairWork *gWorldMapEffectWork;
+extern struct PairWork *Data_03001f30;
 struct WorldMapVramBlock {
     u16 base;
     u16 offset;
 };
-extern struct WorldMapVramBlock gWorldMapVramBlocks[];
-void WorldMap_MoveEffectDown(union FieldObject *object);
-void WorldMap_MoveEffectUp(union FieldObject *object);
-s32 Func_0200c1f4(struct FieldSprite *sprite, s32 animation);
-void Func_0200c1dc(s32 block);
+extern struct WorldMapVramBlock Data_03001b10[];
+s32 Main_08009020(struct FieldSprite *sprite, s32 animation);
+void Main_080001b8(s32 block);
 
 /* The OAM view with attribute 1 ending in the two-bit size field. */
 struct WorldMapOam {
@@ -50,20 +47,17 @@ struct WorldMapOam {
     u16 size : 2;
 };
 
-/* NONMATCHING: 288 of 284 bytes, 18 halfword edits (2026-09-24). The size
- * field and the two-field vram table entry fix the 0x3f sharing and the +2
- * load; the child setup still computes motion_flags (+85) before the words[5]
- * store, so spin (+100) is not addressed as +85+15 and the block is 4 bytes
- * long. Twin: resource_373:02005d68. */
-void WorldMap_CreateLinkedEffects(union PairObject *parent)
+/* Haidia house: spawns the linked pair of effect objects above the parent actor, with a cue, and gives the two their update routines and priorities. */
+void HaidiaIe_Func02002440(union PairObject *parent)
 {
     union PairObject *pair[2];
     union PairObject *child;
     struct PairSprite *part;
     struct FieldSprite *sprite;
-    struct PairWork *work = gWorldMapEffectWork;
+    struct PairWork *work = Data_03001f30;
     s32 i;
 
+    Engine_AudioPlayCue(131);
     for (i = 0; i < 2; ++i) {
         child = (union PairObject *)Engine_ObjectCreate(26,
             parent->object.actor.x.fixed, parent->object.actor.y.fixed,
@@ -77,12 +71,15 @@ void WorldMap_CreateLinkedEffects(union PairObject *parent)
             child->link.parent = parent;
             if (part != NULL) {
                 sprite = &part->sprite;
-                Func_0200c1f4(sprite, 0);
+                Main_08009020(sprite, 0);
                 sprite->flags = 0;
-                Func_0200c1dc(sprite->vram_block);
+                Main_080001b8(sprite->vram_block);
                 sprite->vram_block = work->vram_block;
-                sprite->unknown_1d |= 1;
-                sprite->tile = (gWorldMapVramBlocks[sprite->vram_block].offset >> 5) & 0x3ff;
+                /* FAKEMATCH: a plain byte access; the struct field store
+                 * leaves a dead QImode zero that takes r3 from the +85
+                 * address. */
+                *(u8 *)&sprite->unknown_1d |= 1;
+                sprite->tile = (Data_03001b10[sprite->vram_block].offset >> 5) & 0x3ff;
                 sprite->full_color = 0;
                 sprite->shape = 1;
                 ((struct WorldMapOam *)sprite)->size = 2;
@@ -90,20 +87,19 @@ void WorldMap_CreateLinkedEffects(union PairObject *parent)
             }
         }
     }
-    /* The reference dereferences both final entries without another null check. */
     {
         union PairObject *p = pair[0];
         struct FieldSprite *sp = p->object.actor.sprite;
 
-        p->object.actor.update = WorldMap_MoveEffectDown;
-        sp->priority = 1;
+        p->object.actor.update = (void (*)(union FieldObject *))0x0200a3ed;
+        sp->priority = 2;
     }
     {
-        union PairObject *p = pair[1];
-        struct FieldSprite *sp = p->object.actor.sprite;
+        struct FieldActor *p = &pair[1]->object.actor;
+        struct FieldSprite *sp = p->sprite;
 
-        sp->priority = 1;
-        p->object.actor.update = WorldMap_MoveEffectUp;
-        p->object.actor.priority_flags = 2;
+        sp->priority = 2;
+        p->update = (void (*)(union FieldObject *))0x0200a39d;
+        p->priority_flags = 2;
     }
 }

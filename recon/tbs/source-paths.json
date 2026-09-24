@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "main:08006e24": {
+      "name": "ProgramFlashSectorWithEraseRetry",
+      "source": "SYSTEM/SAVE/PROGRAM_FLASH_SECTOR_WITH_ERASE_RETRY.C"
+    },
     "main:08006d50": {
       "name": "EraseFlashSector",
       "source": "SYSTEM/SAVE/ERASE_FLASH_SECTOR.C"

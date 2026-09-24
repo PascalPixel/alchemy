@@ -600,10 +600,8 @@ draw_name:
                 i++;
             Func_0801965c(i, name, 14);
         } else {
-            for (i = 0; i <= 13; ) {
-                j = unit->name[i];
-                name[i] = j;
-                i++;
+            for (i = 0; i <= 13; i++) {
+                name[i] = j = unit->name[i];
                 if (j == 0)
                     break;
             }

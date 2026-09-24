@@ -1861,6 +1861,12 @@
     "main:0802281c": {
       "name": "BattleLayout_HighlightPartyPanels"
     },
+    "main:08025200": {
+      "name": "ItemList_SelectEntry"
+    },
+    "main:0802592c": {
+      "name": "BattleMenu_RunActionSelection"
+    },
     "main:0801e858": {
       "name": "UiText_DrawString"
     },

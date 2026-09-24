@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_3a5:02001c1c": {
+      "name": "RamakanSabaku_Func02001c1c",
+      "source": "FIELD/RAMAKAN_SABAKU/F_01C1C.C"
+    },
     "resource_39f:020022c0": {
       "name": "MogoruMori_Func020022c0",
       "source": "FIELD/MOGORU_MORI/F_022C0.C"

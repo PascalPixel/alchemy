@@ -75172,6 +75172,38 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "scene-3a5-02001c1c",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/RAMAKAN_SABAKU/F_01C1C.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3a5",
+      "absolute_symbols": {
+        "Main_080001a8": {
+          "address": "0x02009cbc",
+          "kind": "thumb"
+        },
+        "Main_080001d0": {
+          "address": "0x02009cd4",
+          "kind": "thumb"
+        },
+        "Engine_VramLoad": {
+          "address": "0x02009ccc",
+          "kind": "thumb"
+        },
+        "Engine_TaskAddCallback": {
+          "address": "0x02009c94",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02001c1c",
+          "extent": 90,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

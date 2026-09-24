@@ -71951,6 +71951,74 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "common-imiru-fuchin-f-017e4",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/IMIRU_FUCHIN/F_017E4.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_39a",
+      "absolute_symbols": {
+        "ImiruFuchin_ApplyRoomLayout": {
+          "address": "0x02009948",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagIsSet": {
+          "address": "0x0200a318",
+          "kind": "thumb"
+        },
+        "FieldScene_RunScene39a_02001b1c": {
+          "address": "0x02009b1c",
+          "kind": "thumb"
+        },
+        "OverlayObject_CreateAndInitialize": {
+          "address": "0x02008ed8",
+          "kind": "thumb"
+        },
+        "Engine_ActorGet": {
+          "address": "0x0200a350",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpritePriority": {
+          "address": "0x0200a398",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetChildValue": {
+          "address": "0x0200a388",
+          "kind": "thumb"
+        },
+        "Main_0808a408": {
+          "address": "0x0200a3f0",
+          "kind": "thumb"
+        },
+        "Engine_MapCopyCellsTo": {
+          "address": "0x0200a2d8",
+          "kind": "thumb"
+        },
+        "Engine_ColorBufferApplySource": {
+          "address": "0x0200a3b8",
+          "kind": "thumb"
+        },
+        "Engine_ColorBufferApplyTarget": {
+          "address": "0x0200a3b0",
+          "kind": "thumb"
+        },
+        "Engine_ColorBufferInterpolate": {
+          "address": "0x0200a3c0",
+          "kind": "thumb"
+        },
+        "Engine_TaskWait": {
+          "address": "0x0200a260",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x020017e4",
+          "extent": 356,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_39a:020017e4": {
+      "name": "ImiruFuchin_Func020017e4",
+      "source": "FIELD/COMMON/IMIRU_FUCHIN/F_017E4.C"
+    },
     "resource_39e:02000518": {
       "name": "ShianJiin_Func02000518",
       "source": "FIELD/COMMON/SHIAN_JIIN/F_00518.C"

@@ -6366,7 +6366,8 @@
       "source": "FIELD/VINASU_CHOJO/SCRIPTED_PRESENTATION.C"
     },
     "resource_3c9:0200423c": {
-      "name": "Scene_RunExtendedPresentation"
+      "name": "VinasuChojo_RunActorTransition",
+      "source": "FIELD/VINASU_CHOJO/ACTOR_TRANSITION.C"
     },
     "resource_376:02000658": {
       "name": "FieldScene_RunLongPresentationSequence",

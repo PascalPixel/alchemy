@@ -3682,9 +3682,9 @@
       ]
     },
     {
-      "id": "candidate-resource-3c9-0200423c",
+      "id": "vinasu-chojo-actor-transition",
       "game": "tbs",
-      "source": "recon/tbs/en/overlays/resource_3c9_c_0200423c.c",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/VINASU_CHOJO/ACTOR_TRANSITION.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c9",
       "absolute_symbols": {
@@ -4265,7 +4265,7 @@
         {
           "address": "0x0200423c",
           "extent": 1692,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ]
     },

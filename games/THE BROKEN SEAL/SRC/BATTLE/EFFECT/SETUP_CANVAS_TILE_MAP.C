@@ -1,10 +1,9 @@
-/* 2026-09-24: hand-written, 11 differing halfwords (was 22), same size apart
-   from the trailing alignment. Mid-function pools and the tile-map loop
-   match, and the IWRAM clear/fill routines are declared value-returning,
-   which loads each destination before the routine as the ROM does.
-   Residual: global allocation in the tile-map loop; the map base, row
-   counter and row base take r4/r5/r6 where the reference has r5/r6/r4. */
-
+/* Battle effect: set up the canvas tile layer. Fade the battle palette,
+   clear the canvas tiles and fill the window map, lay out the 16 by 16
+   canvas tile map (columns past 15 blank), then set the display, window and
+   blend registers and clear the canvas buffers. The IWRAM clear and fill
+   routines are called through value-returning pointers, which loads each
+   destination before the routine as the ROM does. */
 #include "TYPES.H"
 #include "SYSTEM.H"
 
@@ -35,17 +34,15 @@ extern u16 Data_03001ad0[];
 void Runtime_ApplyValueToWork7818(void);
 void BattlePresentation_ConfigurePaletteFadeFar(s32 mode, s32 fade, s32 arg);
 
-void Func_080cdd58(void)
+void BattleFx_SetupCanvasTileMap(void)
 {
     u8 **cells = (u8 **)0x03001e74;
     void *canvas = cells[31];
     struct BattleScreen *screen = (struct BattleScreen *)cells[0];
     struct BattleLayer *layer = (struct BattleLayer *)cells[35];
-    u16 *map;
     s32 row;
     s32 col;
     s32 off;
-    s32 base;
 
     Runtime_ApplyValueToWork7818();
     BattlePresentation_ConfigurePaletteFadeFar(2, screen->palette_fade, 0);
@@ -54,18 +51,13 @@ void Func_080cdd58(void)
     ClearWords((ClearFn)0x03000164, (void *)0x06003fc0, 64);
     FillWords((FillFn)0x03000168, (void *)0x0600f900, 0x200, -1);
     off = 0;
-    base = 0;
     for (row = 0; row != 16; row++) {
-        s32 tile = base + 0x100;
-        for (col = 0; col != 32; col++) {
+        for (col = 0; col != 32; col++, off += 2) {
             if (col > 15)
                 *(volatile u16 *)(0x0600fb00 + off) = 0xff;
             else
-                *(volatile u16 *)(0x0600fb00 + off) = tile;
-            tile++;
-            off += 2;
+                *(volatile u16 *)(0x0600fb00 + off) = row * 16 + 0x100 + col;
         }
-        base += 16;
     }
     *(volatile u16 *)0x04000000 = 0x7741;
     *(volatile u16 *)0x0400000a = 0x1f81;

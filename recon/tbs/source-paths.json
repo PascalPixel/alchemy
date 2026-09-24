@@ -20826,6 +20826,10 @@
     "main:080b5b18": {
       "name": "BattleParty_ResetActiveRuntimeFields",
       "source": "BATTLE/PARTY/RESET_ACTIVE_RUNTIME_FIELDS.C"
+    },
+    "main:080cdd58": {
+      "name": "BattleFx_SetupCanvasTileMap",
+      "source": "BATTLE/EFFECT/SETUP_CANVAS_TILE_MAP.C"
     }
   },
   "symbols": {

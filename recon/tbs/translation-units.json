@@ -73280,6 +73280,38 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "haidia-dou-scene-script",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_DOU/SCENE_SCRIPT.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3a6",
+      "absolute_symbols": {
+        "Engine_TaskWait": {
+          "address": "0x02009c1c",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpritePriority": {
+          "address": "0x02009d1c",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagClear": {
+          "address": "0x02009c9c",
+          "kind": "thumb"
+        },
+        "Local_02001984": {
+          "address": "0x02009984",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x020016f0",
+          "extent": 88,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

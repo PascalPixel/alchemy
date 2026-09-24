@@ -76707,6 +76707,140 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "scene-3ba-020031c0",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/KOROSSEO/PATH_RIVAL.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3ba",
+      "absolute_symbols": {
+        "Engine_ActorGet": {
+          "address": "0x0200bcb8",
+          "kind": "thumb"
+        },
+        "Engine_ObjectSetAnimation": {
+          "address": "0x0200bba8",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagIsSet": {
+          "address": "0x0200bc58",
+          "kind": "thumb"
+        },
+        "Engine_ObjectSetPosition": {
+          "address": "0x0200bbd8",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagSet": {
+          "address": "0x0200bc60",
+          "kind": "thumb"
+        },
+        "Engine_ObjectSetScript": {
+          "address": "0x0200bbb0",
+          "kind": "thumb"
+        },
+        "Math_Atan2": {
+          "address": "0x0200bb28",
+          "kind": "thumb"
+        },
+        "Korosseo_RivalFinishScript": {
+          "address": "0x0200c6a8",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x020031c0",
+          "extent": 480,
+          "state": "exact-c"
+        }
+      ],
+      "instances": {
+        "resource_3bb": {
+          "owners": {
+            "Korosseo_UpdatePathRival": {
+              "address": "0x02003458",
+              "extent": 480
+            }
+          },
+          "absolute_symbols": {
+            "Engine_ActorGet": {
+              "address": "0x0200bf50",
+              "kind": "thumb"
+            },
+            "Engine_ObjectSetAnimation": {
+              "address": "0x0200be48",
+              "kind": "thumb"
+            },
+            "Engine_GameFlagIsSet": {
+              "address": "0x0200bee8",
+              "kind": "thumb"
+            },
+            "Engine_ObjectSetPosition": {
+              "address": "0x0200be78",
+              "kind": "thumb"
+            },
+            "Engine_GameFlagSet": {
+              "address": "0x0200bef0",
+              "kind": "thumb"
+            },
+            "Engine_ObjectSetScript": {
+              "address": "0x0200be50",
+              "kind": "thumb"
+            },
+            "Math_Atan2": {
+              "address": "0x0200bdc0",
+              "kind": "thumb"
+            },
+            "Korosseo_RivalFinishScript": {
+              "address": "0x0200cb48",
+              "kind": "data"
+            }
+          }
+        },
+        "resource_3bc": {
+          "owners": {
+            "Korosseo_UpdatePathRival": {
+              "address": "0x02003ef0",
+              "extent": 480
+            }
+          },
+          "absolute_symbols": {
+            "Engine_ActorGet": {
+              "address": "0x0200ca18",
+              "kind": "thumb"
+            },
+            "Engine_ObjectSetAnimation": {
+              "address": "0x0200c8e0",
+              "kind": "thumb"
+            },
+            "Engine_GameFlagIsSet": {
+              "address": "0x0200c9b0",
+              "kind": "thumb"
+            },
+            "Engine_ObjectSetPosition": {
+              "address": "0x0200c910",
+              "kind": "thumb"
+            },
+            "Engine_GameFlagSet": {
+              "address": "0x0200c9b8",
+              "kind": "thumb"
+            },
+            "Engine_ObjectSetScript": {
+              "address": "0x0200c8e8",
+              "kind": "thumb"
+            },
+            "Math_Atan2": {
+              "address": "0x0200c860",
+              "kind": "thumb"
+            },
+            "Korosseo_RivalFinishScript": {
+              "address": "0x0200dad0",
+              "kind": "data"
+            }
+          }
+        }
+      }
     }
   ]
 }

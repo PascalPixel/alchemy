@@ -1,6 +1,18 @@
 {
   "format": 3,
   "owners": {
+    "resource_3bc:02003ef0": {
+      "name": "Korosseo_UpdatePathRival",
+      "source": "FIELD/COMMON/KOROSSEO/PATH_RIVAL.C"
+    },
+    "resource_3bb:02003458": {
+      "name": "Korosseo_UpdatePathRival",
+      "source": "FIELD/COMMON/KOROSSEO/PATH_RIVAL.C"
+    },
+    "resource_3ba:020031c0": {
+      "name": "Korosseo_UpdatePathRival",
+      "source": "FIELD/COMMON/KOROSSEO/PATH_RIVAL.C"
+    },
     "resource_3b4:02001fd8": {
       "name": "TakaraAshiba_UpdateItemIcons",
       "source": "FIELD/TAKARA_ASHIBA/ITEM_ICONS.C"

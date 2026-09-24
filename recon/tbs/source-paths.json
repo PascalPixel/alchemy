@@ -1936,7 +1936,10 @@
       "name": "BattleFx_UpdateObjectMotionScaleAndLinkedAngle",
       "source": "BATTLE/EFFECT/UPDATE_OBJECT_MOTION_SCALE_AND_LINKED_ANGLE.C"
     },
-    "main:080a2268": { "name": "Render_SetTilemapFlagRect", "source": "GRAPHICS/TILE/SET_FLAG_RECT.C" },
+    "main:080a2268": {
+      "name": "Render_SetTilemapFlagRect",
+      "source": "GRAPHICS/TILE/SET_FLAG_RECT.C"
+    },
     "main:080ad608": {
       "name": "FourObjectMotion_ReplaceSlot"
     },
@@ -2052,7 +2055,10 @@
     "main:080912a8": {
       "name": "BattleFx_ClampRgb555Component"
     },
-    "main:0809728c": { "name": "EventObject_Initialize", "source": "FIELD/COMMON/EVENT_OBJECT_INITIALIZE.C" },
+    "main:0809728c": {
+      "name": "EventObject_Initialize",
+      "source": "FIELD/COMMON/EVENT_OBJECT_INITIALIZE.C"
+    },
     "main:08099678": {
       "name": "MapEvent_CheckObjectTile",
       "source": "FIELD/COMMON/MAP/EVENTS_CHECK_OBJECT_TILE.C"
@@ -2391,7 +2397,10 @@
     "main:080187ac": {
       "name": "UiText_GetResourceDimensions"
     },
-    "main:0801a32c": { "name": "RenderResource_LoadTableEntry", "source": "GRAPHICS/RENDER/LOAD_TABLE_ENTRY.C" },
+    "main:0801a32c": {
+      "name": "RenderResource_LoadTableEntry",
+      "source": "GRAPHICS/RENDER/LOAD_TABLE_ENTRY.C"
+    },
     "main:0801e74c": {
       "name": "UiText_DrawResource",
       "source": "GRAPHICS/TEXT/RENDER.C"
@@ -10158,7 +10167,8 @@
       "source": "FIELD/KORASHIAMU_IRIGUCHI/BRANCHING_ACTOR_PRESENTATION.C"
     },
     "resource_3b9:02000dcc": {
-      "name": "Scene_RunLargeActorPresentationSetup"
+      "name": "KorashiamuIriguchi_RunGatherScene",
+      "source": "FIELD/KORASHIAMU_IRIGUCHI/GATHER_SCENE.C"
     },
     "resource_3b1:020052f4": {
       "name": "FieldScene_RunFormationAndEffectPresentation",
@@ -10218,7 +10228,8 @@
       "source": "FIELD/SORU_STAR/PARTY_INTRO.C"
     },
     "resource_3ba:02001214": {
-      "name": "Scene_RunMapEntranceCoordinator"
+      "name": "KorosseoKawa_RunStageIntro",
+      "source": "FIELD/KOROSSEO_KAWA/STAGE_INTRO.C"
     },
     "resource_3ba:020016ec": {
       "name": "Scene_RunSceneFourCoordinator",
@@ -16766,10 +16777,12 @@
       "source": "FIELD/KOROSSEO_KABE/TASK.C"
     },
     "resource_3bb:020010dc": {
-      "name": "FieldScene_ConfigureActorFormation"
+      "name": "Korosseo_RunGreetScene",
+      "source": "FIELD/COMMON/KOROSSEO/GREET_SCENE.C"
     },
     "resource_3bb:020012f0": {
-      "name": "FieldScene_RunFirstActorInteraction"
+      "name": "KorosseoKabe_RunStageIntro",
+      "source": "FIELD/KOROSSEO_KABE/STAGE_INTRO.C"
     },
     "resource_3bb:02001424": {
       "name": "FieldScene_RunSecondActorInteraction",
@@ -16975,7 +16988,8 @@
       "source": "FIELD/KOROSSEO_MARUTA/LOG_ROLLING.C"
     },
     "resource_3bc:02001a0c": {
-      "name": "FieldScene_ArrangeFourActors"
+      "name": "Korosseo_RunGreetScene",
+      "source": "FIELD/COMMON/KOROSSEO/GREET_SCENE.C"
     },
     "resource_3bc:02001c20": {
       "name": "FieldScene_RunDualArrivalSequence",
@@ -16986,7 +17000,8 @@
       "source": "FIELD/KOROSSEO_MARUTA/LOG_ROLLING.C"
     },
     "resource_3bc:02001f90": {
-      "name": "FieldScene_RunTimedArrivalSequence"
+      "name": "KorosseoMaruta_RunStageIntro",
+      "source": "FIELD/KOROSSEO_MARUTA/STAGE_INTRO.C"
     },
     "resource_3bc:020020f0": {
       "name": "FieldScene_RunFourStepActorMotion",
@@ -18072,7 +18087,8 @@
       "source": "FIELD/RAMAKAN_SABAKU/ENTRY_STATE.C"
     },
     "resource_3a5:0200088c": {
-      "name": "FieldScene_ConfigureAlternateActorLayout"
+      "name": "RamakanSabaku_ConfigureAreaLayout",
+      "source": "FIELD/RAMAKAN_SABAKU/AREA_LAYOUT.C"
     },
     "resource_3a5:02001874": {
       "name": "FieldScene_RunScene3a5_02001874",
@@ -19770,6 +19786,66 @@
     "main:080935d4": {
       "name": "BattleFx_StepRatioTransition",
       "source": "BATTLE/EFFECT/STEP_RATIO_TRANSITION.C"
+    },
+    "resource_3c4:02000e20": {
+      "name": "BabiChika_UpdateTrackedActor",
+      "source": "FIELD/BABI_CHIKA/TRACKED_ACTOR.C"
+    },
+    "resource_3b2:020013ac": {
+      "name": "TakaraShima_RunAreaEntry",
+      "source": "FIELD/TAKARA_SHIMA/AREA_ENTRY.C"
+    },
+    "resource_3b1:0200037c": {
+      "name": "FuneHeya_GetStepScript",
+      "source": "FIELD/FUNE_HEYA/STEP_SCRIPT.C"
+    },
+    "resource_3b9:0200007c": {
+      "name": "KorashiamuIriguchi_GetAreaScript",
+      "source": "FIELD/KORASHIAMU_IRIGUCHI/AREA_SCRIPT.C"
+    },
+    "resource_3a4:02001678": {
+      "name": "ArutinYama_GetAreaScript",
+      "source": "FIELD/ARUTIN_YAMA/AREA_SCRIPT.C"
+    },
+    "resource_3c9:020037c4": {
+      "name": "VinasuChojo_UpdateBeamActors",
+      "source": "FIELD/VINASU_CHOJO/BEAM_ACTORS.C"
+    },
+    "resource_3b3:020021ac": {
+      "name": "TakaraHashira_RaiseActorFourteen",
+      "source": "FIELD/TAKARA_HASHIRA/RAISE_ACTOR.C"
+    },
+    "resource_3a4:02002020": {
+      "name": "ArutinYama_RunAreaScene",
+      "source": "FIELD/ARUTIN_YAMA/AREA_SCENE.C"
+    },
+    "resource_3af:020019c0": {
+      "name": "FuneKanpan_PlaceDeckActors",
+      "source": "FIELD/FUNE_KANPAN/DECK_ACTORS.C"
+    },
+    "resource_3a5:02001638": {
+      "name": "RamakanSabaku_EnterArea",
+      "source": "FIELD/RAMAKAN_SABAKU/ENTER_AREA.C"
+    },
+    "resource_3bb:02002d84": {
+      "name": "Korosseo_RestoreCompetitor",
+      "source": "FIELD/COMMON/KOROSSEO/RESTORE_COMPETITOR.C"
+    },
+    "resource_3ba:02002aec": {
+      "name": "Korosseo_RestoreCompetitor",
+      "source": "FIELD/COMMON/KOROSSEO/RESTORE_COMPETITOR.C"
+    },
+    "resource_3bc:0200381c": {
+      "name": "Korosseo_RestoreCompetitor",
+      "source": "FIELD/COMMON/KOROSSEO/RESTORE_COMPETITOR.C"
+    },
+    "resource_3af:02001f90": {
+      "name": "FuneKanpan_RunDeckCrewScene",
+      "source": "FIELD/FUNE_KANPAN/DECK_CREW_SCENE.C"
+    },
+    "resource_3c8:02001d48": {
+      "name": "VinasuHeya_RunCellPushScene",
+      "source": "FIELD/VINASU_HEYA/FLAG_301_CELL_PUSH.C"
     }
   },
   "symbols": {

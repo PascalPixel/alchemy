@@ -80020,6 +80020,62 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "scene-3cb-020002d8",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/MENU/LINK_LOBBY/F_002D8.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3cb",
+      "absolute_symbols": {
+        "Engine_GameFlagIsSet": {
+          "address": "0x0200980c",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagClear": {
+          "address": "0x0200981c",
+          "kind": "thumb"
+        },
+        "Engine_EventBegin": {
+          "address": "0x02009844",
+          "kind": "thumb"
+        },
+        "Engine_EventSetMessage": {
+          "address": "0x02009884",
+          "kind": "thumb"
+        },
+        "Engine_EventOpenMessage": {
+          "address": "0x0200988c",
+          "kind": "thumb"
+        },
+        "Engine_TaskWait": {
+          "address": "0x02009714",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagSet": {
+          "address": "0x02009814",
+          "kind": "thumb"
+        },
+        "Engine_EventEnd": {
+          "address": "0x0200984c",
+          "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x020002d8",
+          "extent": 104,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

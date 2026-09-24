@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_3cb:020002d8": {
+      "name": "LinkLobby_Func020002d8",
+      "source": "MENU/LINK_LOBBY/F_002D8.C"
+    },
     "resource_3c0:02000f50": {
       "name": "SuharaSabaku_Func02000f50",
       "source": "FIELD/SUHARA_SABAKU/F_00F50.C"

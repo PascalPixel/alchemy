@@ -1,6 +1,14 @@
-/* NONMATCHING: 394 of 396 bytes, 56 halfword edits (2026-09-24). Hand-written from the
- * resolved jump-table disassembly as a single-overlay unit binding Engine_* at
- * their import veneers. Remaining: the priority mask is 0xf3 where the reference derives -13 from the 2 in r5; the BG priorities 2 and 3 are pool constants whose short range puts the reference pool after the blend registers (the candidate pools at the end and derives 0x04000050 from 0x0400000a); the two layer offsets fold to +320/+368 where the reference keeps base +308/+356 with field +12 (56 edits). */
+/* NONMATCHING: 396 of 396 bytes, 7 halfword edits (2026-09-24). Hand-written
+ * from the resolved disassembly as a single-overlay unit binding Engine_* at
+ * their import veneers. Matched: the sprite priorities are the FieldSprite
+ * bitfields read through an s32 view of actor->sprite (so the pointer reloads
+ * after each byte store and the mask is -13 derived from the 2 in r5); the BG
+ * priorities 2 and 3 are one-halfword structs (short pool reach puts the pool
+ * after the blend registers, as in the ROM); the layers go through a struct
+ * MapLayer pointer (base +308, field +12). Remaining: sched2 hoists the
+ * BLDCNT address load above the BG1CNT store (the store is class 2 against
+ * the cnt spill's output dependence); the reference stores BG1CNT first, then
+ * loads 0x2648 before the address (7 edits). */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
@@ -38,7 +46,8 @@ extern u8 Data_00000003[];
 
 #define SPRITE_BYTES(actor) ((u8 *)(actor)->sprite)
 
-#define SET_PRIORITY(actor, n) (SPRITE_BYTES(actor)[n] = (s32)(SPRITE_BYTES(actor)[n] & ~0xc) | 4)
+#define SPRITE_OF(actor) ((struct FieldSprite *)*(s32 *)((u8 *)(actor) + 0x50))
+#define SET_PRIORITY(actor, n) ((n) == 9 ? (SPRITE_OF(actor)->priority = 1) : (SPRITE_OF(actor)->second_priority = 1))
 
 #define REG_BG1CNT (*(volatile u16 *)0x0400000a)
 #define REG_BG2CNT (*(volatile u16 *)0x0400000c)
@@ -94,16 +103,34 @@ s32 Local_02000da4(void)
         SET_PRIORITY(actor, 9);
         SET_PRIORITY(actor, 21);
     }
-    cnt = (REG_BG3CNT & 0xfffc) | (u16)(u32)Data_00000002;
-    REG_BG3CNT = cnt;
-    cnt = (REG_BG2CNT & 0xfffc) | (u16)(u32)Data_00000003;
-    REG_BG2CNT = cnt;
-    cnt = (REG_BG1CNT & 0xfffc) | (u16)(u32)Data_00000003;
-    REG_BG1CNT = cnt;
-    REG_BLDCNT = 0x2648;
-    REG_BLDALPHA = 0x810;
-    map->layers[6].y += -0x5a0000;
-    map->layers[7].y += -0x5a0000;
+    {
+        struct Half { u16 v; } two, three;
+
+        cnt = REG_BG3CNT & 0xfffc;
+        two.v = 2;
+        cnt |= two.v;
+        REG_BG3CNT = cnt;
+        cnt = REG_BG2CNT & 0xfffc;
+        three.v = 3;
+        cnt |= three.v;
+        REG_BG2CNT = cnt;
+        cnt = (REG_BG1CNT & 0xfffc) | three.v;
+        REG_BG1CNT = cnt;
+    }
+    {
+        s32 v = 0x2648;
+
+        REG_BLDCNT = v;
+        v = 0x810;
+        REG_BLDALPHA = v;
+    }
+    {
+        struct MapLayer *layer = map->layers + 6;
+
+        layer->y += -0x5a0000;
+        layer = map->layers + 7;
+        layer->y += -0x5a0000;
+    }
     Engine_MapRedraw();
     FieldScene_ConfigureFixedPointValues();
     return 0;

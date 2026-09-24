@@ -81364,6 +81364,42 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "scene-3a4-02002a48",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/F_02A48.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3a4",
+      "absolute_symbols": {
+        "Engine_RandomNext": {
+          "address": "0x0200ba90",
+          "kind": "thumb"
+        },
+        "Engine_ObjectSetPalette": {
+          "address": "0x0200bc20",
+          "kind": "thumb"
+        },
+        "Engine_ObjectDispatchRelease": {
+          "address": "0x0200bae8",
+          "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02002a48",
+          "extent": 272,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

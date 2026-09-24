@@ -1,16 +1,17 @@
-/* NONMATCHING: 264 of 272 bytes, 34 halfword edits (2026-09-24). Hand-written from the
- * resolved jump-table disassembly as a single-overlay unit binding Engine_* at
- * their import veneers. Remaining: 87 halfwords: control flow matches (two switches on the drift direction); the reference puts the 0x8000 compare and branch constants in r1, so its branch tails differ and are not cross-jumped as ours are */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
 #define TIMER(object) (*(s16 *)&(object)->unknown_64)
 
-extern s32 ArutinYama_DriftDirection;
+/* The way the wind blows the drifting leaves: 0 or 0x8000. */
+extern s32 Data_0200d23c;
 
-void Local_02002a48(struct FieldActor *object)
+/* A drifting leaf: blown along the wind with a random wobble while its
+ * timer runs, shrinking and settling once it is low, flickering to palette
+ * 7 at random; released when its lifetime ends. */
+void ArutinYama_Func02002a48(struct FieldActor *object)
 {
-    switch (ArutinYama_DriftDirection) {
+    switch (Data_0200d23c) {
     case 0:
         object->x.fixed += (TIMER(object) << 12) + ((s32)((((u32)(Engine_RandomNext() << 1) >> 16) - 1) << 16) >> 1);
         break;
@@ -19,7 +20,7 @@ void Local_02002a48(struct FieldActor *object)
         break;
     }
     if (TIMER(object) <= 3) {
-        switch (ArutinYama_DriftDirection) {
+        switch (Data_0200d23c) {
         case 0:
             object->x.fixed += 0x8000;
             break;
@@ -28,7 +29,7 @@ void Local_02002a48(struct FieldActor *object)
             break;
         }
         object->scale_x += 0x1999;
-        object->scale_y += -0x2590cc9;
+        object->scale_y -= 0xccc;
     } else {
         object->z.fixed += 0x13333;
         object->scale_x += 0x7ae;
@@ -36,7 +37,7 @@ void Local_02002a48(struct FieldActor *object)
     }
     if ((u32)(TIMER(object) * Engine_RandomNext()) >> 16 == 0)
         Engine_ObjectSetPalette(object, 7);
-    if (object->unknown_64 != 0)
+    if (TIMER(object) != 0)
         TIMER(object) -= 2;
     else
         TIMER(object) = ((u32)(Engine_RandomNext() * 5) >> 16) * 2 + 2;

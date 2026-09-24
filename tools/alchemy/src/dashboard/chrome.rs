@@ -41,7 +41,7 @@ fn theme() -> String {
     css.push_str(&glyphs::lettering_css());
     if let Some(stamp) = &assets.icons {
         css.push_str(&format!(
-            ".icon{{background-image:url(/cache/icons-{stamp}.png)}}"
+            ".icon{{-webkit-mask-image:url(/cache/icons-{stamp}.png);mask-image:url(/cache/icons-{stamp}.png)}}"
         ));
     }
     css
@@ -56,7 +56,7 @@ fn tabs(current: &str) -> String {
                 .unwrap_or(0);
             let icon = if icons {
                 format!(
-                    "<i class=\"icon\" style=\"background-position:-{}px 0\" aria-hidden=\"true\"></i>",
+                    "<i class=\"icon\" style=\"-webkit-mask-position:-{0}px 0;mask-position:-{0}px 0\" aria-hidden=\"true\"></i>",
                     slot as u32 * LINE * PIXEL
                 )
             } else {

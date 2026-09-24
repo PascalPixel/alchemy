@@ -21948,16 +21948,16 @@
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3ca",
       "absolute_symbols": {
+        "Engine_EventRequestExit": {
+          "address": "0x02009464",
+          "kind": "thumb"
+        },
         "Func_02001172": {
           "address": "0x020090d4",
           "kind": "thumb"
         },
         "Func_020011fc": {
           "address": "0x02009188",
-          "kind": "thumb"
-        },
-        "Func_020014c2": {
-          "address": "0x02009464",
           "kind": "thumb"
         },
         "Func_0200179c": {

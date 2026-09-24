@@ -81316,6 +81316,54 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "scene-3b7-0200173c",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/TOREBI_IZUMI/F_0173C.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3b7",
+      "absolute_symbols": {
+        "Engine_AudioPlayCue": {
+          "address": "0x020099c4",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetAnimation": {
+          "address": "0x02009954",
+          "kind": "thumb"
+        },
+        "Engine_ActorGet": {
+          "address": "0x0200993c",
+          "kind": "thumb"
+        },
+        "Engine_ObjectSetAnimation": {
+          "address": "0x0200988c",
+          "kind": "thumb"
+        },
+        "OverlayObject_SetField54": {
+          "address": "0x02008e44",
+          "kind": "thumb"
+        },
+        "Engine_TaskWait": {
+          "address": "0x02009864",
+          "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x0200173c",
+          "extent": 280,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

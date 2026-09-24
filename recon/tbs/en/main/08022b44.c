@@ -16,7 +16,22 @@
  * and-mask zero (set before the slot-load call) for the later tile zero, so
  * it crosses the call and takes r8. Storing the bytes through a u8 cast
  * removes the mask and the hoist, but the static chain is then copied to r7
- * and x moves to r9. */
+ * and x moves to r9.
+ * Second pass (2026-09-24): the ROM needs a call-crossing zero in r5 so the
+ * chain loses the low registers and stays in r9. The mask zero gets r5 from
+ * local-alloc only while its use sits right after entry is formed (r7 is
+ * the frame pointer to local-alloc, r4 is call-used); stored after the
+ * attribute word it takes r8 or r9. Written in ROM order with
+ * `register u32 zero asm("r5"); ... zero = 0; entry->tile.value = zero;`
+ * allocation and store order match and 3 halfwords remain: sched2 issues the
+ * reload copy `adds r7, r6, #0` after the x/y halfword stores. In sched2 the
+ * copy and both stores have priority 20; the stores win the tie on
+ * dependant count (4 against 2) because they may alias the attribute word
+ * and tile stores (RenderOutput has char members, so its alias set
+ * conflicts with every set, and the union stores are set 0). Local bitfield
+ * views of RenderOutput, flat sprite structs, u32 casts, the store order of
+ * x/y/sentinel/word/zero (all 120 orders), a two-step entry and u8 casts on
+ * one4/one5 moved nothing further. */
 #include "RENDER_INPUT.H"
 
 /* Preview setting or resting one Djinn: toggle it on the live owner record,

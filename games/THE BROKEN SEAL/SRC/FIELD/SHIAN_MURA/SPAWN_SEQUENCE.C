@@ -42,59 +42,18 @@ extern u8 Data_020097a4[];
 extern u8 Data_020097ba[];
 extern u8 Data_020097d0[];
 
-void *Func_020013ca(s32, s32, s32, s32);
-void *Func_02001422(s32, s32, s32, s32);
 void Func_020017be();
-u8 *Func_0200172e();
-u8 *Func_02001748();
 void Func_020004f0();
 typedef s32(*IwramIntegerSquareRoot)(s32);
-u8 *Func_02001d22(s32 actorId);
-void Func_02001cf0();
-s32 Func_020019cc();
-u8 *Func_020019d8();
-s32 Func_020019ee();
-u8 *Func_020019fc();
 s32 Func_02001a3e_a();
-s32 Func_02001a48();
-u8 *Func_02001a66();
-s32 Func_02001a76();
-s32 Func_02001a84();
-s32 Func_02001a92();
-s32 Func_02001abe();
-u8 *Func_02001ac6();
 s32 Func_02001ad4();
-s32 Func_02001ae4();
 s32 Func_02001afe();
-s32 Func_02001b0e();
-u8 *Func_02001b2a();
-u8 *Func_02001b2a_a();
-s32 Func_02001b36();
-u8 *Func_02001b3e();
-s32 Func_02001b70();
-s32 Func_02001b78();
-s32 Func_02001b98();
-s32 Func_02001ba0();
-s32 Func_02001c30();
-s32 Func_02001c3e();
 s32 Func_02001c68();
-s32 Func_02001ca2();
-u8 *Func_02001cb0();
 void Func_02001d0a();
 void Func_02001cf8();
 s32 Func_02001d44();
 s32 Func_02001d54();
-s32 Func_02001d60();
-s32 Func_02001d68();
 s32 Func_020021c0();
-s32 Func_02002442();
-s32 Func_0200244c_a();
-s32 Func_02002458();
-s32 Func_02002460();
-s32 Func_02002468();
-s32 Func_02002470();
-s32 Func_02002478();
-s32 Func_020024f2();
 
 /* Named shorthand for one fixed effect request, in overlay resource_3a0. */
 
@@ -197,7 +156,7 @@ void SetEffectRecordMode(struct EffectWork *work, s32 mode)
 
 void *SceneEffect_SpawnPrimary(s32 x, s32 y, s32 z, s32 kind)
 {
-    u8 *effect = Func_020013ca(kind, x, y, z);
+    u8 *effect = Object_Create(kind, x, y, z);
 
     if (effect != NULL) {
         u8 *sprite = *(u8 **)(effect + 0x50);
@@ -220,7 +179,7 @@ void *SceneEffect_SpawnPrimary(s32 x, s32 y, s32 z, s32 kind)
 
 void *SceneEffect_SpawnSecondary(s32 x, s32 y, s32 z, s32 kind)
 {
-    u8 *effect = Func_02001422(kind, x, y, z);
+    u8 *effect = Object_Create(kind, x, y, z);
 
     if (effect != NULL) {
         u8 *sprite = *(u8 **)(effect + 0x50);
@@ -256,14 +215,14 @@ void SceneEffect_RequestFixedEffect(void)
 /* Complete entity-19 sprite-counter adjustment. */
 void SceneEffect_AdvanceRotatingSprite(void)
 {
-    u8 *entity = Func_0200172e(19);
+    u8 *entity = Actor_Get(19);
     u8 *sprite = *(u8 **)(entity + 80);
     *(u16 *)(sprite + 30) += 0x1400;
 }
 
 void SceneEffect_SpawnPeriodicEffect(void)
 {
-    u8 *entity = Func_02001748(14);
+    u8 *entity = Actor_Get(14);
 
     if ((Data_03001e40 & 3) == 0) {
         struct PeriodicEffectConfig config;
@@ -344,18 +303,18 @@ void FieldScene_RunPrimarySequence(void)
     s32 hi;
     s32 lo;
 
-    actor = (struct FieldActor *)Value1(Func_020019cc, 20);
+    actor = (struct FieldActor *)Value1(Engine_ActorGet, 20);
     Event_Begin();
     v7 = 0;
-    record = Func_020019d8(18);
+    record = Actor_Get(18);
     *(s32 *)((s32)record + 108) = v7;
     if (GameFlag_IsSet(0x200) == 0) {
-        record = Value1(Func_020019ee, 18);
+        record = Value1(Engine_ActorGet, 18);
         if ((*(s32 *)((s32)record + 8) >> 20) > 19) {
             goto L_020006a2;
         }
     }
-    record = Func_020019fc(18);
+    record = Actor_Get(18);
     p5 = *(u16 *)((s32)record + 6);
     Actor_FaceActor(18, 0, 0);
     Event_Wait(10);
@@ -364,36 +323,36 @@ void FieldScene_RunPrimarySequence(void)
         bump_step(1);
         Event_ShowMessage(18, 0);
         *(u16 *)(Func_02001a3e_a(18) + 100) = v7;
-        record = Value1(Func_02001a48, 18);
+        record = Value1(Engine_ActorGet, 18);
         *(u16 *)((s32)record + 6) = p5;
     } else {
         Event_ShowMessage(18, 0);
         Actor_FaceDirection(18, 0x8000, 20);
     }
-    record = Func_02001a66(18);
+    record = Actor_Get(18);
     *(s32 *)((s32)record + 108) = 0x2008501;
     Call0(Engine_EventEnd);
     goto L_02000916;
     L_020006a2:;
-    record = Value1(Func_02001a76, 0);
+    record = Value1(Engine_ActorGet, 0);
     if ((*(s32 *)((s32)record + 16) >> 19) > 27) {
-        record = Value1(Func_02001a84, 0);
+        record = Value1(Engine_ActorGet, 0);
         if ((*(s32 *)((s32)record + 16) >> 19) <= 29) {
-            record = Value1(Func_02001a92, 0);
+            record = Value1(Engine_ActorGet, 0);
             if ((*(s32 *)((s32)record + 8) >> 20) != 26) {
                 Actor_SetSpeed(0, 0x8000, 0x4000);
-                Call3((void (*)())Func_02001b2a, 0, 18, 0);
+                Call3((void (*)())Engine_ActorFaceActor, 0, 18, 0);
                 Event_Wait(5);
-                rec7 = Value1(Func_02001abe, 0);
-                record = Func_02001ac6(18);
+                rec7 = Value1(Engine_ActorGet, 0);
+                record = Actor_Get(18);
                 if (*(s32 *)(rec7 + 8) < *(s32 *)((s32)record + 8)) {
                     *(u8 *)(Func_02001ad4(0) + 90) &= 254;
-                    record = Value1(Func_02001ae4, 18);
+                    record = Value1(Engine_ActorGet, 18);
                     Actor_WalkTo(0, (((*(s32 *)((s32)record + 8) >> 20) << 4) - 8), 232);
                     v7 = 1;
                 } else {
                     *(u8 *)(Func_02001afe(0) + 90) &= 254;
-                    record = Value1(Func_02001b0e, 18);
+                    record = Value1(Engine_ActorGet, 18);
                     Actor_WalkTo(0, (((*(s32 *)((s32)record + 8) >> 20) << 4) + 24), 232);
                 }
                 Actor_WaitForMove(0);
@@ -401,11 +360,11 @@ void FieldScene_RunPrimarySequence(void)
         }
     }
     v5 = 128;
-    record = Func_02001b2a_a(18);
+    record = Actor_Get(18);
     *(s32 *)((s32)record + 56) = (v5 << 24);
-    record = Value1(Func_02001b36, 18);
+    record = Value1(Engine_ActorGet, 18);
     *(s32 *)((s32)record + 60) = (v5 << 24);
-    record = Func_02001b3e(18);
+    record = Actor_Get(18);
     *(s32 *)((s32)record + 64) = (v5 << 24);
     Actor_EnableActionCallback(18, 1);
     Actor_SetAnimation(18, 1);
@@ -414,14 +373,14 @@ void FieldScene_RunPrimarySequence(void)
     Audio_PlayCue(228);
     actor->scale_x = 0x4ccc;
     actor->scale_y = 0x4ccc;
-    record = Value1(Func_02001b70, 18);
+    record = Value1(Engine_ActorGet, 18);
     q1 = *(s32 *)((s32)record + 8);
-    record = Value1(Func_02001b78, 18);
+    record = Value1(Engine_ActorGet, 18);
     t2 = *(s32 *)((s32)record + 16) >> 20;
     Actor_SetPosition(20, (((q1 >> 20) << 20) + 0x80000), ((t2 << 20) + 0x80000));
-    record = Value1(Func_02001b98, 18);
+    record = Value1(Engine_ActorGet, 18);
     q2 = *(s32 *)((s32)record + 8);
-    record = Value1(Func_02001ba0, 18);
+    record = Value1(Engine_ActorGet, 18);
     Map_CopyCellAttributes(16, 16, 1, 1, (q2 >> 20), (*(s32 *)((s32)record + 16) >> 20));
     Actor_SetSpritePriority(20, 2);
     actor->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
@@ -442,9 +401,9 @@ void FieldScene_RunPrimarySequence(void)
     Event_SetMessage(0x17fa);
     Event_ShowMessageAndWait(18, 0, 20);
     Func_02001d0a();
-    record = Value1(Func_02001c30, 0);
+    record = Value1(Engine_ActorGet, 0);
     if ((*(s32 *)((s32)record + 8) >> 20) == 26) {
-        record = Value1(Func_02001c3e, 0);
+        record = Value1(Engine_ActorGet, 0);
         if ((*(s32 *)((s32)record + 16) >> 20) > 13) {
             v7 = 1;
         }
@@ -459,9 +418,9 @@ void FieldScene_RunPrimarySequence(void)
         Actor_SetAnimation(0, 1);
     }
     Actor_SetSpeed(18, 0xcccc, 0x6666);
-    record = Value1(Func_02001ca2, 18);
+    record = Value1(Engine_ActorGet, 18);
     if ((*(s32 *)((s32)record + 16) >> 20) != 14) {
-        record = Func_02001cb0(18);
+        record = Actor_Get(18);
         Actor_WalkToAndWait(18, *(s16 *)((s32)record + 10), 232);
     }
     Actor_WalkToAndWait(18, 0x118, 232);
@@ -473,7 +432,7 @@ void FieldScene_RunPrimarySequence(void)
 
 void SceneEffect_ActivateNearbyActor(void)
 {
-    u8 *leader = Func_02001d22(0);
+    u8 *leader = Actor_Get(0);
     if ((*(s32 *)(leader + 16) >> 20) <= 13)
         Actor_SetSpritePriority(20, 1);
 }
@@ -489,9 +448,9 @@ void FieldScene_RunScene3a0_02000968(void)
     *(u8 *)(Func_02001d44(20) + 35) &= 253;
     v5 = 0;
     *(u8 *)(Func_02001d54(20) + 85) = v5;
-    record = Value1(Func_02001d60, 20);
+    record = Value1(Engine_ActorGet, 20);
     x = *(s32 *)(record + 8);
-    record = Value1(Func_02001d68, 20);
+    record = Value1(Engine_ActorGet, 20);
     Map_CopyCellAttributes(3, 17, 1, 1, (x >> 20), (*(s32 *)(record + 16) >> 20));
     Call2(Func_02001cf8, 0x2008325, 0xc80);
     GameFlag_Set(0x201);
@@ -585,7 +544,7 @@ void SceneEffect_DispatchStep(void)
         break;
     }
 
-    Func_02001cf0(scene[182]);
+    FieldScene_RunScene3a0_02000de8(scene[182]);
     Event_End();
 }
 
@@ -596,19 +555,19 @@ void FieldScene_RunScene3a0_02001060(void)
 
     Event_Begin();
     Call2((void (*)())Engine_ActorEnableActionCallback, 18, 1);
-    record = Func_02002442(18);
+    record = Actor_Get(18);
     *(s32 *)(record + 108) = 0;
-    record = Func_0200244c_a(18);
+    record = Actor_Get(18);
     *(s32 *)(record + 56) = -0x80000000;
-    record = Value1(Func_02002458, 18);
+    record = Value1(Engine_ActorGet, 18);
     *(s32 *)(record + 64) = -0x80000000;
-    record = Value1(Func_02002460, 18);
+    record = Value1(Engine_ActorGet, 18);
     *(s32 *)(record + 36) = 0;
-    record = Value1(Func_02002468, 18);
+    record = Value1(Engine_ActorGet, 18);
     *(s32 *)(record + 44) = 0;
-    record = Value1(Func_02002470, 18);
+    record = Value1(Engine_ActorGet, 18);
     *(s32 *)(record + 48) = 0;
-    record = Func_02002478(18);
+    record = Actor_Get(18);
     *(s32 *)(record + 52) = 0;
     Actor_ShowEmote(18, 0x103, 0);
     Actor_StartRepeatedMotion(18, 2);
@@ -621,7 +580,7 @@ void FieldScene_RunScene3a0_02001060(void)
     Actor_FaceDirection(0, 0x8000, 20);
     Actor_ShowEmote(0, 0x102, 60);
     Actor_EnableActionCallback(18, 0x20095b0);
-    record = Func_020024f2(18);
+    record = Actor_Get(18);
     *(s32 *)(record + 108) = 0x2008501;
     Call0(Engine_EventEnd);
 }

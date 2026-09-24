@@ -124655,6 +124655,35 @@
         }
       ],
       "overlay": null
+    },
+    {
+      "id": "battle-party-timed-entries",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/BATTLE/PARTY/TIMED_ENTRIES.C",
+      "compiler_route": "canonical-gcc296",
+      "owners": [
+        {
+          "address": "0x080bf54c",
+          "extent": 40,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080bf574",
+          "extent": 52,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080bf5a8",
+          "extent": 178,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080bf65c",
+          "extent": 22,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
     }
   ]
 }

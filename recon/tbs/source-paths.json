@@ -1668,8 +1668,7 @@
       "source": "BATTLE/PARTY/COUNT_VALID_ENTRIES.C"
     },
     "main:080bf5a8": {
-      "name": "BattlePlacement_UpdateTimedEntries",
-      "source": "BATTLE/PARTY/UPDATE_TIMED_ENTRIES.C"
+      "name": "BattlePlacement_UpdateTimedEntries"
     },
     "main:08099d18": {
       "name": "BattleFx_SpawnFallingParticles",
@@ -5340,15 +5339,13 @@
     },
     "main:080bf54c": {
       "name": "BattleUnit_TickCounter13f",
-      "source": "BATTLE/PARTY/TICK_COUNTER_13F.C"
+      "source": "BATTLE/PARTY/TIMED_ENTRIES.C"
     },
     "main:080bf574": {
-      "name": "BattleUnit_TickCounter146",
-      "source": "BATTLE/PARTY/TICK_COUNTER_146.C"
+      "name": "BattleUnit_TickCounter146"
     },
     "main:080bf65c": {
-      "name": "BattlePlacement_UpdateTimedEntriesTwentyTimes",
-      "source": "BATTLE/PARTY/UPDATE_TIMED_ENTRIES_TWENTY_TIMES.C"
+      "name": "BattlePlacement_UpdateTimedEntriesTwentyTimes"
     },
     "main:080bffb8": {
       "name": "BattlePres_RunMosaicFadeOut",

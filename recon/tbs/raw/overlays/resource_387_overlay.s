@@ -505,32 +505,8 @@ AlchemyC_0200067c:
 	.space 0x688
 AlchemyC_02000d04:
 	.space 0x64
-	push	{r5, lr}
-	ldr	r3, [pc, #52]
-.L_02000d6c:
-	movs	r0, #78
-	movs	r1, #1
-	ldr	r5, [r3, #0]
-	bl	sub_02001f70
-	movs	r1, #15
-	movs	r0, #2
-	bl	sub_02001f80
-	ldr	r3, [pc, #36]
-	adds	r5, r5, r3
-	ldrb	r2, [r5, #0]
-	movs	r3, #8
-	orrs	r3, r2
-	strb	r3, [r5, #0]
-	bl	sub_02001fa0
-	movs	r0, #1
-	bl	sub_02001f86
-	bl	sub_02001fa2
-	pop	{r5}
-	pop	{r0}
-	bx	r0
-	.2byte 0x0000
-	.4byte 0x03001f30
-	.4byte 0x0000071c
+AlchemyC_02000d68:
+	.space 0x40
 AlchemyC_02000da8:
 	.space 0x10
 AlchemyC_02000db8:

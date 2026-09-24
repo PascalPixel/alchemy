@@ -12,7 +12,15 @@
  *    and walks turn_order + 88 in place, but GCSE then shares the test load
  *    with the body (ldrh carried in r2) where the ROM reloads with ldrsh at
  *    the loop top; volatile, do/while with an explicit pre-check and goto
- *    loops all keep the sharing.
+ *    loops all keep the sharing. Best loop shape so far: test
+ *    turn_order->normal[target_index] != 255 and body
+ *    slot = &turn_order->normal[target_index]; unit_id = *slot; gives the
+ *    ROM pre-check, the in-place walk and both ldrsh loads exactly (71.5%
+ *    overall only because the pools shift); it still counts 36 real insns in
+ *    the second loop pass (2*i kept live by GCSE register 613 shared with the
+ *    mirrored loop, plus the reg34 + 2i and + 88 givs), so 0x100 is not
+ *    hoisted. A separate index variable for the loop drops the [sp, #24]
+ *    spill instead.
  *  - Sort/selection: the ROM keeps `selected` in r1 with caller-saves around
  *    the calls and spills the unit_ids base to [sp, #16]; ours spills
  *    `selected` to [sp, #16].

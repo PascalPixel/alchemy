@@ -11,7 +11,7 @@
 #endif
 
 /*
- * This owner's view of gCell, which games/THE BROKEN SEAL/INCLUDE/BATTLE_EFFECT_RUNTIME.H
+ * This owner's view of gGameState, which games/THE BROKEN SEAL/INCLUDE/BATTLE_EFFECT_RUNTIME.H
  * declares as `struct BattleWork`. Two fields are evidence here; the paddings
  * are arithmetic to reach them.
  */
@@ -22,15 +22,15 @@ struct Work_080b0444 {
     s8 value11c;
 };
 
-extern struct Work_080b0444 gCell;
+extern struct Work_080b0444 gGameState;
 
 void *Runtime_GetObject(s32);
 
 /* 固定値を設定し、3つの項目フラグを1にする。 */
 s32 Battle_ApplyPresetItemsAndFlags(void)
 {
-    gCell.value10 = 0x30d40;
-    gCell.value11c = 0x1c;
+    gGameState.value10 = 0x30d40;
+    gGameState.value11c = 0x1c;
     Inventory_EquipFar(1, Inventory_AddForOwner(1, 0x48d));
     Inventory_EquipFar(0, Inventory_AddForOwner(0, 0x40b));
     Inventory_AddForOwner(2, 0xe7);

@@ -40,7 +40,7 @@ struct BattleEscapeState {
 u32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 #define Rand Random16
-extern u8 gCell[];
+extern u8 gGameState[];
 
 s32 BattleEscape_CheckSuccess(void)
 {
@@ -84,7 +84,7 @@ s32 BattleEscape_CheckSuccess(void)
         }
         *failed_attempts += 1;
     }
-    if (gCell[0x22B] == 2) {
+    if (gGameState[0x22B] == 2) {
         escaped = 0;
     }
     return escaped;

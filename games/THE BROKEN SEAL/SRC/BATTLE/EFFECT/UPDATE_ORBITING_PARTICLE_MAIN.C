@@ -168,7 +168,7 @@ struct OrbitingParticleGlobals {
     s32 resource_mode;
 };
 
-extern struct OrbitingParticleGlobals gCell;
+extern struct OrbitingParticleGlobals gGameState;
 
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 #define Rand Random16
@@ -264,7 +264,7 @@ void BattleFx_RunOrbitingParticles(void)
         if (resource != NULL) {
             BattleFx_RunEventAction(
                 resource,
-                gCell.resource_mode,
+                gGameState.resource_mode,
                 resource_size);
         }
         WaitFrames(20);

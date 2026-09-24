@@ -37,7 +37,7 @@ struct Object_0808f0d8 {
     u8 field55;
 };
 
-extern struct State_0808f0d8 gCell;
+extern struct State_0808f0d8 gGameState;
 void Object_SetPosition(struct Object_0808f0d8 *, s32, s32, s32);
 void Object_SetMode(void *, s32);
 void Object_SetCallback(void *, const void *);
@@ -50,7 +50,7 @@ void EffectRuntime_PrepareRisingObject(struct Object_0808f0d8 *object)
     if (object == 0)
         return;
 
-    entity = ObjectTable_Get(gCell.object_index);
+    entity = ObjectTable_Get(gGameState.object_index);
     object->field34 = 0x10000;
     object->field30 = 0x20000;
     object->field55 = 0;
@@ -71,7 +71,7 @@ void EffectRuntime_RunRisingObjectSequence(void *object, s32 flags)
     void *other;
 
     if (object != NULL) {
-        other = ObjectTable_Get(gCell.object_index);
+        other = ObjectTable_Get(gGameState.object_index);
         if (flags & 1) {
             ObjectDispatch_SetSingleChildField26Far(object, 0);
             Object_SetCallback(object, BattleFx_ParticleEmitterScript);
@@ -129,7 +129,7 @@ void EmitRandomParticleEffect(void);
 void BattleFx_StartEffectObject22(s32 value, s32 flags)
 {
     struct EffectResource_0808f1c0 *resource =
-        ObjectTable_Get(gCell.object_index);
+        ObjectTable_Get(gGameState.object_index);
     void *handle = Runtime_AllocateHeapBlock(17, 0x608);
     struct EffectObject_0808f1c0 *object = Object_CreateFar(
         22, resource->x, resource->y + 0x240000, resource->z);

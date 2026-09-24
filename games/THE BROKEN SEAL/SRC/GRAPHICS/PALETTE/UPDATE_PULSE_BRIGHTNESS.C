@@ -2,7 +2,7 @@
 #include "SCENE.H"
 
 s32 Math_Div(s32, s32);
-extern s32 gIw;
+extern s32 gFrameCount;
 
 void Palette_UpdatePulseBrightness(void)
 {
@@ -22,7 +22,7 @@ void Palette_UpdatePulseBrightness(void)
         s32 green;
         s32 blue;
 
-        tick = gIw;
+        tick = gFrameCount;
         angle = (tick * 3) << 10;
         color = palette[16];
         amount = Math_Div(0x10000 - FixedCos(angle), 0x2AAA);

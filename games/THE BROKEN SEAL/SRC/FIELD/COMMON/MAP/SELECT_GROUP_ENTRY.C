@@ -26,7 +26,7 @@ struct Services_0808a5f8 {
     TableProvider_0808a5f8 table_provider;
 };
 
-extern struct Work_0808a5f8 gCell;
+extern struct Work_0808a5f8 gGameState;
 extern struct Services_0808a5f8 gOv;
 
 void MapGroupTable_SelectEntry(s32 kind)
@@ -42,7 +42,7 @@ void MapGroupTable_SelectEntry(s32 kind)
     s32 entry_kind;
     s32 flag;
 
-    cur = gCell.current;
+    cur = gGameState.current;
     p = gOv.table_provider();
     result = 999;
     sub = 0;
@@ -83,7 +83,7 @@ void MapGroupTable_SelectEntry(s32 kind)
     }
 
     if (result != 999) {
-        gCell.current = result;
-        gCell.sub = sub;
+        gGameState.current = result;
+        gGameState.sub = sub;
     }
 }

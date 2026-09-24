@@ -28,7 +28,7 @@ struct Global_08099738 {
     u16 field_24c;
 };
 
-extern struct Global_08099738 gCell;
+extern struct Global_08099738 gGameState;
 extern struct MapEventRuntime *gWork;
 
 void CheckObjectMapTile(void)
@@ -42,7 +42,7 @@ void CheckObjectMapTile(void)
 
     runtime_slot_address = (u32)&gWork;
     runtime = gWork;
-    object = ObjectTable_Get(gCell.object_id);
+    object = ObjectTable_Get(gGameState.object_id);
     /* The map-state pointer slot is 19 words before the runtime pointer slot. */
     tile = (u8 *)*(struct MapState **)(runtime_slot_address - 76);
 
@@ -121,7 +121,7 @@ void MapEvent_RunTileTriggerSequence(void)
     struct Controller_08099738 *controller;
     u32 i;
 
-    object = ObjectTable_Get(gCell.object_id);
+    object = ObjectTable_Get(gGameState.object_id);
     state = object->state;
     controller = state->controller;
 
@@ -151,5 +151,5 @@ void MapEvent_RunTileTriggerSequence(void)
     }
 
     state->field_26 = 1;
-    gCell.field_24c = 0;
+    gGameState.field_24c = 0;
 }

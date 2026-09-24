@@ -18,7 +18,7 @@ void Ui_Place(s32, s16 *, s32);
 s32 Ui_Place(s32, s16 *, s32);
 #endif
 
-extern u8 gCell[];
+extern u8 gGameState[];
 extern void *gBattleWork;
 extern volatile s32 gKeyState;
 extern void *gIw2;
@@ -33,8 +33,8 @@ s32 UiText_ShowLocalizedMessageAndWait(void)
     s32 mode;
 
     state = gBattleWork;
-    mode = gCell[0x22B];
-    if (gCell[0x22B] == 2 || mode <= 2 || (result = 1, mode > 4)) {
+    mode = gGameState[0x22B];
+    if (gGameState[0x22B] == 2 || mode <= 2 || (result = 1, mode > 4)) {
         result = 0;
     }
     if (result == 0) {

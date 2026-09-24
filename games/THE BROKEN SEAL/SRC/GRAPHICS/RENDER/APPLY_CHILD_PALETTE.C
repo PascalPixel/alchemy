@@ -22,7 +22,7 @@ struct Outer0808e0b0 {
     u8 mode;
 };
 
-extern u32 gIw;
+extern u32 gFrameCount;
 extern u8 gRom[];
 
 void Animation_ApplyChildPalette(struct Outer0808e0b0 *obj, s32 palette)
@@ -38,7 +38,7 @@ void Animation_ApplyChildPalette(struct Outer0808e0b0 *obj, s32 palette)
         state = obj->state;
         replacement = palette - 1;
         if (palette == 0)
-            replacement = gRom[(gIw >> 1) & 7];
+            replacement = gRom[(gFrameCount >> 1) & 7];
 
         n = state->cnt;
         if (n != 0) {

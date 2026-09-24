@@ -7,10 +7,10 @@ struct SharedData_08091f90 {
     u16 second;
 };
 
-extern struct SharedData_08091f90 gCell;
+extern struct SharedData_08091f90 gGameState;
 
 void Party_SetFields1ceAnd1d0(u16 first, u16 second)
 {
-    gCell.first = first;
-    gCell.second = second;
+    gGameState.first = first;
+    gGameState.second = second;
 }

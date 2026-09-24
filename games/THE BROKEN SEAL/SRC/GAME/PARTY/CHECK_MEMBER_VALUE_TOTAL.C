@@ -1,7 +1,7 @@
 #include "TYPES.H"
 #include "SCENE.H"
 
-extern u8 gCell[];
+extern u8 gGameState[];
 extern u8 Value_0000097d;
 
 extern void UiText_DrawQuantity(s32, s32);
@@ -20,7 +20,7 @@ s32 Party_CheckMemberValueTotal(s32 id)
     if (sum < count) {
         offset = 252;
         offset <<= 1;
-        p = gCell + offset;
+        p = gGameState + offset;
         cnt = count;
         do {
             value = Party_Apply(*p, id);

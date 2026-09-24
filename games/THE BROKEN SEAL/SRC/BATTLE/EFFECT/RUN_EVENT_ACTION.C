@@ -41,7 +41,7 @@ s32 BattleFx_RunEventAction(void *arg0, s32 arg1, s32 arg2)
 
 /* object/Animation_ApplyRandomChildValues.c */
 /* object/group/Animation_ApplyRandomChildValues.c */
-extern volatile s32 gIw;
+extern volatile s32 gFrameCount;
 
 void ObjectGroup_ApplyRandomChildValues(void *owner)
 {
@@ -61,7 +61,7 @@ void ObjectGroup_ApplyRandomChildValues(void *owner)
         if (target != 0 && (*(u8 *)((u8 *)target + 29) & state) == 0) {
             initial_count = *(u8 *)((u8 *)target + 39);
             if (initial_count != 0) {
-                global = &gIw;
+                global = &gFrameCount;
                 entry = (void **)((u8 *)target + 40);
                 count = initial_count;
                 do {

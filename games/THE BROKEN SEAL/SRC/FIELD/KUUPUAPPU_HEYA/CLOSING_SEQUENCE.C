@@ -1,5 +1,6 @@
 #include "TYPES.H"
-
+#include "FIELD_EVENT.H"
+#include "FIELD_SCENE.H"
 
 extern u8 Value_00000015[];
 
@@ -60,8 +61,6 @@ void Func_02006078();
 void Func_02006090();
 void Func_020060b4();
 void Func_020060cc();
-void Func_020060da();
-void Func_020060da_a();
 void Func_020060e4();
 void Func_020060ee();
 void Func_02006166();
@@ -108,8 +107,6 @@ void Func_02006344();
 void Func_02006356();
 void Func_02006360();
 void Func_0200636a();
-void Func_02006370();
-void Func_02006370_a();
 void Func_02006374();
 void Func_0200637e();
 void Func_0200638e();
@@ -119,8 +116,6 @@ void Func_020063a6();
 void Func_020063aa();
 void Func_020063be();
 void Func_020063e0();
-void Func_020063ea();
-void Func_020063ea_a();
 void Func_020063f4();
 void Func_020063f8();
 void Func_020063fc();
@@ -137,8 +132,6 @@ void Func_020064b0();
 void Func_020064b8();
 void Func_020064c4();
 void Func_020064da();
-void Func_020064e4();
-void Func_020064e4_a();
 void Func_020064ee();
 void Func_020064f6();
 void Func_0200650a();
@@ -151,8 +144,6 @@ void Func_02006578();
 void Func_02006584();
 void Func_0200658a();
 s32 Func_02006590();
-void Func_02006594();
-void Func_02006594_a();
 void Func_020065be();
 void Func_020065de();
 void Func_02006606();
@@ -161,8 +152,6 @@ void Func_02006612();
 void Func_02006616();
 void Func_0200661e();
 void Func_02006634();
-void Func_0200663e();
-void Func_0200663e_a();
 void Func_02006652();
 void Func_0200665a();
 void Func_02006666();
@@ -183,7 +172,6 @@ void Func_02006754();
 void Func_020067ca();
 void Func_020067da();
 void Func_020067dc();
-
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
@@ -219,7 +207,7 @@ void Func_02001348(void)
     s32 base;
 
     Func_02006090();
-    Call3(Func_020060da, 0, 52428, 26214);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 52428, 26214);
     Call3(Func_020060e4, 1, 52428, 26214);
     Call3(Func_020060ee, 2, 52428, 26214);
     Func_0200616e(0, 3);
@@ -230,7 +218,7 @@ void Func_02001348(void)
     Func_0200619e(base);
     Func_020060cc(30);
     Func_0200616c(8, 1);
-    Func_020060da_a(60);
+    Event_Wait(60);
     Func_020059e4(8, 3, 40);
     Call3(Func_0200616a, 0, 792, 440);
     Func_020059cc(0, 8, 20);
@@ -284,13 +272,13 @@ void Func_02001348(void)
     Call3(Func_020062fe, 10, 52428, 26214);
     Call3(Func_0200630c, 11, 98304, 49152);
     Call3(Func_0200631a, 12, 98304, 49152);
-    Call3(Func_02006370, 11, 48758784, 26738688);
+    Actor_SetPosition(11, 48758784, 26738688);
     Call3(Func_0200637e, 12, 48758784, 26738688);
     Call3(Func_02006374, 10, 792, 416);
     Call3(Func_020063f8, 10, 12288, 0);
     Func_0200630e(70);
     Func_020063e0(0, 10, 0);
-    Func_020063ea(1, 10, 0);
+    Actor_FaceActor(ACTOR_GERALD, 10, 0);
     Func_020063f4(2, 10, 0);
     Func_020063fe(8, 10, 0);
     Call2(Func_0200638e, 11, 33608264);
@@ -299,7 +287,7 @@ void Func_02001348(void)
     Func_020063aa(12);
     Call3(Func_0200644e, 11, 8192, 0);
     Call3(Func_0200645a, 12, 8192, 0);
-    Func_02006370_a(40);
+    Event_Wait(40);
     Func_02005c7a(10, 4, 20);
     Func_02005c3a(10, 20);
     Func_0200644a(11, 1);
@@ -313,14 +301,14 @@ void Func_02001348(void)
     Func_02005cc8(10, 4, 20);
     Func_02005c88(10, 20);
     Call3(Func_020064da, 0, 257, 0);
-    Call3(Func_020064e4, 1, 257, 0);
-    Func_020063ea_a(60);
+    Actor_ShowEmote(ACTOR_GERALD, 257, 0);
+    Event_Wait(60);
     Call3(Func_020064f6, 8, 256, 0);
     Func_020063fc(40);
     Func_020064c4(8, 2);
     Func_0200640a(20);
     Func_02005cca(8, 20);
-    Func_020064e4_a(0, 8, 0);
+    Actor_FaceActor(ACTOR_PARTY_LEADER, 8, 0);
     Func_020064ee(1, 8, 0);
     Func_02005d00(2, 8, 20);
     Func_02005d3a(8, 4, 30);
@@ -337,7 +325,7 @@ void Func_02001348(void)
     Func_020064b0(10);
     Func_02005d70(10, 20);
     Func_0200658a(0, 10, 0);
-    Func_02006594(1, 10, 0);
+    Actor_FaceActor(ACTOR_GERALD, 10, 0);
     Func_02005da6(2, 10, 20);
     Func_02005de0(11, 3, 20);
     Func_02005da0(11, 20);
@@ -355,12 +343,12 @@ void Func_02001348(void)
     if (Func_02006590(0, 0) == 0) {
         Func_02006562(40);
         Func_02006634(1, 10, 0);
-        Func_0200663e(2, 10, 0);
-        Func_0200663e_a(10, 2);
+        Actor_FaceActor(ACTOR_IVAN, 10, 0);
+        Actor_RunRepeatedMotion(10, 2);
         Func_02006584(20);
         Func_02006674(10, 0);
     } else {
-        Func_02006594_a(40);
+        Event_Wait(40);
         Func_02006666(1, 10, 0);
         Func_02006670(2, 10, 0);
         base = (s32)&LinkedMessage_VaultThievesCaught;

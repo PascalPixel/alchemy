@@ -1,21 +1,55 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "FIELD_SCENE.H"
+
+/*
+ * Sukureta's cottage in Vale. Outside it, Saturos and Menardi are overheard
+ * plotting to use Sukureta and let the children go; inside, Sukureta and the
+ * children decide to see for themselves whether the strangers have been to
+ * Mt. Aleph and Sol Sanctum.
+ */
+
+enum CottageActor {
+    ACTOR_SUKURETA = ACTOR_FIRST_PLACED + 5,
+    ACTOR_SATUROS,
+    ACTOR_MENARDI
+};
+
+enum CottageFlag {
+    FLAG_SANCTUM_VISIT_PLANNED = 0x801,
+    FLAG_MET_SATUROS_AND_MENARDI = 0x808
+};
 
 #define NULL ((void *)0)
 #define CalculateFacingAngle Func_02001a9e
 
 #include "FACING_OBJECT.H"
 
+enum CottageMessage {
+    MSG_SATUROS_GO = 0xf98,
+    MSG_SUKURETA_OH_ROBIN = 0xfa6,
+    MSG_SUKURETA_I_WAITED_YEARS_FOR_THE_SANCTUM = 0xfb1,
+    MSG_JASMINE_THEY_MIGHT_BE_THIEVES = 0xfb2,
+    MSG_SUKURETA_WE_ONLY_CHECK_THE_MOUNTAIN = 0xfbd,
+    MSG_SUKURETA_WE_ONLY_CHECK_MT_ALEPH = 0xfbe,
+    MSG_JASMINE_OUR_SECRET = 0xfc2,
+    MSG_GERALD_YOU_CAN_HANDLE_THE_DANGER = 0xfc6,
+    MSG_GERALD_ILL_TAKE_OVER_IF_NERVOUS = 0xfc9,
+    MSG_SUKURETA_OUR_BEST_BET = 0xfcc,
+    MSG_ILL_CLIMB_THE_FENCE_SOMEDAY = 0x11c4,
+    MSG_MEMORIES_OF_THIS_COTTAGE = 0x1c96
+};
+
 extern u8 Data_0200a028[];
 extern u8 Data_02009fb0[];
 extern u8 Data_02009efc[];
-extern u8 Data_00000fb0[];
-extern u8 Data_00000fbf[];
+extern u8 LinkedMessage_YouCannotEnterMtAleph[];
+extern u8 LinkedMessage_FineIfTheyDontSeeUs[];
 extern u8 Data_03001ebc[];
 extern u8 Data_0200a0ac[];
 extern u8 Value_00000f76;
-extern u8 Data_00000f85[];
-extern u8 Data_00000f91[];
+extern u8 LinkedMessage_TheyKnowLittleOfTheSanctum[];
+extern u8 LinkedMessage_YoureTheOnesSneakingAround[];
 extern u8 Data_02009ce0[];
 
 s32 Func_02001a9e(s32, s32);
@@ -33,7 +67,7 @@ void Data_02009b85();
 void Func_02002e46();
 
 /*
- * DRAFTED SCENE SCRIPT for FieldScene_RunGatedActorSequence.
+ * DRAFTED SCENE SCRIPT for Scene_OverhearSaturosAndMenardi.
  *
  * One progress-gated field cutscene.  The owner returns immediately when
  * progress flag 0x808 is already set; otherwise it sets that flag and plays a
@@ -203,26 +237,15 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
     f(a0, a1, a2);
 }
 
-/* The scene step counter at 0x1d8 of the shared scene work record. */
+/* Moves the next dialogue line on by amount messages. */
 static __inline__ void bump_step(s32 amount)
 {
-    u8 *work = *(u8 **)Data_03001ebc;
-
-    *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
+    gEventWork->message += amount;
 }
 
 static __inline__ void Scene_SetActorDirection(s32 actor, s32 angle, s32 frames)
 {
     Actor_FaceDirection(actor, angle, frames);
-}
-
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-static __inline__ void Call1_02000be0(void (*f)(), s32 a0)
-{
-    f(a0);
 }
 
 static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
@@ -311,13 +334,13 @@ void Scene_RunActorTwelveDialogue(void)
     s32 base;
 
     Event_Begin();
-    if (GameFlag_IsSet(2069) != 0) {
-        Event_SetMessage(4548);
+    if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE) != 0) {
+        Event_SetMessage(MSG_ILL_CLIMB_THE_FENCE_SOMEDAY);
         Event_ShowMessage(12, 0);
     } else {
         base = (s32)&Value_00000f76;
         Event_SetMessage(base);
-        Actor_FaceActor(12, 0, 10);
+        Actor_FaceActor(12, ACTOR_PARTY_LEADER, 10);
         Actor_RunRepeatedMotion(12, 2);
         Event_Wait(6);
         Event_OpenMessage(12, 0);
@@ -339,227 +362,227 @@ void Scene_RunActorTwelveDialogue(void)
  * the placement calls as s16 values shifted into fixed point, and base5_fbf
  * holds a base that later sites use as base + 1 and base + 2.
  */
-void FieldScene_RunActorPositionSequence(void)
+void Scene_PlanSanctumVisit(void)
 {
     u8 *record;
     s32 x, y;
     s32 base5_fbf;
 
-    if (GameFlag_IsSet(0x801) != 0) {
+    if (GameFlag_IsSet(FLAG_SANCTUM_VISIT_PLANNED) != 0) {
     } else {
         Event_Begin();
-        Actor_SetSpeed(0, 0x10000, 0x8000);
-        Event_SetMessage(0xfa6);
-        Actor_RunRepeatedMotion(13, 1);
-        Actor_WalkToAndWait(0, 232, 0x108);
-        Actor_SetAnimation(0, 0);
-        Actor_FaceEachOther(0, 13, 20);
-        Actor_RunRepeatedMotion(13, 2);
-        Event_ShowMessageAndWait(13, 0, 10);
+        Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
+        Event_SetMessage(MSG_SUKURETA_OH_ROBIN);
+        Actor_RunRepeatedMotion(ACTOR_SUKURETA, 1);
+        Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 232, 0x108);
+        Actor_SetAnimation(ACTOR_PARTY_LEADER, 0);
+        Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_SUKURETA, 20);
+        Actor_RunRepeatedMotion(ACTOR_SUKURETA, 2);
+        Event_ShowMessageAndWait(ACTOR_SUKURETA, 0, 10);
         record = (u8 *)Func_02001c6e(0);
         x = *(s16 *)(record + 10);
         y = *(s16 *)(record + 18);
-        Actor_SetPosition(5, x << 16, y << 16);
-        Actor_SetPosition(1, x << 16, y << 16);
-        Actor_SetSpeed(5, 0x8000, 0x4000);
-        Actor_SetSpeed(1, 0x8000, 0x4000);
-        Actor_WalkTo(5, 248, 0x108);
-        Actor_WalkToAndWait(1, 216, 0x108);
-        Actor_SetAnimation(0, 1);
-        Actor_SetAnimation(5, 1);
-        Actor_SetAnimation(1, 1);
+        Actor_SetPosition(ACTOR_JASMINE, x << 16, y << 16);
+        Actor_SetPosition(ACTOR_GERALD, x << 16, y << 16);
+        Actor_SetSpeed(ACTOR_JASMINE, 0x8000, 0x4000);
+        Actor_SetSpeed(ACTOR_GERALD, 0x8000, 0x4000);
+        Actor_WalkTo(ACTOR_JASMINE, 248, 0x108);
+        Actor_WalkToAndWait(ACTOR_GERALD, 216, 0x108);
+        Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
+        Actor_SetAnimation(ACTOR_JASMINE, 1);
+        Actor_SetAnimation(ACTOR_GERALD, 1);
         Event_Wait(4);
-        Actor_FaceDirection(5, 0xb000, 0);
-        Actor_FaceDirection(1, 0xd000, 20);
-        Actor_SetAnimationAndWait(5, 4);
+        Actor_FaceDirection(ACTOR_JASMINE, 0xb000, 0);
+        Actor_FaceDirection(ACTOR_GERALD, 0xd000, 20);
+        Actor_SetAnimationAndWait(ACTOR_JASMINE, 4);
         Event_Wait(10);
-        Event_ShowMessageAndWait(5, 0, 20);
-        Actor_RunRepeatedMotion(13, 1);
+        Event_ShowMessageAndWait(ACTOR_JASMINE, 0, 20);
+        Actor_RunRepeatedMotion(ACTOR_SUKURETA, 1);
         Event_Wait(10);
-        Actor_FaceDirection(13, 0x3000, 10);
-        Event_ShowMessageAndWait(13, 0, 10);
-        Actor_FaceDirection(1, 0x3000, 40);
-        Actor_RunRepeatedMotion(1, 2);
-        Event_ShowMessageAndWait(1, 0, 10);
-        Actor_RunRepeatedMotion(13, 2);
-        Actor_FaceDirection(13, 0x5000, 10);
-        Actor_SetAnimation(13, 3);
-        Event_ShowMessageAndWait(13, 0, 8);
-        Actor_FaceDirection(5, 0x3000, 20);
-        Event_ShowMessageAndWait(5, 0, 10);
-        Actor_FaceDirection(13, 0x3000, 10);
-        Actor_SetAnimationAndWait(13, 3);
+        Actor_FaceDirection(ACTOR_SUKURETA, 0x3000, 10);
+        Event_ShowMessageAndWait(ACTOR_SUKURETA, 0, 10);
+        Actor_FaceDirection(ACTOR_GERALD, 0x3000, 40);
+        Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
+        Event_ShowMessageAndWait(ACTOR_GERALD, 0, 10);
+        Actor_RunRepeatedMotion(ACTOR_SUKURETA, 2);
+        Actor_FaceDirection(ACTOR_SUKURETA, 0x5000, 10);
+        Actor_SetAnimation(ACTOR_SUKURETA, 3);
+        Event_ShowMessageAndWait(ACTOR_SUKURETA, 0, 8);
+        Actor_FaceDirection(ACTOR_JASMINE, 0x3000, 20);
+        Event_ShowMessageAndWait(ACTOR_JASMINE, 0, 10);
+        Actor_FaceDirection(ACTOR_SUKURETA, 0x3000, 10);
+        Actor_SetAnimationAndWait(ACTOR_SUKURETA, 3);
         Event_Wait(10);
-        Event_ShowMessageAndWait(13, 0, 6);
-        Actor_ShowEmote(0, 0x101, 0);
-        Actor_ShowEmote(1, 0x101, 0);
-        Actor_ShowEmote(5, 0x101, 60);
-        Actor_FaceDirection(1, 0xd000, 0);
-        Actor_FaceDirection(5, 0xb000, 20);
-        Actor_RunRepeatedMotion(5, 2);
-        Event_ShowMessageAndWait(5, 0, 10);
-        Actor_ShowEmote(13, 0x102, 60);
-        Actor_SetAnimationAndWait(13, 4);
-        Event_ShowMessageAndWait(13, 0, 10);
-        Actor_FaceDirection(1, 0, 0);
-        Actor_FaceDirection(5, 0x8000, 20);
-        Actor_ShowEmote(0, 0x100, 60);
-        Actor_FaceDirection(1, 0xd000, 0);
-        Actor_FaceDirection(5, 0xb000, 0);
-        Actor_FaceDirection(13, 0x5000, 20);
-        Actor_FaceDirection(13, 0x3000, 40);
-        Actor_FaceDirection(13, 0x5000, 40);
-        Actor_FaceDirection(13, 0x3000, 20);
-        Event_OpenMessage(13, 0);
+        Event_ShowMessageAndWait(ACTOR_SUKURETA, 0, 6);
+        Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 0);
+        Actor_ShowEmote(ACTOR_GERALD, 0x101, 0);
+        Actor_ShowEmote(ACTOR_JASMINE, 0x101, 60);
+        Actor_FaceDirection(ACTOR_GERALD, 0xd000, 0);
+        Actor_FaceDirection(ACTOR_JASMINE, 0xb000, 20);
+        Actor_RunRepeatedMotion(ACTOR_JASMINE, 2);
+        Event_ShowMessageAndWait(ACTOR_JASMINE, 0, 10);
+        Actor_ShowEmote(ACTOR_SUKURETA, 0x102, 60);
+        Actor_SetAnimationAndWait(ACTOR_SUKURETA, 4);
+        Event_ShowMessageAndWait(ACTOR_SUKURETA, 0, 10);
+        Actor_FaceDirection(ACTOR_GERALD, 0, 0);
+        Actor_FaceDirection(ACTOR_JASMINE, 0x8000, 20);
+        Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x100, 60);
+        Actor_FaceDirection(ACTOR_GERALD, 0xd000, 0);
+        Actor_FaceDirection(ACTOR_JASMINE, 0xb000, 0);
+        Actor_FaceDirection(ACTOR_SUKURETA, 0x5000, 20);
+        Actor_FaceDirection(ACTOR_SUKURETA, 0x3000, 40);
+        Actor_FaceDirection(ACTOR_SUKURETA, 0x5000, 40);
+        Actor_FaceDirection(ACTOR_SUKURETA, 0x3000, 20);
+        Event_OpenMessage(ACTOR_SUKURETA, 0);
         if (Event_ChooseYesNo(0, 0) == 0) {
-            Event_SetMessage((s32)Data_00000fb0);
+            Event_SetMessage((s32)LinkedMessage_YouCannotEnterMtAleph);
         } else {
-            Event_SetMessage(0xfb1);
+            Event_SetMessage(MSG_SUKURETA_I_WAITED_YEARS_FOR_THE_SANCTUM);
         }
         Event_Wait(20);
-        Actor_SetAnimationAndWait(13, 3);
+        Actor_SetAnimationAndWait(ACTOR_SUKURETA, 3);
         Event_Wait(10);
-        Event_ShowMessageAndWait(13, 0, 10);
-        Event_SetMessage(0xfb2);
-        Actor_RunRepeatedMotion(5, 2);
-        Actor_FaceDirection(5, 0x8000, 10);
-        Event_ShowMessageAndWait(5, 0, 6);
-        Actor_ShowEmote(1, 0x103, 30);
-        Actor_Jump(1, 4, 30);
-        Actor_FaceDirection(1, 0, 10);
-        Event_ShowMessageAndWait(1, 0, 6);
-        Actor_FaceEachOther(0, 1, 10);
-        Actor_FaceEachOther(0, 5, 0);
-        Actor_FaceActor(13, 1, 10);
-        Actor_FaceActor(13, 5, 10);
-        Actor_SetAnimation(0, 3);
-        Actor_SetAnimation(1, 3);
-        Actor_SetAnimationAndWait(5, 3);
+        Event_ShowMessageAndWait(ACTOR_SUKURETA, 0, 10);
+        Event_SetMessage(MSG_JASMINE_THEY_MIGHT_BE_THIEVES);
+        Actor_RunRepeatedMotion(ACTOR_JASMINE, 2);
+        Actor_FaceDirection(ACTOR_JASMINE, 0x8000, 10);
+        Event_ShowMessageAndWait(ACTOR_JASMINE, 0, 6);
+        Actor_ShowEmote(ACTOR_GERALD, 0x103, 30);
+        Actor_Jump(ACTOR_GERALD, 4, 30);
+        Actor_FaceDirection(ACTOR_GERALD, 0, 10);
+        Event_ShowMessageAndWait(ACTOR_GERALD, 0, 6);
+        Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GERALD, 10);
+        Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_JASMINE, 0);
+        Actor_FaceActor(ACTOR_SUKURETA, ACTOR_GERALD, 10);
+        Actor_FaceActor(ACTOR_SUKURETA, ACTOR_JASMINE, 10);
+        Actor_SetAnimation(ACTOR_PARTY_LEADER, 3);
+        Actor_SetAnimation(ACTOR_GERALD, 3);
+        Actor_SetAnimationAndWait(ACTOR_JASMINE, 3);
         Event_Wait(10);
-        Actor_SetAnimation(5, 1);
-        Actor_SetAnimation(1, 1);
-        Actor_SetAnimation(0, 0);
-        Actor_FaceDirection(0, 0x4000, 0);
-        Actor_FaceDirection(1, 0x4000, 0);
-        Actor_FaceDirection(5, 0x4000, 16);
-        Actor_SetAttachedEffect(13, 0x102);
-        Actor_RunRepeatedMotion(13, 3);
+        Actor_SetAnimation(ACTOR_JASMINE, 1);
+        Actor_SetAnimation(ACTOR_GERALD, 1);
+        Actor_SetAnimation(ACTOR_PARTY_LEADER, 0);
+        Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 0);
+        Actor_FaceDirection(ACTOR_GERALD, 0x4000, 0);
+        Actor_FaceDirection(ACTOR_JASMINE, 0x4000, 16);
+        Actor_SetAttachedEffect(ACTOR_SUKURETA, 0x102);
+        Actor_RunRepeatedMotion(ACTOR_SUKURETA, 3);
         Event_Wait(10);
-        Event_ShowMessageAndWait(13, 0, 6);
-        Actor_ShowEmote(0, 0x100, 0);
-        Actor_ShowEmote(1, 0x100, 0);
-        Actor_ShowEmote(5, 0x100, 40);
-        Actor_SetAnimationAndWait(13, 4);
+        Event_ShowMessageAndWait(ACTOR_SUKURETA, 0, 6);
+        Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x100, 0);
+        Actor_ShowEmote(ACTOR_GERALD, 0x100, 0);
+        Actor_ShowEmote(ACTOR_JASMINE, 0x100, 40);
+        Actor_SetAnimationAndWait(ACTOR_SUKURETA, 4);
         Event_Wait(10);
-        Event_ShowMessageAndWait(13, 0, 6);
-        Actor_RunRepeatedMotion(13, 1);
-        Event_ShowMessageAndWait(13, 0, 6);
-        Actor_FaceDirection(5, 0xb000, 10);
-        Event_ShowMessageAndWait(5, 0, 6);
-        Actor_FaceDirection(13, 0x3000, 10);
-        Actor_SetAnimationAndWait(13, 3);
+        Event_ShowMessageAndWait(ACTOR_SUKURETA, 0, 6);
+        Actor_RunRepeatedMotion(ACTOR_SUKURETA, 1);
+        Event_ShowMessageAndWait(ACTOR_SUKURETA, 0, 6);
+        Actor_FaceDirection(ACTOR_JASMINE, 0xb000, 10);
+        Event_ShowMessageAndWait(ACTOR_JASMINE, 0, 6);
+        Actor_FaceDirection(ACTOR_SUKURETA, 0x3000, 10);
+        Actor_SetAnimationAndWait(ACTOR_SUKURETA, 3);
         Event_Wait(6);
-        Event_ShowMessageAndWait(13, 0, 10);
-        Actor_Jump(0, 2, 0);
-        Actor_Jump(1, 2, 0);
-        Actor_Jump(5, 2, 10);
-        Actor_FaceDirection(0, 0xc000, 0);
-        Actor_FaceDirection(1, 0xd000, 20);
-        Event_ShowMessageAndWait(1, 0, 6);
-        Actor_FaceDirection(13, 0x5000, 10);
-        Actor_SetAnimationAndWait(13, 3);
+        Event_ShowMessageAndWait(ACTOR_SUKURETA, 0, 10);
+        Actor_Jump(ACTOR_PARTY_LEADER, 2, 0);
+        Actor_Jump(ACTOR_GERALD, 2, 0);
+        Actor_Jump(ACTOR_JASMINE, 2, 10);
+        Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
+        Actor_FaceDirection(ACTOR_GERALD, 0xd000, 20);
+        Event_ShowMessageAndWait(ACTOR_GERALD, 0, 6);
+        Actor_FaceDirection(ACTOR_SUKURETA, 0x5000, 10);
+        Actor_SetAnimationAndWait(ACTOR_SUKURETA, 3);
         Event_Wait(16);
-        Actor_FaceEachOther(0, 5, 40);
-        Event_ShowMessageAndWait(5, 0, 10);
-        Actor_RunRepeatedMotion(13, 2);
-        Actor_FaceDirection(13, 0x3000, 10);
-        Event_ShowMessageAndWait(13, 0, 6);
-        Actor_FaceDirection(0, 0xc000, 0);
-        Actor_FaceDirection(5, 0xb000, 30);
-        Actor_ShowEmote(0, 0x105, 0);
-        Actor_ShowEmote(1, 0x105, 0);
-        Actor_ShowEmote(5, 0x105, 80);
-        Actor_SetAnimationAndWait(13, 4);
-        Event_OpenMessage(13, 0);
+        Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_JASMINE, 40);
+        Event_ShowMessageAndWait(ACTOR_JASMINE, 0, 10);
+        Actor_RunRepeatedMotion(ACTOR_SUKURETA, 2);
+        Actor_FaceDirection(ACTOR_SUKURETA, 0x3000, 10);
+        Event_ShowMessageAndWait(ACTOR_SUKURETA, 0, 6);
+        Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
+        Actor_FaceDirection(ACTOR_JASMINE, 0xb000, 30);
+        Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x105, 0);
+        Actor_ShowEmote(ACTOR_GERALD, 0x105, 0);
+        Actor_ShowEmote(ACTOR_JASMINE, 0x105, 80);
+        Actor_SetAnimationAndWait(ACTOR_SUKURETA, 4);
+        Event_OpenMessage(ACTOR_SUKURETA, 0);
         if (Event_ChooseYesNo(0, 0) == 0) {
-            Event_SetMessage(0xfbd);
+            Event_SetMessage(MSG_SUKURETA_WE_ONLY_CHECK_THE_MOUNTAIN);
         } else {
-            Event_SetMessage(0xfbe);
+            Event_SetMessage(MSG_SUKURETA_WE_ONLY_CHECK_MT_ALEPH);
         }
-        Event_ShowMessageAndWait(13, 0, 20);
-        base5_fbf = (s32)Data_00000fbf;
+        Event_ShowMessageAndWait(ACTOR_SUKURETA, 0, 20);
+        base5_fbf = (s32)LinkedMessage_FineIfTheyDontSeeUs;
         Event_SetMessage(base5_fbf);
-        Actor_FaceDirection(1, 0, 10);
-        Actor_RunRepeatedMotion(1, 2);
-        Event_OpenMessage(1, 0);
+        Actor_FaceDirection(ACTOR_GERALD, 0, 10);
+        Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
+        Event_OpenMessage(ACTOR_GERALD, 0);
         if (Event_ChooseYesNo(0, 0) == 0) {
             Event_SetMessage((base5_fbf + 1));
         } else {
             Event_SetMessage((base5_fbf + 2));
         }
-        Event_ShowMessageAndWait(1, 0, 6);
-        Event_SetMessage(0xfc2);
-        Actor_FaceDirection(5, 0x8000, 10);
-        Actor_RunRepeatedMotion(5, 1);
-        Event_OpenMessage(5, 0);
+        Event_ShowMessageAndWait(ACTOR_GERALD, 0, 6);
+        Event_SetMessage(MSG_JASMINE_OUR_SECRET);
+        Actor_FaceDirection(ACTOR_JASMINE, 0x8000, 10);
+        Actor_RunRepeatedMotion(ACTOR_JASMINE, 1);
+        Event_OpenMessage(ACTOR_JASMINE, 0);
         Event_Wait(4);
         if (Event_ChooseYesNo(0, 0) == 1) {
-            Actor_Jump(5, 2, 20);
-            Event_ShowMessageAndWait(5, 0, 10);
+            Actor_Jump(ACTOR_JASMINE, 2, 20);
+            Event_ShowMessageAndWait(ACTOR_JASMINE, 0, 10);
         } else {
-            Actor_SetAnimation(0, 3);
-            Actor_SetAnimation(1, 3);
-            Actor_SetAnimationAndWait(5, 3);
+            Actor_SetAnimation(ACTOR_PARTY_LEADER, 3);
+            Actor_SetAnimation(ACTOR_GERALD, 3);
+            Actor_SetAnimationAndWait(ACTOR_JASMINE, 3);
             Event_Wait(8);
-            Actor_SetAnimation(0, 0);
+            Actor_SetAnimation(ACTOR_PARTY_LEADER, 0);
             bump_step(1);
         }
-        Actor_SetAnimationAndWait(13, 3);
+        Actor_SetAnimationAndWait(ACTOR_SUKURETA, 3);
         Event_Wait(10);
-        Event_ShowMessageAndWait(13, 0, 10);
-        Actor_FaceDirection(0, 0xc000, 0);
-        Actor_FaceDirection(1, 0xd000, 0);
-        Actor_FaceDirection(5, 0xb000, 10);
-        Actor_SetAnimation(0, 3);
-        Actor_SetAnimation(1, 3);
-        Actor_SetAnimationAndWait(5, 3);
+        Event_ShowMessageAndWait(ACTOR_SUKURETA, 0, 10);
+        Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
+        Actor_FaceDirection(ACTOR_GERALD, 0xd000, 0);
+        Actor_FaceDirection(ACTOR_JASMINE, 0xb000, 10);
+        Actor_SetAnimation(ACTOR_PARTY_LEADER, 3);
+        Actor_SetAnimation(ACTOR_GERALD, 3);
+        Actor_SetAnimationAndWait(ACTOR_JASMINE, 3);
         Event_Wait(10);
-        Actor_SetAnimation(0, 0);
+        Actor_SetAnimation(ACTOR_PARTY_LEADER, 0);
         Event_Wait(20);
-        Actor_RunRepeatedMotion(13, 2);
-        Event_OpenMessage(13, 0);
+        Actor_RunRepeatedMotion(ACTOR_SUKURETA, 2);
+        Event_OpenMessage(ACTOR_SUKURETA, 0);
         Event_Wait(4);
         if (Event_ChooseYesNo(0, 0) == 0) {
-            Event_SetMessage(0xfc6);
+            Event_SetMessage(MSG_GERALD_YOU_CAN_HANDLE_THE_DANGER);
         } else {
-            Event_SetMessage(0xfc9);
+            Event_SetMessage(MSG_GERALD_ILL_TAKE_OVER_IF_NERVOUS);
         }
         ((void (*)())Engine_EventWait)(10);
-        Actor_RunRepeatedMotion(1, 2);
-        Actor_FaceDirection(1, 0, 10);
-        Event_ShowMessageAndWait(1, 0, 6);
-        Actor_FaceDirection(5, 0x8000, 10);
-        Actor_SetAnimationAndWait(5, 4);
-        Event_ShowMessageAndWait(5, 0, 6);
-        Actor_RunRepeatedMotion(1, 2);
-        Actor_FaceDirection(1, 0x8000, 10);
-        Actor_ShowEmote(1, 0x103, 30);
-        Event_ShowMessageAndWait(1, 0, 10);
-        Actor_ShowEmote(13, 0x100, 40);
-        Actor_Jump(13, 4, 40);
-        Actor_FaceDirection(0, 0xc000, 0);
-        Actor_FaceDirection(1, 0xc000, 0);
-        Actor_FaceDirection(5, 0xb000, 20);
-        Actor_FaceDirection(13, 0xb000, 10);
+        Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
+        Actor_FaceDirection(ACTOR_GERALD, 0, 10);
+        Event_ShowMessageAndWait(ACTOR_GERALD, 0, 6);
+        Actor_FaceDirection(ACTOR_JASMINE, 0x8000, 10);
+        Actor_SetAnimationAndWait(ACTOR_JASMINE, 4);
+        Event_ShowMessageAndWait(ACTOR_JASMINE, 0, 6);
+        Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
+        Actor_FaceDirection(ACTOR_GERALD, 0x8000, 10);
+        Actor_ShowEmote(ACTOR_GERALD, 0x103, 30);
+        Event_ShowMessageAndWait(ACTOR_GERALD, 0, 10);
+        Actor_ShowEmote(ACTOR_SUKURETA, 0x100, 40);
+        Actor_Jump(ACTOR_SUKURETA, 4, 40);
+        Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
+        Actor_FaceDirection(ACTOR_GERALD, 0xc000, 0);
+        Actor_FaceDirection(ACTOR_JASMINE, 0xb000, 20);
+        Actor_FaceDirection(ACTOR_SUKURETA, 0xb000, 10);
         Audio_PlayCue(158);
         Map_AnimateCells(0x200a0ac, 43, 8);
-        Actor_SetSpeed(13, 0x10000, 0x8000);
-        Actor_WalkToAndWait(13, 232, 218);
-        Actor_SetPosition(13, 0, 0);
-        Actor_ShowEmote(0, 0x101, 0);
-        Actor_ShowEmote(1, 0x101, 0);
-        Actor_ShowEmote(5, 0x101, 60);
-        *(s32 *)((*(u8 **)Data_03001ebc + 0x1c0)) = 0x202;
+        Actor_SetSpeed(ACTOR_SUKURETA, 0x10000, 0x8000);
+        Actor_WalkToAndWait(ACTOR_SUKURETA, 232, 218);
+        Actor_SetPosition(ACTOR_SUKURETA, 0, 0);
+        Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 0);
+        Actor_ShowEmote(ACTOR_GERALD, 0x101, 0);
+        Actor_ShowEmote(ACTOR_JASMINE, 0x101, 60);
+        gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
         Event_CloseScreen();
         Event_WaitForScreen();
         Event_RequestExit(13);
@@ -567,88 +590,81 @@ void FieldScene_RunActorPositionSequence(void)
     }
 }
 
-/* Loader-relocated overlay calls: each symbol names the pre-relocation call
- * word the image holds. */
-
 /* Contiguous unnamed state-owner run for resource_375. */
 
 /* The same import at two sites, so two names: the flag set at +0x1e and again
  * at +0x2e. */
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-void FieldScene_RunScene375_02000964(void)
+void Scene_LeaveForMtAleph(void)
 {
     s32 record;
     s32 facing;
 
     Event_Begin();
-    Actor_SetPosition(13, 0, 0);
-    Actor_SetPosition(1, 0xd80000, 0x1080000);
-    Actor_SetPosition(5, 0xf80000, 0x1080000);
+    Actor_SetPosition(ACTOR_SUKURETA, 0, 0);
+    Actor_SetPosition(ACTOR_GERALD, 0xd80000, 0x1080000);
+    Actor_SetPosition(ACTOR_JASMINE, 0xf80000, 0x1080000);
     record = Func_02002430(1);
     facing = 0xc000;
     *(u16 *)(record + 6) = facing;
     record = Func_0200243c(5);
     *(u16 *)(record + 6) = facing;
     Map_AnimateCells(0x200a0ac, 43, 8);
-    *(s32 *)(*(u8 **)Data_03001ebc + 0x1c0) = 0x202;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
     Event_OpenScreen();
     Event_WaitForScreen();
     Event_Wait(40);
-    Actor_SetSpeed(13, 0xcccc, 0x6666);
-    Actor_SetPosition(13, 0xe60000, 0xdc0000);
-    Actor_WalkToAndWait(13, 230, 232);
+    Actor_SetSpeed(ACTOR_SUKURETA, 0xcccc, 0x6666);
+    Actor_SetPosition(ACTOR_SUKURETA, 0xe60000, 0xdc0000);
+    Actor_WalkToAndWait(ACTOR_SUKURETA, 230, 232);
     Event_Wait(20);
-    Actor_SetAnimationAndWait(13, 3);
-    Event_SetMessage(0xfcc);
-    Event_ShowMessageAndWait(13, 0, 10);
-    Actor_RunRepeatedMotion(13, 2);
-    Actor_FaceDirection(13, 0x3000, 10);
-    Event_ShowMessageAndWait(13, 0, 10);
-    Actor_FaceDirection(1, 0, 0);
-    Actor_FaceDirection(0, 0x8000, 10);
-    Actor_SetAnimation(0, 3);
-    Actor_SetAnimationAndWait(1, 3);
-    Actor_SetAnimation(0, 0);
+    Actor_SetAnimationAndWait(ACTOR_SUKURETA, 3);
+    Event_SetMessage(MSG_SUKURETA_OUR_BEST_BET);
+    Event_ShowMessageAndWait(ACTOR_SUKURETA, 0, 10);
+    Actor_RunRepeatedMotion(ACTOR_SUKURETA, 2);
+    Actor_FaceDirection(ACTOR_SUKURETA, 0x3000, 10);
+    Event_ShowMessageAndWait(ACTOR_SUKURETA, 0, 10);
+    Actor_FaceDirection(ACTOR_GERALD, 0, 0);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x8000, 10);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, 3);
+    Actor_SetAnimationAndWait(ACTOR_GERALD, 3);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, 0);
     Event_Wait(20);
-    Actor_FaceDirection(0, 0, 0);
-    Actor_FaceDirection(5, 0x8000, 10);
-    Actor_SetAnimation(5, 3);
-    Actor_SetAnimationAndWait(0, 3);
-    Actor_SetAnimation(0, 0);
-    Actor_SetSpeed(1, 0xcccc, 0x6666);
-    Actor_SetSpeed(5, 0xcccc, 0x6666);
-    Actor_FaceDirection(0, 0xc000, 0);
-    Actor_SetAnimation(1, 2);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0, 0);
+    Actor_FaceDirection(ACTOR_JASMINE, 0x8000, 10);
+    Actor_SetAnimation(ACTOR_JASMINE, 3);
+    Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, 0);
+    Actor_SetSpeed(ACTOR_GERALD, 0xcccc, 0x6666);
+    Actor_SetSpeed(ACTOR_JASMINE, 0xcccc, 0x6666);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
+    Actor_SetAnimation(ACTOR_GERALD, 2);
     record = Value1(Func_02002550, 0);
     if (record != 0) {
-        Actor_SetDestination(1, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        Actor_SetDestination(ACTOR_GERALD, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
-    Actor_SetAnimation(5, 2);
+    Actor_SetAnimation(ACTOR_JASMINE, 2);
     record = Value1(Func_02002570_a, 0);
     if (record != 0) {
-        Actor_SetDestination(5, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        Actor_SetDestination(ACTOR_JASMINE, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
-    Actor_SetAnimation(13, 2);
+    Actor_SetAnimation(ACTOR_SUKURETA, 2);
     record = Value1(Func_02002590_a, 0);
     if (record != 0) {
-        Actor_SetDestination(13, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        Actor_SetDestination(ACTOR_SUKURETA, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
-    Actor_WaitForMove(1);
-    Actor_SetPosition(1, 0, 0);
-    Actor_SetPosition(5, 0, 0);
-    Actor_WaitForMove(13);
-    Actor_SetPosition(13, 0, 0);
-    Actor_SetAnimation(1, 1);
-    Actor_SetAnimation(5, 1);
-    Actor_SetAnimation(13, 1);
-    Actor_SetPosition(14, 0, 0);
-    Actor_SetPosition(15, 0, 0);
-    GameFlag_Set(0x801);
-    *(s32 *)(*(u8 **)Data_03001ebc + 0x1c0) = 0x100;
+    Actor_WaitForMove(ACTOR_GERALD);
+    Actor_SetPosition(ACTOR_GERALD, 0, 0);
+    Actor_SetPosition(ACTOR_JASMINE, 0, 0);
+    Actor_WaitForMove(ACTOR_SUKURETA);
+    Actor_SetPosition(ACTOR_SUKURETA, 0, 0);
+    Actor_SetAnimation(ACTOR_GERALD, 1);
+    Actor_SetAnimation(ACTOR_JASMINE, 1);
+    Actor_SetAnimation(ACTOR_SUKURETA, 1);
+    Actor_SetPosition(ACTOR_SATUROS, 0, 0);
+    Actor_SetPosition(ACTOR_MENARDI, 0, 0);
+    GameFlag_Set(FLAG_SANCTUM_VISIT_PLANNED);
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     ColorBuffer_ApplySource(0x10000, 0);
     GameFlag_Set(0x242);
     Event_End();
@@ -660,11 +676,11 @@ void FieldScene_SetupWithDescriptorA0ACWhenFlag242Clear(void)
         Audio_PlayCue(0x9E);
         Map_AnimateCells(Data_0200a0ac, 0x2B, 8);
     }
-    Actor_WalkTo(0, 0xE5, 0xD9);
+    Actor_WalkTo(ACTOR_PARTY_LEADER, 0xE5, 0xD9);
     Event_RequestExit(3);
 }
 
-void FieldScene_RunGatedActorSequence(void)
+void Scene_OverhearSaturosAndMenardi(void)
 {
     u8 *record;
     s32 x, z;
@@ -672,95 +688,95 @@ void FieldScene_RunGatedActorSequence(void)
     s32 evt2;
     s32 tbl;
 
-    if (GameFlag_IsSet(0x808) != 0) {
+    if (GameFlag_IsSet(FLAG_MET_SATUROS_AND_MENARDI) != 0) {
         return;
     }
 
     Event_Begin();
     Audio_PlayCue(17);
-    GameFlag_Set(0x808);
+    GameFlag_Set(FLAG_MET_SATUROS_AND_MENARDI);
 
-    evt = (s32)Data_00000f85;
+    evt = (s32)LinkedMessage_TheyKnowLittleOfTheSanctum;
     Event_SetMessage(evt);
-    Event_ShowMessageAndWait(14, 0, 10);
+    Event_ShowMessageAndWait(ACTOR_SATUROS, 0, 10);
 
-    Actor_SetSpeed(0, 0x13333, 0x9999);
-    Actor_ShowEmote(0, 0x100, 30);
-    Actor_WalkToAndWait(0, 0x188, 0x148);
-    Actor_FaceDirection(0, 0x4000, 10);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x13333, 0x9999);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x100, 30);
+    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x188, 0x148);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 10);
 
     record = Func_020026e0(0);
     x = *(s16 *)(record + 10);
     z = *(s16 *)(record + 18);
-    Actor_SetPosition(5, x << 16, z << 16);
-    Actor_SetPosition(1, x << 16, z << 16);
+    Actor_SetPosition(ACTOR_JASMINE, x << 16, z << 16);
+    Actor_SetPosition(ACTOR_GERALD, x << 16, z << 16);
 
-    Actor_SetSpeed(5, 0x13333, 0x9999);
-    Actor_SetSpeed(1, 0x13333, 0x9999);
-    Actor_WalkTo(5, 0x178, 0x148);
-    Actor_WalkToAndWait(1, 0x198, 0x148);
-    Actor_SetAnimation(0, 0);
-    Actor_SetAnimation(5, 0);
-    Actor_SetAnimation(1, 0);
-    Actor_FaceDirection(1, 0x8000, 0);
-    Actor_FaceDirection(5, 0, 20);
-    Actor_ShowEmote(0, 0x101, 0);
-    Actor_ShowEmote(1, 0x101, 0);
-    Actor_ShowEmote(5, 0x101, 30);
-    Actor_FaceDirection(0, 0x4000, 0);
-    Actor_FaceDirection(1, 0x4000, 0);
-    Actor_FaceDirection(5, 0x4000, 0);
+    Actor_SetSpeed(ACTOR_JASMINE, 0x13333, 0x9999);
+    Actor_SetSpeed(ACTOR_GERALD, 0x13333, 0x9999);
+    Actor_WalkTo(ACTOR_JASMINE, 0x178, 0x148);
+    Actor_WalkToAndWait(ACTOR_GERALD, 0x198, 0x148);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, 0);
+    Actor_SetAnimation(ACTOR_JASMINE, 0);
+    Actor_SetAnimation(ACTOR_GERALD, 0);
+    Actor_FaceDirection(ACTOR_GERALD, 0x8000, 0);
+    Actor_FaceDirection(ACTOR_JASMINE, 0, 20);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 0);
+    Actor_ShowEmote(ACTOR_GERALD, 0x101, 0);
+    Actor_ShowEmote(ACTOR_JASMINE, 0x101, 30);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 0);
+    Actor_FaceDirection(ACTOR_GERALD, 0x4000, 0);
+    Actor_FaceDirection(ACTOR_JASMINE, 0x4000, 0);
     Camera_SetSpeed(0x60000, 0xc000);
     Camera_MoveTo(0xd70000, -1, 0x1590000, 1);
     Data_02009b85();
     Event_Wait(20);
     Audio_PlayCue(61);
 
-    Actor_SetAnimationAndWait(14, 4);
-    Actor_SetAnimation(14, 4);
-    Event_ShowMessageAndWait(14, 0, 20);
-    Actor_FaceDirection(15, 0, 10);
-    Event_ShowMessageAndWait(15, 0, 10);
-    Actor_SetAnimationAndWait(14, 3);
-    Event_ShowMessageAndWait(14, 0, 10);
-    Actor_FaceDirection(15, 0x4000, 60);
-    Actor_RunRepeatedMotion(15, 1);
-    Event_ShowMessageAndWait(15, 0, 20);
-    Actor_SetAnimationAndWait(14, 3);
-    Event_ShowMessageAndWait(14, 0, 10);
-    Actor_SetAnimationAndWait(15, 4);
-    Event_ShowMessageAndWait(15, 0, 6);
-    Actor_ShowEmote(14, 0x100, 0);
-    Actor_RunRepeatedMotion(14, 2);
+    Actor_SetAnimationAndWait(ACTOR_SATUROS, 4);
+    Actor_SetAnimation(ACTOR_SATUROS, 4);
+    Event_ShowMessageAndWait(ACTOR_SATUROS, 0, 20);
+    Actor_FaceDirection(ACTOR_MENARDI, 0, 10);
+    Event_ShowMessageAndWait(ACTOR_MENARDI, 0, 10);
+    Actor_SetAnimationAndWait(ACTOR_SATUROS, 3);
+    Event_ShowMessageAndWait(ACTOR_SATUROS, 0, 10);
+    Actor_FaceDirection(ACTOR_MENARDI, 0x4000, 60);
+    Actor_RunRepeatedMotion(ACTOR_MENARDI, 1);
+    Event_ShowMessageAndWait(ACTOR_MENARDI, 0, 20);
+    Actor_SetAnimationAndWait(ACTOR_SATUROS, 3);
+    Event_ShowMessageAndWait(ACTOR_SATUROS, 0, 10);
+    Actor_SetAnimationAndWait(ACTOR_MENARDI, 4);
+    Event_ShowMessageAndWait(ACTOR_MENARDI, 0, 6);
+    Actor_ShowEmote(ACTOR_SATUROS, 0x100, 0);
+    Actor_RunRepeatedMotion(ACTOR_SATUROS, 2);
     Event_Wait(20);
-    Actor_FaceDirection(15, 0, 10);
-    Actor_ShowEmote(15, 0x101, 40);
-    Actor_FaceDirection(14, 0, 60);
-    Actor_FaceDirection(14, 0x8000, 40);
-    Actor_FaceDirection(14, 0, 40);
-    Actor_WalkToAndWait(14, 232, 0x168);
-    Actor_FaceDirection(14, 0, 10);
-    Actor_SetAnimationAndWait(15, 3);
+    Actor_FaceDirection(ACTOR_MENARDI, 0, 10);
+    Actor_ShowEmote(ACTOR_MENARDI, 0x101, 40);
+    Actor_FaceDirection(ACTOR_SATUROS, 0, 60);
+    Actor_FaceDirection(ACTOR_SATUROS, 0x8000, 40);
+    Actor_FaceDirection(ACTOR_SATUROS, 0, 40);
+    Actor_WalkToAndWait(ACTOR_SATUROS, 232, 0x168);
+    Actor_FaceDirection(ACTOR_SATUROS, 0, 10);
+    Actor_SetAnimationAndWait(ACTOR_MENARDI, 3);
     Event_Wait(10);
-    Actor_WalkTo(14, 0x188, 0x168);
-    Actor_WalkToAndWait(15, 216, 0x168);
-    Actor_WalkTo(15, 0x178, 0x168);
-    Actor_FaceDirection(0, 0x4000, 0);
-    Actor_FaceDirection(1, 0x4000, 0);
-    Actor_FaceDirection(5, 0x4000, 0);
+    Actor_WalkTo(ACTOR_SATUROS, 0x188, 0x168);
+    Actor_WalkToAndWait(ACTOR_MENARDI, 216, 0x168);
+    Actor_WalkTo(ACTOR_MENARDI, 0x178, 0x168);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 0);
+    Actor_FaceDirection(ACTOR_GERALD, 0x4000, 0);
+    Actor_FaceDirection(ACTOR_JASMINE, 0x4000, 0);
     Camera_MoveTo(0x1890000, -1, 0x1530000, 1);
-    Actor_WalkTo(14, 0x188, 0x168);
-    Actor_WalkToAndWait(15, 0x178, 0x168);
-    Actor_SetAnimation(14, 0);
-    Actor_SetAnimation(15, 0);
-    Actor_FaceDirection(14, 0xd000, 0);
-    Actor_FaceDirection(15, 0xd000, 30);
-    Actor_RunRepeatedMotion(14, 2);
-    Event_ShowMessageAndWait(14, 0, 10);
-    Actor_ShowEmote(1, 258, 60);
-    Actor_RunRepeatedMotion(1, 1);
-    Event_ShowMessageAndWait(1, 0, 10);
-    Actor_SetAnimationAndWait(15, 4);
+    Actor_WalkTo(ACTOR_SATUROS, 0x188, 0x168);
+    Actor_WalkToAndWait(ACTOR_MENARDI, 0x178, 0x168);
+    Actor_SetAnimation(ACTOR_SATUROS, 0);
+    Actor_SetAnimation(ACTOR_MENARDI, 0);
+    Actor_FaceDirection(ACTOR_SATUROS, 0xd000, 0);
+    Actor_FaceDirection(ACTOR_MENARDI, 0xd000, 30);
+    Actor_RunRepeatedMotion(ACTOR_SATUROS, 2);
+    Event_ShowMessageAndWait(ACTOR_SATUROS, 0, 10);
+    Actor_ShowEmote(ACTOR_GERALD, 258, 60);
+    Actor_RunRepeatedMotion(ACTOR_GERALD, 1);
+    Event_ShowMessageAndWait(ACTOR_GERALD, 0, 10);
+    Actor_SetAnimationAndWait(ACTOR_MENARDI, 4);
     Event_OpenMessage(0x100f, 0);
 
     if (Event_ChooseYesNo(0, 0) == 0) {
@@ -770,25 +786,25 @@ void FieldScene_RunGatedActorSequence(void)
     }
 
     Event_ShowMessageAndWait(0x100f, 0, 10);
-    Actor_RunRepeatedMotion(1, 2);
+    Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
 
-    evt2 = (s32)Data_00000f91;
+    evt2 = (s32)LinkedMessage_YoureTheOnesSneakingAround;
     Event_SetMessage(evt2);
-    Event_ShowMessageAndWait(1, 0, 20);
-    Actor_FaceEachOther(14, 15, 40);
-    Actor_FaceDirection(14, 0xd000, 0);
-    Actor_FaceDirection(15, 0xd000, 20);
-    Event_ShowMessageAndWait(14, 0, 60);
-    Actor_RunRepeatedMotion(15, 1);
+    Event_ShowMessageAndWait(ACTOR_GERALD, 0, 20);
+    Actor_FaceEachOther(ACTOR_SATUROS, ACTOR_MENARDI, 40);
+    Actor_FaceDirection(ACTOR_SATUROS, 0xd000, 0);
+    Actor_FaceDirection(ACTOR_MENARDI, 0xd000, 20);
+    Event_ShowMessageAndWait(ACTOR_SATUROS, 0, 60);
+    Actor_RunRepeatedMotion(ACTOR_MENARDI, 1);
     Event_Wait(10);
-    Actor_SetAnimationAndWait(15, 3);
+    Actor_SetAnimationAndWait(ACTOR_MENARDI, 3);
     Event_ShowMessageAndWait(0x100f, 0, 10);
-    Actor_RunRepeatedMotion(5, 2);
-    Actor_SetAnimationAndWait(5, 3);
+    Actor_RunRepeatedMotion(ACTOR_JASMINE, 2);
+    Actor_SetAnimationAndWait(ACTOR_JASMINE, 3);
     Event_ShowMessageAndWait(0x1005, 0, 20);
-    Actor_RunRepeatedMotion(14, 2);
-    Actor_FaceDirection(14, 0xa000, 20);
-    Event_OpenMessage(14, 0);
+    Actor_RunRepeatedMotion(ACTOR_SATUROS, 2);
+    Actor_FaceDirection(ACTOR_SATUROS, 0xa000, 20);
+    Event_OpenMessage(ACTOR_SATUROS, 0);
 
     if (Event_ChooseYesNo(0, 0) == 0) {
         Event_SetMessage(evt2 + 5);
@@ -796,47 +812,47 @@ void FieldScene_RunGatedActorSequence(void)
         Event_SetMessage(evt2 + 6);
     }
 
-    Actor_FaceDirection(5, 0, 0);
-    Actor_FaceDirection(1, 0x8000, 20);
-    Actor_RunRepeatedMotion(14, 2);
-    Event_ShowMessageAndWait(14, 0, 10);
-    Actor_FaceActor(14, 1, 30);
-    Actor_FaceActor(14, 5, 30);
-    Actor_ShowEmote(14, 0x105, 80);
-    Actor_SetAnimationAndWait(14, 4);
-    Event_SetMessage(0xf98);
-    Event_ShowMessageAndWait(14, 0, 6);
-    Actor_ShowEmote(0, 0x100, 0);
-    Actor_ShowEmote(1, 0x100, 0);
-    Actor_ShowEmote(5, 0x100, 0);
-    Actor_StartRepeatedMotion(1, 1);
-    Actor_StartRepeatedMotion(5, 1);
-    Actor_RunRepeatedMotion(0, 1);
+    Actor_FaceDirection(ACTOR_JASMINE, 0, 0);
+    Actor_FaceDirection(ACTOR_GERALD, 0x8000, 20);
+    Actor_RunRepeatedMotion(ACTOR_SATUROS, 2);
+    Event_ShowMessageAndWait(ACTOR_SATUROS, 0, 10);
+    Actor_FaceActor(ACTOR_SATUROS, ACTOR_GERALD, 30);
+    Actor_FaceActor(ACTOR_SATUROS, ACTOR_JASMINE, 30);
+    Actor_ShowEmote(ACTOR_SATUROS, 0x105, 80);
+    Actor_SetAnimationAndWait(ACTOR_SATUROS, 4);
+    Event_SetMessage(MSG_SATUROS_GO);
+    Event_ShowMessageAndWait(ACTOR_SATUROS, 0, 6);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x100, 0);
+    Actor_ShowEmote(ACTOR_GERALD, 0x100, 0);
+    Actor_ShowEmote(ACTOR_JASMINE, 0x100, 0);
+    Actor_StartRepeatedMotion(ACTOR_GERALD, 1);
+    Actor_StartRepeatedMotion(ACTOR_JASMINE, 1);
+    Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 1);
     Event_Wait(40);
-    Actor_RunRepeatedMotion(5, 2);
-    Actor_FaceDirection(1, 0x4000, 0);
-    Actor_FaceDirection(5, 0x4000, 10);
+    Actor_RunRepeatedMotion(ACTOR_JASMINE, 2);
+    Actor_FaceDirection(ACTOR_GERALD, 0x4000, 0);
+    Actor_FaceDirection(ACTOR_JASMINE, 0x4000, 10);
     Event_ShowMessageAndWait(0x1005, 0, 10);
-    Actor_RunRepeatedMotion(15, 2);
-    Actor_FaceDirection(15, 0, 10);
+    Actor_RunRepeatedMotion(ACTOR_MENARDI, 2);
+    Actor_FaceDirection(ACTOR_MENARDI, 0, 10);
     Event_ShowMessageAndWait(0x100f, 0, 10);
-    Actor_FaceDirection(14, 0x8000, 20);
-    Actor_SetAnimationAndWait(14, 4);
-    Event_ShowMessageAndWait(14, 0, 10);
-    Actor_RunRepeatedMotion(15, 2);
+    Actor_FaceDirection(ACTOR_SATUROS, 0x8000, 20);
+    Actor_SetAnimationAndWait(ACTOR_SATUROS, 4);
+    Event_ShowMessageAndWait(ACTOR_SATUROS, 0, 10);
+    Actor_RunRepeatedMotion(ACTOR_MENARDI, 2);
     Event_Wait(10);
-    Actor_FaceDirection(14, 0xb000, 0);
-    Actor_FaceDirection(15, 0xd000, 20);
-    Actor_SetSpeed(15, 0x8000, 0x4000);
-    Actor_SetSpeed(14, 0x8000, 0x4000);
+    Actor_FaceDirection(ACTOR_SATUROS, 0xb000, 0);
+    Actor_FaceDirection(ACTOR_MENARDI, 0xd000, 20);
+    Actor_SetSpeed(ACTOR_MENARDI, 0x8000, 0x4000);
+    Actor_SetSpeed(ACTOR_SATUROS, 0x8000, 0x4000);
 
     record = Func_020026e0(14);
     *(record + 90) &= 0xfe;
     record = Func_020026e0(15);
     *(record + 90) &= 0xfe;
 
-    Actor_WalkTo(14, 0x188, 0x178);
-    Actor_WalkToAndWait(15, 0x178, 0x178);
+    Actor_WalkTo(ACTOR_SATUROS, 0x188, 0x178);
+    Actor_WalkToAndWait(ACTOR_MENARDI, 0x178, 0x178);
     Event_Wait(6);
 
     record = Func_020026e0(14);
@@ -857,31 +873,31 @@ void FieldScene_RunGatedActorSequence(void)
         *(record + 90) = merged;
     }
 
-    Actor_SetAnimation(14, 0);
-    Actor_SetAnimation(15, 0);
+    Actor_SetAnimation(ACTOR_SATUROS, 0);
+    Actor_SetAnimation(ACTOR_MENARDI, 0);
     Event_Wait(20);
-    Actor_RunRepeatedMotion(1, 2);
-    Event_ShowMessageAndWait(1, 0, 10);
-    Actor_FaceDirection(0, 1, 20);
-    Actor_SetAnimation(0, 3);
-    Actor_SetAnimationAndWait(1, 3);
+    Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
+    Event_ShowMessageAndWait(ACTOR_GERALD, 0, 10);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, 1, 20);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, 3);
+    Actor_SetAnimationAndWait(ACTOR_GERALD, 3);
     Audio_PlayCue(17);
 
-    Actor_SetAnimation(1, 2);
+    Actor_SetAnimation(ACTOR_GERALD, 2);
     record = Func_020026e0(0);
     if (record != 0) {
-        Actor_SetDestination(1, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        Actor_SetDestination(ACTOR_GERALD, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
-    Actor_WaitForMove(1);
-    Actor_SetPosition(1, 0, 0);
+    Actor_WaitForMove(ACTOR_GERALD);
+    Actor_SetPosition(ACTOR_GERALD, 0, 0);
 
-    Actor_SetAnimation(5, 2);
+    Actor_SetAnimation(ACTOR_JASMINE, 2);
     record = Func_020026e0(0);
     if (record != 0) {
-        Actor_SetDestination(5, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        Actor_SetDestination(ACTOR_JASMINE, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
-    Actor_WaitForMove(5);
-    Actor_SetPosition(5, 0, 0);
+    Actor_WaitForMove(ACTOR_JASMINE);
+    Actor_SetPosition(ACTOR_JASMINE, 0, 0);
 
     tbl = (s32)Data_02009ce0;
     Call3(Func_02002d8e, 14, 0x10000, tbl);
@@ -925,7 +941,7 @@ void SceneState_SetWorkAndFlag87e(void)
 void SceneDialogue_RunActorSixteenDialogue(void)
 {
     Event_Begin();
-    Event_SetMessage(0x1C96);
+    Event_SetMessage(MSG_MEMORIES_OF_THIS_COTTAGE);
     Event_AskYesNo(16, 0);
     Event_End();
 }

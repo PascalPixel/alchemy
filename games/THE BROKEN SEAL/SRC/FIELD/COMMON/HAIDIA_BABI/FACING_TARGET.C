@@ -6,6 +6,24 @@
 
 #include "FACING_OBJECT.H"
 #include "FIELD_EVENT.H"
+#include "FIELD_SCENE.H"
+
+enum {
+    /* Message 0x182 + 224. */
+    ITEM_MYTHRIL_BAG = 224
+};
+
+enum ValeMessage {
+    MSG_THE_THREE_TRAVELERS_SEEM_ODD = 0xf58,
+    MSG_HEY_BOY = 0xf5b,
+    MSG_THE_VISITORS_CAUSED_THE_ERUPTION = 0x11a9,
+    MSG_THE_MASKED_MAN_WAS_GARCIA = 0x11aa,
+    MSG_YOUVE_GROWN_SO_MUCH = 0x1c13,
+    MSG_YOU_CAME_BACK = 0x1c14,
+    MSG_HOME_JUST_TO_STAY = 0x1c15,
+    MSG_DORA_WAS_STRUCK_WITH_ILLNESS = 0x1c1a,
+    MSG_DORA_WOULDNT_LET_HIM_STAY = 0x1c1b
+};
 
 /* The anchor pointer is read before the frame counter is stored: the reference
  * hoists `ldr r6,[r5,#104]` above the `strh`, and only that source order
@@ -53,12 +71,6 @@ s32 Func_02001a0c(s32);
 void Func_020030f6(s32);
 void Func_02002d4e(void);
 void Func_0200329a(void);
-void Func_0200061c(s32);
-void Func_02000644(s32);
-void Func_02000658(s32);
-void Func_0200066c(s32);
-void Func_02000680(s32);
-void Func_020006bc(s32);
 s32 Func_02002766();
 s32 Func_02002c98();
 s32 Func_02002c9e();
@@ -68,11 +80,6 @@ void Func_02002d70();
 void Func_02003106(s32);
 void Func_02002d9a(void);
 void Func_02001d34(void);
-void Func_02000608(s32);
-void Func_02000630(s32);
-void Func_02000694(s32);
-void Func_020006a8(s32);
-void Func_020006d0(s32);
 void Func_02002c00(u8 *);
 s32 Func_02002da4(s32, s32);
 void Func_02002c3c(u8 *);
@@ -80,9 +87,6 @@ s32 Func_02002de0(s32, s32);
 void Func_02003250(void);
 
 /* One import, four call sites, four distinct veneer addresses. */
-
-/* Loader-relocated overlay calls: each symbol names the pre-relocation call
- * word the image holds. */
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
@@ -103,14 +107,10 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
     f(a0, a1, a2);
 }
 
-/* The scene step counter at 0x1d8 of the shared scene work record. */
+/* Moves the next dialogue line on by amount messages. */
 static __inline__ void bump_step(s32 amount)
 {
-    extern u8 Data_03001ebc[];
-
-    u8 *work = *(u8 **)Data_03001ebc;
-
-    *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
+    gEventWork->message += amount;
 }
 
 static __inline__ s32 Value1(s32 (*f)(), s32 a0)
@@ -118,10 +118,6 @@ static __inline__ s32 Value1(s32 (*f)(), s32 a0)
     return f(a0);
 }
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
 static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
 {
     f(a0, a1);
@@ -193,7 +189,7 @@ s32 SceneData_SelectTableByStoryFlags(void)
         return (s32)Data_0200a518;
     if (GameFlag_IsSet(0x87a) != 0)
         tbl = Data_0200a410;
-    else if (GameFlag_IsSet(0x815) != 0)
+    else if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE) != 0)
         tbl = Data_0200a338;
     else
         tbl = Data_0200a218;
@@ -218,9 +214,7 @@ void FieldScene_RunActorCueBranch(s32 object)
 
 s32 SceneData_SelectTableByStoryFlagsB(void)
 {
-    extern s16 Data_02000240[];
-
-    if (Data_02000240[225] == 19) {
+    if (gGameState.entrance == 19) {
         if (GameFlag_IsSet(0x950) != 0) {
             return 0x0200AC5C;
         }
@@ -233,7 +227,7 @@ s32 SceneData_SelectTableByStoryFlagsB(void)
     if (GameFlag_IsSet(0x87A) != 0) {
         return 0x0200A980;
     }
-    if (GameFlag_IsSet(0x815) != 0) {
+    if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE) != 0) {
         return 0x0200A800;
     }
     return 0x0200A6B0;
@@ -247,8 +241,8 @@ void FieldScene_RunScene377_020001e0(void)
     Event_Begin();
     Actor_StartRepeatedMotion(16, 2);
     Event_Wait(30);
-    Event_SetMessage(0xf5b);
-    Actor_FaceEachOther(0, 16, 10);
+    Event_SetMessage(MSG_HEY_BOY);
+    Actor_FaceEachOther(ACTOR_PARTY_LEADER, 16, 10);
     Event_ShowMessageAndWait(16, 0, 6);
     Actor_ShowEmote(16, 0x102, 0);
     Actor_StartRepeatedMotion(16, 1);
@@ -270,8 +264,8 @@ void SceneDialogue_RunActorFourteenDialogue11AA(void)
     void *work;
 
     Event_Begin();
-    Actor_FaceActor(0xE, 0, 0xA);
-    Event_SetMessage(0x11AA);
+    Actor_FaceActor(0xE, ACTOR_PARTY_LEADER, 0xA);
+    Event_SetMessage(MSG_THE_MASKED_MAN_WAS_GARCIA);
     Event_OpenMessage(0xE, 0);
     if (Event_ChooseYesNo(0, 0) == 0) {
         Event_ShowMessage(0xE, 0);
@@ -285,12 +279,10 @@ void SceneDialogue_RunActorFourteenDialogue11AA(void)
 
 void SceneState_SetWork448To521AndRun(s32 object)
 {
-    extern u8 *Data_03001ebc;
-
     if (GameFlag_IsSet(0x834) != 0) {
         Func_02001d34();
     }
-    *(s32 *)(Data_03001ebc + 448) = 521;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
     Event_CloseScreen();
     Event_WaitForScreen();
     Event_RequestExit(object);
@@ -299,67 +291,67 @@ void SceneState_SetWork448To521AndRun(s32 object)
 void SceneState_SetValue123Mode1(void)
 {
     Audio_PlayCue(0x7B);
-    Func_02000608(1);
+    SceneState_SetWork448To521AndRun(1);
 }
 
 void FieldScene_RunStep7BThen2(void)
 {
     Audio_PlayCue(0x7B);
-    Func_0200061c(2);
+    SceneState_SetWork448To521AndRun(2);
 }
 
 void SceneState_SetValue123Mode3(void)
 {
     Audio_PlayCue(0x7B);
-    Func_02000630(3);
+    SceneState_SetWork448To521AndRun(3);
 }
 
 void FieldScene_RunStep7BThen4(void)
 {
     Audio_PlayCue(0x7B);
-    Func_02000644(4);
+    SceneState_SetWork448To521AndRun(4);
 }
 
 void FieldScene_RunStep80Then5(void)
 {
     Audio_PlayCue(0x80);
-    Func_02000658(5);
+    SceneState_SetWork448To521AndRun(5);
 }
 
 void FieldScene_RunStep7BThen6(void)
 {
     Audio_PlayCue(0x7B);
-    Func_0200066c(6);
+    SceneState_SetWork448To521AndRun(6);
 }
 
 void FieldScene_RunStep80Then7(void)
 {
     Audio_PlayCue(0x80);
-    Func_02000680(7);
+    SceneState_SetWork448To521AndRun(7);
 }
 
 void SceneState_SetValue129Mode8(void)
 {
     Audio_PlayCue(0x81);
-    Func_02000694(8);
+    SceneState_SetWork448To521AndRun(8);
 }
 
 void SceneState_SetValue129Mode9(void)
 {
     Audio_PlayCue(0x81);
-    Func_020006a8(9);
+    SceneState_SetWork448To521AndRun(9);
 }
 
 void FieldScene_RunStep7BThen10(void)
 {
     Audio_PlayCue(0x7B);
-    Func_020006bc(10);
+    SceneState_SetWork448To521AndRun(10);
 }
 
 void SceneState_ApplyValues123And11(void)
 {
     Audio_PlayCue(0x7B);
-    Func_020006d0(11);
+    SceneState_SetWork448To521AndRun(11);
 }
 
 void FieldScene_RunScene377_02000e34(void)
@@ -374,20 +366,20 @@ void FieldScene_RunScene377_02000e34(void)
         Event_Begin();
         if (GameFlag_IsSet(0x87a) != 0) {
             Actor_RunRepeatedMotion(13, 2);
-            Actor_FaceActor(13, 0, 10);
+            Actor_FaceActor(13, ACTOR_PARTY_LEADER, 10);
             if (GameFlag_IsSet(0x300) == 0) {
-                Event_SetMessage(0x1c14);
+                Event_SetMessage(MSG_YOU_CAME_BACK);
                 Event_ShowMessage(13, 0);
                 GameFlag_Set(0x300);
             }
-            Event_SetMessage(0x1c15);
+            Event_SetMessage(MSG_HOME_JUST_TO_STAY);
             Event_AskYesNo(13, 0);
             Actor_FaceDirection(13, 0x9000, 10);
         } else {
-            if (GameFlag_IsSet(0x815) != 0) {
-                Event_SetMessage(0x11a9);
+            if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE) != 0) {
+                Event_SetMessage(MSG_THE_VISITORS_CAUSED_THE_ERUPTION);
             } else {
-                Event_SetMessage(0xf58);
+                Event_SetMessage(MSG_THE_THREE_TRAVELERS_SEEM_ODD);
             }
             Event_ShowMessage(13, 0);
         }
@@ -398,8 +390,8 @@ void FieldScene_RunScene377_02000e34(void)
 void SceneDialogue_ShowLine1C13WithActor16Steps(void)
 {
     Event_Begin();
-    Actor_FaceActor(0x10, 0, 0xA);
-    Event_SetMessage(0x1C13);
+    Actor_FaceActor(0x10, ACTOR_PARTY_LEADER, 0xA);
+    Event_SetMessage(MSG_YOUVE_GROWN_SO_MUCH);
     Event_ShowMessage(0x10, 0);
     Actor_FaceDirection(0x10, 0xB000, 0xA);
     GameFlag_Set(0x301);
@@ -409,7 +401,7 @@ void SceneDialogue_ShowLine1C13WithActor16Steps(void)
 void SceneDialogue_RunActorThirteenDialogue(void)
 {
     Event_Begin();
-    Event_SetMessage(0x1C1B);
+    Event_SetMessage(MSG_DORA_WOULDNT_LET_HIM_STAY);
     Event_ShowMessage(0xD, 0);
     GameFlag_Set(0x81C);
     Event_End();
@@ -418,7 +410,7 @@ void SceneDialogue_RunActorThirteenDialogue(void)
 void SceneDialogue_RunActor16LineAndFlag81c(void)
 {
     Event_Begin();
-    Event_SetMessage(0x1C1A);
+    Event_SetMessage(MSG_DORA_WAS_STRUCK_WITH_ILLNESS);
     Event_ShowMessage(0x10, 0);
     GameFlag_Set(0x81C);
     Event_End();
@@ -440,8 +432,6 @@ void ActorPresentation_SetTwoSceneCells(void)
 
 void FieldScene_RunSupplementalSequenceOne(s32 a0)
 {
-    extern u8 Data_03001ebc[];
-
     struct FieldActor *actor;
     struct FieldSprite *sprite;
     s32 rec7;
@@ -449,7 +439,7 @@ void FieldScene_RunSupplementalSequenceOne(s32 a0)
     Func_02002cf8(a0);
     Camera_MoveTo(-1, -1, -1, 0);
     Task_Wait(1);
-    Actor_SetPosition(0, 0, 0);
+    Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
     Actor_SetPosition(18, 0x1e00000, 0xca0000);
     Task_Wait(1);
     Camera_FollowActor(18, 1);
@@ -462,10 +452,10 @@ void FieldScene_RunSupplementalSequenceOne(s32 a0)
     sprite->full_color = 0;
     sprite->palette = 0;
     rec7 = Value2(Func_02002c9e, 17, 0x608);
-    Item_LoadIcon(224);
+    Item_LoadIcon(ITEM_MYTHRIL_BAG);
     Vram_Load(sprite->vram_block, 128, rec7 + 0x400);
     Heap_Release(17);
-    *(s32 *)(*(u8 **)Data_03001ebc + 0x1c0) = 0x202;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
     Event_OpenScreen();
     Actor_SetSpeed(18, 0x10000, 0x8000);
     Actor_WalkToAndWait(18, 0x1e0, 176);

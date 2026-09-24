@@ -16,8 +16,6 @@ struct SceneActorRecord *Func_02001a84(s32 actor);
 
 #define TILE(position) ((position) / 0x100000)
 
-#define SceneActor_LiftLowActorOnSubjectTile Func_02000944
-
 /* Checks actors 11 to 14 in turn against the subject actor. The first one
  * whose y lies above 0 and below one tile, and that stands on the subject's
  * tile, is moved up to y 255 with fields 0x28 and 0x48 cleared, and the check

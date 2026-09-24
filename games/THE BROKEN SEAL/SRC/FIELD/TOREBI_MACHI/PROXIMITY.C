@@ -4,6 +4,8 @@
  */
 
 #include "TYPES.H"
+#include "FIELD_EVENT.H"
+#include "FIELD_SCENE.H"
 #include "FIELD_EFFECT.H"
 
 #define NULL ((void *)0)
@@ -29,7 +31,6 @@
 #define ObjectMotion_ResetAndSetPositionInMode2_1(args...) Func_02001796(args)
 #define ObjectMotion_ResetAndSetPositionInMode2_2(args...) Func_020017a0(args)
 #define ObjectMotion_SetPositionAndReset_1(a0, a1, a2) Call3(Func_020017b4, a0, a1, a2)
-#define ObjectMotion_ArmCallback_1(a0, a1, a2) Call3(Func_02001840_a, a0, a1, a2)
 #define ObjectMotion_CommitCurrentPositionAndActivate_1(args...) Func_020017d6(args)
 #define Object_SetModeById_1(args...) Func_020017ee(args)
 #define Object_SetModeById_2(args...) Func_020017f6(args)
@@ -37,12 +38,9 @@
 #define ObjectMotion_SetAngleToward_1(args...) Func_02001828(args)
 #define ObjectMotion_SetAngleToward_2(args...) Func_02001832(args)
 #define BattleRuntime_WaitIfModeZero_1(args...) Func_020017b0(args)
-#define BattleRuntime_WaitIfModeZero_2(a0, a1) Call2(Func_0200188a_a, a0, a1)
 #define BattleRuntime_WaitIfModeZero_3(a0, a1) Call2(Func_02001894, a0, a1)
 #define ObjectMotion_SetVariantCallback_1(args...) Func_02001844(args)
-#define ObjectMotion_SetVariantCallbackAndInvokeObject_1(args...) Func_02001854_a(args)
 #define BattleRuntime_WaitIfModeZero_4(args...) Func_020017da(args)
-#define ObjectMotion_SetSpeedParameters_3(args...) Func_0200188a_b(args)
 #define BattleRuntime_WaitIfModeZero_5(args...) Func_020017e8(args)
 #define UiWork_Create_1(args...) Func_020017e2(args)
 #define UiWork_WaitThenFinalizeCapacity_1(a0, a1) Value2(Func_02001838, a0, a1)
@@ -50,10 +48,8 @@
 #define ObjectMotion_SetVariantCallbackAndInvokeObject_2(args...) Func_020018aa(args)
 #define BattleRuntime_WaitIfModeZero_7(args...) Func_02001830(args)
 #define ObjectMotion_ArmCallback_2(args...) Func_02001902(args)
-#define BattleRuntime_WaitIfModeZero_8(args...) Func_02001840_b(args)
 #define BattleRuntime_WaitIfModeZero_9(args...) Func_02001846(args)
 #define ObjectMotion_CallThenWaitForAnimationChange_1(args...) Func_020018be(args)
-#define BattleRuntime_WaitIfModeZero_10(args...) Func_02001854_b(args)
 #define ObjectMotion_ArmCallback_3(args...) Func_02001926(args)
 #define BattleRuntime_WaitIfModeZero_11(args...) Func_02001864(args)
 #define BattleEvent_RunActionAndWait_1(args...) Func_0200191c(args)
@@ -66,17 +62,13 @@
 #define BattleRuntime_WaitIfModeZero_14(args...) Func_020018a6(args)
 #define ObjectMotion_SetSpeedParameters_4(a0, a1, a2) Call3(Func_020018e0, a0, a1, a2)
 #define ObjectMotion_SetSpeedParameters_5(a0, a1, a2) Call3(Func_020018ea, a0, a1, a2)
-#define ObjectMotion_ResetAndSetPositionInMode2_3(args...) Func_02001904_a(args)
 #define BattleRuntime_WaitIfModeZero_15(args...) Func_020018ca(args)
-#define ObjectMotion_ResetAndSetPositionInMode2_4(args...) Func_02001914_a(args)
 #define ObjectMotion_CommitCurrentPositionAndActivate_2(args...) Func_02001932(args)
 #define ObjectMotion_ResetAndSetPositionInMode2_5(args...) Func_02001924(args)
 #define ObjectMotion_SetPositionAndReset_2(args...) Func_02001936(args)
 #define BattleRuntime_WaitIfModeZero_16(args...) Func_020018f6(args)
 #define ObjectMotion_SetVariantCallbackAndInvokeObject_3(args...) Func_0200197e(args)
-#define BattleRuntime_WaitIfModeZero_17(args...) Func_02001904_b(args)
 #define ObjectMotion_ArmCallback_6(args...) Func_020019d6(args)
-#define BattleRuntime_WaitIfModeZero_18(args...) Func_02001914_b(args)
 #define BattleRuntime_WaitIfModeZero_19(args...) Func_0200191a(args)
 #define ObjectMotion_CallThenWaitForAnimationChange_3(args...) Func_02001992(args)
 #define BattleRuntime_WaitIfModeZero_20(args...) Func_02001928(args)
@@ -105,33 +97,6 @@
  * the id of the object created earlier in the same function.
  */
 #define SCENE_OBJECT_ID (*(s32 *)(*(u8 **)Data_03001ebc + 0x1f4))
-#define SceneState_SetValues31_2_4 Func_02000030
-#define SceneActor_GetPositionDistance Func_02000040
-#define SceneActor_UpdatePartnerProximity Func_02000170
-#define SceneData_GetTable9060 Func_02000208
-#define SceneData_ReturnZero Func_02000210
-#define SceneData_GetTable91f8 Func_02000214
-#define SceneData_GetTable9238 Func_0200021c
-#define FieldScene_RunScene3b5_02000224 Func_02000224
-#define ConfigureAndPlaceActorOneHundredTwo Func_02000260
-#define SceneDialogue_RunMessage0e36 Func_020002b8
-#define SceneDialogue_RunMessage0e37 Func_020002d4
-#define FieldScene_RunSupplementalSequenceTwo Func_020002f0
-#define SceneData_SelectTable94a8ByFlags Func_020004b0
-#define SceneDialogue_RunActor15Message1f92 Func_020004e8
-#define SceneDialogue_RunActor24Message1f9d Func_02000508
-#define FieldScene_RunScene3b5_02000528 Func_02000528
-#define FieldScene_RunScene3b5_02000568 Func_02000568
-#define SceneDialogue_RunActor27Message1fa3 Func_0200059c
-#define SceneDialogue_RunActor24Message235f Func_020005bc
-#define FieldScene_RunScene3b5_020005dc Func_020005dc
-#define SceneScript_SetupActors Func_02000644
-#define SceneActor_CopyPlayerModeToActor Func_020006e8
-#define FieldScene_RunScene3b5SequenceA Func_02000894
-#define SceneState_SetValue30ThenCall Func_02000954
-#define SceneState_PassWorkHalfword16C Func_02000964
-#define FieldScene_RunPrimarySequence Func_02000980
-#define FieldScene_ResetActor9AndDrawTiles Func_02000ca8
 
 struct SceneSetup {
     u16 *commands;
@@ -184,12 +149,8 @@ u8 *Func_02000f34();
 void Func_0200026a();
 void Func_02000f66();
 void Func_02000f7e();
-s32 Func_02000fa6_a();
-s32 Func_02000fa6_b();
 u8 *Func_02000fb8();
 s32 Func_0200132a();
-void Func_0200133c_a();
-void Func_0200133c_b();
 void Func_0200138a();
 void Func_02001396();
 void Func_020013ea();
@@ -207,8 +168,6 @@ void Func_020016a4();
 void Func_020016ae();
 void Func_020016bc();
 void Func_020016be();
-s32 Func_020016ce_a();
-s32 Func_020016ce_b();
 void Func_020016da();
 void Func_020016fa();
 void Func_02001740();
@@ -291,13 +250,9 @@ struct FieldActor *Func_02001470();
 void Func_020009e8();
 void Func_0200145c();
 s32 Func_020014ce();
-s32 Func_020014d8_a();
-s32 Func_020014d8_b();
 s32 Func_020014f0();
 s32 Func_020014f6();
 void Func_020014f8();
-s32 Func_02001500_a();
-s32 Func_02001500_b();
 s32 Func_02001506();
 s32 Func_02001518();
 s32 Func_02001520();
@@ -345,16 +300,10 @@ void Func_02001828();
 void Func_02001830();
 void Func_02001832();
 s32 Func_02001838();
-void Func_02001840_a();
-void Func_02001840_b();
 void Func_02001844();
 void Func_02001846();
-void Func_02001854_a();
-void Func_02001854_b();
 void Func_02001864();
 void Func_02001872();
-void Func_0200188a_a();
-void Func_0200188a_b();
 void Func_02001890();
 void Func_02001894();
 void Func_020018a6();
@@ -366,11 +315,7 @@ void Func_020018ea();
 void Func_020018f6();
 void Func_02001900();
 void Func_02001902();
-void Func_02001904_a();
-void Func_02001904_b();
 void Func_02001910();
-void Func_02001914_a();
-void Func_02001914_b();
 void Func_0200191a();
 void Func_0200191c();
 void Func_02001924();
@@ -430,7 +375,6 @@ void Func_02001a3a(s32);
  */
 static __inline__ void Call1(void (*f)(), s32 a0)
 {
-    extern u8 Data_03001ebc[];
     void Func_020013d2();
     void Func_0200141a();
 
@@ -439,7 +383,6 @@ static __inline__ void Call1(void (*f)(), s32 a0)
 
 static __inline__ s32 Value1(s32 (*f)(), s32 a0)
 {
-    extern u8 Data_03001ebc[];
     void Func_020013d2();
     void Func_0200141a();
 
@@ -448,7 +391,6 @@ static __inline__ s32 Value1(s32 (*f)(), s32 a0)
 
 static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 {
-    extern u8 Data_03001ebc[];
     void Func_020013d2();
     void Func_0200141a();
 
@@ -469,7 +411,6 @@ static __inline__ void bump_step(s32 amount)
 
 static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
 {
-    extern u8 Data_03001ebc[];
     void Func_020013d2();
     void Func_0200141a();
 
@@ -478,7 +419,6 @@ static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
 
 static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
 {
-    extern u8 Data_03001ebc[];
     void Func_020013d2();
     void Func_0200141a();
 
@@ -497,25 +437,16 @@ static __inline__ void PlaceActor_02001104(s32 actor, s32 x, s32 y)
 
 static __inline__ void bump_step_02000528(s32 amount)
 {
-    extern u8 Data_03001ebc[];
-
-    u8 *work = *(u8 **)Data_03001ebc;
-
-    *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
+    gEventWork->message += amount;
 }
 
 static __inline__ void bump_step_02000568(s32 amount)
 {
-    extern u8 Data_03001ebc[];
-
-    u8 *work = *(u8 **)Data_03001ebc;
-
-    *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
+    gEventWork->message += amount;
 }
 
 static __inline__ void Call1_02000644(void (*f)(), s32 a)
 {
-    extern u8 *Data_03001ebc;
     u8 *Func_020013d2(s32);
     u8 *Func_0200141a(s32);
 
@@ -524,7 +455,6 @@ static __inline__ void Call1_02000644(void (*f)(), s32 a)
 
 static __inline__ void Call3_02000644(void (*f)(), s32 a, s32 b, s32 c)
 {
-    extern u8 *Data_03001ebc;
     u8 *Func_020013d2(s32);
     u8 *Func_0200141a(s32);
 
@@ -533,31 +463,21 @@ static __inline__ void Call3_02000644(void (*f)(), s32 a, s32 b, s32 c)
 
 static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
 {
-    extern u8 Data_03001ebc[];
-
     f(a0, a1);
 }
 
 static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
 {
-    extern u8 Data_03001ebc[];
-
     return f(a0, a1, a2);
 }
 
 static __inline__ void bump_step_02000728(s32 amount)
 {
-    extern u8 Data_03001ebc[];
-
-    u8 *work = *(u8 **)Data_03001ebc;
-
-    *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
+    gEventWork->message += amount;
 }
 
 static __inline__ s32 Value4(s32 (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 {
-    extern u8 Data_03001ebc[];
-
     return f(a0, a1, a2, a3);
 }
 
@@ -598,7 +518,6 @@ s32 SceneActor_GetPositionDistance(s32 *a, s32 *b)
  */
 #include "TYPES.H"
 
-#define SceneActor_UpdatePlayerProximity Func_0200007c
 struct SceneActor {
     u8 unk_00[6];
     u16 facing;
@@ -725,21 +644,20 @@ u8 *SceneData_GetTable9238(void)
 
 void FieldScene_RunScene3b5_02000224(void)
 {
-    extern u8 Data_03001ebc[];
     void Func_020013d2();
     void Func_0200141a();
 
     u32 i;
     u8 *record;
 
-    record = Value1(Func_02000fa6_a, 8);
+    record = Value1(Engine_ActorGet, 8);
     if ((s32)record != 0) {
         record[89] = 0;
     }
     record = Func_02000fb8(8);
     Func_02000f66((s32)record, 0);
     Call4(Func_02000f7e, 0, 0x2200000, 0x1200000, 253);
-    Call1(Func_02000fa6_b, 0x200);
+    GameFlag_Set(0x200);
 }
 
 void ConfigureAndPlaceActorOneHundredTwo(void)
@@ -879,8 +797,6 @@ void SceneDialogue_RunActor24Message1f9d(void)
 
 void FieldScene_RunScene3b5_02000528(void)
 {
-    extern u8 Data_03001ebc[];
-
     u32 i;
     s32 record;
 
@@ -895,8 +811,6 @@ void FieldScene_RunScene3b5_02000528(void)
 
 void FieldScene_RunScene3b5_02000568(void)
 {
-    extern u8 Data_03001ebc[];
-
     u32 i;
     s32 record;
 
@@ -926,16 +840,15 @@ void SceneDialogue_RunActor24Message235f(void)
 
 void FieldScene_RunScene3b5_020005dc(void)
 {
-    extern u8 Data_03001ebc[];
     void Func_020013d2();
     void Func_0200141a();
 
     u32 i;
     s32 record;
 
-    Func_0200133c_a();
+    Event_Begin();
     if (Value1(Func_0200132a, 0x8bf) == 0) {
-        Call1(Func_0200133c_b, 0x8bf);
+        GameFlag_Set(0x8bf);
         Call1(Func_020013ea, 0x2368);
         Func_02001402(19, 0);
         Func_02001452(233, 3);
@@ -1000,35 +913,33 @@ void SceneActor_CopyPlayerModeToActor(union FieldObject *object)
 
 s32 Func_02000728(s32 a0)
 {
-    extern struct EventWork *Data_03001ebc;
-
     u32 i;
     s32 record;
     s32 handler;
     s32 hidden;
 
-    Data_03001ebc->start_transition = 0x100;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Call3(Func_020014f8, 16, 0x1600000, 0x1600000);
-    Call2(Func_020014d8_a, 16, 0x2008ec0);
+    Actor_EnableActionCallback(16, 0x2008ec0);
     record = Value1(Func_020014ce, 16);
     handler = 0x2008171;
     ((struct SceneActor *)record)->proximity_flags = 1;
     *(s32 *)(record + 108) = handler;
     hidden = 0;
     Value3(Func_02001520, 17, 0x1700000, 0x1400000);
-    Call2(Func_02001500_a, 17, 0x2008f90);
+    Actor_EnableActionCallback(17, 0x2008f90);
     record = Value1(Func_020014f6, 17);
     ((struct SceneActor *)record)->proximity_flags = hidden;
     *(s32 *)(record + 108) = handler;
     record = Func_02001506(14);
     *(s32 *)(record + 108) = 0x20086e9;
-    if (Value1(Func_020014d8_b, 0x8c1) != 0) {
+    if (GameFlag_IsSet(0x8c1) != 0) {
         Call3(Func_0200155a, 28, 0x13c0000, 0x1480000);
     }
     if (Value1(Func_020014f0, 0x201) != 0) {
         Func_0200145c();
     }
-    if (Value1(Func_02001500_b, 0x200) != 0) {
+    if (GameFlag_IsSet(0x200) != 0) {
         Func_020009e8();
         Func_02001588(8, 4);
     }
@@ -1052,7 +963,6 @@ s32 Func_02000728(s32 a0)
 
 void FieldScene_RunScene3b5SequenceA(void)
 {
-    extern u8 Data_03001ebc[];
     void Func_020013d2();
     void Func_0200141a();
 
@@ -1061,11 +971,11 @@ void FieldScene_RunScene3b5SequenceA(void)
 
     Func_020015f4();
     Call3(Func_02001642, 0, 0x130, 0x138);
-    Call3(Func_020016ce_a, 0, 0xc000, 0);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
     Call3(Func_020016da, 28, 0x4000, 0);
     Func_02001618(20);
     Call1(Func_020016be, 0xe3d);
-    Value2(Func_020016ce_b, 28, 0);
+    Event_OpenMessage(28, 0);
     if (Value2(Func_0200164e, 0, 0) == 0) {
         bump_step(1);
         Func_020016fa(28, 0);
@@ -1123,7 +1033,7 @@ void FieldScene_RunPrimarySequence(void)
     ObjectMotion_ResetAndSetPositionInMode2_1(29, 72, 248);
     ObjectMotion_ResetAndSetPositionInMode2_2(30, 56, 248);
     ObjectMotion_SetPositionAndReset_1(0, 64, 0x108);
-    ObjectMotion_ArmCallback_1(0, 0xc000, 0);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
     ObjectMotion_CommitCurrentPositionAndActivate_1(29);
     Object_SetModeById_1(29, 1);
     Object_SetModeById_2(30, 1);
@@ -1131,12 +1041,12 @@ void FieldScene_RunPrimarySequence(void)
     ObjectMotion_SetAngleToward_1(29, 0, 0);
     ObjectMotion_SetAngleToward_2(30, 0, 0);
     BattleRuntime_WaitIfModeZero_1(20);
-    BattleRuntime_WaitIfModeZero_2(29, 0x102); /* main:0808a1f0 */
+    Actor_SetAttachedEffect(29, 0x102); /* main:0808a1f0 */
     BattleRuntime_WaitIfModeZero_3(30, 0x102); /* main:0808a1f0 */
     ObjectMotion_SetVariantCallback_1(29, 2);
-    ObjectMotion_SetVariantCallbackAndInvokeObject_1(30, 2);
+    Actor_RunRepeatedMotion(30, 2);
     BattleRuntime_WaitIfModeZero_4(20);
-    ObjectMotion_SetSpeedParameters_3(29, 0); /* main:0808a178 */
+    Event_OpenMessage(29, 0); /* main:0808a178 */
     BattleRuntime_WaitIfModeZero_5(25);
     Value4(Func_020017de, 52, 0, 12, 7); /* main:080150f8 */
     UiWork_Create_1((list_00001fb6 + 3), 11, 12, 2);
@@ -1146,10 +1056,10 @@ void FieldScene_RunPrimarySequence(void)
         ObjectMotion_SetVariantCallbackAndInvokeObject_2(30, 2);
         BattleRuntime_WaitIfModeZero_7(30);
         ObjectMotion_ArmCallback_2(30, 0, 0);
-        BattleRuntime_WaitIfModeZero_8(30);
+        Event_Wait(30);
         BattleRuntime_WaitIfModeZero_9(10);
         ObjectMotion_CallThenWaitForAnimationChange_1(29, 3);
-        BattleRuntime_WaitIfModeZero_10(20);
+        Event_Wait(20);
         ObjectMotion_ArmCallback_3(29, 0, 0);
         BattleRuntime_WaitIfModeZero_11(30);
         BattleEvent_RunActionAndWait_1(29, 0);
@@ -1162,18 +1072,18 @@ void FieldScene_RunPrimarySequence(void)
         BattleRuntime_WaitIfModeZero_14(20);
         ObjectMotion_SetSpeedParameters_4(29, 0x1cccc, 0xe666);
         ObjectMotion_SetSpeedParameters_5(30, 0x1cccc, 0xe666);
-        ObjectMotion_ResetAndSetPositionInMode2_3(29, 232, 248);
+        Actor_WalkTo(29, 232, 248);
         BattleRuntime_WaitIfModeZero_15(2);
-        ObjectMotion_ResetAndSetPositionInMode2_4(30, 232, 248);
+        Actor_WalkTo(30, 232, 248);
         ObjectMotion_CommitCurrentPositionAndActivate_2(29);
         ObjectMotion_ResetAndSetPositionInMode2_5(29, 248, 248);
         ObjectMotion_SetPositionAndReset_2(30, 248, 248);
     } else {
         BattleRuntime_WaitIfModeZero_16(20);
         ObjectMotion_SetVariantCallbackAndInvokeObject_3(30, 2);
-        BattleRuntime_WaitIfModeZero_17(30);
+        Event_Wait(30);
         ObjectMotion_ArmCallback_6(30, 0, 0);
-        BattleRuntime_WaitIfModeZero_18(30);
+        Event_Wait(30);
         BattleRuntime_WaitIfModeZero_19(10);
         ObjectMotion_CallThenWaitForAnimationChange_3(29, 4);
         BattleRuntime_WaitIfModeZero_20(20);

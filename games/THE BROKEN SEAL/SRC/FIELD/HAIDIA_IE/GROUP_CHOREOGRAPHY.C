@@ -28,8 +28,6 @@ s32 Func_02003732();
 s32 Func_02003754();
 s32 Func_02003778();
 void Func_02003792();
-s32 Func_0200379e();
-s32 Func_0200379e_a();
 void Func_02003888();
 void Func_020038e0();
 s32 Func_0200394a();
@@ -96,6 +94,10 @@ void Func_02003d22(const void *, s32);
  * into the argument registers; a direct call precomputes a costly constant
  * into a pseudo that the compiler then shares with later uses in the block.
  * A value-returning call also sets r0 last of its arguments. */
+
+void SceneActor_SetPairZeroAndValue(s32 a, s32 b, s32 c);
+
+void Event_SayThenWait(s32 speaker, s32 frames);
 
 static __inline__ void Call1(void (*f)(), s32 a0)
 {
@@ -200,10 +202,10 @@ void FieldScene_RunGroupChoreography(void)
     Func_02003bc4(24, 4);
     Call2(Func_02003c1c, 0x2018, 0);
     Func_02003792(0, approach_speed, 30);
-    Value3(Func_0200379e, 0, 0x4000, 40);
+    Value3(SceneActor_SetPairZeroAndValue, 0, 0x4000, 40);
     Func_02003c02(23, 2);
     Func_02003bf2(23, 3);
-    ((void (*)())Func_0200379e_a)(23, 20);
+    ((void (*)())Event_SayThenWait)(23, 20);
     Call2(Func_02003c84, 0, 0x102);
     Call2(Func_02003c8e, 25, 0x102);
     Func_02003b84(80);

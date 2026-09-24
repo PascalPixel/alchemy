@@ -1,24 +1,21 @@
 #include "TYPES.H"
-
+#include "FIELD_EVENT.H"
+#include "FIELD_SCENE.H"
 
 #include "STAGED_ACTOR.H"
 
-
 #include "TYPES.H"
 
-#define ConfigureActorThirteenSceneParameters Func_020009dc
-void Func_02001ec8(s32, s32, s32);
-void Func_02001e92(s32, s32, s32);
 void Func_02001ee2(s32, s32);
 
 static __inline__ void ConfigureFirst(s32 actor, s32 angle, s32 zero)
 {
-    Func_02001ec8(actor, angle, zero);
+    Actor_ShowEmote(actor, angle, zero);
 }
 
 static __inline__ void ConfigureSecond(s32 actor, s32 mode, s32 zero)
 {
-    Func_02001e92(actor, mode, zero);
+    Actor_Jump(actor, mode, zero);
 }
 
 static __inline__ void ConfigureThird(s32 actor, s32 value)
@@ -26,55 +23,20 @@ static __inline__ void ConfigureThird(s32 actor, s32 value)
     Func_02001ee2(actor, value);
 }
 
-
+#include "TYPES.H"
 
 #include "TYPES.H"
 
-#define SceneEffect_AdvancePositionByAxisMode Func_02000a00
-
-
-#include "TYPES.H"
-
-#define OverlayObject_ApplyValue15 Func_02000a58
 void Func_02001f1e(s32 actor, s32 mode);
 
-
+#include "TYPES.H"
 
 #include "TYPES.H"
 
-#define SceneData_GetTable9690 Func_02000b50
-#define SceneData_ReturnZero Func_02000b58
-#define SceneData_GetTable9750 Func_02000b5c
-#define SceneData_GetTable976c Func_02000b64
-#define SceneData_GetTable9814 Func_020010c0
-
-
-
-
-
-
-
-
-
-
-#include "TYPES.H"
-
-#define ConfigureSceneForActorEightColumn Func_02000b6c
-void Func_02001f8a();
-void Func_02001fa4();
 u8 *Func_02001fc4();
-void Func_02001fc4_a();
-void Func_02001fd0();
-void Func_02001fe2();
-void Func_02002006();
-
-
 
 #include "TYPES.H"
 
-#define FieldScene_RunPrimarySequence Func_02000bd0
-#define FieldScene_RunScene389_0200115c Func_0200115c
-#define FieldScene_RunScene389_0200121c Func_0200121c
 /* Loader-relocated overlay calls: each symbol names the pre-relocation call
  * word the image holds. */
 extern u8 Data_03001ebc[];
@@ -92,61 +54,27 @@ void Func_02001a2e();
 void Func_02001a5c();
 void Func_02001a8c();
 void Func_02001abc();
-s32 Func_02001fb4();
-s32 Func_02001fde();
-s32 Func_02001ff8();
-s32 Func_0200202a();
 s32 Func_0200203e();
-s32 Func_02002054();
 s32 Func_0200205a();
 u8 *Func_02002062();
-s32 Func_0200206e();
 s32 Func_020020b4();
 s32 Func_020020d0();
 u8 *Func_020020d8();
 void Func_02002108();
-void Func_02002124();
-void Func_02002140();
 s32 Func_02002142();
 u8 *Func_0200215e();
 u8 *Func_0200216e();
 u8 *Func_02002182();
-void Func_02002184();
 void Func_0200218a();
-s32 Func_020021aa();
-void Func_020021ac();
-void Func_020021cc();
-void Func_020021ce();
-s32 Func_020021d4();
-void Func_020021d6();
 u8 *Func_020021da();
-void Func_020021e0();
 u8 *Func_020021e4();
-s32 Func_020021ee();
-void Func_020021f6();
-void Func_02002204();
-void Func_02002210();
 u8 *Func_02002216();
-void Func_02002220();
 s32 Func_02002234();
 s32 Func_02002250();
 u8 *Func_02002258();
-void Func_0200226e();
-void Func_02002274();
-void Func_02002282();
-void Func_02002286();
-void Func_0200228e();
-void Func_02002296();
-void Func_020022ba();
-void Func_020022c4();
-void Func_020022ee();
-void Func_020022f2();
-void Func_02002308();
-void Func_02002312();
 s32 Func_02002330();
 s32 Func_02002342();
 u8 *Func_02002360();
-void Func_02002364();
 s32 Func_0200236a();
 s32 Func_02002372();
 s32 Func_02002382();
@@ -161,7 +89,6 @@ s32 Func_020023f8();
 s32 Func_0200241c();
 s32 Func_02002424();
 u8 *Func_0200242c();
-void Func_0200243c();
 s32 Func_0200244a();
 s32 Func_02002452();
 s32 Func_0200245a();
@@ -169,52 +96,17 @@ s32 Func_0200247a();
 s32 Func_02002482();
 s32 Func_0200248a();
 void Func_02008bd1();
-s32 Func_02002142_a();
 u8 *Func_020021e4_a();
-s32 Func_020021ee_a();
-void Func_02002204_a();
-s32 Func_02002482_a();
 void Func_0200251a();
-void Func_020025a6();
-void Func_020025da();
 s32 Func_020025f8();
-void Func_02002618();
-void Func_0200262a();
-void Func_0200262e();
-void Func_02002634();
-void Func_0200263c();
 u8 *Func_02002646();
-void Func_02002648();
-void Func_02002652();
-void Func_02002652_a();
-void Func_02002654();
-void Func_02002656();
-void Func_0200265e();
-void Func_02002664();
-void Func_02002678();
 void Func_02002046();
-void Func_0200265e_a();
-s32 Func_0200266a();
-void Func_02002672();
 u8 *Func_0200268a();
-void Func_0200269c();
-s32 Func_020026aa();
-s32 Func_020026d2();
-void Func_020026e4();
-void Func_02002706();
-void Func_02002720();
 s32 Func_02002730();
 void Func_02002734();
 s32 Func_0200273c();
 u8 *Func_02002748();
-void Func_0200274c();
-void Func_0200277c();
 s32 Func_0200279a();
-s32 Func_0200279a_a();
-void Func_020027c4();
-void Func_020027c6();
-void Func_02002824();
-void Func_02002830();
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
@@ -255,66 +147,20 @@ static __inline__ void Call7(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
     f(a0, a1, a2, a3, a4, a5, a6);
 }
 
-/* The scene step counter at 0x1d8 of the shared scene work record. */
-static __inline__ void bump_step(s32 amount)
-{
-    u8 *work = *(u8 **)Data_03001ebc;
-
-    *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
-}
-
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-static __inline__ void Call1_0200115c(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-static __inline__ void Call1_0200121c(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-
-
-
-
-
-
-
-
-
-
 #include "TYPES.H"
 
-#define FieldScene_RunThreeCallSequence Func_02001088
-#define FieldScene_RunFourStepSequence Func_0200109c
-void Func_020024cc(void);
 void Func_02001f5c(void);
-void Func_020024dc(void);
-void Func_020024e0(void);
-void Func_02001168(void);
 void Func_02001f74(void);
-void Func_020024f4(void);
-
-
-
-
 
 #include "TYPES.H"
 
-#define FieldScene_Forward25a8 Func_020010b4
 void Func_020025a8(void);
 
-
 #include "TYPES.H"
 
+enum StagedPlacementMessage {
+    MSG_GOT_WOW_THATS_PRETTY_IMPRESSIVE = 0x132f
+};
 
 void ConfigureActorThirteenSceneParameters(void)
 {
@@ -375,19 +221,19 @@ void ConfigureSceneForActorEightColumn(void)
     if (x < 0)
         x += 0xfffff;
     x >>= 20;
-    Func_02001fc4_a();
+    Event_Begin();
     if (x == 20) {
         a4 = 18;
         a5 = 6;
-        Func_02001f8a(18, 40, 6, 3, a4, a5);
-        Func_02001fd0(0x302);
+        Map_CopyCellAttributes(18, 40, 6, 3, a4, a5);
+        GameFlag_Clear(0x302);
     } else {
         a4 = 18;
         a5 = 6;
-        Func_02001fa4(24, 40, 6, 3, a4, a5);
-        Func_02001fe2(0x302);
+        Map_CopyCellAttributes(24, 40, 6, 3, a4, a5);
+        GameFlag_Set(0x302);
     }
-    Func_02002006();
+    Event_End();
 }
 
 void FieldScene_RunPrimarySequence(void)
@@ -403,42 +249,42 @@ void FieldScene_RunPrimarySequence(void)
     flags = *state & 7;
     if (flags == 0) {
         rec7a = Value1(Func_0200203e, 9);
-        v1a = Value0(Func_02001fb4);
+        v1a = Value0(Engine_RandomNext);
         a0 = *(s32 *)(rec7a + 8);
         a0 = a0 + (s32)((((u32)(((v1a << 1) + v1a) << 2)) >> 16) << 16);
         rec4 = Func_0200205a(9);
         reca = (s32)Func_02002062(9);
         a2 = *(s32 *)(reca + 16);
         a2 = a2 + 0x60000;
-        v2a = Value0(Func_02001fde);
+        v2a = Value0(Engine_RandomNext);
         ta = (s32)((u32)((v2a << 2) + v2a) >> 16);
         ua = (((ta << 1) + ta) << 2) + ta;
         na = ua << 6;
         na = na - ua;
         na = na << 3;
         na = na + ta;
-        v3a = Func_02001ff8();
+        v3a = Random_Next();
         na = -na;
         Call7(Func_020016ba, a0, *(s32 *)(rec4 + 12), a2, 0, na,
               (s32)((u32)(v3a << 1) >> 16), flags);
         flags = *state & 15;
         if (flags == 0) {
             rec7b = Value1(Func_020020b4, 9);
-            v1b = Value0(Func_0200202a);
+            v1b = Value0(Engine_RandomNext);
             a0 = *(s32 *)(rec7b + 8);
             a0 = a0 + (s32)((((u32)(((v1b << 1) + v1b) << 2)) >> 16) << 16);
             rec4 = Func_020020d0(9);
             recb = (s32)Func_020020d8(9);
             a2 = *(s32 *)(recb + 16);
             a2 = a2 + 0x60000;
-            v2b = Value0(Func_02002054);
+            v2b = Value0(Engine_RandomNext);
             tb = (s32)((u32)((v2b << 2) + v2b) >> 16);
             ub = (((tb << 1) + tb) << 2) + tb;
             nb = ub << 6;
             nb = nb - ub;
             nb = nb << 3;
             nb = nb + tb;
-            v3b = Func_0200206e();
+            v3b = Random_Next();
             nb = -nb;
             Call7(Func_02001730, a0, *(s32 *)(rec4 + 12), a2, 0, nb,
                   (s32)((u32)(v3b << 1) >> 16), flags);
@@ -460,69 +306,69 @@ void Func_02000ce0(void)
 
     r1 = Value1(Func_02002142, 9);
     kind = *(s32 *)(r1 + 8) / 0x100000;
-    ((void (*)())Func_02002142_a)();
+    ((void (*)())Engine_EventBegin)();
     if (kind == 25) {
         p0 = Func_0200215e(11);
         zero = 0;
         p0[34] = 1;
         r2 = (s32)Func_0200216e(11);
-        Func_02002124(r2, 0);
+        Actor_SetSpriteFlags(r2, 0);
         Call2((void (*)())Func_020021e4, 11, 14);
         r3 = (s32)Func_02002182(11);
-        Func_02002140(r3, 1);
-        Call3(Func_020021ce, 11, 0x19e0000, 0xf00000);
-        Func_02002184(10);
+        Object_SetBlendMode(r3, 1);
+        Actor_SetPosition(11, 0x19e0000, 0xf00000);
+        Event_Wait(10);
         base = (s32)Func_02008bd1;
         Func_02002108(base, 0xc80);
-        Func_0200226e(141);
-        Func_020021e0(9, 1, 0);
-        Call1((void (*)())Func_020021ee, 9);
-        Func_020021ac(10);
-        Func_020021f6(9, 2, 0);
-        Func_02002204(9);
+        Audio_PlayCue(141);
+        Actor_SetDestinationOffset(9, 1, 0);
+        Call1((void (*)())Engine_ActorWaitForMove, 9);
+        Event_Wait(10);
+        Actor_SetDestinationOffset(9, 2, 0);
+        Actor_WaitForMove(9);
         r4 = (s32)Func_020021da(9);
         *(s32 *)(r4 + 68) = zero;
         r5 = (s32)Func_020021e4_a(9);
         *(s32 *)(r5 + 72) = 0x9999;
-        Func_020021d6(3);
-        Call3(Func_02002204_a, 9, 0x28000, 0x4000);
-        Call1(Func_020022c4, 0x120);
-        Call3(Func_02002220, 9, 0x1a0, 200);
+        Event_Wait(3);
+        Actor_SetSpeed(9, 0x28000, 0x4000);
+        Audio_PlayCue(0x120);
+        Actor_SetDestination(9, 0x1a0, 200);
         r6 = (s32)Func_02002216(9);
-        Func_020021cc(r6, 0);
+        Actor_SetSpriteFlags(r6, 0);
         Func_0200218a(base);
-        Func_02002210(12);
-        Func_020022ee(189);
+        Event_Wait(12);
+        Audio_PlayCue(189);
         rec7 = Value1(Func_02002234, 9);
-        v1 = Value0(Func_020021aa);
+        v1 = Value0(Engine_RandomNext);
         a0 = *(s32 *)(rec7 + 8);
         a0 = a0 + (s32)((((u32)(((v1 << 1) + v1) << 2)) >> 16) << 16);
         rec4 = Func_02002250(9);
         r7 = (s32)Func_02002258(9);
         a2 = *(s32 *)(r7 + 16);
         a2 = a2 + 0x60000;
-        v2 = Value0(Func_020021d4);
+        v2 = Value0(Engine_RandomNext);
         t = (s32)((u32)((v2 << 2) + v2) >> 16);
         u = (((t << 1) + t) << 2) + t;
         n = u << 6;
         n = n - u;
         n = n << 3;
         n = n + t;
-        v3 = Func_020021ee_a();
+        v3 = Random_Next();
         n = -n;
         Call7(Func_020018b0, a0, *(s32 *)(rec4 + 12), a2, zero, n,
               (s32)((u32)(v3 << 1) >> 16), zero);
-        Func_02002286(20);
-        Func_02002364(154);
-        Call3(Func_02002274, 0x50000, 0x50000, 0x10000);
-        Call3(Func_02002282, -1, -1, 0xe666);
-        Func_0200228e();
-        Func_02002308(9, 0, 0);
-        Call3(Func_02002312, 11, 0, 0);
-        Call1(Func_020022ba, 0x300);
-        Call6(Func_02002296, 21, 45, 4, 2, 21, 11);
+        Event_Wait(20);
+        Audio_PlayCue(154);
+        Work_SetValuesIfNonNegative(0x50000, 0x50000, 0x10000);
+        Work_SetValuesIfNonNegative(-1, -1, 0xe666);
+        MapRender_WaitForValues();
+        Actor_SetPosition(9, 0, 0);
+        Actor_SetPosition(11, 0, 0);
+        GameFlag_Set(0x300);
+        Map_CopyCellAttributes(21, 45, 4, 2, 21, 11);
     }
-    Func_020022f2();
+    Event_End();
 }
 
 void Func_02000ecc(void)
@@ -545,7 +391,7 @@ void Func_02000ecc(void)
             e1 = Value1(Func_0200236a, 10);
             e2 = Value1(Func_02002372, 10);
             *(s32 *)(e1 + 60) = *(s32 *)(e2 + 12);
-            Func_0200243c(188);
+            Audio_PlayCue(188);
             g1a = Value1(Func_02002382, 10);
             g1b = Value1(Func_0200238a, 10);
             g1c = (s32)Func_02002392(10);
@@ -579,24 +425,24 @@ void Func_02000ecc(void)
             g6c = (s32)Func_0200248a(10);
             Func_02001abc(*(s32 *)(g6a + 8), *(s32 *)(g6b + 12),
                   *(s32 *)(g6c + 16), c2, c2, 0, 1);
-            Func_02002482_a(0x301);
+            GameFlag_Set(0x301);
         }
     }
 }
 
 void FieldScene_RunThreeCallSequence(void)
 {
-    Func_020024cc();
+    Event_Begin();
     Func_02001f5c();
-    Func_020024dc();
+    Event_End();
 }
 
 void FieldScene_RunFourStepSequence(void)
 {
-    Func_020024e0();
-    Func_02001168();
+    Event_Begin();
+    StagedActor_AdvancePair();
     Func_02001f74();
-    Func_020024f4();
+    Event_End();
 }
 
 void FieldScene_Forward25a8(void)
@@ -617,24 +463,24 @@ static __inline__ void SetFlagBits(u8 *flags, u8 bits)
 
 void FieldScene_RunScene389_0200115c(void)
 {
-    Call1_0200115c(Func_0200251a, 0x20090c9);
-    Func_020025a6();
-    Call3(Func_02002652, 13, 0x100, 30);
-    Func_0200262a(13, 2);
-    Call3(Func_0200265e, 0, 0xa000, 0);
-    Call1_0200115c(Func_02002654, 0x132f);
-    Func_02002664(13, 0);
-    Func_02002634(13, 3);
-    Func_020025da(30);
+    Call1(Func_0200251a, 0x20090c9);
+    Event_Begin();
+    Actor_ShowEmote(13, 0x100, 30);
+    Actor_RunRepeatedMotion(13, 2);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xa000, 0);
+    Event_SetMessage(MSG_GOT_WOW_THATS_PRETTY_IMPRESSIVE);
+    Event_ShowMessage(13, 0);
+    Actor_SetAnimationAndWait(13, 3);
+    Event_Wait(30);
     *(u8 *)(Func_020025f8(10) + 35) &= 253;
-    Call3(Func_02002618, 13, 0x20000, 0x10000);
-    Call3(Func_0200263c, 13, 0x258, 216);
-    Call3(Func_02002648, 13, 0x258, 248);
-    Call3(Func_02002656, 13, 0x238, 0x128);
-    Func_02002678(13, 0, 0);
+    Actor_SetSpeed(13, 0x20000, 0x10000);
+    Actor_WalkToAndWait(13, 0x258, 216);
+    Actor_WalkToAndWait(13, 0x258, 248);
+    Actor_WalkToAndWait(13, 0x238, 0x128);
+    Actor_SetPosition(13, 0, 0);
     SetFlagBits(Func_02002646(10) + 35, 2);
-    Call1_0200115c(Func_0200262e, 0x869);
-    Func_02002652_a();
+    GameFlag_Set(0x869);
+    Event_End();
 }
 
 s32 FieldScene_RunScene389_0200121c(void)
@@ -646,18 +492,18 @@ s32 FieldScene_RunScene389_0200121c(void)
     *(s32 *)((s32)work + 0x1c0) = 0x204;
     *(s32 *)((s32)work + 0x1c8) = 24;
     SetFlagBits(Func_0200268a(9) + 89, 16);
-    if (Value1(Func_0200266a, 0x302) != 0) {
-        Call3(Func_020026e4, 8, 0x1580000, 0x680000);
-        Call6(Func_0200265e_a, 24, 40, 6, 3, 18, 6);
+    if (GameFlag_IsSet(0x302) != 0) {
+        Actor_SetPosition(8, 0x1580000, 0x680000);
+        Map_CopyCellAttributes(24, 40, 6, 3, 18, 6);
     } else {
-        Call6(Func_02002672, 18, 40, 6, 3, 18, 6);
+        Map_CopyCellAttributes(18, 40, 6, 3, 18, 6);
     }
-    if (Value1(Func_020026aa, 0x300) != 0) {
-        Func_02002720(9, 0, 0);
-        Call6(Func_0200269c, 21, 45, 4, 2, 21, 11);
+    if (GameFlag_IsSet(0x300) != 0) {
+        Actor_SetPosition(9, 0, 0);
+        Map_CopyCellAttributes(21, 45, 4, 2, 21, 11);
     }
-    if (Value1(Func_020026d2, 0x301) != 0) {
-        Call3(Func_0200274c, 10, 0x2680000, 0xe80000);
+    if (GameFlag_IsSet(0x301) != 0) {
+        Actor_SetPosition(10, 0x2680000, 0xe80000);
         if ((u32)(((u16)Data_02000240[225] - 2) << 16) > 0x10000) {
             goto L_0200131c;
         }
@@ -670,17 +516,17 @@ s32 FieldScene_RunScene389_0200121c(void)
 
             *flags |= bits;
         }
-        Call6(Func_02002706, 36, 48, 5, 1, 36, 14);
+        Map_CopyCellAttributes(36, 48, 5, 1, 36, 14);
     }
 L_0200131c:
     if (Data_02000240[225] == 99) {
-        Func_02002824();
-        Func_02002830();
-        Call3(Func_020027c6, 9, 0x1800000, 0xc00000);
-        Func_0200277c(60);
+        Event_OpenScreen();
+        Event_WaitForScreen();
+        Actor_SetPosition(9, 0x1800000, 0xc00000);
+        Event_Wait(60);
         *(u8 *)(Func_0200279a(9) + 34) = 2;
-        Call3(Func_020027c4, 9, 0x198, 192);
-        Call1_0200121c((void (*)())Func_0200279a_a, 60);
+        Actor_MoveToAndWait(9, 0x198, 192);
+        Call1((void (*)())Engine_EventWait, 60);
         Func_02002046();
     }
     if (Data_02000240[282] != 0) {

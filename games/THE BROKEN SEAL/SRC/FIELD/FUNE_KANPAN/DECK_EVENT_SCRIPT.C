@@ -1,6 +1,5 @@
 #include "TYPES.H"
 
-
 /* Audited 49-call script for the complete 0x02001db0 owner.
  * Recovered from the bounded canonical owner.
  *
@@ -56,7 +55,6 @@ void Func_02006318();
 void Func_0200636c();
 void Func_02006374();
 void Func_02006378();
-
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant

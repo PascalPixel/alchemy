@@ -1,7 +1,12 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "FIELD_SCENE.H"
 
-extern u8 Data_03001ebc[];
+enum ElementalStarDemandMessage {
+    MSG_LOOKS_LIKE_THEYVE_SPOTTED_US = 0x107d
+};
+
+
 void Func_020051f8();
 void Func_02005208();
 void Func_02005230();
@@ -137,9 +142,7 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 /* Moves the event's current message on by amount. */
 static __inline__ void SkipMessage(s32 amount)
 {
-    u8 *work = *(u8 **)Data_03001ebc;
-
-    *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
+    gEventWork->message += amount;
 }
 
 /* The demand for the Elemental Stars. Its dialogue starts at message 0x107d
@@ -156,7 +159,7 @@ void FieldScene_RunElementalStarDemand(void)
 
     Func_02005aae(61);
     Func_020059ae(10, 4);
-    Event_SetMessage(0x107d);
+    Event_SetMessage(MSG_LOOKS_LIKE_THEYVE_SPOTTED_US);
     Func_020051f8(10, 10);
     Func_020059c4(11, 4);
     Func_02005208(11, 30);
@@ -239,7 +242,7 @@ void FieldScene_RunElementalStarDemand(void)
     Call2(Func_0200544a, 0x400c, 20);
     Func_02005c48(5, 9, 0);
     Func_02005ba6(20);
-    Actor_StartRepeatedMotion(5, 2);
+    Actor_StartRepeatedMotion(ACTOR_JASMINE, 2);
     Func_02005c4e(9, 2);
     Event_Wait(40);
     Func_02005c54(10, 1);

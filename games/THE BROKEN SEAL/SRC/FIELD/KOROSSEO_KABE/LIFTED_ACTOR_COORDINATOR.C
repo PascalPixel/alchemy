@@ -1,6 +1,11 @@
 #include "TYPES.H"
+#include "FIELD_EVENT.H"
+#include "FIELD_SCENE.H"
 
-#define FieldScene_RunLiftedActorCoordinator Func_020016d4
+enum LiftedActorCoordinatorMessage {
+    MSG_FANS_JUST_CALL_WALL = 0x20aa
+};
+
 
 void Func_020034de();
 s32 Func_020036f4();
@@ -12,8 +17,6 @@ void Func_02004902();
 void Func_02005628();
 void Func_02005654();
 void Func_0200565e();
-void Func_020056d6();
-void Func_020056d6_a();
 void Func_02005702();
 void *Func_0200571c();
 void Func_0200571e();
@@ -31,7 +34,6 @@ void Func_0200577e();
 void Func_020057b6();
 void Func_020057c2();
 void Func_020057d0();
-void Func_020057e0();
 void Func_020057e0_a();
 void Func_020057ea();
 void Func_02005816();
@@ -88,7 +90,7 @@ void FieldScene_RunLiftedActorCoordinator(s32 scene)
     Func_02005628();
     path = Func_020036f4(scene, 4);
     if (path == 0) {
-        Call1(Func_020056d6, 8362);
+        Event_SetMessage(MSG_FANS_JUST_CALL_WALL);
         Call2(Func_0200572a, 196608, 24576);
         Call4(Func_02005744, 35127296, -1, 15728640, 1);
         Func_02005750();
@@ -98,7 +100,7 @@ void FieldScene_RunLiftedActorCoordinator(s32 scene)
         Func_0200577a();
         Func_0200573a(scene, 0);
         Func_02004310(0, 632, 264);
-        Call3(Func_020056d6_a, 0, 65536, 32768);
+        Actor_SetSpeed(ACTOR_PARTY_LEADER, 65536, 32768);
         Call3(Func_02005702, 0, 616, 264);
         Value3(Func_0200577e, 0, 49152, 20);
         Func_020057ea();
@@ -113,7 +115,7 @@ void FieldScene_RunLiftedActorCoordinator(s32 scene)
         Func_0200576a(0);
         Func_0200583e();
         Call4(Func_02005818, -1, -1, -1, 0);
-        Func_020057e0(scene, 0);
+        Event_ShowMessage(scene, 0);
         Call3(Func_0200576e, 0, 98304, 49152);
         Value3(Func_02004902, 0, 488, 248);
         Call3(Func_02005816, 0, 16384, 20);

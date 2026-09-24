@@ -6,8 +6,6 @@
  * lines.
  */
 
-#define Dialogue_HandleFacingCueBranch Func_0200029c
-
 u16 *Func_020014b8(s32);
 s32 Func_020014ac(s32);
 void Func_020015c6(s32, s32);

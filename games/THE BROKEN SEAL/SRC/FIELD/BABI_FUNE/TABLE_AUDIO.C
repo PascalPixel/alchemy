@@ -1,6 +1,6 @@
 #include "TYPES.H"
+#include "FIELD_EVENT.H"
 
-#define Audio_PlayCue Func_020014c2
 #define PALETTE ((volatile u16 *)0x05000000)
 
 typedef struct {
@@ -8,7 +8,6 @@ typedef struct {
     s32 unk12;
 } T;
 
-extern u8 *Data_03001ebc;
 extern s32 Data_020097f4;
 extern s32 Data_020097f0;
 extern s32 Data_0200980c;
@@ -18,8 +17,6 @@ extern s32 Data_02009818;
 extern u16 Data_02008f31[];
 extern u16 Data_02008f81[];
 
-void Func_020014c2(s32 cue);
-void Func_020011fc(void);
 void Func_02001172(s32, s32, s32, s32, s32, s32, s32);
 T *Func_0200179c(s32);
 T *Func_020017b8(s32);
@@ -74,7 +71,7 @@ u8 *SceneData_GetTable971c(void)
 
 void PlayWorkspaceCueAndClearPaletteZero(void)
 {
-    Audio_PlayCue(*(s16 *)(Data_03001ebc + 364));
+    Event_RequestExit(gEventWork->touched_trigger);
     do {
         u16 color = PALETTE == 0;
         register volatile u16 *palette = PALETTE;
@@ -85,7 +82,7 @@ void PlayWorkspaceCueAndClearPaletteZero(void)
 
 void FieldScene_Forward11fc(void)
 {
-    Func_020011fc();
+    SceneEffect_LoadTablesAndStopDma0();
 }
 
 void FieldScene_ConfigureFixedPointValues(void)

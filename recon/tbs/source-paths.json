@@ -39,7 +39,7 @@
       "source": "FIELD/SORU_FUNKA/EXTENDED_EFFECT_PRESENTATION.C"
     },
     "resource_385:02000f30": {
-      "name": "Setup_InitializeActorsAndFlags",
+      "name": "SceneSetup_InitializeActorsAndFlags",
       "source": "FIELD/KUUPUAPPU_MURA_SAI/MOTION_EVENT.C"
     },
     "resource_3c9:02004bec": {
@@ -61,15 +61,15 @@
       "source": "FIELD/KUUPUAPPU_MURA/SCENE_CELLS.C"
     },
     "resource_385:02000350": {
-      "name": "Actor_UpdateProximity",
+      "name": "SceneActor_UpdateProximity",
       "source": "FIELD/KUUPUAPPU_MURA_SAI/MOTION_EVENT.C"
     },
     "resource_385:0200058c": {
-      "name": "Dialogue_RunActorFourteenFlagDialogue",
+      "name": "SceneDialogue_RunActorFourteenFlagDialogue",
       "source": "FIELD/KUUPUAPPU_MURA_SAI/MOTION_EVENT.C"
     },
     "resource_385:02000864": {
-      "name": "Dialogue_RunActorFifteenDialogue",
+      "name": "SceneDialogue_RunActorFifteenDialogue",
       "source": "FIELD/KUUPUAPPU_MURA_SAI/MOTION_EVENT.C"
     },
     "resource_385:02000104": {
@@ -89,19 +89,19 @@
       "source": "FIELD/TOREBI_HEYA/FACING_EVENTS.C"
     },
     "resource_3b6:02000500": {
-      "name": "Dialogue_RunFacingPrompt",
+      "name": "SceneDialogue_RunFacingPrompt",
       "source": "FIELD/TOREBI_HEYA/FACING_EVENTS.C"
     },
     "resource_3b6:020005a8": {
-      "name": "Dialogue_RunFacingActionPrompt",
+      "name": "SceneDialogue_RunFacingActionPrompt",
       "source": "FIELD/TOREBI_HEYA/FACING_EVENTS.C"
     },
     "resource_3b6:0200066c": {
-      "name": "Dialogue_RunFacingAction",
+      "name": "SceneDialogue_RunFacingAction",
       "source": "FIELD/TOREBI_HEYA/FACING_EVENTS.C"
     },
     "resource_3b6:0200091c": {
-      "name": "Dialogue_RunFacingMessage",
+      "name": "SceneDialogue_RunFacingMessage",
       "source": "FIELD/TOREBI_HEYA/FACING_EVENTS.C"
     },
     "resource_3ad:02001760": {
@@ -113,11 +113,11 @@
       "source": "FIELD/ARUTIN_MURA/MOTION_PARTICLE.C"
     },
     "resource_3a3:02000c44": {
-      "name": "Effect_UpdateDriftingParticle",
+      "name": "SceneEffect_UpdateDriftingParticle",
       "source": "FIELD/ARUTIN_MURA/MOTION_PARTICLE.C"
     },
     "resource_3a3:02000d08": {
-      "name": "Effect_SpawnDriftingParticle",
+      "name": "SceneEffect_SpawnDriftingParticle",
       "source": "FIELD/ARUTIN_MURA/MOTION_PARTICLE.C"
     },
     "resource_3a3:0200007c": {
@@ -3329,15 +3329,15 @@
       "source": "FIELD/KUUPUAPPU_MURA_SAI/MOTION_EVENT.C"
     },
     "resource_385:02000b40": {
-      "name": "ActorDraw_SetupActorZeroForSceneEight",
+      "name": "ActorPresentation_SetupActorZeroForSceneEight",
       "source": "FIELD/KUUPUAPPU_MURA_SAI/MOTION_EVENT.C"
     },
     "resource_385:02000b9c": {
-      "name": "ActorDraw_SetupActorZeroForSceneNine",
+      "name": "ActorPresentation_SetupActorZeroForSceneNine",
       "source": "FIELD/KUUPUAPPU_MURA_SAI/MOTION_EVENT.C"
     },
     "resource_385:02000cc8": {
-      "name": "ActorDraw_SetupActorZeroForSceneTwelve",
+      "name": "ActorPresentation_SetupActorZeroForSceneTwelve",
       "source": "FIELD/KUUPUAPPU_MURA_SAI/MOTION_EVENT.C"
     },
     "resource_387:02000030": {
@@ -5701,7 +5701,7 @@
       "source": "FIELD/KUUPUAPPU_HEYA/PROMPT.C"
     },
     "resource_390:020000e4": {
-      "name": "Scene_RunActor17MessageBranch",
+      "name": "FieldScene_RunActor17MessageBranch",
       "source": "FIELD/KORIMA_HEYA/ENTRY_LAYOUT.C"
     },
     "resource_394:0200036c": {
@@ -5741,7 +5741,7 @@
       "source": "FIELD/IMIRU_MURA/FLAGGED_CHOREOGRAPHY.C"
     },
     "resource_3c1:020000b0": {
-      "name": "Scene_RunActorCue25dcBranch",
+      "name": "FieldScene_RunActorCue25dcBranch",
       "source": "FIELD/SUHARA_MURA/ENTRY_CUE.C"
     },
     "resource_39e:020025b8": {
@@ -5761,7 +5761,7 @@
       "source": "FIELD/COMMON/SHIAN_JIIN/TEMPLE_ROOMS.C"
     },
     "resource_385:020000a0": {
-      "name": "OvObj_CreateConfiguredObjectB",
+      "name": "OverlayObject_CreateConfiguredObjectB",
       "source": "FIELD/KUUPUAPPU_MURA_SAI/MOTION_EVENT.C"
     },
     "resource_394:02000044": {
@@ -5785,7 +5785,7 @@
       "source": "FIELD/KUUPUAPPU_HEYA/PROMPT.C"
     },
     "resource_37b:02000098": {
-      "name": "FieldScene_RunLoopedLayoutSequence",
+      "name": "Scene_OpenTheHole",
       "source": "FIELD/SORU_SEKIZO/GUARDED_STEP.C"
     },
     "resource_372:02002180": {
@@ -5801,7 +5801,7 @@
       "source": "MENU/LINK_LOBBY/DIGIT_VALUE.C"
     },
     "resource_38e:0200090c": {
-      "name": "Effect_UpdateLobeOrbitEntity",
+      "name": "SceneEffect_UpdateLobeOrbitEntity",
       "source": "FIELD/BIRIBINO_NIWA/ORBITING.C"
     },
     "resource_36f:02000044": {
@@ -5817,11 +5817,11 @@
       "source": "FIELD/FUNE_HEYA/EXTENDED_CHOREOGRAPHY.C"
     },
     "resource_38e:020000f8": {
-      "name": "Scene_RunStepWithValueFd2",
+      "name": "FieldScene_RunStepWithValueFd2",
       "source": "FIELD/BIRIBINO_NIWA/ORBITING.C"
     },
     "resource_398:0200044c": {
-      "name": "State_SetGlobalByte17",
+      "name": "SceneState_SetGlobalByte17",
       "source": "FIELD/BIRIBINO_DOU/REGION.C"
     },
     "resource_376:02000308": {
@@ -5829,11 +5829,11 @@
       "source": "FIELD/HAIDIA_HEYA/TIMED_EVENTS.C"
     },
     "resource_38c:02000490": {
-      "name": "Scene_RunActor10MessageBranch",
+      "name": "FieldScene_RunActor10MessageBranch",
       "source": "FIELD/BIRIBINO_HEYA/MESSAGE_BRANCH.C"
     },
     "resource_374:0200010c": {
-      "name": "FieldScene_RunSequence111F",
+      "name": "Scene_CheckPsynergyStone",
       "source": "FIELD/HAIDIA_IE/EXTENDED.C"
     },
     "resource_3ac:0200014c": {
@@ -5853,7 +5853,7 @@
       "source": "FIELD/COMMON/RUNPA_SUHARA/INTERIORS.C"
     },
     "resource_3a1:02000524": {
-      "name": "Dialogue_RunActor9MotionDialogue",
+      "name": "SceneDialogue_RunActor9MotionDialogue",
       "source": "FIELD/SHIAN_HEYA/FLAGGED_OBJECT.C"
     },
     "resource_3cd:020007c8": {
@@ -5881,7 +5881,7 @@
       "source": "FIELD/SORU_SEKIZO/GUARDED_STEP.C"
     },
     "resource_386:020001c4": {
-      "name": "Dialogue_RunActor16Line",
+      "name": "SceneDialogue_RunActor16Line",
       "source": "FIELD/KUUPUAPPU_HEYA_SAI/PLACEMENT.C"
     },
     "resource_372:0200015c": {
@@ -5921,7 +5921,7 @@
       "source": "DEBUG/TEST_ROOMS/EMPTY.C"
     },
     "resource_386:02000410": {
-      "name": "Scene_RunActor21StepByPlace",
+      "name": "FieldScene_RunActor21StepByPlace",
       "source": "FIELD/KUUPUAPPU_HEYA_SAI/PLACEMENT.C"
     },
     "resource_3b1:02000ee0": {
@@ -5929,7 +5929,7 @@
       "source": "FIELD/FUNE_HEYA/EXTENDED_CHOREOGRAPHY.C"
     },
     "resource_398:020001bc": {
-      "name": "Scene_RunTwoLayoutSteps",
+      "name": "FieldScene_RunTwoLayoutSteps",
       "source": "FIELD/BIRIBINO_DOU/REGION.C"
     },
     "resource_3c7:02000030": {
@@ -5961,7 +5961,7 @@
       "source": "FIELD/WORLD_MAP/ACTOR_TRANSFER.C"
     },
     "resource_3a1:020004e4": {
-      "name": "Dialogue_RunActor10Dialogue",
+      "name": "SceneDialogue_RunActor10Dialogue",
       "source": "FIELD/SHIAN_HEYA/FLAGGED_OBJECT.C"
     },
     "resource_374:02002580": {
@@ -5986,7 +5986,7 @@
       "source": "FIELD/BABI_FUNE/TABLE_AUDIO.C"
     },
     "resource_390:0200009c": {
-      "name": "Scene_RunActor16MessageBranch",
+      "name": "FieldScene_RunActor16MessageBranch",
       "source": "FIELD/KORIMA_HEYA/ENTRY_LAYOUT.C"
     },
     "resource_3ac:02000338": {
@@ -5998,7 +5998,7 @@
       "source": "FIELD/KOROSSEO_KAWA/COORDINATOR.C"
     },
     "resource_3b6:0200009c": {
-      "name": "State_SetWork1c0AndRun",
+      "name": "SceneState_SetWork1c0AndRun",
       "source": "FIELD/TOREBI_HEYA/FACING_EVENTS.C"
     },
     "resource_37b:020019e4": {
@@ -6010,7 +6010,7 @@
       "source": "FIELD/BABI_FUNE/TABLE_AUDIO.C"
     },
     "resource_385:020007d4": {
-      "name": "ActorDraw_RunActor13AcceptanceDialogue",
+      "name": "ActorPresentation_RunActor13AcceptanceDialogue",
       "source": "FIELD/KUUPUAPPU_MURA_SAI/MOTION_EVENT.C"
     },
     "resource_37e:02000054": {
@@ -6018,7 +6018,7 @@
       "source": "FIELD/SORU_ROKA/SCENE_37E.C"
     },
     "resource_3a1:02000030": {
-      "name": "OvObj_SetEntryField",
+      "name": "OverlayObject_SetEntryField",
       "source": "FIELD/SHIAN_HEYA/FLAGGED_OBJECT.C"
     },
     "resource_387:02000314": {
@@ -6062,11 +6062,11 @@
       "source": "FIELD/SORU_STAR/PARTY_INTRO.C"
     },
     "resource_380:020027f8": {
-      "name": "Lifted_020027f8",
+      "name": "Scene_EnterStarRoom",
       "source": "FIELD/SORU_STAR/PARTY_INTRO.C"
     },
     "resource_380:02000a98": {
-      "name": "Scene_RunPartyIntroduction",
+      "name": "Scene_BagJupiterStar",
       "source": "FIELD/SORU_STAR/PARTY_INTRO.C"
     },
     "resource_380:02000d5c": {
@@ -6108,7 +6108,7 @@
       "source": "FIELD/KUUPUAPPU_HEYA/CLOSING_SEQUENCE.C"
     },
     "resource_381:02000054": {
-      "name": "FieldScene_RunTwoPhaseActorSequence",
+      "name": "Scene_SaturosTakesHostages",
       "source": "FIELD/SORU_FUNKA/EXTENDED_EFFECT.C"
     },
     "resource_3b1:02001420": {
@@ -6124,7 +6124,7 @@
       "source": "FIELD/HAIDIA_IE/EXTENDED.C"
     },
     "resource_38e:0200012c": {
-      "name": "Scene_RunStepWithValue29de",
+      "name": "FieldScene_RunStepWithValue29de",
       "source": "FIELD/BIRIBINO_NIWA/ORBITING.C"
     },
     "resource_372:02000328": {
@@ -6152,7 +6152,7 @@
       "source": "FIELD/TOREBI_HEYA/FACING_EVENTS.C"
     },
     "resource_3ba:02000158": {
-      "name": "State_SetMode66AndPassOpeningSequence",
+      "name": "SceneState_SetMode66AndPassOpeningSequence",
       "source": "FIELD/KOROSSEO_KAWA/COORDINATOR.C"
     },
     "resource_390:02000064": {
@@ -6172,7 +6172,7 @@
       "source": "FIELD/VINASU_HEYA/ENTRY_SETUP.C"
     },
     "resource_380:020026e0": {
-      "name": "SceneDialogue_RunActorFiveTalk",
+      "name": "Jasmine_Talk",
       "source": "FIELD/SORU_STAR/PARTY_INTRO.C"
     },
     "resource_3c6:020001f0": {
@@ -6184,7 +6184,7 @@
       "source": "FIELD/IMIRU_MURA/FLAGGED_CHOREOGRAPHY.C"
     },
     "resource_385:02000d24": {
-      "name": "State_SetFlag200AndConfigureRegion55_26",
+      "name": "SceneState_SetFlag200AndConfigureRegion55_26",
       "source": "FIELD/KUUPUAPPU_MURA_SAI/MOTION_EVENT.C"
     },
     "resource_3cd:020000ec": {
@@ -6192,7 +6192,7 @@
       "source": "DEBUG/ITEM_LEVEL/RECORD_COUNT.C"
     },
     "resource_385:02000e60": {
-      "name": "ActorDraw_SetAlternatePairedSceneCells",
+      "name": "ActorPresentation_SetAlternatePairedSceneCells",
       "source": "FIELD/KUUPUAPPU_MURA_SAI/MOTION_EVENT.C"
     },
     "resource_37b:02001af4": {
@@ -6200,7 +6200,7 @@
       "source": "FIELD/SORU_SEKIZO/GUARDED_STEP.C"
     },
     "resource_398:02000168": {
-      "name": "State_ConfigureRegion0_0_21x14",
+      "name": "SceneState_ConfigureRegion0_0_21x14",
       "source": "FIELD/BIRIBINO_DOU/REGION.C"
     },
     "resource_3c2:020001d4": {
@@ -6220,11 +6220,11 @@
       "source": "FIELD/VINASU_HEYA/ENTRY_SETUP.C"
     },
     "resource_3ba:0200042c": {
-      "name": "Actor_ShiftActorSeventeenByLeaderRow",
+      "name": "SceneActor_ShiftActorSeventeenByLeaderRow",
       "source": "FIELD/KOROSSEO_KAWA/COORDINATOR.C"
     },
     "resource_3ba:020020e8": {
-      "name": "Actor_ApplyValueAndMatchingSlots",
+      "name": "SceneActor_ApplyValueAndMatchingSlots",
       "source": "FIELD/KOROSSEO_KAWA/COORDINATOR.C"
     },
     "resource_37b:020023a4": {
@@ -6232,7 +6232,7 @@
       "source": "FIELD/SORU_SEKIZO/GUARDED_STEP.C"
     },
     "resource_3a3:02000298": {
-      "name": "Dialogue_RunActor17Message1924",
+      "name": "SceneDialogue_RunActor17Message1924",
       "source": "FIELD/ARUTIN_MURA/MOTION_PARTICLE.C"
     },
     "resource_3ac:020000fc": {
@@ -6272,7 +6272,7 @@
       "source": "FIELD/KORIMA_HEYA/ENTRY_LAYOUT.C"
     },
     "resource_390:02000174": {
-      "name": "Scene_RunActor19MessageBranch",
+      "name": "FieldScene_RunActor19MessageBranch",
       "source": "FIELD/KORIMA_HEYA/ENTRY_LAYOUT.C"
     },
     "resource_371:020006dc": {
@@ -6292,7 +6292,7 @@
       "source": "FIELD/FUNE_HEYA/EXTENDED_CHOREOGRAPHY.C"
     },
     "resource_3ad:0200134c": {
-      "name": "Garet_ChecksNothingLeftToDo",
+      "name": "Gerald_ChecksNothingLeftToDo",
       "source": "FIELD/RUNPA_DOU/CAVE.C"
     },
     "resource_388:0200003c": {
@@ -6300,7 +6300,7 @@
       "source": "FIELD/GOMA_IKE/GATE_PLACEMENT.C"
     },
     "resource_3ba:02002bcc": {
-      "name": "State_InitHalfwordC6a6Once",
+      "name": "SceneState_InitHalfwordC6a6Once",
       "source": "FIELD/KOROSSEO_KAWA/COORDINATOR.C"
     },
     "resource_3c8:02003ffc": {
@@ -6312,7 +6312,7 @@
       "source": "FIELD/FUNE_HEYA/EXTENDED_CHOREOGRAPHY.C"
     },
     "resource_398:020002d8": {
-      "name": "Scene_RunActor17Steps28AndD2",
+      "name": "FieldScene_RunActor17Steps28AndD2",
       "source": "FIELD/BIRIBINO_DOU/REGION.C"
     },
     "resource_3cc:0200003c": {
@@ -6328,7 +6328,7 @@
       "source": "FIELD/KORIMA_MAGARI/PRESET_LAYOUT.C"
     },
     "resource_3ba:02000490": {
-      "name": "Actor_ShiftActorEighteenByInputAndLeaderColumn",
+      "name": "SceneActor_ShiftActorEighteenByInputAndLeaderColumn",
       "source": "FIELD/KOROSSEO_KAWA/COORDINATOR.C"
     },
     "resource_397:02000030": {
@@ -6352,7 +6352,7 @@
       "source": "MENU/CLEAR/SAVE_MENU.C"
     },
     "resource_374:0200021c": {
-      "name": "SceneDialogue_ShowLineF44",
+      "name": "Villager_AskAboutTheTravelers",
       "source": "FIELD/HAIDIA_IE/EXTENDED.C"
     },
     "resource_381:02002c9c": {
@@ -6360,7 +6360,7 @@
       "source": "FIELD/SORU_FUNKA/EXTENDED_EFFECT.C"
     },
     "resource_3b6:02000760": {
-      "name": "Dialogue_RunMessage1FBBStep",
+      "name": "SceneDialogue_RunMessage1FBBStep",
       "source": "FIELD/TOREBI_HEYA/FACING_EVENTS.C"
     },
     "resource_3c3:0200008c": {
@@ -6368,7 +6368,7 @@
       "source": "FIELD/SUHARA_GATE/ACTOR_PROMPT.C"
     },
     "resource_3ad:0200141c": {
-      "name": "Garet_AsksAboutThingsToDo",
+      "name": "Gerald_AsksAboutThingsToDo",
       "source": "FIELD/RUNPA_DOU/CAVE.C"
     },
     "resource_399:02001990": {
@@ -6380,15 +6380,15 @@
       "source": "FIELD/COMMON/EFFECT/SPAWN.C"
     },
     "resource_38e:020008e8": {
-      "name": "Scene_SetupWithDescriptor8BD4",
+      "name": "FieldScene_SetupWithDescriptor8BD4",
       "source": "FIELD/BIRIBINO_NIWA/ORBITING.C"
     },
     "resource_376:02000258": {
-      "name": "SceneDialogue_RunActor16Message11be",
+      "name": "Villager_AskAboutStrangePowers",
       "source": "FIELD/HAIDIA_HEYA/TIMED_EVENTS.C"
     },
     "resource_380:02002674": {
-      "name": "FieldScene_RunActorNineDialogueByFlags",
+      "name": "Sukureta_Talk",
       "source": "FIELD/SORU_STAR/PARTY_INTRO.C"
     },
     "resource_3c9:02005688": {
@@ -6424,7 +6424,7 @@
       "source": "FIELD/RARIBERO_MACHI/FLAGGED_CUE.C"
     },
     "resource_380:0200278c": {
-      "name": "SceneDialogue_ShowLine10C8",
+      "name": "Garcia_Talk",
       "source": "FIELD/SORU_STAR/PARTY_INTRO.C"
     },
     "resource_3c8:0200032c": {
@@ -6440,7 +6440,7 @@
       "source": "FIELD/VINASU_CHOJO/SCRIPTED_PRESENTATION.C"
     },
     "resource_386:02000098": {
-      "name": "Actor_RunActorStep",
+      "name": "SceneActor_RunActorStep",
       "source": "FIELD/KUUPUAPPU_HEYA_SAI/PLACEMENT.C"
     },
     "resource_399:0200021c": {
@@ -6504,7 +6504,7 @@
       "source": "FIELD/FUNE_HEYA/EXTENDED_CHOREOGRAPHY.C"
     },
     "resource_380:02004248": {
-      "name": "FieldScene_RunSplitPairSteps",
+      "name": "Event_SayThenWait",
       "source": "FIELD/SORU_STAR/PARTY_INTRO.C"
     },
     "resource_3b1:02004890": {
@@ -6512,15 +6512,15 @@
       "source": "FIELD/FUNE_HEYA/EXTENDED_CHOREOGRAPHY.C"
     },
     "resource_38e:02000184": {
-      "name": "Dialogue_RunActor9Message13c0",
+      "name": "SceneDialogue_RunActor9Message13c0",
       "source": "FIELD/BIRIBINO_NIWA/ORBITING.C"
     },
     "resource_3a3:02000874": {
-      "name": "State_SyncProgressFlagsAndDispatch",
+      "name": "SceneState_SyncProgressFlagsAndDispatch",
       "source": "FIELD/ARUTIN_MURA/MOTION_PARTICLE.C"
     },
     "resource_38c:020004c8": {
-      "name": "Scene_SetupActor27OnEntry",
+      "name": "FieldScene_SetupActor27OnEntry",
       "source": "FIELD/BIRIBINO_HEYA/MESSAGE_BRANCH.C"
     },
     "resource_3a1:02000320": {
@@ -6540,7 +6540,7 @@
       "source": "FIELD/KORIMA_MAGARI/PRESET_LAYOUT.C"
     },
     "resource_398:020004e8": {
-      "name": "State_SetRuntimeWord448To516",
+      "name": "SceneState_SetRuntimeWord448To516",
       "source": "FIELD/BIRIBINO_DOU/REGION.C"
     },
     "resource_3c7:020003f4": {
@@ -6560,7 +6560,7 @@
       "source": "MENU/LINK_LOBBY/DIGIT_VALUE.C"
     },
     "resource_3a3:020001b0": {
-      "name": "Dialogue_ShowLine1918",
+      "name": "SceneDialogue_ShowLine1918",
       "source": "FIELD/ARUTIN_MURA/MOTION_PARTICLE.C"
     },
     "resource_390:02000070": {
@@ -6584,19 +6584,19 @@
       "source": "MENU/TITLE/MINIMAL.C"
     },
     "resource_376:02000190": {
-      "name": "SceneDialogue_RunActor15Message0f6d",
+      "name": "Villager_AskWhySukuretaCame",
       "source": "FIELD/HAIDIA_HEYA/TIMED_EVENTS.C"
     },
     "resource_3ba:02002d28": {
-      "name": "State_StoreParamsAndInitTable",
+      "name": "SceneState_StoreParamsAndInitTable",
       "source": "FIELD/KOROSSEO_KAWA/COORDINATOR.C"
     },
     "resource_3ba:02002738": {
-      "name": "Scene_RunTwoArmSequence",
+      "name": "FieldScene_RunTwoArmSequence",
       "source": "FIELD/KOROSSEO_KAWA/COORDINATOR.C"
     },
     "resource_398:0200045c": {
-      "name": "State_ClearRuntimeByte17",
+      "name": "SceneState_ClearRuntimeByte17",
       "source": "FIELD/BIRIBINO_DOU/REGION.C"
     },
     "resource_3c9:0200211c": {
@@ -6641,7 +6641,7 @@
       "source": "FIELD/SORU_FUNKA/EXTENDED_EFFECT.C"
     },
     "resource_3b0:020000a4": {
-      "name": "OvObj_Add160ToFields18And1c",
+      "name": "OverlayObject_Add160ToFields18And1c",
       "source": "FIELD/FUNE_HOBASHIRA/OBJECT_SCALE.C"
     },
     "resource_3c9:020008a8": {
@@ -6653,7 +6653,7 @@
       "source": "FIELD/FUNE_HOBASHIRA/OBJECT_SCALE.C"
     },
     "resource_3ba:02000248": {
-      "name": "State_ApplyRectAndSend303",
+      "name": "SceneState_ApplyRectAndSend303",
       "source": "FIELD/KOROSSEO_KAWA/COORDINATOR.C"
     },
     "resource_385:020004a0": {
@@ -6665,7 +6665,7 @@
       "source": "FIELD/VINASU_CHOJO/SCRIPTED_PRESENTATION.C"
     },
     "resource_374:020022c8": {
-      "name": "FieldScene_RunSplitPairSteps",
+      "name": "Event_SayThenWait",
       "source": "FIELD/HAIDIA_IE/EXTENDED.C"
     },
     "resource_3b0:02001130": {
@@ -6689,7 +6689,7 @@
       "source": "MENU/LINK_LOBBY/DIGIT_VALUE.C"
     },
     "resource_3ba:02002de8": {
-      "name": "State_ReleaseTableAndResetC6a6",
+      "name": "SceneState_ReleaseTableAndResetC6a6",
       "source": "FIELD/KOROSSEO_KAWA/COORDINATOR.C"
     },
     "resource_39e:02000afc": {
@@ -6717,7 +6717,7 @@
       "source": "FIELD/VINASU_HEYA/ENTRY_SETUP.C"
     },
     "resource_3a1:020000a0": {
-      "name": "OvObj_CreateConfigured",
+      "name": "OverlayObject_CreateConfigured",
       "source": "FIELD/SHIAN_HEYA/FLAGGED_OBJECT.C"
     },
     "resource_37d:02000054": {
@@ -6725,11 +6725,11 @@
       "source": "FIELD/SORU_MEIRO/SCENE_37D.C"
     },
     "resource_385:02000d74": {
-      "name": "Scene_SetActor21Values0And4",
+      "name": "FieldScene_SetActor21Values0And4",
       "source": "FIELD/KUUPUAPPU_MURA_SAI/MOTION_EVENT.C"
     },
     "resource_385:02000e30": {
-      "name": "ActorDraw_SetPairedSceneCells",
+      "name": "ActorPresentation_SetPairedSceneCells",
       "source": "FIELD/KUUPUAPPU_MURA_SAI/MOTION_EVENT.C"
     },
     "resource_383:0200019c": {
@@ -6757,7 +6757,7 @@
       "source": "FIELD/HAIDIA_ARASHI/GROUP_DEPARTURE.C"
     },
     "resource_3ba:02002e50": {
-      "name": "OvObj_PlaceWithScale14000",
+      "name": "OverlayObject_PlaceWithScale14000",
       "source": "FIELD/KOROSSEO_KAWA/COORDINATOR.C"
     },
     "resource_37e:02000038": {
@@ -6773,7 +6773,7 @@
       "source": "FIELD/KUUPUAPPU_HEYA/PROMPT.C"
     },
     "resource_3ba:02000954": {
-      "name": "Scene_RunBranchedStep",
+      "name": "FieldScene_RunBranchedStep",
       "source": "FIELD/KOROSSEO_KAWA/COORDINATOR.C"
     },
     "resource_3c1:02000038": {
@@ -6781,15 +6781,15 @@
       "source": "FIELD/SUHARA_MURA/ENTRY_CUE.C"
     },
     "resource_385:02000bf8": {
-      "name": "Scene_SetupWithDescriptor97AE",
+      "name": "FieldScene_SetupWithDescriptor97AE",
       "source": "FIELD/KUUPUAPPU_MURA_SAI/MOTION_EVENT.C"
     },
     "resource_3ba:02001e20": {
-      "name": "State_SendIdBySceneId",
+      "name": "SceneState_SendIdBySceneId",
       "source": "FIELD/KOROSSEO_KAWA/COORDINATOR.C"
     },
     "resource_3ba:02001d64": {
-      "name": "Dialogue_RunFlagGatedPromptInteraction",
+      "name": "SceneDialogue_RunFlagGatedPromptInteraction",
       "source": "FIELD/KOROSSEO_KAWA/COORDINATOR.C"
     },
     "resource_380:02000378": {
@@ -6797,7 +6797,7 @@
       "source": "FIELD/SORU_STAR/PARTY_INTRO.C"
     },
     "resource_3a1:02000484": {
-      "name": "Dialogue_RunActor17FlaggedDialogue",
+      "name": "SceneDialogue_RunActor17FlaggedDialogue",
       "source": "FIELD/SHIAN_HEYA/FLAGGED_OBJECT.C"
     },
     "resource_397:02000108": {
@@ -6837,7 +6837,7 @@
       "source": "FIELD/FUNE_HEYA/EXTENDED_CHOREOGRAPHY.C"
     },
     "resource_386:020000fc": {
-      "name": "Dialogue_RunActor12Line",
+      "name": "SceneDialogue_RunActor12Line",
       "source": "FIELD/KUUPUAPPU_HEYA_SAI/PLACEMENT.C"
     },
     "resource_385:020004ac": {
@@ -6845,7 +6845,7 @@
       "source": "FIELD/KUUPUAPPU_MURA_SAI/MOTION_EVENT.C"
     },
     "resource_3ba:020038a0": {
-      "name": "State_SetStateHalfword220",
+      "name": "SceneState_SetStateHalfword220",
       "source": "FIELD/KOROSSEO_KAWA/COORDINATOR.C"
     },
     "resource_3c6:020011e8": {
@@ -6861,7 +6861,7 @@
       "source": "FIELD/SORU_FUNKA/EXTENDED_EFFECT.C"
     },
     "resource_398:02000188": {
-      "name": "State_ApplyTwoRects",
+      "name": "SceneState_ApplyTwoRects",
       "source": "FIELD/BIRIBINO_DOU/REGION.C"
     },
     "resource_383:02004704": {
@@ -6873,7 +6873,7 @@
       "source": "FIELD/SORU_ROKA/SCENE_37E.C"
     },
     "resource_385:02000b18": {
-      "name": "Scene_SetupWithDescriptor976C",
+      "name": "FieldScene_SetupWithDescriptor976C",
       "source": "FIELD/KUUPUAPPU_MURA_SAI/MOTION_EVENT.C"
     },
     "resource_372:0200209c": {
@@ -6897,11 +6897,11 @@
       "source": "FIELD/FUNE_HEYA/EXTENDED_CHOREOGRAPHY.C"
     },
     "resource_3b0:02000a84": {
-      "name": "OvObj_InitWithRandomFields",
+      "name": "OverlayObject_InitWithRandomFields",
       "source": "FIELD/FUNE_HOBASHIRA/OBJECT_SCALE.C"
     },
     "resource_374:02000444": {
-      "name": "FieldScene_RunActorTwentySixEffectPresentation",
+      "name": "Scene_StoneFellOnTheHut",
       "source": "FIELD/HAIDIA_IE/EXTENDED.C"
     },
     "resource_3c6:0200004c": {
@@ -6909,11 +6909,11 @@
       "source": "FIELD/RARIBERO_MACHI/FLAGGED_CUE.C"
     },
     "resource_3a3:0200015c": {
-      "name": "Scene_RunActorEightPromptDialogue",
+      "name": "FieldScene_RunActorEightPromptDialogue",
       "source": "FIELD/ARUTIN_MURA/MOTION_PARTICLE.C"
     },
     "resource_3ba:02001d20": {
-      "name": "Scene_RunSixSteps380To3A8",
+      "name": "FieldScene_RunSixSteps380To3A8",
       "source": "FIELD/KOROSSEO_KAWA/COORDINATOR.C"
     },
     "resource_372:0200456c": {
@@ -6925,7 +6925,7 @@
       "source": "FIELD/HAIDIA_ARASHI/GROUP_DEPARTURE.C"
     },
     "resource_374:020001f0": {
-      "name": "SceneDialogue_ShowLineF3F",
+      "name": "Villager_RecallThreeYearsAgo",
       "source": "FIELD/HAIDIA_IE/EXTENDED.C"
     },
     "resource_3c8:02003050": {
@@ -6941,7 +6941,7 @@
       "source": "FIELD/IMIRU_MURA/FLAGGED_CHOREOGRAPHY.C"
     },
     "resource_3ad:020012c4": {
-      "name": "Garet_AsksIfNotRiding",
+      "name": "Gerald_AsksIfNotRiding",
       "source": "FIELD/RUNPA_DOU/CAVE.C"
     },
     "resource_399:02001960": {
@@ -6949,7 +6949,7 @@
       "source": "FIELD/IMIRU_MURA/FLAGGED_CHOREOGRAPHY.C"
     },
     "resource_3ba:02000134": {
-      "name": "State_ResetCounterAndStartTask",
+      "name": "SceneState_ResetCounterAndStartTask",
       "source": "FIELD/KOROSSEO_KAWA/COORDINATOR.C"
     },
     "resource_374:020025a0": {
@@ -6957,7 +6957,7 @@
       "source": "FIELD/HAIDIA_IE/EXTENDED.C"
     },
     "resource_385:0200056c": {
-      "name": "Dialogue_ShowLine1CB0ForActor13",
+      "name": "SceneDialogue_ShowLine1CB0ForActor13",
       "source": "FIELD/KUUPUAPPU_MURA_SAI/MOTION_EVENT.C"
     },
     "resource_384:02000190": {
@@ -6965,15 +6965,15 @@
       "source": "FIELD/COMMON/KUUPUAPPU_RUNPA/JAIL.C"
     },
     "resource_3aa:02000264": {
-      "name": "Scene_DispatchSceneByIndex",
+      "name": "FieldScene_DispatchSceneByIndex",
       "source": "FIELD/KAREI_KYUDEN/PARTY_EVENTS.C"
     },
     "resource_3b6:020006ec": {
-      "name": "Dialogue_RunMessage239eStep",
+      "name": "SceneDialogue_RunMessage239eStep",
       "source": "FIELD/TOREBI_HEYA/FACING_EVENTS.C"
     },
     "resource_38c:02000470": {
-      "name": "Scene_RunActor27Message",
+      "name": "FieldScene_RunActor27Message",
       "source": "FIELD/BIRIBINO_HEYA/MESSAGE_BRANCH.C"
     },
     "resource_3aa:02000064": {
@@ -6981,11 +6981,11 @@
       "source": "FIELD/KAREI_KYUDEN/PARTY_EVENTS.C"
     },
     "resource_3a3:02000c0c": {
-      "name": "Actor_ResetStateAndSpan",
+      "name": "SceneActor_ResetStateAndSpan",
       "source": "FIELD/ARUTIN_MURA/MOTION_PARTICLE.C"
     },
     "resource_3ba:02002e10": {
-      "name": "Actor_StartMode5MoveToTile",
+      "name": "SceneActor_StartMode5MoveToTile",
       "source": "FIELD/KOROSSEO_KAWA/COORDINATOR.C"
     },
     "resource_399:02000254": {
@@ -7005,7 +7005,7 @@
       "source": "MENU/CLEAR/SAVE_MENU.C"
     },
     "resource_38e:02000030": {
-      "name": "Actor_UpdateFacingTowardTarget",
+      "name": "SceneActor_UpdateFacingTowardTarget",
       "source": "FIELD/BIRIBINO_NIWA/ORBITING.C"
     },
     "resource_3c9:02000030": {
@@ -7041,7 +7041,7 @@
       "source": "FIELD/GOMA_IKE/GATE_PLACEMENT.C"
     },
     "resource_386:020002fc": {
-      "name": "Actor_RunActor16StepWithFlag91",
+      "name": "SceneActor_RunActor16StepWithFlag91",
       "source": "FIELD/KUUPUAPPU_HEYA_SAI/PLACEMENT.C"
     },
     "resource_3cd:02000030": {
@@ -7049,7 +7049,7 @@
       "source": "DEBUG/ITEM_LEVEL/RECORD_COUNT.C"
     },
     "resource_385:02000048": {
-      "name": "OvObj_CreateConfigured",
+      "name": "OverlayObject_CreateConfigured",
       "source": "FIELD/KUUPUAPPU_MURA_SAI/MOTION_EVENT.C"
     },
     "resource_374:02002370": {
@@ -7085,7 +7085,7 @@
       "source": "FIELD/KAREI_KYUDEN/PARTY_EVENTS.C"
     },
     "resource_386:020000bc": {
-      "name": "Dialogue_RunActor9Line",
+      "name": "SceneDialogue_RunActor9Line",
       "source": "FIELD/KUUPUAPPU_HEYA_SAI/PLACEMENT.C"
     },
     "resource_374:02000930": {
@@ -7097,7 +7097,7 @@
       "source": "FIELD/HAIDIA_IE/EXTENDED.C"
     },
     "resource_3b6:0200085c": {
-      "name": "Dialogue_RunActor25FlaggedLine",
+      "name": "SceneDialogue_RunActor25FlaggedLine",
       "source": "FIELD/TOREBI_HEYA/FACING_EVENTS.C"
     },
     "resource_383:0200080c": {
@@ -7125,7 +7125,7 @@
       "source": "MENU/LINK_LOBBY/DIGIT_VALUE.C"
     },
     "resource_385:0200052c": {
-      "name": "Dialogue_RunActor12TwoFlagScene",
+      "name": "SceneDialogue_RunActor12TwoFlagScene",
       "source": "FIELD/KUUPUAPPU_MURA_SAI/MOTION_EVENT.C"
     },
     "resource_376:02000320": {
@@ -7165,7 +7165,7 @@
       "source": "FIELD/COMMON/SHIAN_JIIN/TEMPLE_ROOMS.C"
     },
     "resource_3c1:02000068": {
-      "name": "Scene_RunActorCue25b8Branch",
+      "name": "FieldScene_RunActorCue25b8Branch",
       "source": "FIELD/SUHARA_MURA/ENTRY_CUE.C"
     },
     "resource_39e:020041ec": {
@@ -7221,7 +7221,7 @@
       "source": "FIELD/FUNE_HEYA/EXTENDED_CHOREOGRAPHY.C"
     },
     "resource_3ba:02001898": {
-      "name": "Actor_PlaceSlots1To3FromWork",
+      "name": "SceneActor_PlaceSlots1To3FromWork",
       "source": "FIELD/KOROSSEO_KAWA/COORDINATOR.C"
     },
     "resource_379:0200004c": {
@@ -7237,7 +7237,7 @@
       "source": "FIELD/KUUPUAPPU_HEYA/PROMPT.C"
     },
     "resource_3b6:020008cc": {
-      "name": "Dialogue_RunMessage23acStep",
+      "name": "SceneDialogue_RunMessage23acStep",
       "source": "FIELD/TOREBI_HEYA/FACING_EVENTS.C"
     },
     "resource_36f:02000038": {
@@ -7277,11 +7277,11 @@
       "source": "FIELD/COMMON/EFFECT/SPAWN.C"
     },
     "resource_390:0200012c": {
-      "name": "Scene_RunActor18MessageBranch",
+      "name": "FieldScene_RunActor18MessageBranch",
       "source": "FIELD/KORIMA_HEYA/ENTRY_LAYOUT.C"
     },
     "resource_385:02000784": {
-      "name": "Dialogue_RunActor12TimedTwoFlagScene",
+      "name": "SceneDialogue_RunActor12TimedTwoFlagScene",
       "source": "FIELD/KUUPUAPPU_MURA_SAI/MOTION_EVENT.C"
     },
     "resource_37c:02000038": {
@@ -7297,7 +7297,7 @@
       "source": "MENU/TITLE/MINIMAL.C"
     },
     "resource_3a3:02000338": {
-      "name": "Actor_IsSlotZeroAngleInRange",
+      "name": "SceneActor_IsSlotZeroAngleInRange",
       "source": "FIELD/ARUTIN_MURA/MOTION_PARTICLE.C"
     },
     "resource_397:0200026c": {
@@ -7365,7 +7365,7 @@
       "source": "DEBUG/ITEM_LEVEL/RECORD_COUNT.C"
     },
     "resource_3a1:02000048": {
-      "name": "OvObj_SpawnWithMode14",
+      "name": "OverlayObject_SpawnWithMode14",
       "source": "FIELD/SHIAN_HEYA/FLAGGED_OBJECT.C"
     },
     "resource_383:020045f4": {
@@ -7373,11 +7373,11 @@
       "source": "FIELD/KUUPUAPPU_HEYA/PROMPT.C"
     },
     "resource_38e:020001a4": {
-      "name": "Dialogue_RunActor10Message13c3",
+      "name": "SceneDialogue_RunActor10Message13c3",
       "source": "FIELD/BIRIBINO_NIWA/ORBITING.C"
     },
     "resource_3b0:0200007c": {
-      "name": "Actor_SetFacingFromSample",
+      "name": "SceneActor_SetFacingFromSample",
       "source": "FIELD/FUNE_HOBASHIRA/OBJECT_SCALE.C"
     },
     "resource_371:02000560": {
@@ -7385,7 +7385,7 @@
       "source": "FIELD/WORLD_MAP/ACTOR_TRANSFER.C"
     },
     "resource_3a3:020002d8": {
-      "name": "Dialogue_RunActor10Message18d9",
+      "name": "SceneDialogue_RunActor10Message18d9",
       "source": "FIELD/ARUTIN_MURA/MOTION_PARTICLE.C"
     },
     "resource_3c8:02000910": {
@@ -7401,11 +7401,11 @@
       "source": "FIELD/FUNE_HEYA/EXTENDED_CHOREOGRAPHY.C"
     },
     "resource_398:020001f0": {
-      "name": "Scene_RunActor9Flag882Scene",
+      "name": "FieldScene_RunActor9Flag882Scene",
       "source": "FIELD/BIRIBINO_DOU/REGION.C"
     },
     "resource_398:020007c4": {
-      "name": "Actor_FindSlotAtTile",
+      "name": "SceneActor_FindSlotAtTile",
       "source": "FIELD/BIRIBINO_DOU/REGION.C"
     },
     "resource_3b1:02001594": {
@@ -7413,11 +7413,11 @@
       "source": "FIELD/FUNE_HEYA/EXTENDED_CHOREOGRAPHY.C"
     },
     "resource_3aa:02000230": {
-      "name": "State_SetWord448To209AndRun",
+      "name": "SceneState_SetWord448To209AndRun",
       "source": "FIELD/KAREI_KYUDEN/PARTY_EVENTS.C"
     },
     "resource_385:02000ac8": {
-      "name": "Scene_SetupDescriptor9740",
+      "name": "FieldScene_SetupDescriptor9740",
       "source": "FIELD/KUUPUAPPU_MURA_SAI/MOTION_EVENT.C"
     },
     "resource_371:02003f88": {
@@ -7425,7 +7425,7 @@
       "source": "FIELD/WORLD_MAP/ACTOR_TRANSFER.C"
     },
     "resource_380:020027ac": {
-      "name": "SceneDialogue_RunActor14TalkLine",
+      "name": "Alex_Talk",
       "source": "FIELD/SORU_STAR/PARTY_INTRO.C"
     },
     "resource_3c9:020035c4": {
@@ -7433,7 +7433,7 @@
       "source": "FIELD/VINASU_CHOJO/SCRIPTED_PRESENTATION.C"
     },
     "resource_3ad:020012f0": {
-      "name": "Garet_AsksAboutUnfinishedBusiness",
+      "name": "Gerald_AsksAboutUnfinishedBusiness",
       "source": "FIELD/RUNPA_DOU/CAVE.C"
     },
     "resource_372:02000198": {
@@ -7445,7 +7445,7 @@
       "source": "FIELD/COMMON/SHIAN_JIIN/TEMPLE_ROOMS.C"
     },
     "resource_374:020001c4": {
-      "name": "SceneDialogue_RunActor23Line",
+      "name": "Villager_AskAboutMeditation",
       "source": "FIELD/HAIDIA_IE/EXTENDED.C"
     },
     "resource_399:02000510": {
@@ -7481,7 +7481,7 @@
       "source": "FIELD/RUNPA_DOU/CAVE.C"
     },
     "resource_3ba:02002fc4": {
-      "name": "Effect_SpawnKind285AtRandomChance",
+      "name": "SceneEffect_SpawnKind285AtRandomChance",
       "source": "FIELD/KOROSSEO_KAWA/COORDINATOR.C"
     },
     "resource_3c8:020006a0": {
@@ -7501,7 +7501,7 @@
       "source": "FIELD/KUUPUAPPU_HEYA/PROMPT.C"
     },
     "resource_3a3:020004bc": {
-      "name": "Scene_RunFacingGatedDialogue18",
+      "name": "FieldScene_RunFacingGatedDialogue18",
       "source": "FIELD/ARUTIN_MURA/MOTION_PARTICLE.C"
     },
     "resource_3c7:02000468": {
@@ -7509,7 +7509,7 @@
       "source": "FIELD/RARIBERO_HEYA/POSE.C"
     },
     "resource_38c:020002d4": {
-      "name": "Scene_RunActor13Message",
+      "name": "FieldScene_RunActor13Message",
       "source": "FIELD/BIRIBINO_HEYA/MESSAGE_BRANCH.C"
     },
     "resource_372:020000f4": {
@@ -7521,7 +7521,7 @@
       "source": "FIELD/BIRIBINO_DOU/REGION.C"
     },
     "resource_3b0:02000180": {
-      "name": "OvObj_ShrinkScaleThenStop",
+      "name": "OverlayObject_ShrinkScaleThenStop",
       "source": "FIELD/FUNE_HOBASHIRA/OBJECT_SCALE.C"
     },
     "resource_383:02004698": {
@@ -7537,7 +7537,7 @@
       "source": "FIELD/GOMA_IRIGUCHI/DEPTH.C"
     },
     "resource_386:02000338": {
-      "name": "Scene_RunActor18ConditionalCue",
+      "name": "FieldScene_RunActor18ConditionalCue",
       "source": "FIELD/KUUPUAPPU_HEYA_SAI/PLACEMENT.C"
     },
     "resource_3c9:02000470": {
@@ -7549,11 +7549,11 @@
       "source": "FIELD/HAIDIA_IE/EXTENDED.C"
     },
     "resource_3b6:0200073c": {
-      "name": "Dialogue_RunActorLine23a1",
+      "name": "SceneDialogue_RunActorLine23a1",
       "source": "FIELD/TOREBI_HEYA/FACING_EVENTS.C"
     },
     "resource_385:02000e90": {
-      "name": "Scene_RunActorEighteenDialogue",
+      "name": "FieldScene_RunActorEighteenDialogue",
       "source": "FIELD/KUUPUAPPU_MURA_SAI/MOTION_EVENT.C"
     },
     "resource_383:0200013c": {
@@ -7569,7 +7569,7 @@
       "source": "FIELD/KUUPUAPPU_HEYA_SAI/PLACEMENT.C"
     },
     "resource_380:0200276c": {
-      "name": "SceneDialogue_RunActor11TalkLine",
+      "name": "Menardi_Talk",
       "source": "FIELD/SORU_STAR/PARTY_INTRO.C"
     },
     "resource_3b1:02005004": {
@@ -7577,7 +7577,7 @@
       "source": "FIELD/FUNE_HEYA/EXTENDED_CHOREOGRAPHY.C"
     },
     "resource_3aa:020000d4": {
-      "name": "Dialogue_RunActor13Message1b83",
+      "name": "SceneDialogue_RunActor13Message1b83",
       "source": "FIELD/KAREI_KYUDEN/PARTY_EVENTS.C"
     },
     "resource_3c8:020019c0": {
@@ -7701,7 +7701,7 @@
       "source": "FIELD/IMIRU_MURA/FLAGGED_CHOREOGRAPHY.C"
     },
     "resource_386:020003c8": {
-      "name": "Scene_RunActor20StepByPlace",
+      "name": "FieldScene_RunActor20StepByPlace",
       "source": "FIELD/KUUPUAPPU_HEYA_SAI/PLACEMENT.C"
     },
     "resource_3cc:020000b4": {
@@ -7737,7 +7737,7 @@
       "source": "FIELD/RUNPA_DOU/CAVE.C"
     },
     "resource_386:02000380": {
-      "name": "Scene_RunActor19StepByPlace",
+      "name": "FieldScene_RunActor19StepByPlace",
       "source": "FIELD/KUUPUAPPU_HEYA_SAI/PLACEMENT.C"
     },
     "resource_3ac:02000030": {
@@ -7765,7 +7765,7 @@
       "source": "FIELD/RARIBERO_HEYA/POSE.C"
     },
     "resource_3a1:0200041c": {
-      "name": "Dialogue_RunActor16FlaggedDialogue",
+      "name": "SceneDialogue_RunActor16FlaggedDialogue",
       "source": "FIELD/SHIAN_HEYA/FLAGGED_OBJECT.C"
     },
     "resource_3c9:02000314": {
@@ -7777,7 +7777,7 @@
       "source": "FIELD/RUNPA_DOU/CAVE.C"
     },
     "resource_3ba:02002d8c": {
-      "name": "State_InitTableWordsAndLoad3200",
+      "name": "SceneState_InitTableWordsAndLoad3200",
       "source": "FIELD/KOROSSEO_KAWA/COORDINATOR.C"
     },
     "resource_3b1:02004670": {
@@ -7833,7 +7833,7 @@
       "source": "FIELD/HAIDIA_IE/EXTENDED.C"
     },
     "resource_385:0200050c": {
-      "name": "Dialogue_RunActor11Line",
+      "name": "SceneDialogue_RunActor11Line",
       "source": "FIELD/KUUPUAPPU_MURA_SAI/MOTION_EVENT.C"
     },
     "resource_381:02002e5c": {
@@ -7845,7 +7845,7 @@
       "source": "FIELD/COMMON/RUNPA_SUHARA/INTERIORS.C"
     },
     "resource_3b6:02000328": {
-      "name": "Scene_RunActorsThirtyOneToThirtyThreeChoreography",
+      "name": "FieldScene_RunActorsThirtyOneToThirtyThreeChoreography",
       "source": "FIELD/TOREBI_HEYA/FACING_EVENTS.C"
     },
     "resource_3c2:02000038": {
@@ -7945,7 +7945,7 @@
       "source": "FIELD/TORETO_EDA/BACKGROUND_SCROLL.C"
     },
     "resource_385:020004d8": {
-      "name": "Dialogue_RunActor8FlagScene",
+      "name": "SceneDialogue_RunActor8FlagScene",
       "source": "FIELD/KUUPUAPPU_MURA_SAI/MOTION_EVENT.C"
     },
     "resource_3c8:02000e04": {
@@ -7965,7 +7965,7 @@
       "source": "FIELD/BIRIBINO_DOU/REGION.C"
     },
     "resource_3ba:02000830": {
-      "name": "State_ApplyValue768",
+      "name": "SceneState_ApplyValue768",
       "source": "FIELD/KOROSSEO_KAWA/COORDINATOR.C"
     },
     "resource_383:02004624": {
@@ -7973,7 +7973,7 @@
       "source": "FIELD/KUUPUAPPU_HEYA/PROMPT.C"
     },
     "resource_386:02000458": {
-      "name": "Scene_RunActor22StepByPlace",
+      "name": "FieldScene_RunActor22StepByPlace",
       "source": "FIELD/KUUPUAPPU_HEYA_SAI/PLACEMENT.C"
     },
     "resource_397:020000e8": {
@@ -7993,7 +7993,7 @@
       "source": "FIELD/IMIRU_MURA/FLAGGED_CHOREOGRAPHY.C"
     },
     "resource_3c1:0200022c": {
-      "name": "State_InitEntryWorkspaceAndFlag96f",
+      "name": "SceneState_InitEntryWorkspaceAndFlag96f",
       "source": "FIELD/SUHARA_MURA/ENTRY_CUE.C"
     },
     "resource_3ad:02001320": {
@@ -8037,7 +8037,7 @@
       "source": "FIELD/VINASU_HEYA/ENTRY_SETUP.C"
     },
     "resource_386:020000dc": {
-      "name": "Dialogue_RunActor11Line",
+      "name": "SceneDialogue_RunActor11Line",
       "source": "FIELD/KUUPUAPPU_HEYA_SAI/PLACEMENT.C"
     },
     "resource_397:0200015c": {
@@ -8057,7 +8057,7 @@
       "source": "MENU/LINK_LOBBY/DIGIT_VALUE.C"
     },
     "resource_3c1:020000f8": {
-      "name": "Scene_RunLayoutStepThenSet201",
+      "name": "FieldScene_RunLayoutStepThenSet201",
       "source": "FIELD/SUHARA_MURA/ENTRY_CUE.C"
     },
     "resource_399:02001fa4": {
@@ -8065,7 +8065,7 @@
       "source": "FIELD/IMIRU_MURA/FLAGGED_CHOREOGRAPHY.C"
     },
     "resource_3ba:020019e0": {
-      "name": "State_SetStateHalfword386To99WhenMatched",
+      "name": "SceneState_SetStateHalfword386To99WhenMatched",
       "source": "FIELD/KOROSSEO_KAWA/COORDINATOR.C"
     },
     "resource_3b1:020015e8": {
@@ -8133,7 +8133,7 @@
       "source": "FIELD/HAIDIA_HEYA/TIMED_EVENTS.C"
     },
     "resource_3ba:02003a60": {
-      "name": "Actor_FindOccupantAheadOfSubject",
+      "name": "SceneActor_FindOccupantAheadOfSubject",
       "source": "FIELD/KOROSSEO_KAWA/COORDINATOR.C"
     },
     "resource_3c8:02001a14": {
@@ -8153,7 +8153,7 @@
       "source": "FIELD/FUNE_HEYA/EXTENDED_CHOREOGRAPHY.C"
     },
     "resource_3ba:02000a10": {
-      "name": "Actor_MarkObjectAtTiles94To95",
+      "name": "SceneActor_MarkObjectAtTiles94To95",
       "source": "FIELD/KOROSSEO_KAWA/COORDINATOR.C"
     },
     "resource_399:02000164": {
@@ -8213,7 +8213,7 @@
       "source": "FIELD/TORETO_EDA/BACKGROUND_SCROLL.C"
     },
     "resource_38c:020002f4": {
-      "name": "Scene_RunActor19MessageBranch",
+      "name": "FieldScene_RunActor19MessageBranch",
       "source": "FIELD/BIRIBINO_HEYA/MESSAGE_BRANCH.C"
     },
     "resource_3c9:02003660": {
@@ -8221,11 +8221,11 @@
       "source": "FIELD/VINASU_CHOJO/SCRIPTED_PRESENTATION.C"
     },
     "resource_38c:020003f4": {
-      "name": "Scene_ConfigureActor22Scene",
+      "name": "FieldScene_ConfigureActor22Scene",
       "source": "FIELD/BIRIBINO_HEYA/MESSAGE_BRANCH.C"
     },
     "resource_3b0:020001fc": {
-      "name": "Scene_RunActor232SceneWhenFlag923Or922",
+      "name": "FieldScene_RunActor232SceneWhenFlag923Or922",
       "source": "FIELD/FUNE_HOBASHIRA/OBJECT_SCALE.C"
     },
     "resource_3b9:02000070": {
@@ -8233,7 +8233,7 @@
       "source": "FIELD/KORASHIAMU_IRIGUCHI/STATUS_DISPATCH.C"
     },
     "resource_3ba:020038b0": {
-      "name": "Actor_FindSlotAtTilePosition",
+      "name": "SceneActor_FindSlotAtTilePosition",
       "source": "FIELD/KOROSSEO_KAWA/COORDINATOR.C"
     },
     "resource_383:0200025c": {
@@ -8245,7 +8245,7 @@
       "source": "FIELD/KUUPUAPPU_HEYA/PROMPT.C"
     },
     "resource_398:02000424": {
-      "name": "ActorDraw_SetSceneCell31AndFlag305",
+      "name": "ActorPresentation_SetSceneCell31AndFlag305",
       "source": "FIELD/BIRIBINO_DOU/REGION.C"
     },
     "resource_3c8:02003fe4": {
@@ -8257,7 +8257,7 @@
       "source": "FIELD/HAIDIA_ARASHI/GROUP_DEPARTURE.C"
     },
     "resource_380:0200274c": {
-      "name": "SceneDialogue_RunActorTenDialogue",
+      "name": "Saturos_Talk",
       "source": "FIELD/SORU_STAR/PARTY_INTRO.C"
     },
     "resource_3ac:02000124": {
@@ -8269,7 +8269,7 @@
       "source": "FIELD/BIRIBINO_NIWA/ORBITING.C"
     },
     "resource_3aa:020000f4": {
-      "name": "Dialogue_RunActor16Message1b88",
+      "name": "SceneDialogue_RunActor16Message1b88",
       "source": "FIELD/KAREI_KYUDEN/PARTY_EVENTS.C"
     },
     "resource_383:020002e8": {
@@ -8277,7 +8277,7 @@
       "source": "FIELD/KUUPUAPPU_HEYA/PROMPT.C"
     },
     "resource_3aa:02000114": {
-      "name": "Scene_RunActorEightTurnDialogue",
+      "name": "FieldScene_RunActorEightTurnDialogue",
       "source": "FIELD/KAREI_KYUDEN/PARTY_EVENTS.C"
     },
     "resource_3ba:02002f64": {
@@ -8289,7 +8289,7 @@
       "source": "FIELD/SORU_FUNKA/EXTENDED_EFFECT.C"
     },
     "resource_3a3:020002b8": {
-      "name": "Dialogue_RunActor9Message1932",
+      "name": "SceneDialogue_RunActor9Message1932",
       "source": "FIELD/ARUTIN_MURA/MOTION_PARTICLE.C"
     },
     "resource_383:020000fc": {
@@ -8333,7 +8333,7 @@
       "source": "FIELD/VINASU_HEYA/ENTRY_SETUP.C"
     },
     "resource_385:02000d4c": {
-      "name": "ActorDraw_SetFlag200AndSceneCell23",
+      "name": "ActorPresentation_SetFlag200AndSceneCell23",
       "source": "FIELD/KUUPUAPPU_MURA_SAI/MOTION_EVENT.C"
     },
     "resource_37b:02001a84": {
@@ -8377,15 +8377,15 @@
       "source": "FIELD/KORASHIAMU_IRIGUCHI/STATUS_DISPATCH.C"
     },
     "resource_3a1:0200035c": {
-      "name": "Dialogue_RunActor14FlaggedDialogue",
+      "name": "SceneDialogue_RunActor14FlaggedDialogue",
       "source": "FIELD/SHIAN_HEYA/FLAGGED_OBJECT.C"
     },
     "resource_3a3:02000448": {
-      "name": "Scene_RunActorTwentyOneFlagBranch",
+      "name": "FieldScene_RunActorTwentyOneFlagBranch",
       "source": "FIELD/ARUTIN_MURA/MOTION_PARTICLE.C"
     },
     "resource_38c:020002b4": {
-      "name": "Scene_RunActor8Message",
+      "name": "FieldScene_RunActor8Message",
       "source": "FIELD/BIRIBINO_HEYA/MESSAGE_BRANCH.C"
     },
     "resource_3c8:020026e4": {
@@ -8401,7 +8401,7 @@
       "source": "FIELD/VINASU_HEYA/ENTRY_SETUP.C"
     },
     "resource_374:02000674": {
-      "name": "FieldScene_RunActorTwentyOneSetup",
+      "name": "Scene_PsynergyStoneIsGone",
       "source": "FIELD/HAIDIA_IE/EXTENDED.C"
     },
     "resource_381:02001084": {
@@ -8429,11 +8429,11 @@
       "source": "FIELD/VINASU_HEYA/ENTRY_SETUP.C"
     },
     "resource_398:02000030": {
-      "name": "State_ApplyArgMode0AndReturnZero",
+      "name": "SceneState_ApplyArgMode0AndReturnZero",
       "source": "FIELD/BIRIBINO_DOU/REGION.C"
     },
     "resource_3ba:02002fa0": {
-      "name": "State_WaitUntilWord1000IsNine",
+      "name": "SceneState_WaitUntilWord1000IsNine",
       "source": "FIELD/KOROSSEO_KAWA/COORDINATOR.C"
     },
     "resource_3c2:0200021c": {
@@ -8449,7 +8449,7 @@
       "source": "FIELD/VINASU_HEYA/ENTRY_SETUP.C"
     },
     "resource_3a3:02000318": {
-      "name": "Dialogue_RunActor21Message194a",
+      "name": "SceneDialogue_RunActor21Message194a",
       "source": "FIELD/ARUTIN_MURA/MOTION_PARTICLE.C"
     },
     "resource_3cd:02000044": {
@@ -8493,7 +8493,7 @@
       "source": "FIELD/VINASU_HEYA/ENTRY_SETUP.C"
     },
     "resource_38e:020001c4": {
-      "name": "Dialogue_RunActor11Message1751",
+      "name": "SceneDialogue_RunActor11Message1751",
       "source": "FIELD/BIRIBINO_NIWA/ORBITING.C"
     },
     "resource_372:020045a8": {
@@ -8513,7 +8513,7 @@
       "source": "FIELD/WORLD_MAP/ACTOR_TRANSFER.C"
     },
     "resource_3ba:02003764": {
-      "name": "Scene_BuildSceneDescriptorAndInstallTask",
+      "name": "FieldScene_BuildSceneDescriptorAndInstallTask",
       "source": "FIELD/KOROSSEO_KAWA/COORDINATOR.C"
     },
     "resource_3c1:02000208": {
@@ -8521,7 +8521,7 @@
       "source": "FIELD/SUHARA_MURA/ENTRY_CUE.C"
     },
     "resource_3a3:0200084c": {
-      "name": "State_SetFlag906ByActorNineteenX",
+      "name": "SceneState_SetFlag906ByActorNineteenX",
       "source": "FIELD/ARUTIN_MURA/MOTION_PARTICLE.C"
     },
     "resource_383:02001990": {
@@ -8537,7 +8537,7 @@
       "source": "FIELD/KORIMA_MAGARI/PRESET_LAYOUT.C"
     },
     "resource_3a1:020003bc": {
-      "name": "Dialogue_RunActor15FlaggedDialogue",
+      "name": "SceneDialogue_RunActor15FlaggedDialogue",
       "source": "FIELD/SHIAN_HEYA/FLAGGED_OBJECT.C"
     },
     "resource_399:02000160": {
@@ -8545,7 +8545,7 @@
       "source": "FIELD/IMIRU_MURA/FLAGGED_CHOREOGRAPHY.C"
     },
     "resource_3a3:020002f8": {
-      "name": "Dialogue_RunActor14Message18e1",
+      "name": "SceneDialogue_RunActor14Message18e1",
       "source": "FIELD/ARUTIN_MURA/MOTION_PARTICLE.C"
     },
     "resource_3a1:02000328": {
@@ -8561,11 +8561,11 @@
       "source": "FIELD/HAIDIA_ARASHI/GROUP_DEPARTURE.C"
     },
     "resource_3a3:02000360": {
-      "name": "Scene_RunActorFifteenFlagBranch",
+      "name": "FieldScene_RunActorFifteenFlagBranch",
       "source": "FIELD/ARUTIN_MURA/MOTION_PARTICLE.C"
     },
     "resource_386:02000570": {
-      "name": "OvObj_InitObject22",
+      "name": "OverlayObject_InitObject22",
       "source": "FIELD/KUUPUAPPU_HEYA_SAI/PLACEMENT.C"
     },
     "resource_3ca:0200003c": {
@@ -8601,7 +8601,7 @@
       "source": "FIELD/BIRIBINO_DOU/REGION.C"
     },
     "resource_38c:020000bc": {
-      "name": "Scene_RunActor18MessageBranch",
+      "name": "FieldScene_RunActor18MessageBranch",
       "source": "FIELD/BIRIBINO_HEYA/MESSAGE_BRANCH.C"
     },
     "resource_387:02000334": {
@@ -8617,7 +8617,7 @@
       "source": "FIELD/KORIMA_MAGARI/PRESET_LAYOUT.C"
     },
     "resource_385:020004b4": {
-      "name": "ActorDraw_RunActorModeOneThenZero",
+      "name": "ActorPresentation_RunActorModeOneThenZero",
       "source": "FIELD/KUUPUAPPU_MURA_SAI/MOTION_EVENT.C"
     },
     "resource_3c8:02000fbc": {
@@ -8645,11 +8645,11 @@
       "source": "FIELD/VINASU_HEYA/ENTRY_SETUP.C"
     },
     "resource_3ba:02000238": {
-      "name": "Scene_RunTwoCallSequence",
+      "name": "FieldScene_RunTwoCallSequence",
       "source": "FIELD/KOROSSEO_KAWA/COORDINATOR.C"
     },
     "resource_386:020001e4": {
-      "name": "Dialogue_RunActor23Line",
+      "name": "SceneDialogue_RunActor23Line",
       "source": "FIELD/KUUPUAPPU_HEYA_SAI/PLACEMENT.C"
     },
     "resource_3c1:02000030": {
@@ -8669,11 +8669,11 @@
       "source": "FIELD/SORU_ROKA/SCENE_37E.C"
     },
     "resource_3ba:02000178": {
-      "name": "State_WaitUntilWordC41cIs22",
+      "name": "SceneState_WaitUntilWordC41cIs22",
       "source": "FIELD/KOROSSEO_KAWA/COORDINATOR.C"
     },
     "resource_376:020001bc": {
-      "name": "SceneDialogue_RunActor19Message0f73",
+      "name": "Villager_PlanToScareVisitors",
       "source": "FIELD/HAIDIA_HEYA/TIMED_EVENTS.C"
     },
     "resource_3b6:02000044": {
@@ -8681,7 +8681,7 @@
       "source": "FIELD/TOREBI_HEYA/FACING_EVENTS.C"
     },
     "resource_3ba:02002f94": {
-      "name": "State_SetHalfword1000To9",
+      "name": "SceneState_SetHalfword1000To9",
       "source": "FIELD/KOROSSEO_KAWA/COORDINATOR.C"
     },
     "resource_3c6:02000030": {
@@ -8689,7 +8689,7 @@
       "source": "FIELD/RARIBERO_MACHI/FLAGGED_CUE.C"
     },
     "resource_390:020001c4": {
-      "name": "Scene_SetupEntryLayoutsBySelector",
+      "name": "FieldScene_SetupEntryLayoutsBySelector",
       "source": "FIELD/KORIMA_HEYA/ENTRY_LAYOUT.C"
     },
     "resource_37b:02001ad4": {
@@ -8717,7 +8717,7 @@
       "source": "FIELD/IMIRU_MURA/FLAGGED_CHOREOGRAPHY.C"
     },
     "resource_38c:0200005c": {
-      "name": "Scene_RunActor16MessageBranch",
+      "name": "FieldScene_RunActor16MessageBranch",
       "source": "FIELD/BIRIBINO_HEYA/MESSAGE_BRANCH.C"
     },
     "resource_3ba:0200096c": {
@@ -8725,7 +8725,7 @@
       "source": "FIELD/KOROSSEO_KAWA/COORDINATOR.C"
     },
     "resource_385:02000f00": {
-      "name": "State_SetFlag947AndValue29dc",
+      "name": "SceneState_SetFlag947AndValue29dc",
       "source": "FIELD/KUUPUAPPU_MURA_SAI/MOTION_EVENT.C"
     },
     "resource_387:02000f8c": {
@@ -8737,7 +8737,7 @@
       "source": "FIELD/FUNE_HEYA/EXTENDED_CHOREOGRAPHY.C"
     },
     "resource_398:02000148": {
-      "name": "State_ConfigureRegion1_0_21x14",
+      "name": "SceneState_ConfigureRegion1_0_21x14",
       "source": "FIELD/BIRIBINO_DOU/REGION.C"
     },
     "resource_3ac:02000294": {
@@ -8765,7 +8765,7 @@
       "source": "FIELD/SORU_FUNKA/EXTENDED_EFFECT.C"
     },
     "resource_385:02000710": {
-      "name": "Dialogue_RunActorEightTimedDialogue",
+      "name": "SceneDialogue_RunActorEightTimedDialogue",
       "source": "FIELD/KUUPUAPPU_MURA_SAI/MOTION_EVENT.C"
     },
     "resource_3ad:02000094": {
@@ -8773,11 +8773,11 @@
       "source": "FIELD/RUNPA_DOU/CAVE.C"
     },
     "resource_398:02000280": {
-      "name": "Scene_RunActorFifteenScene",
+      "name": "FieldScene_RunActorFifteenScene",
       "source": "FIELD/BIRIBINO_DOU/REGION.C"
     },
     "resource_38e:020004bc": {
-      "name": "Scene_RunEntryZeroAndScene22Body",
+      "name": "FieldScene_RunEntryZeroAndScene22Body",
       "source": "FIELD/BIRIBINO_NIWA/ORBITING.C"
     },
     "resource_3c9:020004bc": {
@@ -8837,7 +8837,7 @@
       "source": "FIELD/GOMA_IKE/GATE_PLACEMENT.C"
     },
     "resource_398:0200046c": {
-      "name": "Scene_DispatchByScenarioId",
+      "name": "FieldScene_DispatchByScenarioId",
       "source": "FIELD/BIRIBINO_DOU/REGION.C"
     },
     "resource_3ba:02000038": {
@@ -8857,7 +8857,7 @@
       "source": "FIELD/BABI_FUNE/TABLE_AUDIO.C"
     },
     "resource_385:02000af0": {
-      "name": "ActorDraw_SetupActorEighteenAt312_304",
+      "name": "ActorPresentation_SetupActorEighteenAt312_304",
       "source": "FIELD/KUUPUAPPU_MURA_SAI/MOTION_EVENT.C"
     },
     "resource_3c9:0200071c": {
@@ -8865,7 +8865,7 @@
       "source": "FIELD/VINASU_CHOJO/SCRIPTED_PRESENTATION.C"
     },
     "resource_3a1:02000504": {
-      "name": "Dialogue_RunActor12Dialogue",
+      "name": "SceneDialogue_RunActor12Dialogue",
       "source": "FIELD/SHIAN_HEYA/FLAGGED_OBJECT.C"
     },
     "resource_397:02000200": {
@@ -8873,7 +8873,7 @@
       "source": "FIELD/TORETO_EDA/BACKGROUND_SCROLL.C"
     },
     "resource_385:020006b4": {
-      "name": "Dialogue_RunActor16CountedDialogue",
+      "name": "SceneDialogue_RunActor16CountedDialogue",
       "source": "FIELD/KUUPUAPPU_MURA_SAI/MOTION_EVENT.C"
     },
     "resource_383:02000400": {
@@ -8893,7 +8893,7 @@
       "source": "FIELD/RARIBERO_HEYA/POSE.C"
     },
     "resource_380:02000a64": {
-      "name": "FieldScene_RunSevenSceneChain",
+      "name": "Scene_HandOverStars",
       "source": "FIELD/SORU_STAR/PARTY_INTRO.C"
     },
     "resource_384:02000110": {
@@ -8913,7 +8913,7 @@
       "source": "FIELD/HAIDIA_HEYA/TIMED_EVENTS.C"
     },
     "resource_3b0:020001f0": {
-      "name": "Scene_CallHelper14d0",
+      "name": "FieldScene_CallHelper14d0",
       "source": "FIELD/FUNE_HOBASHIRA/OBJECT_SCALE.C"
     },
     "resource_374:020000b8": {
@@ -8957,7 +8957,7 @@
       "source": "FIELD/SUHARA_GATE/ACTOR_PROMPT.C"
     },
     "resource_385:02000754": {
-      "name": "Dialogue_RunActor11AcceptanceDialogue",
+      "name": "SceneDialogue_RunActor11AcceptanceDialogue",
       "source": "FIELD/KUUPUAPPU_MURA_SAI/MOTION_EVENT.C"
     },
     "resource_3cc:02000038": {
@@ -9017,7 +9017,7 @@
       "source": "FIELD/COMMON/RUNPA_SUHARA/INTERIORS.C"
     },
     "resource_386:02000030": {
-      "name": "State_CheckPositionWindow",
+      "name": "SceneState_CheckPositionWindow",
       "source": "FIELD/KUUPUAPPU_HEYA_SAI/PLACEMENT.C"
     },
     "resource_37c:02000030": {
@@ -9029,7 +9029,7 @@
       "source": "FIELD/GOMA_IRIGUCHI/DEPTH.C"
     },
     "resource_3ba:0200384c": {
-      "name": "State_InitControlWhenFlag109Clear",
+      "name": "SceneState_InitControlWhenFlag109Clear",
       "source": "FIELD/KOROSSEO_KAWA/COORDINATOR.C"
     },
     "resource_383:020002c0": {
@@ -9041,7 +9041,7 @@
       "source": "FIELD/GOMA_IRIGUCHI/DEPTH.C"
     },
     "resource_3ba:02003058": {
-      "name": "Actor_PlaceLinkedActorAbove",
+      "name": "SceneActor_PlaceLinkedActorAbove",
       "source": "FIELD/KOROSSEO_KAWA/COORDINATOR.C"
     },
     "resource_3b9:02001c6c": {
@@ -9085,7 +9085,7 @@
       "source": "FIELD/KORASHIAMU_IRIGUCHI/STATUS_DISPATCH.C"
     },
     "resource_3a1:02000598": {
-      "name": "State_SetRuntimeWord448To521",
+      "name": "SceneState_SetRuntimeWord448To521",
       "source": "FIELD/SHIAN_HEYA/FLAGGED_OBJECT.C"
     },
     "resource_384:02000044": {
@@ -9173,7 +9173,7 @@
       "source": "FIELD/RUNPA_DOU/CAVE.C"
     },
     "resource_3ba:020001a8": {
-      "name": "State_ApplyRectsForActorsNineAndTen",
+      "name": "SceneState_ApplyRectsForActorsNineAndTen",
       "source": "FIELD/KOROSSEO_KAWA/COORDINATOR.C"
     },
     "resource_3c9:02000478": {
@@ -9185,7 +9185,7 @@
       "source": "FIELD/ARUTIN_MURA/MOTION_PARTICLE.C"
     },
     "resource_3ba:02002bac": {
-      "name": "OvObj_ResetMotionFields",
+      "name": "OverlayObject_ResetMotionFields",
       "source": "FIELD/KOROSSEO_KAWA/COORDINATOR.C"
     },
     "resource_3c2:02000a54": {
@@ -9193,7 +9193,7 @@
       "source": "FIELD/SUHARA_HEYA/RECORD_SETUP.C"
     },
     "resource_3ba:020030ac": {
-      "name": "Scene_RunFlag211ApproachScene",
+      "name": "FieldScene_RunFlag211ApproachScene",
       "source": "FIELD/KOROSSEO_KAWA/COORDINATOR.C"
     },
     "resource_376:020000cc": {
@@ -9229,7 +9229,7 @@
       "source": "FIELD/SORU_FUNKA/EXTENDED_EFFECT.C"
     },
     "resource_3ba:02001a28": {
-      "name": "Scene_RunNearestActor165Scene",
+      "name": "FieldScene_RunNearestActor165Scene",
       "source": "FIELD/KOROSSEO_KAWA/COORDINATOR.C"
     },
     "resource_3cb:020011bc": {
@@ -9237,15 +9237,15 @@
       "source": "MENU/LINK_LOBBY/DIGIT_VALUE.C"
     },
     "resource_3a3:020003d4": {
-      "name": "Scene_RunActorTwentyFlagBranch",
+      "name": "FieldScene_RunActorTwentyFlagBranch",
       "source": "FIELD/ARUTIN_MURA/MOTION_PARTICLE.C"
     },
     "resource_386:020004a0": {
-      "name": "Dialogue_RunActor18FlaggedLine",
+      "name": "SceneDialogue_RunActor18FlaggedLine",
       "source": "FIELD/KUUPUAPPU_HEYA_SAI/PLACEMENT.C"
     },
     "resource_386:020004e4": {
-      "name": "Scene_InitSceneStateByStep",
+      "name": "FieldScene_InitSceneStateByStep",
       "source": "FIELD/KUUPUAPPU_HEYA_SAI/PLACEMENT.C"
     },
     "resource_397:02000054": {
@@ -9273,7 +9273,7 @@
       "source": "FIELD/FUNE_HEYA/EXTENDED_CHOREOGRAPHY.C"
     },
     "resource_376:02000278": {
-      "name": "SceneDialogue_RunActor10Message1c3d",
+      "name": "Villager_AskAboutDora",
       "source": "FIELD/HAIDIA_HEYA/TIMED_EVENTS.C"
     },
     "resource_3a3:02000074": {
@@ -9285,7 +9285,7 @@
       "source": "FIELD/KUUPUAPPU_HEYA/PROMPT.C"
     },
     "resource_385:02000640": {
-      "name": "Dialogue_RunActorFifteenFacingPreservedDialogue",
+      "name": "SceneDialogue_RunActorFifteenFacingPreservedDialogue",
       "source": "FIELD/KUUPUAPPU_MURA_SAI/MOTION_EVENT.C"
     },
     "resource_381:02002970": {
@@ -9313,11 +9313,11 @@
       "source": "FIELD/VINASU_HEYA/ENTRY_SETUP.C"
     },
     "resource_380:02004328": {
-      "name": "SceneState_PumpUntilSlotsFree",
+      "name": "Scene_GiveMythrilBags",
       "source": "FIELD/SORU_STAR/PARTY_INTRO.C"
     },
     "resource_398:020002ac": {
-      "name": "Scene_RunActorSixteenScene",
+      "name": "FieldScene_RunActorSixteenScene",
       "source": "FIELD/BIRIBINO_DOU/REGION.C"
     },
     "resource_376:020000d8": {
@@ -9703,7 +9703,7 @@
       "source": "FIELD/KUUPUAPPU_MURA_SAI/MOTION_EVENT.C"
     },
     "resource_3a0:02000324": {
-      "name": "UpdateActorTwentyPresentationBit",
+      "name": "Actor_UpdatePresentationFlag",
       "source": "FIELD/SHIAN_MURA/PRESENTATION_FLAG.C"
     },
     "resource_3aa:02000360": {
@@ -9743,11 +9743,11 @@
       "source": "FIELD/KAREI_KYUDEN/PARTY_EVENTS.C"
     },
     "resource_38c:020001a8": {
-      "name": "Scene_ConfigureActor21Scene",
+      "name": "FieldScene_ConfigureActor21Scene",
       "source": "FIELD/BIRIBINO_HEYA/MESSAGE_BRANCH.C"
     },
     "resource_38c:02000430": {
-      "name": "Scene_ConfigureActor23Scene",
+      "name": "FieldScene_ConfigureActor23Scene",
       "source": "FIELD/BIRIBINO_HEYA/MESSAGE_BRANCH.C"
     },
     "resource_37b:020015d4": {
@@ -9759,11 +9759,11 @@
       "source": "FIELD/SORU_SEKIZO/GUARDED_STEP.C"
     },
     "resource_3c1:02000120": {
-      "name": "Effect_ConfigureIndexedEffect85e8",
+      "name": "SceneEffect_ConfigureIndexedEffect85e8",
       "source": "FIELD/SUHARA_MURA/ENTRY_CUE.C"
     },
     "resource_3c1:02000194": {
-      "name": "Effect_ConfigureIndexedEffect85fe",
+      "name": "SceneEffect_ConfigureIndexedEffect85fe",
       "source": "FIELD/SUHARA_MURA/ENTRY_CUE.C"
     },
     "main:0801e318": {
@@ -9932,11 +9932,11 @@
       "source": "FIELD/FUNE_HEYA/EXTENDED_CHOREOGRAPHY.C"
     },
     "resource_380:020006f4": {
-      "name": "Scene_RunMultiStageEffectPresentation",
+      "name": "Scene_BagMercuryStar",
       "source": "FIELD/SORU_STAR/PARTY_INTRO.C"
     },
     "resource_380:02002400": {
-      "name": "FieldScene_RunSixPassEffectSequence",
+      "name": "Scene_BagMarsStar",
       "source": "FIELD/SORU_STAR/PARTY_INTRO.C"
     },
     "resource_3ba:02001214": {
@@ -9951,7 +9951,7 @@
       "source": "FIELD/FUNE_HOBASHIRA/OBJECT_SCALE.C"
     },
     "resource_3b0:020007b0": {
-      "name": "Scene_RunActorNinePresentationCycles",
+      "name": "FieldScene_RunActorNinePresentationCycles",
       "source": "FIELD/FUNE_HOBASHIRA/OBJECT_SCALE.C"
     },
     "resource_3b0:02000564": {
@@ -9981,7 +9981,7 @@
       "source": "FIELD/RUNPA_DOU/CAVE.C"
     },
     "resource_380:02001d04": {
-      "name": "FieldScene_RunActorFourteenGuestScene",
+      "name": "Scene_AlexTakesStars",
       "source": "FIELD/SORU_STAR/PARTY_INTRO.C"
     },
     "resource_3c7:02000508": {
@@ -9997,7 +9997,7 @@
       "source": "FIELD/RUNPA_DOU/CAVE.C"
     },
     "resource_372:02001b18": {
-      "name": "FieldScene_RunReturnScript",
+      "name": "Scene_BoulderFalls",
       "source": "FIELD/HAIDIA_ARASHI/GROUP_DEPARTURE.C"
     },
     "resource_383:020019a2": {
@@ -10043,19 +10043,19 @@
       "source": "FIELD/SHIAN_MURA/SPAWN_SEQUENCE.C"
     },
     "resource_3a3:02000524": {
-      "name": "Scene_RunEarlySequence",
+      "name": "FieldScene_RunEarlySequence",
       "source": "FIELD/ARUTIN_MURA/MOTION_PARTICLE.C"
     },
     "resource_3a3:02000904": {
-      "name": "Scene_RunMiddleSequence",
+      "name": "FieldScene_RunMiddleSequence",
       "source": "FIELD/ARUTIN_MURA/MOTION_PARTICLE.C"
     },
     "resource_3ba:02001e7c": {
-      "name": "Scene_RunMiddleSequence",
+      "name": "FieldScene_RunMiddleSequence",
       "source": "FIELD/KOROSSEO_KAWA/COORDINATOR.C"
     },
     "resource_3b6:020000c0": {
-      "name": "Scene_RunPrimarySequence",
+      "name": "FieldScene_RunPrimarySequence",
       "source": "FIELD/TOREBI_HEYA/FACING_EVENTS.C"
     },
     "resource_3b1:02001804": {
@@ -10063,14 +10063,14 @@
       "source": "FIELD/FUNE_HEYA/EXTENDED_CHOREOGRAPHY.C"
     },
     "resource_3ba:02000db8": {
-      "name": "Scene_RunCommandSequence",
+      "name": "FieldScene_RunCommandSequence",
       "source": "FIELD/KOROSSEO_KAWA/COORDINATOR.C"
     },
     "resource_371:020028e8": {
       "name": "Scene_RunActorPresentation"
     },
     "resource_3b0:02000af8": {
-      "name": "Scene_RunPrimarySequence",
+      "name": "FieldScene_RunPrimarySequence",
       "source": "FIELD/FUNE_HOBASHIRA/OBJECT_SCALE.C"
     },
     "resource_372:02001154": {
@@ -10082,7 +10082,7 @@
       "source": "FIELD/GOMA_IRIGUCHI/DEPTH.C"
     },
     "resource_374:02000248": {
-      "name": "FieldScene_RunOpeningAuxiliarySequence",
+      "name": "Villager_ShowOffPsynergy",
       "source": "FIELD/HAIDIA_IE/EXTENDED.C"
     },
     "resource_3b1:0200366c": {
@@ -10098,7 +10098,7 @@
       "source": "FIELD/HAIDIA_IE/EXTENDED.C"
     },
     "resource_3ba:0200004c": {
-      "name": "Scene_RunOpeningAuxiliarySequence",
+      "name": "FieldScene_RunOpeningAuxiliarySequence",
       "source": "FIELD/KOROSSEO_KAWA/COORDINATOR.C"
     },
     "resource_371:020036dc": {
@@ -10114,7 +10114,7 @@
       "source": "FIELD/VINASU_HEYA/ENTRY_SETUP.C"
     },
     "resource_3a3:020001d0": {
-      "name": "Scene_RunOpeningAuxiliarySequence",
+      "name": "FieldScene_RunOpeningAuxiliarySequence",
       "source": "FIELD/ARUTIN_MURA/MOTION_PARTICLE.C"
     },
     "resource_380:02004260": {
@@ -10149,7 +10149,7 @@
       "source": "FIELD/HAIDIA_HEYA/TIMED_EVENTS.C"
     },
     "resource_385:02000804": {
-      "name": "Scene_RunSupplementalSequenceOne",
+      "name": "FieldScene_RunSupplementalSequenceOne",
       "source": "FIELD/KUUPUAPPU_MURA_SAI/MOTION_EVENT.C"
     },
     "main:080a46b4": {
@@ -10275,7 +10275,7 @@
       "source": "FIELD/HAIDIA_ARASHI/GROUP_DEPARTURE.C"
     },
     "resource_372:02000a10": {
-      "name": "FieldScene_RunScene372_02000a10",
+      "name": "Scene_DoraSendsRobinToThePlaza",
       "source": "FIELD/HAIDIA_ARASHI/GROUP_DEPARTURE.C"
     },
     "resource_376:0200055c": {
@@ -10287,11 +10287,11 @@
       "source": "FIELD/HAIDIA_HEYA/TIMED_EVENTS.C"
     },
     "resource_37b:02002244": {
-      "name": "FieldScene_RunScene37b_02002244",
+      "name": "Scene_ShineLeftBeam",
       "source": "FIELD/SORU_SEKIZO/GUARDED_STEP.C"
     },
     "resource_37b:020022f4": {
-      "name": "FieldScene_RunScene37b_020022f4",
+      "name": "Scene_ShineRightBeam",
       "source": "FIELD/SORU_SEKIZO/GUARDED_STEP.C"
     },
     "resource_383:0200091c": {
@@ -10307,31 +10307,31 @@
       "source": "FIELD/KUUPUAPPU_MURA_SAI/MOTION_EVENT.C"
     },
     "resource_386:0200011c": {
-      "name": "Scene_RunActor16Sequence",
+      "name": "FieldScene_RunActor16Sequence",
       "source": "FIELD/KUUPUAPPU_HEYA_SAI/PLACEMENT.C"
     },
     "resource_386:02000204": {
-      "name": "Scene_RunActor18FlaggedSequence",
+      "name": "FieldScene_RunActor18FlaggedSequence",
       "source": "FIELD/KUUPUAPPU_HEYA_SAI/PLACEMENT.C"
     },
     "resource_38c:02000124": {
-      "name": "Scene_RunActor17MessageBranch",
+      "name": "FieldScene_RunActor17MessageBranch",
       "source": "FIELD/BIRIBINO_HEYA/MESSAGE_BRANCH.C"
     },
     "resource_38c:020001e0": {
-      "name": "Scene_RunActor24Sequence",
+      "name": "FieldScene_RunActor24Sequence",
       "source": "FIELD/BIRIBINO_HEYA/MESSAGE_BRANCH.C"
     },
     "resource_38c:02000250": {
-      "name": "Scene_RunActor27Sequence",
+      "name": "FieldScene_RunActor27Sequence",
       "source": "FIELD/BIRIBINO_HEYA/MESSAGE_BRANCH.C"
     },
     "resource_38c:0200035c": {
-      "name": "Scene_RunActor21SequenceOnFlag300",
+      "name": "FieldScene_RunActor21SequenceOnFlag300",
       "source": "FIELD/BIRIBINO_HEYA/MESSAGE_BRANCH.C"
     },
     "resource_38e:0200045c": {
-      "name": "Scene_RunScene38e",
+      "name": "FieldScene_RunScene38e_0200045c",
       "source": "FIELD/BIRIBINO_NIWA/ORBITING.C"
     },
     "resource_399:02000a3c": {
@@ -10359,19 +10359,19 @@
       "source": "FIELD/SHIAN_MURA/SPAWN_SEQUENCE.C"
     },
     "resource_3aa:02000184": {
-      "name": "Scene_RunScene3aa",
+      "name": "FieldScene_RunScene3aa_02000184",
       "source": "FIELD/KAREI_KYUDEN/PARTY_EVENTS.C"
     },
     "resource_3b0:0200040c": {
-      "name": "Scene_RunScene3b0",
+      "name": "FieldScene_RunScene3b0_0200040c",
       "source": "FIELD/FUNE_HOBASHIRA/OBJECT_SCALE.C"
     },
     "resource_3b0:02000468": {
-      "name": "Scene_RunScene3b0",
+      "name": "FieldScene_RunScene3b0_02000468",
       "source": "FIELD/FUNE_HOBASHIRA/OBJECT_SCALE.C"
     },
     "resource_3b0:020004b0": {
-      "name": "Scene_RunScene3b0",
+      "name": "FieldScene_RunScene3b0_020004b0",
       "source": "FIELD/FUNE_HOBASHIRA/OBJECT_SCALE.C"
     },
     "resource_3b1:02000670": {
@@ -10415,7 +10415,7 @@
       "source": "FIELD/FUNE_HEYA/EXTENDED_CHOREOGRAPHY.C"
     },
     "resource_3b6:020007b0": {
-      "name": "Scene_RunScene3b6",
+      "name": "FieldScene_RunScene3b6_020007b0",
       "source": "FIELD/TOREBI_HEYA/FACING_EVENTS.C"
     },
     "resource_3b9:02000334": {
@@ -10515,7 +10515,7 @@
       "source": "FIELD/RUNPA_DOU/CAVE.C"
     },
     "resource_3ba:02000974": {
-      "name": "Scene_RunScene3ba",
+      "name": "FieldScene_RunScene3ba_02000974",
       "source": "FIELD/KOROSSEO_KAWA/COORDINATOR.C"
     },
     "resource_371:0200155c": {
@@ -10527,7 +10527,7 @@
       "source": "FIELD/HAIDIA_ARASHI/GROUP_DEPARTURE.C"
     },
     "resource_3a3:02000d58": {
-      "name": "Scene_RunScene3a3",
+      "name": "FieldScene_RunScene3a3_02000d58",
       "source": "FIELD/ARUTIN_MURA/MOTION_PARTICLE.C"
     },
     "resource_371:0200357c": {
@@ -10555,7 +10555,7 @@
       "source": "FIELD/VINASU_CHOJO/SCRIPTED_PRESENTATION.C"
     },
     "resource_395:02000158": {
-      "name": "Scene_RunScene395",
+      "name": "FieldScene_RunScene395_02000158",
       "source": "FIELD/KORIMA_KI/PALETTE.C"
     },
     "resource_3b1:02000728": {
@@ -10583,7 +10583,7 @@
       "source": "FIELD/IMIRU_MURA/FLAGGED_CHOREOGRAPHY.C"
     },
     "resource_3b6:02000898": {
-      "name": "Scene_RunScene3b6",
+      "name": "FieldScene_RunScene3b6_02000898",
       "source": "FIELD/TOREBI_HEYA/FACING_EVENTS.C"
     },
     "resource_3c6:020011bc": {
@@ -10599,7 +10599,7 @@
       "source": "FIELD/WORLD_MAP/ACTOR_TRANSFER.C"
     },
     "resource_376:020001e8": {
-      "name": "FieldScene_RunScene376_020001e8",
+      "name": "Scene_GiveFarewellHerb",
       "source": "FIELD/HAIDIA_HEYA/TIMED_EVENTS.C"
     },
     "resource_3ad:02001394": {
@@ -10611,7 +10611,7 @@
       "source": "FIELD/RUNPA_DOU/CAVE.C"
     },
     "resource_3ba:02000270": {
-      "name": "Scene_RunScene3ba",
+      "name": "FieldScene_RunScene3ba_02000270",
       "source": "FIELD/KOROSSEO_KAWA/COORDINATOR.C"
     },
     "resource_399:02000abc": {
@@ -10639,7 +10639,7 @@
       "source": "FIELD/SORU_FUNKA/EXTENDED_EFFECT.C"
     },
     "resource_3ba:020015e0": {
-      "name": "Scene_RunScene3ba",
+      "name": "FieldScene_RunScene3ba_020015e0",
       "source": "FIELD/KOROSSEO_KAWA/COORDINATOR.C"
     },
     "resource_3a0:02000968": {
@@ -10651,7 +10651,7 @@
       "source": "FIELD/WORLD_MAP/ACTOR_TRANSFER.C"
     },
     "resource_380:0200178c": {
-      "name": "Scene_RunCountedActorSequence",
+      "name": "Scene_UnmaskGarcia",
       "source": "FIELD/SORU_STAR/PARTY_INTRO.C"
     },
     "resource_371:02000a8c": {
@@ -10659,7 +10659,7 @@
       "source": "FIELD/WORLD_MAP/ACTOR_TRANSFER.C"
     },
     "resource_380:02001450": {
-      "name": "RunEventScript01",
+      "name": "Scene_OfferGuarantee",
       "source": "FIELD/SORU_STAR/PARTY_INTRO.C"
     },
     "resource_395:02000488": {
@@ -10671,7 +10671,7 @@
       "source": "FIELD/KORIMA_KI/PALETTE.C"
     },
     "resource_374:02000634": {
-      "name": "SceneDialogue_RunActorElevenFlaggedDialogue",
+      "name": "Villager_WelcomeBack",
       "source": "FIELD/HAIDIA_IE/EXTENDED.C"
     },
     "resource_3ad:020001b0": {
@@ -10699,7 +10699,7 @@
       "source": "FIELD/KUUPUAPPU_HEYA/PROMPT.C"
     },
     "resource_398:02000214": {
-      "name": "Scene_RunScene398SequenceA",
+      "name": "FieldScene_RunScene398SequenceA",
       "source": "FIELD/BIRIBINO_DOU/REGION.C"
     },
     "resource_3c8:02001218": {
@@ -10727,7 +10727,7 @@
       "source": "FIELD/SUHARA_GATE/ACTOR_PROMPT.C"
     },
     "resource_3b6:0200013c": {
-      "name": "Scene_RunScene3b6SequenceA",
+      "name": "FieldScene_RunScene3b6SequenceA",
       "source": "FIELD/TOREBI_HEYA/FACING_EVENTS.C"
     },
     "resource_37b:0200195c": {
@@ -10739,7 +10739,7 @@
       "source": "FIELD/HAIDIA_ARASHI/GROUP_DEPARTURE.C"
     },
     "resource_3a3:02000b2c": {
-      "name": "Scene_RunScene3a3SequenceD",
+      "name": "FieldScene_RunScene3a3SequenceD",
       "source": "FIELD/ARUTIN_MURA/MOTION_PARTICLE.C"
     },
     "resource_3c9:0200215c": {
@@ -10751,7 +10751,7 @@
       "source": "FIELD/FUNE_HEYA/EXTENDED_CHOREOGRAPHY.C"
     },
     "resource_398:02000538": {
-      "name": "Scene_RunScene398SequenceC",
+      "name": "FieldScene_RunScene398SequenceC",
       "source": "FIELD/BIRIBINO_DOU/REGION.C"
     },
     "resource_39e:020026d8": {
@@ -10763,11 +10763,11 @@
       "source": "FIELD/FUNE_HEYA/EXTENDED_CHOREOGRAPHY.C"
     },
     "resource_385:020008a8": {
-      "name": "Scene_RunScene385SequenceA",
+      "name": "FieldScene_RunScene385SequenceA",
       "source": "FIELD/KUUPUAPPU_MURA_SAI/MOTION_EVENT.C"
     },
     "resource_3a3:020007b8": {
-      "name": "Scene_RunScene3a3SequenceC",
+      "name": "FieldScene_RunScene3a3SequenceC",
       "source": "FIELD/ARUTIN_MURA/MOTION_PARTICLE.C"
     },
     "resource_372:02001600": {
@@ -10775,7 +10775,7 @@
       "source": "FIELD/HAIDIA_ARASHI/GROUP_DEPARTURE.C"
     },
     "resource_398:02000304": {
-      "name": "Scene_RunScene398SequenceB",
+      "name": "FieldScene_RunScene398SequenceB",
       "source": "FIELD/BIRIBINO_DOU/REGION.C"
     },
     "resource_3b1:02000cc8": {
@@ -10783,7 +10783,7 @@
       "source": "FIELD/FUNE_HEYA/EXTENDED_CHOREOGRAPHY.C"
     },
     "resource_3a3:020006a4": {
-      "name": "Scene_RunScene3a3SequenceB",
+      "name": "FieldScene_RunScene3a3SequenceB",
       "source": "FIELD/ARUTIN_MURA/MOTION_PARTICLE.C"
     },
     "main:080a9598": {
@@ -10833,7 +10833,7 @@
       "source": "FIELD/COMMON/MAP/RENDER_PALETTE_MAPPED_BLOCK.C"
     },
     "resource_3ba:02002844": {
-      "name": "Scene_RunLateSequence",
+      "name": "FieldScene_RunLateSequence",
       "source": "FIELD/KOROSSEO_KAWA/COORDINATOR.C"
     },
     "main:080207c4": {
@@ -11181,7 +11181,7 @@
       "source": "FIELD/HAIDIA_MURA/STAGED_MOTION.C"
     },
     "resource_373:02003fb0": {
-      "name": "FieldScene_RunStagedActorCutsceneSequence",
+      "name": "Scene_RepairTheHouse",
       "source": "FIELD/HAIDIA_MURA/STAGED_MOTION.C"
     },
     "resource_373:02000fbc": {
@@ -11238,7 +11238,7 @@
       "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_375:02000170": {
-      "name": "FieldScene_RunActorPositionSequence",
+      "name": "Scene_PlanSanctumVisit",
       "source": "FIELD/HAIDIA_SUKURETA/PROGRESS_ACTOR.C"
     },
     "resource_375:02000ba8": {
@@ -11292,11 +11292,11 @@
       "name": "FieldScene_RunProgressDependentActorSequence"
     },
     "resource_375:02000964": {
-      "name": "FieldScene_RunScene375_02000964",
+      "name": "Scene_LeaveForMtAleph",
       "source": "FIELD/HAIDIA_SUKURETA/PROGRESS_ACTOR.C"
     },
     "resource_375:02000be0": {
-      "name": "FieldScene_RunGatedActorSequence",
+      "name": "Scene_OverhearSaturosAndMenardi",
       "source": "FIELD/HAIDIA_SUKURETA/PROGRESS_ACTOR.C"
     },
     "resource_377:02000088": {
@@ -11911,7 +11911,7 @@
       "source": "FIELD/SORU_NICHIGETSU/INNER_SANCTUM.C"
     },
     "resource_37a:02001380": {
-      "name": "StartSolShindenTrapEvent",
+      "name": "Scene_SpringStatueTrap",
       "source": "FIELD/SORU_NICHIGETSU/INNER_SANCTUM.C"
     },
     "resource_37a:02001790": {
@@ -11935,11 +11935,11 @@
       "source": "FIELD/SORU_NICHIGETSU/INNER_SANCTUM.C"
     },
     "resource_37a:02002924": {
-      "name": "FieldScene_RunScene37a_02002924",
+      "name": "Sukureta_Talk",
       "source": "FIELD/SORU_NICHIGETSU/INNER_SANCTUM.C"
     },
     "resource_37a:020009f4": {
-      "name": "FieldScene_RunScene37a_020009f4",
+      "name": "Scene_EnterInnerSanctum",
       "source": "FIELD/SORU_NICHIGETSU/INNER_SANCTUM.C"
     },
     "resource_37a:02000108": {
@@ -11959,7 +11959,7 @@
       "source": "FIELD/SORU_NICHIGETSU/INNER_SANCTUM.C"
     },
     "resource_37a:02001a58": {
-      "name": "FieldScene_RunScene37aSequenceE",
+      "name": "Scene_ChangeLunaPictureToSol",
       "source": "FIELD/SORU_NICHIGETSU/INNER_SANCTUM.C"
     },
     "resource_37a:02002108": {
@@ -14748,7 +14748,7 @@
       "source": "FIELD/RUNPA_MURA/VILLAGE.C"
     },
     "resource_3ab:02000b0c": {
-      "name": "Garet_RefusesToReturn",
+      "name": "Gerald_RefusesToReturn",
       "source": "FIELD/RUNPA_MURA/VILLAGE.C"
     },
     "resource_3ab:0200131c": {
@@ -14969,7 +14969,7 @@
       "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_391:02002768": {
-      "name": "FieldScene_RunSplitPairSteps",
+      "name": "Event_SayThenWait",
       "source": "FIELD/KORIMA_HASHI/BRANCHING_FORMATION.C"
     },
     "resource_391:020009fc": {
@@ -16111,7 +16111,7 @@
       "source": "FIELD/SORU_IRIGUCHI/SCENARIO_DISPATCH.C"
     },
     "resource_37f:02000f8c": {
-      "name": "FieldScene_RunFourEntitySequence",
+      "name": "Scene_SukuretaSuspectsHiddenPassage",
       "source": "FIELD/SORU_IRIGUCHI/SCENARIO_DISPATCH.C"
     },
     "resource_37f:02000258": {
@@ -16131,7 +16131,7 @@
       "source": "FIELD/SORU_IRIGUCHI/SCENARIO_DISPATCH.C"
     },
     "resource_37f:02000d1c": {
-      "name": "FieldScene_RunScene37f_02000d1c",
+      "name": "Scene_EnterSolSanctum",
       "source": "FIELD/SORU_IRIGUCHI/SCENARIO_DISPATCH.C"
     },
     "resource_37f:0200092c": {
@@ -16723,7 +16723,7 @@
       "source": "FIELD/KOROSSEO_MARUTA/LOG_ROLLING.C"
     },
     "resource_3bc:02002bac": {
-      "name": "FieldScene_RunLateSequence",
+      "name": "FieldScene_RunMiddleSequence",
       "source": "FIELD/KOROSSEO_MARUTA/LOG_ROLLING.C"
     },
     "resource_3bc:02002330": {
@@ -17730,7 +17730,10 @@
       "call_via": "0200371a",
       "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
-    "resource_3a5:02000030": "FIELD/RAMAKAN_SABAKU/SELECTED_ACTOR_SET_EFFECT_RECORD_MODE.C",
+    "resource_3a5:02000030": {
+      "name": "SetEffectRecordMode",
+      "source": "FIELD/RAMAKAN_SABAKU/SELECTED_ACTOR_SET_EFFECT_RECORD_MODE.C"
+    },
     "resource_3a5:02000e00": {
       "name": "CalculatePlanarDistance",
       "source": "FIELD/RAMAKAN_SABAKU/SELECTED_ACTOR_SCENE_ID_SELECTED_ACTOR_SCENE.C"
@@ -18407,7 +18410,7 @@
       "name": "InventoryMenu_NoOp"
     },
     "resource_3bc:02000da4": {
-      "name": "Scene_SetupLogRollingStage",
+      "name": "StageSetup_BuildAndDispatch",
       "source": "FIELD/KOROSSEO_MARUTA/LOG_ROLLING_SETUP.C"
     },
     "main:080d0468": {

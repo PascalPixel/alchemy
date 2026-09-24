@@ -1,52 +1,30 @@
 #include "TYPES.H"
+#include "FIELD_EVENT.H"
+#include "FIELD_SCENE.H"
 
 extern u8 *Data_03001ebc;
 
 #include "TYPES.H"
 
-void Func_020013cc(s32);
-void Func_020013cc_a(s32, s32);
-u8 *Func_02001644(s32);
-void Func_020015fa(s32, s32, s32, s32, s32, s32);
 u8 *Func_02001664(s32);
-void Func_02001652(s32);
-u8 *Func_02001724(s32);
-void Func_020016da(s32, s32, s32, s32, s32, s32);
-void Func_020016f6(u8 *, s32);
 u8 *Func_0200174c(s32);
-void Func_02001738(s32);
-u8 *Func_020017c8(s32);
-void Func_0200177e(s32, s32, s32, s32, s32, s32);
-void Func_0200179a(u8 *, s32);
 u8 *Func_020017f0(s32);
-void Func_020017dc(s32);
 
 #include "TYPES.H"
 
-#define GetActorPosition Func_0200146a
-
-s32 *Func_0200146a(s32 actor);
-s32 *Func_0200158e(s32);
 void Func_02001bfc(s32, s32, s32 *);
 void Func_02001c38(s32 *, s32, s32, s32);
 
 #include "TYPES.H"
 
-
 void Func_020004e6();
-s32 Func_020006ae();
-void Func_02000726();
-s32 Func_0200146e();
-void Func_0200148c();
-void Func_020014da();
-
-/* Loader-relocated overlay calls: each symbol names the pre-relocation call
- * word the image holds. */
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
  * into a pseudo that the compiler then shares with later uses in the block.
  * A value-returning call also sets r0 last of its arguments. */
+s32 SceneActor_LiftLowActorOnSubjectTile(s32 subject_actor);
+
 static __inline__ s32 Value0(s32 (*f)())
 {
     return f();
@@ -62,34 +40,11 @@ static __inline__ s32 Value1(s32 (*f)(), s32 a0)
     return f(a0);
 }
 
-/* The scene step counter at 0x1d8 of the shared scene work record. */
-static __inline__ void bump_step(s32 amount)
-{
-    u8 *work = Data_03001ebc;
-
-    *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
-}
-
 #include "TYPES.H"
 
-void Func_02001476(s32, s32, s32, s32, s32, s32);
-void Func_0200148a(s32, s32, s32, s32, s32, s32);
-void Func_020014a4(s32, s32, s32, s32, s32, s32);
-u8 *Func_020016d8(s32);
-void Func_0200168e(s32, s32, s32, s32, s32, s32);
 u8 *Func_020016f8(s32);
-void Func_020016e4(s32);
-u8 *Func_02001778(s32);
-void Func_0200172e(s32, s32, s32, s32, s32, s32);
-void Func_0200174a(u8 *, s32);
 u8 *Func_020017a0(s32);
-void Func_0200178e(s32);
-s32 *Func_02001d42();
-void Func_02001cf8();
 void Func_02001cb6();
-s32 *Func_02001d8a();
-void Func_02001d40();
-void Func_02001dc8();
 void Func_02001d08();
 
 #include "TYPES.H"
@@ -100,99 +55,20 @@ extern s32 Data_0200a228;
 extern s32 Data_0200a22c;
 extern s32 Data_0200a230;
 
-s32 Func_02000722();
-void Func_0200079a();
-s32 Func_020014e6();
-void Func_02001500();
-void Func_0200154e();
 void Func_02000600();
-void Func_020008c6();
-s32 Func_020008f6();
-s32 Func_02001596();
-s32 Func_020015a8();
-void Func_020015c4();
-void Func_02001602();
-void Func_02000906();
-s32 Func_02000936();
-s32 Func_020015d6();
-s32 Func_020015e8();
-void Func_02001604();
-void Func_02001642();
-s32 Func_02001836();
-void Func_02001882();
-void Func_0200188c();
-void Func_02001890();
 s32 Func_02001898();
 void Func_020018ba();
-void Func_020018fe();
-void Func_0200191a();
-void Func_02001920();
-void Func_02001926();
-void Func_02001948();
-void Func_0200195e();
-void Func_0200199a();
-void Func_020019b6();
 double Func_02001bd2();
 void Func_02001bde();
 double Func_02001c1c();
 double Func_02001c2a();
 s32 Func_02001cd6();
-void Func_02001084();
-void Func_020019a4();
-s32 Func_020019b0();
-void Func_020019b4();
-void Func_020019ba();
-void Func_020019ca();
-void Func_020019d8();
-void Func_020019ee();
-void Func_020019fa();
-void Func_02001a10();
-void Func_02001a18();
-void Func_02001a2e();
-void Func_02001a44();
-void Func_02001a4e();
-s32 Func_0200138a();
-s32 Func_020013ba();
 void Func_020015b0();
 s32 Func_02001af6();
-u8 *Func_02001b22();
 s32 Func_02001b36();
-s32 Func_02001b40();
-s32 Func_02001b48();
-s32 Func_02001b58();
-void Func_02001b6a();
-void Func_02001b8a_a();
-void Func_02001b92();
-void Func_02001bb8();
-void Func_02001bc0();
-void Func_02001bd0();
-s32 Func_02001bd6();
-s32 Func_02001bf6();
-u8 *Func_02001c06();
-u8 *Func_02001c1a();
-void Func_02001c66();
-void Func_02001c82();
-
-/* Loader-relocated overlay calls: each symbol names the pre-relocation call
- * word the image holds. */
-
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-
-
-
-
-
 
 /* The scene step counter at 0x1d8 of the shared scene work record. */
 
-
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
 static __inline__ void Call1_02000754(void (*f)(), s32 a0)
 {
     double Func_02001b8a();
@@ -235,28 +111,6 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
     f(a0, a1, a2, a3, a4, a5);
 }
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-static __inline__ void Call1_020008a8(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-static __inline__ void Call1_020009c0(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
 static __inline__ void Call1_02000aa0(void (*f)(), s32 a0)
 {
     void Func_02001b8a();
@@ -265,8 +119,6 @@ static __inline__ void Call1_02000aa0(void (*f)(), s32 a0)
 }
 
 #include "TYPES.H"
-
-
 
 extern s16 Data_02000240[];
 extern u8 Value_00000060;
@@ -277,11 +129,7 @@ extern u8 Data_02009d4c[];
 extern u8 Data_02009ecc[];
 extern u8 Data_02009d1c[];
 
-
 #include "TYPES.H"
-
-extern u8 *Func_02001870(s32);
-
 
 extern s16 Data_02000240[];
 extern u8 Value_00000060;
@@ -292,7 +140,6 @@ extern u8 Data_0200a064[];
 extern u8 Data_0200a190[];
 extern u8 Data_02009f8c[];
 
-
 #include "TYPES.H"
 
 struct Actor {
@@ -302,10 +149,7 @@ struct Actor {
     s32 f0c;
 };
 
-extern struct Actor *Func_0200181a(s32);
 extern void Func_02000dfc(void);
-extern void Func_02000e32(void);
-
 
 extern s16 Data_02000240[];
 extern u8 Value_00000060;
@@ -316,7 +160,6 @@ extern u8 Data_02009cc0[];
 extern u8 Data_02009cfc[];
 extern u8 Data_02009c7c[];
 
-
 extern s16 Data_02000240[];
 extern u8 Value_00000060;
 extern u8 Value_00000061;
@@ -326,30 +169,24 @@ extern u8 Data_02009a34[];
 extern u8 Data_02009b9c[];
 extern u8 Data_0200989c[];
 
-
 #include "TYPES.H"
-
 
 /* Deliberate no-op callback. */
 
+#include "TYPES.H"
 
 #include "TYPES.H"
 
-extern void Func_020014ee(s32, s32, s32, s32, s32, s32);
-extern void Func_02001502(s32, s32, s32, s32, s32, s32);
-extern void Func_0200151c(s32, s32, s32, s32, s32, s32);
+enum SelectByRuntimeSelectorMessage {
+    MSG_DOOR_TIGHTLY_LOCKED = 0x953,
+    MSG_ROBIN_FLIPPED_SWITCH = 0x1528
+};
 
-
-#include "TYPES.H"
-
-extern u8 *Func_0200168c(s32);
-extern void Func_02001642_scene(s32, s32, s32, s32, s32, s32);
 extern u8 *Func_020016ac(s32);
-extern void Func_02001698(s32);
 
 s32 SceneData_SelectByRuntimeSelector(void)
 {
-    s16 selector = Data_02000240[224];
+    s16 selector = gGameState.scene;
 
     if (selector == (s32)&Value_00000060) {
         return (s32)Data_020098cc;
@@ -371,7 +208,7 @@ u8 *SceneData_GetTable9C5C(void)
 
 s32 SceneData_SelectSecondaryByRuntimeSelector(void)
 {
-    s16 selector = Data_02000240[224];
+    s16 selector = gGameState.scene;
 
     if (selector == (s32)&Value_00000060) {
         return (s32)Data_02009c80;
@@ -388,7 +225,7 @@ s32 SceneData_SelectSecondaryByRuntimeSelector(void)
 
 s32 SceneData_SelectOverlayDataBySelector(void)
 {
-    s16 selector = Data_02000240[224];
+    s16 selector = gGameState.scene;
 
     if (selector == (s32)&Value_00000060) {
         return (s32)Data_02009d34;
@@ -420,17 +257,17 @@ s32 *SceneData_FindActiveSlotAtCell(s32 cx, s32 cz)
 
 void SceneState_ApplyFlag300(void)
 {
-    Func_020013cc(0x300);
+    GameFlag_Set(0x300);
 }
 
 void SceneState_SetFlag953(void)
 {
-    Func_020013cc_a(0x953, 1);
+    Message_ShowCentered(MSG_DOOR_TIGHTLY_LOCKED, 1);
 }
 
 s32 SceneData_SelectDataByRuntimeSelector(void)
 {
-    s16 selector = Data_02000240[224];
+    s16 selector = gGameState.scene;
 
     if (selector == (s32)&Value_00000060) {
         return (s32)Data_02009f98;
@@ -447,7 +284,7 @@ s32 SceneData_SelectDataByRuntimeSelector(void)
 
 s32 IsActor9AtTile15x54(void)
 {
-    s32 *actor = GetActorPosition(9);
+    s32 *actor = Actor_Get(9);
     s32 z = actor[4];
     s32 x;
     s32 z_tile;
@@ -473,12 +310,12 @@ void FieldScene_RunFlag9a9GuardedScene(void)
     u32 i;
     s32 record;
 
-    if (Value1(Func_0200146e, 0x9a9) == 0) {
+    if (GameFlag_IsSet(0x9a9) == 0) {
         Func_020004e6();
-        if (Value0(Func_020006ae)!= 0) {
-            Call1(Func_0200148c, 0x9a9);
-            Func_020014da(80);
-            Func_02000726();
+        if (Value0(IsActor9AtTile15x54)!= 0) {
+            GameFlag_Set(0x9a9);
+            Audio_PlayCue(80);
+            SceneState_ApplyThreeRects();
         }
     }
 }
@@ -491,10 +328,10 @@ void SceneState_ApplyThreeRects(void)
         s32 fifth = 80;
         s32 sixth = 50;
 
-        Func_02001476(87, 50, 2, 4, fifth, sixth);
+        Map_CopyCells(87, 50, 2, 4, fifth, sixth);
     }
-    Func_0200148a(23, 52, 1, 2, strip, 52);
-    Func_020014a4(16, 52, 1, 1, strip, 53);
+    Map_CopyCells(23, 52, 1, 2, strip, 52);
+    Map_CopyCellAttributes(16, 52, 1, 1, strip, 53);
 }
 
 void FieldScene_RunScene3a7SequenceA(void)
@@ -502,11 +339,11 @@ void FieldScene_RunScene3a7SequenceA(void)
     u32 i;
     s32 record;
 
-    if (Value1(Func_020014e6, 0x9a9) == 0) {
-        if (Value0(Func_02000722)!= 0) {
-            Call1(Func_02001500, 0x9a9);
-            Func_0200154e(80);
-            Func_0200079a();
+    if (GameFlag_IsSet(0x9a9) == 0) {
+        if (Value0(IsActor9AtTile15x54)!= 0) {
+            GameFlag_Set(0x9a9);
+            Audio_PlayCue(80);
+            SceneState_ApplyThreeRects();
         }
     }
 }
@@ -521,15 +358,15 @@ void SceneState_ApplyThreeRectsRows9And10(void)
         s32 p5 = 80;
         s32 p6 = 9;
 
-        Func_020014ee(90, 9, 2, 3, p5, p6);
+        Map_CopyCells(90, 9, 2, 3, p5, p6);
     }
-    Func_02001502(27, 10, 1, 2, strip, 10);
-    Func_0200151c(17, 10, 1, 1, strip, 11);
+    Map_CopyCells(27, 10, 1, 2, strip, 10);
+    Map_CopyCellAttributes(17, 10, 1, 1, strip, 11);
 }
 
 s32 SceneActor_IsActor10AtTile16x12(void)
 {
-    s32 *p = Func_0200158e(10);
+    s32 *p = Actor_Get(10);
     s32 z = p[4];
     s32 x;
     s32 cz;
@@ -556,12 +393,12 @@ void FieldScene_RunGuardedStep9AAAfterSetup(void)
     s32 record;
 
     Func_02000600();
-    if (Value1(Func_02001596, 0x9aa) == 0) {
-        if (Value0(Func_020008f6)!= 0) {
-            if (Value1(Func_020015a8, 0x207) == 0) {
-                Func_02001602(80);
-                Func_020008c6();
-                Call1(Func_020015c4, 0x9aa);
+    if (GameFlag_IsSet(0x9aa) == 0) {
+        if (Value0(SceneActor_IsActor10AtTile16x12)!= 0) {
+            if (GameFlag_IsSet(0x207) == 0) {
+                Audio_PlayCue(80);
+                SceneState_ApplyThreeRectsRows9And10();
+                GameFlag_Set(0x9aa);
             }
         }
     }
@@ -576,12 +413,12 @@ void FieldScene_RunGuardedStep9AA(void)
     u32 i;
     s32 record;
 
-    if (Value1(Func_020015d6, 0x9aa) == 0) {
-        if (Value0(Func_02000936)!= 0) {
-            if (Value1(Func_020015e8, 0x207) == 0) {
-                Func_02001642(80);
-                Func_02000906();
-                Call1(Func_02001604, 0x9aa);
+    if (GameFlag_IsSet(0x9aa) == 0) {
+        if (Value0(SceneActor_IsActor10AtTile16x12)!= 0) {
+            if (GameFlag_IsSet(0x207) == 0) {
+                Audio_PlayCue(80);
+                SceneState_ApplyThreeRectsRows9And10();
+                GameFlag_Set(0x9aa);
             }
         }
     }
@@ -589,14 +426,14 @@ void FieldScene_RunGuardedStep9AA(void)
 
 void SceneState_ApplyRectAndMarkActor16(void)
 {
-    u8 *rec = Func_02001644(16);
+    u8 *rec = Actor_Get(16);
     /* The two stack arguments each need their own local: the reference builds
      * both into separate registers before storing either, and a literal pair
      * lets the compiler reuse one register for both. */
     s32 fifth = 23;
     s32 sixth = 32;
 
-    Func_020015fa(26, 30, 1, 1, fifth, sixth);
+    Map_CopyCellAttributes(26, 30, 1, 1, fifth, sixth);
 
     if (rec != 0) {
         /* The rec is reloaded with the same selector before this store. */
@@ -604,19 +441,19 @@ void SceneState_ApplyRectAndMarkActor16(void)
         rec[35] = 1;
     }
 
-    Func_02001652(0x200);
+    GameFlag_Set(0x200);
 }
 
 void SceneState_ConfigureRegion26_30AndMarkActor17(void)
 {
-    u8 *rec = Func_0200168c(17);
+    u8 *rec = Actor_Get(17);
     /* The two stack arguments each need their own local: the reference builds
      * both into separate registers before storing either, and a literal pair
      * lets the compiler reuse one register for both. */
     s32 p5 = 23;
     s32 p6 = 34;
 
-    Func_02001642_scene(26, 30, 1, 1, p5, p6);
+    Map_CopyCellAttributes(26, 30, 1, 1, p5, p6);
 
     if (rec != 0) {
         /* The record is reloaded with the same selector before this store. */
@@ -624,19 +461,19 @@ void SceneState_ConfigureRegion26_30AndMarkActor17(void)
         rec[35] = 1;
     }
 
-    Func_02001698(0x201);
+    GameFlag_Set(0x201);
 }
 
 void SceneState_ConfigureRegion26_30AndClearActor18Mode(void)
 {
-    u8 *record = Func_020016d8(18);
+    u8 *record = Actor_Get(18);
     /* The two stack arguments each need their own local: the reference builds
      * both into separate registers before storing either, and a literal pair
      * lets the compiler reuse one register for both. */
     s32 a = 24;
     s32 b = 34;
 
-    Func_0200168e(26, 30, 1, 1, a, b);
+    Map_CopyCellAttributes(26, 30, 1, 1, a, b);
 
     if (record != 0) {
         /* The record is reloaded with the same selector before this store. */
@@ -644,80 +481,80 @@ void SceneState_ConfigureRegion26_30AndClearActor18Mode(void)
         record[35] = 1;
     }
 
-    Func_020016e4(0x202);
+    GameFlag_Set(0x202);
 }
 
 void SceneState_ApplyRectAndSetupActor19(void)
 {
-    u8 *p = Func_02001724(19);
+    u8 *p = Actor_Get(19);
     /* The two stack arguments each need their own local: the reference builds
      * both into separate registers before storing either, and a literal pair
      * lets the compiler reuse one register for both. */
     s32 a5 = 26;
     s32 a6 = 32;
 
-    Func_020016da(26, 30, 1, 1, a5, a6);
+    Map_CopyCellAttributes(26, 30, 1, 1, a5, a6);
 
     if (p != 0) {
-        Func_020016f6(p, 0);
+        Actor_SetSpriteFlags(p, 0);
         /* The record is reloaded with the same selector before this store. */
         Func_0200174c(19)[85] = 0;
         p[35] = 1;
     }
 
-    Func_02001738(0x203);
+    GameFlag_Set(0x203);
 }
 
 void SceneActor_SetupSlotTwenty(void)
 {
-    u8 *rec = Func_02001778(20);
+    u8 *rec = Actor_Get(20);
     /* The two stack arguments each need their own local: the reference builds
      * both into separate registers before storing either, and a literal pair
      * lets the compiler reuse one register for both. */
     s32 fifth = 26;
     s32 sixth = 34;
 
-    Func_0200172e(26, 30, 1, 1, fifth, sixth);
+    Map_CopyCellAttributes(26, 30, 1, 1, fifth, sixth);
 
     if (rec != 0) {
-        Func_0200174a(rec, 0);
+        Actor_SetSpriteFlags(rec, 0);
         /* The rec is reloaded with the same selector before this store. */
         Func_020017a0(20)[85] = 0;
         rec[35] = 1;
     }
 
-    Func_0200178e(0x204);
+    GameFlag_Set(0x204);
 }
 
 void SceneActor_MarkSlot21AndSetFlag205(void)
 {
-    u8 *record = Func_020017c8(21);
+    u8 *record = Actor_Get(21);
     /* The two stack arguments each need their own local: the reference builds
      * both into separate registers before storing either, and a literal pair
      * lets the compiler reuse one register for both. */
     s32 fifth = 28;
     s32 sixth = 33;
 
-    Func_0200177e(26, 30, 1, 1, fifth, sixth);
+    Map_CopyCellAttributes(26, 30, 1, 1, fifth, sixth);
 
     if (record != 0) {
-        Func_0200179a(record, 0);
+        Actor_SetSpriteFlags(record, 0);
         /* The record is reloaded with the same selector before this store. */
         Func_020017f0(21)[85] = 0;
         record[35] = 1;
     }
 
-    Func_020017dc(0x205);
+    GameFlag_Set(0x205);
 }
 
 void SceneState_DispatchByActorZeroDepth(void)
 {
-    struct Actor *p = Func_0200181a(0);
+    struct Actor *p = Actor_Get(ACTOR_PARTY_LEADER);
 
     if (p->f0c >= 0x100000) {
         Func_02000dfc();
     } else {
-        Func_02000e32();
+        SceneState_SetEntries16To21Byte35();
     }
 }
 
@@ -728,7 +565,7 @@ void SceneState_SetEntries16To21Byte35(void)
     s32 remaining = 5;
 
     do {
-        u8 *entry = Func_02001870(index);
+        u8 *entry = Actor_Get(index);
 
         remaining--;
         entry[35] = flag;
@@ -752,7 +589,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
     s32 mode;
 
     p10 = (0x164 + *(volatile s32 *)0x03001e70);
-    Func_0200188c();
+    Event_Begin();
     if ((*(volatile s32 *)0x03001e40 & 1) != 0) {
         *(volatile s32 *)(p10 + 24) = 1;
         *(volatile s32 *)(p10 + 28) = 1;
@@ -760,13 +597,13 @@ void FieldScene_RunSupplementalSequenceOne(void)
         *(volatile s32 *)(p10 + 24) = -1;
         *(volatile s32 *)(p10 + 28) = -1;
     }
-    Call3(Func_02001882, 0x30000, 0x30000, 0x10000);
-    Call3(Func_02001890, -1, -1, 0xe666);
-    Func_020018fe(163);
+    Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
+    Work_SetValuesIfNonNegative(-1, -1, 0xe666);
+    Audio_PlayCue(163);
     bias = 4294967296.0;
     count = 0x1df;
     do {
-        rec7 = Func_02001836();
+        rec7 = Random_Next();
         held = Func_02001c1c(*(volatile s32 *)(p10 + 36));
         shown = (s32)((u32)(rec7 << 11) >> 16);
         scaled = Func_02001c2a(shown);
@@ -776,7 +613,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
         }
         Func_02001bde(held, Func_02001bd2(4718.592, scaled));
         *(volatile s32 *)(p10 + 36) = Func_02001cd6();
-        Func_02001920(1);
+        Event_Wait(1);
         count = (count + -1);
     } while (count >= 0);
     c5 = 6;
@@ -785,18 +622,18 @@ void FieldScene_RunSupplementalSequenceOne(void)
     mode = (c5 << 10);
     do {
         Call2(Func_020018ba, 0x4000052, ((mode | (c5 << 5)) | c6));
-        Func_02001948(1);
+        Event_Wait(1);
         if (Value2(Func_02001898, count, 20) == 0) {
             c6 = (c6 - 1);
             c5 = (c5 - 1);
         }
         count = (count + 1);
     } while (count <= 69);
-    Call6(Func_02001926, 19, 83, 15, 8, 19, 91);
-    Call1_02000754(Func_020019b6, 0x120);
-    Func_0200191a();
-    Func_0200195e();
-    Func_0200199a();
+    Map_CopyCells(19, 83, 15, 8, 19, 91);
+    Audio_PlayCue(0x120);
+    Map_Redraw();
+    MapRender_WaitForValues();
+    Event_End();
 }
 
 void FieldScene_RunScene3a7SequenceB(void)
@@ -806,23 +643,23 @@ void FieldScene_RunScene3a7SequenceB(void)
     s32 v5;
     s32 v6;
 
-    if (Value1(Func_020019b0, 0x9a8) == 0) {
-        Call2(Func_020019b4, 0x1528, 1);
-        Call1_020008a8(Func_020019ca, 0x9a8);
+    if (GameFlag_IsSet(0x9a8) == 0) {
+        Message_ShowCentered(MSG_ROBIN_FLIPPED_SWITCH, 1);
+        GameFlag_Set(0x9a8);
         v5 = 27;
         v6 = 92;
-        Func_02001a18(155);
-        Call6(Func_020019a4, 107, 27, 1, 1, v6, v5);
-        Func_020019fa(39);
-        Call6(Func_020019ba, 108, 27, 1, 1, v6, v5);
-        Func_02001a10(50);
+        Audio_PlayCue(155);
+        Map_CopyCells(107, 27, 1, 1, v6, v5);
+        Event_Wait(39);
+        Map_CopyCells(108, 27, 1, 1, v6, v5);
+        Event_Wait(50);
         v6 = 25;
-        Func_02001a4e(156);
-        Call6(Func_020019d8, 1, 24, 1, 2, v6, v5);
-        Func_02001a2e(40);
-        Call6(Func_020019ee, 2, 24, 1, 2, v6, v5);
-        Func_02001a44(40);
-        Func_02001084();
+        Audio_PlayCue(156);
+        Map_CopyCells(1, 24, 1, 2, v6, v5);
+        Event_Wait(40);
+        Map_CopyCells(2, 24, 1, 2, v6, v5);
+        Event_Wait(40);
+        FieldScene_RunSupplementalSequenceOne();
     }
 }
 
@@ -840,14 +677,14 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
         }
         index = Data_0200a228;
         if (Data_0200a214[index] == Data_0200a224) {
-            rec7 = Func_02001b22((index + 11));
+            rec7 = Actor_Get((index + 11));
             *(s32 *)(rec7 + 72) = 0xa3d;
             if (++Data_0200a228 > 3) {
                 Data_0200a228 = 0;
             }
         }
         for (i = 0; i <= 3; i++) {
-            rec7 = Value1(Func_02001b40, (i + 11));
+            rec7 = Value1(Engine_ActorGet, (i + 11));
             if (*(s32 *)(rec7 + 40) >= 0) {
                 if (*(s32 *)(rec7 + 12) <= 0xffff) {
                     Func_020015b0();
@@ -855,21 +692,21 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
                     *(s32 *)(rec7 + 72) = 0;
                     *(s32 *)(rec7 + 40) = 0;
                     rec7[91] = 0;
-                    Func_02001b8a_a(106);
+                    Audio_PlayCue(106);
                 }
             }
         }
-        if (Value1(Func_0200138a, 10) != 0) {
-            Func_02001b92(10, 1);
-            if (Value1(Func_02001b58, 0x207) == 0) {
-                Call1_020009c0(Func_02001b6a, 0x207);
-                Func_02001bb8(204);
+        if (Value1(SceneActor_LiftLowActorOnSubjectTile, 10) != 0) {
+            Actor_SetAnimation(10, 1);
+            if (GameFlag_IsSet(0x207) == 0) {
+                GameFlag_Set(0x207);
+                Audio_PlayCue(204);
             } else {
-                Func_02001bc0(106);
+                Audio_PlayCue(106);
             }
         }
-        if (Value1(Func_020013ba, 9) != 0) {
-            Func_02001bd0(106);
+        if (Value1(SceneActor_LiftLowActorOnSubjectTile, 9) != 0) {
+            Audio_PlayCue(106);
         }
     }
 }
@@ -883,19 +720,19 @@ void Func_02000aa0(void)
     s32 record;
     s32 *selected;
 
-    rec7 = (u8 *)Value1(Func_02001bd6, 10);
+    rec7 = (u8 *)Value1(Engine_ActorGet, 10);
     if (rec7[91] == 0) {
         if ((++Data_0200a22c & 63) == 0) {
             selected = &Data_0200a230;
-            record = Func_02001b48();
+            record = Random_Next();
             record = Value2(Func_02001b36, record, 6);
             *selected = record;
-            rec7 = Func_02001c06((record + 10));
+            rec7 = Actor_Get((record + 10));
             *(s32 *)(rec7 + 72) = 0xa3d;
         }
         for (i = 0; i <= 5; i++) {
-            rec7 = Func_02001c1a((i + 10));
-            record = Value1(Func_02001bf6, (i + 0x200));
+            rec7 = Actor_Get((i + 10));
+            record = GameFlag_IsSet((i + 0x200));
             if (record != 0) {
                 if (*(s32 *)(rec7 + 40) <= 0) {
                     if (*(s32 *)(rec7 + 12) > 0x20ffff) {
@@ -905,7 +742,7 @@ void Func_02000aa0(void)
                 *(s32 *)(rec7 + 12) = 0xff0000;
                 *(s32 *)(rec7 + 72) = 0;
                 *(s32 *)(rec7 + 40) = 0;
-                Func_02001c66(106);
+                Audio_PlayCue(106);
             } else {
                 if (*(s32 *)(rec7 + 40) <= 0) {
                     if (*(s32 *)(rec7 + 12) > 0xffff) {
@@ -915,7 +752,7 @@ void Func_02000aa0(void)
                 *(s32 *)(rec7 + 72) = record;
                 *(s32 *)(rec7 + 40) = record;
                 *(s32 *)(rec7 + 12) = 0xff0000;
-                Func_02001c82(106);
+                Audio_PlayCue(106);
             }
         }
     }
@@ -943,8 +780,8 @@ void SceneActor_InitSlots10To15AndStartTask(void)
     do {
         s32 *record;
 
-        Func_02001cf8(Func_02001d42(selector), 0);
-        record = Func_02001d4e(selector);
+        Actor_SetSpriteFlags(Actor_Get(selector), 0);
+        record = Actor_Get(selector);
         record[17] = 0x1999;
         record[18] = 0;
         remaining--;
@@ -967,12 +804,12 @@ void SceneActor_SetupActors11To14AndInstallTask(void)
     do {
         s32 *rec;
 
-        Func_02001d40(Func_02001d8a(no), 0);
-        rec = Func_02001d96(no);
+        Actor_SetSpriteFlags(Actor_Get(no), 0);
+        rec = Actor_Get(no);
         rec[17] = 0x1999;
         rec[18] = 0;
         rec[3] = 0x00ff0000;
-        Func_02001dc8(i + 11, 1);
+        Actor_SetSpritePriority(i + 11, 1);
         i++;
         no++;
     } while (i <= 3);

@@ -1,6 +1,5 @@
 #include "TYPES.H"
 
-
 extern s16 Data_02000240[];             /* the overlay's scene table */
 extern u8 Value_0000007e;
 extern u8 Value_000008d2;
@@ -16,7 +15,6 @@ void Func_02004356();
 void Func_020043f6();
 void Func_02004370();
 void Func_020043b4();
-
 
 void FieldScene_HandleEscapeColumn(void)
 {

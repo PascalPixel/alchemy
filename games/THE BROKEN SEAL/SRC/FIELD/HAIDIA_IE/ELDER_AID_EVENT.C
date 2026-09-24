@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "FIELD_SCENE.H"
 
 extern u8 Data_0200aef0[];
 extern u8 Data_0200af50[];
@@ -243,8 +244,8 @@ void FieldScene_RunElderAidEvent(void)
         Func_02003226(19, 0x8000, 30);
         Func_0200368a(19, 2);
         Func_0200321e(unk + 19, 10);
-        Actor_FaceEachOther(0, 25, 40);
-        Actor_FaceDirection(0, 0, 0);
+        Actor_FaceEachOther(ACTOR_PARTY_LEADER, 25, 40);
+        Actor_FaceDirection(ACTOR_PARTY_LEADER, 0, 0);
         Func_02003254(25, 0, 20);
         Func_0200325e(26, 0x8000, 30);
         Func_020036aa(26, 3);

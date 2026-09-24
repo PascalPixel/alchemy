@@ -79,9 +79,6 @@ void Func_02000b98(s32 frames);
 
 /* Complete eight-byte literal-address getter, including its sole pool word. */
 
-/* Loader-relocated overlay calls: each symbol names the pre-relocation call
- * word the image holds. */
-
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
  * into a pseudo that the compiler then shares with later uses in the block.
@@ -106,8 +103,6 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
 
 static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
 {
-    extern u8 Data_02000240[];
-
     f(a0, a1, a2);
 }
 
@@ -162,7 +157,6 @@ void *OverlayObject_CreateConfiguredObject(s32 arg0, s32 arg1, s32 arg2, s32 arg
 }
 
 void Effect_Move(void *object);
-#define SceneEffect_UpdateMotion Effect_Move
 
 /* The object is accessed through word fields and a linked record. Keep the
  * shared storage view so the record load follows the position stores. */
@@ -183,7 +177,6 @@ union MotionWork {
     u8 bytes[102];
 };
 
-
 s32 SceneData_GetTable8818OrTable88d8(void)
 {
     extern s16 Data_02000240[];
@@ -196,15 +189,11 @@ s32 SceneData_GetTable8818OrTable88d8(void)
 
 s32 SceneData_ReturnZero(void)
 {
-    extern s16 Data_02000240[];
-
     return 0;
 }
 
 u8 *SceneData_GetTable8920(void)
 {
-    extern s16 Data_02000240[];
-
     return Data_02008920;
 }
 
@@ -341,8 +330,6 @@ void Func_020007ac();
 void Func_02000dd2(s32);
 void Func_02000dca(s32, s32);
 void Func_02000d86(void);
-
-#define SceneEffect_RunActorBurst Func_020004f4
 
 /* Mixed object and option views preserve the reference's alias ordering. */
 void SceneEffect_RunActorBurst(s32 no)

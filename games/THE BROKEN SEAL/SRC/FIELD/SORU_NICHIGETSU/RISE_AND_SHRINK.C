@@ -1,4 +1,5 @@
 #include "FIELD_EVENT.H"
+#include "FIELD_SCENE.H"
 
 /*
  * Exact 2026-09-23 (1,120 bytes), with two tagged fake matches for the
@@ -136,7 +137,7 @@ void FieldScene_RunSanctumRiseAndShrink(void)
         Call4(Func_02004776, 0x11f0000, -1, 0x940000, 1);
         Call3(Func_020046f2, 0, 0x120, 120);
         Func_02004712(0, 0);
-        Actor_Jump(0, 4, 30);
+        Actor_Jump(ACTOR_PARTY_LEADER, 4, 30);
         Call3(Func_02004722, 16, 0x1200000, 0x780000);
         Call3(Func_02004708, 16, 0x10000, 0x8000);
         Actor_WalkToAndWait(16, 0x114, 136);
@@ -179,7 +180,7 @@ void FieldScene_RunSanctumRiseAndShrink(void)
         }
         Func_020048fe(16, 0, 30);
         Func_020048e6(16, 3);
-        Actor_SetAnimationAndWait(0, 3);
+        Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
         Actor_SetAnimation(16, 1);
         base5_8010 = 0x8010;
         Func_02004900(0, 0);
@@ -190,7 +191,7 @@ void FieldScene_RunSanctumRiseAndShrink(void)
         Func_02004966(base5_8010, 0);
         Func_0200492e(0, 3);
         Func_020048dc(60);
-        actor = Actor_Get(0);
+        actor = Actor_Get(ACTOR_PARTY_LEADER);
         Call2(Func_020049b4, 0x9999, 0x1333);
         Call4(Func_020049cc, 0x11f0000, -1, 0x720000, 1);
         Call3(Func_02004948, 0, 0x120, 120);

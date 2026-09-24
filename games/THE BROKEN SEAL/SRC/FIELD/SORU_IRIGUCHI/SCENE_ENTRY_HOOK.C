@@ -1,8 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
-extern s16 Data_02000240[];
-extern u8 Data_03001ebc[];
 extern u8 Value_00000010;
 
 s32 Func_020025c8();
@@ -92,16 +90,14 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
 void FieldScene_RunSceneEntryHook(void)
 {
     s32 entrance;
-    u8 *work = *(u8 **)Data_03001ebc;
-
-    *(s32 *)(work + 448) = 0x204;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
     if (Value1(Func_020025c8, 0x814) != 0) {
         Func_0200270a(141);
         Call3(Func_020025d2, 0x10000, 0x10000, 0x10000);
         Func_020026f6();
     }
 
-    entrance = Data_02000240[225];
+    entrance = gGameState.entrance;
     switch (entrance) {
     case 1:
     case 2:
@@ -119,8 +115,8 @@ void FieldScene_RunSceneEntryHook(void)
         break;
 
     case 8:
-        Data_02000240[288] = (s32)&Value_00000010;
-        Data_02000240[289] = 8;
+        gGameState.retreat_scene = (s32)&Value_00000010;
+        gGameState.retreat_entrance = 8;
         if (GameFlag_IsSet(0x802) == 0)
             Func_0200185a();
         break;

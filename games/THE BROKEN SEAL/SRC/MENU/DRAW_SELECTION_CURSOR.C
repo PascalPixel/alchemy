@@ -8,7 +8,7 @@ struct State_080a847c {
 extern struct State_080a847c *volatile gMenuWork;
 extern u8 Data_080af2fc[];
 
-void Func_080a2268(const u8 *, s32, s32, s32, s32, u32);
+void Render_SetTilemapFlagRect(const u8 *, s32, s32, s32, s32, u32);
 
 void CharacterMenu_DrawSelectionCursor(s32 mode, s32 selected,
     u8 *entries, s32 invert)
@@ -50,5 +50,5 @@ void CharacterMenu_DrawSelectionCursor(s32 mode, s32 selected,
 
     different = 1 ^ (u32)invert;
     last = 15 - (((0u - different) | different) >> 31);
-    Func_080a2268(state->object, x, y, width, 1, last);
+    Render_SetTilemapFlagRect(state->object, x, y, width, 1, last);
 }

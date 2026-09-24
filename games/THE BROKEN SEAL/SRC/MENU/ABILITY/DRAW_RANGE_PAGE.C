@@ -59,7 +59,7 @@ void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 void RenderOutput_RedrawSavedRectFar(s32 window);
 void UiWindow_SetTilemapEntryFar(s32 window, s32 icon, s32 x, s32 y, s32 palette);
 struct BattleAction *BattleAction_Get(s32 action);
-void Func_080a2268(s32, s32, s32, s32, s32, s32);
+void Render_SetTilemapFlagRect(s32, s32, s32, s32, s32, s32);
 
 #define ACTION_ID_MASK 0x3fff
 
@@ -106,19 +106,19 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused, struct MenuResult *state)
             ability = BattleAction_Get(menu->psynergies[base + row] & ACTION_ID_MASK);
             if (ability->damage_class != 4) {
                 UiWindow_SetTilemapEntryFar(window, ability->damage_class + 1, 24, row * 2 + 2, 0);
-                Func_080a2268(window, 9, row * 2 + 2, 15, 1, 14);
-                Func_080a2268(window, 25, row * 2 + 2, 3, 1, 14);
+                Render_SetTilemapFlagRect(window, 9, row * 2 + 2, 15, 1, 14);
+                Render_SetTilemapFlagRect(window, 25, row * 2 + 2, 3, 1, 14);
             } else {
-                Func_080a2268(window, 9, row * 2 + 2, 19, 1, 14);
+                Render_SetTilemapFlagRect(window, 9, row * 2 + 2, 19, 1, 14);
             }
         } else {
             ability = BattleAction_Get(menu->psynergies[base + row] & ACTION_ID_MASK);
             if (ability->damage_class != 4) {
                 UiWindow_SetTilemapEntryFar(window, ability->damage_class + 1, 24, row * 2 + 2, 4);
-                Func_080a2268(window, 9, row * 2 + 2, 15, 1, 15);
-                Func_080a2268(window, 25, row * 2 + 2, 3, 1, 15);
+                Render_SetTilemapFlagRect(window, 9, row * 2 + 2, 15, 1, 15);
+                Render_SetTilemapFlagRect(window, 25, row * 2 + 2, 3, 1, 15);
             } else {
-                Func_080a2268(window, 9, row * 2 + 2, 19, 1, 15);
+                Render_SetTilemapFlagRect(window, 9, row * 2 + 2, 19, 1, 15);
             }
         }
     }

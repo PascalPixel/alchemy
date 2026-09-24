@@ -6,7 +6,7 @@ extern u8 Value_00000075;
 
 void RenderOutput_RedrawSavedRectFar(s32);
 void UiText_DrawCharacterAtOffsetFar(s32, s32, s32, s32);
-s32 Func_080a2268(s32, s32, s32, s32, s32, s32);
+s32 Render_SetTilemapFlagRect(s32, s32, s32, s32, s32, s32);
 
 s32 ItemMenu_DrawItemDetailPage(s32 arg0, s32 arg1, void *state)
 {
@@ -35,9 +35,9 @@ s32 ItemMenu_DrawItemDetailPage(s32 arg0, s32 arg1, void *state)
     row = 0;
     do {
         if (row == *(s32 *)(state + 16)) {
-            Func_080a2268(*(s32 *)(menu + 32), 1, row * 2 + 1, 14, 1, 14);
+            Render_SetTilemapFlagRect(*(s32 *)(menu + 32), 1, row * 2 + 1, 14, 1, 14);
         } else {
-            Func_080a2268(*(s32 *)(menu + 32), 1, row * 2 + 1, 14, 1, 15);
+            Render_SetTilemapFlagRect(*(s32 *)(menu + 32), 1, row * 2 + 1, 14, 1, 15);
         }
         row++;
     } while (row <= 4);

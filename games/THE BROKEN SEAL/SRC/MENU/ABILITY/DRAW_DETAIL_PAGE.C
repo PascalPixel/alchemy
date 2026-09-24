@@ -8,7 +8,7 @@ s32 GameFlag_TestFar(s32 flag);
 void GameFlag_ClearBitFar(s32 flag);
 void RenderOutput_RedrawSavedRectFar(s32);
 void UiText_DrawCharacterAtOffsetFar(s32, s32, s32, s32);
-s32 Func_080a2268(s32, s32, s32, s32, s32, s32);
+s32 Render_SetTilemapFlagRect(s32, s32, s32, s32, s32, s32);
 
 /* The Psynergy counterpart of ItemMenu_DrawItemDetailPage: while flag
    0x151 is clear it names the selected entry, otherwise it clears flag
@@ -42,9 +42,9 @@ s32 PsynergyMenu_DrawDetailPage(s32 arg0, s32 arg1, void *state)
     row = 0;
     do {
         if (row == *(s32 *)(state + 16)) {
-            Func_080a2268(*(s32 *)(menu + 32), 0, row * 2 + 1, 15, 1, 14);
+            Render_SetTilemapFlagRect(*(s32 *)(menu + 32), 0, row * 2 + 1, 15, 1, 14);
         } else {
-            Func_080a2268(*(s32 *)(menu + 32), 0, row * 2 + 1, 15, 1, 15);
+            Render_SetTilemapFlagRect(*(s32 *)(menu + 32), 0, row * 2 + 1, 15, 1, 15);
         }
         row++;
     } while (row <= 4);

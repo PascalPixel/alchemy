@@ -55,7 +55,7 @@ extern u8 Value_00000075;
 void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 void RenderOutput_RedrawSavedRectFar(s32 window);
 void UiWindow_SetTilemapEntryFar(s32 window, s32 icon, s32 x, s32 y, s32 palette);
-void Func_080a2268(s32, s32, s32, s32, s32, s32);
+void Render_SetTilemapFlagRect(s32, s32, s32, s32, s32, s32);
 
 #define ITEM_ID_MASK 0x1ff
 
@@ -85,39 +85,39 @@ s32 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct MenuResult *state)
             item = Item_Get(menu->items[state->selected_index] & ITEM_ID_MASK);
             if (item->element != 4) {
                 UiWindow_SetTilemapEntryFar(window, item->element + 1, 27, row * 2 + 1, 0);
-                Func_080a2268(window, 14, row * 2 + 1, 13, 1, 14);
+                Render_SetTilemapFlagRect(window, 14, row * 2 + 1, 13, 1, 14);
             } else {
-                Func_080a2268(window, 14, row * 2 + 1, 14, 1, 14);
+                Render_SetTilemapFlagRect(window, 14, row * 2 + 1, 14, 1, 14);
             }
         } else {
             item = Item_Get(menu->items[base + row] & ITEM_ID_MASK);
             if (item->element != 4) {
                 UiWindow_SetTilemapEntryFar(window, item->element + 1, 27, row * 2 + 1, 4);
-                Func_080a2268(window, 14, row * 2 + 1, 13, 1, 15);
+                Render_SetTilemapFlagRect(window, 14, row * 2 + 1, 13, 1, 15);
             } else {
-                Func_080a2268(window, 14, row * 2 + 1, 14, 1, 15);
+                Render_SetTilemapFlagRect(window, 14, row * 2 + 1, 14, 1, 15);
             }
         }
     }
 
     for (row = 0; row <= 3; row++) {
-        Func_080a2268((s32)menu->equip_window, 1, row * 2 + 1, 12, 1, 15);
+        Render_SetTilemapFlagRect((s32)menu->equip_window, 1, row * 2 + 1, 12, 1, 15);
     }
 
     if (menu->items[state->selected_index] & 0x200) {
         item = Item_Get(menu->items[state->selected_index] & ITEM_ID_MASK);
         switch (item->type) {
         case 1:
-            Func_080a2268((s32)menu->equip_window, 1, 1, 12, 1, 14);
+            Render_SetTilemapFlagRect((s32)menu->equip_window, 1, 1, 12, 1, 14);
             break;
         case 4:
-            Func_080a2268((s32)menu->equip_window, 1, 3, 12, 1, 14);
+            Render_SetTilemapFlagRect((s32)menu->equip_window, 1, 3, 12, 1, 14);
             break;
         case 3:
-            Func_080a2268((s32)menu->equip_window, 1, 5, 12, 1, 14);
+            Render_SetTilemapFlagRect((s32)menu->equip_window, 1, 5, 12, 1, 14);
             break;
         case 2:
-            Func_080a2268((s32)menu->equip_window, 1, 7, 12, 1, 14);
+            Render_SetTilemapFlagRect((s32)menu->equip_window, 1, 7, 12, 1, 14);
             break;
         }
     }

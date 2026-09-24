@@ -1,6 +1,13 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
+enum TransitionMessage {
+    MSG_DRAGONS_FLAME_ILLUMINATES_PATH_TRUTH = 0x17e1,
+    MSG_SECRET_KI_SHALL_REVEALED_DISCIPLES = 0x17e2,
+    MSG_RAYS_LIGHT_GIVE_BIRTH_SHADOWS = 0x17e3
+};
+
+
 #define NULL ((void *)0)
 
 /* Prepare service zero, set its +6 halfword, and run the follow-up sequence. */
@@ -1500,21 +1507,21 @@ void FieldScene_RunFourPassCallbackSequence(void)
 void SceneState_SetValue17e1(void)
 {
     Event_Begin();
-    Message_ShowCentered(0x17E1, 1);
+    Message_ShowCentered(MSG_DRAGONS_FLAME_ILLUMINATES_PATH_TRUTH, 1);
     Event_End();
 }
 
 void SceneDialogue_RunLine17e2(void)
 {
     Event_Begin();
-    Message_ShowCentered(0x17E2, 1);
+    Message_ShowCentered(MSG_SECRET_KI_SHALL_REVEALED_DISCIPLES, 1);
     Event_End();
 }
 
 void FieldScene_RunScriptedStep17E3(void)
 {
     Event_Begin();
-    Message_ShowCentered(0x17E3, 1);
+    Message_ShowCentered(MSG_RAYS_LIGHT_GIVE_BIRTH_SHADOWS, 1);
     Event_End();
 }
 

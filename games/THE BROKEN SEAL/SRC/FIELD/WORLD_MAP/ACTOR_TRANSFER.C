@@ -3,6 +3,17 @@
 #include "FIELD_SCENE.H"
 #include "MAP_RENDER_WORK.H"
 
+enum ActorTransferMessage {
+    MSG_AFTER_BRINGING_DJINNI_INTO_YOUR = 0xc66,
+    MSG_NEXT_ILL_SHOW_HOW_CAN = 0xc67,
+    MSG_WE_CANT_STAY_ANOTHER_MINUTE = 0x1215,
+    MSG_NOW_USE_ON_SHIP = 0x2642,
+    MSG_ROBIN_WHERE_GOING_SAID_USE = 0x2643,
+    MSG_WRECKAGE_SHIP_SCUTTLED_OFF_COAST = 0x264c,
+    MSG_SUKURETA_HOW_LONG_WILL_ISLAND = 0x2913
+};
+
+
 #define RatioHistory_RecordAndScheduleCallback_1(a0, a1) Call2(Func_020077c6, a0, a1)
 #define SCENE_PHASE (*(s32 *)(*(u8 **)0x03001ebc + 0x1c0))
 #define ACTOR 8
@@ -904,7 +915,7 @@ void FieldScene_RunActorTransferSequence(void)
     Actor_ShowEmote(1, 0x101, 60);
     Actor_SetPosition(8, 0x16d80000, 0x6380000);
     Task_Wait(1);
-    Event_SetMessage(0x1215);
+    Event_SetMessage(MSG_WE_CANT_STAY_ANOTHER_MINUTE);
     Event_ShowMessageAndWait(8, 0, 10);
     Actor_FaceDirection(0, 0x6000, 0);
     Actor_FaceDirection(1, 0x6000, 40);
@@ -1427,7 +1438,7 @@ void FieldScene_RunScene371_02001c08(void)
     Func_020060ae();
     Func_0200607a();
     Actor_RunRepeatedMotion(8, 2);
-    Event_SetMessage(0xc66);
+    Event_SetMessage(MSG_AFTER_BRINGING_DJINNI_INTO_YOUR);
     Event_ShowMessage(8, 0);
     Event_Wait(30);
     Audio_PlayCue(111);
@@ -1436,7 +1447,7 @@ void FieldScene_RunScene371_02001c08(void)
     GameFlag_Clear(0x171);
     Func_020060f4();
     Actor_Jump(8, 4, 30);
-    Event_SetMessage(0xc67);
+    Event_SetMessage(MSG_NEXT_ILL_SHOW_HOW_CAN);
     Event_ShowMessage(8, 0);
     GameFlag_Clear(0x16f);
     GameFlag_Set(0x171);
@@ -1508,7 +1519,7 @@ void FieldScene_RunScene371_0200281c(void)
 {
     Event_Begin();
     Actor_FaceActor(55, 0, 0);
-    Event_SetMessage(0x2642);
+    Event_SetMessage(MSG_NOW_USE_ON_SHIP);
     Value2(Engine_EventShowMessage, Data_0200e79c, 0);
     Actor_FaceDirection(55, 0x3000, 0);
     Event_End();
@@ -1518,7 +1529,7 @@ void FieldScene_RunScene371_02002858(void)
 {
     Event_Begin();
     Func_02006cbc();
-    Event_SetMessage(0x2643);
+    Event_SetMessage(MSG_ROBIN_WHERE_GOING_SAID_USE);
     Value2(Engine_EventShowMessage, Data_0200e79c, 0);
     Func_02006cd8();
     Actor_SetSpeed(0, 0x10000, 0x8000);
@@ -1534,7 +1545,7 @@ void StoryScene_ShowRewardDialogue(void)
 
     Event_Begin();
     Func_02006d0c();
-    Message_ShowCentered(0x264c, 1);
+    Message_ShowCentered(MSG_WRECKAGE_SHIP_SCUTTLED_OFF_COAST, 1);
     if (GameFlag_IsSet(0x234) != 0) {
         Data_03001ebc->story_result = 1;
     }
@@ -1565,7 +1576,7 @@ void FieldScene_RunActorPresentationSequence(void)
     Event_Wait(40);
     Actor_RunRepeatedMotion(5, 1);
     Event_Wait(20);
-    Event_SetMessage(0x2913);
+    Event_SetMessage(MSG_SUKURETA_HOW_LONG_WILL_ISLAND);
     Event_ShowMessageAndWait(5, 0, 20);
     Actor_RunRepeatedMotion(8, 2);
     Event_Wait(20);

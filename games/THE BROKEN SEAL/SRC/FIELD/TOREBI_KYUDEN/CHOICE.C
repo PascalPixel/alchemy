@@ -1262,6 +1262,17 @@ s32 Func_02004a00_dialogue_layout(s32, s32);
 
 #include "TYPES.H"
 
+enum ChoiceMessage {
+    MSG_ROBIN_PEERED_INTO = 0x947,
+    MSG_WE_HAVE_JUST_ENOUGH_EXTRA = 0x1ff7,
+    MSG_CANT_FIGHT_BECAUSE_LITTLE_INDIGESTION = 0x2009,
+    MSG_EVEN_IF_ESCAPED_BABI_PALACE = 0x2052,
+    MSG_ROBIN_ID_REALLY_LIKE_THANK = 0x2239,
+    MSG_BABI_WAITING_FOR_AT_COLOSSEUM = 0x223a,
+    MSG_ITS_FILLED_WITH_FRESH_CLEAN = 0x29e0
+};
+
+
 /* The scene step counter at 0x1d8 of the shared scene work record. */
 
 s32 SceneData_SelectTablec614ByState(void)
@@ -1325,7 +1336,7 @@ void RunOpeningAuxiliarySequence(s32 a)
     if (Value1_scene_effect_sequence_head(Engine_GameFlagIsSet, 512) == 0) {
         Call1_scene_effect_sequence_head(Engine_GameFlagSet, 512);
         GameFlag_Clear(0x969);
-        Event_SetMessage(0x1ff7);
+        Event_SetMessage(MSG_WE_HAVE_JUST_ENOUGH_EXTRA);
         Event_ShowMessage(a, 0);
         Event_Wait(10);
         t = v << 16;
@@ -1429,7 +1440,7 @@ void RunMiddleAuxiliarySequence(s32 a)
     Event_Begin();
     q = Data_0200c570;
     Actor_EnableActionCallback(a, q);
-    Event_SetMessage(0x2009);
+    Event_SetMessage(MSG_CANT_FIGHT_BECAUSE_LITTLE_INDIGESTION);
     Event_ShowMessage(a, 0);
     Actor_Stop(a);
     *(s32 *)(obj + 28) = 0x10000;
@@ -1461,7 +1472,7 @@ void RunMiddleAuxiliarySequence(s32 a)
 void FieldScene_RunScene3b8_0200049c(s32 unused0, s32 a1)
 {
     Event_Begin();
-    Event_SetMessage(0x2052);
+    Event_SetMessage(MSG_EVEN_IF_ESCAPED_BABI_PALACE);
     Event_ShowMessage(a1, 0);
     if (GameFlag_IsSet(0x968) == 0) {
         GameFlag_Set(0x968);
@@ -3402,10 +3413,10 @@ void SceneDialogue_ShowLine2239Or223A(void)
 
     if (GameFlag_IsSet(0x96d) == 0) {
         GameFlag_Set(0x96d);
-        Event_SetMessage(0x2239);
+        Event_SetMessage(MSG_ROBIN_ID_REALLY_LIKE_THANK);
         Event_ShowMessage(9, 0);
     } else {
-        Event_SetMessage(0x223a);
+        Event_SetMessage(MSG_BABI_WAITING_FOR_AT_COLOSSEUM);
         Event_ShowMessage(9, 0);
     }
 }
@@ -3428,8 +3439,8 @@ void SceneDialogue_ShowMessage22a3Branch(s32 a)
 void FieldScene_RunStepWithValue29e0(void)
 {
     Event_Begin();
-    Message_ShowCentered(0x947, 1);
-    Message_ShowCentered(0x29e0, 1);
+    Message_ShowCentered(MSG_ROBIN_PEERED_INTO, 1);
+    Message_ShowCentered(MSG_ITS_FILLED_WITH_FRESH_CLEAN, 1);
     Event_End();
 }
 

@@ -18,8 +18,46 @@
 #include "TYPES.H"
 #include "BATTLE_EFX.H"
 
-#define M2C_FIELD(expr, type_ptr, offset) \
-    (*(type_ptr)((u8 *)(expr) + (offset)))
+/* One column record at work + 0x7080. */
+struct DualColumn {
+    s32 x;
+    s32 y;
+    u8 unknown_08[8];
+    s32 height;
+    u8 unknown_14[4];
+    s32 start;
+};
+
+/* One slot of the 512-entry spark pool at 0x02010000; age -1 is free. */
+struct DualSpark {
+    s32 x;
+    s32 y;
+    u8 unknown_08[16];
+    s32 age;
+};
+
+struct DualTableEffect {
+    u8 unknown_00[4];
+    s32 mirror;
+    u8 unknown_08[12];
+    s32 target_count;
+    s32 table;
+    u8 unknown_1c[8];
+    s16 targets[8];
+};
+
+struct DualTableWork {
+    u8 cells[0x7080];
+    struct DualColumn columns[16];
+    u8 unknown_7240[0x540];
+    s32 unknown_7780;
+    s32 unknown_7784;
+    u8 unknown_7788[0x20];
+    s32 cue;
+    u8 unknown_77ac[0x78];
+    s32 transfer_pending;
+    struct DualTableEffect *effect;
+};
 
 extern u8 Value_00000083;
 extern u8 Value_00000084;
@@ -56,7 +94,7 @@ void BattleFx_RunDualTable(void *object, s32 arg1)
 {
     void **heap_cache;
     void **cursor;
-    void *work;
+    struct DualTableWork *work;
     s32 mode;
     void *draw_destination;
     s32 status;
@@ -73,13 +111,13 @@ void BattleFx_RunDualTable(void *object, s32 arg1)
 
     u8 *slot_cursor;
 
-    void *var_r6_121;
+    struct DualColumn *seed;
     s32 temp_r2_134;
     s32 temp_r5_140;
     s32 temp_r3_145;
 
     u8 *cell_base;
-    u8 *column;
+    struct DualColumn *column;
     s32 var_r5_297;
     s32 temp_r3_298;
     u8 temp_r4_315;
@@ -92,7 +130,7 @@ void BattleFx_RunDualTable(void *object, s32 arg1)
 
 
     s32 i;
-    void *var_r8_471;
+    struct DualSpark *spark;
     s32 temp_r2_474;
     s32 temp_r7_481;
     s8 temp_r5_490;
@@ -106,16 +144,16 @@ void BattleFx_RunDualTable(void *object, s32 arg1)
     cursor = heap_cache;
     work = *cursor++;
     draw_destination = *cursor;
-    M2C_FIELD(work, void **, 0x7828) = object;
+    work->effect = object;
     Func_080cd594(1);
-    M2C_FIELD((void *)0x04000020, s16 *, 0) = 0x100;
-    M2C_FIELD((void *)0x04000020, s16 *, 0x30) = 0;
+    *(s16 *)0x04000020 = 0x100;
+    *(s16 *)0x04000050 = 0;
     if (mode == 1) {
         Resource_LoadAndDecompress((s32)&Value_00000083, work, 1, 1);
     } else {
         Resource_LoadAndDecompress((s32)&Value_00000084, work, 1, 1);
     }
-    if (M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 4) == 1) {
+    if (work->effect->mirror == 1) {
         *(s32 *)0x04000028 = 0xFFFF9000;
     }
     status = BattleEffect_LoadWork(46, 7, 7, 3, 1);
@@ -125,37 +163,36 @@ void BattleFx_RunDualTable(void *object, s32 arg1)
     slot_pair = rectangle;
     slot_pair[1] = second_slot;
 
-    sp20 = Data_080eeb5e[
-        M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 0x18)] * 4 + 0x38;
+    sp20 = Data_080eeb5e[work->effect->table] * 4 + 0x38;
 
     slot_cursor = (u8 *)0x02010018;
     i = 0;
     do {
         i += 1;
-        M2C_FIELD(slot_cursor, s32 *, 0) = -1;
+        *(s32 *)slot_cursor = -1;
         slot_cursor += 28;
     } while (i != 0x400);
 
     i = 0;
-    var_r6_121 = (u8 *)work + 0x7080;
+    seed = work->columns;
     do {
         temp_r2_134 = (Data_080eeb61[i] + (7 & Func_08004458())) - 4;
-        M2C_FIELD(var_r6_121, s32 *, 4) = i / 2 + 0x6C;
-        M2C_FIELD(var_r6_121, s32 *, 0) = temp_r2_134;
+        seed->y = i / 2 + 0x6C;
+        seed->x = temp_r2_134;
         temp_r5_140 = (63 & Func_08004458()) + 0x37;
-        M2C_FIELD(var_r6_121, s32 *, 0x10) = temp_r5_140;
+        seed->height = temp_r5_140;
         temp_r3_145 = Data_080eeb4b[Func_080022fc(i, 3)];
         if (temp_r3_145 < temp_r5_140) {
-            M2C_FIELD(var_r6_121, s32 *, 0x10) = temp_r3_145;
+            seed->height = temp_r3_145;
         }
         temp_r3_145 = i * 4 + 8;
-        M2C_FIELD(var_r6_121, s32 *, 0x18) = temp_r3_145;
+        seed->start = temp_r3_145;
         i += 1;
-        var_r6_121 += 28;
+        seed++;
     } while (i != 16);
 
-    M2C_FIELD(work, s32 *, 0x7780) = 1;
-    M2C_FIELD(work, s32 *, 0x7784) = 0;
+    work->unknown_7780 = 1;
+    work->unknown_7784 = 0;
     Func_080041d8((void *)0x080CD261, 0x480);
 
     sp24 = 0;
@@ -173,20 +210,18 @@ void BattleFx_RunDualTable(void *object, s32 arg1)
             }
             if (sp24 < sp10) {
                 i = 0;
-                if (Data_080eeb5e[M2C_FIELD(
-                        M2C_FIELD(work, void **, 0x7828), s32 *, 0x18)]
-                        != 0) {
+                if (Data_080eeb5e[work->effect->table] != 0) {
                     do {
-                        column = (u8 *)work + 0x7080 + i * 0x1C;
+                        column = (struct DualColumn *)((u8 *)work + 0x7080 + i * 0x1C);
                         sp0C = i * 4 + 8;
                         if (sp24 == ((i * 4) + 9)) {
-                            M2C_FIELD(work, s32 *, 0x77A8) = 2;
+                            work->cue = 2;
                         }
                         if (sp24 > sp0C) {
                             u32 texture_index = Func_080022fc(i, 3);
 
                             var_r5_297 = (sp24 - sp0C) * 8;
-                            temp_r3_298 = M2C_FIELD(column, s32 *, 0x10);
+                            temp_r3_298 = column->height;
                             if (var_r5_297 > temp_r3_298) {
                                 var_r5_297 = temp_r3_298;
                             }
@@ -196,8 +231,8 @@ void BattleFx_RunDualTable(void *object, s32 arg1)
                                     s32 cell = Data_080eeb4e[texture_index];
                                     texture_index = Data_080eeb48[texture_index];
                                     ((DrawRectangleFn)slot_pair[sel])(draw_destination, (u8 *)work + cell,
-                                        M2C_FIELD(column, s32 *, 0) - (texture_index >> 1),
-                                        M2C_FIELD(column, s32 *, 4) - var_r5_297, texture_index, var_r5_297);
+                                        column->x - (texture_index >> 1),
+                                        column->y - var_r5_297, texture_index, var_r5_297);
                                 }
                             } else {
                                 temp_r3_335 = Data_080eeb71[7 & i];
@@ -209,14 +244,13 @@ void BattleFx_RunDualTable(void *object, s32 arg1)
                                     s32 cell = Data_080eeb58[texture_index];
                                     texture_index = Data_080eeb54[texture_index];
                                     ((DrawRectangleFn)slot_pair[sel])(draw_destination, (u8 *)work + cell,
-                                        M2C_FIELD(column, s32 *, 0) - (texture_index >> 1),
-                                        M2C_FIELD(column, s32 *, 4) - var_r5_297, texture_index, var_r5_297);
+                                        column->x - (texture_index >> 1),
+                                        column->y - var_r5_297, texture_index, var_r5_297);
                                 }
                             }
                         }
                         n = 0;
-                        if (M2C_FIELD(M2C_FIELD(work, void **, 0x7828),
-                                s32 *, 0x14) != 0) {
+                        if (work->effect->target_count != 0) {
                             cue_frame = sp0C + 4;
                             do {
                                 id_offset = n * 2 + 0x24;
@@ -224,16 +258,10 @@ void BattleFx_RunDualTable(void *object, s32 arg1)
                                     if (!(i & 1)) {
                                         Func_080f9010(0x85);
                                     }
-                                    Func_080d6888(
-                                        M2C_FIELD(
-                                            M2C_FIELD(work, void **, 0x7828),
-                                            s16 *, id_offset),
-                                        7, 5, n, 3);
+                                    Func_080d6888(*(s16 *)((u8 *)work->effect + id_offset), 7, 5, n, 3);
                                 }
                                 n += 1;
-                            } while (n != M2C_FIELD(
-                                M2C_FIELD(work, void **, 0x7828), s32 *,
-                                0x14));
+                            } while (n != work->effect->target_count);
                         } else {
                             cue_frame = sp0C + 4;
                         }
@@ -241,15 +269,10 @@ void BattleFx_RunDualTable(void *object, s32 arg1)
                             var_r5_297 = 0x02010000;
                             n = 0;
                             while (n != 0x200) {
-                                if (M2C_FIELD((void *)var_r5_297, s32 *, 0x18)
-                                        == -1) {
-                                    M2C_FIELD((void *)var_r5_297, s32 *, 0) =
-                                        ((Func_08004458() & 0xF)
-                                            + M2C_FIELD(column, s32 *,
-                                                0)) - 8;
-                                    M2C_FIELD((void *)var_r5_297, s32 *, 4) =
-                                        (Func_08004458() & 0xF) + 0x50;
-                                    M2C_FIELD((void *)var_r5_297, s32 *, 0x18) = 0;
+                                if (((struct DualSpark *)var_r5_297)->age == -1) {
+                                    ((struct DualSpark *)var_r5_297)->x = ((Func_08004458() & 0xF) + column->x) - 8;
+                                    ((struct DualSpark *)var_r5_297)->y = (Func_08004458() & 0xF) + 0x50;
+                                    ((struct DualSpark *)var_r5_297)->age = 0;
                                     break;
                                 }
                                 var_r5_297 += 0x1C;
@@ -257,15 +280,14 @@ void BattleFx_RunDualTable(void *object, s32 arg1)
                             }
                         }
                         i += 1;
-                    } while (i != Data_080eeb5e[M2C_FIELD(
-                        M2C_FIELD(work, void **, 0x7828), s32 *, 0x18)]);
+                    } while (i != Data_080eeb5e[work->effect->table]);
                 }
             }
 
             i = 0;
-            var_r8_471 = (void *)0x02010000;
+            spark = (struct DualSpark *)0x02010000;
             do {
-                temp_r2_474 = M2C_FIELD(var_r8_471, s32 *, 0x18);
+                temp_r2_474 = spark->age;
                 if (temp_r2_474 >= 0) {
                     temp_r7_481 = temp_r2_474 / 2;
                     cell_base = (u8 *)0x1E59;
@@ -275,28 +297,28 @@ void BattleFx_RunDualTable(void *object, s32 arg1)
                     ((DrawRectangleFn)rectangle[0])(
                         draw_destination,
                         (u8 *)work + (Data_080eeb88[temp_r7_481] + (s32)cell_base),
-                        M2C_FIELD(var_r8_471, s32 *, 0) - Data_080eeb79[temp_r7_481],
-                        M2C_FIELD(var_r8_471, s32 *, 4) - (s8)Data_080eeb80[temp_r7_481] / 2,
+                        spark->x - Data_080eeb79[temp_r7_481],
+                        spark->y - (s8)Data_080eeb80[temp_r7_481] / 2,
                         Data_080eeb79[temp_r7_481], (s8)Data_080eeb80[temp_r7_481]);
                     ((DrawRectangleFn)rectangle[1])(
                         draw_destination,
                         (u8 *)work + (Data_080eeb88[temp_r7_481] + (s32)cell_base),
-                        M2C_FIELD(var_r8_471, s32 *, 0),
-                        M2C_FIELD(var_r8_471, s32 *, 4) - (s8)Data_080eeb80[temp_r7_481] / 2,
+                        spark->x,
+                        spark->y - (s8)Data_080eeb80[temp_r7_481] / 2,
                         Data_080eeb79[temp_r7_481], (s8)Data_080eeb80[temp_r7_481]);
-                    temp_r3_538 = M2C_FIELD(var_r8_471, s32 *, 0x18) + 1;
-                    M2C_FIELD(var_r8_471, s32 *, 0x18) = temp_r3_538;
+                    temp_r3_538 = spark->age + 1;
+                    spark->age = temp_r3_538;
                     if (temp_r3_538 == 0xE) {
-                        M2C_FIELD(var_r8_471, s32 *, 0x18) = -1;
+                        spark->age = -1;
                     }
                 }
-                var_r8_471 += 0x1C;
+                spark++;
                 i += 1;
             } while (i != 0x200);
 
             Func_080e155c(4, 4);
             Func_080cd52c();
-            M2C_FIELD(work, s32 *, 0x7824) = 1;
+            work->transfer_pending = 1;
             Func_080030f8(1);
             sp24 += 1;
         } while (sp24 != sp20);

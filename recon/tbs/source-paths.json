@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_3a4:02003484": {
+      "name": "ArutinYama_Func02003484",
+      "source": "FIELD/ARUTIN_YAMA/F_03484.C"
+    },
     "resource_3af:020031a8": {
       "name": "FuneKanpan_Func020031a8",
       "source": "FIELD/FUNE_KANPAN/F_031A8.C"

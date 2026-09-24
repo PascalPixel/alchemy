@@ -8295,24 +8295,12 @@
           "address": "0x02008538",
           "kind": "thumb"
         },
-        "Func_02000662": {
-          "address": "0x02008588",
-          "kind": "thumb"
-        },
         "Func_02000662_a": {
           "address": "0x02008538",
           "kind": "thumb"
         },
         "Func_02000832": {
           "address": "0x02008538",
-          "kind": "thumb"
-        },
-        "Func_0200099a": {
-          "address": "0x02008578",
-          "kind": "thumb"
-        },
-        "Func_020009d8": {
-          "address": "0x02008578",
           "kind": "thumb"
         },
         "Func_02000a14_a": {

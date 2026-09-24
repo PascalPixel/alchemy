@@ -42,35 +42,30 @@ u8 *Func_02000832(s32);
 /* The workspace pointer this overlay reaches through. */
 static __inline__ void Call1(void (*f)(), s32 a0)
 {
-    s32 Func_02000662();
 
     f(a0);
 }
 
 static __inline__ s32 Value1(s32 (*f)(), s32 a0)
 {
-    s32 Func_02000662();
 
     return f(a0);
 }
 
 static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
 {
-    s32 Func_02000662();
 
     return f(a0, a1);
 }
 
 static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
 {
-    s32 Func_02000662();
 
     f(a0, a1, a2);
 }
 
 static __inline__ void bump_step(s32 amount)
 {
-    s32 Func_02000662();
 
     gEventWork->message += amount;
 }
@@ -89,9 +84,8 @@ static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
 
 static __inline__ void SetScale_020009d8(s32 actor, s32 scale, s32 duration)
 {
-    void Func_020009d8(s32, s32, s32);
 
-    Func_020009d8(actor, scale, duration);
+    Actor_FaceDirection(actor, scale, duration);
 }
 
 u8 *SceneData_GetPrimaryTable(void)
@@ -117,7 +111,6 @@ s32 SceneData_PrepareTable86b0(void)
 
 void FieldScene_RunActor16MessageBranch(void)
 {
-    void Func_02000662(s32, s32);
 
     u32 dir;
 
@@ -140,7 +133,6 @@ void FieldScene_RunActor16MessageBranch(void)
 
 void FieldScene_RunActor18MessageBranch(void)
 {
-    void Func_02000662(s32, s32);
 
     u32 dir;
 
@@ -148,7 +140,7 @@ void FieldScene_RunActor18MessageBranch(void)
     Event_Begin();
 
     if (dir + 0xFFFF5FFF <= 0x3FFE) {
-        Func_02000662(9, 18);
+        Shop_Open(9, 18);
     } else {
         if (GameFlag_IsSet(0x845) == 0) {
             Event_SetMessage(0x13E9);
@@ -308,20 +300,18 @@ void FieldScene_RunActor21SequenceOnFlag300(void)
 void FieldScene_ConfigureActor22Scene(void)
 {
     void Actor_FaceActor(s32, s32, s32);
-    void Func_0200099a(s32, s32, s32);
 
     Event_Begin();
     Event_SetMessage(0x1703);
     Event_ShowMessage(0x16, 0);
     Actor_FaceActor(0x16, 0, 0);
     Event_ShowMessage(0x16, 0);
-    Func_0200099a(0x16, 0, 0xA);
+    Actor_FaceDirection(0x16, 0, 0xA);
     Event_End();
 }
 
 void FieldScene_ConfigureActor23Scene(void)
 {
-    void Func_020009d8(s32, s32, s32);
 
     Event_Begin();
     Event_SetMessage(0x1705);
@@ -334,8 +324,6 @@ void FieldScene_ConfigureActor23Scene(void)
 
 void FieldScene_RunActor27Message(void)
 {
-    s32 Func_0200099a(s32);
-    void Func_020009d8(void);
     void Event_ShowMessage(s32, s32);
 
     Event_Begin();

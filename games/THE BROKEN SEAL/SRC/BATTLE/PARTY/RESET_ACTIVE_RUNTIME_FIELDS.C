@@ -1,8 +1,5 @@
-/*
- * Draft, 240 of 240 bytes, three halfword edits: the copy of the zero byte
- * into r9 issues before the two hoisted loop zeros instead of after them.
- * Returns int: its epilogue returns through r1.
- */
+/* Battle: clear the active party members' status bytes and stat modifiers.
+   Returns int: its epilogue returns through r1. */
 #include "TYPES.H"
 #include "BATTLE_TYPES.H"
 
@@ -10,14 +7,11 @@ s32 Func_080b6a60(u16 *owners);
 struct BattleUnit *Func_08077008(s32 owner);
 void Func_08077010(s32 owner);
 
-#define BattleParty_ResetActiveRuntimeFields Func_080b5b18
-
 s32 BattleParty_ResetActiveRuntimeFields(void)
 {
     u16 owners[10];
     s32 count;
     s32 i;
-    u8 zero;
 
     count = Func_080b6a60(owners);
 
@@ -27,7 +21,6 @@ s32 BattleParty_ResetActiveRuntimeFields(void)
         u8 *cursor;
         s32 remaining;
 
-        zero = 0;
         do {
             unit = Func_08077008(owners[i]);
             cursor = &unit->status_12f;
@@ -35,7 +28,7 @@ s32 BattleParty_ResetActiveRuntimeFields(void)
 
             do {
                 remaining--;
-                *cursor-- = zero;
+                *cursor-- = 0;
             } while (remaining >= 0);
 
             unit->attack_modifier_turns = 0;

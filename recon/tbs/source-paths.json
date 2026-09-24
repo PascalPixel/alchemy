@@ -19989,7 +19989,8 @@
       "source": "GRAPHICS/DISPLAY/BG0_CLEAR_TILEMAP.C"
     },
     "main:08095160": {
-      "name": "BattleFx_StartTwelveFrameBlend"
+      "name": "BattleFx_StartTwelveFrameBlend",
+      "source": "BATTLE/EFFECT/START_TWELVE_FRAME_BLEND.C"
     },
     "main:08090a5c": {
       "name": "BattleFx_BuildBuffer"
@@ -20863,6 +20864,18 @@
     "resource_3bb:020019bc": {
       "name": "KorosseoKabe_Func020019bc",
       "source": "FIELD/KOROSSEO_KABE/F_019BC.C"
+    },
+    "main:080b3050": {
+      "name": "Shop_RunPartyMemberIconBurst",
+      "source": "MENU/SHOP/PARTY_MEMBER_ICON_BURST.C"
+    },
+    "main:080b5b18": {
+      "name": "BattleParty_ResetActiveRuntimeFields",
+      "source": "BATTLE/PARTY/RESET_ACTIVE_RUNTIME_FIELDS.C"
+    },
+    "main:080cdd58": {
+      "name": "BattleFx_SetupCanvasTileMap",
+      "source": "BATTLE/EFFECT/SETUP_CANVAS_TILE_MAP.C"
     }
   },
   "symbols": {
@@ -21081,7 +21094,6 @@
     "main:0801e41c": "UiWindow_DrawDividerLine",
     "main:080153c8": "UiWindow_SetPaletteBitRectFar",
     "main:080acab8": "DjinnMenu_DrawStatPreview",
-    "main:080b3050": "Shop_RunPartyMemberIconBurst",
     "main:08015038": "UiText_OpenMessageWindowFar",
     "main:080164d4": "UiWindow_ClearInteriorTiles",
     "main:080a8604": "CharacterMenu_DrawStatusAilments",

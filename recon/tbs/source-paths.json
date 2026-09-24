@@ -3359,7 +3359,8 @@
       "source": "../../COMMON/SRC/SOUND/INITIALIZE_CGB.C"
     },
     "main:080fa678": {
-      "name": "AudioCommand_InvokeSlot34"
+      "name": "AudioCommand_InvokeSlot34",
+      "source": "SOUND/COMMAND_INVOKE_SLOT34.C"
     },
     "main:080fa68c": {
       "name": "AudioCommand_InvokeSlot35"

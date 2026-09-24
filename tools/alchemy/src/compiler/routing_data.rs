@@ -50,6 +50,10 @@ pub static AGBCC_SOURCES: &[&str] = &[
     "main:080fa490",
     "main:080fa514",
     "main:080fa55c",
+    // The two command-slot trampolines between the CGB and engine initializers
+    // pick their call_via register as agbcc does (r1), not as agscc does (r3).
+    "main:080fa678",
+    "main:080fa68c",
     "main:080fa6a0",
     "main:080fa83c",
     "main:080fa8d4",

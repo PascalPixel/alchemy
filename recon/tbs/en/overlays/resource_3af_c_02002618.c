@@ -1,98 +1,39 @@
 #include "TYPES.H"
 
-/* AUDITED GENERATED CALL SCRIPT for FieldScene_ConfigureActorGroup:
- * 86 calls, 0 loops, and all explicit object, workspace, and scene-data effects.
- * Recovered from the complete decoded owner and checked against the original assembly. */
+void Engine_EventBegin();
+void Main_0808a030();
+void Engine_TaskWait();
+void Engine_CameraFollowActor();
+void Engine_ActorSetAnimation();
+s32 Engine_ActorGet();
+void Engine_ActorSetSpriteFlags();
+void Engine_ActorSetPosition();
+void Engine_EventOpenScreen();
+void Engine_EventWaitForScreen();
+void Engine_EventWait();
+void FieldScene_RunScene3af_02000bb8();
+s32 Engine_ActorSetSpeed();
+void Engine_ActorWalkToAndWait();
+s32 FieldScene_CallPairWith10();
+void Engine_ActorJump();
+void Engine_AudioPlayCue();
+void Engine_WorkSetValuesIfNonNegative();
+void Engine_ActorFaceDirection();
+s32 Engine_ActorSetDestination();
+void Engine_ActorSetSpritePriority();
+void Engine_ObjectMotionSetPositionAndCommit();
+void Engine_ActorWalkTo();
+void Engine_ActorSetAttachedEffect();
+void Engine_GameStateSetReturn();
+void Engine_Import0808a250();
+void Engine_EventEnd();
 
-#define FieldScene_ConfigureActorGroup Func_02002618
 
-void Func_02003238();
-void Func_020060ba();
-void Func_020061c8();
-void *Func_02006884();
-void Func_02006892();
-void Func_020068ee();
-void *Func_02006908();
-void Func_0200691e();
-void *Func_02006950();
-void Func_02006960();
-void *Func_02006966();
-void Func_0200696a();
-void Func_02006994();
-void Func_0200699c();
-void Func_020069b0();
-void Func_020069b2();
-void Func_020069bc();
-void Func_020069c0();
-void Func_020069da();
-void Func_020069ea();
-void Func_020069ee();
-void Func_020069fe();
-void Func_02006a06();
-void *Func_02006a28();
-void Func_02006a34();
-void Func_02006a36();
-void Func_02006a48();
-void Func_02006a4c();
-void Func_02006a62();
-void *Func_02006a64();
-void Func_02006a80();
-void Func_02006aae();
-void Func_02006ac2();
-void Func_02006ac4();
-void *Func_02006ac4_a();
-void Func_02006ac6();
-void Func_02006aea();
-void Func_02006afe();
-void *Func_02006b0e();
-void *Func_02006b22();
-void *Func_02006b22_a();
-void Func_02006b2e();
-void *Func_02006b36();
-void Func_02006b3c();
-void Func_02006b44();
-void Func_02006b4e();
-void Func_02006b56();
-void Func_02006b58();
-void Func_02006b60();
-void Func_02006b6c();
-void Func_02006b78();
-void Func_02006b7c();
-void Func_02006b90();
-void Func_02006b9e();
-void Func_02006ba4();
-void Func_02006bbc();
-void Func_02006bc4();
-void Func_02006bc8();
-void Func_02006bd4();
-void Func_02006be8();
-void Func_02006bf2();
-void Func_02006c08();
-void Func_02006c10();
-void Func_02006c18();
-void Func_02006c34();
-void Func_02006c38();
-void Func_02006c3e();
-void Func_02006c48();
-void Func_02006c52();
-void Func_02006c56();
-void Func_02006c84();
-void Func_02006c90();
-void Func_02006c96();
-void Func_02006c98();
-void Func_02006c9c();
-void Func_02006ca2();
-void Func_02006ca8();
-void Func_02006cb4();
-void Func_02006cc0();
-void Func_02006cde();
-void Func_02006ce8();
-void Func_02006cf2();
-void Func_02006cfc();
-void Func_02006d36();
-void Func_02006dcc();
-void Func_02006dcc_a();
-
+extern u8 Data_00000000[];
+extern u8 Data_0000006d[];
+extern u8 Data_0000006f[];
+extern u8 Data_02000240[];
+extern u16 Data_02000240_t[][1];
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
@@ -102,6 +43,11 @@ void Func_02006dcc_a();
 static __inline__ void Call1(void (*f)(), s32 a0)
 {
     f(a0);
+}
+
+static __inline__ s32 Value1(s32 (*f)(), s32 a0)
+{
+    return f(a0);
 }
 
 static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
@@ -119,132 +65,129 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
     f(a0, a1, a2);
 }
 
-static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    f(a0, a1, a2, a3);
-}
-
-extern u16 Data_02000240[];
-extern u8 Data_00000000[];
-extern u8 Value_0000006f;
-extern u8 Value_0000006d;
-
+/* NONMATCHING: 956 of 956 bytes, 44 halfword edits (2026-09-24). Same wall
+ * as resource_3c9:0200423c: the zero loaded through Data_00000000 has pool
+ * range 60 here, the reference behaves like 64, so the mid-function pool
+ * lands 4 bytes early and every later literal offset shifts. */
 void Func_02002618(void)
 {
-    void *p1;
-    void *p10;
-    void *p3;
-    void *p30;
-    void *p36;
-    void *target;
-    void *handle;
-    s32 v;
-    s32 mode;
+    u32 i;
+    s32 record;
 
-    p1 = Func_02006908();
-    Call1(Func_0200691e, 33608728);
-    p3 = Func_02006884(1);
-    Func_02006a34(25, 1);
-    Func_02006892(1);
-    Func_020069b2(21, 5);
-    Func_020068ee(Func_02006950(21), 0);
-    Func_020069c0(0, 0, 0);
-    p10 = Func_02006966(0);
-    mode = 16384;
-    *(u16 *)(p10 + 6) = mode;
-    *(s32 *)(*(u8 **)0x03001ebc + 448) = 514;
-    Func_02006aae(448);
-    Func_02006ac2();
-    Func_02006960(20);
-    Func_02003238();
-    Func_0200696a(10);
-    Call3(Func_020069fe, 0, 14155776, 38404096);
-    Call3(Func_020069bc, 0, 65536, 32768);
-    Call3(Func_02006a06, 0, 216, 598);
-    Func_02006994(20);
-    Value2(Func_020060ba, 0, 24576);
-    Func_02006a48(0, 2, 10);
-    Call3(Func_020069ea, 0, 104857, 52428);
-    Call3(Func_02006a36, 0, 194, 624);
-    Func_02006b3c(181);
-    Call3(Func_0200699c, 262144, 262144, 65536);
-    Func_020069da(20);
-    Call3(Func_020069b0, -1, -1, 58982);
-    Func_020069ee(10);
-    Call3(Func_02006aea, 0, 49152, 20);
-    p30 = Func_02006a28(25);
-    v = (s32)Data_00000000;
-    *(u8 *)((u8 *)(p30) + 85) = v;
-    Call3(Func_02006a4c, 25, 131072, 65536);
-    Call3(Func_02006a80, 25, 216, 612);
-    Func_02006b9e(149);
-    Func_02006b2e(22, 2);
-    Func_02006ac6(22, 5);
-    p36 = Func_02006a64(22);
-    *(s32 *)(p36 + 40) = 524288;
-    *(s32 *)(p36 + 72) = 45875;
-    *(s32 *)(p36 + 24) = 106496;
-    *(s32 *)(p36 + 28) = 106496;
-    *(s32 *)(p36 + 108) = 33589441;
-    v = 32768;
-    *(s32 *)(p36 + 68) = v;
-    Call4(Func_02006ac4, 22, 393216, 196608, 33589441);
-    Call3(Func_02006afe, 22, 182, 618);
-    handle = Func_02006ac4_a(22);
-    Func_02006a62(handle, 0);
-    Value2(Func_020061c8, 0, 40960);
-    Func_02006b56(0, 6, 80);
-    Call3(Func_02006b22, 25, 232, 564);
-    Call3(Func_02006b44, 0, 204, 610);
-    Call3(Func_02006b4e, 0, 208, 598);
-    Call3(Func_02006b58, 0, 248, 598);
-    target = Func_02006b0e(0);
-    if (target != 0) {
-        Func_02006b7c(1, *(u32 *)((u8 *)target + 8), *(u32 *)((u8 *)target + 16));
+    Engine_EventBegin();
+    Call1(Main_0808a030, 0x200d418);
+    Engine_TaskWait(1);
+    Engine_CameraFollowActor(25, 1);
+    Engine_TaskWait(1);
+    Engine_ActorSetAnimation(21, 5);
+    record = Engine_ActorGet(21);
+    Engine_ActorSetSpriteFlags(record, 0);
+    Engine_ActorSetPosition(0, 0, 0);
+    record = Engine_ActorGet(0);
+    {
+        s32 shown = 0x4000;
+    
+        *(u16 *)(record + 6) = shown;
     }
-    target = Func_02006b22_a(0);
-    if (target != 0) {
-        Func_02006b90(2, *(u32 *)((u8 *)target + 8), *(u32 *)((u8 *)target + 16));
+    *(s32 *)((*(s32 *)0x03001ebc + 0x1c0)) = 0x202;
+    Engine_EventOpenScreen();
+    Engine_EventWaitForScreen();
+    Engine_EventWait(20);
+    FieldScene_RunScene3af_02000bb8();
+    Engine_EventWait(10);
+    Call3(Engine_ActorSetPosition, 0, 0xd80000, 0x24a0000);
+    Call3(Engine_ActorSetSpeed, 0, 0x10000, 0x8000);
+    Call3(Engine_ActorWalkToAndWait, 0, 216, 0x256);
+    Engine_EventWait(20);
+    Value2(FieldScene_CallPairWith10, 0, 0x6000);
+    Engine_ActorJump(0, 2, 10);
+    Call3(Engine_ActorSetSpeed, 0, 0x19999, 0xcccc);
+    Call3(Engine_ActorWalkToAndWait, 0, 194, 0x270);
+    Engine_AudioPlayCue(181);
+    Call3(Engine_WorkSetValuesIfNonNegative, 0x40000, 0x40000, 0x10000);
+    Engine_EventWait(20);
+    Call3(Engine_WorkSetValuesIfNonNegative, -1, -1, 0xe666);
+    Engine_EventWait(10);
+    Call3(Engine_ActorFaceDirection, 0, 0xc000, 20);
+    {
+        u8 *p = (u8 *)Engine_ActorGet(25);
+        s32 z = (u16)(u32)Data_00000000;
+
+        p[85] = z;
     }
-    target = Func_02006b36(0);
-    if (target != 0) {
-        Func_02006ba4(3, *(u32 *)((u8 *)target + 8), *(u32 *)((u8 *)target + 16));
+    Call3(Engine_ActorSetSpeed, 25, 0x20000, 0x10000);
+    Call3(Engine_ActorSetDestination, 25, 216, 0x264);
+    Engine_AudioPlayCue(149);
+    Engine_ActorSetSpritePriority(22, 2);
+    Engine_ActorSetAnimation(22, 5);
+    record = Engine_ActorGet(22);
+    *(s32 *)(record + 40) = 0x80000;
+    *(s32 *)(record + 72) = 0xb333;
+    *(s32 *)(record + 24) = 0x1a000;
+    *(s32 *)(record + 28) = 0x1a000;
+    *(s32 *)(record + 108) = 0x20088c1;
+    *(s32 *)(record + 68) = 0x8000;
+    Call3(Engine_ActorSetSpeed, 22, 0x60000, 0x30000);
+    Call3(Engine_ObjectMotionSetPositionAndCommit, 22, 182, 0x26a);
+    record = Engine_ActorGet(22);
+    Engine_ActorSetSpriteFlags(record, 0);
+    Value2(FieldScene_CallPairWith10, 0, 0xa000);
+    Engine_ActorJump(0, 6, 80);
+    Call3(Engine_ActorSetDestination, 25, 232, 0x234);
+    Call3(Engine_ActorWalkToAndWait, 0, 204, 0x262);
+    Call3(Engine_ActorWalkToAndWait, 0, 208, 0x256);
+    Call3(Engine_ActorWalkToAndWait, 0, 248, 0x256);
+    record = Value1(Engine_ActorGet, 0);
+    if (record != 0) {
+        Engine_ActorSetPosition(1, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
-    Call3(Func_02006b60, 1, 65536, v);
-    Call3(Func_02006b6c, 2, 65536, v);
-    Call3(Func_02006b78, 3, 65536, v);
-    Call3(Func_02006bbc, 0, 250, 584);
-    Call3(Func_02006bc8, 1, 240, 600);
-    Call3(Func_02006bd4, 2, 254, 600);
-    Call3(Func_02006be8, 3, 248, 616);
-    Func_02006c08(0, 1);
-    Func_02006c10(1, 1);
-    Func_02006c18(2, 1);
-    Call3(Func_02006c84, 0, 49152, 0);
-    Call3(Func_02006c90, 1, 49152, 0);
-    Call3(Func_02006c9c, 2, 49152, 0);
-    Call3(Func_02006ca8, 3, 49152, 20);
-    Func_02006d36(149);
-    Func_02006bc4(40);
-    Call2(Func_02006cde, 0, 258);
-    Call2(Func_02006ce8, 1, 258);
-    Call2(Func_02006cf2, 2, 258);
-    Call2(Func_02006cfc, 3, 258);
-    Func_02006bf2(60);
-    Call3(Func_02006c34, 0, 52428, 26214);
-    Call3(Func_02006c3e, 1, 52428, 26214);
-    Call3(Func_02006c48, 2, 52428, 26214);
-    Call3(Func_02006c52, 3, 52428, 26214);
-    Call3(Func_02006c96, 0, 248, 564);
-    Call3(Func_02006ca2, 1, 248, 564);
-    Func_02006c38(20);
-    Call3(Func_02006cb4, 2, 248, 564);
-    Call3(Func_02006cc0, 3, 248, 564);
-    Func_02006c56(20);
-    Data_02000240[226] = (s32)&Value_0000006f;
-    Data_02000240[227] = 30;
-    ((u8 *)&Data_02000240[226])[103] = 3;
-    Func_02006dcc((s32)&Value_0000006d, 16);
-    Func_02006dcc_a(62, 3);
-    Func_02006c98();
+    record = Value1(Engine_ActorGet, 0);
+    if (record != 0) {
+        Engine_ActorSetPosition(2, *(s32 *)(record + 8), *(s32 *)(record + 16));
+    }
+    record = Value1(Engine_ActorGet, 0);
+    if (record != 0) {
+        Engine_ActorSetPosition(3, *(s32 *)(record + 8), *(s32 *)(record + 16));
+    }
+    Call3(Engine_ActorSetSpeed, 1, 0x10000, 0x8000);
+    Call3(Engine_ActorSetSpeed, 2, 0x10000, 0x8000);
+    Call3(Engine_ActorSetSpeed, 3, 0x10000, 0x8000);
+    Call3(Engine_ActorWalkTo, 0, 250, 0x248);
+    Call3(Engine_ActorWalkTo, 1, 240, 0x258);
+    Call3(Engine_ActorWalkTo, 2, 254, 0x258);
+    Call3(Engine_ActorWalkToAndWait, 3, 248, 0x268);
+    Engine_ActorSetAnimation(0, 1);
+    Engine_ActorSetAnimation(1, 1);
+    Engine_ActorSetAnimation(2, 1);
+    Call3(Engine_ActorFaceDirection, 0, 0xc000, 0);
+    Call3(Engine_ActorFaceDirection, 1, 0xc000, 0);
+    Call3(Engine_ActorFaceDirection, 2, 0xc000, 0);
+    Call3(Engine_ActorFaceDirection, 3, 0xc000, 20);
+    Engine_AudioPlayCue(149);
+    Engine_EventWait(40);
+    Call2(Engine_ActorSetAttachedEffect, 0, 0x102);
+    Call2(Engine_ActorSetAttachedEffect, 1, 0x102);
+    Call2(Engine_ActorSetAttachedEffect, 2, 0x102);
+    Call2(Engine_ActorSetAttachedEffect, 3, 0x102);
+    Engine_EventWait(60);
+    Call3(Engine_ActorSetSpeed, 0, 0xcccc, 0x6666);
+    Call3(Engine_ActorSetSpeed, 1, 0xcccc, 0x6666);
+    Call3(Engine_ActorSetSpeed, 2, 0xcccc, 0x6666);
+    Call3(Engine_ActorSetSpeed, 3, 0xcccc, 0x6666);
+    Call3(Engine_ActorWalkTo, 0, 248, 0x234);
+    Call3(Engine_ActorWalkTo, 1, 248, 0x234);
+    Engine_EventWait(20);
+    Call3(Engine_ActorWalkTo, 2, 248, 0x234);
+    Call3(Engine_ActorWalkTo, 3, 248, 0x234);
+    Engine_EventWait(20);
+    Data_02000240_t[226][0] = (s32)Data_0000006f;
+    {
+        s32 shown = 30;
+    
+        Data_02000240_t[227][0] = shown;
+    }
+    *(u8 *)0x0200046b = 3;
+    Engine_GameStateSetReturn((s32)Data_0000006d, 16);
+    Engine_Import0808a250(62, 3);
+    Engine_EventEnd();
 }

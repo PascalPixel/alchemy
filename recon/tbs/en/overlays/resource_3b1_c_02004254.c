@@ -1,245 +1,175 @@
 #include "TYPES.H"
 
-#define FieldScene_RunFlagDependentActorPose Func_02004254
+void Engine_EventBegin();
+void FieldScene_RunSceneStep();
+void OverlayObject_SetPositionAndHeading();
+void Local_020037d8();
+void Engine_TaskWait();
+void Engine_EventOpenScreen();
+void Engine_ActorSetSpeed();
+s32 Engine_ActorWalkToAndWait();
+void Engine_ActorRunRepeatedMotion();
+void Engine_EventWait();
+void Engine_ActorFaceEachOther();
+s32 Engine_GameFlagIsSet();
+s32 Local_02004fa8();
+void Engine_EventSetMessage();
+void FieldScene_RunStepThen10();
+void Engine_ActorSetAnimationAndWait();
+void Engine_ActorFaceDirection();
+s32 Engine_ActorGet();
+void Engine_ActorSetPosition();
+void Engine_ActorSetAnimation();
+void Engine_ActorShowEmote();
+void FieldScene_CallPairWith10();
+void Engine_ActorWalkTo();
+void Engine_EventShowMessageAndWait();
+void Engine_ActorSetAttachedEffect();
+void Engine_ActorStartRepeatedMotion();
+void Engine_EventRequestExit();
 
-void Func_02007a5c();
-void Func_02008b0e();
-void Func_02008b50();
-void Func_02008b7a();
-void Func_02008bf8();
-void Func_02008c1a();
-void Func_02008ca8();
-void Func_02008ce2();
-void Func_02008d1c();
-void Func_02008d20();
-void Func_02008da2();
-void Func_02008dca();
-void Func_02008dda();
-void Func_02008de8();
-void Func_02008dfa();
-s32 Func_02009290();
-void Func_0200a6aa();
-void Func_0200a726();
-s32 Func_0200a77a();
-void Func_0200a788();
-void Func_0200a790();
-void Func_0200a7b8();
-void Func_0200a7d4();
-void Func_0200a7e0();
-void Func_0200a7ea();
-void Func_0200a81a();
-u8 *Func_0200a828();
-void Func_0200a842();
-void Func_0200a852();
-void Func_0200a85c();
-void Func_0200a862();
-void Func_0200a872();
-void Func_0200a876();
-s32 Func_0200a888();
-void Func_0200a892();
-void Func_0200a896();
-void Func_0200a8b0();
-void Func_0200a8be();
-s32 Func_0200a8d0();
-void Func_0200a8d6();
-void Func_0200a8f8();
-void Func_0200a908();
-void Func_0200a916();
-void Func_0200a920();
-void Func_0200a928();
-void Func_0200a942();
-void Func_0200a94c();
-void Func_0200a94e();
-void Func_0200a980();
-void Func_0200a988();
-void Func_0200a99c();
-void Func_0200a9a0();
-void Func_0200a9a8();
-void Func_0200a9c4();
-void Func_0200a9c6();
-void Func_0200a9c8();
-void Func_0200a9d4();
-void Func_0200a9e0();
-void Func_0200aa06();
-void Func_0200aa0e();
-void Func_0200aa10();
-void Func_0200aa18();
-void Func_0200aa1a();
-void Func_0200aa1c();
-void Func_0200aa20();
-void Func_0200aa26();
-void Func_0200aa2a();
-void Func_0200aa3a();
-void Func_0200aa4a();
-void Func_0200aa4c();
-void Func_0200aa58();
-void Func_0200aac2();
-void Func_0200aad0();
-void Func_0200aad6();
-void Func_0200aae4();
-void Func_0200aae6();
-void Func_0200ab18();
-void Func_0200ab30();
-void Func_0200ab38();
-void Func_0200ab50();
-void Func_0200aba8();
+
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
  * into a pseudo that the compiler then shares with later uses in the block.
  * A value-returning call also sets r0 last of its arguments. */
 
-static __inline__ void Call1(void (*f)(), s32 group)
+static __inline__ void Call1(void (*f)(), s32 a0)
 {
-    f(group);
+    f(a0);
 }
 
-static __inline__ s32 Value1(s32 (*f)(), s32 group)
+static __inline__ s32 Value1(s32 (*f)(), s32 a0)
 {
-    return f(group);
+    return f(a0);
 }
 
-static __inline__ void Call2(void (*f)(), s32 group, s32 a1)
+static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
 {
-    f(group, a1);
+    f(a0, a1);
 }
 
-static __inline__ void Call3(void (*f)(), s32 group, s32 a1, s32 a2)
+static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
 {
-    f(group, a1, a2);
+    f(a0, a1, a2);
 }
 
-static __inline__ s32 Value3(s32 (*f)(), s32 group, s32 a1, s32 a2)
+static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
 {
-    return f(group, a1, a2);
+    return f(a0, a1, a2);
 }
 
-void Func_0200a896_a();
-s32 Func_0200a85c_a();
-
-static __inline__ u8 *Pointer1(u8 *(*f)(), s32 a)
+/* NONMATCHING: 884 of 892 bytes, 107 halfword edits (2026-09-24). Flag
+ * branches restructured from the listing (0x92b/0x929 walk to x 0x1d6,
+ * 0x92a/else to 0x19a); the 0x1b0 x coordinate must be shared in r8. */
+void Func_02004254(s32 a0)
 {
-    return f(a);
-}
+    u32 i;
+    s32 rec7;
+    s32 record;
+    s32 v6;
+    s32 v7;
+    s32 base5_a01b;
 
-void FieldScene_RunFlagDependentActorPose(s32 group)
-{
-    s32 slot;
-    u8 *record;
-    s32 flag;
-    s32 height;
-    s32 coordinate_scale;
-    s32 alternate_pose;
-    s32 request;
-
-    Func_0200a726();
-    Func_02008b50(24, 0, 0);
-    coordinate_scale = 0x8000;
-    Func_02008b0e(0, 0x1b0, 134, coordinate_scale);
-    Func_02007a5c(1);
-    Func_0200a6aa(1);
-    Func_0200a8be();
-    Call3(Func_0200a790, 0, 0xcccc, 0x6666);
-    Call3(Func_0200a7d4, 0, 0x196, 134);
-    Call3(Func_0200a7e0, 0, 0x196, 152);
-    Call3(Func_0200a7ea, 0, 0x1a5, 152);
-    Func_0200a842(27, 1);
-    Func_0200a788(20);
-    Func_0200a862(27, 0, 10);
-    if (Value1(Func_0200a77a, 0x300) == 0) {
+    Engine_EventBegin();
+    v6 = 128;
+    FieldScene_RunSceneStep(24, 0, 0);
+    OverlayObject_SetPositionAndHeading(0, 0x1b0, 134, (v6 << 8));
+    Local_020037d8(1);
+    Engine_TaskWait(1);
+    Engine_EventOpenScreen();
+    Call3(Engine_ActorSetSpeed, 0, 0xcccc, 0x6666);
+    Call3(Engine_ActorWalkToAndWait, 0, 0x196, 134);
+    Call3(Engine_ActorWalkToAndWait, 0, 0x196, 152);
+    Call3(Engine_ActorWalkToAndWait, 0, 0x1a5, 152);
+    Engine_ActorRunRepeatedMotion(27, 1);
+    Engine_EventWait(20);
+    Engine_ActorFaceEachOther(27, 0, 10);
+    if (Value1(Engine_GameFlagIsSet, 0x300) == 0) {
     } else {
-        slot = Func_02009290(group, 0);
-        Func_0200a872(27, 1);
-        Func_0200a7b8(20);
-        Func_0200a892(27, 0, 10);
-        Call1(Func_0200a8b0, 0x1ebc);
-        Call1(Func_02008b7a, 0xa01b);
-        Func_0200a876(0, 3);
-        Func_0200a81a(0, 0x10000, coordinate_scale);
-        Func_0200a85c(0, 0x1b0, 168);
-        Call3(Func_0200a908, 0, 0xc000, 0);
-        record = Pointer1(Func_0200a828, 0);
+        rec7 = Local_02004fa8(a0, 0);
+        Engine_ActorRunRepeatedMotion(27, 1);
+        Engine_EventWait(20);
+        Engine_ActorFaceEachOther(27, 0, 10);
+        Call1(Engine_EventSetMessage, 0x1ebc);
+        Call1(FieldScene_RunStepThen10, 0xa01b);
+        Engine_ActorSetAnimationAndWait(0, 3);
+        Call3(Engine_ActorSetSpeed, 0, 0x10000, (v6 << 8));
+        ((void (*)())Engine_ActorWalkToAndWait)(0, 0x1b0, 168);
+        Call3(Engine_ActorFaceDirection, 0, 0xc000, 0);
+        v7 = 0;
+        record = Value1(Engine_ActorGet, 0);
         if (record != 0) {
-            Func_0200a896(slot, *(s32 *)(record + 8), *(s32 *)(record + 16));
+            Engine_ActorSetPosition(rec7, *(s32 *)(record + 8), *(s32 *)(record + 16));
         }
-        Func_0200a852(slot, 0x10000, coordinate_scale);
-        Call3(Func_0200a896_a, slot, 0x1c0, 168);
-        Call3(Func_0200a942, slot, 0xb000, 20);
-        Call3(Func_0200a94e, 27, 0x3000, 20);
-        Func_0200a8d6(27, 3);
-        Func_02008bf8(27);
-        Call3(Func_0200a980, slot, 0x102, 60);
-        Func_0200a920(27, 1);
-        Func_0200a8f8(27, 3);
-        Func_02008c1a(27);
-        Func_0200a916(slot, 3);
-        alternate_pose = 0;
-        if (Value1(Func_0200a85c_a, 0x92b) != 0) {
-            Call3(Func_0200a99c, 0, 0x2000, 0);
-            Call3(Func_0200a9a8, 27, 0x3000, 0);
-            height = 204;
-            goto common_pose;
+        Call3(Engine_ActorSetSpeed, rec7, 0x10000, (v6 << 8));
+        Call3(Engine_ActorWalkToAndWait, rec7, 0x1c0, 168);
+        Call3(Engine_ActorFaceDirection, rec7, 0xb000, 20);
+        Call3(Engine_ActorFaceDirection, 27, 0x3000, 20);
+        Engine_ActorSetAnimation(27, 3);
+        FieldScene_RunStepThen10(27);
+        Call3(Engine_ActorShowEmote, rec7, 0x102, 60);
+        Engine_ActorRunRepeatedMotion(27, 1);
+        Engine_ActorSetAnimation(27, 3);
+        FieldScene_RunStepThen10(27);
+        Engine_ActorSetAnimationAndWait(rec7, 3);
+        if (Value1(Engine_GameFlagIsSet, 0x92b) != 0) {
+            Call3(Engine_ActorFaceDirection, 0, 0x2000, 0);
+            Call3(Engine_ActorFaceDirection, 27, 0x3000, 0);
+            Call3(Engine_ActorWalkToAndWait, rec7, 0x1d6, 204);
+            FieldScene_CallPairWith10(rec7, 0xb000);
+        } else if (Value1(Engine_GameFlagIsSet, 0x92a) != 0) {
+            Call3(Engine_ActorWalkToAndWait, 0, 0x1a6, 154);
+            Call3(Engine_ActorFaceDirection, 0, 0x6000, 0);
+            Call3(Engine_ActorFaceDirection, 27, 0x5000, 0);
+            Call3(Engine_ActorWalkToAndWait, rec7, 0x19a, 204);
+            v7 = 1;
+            FieldScene_CallPairWith10(rec7, 0xd000);
+        } else if (Value1(Engine_GameFlagIsSet, 0x929) != 0) {
+            Call3(Engine_ActorFaceDirection, 0, 0x2000, 0);
+            Call3(Engine_ActorFaceDirection, 27, 0x3000, 0);
+            Call3(Engine_ActorWalkToAndWait, rec7, 0x1d6, 172);
+            FieldScene_CallPairWith10(rec7, 0xb000);
         } else {
-            if (Value1(Func_0200a888, 0x92a) != 0) {
-                Call3(Func_0200a928, 0, 0x1a6, 154);
-                Call3(Func_0200a9d4, 0, 0x6000, 0);
-                Call3(Func_0200a9e0, 27, 0x5000, 0);
-                Call3(Func_0200a94c, slot, 0x19a, 204);
-                alternate_pose = 1;
-                Func_02008ca8(slot, 0xd000);
-                goto L_020044a2;
-            }
-            flag = Value1(Func_0200a8d0, 0x929);
-            if (flag == 0) {
-                goto L_02004466;
-            }
-            Call3(Func_0200aa10, 0, 0x2000, 0);
-            Call3(Func_0200aa1c, 27, 0x3000, 0);
-            height = 172;
+            Call3(Engine_ActorWalkToAndWait, 0, 0x1a6, 154);
+            Call3(Engine_ActorFaceDirection, 0, 0x6000, 0);
+            Call3(Engine_ActorFaceDirection, 27, 0x5000, 0);
+            Call3(Engine_ActorWalkToAndWait, rec7, 0x19a, 172);
+            v7 = 1;
+            FieldScene_CallPairWith10(rec7, 0xd000);
         }
-        common_pose:;
-        Call3(Func_0200a988, slot, 0x1d6, height);
-        Func_02008ce2(slot, 0xb000);
-        goto L_020044a2;
-        L_02004466:;
-        Call3(Func_0200a9a0, 0, 0x1a6, 154);
-        Call3(Func_0200aa4c, 0, 0x6000, 0);
-        Call3(Func_0200aa58, 27, 0x5000, 0);
-        Call3(Func_0200a9c4, slot, 0x19a, 172);
-        alternate_pose = 1;
-        Func_02008d20(slot, 0xd000);
-        L_020044a2:;
-        Func_0200aa3a(27, 0, 20);
-        Call1(Func_02008d1c, 0x201b);
-        Func_0200aa18(0, 3);
-        Func_0200aa20(27, 3);
-        Call3(Func_0200a9c6, 27, 0x10000, 0x8000);
-        if (alternate_pose != 0) {
-            Call3(Func_0200aa0e, 27, 0x1ac, 164);
-            Call3(Func_0200aa1a, 27, 0x198, 164);
+        Engine_ActorFaceEachOther(27, 0, 20);
+        Call1(FieldScene_RunStepThen10, 0x201b);
+        Engine_ActorSetAnimationAndWait(0, 3);
+        Engine_ActorSetAnimationAndWait(27, 3);
+        Call3(Engine_ActorSetSpeed, 27, 0x10000, 0x8000);
+        if (v7 != 0) {
+            Call3(Engine_ActorWalkToAndWait, 27, 0x1ac, 164);
+            Call3(Engine_ActorWalkToAndWait, 27, 0x198, 164);
         }
-        Call3(Func_0200aa26, 27, 0x198, 134);
-        Call3(Func_0200aa2a, 27, 0x1b8, 134);
-        Func_0200a9c8(40);
-        Func_02008dfa(9, 10, 0);
+        Call3(Engine_ActorWalkToAndWait, 27, 0x198, 134);
+        Call3(Engine_ActorWalkTo, 27, 0x1b8, 134);
+        Engine_EventWait(40);
+        FieldScene_RunSceneStep(9, 10, 0);
         goto L_02004592;
     }
-    Call1(Func_0200aac2, 0x1eb7);
-    request = 0xa01b;
-    Call3(Func_0200aae6, 0xa01b, 0, 40);
-    Call3(Func_0200ab18, 27, 0x101, 60);
-    Func_02008da2(request);
-    Call2(Func_0200ab30, 0, 0x102);
-    Func_0200aa06(60);
-    Call3(Func_0200ab38, 27, 0x103, 40);
-    Func_0200aad0(27, 2);
-    Func_02008dca(request);
-    Call3(Func_0200ab50, 27, 0x105, 40);
-    Func_02008dda(request);
-    Func_0200aad6(27, 4);
-    Func_02008de8(request);
-    Func_0200aae4(0, 3);
-    Func_0200aa4a(20);
-    Func_0200aba8(4);
+    Call1(Engine_EventSetMessage, 0x1eb7);
+    base5_a01b = 0xa01b;
+    Call3(Engine_EventShowMessageAndWait, 0xa01b, 0, 40);
+    Call3(Engine_ActorShowEmote, 27, 0x101, 60);
+    FieldScene_RunStepThen10(base5_a01b);
+    Call2(Engine_ActorSetAttachedEffect, 0, 0x102);
+    Engine_EventWait(60);
+    Call3(Engine_ActorShowEmote, 27, 0x103, 40);
+    Engine_ActorStartRepeatedMotion(27, 2);
+    FieldScene_RunStepThen10(base5_a01b);
+    Call3(Engine_ActorShowEmote, 27, 0x105, 40);
+    FieldScene_RunStepThen10(base5_a01b);
+    Engine_ActorSetAnimationAndWait(27, 4);
+    FieldScene_RunStepThen10(base5_a01b);
+    Engine_ActorSetAnimationAndWait(0, 3);
+    Engine_EventWait(20);
+    Engine_EventRequestExit(4);
     L_02004592:;
 }

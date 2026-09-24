@@ -1,67 +1,28 @@
 #include "TYPES.H"
 
-#define FieldScene_RunActorEventSetup Func_020011b0
+void Main_0808a5e0();
+void Engine_ActorSetAnimation();
+void Engine_MapCopyCellAttributes();
+void ConfigureAndPlaceActorFourteen();
+s32 Engine_GameFlagIsSet();
+void Engine_ActorSetPosition();
+void Engine_ActorFaceDirection();
+s32 Engine_GameFlagClear();
+void FieldScene_RunScene3a2SequenceA();
+u8 * Engine_ActorGet();
+void Engine_ActorSetSpriteFlags();
+void ActorPresentation_PrepareActorFourteenWithCallback();
+void FieldScene_SetSlot15Byte89AndRunStep();
+void Engine_GameFlagSet();
+void Engine_MapCopyCellsTo();
+s32 Engine_ActorEnableActionCallback();
+void Scene_RunActorExchange();
 
-/* Complete 744-byte owner. The loader relocates the call at resource
- * 0x0200124c to 0x020081ec; its raw disassembly label is not an inner entry.
- * The two scene selectors below are numeric values, not address symbols. */
-extern s16 Data_02000240[];
-void Func_0200143a();
-void Func_02001a70();
-void Func_02001f80();
-void Func_02002344();
-void Func_020023e6();
-void Func_020026b4();
-s32 Func_020026d6();
-s32 Func_02002714();
-void Func_02002716();
-void Func_02002724();
-void Func_02002730();
-void Func_02002738();
-void Func_02002740();
-s32 Func_0200274c();
-s32 Func_02002762();
-u8 *Func_02002766();
-void Func_02002768();
-u8 *Func_02002772();
-s32 Func_02002792();
-void Func_0200279c();
-s32 Func_0200279c_1();
-s32 Func_020027a6();
-s32 Func_020027ba();
-s32 Func_020027c4();
-void Func_020027ca();
-void Func_020027d0();
-void Func_020027e0();
-void Func_020027f0();
-void Func_020027f6();
-void Func_020027f6_1();
-void Func_020027f6_2();
-s32 Func_020027fe();
-void Func_02002812();
-void Func_0200281a();
-void Func_02002834();
-void Func_02002834_1();
-s32 Func_02002852();
-s32 Func_0200285c();
-void Func_02002862();
-void Func_02002878();
-s32 Func_020028ce();
-void Func_020028ea();
-void Func_020028f4();
-u8 *Func_020028fc();
-void Func_02002902();
-void Func_02002906();
-s32 Func_02002908();
-void Func_02002910();
-s32 Func_02002912();
-s32 Func_0200291c();
-void Func_0200291e();
-u8 *Func_02002926();
-void Func_02002930();
-void Func_02002960();
-void Func_02002982();
-void Func_0200298e();
+
+extern u8 Data_0000004a[];
+extern u8 Data_00000058[];
+extern u8 Data_02000240[];
+extern s16 Data_02000240_t[][1];
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
@@ -78,9 +39,9 @@ static __inline__ s32 Value1(s32 (*f)(), s32 a0)
     return f(a0);
 }
 
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
+static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
 {
-    f(a0, a1);
+    return f(a0, a1);
 }
 
 static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
@@ -93,99 +54,108 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
     f(a0, a1, a2, a3, a4, a5);
 }
 
-s32 FieldScene_RunActorEventSetup(void)
+/* NONMATCHING: 744 of 744 bytes, 2 halfword edits (2026-09-24). The reference
+ * loads the Data_02000240 base after the event-work store; here it is
+ * scheduled first. A do-while wrap, volatile spellings and a local for the
+ * area id did not move it. */
+s32 Func_020011b0(void)
 {
+    u32 i;
     u8 *record;
 
     *(s32 *)(*(s32 *)0x03001ebc + 0x1c0) = 0x100;
-    if (Data_02000240[224] == 0x58) {
-        Func_020027d0(169);
-        Func_02002730(11, 5);
-        Func_02002738(12, 5);
-        Func_02002740(14, 2);
-        Call6(Func_020026b4, 21, 9, 1, 1, 21, 73);
-        Func_02001a70();
-        if (Value1(Func_020026d6, 0x8b2) != 0) {
-            Call3(Func_02002768, 13, 0x880000, 0x1000000);
-            Func_020027ca(13, 0, 0);
+    if (Data_02000240_t[224][0] == (s32)Data_00000058) {
+        Main_0808a5e0(169);
+        Engine_ActorSetAnimation(11, 5);
+        Engine_ActorSetAnimation(12, 5);
+        Engine_ActorSetAnimation(14, 2);
+        Call6(Engine_MapCopyCellAttributes, 21, 9, 1, 1, 21, 73);
+        ConfigureAndPlaceActorFourteen();
+        if (Value1(Engine_GameFlagIsSet, 0x8b2) != 0) {
+            Call3(Engine_ActorSetPosition, 13, 0x880000, 0x1000000);
+            Engine_ActorFaceDirection(13, 0, 0);
         }
-        if (Data_02000240[225] == 2) {
-            Call1(Func_02002716, 0x12f);
+        if (Data_02000240_t[225][0] == 2) {
+            Call1(Engine_GameFlagClear, 0x12f);
             goto L_02001456;
         }
-        if (Data_02000240[225] != 3) {
+        if (Data_02000240_t[225][0] != 3) {
             goto L_02001456;
         }
-        if (Value1(Func_02002714, 0x109) != 0) {
+        if (Value1(Engine_GameFlagIsSet, 0x109) != 0) {
             goto L_02001456;
         }
-        Func_0200143a();
+        FieldScene_RunScene3a2SequenceA();
     } else {
-        if (Data_02000240[224] != 0x4a) {
+        if (Data_02000240_t[224][0] != (s32)Data_0000004a) {
         } else {
-            record = Func_02002766(14);
-            Func_02002724((s32)record, 0);
-            record = Func_02002772(14);
-            record[35] |= 2;
-            if (Value1(Func_0200274c, 0x200) != 0) {
-                Func_020027e0(14, 5);
-                Func_02002344();
+            record = Engine_ActorGet(14);
+            Engine_ActorSetSpriteFlags((s32)record, 0);
+            {
+                u8 *record = Engine_ActorGet(14);
+                u8 value = *(volatile u8 *)&record[35];
+            
+                record[35] = (u8)(value | 2);
             }
-            if (Value1(Func_02002762, 0x201) != 0) {
-                Func_020027f6(15, 4);
-                Func_020023e6();
+            if (Value1(Engine_GameFlagIsSet, 0x200) != 0) {
+                Engine_ActorSetAnimation(14, 5);
+                ActorPresentation_PrepareActorFourteenWithCallback();
             }
-            if ((u16)(Data_02000240[225] - 4) <= 1) {
-                Call1(Func_0200279c, 0x12f);
+            if (Value1(Engine_GameFlagIsSet, 0x201) != 0) {
+                Engine_ActorSetAnimation(15, 4);
+                FieldScene_SetSlot15Byte89AndRunStep();
             }
-            if (Value1(Func_02002792, 0x89a) == 0) {
-                if (Value1(Func_0200279c_1, 0x895) == 0) {
-                    if (Value1(Func_020027a6, 0x8b2) == 0) {
-                        Func_02002834(10, 0, 0);
+            if ((u32)(((u16)Data_02000240_t[225][0] - 4) << 16) <= 0x10000) {
+                Call1(Engine_GameFlagClear, 0x12f);
+            }
+            if (Value1(Engine_GameFlagIsSet, 0x89a) == 0) {
+                if (Value1(Engine_GameFlagIsSet, 0x895) == 0) {
+                    if (Value1(Engine_GameFlagIsSet, 0x8b2) == 0) {
+                        Engine_ActorSetPosition(10, 0, 0);
                     }
                 }
             }
-            if (Value1(Func_020027ba, 0x8b2) == 0) {
-                if (Value1(Func_020027c4, 0x895) != 0) {
-                    if (Data_02000240[225] == 2) {
-                        Func_02002862(11, 0, 0);
-                        Call1(Func_020027f0, 0x8b2);
-                        Call1(Func_020027f6_1, 0x8b3);
-                        Func_02002878(10, 0, 0);
+            if (Value1(Engine_GameFlagIsSet, 0x8b2) == 0) {
+                if (Value1(Engine_GameFlagIsSet, 0x895) != 0) {
+                    if (Data_02000240_t[225][0] == 2) {
+                        Engine_ActorSetPosition(11, 0, 0);
+                        Call1(Engine_GameFlagSet, 0x8b2);
+                        Call1(Engine_GameFlagSet, 0x8b3);
+                        Engine_ActorSetPosition(10, 0, 0);
                     }
                 }
             }
-            if (Value1(Func_020027fe, 0x8b2) != 0) {
-                Call6(Func_020027f6_2, 54, 21, 53, 21, 1, 2);
-                Call6(Func_02002812, 18, 20, 1, 3, 17, 21);
-                Call6(Func_0200281a, 44, 18, 43, 17, 1, 1);
-                Call6(Func_02002834_1, 8, 17, 1, 1, 7, 17);
+            if (Value1(Engine_GameFlagIsSet, 0x8b2) != 0) {
+                Call6(Engine_MapCopyCellsTo, 54, 21, 53, 21, 1, 2);
+                Call6(Engine_MapCopyCellAttributes, 18, 20, 1, 3, 17, 21);
+                Call6(Engine_MapCopyCellsTo, 44, 18, 43, 17, 1, 1);
+                Call6(Engine_MapCopyCellAttributes, 8, 17, 1, 1, 7, 17);
             }
-            if (Value1(Func_02002852, 0x895) != 0) {
-                if (Value1(Func_0200285c, 0x8b2) == 0) {
-                    Func_020028ea(12, 0, 0);
-                    Func_020028f4(13, 0, 0);
-                    Call3(Func_02002902, 8, 0xc00000, 0x1080000);
-                    Call3(Func_02002910, 9, 0xa40000, 0x1180000);
-                    Call3(Func_0200291e, 10, 0xb80000, 0x1300000);
-                    Call3(Func_02002982, 8, 0x5000, 0);
-                    Call3(Func_0200298e, 10, 0xb000, 0);
-                    Call2(Func_02002906, 9, 0x2009730);
-                    record = Func_020028fc(9);
+            if (Value1(Engine_GameFlagIsSet, 0x895) != 0) {
+                if (Value1(Engine_GameFlagIsSet, 0x8b2) == 0) {
+                    Engine_ActorSetPosition(12, 0, 0);
+                    Engine_ActorSetPosition(13, 0, 0);
+                    Call3(Engine_ActorSetPosition, 8, 0xc00000, 0x1080000);
+                    Call3(Engine_ActorSetPosition, 9, 0xa40000, 0x1180000);
+                    Call3(Engine_ActorSetPosition, 10, 0xb80000, 0x1300000);
+                    Call3(Engine_ActorFaceDirection, 8, 0x5000, 0);
+                    Call3(Engine_ActorFaceDirection, 10, 0xb000, 0);
+                    Value2(Engine_ActorEnableActionCallback, 9, 0x2009730);
+                    record = Engine_ActorGet(9);
                     *(s32 *)((s32)record + 24) = -0x10000;
                 }
             }
-            if (Value1(Func_020028ce, 0x8b2) == 0) {
-                Call3(Func_02002960, 9, 0xa40000, 0x1180000);
-                Call2(Func_02002930, 9, 0x2009730);
-                record = Func_02002926(9);
+            if (Value1(Engine_GameFlagIsSet, 0x8b2) == 0) {
+                Call3(Engine_ActorSetPosition, 9, 0xa40000, 0x1180000);
+                Value2(Engine_ActorEnableActionCallback, 9, 0x2009730);
+                record = Engine_ActorGet(9);
                 *(s32 *)((s32)record + 24) = -0x10000;
             }
-            if (Data_02000240[225] == 5) {
-                if (Value1(Func_02002908, 0x8b1) == 0) {
-                    if (Value1(Func_02002912, 0x109) == 0) {
-                        if (Value1(Func_0200291c, 0x8b2) == 0) {
-                            Func_02001f80();
+            if (Data_02000240_t[225][0] == 5) {
+                if (Value1(Engine_GameFlagIsSet, 0x8b1) == 0) {
+                    if (Value1(Engine_GameFlagIsSet, 0x109) == 0) {
+                        if (Value1(Engine_GameFlagIsSet, 0x8b2) == 0) {
+                            Scene_RunActorExchange();
                         }
                     }
                 }

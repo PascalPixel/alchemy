@@ -1,6 +1,5 @@
 #include "TYPES.H"
 
-
 #include "FACING_OBJECT.H"
 
 typedef struct {

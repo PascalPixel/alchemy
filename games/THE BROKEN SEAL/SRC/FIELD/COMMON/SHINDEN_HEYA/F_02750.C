@@ -1,7 +1,3 @@
-/* NONMATCHING: 130 of 132 bytes, 7 differing halfwords (2026-09-24). Written as
- * a single-overlay unit source. The zero byte comes from a HImode pool constant
- * as in the reference; remaining: the script-pointer and flag stores are
- * scheduled differently and the function is 2 bytes short. */
 #include "TYPES.H"
 
 s32 Engine_ActorGet();
@@ -37,7 +33,8 @@ struct Flags9 {
     u8 mode : 2;
 };
 
-void Local_02002750(s32 a0, s32 a1)
+/* Spawns the effect object above actor a0 with its script, zeroes its state and copies the owner's sprite mode. */
+void ShindenHeya_Func02002750(s32 a0, s32 a1)
 {
     u32 i;
     s32 p8;
@@ -62,9 +59,8 @@ void Local_02002750(s32 a0, s32 a1)
             }
             *(u16 *)(rec8 + 102) = p8;
             *(s32 *)((s32)rec8 + 108) = 0x200a6f1;
-            { s32 v = (u16)(u32)Data_00000000; p5[38] = v; }
-            ((struct Flags9 *)p5)->mode = ((struct Flags9 *)(*(s32 *)(rec + 80)))->mode;
-            *(s32 *)((s32)rec8 + 104) = rec;
+            { u16 v = 0; p5[38] = v; }
+            { u8 m = ((struct Flags9 *)(*(s32 *)(rec + 80)))->mode; *(s32 *)((s32)rec8 + 104) = rec; ((struct Flags9 *)p5)->mode = m; } /* FAKEMATCH: the mode is read into a temporary so the owner store schedules first */
         }
     }
 }

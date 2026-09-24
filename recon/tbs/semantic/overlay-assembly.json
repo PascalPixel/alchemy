@@ -965,19 +965,6 @@
       ]
     },
     {
-      "overlay": "resource_3af",
-      "start": "0x02002618",
-      "end": "0x020029d4",
-      "kind": "not_yet_decompiled",
-      "retention": "not_yet_c",
-      "confidence": "strong",
-      "evidence": [
-        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
-        "2026-09-06 review of the linked reconstruction record found no compiler-impossibility proof; its dated source and score observations remain research evidence, not DONE.",
-        "recon/tbs/en/dossiers.json#resource_3af:02002618"
-      ]
-    },
-    {
       "overlay": "resource_3c7",
       "start": "0x020000c8",
       "end": "0x020000f2",
@@ -1131,19 +1118,6 @@
         "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
         "independently address-mapped homolog preserves the complete renderer control flow and all ten calls",
         "recon/tbs/en/dossiers.json#resource_3bc:02002ee8"
-      ]
-    },
-    {
-      "overlay": "resource_3b7",
-      "start": "0x20001d8",
-      "end": "0x20004bc",
-      "kind": "not_yet_decompiled",
-      "retention": "not_yet_c",
-      "confidence": "strong",
-      "evidence": [
-        "This segment preserves retained assembly from the historical 0x020001d8–0x02000d70 range, split at the complete declared owner boundaries; no bytes were removed or counted as exact C.",
-        "The historical merged-body draft and unsuccessful flag probes do not establish compiler impossibility. Owner-bounded candidates and dated measurements are retained in the reconstruction corpus.",
-        "recon/tbs/en/dossiers.json#resource_3b7:020001d8"
       ]
     },
     {

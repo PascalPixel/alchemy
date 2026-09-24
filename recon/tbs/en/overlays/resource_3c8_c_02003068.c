@@ -1,6 +1,6 @@
-/* NONMATCHING: 3964 of 3964 bytes, 5 halfword edits (2026-09-24). Hand-written from the
+/* NONMATCHING: 3964 of 3964 bytes, 2 halfword edits (2026-09-24). Hand-written from the
  * resolved jump-table disassembly as a single-overlay unit binding Engine_* at
- * their import veneers. Remaining: 5 halfwords: in case 7/8 of area 0xb8 the REG_BLDCNT zero store (inside a do/while that keeps its zero out of the pool) schedules the address load before the zero; the reference sets r3 = 0 first, then loads the address into r2. Every other instruction, pool and jump table matches. The b9 opening-auxiliary call is spelled through a value-returning cast so cross-jumping keeps the two identical blocks apart (tag FAKEMATCH when closed). */
+ * their import veneers. Remaining: 2 halfwords: in case 7/8 of area 0xb8 the REG_BLDCNT zero store still loads the address (r2) before the zero (r3). Spelling the zero as a u32 local inside the do/while puts the zero first but swaps the registers (3 edits). The area 0xba loop counter is unsigned (bls), and the second BLDCNT zero is a do/while around an s16 store (FAKEMATCH). Every other instruction, pool and jump table matches. The b9 opening-auxiliary call is spelled through a value-returning cast so cross-jumping keeps the two identical blocks apart (tag FAKEMATCH when closed). */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
@@ -82,7 +82,7 @@ s32 Local_02003068(void)
 {
     struct FieldActor *actor;
     s32 area;
-    s32 i;
+    u32 i;
     s32 x;
     s32 z;
 
@@ -455,7 +455,7 @@ s32 Local_02003068(void)
             Engine_ActorGet(20)->priority_flags |= 2;
             Engine_ActorGet(20)->y.fixed = -0x108000;
             Main_080091a0();
-            REG_BLDCNT = 0;
+            do { *(s16 *)0x04000050 = 0; } while (0); /* FAKEMATCH: the do/while keeps the zero ahead of the register address */
             if (Engine_GameFlagIsSet(0x306)) {
                 Main_0808a5e0(170);
                 Call6((void (*)())Engine_MapCopyCellsTo, 36, 81, 32, 81, 3, 2);

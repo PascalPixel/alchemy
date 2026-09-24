@@ -1,6 +1,18 @@
 {
   "format": 3,
   "owners": {
+    "resource_3c4:0200252c": {
+      "name": "BabiChika_Func0200252c",
+      "source": "FIELD/BABI_CHIKA/F_0252C.C"
+    },
+    "resource_378:02002750": {
+      "name": "ShindenHeya_Func02002750",
+      "source": "FIELD/COMMON/SHINDEN_HEYA/F_02750.C"
+    },
+    "resource_3a0:02000500": {
+      "name": "ShianMura_Func02000500",
+      "source": "FIELD/SHIAN_MURA/F_00500.C"
+    },
     "resource_3b7:02000880": {
       "name": "TorebiIzumi_RiseAndFadeIn",
       "source": "FIELD/TOREBI_IZUMI/RISE_AND_FADE.C"
@@ -14738,7 +14750,8 @@
       "source": "FIELD/TOREBI_IZUMI/TOPIC.C"
     },
     "resource_3b7:020001d8": {
-      "name": "FieldScene_RunPrimaryScript"
+      "name": "TorebiIzumi_Func020001d8",
+      "source": "FIELD/TOREBI_IZUMI/F_001D8.C"
     },
     "resource_3b7:02000e5c": {
       "name": "FieldScene_RunSecondaryScript"
@@ -15235,7 +15248,8 @@
       "source": "FIELD/BIRIBINO_MURA/PUSH_PUZZLE.C"
     },
     "resource_3af:02002618": {
-      "name": "FieldScene_ConfigureActorGroup"
+      "name": "FuneKanpan_Func02002618",
+      "source": "FIELD/FUNE_KANPAN/F_02618.C"
     },
     "resource_3af:020029d4": {
       "name": "FieldScene_ConfigureLeadActors",

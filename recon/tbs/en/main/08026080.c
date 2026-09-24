@@ -595,10 +595,10 @@ draw_name:
         Func_080b50b8(ids[cursor], &namePos);
         namePos.y += Func_08002322(Data_03001e40 << 12) / 32768;
         if (unit->class_id == 125 || unit->class_id == 122) {
-            i = 0x80E;
+            width = 0x80E;
             if (unit->class_id == 125)
-                i++;
-            Func_0801965c(i, name, 14);
+                width++;
+            Func_0801965c(width, name, 14);
         } else {
             for (i = 0; i <= 13; i++) {
                 name[i] = j = unit->name[i];

@@ -41785,14 +41785,6 @@
           "address": "0x02008704",
           "kind": "thumb"
         },
-        "Func_0200138a": {
-          "address": "0x02008944",
-          "kind": "thumb"
-        },
-        "Func_020013ba": {
-          "address": "0x02008944",
-          "kind": "thumb"
-        },
         "Func_020015b0": {
           "address": "0x02008b8c",
           "kind": "thumb"
@@ -41880,6 +41872,10 @@
         "gGameState": {
           "address": "0x02000240",
           "kind": "data"
+        },
+        "SceneActor_LiftLowActorOnSubjectTile": {
+          "address": "0x02008944",
+          "kind": "thumb"
         }
       },
       "owners": [

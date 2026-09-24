@@ -1,6 +1,14 @@
 {
   "format": 3,
   "owners": {
+    "resource_3ca:020000b0": {
+      "name": "BabiFune_CyclePalette",
+      "source": "FIELD/BABI_FUNE/PALETTE_CYCLE.C"
+    },
+    "resource_3bd:02000c98": {
+      "name": "ArutamiraDou_RespawnActorObject",
+      "source": "FIELD/ARUTAMIRA_DOU/RESPAWN_ACTOR_OBJECT.C"
+    },
     "resource_39c:02004fcc": {
       "name": "Makyuri_SpawnLightObjects",
       "source": "FIELD/COMMON/MAKYURI/LIGHT_OBJECTS.C"

@@ -165,11 +165,6 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
     f(a0, a1, a2, a3);
 }
 
-static __inline__ void Call3_020007dc(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
 static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
 {
     f(a0, a1);

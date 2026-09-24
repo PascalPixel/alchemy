@@ -152,40 +152,9 @@ static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
     return f(a0, a1);
 }
 
-static __inline__ void Call3_02000fdc(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
 static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
 {
     f(a0, a1, a2, a3, a4, a5);
-}
-
-static __inline__ s32 Value1_020015f0(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ s32 Value1_02002188(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ s32 Value1_02002290(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ s32 Value1_02002334(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ s32 Value1_02000e50(s32 (*f)(), s32 a0)
-{
-
-    return f(a0);
 }
 
 /* resource_3b4 actor presentation: cell repaints for slots 11 and 12. */
@@ -421,11 +390,11 @@ void Func_02000e50(void)
     if (GameFlag_IsSet(0x9ca) != 0) {
         if (Data_02000240[293] != 15) {
             idx = work->touched_trigger;
-            dst = Value1_02000e50(Func_020033bc, 15);
-            src = Value1_02000e50(Func_020033c4, 0);
+            dst = Value1(Func_020033bc, 15);
+            src = Value1(Func_020033c4, 0);
             *(s32 *)(dst + 48) = *(s32 *)(src + 48);
-            dst = Value1_02000e50(Func_020033ce, 15);
-            src = Value1_02000e50(Func_020033d6, 0);
+            dst = Value1(Func_020033ce, 15);
+            src = Value1(Func_020033d6, 0);
             *(s32 *)(dst + 52) = *(s32 *)(src + 48);
             idx -= 30;
             tbl = 0x0200a808;
@@ -768,7 +737,7 @@ void FieldScene_RunPrimarySequence(void)
         Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x1b333, 0xd999);
         Actor_SetSpeed(10, 0x1b333, 0xd999);
         Audio_PlayCue(188);
-        record = Value1_020015f0(Engine_GetTriggerActor, 0);
+        record = Value1(Engine_GetTriggerActor, 0);
         if (record != 0) {
             Actor_SetDestination(10, *(s16 *)(record + 10), *(s16 *)(record + 18));
         }
@@ -1272,11 +1241,11 @@ void FieldScene_RunScene3b4_02002290(void)
     *(u8 *)(Func_020047f6(11) + 89) = 1;
     record = Engine_GetTriggerActor(8);
     *(s32 *)(record + 24) = 0xb333;
-    record = Value1_02002290(Engine_GetTriggerActor, 9);
+    record = Value1(Engine_GetTriggerActor, 9);
     *(s32 *)(record + 24) = 0xb333;
-    record = Value1_02002290(Engine_GetTriggerActor, 10);
+    record = Value1(Engine_GetTriggerActor, 10);
     *(s32 *)(record + 24) = 0xb333;
-    record = Value1_02002290(Engine_GetTriggerActor, 11);
+    record = Value1(Engine_GetTriggerActor, 11);
     *(s32 *)(record + 24) = 0xb333;
     record = Engine_GetTriggerActor(12);
     *(s32 *)(record + 24) = 0xb333;
@@ -1323,7 +1292,7 @@ void FieldScene_RunScene3b4_02002334(void)
             *(s32 *)(record + 108) = 0x2008aa9;
         } else if (GameFlag_IsSet(0x9c9) != 0) {
             Actor_SetPosition(15, 0x3780000, 0x2980000);
-            record = Value1_02002334(Engine_GetTriggerActor, 15);
+            record = Value1(Engine_GetTriggerActor, 15);
             *(u16 *)(*(s32 *)(record + 80) + 30) = 0;
             Func_020048c4(record, 16);
         } else if (GameFlag_IsSet(0x9c8) != 0) {

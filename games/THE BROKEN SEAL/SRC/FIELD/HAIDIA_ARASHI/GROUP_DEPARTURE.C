@@ -254,21 +254,6 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
     f(a0, a1, a2);
 }
 
-static __inline__ void Call3_02000398(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-static __inline__ void Call3_020003cc(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-static __inline__ void Call3_02000400(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
 static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
 {
     f(a0, a1);
@@ -291,21 +276,6 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
 
 /* Configures actor 22 (position, pose, and movement/sprite flags) for the
  * scene. */
-
-static __inline__ void Call1_02001828(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ void Call6_02001828(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
-{
-    f(a0, a1, a2, a3, a4, a5);
-}
-
-static __inline__ s32 Value1_020028a4(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
 
 s32 OverlayObject_SetField6OnCountdown(struct Object *object)
 {
@@ -1273,7 +1243,7 @@ void Scene_BoulderFalls(void)
 
     if (GameFlag_IsSet(FLAG_BOULDER_FELL) == 0) {
         Event_Begin();
-        Call1_02001828(Func_02006246, 0x200d4b0);
+        Call1(Func_02006246, 0x200d4b0);
         SceneState_SetValue140Mode0();
         Task_Wait(1);
         Audio_PlayCue(141);
@@ -2133,7 +2103,7 @@ void FieldScene_ConfigureActorTwentyTwoScene(void)
     Event_Begin();
     Camera_MoveTo(-1, -1, -1, 0);
     Actor_Stop(ACTOR_ID);
-    Call1_02001828(Func_0200861e_a, 0x200c5b9);
+    Call1(Func_0200861e_a, 0x200c5b9);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x1e0, 0x570);
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
     Actor_FaceDirection(ACTOR_ID, 0x3000, 20);

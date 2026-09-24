@@ -248,11 +248,6 @@ static __inline__ void Scene_SetActorDirection(s32 actor, s32 angle, s32 frames)
     Actor_FaceDirection(actor, angle, frames);
 }
 
-static __inline__ void Call1_02000be0(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
 static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 {
     f(a0, a1, a2, a3);

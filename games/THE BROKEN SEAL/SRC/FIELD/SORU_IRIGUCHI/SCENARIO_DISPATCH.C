@@ -247,11 +247,6 @@ static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
     f(a0, a1);
 }
 
-static __inline__ void Call3_02000258(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
 /* Loader-relocated ROM calls: each site names the pre-relocation call word the image holds. */
 static __inline__ void Call0(void (*f)())
 {
@@ -293,46 +288,6 @@ static __inline__ s32 Value4(s32 (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 static __inline__ void Scene_Call(void (*func)(s32), s32 arg)
 {
     func(arg);
-}
-
-static __inline__ void Call1_0200161c(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ s32 Value1_0200161c(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ void Call2_0200161c(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
-static __inline__ void Call3_0200161c(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-static __inline__ void Call4_0200161c(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    f(a0, a1, a2, a3);
-}
-
-static __inline__ s32 Value1_020017c0(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ void Call6_0200161c(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
-{
-    f(a0, a1, a2, a3, a4, a5);
-}
-
-static __inline__ s32 Value0_0200161c(s32 (*f)())
-{
-    return f();
 }
 
 /* Runs the full scene sequence for entities 0, 1, 5 and 8: per-entity setup,
@@ -1075,7 +1030,7 @@ void Scene_RunTransitionCue(void)
     Event_OpenScreen();
     Event_WaitForScreen();
     Event_Wait(20);
-    record = Value1_0200161c(Func_0200320e, 0);
+    record = Value1(Func_0200320e, 0);
     if (record != 0) {
         Actor_SetPosition(8, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
@@ -1108,7 +1063,7 @@ void Scene_RunTransitionCue(void)
     Actor_FaceDirection(8, 0x5000, 20);
     Event_ShowMessageAndWait(0x4008, 0, 10);
     Actor_SetAnimation(8, 2);
-    record = Value1_0200161c(Func_0200332e, 0);
+    record = Value1(Func_0200332e, 0);
     if (record != 0) {
         Actor_SetDestination(8, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
@@ -1245,7 +1200,7 @@ void Scene_UpdateCueTimer(s32 a0, s32 a1, s32 a2)
         }
         Work_SetValuesIfNonNegative(-1, -1, 0xe666);
     } else {
-        value = Value0_0200161c(Engine_RandomNext);
+        value = Value0(Engine_RandomNext);
         if (((u32)(((value << 4) - value) << 3) >> 16) == 0) {
             Audio_PlayCue(138);
             Work_SetValuesIfNonNegative(0x10000, 0x20000, 0x10000);

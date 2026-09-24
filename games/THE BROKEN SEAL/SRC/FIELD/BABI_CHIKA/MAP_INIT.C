@@ -16,7 +16,6 @@ enum MapInitMessage {
     MSG_STATUE_SEEMS_SPEAK_YOUR_SOUL = 0x268b
 };
 
-
 struct Owner {
     u8 unk0[9];
     u8 unk9_0 : 2;
@@ -352,11 +351,6 @@ static __inline__ void Call8(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
     f(a0, a1, a2, a3, a4, a5, a6, a7);
 }
 
-static __inline__ s32 Value1_02001d04(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
 static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
 {
     return f(a0, a1);
@@ -367,19 +361,9 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
     f(a0, a1, a2, a3);
 }
 
-static __inline__ void Call1_020020a4(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
 static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
 {
     f(a0, a1);
-}
-
-static __inline__ s32 Value1_02002480(s32 (*f)(), s32 a0)
-{
-    return f(a0);
 }
 
 struct Record_02000ec8;
@@ -1215,7 +1199,7 @@ void FieldScene_RunMiddleSequence(void)
 
     Event_Begin();
     for (i = 0; i <= 2; i++) {
-        if (((struct FieldActor *)Value1_02001d04(Engine_ActorGet, i + 12))->sprite->priority == 3
+        if (((struct FieldActor *)Value1(Engine_ActorGet, i + 12))->sprite->priority == 3
             && GameFlag_IsSet(i + 0x200) == 0) {
             Actor_Get(i + 12);
             Func_02002d82();
@@ -1223,25 +1207,25 @@ void FieldScene_RunMiddleSequence(void)
             GameFlag_Set(i + 0x200);
             break;
         }
-        if ((((struct FieldActor *)Value1_02001d04(Engine_ActorGet, i + 12))->z.fixed >> 20) == 9
+        if ((((struct FieldActor *)Value1(Engine_ActorGet, i + 12))->z.fixed >> 20) == 9
             && GameFlag_IsSet(i + 0x200) == 0) {
-            *(s32 *)(Value1_02001d04(Engine_ActorGet, i + 12) + 20) = 0;
-            ((struct FieldActor *)Value1_02001d04(Engine_ActorGet, i + 12))->velocity_y = 0;
+            *(s32 *)(Value1(Engine_ActorGet, i + 12) + 20) = 0;
+            ((struct FieldActor *)Value1(Engine_ActorGet, i + 12))->velocity_y = 0;
             *(s32 *)(Func_02004f26(i + 12) + 60) = -0x80000000;
             ((struct FieldActor *)Actor_Get(i + 12))->motion_flags = 0;
             *(u16 *)(Func_02004f3c(i + 12) + 100) = 0;
             found = i;
             for (j = 0; j < i; j++) {
                 if (GameFlag_IsSet(0x200 + j) == 0) {
-                    saved.x.fixed = ((struct FieldActor *)Value1_02001d04(Engine_ActorGet, i + 12))->x.fixed;
-                    saved.y.fixed = ((struct FieldActor *)Value1_02001d04(Engine_ActorGet, i + 12))->y.fixed;
-                    saved.z.fixed = ((struct FieldActor *)Value1_02001d04(Engine_ActorGet, i + 12))->z.fixed;
+                    saved.x.fixed = ((struct FieldActor *)Value1(Engine_ActorGet, i + 12))->x.fixed;
+                    saved.y.fixed = ((struct FieldActor *)Value1(Engine_ActorGet, i + 12))->y.fixed;
+                    saved.z.fixed = ((struct FieldActor *)Value1(Engine_ActorGet, i + 12))->z.fixed;
                     ((struct FieldActor *)Actor_Get(i + 12))->x.fixed =
-                        ((struct FieldActor *)Value1_02001d04(Engine_ActorGet, j + 12))->x.fixed;
-                    ((struct FieldActor *)Value1_02001d04(Engine_ActorGet, i + 12))->y.fixed =
-                        ((struct FieldActor *)Value1_02001d04(Engine_ActorGet, j + 12))->y.fixed;
-                    ((struct FieldActor *)Value1_02001d04(Engine_ActorGet, i + 12))->z.fixed =
-                        ((struct FieldActor *)Value1_02001d04(Engine_ActorGet, j + 12))->z.fixed;
+                        ((struct FieldActor *)Value1(Engine_ActorGet, j + 12))->x.fixed;
+                    ((struct FieldActor *)Value1(Engine_ActorGet, i + 12))->y.fixed =
+                        ((struct FieldActor *)Value1(Engine_ActorGet, j + 12))->y.fixed;
+                    ((struct FieldActor *)Value1(Engine_ActorGet, i + 12))->z.fixed =
+                        ((struct FieldActor *)Value1(Engine_ActorGet, j + 12))->z.fixed;
                     ((struct FieldActor *)Actor_Get(j + 12))->x.fixed = saved.x.fixed;
                     ((struct FieldActor *)Actor_Get(j + 12))->y.fixed = saved.y.fixed;
                     ((struct FieldActor *)Actor_Get(j + 12))->z.fixed = saved.z.fixed;
@@ -1259,7 +1243,7 @@ void FieldScene_RunMiddleSequence(void)
             Camera_MoveTo(0xa80000, 0x80000, 0xb80000, 1);
             Camera_WaitForMove();
             SceneActor_LandOnHighestPlatform(found + 12);
-            if ((((struct FieldActor *)Value1_02001d04(Engine_ActorGet, found + 12))->x.fixed >> 20) == 8) {
+            if ((((struct FieldActor *)Value1(Engine_ActorGet, found + 12))->x.fixed >> 20) == 8) {
                 (*(s16 *)(Func_02004fe2(10) + 100))++;
                 (*(s16 *)(Func_02004ff0(11) + 100))--;
             } else {
@@ -1544,19 +1528,19 @@ void FieldScene_RunScene3c4_02002480(void)
     Map_CopyCellAttributes(89, 49, 3, 2, 25, 49);
     Map_CopyCellAttributes(89, 51, 8, 5, 25, 51);
     *(u8 *)(Func_020055ba(14) + 34) = 1;
-    record = Value1_02002480(Engine_ActorGet, 12);
+    record = Value1(Engine_ActorGet, 12);
     p5 = *(s32 *)(record + 8);
-    record = Value1_02002480(Engine_ActorGet, 12);
+    record = Value1(Engine_ActorGet, 12);
     p5 = p5 >> 20;
     Map_CopyCellAttributes(22, 52, 1, 1, p5, (*(s32 *)(record + 16) >> 20));
-    record = Value1_02002480(Engine_ActorGet, 13);
+    record = Value1(Engine_ActorGet, 13);
     p5 = *(s32 *)(record + 8);
-    record = Value1_02002480(Engine_ActorGet, 13);
+    record = Value1(Engine_ActorGet, 13);
     p5 = p5 >> 20;
     Map_CopyCellAttributes(22, 52, 1, 1, p5, (*(s32 *)(record + 16) >> 20));
-    record = Value1_02002480(Engine_ActorGet, 14);
+    record = Value1(Engine_ActorGet, 14);
     p5 = *(s32 *)(record + 8);
-    record = Value1_02002480(Engine_ActorGet, 14);
+    record = Value1(Engine_ActorGet, 14);
     p5 = p5 >> 20;
     Map_CopyCellAttributes(22, 52, 1, 1, p5, (*(s32 *)(record + 16) >> 20));
 }

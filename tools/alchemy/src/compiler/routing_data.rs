@@ -62,6 +62,8 @@ pub static AGBCC_SOURCES: &[&str] = &[
     "main:080fa4cc",
     "main:080fa798",
     "main:080faa58",
+    // The CGB channel update of the MusicPlayer2000 C object, exact under
+    // this family's -O2 set like its neighbours.
     "main:080fae58",
     "main:080fb2a4",
     "main:080fb410",

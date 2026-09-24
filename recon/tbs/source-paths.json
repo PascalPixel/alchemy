@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_3b3:0200101c": {
+      "name": "TakaraHashira_SetCellAttributes",
+      "source": "FIELD/TAKARA_HASHIRA/CELL_ATTRIBUTES.C"
+    },
     "resource_3b3:02001578": {
       "name": "TakaraHashira_JitterBackgroundScroll",
       "source": "FIELD/TAKARA_HASHIRA/SCROLL_JITTER.C"

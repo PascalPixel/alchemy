@@ -73432,6 +73432,21 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "takara-hashira-cell-attributes",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/TAKARA_HASHIRA/CELL_ATTRIBUTES.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3b3",
+      "absolute_symbols": {},
+      "owners": [
+        {
+          "address": "0x0200101c",
+          "extent": 88,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_3b3:020024cc": {
+      "name": "TakaraHashira_DropActorTen",
+      "source": "FIELD/TAKARA_HASHIRA/DROP_ACTOR_TEN.C"
+    },
     "resource_3b3:0200253c": {
       "name": "TakaraHashira_RunPushScene",
       "source": "FIELD/TAKARA_HASHIRA/PUSH_SCENE.C"

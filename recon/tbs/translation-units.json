@@ -70164,6 +70164,54 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "takara-hashira-drop-actor-ten",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/TAKARA_HASHIRA/DROP_ACTOR_TEN.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3b3",
+      "absolute_symbols": {
+        "Engine_ActorGet": {
+          "address": "0x0200ab1c",
+          "kind": "thumb"
+        },
+        "Engine_EventBegin": {
+          "address": "0x0200ab0c",
+          "kind": "thumb"
+        },
+        "StagedActor_FillGridAttributeRectangle": {
+          "address": "0x02008528",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagIsSet": {
+          "address": "0x0200aaec",
+          "kind": "thumb"
+        },
+        "Engine_EventWait": {
+          "address": "0x0200ab04",
+          "kind": "thumb"
+        },
+        "Engine_AudioPlayCue": {
+          "address": "0x0200abb4",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagSet": {
+          "address": "0x0200aaf4",
+          "kind": "thumb"
+        },
+        "Engine_EventEnd": {
+          "address": "0x0200ab14",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x020024cc",
+          "extent": 112,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

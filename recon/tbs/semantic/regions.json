@@ -1139,7 +1139,7 @@
     {
       "overlay": "resource_378",
       "entry": "0x02000848",
-      "span_bytes": 68
+      "span_bytes": 66
     },
     {
       "overlay": "resource_378",
@@ -5234,7 +5234,7 @@
     {
       "overlay": "resource_39e",
       "entry": "0x02000cd4",
-      "span_bytes": 198
+      "span_bytes": 224
     },
     {
       "overlay": "resource_39e",

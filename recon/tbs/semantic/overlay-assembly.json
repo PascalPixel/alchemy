@@ -508,21 +508,6 @@
     },
     {
       "overlay": "resource_381",
-      "start": "0x02000f64",
-      "end": "0x02000ffc",
-      "kind": "not_yet_decompiled",
-      "retention": "not_yet_c",
-      "confidence": "strong",
-      "evidence": [
-        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
-        "audited 288-byte whole owner in recon/tbs/semantic/regions.json",
-        "inline call at 0x02000ff8 uses mov ip,pc followed by bx r3",
-        "the approved Thumb indirect-call patterns emit bl to a call-via-register thunk and cannot select an IP-linked return ABI",
-        "byte-exact decoded-overlay assembly round trip"
-      ]
-    },
-    {
-      "overlay": "resource_381",
       "start": "0x020010c4",
       "end": "0x02001268",
       "kind": "not_yet_decompiled",
@@ -552,36 +537,6 @@
       ]
     },
     {
-      "overlay": "resource_399",
-      "start": "0x020015b4",
-      "end": "0x020015d4",
-      "kind": "not_yet_decompiled",
-      "retention": "not_yet_c",
-      "confidence": "strong",
-      "evidence": [
-        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
-        "audited 248-byte whole owner in recon/tbs/semantic/regions.json",
-        "inline call at 0x020015d0 uses mov ip,pc followed by bx r3",
-        "the approved Thumb indirect-call patterns emit bl to a call-via-register thunk and cannot select an IP-linked return ABI",
-        "byte-exact decoded-overlay assembly round trip"
-      ]
-    },
-    {
-      "overlay": "resource_39b",
-      "start": "0x02001cb4",
-      "end": "0x02001d44",
-      "kind": "not_yet_decompiled",
-      "retention": "not_yet_c",
-      "confidence": "strong",
-      "evidence": [
-        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
-        "audited 324-byte whole owner in recon/tbs/semantic/regions.json",
-        "two inline calls at 0x02001d40 and 0x02001d94 use mov ip,pc followed by bx r3",
-        "the approved Thumb indirect-call patterns emit bl to a call-via-register thunk and cannot select an IP-linked return ABI",
-        "byte-exact decoded-overlay assembly round trip"
-      ]
-    },
-    {
       "overlay": "resource_39b",
       "start": "0x02002030",
       "end": "0x020021f2",
@@ -592,21 +547,6 @@
         "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
         "audited 832-byte whole owner in recon/tbs/semantic/regions.json",
         "inline call at 0x02002344 uses mov ip,pc followed by bx r3",
-        "the approved Thumb indirect-call patterns emit bl to a call-via-register thunk and cannot select an IP-linked return ABI",
-        "byte-exact decoded-overlay assembly round trip"
-      ]
-    },
-    {
-      "overlay": "resource_39c",
-      "start": "0x02005244",
-      "end": "0x020052d4",
-      "kind": "not_yet_decompiled",
-      "retention": "not_yet_c",
-      "confidence": "strong",
-      "evidence": [
-        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
-        "audited 324-byte whole owner in recon/tbs/semantic/regions.json",
-        "two inline calls at 0x020052d0 and 0x02005324 use mov ip,pc followed by bx r3",
         "the approved Thumb indirect-call patterns emit bl to a call-via-register thunk and cannot select an IP-linked return ABI",
         "byte-exact decoded-overlay assembly round trip"
       ]
@@ -687,34 +627,6 @@
     },
     {
       "overlay": "resource_39b",
-      "start": "0x02001d5a",
-      "end": "0x02001d98",
-      "kind": "not_yet_decompiled",
-      "retention": "not_yet_c",
-      "confidence": "strong",
-      "evidence": [
-        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
-        "second audited executable island of the 0x02001cb4 owner",
-        "the owner uses IP-linked inline calls that the approved Thumb call patterns cannot emit",
-        "byte-exact decoded-overlay assembly round trip"
-      ]
-    },
-    {
-      "overlay": "resource_39b",
-      "start": "0x02001dae",
-      "end": "0x02001de4",
-      "kind": "not_yet_decompiled",
-      "retention": "not_yet_c",
-      "confidence": "strong",
-      "evidence": [
-        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
-        "third audited executable island of the 0x02001cb4 owner",
-        "the owner uses IP-linked inline calls that the approved Thumb call patterns cannot emit",
-        "byte-exact decoded-overlay assembly round trip"
-      ]
-    },
-    {
-      "overlay": "resource_39b",
       "start": "0x02002224",
       "end": "0x02002348",
       "kind": "not_yet_decompiled",
@@ -738,34 +650,6 @@
         "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
         "third audited executable island of the 0x02002030 owner",
         "the owner uses an IP-linked inline call that the approved Thumb call patterns cannot emit",
-        "byte-exact decoded-overlay assembly round trip"
-      ]
-    },
-    {
-      "overlay": "resource_39c",
-      "start": "0x020052ea",
-      "end": "0x02005328",
-      "kind": "not_yet_decompiled",
-      "retention": "not_yet_c",
-      "confidence": "strong",
-      "evidence": [
-        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
-        "second audited executable island of the 0x02005244 owner, containing an IP-linked call",
-        "the approved Thumb indirect-call patterns emit a call-via-register thunk instead",
-        "byte-exact decoded-overlay assembly round trip"
-      ]
-    },
-    {
-      "overlay": "resource_39c",
-      "start": "0x0200533e",
-      "end": "0x02005374",
-      "kind": "not_yet_decompiled",
-      "retention": "not_yet_c",
-      "confidence": "strong",
-      "evidence": [
-        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
-        "third audited executable island of the 0x02005244 owner",
-        "the owner uses IP-linked inline calls that the approved Thumb call patterns cannot emit",
         "byte-exact decoded-overlay assembly round trip"
       ]
     },
@@ -4932,35 +4816,6 @@
       "evidence": [
         "Create two type26 objects at parent coordinates. Copy parent word0x14, clear motion/spin, retain parent pointer at0x68. If sprite exists, reset animation/flags, release old VRAM block, copy current work block, update tile/shape/flip bits and detail byte0x16. Set opposite vertical callbacks, priority1 for both, and second-object priority flags2. Preserve reference final unconditional dereferences.",
         "Complete reviewed extent independently scored as ordinary C; nonexact and retained without handwritten, library, compiler-impossibility or DONE credit."
-      ]
-    },
-    {
-      "overlay": "resource_371",
-      "start": "0x020001c4",
-      "end": "0x0200020c",
-      "kind": "not_yet_decompiled",
-      "retention": "not_yet_c",
-      "confidence": "strong",
-      "evidence": [
-        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
-        "audited 140-byte whole owner in recon/tbs/semantic/regions.json",
-        "inline call at 0x02000208 uses mov ip,pc followed by bx r3",
-        "the approved Thumb indirect-call patterns emit bl to a call-via-register thunk and cannot select an IP-linked return ABI",
-        "byte-exact decoded-overlay assembly round trip"
-      ]
-    },
-    {
-      "overlay": "resource_371",
-      "start": "0x0200023c",
-      "end": "0x02000242",
-      "kind": "not_yet_decompiled",
-      "retention": "not_yet_c",
-      "confidence": "strong",
-      "evidence": [
-        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
-        "second audited executable island of the 0x020001c4 owner",
-        "the owner uses an IP-linked inline call that the approved Thumb call patterns cannot emit",
-        "byte-exact decoded-overlay assembly round trip"
       ]
     },
     {

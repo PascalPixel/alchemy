@@ -19646,7 +19646,8 @@
       "name": "WorldMap_CreateLinkedEffects"
     },
     "resource_371:020001c4": {
-      "name": "WorldMap_UpdateOrbitActor"
+      "name": "WorldMap_UpdateBobbingMarker",
+      "source": "FIELD/WORLD_MAP/BOBBING_MARKER.C"
     },
     "resource_391:02002974": {
       "name": "FieldScene_UpdateFallingEffect",
@@ -20628,6 +20629,60 @@
     "main:0808b98c": {
       "name": "BattleEffect_ClearAllObjects",
       "source": "BATTLE/EFFECT/CLEAR_ALL_OBJECTS.C"
+    },
+    "resource_381:02000f64": {
+      "name": "SoruFunka_ThrowEruptionRing",
+      "source": "FIELD/SORU_FUNKA/ERUPTION_RING.C"
+    },
+    "resource_39e:02000cd4": {
+      "name": "ShianJiin_SpinAway",
+      "source": "FIELD/COMMON/SHIAN_JIIN/SPIN_AWAY.C"
+    },
+    "resource_39c:02005244": {
+      "name": "Makyuri_FollowLeader",
+      "call_via": "02005c6c",
+      "source": "FIELD/COMMON/MAKYURI/FOLLOW_LEADER.C"
+    },
+    "resource_39b:02001cb4": {
+      "name": "Makyuri_FollowLeader",
+      "call_via": "0200261c",
+      "source": "FIELD/COMMON/MAKYURI/FOLLOW_LEADER.C"
+    },
+    "resource_370:020001fc": {
+      "name": "Clear_CheckButtonCodes",
+      "source": "MENU/CLEAR/BUTTON_CODES.C"
+    },
+    "resource_399:020015b4": {
+      "name": "ImiruMura_SwayAndSpark",
+      "source": "FIELD/IMIRU_MURA/SWAY_SPARKS.C"
+    },
+    "resource_370:020011e4": {
+      "name": "Clear_EncodePassword",
+      "source": "MENU/CLEAR/ENCODE_PASSWORD.C"
+    },
+    "resource_36f:02000238": {
+      "name": "Title_RevealSpriteRow",
+      "source": "MENU/TITLE/SPRITE_ROW.C"
+    },
+    "resource_394:02000a90": {
+      "name": "KorimaMagari_PlaceObjects",
+      "source": "FIELD/KORIMA_MAGARI/PLACE_OBJECTS.C"
+    },
+    "resource_370:020002f4": {
+      "name": "Clear_NameEntryCharacter",
+      "source": "MENU/CLEAR/NAME_CHARACTER.C"
+    },
+    "resource_383:02004754": {
+      "name": "KuupuappuHeya_SnapToNearestStop",
+      "source": "FIELD/KUUPUAPPU_HEYA/NEAREST_STOP.C"
+    },
+    "resource_378:02000848": {
+      "name": "ShindenHeya_MatchLeaderPriority",
+      "source": "FIELD/COMMON/SHINDEN_HEYA/LEADER_PRIORITY.C"
+    },
+    "resource_383:020047fc": {
+      "name": "KuupuappuHeya_IsActorNearPoint",
+      "source": "FIELD/KUUPUAPPU_HEYA/ACTOR_NEAR_POINT.C"
     }
   },
   "symbols": {

@@ -31,7 +31,7 @@ struct UiCounterWorkJa {
 #endif
 
 extern void *gWindowWork;
-extern u8 Data_0801789d;
+void UiWork_ProcessAll(void);
 
 s32 Resource_CopyData(s32, s32, s32);
 void ScheduleCallbackAfterFrames(void *, s32);
@@ -91,7 +91,7 @@ void UiWork_InitCountersAndScheduleRefresh(s32 initialize)
     state->second_zero = 0;
     size = 200;
     size <<= 4;
-    ScheduleCallbackAfterFrames(&Data_0801789d, size);
+    ScheduleCallbackAfterFrames(UiWork_ProcessAll, size);
 }
 
 void UiWork_FinalizeSharedSlot(void)

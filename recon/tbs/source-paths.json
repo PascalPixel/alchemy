@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_3c5:02001030": {
+      "name": "BabiIriguchi_JumpFromLedge",
+      "source": "FIELD/BABI_IRIGUCHI/JUMP_FROM_LEDGE.C"
+    },
     "resource_3af:02001684": {
       "name": "FuneKanpan_PlaceRandomDeckActors",
       "source": "FIELD/FUNE_KANPAN/RANDOM_ACTORS.C"

@@ -72882,6 +72882,62 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "babi-iriguchi-jump-from-ledge",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/BABI_IRIGUCHI/JUMP_FROM_LEDGE.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3c5",
+      "absolute_symbols": {
+        "Engine_ActorGet": {
+          "address": "0x0200ae50",
+          "kind": "thumb"
+        },
+        "Engine_EventBegin": {
+          "address": "0x0200ae38",
+          "kind": "thumb"
+        },
+        "Engine_ActorShowEmote": {
+          "address": "0x0200af00",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpeed": {
+          "address": "0x0200ae58",
+          "kind": "thumb"
+        },
+        "Engine_ActorJump": {
+          "address": "0x0200aea0",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetDestinationOffset": {
+          "address": "0x0200ae78",
+          "kind": "thumb"
+        },
+        "Engine_ActorWaitForMove": {
+          "address": "0x0200ae80",
+          "kind": "thumb"
+        },
+        "Engine_ActorFaceDirection": {
+          "address": "0x0200aef0",
+          "kind": "thumb"
+        },
+        "SceneState_ApplyRectsAtActors8And9": {
+          "address": "0x0200a820",
+          "kind": "thumb"
+        },
+        "Engine_EventEnd": {
+          "address": "0x0200ae40",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02001030",
+          "extent": 196,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

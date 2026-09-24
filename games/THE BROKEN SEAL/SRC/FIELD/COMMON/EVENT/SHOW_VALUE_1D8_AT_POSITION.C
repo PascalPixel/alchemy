@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "SYSTEM.H"
 
 struct State_08093168 {
     u8 padding[472];
@@ -8,7 +9,6 @@ struct State_08093168 {
 extern struct State_08093168 *gEventWork;
 extern s32 UiWork_Create(s32, s32, s32, s32);
 extern s32 UiWork_IsIdleFar(s32);
-extern void WaitFrames(s32);
 
 void Event_ShowValue1d8AtPosition(s32 unused0, s32 unused1, s32 x, s32 y)
 {

@@ -6,9 +6,9 @@
 #include "OBJECT_LOOKUP.H"
 #include "FIXED_MATH.H"
 #include "OBJECT_EFFECT.H"
+#include "SYSTEM.H"
 
 /* battle/effects/play_cue_and_start_emitter_on_target.c */
-void WaitFrames(s32);
 extern void Object_SetMode(struct ParticleEffectObject *, s32);
 
 s32 Object_GetById(u32);

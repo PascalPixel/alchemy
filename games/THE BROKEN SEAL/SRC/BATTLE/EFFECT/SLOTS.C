@@ -3,11 +3,11 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "GLOBAL_CELLS.H"
 #include "EFFECT_0809B11C.H"
+#include "SYSTEM.H"
 
 void *Runtime_AllocateHeapBlock(s32, s32);
 void BattleFx_ClearOwnedSlot(struct EffectSlot *);
 void Runtime_ReleaseHeapBlock(s32);
-void WaitFrames(s32);
 
 struct EffectScene {
     u8 unknown_00[0x58];

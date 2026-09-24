@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "SYSTEM.H"
 
 struct EfxSrc {
     u8 pad0[6];
@@ -51,7 +52,6 @@ struct EfxObj *Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);
 void ObjectDispatch_InitializeFar(struct EfxObj *obj, s32 data);
 void Object_Destroy(struct EfxObj *obj);
 void *Runtime_AllocateHeapBlock(s32 kind, s32 size);
-void WaitFrames(s32 frames);
 void ItemIcon_LoadTilesFar(s32 item);
 s32 VramBlock_LoadCached(u32 slot, u32 size, const void *src);
 void Runtime_ReleaseHeapBlock(s32 kind);

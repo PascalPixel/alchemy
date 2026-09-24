@@ -1,12 +1,12 @@
 #include "TYPES.H"
 #include "SCENE.H"
 #include "SOUND_IDS.H"
+#include "SYSTEM.H"
 
 /* menu/selection/loop.c */
 extern u8 *gIw;
 extern u32 gIw2;
 extern volatile u32 gIw3;
-void WaitFrames(s32);
 void Audio_PlayCue(u32);
 void FunctionHead_0801b9ec(void *state, u32 index);
 void Menu_StepRight(void *state);

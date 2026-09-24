@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "SYSTEM.H"
 
 struct BattleEffectScene {
     u8 pad00[16];
@@ -11,7 +12,6 @@ void BattleEffect_InitializeSharedScene(void);
 void *BattleFx_StartItemBreak(void *object);
 void BattleFx_SnapScaleToFull(void *object);
 void Object_SetMode(void *object, s32 mode);
-void WaitFrames(s32 frames);
 void BattleFx_PrepareBufferInterpolation(void);
 void UpdateRisingParticleBurst(void *object);
 

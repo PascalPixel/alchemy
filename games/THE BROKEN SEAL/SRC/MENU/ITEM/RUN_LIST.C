@@ -2,6 +2,7 @@
 #include "BATTLE_TYPES.H"
 #include "GLOBAL_CELLS.H"
 #include "MENU_RESULT.H"
+#include "SYSTEM.H"
 
 struct MenuEntryIcon {
     u8 unknown_00[5];
@@ -47,7 +48,6 @@ struct ItemListWork {
 
 extern struct ItemListWork *gMenuWork;
 
-void WaitFrames(s32 frames);
 s32 Math_Mod(s32 value, s32 divisor);
 void AnimationObjects_SelectAnimationFar(s32 object, s32 mode);
 void Func_08015068(s32 window, s32 x, s32 y, s32 width, s32 height);
@@ -90,7 +90,6 @@ s32 ItemMenu_PageResult(struct MenuResult *result, s32 pane);
 s32 ItemMenu_DrawItemDetailPage(s32 window, s32 *work, struct MenuResult *result);
 s32 ItemMenu_DrawNamePage(s32 window, s32 unused, struct MenuResult *result);
 s32 Item_CanOwnerEquip(s32 owner, s32 item);
-
 
 #define ITEM_ID_MASK 0x1ff
 #define LIST_PAGE_SIZE 5

@@ -1,11 +1,11 @@
 #include "FIXED_MATH.H"
 #include "TYPES.H"
+#include "SYSTEM.H"
 
 void Blend_SetDarkenTarget16(s32 arg0);
 u32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 #define Rand Random16
-void WaitFrames(s32);
 
 s32 BattlePres_RunMosaicFadeOut(void)
 {

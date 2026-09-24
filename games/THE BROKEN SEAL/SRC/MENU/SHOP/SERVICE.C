@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "SYSTEM.H"
 
 struct ShopServiceWork {
     u8 unk_000[0x380];
@@ -21,7 +22,6 @@ void UiWork_FinalizePending(void);
 s32 Shop_MsgByMode(s32 value);
 void UiWork_Create(s32, s32, s32, s32);
 s32 UiWork_IsCompleteFar(void);
-void WaitFrames(u32);
 
 s32 Shop_ServicePrice(s32 entry_no, s32 kind)
 {

@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "SYSTEM.H"
 
 struct Runtime_080931ec {
     u8 unknown_000[0x1d8];
@@ -16,7 +17,6 @@ s32 UiWork_IsCompleteFar(void);
 s32 UiWork_IsIdleFar(s32);
 void UiWork_FinalizeEntityMatchingLocalizedIdFar(s32);
 void UiWork_FinalizePending(void);
-void WaitFrames(s32);
 
 void Battle_ShowPairedUnitWorkAndWait(
     s32 first, s32 first_x, s32 first_y, s32 first_arg,

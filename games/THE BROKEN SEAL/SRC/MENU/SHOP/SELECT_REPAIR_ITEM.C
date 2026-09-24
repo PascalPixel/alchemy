@@ -1,11 +1,10 @@
 #include "SHOP.H"
 #include "BATTLE_RUNTIME.H"
 #include "SOUND_IDS.H"
-
+#include "SYSTEM.H"
 
 s32 Modulo(s32, s32);
 s32 FixedPoint_Ratio(s32, s32);
-void WaitFrames(s32);
 s32 UiWindow_CreateFar(s32, s32, s32, s32, s32);
 void UiWindow_Close(s32, s32);
 s32 Ability_GetAvailability(s32);

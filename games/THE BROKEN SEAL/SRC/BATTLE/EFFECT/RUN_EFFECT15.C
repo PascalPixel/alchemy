@@ -3,6 +3,7 @@
 #include "FIXED_MATH.H"
 #include "EFFECT_0809B11C.H"
 #include "OBJECT_LOOKUP.H"
+#include "SYSTEM.H"
 
 /* battle/effects/runtime/upd/update_spin_angle.c */
 void BattleFx_UpdateSpinAngle(void *object)
@@ -122,13 +123,11 @@ struct EffectObject {
     void (*callback)(void);
 };
 
-
 extern u8 gGameState[];
 
 void Battle_Reset(void);
 void place_within_camera_bounds(s32, s32, s32, s32);
 void BattleEffect_InitializeSharedScene(void);
-void WaitFrames(s32);
 void ObjectMotion_ArmCallback(s32, s32, s32);
 void Audio_PlayCue(s32);
 void Object_SetMode(void *, s32);
@@ -139,9 +138,6 @@ u32 Random16(void);
 void ObjectGroup_SetChildValueUnlessFifteenFar(void *, s32);
 void BattleFx_PrepareBufferInterpolation(void);
 void apply_random_child_values(void);
-
-
-
 
 void BattleFx_RunEffect15(void)
 {

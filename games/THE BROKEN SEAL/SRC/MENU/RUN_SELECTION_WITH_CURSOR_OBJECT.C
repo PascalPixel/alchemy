@@ -1,9 +1,9 @@
 #include "TYPES.H"
+#include "SYSTEM.H"
 
 s32 UiWindow_Create(s32, s32, s32, s32, s32);
 void Menu_DrawFlagBitTable(s32, s32);
 void UiTextResource_Initialize(struct Object_0801c0dc *obj, s32 *slot);
-void WaitFrames(s32);
 s32 Func_0802938c(s32, s32 *, s32 *);
 void UiTextResource_SetPosition(struct Obj *obj, s32 arg1, s32 arg2);
 void UiTextResource_Release(s32);

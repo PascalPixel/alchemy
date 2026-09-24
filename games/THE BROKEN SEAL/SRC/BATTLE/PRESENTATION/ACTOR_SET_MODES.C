@@ -1,8 +1,8 @@
 #include "TYPES.H"
 #include "SCENE.H"
+#include "SYSTEM.H"
 
 extern u8 *gBattleWork;
-void WaitFrames(s32);
 
 void BattlePres_SetActorModes(u16 *actors, s32 mode)
 {

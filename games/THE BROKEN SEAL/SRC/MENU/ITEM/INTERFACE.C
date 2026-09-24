@@ -3,7 +3,7 @@
 #include "OBJECT_FACTORY.H"
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
-
+#include "SYSTEM.H"
 
 s32 UiMenu_CreateCursor(void *menu);
 void InitializeEntryObjects(s32 source, s32 x, s32 y, s32 spacing, s32 style);
@@ -33,7 +33,6 @@ void ItemMenu_Init(void)
         *(u8 *)((u8 *)menu + 275) = style;
     }
 }
-
 
 void Menu_SpawnIconEntries(struct State080a8088 *state, s32 arg1)
 {
@@ -72,7 +71,6 @@ void Menu_SpawnIconEntries(struct State080a8088 *state, s32 arg1)
     } while (index2 <= 31);
 }
 
-
 void ItemMenu_HideAllIcons(void)
 {
     s32 hidden_state = 13;
@@ -106,8 +104,6 @@ void ItemMenu_HidePageIcons(void)
     } while (slot <= 31);
 }
 
-
-void WaitFrames(s32);
 void UiWindow_CloseIfOpen(void *, s32);
 void Menu_ReleaseEntryObjects(void);
 

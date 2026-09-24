@@ -1,5 +1,6 @@
 #include "FIXED_MATH.H"
 #include "TYPES.H"
+#include "SYSTEM.H"
 
 #define FIELD_S32(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
 #define OBJECT_X(object) FIELD_S32(object, 0x08)
@@ -48,7 +49,6 @@ extern const u8 Data_0809fbec[];
 extern const u8 Data_0809fc04[];
 s32 Object_GetById(u32);
 void Audio_PlayCue(s32);
-void WaitFrames(u32);
 void Object_SetPosition(void *, s32, s32, s32);
 void ObjectMotion_ArmCallback(s32 arg0, s32 arg1, s32 arg2);
 void Object_CommitPosition(void *);

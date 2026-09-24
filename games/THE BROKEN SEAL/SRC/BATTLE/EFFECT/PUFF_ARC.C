@@ -2,7 +2,7 @@
 #include "BATTLE_EFFECT_WORK.H"
 #include "BATTLE_EFX.H"
 #include "CALLBACK_SCHEDULER.H"
-
+#include "SYSTEM.H"
 
 /* Six drawn arguments: destination, source cell, x, y, width, height.
    The reference calls it through the r4 bx bank, so it is an indirect
@@ -23,7 +23,6 @@ void Audio_PlayCue(s32);
 void BattleEventRuntime_BeginPhaseFar(s32);
 void ObjectGroup_UpdateMembers(s32, s32, s32, s32, s32);
 void ObjectGroup_TickMemberTimers(void);
-void WaitFrames(s32);
 void Runtime_ReleaseHeapBlock(s32);
 s32 Func_080cdbc0(void);
 

@@ -1,9 +1,9 @@
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
+#include "SYSTEM.H"
 
 #define FIELD_AT_OFFSET(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
-void WaitFrames(u32);
 void ScheduleCallback(void *);
 s32 BattleEventRuntime_Reset(void);
 void BattleEvent_Playback(void);

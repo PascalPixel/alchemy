@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "SYSTEM.H"
 
 extern u8 Value_0000000a[];
 extern u8 Value_0000000b[];
@@ -14,7 +15,6 @@ void SaveState_LoadSummaryRecords(void);
 s32 Func_08020244(s16 a, s32 b);
 void UiText_ShowPositionedMessageAndWait(s32 msg, s32 mode);
 s32 UiWork_IsComplete(void);
-void WaitFrames(s32 frames);
 s32 Menu_RunConfirmSelection(s32 a, s32 b, s32 c, s32 d);
 void UiWork_FinalizePendingCore(void);
 void Audio_PlayCue(u8 mode);

@@ -1,10 +1,10 @@
 #include "TYPES.H"
+#include "SYSTEM.H"
 
 u8 *Runtime_GetObject(s32);
 s32 *GetBattleObjectSlot(s32);
 u8 *GetMotionRecord(s32, s32);
 void Object_InitializeMode(void *, s32);
-void WaitFrames(s32);
 void Func_080bac6c(s32);
 void Map_RenderAllAnimatedTileFramesFar(void **, s32);
 void ActivateBattleObjectSlot(s32);

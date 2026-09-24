@@ -1,11 +1,11 @@
 #include "INVENTORY_MENU.H"
+#include "SYSTEM.H"
 
 void RenderOutput_ClearListFar(s32);
 void Func_080a1ac0(s32, s32);
 s32 Runtime_GetObject(s32);
 s32 Func_080a35f8(void *, void *);
 void UiIcon_PrepareObject(void *icon);
-void WaitFrames(s32);
 
 s32 ItemMenu_PrepOwner(s32 party_slot)
 {

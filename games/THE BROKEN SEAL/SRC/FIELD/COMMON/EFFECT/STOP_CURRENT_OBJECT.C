@@ -1,12 +1,12 @@
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
+#include "SYSTEM.H"
 
 struct EffectObjectWork {
     u8 unknown_00[0x10];
     u8 *object;
 };
 
-void WaitFrames(s32);
 void Animation_ApplyChildValuesFar(void *, s32);
 
 void EffectRuntime_StopCurrentObject(void)

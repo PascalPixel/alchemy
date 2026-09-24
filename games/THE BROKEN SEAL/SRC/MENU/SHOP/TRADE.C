@@ -2,8 +2,7 @@
 #include "BATTLE_RUNTIME.H"
 #include "TBS_EDITION.H"
 #include "SOUND_IDS.H"
-
-
+#include "SYSTEM.H"
 
 s32 Inventory_AddItemFar(s32, s32);
 s32 Inventory_FindEquippedFar(s32, u8);
@@ -40,10 +39,6 @@ void Shop_BuyDone(s32 unit_id, s32 item_id, s32 quantity)
     }
 }
 
-
-
-
-
 s32 Item_CanOwnerEquip(s32 unit_id, s32 item_id);
 s32 Inventory_FindEquippedFar(s32 unit_id, u8 kind);
 void Inventory_EquipFar(s32 unit_id, s32 slot);
@@ -55,7 +50,6 @@ void Audio_PlayCue(s32 cue);
 void UiWork_FinalizePendingCoreFar(void);
 s32 Func_08015038(s32 a, s32 b, s32 c, s32 d);
 s32 UiWork_IsCompleteFar(void);
-void WaitFrames(s32 frames);
 
 extern struct ShopRuntime *gMenuWork;
 extern char Value_00000ca2;
@@ -108,9 +102,6 @@ s32 Shop_ConfirmEquip(s32 unit_id, s32 slot)
     return 1;
 }
 
-
-
-
 void Func_080b1f4c(s32, s32, s32);
 
 s32 Shop_SellOld(s32 unit_id, s32 slot)
@@ -138,8 +129,6 @@ s32 Shop_SellOld(s32 unit_id, s32 slot)
     return 1;
 }
 
-
-
 s32 Shop_SalePrice(s32 item_id)
 {
     s32 price;
@@ -156,10 +145,6 @@ s32 Shop_SalePrice(s32 item_id)
     return price;
 }
 
-
-
-
-
 #if defined(TBS_EDITION_JA)
 #define BASE_W 11
 #else
@@ -167,7 +152,6 @@ s32 Shop_SalePrice(s32 item_id)
 #endif
 
 s32 Modulo(s32, s32);
-void WaitFrames(s32);
 s32 UiWindow_CreateFar(s32, s32, s32, s32, s32);
 void UiWindow_Close(s32, s32);
 s32 Ability_GetAvailability(s32);
@@ -252,11 +236,6 @@ s32 Shop_PickUnit(void)
         WaitFrames(1);
     }
 }
-
-
-
-
-
 
 s32 FixedPoint_Ratio(s32, s32);
 void UiMessage_ShowAndWait(s32);
@@ -376,9 +355,6 @@ done:
     return result;
 }
 
-
-
-
 extern u8 Value_00000c91;
 
 void UiWindow_Clear(s32 window);
@@ -427,10 +403,6 @@ void Shop_DrawUnitGrid(s32 window, s32 unit_id)
         }
     }
 }
-
-
-
-
 
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_FR)
 #define EFFECT_X 0x78

@@ -3,6 +3,7 @@
 #include "SOUND_IDS.H"
 #include "GLOBAL_CELLS.H"
 #include "FIXED_MATH.H"
+#include "SYSTEM.H"
 
 /* battle/effects/scene_transition/reset.c */
 typedef struct {
@@ -23,7 +24,6 @@ typedef struct {
     u8 transition_phase;
 } SceneTransitionScene;
 
-void WaitFrames(s32);
 void ScheduleCallback(void (*callback)(void));
 void *FunctionHead_0808e4b4(u32 kind, u32 entry_index, s32 *size);
 void BattleFx_ApplyColorToTargetBuffer(u32 battle_value, s32 enabled);

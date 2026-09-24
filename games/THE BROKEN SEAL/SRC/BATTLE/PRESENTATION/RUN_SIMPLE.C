@@ -4,6 +4,7 @@
 #include "BATTLE_MOTION.H"
 #include "BATTLE_COMMAND.H"
 #include "BATTLE_RUNTIME.H"
+#include "SYSTEM.H"
 
 /* battle/run_simple_presentation.c */
 struct SimplePresentationInput {
@@ -49,7 +50,6 @@ extern s32 *gIw;
 
 struct PresentationObjectSlot *GetBattleObjectSlot(s32 id);
 s32 ArcTan2(s32 first, s32 second);
-void WaitFrames(s32);
 
 struct BattleUnit *Runtime_GetObject(s32 id);
 struct MotionRecord *GetMotionRecord(

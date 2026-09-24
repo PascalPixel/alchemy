@@ -3,6 +3,7 @@
 #include "GLOBAL_CELLS.H"
 #include "OBJECT_EFX.H"
 #include "FIXED_MATH.H"
+#include "SYSTEM.H"
 
 /* battle/effects/orbiting_particles/update_main.c */
 struct OrbitingParticle;
@@ -43,7 +44,6 @@ struct OrbitingParticleVector {
     s32 y;
     s32 z;
 };
-
 
 void RotateVectorByMagnitude(s32, s32, struct OrbitingParticleVector *);
 void BattleFx_UpdateOrbitingParticleFade(void *object);
@@ -170,7 +170,6 @@ struct OrbitingParticleGlobals {
 
 extern struct OrbitingParticleGlobals gCell;
 
-void WaitFrames(s32);
 u32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 #define Rand Random16

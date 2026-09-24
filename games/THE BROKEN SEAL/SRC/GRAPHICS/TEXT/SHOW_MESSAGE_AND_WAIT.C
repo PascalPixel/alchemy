@@ -1,6 +1,6 @@
 #include "TYPES.H"
+#include "SYSTEM.H"
 
-void WaitFrames(s32);
 s32 UiWork_IsComplete(void);
 void UiText_ShowMessageAndWaitCore(s32 argument)
 {

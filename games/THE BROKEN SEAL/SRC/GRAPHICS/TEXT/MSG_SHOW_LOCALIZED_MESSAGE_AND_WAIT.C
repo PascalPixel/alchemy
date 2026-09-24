@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "SCENE.H"
 #include "TBS_EDITION.H"
+#include "SYSTEM.H"
 
 #if defined(TBS_EDITION_JA)
 #define TEXT_COUNT 32
@@ -8,7 +9,6 @@
 #define TEXT_COUNT 52
 #endif
 
-void WaitFrames(s32);
 s32 UiWindow_Create(s32, s32, s32, s32, s32);
 void UiWork_Finalize(struct Work *work, s32 release);
 

@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "SYSTEM.H"
 
 #define FIELD(ptr, type, offset) (*(type *)((u8 *)(ptr) + (offset)))
 
@@ -11,7 +12,6 @@ extern struct MenuObjectControl *gMenuCtrlWork;
 
 s32 Runtime_AllocateHeapBlock(s32 kind, s32 size);
 void Func_08015408(s32 x, s32 y, s32 width, s32 height);
-void WaitFrames(s32 frames);
 void UiWindow_InitializeWork(s32 unused);
 s32 Party_ListActiveOwnersFar(const u16 *ids);
 void ItemMenu_Init(s32, s32, s32, s32);

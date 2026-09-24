@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "SYSTEM.H"
 
 /* Convert the tiled background through a blue palette ramp. Each screen
  * column begins after its random delay; the row budget grows each frame.
@@ -13,7 +14,6 @@ static __inline__ void CopyWords(WordCopy copy, void *destination,
 }
 extern u8 gWorkSlot[];
 #define PIXEL_BUFFER ((u8 *)0x02010000)
-void WaitFrames(s32);
 u32 Random16(void);
 
 void Graphics_ConvertBackgroundToBlueRamp(void)

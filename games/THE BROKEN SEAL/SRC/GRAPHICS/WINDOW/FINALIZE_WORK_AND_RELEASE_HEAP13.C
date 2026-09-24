@@ -1,11 +1,11 @@
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
+#include "SYSTEM.H"
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 void UiWork_Finalize(struct Work *work, s32 release);
 s32 UiWork_IsIdle(void *arg0);
-void WaitFrames(s32);
 s32 Resource_ResetEntry(u32 index);
 void Runtime_ReleaseHeapBlock(s32);
 

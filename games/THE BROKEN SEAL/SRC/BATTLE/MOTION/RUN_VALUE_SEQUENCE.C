@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "SYSTEM.H"
 
 struct ObjectSlot_080babdc {
     void *object;
@@ -16,7 +17,6 @@ struct ObjectSlot_080babdc *GetBattleObjectSlot(s32 id);
 void Object_SetMode(void *object, s32 mode);
 void Func_080152b8(u16 *selection);
 void BattleMotion_SetRecordChildValues(void *object, s32 value);
-void WaitFrames(s32 frames);
 s32 BattleMotion_GetSlotField14(s32 id);
 void Func_08015130(s32 mode);
 

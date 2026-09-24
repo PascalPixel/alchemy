@@ -1,7 +1,7 @@
 #include "TYPES.H"
 #include "BATTLE_EFX.H"
 #include "CALLBACK_SCHEDULER.H"
-
+#include "SYSTEM.H"
 
 /*
  * Battle-presentation sub-effect at 0x080e0c84.
@@ -38,7 +38,6 @@
  * otherwise fit an 8-bit `movs` immediate.
  */
 
-
 typedef struct {
     s32 x;
     s32 y;
@@ -73,7 +72,6 @@ void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 void BattleMotion_ApplyVariantMotionFar(s32 member_id, s32 b);
 void Camera_ApplyShake(s32 a, s32 b);
 void ObjectGroup_TickMemberTimers(void);
-void WaitFrames(s32 frames);
 void Runtime_ReleaseHeapBlock(s32 id);
 void Func_080cdbc0(void);
 

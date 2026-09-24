@@ -1,9 +1,9 @@
 #include "TYPES.H"
 #include "SCENE.H"
 #include "RESOURCE.H"
+#include "SYSTEM.H"
 
 extern volatile u32 gIw;
-void WaitFrames(s32);
 
 void Runtime_IdleForever(void)
 {

@@ -1,12 +1,12 @@
 #include "TYPES.H"
 #include "SCENE.H"
 #include "SOUND_IDS.H"
+#include "SYSTEM.H"
 
 /* battle/effects/item_break/spawn_mode_1.c */
 void Audio_PlayCue(s32);
 void *Object_Spawn(s32, s32, s32, s32);
 void Object_SetMode(void *, s32);
-void WaitFrames(s32);
 
 void *SpawnItemBreakEffectMode1(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 {

@@ -2,6 +2,7 @@
 #include "DMA.H"
 #include "BATTLE_EFX.H"
 #include "CALLBACK_SCHEDULER.H"
+#include "SYSTEM.H"
 
 /* Nested particle allocators capture this sequence's work block. */
 
@@ -34,7 +35,6 @@ extern struct Cells03001ce0 Data_03001ce0;
    biased literal. */
 extern u16 Data_080ede48[];
 
-
 void *Func_08009030(s32);
 void **GetBattleObjectSlotFar(s32);
 void Func_080cd594(s32);
@@ -45,7 +45,6 @@ void Unnamed_080cd104(s32, s32);
 void AnimationObjects_SelectAnimationFar(void *, s32);
 void BattleFx_SpawnObjects(s32, s32, s32);
 void *Resource_GetTableEntry(s32);
-void WaitFrames(s32);
 s32 Random16(void);
 void BattleFx_SelectLivingTargets(s32);
 void Func_08009008(s32, void *, void *, s32);
@@ -236,8 +235,6 @@ s32 BattleEffect_RunParticleStreams(s32 arg0, s32 arg1)
     s32 sp60[3];
     s32 sp58[2];
     s32 sp50[2];
-
-
 
     cursor = &gWorkSlot[40];
     sp4C = arg1;

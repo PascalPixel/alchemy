@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "PSYNERGY_MENU.H"
+#include "SYSTEM.H"
 
 /* menu/psynergy_menu/classify_selected_psynergy.c */
 u8 *Ability_GetData(s32 action);
@@ -38,7 +39,6 @@ void *Runtime_GetObject(s32);
 s32 FunctionHead_080a1ac0(s32, s32);
 s32 FunctionHead_080a60d4(void *, void *);
 void UiIcon_PrepareObject(void *cursor);
-void WaitFrames(s32);
 
 s32 PsynergyMenu_SelectPartySlot(s32 party_slot)
 {

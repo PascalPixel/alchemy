@@ -3,6 +3,7 @@
 #include "RUNTIME_INTERFACES.H"
 #include "TBS_EDITION.H"
 #include "GLOBAL_CELLS.H"
+#include "SYSTEM.H"
 
 /* save/state/confirm_and_process_selected_slot.c */
 /* save/state/state_confirm_and_process_selected_slot.c */
@@ -11,7 +12,6 @@ extern u8 Value_00000014;
 extern u8 Value_00000017;
 
 s32 UiWork_IsComplete(void);
-void WaitFrames(s32);
 
 void UiWork_FinalizePendingCore(void);
 void Audio_PlayCue(s32);
@@ -96,8 +96,6 @@ s32 SaveState_CopySlotPair(void)
 /* save/state/delete_selected_slot.c */
 extern u8 Value_00000016;
 extern u8 Value_00000018;
-
-
 
 s32 SaveState_DeleteSelectedSlot(void)
 {

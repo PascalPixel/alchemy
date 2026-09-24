@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
+#include "SYSTEM.H"
 
 struct Work {
     u8 padding00[0x14];
@@ -14,7 +15,6 @@ struct FinalizeWorkSlot {
 };
 
 void UiWork_Finalize(void *work, s32 release);
-void WaitFrames(u32);
 
 void UiWork_FinalizePendingCore(void)
 {

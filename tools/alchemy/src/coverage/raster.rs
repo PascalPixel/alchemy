@@ -2,7 +2,7 @@
 //! colours, glyphs from the tracked sheet, written as an indexed PNG at
 //! `FIGURE_SCALE` device pixels per game pixel, dated by its tIME chunk
 //! (the only standard chunk the publication check lets a date ride in).
-use super::letters::{Letters, LINE};
+use super::letters::Letters;
 
 pub(crate) type Rgb = [u8; 3];
 
@@ -82,8 +82,8 @@ impl Canvas {
             }
         }
     }
-    /// Text with its top at `y`, each glyph's ink in `color` over a shadow
-    /// one pixel down and right; returns the advance.
+    /// Text in a line box whose top is `y`, each glyph's ink in `color` over
+    /// a shadow one pixel down and right; returns the advance.
     pub(crate) fn text(
         &mut self,
         letters: &Letters,
@@ -101,10 +101,11 @@ impl Canvas {
             let mut at = x;
             for character in text.chars() {
                 let frame = letters.stand_in(character);
-                for row in 0..LINE {
-                    for column in 0..LINE {
+                let top = y + letters.top as i32 + dx;
+                for row in 0..letters.cell.1 {
+                    for column in 0..letters.cell.0 {
                         if letters.ink(frame, column, row) {
-                            self.fill(at + column as i32 + dx, y + row as i32 + dx, 1, 1, ink);
+                            self.fill(at + column as i32 + dx, top + row as i32, 1, 1, ink);
                         }
                     }
                 }

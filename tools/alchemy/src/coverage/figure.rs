@@ -4,12 +4,13 @@
 //! Both are opaque, so they read the same on light and dark pages.
 use super::boxtree::{
     color, content_mix, content_style, directories, disk_tiles, display_bytes, legend_items, quiet,
-    source_name, tracked_only, BEVEL_DARK, BEVEL_LIGHT, CHART_BACKGROUND, DISPLAY_CATEGORIES,
+    source_name, tracked_only, DISPLAY_CATEGORIES,
 };
-use super::history::{day_number, percent};
+use super::history::{day_number, percent, UNTAGGED};
 use super::jsnum::commas;
 use super::letters::{Letters, LINE};
 use super::model::{treemap, Category, Rect, Tile};
+use super::palette::{BAND, BLUE, DARK, FACE, GOLD, GRID, INK, LIGHT, MUTED, SHADOW, WELL};
 use super::raster::Canvas;
 use serde_json::Value;
 use std::path::Path;
@@ -18,26 +19,15 @@ use std::path::Path;
 pub(crate) const WIDTH: i32 = 830;
 pub(crate) const CHART: &str = "PROGRESS_CHART.png";
 pub(crate) const MAP: &str = "PROGRESS.png";
-const INK: &str = "#fff";
-const SHADOW: &str = "#000";
-/// The Broken Seal in gold, The Lost Age in a pale window blue; the plot is
-/// a darker teal well with quiet grid lines and lighter stricter-rule days.
-const GOLD: &str = "#f4c84f";
-const BLUE: &str = "#a8c4f8";
-const WELL: &str = "#17606f";
-const GRID: &str = "#246f7e";
-const STRICTER: &str = "#3a8c9c";
-const MUTED: &str = "#b4ccd2";
-
 // ------------------------------------------------------------------ chart
 
 /// The daily chart of `history`: x is calendar days since the project
 /// began, y is 0–100%, stricter-rule days are light bands, and today's
 /// values are labelled at the right end.
 pub(crate) fn chart(letters: &Letters, history: &Value) -> Canvas {
-    let height = 256;
-    let mut canvas = Canvas::new(WIDTH, height, CHART_BACKGROUND);
-    canvas.bevel(0, 0, WIDTH, height, BEVEL_LIGHT, BEVEL_DARK);
+    let height = 296;
+    let mut canvas = Canvas::new(WIDTH, height, FACE);
+    canvas.bevel(0, 0, WIDTH, height, LIGHT, DARK);
     let began = history["began"]
         .as_str()
         .and_then(day_number)
@@ -74,7 +64,7 @@ pub(crate) fn chart(letters: &Letters, history: &Value) -> Canvas {
     let stricter = "Stricter rules";
     key_x -= letters.width(stricter) as i32;
     canvas.text(letters, key_x, 6, stricter, INK, Some(SHADOW));
-    canvas.fill(key_x - 14, 9, 10, 10, STRICTER);
+    canvas.fill(key_x - 14, 9, 10, 10, BAND);
     // The plot well.
     let label_room = latest
         .iter()
@@ -84,7 +74,7 @@ pub(crate) fn chart(letters: &Letters, history: &Value) -> Canvas {
         .unwrap_or(0)
         + 12;
     let (left, top) = (40, 32);
-    let (right, bottom) = (WIDTH - 8 - label_room, height - 32);
+    let (right, bottom) = (WIDTH - 8 - label_room, height - 72);
     let (plot_w, plot_h) = (right - left, bottom - top);
     let span = (last - began) as i32;
     let x_of = |day: i64| left + ((day - began) as i32 * (plot_w - 1) + span / 2) / span;
@@ -96,8 +86,8 @@ pub(crate) fn chart(letters: &Letters, history: &Value) -> Canvas {
         if let Some(day) = change["date"].as_str().and_then(day_number) {
             // The band covers the step into the stricter day.
             let (from, to) = (x_of(day - 1) + 1, x_of(day) + 1);
-            canvas.fill(from, top + 1, to - from, plot_h - 2, STRICTER);
-            canvas.fill(from, top - 4, to - from, 3, STRICTER);
+            canvas.fill(from, top + 1, to - from, plot_h - 2, BAND);
+            canvas.fill(from, top - 4, to - from, 3, BAND);
         }
     }
     for quarter in 0..=4 {
@@ -117,14 +107,7 @@ pub(crate) fn chart(letters: &Letters, history: &Value) -> Canvas {
             Some(SHADOW),
         );
     }
-    canvas.bevel(
-        left - 1,
-        top - 1,
-        plot_w + 2,
-        plot_h + 2,
-        BEVEL_DARK,
-        BEVEL_LIGHT,
-    );
+    canvas.bevel(left - 1, top - 1, plot_w + 2, plot_h + 2, DARK, LIGHT);
     // Month starts, and the first day, along the bottom.
     let mut labelled_until = i32::MIN;
     for day in began..=last {
@@ -141,6 +124,13 @@ pub(crate) fn chart(letters: &Letters, history: &Value) -> Canvas {
             labelled_until = at + width;
         }
     }
+    models_strip(
+        &mut canvas,
+        letters,
+        &days,
+        (left, right, bottom + 24),
+        &x_of,
+    );
     // The lines, then today's values beside their ends.
     let mut ends = Vec::new();
     for ((key, _, ink), label) in series.iter().zip(&latest) {
@@ -174,6 +164,79 @@ pub(crate) fn chart(letters: &Letters, history: &Value) -> Canvas {
     canvas
 }
 
+/// Each model's colour in the strip: quiet tones of the file palette, grey
+/// for commits that name no model.
+const MODEL_COLOURS: [(&str, &str); 10] = [
+    ("Opus 5.5", "#e8a6d3"),
+    ("Opus 5", "#b5a0de"),
+    ("Opus 4.8", "#9aa4c2"),
+    ("Fable 5.1", "#81d6b2"),
+    ("Fable 5", "#b5cc82"),
+    ("Sonnet 5", "#8fb7ec"),
+    ("Claude", "#c9e1dc"),
+    ("Codex", "#efbb82"),
+    ("Cursor", "#f29b91"),
+    (UNTAGGED, "#7f9ea6"),
+];
+/// A thin strip under the date axis, a column per day stacked by the day's
+/// share of commits per model, and a one-line key of the models it shows.
+fn models_strip(
+    canvas: &mut Canvas,
+    letters: &Letters,
+    days: &[Value],
+    (left, right, top): (i32, i32, i32),
+    x_of: &dyn Fn(i64) -> i32,
+) {
+    const HEIGHT: i32 = 8;
+    let dated = days
+        .iter()
+        .filter_map(|row| {
+            Some((
+                row["date"].as_str().and_then(day_number)?,
+                row["models"].as_object()?,
+            ))
+        })
+        .collect::<Vec<_>>();
+    canvas.fill(left - 1, top - 1, right - left + 2, HEIGHT + 2, DARK);
+    let mut shown = std::collections::BTreeSet::new();
+    for (day, models) in &dated {
+        // Each column spans halfway to its neighbouring days.
+        let (from, to) = (
+            ((x_of(*day - 1) + x_of(*day)) / 2 + 1).max(left),
+            ((x_of(*day) + x_of(*day + 1)) / 2 + 1).min(right),
+        );
+        let total: u64 = models.values().filter_map(Value::as_u64).sum();
+        let mut below = 0u64;
+        for (model, colour) in MODEL_COLOURS {
+            let Some(count) = models.get(model).and_then(Value::as_u64).filter(|n| *n > 0) else {
+                continue;
+            };
+            shown.insert(model);
+            let y0 = top + HEIGHT - (below * HEIGHT as u64 / total) as i32;
+            below += count;
+            let y1 = top + HEIGHT - (below * HEIGHT as u64 / total) as i32;
+            canvas.fill(from, y1, (to - from).max(1), y0 - y1, colour);
+        }
+    }
+    let mut x = left;
+    for (model, colour) in MODEL_COLOURS
+        .iter()
+        .filter(|(model, _)| shown.contains(model))
+    {
+        canvas.fill(x, top + HEIGHT + 8, 8, 8, SHADOW);
+        canvas.fill(x - 1, top + HEIGHT + 7, 8, 8, colour);
+        x +=
+            12 + canvas.text(
+                letters,
+                x + 12,
+                top + HEIGHT + 4,
+                model,
+                MUTED,
+                Some(SHADOW),
+            ) + 12;
+    }
+}
+
 // -------------------------------------------------------------------- map
 
 /// The tracked files of the Camelot-shaped trees and `recon/`, by size on
@@ -183,7 +246,7 @@ pub(crate) fn map(letters: &Letters, root: &Path) -> Canvas {
 }
 pub(crate) fn map_of(letters: &Letters, tiles: Vec<Tile>) -> Canvas {
     let height = (WIDTH * 16 + 8) / 9;
-    let mut canvas = Canvas::new(WIDTH, height, CHART_BACKGROUND);
+    let mut canvas = Canvas::new(WIDTH, height, FACE);
     let total: i64 = tiles.iter().map(|tile| tile.bytes).sum();
     let legend = legend_items(&tiles.iter().collect::<Vec<_>>())
         .into_iter()
@@ -235,7 +298,7 @@ pub(crate) fn map_of(letters: &Letters, tiles: Vec<Tile>) -> Canvas {
         canvas.text(letters, x + 20, y, &label, INK, Some(SHADOW));
         x += entry(&label);
     }
-    canvas.bevel(0, 0, WIDTH, height, BEVEL_LIGHT, BEVEL_DARK);
+    canvas.bevel(0, 0, WIDTH, height, LIGHT, DARK);
     canvas
 }
 
@@ -295,8 +358,8 @@ fn draw(
         };
         let expanded = container && body.2 >= 44 && body.3 >= 34;
         if expanded {
-            canvas.fill(cell.0, cell.1, cell.2, cell.3, CHART_BACKGROUND);
-            canvas.bevel(cell.0, cell.1, cell.2, cell.3, BEVEL_LIGHT, BEVEL_DARK);
+            canvas.fill(cell.0, cell.1, cell.2, cell.3, FACE);
+            canvas.bevel(cell.0, cell.1, cell.2, cell.3, LIGHT, DARK);
         } else {
             stack(canvas, tile, body);
         }
@@ -470,14 +533,8 @@ mod tests {
         );
         assert_eq!((canvas.width, canvas.height), (830, 1476));
         // The outer frame's bevel, and the games folder's own at its corner.
-        assert_eq!(
-            canvas.get(0, 0),
-            Some(super::super::raster::rgb(BEVEL_LIGHT))
-        );
-        assert_eq!(
-            canvas.get(4, 32),
-            Some(super::super::raster::rgb(BEVEL_LIGHT))
-        );
+        assert_eq!(canvas.get(0, 0), Some(super::super::raster::rgb(LIGHT)));
+        assert_eq!(canvas.get(4, 32), Some(super::super::raster::rgb(LIGHT)));
         let png = canvas.png(2, "2026-09-24").unwrap();
         let again = map_of(
             &letters,
@@ -492,17 +549,27 @@ mod tests {
             {"date": "2026-07-16", "tbs": {"percent": 1.0}},
             {"date": "2026-09-09", "tbs": {"percent": 44.0}},
             {"date": "2026-09-18", "tbs": {"percent": 56.0}, "tla": {"percent": 0.2}},
-            {"date": "2026-09-24", "tbs": {"done": 6486, "executable": 10000}, "tla": {"done": 213, "executable": 10000}}
+            {"date": "2026-09-24", "tbs": {"done": 6486, "executable": 10000}, "tla": {"done": 213, "executable": 10000}, "models": {"Opus 5.5": 3, "Untagged": 1}}
         ]});
         let canvas = chart(&letters, &history);
-        assert_eq!((canvas.width, canvas.height), (830, 256));
+        assert_eq!((canvas.width, canvas.height), (830, 296));
         let gold = super::super::raster::rgb(GOLD);
         let blue = super::super::raster::rgb(BLUE);
-        let column = |x: i32, ink| (0..256).any(|y| canvas.get(x, y) == Some(ink));
+        let column = |x: i32, ink| (0..224).any(|y| canvas.get(x, y) == Some(ink));
         // Gold runs from the first day; blue only from 18 September.
         assert!(column(41, gold));
         assert!(!column(41, blue) && !column(300, blue));
         let right = (0..830).rev().find(|x| column(*x, blue)).unwrap();
         assert!(right > 600);
+        // The last day's strip column is three quarters Opus 5.5 over grey.
+        let pink = super::super::raster::rgb("#e8a6d3");
+        let grey = super::super::raster::rgb("#7f9ea6");
+        let strip = (0..830)
+            .rev()
+            .find(|x| (248..256).any(|y| canvas.get(*x, y) == Some(pink)))
+            .unwrap();
+        let shades = (248..256).map(|y| canvas.get(strip, y)).collect::<Vec<_>>();
+        assert_eq!(shades.iter().filter(|c| **c == Some(pink)).count(), 6);
+        assert_eq!(shades.iter().filter(|c| **c == Some(grey)).count(), 2);
     }
 }

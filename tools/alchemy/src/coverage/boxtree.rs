@@ -19,14 +19,13 @@ pub(crate) fn display_bytes(categories: &[i64; 6], category: Category) -> i64 {
 use crate::coverage::pipeline::source_container;
 use sha1::{Digest, Sha1};
 
-pub(crate) const CHART_BACKGROUND: &str = "#1f7f93";
-// One palette for the figure and dashboard: each kind of file has its own
-// clear pastel on the teal chart; assembly and executable code sit in teal.
+// The file-type palette of the figure and dashboard: each kind of file has
+// its own clear pastel on the teal chart (the chrome is in `palette`); assembly and executable code sit in teal.
 pub(crate) const UNKNOWN: &str = "#d9d9d4";
 pub(crate) const C_TEAL: &str = "#326b7d";
 const DRAFTED: &str = "#96c8c9";
 pub(crate) const ASSEMBLY: &str = "#6cafb2";
-const DRAFT_ASSEMBLY: &str = "#b4ccd2";
+pub(crate) const DRAFT_ASSEMBLY: &str = "#b4ccd2";
 const TEXT_CYAN: &str = "#85cbd2";
 /// C source and its headers in rose-greys, drafts paler; sprite sheets purple,
 /// stills blue, maps green; registries a quiet lavender. Translation text (a
@@ -46,21 +45,6 @@ const MIDI_GREEN: &str = "#81d6b2";
 const PCM_ORANGE: &str = "#efbb82";
 const OTHER_TAN: &str = "#bda995";
 const HEADER_GOLD: &str = "#eadb83";
-pub(crate) const BEVEL_LIGHT: &str = "#c9e1dc";
-pub(crate) const BEVEL_DARK: &str = "#103840";
-/// The figure's frame and label tones, named for the dashboard's window
-/// chrome so both draw from this one palette.
-pub(crate) const CHROME: [(&str, &str); 9] = [
-    ("face", CHART_BACKGROUND),
-    ("light", BEVEL_LIGHT),
-    ("soft", ASSEMBLY),
-    ("shadow", BEVEL_DARK),
-    ("title", C_TEAL),
-    ("gold", HEADER_GOLD),
-    ("hover", "#fff3ac"),
-    ("unknown", UNKNOWN),
-    ("mist", DRAFT_ASSEMBLY),
-];
 const SOUND_TYPES: [(&str, &str); 5] = [
     ("MIDI music", MIDI_GREEN),
     ("SFX", "#f29b91"),

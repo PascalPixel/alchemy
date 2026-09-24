@@ -411,8 +411,6 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
  * A value-returning call also sets r0 last of its arguments. */
 static __inline__ void Call1_02001828(void (*f)(), s32 a0)
 {
-    extern u8 Data_0200d7fc[];
-
     f(a0);
 }
 
@@ -429,8 +427,6 @@ static __inline__ void Call1_02001828(void (*f)(), s32 a0)
  * A value-returning call also sets r0 last of its arguments. */
 static __inline__ void Call6_02001828(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
 {
-    extern u8 Data_0200d7fc[];
-
     f(a0, a1, a2, a3, a4, a5);
 }
 
@@ -1092,8 +1088,6 @@ void FieldScene_RunScene372_02000ec4(void)
 
 void ActorPresentation_SetEightSceneCells(void)
 {
-    extern s32 Data_0200d7fc;
-
     s32 a = 15;
     s32 d = 0x35;
     s32 e;
@@ -1290,8 +1284,6 @@ void FieldScene_RunScene372SequenceC(void)
 
 void FieldScene_RunScene372SequenceE(void)
 {
-    extern u8 Data_0200d7fc[];
-
     u32 i;
     s32 record;
     s32 base5_e74;
@@ -1344,8 +1336,6 @@ void FieldScene_RunScene372SequenceE(void)
 
 void FieldScene_RunScene372SequenceD(void)
 {
-    extern u8 Data_0200d7fc[];
-
     u32 i;
     s32 record;
     struct FieldActor *actor;
@@ -1380,8 +1370,6 @@ void FieldScene_RunScene372SequenceD(void)
 
 void SceneActor_RunActor22PlacementSequence(s32 x, s32 y)
 {
-    extern s32 Data_0200d7fc;
-
     Thing1 *a;
     s32 w = 0x10000;
     s32 h = 0x8000;
@@ -1629,8 +1617,6 @@ void ActorPresentation_SetFourActorsModeByBit(void)
 
 void FieldScene_RunFlagGatedActorSequence(void)
 {
-    extern u8 Data_0200d7fc[];
-
     s32 kc0_1 = 0xC00000;
     s32 k4be_1 = 0x4BE0000;
     s32 k2000_1 = 0x2000;
@@ -2175,8 +2161,6 @@ void SceneDialogue_RunActorTenFlag30dDialogue(void)
 
 void FieldScene_RunScene372_02003c48(void)
 {
-    extern u8 Data_0200d7fc[];
-
     u32 i;
     s32 record;
 
@@ -2206,8 +2190,6 @@ void FieldScene_RunScene372_02003c48(void)
 
 void ActorPresentation_SelectActorTwentySevenState(void)
 {
-    extern s32 Data_0200d7fc;
-
     struct Actor *actor = Func_0200854a(27);
     u32 flags = Data_03001e40;
     u8 *presentation = actor->presentation;
@@ -2223,8 +2205,6 @@ void ActorPresentation_SelectActorTwentySevenState(void)
 
 void FieldScene_RunScene372_02003e48(void)
 {
-    extern u8 Data_0200d7fc[];
-
     u32 i;
     s32 rec7;
     s32 rec8;
@@ -2287,8 +2267,6 @@ void FieldScene_RunScene372_02003e48(void)
 
 void FieldScene_ConfigureActorTwentyTwoScene(void)
 {
-    extern u8 Data_0200d7fc[];
-
     u32 i;
     u8 *record;
 
@@ -2328,8 +2306,6 @@ void FieldScene_ConfigureActorTwentyTwoScene(void)
  * trailing pair of small counts. The final call takes no arguments. */
 void FieldScene_BuildPlacementGrid(void)
 {
-    extern u8 Data_0200d7fc[];
-
     u32 i;
     u8 *record;
 
@@ -2386,8 +2362,6 @@ void SceneState_SetWorkWordsAndFlag87f(void)
 
 void SceneActor_SetModeByFrameBit1(s32 o)
 {
-    extern s32 Data_0200d7fc;
-
     s32 v;
 
     if ((*(volatile s32 *)0x03001e40 & 2) != 0) {
@@ -2495,8 +2469,6 @@ void FieldScene_RunSingleStep(void)
 
 void FieldScene_RunFourPairedSteps(void)
 {
-    extern u8 Data_0200d7fc[];
-
     Func_02008c9e(32);
     Func_0200887a_a();
     Func_02008ca8(33);
@@ -2541,8 +2513,6 @@ void SceneState_SetValueEe4(void)
 
 void FieldScene_RunScriptedStep1120(void)
 {
-    extern u8 Data_0200d7fc[];
-
     Event_Begin();
     Message_ShowCentered((s32)&Value_00001120, 1);
     Event_End();

@@ -14,7 +14,7 @@ typedef struct {
 extern u32 gBattleFxWork;
 extern u8 Value_000077d8;
 
-#define InitBattleEffectObject Object_InitializeMode
+#define InitBattleEffectObject AnimationObjects_SelectAnimationFar
 
 BattleEffectObject *GetBattleEffectObject(s32);
 void InitBattleEffectObject(BattleEffectObject *, s32);

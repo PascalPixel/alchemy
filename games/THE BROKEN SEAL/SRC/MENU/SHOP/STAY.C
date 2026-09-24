@@ -24,7 +24,7 @@ extern struct FieldEffectState *gEventWork;
 
 s32 Party_ListActiveOwnersFar(s16 *);
 void Party_AdjustSixDigitCounterAFar(s32);
-struct FieldObject *Runtime_GetObject(s32);
+struct FieldObject *Owner_GetStateFar(s32);
 void Owner_RecalculateRatiosFar(s32);
 void Event_ClearStatus1c6Far(void);
 void Event_WaitValue1c8FramesFar(void);
@@ -73,10 +73,10 @@ void UiMessage_ShowAndWait(s32 message_id);
 s32 UiMessage_ShowChoice(s32);
 s32 Inn_RoomPrice(s32);
 void Inn_PlaySleep(s32);
-void UiWindow_Close(s32, s32);
+void UiWork_FinalizeFar(s32, s32);
 s32 UiWindow_CreateWithSideObjectFar(u16, s32, s32, s32);
-void UiText_DrawQuantity(s32, s32);
-struct InnObject *Scene_GetRecord(s32);
+void UiWork_PushValueSlotFar(s32, s32);
+struct InnObject *Object_GetByIdFar(s32);
 
 s32 Inn_RoomPrice(s32 mode)
 {
@@ -91,7 +91,7 @@ s32 Inn_RoomPrice(s32 mode)
         base = global + 2;
         offset = 0x36C;
         do {
-            if (*(s16 *)((u8 *)Runtime_GetObject(
+            if (*(s16 *)((u8 *)Owner_GetStateFar(
                     *(s16 *)(base + offset)) + 56) != 0)
                 active++;
             index++;
@@ -116,12 +116,12 @@ s32 Inn_CheckIn(s32 mode, s32 object_id)
     if (mode == 5)
         state->special_active = 1;
 
-    object = Scene_GetRecord(object_id);
+    object = Object_GetByIdFar(object_id);
     state->resource_id = *object->component->resource_id;
     win = UiWindow_CreateWithSideObjectFar(state->resource_id, 0, 0, 0);
 
     amount = Inn_RoomPrice(mode);
-    UiText_DrawQuantity(amount, 5);
+    UiWork_PushValueSlotFar(amount, 5);
     message_base = (s32)&Value_00000d1c;
     UiMessage_ShowAndWait(message_base);
     state->window = UiWindow_CreateFar(0, 16, MESSAGE_WINDOW_ROWS, 4, 2);
@@ -130,26 +130,26 @@ s32 Inn_CheckIn(s32 mode, s32 object_id)
     if (UiMessage_ShowChoice(0) != 0) {
         UiMessage_ShowAndWait(message_base
             + (INN_MESSAGE_GOODBYE - INN_MESSAGE_WELCOME));
-        UiWindow_Close(state->window, 2);
+        UiWork_FinalizeFar(state->window, 2);
     } else if ((u32)amount > PARTY_STATE.limit) {
         UiMessage_ShowAndWait(message_base
             + (INN_MESSAGE_NOT_ENOUGH_COINS - INN_MESSAGE_WELCOME));
-        UiWindow_Close(state->window, 2);
+        UiWork_FinalizeFar(state->window, 2);
     } else {
-        UiWindow_Close(state->window, 2);
+        UiWork_FinalizeFar(state->window, 2);
         UiMessage_ShowAndWait(message_base
             + (INN_MESSAGE_STAY_COMPLETE - INN_MESSAGE_WELCOME));
-        UiWindow_Close(win, 2);
+        UiWork_FinalizeFar(win, 2);
         Inn_PlaySleep(amount);
 
-        object = Scene_GetRecord(object_id);
+        object = Object_GetByIdFar(object_id);
         state->resource_id = *object->component->resource_id;
         win = UiWindow_CreateWithSideObjectFar(state->resource_id, 0, 0, 0);
         UiMessage_ShowAndWait(message_base
             + (INN_MESSAGE_REST_COMPLETE - INN_MESSAGE_WELCOME));
     }
 
-    UiWindow_Close(win, 2);
+    UiWork_FinalizeFar(win, 2);
     Inn_Cleanup();
     return 0;
 }
@@ -166,7 +166,7 @@ void Inn_PlaySleep(s32 room_price)
     Party_AdjustSixDigitCounterAFar(-room_price);
 
     for (index = 0; index < count; index++) {
-        object = Runtime_GetObject(objects[index]);
+        object = Owner_GetStateFar(objects[index]);
         if (object->x != 0) {
             object->x = object->saved_x;
             object->y = object->saved_y;

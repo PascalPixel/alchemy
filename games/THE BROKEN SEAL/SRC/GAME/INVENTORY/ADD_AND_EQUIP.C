@@ -2,11 +2,11 @@
 
 void Inventory_AddAndEquip(s32 owner, s32 target)
 {
-    s32 state = (s32)OwnerState_Get(owner);
+    s32 state = (s32)Owner_GetState(owner);
     u16 *entry;
     s32 index;
 
-    Inventory_Add(owner, target);
+    Inventory_AddItem(owner, target);
     index = 0;
     entry = (u16 *)(state + 0xd8);
     do {

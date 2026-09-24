@@ -39,11 +39,11 @@ extern struct EffectCamera *gEffectWork;
 
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 #define Rand Random16
-extern void RotateVectorByMagnitude(s32, s32, struct EffectPosition *);
-extern void NormalizeVector(struct EffectPosition *);
-extern s32 EffectSlot_HasReachedTarget(struct RadialCameraEffect *);
+extern void Vector_AddPolarOffset(s32, s32, struct EffectPosition *);
+extern void Camera_WorldToScreen(struct EffectPosition *);
+extern s32 BattleFx_HasReachedTarget(struct RadialCameraEffect *);
 
-void UpdateRadialCameraEffect(struct RadialCameraEffect *effect)
+void BattleFx_UpdateRadialCamera(struct RadialCameraEffect *effect)
 {
     struct EffectCamera *camera;
     struct EffectPosition position;
@@ -59,7 +59,7 @@ top:
         position.x = effect->source_x;
         position.z = effect->source_z;
         angle = Rand();
-        RotateVectorByMagnitude(Rand() * 30 + 0x280000, (u16)angle, &position);
+        Vector_AddPolarOffset(Rand() * 30 + 0x280000, (u16)angle, &position);
         effect->x = position.x;
         effect->z = position.z;
         effect->acceleration = 0x40000;
@@ -67,7 +67,7 @@ top:
         effect->flag = state;
         goto advance;
     } else if (state == 1) {
-        if (EffectSlot_HasReachedTarget(effect)!= 0)
+        if (BattleFx_HasReachedTarget(effect)!= 0)
             return;
         *state_pointer = (u8)*state_pointer + 1;
         goto top;
@@ -75,8 +75,8 @@ top:
         position.x = camera->x;
         position.y = camera->y + 0x80000;
         position.z = camera->z;
-        NormalizeVector(&position);
-        RotateVectorByMagnitude(0x40000, Rand(), &position);
+        Camera_WorldToScreen(&position);
+        Vector_AddPolarOffset(0x40000, Rand(), &position);
         effect->x = position.x;
         effect->z = position.z;
         effect->field_32 = 0x1000;
@@ -85,7 +85,7 @@ advance:
         *state_pointer = (u8)*state_pointer + 1;
         return;
     } else if (state == 3) {
-        if (EffectSlot_HasReachedTarget(effect) == 0)
+        if (BattleFx_HasReachedTarget(effect) == 0)
             BattleFx_ClearOwnedSlot(effect);
         return;
     } else {

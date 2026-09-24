@@ -16,7 +16,7 @@
 #define SLOT_VALUE_OFS 0x12F0
 #endif
 
-s32 GameFlag_IsSet(s32);
+s32 GameFlag_TestFar(s32);
 s32 Localization_LookupEntryId(s32);
 
 void Ui_LoadCharacterEntryForSlot(u32 slot, s32 character, s32 value)
@@ -29,7 +29,7 @@ void Ui_LoadCharacterEntryForSlot(u32 slot, s32 character, s32 value)
 
     state = *(u8 **)ADDR_03001E8C;
 
-    if (GameFlag_IsSet(0x20) != 0) {
+    if (GameFlag_TestFar(0x20) != 0) {
         if (character == 0)
             character = 0x12;
         if (character == 1)

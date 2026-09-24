@@ -68,7 +68,7 @@ s32 Djinn_CheckTurnBalance(s32 from, s32 to)
 }
 
 /* djinn/count_turns.c */
-u8 *Runtime_GetObject(s32);
+u8 *Owner_GetStateFar(s32);
 
 
 void Djinn_CountTurns(u8 *counts)
@@ -91,7 +91,7 @@ void Djinn_CountTurns(u8 *counts)
         one = 1;
         owner_ids = (u16 *)(work + 0x208);
         do {
-            owner = Runtime_GetObject(*owner_ids);
+            owner = Owner_GetStateFar(*owner_ids);
             row_index = 0;
             count = 0;
             row = (u32 *)(owner + 0xf8);

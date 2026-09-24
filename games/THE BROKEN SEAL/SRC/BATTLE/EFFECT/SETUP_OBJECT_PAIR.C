@@ -3,7 +3,7 @@
 #include "GLOBAL_CELLS.H"
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
-void RotateVectorByMagnitude(s32, s32, void *);
+void Vector_AddPolarOffset(s32, s32, void *);
 void BattleFx_SetupObjectPair(s32 first_object_id, s32 second_object_id)
 {
     void *first_object; void *second_object; s32 facing_quadrant; void *state;
@@ -31,5 +31,5 @@ void BattleFx_SetupObjectPair(s32 first_object_id, s32 second_object_id)
     FIELD_AT_OFFSET(state, s32 *, 4) = (s32)FIELD_AT_OFFSET(first_object, s32 *, 8);
     FIELD_AT_OFFSET(state, s32 *, 0xC) = (s32)FIELD_AT_OFFSET(first_object, s32 *, 0x10);
     FIELD_AT_OFFSET(state, s32 *, 8) = (s32)FIELD_AT_OFFSET(first_object, s32 *, 0xC);
-    RotateVectorByMagnitude(0x100000, facing_quadrant, (u8 *)state + 4);
+    Vector_AddPolarOffset(0x100000, facing_quadrant, (u8 *)state + 4);
 }

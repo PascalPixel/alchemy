@@ -2,7 +2,7 @@
 #include "TYPES.H"
 #include "UI.H"
 
-s32 UiWindow_Close(void *handle);
+s32 UiWork_FinalizeFar(void *handle);
 
 s32 UiWindow_UpdateOrCreate(s32 *handle, s32 first, s32 second, s32 third, s32 fourth, s32 flags)
 {
@@ -14,7 +14,7 @@ s32 UiWindow_UpdateOrCreate(s32 *handle, s32 first, s32 second, s32 third, s32 f
         if (0x100 & flags) {
             return 0;
         }
-        UiWindow_Commit(current);
+        RenderOutput_RedrawSavedRectFar(current);
         return 0;
     }
     masked = flags & 0xff;
@@ -25,7 +25,7 @@ s32 UiWindow_UpdateOrCreate(s32 *handle, s32 first, s32 second, s32 third, s32 f
 void UiWindow_CloseIfOpen(void **handle)
 {
     if (*handle != NULL) {
-        UiWindow_Close(*handle);
+        UiWork_FinalizeFar(*handle);
         *handle = NULL;
     }
 }

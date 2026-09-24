@@ -8,8 +8,8 @@
  * BattleFx_FinishAction returned, not a fixed address.
  */
 
-void UiText_DrawMessage(s32, s32);
-s32 GameFlag_IsSet(s32);
+void UiText_ShowPositionedMessageAndWaitFar(s32, s32);
+s32 GameFlag_TestFar(s32);
 void Battle_Reset();
 
 extern char Value_00000927;
@@ -30,9 +30,9 @@ s32 BattleFx_RunEventAction(void *arg0, s32 arg1, s32 arg2)
                 Battle_Apply(arg1, arg2);
             }
         }
-        if (GameFlag_IsSet(0x142) != 0) {
+        if (GameFlag_TestFar(0x142) != 0) {
             Battle_Reset();
-            UiText_DrawMessage((s32)&Value_00000927, 1);
+            UiText_ShowPositionedMessageAndWaitFar((s32)&Value_00000927, 1);
             BattleFx_FinishAction();
         }
     }
@@ -84,7 +84,7 @@ struct Object_08096bec {
     s32 z;
 };
 
-void RotateVectorByMagnitude(s32, s32, s32 *);
+void Vector_AddPolarOffset(s32, s32, s32 *);
 void Object_SetPosition(struct Object_08096bec *, s32, s32, s32);
 
 void Motion_SetTargetPositionFromMagnitudeAngle(
@@ -97,7 +97,7 @@ void Motion_SetTargetPositionFromMagnitudeAngle(
         values[0] = object->x;
         values[1] = object->y;
         values[2] = object->z;
-        RotateVectorByMagnitude(magnitude, angle, values);
+        Vector_AddPolarOffset(magnitude, angle, values);
         Object_SetPosition(object, values[0], values[1], values[2]);
     }
 }

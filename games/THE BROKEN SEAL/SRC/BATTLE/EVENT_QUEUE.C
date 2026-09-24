@@ -21,7 +21,7 @@ struct BattleEventObjectSlot {
 };
 
 s32 Object_Destroy(s32);
-struct BattleEventActor *Runtime_GetObject();
+struct BattleEventActor *Owner_GetStateFar();
 s32 Owner_UpdateRatioPairFar(void *, s32);
 struct BattleEventObjectSlot *GetBattleObjectSlot(s32 arg0);
 s32 ActivateBattleObjectSlot(s32 arg0);
@@ -33,7 +33,7 @@ s32 BattleActor_DestroyTemporaryObject(s32 arg0)
     struct BattleEventActor *creature;
     struct BattleEventObjectSlot *runtime;
 
-    creature = Runtime_GetObject();
+    creature = Owner_GetStateFar();
     if (creature->field_12a == 1) {
         Owner_UpdateRatioPairFar(creature, 0);
         BattleActor_RemoveFromLists(arg0);

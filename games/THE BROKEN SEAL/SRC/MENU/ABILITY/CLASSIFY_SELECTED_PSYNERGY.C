@@ -3,7 +3,7 @@
 #include "SYSTEM.H"
 
 /* menu/psynergy_menu/classify_selected_psynergy.c */
-u8 *Ability_GetData(s32 action);
+u8 *BattleAction_Get(s32 action);
 s32 FunctionHead_0808a488(u8 effect);
 
 s32 PsynergyMenu_ClassifySelectedPsynergy(void)
@@ -12,7 +12,7 @@ s32 PsynergyMenu_ClassifySelectedPsynergy(void)
     s32 diff;
     s32 ret;
 
-    psynergy = Ability_GetData(
+    psynergy = BattleAction_Get(
         (s32)(0x3fff &
               (*(struct PsynergyMenuState **)ADDR_03001F2C)
                   ->selected_psynergy));
@@ -35,7 +35,7 @@ struct Rec5 { u8 pad[5]; unsigned int flag : 8; };
 struct Cur { unsigned short mark : 8; };
 
 extern struct PsynergyMenuState *gMenuWork;
-void *Runtime_GetObject(s32);
+void *Owner_GetStateFar(s32);
 s32 UiMenu_SlideCursor(s32, s32);
 s32 FunctionHead_080a60d4(void *, void *);
 void UiIcon_PrepareObject(void *cursor);
@@ -78,7 +78,7 @@ s32 PsynergyMenu_SelectPartySlot(s32 party_slot)
 
     obj_off = combined_offset + 520;
     obj_id = *(u16 *)(menu + obj_off);
-    obj_ptr = Runtime_GetObject(obj_id);
+    obj_ptr = Owner_GetStateFar(obj_id);
     p456 = menu + 456;
     badge = PsynergyMenu_CollectActions(obj_ptr, p456, 2);
     *(u8 *)(menu + 536) = (u8)badge;

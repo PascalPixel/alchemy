@@ -11,7 +11,7 @@ struct ShopServiceWork {
     s8 mode;
 };
 
-u8 *Runtime_GetObject(s32);
+u8 *Owner_GetStateFar(s32);
 extern struct ShopServiceWork *gMenuWork;
 s32 Shop_CanServe(s32 selection, s32 variant);
 extern u8 Value_00000d24;
@@ -19,13 +19,13 @@ extern u8 Value_00000d2e;
 extern u8 Value_00000d38;
 extern u8 Value_00000d42;
 s32 BattleFx_GetResourceIdFar(u16);
-void UiWork_FinalizePending(void);
+void UiWork_FinalizePendingCoreFar(void);
 s32 Shop_MsgByMode(s32 value);
-void UiWork_Create(s32, s32, s32, s32);
+void UiText_OpenMessageWindowFar(s32, s32, s32, s32);
 
 s32 Shop_ServicePrice(s32 entry_no, s32 kind)
 {
-    u8 value = Runtime_GetObject(entry_no)[0xF];
+    u8 value = Owner_GetStateFar(entry_no)[0xF];
     s32 result = 0;
 
     if (kind == 0) {
@@ -42,7 +42,7 @@ s32 Shop_ServicePrice(s32 entry_no, s32 kind)
 
 s32 Shop_CanServe(s32 entry_no, s32 kind)
 {
-    u8 *entry = Runtime_GetObject(entry_no);
+    u8 *entry = Owner_GetStateFar(entry_no);
     s32 result = 0;
 
     if ((kind == 0 && *(s16 *)(entry + 56) <= 0)
@@ -98,9 +98,9 @@ void UiMessage_ShowResolvedAndWait(s32 value)
     s32 no;
 
     no = BattleFx_GetResourceIdFar(gMenuWork->value);
-    UiWork_FinalizePending();
+    UiWork_FinalizePendingCoreFar();
     value = Shop_MsgByMode(value);
-    UiWork_Create(value, 5, 0, (no << 0x10) | 0x22);
+    UiText_OpenMessageWindowFar(value, 5, 0, (no << 0x10) | 0x22);
     while (UiWork_IsCompleteFar() == 0) {
         WaitFrames(1U);
     }
@@ -120,8 +120,8 @@ void UiMessage_ShowResolvedAndRestoreState(s32 arg0)
     value = BattleFx_GetResourceIdFar(state->value);
     arg0 = Shop_MsgByMode(arg0);
     *(u8 *)((u8 *)*slot + 5) = 13;
-    UiWork_FinalizePending();
-    UiWork_Create(arg0, 5, 0, (value << 16) | 0x22);
+    UiWork_FinalizePendingCoreFar();
+    UiText_OpenMessageWindowFar(arg0, 5, 0, (value << 16) | 0x22);
     while (UiWork_IsCompleteFar() == 0)
         WaitFrames(1);
     WaitFrames(1);

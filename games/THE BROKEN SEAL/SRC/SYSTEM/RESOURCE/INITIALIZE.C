@@ -73,18 +73,18 @@ s32 Resource_FindFreeEntry(void)
 }
 
 /* resource/load_into_free_slot.c */
-s32 Resource_CopyData(s32, s32, s32);
+s32 VramBlock_LoadCached(s32, s32, s32);
 
 s32 Resource_LoadIntoFreeSlot(s32 arg0)
 {
     s32 slot;
 
     slot = Resource_FindFreeEntry();
-    Resource_CopyData(slot, arg0, 0);
+    VramBlock_LoadCached(slot, arg0, 0);
     return slot;
 }
 
 s32 Resource_GetBuffer(s32 index, s32 value)
 {
-    return Resource_CopyData(index, ResourceTableEntries[index].value, value);
+    return VramBlock_LoadCached(index, ResourceTableEntries[index].value, value);
 }

@@ -47,14 +47,14 @@ extern u8 *gEventWork;
 extern const u8 BattleFx_ParticleEmitterScript[];
 extern const u8 BattleFx_ParticleScript[];
 
-void RotateVectorByMagnitude(s32 mag, s32 ang, struct EfxPos *pos);
+void Vector_AddPolarOffset(s32 mag, s32 ang, struct EfxPos *pos);
 struct EfxObj *Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);
 void ObjectDispatch_InitializeFar(struct EfxObj *obj, s32 data);
 void Object_Destroy(struct EfxObj *obj);
 void *Runtime_AllocateHeapBlock(s32 kind, s32 size);
 void ItemIcon_LoadTilesFar(s32 item);
 s32 VramBlock_LoadCached(u32 slot, u32 size, const void *src);
-void EmitRandomParticleEffect(void);
+void BattleFx_EmitRandomParticleFromEmitter(void);
 void BattleFx_SpawnRandomParticleAtPosition(const void *src);
 
 #define EfxWork gEventWork
@@ -80,7 +80,7 @@ struct EfxObj *BattleFx_StartRandomParticleEmitter(s32 obj_id, s32 item)
     pos.x = ((struct EfxSrc *)src_z)->x;
     pos.y = ((struct EfxSrc *)src_z)->y;
     pos.z = ((struct EfxSrc *)src_z)->z;
-    RotateVectorByMagnitude(
+    Vector_AddPolarOffset(
         0x100000,
         ((struct EfxSrc *)src_z)->ang,
         &pos);
@@ -142,7 +142,7 @@ struct EfxObj *BattleFx_StartRandomParticleEmitter(s32 obj_id, s32 item)
             VramBlock_LoadCached(vis->slot, 128, (u8 *)buf + 0x400);
 
         Runtime_ReleaseHeapBlock(17);
-        obj->proc = (void (*)(void))EmitRandomParticleEffect;
+        obj->proc = (void (*)(void))BattleFx_EmitRandomParticleFromEmitter;
     }
 
     return obj;

@@ -1,7 +1,7 @@
 #include "TYPES.H"
 #include "SCENE.H"
 
-void Resource_CopyData(void *, s32, void *);
+void VramBlock_LoadCached(void *, s32, void *);
 extern u8 gRom;
 extern u8 Value_08031864;
 extern u8 gRom2;
@@ -25,6 +25,6 @@ s32 RenderResource_LoadTableEntry(u32 value, s32 unused, void *destination)
         source = &gRom3;
         break;
     }
-    Resource_CopyData(destination, 32, source);
+    VramBlock_LoadCached(destination, 32, source);
     return 1;
 }

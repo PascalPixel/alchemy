@@ -64,15 +64,15 @@ void EventObject_Initialize(void)
     }
     if ((s8)FIELD_AT_OFFSET(event_state, s8 *, 0x23) != 0) {
         ObjectGroup_SetActionForOthers(event_object, 1, 0);
-        UiText_DrawQuantity((s32)event_index, 4);
+        UiWork_PushValueSlotFar((s32)event_index, 4);
         if ((s8)FIELD_AT_OFFSET(event_state, s8 *, 0x21) != 0) {
-            UiText_DrawMessage((void *)MESSAGE_NO, (s32)*(s8 *)((u8 *)(event_state) + 0x71C));
+            UiText_ShowPositionedMessageAndWaitFar((void *)MESSAGE_NO, (s32)*(s8 *)((u8 *)(event_state) + 0x71C));
         } else {
-            UiText_DrawMessage((void *)MESSAGE_NO, (s32)*(s8 *)((u8 *)(event_state) + 0x71C));
+            UiText_ShowPositionedMessageAndWaitFar((void *)MESSAGE_NO, (s32)*(s8 *)((u8 *)(event_state) + 0x71C));
         }
         ObjectGroup_SetActionForOthers(event_object, 0, 0x10);
     }
-    if (GameFlag_IsSet(0x140) != 0) {
+    if (GameFlag_TestFar(0x140) != 0) {
         if ((s8)FIELD_AT_OFFSET(event_state, s8 *, 0x22) != 0) {
             FIELD_AT_OFFSET(event_object, s32 *, 0x6C) = CALLBACK_2;
         }

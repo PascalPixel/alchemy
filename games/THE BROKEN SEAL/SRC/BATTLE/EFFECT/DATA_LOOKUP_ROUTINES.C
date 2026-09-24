@@ -61,7 +61,7 @@ struct SceneInteractionEntry {
 
 extern const struct SceneInteractionEntry Scene_InteractionRuleTable[];
 
-s32 GameFlag_IsSet(s32 flag);
+s32 GameFlag_TestFar(s32 flag);
 
 void Scene_ResolveInteractionResult(void)
 {
@@ -79,7 +79,7 @@ void Scene_ResolveInteractionResult(void)
             if (entry->value != -1 && entry->value != sub) {
                 continue;
             }
-            if (entry->condition != -1 && GameFlag_IsSet(entry->condition) == 0) {
+            if (entry->condition != -1 && GameFlag_TestFar(entry->condition) == 0) {
                 continue;
             }
             result = entry->result;
@@ -91,7 +91,7 @@ void Scene_ResolveInteractionResult(void)
             if (entry->value != -1 && entry->value != sub) {
                 continue;
             }
-            if (entry->condition != -1 && GameFlag_IsSet(entry->condition) == 0) {
+            if (entry->condition != -1 && GameFlag_TestFar(entry->condition) == 0) {
                 continue;
             }
             result = entry->result;

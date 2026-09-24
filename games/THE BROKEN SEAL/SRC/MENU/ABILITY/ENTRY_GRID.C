@@ -3,7 +3,7 @@
 #include "UI.H"
 
 s32 UiMenu_CreateCursor(void *menu);
-s32 InitializeEntryObjects(s32, s32, s32, s32, s32);
+s32 PsynergyMenu_InitializeEntryObjects(s32, s32, s32, s32, s32);
 struct PsynergyMenuIcon *UiIcon_CreateWithResourceVariant(s32, s32, s32);
 void *SideObject_CreateFar(s32, s32, s32, s32, s32, s32);
 struct PsynergyMenuIcon *RenderOutput_CreateFromResourceFar(s32, s32, s32, s32, s32);
@@ -20,7 +20,7 @@ void PsynergyMenu_CreateEntryGrid(void)
 
     menu = *(struct PsynergyMenuState **)ADDR_03001F2C;
     window = UiMenu_CreateCursor(menu);
-    InitializeEntryObjects(window, 2, 2, 8, 0);
+    PsynergyMenu_InitializeEntryObjects(window, 2, 2, 8, 0);
 
     window = UiWindow_CreateFar(0, 5, 30, 15, 2);
     menu->psynergy_window = window;
@@ -55,7 +55,7 @@ void PsynergyMenu_CreateEntryGrid(void)
     } while (index <= 15);
 }
 
-s32 UiWindow_Close(s32 window, s32 mode);
+s32 UiWork_FinalizeFar(s32 window, s32 mode);
 void Menu_ReleaseEntryObjects(void);
 
 void PsynergyMenu_CloseWindows(void)
@@ -64,9 +64,9 @@ void PsynergyMenu_CloseWindows(void)
 
     menu = *(struct PsynergyMenuState **)ADDR_03001F2C;
     Menu_ReleaseEntryObjects();
-    UiWindow_Close(menu->auxiliary_window, 1);
-    UiWindow_Close(menu->psynergy_window, 1);
-    UiWindow_Close(menu->message_window, 1);
+    UiWork_FinalizeFar(menu->auxiliary_window, 1);
+    UiWork_FinalizeFar(menu->psynergy_window, 1);
+    UiWork_FinalizeFar(menu->message_window, 1);
 }
 
 void Resource_LoadByModeIntoSlotFar(s32 style, u16 action, u8 target, s32 flags);

@@ -1,8 +1,8 @@
 #include "TYPES.H"
 #include "SCENE.H"
 
-u8 *Runtime_GetObject(s32);
-void BattleUnit_Recalculate(s32);
+u8 *Owner_GetStateFar(s32);
+void Owner_RecalculateStatsFar(s32);
 s32 GetBattleObjectSlot(s32);
 
 s32 BattleActor_ResetRuntimeFields(s32 actor)
@@ -12,7 +12,7 @@ s32 BattleActor_ResetRuntimeFields(s32 actor)
     s32 count;
     u8 zero;
 
-    state = Runtime_GetObject(actor);
+    state = Owner_GetStateFar(actor);
     count = 3;
     zero = 0;
     cursor = state + 0x12f;
@@ -46,6 +46,6 @@ s32 BattleActor_ResetRuntimeFields(s32 actor)
     state[0x147] = 0;
     state[0x148] = 0;
 
-    BattleUnit_Recalculate(actor);
+    Owner_RecalculateStatsFar(actor);
     return Actor_Apply(actor, GetBattleObjectSlot(actor));
 }

@@ -33,8 +33,8 @@ struct UiCounterWorkJa {
 extern void *gWindowWork;
 void UiWork_ProcessAll(void);
 
-s32 Resource_CopyData(s32, s32, s32);
-void ScheduleCallbackAfterFrames(void *, s32);
+s32 VramBlock_LoadCached(s32, s32, s32);
+void Scheduler_AddOrUpdateCallback(void *, s32);
 void UiWork_Finalize(struct Work *, s32);
 
 s32 UiWork_IsIdle(void *arg0)
@@ -62,7 +62,7 @@ void UiWork_InitCountersWithResourceAndScheduleRefresh(void)
     struct UiCounterWork *state = gWindowWork;
     s32 size;
 
-    state->result = Resource_CopyData(95, 128 << 6, 0);
+    state->result = VramBlock_LoadCached(95, 128 << 6, 0);
     state->nine = 9;
     state->ten = 10;
     state->zero = 0;
@@ -70,7 +70,7 @@ void UiWork_InitCountersWithResourceAndScheduleRefresh(void)
     state->second_zero = 0;
     size = 200;
     size <<= 4;
-    ScheduleCallbackAfterFrames((void *)0x0801789d, size);
+    Scheduler_AddOrUpdateCallback((void *)0x0801789d, size);
 }
 
 void UiWork_InitCountersAndScheduleRefresh(s32 initialize)
@@ -83,7 +83,7 @@ void UiWork_InitCountersAndScheduleRefresh(s32 initialize)
     s32 size;
 
     if (initialize != 0)
-        state->result = Resource_CopyData(95, 128 << 6, 0);
+        state->result = VramBlock_LoadCached(95, 128 << 6, 0);
     state->nine = 9;
     state->ten = 10;
     state->zero = 0;
@@ -91,7 +91,7 @@ void UiWork_InitCountersAndScheduleRefresh(s32 initialize)
     state->second_zero = 0;
     size = 200;
     size <<= 4;
-    ScheduleCallbackAfterFrames(UiWork_ProcessAll, size);
+    Scheduler_AddOrUpdateCallback(UiWork_ProcessAll, size);
 }
 
 void UiWork_FinalizeSharedSlot(void)

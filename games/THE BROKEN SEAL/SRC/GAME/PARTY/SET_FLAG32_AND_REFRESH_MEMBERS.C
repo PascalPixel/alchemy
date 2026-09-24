@@ -51,7 +51,7 @@ void Party_ApplyStatePreset(void)
     GameFlag_SetBit(282);
 
     for (id = 0; id <= 1; id++) {
-        struct OwnerWork *unit = (struct OwnerWork *)OwnerState_Get(id);
+        struct OwnerWork *unit = (struct OwnerWork *)Owner_GetState(id);
         s32 ratio;
         s32 rate;
         s32 slot;
@@ -127,7 +127,7 @@ void Owner_RefreshActiveRatios(s32 arg0)
 
     count = Party_CountActiveOwners();
     for (n = 0; n < count; n++) {
-        obj = OwnerState_Get(PARTY_STATE.active_owners[n]);
+        obj = Owner_GetState(PARTY_STATE.active_owners[n]);
 
         do {
             *(u16 *)(obj + 0x38) = *(u16 *)(obj + 0x34);

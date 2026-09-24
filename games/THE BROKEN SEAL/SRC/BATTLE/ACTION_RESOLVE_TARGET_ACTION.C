@@ -349,7 +349,7 @@ typedef void (*BattleUnitCopyFn)(void *, const void *, s32);
     toff = (toff_c);                                                           \
     (field) += (delta);                                                        \
     CLAMP_MOD(field);                                                          \
-    BattleUnit_Recalculate(target_id);                                         \
+    Owner_RecalculateStatsFar(target_id);                                         \
     BattleEvent_Push(BATTLE_EVENT_VALUE, (value_expr));                           \
     BattleEvent_Push(BATTLE_EVENT_TEXT, (text));                                  \
     *BytePtr((u8 *)target + toff) = 7;                                          \
@@ -672,7 +672,7 @@ after_power:
                 s32 y;
 
                 /* The slot cursor is dead here; its word now carries the object. */
-                cursor = (s32)Actor_GetObject(rec);
+                cursor = (s32)GetBattleObjectSlot(rec);
                 x = *(s32 *)(cursor + 12);
                 if (x < 0)
                     x += 0xffff;
@@ -681,13 +681,13 @@ after_power:
                 if (y < 0)
                     y += 0xffff;
                 y >>= 16;
-                Actor_Place((void *)cursor, rec, x, y);
+                BattlePresentation_SpawnActorObject((void *)cursor, rec, x, y);
             }
-            Actor_Commit();
+            BattleActor_CommitPlacement();
             {
                 s32 listed;
 
-                listed = Actor_ListSlots(saved);
+                listed = BattleParty_ListPresentEnemies(saved);
                 if (listed > 0) {
                     u16 *q;
 
@@ -1245,7 +1245,7 @@ dealt = target->hp - cur;
     case EFX_AGI_SET_UP8:
         S8OF(target->agility_modifier) = 8;
         target->agility_modifier_turns = 5;
-        BattleUnit_Recalculate(target_id);
+        Owner_RecalculateStatsFar(target_id);
         BattleEvent_Push(BATTLE_EVENT_VALUE, target->agility - copy->agility);
         BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_AGI_UP);
         break;
@@ -1259,7 +1259,7 @@ dealt = target->hp - cur;
         *am = v;
     }
         target->agility_modifier_turns = 5;
-        BattleUnit_Recalculate(target_id);
+        Owner_RecalculateStatsFar(target_id);
         BattleEvent_Push(BATTLE_EVENT_VALUE, copy->agility - target->agility);
         BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_AGI_DOWN);
         break;
@@ -1267,7 +1267,7 @@ dealt = target->hp - cur;
     case EFX_ATK_DOWN1:
         target->attack_modifier += -1;
         CLAMP_MOD(target->attack_modifier);
-        BattleUnit_Recalculate(target_id);
+        Owner_RecalculateStatsFar(target_id);
         BattleEvent_Push(BATTLE_EVENT_VALUE, copy->attack - target->attack);
         BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_ATK_DOWN);
         target->attack_modifier_turns = 7;
@@ -1276,7 +1276,7 @@ dealt = target->hp - cur;
     case EFX_ATK_DOWN2:
         target->attack_modifier += -2;
         CLAMP_MOD(target->attack_modifier);
-        BattleUnit_Recalculate(target_id);
+        Owner_RecalculateStatsFar(target_id);
         BattleEvent_Push(BATTLE_EVENT_VALUE, copy->attack - target->attack);
         BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_ATK_DOWN);
         target->attack_modifier_turns = 7;
@@ -1285,7 +1285,7 @@ dealt = target->hp - cur;
     case EFX_ATK_UP1:
         target->attack_modifier += 1;
         CLAMP_MOD(target->attack_modifier);
-        BattleUnit_Recalculate(target_id);
+        Owner_RecalculateStatsFar(target_id);
         BattleEvent_Push(BATTLE_EVENT_VALUE, target->attack - copy->attack);
         BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_ATK_UP);
         target->attack_modifier_turns = 7;
@@ -1294,7 +1294,7 @@ dealt = target->hp - cur;
     case EFX_ATK_UP2:
         target->attack_modifier += 2;
         CLAMP_MOD(target->attack_modifier);
-        BattleUnit_Recalculate(target_id);
+        Owner_RecalculateStatsFar(target_id);
         BattleEvent_Push(BATTLE_EVENT_VALUE, target->attack - copy->attack);
         BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_ATK_UP);
         target->attack_modifier_turns = 7;
@@ -1303,7 +1303,7 @@ dealt = target->hp - cur;
     case EFX_DEF_DOWN1:
         target->defense_modifier += -1;
         CLAMP_MOD(target->defense_modifier);
-        BattleUnit_Recalculate(target_id);
+        Owner_RecalculateStatsFar(target_id);
         BattleEvent_Push(BATTLE_EVENT_VALUE, copy->defense - target->defense);
         BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_DEF_DOWN);
         target->defense_modifier_turns = 7;
@@ -1312,7 +1312,7 @@ dealt = target->hp - cur;
     case EFX_DEF_DOWN2:
         target->defense_modifier += -2;
         CLAMP_MOD(target->defense_modifier);
-        BattleUnit_Recalculate(target_id);
+        Owner_RecalculateStatsFar(target_id);
         BattleEvent_Push(BATTLE_EVENT_VALUE, copy->defense - target->defense);
         BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_DEF_DOWN);
         target->defense_modifier_turns = 7;
@@ -1321,7 +1321,7 @@ dealt = target->hp - cur;
     case EFX_DEF_UP1:
         target->defense_modifier += 1;
         CLAMP_MOD(target->defense_modifier);
-        BattleUnit_Recalculate(target_id);
+        Owner_RecalculateStatsFar(target_id);
         BattleEvent_Push(BATTLE_EVENT_VALUE, target->defense - copy->defense);
         BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_DEF_UP);
         target->defense_modifier_turns = 7;
@@ -1330,7 +1330,7 @@ dealt = target->hp - cur;
     case EFX_DEF_UP2:
         target->defense_modifier += 2;
         CLAMP_MOD(target->defense_modifier);
-        BattleUnit_Recalculate(target_id);
+        Owner_RecalculateStatsFar(target_id);
         BattleEvent_Push(BATTLE_EVENT_VALUE, target->defense - copy->defense);
         BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_DEF_UP);
         target->defense_modifier_turns = 7;
@@ -1646,8 +1646,8 @@ done:
         }
     }
     Sys_Free(copy);
-    BattleUnit_Recalculate(target_id);
-    Sys_SetMode(((u8 *)BATTLE_WORK)[65]);
+    Owner_RecalculateStatsFar(target_id);
+    UiWindow_DrawPartyStatusContentsFar(((u8 *)BATTLE_WORK)[65]);
     if (target->hp != 0)
         BattleEvent_Push(BATTLE_EVENT_ACTOR_FINISH, target_id);
     if (BATTLE_EVIL_SPIRIT_ACTIVE()

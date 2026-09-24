@@ -72,7 +72,7 @@ void BattlePresentation_PrepareScene(s32 kind)
 }
 
 /* battle/effects/runtime/misc/schedule_callbacks_and_release_blocks.c */
-extern void ScheduleCallback(void (*)(void));
+extern void Scheduler_RemoveCallback(void (*)(void));
 
 typedef void (*Transfer)(void *, s32);
 extern u8 gRom;
@@ -81,14 +81,14 @@ extern u8 gRom3;
 
 void BattleFx_ScheduleCallbacksAndReleaseBlocks(void)
 {
-    ScheduleCallback((void (*)(void))&gRom);
-    ScheduleCallback((void (*)(void))&gRom2);
+    Scheduler_RemoveCallback((void (*)(void))&gRom);
+    Scheduler_RemoveCallback((void (*)(void))&gRom2);
     {
         Transfer transfer = (Transfer)0x03000164;
 
         transfer((void *)0x06004000, 0x4000);
     }
-    ScheduleCallback((void (*)(void))&gRom3);
+    Scheduler_RemoveCallback((void (*)(void))&gRom3);
     Runtime_ReleaseHeapBlock(40);
     Runtime_ReleaseHeapBlock(39);
 }

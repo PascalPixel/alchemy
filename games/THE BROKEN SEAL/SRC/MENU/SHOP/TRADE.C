@@ -152,8 +152,8 @@ s32 Shop_SalePrice(s32 item_id)
 #define BASE_W 12
 #endif
 
-void UiWindow_Close(s32, s32);
-s32 Ability_GetAvailability(s32);
+void UiWork_FinalizeFar(s32, s32);
+s32 Inventory_CountFar(s32);
 void PsynergyMenu_InitializeEntryObjectsFar(s32, s32, s32, s32, s32);
 void Menu_ReleaseEntryObjectsFar(void);
 s32 Shop_SelSell(s32);
@@ -197,7 +197,7 @@ s32 Shop_PickUnit(void)
 
         if ((*(volatile u32 *)ADDR_03001C94 & 1) != 0) {
             WaitFrames(1);
-            if (Ability_GetAvailability(unit_id) == 0) {
+            if (Inventory_CountFar(unit_id) == 0) {
                 Audio_PlayCue(SOUND_MENU_CANCEL);
             } else {
                 Audio_PlayCue(SOUND_MENU_CONFIRM);
@@ -215,9 +215,9 @@ s32 Shop_PickUnit(void)
         if ((*(volatile u32 *)ADDR_03001C94 & 2) != 0) {
             Audio_PlayCue(SOUND_MENU_CANCEL);
             Menu_ReleaseEntryObjectsFar();
-            UiWindow_Close(list_window, 2);
-            UiWindow_Close(shop->item_window, 2);
-            UiWindow_Close(shop->money_window, 2);
+            UiWork_FinalizeFar(list_window, 2);
+            UiWork_FinalizeFar(shop->item_window, 2);
+            UiWork_FinalizeFar(shop->money_window, 2);
             WaitFrames(1);
             return 0;
         }
@@ -277,7 +277,7 @@ s32 Shop_SelSell(s32 unit_id)
         for (;;) {
             if (redraw != 0) {
                 redraw = 0;
-                item_count = Ability_GetAvailability(unit_id);
+                item_count = Inventory_CountFar(unit_id);
                 if (selection > item_count - 1)
                     selection = item_count - 1;
                 item_id = 0x1ff & unit->inventory[selection];
@@ -336,7 +336,7 @@ s32 Shop_SelSell(s32 unit_id)
             WaitFrames(1);
         }
 done:
-        UiWindow_Close(price_window, 2);
+        UiWork_FinalizeFar(price_window, 2);
         WaitFrames(1);
         if (result != 0)
             break;
@@ -345,18 +345,18 @@ done:
         if (quantity != -1)
             Shop_SellItem(unit_id, selection, quantity);
         UiMessage_ShowAndWait((s32)&Value_00000caa);
-        if (Ability_GetAvailability(unit_id) == 0)
+        if (Inventory_CountFar(unit_id) == 0)
             break;
     }
 
-    UiWindow_Close(list_window, 2);
+    UiWork_FinalizeFar(list_window, 2);
     return result;
 }
 
 extern u8 Value_00000c91;
 
 void UiWindow_Clear(s32 window);
-s32 Ability_GetAvailability(s32 unit_id);
+s32 Inventory_CountFar(s32 unit_id);
 void UiText_DrawMessageAt(s32 message, s32 window, s32 x, s32 y);
 u8 *UiIcon_Draw(u16 no, s32 kind, s32 window, s32 x, s32 y);
 
@@ -374,7 +374,7 @@ void Shop_DrawUnitGrid(s32 window, s32 unit_id)
     y = 0;
     if (window != 0) {
         UiWindow_Clear(window);
-        if (Ability_GetAvailability(unit_id) == 0) {
+        if (Inventory_CountFar(unit_id) == 0) {
             UiText_DrawMessageAt((s32)&Value_00000c91, window, 8, 20);
         } else {
             slot = 0;

@@ -1,8 +1,8 @@
 #include "EQUIPMENT_MENU.H"
 
 extern u8 *gMenuWork;
-void Object_InitializeMode(void *, s32);
-s32 ScheduleCallback(s32);
+void AnimationObjects_SelectAnimationFar(void *, s32);
+s32 Scheduler_RemoveCallback(s32);
 
 void EquipmentMenu_StartCompatibilityIndicators(void)
 {
@@ -15,9 +15,9 @@ void EquipmentMenu_StartCompatibilityIndicators(void)
         do {
             s32 off = member_index * 4 + 276;
             void *indicator = *(void **)(menu + off);
-            Object_InitializeMode(indicator, 1);
+            AnimationObjects_SelectAnimationFar(indicator, 1);
             member_index++;
         } while (member_index < menu[0x219]);
     }
-    ScheduleCallback((s32)&EquipmentMenu_CompatibilityUpdateEntry);
+    Scheduler_RemoveCallback((s32)&EquipmentMenu_CompatibilityUpdateEntry);
 }

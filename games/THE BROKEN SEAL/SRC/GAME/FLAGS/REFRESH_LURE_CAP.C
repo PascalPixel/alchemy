@@ -21,7 +21,7 @@ void GameFlag_RefreshLureCap(void)
         struct OwnerInventoryState *owner;
         s32 i;
 
-        owner = OwnerState_Get(gGameState.active_owners[n]);
+        owner = Owner_GetState(gGameState.active_owners[n]);
         for (i = 0; i < 15; i++) {
             if (owner->inventory[i] & 0x200) {
                 u8 *record;

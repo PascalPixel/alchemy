@@ -24,7 +24,7 @@ typedef struct {
     u8 transition_phase;
 } SceneTransitionScene;
 
-void ScheduleCallback(void (*callback)(void));
+void Scheduler_RemoveCallback(void (*callback)(void));
 void *BattleFx_FindMatchingEvent(u32 kind, u32 entry_index, s32 *size);
 void BattleFx_ApplyColorToTargetBuffer(u32 battle_value, s32 enabled);
 void BattleFx_ApplyColorToSourceBuffer(u32 battle_value, s32 enabled);
@@ -48,7 +48,7 @@ void ResetSceneTransitionEffect(void)
 
     if (state->active != 0) {
         Audio_PlayCue(SOUND_SCENE_TRANSITION);
-        ScheduleCallback(FieldEffect_WatchLeaderDistance);
+        Scheduler_RemoveCallback(FieldEffect_WatchLeaderDistance);
 
         zero = 0;
         state->active = zero;
@@ -110,7 +110,7 @@ struct BurstParticleVector {
 
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 #define Rand Random16
-void RotateVectorByMagnitude(s32, s32, struct BurstParticleVector *);
+void Vector_AddPolarOffset(s32, s32, struct BurstParticleVector *);
 void *Object_Spawn(s32, s32, s32, s32);
 void Object_SetCallback(void *, const void *);
 extern const u8 gRom[];
@@ -133,7 +133,7 @@ void BattleFx_RunBurstParticles(void)
         p->values[0] = *(s32 *)(state + 4);
         p->values[2] = *(s32 *)(state + 12);
         random_value = (Rand() * 6) + 0x40000;
-        RotateVectorByMagnitude(random_value, Rand(), p);
+        Vector_AddPolarOffset(random_value, Rand(), p);
         p->values[1] = *(s32 *)(state + 8);
         object = Object_Spawn(
             0xD9,

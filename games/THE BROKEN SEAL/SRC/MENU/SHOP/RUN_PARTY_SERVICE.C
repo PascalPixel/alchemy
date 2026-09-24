@@ -3,8 +3,8 @@
 #include "GLOBAL_CELLS.H"
 #include "SOUND_IDS.H"
 
-void UiText_DrawQuantity(s32 value, s32 slot);
-void UiWindow_Close(s32 window, s32 style);
+void UiWork_PushValueSlotFar(s32 value, s32 slot);
+void UiWork_FinalizeFar(s32 window, s32 style);
 s32 Shop_CanServe(s32 unit_id, s32 kind);
 s32 Shop_ServicePrice(s32 unit_id, s32 kind);
 void BattleUnit_ResetStateByMode(s32 unit_id, s32 mode);
@@ -95,8 +95,8 @@ s32 Sanctum_RunPartyService(void)
                 Audio_PlayCue(SOUND_MENU_CANCEL);
                 continue;
             }
-            UiText_DrawQuantity(unit_id, 1);
-            UiText_DrawQuantity(price, 5);
+            UiWork_PushValueSlotFar(unit_id, 1);
+            UiWork_PushValueSlotFar(price, 5);
             message = (s32)&Value_00000d27;
             UiMessage_ShowResolvedAndWait(message);
             if (UiMessage_ShowChoiceVariant(0) != 0) {
@@ -110,14 +110,14 @@ s32 Sanctum_RunPartyService(void)
                 retry = 1;
                 continue;
             }
-            UiText_DrawQuantity(unit_id, 1);
+            UiWork_PushValueSlotFar(unit_id, 1);
             UiMessage_ShowResolvedAndWait(message + 3);
-            UiWork_FinalizePending();
+            UiWork_FinalizePendingCoreFar();
             BattleUnit_ResetStateByMode(unit_id, kind);
             Shop_RunPartyMemberIconBurst(selection);
             Party_AdjustSixDigitCounterAFar(-price);
             Shop_DrawMoney();
-            UiText_DrawQuantity(unit_id, 1);
+            UiWork_PushValueSlotFar(unit_id, 1);
             UiMessage_ShowResolvedAndWait(message + 4);
             if (Shop_CountUnits() != 0) {
                 retry = 1;
@@ -144,8 +144,8 @@ s32 Sanctum_RunPartyService(void)
     }
 
     Menu_ReleaseEntryObjectsFar();
-    UiWindow_Close(price_window, 2);
-    UiWindow_Close(list_window, 2);
+    UiWork_FinalizeFar(price_window, 2);
+    UiWork_FinalizeFar(list_window, 2);
     WaitFrames(1);
     return 0;
 }

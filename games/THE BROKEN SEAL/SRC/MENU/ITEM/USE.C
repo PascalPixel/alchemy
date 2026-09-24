@@ -7,12 +7,12 @@
 extern char Value_00000bef;
 extern struct ItemMenuState *gMenuWork;
 s32 Audio_PlayCue(s32);
-void UiWindow_Commit(s32 window);
+void RenderOutput_RedrawSavedRectFar(s32 window);
 s32 Item_Use(s32 slot, s32 owner, s32 target);
 void Item_PlayUseAnimation(u32 item);
 s32 RenderOutput_ClearListFar(s32 window);
 s32 InventoryMenu_ShowModalMessage(s32 message, s32 a, s32 b);
-void BattleUnit_Recalculate(s32 owner);
+void Owner_RecalculateStatsFar(s32 owner);
 
 s32 ItemMenu_Use(void)
 {
@@ -29,14 +29,14 @@ s32 ItemMenu_Use(void)
         InventoryMenu_ShowModalMessage(
             menu->message_offset + (s32)&Value_00000bef, result, result);
 #if defined(TBS_EDITION_JA)
-        UiWindow_Commit(menu->info_window);
+        RenderOutput_RedrawSavedRectFar(menu->info_window);
 #endif
         menu->completion_flag = 1;
         return result;
     }
 
     Item_PlayUseAnimation(menu->selected_item & 0x1ff);
-    BattleUnit_Recalculate(menu->item_owner);
-    BattleUnit_Recalculate(menu->target_owner);
+    Owner_RecalculateStatsFar(menu->item_owner);
+    Owner_RecalculateStatsFar(menu->target_owner);
     return 1;
 }

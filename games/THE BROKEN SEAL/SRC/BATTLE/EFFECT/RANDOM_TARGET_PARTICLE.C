@@ -17,11 +17,11 @@ extern s32 gGameState[];
 #define PARTY_STATE gGameState
 
 struct EffectPositionSource *Object_GetById(s32 id);
-void RotateVectorByMagnitude(
+void Vector_AddPolarOffset(
     s32 magnitude,
     s32 angle,
     struct EffectVector *position);
-void NormalizeVector(struct EffectVector *position);
+void Camera_WorldToScreen(struct EffectVector *position);
 void Audio_PlayCue(s32 cue);
 
 void BattleFx_UpdateRandomTargetParticle(struct EffectSlot *effect)
@@ -39,8 +39,8 @@ void BattleFx_UpdateRandomTargetParticle(struct EffectSlot *effect)
         position.x = source->position.x;
         position.y = source->position.y + Random16() * 5 + 0xf0000;
         position.z = source->position.z;
-        NormalizeVector(&position);
-        RotateVectorByMagnitude(
+        Camera_WorldToScreen(&position);
+        Vector_AddPolarOffset(
             Random16() * 6 + 0x20000,
             Random16(),
             &position);
@@ -57,10 +57,10 @@ void BattleFx_UpdateRandomTargetParticle(struct EffectSlot *effect)
         effect->flag41 = 1;
         (*state_pointer)++;
     } else if ((u8)(effect->state - 1) <= 1) {
-        if (EffectSlot_HasReachedTarget(effect) == 0) {
+        if (BattleFx_HasReachedTarget(effect) == 0) {
             position.x = effect->x;
             position.z = effect->z;
-            RotateVectorByMagnitude(0xc0000, Random16(), &position);
+            Vector_AddPolarOffset(0xc0000, Random16(), &position);
             effect->target_x = position.x;
             effect->target_z = position.z;
             effect->flag41 = 0;

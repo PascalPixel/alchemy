@@ -7,7 +7,7 @@
 
 /* battle/actor/clear_field_12b_for_group.c */
 u8 *Owner_GetStateFar(s32);
-void BattleUnit_Recalculate(u16 id);
+void Owner_RecalculateStatsFar(u16 id);
 
 struct ActorState_080b90ac {
     u8 padding_000[0x12b];
@@ -26,7 +26,7 @@ void BattleUnit_ClearField12bForGroup(void)
 
         actor = (struct ActorState_080b90ac *)Owner_GetStateFar(ids[index]);
         actor->field_12b = 0;
-        BattleUnit_Recalculate(ids[index]);
+        Owner_RecalculateStatsFar(ids[index]);
     }
 }
 

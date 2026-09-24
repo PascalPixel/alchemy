@@ -2,7 +2,7 @@
 
 u32 Math_DivU(s32, s32);
 s32 Math_ModU(s32, s32);
-u8 *Text_FormatNumber(u8 *, s32, s32);
+u8 *UiText_FormatNumber(u8 *, s32, s32);
 
 void *Text_FormatPlayTime(s32 value, u8 *out)
 {
@@ -20,7 +20,7 @@ void *Text_FormatPlayTime(s32 value, u8 *out)
     minutes = Math_DivU(time, 60);
     seconds = Math_ModU(time, 60);
 
-    s = Text_FormatNumber(buf, minutes, 3);
+    s = UiText_FormatNumber(buf, minutes, 3);
     *out = *s;
     s++;
     p = out + 1;
@@ -31,7 +31,7 @@ void *Text_FormatPlayTime(s32 value, u8 *out)
     p++;
     *p = ':';
 
-    s = Text_FormatNumber(buf, seconds, 2);
+    s = UiText_FormatNumber(buf, seconds, 2);
     p++;
     *p = s[0];
     p++;

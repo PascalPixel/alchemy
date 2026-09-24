@@ -176,7 +176,7 @@ void UiText_DrawStringAtOffsetFar(u8 *, void *, s32, s32);
 void UiText_DrawStringInWindowFar(u8 *, s32, s32, s32);
 void UiText_DrawNumberAtOffsetFar(s32, s32, s32, s32, s32);
 void PsynergyMenu_DrawRange(s32, s32, s32, s32, s32);
-u8 *Runtime_GetObject(s32 owner);
+u8 *Owner_GetStateFar(s32 owner);
 struct BattleAction *Ability_GetData(s32 action);
 
 s32 PsynergyMenu_DrawListPage(
@@ -191,7 +191,7 @@ s32 PsynergyMenu_DrawListPage(
 
     (void)unused;
 
-    owner = Runtime_GetObject(menu->owner_ids[0]);
+    owner = Owner_GetStateFar(menu->owner_ids[0]);
 
     UiWindow_Commit(window);
 
@@ -244,7 +244,7 @@ s32 PsynergyMenu_DrawListPage(
     UiText_DrawAt(
         owner[OWNER_CLASS_MSG_OFS] + (s32)&MsgClass, window, 0, 32);
     UiText_DrawStringInWindowFar(&StrLv, window, 0, 48);
-    UiNumber_DrawAt(owner[OWNER_LEVEL_OFS], 2, window, 24, 48);
+    UiText_DrawNumberInWindowFar(owner[OWNER_LEVEL_OFS], 2, window, 24, 48);
 
     return 1;
 }

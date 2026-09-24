@@ -6,7 +6,7 @@
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
 s32 Object_SetMode(s32, s32);
-s32 Object_SetAction(s32, s32);
+s32 ObjectDispatch_ApplyValueToChildrenFar(s32, s32);
 s32 BattleFx_RunProjectileVolley(void *effect, s32 mode);
 
 void BattleFx_RunMode0(void *effect)
@@ -46,9 +46,9 @@ void BattleEffect_RunMode5WithAction(void *effect)
     object =
         (s32)GetBattleObjectSlotFar(FIELD_AT_OFFSET(effect, s32 *, 8))->object;
     Object_SetMode(object, 2);
-    Object_SetAction(object, 0x30);
+    ObjectDispatch_ApplyValueToChildrenFar(object, 0x30);
     BattleFx_RunProjectileVolley(effect, 5);
-    Object_SetAction(object, 0x10);
+    ObjectDispatch_ApplyValueToChildrenFar(object, 0x10);
 }
 
 void BattleFx_RunMode6WithAction(void *effect)
@@ -58,9 +58,9 @@ void BattleFx_RunMode6WithAction(void *effect)
     object =
         (s32)GetBattleObjectSlotFar(FIELD_AT_OFFSET(effect, s32 *, 8))->object;
     Object_SetMode(object, 2);
-    Object_SetAction(object, 0x30);
+    ObjectDispatch_ApplyValueToChildrenFar(object, 0x30);
     BattleFx_RunProjectileVolley(effect, 6);
-    Object_SetAction(object, 0x10);
+    ObjectDispatch_ApplyValueToChildrenFar(object, 0x10);
 }
 
 void BattleFx_RunMode7(void *effect)
@@ -80,7 +80,7 @@ void BattleFx_RunMode9WithAction(void *effect)
     object =
         (s32)GetBattleObjectSlotFar(FIELD_AT_OFFSET(effect, s32 *, 8))->object;
     Object_SetMode(object, 2);
-    Object_SetAction(object, 0x30);
+    ObjectDispatch_ApplyValueToChildrenFar(object, 0x30);
     BattleFx_RunProjectileVolley(effect, 9);
-    Object_SetAction(object, 0x10);
+    ObjectDispatch_ApplyValueToChildrenFar(object, 0x10);
 }

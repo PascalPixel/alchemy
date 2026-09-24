@@ -2,7 +2,7 @@
 
 s32 Inventory_CountItem(s32 owner, s32 item_id)
 {
-    u8 *base = OwnerState_Get(owner);
+    u8 *base = Owner_GetState(owner);
     s32 count = 0;
     s32 target = item_id & 0x1ff;
     s32 index = 0;

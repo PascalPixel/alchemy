@@ -10,7 +10,7 @@ struct ItemDefinition *Item_GetDirect(s32 item_id)
 
 s32 Item_CanOwnerEquipDirect(s32 owner_id, s32 item_id)
 {
-    struct OwnerInventoryState *owner = OwnerState_Get(owner_id);
+    struct OwnerInventoryState *owner = Owner_GetState(owner_id);
     struct ItemDefinition *item = Item_GetDirect(item_id);
     s32 mask = item->equip_mask;
 

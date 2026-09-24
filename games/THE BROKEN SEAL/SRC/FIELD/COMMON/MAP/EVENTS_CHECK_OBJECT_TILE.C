@@ -110,7 +110,7 @@ struct Object_08099738 {
 };
 
 void Audio_PlayCue(s32);
-s32 ScheduleCallback(void (*callback)(void));
+s32 Scheduler_RemoveCallback(void (*callback)(void));
 void Object_SetMode(struct Object_08099738 *, s32);
 void CheckObjectMapTile(void);
 
@@ -126,7 +126,7 @@ void MapEvent_RunTileTriggerSequence(void)
     controller = state->controller;
 
     Audio_PlayCue(154);
-    ScheduleCallback(CheckObjectMapTile);
+    Scheduler_RemoveCallback(CheckObjectMapTile);
     Object_SetMode(object, 0);
     object->field_6c = 0;
 

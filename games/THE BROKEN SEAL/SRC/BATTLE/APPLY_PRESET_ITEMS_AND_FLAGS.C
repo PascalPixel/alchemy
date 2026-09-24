@@ -24,19 +24,19 @@ struct Work_080b0444 {
 
 extern struct Work_080b0444 gGameState;
 
-void *Runtime_GetObject(s32);
+void *Owner_GetStateFar(s32);
 
 /* 固定値を設定し、3つの項目フラグを1にする。 */
 s32 Battle_ApplyPresetItemsAndFlags(void)
 {
     gGameState.value10 = 0x30d40;
     gGameState.value11c = 0x1c;
-    Inventory_EquipFar(1, Inventory_AddForOwner(1, 0x48d));
-    Inventory_EquipFar(0, Inventory_AddForOwner(0, 0x40b));
-    Inventory_AddForOwner(2, 0xe7);
-    FIELD((void *)Runtime_GetObject(3), s8 *, 0x131) = 1;
-    FIELD((void *)Runtime_GetObject(5), s8 *, 0x131) = 1;
-    FIELD((void *)Runtime_GetObject(2), s8 *, 0x140) = 1;
+    Inventory_EquipFar(1, Inventory_AddItemFar(1, 0x48d));
+    Inventory_EquipFar(0, Inventory_AddItemFar(0, 0x40b));
+    Inventory_AddItemFar(2, 0xe7);
+    FIELD((void *)Owner_GetStateFar(3), s8 *, 0x131) = 1;
+    FIELD((void *)Owner_GetStateFar(5), s8 *, 0x131) = 1;
+    FIELD((void *)Owner_GetStateFar(2), s8 *, 0x140) = 1;
     Battle_Apply3(FINAL_ARG, 0x1e);
     return 0;
 }

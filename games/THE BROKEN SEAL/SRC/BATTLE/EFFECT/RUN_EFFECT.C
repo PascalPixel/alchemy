@@ -48,7 +48,7 @@ s32 BattleFx_FilterObjectIdByFlags(s32 obj_id);
 
 void BattleFx_SetupObjectPair(s32 selected_object, s32 obj_id);
 
-void BattleFx_PauseObject(s32 obj_id);
+void BattleEffect_PauseObject(s32 obj_id);
 
 void ResetSceneTransitionEffect(void);
 
@@ -107,7 +107,7 @@ void BattleFx_Run(void)
         if (BattleFx_FindDescriptorWithOverride(obj_id)!= 0) {
             BattleFx_SetupObjectPair(gGameState.selected_object, obj_id);
             BattleFx_MarkChildAndRunFallbackTransition(obj_id);
-            BattleFx_PauseObject(obj_id);
+            BattleEffect_PauseObject(obj_id);
             gGameState.selected_id = obj_id;
         } else {
             BattleEffect_RunFallbackObjectTransition();
@@ -176,7 +176,7 @@ void BattleFx_DispatchRequestKind(void)
             BattleFx_ResumeObject(gGameState.selected_id);
             gGameState.selected_id = -1;
         }
-        BattleFx_PauseObject(target_id);
+        BattleEffect_PauseObject(target_id);
         gGameState.selected_id = target_id;
         BattleFx_MarkChildAndRunFallbackTransition(target_id);
         break;

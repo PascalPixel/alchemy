@@ -3,7 +3,7 @@
 extern u8 *gMenuWork;
 s32 Party_ListActiveOwnersFar(void *);
 void ResourceObject_ReleaseFar(void *);
-void ScheduleCallback(void (*callback)(void));
+void Scheduler_RemoveCallback(void (*callback)(void));
 void Menu_UpdateEntryObjectTransforms(void);
 
 void Menu_ReleaseEntryObjects(void)
@@ -26,5 +26,5 @@ void Menu_ReleaseEntryObjects(void)
             }
         } while (--i != 0);
     }
-    ScheduleCallback((void (*)(void))Menu_UpdateEntryObjectTransforms);
+    Scheduler_RemoveCallback((void (*)(void))Menu_UpdateEntryObjectTransforms);
 }

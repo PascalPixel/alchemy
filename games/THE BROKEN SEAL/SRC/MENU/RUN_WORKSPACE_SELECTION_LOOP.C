@@ -42,7 +42,7 @@ s32 Menu_RunWorkspaceSelectionLoop(void)
 
     spC = 1;
     var_fp_21 = 3;
-    temp_r0_22 = GameFlag_IsSet(0x17E);
+    temp_r0_22 = GameFlag_TestFar(0x17E);
     sp4 = 0;
     Menu_PrepareWorkspacePage();
     temp_sl_29 = gSelectionWork;
@@ -79,7 +79,7 @@ loop_6:
                 if (i != FIELD_AT_OFFSET(temp_sl_29, u16 *, 0x574)) {
                     var_r2_101 = 1;
                 }
-                RenderResource_LoadFrame(*(s8 *)(j + (s32)tbl), temp_e, var_r2_101);
+                RenderOutput_LoadFrame(*(s8 *)(j + (s32)tbl), temp_e, var_r2_101);
                 i++;
                 j++;
             } while (i < var_fp_21);

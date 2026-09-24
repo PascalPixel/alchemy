@@ -3,7 +3,7 @@
 #include "FIXED_MATH.H"
 
 /* menu/item_menu/page_result.c */
-s32 Runtime_GetObject(s32);
+s32 Owner_GetStateFar(s32);
 s32 ItemMenu_Count(s32 owner);
 
 static __inline__ u8 LoadByte(s32 base, s32 offset)
@@ -29,7 +29,7 @@ s32 ItemMenu_PageResult(struct MenuResult *result, s32 index)
     s32 value;
 
     limit = ItemMenu_Count(LoadByte(entries, offset));
-    encoded = Runtime_GetObject(LoadByte(entries, offset));
+    encoded = Owner_GetStateFar(LoadByte(entries, offset));
     value = LoadSignedByte(base, LoadByte(entries, offset) + 0x260);
     if ((s32)(value + 1) > limit) {
         value = limit - 1;

@@ -2,7 +2,7 @@
 
 #include "OWNER_STATE.H"
 
-u8 *Ability_GetData(s32 action);
+u8 *BattleAction_Get(s32 action);
 
 #define ACTION_ID_MASK 0x3FFF
 
@@ -28,7 +28,7 @@ s32 PsynergyMenu_CollectActions(struct OwnerActionState *owner, u16 *actions, s3
     if (mode == 1) {
         for (i = 0, off = 88, out = actions; i <= 31; i++, off += 4) {
             if (*(u16 *)(off + (s32)owner) != 0) {
-                if (Ability_GetData(*(u16 *)(off + (s32)owner) & ACTION_ID_MASK)[12] != 0) {
+                if (BattleAction_Get(*(u16 *)(off + (s32)owner) & ACTION_ID_MASK)[12] != 0) {
                     *out = *(u16 *)((s32)owner + off);
                     out++;
                     count++;
@@ -41,7 +41,7 @@ s32 PsynergyMenu_CollectActions(struct OwnerActionState *owner, u16 *actions, s3
 
             for (i = 0; i < 32; i++) {
                 if (owner->action_slots[i].encoded_action != 0) {
-                    u8 *ability = Ability_GetData(owner->action_slots[i].encoded_action & ACTION_ID_MASK);
+                    u8 *ability = BattleAction_Get(owner->action_slots[i].encoded_action & ACTION_ID_MASK);
 
                     if (j == 0 && (ability[12] != 0 || (ability[1] & 0x40) != 0)) {
                         *out = owner->action_slots[i].encoded_action;

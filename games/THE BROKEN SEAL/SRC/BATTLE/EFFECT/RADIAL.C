@@ -26,7 +26,7 @@ struct Effect_080b2f4c {
 
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 #define Rand Random16
-void RotateVectorByMagnitude(s32, s32, struct Position *);
+void Vector_AddPolarOffset(s32, s32, struct Position *);
 
 void BattleFx_UpdateRadialMotion(struct Effect_080b2f4c *effect)
 {
@@ -40,11 +40,11 @@ void BattleFx_UpdateRadialMotion(struct Effect_080b2f4c *effect)
     if (state == 0) {
         position.x = effect->source_x;
         position.z = effect->source_z;
-        RotateVectorByMagnitude(0x280000, Rand(), &position);
+        Vector_AddPolarOffset(0x280000, Rand(), &position);
         Battle_Place(effect, position.x, position.z);
         position.x = effect->source_x;
         position.z = effect->source_z;
-        RotateVectorByMagnitude(0x40000, Rand(), &position);
+        Vector_AddPolarOffset(0x40000, Rand(), &position);
         effect->x = position.x;
         effect->z = position.z;
         effect->velocity = 0x20000;

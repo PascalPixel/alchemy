@@ -76,7 +76,7 @@ void Owner_InitRecords(void)
                     state->inventory[i] = 0;
 
                 for (i = 0; i < sizeof(tmpl->items) / sizeof(tmpl->items[0]); i++) {
-                    slot = Inventory_Add(*remote, tmpl->items[i] & 0x1ff);
+                    slot = Inventory_AddItem(*remote, tmpl->items[i] & 0x1ff);
                     Inventory_Equip(*remote, slot);
                 }
 

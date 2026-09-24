@@ -1,7 +1,7 @@
 #include "TYPES.H"
 #include "FIXED_MATH.H"
 
-void ParticleEffect_UpdateLinearMotion(void *particle)
+void BattleFx_UpdateParticleLinearMotion(void *particle)
 {
   s32 velocity_x;
   s32 x;

@@ -75,13 +75,13 @@ s16 Menu_RunSelection(void)
     for (;;) {
         result = FunctionHead_08029094(work, primary, &secondary, &mode);
         if (result == -1) {
-            TextResource_Release(resource);
+            UiTextResource_Release(resource);
             UiWork_Finalize(work, 2);
             FunctionHead_0808a238(primary, secondary);
             return result;
         }
         if (result == -2) {
-            TextResource_Release(resource);
+            UiTextResource_Release(resource);
             UiWork_Finalize(work, 2);
             return result;
         }

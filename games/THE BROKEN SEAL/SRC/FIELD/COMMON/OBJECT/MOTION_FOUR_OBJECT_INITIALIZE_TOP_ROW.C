@@ -9,9 +9,9 @@ extern u8 RomBytes_080ad40d[];
 extern s32 RomBytes_080af304[];
 
 void *ResourceObject_CreateFar(s32);
-void Object_InitializeMode(void *, s32);
+void AnimationObjects_SelectAnimationFar(void *, s32);
 
-s32 ScheduleCallbackAfterFrames(void (*)(void), s32);
+s32 Scheduler_AddOrUpdateCallback(void (*)(void), s32);
 void FourObjectMotion_UpdateAllPositions(void);
 void FourObjectMotion_UpdateBottomRow(void);
 
@@ -33,17 +33,17 @@ void FourObjectMotion_InitializeTopRow(void)
         void *object = ResourceObject_CreateFar(RomBytes_080af304[index]);
 
         if (object != NULL) {
-            Object_InitializeMode(object, 2);
+            AnimationObjects_SelectAnimationFar(object, 2);
         }
         state->objects[index] = object;
         state->positions_x[index] = 0x10;
         state->positions_y[index] = 0x20;
     }
-    ScheduleCallbackAfterFrames(FourObjectMotion_UpdateAllPositions, 0xc80);
+    Scheduler_AddOrUpdateCallback(FourObjectMotion_UpdateAllPositions, 0xc80);
 }
 
 /* object/motion/four_object/FourObjectMotion_ClearSlotsAndSchedule.c */
-void ScheduleCallback(s32);
+void Scheduler_RemoveCallback(s32);
 
 void FourObjectMotion_ClearSlotsAndSchedule(void)
 {
@@ -59,7 +59,7 @@ void FourObjectMotion_ClearSlotsAndSchedule(void)
         }
         index++;
     } while (index < 4);
-    ScheduleCallback((s32)&RomBytes_080ad35d);
+    Scheduler_RemoveCallback((s32)&RomBytes_080ad35d);
 }
 
 /* object/motion/four_object/FourObjectMotion_UpdateAllPositions.c */

@@ -49,7 +49,7 @@ s32 Resource_LoadIndexedEntryToBuffer(s32 resource, s32 index)
 }
 
 s32 UiGlyph_LoadEntryWithPalette(u32, s32, s32 *, s32 *, s32, s32);
-s32 GameFlag_IsSet(s32);
+s32 GameFlag_TestFar(s32);
 
 s32 Ui_LoadEntryForKind(u32 kind, s32 value)
 {
@@ -62,7 +62,7 @@ s32 Ui_LoadEntryForKind(u32 kind, s32 value)
     if (no > 7U) {
         no = 0;
     }
-    if (GameFlag_IsSet(0x20) != 0) {
+    if (GameFlag_TestFar(0x20) != 0) {
         switch (no) {
         case 0:
             no = 0x38;

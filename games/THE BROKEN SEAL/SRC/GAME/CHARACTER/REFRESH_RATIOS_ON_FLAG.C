@@ -41,7 +41,7 @@ void Owner_RefreshRatiosOnFlag(void)
             continue;
         }
 
-        obj = OwnerState_Get(ownerId);
+        obj = Owner_GetState(ownerId);
         do {
             *(u16 *)(obj + 0x3A) = *(u16 *)(obj + 0x36);
         } while (0);

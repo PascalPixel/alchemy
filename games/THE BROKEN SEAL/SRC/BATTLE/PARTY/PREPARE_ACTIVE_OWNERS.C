@@ -7,7 +7,7 @@
 extern struct PartyState gGameState;
 
 s32 Party_CountActiveOwnersFar(void);
-struct BattleUnit *Runtime_GetObject(s32 unit_id);
+struct BattleUnit *Owner_GetStateFar(s32 unit_id);
 
 /* Caps the active party at four owners, or three in the alternate battle mode,
  * optionally writes their identifiers with a 0xff terminator, marks each
@@ -31,7 +31,7 @@ s32 BattleParty_PrepareActiveOwners(u16 *owners)
 
         if (owners != 0)
             *owners++ = owner;
-        Runtime_GetObject(owner)->status_12a = 2;
+        Owner_GetStateFar(owner)->status_12a = 2;
     }
 
     if (owners != 0)

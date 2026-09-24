@@ -23,7 +23,7 @@ struct Object_0808f28c {
     struct Child_0808f28c *child;
 };
 
-extern void RotateVectorByMagnitude(s32, s32, struct Values_0808f28c *);
+extern void Vector_AddPolarOffset(s32, s32, struct Values_0808f28c *);
 extern struct Object_0808f28c *Object_Spawn(s32, u32, u32, u32);
 extern void Object_SetCallback(struct Object_0808f28c *, void *);
 extern void Object_SetMode(struct Object_0808f28c *, s32);
@@ -41,7 +41,7 @@ void BattleFx_SpawnRandomParticleAtPosition(const struct Source_0808f28c *source
     values.second = source->values.second;
     values.third = source->values.third;
     rnd = Random16();
-    RotateVectorByMagnitude(rnd << 4, Random16(), &values);
+    Vector_AddPolarOffset(rnd << 4, Random16(), &values);
     object = Object_Spawn(
         0x11D, values.first, values.second, values.third);
     if (object != 0) {

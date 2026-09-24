@@ -59,7 +59,7 @@ s32 BattlePlacement_UpdateEntries(void)
         }
     }
 
-    if (GameFlag_IsSet(364) != 0)
+    if (GameFlag_TestFar(364) != 0)
         return;
 
     {

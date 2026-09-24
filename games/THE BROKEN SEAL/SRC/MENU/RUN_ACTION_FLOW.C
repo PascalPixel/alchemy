@@ -15,7 +15,7 @@ struct MenuActionState {
 
 extern struct MenuActionState *gMenuWork;
 
-s32 GameFlag_IsSet(s32 flag);
+s32 GameFlag_TestFar(s32 flag);
 s32 CharacterMenu_SelectOwner(s32 index);
 s32 CharacterMenu_SelectCommand(void);
 s32 PsynergyMenu_SelectAction(void);
@@ -29,7 +29,7 @@ s32 Menu_RunActionFlow(void)
     s32 result = 0;
     u32 changed;
 
-    while (!finished && !GameFlag_IsSet(0x150)) {
+    while (!finished && !GameFlag_TestFar(0x150)) {
         switch (step) {
         case 0:
             state->selection = finished;
@@ -64,7 +64,7 @@ s32 Menu_RunActionFlow(void)
         }
     }
 
-    if (GameFlag_IsSet(0x150))
+    if (GameFlag_TestFar(0x150))
         result = -1;
 
     return result;

@@ -5,8 +5,8 @@
 #include "FIXED_MATH.H"
 #include "UI.H"
 
-void UiWindow_Close(s32, s32);
-s32 Ability_GetAvailability(s32);
+void UiWork_FinalizeFar(s32, s32);
+s32 Inventory_CountFar(s32);
 void Audio_PlayCue(s32);
 void UiMessage_ShowAndWait(s32);
 void Shop_RepairItem(s32, s32);
@@ -51,7 +51,7 @@ s32 Shop_SelRepair(s32 unit_id)
         for (;;) {
             if (redraw != 0) {
                 redraw = 0;
-                item_count = Ability_GetAvailability(unit_id);
+                item_count = Inventory_CountFar(unit_id);
                 if (selection > item_count - 1)
                     selection = item_count - 1;
                 item_id = 0x1ff & unit->inventory[selection];
@@ -109,17 +109,17 @@ s32 Shop_SelRepair(s32 unit_id)
         }
 done:
 
-        UiWindow_Close(price_window, 2);
+        UiWork_FinalizeFar(price_window, 2);
         WaitFrames(1);
         if (result != 0)
             break;
 
         Shop_RepairItem(unit_id, selection);
         UiMessage_ShowAndWait((s32)&Value_00000cc2);
-        if (Ability_GetAvailability(unit_id) == 0)
+        if (Inventory_CountFar(unit_id) == 0)
             break;
     }
 
-    UiWindow_Close(list_window, 2);
+    UiWork_FinalizeFar(list_window, 2);
     return result;
 }

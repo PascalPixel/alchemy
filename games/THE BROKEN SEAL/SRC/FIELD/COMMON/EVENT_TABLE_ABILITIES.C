@@ -1,8 +1,8 @@
 #include "TYPES.H"
 
 extern s16 EventTable_AbilityLoadouts[][33];
-s32 GameFlag_IsSet(s32);
-s32 GameFlag_Set(s32);
+s32 GameFlag_TestFar(s32);
+s32 GameFlag_SetBitFar(s32);
 void Ability_GetMaximum(s32, s32);
 
 s32 EventTable_GetRowLimit(void)
@@ -19,8 +19,8 @@ void EventTable_ApplyRowAbilities(s32 row_no)
     s32 flag;
 
     flag = row_no + 0x400;
-    if (GameFlag_IsSet(flag) == 0) {
-        GameFlag_Set(flag);
+    if (GameFlag_TestFar(flag) == 0) {
+        GameFlag_SetBitFar(flag);
         count = 0;
         value = EventTable_AbilityLoadouts[row_no][24];
         if (value != 0) {

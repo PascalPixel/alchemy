@@ -5,9 +5,9 @@ extern s32 FourObjectMotion_ResourceIds[];
 
 void ResourceObject_ReleaseFar(void *);
 void *ResourceObject_CreateFar(s32);
-void Object_InitializeMode(void *, s32);
+void AnimationObjects_SelectAnimationFar(void *, s32);
 void FourObjectMotion_UpdateBottomRow(void);
-s32 ScheduleCallbackAfterFrames(void (*)(void), s32);
+s32 Scheduler_AddOrUpdateCallback(void (*)(void), s32);
 void Scheduler_RemoveCallback(void (*)(void));
 
 void FourObjectMotion_InitializeBottomRow(void)
@@ -27,13 +27,13 @@ void FourObjectMotion_InitializeBottomRow(void)
         void *object = ResourceObject_CreateFar(FourObjectMotion_ResourceIds[index]);
 
         if (object != NULL)
-            Object_InitializeMode(object, 2);
+            AnimationObjects_SelectAnimationFar(object, 2);
         state->objects[index] = object;
         state->phases[index] = 0x10000;
         state->positions_x[index] = 0x10;
         state->positions_y[index] = 0xc8;
     }
-    ScheduleCallbackAfterFrames(FourObjectMotion_UpdateBottomRow, 0xc80);
+    Scheduler_AddOrUpdateCallback(FourObjectMotion_UpdateBottomRow, 0xc80);
 }
 
 s32 FourObjectMotion_SetSlotPosition(s32 index, s32 x, s32 y, s32 negative)
@@ -65,7 +65,7 @@ s32 FourObjectMotion_ReplaceSlot(s32 index, s32 kind, s32 value)
         void *object = ResourceObject_CreateFar(FourObjectMotion_ResourceIds[kind]);
 
         if (object != NULL)
-            Object_InitializeMode(object, value);
+            AnimationObjects_SelectAnimationFar(object, value);
         state->objects[index] = object;
     }
     return 1;

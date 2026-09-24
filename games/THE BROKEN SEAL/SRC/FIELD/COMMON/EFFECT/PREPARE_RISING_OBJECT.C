@@ -124,7 +124,7 @@ void *Runtime_AllocateHeapBlock(s32 asset_id, s32 size);
 void ItemIcon_LoadTilesFar(s32);
 s32 VramBlock_LoadCached(u32 slot, u32 size, const void *source);
 void Runtime_ReleaseHeapBlock(s32);
-void EmitRandomParticleEffect(void);
+void BattleFx_EmitRandomParticleFromEmitter(void);
 
 void BattleFx_StartEffectObject22(s32 value, s32 flags)
 {
@@ -158,7 +158,7 @@ void BattleFx_StartEffectObject22(s32 value, s32 flags)
         Runtime_ReleaseHeapBlock(17);
 
         if (flags & 1)
-            object->callback = (void (*)(void))EmitRandomParticleEffect;
+            object->callback = (void (*)(void))BattleFx_EmitRandomParticleFromEmitter;
         if (flags & 2)
             EffectRuntime_PrepareRisingObject((struct Object_0808f0d8 *)object);
 

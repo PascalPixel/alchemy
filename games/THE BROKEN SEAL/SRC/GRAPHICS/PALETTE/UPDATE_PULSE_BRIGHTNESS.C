@@ -25,7 +25,7 @@ void Palette_UpdatePulseBrightness(void)
         tick = gFrameCount;
         angle = (tick * 3) << 10;
         color = palette[16];
-        amount = Math_Div(0x10000 - FixedCos(angle), 0x2AAA);
+        amount = Math_Div(0x10000 - Trig_Cos(angle), 0x2AAA);
 
         red = (color >> 10) & mask;
         green = (color >> 5) & mask;

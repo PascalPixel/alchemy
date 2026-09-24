@@ -4,7 +4,7 @@
 void ObjectMotion_SetActionVariant(u32, s32);
 void ObjectMotion_SetHorizontalPositionWithTerrain(u32, s32, s32);
 void Object_SetCallback(struct ObjectRuntime *, const void *);
-void Object_SetAction(struct ObjectRuntime *, s32);
+void ObjectDispatch_ApplyValueToChildrenFar(struct ObjectRuntime *, s32);
 s32 Map_GetTerrainHeightFar(u8, s32, s32);
 void Battle_WaitMode0(s32);
 void Audio_PlayCue(s32);
@@ -326,7 +326,7 @@ void Object_SetActionById(u32 object_id, s32 action)
     struct ObjectRuntime *object = ObjectTable_Get(object_id);
 
     if (object != NULL)
-        Object_SetAction(object, action);
+        ObjectDispatch_ApplyValueToChildrenFar(object, action);
 }
 
 void ObjectMotion_WaitForAnimationChange(u32 object_id)

@@ -41,8 +41,8 @@ extern u32 gFrameTick;
 s32 Object_GetById(u32);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 #define Rand Random16
-void RotateVectorByMagnitude(s32, s32, void *);
-void NormalizeVector(void *);
+void Vector_AddPolarOffset(s32, s32, void *);
+void Camera_WorldToScreen(void *);
 void Audio_PlayCue(s32);
 void Object_Destroy();
 
@@ -73,7 +73,7 @@ void BattleFx_UpdateDescendingOrbitObject(struct Object08095fcc *arg)
     value = arg->timer;
     local.x = other->x;
     local.z = other->z;
-    RotateVectorByMagnitude(value * 0x6666,
+    Vector_AddPolarOffset(value * 0x6666,
                   (value << 11) + arg->angle,
                   &local);
     arg->x = local.x;
@@ -101,11 +101,11 @@ void BattleFx_UpdateRadialSpread(struct EffectSlot *effect)
         position.z = source->position.z;
 
         random = Rand() * 10 + 0xa0000;
-        RotateVectorByMagnitude(
+        Vector_AddPolarOffset(
             random,
             Rand(),
             &position);
-        NormalizeVector(&position);
+        Camera_WorldToScreen(&position);
 
         effect->origin_x = position.x;
         effect->origin_z = position.z;
@@ -114,7 +114,7 @@ void BattleFx_UpdateRadialSpread(struct EffectSlot *effect)
         position.x = effect->x;
         position.z = effect->z;
 
-        RotateVectorByMagnitude(0x780000, 0xc000, &position);
+        Vector_AddPolarOffset(0x780000, 0xc000, &position);
         effect->target_x = position.x;
         effect->target_z = position.z;
         effect->acceleration = 0x10000;
@@ -125,10 +125,10 @@ void BattleFx_UpdateRadialSpread(struct EffectSlot *effect)
         if ((gFrameTick & 1) != 0)
             Audio_PlayCue(0x90);
     } else if (state == 1) {
-        if (EffectSlot_HasReachedTarget(effect) == 0)
+        if (BattleFx_HasReachedTarget(effect) == 0)
             effect->state--;
     } else if (state == 2) {
-        if (EffectSlot_HasReachedTarget(effect) == 0)
+        if (BattleFx_HasReachedTarget(effect) == 0)
             BattleFx_ClearOwnedSlot(effect);
     }
 }

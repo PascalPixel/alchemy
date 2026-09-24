@@ -24,8 +24,8 @@ extern struct PlacementState *gMenuWork;
 extern const s32 Menu_PartySpriteResourceIds[4];
 
 struct RuntimeObject *ResourceObject_CreateFar(s32);
-void Object_InitializeMode(struct RuntimeObject *, s32);
-void ScheduleCallbackAfterFrames(s32, s32);
+void AnimationObjects_SelectAnimationFar(struct RuntimeObject *, s32);
+void Scheduler_AddOrUpdateCallback(s32, s32);
 void Menu_UpdateSecondObjectRowPositions(void);
 
 void Menu_SpawnFourObjectsAtOrigin(struct PlacementOrigin *origin, s32 x, s32 y)
@@ -38,7 +38,7 @@ void Menu_SpawnFourObjectsAtOrigin(struct PlacementOrigin *origin, s32 x, s32 y)
             struct RuntimeObject *object = ResourceObject_CreateFar(Menu_PartySpriteResourceIds[i]);
 
             if (object != 0) {
-                Object_InitializeMode(object, 2);
+                AnimationObjects_SelectAnimationFar(object, 2);
                 object->field_26 = 0;
                 object->flags = (u8)(object->flags & ~0x0c);
             }
@@ -48,12 +48,12 @@ void Menu_SpawnFourObjectsAtOrigin(struct PlacementOrigin *origin, s32 x, s32 y)
             state->y[i] = (origin->y + y) * 8 + 0x10;
         }
 
-        ScheduleCallbackAfterFrames((s32)Menu_UpdateSecondObjectRowPositions, 200 << 4);
+        Scheduler_AddOrUpdateCallback((s32)Menu_UpdateSecondObjectRowPositions, 200 << 4);
     }
 }
 
 
-void ScheduleCallback(s32);
+void Scheduler_RemoveCallback(s32);
 void ResourceObject_ReleaseFar(void *);
 
 void Menu_ClearSecondObjectRowAndScheduleUpdate(void)
@@ -63,7 +63,7 @@ void Menu_ClearSecondObjectRowAndScheduleUpdate(void)
     s32 zero;
     s32 count;
 
-    ScheduleCallback((s32)Menu_UpdateSecondObjectRowPositions);
+    Scheduler_RemoveCallback((s32)Menu_UpdateSecondObjectRowPositions);
     zero = 0;
     offset *= 4;
     count = 3;

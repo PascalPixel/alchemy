@@ -33,7 +33,7 @@ struct ItemBreakFragmentObject {
 extern s32 ArcTan2(s32, s32);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 #define Rand Random16
-extern void RotateVectorByMagnitude(s32, s32, struct ItemBreakFragmentPosition *);
+extern void Vector_AddPolarOffset(s32, s32, struct ItemBreakFragmentPosition *);
 extern struct ItemBreakFragmentObject *Object_Spawn(s32, s32, s32, s32);
 extern void Object_SetMode(struct ItemBreakFragmentObject *, s32);
 extern void Object_SetCallback(struct ItemBreakFragmentObject *, const void *);
@@ -67,7 +67,7 @@ void BattleFx_UpdateItemBreakFragment(struct ItemBreakFragmentSource *source)
     position.z = source->z;
     drift_magnitude = Rand() * 3;
     drift_magnitude <<= 4;
-    RotateVectorByMagnitude(drift_magnitude, Rand(), &position);
+    Vector_AddPolarOffset(drift_magnitude, Rand(), &position);
 
     object = Object_Spawn(0x11D, position.x, position.y, position.z);
     if (object != 0) {

@@ -27,19 +27,19 @@ struct Runtime_080b8ec4 {
 };
 
 s32 WaitFrames(s32);
-s32 Object_InitializeMode(void *, s32);
+s32 AnimationObjects_SelectAnimationFar(void *, s32);
 s32 Map_RenderAnimatedTileFramesForObjectFar(void *);
-struct Creature_080b8ec4 *Runtime_GetObject();
+struct Creature_080b8ec4 *Owner_GetStateFar();
 struct Runtime_080b8ec4 *GetBattleObjectSlot(s32);
 s32 ActivateBattleObjectSlot(s32);
 void BattleMotion_SetMode5AndActivateSlot(s32 arg0)
 {
   struct ActorData_080b8ec4 *actor_data;
   struct Actor_080b8ec4 *object;
-  if (Runtime_GetObject()->field_38 <= 0)
+  if (Owner_GetStateFar()->field_38 <= 0)
   {
     object = GetBattleObjectSlot(arg0)->field_00->field_50;
-    Object_InitializeMode(object, 5);
+    AnimationObjects_SelectAnimationFar(object, 5);
     actor_data = object->field_28;
     actor_data->field_05 = 6;
     actor_data->field_16 = 0xFF;

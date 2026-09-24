@@ -4,7 +4,7 @@
 /* ability/play_use_animation.c */
 #define FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
-void *Ability_GetData();
+void *BattleAction_Get();
 
 void Ability_PlayUseAnimation(void)
 {
@@ -12,7 +12,7 @@ void Ability_PlayUseAnimation(void)
     u32 target_type;
     void *ability;
 
-    ability = Ability_GetData();
+    ability = BattleAction_Get();
     animation_type = 0xf & FIELD(ability, u8 *, 1);
     switch (animation_type) {
     case 1:

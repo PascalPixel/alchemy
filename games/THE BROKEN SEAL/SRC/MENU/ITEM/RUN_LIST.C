@@ -65,7 +65,7 @@ void Audio_PlayCue(s32 cue);
 
 /*
  * types.h already supplies WaitFrames, Math_Mod, Audio_PlayCue, GameFlag_IsSet,
- * Ability_GetData, UiText_DrawAt, UiIcon_PrepareObject and
+ * Ability_GetData, UiText_DrawCharacterAtOffsetFar, UiIcon_PrepareObject and
  * Object_InitializeMode; only the names it does not carry are declared here.
  */
 
@@ -145,7 +145,7 @@ s32 ItemMenu_RunList(s32 pane)
                     WaitFrames(1);
                     ItemMenu_DrawNamePage(window, 0, &state);
                     if (pane == 0) {
-                        UiText_DrawAt((s32)&Value_00000b89, window, 0, 88);
+                        UiText_DrawCharacterAtOffsetFar((s32)&Value_00000b89, window, 0, 88);
                     }
                     redraw = 0;
                 }

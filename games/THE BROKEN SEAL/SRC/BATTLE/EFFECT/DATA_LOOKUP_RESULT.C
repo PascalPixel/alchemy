@@ -11,7 +11,7 @@ typedef struct Entry {
 
 extern Entry gRom[];
 
-s32 GameFlag_IsSet(s32 flag);
+s32 GameFlag_TestFar(s32 flag);
 void BattleFx_SelectResultPointer(s32 arg0);
 
 s32 BattleFx_LookupResult(void *arg0)
@@ -24,7 +24,7 @@ s32 BattleFx_LookupResult(void *arg0)
     while (entry->first != -1) {
         if (entry->first == value &&
             (entry->second == -1 || entry->second == key) &&
-            (entry->third == -1 || GameFlag_IsSet(entry->third) == 0)) {
+            (entry->third == -1 || GameFlag_TestFar(entry->third) == 0)) {
             result = entry->result;
             break;
         }

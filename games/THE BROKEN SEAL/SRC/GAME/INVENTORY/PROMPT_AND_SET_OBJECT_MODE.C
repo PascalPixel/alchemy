@@ -26,7 +26,7 @@ extern volatile s32 gKeyState;
 s16 *BattleAction_FindDescriptor(s32);
 s32 Inventory_RequestMode(s32, s32, s32, s32);
 
-void UiWork_FinalizePending(void);
+void UiWork_FinalizePendingCoreFar(void);
 
 s32 Inventory_PromptAndSetObjectMode(s32 id, s32 force)
 {
@@ -62,12 +62,12 @@ s32 Inventory_PromptAndSetObjectMode(s32 id, s32 force)
     if (ret != 0) {
         Object_SetModeById(id, 4);
         UiWork_FinalizeEntityMatchingLocalizedIdFar(v);
-        UiWork_FinalizePending();
+        UiWork_FinalizePendingCoreFar();
         Object_WaitUntilChildValueDiffers(id, 4);
     } else {
         Object_SetModeById(id, 3);
         UiWork_FinalizeEntityMatchingLocalizedIdFar(v);
-        UiWork_FinalizePending();
+        UiWork_FinalizePendingCoreFar();
         Object_WaitUntilChildValueDiffers(id, 3);
     }
 

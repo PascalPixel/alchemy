@@ -60,10 +60,10 @@ struct EffectSceneWork {
 extern struct EffectSceneWork *gEffectWork;
 extern u32 gFrameCount;
 
-void NormalizeVector(struct Output *);
+void Camera_WorldToScreen(struct Output *);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 #define Rand Random16
-void RotateVectorByMagnitude(s32, s32, struct Output *);
+void Vector_AddPolarOffset(s32, s32, struct Output *);
 void Audio_PlayCue(s32);
 
 void BattleFx_UpdateRadialLaunch(struct EffectSlot *effect)
@@ -80,7 +80,7 @@ void BattleFx_UpdateRadialLaunch(struct EffectSlot *effect)
         position.x = source->position.x;
         position.y = source->position.y;
         position.z = source->position.z;
-        NormalizeVector(&position);
+        Camera_WorldToScreen(&position);
 
         effect->x = position.x;
         effect->z = (s32)((u32)position.z + 0x80000);
@@ -90,7 +90,7 @@ void BattleFx_UpdateRadialLaunch(struct EffectSlot *effect)
         position.x = effect->origin_x;
 
         first_random = Rand();
-        RotateVectorByMagnitude(
+        Vector_AddPolarOffset(
             0x780000,
             ((first_random << 13) >> 16)
                 - ((Rand() << 13) >> 16)
@@ -107,10 +107,10 @@ void BattleFx_UpdateRadialLaunch(struct EffectSlot *effect)
         if ((gFrameCount & 2) != 0)
             Audio_PlayCue(0xf6);
     } else if (state == 1) {
-        if (EffectSlot_HasReachedTarget(effect) == 0)
+        if (BattleFx_HasReachedTarget(effect) == 0)
             effect->state--;
     } else if (state == 2) {
-        if (EffectSlot_HasReachedTarget(effect) == 0)
+        if (BattleFx_HasReachedTarget(effect) == 0)
             BattleFx_ClearOwnedSlot(effect);
     }
 }
@@ -171,7 +171,7 @@ void BattleFx_RunEffect15(void)
     position.x = *(s32 *)(main_object + 8);
     position.y = *(s32 *)(main_object + 12);
     position.z = *(s32 *)(main_object + 16);
-    NormalizeVector(&position);
+    Camera_WorldToScreen(&position);
     index = 0;
     particle = scene;
     particle += 88;

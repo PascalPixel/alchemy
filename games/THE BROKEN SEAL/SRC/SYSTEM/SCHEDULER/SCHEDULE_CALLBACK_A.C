@@ -1,8 +1,8 @@
 #include "TYPES.H"
 
-s32 ScheduleCallback(s32);
+s32 Scheduler_RemoveCallback(s32);
 
 void Scheduler_ScheduleCallbackA(void)
 {
-    ScheduleCallback(0x0801FD35);
+    Scheduler_RemoveCallback(0x0801FD35);
 }

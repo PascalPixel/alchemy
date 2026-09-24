@@ -8,7 +8,7 @@ struct Triple08099340 {
 };
 
 extern s32 *gEffectWork;
-void RotateVectorByMagnitude(s32, s32, struct Triple08099340 *);
+void Vector_AddPolarOffset(s32, s32, struct Triple08099340 *);
 void Object_SetCallback(void *, void *);
 
 void BattleFx_UpdateShrinkingOrbitObject(u8 *arg)
@@ -26,7 +26,7 @@ void BattleFx_UpdateShrinkingOrbitObject(u8 *arg)
             local.x = global[1];
             local.y = global[2] + 0xA0000;
             local.z = global[3];
-            RotateVectorByMagnitude(value << 16,
+            Vector_AddPolarOffset(value << 16,
                           *(s16 *)(arg + 102) + (value << 11),
                           &local);
             *(s32 *)(arg + 8) = local.x;

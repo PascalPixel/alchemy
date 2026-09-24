@@ -9,7 +9,7 @@
    the poison and venom damage applied at the end of a round. */
 
 s32 Party_CountActiveOwnersFar();
-struct BattleUnit *Runtime_GetObject(s32 unit_id);
+struct BattleUnit *Owner_GetStateFar(s32 unit_id);
 void Owner_AdjustFirstValueFar(s32 owner, s32 amount);
 void Owner_AdjustSecondValueFar(s32 owner, s32 amount);
 void BattleFx_ApplyColorToSourceBuffer(s32 color, s32 mode);
@@ -58,7 +58,7 @@ void BattleParty_ApplyHealthDelta(s32 amount, s32 scaled)
 
     count = Party_CountActiveOwnersFar();
     for (i = 0; i < count; i++) {
-        unit = Runtime_GetObject(PARTY_STATE.active_owners[i]);
+        unit = Owner_GetStateFar(PARTY_STATE.active_owners[i]);
         if (!scaled) {
             value = amount;
         } else {
@@ -88,7 +88,7 @@ s32 BattleParty_ApplyStatusDamage(void)
         remaining = count;
 
         do {
-            u8 *object = (u8 *)Runtime_GetObject(*entry);
+            u8 *object = (u8 *)Owner_GetStateFar(*entry);
             s32 amount;
 
             switch ((s8)object[0x131]) {

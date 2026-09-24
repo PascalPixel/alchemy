@@ -3,7 +3,7 @@
 /* inventory/has_equipment_value.c */
 s32 Equipment_HasValue(s32 owner, s32 value)
 {
-    u8 *entry = OwnerState_Get(owner);
+    u8 *entry = Owner_GetState(owner);
     s32 mask = 0x3fff;
     s32 index = 0;
 

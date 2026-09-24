@@ -10,7 +10,7 @@ struct Output_08097f80 {
 
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 #define Rand Random16
-void RotateVectorByMagnitude(s32, s32, struct Output_08097f80 *);
+void Vector_AddPolarOffset(s32, s32, struct Output_08097f80 *);
 void BattleFx_UpdateOrbitAndReturn(struct EffectSlot *effect)
 {
     struct Output_08097f80 position;
@@ -25,7 +25,7 @@ next_state:
         position.x = effect->origin_x;
         position.z = effect->origin_z;
         angle = Rand();
-        RotateVectorByMagnitude(0x1e0000, (u16)angle, &position);
+        Vector_AddPolarOffset(0x1e0000, (u16)angle, &position);
         effect->target_x = position.x;
         effect->target_z = position.z;
         effect->acceleration = 0x40000;
@@ -36,7 +36,7 @@ next_state:
     }
 
     if (state == 1) {
-        if (EffectSlot_HasReachedTarget(effect) == 0) {
+        if (BattleFx_HasReachedTarget(effect) == 0) {
             (*state_pointer)++;
             goto next_state;
         }
@@ -56,6 +56,6 @@ next_state:
         return;
     }
 
-    if (state == 3 && EffectSlot_HasReachedTarget(effect) == 0)
+    if (state == 3 && BattleFx_HasReachedTarget(effect) == 0)
         BattleFx_ClearOwnedSlot(effect);
 }

@@ -8,7 +8,7 @@ void Audio_PlayCue(s32);
 void *Object_Spawn(s32, s32, s32, s32);
 void Object_SetMode(void *, s32);
 
-void *SpawnItemBreakEffectMode1(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
+void *BattleFx_SpawnItemBreakMode1(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 {
     u8 *obj;
     s32 v;

@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_378:020005cc": {
+      "name": "ShindenHeya_ApplyEntryState",
+      "source": "FIELD/COMMON/SHINDEN_HEYA/ENTRY_STATE.C"
+    },
     "resource_372:02003ce4": {
       "name": "HaidiaArashi_UpdatePulsingGlow",
       "source": "FIELD/HAIDIA_ARASHI/PULSING_GLOW.C"

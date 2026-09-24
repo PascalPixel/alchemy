@@ -76607,6 +76607,66 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "scene-378-020005cc",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHINDEN_HEYA/ENTRY_STATE.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_378",
+      "absolute_symbols": {
+        "Engine_ColorBufferApplyTarget": {
+          "address": "0x0200b708",
+          "kind": "thumb"
+        },
+        "Engine_ColorBufferInterpolate": {
+          "address": "0x0200b710",
+          "kind": "thumb"
+        },
+        "Engine_EventWait": {
+          "address": "0x0200b5e8",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagIsSet": {
+          "address": "0x0200b5d0",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetPosition": {
+          "address": "0x0200b658",
+          "kind": "thumb"
+        },
+        "SceneState_ApplyTwoRects": {
+          "address": "0x0200b270",
+          "kind": "thumb"
+        },
+        "FieldScene_RunScriptedSceneSequence": {
+          "address": "0x0200888c",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagClear": {
+          "address": "0x0200b5e0",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagSet": {
+          "address": "0x0200b5d8",
+          "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x020005cc",
+          "extent": 284,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

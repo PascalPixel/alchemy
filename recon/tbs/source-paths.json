@@ -1,6 +1,18 @@
 {
   "format": 3,
   "owners": {
+    "resource_3bc:0200288c": {
+      "name": "Korosseo_FinishSoloRound",
+      "source": "FIELD/COMMON/KOROSSEO/SOLO_ROUND.C"
+    },
+    "resource_3bb:02001df4": {
+      "name": "Korosseo_FinishSoloRound",
+      "source": "FIELD/COMMON/KOROSSEO/SOLO_ROUND.C"
+    },
+    "resource_3ba:02001b5c": {
+      "name": "Korosseo_FinishSoloRound",
+      "source": "FIELD/COMMON/KOROSSEO/SOLO_ROUND.C"
+    },
     "resource_3b7:02000104": {
       "name": "TorebiIzumi_WalkLeaderToSpring",
       "source": "FIELD/TOREBI_IZUMI/WALK_TO_SPRING.C"

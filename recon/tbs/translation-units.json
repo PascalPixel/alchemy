@@ -72986,6 +72986,236 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "korosseo-solo-round",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/KOROSSEO/SOLO_ROUND.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3ba",
+      "absolute_symbols": {
+        "Engine_ActorGet": {
+          "address": "0x0200bcb8",
+          "kind": "thumb"
+        },
+        "Engine_EventBegin": {
+          "address": "0x0200bca0",
+          "kind": "thumb"
+        },
+        "Engine_EventSetMessage": {
+          "address": "0x0200bd30",
+          "kind": "thumb"
+        },
+        "Engine_EventOpenMessage": {
+          "address": "0x0200bd38",
+          "kind": "thumb"
+        },
+        "Engine_UiWorkWaitThenFinalizeCapacity": {
+          "address": "0x0200bcb0",
+          "kind": "thumb"
+        },
+        "Engine_EventShowMessage": {
+          "address": "0x0200bd40",
+          "kind": "thumb"
+        },
+        "Engine_EventCloseScreen": {
+          "address": "0x0200bdb8",
+          "kind": "thumb"
+        },
+        "Engine_EventWaitForScreen": {
+          "address": "0x0200bdc0",
+          "kind": "thumb"
+        },
+        "Main_080770e8": {
+          "address": "0x0200bc70",
+          "kind": "thumb"
+        },
+        "Engine_EventRequestExit": {
+          "address": "0x0200bd88",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagSet": {
+          "address": "0x0200bc60",
+          "kind": "thumb"
+        },
+        "Korosseo_SelectSoloCompetitor": {
+          "address": "0x02009910",
+          "kind": "thumb"
+        },
+        "Engine_EventOpenScreen": {
+          "address": "0x0200bdb0",
+          "kind": "thumb"
+        },
+        "Engine_EventEnd": {
+          "address": "0x0200bca8",
+          "kind": "thumb"
+        },
+        "gGameStateRows": {
+          "address": "0x02000240",
+          "kind": "data"
+        },
+        "Korosseo_RoundMessage": {
+          "address": "0x00002086",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02001b5c",
+          "extent": 288,
+          "state": "exact-c"
+        }
+      ],
+      "instances": {
+        "resource_3bb": {
+          "owners": {
+            "Korosseo_FinishSoloRound": {
+              "address": "0x02001df4",
+              "extent": 288
+            }
+          },
+          "absolute_symbols": {
+            "Engine_ActorGet": {
+              "address": "0x0200bf50",
+              "kind": "thumb"
+            },
+            "Engine_EventBegin": {
+              "address": "0x0200bf38",
+              "kind": "thumb"
+            },
+            "Engine_EventSetMessage": {
+              "address": "0x0200bfd0",
+              "kind": "thumb"
+            },
+            "Engine_EventOpenMessage": {
+              "address": "0x0200bfd8",
+              "kind": "thumb"
+            },
+            "Engine_UiWorkWaitThenFinalizeCapacity": {
+              "address": "0x0200bf48",
+              "kind": "thumb"
+            },
+            "Engine_EventShowMessage": {
+              "address": "0x0200bfe0",
+              "kind": "thumb"
+            },
+            "Engine_EventCloseScreen": {
+              "address": "0x0200c068",
+              "kind": "thumb"
+            },
+            "Engine_EventWaitForScreen": {
+              "address": "0x0200c070",
+              "kind": "thumb"
+            },
+            "Main_080770e8": {
+              "address": "0x0200bf08",
+              "kind": "thumb"
+            },
+            "Engine_EventRequestExit": {
+              "address": "0x0200c030",
+              "kind": "thumb"
+            },
+            "Engine_GameFlagSet": {
+              "address": "0x0200bef0",
+              "kind": "thumb"
+            },
+            "Korosseo_SelectSoloCompetitor": {
+              "address": "0x02009ba8",
+              "kind": "thumb"
+            },
+            "Engine_EventOpenScreen": {
+              "address": "0x0200c060",
+              "kind": "thumb"
+            },
+            "Engine_EventEnd": {
+              "address": "0x0200bf40",
+              "kind": "thumb"
+            },
+            "gGameStateRows": {
+              "address": "0x02000240",
+              "kind": "data"
+            },
+            "Korosseo_RoundMessage": {
+              "address": "0x00002086",
+              "kind": "data"
+            }
+          }
+        },
+        "resource_3bc": {
+          "owners": {
+            "Korosseo_FinishSoloRound": {
+              "address": "0x0200288c",
+              "extent": 288
+            }
+          },
+          "absolute_symbols": {
+            "Engine_ActorGet": {
+              "address": "0x0200ca18",
+              "kind": "thumb"
+            },
+            "Engine_EventBegin": {
+              "address": "0x0200ca00",
+              "kind": "thumb"
+            },
+            "Engine_EventSetMessage": {
+              "address": "0x0200cab0",
+              "kind": "thumb"
+            },
+            "Engine_EventOpenMessage": {
+              "address": "0x0200cab8",
+              "kind": "thumb"
+            },
+            "Engine_UiWorkWaitThenFinalizeCapacity": {
+              "address": "0x0200ca10",
+              "kind": "thumb"
+            },
+            "Engine_EventShowMessage": {
+              "address": "0x0200cac0",
+              "kind": "thumb"
+            },
+            "Engine_EventCloseScreen": {
+              "address": "0x0200cb58",
+              "kind": "thumb"
+            },
+            "Engine_EventWaitForScreen": {
+              "address": "0x0200cb60",
+              "kind": "thumb"
+            },
+            "Main_080770e8": {
+              "address": "0x0200c9d0",
+              "kind": "thumb"
+            },
+            "Engine_EventRequestExit": {
+              "address": "0x0200cb10",
+              "kind": "thumb"
+            },
+            "Engine_GameFlagSet": {
+              "address": "0x0200c9b8",
+              "kind": "thumb"
+            },
+            "Korosseo_SelectSoloCompetitor": {
+              "address": "0x0200a640",
+              "kind": "thumb"
+            },
+            "Engine_EventOpenScreen": {
+              "address": "0x0200cb50",
+              "kind": "thumb"
+            },
+            "Engine_EventEnd": {
+              "address": "0x0200ca08",
+              "kind": "thumb"
+            },
+            "gGameStateRows": {
+              "address": "0x02000240",
+              "kind": "data"
+            },
+            "Korosseo_RoundMessage": {
+              "address": "0x00002086",
+              "kind": "data"
+            }
+          }
+        }
+      }
     }
   ]
 }

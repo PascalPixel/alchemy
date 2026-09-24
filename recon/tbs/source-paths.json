@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_374:020015b4": {
+      "name": "HaidiaIe_RunScene015B4",
+      "source": "FIELD/HAIDIA_IE/FAMILY_SCENE_015B4.C"
+    },
     "resource_37b:020016dc": {
       "name": "SoruSekizo_RunStatueDropScene",
       "source": "FIELD/SORU_SEKIZO/STATUE_DROP_SCENE.C"

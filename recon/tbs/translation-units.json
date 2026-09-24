@@ -71020,6 +71020,122 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "haidia-ie-family-scene-015b4",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_IE/FAMILY_SCENE_015B4.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_374",
+      "absolute_symbols": {
+        "Engine_AudioPlayCue": {
+          "address": "0x0200a84c",
+          "kind": "thumb"
+        },
+        "Engine_EventBegin": {
+          "address": "0x0200a69c",
+          "kind": "thumb"
+        },
+        "Engine_CameraMoveTo": {
+          "address": "0x0200a7b4",
+          "kind": "thumb"
+        },
+        "Engine_TaskWait": {
+          "address": "0x0200a5ec",
+          "kind": "thumb"
+        },
+        "Engine_MapRedraw": {
+          "address": "0x0200a634",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetPosition": {
+          "address": "0x0200a714",
+          "kind": "thumb"
+        },
+        "Engine_ActorFaceDirection": {
+          "address": "0x0200a78c",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetAnimation": {
+          "address": "0x0200a71c",
+          "kind": "thumb"
+        },
+        "Engine_ActorGet": {
+          "address": "0x0200a6c4",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpriteFlags": {
+          "address": "0x0200a654",
+          "kind": "thumb"
+        },
+        "Engine_EventOpenScreen": {
+          "address": "0x0200a814",
+          "kind": "thumb"
+        },
+        "Main_0808a2e0": {
+          "address": "0x0200a80c",
+          "kind": "thumb"
+        },
+        "Engine_EventWaitForScreen": {
+          "address": "0x0200a824",
+          "kind": "thumb"
+        },
+        "Engine_EventWait": {
+          "address": "0x0200a694",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetAnimationAndWait": {
+          "address": "0x0200a724",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpritePriority": {
+          "address": "0x0200a794",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpeed": {
+          "address": "0x0200a6cc",
+          "kind": "thumb"
+        },
+        "Engine_ActorEnableActionCallback": {
+          "address": "0x0200a6d4",
+          "kind": "thumb"
+        },
+        "Main_0808a0b0": {
+          "address": "0x0200a6ec",
+          "kind": "thumb"
+        },
+        "Main_0808a2d0": {
+          "address": "0x0200a7fc",
+          "kind": "thumb"
+        },
+        "Main_0808a2d8": {
+          "address": "0x0200a804",
+          "kind": "thumb"
+        },
+        "Engine_EventCloseScreen": {
+          "address": "0x0200a81c",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagClear": {
+          "address": "0x0200a684",
+          "kind": "thumb"
+        },
+        "Engine_EventRequestExit": {
+          "address": "0x0200a7cc",
+          "kind": "thumb"
+        },
+        "Engine_EventEnd": {
+          "address": "0x0200a6a4",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x020015b4",
+          "extent": 532,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

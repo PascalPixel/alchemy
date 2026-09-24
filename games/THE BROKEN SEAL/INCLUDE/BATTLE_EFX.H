@@ -9,7 +9,10 @@ s32 Func_080ed408(s32 kind, s32 width, s32 height, s32 count, u32 mode);
 #define Resource_LoadAndDecompress Func_080e0524
 #define BattleEffect_LoadWork      Func_080ed408
 
-typedef void (*BattleEffectDrawRectangle)(
+/* The rectangle blitters return a value every caller ignores; declaring it
+   still matters, because a call that sets r0 changes how the scheduler
+   orders the argument loads. */
+typedef s32 (*BattleEffectDrawRectangle)(
     void *destination, const void *source,
     s32 x, s32 y, s32 width, s32 height);
 typedef BattleEffectDrawRectangle DrawRectangle;

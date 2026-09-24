@@ -19,7 +19,7 @@ things itself; it lays the foundation that makes them possible.
 
 ## Progress
 
-**☀️ 63.53% · ⚓️ 2.13%**
+**☀️ 63.54% · ⚓️ 2.13%**
 
 <img src="PROGRESS.svg" width="830" alt="Alchemy progress for The Broken Seal and The Lost Age, above a map of the project's files">
 

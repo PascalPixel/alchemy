@@ -140,6 +140,10 @@
       "name": "SceneData_SelectFlaggedTable",
       "source": "FIELD/HAIDIA_HEYA/TIMED_EVENTS.C"
     },
+    "main:080a22f4": {
+      "name": "Palette_CopyObjectBankToBackground14",
+      "source": "GRAPHICS/PALETTE/COPY_OBJECT_BANK_TO_BACKGROUND14.C"
+    },
     "main:080c91dc": {
       "name": "BattleEffect_RunFallingParticles"
     },
@@ -19205,7 +19209,8 @@
       "name": "Unnamed_080ba918"
     },
     "main:080bd7a4": {
-      "name": "Unnamed_080bd7a4"
+      "name": "Dma_StopAllThenRunHook",
+      "source": "SYSTEM/DMA_STOP_ALL_THEN_RUN_HOOK.C"
     },
     "main:080c0700": {
       "name": "Unnamed_080c0700"

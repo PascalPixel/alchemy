@@ -19292,7 +19292,8 @@
       "source": "FIELD/KUUPUAPPU_MURA/SCENE_CELLS.C"
     },
     "resource_371:020006ec": {
-      "name": "WorldMap_EnterScene"
+      "name": "WorldMap_EnterScene",
+      "source": "FIELD/WORLD_MAP/ENTER_SCENE.C"
     },
     "resource_371:020024a8": {
       "name": "WorldMap_RunActorSequence"

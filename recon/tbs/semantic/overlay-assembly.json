@@ -5116,18 +5116,6 @@
     },
     {
       "overlay": "resource_371",
-      "start": "0x020006ec",
-      "end": "0x02000a8c",
-      "kind": "structured_scene_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "Complete 928-byte world-map entry includes an 80-entry selector switch, common return, and terminal literal pool ending at the next function. Loaded runtime call bindings independently resolved.",
-        "Ordinary C draft is 920 bytes and not exact. Retain original assembly without handwritten, library, compiler-impossibility or DONE credit."
-      ]
-    },
-    {
-      "overlay": "resource_371",
       "start": "0x020024a8",
       "end": "0x02002768",
       "kind": "structured_scene_module",

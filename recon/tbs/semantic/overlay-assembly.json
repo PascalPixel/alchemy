@@ -1227,8 +1227,8 @@
       "overlay": "resource_3b7",
       "start": "0x20004bc",
       "end": "0x020009f8",
-      "kind": "structured_scene_module",
-      "retention": "keep_structured_asm",
+      "kind": "not_yet_decompiled",
+      "retention": "not_yet_c",
       "confidence": "strong",
       "evidence": [
         "This segment preserves retained assembly from the historical 0x020001d8–0x02000d70 range, split at the complete declared owner boundaries; no bytes were removed or counted as exact C.",

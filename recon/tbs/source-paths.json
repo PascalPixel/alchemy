@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_3b4:02000f40": {
+      "name": "TakaraAshiba_OpenPassage",
+      "source": "FIELD/TAKARA_ASHIBA/OPEN_PASSAGE.C"
+    },
     "resource_3cb:0200008c": {
       "name": "LinkLobby_PeerSlotMatches",
       "source": "MENU/LINK_LOBBY/PEER_SLOT.C"

@@ -58,26 +58,11 @@ s32 Func_020011b6(s32, s32);
 void Func_020012cc(void *);
 void Func_0200144c();
 void Func_02001588(void);
-void Func_020005ca(int value);
-void Func_020005d6(int value);
-void Func_020005e2(int value);
-void Func_020005ee(int value);
-void Func_020005fa(int value);
-void Func_02000606(int value);
-void Func_02000612(int value);
-void Func_0200061e(int value);
-void Func_02000aba();
 void Func_02001620();
-u8 *Func_02001664();
 void Func_020016ce();
 void Func_020016ec();
 void Func_02001706_b();
-u8 *Func_020016a6(s32 actor_id);
-void Func_02000808();
 void Func_02001864();
-s32 Func_0200188a();
-s32 Func_02001896();
-s32 Func_020018a2();
 s32 Func_020018ae();
 s32 Func_020018ba();
 s32 Func_020018c4();
@@ -91,8 +76,6 @@ s32 Func_02001ffe();
 s32 Func_02002062();
 s32 Func_02002248();
 void Func_020090c1();
-union SceneActor *Func_020022b0(s32);
-s32 *Func_020022bc(s32);
 
 /*
  * Call sites spelled through these wrappers pass their constants straight
@@ -318,42 +301,42 @@ void SceneState_SetRuntimeWord448To521AndRun(s32 value)
 /* Eight numbered-scene wrappers follow, each a twelve-byte owner. */
 void FieldScene_RunIndexedStep1(void)
 {
-    Func_020005ca(1);
+    SceneState_SetRuntimeWord448To521AndRun(1);
 }
 
 void FieldScene_RunIndexedStep2(void)
 {
-    Func_020005d6(2);
+    SceneState_SetRuntimeWord448To521AndRun(2);
 }
 
 void FieldScene_RunIndexedStep3(void)
 {
-    Func_020005e2(3);
+    SceneState_SetRuntimeWord448To521AndRun(3);
 }
 
 void FieldScene_RunIndexedStep4(void)
 {
-    Func_020005ee(4);
+    SceneState_SetRuntimeWord448To521AndRun(4);
 }
 
 void FieldScene_RunIndexedStep5(void)
 {
-    Func_020005fa(5);
+    SceneState_SetRuntimeWord448To521AndRun(5);
 }
 
 void FieldScene_RunIndexedStep6(void)
 {
-    Func_02000606(6);
+    SceneState_SetRuntimeWord448To521AndRun(6);
 }
 
 void FieldScene_RunIndexedStep7(void)
 {
-    Func_02000612(7);
+    SceneState_SetRuntimeWord448To521AndRun(7);
 }
 
 void FieldScene_RunIndexedStep8(void)
 {
-    Func_0200061e(8);
+    SceneState_SetRuntimeWord448To521AndRun(8);
 }
 
 /*
@@ -401,7 +384,7 @@ s32 Func_02000368(void)
     if (GameFlag_IsSet(0x87a) != 0) {
         if (Data_02000240_t[225][0] == 6) {
             if (GameFlag_IsSet(0x81d) == 0) {
-                Func_02000aba();
+                FieldScene_RunLongPresentationSequence();
             }
         }
         Actor_Get(10)->collision_flags |= 0x80;
@@ -409,7 +392,7 @@ s32 Func_02000368(void)
     if (Data_02000240_t[225][0] == 2) {
         if (GameFlag_IsSet(0x815) != 0) {
             Actor_SetPosition(13, 0x1c60000, 0x960000);
-            record = Func_02001664(13);
+            record = Actor_Get(13);
             Actor_SetSpriteFlags((s32)record, 0);
             Actor_SetAnimation(13, 5);
             Func_02001620(4);
@@ -431,7 +414,7 @@ void FieldScene_RunByActorDirectionAndFlags(void)
     u8 *p;
     u32 dir;
 
-    p = Func_020016a6(0);
+    p = Actor_Get(0);
     dir = *(u16 *)(p + 6);
     dir += 0xffff5fff;
 
@@ -493,7 +476,7 @@ void FieldScene_RunScene376_020005d4(void)
             Event_End();
         } else {
             if (GameFlag_IsSet(0x815) != 0) {
-                Func_02000808();
+                FieldScene_RunScene376_020001e8();
             } else {
                 Event_Begin();
                 Event_SetMessage(0xf55);
@@ -526,11 +509,11 @@ void FieldScene_RunLongPresentationSequence(void)
     Actor_SetSpeed(3, 0x6666, 0x3333);
     Actor_SetAnimation(8, 5);
     Actor_WalkTo(0, 0x328, 0x1fc);
-    record = Func_0200188a(23);
+    record = Actor_Get(23);
     Actor_SetSpriteFlags(record, 0);
-    record = Func_02001896(24);
+    record = Actor_Get(24);
     Actor_SetSpriteFlags(record, 0);
-    record = Func_020018a2(25);
+    record = Actor_Get(25);
     Actor_SetSpriteFlags(record, 0);
     v6 = 0;
     *(u8 *)(Func_020018ae(23) + 85) = v6;
@@ -813,11 +796,11 @@ void Scene_UpdateTimedActor(void)
     default:
         return;
     }
-    actor = Func_020022b0(no);
+    actor = Actor_Get(no);
     if (actor == NULL) {
         return;
     }
-    other = Func_020022bc(8);
+    other = Actor_Get(8);
     if (other != NULL) {
         Actor_SetPosition(no, other[2], other[4]);
     }

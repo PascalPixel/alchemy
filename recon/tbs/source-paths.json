@@ -771,6 +771,10 @@
       "name": "UiWindow_FillFromScene",
       "source": "GRAPHICS/WINDOW/FILL_FROM_SCENE.C"
     },
+    "main:0802938c": {
+      "name": "Menu_HandleFlagGridInput",
+      "source": "MENU/FLAG_GRID_INPUT.C"
+    },
     "main:0808ab74": {
       "name": "Scene_ResetFlagsOnEnter",
       "source": "FIELD/COMMON/SCENE_RESET_FLAGS_ON_ENTER.C"
@@ -20659,7 +20663,6 @@
     "main:080a1ac0": "UiMenu_SlideCursor",
     "main:080a35f8": "ItemMenu_RunOwnerSelection",
     "main:080a939c": "PsynergyMenu_ReservedNoOp939C",
-    "main:0802938c": "Menu_HandleFlagGridInput",
     "main:0801a7f4": "MenuSelection_BuildEntries",
     "main:080e2974": "BattlePres_RunBurstScene",
     "main:080118c0": "Map_SetLayerEntryFlag",

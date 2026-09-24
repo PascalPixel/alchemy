@@ -1492,20 +1492,6 @@
       ]
     },
     {
-      "overlay": "resource_3c4",
-      "kind": "not_yet_decompiled",
-      "retention": "not_yet_c",
-      "confidence": "strong",
-      "evidence": [
-        "Complete two-switch actor initializer reconstructed as ordinary draft C; 206 true calls and five far branches agree with the reference in ordered destinations. This does not establish exact C or assembly origin.",
-        "This executable-audited fragment is 102 bytes from 0x0200259c through 0x02002602, including the first executable segment before uncovered gaps.",
-        "Retain assembly until complete-owner C verification succeeds; no handwritten/third-party-assembly credit.",
-        "recon/tbs/en/dossiers.json#resource_3c4:0200259c"
-      ],
-      "start": "0x0200259c",
-      "end": "0x02002602"
-    },
-    {
       "overlay": "resource_370",
       "start": "0x02000de4",
       "end": "0x020011e4",

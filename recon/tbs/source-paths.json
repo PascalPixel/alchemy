@@ -16762,7 +16762,8 @@
       "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_3c4:0200259c": {
-      "name": "FieldScene_InitializeActorGroups"
+      "name": "FieldScene_InitializeActorGroups",
+      "source": "FIELD/BABI_CHIKA/ENTRY_STATE.C"
     },
     "resource_37f:02000030": {
       "name": "SceneData_SelectOverlayDataBySelector",

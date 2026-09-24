@@ -2031,6 +2031,10 @@
       "name": "BattleFx_RunMercuryDjinnCapture",
       "source": "BATTLE/EFFECT/RUN_MERCURY_DJINN_CAPTURE.C"
     },
+    "main:0809537c": {
+      "name": "EventActor_RunHopAndLeapSequence",
+      "source": "BATTLE/EFFECT/RUN_HOP_AND_LEAP_SEQUENCE.C"
+    },
     "main:0809641c": {
       "name": "BattleFx_UpdateRandomTargetParticle",
       "source": "BATTLE/EFFECT/RANDOM_TARGET_PARTICLE.C"
@@ -20166,7 +20170,6 @@
     "main:080ca1fc": "BattleFx_RunParticlePool",
     "main:080ceb54": "BattleFx_RunMemberBurst",
     "main:080dea70": "BattleFx_RunProjectileVolley",
-    "main:0809537c": "EventActor_RunHopAndLeapSequence",
     "main:0808ae74": "Encounter_SelectEnemyGroup",
     "main:080c9048": "BattlePres_ConfigureEffectDisplay",
     "main:08004c6c": "SceneTransform_ApplyRoll",

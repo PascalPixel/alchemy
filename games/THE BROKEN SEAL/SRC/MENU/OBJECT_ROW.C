@@ -21,7 +21,7 @@ struct RuntimeObject {
 };
 
 extern struct PlacementState *gMenuWork;
-extern const s32 Data_08073854[4];
+extern const s32 Menu_PartySpriteResourceIds[4];
 
 struct RuntimeObject *ResourceObject_CreateFar(s32);
 void Object_InitializeMode(struct RuntimeObject *, s32);
@@ -35,7 +35,7 @@ void Menu_SpawnFourObjectsAtOrigin(struct PlacementOrigin *origin, s32 x, s32 y)
 
     if (origin != 0) {
         for (i = 0; i < 4; i++) {
-            struct RuntimeObject *object = ResourceObject_CreateFar(Data_08073854[i]);
+            struct RuntimeObject *object = ResourceObject_CreateFar(Menu_PartySpriteResourceIds[i]);
 
             if (object != 0) {
                 Object_InitializeMode(object, 2);

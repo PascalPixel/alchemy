@@ -9,14 +9,14 @@ struct OwnerDigitState {
 
 #include "PRESET_TABLE.H"
 
-extern struct PresetValues Data_08088e38[];
+extern struct PresetValues Enemy_ElementPresetTable[];
 
 struct DigitOffsets {
     u16 first;
     u16 second;
 };
 
-extern const struct DigitOffsets Data_08088df8[16];
+extern const struct DigitOffsets Element_PowerResistByLevel[16];
 
 void *Owner_GetState(s32 owner);
 const u8 *Owner_GetRecord(s32 record);
@@ -40,7 +40,7 @@ u32 Owner_BuildDigitTiles(s32 owner, s16 destination[4][2])
         i = 0;
         for (;;) {
             ((s32 *)destination)[i] =
-                Data_08088e38[index].values[i];
+                Enemy_ElementPresetTable[index].values[i];
             i++;
             if (i > 3)
                 goto copied;
@@ -56,7 +56,7 @@ copied:
         s32 ones;
         s32 tens;
 
-        result = (u32)Data_08088df8;
+        result = (u32)Element_PowerResistByLevel;
         value = values[i];
         ones = Modulo(value, 10);
         tens = FixedPoint_Ratio(value, 10);
@@ -66,9 +66,9 @@ copied:
         if (tens < 0)
             tens = 0;
 
-        destination[i][0] = Data_08088df8[tens].first + ones;
+        destination[i][0] = Element_PowerResistByLevel[tens].first + ones;
         destination[i][1] =
-            ((volatile const struct DigitOffsets *)Data_08088df8)[tens].second + ones;
+            ((volatile const struct DigitOffsets *)Element_PowerResistByLevel)[tens].second + ones;
         i++;
     } while (i < 4);
     return result;

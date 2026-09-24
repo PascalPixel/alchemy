@@ -1,6 +1,6 @@
 #include "TYPES.H"
 
-extern s16 Data_080b41ac[][33];
+extern s16 EventTable_AbilityLoadouts[][33];
 s32 GameFlag_IsSet(s32);
 s32 GameFlag_Set(s32);
 void Ability_GetMaximum(s32, s32);
@@ -22,9 +22,9 @@ void EventTable_ApplyRowAbilities(s32 row_no)
     if (GameFlag_IsSet(flag) == 0) {
         GameFlag_Set(flag);
         count = 0;
-        value = Data_080b41ac[row_no][24];
+        value = EventTable_AbilityLoadouts[row_no][24];
         if (value != 0) {
-            row = Data_080b41ac[row_no];
+            row = EventTable_AbilityLoadouts[row_no];
             entry = row + 24;
             do {
                 Ability_GetMaximum(value, 1);

@@ -43,7 +43,7 @@ void ObjectGroup_ConfigureChildValue(s32 object_id, s32 value)
 }
 
 extern u32 gFrameCount;
-extern u8 Data_0809ed80[];
+extern u8 ObjectGroup_BlinkChildValues[];
 
 void ObjectGroup_ApplyIndexedChildValue(struct DispatchObject *object)
 {
@@ -52,7 +52,7 @@ void ObjectGroup_ApplyIndexedChildValue(struct DispatchObject *object)
         u8 *container;
         u8 child_count;
 
-        child_value = Data_0809ed80[(gFrameCount >> 1) & 3];
+        child_value = ObjectGroup_BlinkChildValues[(gFrameCount >> 1) & 3];
         container = object->target.child;
         child_count = *(container + 0x27);
         if (child_count != 0) {

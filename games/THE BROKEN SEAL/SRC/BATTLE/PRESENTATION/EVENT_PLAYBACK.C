@@ -116,7 +116,7 @@ void BattleEvent_Playback(void)
     void BattleEvent_ClearRecordTiles(void *record, s32 value)
     {
         u8 *part = record;
-        void *destination = (void *)(0x06010000 + Data_03001b10[part[28]].offset);
+        void *destination = (void *)(0x06010000 + gVramBlockCache[part[28]].offset);
         ((void (*)(void *, u32))0x03000164)(destination, part[32] * part[33]);
     }
 

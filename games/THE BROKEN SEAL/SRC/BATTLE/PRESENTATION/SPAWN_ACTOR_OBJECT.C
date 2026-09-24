@@ -44,7 +44,7 @@ s32 BattleUnit_LookupWeaponValueByClass(s32);
 s32 Summon_GetEntryValue(s32);
 s32 Summon_GetEntryFlag1Field(s32);
 s32 ArcTan2(s32, s32);
-extern const u8 Data_080c5938[];
+extern const u8 BattlePres_ActorObjectScript[];
 
 void BattlePresentation_SpawnActorObject(Actor *actor, s32 unit, s32 x, s32 y)
 {
@@ -175,5 +175,5 @@ void BattlePresentation_SpawnActorObject(Actor *actor, s32 unit, s32 x, s32 y)
         object->field_18 = 0x10000;
         object->field_1c = 0x10000;
     }
-    ObjectDispatch_InitializeFar(object, Data_080c5938);
+    ObjectDispatch_InitializeFar(object, BattlePres_ActorObjectScript);
 }

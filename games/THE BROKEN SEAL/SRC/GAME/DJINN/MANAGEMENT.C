@@ -3,7 +3,7 @@
 #include "OWNER_STATE.H"
 #include "PARTY_STATE.H"
 
-extern const u16 Data_0808926c[];
+extern const u16 Djinn_DefinitionTable[];
 
 struct OwnerState_0807a0f4 {
     u8 padding[280];
@@ -44,7 +44,7 @@ const u16 *Djinn_GetDefinition(u32 group, u32 index)
     if ((group <= 3U) && (index <= 0x13U)) {
         entry = (group * 0x14) + index;
     }
-    return (const u16 *)((u8 *)Data_0808926c + entry * 0xC);
+    return (const u16 *)((u8 *)Djinn_DefinitionTable + entry * 0xC);
 }
 
 s32 Djinn_AddToLeastLoadedOwner(s32 index, u8 *state)

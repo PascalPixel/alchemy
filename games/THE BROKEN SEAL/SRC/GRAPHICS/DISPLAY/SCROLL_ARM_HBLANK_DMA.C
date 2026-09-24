@@ -5,7 +5,7 @@ struct DisplayScrollState {
     u8 page;
 };
 
-extern struct DisplayScrollState *Data_03001ed8;
+extern struct DisplayScrollState *gHBlankScrollWork;
 
 
 void DisplayScroll_ArmHBlankDma(void)
@@ -17,7 +17,7 @@ void DisplayScroll_ArmHBlankDma(void)
     u32 control;
     volatile u32 *destination;
 
-    state = Data_03001ed8;
+    state = gHBlankScrollWork;
     source = (u32 *)((u8 *)state + state->page * 0x780);
 
     dma = (volatile u32 *)0x040000b0;

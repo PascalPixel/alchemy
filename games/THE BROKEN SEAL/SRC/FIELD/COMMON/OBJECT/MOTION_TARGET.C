@@ -5,7 +5,7 @@ void Object_SetCallback(struct ObjectRuntime *, const void *);
 void Object_ResetMotion(struct ObjectRuntime *);
 void Object_SetMode(struct ObjectRuntime *, s32);
 void Battle_WaitMode0(s32);
-extern const u8 Data_0809fc1c[];
+extern const u8 ObjectMotion_StepAngleScript[];
 
 void Object_SetTargetAndCallback(u32 object_id, s32 target_id, const void *callback)
 {
@@ -62,7 +62,7 @@ void ObjectMotion_ArmCallback(s32 object_id, s32 angle, s32 wait)
 
     if (object != NULL) {
         object->action = angle;
-        Object_SetCallback(object, Data_0809fc1c);
+        Object_SetCallback(object, ObjectMotion_StepAngleScript);
         Battle_WaitMode0(wait);
     }
 }

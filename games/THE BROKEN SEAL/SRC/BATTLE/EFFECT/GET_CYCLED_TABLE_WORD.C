@@ -1,9 +1,9 @@
 #include "TYPES.H"
 
-extern u32 Data_03001ae8;
-extern u16 Data_0809f0f8[];
+extern u32 gKeysHeld;
+extern u16 BattleFx_CyclePatternWords[];
 
 u16 BattleFx_GetCycledTableWord(void)
 {
-    return Data_0809f0f8[(Data_03001ae8 >> 4) & 15];
+    return BattleFx_CyclePatternWords[(gKeysHeld >> 4) & 15];
 }

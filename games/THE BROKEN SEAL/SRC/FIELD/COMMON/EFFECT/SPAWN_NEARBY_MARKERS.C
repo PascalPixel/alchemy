@@ -26,7 +26,7 @@ struct FieldMapState {
 };
 
 extern struct FieldPartyState gGameState;
-extern struct FieldMapState Data_02008000;
+extern struct FieldMapState gOverlayArea;
 
 struct FieldActor *ObjectTable_Get(s32 index);
 s32 EffectRuntime_GetCurrentObject(s32 id);
@@ -71,7 +71,7 @@ void FieldEffect_SpawnNearbyMarkers(void)
                     continue;
             } else if (z - actor_z > 5)
                 continue;
-            entry = Func_080072e4(Data_02008000.events);
+            entry = Func_080072e4(gOverlayArea.events);
             if (entry->flags == -1)
                 continue;
             do {

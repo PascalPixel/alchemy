@@ -2,11 +2,11 @@
 #include "METADATA_LOOKUP.H"
 #include "GLOBAL_CELLS.H"
 
-extern u8 *Data_03001e60;
+extern u8 *gSpriteObjects;
 
 void Ui_SetGridColumnByte5(s32 slot, s32 value)
 {
-    u8 *base = Data_03001e60;
+    u8 *base = gSpriteObjects;
     s32 offset = (slot & 3) * 4 + 40;
     s32 count = 9;
 
@@ -21,7 +21,7 @@ void Ui_SetGridColumnByte5(s32 slot, s32 value)
 
 void Ui_SetGridColumnByte6(s32 slot, s32 value)
 {
-    u8 *base = Data_03001e60;
+    u8 *base = gSpriteObjects;
     s32 offset = (slot & 3) * 4 + 40;
     s32 count = 9;
 
@@ -85,7 +85,7 @@ void Animation_InitWorkFromMetadata(void *);
 
 void Ui_SetGridColumnNumber(s32 slot, s32 no)
 {
-    u8 *base = Data_03001e60;
+    u8 *base = gSpriteObjects;
     s32 offset;
     s32 count;
 

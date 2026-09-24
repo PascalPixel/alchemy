@@ -3,7 +3,7 @@
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
 s32 Object_SetCallback(void *, s32);
-extern const u8 Data_080a0128[];
+extern const u8 BattleFx_UntargetedObjectScript[];
 
 struct Target_08097a54 {
     u8 unknown_00[0x38];
@@ -21,7 +21,7 @@ void BattleFx_SetCallbackWhenTargetUnset(struct Target_08097a54 *target)
     if (tx == 0x80000000) {
         ty = target->y;
         if ((ty == tx) && (target->z == ty)) {
-            Object_SetCallback(target, (s32)Data_080a0128);
+            Object_SetCallback(target, (s32)BattleFx_UntargetedObjectScript);
         }
     }
 }

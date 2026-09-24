@@ -22,18 +22,18 @@ struct Cells03001ad0 {
     u16 unk04;
     u16 unk06;
 };
-extern struct Cells03001ad0 Data_03001ad0;
+extern struct Cells03001ad0 gBgScroll;
 
 struct Cells03001ce0 {
     s32 unk00[4];
     s32 unk10;
 };
-extern struct Cells03001ce0 Data_03001ce0;
+extern struct Cells03001ce0 gProjection;
 
 /* Sixteen halfword cell offsets; the reference keeps the table base in
    a register and indexes it, so it is named rather than folded into a
    biased literal. */
-extern u16 Data_080ede48[];
+extern u16 ParticleStreams_CellOffsets[];
 
 void *ResourceObject_CreateFar(s32);
 void **GetBattleObjectSlotFar(s32);
@@ -330,7 +330,7 @@ s32 BattleEffect_RunParticleStreams(s32 arg0, s32 arg1)
     } while (var_r8_303 != 0x100);
     ((WordCopy)0x03001388)(
         (void *)0x06004000, draw_destination, 0x4000);
-    Data_03001ce0.unk10 = 0xF0;
+    gProjection.unk10 = 0xF0;
     BattleFx_SelectLivingTargets((*(s32 *)((u8 *)(*sp3C) + (0x7828))));
     temp_r2_365 = *sp3C;
     (*(s32 *)((u8 *)(temp_r2_365) + (0x77D0))) = 0;
@@ -385,12 +385,12 @@ loop_33:
     } while (var_r6_408 <= 0xBF);
     (*(s16 *)((u8 *)((void *)0x04000050) + (0))) = 0x3F42;
     (*(s16 *)((u8 *)((void *)0x04000050) + (2))) = 0x1010;
-    sp38 = (s32) Data_03001ad0.unk04;
-    sp34 = (s32) Data_03001ad0.unk06;
+    sp38 = (s32) gBgScroll.unk04;
+    sp34 = (s32) gBgScroll.unk06;
     display = &gWorkSlot[44];
     sp30 = display[0];
-    Data_03001ad0.unk04 = 0U;
-    Data_03001ad0.unk06 = 0x20U;
+    gBgScroll.unk04 = 0U;
+    gBgScroll.unk06 = 0x20U;
     BattleEffect_LoadWork(0x2E, 8, 7, 3, 2);
     draw_rectangle = (DrawRectangle) display[2];
     temp_r2_553 = *sp3C;
@@ -624,8 +624,8 @@ loop_84:
     Scheduler_RemoveCallback(0x080C9139);
     Scheduler_RemoveCallback(0x080E72E1);
     Scheduler_RemoveCallback(0x080CD359);
-    Data_03001ad0.unk04 = (u16) sp38;
-    Data_03001ad0.unk06 = (u16) sp34;
+    gBgScroll.unk04 = (u16) sp38;
+    gBgScroll.unk06 = (u16) sp34;
     Runtime_ReleaseHeapBlock(0x2E);
     BattleFx_RestoreBackgroundDisplay();
     (*(s16 *)((u8 *)((void *)0x04000020) + (0))) = 0x80;
@@ -724,7 +724,7 @@ loop_121:
             temp_r0_1420 = 9 - (var_r3_1413 >> 6);
             temp_r5_1422 = temp_r0_1420 * 2;
             draw_rectangle(draw_destination,
-                *sp3C + (Data_080ede48[temp_r0_1420 - 1]
+                *sp3C + (ParticleStreams_CellOffsets[temp_r0_1420 - 1]
                     + ((var_r8_1386 & 1) * 0x302)) + 0x3200,
                 sp60[0]
                     - ((s32)(temp_r0_1420 + (temp_r0_1420 >> 0x1F)) >> 1),
@@ -753,7 +753,7 @@ loop_121:
         temp_r6_1503 = temp_r4_1501 * 2;
         temp_r7_1505 = temp_r3_1499 + 0x7080;
         draw_rectangle(draw_destination,
-            temp_r1_1495 + (Data_080ede48[temp_r4_1501 - 1]
+            temp_r1_1495 + (ParticleStreams_CellOffsets[temp_r4_1501 - 1]
                 + ((var_r8_1490 & 1) * 0x302)) + 0x3200,
             (*(s32 *)((u8 *)(temp_r3_1499) + (0x7080)))
                 - (temp_r4_1501 >> 1),

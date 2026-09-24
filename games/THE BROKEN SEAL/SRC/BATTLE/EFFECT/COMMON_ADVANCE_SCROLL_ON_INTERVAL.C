@@ -6,18 +6,18 @@ struct Position {
     u16 y;
 };
 
-extern u32 Data_03001eec;
-extern struct Position Data_03001ad0;
+extern u32 gBattleFxWork;
+extern struct Position gBgScroll;
 
 void BattleFx_AdvanceScrollOnInterval(void)
 {
-    u8 *base = (u8 *)Data_03001eec;
+    u8 *base = (u8 *)gBattleFxWork;
     u32 *counter = (u32 *)(base + 0x7790);
 
     (*counter)++;
     if (*counter == *(u32 *)(base + 0x7794)) {
-        Data_03001ad0.x += *(s32 *)(base + 0x7798);
-        Data_03001ad0.y += *(s32 *)(base + 0x779C);
+        gBgScroll.x += *(s32 *)(base + 0x7798);
+        gBgScroll.y += *(s32 *)(base + 0x779C);
         *counter = 0;
     }
 }

@@ -16,7 +16,7 @@ struct MenuSelectionState {
 };
 
 extern struct MenuSelectionState *gMenuSelectWork;
-extern u8 Data_080373ef[];
+extern u8 Menu_SelectionStepDelays[];
 extern u8 Data_0000001f;
 
 void RenderOutput_PrepareForRedraw(void *work);
@@ -62,7 +62,7 @@ s32 Menu_SelectResource(s32 start, s32 goal)
         UiText_DrawCharacterAtOffset(resource_id, state->work, 0, 0);
 
         cur = state->selection;
-        tbl = Data_080373ef;
+        tbl = Menu_SelectionStepDelays;
         diff = cur - goal;
         dist = AbsoluteDifference(diff, cur, goal);
         WaitFrames(tbl[dist] + delay);

@@ -8,7 +8,7 @@ struct Projection {
     s32 center_y;
 };
 
-extern struct Projection Data_03001ce0;
+extern struct Projection gProjection;
 
 /* Transforms point through the IWRAM matrix routine and projects it to
    screen x, y and depth; returns the perspective scale, or 0 when the depth
@@ -21,7 +21,7 @@ s32 Render_ProjectPoint(s32 *point, s32 *screen)
     s32 result;
 
     ((void (*)(s32 *, s32 *))0x03000250)(point, screen);
-    projection = &Data_03001ce0;
+    projection = &gProjection;
     depth = -screen[2];
     result = 0;
     if (depth >= projection->near && depth <= projection->far) {

@@ -1,6 +1,6 @@
 #include "IWRAM_CALL.H"
 
-extern u8 *Data_03001e80;
+extern u8 *gCameraWork;
 
 s32 **GetBattleObjectSlotFar(s32 unit);
 u8 *GetMotionRecordFar(s32 *object, s32 mode);
@@ -20,7 +20,7 @@ s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen)
     /* FAKEMATCH: an unused vector reproduces the reference's 12-byte frame. */
     s32 unused[3];
 
-    camera = Data_03001e80;
+    camera = gCameraWork;
     object = *GetBattleObjectSlotFar(unit);
     info = GetMotionRecordFar(object, 0);
     Render_ResetTransformState();

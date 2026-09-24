@@ -44,7 +44,7 @@ s32 SaveState_CountRecordsExcludingFlagged(s32 flag)
 }
 
 
-extern s16 Data_0200200c;
+extern s16 gTitleExtraOptionEnabled;
 
 s32 SaveState_ScanRecordFlags(void)
 {
@@ -62,14 +62,14 @@ s32 SaveState_ScanRecordFlags(void)
         ret = SaveState_LoadSummaryRecords();
         p = (s8 *)(*(s32 *)ADDR_03001F1C + 0x1070);
         *(s16 *)0x02002010 = 0;
-        Data_0200200c = 0;
+        gTitleExtraOptionEnabled = 0;
         for (i = 0; i < 3; i++) {
             if (p[i * 0x40 + 1] != 0) {
                 *(s16 *)0x02002010 = 1;
                 cnt++;
             }
             if (p[i * 0x40 + 2] != 0) {
-                Data_0200200c = 1;
+                gTitleExtraOptionEnabled = 1;
             }
         }
 

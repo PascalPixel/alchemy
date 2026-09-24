@@ -14,7 +14,7 @@ struct PaletteSnapshotWork {
     u16 count;
 };
 
-extern struct PaletteSnapshotWork *Data_03001ec0;
+extern struct PaletteSnapshotWork *gPaletteWork;
 
 /* Queues up to four palette snapshots (the queue Runtime_AllocateAndClearQueue
    clears): copies count colours of palette bank:index into the next slot. */
@@ -26,7 +26,7 @@ s32 PaletteQueue_Add(s16 bank, s16 index, s16 value, s16 count)
     u32 slot;
     u16 size;
 
-    work = Data_03001ec0;
+    work = gPaletteWork;
     slot = work->count;
     if (slot > 3)
         return -1;

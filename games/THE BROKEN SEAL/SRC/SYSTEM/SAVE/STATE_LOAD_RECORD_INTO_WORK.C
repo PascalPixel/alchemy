@@ -14,13 +14,13 @@ s32 SaveState_ReadRecordPayload(s32, void *);
 
 extern char Value_0000000a;
 extern char Value_0000000c;
-extern char Data_02000000;
-extern s16 Data_02002004;
+extern char gSaveBuffer;
+extern s16 gSaveSlot;
 extern struct State_080208e4 gGameState;
 #define PARTY_STATE gGameState
-extern s32 Data_03001c9c;
-extern u8 Data_03001d08;
-extern s16 Data_03001d24;
+extern s32 gLoadedStateWord;
+extern u8 gOptionMirror;
+extern s16 gPostLoadCounter;
 
 s32 SaveState_LoadRecordIntoWork(s32 arg)
 {
@@ -34,11 +34,11 @@ s32 SaveState_LoadRecordIntoWork(s32 arg)
         s32 value;
 
         SaveState_LoadSummaryRecords();
-        value = SaveMenu_SelectSlot(Data_02002004, arg);
+        value = SaveMenu_SelectSlot(gSaveSlot, arg);
         if (value == -1) {
             ret = value;
         } else {
-            void *base = &Data_02000000;
+            void *base = &gSaveBuffer;
 
             err = SaveState_ReadRecordPayload(value, base);
             base = (char *)base + 0x1000;
@@ -47,10 +47,10 @@ s32 SaveState_LoadRecordIntoWork(s32 arg)
                 UiText_ShowPositionedMessageAndWait((s32)&Value_0000000c, 1);
                 ret = -2;
             } else {
-                Data_03001c9c = PARTY_STATE.value;
-                Data_03001d08 = ((u8 *)&PARTY_STATE)[0x22a];
-                Data_03001d24 = 0;
-                Data_02002004 = value;
+                gLoadedStateWord = PARTY_STATE.value;
+                gOptionMirror = ((u8 *)&PARTY_STATE)[0x22a];
+                gPostLoadCounter = 0;
+                gSaveSlot = value;
             }
         }
     }

@@ -75,6 +75,6 @@ void BattleFx_UpdateItemBreakFragment(struct ItemBreakFragmentSource *source)
         object->field_48 = 0x1999;
         Object_SetMode(object, 0);
         object->field_5e = 12;
-        Object_SetCallback(object, Data_0809f0b0);
+        Object_SetCallback(object, BattleFx_CommonParticleScript);
     }
 }

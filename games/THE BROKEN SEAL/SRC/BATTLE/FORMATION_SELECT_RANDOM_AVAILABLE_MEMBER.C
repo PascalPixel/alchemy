@@ -19,7 +19,7 @@ s32 BattleFormation_SelectRandomAvailableMember(s32 record_id)
         record_id = 1;
 
     choices_base = choices;
-    record = &Data_080c5c38[record_id];
+    record = &BattleFormation_Records[record_id];
     member_id = record->member_ids;
     maximum_count = record->maximum_counts;
     choice_cursor = choices_base;

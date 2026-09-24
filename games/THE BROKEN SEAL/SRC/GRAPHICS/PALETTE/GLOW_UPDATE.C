@@ -3,7 +3,7 @@
 /* Scales each 5-bit component by its own Q16 factor and packs BGR555. */
 u16 Color_ScaleComponents(const s16 *rgb, s32 red, s32 green, s32 blue);
 
-extern const u8 Data_08036750[];
+extern const u8 PaletteGlow_WaveTable[];
 
 #define GLOW_PALETTE ((u16 *)0x050001e8)
 
@@ -20,9 +20,9 @@ void PaletteGlow_Update(s32 phase, s32 brightness)
 
     step = ((phase + 12) % 24) * 4;
     offset = brightness - 7;
-    red = Data_08036750[(s16)(step % 96)] + offset;
-    green = Data_08036750[(step + 32) % 96] + offset;
-    blue = Data_08036750[(step + 64) % 96] + offset;
+    red = PaletteGlow_WaveTable[(s16)(step % 96)] + offset;
+    green = PaletteGlow_WaveTable[(step + 32) % 96] + offset;
+    blue = PaletteGlow_WaveTable[(step + 64) % 96] + offset;
     if (red < 0)
         red = 0;
     if (red > 31)

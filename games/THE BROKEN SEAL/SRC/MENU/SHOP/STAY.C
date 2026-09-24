@@ -31,7 +31,7 @@ void Audio_PlayCue(s32);
 void AudioCommand_WaitForStateByteClear(void);
 void Event_SetStatus1c6Far(void);
 
-extern s8 Data_080b4ab6[];
+extern s8 Inn_PriceMultipliers[];
 
 #if defined(TBS_EDITION_JA)
 #define MESSAGE_WINDOW_ROWS 11
@@ -83,7 +83,7 @@ s32 Inn_RoomPrice(s32 mode)
     u8 *global = (u8 *)gMenuWork;
     u8 *base;
     s32 active = 0;
-    s32 factor = Data_080b4ab6[mode];
+    s32 factor = Inn_PriceMultipliers[mode];
     s32 index = 0;
     s32 offset;
 

@@ -4,13 +4,13 @@ struct State_0807977c {
     u32 flags;
 };
 
-extern u8 Data_08084a8c[16];
+extern u8 Summon_OrderList[16];
 struct State_0807977c *Trade_GetOfferState(s32);
 
 s32 Trade_ListFlaggedEntries(u8 *output)
 {
-    u8 *source = Data_08084a8c;
-    u8 *end = Data_08084a8c + 15;
+    u8 *source = Summon_OrderList;
+    u8 *end = Summon_OrderList + 15;
     s32 count = 0;
 
     do {

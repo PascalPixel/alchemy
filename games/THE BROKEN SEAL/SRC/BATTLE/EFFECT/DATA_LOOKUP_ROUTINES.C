@@ -20,15 +20,15 @@ s32 BattleFx_ApplyLookupResult(s32 arg0, s32 arg1)
     return Encounter_SelectEnemyGroup(BattleFx_LookupResult((void *)arg0), arg1);
 }
 
-extern u16 Data_0809c610[];
+extern u16 Encounter_EnemyGroupTable[];
 
 u16 BattleFx_GetWeightedResult(s32 arg0, s32 arg1)
 {
-    return Data_0809c610[(arg0 * 14) + arg1 + 2];
+    return Encounter_EnemyGroupTable[(arg0 * 14) + arg1 + 2];
 }
 
 u16 BattleFx_GetWeightedResult(s32 arg0, s32 arg1);
-extern u8 Data_0809d8b0[];
+extern u8 Encounter_AreaEntryTable[];
 unsigned char BattleFx_GetPhaseResult(s32 phase_index)
 {
   s32 entry_offset;
@@ -38,8 +38,8 @@ unsigned char BattleFx_GetPhaseResult(s32 phase_index)
   u8 *entry;
   u8 *weighted_row_address;
   entry_offset = phase_index * 4;
-  entry = ((u8 *)entry_offset) + (s32)Data_0809d8b0;
-  weighted_index_address = entry_offset + (s32)Data_0809d8b0;
+  entry = ((u8 *)entry_offset) + (s32)Encounter_AreaEntryTable;
+  weighted_index_address = entry_offset + (s32)Encounter_AreaEntryTable;
   weighted_row_address = entry;
   weighted_row = *((u16 *)weighted_row_address);
   entry_address = weighted_index_address;
@@ -59,7 +59,7 @@ struct SceneInteractionEntry {
     s16 result;
 };
 
-extern const struct SceneInteractionEntry Data_0809d9f0[];
+extern const struct SceneInteractionEntry Scene_InteractionRuleTable[];
 
 s32 GameFlag_IsSet(s32 flag);
 
@@ -69,7 +69,7 @@ void Scene_ResolveInteractionResult(void)
     s16 progress = PARTY_STATE[224];
     s16 sub = PARTY_STATE[225];
     s16 alt = PARTY_STATE[230];
-    const struct SceneInteractionEntry *entry = Data_0809d9f0;
+    const struct SceneInteractionEntry *entry = Scene_InteractionRuleTable;
 
     for (; entry->id != -1; entry++) {
         if (entry->alt_source) {

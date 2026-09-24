@@ -3,7 +3,7 @@
 
 #define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
-extern u8 *Data_03001ea0;
+extern u8 *gSelectionWork;
 extern u8 Data_000000e8[];
 
 void ShopCursor_AdvanceFar(void *);
@@ -18,7 +18,7 @@ void GraphicsPalette_LoadSelectionResourcesAndAdvance(void)
     s32 sel;
     void *base;
 
-    base = Data_03001ea0;
+    base = gSelectionWork;
     sel = FIELD(base, u16, 0x574);
     ShopCursor_AdvanceFar(base + 0x5A4);
     ShopCursor_MoveTowardTargetFar(base + 0x5B4);

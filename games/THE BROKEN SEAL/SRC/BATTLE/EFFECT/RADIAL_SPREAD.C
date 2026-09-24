@@ -35,7 +35,7 @@ struct PositionSource_08096048 {
 
 extern s32 gGameState[];
 #define PARTY_STATE gGameState
-extern u32 Data_03001800;
+extern u32 gFrameTick;
 
 s32 Object_GetById(u32);
 u32 Random16(void);
@@ -122,7 +122,7 @@ void BattleFx_UpdateRadialSpread(struct EffectSlot *effect)
         effect->flag42 = state;
         effect->state++;
 
-        if ((Data_03001800 & 1) != 0)
+        if ((gFrameTick & 1) != 0)
             Audio_PlayCue(0x90);
     } else if (state == 1) {
         if (EffectSlot_HasReachedTarget(effect) == 0)

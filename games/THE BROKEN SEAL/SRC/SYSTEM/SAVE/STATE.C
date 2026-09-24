@@ -102,11 +102,11 @@ s32 SaveState_ReadSlotAndCheckChecksum(s32 index)
 #include "TYPES.H"
 
 typedef u16 (*Callback_08005904)(u16);
-extern Callback_08005904 Data_02004c14;
+extern Callback_08005904 gEraseFlashSector;
 
 u16 SaveState_EraseSlotSector(u16 value)
 {
-    return Data_02004c14(value);
+    return gEraseFlashSector(value);
 }
 
 #include "SAVE_STATE.H"

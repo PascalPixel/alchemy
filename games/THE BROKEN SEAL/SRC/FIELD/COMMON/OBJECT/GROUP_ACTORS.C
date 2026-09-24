@@ -6,7 +6,7 @@ void Object_Destroy(struct ObjectRuntime *);
 void ObjectDispatch_SetSingleChildField26Far(struct ObjectRuntime *, s32);
 void Object_SetMode(struct ObjectRuntime *, s32);
 void Object_SetAction(struct ObjectRuntime *, s32);
-extern u8 Data_0200048a[];
+extern u8 gPlayerObjectId[];
 
 struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z)
 {
@@ -41,7 +41,7 @@ void ObjectGroup_SetActionForOthers(struct ObjectRuntime *excluded_object,
     s32 object_id;
 
     object_id = 0;
-    active_object_id = (s16 *)Data_0200048a;
+    active_object_id = (s16 *)gPlayerObjectId;
     do {
         object = ObjectTable_Get(object_id);
         if (object_id != *active_object_id && object != NULL && object != excluded_object) {

@@ -10,7 +10,7 @@ s32 SerialRuntime_PollAndTransfer(void *send, void *receive)
 
     siocnt = &REG_SIOCNT;
     control = *siocnt;
-    switch (Data_02002240.phase) {
+    switch (gSerialRuntime.phase) {
     case 0: {
         u8 mask30 = control & 0x30;
         u8 mode;
@@ -18,7 +18,7 @@ s32 SerialRuntime_PollAndTransfer(void *send, void *receive)
         if (mask30 == 0 && (mode = control & 0x88) == 8) {
             u8 serial_error = control & 4;
 
-            if (serial_error == 0 && Data_02002240.send_index == -1) {
+            if (serial_error == 0 && gSerialRuntime.send_index == -1) {
                 u32 ie;
 
                 /* FAKEMATCH: the do/while blocks and the separate enable
@@ -39,12 +39,12 @@ s32 SerialRuntime_PollAndTransfer(void *send, void *receive)
                     REG_IF = 0xc0;
                     REG_TM3CNT = 0xc963;
                 } while (0);
-                Data_02002240.mode = mode;
+                gSerialRuntime.mode = mode;
             }
         } else if (mask30 == 0) {
             break;
         }
-        Data_02002240.phase = 1;
+        gSerialRuntime.phase = 1;
     }
     case 1:
         SerialRuntime_CollectReceivedPayloads(receive);
@@ -52,9 +52,9 @@ s32 SerialRuntime_PollAndTransfer(void *send, void *receive)
         break;
     }
 
-    Data_02002240.sequence++;
-    status = Data_02002240.current_mask | (Data_02002240.received_mask << 8);
-    if (Data_02002240.mode == 8)
+    gSerialRuntime.sequence++;
+    status = gSerialRuntime.current_mask | (gSerialRuntime.received_mask << 8);
+    if (gSerialRuntime.mode == 8)
         status |= 0x80;
     result = SerialRuntime_AddParentFlag(status);
     if (((control << 26) >> 30) > 1)

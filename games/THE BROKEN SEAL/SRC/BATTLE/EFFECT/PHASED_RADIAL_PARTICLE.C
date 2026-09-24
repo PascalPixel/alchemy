@@ -4,15 +4,15 @@
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
-extern u32 Data_03001800;
-extern u32 Data_0809f0a4[];
+extern u32 gFrameTick;
+extern u32 BattleFx_PulseScales[];
 
 void Object_Destroy();
 
 void BattleFx_SetObjectAlternatingWords(u8 *object)
 {
-    u32 *table = Data_0809f0a4;
-    u32 index = (Data_03001800 >> 2) & 1;
+    u32 *table = BattleFx_PulseScales;
+    u32 index = (gFrameTick >> 2) & 1;
     u32 value = index[table];
     *(u32 *)(object + 0x18) = value;
     *(u32 *)(object + 0x1C) = value;

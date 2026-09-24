@@ -67,7 +67,7 @@ struct BattleEventRuntime {
 };
 
 extern u8 *gBattleWork;
-extern u8 *Data_03001ee4;
+extern u8 *gBattleDisplayWork;
 
 
 
@@ -100,7 +100,7 @@ u32 BattleEv_DispatchQueued(void)
         case 1: UiWork_PushValueSlotFar(queue->operands[i], 5); break;
         case 2: UiWork_PushValueSlotFar(queue->operands[i] & 0x1ff, 2); break;
         case 3: UiWork_PushValueSlotFar(queue->operands[i] & 0x3fff, 4); break;
-        case 6: FIELD(Data_03001ee4, s32, 8) = 1; break;
+        case 6: FIELD(gBattleDisplayWork, s32, 8) = 1; break;
         case 7: UiWork_ClearValueNameTablesFar(); break;
         case 4:
             if ((s32)queue->operands[i] >= 0) UiText_ShowMessageAndWaitCoreFar(queue->operands[i]);

@@ -9,9 +9,9 @@ struct SchedulerTask {
 
 #define TASK_STATE_HIGH(task) (((u8 *)&(task)->state)[1])
 
-extern volatile u8 Data_03001a10;
-extern u8 Data_03001d34;
-extern struct SchedulerTask Data_03001a20[20];
+extern volatile u8 gSchedulerStatus;
+extern u8 gSchedulerTaskCount;
+extern struct SchedulerTask gSchedulerTaskTable[20];
 extern volatile u16 Data_04000208;
 
 /*
@@ -19,9 +19,6 @@ extern volatile u16 Data_04000208;
  * word. The hex symbols are the retained-assembly bindings; the aliases are
  * how this unit names them.
  */
-#define gSchedulerStatus Data_03001a10
-#define gSchedulerTaskCount Data_03001d34
-#define gSchedulerTaskTable Data_03001a20
 #define REG_IME Data_04000208
 
 void Scheduler_ResetTaskTable(void)

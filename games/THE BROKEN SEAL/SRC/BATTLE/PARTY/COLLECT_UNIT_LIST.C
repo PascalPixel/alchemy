@@ -1,7 +1,7 @@
 #include "INVENTORY.H"
 
 extern u8 *gBattleWork;
-extern s8 Data_080c2a10[];
+extern s8 BattleParty_CenterOrderOffsets[];
 
 s32 BattleParty_PrepareActiveOwners(u16 *out);
 s32 BattleParty_ListPresentEnemies(u16 *out);
@@ -38,7 +38,7 @@ void BattleParty_CollectUnitList(void)
         }
     }
     for (i = 0; i < count; i++) {
-        index = (Data_080c2a10[i] + count / 2) * 2 + 100;
+        index = (BattleParty_CenterOrderOffsets[i] + count / 2) * 2 + 100;
         out = (u16 *)(state + 2);
         *(u16 *)((u8 *)out + index) = buf[i];
     }

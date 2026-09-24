@@ -7,15 +7,15 @@ struct State_0801a4c0 {
     u32 value;
 };
 
-extern struct State_0801a4c0 *Data_03001e94;
-extern u32 Data_080308a0[];
+extern struct State_0801a4c0 *gGlyphWork;
+extern u32 UiIcon_MiscIconPointers[];
 void UiGlyph_DecodeWithHeapRoutines(struct State_0801a4c0 *, u32);
 
 void Ui_PrepareTransferFromTableEntry(u32 index)
 {
-    struct State_0801a4c0 *state = Data_03001e94;
+    struct State_0801a4c0 *state = gGlyphWork;
 
-    state->value = Data_080308a0[index];
+    state->value = UiIcon_MiscIconPointers[index];
     state->first = 2;
     state->second = 2;
     UiGlyph_DecodeWithHeapRoutines(state, 0);

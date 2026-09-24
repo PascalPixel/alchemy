@@ -12,7 +12,7 @@ void BattleLink_ResetTransferState(void)
      * meaningless. The blocks keep the zero after the IME write; setting
      * state twice raises its allocation priority above ime so it gets r1. */
     do {
-        state = &Data_02002220;
+        state = &gSerialTransfer;
         ime = &Data_04000208;
     } while (0);
     do {
@@ -21,14 +21,14 @@ void BattleLink_ResetTransferState(void)
     } while (0);
     do {
         zero = 0;
-        state = &Data_02002220;
+        state = &gSerialTransfer;
     } while (0);
     state->status = 0x80;
-    Data_02002080 = zero;
-    Data_02002008 = zero;
-    Data_020023ac = zero;
+    gSerialSendSource = zero;
+    gSerialSendSize = zero;
+    gSerialReceiveDest = zero;
     state->peer_flags = zero;
     state->flags = zero;
-    Data_02002238 = zero;
+    gSerialReceivedSize = zero;
     *ime = saved;
 }

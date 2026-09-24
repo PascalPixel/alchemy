@@ -1,6 +1,6 @@
 #include "TYPES.H"
 
-extern volatile u32 Data_03001ae8;
+extern volatile u32 gKeysHeld;
 
 void BattleEv_RunWait(s32 action)
 {
@@ -25,8 +25,8 @@ void BattleEv_RunWait(s32 action)
             WaitFrames(1);
             frames++;
             if (frames > 600 ||
-                ((Data_03001ae8 & 4) && (Data_03001ae8 & 0x100) &&
-                 (Data_03001ae8 & 0x200) && (Data_03001ae8 & 1))) {
+                ((gKeysHeld & 4) && (gKeysHeld & 0x100) &&
+                 (gKeysHeld & 0x200) && (gKeysHeld & 1))) {
                 UiWork_FinalizePendingCoreFar();
             }
         }

@@ -37,8 +37,8 @@ extern u8 *gBattleWork;
 /* The two seven-byte-stride rectangle tables are plain, non-const arrays:
  * their element loads are ordered against the outgoing-argument stores at
  * each blit call site, which a const spelling would let float away. */
-extern u8 Data_080ee10c[];
-extern u8 Data_080ee11a[];
+extern u8 CounterReveal_PanelX[];
+extern u8 CounterReveal_PanelY[];
 
 s32 Unnamed_080cdb24(s32 mode);
 void *Resource_GetTableEntry(s32 id);
@@ -190,17 +190,17 @@ void BattleFx_RunCounterReveal(void *object)
             }
             if (frame <= 87) {
                 ((DrawRectangleFn)rectangle[(*(s32 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (4)))])(
-                    canvas, work, Data_080ee10c[idx_a * 7],
-                    Data_080ee11a[idx_b * 7] + screen_y, 57, 98);
+                    canvas, work, CounterReveal_PanelX[idx_a * 7],
+                    CounterReveal_PanelY[idx_b * 7] + screen_y, 57, 98);
             } else {
                 if (frame <= 91) {
                     ((DrawRectangleFn)rectangle[(*(s32 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (4)))])(
-                        canvas, work, Data_080ee10c[idx_a * 7],
-                        Data_080ee11a[idx_b * 7] + screen_y, 57, 98);
+                        canvas, work, CounterReveal_PanelX[idx_a * 7],
+                        CounterReveal_PanelY[idx_b * 7] + screen_y, 57, 98);
                 }
                 ((DrawRectangleFn)rectangle[(*(s32 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (4)))])(
-                    canvas, (u8 *)work + 0x15D2, Data_080ee10c[idx_a * 7 + 1],
-                    Data_080ee11a[idx_b * 7 + 1] + screen_y, 99, 69);
+                    canvas, (u8 *)work + 0x15D2, CounterReveal_PanelX[idx_a * 7 + 1],
+                    CounterReveal_PanelY[idx_b * 7 + 1] + screen_y, 99, 69);
                 if ((u32)(frame - 88) <= 1U) {
                     status = ((WordCopyFn)0x03000168)(
                         canvas, (void *)0x4000, (void *)0x3F3F3F3F);
@@ -208,32 +208,32 @@ void BattleFx_RunCounterReveal(void *object)
                 if ((u32)(frame - 90) <= 1U) {
                     ((DrawRectangleFn)rectangle[(*(s32 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (4)))])(
                         canvas, (u8 *)work + 0x3081,
-                        Data_080ee10c[idx_a * 7 + 2],
-                        Data_080ee11a[idx_b * 7 + 2] + screen_y, 128, 91);
+                        CounterReveal_PanelX[idx_a * 7 + 2],
+                        CounterReveal_PanelY[idx_b * 7 + 2] + screen_y, 128, 91);
                 }
                 if ((u32)(frame - 92) <= 1U) {
                     ((DrawRectangleFn)rectangle[(*(s32 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (4)))])(
                         canvas, (void *)0x02010000,
-                        Data_080ee10c[idx_a * 7 + 3],
-                        Data_080ee11a[idx_b * 7 + 3] + screen_y, 128, 91);
+                        CounterReveal_PanelX[idx_a * 7 + 3],
+                        CounterReveal_PanelY[idx_b * 7 + 3] + screen_y, 128, 91);
                 }
                 if ((u32)(frame - 94) <= 1U) {
                     ((DrawRectangleFn)rectangle[(*(s32 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (4)))])(
                         canvas, (void *)0x02012D80,
-                        Data_080ee10c[idx_a * 7 + 4],
-                        Data_080ee11a[idx_b * 7 + 4] + screen_y, 128, 59);
+                        CounterReveal_PanelX[idx_a * 7 + 4],
+                        CounterReveal_PanelY[idx_b * 7 + 4] + screen_y, 128, 59);
                 }
                 if ((u32)(frame - 96) <= 1U) {
                     ((DrawRectangleFn)rectangle[(*(s32 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (4)))])(
                         canvas, (void *)0x02014B00,
-                        Data_080ee10c[idx_a * 7 + 5],
-                        Data_080ee11a[idx_b * 7 + 5] + screen_y, 122, 29);
+                        CounterReveal_PanelX[idx_a * 7 + 5],
+                        CounterReveal_PanelY[idx_b * 7 + 5] + screen_y, 122, 29);
                 }
                 if ((u32)(frame - 98) <= 1U) {
                     ((DrawRectangleFn)rectangle[(*(s32 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (4)))])(
                         canvas, (void *)0x020158D2,
-                        Data_080ee10c[idx_a * 7 + 6],
-                        Data_080ee11a[idx_b * 7 + 6] + screen_y, 76, 25);
+                        CounterReveal_PanelX[idx_a * 7 + 6],
+                        CounterReveal_PanelY[idx_b * 7 + 6] + screen_y, 76, 25);
                 }
             }
         }

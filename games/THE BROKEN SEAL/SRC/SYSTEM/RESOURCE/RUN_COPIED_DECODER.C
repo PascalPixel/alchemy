@@ -7,7 +7,7 @@ struct RuntimeCells {
 
 extern struct RuntimeCells gWorkSlot;
 extern u8 Value_0000027c[];
-extern u8 Data_0201c000[];
+extern u8 gDecodeBuffer[];
 
 void *Runtime_AllocateHeapBlock(s32 kind, s32 size);
 void Runtime_ReleaseHeapBlock(s32 kind);
@@ -20,7 +20,7 @@ void Resource_RunCopiedDecoder(s32 a, s32 b)
     u32 size;
     void *code;
 
-    base = Data_0201c000;
+    base = gDecodeBuffer;
     /* FAKEMATCH: the do-whiles order the size load and the call. */
     do { size = (u32)Value_0000027c; } while (0);
     code = Runtime_AllocateHeapBlock(49, size);

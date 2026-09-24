@@ -32,8 +32,8 @@ struct MenuCursorWork {
     struct MenuCursorSprite *cursor;
 };
 
-extern u8 Data_080af294[];
-extern u8 Data_080af29d[];
+extern u8 UiMenu_CursorBobX[];
+extern u8 UiMenu_CursorBobY[];
 extern volatile u32 gFrameCount;
 extern struct MenuCursorWork *gMenuWork;
 
@@ -46,9 +46,9 @@ void UiMenu_PositionCursor(s32 x_offset, s32 y_offset)
     struct MenuCursorWork *work = gMenuWork;
 
     work->cursor->attributes.x = work->cursor->x =
-        Data_080af294[(gFrameCount >> 1) & 7] + x_offset
+        UiMenu_CursorBobX[(gFrameCount >> 1) & 7] + x_offset
         + work->window->x * 8 + 8;
     work->cursor->attributes.y = work->cursor->y =
-        Data_080af29d[(gFrameCount >> 1) & 7] + y_offset
+        UiMenu_CursorBobY[(gFrameCount >> 1) & 7] + y_offset
         + work->window->y * 8 + 8;
 }

@@ -9,12 +9,12 @@ u8 Item_GetTargetMode(s32 item_id)
 
 #include "ITEM.H"
 
-extern u8 Data_02000380[128];
+extern u8 gItemCounters[128];
 
 s32 ItemCounter_Adjust(s32 index, s32 delta)
 {
     s32 counter_slot = index;
-    u8 *data = Data_02000380;
+    u8 *data = gItemCounters;
 
     index = 0;
     if (counter_slot <= 127) {
@@ -37,7 +37,7 @@ s32 ItemCounter_Adjust(s32 index, s32 delta)
 
 #include "ITEM.H"
 
-extern u8 Data_0807b490[];
+extern u8 Item_ArtifactSlotTable[];
 
 s32 Item_AdjustCounter(s32 item_id, s32 delta)
 {
@@ -45,7 +45,7 @@ s32 Item_AdjustCounter(s32 item_id, s32 delta)
     u8 counter;
     s32 result = 0;
 
-    counter = Data_0807b490[item_id & item_id_mask];
+    counter = Item_ArtifactSlotTable[item_id & item_id_mask];
     if (counter != 0) {
         result = ItemCounter_Adjust(counter - 1, delta);
     }

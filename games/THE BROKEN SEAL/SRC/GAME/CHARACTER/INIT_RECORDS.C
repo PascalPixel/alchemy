@@ -29,7 +29,7 @@ struct OwnerEquipTemplate {
     u16 items[13]; /* 0x98 (152) */
 };
 
-extern s32 Data_0807b690[];
+extern s32 Character_StartingEquipOwnerIds[];
 extern u8 Value_00000066;
 
 void Ui_AdjustValueWithoutLimitFar(s32, u16 *);
@@ -43,7 +43,7 @@ void Owner_InitRecords(void)
     struct OwnerEquipTemplate *tmpl;
     u16 name_buf[16];
     s32 owner;
-    s32 *remote = Data_0807b690;
+    s32 *remote = Character_StartingEquipOwnerIds;
     s32 i;
     s32 slot;
     u8 *name;

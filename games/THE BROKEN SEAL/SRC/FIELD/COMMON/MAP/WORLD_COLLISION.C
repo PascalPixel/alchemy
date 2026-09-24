@@ -75,7 +75,7 @@ s32 CheckWorldMapCollisionRange(s32 unused, struct WorldPosition *position)
     return -1;
 }
 
-extern u8 Data_0801353c[];
+extern u8 WorldMap_TerrainBehaviorTable[];
 
 u8 GetWorldMapTerrainBehavior(struct WorldPosition *position, s32 *terrain_kind)
 {
@@ -103,5 +103,5 @@ u8 GetWorldMapTerrainBehavior(struct WorldPosition *position, s32 *terrain_kind)
     if (*terrain_kind == 21)
         flag = 0x20;
 
-    return Data_0801353c[flag + selector];
+    return WorldMap_TerrainBehaviorTable[flag + selector];
 }

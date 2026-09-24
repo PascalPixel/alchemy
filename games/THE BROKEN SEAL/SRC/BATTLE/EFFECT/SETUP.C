@@ -18,11 +18,11 @@ void Object_DisableEffectSpawnCallback(void)
     Scheduler_DisableCallbacks((u32)Object_EffectSpawnCallback);
 }
 
-extern struct BattleEffectEntry Data_0809e9f0[];
+extern struct BattleEffectEntry BattleFx_DefinitionTable[];
 
 struct BattleEffectEntry *BattleFx_FindDefinition(u32 id)
 {
-    struct BattleEffectEntry *entry = Data_0809e9f0;
+    struct BattleEffectEntry *entry = BattleFx_DefinitionTable;
     u32 index = 0;
 
     if (entry->id != id) {
@@ -64,7 +64,7 @@ u8 BattleFx_GetFlags(void)
     return BattleFx_FindDefinition(BattleFx_GetAnimationValue())->flags;
 }
 
-extern volatile u8 Data_03001f54;
+extern volatile u8 gDebugMode;
 extern volatile s32 gKeyState;
 
 void Battle_UpdateModeFromShoulderButtons(void)
@@ -76,7 +76,7 @@ void Battle_UpdateModeFromShoulderButtons(void)
      * key layout, so the two arms are the shoulder buttons setting the mode
      * word either way round.
      */
-    if (Data_03001f54 != 0) {
+    if (gDebugMode != 0) {
         if (gKeyState & 0x200) {
             runtime->mode_1cc = 0;
         }

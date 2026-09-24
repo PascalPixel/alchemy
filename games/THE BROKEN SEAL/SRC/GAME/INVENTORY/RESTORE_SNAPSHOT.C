@@ -5,7 +5,7 @@
 
 #define INVENTORY_SNAPSHOT_SENTINEL 0x6774
 
-extern u16 Data_02001078[];
+extern u16 gInventorySnapshot[];
 
 void GameFlag_ClearBit(s32 flag);
 
@@ -17,7 +17,7 @@ void GameFlag_ClearBit(s32 flag);
 void InventorySnapshot_Restore(void)
 {
     s32 owner;
-    u16 *source = Data_02001078;
+    u16 *source = gInventorySnapshot;
 
     if (*source++ == INVENTORY_SNAPSHOT_SENTINEL) {
         owner = 0;
@@ -39,7 +39,7 @@ void InventorySnapshot_Restore(void)
         PARTY_STATE.psynergy_shortcuts[1] = *source++;
         *(u16 *)((u8 *)&PARTY_STATE + 0x1f8) = *source++;
         *(u16 *)((u8 *)&PARTY_STATE + 0x1fa) = *source;
-        source = Data_02001078;
+        source = gInventorySnapshot;
         *source = 0;
         GameFlag_ClearBit(0x952);
     }

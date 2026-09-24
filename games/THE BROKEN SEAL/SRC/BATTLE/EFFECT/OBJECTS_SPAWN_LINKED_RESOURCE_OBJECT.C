@@ -40,7 +40,7 @@ void Object_SetMode(struct BattleEffectLinkedObject *object, s32 mode);
 void Audio_PlayCue(s32 cue);
 void Battle_WaitMode0(s32 state);
 void BattleFx_CopyLinkedObjectPosition(void);
-extern const u8 Data_0809fc2c[];
+extern const u8 BattleFx_LinkedObjectScript[];
 
 void BattleFx_SpawnLinked(
     s32 resource_id,
@@ -59,7 +59,7 @@ void BattleFx_SpawnLinked(
             Object_CreateFar(21, resource->x, resource->y, resource->z);
 
         if (object != 0) {
-            ObjectDispatch_InitializeFar(object, Data_0809fc2c);
+            ObjectDispatch_InitializeFar(object, BattleFx_LinkedObjectScript);
             Object_SetMode(object, flags & 15);
             object->value_55 = 0;
             object->counter = 0;

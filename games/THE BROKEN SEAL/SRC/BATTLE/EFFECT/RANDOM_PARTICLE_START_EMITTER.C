@@ -44,8 +44,8 @@ struct EfxObj {
 };
 
 extern u8 *gEventWork;
-extern const u8 Data_0809e6c0[];
-extern const u8 Data_0809e87c[];
+extern const u8 BattleFx_ParticleEmitterScript[];
+extern const u8 BattleFx_ParticleScript[];
 
 void RotateVectorByMagnitude(s32 mag, s32 ang, struct EfxPos *pos);
 struct EfxObj *Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);
@@ -59,8 +59,8 @@ void EmitRandomParticleEffect(void);
 void BattleFx_SpawnRandomParticleAtPosition(const void *src);
 
 #define EfxWork gEventWork
-#define EmitterData Data_0809e6c0
-#define ParticleData Data_0809e87c
+#define EmitterData BattleFx_ParticleEmitterScript
+#define ParticleData BattleFx_ParticleScript
 #define EfxPool (*(struct EfxObj **)((u8 *)&gEventWork - 88))
 #define BATTLE_ACTIVE_OFS 0xcb8
 

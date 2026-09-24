@@ -28,8 +28,8 @@ void Menu_LayoutResourceEntries(s32 x, s32 y, s32 w, s32 h)
 
 #include "TBS_EDITION.H"
 
-extern s8 Data_08037403[];
-extern s8 Data_080373f7[];
+extern s8 Menu_TopEntryPositionByCommand[];
+extern s8 Menu_TopEntryCommandByPosition[];
 
 s32 Party_SumDjinnCountsFar(s32);
 void *AffineEffect_InitializeWork(void);
@@ -56,7 +56,7 @@ s32 Menu_SelectTopEntry(s32 sel)
     }
 
     triple = group * 3;
-    tbl = Data_08037403;
+    tbl = Menu_TopEntryPositionByCommand;
     ofs = triple << 1;
     sel = TblGet(tbl, sel + ofs) - 1;
     if (sel < 0) {
@@ -75,7 +75,7 @@ s32 Menu_SelectTopEntry(s32 sel)
     Menu_EndResourceSelection();
 
     if (ret >= 0) {
-        ret = Data_080373f7[ret + ofs + 1];
+        ret = Menu_TopEntryCommandByPosition[ret + ofs + 1];
     }
 
     return ret;
@@ -101,7 +101,7 @@ s32 Menu_AnimateSelectionToEntry(s32 arg0, s32 arg1)
 }
 
 extern s32 SaveState_ScanRecordFlags(void);
-extern s8 Data_0803740f[];
+extern s8 Menu_SaveSlotActionByPosition[];
 
 s32 Menu_SelectSaveSlotAction(void)
 {
@@ -149,7 +149,7 @@ s32 Menu_SelectSaveSlotAction(void)
     ret = Menu_RunResourceSelectionLoop(initial);
     Menu_EndResourceSelection();
     if (ret >= 0) {
-        ret = Data_0803740f[ret + (group * 6)];
+        ret = Menu_SaveSlotActionByPosition[ret + (group * 6)];
     }
     return ret;
 }

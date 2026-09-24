@@ -1,45 +1,45 @@
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
 
-extern u8 Data_03001ac0;
-extern volatile u8 Data_03001ca8;
-extern u8 Data_03001aec;
-extern volatile u8 Data_03001c98;
-extern u8 Data_03001cd4;
-extern u16 Data_03001cf8;
+extern u8 gBlendFramesLeft;
+extern volatile u8 gBlendTargetLevel;
+extern u8 gBlendStartLevel;
+extern volatile u8 gBlendDuration;
+extern u8 gBlendBrighten;
+extern u16 gBlendLayers;
 
 s32 Math_Div(s32 numerator, s32 denominator);
 
 void BlendTransition_Update(void)
 {
-    if (Data_03001c98 != 0) {
+    if (gBlendDuration != 0) {
         {
             volatile u16 *blend_control;
             u32 control;
 
-            if (Data_03001cd4 != 0) {
-                control = Data_03001cf8 | 0x80;
+            if (gBlendBrighten != 0) {
+                control = gBlendLayers | 0x80;
                 blend_control = (volatile u16 *)0x04000050;
             } else {
-                control = Data_03001cf8 | 0xc0;
+                control = gBlendLayers | 0xc0;
                 blend_control = (volatile u16 *)0x04000050;
             }
             *blend_control = control;
         }
         {
-            u8 *remaining = &Data_03001ac0;
+            u8 *remaining = &gBlendFramesLeft;
             s32 delta;
             s32 level;
             s32 step;
 
             (*remaining)--;
-            level = Data_03001ca8;
-            delta = Data_03001aec - Data_03001ca8;
+            level = gBlendTargetLevel;
+            delta = gBlendStartLevel - gBlendTargetLevel;
             step = *remaining;
-            level += Math_Div(delta * step, Data_03001c98);
+            level += Math_Div(delta * step, gBlendDuration);
             *(volatile u16 *)0x04000054 = level;
             if (*remaining == 0)
-                Data_03001c98 = 0;
+                gBlendDuration = 0;
         }
     }
 }
@@ -48,63 +48,63 @@ void BlendTransition_Update(void)
 
 void Blend_SetDarkenTarget16(s32 duration)
 {
-    Data_03001cd4 = 0;
-    Data_03001cf8 = 0x3e;
-    Data_03001aec = Data_03001ca8;
-    Data_03001ca8 = 0x10;
-    Data_03001c98 = duration;
-    Data_03001ac0 = Data_03001c98;
+    gBlendBrighten = 0;
+    gBlendLayers = 0x3e;
+    gBlendStartLevel = gBlendTargetLevel;
+    gBlendTargetLevel = 0x10;
+    gBlendDuration = duration;
+    gBlendFramesLeft = gBlendDuration;
 }
 
 
 
 void Blend_SetDarkenTarget0(s32 duration)
 {
-    Data_03001cd4 = 0;
-    Data_03001cf8 = 0x3e;
-    Data_03001aec = Data_03001ca8;
-    Data_03001ca8 = 0;
-    Data_03001c98 = duration;
-    Data_03001ac0 = Data_03001c98;
+    gBlendBrighten = 0;
+    gBlendLayers = 0x3e;
+    gBlendStartLevel = gBlendTargetLevel;
+    gBlendTargetLevel = 0;
+    gBlendDuration = duration;
+    gBlendFramesLeft = gBlendDuration;
 }
 
 
 
 void Blend_SetBrightenTarget16(s32 duration)
 {
-    Data_03001cd4 = 1;
-    Data_03001cf8 = 0x3e;
-    Data_03001aec = Data_03001ca8;
-    Data_03001ca8 = 0x10;
-    Data_03001c98 = duration;
-    Data_03001ac0 = Data_03001c98;
+    gBlendBrighten = 1;
+    gBlendLayers = 0x3e;
+    gBlendStartLevel = gBlendTargetLevel;
+    gBlendTargetLevel = 0x10;
+    gBlendDuration = duration;
+    gBlendFramesLeft = gBlendDuration;
 }
 
 
 
 void Blend_SetBrightenTarget0(s32 duration)
 {
-    Data_03001cd4 = 1;
-    Data_03001cf8 = 0x3e;
-    Data_03001aec = Data_03001ca8;
-    Data_03001ca8 = 0;
-    Data_03001c98 = duration;
-    Data_03001ac0 = Data_03001c98;
+    gBlendBrighten = 1;
+    gBlendLayers = 0x3e;
+    gBlendStartLevel = gBlendTargetLevel;
+    gBlendTargetLevel = 0;
+    gBlendDuration = duration;
+    gBlendFramesLeft = gBlendDuration;
 }
 
 
 
 void Blend_ConfigureTransition(s8 mode, s32 coefficient, u32 start, s32 target, s32 duration)
 {
-    Data_03001cd4 = mode;
-    Data_03001cf8 = coefficient & 0x3f;
+    gBlendBrighten = mode;
+    gBlendLayers = coefficient & 0x3f;
     if (start > 0x10U) {
-        Data_03001aec = Data_03001ca8;
+        gBlendStartLevel = gBlendTargetLevel;
     } else {
-        Data_03001aec = start;
+        gBlendStartLevel = start;
     }
-    Data_03001ca8 = target;
-    Data_03001ac0 = (Data_03001c98 = duration);
+    gBlendTargetLevel = target;
+    gBlendFramesLeft = (gBlendDuration = duration);
 }
 
 s32 WaitFrames(s32);

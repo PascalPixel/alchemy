@@ -1,13 +1,14 @@
-/* NONMATCHING: 1300 bytes, candidate 1300, 66 differing halfwords
+/* NONMATCHING: 1300 bytes, candidate 1300, 60 differing halfwords
  * (2026-09-24). Single-overlay unit binding Engine_* at their import veneers.
  * Remaining: scheduling only. QueueTransfer is a macro (the source is
- * computed inside the count check), writes IME its own address's low half,
- * reads the count through a u16 lvalue and fills the entry through a
- * post-incremented word pointer. In every call the reference copies the saved
- * IME into its register before the IME write, and in the first it loads the
- * queue and IME addresses after the decompress call; here sched2 puts the
- * copy (priority 1, used only after the join) after the count load and hoists
- * the IME address above the call. Needs the unit symbols
+ * computed inside the count check), writes IME its own address's low half
+ * through the Value_04000208 symbol (so the address loads after the
+ * decompress call), reads the count through a u16 lvalue and fills the entry
+ * through a post-incremented word pointer. In every call the reference copies
+ * the saved IME into its register before the IME write (here sched2 puts that
+ * copy, used only after the join, after the count load); the first call loads
+ * the queue address before IME; and the callback calls set r0 before r1
+ * (wrappers and casts do not change it). Needs the unit symbols
  * gWorldMapTransferQueue=0x02002090, gWorldMapBlend=0x0200e7a0,
  * gWorldMapPalettes=0x0200c4ac, gWorldMapPackedTiles=0x0200c7a6,
  * gWorldMapPackedFrames=0x0200c4ec (data), WorldMap_RestoreBlend=0x0200b8fc,
@@ -29,6 +30,7 @@ struct DisplayTransferQueue {
 
 extern struct DisplayTransferQueue gWorldMapTransferQueue;
 extern u16 gWorldMapBlend;
+extern volatile u16 Value_04000208;
 extern const u8 gWorldMapPalettes[];
 extern const u8 gWorldMapPackedTiles[];
 extern const u8 gWorldMapPackedFrames[];
@@ -45,11 +47,11 @@ void WorldMap_UpdateBlend(void);
  * The original writes 0x0208 to IME; its enable bit is clear. */
 #define QueueTransfer(source, destination, control) \
 { \
-    volatile u16 *ime = (volatile u16 *)0x04000208; \
+    struct DisplayTransferQueue *q = &gWorldMapTransferQueue; \
+    volatile u16 *ime = &Value_04000208; \
     u32 saved = *ime; \
     u32 *p; \
     s32 n; \
-    struct DisplayTransferQueue *q = &gWorldMapTransferQueue; \
     *ime = (u16)(u32)ime; \
     n = *(u16 *)&gWorldMapTransferQueue; \
     if (n < 32) { \

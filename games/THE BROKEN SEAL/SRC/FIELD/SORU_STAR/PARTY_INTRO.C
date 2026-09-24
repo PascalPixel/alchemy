@@ -57,7 +57,7 @@ enum StarRoomMessage {
 };
 
 enum StarRoomFlag {
-    FLAG_STATUE_HALL_TRAP_ARMED = 0x12f,
+    FLAG_ARRIVAL_EVENT_PENDING = 0x12f,
     FLAG_STAR_ROOM_EXPLAINED = 0x83b,
     FLAG_FIRST_STAR_BAGGED = 0x83c,
     FLAG_MERCURY_STAR_BAGGED = 0x83d,
@@ -1969,7 +1969,7 @@ void Scene_EnterStarRoom(void)
     Scene_GiveMythrilBags();
     Map_CopyCellAttributes(8, 0, 5, 1, 27, 17);
     gEventWork->transition_frames = 16;
-    GameFlag_Clear(FLAG_STATUE_HALL_TRAP_ARMED);
+    GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);
     Event_End();
 }
 

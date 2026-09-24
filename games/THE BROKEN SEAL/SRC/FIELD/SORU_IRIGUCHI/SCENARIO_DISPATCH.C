@@ -1,6 +1,22 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
+enum SanctumEntranceFlag {
+    /* Set after the party is asked whether this is its first visit. */
+    FLAG_SOL_SANCTUM_ENTERED = 0x802,
+    FLAG_ARRIVAL_EVENT_PENDING = 0x12f
+};
+
+enum SanctumEntranceMessage {
+    MSG_THE_DOOR_IS_LOCKED = 0x953,
+    MSG_FIRST_TIME_AT_SOL_SANCTUM = 0xfd3,
+    MSG_WHATS_WRONG_SUKURETA = 0xfd6,
+    MSG_MINOTAUR_RELIEF_ONE_EYE = 0x1031,
+    MSG_MINOTAUR_RELIEF_BOTH_EYES = 0x1034,
+    MSG_MORE_STATUES_OUT_OF_REACH = 0x103a
+};
+
+
 #define GATE_ID 2081
 #define Audio_PlayCue_1(a0) Value1(Engine_AudioPlayCue, a0)
 #define BattleRuntime_WaitIfModeZero_1(a0) Value1(Engine_EventWait, a0)
@@ -428,9 +444,9 @@ void SceneDialogue_RunFlag81aMessageBranch(void)
     Event_Begin();
 
     if (GameFlag_IsSet(0x81a) != 0) {
-        Message_ShowCentered(0x1034, 1);
+        Message_ShowCentered(MSG_MINOTAUR_RELIEF_BOTH_EYES, 1);
     } else {
-        Message_ShowCentered(0x1031, 1);
+        Message_ShowCentered(MSG_MINOTAUR_RELIEF_ONE_EYE, 1);
         if (GameFlag_IsSet(0xf01) != 0) {
             u16 *p = (u16 *)(Data_03001ebc + 370);
             u16 val = 1;
@@ -497,10 +513,10 @@ void FieldScene_RunFlag821Dialogue(void)
     Event_Begin();
 
     if (GameFlag_IsSet(0x821) != 0) {
-        Message_ShowCentered(0x1034, 1);
+        Message_ShowCentered(MSG_MINOTAUR_RELIEF_BOTH_EYES, 1);
     } else if (GameFlag_IsSet(0xf02) != 0) {
         work = Data_03001ebc;
-        Message_ShowCentered(0x1031, 1);
+        Message_ShowCentered(MSG_MINOTAUR_RELIEF_ONE_EYE, 1);
         {
             /*
              * The halfword store goes through a pointer local and then an
@@ -514,7 +530,7 @@ void FieldScene_RunFlag821Dialogue(void)
             *frame = (u16)one;
         }
     } else {
-        Message_ShowCentered(0x1031, 1);
+        Message_ShowCentered(MSG_MINOTAUR_RELIEF_ONE_EYE, 1);
     }
 
     Event_End();
@@ -766,7 +782,7 @@ void FieldScene_RunScene37f_0200092c(void)
     }
 }
 
-void FieldScene_RunScene37f_02000d1c(void)
+void Scene_EnterSolSanctum(void)
 {
     s32 record;
 
@@ -813,7 +829,7 @@ void FieldScene_RunScene37f_02000d1c(void)
     Actor_FaceDirection(8, 0x5000, 40);
     Actor_FaceDirection(8, 0x3000, 20);
     Actor_Jump(8, 4, 20);
-    Event_SetMessage(0xfd3);
+    Event_SetMessage(MSG_FIRST_TIME_AT_SOL_SANCTUM);
     Event_AskYesNo(0x4008, 0);
     Event_Wait(20);
     Camera_MoveTo(0x4c80000, -1, 0x940000, 1);
@@ -840,9 +856,9 @@ void FieldScene_RunScene37f_02000d1c(void)
     Actor_SetAnimation(1, 1);
     Actor_SetAnimation(5, 1);
     Actor_SetAnimation(8, 1);
-    GameFlag_Set(0x802);
+    GameFlag_Set(FLAG_SOL_SANCTUM_ENTERED);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
-    GameFlag_Clear(0x12f);
+    GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);
     Event_End();
 }
 
@@ -932,7 +948,7 @@ void FieldScene_RunFourEntitySequence(void)
     Actor_FaceDirection(1, 0xe000, 0);
     Actor_FaceDirection(5, 0xa000, 10);
     Actor_ShowEmote(1, 0x101, 20);
-    Event_SetMessage(0xfd6);
+    Event_SetMessage(MSG_WHATS_WRONG_SUKURETA);
     Event_ShowMessageAndWait(1, 0, 10);
     Actor_ShowEmote(8, 0x102, 60);
     Actor_StartRepeatedMotion(8, 2);
@@ -1039,7 +1055,7 @@ void FieldScene_RunFourEntitySequence(void)
     Actor_SetAnimation(1, 1);
     Object_SetModeById_23(5, 1);
     GameFlag_Set(0x804);
-    GameFlag_Clear_1(0x12f);
+    GameFlag_Clear_1(FLAG_ARRIVAL_EVENT_PENDING);
     Event_End();
 }
 
@@ -1079,7 +1095,7 @@ void Scene_RunTransitionCue(void)
     Event_Wait(20);
     Actor_RunRepeatedMotion(8, 2);
     Actor_FaceDirection(8, 0, 30);
-    Event_SetMessage(0x103a);
+    Event_SetMessage(MSG_MORE_STATUES_OUT_OF_REACH);
     Event_ShowMessageAndWait(0x4008, 0, 10);
     Actor_ShowEmote(8, 0x100, 40);
     Actor_RunRepeatedMotion(8, 1);
@@ -1202,7 +1218,7 @@ void Scene_RunActorFormation(s32 a0)
 void FieldScene_RunScriptedStep953(void)
 {
     Event_Begin();
-    Message_ShowCentered(0x953, 1);
+    Message_ShowCentered(MSG_THE_DOOR_IS_LOCKED, 1);
     Event_End();
 }
 

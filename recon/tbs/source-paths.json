@@ -19928,7 +19928,8 @@
       "name": "BattleFx_BuildBuffer"
     },
     "main:08095290": {
-      "name": "BattleFx_StartBufferBlend"
+      "name": "BattleFx_StartBufferBlend",
+      "source": "BATTLE/EFFECT/START_BUFFER_BLEND.C"
     },
     "main:080167e0": {
       "name": "UiWork_ShiftPanelRowsLeft"
@@ -20561,6 +20562,10 @@
     "main:0801c9c8": {
       "name": "Menu_ResetWorkspaceSelection",
       "source": "MENU/RESET_WORKSPACE_SELECTION.C"
+    },
+    "main:08094154": {
+      "name": "Object_GetScreenPosition",
+      "source": "FIELD/COMMON/OBJECT/GET_SCREEN_POSITION.C"
     }
   },
   "symbols": {

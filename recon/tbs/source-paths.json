@@ -960,6 +960,10 @@
     "main:0801c9c4": {
       "name": "GraphicsPalette_ReservedNoOpC9C4"
     },
+    "main:0801c9c8": {
+      "name": "Menu_ResetWorkspaceSelection",
+      "source": "MENU/RESET_WORKSPACE_SELECTION.C"
+    },
     "main:0801cee0": {
       "name": "GraphicsPalette_AdjustSelectionCounter"
     },

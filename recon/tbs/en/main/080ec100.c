@@ -472,7 +472,8 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
         if (frame == 96) {
             BattleEventRuntime_BeginPhaseFar(134);
         }
-        for (i = 0, q4 = work->sparks; i != 5; i++, q4++) {
+        for (i = 0; i != 5; i++) {
+            q4 = &work->sparks[i];
             if (frame == i * 16 + 7) {
                 Audio_PlayCue(154);
             }

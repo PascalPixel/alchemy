@@ -331,9 +331,6 @@ extern u8 Value_0200ae71;
 void Func_020047ee(Obj *, s32, s32, s32);
 void Func_0200481a(Obj *, s32, s32, s32);
 void Func_0200484c(Obj *);
-void Func_02001440(void);
-void Func_02002638(void);
-s32 Func_02001bc2(struct V6 *arg0);
 void Func_02001d6e(struct V6 arg0);
 void Func_02004a60(s32 arg0, s32 arg1, struct V *arg2);
 s32 Func_02004ac0(struct S *arg0, struct V *arg1);
@@ -356,8 +353,6 @@ void Func_0200325c(s32, s32, s32, s32);
 struct SceneObject *Func_02003e96(void);
 void Func_0200194a(s32, s32, s32, s32, s32, s32, s32, struct EffectParams *);
 void Func_02003fb0_a(s32 arg0);
-void Func_02001914();
-void Func_0200191a();
 void Func_020040e0();
 void Func_0200411c();
 void Func_02004158();
@@ -496,6 +491,8 @@ u8 *Func_02005f3c(s32, s32);
  * into the argument registers; a direct call precomputes a costly constant
  * into a pseudo that the compiler then shares with later uses in the block.
  * A value-returning call also sets r0 last of its arguments. */
+s32 StagedActor_FindClearPosition(struct StagedActorProbe *probe);
+
 static __inline__ void Call1(void (*f)(), s32 a0)
 {
     f(a0);
@@ -806,8 +803,8 @@ s32 Func_02000f70(void)
         FieldScene_RunScene3b2_0200167c();
         rec = Actor_Get(8);
         *(volatile s32 *)(rec + 56) = 0x810000;
-        Func_02001914(9);
-        Func_0200191a(10);
+        FieldScene_RedrawActorFootprint(9);
+        FieldScene_RedrawActorFootprint(10);
         if (GameFlag_IsSet(0x240) != 0) {
             rec7 = Value1(Engine_ActorGet, 11);
             if ((s32)rec7 != 0) {
@@ -900,9 +897,9 @@ void FieldScene_RunScene3b2SequenceA(void)
 void RunPrologueSceneSetup(void)
 {
     Event_Begin();
-    Func_02001440();
+    StagedActor_AdvancePair();
     Event_End();
-    Func_02002638();
+    FieldScene_HandleEscapeColumn();
 }
 
 void StartSceneScript37(void)
@@ -1049,7 +1046,7 @@ void RunSceneVectorTransition(void)
     struct V6 transition;
 
     Event_Begin();
-    if (Func_02001bc2(&transition) != 0) {
+    if (StagedActor_FindClearPosition(&transition) != 0) {
         Func_02001d6e(transition);
     }
     Event_End();

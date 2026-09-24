@@ -68689,6 +68689,90 @@
           }
         }
       }
+    },
+    {
+      "id": "makyuri-palette-cycle",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAKYURI/PALETTE_CYCLE.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_39b",
+      "absolute_symbols": {
+        "Makyuri_ZeroWord": {
+          "address": "0x00000000",
+          "kind": "data"
+        },
+        "gFrameCount": {
+          "address": "0x03001e40",
+          "kind": "data"
+        },
+        "gPaletteCycleRed": {
+          "address": "0x0200a91c",
+          "kind": "data"
+        },
+        "gPaletteCycleGreen": {
+          "address": "0x0200a920",
+          "kind": "data"
+        },
+        "gPaletteCycleBlue": {
+          "address": "0x0200a924",
+          "kind": "data"
+        },
+        "Engine_MathModulo": {
+          "address": "0x0200a3e4",
+          "kind": "thumb"
+        },
+        "Engine_MathDivide": {
+          "address": "0x0200a3dc",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02000d98",
+          "extent": 164,
+          "state": "exact-c"
+        }
+      ],
+      "instances": {
+        "resource_39c": {
+          "owners": {
+            "Makyuri_CyclePalette": {
+              "address": "0x02000d58",
+              "extent": 164
+            }
+          },
+          "absolute_symbols": {
+            "Makyuri_ZeroWord": {
+              "address": "0x00000000",
+              "kind": "data"
+            },
+            "gFrameCount": {
+              "address": "0x03001e40",
+              "kind": "data"
+            },
+            "gPaletteCycleRed": {
+              "address": "0x0200e004",
+              "kind": "data"
+            },
+            "gPaletteCycleGreen": {
+              "address": "0x0200e008",
+              "kind": "data"
+            },
+            "gPaletteCycleBlue": {
+              "address": "0x0200e00c",
+              "kind": "data"
+            },
+            "Engine_MathModulo": {
+              "address": "0x0200d974",
+              "kind": "thumb"
+            },
+            "Engine_MathDivide": {
+              "address": "0x0200d96c",
+              "kind": "thumb"
+            }
+          }
+        }
+      }
     }
   ]
 }

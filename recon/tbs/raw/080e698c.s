@@ -24,48 +24,15 @@
 	.set sub_080cdbc0, 0x080cdbc0
 	.set sub_080cef64, 0x080cef64
 	.set sub_080d6888, 0x080d6888
-	.set sub_080de2f8, 0x080de2f8
 	.set sub_080e0524, 0x080e0524
 	.set sub_080e155c, 0x080e155c
 	.set sub_080e3908, 0x080e3908
 	.set sub_080e3980, 0x080e3980
 	.set sub_080ed408, 0x080ed408
 	.set sub_080f9010, 0x080f9010
-	.global ObjectGroup_StoreObjectAndRunStep7
-	.global Func_080e6948
+	.global Func_080e698c
 	.thumb_func
-ObjectGroup_StoreObjectAndRunStep7:
-Func_080e6948:
-	push	{r5, r6, lr}
-	ldr	r3, [pc, #56]
-	ldr	r5, [r3, #0]
-	ldr	r3, [pc, #56]
-	adds	r6, r0, #0
-	adds	r5, r5, r3
-	str	r6, [r5, #0]
-	movs	r0, #0
-	sub	sp, #16
-	bl	sub_080cd594
-	ldr	r3, [r5, #0]
-	ldr	r2, [r3, #4]
-	movs	r3, #1
-	eors	r2, r3
-	add	r3, sp, #12
-	str	r3, [sp, #0]
-	add	r3, sp, #8
-	str	r3, [sp, #4]
-	adds	r0, r6, #0
-	movs	r1, #7
-	movs	r3, #0
-	bl	sub_080de2f8
-	bl	sub_080cdbc0
-	add	sp, #16
-	pop	{r5, r6}
-	pop	{r0}
-	bx	r0
-	.4byte 0x03001eec
-	.2byte 0x7828
-	.2byte 0x0000
+Func_080e698c:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl

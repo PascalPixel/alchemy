@@ -186,7 +186,6 @@ void Func_020099a6();
 s32 Func_0200ba42();
 s32 Func_0200ba60();
 s32 Func_0200451a(s32, s32, s32, s32);
-void Func_02005a06(void);
 void Func_0200b296(void);
 s32 Func_02004612(s32, s32, s32, s32);
 void Func_020078a2();
@@ -2320,7 +2319,7 @@ void SceneState_ApplyRectAndRunTwo(void)
     s32 e = 22;
     s32 f = 36;
     Map_CopyCellAttributes(17, 0, 3, 1, e, f);
-    Func_02005a06();
+    StagedActor_AdvancePair();
     Func_0200b296();
 }
 

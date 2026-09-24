@@ -13330,12 +13330,12 @@
           "address": "0x200a694",
           "kind": "thumb"
         },
-        "Func_0200379e": {
-          "address": "0x200a2e0",
+        "Event_SayThenWait": {
+          "address": "0x200a2c8",
           "kind": "thumb"
         },
-        "Func_0200379e_a": {
-          "address": "0x200a2c8",
+        "SceneActor_SetPairZeroAndValue": {
+          "address": "0x200a2e0",
           "kind": "thumb"
         }
       },
@@ -19602,16 +19602,16 @@
           "address": "0x0200a41c",
           "kind": "thumb"
         },
-        "Func_0200157c": {
+        "FieldScene_RunStagedActorScene": {
+          "address": "0x02008614",
+          "kind": "thumb"
+        },
+        "FieldScene_SetupStagedActors": {
           "address": "0x02008150",
           "kind": "thumb"
         },
         "Func_0200181c": {
           "address": "0x020096dc",
-          "kind": "thumb"
-        },
-        "Func_02001a82": {
-          "address": "0x02008614",
           "kind": "thumb"
         },
         "Func_0200252c": {
@@ -37333,36 +37333,12 @@
           "address": "0x02008dc4",
           "kind": "thumb"
         },
-        "Func_02000e7a": {
-          "address": "0x02008474",
+        "FieldScene_RedrawActorFootprint": {
+          "address": "0x020088c0",
           "kind": "thumb"
         },
         "Func_02001026": {
           "address": "0x02008608",
-          "kind": "thumb"
-        },
-        "Func_0200134c": {
-          "address": "0x020088c0",
-          "kind": "thumb"
-        },
-        "Func_02001352": {
-          "address": "0x020088c0",
-          "kind": "thumb"
-        },
-        "Func_02001358": {
-          "address": "0x020088c0",
-          "kind": "thumb"
-        },
-        "Func_0200164e": {
-          "address": "0x02008b8c",
-          "kind": "thumb"
-        },
-        "Func_020016b6": {
-          "address": "0x02008bac",
-          "kind": "thumb"
-        },
-        "Func_020016d2": {
-          "address": "0x02008bcc",
           "kind": "thumb"
         },
         "Func_02001aec": {
@@ -37376,6 +37352,22 @@
         "gEventWork": {
           "address": "0x03001ebc",
           "kind": "data"
+        },
+        "KorimaPalette_Capture": {
+          "address": "0x02008bcc",
+          "kind": "thumb"
+        },
+        "KorimaPalette_SaveFirst": {
+          "address": "0x02008b8c",
+          "kind": "thumb"
+        },
+        "KorimaPalette_SaveSecond": {
+          "address": "0x02008bac",
+          "kind": "thumb"
+        },
+        "StagedActor_FindClearPosition": {
+          "address": "0x02008474",
+          "kind": "thumb"
         }
       },
       "owners": [
@@ -41761,14 +41753,6 @@
           "address": "0x02008704",
           "kind": "thumb"
         },
-        "Func_0200138a": {
-          "address": "0x02008944",
-          "kind": "thumb"
-        },
-        "Func_020013ba": {
-          "address": "0x02008944",
-          "kind": "thumb"
-        },
         "Func_020015b0": {
           "address": "0x02008b8c",
           "kind": "thumb"
@@ -41856,6 +41840,10 @@
         "gGameState": {
           "address": "0x02000240",
           "kind": "data"
+        },
+        "SceneActor_LiftLowActorOnSubjectTile": {
+          "address": "0x02008944",
+          "kind": "thumb"
         }
       },
       "owners": [
@@ -52421,26 +52409,6 @@
           "address": "0x0200a4e8",
           "kind": "thumb"
         },
-        "Func_02001c78": {
-          "address": "0x020080c4",
-          "kind": "thumb"
-        },
-        "Func_02001d24": {
-          "address": "0x020080c4",
-          "kind": "thumb"
-        },
-        "Func_02001e30": {
-          "address": "0x020080c4",
-          "kind": "thumb"
-        },
-        "Func_02001f2c": {
-          "address": "0x020080c4",
-          "kind": "thumb"
-        },
-        "Func_02001f4c": {
-          "address": "0x020080c4",
-          "kind": "thumb"
-        },
         "Func_02002038": {
           "address": "0x02008f40",
           "kind": "thumb"
@@ -52656,6 +52624,10 @@
         "gEventWork": {
           "address": "0x03001ebc",
           "kind": "data"
+        },
+        "StagedActor_AdvancePair": {
+          "address": "0x020080c4",
+          "kind": "thumb"
         }
       },
       "owners": [
@@ -53361,10 +53333,6 @@
           "address": "0x0200b380",
           "kind": "thumb"
         },
-        "Func_02005a06": {
-          "address": "0x020080c4",
-          "kind": "thumb"
-        },
         "Func_020073a4": {
           "address": "0x0200dffc",
           "kind": "thumb"
@@ -53604,6 +53572,10 @@
         "gEventWork": {
           "address": "0x03001ebc",
           "kind": "data"
+        },
+        "StagedActor_AdvancePair": {
+          "address": "0x020080c4",
+          "kind": "thumb"
         }
       },
       "owners": [
@@ -58089,15 +58061,11 @@
           "address": "0x0200aff0",
           "kind": "thumb"
         },
-        "Func_02001440": {
-          "address": "0x020080c4",
+        "FieldScene_HandleEscapeColumn": {
+          "address": "0x020092b4",
           "kind": "thumb"
         },
-        "Func_02001914": {
-          "address": "0x020088c0",
-          "kind": "thumb"
-        },
-        "Func_0200191a": {
+        "FieldScene_RedrawActorFootprint": {
           "address": "0x020088c0",
           "kind": "thumb"
         },
@@ -58105,16 +58073,8 @@
           "address": "0x02008ae8",
           "kind": "thumb"
         },
-        "Func_02001bc2": {
-          "address": "0x02008474",
-          "kind": "thumb"
-        },
         "Func_02001d6e": {
           "address": "0x02008608",
-          "kind": "thumb"
-        },
-        "Func_02002638": {
-          "address": "0x020092b4",
           "kind": "thumb"
         },
         "Func_02003184": {
@@ -58628,6 +58588,14 @@
         "gGameState": {
           "address": "0x02000240",
           "kind": "data"
+        },
+        "StagedActor_AdvancePair": {
+          "address": "0x020080c4",
+          "kind": "thumb"
+        },
+        "StagedActor_FindClearPosition": {
+          "address": "0x02008474",
+          "kind": "thumb"
         }
       },
       "owners": [

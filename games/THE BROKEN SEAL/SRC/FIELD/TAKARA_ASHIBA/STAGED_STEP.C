@@ -84,12 +84,8 @@ s32 Func_020033c4();
 s32 Func_020033ce();
 s32 Func_020033d6();
 u8 *Func_02003ff8(s32);
-void Func_02001d24(void);
 u8 *Func_020041fc(s32);
-void Func_02001e30(void);
 void Func_02003a68(void);
-void Func_02001f2c(void);
-void Func_02001f4c(void);
 s32 Func_020035d8(s32);
 void Func_02002038(s32);
 u8 *Func_02003eec(s32);
@@ -100,7 +96,6 @@ void Func_02003ef8_a();
 u8 *Func_02003fcc(s32);
 void Func_02004174();
 void Func_0200417a();
-void Func_02001c78();
 void Func_02003680();
 void Func_02004322(s32, s32, s32);
 
@@ -1029,7 +1024,7 @@ void SceneActor_BranchOnSlotZeroAtTile38(void)
     }
 
     SceneState_ApplyFourRectsAndSetActor8Byte85();
-    Func_02001c78();
+    StagedActor_AdvancePair();
     Func_02003680();
 }
 
@@ -1062,7 +1057,7 @@ void SceneActor_RunWhenActor9AtTile45x43(void)
 
 void FieldScene_RunTwoStepSequence(void)
 {
-    Func_02001d24();
+    StagedActor_AdvancePair();
     SceneActor_RunWhenActor9AtTile45x43();
 }
 
@@ -1099,7 +1094,7 @@ void SceneState_ApplyRectAndClearActor10Byte85(void)
 void FieldScene_RunThreeCallSequenceB(void)
 {
     SceneState_ApplyTwoRectsAtRow56();
-    Func_02001e30();
+    StagedActor_AdvancePair();
     Func_02003a68();
 }
 
@@ -1154,7 +1149,7 @@ void FieldScene_RunSingleStep(void)
 void FieldScene_RunThreeCallSequence(void)
 {
     SceneState_ApplyFourRectsAt48_55();
-    Func_02001f2c();
+    StagedActor_AdvancePair();
     FieldScene_RunSingleStep();
 }
 
@@ -1166,7 +1161,7 @@ void FieldScene_CallHelper3c70(void)
 void FieldScene_RunThreeStepSequence(void)
 {
     SceneState_ApplyFourRectsAt48_55();
-    Func_02001f4c();
+    StagedActor_AdvancePair();
     FieldScene_CallHelper3c70();
 }
 

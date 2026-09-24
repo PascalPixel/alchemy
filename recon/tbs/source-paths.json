@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_3c9:020037c4": {
+      "name": "VinasuChojo_UpdateBeamActors",
+      "source": "FIELD/VINASU_CHOJO/BEAM_ACTORS.C"
+    },
     "resource_3b3:020021ac": {
       "name": "TakaraHashira_RaiseActorFourteen",
       "source": "FIELD/TAKARA_HASHIRA/RAISE_ACTOR.C"

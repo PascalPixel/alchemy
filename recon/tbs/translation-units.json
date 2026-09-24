@@ -70990,6 +70990,34 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "vinasu-chojo-beam-actors",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/VINASU_CHOJO/BEAM_ACTORS.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3c9",
+      "absolute_symbols": {
+        "Engine_ActorGet": {
+          "address": "0x0200dd4c",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagIsSet": {
+          "address": "0x0200dd0c",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetChildValue": {
+          "address": "0x0200dde4",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x020037c4",
+          "extent": 252,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

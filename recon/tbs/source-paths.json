@@ -1317,6 +1317,10 @@
     "main:080069c8": {
       "name": "SetFlashTimerIntr"
     },
+    "main:08006910": {
+      "name": "IdentifyFlash",
+      "source": "SYSTEM/SAVE/IDENTIFY_FLASH.C"
+    },
     "main:080069a4": {
       "name": "Flash_TimerInterrupt",
       "source": "SYSTEM/SAVE/FLASH_TIMER_INTERRUPT.C"

@@ -140,6 +140,13 @@
       "name": "SceneData_SelectFlaggedTable",
       "source": "FIELD/HAIDIA_HEYA/TIMED_EVENTS.C"
     },
+    "main:08002e00": {
+      "name": "System_Initialize",
+      "source": "SYSTEM/INITIALIZE.C"
+    },
+    "main:080d67dc": {
+      "name": "BattleEffect_SetupBlendedDisplay"
+    },
     "main:08011590": {
       "name": "MapAnimation_Start",
       "source": "FIELD/COMMON/MAP/ANIMATION_START.C"

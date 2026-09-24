@@ -11,9 +11,6 @@
 #include "TYPES.H"
 #include "BATTLE_EFFECT_WORK.H"
 #include "BATTLE_EFX.H"
-/* As in mode 6, the blitters return a value the effect ignores. */
-typedef s32 (*DrawRectangleResult)(void *, const void *, s32, s32, s32, s32);
-#define DrawRectangle DrawRectangleResult
 #include "CALLBACK_SCHEDULER.H"
 #include "EFFECT_STEP.H"
 

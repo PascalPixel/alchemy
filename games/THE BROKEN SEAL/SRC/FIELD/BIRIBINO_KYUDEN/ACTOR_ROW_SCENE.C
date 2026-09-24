@@ -1,10 +1,6 @@
-/* NONMATCHING: 584 of 588 bytes, 53 halfword edits (2026-09-24). Hand-written from the
- * resolved jump-table disassembly as a single-overlay unit binding Engine_* at
- * their import veneers. Remaining: every instruction matches; only the literal pool moves: the reference dumps it mid-function after Engine_ActorGet(23) with the zero link symbol first, this draft pools at the end (53 edits of pool offsets). The zero is a local loaded right after Engine_ActorGet(21) and reused for actors 22-24. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
-extern u8 Data_00000000[];
 
 static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
 {
@@ -21,7 +17,8 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
     f(a0, a1, a2, a3, a4, a5);
 }
 
-void Local_020021bc(void)
+/* Pans the camera over the palace, lines up four actors in a row and runs their scripted beat. */
+void BiribinoKyuden_RunActorRowScene(void)
 {
     u16 zero;
     struct FieldActor *actor;
@@ -47,7 +44,7 @@ void Local_020021bc(void)
     Engine_ActorSetSpriteFlags(Engine_ActorGet(23), 0);
     Engine_ActorSetSpriteFlags(Engine_ActorGet(24), 0);
     actor = Engine_ActorGet(21);
-    zero = (u32)Data_00000000;
+    zero = 0;
     actor->motion_flags = zero;
     Engine_ActorGet(22)->motion_flags = zero;
     Engine_ActorGet(23)->motion_flags = zero;

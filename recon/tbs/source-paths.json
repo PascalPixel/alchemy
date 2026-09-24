@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_38d:020021bc": {
+      "name": "BiribinoKyuden_RunActorRowScene",
+      "source": "FIELD/BIRIBINO_KYUDEN/ACTOR_ROW_SCENE.C"
+    },
     "resource_3c4:02000f4c": {
       "name": "BabiChika_UpdateFlickerEffect",
       "source": "FIELD/BABI_CHIKA/FLICKER_EFFECT.C"

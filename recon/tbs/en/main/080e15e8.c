@@ -1,5 +1,5 @@
-/* Draft, not exact (2026-09-24): candidate=3908 reference=3920,
-   binary similarity 58.3%. Phase one (170 frames, A or B skips it) draws
+/* Draft, not exact (2026-09-24): candidate=3924 reference=3920,
+   binary similarity 59.9%. Phase one (170 frames, A or B skips it) draws
    three dotted beams between six projected points, a ring of dots and a
    falling column; phase two (192 frames) bursts sparks, flashes and smoke
    and pans the camera. Residual: the reference frame is 336 bytes, 4 more
@@ -342,7 +342,7 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
             }
             for (i = 1; i != 10; i++) {
                 if (w + i <= 15) {
-                    blit46(dst, ramp + w + i, w + 48 + i, 16 - i, 32 - w * 2 - i * 2, 1);
+                    blit46(dst, &ramp[w + i], w + 48 + i, 16 - i, 32 - w * 2 - i * 2, 1);
                 }
             }
             for (i = 0; i != h; i++) {

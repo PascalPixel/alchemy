@@ -3363,7 +3363,8 @@
       "source": "SOUND/COMMAND_INVOKE_SLOT34.C"
     },
     "main:080fa68c": {
-      "name": "AudioCommand_InvokeSlot35"
+      "name": "AudioCommand_InvokeSlot35",
+      "source": "SOUND/COMMAND_INVOKE_SLOT35.C"
     },
     "main:080fa6a0": {
       "name": "AudioEngine_Initialize",

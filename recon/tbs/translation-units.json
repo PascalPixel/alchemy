@@ -39511,10 +39511,6 @@
           "address": "0x02009410",
           "kind": "thumb"
         },
-        "Func_02001168": {
-          "address": "0x020080c4",
-          "kind": "thumb"
-        },
         "Func_020016ba": {
           "address": "0x02008a68",
           "kind": "thumb"
@@ -39773,6 +39769,10 @@
         },
         "Func_0200279a": {
           "address": "0x02009450",
+          "kind": "thumb"
+        },
+        "StagedActor_AdvancePair": {
+          "address": "0x020080c4",
           "kind": "thumb"
         }
       },

@@ -577,9 +577,7 @@ s32 SceneActor_ApplyCounterLowBitsAsMode(u8 *actor)
 /* Contiguous unnamed leaf-owner run for resource_3b3. */
 s32 SceneData_SelectTableBySceneId(void)
 {
-    extern s16 Data_02000240[];
-
-    s16 v = Data_02000240[224];
+    s16 v = gGameState.scene;
 
     if (v == (s32)&Value_00000073) {
         return (s32)Data_0200aeac;
@@ -613,9 +611,7 @@ u8 *SceneData_GetTableb014(void)
 
 s32 SceneData_SelectDataByRuntimeSelector(void)
 {
-    extern s16 Data_02000240[];
-
-    s16 v = Data_02000240[224];
+    s16 v = gGameState.scene;
 
     if (v == (s32)&Value_00000073) {
         return (s32)Data_0200b06c;
@@ -992,9 +988,7 @@ void StagedActor_PlaceAtObjectTenCell(void)
 
 s32 SceneData_SelectSecondaryTableBySceneId(void)
 {
-    extern s16 Data_02000240[];
-
-    s16 v = Data_02000240[224];
+    s16 v = gGameState.scene;
 
     if (v == (s32)&Value_00000073) {
         return (s32)Data_0200b3a8;

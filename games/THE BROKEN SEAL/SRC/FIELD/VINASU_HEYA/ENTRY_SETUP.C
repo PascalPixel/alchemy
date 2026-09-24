@@ -1200,9 +1200,7 @@ s32 SceneActor_TryMoveActorZeroTwoTilesAhead(void)
 /* Contiguous unnamed leaf-owner run for resource_3c8. */
 s32 SceneData_SelectTableBySceneB5ToBa(void)
 {
-    extern s16 Data_02000240[];
-
-    s16 v = Data_02000240[224];
+    s16 v = gGameState.scene;
 
     if (v == (s32)&Value_000000b5) {
         return (s32)Data_0200dd68;

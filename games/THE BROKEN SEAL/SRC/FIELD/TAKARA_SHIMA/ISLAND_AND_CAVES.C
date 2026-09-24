@@ -726,9 +726,7 @@ void NoOpEffectCallback(void) {}
 
 s32 SelectPrimarySceneData(void)
 {
-    extern s16 Data_02000240[];
-
-    s16 v = Data_02000240[224];
+    s16 v = gGameState.scene;
 
     if (v == (s32)&Value_00000071) {
         return (s32)Data_0200b310;
@@ -762,9 +760,7 @@ u8 *GetDefaultSceneData(void)
 
 s32 SelectSecondarySceneData(void)
 {
-    extern s16 Data_02000240[];
-
-    s16 v = Data_02000240[224];
+    s16 v = gGameState.scene;
 
     if (v == (s32)&Value_00000071) {
         return (s32)Data_0200b610;
@@ -845,9 +841,7 @@ void InitializePrologueSceneState(void)
 
 s32 SelectTertiarySceneData(void)
 {
-    extern s16 Data_02000240[];
-
-    s16 scene_id = Data_02000240[224];
+    s16 scene_id = gGameState.scene;
 
     if (scene_id == (s32)&Value_00000071) {
         return (s32)Data_0200b904;
@@ -1168,13 +1162,12 @@ void RunSceneVectorTransition(void)
 
 void PositionSceneActorPair(s32 actor_id, s32 x_offset, s32 z_offset)
 {
-    extern s32 Data_02000240[];
     Obj *p;
     Obj *q;
     s32 x;
     s32 y;
 
-    p = Func_0200481e(Data_02000240[125]);
+    p = Func_0200481e(gGameState.selected_actor);
     q = Func_02004826(actor_id);
     Event_Begin();
     {

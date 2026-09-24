@@ -24,13 +24,11 @@ static __inline__ void ConfigureThird(s32 actor, s32 value)
 
 #include "TYPES.H"
 
-
 #include "TYPES.H"
 
 void Func_02001f1e(s32 actor, s32 mode);
 
 #include "TYPES.H"
-
 
 #include "TYPES.H"
 

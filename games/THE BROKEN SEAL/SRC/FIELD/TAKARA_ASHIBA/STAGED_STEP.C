@@ -1298,11 +1298,9 @@ void FieldScene_RunScene3b4_02002334(void);
 
 s32 FieldScene_DispatchByRuntimeSelector(void)
 {
-    extern u8 Data_03001ebc[];
-
     u8 *base;
 
-    *(s32 *)(*(u8 **)Data_03001ebc + 0x1c0) = 0x204;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
     base = RuntimeSelectorTable;
     if (*(s16 *)(base + 0x1c0) == (s32)&PrimaryRuntimeSelector) {
         FieldScene_RunScene3b4_02002188();

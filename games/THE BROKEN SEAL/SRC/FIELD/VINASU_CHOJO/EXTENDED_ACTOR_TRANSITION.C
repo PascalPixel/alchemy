@@ -2,7 +2,6 @@
 #include "FIELD_EVENT.H"
 #include "STAGED_ACTOR.H"
 
-
 struct SceneWork {
     u8 unknown_000[0x1c0];
     s32 request;

@@ -330,14 +330,10 @@ static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
     return f(a0, a1);
 }
 
-/* The scene step counter at 0x1d8 of the shared scene work record. */
+/* Moves the next dialogue line on by amount messages. */
 static __inline__ void bump_step(s32 amount)
 {
-    extern u8 Data_03001ebc[];
-
-    u8 *work = *(u8 **)Data_03001ebc;
-
-    *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
+    gEventWork->message += amount;
 }
 
 static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
@@ -375,11 +371,7 @@ static __inline__ void Call3_02002904(void (*f)(), s32 a0, s32 a1, s32 a2)
 
 static __inline__ __attribute__((always_inline)) void bump_step_020006bc(s32 amount)
 {
-    extern u8 Data_03001ebc[];
-
-    u8 *scene = *(u8 **)Data_03001ebc;
-
-    *(u16 *)(scene + 0x1d8) = (u16)(*(u16 *)(scene + 0x1d8) + amount);
+    gEventWork->message += amount;
 }
 
 /* A call site spelled through one of these wrappers passes its constants
@@ -415,9 +407,7 @@ extern u8 Data_0200adac[];
  */
 s32 SceneData_SelectTableBySceneId(void)
 {
-    extern s16 Data_02000240[];
-
-    s16 v = Data_02000240[224];
+    s16 v = gGameState.scene;
 
     if (v == (s32)&Value_0000008c) {
         return (s32)Data_0200b094;
@@ -440,15 +430,13 @@ u8 *SceneData_GetTableB2bc(void)
 
 s32 SceneData_SelectDataBySelectorAndSubstate(void)
 {
-    extern s16 Data_02000240[];
-
-    s16 v = Data_02000240[224];
+    s16 v = gGameState.scene;
 
     if (v == (s32)&Value_0000008d) {
         return (s32)Data_0200be70;
     }
     if (v == (s32)&Value_0000008c) {
-        if (Data_02000240[225] == 12) {
+        if (gGameState.entrance == 12) {
             return (s32)Data_0200c110;
         }
         return (s32)Data_0200be94;

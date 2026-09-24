@@ -139,9 +139,7 @@ void OverlayObject_WaitUntilField12BelowLimit(u8 *o, s32 limit)
 
 s32 SceneData_SelectTableByScene59To5c(void)
 {
-    extern s16 Data_02000240[];
-
-    s16 v = Data_02000240[224];
+    s16 v = gGameState.scene;
 
     if (v == (s32)&Value_00000059) {
         return (s32)Data_0200a174;
@@ -170,20 +168,18 @@ void *SceneData_GetTablea36c(void)
 
 s32 SceneData_SelectTableBySceneId(void)
 {
-    extern s16 Data_02000240[];
-
-    if (Data_02000240[224] == (s32)&Value_0000005b) {
-        if (Data_02000240[225] == 5) {
+    if (gGameState.scene == (s32)&Value_0000005b) {
+        if (gGameState.entrance == 5) {
             GameFlag_Set(0x90a);
         }
     }
-    if (Data_02000240[224] == (s32)&Value_00000059) {
+    if (gGameState.scene == (s32)&Value_00000059) {
         return (s32)Data_0200a3c8;
     }
-    if (Data_02000240[224] == (s32)&Value_0000005a) {
+    if (gGameState.scene == (s32)&Value_0000005a) {
         return (s32)Data_0200a410;
     }
-    if (Data_02000240[224] == (s32)&Value_0000005b) {
+    if (gGameState.scene == (s32)&Value_0000005b) {
         return (s32)Data_0200a4b8;
     }
     return (s32)Data_0200a3b0;

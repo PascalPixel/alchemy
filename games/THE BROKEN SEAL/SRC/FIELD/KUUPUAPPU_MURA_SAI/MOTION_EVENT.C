@@ -297,14 +297,10 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
     f(a0, a1, a2);
 }
 
-/* The scene step counter at 0x1d8 of the shared scene work record. */
+/* Moves the next dialogue line on by amount messages. */
 static __inline__ void bump_step(s32 amount)
 {
-    extern u8 Data_03001ebc[];
-
-    u8 *work = *(u8 **)Data_03001ebc;
-
-    *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
+    gEventWork->message += amount;
 }
 
 static __inline__ void SetScale(s32 actor, s32 horizontal, s32 vertical)
@@ -782,13 +778,11 @@ void FieldScene_RunScene385_020009f8(void)
 
 void PlaceActorAndSetSceneDelay(s32 x, s32 y, s32 delay)
 {
-    extern u8 *Data_03001ebc;
-
     s32 zero = 0;
 
     SetScale(zero, 0x8000, 0x4000);
     Actor_WalkTo(zero, x, y);
-    *(s32 *)(Data_03001ebc + 456) = 16;
+    gEventWork->transition_frames = 16;
     Event_RequestExit(delay);
 }
 

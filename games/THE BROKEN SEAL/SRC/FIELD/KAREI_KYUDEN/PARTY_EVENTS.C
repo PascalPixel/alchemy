@@ -1,7 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
-
 extern s16 Data_02000240[];
 extern u8 Value_00000067;
 extern u8 Data_02009c04[];
@@ -147,7 +146,7 @@ static __inline__ void Scene_AdvanceStep(s32 amount)
 
 s32 SceneData_SelectTable9bd4ByState(void)
 {
-    if (Data_02000240[224] == (s32)&Value_00000067) {
+    if (gGameState.scene == (s32)&Value_00000067) {
         return (s32)Data_02009c04;
     }
     return (s32)Data_02009bd4;
@@ -170,7 +169,7 @@ u8 *SceneData_GetTable9d9c(void)
 
 s32 SceneData_SelectTable9ddcByStateWithInit(void)
 {
-    if (Data_02000240[224] == (s32)&Value_00000067) {
+    if (gGameState.scene == (s32)&Value_00000067) {
         Func_02001b1a(Data_02009df4);
         return (s32)Data_02009df4;
     }
@@ -179,7 +178,7 @@ s32 SceneData_SelectTable9ddcByStateWithInit(void)
 
 s32 SceneData_SelectTable9f2cByState(void)
 {
-    if (Data_02000240[224] == (s32)&Value_00000067) {
+    if (gGameState.scene == (s32)&Value_00000067) {
         return (s32)Data_02009f38;
     }
     return (s32)Data_02009f2c;
@@ -255,10 +254,8 @@ void FieldScene_RunScene3aa_02000184(void)
 
 s32 SceneState_SetWord448To209AndRun(void)
 {
-    extern u8 *Data_03001ebc;
-
-    *(s32 *)(Data_03001ebc + 448) = 0x209;
-    if (Data_02000240[224] == (s32)(u32)&Value_00000067) {
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+    if (gGameState.scene == (s32)(u32)&Value_00000067) {
         Func_020004ae();
     }
     return 0;
@@ -282,7 +279,7 @@ void FieldScene_DispatchSceneByIndex(void)
     Func_02001cc0(1);
     Func_02001cc6(2);
 
-    switch (Data_02000240[225]) {
+    switch (gGameState.entrance) {
     case 9:
         if (GameFlag_IsSet(0x941) != 0) {
             rec = Func_02001d46(8);

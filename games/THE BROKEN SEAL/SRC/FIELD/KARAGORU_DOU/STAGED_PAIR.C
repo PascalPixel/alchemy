@@ -29,7 +29,6 @@ struct HeightTrackedObject {
     s32 height;                 /* +12 */
 };
 
-extern s16 Data_02000240[];
 extern u8 Value_00000098;
 extern u8 Value_0000009d;
 extern u8 Value_0000009e;
@@ -94,14 +93,10 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
     f(a0, a1, a2);
 }
 
-/* The scene step counter at 0x1d8 of the shared scene work record. */
+/* Moves the next dialogue line on by amount messages. */
 static __inline__ void bump_step(s32 amount)
 {
-    extern u8 Data_03001ebc[];
-
-    u8 *work = *(u8 **)Data_03001ebc;
-
-    *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
+    gEventWork->message += amount;
 }
 
 /* Call sites spelled through these wrappers pass their constants straight
@@ -177,7 +172,7 @@ void *StagedActorPairScene_SpawnSecondaryEffect(s32 x, s32 y, s32 z, s32 kind)
 
 s32 StagedActorPairScene_GetVariantData(void)
 {
-    s16 scene_id = Data_02000240[224];
+    s16 scene_id = gGameState.scene;
 
     if (scene_id == (s32)&Value_00000098) {
         return (s32)Data_020097b4;

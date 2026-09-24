@@ -1,37 +1,8 @@
 #include "TYPES.H"
+#include "FIELD_EVENT.H"
 
-#define ColossoLogRollingStage_PositionAndActivateActor Func_020022f4
-#define ColossoLogRollingStage_RunLogRollingInteraction Func_020024d0
-#define ColossoLogRollingStage_RestoreActorPositions Func_020025c8
-#define ColossoLogRollingStage_MarkSceneProgress Func_02002710
-#define ColossoLogRollingStage_SelectNearestObstacle Func_02002758
-#define ColossoLogRollingStage_ClearSavedActorPositions Func_02002a50
-#define ColossoLogRollingStage_RunStateInteraction Func_02002a94
-#define ColossoLogRollingStage_InitializeStateInteraction Func_02002b50
-#define ColossoLogRollingStage_ApplyItemToMatchingSlots Func_02002e18
-#define ColossoLogRollingStage_InitializeModeTask Func_020033d8
-#define ColossoLogRollingStage_RunScriptedTransition Func_02003468
-#define ColossoLogRollingStage_ResetActorMotion Func_020038dc
-#define ColossoLogRollingStage_EnsurePaletteHandle Func_020038fc
-#define ColossoLogRollingStage_StartPaletteTask Func_02003a58
-#define ColossoLogRollingStage_StartPaletteTaskFromState Func_02003abc
-#define ColossoLogRollingStage_StopPaletteTask Func_02003b18
-#define ColossoLogRollingStage_PositionScaledObject Func_02003b40
-#define ColossoLogRollingStage_SpawnPositionedObject Func_02003b80
-#define ColossoLogRollingStage_SetBalanceStateReady Func_02003cc4
-#define ColossoLogRollingStage_WaitForBalanceState Func_02003cd0
-#define ColossoLogRollingStage_SpawnRandomSceneEffect Func_02003cf4
-#define ColossoLogRollingStage_RaiseLinkedSceneEffect Func_02003d88
-#define ColossoLogRollingStage_PositionActiveActor Func_02003ddc
-#define ColossoLogRollingStage_SetupSceneDescriptor Func_02004494
-#define ColossoLogRollingStage_InitializeSceneControl Func_0200457c
-#define ColossoLogRollingStage_SetSceneControlValue Func_020045d0
-#define ColossoLogRollingStage_PushStagedActor Func_02004628
-#define ColossoLogRollingStage_FindActorAhead Func_02004790
 #include "COLOSSO_LOG_ROLLING_STAGE.H"
 
-#define WriteU32AsHex Func_02003c94
-#define FindActorAtWholeTilePosition Func_020045e0
 extern u8 Data_0200ce3c[];
 extern u8 *Data_03001ebc;
 
@@ -122,31 +93,13 @@ typedef struct ActiveSubjectSlot {
 } ActiveSubjectSlot;
 
 extern void Func_02004d72(void);       /* site 0x20024e4 -> Func_0200288c veneer */
-extern void Func_02006eec(void);       /* site 0x20024ea -> Func_0808a018 veneer */
 extern s32 Func_02004f88(s32 actor, s32 slot); /* site 0x20024f2 -> Func_02002a94 veneer */
-extern void Func_02006fb0(s32 message);  /* site 0x20024fe -> Func_0808a170 veneer (state==0 arm) */
-extern void Func_02007004(s32 x, s32 z); /* site 0x200250a -> Func_0808a208 veneer */
-extern void Func_0200701e(s32 x, s32 y, s32 z, s32 mode); /* site 0x200251c -> Func_0808a210 veneer */
-extern void Func_0200702a(void);         /* site 0x2002520 -> Func_0808a218 veneer */
-extern void Func_02006f20(s32 frames);   /* site 0x2002526 -> Func_0808a010 veneer #1 */
-extern void Func_02006ff0(s32 actor, s32 mode); /* site 0x200252e -> Func_0808a180 veneer #1 */
 extern void Func_02005f92(s32 x, s32 z, s32 mode); /* site 0x2002538 -> Func_02003a58 veneer */
-extern void Func_02006f38(s32 frames);   /* site 0x200253e -> Func_0808a010 veneer #2 */
-extern void Func_02007008(s32 actor, s32 mode); /* site 0x2002546 -> Func_0808a180 veneer #2 */
 extern void Func_0200600e(s32 x, s32 z, s32 mode); /* site 0x2002550 -> Func_02003abc veneer #1 */
-extern void Func_02006f50(s32 frames);   /* site 0x2002556 -> Func_0808a010 veneer #3 */
-extern void Func_02007020(s32 actor, s32 mode); /* site 0x200255e -> Func_0808a180 veneer #3 */
 extern void Func_02006026(s32 x, s32 z, s32 mode); /* site 0x2002568 -> Func_02003abc veneer #2 */
-extern void Func_02006f68(s32 frames);   /* site 0x200256e -> Func_0808a010 veneer #4 */
-extern void Func_02007038(s32 actor, s32 mode); /* site 0x2002576 -> Func_0808a180 veneer #4 */
 extern void Func_02006094(void);         /* site 0x200257a -> Func_02003b18 veneer */
-extern void Func_02006f7a(s32 frames);   /* site 0x2002580 -> Func_0808a010 veneer #5 */
-extern void Func_0200707a(s32 actor, s32 mode); /* site 0x2002588 -> Func_0808a200 veneer */
 extern void Func_020050e2(s32 actor, s32 slot); /* site 0x2002590 -> Func_02002b50 veneer */
-extern void Func_0200704e(s32 message);  /* site 0x200259c -> Func_0808a170 veneer (state==1 arm) */
-extern void Func_02007066(s32 actor, s32 mode); /* site 0x20025a4 -> Func_0808a180 veneer #5 */
 extern s32 Func_0200515c(s32 state, s32 actor, s32 slot); /* site 0x20025ae -> Func_02002bac veneer */
-extern void Func_02006fbc(void);         /* site 0x20025b2 -> Func_0808a020 veneer */
 extern u8 Value_0000008f;
 extern u8 Value_00000090;
 extern u8 Value_00002076;
@@ -165,44 +118,19 @@ extern s32 Data_0200ccba;   /* handler for mode == 2 */
 extern s32 Data_0200d9d2;   /* handler for mode == 4 */
 extern struct ModeRecord Data_0200cce2;
 extern struct ModeRecord Data_0200da50;
-extern void Func_02007e72(void);              /* Func_0808a018 veneer #1 (mode==0 arm) */
-extern void Func_02007fc6(void);              /* Func_0808a360 veneer #1 */
-extern void Func_02007fda(void);              /* Func_0808a370 veneer #1 */
-extern void Func_02007e78(s32 frames);        /* Func_0808a010 veneer #1 */
-extern void Func_02008026(s32 cue);           /* Audio_PlayCue veneer #1 */
 extern void Func_020062e0(s32 mode);          /* Func_02002e54 veneer #1 */
 extern void Func_0200686c(s32 style, s32 variant); /* Func_020033d8 veneer #1 */
-extern void Func_02007e92(s32 frames);        /* Func_0808a010 veneer #2 */
-extern void Func_02007ea6(void);              /* Func_0808a020 veneer #1 */
-extern void Func_02008046(s32 cue);           /* Audio_PlayCue veneer #2 (main arm) */
-extern void Func_02007eaa(void);              /* Func_0808a018 veneer #2 */
-extern void Func_02007ffe(void);              /* Func_0808a360 veneer #2 */
-extern void Func_02008012(void);              /* Func_0808a370 veneer #2 */
-extern void Func_02007eba(s32 frames);        /* Func_0808a010 veneer #3 */
-extern void Func_0200806a(s32 cue);           /* Audio_PlayCue veneer #3 */
 extern void Func_02006324(s32 mode);          /* Func_02002e54 veneer #2 */
 extern void Func_020068b0(s32 style, s32 variant); /* Func_020033d8 veneer #2 */
-extern void Func_02007ed6(s32 frames);        /* Func_0808a010 veneer #4 */
-extern void Func_02007d26(s32 frames);        /* Func_080000c0 veneer (loop body) */
 extern s32 Func_02008092(void);               /* Func_080f9048 veneer (loop check) */
-extern void Func_02008094(s32 cue);           /* Audio_PlayCue veneer #4 */
 extern void Func_0200634e(s32 mode);          /* Func_02002e54 veneer #3 */
 extern void Func_020068da(s32 style, s32 variant); /* Func_020033d8 veneer #3 */
-extern void Func_020080a8(s32 cue);           /* Audio_PlayCue veneer #5 */
-extern void Func_02007f06(s32 frames);        /* Func_0808a010 veneer #5 */
 extern void Func_020068ee(s32 style, s32 variant); /* Func_020033d8 veneer #4 */
-extern void Func_020080bc(s32 cue);           /* Audio_PlayCue veneer #6 */
-extern void Func_02007f1a(s32 frames);        /* Func_0808a010 veneer #6 */
 extern void Func_0200637c(s32 mode);          /* Func_02002e54 veneer #4 */
 extern void Func_02006908(s32 style, s32 variant); /* Func_020033d8 veneer #5 */
-extern void Func_020080d6(s32 cue);           /* Audio_PlayCue veneer #7 */
-extern void Func_02007f34(s32 frames);        /* Func_0808a010 veneer #7 */
 extern void Func_02006396(s32 mode);          /* Func_02002e54 veneer #5 */
 extern void Func_02006922(s32 style, s32 variant); /* Func_020033d8 veneer #6 */
-extern void Func_020080f0(s32 cue);           /* Audio_PlayCue veneer #8 */
 extern void Func_020080cc(void);              /* Func_0808a4f0 veneer */
-extern void Func_02007f60(void);              /* Func_0808a020 veneer #2 */
-extern void Func_02007f16(s32 flag);          /* GameFlag_Set veneer */
 extern s16 Data_0200dace;
 extern u16 Data_0200dc34;
 extern u16 Data_0200dbc0;
@@ -221,23 +149,11 @@ extern u8 *Data_03001f3c;
 extern u8 Data_0200bef1[];
 extern u32 Data_0200cfc0[];
 
-s32 Func_020070e6(s32);
 StageActor *Func_02007198(s32);
-void Func_02007186(void);
 StageActor *Func_020071a6(s32);
-void Func_020072a0(s32);
-void Func_020072b8(s32, s32);
-void Func_02007210_a();
 void Func_02007210_b();
-void Func_02007374(void);
-void Func_02007380(void);
 void Func_02007200(s32, s32);
-void Func_0200735a(s32);
-void Func_0200720a(s32);
 void Func_02004e9a(s32);
-void Func_020073ae(void);
-void Func_020073c2(void);
-void Func_02007274(void);
 void Func_0200742a(s32, s32);
 void Func_02007434(s32, s32);
 void Func_0200743e(s32, s32);
@@ -246,18 +162,8 @@ void Func_02007452(s32, s32);
 void Func_0200745c(s32, s32);
 void Func_0200760c(void);
 void Func_0200741c(s32, s32);
-void Func_0200757a(s32);
-void Func_02007592(s32, s32);
-s32 Func_0200748c(s32);
-s32 Func_0200749c(s32);
 s32 Func_0200747e(s32);
-void Func_020074cc(s32);
-void Func_020075ca(s32);
-s32 Func_020075da(s32, s32);
-s32 Func_0200753a(s32, s32);
 void Func_020074d2(s32, s32);
-void Func_02007632(s32);
-void Func_0200764a(s32, s32);
 void Func_02007c38(s32 taskAddress, s32 frameBudget);
 void Func_020082d4(s32 taskAddress, s32 frameBudget);
 void Func_02008330(s32 taskAddress, s32 frameBudget);
@@ -266,56 +172,37 @@ void Func_0200836e(void (*callback)(void));
 void Func_020083c8(s32 slot);
 ScaledStageObject *Func_020086b0();
 void Func_02008464();
-void Func_0200844c();
 void Func_02008488();
 u8 *Func_020086f0(s32 object_id);
 void Func_020084a4(void);
-void Func_0200848c(u8 *object, s32 mode);
 void Func_020084c8(u8 *object, s32 x, s32 y, s32 z);
 void Func_020084d6(u8 *object);
-void Func_020084a6(u8 *object, s32 enabled);
 u32 Func_02008568(void);
-s32 Func_02008584(void);
-s32 Func_0200858a(void);
 void Func_020085a6(s32, s32, s32 *);
 StageEffect *Func_0200863a(s32, s32, s32, s32);
-void Func_020086b6(StageEffect *, s32);
-void Func_0200864e_a(StageEffect *, s32);
-void Func_0200864e_b(StageEffect *, s32);
-void Func_02008656(StageEffect *, s32);
 StageEffect *Func_020087b4(s16);
 void Func_020086be(StageEffect *, s32, s32, s32);
-void Func_020086a6(StageEffect *, s32);
-void Func_02008964(s32);
 u8 *Func_02008818_b();
 u8 *Func_02008d2e();
 s32 Func_02008d48();
 u8 *Func_02008f08();
 u8 *Func_02008f10();
-s32 Func_02008eb0();
 void Func_02008dbe();
 s32 Func_02008de2();
-s32 Func_02008dee();
 void Func_02008d8e();
 void Func_02008ddc();
 void Func_0200c0d0(void);
 s32 Func_02008e56(void);
 void Func_02008e26(s32, s32);
-s32 Func_02008f44(s32);
 void Func_02008dfa(s32, s32);
 SceneRecord *Func_0200905c();
 SceneRecord *Func_02008c56(Position3 *, SceneRecord *);
 SceneRecord *Func_02008c80(Position3 *, SceneRecord *);
 SceneRecord *Func_02008cac(Position3 *, SceneRecord *);
 s32 Func_0200905e(SceneRecord *, Position3 *);
-void Func_02008ffc(SceneRecord *, s32);
-void Func_02008f62(s32);
 void Func_02009042(SceneRecord *, s32, s32, s32);
 void Func_02009052(SceneRecord *, s32, s32, s32);
-void Func_020092e8(s32);
 void Func_02009066(SceneRecord *);
-void Func_020092f6(s32);
-void Func_0200904c(SceneRecord *, s32);
 u8 *Func_020091bc();
 void Func_02009046();
 s32 *Func_02008dc6();
@@ -385,31 +272,21 @@ s32 *Func_02006e64();          /* entity by selector, established */
 
 void Func_02006c06();          /* unestablished */
 
-void Func_02006bee();          /* established (record, mode) */
-
 void Func_02006c2a();          /* established (record, x, y, z) */
 
 void Func_02006c38();          /* unestablished, single argument */
-
-void Func_02006c08();          /* established (record, mode) */
 
 s32 Func_02006f98();           /* Func_080770e0 veneer #1 */
 
 s32 Func_02006fa2();           /* Func_080770e0 veneer #2 */
 
-void Func_02007058();          /* Func_0808a0f0 veneer #1 */
-
 s32 Func_02006fc0();           /* Func_080770e0 veneer #3 */
 
 s32 Func_02006fca();           /* Func_080770e0 veneer #4 */
 
-void Func_0200707c();          /* Func_0808a0f0 veneer #2 */
-
 s32 Func_02006fe4();           /* Func_080770e0 veneer #5 */
 
 s32 Func_02006fee();           /* Func_080770e0 veneer #6 */
-
-void Func_020070a0();          /* Func_0808a0f0 veneer #3 */
 
 u8 *Func_020077bc();           /* veneer, item/party record by id, established */
 
@@ -425,17 +302,9 @@ s32 Func_0200829e(void);       /* established (veneer to Func_080153b8) */
 
 void Func_02007362();          /* sibling item-28 owner, via per-site veneer */
 
-void Func_02008520();          /* advance the task scheduler, established (veneer to Func_080000c0) */
-
-s32 Func_020087a0();           /* veneer to GameFlag_IsSet */
-
 u8 *Func_02008818_a();         /* veneer to Scene_GetRecord */
 
 void Func_0200876a();          /* veneer to Object_SetPosition */
-
-void Func_02008750();          /* veneer to Object_SetCallback */
-
-void Func_020086b6_a();          /* veneer to Func_080000c0 */
 
 s32 Func_02006ca2();           /* local thunk to Func_020020e8, site A */
 
@@ -447,13 +316,10 @@ void Func_0200881c();          /* veneer to UiText_DrawQuantity, site B */
 
 void Func_0200882c_a();          /* shared veneer, selector refresh + 0x96a */
 
-void Func_0200882c_b();          /* shared veneer, selector refresh + 0x96a */
-
 void Func_020087ca();          /* veneer to Func_08009148 */
 
 s32 *Func_02006e34_position();          /* entity by selector, established */
 void Func_02006bd6_position();          /* unestablished */
-void Func_02006bbe_position();          /* established (record, mode) */
 void Func_02006bfa_position();          /* established (record, x, y, z) */
 
 static __inline__ void Call1(void (*f)(), s32 a0)
@@ -514,230 +380,81 @@ void Func_020059ee_arrival();
 s32 Func_02005a00_arrival();
 void Func_02005a0c_arrival();
 void Func_02005a5c_arrival();
-void Func_02006814_arrival();
-void Func_0200684c_arrival();
-void Func_0200688a_arrival();
-void Func_0200689e_arrival();
-void Func_020068da_arrival();
-void Func_02006910_arrival();
-void Func_0200691e_arrival();
-void Func_02006920_arrival();
-void Func_0200692e_arrival();
-void Func_02006930_arrival();
-void Func_02006948_arrival();
-void Func_02006956_arrival();
-void Func_0200cad0_arrival();
-void Func_0200ca08_arrival();
-void Func_020069a4_arrival();
-void Func_020069a8_arrival();
-void Func_020069be_arrival();
-void Func_0200cb30_arrival();
-void Func_020069ca_arrival();
-void Func_020069e8_arrival();
-void Func_020069ea_arrival();
-void Func_02006a00_arrival();
-void Func_02006a08_arrival();
-void Func_02006a16_arrival();
-void Func_02006a2e_arrival();
-void Func_02006a42_arrival();
-
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
  * into a pseudo that the compiler then shares with later uses in the block.
  * A value-returning call also sets r0 last of its arguments. */
 
-
-
-
-
-
-
-
-
-
-
-
-#define ObjectTable_DestroyById_1(args...) Func_02005ea2_head(args)
-#define ObjectTable_DestroyById_2(args...) Func_02005ea8_head(args)
 #define Audio_PlayCue_1(args...) Func_02006034_a_head(args)
-#define BattleRuntime_Reset_1(args...) Func_02005e98_head(args)
-#define ObjectMotion_SetHorizontalPositionWithTerrain_1(a0, a1, a2) Call3(Func_02005f0e_head, a0, a1, a2)
 #define Object_SetModeById_1(args...) Func_02005f22_a_head(args)
-#define Object_SetModeById_2(args...) Func_02005f2c_head(args)
-#define ObjectMotion_EnableActionAndSetCallback_1(a0, a1) Value2(Func_02005ef4_head, a0, a1)
-#define ObjectMotion_SetHorizontalPositionWithTerrain_2(a0, a1, a2) Call3(Func_02005f3a_head, a0, a1, a2)
+#define ObjectMotion_EnableActionAndSetCallback_1(a0, a1) Value2(Engine_ActorEnableActionCallback, a0, a1)
 #define Scene_GetRecord_1(args...) Func_02005ef0_head(args)
-#define ObjectMotion_EnableActionAndSetCallback_2(a0, a1) Value2(Func_02005f14_head, a0, a1)
-#define Object_SetModeById_3(args...) Func_02005f5c_head(args)
+#define ObjectMotion_EnableActionAndSetCallback_2(a0, a1) Value2(Engine_ActorEnableActionCallback, a0, a1)
 #define ObjectMotion_SetSpeedParameters_1(a0, a1, a2) Call3(Func_02005f22_b_head, a0, a1, a2)
-#define ObjectMotion_SetSpeedParameters_2(a0, a1, a2) Call3(Func_02005f30_head, a0, a1, a2)
-#define ObjectMotion_SetSpeedParameters_3(a0, a1, a2) Call3(Func_02005f3e_head, a0, a1, a2)
-#define ObjectMotion_SetHorizontalPositionWithTerrain_3(a0, a1, a2) Call3(Func_02005f8c_head, a0, a1, a2)
-#define ObjectMotion_SetHorizontalPositionWithTerrain_4(a0, a1, a2) Call3(Func_02005f9a_head, a0, a1, a2)
-#define ObjectMotion_SetHorizontalPositionWithTerrain_5(a0, a1, a2) Call3(Func_02005fa8_head, a0, a1, a2)
 #define Scene_GetRecord_2(a0) Value1(Func_02005f5e_head, a0)
 #define Scene_GetRecord_3(a0) Value1(Func_02005f66_head, a0)
 #define Scene_GetRecord_4(a0) Value1(Func_02005f6e_head, a0)
 #define ObjectMotion_SetPositionAndReset_1(args...) Func_02006056_a_head(args)
-#define BattleRuntime_WaitIfModeZero_1(a0, a1) Call2(Func_020060be_head, a0, a1)
-#define BattleRuntime_WaitIfModeZero_2(args...) Func_020060d2_head(args)
-#define ObjectMotion_SetSpeedParameters_4(args...) Func_020060e6_head(args)
-#define SceneWork_SetStepValue_1(a0) Call1(Func_0200603c_head, a0)
-#define BattleRuntime_WaitIfModeZero_3(args...) Func_02005f8a_head(args)
-#define ObjectMotion_EnableActionAndSetCallback_3(args...) Func_02005fcc_head(args)
 #define Scene_GetRecord_5(args...) Func_02005fba_head(args)
 #define Scene_GetRecord_6(args...) Func_02005fc8_head(args)
 #define ObjectMotion_CallThenWaitForAnimationChange_1(args...) Func_02006034_b_head(args)
 #define Scene_GetRecord_7(args...) Func_02005fda_head(args)
-#define BattleRuntime_WaitIfModeZero_4(args...) Func_02005fca_head(args)
 #define Scene_GetRecord_8(args...) Func_02005ff0_head(args)
-#define BattleRuntime_WaitIfModeZero_5(args...) Func_02005fdc_head(args)
-#define ObjectMotion_EnableActionAndSetCallback_4(a0, a1) Value2(Func_0200601c_head, a0, a1)
-#define BattleEvent_RunActionAndWait_1(args...) Func_020060b4_head(args)
-#define BattleRuntime_WaitIfModeZero_6(args...) Func_02005ff2_head(args)
+#define ObjectMotion_EnableActionAndSetCallback_4(a0, a1) Value2(Engine_ActorEnableActionCallback, a0, a1)
 #define ObjectMotion_SetPositionAndReset_2(a0, a1, a2) Call3(Func_02006056_b_head, a0, a1, a2)
-#define ObjectMotion_ArmCallback_1(a0, a1, a2) Call3(Func_020060e2_head, a0, a1, a2)
 #define BattleEffect_SpawnLinkedResourceObject_1(a0, a1, a2) Value3(Func_020060fc_a_head, a0, a1, a2)
-#define BattleEvent_RunActionAndWait_2(args...) Func_020060e4_head(args)
 #define Object_LinkObjectAndSetCallback_1(args...) Func_020061b4_head(args)
-#define BattleRuntime_WaitIfModeZero_7(args...) Func_0200602a_head(args)
-#define ObjectMotion_SetPositionAndReset_3(a0, a1, a2) Call3(Func_0200608e_head, a0, a1, a2)
-#define ObjectMotion_ResetAndSetPositionInMode2_1(a0, a1, a2) Call3(Func_02006092_head, a0, a1, a2)
-#define ObjectMotion_SetPositionAndReset_4(a0, a1, a2) Call3(Func_020060a6_head, a0, a1, a2)
-#define Object_SetModeById_4(args...) Func_020060ce_head(args)
-#define ObjectMotion_ArmCallback_2(a0, a1, a2) Call3(Func_0200613a_head, a0, a1, a2)
-#define ObjectMotion_ArmCallback_3(a0, a1, a2) Call3(Func_02006146_head, a0, a1, a2)
-#define ObjectMotion_SetVariantCallbackAndInvokeObject_1(args...) Func_02006106_head(args)
-#define BattleRuntime_WaitIfModeZero_8(args...) Func_0200607c_head(args)
 #define Object_LinkObjectAndSetCallback_2(args...) Func_02006214_head(args)
-#define BattleRuntime_WaitIfModeZero_9(args...) Func_0200608a_head(args)
 #define ObjectMotion_CallThenWaitForAnimationChange_2(args...) Func_02006112_a_head(args)
-#define BattleRuntime_WaitIfModeZero_10(args...) Func_02006098_head(args)
-#define BattleEvent_RunActionAndWait_3(args...) Func_02006168_head(args)
 #define Object_LinkObjectAndSetCallback_3(args...) Func_02006238_head(args)
 #define Object_LinkObjectAndSetCallback_4(args...) Func_02006240_head(args)
-#define ObjectMotion_SetPositionAndReset_5(a0, a1, a2) Call3(Func_02006114_head, a0, a1, a2)
 #define Object_LinkObjectAndSetCallback_5(args...) Func_02006254_head(args)
 #define Object_LinkObjectAndSetCallback_6(args...) Func_0200625c_head(args)
-#define BattleEffect_SpawnLinkedResourceObject_2(a0, a1, a2) Call3(Func_020061c0_head, a0, a1, a2)
 #define Object_LinkObjectAndSetCallback_7(args...) Func_02006270_head(args)
 #define Object_LinkObjectAndSetCallback_8(args...) Func_02006278_head(args)
-#define BattleRuntime_WaitIfModeZero_11(args...) Func_020060ee_head(args)
-#define ObjectMotion_SetVariantCallbackAndInvokeObject_2(args...) Func_02006186_head(args)
 #define BattleRuntime_WaitIfModeZero_12(args...) ((void (*)())Func_020060fc_b_head)(args)
 #define Object_LinkObjectAndSetCallback_9(args...) Func_02006294_head(args)
 #define Object_LinkObjectAndSetCallback_10(args...) Func_0200629c_head(args)
 #define BattleRuntime_WaitIfModeZero_13(args...) Func_02006112_b_head(args)
-#define BattleEvent_RunActionAndWait_4(args...) Func_020061e2_head(args)
-#define ObjectMotion_EnableActionAndSetCallback_5(a0, a1) Value2(Func_0200615a_head, a0, a1)
-#define ObjectMotion_SetVariantCallbackAndInvokeObject_3(args...) Func_020061ba_head(args)
+#define ObjectMotion_EnableActionAndSetCallback_5(a0, a1) Value2(Engine_ActorEnableActionCallback, a0, a1)
 #define Object_LinkObjectAndSetCallback_11(args...) Func_020062c2_head(args)
-#define BattleRuntime_WaitIfModeZero_14(args...) Func_02006138_head(args)
-#define BattleEvent_RunActionAndWait_5(args...) Func_02006208_head(args)
-#define ObjectMotion_SetVariantCallbackAndInvokeObject_4(args...) Func_020061d8_head(args)
 #define Object_LinkObjectAndSetCallback_12(args...) Func_020062e0_head(args)
-#define BattleRuntime_WaitIfModeZero_15(args...) Func_02006156_head(args)
-#define BattleEvent_RunActionAndWait_6(args...) Func_02006226_head(args)
-#define ObjectMotion_SetVariantCallbackAndInvokeObject_5(args...) Func_020061f6_head(args)
 #define Object_LinkObjectAndSetCallback_13(args...) Func_020062fe_head(args)
-#define BattleRuntime_WaitIfModeZero_16(args...) Func_02006174_head(args)
-#define BattleEvent_RunActionAndWait_7(args...) Func_02006244_head(args)
-#define ObjectMotion_EnableActionAndSetCallback_6(args...) Func_020061bc_head(args)
-#define BattleRuntime_WaitIfModeZero_17(args...) Func_0200618a_head(args)
-#define BattleRuntime_WaitIfModeZero_18(args...) Func_020061a4_head(args)
-#define BattleRuntime_WaitIfModeZero_19(args...) Func_020061b0_head(args)
-#define BattleEffect_SpawnLinkedResourceObject_3(a0, a1, a2) Call3(Func_020062a2_head, a0, a1, a2)
-#define BattleRuntime_WaitIfModeZero_20(args...) Func_020061ca_head(args)
-#define BattleRuntime_WaitIfModeZero_21(args...) Func_020061d6_head(args)
-#define BattleEffect_SpawnLinkedResourceObject_4(a0, a1, a2) Call3(Func_020062c8_head, a0, a1, a2)
-#define BattleRuntime_WaitIfModeZero_22(args...) Func_020061f4_head(args)
-#define BattleRuntime_WaitIfModeZero_23(args...) Func_02006200_head(args)
-#define BattleEffect_SpawnLinkedResourceObject_5(a0, a1, a2) Call3(Func_020062f4_head, a0, a1, a2)
-#define BattleRuntime_WaitIfModeZero_24(args...) Func_02006220_head(args)
-#define BattleRuntime_WaitIfModeZero_25(args...) Func_0200622c_head(args)
 #define BattleEffect_SpawnLinkedResourceObject_6(a0, a1, a2) Call3(Func_02006320_a_head, a0, a1, a2)
 #define Object_LinkObjectAndSetCallback_14(args...) Func_020063d0_a_head(args)
 #define Object_LinkObjectAndSetCallback_15(args...) Func_020063d8_head(args)
-#define BattleRuntime_WaitIfModeZero_26(args...) Func_0200624e_head(args)
 #define Object_LinkObjectAndSetCallback_16(args...) Func_020063e6_head(args)
 #define Object_LinkObjectAndSetCallback_17(args...) Func_020063ee_head(args)
-#define BattleRuntime_WaitIfModeZero_27(args...) Func_02006272_head(args)
-#define BattleRuntime_WaitIfModeZero_28(args...) Func_0200627e_head(args)
-#define BattleEffect_SpawnLinkedResourceObject_7(a0, a1, a2) Call3(Func_02006372_head, a0, a1, a2)
-#define ObjectMotion_SetVariantCallback_1(args...) Func_0200631a_head(args)
 #define ObjectMotion_SetVariantCallback_2(args...) Func_02006322_a_head(args)
 #define ObjectMotion_SetVariantCallbackAndInvokeObject_6(args...) Func_02006332_a_head(args)
 #define Object_LinkObjectAndSetCallback_18(args...) Func_0200643a_head(args)
 #define Object_LinkObjectAndSetCallback_19(args...) Func_02006472_head(args)
-#define Object_SetModeById_5(args...) Func_02006370_head(args)
-#define Object_SetModeById_6(args...) Func_02006378_head(args)
-#define Object_SetModeById_7(args...) Func_02006380_head(args)
-#define BattleRuntime_WaitIfModeZero_29(args...) Func_0200630e_head(args)
-#define ObjectMotion_ResetAndSetPositionInMode2_2(a0, a1, a2) Call3(Func_0200636a_head, a0, a1, a2)
 #define BattleRuntime_WaitIfModeZero_30(args...) Func_02006320_b_head(args)
-#define ObjectMotion_ResetAndSetPositionInMode2_3(a0, a1, a2) Call3(Func_0200637c_head, a0, a1, a2)
 #define BattleRuntime_WaitIfModeZero_31(args...) Func_02006332_b_head(args)
-#define ObjectMotion_SetPositionAndReset_6(a0, a1, a2) Call3(Func_02006396_head, a0, a1, a2)
-#define ObjectMotion_ResetAndSetPositionInMode2_4(a0, a1, a2) Call3(Func_0200639a_head, a0, a1, a2)
-#define ObjectMotion_CommitCurrentPositionAndActivate_1(args...) Func_020063b8_head(args)
 #define Object_SetModeById_8(args...) Func_020063d0_b_head(args)
 #define Object_LinkObjectAndSetCallback_20(args...) Func_020064f0_head(args)
-#define BattleRuntime_WaitIfModeZero_32(args...) Func_02006366_head(args)
-#define ObjectMotion_SetPositionAndReset_7(a0, a1, a2) Call3(Func_020063ca_head, a0, a1, a2)
-#define ObjectMotion_ResetAndSetPositionInMode2_5(a0, a1, a2) Call3(Func_020063ce_head, a0, a1, a2)
-#define ObjectMotion_SetSpeedParameters_5(args...) Func_020064ee_head(args)
-#define BattleRuntime_WaitIfModeZero_33(args...) Func_0200638c_head(args)
-#define ObjectMotion_SetHorizontalPositionWithTerrain_6(a0, a1, a2) Call3(Func_0200640a_head, a0, a1, a2)
-#define ObjectMotion_SetHorizontalPositionWithTerrain_7(a0, a1, a2) Call3(Func_02006418_head, a0, a1, a2)
-#define ObjectMotion_SetHorizontalPositionWithTerrain_8(a0, a1, a2) Call3(Func_02006426_head, a0, a1, a2)
-#define BattleRuntime_WaitIfModeZero_34(args...) Func_0200650a_head(args)
-#define BattleRuntime_WaitIfModeZero_35(args...) Func_02006518_head(args)
-#define SceneWork_SetStepValue_2(a0) Call1(Func_02006486_head, a0)
-#define BattleEvent_RunActionAndWait_8(args...) Func_0200649e_head(args)
-#define BattleEvent_RunActionAndWait_9(args...) Func_020064a6_head(args)
-#define BattleEvent_RunActionAndWait_10(args...) Func_020064ae_head(args)
-#define BattleRuntime_WaitIfModeZero_36(args...) Func_020063ec_head(args)
-#define BattleRuntime_ScheduleShoulderButtonModeUpdate_1(args...) Func_02006400_head(args)
 #define SCENE_PHASE (*(s32 *)(*(u8 **)0x03001ebc + 0x1c0))
 #define PENDING_CALLBACK_FLAG (*(s32 *)0x0200db80)
-#define FieldScene_RunClosingAuxiliarySequence Func_020002f8
-#define FieldScene_RunFinalAuxiliarySequence Func_020004a4
-#define FieldScene_RunEarlySequence Func_0200076c
-#define FieldScene_RunSupplementalSequenceOne Func_02000ba4
-#define FieldScene_RunMultiPhaseActorSequence Func_02001474
 
 extern u8 StageSceneWork[];
-extern u8 Data_00000091[];
 extern u8 Data_00002073[];
-extern u8 Data_02000434[];
 extern u8 Data_0200d950[];
 
-void Func_02004c06_head();
 void Func_02004c6a_head();
 void Func_02004c8a_head();
 void Func_02004cae_head();
-s32 Func_02004cc2_head();
-void Func_02004cfe_head();
-void Func_02004d00_head();
-void Func_02004d26_head();
 s32 Func_02004d36_head();
 s32 Func_02004d54_head();
-void Func_02004d70_head();
 s32 Func_02004d78_head();
 void Func_02004d96_a_head();
 void Func_02004d96_b_head();
 s32 Func_02004d98_head();
-void Func_02004e0c_head();
 void Func_02004e0e_head();
-void Func_02004e2c_head();
 void Func_02004e2e_head();
 void Func_02004e46_head();
-void Func_02004e90_head();
-void Func_02004ea2_head();
 s32 Func_02004ecc_head();
 u8 *Func_02004ee4_head();
-void Func_02004ef6_head();
 s32 Func_02004f1c_head();
 u8 *Func_02004f3c_head();
 s32 Func_02000f3a_head();
@@ -746,238 +463,72 @@ void Func_02000fd0_head();
 void Func_02005014_head();
 void Func_02005036_head();
 s32 Func_02005154_head();
-s32 Func_0200519a_head();
 s32 Func_020051a0_head();
 s32 Func_020051a8_head();
-void Func_020051c0_head();
-void Func_020051d4_head();
 void Func_020051d6_head();
 void Func_020051e2_head();
-void Func_020051e4_head();
-s32 Func_02005208_head();
 void Func_0200522a_head();
 void Func_02005238_head();
-void Func_0200523c_head();
 void Func_02005246_head();
 void Func_0200527a_head();
-void Func_02005288_head();
-void Func_02005298_head();
-void Func_0200529e_head();
-void Func_020052be_head();
-void Func_020052c4_head();
-void Func_020052d0_head();
-void Func_020052f4_head();
-void Func_0200530a_head();
-void Func_02005310_head();
-void Func_0200531c_head();
-void Func_0200531e_head();
-void Func_02005344_head();
-void Func_0200534c_head();
-void Func_020053a6_head();
-void Func_020053b4_head();
-void Func_020053da_head();
-void Func_020053ee_head();
-void Func_0200549c_head();
-void Func_02005538_head();
-void Func_0200553e_head();
-void Func_02005550_head();
-void Func_02005556_head();
 void Func_02003262_head();
-void Func_02004920();
-void Func_02004942();
-s32 Func_02004a48();
-void Func_020055ce_head();
-s32 Func_020055fa_head();
-void Func_02005648_head();
-void Func_02005664();
-void Func_0200568a_head();
-s32 Func_0200569a_head();
-void Func_020056a6_head();
-void Func_020056b4();
-void Func_020056b6();
-void Func_020056be_head();
-void Func_020056c4();
-void Func_020056d0();
-void Func_020056da();
-void Func_020056e2();
-void Func_020056e4_head();
-void Func_020056fc_head();
-void Func_02005704();
-void Func_02005714();
-void Func_02005718();
-void Func_02005724();
-void Func_02005726();
-void Func_0200572c();
-void Func_02005744();
-void Func_02005752();
-void Func_02005754();
-void Func_02005766();
-void Func_02005770_head();
-void Func_02005776_head();
-void Func_0200577c_head();
-void Func_0200578a_head();
-void Func_0200578e();
-void Func_02005796();
-s32 Func_02005850();
-s32 Func_0200586c();
-void Func_0200587c();
-void Func_02005d9e_head();
 void Func_02005e7e_head();
-void Func_02005e98_head();
-void Func_02005ea2_head();
-void Func_02005ea8_head();
 s32 Func_02005ef0_head();
-s32 Func_02005ef4_head();
-void Func_02005f0e_head();
-s32 Func_02005f14_head();
 void Func_02005f22_a_head();
 void Func_02005f22_b_head();
-void Func_02005f2c_head();
-void Func_02005f30_head();
-void Func_02005f36_head();
-void Func_02005f3a_head();
-void Func_02005f3e_head();
-void Func_02005f5c_head();
 s32 Func_02005f5e_head();
 s32 Func_02005f66_head();
 s32 Func_02005f6e_head();
-void Func_02005f8a_head();
-void Func_02005f8c_head();
-void Func_02005f9a_head();
-void Func_02005fa8_head();
 s32 Func_02005fba_head();
 s32 Func_02005fc8_head();
-void Func_02005fca_head();
-void Func_02005fcc_head();
 s32 Func_02005fda_head();
-void Func_02005fdc_head();
 void Func_02005fee_head();
 s32 Func_02005ff0_head();
-void Func_02005ff2_head();
 void Func_02006002_head();
 void Func_02006014_head();
-s32 Func_0200601c_head();
 void Func_02006028_head();
-void Func_0200602a_head();
 void Func_02006034_a_head();
 void Func_02006034_b_head();
-void Func_0200603c_head();
 void Func_0200603e_head();
 void Func_02006052_head();
 void Func_02006056_a_head();
 void Func_02006056_b_head();
 void Func_0200606a_head();
-void Func_0200607c_head();
 void Func_0200607e_head();
-void Func_0200608a_head();
-void Func_0200608e_head();
-void Func_02006092_head();
-void Func_02006098_head();
-void Func_020060a6_head();
-void Func_020060b4_head();
 void Func_020060bc_head();
-void Func_020060be_head();
-void Func_020060ce_head();
 void Func_020060d0_head();
-void Func_020060d2_head();
-void Func_020060e2_head();
-void Func_020060e4_head();
-void Func_020060e6_head();
-void Func_020060ee_head();
 s32 Func_020060fc_a_head();
 s32 Func_020060fc_b_head();
-void Func_02006106_head();
 void Func_02006112_a_head();
 void Func_02006112_b_head();
-void Func_02006114_head();
-void Func_02006138_head();
-void Func_0200613a_head();
 void Func_02006140_head();
-void Func_02006146_head();
-void Func_02006156_head();
-s32 Func_0200615a_head();
-void Func_02006168_head();
-void Func_02006174_head();
-void Func_02006186_head();
-void Func_0200618a_head();
-void Func_020061a4_head();
-void Func_020061b0_head();
 void Func_020061b4_head();
-void Func_020061ba_head();
-void Func_020061bc_head();
-void Func_020061c0_head();
-void Func_020061ca_head();
-void Func_020061d6_head();
-void Func_020061d8_head();
-void Func_020061e2_head();
-void Func_020061f4_head();
-void Func_020061f6_head();
-void Func_02006200_head();
-void Func_02006208_head();
 void Func_02006214_head();
-void Func_02006220_head();
-void Func_02006226_head();
-void Func_0200622c_head();
 void Func_02006238_head();
 void Func_02006240_head();
-void Func_02006244_head();
-void Func_0200624e_head();
 void Func_02006254_head();
 void Func_0200625c_head();
 void Func_02006270_head();
-void Func_02006272_head();
 void Func_02006278_head();
-void Func_0200627e_head();
 void Func_02006294_head();
 void Func_0200629c_head();
-void Func_020062a2_head();
 void Func_020062c2_head();
-void Func_020062c8_head();
 void Func_020062e0_head();
-void Func_020062f4_head();
 void Func_020062fe_head();
-void Func_0200630e_head();
-void Func_0200631a_head();
 void Func_02006320_a_head();
 void Func_02006320_b_head();
 void Func_02006322_a_head();
 void Func_02006322_b_head();
 void Func_02006332_a_head();
 void Func_02006332_b_head();
-void Func_02006366_head();
-void Func_0200636a_head();
-void Func_02006370_head();
-void Func_02006372_head();
-void Func_02006378_head();
-void Func_0200637c_head();
-void Func_02006380_head();
-void Func_0200638c_head();
-void Func_02006396_head();
-void Func_0200639a_head();
-void Func_020063b8_head();
-void Func_020063ca_head();
-void Func_020063ce_head();
 void Func_020063d0_a_head();
 void Func_020063d0_b_head();
 void Func_020063d8_head();
 void Func_020063e6_head();
-void Func_020063ec_head();
 void Func_020063ee_head();
-void Func_02006400_head();
-void Func_0200640a_head();
-void Func_02006418_head();
-void Func_02006426_head();
 void Func_0200643a_head();
 void Func_02006472_head();
-void Func_02006486_head();
-void Func_0200649e_head();
-void Func_020064a6_head();
-void Func_020064ae_head();
-void Func_020064e2_head();
-void Func_020064ee_head();
 void Func_020064f0_head();
-void Func_0200650a_head();
-void Func_02006518_head();
 void Func_020093c1();
 
 /* Loader-relocated overlay calls: each symbol names the pre-relocation call
@@ -999,26 +550,12 @@ void Func_020093c1();
  * into a pseudo that the compiler then shares with later uses in the block.
  * A value-returning call also sets r0 last of its arguments. */
 
-
-
-
-
-
 static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
 {
     f(a0, a1, a2, a3, a4, a5);
 }
 
 /* The scene step counter at 0x1d8 of the shared scene work record. */
-
-
-
-
-
-
-
-
-
 
 typedef struct StageObstacleActor {
     u8 unk_00[6];
@@ -1034,7 +571,6 @@ typedef struct StageObstacleActor {
     u8 unk_38[29];
     u8 state;
 } StageObstacleActor;
-
 
 typedef struct SceneParticle {
     u8 filler00[8];
@@ -1101,7 +637,6 @@ void ColossoLogRollingStage_StartSceneTask(void)
 extern s32 Data_0200d480;
 extern s32 Data_0200d484;
 
-extern u8 Value_0000000a;
 void Func_02004a0e_wait_for_scene_task();
 void Func_02004a1e_wait_for_scene_task();
 
@@ -1219,11 +754,11 @@ void FieldScene_RunClosingAuxiliarySequence(void)
     u8 *base = Data_02000240;
 
     p6 = *(u8 **)(base + 500);
-    rec = Value1(Func_02004cc2_head, 0x362);
+    rec = GameFlag_IsSet(0x362);
     if (rec == 0) {
         record = Value1(Func_02004d36_head, 10);
         if ((s32)record != 0) {
-            Func_02004d70_head((s32)p6, *(s16 *)((s32)record + 10), *(s16 *)((s32)record + 18));
+            Actor_SetDestination((s32)p6, *(s16 *)((s32)record + 10), *(s16 *)((s32)record + 18));
         }
         Func_02004d96_a_head((s32)p6);
         record = Value1(Func_02004d54_head, 11);
@@ -1242,11 +777,11 @@ void FieldScene_RunClosingAuxiliarySequence(void)
         *(s32 *)(rec7 + 52) = 0x6666;
         *(s32 *)(rec7 + 48) = 0xcccc;
         Call4(Func_02004cae_head, rec7, *(s32 *)(rec7 + 8), 0x40000, *(s32 *)(rec7 + 16));
-        Func_02004cfe_head(rec7, 1);
-        Func_02004e0c_head((s32)p6);
-        Call6(Func_02004d00_head, 0, 24, 1, 1, 9, 12);
-        Func_02004c06_head(2);
-        Func_02004d26_head(rec7, 1);
+        Actor_SetSpriteFlags(rec7, 1);
+        Actor_WaitForMove((s32)p6);
+        Map_CopyCellAttributes(0, 24, 1, 1, 9, 12);
+        Task_Wait(2);
+        Actor_SetSpriteFlags(rec7, 1);
         *p9 = 3;
         *(s32 *)(rec7 + 20) = *(s32 *)(rec7 + 12);
         Call1(Func_02004d96_b_head, 0x367);
@@ -1264,8 +799,6 @@ typedef struct SecondaryStageObject {
     u8 filler38[0x1d];
     u8 state;
 } SecondaryStageObject;
-
-
 
 void Func_02004e8a_configure_secondary_object_set();
 SecondaryStageObject *Func_02004e38_configure_secondary_object_set();
@@ -1327,7 +860,7 @@ void FieldScene_RunFinalAuxiliarySequence(void)
         b = (*(s32 *)((s32)rec + 16) >> 20);
         if (b == 12) {
             b1 = Func_02004ee4_head(12);
-            Func_02004e2c_head((s32)b1, 0);
+            Actor_SetSpriteFlags((s32)b1, 0);
             t = b1 + 35;
             zero = 0;
             two = 2;
@@ -1346,9 +879,9 @@ void FieldScene_RunFinalAuxiliarySequence(void)
             *(s32 *)((s32)b3 + 52) = 0x6666;
             *(s32 *)((s32)b3 + 48) = 0xcccc;
             Call4(Func_02004e46_head, (s32)b3, *(s32 *)((s32)b3 + 8), 0x40000, *(s32 *)((s32)b3 + 16));
-            Call1(Func_02004ef6_head, 0x368);
-            Call6(Func_02004e90_head, 15, 12, 1, 1, 13, b);
-            Call6(Func_02004ea2_head, 1, 25, 1, 1, a, b);
+            GameFlag_Set(0x368);
+            Map_CopyCellAttributes(15, 12, 1, 1, 13, b);
+            Map_CopyCellAttributes(1, 25, 1, 1, a, b);
         }
     }
 }
@@ -1558,51 +1091,51 @@ moved:
     if (steps == 0) {
         return;
     }
-    Call6(Func_020051c0_head, 74, 8, 1, 4, *(s32 *)(log_actor + 8) >> 20, 9);
-    Call6(Func_020051d4_head, 120, 60, 8, 5, 74, 60);
-    Func_02005298_head();
-    Func_02005310_head(selected_actor, 8);
-    Func_0200529e_head(6);
+    Map_CopyCellAttributes(74, 8, 1, 4, *(s32 *)(log_actor + 8) >> 20, 9);
+    Map_CopyCellAttributes(120, 60, 8, 5, 74, 60);
+    Event_Begin();
+    Actor_SetAnimation(selected_actor, 8);
+    Event_Wait(6);
     *(s32 *)(log_actor + 48) = 0x8000;
     acceleration = 0x3333;
     *(s32 *)(log_actor + 52) = acceleration;
-    Value2(Func_0200519a_head, log_actor, direction);
+    Value2(Engine_ObjectSetAnimation, log_actor, direction);
     Func_020051d6_head(log_actor, x, 0, z);
-    Func_020052c4_head(6);
-    Func_02005344_head(selected_actor, 2);
+    Event_Wait(6);
+    Actor_SetAnimation(selected_actor, 2);
     record = Value2(Func_02005154_head, 27, 0xccc);
     Func_020051e2_head(*(s32 *)(record + 0x1e0), log_actor);
-    Call3(Func_0200531e_head, selected_actor, 0x8000, acceleration);
-    Func_0200549c_head(239);
-    Func_020051e4_head(leader, 2);
+    Actor_SetSpeed(selected_actor, 0x8000, acceleration);
+    Audio_PlayCue(239);
+    Object_SetAnimation(leader, 2);
     Func_0200522a_head(leader, ((steps * cell_step) << 16) + *(s32 *)(leader + 8), 0,
                        *(s32 *)(leader + 16));
     Func_02005238_head(leader);
-    Value2(Func_02005208_head, leader, 1);
+    Value2(Engine_ObjectSetAnimation, leader, 1);
     Func_02005246_head(log_actor);
     if (x >= 0x5300000) {
-        Call1(Func_020052f4_head, 0x369);
-        Func_020053b4_head(31, 3);
-        Func_020053a6_head(31, 18, 6);
-        Func_0200534c_head(30);
-        Func_0200523c_head(log_actor, 8);
+        GameFlag_Set(0x369);
+        Actor_SetAnimation(31, 3);
+        Actor_SetDestinationOffset(31, 18, 6);
+        Event_Wait(30);
+        Object_SetAnimation(log_actor, 8);
         Func_0200527a_head(log_actor);
         *(u8 *)(log_actor + 35) = 2;
         column = 84;
-        Call6(Func_020052be_head, 86, 10, 1, 2, column, 10);
-        Call6(Func_020052d0_head, 86, 9, 1, 1, column, 12);
-        Call1(Func_02005538_head, 0x120);
-        Func_0200553e_head(240);
+        Map_CopyCellAttributes(86, 10, 1, 2, column, 10);
+        Map_CopyCellAttributes(86, 9, 1, 1, column, 12);
+        Audio_PlayCue(0x120);
+        Audio_PlayCue(240);
     } else {
-        Func_02005288_head(log_actor, 1);
-        Call1(Func_02005550_head, 0x120);
-        Func_02005556_head(213);
+        Object_SetAnimation(log_actor, 1);
+        Audio_PlayCue(0x120);
+        Audio_PlayCue(213);
         column = x >> 20;
-        Call6(Func_0200530a_head, 85, 9, 1, 4, column, 9);
-        Call6(Func_0200531c_head, 85, 9, 1, 4, column, 61);
+        Map_CopyCellAttributes(85, 9, 1, 4, column, 9);
+        Map_CopyCellAttributes(85, 9, 1, 4, column, 61);
     }
-    Func_020053da_head(15);
-    Func_020053ee_head();
+    Event_Wait(15);
+    Event_End();
     return;
 far:
     Func_02005014_head();
@@ -1754,28 +1287,28 @@ void FieldScene_RunSupplementalSequenceOne(s32 a0)
     p8 = *(s32 *)(base + 500);
     mode = *(s16 *)(base + 450);
     if (mode == 2) {
-        Func_020055ce_head();
+        Event_Begin();
         base7_2073 = (s32)Data_00002073;
         threea0 = (a0 << 1) + a0;
-        Func_0200568a_head(threea0 + base7_2073);
-        Value2(Func_0200569a_head, a0, 0);
-        if (Value2(Func_020055fa_head, p8, 0) == 0) {
+        Event_SetMessage(threea0 + base7_2073);
+        Event_OpenMessage(a0, 0);
+        if (Event_ChooseYesNo(p8, 0) == 0) {
             s32 t1 = base7_2073 + 1;
-            Func_020056a6_head(threea0 + t1);
-            Func_020056be_head(a0, 0);
+            Event_SetMessage(threea0 + t1);
+            Event_ShowMessage(a0, 0);
             *(s32 *)((0x1c0 + p10)) = 0x200;
             *(s32 *)((0x1c8 + p10)) = 15;
-            Func_02005770_head();
-            Func_0200577c_head();
+            Event_CloseScreen();
+            Event_WaitForScreen();
             Func_02003262_head(a0);
-            Func_02005776_head();
-            Func_0200578a_head();
+            Event_OpenScreen();
+            Event_WaitForScreen();
         } else {
             s32 t2 = base7_2073 + 2;
-            Func_020056e4_head(threea0 + t2);
-            Func_020056fc_head(a0, 0);
+            Event_SetMessage(threea0 + t2);
+            Event_ShowMessage(a0, 0);
         }
-        Func_02005648_head();
+        Event_End();
     }
 }
 
@@ -1887,19 +1420,19 @@ void FieldScene_RunMultiPhaseActorSequence(s32 a0)
     s32 data_table_addr;
     s32 callback_target;
 
-    ObjectTable_DestroyById_1(39);
-    ObjectTable_DestroyById_2(40);
+    Actor_Destroy(39);
+    Actor_Destroy(40);
     Func_02005e7e_head(1);
     Audio_PlayCue_1(17);
-    BattleRuntime_Reset_1();
-    ObjectMotion_SetHorizontalPositionWithTerrain_1(8, 0x6080000, 0xc00000);
+    Event_Begin();
+    Actor_SetPosition(8, 0x6080000, 0xc00000);
     if (a0 < 0) {
         Object_SetModeById_1(8, 10);
     } else {
-        Object_SetModeById_2(8, 8);
+        Actor_SetAnimation(8, 8);
     }
     ObjectMotion_EnableActionAndSetCallback_1(8, 0x200d668);
-    ObjectMotion_SetHorizontalPositionWithTerrain_2(0, 0x5e00000, 0xc00000);
+    Actor_SetPosition(0, 0x5e00000, 0xc00000);
     record = Scene_GetRecord_1(0);
     {
         /* Clear the visibility/active flag at +6. */
@@ -1908,13 +1441,13 @@ void FieldScene_RunMultiPhaseActorSequence(s32 a0)
         *(u16 *)(record + 6) = shown;
     }
     ObjectMotion_EnableActionAndSetCallback_2(0, 0x200d738);
-    Object_SetModeById_3(0, 35);
+    Actor_SetAnimation(0, 35);
     ObjectMotion_SetSpeedParameters_1(1, 0x10000, 0x8000);
-    ObjectMotion_SetSpeedParameters_2(2, 0x10000, 0x8000);
-    ObjectMotion_SetSpeedParameters_3(3, 0x10000, 0x8000);
-    ObjectMotion_SetHorizontalPositionWithTerrain_3(1, 0x5b80000, 0xb80000);
-    ObjectMotion_SetHorizontalPositionWithTerrain_4(2, 0x5b80000, 0xc80000);
-    ObjectMotion_SetHorizontalPositionWithTerrain_5(3, 0x5a80000, 0xc00000);
+    Actor_SetSpeed(2, 0x10000, 0x8000);
+    Actor_SetSpeed(3, 0x10000, 0x8000);
+    Actor_SetPosition(1, 0x5b80000, 0xb80000);
+    Actor_SetPosition(2, 0x5b80000, 0xc80000);
+    Actor_SetPosition(3, 0x5a80000, 0xc00000);
     record = Scene_GetRecord_2(1);
     {
         /* Clear the visibility/active flag at +6. */
@@ -1936,16 +1469,16 @@ void FieldScene_RunMultiPhaseActorSequence(s32 a0)
 
         *(u16 *)(record + 6) = shown;
     }
-    Func_02005d9e_head(1);
+    Task_Wait(1);
     ObjectMotion_SetPositionAndReset_1(0, 0);
     SCENE_PHASE = 0x100;
-    BattleRuntime_WaitIfModeZero_1(0x10001, 1);
-    BattleRuntime_WaitIfModeZero_2();
-    ObjectMotion_SetSpeedParameters_4();
-    SceneWork_SetStepValue_1(0x20f1);
-    BattleRuntime_WaitIfModeZero_3(60);
+    ColorBuffer_ApplyTarget(0x10001, 1);
+    Event_OpenScreen();
+    Event_WaitForScreen();
+    Event_SetMessage(0x20f1);
+    Event_Wait(60);
     data_table_addr = (s32)Data_0200d950;
-    ObjectMotion_EnableActionAndSetCallback_3(0, data_table_addr);
+    Actor_EnableActionCallback(0, data_table_addr);
     record = Scene_GetRecord_5(0);
     *(s32 *)(record + 24) = 0x10000;
     record = Scene_GetRecord_6(0);
@@ -1953,135 +1486,135 @@ void FieldScene_RunMultiPhaseActorSequence(s32 a0)
     ObjectMotion_CallThenWaitForAnimationChange_1(0, 36);
     record = Scene_GetRecord_7(0);
     *(s32 *)(record + 8) += 0x30000;
-    BattleRuntime_WaitIfModeZero_4(10);
+    Event_Wait(10);
     record = Scene_GetRecord_8(0);
-    Func_02005f36_head(record, 0);
-    BattleRuntime_WaitIfModeZero_5(20);
+    Actor_SetSpriteFlags(record, 0);
+    Event_Wait(20);
     ObjectMotion_EnableActionAndSetCallback_4(0, 0x200d808);
-    BattleEvent_RunActionAndWait_1(1, 0);
-    BattleRuntime_WaitIfModeZero_6(20);
+    Event_ShowMessage(1, 0);
+    Event_Wait(20);
     ObjectMotion_SetPositionAndReset_2(1, 0x5e0, 176);
-    ObjectMotion_ArmCallback_1(1, 0x4000, 10);
+    Actor_FaceDirection(1, 0x4000, 10);
     BattleEffect_SpawnLinkedResourceObject_1(1, 0x100, 20);
-    BattleEvent_RunActionAndWait_2(2, 0);
+    Event_ShowMessage(2, 0);
     Object_LinkObjectAndSetCallback_1(1, 2);
-    BattleRuntime_WaitIfModeZero_7(30);
-    ObjectMotion_SetPositionAndReset_3(2, 0x5d0, 176);
-    ObjectMotion_ResetAndSetPositionInMode2_1(1, 0x5f0, 184);
-    ObjectMotion_SetPositionAndReset_4(2, 0x5e0, 176);
-    Object_SetModeById_4(1, 1);
-    ObjectMotion_ArmCallback_2(1, 0x6000, 0);
-    ObjectMotion_ArmCallback_3(2, 0x4000, 10);
-    ObjectMotion_SetVariantCallbackAndInvokeObject_1(2, 2);
-    BattleRuntime_WaitIfModeZero_8(10);
+    Event_Wait(30);
+    Actor_WalkToAndWait(2, 0x5d0, 176);
+    Actor_WalkTo(1, 0x5f0, 184);
+    Actor_WalkToAndWait(2, 0x5e0, 176);
+    Actor_SetAnimation(1, 1);
+    Actor_FaceDirection(1, 0x6000, 0);
+    Actor_FaceDirection(2, 0x4000, 10);
+    Actor_RunRepeatedMotion(2, 2);
+    Event_Wait(10);
     Object_LinkObjectAndSetCallback_2(2, 1);
-    BattleRuntime_WaitIfModeZero_9(30);
+    Event_Wait(30);
     ObjectMotion_CallThenWaitForAnimationChange_2(1, 4);
-    BattleRuntime_WaitIfModeZero_10(30);
-    BattleEvent_RunActionAndWait_3(3, 0);
+    Event_Wait(30);
+    Event_ShowMessage(3, 0);
     Object_LinkObjectAndSetCallback_3(1, 3);
     Object_LinkObjectAndSetCallback_4(2, 3);
-    ObjectMotion_SetPositionAndReset_5(3, 0x5d0, 184);
+    Actor_WalkToAndWait(3, 0x5d0, 184);
     Object_LinkObjectAndSetCallback_5(2, 0);
     Object_LinkObjectAndSetCallback_6(1, 0);
-    BattleEffect_SpawnLinkedResourceObject_2(1, 0x102, 60);
+    Actor_ShowEmote(1, 0x102, 60);
     Object_LinkObjectAndSetCallback_7(2, 1);
     Object_LinkObjectAndSetCallback_8(1, 2);
-    BattleRuntime_WaitIfModeZero_11(40);
-    ObjectMotion_SetVariantCallbackAndInvokeObject_2(3, 2);
+    Event_Wait(40);
+    Actor_RunRepeatedMotion(3, 2);
     BattleRuntime_WaitIfModeZero_12(10);
     Object_LinkObjectAndSetCallback_9(2, 3);
     Object_LinkObjectAndSetCallback_10(1, 3);
     BattleRuntime_WaitIfModeZero_13(20);
-    BattleEvent_RunActionAndWait_4(3, 0);
+    Event_ShowMessage(3, 0);
     ObjectMotion_EnableActionAndSetCallback_5(0, 0x200d8ac);
-    ObjectMotion_SetVariantCallbackAndInvokeObject_3(1, 2);
+    Actor_RunRepeatedMotion(1, 2);
     Object_LinkObjectAndSetCallback_11(1, 0);
-    BattleRuntime_WaitIfModeZero_14(20);
-    BattleEvent_RunActionAndWait_5(1, 0);
-    ObjectMotion_SetVariantCallbackAndInvokeObject_4(2, 2);
+    Event_Wait(20);
+    Event_ShowMessage(1, 0);
+    Actor_RunRepeatedMotion(2, 2);
     Object_LinkObjectAndSetCallback_12(2, 0);
-    BattleRuntime_WaitIfModeZero_15(20);
-    BattleEvent_RunActionAndWait_6(2, 0);
-    ObjectMotion_SetVariantCallbackAndInvokeObject_5(3, 2);
+    Event_Wait(20);
+    Event_ShowMessage(2, 0);
+    Actor_RunRepeatedMotion(3, 2);
     Object_LinkObjectAndSetCallback_13(3, 0);
-    BattleRuntime_WaitIfModeZero_16(20);
-    BattleEvent_RunActionAndWait_7(3, 0);
-    ObjectMotion_EnableActionAndSetCallback_6(0, data_table_addr);
-    BattleRuntime_WaitIfModeZero_17(60);
+    Event_Wait(20);
+    Event_ShowMessage(3, 0);
+    Actor_EnableActionCallback(0, data_table_addr);
+    Event_Wait(60);
     callback_target = (s32)Func_020093c1;
     PENDING_CALLBACK_FLAG = 9;
     Call2(Func_02005fee_head, callback_target, 0xc80);
-    BattleRuntime_WaitIfModeZero_18(5);
+    Event_Wait(5);
     Func_02006002_head(callback_target);
-    BattleRuntime_WaitIfModeZero_19(55);
-    BattleEffect_SpawnLinkedResourceObject_3(1, 0x101, 60);
+    Event_Wait(55);
+    Actor_ShowEmote(1, 0x101, 60);
     Call2(Func_02006014_head, callback_target, 0xc80);
-    BattleRuntime_WaitIfModeZero_20(20);
+    Event_Wait(20);
     Func_02006028_head(callback_target);
-    BattleRuntime_WaitIfModeZero_21(40);
-    BattleEffect_SpawnLinkedResourceObject_4(2, 0x101, 60);
+    Event_Wait(40);
+    Actor_ShowEmote(2, 0x101, 60);
     PENDING_CALLBACK_FLAG = 9;
     Call2(Func_0200603e_head, callback_target, 0xc80);
-    BattleRuntime_WaitIfModeZero_22(35);
+    Event_Wait(35);
     Func_02006052_head(callback_target);
-    BattleRuntime_WaitIfModeZero_23(25);
-    BattleEffect_SpawnLinkedResourceObject_5(3, 0x102, 60);
+    Event_Wait(25);
+    Actor_ShowEmote(3, 0x102, 60);
     PENDING_CALLBACK_FLAG = 9;
     Call2(Func_0200606a_head, callback_target, 0xc80);
-    BattleRuntime_WaitIfModeZero_24(35);
+    Event_Wait(35);
     Func_0200607e_head(callback_target);
-    BattleRuntime_WaitIfModeZero_25(25);
+    Event_Wait(25);
     BattleEffect_SpawnLinkedResourceObject_6(2, 0x102, 60);
     Object_LinkObjectAndSetCallback_14(3, 2);
     Object_LinkObjectAndSetCallback_15(2, 3);
-    BattleRuntime_WaitIfModeZero_26(60);
+    Event_Wait(60);
     Object_LinkObjectAndSetCallback_16(3, 0);
     Object_LinkObjectAndSetCallback_17(2, 0);
     PENDING_CALLBACK_FLAG = 9;
     Call2(Func_020060bc_head, callback_target, 0xc80);
-    BattleRuntime_WaitIfModeZero_27(35);
+    Event_Wait(35);
     Func_020060d0_head(callback_target);
-    BattleRuntime_WaitIfModeZero_28(25);
-    BattleEffect_SpawnLinkedResourceObject_7(3, 0x108, 60);
-    ObjectMotion_SetVariantCallback_1(1, 3);
+    Event_Wait(25);
+    Actor_ShowEmote(3, 0x108, 60);
+    Actor_StartRepeatedMotion(1, 3);
     ObjectMotion_SetVariantCallback_2(2, 3);
     ObjectMotion_SetVariantCallbackAndInvokeObject_6(3, 3);
     Object_LinkObjectAndSetCallback_18(3, 2);
     Object_LinkObjectAndSetCallback_19(1, 2);
     PENDING_CALLBACK_FLAG = 9;
     Call2(Func_02006140_head, callback_target, 0xc80);
-    Object_SetModeById_5(1, 3);
-    Object_SetModeById_6(2, 3);
-    Object_SetModeById_7(3, 3);
-    BattleRuntime_WaitIfModeZero_29(60);
-    ObjectMotion_ResetAndSetPositionInMode2_2(3, 0x5b8, 200);
+    Actor_SetAnimation(1, 3);
+    Actor_SetAnimation(2, 3);
+    Actor_SetAnimation(3, 3);
+    Event_Wait(60);
+    Actor_WalkTo(3, 0x5b8, 200);
     BattleRuntime_WaitIfModeZero_30(5);
-    ObjectMotion_ResetAndSetPositionInMode2_3(2, 0x558, 184);
+    Actor_WalkTo(2, 0x558, 184);
     BattleRuntime_WaitIfModeZero_31(3);
-    ObjectMotion_SetPositionAndReset_6(1, 0x5e8, 184);
-    ObjectMotion_ResetAndSetPositionInMode2_4(1, 0x558, 184);
-    ObjectMotion_CommitCurrentPositionAndActivate_1(3);
+    Actor_WalkToAndWait(1, 0x5e8, 184);
+    Actor_WalkTo(1, 0x558, 184);
+    Actor_WaitForMove(3);
     Object_SetModeById_8(3, 1);
     Object_LinkObjectAndSetCallback_20(3, 0);
-    BattleRuntime_WaitIfModeZero_32(60);
-    ObjectMotion_SetPositionAndReset_7(3, 0x598, 200);
-    ObjectMotion_ResetAndSetPositionInMode2_5(3, 0x558, 184);
-    Func_020064e2_head();
-    ObjectMotion_SetSpeedParameters_5();
-    BattleRuntime_WaitIfModeZero_33(30);
-    ObjectMotion_SetHorizontalPositionWithTerrain_6(1, 0x5e80000, 0xb00000);
-    ObjectMotion_SetHorizontalPositionWithTerrain_7(2, 0x5b80000, 0xc00000);
-    ObjectMotion_SetHorizontalPositionWithTerrain_8(3, 0x6180000, 0xc80000);
+    Event_Wait(60);
+    Actor_WalkToAndWait(3, 0x598, 200);
+    Actor_WalkTo(3, 0x558, 184);
+    Event_CloseScreen();
+    Event_WaitForScreen();
+    Event_Wait(30);
+    Actor_SetPosition(1, 0x5e80000, 0xb00000);
+    Actor_SetPosition(2, 0x5b80000, 0xc00000);
+    Actor_SetPosition(3, 0x6180000, 0xc80000);
     Func_02006322_b_head();
-    BattleRuntime_WaitIfModeZero_34(0x10000, 2);
-    BattleRuntime_WaitIfModeZero_35(1);
-    SceneWork_SetStepValue_2(0x214c);
-    BattleEvent_RunActionAndWait_8(1, 0);
-    BattleEvent_RunActionAndWait_9(2, 0);
-    BattleEvent_RunActionAndWait_10(3, 0);
-    BattleRuntime_WaitIfModeZero_36(60);
-    BattleRuntime_ScheduleShoulderButtonModeUpdate_1();
+    ColorBuffer_ApplyTarget(0x10000, 2);
+    ColorBuffer_Interpolate(1);
+    Event_SetMessage(0x214c);
+    Event_ShowMessage(1, 0);
+    Event_ShowMessage(2, 0);
+    Event_ShowMessage(3, 0);
+    Event_Wait(60);
+    Event_End();
 }
 
 void Func_02001df8(s32 scene)
@@ -2093,48 +1626,48 @@ void Func_02001df8(s32 scene)
         Func_0200469a_arrival();
         return;
     }
-    Func_02006814_arrival();
+    Event_Begin();
     state = Func_020048b0_arrival(scene, 2);
     if (state == 0) {
-    Call1(Func_020068da_arrival, 8375);
-    Call2(Func_0200692e_arrival, 196608, 24576);
-    Call4(Func_02006948_arrival, 24641536, -1, 9961472, 1);
-    Func_02006956_arrival();
-    Func_0200684c_arrival(30);
-    Func_0200691e_arrival(scene, 0);
+    Event_SetMessage(8375);
+    Camera_SetSpeed(196608, 24576);
+    Camera_MoveTo(24641536, -1, 9961472, 1);
+    Camera_WaitForMove();
+    Event_Wait(30);
+    Event_ShowMessage(scene, 0);
     Func_020054a8_arrival(0, 280, 200);
-    Call3(Func_0200689e_arrival, 0, 98304, 49152);
+    Actor_SetSpeed(0, 98304, 49152);
     Func_02005a00_arrival(0, 280, 152);
     Call3(Func_02005a0c_arrival, 0, 296, 152);
-    Func_0200688a_arrival(10);
-    Func_0200cb30_arrival();
-    Call4(Func_020069a8_arrival, -1, -1, -1, 0);
-    Value3(Func_0200cad0_arrival, 0, 49152, 15);
-    Func_020069e8_arrival();
-    Call4(Func_020069ca_arrival, -1, -1, -1, 0);
-    Value3(Func_020069a4_arrival, 0, 0, 15);
-    Func_02006a08_arrival();
-    Call4(Func_020069ea_arrival, -1, -1, -1, 0);
-    Call3(Func_0200cad0_arrival, 0, 16384, 15);
-    Func_020069be_arrival(scene, 0);
+    Event_Wait(10);
+    Leader_CheckAhead();
+    Camera_MoveTo(-1, -1, -1, 0);
+    Value3(Engine_ActorFaceDirection, 0, 49152, 15);
+    Leader_CheckAhead();
+    Camera_MoveTo(-1, -1, -1, 0);
+    Value3(Engine_ActorFaceDirection, 0, 0, 15);
+    Leader_CheckAhead();
+    Camera_MoveTo(-1, -1, -1, 0);
+    Actor_FaceDirection(0, 16384, 15);
+    Event_ShowMessage(scene, 0);
     Value3(Func_02005960_arrival, 96, 40, 0);
     Func_020059ce_arrival(128, 40, 10);
-    Func_02006910_arrival(30);
+    Event_Wait(30);
     Func_020059de_arrival(160, 40, 10);
-    Func_02006920_arrival(30);
+    Event_Wait(30);
     Func_020059ee_arrival(160, 72, 10);
-    Func_02006930_arrival(30);
-    Func_02006a00_arrival(scene, 0);
+    Event_Wait(30);
+    Event_ShowMessage(scene, 0);
     Func_02005a5c_arrival();
     Func_02005766_arrival(0);
-    Func_02006a42_arrival(0, 0);
+    Camera_FollowActor(0, 0);
     Func_02004aaa_arrival(scene, 2);
     } else if (state == 1) {
-        Call1(Func_02006a16_arrival, 0x20b6);
-        Func_02006a2e_arrival(scene, 0);
+        Event_SetMessage(0x20b6);
+        Event_ShowMessage(scene, 0);
     }
     Value3(Func_02004b24_arrival, state, scene, 2);
-    Func_0200ca08_arrival();
+    Event_End();
 }
 
 /* Loader-relocated overlay calls: each symbol names the pre-relocation call
@@ -2148,60 +1681,21 @@ s32 Func_020057b2_motion();
 void Func_02005a8c_motion();
 void Func_02006b02_motion();
 void Func_02006b10_motion();
-void Func_02006b18_motion();
 void Func_02006b24_motion();
 void Func_02006b32_motion();
 void Func_02006b44_motion();
-void Func_02006b4e_motion();
 void Func_02006b52_motion();
 void Func_02006b64_motion();
 void Func_02006b72_motion();
-void Func_02006ba8_motion();
 s32 Func_02006bda_motion();
-void Func_02006bdc_motion();
-void Func_02006bde_motion();
-void Func_02006be4_motion();
-void Func_02006c00_motion();
-void Func_02006c1e_motion();
-void Func_02006c26_motion();
-void Func_02006c32_motion();
-void Func_02006c4c_motion();
-void Func_02006c50_motion();
-void Func_02006c58_motion();
-s32 Func_02006c68_motion();
-void Func_02006c70_motion();
-void Func_02006c92_motion();
-void Func_02006cac_motion();
-void Func_02006cae_motion();
-void Func_02006cb2_motion();
-void Func_02006cd2_motion();
 void Func_02006cd4_motion();
-void Func_02006d2a_motion();
-void Func_02006d3e_motion();
-void Func_02006d56_motion();
-void Func_02006d68_motion();
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
  * into a pseudo that the compiler then shares with later uses in the block.
  * A value-returning call also sets r0 last of its arguments. */
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /* The scene step counter at 0x1d8 of the shared scene work record. */
-
 
 void FieldScene_RunFourStepActorMotion(s32 a0)
 {
@@ -2215,52 +1709,52 @@ void FieldScene_RunFourStepActorMotion(s32 a0)
     if (Data_02000240_t[225][0] == 2) {
         Func_0200499e_motion();
     } else {
-        Func_02006b18_motion();
+        Event_Begin();
         result = Value2(Func_02004bb4_motion, a0, 4);
         if (result == 0) {
-            Call1(Func_02006bde_motion, 0x20bf);
-            Call2(Func_02006c32_motion, 0x30000, 0x6000);
-            Call4(Func_02006c4c_motion, 0x3580000, -1, 0xa80000, 1);
-            Func_02006c58_motion();
-            Func_02006b4e_motion(30);
-            Func_02006c1e_motion(a0, 0);
-            Func_02006c26_motion(a0, 0);
+            Event_SetMessage(0x20bf);
+            Camera_SetSpeed(0x30000, 0x6000);
+            Camera_MoveTo(0x3580000, -1, 0xa80000, 1);
+            Camera_WaitForMove();
+            Event_Wait(30);
+            Event_ShowMessage(a0, 0);
+            Event_ShowMessage(a0, 0);
             Value3(Func_020057b2_motion, 0, 0x330, 200);
-            Call3(Func_02006ba8_motion, 0, 0x10000, 0x8000);
-            Call3(Func_02006bdc_motion, 0, 0x348, 200);
-            Value3(Func_02006c68_motion, 0, 0xc000, 20);
+            Actor_SetSpeed(0, 0x10000, 0x8000);
+            Actor_WalkToAndWait(0, 0x348, 200);
+            Value3(Engine_ActorFaceDirection, 0, 0xc000, 20);
             Func_02006cd4_motion();
-            Call4(Func_02006cae_motion, -1, -1, -1, 0);
-            Call3(Func_02006be4_motion, 0, 0x8000, 0x4000);
+            Camera_MoveTo(-1, -1, -1, 0);
+            Actor_SetSpeed(0, 0x8000, 0x4000);
             actor = Value1(Func_02006bda_motion, 0);
             y = *(s32 *)(actor + 12);
             x = *(s32 *)(actor + 8);
-            Call3(Func_02006c00_motion, 0, 0x8000, 0x4000);
-            Func_02006c50_motion(0, 10);
+            Actor_SetSpeed(0, 0x8000, 0x4000);
+            Actor_SetAnimation(0, 10);
             raised_y = 0x60000 + y;
             Func_02006b02_motion(actor, x, raised_y, *(s32 *)(actor + 16));
             Func_02006b10_motion(actor);
-            Func_02006c70_motion(0, 14);
+            Actor_SetAnimation(0, 14);
             shifted_x = 0x400000 + x;
             Func_02006b24_motion(actor, shifted_x, raised_y, *(s32 *)(actor + 16));
             Func_02006b32_motion(actor);
-            Func_02006c92_motion(0, 10);
+            Actor_SetAnimation(0, 10);
             Func_02006b44_motion(actor, shifted_x, y + 0x360000, *(s32 *)(actor + 16));
             Func_02006b52_motion(actor);
-            Func_02006cb2_motion(0, 15);
+            Actor_SetAnimation(0, 15);
             Func_02006b64_motion(actor, x + 0x300000, y + 0x360000, *(s32 *)(actor + 16));
             Func_02006b72_motion(actor);
-            Func_02006cd2_motion(0, 12);
-            Func_02006d2a_motion(a0, 0);
+            Actor_SetAnimation(0, 12);
+            Event_ShowMessage(a0, 0);
             Func_02005a8c_motion(0);
-            Func_02006d68_motion(0, 0);
+            Camera_FollowActor(0, 0);
             Func_02004dd0_motion(a0, 4);
         } else if (result == 1) {
-            Call1(Func_02006d3e_motion, 0x20be);
-            Func_02006d56_motion(a0, 0);
+            Event_SetMessage(0x20be);
+            Event_ShowMessage(a0, 0);
         }
         Value3(Func_02004e4c_motion, result, a0, 4);
-        Func_02006cac_motion();
+        Event_End();
     }
 }
 
@@ -2271,7 +1765,7 @@ void ColossoLogRollingStage_PositionActor(s32 selector, s32 x, s32 z)
     record = Func_02006e34_position(selector);
     if (record != 0) {
         Func_02006bd6_position();
-        Func_02006bbe_position(record, 5);
+        Object_SetAnimation(record, 5);
         Func_02006bfa_position(record, x << 16, record[3], z << 16);
     }
 }
@@ -2283,16 +1777,15 @@ void ColossoLogRollingStage_PositionAndActivateActor(s32 selector, s32 x, s32 z)
     record = Func_02006e64(selector);
     if (record != 0) {
         Func_02006c06();
-        Func_02006bee(record, 5);
+        Object_SetAnimation(record, 5);
         Func_02006c2a(record, x << 16, record[3], z << 16);
         Func_02006c38(record);
-        Func_02006c08(record, 1);
+        Object_SetAnimation(record, 1);
     }
 }
 
 /* Loader-relocated overlay calls: each symbol names the pre-relocation call
  * word the image holds. */
-extern u8 Data_02000432[];
 extern s16 Data_02000240_t[][1];
 void Func_0200469e_opening();
 void Func_020046b8_opening();
@@ -2305,50 +1798,14 @@ s32 Func_020059ea_opening();
 void Func_02005c88_opening();
 void Func_02005cd0_opening();
 void Func_02005d36_opening();
-void Func_02006c72_opening();
-void Func_02006d50_opening();
-void Func_02006d86_opening();
-void Func_02006dd8_opening();
-void Func_02006de0_opening();
-void Func_02006de6_opening();
-void Func_02006df6_opening();
-void Func_02006e16_opening();
 s32 Func_02006e2e_opening();
-void Func_02006e56_opening();
-void Func_02006e5e_opening();
-void Func_02006e6a_opening();
-void Func_02006e6c_opening();
-void Func_02006e84_opening();
-void Func_02006e90_opening();
-void Func_02006ea8_opening();
-void Func_02006ed0_opening();
-void Func_02006eee_opening();
-void Func_02006ef0_opening();
-void Func_02006f14_opening();
-void Func_02006f20_opening();
-void Func_02006f3a_opening();
-void Func_02006f52_opening();
-void Func_02006f64_opening();
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
  * into a pseudo that the compiler then shares with later uses in the block.
  * A value-returning call also sets r0 last of its arguments. */
 
-
-
-
-
-
-
-
-
-
-
-
-
 /* The scene step counter at 0x1d8 of the shared scene work record. */
-
 
 void FieldScene_RunOpeningAuxiliarySequence(s32 a0)
 {
@@ -2360,39 +1817,39 @@ void FieldScene_RunOpeningAuxiliarySequence(s32 a0)
     if (Data_02000240_t[225][0] == 2) {
         Func_02004bd6_opening();
     } else {
-        Func_02006d50_opening();
+        Event_Begin();
         rec2 = Value2(Func_02004dec_opening, a0, 5);
         if (rec2 != 0) {
         } else {
-            Call1(Func_02006e16_opening, 0x20c3);
-            Call2(Func_02006e6a_opening, 0x30000, 0x6000);
-            Call4(Func_02006e84_opening, 0x4380000, -1, 0xa80000, 1);
-            Func_02006e90_opening();
-            Func_02006d86_opening(30);
-            Func_02006e56_opening(a0, 0);
-            Func_02006e5e_opening(a0, 0);
+            Event_SetMessage(0x20c3);
+            Camera_SetSpeed(0x30000, 0x6000);
+            Camera_MoveTo(0x4380000, -1, 0xa80000, 1);
+            Camera_WaitForMove();
+            Event_Wait(30);
+            Event_ShowMessage(a0, 0);
+            Event_ShowMessage(a0, 0);
             Value3(Func_020059ea_opening, 0, 0x3d8, 184);
-            Call3(Func_02006de0_opening, 0, 0x18000, 0xc000);
+            Actor_SetSpeed(0, 0x18000, 0xc000);
             Func_020046b8_opening(0, 0x3e0, 184);
-            Call3(Func_02006df6_opening, 0, 0x4ccc, 0x2666);
+            Actor_SetSpeed(0, 0x4ccc, 0x2666);
             Call3(Func_0200469e_opening, 0, 0x460, 184);
-            Func_02006dd8_opening(120);
-            Call2(Func_02006ed0_opening, 0, 0x101);
-            Func_02006de6_opening(120);
+            Event_Wait(120);
+            Actor_SetAttachedEffect(0, 0x101);
+            Event_Wait(120);
             Func_02005cd0_opening(0);
-            Func_02006e6c_opening(0, 1);
-            Call2(Func_02006eee_opening, 0, 0x100);
-            Call3(Func_02006ef0_opening, 0, 0x105, 0);
+            Actor_SetAnimation(0, 1);
+            Actor_SetAttachedEffect(0, 0x100);
+            Actor_ShowEmote(0, 0x105, 0);
             rec7 = Func_02006e2e_opening(0);
             for (i = 119; i >= 0; i--) {
                 if (*(s32 *)(rec7 + 8) > 0x3e00000) {
                     *(s32 *)(rec7 + 8) += -0x13333;
                 }
-                Func_02006c72_opening(1);
+                Task_Wait(1);
             }
-            Call3(Func_02006f20_opening, 0, 0x103, 60);
+            Actor_ShowEmote(0, 0x103, 60);
             Value3(Func_02004710_opening, 0, 0x460, 184);
-            Func_02006f14_opening(a0, 0);
+            Event_ShowMessage(a0, 0);
             Func_02005d36_opening(0);
             {
                 u8 *flag = (u8 *)Data_02000240_t;
@@ -2400,17 +1857,17 @@ void FieldScene_RunOpeningAuxiliarySequence(s32 a0)
                 flag[498] = 1;
             }
             Func_02005c88_opening(0);
-            Func_02006f64_opening(0, 0);
+            Camera_FollowActor(0, 0);
             Func_02004fcc_opening(a0, 5);
             goto L_02002494;
         }
         if (rec2 == 1) {
-            Call1(Func_02006f3a_opening, 0x20c2);
-            Func_02006f52_opening(a0, 0);
+            Event_SetMessage(0x20c2);
+            Event_ShowMessage(a0, 0);
         }
         L_02002494:;
         Value3(Func_02005048_opening, rec2, a0, 5);
-        Func_02006ea8_opening();
+        Event_End();
     }
 }
 
@@ -2425,36 +1882,36 @@ void ColossoLogRollingStage_RunLogRollingInteraction(s32 actor)
         return;
     }
 
-    Func_02006eec();
+    Event_Begin();
     state = Func_02004f88(actor, 6);
 
     if (state == 0) {
-        Func_02006fb0(0x20c7);
-        Func_02007004(0x30000, 0x6000);
-        Func_0200701e(0x5080000, -1, 0x980000, 1);
-        Func_0200702a();
-        Func_02006f20(30);
-        Func_02006ff0(actor, 0);
+        Event_SetMessage(0x20c7);
+        Camera_SetSpeed(0x30000, 0x6000);
+        Camera_MoveTo(0x5080000, -1, 0x980000, 1);
+        Camera_WaitForMove();
+        Event_Wait(30);
+        Event_ShowMessage(actor, 0);
         Func_02005f92(0xb4, 0x58, 0);
-        Func_02006f38(60);
-        Func_02007008(actor, 0);
+        Event_Wait(60);
+        Event_ShowMessage(actor, 0);
         Func_0200600e(0x20, 0x54, 10);
-        Func_02006f50(30);
-        Func_02007020(actor, 0);
+        Event_Wait(30);
+        Event_ShowMessage(actor, 0);
         Func_02006026(0x60, 0x54, 30);
-        Func_02006f68(60);
-        Func_02007038(actor, 0);
+        Event_Wait(60);
+        Event_ShowMessage(actor, 0);
         Func_02006094();
-        Func_02006f7a(2);
-        Func_0200707a(0, 0);
+        Event_Wait(2);
+        Camera_FollowActor(0, 0);
         Func_020050e2(actor, 6);
     } else if (state == 1) {
-        Func_0200704e(0x20c6);
-        Func_02007066(actor, 0);
+        Event_SetMessage(0x20c6);
+        Event_ShowMessage(actor, 0);
     }
 
     Func_0200515c(state, actor, 6);
-    Func_02006fbc();
+    Event_End();
 }
 
 void ColossoLogRollingStage_RestoreActorPositions(void)
@@ -2469,7 +1926,7 @@ void ColossoLogRollingStage_RestoreActorPositions(void)
         x += center;
         z <<= 20;
         z += center;
-        Func_02007058(1, x, z);
+        Actor_SetPosition(1, x, z);
     }
     {
         s32 x = Func_02006fc0(912);
@@ -2478,7 +1935,7 @@ void ColossoLogRollingStage_RestoreActorPositions(void)
         x += center;
         z <<= 20;
         z += center;
-        Func_0200707c(2, x, z);
+        Actor_SetPosition(2, x, z);
     }
     {
         s32 x = Func_02006fe4(928);
@@ -2487,7 +1944,7 @@ void ColossoLogRollingStage_RestoreActorPositions(void)
         x += center;
         z <<= 20;
         z += center;
-        Func_020070a0(3, x, z);
+        Actor_SetPosition(3, x, z);
     }
 }
 
@@ -2506,7 +1963,7 @@ void ColossoLogRollingStage_MarkSceneProgress(void)
     slotValue = *(s32 *)&table[250];
     if (slotValue != 0) {
         if ((s16)*(u16 *)(state + 382) >> 10 == slotValue) {
-            if (Func_020070e6(0x141) != 0) {
+            if (GameFlag_IsSet(0x141) != 0) {
                 field = (u16 *)(state + 386);
                 value = 99;
                 *field = value;
@@ -2540,7 +1997,7 @@ void ColossoLogRollingStage_SelectNearestObstacle(void)
     table = Data_02000240;
     active_slot = *(s32 *)&table[250];
     target = Func_02007198(active_slot);
-    Func_02007186();
+    Event_Begin();
     for (slot = 8; slot <= 66; slot++) {
         actor = Func_020071a6(slot);
         if (actor == 0) {
@@ -2569,47 +2026,33 @@ void ColossoLogRollingStage_SelectNearestObstacle(void)
             best = adx + dz;
         }
     }
-    Func_020072a0(0x2085);
-    Func_020072b8(best_slot, 0);
+    Event_SetMessage(0x2085);
+    Event_ShowMessage(best_slot, 0);
     frame = (s32 *)(state + 448);
     *frame = 0x200;
     *(s32 *)(state + 456) = 15;
-    Func_02007210_a(20);
-    Func_02007374();
-    Func_02007380();
+    Event_Wait(20);
+    Event_CloseScreen();
+    Event_WaitForScreen();
     base = active_slot * 16;
     Func_02007200(base + 880, target->x >> 20);
     z = target->z >> 20;
     Func_02007210_b(base + 888, z);
     active_slot = active_slot + 1;
     if (active_slot > 3) {
-        Func_0200735a(10);
-        Func_0200720a(282);
+        Event_RequestExit(10);
+        GameFlag_Set(282);
     } else {
         Func_02004e9a(active_slot);
-        Func_020073ae();
-        Func_020073c2();
+        Event_OpenScreen();
+        Event_WaitForScreen();
         *frame = 0;
     }
-    Func_02007274();
+    Event_End();
 }
 
 #define GetPartyInteractionRecord Func_020073ca_party
-#define FinishPartyInteractionRecordRead Func_020073be_party
 #define GetPartyMemberCount Func_0200739a_party
-#define SetInteractionCue Func_0200747c_party
-#define CheckActorInteraction Func_0200749c_party
-#define PlaceSelectedActor Func_02007448_party
-#define SetInteractionStep Func_020073fe_party
-#define PlaceActorZero Func_02007460_party
-#define PlaceSupportActor Func_0200746c_party
-#define StartInteractionPhase Func_02007578_party
-#define AdvanceInteractionPhase Func_02007584_party
-#define SelectInteractionStep Func_0200753a_party
-#define SetLargePartyInteractionCue Func_020074e2_party
-#define RunLargePartyInteraction Func_020074fa_party
-#define FinishPartyCountInteraction Func_02007446_party
-#define RunPartyCountInteractionCopyB Func_020029ac
 
 typedef struct PartyInteractionRecord {
     u8 padding_00[10];
@@ -2619,31 +2062,16 @@ typedef struct PartyInteractionRecord {
 } PartyInteractionRecord;
 
 PartyInteractionRecord *Func_020073ca_party(void);
-void Func_020073be_party(void);
 s32 Func_0200739a_party(void);
-void Func_0200747c_party(s32 cue);
-s32 Func_0200749c_party(s32 actorId, s32 mode);
-void Func_0200740e_party(s32 actorId, s32 horizontalRate, s32 verticalRate);
-void Func_0200741c_party(s32 actorId, s32 horizontalRate, s32 verticalRate);
-void Func_02007448_party(s32 actorId, s32 x, s32 y);
-void Func_020073fe_party(s32 step);
-void Func_02007460_party(s32 actorId, s32 x, s32 y);
-void Func_0200746c_party(s32 actorId, s32 x, s32 y);
-void Func_02007578_party(void);
-void Func_02007584_party(void);
-void Func_0200753a_party(s32 step);
-void Func_020074e2_party(s32 cue);
-void Func_020074fa_party(s32 actorId, s32 mode);
-void Func_02007446_party(void);
 
 static inline void InitializeActorZero(void)
 {
-    Func_0200740e_party(0, 0x10000, 0x8000);
+    Actor_SetSpeed(0, 0x10000, 0x8000);
 }
 
 static inline void InitializeSelectedActor(s32 actorId)
 {
-    Func_0200741c_party(actorId, 0x10000, 0x8000);
+    Actor_SetSpeed(actorId, 0x10000, 0x8000);
 }
 
 void RunPartyCountInteractionCopyB(s32 actorId)
@@ -2655,27 +2083,27 @@ void RunPartyCountInteractionCopyB(s32 actorId)
     record = GetPartyInteractionRecord();
     x = record->x;
     y = record->y;
-    FinishPartyInteractionRecordRead();
+    Event_Begin();
 
     if (GetPartyMemberCount() <= 1) {
-        SetInteractionCue(0x20e5);
-        if (CheckActorInteraction(actorId, 0) == 0) {
+        Event_SetMessage(0x20e5);
+        if (Event_AskYesNo(actorId, 0) == 0) {
             InitializeActorZero();
             InitializeSelectedActor(actorId);
-            PlaceSelectedActor(actorId, x, y + 0x40);
-            SetInteractionStep(15);
-            PlaceActorZero(0, x, y);
-            PlaceSupportActor(0, x, y + 0x20);
-            StartInteractionPhase();
-            AdvanceInteractionPhase();
-            SelectInteractionStep(11);
+            Actor_WalkTo(actorId, x, y + 0x40);
+            Event_Wait(15);
+            Actor_WalkToAndWait(0, x, y);
+            Actor_WalkToAndWait(0, x, y + 0x20);
+            Event_CloseScreen();
+            Event_WaitForScreen();
+            Event_RequestExit(11);
         }
     } else {
-        SetLargePartyInteractionCue(0x20e8);
-        RunLargePartyInteraction(actorId, 0);
+        Event_SetMessage(0x20e8);
+        Event_ShowMessage(actorId, 0);
     }
 
-    FinishPartyCountInteraction();
+    Event_End();
 }
 
 void ColossoLogRollingStage_ClearSavedActorPositions(void)
@@ -2706,12 +2134,12 @@ s32 ColossoLogRollingStage_RunStateInteraction(s32 actor_handle, s32 interaction
     } else {
         script_id = (s32)&Value_0000207a;
     }
-    Func_0200757a(script_id);
-    Func_02007592(actor_handle, 0);
-    if (Func_0200748c(interaction_base + 512) != 0) {
+    Event_SetMessage(script_id);
+    Event_ShowMessage(actor_handle, 0);
+    if (GameFlag_IsSet(interaction_base + 512) != 0) {
         return 2;
     }
-    if (Func_0200749c(interaction_base + 520) != 0) {
+    if (GameFlag_IsSet(interaction_base + 520) != 0) {
         result = Func_0200747e(0);
         if (result == 1) {
             return 2;
@@ -2721,10 +2149,10 @@ s32 ColossoLogRollingStage_RunStateInteraction(s32 actor_handle, s32 interaction
         }
         return result;
     }
-    Func_020074cc(interaction_base + 520);
-    Func_020075ca((s32)&Value_0000207c);
-    Func_020075da(actor_handle, 0);
-    return Func_0200753a(0, 0);
+    GameFlag_Set(interaction_base + 520);
+    Event_SetMessage((s32)&Value_0000207c);
+    Event_OpenMessage(actor_handle, 0);
+    return Event_ChooseYesNo(0, 0);
 }
 
 void ColossoLogRollingStage_InitializeStateInteraction(s32 actor_handle, s32 interaction_base)
@@ -2743,17 +2171,14 @@ void ColossoLogRollingStage_InitializeStateInteraction(s32 actor_handle, s32 int
     } else {
         script_id = (s32)&Value_0000207a;
     }
-    Func_02007632(script_id + 1);
-    Func_0200764a(actor_handle, 0);
+    Event_SetMessage(script_id + 1);
+    Event_ShowMessage(actor_handle, 0);
 }
 
-#define FieldScene_RunMiddleSequence Func_02002bac
 
 /* Loader-relocated overlay calls: each symbol names the pre-relocation call
  * word the image holds. */
-void Func_02007464_middle();
 s32 Func_020075b4_middle();
-s32 Func_020075c0_middle();
 s32 Func_020075de_middle();
 void Func_02007640_middle();
 s32 Func_0200764c_a_middle();
@@ -2761,54 +2186,20 @@ s32 Func_0200764c_b_middle();
 void Func_02007654_middle();
 void Func_0200767e_middle();
 void Func_02007690_middle();
-void Func_020076dc_middle();
-s32 Func_020076ec_middle();
-void Func_02007718_middle();
-void Func_02007726_middle();
 s32 Func_0200772a_middle();
-void Func_02007734_middle();
-void Func_02007772_middle();
 void Func_0200778a_a_middle();
 void Func_0200778a_b_middle();
-void Func_02007788_middle();
-void Func_02007782_middle();
-void Func_0200777c_middle();
-s32 Func_0200778c_middle();
-void Func_020077a2_middle();
 void Func_020077a0_middle();
-void Func_020077b2_middle();
-s32 Func_020077b4_middle();
 void Func_020077bc_middle();
-void Func_020077d0_middle();
-void Func_020077ce_middle();
-void Func_020077e6_middle();
 s32 Func_020077e2_middle();
 s32 Func_02007816_middle();
-void Func_020077f8_middle();
-void Func_02007802_middle();
-void Func_02007862_middle();
 void Func_020078fc_middle();
 
 void Func_020077ae_middle();
-void Func_020077be_middle();
-void Func_020077ee_middle();
-void Func_020077f6_middle();
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
  * into a pseudo that the compiler then shares with later uses in the block.
  * A value-returning call also sets r0 last of its arguments. */
-
-
-
-
-
-
-
-
-
-
-
-
 
 void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base)
 {
@@ -2837,21 +2228,21 @@ void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base)
             buf[i] = Data_02000240[504 + i];
         }
         if (count <= 1) {
-            Func_02007772_middle(0x2083);
+            Event_SetMessage(0x2083);
             Func_0200778a_a_middle(owner, 0);
             return;
         }
-        if (Value1(Func_020075c0_middle, base + 512) != 0) {
-            Func_02007772_middle(0x2084);
+        if (GameFlag_IsSet(base + 512) != 0) {
+            Event_SetMessage(0x2084);
             Func_0200778a_a_middle(owner, 0);
             return;
         }
         if (mode == 2) {
             state = 0;
-            Func_02007464_middle(6);
+            Task_Wait(6);
         } else {
-            Call1(Func_020076dc_middle, 0x207d);
-            Value2(Func_020076ec_middle, owner, 0);
+            Event_SetMessage(0x207d);
+            Event_OpenMessage(owner, 0);
             state = Value2(Func_0200764c_a_middle, 0, 0);
         }
         if (state == 0) {
@@ -2877,39 +2268,39 @@ void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base)
             }
         }
     }
-    Func_02007772_middle(0x207e);
+    Event_SetMessage(0x207e);
     Func_0200778a_a_middle(owner, 0);
     return;
 L_main:
     ((void (*)())Func_0200764c_b_middle)(obj, 1);
     Call1(Func_0200778a_b_middle, 0x207f);
-    Func_020077a2_middle(owner, 0);
-    Call3(Func_02007718_middle, 0, 0x10000, 0x8000);
-    Call3(Func_02007726_middle, obj, 0x10000, 0x8000);
-    Call3(Func_02007734_middle, owner, 0x10000, 0x8000);
+    Event_ShowMessage(owner, 0);
+    Actor_SetSpeed(0, 0x10000, 0x8000);
+    Actor_SetSpeed(obj, 0x10000, 0x8000);
+    Actor_SetSpeed(owner, 0x10000, 0x8000);
     record = Value1(Func_0200772a_middle, 0);
     if (record != 0) {
-        Func_02007788_middle(obj, *(s32 *)(record + 8), *(s32 *)(record + 16));
+        Actor_SetPosition(obj, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
     hi = p11 + 16;
-    Func_02007782_middle(obj, p9, hi);
+    Actor_WalkToAndWait(obj, p9, hi);
     lo = p9 + 16;
-    Value3(Func_0200778c_middle, 0, lo, hi);
-    Func_020077e6_middle(obj, 0, 30);
-    Func_020077be_middle(obj, 3);
+    Value3(Engine_ActorWalkToAndWait, 0, lo, hi);
+    Actor_FaceEachOther(obj, 0, 30);
+    Actor_SetAnimation(obj, 3);
     tail = hi - 32;
-    Func_020077d0_middle(0, 3);
-    Func_020077b2_middle(owner, p9, tail);
-    Value3(Func_020077b4_middle, owner, lo, tail);
+    Actor_SetAnimationAndWait(0, 3);
+    Actor_WalkToAndWait(owner, p9, tail);
+    Value3(Engine_ActorWalkTo, owner, lo, tail);
     Func_020078fc_middle(0, obj);
-    Func_020077ce_middle(obj, p9, tail);
-    Func_020077f6_middle(owner, 1);
-    Call3(Func_02007862_middle, owner, 0x8000, 0);
-    Func_020077ee_middle(obj, p9, p11 - 48);
-    Func_020077f8_middle(owner, p9, tail);
-    Func_02007802_middle(owner, p9, p11);
+    Actor_WalkToAndWait(obj, p9, tail);
+    Actor_SetAnimation(owner, 1);
+    Actor_FaceDirection(owner, 0x8000, 0);
+    Actor_WalkToAndWait(obj, p9, p11 - 48);
+    Actor_WalkToAndWait(owner, p9, tail);
+    Actor_WalkToAndWait(owner, p9, p11);
     Func_020077a0_middle(obj);
-    Func_0200777c_middle(base + 512);
+    GameFlag_Set(base + 512);
     rec = Value1(Func_020077e2_middle, obj);
     sx = *(s32 *)(rec + 8) >> 20;
     Func_020077ae_middle((obj << 4) + 880, sx);
@@ -2982,62 +2373,61 @@ void ColossoLogRollingStage_InitializeModeTask(u32 mode, u32 parameter)
 void ColossoLogRollingStage_RunScriptedTransition(s32 mode)
 {
     if (mode == 0) {
-        Func_02007e72();
-        Func_02007fc6();
-        Func_02007fda();
-        Func_02007e78(30);
-        Func_02008026(0x59);
+        Event_Begin();
+        Event_OpenScreen();
+        Event_WaitForScreen();
+        Event_Wait(30);
+        Audio_PlayCue(0x59);
         Func_020062e0(0);
         Func_0200686c(1, 0);
-        Func_02007e92(120);
-        Func_02007ea6();
+        Event_Wait(120);
+        Event_End();
         return;
     }
 
-    Func_02008046(0xf7);
-    Func_02007eaa();
-    Func_02007ffe();
-    Func_02008012();
+    Audio_PlayCue(0xf7);
+    Event_Begin();
+    Event_OpenScreen();
+    Event_WaitForScreen();
     {
         s16 *base = (s16 *)0x0200d9a6;
         *(s16 *)((u8 *)base + 30) = (s16)(mode * 60);
     }
-    Func_02007eba(30);
-    Func_0200806a(mode + 0x5a);
+    Event_Wait(30);
+    Audio_PlayCue(mode + 0x5a);
     Func_02006324(mode);
     Func_020068b0(1, 0);
-    Func_02007ed6(120);
+    Event_Wait(120);
 
     goto check_transition;
 wait_transition:
-    Func_02007d26(1);
+    Task_Wait(1);
 check_transition:
     if (Func_02008092() != 0)
         goto wait_transition;
 
-    Func_02008094(0x121);
+    Audio_PlayCue(0x121);
     Func_0200634e(5);
     Func_020068da(2, 0);
-    Func_020080a8(0xec);
-    Func_02007f06(60);
+    Audio_PlayCue(0xec);
+    Event_Wait(60);
     Func_020068ee(2, 1);
-    Func_020080bc(0xec);
-    Func_02007f1a(60);
+    Audio_PlayCue(0xec);
+    Event_Wait(60);
     Func_0200637c(6);
     Func_02006908(2, 0);
-    Func_020080d6(0xec);
-    Func_02007f34(60);
+    Audio_PlayCue(0xec);
+    Event_Wait(60);
     Func_02006396(7);
     Func_02006922(4, 0);
-    Func_020080f0(0xed);
+    Audio_PlayCue(0xed);
     Func_020080cc();
-    Func_02007f60();
-    Func_02007f16(0x123);
+    Event_End();
+    GameFlag_Set(0x123);
 }
 
 /* Loader-relocated overlay calls: each symbol names the pre-relocation call
  * word the image holds. */
-extern u8 Data_00000000[];
 
 /* The two mode records the entry point seeds; the halfword at +26 holds the
  * per-mode span in sixtieths. */
@@ -3047,104 +2437,52 @@ struct ModeRecord {
 };
 extern struct ModeRecord Data_0200da50;
 extern struct ModeRecord Data_0200cce2;
-extern u8 Data_02002090[];
-extern u8 Data_0200cbfc[];
-extern u8 Data_0200cc28[];
-extern u8 Data_0200cca4[];
 void Func_0200640a_sequence();
 void Func_02006436_sequence();
 s32 Func_02006996_sequence();
 s32 Func_020069c2_sequence();
-void Func_02007e44_sequence();
-void Func_02007fa2_sequence();
-void Func_02006a56_sequence();
-void Func_02006a5e_sequence();
-void Func_02007fc2_sequence();
-void Func_02007fcc_sequence();
-void Func_02006a76_sequence();
-void Func_02007fea_sequence();
-void Func_02006aa6_sequence();
-void Func_02008010_sequence();
-u8 *Func_02006b14_sequence();
-void Func_020080d0_sequence();
-void Func_020080e4_sequence();
-void Func_020080dc_sequence();
-void Func_0200811c_sequence();
-void Func_02006bba_sequence();
-void Func_02008150_sequence();
-void Func_02006be4_sequence();
-void Func_02006bec_sequence();
-void Func_0200817a_sequence();
-void Func_0200817c_sequence();
-void Func_02008186_sequence();
 s32 Func_020081b0_sequence();
-void Func_020081b2_sequence();
-void Func_020081be_sequence();
-void Func_02006c4e_sequence();
-void Func_02006c5c_sequence();
-void Func_02006c62_sequence();
-void Func_02006c6a_sequence();
-void Func_02006c80_sequence();
-void Func_02006cb2_sequence();
-u8 *Func_02006cde_sequence();
-void Func_02006cea_sequence();
-void Func_02006d00_sequence();
-void Func_02006d36_sequence();
-void Func_02006d42_sequence();
-void Func_02006d62_sequence();
-void Func_02006db2_sequence();
 
-void Func_02002ba8_sequence();
-void Func_02002d84_sequence();
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
  * into a pseudo that the compiler then shares with later uses in the block.
  * A value-returning call also sets r0 last of its arguments. */
 
-
-
-
-
-
-
-
-
 /* The scene step counter at 0x1d8 of the shared scene work record. */
-
 
 void FieldScene_RunScene3bcSequenceA(s32 a0)
 {
     s32 kind;
 
-    Func_0200811c_sequence(247);
-    Func_020080d0_sequence();
-    Func_020080e4_sequence();
+    Audio_PlayCue(247);
+    Event_OpenScreen();
+    Event_WaitForScreen();
     Data_0200da50.span = a0 * 60;
     Data_0200cce2.span = (a0 < 0 ? -a0 : a0) * 60;
     if (a0 < 0) {
-        Func_02007fa2_sequence(30);
-        Func_02008150_sequence(86);
+        Event_Wait(30);
+        Audio_PlayCue(86);
         Func_0200640a_sequence(8);
         Value2(Func_02006996_sequence, 3, 1);
-        Func_02007fc2_sequence(-a0 * 60 + 60);
+        Event_Wait(-a0 * 60 + 60);
         kind = 0;
     } else {
-        Func_02007fcc_sequence(30);
-        Func_0200817c_sequence(a0 + 90);
+        Event_Wait(30);
+        Audio_PlayCue(a0 + 90);
         Func_02006436_sequence(4);
         Value2(Func_020069c2_sequence, 3, 0);
-        Func_02007fea_sequence(a0 * 60 + 60);
+        Event_Wait(a0 * 60 + 60);
         kind = 8;
     }
-    Call3(Func_020080dc_sequence, kind, 0x105, 0);
+    Actor_ShowEmote(kind, 0x105, 0);
     while (Value0(Func_020081b0_sequence)!= 0) {
-        Func_02007e44_sequence(1);
+        Task_Wait(1);
     }
-    Func_020081b2_sequence(19);
-    Func_02008010_sequence(30);
-    Call1(Func_020081be_sequence, 0x121);
-    Func_0200817a_sequence();
-    Func_02008186_sequence();
+    Audio_PlayCue(19);
+    Event_Wait(30);
+    Audio_PlayCue(0x121);
+    Event_CloseScreen();
+    Event_WaitForScreen();
 }
 
 void ColossoLogRollingStage_ResetActorMotion(s32 selector)
@@ -3220,7 +2558,7 @@ void ColossoLogRollingStage_PositionScaledObject(s32 id, s32 x, s32 z)
         object->scale_z = scale / 2;
         object->state = 0;
         Func_02008464(object);
-        Func_0200844c(object, 5);
+        Object_SetAnimation(object, 5);
         Func_02008488(object, x << 16, object->y, z << 16);
     }
 }
@@ -3244,10 +2582,10 @@ void ColossoLogRollingStage_SpawnPositionedObject(s32 object_id, s32 x, s32 z)
     }
 
     Func_020084a4();
-    Func_0200848c(object, 5);
+    Object_SetAnimation(object, 5);
     Func_020084c8(object, x << 16, *(s32 *)(object + 12), z << 16);
     Func_020084d6(object);
-    Func_020084a6(object, 1);
+    Object_SetAnimation(object, 1);
 }
 
 /* Complete eight-byte state setter plus its sole four-byte pool word. */
@@ -3283,7 +2621,7 @@ void ColossoLogRollingStage_WaitForBalanceState(void)
     s16 *status = &Data_02001000;
 
     while (*status != 9) {
-        Func_02008520(1);
+        Task_Wait(1);
     }
 }
 
@@ -3304,8 +2642,8 @@ void ColossoLogRollingStage_SpawnRandomSceneEffect(StageEffect *source)
         position[0] = source->x;
         position[1] = source->y;
         position[2] = source->z;
-        angle = Func_02008584();
-        radius = Func_0200858a();
+        angle = Random_Next();
+        radius = Random_Next();
         Func_020085a6(angle << 4, radius, position);
         {
             s32 x = position[0];
@@ -3316,10 +2654,10 @@ void ColossoLogRollingStage_SpawnRandomSceneEffect(StageEffect *source)
         }
         if (effect != 0) {
             effect->state = 0;
-            Func_020086b6(effect, 0);
-            Func_0200864e_b(effect, (s32)Data_0200ce50);
-            Func_0200864e_a(effect, 1);
-            Func_02008656(effect, 0);
+            Actor_SetSpriteFlags(effect, 0);
+            Object_SetScript(effect, (s32)Data_0200ce50);
+            Object_SetAnimation(effect, 1);
+            Object_SetAnimation(effect, 0);
         }
     }
 }
@@ -3330,8 +2668,8 @@ s32 ColossoLogRollingStage_RaiseLinkedSceneEffect(StageEffect_02003d88 *source)
 
     Func_020086be(effect, source->x, source->y + 0x240000, source->z);
     effect->state = 0;
-    Func_020086a6(effect, (s32)Data_0200ce74);
-    Func_02008964(83);
+    Object_SetScript(effect, (s32)Data_0200ce74);
+    Audio_PlayCue(83);
     source->linked_effect_slot = 0;
     return 0;
 }
@@ -3349,7 +2687,7 @@ s32 ColossoLogRollingStage_PositionActiveActor(s32 first_handle, s32 second_hand
     u16 *cuep;
     s16 *waitp;
 
-    flag = Func_020087a0(0x211);
+    flag = GameFlag_IsSet(0x211);
 
     shared = Data_02000240;
     record = Func_02008818_a(*(s32 *)(shared + 500));
@@ -3375,10 +2713,10 @@ s32 ColossoLogRollingStage_PositionActiveActor(s32 first_handle, s32 second_hand
 
     Func_0200876a(record, x, 0, z);
     Func_02008818_b(0x211);
-    Func_02008750(record, (void *)0x0200db24);
+    Object_SetScript(record, (void *)0x0200db24);
 
     while (*waitp != 0) {
-        Func_020086b6_a(1);
+        Task_Wait(1);
     }
 
     if (flag == 0) {
@@ -3391,7 +2729,7 @@ s32 ColossoLogRollingStage_PositionActiveActor(s32 first_handle, s32 second_hand
 
     shared = Data_02000240;
     Func_0200882c_a(*(s32 *)(shared + 500), 1);
-    Func_0200882c_b(0x96a, 3);
+    Message_ShowCentered(0x96a, 3);
     Func_020087ca(record);
 
     return flag;
@@ -3421,7 +2759,7 @@ void ColossoLogRollingStage_SetupSceneDescriptor(s32 first_actor, s32 second_act
     first_record = Func_02008f08(first_actor);
     second_record = Func_02008f10(second_actor);
 
-    if (Func_02008eb0(0x109) == 0) {
+    if (GameFlag_IsSet(0x109) == 0) {
         *(s32 *)(second_record + 8) =
             (centre << 1) - *(s32 *)(first_record + 8);
         *(s32 *)(second_record + 16) = *(s32 *)(first_record + 16);
@@ -3434,7 +2772,7 @@ void ColossoLogRollingStage_SetupSceneDescriptor(s32 first_actor, s32 second_act
 
     extent = Func_02008de2();
     *(u16 *)(descriptor + 216) = (u16)extent;
-    Func_02008dee((s16)extent, 512, handle);
+    Vram_Load((s16)extent, 512, handle);
 
     Func_02008d8e((s32)Func_0200c0d0 + 1, 0xc76);
 
@@ -3449,7 +2787,7 @@ void ColossoLogRollingStage_InitializeSceneControl(void)
     SceneControl *control = &Data_02001000;
 
     Func_02008e26(Func_02008e56(), (s32)(scene_state + 240));
-    if (Func_02008f44(0x109) == 0) {
+    if (GameFlag_IsSet(0x109) == 0) {
         control->enabled = 1;
         control->active = 1;
         control->scene_variant = *(u16 *)(scene_state + 224);
@@ -3551,8 +2889,8 @@ void ColossoLogRollingStage_PushStagedActor(void)
         return;
     }
 
-    Func_02008ffc(subject, 8);
-    Func_02008f62(15);
+    Object_SetAnimation(subject, 8);
+    Task_Wait(15);
 
     target->rate_x = 0x3333;
     target->rate_z = 0x3333;
@@ -3562,16 +2900,16 @@ void ColossoLogRollingStage_PushStagedActor(void)
     subject->rate_z = 0x3333;
     Func_02009052(subject, position.x, position.y, position.z);
 
-    Func_020092e8(0xee);
+    Audio_PlayCue(0xee);
     Func_02009066(target);
-    Func_020092f6(0x120);                                /* 144 << 1 */
+    Audio_PlayCue(0x120);                                /* 144 << 1 */
 
     target->x = position.x;
     target->z = position.z;
     target->motion_24 = zero;
     target->motion_2c = zero;
 
-    Func_0200904c(subject, 1);
+    Object_SetAnimation(subject, 1);
 }
 
 /* This overlay's own byte-exact occupancy lookup. */

@@ -2388,7 +2388,8 @@
       "source": "BATTLE/EFFECT/RUN_TARGETED_ITEM_BREAK.C"
     },
     "main:080cd260": {
-      "name": "BattlePresentation_ProcessPendingGraphicsTransfer"
+      "name": "BattlePresentation_ProcessPendingGraphicsTransfer",
+      "source": "BATTLE/PRESENTATION/PROCESS_PENDING_GRAPHICS_TRANSFER.C"
     },
     "main:08096048": {
       "name": "BattleFx_UpdateRadialSpread"

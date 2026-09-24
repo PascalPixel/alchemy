@@ -180,7 +180,7 @@ static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
 
 #include "TYPES.H"
 
-extern u8 Data_00001d20[];
+extern u8 LinkedMessage_DoYouWantGoAshore[];
 
 u8 *Func_020018ce();
 s32 Func_0200194c();
@@ -371,11 +371,11 @@ void SceneDialogue_RunActor12Event(void)
             Event_OpenMessage(12, 0);
             goto L_02000496;
         }
-        Event_SetMessage((s32)Data_00001d20);
+        Event_SetMessage((s32)LinkedMessage_DoYouWantGoAshore);
         Event_OpenMessage(12, 0);
         if (Event_ChooseYesNo(0, 0) == 0) {
             Event_Wait(10);
-            Event_SetMessage(((s32)Data_00001d20 + 1));
+            Event_SetMessage(((s32)LinkedMessage_DoYouWantGoAshore + 1));
             Event_ShowMessage(12, 0);
             Actor_WalkToAndWait(12, 88, 0x508);
             Actor_FaceDirection(12, 0x4000, 0);
@@ -383,7 +383,7 @@ void SceneDialogue_RunActor12Event(void)
             GameFlag_Set(0x8a9);
             goto L_02000496;
         }
-        Event_SetMessage(((s32)Data_00001d20 + 2));
+        Event_SetMessage(((s32)LinkedMessage_DoYouWantGoAshore + 2));
         Event_ShowMessage(12, 0);
     } else {
         if ((u16)angle != 0x8000) {

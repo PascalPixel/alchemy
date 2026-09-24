@@ -23,11 +23,11 @@ extern u8 Data_02009670[];
 extern u8 Data_02009310[];
 extern struct Ent Data_02009dcc[];
 extern s16 Data_02000240_t[][1];
-extern u8 Data_00001fd5[];
-extern u8 Data_00002389[];
+extern u8 LinkedMessage_YourFirstTimeTolbi[];
+extern u8 LinkedMessage_DidYouComeAllWay[];
 extern u8 Value_0000239e;
-extern u8 Value_00001fbb;
-extern u8 Data_00002399[];
+extern u8 LinkedMessage_DoYouWantStayWith;
+extern u8 LinkedMessage_HeeHeeDoLookLike[];
 extern u8 Value_000023ac;
 
 void Func_02000b16(void);
@@ -341,7 +341,7 @@ void SceneDialogue_RunFacingPrompt(s32 no)
         Scene_Call1(Engine_EventSetMessage, 0x221b);
         Event_ShowMessage(no, 0);
     } else {
-        msg = (s32)Data_00001fd5;
+        msg = (s32)LinkedMessage_YourFirstTimeTolbi;
         Event_SetMessage(msg);
         Scene_Value2(Engine_EventOpenMessage, no, 0);
         if (Scene_Value2(Engine_EventChooseYesNo, 0, 0) == 0) {
@@ -361,7 +361,7 @@ void SceneDialogue_RunFacingActionPrompt(s32 no)
     if ((u16)((*(u16 *)(actor + 6) + 0x2000) & ~0x3fff) == 0xc000) {
         Shop_Open(26, no);
     } else if (GameFlag_IsSet(0x950) != 0) {
-        msg = (s32)Data_00002389;
+        msg = (s32)LinkedMessage_DidYouComeAllWay;
         Event_SetMessage(msg);
         Scene_Value2(Engine_EventOpenMessage, no, 0);
         if (Scene_Value2(Engine_EventChooseYesNo, 0, 0) == 0) {
@@ -442,7 +442,7 @@ void SceneDialogue_RunMessage1FBBStep(s32 subject)
 
     Event_Begin();
 
-    msg = (s32)&Value_00001fbb;
+    msg = (s32)&LinkedMessage_DoYouWantStayWith;
     Event_SetMessage(msg);
     Event_OpenMessage(subject, 0);
 
@@ -472,7 +472,7 @@ void FieldScene_RunScene3b6_020007b0(s32 a0)
 
     Event_Begin();
     if (GameFlag_IsSet(0x8bd) == 0) {
-        base5_2399 = (s32)Data_00002399;
+        base5_2399 = (s32)LinkedMessage_HeeHeeDoLookLike;
         Event_SetMessage(base5_2399);
         Event_OpenMessage(a0, 0);
         if (Event_ChooseYesNo(0, 0) == 0) {

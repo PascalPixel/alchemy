@@ -348,7 +348,7 @@ typedef struct {
     s16 unk12;
 } EntB;
 
-extern u8 Value_00001000;
+extern u8 LinkedMessage_WayLeadsOutSanctumShould;
 extern u16 Data_0200ade4;
 extern s32 Data_0200ade8;
 extern u16 Data_0200addc;
@@ -913,7 +913,7 @@ void UpdateStatueTrapActor(void)
     }
     Event_Begin();
     Actor_SetAnimation(ACTOR_PARTY_LEADER, 0);
-    Event_SetMessage((s32)&Value_00001000);
+    Event_SetMessage((s32)&LinkedMessage_WayLeadsOutSanctumShould);
     if (GameFlag_IsSet(g1)!= 0 || GameFlag_IsSet(FLAG_INNER_SANCTUM_ENTERED) == 0) {
         target_actor = Func_0200364a(0);
         if (target_actor != 0) {

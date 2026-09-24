@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_3b3:020021ac": {
+      "name": "TakaraHashira_RaiseActorFourteen",
+      "source": "FIELD/TAKARA_HASHIRA/RAISE_ACTOR.C"
+    },
     "resource_3a4:02002020": {
       "name": "ArutinYama_RunAreaScene",
       "source": "FIELD/ARUTIN_YAMA/AREA_SCENE.C"

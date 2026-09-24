@@ -70958,6 +70958,38 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "takara-hashira-raise-actor",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/TAKARA_HASHIRA/RAISE_ACTOR.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3b3",
+      "absolute_symbols": {
+        "Engine_ActorGet": {
+          "address": "0x0200ab1c",
+          "kind": "thumb"
+        },
+        "Engine_ObjectSetPosition": {
+          "address": "0x0200aa8c",
+          "kind": "thumb"
+        },
+        "Engine_ActorWaitForMove": {
+          "address": "0x0200ab44",
+          "kind": "thumb"
+        },
+        "Engine_MapCopyCellAttributes": {
+          "address": "0x0200aac4",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x020021ac",
+          "extent": 132,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

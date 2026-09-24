@@ -15185,7 +15185,8 @@
       "source": "FIELD/TOREBI_KYUDEN/CHOICE.C"
     },
     "resource_38b:02000db4": {
-      "name": "SceneActor_PushPuzzleActor"
+      "name": "BiribinoMura_PushFacedBlock",
+      "source": "FIELD/BIRIBINO_MURA/F_00DB4.C"
     },
     "resource_38b:020001ec": {
       "name": "FieldScene_RunScriptedStep1472",

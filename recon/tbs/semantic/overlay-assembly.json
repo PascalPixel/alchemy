@@ -16,17 +16,6 @@
       ]
     },
     {
-      "overlay": "resource_38b",
-      "start": "0x02000db4",
-      "end": "0x02000ed8",
-      "kind": "not_yet_decompiled",
-      "retention": "not_yet_c",
-      "confidence": "strong",
-      "evidence": [
-        "Complete reviewed 292-byte owner remains retained while its ordinary C candidate is nonexact. Numeric scene selectors are values, not fabricated absolute data symbols. This records unresolved reconstruction, not assembly origin."
-      ]
-    },
-    {
       "overlay": "resource_3c8",
       "start": "0x02001808",
       "end": "0x020018f8",

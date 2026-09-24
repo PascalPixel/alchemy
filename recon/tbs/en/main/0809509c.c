@@ -1,10 +1,9 @@
-/* Draft, not exact (2026-09-24): candidate=190 reference=196 differing_halfwords=51.
-   Initialise the 32 dust particles drawn by main:08094820 and schedule
-   main:08094e7c. The goto loop keeps the pool-loaded mask 15 in the loop and
-   so reproduces the pool before the epilogue. Residuals: the reference ands
-   a copy of the counter with the mask (adds r3, r5, #0; ands r3, r2) where
-   this ands into the mask register (one instruction short), and the zero for
-   the DMA fill and the stmia pointer take r1 where these take r3 and r2. */
+/* Draft, not exact (2026-09-24): 11 differing halfwords (194 bytes plus
+   the 2-byte pad). Writing the timer as (i & 15) + 1 with a literal lets
+   GCC pool the halfword 15 in the first slot and reload it per iteration,
+   as the reference does; the Value_0000000f local cost 40 halfwords.
+   Residual: the fill zero takes r3 (reference r1), and the particle word
+   pointer and the leader pointer take r2 and r0 (reference r1 and r2). */
 #include "TYPES.H"
 #include "DMA.H"
 
@@ -32,7 +31,6 @@ struct FieldView {
 };
 
 extern struct FieldView *Data_03001e70;
-extern u8 Value_0000000f;
 extern const u8 Data_080a00b8[];
 void *Runtime_AllocateBlock(s32 slot, s32 size);
 void Resource_DecodeByteLz(const void *source, void *destination);
@@ -50,7 +48,6 @@ void Func_0809509c(void)
     volatile u32 zero;
     u8 *buf;
     u32 i;
-    u16 mask;
     s32 clear;
 
     zero = 0;
@@ -77,8 +74,7 @@ loop:
         p->pos_x = clear;
         p->pos_z = clear;
         p->pos_y = Map_GetTerrainHeightFar(0, x >> 16, z >> 16) << 16;
-        mask = (u16)(u32)&Value_0000000f;
-        p->timer = (i & mask) + 1;
+        p->timer = (i & 15) + 1;
     }
     i++;
     p++;

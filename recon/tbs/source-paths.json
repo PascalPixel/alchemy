@@ -19085,7 +19085,8 @@
       "source": "GRAPHICS/PALETTE/GLOW_UPDATE.C"
     },
     "main:0801cc50": {
-      "name": "Color_ScaleComponents"
+      "name": "Color_ScaleComponents",
+      "source": "GRAPHICS/PALETTE/SCALE_COMPONENTS.C"
     },
     "main:0801a5a4": {
       "name": "UiGlyph_DecodeWithHeapRoutines"

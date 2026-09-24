@@ -1292,41 +1292,8 @@ AlchemyC_02001fe8:
 	.4byte 0x03001c94
 	.2byte 0x0118
 	.2byte 0x0300
-	push	{r5, lr}
-	ldr	r3, [pc, #60]
-	ldr	r2, [r3, #0]
-	subs	r3, #32
-	ldr	r5, [r2, #0]
-	movs	r1, #250
-	ldr	r2, [r3, #0]
-	ldr	r3, [pc, #52]
-	lsls	r1, r1, #1
-	adds	r3, r3, r1
-	ldr	r3, [r3, #0]
-	lsls	r3, r3, #2
-	adds	r3, #20
-	ldr	r0, [r2, r3]
-	ldr	r3, [r5, #8]
-	cmp	r3, #0
-	beq.n	.L_02002396
-	subs	r3, #1
-	b.n	.L_020023a8
-.L_02002396:
-	bl	sub_02003f60
-	bl	sub_02004798
-	lsls	r3, r0, #4
-	subs	r3, r3, r0
-	lsls	r3, r3, #1
-	lsrs	r3, r3, #16
-	adds	r3, #10
-.L_020023a8:
-	str	r3, [r5, #8]
-	pop	{r5}
-	pop	{r0}
-	bx	r0
-	.4byte 0x03001edc
-	.2byte 0x0240
-	.2byte 0x0200
+AlchemyC_02002370:
+	.space 0x48
 AlchemyC_020023b8:
 	.space 0x24
 	.include "games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_IRIGUCHI/IMPORT.INC"

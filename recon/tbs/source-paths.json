@@ -1219,11 +1219,10 @@
     },
     "main:0808c2dc": {
       "name": "BattleParty_ApplyDrain",
-      "source": "BATTLE/PARTY/APPLY_DRAIN.C"
+      "source": "BATTLE/PARTY/DAMAGE.C"
     },
     "main:0808c3a4": {
-      "name": "BattleParty_ApplyStatusDamage",
-      "source": "BATTLE/PARTY/APPLY_STATUS_DAMAGE.C"
+      "name": "BattleParty_ApplyStatusDamage"
     },
     "main:080a1bdc": {
       "name": "PsynergyMenu_RefreshOwnerEntries"
@@ -18615,8 +18614,7 @@
       "source": "GAME/INVENTORY/RESTORE_SNAPSHOT.C"
     },
     "main:0808c30c": {
-      "name": "BattleParty_ApplyHealthDelta",
-      "source": "BATTLE/PARTY/APPLY_HEALTH_DELTA.C"
+      "name": "BattleParty_ApplyHealthDelta"
     },
     "main:080b110c": {
       "name": "Shop_DrawItemPrice",

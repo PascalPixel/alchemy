@@ -52595,20 +52595,6 @@
       "overlay": null
     },
     {
-      "id": "battle-party-apply-drain",
-      "game": "tbs",
-      "source": "games/THE BROKEN SEAL/SRC/BATTLE/PARTY/APPLY_DRAIN.C",
-      "compiler_route": "canonical-gcc296",
-      "owners": [
-        {
-          "address": "0x0808c2dc",
-          "extent": 48,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
       "id": "effect-runtime-prepare-rising-object",
       "game": "tbs",
       "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/PREPARE_RISING_OBJECT.C",
@@ -124768,6 +124754,30 @@
         {
           "address": "0x0801cbd4",
           "extent": 124,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "battle-party-damage",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/BATTLE/PARTY/DAMAGE.C",
+      "compiler_route": "canonical-gcc296",
+      "owners": [
+        {
+          "address": "0x0808c2dc",
+          "extent": 48,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0808c30c",
+          "extent": 152,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0808c3a4",
+          "extent": 168,
           "state": "exact-c"
         }
       ],

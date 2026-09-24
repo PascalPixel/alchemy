@@ -39,7 +39,7 @@ s32 SaveState_ConfirmAndProcessSelectedSlot(void)
 
 /* save/state/copy_slot_pair.c */
 extern u8 gSaveBuffer;
-extern u8 Value_0000000a;
+extern u8 MsgNoBackupMemory;
 extern u8 Value_0000000c;
 extern u8 Value_0000000d;
 extern u8 Value_00000019;
@@ -53,7 +53,7 @@ s32 SaveState_CopySlotPair(void)
     result = 0;
     found = SaveState_InitializeWorkspace();
     if (found != 0) {
-        UiText_ShowPositionedMessageAndWait((s32)&Value_0000000a, 1);
+        UiText_ShowPositionedMessageAndWait((s32)&MsgNoBackupMemory, 1);
         result = -9;
     } else {
         SaveState_LoadSummaryRecords();
@@ -105,7 +105,7 @@ s32 SaveState_DeleteSelectedSlot(void)
 
     found = SaveState_InitializeWorkspace();
     if (found != 0) {
-        UiText_ShowPositionedMessageAndWait((s32)&Value_0000000a, 1);
+        UiText_ShowPositionedMessageAndWait((s32)&MsgNoBackupMemory, 1);
         result = -9;
     } else {
         SaveState_LoadSummaryRecords();

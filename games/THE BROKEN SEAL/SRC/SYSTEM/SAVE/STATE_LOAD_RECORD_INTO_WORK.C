@@ -12,7 +12,7 @@ void UiText_ShowPositionedMessageAndWait(s32, s32);
 s32 SaveMenu_SelectSlot(s16, s32);
 s32 SaveState_ReadRecordPayload(s32, void *);
 
-extern char Value_0000000a;
+extern char MsgNoBackupMemory;
 extern char Value_0000000c;
 extern char gSaveBuffer;
 extern s16 gSaveSlot;
@@ -28,7 +28,7 @@ s32 SaveState_LoadRecordIntoWork(s32 arg)
     s32 err = SaveState_InitializeWorkspace();
 
     if (err != 0) {
-        UiText_ShowPositionedMessageAndWait((s32)&Value_0000000a, 1);
+        UiText_ShowPositionedMessageAndWait((s32)&MsgNoBackupMemory, 1);
         ret = -9;
     } else {
         s32 value;

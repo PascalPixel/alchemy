@@ -6,8 +6,8 @@ s32 SaveState_WriteRecord(s32, void *);
 void UiText_ShowPositionedMessageAndWait(s32, s32);
 void SaveState_BuildSummaryHeader(void);
 extern char gSaveBuffer;
-extern char Value_0000000a;
-extern char Value_0000000b;
+extern char MsgNoBackupMemory;
+extern char MsgSaveFailed;
 
 s16 SaveState_WriteCurrentSlotPair(void)
 {
@@ -21,7 +21,7 @@ s16 SaveState_WriteCurrentSlotPair(void)
     if (value != -1) {
         found = SaveState_InitializeWorkspace();
         if (found != 0) {
-            UiText_ShowPositionedMessageAndWait((s32)&Value_0000000a, 1);
+            UiText_ShowPositionedMessageAndWait((s32)&MsgNoBackupMemory, 1);
             error = 9;
             goto set_error;
         }
@@ -35,7 +35,7 @@ s16 SaveState_WriteCurrentSlotPair(void)
             base = (char *)base + 0x1000;
             found |= SaveState_WriteRecord(next + 3, base);
             if (found != 0) {
-                UiText_ShowPositionedMessageAndWait((s32)&Value_0000000b, 1);
+                UiText_ShowPositionedMessageAndWait((s32)&MsgSaveFailed, 1);
                 error = 3;
 set_error:
                 result = 0 - error;
@@ -56,7 +56,7 @@ s32 SaveState_WriteSlotPair(s32 arg0)
 
     found = SaveState_InitializeWorkspace();
     if (found != 0) {
-        UiText_ShowPositionedMessageAndWait((s32)&Value_0000000a, 1);
+        UiText_ShowPositionedMessageAndWait((s32)&MsgNoBackupMemory, 1);
         result = -9;
     } else {
         void *base = &gSaveBuffer;
@@ -65,7 +65,7 @@ s32 SaveState_WriteSlotPair(s32 arg0)
         base = (char *)base + 0x1000;
         found |= SaveState_WriteRecord(arg0 + 3, base);
         if (found != 0) {
-            UiText_ShowPositionedMessageAndWait((s32)&Value_0000000b, 1);
+            UiText_ShowPositionedMessageAndWait((s32)&MsgSaveFailed, 1);
             result = -3;
         }
     }

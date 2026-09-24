@@ -1,8 +1,8 @@
 #include "TYPES.H"
 #include "SYSTEM.H"
 
-extern u8 Value_0000000a[];
-extern u8 Value_0000000b[];
+extern u8 MsgNoBackupMemory[];
+extern u8 MsgSaveFailed[];
 extern u8 Value_00000014[];
 extern u8 Value_00000017[];
 extern u8 Value_0000001a[];
@@ -33,7 +33,7 @@ s32 Save_WriteSelectedSlot(void)
     result = 0;
     flag = SaveState_InitializeWorkspace();
     if (flag != 0) {
-        UiText_ShowPositionedMessageAndWait((s32)Value_0000000a, 1);
+        UiText_ShowPositionedMessageAndWait((s32)MsgNoBackupMemory, 1);
         result = -9;
     } else {
         SaveState_LoadSummaryRecords();
@@ -66,7 +66,7 @@ s32 Save_WriteSelectedSlot(void)
             flag |= SaveState_WriteRecord(slot + 3, gSaveBuffer + 0x1000);
             UiWork_FinalizePendingCore();
             if (flag != 0) {
-                UiText_ShowPositionedMessageAndWait((s32)Value_0000000b, 1);
+                UiText_ShowPositionedMessageAndWait((s32)MsgSaveFailed, 1);
                 result = -3;
             } else {
                 UiText_ShowPositionedMessageAndWait((s32)Value_00000017, 9);

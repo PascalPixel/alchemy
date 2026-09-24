@@ -11,7 +11,7 @@ void Audio_PlayCue(s32);
 void UiMessage_ShowAndWait(s32);
 void Shop_RepairItem(s32, s32);
 
-extern u8 Value_00000075;
+extern u8 MsgItemPlainName;
 extern u8 Value_00000cc2;
 
 /*
@@ -63,7 +63,7 @@ s32 Shop_SelRepair(s32 unit_id)
                 price = Shop_ComputeRepairPrice(unit->inventory[selection]);
                 Shop_DrawItemPrice(list_window, item_id, price, 2);
                 Shop_DrawMessage(
-                    price_window, item_id + (s32)&Value_00000075);
+                    price_window, item_id + (s32)&MsgItemPlainName);
             }
             if ((*(volatile u32 *)ADDR_03001C94 & 1) != 0) {
                 Audio_PlayCue(SOUND_MENU_CONFIRM);

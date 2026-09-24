@@ -153,13 +153,13 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused, struct MenuResult *state)
 
 extern u8 Value_00000aed;
 extern u8 Value_00000aef;
-extern u8 Value_00000333;
+extern u8 MsgAbilityName;
 extern u8 Value_00000741;
 extern u8 Menu_LvString;
 
 #define MsgPP Value_00000aed
 #define MsgNoPsy Value_00000aef
-#define MsgAction Value_00000333
+#define MsgAction MsgAbilityName
 #define MsgClass Value_00000741
 #define StrLv Menu_LvString
 #define PsyMenuWork gMenuWork

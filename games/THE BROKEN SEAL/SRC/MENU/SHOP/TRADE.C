@@ -238,7 +238,7 @@ s32 Shop_PickUnit(void)
 
 void UiMessage_ShowAndWait(s32);
 
-extern u8 Value_00000075;
+extern u8 MsgItemPlainName;
 extern u8 Value_00000caa;
 
 /*
@@ -290,7 +290,7 @@ s32 Shop_SelSell(s32 unit_id)
                     item_id,
                     Shop_ComputeSalePrice(unit->inventory[selection]),
                     1);
-                Shop_DrawMessage(price_window, item_id + (s32)&Value_00000075);
+                Shop_DrawMessage(price_window, item_id + (s32)&MsgItemPlainName);
             }
 
             if ((*(volatile u32 *)ADDR_03001C94 & 1) != 0) {

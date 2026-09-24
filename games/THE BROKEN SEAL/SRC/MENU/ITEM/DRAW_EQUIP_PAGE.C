@@ -51,7 +51,7 @@ struct ItemListWork {
 
 extern struct ItemListWork *gMenuWork;
 
-extern u8 Value_00000075;
+extern u8 MsgItemPlainName;
 
 void RenderOutput_RedrawSavedRectFar(s32 window);
 void UiWindow_SetTilemapEntryFar(s32 window, s32 icon, s32 x, s32 y, s32 palette);
@@ -76,7 +76,7 @@ s32 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct MenuResult *state)
     WaitFrames(1);
     if (menu->items[state->selected_index] != 0) {
         UiText_DrawCharacterAtOffsetFar((menu->items[state->selected_index] & ITEM_ID_MASK)
-                + (s32)&Value_00000075,
+                + (s32)&MsgItemPlainName,
             (s32)menu->info_window, 0, 0);
     }
 

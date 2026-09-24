@@ -38,8 +38,8 @@ void UiIcon_BuildItemIconTiles(u32 glyph, s32 includeBase, s32 *sourceIndex,
 void Ability_LoadGlyph(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4);
 
 extern u8 Value_0000001f;
-extern u8 Value_00000182;
-extern u8 Value_00000333;
+extern u8 MsgItemName;
+extern u8 MsgAbilityName;
 
 /*
  * Load the graphic for kind through one of three tile loaders, record the
@@ -67,13 +67,13 @@ void MenuSelection_SetupEntry(u32 kind, s32 base, struct ListNode *node, s32 reu
         if (reuse != 0)
             src = node->src;
         UiIcon_BuildItemIconTiles(base, 1, &src, &tile, reuse);
-        node->end = base + (s32)&Value_00000182;
+        node->end = base + (s32)&MsgItemName;
         break;
     case 4:
         if (reuse != 0)
             src = node->src;
         Ability_LoadGlyph(base, 1, (s32)&src, (s32)&tile, reuse);
-        node->end = base + (s32)&Value_00000333;
+        node->end = base + (s32)&MsgAbilityName;
         break;
     }
 

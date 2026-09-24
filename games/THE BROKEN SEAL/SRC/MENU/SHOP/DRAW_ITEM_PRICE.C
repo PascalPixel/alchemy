@@ -3,7 +3,7 @@
 
 void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 void UiText_DrawNumberInWindowFar(s32 value, s32 digits, s32 window, s32 x, s32 y);
-extern u8 Value_00000182;
+extern u8 MsgItemName;
 
 /* Draws an item's name in the window and, on the line below, "Price" with
  * the price and "Coins". With no price, mode 1 shows "We can't buy that."
@@ -27,7 +27,7 @@ show_price:
     goto done;
 draw:
     RenderOutput_RedrawSavedRectFar(window);
-    UiText_DrawCharacterAtOffsetFar(item + (s32)&Value_00000182, window, 0, 0);
+    UiText_DrawCharacterAtOffsetFar(item + (s32)&MsgItemName, window, 0, 0);
     if (price != 0)
         goto show_price;
     switch (price_mode) {

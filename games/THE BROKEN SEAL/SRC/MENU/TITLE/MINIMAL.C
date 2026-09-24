@@ -8,7 +8,7 @@ extern s32 gIw2;
 extern u8 Value_00000000;
 extern u8 Value_00000001;
 extern u8 Value_00000004;
-extern u8 Value_0000000b;
+extern u8 MsgSaveFailed;
 
 u8 *SceneData_Run(void *);
 
@@ -93,7 +93,7 @@ s32 FunctionHead_02000054(void)
         SceneData_Apply2((s32)(u32)&Value_00000001, 2);
         return 0;
     }
-    SceneData_unk11((s32)(u32)&Value_0000000b);
+    SceneData_unk11((s32)(u32)&MsgSaveFailed);
     if (gCell[225] == 2) {
         for (;;) {
             SceneData_unk12(19);

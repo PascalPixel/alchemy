@@ -79752,6 +79752,70 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "scene-3cb-02000d68",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/MENU/LINK_LOBBY/WINS_TALK.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3cb",
+      "absolute_symbols": {
+        "Engine_ActorGet": {
+          "address": "0x0200985c",
+          "kind": "thumb"
+        },
+        "Engine_EventBegin": {
+          "address": "0x02009844",
+          "kind": "thumb"
+        },
+        "Engine_ActorFaceActor": {
+          "address": "0x0200987c",
+          "kind": "thumb"
+        },
+        "Main_08015118": {
+          "address": "0x020097e4",
+          "kind": "thumb"
+        },
+        "Main_08015120": {
+          "address": "0x020097ec",
+          "kind": "thumb"
+        },
+        "Engine_EventSetMessage": {
+          "address": "0x02009884",
+          "kind": "thumb"
+        },
+        "Engine_EventShowMessage": {
+          "address": "0x02009894",
+          "kind": "thumb"
+        },
+        "gGameStateRows": {
+          "address": "0x2000240",
+          "kind": "data"
+        },
+        "Data_0000297b": {
+          "address": "0x297b",
+          "kind": "data"
+        },
+        "Data_0000297d": {
+          "address": "0x297d",
+          "kind": "data"
+        },
+        "Data_00002988": {
+          "address": "0x2988",
+          "kind": "data"
+        },
+        "Data_00002989": {
+          "address": "0x2989",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02000d68",
+          "extent": 168,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_3cb:02000d68": {
+      "name": "LinkLobby_TalkLinkedWins",
+      "source": "MENU/LINK_LOBBY/WINS_TALK.C"
+    },
     "resource_399:02000b70": {
       "name": "ImiruMura_Func02000b70",
       "source": "FIELD/IMIRU_MURA/F_00B70.C"
@@ -1138,7 +1142,8 @@
       "source": "MENU/CHARACTER_SELECTOR_RUN.C"
     },
     "main:080a7478": {
-      "name": "Unnamed_080a7478"
+      "name": "ActionMenu_Open",
+      "source": "MENU/OPEN_ACTION_MENU.C"
     },
     "main:08002f4c": {
       "name": "PackedTable_AdjustMarkedOffsets"
@@ -10579,7 +10584,8 @@
       "source": "BATTLE/EFFECT/CLEANUP_SCENE_OBJECTS.C"
     },
     "main:080a1d08": {
-      "name": "InventoryMenu_ShowModalMessage"
+      "name": "InventoryMenu_ShowModalMessage",
+      "source": "MENU/ITEM/SHOW_MODAL_MESSAGE.C"
     },
     "main:080a24d0": {
       "name": "RunAssetSelectionScreen"
@@ -20006,7 +20012,8 @@
       "name": "Unnamed_080a5388"
     },
     "main:080a7d68": {
-      "name": "Unnamed_080a7d68"
+      "name": "PsynergyMenu_SelectOwner",
+      "source": "MENU/ABILITY/SELECT_OWNER.C"
     },
     "main:080aa768": {
       "name": "Unnamed_080aa768"
@@ -20185,7 +20192,8 @@
       "name": "Unnamed_080f0614"
     },
     "main:080f0678": {
-      "name": "Unnamed_080f0678"
+      "name": "DisplayScroll_InitObjectTable",
+      "source": "GRAPHICS/DISPLAY/SCROLL_INIT_OBJECT_TABLE.C"
     },
     "main:080f07f0": {
       "name": "Unnamed_080f07f0"

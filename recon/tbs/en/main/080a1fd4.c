@@ -1,114 +1,84 @@
+/* Draft, not exact (2026-09-24): candidate=384 reference=368, 132 differing
+   halfwords. Hand-written from the assembly; the paging, clamping and key
+   decoding follow the reference. Residual: the reference keeps only r5-sl
+   (this spelling also takes fp), reuses the first parameter for the page-back
+   key, sets the -1 and 0 results before their tests, and shares the page clamp
+   tail between the two page branches. */
 #include "TYPES.H"
 
-#define Function Func_080a1fd4
+#define KEYS_REPEAT (*(volatile u32 *)0x03001b04)
 
-s32 Func_080022ec();
-s32 Func_080022fc();
-void Func_0800352c();
-void Func_08015418();
-void Func_080f9010();
+void Link_DrawShiftedTilePairFar(s32 addr);
+s32 Math_Div(s32 numerator, s32 denominator);
+s32 Math_Mod(s32 numerator, s32 denominator);
+void Audio_PlayCue(s32 cue);
+void Runtime_SetMainState19(void);
 
-static __inline__ void Call1(void (*f)(), s32 a0)
+s32 Func_080a1fd4(s32 horizontal, s32 count, s32 per_page, s32 *cursor, s32 *page)
 {
-    f(a0);
-}
+    s32 pages;
+    s32 next;
+    s32 previous;
+    s32 page_forward;
 
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
-s32 Func_080a1fd4(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4)
-{
-    s32 n;
-    s32 v1;
-    s32 v3;
-    s32 v4;
-    s32 v5;
-    s32 w;
-    s32 v2;
-    s32 prod;
-
-    if (a1 == 0) {
+    if (count == 0)
         return -1;
-    }
-    Call1(Func_08015418, 0x6002500);
-    n = Value2(Func_080022ec, a1, a2);
-    if (Value2(Func_080022fc, a1, a2) != 0) {
-        n += 1;
-    }
-    if (a0 != 0) {
-        v4 = (*(volatile s32 *)0x03001b04 & 16);
-        v1 = (*(volatile s32 *)0x03001b04 & 32);
-        v5 = (*(volatile s32 *)0x03001b04 & 64);
-        w = (*(volatile s32 *)0x03001b04 & 128);
+    Link_DrawShiftedTilePairFar(0x06002500);
+    pages = Math_Div(count, per_page);
+    if (Math_Mod(count, per_page) != 0)
+        pages++;
+    if (horizontal) {
+        next = KEYS_REPEAT & 16;
+        previous = KEYS_REPEAT & 32;
+        horizontal = KEYS_REPEAT & 64;
+        page_forward = KEYS_REPEAT & 128;
     } else {
-        v4 = (*(volatile s32 *)0x03001b04 & 128);
-        v1 = (*(volatile s32 *)0x03001b04 & 64);
-        v5 = (*(volatile s32 *)0x03001b04 & 32);
-        w = (*(volatile s32 *)0x03001b04 & 16);
+        next = KEYS_REPEAT & 128;
+        previous = KEYS_REPEAT & 64;
+        horizontal = KEYS_REPEAT & 32;
+        page_forward = KEYS_REPEAT & 16;
     }
-    if (v5 != 0) {
-        Call1(Func_080f9010, 111);
-        v3 = (*(s32 *)a4 - 1);
-        *(s32 *)a4 = v3;
-        if (v3 < 0) {
-            *(s32 *)a4 = (n - 1);
+    if (horizontal) {
+        Audio_PlayCue(111);
+        if (--*page < 0)
+            *page = pages - 1;
+        if (*cursor + *page * per_page > count - 1) {
+            *cursor = count - *page * per_page - 1;
+            if (*cursor > per_page - 1)
+                *cursor = per_page - 1;
         }
-        prod = a2 * *(s32 *)a4;
-        if ((*(s32 *)a3 + prod) <= (a1 - 1)) {
-            goto L_done;
-        }
-    } else {
-        if (w == 0) {
-            goto L_other;
-        }
-        Call1(Func_080f9010, 111);
-        v3 = (*(s32 *)a4 + 1);
-        *(s32 *)a4 = v3;
-        if (v3 > (n - 1)) {
-            *(s32 *)a4 = 0;
-        }
-        prod = a2 * *(s32 *)a4;
-        if ((*(s32 *)a3 + prod) <= (a1 - 1)) {
-            goto L_done;
-        }
+        Runtime_SetMainState19();
+        return 1;
     }
-    v3 = (a1 - prod) - 1;
-    *(s32 *)a3 = v3;
-    if (v3 > (a2 - 1)) {
-        *(s32 *)a3 = (a2 - 1);
+    if (page_forward) {
+        Audio_PlayCue(111);
+        if (++*page > pages - 1)
+            *page = 0;
+        if (*cursor + *page * per_page > count - 1) {
+            *cursor = count - *page * per_page - 1;
+            if (*cursor > per_page - 1)
+                *cursor = per_page - 1;
+        }
+        Runtime_SetMainState19();
+        return 1;
     }
-L_done:
-    Func_0800352c();
-    return 1;
-L_other:
-    if (v1 != 0) {
-        Call1(Func_080f9010, 111);
-        v3 = (*(s32 *)a3 - 1);
-        *(s32 *)a3 = v3;
-        if (v3 >= 0) {
-            return 0;
+    if (previous) {
+        Audio_PlayCue(111);
+        if (--*cursor < 0) {
+            *cursor = per_page - 1;
+            *cursor = count - *page * per_page - 1;
+            if (*cursor > per_page - 1)
+                *cursor = per_page - 1;
         }
-        v3 = ((a1 - (s32)(*(s32 *)a4 * a2)) - 1);
-        *(s32 *)a3 = v3;
-        if (v3 <= (a2 - 1)) {
-            return 0;
-        }
-        *(s32 *)a3 = (a2 - 1);
-    } else {
-        if (v4 == 0) {
-            return -1;
-        }
-        Call1(Func_080f9010, 111);
-        v2 = (*(s32 *)a3 + 1);
-        *(s32 *)a3 = v2;
-        if (v2 == (a1 - (s32)(*(s32 *)a4 * a2))) {
-            *(s32 *)a3 = 0;
-        }
-        if (*(s32 *)a3 > (a2 - 1)) {
-            *(s32 *)a3 = 0;
-        }
+        return 0;
     }
-    return 0;
+    if (next) {
+        Audio_PlayCue(111);
+        if (++*cursor == count - *page * per_page)
+            *cursor = 0;
+        if (*cursor > per_page - 1)
+            *cursor = 0;
+        return 0;
+    }
+    return -1;
 }

@@ -4511,6 +4511,12 @@
       "name": "NodeChain_GetNodeAtCount",
       "source": "SYSTEM/MEMORY/NODE_CHAIN_GET_NODE_AT_COUNT.C"
     },
+    "main:0801b664": {
+      "name": "Menu_StepRight"
+    },
+    "main:0801b810": {
+      "name": "Menu_StepLeft"
+    },
     "main:0801b9a8": {
       "name": "Menu_ReloadNodeResource",
       "source": "MENU/SELECTION_RESOURCE.C"
@@ -20274,8 +20280,6 @@
     "main:08079b24": "Curve_LookupScaledValue",
     "main:0808a500": "EffectSlot_UpdateFar",
     "main:0801b248": "Menu_SetupSelectionSide",
-    "main:0801b664": "Menu_StepRight",
-    "main:0801b810": "Menu_StepLeft",
     "main:0801ba68": "Menu_ScrollSelectionList",
     "main:08077238": "Item_GetEquipmentGroupFar",
     "main:080150e0": "Ui_LoadCharacterEntryForSlotFar",

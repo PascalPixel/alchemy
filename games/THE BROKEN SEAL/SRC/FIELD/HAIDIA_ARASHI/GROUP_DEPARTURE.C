@@ -6,9 +6,9 @@
 #define ObjectMotion_EnableActionAndSetCallback_1(a0, a1) Value2(Engine_ActorEnableActionCallback, a0, a1)
 #define ObjectMotion_MarkActiveAndSetActionCallback_1(a0, a1) Call2(Func_020070aa, a0, a1)
 #define BattleEffect_PlayQueuedSound_1(args...) Func_02007232(args)
-#define Scene_GetRecord_1_020028a4(a0) Value1(Func_020070f4, a0)
-#define Scene_GetRecord_2(a0) Value1(Func_0200710c, a0)
-#define Scene_GetRecord_3(a0) Value1(Func_02007124, a0)
+#define Scene_GetRecord_1_020028a4(a0) Value1(Engine_ActorGet, a0)
+#define Scene_GetRecord_2(a0) Value1(Engine_ActorGet, a0)
+#define Scene_GetRecord_3(a0) Value1(Engine_ActorGet, a0)
 #define ObjectMotion_EnableActionAndSetCallback_3(a0, a1) Value2(Engine_ActorEnableActionCallback, a0, a1)
 #define Object_LookupAndStep_1(args...) Func_02007176(args)
 #define BattleRuntime_WaitIfModeZero_3(args...) ((void (*)())Engine_EventWait)(args)
@@ -18,7 +18,7 @@
 #define BattleEffect_PlayQueuedSound_4(args...) Func_02007356(args)
 #define ObjectMotion_EnableActionAndSetCallback_7(a0, a1) Value2(Engine_ActorEnableActionCallback, a0, a1)
 #define Object_LookupAndStep_3(args...) Func_0200726e(args)
-#define Scene_GetRecord_4(a0) Value1(Func_020073c0, a0)
+#define Scene_GetRecord_4(a0) Value1(Engine_ActorGet, a0)
 
 struct Object {
     u8 filler00[6];
@@ -128,144 +128,50 @@ Rec *Func_02008cea(s32);
 Rec *Func_02008cf2(s32);
 Rec *Func_02008d0e(s32);
 u32 Func_020046fa(u32 value, u32 divisor);
-void Func_0200031c(s32);
-void Func_020003c4(s32);
-void Func_02000474(s32);
-void Func_020004ac(s32);
-void Func_020004e4(s32);
 void Func_02004ce4(s32);
-void Func_02001342(void);
-void Func_0200153e(void);
-void Func_020017a4(void);
-u8 *Func_02004c56(s32);
-void Func_02001966(void);
-u8 *Func_02004c00(s32);
-u8 *Func_02004c10(s32);
-u8 *Func_02004c1e(s32);
-u8 *Func_02004c2c(s32);
-u8 *Func_02004c3a(s32);
-u8 *Func_02004c48(s32);
-u8 *Func_02004c64(s32);
-u8 *Func_02004c64_a(s32);
-u8 *Func_02004c86(s32);
-void Func_02004682(void);
-u8 *Func_02004cd0(s32);
 s32 Func_02004bea(s32, s32);
-u8 *Func_02004d0e(s32);
 s32 Func_02004c24(s32, s32);
-u8 *Func_02004d44(s32);
 s32 Func_02004c5a(s32, s32);
-u8 *Func_02004d7c(s32);
 s32 Func_02004c92(s32, s32);
-u8 *Func_02004dae(s32);
-u8 *Func_02004dc0(s32);
-u8 *Func_02004dc0_a(s32);
 void Func_02004cea(u8 *, s32);
-u8 *Func_02004e3c(s32);
 s32 Func_02004d50(s32, s32);
-u8 *Func_02004e7e(s32);
 s32 Func_02004d92(s32, s32);
-u8 *Func_02004ebe(s32);
 s32 Func_02004dd2(s32, s32);
-s32 Func_02004ef6(s32);
 void Func_020050bc(void);
 void Func_020050c8(void);
-void Func_02000990(void);
-u8 *Func_0200501a(s32);
-void Func_0200133c(void);
 void Func_02005248(void);
 void Func_02002df0(void);
 void Func_020049c8(void);
-void Func_02000338(s32);
-void Func_0200034c(s32);
 s32 Func_02008aa0(s32, s32);
 s32 Func_02008ae4(s32, s32);
-void Func_02008cda(s32);
 void Func_020088fe(void);
-void Func_020041da(void);
-void Func_0200038c(s32);
-void Func_02000426();
-void Func_020017b6();
-void Func_0200051a();
-void Func_0200054e();
-void Func_02000582();
 void Func_02005264_a();
 void Func_02005270();
 void Func_02005284();
 void Func_020052ea();
 void Func_0200537c();
-void Func_02002538();
-s32 Func_02002ce8();
-s32 Func_02002cfc();
 void Func_02005acc();
 void Func_02005d2e();
 void Func_02005e24();
 void Func_02002e5e();
-Thing1 *Func_0200619a(s32);
-Thing2 *Func_02006214(s32);
-s32 Func_02006840(s32);
-void Func_020041b6(s32, s32);
-s32 Func_0200684c(s32);
-void Func_020041c2(s32, s32);
-s32 Func_02006858(s32);
-void Func_020041ce(s32, s32);
-s32 Func_02006864(s32);
-void Func_020041da_a(s32, s32);
-s32 Func_02006872(s32);
-void Func_020041e8(s32, s32);
-s32 Func_0200687e(s32);
-void Func_020041f4(s32, s32);
-s32 Func_0200688a(s32);
-void Func_02004200(s32, s32);
-s32 Func_02006896(s32);
-void Func_0200420c(s32, s32);
-struct Actor *Func_0200854a(s32);
 s32 Func_0200891e(s32, s32);
 void Func_02008710(s32);
-s32 Func_02005fec();
 s32 Func_02005ff6();
-s32 Func_0200605a();
 void Func_0200606c();
-s32 Func_02006146();
-void Func_02005f86();
-void Func_02005f90();
-void Func_02005f9a();
-void Func_02005fa4();
-void Func_0200608e_a();
 void Func_02006246();
 void Func_0200630e();
 void Func_02006318();
 s32 Func_02006350();
 void Func_0200635e();
-s32 Func_020063f2();
-s32 Func_020063fc();
-s32 Func_02006406();
-s32 Func_02006410();
-s32 Func_0200646c();
-void Func_02006568();
 void Func_02006632();
 void Func_02006638_a();
-s32 Func_02006758();
 void Func_0200686c();
 void Func_0200c56d();
-u8 *Func_020068e2(s32);
 s32 Func_020067f6(s32, s32);
-u8 *Func_0200693c(s32);
 s32 Func_02006850(s32, s32);
-u8 *Func_0200697c(s32);
 s32 Func_02006890(s32, s32);
-u8 *Func_02006a02_b(s32);
-s32 Func_020069cc(s32);
-u8 *Func_02006b12_b(s32);
 void Func_02006c84(void);
-u8 *Func_02006b28(s32);
-u8 *Func_02006b3a(s32);
-u8 *Func_02006c16_b(s32);
 void Func_02006db4(void);
-u8 *Func_02006c96(s32);
-u8 *Func_02006cee(s32);
-u8 *Func_02006d24(s32);
-u8 *Func_02006d34(s32);
 void Func_02005116(void);
 void Func_02008300();
 void Func_02008306();
@@ -279,24 +185,15 @@ void Func_02008362();
 void Func_02008368();
 void Func_0200836e();
 void Func_02008374();
-s32 Func_0200857a();
-s32 Func_02008582();
 void Func_0200861e_a();
-void Func_02008c9e(s32);
 void Func_0200887a_a(void);
-void Func_02008ca8(s32);
 void Func_02008884_a(void);
-void Func_02008cb2(s32);
 void Func_0200888e(void);
-void Func_02008cc4(s32);
 void Func_020088a0(void);
 s32 Func_02007008();
 s32 Func_02007020();
 s32 Func_02007038();
 void Func_020070aa();
-s32 Func_020070f4();
-s32 Func_0200710c();
-s32 Func_02007124();
 void Func_02007176();
 void Func_020071f2();
 void Func_02007232();
@@ -304,8 +201,6 @@ void Func_0200726e();
 void Func_020072f6();
 void Func_02007320();
 void Func_02007356();
-s32 Func_020073c0();
-u8 *Func_020074d6(s32);
 s32 Func_020073ea(s32, s32);
 void Func_02008e00(void);
 
@@ -326,6 +221,8 @@ void Func_02008e00(void);
  * into the argument registers; a direct call precomputes a costly constant
  * into a pseudo that the compiler then shares with later uses in the block.
  * A value-returning call also sets r0 last of its arguments. */
+void SceneActor_RunActor22PlacementSequence(s32 x, s32 y);
+
 static __inline__ void Call1(void (*f)(), s32 a0)
 {
     f(a0);
@@ -516,7 +413,6 @@ void SceneState_SetFlag210AndConfigureRegion40_84(void)
 
 void SceneState_SetFlag210AndConfigureRegion40_89(void)
 {
-    void Func_02000360_r(s32);
 
     s32 a;
     s32 b;
@@ -529,7 +425,6 @@ void SceneState_SetFlag210AndConfigureRegion40_89(void)
 
 void SceneState_SetWork1c0AndRunObject(u8 *o)
 {
-    void Func_02000360_r(s32);
 
     u8 *state;
 
@@ -548,31 +443,28 @@ void FieldScene_SetupDescriptorD774(void)
     Map_AnimateCells(Data_0200d774, 45, 11);
     Actor_WalkTo(0, (s32)&Value_00000101, 0x1A4);
     Event_Wait(3);
-    Func_0200031c(11);
+    SceneState_SetWork1c0AndRunObject(11);
 }
 
 void SceneState_SetValue123Mode1(void)
 {
-    void Func_02000360_r(s32);
 
     Audio_PlayCue(0x7B);
-    Func_02000338(1);
+    SceneState_SetWork1c0AndRunObject(1);
 }
 
 void SceneState_ApplyValues123And3(void)
 {
-    void Func_02000360_r(s32);
 
     Audio_PlayCue(0x7B);
-    Func_0200034c(3);
+    SceneState_SetWork1c0AndRunObject(3);
 }
 
 void SceneState_SetValue123Mode4(void)
 {
-    void Func_02000360_r(s32);
 
     Audio_PlayCue(0x7B);
-    Func_02000360_r(4);
+    SceneState_SetWork1c0AndRunObject(4);
 }
 
 void FieldScene_RunStep7BAndCheckFlags841And842(void)
@@ -580,9 +472,9 @@ void FieldScene_RunStep7BAndCheckFlags841And842(void)
     Audio_PlayCue(0x7B);
     if (GameFlag_IsSet((s32)&Value_00000841) != 0
         && GameFlag_IsSet((s32)&Value_00000842) == 0) {
-        Func_020041da();
+        FieldScene_ConfigureActorTwentyTwoScene();
     }
-    Func_0200038c(2);
+    SceneState_SetWork1c0AndRunObject(2);
 }
 
 void FieldScene_SetupDescriptorD78a(void)
@@ -591,7 +483,7 @@ void FieldScene_SetupDescriptorD78a(void)
     Map_AnimateCells(Data_0200d78a, 54, 32);
     Engine_ActorWalkTo(0, 0x196, (s32)&Value_000002d7);
     Event_Wait(3);
-    Func_020003c4(5);
+    SceneState_SetWork1c0AndRunObject(5);
 }
 
 void FieldScene_RunScene372_02000278(void)
@@ -608,13 +500,13 @@ void FieldScene_RunScene372_02000278(void)
         if (record != 0) {
             goto L_020002b4;
         }
-        Func_020017b6();
+        FieldScene_RunScene372SequenceA();
         GameFlag_Set(0x206);
     } else {
         L_020002b4:;
         Actor_WalkTo(0, 0x106, 0x325);
         Event_Wait(3);
-        Func_02000426(6);
+        SceneState_SetWork1c0AndRunObject(6);
     }
 }
 
@@ -626,7 +518,7 @@ void FieldScene_SetupDescriptorD78aIfFlag205Clear(void)
     }
     Actor_WalkTo(0, 0x154, 0x378);
     Event_Wait(3);
-    Func_02000474(7);
+    SceneState_SetWork1c0AndRunObject(7);
 }
 
 void FieldScene_SetupWithDescriptorD7A0(void)
@@ -635,7 +527,7 @@ void FieldScene_SetupWithDescriptorD7A0(void)
     Map_AnimateCells((void *)0x0200d7a0, 49, 69);
     Actor_WalkTo(0, 0x146, 0x466);
     Event_Wait(3);
-    Func_020004ac(8);
+    SceneState_SetWork1c0AndRunObject(8);
 }
 
 void FieldScene_SetupDescriptorD7b6(void)
@@ -644,7 +536,7 @@ void FieldScene_SetupDescriptorD7b6(void)
     Map_AnimateCells((void *)0x0200d7b6, 52, 76);
     Actor_WalkTo(0, 0x176, 0x4d6);
     Event_Wait(3);
-    Func_020004e4(9);
+    SceneState_SetWork1c0AndRunObject(9);
 }
 
 void FieldScene_RunScene372_02000398(void)
@@ -656,7 +548,7 @@ void FieldScene_RunScene372_02000398(void)
     Map_AnimateCells(0x200d78a, 35, 74);
     Actor_WalkTo(0, 102, 0x4b6);
     Event_Wait(3);
-    Func_0200051a(10);
+    SceneState_SetWork1c0AndRunObject(10);
 }
 
 void FieldScene_RunScene372_020003cc(void)
@@ -668,7 +560,7 @@ void FieldScene_RunScene372_020003cc(void)
     Map_AnimateCells(0x200d78a, 35, 73);
     Actor_WalkTo(0, 102, 0x4b6);
     Event_Wait(3);
-    Func_0200054e(12);
+    SceneState_SetWork1c0AndRunObject(12);
 }
 
 void FieldScene_RunScene372_02000400(void)
@@ -680,7 +572,7 @@ void FieldScene_RunScene372_02000400(void)
     Map_AnimateCells(0x200d7a0, 38, 72);
     Actor_WalkTo(0, 146, 0x49e);
     Event_Wait(3);
-    Func_02000582(13);
+    SceneState_SetWork1c0AndRunObject(13);
 }
 
 s32 FieldScene_RunFlagGatedActorSetup(void)
@@ -734,45 +626,45 @@ s32 FieldScene_RunFlagGatedActorSetup(void)
     }
     if (GameFlag_IsSet(0x830) != 0) {
         Actor_SetPosition(11, w1, w2);
-        Func_02001342();
+        FieldScene_RunScene372_02000ec4();
     }
     if (GameFlag_IsSet((s32)&Value_00000831) != 0) {
         Actor_SetPosition(12, w3, w4);
-        Func_0200153e();
+        ActorPresentation_SetEightSceneCells();
     }
     if (GameFlag_IsSet((s32)&Value_00000832) != 0) {
         Actor_SetPosition(13, w5, p1);
-        Func_020017a4();
+        SceneState_ApplyFourRects();
     }
     if (GameFlag_IsSet((s32)&Value_00000833) != 0) {
         Actor_SetPosition(14, w6, p2);
-        Func_02001966();
+        FieldScene_DrawFiveTileBlocks();
     }
     {
         u8 *q;
-        q = Func_02004c00(11);
+        q = Actor_Get(11);
         q += 0x59;
         m = 4;
         *q = *q | m;
-        q = Func_02004c10(12);
+        q = Actor_Get(12);
         q += 0x59;
         *q = *q | m;
-        q = Func_02004c1e(13);
+        q = Actor_Get(13);
         q += 0x59;
         *q = *q | m;
-        q = Func_02004c2c(14);
+        q = Actor_Get(14);
         q += 0x59;
         *q = *q | m;
-        q = Func_02004c3a(15);
+        q = Actor_Get(15);
         q += 0x59;
         *q = *q | m;
-        q = Func_02004c48(16);
+        q = Actor_Get(16);
         q += 0x59;
         *q = *q | m;
-        q = Func_02004c56(17);
+        q = Actor_Get(17);
         q += 0x59;
         *q = *q | m;
-        q = Func_02004c64(18);
+        q = Actor_Get(18);
         q += 0x59;
         { u8 tmp = m | *q; *q = tmp; }
     }
@@ -781,7 +673,7 @@ s32 FieldScene_RunFlagGatedActorSetup(void)
     }
     {
         u8 *q;
-        q = Func_02004c86(19);
+        q = Actor_Get(19);
         *(s32 *)(q + 0x18) = 0x20000;
         *(s32 *)(q + 0x1C) = 0x20000;
     }
@@ -790,15 +682,15 @@ s32 FieldScene_RunFlagGatedActorSetup(void)
     } else {
         Actor_EnableActionCallback(19, Data_0200c9f4);
     }
-    if (Func_02004c64_a((s32)&Value_00000841) != 0) {
+    if (GameFlag_IsSet((s32)&Value_00000841) != 0) {
         s32 h2;
         u8 *tbl;
-        Func_02004682();
+        FieldScene_BuildPlacementGrid();
         Actor_SetPosition(9, w21, 0x4CD0000);
         {
             u8 *o;
             s32 v;
-            o = Func_02004cd0(9);
+            o = Actor_Get(9);
             h2 = 0xE000;
             *(u16 *)(o + 6) = h2;
             v = Func_02004bea(Random_Next(), 0x5A) + 60;
@@ -813,7 +705,7 @@ s32 FieldScene_RunFlagGatedActorSetup(void)
         {
             u8 *o;
             s32 v;
-            o = Func_02004d0e(26);
+            o = Actor_Get(26);
             *(u16 *)(o + 6) = h2;
             v = Func_02004c24(Random_Next(), 0x5A) + 60;
             *(u16 *)(o + 0x64) = v;
@@ -826,7 +718,7 @@ s32 FieldScene_RunFlagGatedActorSetup(void)
         {
             u8 *o;
             s32 v;
-            o = Func_02004d44(22);
+            o = Actor_Get(22);
             *(u16 *)(o + 6) = h2;
             v = Func_02004c5a(Random_Next(), 0x5A) + 60;
             *(u16 *)(o + 0x64) = v;
@@ -839,7 +731,7 @@ s32 FieldScene_RunFlagGatedActorSetup(void)
         {
             u8 *o;
             s32 v;
-            o = Func_02004d7c(8);
+            o = Actor_Get(8);
             *(u16 *)(o + 6) = h2;
             v = Func_02004c92(Random_Next(), 0x5A) + 60;
             *(u16 *)(o + 0x64) = v;
@@ -851,11 +743,11 @@ s32 FieldScene_RunFlagGatedActorSetup(void)
         Actor_SetAnimation(8, 6);
         {
             u8 *r;
-            r = Func_02004dae(22);
+            r = Actor_Get(22);
             r += 0x23;
             m2 = 0xFE;
             *r = *r & m2;
-            r = Func_02004dc0(8);
+            r = Actor_Get(8);
             r += 0x23;
             *r = m2 & *r;
         }
@@ -867,7 +759,7 @@ s32 FieldScene_RunFlagGatedActorSetup(void)
         if (GameFlag_IsSet((s32)&Value_00000842) != 0) {
             Actor_SetPosition(22, 0, 0);
         }
-    } else if (Func_02004dc0_a((s32)&Value_0000083a) != 0) {
+    } else if (GameFlag_IsSet((s32)&Value_0000083a) != 0) {
         u8 *tbl;
         Actor_SetPosition(10, w8, b1);
         Actor_FaceDirection(10, w9, 0);
@@ -875,7 +767,7 @@ s32 FieldScene_RunFlagGatedActorSetup(void)
         {
             u8 *o;
             s32 v;
-            o = Func_02004e3c(10);
+            o = Actor_Get(10);
             v = Func_02004d50(Random_Next(), 0x5A) + 60;
             *(u16 *)(o + 0x64) = v;
         }
@@ -887,7 +779,7 @@ s32 FieldScene_RunFlagGatedActorSetup(void)
         {
             u8 *o;
             s32 v;
-            o = Func_02004e7e(24);
+            o = Actor_Get(24);
             v = Func_02004d92(Random_Next(), 0x5A) + 60;
             *(u16 *)(o + 0x64) = v;
         }
@@ -898,14 +790,14 @@ s32 FieldScene_RunFlagGatedActorSetup(void)
         {
             u8 *o;
             s32 v;
-            o = Func_02004ebe(25);
+            o = Actor_Get(25);
             v = Func_02004dd2(Random_Next(), 0x5A) + 60;
             *(u16 *)(o + 0x64) = v;
         }
         Actor_EnableActionCallback(25, tbl);
         Actor_SetPosition(23, w14, p4);
         Actor_FaceDirection(23, 0xC000, 0);
-        Actor_SetSpriteFlags(Func_02004ef6(23), 0);
+        Actor_SetSpriteFlags(Actor_Get(23), 0);
         Actor_SetPosition(17, 0, 0);
         Actor_SetPosition(18, 0, 0);
     } else {
@@ -920,7 +812,7 @@ s32 FieldScene_RunFlagGatedActorSetup(void)
         }
     }
     if (GameFlag_IsSet(0x210) != 0) {
-        Func_02000990();
+        SceneState_SetFlag210AndConfigureRegion40_84();
     }
     GameFlag_Set((s32)&Value_00000834);
     k = 46;
@@ -933,7 +825,7 @@ s32 FieldScene_RunFlagGatedActorSetup(void)
     {
         u8 *o;
         u8 *q;
-        o = Func_0200501a(21);
+        o = Actor_Get(21);
         q = o + 0x55;
         *q = 0;
         *(s32 *)(o + 0xC) = 0xC00000;
@@ -945,7 +837,7 @@ s32 FieldScene_RunFlagGatedActorSetup(void)
     if (GameFlag_IsSet((s32)&Value_0000087b) == 0) {
         s16 *table = (s16 *)Data_02000240;
         if (table[225] == 15) {
-            Func_0200133c();
+            FieldScene_RunScene372_02000a10();
             return 0;
         }
     }
@@ -1142,16 +1034,16 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
             Actor_Get(0)->priority_flags |= ACTOR_PRIORITY_AUTOMATIC;
             leader->priority_flags = flags;
         }
-        Func_02002538();
+        SceneState_ApplyFourRects();
         GameFlag_Set(0x312);
         if (GameFlag_IsSet(0x837) != 0) {
             if (GameFlag_IsSet(0x841) == 0) {
                 if (GameFlag_IsSet(0x30c) == 0) {
                     if (Actor_Get(0)->z.fixed <= 0x2b4ffff) {
-                        Value2(Func_02002ce8, 62, 0x29d);
+                        Value2(SceneActor_RunActor22PlacementSequence, 62, 0x29d);
                         Actor_WalkToAndWait(0, 27, 0x273);
                     } else {
-                        Value2(Func_02002cfc, 75, 0x2cb);
+                        Value2(SceneActor_RunActor22PlacementSequence, 75, 0x2cb);
                         Actor_WalkToAndWait(0, 67, 0x2f5);
                     }
                     GameFlag_Set(0x30c);
@@ -1164,7 +1056,6 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
 
 void SceneState_ApplyFourRects(void)
 {
-    void Func_02000360_r(s32);
 
     s32 a = 0x2a;
     s32 b;
@@ -1307,7 +1198,7 @@ void FieldScene_RunScene372SequenceE(void)
         Value2(Engine_ActorEnableActionCallback, 22, 0x200c984);
         Event_ShowMessage(22, 0);
         v6 = 128;
-        record = Func_02005fec(22);
+        record = Actor_Get(22);
         *(volatile s32 *)(record + 28) = (v6 << 9);
         Actor_RunRepeatedMotion(22, 1);
         Event_Wait(20);
@@ -1321,7 +1212,7 @@ void FieldScene_RunScene372SequenceE(void)
         Event_ShowMessage(22, 0);
         Actor_SetSpeed(22, (v6 << 9), 0x8000);
         Actor_SetAnimation(22, 2);
-        record = Value1(Func_0200605a, 0);
+        record = Value1(Engine_ActorGet, 0);
         if (record != 0) {
             Actor_SetDestination(22, *(s16 *)(record + 10), *(s16 *)(record + 18));
         }
@@ -1358,7 +1249,7 @@ void FieldScene_RunScene372SequenceD(void)
     Actor_FaceDirection(22, 0x4000, 0);
     Event_ShowMessage(22, 0);
     Actor_SetAnimation(22, 2);
-    record = Value1(Func_02006146, 0);
+    record = Value1(Engine_ActorGet, 0);
     if (record != 0) {
         Actor_SetDestination(22, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
@@ -1375,7 +1266,7 @@ void SceneActor_RunActor22PlacementSequence(s32 x, s32 y)
     s32 h = 0x8000;
     Thing2 *b;
 
-    a = Func_0200619a(0);
+    a = Actor_Get(0);
     if (a != 0) {
         Actor_SetPosition(22, a->unk8, a->unk10);
     }
@@ -1391,7 +1282,7 @@ void SceneActor_RunActor22PlacementSequence(s32 x, s32 y)
     Event_ShowMessage(22, 0);
     Actor_SetAnimationAndWait(0, 3);
     Actor_SetAnimation(22, 2);
-    b = Func_02006214(0);
+    b = Actor_Get(0);
     if (b != 0) {
         Actor_SetDestination(22, b->unkA, b->unk12);
     }
@@ -1414,7 +1305,7 @@ void FieldScene_RunReturnScript(void)
     if (GameFlag_IsSet(0x838) == 0) {
         Event_Begin();
         Call1_02001828(Func_02006246, 0x200d4b0);
-        Func_0200608e_a();
+        SceneState_SetValue140Mode0();
         Task_Wait(1);
         Audio_PlayCue(141);
         Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
@@ -1459,10 +1350,10 @@ void FieldScene_RunReturnScript(void)
         Camera_MoveTo(0x700000, -1, 0x14b0000, 1);
         Camera_WaitForMove();
         for (i = 0; i < 40; i++) {
-            Func_02005f86(Func_020063f2(32));
-            Func_02005f90(Func_020063fc(33));
-            Func_02005f9a(Func_02006406(30));
-            Func_02005fa4(Func_02006410(29));
+            SceneActor_SetModeByFrameBit1(Actor_Get(32));
+            SceneActor_SetModeByFrameBit1(Actor_Get(33));
+            SceneActor_SetModeByFrameBit1(Actor_Get(30));
+            SceneActor_SetModeByFrameBit1(Actor_Get(29));
             Task_Wait(1);
         }
         phase = &Data_0200d7fc;
@@ -1476,7 +1367,7 @@ void FieldScene_RunReturnScript(void)
         *phase = 1;
         Event_Wait(30);
         Actor_SetPosition(19, 0x720000, 0x1220000);
-        record = Func_0200646c(19);
+        record = Actor_Get(19);
         shifted = *(s32 *)(record + 12) + 0x400000;
         *(s32 *)(record + 12) = shifted;
         *(s32 *)(record + 60) = shifted;
@@ -1551,12 +1442,12 @@ void FieldScene_RunReturnScript(void)
         Event_ShowMessage(22, 0);
         Actor_FaceActor(0, 22, 0);
         Event_Wait(20);
-        Func_02006568();
+        FieldScene_RunSingleStep();
         Actor_SetAnimation(0, 3);
         Actor_SetAnimationAndWait(22, 3);
         Event_Wait(20);
         Actor_SetAnimation(22, 2);
-        record = Value1(Func_02006758, 0);
+        record = Value1(Engine_ActorGet, 0);
         if (record != 0) {
             Actor_SetDestination(22, *(s16 *)(record + 10), *(s16 *)(record + 18));
         }
@@ -1603,15 +1494,15 @@ void ActorPresentation_SetFourActorsModeByBit(void)
     extern s32 Data_0200d7fc;
 
     if (((*(u32 *)0x03001E40 >> Data_0200d7fc) & 3) != 0) {
-        Func_020041b6(Func_02006840(32), 1);
-        Func_020041c2(Func_0200684c(33), 1);
-        Func_020041ce(Func_02006858(30), 1);
-        Func_020041da_a(Func_02006864(29), 1);
+        OverlayObject_SetChildByte5AndMark(Actor_Get(32), 1);
+        OverlayObject_SetChildByte5AndMark(Actor_Get(33), 1);
+        OverlayObject_SetChildByte5AndMark(Actor_Get(30), 1);
+        OverlayObject_SetChildByte5AndMark(Actor_Get(29), 1);
     } else {
-        Func_020041e8(Func_02006872(32), 8);
-        Func_020041f4(Func_0200687e(33), 8);
-        Func_02004200(Func_0200688a(30), 8);
-        Func_0200420c(Func_02006896(29), 8);
+        OverlayObject_SetChildByte5AndMark(Actor_Get(32), 8);
+        OverlayObject_SetChildByte5AndMark(Actor_Get(33), 8);
+        OverlayObject_SetChildByte5AndMark(Actor_Get(30), 8);
+        OverlayObject_SetChildByte5AndMark(Actor_Get(29), 8);
     }
 }
 
@@ -1722,7 +1613,7 @@ void FieldScene_RunFlagGatedActorSequence(void)
     {
         u8 *o;
         s32 v;
-        o = Func_020068e2(10);
+        o = Actor_Get(10);
         v = Func_020067f6(Random_Next(), 0x5A) + 60;
         tbl = Data_0200cec8;
         *(u16 *)(o + 0x64) = v;
@@ -1736,7 +1627,7 @@ void FieldScene_RunFlagGatedActorSequence(void)
     {
         u8 *o;
         s32 v;
-        o = Func_0200693c(24);
+        o = Actor_Get(24);
         v = Func_02006850(Random_Next(), 0x5A) + 60;
         *(u16 *)(o + 0x64) = v;
         Actor_EnableActionCallback(24, tbl);
@@ -1747,7 +1638,7 @@ void FieldScene_RunFlagGatedActorSequence(void)
     {
         u8 *o;
         s32 v;
-        o = Func_0200697c(25);
+        o = Actor_Get(25);
         v = Func_02006890(Random_Next(), 0x5A) + 60;
         *(u16 *)(o + 0x64) = v;
         Actor_EnableActionCallback(25, tbl);
@@ -1756,7 +1647,7 @@ void FieldScene_RunFlagGatedActorSequence(void)
     Actor_FaceDirection(26, k2000_3, 0);
     Actor_SetPosition(23, kf3_1, k4fd_1);
     Actor_FaceDirection(23, kc000_1, 0);
-    Actor_SetSpriteFlags(Func_020069cc(23), 0);
+    Actor_SetSpriteFlags(Actor_Get(23), 0);
     Task_Wait(3);
     Event_SetMessage((s32)&Value_00000e8c);
     Event_ShowMessage((s32)&Value_0000201a, 0);
@@ -1764,7 +1655,7 @@ void FieldScene_RunFlagGatedActorSequence(void)
     Actor_WalkToAndWait(0, 150, k446_1);
     {
         u8 *p;
-        p = Func_02006a02_b(0);
+        p = Actor_Get(0);
         if (p != 0) {
             Actor_SetPosition(22, *(s32 *)(p + 8), *(s32 *)(p + 16));
         }
@@ -1799,7 +1690,7 @@ void FieldScene_RunFlagGatedActorSequence(void)
     Actor_SetAnimation(10, 1);
     {
         u8 *o;
-        o = Func_02006b12_b(10);
+        o = Actor_Get(10);
         w16 = 0x10000;
         *(s32 *)(o + 0x18) = w16;
         *(s32 *)(o + 0x1C) = w16;
@@ -1807,14 +1698,14 @@ void FieldScene_RunFlagGatedActorSequence(void)
     Actor_SetAnimation(24, 1);
     {
         u8 *o;
-        o = Func_02006b28(24);
+        o = Actor_Get(24);
         *(s32 *)(o + 0x18) = w16;
         *(s32 *)(o + 0x1C) = w16;
     }
     Actor_SetAnimation(25, 1);
     {
         u8 *o;
-        o = Func_02006b3a(25);
+        o = Actor_Get(25);
         *(s32 *)(o + 0x18) = w16;
         *(s32 *)(o + 0x1C) = w16;
     }
@@ -1844,7 +1735,7 @@ void FieldScene_RunFlagGatedActorSequence(void)
     Audio_PlayCue(106);
     {
         u8 *o;
-        o = Func_02006c16_b(23);
+        o = Actor_Get(23);
         *(s32 *)(o + 0x28) = k20000_1;
     }
     Event_Wait(6);
@@ -1864,7 +1755,7 @@ void FieldScene_RunFlagGatedActorSequence(void)
     Event_ShowMessage(k800a_1, 0);
     {
         u8 *o;
-        o = Func_02006c96(25);
+        o = Actor_Get(25);
         o += 0x5A;
         m = 0xFE;
         {
@@ -1874,7 +1765,7 @@ void FieldScene_RunFlagGatedActorSequence(void)
     }
     {
         u8 *o;
-        o = Func_02006cee(26);
+        o = Actor_Get(26);
         o += 0x5A;
         *o = *o & m;
     }
@@ -1884,7 +1775,7 @@ void FieldScene_RunFlagGatedActorSequence(void)
     Actor_MoveToAndWait(26, 227, k4a5_3);
     {
         u8 *o;
-        o = Func_02006d24(25);
+        o = Actor_Get(25);
         o += 0x5A;
         one = 1;
         {
@@ -1894,7 +1785,7 @@ void FieldScene_RunFlagGatedActorSequence(void)
     }
     {
         u8 *o;
-        o = Func_02006d34(26);
+        o = Actor_Get(26);
         o += 0x5A;
         {
             u8 lv = one | *o;
@@ -2148,7 +2039,7 @@ void SceneDialogue_RunActorTenFlag30dDialogue(void)
     {
         u8 *rec;
         s32 v;
-        rec = Func_020074d6(10);
+        rec = Actor_Get(10);
         v = Func_020073ea(Random_Next(), 0x5A) + 60;
         tbl = Data_0200cec8;
         *(u16 *)(rec + 0x64) = v;
@@ -2190,7 +2081,7 @@ void FieldScene_RunScene372_02003c48(void)
 
 void ActorPresentation_SelectActorTwentySevenState(void)
 {
-    struct Actor *actor = Func_0200854a(27);
+    struct Actor *actor = Actor_Get(27);
     u32 flags = Data_03001e40;
     u8 *presentation = actor->presentation;
 
@@ -2210,8 +2101,8 @@ void FieldScene_RunScene372_02003e48(void)
     s32 rec8;
     s32 record;
 
-    rec8 = Value1(Func_0200857a, 0);
-    rec7 = Value1(Func_02008582, 8);
+    rec8 = Value1(Engine_ActorGet, 0);
+    rec7 = Value1(Engine_ActorGet, 8);
     Event_Begin();
     if (GameFlag_IsSet(0x305) != 0) {
         Actor_Stop(8);
@@ -2330,7 +2221,6 @@ void FieldScene_BuildPlacementGrid(void)
 
 void SceneState_SetWords1c0And1c8AndRun(void)
 {
-    void Func_02000360_r(s32);
 
     u8 *state;
 
@@ -2346,7 +2236,6 @@ void SceneState_SetWords1c0And1c8AndRun(void)
 
 void SceneState_SetWorkWordsAndFlag87f(void)
 {
-    void Func_02000360_r(s32);
 
     u8 *state;
 
@@ -2457,7 +2346,6 @@ void OverlayObject_UpdateArcFromParent(Obj *o)
 
 void SceneState_SetValue140Mode0(void)
 {
-    void Func_02000360_r(s32);
 
     Psynergy_Begin(140, 0);
 }
@@ -2469,23 +2357,22 @@ void FieldScene_RunSingleStep(void)
 
 void FieldScene_RunFourPairedSteps(void)
 {
-    Func_02008c9e(32);
+    Actor_Get(32);
     Func_0200887a_a();
-    Func_02008ca8(33);
+    Actor_Get(33);
     Func_02008884_a();
-    Func_02008cb2(30);
+    Actor_Get(30);
     Func_0200888e();
     if (*(s32 *)0x0200d7f8 == 0) {
-        Func_02008cc4(29);
+        Actor_Get(29);
         Func_020088a0();
     }
 }
 
 void SceneState_SetValue19ThenCall(void)
 {
-    void Func_02000360_r(s32);
 
-    Func_02008cda(19);
+    Actor_Get(19);
     Func_020088fe();
 }
 
@@ -2504,7 +2391,6 @@ void OverlayObject_CopyRecordField1ToSlots22And8(void)
 
 void SceneState_SetValueEe4(void)
 {
-    void Func_02000360_r(s32);
 
     Event_Begin();
     Message_ShowCentered(0xee4, 1);

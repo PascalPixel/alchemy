@@ -82,18 +82,15 @@ extern u8 Data_0200b5d8[];
 
 s32 Func_02002a0a(struct Obj *);
 u16 Func_02002af2(s32, s32);
-void Func_0200029e(s32);
 struct Rec *Func_02002c8a(s32);
 void Func_02002c70(struct Rec *);
 void Func_02002e3a(s32, s32, s32);
 s32 Func_02002d10();
-void Func_02002fbc(void);
 s32 Func_0200311e();
 s32 Func_0200312a();
 s32 Func_02003136();
 s32 Func_02003142();
 s32 Func_0200317c();
-void Func_02001078(void);
 void Func_02003216_a();
 struct Ent *Func_0200325a(s32);
 struct Ent *Func_02003282(s32);
@@ -249,7 +246,7 @@ s32 SceneData_SelectTableB080BySelector(void)
     s32 v = gGameState.scene;
     if (v == (s32)&Value_00000024) {
         if (GameFlag_IsSet(0x845) == 0) {
-            Func_0200029e((s32)Data_0200b098);
+            SceneData_InitRecordTable((s32)Data_0200b098);
         }
         return (s32)Data_0200b098;
     }
@@ -310,7 +307,7 @@ s32 FieldScene_SetupEntryBySelector(void)
     step = gGameState.scene;
 
     if (step == (s32)&Value_00000027) {
-        Func_02002fbc();
+        FieldScene_RunFlag845And847Branches();
         return 0;
     }
 
@@ -343,7 +340,7 @@ s32 FieldScene_SetupEntryBySelector(void)
 
     if (GameFlag_IsSet(0x843) == 0) {
         if (gGameState.entrance == 1) {
-            Func_02001078();
+            FieldScene_RunExtendedActorSequence();
         }
     }
 
@@ -432,8 +429,6 @@ void FieldScene_RunSequenceA(void)
 struct ObjectRuntime *Func_02002a54();
 void Func_02002a74();
 void Func_020025a8();
-void Func_020008ac();
-void Func_020008d8();
 void Func_020025c0();
 s32 Func_020029a4();
 s32 Func_020029ac();
@@ -593,9 +588,9 @@ void FieldScene_RunExtendedActorSequence(void)
     Event_Wait(30);
     Actor_FaceDirection(2, 0, 0);
     Event_Wait(20);
-    Func_020008ac(2, 9);
+    FieldScene_StartEffect141Sequence(2, 9);
     Event_Wait(40);
-    Func_020008d8();
+    FieldScene_RunSequenceA();
     Actor_ShowEmote(2, 0x100, 40);
     Actor_SetSpeed(2, 0x10000, 0x8000);
     Func_02002a54(2)->action_flags &= 254;

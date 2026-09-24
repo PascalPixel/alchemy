@@ -819,6 +819,9 @@
     "main:080a7440": {
       "name": "CharacterSelector_Run"
     },
+    "main:080a7478": {
+      "name": "Unnamed_080a7478"
+    },
     "main:08002f4c": {
       "name": "PackedTable_AdjustMarkedOffsets"
     },
@@ -9902,6 +9905,9 @@
     "main:080bb65c": {
       "name": "BattlePresentation_WaitForAdvance"
     },
+    "main:080bb7c0": {
+      "name": "Unnamed_080bb7c0"
+    },
     "main:08092f84": {
       "name": "BattleEv_RunWait",
       "source": "BATTLE/PRESENTATION/RUN_ACTION_AND_WAIT.C"
@@ -10052,6 +10058,51 @@
     },
     "main:080e47b8": {
       "name": "FunctionHead_080e47b8"
+    },
+    "main:08094820": {
+      "name": "Unnamed_08094820"
+    },
+    "main:080949a8": {
+      "name": "Unnamed_080949a8"
+    },
+    "main:08094ac8": {
+      "name": "Unnamed_08094ac8"
+    },
+    "main:08094bbc": {
+      "name": "Unnamed_08094bbc"
+    },
+    "main:08094da0": {
+      "name": "Unnamed_08094da0"
+    },
+    "main:08094e7c": {
+      "name": "Unnamed_08094e7c"
+    },
+    "main:0809509c": {
+      "name": "Unnamed_0809509c"
+    },
+    "main:08095680": {
+      "name": "Unnamed_08095680"
+    },
+    "main:08095778": {
+      "name": "Unnamed_08095778"
+    },
+    "main:0809bcf8": {
+      "name": "Unnamed_0809bcf8"
+    },
+    "main:0809c138": {
+      "name": "Unnamed_0809c138"
+    },
+    "main:080e698c": {
+      "name": "Unnamed_080e698c"
+    },
+    "main:080e6d3c": {
+      "name": "Unnamed_080e6d3c"
+    },
+    "main:080e6eac": {
+      "name": "Unnamed_080e6eac"
+    },
+    "main:080e727c": {
+      "name": "Palette_BrightenBgEntries"
     },
     "main:080e72e0": {
       "name": "BattleFx_ArmPaletteHBlankDma",
@@ -20347,7 +20398,6 @@
     "main:0808ae74": "Encounter_SelectEnemyGroup",
     "main:080c9048": "BattlePres_ConfigureEffectDisplay",
     "main:08004c6c": "SceneTransform_ApplyRoll",
-    "main:080e727c": "Palette_BrightenBgEntries",
     "main:08015358": "Djinn_ShowJoinedMessageFar",
     "main:080e3aa0": "BattlePres_RunBeamSequence",
     "main:080ecef4": "BattleFx_RunRevealColumn",

@@ -1,9 +1,10 @@
-/* Draft, not exact (2026-09-24): candidate=3164 reference=3156 differing_halfwords=930,
-   binary similarity 63%. The stack frame (332 bytes, every spill slot), the
+/* Draft, not exact (2026-09-24): candidate=3160 reference=3156 differing_halfwords=630,
+   binary similarity 89%. The stack frame (332 bytes, every spill slot), the
    two frame loops, the skip test with its count reset, the noise loop end
-   pointer and the 3x3 placement loop all match; the residual is register
-   allocation (ox/oy and loop temporaries take other high registers) and the
-   scheduling that follows from it. */
+   pointer, the 3x3 placement loop and most particle loops (indexed, so each
+   gets its own induction pointer) match. Remaining: the rock and fall loops
+   keep the Math_Mod result in r0 in the reference, the flag clear uses -13
+   rather than 0xf3, and the phase-two spark loops pick r5/r6 the other way. */
 #include "TYPES.H"
 #include "BATTLE_EFFECT_WORK.H"
 #include "BATTLE_EFX.H"
@@ -283,46 +284,46 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *efx)
         Render_ResetTransformState();
 
         if (frame == 32) {
-            for (i = 0, p = PARTICLES; i != 32; i++, p++) {
-                p->x = ((Random16() & 31) + 68) << 16;
-                p->y = ((Random16() & 31) + 8) << 16;
-                p->velocity_x = ((Random16() & 127) - 63) << 11;
-                p->velocity_y = ((-Random16() & 127) - 64) << 11;
-                p->variant = (Random16() & 15) + 32;
+            for (i = 0; i != 32; i++) {
+                PARTICLES[i].x = ((Random16() & 31) + 68) << 16;
+                PARTICLES[i].y = ((Random16() & 31) + 8) << 16;
+                PARTICLES[i].velocity_x = ((Random16() & 127) - 63) << 11;
+                PARTICLES[i].velocity_y = ((-Random16() & 127) - 64) << 11;
+                PARTICLES[i].variant = (Random16() & 15) + 32;
             }
         }
         if (frame == 64) {
-            for (i = 0, p = PARTICLES + 32; i != 32; i++, p++) {
-                p->x = (Math_ModU(Random16(), 48) + 60) << 16;
-                p->y = ((Random16() & 31) + 52) << 16;
-                p->velocity_x = ((Random16() & 127) - 63) << 12;
-                p->velocity_y = ((-Random16() & 31) - 32) << 13;
-                p->variant = (Random16() & 15) + 32;
+            for (i = 0; i != 32; i++) {
+                PARTICLES[i + 32].x = (Math_ModU(Random16(), 48) + 60) << 16;
+                PARTICLES[i + 32].y = ((Random16() & 31) + 52) << 16;
+                PARTICLES[i + 32].velocity_x = ((Random16() & 127) - 63) << 12;
+                PARTICLES[i + 32].velocity_y = ((-Random16() & 31) - 32) << 13;
+                PARTICLES[i + 32].variant = (Random16() & 15) + 32;
             }
         }
         if (frame == 104) {
-            for (i = 0, p = PARTICLES; i != 32; i++, p++) {
-                p->x = ((Random16() & 63) + 52) << 16;
-                p->y = ((Random16() & 31) + 72) << 16;
-                p->velocity_x = ((Random16() & 127) - 63) << 11;
-                p->velocity_y = ((-Random16() & 31) - 32) << 13;
-                p->variant = (Random16() & 15) + 32;
+            for (i = 0; i != 32; i++) {
+                PARTICLES[i].x = ((Random16() & 63) + 52) << 16;
+                PARTICLES[i].y = ((Random16() & 31) + 72) << 16;
+                PARTICLES[i].velocity_x = ((Random16() & 127) - 63) << 11;
+                PARTICLES[i].velocity_y = ((-Random16() & 31) - 32) << 13;
+                PARTICLES[i].variant = (Random16() & 15) + 32;
             }
         }
 
         if (frame >= 32 && frame < 208) {
-            for (i = 0, p = PARTICLES; i != 64; i++, p++) {
-                if (p->variant >= 0) {
+            for (i = 0; i != 64; i++) {
+                if (PARTICLES[i].variant >= 0) {
                     if (frame > 191) {
                         k = Math_Mod(i, 7) + 4;
                     } else {
                         k = i & 3;
                     }
-                    blit47(dst, work->sheet + BattleFx10_DebrisCells[k], HI(p->x), HI(p->y),
+                    blit47(dst, work->sheet + BattleFx10_DebrisCells[k], HI(PARTICLES[i].x), HI(PARTICLES[i].y),
                         BattleFx10_DebrisWidths[k], BattleFx10_DebrisHeights[k]);
-                    p->x += p->velocity_x;
-                    p->y += p->velocity_y;
-                    p->velocity_y += 0x2000;
+                    PARTICLES[i].x += PARTICLES[i].velocity_x;
+                    PARTICLES[i].y += PARTICLES[i].velocity_y;
+                    PARTICLES[i].velocity_y += 0x2000;
                 }
             }
         }
@@ -337,34 +338,34 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *efx)
                     p->variant = Random16();
                 }
             }
-            for (i = 0, p = PARTICLES; i != 128; i++, p++) {
+            for (i = 0; i != 128; i++) {
                 if (frame >= i / 4 + 224) {
                     k = Math_Mod(i, 3);
                     if ((i & 1) == 0) {
-                        blit46(dst, work->sheet + BattleFx10_SprayCells[k], HI(p->x), HI(p->y),
+                        blit46(dst, work->sheet + BattleFx10_SprayCells[k], HI(PARTICLES[i].x), HI(PARTICLES[i].y),
                             BattleFx10_SprayWidths[k], BattleFx10_SprayHeights[k]);
                     }
-                    p->x += p->velocity_x;
-                    p->y += p->velocity_y;
-                    if ((p->x >> 16) < -16 || (p->y >> 16) > 120) {
-                        p->x = 0x480000;
-                        p->y = 0x380000;
+                    PARTICLES[i].x += PARTICLES[i].velocity_x;
+                    PARTICLES[i].y += PARTICLES[i].velocity_y;
+                    if ((PARTICLES[i].x >> 16) < -16 || (PARTICLES[i].y >> 16) > 120) {
+                        PARTICLES[i].x = 0x480000;
+                        PARTICLES[i].y = 0x380000;
                     }
-                    p->variant++;
+                    PARTICLES[i].variant++;
                 }
             }
             if (frame == 228) {
-                for (i = 0, p = PARTICLES, q = TRAILS; i != 128; i++, p++, q++) {
-                    q->x = p->x;
-                    q->y = p->y;
-                    q->variant = 0;
+                for (i = 0; i != 128; i++) {
+                    TRAILS[i].x = PARTICLES[i].x;
+                    TRAILS[i].y = PARTICLES[i].y;
+                    TRAILS[i].variant = 0;
                 }
             }
             for (i = 0, p = PARTICLES, q = TRAILS; i != 128; i++, p++, q++) {
                 if (frame >= i + 228) {
-                    k = Math_Mod(q->variant / 2, 9);
-                    h = BattleFx_PuffSizes[k];
-                    blit46(dst, aux + BattleFx_PuffCells[k], HI(q->x) - h / 2, HI(q->y) - h / 2, h, h);
+                    s32 n = Math_Mod(q->variant / 2, 9);
+                    s32 sz = BattleFx_PuffSizes[n];
+                    blit46(dst, aux + BattleFx_PuffCells[n], HI(q->x) - sz / 2, HI(q->y) - sz / 2, sz, sz);
                     if (++q->variant == 18) {
                         q->x = p->x;
                         q->y = p->y;
@@ -424,11 +425,11 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *efx)
         }
         if (frame <= 71) {
             for (i = 0; i != count; i++) {
-                k = Math_Mod(i, 3);
-                h = BattleFx10_BoulderHeights[k];
-                blit46(dst, work->sheet + BattleFx10_BoulderCells[k],
-                    BattleFx10_Points[i][0] - 56, BattleFx10_Points[i][1] - h,
-                    BattleFx10_BoulderWidths[k], h);
+                s32 n = Math_Mod(i, 3);
+                s32 sz = BattleFx10_BoulderHeights[n];
+                blit46(dst, work->sheet + BattleFx10_BoulderCells[n],
+                    BattleFx10_Points[i][0] - 56, BattleFx10_Points[i][1] - sz,
+                    BattleFx10_BoulderWidths[n], sz);
             }
         }
         if (frame == 72) {
@@ -464,13 +465,13 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *efx)
             }
         }
         if (frame <= 71) {
-            for (i = 0, p = work->sparks; i != 64; i++, p++) {
-                blit46(dst, work->sheet, HI(p->x) - 12, HI(p->y) - 24, 24, 48);
-                p->x += p->velocity_x;
-                p->y += p->velocity_y;
-                if ((p->y >> 16) > 120 && frame <= 47) {
-                    p->x = ((Random16() & 127) + 64) << 16;
-                    p->y = -0x100000;
+            for (i = 0; i != 64; i++) {
+                blit46(dst, work->sheet, HI(work->sparks[i].x) - 12, HI(work->sparks[i].y) - 24, 24, 48);
+                work->sparks[i].x += work->sparks[i].velocity_x;
+                work->sparks[i].y += work->sparks[i].velocity_y;
+                if ((work->sparks[i].y >> 16) > 120 && frame <= 47) {
+                    work->sparks[i].x = ((Random16() & 127) + 64) << 16;
+                    work->sparks[i].y = -0x100000;
                 }
             }
         }
@@ -482,16 +483,16 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *efx)
         }
 
         if (frame > 72) {
-            for (i = 0, p = PARTICLES; i != 64; i++, p++) {
-                if ((u32)p->variant < 18) {
-                    k = Math_Mod(p->variant / 2, 9);
-                    h = BattleFx_PuffSizes[k];
-                    blit46(dst, aux + BattleFx_PuffCells[k], p->x - h / 2, p->y - h / 2, h, h);
+            for (i = 0; i != 64; i++) {
+                if ((u32)PARTICLES[i].variant < 18) {
+                    s32 n = Math_Mod(PARTICLES[i].variant / 2, 9);
+                    s32 sz = BattleFx_PuffSizes[n];
+                    blit46(dst, aux + BattleFx_PuffCells[n], PARTICLES[i].x - sz / 2, PARTICLES[i].y - sz / 2, sz, sz);
                 }
-                if (++p->variant == 18 && frame <= 127) {
-                    p->x = Random16() & 127;
-                    p->y = (Random16() & 63) + (frame - 54) / 2;
-                    p->variant = 0;
+                if (++PARTICLES[i].variant == 18 && frame <= 127) {
+                    PARTICLES[i].x = Random16() & 127;
+                    PARTICLES[i].y = (Random16() & 63) + (frame - 54) / 2;
+                    PARTICLES[i].variant = 0;
                 }
             }
         }

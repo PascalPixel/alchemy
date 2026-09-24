@@ -17737,7 +17737,10 @@
       "call_via": "0200371a",
       "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
-    "resource_3a5:02000030": "FIELD/RAMAKAN_SABAKU/SELECTED_ACTOR_SET_EFFECT_RECORD_MODE.C",
+    "resource_3a5:02000030": {
+      "name": "SetEffectRecordMode",
+      "source": "FIELD/RAMAKAN_SABAKU/SELECTED_ACTOR_SET_EFFECT_RECORD_MODE.C"
+    },
     "resource_3a5:02000e00": {
       "name": "CalculatePlanarDistance",
       "source": "FIELD/RAMAKAN_SABAKU/SELECTED_ACTOR_SCENE_ID_SELECTED_ACTOR_SCENE.C"

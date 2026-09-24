@@ -11291,10 +11291,6 @@
           "address": "0x02008290",
           "kind": "thumb"
         },
-        "Func_0200035e": {
-          "address": "0x020080f8",
-          "kind": "thumb"
-        },
         "gGameState": {
           "address": "0x02000240",
           "kind": "data"

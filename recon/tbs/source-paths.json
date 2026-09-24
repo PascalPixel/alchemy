@@ -10443,7 +10443,8 @@
       "name": "Unnamed_0809bcf8"
     },
     "main:0809c138": {
-      "name": "Unnamed_0809c138"
+      "name": "Map_ShowWorldMap",
+      "source": "FIELD/COMMON/MAP/SHOW_WORLD_MAP.C"
     },
     "main:080e698c": {
       "name": "Unnamed_080e698c"

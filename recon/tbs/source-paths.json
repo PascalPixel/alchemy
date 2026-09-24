@@ -20595,6 +20595,10 @@
     "main:0808b98c": {
       "name": "BattleEffect_ClearAllObjects",
       "source": "BATTLE/EFFECT/CLEAR_ALL_OBJECTS.C"
+    },
+    "main:0809bb64": {
+      "name": "BattleFx_SetupResourcesAndWindow",
+      "source": "BATTLE/EFFECT/SETUP_RESOURCES_AND_WINDOW.C"
     }
   },
   "symbols": {

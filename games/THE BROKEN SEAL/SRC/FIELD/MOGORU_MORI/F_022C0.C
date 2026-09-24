@@ -1,7 +1,3 @@
-/* NONMATCHING: 492 of 492 bytes, 3 differing halfwords (2026-09-24). Unit source
- * (evconv Engine_* veneers). Remaining: before the last
- * FieldScene_RunScene39f_02000d90 the reference moves px into r1 after the
- * third and fourth arguments; here it moves first. */
 #include "TYPES.H"
 
 u8 *Engine_ActorGet();
@@ -68,6 +64,7 @@ struct Vec {
     s32 z;
 };
 
+/* Run the closing choreography of the room's scene. */
 void MogoruMori_Func020022c0(void)
 {
     struct Vec dir;
@@ -133,6 +130,9 @@ void MogoruMori_Func020022c0(void)
         FieldScene_RunScene39f_02000d90(18, px, *(s16 *)(Engine_ActorGet(0) + 18) - 16, 0x80000);
     }
     Engine_EventWait(10);
+    /* FAKEMATCH: an empty do-while here moves px into r1 after the
+     * other arguments of the call above. */
+    do { } while (0);
     base3_2000240 = (s32)Data_02000240;
     *(u8 *)((base3_2000240 + 0x22b)) = 3;
     Engine_GameStateSetReturn((s32)Data_00000046, 15);

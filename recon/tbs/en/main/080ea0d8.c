@@ -3,8 +3,8 @@
    (160 frames, A or B skips after frame 4), then a second 320-frame pass
    draws concentric ellipses, falling objects and palette ramps.
 
-   DRAFT, not yet C: 46.9% aligned similarity, 2584 differing halfwords
-   (candidate 5732 bytes, reference 5756). Every call lines up with the
+   DRAFT, not yet C: 47.0% aligned similarity, 2552 differing halfwords
+   (candidate 5752 bytes, reference 5756). Every call lines up with the
    reference; what remains is register allocation and spill-slot order.
    Known: the reference spills draw2 at sp+92 in the second pass (this
    draft keeps it in a register, shifting frame and later slots by 4);
@@ -13,7 +13,9 @@
    petal blocks call draw through a callee-saved copy. Evidence used:
    (x * sx) / 8 with sx = 8 in a variable (the reference divides after a
    shift), the ring radius derived from the frame (a strength-reduced
-   giv at sp+12), the gWorkSlot base spilled at sp+56 for slot 47. */
+   giv at sp+12), the gWorkSlot base spilled at sp+56 for slot 47, and
+   the palette colour held as u16. Next: the palette loop masks with a
+   pooled 0x1f and reads the red field from the unshifted colour. */
 #include "TYPES.H"
 #include "DMA.H"
 #include "BATTLE_EFFECT_WORK.H"
@@ -633,7 +635,7 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
         if (frame > 279) {
             u16 *pal = (u16 *)0x05000002;
             for (i17 = 0; i17 != 63; i17++, pal++) {
-                s32 c = *pal;
+                u16 c = *pal;
                 s32 b = ((c >> 10) & 31) + 1;
                 s32 g = ((c >> 5) & 31) + 1;
                 s32 r = (c & 31) + 1;

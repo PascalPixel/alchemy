@@ -72799,6 +72799,42 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "goma-hashira-f-00a68",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/GOMA_HASHIRA/F_00A68.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_389",
+      "absolute_symbols": {
+        "Engine_ActorGet": {
+          "address": "0x02009450",
+          "kind": "thumb"
+        },
+        "Engine_ObjectCreate": {
+          "address": "0x020093d8",
+          "kind": "thumb"
+        },
+        "Engine_ObjectSetAnimation": {
+          "address": "0x020093c8",
+          "kind": "thumb"
+        },
+        "Engine_ObjectSetScript": {
+          "address": "0x020093d0",
+          "kind": "thumb"
+        },
+        "Engine_ObjectSetPalette": {
+          "address": "0x020094c0",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02000a68",
+          "extent": 232,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

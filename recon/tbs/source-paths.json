@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_389:02000a68": {
+      "name": "GomaHashira_Func02000a68",
+      "source": "FIELD/GOMA_HASHIRA/F_00A68.C"
+    },
     "resource_36f:020001c0": {
       "name": "Title_Func020001c0",
       "source": "MENU/TITLE/F_001C0.C"

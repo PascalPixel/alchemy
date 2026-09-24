@@ -320,9 +320,10 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
         }
         if (frame > 221) {
             for (i = 0; i != 64; i++) {
+                s32 r = 1;
                 if (frame >= i / 2 + 222) {
-                    blit[0](dst, work->sheet + BattleFx6_FlareCells[0] + 0x4e20,
-                        work->sparks[i].x - 1, work->sparks[i].y - 1, 2, 2);
+                    blit[0](dst, work->sheet + BattleFx6_FlareCells[r - 1] + 0x4e20,
+                        work->sparks[i].x - r, work->sparks[i].y - r, r * 2, r * 2);
                     work->sparks[i].x += work->sparks[i].velocity_x;
                     work->sparks[i].y += work->sparks[i].velocity_y;
                     if (work->sparks[i].y < 0) {
@@ -401,9 +402,10 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
             blit[1](dst, work->sheet + z * 9 * 256 + 0x400, 63, 18, 48, 48);
         }
         if (frame > 221) {
-            s = (frame - 222) / 2 % 4 + 3;
-            blit[0](dst, work->sheet + s * 9 * 256 + 0x400, 72, 30, 48, 48);
-            if (s == 5) {
+            s32 z;
+            z = (frame - 222) / 2 % 4 + 3;
+            blit[0](dst, work->sheet + z * 9 * 256 + 0x400, 72, 30, 48, 48);
+            if (z == 5) {
                 blit[0](dst, work->sheet + 0x1600, 66, 22, 48, 48);
             }
         }

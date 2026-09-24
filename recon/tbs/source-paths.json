@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_395:02001070": {
+      "name": "KorimaKi_PrepareActors",
+      "source": "FIELD/KORIMA_KI/PREPARE_ACTORS.C"
+    },
     "resource_39e:02000f80": {
       "name": "ShianJiin_WalkByFacing",
       "source": "FIELD/COMMON/SHIAN_JIIN/WALK_BY_FACING.C"

@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_3cb:02000d68": {
+      "name": "LinkLobby_TalkLinkedWins",
+      "source": "MENU/LINK_LOBBY/WINS_TALK.C"
+    },
     "resource_399:02000b70": {
       "name": "ImiruMura_Func02000b70",
       "source": "FIELD/IMIRU_MURA/F_00B70.C"

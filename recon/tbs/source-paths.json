@@ -763,6 +763,10 @@
       "name": "Ui_LoadWindowGraphics",
       "source": "GRAPHICS/WINDOW/LOAD_GRAPHICS.C"
     },
+    "main:080b0744": {
+      "name": "Shop_CreatePriceSprite",
+      "source": "MENU/SHOP/CREATE_PRICE_SPRITE.C"
+    },
     "main:080d67dc": {
       "name": "BattleEffect_SetupBlendedDisplay",
       "source": "BATTLE/EFFECT/SETUP_BLENDED_DISPLAY.C"
@@ -20627,7 +20631,6 @@
     "main:0801e41c": "UiWindow_DrawDividerLine",
     "main:080153c8": "UiWindow_SetPaletteBitRectFar",
     "main:080acab8": "DjinnMenu_DrawStatPreview",
-    "main:080b0744": "Shop_CreatePriceSprite",
     "main:080b3050": "Shop_RunPartyMemberIconBurst",
     "main:08015038": "UiText_OpenMessageWindowFar",
     "main:080164d4": "UiWindow_ClearInteriorTiles",

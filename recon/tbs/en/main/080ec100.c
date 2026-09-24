@@ -309,15 +309,15 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
             }
         }
         if (frame > 221) {
-            for (i = 0, p = work->sparks; i != 64; i++, p++) {
+            for (i = 0; i != 64; i++) {
                 if (frame >= i / 2 + 222) {
                     blit[0](dst, work->sheet + BattleFx6_FlareCells[0] + 0x4e20,
-                        p->x - 1, p->y - 1, 2, 2);
-                    p->x += p->velocity_x;
-                    p->y += p->velocity_y;
-                    if (p->y < 0) {
-                        p->y = p->velocity_y;
-                        p->x = p->z;
+                        work->sparks[i].x - 1, work->sparks[i].y - 1, 2, 2);
+                    work->sparks[i].x += work->sparks[i].velocity_x;
+                    work->sparks[i].y += work->sparks[i].velocity_y;
+                    if (work->sparks[i].y < 0) {
+                        work->sparks[i].y = work->sparks[i].velocity_y;
+                        work->sparks[i].x = work->sparks[i].z;
                     }
                 }
             }
@@ -373,7 +373,7 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
             }
             blit[1](dst, work->sheet + BattleFx6_FlareCells[s - 1] + 0x4e20, 108 - s, 60 - s, s * 2, s * 2);
             if (frame <= 213) {
-                s = u + 1;
+                s = u / 4 + 1;
                 if (s > 4) {
                     s = 4;
                 }
@@ -428,14 +428,14 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
     for (i = 0; i != 1024; i++) {
         PARTICLES[i].variant = 0;
     }
-    for (i = 0, p = work->sparks; i != 16; i++, p++) {
-        p->x = (Random16() & 31) + 32;
-        p->y = 0;
-        p->variant = 0;
+    for (i = 0; i != 16; i++) {
+        work->sparks[i].x = (Random16() & 31) + 32;
+        work->sparks[i].y = 0;
+        work->sparks[i].variant = 0;
     }
-    for (i = 0, p = work->sparks; i != work->effect->count; i++, p++) {
+    for (i = 0; i != work->effect->count; i++) {
         EffectPosition_ApplyStepAndYOffset(work->effect->actors[i], (struct EffectPosition *)seat);
-        p->x = seat[0] / 2;
+        work->sparks[i].x = seat[0] / 2;
     }
     Resource_LoadAndDecompress((s32)&Value_0000006f, work, 1, 1);
     Audio_PlayCue((s32)&Value_00000121);

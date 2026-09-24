@@ -106,7 +106,7 @@ extern u8 Value_00000333[];
 extern u8 Data_080313a4[];
 extern u8 Data_08031424[];
 s32 UiText_FormatNumberToHalfwords(s16 *out, s32 value);
-s32 Func_080228e4(u8 *oldGrid, u8 *newGrid, u16 *out, s32 *gained, s32 *lost);
+s32 DjinnMenu_ListChangedDjinn(u8 *oldGrid, u8 *newGrid, u16 *out, s32 *gained, s32 *lost);
 s32 Func_08077208(s32 owner, s32 col, s32 row);
 void Func_080771b0(s32 owner, s32 col, s32 row);
 void Func_080771b8(s32 owner, s32 col, s32 row);
@@ -196,7 +196,7 @@ struct RenderInput *DjinnMenu_ShowChangePreview(
         Func_080771b0(owner, col, row);
     BattleUnit_Recalculate(owner);
 
-    total = Func_080228e4(snap->grid, unit->grid, list, &gained, &lost);
+    total = DjinnMenu_ListChangedDjinn(snap->grid, unit->grid, list, &gained, &lost);
     pages = FixedPoint_Ratio(total - 1, 5) + 1;
     *pageCount = pages;
     if (page * 5 - 5 >= total)

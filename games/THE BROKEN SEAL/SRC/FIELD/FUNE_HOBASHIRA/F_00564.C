@@ -23,7 +23,7 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
     f(a0, a1, a2);
 }
 
-void FuneHobashira_Func02000564(void)
+void Scene_RunFourActorStagingSequence(void)
 {
     s32 *placement = *Data_03001e70.map;
     struct FieldActor *actor;

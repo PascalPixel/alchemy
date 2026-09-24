@@ -71,7 +71,7 @@ extern u8 Value_0200bd34;
 /* The zero is a one-halfword struct, so its movhi pool load reaches 64 bytes
  * and the pool lands where the ROM has it; the motion callbacks are Value_
  * link symbols. */
-void ArutinYama_Func02001838(void)
+void FieldScene_BuildMultiPhasePresentation(void)
 {
     struct Half p10;
     s32 p8;

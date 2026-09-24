@@ -1,6 +1,13 @@
 /* NONMATCHING: 204 of 184 bytes, 69 halfword edits (2026-09-24). Hand-written from the
  * resolved jump-table disassembly as a single-overlay unit binding Engine_* at
- * their import veneers. Remaining: tile-map block copy; loop.c hoists all six address constants out of the inner loop where the reference keeps only 0xfff, 15 and 0x06002800 in registers and reloads the others each cell; the row base goes to the stack in both. Twin of resource_3b3:02000cc0 (69 edits). */
+ * their import veneers. Remaining: tile-map block copy; loop.c hoists all
+ * six address constants out of the inner loop where the reference keeps only
+ * 0xfff, 15 and 0x06002800 in registers and reloads the others each cell;
+ * the row base goes to the stack in both. Writing the column bound as
+ * col < dest_x + width in the for gives the reference's per-row bound
+ * (196 bytes) but still hoists five constants whatever the address
+ * spelling (arrays, byte sums, [base + 16]). Twin of resource_3b3:02000cc0
+ * (69 edits). */
 #include "TYPES.H"
 
 void Local_02000098(s32 x, s32 y, s32 width, s32 height, s32 bank, s32 dest_x, s32 dest_y)

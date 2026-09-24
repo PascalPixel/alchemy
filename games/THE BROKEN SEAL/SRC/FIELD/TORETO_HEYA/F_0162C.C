@@ -1,6 +1,3 @@
-/* NONMATCHING: 448 of 448 bytes, 53 halfword edits (2026-09-24). Hand-written from the
- * resolved jump-table disassembly as a single-overlay unit binding Engine_* at
- * their import veneers. Remaining: the reference keeps the frame counter's address in r7 across the switch (reloaded after the spark loop, where r7 is the loop index) and computes the spark count into r1 before moving it to r8; this draft reloads the address into a scratch register at both ends and allocates the count straight to r8. Structure, division calls and the spark struct match. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
@@ -22,16 +19,17 @@ struct Vec3 {
 extern struct Vec3 Data_0200adc0;
 extern s32 Data_0200adcc;
 
-void Local_0200162c(void)
+void ToretoHeya_Func0200162c(void)
 {
     struct FieldActor *spark;
     u32 frame;
     s32 previous;
     s32 wave;
-    u32 count;
     u32 i;
+    s32 *counter;
 
-    frame = Data_0200adcc;
+    counter = &Data_0200adcc;
+    frame = *counter;
     previous = 0;
     wave = Engine_MathDivide(frame, 10);
     switch (frame) {
@@ -41,8 +39,7 @@ void Local_0200162c(void)
     case 30:
     case 40:
         Engine_AudioPlayCue(220);
-        count = 6 - wave;
-        for (i = 0; i < count; i++) {
+        for (i = 0; i < 6 - wave; i++) {
             spark = Engine_ObjectCreate(0x11d, Data_0200adc0.x, Data_0200adc0.y, Data_0200adc0.z);
             if (spark != 0) {
                 previous = Main_0808a498(spark->sprite, previous);
@@ -51,7 +48,7 @@ void Local_0200162c(void)
                 Engine_ActorSetSpriteFlags(spark, 0);
                 Engine_ObjectSetAnimation(spark, 1);
                 ((struct Spark *)spark)->phase = 0;
-                ((struct Spark *)spark)->angle = ((360 / count * i) << 16) / 360;
+                ((struct Spark *)spark)->angle = ((360 / (u32)(6 - wave) * i) << 16) / 360;
                 spark->target_x = Data_0200adc0.x;
                 spark->target_y = Data_0200adc0.y;
                 spark->target_z = Data_0200adc0.z;
@@ -61,9 +58,12 @@ void Local_0200162c(void)
         }
     case 44:
         Engine_AudioPlayCue(0x121);
+        /* FAKEMATCH: the counter pointer is taken again here so it is dead
+         * across the spark loop, where the loop index takes its register. */
+        counter = &Data_0200adcc;
         break;
     }
-    if (++Data_0200adcc > 120) {
-        Data_0200adcc = 0;
+    if (++*counter > 120) {
+        *counter = 0;
     }
 }

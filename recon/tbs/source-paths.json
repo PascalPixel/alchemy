@@ -3240,6 +3240,10 @@
       "name": "ItemMenu_OpenDetail",
       "source": "MENU/ITEM/OPEN_ITEM_DETAILS.C"
     },
+    "main:080a4924": {
+      "name": "ItemMenu_DrawItemDetails",
+      "source": "MENU/ITEM/DRAW_ITEM_DETAILS.C"
+    },
     "main:080a4db4": {
       "name": "ItemMenu_DrawStat",
       "source": "MENU/ITEM/WINDOW.C"
@@ -20155,7 +20159,6 @@
     "main:08028574": "Menu_RunResourceSelectionLoop",
     "main:08028808": "Menu_CenterResourceEntries",
     "main:08015070": "UiWindow_DrawDividerLineFar",
-    "main:080a4924": "ItemMenu_DrawItemDetails",
     "main:0800d14c": "Object_SetMoveTarget",
     "main:0801a4fc": "UiGlyph_LoadEntryWithPalette",
     "main:0808a5b0": "SaveState_CaptureObjectTableFar",

@@ -72,7 +72,7 @@ void EffectStep_AdvanceWithGravity2D(struct EffectStep *, s32, s32);
 void ObjectGroup_UpdateMembers(s32, s32, s32, s32, s32);
 void ObjectGroup_TickMemberTimers(void);
 void Camera_ApplyShake(s32, s32);
-void Unnamed_080e6d3c(s32, s32, s32);
+void BattleFx_PlaceFormationObjects(s32, s32, s32);
 void Unnamed_080e6eac(s32, s32, s32);
 void ResourceObject_ReleaseFar(void *);
 void Runtime_ReleaseHeapBlock(s32);
@@ -591,7 +591,7 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
                 vel_x = vel_x * 60 / 64;
                 vel_y = vel_y * 60 / 64;
             }
-            Unnamed_080e6d3c(0, cam_x, cam_y);
+            BattleFx_PlaceFormationObjects(0, cam_x, cam_y);
         }
         if ((u32)(frame - 16) <= 127) {
             s32 base = cam_x >> 17;

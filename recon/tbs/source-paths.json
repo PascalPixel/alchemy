@@ -5840,7 +5840,7 @@
       "source": "FIELD/BIRIBINO_HEYA/MESSAGE_BRANCH.C"
     },
     "resource_374:0200010c": {
-      "name": "FieldScene_RunSequence111F",
+      "name": "Scene_CheckPsynergyStone",
       "source": "FIELD/HAIDIA_IE/EXTENDED.C"
     },
     "resource_3ac:0200014c": {
@@ -6359,7 +6359,7 @@
       "source": "MENU/CLEAR/SAVE_MENU.C"
     },
     "resource_374:0200021c": {
-      "name": "SceneDialogue_ShowLineF44",
+      "name": "Villager_AskAboutTheTravelers",
       "source": "FIELD/HAIDIA_IE/EXTENDED.C"
     },
     "resource_381:02002c9c": {
@@ -6908,7 +6908,7 @@
       "source": "FIELD/FUNE_HOBASHIRA/OBJECT_SCALE.C"
     },
     "resource_374:02000444": {
-      "name": "FieldScene_RunActorTwentySixEffectPresentation",
+      "name": "Scene_StoneFellOnTheHut",
       "source": "FIELD/HAIDIA_IE/EXTENDED.C"
     },
     "resource_3c6:0200004c": {
@@ -6932,7 +6932,7 @@
       "source": "FIELD/HAIDIA_ARASHI/GROUP_DEPARTURE.C"
     },
     "resource_374:020001f0": {
-      "name": "SceneDialogue_ShowLineF3F",
+      "name": "Villager_RecallThreeYearsAgo",
       "source": "FIELD/HAIDIA_IE/EXTENDED.C"
     },
     "resource_3c8:02003050": {
@@ -7452,7 +7452,7 @@
       "source": "FIELD/COMMON/SHIAN_JIIN/TEMPLE_ROOMS.C"
     },
     "resource_374:020001c4": {
-      "name": "SceneDialogue_RunActor23Line",
+      "name": "Villager_AskAboutMeditation",
       "source": "FIELD/HAIDIA_IE/EXTENDED.C"
     },
     "resource_399:02000510": {
@@ -8408,7 +8408,7 @@
       "source": "FIELD/VINASU_HEYA/ENTRY_SETUP.C"
     },
     "resource_374:02000674": {
-      "name": "FieldScene_RunActorTwentyOneSetup",
+      "name": "Scene_PsynergyStoneIsGone",
       "source": "FIELD/HAIDIA_IE/EXTENDED.C"
     },
     "resource_381:02001084": {
@@ -10088,7 +10088,7 @@
       "source": "FIELD/GOMA_IRIGUCHI/DEPTH.C"
     },
     "resource_374:02000248": {
-      "name": "FieldScene_RunOpeningAuxiliarySequence",
+      "name": "Villager_ShowOffPsynergy",
       "source": "FIELD/HAIDIA_IE/EXTENDED.C"
     },
     "resource_3b1:0200366c": {
@@ -10678,7 +10678,7 @@
       "source": "FIELD/KORIMA_KI/PALETTE.C"
     },
     "resource_374:02000634": {
-      "name": "SceneDialogue_RunActorElevenFlaggedDialogue",
+      "name": "Villager_WelcomeBack",
       "source": "FIELD/HAIDIA_IE/EXTENDED.C"
     },
     "resource_3ad:020001b0": {

@@ -5748,7 +5748,7 @@
       "source": "FIELD/IMIRU_MURA/FLAGGED_CHOREOGRAPHY.C"
     },
     "resource_3c1:020000b0": {
-      "name": "Scene_RunActorCue25dcBranch",
+      "name": "FieldScene_RunActorCue25dcBranch",
       "source": "FIELD/SUHARA_MURA/ENTRY_CUE.C"
     },
     "resource_39e:020025b8": {
@@ -7172,7 +7172,7 @@
       "source": "FIELD/COMMON/SHIAN_JIIN/TEMPLE_ROOMS.C"
     },
     "resource_3c1:02000068": {
-      "name": "Scene_RunActorCue25b8Branch",
+      "name": "FieldScene_RunActorCue25b8Branch",
       "source": "FIELD/SUHARA_MURA/ENTRY_CUE.C"
     },
     "resource_39e:020041ec": {
@@ -8000,7 +8000,7 @@
       "source": "FIELD/IMIRU_MURA/FLAGGED_CHOREOGRAPHY.C"
     },
     "resource_3c1:0200022c": {
-      "name": "State_InitEntryWorkspaceAndFlag96f",
+      "name": "SceneState_InitEntryWorkspaceAndFlag96f",
       "source": "FIELD/SUHARA_MURA/ENTRY_CUE.C"
     },
     "resource_3ad:02001320": {
@@ -8064,7 +8064,7 @@
       "source": "MENU/LINK_LOBBY/DIGIT_VALUE.C"
     },
     "resource_3c1:020000f8": {
-      "name": "Scene_RunLayoutStepThenSet201",
+      "name": "FieldScene_RunLayoutStepThenSet201",
       "source": "FIELD/SUHARA_MURA/ENTRY_CUE.C"
     },
     "resource_399:02001fa4": {
@@ -9765,11 +9765,11 @@
       "source": "FIELD/SORU_SEKIZO/GUARDED_STEP.C"
     },
     "resource_3c1:02000120": {
-      "name": "Effect_ConfigureIndexedEffect85e8",
+      "name": "SceneEffect_ConfigureIndexedEffect85e8",
       "source": "FIELD/SUHARA_MURA/ENTRY_CUE.C"
     },
     "resource_3c1:02000194": {
-      "name": "Effect_ConfigureIndexedEffect85fe",
+      "name": "SceneEffect_ConfigureIndexedEffect85fe",
       "source": "FIELD/SUHARA_MURA/ENTRY_CUE.C"
     },
     "main:0801e318": {

@@ -168,27 +168,30 @@ pub(crate) fn chart(letters: &Letters, history: &Value) -> Canvas {
     canvas
 }
 
-/// Each model's colour in the strip, each family in release order, older
-/// lighter and newer deeper: Claude in yellows to oranges, OpenAI's Codex
-/// models in lilacs to pinks, Grok in black, and greys for commits whose
-/// model no log names. A family's unversioned name takes its muted tone.
-const MODEL_COLOURS: [(&str, &str); 16] = [
-    ("Haiku 4.5", "#faf5c6"),
-    ("Opus 4.8", "#f8e7ab"),
-    ("Sonnet 5", "#f4d48f"),
-    ("Fable 5", "#f1bb74"),
-    ("Opus 5", "#ed9d59"),
-    ("Fable 5.1", "#e97a3f"),
-    ("Opus 5.5", "#e45225"),
+/// Each model's colour in the strip (Pascal, 2026-09-24). A company keeps
+/// one hue family, Anthropic warm and OpenAI cool; the tier sets the depth,
+/// weakest to strongest (Haiku and Luna, Sonnet and Terra, Opus and Sol,
+/// Fable and Astra); within a model line the latest version is the brightest.
+/// Grok is black; Cursor, which left no logs, is grey.
+const MODEL_COLOURS: [(&str, &str); 14] = [
+    // The key's order (Pascal, 2026-09-24): Claude weakest to strongest,
+    // then Codex weakest to strongest, each model line oldest to newest.
+    // Claude is warm (yellow, orange, red) and Codex cool (blue, indigo,
+    // violet) so the two companies never share a hue.
+    ("Haiku 4.5", "#fff6cf"),
+    ("Sonnet 5", "#ffe79a"),
+    ("Opus 4.8", "#fcd3ad"),
+    ("Opus 5", "#ffbd8c"),
+    ("Opus 5.5", "#ffa27a"),
+    ("Fable 5", "#eb9a9c"),
+    ("Fable 5.1", "#ff8f94"),
     ("Claude", "#c9ab84"),
-    ("GPT-5.6 Sol", "#d2b6ef"),
-    ("GPT-5.6 Luna", "#d794e6"),
-    ("GPT-5.6 Terra", "#dc73cc"),
-    ("GPT-6 Astra", "#d4518f"),
-    ("Codex", "#ad94b8"),
+    ("Luna 5.6", "#dcf0ff"),
+    ("Terra 5.6", "#aed4fb"),
+    ("Sol 5.6", "#9fabf5"),
+    ("Astra 6", "#c8a6f7"),
     ("Grok 4.6", "#000000"),
     ("Cursor", "#c6c6c6"),
-    (UNTAGGED, "#8c8c8c"),
 ];
 fn model_colour(model: &str) -> &'static str {
     let known = |name: &str| {
@@ -201,7 +204,7 @@ fn model_colour(model: &str) -> &'static str {
         Some(Family::Claude) => known("Claude").unwrap_or(MUTED),
         Some(Family::Codex) => known("Codex").unwrap_or(MUTED),
         Some(Family::Grok) => "#000000",
-        None => known(UNTAGGED).unwrap_or(MUTED),
+        None => "#8c8c8c",
     })
 }
 /// The models the strip shows with their colours, in the order each first
@@ -226,8 +229,20 @@ fn models_shown(days: &[Value]) -> Vec<(String, &'static str)> {
             .unwrap_or(MODEL_COLOURS.len())
     };
     let mut models = first.into_iter().collect::<Vec<_>>();
+    let group = |model: &str| match family(model) {
+        Some(Family::Claude) => 0,
+        Some(Family::Codex) => 1,
+        Some(Family::Grok) => 2,
+        None => 3,
+    };
     models.sort_by(|(a, day_a), (b, day_b)| {
-        (a == UNTAGGED, day_a, rank(a), a).cmp(&(b == UNTAGGED, day_b, rank(b), b))
+        (a == UNTAGGED, group(a), rank(a), day_a, a).cmp(&(
+            b == UNTAGGED,
+            group(b),
+            rank(b),
+            day_b,
+            b,
+        ))
     });
     models
         .into_iter()
@@ -616,7 +631,7 @@ mod tests {
         assert_eq!(canvas.rgb(2), again.rgb(2));
     }
     #[test]
-    fn the_model_key_runs_by_first_appearance_with_untagged_last() {
+    fn the_model_key_groups_each_company_weakest_to_strongest() {
         let days = json!([
             {"date": "2026-07-16", "models": {"Untagged": 5, "Opus 5": 0}},
             {"date": "2026-07-17", "models": {"Opus 5.5": 1, "Fable 5": 2, "GPT-9 Nova": 1}},
@@ -627,16 +642,16 @@ mod tests {
         assert_eq!(
             names,
             [
-                "Fable 5",
-                "Opus 5.5",
-                "GPT-9 Nova",
                 "Opus 5",
+                "Opus 5.5",
+                "Fable 5",
+                "GPT-9 Nova",
                 "Grok 4.6",
                 UNTAGGED
             ]
         );
         // An unknown model takes its family's muted tone.
-        assert_eq!(shown[2].1, model_colour("Codex"));
+        assert_eq!(shown[3].1, model_colour("Codex"));
         assert_eq!(shown[4].1, "#000000");
     }
     #[test]

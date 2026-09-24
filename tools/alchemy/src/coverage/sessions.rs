@@ -26,7 +26,7 @@ pub(crate) fn family(name: &str) -> Option<Family> {
     let word = name.split([' ', '-']).next().unwrap_or("");
     match word {
         "Opus" | "Fable" | "Sonnet" | "Haiku" | "Claude" => Some(Family::Claude),
-        "GPT" | "Codex" => Some(Family::Codex),
+        "GPT" | "Codex" | "Sol" | "Luna" | "Terra" | "Astra" => Some(Family::Codex),
         "Grok" => Some(Family::Grok),
         _ => None,
     }
@@ -39,7 +39,7 @@ fn title(word: &str) -> String {
         .unwrap_or_default()
 }
 /// A logged model id as the chart names it: `claude-opus-5-5` is "Opus
-/// 5.5", `gpt-5.6-sol` is "GPT-5.6 Sol", `grok-4.6` is "Grok 4.6". Ids that
+/// 5.5", `gpt-5.6-sol` is "Sol 5.6", `grok-4.6` is "Grok 4.6". Ids that
 /// name no working model (reviewers, aliases, placeholders) give `None`.
 pub(crate) fn readable(id: &str) -> Option<String> {
     if let Some(rest) = id.strip_prefix("claude-") {
@@ -54,10 +54,11 @@ pub(crate) fn readable(id: &str) -> Option<String> {
         let mut parts = rest.split('-');
         let version = parts.next()?;
         let words = parts.map(title).collect::<Vec<_>>();
+        // Named like Claude's models (Pascal, 2026-09-24): "Sol 5.6".
         return Some(if words.is_empty() {
             format!("GPT-{version}")
         } else {
-            format!("GPT-{version} {}", words.join(" "))
+            format!("{} {version}", words.join(" "))
         });
     }
     let version = id.strip_prefix("grok-")?;
@@ -449,8 +450,17 @@ pub(crate) fn label(
     let after = activity
         .model_at(commit.time, family_of, path)
         .map_or_else(|| before.clone(), |model| vec![model.to_string()]);
+    // Pascal (2026-09-24): commits no trailer, author or session places were
+    // made with Sol 5.6.
+    let after = if after == [UNTAGGED] {
+        vec![UNPLACED.to_string()]
+    } else {
+        after
+    };
     (before, after)
 }
+/// The model of a commit nothing else identifies.
+pub(crate) const UNPLACED: &str = "Sol 5.6";
 /// Commits per model per day, and how many commits moved from one label to
 /// another, for every commit `git log --format=LOG` printed.
 pub(crate) fn tally(
@@ -475,7 +485,46 @@ pub(crate) fn tally(
             *day.entry(model).or_default() += 1;
         }
     }
+    resolve_unversioned_claude(&mut days);
     (days, moved)
+}
+/// Pascal (2026-09-24): an unversioned Claude commit was Fable 5 or Sonnet 5.
+/// A day's unversioned commits go to whichever of the two did more that day,
+/// else to the one active on the nearest day.
+fn resolve_unversioned_claude(days: &mut BTreeMap<String, BTreeMap<String, u64>>) {
+    const CANDIDATES: [&str; 2] = ["Fable 5", "Sonnet 5"];
+    let active: Vec<(i64, &str, u64)> = days
+        .iter()
+        .flat_map(|(date, models)| {
+            CANDIDATES.iter().filter_map(move |c| {
+                models
+                    .get(*c)
+                    .filter(|n| **n > 0)
+                    .map(|n| (day_number(date).unwrap_or(0), *c, *n))
+            })
+        })
+        .collect();
+    for models in days.values_mut() {
+        if let Some(count) = models.remove("Codex") {
+            *models.entry(UNPLACED.to_string()).or_default() += count;
+        }
+    }
+    let dates: Vec<String> = days.keys().cloned().collect();
+    for date in dates {
+        let Some(count) = days.get_mut(&date).and_then(|m| m.remove("Claude")) else {
+            continue;
+        };
+        let today = day_number(&date).unwrap_or(0);
+        let pick = active
+            .iter()
+            .min_by_key(|(d, c, n)| ((d - today).abs(), std::cmp::Reverse(*n), *c))
+            .map_or("Sonnet 5", |(_, c, _)| *c);
+        *days
+            .get_mut(&date)
+            .unwrap()
+            .entry(pick.to_string())
+            .or_default() += count;
+    }
 }
 /// The `git log` of every branch, from `since` (a date) when given.
 pub(crate) fn git_log(root: &Path, since: Option<&str>) -> Result<String, String> {
@@ -511,8 +560,8 @@ mod tests {
             ("claude-opus-5", Some("Opus 5")),
             ("claude-haiku-4-5-20251001", Some("Haiku 4.5")),
             ("claude-fable-5-1", Some("Fable 5.1")),
-            ("gpt-5.6-sol", Some("GPT-5.6 Sol")),
-            ("gpt-6-astra", Some("GPT-6 Astra")),
+            ("gpt-5.6-sol", Some("Sol 5.6")),
+            ("gpt-6-astra", Some("Astra 6")),
             ("grok-4.6", Some("Grok 4.6")),
             ("codex-auto-review", None),
             ("<synthetic>", None),
@@ -520,7 +569,7 @@ mod tests {
         ] {
             assert_eq!(readable(id).as_deref(), name, "{id}");
         }
-        assert_eq!(family("GPT-6 Astra"), Some(Family::Codex));
+        assert_eq!(family("Astra 6"), Some(Family::Codex));
         assert_eq!(iso_seconds("1970-01-02T01:02:03.500Z"), Some(90_123));
     }
     #[test]
@@ -561,15 +610,36 @@ mod tests {
             ("Opus 5.5", 1),
             ("Fable 5.1", 1),
             ("Opus 5", 1),
-            ("GPT-5.6 Sol", 1),
+            ("Sol 5.6", 2),
             ("Grok 4.6", 1),
             ("Cursor", 1),
-            (UNTAGGED, 1),
         ] {
             assert_eq!(day.get(model), Some(&count), "{model}");
         }
         assert_eq!(moved[&("Claude".into(), "Fable 5.1".into())], 1);
         assert_eq!(moved[&(UNTAGGED.into(), "Opus 5".into())], 1);
-        assert_eq!(moved.values().sum::<u64>(), 4);
+        assert_eq!(day.get(UNTAGGED), None);
+        assert_eq!(moved.values().sum::<u64>(), 5);
+    }
+    #[test]
+    fn unversioned_claude_goes_to_the_nearest_fable_5_or_sonnet_5() {
+        let mut days = BTreeMap::from([
+            (
+                "2026-07-20".to_string(),
+                BTreeMap::from([("Fable 5".to_string(), 3)]),
+            ),
+            (
+                "2026-07-21".to_string(),
+                BTreeMap::from([("Claude".to_string(), 2)]),
+            ),
+            (
+                "2026-08-10".to_string(),
+                BTreeMap::from([("Sonnet 5".to_string(), 1), ("Claude".to_string(), 4)]),
+            ),
+        ]);
+        resolve_unversioned_claude(&mut days);
+        assert_eq!(days["2026-07-21"].get("Fable 5"), Some(&2));
+        assert_eq!(days["2026-08-10"].get("Sonnet 5"), Some(&5));
+        assert!(days.values().all(|m| !m.contains_key("Claude")));
     }
 }

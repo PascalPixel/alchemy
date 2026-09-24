@@ -17,7 +17,6 @@ extern s32 Data_02009818;
 extern u16 Data_02008f31[];
 extern u16 Data_02008f81[];
 
-void Func_020011fc(void);
 void Func_02001172(s32, s32, s32, s32, s32, s32, s32);
 T *Func_0200179c(s32);
 T *Func_020017b8(s32);
@@ -83,7 +82,7 @@ void PlayWorkspaceCueAndClearPaletteZero(void)
 
 void FieldScene_Forward11fc(void)
 {
-    Func_020011fc();
+    SceneEffect_LoadTablesAndStopDma0();
 }
 
 void FieldScene_ConfigureFixedPointValues(void)

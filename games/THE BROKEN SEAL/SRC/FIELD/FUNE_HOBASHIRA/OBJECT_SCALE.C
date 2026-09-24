@@ -48,17 +48,7 @@ extern u8 Value_0000006f;
 void Func_020014d0(void);
 void Func_02000908();
 s32 Func_020016f8();
-void Func_02000950();
 s32 Func_020016ba();
-void Func_0200126a();
-void Func_02001270();
-void Func_02001276();
-void Func_0200127c();
-void Func_02001282();
-void Func_02001288();
-void Func_0200128e();
-void Func_02001376();
-void Func_02001476();
 void Func_020019fe();
 void Func_02001a5e();
 void Func_02001a74();
@@ -83,33 +73,12 @@ void Func_02001a6c_a();
 u8 *Func_02001cbe(void);
 u32 Func_02001c64(void);
 u32 Func_02001c70_a(void);
-u32 Func_02001c7c(void);
-u32 Func_02001c8e(void);
-void Func_020015b8();
-void Func_020015be();
-void Func_020015c4();
-void Func_020015ca();
-void Func_020015d0();
-void Func_020015d6();
-void Func_020015dc_a();
 void Func_02001d40();
 void Func_02001d4c();
 s32 Func_02001f98();
 s32 Func_02002042();
-s32 Func_02002292(s32);
-s32 Func_0200229a(s32);
-s32 Func_020022a2(s32);
-s32 Func_020022aa(s32);
-void Func_02001926();
-void Func_0200192c();
-void Func_02001932();
-void Func_02001938();
-void Func_0200193e();
-void Func_02001944();
-void Func_0200194a();
 void Func_020020ba();
 s32 Func_020020be();
-s32 Func_02002176();
 
 /* AUDITED GENERATED CALL SCRIPT for FieldScene_RunSevenActorEnsemble:
  * Seven actor setup and motion sequences, two scene-workspace state writes,
@@ -329,7 +298,7 @@ void FieldScene_RunScene3b0_02000468(void)
     Task_Wait(1);
     Map_Redraw();
     Task_Wait(1);
-    Func_02000950();
+    FieldScene_RunScene3b0_020004b0();
     Event_End();
 }
 
@@ -374,13 +343,13 @@ void FieldScene_RunActorNinePresentationCycles(void)
     Task_Wait(1);
     Object_NotifyLastActiveOfEvent_1(0x200976c);
     Task_Wait(1);
-    Func_0200126a(9);
-    Func_02001270(10);
-    Func_02001276(11);
-    Func_0200127c(12);
-    Func_02001282(13);
-    Func_02001288(14);
-    Func_0200128e(15);
+    OverlayObject_InitWithRandomFields(9);
+    OverlayObject_InitWithRandomFields(10);
+    OverlayObject_InitWithRandomFields(11);
+    OverlayObject_InitWithRandomFields(12);
+    OverlayObject_InitWithRandomFields(13);
+    OverlayObject_InitWithRandomFields(14);
+    OverlayObject_InitWithRandomFields(15);
     Engine_ActorEnableActionCallback(8, 0x200939c);
     SCENE_PHASE = 0x203;
     Event_OpenScreen();
@@ -411,7 +380,7 @@ void FieldScene_RunActorNinePresentationCycles(void)
     Actor_FaceDirection(8, 0x8000, 0);
     Actor_ShowEmote(8, 0x103, 60);
     Actor_SetSpeed(9, 0x20000, 0x10000);
-    Func_02001376(9);
+    OverlayObject_InitWithRandomFields(9);
     Event_Wait(20);
     Engine_ActorEnableActionCallback(8, 0x200939c);
     Event_Wait(120);
@@ -443,7 +412,7 @@ void FieldScene_RunActorNinePresentationCycles(void)
     Actor_FaceDirection(8, 0x8000, 0);
     Actor_ShowEmote(8, 0x103, 60);
     Actor_SetSpeed(9, 0x20000, 0x10000);
-    Func_02001476(9);
+    OverlayObject_InitWithRandomFields(9);
     Actor_Jump(8, 4, 20);
     Actor_Jump(8, 6, 40);
     Audio_PlayCue(29);
@@ -470,13 +439,13 @@ void OverlayObject_InitWithRandomFields(s32 a)
     obj[0x55] = 0;
     *(u16 *)(obj + 0x64) = Func_02001c64() >> 15;
     *(u16 *)(obj + 0x66) = Func_02001c70_a() >> 15;
-    x = Func_02001c7c();
+    x = Random_Next();
     x <<= 2;
     x >>= 16;
     x <<= 16;
     x += 0x60000;
     *(s32 *)(obj + 0xc) = x;
-    x = Func_02001c8e();
+    x = Random_Next();
     *(s32 *)(obj + 0x4c) = ((x * 3 << 13) >> 16) - 0x3000;
     *(s32 *)(obj + 0x18) = 0x14000;
     *(s32 *)(obj + 0x1c) = 0x14000;
@@ -503,13 +472,13 @@ void FieldScene_RunPrimarySequence(void)
     Task_Wait(1);
     Object_NotifyLastActiveOfEvent_2(0x2009844);
     Task_Wait(1);
-    Func_020015b8(9);
-    Func_020015be(10);
-    Func_020015c4(11);
-    Func_020015ca(12);
-    Func_020015d0(13);
-    Func_020015d6(14);
-    Func_020015dc_a(15);
+    OverlayObject_InitWithRandomFields(9);
+    OverlayObject_InitWithRandomFields(10);
+    OverlayObject_InitWithRandomFields(11);
+    OverlayObject_InitWithRandomFields(12);
+    OverlayObject_InitWithRandomFields(13);
+    OverlayObject_InitWithRandomFields(14);
+    OverlayObject_InitWithRandomFields(15);
     Actor_EnableActionCallback(8, 0x200939c);
     SCENE_PHASE = 0x203;
     Event_OpenScreen();
@@ -627,13 +596,13 @@ void Func_02000e78(void)
     Actor_SetSpriteFlags(ensemble, 0);
     Call1(Func_020020ba, 33593196);
     Task_Wait(1);
-    Func_02001926(9);
-    Func_0200192c(10);
-    Func_02001932(11);
-    Func_02001938(12);
-    Func_0200193e(13);
-    Func_02001944(14);
-    Func_0200194a(15);
+    OverlayObject_InitWithRandomFields(9);
+    OverlayObject_InitWithRandomFields(10);
+    OverlayObject_InitWithRandomFields(11);
+    OverlayObject_InitWithRandomFields(12);
+    OverlayObject_InitWithRandomFields(13);
+    OverlayObject_InitWithRandomFields(14);
+    OverlayObject_InitWithRandomFields(15);
     Actor_EnableActionCallback(8, 33592220);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 3);
     Event_OpenScreen();
@@ -677,7 +646,7 @@ void Func_02000e78(void)
     Event_WaitForScreen();
     Data_02000240[226] = (s32)&Value_0000006f;
     Data_02000240[227] = 2;
-    selector = Func_02002176();
+    selector = SceneData_GetDifferenceOfPairSums();
     if (selector == 11) {
         Event_RequestExit(15);
     } else {
@@ -691,10 +660,10 @@ s32 SceneData_GetDifferenceOfPairSums(void)
     s32 a;
     s32 b;
 
-    a = Func_02002292(0);
-    a += Func_0200229a(2);
-    b = Func_020022a2(1);
-    b += Func_020022aa(3);
+    a = SceneData_GetValueByFirstSetFlag(0);
+    a += SceneData_GetValueByFirstSetFlag(2);
+    b = SceneData_GetValueByFirstSetFlag(1);
+    b += SceneData_GetValueByFirstSetFlag(3);
     return a - b;
 }
 

@@ -1,6 +1,3 @@
-/* NONMATCHING: 1056 of 1056 bytes, 6 halfword edits (2026-09-24). Hand-written from the
- * resolved jump-table disassembly as a single-overlay unit binding Engine_* at
- * their import veneers. Remaining: the game-state base and the leader actor swap r5 and r6 (6 halfwords); everything else, including the shared MapCopyCellsTo tails, matches. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
@@ -29,6 +26,13 @@ static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
     return f(a0, a1);
 }
 
+/* The two flag clears go through Call1: the wrapper leaves fewer insns across
+ * the leader actor's life, so it outranks the game-state base for r5. */
+static __inline__ void Call1(void (*f)(), s32 a0)
+{
+    f(a0);
+}
+
 static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
 {
     f(a0, a1, a2);
@@ -39,7 +43,8 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
     f(a0, a1, a2, a3, a4, a5);
 }
 
-s32 Local_02000b70(void)
+/* Imil: entry setup for the two Imil areas, by entrance and story flags. */
+s32 ImiruMura_Func02000b70(void)
 {
     struct FieldActor *leader;
     s32 entrance;
@@ -49,8 +54,8 @@ s32 Local_02000b70(void)
         gEventWork->start_transition = 0x100;
         Engine_ActorSetAnimation(10, 9);
         if (Value1(Engine_GameFlagIsSet, 0x109)) {
-            Engine_GameFlagClear(0x200);
-            Engine_GameFlagClear(0x201);
+            Call1(Engine_GameFlagClear, 0x200);
+            Call1(Engine_GameFlagClear, 0x201);
         }
         leader->unknown_64 = 0;
         leader->unknown_66 = 0;

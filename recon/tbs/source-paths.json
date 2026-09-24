@@ -19161,7 +19161,8 @@
       "name": "Unnamed_080a1fd4"
     },
     "main:080a2144": {
-      "name": "Unnamed_080a2144"
+      "name": "Palette_LightenBankHighlight",
+      "source": "GRAPHICS/PALETTE/LIGHTEN_BANK_HIGHLIGHT.C"
     },
     "main:080a40ac": {
       "name": "Unnamed_080a40ac"
@@ -19185,7 +19186,8 @@
       "name": "Unnamed_080ae2f4"
     },
     "main:080b0840": {
-      "name": "Unnamed_080b0840"
+      "name": "Shop_RestoreSceneTiles",
+      "source": "MENU/SHOP/RESTORE_SCENE_TILES.C"
     },
     "main:080b24e4": {
       "name": "Unnamed_080b24e4"

@@ -1,6 +1,9 @@
 /* Draft, not exact (2026-09-24): candidate=3456 reference=3452, binary
-   similarity 81%. Frame, spill slots and the high registers (i r8, frame sl,
-   t r9, work fp) match; loops still differ in low-register choices. */
+   similarity 82%. Frame, spill slots and the high registers (i r8, frame sl,
+   t r9, work fp) match, and each spark loop has its own pointer. Remaining:
+   the flare loop keeps its size in r0 (a separate variable there breaks the
+   prologue's low registers), the draw blocks keep size in r4, and a few
+   low-register choices in phase two. */
 #include "TYPES.H"
 #include "BATTLE_EFFECT_WORK.H"
 #include "BATTLE_EFX.H"
@@ -114,6 +117,10 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
     s32 n;
     s32 s;
     struct EffectStep *p;
+    struct EffectStep *q1;
+    struct EffectStep *q2;
+    struct EffectStep *q3;
+    struct EffectStep *q4;
     struct EffectStep *q;
     DrawRectangle blit[2];
     Scale scale;
@@ -165,14 +172,14 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
     for (i = 0; i != 1024; i++) {
         PARTICLES[i].variant = -1;
     }
-    for (i = 0, p = work->sparks; i != 32; i++, p++) {
+    for (i = 0, q1 = work->sparks; i != 32; i++, q1++) {
         s32 a = (Random16() & 0x3fff) + 0x8000;
         s32 r = (Random16() & 127) + 255;
-        p->x = (Trig_Sin(a) * r) >> 2;
-        p->y = (Trig_Cos(a) * r) >> 2;
-        p->velocity_x = -p->x / 32;
-        p->velocity_y = -p->y / 32;
-        p->variant = 0;
+        q1->x = (Trig_Sin(a) * r) >> 2;
+        q1->y = (Trig_Cos(a) * r) >> 2;
+        q1->velocity_x = -q1->x / 32;
+        q1->velocity_y = -q1->y / 32;
+        q1->variant = 0;
     }
     for (i = 0; i != 712; i++) {
         s32 r = Random16() & 255;
@@ -276,37 +283,37 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
 
         t = frame - 152;
         if (t >= 0 && t < 88) {
-            for (i = 0, p = work->sparks; i != 32; i++, p++) {
+            for (i = 0, q2 = work->sparks; i != 32; i++, q2++) {
                 if (frame >= i / 4 + 152 && frame < i / 4 + 152 + 32) {
                     s = (i & 3) + 5;
                     blit[0](dst, work->sheet + BattleFx6_FlareCells[s - 1] + 0x4e20,
-                        HI(p->x) + 112 - s, HI(p->y) + 62 - s, s * 2, s * 2);
-                    p->x += p->velocity_x;
-                    p->y += p->velocity_y;
+                        HI(q2->x) + 112 - s, HI(q2->y) + 62 - s, s * 2, s * 2);
+                    q2->x += q2->velocity_x;
+                    q2->y += q2->velocity_y;
                 }
             }
         }
 
         if (frame == 222) {
-            for (i = 0, p = work->sparks; i != 64; i++, p++) {
-                p->x = (Random16() & 15) - 8;
-                p->y = (Random16() & 15) - 8;
-                if (p->x < 0) {
-                    p->x -= 4;
+            for (i = 0, q3 = work->sparks; i != 64; i++, q3++) {
+                q3->x = (Random16() & 15) - 8;
+                q3->y = (Random16() & 15) - 8;
+                if (q3->x < 0) {
+                    q3->x -= 4;
                 } else {
-                    p->x += 4;
+                    q3->x += 4;
                 }
-                if (p->y < 0) {
-                    p->y -= 4;
+                if (q3->y < 0) {
+                    q3->y -= 4;
                 } else {
-                    p->y += 4;
+                    q3->y += 4;
                 }
-                p->x += 100;
-                p->y += 52;
-                p->velocity_x = -6;
-                p->z = p->x;
-                p->velocity_y = p->y;
-                p->variant = 0;
+                q3->x += 100;
+                q3->y += 52;
+                q3->velocity_x = -6;
+                q3->z = q3->x;
+                q3->velocity_y = q3->y;
+                q3->variant = 0;
             }
         }
         if (frame > 221) {
@@ -448,24 +455,24 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
         if (frame == 96) {
             BattleEventRuntime_BeginPhaseFar(134);
         }
-        for (i = 0, p = work->sparks; i != 5; i++, p++) {
+        for (i = 0, q4 = work->sparks; i != 5; i++, q4++) {
             if (frame == i * 16 + 7) {
                 Audio_PlayCue(154);
             }
-            if (frame >= i * 16 && p->variant <= 31) {
+            if (frame >= i * 16 && q4->variant <= 31) {
                 s32 wobble = Math_Mod(frame * 16, 104);
-                blit[1](dst, work->sheet, p->x - 8, p->y + wobble - 216, 17, 104);
-                blit[1](dst, work->sheet, p->x - 8, p->y + wobble - 112, 17, 104 - wobble);
-                blit[1](dst, work->sheet + 0x6e8, p->x - 17, p->y - 65, 34, 65);
-                if (p->y <= 111) {
-                    p->y += 16;
+                blit[1](dst, work->sheet, q4->x - 8, q4->y + wobble - 216, 17, 104);
+                blit[1](dst, work->sheet, q4->x - 8, q4->y + wobble - 112, 17, 104 - wobble);
+                blit[1](dst, work->sheet + 0x6e8, q4->x - 17, q4->y - 65, 34, 65);
+                if (q4->y <= 111) {
+                    q4->y += 16;
                 } else {
-                    p->variant++;
+                    q4->variant++;
                 }
-                if (p->y > 111) {
+                if (q4->y > 111) {
                     burst = 0;
-                    bx = p->x;
-                    if (p->variant <= 7) {
+                    bx = q4->x;
+                    if (q4->variant <= 7) {
                         work->shake = 4;
                     }
                     for (j = 0; j != 1024; j++) {

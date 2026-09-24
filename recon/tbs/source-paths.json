@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_38f:020003c8": {
+      "name": "KorimaMura_RunObjectSpreadScene",
+      "source": "FIELD/KORIMA_MURA/OBJECT_SPREAD_SCENE.C"
+    },
     "resource_3b3:020024cc": {
       "name": "TakaraHashira_DropActorTen",
       "source": "FIELD/TAKARA_HASHIRA/DROP_ACTOR_TEN.C"

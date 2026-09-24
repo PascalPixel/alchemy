@@ -12,10 +12,10 @@ use std::{collections::BTreeMap, path::Path, sync::Mutex};
 
 /// Each tab's icon: an icon bank the graphics review identifies and a frame.
 pub(super) const TAB_ICONS: [(&str, u8, u32); 5] = [
-    ("Files", 4, 148),
+    ("Files", 4, 254),
     ("ROM coverage", 4, 137),
     ("Music", 5, 53),
-    ("Maps", 4, 167),
+    ("Maps", 4, 175),
     ("Text", 4, 176),
 ];
 /// The served glyph sheets are drawn at two device pixels per game pixel,
@@ -413,10 +413,19 @@ fn icon_file(root: &Path, store: &Store) -> Result<String, String> {
     Ok(stamp)
 }
 
-/// One 16x16 frame per tab, index zero transparent, in `TAB_ICONS` order.
+/// One 16x16 frame per tab, in `TAB_ICONS` order, as a one-colour mask at
+/// `SHEET_SCALE` device pixels per game pixel: each icon keeps its lighter
+/// half of colours as ink and drops its dark outline, which the page redraws
+/// as the labels' one-pixel shadow. The page tints the ink.
 fn icon_strip(banks: &BTreeMap<u8, IndexedImage>, colors: &[u16; 16]) -> Result<Vec<u8>, String> {
-    let width = 16 * TAB_ICONS.len();
-    let mut rgba = vec![0u8; width * 16 * 4];
+    let luminance = |index: usize| {
+        let color = colors[index & 15];
+        let channel = |shift: u16| u32::from((color >> shift) & 31);
+        2 * channel(0) + 5 * channel(5) + channel(10)
+    };
+    let scale = SHEET_SCALE as usize;
+    let width = 16 * TAB_ICONS.len() * scale;
+    let mut alpha = vec![0u8; width * 16 * scale];
     for (slot, (_, bank, frame)) in TAB_ICONS.iter().enumerate() {
         let image = banks.get(bank).ok_or("icon bank absent")?;
         let columns = image.width / 16;
@@ -424,29 +433,39 @@ fn icon_strip(banks: &BTreeMap<u8, IndexedImage>, colors: &[u16; 16]) -> Result<
             return Err(format!("icon {frame} lies outside bank {bank}"));
         }
         let (left, top) = (frame % columns * 16, frame / columns * 16);
-        for y in 0..16 {
-            for x in 0..16 {
-                let index = image.pixels[((top + y) * image.width + left + x) as usize] as usize;
-                if index == 0 {
+        let index =
+            |x: u32, y: u32| image.pixels[((top + y) * image.width + left + x) as usize] as usize;
+        let opaque = (0..16)
+            .flat_map(|y| (0..16).map(move |x| (x, y)))
+            .filter(|(x, y)| index(*x, *y) != 0)
+            .map(|(x, y)| luminance(index(x, y)))
+            .collect::<Vec<_>>();
+        let mean = opaque.iter().sum::<u32>() / opaque.len().max(1) as u32;
+        for y in 0..16u32 {
+            for x in 0..16u32 {
+                let pixel = index(x, y);
+                if pixel == 0 || luminance(pixel) < mean {
                     continue;
                 }
-                let color = colors[index & 15];
-                let at = ((y as usize) * width + slot * 16 + x as usize) * 4;
-                for (channel, shift) in [0, 5, 10].into_iter().enumerate() {
-                    let value = (color >> shift) & 31;
-                    rgba[at + channel] = ((value << 3) | (value >> 2)) as u8;
+                for dy in 0..scale {
+                    for dx in 0..scale {
+                        let at = (y as usize * scale + dy) * width
+                            + (slot * 16 + x as usize) * scale
+                            + dx;
+                        alpha[at] = 255;
+                    }
                 }
-                rgba[at + 3] = 255;
             }
         }
     }
     let mut out = Vec::new();
-    let mut encoder = png::Encoder::new(&mut out, width as u32, 16);
-    encoder.set_color(png::ColorType::Rgba);
+    let mut encoder = png::Encoder::new(&mut out, width as u32, (16 * scale) as u32);
+    encoder.set_color(png::ColorType::GrayscaleAlpha);
     encoder.set_depth(png::BitDepth::Eight);
+    let pixels = alpha.iter().flat_map(|a| [255, *a]).collect::<Vec<_>>();
     encoder
         .write_header()
-        .and_then(|mut writer| writer.write_image_data(&rgba))
+        .and_then(|mut writer| writer.write_image_data(&pixels))
         .map_err(|e| e.to_string())?;
     Ok(out)
 }

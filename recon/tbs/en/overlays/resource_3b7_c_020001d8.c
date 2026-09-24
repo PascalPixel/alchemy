@@ -1,6 +1,6 @@
-/* NONMATCHING: 740 of 740 bytes, 14 halfword edits (2026-09-24). Hand-written from the
+/* NONMATCHING: 740 of 740 bytes, 2 halfword edits (2026-09-24). Hand-written from the
  * resolved jump-table disassembly as a single-overlay unit binding Engine_* at
- * their import veneers. Remaining: the blend-register writes load the address before the value (the reference loads 0x3f42 into sl first, then 0x04000050 into r8), and two scheduling slots differ (movs r0, #24 and the p = list copy); 14 halfwords. The 0xe30 message is a link symbol, bound as TorebiIzumi_AndYouWonMessage. */
+ * their import veneers. Remaining: 2 halfwords: inside the list branch the reference copies the hoisted -1 (r5) into r8 before setting p = list (r6); this draft sets p first. The blend writes now match: each is wrapped in a do/while (FAKEMATCH when closed) so the value loads before the register address. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
@@ -39,8 +39,8 @@ s32 Local_020001d8(void)
 
     if (Data_02000240_t.halves[224][0] == (s32)Data_000000bd) {
         gEventWork->start_transition = 0x100;
-        Io_SetBlendControl(0x3f42);
-        Io_SetBlendAlpha(0x80c);
+        do { Io_SetBlendControl(0x3f42); } while (0);
+        do { Io_SetBlendAlpha(0x80c); } while (0);
         Engine_ActorSetAnimation(24, 2);
         Engine_ActorSetAnimation(25, 2);
         Engine_ActorGet(24)->scale_x = -0x10000;

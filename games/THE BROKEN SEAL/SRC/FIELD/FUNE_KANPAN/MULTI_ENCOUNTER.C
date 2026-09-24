@@ -83,7 +83,7 @@ extern u8 Data_0200da54[];
 extern u8 Data_0200d958[];
 extern u8 Data_0200d778[];
 extern s32 Data_0200db08[];
-extern u8 Data_00001d40[];
+extern u8 LinkedMessage_TheresNothingWeCanDo[];
 extern unsigned char Value_00001f00;
 extern u8 *Data_03001e70;
 extern u32 Data_0200db58;
@@ -671,7 +671,7 @@ void FieldScene_RunActorAndEffectPresentationSetup(void)
         Event_Wait(60);
         Actor_ShowEmote(22, 0x106, 40);
         FieldScene_CallPairWith10(22, 0x5000);
-        Event_SetMessage((s32)Data_00001d40);
+        Event_SetMessage((s32)LinkedMessage_TheresNothingWeCanDo);
         Actor_StartRepeatedMotion(22, 1);
         FieldScene_RunStepThen10(0x4016);
         Actor_ShowEmote(20, 0x101, 40);

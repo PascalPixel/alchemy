@@ -476,7 +476,7 @@ extern s16 Data_02000240[];
 extern u8 Value_00000021;
 extern u8 Data_0200aca8[];
 extern u8 Data_0200ac9c[];
-extern u8 Value_00001420;
+extern u8 LinkedMessage_YouWillingGoKolimaForest;
 
 s32 Func_02002ab4(s32, s32, s32);
 /* 0x02002996 serves two imports: the two-argument reader that guards the
@@ -714,7 +714,7 @@ s32 SceneData_SelectTableac9cByState(void)
 void SceneDialogue_RunActor10Message1420(void)
 {
     Event_Begin();
-    Event_SetMessage((s32)&Value_00001420);
+    Event_SetMessage((s32)&LinkedMessage_YouWillingGoKolimaForest);
     Event_AskYesNo(10, 0);
     Event_End();
 }

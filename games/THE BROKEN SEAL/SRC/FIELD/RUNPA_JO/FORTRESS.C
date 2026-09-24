@@ -119,18 +119,18 @@ extern u8 Data_0200eff4[];
 extern u8 Data_0200f258[];
 extern u8 Data_0200f528[];
 extern u8 Data_0200f63c[];
-extern s32 Value_00000953;
+extern s32 LinkedMessage_DoorTightlyLocked;
 extern s32 Value_00000f2a;
 extern s32 Value_00000f2b;
 extern s32 Value_00000f2c;
 extern s32 Value_00000f2d;
-extern u8 Value_00002440;
-extern u8 Value_00002459;
+extern u8 LinkedMessage_AllRightAllRightWe;
+extern u8 LinkedMessage_DoYouKnowWhereDodonpa;
 extern u8 Value_0000256c;
 extern s32 Data_0200f714[];
 extern s32 Data_0200f754[];
 extern s32 Data_0200f764[];
-extern u8 Data_00002411[];
+extern u8 LinkedMessage_CouldSwearJustHeardSomeone[];
 extern u32 Data_03001e40;
 extern u8 Value_00002092;
 extern u8 Value_0000240d;
@@ -138,18 +138,18 @@ extern u8 Value_0000241e;
 extern u8 Value_00002428;
 extern u8 Value_0000247d;
 extern u8 Value_00002464;
-extern u8 Value_0000247e;
-extern u8 Data_0000242e[];
-extern u8 Data_00002430[];
-extern u8 Data_00002424[];
+extern u8 LinkedMessage_DodonpaPulledLever;
+extern u8 LinkedMessage_WhWhWhoGoesThere[];
+extern u8 LinkedMessage_YouDontLookNearlyAs[];
+extern u8 LinkedMessage_MyShiftUpAlready[];
 extern u8 Data_000000a1[];
 extern u8 Data_00002438[];
-extern u8 Data_0000240d[];
-extern u8 Data_00002481[];
-extern u8 Data_0000248e[];
-extern u8 Data_000024a6[];
-extern u8 Data_0000244f[];
-extern u8 Data_00002455[];
+extern u8 LinkedMessage_WhoYou[];
+extern u8 LinkedMessage_UhnnGetOffMe[];
+extern u8 LinkedMessage_ThereYouShouldAbleGet[];
+extern u8 LinkedMessage_Dad[];
+extern u8 LinkedMessage_ShhhPleaseDontWakeDonpa[];
+extern u8 LinkedMessage_DonpaKnowsHeCoddledDodonpa[];
 extern u8 Data_02009151[], Data_0200938d[], Data_02009a45[];
 extern u8 Data_02009719[], Data_0200975d[], Data_020097bd[];
 extern u8 Data_02009529[], Data_020099e9[], Data_0200969d[];
@@ -852,13 +852,13 @@ void FieldScene_UpdateObjectPairC(void)
 void CellDoor_Touch(void)
 {
     if (Func_020065a2(ITEM_CELL_KEY) == -1) {
-        Message_ShowCentered((s32)&Value_00000953, 1);
+        Message_ShowCentered((s32)&LinkedMessage_DoorTightlyLocked, 1);
     }
 }
 
 void LockedDoor_Touch(void)
 {
-    Message_ShowCentered((s32)&Value_00000953, 1);
+    Message_ShowCentered((s32)&LinkedMessage_DoorTightlyLocked, 1);
 }
 
 void Actor8_Interact(void)
@@ -1535,7 +1535,7 @@ void FieldScene_RunScene3bf_02001cf0(s32 a0)
     s32 record;
     s32 base6_2424;
 
-    base6_2424 = (s32)Data_00002424;
+    base6_2424 = (s32)LinkedMessage_MyShiftUpAlready;
     Event_SetMessage(base6_2424);
     Event_ShowMessage(a0, 0);
     Event_Wait(120);
@@ -1737,7 +1737,7 @@ void FieldScene_RunScene3bf_020021c4(void)
     Actor_ShowEmote(13, 0x100, 60);
     Actor_FaceActor(21, ACTOR_PARTY_LEADER, 0);
     Actor_FaceActor(13, ACTOR_PARTY_LEADER, 0);
-    base5_240d = (s32)Data_0000240d;
+    base5_240d = (s32)LinkedMessage_WhoYou;
     Event_SetMessage(base5_240d);
     Event_ShowMessage(13, 0);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 30);
@@ -2183,7 +2183,7 @@ void PlayStoryScene(void)
         Actor_WaitForMove(13);
         Event_Wait(60);
         Audio_PlayCue(155);
-        Message_ShowCentered((s32)&Value_0000247e, 1);
+        Message_ShowCentered((s32)&LinkedMessage_DodonpaPulledLever, 1);
         Actor_SetDestinationOffset(13, 8, -8);
         Actor_FaceActor(13, 11, 0);
         FieldScene_RunScene3bf_020025f8();
@@ -2251,7 +2251,7 @@ void FieldScene_RunMainScriptSequence(void)
     Event_Wait(120);
     /* Script line bases are overlay data symbols: an integer base would be
      * constant-propagated into every offset instead of staying in r5. */
-    script_a = (s32)Data_00002481;
+    script_a = (s32)LinkedMessage_UhnnGetOffMe;
     Event_SetMessage(script_a);
     Event_ShowMessage(13, 0);
     Actor_ShowEmote(ACTOR_GERALD, 0x101, 60);
@@ -2432,7 +2432,7 @@ void FieldScene_RunMainScriptSequence(void)
     Actor_FaceDirection(ACTOR_MIA, 0x4000, 0);
     Event_Wait(30);
     Event_Wait(60);
-    script_b = (s32)Data_0000248e;
+    script_b = (s32)LinkedMessage_ThereYouShouldAbleGet;
     Event_SetMessage(script_b);
     Event_ShowMessage(ACTOR_GERALD, 0);
     Actor_SetAnimation(13, 6);
@@ -2590,7 +2590,7 @@ void FieldScene_RunMainScriptSequence(void)
     Actor_StartRepeatedMotion(13, 1);
     Event_Wait(60);
     Audio_PlayCue(8);
-    script_c = (s32)Data_000024a6;
+    script_c = (s32)LinkedMessage_Dad;
     Event_SetMessage(script_c);
     Event_ShowMessage(13, 0);
     Actor_WalkTo(14, 0x1c8, 0x118);
@@ -2938,7 +2938,7 @@ void FieldScene_RunActorTwentyOneSequence(void)
     Event_Wait(50);
     Actor_FaceDirection(21, 0x5000, 0);
     Event_Wait(50);
-    base5_2411 = (s32)Data_00002411;
+    base5_2411 = (s32)LinkedMessage_CouldSwearJustHeardSomeone;
     Event_SetMessage(base5_2411);
     Event_ShowMessage(21, 0);
     Actor_SetAnimation(21, 4);
@@ -2969,7 +2969,7 @@ void FieldScene_RunScene3bf_02004794(void)
         } else {
             Actor_ShowEmote(25, 0x102, 30);
             Actor_FaceActor(25, ACTOR_PARTY_LEADER, 0);
-            base5_244f = (s32)Data_0000244f;
+            base5_244f = (s32)LinkedMessage_ShhhPleaseDontWakeDonpa;
             Event_SetMessage(base5_244f);
             Event_ShowMessage(25, 0);
             Actor_FaceActor(25, 24, 0);
@@ -2998,7 +2998,7 @@ void FieldScene_RunScene3bf_02004794(void)
             }
             Event_Wait(60);
             Actor_ShowEmote(25, 0x105, 60);
-            base5_2455 = (s32)Data_00002455;
+            base5_2455 = (s32)LinkedMessage_DonpaKnowsHeCoddledDodonpa;
             Event_SetMessage(base5_2455);
             Event_OpenMessage(25, 0);
             Actor_RunRepeatedMotion(25, 1);
@@ -3114,7 +3114,7 @@ void ConfigureSceneActor14(void)
 void ConfigureSceneActor13(void)
 {
     Actor_RunRepeatedMotion(13, 2);
-    Event_SetMessage((s32)&Value_00002440);
+    Event_SetMessage((s32)&LinkedMessage_AllRightAllRightWe);
     Event_ShowMessage(13, 0);
 }
 
@@ -3127,7 +3127,7 @@ void ConfigureSceneActor12Variant(void)
 
 void ConfigureSceneActor18(void)
 {
-    Event_SetMessage((s32)&Value_00002459);
+    Event_SetMessage((s32)&LinkedMessage_DoYouKnowWhereDodonpa);
     Event_AskYesNo(18, 0);
 }
 
@@ -3149,7 +3149,7 @@ void RunActor20SceneSequence(void)
             Actor_Stop(20);
             Func_0200a2ac(20);
             Event_Wait(20);
-            base5_242e = (s32)Data_0000242e;
+            base5_242e = (s32)LinkedMessage_WhWhWhoGoesThere;
             Event_SetMessage(base5_242e);
             Event_ShowMessage(20, 0);
             Actor_ShowEmote(20, 0x102, 30);
@@ -3159,7 +3159,7 @@ void RunActor20SceneSequence(void)
             Actor_SetAnimation(20, 4);
             Event_Wait(30);
         }
-        base5_2430 = (s32)Data_00002430;
+        base5_2430 = (s32)LinkedMessage_YouDontLookNearlyAs;
         Event_SetMessage(base5_2430);
         Event_ShowMessage(20, 0);
         Actor_ShowEmote(20, 0x101, 40);

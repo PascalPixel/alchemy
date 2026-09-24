@@ -234,7 +234,7 @@ extern u16 Data_0200c7a4;
 extern u16 Data_0200c7bc;
 extern u16 Data_0200c750;
 extern u8 *Data_03001f3c;
-extern u8 Value_0000207c;
+extern u8 LinkedMessage_WouldYouLikeHearDescription;
 extern u8 Data_0200c420[];
 extern u8 Data_0200bf14[];
 extern u8 Data_0200b1c1[];
@@ -1490,7 +1490,7 @@ s32 SceneDialogue_RunFlagGatedPromptInteraction(s32 a, s32 b)
         return r;
     }
     GameFlag_Set(b + 520);
-    Event_SetMessage((s32)&Value_0000207c);
+    Event_SetMessage((s32)&LinkedMessage_WouldYouLikeHearDescription);
     Event_OpenMessage(a, 0);
     return Event_ChooseYesNo(0, 0);
 }

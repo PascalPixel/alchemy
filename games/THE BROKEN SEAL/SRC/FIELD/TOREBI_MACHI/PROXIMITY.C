@@ -148,7 +148,6 @@ u8 *Func_02000f34();
 void Func_0200026a();
 void Func_02000f66();
 void Func_02000f7e();
-s32 Func_02000fa6_a();
 u8 *Func_02000fb8();
 s32 Func_0200132a();
 void Func_0200138a();
@@ -650,7 +649,7 @@ void FieldScene_RunScene3b5_02000224(void)
     u32 i;
     u8 *record;
 
-    record = Value1(Func_02000fa6_a, 8);
+    record = Value1(Engine_ActorGet, 8);
     if ((s32)record != 0) {
         record[89] = 0;
     }

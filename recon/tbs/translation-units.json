@@ -42262,10 +42262,6 @@
           "address": "0x02008d04",
           "kind": "thumb"
         },
-        "Func_02000fa6_a": {
-          "address": "0x02008d7c",
-          "kind": "thumb"
-        },
         "Func_020013d2": {
           "address": "0x02008dbc",
           "kind": "thumb"
@@ -42273,6 +42269,10 @@
         "Func_0200141a": {
           "address": "0x02008df4",
           "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
         },
         "SceneActor_Find": {
           "address": "0x02008d7c",
@@ -42293,10 +42293,6 @@
         "SceneFlag_Test": {
           "address": "0x02008d44",
           "kind": "thumb"
-        },
-        "gEventWork": {
-          "address": "0x03001ebc",
-          "kind": "data"
         }
       },
       "owners": [

@@ -1,12 +1,19 @@
-/* Draft, not exact (2026-09-24): 37 differing halfwords, equal size (was 16 bytes long). The word copies are ordinary calls through the IWRAM CopyWords pointer, not calls to the call_via_r3 veneer; the residual is register choice in the fade loop.
-   FAKEMATCH marks below are empty do-while wraps that only move scheduling
-   or register choice; they stay tagged until a real spelling replaces them. */
+/* Draft, not exact (2026-09-24): 200 of 200 bytes, 32 differing halfwords
+   (30 edits; was 37). Step every palette colour one unit towards the colours
+   of resource_id. The IWRAM word copy returns a value (ignored) and the green
+   and blue masks are a u16 held from the 0x1f link symbol: that halfword pool
+   constant has a 60-byte reach, which puts the literal pool before the loop
+   as in the reference. Residual: the reference recomputes the buffer address
+   from sp after the copy call; here it is kept in r7 across the call, which
+   renames the loop registers. */
 #include "TYPES.H"
-#include "RESOURCE.H"
-typedef void (*CopyWordsFn)(void *destination, const void *source, s32 size);
+
+typedef s32 (*CopyWordsFn)(void *destination, const void *source, s32 size);
 #define CopyWords(d, s, n) ((CopyWordsFn)0x03001388)((d), (s), (n))
 
-extern u8 Data_03001388[];
+#include "RESOURCE.H"
+extern u8 Value_0000001f;
+#define MASK mask
 
 void Func_080e46f0(s32 resource_id)
 {
@@ -14,6 +21,7 @@ void Func_080e46f0(s32 resource_id)
     u16 *pal = (u16 *)0x05000000;
     u16 *dst;
     s32 i;
+    u16 mask;
     s32 r;
     s32 g;
     s32 b;
@@ -22,16 +30,16 @@ void Func_080e46f0(s32 resource_id)
     s32 tb;
 
     CopyWords(buf, GetResource(resource_id), 128);
-    do { buf[0] = 0; } while (0); /* FAKEMATCH */
+    buf[0] = 0;
+    mask = (u16)(s32)&Value_0000001f;
     dst = buf;
-    i = 0;
-    do {
+    for (i = 0; i != 64; i++) {
         r = *pal & 0x1f;
-        g = (*pal >> 5) & 0x1f;
-        b = (*pal >> 10) & 0x1f;
+        g = (*pal >> 5) & MASK;
+        b = (*pal >> 10) & MASK;
         tr = dst[i] & 0x1f;
-        tg = (dst[i] >> 5) & 0x1f;
-        tb = (dst[i] >> 10) & 0x1f;
+        tg = (dst[i] >> 5) & MASK;
+        tb = (dst[i] >> 10) & MASK;
         if (r < tr) {
             r++;
         } else if (r > tr) {
@@ -47,9 +55,8 @@ void Func_080e46f0(s32 resource_id)
         } else if (b > tb) {
             b--;
         }
-        do { dst[i] = (b << 10) | (g << 5) | r; } while (0); /* FAKEMATCH */
+        dst[i] = (b << 10) | (g << 5) | r;
         pal++;
-        i++;
-    } while (i != 64);
+    }
     CopyWords((u16 *)0x05000000, buf, 128);
 }

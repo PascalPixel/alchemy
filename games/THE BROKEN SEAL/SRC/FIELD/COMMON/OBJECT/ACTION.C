@@ -25,7 +25,7 @@ extern const u8 ObjectMotion_MoveTowardTargetScript[];
 extern const u8 ObjectMotion_TurnTowardLinkedScript[];
 extern const u8 ObjectMotion_ResetActionScript[];
 
-s32 FixedPoint_Ratio(s32, s32);
+s32 Math_Div(s32, s32);
 s32 Object_SetPosition(s32, s32, s32, s32);
 s32 Object_SetMode(s32, s32);
 
@@ -55,10 +55,10 @@ s32 ObjectMotion_MoveTowardTarget(s32 arg0)
         arg0 = *(s16 *)(object + 0x64);
         if (distance >= arg0) {
             newX = *(s32 *)(object + 8) +
-                FixedPoint_Ratio(cellX << 20, arg0);
+                Math_Div(cellX << 20, arg0);
             Object_SetPosition(object, newX, *(s32 *)(object + 0x0c),
                           *(s32 *)(object + 0x10) +
-                              FixedPoint_Ratio(cellY << 20, arg0));
+                              Math_Div(cellY << 20, arg0));
             Object_SetMode(object, 2);
         } else {
             Object_SetMode(object, 1);

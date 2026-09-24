@@ -64,7 +64,7 @@ s32 Menu_RunWorkspaceSelectionLoop(void)
 loop_6:
     if (spC != 0) {
         spC = 0;
-        var_r8_51 = Modulo(var_r8_51 + var_fp_21, var_fp_21);
+        var_r8_51 = Math_Mod(var_r8_51 + var_fp_21, var_fp_21);
         FIELD_AT_OFFSET(temp_sl_29, u16 *, 0x574) = var_r8_51;
         i = 0;
         if (i < var_fp_21) {

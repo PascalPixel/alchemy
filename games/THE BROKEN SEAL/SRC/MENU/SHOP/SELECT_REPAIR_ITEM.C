@@ -3,8 +3,8 @@
 #include "SOUND_IDS.H"
 #include "SYSTEM.H"
 
-s32 Modulo(s32, s32);
-s32 FixedPoint_Ratio(s32, s32);
+s32 Math_Mod(s32, s32);
+s32 Math_Div(s32, s32);
 s32 UiWindow_CreateFar(s32, s32, s32, s32, s32);
 void UiWindow_Close(s32, s32);
 s32 Ability_GetAvailability(s32);
@@ -57,8 +57,8 @@ s32 Shop_SelRepair(s32 unit_id)
                     selection = item_count - 1;
                 item_id = 0x1ff & unit->inventory[selection];
                 window = (void *)shop->item_window;
-                x = Modulo(selection, 5) * 16;
-                y = FixedPoint_Ratio(selection, 5) * 16 + 8;
+                x = Math_Mod(selection, 5) * 16;
+                y = Math_Div(selection, 5) * 16 + 8;
                 Shop_PlaceCursor(window, x, y);
                 shop->mode = 3;
                 price = Shop_ComputeRepairPrice(unit->inventory[selection]);
@@ -79,13 +79,13 @@ s32 Shop_SelRepair(s32 unit_id)
             if ((*(volatile u32 *)ADDR_03001B04 & 0x20) != 0) {
                 Audio_PlayCue(SOUND_MENU_CURSOR_MOVE);
                 selection -= 1;
-                selection = Modulo(selection + item_count, item_count);
+                selection = Math_Mod(selection + item_count, item_count);
                 redraw = 1;
             }
             if ((*(volatile u32 *)ADDR_03001B04 & 0x10) != 0) {
                 Audio_PlayCue(SOUND_MENU_CURSOR_MOVE);
                 selection += 1;
-                selection = Modulo(selection + item_count, item_count);
+                selection = Math_Mod(selection + item_count, item_count);
                 redraw = 1;
             }
             if ((*(volatile u32 *)ADDR_03001B04 & 0x40) != 0) {

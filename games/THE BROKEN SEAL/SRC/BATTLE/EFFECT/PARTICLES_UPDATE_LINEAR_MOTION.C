@@ -1,6 +1,6 @@
 #include "TYPES.H"
 
-s32 FixedPoint_Ratio(s32, s32);
+s32 Math_Div(s32, s32);
 void ParticleEffect_UpdateLinearMotion(void *particle)
 {
   s32 velocity_x;
@@ -21,7 +21,7 @@ void ParticleEffect_UpdateLinearMotion(void *particle)
   *((s32 *)(((u8 *)particle) + 0xC)) = velocity_y;
   *((s32 *)(((u8 *)particle) + 0x3C)) = velocity_y;
   *((s32 *)(((u8 *)particle) + 0x30)) =
-      (s32)(velocity_x - FixedPoint_Ratio(velocity_x, 0x12));
+      (s32)(velocity_x - Math_Div(velocity_x, 0x12));
  do {
    vz = velocity_z;
    if (velocity_z < 0) {

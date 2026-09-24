@@ -22,7 +22,7 @@ s32 Trade_GetOfferState(s32 arg0)
 }
 
 /* party/get_average_level.c */
-u32 FixedPoint_Ratio(s32, s32);
+u32 Math_Div(s32, s32);
 u32 Party_GetAverageLevel(void)
 {
     s32 count;
@@ -38,6 +38,6 @@ u32 Party_GetAverageLevel(void)
         total += ((u8 *)OwnerState_Get(
             gCell.active_owners[i]))[15];
     }
-    total = FixedPoint_Ratio(total, count);
+    total = Math_Div(total, count);
     return total;
 }

@@ -51,8 +51,8 @@ s32 CharacterMenu_BuildAvailability(u8 *output, s32 requested, s32 id)
 #define GROUP_LEN 5
 #endif
 
-s32 FixedPoint_Ratio(s32, s32);
-s32 Modulo(s32, s32);
+s32 Math_Div(s32, s32);
+s32 Math_Mod(s32, s32);
 
 static __inline__ u8 LoadByte(s32 base, s32 offset)
 {
@@ -85,10 +85,10 @@ s32 Menu_BuildPageResult(struct MenuResult *result, s32 index)
     if (limit == 0) {
         value = 0;
     }
-    quotient = FixedPoint_Ratio(value, GROUP_LEN);
-    remainder = Modulo(value, GROUP_LEN);
-    groups = FixedPoint_Ratio(limit, GROUP_LEN);
-    if (Modulo(limit, GROUP_LEN) != 0) {
+    quotient = Math_Div(value, GROUP_LEN);
+    remainder = Math_Mod(value, GROUP_LEN);
+    groups = Math_Div(limit, GROUP_LEN);
+    if (Math_Mod(limit, GROUP_LEN) != 0) {
         groups++;
     }
     result->owner_state = encoded;

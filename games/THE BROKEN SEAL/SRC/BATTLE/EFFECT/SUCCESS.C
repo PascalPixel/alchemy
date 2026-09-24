@@ -113,7 +113,7 @@ s32 BattleFx_IsRevive(s32 effect_id)
 
 #define FIELD_AT_OFFSET(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
-s32 FixedPoint_Ratio(s32, s32);
+s32 Math_Div(s32, s32);
 u8 *Owner_GetState(s32);
 s32 Owner_GetResistanceValue(s32, s32);
 s32 BattleRandomPercent(void);
@@ -200,7 +200,7 @@ action4_done:
     }
 
     for (attempt = 0; attempt < attempts; attempt++) {
-        if (FixedPoint_Ratio(score *success_scale, 100) >= BattleRandomPercent()) {
+        if (Math_Div(score *success_scale, 100) >= BattleRandomPercent()) {
             return 1;
         }
     }

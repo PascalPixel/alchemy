@@ -1,7 +1,7 @@
 #include "TYPES.H"
 
 void *Owner_GetState(s32);
-s32 FixedPoint_Ratio(s32, s32);
+s32 Math_Div(s32, s32);
 
 void Owner_RatioNoOp(void)
 {
@@ -27,7 +27,7 @@ void Owner_RecalculateRatios(s32 owner_no)
     struct OwnerRatioState *owner;
 
     owner = Owner_GetState(owner_no);
-    first = FixedPoint_Ratio(
+    first = Math_Div(
         (s32)((u32)(s32)owner->value_38 << 14), owner->divisor_34);
     first_value = 0x4000;
     if (first <= 0x4000) {
@@ -41,7 +41,7 @@ void Owner_RecalculateRatios(s32 owner_no)
         first_value = 1;
         owner->value_14 = first_value;
     }
-    second = FixedPoint_Ratio(
+    second = Math_Div(
         (s32)((u32)(s32)owner->value_3a << 14), owner->divisor_36);
     second_value = 0x4000;
     if (second <= 0x4000) {
@@ -70,7 +70,7 @@ void Owner_UpdateRatioPair(struct OwnerRatioState *state, s32 input)
         }
     }
     state->value_38 = value;
-    value = FixedPoint_Ratio((value << 16) >> 2, state->divisor_34);
+    value = Math_Div((value << 16) >> 2, state->divisor_34);
 
     {
         s32 output = 0x4000;
@@ -87,7 +87,7 @@ void Owner_UpdateRatioPair(struct OwnerRatioState *state, s32 input)
         }
     }
 
-    value = FixedPoint_Ratio(state->value_3a << 14, state->divisor_36);
+    value = Math_Div(state->value_3a << 14, state->divisor_36);
     {
         s32 output = 0x4000;
 

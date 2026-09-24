@@ -3,7 +3,7 @@
 #define INPUT_NEW_KEYS (*(volatile u32 *)ADDR_03001C94)
 #define INPUT_REPEAT_KEYS (*(volatile u32 *)ADDR_03001B04)
 
-s32 Modulo(s32 value, s32 divisor);
+s32 Math_Mod(s32 value, s32 divisor);
 s32 UiWindow_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 style);
 void UiWindow_Close(s32 window, s32 style);
 struct ShopCursorAnchor *RenderOutput_CreateFar(
@@ -53,7 +53,7 @@ s32 Shop_PickUnitItem(s32 *selected_unit, s32 *selected_item)
     for (;;) {
         if (redraw != 0) {
             redraw = 0;
-            selected_index = Modulo(
+            selected_index = Math_Mod(
                 selected_index + shop->party_member_count,
                 shop->party_member_count);
             unit_id = shop->party_member_ids[selected_index];
@@ -179,7 +179,7 @@ s32 Shop_SelUse(s32 actor)
             off = selection * 2 + 216;
             flags = *(u16 *)(object + off) & 0x1ff;
             window = (void *)shop->item_window;
-            x = Modulo(selection, 5) << 4;
+            x = Math_Mod(selection, 5) << 4;
             y = (Math_Div(selection, 5) << 4) + 8;
             Shop_PlaceCursor(window, x, y);
             shop->mode = 3;
@@ -213,7 +213,7 @@ s32 Shop_SelUse(s32 actor)
             goto exit_loop;
         }
 
-        /* selection -= 1 / += 1 as its own statement before the Modulo
+        /* selection -= 1 / += 1 as its own statement before the Math_Mod
          * call (matching sibling main:080b211c's idiom) so the compiler
          * commits the +-1 directly into selection's home register (r7)
          * ahead of the add; folding it into one `selection +- 1 + count`
@@ -222,13 +222,13 @@ s32 Shop_SelUse(s32 actor)
         if ((*(volatile u32 *)ADDR_03001B04 & 0x20) != 0) {
             Audio_PlayCue(111);
             selection -= 1;
-            selection = Modulo(selection + count, count);
+            selection = Math_Mod(selection + count, count);
             redraw = 1;
         }
         if ((*(volatile u32 *)ADDR_03001B04 & 0x10) != 0) {
             Audio_PlayCue(111);
             selection += 1;
-            selection = Modulo(selection + count, count);
+            selection = Math_Mod(selection + count, count);
             redraw = 1;
         }
         if ((*(volatile u32 *)ADDR_03001B04 & 0x40) != 0) {

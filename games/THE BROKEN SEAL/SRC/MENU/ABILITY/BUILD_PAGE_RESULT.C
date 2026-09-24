@@ -2,8 +2,8 @@
 #include "GLOBAL_CELLS.H"
 
 s32 Runtime_GetObject(s32);
-s32 FixedPoint_Ratio(s32, s32);
-s32 Modulo(s32, s32);
+s32 Math_Div(s32, s32);
+s32 Math_Mod(s32, s32);
 
 s32 PsynergyMenu_BuildPageResult(struct MenuResult *result, s32 index)
 {
@@ -25,10 +25,10 @@ s32 PsynergyMenu_BuildPageResult(struct MenuResult *result, s32 index)
     if ((s32)(selected_index + 1) > entry_count) {
         selected_index = entry_count - 1;
     }
-    page = FixedPoint_Ratio(selected_index, 5);
-    row = Modulo(selected_index, 5);
-    page_count = FixedPoint_Ratio(entry_count, 5);
-    if (Modulo(entry_count, 5) != 0) {
+    page = Math_Div(selected_index, 5);
+    row = Math_Mod(selected_index, 5);
+    page_count = Math_Div(entry_count, 5);
+    if (Math_Mod(entry_count, 5) != 0) {
         page_count++;
     }
     result->owner_state = owner_state;

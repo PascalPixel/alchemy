@@ -79,7 +79,7 @@ s32 Curve_StepAtDifferencePosition(const s8 *samples, s32 start, s32 end)
     return second;
 }
 
-s32 FixedPoint_Ratio(s32 dividend, s32 divisor);
+s32 Math_Div(s32 dividend, s32 divisor);
 
 s32 Curve_LerpThreeSamplesByRatio(const s8 *samples, s32 start, s32 end)
 {
@@ -95,12 +95,12 @@ s32 Curve_LerpThreeSamplesByRatio(const s8 *samples, s32 start, s32 end)
     if ((u32)start == CURVE_FULL_STEPS - 1) {
         result = middle;
     } else if ((u32)start < CURVE_FULL_STEPS - 1) {
-        result = first + FixedPoint_Ratio(
+        result = first + Math_Div(
             (middle - first) * start,
             CURVE_FULL_STEPS - 1);
     } else {
         start = start - (CURVE_FULL_STEPS - 1);
-        result = middle + FixedPoint_Ratio(
+        result = middle + Math_Div(
             (last - middle) * start,
             CURVE_FULL_STEPS - 1);
     }

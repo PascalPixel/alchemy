@@ -42,7 +42,7 @@ extern struct LinkCountdownState *gIw;
 extern struct LinkRuntimeState *gBattleWork;
 extern struct LinkSignature gOv[];
 
-s32 FixedPoint_Ratio(s32 dividend, s32 divisor);
+s32 Math_Div(s32 dividend, s32 divisor);
 void Runtime_PushSlotEntry(struct CountdownDisplayEntry *entry, s32 value);
 
 void UiText_DrawNumberInWindow(s32 value, s32 width, s32 handle, s32 arg3, s32 arg4);
@@ -71,7 +71,7 @@ void UpdateLinkSessionCountdown(void)
         current = state->currentOffset;
         if (target != current) {
             difference = target - current;
-            step = FixedPoint_Ratio(difference, 3);
+            step = Math_Div(difference, 3);
             if (step == 0) {
                 step--;
                 if (difference >= 0)
@@ -139,7 +139,7 @@ timer_ready:
         if (timer < 0)
             goto done;
 
-        seconds = FixedPoint_Ratio(timer + FRAMES_PER_SECOND - 1, FRAMES_PER_SECOND);
+        seconds = Math_Div(timer + FRAMES_PER_SECOND - 1, FRAMES_PER_SECOND);
         if (seconds != 0 && seconds *FRAMES_PER_SECOND == timer)
             Audio_PlayCue(SOUND_TRIPLE_TONE_LOW);
 

@@ -28,7 +28,7 @@ struct BattleActorDefinition {
 
 extern struct SummonChargeState *gBattleWork;
 
-s32 Modulo(s32, s32);
+s32 Math_Mod(s32, s32);
 struct BattleActorDefinition *Owner_GetStateFar(s32 actor_id);
 
 /* 番号表を線形探索し、既存なら次の空きビットを剰余で回して確保、 */
@@ -55,7 +55,7 @@ s32 Summon_TakeCharge(s32 no, s32 n)
             return 0x8001;
         }
         for (; retry <= 31; retry++) {
-            ch = Modulo(w->channels[i] + 1, CH_CNT);
+            ch = Math_Mod(w->channels[i] + 1, CH_CNT);
             w->channels[i] = ch;
             if ((w->used_masks[i] & (1 << (s8)ch)) == 0)
                 break;

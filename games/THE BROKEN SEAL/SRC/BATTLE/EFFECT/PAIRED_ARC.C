@@ -14,8 +14,8 @@ extern struct BattleEffect16GlobalState gGameState;
 #define PARTY_STATE gGameState
 extern u32 gFrameCount;
 extern u8 Value_00000001;
-s32 UnsignedModulo(u32, s32);
-s32 Modulo(s32, s32);
+s32 Math_ModU(u32, s32);
+s32 Math_Mod(s32, s32);
 void BattleFx_SpawnDescendingArcParticles(void *);
 
 void BattleFx_UpdateEffect16State(void)
@@ -28,7 +28,7 @@ void BattleFx_UpdateEffect16State(void)
 
     effect_state = *(u8 **)(ObjectTable_Get(PARTY_STATE.active_object_id) + 0x50);
     child_state = *(u8 **)(effect_state + 0x28);
-    phase = UnsignedModulo(gFrameCount, 5);
+    phase = Math_ModU(gFrameCount, 5);
     if (phase == 0) {
         state_byte = effect_state + 0x25;
         *state_byte = 1;
@@ -56,9 +56,9 @@ void BattleFx_UpdatePairedArcSpawner(void *arg0)
     counter = (*(u16 *)((u8 *)arg0 + 0x66))++;
 
     if (PARTY_STATE.value_1da == (s32)&Value_00000001) {
-        if (Modulo(counter, 7) == 0)
+        if (Math_Mod(counter, 7) == 0)
             BattleFx_SpawnDescendingArcParticles(arg0);
-    } else if (Modulo(counter, 5) == 0) {
+    } else if (Math_Mod(counter, 5) == 0) {
         BattleFx_SpawnDescendingArcParticles(arg0);
     }
 

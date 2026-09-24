@@ -16,7 +16,7 @@ union AffineMatrix {
 
 s32 Trig_Cos(s32 angle);
 s32 Trig_Sin(s32 angle);
-s32 FixedPoint_Ratio(s32 numerator, s32 denominator);
+s32 Math_Div(s32 numerator, s32 denominator);
 
 extern u8 gObjAffineCount;
 extern union AffineMatrix gObjAffineMatrices[];
@@ -58,13 +58,13 @@ s32 AffineMatrix_BuildForEffect(struct Effect *source)
 
         sine = Trig_Sin(angle);
         cosine = Trig_Cos(angle);
-        *coefficient = FixedPoint_Ratio(cosine, x_scale);
+        *coefficient = Math_Div(cosine, x_scale);
         coefficient++;
-        *coefficient = FixedPoint_Ratio(sine, x_scale);
+        *coefficient = Math_Div(sine, x_scale);
         coefficient++;
-        *coefficient = FixedPoint_Ratio(-sine, y_scale);
+        *coefficient = Math_Div(-sine, y_scale);
         coefficient++;
-        *coefficient = FixedPoint_Ratio(cosine, y_scale);
+        *coefficient = Math_Div(cosine, y_scale);
     }
 
     gObjAffineCount = index + 1;

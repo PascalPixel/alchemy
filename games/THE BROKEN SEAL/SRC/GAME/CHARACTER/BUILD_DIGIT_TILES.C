@@ -21,8 +21,8 @@ extern const struct DigitOffsets Element_PowerResistByLevel[16];
 void *Owner_GetState(s32 owner);
 const u8 *Owner_GetRecord(s32 record);
 s32 Owner_GetDigitValues(s32 record, const u8 *source, s32 output[4]);
-s32 Modulo(s32 value, s32 divisor);
-s32 FixedPoint_Ratio(s32 value, s32 divisor);
+s32 Math_Mod(s32 value, s32 divisor);
+s32 Math_Div(s32 value, s32 divisor);
 
 u32 Owner_BuildDigitTiles(s32 owner, s16 destination[4][2])
 {
@@ -58,8 +58,8 @@ copied:
 
         result = (u32)Element_PowerResistByLevel;
         value = values[i];
-        ones = Modulo(value, 10);
-        tens = FixedPoint_Ratio(value, 10);
+        ones = Math_Mod(value, 10);
+        tens = Math_Div(value, 10);
 
         if (tens > 15)
             tens = 15;

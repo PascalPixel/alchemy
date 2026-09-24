@@ -5,18 +5,18 @@
    day counters in the game state and scaled into palette bank 15. */
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
-s32 Modulo(s32, s32);
+s32 Math_Mod(s32, s32);
 extern u8 gGameState[];
 #define PARTY_STATE gGameState
 extern u8 PaletteGlow_WaveTable[];
 void GraphicsPalette_SetTintChannelsFromCounters(void *work)
 {
     s16 phase; s32 bias; s32 c2, c0, c1;
-    phase = Modulo(PARTY_STATE[0x205] + 0xC, 0x18) * 4;
+    phase = Math_Mod(PARTY_STATE[0x205] + 0xC, 0x18) * 4;
     bias = PARTY_STATE[0x206] - 7;
-    c0 = PaletteGlow_WaveTable[(s16)Modulo(phase, 0x60)];
-    c1 = PaletteGlow_WaveTable[Modulo(phase + 0x20, 0x60)];
-    c2 = PaletteGlow_WaveTable[Modulo(phase + 0x40, 0x60)];
+    c0 = PaletteGlow_WaveTable[(s16)Math_Mod(phase, 0x60)];
+    c1 = PaletteGlow_WaveTable[Math_Mod(phase + 0x20, 0x60)];
+    c2 = PaletteGlow_WaveTable[Math_Mod(phase + 0x40, 0x60)];
     c0 += bias; c1 += bias; c2 += bias;
     if (c0 < 0) c0 = 0; if (c1 < 0) c1 = 0; if (c2 < 0) c2 = 0;
     if (c0 > 0x1F) c0 = 0x1F; if (c1 > 0x1F) c1 = 0x1F; if (c2 > 0x1F) c2 = 0x1F;

@@ -53,7 +53,7 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *out_margin)
         } while (i != 0);
     }
 
-    chance = FixedPoint_Ratio(level_total, unit_count);
+    chance = Math_Div(level_total, unit_count);
     chance += (s8)GameFlag_GetByteFar(1016);
     if (chance <= 0)
         chance = 1;

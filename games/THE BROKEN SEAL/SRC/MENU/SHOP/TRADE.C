@@ -151,7 +151,7 @@ s32 Shop_SalePrice(s32 item_id)
 #define BASE_W 12
 #endif
 
-s32 Modulo(s32, s32);
+s32 Math_Mod(s32, s32);
 s32 UiWindow_CreateFar(s32, s32, s32, s32, s32);
 void UiWindow_Close(s32, s32);
 s32 Ability_GetAvailability(s32);
@@ -183,7 +183,7 @@ s32 Shop_PickUnit(void)
     for (;;) {
         if (redraw != 0) {
             redraw = 0;
-            selection = Modulo(
+            selection = Math_Mod(
                 selection + shop->party_member_count,
                 shop->party_member_count);
             unit_id = shop->party_member_ids[selection];
@@ -237,7 +237,7 @@ s32 Shop_PickUnit(void)
     }
 }
 
-s32 FixedPoint_Ratio(s32, s32);
+s32 Math_Div(s32, s32);
 void UiMessage_ShowAndWait(s32);
 
 extern u8 Value_00000075;
@@ -284,8 +284,8 @@ s32 Shop_SelSell(s32 unit_id)
                     selection = item_count - 1;
                 item_id = 0x1ff & unit->inventory[selection];
                 window = (void *)shop->item_window;
-                x = Modulo(selection, 5) * 16;
-                Shop_PlaceCursor(window, x, FixedPoint_Ratio(selection, 5) * 16 + 8);
+                x = Math_Mod(selection, 5) * 16;
+                Shop_PlaceCursor(window, x, Math_Div(selection, 5) * 16 + 8);
                 shop->mode = 3;
                 Shop_DrawItemPrice(
                     list_window,
@@ -308,13 +308,13 @@ s32 Shop_SelSell(s32 unit_id)
             if ((*(volatile u32 *)ADDR_03001B04 & 0x20) != 0) {
                 Audio_PlayCue(SOUND_MENU_CURSOR_MOVE);
                 selection -= 1;
-                selection = Modulo(selection + item_count, item_count);
+                selection = Math_Mod(selection + item_count, item_count);
                 redraw = 1;
             }
             if ((*(volatile u32 *)ADDR_03001B04 & 0x10) != 0) {
                 Audio_PlayCue(SOUND_MENU_CURSOR_MOVE);
                 selection += 1;
-                selection = Modulo(selection + item_count, item_count);
+                selection = Math_Mod(selection + item_count, item_count);
                 redraw = 1;
             }
             if ((*(volatile u32 *)ADDR_03001B04 & 0x40) != 0) {

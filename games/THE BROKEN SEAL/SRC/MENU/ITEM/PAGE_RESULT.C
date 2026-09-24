@@ -3,8 +3,8 @@
 
 /* menu/item_menu/page_result.c */
 s32 Runtime_GetObject(s32);
-s32 FixedPoint_Ratio(s32, s32);
-s32 Modulo(s32, s32);
+s32 Math_Div(s32, s32);
+s32 Math_Mod(s32, s32);
 s32 ItemMenu_Count(s32 owner);
 
 static __inline__ u8 LoadByte(s32 base, s32 offset)
@@ -35,10 +35,10 @@ s32 ItemMenu_PageResult(struct MenuResult *result, s32 index)
     if ((s32)(value + 1) > limit) {
         value = limit - 1;
     }
-    quotient = FixedPoint_Ratio(value, 5);
-    remainder = Modulo(value, 5);
-    groups = FixedPoint_Ratio(limit, 5);
-    if (Modulo(limit, 5) != 0) {
+    quotient = Math_Div(value, 5);
+    remainder = Math_Mod(value, 5);
+    groups = Math_Div(limit, 5);
+    if (Math_Mod(limit, 5) != 0) {
         groups++;
     }
     result->owner_state = encoded;

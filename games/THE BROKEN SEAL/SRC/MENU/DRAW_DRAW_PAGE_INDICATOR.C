@@ -5,8 +5,8 @@
 #define PAGE_CAP_LEFT 0xf128
 #define PAGE_CAP_RIGHT 0xf129
 
-s32 FixedPoint_Ratio(s32 numerator, s32 denominator);
-s32 Modulo(s32 numerator, s32 denominator);
+s32 Math_Div(s32 numerator, s32 denominator);
+s32 Math_Mod(s32 numerator, s32 denominator);
 
 void Menu_DrawPageIndicator(
     s32 window,
@@ -23,8 +23,8 @@ void Menu_DrawPageIndicator(
 
     x = right_edge;
     tile = PAGE_LABEL_FIRST;
-    page_count = FixedPoint_Ratio(item_count, page_size);
-    if (Modulo(item_count, page_size) != 0)
+    page_count = Math_Div(item_count, page_size);
+    if (Math_Mod(item_count, page_size) != 0)
         page_count++;
 
     x -= page_count;

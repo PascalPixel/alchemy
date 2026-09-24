@@ -10123,7 +10123,8 @@
       "source": "FIELD/KORASHIAMU_IRIGUCHI/BRANCHING_ACTOR_PRESENTATION.C"
     },
     "resource_3b9:02000dcc": {
-      "name": "Scene_RunLargeActorPresentationSetup"
+      "name": "KorashiamuIriguchi_RunGatherScene",
+      "source": "FIELD/KORASHIAMU_IRIGUCHI/GATHER_SCENE.C"
     },
     "resource_3b1:020052f4": {
       "name": "FieldScene_RunFormationAndEffectPresentation",

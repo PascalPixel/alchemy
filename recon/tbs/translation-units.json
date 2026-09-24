@@ -6196,102 +6196,6 @@
       ]
     },
     {
-      "id": "retained-overlay-3b9-02000dcc",
-      "game": "tbs",
-      "source": "recon/tbs/en/overlays/resource_3b9_c_02000dcc.c",
-      "compiler_route": "canonical-gcc296",
-      "overlay": "resource_3b9",
-      "absolute_symbols": {
-        "Func_02003b12": {
-          "address": "0x0200ac6c",
-          "kind": "thumb"
-        },
-        "Func_02003b12_a": {
-          "address": "0x0200ac5c",
-          "kind": "thumb"
-        },
-        "Func_02003b7c": {
-          "address": "0x0200acbc",
-          "kind": "thumb"
-        },
-        "Func_02003b7c_a": {
-          "address": "0x0200ac74",
-          "kind": "thumb"
-        },
-        "Func_02003bbe": {
-          "address": "0x0200ac74",
-          "kind": "thumb"
-        },
-        "Func_02003bbe_a": {
-          "address": "0x0200ac14",
-          "kind": "thumb"
-        },
-        "Func_02003c30": {
-          "address": "0x0200acbc",
-          "kind": "thumb"
-        },
-        "Func_02003c30_a": {
-          "address": "0x0200ac2c",
-          "kind": "thumb"
-        },
-        "Func_02003c9a": {
-          "address": "0x0200acbc",
-          "kind": "thumb"
-        },
-        "Func_02003c9a_a": {
-          "address": "0x0200ac6c",
-          "kind": "thumb"
-        },
-        "Func_02003cee": {
-          "address": "0x0200ac1c",
-          "kind": "thumb"
-        },
-        "Func_02003cee_a": {
-          "address": "0x0200abec",
-          "kind": "thumb"
-        },
-        "Func_02003cfc": {
-          "address": "0x0200ac1c",
-          "kind": "thumb"
-        },
-        "Func_02003cfc_a": {
-          "address": "0x0200abec",
-          "kind": "thumb"
-        },
-        "Func_02003d0a": {
-          "address": "0x0200ac1c",
-          "kind": "thumb"
-        },
-        "Func_02003d0a_a": {
-          "address": "0x0200abec",
-          "kind": "thumb"
-        },
-        "Func_02003d18": {
-          "address": "0x0200ac1c",
-          "kind": "thumb"
-        },
-        "Func_02003d18_a": {
-          "address": "0x0200abec",
-          "kind": "thumb"
-        },
-        "Func_02003d26": {
-          "address": "0x0200ac1c",
-          "kind": "thumb"
-        },
-        "Func_02003d26_a": {
-          "address": "0x0200abec",
-          "kind": "thumb"
-        }
-      },
-      "owners": [
-        {
-          "address": "0x02000dcc",
-          "extent": 992,
-          "state": "retained-assembly"
-        }
-      ]
-    },
-    {
       "id": "retained-overlay-383-02001348",
       "game": "tbs",
       "source": "games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_HEYA/CLOSING_SEQUENCE.C",
@@ -70903,6 +70807,134 @@
         {
           "address": "0x02001638",
           "extent": 572,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "korashiamu-iriguchi-gather-scene",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/KORASHIAMU_IRIGUCHI/GATHER_SCENE.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3b9",
+      "absolute_symbols": {
+        "Engine_GameFlagIsSet": {
+          "address": "0x0200abbc",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagSet": {
+          "address": "0x0200abc4",
+          "kind": "thumb"
+        },
+        "Engine_EventBegin": {
+          "address": "0x0200abf4",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpeed": {
+          "address": "0x0200ac14",
+          "kind": "thumb"
+        },
+        "Engine_ActorWalkToAndWait": {
+          "address": "0x0200ac4c",
+          "kind": "thumb"
+        },
+        "SceneState_ForwardMaskedHalfwordWith10": {
+          "address": "0x02009c5c",
+          "kind": "thumb"
+        },
+        "Engine_CameraSetSpeed": {
+          "address": "0x0200acdc",
+          "kind": "thumb"
+        },
+        "Engine_CameraMoveTo": {
+          "address": "0x0200ace4",
+          "kind": "thumb"
+        },
+        "Engine_CameraWaitForMove": {
+          "address": "0x0200acec",
+          "kind": "thumb"
+        },
+        "Engine_ActorFaceDirection": {
+          "address": "0x0200acbc",
+          "kind": "thumb"
+        },
+        "Engine_ActorRunRepeatedMotion": {
+          "address": "0x0200ac7c",
+          "kind": "thumb"
+        },
+        "Engine_EventSetMessage": {
+          "address": "0x0200ac94",
+          "kind": "thumb"
+        },
+        "Engine_EventOpenMessage": {
+          "address": "0x0200ac9c",
+          "kind": "thumb"
+        },
+        "Engine_UiWorkWaitThenFinalizeCapacity": {
+          "address": "0x0200ac04",
+          "kind": "thumb"
+        },
+        "Engine_EventWait": {
+          "address": "0x0200abec",
+          "kind": "thumb"
+        },
+        "FieldScene_CallPairWith10": {
+          "address": "0x02009c48",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetAnimationAndWait": {
+          "address": "0x0200ac6c",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetAnimation": {
+          "address": "0x0200ac5c",
+          "kind": "thumb"
+        },
+        "Engine_ActorStartRepeatedMotion": {
+          "address": "0x0200ac74",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetAttachedEffect": {
+          "address": "0x0200accc",
+          "kind": "thumb"
+        },
+        "Engine_ActorStop": {
+          "address": "0x0200ac24",
+          "kind": "thumb"
+        },
+        "Engine_TaskWait": {
+          "address": "0x0200ab8c",
+          "kind": "thumb"
+        },
+        "Engine_ActorEnableActionCallback": {
+          "address": "0x0200ac1c",
+          "kind": "thumb"
+        },
+        "Main_0808a0b0": {
+          "address": "0x0200ac2c",
+          "kind": "thumb"
+        },
+        "Engine_ActorGet": {
+          "address": "0x0200ac0c",
+          "kind": "thumb"
+        },
+        "Engine_EventRequestExit": {
+          "address": "0x0200acfc",
+          "kind": "thumb"
+        },
+        "Engine_EventShowMessage": {
+          "address": "0x0200aca4",
+          "kind": "thumb"
+        },
+        "Engine_EventEnd": {
+          "address": "0x0200abfc",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02000dcc",
+          "extent": 992,
           "state": "exact-c"
         }
       ]

@@ -66,19 +66,6 @@
     },
     {
       "overlay": "resource_36f",
-      "start": "0x020001c0",
-      "end": "0x02000238",
-      "kind": "thumb_multi_register_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
-        "Thumb multiple-transfer instructions alone are not proof of handwritten code: stock GCC also has Thumb block-move patterns. The precise sequence and provenance remain to be established.",
-        "complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"
-      ]
-    },
-    {
-      "overlay": "resource_36f",
       "start": "0x02000454",
       "end": "0x02000538",
       "kind": "thumb_multi_register_module",
@@ -94,32 +81,6 @@
       "overlay": "resource_370",
       "start": "0x02000054",
       "end": "0x02000154",
-      "kind": "thumb_multi_register_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
-        "Thumb multiple-transfer instructions alone are not proof of handwritten code: stock GCC also has Thumb block-move patterns. The precise sequence and provenance remain to be established.",
-        "complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"
-      ]
-    },
-    {
-      "overlay": "resource_380",
-      "start": "0x0200478c",
-      "end": "0x02004854",
-      "kind": "thumb_multi_register_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
-        "Thumb multiple-transfer instructions alone are not proof of handwritten code: stock GCC also has Thumb block-move patterns. The precise sequence and provenance remain to be established.",
-        "complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"
-      ]
-    },
-    {
-      "overlay": "resource_381",
-      "start": "0x0200330c",
-      "end": "0x020033d4",
       "kind": "thumb_multi_register_module",
       "retention": "keep_structured_asm",
       "confidence": "strong",

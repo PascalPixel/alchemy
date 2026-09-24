@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "FIELD_SCENE.H"
 
 #define NULL ((void *)0)
 
@@ -266,7 +267,7 @@ void FieldScene_RunScene3ae_02000144(void)
 
     Event_Begin();
     GameFlag_Set(0x8aa);
-    Actor_WalkToAndWait(0, 0x188, 0x128);
+    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x188, 0x128);
     Actor_SetSpeed(8, 0x13333, 0x9999);
     Actor_WalkToAndWait(8, 0x198, 0x128);
     Actor_FaceDirection(8, 0x8000, 0);
@@ -401,8 +402,8 @@ void SceneDialogue_RunActor12Event(void)
             Func_020019be(rec7, rec8);
             GameFlag_Set(0x8a7);
             record = Func_020019fa(0);
-            Actor_WalkToAndWait(0, *(s16 *)(record + 10), 0x518);
-            Actor_WalkToAndWait(0, 72, 0x518);
+            Actor_WalkToAndWait(ACTOR_PARTY_LEADER, *(s16 *)(record + 10), 0x518);
+            Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 72, 0x518);
             Actor_WalkToAndWait(12, 88, 0x518);
             Actor_FaceDirection(12, 0, 0);
         } else {
@@ -460,7 +461,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
             Func_02001aec(*(s32 *)(base6_2000240 + 16), 6, rec7, 24, 8);
             if (Event_ChooseYesNo(-1, 0) == 1) {
                 Func_02001af2(rec7, 2);
-                Actor_SetAnimationAndWait(0, 4);
+                Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 4);
                 Event_Wait(10);
                 Event_ShowMessage(8, 0);
                 goto L_02000660;
@@ -469,7 +470,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
                     goto L_0200061e;
                 }
                 Func_02001b10(rec7, 2);
-                Actor_SetAnimationAndWait(0, 3);
+                Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
                 Event_Wait(10);
                 bump_step(1);
                 Audio_PlayCue(113);
@@ -478,7 +479,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
             }
             L_0200061e:;
             Func_02001b44(rec7, 2);
-            Actor_SetAnimationAndWait(0, 3);
+            Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
             Event_Wait(10);
             bump_step(3);
             Event_ShowMessage(8, 0);
@@ -514,7 +515,7 @@ void FieldScene_RunScene3ae_020006c8(void)
 
     Event_Begin();
     if (GameFlag_IsSet(0x8a8) != 0) {
-        Actor_FaceActor(11, 0, 0);
+        Actor_FaceActor(11, ACTOR_PARTY_LEADER, 0);
         Event_Wait(20);
         Event_SetMessage(0x1f1c);
         Event_ShowMessage(11, 0);
@@ -522,7 +523,7 @@ void FieldScene_RunScene3ae_020006c8(void)
     } else {
         Event_Wait(20);
         Actor_ShowEmote(11, 0x100, 50);
-        Actor_FaceActor(11, 0, 0);
+        Actor_FaceActor(11, ACTOR_PARTY_LEADER, 0);
         Event_Wait(20);
         Event_SetMessage(0x1f18);
         Event_ShowMessage(11, 0);
@@ -558,15 +559,15 @@ void FieldScene_RunScene3ae_020007dc(void)
 
     Event_Begin();
     Audio_PlayCue(158);
-    Actor_SetSpeed(0, 0x8000, 0x4000);
-    Actor_SetSpritePriority(0, 3);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
+    Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 3);
     work = (u8 *)Data_02000240;
     if (*(s16 *)(work + 0x1c0) == (s32)Data_0000006b) {
-        Actor_WalkTo(0, 0x130, 0x570);
+        Actor_WalkTo(ACTOR_PARTY_LEADER, 0x130, 0x570);
         Map_AnimateCells(0x20096b8, 78, 86);
     } else {
         if (*(s16 *)(work + 0x1c0) == (s32)Data_00000070) {
-            Actor_WalkTo(0, 248, 192);
+            Actor_WalkTo(ACTOR_PARTY_LEADER, 248, 192);
             Map_AnimateCells(0x20096ce, 74, 9);
         }
     }
@@ -677,20 +678,20 @@ void FieldScene_RunScene3aeSequenceA(void)
     Event_WaitForScreen();
     Event_Wait(20);
     ObjectMotion_RealignToTrackedObjectAndArmCallback_1(1, -16, 0, 0x8000);
-    Actor_WaitForMove(1);
-    Actor_FaceDirection(0, 0xa000, 0);
+    Actor_WaitForMove(ACTOR_GERALD);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xa000, 0);
     Event_Wait(20);
     Event_SetMessage(0x1f89);
-    Actor_FaceDirection(0, 0xa000, 0);
-    Actor_SetSpeed(1, 0x19999, 0xcccc);
-    Actor_WalkToAndWait(1, 232, 0x590);
-    Actor_FaceDirection(1, 0x8000, 0);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xa000, 0);
+    Actor_SetSpeed(ACTOR_GERALD, 0x19999, 0xcccc);
+    Actor_WalkToAndWait(ACTOR_GERALD, 232, 0x590);
+    Actor_FaceDirection(ACTOR_GERALD, 0x8000, 0);
     Camera_MoveTo(0xb80000, -1, 0x5a00000, 1);
     Camera_WaitForMove();
     Event_Wait(10);
-    Actor_Jump(1, 6, 15);
-    Actor_Jump(1, 6, 40);
-    Event_ShowMessage(1, 0);
+    Actor_Jump(ACTOR_GERALD, 6, 15);
+    Actor_Jump(ACTOR_GERALD, 6, 40);
+    Event_ShowMessage(ACTOR_GERALD, 0);
     Event_Wait(20);
     Camera_MoveTo(0x1080000, -1, 0x5a80000, 1);
     Camera_WaitForMove();
@@ -700,43 +701,43 @@ void FieldScene_RunScene3aeSequenceA(void)
     Actor_WalkToAndWait(8, 0x108, 0x590);
     Actor_FaceDirection(8, 0x8000, 0);
     Event_Wait(10);
-    Actor_FaceDirection(1, 0, 0);
+    Actor_FaceDirection(ACTOR_GERALD, 0, 0);
     Event_Wait(20);
     Event_Wait(10);
     Actor_SetAnimationAndWait(8, 4);
     Event_Wait(10);
     Event_ShowMessage(8, 0);
     Event_Wait(20);
-    Actor_ShowEmote(1, 0x102, 40);
+    Actor_ShowEmote(ACTOR_GERALD, 0x102, 40);
     Event_Wait(30);
-    Actor_FaceDirection(1, 0x8000, 0);
+    Actor_FaceDirection(ACTOR_GERALD, 0x8000, 0);
     Event_Wait(50);
-    Event_ShowMessage(1, 0);
+    Event_ShowMessage(ACTOR_GERALD, 0);
     Event_Wait(20);
-    Actor_FaceDirection(1, 0x2000, 0);
+    Actor_FaceDirection(ACTOR_GERALD, 0x2000, 0);
     Event_Wait(30);
-    Actor_SetSpeed(1, 0x10000, 0x8000);
-    Actor_WalkToAndWait(1, 0x108, 0x5b8);
-    Actor_FaceDirection(1, 0, 0);
-    Actor_FaceDirection(0, 0x8000, 0);
+    Actor_SetSpeed(ACTOR_GERALD, 0x10000, 0x8000);
+    Actor_WalkToAndWait(ACTOR_GERALD, 0x108, 0x5b8);
+    Actor_FaceDirection(ACTOR_GERALD, 0, 0);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x8000, 0);
     Actor_FaceDirection(8, 0x4000, 0);
     Event_Wait(30);
-    Event_ShowMessage(1, 0);
+    Event_ShowMessage(ACTOR_GERALD, 0);
     Event_Wait(10);
-    Actor_SetAnimationAndWait(0, 3);
+    Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
     Event_Wait(30);
-    Actor_SetAnimationAndWait(1, 3);
+    Actor_SetAnimationAndWait(ACTOR_GERALD, 3);
     Event_Wait(30);
-    Actor_SetSpeed(1, 0x13333, 0x9999);
-    Actor_SetAnimation(1, 2);
+    Actor_SetSpeed(ACTOR_GERALD, 0x13333, 0x9999);
+    Actor_SetAnimation(ACTOR_GERALD, 2);
     /* If a record is returned, pass its s16 fields at +10 and +18 back in as
      * arguments. */
     record = Scene_GetRecord_2(0);
     if (record != 0) {
-        Actor_SetDestination(1, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        Actor_SetDestination(ACTOR_GERALD, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
-    Actor_WaitForMove(1);
-    Actor_SetPosition(1, 0, 0);
+    Actor_WaitForMove(ACTOR_GERALD);
+    Actor_SetPosition(ACTOR_GERALD, 0, 0);
     /* Same routine as above, called directly instead of through the Value
      * wrapper. */
     BattleRuntime_WaitIfModeZero_20(20);
@@ -777,9 +778,9 @@ void FieldScene_RunScene3aeSequenceB(void)
     *(u8 *)(*(s32 *)((s32)record + 80) + 9) |= 12;
     *(u8 *)(*(s32 *)((s32)record + 80) + 21) |= 12;
     Camera_MoveTo(0xe80000, -1, 0x1300000, 1);
-    Actor_SetSpeed(0, 0x10000, 0x8000);
-    Actor_WalkToAndWait(0, 216, 0x110);
-    Actor_FaceDirection(0, 0x2000, 0);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
+    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 216, 0x110);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x2000, 0);
     Camera_WaitForMove();
     Event_Wait(20);
     Actor_ShowEmote(13, 0x102, 50);

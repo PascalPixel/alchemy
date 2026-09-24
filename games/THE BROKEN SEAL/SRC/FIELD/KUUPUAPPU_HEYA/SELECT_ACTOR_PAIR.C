@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "FIELD_SCENE.H"
 #include "EVENT_RUNTIME.H"
 
 enum SelectActorPairMessage {
@@ -60,13 +61,13 @@ void FieldScene_SelectActorPair(void)
     GameFlag_Clear(0x250);
     Actor_SetAnimation(24, 1);
     Actor_SetAnimation(25, 1);
-    Actor_SetAnimation(2, 1);
-    Actor_SetAnimation(0, 1);
-    Actor_SetAnimation(1, 1);
-    Actor_FaceActor(1, 2, 0);
-    Actor_FaceEachOther(0, 2, 0);
-    Actor_FaceActor(24, 2, 0);
-    Actor_FaceActor(25, 2, 0);
+    Actor_SetAnimation(ACTOR_IVAN, 1);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
+    Actor_SetAnimation(ACTOR_GERALD, 1);
+    Actor_FaceActor(ACTOR_GERALD, ACTOR_IVAN, 0);
+    Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_IVAN, 0);
+    Actor_FaceActor(24, ACTOR_IVAN, 0);
+    Actor_FaceActor(25, ACTOR_IVAN, 0);
     Event_Wait(10);
     actor = 24;
     switch (*(s16 *)(((s32)work + 0x182))) {
@@ -89,14 +90,14 @@ void FieldScene_SelectActorPair(void)
         Func_0200c5f4(24, 20);
         break;
     }
-    Actor_SetAnimation(2, 1);
-    Actor_FaceActor(2, actor, 0);
-    Actor_FaceActor(1, 2, 0);
-    Actor_RunRepeatedMotion(1, 2);
+    Actor_SetAnimation(ACTOR_IVAN, 1);
+    Actor_FaceActor(ACTOR_IVAN, actor, 0);
+    Actor_FaceActor(ACTOR_GERALD, ACTOR_IVAN, 0);
+    Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
     Event_Wait(20);
     Event_SetMessage(MSG_NOW_IVAN);
     Func_0200c5f4(1, 20);
-    Actor_RunRepeatedMotion(2, 2);
+    Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
     Event_Wait(20);
     Func_0200c5f4(2, 20);
     SceneEffect_ApplyPairWithValue141(2, actor);
@@ -106,15 +107,15 @@ void FieldScene_SelectActorPair(void)
     Func_0200c5f4(24, 20);
     Actor_RunRepeatedMotion(25, 2);
     Func_0200c5f4(25, 20);
-    Actor_ShowEmote(2, 0x100, 60);
+    Actor_ShowEmote(ACTOR_IVAN, 0x100, 60);
     Func_0200c684();
-    Actor_StartRepeatedMotion(1, 2);
-    Actor_RunRepeatedMotion(0, 2);
+    Actor_StartRepeatedMotion(ACTOR_GERALD, 2);
+    Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
     Event_Wait(20);
     Func_0200c5f4(1, 20);
-    Actor_FaceActor(2, 1, 0);
+    Actor_FaceActor(ACTOR_IVAN, ACTOR_GERALD, 0);
     Event_Wait(20);
-    Actor_SetAnimationAndWait(2, 3);
+    Actor_SetAnimationAndWait(ACTOR_IVAN, 3);
     Event_Wait(40);
     record = Func_0200cd7c(0);
     (*(struct SceneObjectFlags **)(record + 80))->mode = 1;

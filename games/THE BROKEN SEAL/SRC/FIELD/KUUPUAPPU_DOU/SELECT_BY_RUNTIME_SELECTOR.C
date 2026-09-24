@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "FIELD_SCENE.H"
 
 extern u8 *Data_03001ebc;
 
@@ -559,7 +560,7 @@ void SceneActor_MarkSlot21AndSetFlag205(void)
 
 void SceneState_DispatchByActorZeroDepth(void)
 {
-    struct Actor *p = Actor_Get(0);
+    struct Actor *p = Actor_Get(ACTOR_PARTY_LEADER);
 
     if (p->f0c >= 0x100000) {
         Func_02000dfc();

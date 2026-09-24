@@ -20600,6 +20600,9 @@
     "main:0809bb64": {
       "name": "BattleFx_SetupResourcesAndWindow",
       "source": "BATTLE/EFFECT/SETUP_RESOURCES_AND_WINDOW.C"
+    },
+    "main:080a4f08": {
+      "name": "ItemMenu_SelectGiveQuantity"
     }
   },
   "symbols": {

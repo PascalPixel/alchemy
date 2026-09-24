@@ -20,8 +20,10 @@
 	.set sub_080a4eb8, 0x080a4eb8
 	.set sub_080b0040, 0x080b0040
 	.set sub_080f9010, 0x080f9010
+	.global ItemMenu_SelectGiveQuantity
 	.global Func_080a4f08
 	.thumb_func
+ItemMenu_SelectGiveQuantity:
 Func_080a4f08:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

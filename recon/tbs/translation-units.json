@@ -25190,6 +25190,14 @@
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_374",
       "absolute_symbols": {
+        "Func_0200339a": {
+          "address": "0x200a71c",
+          "kind": "thumb"
+        },
+        "Func_0200339a_a": {
+          "address": "0x200a694",
+          "kind": "thumb"
+        },
         "Func_020033aa": {
           "address": "0x200a7b4",
           "kind": "thumb"
@@ -25204,14 +25212,6 @@
         },
         "Func_02003402_a": {
           "address": "0x200a6d4",
-          "kind": "thumb"
-        },
-        "Func_0200339a": {
-          "address": "0x200a71c",
-          "kind": "thumb"
-        },
-        "Func_0200339a_a": {
-          "address": "0x200a694",
           "kind": "thumb"
         },
         "Func_020034b4": {
@@ -25238,14 +25238,6 @@
           "address": "0x200a6c4",
           "kind": "thumb"
         },
-        "Func_020036f6": {
-          "address": "0x200a78c",
-          "kind": "thumb"
-        },
-        "Func_020036f6_a": {
-          "address": "0x200a6a4",
-          "kind": "thumb"
-        },
         "Func_020036ce": {
           "address": "0x200a724",
           "kind": "thumb"
@@ -25268,6 +25260,14 @@
         },
         "Func_020036ee_a": {
           "address": "0x200a6f4",
+          "kind": "thumb"
+        },
+        "Func_020036f6": {
+          "address": "0x200a78c",
+          "kind": "thumb"
+        },
+        "Func_020036f6_a": {
+          "address": "0x200a6a4",
           "kind": "thumb"
         },
         "Func_0200371e": {

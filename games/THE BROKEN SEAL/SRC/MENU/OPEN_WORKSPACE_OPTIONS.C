@@ -1,35 +1,27 @@
-/*
- * Menu_OpenWorkspaceOptions (main:0801d108, 964 bytes)
- *
- * Opens the workspace options window: four divider lines, six captions,
- * the selection cursor, the two value markers placed along their sliders
- * (value * 60 / step pixels in), and seven frame icons in three rows.
- * Returns the window for Menu_RunWorkspaceOptions.
- *
- * Draft, not exact (2026-09-24): candidate=964 reference=964
- * differing_halfwords=6.  Everything matches except the second and third
- * frame rows, where the reference loads the row table address before the
- * previous frame pointer is stored.  Findings: the work area is accessed
- * through a union view, so its stores alias the window loads; the caption
- * ids are link-time Value_ symbols with a post-incremented local; the
- * marker x is (x * 8 + 140) + quotient.  With const row tables the address
- * load is hoisted as in the reference, but mov r2, fp then wins the tie
- * against the first ldrsb of each row (it has one more dependent, the
- * epilogue's fp restore); with non-const tables (this draft) the ldrsb
- * order is right but the address load waits for the store.
- */
 #include "TYPES.H"
 #include "DMA.H"
 #include "RENDER_INPUT.H"
 
-union WorkspaceWork {
-    s8 s8[0x610];
-    u16 u16[0x308];
-    struct RenderOutput *out[0x184];
-    void *ptr[0x184];
+/* A menu cursor record (object pointer and cursor state).
+   FAKEMATCH: declared as a union so the stores of its object pointer stay
+   ordered against the window reads that follow them. */
+union MenuCursor {
+    struct RenderOutput *output;
+    u8 data[0x10];
 };
 
-extern union WorkspaceWork *Data_03001ea0;
+struct WorkspaceWork {
+    u8 unknown_000[0x594];
+    s8 value[5];
+    s8 step[5];
+    u8 unknown_59e[6];
+    union MenuCursor cursor;
+    union MenuCursor marker[2];
+    u8 unknown_5d4[0x18];
+    void *frame[3][3];
+};
+
+extern struct WorkspaceWork *Data_03001ea0;
 extern u8 Value_00000c07;
 extern u8 Value_00000c0d;
 extern s8 Data_080367c9[];
@@ -46,9 +38,13 @@ void *RenderOutput_CreateFrame(s32 frame, s32 flags, struct RenderInput *input, 
 s32 Math_Div(s32 numerator, s32 denominator);
 void Func_080b0038(void *object, s32 x, s32 y);
 
+/* Opens the workspace options window: four divider lines, six captions,
+   the selection cursor, the two value markers placed along their sliders
+   (value * 60 / step pixels in) and seven frame icons in three rows.
+   Caption ids come from the literal pool as link-time values. */
 struct RenderInput *Menu_OpenWorkspaceOptions(void)
 {
-    union WorkspaceWork *work;
+    struct WorkspaceWork *work;
     struct RenderInput *win;
     struct RenderOutput *out;
     s32 x;
@@ -76,10 +72,10 @@ struct RenderInput *Menu_OpenWorkspaceOptions(void)
     if (x < 96) {
         VramBlock_LoadCached(x, 128, (const void *)0x080310a4);
         out = RenderOutput_Create(x, 0x40000000, win, 0, 0);
-        work->out[0x5a4 / 4] = out;
+        work->cursor.output = out;
         x = win->x * 8;
         y = win->y * 8 + 12;
-        Func_080b0038(&work->out[0x5a4 / 4], x, y);
+        Func_080b0038(&work->cursor, x, y);
     }
 
     x = Resource_FindFreeEntry();
@@ -105,11 +101,11 @@ struct RenderInput *Menu_OpenWorkspaceOptions(void)
         VramBlock_LoadCached(x, 256, 0);
         out = RenderOutput_Create(x, 0x40000000, win, 0, 0);
         ((u8 *)&out->packed)[1] |= 32;
-        work->out[0x5b4 / 4] = out;
+        work->marker[0].output = out;
         x = win->x * 8 + 140;
-        x += Math_Div(work->s8[0x594] * 60, work->s8[0x599]);
+        x += Math_Div(work->value[0] * 60, work->step[0]);
         y = win->y * 8 + 4;
-        Func_080b0038(&work->out[0x5b4 / 4], x, y);
+        Func_080b0038(&work->marker[0], x, y);
     }
 
     x = Resource_FindFreeEntry();
@@ -117,22 +113,22 @@ struct RenderInput *Menu_OpenWorkspaceOptions(void)
         VramBlock_LoadCached(x, 256, 0);
         out = RenderOutput_Create(x, 0x40000000, win, 0, 0);
         ((u8 *)&out->packed)[1] |= 32;
-        work->out[0x5c4 / 4] = out;
+        work->marker[1].output = out;
         x = win->x * 8 + 140;
-        x += Math_Div(work->s8[0x595] * 60, work->s8[0x59a]);
+        x += Math_Div(work->value[1] * 60, work->step[1]);
         y = win->y * 8 + 20;
-        Func_080b0038(&work->out[0x5c4 / 4], x, y);
+        Func_080b0038(&work->marker[1], x, y);
     }
 
     y = 28;
-    work->ptr[0x5ec / 4 + 0] = RenderOutput_CreateFrame(Data_080367c9[0], 0, win, 84, y);
-    work->ptr[0x5ec / 4 + 1] = RenderOutput_CreateFrame(Data_080367c9[1], 0, win, 108, y);
-    work->ptr[0x5ec / 4 + 2] = RenderOutput_CreateFrame(Data_080367c9[2], 0, win, 132, y);
+    work->frame[0][0] = RenderOutput_CreateFrame(Data_080367c9[0], 0, win, 84, y);
+    work->frame[0][1] = RenderOutput_CreateFrame(Data_080367c9[1], 0, win, 108, y);
+    work->frame[0][2] = RenderOutput_CreateFrame(Data_080367c9[2], 0, win, 132, y);
     y = 52;
-    work->ptr[0x5ec / 4 + 3] = RenderOutput_CreateFrame(Data_080367cc[0], 0, win, 100, y);
-    work->ptr[0x5ec / 4 + 4] = RenderOutput_CreateFrame(Data_080367cc[1], 0, win, 124, y);
+    work->frame[1][0] = RenderOutput_CreateFrame(Data_080367cc[0], 0, win, 100, y);
+    work->frame[1][1] = RenderOutput_CreateFrame(Data_080367cc[1], 0, win, 124, y);
     y = 76;
-    work->ptr[0x5ec / 4 + 6] = RenderOutput_CreateFrame(Data_080367ce[0], 0, win, 100, y);
-    work->ptr[0x5ec / 4 + 7] = RenderOutput_CreateFrame(Data_080367ce[1], 0, win, 124, y);
+    work->frame[2][0] = RenderOutput_CreateFrame(Data_080367ce[0], 0, win, 100, y);
+    work->frame[2][1] = RenderOutput_CreateFrame(Data_080367ce[1], 0, win, 124, y);
     return win;
 }

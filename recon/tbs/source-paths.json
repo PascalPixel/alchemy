@@ -1868,7 +1868,8 @@
       "name": "BattleMenu_RunActionSelection"
     },
     "main:0801d108": {
-      "name": "Menu_OpenWorkspaceOptions"
+      "name": "Menu_OpenWorkspaceOptions",
+      "source": "MENU/OPEN_WORKSPACE_OPTIONS.C"
     },
     "main:0801d4cc": {
       "name": "Menu_RunWorkspaceOptions"

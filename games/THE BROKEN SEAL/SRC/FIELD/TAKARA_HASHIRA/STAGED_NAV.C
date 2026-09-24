@@ -68,10 +68,7 @@ extern volatile s32 Data_03001e40;
 u8 *Func_020051b4(void);
 s32 Func_02001cc4();
 s32 Func_02001d54();
-void Func_020014d4();
 void Func_02001386();
-s32 Func_02001630();
-s32 Func_02001662();
 void Func_02003d20();
 void Func_02003d5e();
 s32 Func_02003da0();
@@ -88,18 +85,14 @@ void Func_0200417a();
 void Func_02004186();
 s32 Func_020042de();
 s32 Func_02004398();
-void Func_020023ac();
 s32 Func_02003244();
 void Func_02003d8c();
 s32 Func_02004b02();
 s32 Func_02004b14();
 s32 Func_02005160();
 int Func_02002798(void);
-void Func_020018e0(void);
-s32 Func_02001caa(PlacementResult *out);
 void Func_02001e56(PlacementResult out);
 void Func_02004bd4();
-s32 Func_020029e6();
 u8 *Func_02005240();
 
 /*
@@ -141,6 +134,10 @@ u8 *Func_02005240();
  * into the argument registers; a direct call precomputes a costly constant
  * into a pseudo that the compiler then shares with later uses in the block.
  * A value-returning call also sets r0 last of its arguments. */
+struct StagedActor *StagedActor_FindAtTile(s32 *position, struct StagedActor *origin);
+
+s32 StagedActor_FindClearPosition(struct StagedActorProbe *probe);
+
 static __inline__ s32 Value0(s32 (*f)())
 {
     s32 Func_02001268();
@@ -380,7 +377,7 @@ s32 SceneActor_ApplyPlacementQuery(u8 *no)
         s32 z = out8 + rec[4];
 
         Map_CopyCellAttributes(x, z, out20, out16, rec[2], rec[4]);
-        Func_020014d4(0, rec[2], rec[4], out20, out16, 255);
+        StagedActor_FillGridAttributeRectangle(0, rec[2], rec[4], out20, out16, 255);
     }
 
     Object_SetAnimation(obj, 1);
@@ -475,14 +472,14 @@ s32 Func_02001268(void)
     if (Value2(Func_02003da0, (s32)rec, (s32)p) == 1) {
         goto reject;
     }
-    if (Value2(Func_02001630, (s32)p, (s32)rec) != 0) {
+    if (Value2(StagedActor_FindAtTile, (s32)p, (s32)rec) != 0) {
         goto reject;
     }
     p[0] = (*(s32 *)(rec + 8) & -0x100000) + 0x80000;
     p[1] = *(s32 *)(rec + 12);
     p[2] = (*(s32 *)(rec + 16) & -0x100000) + 0x80000;
     Call3(Func_02003d5e, 0x200000, mode, (s32)p);
-    if (Value2(Func_02001662, (s32)p, (s32)rec) != 0) {
+    if (Value2(StagedActor_FindAtTile, (s32)p, (s32)rec) != 0) {
         goto reject;
     }
     if (Value2(Func_02003dea, (s32)rec, (s32)p) != 0) {
@@ -592,7 +589,7 @@ void FieldScene_RunTransitionOrFallback(void)
 {
     Event_Begin();
     if (Func_02002798() == 0)
-        Func_020018e0();
+        StagedActor_AdvancePair();
     Event_End();
 }
 
@@ -605,7 +602,7 @@ void SceneState_ApplyPlacementResult(void)
     PlacementResult out;
 
     Event_Begin();
-    if (Func_02001caa(&out) != 0)
+    if (StagedActor_FindClearPosition(&out) != 0)
         Func_02001e56(out);
     Event_End();
 }
@@ -739,7 +736,7 @@ void FieldScene_RunScene3b3_02001fd4(void)
     if (Value0(Func_02003244) == 0) {
         *(u8 *)(Func_02004b02(0) + 85) &= 254;
         *(u8 *)(Func_02004b14(0) + 35) &= 254;
-        Func_020023ac();
+        StagedActor_AdvancePair();
         Func_02003d8c();
         {
             u8 bits = 1;
@@ -942,7 +939,7 @@ void StagedActor_PlaceAtObjectTenCell(void)
     x = *(s32 *)(obj + 8) >> 20;
     z = *(s32 *)(obj + 16) >> 20;
 
-    Func_020029e6(2, x, z, 1, 1, 0);
+    StagedActor_FillGridAttributeRectangle(2, x, z, 1, 1, 0);
     Event_End();
 }
 

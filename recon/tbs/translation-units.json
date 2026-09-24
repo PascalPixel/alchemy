@@ -78300,6 +78300,50 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "scene-3a7-02000b8c",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_DOU/SPAWN_PUFFS.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3a7",
+      "absolute_symbols": {
+        "Engine_RandomNext": {
+          "address": "0x02009080",
+          "kind": "thumb"
+        },
+        "SceneActor_TransformAndApplyRecordPosition": {
+          "address": "0x02008b54",
+          "kind": "thumb"
+        },
+        "Engine_ObjectSetScript": {
+          "address": "0x020090a0",
+          "kind": "thumb"
+        },
+        "Engine_ObjectCreate": {
+          "address": "0x020090a8",
+          "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
+        },
+        "KuupuappuDou_PuffScript": {
+          "address": "0x2009884",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02000b8c",
+          "extent": 124,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

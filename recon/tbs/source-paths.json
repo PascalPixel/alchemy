@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_3a7:02000b8c": {
+      "name": "KuupuappuDou_SpawnPuffs",
+      "source": "FIELD/KUUPUAPPU_DOU/SPAWN_PUFFS.C"
+    },
     "resource_3cb:0200106c": {
       "name": "LinkLobby_TalkToAttendant",
       "source": "MENU/LINK_LOBBY/ATTENDANT_TALK.C"

@@ -36,7 +36,7 @@ extern u8 Data_02008778[];
 extern u8 Data_02008868[];
 extern u8 Data_020089c8[];
 extern u8 Data_02008890[];
-extern u8 Value_00001a40;
+extern u8 LinkedMessage_DidMonstersInAltinSpit;
 extern u8 Data_02008d4c[];
 extern u8 Data_02008a28[];
 
@@ -217,7 +217,7 @@ void SceneDialogue_RunActor12Dialogue(void)
     s32 Event_AskYesNo(s32, s32);
 
     Event_Begin();
-    Event_SetMessage((s32)&Value_00001a40);
+    Event_SetMessage((s32)&LinkedMessage_DidMonstersInAltinSpit);
     Event_AskYesNo(12, 0);
     Event_End();
 }

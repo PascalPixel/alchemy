@@ -9505,6 +9505,10 @@
         "gGameState": {
           "address": "0x02000240",
           "kind": "data"
+        },
+        "LinkedMessage_DidMonstersInAltinSpit": {
+          "address": "0x00001a40",
+          "kind": "data"
         }
       },
       "owners": [
@@ -13594,6 +13598,10 @@
           "address": "0x03001ebc",
           "kind": "data"
         },
+        "LinkedMessage_WatchingYouGuysMakesMe": {
+          "address": "0x00001cc0",
+          "kind": "data"
+        },
         "SceneActor_Find": {
           "address": "0x02009100",
           "kind": "thumb"
@@ -16643,6 +16651,10 @@
         "gGameState": {
           "address": "0x02000240",
           "kind": "data"
+        },
+        "LinkedMessage_YouReadyForFinals": {
+          "address": "0x00002125",
+          "kind": "data"
         }
       },
       "owners": [
@@ -19261,6 +19273,14 @@
         "gGameState": {
           "address": "0x02000240",
           "kind": "data"
+        },
+        "LinkedMessage_ArentYouWorriedAboutCrossing": {
+          "address": "0x00001197",
+          "kind": "data"
+        },
+        "LinkedMessage_JasmineWentOffWay": {
+          "address": "0x00000eb0",
+          "kind": "data"
         }
       },
       "owners": [
@@ -21444,6 +21464,30 @@
         },
         "gEventWork": {
           "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "LinkedMessage_IvanGotShamansRod": {
+          "address": "0x00001324",
+          "kind": "data"
+        },
+        "LinkedMessage_MasterHammetIsntOnlyOne": {
+          "address": "0x00001280",
+          "kind": "data"
+        },
+        "LinkedMessage_TheyreActingSuspiciousSomethingsNot": {
+          "address": "0x00001299",
+          "kind": "data"
+        },
+        "LinkedMessage_TheyreBack": {
+          "address": "0x000012a0",
+          "kind": "data"
+        },
+        "LinkedMessage_YouRobinRightWontForget": {
+          "address": "0x000012fc",
+          "kind": "data"
+        },
+        "LinkedMessage_YouWereSuchGreatHelp": {
+          "address": "0x00001360",
           "kind": "data"
         }
       },
@@ -37762,6 +37806,10 @@
           "address": "0x03001ebc",
           "kind": "data"
         },
+        "LinkedMessage_HeShouldFixingRoofNow": {
+          "address": "0x000012c0",
+          "kind": "data"
+        },
         "SceneActor_CheckFacingAndRange": {
           "address": "0x02009674",
           "kind": "thumb"
@@ -43732,6 +43780,10 @@
         },
         "gGameState": {
           "address": "0x02000240",
+          "kind": "data"
+        },
+        "LinkedMessage_YouAllCameRestUp": {
+          "address": "0x00002241",
           "kind": "data"
         },
         "Scene_PauseScript": {
@@ -53595,6 +53647,22 @@
         },
         "gEventWork": {
           "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "LinkedMessage_Ah": {
+          "address": "0x00001c45",
+          "kind": "data"
+        },
+        "LinkedMessage_DoorWontOpenForceImpact": {
+          "address": "0x00000ee4",
+          "kind": "data"
+        },
+        "LinkedMessage_RrruffRrrruff": {
+          "address": "0x00000f4d",
+          "kind": "data"
+        },
+        "LinkedMessage_WhatEverYouDoYou": {
+          "address": "0x00001c60",
           "kind": "data"
         },
         "StagedActor_AdvancePair": {

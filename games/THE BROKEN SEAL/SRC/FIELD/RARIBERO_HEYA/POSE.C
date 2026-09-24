@@ -33,7 +33,7 @@ extern u8 Data_0200a010[];
 extern u8 Data_02009eb4[];
 extern u8 Data_02009ca4[];
 extern u8 Data_02009a94[];
-extern u8 Value_00002880;
+extern u8 LinkedMessage_ButTellMeWhatJasmine;
 
 void Func_020016d6(void);
 void Func_02001590();
@@ -596,7 +596,7 @@ void FieldScene_RunSecondaryScript(void)
     void Event_Wait(s32);
     void Event_Wait(s32);
 
-    Event_SetMessage(((s32)&Value_00002880));
+    Event_SetMessage(((s32)&LinkedMessage_ButTellMeWhatJasmine));
     Event_Wait(20);
 
     Actor_RunRepeatedMotion(11, 2);

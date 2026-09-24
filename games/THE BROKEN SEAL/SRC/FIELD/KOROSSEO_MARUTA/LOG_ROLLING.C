@@ -118,10 +118,10 @@ typedef struct ActiveSubjectSlot {
 extern void Func_02004d72(void);       /* site 0x20024e4 -> Func_0200288c veneer */
 extern u8 Value_0000008f;
 extern u8 Value_00000090;
-extern u8 Value_00002076;
-extern u8 Value_00002078;
-extern u8 Value_0000207a;
-extern u8 Value_0000207c;
+extern u8 LinkedMessage_StageFirstFinalsMatch;
+extern u8 LinkedMessage_StageSecondFinalsMatch;
+extern u8 LinkedMessage_StageThirdFinalsMatch;
+extern u8 LinkedMessage_WouldYouLikeHearDescription;
 extern u16 Data_0200dbd0;
 extern u16 Data_0200dba4;
 extern u16 Data_0200dbdc;
@@ -2106,11 +2106,11 @@ s32 ColossoLogRollingStage_RunStateInteraction(s32 actor_handle, s32 interaction
     Func_0200741c(interaction_base, 5);
     stage_variant = gGameState.scene;
     if (stage_variant == (s32)&Value_0000008f) {
-        script_id = (s32)&Value_00002076;
+        script_id = (s32)&LinkedMessage_StageFirstFinalsMatch;
     } else if (stage_variant == (s32)&Value_00000090) {
-        script_id = (s32)&Value_00002078;
+        script_id = (s32)&LinkedMessage_StageSecondFinalsMatch;
     } else {
-        script_id = (s32)&Value_0000207a;
+        script_id = (s32)&LinkedMessage_StageThirdFinalsMatch;
     }
     Event_SetMessage(script_id);
     Event_ShowMessage(actor_handle, 0);
@@ -2128,7 +2128,7 @@ s32 ColossoLogRollingStage_RunStateInteraction(s32 actor_handle, s32 interaction
         return result;
     }
     GameFlag_Set(interaction_base + 520);
-    Event_SetMessage((s32)&Value_0000207c);
+    Event_SetMessage((s32)&LinkedMessage_WouldYouLikeHearDescription);
     Event_OpenMessage(actor_handle, 0);
     return Event_ChooseYesNo(0, 0);
 }
@@ -2141,11 +2141,11 @@ void ColossoLogRollingStage_InitializeStateInteraction(s32 actor_handle, s32 int
     Func_020074d2(interaction_base, 5);
     stage_variant = gGameState.scene;
     if (stage_variant == (s32)&Value_0000008f) {
-        script_id = (s32)&Value_00002076;
+        script_id = (s32)&LinkedMessage_StageFirstFinalsMatch;
     } else if (stage_variant == (s32)&Value_00000090) {
-        script_id = (s32)&Value_00002078;
+        script_id = (s32)&LinkedMessage_StageSecondFinalsMatch;
     } else {
-        script_id = (s32)&Value_0000207a;
+        script_id = (s32)&LinkedMessage_StageThirdFinalsMatch;
     }
     Event_SetMessage(script_id + 1);
     Event_ShowMessage(actor_handle, 0);

@@ -77,7 +77,7 @@ extern u8 Data_020098b8[];
 extern u8 Data_02009738[];
 extern u8 Data_020095b8[];
 extern u8 LinkedMessage_ThisIsMyFarewellGift[];
-extern u8 Data_00001c40[];
+extern u8 LinkedMessage_HopeYouDidntGetSick[];
 extern s16 Data_02000240_t[][1];
 extern u8 Data_020092fc[];
 extern u8 Data_02009400[];
@@ -310,7 +310,7 @@ void FieldScene_RunScene376_02000298(void)
     s32 record;
 
     Event_Begin();
-    Event_SetMessage((s32)Data_00001c40);
+    Event_SetMessage((s32)LinkedMessage_HopeYouDidntGetSick);
     Event_ShowMessage(0x800b, 0);
     Event_End();
 }

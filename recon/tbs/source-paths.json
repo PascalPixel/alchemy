@@ -19610,7 +19610,8 @@
       "source": "FIELD/COMMON/MAP/LOAD_AREA_GRAPHICS.C"
     },
     "main:0801d014": {
-      "name": "OptionMenu_InitializeWork"
+      "name": "OptionMenu_InitializeWork",
+      "source": "MENU/OPTION_INITIALIZE_WORK.C"
     },
     "main:08091494": {
       "name": "BattleFx_StartFadeOverlay",

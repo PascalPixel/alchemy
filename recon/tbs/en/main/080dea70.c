@@ -1,7 +1,6 @@
 #include "TYPES.H"
 #include "BATTLE_EFX.H"
 
-#define BattleEffect_RunProjectileVolley Func_080dea70
 
 /*
  * Battle-presentation sub-effect at 0x080dea70 (3656 bytes, one function,
@@ -135,7 +134,7 @@ extern u16 Data_080eec44[]; /* per-half-frame flare tile offset */
 extern u16 Data_080eec52[]; /* per-shot spark tile offset, 4 entries */
 extern u16 Data_080ede48[]; /* shared spark-size tile table */
 
-s32 Func_080dea70(void *object, s32 kind)
+s32 BattleFx_RunProjectileVolley(void *object, s32 kind)
 {
     void **heap_cache;
     void **cursor;

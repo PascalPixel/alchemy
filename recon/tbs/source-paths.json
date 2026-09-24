@@ -14315,7 +14315,8 @@
       "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_39c:02003d20": {
-      "name": "Scene_RunSelectorEntry"
+      "name": "Scene_RunSelectorEntry",
+      "source": "FIELD/MAKYURI_HEYA/ENTRY_STATE.C"
     },
     "resource_39c:02002f68": {
       "name": "FieldScene_RunRandomEffectActorSequence",

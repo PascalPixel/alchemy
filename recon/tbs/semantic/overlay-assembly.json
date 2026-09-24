@@ -236,19 +236,6 @@
       ]
     },
     {
-      "overlay": "resource_39c",
-      "start": "0x02003d20",
-      "end": "0x02004a08",
-      "kind": "not_yet_decompiled",
-      "retention": "not_yet_c",
-      "confidence": "strong",
-      "evidence": [
-        "Complete 3304-byte scene-entry owner has three selector jump tables, four branch-over/tail literal pools and a single return ending at 0x020049f8. Next owner begins at 0x02004a08.",
-        "All 257 original loader-resolved BL sites call 43 external destinations; switch arms previously omitted by linear inventory add 2094 function-extent bytes, including 1846 Thumb bytes and 248 associated table/pool/alignment bytes.",
-        "Ordinary C reconstructs every selector case and the four-actor flag loop. No handwritten assembly or compiler-impossibility claim; keep original bytes until the complete C owner is exact."
-      ]
-    },
-    {
       "overlay": "resource_3c9",
       "start": "0x020008b4",
       "end": "0x02001280",

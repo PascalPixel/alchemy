@@ -1,7 +1,8 @@
 //! A small pixel canvas for the README figures: whole game pixels, flat
 //! colours, glyphs from the tracked sheet, written as an indexed PNG at
-//! `FIGURE_SCALE` device pixels per game pixel, dated by its tIME chunk
-//! (the only standard chunk the publication check lets a date ride in).
+//! `FIGURE_SCALE` device pixels per game pixel, deflated by Zopfli, dated by
+//! its tIME chunk (the only standard chunk the publication check lets a date
+//! ride in).
 use super::letters::Letters;
 
 pub(crate) type Rgb = [u8; 3];
@@ -114,8 +115,26 @@ impl Canvas {
         }
         letters.width(text) as i32
     }
-    /// The canvas as an indexed PNG, each pixel `scale` device pixels wide,
-    /// stamped with `date` (`YYYY-MM-DD`) at midnight.
+    /// The canvas as RGB bytes, each pixel `scale` device pixels wide:
+    /// exactly what its PNG decodes to.
+    pub(crate) fn rgb(&self, scale: u32) -> Vec<u8> {
+        let scale = scale as usize;
+        let mut out = Vec::with_capacity(self.pixels.len() * scale * scale * 3);
+        for row in self.pixels.chunks(self.width as usize) {
+            let wide = row
+                .iter()
+                .flat_map(|pixel| std::iter::repeat(pixel).take(scale).flatten().copied())
+                .collect::<Vec<_>>();
+            for _ in 0..scale {
+                out.extend_from_slice(&wide);
+            }
+        }
+        out
+    }
+    /// The canvas as an indexed PNG at the smallest bit depth its palette
+    /// allows, each pixel `scale` device pixels wide, every row after the
+    /// first filtered against the one above, deflated by Zopfli, and stamped
+    /// with `date` (`YYYY-MM-DD`) at midnight.
     pub(crate) fn png(&self, scale: u32, date: &str) -> Result<Vec<u8>, String> {
         let mut palette: Vec<Rgb> = Vec::new();
         let mut index = std::collections::HashMap::new();
@@ -130,28 +149,48 @@ impl Canvas {
             }
             indices.push(slot as u8);
         }
+        let depth: usize = match palette.len() {
+            0..=2 => 1,
+            3..=4 => 2,
+            5..=16 => 4,
+            _ => 8,
+        };
         let (width, height) = (self.width as u32 * scale, self.height as u32 * scale);
-        let mut data = Vec::with_capacity((width * height) as usize);
-        for row in 0..self.height as usize {
-            let line = &indices[row * self.width as usize..(row + 1) * self.width as usize];
+        let stride = (width as usize * depth).div_ceil(8);
+        let mut raw = Vec::with_capacity((stride + 1) * height as usize);
+        let mut above: Option<Vec<u8>> = None;
+        for line in indices.chunks(self.width as usize) {
+            let mut packed = vec![0u8; stride];
             let wide = line
                 .iter()
-                .flat_map(|index| std::iter::repeat(*index).take(scale as usize))
-                .collect::<Vec<_>>();
+                .flat_map(|index| std::iter::repeat(*index).take(scale as usize));
+            for (x, index) in wide.enumerate() {
+                let bit = x * depth;
+                packed[bit / 8] |= index << (8 - depth - bit % 8);
+            }
             for _ in 0..scale {
-                data.extend_from_slice(&wide);
+                match &above {
+                    // Filter 2, Up: each byte less the one above it.
+                    Some(previous) => {
+                        raw.push(2);
+                        raw.extend(packed.iter().zip(previous).map(|(a, b)| a.wrapping_sub(*b)));
+                    }
+                    None => {
+                        raw.push(0);
+                        raw.extend(&packed);
+                    }
+                }
+                above = Some(packed.clone());
             }
         }
-        let mut out = Vec::new();
-        let mut encoder = png::Encoder::new(&mut out, width, height);
-        encoder.set_color(png::ColorType::Indexed);
-        encoder.set_depth(png::BitDepth::Eight);
-        encoder.set_palette(palette.concat());
-        encoder.set_compression(png::Compression::Best);
-        encoder
-            .write_header()
-            .and_then(|mut writer| writer.write_image_data(&data))
-            .map_err(|e| e.to_string())?;
+        let mut idat = Vec::new();
+        zopfli::compress(
+            zopfli::Options::default(),
+            zopfli::Format::Zlib,
+            &raw[..],
+            &mut idat,
+        )
+        .map_err(|e| e.to_string())?;
         let mut parts = date.splitn(3, '-').map(|part| part.parse::<u16>().ok());
         let (Some(Some(year)), Some(Some(month)), Some(Some(day))) =
             (parts.next(), parts.next(), parts.next())
@@ -160,11 +199,29 @@ impl Canvas {
         };
         let mut time = year.to_be_bytes().to_vec();
         time.extend([month as u8, day as u8, 0, 0, 0]);
-        // The chunk goes just before IEND, the last twelve bytes.
-        let end = out.len() - 12;
-        out.splice(end..end, chunk(b"tIME", &time));
+        let mut header = width.to_be_bytes().to_vec();
+        header.extend(height.to_be_bytes());
+        header.extend([depth as u8, 3, 0, 0, 0]);
+        let mut out = b"\x89PNG\r\n\x1a\n".to_vec();
+        out.extend(chunk(b"IHDR", &header));
+        out.extend(chunk(b"PLTE", &palette.concat()));
+        out.extend(chunk(b"IDAT", &idat));
+        out.extend(chunk(b"tIME", &time));
+        out.extend(chunk(b"IEND", &[]));
         Ok(out)
     }
+}
+/// A PNG's pixels as RGB bytes, with its width and height.
+pub(crate) fn decode(bytes: &[u8]) -> Option<(u32, u32, Vec<u8>)> {
+    let mut decoder = png::Decoder::new(std::io::Cursor::new(bytes));
+    decoder.set_transformations(png::Transformations::EXPAND);
+    let mut reader = decoder.read_info().ok()?;
+    let mut data = vec![0; reader.output_buffer_size()];
+    let info = reader.next_frame(&mut data).ok()?;
+    (info.color_type == png::ColorType::Rgb && info.bit_depth == png::BitDepth::Eight).then(|| {
+        data.truncate(info.buffer_size());
+        (info.width, info.height, data)
+    })
 }
 fn chunk(kind: &[u8; 4], body: &[u8]) -> Vec<u8> {
     let mut out = (body.len() as u32).to_be_bytes().to_vec();
@@ -209,17 +266,32 @@ mod tests {
         assert_eq!(canvas.get(7, 15), Some([0, 255, 0]));
         let png = canvas.png(2, "2026-09-24").unwrap();
         assert_eq!(png_date(&png).as_deref(), Some("2026-09-24"));
-        let mut decoder = png::Decoder::new(std::io::Cursor::new(&png));
-        decoder.set_transformations(png::Transformations::EXPAND);
-        let mut reader = decoder.read_info().unwrap();
-        assert_eq!((reader.info().width, reader.info().height), (16, 32));
-        let mut data = vec![0; reader.output_buffer_size()];
-        reader.next_frame(&mut data).unwrap();
+        // Decoding gives back exactly the rendered pixels.
+        let (width, height, data) = decode(&png).unwrap();
+        assert_eq!((width, height), (16, 32));
+        assert_eq!(data, canvas.rgb(2));
         // The red game pixel covers two by two device pixels, and no more.
         for at in [0, 3, 48, 51] {
             assert_eq!(&data[at..at + 3], [255, 0, 0]);
         }
         assert_ne!(&data[6..9], [255, 0, 0]);
         assert_eq!(canvas.png(2, "2026-09-24").unwrap(), png);
+    }
+    #[test]
+    fn every_bit_depth_decodes_to_the_rendered_pixels() {
+        for colours in [2, 3, 7, 40] {
+            let mut canvas = Canvas::new(5, 3, "#000");
+            for n in 0..colours {
+                canvas.fill(
+                    n % 5,
+                    (n / 5) % 3,
+                    1,
+                    1,
+                    &format!("#{:02x}{:02x}10", n * 6, 255 - n),
+                );
+            }
+            let png = canvas.png(2, "2026-09-24").unwrap();
+            assert_eq!(decode(&png), Some((10, 6, canvas.rgb(2))), "{colours}");
+        }
     }
 }

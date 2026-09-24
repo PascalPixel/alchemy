@@ -6,6 +6,7 @@ edition = "2021"
 [dependencies]
 fdeflate = "0.3"
 png = "0.17"
+zopfli = { version = "0.8", default-features = false, features = ["std", "zlib"] }
 psynergy = { path = "../psynergy" }
 regex = "1"
 fs2 = "0.4"

@@ -10,6 +10,7 @@ pub(crate) mod pipeline;
 pub(crate) mod progress;
 pub(crate) mod proof;
 pub(crate) mod raster;
+pub(crate) mod sessions;
 pub(crate) mod tree;
 
 use crate::compiler::canonical_json::canonical_json;
@@ -19,7 +20,7 @@ use crate::coverage::progress::{game_done, measured, GameDone};
 use crate::coverage::tree::{ref_tree, root, work_tree};
 use serde_json::Value;
 use std::path::{Path, PathBuf};
-const USAGE: &str = "usage: alchemy check coverage [--target tbs-en|tla-en] [--exact-ref <ref>|worktree] [--recon-ref <ref>|worktree|none] [--write|--check|--files|--assembly-spans|--self-test]";
+const USAGE: &str = "usage: alchemy check coverage [--target tbs-en|tla-en] [--exact-ref <ref>|worktree] [--recon-ref <ref>|worktree|none] [--write|--check|--files|--models|--assembly-spans|--self-test]";
 fn get<'a>(v: &'a Value, key: &str) -> Option<&'a Value> {
     v.as_object()?.get(key)
 }
@@ -56,6 +57,7 @@ struct Options {
     assembly_spans: bool,
     self_test: bool,
     files: bool,
+    models: bool,
     help: bool,
 }
 fn parse(argv: &[String]) -> Result<Options, String> {
@@ -97,6 +99,7 @@ fn parse(argv: &[String]) -> Result<Options, String> {
             "--assembly-spans" => o.assembly_spans = true,
             "--self-test" => o.self_test = true,
             "--files" => o.files = true,
+            "--models" => o.models = true,
             "-h" | "--help" => {
                 o.help = true;
                 break;
@@ -357,17 +360,14 @@ fn map_inputs(root: &Path) -> String {
         .collect::<String>();
     boxtree::content_version(&listing)
 }
-/// Both README figures as drawn on the history's recorded figure date.
-fn render_figures(root: &Path, history: &serde_json::Value) -> Result<(Vec<u8>, Vec<u8>), String> {
+/// Both README figures as the history's recorded figure date draws them.
+fn render_figures(
+    root: &Path,
+    history: &serde_json::Value,
+) -> Result<(raster::Canvas, raster::Canvas), String> {
     let letters = letters::Letters::menu(root)?;
-    let date = history["figures"]["date"]
-        .as_str()
-        .unwrap_or("")
-        .to_string();
-    let scale = letters::FIGURE_SCALE;
-    let chart = figure::chart(&letters, &history::as_drawn(history)).png(scale, &date)?;
-    let map = figure::map(&letters, root).png(scale, &date)?;
-    Ok((chart, map))
+    let chart = figure::chart(&letters, &history::as_drawn(history));
+    Ok((chart, figure::map(&letters, root)))
 }
 /// Record today's verified counts, and redraw the figures when the stored
 /// ones carry an earlier date: the tracked PNGs change at most once a day.
@@ -394,6 +394,8 @@ fn write_figures(
     history["figures"]["files"] = serde_json::json!(map_inputs(root));
     write(&history::path(root), &history::text(&history))?;
     let (chart, map) = render_figures(root, &history)?;
+    let scale = letters::FIGURE_SCALE;
+    let (chart, map) = (chart.png(scale, &today)?, map.png(scale, &today)?);
     std::fs::write(root.join(figure::CHART), chart)
         .map_err(|e| format!("{}: {e}", figure::CHART))?;
     std::fs::write(root.join(figure::MAP), map).map_err(|e| format!("{}: {e}", figure::MAP))
@@ -428,12 +430,21 @@ fn check_figures(root: &Path) -> Result<(), String> {
             return stale(&format!("{name} does not carry {date}"));
         }
     }
+    // Compared by decoded pixels, so a check never has to deflate again.
     let (expected_chart, expected_map) = render_figures(root, &history)?;
-    if chart != expected_chart {
+    let scale = letters::FIGURE_SCALE;
+    let drawn = |canvas: &raster::Canvas| {
+        Some((
+            canvas.width as u32 * scale,
+            canvas.height as u32 * scale,
+            canvas.rgb(scale),
+        ))
+    };
+    if raster::decode(&chart) != drawn(&expected_chart) {
         return stale(&format!("{} differs from its rows", figure::CHART));
     }
     let unchanged = history["figures"]["files"].as_str() == Some(map_inputs(root).as_str());
-    if unchanged && map != expected_map {
+    if unchanged && raster::decode(&map) != drawn(&expected_map) {
         return stale(&format!("{} differs from the tracked files", figure::MAP));
     }
     Ok(())
@@ -448,6 +459,17 @@ fn run(argv: &[String]) -> Result<String, String> {
     }
     if o.self_test {
         return Ok("self-test=ok coverage-map".into());
+    }
+    if o.models {
+        // Relabel every day's commits by model from the local agent logs.
+        let mut history = history::load(&root())?;
+        let moved = history::relabel_models(&root(), &mut history)?;
+        write(&history::path(&root()), &history::text(&history))?;
+        return Ok(moved
+            .iter()
+            .map(|((from, to), n)| format!("{n}\t{from} -> {to}"))
+            .collect::<Vec<_>>()
+            .join("\n"));
     }
     if o.files {
         if o.exact.is_some() || o.recon.is_some() || o.assembly_spans {

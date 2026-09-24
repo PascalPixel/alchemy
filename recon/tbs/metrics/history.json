@@ -8,54 +8,90 @@
   "days": [
     {"date": "2026-07-16", "tbs": {"percent": 1}, "models": {"Untagged": 56}},
     {"date": "2026-07-17", "tbs": {"percent": 1}, "models": {"Fable 5": 44, "Untagged": 12}},
-    {"date": "2026-07-18", "tbs": {"percent": 2}, "models": {"Codex": 52, "Fable 5": 13, "Untagged": 1}},
-    {"date": "2026-07-19", "tbs": {"percent": 2}, "models": {"Codex": 72, "Fable 5": 12, "Untagged": 3}},
+    {"date": "2026-07-18", "tbs": {"percent": 2}, "models": {"Codex": 15, "Fable 5": 13, "GPT-5.6 Sol": 38}},
+    {"date": "2026-07-19", "tbs": {"percent": 2}, "models": {"Codex": 51, "Fable 5": 12, "GPT-5.6 Sol": 24}},
     {"date": "2026-07-20", "tbs": {"percent": 3}, "models": {"Fable 5": 22, "Untagged": 1}},
-    {"date": "2026-07-21", "tbs": {"percent": 3}, "models": {"Fable 5": 14, "Untagged": 10}},
-    {"date": "2026-07-22", "tbs": {"percent": 4}, "models": {"Fable 5": 41, "Untagged": 46}},
-    {"date": "2026-07-23", "tbs": {"percent": 5}, "models": {"Sonnet 5": 1, "Untagged": 63}},
-    {"date": "2026-07-24", "tbs": {"percent": 6}, "models": {"Claude": 38, "Sonnet 5": 12, "Untagged": 3}},
+    {
+      "date": "2026-07-21",
+      "tbs": {"percent": 3},
+      "models": {"Fable 5": 14, "GPT-5.6 Sol": 1, "GPT-5.6 Terra": 2, "Untagged": 7}
+    },
+    {
+      "date": "2026-07-22",
+      "tbs": {"percent": 4},
+      "models": {"Fable 5": 41, "GPT-5.6 Sol": 22, "GPT-5.6 Terra": 4, "Untagged": 20}
+    },
+    {
+      "date": "2026-07-23",
+      "tbs": {"percent": 5},
+      "models": {"Fable 5": 22, "GPT-5.6 Sol": 13, "Sonnet 5": 1, "Untagged": 28}
+    },
+    {"date": "2026-07-24", "tbs": {"percent": 6}, "models": {"Claude": 38, "Sonnet 5": 15}},
     {"date": "2026-07-25", "tbs": {"percent": 7}, "models": {"Claude": 25, "Fable 5": 46, "Opus 5": 2, "Untagged": 1}},
-    {"date": "2026-07-26", "tbs": {"percent": 7}, "models": {"Opus 5": 44, "Untagged": 8}},
-    {"date": "2026-07-27", "tbs": {"percent": 8}, "models": {"Untagged": 10}},
+    {"date": "2026-07-26", "tbs": {"percent": 7}, "models": {"GPT-5.6 Sol": 2, "Opus 5": 44, "Untagged": 6}},
+    {"date": "2026-07-27", "tbs": {"percent": 8}, "models": {"GPT-5.6 Sol": 6, "Untagged": 4}},
     {"date": "2026-07-28", "tbs": {"percent": 9}, "models": {"Fable 5": 3, "Untagged": 52}},
-    {"date": "2026-07-29", "tbs": {"percent": 11}, "models": {"Claude": 28, "Fable 5": 14, "Untagged": 147}},
-    {"date": "2026-07-30", "tbs": {"percent": 16}, "models": {"Claude": 129, "Opus 5": 77, "Untagged": 72}},
+    {
+      "date": "2026-07-29",
+      "tbs": {"percent": 11},
+      "models": {"Claude": 28, "Fable 5": 14, "GPT-5.6 Sol": 4, "Untagged": 143}
+    },
+    {
+      "date": "2026-07-30",
+      "tbs": {"percent": 16},
+      "models": {"Claude": 128, "GPT-5.6 Sol": 7, "Opus 5": 101, "Untagged": 42}
+    },
     {
       "date": "2026-07-31",
       "tbs": {"percent": 17},
-      "models": {"Claude": 152, "Fable 5": 18, "Opus 5": 103, "Sonnet 5": 1, "Untagged": 310}
+      "models": {"Claude": 152, "Fable 5": 130, "GPT-5.6 Sol": 15, "Opus 5": 121, "Sonnet 5": 166}
     },
-    {"date": "2026-08-01", "tbs": {"percent": 20}, "models": {"Fable 5": 89, "Untagged": 348}},
-    {"date": "2026-08-02", "tbs": {"percent": 20}, "models": {"Untagged": 49}},
-    {"date": "2026-08-03", "tbs": {"percent": 20}, "models": {"Codex": 1, "Untagged": 12}},
+    {
+      "date": "2026-08-01",
+      "tbs": {"percent": 20},
+      "models": {"Fable 5": 89, "GPT-5.6 Sol": 2, "Opus 5": 285, "Untagged": 61}
+    },
+    {"date": "2026-08-02", "tbs": {"percent": 20}, "models": {"GPT-5.6 Luna": 3, "GPT-5.6 Sol": 3, "Untagged": 43}},
+    {"date": "2026-08-03", "tbs": {"percent": 20}, "models": {"Codex": 1, "GPT-5.6 Sol": 9, "Untagged": 3}},
     {"date": "2026-08-04", "tbs": {"percent": 21}, "models": {"Fable 5": 1, "Sonnet 5": 42, "Untagged": 1}},
     {"date": "2026-08-05", "tbs": {"percent": 22}, "models": {"Fable 5": 11, "Opus 5": 19, "Sonnet 5": 95}},
-    {"date": "2026-08-06", "tbs": {"percent": 22}, "models": {"Fable 5": 3, "Opus 5": 8, "Sonnet 5": 3, "Untagged": 18}},
-    {"date": "2026-08-07", "tbs": {"percent": 24}, "models": {"Opus 5": 32, "Untagged": 109}},
-    {"date": "2026-08-08", "tbs": {"percent": 24}, "models": {"Sonnet 5": 8, "Untagged": 33}},
-    {"date": "2026-08-09", "tbs": {"percent": 26}, "models": {"Untagged": 12}},
-    {"date": "2026-08-10", "tbs": {"percent": 26}, "models": {"Untagged": 3}},
-    {"date": "2026-08-12", "tbs": {"percent": 26}, "models": {"Untagged": 23}},
-    {"date": "2026-08-13", "tbs": {"percent": 28}, "models": {"Codex": 8, "Fable 5": 5, "Untagged": 4}},
+    {"date": "2026-08-06", "tbs": {"percent": 22}, "models": {"Fable 5": 3, "Opus 5": 26, "Sonnet 5": 3}},
+    {"date": "2026-08-07", "tbs": {"percent": 24}, "models": {"Opus 5": 141}},
+    {"date": "2026-08-08", "tbs": {"percent": 24}, "models": {"GPT-5.6 Sol": 1, "Sonnet 5": 15, "Untagged": 25}},
+    {"date": "2026-08-09", "tbs": {"percent": 26}, "models": {"GPT-5.6 Sol": 3, "Untagged": 9}},
+    {"date": "2026-08-10", "tbs": {"percent": 26}, "models": {"GPT-5.6 Sol": 3}},
+    {"date": "2026-08-12", "tbs": {"percent": 26}, "models": {"GPT-5.6 Sol": 14, "GPT-5.6 Terra": 1, "Untagged": 8}},
+    {
+      "date": "2026-08-13",
+      "tbs": {"percent": 28},
+      "models": {"Codex": 4, "Fable 5": 5, "GPT-5.6 Luna": 2, "GPT-5.6 Sol": 2, "GPT-5.6 Terra": 1, "Untagged": 3}
+    },
     {"date": "2026-08-14", "tbs": {"percent": 28}, "models": {"Codex": 4, "Fable 5": 1}},
-    {"date": "2026-08-15", "tbs": {"percent": 28}, "models": {"Codex": 23, "Fable 5": 17}},
-    {"date": "2026-08-16", "tbs": {"percent": 27}, "models": {"Fable 5": 50, "Opus 5": 85, "Untagged": 2}},
-    {"date": "2026-08-17", "tbs": {"percent": 36}, "models": {"Claude": 15, "Opus 5": 130, "Untagged": 6}},
-    {"date": "2026-08-18", "tbs": {"percent": 37}, "models": {"Opus 5": 15, "Untagged": 2}},
+    {"date": "2026-08-15", "tbs": {"percent": 28}, "models": {"Codex": 22, "Fable 5": 17, "GPT-5.6 Luna": 1}},
+    {"date": "2026-08-16", "tbs": {"percent": 27}, "models": {"Fable 5": 50, "Opus 5": 87}},
+    {"date": "2026-08-17", "tbs": {"percent": 36}, "models": {"Opus 5": 151}},
+    {"date": "2026-08-18", "tbs": {"percent": 37}, "models": {"Opus 5": 16, "Untagged": 1}},
     {"date": "2026-08-19", "tbs": {"percent": 37}, "models": {"Opus 5": 70, "Untagged": 1}},
-    {"date": "2026-08-20", "tbs": {"percent": 37}, "models": {"Codex": 6, "Fable 5": 7, "Opus 5": 48}},
-    {"date": "2026-08-21", "tbs": {"percent": 37}, "models": {"Codex": 8, "Fable 5": 54, "Untagged": 5}},
-    {"date": "2026-08-22", "tbs": {"percent": 40}, "models": {"Codex": 13, "Untagged": 9}},
-    {"date": "2026-08-23", "tbs": {"percent": 50}, "models": {"Codex": 1, "Untagged": 34}},
-    {"date": "2026-08-24", "tbs": {"percent": 51}, "models": {"Codex": 2, "Untagged": 119}},
-    {"date": "2026-08-25", "tbs": {"percent": 52}, "models": {"Codex": 1, "Untagged": 19}},
+    {"date": "2026-08-20", "tbs": {"percent": 37}, "models": {"Codex": 1, "Fable 5": 7, "GPT-5.6 Sol": 5, "Opus 5": 48}},
+    {
+      "date": "2026-08-21",
+      "tbs": {"percent": 37},
+      "models": {"Codex": 2, "Fable 5": 54, "GPT-5.6 Sol": 9, "Sonnet 5": 2}
+    },
+    {"date": "2026-08-22", "tbs": {"percent": 40}, "models": {"Codex": 12, "GPT-5.6 Sol": 1, "Untagged": 9}},
+    {"date": "2026-08-23", "tbs": {"percent": 50}, "models": {"GPT-5.6 Luna": 1, "GPT-5.6 Sol": 5, "Untagged": 29}},
+    {
+      "date": "2026-08-24",
+      "tbs": {"percent": 51},
+      "models": {"Codex": 2, "GPT-5.6 Luna": 1, "GPT-5.6 Sol": 2, "Untagged": 116}
+    },
+    {"date": "2026-08-25", "tbs": {"percent": 52}, "models": {"Codex": 1, "GPT-5.6 Sol": 4, "Untagged": 15}},
     {"date": "2026-08-26", "tbs": {"percent": 52}, "models": {"Fable 5": 17, "Sonnet 5": 6, "Untagged": 19}},
-    {"date": "2026-08-27", "tbs": {"percent": 52}, "models": {"Claude": 9, "Sonnet 5": 111, "Untagged": 7}},
-    {"date": "2026-08-28", "tbs": {"percent": 53}, "models": {"Claude": 13, "Sonnet 5": 1, "Untagged": 6}},
+    {"date": "2026-08-27", "tbs": {"percent": 52}, "models": {"Claude": 3, "Opus 5": 1, "Sonnet 5": 123}},
+    {"date": "2026-08-28", "tbs": {"percent": 53}, "models": {"Claude": 13, "GPT-5.6 Sol": 6, "Sonnet 5": 1}},
     {"date": "2026-08-29", "tbs": {"percent": 53}, "models": {"Claude": 34}},
-    {"date": "2026-08-30", "tbs": {"percent": 60.06}, "models": {"Untagged": 115}},
-    {"date": "2026-08-31", "tbs": {"percent": 64.04}, "models": {"Untagged": 87}},
+    {"date": "2026-08-30", "tbs": {"percent": 60.06}, "models": {"GPT-5.6 Sol": 1, "Untagged": 114}},
+    {"date": "2026-08-31", "tbs": {"percent": 64.04}, "models": {"GPT-5.6 Sol": 12, "GPT-6 Astra": 6, "Untagged": 69}},
     {"date": "2026-09-01", "tbs": {"percent": 64.69}, "models": {"Fable 5.1": 4, "Untagged": 56}},
     {"date": "2026-09-02", "tbs": {"percent": 66.43}, "models": {"Fable 5.1": 15}},
     {"date": "2026-09-03", "tbs": {"percent": 66.99}, "models": {"Fable 5.1": 5}},
@@ -65,46 +101,64 @@
       "tbs": {"percent": 73.07},
       "models": {"Claude": 1, "Codex": 23, "Fable 5.1": 49, "Opus 5": 5}
     },
-    {"date": "2026-09-06", "tbs": {"percent": 67.95}, "models": {"Untagged": 9}},
-    {"date": "2026-09-07", "tbs": {"percent": 67.32}, "models": {"Fable 5.1": 34, "Untagged": 55}},
+    {"date": "2026-09-06", "tbs": {"percent": 67.95}, "models": {"GPT-6 Astra": 1, "Untagged": 8}},
+    {"date": "2026-09-07", "tbs": {"percent": 67.32}, "models": {"Fable 5.1": 34, "GPT-6 Astra": 2, "Untagged": 53}},
     {"date": "2026-09-08", "tbs": {"percent": 67.64}, "models": {"Untagged": 74}},
-    {"date": "2026-09-09", "tbs": {"percent": 43.56}, "models": {"Opus 5": 14, "Untagged": 9}},
+    {"date": "2026-09-09", "tbs": {"percent": 43.56}, "models": {"GPT-6 Astra": 1, "Opus 5": 14, "Untagged": 8}},
     {"date": "2026-09-10", "tbs": {"percent": 50.42}, "models": {"Fable 5.1": 142, "Opus 5": 91, "Sonnet 5": 14}},
     {"date": "2026-09-11", "tbs": {"percent": 50.64}, "models": {"Cursor": 19, "Fable 5.1": 5}},
     {"date": "2026-09-12", "tbs": {"percent": 50.64}, "models": {"Cursor": 193, "Untagged": 9}},
-    {"date": "2026-09-13", "tbs": {"percent": 50.97}, "models": {"Untagged": 99}},
-    {"date": "2026-09-14", "tbs": {"percent": 51.51}, "models": {"Untagged": 19}},
-    {"date": "2026-09-15", "tbs": {"percent": 51.63}, "models": {"Untagged": 41}},
-    {"date": "2026-09-16", "tbs": {"percent": 56.08}, "models": {"Opus 5": 19, "Untagged": 3}},
-    {"date": "2026-09-17", "tbs": {"percent": 56.19}, "models": {"Codex": 2, "Opus 5": 23, "Untagged": 1}},
-    {"date": "2026-09-18", "tbs": {"percent": 55.96}, "tla": {"percent": 0.2}, "models": {"Codex": 5, "Untagged": 1}},
-    {"date": "2026-09-19", "tbs": {"percent": 57.16}, "tla": {"percent": 0.52}, "models": {"Codex": 7, "Untagged": 2}},
-    {"date": "2026-09-20", "tbs": {"percent": 57.51}, "tla": {"percent": 0.52}, "models": {"Codex": 28, "Opus 4.8": 4}},
+    {
+      "date": "2026-09-13",
+      "tbs": {"percent": 50.97},
+      "models": {"GPT-5.6 Luna": 2, "GPT-5.6 Sol": 6, "GPT-6 Astra": 16, "Untagged": 75}
+    },
+    {"date": "2026-09-14", "tbs": {"percent": 51.51}, "models": {"GPT-5.6 Sol": 1, "GPT-6 Astra": 12, "Untagged": 6}},
+    {
+      "date": "2026-09-15",
+      "tbs": {"percent": 51.63},
+      "models": {"GPT-5.6 Luna": 29, "GPT-5.6 Sol": 10, "GPT-6 Astra": 2}
+    },
+    {"date": "2026-09-16", "tbs": {"percent": 56.08}, "models": {"GPT-5.6 Sol": 3, "Opus 5": 19}},
+    {"date": "2026-09-17", "tbs": {"percent": 56.19}, "models": {"GPT-6 Astra": 3, "Opus 5": 23}},
+    {
+      "date": "2026-09-18",
+      "tbs": {"percent": 55.96},
+      "tla": {"percent": 0.2},
+      "models": {"GPT-6 Astra": 5, "Untagged": 1}
+    },
+    {
+      "date": "2026-09-19",
+      "tbs": {"percent": 57.16},
+      "tla": {"percent": 0.52},
+      "models": {"GPT-5.6 Luna": 3, "GPT-5.6 Sol": 3, "GPT-6 Astra": 3}
+    },
+    {
+      "date": "2026-09-20",
+      "tbs": {"percent": 57.51},
+      "tla": {"percent": 0.52},
+      "models": {"GPT-5.6 Luna": 24, "GPT-5.6 Terra": 1, "GPT-6 Astra": 3, "Opus 4.8": 4}
+    },
     {
       "date": "2026-09-21",
       "tbs": {"percent": 55.48},
       "tla": {"percent": 0.52},
-      "models": {"Codex": 3, "Opus 4.8": 18, "Untagged": 15}
+      "models": {"GPT-5.6 Luna": 18, "Opus 4.8": 18}
     },
-    {"date": "2026-09-22", "models": {"Codex": 1, "Opus 5.5": 30, "Untagged": 47}},
-    {
-      "date": "2026-09-23",
-      "tbs": {"percent": 57.37},
-      "tla": {"percent": 2.14},
-      "models": {"Opus 5.5": 81, "Untagged": 11}
-    },
+    {"date": "2026-09-22", "models": {"GPT-5.6 Luna": 31, "GPT-5.6 Sol": 1, "GPT-5.6 Terra": 1, "Opus 5.5": 45}},
+    {"date": "2026-09-23", "tbs": {"percent": 57.37}, "tla": {"percent": 2.14}, "models": {"Opus 5.5": 92}},
     {
       "date": "2026-09-24",
       "tbs": {"done": 922224, "executable": 1375934},
       "tla": {"done": 42186, "executable": 1975640},
-      "models": {"Opus 5.5": 978, "Untagged": 44}
+      "models": {"Opus 5.5": 1029}
     }
   ],
   "figures": {
     "date": "2026-09-24",
-    "tbs": {"done": 892484, "executable": 1375934},
+    "tbs": {"done": 917086, "executable": 1375934},
     "tla": {"done": 42186, "executable": 1975640},
-    "models": {"Opus 5.5": 908, "Untagged": 30},
-    "files": "fca902db8a180d48"
+    "models": {"Opus 5.5": 1000},
+    "files": "f81705dd58bd4a96"
   }
 }

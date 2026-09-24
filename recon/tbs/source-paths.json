@@ -10332,7 +10332,8 @@
       "name": "Unnamed_080e698c"
     },
     "main:080e6d3c": {
-      "name": "Unnamed_080e6d3c"
+      "name": "BattleFx_PlaceFormationObjects",
+      "source": "BATTLE/EFFECT/PLACE_FORMATION_OBJECTS.C"
     },
     "main:080e6eac": {
       "name": "Unnamed_080e6eac"

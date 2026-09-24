@@ -78036,6 +78036,46 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "scene-3b1-020037d8",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/FUNE_HEYA/PLACE_FOUND_ACTORS.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3b1",
+      "absolute_symbols": {
+        "Engine_GameFlagIsSet": {
+          "address": "0x0200e4a0",
+          "kind": "thumb"
+        },
+        "FuneHeya_FindFirstSetFlag": {
+          "address": "0x0200cfa8",
+          "kind": "thumb"
+        },
+        "OverlayObject_SetPositionAndHeading": {
+          "address": "0x0200c890",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetPosition": {
+          "address": "0x0200e548",
+          "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x020037d8",
+          "extent": 212,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

@@ -2800,64 +2800,8 @@ AlchemyC_02003724:
 	pop	{r0}
 	bx	r0
 	.2byte 0x0000
-	push	{r5, r6, lr}
-	ldr	r3, [pc, #48]
-	ldr	r4, [pc, #48]
-	ldr	r6, [r3, #0]
-	movs	r2, #0
-	ldrsh	r3, [r4, r2]
-	cmp	r3, #0
-	bgt.n	.L_02003a28
-.L_020039d8:
-	ldr	r1, [pc, #40]
-	ldrh	r3, [r1, #0]
-	ldr	r5, [pc, #40]
-	adds	r2, r3, #1
-	lsls	r3, r3, #16
-	asrs	r3, r3, #16
-	ldrsb	r0, [r5, r3]
-	movs	r3, #1
-	negs	r3, r3
-	strh	r2, [r1, #0]
-	cmp	r0, r3
-	bne.n	.L_02003a0c
-	ldr	r3, [pc, #4]
-	strh	r3, [r1, #0]
-	b.n	.L_020039d8
-	.2byte 0x0000
-	.4byte 0x00000000
-	.4byte 0x03001ed0
-	.4byte 0x0200d25c
-	.4byte 0x0200d260
-	.2byte 0xbd28
-	.2byte 0x0200
-.L_02003a0c:
-	adds	r3, r2, #1
-	strh	r3, [r1, #0]
-	lsls	r3, r2, #16
-	asrs	r3, r3, #16
-	ldrsb	r3, [r5, r3]
-	ldr	r4, [pc, #28]
-	lsls	r0, r0, #1
-	strh	r3, [r4, #0]
-	adds	r0, r6, r0
-	ldr	r3, [pc, #24]
-	ldr	r1, [pc, #24]
-	ldr	r2, [pc, #28]
-	stmia	r3!, {r0, r1, r2}
-	subs	r3, #12
-.L_02003a28:
-	ldrh	r3, [r4, #0]
-	subs	r3, #1
-	strh	r3, [r4, #0]
-	pop	{r5, r6}
-	pop	{r0}
-	bx	r0
-	.4byte 0x0200d25c
-	.4byte 0x040000d4
-	.4byte 0x05000006
-	.2byte 0x0009
-	.2byte 0x8000
+AlchemyC_020039c8:
+	.space 0x7c
 	push	{lr}
 	ldr	r2, [pc, #20]
 	ldr	r3, [pc, #20]

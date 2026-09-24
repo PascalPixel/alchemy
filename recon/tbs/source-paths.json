@@ -6234,7 +6234,7 @@
       "source": "FIELD/KOROSSEO_KAWA/COORDINATOR.C"
     },
     "resource_37b:020023a4": {
-      "name": "FieldScene_RunSplitPairSteps",
+      "name": "Event_SayThenWait",
       "source": "FIELD/SORU_SEKIZO/GUARDED_STEP.C"
     },
     "resource_3a3:02000298": {

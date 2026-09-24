@@ -982,8 +982,9 @@ void FieldScene_RunScene37b_020022f4(void)
     Event_End();
 }
 
-void FieldScene_RunSplitPairSteps(s32 a, s32 b)
+/* Shows the next line of dialogue, then holds the scene for a moment. */
+void Event_SayThenWait(s32 speaker, s32 frames)
 {
-    Event_ShowMessage(a, 0);
-    Event_Wait(b);
+    Event_ShowMessage(speaker, 0);
+    Event_Wait(frames);
 }

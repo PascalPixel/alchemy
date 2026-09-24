@@ -31,29 +31,10 @@ extern u8 Data_0200bf60[];
 extern u8 Data_0200be64[];
 extern u8 Data_0200adac[];
 extern u8 Value_00002125[];
-void Func_02002164();
-void Func_02002174();
-void Func_0200218a();
-void Func_020021a8();
-void Func_02001f9e();
-void Func_02001fd2();
-void Func_020020d8();
 s32 Func_0200307a();
-void Func_02002132();
-void Func_020021e8();
 void Func_020021ee();
-void Func_02002200();
-void Func_02002210();
 void Func_0200222e();
-void Func_02002252();
-void Func_02002268();
-void Func_02002276();
-void Func_02002294();
-void Func_020022aa();
-void Func_020022de();
-void Func_020022ec();
 s32 Func_0200230a();
-void Func_02002e32();
 s32 Func_02003f06();
 s32 Func_020034f2();
 s32 Func_02004310_a();
@@ -64,55 +45,25 @@ s32 Func_02004512();
 void Func_02004fd0();
 void Func_02004fd2();
 s32 Func_02005042();
-void Func_020041c0();
 s32 Func_020050ea();
-void Func_02004308_a();
-void Func_02004316();
-void Func_02004324();
-void Func_0200433a();
-void Func_020043b8();
 void Func_0200537a();
 void Func_02005410();
 void Func_02005412();
 s32 Func_02005482();
-void Func_02004604();
-void Func_02004612();
-void Func_02004620();
-void Func_02004636();
-void Func_020046b4();
 void Func_02005676();
-void Func_02003292();
-void Func_020032a2();
-void Func_020032c0();
-void Func_02003476(void);
-void Func_020036a2(void);
 s32 Func_02003f28();
 s32 Func_02003f34();
 s32 Func_02003f3e();
 s32 Func_02003128();
 s32 Func_020040e4();
-void Func_020031b2(void);
-void Func_02002e44(void);
-void Func_0200323a(void);
-void Func_0200388c(void);
 void Func_020047a0(void);
-void Func_02003fa2(void);
-void Func_020041b8(void);
-void Func_020046f2(void);
-void Func_020040bc(void);
 void Func_020047c0(s32 arg0);
 void Func_020047c6(s32 arg0);
 void Func_020047cc(s32 arg0);
-void Func_0200426a_a(void);
-void Func_02004428_a(void);
-void Func_02004512_a(void);
 void Func_020047ea(s32 arg0);
 void Func_020047f0(s32 arg0);
 void Func_020047f6(s32 arg0);
-void Func_02004590(void);
 void Func_02004f1c();
-void Func_02003a36();
-void Func_02003a00();
 void Data_0200ad0c();
 void Func_020057c0_b();
 void Func_020057c8_a();
@@ -315,6 +266,8 @@ void Func_020057e8();
  * into the argument registers; a direct call precomputes a costly constant
  * into a pseudo that the compiler then shares with later uses in the block.
  * A value-returning call also sets r0 last of its arguments. */
+void FieldScene_RunMiddleSequence(void);
+
 static __inline__ void Call1(void (*f)(), s32 a0)
 {
     f(a0);
@@ -484,11 +437,11 @@ void FieldScene_RunScene3b9_02000334(void)
     if (GameFlag_IsSet(0x962) != 0) {
         Actor_RunRepeatedMotion(14, 2);
         Event_SetMessage(0x2256);
-        Func_02001f9e(14);
+        FieldScene_CallPairWith10(14);
         Actor_FaceEachOther(14, 0, 0);
         Event_Wait(20);
         Event_AskYesNo(14, 0);
-        Func_02001fd2(14, 0);
+        SceneState_ForwardMaskedHalfwordWith10(14, 0);
     } else {
         Event_SetMessage(0x205d);
         Event_ShowMessage(14, 0);
@@ -541,7 +494,7 @@ void FieldScene_RunScene3b9_02000468(void)
     Actor_Stop(13);
     Actor_FaceEachOther(13, 0, 20);
     Event_SetMessage(0x2114);
-    Func_020020d8(13);
+    FieldScene_CallPairWith10(13);
     Actor_RunRepeatedMotion(13, 1);
     Event_ShowMessage(13, 0);
     {
@@ -569,7 +522,7 @@ void FieldScene_RunScene3b9_020004c8(void)
     Actor_SetAttachedEffect(14, 0x102);
     Actor_RunRepeatedMotion(14, 2);
     Event_SetMessage(0x2116);
-    Func_02002132(14);
+    FieldScene_CallPairWith10(14);
     Actor_ShowEmote(14, 0x102, 40);
     Event_ShowMessage(14, 0);
     Event_End();
@@ -579,13 +532,13 @@ void SceneDialogue_ShowLine2118WithActor15Steps(void)
 {
     Event_Begin();
     Event_SetMessage(0x2118);
-    Func_02002164(15);
+    FieldScene_CallPairWith10(15);
     Actor_FaceEachOther(15, 0, 20);
-    Func_02002174(15);
+    FieldScene_CallPairWith10(15);
     Actor_SetAnimationAndWait(15, 3);
     Actor_SetAnimation(15, 0);
-    Func_0200218a(15);
-    Func_020021a8(15, 20480);
+    FieldScene_CallPairWith10(15);
+    SceneState_ForwardMaskedHalfwordWith10(15, 20480);
     Event_End();
 }
 
@@ -603,12 +556,12 @@ void FieldScene_RunScene3b9_0200055c(void)
     } else {
         Func_020021ee(17, 0);
         Actor_RunRepeatedMotion(17, 1);
-        Func_020021e8(17);
+        FieldScene_CallPairWith10(17);
         Actor_FaceEachOther(17, 0, 20);
         Actor_SetAnimation(17, 4);
-        Func_02002200(17);
+        FieldScene_CallPairWith10(17);
         Actor_ShowEmote(17, 0x105, 40);
-        Func_02002210(17);
+        FieldScene_CallPairWith10(17);
         Call2(Func_0200222e, 17, 0x5000);
         GameFlag_Set(0x3c1);
     }
@@ -620,13 +573,13 @@ void FieldScene_RunActorSeventeenDialogueSteps(void)
     Event_Begin();
     Actor_FaceEachOther(17, 0, 20);
     Event_SetMessage(0x211f);
-    Func_02002252(17);
+    FieldScene_CallPairWith10(17);
     Actor_SetAnimationAndWait(0, 3);
     Actor_SetAnimationAndWait(17, 3);
-    Func_02002268(17);
+    FieldScene_CallPairWith10(17);
     Actor_RunRepeatedMotion(17, 1);
-    Func_02002276(17);
-    Func_02002294(17, 20480);
+    FieldScene_CallPairWith10(17);
+    SceneState_ForwardMaskedHalfwordWith10(17, 20480);
     Event_End();
 }
 
@@ -638,14 +591,14 @@ void FieldScene_RunScene3b9_02000648(void)
     Event_Begin();
     Actor_FaceEachOther(18, 0, 20);
     Event_SetMessage(0x2122);
-    Func_020022aa(18);
+    FieldScene_CallPairWith10(18);
     Actor_FaceDirection(18, 0xd000, 20);
     Actor_FaceDirection(18, 0xb000, 20);
     Actor_FaceDirection(18, 0x8000, 40);
     Actor_FaceEachOther(18, 0, 20);
-    Func_020022de(18);
+    FieldScene_CallPairWith10(18);
     Actor_SetAnimationAndWait(18, 3);
-    Func_020022ec(18);
+    FieldScene_CallPairWith10(18);
     Value2(Func_0200230a, 18, 0x5000);
     Event_End();
 }
@@ -705,7 +658,7 @@ void FieldScene_RunConditionalSceneSetup(void)
     if (flag_8a4 != 0) {
         Actor_FaceEachOther(RECORD_17, 0, 40);
         Event_SetMessage(0x206f);
-        Func_02002e32(RECORD_17);
+        FieldScene_CallPairWith10(RECORD_17);
         Actor_FaceDirection(RECORD_17, 0x3000, 20);
     } else {
         Actor_StartRepeatedMotion(RECORD_17, 2);
@@ -862,7 +815,7 @@ void SceneState_SetRuntimeWord448To513(void)
     Event_WaitForScreen();
 
     Event_Wait(20);
-    Func_02003292(17, 160 << 7);
+    SceneState_ForwardMaskedHalfwordWith10(17, 160 << 7);
     Event_SetMessage(0x206e);
 
     if (GameFlag_IsSet(0x8a4) != 0) {
@@ -870,8 +823,8 @@ void SceneState_SetRuntimeWord448To513(void)
             (u16)(*(u16 *)((u8 *)Data_03001ebc + 472) + 1);
     }
 
-    Func_020032a2(17);
-    Func_020032c0(17, 192 << 6);
+    FieldScene_CallPairWith10(17);
+    SceneState_ForwardMaskedHalfwordWith10(17, 192 << 6);
     GameFlag_Set(0x8a3);
 
     Event_End();
@@ -1016,9 +969,9 @@ s32 SceneState_DispatchByStatus448(void)
     s16 status = *(s16 *)(Data_02000240 + off);
 
     if (status == (s32)&Value_0000008c) {
-        Func_02003476();
+        FieldScene_DispatchBySelector();
     } else if (status == (s32)&Value_0000008e) {
-        Func_020036a2();
+        SceneState_ApplyRectsByFlatla384And962();
     }
     return 0;
 }
@@ -1064,50 +1017,50 @@ void FieldScene_DispatchBySelector(void)
         Actor_SetAnimation(9, 2);
         if (GameFlag_IsSet(0x109) != 0)
             break;
-        Func_020031b2();
+        SceneState_SetRuntimeWord448To513();
         break;
     case 7:
-        Func_02002e44();
+        FieldScene_BuildActorPresentationGroup();
         break;
     case 70:
-        Func_0200323a();
+        FieldScene_RunMiddleSequence();
         break;
     case 64:
-        Func_0200388c();
+        FieldScene_BuildActorPresentationSequence();
         Func_020047a0();
         break;
     case 65:
-        Func_02003fa2();
+        FieldScene_RunScene3b9_020023e0();
         break;
     case 66:
-        Func_020041b8();
+        FieldScene_RunScene3b9_020025f0();
         break;
     case 12:
         GameFlag_Set(324);
-        Func_020046f2();
+        ActorPresentation_SetActorsTwelveToEighteen();
         if (GameFlag_IsSet(0x109) != 0)
             break;
-        Func_020040bc();
+        FieldScene_RunScene3b9_020024d8();
         break;
     case 21:
         Func_020047c0(1);
         Func_020047c6(2);
         Func_020047cc(3);
         GameFlag_Set(0x90e);
-        Func_0200426a_a();
+        FieldScene_RunScene3b9_02002668();
         break;
     case 67:
-        Func_02004428_a();
+        FieldScene_RunScene3b9_02002820();
         break;
     case 68:
-        Func_02004512_a();
+        FieldScene_RunScene3b9_02002904();
         break;
     case 31:
         Func_020047ea(1);
         Func_020047f0(2);
         Func_020047f6(3);
         GameFlag_Set(0x90f);
-        Func_02004590();
+        FieldScene_RunScene3b9_02002964();
         break;
     default:
         break;
@@ -1173,7 +1126,7 @@ void FieldScene_BuildActorPresentationSequence(void)
     Event_Wait(20);
     Actor_RunRepeatedMotion(2, 2);
     Event_Wait(40);
-    Func_02003a00(8, 0x3000);
+    SceneState_ForwardMaskedHalfwordWith10(8, 0x3000);
     Actor_RunRepeatedMotion(8, 2);
     Event_Wait(20);
     ColorBuffer_ApplyTarget(0x10000, 0);
@@ -1183,44 +1136,44 @@ void FieldScene_BuildActorPresentationSequence(void)
     Actor_RunRepeatedMotion(2, 1);
     Event_Wait(20);
     Event_SetMessage(0x20f8);
-    Func_02003a36(2);
+    FieldScene_CallPairWith10(2);
     Actor_SetAnimationAndWait(8, 3);
-    Func_02003a36(8);
+    FieldScene_CallPairWith10(8);
     Actor_ShowEmote(3, 0x102, 40);
-    Func_02003a36(3);
+    FieldScene_CallPairWith10(3);
     Actor_FaceDirection(8, 0x8000, 0);
     Actor_FaceDirection(9, 0, 40);
     Actor_FaceDirection(8, 0x5000, 0);
-    Func_02003a00(9, 0x3000);
+    SceneState_ForwardMaskedHalfwordWith10(9, 0x3000);
     Actor_ShowEmote(9, 0x105, 20);
-    Func_02003a36(9);
+    FieldScene_CallPairWith10(9);
     Actor_ShowEmote(1, 0x103, 20);
     Actor_StartRepeatedMotion(1, 2);
-    Func_02003a36(1);
+    FieldScene_CallPairWith10(1);
     Actor_ShowEmote(10, 0x102, 40);
-    Func_02003a36(10);
+    FieldScene_CallPairWith10(10);
     Actor_SetAnimationAndWait(11, 3);
-    Func_02003a36(11);
-    Func_02003a00(2, 0xa000);
+    FieldScene_CallPairWith10(11);
+    SceneState_ForwardMaskedHalfwordWith10(2, 0xa000);
     Actor_SetAnimationAndWait(2, 4);
-    Func_02003a36(2);
+    FieldScene_CallPairWith10(2);
     Actor_RunRepeatedMotion(3, 1);
-    Func_02003a36(3);
+    FieldScene_CallPairWith10(3);
     Actor_ShowEmote(1, 0x103, 20);
-    Func_02003a00(1, 0);
+    SceneState_ForwardMaskedHalfwordWith10(1, 0);
     Actor_StartRepeatedMotion(1, 2);
-    Func_02003a36(1);
-    Func_02003a00(0, 0x6000);
+    FieldScene_CallPairWith10(1);
+    SceneState_ForwardMaskedHalfwordWith10(0, 0x6000);
     Actor_ShowEmote(0, 0x102, 60);
     Actor_RunRepeatedMotion(2, 1);
-    Func_02003a00(2, 0x8000);
-    Func_02003a36(2);
+    SceneState_ForwardMaskedHalfwordWith10(2, 0x8000);
+    FieldScene_CallPairWith10(2);
     Actor_SetAnimation(3, 4);
     Event_Wait(20);
-    Func_02003a36(3);
+    FieldScene_CallPairWith10(3);
     Actor_RunRepeatedMotion(1, 1);
-    Func_02003a00(1, 0x2000);
-    Func_02003a36(1);
+    SceneState_ForwardMaskedHalfwordWith10(1, 0x2000);
+    FieldScene_CallPairWith10(1);
     Actor_ShowEmote(2, 0x105, 60);
     Actor_FaceDirection(2, 0x2000, 0);
     Actor_FaceDirection(1, 0, 0);
@@ -1230,31 +1183,31 @@ void FieldScene_BuildActorPresentationSequence(void)
     Actor_ShowEmote(3, 0x102, 80);
     Actor_ShowEmote(2, 0x106, 0);
     Actor_RunRepeatedMotion(2, 1);
-    Func_02003a00(2, 0xc000);
-    Func_02003a36(2);
+    SceneState_ForwardMaskedHalfwordWith10(2, 0xc000);
+    FieldScene_CallPairWith10(2);
     Actor_FaceDirection(0, 0xc000, 0);
     Actor_FaceDirection(1, 0xc000, 0);
     Actor_FaceDirection(3, 0xc000, 20);
-    Func_02003a00(8, 0x3000);
+    SceneState_ForwardMaskedHalfwordWith10(8, 0x3000);
     Actor_SetAnimationAndWait(8, 3);
-    Func_02003a36(8);
+    FieldScene_CallPairWith10(8);
     Actor_ShowEmote(0, 0x100, 0);
     Actor_ShowEmote(1, 0x100, 0);
     Actor_ShowEmote(3, 0x100, 40);
     Actor_RunRepeatedMotion(9, 1);
-    Func_02003a36(9);
+    FieldScene_CallPairWith10(9);
     Actor_FaceDirection(0, 0x6000, 0);
     Actor_FaceDirection(1, 0xe000, 0);
     Actor_FaceDirection(2, 0x6000, 0);
     Actor_FaceDirection(3, 0xe000, 40);
     Actor_RunRepeatedMotion(10, 1);
-    Func_02003a36(10);
+    FieldScene_CallPairWith10(10);
     Actor_FaceDirection(0, 0xc000, 0);
     Actor_FaceDirection(1, 0xc000, 0);
     Actor_FaceDirection(2, 0xc000, 0);
-    Func_02003a00(3, 0xc000);
+    SceneState_ForwardMaskedHalfwordWith10(3, 0xc000);
     Actor_SetAnimationAndWait(11, 3);
-    Func_02003a36(11);
+    FieldScene_CallPairWith10(11);
     Actor_FaceDirection(0, 0x6000, 0);
     Actor_FaceDirection(1, 0xe000, 0);
     Actor_FaceDirection(2, 0x6000, 0);
@@ -1264,8 +1217,8 @@ void FieldScene_BuildActorPresentationSequence(void)
     Actor_ShowEmote(3, 0x105, 80);
     Actor_ShowEmote(2, 0x106, 0);
     Actor_RunRepeatedMotion(2, 1);
-    Func_02003a00(2, 0xe000);
-    Func_02003a36(2);
+    SceneState_ForwardMaskedHalfwordWith10(2, 0xe000);
+    FieldScene_CallPairWith10(2);
     Actor_FaceDirection(0, 0, 0);
     Actor_FaceDirection(1, 0, 20);
     Actor_ShowEmote(11, 0x101, 60);
@@ -1276,13 +1229,13 @@ void FieldScene_BuildActorPresentationSequence(void)
     Actor_FaceDirection(3, 0xc000, 0);
     flag = 0;
     if (Event_ChooseYesNo(0, 0) == 1) {
-        Func_02003a36(2);
+        FieldScene_CallPairWith10(2);
         flag = 1;
     } else {
         SCENE_STEP++;
         Actor_SetAnimationAndWait(2, 3);
-        Func_02003a00(2, 0xc000);
-        Func_02003a36(2);
+        SceneState_ForwardMaskedHalfwordWith10(2, 0xc000);
+        FieldScene_CallPairWith10(2);
     }
     if (flag != 0) {
         SCENE_STEP++;
@@ -1296,21 +1249,21 @@ void FieldScene_BuildActorPresentationSequence(void)
     Actor_ShowEmote(10, 0x105, 0);
     Actor_ShowEmote(11, 0x105, 60);
     Actor_RunRepeatedMotion(8, 1);
-    Func_02003a00(8, 0x3000);
-    Func_02003a36(8);
+    SceneState_ForwardMaskedHalfwordWith10(8, 0x3000);
+    FieldScene_CallPairWith10(8);
     Actor_FaceDirection(0, 0xc000, 0);
     Actor_FaceDirection(1, 0xc000, 0);
     Actor_FaceDirection(2, 0xc000, 0);
     Actor_FaceDirection(3, 0xc000, 20);
     Actor_RunRepeatedMotion(9, 1);
-    Func_02003a00(9, 0x3000);
-    Func_02003a36(9);
+    SceneState_ForwardMaskedHalfwordWith10(9, 0x3000);
+    FieldScene_CallPairWith10(9);
     Actor_RunRepeatedMotion(10, 1);
-    Func_02003a00(10, 0x5000);
-    Func_02003a36(10);
-    Func_02003a00(11, 0x8000);
+    SceneState_ForwardMaskedHalfwordWith10(10, 0x5000);
+    FieldScene_CallPairWith10(10);
+    SceneState_ForwardMaskedHalfwordWith10(11, 0x8000);
     Actor_SetAnimationAndWait(11, 3);
-    Func_02003a36(11);
+    FieldScene_CallPairWith10(11);
     Actor_FaceDirection(1, 0xe000, 0);
     Actor_FaceDirection(2, 0xa000, 20);
     Actor_SetAnimation(1, 3);
@@ -1323,7 +1276,7 @@ void FieldScene_BuildActorPresentationSequence(void)
     Actor_EnableActionCallback(2, (s32)Data_0200adac);
     ObjectMotion_MarkActiveAndSetActionCallback(3, (s32)Data_0200adac);
     Event_Wait(20);
-    Func_02003a00(0, 0);
+    SceneState_ForwardMaskedHalfwordWith10(0, 0);
     Actor_SetAnimationAndWait(0, 3);
     Actor_SetAnimationAndWait(11, 3);
     Actor_SetSpeed(11, 0x10000, 0x8000);
@@ -1405,7 +1358,7 @@ void FieldScene_RunScene3b9_020024d8(void)
     Actor_FaceDirection(17, 0xb000, 0);
     Actor_FaceDirection(18, 0xb000, 0);
     Event_SetMessage(0x2112);
-    Func_020041c0(8);
+    FieldScene_CallPairWith10(8);
     Actor_SetAnimationAndWait(0, 3);
     {
         u16 *target = (u16 *)(rec7 + 100);
@@ -1466,14 +1419,14 @@ void FieldScene_RunScene3b9_02002668(void)
     Actor_RunRepeatedMotion(8, 1);
     Actor_SetAnimation(8, 3);
     Event_SetMessage(0x2134);
-    Func_02004308_a(8);
+    FieldScene_CallPairWith10(8);
     Actor_RunRepeatedMotion(9, 1);
-    Func_02004316(9);
+    FieldScene_CallPairWith10(9);
     Actor_RunRepeatedMotion(10, 1);
-    Func_02004324(10);
+    FieldScene_CallPairWith10(10);
     Actor_RunRepeatedMotion(11, 1);
     Actor_SetAnimation(11, 3);
-    Func_0200433a(11);
+    FieldScene_CallPairWith10(11);
     Actor_FaceDirection(1, 0xe000, 0);
     Actor_FaceDirection(2, 0xa000, 20);
     Actor_SetSpeed(1, 0x10000, 0x8000);
@@ -1484,7 +1437,7 @@ void FieldScene_RunScene3b9_02002668(void)
     Value2(Engine_ActorEnableActionCallback, 2, base5_200adac);
     Func_0200537a(3, base5_200adac);
     Event_Wait(20);
-    Func_020043b8(0, 0);
+    SceneState_ForwardMaskedHalfwordWith10(0, 0);
     Actor_SetAnimationAndWait(0, 3);
     Actor_SetAnimationAndWait(11, 3);
     Actor_SetSpeed(11, 0x10000, 0x8000);
@@ -1569,14 +1522,14 @@ void FieldScene_RunScene3b9_02002964(void)
     Actor_RunRepeatedMotion(8, 1);
     Actor_SetAnimation(8, 3);
     Event_SetMessage(SCENE_STEP_VALUE);
-    Func_02004604(8);
+    FieldScene_CallPairWith10(8);
     Actor_RunRepeatedMotion(9, 1);
-    Func_02004612(9);
+    FieldScene_CallPairWith10(9);
     Actor_RunRepeatedMotion(10, 1);
-    Func_02004620(10);
+    FieldScene_CallPairWith10(10);
     Actor_RunRepeatedMotion(11, 1);
     Actor_SetAnimation(11, 3);
-    Func_02004636(11);
+    FieldScene_CallPairWith10(11);
     Actor_FaceDirection(1, 0xe000, 0);
     Actor_FaceDirection(2, 0xa000, 20);
     Actor_SetSpeed(1, 0x10000, 0x8000);
@@ -1587,7 +1540,7 @@ void FieldScene_RunScene3b9_02002964(void)
     Value2(Engine_ActorEnableActionCallback, 2, base5_200adac);
     Func_02005676(3, base5_200adac);
     Event_Wait(20);
-    Func_020046b4(0, 0);
+    SceneState_ForwardMaskedHalfwordWith10(0, 0);
     Actor_SetAnimationAndWait(0, 3);
     Actor_SetAnimationAndWait(11, 3);
     Actor_SetSpeed(11, 0x10000, 0x8000);

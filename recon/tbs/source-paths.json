@@ -2221,12 +2221,10 @@
       "source": "BATTLE/EFFECT/RUNTIME_INITIALIZE_MODE_1.C"
     },
     "main:08091814": {
-      "name": "Event_ValidatePackedId",
-      "source": "FIELD/COMMON/EVENT/VALIDATE_PACKED_ID.C"
+      "name": "Event_ValidatePackedId"
     },
     "main:08091858": {
-      "name": "Event_ClearInvalidPackedValues",
-      "source": "FIELD/COMMON/EVENT/CLEAR_INVALID_PACKED_VALUES.C"
+      "name": "Event_ClearInvalidPackedValues"
     },
     "main:080b0070": {
       "name": "AbilityMenu_BuildAvailableList",
@@ -4678,7 +4676,7 @@
     },
     "main:080917d0": {
       "name": "Event_PrepareObjectAndApplyValue",
-      "source": "FIELD/COMMON/EVENT/PREPARE_OBJECTS.C"
+      "source": "FIELD/COMMON/EVENT/PACKED_ID.C"
     },
     "main:080917f4": {
       "name": "Event_PrepareTwoObjectsAndApply"

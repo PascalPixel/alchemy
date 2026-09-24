@@ -121873,25 +121873,6 @@
       ]
     },
     {
-      "id": "event-prepare-objects",
-      "game": "tbs",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/EVENT/PREPARE_OBJECTS.C",
-      "compiler_route": "canonical-gcc296",
-      "overlay": null,
-      "owners": [
-        {
-          "address": "0x080917d0",
-          "extent": 34,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080917f4",
-          "extent": 30,
-          "state": "exact-c"
-        }
-      ]
-    },
-    {
       "id": "battle-motion-slots",
       "game": "tbs",
       "source": "games/THE BROKEN SEAL/SRC/BATTLE/MOTION/SLOTS.C",
@@ -124704,6 +124685,35 @@
         {
           "address": "0x08078ad0",
           "extent": 40,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "event-packed-ids",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/EVENT/PACKED_ID.C",
+      "compiler_route": "canonical-gcc296",
+      "owners": [
+        {
+          "address": "0x080917d0",
+          "extent": 34,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080917f4",
+          "extent": 30,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08091814",
+          "extent": 68,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08091858",
+          "extent": 56,
           "state": "exact-c"
         }
       ],

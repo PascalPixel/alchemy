@@ -283,7 +283,6 @@
     "FIELD/COMMON/OBJECT/GROUP_CHILDREN.C": "#define gFrameCount @D03001e40\n#define gEventWork @D03001ebc\n",
     "FIELD/COMMON/EVENT/OBJECT_HOOKS.C": "#define gGameState @D02000240\n",
     "FIELD/COMMON/EVENT/SET_PAIR1C4_AND_RESET_VALUE170.C": "#define gEventWork @D03001ebc\n#define gGameState @D02000240\n",
-    "FIELD/COMMON/EVENT/CLEAR_INVALID_PACKED_VALUES.C": "#define gGameState @D02000240\n",
     "FIELD/COMMON/EVENT/SHOW_VALUE_1D8_AT_POSITION.C": "#define gEventWork @D03001ebc\n",
     "FIELD/COMMON/EVENT/SET_VALUE_1D8.C": "#define gEventWork @D03001ebc\n",
     "GRAPHICS/WINDOW/MENU_POSITION_CURSOR.C": "#define gFrameCount @D03001e40\n",
@@ -294,6 +293,7 @@
     "BATTLE/EFFECT/SPARK_EMITTER.C": "#define gFrameCount @D03001e40\n",
     "FIELD/COMMON/EFFECT/SPAWN_NEARBY_MARKERS.C": "#define gGameState @D02000240\n",
     "FIELD/COMMON/EFFECT/UPDATE_GRID_PLACEMENT.C": "#define gGameState @D02000240\n",
-    "FIELD/COMMON/EFFECT/WATCH_LEADER_DISTANCE.C": "#define gEventWork @D03001ebc\n#define gGameState @D02000240\n"
+    "FIELD/COMMON/EFFECT/WATCH_LEADER_DISTANCE.C": "#define gEventWork @D03001ebc\n#define gGameState @D02000240\n",
+    "FIELD/COMMON/EVENT/PACKED_ID.C": "#define gGameState @D02000240\n"
   }
 }

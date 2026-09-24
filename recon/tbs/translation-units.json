@@ -72019,6 +72019,46 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "world-map-f-034a0",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/WORLD_MAP/F_034A0.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_371",
+      "absolute_symbols": {
+        "Engine_ActorGet": {
+          "address": "0x0200c2fc",
+          "kind": "thumb"
+        },
+        "Engine_ObjectCreate": {
+          "address": "0x0200c20c",
+          "kind": "thumb"
+        },
+        "Engine_RandomNext": {
+          "address": "0x0200c19c",
+          "kind": "thumb"
+        },
+        "Engine_ObjectSetPalette": {
+          "address": "0x0200c39c",
+          "kind": "thumb"
+        },
+        "Engine_ObjectSetAnimation": {
+          "address": "0x0200c1fc",
+          "kind": "thumb"
+        },
+        "Engine_ObjectSetScript": {
+          "address": "0x0200c204",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x020034a0",
+          "extent": 220,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

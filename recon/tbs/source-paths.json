@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_371:020034a0": {
+      "name": "WorldMap_Func020034a0",
+      "source": "FIELD/WORLD_MAP/F_034A0.C"
+    },
     "resource_39a:020017e4": {
       "name": "ImiruFuchin_Func020017e4",
       "source": "FIELD/COMMON/IMIRU_FUCHIN/F_017E4.C"

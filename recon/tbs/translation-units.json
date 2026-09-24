@@ -80648,6 +80648,98 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "scene-3bd-02003ad4",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/ARUTAMIRA_DOU/F_03AD4.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3bd",
+      "absolute_symbols": {
+        "Main_0808a550": {
+          "address": "0x0200be28",
+          "kind": "thumb"
+        },
+        "Main_080b0048": {
+          "address": "0x0200be60",
+          "kind": "thumb"
+        },
+        "Main_0808a538": {
+          "address": "0x0200be20",
+          "kind": "thumb"
+        },
+        "Main_0808a528": {
+          "address": "0x0200be10",
+          "kind": "thumb"
+        },
+        "Main_0808a520": {
+          "address": "0x0200be08",
+          "kind": "thumb"
+        },
+        "Main_0808a518": {
+          "address": "0x0200be00",
+          "kind": "thumb"
+        },
+        "Engine_RandomNext": {
+          "address": "0x0200bc18",
+          "kind": "thumb"
+        },
+        "Main_08009248": {
+          "address": "0x0200bc80",
+          "kind": "thumb"
+        },
+        "Main_030003f0": {
+          "address": "0x0200bbf8",
+          "kind": "thumb"
+        },
+        "Engine_TaskWait": {
+          "address": "0x0200bc00",
+          "kind": "thumb"
+        },
+        "Main_080091c8": {
+          "address": "0x0200bc50",
+          "kind": "thumb"
+        },
+        "Engine_MapCopyCellAttributes": {
+          "address": "0x0200bc48",
+          "kind": "thumb"
+        },
+        "Engine_WorkSetValuesIfNonNegative": {
+          "address": "0x0200bc68",
+          "kind": "thumb"
+        },
+        "Engine_MapWaitWorkValuesBelow256": {
+          "address": "0x0200bc70",
+          "kind": "thumb"
+        },
+        "Main_080b0050": {
+          "address": "0x0200be68",
+          "kind": "thumb"
+        },
+        "Main_0808a558": {
+          "address": "0x0200be30",
+          "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
+        },
+        "OverlayObject_UpdateThreeStateMotion": {
+          "address": "0x0200ba30",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02003ad4",
+          "extent": 276,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

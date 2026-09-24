@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_372:02003ce4": {
+      "name": "HaidiaArashi_UpdatePulsingGlow",
+      "source": "FIELD/HAIDIA_ARASHI/PULSING_GLOW.C"
+    },
     "resource_3af:02000724": {
       "name": "FuneKanpan_UpdateFlyByForActor22",
       "source": "FIELD/FUNE_KANPAN/FLY_BY_22.C"

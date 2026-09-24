@@ -76571,6 +76571,42 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "scene-372-02003ce4",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_ARASHI/PULSING_GLOW.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_372",
+      "absolute_symbols": {
+        "Engine_ActorGet": {
+          "address": "0x0200c72c",
+          "kind": "thumb"
+        },
+        "Engine_WorkSetValuesIfNonNegative": {
+          "address": "0x0200c6bc",
+          "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
+        },
+        "gFrameCount": {
+          "address": "0x03001e40",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02003ce4",
+          "extent": 308,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

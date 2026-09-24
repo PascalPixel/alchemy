@@ -245,9 +245,7 @@ u8 *Func_0200711a();
 u8 *Func_0200714a_a();
 void Func_02007298();
 void Func_02001528(void);
-void Func_02000e10(void);
 void Func_02001a48(void);
-s32 Func_0200132e(S6 *);
 void Func_020014da(S6);
 void Func_0200490a(s32);
 void Func_020015ce_a(void);
@@ -286,6 +284,8 @@ void Func_020078da(void *object);
  */
 
 /* Signed coordinate halfwords in a placed-actor record, named by offset. */
+s32 StagedActor_FindClearPosition(struct StagedActorProbe *probe);
+
 static __inline__ void Call1(void (*f)(), s32 a0)
 {
     f(a0);
@@ -481,7 +481,7 @@ void SceneState_RunFlag200SetupAndPlaceActors16To20(void)
 
 void FieldScene_RunTwoCallSequence(void)
 {
-    Func_02000e10();
+    StagedActor_AdvancePair();
     Func_02001a48();
 }
 
@@ -528,7 +528,7 @@ void FieldScene_RunGuardedSixWordStep(void)
     S6 s;
 
     Event_Begin();
-    if (Func_0200132e(&s) != 0) {
+    if (StagedActor_FindClearPosition(&s) != 0) {
         Func_020014da(s);
     }
     Event_End();

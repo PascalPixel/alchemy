@@ -57810,14 +57810,6 @@
           "address": "0x0200bc00",
           "kind": "thumb"
         },
-        "Func_02000e10": {
-          "address": "0x020080c4",
-          "kind": "thumb"
-        },
-        "Func_0200132e": {
-          "address": "0x02008474",
-          "kind": "thumb"
-        },
         "Func_020014da": {
           "address": "0x02008608",
           "kind": "thumb"
@@ -57912,6 +57904,14 @@
         },
         "Func_020078da": {
           "address": "0x0200be18",
+          "kind": "thumb"
+        },
+        "StagedActor_AdvancePair": {
+          "address": "0x020080c4",
+          "kind": "thumb"
+        },
+        "StagedActor_FindClearPosition": {
+          "address": "0x02008474",
           "kind": "thumb"
         }
       },

@@ -15240,7 +15240,8 @@
       "source": "FIELD/BIRIBINO_MURA/PUSH_PUZZLE.C"
     },
     "resource_3af:02002618": {
-      "name": "FieldScene_ConfigureActorGroup"
+      "name": "FuneKanpan_Func02002618",
+      "source": "FIELD/FUNE_KANPAN/F_02618.C"
     },
     "resource_3af:020029d4": {
       "name": "FieldScene_ConfigureLeadActors",

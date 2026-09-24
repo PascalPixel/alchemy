@@ -965,19 +965,6 @@
       ]
     },
     {
-      "overlay": "resource_3af",
-      "start": "0x02002618",
-      "end": "0x020029d4",
-      "kind": "not_yet_decompiled",
-      "retention": "not_yet_c",
-      "confidence": "strong",
-      "evidence": [
-        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
-        "2026-09-06 review of the linked reconstruction record found no compiler-impossibility proof; its dated source and score observations remain research evidence, not DONE.",
-        "recon/tbs/en/dossiers.json#resource_3af:02002618"
-      ]
-    },
-    {
       "overlay": "resource_3c7",
       "start": "0x020000c8",
       "end": "0x020000f2",

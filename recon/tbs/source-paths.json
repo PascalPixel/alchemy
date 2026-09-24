@@ -140,6 +140,14 @@
       "name": "SceneData_SelectFlaggedTable",
       "source": "FIELD/HAIDIA_HEYA/TIMED_EVENTS.C"
     },
+    "main:08011590": {
+      "name": "MapAnimation_Start",
+      "source": "FIELD/COMMON/MAP/ANIMATION_START.C"
+    },
+    "main:0801161c": {
+      "name": "Map_ShowBg1FromBuffer",
+      "source": "FIELD/COMMON/MAP/SHOW_BG1_FROM_BUFFER.C"
+    },
     "main:080a22f4": {
       "name": "Palette_CopyObjectBankToBackground14",
       "source": "GRAPHICS/PALETTE/COPY_OBJECT_BANK_TO_BACKGROUND14.C"

@@ -5042,18 +5042,6 @@
     },
     {
       "overlay": "resource_371",
-      "start": "0x02002768",
-      "end": "0x020027dc",
-      "kind": "structured_scene_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "Scan the complete12-byte SceneEvent array until control0xffffffff; convert every exit trigger138 to a touch callback at runtime0200a858. Then scan24-byte ScenePlacement records for sprite57 and set x0x17940000,z0x0d480000,facing0x3000. The argument is unused. No calls.",
-        "Complete reviewed owner remains assembled while the ordinary C draft is nonexact. No handwritten, library or compiler-impossibility credit."
-      ]
-    },
-    {
-      "overlay": "resource_371",
       "start": "0x02004058",
       "end": "0x02004174",
       "kind": "structured_scene_module",

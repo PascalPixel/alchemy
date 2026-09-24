@@ -78740,6 +78740,38 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "scene-371-02002768",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/WORLD_MAP/SITE_138.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_371",
+      "absolute_symbols": {
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
+        },
+        "WorldMap_Sites": {
+          "address": "0x200e3f4",
+          "kind": "data"
+        },
+        "WorldMap_Marks": {
+          "address": "0x200db84",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02002768",
+          "extent": 116,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

@@ -19432,7 +19432,8 @@
       "source": "FIELD/WORLD_MAP/BLACK_ORB_SCENE.C"
     },
     "resource_371:02002768": {
-      "name": "WorldMap_PrepareTriggerActor"
+      "name": "WorldMap_ActivateSite138",
+      "source": "FIELD/WORLD_MAP/SITE_138.C"
     },
     "resource_371:020027dc": {
       "name": "WorldMap_RestoreExitTrigger",

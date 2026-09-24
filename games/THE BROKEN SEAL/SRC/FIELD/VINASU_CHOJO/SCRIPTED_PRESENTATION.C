@@ -150,21 +150,15 @@ extern Spr *Data_0200e6e8;
 
 s32 Func_02005f8e(Spr *);
 s32 Func_02005f74(s32, s32);
-void *Func_02005cc6(s32, s32, s32, s32);
 void OverlayObject_SetValue1(void *, s32);
 s32 Func_02007cf8(s32, s32);
 void Func_0200430e(s32);
 void Func_0200b096(void *record);
 typedef s32(*IwramIntegerSquareRoot)(s32);
-Spr *Func_0200621c(s32);
-s32 Func_02000976(u8 *, u8 *);
 void Func_02000c3a();
 void Func_0200618e();
 s32 Func_0200620e();
-void *Func_02006270();
-Spr *Func_0200633e(s32);
 Spr *Func_02000ab8(void);
-Spr *Func_0200635e(Spr *);
 u8 *Func_02006412(s32);
 u8 *Func_0200641e(s32);
 u8 *Func_0200642a(s32);
@@ -172,14 +166,8 @@ u8 *Func_02006434(s32);
 u8 *Func_0200643e(s32);
 u8 *Func_02006448(s32);
 u8 *Func_02006452(s32);
-Spr *Func_02006484(s32);
-Spr *Func_02006490(s32);
-Spr *Func_0200649c(s32);
-Spr *Func_020064a8(s32);
 Spr *Func_020064b4(s32);
 Spr *Func_020064be(s32);
-Spr *Func_020064ca(s32);
-Spr *Func_020064d2(s32);
 void Func_020010a8(void);
 void Func_02002b5a(void);
 void Func_020040c0(void);
@@ -189,16 +177,12 @@ void Func_02006534(s32, s32);
 void Func_0200653e(s32, s32);
 s32 Func_02000d1a(void);
 Spr *Func_020065b2(void);
-void Func_02007490();
 void Func_02007768();
 void Func_02007b0c();
 s32 Func_02007d28(u32, s32);
 s32 Func_02007d38(u32, s32);
 void Func_0200434e(s32);
 void Func_020081fc(s32);
-s32 Func_02006fde();
-s32 Func_02006ffe_a();
-void Func_020080a2(s32);
 void Func_02004476(void);
 void Func_02008784();
 void Func_020090a2();
@@ -209,24 +193,8 @@ void Func_0200917e();
 void Func_0200918e();
 void Func_020091a2();
 void Func_020091b2();
-s32 Func_0200967e();
-s32 Func_02009740();
-s32 Func_02009774();
-s32 Func_02009774_a();
-s32 Func_02009780();
 s32 Func_02009788();
-s32 Func_020097a6_a();
-s32 Func_020097b2_a();
-s32 Func_020097d8();
-s32 Func_020097e4();
-s32 Func_0200982a();
-s32 Func_02009836();
-s32 Func_02009848();
-s32 Func_02009858();
-s32 Func_0200986c();
-s32 Func_0200988c_a();
 s32 Func_02009898();
-s32 Func_020098ac();
 void Func_020053c8();
 void Func_0200542c();
 void Func_02005464();
@@ -284,6 +252,8 @@ void Func_02004834_a();
  * into the argument registers; a direct call precomputes a costly constant
  * into a pseudo that the compiler then shares with later uses in the block.
  * A value-returning call also sets r0 last of its arguments. */
+s32 MeasureFixedPointPositionDistance(s32 *first_position, s32 *second_position);
+
 static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
 {
     f(a0, a1, a2);
@@ -347,11 +317,7 @@ static __inline__ void Call3_02003e9c(void (*f)(), s32 a0, s32 a1, s32 a2)
     f(a0, a1, a2);
 }
 
-void Func_020081bc();  /* Func_020048d8, this overlay's own */
-
 void Func_02008410();  /* Func_02004b28, this overlay's own */
-
-u8 *Func_020093ba(s32 index);   /* scene-record accessor (Scene_GetRecord) */
 
 void OverlayObject_SetRecordField1(Obj *o, u32 v)
 {
@@ -370,7 +336,7 @@ void OverlayObject_SetRecordField1(Obj *o, u32 v)
  */
 void *OverlayObject_CreateAndInitialize(s32 x, s32 y, s32 z, s32 kind)
 {
-    u8 *ret = Func_02005cc6(kind, x, y, z);
+    u8 *ret = Object_Create(kind, x, y, z);
 
     if (ret != NULL) {
         u8 *obj = *(u8 **)(ret + 0x50);
@@ -528,14 +494,14 @@ s32 SceneActor_FindNearestSlotOfKindF2(void)
     u32 i;
 
     limit = 640;
-    ref = Func_0200621c(0);
+    ref = Actor_Get(0);
     i = 8;
     p = (Spr_020004bc **)(work + 0x34);
     do {
         Spr_020004bc *spr = *p++;
         if (spr != 0) {
             if (*spr->obj->unk28 == 0xf2) {
-                s32 dist = Func_02000976((u8 *)ref + 8, (u8 *)spr + 8);
+                s32 dist = MeasureFixedPointPositionDistance((u8 *)ref + 8, (u8 *)spr + 8);
                 if (dist < limit) {
                     limit = dist;
                     best = i;
@@ -554,7 +520,7 @@ void InitializeActorZeroMotion(void)
     s32 angle;
     u8 flags;
 
-    actor = Func_02006270(0);
+    actor = Actor_Get(0);
     angle = (actor->angle + 0x1000) & 0xe000;
     flags = actor->flags55;
     position[0] = (actor->x & 0xfff00000) + 0x80000;
@@ -583,7 +549,7 @@ void InitializeActorZeroMotion(void)
 
 void SceneEffect_SpawnAndBobWithActorZero(void)
 {
-    Spr_020005ec *a = Func_0200633e(0);
+    Spr_020005ec *a = Actor_Get(0);
     Spr_020005ec *b;
     Spr_020005ec *r;
     s32 k;
@@ -593,7 +559,7 @@ void SceneEffect_SpawnAndBobWithActorZero(void)
     Data_0200e6e8 = r;
     if (r != 0) {
         GameFlag_Set(592);
-        b = Func_0200635e(Data_0200e6e8);
+        b = Actor_Get(Data_0200e6e8);
         b->unk55 = 0;
         a->unk55 &= 0xfe;
         b->unk0c += (s32)0xfffd0000;
@@ -650,18 +616,18 @@ s32 FieldScene_InitActorsAndDispatchBySubstate(void)
     GameFlag_Set(324);
     Task_Wait(1);
     GameFlag_Set(272);
-    Actor_SetSpriteFlags(Func_02006484(8), 0);
-    Actor_SetSpriteFlags(Func_02006490(9), 0);
-    Actor_SetSpriteFlags(Func_0200649c(10), 0);
-    Actor_SetSpriteFlags(Func_020064a8(11), 0);
+    Actor_SetSpriteFlags(Actor_Get(8), 0);
+    Actor_SetSpriteFlags(Actor_Get(9), 0);
+    Actor_SetSpriteFlags(Actor_Get(10), 0);
+    Actor_SetSpriteFlags(Actor_Get(11), 0);
     v = (s32)0xffff0000;
     Func_020064b4(10)->unk18 = v;
     Func_020064be(11)->unk18 = v;
     i = 12;
     z = 0;
     do {
-        obj = Func_020064ca(i);
-        Actor_SetSpriteFlags(Func_020064d2(i), z);
+        obj = Actor_Get(i);
+        Actor_SetSpriteFlags(Actor_Get(i), z);
         Actor_SetSpritePriority(i, 1);
         obj->unk55 = 4;
         obj->unk23 |= 2;
@@ -733,12 +699,12 @@ void FieldScene_RunScene3c9_02001280(s32 a0, s32 a1)
 
     if (a1 != 0) {
         Actor_SetChildValue(a0, 0);
-        record = Func_02006fde(a0);
+        record = Actor_Get(a0);
         Actor_SetSpriteFlags(record, 1);
         Actor_SetSpeed(a0, 0xcccc, 0x6666);
     } else {
         Actor_SetChildValue(a0, 15);
-        record = Func_02006ffe_a(a0);
+        record = Actor_Get(a0);
         Actor_SetSpriteFlags(record, 0);
     }
 }
@@ -815,7 +781,7 @@ void FieldScene_ForwardValue81fc(s32 a)
 
 void FieldScene_RunStep6(void)
 {
-    Func_020080a2(6);
+    Actor_Get(6);
     Func_02004476();
 }
 
@@ -880,7 +846,7 @@ void SceneEffect_UpdateOrbitAroundActor(union OrbitEffect *effect)
  */
 void SceneEffect_UpdateCounterDrivenOrbit(u8 *actor)
 {
-    u8 *anchor = Func_020093ba(23);
+    u8 *anchor = Actor_Get(23);
     u16 *pangle = (u16 *)(actor + 100);
     s32 angle = *pangle;
     s32 cosine;
@@ -911,7 +877,7 @@ void SceneEffect_UpdateCounterDrivenOrbit(u8 *actor)
 void FieldScene_RunThreeStepsInBracket(void)
 {
     Event_Begin();
-    Func_02007490();
+    FieldScene_RunPairDefeat();
     Func_02007768();
     Func_02007b0c();
     Event_End();
@@ -931,7 +897,7 @@ void FieldScene_RunBracketedSceneWithFlag282(void)
     u8 *workspace;
 
     Event_Begin();
-    Func_020081bc();
+    FieldScene_RestageParty();
     Func_02008410();
     /* The flag id is built as 141 << 1 rather than folded. */
     GameFlag_Set(141 << 1);
@@ -955,7 +921,7 @@ void FieldScene_RunScene3c9_02003924(void)
     s32 record;
     u8 *work;
 
-    rec4 = Value1(Func_0200967e, 0);
+    rec4 = Value1(Engine_ActorGet, 0);
     Event_Begin();
     *(u8 *)(Func_02009788() + 85) = 0;
     Map_CopyCellsTo(102, 4, 74, 4, 18, 23);
@@ -972,7 +938,7 @@ void FieldScene_RunScene3c9_02003924(void)
     Actor_Destroy(20);
     Actor_Destroy(19);
     Actor_SetAnimation(0, 19);
-    record = Func_02009740(0);
+    record = Actor_Get(0);
     Actor_SetSpriteFlags(record, 0);
     *(s32 *)(rec4 + 8) = 0x15a0000;
     *(s32 *)(rec4 + 16) = 0xcd0000;
@@ -984,9 +950,9 @@ void FieldScene_RunScene3c9_02003924(void)
     }
     Func_020090a2(rec4);
     Actor_SetAnimation(1, 18);
-    record = Func_02009774(1);
+    record = Actor_Get(1);
     Actor_SetSpriteFlags(record, 0);
-    record = Func_02009780(1);
+    record = Actor_Get(1);
     *(s32 *)(record + 8) = 0x1640000;
     *(s32 *)(record + 16) = 0xc00000;
     {
@@ -997,9 +963,9 @@ void FieldScene_RunScene3c9_02003924(void)
     *(s32 *)(record + 12) = 0x200000;
     Func_020090d4();
     Actor_SetAnimation(2, 18);
-    record = Func_020097a6_a(2);
+    record = Actor_Get(2);
     Actor_SetSpriteFlags(record, 0);
-    record = Func_020097b2_a(2);
+    record = Actor_Get(2);
     *(s32 *)(record + 8) = 0x1680000;
     {
         s32 shown = 0x2000;
@@ -1010,9 +976,9 @@ void FieldScene_RunScene3c9_02003924(void)
     *(s32 *)(record + 16) = 0xde0000;
     Func_02009106();
     Actor_SetAnimation(3, 18);
-    record = Func_020097d8(3);
+    record = Actor_Get(3);
     Actor_SetSpriteFlags(record, 0);
-    record = Func_020097e4(3);
+    record = Actor_Get(3);
     *(s32 *)(record + 8) = 0x14e0000;
     {
         s32 shown = 0x8000;
@@ -1026,28 +992,28 @@ void FieldScene_RunScene3c9_02003924(void)
     Actor_SetAnimation(21, 5);
     Actor_SetPosition(6, 0xbc0000, 0x13c0000);
     Call2((void (*)())Engine_ActorSetAnimation, 6, 5);
-    record = Func_0200982a(6);
+    record = Actor_Get(6);
     Actor_SetSpriteFlags(record, 0);
-    record = Func_02009836(8);
+    record = Actor_Get(8);
     *(s32 *)(record + 8) += -0x100000;
     Func_0200917e();
-    record = Value1(Func_02009848, 9);
+    record = Value1(Engine_ActorGet, 9);
     *(s32 *)(record + 8) += -0x100000;
     Func_0200918e();
-    record = Func_02009858(10);
+    record = Actor_Get(10);
     *(s32 *)(record + 8) += 0x100000;
     Func_020091a2();
-    record = Value1(Func_0200986c, 11);
+    record = Value1(Engine_ActorGet, 11);
     *(s32 *)(record + 8) += 0x100000;
     Func_020091b2();
     Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
-    record = Func_0200988c_a(23);
+    record = Actor_Get(23);
     Actor_SetSpriteFlags(record, 0);
     *(u8 *)(Func_02009898(23) + 85) = 4;
     Actor_SetChildValue(23, 4);
-    record = Func_020098ac(23);
+    record = Actor_Get(23);
     *(s32 *)(record + 12) = 0x280000;
-    Call2(Func_02009774_a, 0x200da29, 0xc80);
+    Call2(Engine_TaskAddCallback, 0x200da29, 0xc80);
     work = *(u8 **)Data_03001ebc;
     *(s32 *)(work + 0x1c0) = 0x200;
     *(s32 *)(work + 0x1c8) = 24;

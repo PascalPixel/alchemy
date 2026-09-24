@@ -5,6 +5,14 @@
 
 #include "SCENE_EFFECT_SEQUENCE.H"
 
+enum SpawnSequenceMessage {
+    MSG_YOUNG_WARRIORS_VERY_GALLANT_CAME = 0x17e8,
+    MSG_WARRIORS_FROM_SCHOOL_STRONG_WARRIORS = 0x17f7,
+    MSG_DOING_MADE_ME_SPILL_MY = 0x17fa,
+    MSG_NOW_MUST_GET_WATER_AGAIN = 0x17fb
+};
+
+
 /* Shared 22-byte head leaf proved identical for this overlay family. */
 struct EffectRecord {
     u8 pad[9];
@@ -272,7 +280,7 @@ s32 SceneEffect_PrepareState(void)
 void SceneEffect_ShowActorSetupMessage(void)
 {
     Event_Begin();
-    Event_SetMessage(0x17e8);
+    Event_SetMessage(MSG_YOUNG_WARRIORS_VERY_GALLANT_CAME);
     Event_AskYesNo(9, 0);
     Event_End();
 }
@@ -307,7 +315,7 @@ void FieldScene_RunPrimarySequence(void)
     p5 = *(u16 *)((s32)record + 6);
     Actor_FaceActor(18, 0, 0);
     Event_Wait(10);
-    Event_SetMessage(0x17fb);
+    Event_SetMessage(MSG_NOW_MUST_GET_WATER_AGAIN);
     if (GameFlag_IsSet(0x200) == 0) {
         bump_step(1);
         Event_ShowMessage(18, 0);
@@ -387,7 +395,7 @@ void FieldScene_RunPrimarySequence(void)
     Actor_ShowEmote(18, 0x103, 0);
     Actor_StartRepeatedMotion(18, 2);
     Event_Wait(70);
-    Event_SetMessage(0x17fa);
+    Event_SetMessage(MSG_DOING_MADE_ME_SPILL_MY);
     Event_ShowMessageAndWait(18, 0, 20);
     Func_02001d0a();
     record = Value1(Engine_ActorGet, 0);
@@ -455,7 +463,7 @@ void FieldScene_RunScene3a0_02000968(void)
 void SceneEffect_RunActorSceneMessage(void)
 {
     Event_Begin();
-    Event_SetMessage(0x17f7);
+    Event_SetMessage(MSG_WARRIORS_FROM_SCHOOL_STRONG_WARRIORS);
     Event_AskYesNo(17, 0);
     Event_End();
 }

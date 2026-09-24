@@ -9,6 +9,14 @@
 
 #include "FACING_OBJECT.H"
 
+enum OrbitingMessage {
+    MSG_ROBIN_PEERED_INTO = 0x947,
+    MSG_TELLING_ME_IM_RESPONSIBLE_FOR = 0x13c3,
+    MSG_DO_THINK_CAN_BECOME_AS = 0x1751,
+    MSG_UPON_CLOSER_INSPECTION_SEEMS_DRIED = 0x29de
+};
+
+
 struct SceneHandle {
     u8 unknown_00[9];
     u8 flags09;                     /* 0x09 */
@@ -187,8 +195,8 @@ void FieldScene_RunStepWithValueFd2(void)
 void FieldScene_RunStepWithValue29de(void)
 {
     Event_Begin();
-    Message_ShowCentered(0x947, 1);
-    Message_ShowCentered(0x29DE, 1);
+    Message_ShowCentered(MSG_ROBIN_PEERED_INTO, 1);
+    Message_ShowCentered(MSG_UPON_CLOSER_INSPECTION_SEEMS_DRIED, 1);
     Event_End();
 }
 
@@ -211,7 +219,7 @@ void SceneDialogue_RunActor9Message13c0(void)
 void SceneDialogue_RunActor10Message13c3(void)
 {
     Event_Begin();
-    Event_SetMessage(0x13C3);
+    Event_SetMessage(MSG_TELLING_ME_IM_RESPONSIBLE_FOR);
     Event_AskYesNo(10, 0);
     Event_End();
 }
@@ -219,7 +227,7 @@ void SceneDialogue_RunActor10Message13c3(void)
 void SceneDialogue_RunActor11Message1751(void)
 {
     Event_Begin();
-    Event_SetMessage(0x1751);
+    Event_SetMessage(MSG_DO_THINK_CAN_BECOME_AS);
     Event_AskYesNo(11, 0);
     Event_End();
 }

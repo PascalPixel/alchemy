@@ -1,6 +1,11 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
+enum ActorEntrySequenceMessage {
+    MSG_ROBIN = 0x278e
+};
+
+
 extern u8 Value_000027ba[];
 
 extern u8 Value_000000bb[];
@@ -86,7 +91,7 @@ void Scene_RunActorEntrySequence(void)
     Actor_WalkToAndWait(0, 0x154, 184);
     Func_020008a8(0, 0x8000);
     Actor_RunRepeatedMotion(21, 1);
-    Event_SetMessage(0x278e);
+    Event_SetMessage(MSG_ROBIN);
     Call1(Func_02000894, 0x9015);
     *(u8 *)(Func_02005e4c() + 85) = hidden;
     Camera_SetSpeed(0xcccc, 0x1999);

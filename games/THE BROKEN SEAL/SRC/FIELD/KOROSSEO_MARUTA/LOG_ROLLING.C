@@ -3,6 +3,28 @@
 
 #include "COLOSSO_LOG_ROLLING_STAGE.H"
 
+enum LogRollingMessage {
+    MSG_ROBIN_GOT = 0x96a,
+    MSG_WOULD_LIKE_FRIEND_CHEER_FOR = 0x207d,
+    MSG_IF_KNOW_WHO_WANT_CHEER = 0x207e,
+    MSG_DO_YOUR_BEST = 0x2083,
+    MSG_UNFORTUNATELY_WE_HAVE_FULL_HOUSE = 0x2084,
+    MSG_MATCH_ABOUT_BEGIN_PLEASE_TAKE = 0x2085,
+    MSG_YOUR_GOAL_IN_STAGE_SIMPLE = 0x20b6,
+    MSG_STEPPING_STONE_STAGE = 0x20b7,
+    MSG_CLEAR_STAGE_MUST_ABLE_CHANGE = 0x20be,
+    MSG_PLACE_NORMALLY_CALLED_FREE_CLIMB = 0x20bf,
+    MSG_IN_STAGE_MUST_TRY_OUTPACE = 0x20c2,
+    MSG_CALLED_MOVING_SIDEWALK_STAGE = 0x20c3,
+    MSG_HERE_MUST_FIGURE_OUT_HOW = 0x20c6,
+    MSG_ANOTHER_LOG_ROLLING_AREA = 0x20c7,
+    MSG_ROBIN_DID_GET_GOOD_LOOK = 0x20e5,
+    MSG_WAIT_SHOULDNT_DECIDE_WHERE_BEST = 0x20e8,
+    MSG_ROBIN = 0x20f1,
+    MSG_ROBIN_FELL_ASLEEP = 0x214c
+};
+
+
 extern u8 Data_0200ce3c[];
 extern u8 *Data_03001ebc;
 
@@ -1445,7 +1467,7 @@ void FieldScene_RunMultiPhaseActorSequence(s32 a0)
     ColorBuffer_ApplyTarget(0x10001, 1);
     Event_OpenScreen();
     Event_WaitForScreen();
-    Event_SetMessage(0x20f1);
+    Event_SetMessage(MSG_ROBIN);
     Event_Wait(60);
     data_table_addr = (s32)Data_0200d950;
     Actor_EnableActionCallback(0, data_table_addr);
@@ -1579,7 +1601,7 @@ void FieldScene_RunMultiPhaseActorSequence(s32 a0)
     Func_02006322_b_head();
     ColorBuffer_ApplyTarget(0x10000, 2);
     ColorBuffer_Interpolate(1);
-    Event_SetMessage(0x214c);
+    Event_SetMessage(MSG_ROBIN_FELL_ASLEEP);
     Event_ShowMessage(1, 0);
     Event_ShowMessage(2, 0);
     Event_ShowMessage(3, 0);
@@ -1598,7 +1620,7 @@ void Func_02001df8(s32 scene)
     Event_Begin();
     state = Func_020048b0_arrival(scene, 2);
     if (state == 0) {
-    Event_SetMessage(8375);
+    Event_SetMessage(MSG_STEPPING_STONE_STAGE);
     Camera_SetSpeed(196608, 24576);
     Camera_MoveTo(24641536, -1, 9961472, 1);
     Camera_WaitForMove();
@@ -1632,7 +1654,7 @@ void Func_02001df8(s32 scene)
     Camera_FollowActor(0, 0);
     Func_02004aaa_arrival(scene, 2);
     } else if (state == 1) {
-        Event_SetMessage(0x20b6);
+        Event_SetMessage(MSG_YOUR_GOAL_IN_STAGE_SIMPLE);
         Event_ShowMessage(scene, 0);
     }
     Value3(Func_02004b24_arrival, state, scene, 2);
@@ -1676,7 +1698,7 @@ void FieldScene_RunFourStepActorMotion(s32 a0)
         Event_Begin();
         result = Value2(Func_02004bb4_motion, a0, 4);
         if (result == 0) {
-            Event_SetMessage(0x20bf);
+            Event_SetMessage(MSG_PLACE_NORMALLY_CALLED_FREE_CLIMB);
             Camera_SetSpeed(0x30000, 0x6000);
             Camera_MoveTo(0x3580000, -1, 0xa80000, 1);
             Camera_WaitForMove();
@@ -1714,7 +1736,7 @@ void FieldScene_RunFourStepActorMotion(s32 a0)
             Camera_FollowActor(0, 0);
             Func_02004dd0_motion(a0, 4);
         } else if (result == 1) {
-            Event_SetMessage(0x20be);
+            Event_SetMessage(MSG_CLEAR_STAGE_MUST_ABLE_CHANGE);
             Event_ShowMessage(a0, 0);
         }
         Value3(Func_02004e4c_motion, result, a0, 4);
@@ -1780,7 +1802,7 @@ void FieldScene_RunOpeningAuxiliarySequence(s32 a0)
         rec2 = Value2(Func_02004dec_opening, a0, 5);
         if (rec2 != 0) {
         } else {
-            Event_SetMessage(0x20c3);
+            Event_SetMessage(MSG_CALLED_MOVING_SIDEWALK_STAGE);
             Camera_SetSpeed(0x30000, 0x6000);
             Camera_MoveTo(0x4380000, -1, 0xa80000, 1);
             Camera_WaitForMove();
@@ -1821,7 +1843,7 @@ void FieldScene_RunOpeningAuxiliarySequence(s32 a0)
             goto L_02002494;
         }
         if (rec2 == 1) {
-            Event_SetMessage(0x20c2);
+            Event_SetMessage(MSG_IN_STAGE_MUST_TRY_OUTPACE);
             Event_ShowMessage(a0, 0);
         }
         L_02002494:;
@@ -1843,7 +1865,7 @@ void ColossoLogRollingStage_RunLogRollingInteraction(s32 actor)
     state = ColossoLogRollingStage_RunStateInteraction(actor, 6);
 
     if (state == 0) {
-        Event_SetMessage(0x20c7);
+        Event_SetMessage(MSG_ANOTHER_LOG_ROLLING_AREA);
         Camera_SetSpeed(0x30000, 0x6000);
         Camera_MoveTo(0x5080000, -1, 0x980000, 1);
         Camera_WaitForMove();
@@ -1863,7 +1885,7 @@ void ColossoLogRollingStage_RunLogRollingInteraction(s32 actor)
         Camera_FollowActor(0, 0);
         ColossoLogRollingStage_InitializeStateInteraction(actor, 6);
     } else if (state == 1) {
-        Event_SetMessage(0x20c6);
+        Event_SetMessage(MSG_HERE_MUST_FIGURE_OUT_HOW);
         Event_ShowMessage(actor, 0);
     }
 
@@ -1983,7 +2005,7 @@ void ColossoLogRollingStage_SelectNearestObstacle(void)
             best = adx + dz;
         }
     }
-    Event_SetMessage(0x2085);
+    Event_SetMessage(MSG_MATCH_ABOUT_BEGIN_PLEASE_TAKE);
     Event_ShowMessage(best_slot, 0);
     frame = (s32 *)(state + 448);
     *frame = 0x200;
@@ -2043,7 +2065,7 @@ void RunPartyCountInteractionCopyB(s32 actorId)
     Event_Begin();
 
     if (GetPartyMemberCount() <= 1) {
-        Event_SetMessage(0x20e5);
+        Event_SetMessage(MSG_ROBIN_DID_GET_GOOD_LOOK);
         if (Event_AskYesNo(actorId, 0) == 0) {
             InitializeActorZero();
             InitializeSelectedActor(actorId);
@@ -2056,7 +2078,7 @@ void RunPartyCountInteractionCopyB(s32 actorId)
             Event_RequestExit(11);
         }
     } else {
-        Event_SetMessage(0x20e8);
+        Event_SetMessage(MSG_WAIT_SHOULDNT_DECIDE_WHERE_BEST);
         Event_ShowMessage(actorId, 0);
     }
 
@@ -2176,12 +2198,12 @@ void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base)
             buf[i] = Data_02000240[504 + i];
         }
         if (count <= 1) {
-            Event_SetMessage(0x2083);
+            Event_SetMessage(MSG_DO_YOUR_BEST);
             Func_0200778a_a_middle(owner, 0);
             return;
         }
         if (GameFlag_IsSet(base + 512) != 0) {
-            Event_SetMessage(0x2084);
+            Event_SetMessage(MSG_UNFORTUNATELY_WE_HAVE_FULL_HOUSE);
             Func_0200778a_a_middle(owner, 0);
             return;
         }
@@ -2189,7 +2211,7 @@ void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base)
             state = 0;
             Task_Wait(6);
         } else {
-            Event_SetMessage(0x207d);
+            Event_SetMessage(MSG_WOULD_LIKE_FRIEND_CHEER_FOR);
             Event_OpenMessage(owner, 0);
             state = Value2(Func_0200764c_a_middle, 0, 0);
         }
@@ -2216,7 +2238,7 @@ void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base)
             }
         }
     }
-    Event_SetMessage(0x207e);
+    Event_SetMessage(MSG_IF_KNOW_WHO_WANT_CHEER);
     Func_0200778a_a_middle(owner, 0);
     return;
 L_main:
@@ -2669,7 +2691,7 @@ s32 ColossoLogRollingStage_PositionActiveActor(s32 first_handle, s32 second_hand
 
     shared = Data_02000240;
     Func_0200882c_a(*(s32 *)(shared + 500), 1);
-    Message_ShowCentered(0x96a, 3);
+    Message_ShowCentered(MSG_ROBIN_GOT, 3);
     Func_020087ca(record);
 
     return flag;

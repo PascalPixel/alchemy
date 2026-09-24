@@ -167,6 +167,11 @@ void Func_020025a8(void);
 
 #include "TYPES.H"
 
+enum StagedPlacementMessage {
+    MSG_GOT_WOW_THATS_PRETTY_IMPRESSIVE = 0x132f
+};
+
+
 void ConfigureActorThirteenSceneParameters(void)
 {
     ConfigureFirst(13, 256, 0);
@@ -473,7 +478,7 @@ void FieldScene_RunScene389_0200115c(void)
     Actor_ShowEmote(13, 0x100, 30);
     Actor_RunRepeatedMotion(13, 2);
     Actor_FaceDirection(0, 0xa000, 0);
-    Event_SetMessage(0x132f);
+    Event_SetMessage(MSG_GOT_WOW_THATS_PRETTY_IMPRESSIVE);
     Event_ShowMessage(13, 0);
     Actor_SetAnimationAndWait(13, 3);
     Event_Wait(30);

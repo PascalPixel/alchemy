@@ -4,6 +4,17 @@
 #include "FIELD_SCENE.H"
 #include "ITEM_IDS.H"
 
+enum FlaggedCueMessage {
+    MSG_MORE_TOLBIS_SOLDIERS_LAY_DEFEATED = 0x2694,
+    MSG_OHH_THEY_TOOK_SHEBA_HEADED = 0x26af,
+    MSG_WHERE_GOING_ROBIN_IODEM_ASKED = 0x288e,
+    MSG_BABI_TOLD_ME_SHIP_ANCIENTS = 0x28a5,
+    MSG_THOUGHT_SHIP_WE_SAW_AT = 0x28b0,
+    MSG_WHERE_GOING_ARENT_WE_TAKING = 0x28b7,
+    MSG_WAS_TOLD_LET_IN_IF = 0x28b8
+};
+
+
 #define NULL ((void *)0)
 #define ObjectMotion_RealignToTrackedObjectAndArmCallback_1(a0, a1, a2, a3) Call4(Func_02001882, a0, a1, a2, a3)
 #define ObjectMotion_RealignToTrackedObjectAndArmCallback_1_020007c4(a0, a1, a2, a3) Call4(Func_02001e12, a0, a1, a2, a3)
@@ -184,7 +195,7 @@ void SceneActor_SetupActorForTable9638(s32 actor)
     object->scale_x = 0x10000;
     object = (struct FieldActor *)Value1(Engine_ActorGet, actor);
     object->scale_y = 0x10000;
-    Event_SetMessage(0x26af);
+    Event_SetMessage(MSG_OHH_THEY_TOOK_SHEBA_HEADED);
     Event_ShowMessage(actor, 0);
     Actor_FaceDirection(actor, 0xc000, 0);
     Event_Wait(20);
@@ -210,7 +221,7 @@ void SceneActor_SetupActor18Event(void)
     void Actor_FaceDirection(s32, s32, s32);
 
     GameFlag_Set(2491);
-    Event_SetMessage(0x28b8);
+    Event_SetMessage(MSG_WAS_TOLD_LET_IN_IF);
     Event_ShowMessage(18, 0);
     PlaceActor(18, 65536, 32768);
     SetOffset(18, -16, 0);
@@ -264,7 +275,7 @@ void FieldScene_RunPrimarySequence(void)
     u8 *record;
 
     Event_Begin();
-    Event_SetMessage(0x2694);
+    Event_SetMessage(MSG_MORE_TOLBIS_SOLDIERS_LAY_DEFEATED);
     Actor_SetPosition(0, 0xf80000, 0x1a80000);
     Actor_FaceDirection(0, 0xc000, 0);
     Actor_SetAnimation(8, 0);
@@ -459,7 +470,7 @@ void FieldScene_RunSecondarySequence(void)
 
     GameFlag_Set(0x9ba);
     Event_Begin();
-    Event_SetMessage(0x288e);
+    Event_SetMessage(MSG_WHERE_GOING_ROBIN_IODEM_ASKED);
     Actor_WalkToAndWait(0, 104, 0x178);
     Actor_FaceDirection(0, 0, 0);
     ObjectMotion_RealignToTrackedObjectAndArmCallback_1_020007c4(1, -32, 0, 0);
@@ -618,7 +629,7 @@ void FieldScene_RunSecondarySequence(void)
     if (GameFlag_IsSet(0x9bf) != 0) {
         Func_02001d8c_a();
     }
-    Event_SetMessage(0x28a5);
+    Event_SetMessage(MSG_BABI_TOLD_ME_SHIP_ANCIENTS);
     Event_Wait(10);
     Actor_RunRepeatedMotion(22, 2);
     Event_Wait(20);
@@ -739,7 +750,7 @@ void FieldScene_RunScene3c6SequenceA(void)
     u32 i;
     u8 *record;
 
-    Event_SetMessage(0x28b0);
+    Event_SetMessage(MSG_THOUGHT_SHIP_WE_SAW_AT);
     Event_Wait(20);
     Actor_RunRepeatedMotion(22, 2);
     Event_Wait(20);
@@ -784,7 +795,7 @@ void FieldScene_RunSequenceB(void)
     s32 record;
 
     Event_Begin();
-    Event_SetMessage(0x28b7);
+    Event_SetMessage(MSG_WHERE_GOING_ARENT_WE_TAKING);
     Event_ShowMessage(1, 0);
     Actor_WalkByAndWait(0, 0, -16);
     Event_End();

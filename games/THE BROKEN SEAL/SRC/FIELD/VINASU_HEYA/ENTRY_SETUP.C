@@ -24,6 +24,17 @@
  * Effect spawning for overlay resource_39f.  Every cutscene beat in the
  * overlay creates its effects through this routine.
  */
+
+enum EntrySetupMessage {
+    MSG_DOOR_TIGHTLY_LOCKED = 0x953,
+    MSG_VENUS_LIGHTHOUSE_WAS_ATTACKED_BY = 0x266d,
+    MSG_IVE_WAITED_LONG_SEE_ITS = 0x2670,
+    MSG_THOUGHT_ID_EXPLORE_AFTER_DOOR = 0x267d,
+    MSG_THERE_WORDS_CARVED_INTO_RELIEF = 0x2682,
+    MSG_STATUE_SPEAKS_ROBIN_SOUL_YE = 0x2688,
+    MSG_HMMM_WE_CANT_PUSH_BLOCK = 0x2691
+};
+
 struct Sprite {
     u8 pad00[9];
     u8 flags9;
@@ -1186,7 +1197,7 @@ no_match:
 void SceneState_SetFlag953(void)
 {
     Event_Begin();
-    Message_ShowCentered(0x953, 1);
+    Message_ShowCentered(MSG_DOOR_TIGHTLY_LOCKED, 1);
     Event_End();
 }
 
@@ -1199,7 +1210,7 @@ void FieldScene_RunActorEightTenStepLoop(void)
 
     Event_Begin();
     Actor_RunRepeatedMotion(8, 3);
-    Event_SetMessage(0x266d);
+    Event_SetMessage(MSG_VENUS_LIGHTHOUSE_WAS_ATTACKED_BY);
     n = 10;
     w = 8;
     Event_ShowMessageAndWait(8, 0, 20);
@@ -1224,7 +1235,7 @@ void FieldScene_RunActorEightTenStepLoop(void)
 void SceneDialogue_RunActorElevenDialogue(void)
 {
     Event_Begin();
-    Event_SetMessage(0x2670);
+    Event_SetMessage(MSG_IVE_WAITED_LONG_SEE_ITS);
     Event_ShowMessageAndWait(11, 0, 20);
     Actor_RunRepeatedMotion(11, 2);
     Event_ShowMessage(11, 0);
@@ -1247,7 +1258,7 @@ void SceneDialogue_RunLine2682(void)
 {
     Event_Begin();
     Actor_SetAnimation(0, 1);
-    Message_ShowCentered(0x2682, 1);
+    Message_ShowCentered(MSG_THERE_WORDS_CARVED_INTO_RELIEF, 1);
     Event_End();
 }
 
@@ -1349,7 +1360,7 @@ void FieldScene_RunScene3c8SequenceD(void)
     work->field_cb6 = 1;
     Event_Begin();
     Actor_SetAnimation(0, 1);
-    Message_ShowCentered(0x2688, 1);
+    Message_ShowCentered(MSG_STATUE_SPEAKS_ROBIN_SOUL_YE, 1);
     ColorBuffer_ApplySource(0x10000, 0);
     ColorBuffer_ApplyTarget(0x10005, 0);
     ColorBuffer_Interpolate(120);
@@ -1443,7 +1454,7 @@ void FieldScene_RunFlag986ActorOneScene(void)
             Event_Wait(20);
             Actor_SetAnimationAndWait(1, 4);
             Event_Wait(20);
-            Event_SetMessage(0x2691);
+            Event_SetMessage(MSG_HMMM_WE_CANT_PUSH_BLOCK);
             Event_ShowMessageAndWait(1, 0, 20);
             Actor_FaceDirection(1, 0, 10);
             Actor_ShowEmote(1, h, 60);
@@ -1518,7 +1529,7 @@ void Func_02001780(void)
         *target = shown;
     }
     Event_Begin();
-    Event_SetMessage(0x267d);
+    Event_SetMessage(MSG_THOUGHT_ID_EXPLORE_AFTER_DOOR);
     Actor_FaceActor(10, 0, 0);
     Event_Wait(10);
     Event_ShowMessageAndWait(10, 0, 20);

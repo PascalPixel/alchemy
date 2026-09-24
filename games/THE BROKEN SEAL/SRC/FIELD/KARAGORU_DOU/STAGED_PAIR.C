@@ -6,6 +6,14 @@
 #include "STAGED_ACTOR_PAIR_SCENE.H"
 #include "STAGED_ACTOR.H"
 
+enum StagedPairMessage {
+    MSG_WARRIORS_HAVE_BEEN_FIGHTING_WHILE = 0x23d2,
+    MSG_WE_MISSED_COLOSSO_BECAUSE_WE = 0x23d5,
+    MSG_IVE_BEEN_WAITING_FOR_ROBIN = 0x23d9,
+    MSG_WHY_GOING_BACK_ROBIN_DO = 0x23da
+};
+
+
 struct EffectRecord {
     u8 pad[9];
     u8 flags_lo : 2;
@@ -231,7 +239,7 @@ void FieldScene_RunScene3beSequenceB(void)
         Actor_FaceDirection(11, 0xd000, 0);
         Event_Wait(10);
         Actor_FaceActor(0, 11, 0);
-        Event_SetMessage(0x23da);
+        Event_SetMessage(MSG_WHY_GOING_BACK_ROBIN_DO);
         Event_OpenMessage(11, 0);
         if (Event_ChooseYesNo(0, 0) == 0) {
             Event_ShowMessage(11, 0);
@@ -269,7 +277,7 @@ void ActorPresentation_RunActorElevenRecoveryScene(void)
     Actor_SetAnimation(0, 1);
     Event_Wait(10);
     Actor_FaceEachOther(0, 11, 0);
-    Event_SetMessage(0x23d9);
+    Event_SetMessage(MSG_IVE_BEEN_WAITING_FOR_ROBIN);
     Event_ShowMessage(11, 0);
     Actor_SetAnimation(11, 2);
     {
@@ -310,9 +318,9 @@ void FieldScene_RunScene3be_02000fd0(void)
 void ActorPresentation_SelectActorNineScript(void)
 {
     if (GameFlag_IsSet(2384) != 0 && GameFlag_IsSet(2415) == 0)
-        Event_SetMessage(9173);
+        Event_SetMessage(MSG_WE_MISSED_COLOSSO_BECAUSE_WE);
     else
-        Event_SetMessage(9170);
+        Event_SetMessage(MSG_WARRIORS_HAVE_BEEN_FIGHTING_WHILE);
     Event_ShowMessage(9, 0);
 }
 

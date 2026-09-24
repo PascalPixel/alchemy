@@ -1,6 +1,13 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "EVENT_RUNTIME.H"
+
+enum SelectActorPairMessage {
+    MSG_THERES_NOWHERE_RUN = 0x12a3,
+    MSG_IM_SURROUNDED = 0x12a4,
+    MSG_NOW_IVAN = 0x12a5
+};
+
 extern struct EventRuntime *Data_03001ebc;
 
 void Func_0200cc7c();
@@ -65,7 +72,7 @@ void FieldScene_SelectActorPair(void)
     switch (*(s16 *)(((s32)work + 0x182))) {
     case 202:
     case 203:
-        Event_SetMessage(0x12a4);
+        Event_SetMessage(MSG_IM_SURROUNDED);
         Actor_SetAttachedEffect(25, 0x102);
         Actor_RunRepeatedMotion(25, 2);
         Func_0200c5f4(25, 20);
@@ -75,7 +82,7 @@ void FieldScene_SelectActorPair(void)
         }
         /* fall through */
     case 201:
-        Event_SetMessage(0x12a3);
+        Event_SetMessage(MSG_THERES_NOWHERE_RUN);
         Actor_SetAttachedEffect(24, 0x102);
         Actor_RunRepeatedMotion(24, 2);
         actor = 24;
@@ -87,7 +94,7 @@ void FieldScene_SelectActorPair(void)
     Actor_FaceActor(1, 2, 0);
     Actor_RunRepeatedMotion(1, 2);
     Event_Wait(20);
-    Event_SetMessage(0x12a5);
+    Event_SetMessage(MSG_NOW_IVAN);
     Func_0200c5f4(1, 20);
     Actor_RunRepeatedMotion(2, 2);
     Event_Wait(20);

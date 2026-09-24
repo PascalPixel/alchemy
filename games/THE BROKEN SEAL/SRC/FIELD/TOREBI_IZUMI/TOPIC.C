@@ -1,6 +1,12 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
+enum TopicMessage {
+    MSG_LUCKY_WHEELS_RULES_PULL_LEVER = 0xe34,
+    MSG_LUCKY_WHEELS_PRIZES_PRIZES_DETERMINED = 0xe35
+};
+
+
 /* Signed topic cursors share the scene workspace with its halfword state. */
 extern s8 SceneWork_Bytes[];
 extern u8 Value_000000bd;
@@ -78,7 +84,7 @@ void FieldScene_RunPromptDialogueE19(s32 object)
 void SceneDialogue_RunMessage0e34(void)
 {
     Event_Begin();
-    Event_SetMessage(0xE34);
+    Event_SetMessage(MSG_LUCKY_WHEELS_RULES_PULL_LEVER);
     Event_OpenMessage(-1, 0);
     Event_End();
 }
@@ -86,7 +92,7 @@ void SceneDialogue_RunMessage0e34(void)
 void SceneDialogue_RunMessage0e35(void)
 {
     Event_Begin();
-    Event_SetMessage(0xE35);
+    Event_SetMessage(MSG_LUCKY_WHEELS_PRIZES_PRIZES_DETERMINED);
     Event_OpenMessage(-1, 0);
     Event_End();
 }

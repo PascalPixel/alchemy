@@ -5,6 +5,30 @@
 
 #include "RESOURCE_38C.H"
 
+enum MessageBranchMessage {
+    MSG_WHEN_SPRING_COMES_WANT_GO = 0x13d9,
+    MSG_THERE_WAS_ABLE_HEALER_IN = 0x13e3,
+    MSG_HAVE_EVER_HEARD_OCEAN = 0x13e5,
+    MSG_MUST_USED_TYPES_DANGER_BEING = 0x13e9,
+    MSG_CURSE_ON_KOLIMA_SCARY_DEVELOPMENT = 0x13eb,
+    MSG_IM_REALLY_WORRIED_ABOUT_KOLIMA = 0x13ed,
+    MSG_GRRR = 0x13f0,
+    MSG_DO_BELIEVE_TREE_SPIRIT_CAN = 0x13f6,
+    MSG_EVEN_FROZEN_IMIL_MUST_FEEL = 0x146f,
+    MSG_DO_KNOW_IF_HOLY_TREE = 0x16e1,
+    MSG_DO_KNOW_SILK = 0x16ec,
+    MSG_OUR_WEAPONS_BEST_CAN_FIND = 0x16f5,
+    MSG_FOR_SOME_REASON_OCEAN_FILLS = 0x16f7,
+    MSG_TURNED_OUT_WARRIORS_HIRED_BY = 0x16f9,
+    MSG_WASNT_CURSE_IN_KOLIMA_HORRIFYING = 0x16fb,
+    MSG_TWO_SPECIALS_ONE_DINNER_ONE = 0x16ff,
+    MSG_IF_WANT_MEAL_SPEAK_WAITRESS = 0x1702,
+    MSG_REALLY_THINK_HEAD_CHEF_HAS = 0x1703,
+    MSG_LETS_SEE_SERVE_THEM_WATER = 0x1705,
+    MSG_WAS_SOME_MEAL_DONT_JUST = 0x170a
+};
+
+
 void Func_02000574(s32);
 u8 *Func_0200059a(s32);
 u8 *Func_020005fa(s32);
@@ -121,9 +145,9 @@ void FieldScene_RunActor16MessageBranch(void)
         Shop_Open(7, 16);
     } else {
         if (GameFlag_IsSet(0x845) == 0) {
-            Event_SetMessage(0x13E3);
+            Event_SetMessage(MSG_THERE_WAS_ABLE_HEALER_IN);
         } else {
-            Event_SetMessage(0x16F5);
+            Event_SetMessage(MSG_OUR_WEAPONS_BEST_CAN_FIND);
         }
         Event_ShowMessage(16, 0);
     }
@@ -143,9 +167,9 @@ void FieldScene_RunActor18MessageBranch(void)
         Shop_Open(9, 18);
     } else {
         if (GameFlag_IsSet(0x845) == 0) {
-            Event_SetMessage(0x13E9);
+            Event_SetMessage(MSG_MUST_USED_TYPES_DANGER_BEING);
         } else {
-            Event_SetMessage(0x16F9);
+            Event_SetMessage(MSG_TURNED_OUT_WARRIORS_HIRED_BY);
         }
         Event_ShowMessage(18, 0);
     }
@@ -170,13 +194,13 @@ void FieldScene_RunActor17MessageBranch(void)
         Shop_Open(8, 17);
     } else {
         if (GameFlag_IsSet(0x845) == 0) {
-            Event_SetMessage(0x13e5);
+            Event_SetMessage(MSG_HAVE_EVER_HEARD_OCEAN);
             Actor_FaceActor(17, 0, 0);
             Event_Wait(10);
             Event_AskYesNo(17, 0);
             Actor_FaceDirection(17, 0x3000, 10);
         } else {
-            Event_SetMessage(0x16f7);
+            Event_SetMessage(MSG_FOR_SOME_REASON_OCEAN_FILLS);
             Event_ShowMessage(17, 0);
         }
     }
@@ -186,7 +210,7 @@ void FieldScene_RunActor17MessageBranch(void)
 void FieldScene_ConfigureActor21Scene(void)
 {
     Event_Begin();
-    Event_SetMessage(0x13ed);
+    Event_SetMessage(MSG_IM_REALLY_WORRIED_ABOUT_KOLIMA);
     Actor_FaceActor(21, 0, 0);
     Event_ShowMessage(21, 0);
     SetScale(21, 0xc000, 10);
@@ -199,7 +223,7 @@ void FieldScene_RunActor24Sequence(void)
     s32 record;
 
     Event_Begin();
-    Event_SetMessage(0x13f0);
+    Event_SetMessage(MSG_GRRR);
     Event_ShowMessageAndWait(24, 0, 20);
     Actor_FaceActor(24, 0, 0);
     Event_Wait(10);
@@ -220,7 +244,7 @@ void FieldScene_RunActor27Sequence(void)
     s32 record;
 
     Event_Begin();
-    Event_SetMessage(0x13f6);
+    Event_SetMessage(MSG_DO_BELIEVE_TREE_SPIRIT_CAN);
     Actor_FaceActor(27, 0, 0);
     Event_Wait(10);
     Event_OpenMessage(27, 0);
@@ -235,7 +259,7 @@ void FieldScene_RunActor27Sequence(void)
 void FieldScene_RunActor8Message(void)
 {
     Event_Begin();
-    Event_SetMessage(0x16E1);
+    Event_SetMessage(MSG_DO_KNOW_IF_HOLY_TREE);
     Event_AskYesNo(8, 0);
     Event_End();
 }
@@ -243,7 +267,7 @@ void FieldScene_RunActor8Message(void)
 void FieldScene_RunActor13Message(void)
 {
     Event_Begin();
-    Event_SetMessage(0x16EC);
+    Event_SetMessage(MSG_DO_KNOW_SILK);
     Event_AskYesNo(13, 0);
     Event_End();
 }
@@ -260,10 +284,10 @@ void FieldScene_RunActor19MessageBranch(void)
     if (dir + 0xFFFF5FFF <= 0x3FFE) {
         Inn_Open(2, 19);
     } else if (GameFlag_IsSet(0x845) != 0) {
-        Event_SetMessage(0x16FB);
+        Event_SetMessage(MSG_WASNT_CURSE_IN_KOLIMA_HORRIFYING);
         Event_AskYesNo(19, 0);
     } else {
-        Event_SetMessage(0x13EB);
+        Event_SetMessage(MSG_CURSE_ON_KOLIMA_SCARY_DEVELOPMENT);
         Event_ShowMessage(19, 0);
     }
 
@@ -279,7 +303,7 @@ void FieldScene_RunActor21SequenceOnFlag300(void)
 
     Event_Begin();
     if (GameFlag_IsSet(0x300) == 0) {
-        Event_SetMessage(0x16ff);
+        Event_SetMessage(MSG_TWO_SPECIALS_ONE_DINNER_ONE);
         Event_ShowMessage(21, 0);
         Actor_FaceDirection(21, 0x8000, 20);
         Event_ShowMessage(21, 0);
@@ -291,7 +315,7 @@ void FieldScene_RunActor21SequenceOnFlag300(void)
         GameFlag_Set(0x300);
     }
     Actor_FaceActor(21, 0, 0);
-    Event_SetMessage(0x1702);
+    Event_SetMessage(MSG_IF_WANT_MEAL_SPEAK_WAITRESS);
     Event_ShowMessage(21, 0);
     Actor_FaceDirection(21, 0xc000, 10);
     Event_End();
@@ -302,7 +326,7 @@ void FieldScene_ConfigureActor22Scene(void)
     void Actor_FaceActor(s32, s32, s32);
 
     Event_Begin();
-    Event_SetMessage(0x1703);
+    Event_SetMessage(MSG_REALLY_THINK_HEAD_CHEF_HAS);
     Event_ShowMessage(0x16, 0);
     Actor_FaceActor(0x16, 0, 0);
     Event_ShowMessage(0x16, 0);
@@ -314,7 +338,7 @@ void FieldScene_ConfigureActor23Scene(void)
 {
 
     Event_Begin();
-    Event_SetMessage(0x1705);
+    Event_SetMessage(MSG_LETS_SEE_SERVE_THEM_WATER);
     Event_ShowMessage(23, 0);
     Actor_FaceActor(23, 0, 0);
     Event_ShowMessage(23, 0);
@@ -327,7 +351,7 @@ void FieldScene_RunActor27Message(void)
     void Event_ShowMessage(s32, s32);
 
     Event_Begin();
-    Event_SetMessage(0x170A);
+    Event_SetMessage(MSG_WAS_SOME_MEAL_DONT_JUST);
     Event_AskYesNo(27, 0);
     Event_End();
 }
@@ -340,9 +364,9 @@ void FieldScene_RunActor10MessageBranch(void)
 
     Event_Begin();
     if (GameFlag_IsSet(3) != 0) {
-        Event_SetMessage(0x146F);
+        Event_SetMessage(MSG_EVEN_FROZEN_IMIL_MUST_FEEL);
     } else {
-        Event_SetMessage(0x13D9);
+        Event_SetMessage(MSG_WHEN_SPRING_COMES_WANT_GO);
     }
     Event_ShowMessage(10, 0);
     Event_End();

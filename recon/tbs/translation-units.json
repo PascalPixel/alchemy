@@ -67182,10 +67182,6 @@
           "address": "0x02008ed0",
           "kind": "thumb"
         },
-        "Func_020024a6": {
-          "address": "0x0200a44c",
-          "kind": "thumb"
-        },
         "Func_020024fe": {
           "address": "0x0200a44c",
           "kind": "thumb"
@@ -67218,68 +67214,12 @@
           "address": "0x0200a370",
           "kind": "thumb"
         },
-        "Func_0200324c": {
-          "address": "0x0200a4ec",
-          "kind": "thumb"
-        },
-        "Func_020033c4": {
-          "address": "0x0200a4ec",
-          "kind": "thumb"
-        },
-        "Func_02003400": {
-          "address": "0x0200a4ec",
-          "kind": "thumb"
-        },
-        "Func_02003464": {
-          "address": "0x0200a4ec",
-          "kind": "thumb"
-        },
         "Func_020034cc": {
           "address": "0x0200a3f4",
           "kind": "thumb"
         },
-        "Func_020034d2_a": {
-          "address": "0x0200a4ec",
-          "kind": "thumb"
-        },
-        "Func_020034e4": {
-          "address": "0x0200a4ec",
-          "kind": "thumb"
-        },
-        "Func_0200365e": {
-          "address": "0x0200a4ec",
-          "kind": "thumb"
-        },
-        "Func_020036fa": {
-          "address": "0x0200a4ec",
-          "kind": "thumb"
-        },
-        "Func_02003748": {
-          "address": "0x0200a4ec",
-          "kind": "thumb"
-        },
-        "Func_02003782": {
-          "address": "0x0200a4ec",
-          "kind": "thumb"
-        },
         "Func_020038cc": {
           "address": "0x0200a60c",
-          "kind": "thumb"
-        },
-        "Func_02003e76": {
-          "address": "0x0200a4ec",
-          "kind": "thumb"
-        },
-        "Func_02003e80": {
-          "address": "0x0200a4ec",
-          "kind": "thumb"
-        },
-        "Func_02003e88": {
-          "address": "0x0200a4ec",
-          "kind": "thumb"
-        },
-        "Func_02004020": {
-          "address": "0x0200a44c",
           "kind": "thumb"
         },
         "Func_02004038": {

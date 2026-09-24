@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_3b9:0200007c": {
+      "name": "KorashiamuIriguchi_GetAreaScript",
+      "source": "FIELD/KORASHIAMU_IRIGUCHI/AREA_SCRIPT.C"
+    },
     "resource_3a4:02001678": {
       "name": "ArutinYama_GetAreaScript",
       "source": "FIELD/ARUTIN_YAMA/AREA_SCRIPT.C"

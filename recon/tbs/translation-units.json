@@ -71038,6 +71038,26 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "korashiamu-iriguchi-area-script",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/KORASHIAMU_IRIGUCHI/AREA_SCRIPT.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3b9",
+      "absolute_symbols": {
+        "Engine_GameFlagIsSet": {
+          "address": "0x0200abbc",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x0200007c",
+          "extent": 444,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

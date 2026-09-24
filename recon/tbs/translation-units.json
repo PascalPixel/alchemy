@@ -80340,6 +80340,70 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "scene-3bd-02000de8",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/ARUTAMIRA_DOU/F_00DE8.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3bd",
+      "absolute_symbols": {
+        "Engine_ActorGet": {
+          "address": "0x0200bcc8",
+          "kind": "thumb"
+        },
+        "Main_08000128": {
+          "address": "0x0200bc20",
+          "kind": "thumb"
+        },
+        "Main_080091d8": {
+          "address": "0x0200bc58",
+          "kind": "thumb"
+        },
+        "Engine_EventBegin": {
+          "address": "0x0200bcb0",
+          "kind": "thumb"
+        },
+        "Engine_ObjectSetAnimation": {
+          "address": "0x0200bc28",
+          "kind": "thumb"
+        },
+        "Engine_TaskWait": {
+          "address": "0x0200bc00",
+          "kind": "thumb"
+        },
+        "Engine_AudioPlayCue": {
+          "address": "0x0200be70",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpriteFlags": {
+          "address": "0x0200bc60",
+          "kind": "thumb"
+        },
+        "Engine_ObjectMotionSetPositionAndCommit": {
+          "address": "0x0200bcf8",
+          "kind": "thumb"
+        },
+        "Engine_EventEnd": {
+          "address": "0x0200bcb8",
+          "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02000de8",
+          "extent": 196,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

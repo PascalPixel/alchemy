@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_3c8:020022c8": {
+      "name": "VinasuHeya_Func020022c8",
+      "source": "FIELD/VINASU_HEYA/F_022C8.C"
+    },
     "resource_3b3:02002040": {
       "name": "TakaraHashira_Func02002040",
       "source": "FIELD/TAKARA_HASHIRA/F_02040.C"

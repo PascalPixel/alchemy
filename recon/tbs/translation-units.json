@@ -79928,6 +79928,58 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "scene-3c8-020022c8",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/VINASU_HEYA/F_022C8.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3c8",
+      "absolute_symbols": {
+        "Engine_ActorGet": {
+          "address": "0x0200ceac",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpeed": {
+          "address": "0x0200ceb4",
+          "kind": "thumb"
+        },
+        "Engine_AudioPlayCue": {
+          "address": "0x0200cffc",
+          "kind": "thumb"
+        },
+        "Engine_ObjectSetPosition": {
+          "address": "0x0200ce04",
+          "kind": "thumb"
+        },
+        "Engine_ActorWaitForMove": {
+          "address": "0x0200ceec",
+          "kind": "thumb"
+        },
+        "Engine_MapCopyCellAttributes": {
+          "address": "0x0200ce34",
+          "kind": "thumb"
+        },
+        "Engine_EventWait": {
+          "address": "0x0200ce8c",
+          "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x020022c8",
+          "extent": 268,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

@@ -2,15 +2,22 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 
+/* Sukureta answers Gerald's "What's wrong, Kraden?" as placed actor 8. */
+enum {
+    ACTOR_SUKURETA = ACTOR_FIRST_PLACED
+};
+
 enum SanctumEntranceFlag {
     /* Set after the party is asked whether this is its first visit. */
-    FLAG_SOL_SANCTUM_ENTERED = 0x802
+    FLAG_SOL_SANCTUM_ENTERED = 0x802,
+    /* Set once the party decides to help Sukureta look for the hidden passage. */
+    FLAG_SEARCHING_FOR_HIDDEN_PASSAGE = 0x804
 };
 
 enum SanctumEntranceMessage {
     MSG_THE_DOOR_IS_LOCKED = 0x953,
-    MSG_FIRST_TIME_AT_SOL_SANCTUM = 0xfd3,
-    MSG_WHATS_WRONG_SUKURETA = 0xfd6,
+    MSG_SUKURETA_FIRST_TIME_AT_SOL_SANCTUM = 0xfd3,
+    MSG_GERALD_WHATS_WRONG_SUKURETA = 0xfd6,
     MSG_MINOTAUR_RELIEF_ONE_EYE = 0x1031,
     MSG_MINOTAUR_RELIEF_BOTH_EYES = 0x1034,
     MSG_MORE_STATUES_OUT_OF_REACH = 0x103a
@@ -795,7 +802,7 @@ void Scene_EnterSolSanctum(void)
     Camera_MoveTo(0x4c80000, -1, 0x880000, 1);
     record = Value1(Func_0200293e_a, 0);
     if (record != 0) {
-        Actor_SetPosition(8, *(s32 *)(record + 8), *(s32 *)(record + 16));
+        Actor_SetPosition(ACTOR_SUKURETA, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
     record = Value1(Func_02002952, 0);
     if (record != 0) {
@@ -805,30 +812,30 @@ void Scene_EnterSolSanctum(void)
     if (record != 0) {
         Actor_SetPosition(ACTOR_GERALD, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
-    Actor_SetSpeed(8, 0x9999, 0x4ccc);
+    Actor_SetSpeed(ACTOR_SUKURETA, 0x9999, 0x4ccc);
     Actor_SetSpeed(ACTOR_JASMINE, 0x9999, 0x4ccc);
     Actor_SetSpeed(ACTOR_GERALD, 0x9999, 0x4ccc);
     Actor_SetAnimation(ACTOR_GERALD, 2);
     Actor_SetAnimation(ACTOR_JASMINE, 2);
-    Actor_SetAnimation(8, 2);
+    Actor_SetAnimation(ACTOR_SUKURETA, 2);
     Actor_SetDestinationOffset(ACTOR_GERALD, -16, 0);
     Actor_SetDestinationOffset(ACTOR_JASMINE, 16, 0);
-    Actor_SetDestinationOffset(8, 0, -32);
+    Actor_SetDestinationOffset(ACTOR_SUKURETA, 0, -32);
     Actor_WaitForMove(ACTOR_GERALD);
     Actor_SetAnimation(ACTOR_GERALD, 0);
     Actor_SetAnimation(ACTOR_JASMINE, 0);
     Actor_FaceDirection(ACTOR_GERALD, 0xc000, 0);
     Actor_FaceDirection(ACTOR_JASMINE, 0xc000, 0);
-    Actor_WaitForMove(8);
-    Actor_SetAnimation(8, 1);
+    Actor_WaitForMove(ACTOR_SUKURETA);
+    Actor_SetAnimation(ACTOR_SUKURETA, 1);
     Event_Wait(40);
-    Actor_RunRepeatedMotion(8, 2);
+    Actor_RunRepeatedMotion(ACTOR_SUKURETA, 2);
     Event_Wait(20);
-    Actor_FaceDirection(8, 0x3000, 40);
-    Actor_FaceDirection(8, 0x5000, 40);
-    Actor_FaceDirection(8, 0x3000, 20);
-    Actor_Jump(8, 4, 20);
-    Event_SetMessage(MSG_FIRST_TIME_AT_SOL_SANCTUM);
+    Actor_FaceDirection(ACTOR_SUKURETA, 0x3000, 40);
+    Actor_FaceDirection(ACTOR_SUKURETA, 0x5000, 40);
+    Actor_FaceDirection(ACTOR_SUKURETA, 0x3000, 20);
+    Actor_Jump(ACTOR_SUKURETA, 4, 20);
+    Event_SetMessage(MSG_SUKURETA_FIRST_TIME_AT_SOL_SANCTUM);
     Event_AskYesNo(0x4008, 0);
     Event_Wait(20);
     Camera_MoveTo(0x4c80000, -1, 0x940000, 1);
@@ -842,26 +849,26 @@ void Scene_EnterSolSanctum(void)
     if (record != 0) {
         Actor_SetDestination(ACTOR_JASMINE, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
-    Actor_SetAnimation(8, 2);
+    Actor_SetAnimation(ACTOR_SUKURETA, 2);
     record = Value1(Func_02002abe, 0);
     if (record != 0) {
-        Actor_SetDestination(8, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        Actor_SetDestination(ACTOR_SUKURETA, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
     Actor_WaitForMove(ACTOR_GERALD);
     Actor_SetPosition(ACTOR_GERALD, 0, 0);
     Actor_SetPosition(ACTOR_JASMINE, 0, 0);
-    Actor_WaitForMove(8);
-    Actor_SetPosition(8, 0, 0);
+    Actor_WaitForMove(ACTOR_SUKURETA);
+    Actor_SetPosition(ACTOR_SUKURETA, 0, 0);
     Actor_SetAnimation(ACTOR_GERALD, 1);
     Actor_SetAnimation(ACTOR_JASMINE, 1);
-    Actor_SetAnimation(8, 1);
+    Actor_SetAnimation(ACTOR_SUKURETA, 1);
     GameFlag_Set(FLAG_SOL_SANCTUM_ENTERED);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
     GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);
     Event_End();
 }
 
-void FieldScene_RunFourEntitySequence(void)
+void Scene_SukuretaSuspectsHiddenPassage(void)
 {
     u8 *record;
 
@@ -879,51 +886,51 @@ void FieldScene_RunFourEntitySequence(void)
     if (record != 0)
         ObjectMotion_SetHorizontalPositionWithTerrain_3(1, RECORD_A32(record), RECORD_B32(record));
 
-    Actor_SetSpeed(8, 0x9999, 0x4ccc);
+    Actor_SetSpeed(ACTOR_SUKURETA, 0x9999, 0x4ccc);
     Actor_SetSpeed(ACTOR_JASMINE, 0x9999, 0x4ccc);
     Actor_SetSpeed(ACTOR_GERALD, 0x9999, 0x4ccc);
     Actor_SetAnimation(ACTOR_GERALD, 2);
     Actor_SetAnimation(ACTOR_JASMINE, 2);
-    Actor_SetAnimation(8, 2);
+    Actor_SetAnimation(ACTOR_SUKURETA, 2);
     Actor_SetDestinationOffset(ACTOR_GERALD, -16, 0);
     Actor_SetDestinationOffset(ACTOR_JASMINE, 16, 0);
     ObjectMotion_OffsetPositionAndResetMotion_3(8, 0, -16);
     ObjectMotion_CommitCurrentPositionAndActivate_1(8);
-    Actor_SetAnimation(8, 1);
+    Actor_SetAnimation(ACTOR_SUKURETA, 1);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, 0);
     Actor_SetAnimation(ACTOR_GERALD, 0);
     Actor_SetAnimation(ACTOR_JASMINE, 0);
     Actor_FaceDirection(ACTOR_GERALD, 0xe000, 0);
     Actor_FaceDirection(ACTOR_JASMINE, 0xa000, 0);
-    Actor_FaceDirection(8, 0xc000, 30);
+    Actor_FaceDirection(ACTOR_SUKURETA, 0xc000, 30);
     Actor_FaceDirection(ACTOR_GERALD, 0x8000, 0);
     Actor_FaceDirection(ACTOR_JASMINE, 0, 0);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 0);
-    Actor_FaceDirection(8, 0x8000, 30);
+    Actor_FaceDirection(ACTOR_SUKURETA, 0x8000, 30);
     Actor_FaceDirection(ACTOR_GERALD, 0x4000, 0);
     Actor_FaceDirection(ACTOR_JASMINE, 0x8000, 0);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0, 0);
-    Actor_FaceDirection(8, 0x4000, 30);
+    Actor_FaceDirection(ACTOR_SUKURETA, 0x4000, 30);
     Actor_FaceDirection(ACTOR_GERALD, 0xe000, 0);
     Actor_FaceDirection(ACTOR_JASMINE, 0xa000, 0);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
-    Actor_FaceDirection(8, 0xc000, 40);
+    Actor_FaceDirection(ACTOR_SUKURETA, 0xc000, 40);
     ObjectMotion_SetVariantCallbackAndInvokeObject_1(8, 2);
     BattleRuntime_WaitIfModeZero_2_late(10);
-    Actor_SetAnimation(8, 2);
+    Actor_SetAnimation(ACTOR_SUKURETA, 2);
     ObjectMotion_OffsetPositionAndResetMotion_4(8, 0, -16);
     ObjectMotion_CommitCurrentPositionAndActivate_2(8);
     Object_SetModeById_9(8, 1);
     BattleRuntime_WaitIfModeZero_3_late(6);
-    Actor_FaceDirection(8, 0x8000, 20);
-    Actor_FaceDirection(8, 0, 20);
-    Actor_FaceDirection(8, 0xc000, 40);
+    Actor_FaceDirection(ACTOR_SUKURETA, 0x8000, 20);
+    Actor_FaceDirection(ACTOR_SUKURETA, 0, 20);
+    Actor_FaceDirection(ACTOR_SUKURETA, 0xc000, 40);
     ObjectMotion_SetVariantCallbackAndInvokeObject_2(8, 2);
     BattleRuntime_WaitIfModeZero_4_late(20);
-    Actor_SetAnimation(8, 2);
+    Actor_SetAnimation(ACTOR_SUKURETA, 2);
     ObjectMotion_OffsetPositionAndResetMotion_5(8, 0, -32);
     ObjectMotion_CommitCurrentPositionAndActivate_3(8);
-    Actor_SetAnimation(8, 1);
+    Actor_SetAnimation(ACTOR_SUKURETA, 1);
 
     Camera_SetSpeed(0x20000, 0x4000);
     Camera_MoveTo(0x06310000, -1, 0x00960000, 1);
@@ -934,7 +941,7 @@ void FieldScene_RunFourEntitySequence(void)
     Camera_WaitForMove();
     Camera_MoveTo(0x06b60000, -1, 0x00640000, 1);
     Camera_WaitForMove();
-    Actor_SetAnimation(8, 1);
+    Actor_SetAnimation(ACTOR_SUKURETA, 1);
     ObjectMotion_PlaceWithinCameraBounds_4(0x06d80000, -1, 0x00960000, 1);
     Camera_WaitForMove();
     BattleRuntime_WaitIfModeZero_6(40);
@@ -947,11 +954,11 @@ void FieldScene_RunFourEntitySequence(void)
     Actor_FaceDirection(ACTOR_GERALD, 0xe000, 0);
     Actor_FaceDirection(ACTOR_JASMINE, 0xa000, 10);
     Actor_ShowEmote(ACTOR_GERALD, 0x101, 20);
-    Event_SetMessage(MSG_WHATS_WRONG_SUKURETA);
+    Event_SetMessage(MSG_GERALD_WHATS_WRONG_SUKURETA);
     Event_ShowMessageAndWait(ACTOR_GERALD, 0, 10);
-    Actor_ShowEmote(8, 0x102, 60);
-    Actor_StartRepeatedMotion(8, 2);
-    Event_ShowMessageAndWait(8, 0, 10);
+    Actor_ShowEmote(ACTOR_SUKURETA, 0x102, 60);
+    Actor_StartRepeatedMotion(ACTOR_SUKURETA, 2);
+    Event_ShowMessageAndWait(ACTOR_SUKURETA, 0, 10);
     Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
     Actor_StartRepeatedMotion(ACTOR_GERALD, 2);
     Actor_StartRepeatedMotion(ACTOR_JASMINE, 2);
@@ -961,9 +968,9 @@ void FieldScene_RunFourEntitySequence(void)
     BattleRuntime_WaitIfModeZero_11(40);
     ObjectMotion_SetVariantCallbackAndInvokeObject_3(8, 2);
     BattleRuntime_WaitIfModeZero_12(20);
-    Event_ShowMessage(8, 0);
-    Actor_SetAnimationAndWait(8, 4);
-    Event_ShowMessageAndWait(8, 0, 10);
+    Event_ShowMessage(ACTOR_SUKURETA, 0);
+    Actor_SetAnimationAndWait(ACTOR_SUKURETA, 4);
+    Event_ShowMessageAndWait(ACTOR_SUKURETA, 0, 10);
     Object_LinkPair_1(0, 5, 0);
     BattleRuntime_WaitIfModeZero_13(40);
     Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
@@ -973,24 +980,24 @@ void FieldScene_RunFourEntitySequence(void)
     Actor_FaceDirection(ACTOR_JASMINE, 0xa000, 20);
     Actor_RunRepeatedMotion(ACTOR_JASMINE, 2);
     Event_ShowMessageAndWait(ACTOR_JASMINE, 0, 10);
-    Actor_SetAnimationAndWait(8, 4);
-    Event_ShowMessageAndWait(8, 0, 10);
-    Actor_FaceDirection(8, 0x3000, 10);
-    Event_ShowMessageAndWait(8, 0, 40);
-    Actor_FaceDirection(8, 0xc000, 20);
+    Actor_SetAnimationAndWait(ACTOR_SUKURETA, 4);
+    Event_ShowMessageAndWait(ACTOR_SUKURETA, 0, 10);
+    Actor_FaceDirection(ACTOR_SUKURETA, 0x3000, 10);
+    Event_ShowMessageAndWait(ACTOR_SUKURETA, 0, 40);
+    Actor_FaceDirection(ACTOR_SUKURETA, 0xc000, 20);
     ObjectMotion_SetVariantCallbackAndInvokeObject_6(8, 1);
     BattleRuntime_WaitIfModeZero_15(10);
-    Actor_SetAttachedEffect(8, 0x102); /* main:0808a1f0 */
-    Actor_FaceDirection(8, 0x8000, 20);
-    Actor_FaceDirection(8, 0, 20);
-    Actor_FaceDirection(8, 0xc000, 60);
+    Actor_SetAttachedEffect(ACTOR_SUKURETA, 0x102); /* main:0808a1f0 */
+    Actor_FaceDirection(ACTOR_SUKURETA, 0x8000, 20);
+    Actor_FaceDirection(ACTOR_SUKURETA, 0, 20);
+    Actor_FaceDirection(ACTOR_SUKURETA, 0xc000, 60);
     ObjectMotion_SetVariantCallbackAndInvokeObject_7(8, 2);
     BattleRuntime_WaitIfModeZero_17(10);
-    Event_ShowMessageAndWait(8, 0, 10);
-    Actor_FaceDirection(8, 0x4000, 20);
-    Actor_Jump(8, 2, 20);
+    Event_ShowMessageAndWait(ACTOR_SUKURETA, 0, 10);
+    Actor_FaceDirection(ACTOR_SUKURETA, 0x4000, 20);
+    Actor_Jump(ACTOR_SUKURETA, 2, 20);
 
-    Event_ShowMessageAndWait(8, 0, 40);
+    Event_ShowMessageAndWait(ACTOR_SUKURETA, 0, 40);
     Actor_FaceDirection(ACTOR_GERALD, 0, 20);
     Event_OpenMessage(ACTOR_GERALD, 0); /* main:0808a178 */
     if (Event_ChooseYesNo(0, 0) == 0) {
@@ -1017,8 +1024,8 @@ void FieldScene_RunFourEntitySequence(void)
         BattleRuntime_RunThenWaitIfModeZero_11(1, 0, 10);
     }
 
-    Actor_SetSpeed(8, 0x9999, 0x4ccc);
-    Actor_SetAnimation(8, 2);
+    Actor_SetSpeed(ACTOR_SUKURETA, 0x9999, 0x4ccc);
+    Actor_SetAnimation(ACTOR_SUKURETA, 2);
     ObjectMotion_OffsetPositionAndResetMotion_6(8, 0, 48);
     ObjectMotion_CommitCurrentPositionAndActivate_4(8);
     Object_SetModeById_14(8, 1);
@@ -1049,11 +1056,11 @@ void FieldScene_RunFourEntitySequence(void)
     ObjectMotion_CommitCurrentPositionAndActivate_6(8);
     Actor_SetPosition(ACTOR_GERALD, 0, 0);
     Actor_SetPosition(ACTOR_JASMINE, 0, 0);
-    Actor_SetPosition(8, 0, 0);
-    Actor_SetAnimation(8, 1);
+    Actor_SetPosition(ACTOR_SUKURETA, 0, 0);
+    Actor_SetAnimation(ACTOR_SUKURETA, 1);
     Actor_SetAnimation(ACTOR_GERALD, 1);
     Object_SetModeById_23(5, 1);
-    GameFlag_Set(0x804);
+    GameFlag_Set(FLAG_SEARCHING_FOR_HIDDEN_PASSAGE);
     GameFlag_Clear_1(FLAG_ARRIVAL_EVENT_PENDING);
     Event_End();
 }

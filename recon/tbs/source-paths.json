@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_39c:02002318": {
+      "name": "MakyuriHeya_RunColumnProbeScene",
+      "source": "FIELD/MAKYURI_HEYA/COLUMN_PROBE_SCENE.C"
+    },
     "resource_39f:020019b8": {
       "name": "MogoruMori_RunProbedLandingScene",
       "source": "FIELD/MOGORU_MORI/PROBED_LANDING.C"

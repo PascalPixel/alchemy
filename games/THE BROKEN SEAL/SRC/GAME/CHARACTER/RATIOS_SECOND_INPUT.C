@@ -1,3 +1,7 @@
+/* Clamp the second input to 0..limitY and store it, then refresh both
+   output ratios (input << 14 over its limit, clamped to 0..0x4000, and at
+   least 1 while the input is nonzero). The first-input sibling is
+   Owner_UpdateRatioPair in RATIOS.C. */
 #include "TYPES.H"
 
 struct OwnerRatioPairState {
@@ -27,7 +31,11 @@ void Owner_UpdateSecondInputAndRatios(
             clamped = input;
         }
     }
-    state->inputY = clamped;
+    /* FAKEMATCH: a one-pass loop around the store orders it before the
+       ratio inputs are read, as in the ROM. */
+    do {
+        state->inputY = clamped;
+    } while (0);
     value = state->inputX;
     value <<= 14;
     value = FixedPoint_Ratio(value, state->limitX);

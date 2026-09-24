@@ -5,7 +5,10 @@
  * all three divides). Remaining: the reference keeps (flags & 15) << 2 in r5 and
  * reloads the script in the 0x40000 block, flags lives in r8 and extra in sl,
  * and the -13 field mask shares fp with a3; writing the table load twice spills
- * the index instead. */
+ * the index instead: CSE then derives the -13 mask as the live 15 register
+ * minus 28, so 15 keeps r5 (the reference builds -13 fresh with movs; negs).
+ * The tail is two full Imiru_Divide calls per branch cross-jumped into one
+ * bl. */
 #include "TYPES.H"
 
 u8 *Engine_ObjectCreate(s32 kind, s32 x, s32 y, s32 z);

@@ -690,7 +690,7 @@
       "source": "FIELD/KORIMA_MAGARI/RETURN_SEQUENCE.C"
     },
     "resource_3c8:02001808": {
-      "name": "VinasuHeya_Func02001808",
+      "name": "Scene_RunActorLeapSequence",
       "source": "FIELD/VINASU_HEYA/F_01808.C"
     },
     "resource_39c:02000d58": {
@@ -5352,6 +5352,10 @@
     "main:08022a38": {
       "name": "Ui_CreateOutputFromResourceSlot",
       "source": "GRAPHICS/RENDER/CREATE_OUTPUT_FROM_RESOURCE_SLOT.C"
+    },
+    "main:080228e4": {
+      "name": "DjinnMenu_ListChangedDjinn",
+      "source": "MENU/DJINN_CHANGE_LIST.C"
     },
     "main:08022a7c": {
       "name": "DjinnMenu_DrawStatArrow"
@@ -10794,7 +10798,8 @@
       "source": "FIELD/FUNE_HEYA/EXTENDED_CHOREOGRAPHY.C"
     },
     "resource_3b1:02005d10": {
-      "name": "Scene_RunFourActorProgressPresentation"
+      "name": "Scene_RunFourActorProgressPresentation",
+      "source": "FIELD/FUNE_HEYA/F_05D10.C"
     },
     "resource_3b1:02004254": {
       "name": "Scene_RunConditionalActorPresentation"
@@ -10824,7 +10829,7 @@
       "source": "FIELD/HAIDIA_ARASHI/GROUP_DEPARTURE.C"
     },
     "resource_3a0:02000f30": {
-      "name": "ShianMura_Func02000f30",
+      "name": "Scene_RunActorNineteenScript",
       "source": "FIELD/SHIAN_MURA/F_00F30.C"
     },
     "resource_3b1:020027d8": {
@@ -10860,7 +10865,7 @@
       "source": "FIELD/FUNE_HOBASHIRA/OBJECT_SCALE.C"
     },
     "resource_3b0:02000564": {
-      "name": "FuneHobashira_Func02000564",
+      "name": "Scene_RunFourActorStagingSequence",
       "source": "FIELD/FUNE_HOBASHIRA/F_00564.C"
     },
     "resource_3ba:020021b8": {
@@ -13608,7 +13613,7 @@
       "source": "FIELD/ARUTIN_YAMA/SET_PIECE.C"
     },
     "resource_3a4:02001838": {
-      "name": "ArutinYama_Func02001838",
+      "name": "FieldScene_BuildMultiPhasePresentation",
       "source": "FIELD/ARUTIN_YAMA/F_01838.C"
     },
     "resource_3a4:02000ec0": {
@@ -21035,6 +21040,14 @@
     "resource_3c8:0200290c": {
       "name": "VinasuHeya_Func0200290c",
       "source": "FIELD/VINASU_HEYA/F_0290C.C"
+    },
+    "resource_381:020010c4": {
+      "name": "SoruFunka_Func020010c4",
+      "source": "FIELD/SORU_FUNKA/F_010C4.C"
+    },
+    "resource_396:0200162c": {
+      "name": "ToretoHeya_Func0200162c",
+      "source": "FIELD/TORETO_HEYA/F_0162C.C"
     }
   },
   "symbols": {

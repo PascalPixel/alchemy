@@ -21,7 +21,7 @@ static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
     return f(a0, a1);
 }
 
-void ShianMura_Func02000f30(void)
+void Scene_RunActorNineteenScript(void)
 {
     s32 cb;
 

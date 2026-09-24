@@ -1157,7 +1157,8 @@
       "source": "BATTLE/PRESENTATION/INITIALIZE_TILE_PATTERN.C"
     },
     "main:080b5b08": {
-      "name": "BattlePresentation_ClearBg0VerticalOffset"
+      "name": "BattlePresentation_ClearBg0VerticalOffset",
+      "source": "GRAPHICS/DISPLAY/CLEAR_BG0_VOFS.C"
     },
     "main:080b5c08": {
       "name": "BattlePlacement_UpdateEntries",
@@ -5859,8 +5860,7 @@
       "source": "BATTLE/PRESENTATION/TRANS_TIMER.C"
     },
     "main:080c0298": {
-      "name": "Graphics_ClearBg0Vofs",
-      "source": "GRAPHICS/DISPLAY/CLEAR_BG0_VOFS.C"
+      "name": "Graphics_ClearBg0Vofs"
     },
     "main:080c08e0": {
       "name": "Runtime_ReleaseHeapBlock10",

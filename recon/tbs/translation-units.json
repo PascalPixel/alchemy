@@ -27767,6 +27767,25 @@
       "overlay": null
     },
     {
+      "id": "graphics-clear-bg0-vofs",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/CLEAR_BG0_VOFS.C",
+      "compiler_route": "canonical-gcc296",
+      "owners": [
+        {
+          "address": "0x080b5b08",
+          "extent": 12,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080c0298",
+          "extent": 12,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
       "id": "battle-effects-wait-then-set-field",
       "game": "tbs",
       "source": "games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/WAIT_THEN_SET_FIELD.C",

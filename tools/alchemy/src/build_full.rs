@@ -1033,15 +1033,14 @@ fn validate_translation_units(
     let expected = main.iter().map(|unit| {
         let exact = unit.exact_owner_count();
         let retained = unit.owners.len() - exact;
-        json!({"id":unit.id,"source":unit.source,"c_compiles":1,"composition":if retained==0{"complete-tu-object"}else{"complete-tu-owner-slices"},"exact_owners":exact,"retained_owners":retained})
+        json!({"id":unit.id,"source":unit.source,"c_compiles":1,"composition":if unit.linked_whole(){"complete-tu-object"}else{"complete-tu-owner-slices"},"exact_owners":exact,"retained_owners":retained})
     }).collect::<Vec<_>>();
     if compiles != &expected {
         return Err("production TU compile records differ from manifest".into());
     }
     for unit in &main {
         let exact = unit.exact_owner_count();
-        let retained = unit.owners.len() - exact;
-        let mixed = retained > 0;
+        let mixed = !unit.linked_whole();
         let regions = claimed
             .iter()
             .filter(|region| region.translation_unit.as_deref() == Some(unit.id.as_str()))

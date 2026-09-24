@@ -1,4 +1,12 @@
 #include "TYPES.H"
+
+/* Unit bindings for scoring (declare as absolute_symbols of a unit on
+ * resource_3c0:02000f50):
+ *   Engine_GameFlagIsSet = 0x0200924c (thumb)
+ *   Engine_GameFlagSet = 0x02009254 (thumb)
+ *   Engine_ActorGet = 0x0200928c (thumb)
+ *   Main_0808a5e0 = 0x0200936c (thumb)
+ */
 #include "IO_WRITE_QUEUE.H"
 
 extern volatile u16 Data_04000208;

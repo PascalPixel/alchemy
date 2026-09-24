@@ -1,4 +1,30 @@
 #include "TYPES.H"
+
+/* Unit bindings for scoring (declare as absolute_symbols of a unit on
+ * resource_3c0:02000594):
+ *   Engine_ActorGet = 0x0200928c (thumb)
+ *   Engine_GameFlagIsSet = 0x0200924c (thumb)
+ *   Engine_EventBegin = 0x0200927c (thumb)
+ *   Engine_AudioPlayCue = 0x02009374 (thumb)
+ *   Engine_TaskWait = 0x020091f4 (thumb)
+ *   Engine_GameFlagSet = 0x02009254 (thumb)
+ *   Engine_ActorSetSpeed = 0x02009294 (thumb)
+ *   Engine_ActorSetPosition = 0x020092cc (thumb)
+ *   Engine_ActorFaceActor = 0x020092ec (thumb)
+ *   Engine_ActorWalkTo = 0x020092b4 (thumb)
+ *   Engine_ActorWalkToAndWait = 0x020092bc (thumb)
+ *   Engine_EventWait = 0x02009274 (thumb)
+ *   Engine_ActorSetAnimation = 0x020092d4 (thumb)
+ *   Engine_ActorFaceDirection = 0x02009314 (thumb)
+ *   Engine_EventSetMessage = 0x020092fc (thumb)
+ *   Engine_ActorShowEmote = 0x0200931c (thumb)
+ *   Engine_EventShowMessage = 0x02009304 (thumb)
+ *   Engine_ActorRunRepeatedMotion = 0x020092e4 (thumb)
+ *   Engine_ActorSetAnimationAndWait = 0x020092dc (thumb)
+ *   Engine_ActorSetDestination = 0x020092ac (thumb)
+ *   Engine_ActorWaitForMove = 0x020092c4 (thumb)
+ *   Engine_EventEnd = 0x02009284 (thumb)
+ */
 #include "IO_WRITE_QUEUE.H"
 
 extern volatile u16 Data_04000208;

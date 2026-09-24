@@ -213,17 +213,16 @@ void FieldScene_RunActorEightTurnDialogue(void)
 
 void FieldScene_RunScene3aa_02000184(void)
 {
-    extern u8 Data_03001ebc[];
     void Func_02001c00();
 
     u32 i;
     s32 record;
-    u8 *p5;
+    struct EventWork *p5;
 
-    p5 = *(u8 **)Data_03001ebc;
+    p5 = gEventWork;
     Event_Begin();
     Event_Wait(10);
-    if (*(s16 *)(p5 + 0x16c) == 4) {
+    if (p5->touched_trigger == 4) {
         Audio_PlayCue(188);
     } else {
         Audio_PlayCue(158);
@@ -233,13 +232,13 @@ void FieldScene_RunScene3aa_02000184(void)
     Event_Wait(10);
     Actor_SetSpeed(0, 0x8000, 0x4000);
     Actor_SetAnimation(0, 2);
-    if (*(s16 *)(p5 + 0x16c) == 4) {
+    if (p5->touched_trigger == 4) {
         Actor_SetDestinationOffset(0, 0, -16);
     } else {
         Actor_CenterAndWalk(0, 3, -16);
     }
     Event_Wait(16);
-    Event_RequestExit(*(s16 *)(p5 + 0x16c));
+    Event_RequestExit(p5->touched_trigger);
     Func_02001c6c(1);
     Func_02001c72(2);
     Event_End();

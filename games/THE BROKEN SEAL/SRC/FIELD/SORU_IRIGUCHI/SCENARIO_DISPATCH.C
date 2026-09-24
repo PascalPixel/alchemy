@@ -15,7 +15,6 @@ enum SanctumEntranceMessage {
     MSG_MORE_STATUES_OUT_OF_REACH = 0x103a
 };
 
-
 #define GATE_ID 2081
 #define Audio_PlayCue_1(a0) Value1(Engine_AudioPlayCue, a0)
 #define BattleRuntime_WaitIfModeZero_1(a0) Value1(Engine_EventWait, a0)

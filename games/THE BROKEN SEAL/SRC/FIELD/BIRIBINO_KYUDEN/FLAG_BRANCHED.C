@@ -368,12 +368,10 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
     f(a0, a1, a2, a3);
 }
 
-/* The scene step counter at 0x1d8 of the shared scene work record. */
+/* Moves the next dialogue line on by amount messages. */
 static __inline__ void bump_step(s32 amount)
 {
-    u8 *work = *(u8 **)Data_03001ebc;
-
-    *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
+    gEventWork->message += amount;
 }
 
 #include "TYPES.H"
@@ -1418,7 +1416,6 @@ void ConfigureSecondarySceneChannels(void)
 
 void RunEventScript02(void)
 {
-    u8 *work;
     u8 *buf;
     ActorPos *pos;
     s32 flag;
@@ -1435,9 +1432,8 @@ void RunEventScript02(void)
     Map_Redraw();
     Task_Wait(1);
 
-    work = *(u8 **)Data_03001ebc;
-    *(s32 *)(work + 0x1c0) = 0x201;
-    *(s32 *)(work + 0x1c8) = 16;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
+    gEventWork->transition_frames = 16;
 
     Event_OpenScreen();
     Event_WaitForScreen();

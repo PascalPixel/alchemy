@@ -402,19 +402,17 @@ void FieldScene_RunScene3b4_02000ccc(void)
 
 void Func_02000e50(void)
 {
-    extern u8 Data_03001ebc[];
-
     s32 dst;
     s32 src;
     s32 idx;
     s32 tbl;
     s32 idx4;
-    u8 *work;
+    struct EventWork *work;
 
-    work = *(u8 **)Data_03001ebc;
+    work = gEventWork;
     if (GameFlag_IsSet(0x9ca) != 0) {
         if (Data_02000240[293] != 15) {
-            idx = *(s16 *)(work + 0x16c);
+            idx = work->touched_trigger;
             dst = Value1_02000e50(Func_020033bc, 15);
             src = Value1_02000e50(Func_020033c4, 0);
             *(s32 *)(dst + 48) = *(s32 *)(src + 48);

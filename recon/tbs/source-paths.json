@@ -708,10 +708,12 @@
       "source": "BATTLE/PRESENTATION/SPAWN_ACTOR_OBJECT.C"
     },
     "main:080b7f20": {
-      "name": "BattleMotion_ProjectPosition"
+      "name": "BattleMotion_ProjectPosition",
+      "source": "BATTLE/MOTION/PROJECT_POSITION.C"
     },
     "main:080b81c8": {
-      "name": "BattleMotion_InitializeObject"
+      "name": "BattleMotion_InitializeObject",
+      "source": "BATTLE/MOTION/INITIALIZE_OBJECT.C"
     },
     "main:080b845c": {
       "name": "BattleMotion_ProjectScaledPosition"

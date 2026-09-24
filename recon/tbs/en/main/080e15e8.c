@@ -1,8 +1,8 @@
-/* Draft, not exact (2026-09-24): candidate=3924 reference=3920,
-   binary similarity 59.9%. Phase one (170 frames, A or B skips it) draws
+/* Draft, not exact (2026-09-24): candidate=3920 reference=3920,
+   binary similarity 63.8%. Phase one (170 frames, A or B skips it) draws
    three dotted beams between six projected points, a ring of dots and a
    falling column; phase two (192 frames) bursts sparks, flashes and smoke
-   and pans the camera. Residual: the reference frame is 336 bytes, 4 more
+   and pans the camera. Residual: the reference frame is 336 bytes, 8 more
    than this one. It keeps an unreferenced slot at sp+112 between frame and
    blit46, and a slot at sp+92 holding the beam loop y offset (24k + 4)
    between the scale pointer and blit47; the ring offset lvl * 0x302 is
@@ -139,11 +139,11 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
     s32 cx;
     s32 cy;
 
-    cache = (u32 *)(gWorkSlot + 44 * 4);
-    ctrl = (s32 *)cache[0];
-    work = (struct Mode12Work *)cache[39 - 44];
-    dst = (void *)cache[40 - 44];
-    aux = (u8 *)cache[41 - 44];
+    ctrl = (s32 *)SLOT(44);
+    work = (struct Mode12Work *)SLOT(39);
+    dst = (void *)SLOT(40);
+    aux = (u8 *)SLOT(41);
+    cache = (u32 *)gWorkSlot;
     work->effect = efx;
     BattleFx_BeginCanvasLayer(0x2000);
     *(u16 *)0x04000020 = 0x100;
@@ -188,7 +188,7 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
     Unnamed_080cd104(0, 1);
     *(u16 *)0x04000020 = 0x80;
     BattleEffect_LoadWork(46, 7, 7, 3, 3);
-    blit46 = (DrawRectangle)SLOT(46);
+    blit46 = (DrawRectangle)cache[46];
     *(u16 *)0x04000000 = 0x7741;
     *(u16 *)0x04000020 = 0x80;
     *(u16 *)0x04000052 = 0x100f;
@@ -413,13 +413,15 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
                     n = 0;
                     for (i = 0, p = PARTICLES; i != 910; i++, p++) {
                         if (p->variant == 0) {
-                            s32 speed = Random16() & 0x3ff;
-                            s32 angle = (Random16() & 0x7fff) - 0x4000;
+                            s32 speed = 0x3ff;
+                            s32 angle;
+                            speed &= Random16();
+                            angle = (Random16() & 0x7fff) - 0x4000;
                             p->x = cx << 16;
                             p->y = cy << 16;
                             speed += 32;
-                            p->velocity_x = (speed * Trig_Sin(angle)) >> 7;
-                            p->velocity_y = -((speed * Trig_Cos(angle)) << 1) >> 7;
+                            p->velocity_x = (Trig_Sin(angle) * speed) >> 7;
+                            p->velocity_y = -((Trig_Cos(angle) * speed) << 1) >> 7;
                             p->variant = (Random16() & 7) + 32;
                             if (++n == 512) {
                                 break;
@@ -459,13 +461,15 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
                         n = 0;
                         for (j = 0, p = PARTICLES; j != 910; j++, p++) {
                             if (p->variant == 0) {
-                                s32 speed = Random16() & 0x3ff;
-                                s32 angle = Random16() & 0xffff;
+                                s32 speed = 0x3ff;
+                                s32 angle;
+                                speed &= Random16();
+                                angle = Random16() & 0xffff;
                                 p->x = 0x100000;
                                 p->y = 0x500000;
                                 speed += 32;
-                                p->velocity_x = (speed * Trig_Sin(angle)) >> 7;
-                                p->velocity_y = -((speed * Trig_Cos(angle)) << 1) >> 7;
+                                p->velocity_x = (Trig_Sin(angle) * speed) >> 7;
+                                p->velocity_y = -((Trig_Cos(angle) * speed) << 1) >> 7;
                                 p->variant = (Random16() & 7) + 32;
                                 if (++n == 16) {
                                     break;
@@ -482,11 +486,13 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
                 }
             }
             {
-                s32 r = Random16() & 7;
-                s32 angle = Random16() & 0xffff;
-                ox = ((r + 8) * Trig_Sin(angle)) >> 16;
+                s32 r = 7;
+                s32 angle;
+                r &= Random16();
+                angle = Random16() & 0xffff;
+                ox = (Trig_Sin(angle) * (r + 8)) >> 16;
                 sx = ox + 72;
-                oy = 32 - (((r + 8) * Trig_Cos(angle)) >> 16);
+                oy = 32 - ((Trig_Cos(angle) * (r + 8)) >> 16);
             }
             smoke = work->sheet + 0x6000;
             BattleEffect_LoadWork(47, 7, 7, 3, 2);
@@ -504,13 +510,15 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
             n = 0;
             for (i = 0, p = PARTICLES; i != 910; i++, p++) {
                 if (p->variant == 0) {
-                    s32 speed = Random16() & 63;
-                    s32 angle = Random16() & 0xffff;
+                    s32 speed = 63;
+                    s32 angle;
+                    speed &= Random16();
+                    angle = Random16() & 0xffff;
                     p->x = sx << 16;
                     p->y = oy << 16;
                     speed += 64;
-                    p->velocity_x = (speed * Trig_Sin(angle)) >> 7;
-                    p->velocity_y = -((speed * Trig_Cos(angle)) << 1) >> 7;
+                    p->velocity_x = (Trig_Sin(angle) * speed) >> 7;
+                    p->velocity_y = -((Trig_Cos(angle) * speed) << 1) >> 7;
                     p->variant = (Random16() & 7) + 16;
                     if (++n == 4) {
                         break;

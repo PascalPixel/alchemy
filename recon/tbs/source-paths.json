@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_3bb:02000400": {
+      "name": "KorosseoKabe_Func02000400",
+      "source": "FIELD/KOROSSEO_KABE/F_00400.C"
+    },
     "resource_3c8:02004968": {
       "name": "VinasuHeya_Func02004968",
       "source": "FIELD/VINASU_HEYA/F_04968.C"

@@ -80440,6 +80440,42 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "scene-3bb-02000400",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_KABE/F_00400.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3bb",
+      "absolute_symbols": {
+        "Engine_ActorGet": {
+          "address": "0x0200bf50",
+          "kind": "thumb"
+        },
+        "SceneActor_MovePairByTileOffset": {
+          "address": "0x02008310",
+          "kind": "thumb"
+        },
+        "Engine_MapCopyCellAttributes": {
+          "address": "0x0200be88",
+          "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02000400",
+          "extent": 192,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

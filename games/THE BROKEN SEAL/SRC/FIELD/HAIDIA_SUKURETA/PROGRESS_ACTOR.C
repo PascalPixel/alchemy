@@ -339,7 +339,7 @@ void Scene_RunActorTwelveDialogue(void)
     s32 base;
 
     Event_Begin();
-    if (GameFlag_IsSet(2069) != 0) {
+    if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE) != 0) {
         Event_SetMessage(MSG_ILL_CLIMB_THE_FENCE_SOMEDAY);
         Event_ShowMessage(12, 0);
     } else {

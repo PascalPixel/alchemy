@@ -475,7 +475,7 @@ s32 MapStagedScene_SelectTertiaryData(void)
         return (s32)Data_0200ee48;
     if (GameFlag_IsSet(0x87a) != 0)
         return (s32)Data_0200ecc8;
-    if (GameFlag_IsSet(0x815) != 0)
+    if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE) != 0)
         return (s32)Data_0200eab8;
     return (s32)Data_0200e8a8;
 }
@@ -504,7 +504,7 @@ s32 MapStagedScene_SelectQuaternaryData(void)
 {
     if (GameFlag_IsSet(0x87a) != 0)
         return (s32)Data_0200f334;
-    if (GameFlag_IsSet(0x815) != 0)
+    if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE) != 0)
         return (s32)Data_0200f100;
     return (s32)Data_0200ef38;
 }
@@ -512,7 +512,7 @@ s32 MapStagedScene_SelectQuaternaryData(void)
 void SceneDialogue_RunActorTenFlaggedDialogue(void)
 {
     Event_Begin();
-    if (GameFlag_IsSet(0x815) != 0) {
+    if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE) != 0) {
         Event_SetMessage(MSG_THE_GROUND_STILL_SHAKES);
         Event_ShowMessage(10, 0);
     } else {
@@ -527,7 +527,7 @@ void SceneDialogue_RunActorFourteenTalk(void)
 {
     s32 flag = 0x806;
     Event_Begin();
-    if (GameFlag_IsSet(0x815) != 0) {
+    if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE) != 0) {
         Event_SetMessage(MSG_SUKURETA_HASNT_COME_BACK);
         Event_ShowMessage(14, 0);
     } else if (GameFlag_IsSet(flag) == 0) {
@@ -701,7 +701,7 @@ void FieldScene_RunScene373_02000e84(void)
 
 void SceneDialogue_RunFlag815GatedStep(void)
 {
-    if (GameFlag_IsSet(0x815) != 0 && GameFlag_IsSet(0x87a) == 0) {
+    if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE) != 0 && GameFlag_IsSet(0x87a) == 0) {
         Event_Begin();
         Event_SetMessage(MSG_YOU_CANT_BE_ROBIN);
         Event_OpenMessage(21, 0);

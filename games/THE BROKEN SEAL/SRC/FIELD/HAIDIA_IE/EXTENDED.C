@@ -278,7 +278,7 @@ void *SceneData_SelectTableByFlags87a_815_834(void)
     if (GameFlag_IsSet(0x87a) != 0) {
         return Data_0200bcec;
     }
-    if (GameFlag_IsSet(0x815) != 0) {
+    if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE) != 0) {
         return Data_0200bb3c;
     }
     if (gGameState.entrance == 12) {
@@ -325,7 +325,7 @@ void Villager_ShowOffPsynergy(void)
     u8 *p6;
 
     Event_Begin();
-    if (GameFlag_IsSet(0x815) != 0) {
+    if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE) != 0) {
         base5_1197 = (s32)LinkedMessage_ArentYouWorriedAboutCrossing;
         Event_SetMessage(base5_1197);
         if (GameFlag_IsSet(2) != 0) {
@@ -393,7 +393,7 @@ void SceneDialogue_RunFlagGatedMessageStep(void)
             *(u16 *)(p + 472) = *(u16 *)(p + 472) + 1;
             Event_AskYesNo(15, 0);
         }
-    } else if (GameFlag_IsSet(0x815) != 0) {
+    } else if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE) != 0) {
         Event_SetMessage(MSG_YOU_SAW_THE_WISE_ONE);
         Event_AskYesNo(11, 0);
     } else {
@@ -624,7 +624,7 @@ void FieldScene_RunStep7BThen8(void)
 
 void SceneState_ApplyFlag815Branch(void)
 {
-    if (GameFlag_IsSet(0x815) != 0) {
+    if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE) != 0) {
         Audio_PlayCue(123);
         SceneState_SetWork1c0AndRun(10);
     }

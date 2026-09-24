@@ -1,14 +1,17 @@
 /* Draft, not exact (2026-09-24): candidate=3452 reference=3452
-   differing_halfwords=241, binary similarity 96%. Everything through the
-   phase-one draws matches except two scheduling swaps (the 192 block loads
-   0x4e20 before the size stores; the strip loop loads dst after x). Phase
-   two differs in reload temporaries (r0/r1 against r6/r7), the burst loop
-   builds 112 << 16 from a register holding 112 and loads its masks into the
-   result register (0x3ff & r, 0x7fff & a), which suggests they were
-   variables with constant equivalents; declaring them moves the frame. What
-   closed the rest: loop-top locals that loop.c hoists (the cells pointer and
-   radius in the >221 loop, the constant 3 in the particle loop), centre
-   temporaries for the flare draw, and one pointer variable per spark loop. */
+   differing_halfwords=10, binary similarity 99.7%. Three scheduling swaps
+   remain, all loads moved by one slot: the 192 block loads 0x4e20 before
+   the size stores, and the strip loop and the second phase-two spark draw
+   load dst after the draw pointer. No local source change moves them
+   (argument order, temporaries, block-local sizes and helper inlines all
+   compile identically), so the cause is upstream of those blocks.
+   What closed the rest: loop-top locals that loop.c hoists (the cells
+   pointer and radius in the >221 loop, the constant 3 in the particle
+   loop), centre temporaries for the flare draw, one pointer per spark loop
+   (in-body pointers for the 222 and phase-two loops), `r = 0x3ff;
+   r &= Random16()` in the burst so the mask loads into the result
+   register, and a function-level `ground = 112` so the spawn height is
+   rematerialised as 112 << 16. */
 #include "TYPES.H"
 #include "BATTLE_EFFECT_WORK.H"
 #include "BATTLE_EFX.H"

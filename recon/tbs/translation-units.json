@@ -13802,56 +13802,8 @@
           "address": "0x02009060",
           "kind": "thumb"
         },
-        "Func_020000a0": {
-          "address": "0x020080a0",
-          "kind": "thumb"
-        },
         "Func_0200068c": {
           "address": "0x02008314",
-          "kind": "thumb"
-        },
-        "Func_0200078e": {
-          "address": "0x02008350",
-          "kind": "thumb"
-        },
-        "Func_020007ce": {
-          "address": "0x02008350",
-          "kind": "thumb"
-        },
-        "Func_020009d6": {
-          "address": "0x020084b4",
-          "kind": "thumb"
-        },
-        "Func_02000a36": {
-          "address": "0x020084b4",
-          "kind": "thumb"
-        },
-        "Func_02000c20": {
-          "address": "0x020084b4",
-          "kind": "thumb"
-        },
-        "Func_02000ca0": {
-          "address": "0x020084b4",
-          "kind": "thumb"
-        },
-        "Func_02000ce2": {
-          "address": "0x020084b4",
-          "kind": "thumb"
-        },
-        "Func_02000d38": {
-          "address": "0x020084b4",
-          "kind": "thumb"
-        },
-        "Func_02000dce": {
-          "address": "0x0200858c",
-          "kind": "thumb"
-        },
-        "Func_02000e04": {
-          "address": "0x020084b4",
-          "kind": "thumb"
-        },
-        "Func_020010da": {
-          "address": "0x02009080",
           "kind": "thumb"
         },
         "Func_02001132": {
@@ -13874,50 +13826,6 @@
           "address": "0x02009068",
           "kind": "thumb"
         },
-        "Func_02001532": {
-          "address": "0x02009100",
-          "kind": "thumb"
-        },
-        "Func_02001548": {
-          "address": "0x02009100",
-          "kind": "thumb"
-        },
-        "Func_02001566": {
-          "address": "0x02008a80",
-          "kind": "thumb"
-        },
-        "Func_0200158e": {
-          "address": "0x02008a80",
-          "kind": "thumb"
-        },
-        "Func_020015b4_a": {
-          "address": "0x02008a80",
-          "kind": "thumb"
-        },
-        "Func_0200160e": {
-          "address": "0x02008a80",
-          "kind": "thumb"
-        },
-        "Func_0200166a": {
-          "address": "0x02008a80",
-          "kind": "thumb"
-        },
-        "Func_02001692": {
-          "address": "0x02008a80",
-          "kind": "thumb"
-        },
-        "Func_02001696": {
-          "address": "0x02009100",
-          "kind": "thumb"
-        },
-        "Func_0200174c": {
-          "address": "0x02009100",
-          "kind": "thumb"
-        },
-        "Func_02001794": {
-          "address": "0x02008a80",
-          "kind": "thumb"
-        },
         "Func_02001860": {
           "address": "0x02009100",
           "kind": "thumb"
@@ -13938,18 +13846,6 @@
           "address": "0x02009100",
           "kind": "thumb"
         },
-        "Func_02001952": {
-          "address": "0x02009100",
-          "kind": "thumb"
-        },
-        "Func_0200196a": {
-          "address": "0x02009100",
-          "kind": "thumb"
-        },
-        "Func_0200198e": {
-          "address": "0x02009100",
-          "kind": "thumb"
-        },
         "Func_020019c0": {
           "address": "0x02009100",
           "kind": "thumb"
@@ -13966,22 +13862,6 @@
           "address": "0x02009100",
           "kind": "thumb"
         },
-        "Func_02001a82": {
-          "address": "0x02009100",
-          "kind": "thumb"
-        },
-        "Func_02001c48": {
-          "address": "0x02009100",
-          "kind": "thumb"
-        },
-        "Func_02001ca4": {
-          "address": "0x02009100",
-          "kind": "thumb"
-        },
-        "Func_02001dd0": {
-          "address": "0x02009100",
-          "kind": "thumb"
-        },
         "Func_02001e62": {
           "address": "0x020090d8",
           "kind": "thumb"
@@ -13993,6 +13873,10 @@
         "Func_02001f80": {
           "address": "0x020090b8",
           "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
         },
         "SceneActor_Find": {
           "address": "0x02009100",
@@ -14028,10 +13912,6 @@
         },
         "SceneState_Table": {
           "address": "0x02000240",
-          "kind": "data"
-        },
-        "gEventWork": {
-          "address": "0x03001ebc",
           "kind": "data"
         }
       },

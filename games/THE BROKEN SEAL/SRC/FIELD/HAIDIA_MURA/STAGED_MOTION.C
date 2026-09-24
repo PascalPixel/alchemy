@@ -639,8 +639,6 @@ void SceneDialogue_RunActorFourteenTalk(void)
 
 void FieldScene_RunFlag807BranchSequence(void)
 {
-    extern u8 Data_03001ebc[];
-
     u32 i;
     s32 record;
 
@@ -690,8 +688,6 @@ void SceneDialogue_RunActor10LineAndFlag81f(void)
 
 void FieldScene_RunScene373_02000cd0(void)
 {
-    extern u8 Data_03001ebc[];
-
     u32 i;
     s32 record;
 
@@ -738,8 +734,6 @@ void SceneState_Send210AndApplyRect(void)
 
 void FieldScene_RunScene373_02000dc0(void)
 {
-    extern u8 Data_03001ebc[];
-
     u32 i;
     s32 record;
 
@@ -779,8 +773,6 @@ void SceneState_ApplyValues123And2(void)
 
 void FieldScene_RunScene373_02000e54(void)
 {
-    extern u8 Data_03001ebc[];
-
     u32 i;
     s32 record;
 
@@ -792,8 +784,6 @@ void FieldScene_RunScene373_02000e54(void)
 
 void FieldScene_RunScene373_02000e84(void)
 {
-    extern u8 Data_03001ebc[];
-
     u32 i;
     s32 record;
 
@@ -834,8 +824,6 @@ void SceneDialogue_RunFlag815GatedStep(void)
  * final single-argument call. */
 void FieldScene_RunPrimarySequence(void)
 {
-    extern u8 Data_03001ebc[];
-
     Audio_PlayCue(158);
     Map_AnimateCells((s32)&Value_0200f570, 49, 69); /* main:08009178 */
     Actor_WalkTo(0, 326, 0x466); /* object_id 0, x 326, z 0x466 */
@@ -846,8 +834,6 @@ void FieldScene_RunPrimarySequence(void)
  * short scripted step; none of the callees' effects are visible here. */
 void FieldScene_RunScene373SequenceA(void)
 {
-    extern u8 Data_03001ebc[];
-
     Audio_PlayCue(158);
     Map_AnimateCells(0x200f586, 52, 76); /* main:08009178 */
     Actor_WalkTo(0, 0x176, 0x4d6); /* object_id 0, x 0x176, z 0x4d6 */
@@ -856,8 +842,6 @@ void FieldScene_RunScene373SequenceA(void)
 
 void FieldScene_RunPrimarySequenceSecond(void)
 {
-    extern u8 Data_03001ebc[];
-
     Audio_PlayCue(158);
     Map_AnimateCells((s32)&Value_0200f55a, 35, 74); /* main:08009178 */
     Actor_WalkTo(0, 102, 0x4b6);
@@ -866,8 +850,6 @@ void FieldScene_RunPrimarySequenceSecond(void)
 
 void FieldScene_RunScene373SequenceC(void)
 {
-    extern u8 Data_03001ebc[];
-
     u32 i;
     s32 rec7;
     s32 rec8;
@@ -911,8 +893,6 @@ void FieldScene_RunScene373SequenceC(void)
 
 void FieldScene_RunScene373SequenceD(void)
 {
-    extern u8 Data_03001ebc[];
-
     u32 i;
     s32 record;
     s32 base5_f4d;
@@ -957,8 +937,6 @@ void SceneState_SetFlag204AndConfigureRegion49_46(void)
 
 void FieldScene_RunScene373SequenceE(void)
 {
-    extern u8 Data_03001ebc[];
-
     u32 i;
     u8 *rec7;
     s32 record;
@@ -1019,8 +997,6 @@ void SceneState_RunTablePairWhenActor22State1(void)
 
 void FieldScene_RunScene373_02001490(s32 a0, s32 a1)
 {
-    extern u8 Data_03001ebc[];
-
     u32 i;
     s32 p8;
     s32 rec8;
@@ -1086,8 +1062,6 @@ void SceneState_RunTablePairByActor22State(void)
  * record) to copy their stored values onto actor 1. */
 void FieldScene_RunSecondaryActorSequence(void)
 {
-    extern u8 Data_03001ebc[];
-
     u32 i;
     s32 record;
     s32 slot_table;
@@ -1170,8 +1144,6 @@ void FieldScene_RunSecondaryActorSequence(void)
  * as s16) into the call configuring another actor. */
 void FieldScene_RunPrimaryActorSequence(void)
 {
-    extern u8 Data_03001ebc[];
-
     u32 i;
     s32 record;
 
@@ -1254,8 +1226,6 @@ void FieldScene_RunPrimaryActorSequence(void)
  * parameters, then drives actor 11 through a further sequence of moves. */
 void FieldScene_RunCompanionActorSequence(void)
 {
-    extern u8 Data_03001ebc[];
-
     u32 i;
     s32 actor_data;
     s32 shared_data;
@@ -2268,8 +2238,6 @@ void FieldScene_RunStagedActorCutsceneSequence(void)
 
 void FieldScene_RunStep8C(void)
 {
-    extern u8 Data_03001ebc[];
-
     Psynergy_Begin(0x8c, 0);
 }
 
@@ -2292,16 +2260,12 @@ void SceneState_SetValue0ThenCall(void)
 
 void FieldScene_RunStep9(void)
 {
-    extern u8 Data_03001ebc[];
-
     Func_0200b5ba(9);
     Func_0200b272();
 }
 
 void FieldScene_RunStep17(void)
 {
-    extern u8 Data_03001ebc[];
-
     Func_0200b5ca(0x17);
     Func_0200b282();
 }
@@ -2458,8 +2422,6 @@ void Effect_PlayStepSound(void)
 
 void FieldScene_RunScriptedStepEE4(void)
 {
-    extern u8 Data_03001ebc[];
-
     Event_Begin();
     Message_ShowCentered((s32)&Value_00000ee4, 1);
     Event_End();
@@ -2467,8 +2429,6 @@ void FieldScene_RunScriptedStepEE4(void)
 
 void FieldScene_RunScene373SequenceB(void)
 {
-    extern u8 Data_03001ebc[];
-
     u32 i;
     s32 rec7;
     s32 record;

@@ -493,8 +493,10 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
                     }
                     for (j = 0; j != 1024; j++) {
                         if (PARTICLES[j].variant == 0) {
-                            s32 r = Random16() & 0x3ff;
-                            s32 a = (Random16() & 0x7fff) - 0x4000;
+                            s32 r = 0x3ff;
+                            s32 a;
+                            r &= Random16();
+                            a = (Random16() & 0x7fff) - 0x4000;
                             PARTICLES[j].x = bx << 16;
                             PARTICLES[j].y = 112 << 16;
                             r += 32;

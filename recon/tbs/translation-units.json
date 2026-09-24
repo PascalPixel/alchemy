@@ -876,112 +876,72 @@
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_37b",
       "absolute_symbols": {
-        "Func_02002b08": {
+        "Engine_ActorFaceActor": {
+          "address": "0x0200a4cc",
+          "kind": "thumb"
+        },
+        "Engine_ActorFaceDirection": {
+          "address": "0x0200a4f4",
+          "kind": "thumb"
+        },
+        "Engine_ActorFaceEachOther": {
+          "address": "0x0200a4d4",
+          "kind": "thumb"
+        },
+        "Engine_ActorJump": {
+          "address": "0x0200a4bc",
+          "kind": "thumb"
+        },
+        "Engine_ActorRunRepeatedMotion": {
+          "address": "0x0200a4c4",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetAnimation": {
+          "address": "0x0200a4ac",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetAnimationAndWait": {
+          "address": "0x0200a4b4",
+          "kind": "thumb"
+        },
+        "Engine_ActorShowEmote": {
+          "address": "0x0200a504",
+          "kind": "thumb"
+        },
+        "Engine_CameraMoveTo": {
+          "address": "0x0200a51c",
+          "kind": "thumb"
+        },
+        "Engine_CameraSetSpeed": {
+          "address": "0x0200a514",
+          "kind": "thumb"
+        },
+        "Engine_EventOpenScreen": {
+          "address": "0x0200a544",
+          "kind": "thumb"
+        },
+        "Engine_EventWait": {
           "address": "0x0200a44c",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagClear": {
+          "address": "0x0200a444",
           "kind": "thumb"
         },
         "Func_02002b08_a": {
           "address": "0x0200a3a4",
           "kind": "thumb"
         },
-        "Func_02002b76": {
-          "address": "0x0200a544",
-          "kind": "thumb"
-        },
-        "Func_02002b76_a": {
-          "address": "0x0200a44c",
-          "kind": "thumb"
-        },
-        "Func_02002b7a": {
-          "address": "0x0200a514",
-          "kind": "thumb"
-        },
-        "Func_02002b7a_a": {
-          "address": "0x0200a4c4",
-          "kind": "thumb"
-        },
-        "Func_02002c02": {
-          "address": "0x0200a51c",
-          "kind": "thumb"
-        },
-        "Func_02002c02_a": {
-          "address": "0x0200a44c",
-          "kind": "thumb"
-        },
-        "Func_02002c18": {
-          "address": "0x0200a4f4",
-          "kind": "thumb"
-        },
-        "Func_02002c18_a": {
-          "address": "0x0200a4ac",
-          "kind": "thumb"
-        },
-        "Func_02002cbc": {
-          "address": "0x0200a4d4",
-          "kind": "thumb"
-        },
-        "Func_02002cbc_a": {
-          "address": "0x0200a44c",
-          "kind": "thumb"
-        },
-        "Func_02002cce": {
-          "address": "0x0200a4cc",
-          "kind": "thumb"
-        },
-        "Func_02002cce_a": {
-          "address": "0x0200a4bc",
-          "kind": "thumb"
-        },
         "Func_02002cce_b": {
           "address": "0x0200a3a4",
-          "kind": "thumb"
-        },
-        "Func_02002d68": {
-          "address": "0x0200a514",
           "kind": "thumb"
         },
         "Func_02002d68_a": {
           "address": "0x0200a3a4",
           "kind": "thumb"
         },
-        "Func_02002dd4": {
-          "address": "0x0200a4f4",
-          "kind": "thumb"
-        },
-        "Func_02002dd4_a": {
-          "address": "0x0200a44c",
-          "kind": "thumb"
-        },
-        "Func_02002e18": {
-          "address": "0x0200a4c4",
-          "kind": "thumb"
-        },
-        "Func_02002e18_a": {
-          "address": "0x0200a4b4",
-          "kind": "thumb"
-        },
-        "Func_02002eb2": {
-          "address": "0x0200a504",
-          "kind": "thumb"
-        },
-        "Func_02002eb2_a": {
-          "address": "0x0200a4d4",
-          "kind": "thumb"
-        },
         "Func_02003080": {
           "address": "0x0200a46c",
-          "kind": "thumb"
-        },
-        "Func_02003080_a": {
-          "address": "0x0200a444",
-          "kind": "thumb"
-        },
-        "Func_0200308a": {
-          "address": "0x0200a514",
-          "kind": "thumb"
-        },
-        "Func_0200308a_a": {
-          "address": "0x0200a4ac",
           "kind": "thumb"
         }
       },

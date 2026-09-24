@@ -11662,7 +11662,8 @@
       "source": "FIELD/COMMON/HAIDIA_BABI/FACING_TARGET.C"
     },
     "resource_377:02000f90": {
-      "name": "RunEventScript01"
+      "name": "HaidiaBabi_RunEventScript01",
+      "source": "FIELD/COMMON/HAIDIA_BABI/EVENT_SCRIPT_01.C"
     },
     "resource_377:020001e0": {
       "name": "FieldScene_RunScene377_020001e0",
@@ -14307,7 +14308,8 @@
       "source": "FIELD/TORETO_HEYA/FOUR_ENCOUNTER.C"
     },
     "resource_396:0200069c": {
-      "name": "RunEventScript01"
+      "name": "ToretoHeya_RunTableScene",
+      "source": "FIELD/TORETO_HEYA/TABLE_SCENE.C"
     },
     "resource_396:02000918": {
       "name": "FieldScene_RunFourActorEncounter",

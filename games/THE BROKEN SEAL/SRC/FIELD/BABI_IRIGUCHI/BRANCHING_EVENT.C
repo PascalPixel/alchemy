@@ -74,7 +74,6 @@ struct Obj {
 };
 
 extern struct LevelCheckRecord *Func_02004d68();   /* occupant one square ahead */
-extern void Func_020027f2();                       /* push the object ahead */
 extern u8 Value_000000b0;
 extern u8 Data_0200b5b8[];
 
@@ -94,7 +93,6 @@ s32 Func_02003d46();
 s32 Func_02003d70();
 void Func_02005400_a();
 void Func_020053ea();
-void Func_020011c0();
 void Func_02002130();
 void Func_0200402c();
 s32 *Func_02003f6a();
@@ -508,7 +506,7 @@ s32 SceneData_SelectDataByRuntimeSelector(void)
 void FieldScene_RunFourCallSequence(void)
 {
     Event_Begin();
-    Func_020011c0();
+    StagedActor_AdvancePair();
     Func_02002130();
     Event_End();
 }
@@ -1291,7 +1289,7 @@ void SceneActor_PushObjectAheadIfLevel(void)
         return;
     }
 
-    Func_020027f2();
+    StagedActor_AdvancePair();
 }
 
 void SceneActor_RunSlotZeroFacingCheck(void)

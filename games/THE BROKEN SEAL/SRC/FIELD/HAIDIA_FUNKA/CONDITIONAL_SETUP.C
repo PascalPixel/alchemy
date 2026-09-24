@@ -1,7 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
-extern s16 Data_02000240[];
 extern u8 Data_02008cb4[];
 extern u8 Data_03001ebc[];
 
@@ -86,7 +85,7 @@ u8 *ConditionalSceneSetup_GetEffectData(void)
 
 s32 ConditionalSceneSetup_InitForScene15(void)
 {
-    if (Data_02000240[225] == 15) {
+    if (gGameState.entrance == 15) {
         Func_020000dc();
     }
     return 0;

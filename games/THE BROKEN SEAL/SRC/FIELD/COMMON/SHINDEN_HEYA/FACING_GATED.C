@@ -2,7 +2,6 @@
 #include "FIELD_EVENT.H"
 extern u8 *Data_03001ebc;
 
-
 /* Calls use this overlay's loader veneers. The early long branch shares
  * the dialogue tail and epilogue; the two timing loops each run six times. */
 
@@ -379,7 +378,6 @@ static __inline__ s32 Value4(s32 (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 
 #include "TYPES.H"
 
-
 extern u8 Data_0200baa8;
 extern u8 Data_0200bbc8;
 extern u8 Data_0200bbf4[];   /* Empty table: place nothing. */
@@ -536,7 +534,7 @@ void FieldScene_RunActorNineFlagDialogueA(void)
         Event_SetMessage(0x1289);
     }
 
-    if (Data_02000240[225] == 11) {
+    if (gGameState.entrance == 11) {
         Event_SetMessage(0x1ce9);
     }
 
@@ -560,7 +558,7 @@ void FieldScene_RunActorNineFlagDialogueB(void)
         Event_SetMessage(0x1379);
     }
 
-    if (Data_02000240[225] == 11) {
+    if (gGameState.entrance == 11) {
         Event_SetMessage(0x1ceb);
     }
 
@@ -658,7 +656,7 @@ void FieldScene_RunActorTenCountStep(void)
     Event_OpenMessage(10, 0);
 
     if (Event_ChooseYesNo(0, 0) == 1) {
-        (*(u16 *)(Data_03001ebc + 472))++;
+        (gEventWork->message)++;
     }
 
     Event_ShowMessage(10, 0);

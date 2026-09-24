@@ -247,7 +247,7 @@ extern u8 *Func_020016ac(s32);
 
 s32 SceneData_SelectByRuntimeSelector(void)
 {
-    s16 selector = Data_02000240[224];
+    s16 selector = gGameState.scene;
 
     if (selector == (s32)&Value_00000060) {
         return (s32)Data_020098cc;
@@ -269,7 +269,7 @@ u8 *SceneData_GetTable9C5C(void)
 
 s32 SceneData_SelectSecondaryByRuntimeSelector(void)
 {
-    s16 selector = Data_02000240[224];
+    s16 selector = gGameState.scene;
 
     if (selector == (s32)&Value_00000060) {
         return (s32)Data_02009c80;
@@ -286,7 +286,7 @@ s32 SceneData_SelectSecondaryByRuntimeSelector(void)
 
 s32 SceneData_SelectOverlayDataBySelector(void)
 {
-    s16 selector = Data_02000240[224];
+    s16 selector = gGameState.scene;
 
     if (selector == (s32)&Value_00000060) {
         return (s32)Data_02009d34;
@@ -328,7 +328,7 @@ void SceneState_SetFlag953(void)
 
 s32 SceneData_SelectDataByRuntimeSelector(void)
 {
-    s16 selector = Data_02000240[224];
+    s16 selector = gGameState.scene;
 
     if (selector == (s32)&Value_00000060) {
         return (s32)Data_02009f98;

@@ -284,12 +284,10 @@ static __inline__ void Call2_02000d5c(void (*f)(), s32 a0, s32 a1)
     f(a0, a1);
 }
 
-/* The scene step counter at 0x1d8 of the shared scene work record. */
+/* Moves the next dialogue line on by amount messages. */
 static __inline__ void bump_step(s32 amount)
 {
-    u8 *work = *(u8 **)Data_03001ebc;
-
-    *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
+    gEventWork->message += amount;
 }
 
 static __inline__ s32 Value1(s32 (*f)(), s32 a0)
@@ -468,7 +466,7 @@ void Func_020006f4(void)
     Map_CopyCellAttributes(0, 0, 1, 1, 21, 29);
     Map_CopyCellsTo(87, 42, 21, 31, 1, 2);
     Event_Wait(40);
-    *(s32 *)(*(u8 **)Data_03001ebc + 0x1c0) = 0x202;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
     Event_CloseScreen();
     Event_WaitForScreen();
     Camera_MoveTo(0x2c80000, -1, 0x980000, 0);
@@ -578,7 +576,7 @@ void Func_02000a98(void)
     Map_CopyCellAttributes(0, 0, 1, 1, 36, 10);
     Map_CopyCellsTo(87, 42, 36, 12, 1, 2);
     Event_Wait(40);
-    *(s32 *)(*(u8 **)Data_03001ebc + 0x1c0) = 0x202;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
     Event_CloseScreen();
     Event_WaitForScreen();
     Camera_MoveTo(0xe80000, -1, 0x1dd0000, 0);
@@ -1211,7 +1209,7 @@ void FieldScene_RunSixPassEffectSequence(void)
     Actor_Jump(1, 2, 20);
     Actor_Jump(0, 6, 0);
     Actor_Jump(1, 6, 40);
-    *(s32 *)(*(u8 **)Data_03001ebc + 0x1c0) = 0x100;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Value0(Engine_EventCloseScreen);
     Event_WaitForScreen();
     Event_RequestExit(2);
@@ -2011,7 +2009,7 @@ void Lifted_020027f8(void)
     Func_0200885a(5);
     Func_020081da();
     Map_CopyCellAttributes(8, 0, 5, 1, 27, 17);
-    *(s32 *)((*(u8 **)Data_03001ebc + 0x1c8)) = 16;
+    gEventWork->transition_frames = 16;
     GameFlag_Clear(0x12f);
     Event_End();
 }

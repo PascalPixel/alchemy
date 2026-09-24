@@ -82,7 +82,6 @@
 #include "STAGED_ACTOR.H"
 #include "OBJECT_RUNTIME.H"
 
-
 typedef struct SceneActor {
     u8 pad0[8];
     s32 x;          /* 0x08 */
@@ -356,58 +355,45 @@ void Func_0200a682();
 
 static __inline__ void PlaceActor(s32 actor, s32 x, s32 y)
 {
-    extern s16 Data_02000240[];
-    extern u8 *Data_03001ebc;
-
     Actor_SetPosition(actor, x, y);
 }
 
 static __inline__ void Call1(void (*f)(), s32 a0)
 {
-    extern s16 Data_02000240[];
     extern u32 Data_0200dfa4;
     extern u8 Data_03001e70[];
-    extern u8 Data_03001ebc[];
 
     f(a0);
 }
 
 static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
 {
-    extern s16 Data_02000240[];
     extern u32 Data_0200dfa4;
     extern u8 Data_03001e70[];
-    extern u8 Data_03001ebc[];
 
     f(a0, a1, a2);
 }
 
 static __inline__ s32 Value1(s32 (*f)(), s32 a0)
 {
-    extern s16 Data_02000240[];
     extern u32 Data_0200dfa4;
     extern u8 Data_03001e70[];
-    extern u8 Data_03001ebc[];
 
     return f(a0);
 }
 
 static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
 {
-    extern s16 Data_02000240[];
     extern u32 Data_0200dfa4;
     extern u8 Data_03001e70[];
-    extern u8 Data_03001ebc[];
 
     f(a0, a1, a2, a3, a4, a5);
 }
 
 static __inline__ void SetSceneValue(s16 *field, s32 value)
 {
-    extern s16 Data_02000240[];
     extern u32 Data_0200dfa4;
     extern u8 Data_03001e70[];
-    extern u8 Data_03001ebc[];
 
     *field = value;
 }
@@ -441,25 +427,16 @@ static __inline__ void SetSceneValue(s16 *field, s32 value)
 /* Word at +448 of the record pointed to by the global at 0x03001ebc. */
 static __inline__ s32 Value0(s32 (*f)())
 {
-    extern s16 Data_02000240[];
-    extern u8 *Data_03001ebc;
-
     return f();
 }
 
 static __inline__ void Call1_0200169c(void (*f)(), s32 a0)
 {
-    extern s16 Data_02000240[];
-    extern u8 *Data_03001ebc;
-
     f(a0);
 }
 
 static __inline__ s32 Value1_0200169c(s32 (*f)(), s32 a0)
 {
-    extern s16 Data_02000240[];
-    extern u8 *Data_03001ebc;
-
     return f(a0);
 }
 
@@ -478,53 +455,37 @@ static __inline__ void Call_02007388(s32 handle)
  * A value-returning call also sets r0 last of its arguments. */
 static __inline__ void Call1_0200238c(void (*f)(), s32 a0)
 {
-    extern u8 Data_03001ebc[];
-
     f(a0);
 }
 
 static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
 {
-    extern u8 Data_03001ebc[];
-
     f(a0, a1);
 }
 
 static __inline__ void Call6_0200169c(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
 {
-    extern u8 Data_03001ebc[];
-
     f(a0, a1, a2, a3, a4, a5);
 }
 
-/* The scene step counter at 0x1d8 of the shared scene work record. */
+/* Moves the next dialogue line on by amount messages. */
 static __inline__ void bump_step(s32 amount)
 {
-    extern u8 Data_03001ebc[];
-
-    u8 *work = *(u8 **)Data_03001ebc;
-
-    *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
+    gEventWork->message += amount;
 }
 
 static __inline__ void Call3_0200169c(void (*f)(), s32 a0, s32 a1, s32 a2)
 {
-    extern u8 Data_02000240[];
-
     f(a0, a1, a2);
 }
 
 static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
 {
-    extern u8 Data_02000240[];
-
     return f(a0, a1);
 }
 
 static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
 {
-    extern u8 Data_02000240[];
-
     return f(a0, a1, a2);
 }
 
@@ -534,8 +495,6 @@ static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
  * A value-returning call also sets r0 last of its arguments. */
 static __inline__ void Call1_02004bfc(void (*f)(), s32 a0)
 {
-    extern u8 Data_03001ebc[];
-
     f(a0);
 }
 
@@ -545,19 +504,13 @@ static __inline__ void Call1_02004bfc(void (*f)(), s32 a0)
  * A value-returning call also sets r0 last of its arguments. */
 static __inline__ void Call3_02001cf0(void (*f)(), s32 a0, s32 a1, s32 a2)
 {
-    extern u8 Data_03001ebc[];
-
     f(a0, a1, a2);
 }
 
 /* The scene step counter at 0x1d8 of the shared scene work record. */
 static __inline__ void bump_step_02001cf0(s32 amount)
 {
-    extern u8 Data_03001ebc[];
-
-    u8 *work = *(u8 **)Data_03001ebc;
-
-    *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
+    gEventWork->message += amount;
 }
 
 /* Loader-relocated overlay calls: each symbol names the pre-relocation call
@@ -569,28 +522,16 @@ static __inline__ void bump_step_02001cf0(s32 amount)
  * A value-returning call also sets r0 last of its arguments. */
 static __inline__ void Call1_02001dc4(void (*f)(), s32 a0)
 {
-    extern u8 Data_02000240[];
-
-    extern u8 Data_03001ebc[];
-
     f(a0);
 }
 
 static __inline__ s32 Value1_02001dc4(s32 (*f)(), s32 a0)
 {
-    extern u8 Data_02000240[];
-
-    extern u8 Data_03001ebc[];
-
     return f(a0);
 }
 
 static __inline__ void Call6_02001dc4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
 {
-    extern u8 Data_02000240[];
-
-    extern u8 Data_03001ebc[];
-
     f(a0, a1, a2, a3, a4, a5);
 }
 
@@ -600,21 +541,13 @@ static __inline__ void Call6_02001dc4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a
  * A value-returning call also sets r0 last of its arguments. */
 static __inline__ void Call1_02001e94(void (*f)(), s32 a0)
 {
-    extern u8 Data_02000240[];
-    extern u8 Data_03001ebc[];
-
     f(a0);
 }
 
 /* The scene step counter at 0x1d8 of the shared scene work record. */
 static __inline__ void bump_step_02001e94(s32 amount)
 {
-    extern u8 Data_02000240[];
-    extern u8 Data_03001ebc[];
-
-    u8 *work = *(u8 **)Data_03001ebc;
-
-    *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
+    gEventWork->message += amount;
 }
 
 static __inline__ void Call0(void (*f)())
@@ -633,19 +566,13 @@ static __inline__ void Call2_0200206c(void (*f)(), s32 a0, s32 a1)
  * A value-returning call also sets r0 last of its arguments. */
 static __inline__ void Call1_020021c4(void (*f)(), s32 a0)
 {
-    extern u8 Data_03001ebc[];
-
     f(a0);
 }
 
 /* The scene step counter at 0x1d8 of the shared scene work record. */
 static __inline__ void bump_step_020021c4(s32 amount)
 {
-    extern u8 Data_03001ebc[];
-
-    u8 *work = *(u8 **)Data_03001ebc;
-
-    *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
+    gEventWork->message += amount;
 }
 
 /* Call sites spelled through these wrappers pass their constants straight
@@ -654,19 +581,13 @@ static __inline__ void bump_step_020021c4(s32 amount)
  * A value-returning call also sets r0 last of its arguments. */
 static __inline__ s32 Value1_0200252c(s32 (*f)(), s32 a0)
 {
-    extern u8 Data_03001ebc[];
-
     return f(a0);
 }
 
 /* The scene step counter at 0x1d8 of the shared scene work record. */
 static __inline__ void bump_step_0200252c(s32 amount)
 {
-    extern u8 Data_03001ebc[];
-
-    u8 *work = *(u8 **)Data_03001ebc;
-
-    *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
+    gEventWork->message += amount;
 }
 
 /* Call sites spelled through these wrappers pass their constants straight
@@ -675,26 +596,18 @@ static __inline__ void bump_step_0200252c(s32 amount)
  * A value-returning call also sets r0 last of its arguments. */
 static __inline__ void Call1_020025f8(void (*f)(), s32 a0)
 {
-    extern u8 Data_03001ebc[];
-
     f(a0);
 }
 
 static __inline__ s32 Value3_020025f8(s32 (*f)(), s32 a0, s32 a1, s32 a2)
 {
-    extern u8 Data_03001ebc[];
-
     return f(a0, a1, a2);
 }
 
 /* The scene step counter at 0x1d8 of the shared scene work record. */
 static __inline__ void bump_step_020025f8(s32 amount)
 {
-    extern u8 Data_03001ebc[];
-
-    u8 *work = *(u8 **)Data_03001ebc;
-
-    *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
+    gEventWork->message += amount;
 }
 
 /* Call sites spelled through these wrappers pass their constants straight
@@ -703,19 +616,13 @@ static __inline__ void bump_step_020025f8(s32 amount)
  * A value-returning call also sets r0 last of its arguments. */
 static __inline__ void Call1_0200269c(void (*f)(), s32 a0)
 {
-    extern u8 Data_03001ebc[];
-
     f(a0);
 }
 
 /* The scene step counter at 0x1d8 of the shared scene work record. */
 static __inline__ void bump_step_0200269c(s32 amount)
 {
-    extern u8 Data_03001ebc[];
-
-    u8 *work = *(u8 **)Data_03001ebc;
-
-    *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
+    gEventWork->message += amount;
 }
 
 /* Call sites spelled through these wrappers pass their constants straight
@@ -724,19 +631,13 @@ static __inline__ void bump_step_0200269c(s32 amount)
  * A value-returning call also sets r0 last of its arguments. */
 static __inline__ void Call3_02002718(void (*f)(), s32 a0, s32 a1, s32 a2)
 {
-    extern u8 Data_03001ebc[];
-
     f(a0, a1, a2);
 }
 
 /* The scene step counter at 0x1d8 of the shared scene work record. */
 static __inline__ void bump_step_02002718(s32 amount)
 {
-    extern u8 Data_03001ebc[];
-
-    u8 *work = *(u8 **)Data_03001ebc;
-
-    *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
+    gEventWork->message += amount;
 }
 
 /* Call sites spelled through these wrappers pass their constants straight
@@ -777,26 +678,18 @@ static __inline__ void bump_step_02003054(s32 amount)
  * A value-returning call also sets r0 last of its arguments. */
 static __inline__ void Call1_02004794(void (*f)(), s32 a0)
 {
-    extern u8 Data_03001ebc[];
-
     f(a0);
 }
 
 static __inline__ s32 Value2_02004794(s32 (*f)(), s32 a0, s32 a1)
 {
-    extern u8 Data_03001ebc[];
-
     return f(a0, a1);
 }
 
 /* The scene step counter at 0x1d8 of the shared scene work record. */
 static __inline__ void bump_step_02004794(s32 amount)
 {
-    extern u8 Data_03001ebc[];
-
-    u8 *work = *(u8 **)Data_03001ebc;
-
-    *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
+    gEventWork->message += amount;
 }
 
 /* Loader-relocated ROM calls: each site names the pre-relocation call word the image holds. */
@@ -827,18 +720,12 @@ static __inline__ s32 Value3_020049a0(s32 (*f)(), s32 a0, s32 a1, s32 a2)
 
 static __inline__ void Call1_02004f60(void (*f)(), s32 value)
 {
-    extern s16 Data_02000240[];
-    extern u8 Data_03001ebc[];
-
     f(value);
 }
 
 /* Scheduler_AddOrUpdateCallback returns an index even when it is ignored. */
 static __inline__ s32 Value2_02004f60(s32 (*f)(), s32 a0, s32 a1)
 {
-    extern s16 Data_02000240[];
-    extern u8 Data_03001ebc[];
-
     return f(a0, a1);
 }
 
@@ -850,13 +737,9 @@ static __inline__ s32 Value2_02004f60(s32 (*f)(), s32 a0, s32 a1)
 
 extern u8 Value_00002421;
 
-
 s32 SelectPrimarySceneData(void)
 {
-    extern s16 Data_02000240[];
-    extern u8 *Data_03001ebc;
-
-    s16 scene_variant = Data_02000240[224];
+    s16 scene_variant = gGameState.scene;
 
     if (scene_variant == (s32)&Value_000000a0) {
         return (s32)Data_0200e2a4;
@@ -874,10 +757,7 @@ s32 GetEmptySceneData(void) { return 0; }
 
 s32 SelectSecondarySceneData(void)
 {
-    extern s16 Data_02000240[];
-    extern u8 *Data_03001ebc;
-
-    s16 scene_variant = Data_02000240[224];
+    s16 scene_variant = gGameState.scene;
 
     if (scene_variant == (s32)&Value_000000a1) {
         return (s32)Data_0200e910;
@@ -890,10 +770,7 @@ s32 SelectSecondarySceneData(void)
 
 s32 SelectTertiarySceneData(void)
 {
-    extern s16 Data_02000240[];
-    extern u8 *Data_03001ebc;
-
-    s16 scene_variant = Data_02000240[224];
+    s16 scene_variant = gGameState.scene;
 
     if (scene_variant == (s32)&Value_0000006a) {
         return (s32)Data_0200e9d0;
@@ -915,10 +792,7 @@ s32 SelectTertiarySceneData(void)
 
 s32 SelectQuaternarySceneData(void)
 {
-    extern s16 Data_02000240[];
-    extern u8 *Data_03001ebc;
-
-    s16 scene_variant = Data_02000240[224];
+    s16 scene_variant = gGameState.scene;
 
     if (scene_variant == (s32)&Value_000000a0) {
         return (s32)Data_0200eff4;
@@ -934,10 +808,8 @@ s32 SelectQuaternarySceneData(void)
 
 void ConfigureSceneActor12(void)
 {
-    extern s16 Data_02000240[];
     extern u32 Data_0200dfa4;
     extern u8 Data_03001e70[];
-    extern u8 Data_03001ebc[];
 
     s32 actor_slot = 15;
     u8 *actor;
@@ -954,20 +826,16 @@ void ConfigureSceneActor12(void)
 
 void RunSceneObjectSetup(void)
 {
-    extern s16 Data_02000240[];
     extern u32 Data_0200dfa4;
     extern u8 Data_03001e70[];
-    extern u8 Data_03001ebc[];
 
     Func_02000c68();
 }
 
 void FieldScene_StartActorTwelveTransition(void)
 {
-    extern s16 Data_02000240[];
     extern u32 Data_0200dfa4;
     extern u8 Data_03001e70[];
-    extern u8 Data_03001ebc[];
 
     Actor_SetSpeed(12, 0x10000, 0x8000);
     Actor_SetDestination(12, 248, 0x178);
@@ -1000,19 +868,14 @@ void FieldScene_UpdateActorTwelveTransition(void)
 
 void PlaceActorTwelveAndFinishScene(void)
 {
-    extern s16 Data_02000240[];
-    extern u8 *Data_03001ebc;
-
     PlaceActor(12, 0x00f80000, 0x01780000);
     Func_020017d6();
 }
 
 void PlaceSceneObjectPairFromTableA(s32 table_index)
 {
-    extern s16 Data_02000240[];
     extern u32 Data_0200dfa4;
     extern u8 Data_03001e70[];
-    extern u8 Data_03001ebc[];
 
     s32 position_x = Data_0200f714[table_index * 2];
     s32 position_z = Data_0200f714[table_index * 2 + 1];
@@ -1064,10 +927,8 @@ void FieldScene_UpdateObjectPairB(void)
 
 void PlaceSceneObjectPairFromTableB(s32 table_index)
 {
-    extern s16 Data_02000240[];
     extern u32 Data_0200dfa4;
     extern u8 Data_03001e70[];
-    extern u8 Data_03001ebc[];
 
     s32 position_x = Data_0200f754[table_index * 2];
     s32 position_z = Data_0200f754[table_index * 2 + 1];
@@ -1097,10 +958,8 @@ void FieldScene_UpdateTableBObjectPair(void)
 
 void PlaceSceneObjectPairFromTableC(s32 table_index)
 {
-    extern s16 Data_02000240[];
     extern u32 Data_0200dfa4;
     extern u8 Data_03001e70[];
-    extern u8 Data_03001ebc[];
 
     s32 position_x = Data_0200f764[table_index * 2];
     s32 position_z = Data_0200f764[table_index * 2 + 1];
@@ -1130,9 +989,6 @@ void FieldScene_UpdateObjectPairC(void)
 
 void CellDoor_Touch(void)
 {
-    extern s16 Data_02000240[];
-    extern u8 *Data_03001ebc;
-
     if (Func_020065a2(ITEM_CELL_KEY) == -1) {
         Message_ShowCentered((s32)&Value_00000953, 1);
     }
@@ -1140,17 +996,11 @@ void CellDoor_Touch(void)
 
 void LockedDoor_Touch(void)
 {
-    extern s16 Data_02000240[];
-    extern u8 *Data_03001ebc;
-
     Message_ShowCentered((s32)&Value_00000953, 1);
 }
 
 void Actor8_Interact(void)
 {
-    extern s16 Data_02000240[];
-    extern u8 *Data_03001ebc;
-
     if (Func_02002008(8, 8) != 0) {
         GameFlag_Set((s32)&Value_00000f2a);
     }
@@ -1158,9 +1008,6 @@ void Actor8_Interact(void)
 
 void Actor9_Interact(void)
 {
-    extern s16 Data_02000240[];
-    extern u8 *Data_03001ebc;
-
     if (Func_02002024(9, 7) != 0) {
         GameFlag_Set((s32)&Value_00000f2b);
     }
@@ -1168,9 +1015,6 @@ void Actor9_Interact(void)
 
 void Actor10_Interact(void)
 {
-    extern s16 Data_02000240[];
-    extern u8 *Data_03001ebc;
-
     if (Func_02002040(10, 6) != 0) {
         GameFlag_Set((s32)&Value_00000f2c);
     }
@@ -1178,9 +1022,6 @@ void Actor10_Interact(void)
 
 void Actor11_Interact(void)
 {
-    extern s16 Data_02000240[];
-    extern u8 *Data_03001ebc;
-
     if (Func_0200205c(11, 5) != 0) {
         GameFlag_Set((s32)&Value_00000f2d);
     }
@@ -1188,9 +1029,6 @@ void Actor11_Interact(void)
 
 s32 TryStartActorInteraction(s32 actor_id, s32 interaction_id)
 {
-    extern s16 Data_02000240[];
-    extern u8 *Data_03001ebc;
-
     s32 started = 0;
     s32 interaction;
 
@@ -1210,30 +1048,18 @@ s32 TryStartActorInteraction(s32 actor_id, s32 interaction_id)
 
 void NoOpSceneCallbackA(void)
 {
-    extern s16 Data_02000240[];
-    extern u8 *Data_03001ebc;
-
 }
 
 void NoOpSceneCallbackB(void)
 {
-    extern s16 Data_02000240[];
-    extern u8 *Data_03001ebc;
-
 }
 
 void NoOpSceneCallbackC(void)
 {
-    extern s16 Data_02000240[];
-    extern u8 *Data_03001ebc;
-
 }
 
 void NoOpSceneCallbackD(void)
 {
-    extern s16 Data_02000240[];
-    extern u8 *Data_03001ebc;
-
 }
 
 void CellKey_PickUp(void)
@@ -1254,9 +1080,6 @@ void CellKey_PickUp(void)
 
 s32 IsPlayerInAccidentTriggerArea(void)
 {
-    extern s16 Data_02000240[];
-    extern u8 *Data_03001ebc;
-
     SceneActor *player = Func_0200675e(0);
     s32 z = player->z;
     s32 x;
@@ -1282,10 +1105,8 @@ s32 IsPlayerInAccidentTriggerArea(void)
 
 void FieldScene_UpdateActorPairInteraction(void)
 {
-    extern s16 Data_02000240[];
     extern u32 Data_0200dfa4;
     extern u8 Data_03001e70[];
-    extern u8 Data_03001ebc[];
 
     struct ObjectRuntime *actor = Func_020067ac(9);
     struct ObjectRuntime *other = Func_020067b4(10);
@@ -1309,17 +1130,17 @@ void FieldScene_UpdateActorPairInteraction(void)
             work[8] = Func_02006d72(Func_02006c7a(8912896.0, Func_02006ce6(actor->x)));
         }
         if (!Func_02002314()) {
-            if (Data_02000240[294] != 0) {
-                if (Func_02002b3e(9) && Data_02000240[294] != 0) {
+            if (gGameState.cloaked != 0) {
+                if (Func_02002b3e(9) && gGameState.cloaked != 0) {
                     SetSceneValue(&scene[191], (s32)&Value_00002092);
                     return;
                 }
-                if (Func_02002b3e(10) && Data_02000240[294] != 0) {
+                if (Func_02002b3e(10) && gGameState.cloaked != 0) {
                     SetSceneValue(&scene[191], (s32)&Value_00002092);
                     return;
                 }
             }
-            if (Data_02000240[294] == 0) {
+            if (gGameState.cloaked == 0) {
                 if (Func_02002b72(9)) {
                     GameFlag_Set(0x215);
                     GameFlag_Set(0x214);
@@ -1338,9 +1159,6 @@ void FieldScene_UpdateActorPairInteraction(void)
 
 void ConfigureSceneActor9(void)
 {
-    extern s16 Data_02000240[];
-    extern u8 *Data_03001ebc;
-
     Event_Begin();
     Actor_Stop(9);
     Actor_SetDestinationOffset(9, 0, 0);
@@ -1353,9 +1171,6 @@ void ConfigureSceneActor9(void)
 
 s32 AreSceneActorsInPassingLane(void)
 {
-    extern s16 Data_02000240[];
-    extern u8 *Data_03001ebc;
-
     SceneActor *player = Func_0200697a(0);
     SceneActor *passing_actor = Func_02006982(17);
     s32 ox = player->x;
@@ -1388,10 +1203,8 @@ s32 AreSceneActorsInPassingLane(void)
 
 void FieldScene_UpdateActorSeventeenInteraction(void)
 {
-    extern s16 Data_02000240[];
     extern u32 Data_0200dfa4;
     extern u8 Data_03001e70[];
-    extern u8 Data_03001ebc[];
 
     struct ObjectRuntime *actor = Func_020069e6(17);
     s32 *work = (s32 *)(*(u8 **)Data_03001e70 + 0x164);
@@ -1415,11 +1228,11 @@ void FieldScene_UpdateActorSeventeenInteraction(void)
         }
         if (!Func_02002756()) {
             Func_02002dbc(17);
-            if (Func_02002d5a(17) && Data_02000240[294] != 0) {
+            if (Func_02002d5a(17) && gGameState.cloaked != 0) {
                 SetSceneValue(&scene[191], (s32)&Value_00002092);
                 return;
             }
-            if (Data_02000240[294] == 0) {
+            if (gGameState.cloaked == 0) {
                 if (Func_02002d58(17)) {
                     GameFlag_Set(0x215);
                     GameFlag_Set(0x214);
@@ -1434,18 +1247,12 @@ void FieldScene_UpdateActorSeventeenInteraction(void)
 
 void ActivateSceneActor17(void)
 {
-    extern s16 Data_02000240[];
-    extern u8 *Data_03001ebc;
-
     Func_02002fe6(17);
     Event_End();
 }
 
 s32 IsPlayerInSecondaryTriggerArea(void)
 {
-    extern s16 Data_02000240[];
-    extern u8 *Data_03001ebc;
-
     SceneActor *player = Func_02006b22(0);
     s32 zz = player->z / 0x100000;
     s32 xx = player->x / 0x100000;
@@ -1464,10 +1271,8 @@ s32 IsPlayerInSecondaryTriggerArea(void)
 
 void FieldScene_UpdateActorEighteenInteraction(void)
 {
-    extern s16 Data_02000240[];
     extern u32 Data_0200dfa4;
     extern u8 Data_03001e70[];
-    extern u8 Data_03001ebc[];
 
     struct ObjectRuntime *actor = Func_02006b82(18);
     s32 *work = (s32 *)(*(u8 **)Data_03001e70 + 0x164);
@@ -1489,11 +1294,11 @@ void FieldScene_UpdateActorEighteenInteraction(void)
             work[9] = 0x1f00000 - actor->z;
         }
         if (!Func_02002a96()) {
-            if (Func_02002eec(18) && Data_02000240[294] != 0) {
+            if (Func_02002eec(18) && gGameState.cloaked != 0) {
                 SetSceneValue(&scene[191], (s32)&Value_00002092);
                 return;
             }
-            if (Data_02000240[294] == 0) {
+            if (gGameState.cloaked == 0) {
                 if (Func_02002eea(18)) {
                     GameFlag_Set(0x215);
                     GameFlag_Set(0x214);
@@ -1508,18 +1313,12 @@ void FieldScene_UpdateActorEighteenInteraction(void)
 
 void ActivateSceneActor18(void)
 {
-    extern s16 Data_02000240[];
-    extern u8 *Data_03001ebc;
-
     Func_0200317a(18);
     Event_End();
 }
 
 s32 IsPlayerOutsideSceneRectangle(void)
 {
-    extern s16 Data_02000240[];
-    extern u8 *Data_03001ebc;
-
     SceneActor *player = Func_02006cb6(0);
     s32 zz = player->z / 0x100000;
     s32 xx = player->x / 0x100000;
@@ -1532,7 +1331,6 @@ s32 IsPlayerOutsideSceneRectangle(void)
 
 void FieldScene_RunScene3bfSequenceA(void)
 {
-    extern s16 Data_02000240[];
     extern struct EventWork *Data_03001ebc;
 
     struct EventWork *work;
@@ -1540,7 +1338,7 @@ void FieldScene_RunScene3bfSequenceA(void)
     work = Data_03001ebc;
     if (GameFlag_IsSet(0x214) == 0) {
         if (Value0(Func_02002d10) == 0) {
-            if (Data_02000240[294] == 0) {
+            if (gGameState.cloaked == 0) {
                 if (Value1_0200169c(Func_02002fae, 17) != 0) {
                     GameFlag_Set(0x215);
                     GameFlag_Set(0x214);
@@ -1555,21 +1353,17 @@ void FieldScene_RunScene3bfSequenceA(void)
 
 void RunActor17SceneStep(void)
 {
-    extern s16 Data_02000240[];
-    extern u8 *Data_03001ebc;
-
     Func_02003232(17);
     Event_End();
 }
 
 void TriggerSceneStage95FromActor12(void)
 {
-    extern s16 Data_02000240[];
     extern u8 *Data_03001ebc;
 
     u8 *scene_state = Data_03001ebc;
 
-    if (Func_02003006(12) != 0 && Data_02000240[294] == 0) {
+    if (Func_02003006(12) != 0 && gGameState.cloaked == 0) {
         s16 *scene_stage;
         s32 next_stage;
 
@@ -1582,7 +1376,6 @@ void TriggerSceneStage95FromActor12(void)
 
 void FieldScene_RunScene3bfSequenceB(void)
 {
-    extern s16 Data_02000240[];
     extern struct EventWork *Data_03001ebc;
 
     struct EventWork *work;
@@ -1590,7 +1383,7 @@ void FieldScene_RunScene3bfSequenceB(void)
     work = Data_03001ebc;
     if (GameFlag_IsSet(0x225) == 0) {
         if (Value1_0200169c(Func_02003054_scene_scripts, 13) != 0) {
-            if (Data_02000240[294] == 0) {
+            if (gGameState.cloaked == 0) {
                 GameFlag_Set(0x225);
                 Call1_0200169c(Func_02006d28, 0x200975d);
                 Call1_0200169c(Func_02006d2e, 0x20097bd);
@@ -1602,7 +1395,6 @@ void FieldScene_RunScene3bfSequenceB(void)
 
 void FieldScene_RunScene3bfSequenceC(void)
 {
-    extern s16 Data_02000240[];
     extern struct EventWork *Data_03001ebc;
 
     struct EventWork *work;
@@ -1610,7 +1402,7 @@ void FieldScene_RunScene3bfSequenceC(void)
     work = Data_03001ebc;
     if (GameFlag_IsSet(0x225) == 0) {
         if (Value1_0200169c(Func_020030b4, 21) != 0) {
-            if (Data_02000240[294] == 0) {
+            if (gGameState.cloaked == 0) {
                 GameFlag_Set(0x225);
                 Call1_0200169c(Func_02006d88, 0x20097bd);
                 Call1_0200169c(Func_02006d8e, 0x200975d);
@@ -1622,9 +1414,6 @@ void FieldScene_RunScene3bfSequenceC(void)
 
 s32 IsSceneActorVerticallyNearPlayer(void)
 {
-    extern s16 Data_02000240[];
-    extern u8 *Data_03001ebc;
-
     SceneActor *scene_actor = Func_02006e70();
     SceneActor *player = Func_02006e78(0);
     s32 actor_z = scene_actor->z / 0x100000;
@@ -1641,9 +1430,6 @@ s32 IsSceneActorVerticallyNearPlayer(void)
 
 s32 IsSceneActorHorizontallyNearPlayer(void)
 {
-    extern s16 Data_02000240[];
-    extern u8 *Data_03001ebc;
-
     SceneActor *scene_actor = Func_02006ed4();
     SceneActor *player = Func_02006edc(0);
     s32 actor_z = scene_actor->z / 0x100000;
@@ -1663,9 +1449,6 @@ s32 IsSceneActorHorizontallyNearPlayer(void)
 
 s32 IsActorInteractionAvailable(s32 actor_id)
 {
-    extern s16 Data_02000240[];
-    extern u8 *Data_03001ebc;
-
     if (Func_0200326a() == 0) {
         return 0;
     }
@@ -1682,9 +1465,6 @@ s32 IsActorInteractionAvailable(s32 actor_id)
 
 s32 IsSceneActorWithinFourSteps(void)
 {
-    extern s16 Data_02000240[];
-    extern u8 *Data_03001ebc;
-
     SceneActor *scene_actor = Func_02006f6c();
     SceneActor *player = Func_02006f74(0);
     s32 actor_z = scene_actor->z / 0x100000;
@@ -1710,9 +1490,6 @@ s32 IsSceneActorWithinFourSteps(void)
 
 s32 IsSceneActorWithinTriggerBox(void)
 {
-    extern s16 Data_02000240[];
-    extern u8 *Data_03001ebc;
-
     SceneActor *scene_actor = Func_02006fd4();
     SceneActor *player = Func_020070da();
     s32 actor_x = scene_actor->x / 0x100000;
@@ -1737,7 +1514,6 @@ s32 IsSceneActorWithinTriggerBox(void)
 
 void TriggerScene41AtVillagePath(void)
 {
-    extern s16 Data_02000240[];
     extern u8 *Data_03001ebc;
 
     SceneActor *player = Func_0200703e(0);
@@ -1758,7 +1534,6 @@ void TriggerScene41AtVillagePath(void)
 
 void TriggerScene40AtVillagePath(void)
 {
-    extern s16 Data_02000240[];
     extern u8 *Data_03001ebc;
 
     DirectionalSceneActor *player = Func_0200709a(0);
@@ -1894,8 +1669,6 @@ void RunActorScriptedSequenceC(s32 actor_id)
 
 void FieldScene_RunScene3bf_02001cf0(s32 a0)
 {
-    extern u8 Data_03001ebc[];
-
     u32 i;
     s32 record;
     s32 base6_2424;
@@ -1936,13 +1709,11 @@ void InspectOrdinaryObject(void)
 {
     extern u8 Data_02000240[];
 
-    extern u8 *Data_03001ebc;
-
     Actor_SetAnimation(0, 1);
     Audio_PlayCue(113);
     Actor_ShowEmote(15, 256, 60);
     Func_020039c8(15);
-    *(s32 *)(Data_03001ebc + 448) = 512;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
     Data_02000240[0x22b] = 3;
     Func_02007564(98, 2);
     Actor_SetPosition(15, 0, 0);
@@ -1954,13 +1725,11 @@ void InspectEmptyChest(void)
 {
     extern u8 Data_02000240[];
 
-    extern u8 *Data_03001ebc;
-
     Actor_SetAnimation(0, 1);
     Audio_PlayCue(113);
     Actor_ShowEmote(11, 256, 60);
     Func_02003a30(11);
-    *(s32 *)(Data_03001ebc + 448) = 512;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
     Data_02000240[0x22b] = 3;
     Func_020075cc(98, 2);
     Actor_SetPosition(11, 0, 0);
@@ -1975,7 +1744,6 @@ void InspectEmptyChest(void)
 void FieldScene_RunSupplementalSequenceOne(void)
 {
     extern u8 Data_02000240[];
-    extern struct EventWork *Data_03001ebc;
 
     s32 sequence_2438;
 
@@ -2026,7 +1794,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
     Event_Wait(30);
     Event_SetMessage((sequence_2438 + 6));
     Event_ShowMessage(12, 0);
-    Data_03001ebc->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
     SharedWorkData_SetFirstAndSecondFields_1_02001e94((s32)Data_000000a1, 31);
     Data_02000240[0x22b] = 3;
     BattleEffect_ComputeWeightedResultAndDispatch_1_02001e94(98, 3);
@@ -2055,13 +1823,11 @@ void InspectEmptySceneObject(void)
 {
     extern u8 Data_02000240[];
 
-    extern u8 *Data_03001ebc;
-
     Actor_SetAnimation(0, 1);
     Audio_PlayCue(113);
     Actor_ShowEmote(16, 256, 60);
     Func_02003cd0(16);
-    *(s32 *)(Data_03001ebc + 448) = 512;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
     Data_02000240[0x22b] = 3;
     Func_0200786c_a(98, 2);
     Actor_SetPosition(16, 0, 0);
@@ -2096,8 +1862,6 @@ void RunActor12InteractionSequence(void)
 
 void FieldScene_RunScene3bf_020021c4(void)
 {
-    extern u8 Data_03001ebc[];
-
     u32 i;
     s32 record;
     s32 base5_240d;
@@ -2126,27 +1890,18 @@ void FieldScene_RunScene3bf_020021c4(void)
 
 void ConfigureInteractionRegionA(void)
 {
-    extern s16 Data_02000240[];
-    extern u8 *Data_03001ebc;
-
     Map_CopyCells(2, 82, 1, 2, 21, 81);
     Map_CopyCellAttributes(21, 32, 1, 1, 21, 34);
 }
 
 void ConfigureInteractionRegionB(void)
 {
-    extern s16 Data_02000240[];
-    extern u8 *Data_03001ebc;
-
     Map_CopyCells(2, 84, 1, 2, 6, 55);
     Map_CopyCellAttributes(5, 9, 1, 1, 6, 10);
 }
 
 void ConfigureInteractionRegionC(void)
 {
-    extern s16 Data_02000240[];
-    extern u8 *Data_03001ebc;
-
     Map_CopyCells(2, 86, 1, 2, 27, 62);
     Map_CopyCellAttributes(26, 16, 1, 1, 27, 17);
 }
@@ -2191,9 +1946,6 @@ void RunSecondaryMapInteraction(void)
 
 void ConfigurePrimaryInteractionRegions(void)
 {
-    extern s16 Data_02000240[];
-    extern u8 *Data_03001ebc;
-
     Map_CopyCells(5, 77, 1, 2, 17, 82);
     Map_CopyCells(5, 77, 1, 2, 3, 55);
     Map_CopyCellAttributes(15, 33, 1, 1, 17, 35);
@@ -2202,9 +1954,6 @@ void ConfigurePrimaryInteractionRegions(void)
 
 void ConfigureSecondaryInteractionRegions(void)
 {
-    extern s16 Data_02000240[];
-    extern u8 *Data_03001ebc;
-
     Map_CopyCells(8, 77, 1, 2, 17, 82);
     Map_CopyCells(8, 77, 1, 2, 3, 55);
     Map_CopyCellAttributes(18, 35, 1, 1, 17, 35);
@@ -2213,8 +1962,6 @@ void ConfigureSecondaryInteractionRegions(void)
 
 void InspectWardrobe(void)
 {
-    extern u8 Data_02000240[];
-
     GameFlag_Set(2372);
     GameFlag_Clear(535);
     Actor_SetPosition(8, 0, 0);
@@ -2222,8 +1969,6 @@ void InspectWardrobe(void)
 
 void InspectFirewood(void)
 {
-    extern u8 Data_02000240[];
-
     GameFlag_Set(2373);
     Func_020047c2();
     Actor_SetPosition(9, 0, 0);
@@ -2231,8 +1976,6 @@ void InspectFirewood(void)
 
 void InspectBooks(void)
 {
-    extern u8 Data_02000240[];
-
     GameFlag_Set(2374);
     GameFlag_Clear(536);
     Actor_SetPosition(10, 0, 0);
@@ -2240,9 +1983,6 @@ void InspectBooks(void)
 
 void NoOpInteractionCallback(void)
 {
-    extern s16 Data_02000240[];
-    extern u8 *Data_03001ebc;
-
 }
 
 void FieldScene_RunScene3bf_0200252c(void)
@@ -2279,8 +2019,6 @@ void FieldScene_RunScene3bf_0200252c(void)
 
 void FieldScene_RunScene3bf_020025f8(void)
 {
-    extern u8 Data_03001ebc[];
-
     u32 i;
     s32 record;
 
@@ -2302,8 +2040,6 @@ void FieldScene_RunScene3bf_020025f8(void)
 
 void FieldScene_RunScene3bf_0200269c(void)
 {
-    extern u8 Data_03001ebc[];
-
     u32 i;
     s32 record;
 
@@ -2324,8 +2060,6 @@ void FieldScene_RunScene3bf_0200269c(void)
 
 void FieldScene_RunScene3bf_02002718(void)
 {
-    extern u8 Data_03001ebc[];
-
     u32 i;
     s32 record;
 
@@ -3283,10 +3017,8 @@ void FieldScene_RunMainScriptSequence(void)
 
 void FieldScene_SelectActorTwentyOneMessage(void)
 {
-    extern s16 Data_02000240[];
     extern u32 Data_0200dfa4;
     extern u8 Data_03001e70[];
-    extern u8 Data_03001ebc[];
 
     switch (Data_0200dfa4) {
     case 0:
@@ -3332,10 +3064,8 @@ void FieldScene_SelectActorTwentyOneMessage(void)
 
 void FieldScene_RunActorTwentyOneSequence(void)
 {
-    extern s16 Data_02000240[];
     extern u32 Data_0200dfa4;
     extern u8 Data_03001e70[];
-    extern u8 Data_03001ebc[];
 
     s32 base5_2411;
 
@@ -3359,8 +3089,6 @@ void FieldScene_RunActorTwentyOneSequence(void)
 
 void FieldScene_RunScene3bf_02004794(void)
 {
-    extern u8 Data_03001ebc[];
-
     u32 i;
     s32 record;
     s32 base5_244f;
@@ -3425,9 +3153,6 @@ void FieldScene_RunScene3bf_02004794(void)
 
 void SelectActor25SceneVariant(void)
 {
-    extern s16 Data_02000240[];
-    extern u8 *Data_03001ebc;
-
     if (GameFlag_IsSet(0x941)) {
         Event_SetMessage(0x2568);
         Event_ShowMessage(25, 0);
@@ -3439,9 +3164,6 @@ void SelectActor25SceneVariant(void)
 
 void SelectActor24SceneVariant(void)
 {
-    extern s16 Data_02000240[];
-    extern u8 *Data_03001ebc;
-
     if (GameFlag_IsSet(0x941)) {
         Event_SetMessage(0x2569);
         Event_ShowMessage(24, 0);
@@ -3516,18 +3238,12 @@ void FieldScene_RunSupplementalSequenceTwo(void)
 
 void ConfigureSceneActor26(void)
 {
-    extern s16 Data_02000240[];
-    extern u8 *Data_03001ebc;
-
     Func_0200a30a(26, 1, 5);
     GameFlag_Set(0x94e);
 }
 
 void ConfigureSceneActor14(void)
 {
-    extern s16 Data_02000240[];
-    extern u8 *Data_03001ebc;
-
     Actor_RunRepeatedMotion(14, 2);
     Event_SetMessage(0x2441);
     Event_ShowMessage(14, 0);
@@ -3535,9 +3251,6 @@ void ConfigureSceneActor14(void)
 
 void ConfigureSceneActor13(void)
 {
-    extern s16 Data_02000240[];
-    extern u8 *Data_03001ebc;
-
     Actor_RunRepeatedMotion(13, 2);
     Event_SetMessage((s32)&Value_00002440);
     Event_ShowMessage(13, 0);
@@ -3545,9 +3258,6 @@ void ConfigureSceneActor13(void)
 
 void ConfigureSceneActor12Variant(void)
 {
-    extern s16 Data_02000240[];
-    extern u8 *Data_03001ebc;
-
     Actor_RunRepeatedMotion(12, 2);
     Event_SetMessage(0x243f);
     Event_ShowMessage(12, 0);
@@ -3555,17 +3265,12 @@ void ConfigureSceneActor12Variant(void)
 
 void ConfigureSceneActor18(void)
 {
-    extern s16 Data_02000240[];
-    extern u8 *Data_03001ebc;
-
     Event_SetMessage((s32)&Value_00002459);
     Event_AskYesNo(18, 0);
 }
 
 void RunActor20SceneSequence(void)
 {
-    extern u8 Data_03001ebc[];
-
     u32 i;
     s32 record;
     s32 base5_242e;
@@ -3613,7 +3318,6 @@ void RunActor20SceneSequence(void)
 
 void FinishActor20SceneSequence(void)
 {
-    extern s16 Data_02000240[];
     extern u8 *Data_03001ebc;
 
     if (GameFlag_IsSet(0x226)) {
@@ -3630,16 +3334,10 @@ void FinishActor20SceneSequence(void)
 
 void NoOpActorCallback(void)
 {
-    extern s16 Data_02000240[];
-    extern u8 *Data_03001ebc;
-
 }
 
 void ConfigureActor13Interaction(void)
 {
-    extern s16 Data_02000240[];
-    extern u8 *Data_03001ebc;
-
     u8 *interaction_resources = &Value_0000256c;
 
     Event_SetMessage((s32)interaction_resources);
@@ -3651,9 +3349,6 @@ void ConfigureActor13Interaction(void)
 
 void ConfigureActor13SceneResource(void)
 {
-    extern s16 Data_02000240[];
-    extern u8 *Data_03001ebc;
-
     Event_SetMessage(0x256d);
     Event_ShowMessage(13, 0);
 }
@@ -3664,7 +3359,6 @@ struct DispatcherEventRuntime {
     u8 unknown_000[0x1c0];
     s32 value_1c0;
 };
-
 
 union DispatcherEventWork {
     struct {
@@ -3764,18 +3458,15 @@ s32 FieldScene_DispatchActorUpdate(void)
 
 void FieldScene_InstallSceneTasks(void)
 {
-    extern s16 Data_02000240[];
-    extern u8 Data_03001ebc[];
-
     Func_0200a3d6();
-    switch (Data_02000240[225]) {
+    switch (gGameState.entrance) {
     case 2:
     case 3:
     case 4:
     case 5:
     case 6:
     case 7:
-        *(s32 *)(*(u8 **)Data_03001ebc + 0x1c0) = 0x200;
+        gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
         Value2_02004f60(Func_0200a572, (s32)Data_02009719, 3200);
         Value2_02004f60(Func_0200a57c, (s32)Data_0200975d, 3200);
         Value2_02004f60(Func_0200a586, (s32)Data_020097bd, 3200);
@@ -3783,13 +3474,13 @@ void FieldScene_InstallSceneTasks(void)
         break;
     case 12:
     case 19:
-        *(s32 *)(*(u8 **)Data_03001ebc + 0x1c0) = 0x209;
+        gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
         Func_0200a650(0xc00);
         break;
     case 16:
     case 17:
     case 18:
-        *(s32 *)(*(u8 **)Data_03001ebc + 0x1c0) = 0x200;
+        gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
         Value2_02004f60(Func_0200a5b2, (s32)Data_02009529, 3200);
         Value2_02004f60(Func_0200a5bc, (s32)Data_020099e9, 3200);
         Task_Wait(1);
@@ -3801,11 +3492,11 @@ void FieldScene_InstallSceneTasks(void)
     case 13:
     case 14:
     case 15:
-        *(s32 *)(*(u8 **)Data_03001ebc + 0x1c0) = 0x200;
+        gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
         Value2_02004f60(Func_0200a602, (s32)Data_0200969d, 3200);
         break;
     default:
-        *(s32 *)(*(u8 **)Data_03001ebc + 0x1c0) = 0x200;
+        gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
         Func_0200a682(0xe00);
         break;
     }
@@ -3819,9 +3510,6 @@ void FieldScene_InstallSceneTasks(void)
 
 void FieldScene_SetupActorsForScene(void)
 {
-    extern s16 Data_02000240[];
-    extern u8 Data_03001ebc[];
-
     struct ObjectRuntime *actor;
 
     Func_0200a598();
@@ -3840,11 +3528,11 @@ void FieldScene_SetupActorsForScene(void)
     if (GameFlag_IsSet(0xf2e)) {
         Actor_SetPosition(8, 0, 0);
     }
-    switch (Data_02000240[225]) {
+    switch (gGameState.entrance) {
     case 1:
     case 2:
     case 3:
-        *(s32 *)(*(u8 **)Data_03001ebc + 0x1c0) = 0x200;
+        gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
         Func_0200a7f8(0xe00);
         Func_0200a7f6(Data_02009151, 3200);
         Task_Wait(1);
@@ -3856,7 +3544,7 @@ void FieldScene_SetupActorsForScene(void)
     case 20:
     case 23:
     case 24:
-        *(s32 *)(*(u8 **)Data_03001ebc + 0x1c0) = 0x209;
+        gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
         Func_0200a816(0xc00);
         Actor_SetSpriteFlags(Func_0200a874(24), 0);
         if (GameFlag_IsSet(0x314)) {
@@ -3865,7 +3553,7 @@ void FieldScene_SetupActorsForScene(void)
         break;
     case 21:
     case 22:
-        *(s32 *)(*(u8 **)Data_03001ebc + 0x1c0) = 0x200;
+        gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
         Func_0200a854(0xe00);
         Func_0200a7f6(Data_0200938d, 3200);
         Task_Wait(1);
@@ -3874,13 +3562,13 @@ void FieldScene_SetupActorsForScene(void)
         break;
     case 11:
     case 12:
-        *(s32 *)(*(u8 **)Data_03001ebc + 0x1c0) = 0x200;
+        gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
         if (GameFlag_IsSet(0x94a)) {
             Func_02007300();
         }
         break;
     case 31:
-        *(s32 *)(*(u8 **)Data_03001ebc + 0x1c0) = 0x200;
+        gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
         Func_02007314();
         break;
     case 14:
@@ -3889,7 +3577,7 @@ void FieldScene_SetupActorsForScene(void)
         Func_0200a844(Data_02009a45, 3200);
         break;
     default:
-        *(s32 *)(*(u8 **)Data_03001ebc + 0x1c0) = 0x200;
+        gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
         Func_0200a8c4(0xe00);
         break;
     }
@@ -3902,12 +3590,9 @@ void FieldScene_SetupActorsForScene(void)
 
 void FieldScene_RestoreActorsFromFlags(void)
 {
-    extern s16 Data_02000240[];
-    extern u8 Data_03001ebc[];
-
     struct ObjectRuntime *actor;
 
-    *(s32 *)(*(u8 **)Data_03001ebc + 0x1c0) = 0x200;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
     Func_0200a812();
     if (GameFlag_IsSet(0x943)) {
         Func_02005fbc();
@@ -3961,9 +3646,6 @@ void FieldScene_RestoreActorsFromFlags(void)
 
 void FieldScene_ActivateThreeActorGroup(void)
 {
-    extern s16 Data_02000240[];
-    extern u8 Data_03001ebc[];
-
     if (GameFlag_IsSet(0x35a)) {
         Func_02006360(0);
     }
@@ -3977,9 +3659,6 @@ void FieldScene_ActivateThreeActorGroup(void)
 
 void FieldScene_ActivateTwoActorGroup(void)
 {
-    extern s16 Data_02000240[];
-    extern u8 Data_03001ebc[];
-
     if (GameFlag_IsSet(0x358)) {
         Func_020062f2_a(0);
     }
@@ -3990,9 +3669,6 @@ void FieldScene_ActivateTwoActorGroup(void)
 
 void FieldScene_ActivateAlternateActorGroup(void)
 {
-    extern s16 Data_02000240[];
-    extern u8 Data_03001ebc[];
-
     if (GameFlag_IsSet(0x355)) {
         Func_02006240_a(0);
     }
@@ -4006,9 +3682,6 @@ void FieldScene_ActivateAlternateActorGroup(void)
 
 void ActivateFiveActorGroupFromFlags(void)
 {
-    extern s16 Data_02000240[];
-    extern u8 *Data_03001ebc;
-
     if (GameFlag_IsSet(0x350)) {
         Func_020061c2(0);
     }

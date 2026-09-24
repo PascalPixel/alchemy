@@ -27,7 +27,6 @@ extern u8 SceneEventRuntime_ActorData[];
 extern u8 SceneEventRuntime_EffectData[];
 extern struct Cam *Data_03001e70;
 extern s32 Data_0200a974;
-extern u8 Data_03001ebc[];
 extern u16 Data_02000240_t[][1];
 extern s32 Data_0200a980[];
 
@@ -378,7 +377,7 @@ s32 Func_0200105c(void)
 {
     u8 *record;
 
-    *(s32 *)(*(u8 **)Data_03001ebc + 0x1c0) = 0x204;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
     Func_0200252c();
     GameFlag_Set(0x144);
     record = (u8 *)Value1(Func_020034ee, 18);

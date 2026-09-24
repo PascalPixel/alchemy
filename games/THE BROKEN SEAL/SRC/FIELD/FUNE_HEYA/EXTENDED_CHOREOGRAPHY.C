@@ -760,14 +760,10 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
     f(a0, a1, a2);
 }
 
-/* The scene step counter at 0x1d8 of the shared scene work record. */
+/* Moves the next dialogue line on by amount messages. */
 static __inline__ void bump_step(s32 amount)
 {
-    extern u8 Data_03001ebc[];
-
-    u8 *work = *(u8 **)Data_03001ebc;
-
-    *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
+    gEventWork->message += amount;
 }
 
 /* Call sites spelled through these wrappers pass their constants straight
@@ -1073,7 +1069,7 @@ s32 StagedActor_SetReadyState(struct Work_3b1 *work)
  */
 s32 SceneData_SelectTableByWord224(void)
 {
-    if (Data_02000240[224] == (s32)&Value_0000006f) {
+    if (gGameState.scene == (s32)&Value_0000006f) {
         return (s32)Data_0200e984;
     }
     return (s32)Data_0200e96c;
@@ -1179,8 +1175,6 @@ void SceneDialogue_RunActor12Line(void)
 
 void FieldScene_RunScene3b1_02000728(void)
 {
-    extern u8 Data_03001ebc[];
-
     Event_Begin();
     if (GameFlag_IsSet(0x928) != 0) {
         Event_SetMessage(0x1eb2);
@@ -1196,7 +1190,7 @@ void FieldScene_RunScene3b1_02000728(void)
         Event_SetMessage(0x1dcd);
         Event_ShowMessage(8, 0);
         if (GameFlag_IsSet(0x925) == 0 && GameFlag_IsSet(0x924) != 0) {
-            (*(struct EventWork **)Data_03001ebc)->unknown_172 = 1;
+            gEventWork->unknown_172 = 1;
         }
     } else {
         Event_SetMessage(0x1d30);
@@ -3177,7 +3171,6 @@ void ConfigureSceneMotionFlags(s32 x, s32 y, s32 z, u32 flags)
 void FieldScene_RunSceneStep(s32 step, u32 arg, u32 opt)
 {
     extern const s32 Data_0200e840[];
-    extern u8 Data_03001ebc[];
 
     u32 slot;
 
@@ -3253,7 +3246,7 @@ void FieldScene_RunSceneStep(s32 step, u32 arg, u32 opt)
         }
         break;
     case 8:
-        *(s32 *)(*(u8 **)Data_03001ebc + 0x1c0) = 0x202;
+        gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
         Event_OpenScreen();
         if (arg != 0) {
             Value_0200e640();
@@ -3362,7 +3355,7 @@ void FieldScene_RunSceneStep(s32 step, u32 arg, u32 opt)
         if (opt == 0) {
             break;
         }
-        *(s32 *)(*(u8 **)Data_03001ebc + 0x1c0) = 0x202;
+        gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
         Event_OpenScreen();
         Event_WaitForScreen();
         Value_0200e4c0(20);
@@ -3876,8 +3869,6 @@ void RunActorsEightAndNineMapEvent(void)
 
 void FieldScene_RunScene3b1_02006110(void)
 {
-    extern u8 Data_03001ebc[];
-
     s32 rec2;
     s32 rec4;
     s32 rec7;
@@ -3891,7 +3882,7 @@ void FieldScene_RunScene3b1_02006110(void)
     Func_0200aa3a(10, 0, 0);
     Func_0200a9f2(8, 0x1d8, 144, 0x5000);
     Func_0200aa06(27, 0x198, 142, 0x3000);
-    (*(struct EventWork **)Data_03001ebc)->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
     Event_OpenScreen();
     Event_WaitForScreen();
     Event_Wait(40);
@@ -3941,7 +3932,7 @@ void FieldScene_RunScene3b1_02006110(void)
     Actor_WalkToAndWait(27, 0x198, 132);
     Actor_WalkToAndWait(27, 0x1bc, 132);
     Actor_SetPosition(27, 0, 0);
-    (*(struct EventWork **)Data_03001ebc)->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
     Event_CloseScreen();
     Event_WaitForScreen();
     Call2(Func_0200c712, 0x92c, 0x935);

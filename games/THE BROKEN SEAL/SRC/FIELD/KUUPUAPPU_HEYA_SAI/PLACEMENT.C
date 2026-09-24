@@ -10,7 +10,6 @@
 
 #include "RESOURCE_386_STATE.H"
 
-extern u8 Data_03001ebc[];
 extern s16 Data_02000240[];
 
 void Func_020006d4(u8 *);
@@ -57,12 +56,10 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
     f(a0, a1, a2);
 }
 
-/* Advance the scene step counter at 0x1d8 of the shared scene work record. */
+/* Moves the next dialogue line on by amount messages. */
 static __inline__ void bump_step(s32 amount)
 {
-    u8 *work = *(u8 **)Data_03001ebc;
-
-    *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
+    gEventWork->message += amount;
 }
 
 static __inline__ s32 Value0(s32 (*f)())
@@ -388,7 +385,7 @@ s32 FieldScene_InitSceneStateByStep(void)
     s32 zero;
 
     *(s32 *)(WORKSPACE + 448) = 521;
-    scene = Data_02000240[225];
+    scene = gGameState.entrance;
 
     if (scene == 5) {
         s32 fifth = 4;

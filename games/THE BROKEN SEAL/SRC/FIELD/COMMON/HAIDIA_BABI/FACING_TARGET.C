@@ -103,14 +103,10 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
     f(a0, a1, a2);
 }
 
-/* The scene step counter at 0x1d8 of the shared scene work record. */
+/* Moves the next dialogue line on by amount messages. */
 static __inline__ void bump_step(s32 amount)
 {
-    extern u8 Data_03001ebc[];
-
-    u8 *work = *(u8 **)Data_03001ebc;
-
-    *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
+    gEventWork->message += amount;
 }
 
 static __inline__ s32 Value1(s32 (*f)(), s32 a0)
@@ -218,9 +214,7 @@ void FieldScene_RunActorCueBranch(s32 object)
 
 s32 SceneData_SelectTableByStoryFlagsB(void)
 {
-    extern s16 Data_02000240[];
-
-    if (Data_02000240[225] == 19) {
+    if (gGameState.entrance == 19) {
         if (GameFlag_IsSet(0x950) != 0) {
             return 0x0200AC5C;
         }
@@ -285,12 +279,10 @@ void SceneDialogue_RunActorFourteenDialogue11AA(void)
 
 void SceneState_SetWork448To521AndRun(s32 object)
 {
-    extern u8 *Data_03001ebc;
-
     if (GameFlag_IsSet(0x834) != 0) {
         Func_02001d34();
     }
-    *(s32 *)(Data_03001ebc + 448) = 521;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
     Event_CloseScreen();
     Event_WaitForScreen();
     Event_RequestExit(object);
@@ -440,8 +432,6 @@ void ActorPresentation_SetTwoSceneCells(void)
 
 void FieldScene_RunSupplementalSequenceOne(s32 a0)
 {
-    extern u8 Data_03001ebc[];
-
     struct FieldActor *actor;
     struct FieldSprite *sprite;
     s32 rec7;
@@ -465,7 +455,7 @@ void FieldScene_RunSupplementalSequenceOne(s32 a0)
     Item_LoadIcon(224);
     Vram_Load(sprite->vram_block, 128, rec7 + 0x400);
     Heap_Release(17);
-    *(s32 *)(*(u8 **)Data_03001ebc + 0x1c0) = 0x202;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
     Event_OpenScreen();
     Actor_SetSpeed(18, 0x10000, 0x8000);
     Actor_WalkToAndWait(18, 0x1e0, 176);

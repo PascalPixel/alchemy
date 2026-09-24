@@ -288,7 +288,7 @@ s32 OverlayObject_ToggleField84Bit0(u8 *obj)
 
 s32 SceneData_SelectDataByRuntimeSelector(void)
 {
-    s16 selector = Data_02000240[224];
+    s16 selector = gGameState.scene;
 
     if (selector == (s32)&Value_000000a4) {
         return (s32)Data_02009488;
@@ -314,7 +314,7 @@ u8 *SceneData_GetTable95c0(void)
 
 s32 SceneData_SelectOverlayDataByRuntimeSelector(void)
 {
-    s16 selector = Data_02000240[224];
+    s16 selector = gGameState.scene;
 
     if (selector == (s32)&Value_000000a4) {
         return (s32)Data_02009610;
@@ -541,7 +541,7 @@ s32 Func_02000dc8(s32 a0)
 
 s32 SceneData_SelectTable99C4Or97B4ByStateA6(void)
 {
-    if (Data_02000240[224] == (s32)&Value_000000a6) {
+    if (gGameState.scene == (s32)&Value_000000a6) {
         return (s32)Data_020099c4;
     }
     return (s32)Data_020097b4;

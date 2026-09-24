@@ -27,6 +27,13 @@
 #include "FACING_OBJECT.H"
 #include "FIELD_EVENT.H"
 
+enum SetPieceMessage {
+    MSG_ROBIN_FLIPPED_SWITCH = 0x1528,
+    MSG_WE_DID_ROBIN_WE_BEAT = 0x190c,
+    MSG_GUARDIAN_STATUES_WERE_CREATED_LONG = 0x1910
+};
+
+
 struct Frame {
     s32 f00;
     s32 f04;
@@ -854,7 +861,7 @@ void FieldScene_RunScene3a4SequenceB(void)
 void FieldScene_RunValue1528Scene(void)
 {
     Event_Begin();
-    Message_ShowCentered(0x1528, 1);
+    Message_ShowCentered(MSG_ROBIN_FLIPPED_SWITCH, 1);
     Audio_PlayCue(125);
     FieldScene_RunScene3a4SequenceB();
     Task_Wait(20);
@@ -885,7 +892,7 @@ void FieldScene_RunLine1528Sequence(void)
     extern u8 Data_0200d238[];
 
     Event_Begin();
-    Message_ShowCentered(0x1528, 1);
+    Message_ShowCentered(MSG_ROBIN_FLIPPED_SWITCH, 1);
     Audio_PlayCue(125);
     FieldScene_RunScene3a4SequenceA();
     Task_Wait(20);
@@ -901,7 +908,7 @@ void FieldScene_RunScene3a4SequenceC(void)
     s32 record;
 
     Event_Begin();
-    Message_ShowCentered(0x1528, 1);
+    Message_ShowCentered(MSG_ROBIN_FLIPPED_SWITCH, 1);
     Audio_PlayCue(125);
     if (GameFlag_IsSet(0x326) != 0) {
         Map_CopyCellAttributes(15, 93, 1, 1, 16, 92);
@@ -925,7 +932,7 @@ void FieldScene_RunScene3a4SequenceD(void)
     s32 record;
 
     Event_Begin();
-    Message_ShowCentered(0x1528, 1);
+    Message_ShowCentered(MSG_ROBIN_FLIPPED_SWITCH, 1);
     Audio_PlayCue(125);
     if (GameFlag_IsSet(0x327) != 0) {
         Map_CopyCellAttributes(28, 82, 1, 1, 29, 81);
@@ -1776,7 +1783,7 @@ void RunEventScript01(void)
     Actor_FaceDirection(3, 0xc000, 40);
     Actor_RunRepeatedMotion(1, 1);
     Actor_FaceDirection(1, 0xe000, 10);
-    Event_SetMessage(0x190c);
+    Event_SetMessage(MSG_WE_DID_ROBIN_WE_BEAT);
     Event_ShowMessageAndWait(1, 0, 10);
     Actor_RunRepeatedMotion(2, 1);
     Actor_FaceDirection(2, 0xa000, 10);
@@ -1795,7 +1802,7 @@ void RunEventScript01(void)
     Actor_SetAnimationAndWait(0, 3);
     Event_Wait(20);
     Actor_RunRepeatedMotion(3, 2);
-    Event_SetMessage(0x1910);
+    Event_SetMessage(MSG_GUARDIAN_STATUES_WERE_CREATED_LONG);
     Event_ShowMessage(3, 0);
     Actor_FaceDirection(0, 0x4000, 10);
     Actor_ShowEmote(1, 0x102, 60);

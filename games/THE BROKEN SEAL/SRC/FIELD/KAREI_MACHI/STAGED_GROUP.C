@@ -41,6 +41,22 @@
 
 #include "RESOURCE_3A8_EFFECT.H"
 
+enum StagedGroupMessage {
+    MSG_ROBIN_PEERED_INTO = 0x947,
+    MSG_CAME_KALAY_BECAUSE_DIDNT_LIKE = 0x1a7c,
+    MSG_WHY_WE_STOPPING_AT_PLACE = 0x1a92,
+    MSG_THATS_WE_CANT_WAIT_ANY = 0x1ab2,
+    MSG_LORD_HAMMET_SELLS_HIS_BEST = 0x1acf,
+    MSG_DID_FIND_NEEDED_IN_WEAPON = 0x1ad1,
+    MSG_LADY_LAYANA_SHARED_IN_LORD = 0x1ad5,
+    MSG_LORD_HAMMETS_PALACE_LORD_AWAY = 0x1b05,
+    MSG_WEVE_ARRIVED_HAMMET = 0x256f,
+    MSG_DO_WANT_GO_CAVE_UP = 0x2584,
+    MSG_LAYANA_WAS_VERY_HARD_ON = 0x25b3,
+    MSG_VERY_CLEAN_MAINTAINED = 0x29df
+};
+
+
 struct Obj {
     u8 filler00[6];
     u16 f06;
@@ -489,8 +505,8 @@ s32 SceneData_SelectTableByWord224B(void)
 void FieldScene_RunStepWithValue29df(void)
 {
     Event_Begin();
-    Message_ShowCentered(0x947, 1);
-    Message_ShowCentered(0x29df, 1);
+    Message_ShowCentered(MSG_ROBIN_PEERED_INTO, 1);
+    Message_ShowCentered(MSG_VERY_CLEAN_MAINTAINED, 1);
     Event_End();
 }
 
@@ -532,7 +548,7 @@ s32 SceneData_SelectTableBySelector224(void)
 void SceneDialogue_RunActorNineteenDialogue(void)
 {
     Event_Begin();
-    Event_SetMessage(0x1a7c);
+    Event_SetMessage(MSG_CAME_KALAY_BECAUSE_DIDNT_LIKE);
     Event_AskYesNo(19, 0);
     Event_End();
 }
@@ -551,7 +567,7 @@ void FieldScene_RunSlotZeroFacingSequence(void)
         Event_Begin();
         Actor_FaceEachOther(0, 8, 0);
         Event_Wait(10);
-        Event_SetMessage(0x2584);
+        Event_SetMessage(MSG_DO_WANT_GO_CAVE_UP);
         Event_OpenMessage(8, 0);
         if (Event_ChooseYesNo(0, 0) == 0) {
             Actor_SetAnimationAndWait(8, 4);
@@ -569,7 +585,7 @@ void FieldScene_RunSlotZeroFacingSequence(void)
 void SceneDialogue_RunActorTenDialogue(void)
 {
     Event_Begin();
-    Event_SetMessage(0x25b3);
+    Event_SetMessage(MSG_LAYANA_WAS_VERY_HARD_ON);
     Event_AskYesNo(10, 0);
     Event_End();
 }
@@ -585,7 +601,7 @@ void SceneState_BranchOnSlotZeroFacing(void)
         Shop_Open(22, 22);
     } else {
         Event_Begin();
-        Event_SetMessage(0x1acf);
+        Event_SetMessage(MSG_LORD_HAMMET_SELLS_HIS_BEST);
         Event_ShowMessage(22, 0);
         Event_End();
     }
@@ -602,7 +618,7 @@ void SceneDialogue_RunActorTwentyThreeByLeaderHeading(void)
         Shop_Open(23, 23);
     } else {
         Event_Begin();
-        Event_SetMessage(0x1ad1);
+        Event_SetMessage(MSG_DID_FIND_NEEDED_IN_WEAPON);
         Event_AskYesNo(23, 0);
         Event_End();
     }
@@ -619,7 +635,7 @@ void FieldScene_RunActorTwentyFourAngleDialogue(void)
         Shop_Open(24, 24);
     } else {
         Event_Begin();
-        Event_SetMessage(0x1ad5);
+        Event_SetMessage(MSG_LADY_LAYANA_SHARED_IN_LORD);
         Event_ShowMessage(24, 0);
         Event_End();
     }
@@ -734,7 +750,7 @@ void FieldScene_RunStagedGroupSequence(void)
     Event_Wait(40);
     Actor_RunRepeatedMotion(27, 2);
     Actor_FaceDirection(27, 20480, 20);
-    Event_SetMessage(6802);
+    Event_SetMessage(MSG_WHY_WE_STOPPING_AT_PLACE);
     Event_ShowMessageAndWait(27, 0, 10);
     Actor_RunRepeatedMotion(28, 2);
     Actor_FaceDirection(28, 45056, 10);
@@ -937,7 +953,7 @@ void FieldScene_RunStagedGroupSequence(void)
     Actor_ShowEmote(34, 258, 60);
     Actor_ShowEmote(20, 259, 0);
     Actor_RunRepeatedMotion(20, 2);
-    Event_SetMessage(6834);
+    Event_SetMessage(MSG_THATS_WE_CANT_WAIT_ANY);
     Event_ShowMessageAndWait(20, 0, 10);
     Actor_Stop(27);
     Actor_Stop(28);
@@ -1497,7 +1513,7 @@ void FieldScene_RunTwoActorCutsceneSequence(void)
     }
     Event_Wait(20);
     Actor_SetAnimationAndWait(8, 4);
-    Event_SetMessage(0x1b05);
+    Event_SetMessage(MSG_LORD_HAMMETS_PALACE_LORD_AWAY);
     Event_ShowMessageAndWait(8, 0, 10);
     Actor_FaceDirection(9, 0x5000, 10);
     Actor_SetAnimationAndWait(9, 3);
@@ -1732,7 +1748,7 @@ void FieldScene_RunSecondaryGroupSequence(void)
     Actor_EnableActionCallback(0, motionActions);
     Actor_Jump(11, 2, 20);
     Actor_SetAnimationAndWait(11, 3);
-    Event_SetMessage(0x256f);
+    Event_SetMessage(MSG_WEVE_ARRIVED_HAMMET);
     Event_ShowMessageAndWait(11, 0, 10);
     Actor_SetAnimationAndWait(10, 3);
     object = Actor_Get(0);

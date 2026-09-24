@@ -1,6 +1,36 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
+enum TempleRoomsMessage {
+    MSG_HOW_DID_GET_HERE_BRIDGE = 0x178a,
+    MSG_ISNT_NOBLE_HIM_TRY_SAVE = 0x1794,
+    MSG_MMMM_WHO_WHO_SPEAKS_MY = 0x179f,
+    MSG_FOLLOW_THEM_DO_NOT = 0x17a4,
+    MSG_THEN_CANNOT_TELL_GIVE_UP = 0x17ab,
+    MSG_MUST_SURVIVE_TEST_GROTTO_BEFORE = 0x17ac,
+    MSG_DO_NOT_WORRY_WILL_PERMITTED = 0x17ad,
+    MSG_ENJOY_READING_MINDS_OTHERS_DO = 0x17b1,
+    MSG_YOUNG_MASTER_DID_COMPLETE_TEST = 0x17b7,
+    MSG_EXCELLENT_ROBIN = 0x17be,
+    MSG_CAN_READ_MINDS_KNOW_CURIOUS = 0x17c8,
+    MSG_MONSTERS_WAIT_IN_HIDING_WOULD = 0x17c9,
+    MSG_NOW_HE_TRULY_BEYOND_WORLDS = 0x17d6,
+    MSG_ROBIN_AM_COUNTING_ON_BRING = 0x17df,
+    MSG_MASTER_FEHS_SCHOOL_CAME_WATCH = 0x1825,
+    MSG_FLEXIBILITY_JUMPING_VERY_IMPORTANT_IN = 0x182a,
+    MSG_MASTER_FEH_VERY_BUSY_DO = 0x182d,
+    MSG_DID_DO_WARRIOR = 0x183b,
+    MSG_WARRIOR_WILL_SHOW_ME_YOUR = 0x186e,
+    MSG_YA_TREE_FELL = 0x1883,
+    MSG_LAMA_TEMPLE_FAR_WEST_IN = 0x189e,
+    MSG_IT_IS_LOCKED = 0x18ad,
+    MSG_MASTER_HAMA_MEDITATING_PLEASE_EXTREMELY = 0x1969,
+    MSG_IM_TRAVELING_AROUND_WORLD_SPREAD = 0x1a1c,
+    MSG_WATER_MONSTERS_FLOODED_ALTIN_DID = 0x1a58,
+    MSG_HSU_DID_NOT_PRACTICE_JUMPING = 0x1a5b
+};
+
+
 #define NULL ((void *)0)
 #define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 #define NewEffectObject           Func_02000048
@@ -436,7 +466,7 @@ void FieldScene_RunScene39e_02000414(void)
     s32 record;
 
     Event_Begin();
-    Event_SetMessage(0x178a);
+    Event_SetMessage(MSG_HOW_DID_GET_HERE_BRIDGE);
     if (GameFlag_IsSet(0x890) != 0) {
         bump_step(4);
     }
@@ -456,11 +486,11 @@ void FieldScene_RunFlag88FBranch(void)
 
     Event_Begin();
     if (GameFlag_IsSet(0x88F) != 0) {
-        Event_SetMessage(0x17D6);
+        Event_SetMessage(MSG_NOW_HE_TRULY_BEYOND_WORLDS);
         Event_AskYesNo(12, 0);
         Event_End();
     } else {
-        Event_SetMessage(0x1794);
+        Event_SetMessage(MSG_ISNT_NOBLE_HIM_TRY_SAVE);
         Event_OpenMessage(12, 0);
         if (Event_ChooseYesNo(0, 0) == 1) {
             u16 *q = (u16 *)(Data_03001ebc + 0x1D8);
@@ -482,7 +512,7 @@ void Func_02000658(void)
     GameFlag_Set(2196);
     Actor_FaceActor(9, 0, 0);
     Event_Wait(10);
-    Event_SetMessage(6071);
+    Event_SetMessage(MSG_YOUNG_MASTER_DID_COMPLETE_TEST);
     Actor_RunRepeatedMotion(9, 2);
     Event_Wait(20);
     Scene_Call3(Engine_ActorFaceDirection, 0, 32768, 20);
@@ -519,9 +549,9 @@ void Scene_RunScene39eSequenceB(void)
         *(s32 *)(record + 40) = 0x80000;
         Actor_SetAnimation(8, 1);
         Event_Wait(30);
-        Event_SetMessage(0x17ac);
+        Event_SetMessage(MSG_MUST_SURVIVE_TEST_GROTTO_BEFORE);
     } else {
-        Event_SetMessage(0x179f);
+        Event_SetMessage(MSG_MMMM_WHO_WHO_SPEAKS_MY);
         FieldScene_SetFlag140AndFinishSequence(0, 8);
         Call1_0200071c((void (*)())Engine_EventWait, 30);
         Event_ShowMessage(8, 0);
@@ -557,7 +587,7 @@ void Scene_RunScene39eSequenceB(void)
         Actor_SetAnimationAndWait(8, 3);
         Event_Wait(30);
         Actor_ShowEmote(8, 0x100, 60);
-        Event_SetMessage(0x17a4);
+        Event_SetMessage(MSG_FOLLOW_THEM_DO_NOT);
         Event_OpenMessage(8, 0);
         if (Event_ChooseYesNo(0, 0) == 1) {
             Actor_ShowEmote(8, 0x105, 60);
@@ -595,11 +625,11 @@ void Scene_RunScene39eSequenceB(void)
     }
     Event_OpenMessage(8, 0);
     if (Event_ChooseYesNo(0, 0) == 1) {
-        Event_SetMessage(0x17ab);
+        Event_SetMessage(MSG_THEN_CANNOT_TELL_GIVE_UP);
         Event_ShowMessage(8, 0);
         GameFlag_Set(0x300);
     } else {
-        Event_SetMessage(0x17ad);
+        Event_SetMessage(MSG_DO_NOT_WORRY_WILL_PERMITTED);
         Event_Wait(30);
         Actor_SetAnimationAndWait(8, 3);
         Event_Wait(20);
@@ -630,7 +660,7 @@ void Scene_RunScene39eSequenceB(void)
 void FieldScene_ShowDialogue17B1(void)
 {
     Event_Begin();
-    Event_SetMessage(0x17B1);
+    Event_SetMessage(MSG_ENJOY_READING_MINDS_OTHERS_DO);
     Event_AskYesNo(8, 0);
     Event_End();
 }
@@ -638,7 +668,7 @@ void FieldScene_ShowDialogue17B1(void)
 void FieldScene_ShowDialogue1825(void)
 {
     Event_Begin();
-    Event_SetMessage(0x1825);
+    Event_SetMessage(MSG_MASTER_FEHS_SCHOOL_CAME_WATCH);
     Event_AskYesNo(9, 0);
     Event_End();
 }
@@ -668,11 +698,11 @@ testPendingWork:
     Actor_FaceActor(12, 0, 0);
 
     if (GameFlag_IsSet(0x895) != 0) {
-        Event_SetMessage(0x1a5b);
+        Event_SetMessage(MSG_HSU_DID_NOT_PRACTICE_JUMPING);
     } else if (GameFlag_IsSet(0x89b) != 0) {
-        Event_SetMessage(0x189e);
+        Event_SetMessage(MSG_LAMA_TEMPLE_FAR_WEST_IN);
     } else {
-        Event_SetMessage(0x182a);
+        Event_SetMessage(MSG_FLEXIBILITY_JUMPING_VERY_IMPORTANT_IN);
     }
 
     Event_ShowMessage(12, 0);
@@ -688,7 +718,7 @@ testPendingWork:
 void FieldScene_ShowDialogue182D(void)
 {
     Event_Begin();
-    Event_SetMessage(0x182d);
+    Event_SetMessage(MSG_MASTER_FEH_VERY_BUSY_DO);
     Event_AskYesNo(15, 0);
     Event_End();
 }
@@ -863,7 +893,7 @@ void FieldScene_RunSecondEnsembleBeat(void)
     Actor_ShowEmote(15, 128 << 1, 0);
     Actor_ShowEmote(16, 128 << 1, 0);
     Event_Wait(60);
-    Event_SetMessage(0x183b);
+    Event_SetMessage(MSG_DID_DO_WARRIOR);
     Event_ShowMessageAndWait(13, 0, 20);
     Actor_FaceActor(0, 13, 0);
     Actor_RunRepeatedMotion(15, 1);
@@ -1136,7 +1166,7 @@ void FieldScene_RunSkippableStoryBeat(void)
     u8 *workspace;
 
     Event_Begin();
-    Event_SetMessage(0x186e);
+    Event_SetMessage(MSG_WARRIOR_WILL_SHOW_ME_YOUR);
     Event_OpenMessage(18, 0);
 
     if (Event_ChooseYesNo(0, 0) == 0) {
@@ -1173,7 +1203,7 @@ void FieldScene_RunEnsembleStoryBeat(void)
     Camera_SetSpeed(0x8000, 0x1000);
     Camera_MoveTo(0xe80000, -1, 0xc80000, 1);
     Camera_WaitForMove();
-    Event_SetMessage(0x1883);
+    Event_SetMessage(MSG_YA_TREE_FELL);
     Actor_SetSpeed(10, 0xcccc, 0x6666);
     Actor_SetSpeed(12, 0xcccc, 0x6666);
     Actor_WalkTo(10, 152, 200);
@@ -1364,7 +1394,7 @@ void FieldScene_RunEnsembleStoryBeat(void)
 void FieldScene_ShowDialogue1A58(void)
 {
     Event_Begin();
-    Event_SetMessage(0x1a58);
+    Event_SetMessage(MSG_WATER_MONSTERS_FLOODED_ALTIN_DID);
     Event_AskYesNo(11, 0);
     Event_End();
 }
@@ -1373,7 +1403,7 @@ void StartSchoolDoorEvent(void)
 {
     Event_Begin();
     if (GameFlag_IsSet(2202) == 0 && GameFlag_IsSet(2197) == 0) {
-        Message_ShowCentered(6317, 1);
+        Message_ShowCentered(MSG_IT_IS_LOCKED, 1);
         Event_End();
     } else {
         Audio_PlayCue(158);
@@ -1400,7 +1430,7 @@ void FieldScene_DispatchByRange(void)
     if (biased <= 0x3ffe) {
         Sanctum_Open(13);
     } else {
-        Event_SetMessage(0x1a1c);
+        Event_SetMessage(MSG_IM_TRAVELING_AROUND_WORLD_SPREAD);
         Event_ShowMessage(13, 0);
     }
 
@@ -1411,7 +1441,7 @@ void FieldScene_ShowDialogue17DF(void)
 {
     Event_Begin();
     Actor_RunRepeatedMotion(8, 2);
-    Event_SetMessage(0x17df);
+    Event_SetMessage(MSG_ROBIN_AM_COUNTING_ON_BRING);
     Event_ShowMessage(8, 0);
     Event_End();
 }
@@ -1561,7 +1591,7 @@ void FieldScene_RunScene39e_020027ec(void)
     record = Actor_Get(8);
     *(s32 *)(record + 40) = 0x80000;
     Actor_SetAnimation(8, 1);
-    Event_SetMessage(0x17be);
+    Event_SetMessage(MSG_EXCELLENT_ROBIN);
     Event_ShowMessageAndWait(8, 0, 20);
     Event_ShowMessageAndWait(8, 0, 20);
     Actor_SetAnimationAndWait(0, 3);
@@ -1596,7 +1626,7 @@ void FieldScene_RunScene39e_020027ec(void)
     if (Event_ChooseYesNo(0, 0) == 1) {
         Event_Wait(10);
         Actor_ShowEmote(8, 0x102, 60);
-        Event_SetMessage(0x17c8);
+        Event_SetMessage(MSG_CAN_READ_MINDS_KNOW_CURIOUS);
         Event_OpenMessage(8, 0);
     L_0200299c:
         if (Event_ChooseYesNo(0, 0) == 1) {
@@ -1607,7 +1637,7 @@ void FieldScene_RunScene39e_020027ec(void)
             goto L_0200299c;
         }
     }
-    Event_SetMessage(0x17c9);
+    Event_SetMessage(MSG_MONSTERS_WAIT_IN_HIDING_WOULD);
     Event_Wait(10);
     Actor_SetAnimationAndWait(8, 3);
     Event_Wait(20);
@@ -1656,7 +1686,7 @@ void FieldScene_RunRoofEnsembleSequence(void)
     Actor_FaceDirection(9, 0, 20);
     Actor_RunRepeatedMotion(9, 2);
     Event_Wait(20);
-    Event_SetMessage(0x1969);
+    Event_SetMessage(MSG_MASTER_HAMA_MEDITATING_PLEASE_EXTREMELY);
     Event_ShowMessageAndWait(9, 0, 20);
     Actor_FaceDirection(0, 0x8000, 20);
     Actor_SetAnimationAndWait(0, 3);

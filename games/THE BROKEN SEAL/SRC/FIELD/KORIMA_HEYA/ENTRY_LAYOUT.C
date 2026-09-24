@@ -12,6 +12,14 @@
 #include "RESOURCE_390.H"
 #include "RESOURCE_390_TABLE.H"
 
+enum EntryLayoutMessage {
+    MSG_FUCHIN_TEMPLE_ON_OTHER_SIDE = 0x16ad,
+    MSG_GRAND_BRIDGE_ACROSS_RIVER_PRIDE = 0x16af,
+    MSG_WHEN_WAS_TREE_LEARNED_APPRECIATE = 0x16b1,
+    MSG_THEY_SAY_MCCOY_HALTED_CONSTRUCTION = 0x16b7
+};
+
+
 struct Approach390Subject {
     u16 unknown_00[3];
     u16 dir;                   /* 0x06, wrapped 16-bit */
@@ -99,7 +107,7 @@ void FieldScene_RunActor16MessageBranch(void)
     if (dir + 0xFFFF5FFF <= 0x3FFE) {
         Shop_Open(13, 16);
     } else {
-        Event_SetMessage(0x16AD);
+        Event_SetMessage(MSG_FUCHIN_TEMPLE_ON_OTHER_SIDE);
         Event_ShowMessage(16, 0);
     }
 
@@ -119,7 +127,7 @@ void FieldScene_RunActor17MessageBranch(void)
     if (dir + 0xFFFF5FFF <= 0x3FFE) {
         Shop_Open(14, 17);
     } else {
-        Event_SetMessage(0x16AF);
+        Event_SetMessage(MSG_GRAND_BRIDGE_ACROSS_RIVER_PRIDE);
         Event_ShowMessage(17, 0);
     }
 
@@ -139,7 +147,7 @@ void FieldScene_RunActor18MessageBranch(void)
     if (dir + 0xFFFF5FFF <= 0x3FFE) {
         Shop_Open(15, 18);
     } else {
-        Event_SetMessage(0x16B1);
+        Event_SetMessage(MSG_WHEN_WAS_TREE_LEARNED_APPRECIATE);
         Event_ShowMessage(18, 0);
     }
 
@@ -162,7 +170,7 @@ void FieldScene_RunActor19MessageBranch(void)
     if (dir + 0xFFFF5FFF <= 0x3FFE) {
         Inn_Open(3, 19);
     } else {
-        Event_SetMessage(0x16B7);
+        Event_SetMessage(MSG_THEY_SAY_MCCOY_HALTED_CONSTRUCTION);
         Event_ShowMessage(19, 0);
     }
 

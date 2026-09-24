@@ -27,6 +27,11 @@
 #include "STAGED_ACTOR.H"
 #include "SELECT_OVERLAY_DATA_BY_RUNTIME_SELECTOR.H"
 
+enum WaypointMessage {
+    MSG_BROKEN_SIGN_READS_NORTH_FUCHIN = 0x17e6
+};
+
+
 struct Owner {
     u8 unk0[9];
     u8 unk9_0 : 2;
@@ -483,7 +488,7 @@ void FieldScene_RunScriptedSteps0And17E6(void)
 {
     Event_Begin();
     Actor_SetAnimation(0, 1);
-    Message_ShowCentered(6118, 1);
+    Message_ShowCentered(MSG_BROKEN_SIGN_READS_NORTH_FUCHIN, 1);
     Event_End();
 }
 

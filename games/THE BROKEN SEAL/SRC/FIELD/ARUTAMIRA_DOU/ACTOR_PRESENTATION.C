@@ -3,6 +3,23 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 
+enum ActorPresentationMessage {
+    MSG_CAME_BACK_PLEASE_DRAUGHT_QUICKLY = 0x2183,
+    MSG_WOULD_HAVE_REVEALED_MYSELF_SOONER = 0x218a,
+    MSG_MUST_TRAVELED_INDEED_IF_DIDNT = 0x218b,
+    MSG_HOW_DID_BECOME_PARALYZED_WHILE = 0x218c,
+    MSG_THATS_SUKURETA_SAID_ALCHEMY_COULD = 0x21a4,
+    MSG_FORGOT_SUKURETA_SAID_ALCHEMY_COULD = 0x21a5,
+    MSG_WHAT_WAS_THAT = 0x21a6,
+    MSG_BABI = 0x21a8,
+    MSG_SO_WELL_DO_IT = 0x21ce,
+    MSG_DONT_WANT_EITHER_DO = 0x21cf,
+    MSG_EITHER_WAY_WERE_STUCK_HERE = 0x21d0,
+    MSG_GREAT_ITS_DECIDED_JUST_HAVE = 0x21d7,
+    MSG_DONT_LET_ME_DOWN_LIKE = 0x21d9
+};
+
+
 #define REG_BLDCNT (*(volatile u16 *)0x04000050)
 #define REG_BLDALPHA (*(volatile u16 *)0x04000052)
 
@@ -65,7 +82,7 @@ void FieldScene_RunExtendedActorPresentation(void)
     Event_ResetEffectCounter();
     Actor_RunRepeatedMotion(8, 2);
     Event_Wait(20);
-    Event_SetMessage(0x2183);
+    Event_SetMessage(MSG_CAME_BACK_PLEASE_DRAUGHT_QUICKLY);
     Event_ShowMessage(8, 0);
     Actor_SetSpeed(0, 0xcccc, 0x6666);
     Actor_WalkToAndWait(0, 232, 160);
@@ -172,13 +189,13 @@ void FieldScene_RunExtendedActorPresentation(void)
         Event_Wait(10);
         Actor_SetAnimationAndWait(9, ANIM_NOD);
         Event_Wait(30);
-        Event_SetMessage(0x218a);
+        Event_SetMessage(MSG_WOULD_HAVE_REVEALED_MYSELF_SOONER);
         Event_ShowMessage(9, 0);
     } else {
-        Event_SetMessage(0x218b);
+        Event_SetMessage(MSG_MUST_TRAVELED_INDEED_IF_DIDNT);
         Event_ShowMessage(9, 0);
     }
-    Event_SetMessage(0x218c);
+    Event_SetMessage(MSG_HOW_DID_BECOME_PARALYZED_WHILE);
     Event_Wait(10);
     Actor_RunRepeatedMotion(3, 2);
     Event_Wait(20);
@@ -338,13 +355,13 @@ void FieldScene_RunExtendedActorPresentation(void)
     Actor_ShowEmote(1, EMOTE_IN_FRONT | 1, 40);
     Event_OpenMessage(1, 0);
     if (Event_ChooseYesNo(0, 0) == 0) {
-        Event_SetMessage(0x21a4);
+        Event_SetMessage(MSG_THATS_SUKURETA_SAID_ALCHEMY_COULD);
         Event_ShowMessage(1, 0);
     } else {
-        Event_SetMessage(0x21a5);
+        Event_SetMessage(MSG_FORGOT_SUKURETA_SAID_ALCHEMY_COULD);
         Event_ShowMessage(1, 0);
     }
-    Event_SetMessage(0x21a6);
+    Event_SetMessage(MSG_WHAT_WAS_THAT);
     Event_Wait(10);
     Actor_ShowEmote(9, EMOTE_IN_FRONT, 40);
     Actor_FaceDirection(9, FACING_SOUTH, 0);
@@ -362,7 +379,7 @@ void FieldScene_RunExtendedActorPresentation(void)
     Actor_SetAnimationAndWait(1, ANIM_NOD);
     Event_Wait(30);
     Event_OpenMessage(9, 0);
-    Event_SetMessage(0x21a8);
+    Event_SetMessage(MSG_BABI);
     Event_ChooseYesNo(0, 0);
     display = *(u8 **)0x03001ecc;
     {
@@ -742,16 +759,16 @@ void FieldScene_RunExtendedActorPresentation(void)
         Event_Wait(10);
         Actor_RunRepeatedMotion(1, 2);
         Event_Wait(20);
-        Event_SetMessage(0x21ce);
+        Event_SetMessage(MSG_SO_WELL_DO_IT);
         Event_ShowMessage(1, 0);
     } else {
         Event_Wait(10);
         Actor_RunRepeatedMotion(1, 2);
         Event_Wait(20);
-        Event_SetMessage(0x21cf);
+        Event_SetMessage(MSG_DONT_WANT_EITHER_DO);
         Event_ShowMessage(1, 0);
     }
-    Event_SetMessage(0x21d0);
+    Event_SetMessage(MSG_EITHER_WAY_WERE_STUCK_HERE);
     Event_Wait(10);
     Actor_SetAnimationAndWait(2, ANIM_SHAKE_HEAD);
     Event_Wait(30);
@@ -779,7 +796,7 @@ void FieldScene_RunExtendedActorPresentation(void)
         Event_Wait(10);
         Actor_SetAnimationAndWait(1, ANIM_NOD);
         Event_Wait(30);
-        Event_SetMessage(0x21d7);
+        Event_SetMessage(MSG_GREAT_ITS_DECIDED_JUST_HAVE);
         Event_ShowMessage(1, 0);
         Event_Wait(10);
         Actor_FaceEachOther(3, 2, 50);
@@ -797,7 +814,7 @@ void FieldScene_RunExtendedActorPresentation(void)
         Event_Wait(10);
         Actor_SetAnimationAndWait(1, ANIM_SHAKE_HEAD);
         Event_Wait(30);
-        Event_SetMessage(0x21d9);
+        Event_SetMessage(MSG_DONT_LET_ME_DOWN_LIKE);
         Event_ShowMessage(1, 0);
         Event_Wait(10);
         Actor_FaceEachOther(3, 2, 50);

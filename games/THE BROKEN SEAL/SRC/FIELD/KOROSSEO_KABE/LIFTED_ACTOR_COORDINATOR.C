@@ -1,6 +1,11 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
+enum LiftedActorCoordinatorMessage {
+    MSG_FANS_JUST_CALL_WALL = 0x20aa
+};
+
+
 void Func_020034de();
 s32 Func_020036f4();
 void Func_02003918();
@@ -84,7 +89,7 @@ void FieldScene_RunLiftedActorCoordinator(s32 scene)
     Func_02005628();
     path = Func_020036f4(scene, 4);
     if (path == 0) {
-        Event_SetMessage(8362);
+        Event_SetMessage(MSG_FANS_JUST_CALL_WALL);
         Call2(Func_0200572a, 196608, 24576);
         Call4(Func_02005744, 35127296, -1, 15728640, 1);
         Func_02005750();

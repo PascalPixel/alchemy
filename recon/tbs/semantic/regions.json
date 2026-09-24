@@ -6614,7 +6614,7 @@
     {
       "overlay": "resource_3a8",
       "entry": "0x02001f14",
-      "span_bytes": 236
+      "span_bytes": 244
     },
     {
       "overlay": "resource_3a8",
@@ -10299,7 +10299,7 @@
     {
       "overlay": "resource_3c0",
       "entry": "0x02000e8c",
-      "span_bytes": 160
+      "span_bytes": 196
     },
     {
       "overlay": "resource_3c0",

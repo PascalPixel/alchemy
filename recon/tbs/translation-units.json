@@ -3682,594 +3682,6 @@
       ]
     },
     {
-      "id": "candidate-resource-3c9-0200423c",
-      "game": "tbs",
-      "source": "recon/tbs/en/overlays/resource_3c9_c_0200423c.c",
-      "compiler_route": "canonical-gcc296",
-      "overlay": "resource_3c9",
-      "absolute_symbols": {
-        "Func_0200a11a": {
-          "address": "0x200decc",
-          "kind": "thumb"
-        },
-        "Func_0200a122": {
-          "address": "0x200decc",
-          "kind": "thumb"
-        },
-        "Func_02009f22": {
-          "address": "0x200dcbc",
-          "kind": "thumb"
-        },
-        "Func_0200a096": {
-          "address": "0x200de24",
-          "kind": "thumb"
-        },
-        "Func_0200a0a2": {
-          "address": "0x200de24",
-          "kind": "thumb"
-        },
-        "Func_0200a0ae": {
-          "address": "0x200de24",
-          "kind": "thumb"
-        },
-        "Func_0200a0ba": {
-          "address": "0x200de24",
-          "kind": "thumb"
-        },
-        "Func_0200a0c6": {
-          "address": "0x200de24",
-          "kind": "thumb"
-        },
-        "Func_0200a0d2": {
-          "address": "0x200de24",
-          "kind": "thumb"
-        },
-        "Func_0200a0ce": {
-          "address": "0x200de14",
-          "kind": "thumb"
-        },
-        "Func_0200a0da": {
-          "address": "0x200de14",
-          "kind": "thumb"
-        },
-        "Func_0200a0e6": {
-          "address": "0x200de14",
-          "kind": "thumb"
-        },
-        "Func_0200a0f2": {
-          "address": "0x200de14",
-          "kind": "thumb"
-        },
-        "Func_0200a0fe": {
-          "address": "0x200de14",
-          "kind": "thumb"
-        },
-        "Func_0200a10a": {
-          "address": "0x200de14",
-          "kind": "thumb"
-        },
-        "Func_02009fc2": {
-          "address": "0x200dcbc",
-          "kind": "thumb"
-        },
-        "Func_0200a038": {
-          "address": "0x200dd2c",
-          "kind": "thumb"
-        },
-        "Func_02009fd8": {
-          "address": "0x200dcbc",
-          "kind": "thumb"
-        },
-        "Func_0200a16a": {
-          "address": "0x200de3c",
-          "kind": "thumb"
-        },
-        "Func_0200a176": {
-          "address": "0x200de44",
-          "kind": "thumb"
-        },
-        "Func_0200a084": {
-          "address": "0x200dd4c",
-          "kind": "thumb"
-        },
-        "Func_0200a08e": {
-          "address": "0x200dd4c",
-          "kind": "thumb"
-        },
-        "Func_0200a0b2": {
-          "address": "0x200dd64",
-          "kind": "thumb"
-        },
-        "Func_0200a0ba_a": {
-          "address": "0x200dd64",
-          "kind": "thumb"
-        },
-        "Func_0200a228": {
-          "address": "0x200decc",
-          "kind": "thumb"
-        },
-        "Func_0200a028": {
-          "address": "0x200dcbc",
-          "kind": "thumb"
-        },
-        "Func_0200a1f0": {
-          "address": "0x200de7c",
-          "kind": "thumb"
-        },
-        "Func_0200a206": {
-          "address": "0x200de8c",
-          "kind": "thumb"
-        },
-        "Func_02009f7c": {
-          "address": "0x200dbfc",
-          "kind": "thumb"
-        },
-        "Func_0200a204": {
-          "address": "0x200de7c",
-          "kind": "thumb"
-        },
-        "Func_0200a21a": {
-          "address": "0x200de8c",
-          "kind": "thumb"
-        },
-        "Func_02009f90": {
-          "address": "0x200dbfc",
-          "kind": "thumb"
-        },
-        "Func_0200a266": {
-          "address": "0x200decc",
-          "kind": "thumb"
-        },
-        "Func_0200a0b4": {
-          "address": "0x200dd14",
-          "kind": "thumb"
-        },
-        "Func_0200a0f2_a": {
-          "address": "0x200dd4c",
-          "kind": "thumb"
-        },
-        "Func_0200a0fc": {
-          "address": "0x200dd4c",
-          "kind": "thumb"
-        },
-        "Func_0200a1a0": {
-          "address": "0x200dde4",
-          "kind": "thumb"
-        },
-        "Func_0200a10e": {
-          "address": "0x200dd4c",
-          "kind": "thumb"
-        },
-        "Func_0200a074": {
-          "address": "0x200dcac",
-          "kind": "thumb"
-        },
-        "Func_0200a11a_a": {
-          "address": "0x200dd4c",
-          "kind": "thumb"
-        },
-        "Func_0200a128": {
-          "address": "0x200dd4c",
-          "kind": "thumb"
-        },
-        "Func_0200a1ea": {
-          "address": "0x200dde4",
-          "kind": "thumb"
-        },
-        "Func_0200a158": {
-          "address": "0x200dd4c",
-          "kind": "thumb"
-        },
-        "Func_0200a0be": {
-          "address": "0x200dcac",
-          "kind": "thumb"
-        },
-        "Func_0200a164": {
-          "address": "0x200dd4c",
-          "kind": "thumb"
-        },
-        "Func_0200a170": {
-          "address": "0x200dd4c",
-          "kind": "thumb"
-        },
-        "Func_0200a226": {
-          "address": "0x200dde4",
-          "kind": "thumb"
-        },
-        "Func_0200a194": {
-          "address": "0x200dd4c",
-          "kind": "thumb"
-        },
-        "Func_0200a0fa": {
-          "address": "0x200dcac",
-          "kind": "thumb"
-        },
-        "Func_0200a1a0_a": {
-          "address": "0x200dd4c",
-          "kind": "thumb"
-        },
-        "Func_0200a1ac": {
-          "address": "0x200dd4c",
-          "kind": "thumb"
-        },
-        "Func_0200a120": {
-          "address": "0x200dc94",
-          "kind": "thumb"
-        },
-        "Func_0200a134": {
-          "address": "0x200dc94",
-          "kind": "thumb"
-        },
-        "Func_0200a152": {
-          "address": "0x200dc9c",
-          "kind": "thumb"
-        },
-        "Func_0200a164_a": {
-          "address": "0x200dc9c",
-          "kind": "thumb"
-        },
-        "Func_0200a176_a": {
-          "address": "0x200dc9c",
-          "kind": "thumb"
-        },
-        "Func_0200a186": {
-          "address": "0x200dc9c",
-          "kind": "thumb"
-        },
-        "Func_0200a0ec": {
-          "address": "0x200dbfc",
-          "kind": "thumb"
-        },
-        "Func_0200a242": {
-          "address": "0x200dd4c",
-          "kind": "thumb"
-        },
-        "Func_02009b8a": {
-          "address": "0x200d688",
-          "kind": "thumb"
-        },
-        "Func_0200a254": {
-          "address": "0x200dd4c",
-          "kind": "thumb"
-        },
-        "Func_02009b9a": {
-          "address": "0x200d688",
-          "kind": "thumb"
-        },
-        "Func_0200a264": {
-          "address": "0x200dd4c",
-          "kind": "thumb"
-        },
-        "Func_02009bae": {
-          "address": "0x200d688",
-          "kind": "thumb"
-        },
-        "Func_0200a278": {
-          "address": "0x200dd4c",
-          "kind": "thumb"
-        },
-        "Func_02009bbe": {
-          "address": "0x200d688",
-          "kind": "thumb"
-        },
-        "Func_0200a288": {
-          "address": "0x200dd4c",
-          "kind": "thumb"
-        },
-        "Func_02009bd4": {
-          "address": "0x200d688",
-          "kind": "thumb"
-        },
-        "Func_0200a29e": {
-          "address": "0x200dd4c",
-          "kind": "thumb"
-        },
-        "Func_02009bea": {
-          "address": "0x200d688",
-          "kind": "thumb"
-        },
-        "Func_0200a2b4": {
-          "address": "0x200dd4c",
-          "kind": "thumb"
-        },
-        "Func_02009c00": {
-          "address": "0x200d688",
-          "kind": "thumb"
-        },
-        "Func_0200a2ca": {
-          "address": "0x200dd4c",
-          "kind": "thumb"
-        },
-        "Func_02009c16": {
-          "address": "0x200d688",
-          "kind": "thumb"
-        },
-        "Func_0200a348": {
-          "address": "0x200ddac",
-          "kind": "thumb"
-        },
-        "Func_0200a358": {
-          "address": "0x200ddb4",
-          "kind": "thumb"
-        },
-        "Func_0200a35e": {
-          "address": "0x200ddac",
-          "kind": "thumb"
-        },
-        "Func_0200a36e": {
-          "address": "0x200ddb4",
-          "kind": "thumb"
-        },
-        "Func_0200a30c": {
-          "address": "0x200dd4c",
-          "kind": "thumb"
-        },
-        "Func_0200a272": {
-          "address": "0x200dcac",
-          "kind": "thumb"
-        },
-        "Func_0200a292": {
-          "address": "0x200dcbc",
-          "kind": "thumb"
-        },
-        "Func_0200a45a": {
-          "address": "0x200de7c",
-          "kind": "thumb"
-        },
-        "Func_0200a470": {
-          "address": "0x200de8c",
-          "kind": "thumb"
-        },
-        "Func_0200a352": {
-          "address": "0x200dd64",
-          "kind": "thumb"
-        },
-        "Func_0200a35a": {
-          "address": "0x200dd64",
-          "kind": "thumb"
-        },
-        "Func_0200a362": {
-          "address": "0x200dd64",
-          "kind": "thumb"
-        },
-        "Func_0200a36a": {
-          "address": "0x200dd64",
-          "kind": "thumb"
-        },
-        "Func_0200a372": {
-          "address": "0x200dd64",
-          "kind": "thumb"
-        },
-        "Func_0200a210": {
-          "address": "0x200dbfc",
-          "kind": "thumb"
-        },
-        "Func_0200a2e0": {
-          "address": "0x200dcbc",
-          "kind": "thumb"
-        },
-        "Func_0200a4a8": {
-          "address": "0x200de7c",
-          "kind": "thumb"
-        },
-        "Func_0200a4be": {
-          "address": "0x200de8c",
-          "kind": "thumb"
-        },
-        "Func_0200a234": {
-          "address": "0x200dbfc",
-          "kind": "thumb"
-        },
-        "Func_0200a304": {
-          "address": "0x200dcbc",
-          "kind": "thumb"
-        },
-        "Func_0200a4ce": {
-          "address": "0x200de7c",
-          "kind": "thumb"
-        },
-        "Func_0200a4e4": {
-          "address": "0x200de8c",
-          "kind": "thumb"
-        },
-        "Func_0200a25a": {
-          "address": "0x200dbfc",
-          "kind": "thumb"
-        },
-        "Func_0200a32a": {
-          "address": "0x200dcbc",
-          "kind": "thumb"
-        },
-        "Func_0200a3c0": {
-          "address": "0x200dd4c",
-          "kind": "thumb"
-        },
-        "Func_0200a3e6": {
-          "address": "0x200dd64",
-          "kind": "thumb"
-        },
-        "Func_0200a3ee": {
-          "address": "0x200dd64",
-          "kind": "thumb"
-        },
-        "Func_0200a3f6": {
-          "address": "0x200dd64",
-          "kind": "thumb"
-        },
-        "Func_0200a416": {
-          "address": "0x200dd7c",
-          "kind": "thumb"
-        },
-        "Func_0200a56c": {
-          "address": "0x200decc",
-          "kind": "thumb"
-        },
-        "Func_0200a48c": {
-          "address": "0x200dde4",
-          "kind": "thumb"
-        },
-        "Func_0200a3da": {
-          "address": "0x200dd2c",
-          "kind": "thumb"
-        },
-        "Func_0200a432": {
-          "address": "0x200dd7c",
-          "kind": "thumb"
-        },
-        "Func_0200a2c8": {
-          "address": "0x200dc0c",
-          "kind": "thumb"
-        },
-        "Func_0200a492": {
-          "address": "0x200ddcc",
-          "kind": "thumb"
-        },
-        "Func_02004f60": {
-          "address": "0x2008894",
-          "kind": "thumb"
-        },
-        "Func_0200a4ec": {
-          "address": "0x200de14",
-          "kind": "thumb"
-        },
-        "Func_0200a50e": {
-          "address": "0x200de2c",
-          "kind": "thumb"
-        },
-        "Func_0200a414": {
-          "address": "0x200dd2c",
-          "kind": "thumb"
-        },
-        "Func_0200a4c4": {
-          "address": "0x200ddd4",
-          "kind": "thumb"
-        },
-        "Func_02004f8a": {
-          "address": "0x2008894",
-          "kind": "thumb"
-        },
-        "Func_0200a45c": {
-          "address": "0x200dd5c",
-          "kind": "thumb"
-        },
-        "Func_0200a4a8_a": {
-          "address": "0x200dd9c",
-          "kind": "thumb"
-        },
-        "Func_0200a43e": {
-          "address": "0x200dd2c",
-          "kind": "thumb"
-        },
-        "Func_0200a548": {
-          "address": "0x200de2c",
-          "kind": "thumb"
-        },
-        "Func_02004fb6": {
-          "address": "0x2008894",
-          "kind": "thumb"
-        },
-        "Func_0200a474": {
-          "address": "0x200dd4c",
-          "kind": "thumb"
-        },
-        "Func_0200a4e8": {
-          "address": "0x200dd4c",
-          "kind": "thumb"
-        },
-        "Func_0200a502": {
-          "address": "0x200dd4c",
-          "kind": "thumb"
-        },
-        "Func_0200a522": {
-          "address": "0x200dd4c",
-          "kind": "thumb"
-        },
-        "Func_0200a53c": {
-          "address": "0x200dd4c",
-          "kind": "thumb"
-        },
-        "Func_0200a554": {
-          "address": "0x200dd4c",
-          "kind": "thumb"
-        },
-        "Func_0200a56c_a": {
-          "address": "0x200dd4c",
-          "kind": "thumb"
-        },
-        "Func_0200a578": {
-          "address": "0x200dd4c",
-          "kind": "thumb"
-        },
-        "Func_0200a4de": {
-          "address": "0x200dcac",
-          "kind": "thumb"
-        },
-        "Func_0200a61e": {
-          "address": "0x200dde4",
-          "kind": "thumb"
-        },
-        "Func_0200a65e": {
-          "address": "0x200de1c",
-          "kind": "thumb"
-        },
-        "Func_0200a45c_a": {
-          "address": "0x200dc04",
-          "kind": "thumb"
-        },
-        "Func_0200a45a_a": {
-          "address": "0x200dbfc",
-          "kind": "thumb"
-        },
-        "Func_0200a570": {
-          "address": "0x200dd0c",
-          "kind": "thumb"
-        },
-        "Func_0200a582": {
-          "address": "0x200dd14",
-          "kind": "thumb"
-        },
-        "Func_0200a5a0": {
-          "address": "0x200dd2c",
-          "kind": "thumb"
-        },
-        "Func_0200a590": {
-          "address": "0x200dd14",
-          "kind": "thumb"
-        },
-        "Func_0200a73c": {
-          "address": "0x200debc",
-          "kind": "thumb"
-        },
-        "Func_0200a6dc": {
-          "address": "0x200de54",
-          "kind": "thumb"
-        },
-        "Data_00000000": {
-          "address": "0x00000000",
-          "kind": "data"
-        },
-        "Data_00000002": {
-          "address": "0x00000002",
-          "kind": "data"
-        },
-        "Func_0200a73e": {
-          "address": "0x200de9c",
-          "kind": "thumb"
-        },
-        "Func_0200a74a": {
-          "address": "0x200dea4",
-          "kind": "thumb"
-        }
-      },
-      "owners": [
-        {
-          "address": "0x0200423c",
-          "extent": 1692,
-          "state": "retained-assembly"
-        }
-      ]
-    },
-    {
       "id": "retained-overlay-3b1-flag-dependent-actor-pose",
       "game": "tbs",
       "source": "recon/tbs/en/overlays/resource_3b1_c_02004254.c",
@@ -74190,6 +73602,1454 @@
         {
           "address": "0x020010c8",
           "extent": 148,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "vinasu-chojo-actor-transition",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/VINASU_CHOJO/ACTOR_TRANSITION.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3c9",
+      "absolute_symbols": {
+        "Func_0200a11a": {
+          "address": "0x200decc",
+          "kind": "thumb"
+        },
+        "Func_0200a122": {
+          "address": "0x200decc",
+          "kind": "thumb"
+        },
+        "Func_02009f22": {
+          "address": "0x200dcbc",
+          "kind": "thumb"
+        },
+        "Func_0200a096": {
+          "address": "0x200de24",
+          "kind": "thumb"
+        },
+        "Func_0200a0a2": {
+          "address": "0x200de24",
+          "kind": "thumb"
+        },
+        "Func_0200a0ae": {
+          "address": "0x200de24",
+          "kind": "thumb"
+        },
+        "Func_0200a0ba": {
+          "address": "0x200de24",
+          "kind": "thumb"
+        },
+        "Func_0200a0c6": {
+          "address": "0x200de24",
+          "kind": "thumb"
+        },
+        "Func_0200a0d2": {
+          "address": "0x200de24",
+          "kind": "thumb"
+        },
+        "Func_0200a0ce": {
+          "address": "0x200de14",
+          "kind": "thumb"
+        },
+        "Func_0200a0da": {
+          "address": "0x200de14",
+          "kind": "thumb"
+        },
+        "Func_0200a0e6": {
+          "address": "0x200de14",
+          "kind": "thumb"
+        },
+        "Func_0200a0f2": {
+          "address": "0x200de14",
+          "kind": "thumb"
+        },
+        "Func_0200a0fe": {
+          "address": "0x200de14",
+          "kind": "thumb"
+        },
+        "Func_0200a10a": {
+          "address": "0x200de14",
+          "kind": "thumb"
+        },
+        "Func_02009fc2": {
+          "address": "0x200dcbc",
+          "kind": "thumb"
+        },
+        "Func_0200a038": {
+          "address": "0x200dd2c",
+          "kind": "thumb"
+        },
+        "Func_02009fd8": {
+          "address": "0x200dcbc",
+          "kind": "thumb"
+        },
+        "Func_0200a16a": {
+          "address": "0x200de3c",
+          "kind": "thumb"
+        },
+        "Func_0200a176": {
+          "address": "0x200de44",
+          "kind": "thumb"
+        },
+        "Func_0200a084": {
+          "address": "0x200dd4c",
+          "kind": "thumb"
+        },
+        "Func_0200a08e": {
+          "address": "0x200dd4c",
+          "kind": "thumb"
+        },
+        "Func_0200a0b2": {
+          "address": "0x200dd64",
+          "kind": "thumb"
+        },
+        "Func_0200a0ba_a": {
+          "address": "0x200dd64",
+          "kind": "thumb"
+        },
+        "Func_0200a228": {
+          "address": "0x200decc",
+          "kind": "thumb"
+        },
+        "Func_0200a028": {
+          "address": "0x200dcbc",
+          "kind": "thumb"
+        },
+        "Func_0200a1f0": {
+          "address": "0x200de7c",
+          "kind": "thumb"
+        },
+        "Func_0200a206": {
+          "address": "0x200de8c",
+          "kind": "thumb"
+        },
+        "Func_02009f7c": {
+          "address": "0x200dbfc",
+          "kind": "thumb"
+        },
+        "Func_0200a204": {
+          "address": "0x200de7c",
+          "kind": "thumb"
+        },
+        "Func_0200a21a": {
+          "address": "0x200de8c",
+          "kind": "thumb"
+        },
+        "Func_02009f90": {
+          "address": "0x200dbfc",
+          "kind": "thumb"
+        },
+        "Func_0200a266": {
+          "address": "0x200decc",
+          "kind": "thumb"
+        },
+        "Func_0200a0b4": {
+          "address": "0x200dd14",
+          "kind": "thumb"
+        },
+        "Func_0200a0f2_a": {
+          "address": "0x200dd4c",
+          "kind": "thumb"
+        },
+        "Func_0200a0fc": {
+          "address": "0x200dd4c",
+          "kind": "thumb"
+        },
+        "Func_0200a1a0": {
+          "address": "0x200dde4",
+          "kind": "thumb"
+        },
+        "Func_0200a10e": {
+          "address": "0x200dd4c",
+          "kind": "thumb"
+        },
+        "Func_0200a074": {
+          "address": "0x200dcac",
+          "kind": "thumb"
+        },
+        "Func_0200a11a_a": {
+          "address": "0x200dd4c",
+          "kind": "thumb"
+        },
+        "Func_0200a128": {
+          "address": "0x200dd4c",
+          "kind": "thumb"
+        },
+        "Func_0200a1ea": {
+          "address": "0x200dde4",
+          "kind": "thumb"
+        },
+        "Func_0200a158": {
+          "address": "0x200dd4c",
+          "kind": "thumb"
+        },
+        "Func_0200a0be": {
+          "address": "0x200dcac",
+          "kind": "thumb"
+        },
+        "Func_0200a164": {
+          "address": "0x200dd4c",
+          "kind": "thumb"
+        },
+        "Func_0200a170": {
+          "address": "0x200dd4c",
+          "kind": "thumb"
+        },
+        "Func_0200a226": {
+          "address": "0x200dde4",
+          "kind": "thumb"
+        },
+        "Func_0200a194": {
+          "address": "0x200dd4c",
+          "kind": "thumb"
+        },
+        "Func_0200a0fa": {
+          "address": "0x200dcac",
+          "kind": "thumb"
+        },
+        "Func_0200a1a0_a": {
+          "address": "0x200dd4c",
+          "kind": "thumb"
+        },
+        "Func_0200a1ac": {
+          "address": "0x200dd4c",
+          "kind": "thumb"
+        },
+        "Func_0200a120": {
+          "address": "0x200dc94",
+          "kind": "thumb"
+        },
+        "Func_0200a134": {
+          "address": "0x200dc94",
+          "kind": "thumb"
+        },
+        "Func_0200a152": {
+          "address": "0x200dc9c",
+          "kind": "thumb"
+        },
+        "Func_0200a164_a": {
+          "address": "0x200dc9c",
+          "kind": "thumb"
+        },
+        "Func_0200a176_a": {
+          "address": "0x200dc9c",
+          "kind": "thumb"
+        },
+        "Func_0200a186": {
+          "address": "0x200dc9c",
+          "kind": "thumb"
+        },
+        "Func_0200a0ec": {
+          "address": "0x200dbfc",
+          "kind": "thumb"
+        },
+        "Func_0200a242": {
+          "address": "0x200dd4c",
+          "kind": "thumb"
+        },
+        "Func_02009b8a": {
+          "address": "0x200d688",
+          "kind": "thumb"
+        },
+        "Func_0200a254": {
+          "address": "0x200dd4c",
+          "kind": "thumb"
+        },
+        "Func_02009b9a": {
+          "address": "0x200d688",
+          "kind": "thumb"
+        },
+        "Func_0200a264": {
+          "address": "0x200dd4c",
+          "kind": "thumb"
+        },
+        "Func_02009bae": {
+          "address": "0x200d688",
+          "kind": "thumb"
+        },
+        "Func_0200a278": {
+          "address": "0x200dd4c",
+          "kind": "thumb"
+        },
+        "Func_02009bbe": {
+          "address": "0x200d688",
+          "kind": "thumb"
+        },
+        "Func_0200a288": {
+          "address": "0x200dd4c",
+          "kind": "thumb"
+        },
+        "Func_02009bd4": {
+          "address": "0x200d688",
+          "kind": "thumb"
+        },
+        "Func_0200a29e": {
+          "address": "0x200dd4c",
+          "kind": "thumb"
+        },
+        "Func_02009bea": {
+          "address": "0x200d688",
+          "kind": "thumb"
+        },
+        "Func_0200a2b4": {
+          "address": "0x200dd4c",
+          "kind": "thumb"
+        },
+        "Func_02009c00": {
+          "address": "0x200d688",
+          "kind": "thumb"
+        },
+        "Func_0200a2ca": {
+          "address": "0x200dd4c",
+          "kind": "thumb"
+        },
+        "Func_02009c16": {
+          "address": "0x200d688",
+          "kind": "thumb"
+        },
+        "Func_0200a348": {
+          "address": "0x200ddac",
+          "kind": "thumb"
+        },
+        "Func_0200a358": {
+          "address": "0x200ddb4",
+          "kind": "thumb"
+        },
+        "Func_0200a35e": {
+          "address": "0x200ddac",
+          "kind": "thumb"
+        },
+        "Func_0200a36e": {
+          "address": "0x200ddb4",
+          "kind": "thumb"
+        },
+        "Func_0200a30c": {
+          "address": "0x200dd4c",
+          "kind": "thumb"
+        },
+        "Func_0200a272": {
+          "address": "0x200dcac",
+          "kind": "thumb"
+        },
+        "Func_0200a292": {
+          "address": "0x200dcbc",
+          "kind": "thumb"
+        },
+        "Func_0200a45a": {
+          "address": "0x200de7c",
+          "kind": "thumb"
+        },
+        "Func_0200a470": {
+          "address": "0x200de8c",
+          "kind": "thumb"
+        },
+        "Func_0200a352": {
+          "address": "0x200dd64",
+          "kind": "thumb"
+        },
+        "Func_0200a35a": {
+          "address": "0x200dd64",
+          "kind": "thumb"
+        },
+        "Func_0200a362": {
+          "address": "0x200dd64",
+          "kind": "thumb"
+        },
+        "Func_0200a36a": {
+          "address": "0x200dd64",
+          "kind": "thumb"
+        },
+        "Func_0200a372": {
+          "address": "0x200dd64",
+          "kind": "thumb"
+        },
+        "Func_0200a210": {
+          "address": "0x200dbfc",
+          "kind": "thumb"
+        },
+        "Func_0200a2e0": {
+          "address": "0x200dcbc",
+          "kind": "thumb"
+        },
+        "Func_0200a4a8": {
+          "address": "0x200de7c",
+          "kind": "thumb"
+        },
+        "Func_0200a4be": {
+          "address": "0x200de8c",
+          "kind": "thumb"
+        },
+        "Func_0200a234": {
+          "address": "0x200dbfc",
+          "kind": "thumb"
+        },
+        "Func_0200a304": {
+          "address": "0x200dcbc",
+          "kind": "thumb"
+        },
+        "Func_0200a4ce": {
+          "address": "0x200de7c",
+          "kind": "thumb"
+        },
+        "Func_0200a4e4": {
+          "address": "0x200de8c",
+          "kind": "thumb"
+        },
+        "Func_0200a25a": {
+          "address": "0x200dbfc",
+          "kind": "thumb"
+        },
+        "Func_0200a32a": {
+          "address": "0x200dcbc",
+          "kind": "thumb"
+        },
+        "Func_0200a3c0": {
+          "address": "0x200dd4c",
+          "kind": "thumb"
+        },
+        "Func_0200a3e6": {
+          "address": "0x200dd64",
+          "kind": "thumb"
+        },
+        "Func_0200a3ee": {
+          "address": "0x200dd64",
+          "kind": "thumb"
+        },
+        "Func_0200a3f6": {
+          "address": "0x200dd64",
+          "kind": "thumb"
+        },
+        "Func_0200a416": {
+          "address": "0x200dd7c",
+          "kind": "thumb"
+        },
+        "Func_0200a56c": {
+          "address": "0x200decc",
+          "kind": "thumb"
+        },
+        "Func_0200a48c": {
+          "address": "0x200dde4",
+          "kind": "thumb"
+        },
+        "Func_0200a3da": {
+          "address": "0x200dd2c",
+          "kind": "thumb"
+        },
+        "Func_0200a432": {
+          "address": "0x200dd7c",
+          "kind": "thumb"
+        },
+        "Func_0200a2c8": {
+          "address": "0x200dc0c",
+          "kind": "thumb"
+        },
+        "Func_0200a492": {
+          "address": "0x200ddcc",
+          "kind": "thumb"
+        },
+        "Func_02004f60": {
+          "address": "0x2008894",
+          "kind": "thumb"
+        },
+        "Func_0200a4ec": {
+          "address": "0x200de14",
+          "kind": "thumb"
+        },
+        "Func_0200a50e": {
+          "address": "0x200de2c",
+          "kind": "thumb"
+        },
+        "Func_0200a414": {
+          "address": "0x200dd2c",
+          "kind": "thumb"
+        },
+        "Func_0200a4c4": {
+          "address": "0x200ddd4",
+          "kind": "thumb"
+        },
+        "Func_02004f8a": {
+          "address": "0x2008894",
+          "kind": "thumb"
+        },
+        "Func_0200a45c": {
+          "address": "0x200dd5c",
+          "kind": "thumb"
+        },
+        "Func_0200a4a8_a": {
+          "address": "0x200dd9c",
+          "kind": "thumb"
+        },
+        "Func_0200a43e": {
+          "address": "0x200dd2c",
+          "kind": "thumb"
+        },
+        "Func_0200a548": {
+          "address": "0x200de2c",
+          "kind": "thumb"
+        },
+        "Func_02004fb6": {
+          "address": "0x2008894",
+          "kind": "thumb"
+        },
+        "Func_0200a474": {
+          "address": "0x200dd4c",
+          "kind": "thumb"
+        },
+        "Func_0200a4e8": {
+          "address": "0x200dd4c",
+          "kind": "thumb"
+        },
+        "Func_0200a502": {
+          "address": "0x200dd4c",
+          "kind": "thumb"
+        },
+        "Func_0200a522": {
+          "address": "0x200dd4c",
+          "kind": "thumb"
+        },
+        "Func_0200a53c": {
+          "address": "0x200dd4c",
+          "kind": "thumb"
+        },
+        "Func_0200a554": {
+          "address": "0x200dd4c",
+          "kind": "thumb"
+        },
+        "Func_0200a56c_a": {
+          "address": "0x200dd4c",
+          "kind": "thumb"
+        },
+        "Func_0200a578": {
+          "address": "0x200dd4c",
+          "kind": "thumb"
+        },
+        "Func_0200a4de": {
+          "address": "0x200dcac",
+          "kind": "thumb"
+        },
+        "Func_0200a61e": {
+          "address": "0x200dde4",
+          "kind": "thumb"
+        },
+        "Func_0200a65e": {
+          "address": "0x200de1c",
+          "kind": "thumb"
+        },
+        "Func_0200a45c_a": {
+          "address": "0x200dc04",
+          "kind": "thumb"
+        },
+        "Func_0200a45a_a": {
+          "address": "0x200dbfc",
+          "kind": "thumb"
+        },
+        "Func_0200a570": {
+          "address": "0x200dd0c",
+          "kind": "thumb"
+        },
+        "Func_0200a582": {
+          "address": "0x200dd14",
+          "kind": "thumb"
+        },
+        "Func_0200a5a0": {
+          "address": "0x200dd2c",
+          "kind": "thumb"
+        },
+        "Func_0200a590": {
+          "address": "0x200dd14",
+          "kind": "thumb"
+        },
+        "Func_0200a73c": {
+          "address": "0x200debc",
+          "kind": "thumb"
+        },
+        "Func_0200a6dc": {
+          "address": "0x200de54",
+          "kind": "thumb"
+        },
+        "Data_00000000": {
+          "address": "0x00000000",
+          "kind": "data"
+        },
+        "Data_00000002": {
+          "address": "0x00000002",
+          "kind": "data"
+        },
+        "Func_0200a73e": {
+          "address": "0x200de9c",
+          "kind": "thumb"
+        },
+        "Func_0200a74a": {
+          "address": "0x200dea4",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x0200423c",
+          "extent": 1692,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "karei-machi-dance-alternation",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/KAREI_MACHI/DANCE_ALTERNATION.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3a8",
+      "absolute_symbols": {
+        "Engine_ActorGet": {
+          "address": "0x0200bc1c",
+          "kind": "thumb"
+        },
+        "Engine_ActorEnableActionCallback": {
+          "address": "0x0200bc34",
+          "kind": "thumb"
+        },
+        "KareiMachi_DanceStep": {
+          "address": "0x0200d144",
+          "kind": "data"
+        },
+        "KareiMachi_DanceScriptA": {
+          "address": "0x0200bec0",
+          "kind": "data"
+        },
+        "KareiMachi_DanceScriptB": {
+          "address": "0x0200bfb0",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02001f14",
+          "extent": 244,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "karei-machi-entry-actors",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/KAREI_MACHI/ENTRY_ACTORS.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3a8",
+      "absolute_symbols": {
+        "Engine_GameFlagIsSet": {
+          "address": "0x0200bbd4",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagSet": {
+          "address": "0x0200bbdc",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetPosition": {
+          "address": "0x0200bc74",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetChildValue": {
+          "address": "0x0200bcac",
+          "kind": "thumb"
+        },
+        "Engine_ActorGet": {
+          "address": "0x0200bc1c",
+          "kind": "thumb"
+        },
+        "Engine_HeapAllocate": {
+          "address": "0x0200bb44",
+          "kind": "thumb"
+        },
+        "Engine_ItemLoadIcon": {
+          "address": "0x0200bbcc",
+          "kind": "thumb"
+        },
+        "Engine_VramLoad": {
+          "address": "0x0200bb54",
+          "kind": "thumb"
+        },
+        "Engine_HeapRelease": {
+          "address": "0x0200bb4c",
+          "kind": "thumb"
+        },
+        "Engine_TaskAddCallback": {
+          "address": "0x0200bb1c",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x020016bc",
+          "extent": 300,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "fune-kanpan-random-actors",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/RANDOM_ACTORS.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3af",
+      "absolute_symbols": {
+        "Engine_ActorSetSpritePriority": {
+          "address": "0x0200c3e4",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagIsSet": {
+          "address": "0x0200c2cc",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetPosition": {
+          "address": "0x0200c36c",
+          "kind": "thumb"
+        },
+        "Engine_ActorGet": {
+          "address": "0x0200c30c",
+          "kind": "thumb"
+        },
+        "Engine_RandomNext": {
+          "address": "0x0200c26c",
+          "kind": "thumb"
+        },
+        "Local_030003e0": {
+          "address": "0x0200c254",
+          "kind": "thumb"
+        },
+        "Engine_ActorEnableActionCallback": {
+          "address": "0x0200c324",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02001684",
+          "extent": 284,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "babi-iriguchi-jump-from-ledge",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/BABI_IRIGUCHI/JUMP_FROM_LEDGE.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3c5",
+      "absolute_symbols": {
+        "Engine_ActorGet": {
+          "address": "0x0200ae50",
+          "kind": "thumb"
+        },
+        "Engine_EventBegin": {
+          "address": "0x0200ae38",
+          "kind": "thumb"
+        },
+        "Engine_ActorShowEmote": {
+          "address": "0x0200af00",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpeed": {
+          "address": "0x0200ae58",
+          "kind": "thumb"
+        },
+        "Engine_ActorJump": {
+          "address": "0x0200aea0",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetDestinationOffset": {
+          "address": "0x0200ae78",
+          "kind": "thumb"
+        },
+        "Engine_ActorWaitForMove": {
+          "address": "0x0200ae80",
+          "kind": "thumb"
+        },
+        "Engine_ActorFaceDirection": {
+          "address": "0x0200aef0",
+          "kind": "thumb"
+        },
+        "SceneState_ApplyRectsAtActors8And9": {
+          "address": "0x0200a820",
+          "kind": "thumb"
+        },
+        "Engine_EventEnd": {
+          "address": "0x0200ae40",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02001030",
+          "extent": 196,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "torebi-izumi-walk-to-spring",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/TOREBI_IZUMI/WALK_TO_SPRING.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3b7",
+      "absolute_symbols": {
+        "Engine_GameFlagIsSet": {
+          "address": "0x020098e4",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagSet": {
+          "address": "0x020098ec",
+          "kind": "thumb"
+        },
+        "Local_02000880": {
+          "address": "0x02008880",
+          "kind": "thumb"
+        },
+        "Engine_EventBegin": {
+          "address": "0x0200991c",
+          "kind": "thumb"
+        },
+        "Engine_ActorWalkToAndWait": {
+          "address": "0x02009944",
+          "kind": "thumb"
+        },
+        "Engine_ActorFaceDirection": {
+          "address": "0x0200997c",
+          "kind": "thumb"
+        },
+        "Local_02000ac8": {
+          "address": "0x02008ac8",
+          "kind": "thumb"
+        },
+        "Engine_EventEnd": {
+          "address": "0x02009924",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02000104",
+          "extent": 80,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "korosseo-solo-round",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/KOROSSEO/SOLO_ROUND.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3ba",
+      "absolute_symbols": {
+        "Engine_ActorGet": {
+          "address": "0x0200bcb8",
+          "kind": "thumb"
+        },
+        "Engine_EventBegin": {
+          "address": "0x0200bca0",
+          "kind": "thumb"
+        },
+        "Engine_EventSetMessage": {
+          "address": "0x0200bd30",
+          "kind": "thumb"
+        },
+        "Engine_EventOpenMessage": {
+          "address": "0x0200bd38",
+          "kind": "thumb"
+        },
+        "Engine_UiWorkWaitThenFinalizeCapacity": {
+          "address": "0x0200bcb0",
+          "kind": "thumb"
+        },
+        "Engine_EventShowMessage": {
+          "address": "0x0200bd40",
+          "kind": "thumb"
+        },
+        "Engine_EventCloseScreen": {
+          "address": "0x0200bdb8",
+          "kind": "thumb"
+        },
+        "Engine_EventWaitForScreen": {
+          "address": "0x0200bdc0",
+          "kind": "thumb"
+        },
+        "Main_080770e8": {
+          "address": "0x0200bc70",
+          "kind": "thumb"
+        },
+        "Engine_EventRequestExit": {
+          "address": "0x0200bd88",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagSet": {
+          "address": "0x0200bc60",
+          "kind": "thumb"
+        },
+        "Korosseo_SelectSoloCompetitor": {
+          "address": "0x02009910",
+          "kind": "thumb"
+        },
+        "Engine_EventOpenScreen": {
+          "address": "0x0200bdb0",
+          "kind": "thumb"
+        },
+        "Engine_EventEnd": {
+          "address": "0x0200bca8",
+          "kind": "thumb"
+        },
+        "gGameStateRows": {
+          "address": "0x02000240",
+          "kind": "data"
+        },
+        "Korosseo_RoundMessage": {
+          "address": "0x00002086",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02001b5c",
+          "extent": 288,
+          "state": "exact-c"
+        }
+      ],
+      "instances": {
+        "resource_3bb": {
+          "owners": {
+            "Korosseo_FinishSoloRound": {
+              "address": "0x02001df4",
+              "extent": 288
+            }
+          },
+          "absolute_symbols": {
+            "Engine_ActorGet": {
+              "address": "0x0200bf50",
+              "kind": "thumb"
+            },
+            "Engine_EventBegin": {
+              "address": "0x0200bf38",
+              "kind": "thumb"
+            },
+            "Engine_EventSetMessage": {
+              "address": "0x0200bfd0",
+              "kind": "thumb"
+            },
+            "Engine_EventOpenMessage": {
+              "address": "0x0200bfd8",
+              "kind": "thumb"
+            },
+            "Engine_UiWorkWaitThenFinalizeCapacity": {
+              "address": "0x0200bf48",
+              "kind": "thumb"
+            },
+            "Engine_EventShowMessage": {
+              "address": "0x0200bfe0",
+              "kind": "thumb"
+            },
+            "Engine_EventCloseScreen": {
+              "address": "0x0200c068",
+              "kind": "thumb"
+            },
+            "Engine_EventWaitForScreen": {
+              "address": "0x0200c070",
+              "kind": "thumb"
+            },
+            "Main_080770e8": {
+              "address": "0x0200bf08",
+              "kind": "thumb"
+            },
+            "Engine_EventRequestExit": {
+              "address": "0x0200c030",
+              "kind": "thumb"
+            },
+            "Engine_GameFlagSet": {
+              "address": "0x0200bef0",
+              "kind": "thumb"
+            },
+            "Korosseo_SelectSoloCompetitor": {
+              "address": "0x02009ba8",
+              "kind": "thumb"
+            },
+            "Engine_EventOpenScreen": {
+              "address": "0x0200c060",
+              "kind": "thumb"
+            },
+            "Engine_EventEnd": {
+              "address": "0x0200bf40",
+              "kind": "thumb"
+            },
+            "gGameStateRows": {
+              "address": "0x02000240",
+              "kind": "data"
+            },
+            "Korosseo_RoundMessage": {
+              "address": "0x00002086",
+              "kind": "data"
+            }
+          }
+        },
+        "resource_3bc": {
+          "owners": {
+            "Korosseo_FinishSoloRound": {
+              "address": "0x0200288c",
+              "extent": 288
+            }
+          },
+          "absolute_symbols": {
+            "Engine_ActorGet": {
+              "address": "0x0200ca18",
+              "kind": "thumb"
+            },
+            "Engine_EventBegin": {
+              "address": "0x0200ca00",
+              "kind": "thumb"
+            },
+            "Engine_EventSetMessage": {
+              "address": "0x0200cab0",
+              "kind": "thumb"
+            },
+            "Engine_EventOpenMessage": {
+              "address": "0x0200cab8",
+              "kind": "thumb"
+            },
+            "Engine_UiWorkWaitThenFinalizeCapacity": {
+              "address": "0x0200ca10",
+              "kind": "thumb"
+            },
+            "Engine_EventShowMessage": {
+              "address": "0x0200cac0",
+              "kind": "thumb"
+            },
+            "Engine_EventCloseScreen": {
+              "address": "0x0200cb58",
+              "kind": "thumb"
+            },
+            "Engine_EventWaitForScreen": {
+              "address": "0x0200cb60",
+              "kind": "thumb"
+            },
+            "Main_080770e8": {
+              "address": "0x0200c9d0",
+              "kind": "thumb"
+            },
+            "Engine_EventRequestExit": {
+              "address": "0x0200cb10",
+              "kind": "thumb"
+            },
+            "Engine_GameFlagSet": {
+              "address": "0x0200c9b8",
+              "kind": "thumb"
+            },
+            "Korosseo_SelectSoloCompetitor": {
+              "address": "0x0200a640",
+              "kind": "thumb"
+            },
+            "Engine_EventOpenScreen": {
+              "address": "0x0200cb50",
+              "kind": "thumb"
+            },
+            "Engine_EventEnd": {
+              "address": "0x0200ca08",
+              "kind": "thumb"
+            },
+            "gGameStateRows": {
+              "address": "0x02000240",
+              "kind": "data"
+            },
+            "Korosseo_RoundMessage": {
+              "address": "0x00002086",
+              "kind": "data"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "ramakan-sabaku-nearest-actor",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/RAMAKAN_SABAKU/NEAREST_ACTOR.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3a5",
+      "absolute_symbols": {
+        "Engine_ActorGet": {
+          "address": "0x02009d74",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagSet": {
+          "address": "0x02009d4c",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetAnimation": {
+          "address": "0x02009dac",
+          "kind": "thumb"
+        },
+        "Engine_ActorFaceActor": {
+          "address": "0x02009dcc",
+          "kind": "thumb"
+        },
+        "Engine_EventWait": {
+          "address": "0x02009d5c",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetAttachedEffect": {
+          "address": "0x02009df4",
+          "kind": "thumb"
+        },
+        "Engine_ActorStartRepeatedMotion": {
+          "address": "0x02009dbc",
+          "kind": "thumb"
+        },
+        "Main_0808a108": {
+          "address": "0x02009db4",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpeed": {
+          "address": "0x02009d7c",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetDestination": {
+          "address": "0x02009d84",
+          "kind": "thumb"
+        },
+        "Engine_ActorShowEmote": {
+          "address": "0x02009dec",
+          "kind": "thumb"
+        },
+        "Engine_Import0808a250": {
+          "address": "0x02009e04",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02001180",
+          "extent": 380,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "haidia-dou-scene-script",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_DOU/SCENE_SCRIPT.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3a6",
+      "absolute_symbols": {
+        "Engine_TaskWait": {
+          "address": "0x02009c1c",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpritePriority": {
+          "address": "0x02009d1c",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagClear": {
+          "address": "0x02009c9c",
+          "kind": "thumb"
+        },
+        "Local_02001984": {
+          "address": "0x02009984",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x020016f0",
+          "extent": 88,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "suhara-sabaku-scene-script",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/SUHARA_SABAKU/SCENE_SCRIPT.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3c0",
+      "absolute_symbols": {
+        "Main_080770e0": {
+          "address": "0x02009264",
+          "kind": "thumb"
+        },
+        "Engine_TaskAddCallback": {
+          "address": "0x020091fc",
+          "kind": "thumb"
+        },
+        "FieldScene_RunOpeningAuxiliarySequence": {
+          "address": "0x02008d24",
+          "kind": "thumb"
+        },
+        "Local_02000f50": {
+          "address": "0x02008f50",
+          "kind": "thumb"
+        },
+        "Local_02001094": {
+          "address": "0x02009094",
+          "kind": "thumb"
+        },
+        "Engine_AudioPlayCue": {
+          "address": "0x02009374",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02000e8c",
+          "extent": 196,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "link-lobby-choice-prompt",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/MENU/LINK_LOBBY/CHOICE_PROMPT.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3cb",
+      "absolute_symbols": {
+        "Engine_EventBegin": {
+          "address": "0x02009844",
+          "kind": "thumb"
+        },
+        "Engine_ActorFaceActor": {
+          "address": "0x0200987c",
+          "kind": "thumb"
+        },
+        "Engine_EventSetMessage": {
+          "address": "0x02009884",
+          "kind": "thumb"
+        },
+        "Engine_EventShowMessage": {
+          "address": "0x02009894",
+          "kind": "thumb"
+        },
+        "Engine_DebugCreateWindow": {
+          "address": "0x020097ac",
+          "kind": "thumb"
+        },
+        "Main_08015060": {
+          "address": "0x020097d4",
+          "kind": "thumb"
+        },
+        "Main_080150a0": {
+          "address": "0x020097dc",
+          "kind": "thumb"
+        },
+        "Engine_TaskWait": {
+          "address": "0x02009714",
+          "kind": "thumb"
+        },
+        "Engine_DebugFinalizeWindow": {
+          "address": "0x020097b4",
+          "kind": "thumb"
+        },
+        "Main_080b5110": {
+          "address": "0x020098dc",
+          "kind": "thumb"
+        },
+        "Engine_EventEnd": {
+          "address": "0x0200984c",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02000e10",
+          "extent": 264,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "takara-hashira-scroll-jitter",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/TAKARA_HASHIRA/SCROLL_JITTER.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3b3",
+      "absolute_symbols": {
+        "Engine_RandomNext": {
+          "address": "0x0200aa4c",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02001578",
+          "extent": 84,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "takara-hashira-cell-attributes",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/TAKARA_HASHIRA/CELL_ATTRIBUTES.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3b3",
+      "absolute_symbols": {},
+      "owners": [
+        {
+          "address": "0x0200101c",
+          "extent": 88,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "takara-hashira-read-map-cell",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/TAKARA_HASHIRA/READ_MAP_CELL.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3b3",
+      "absolute_symbols": {},
+      "owners": [
+        {
+          "address": "0x02000fcc",
+          "extent": 80,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "link-lobby-count-message",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/MENU/LINK_LOBBY/COUNT_MESSAGE.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3cb",
+      "absolute_symbols": {
+        "Engine_EventBegin": {
+          "address": "0x02009844",
+          "kind": "thumb"
+        },
+        "Engine_ActorFaceActor": {
+          "address": "0x0200987c",
+          "kind": "thumb"
+        },
+        "Main_08015120": {
+          "address": "0x020097ec",
+          "kind": "thumb"
+        },
+        "Engine_EventSetMessage": {
+          "address": "0x02009884",
+          "kind": "thumb"
+        },
+        "Engine_EventOpenMessage": {
+          "address": "0x0200988c",
+          "kind": "thumb"
+        },
+        "Engine_EventEnd": {
+          "address": "0x0200984c",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02001158",
+          "extent": 92,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "fune-heya-first-set-flag",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/FUNE_HEYA/FIRST_SET_FLAG.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3b1",
+      "absolute_symbols": {
+        "Engine_GameFlagIsSet": {
+          "address": "0x0200e4a0",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02004fa8",
+          "extent": 92,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "ramakan-sabaku-sand-effect",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/RAMAKAN_SABAKU/SAND_EFFECT.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3a5",
+      "absolute_symbols": {
+        "Engine_AudioPlayCue": {
+          "address": "0x02009e44",
+          "kind": "thumb"
+        },
+        "Engine_RandomNext": {
+          "address": "0x02009c9c",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02000344",
+          "extent": 104,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "babi-fune-drifting-object",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/BABI_FUNE/DRIFTING_OBJECT.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3ca",
+      "absolute_symbols": {
+        "Engine_RandomNext": {
+          "address": "0x02009334",
+          "kind": "thumb"
+        },
+        "Engine_ObjectSetAnimation": {
+          "address": "0x0200936c",
+          "kind": "thumb"
+        },
+        "Engine_ObjectSetScript": {
+          "address": "0x02009374",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02000100",
+          "extent": 104,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "babi-fune-schedule-fade",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/BABI_FUNE/SCHEDULE_FADE.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3ca",
+      "absolute_symbols": {
+        "Main_08000170": {
+          "address": "0x0200934c",
+          "kind": "thumb"
+        },
+        "Main_080001d0": {
+          "address": "0x0200935c",
+          "kind": "thumb"
+        },
+        "Engine_VramLoad": {
+          "address": "0x02009354",
+          "kind": "thumb"
+        },
+        "Engine_TaskAddCallback": {
+          "address": "0x02009324",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x020012ac",
+          "extent": 104,
           "state": "exact-c"
         }
       ]

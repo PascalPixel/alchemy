@@ -6516,7 +6516,8 @@
       "source": "FIELD/VINASU_CHOJO/SCRIPTED_PRESENTATION.C"
     },
     "resource_3c9:0200423c": {
-      "name": "Scene_RunExtendedPresentation"
+      "name": "VinasuChojo_RunActorTransition",
+      "source": "FIELD/VINASU_CHOJO/ACTOR_TRANSITION.C"
     },
     "resource_376:02000658": {
       "name": "FieldScene_RunLongPresentationSequence",
@@ -20076,6 +20077,86 @@
     "main:080fa280": {
       "name": "MusicPlayer_BeginFadeOut",
       "source": "SOUND/MUSIC_PLAYER_BEGIN_FADE_OUT.C"
+    },
+    "resource_3ca:020012ac": {
+      "name": "BabiFune_ScheduleFade",
+      "source": "FIELD/BABI_FUNE/SCHEDULE_FADE.C"
+    },
+    "resource_3ca:02000100": {
+      "name": "BabiFune_UpdateDriftingObject",
+      "source": "FIELD/BABI_FUNE/DRIFTING_OBJECT.C"
+    },
+    "resource_3a5:02000344": {
+      "name": "RamakanSabaku_EmitSandEffect",
+      "source": "FIELD/RAMAKAN_SABAKU/SAND_EFFECT.C"
+    },
+    "resource_3b1:02004fa8": {
+      "name": "FuneHeya_FindFirstSetFlag",
+      "source": "FIELD/FUNE_HEYA/FIRST_SET_FLAG.C"
+    },
+    "resource_3cb:02001158": {
+      "name": "LinkLobby_ShowCountMessage",
+      "source": "MENU/LINK_LOBBY/COUNT_MESSAGE.C"
+    },
+    "resource_3b3:02000fcc": {
+      "name": "TakaraHashira_ReadMapCell",
+      "source": "FIELD/TAKARA_HASHIRA/READ_MAP_CELL.C"
+    },
+    "resource_3b3:0200101c": {
+      "name": "TakaraHashira_SetCellAttributes",
+      "source": "FIELD/TAKARA_HASHIRA/CELL_ATTRIBUTES.C"
+    },
+    "resource_3b3:02001578": {
+      "name": "TakaraHashira_JitterBackgroundScroll",
+      "source": "FIELD/TAKARA_HASHIRA/SCROLL_JITTER.C"
+    },
+    "resource_3cb:02000e10": {
+      "name": "LinkLobby_RunChoicePrompt",
+      "source": "MENU/LINK_LOBBY/CHOICE_PROMPT.C"
+    },
+    "resource_3c0:02000e8c": {
+      "name": "SuharaSabaku_RunSceneScript",
+      "source": "FIELD/SUHARA_SABAKU/SCENE_SCRIPT.C"
+    },
+    "resource_3a6:020016f0": {
+      "name": "HaidiaDou_RunSceneScript",
+      "source": "FIELD/HAIDIA_DOU/SCENE_SCRIPT.C"
+    },
+    "resource_3a5:02001180": {
+      "name": "RamakanSabaku_FaceNearestActor",
+      "source": "FIELD/RAMAKAN_SABAKU/NEAREST_ACTOR.C"
+    },
+    "resource_3bc:0200288c": {
+      "name": "Korosseo_FinishSoloRound",
+      "source": "FIELD/COMMON/KOROSSEO/SOLO_ROUND.C"
+    },
+    "resource_3bb:02001df4": {
+      "name": "Korosseo_FinishSoloRound",
+      "source": "FIELD/COMMON/KOROSSEO/SOLO_ROUND.C"
+    },
+    "resource_3ba:02001b5c": {
+      "name": "Korosseo_FinishSoloRound",
+      "source": "FIELD/COMMON/KOROSSEO/SOLO_ROUND.C"
+    },
+    "resource_3b7:02000104": {
+      "name": "TorebiIzumi_WalkLeaderToSpring",
+      "source": "FIELD/TOREBI_IZUMI/WALK_TO_SPRING.C"
+    },
+    "resource_3c5:02001030": {
+      "name": "BabiIriguchi_JumpFromLedge",
+      "source": "FIELD/BABI_IRIGUCHI/JUMP_FROM_LEDGE.C"
+    },
+    "resource_3af:02001684": {
+      "name": "FuneKanpan_PlaceRandomDeckActors",
+      "source": "FIELD/FUNE_KANPAN/RANDOM_ACTORS.C"
+    },
+    "resource_3a8:020016bc": {
+      "name": "KareiMachi_SetupEntryActors",
+      "source": "FIELD/KAREI_MACHI/ENTRY_ACTORS.C"
+    },
+    "resource_3a8:02001f14": {
+      "name": "KareiMachi_AlternateDance",
+      "source": "FIELD/KAREI_MACHI/DANCE_ALTERNATION.C"
     }
   },
   "symbols": {

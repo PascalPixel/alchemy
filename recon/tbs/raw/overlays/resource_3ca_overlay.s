@@ -268,55 +268,8 @@ AlchemyC_020000a8:
 	.space 0x8
 AlchemyC_020000b0:
 	.space 0x50
-	push	{r5, r6, lr}
-	adds	r6, r0, #0
-	adds	r2, r6, #0
-	adds	r2, #100
-	movs	r0, #0
-	ldrsh	r1, [r2, r0]
-	ldrh	r3, [r2, #0]
-	cmp	r1, #0
-	beq.n	.L_02000132
-	subs	r3, #1
-	strh	r3, [r2, #0]
-	bl	sub_0200144c
-	adds	r5, r0, #0
-	bl	sub_02001452
-	ldr	r3, [r6, #8]
-	subs	r5, r5, r0
-	adds	r3, r3, r5
-	str	r3, [r6, #8]
-	ldr	r2, [pc, #52]
-	ldr	r3, [r6, #12]
-	adds	r3, r3, r2
-	str	r3, [r6, #12]
-	b.n	.L_02000158
-.L_02000132:
-	adds	r2, r6, #0
-	adds	r2, #102
-	movs	r0, #0
-	ldrsh	r3, [r2, r0]
-	cmp	r3, #0
-	beq.n	.L_02000158
-	strh	r1, [r2, #0]
-	adds	r0, r6, #0
-	movs	r1, #1
-	bl	sub_020014b2
-	adds	r2, r6, #0
-	adds	r2, #94
-	movs	r3, #20
-	strh	r3, [r2, #0]
-	ldr	r1, [pc, #16]
-	adds	r0, r6, #0
-	bl	sub_020014ca
-.L_02000158:
-	pop	{r5, r6}
-	pop	{r0}
-	bx	r0
-	.2byte 0x0000
-	.4byte 0x0000cccc
-	.2byte 0x94c4
-	.2byte 0x0200
+AlchemyC_02000100:
+	.space 0x68
 AlchemyC_02000168:
 	.space 0x2c
 	push	{r5, r6, r7, lr}
@@ -1914,47 +1867,8 @@ AlchemyC_02001188:
 	.4byte 0x02009af8
 	.2byte 0x4000
 	.2byte 0x8000
-	push	{r5, r6, lr}
-	movs	r0, #128
-	lsls	r0, r0, #1
-	sub	sp, #4
-	bl	sub_02002602
-	ldr	r5, [pc, #64]
-	adds	r6, r0, #0
-	bl	sub_0200261a
-	ldr	r3, [pc, #60]
-	strh	r0, [r5, #0]
-	mov	r0, sp
-	str	r3, [r0, #0]
-	adds	r1, r6, #0
-	ldr	r3, [pc, #56]
-	ldr	r2, [pc, #56]
-	stmia	r3!, {r0, r1, r2}
-	subs	r3, #12
-	movs	r1, #128
-	movs	r3, #0
-	ldrsh	r0, [r5, r3]
-	adds	r2, r6, #0
-	lsls	r1, r1, #1
-	bl	sub_02002632
-	ldr	r2, [pc, #40]
-	ldr	r3, [pc, #20]
-	movs	r1, #200
-	strh	r3, [r2, #0]
-	lsls	r1, r1, #4
-	ldr	r0, [pc, #36]
-	bl	sub_02002612
-	add	sp, #4
-	pop	{r5, r6}
-	pop	{r0}
-	bx	r0
-	.4byte 0x00000030
-	.4byte 0x02009c1a
-	.4byte 0x11111111
-	.4byte 0x040000d4
-	.4byte 0x85000040
-	.4byte 0x02009c18
-	.4byte 0x020091c5
+AlchemyC_020012ac:
+	.space 0x68
 	.include "games/THE BROKEN SEAL/SRC/FIELD/BABI_FUNE/IMPORT.INC"
 	.4byte 0x69c05860
 	.4byte 0x69c07f20

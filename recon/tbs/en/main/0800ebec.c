@@ -1,3 +1,14 @@
+/* Draft, not exact (2026-09-24): 1,790 of 1,804 bytes, 77.5% aligned
+ * similarity; every call site is in the ROM's order. Rewritten from the ROM:
+ * the four delay loops are goto loops (a do/while is unrolled away); the
+ * timer and footprint-phase stores go through the actor's members so the
+ * constants become movs; FootprintSpawn takes the kind first; the ungated
+ * path squares the x and z velocity through Iwram_MulQ16, takes FixedSqrt
+ * and redirects it along the facing. Remaining: the ROM keeps angle << 16 in
+ * [sp+4] and derives (u32)angle >> 16 afresh after each join, where GCSE
+ * here keeps one copy (so r6/r8/fp/r9 roles shift); the footprint phase is
+ * read twice (ldrsh for == 2, ldrh for the flip) with the flip's zero from
+ * the pool; mode and facing trade [sp+8]/[sp+12] with declaration order. */
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 
@@ -172,7 +183,7 @@ wait_d:
     }
 
     angle = Data_08013254[(Data_03001ae8 >> 4) & 15] << 16;
-    if ((u32)angle >> 16 == 0xffff) {
+    if ((u16)((u32)angle >> 16) == 0xffff) {
         blocked |= 4;
         goto tail;
     }
@@ -181,7 +192,7 @@ wait_d:
     posA[0] = actor->pos[0];
     posA[1] = actor->pos[1];
     posA[2] = actor->pos[2];
-    Vector_AddPolarOffset(0x80000, (u32)angle >> 16, posA);
+    Vector_AddPolarOffset(0x80000, (u16)((u32)angle >> 16), posA);
 
     if (Data_03001f54 != 0) {
         facing = angle >> 16;
@@ -195,28 +206,28 @@ wait_d:
     posB[0] = actor->pos[0];
     posB[1] = actor->pos[1];
     posB[2] = actor->pos[2];
-    Vector_AddPolarOffset(0x80000, ((u32)angle >> 16) + 0x1000, posB);
+    Vector_AddPolarOffset(0x80000, ((u16)((u32)angle >> 16)) + 0x1000, posB);
     if (Func_080120dc(actor, posB) != 0)
         goto search;
 
     posB[0] = actor->pos[0];
     posB[1] = actor->pos[1];
     posB[2] = actor->pos[2];
-    Vector_AddPolarOffset(0x80000, ((u32)angle >> 16) - 0x1000, posB);
+    Vector_AddPolarOffset(0x80000, ((u16)((u32)angle >> 16)) - 0x1000, posB);
     if (Func_080120dc(actor, posB) != 0)
         goto search;
 
     posB[0] = actor->pos[0];
     posB[1] = actor->pos[1];
     posB[2] = actor->pos[2];
-    Vector_AddPolarOffset(0x80000, ((u32)angle >> 16) + 0x2000, posB);
+    Vector_AddPolarOffset(0x80000, ((u16)((u32)angle >> 16)) + 0x2000, posB);
     if (Func_080120dc(actor, posB) != 0)
         goto search;
 
     posB[0] = actor->pos[0];
     posB[1] = actor->pos[1];
     posB[2] = actor->pos[2];
-    Vector_AddPolarOffset(0x80000, ((u32)angle >> 16) - 0x2000, posB);
+    Vector_AddPolarOffset(0x80000, ((u16)((u32)angle >> 16)) - 0x2000, posB);
     if (Func_080120dc(actor, posB) != 0)
         goto search;
 
@@ -224,7 +235,7 @@ wait_d:
     goto move;
 
 search:
-    dir = (u32)angle >> 16;
+    dir = (u16)((u32)angle >> 16);
     deltas[0] = dir + 0x1000;
     deltas[1] = dir - 0x1000;
     deltas[2] = dir + 0x2000;
@@ -378,7 +389,7 @@ tail:
         if (blocked & 3) {
             s32 diff;
 
-            diff = (s16)(((u32)angle >> 16) - actor->facing);
+            diff = (s16)(((u16)((u32)angle >> 16)) - actor->facing);
             if (diff > 0x1000)
                 diff = 0x1000;
             if (diff < -0x1000)
@@ -400,7 +411,7 @@ tail:
             actor->step_timer--;
     }
 
-    dir = (u32)angle >> 16;
+    dir = (u16)((u32)angle >> 16);
     if (Data_03001e70->footprints != 0 && actor->step_timer == 0 && blocked == 0) {
         struct FieldActor *print;
 

@@ -1,4 +1,4 @@
-/* Draft, not exact (2026-09-24): 62 of 58 reference halfwords differ (128 vs 116 bytes).
+/* Draft, not exact (2026-09-24): 128-byte candidate for the 116-byte owner, 62 halfwords differ.
    The literal pool lands after the level == 0 branch instead of at the end, and the IME write
    loads 0x0208 from the pool where the reference stores the low half of the IME address
    register itself (strh r3, [r3]). Plain stores instead of Dma_Set, inverted branches and

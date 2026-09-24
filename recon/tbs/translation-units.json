@@ -37208,34 +37208,6 @@
           "address": "0x200d97c",
           "kind": "thumb"
         },
-        "Func_020084ec": {
-          "address": "0x200db8c",
-          "kind": "thumb"
-        },
-        "Func_02008552_a": {
-          "address": "0x200daac",
-          "kind": "thumb"
-        },
-        "Func_020085b6": {
-          "address": "0x200db8c",
-          "kind": "thumb"
-        },
-        "Func_020085e6": {
-          "address": "0x200db1c",
-          "kind": "thumb"
-        },
-        "Func_02008644_a": {
-          "address": "0x200daac",
-          "kind": "thumb"
-        },
-        "Func_0200869e_a": {
-          "address": "0x200daac",
-          "kind": "thumb"
-        },
-        "Func_0200881e_a": {
-          "address": "0x200dad4",
-          "kind": "thumb"
-        },
         "gEventWork": {
           "address": "0x03001ebc",
           "kind": "data"

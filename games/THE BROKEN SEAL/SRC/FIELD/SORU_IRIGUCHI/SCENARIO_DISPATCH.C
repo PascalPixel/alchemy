@@ -110,18 +110,11 @@ void Func_020020fe();
 s32 *Func_0200213e(s32);
 s32 *Func_0200217e(s32);
 s32 *Func_020021be(s32);
-void Func_02001de6(s32);
 s32 *Func_02002206(s32);
-void Func_02001e2a(s32);
 s32 *Func_0200224e(s32);
-void Func_02001e76(s32);
 s32 *Func_02002296(s32);
-void Func_02001eba(s32);
 s32 *Func_020022de(s32);
-void Func_02001f06(s32);
 s32 *Func_02002326(s32);
-void Func_02001f4a(s32);
-void Func_02001236(void);
 void Func_0200133a(void);
 void Func_0200248a();
 s32 Func_0200293e_a();
@@ -210,6 +203,8 @@ s32 Func_0200332e();
  * shared with later uses in the block.  A value-returning call also sets r0
  * last of its arguments.
  */
+void Scene_RunActorFormation(s32 a0);
+
 static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
 {
     f(a0, a1, a2);
@@ -652,7 +647,7 @@ void Scene_UpdateFormationActor9Flags(void)
     } else if (pos == 101) {
         Scene_Call(Engine_GameFlagSet, 0x310);
     }
-    Scene_Call(Func_02001de6, 0);
+    Scene_Call(Scene_RunActorFormation, 0);
 }
 
 void Scene_UpdateFormationActor10Flags(void)
@@ -671,7 +666,7 @@ void Scene_UpdateFormationActor10Flags(void)
     } else if (pos == 105) {
         Scene_Call(Engine_GameFlagSet, 0x312);
     }
-    Scene_Call(Func_02001e2a, 0);
+    Scene_Call(Scene_RunActorFormation, 0);
 }
 
 void Scene_UpdateFormationActor11Flags(void)
@@ -690,7 +685,7 @@ void Scene_UpdateFormationActor11Flags(void)
     } else if (pos == 109) {
         Scene_Call(Engine_GameFlagSet, 0x314);
     }
-    Scene_Call(Func_02001e76, 0);
+    Scene_Call(Scene_RunActorFormation, 0);
 }
 
 void Scene_UpdateFormationActor12Flags(void)
@@ -709,7 +704,7 @@ void Scene_UpdateFormationActor12Flags(void)
     } else if (pos == 113) {
         Scene_Call(Engine_GameFlagSet, 0x316);
     }
-    Scene_Call(Func_02001eba, 0);
+    Scene_Call(Scene_RunActorFormation, 0);
 }
 
 void Scene_UpdateFormationActor13Flags(void)
@@ -728,7 +723,7 @@ void Scene_UpdateFormationActor13Flags(void)
     } else if (pos == 117) {
         Scene_Call(Engine_GameFlagSet, 0x318);
     }
-    Scene_Call(Func_02001f06, 0);
+    Scene_Call(Scene_RunActorFormation, 0);
 }
 
 void Scene_UpdateFormationActor14Flags(void)
@@ -745,7 +740,7 @@ void Scene_UpdateFormationActor14Flags(void)
     } else if (pos == 121) {
         Scene_Call(Engine_GameFlagSet, 0x31a);
     }
-    Scene_Call(Func_02001f4a, 0);
+    Scene_Call(Scene_RunActorFormation, 0);
 }
 
 s32 *SceneActor_FindSlotByTilePosition(s32 x, s32 z)
@@ -770,7 +765,7 @@ s32 FieldScene_DispatchByScenarioId(void)
     s32 scenario = gGameState.scene;
 
     if (scenario == (s32)&Value_00000013) {
-        Func_02001236();
+        FieldScene_RunScene37f_0200092c();
     } else if (scenario == (s32)&Value_00000010) {
         Func_0200133a();
     }

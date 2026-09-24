@@ -68517,10 +68517,6 @@
           "address": "0x02009b7c",
           "kind": "thumb"
         },
-        "Func_02001236": {
-          "address": "0x0200892c",
-          "kind": "thumb"
-        },
         "Func_0200133a": {
           "address": "0x02008a24",
           "kind": "thumb"
@@ -68529,32 +68525,8 @@
           "address": "0x02009bbc",
           "kind": "thumb"
         },
-        "Func_02001de6": {
-          "address": "0x020097c0",
-          "kind": "thumb"
-        },
-        "Func_02001e2a": {
-          "address": "0x020097c0",
-          "kind": "thumb"
-        },
-        "Func_02001e76": {
-          "address": "0x020097c0",
-          "kind": "thumb"
-        },
-        "Func_02001eba": {
-          "address": "0x020097c0",
-          "kind": "thumb"
-        },
-        "Func_02001f06": {
-          "address": "0x020097c0",
-          "kind": "thumb"
-        },
         "Func_02001f3a": {
           "address": "0x02009cbc",
-          "kind": "thumb"
-        },
-        "Func_02001f4a": {
-          "address": "0x020097c0",
           "kind": "thumb"
         },
         "Func_020020fe": {

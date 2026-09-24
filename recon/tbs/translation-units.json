@@ -79656,6 +79656,102 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "scene-399-02000b70",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/IMIRU_MURA/F_00B70.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_399",
+      "absolute_symbols": {
+        "Engine_ActorGet": {
+          "address": "0x0200a248",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetAnimation": {
+          "address": "0x0200a2b8",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagIsSet": {
+          "address": "0x0200a210",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagClear": {
+          "address": "0x0200a220",
+          "kind": "thumb"
+        },
+        "Engine_TaskAddCallback": {
+          "address": "0x0200a178",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpritePriority": {
+          "address": "0x0200a328",
+          "kind": "thumb"
+        },
+        "SceneState_UpdateActor11WithFlag203": {
+          "address": "0x02009960",
+          "kind": "thumb"
+        },
+        "RunEventScript02": {
+          "address": "0x020099bc",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetChildValue": {
+          "address": "0x0200a2e8",
+          "kind": "thumb"
+        },
+        "Engine_MapCopyCellAttributes": {
+          "address": "0x0200a200",
+          "kind": "thumb"
+        },
+        "Engine_MapCopyCellsTo": {
+          "address": "0x0200a1e8",
+          "kind": "thumb"
+        },
+        "Engine_MapRedraw": {
+          "address": "0x0200a1c8",
+          "kind": "thumb"
+        },
+        "Engine_TaskWait": {
+          "address": "0x0200a170",
+          "kind": "thumb"
+        },
+        "Engine_ActorEnableActionCallback": {
+          "address": "0x0200a258",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetPosition": {
+          "address": "0x0200a2b0",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpriteFlags": {
+          "address": "0x0200a208",
+          "kind": "thumb"
+        },
+        "FieldScene_RunPrimaryScriptChoreography": {
+          "address": "0x02008f90",
+          "kind": "thumb"
+        },
+        "FieldScene_RunThreeActorChoreography": {
+          "address": "0x020099e8",
+          "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02000b70",
+          "extent": 1056,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

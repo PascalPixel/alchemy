@@ -10,19 +10,19 @@ struct EventCellPairs {
     u16 second_1d6;
 };
 
-extern s32 gCell[];
+extern s32 gGameState[];
 extern struct EventRuntime *gEventWork;
 
 void Event_SetPair1d4(u16 first, u16 second)
 {
-    ((struct EventCellPairs *)gCell)->first_1d4 = first;
-    ((struct EventCellPairs *)gCell)->second_1d6 = second;
+    ((struct EventCellPairs *)gGameState)->first_1d4 = first;
+    ((struct EventCellPairs *)gGameState)->second_1d6 = second;
 }
 
 void Event_SetPair1c0AndSetValue170(u16 first, u16 second)
 {
     struct EventRuntime *work = gEventWork;
-    ((struct EventCellPairs *)gCell)->first_1c0 = first;
-    ((struct EventCellPairs *)gCell)->second_1c2 = second;
+    ((struct EventCellPairs *)gGameState)->first_1c0 = first;
+    ((struct EventCellPairs *)gGameState)->second_1c2 = second;
     work->value_170 = 999;
 }

@@ -6,11 +6,11 @@ struct Party {
     s16 cue;
 };
 
-extern struct Party gCell;
+extern struct Party gGameState;
 
 extern void Audio_PlayCue(s16 arg0);
 
 void Audio_PlayCueFromEventWork(void)
 {
-    Audio_PlayCue(gCell.cue);
+    Audio_PlayCue(gGameState.cue);
 }

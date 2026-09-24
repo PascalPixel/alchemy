@@ -34,7 +34,7 @@ void Audio_PlayCue(s32 no);
 void FieldEffect_WatchLeaderDistance(void);
 
 extern SceneTransitionContext *gEffectWork;
-extern s32 gCell[];
+extern s32 gGameState[];
 
 void ResetSceneTransitionEffect(void)
 {
@@ -64,7 +64,7 @@ void ResetSceneTransitionEffect(void)
 
         resource = BattleFx_FindMatchingEvent(0x40000005, 8, &size);
         if (resource != NULL)
-            BattleFx_RunEventAction(resource, gCell[125], size);
+            BattleFx_RunEventAction(resource, gGameState[125], size);
 
         if (ctx->field34 == 0) {
             scene->transition_phase = 0;

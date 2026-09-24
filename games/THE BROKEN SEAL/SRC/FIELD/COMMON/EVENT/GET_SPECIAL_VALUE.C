@@ -6,12 +6,12 @@ struct Fields_0808b248 {
     s16 value;
 };
 
-extern struct Fields_0808b248 gCell;
+extern struct Fields_0808b248 gGameState;
 
 s16 Event_GetSpecialValue(void)
 {
     /* 作業領域0x1d6の半語を返す。 */
-    return gCell.value;
+    return gGameState.value;
 }
 
 /* battle/effects/set_special_from_table.c */
@@ -19,7 +19,7 @@ extern s32 RomWords_0809e270[];
 
 void BattleFx_SetSpecialFromTable(s32 arg0, s32 arg1)
 {
-    s16 *special = (s16 *)&gCell;
+    s16 *special = (s16 *)&gGameState;
     s32 target = special[224];
     s32 *table = RomWords_0809e270;
     s32 entry = *table++;

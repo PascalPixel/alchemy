@@ -5,7 +5,7 @@
 #include "RESOURCE.H"
 #include "PARTY_STATE.H"
 
-extern struct PartyState gCell;
+extern struct PartyState gGameState;
 void GameFlag_ClearBit(s32 flag);
 s32 GameFlag_SetBit(s32 flag);
 
@@ -21,7 +21,7 @@ void GameFlag_RefreshLureCap(void)
         struct OwnerInventoryState *owner;
         s32 i;
 
-        owner = OwnerState_Get(gCell.active_owners[n]);
+        owner = OwnerState_Get(gGameState.active_owners[n]);
         for (i = 0; i < 15; i++) {
             if (owner->inventory[i] & 0x200) {
                 u8 *record;

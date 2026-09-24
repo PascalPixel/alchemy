@@ -3,7 +3,7 @@
 #include "GLOBAL_CELLS.H"
 
 /* battle/summon/clear_work_fields.c */
-extern s16 gCell[];
+extern s16 gGameState[];
 
 union Word {
     s32 value;
@@ -18,7 +18,7 @@ void Summon_ClearWorkFields(void)
 
     base = *(u8 **)ADDR_03001E74;
     words = (union Word *)(base + 0x530);
-    gCell[286] = 0;
+    gGameState[286] = 0;
     words[0].value = 0;
     words[1].value = 0;
     words[2].value = 0;

@@ -10,11 +10,11 @@ struct SharedWork080a23c0 {
 };
 
 extern void UiText_DrawAt(s32, s32, s32, s32);
-extern struct SharedWork080a23c0 gCell;
+extern struct SharedWork080a23c0 gGameState;
 
 void UiText_DrawWorkValueWithLabel(s32 work)
 {
-    Ui_SetRange(gCell.resource, 7, work, 8, 0);
+    Ui_SetRange(gGameState.resource, 7, work, 8, 0);
     UiText_DrawAt(0xB0B, work, 0x40, 0);
 }
 

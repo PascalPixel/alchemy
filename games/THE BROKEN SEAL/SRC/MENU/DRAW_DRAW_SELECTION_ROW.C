@@ -42,7 +42,7 @@ void UiTextResource_SetPosition(struct TextObject *object, s32 x, s32 y);
 s16 FunctionHead_08029094(
     struct Work *work, s16 primary, s16 *secondary, s16 *mode);
 
-extern struct MenuDefaults gCell;
+extern struct MenuDefaults gGameState;
 extern volatile u32 gKeysHeld;
 
 struct Work *UiWindow_Create(s32 kind, s32 x, s32 y, s32 width, s32 layer);
@@ -63,8 +63,8 @@ s16 Menu_RunSelection(void)
 
     work = 0;
     mode = 0;
-    primary = gCell.primary;
-    secondary = gCell.secondary;
+    primary = gGameState.primary;
+    secondary = gGameState.secondary;
     work = UiWindow_Create(0, 7, 30, 5, 2);
     Menu_DrawSelectionRow(work, primary, &secondary);
     UiTextResource_Initialize(&object, &resource);

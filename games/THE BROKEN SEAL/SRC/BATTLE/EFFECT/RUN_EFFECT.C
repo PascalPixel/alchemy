@@ -25,7 +25,7 @@ struct BattleEffectGlobals {
 };
 
 extern struct BattleEffectRequest *gEffectWork;
-extern struct BattleEffectGlobals gCell;
+extern struct BattleEffectGlobals gGameState;
 
 void RunBattleEffect01(void);
 void RunSceneTransitionEffect(s32 source_id, s32 target_id);
@@ -97,18 +97,18 @@ void BattleFx_Run(void)
         RunBattleEffect13();
         return;
     case 9:
-        if (gCell.selected_id != -1) {
-            BattleFx_ResumeObject(gCell.selected_id);
-            gCell.selected_id = -1;
+        if (gGameState.selected_id != -1) {
+            BattleFx_ResumeObject(gGameState.selected_id);
+            gGameState.selected_id = -1;
         }
 
-        obj_id = BattleEffect_SelectNearbyTargetObject(gCell.selected_object, battle_mode);
+        obj_id = BattleEffect_SelectNearbyTargetObject(gGameState.selected_object, battle_mode);
         obj_id = BattleFx_FilterObjectIdByFlags(obj_id);
         if (BattleFx_FindDescriptorWithOverride(obj_id)!= 0) {
-            BattleFx_SetupObjectPair(gCell.selected_object, obj_id);
+            BattleFx_SetupObjectPair(gGameState.selected_object, obj_id);
             BattleFx_MarkChildAndRunFallbackTransition(obj_id);
             BattleFx_PauseObject(obj_id);
-            gCell.selected_id = obj_id;
+            gGameState.selected_id = obj_id;
         } else {
             BattleEffect_RunFallbackObjectTransition();
         }
@@ -146,7 +146,7 @@ void BattleFx_DispatchRequestKind(void)
     case 2:
         if (battle->active != 0)
             ResetSceneTransitionEffect();
-        if (gCell.selected_id != request->target_id)
+        if (gGameState.selected_id != request->target_id)
             *(u8 *)((u8 *)request->object + 91) = 1;
         RunSceneTransitionEffect(request->source_id, target_id);
         break;
@@ -172,12 +172,12 @@ void BattleFx_DispatchRequestKind(void)
         BattleFx_RunBurstParticleMainObject(target_id);
         break;
     case 9:
-        if (gCell.selected_id != -1) {
-            BattleFx_ResumeObject(gCell.selected_id);
-            gCell.selected_id = -1;
+        if (gGameState.selected_id != -1) {
+            BattleFx_ResumeObject(gGameState.selected_id);
+            gGameState.selected_id = -1;
         }
         BattleFx_PauseObject(target_id);
-        gCell.selected_id = target_id;
+        gGameState.selected_id = target_id;
         BattleFx_MarkChildAndRunFallbackTransition(target_id);
         break;
     case 3:
@@ -211,7 +211,7 @@ void BattleFx_ClearChildValueOnMismatch(void)
 
     if (request->battle_mode == 2) {
         BattleFx_FinishSceneAndReleaseHeapBlock();
-        if (gCell.selected_id != request->target_id) {
+        if (gGameState.selected_id != request->target_id) {
             *(u8 *)((u8 *)request->object + 91) = 0;
         }
     }

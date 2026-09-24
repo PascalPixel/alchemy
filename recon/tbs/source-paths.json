@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_399:020007a4": {
+      "name": "ImiruMura_Func020007a4",
+      "source": "FIELD/IMIRU_MURA/F_007A4.C"
+    },
     "resource_39c:02005458": {
       "name": "MakyuriIriguchi_Func02001ec8",
       "source": "FIELD/MAKYURI_IRIGUCHI/F_01EC8.C"

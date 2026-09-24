@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "main:080fa280": {
+      "name": "MusicPlayer_BeginFadeOut",
+      "source": "SOUND/MUSIC_PLAYER_BEGIN_FADE_OUT.C"
+    },
     "resource_3b3:020024cc": {
       "name": "TakaraHashira_DropActorTen",
       "source": "FIELD/TAKARA_HASHIRA/DROP_ACTOR_TEN.C"

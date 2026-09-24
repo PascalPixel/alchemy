@@ -4,6 +4,7 @@
 #include "SOUND_IDS.H"
 #include "SYSTEM.H"
 #include "FIXED_MATH.H"
+#include "UI.H"
 
 s32 Inventory_AddItemFar(s32, s32);
 s32 Inventory_FindEquippedFar(s32, u8);
@@ -50,7 +51,6 @@ void Shop_DrawUnitGrid(s32 value, s32 unit_id);
 void Audio_PlayCue(s32 cue);
 void UiWork_FinalizePendingCoreFar(void);
 s32 UiText_OpenMessageWindowFar(s32 a, s32 b, s32 c, s32 d);
-s32 UiWork_IsCompleteFar(void);
 
 extern struct ShopRuntime *gMenuWork;
 extern char Value_00000ca2;
@@ -152,7 +152,6 @@ s32 Shop_SalePrice(s32 item_id)
 #define BASE_W 12
 #endif
 
-s32 UiWindow_CreateFar(s32, s32, s32, s32, s32);
 void UiWindow_Close(s32, s32);
 s32 Ability_GetAvailability(s32);
 void PsynergyMenu_InitializeEntryObjectsFar(s32, s32, s32, s32, s32);

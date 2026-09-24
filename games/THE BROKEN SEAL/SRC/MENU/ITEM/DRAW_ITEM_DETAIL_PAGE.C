@@ -1,11 +1,11 @@
 #include "TYPES.H"
 #include "SYSTEM.H"
+#include "UI.H"
 
 extern void *gMenuWork;
 extern u8 Value_00000075;
 
 void RenderOutput_RedrawSavedRectFar(s32);
-void UiText_DrawCharacterAtOffsetFar(s32, s32, s32, s32);
 s32 Render_SetTilemapFlagRect(s32, s32, s32, s32, s32, s32);
 
 s32 ItemMenu_DrawItemDetailPage(s32 arg0, s32 arg1, void *state)

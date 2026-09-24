@@ -1,6 +1,7 @@
 #include "DMA.H"
 #include "FIXED_MATH.H"
 #include "RESOURCE.H"
+#include "UI.H"
 
 struct UiSprite {
     u8 unknown_00[24];
@@ -9,13 +10,11 @@ struct UiSprite {
 };
 
 void *Runtime_AllocateBlock(s32 kind, s32 size);
-s32 UiWindow_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 flags);
 s32 VramBlock_LoadCached(u32 slot, u32 size, const void *source);
 struct UiSprite *RenderOutput_CreateFar(s32 slot, s32 attributes, s32 window, s32 x, s32 y);
 void Audio_PlayCue(s32 cue);
 void Shop_FillSelector(s32 value, s32 x, void *buffer);
 void UiText_DrawNumberInWindowFar(s32 value, s32 digits, s32 window, s32 x, s32 y);
-void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 s32 WaitFrames(s32 frames);
 void UiWork_FinalizeFar(s32 window, s32 mode);
 void Runtime_ReleaseHeapBlock(s32 kind);

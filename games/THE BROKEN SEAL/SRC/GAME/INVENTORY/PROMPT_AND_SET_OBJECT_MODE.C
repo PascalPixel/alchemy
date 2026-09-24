@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "SCENE.H"
 #include "SYSTEM.H"
+#include "UI.H"
 
 struct Entry_08091c7c {
     u8 unknown_00[10];
@@ -23,7 +24,6 @@ extern struct Runtime_08091c7c *gWork;
 extern volatile s32 gKeyState;
 
 s16 *BattleAction_FindDescriptor(s32);
-s32 UiWork_IsCompleteFar(void);
 s32 Inventory_RequestMode(s32, s32, s32, s32);
 
 void UiWork_FinalizePending(void);

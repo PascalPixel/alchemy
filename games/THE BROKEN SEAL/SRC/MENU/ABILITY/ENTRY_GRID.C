@@ -1,9 +1,9 @@
 #include "PSYNERGY_MENU.H"
 #include "GLOBAL_CELLS.H"
+#include "UI.H"
 
 s32 UiMenu_CreateCursor(void *menu);
 s32 InitializeEntryObjects(s32, s32, s32, s32, s32);
-s32 UiWindow_CreateFar(s32, s32, s32, s32, s32);
 struct PsynergyMenuIcon *UiIcon_CreateWithResourceVariant(s32, s32, s32);
 void *SideObject_CreateFar(s32, s32, s32, s32, s32, s32);
 struct PsynergyMenuIcon *RenderOutput_CreateFromResourceFar(s32, s32, s32, s32, s32);

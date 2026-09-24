@@ -3,8 +3,8 @@
 #include "SOUND_IDS.H"
 #include "SYSTEM.H"
 #include "FIXED_MATH.H"
+#include "UI.H"
 
-s32 UiWindow_CreateFar(s32, s32, s32, s32, s32);
 void UiWindow_Close(s32, s32);
 s32 Ability_GetAvailability(s32);
 void Audio_PlayCue(s32);

@@ -5,6 +5,7 @@
 #include "BATTLE_TYPES.H"
 #include "MOTION_OBJECT.H"
 #include "FIXED_MATH.H"
+#include "UI.H"
 
 /*
  * Battle-event playback.  The resolver immediately before this owner fills
@@ -79,7 +80,6 @@ s32 Resource_GetBuffer(s32 index, s32 table);
 void AnimationObjects_SelectAnimationFar(void *record, s32 animation);
 void Object_SetMode(void *object, s32 animation);
 void render_animated_tile_frameFar(void *record, s32 frame);
-s32 UiWork_IsCompleteFar(void);
 void UiWork_ClearValueNameTablesFar(void);
 void UiWork_PushValueSlotFar(s32 value, s32 style);
 void UiWindow_DrawPartyStatusContentsFar(s32 mode);

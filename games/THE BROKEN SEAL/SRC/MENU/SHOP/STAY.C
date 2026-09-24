@@ -3,6 +3,7 @@
 #include "INN_RUNTIME.H"
 #include "SHOP.H"
 #include "SYSTEM.H"
+#include "UI.H"
 
 struct FieldEffectState {
     u8 padding0[0x1C0];
@@ -72,7 +73,6 @@ void UiMessage_ShowAndWait(s32 message_id);
 s32 UiMessage_ShowChoice(s32);
 s32 Inn_RoomPrice(s32);
 void Inn_PlaySleep(s32);
-s32 UiWindow_CreateFar(s32, s32, s32, s32, s32);
 void UiWindow_Close(s32, s32);
 s32 UiWindow_CreateWithSideObjectFar(u16, s32, s32, s32);
 void UiText_DrawQuantity(s32, s32);

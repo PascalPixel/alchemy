@@ -71,14 +71,12 @@ struct PsynergyListWork {
     u8 mode;                                  /* 0x268 */
 };
 
-
 extern u8 Value_0000053a;
 extern u8 Value_00000b13;
 extern u8 Value_00000b14;
 extern u8 Value_00000b15;
 
 void UiWindow_ClearInteriorTilesFar(s32 window, s32 x, s32 y, s32 width, s32 height);
-void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 void RenderOutput_RedrawSavedRectFar(s32 window);
 void UiWindow_SetTilemapEntryFar(s32 window, s32 icon, s32 x, s32 y, s32 palette);
 struct BattleAction *BattleAction_Get(s32 action);
@@ -151,6 +149,7 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused, struct MenuResult *state)
 
 #include "BATTLE_TYPES.H"
 #include "PSYNERGY_MENU.H"
+#include "UI.H"
 
 extern u8 Value_00000aed;
 extern u8 Value_00000aef;

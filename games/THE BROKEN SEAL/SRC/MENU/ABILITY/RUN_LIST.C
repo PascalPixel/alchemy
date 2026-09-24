@@ -4,6 +4,7 @@
 #include "MENU_RESULT.H"
 #include "SYSTEM.H"
 #include "FIXED_MATH.H"
+#include "UI.H"
 
 /*
  * Psynergy / action list selection loop.
@@ -89,7 +90,6 @@ extern struct PsynergyListWork *gMenuWork;
 
 void AnimationObjects_SelectAnimationFar(s32 object, s32 mode);
 void UiWindow_ClearInteriorTilesFar(s32 window, s32 x, s32 y, s32 width, s32 height);
-void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 struct BattleUnit *Owner_GetStateFar(s32 owner);
 struct BattleAction *BattleAction_Get(s32 action);
 s32 GameFlag_TestFar(s32 message);

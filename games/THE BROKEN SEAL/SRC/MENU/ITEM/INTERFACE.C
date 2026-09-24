@@ -5,10 +5,10 @@
 #include "GLOBAL_CELLS.H"
 #include "SYSTEM.H"
 #include "FIXED_MATH.H"
+#include "UI.H"
 
 s32 UiMenu_CreateCursor(void *menu);
 void InitializeEntryObjects(s32 source, s32 x, s32 y, s32 spacing, s32 style);
-s32 UiWindow_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 style);
 
 void ItemMenu_Init(void)
 {

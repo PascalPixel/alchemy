@@ -72147,6 +72147,46 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "makyuri-chojo-f-03060",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_CHOJO/F_03060.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_39d",
+      "absolute_symbols": {
+        "Engine_ActorGet": {
+          "address": "0x0200b6f0",
+          "kind": "thumb"
+        },
+        "Engine_AudioPlayCue": {
+          "address": "0x0200b840",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpriteFlags": {
+          "address": "0x0200b690",
+          "kind": "thumb"
+        },
+        "Engine_EventWait": {
+          "address": "0x0200b6d0",
+          "kind": "thumb"
+        },
+        "Engine_RandomNext": {
+          "address": "0x0200b640",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetChildValue": {
+          "address": "0x0200b758",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02003060",
+          "extent": 352,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

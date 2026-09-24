@@ -15,7 +15,6 @@ const BAR: f64 = 10.0;
 const GOLD: &str = "#f4c84f";
 const PALE_GOLD: &str = "#f9e7a8";
 const WELL: &str = "#17606f";
-const FONT: &str = "-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif";
 
 /// The figure for both games; a game without a verified count shows `?`.
 pub(crate) fn progress_svg(sun: Option<GameDone>, anchor: Option<GameDone>) -> String {
@@ -58,17 +57,12 @@ fn attribute(svg: &str, name: &str) -> Option<f64> {
     let start = head.find(&format!(" {name}=\""))? + name.len() + 3;
     head[start..].split('"').next()?.parse().ok()
 }
-/// Label text with the tree's one-pixel dark shadow, drawn as a second copy
-/// so it holds in renderers without CSS text shadows.
+/// Text in the tree's one label style, like a handheld's single font: the
+/// same face, size and one-pixel shadow everywhere, only the colour changes.
 fn text(x: f64, y: f64, fill: &str, content: &str, anchor: &str) -> String {
-    let content = esc(content);
-    let style = format!(
-        "font-family=\"{FONT}\" font-size=\"16\" font-weight=\"600\" text-anchor=\"{anchor}\""
-    );
     format!(
-        "<text x=\"{}\" y=\"{}\" {style} fill=\"{BEVEL_DARK}\">{content}</text><text x=\"{x}\" y=\"{y}\" {style} fill=\"{fill}\">{content}</text>",
-        x + 1.0,
-        y + 1.0
+        "<text class=\"label\" x=\"{x}\" y=\"{y}\" text-anchor=\"{anchor}\" style=\"fill:{fill}\">{}</text>",
+        esc(content)
     )
 }
 /// One game's line: its mark, name and DONE, then a slim gold gauge whose

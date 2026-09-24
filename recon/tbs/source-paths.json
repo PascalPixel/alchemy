@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_3a7:02000170": {
+      "name": "KuupuappuDou_Func02000170",
+      "source": "FIELD/KUUPUAPPU_DOU/F_00170.C"
+    },
     "resource_3c0:02001094": {
       "name": "SuharaSabaku_Func02001094",
       "source": "FIELD/SUHARA_SABAKU/F_01094.C"

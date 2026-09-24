@@ -81260,6 +81260,62 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "scene-3a7-02000170",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_DOU/F_00170.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3a7",
+      "absolute_symbols": {
+        "Engine_ActorGet": {
+          "address": "0x02009130",
+          "kind": "thumb"
+        },
+        "SceneData_FindActiveSlotAtCell": {
+          "address": "0x02008134",
+          "kind": "thumb"
+        },
+        "Main_080091d8": {
+          "address": "0x020090d8",
+          "kind": "thumb"
+        },
+        "Engine_ObjectSetAnimation": {
+          "address": "0x02009098",
+          "kind": "thumb"
+        },
+        "Engine_TaskWait": {
+          "address": "0x02009070",
+          "kind": "thumb"
+        },
+        "Engine_AudioPlayCue": {
+          "address": "0x02009150",
+          "kind": "thumb"
+        },
+        "Engine_ObjectSetPosition": {
+          "address": "0x020090b8",
+          "kind": "thumb"
+        },
+        "Engine_ObjectCommitPosition": {
+          "address": "0x020090c0",
+          "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02000170",
+          "extent": 332,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

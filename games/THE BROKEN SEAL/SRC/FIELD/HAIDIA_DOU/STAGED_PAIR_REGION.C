@@ -41,7 +41,6 @@ struct EffectWork {
     struct EffectRecord *record;
 };
 
-
 typedef struct Obj {
     s32 f00;
     s32 f04;
@@ -65,7 +64,6 @@ struct Rec_3a6 {
     u8 f34;                     /* +34 */
     u8 f35;                     /* +35 */
 };
-
 
 extern u8 Value_0000005d;
 extern u8 Value_0000005e;
@@ -130,23 +128,17 @@ struct Rec_3a6 *Func_02003602();
 static __inline__ s32 Value1(s32 (*f)(), s32 a0)
 {
 
-    extern u8 Data_03001ebc[];
-
     return f(a0);
 }
 
 static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
 {
 
-    extern u8 Data_03001ebc[];
-
     return f(a0, a1);
 }
 
 static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
 {
-
-    extern u8 Data_03001ebc[];
 
     return f(a0, a1, a2);
 }
@@ -158,15 +150,11 @@ static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
 static __inline__ void Call1(void (*f)(), s32 a0)
 {
 
-    extern u8 Data_03001ebc[];
-
     f(a0);
 }
 
 static __inline__ s32 Value1_020011a0(s32 (*f)(), s32 a0)
 {
-
-    extern u8 Data_03001ebc[];
 
     return f(a0);
 }
@@ -174,28 +162,13 @@ static __inline__ s32 Value1_020011a0(s32 (*f)(), s32 a0)
 static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
 {
 
-    extern u8 Data_03001ebc[];
-
     f(a0, a1);
 }
 
 static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
 {
 
-    extern u8 Data_03001ebc[];
-
     f(a0, a1, a2);
-}
-
-/* The scene step counter at 0x1d8 of the shared scene work record. */
-static __inline__ void bump_step(s32 amount)
-{
-
-    extern u8 Data_03001ebc[];
-
-    u8 *work = *(u8 **)Data_03001ebc;
-
-    *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
 }
 
 /* Call sites spelled through these wrappers pass their constants straight
@@ -205,15 +178,11 @@ static __inline__ void bump_step(s32 amount)
 static __inline__ void Call0(void (*f)())
 {
 
-    extern u8 Data_03001ebc[];
-
     f();
 }
 
 static __inline__ void Call1_02001258(void (*f)(), s32 a0)
 {
-
-    extern u8 Data_03001ebc[];
 
     f(a0);
 }
@@ -221,15 +190,11 @@ static __inline__ void Call1_02001258(void (*f)(), s32 a0)
 static __inline__ s32 Value1_02001258(s32 (*f)(), s32 a0)
 {
 
-    extern u8 Data_03001ebc[];
-
     return f(a0);
 }
 
 static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
 {
-
-    extern u8 Data_03001ebc[];
 
     f(a0, a1, a2, a3, a4, a5);
 }
@@ -237,13 +202,8 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
 static __inline__ s32 Value6(s32 (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
 {
 
-    extern u8 Data_03001ebc[];
-
     return f(a0, a1, a2, a3, a4, a5);
 }
-
-
-
 
 void SetEffectRecordMode(struct EffectWork *work, s32 mode)
 {
@@ -277,7 +237,6 @@ void *OverlayObject_CreateConfiguredB(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 {
 #include "CREATE_CONFIGURED_OVERLAY_OBJECT_BODY.INC"
 }
-
 
 /* Open the three-by-four presentation block used by this resource. */
 void SceneState_SetValues8_3_4(void)
@@ -385,8 +344,6 @@ void FieldScene_RunInitBracketThenSequence(void)
 s32 Func_020010e0(s32 a0)
 {
 
-    extern u8 Data_03001ebc[];
-
     s32 box[3];
     u8 *rec;
     u8 *flag;
@@ -424,8 +381,6 @@ s32 Func_020010e0(s32 a0)
 void FieldScene_RunScene3a6SequenceA(void)
 {
 
-    extern u8 Data_03001ebc[];
-
     u32 i;
     s32 record;
 
@@ -455,8 +410,6 @@ void FieldScene_RunScene3a6SequenceA(void)
 
 void FieldScene_RunScene3a6SequenceB(void)
 {
-
-    extern u8 Data_03001ebc[];
 
     u32 i;
     s32 record;
@@ -526,8 +479,6 @@ void FieldScene_RunActor8ZeroStep(void)
 void FieldScene_RunScene3a6_020014ac(void)
 {
 
-    extern u8 Data_03001ebc[];
-
     u32 i;
     s32 record;
     s32 zero;
@@ -570,8 +521,6 @@ void FieldScene_RunScene3a6_020014ac(void)
 
 s32 SceneData_SelectSecondaryByRuntimeSelector(void)
 {
-    extern s16 Data_02000240[];
-
     extern u8 PrimaryOverlayData_02000d80[];
     extern u8 SecondaryOverlayData_02000d80[];
     extern u8 TertiaryOverlayData_02000d80[];
@@ -670,8 +619,6 @@ void Func_020017d8(s32 a0, s32 a1, s32 a2)
 void FieldScene_RunShiftAndSetFlag301(void)
 {
 
-    extern u8 Data_03001ebc[];
-
     Audio_PlayCue(241);
     Func_0200309c(11, 112, 0);
     Func_020030a6(11, 80, 0);
@@ -683,8 +630,6 @@ void FieldScene_RunShiftAndSetFlag301(void)
 
 void FieldScene_RunActor11Transition301(void)
 {
-
-    extern u8 Data_03001ebc[];
 
     Audio_PlayCue(241);
     Func_020030de(11, -112, 0);

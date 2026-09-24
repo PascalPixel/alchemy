@@ -166772,6 +166772,35 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "graphics-transfer-work",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/TRANSFER_WORK.C",
+      "compiler_route": "canonical-gcc296",
+      "owners": [
+        {
+          "address": "0x080049e8",
+          "extent": 64,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08004a28",
+          "extent": 28,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08004a44",
+          "extent": 24,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08004a5c",
+          "extent": 56,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
     }
   ]
 }

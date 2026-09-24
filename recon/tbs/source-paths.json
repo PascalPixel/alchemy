@@ -18754,12 +18754,10 @@
       "source": "FIELD/RARIBERO_HEYA/POSE_SEQUENCE.C"
     },
     "main:08004a28": {
-      "name": "Graphics_SaveTransferWork",
-      "source": "GRAPHICS/SAVE_TRANSFER_WORK.C"
+      "name": "Graphics_SaveTransferWork"
     },
     "main:08004a44": {
-      "name": "Graphics_LoadTransferWork",
-      "source": "GRAPHICS/LOAD_TRANSFER_WORK.C"
+      "name": "Graphics_LoadTransferWork"
     },
     "resource_392:02000b8c": {
       "name": "KorimaPalette_SaveFirst",
@@ -18827,7 +18825,7 @@
     },
     "main:080049e8": {
       "name": "Graphics_SaveTransferWorkOnce",
-      "source": "GRAPHICS/SAVE_TRANSFER_WORK_ONCE.C"
+      "source": "GRAPHICS/TRANSFER_WORK.C"
     },
     "main:080251d4": {
       "name": "Vram_CopyTile",
@@ -18914,8 +18912,7 @@
       "source": "SYSTEM/MEMORY/INITIALIZE_HEAP.C"
     },
     "main:08004a5c": {
-      "name": "Graphics_RestoreTransferWork",
-      "source": "GRAPHICS/RESTORE_TRANSFER_WORK.C"
+      "name": "Graphics_RestoreTransferWork"
     },
     "main:080a1090": {
       "name": "UiWindow_InitializeWork",

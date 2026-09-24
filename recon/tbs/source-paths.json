@@ -5121,7 +5121,8 @@
       "source": "BATTLE/EFFECT/SCHEDULE_RATIO_TRANSITION.C"
     },
     "main:08093710": {
-      "name": "Event_WaitForDisplayField358Clear"
+      "name": "Event_WaitForDisplayField358Clear",
+      "source": "EVENT/WAIT_FOR_DISPLAY_FIELD358_CLEAR.C"
     },
     "main:0809376c": {
       "name": "BattleFx_CopyLinkedObjectPosition"

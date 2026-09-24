@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_383:020047bc": {
+      "name": "KuupuappuHeya_IsRecordNearPoint",
+      "source": "FIELD/KUUPUAPPU_HEYA/F_047BC.C"
+    },
     "resource_39c:02001c9c": {
       "name": "MakyuriHeya_TriggerFloorSwitch",
       "source": "FIELD/MAKYURI_HEYA/F_01C9C.C"

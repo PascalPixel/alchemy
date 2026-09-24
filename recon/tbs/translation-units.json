@@ -80858,6 +80858,34 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "scene-383-020047bc",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_HEYA/F_047BC.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_383",
+      "absolute_symbols": {
+        "Main_0808a400": {
+          "address": "0x0200cec4",
+          "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x020047bc",
+          "extent": 64,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

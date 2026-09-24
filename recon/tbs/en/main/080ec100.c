@@ -15,6 +15,7 @@
 #include "TYPES.H"
 #include "BATTLE_EFFECT_WORK.H"
 #include "BATTLE_EFX.H"
+typedef s32 (*DrawRectangleR)(void *, const void *, s32, s32, s32, s32);
 #include "CALLBACK_SCHEDULER.H"
 #include "EFFECT_STEP.H"
 #include "FIXED_MATH.H"
@@ -128,7 +129,7 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
     struct EffectStep *q2;
     struct EffectStep *q3;
     struct EffectStep *q4;
-    DrawRectangle blit[2];
+    DrawRectangleR blit[2];
     Scale scale;
     s32 ground = 112;
 
@@ -171,9 +172,9 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
     work->transfer_value = 75;
     spot[4] = 1;
     BattleEffect_LoadWork(46, 7, 7, 3, 3);
-    blit[0] = (DrawRectangle)cache[46 - 40];
+    blit[0] = (DrawRectangleR)cache[46 - 40];
     BattleEffect_LoadWork(47, 7, 7, 3, 2);
-    blit[1] = (DrawRectangle)cache[47 - 40];
+    blit[1] = (DrawRectangleR)cache[47 - 40];
     *(u16 *)0x0400000c = 0x784;
 
     for (i = 0; i != 1024; i++) {
@@ -421,7 +422,7 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
         }
 
         if (frame > 27) {
-            DrawRectangle draw = blit[1];
+            DrawRectangleR draw = blit[1];
             for (i = 0; i != 1024; i++) {
                 s32 m = 3;
                 if (PARTICLES[i].variant >= 0) {

@@ -7,7 +7,7 @@ use serde::de::{Error, MapAccess, Visitor};
 use serde::{Deserialize, Deserializer};
 use std::collections::{BTreeMap, BTreeSet};
 use std::path::{Component, Path, PathBuf};
-pub const FORMAT: u32 = 5;
+pub const FORMAT: u32 = 6;
 const EDITIONS: [&str; 6] = ["ja", "en", "de", "es", "fr", "it"];
 
 /// A requested span is a constraint, never evidence of a function boundary.
@@ -172,9 +172,10 @@ pub struct UnitData {
 #[serde(deny_unknown_fields)]
 pub struct TranslationUnit {
     pub id: String,
+    /// The game whose manifest declares the unit.
+    #[serde(skip)]
     pub game: String,
     pub source: PathBuf,
-    pub compiler_route: String,
     pub overlay: Option<String>,
     #[serde(default, deserialize_with = "unique_keys")]
     pub absolute_symbols: BTreeMap<String, AbsoluteSymbol>,
@@ -659,8 +660,6 @@ impl TranslationUnit {
 #[serde(deny_unknown_fields)]
 pub struct TranslationUnits {
     format: u32,
-    kind: String,
-    original_translation_units: String,
     pub units: Vec<TranslationUnit>,
 }
 impl TranslationUnits {
@@ -677,32 +676,15 @@ impl TranslationUnits {
         if game != CompilerTarget::Tbs && !path.is_file() {
             return Ok(Self {
                 format: FORMAT,
-                kind: "reconstruction-composition-contracts".into(),
-                original_translation_units: "unknown".into(),
                 units: Vec::new(),
             });
         }
-        let document: Self = crate::compiler::build_io::read_json(&path)?;
-        if let Some(unit) = document
-            .units
-            .iter()
-            .find(|unit| unit.game != game.as_str())
-        {
-            return Err(format!(
-                "{}: {} unit declared in the {} manifest",
-                unit.id,
-                unit.game,
-                game.as_str()
-            ));
+        let mut document: Self = crate::compiler::build_io::read_json(&path)?;
+        if document.format != FORMAT {
+            return Err(format!("{}: expected format {FORMAT}", path.display()));
         }
-        if document.format != FORMAT
-            || document.kind != "reconstruction-composition-contracts"
-            || document.original_translation_units != "unknown"
-        {
-            return Err(format!(
-                "{}: expected reconstruction-composition format {FORMAT}",
-                path.display()
-            ));
+        for unit in &mut document.units {
+            unit.game = game.as_str().to_owned();
         }
         Ok(document)
     }
@@ -736,15 +718,8 @@ impl TranslationUnits {
             }
         }
         for unit in &mut document.units {
-            if !unit_id(&unit.id)
-                || !ids.insert(&unit.id)
-                || unit.compiler_route != "canonical-gcc296"
-                || unit.owners.is_empty()
-            {
-                return Err(format!(
-                    "{}: invalid id, route, or empty owner list",
-                    unit.id
-                ));
+            if !unit_id(&unit.id) || !ids.insert(&unit.id) || unit.owners.is_empty() {
+                return Err(format!("{}: invalid id or empty owner list", unit.id));
             }
             if unit.source.is_absolute()
                 || unit
@@ -1277,8 +1252,6 @@ pub(crate) mod fixture {
                 "recon/tbs/translation-units.json",
                 &json!({
                     "format": FORMAT,
-                    "kind": "reconstruction-composition-contracts",
-                    "original_translation_units": "unknown",
                     "units": units
                 })
                 .to_string(),
@@ -1309,9 +1282,7 @@ pub(crate) mod fixture {
     pub fn staged_actor() -> Value {
         json!({
             "id": "staged-actor",
-            "game": "tbs",
             "source": format!("games/THE BROKEN SEAL/SRC/{STAGED_ACTOR}"),
-            "compiler_route": "canonical-gcc296",
             "overlay": "resource_3bf",
             "absolute_symbols": {TABLE: {"address": "0x0200df18", "kind": "data"}},
             "owners": [
@@ -1415,25 +1386,11 @@ mod tests {
         .is_err());
     }
     #[test]
-    fn each_game_manifest_declares_only_its_own_units() {
+    fn a_game_without_a_manifest_declares_nothing() {
         let work = tempfile::tempdir().unwrap();
         let empty = TranslationUnits::load_game(work.path(), CompilerTarget::Tla).unwrap();
         assert!(empty.units.is_empty());
         assert!(TranslationUnits::load_game(work.path(), CompilerTarget::Tbs).is_err());
-        let path = work.path().join("recon/tla/translation-units.json");
-        std::fs::create_dir_all(path.parent().unwrap()).unwrap();
-        std::fs::write(
-            &path,
-            format!(
-                r#"{{"format":{FORMAT},"kind":"reconstruction-composition-contracts","original_translation_units":"unknown","units":[{{"id":"wrong-game","game":"tbs","source":"a.c","compiler_route":"canonical-gcc296","overlay":"resource_650","absolute_symbols":{{}},"local_symbols":[],"owners":[{{"address":"0x02000038","extent":8,"state":"exact-c"}}]}}]}}"#
-            ),
-        )
-        .unwrap();
-        let error = TranslationUnits::load_game(work.path(), CompilerTarget::Tla).unwrap_err();
-        assert!(
-            error.contains("tbs unit declared in the tla manifest"),
-            "{error}"
-        );
     }
 
     /// The loaded staged-actor unit after `edit`, checked as `load` checks it.

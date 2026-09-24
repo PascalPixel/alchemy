@@ -267,11 +267,8 @@ fn audit_with_rom(root: &Path, overlay: &str, rom: Option<&CanonicalRom>) -> Aud
 }
 pub fn run_audit(root: &Path, argv: &[String]) -> Result<i32, String> {
     if argv == ["--help"] || argv == ["-h"] {
-        println!("usage: alchemy overlay audit [RESOURCE ... | --all | --corpus]");
+        println!("usage: alchemy overlay audit [RESOURCE ... | --all]");
         return Ok(0);
-    }
-    if argv == ["--corpus"] {
-        return crate::overlay::score::audit_corpus(root);
     }
     let overlays: Vec<String> = if argv.is_empty() || argv[0] == "--all" {
         let mut names = Vec::new();

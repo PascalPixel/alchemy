@@ -2235,7 +2235,7 @@ fn write_overlay_edition_build(
     }
     write_json(
         path,
-        &serde_json::json!({"format":1,"kind":"declared-overlay-reconstruction-composition-edition-builds","original_translation_units":"unknown","units":reports}),
+        &serde_json::json!({"format":1,"kind":"declared-overlay-reconstruction-composition-edition-builds","units":reports}),
         "overlay edition build",
     )?;
     println!("overlay_edition_build={}", path.display());
@@ -3607,9 +3607,7 @@ mod tests {
     fn artifact_substitution_and_callee_inference_fail_closed() {
         let unit: TranslationUnit = serde_json::from_value(serde_json::json!({
             "id": "complete-symbols-fixture",
-            "game": "tbs",
             "source": "fixture.c",
-            "compiler_route": "canonical-gcc296",
             "owners": [
                 {"address": "0x08001000", "extent": 16, "state": "exact-c"},
                 {"address": "0x08001010", "extent": 16, "state": "exact-c"}

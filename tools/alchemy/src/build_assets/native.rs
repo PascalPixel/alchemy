@@ -41,8 +41,8 @@ pub(crate) fn icon_bank_source(bank: u8) -> String {
         broken_seal().source
     )
 }
-/// One raw palette bank read straight from the verified ROM, located and
-/// checksummed by the game's private-input registry. Local viewers colour
+/// One raw palette bank read straight from the verified ROM, located by the
+/// game's private-input registry. Local viewers colour
 /// tracked indexed art with it without restoring private inputs into the tree.
 pub(crate) fn raw_palette_bank(
     root: &Path,
@@ -73,9 +73,7 @@ pub(crate) fn raw_palette_bank(
     let data = rom
         .get(offset..offset + address(&region["size"])?)
         .ok_or("palette outside ROM")?;
-    if sha256::hex(data) != json_string(&input["decoded_sha256"], "palette digest")? {
-        return Err("raw palette differs from its registered checksum".into());
-    }
+    crate::text_catalog::verify_reference(root, target.id.as_str(), rom)?;
     let position = input["banks"]
         .as_array()
         .unwrap()
@@ -340,38 +338,6 @@ pub fn validate(index: &Value) -> Result<(), String> {
     if index["format"] != "camelot-style-golden-sun-native" {
         return Err("unsupported native source format".into());
     }
-    let mut extents: BTreeMap<String, Vec<(usize, usize, Option<String>)>> = BTreeMap::new();
-    for layout in index["layouts"].as_array().ok_or("missing layouts")? {
-        let source = json_string(&layout["map"], "map source")?.to_string();
-        let start = address(&layout["grid_offset"])?;
-        if address(&layout["grid_length"])? != 65536 {
-            return Err("invalid native grid length".into());
-        }
-        let middle = start.checked_add(65536).ok_or("grid extent overflows")?;
-        if middle != address(&layout["metatile_offset"])? {
-            return Err("grid and metatiles must be adjacent".into());
-        }
-        let length = address(&layout["metatile_length"])?;
-        if length == 0 || length % 8 != 0 {
-            return Err("native metatiles need complete 2x2 definitions".into());
-        }
-        let end = middle
-            .checked_add(length)
-            .ok_or("metatile extent overflows")?;
-        let spans = extents.entry(source).or_default();
-        let digest = layout
-            .get("payload_sha256")
-            .and_then(Value::as_str)
-            .map(str::to_string);
-        if spans.iter().any(|(a, b, existing)| {
-            start < *b
-                && *a < end
-                && !(start == *a && end == *b && digest.is_some() && &digest == existing)
-        }) {
-            return Err("native map sections overlap".into());
-        }
-        spans.push((start, end, digest));
-    }
     let mut addresses = BTreeSet::new();
     for region in index["regions"]
         .as_array()
@@ -386,17 +352,18 @@ pub fn validate(index: &Value) -> Result<(), String> {
 
 pub fn extract(root: &Path, rom_path: &Path, target: &DecompTarget) -> Result<(), String> {
     let paths = NativePaths::of(target);
-    let index = json(&root.join(&paths.index))?;
+    let registry =
+        fs::read(root.join(&paths.index)).map_err(|e| format!("{}: {e}", paths.index))?;
+    let index: Value =
+        serde_json::from_slice(&registry).map_err(|e| format!("{}: {e}", paths.index))?;
     validate(&index)?;
     let rom = fs::read(rom_path).map_err(|e| e.to_string())?;
-    if sha256::hex(&rom) != json_string(&index["reference_sha256"], "reference checksum")? {
-        return Err("ROM checksum differs from native source reference".into());
-    }
+    crate::text_catalog::verify_reference(root, target.id.as_str(), &rom)?;
     let regions = index["regions"].as_array().unwrap();
     let ctx = Context::new(root);
-    character::extract_all(root, &index["private_inputs"], &rom)?;
-    let mut maps: BTreeMap<String, Vec<u8>> = BTreeMap::new();
-    let mut tiles: BTreeMap<String, Vec<u8>> = BTreeMap::new();
+    let mut digests = character::extract_all(root, &index["private_inputs"], &rom)?;
+    let mut maps: BTreeMap<String, Placed> = BTreeMap::new();
+    let mut tiles: BTreeMap<String, Placed> = BTreeMap::new();
     let mut banks: BTreeMap<usize, Vec<u16>> = BTreeMap::new();
     let mut tables = serde_json::Map::new();
     for input in index["private_inputs"]
@@ -444,19 +411,10 @@ pub fn extract(root: &Path, rom_path: &Path, target: &DecompTarget) -> Result<()
                     return Err(format!("private bytes at {target:#x} differ in length"));
                 }
                 let offset = address(&component["source_offset"])?;
-                let file = maps.entry(source.into()).or_default();
-                let end = offset
-                    .checked_add(data.len())
-                    .ok_or("decoded extent overflows")?;
-                if file.len() < end {
-                    file.resize(end, 0);
-                }
-                file[offset..end].copy_from_slice(&data);
+                place(maps.entry(source.into()).or_default(), offset, &data)?;
                 span.extend(data);
             }
-            if sha256::hex(&span) != json_string(&input["decoded_sha256"], "input digest")? {
-                return Err(format!("private bytes differ: {source}"));
-            }
+            digests.insert(input_key(input), sha256::hex(&span));
             continue;
         }
         let target = address(&input["region_address"])?;
@@ -468,12 +426,10 @@ pub fn extract(root: &Path, rom_path: &Path, target: &DecompTarget) -> Result<()
             let data = rom
                 .get(start..start.checked_add(length).ok_or("palette table overflows")?)
                 .ok_or("palette table exceeds ROM")?;
-            if length % 2 != 0
-                || sha256::hex(data)
-                    != json_string(&input["decoded_sha256"], "palette table digest")?
-            {
-                return Err("palette table differs".into());
+            if length % 2 != 0 {
+                return Err("palette table length is odd".into());
             }
+            digests.insert(input_key(input), sha256::hex(data));
             let pointer = json_string(&input["pointer"], "palette table pointer")?;
             let key = pointer
                 .strip_prefix("/tables/")
@@ -504,10 +460,7 @@ pub fn extract(root: &Path, rom_path: &Path, target: &DecompTarget) -> Result<()
                 )
                 .ok_or("palette component exceeds decoded buffer")?
                 .to_vec();
-            if sha256::hex(&data) != json_string(&input["decoded_sha256"], "palette buffer digest")?
-            {
-                return Err("palette buffer differs".into());
-            }
+            digests.insert(input_key(input), sha256::hex(&data));
             let slots = input["banks"].as_array().ok_or("palette slots absent")?;
             if data.len() != slots.len() * 32 {
                 return Err("palette buffer dimensions differ".into());
@@ -535,9 +488,7 @@ pub fn extract(root: &Path, rom_path: &Path, target: &DecompTarget) -> Result<()
                 .checked_add(address(&region["size"])?)
                 .ok_or("palette extent overflows")?;
             let data = rom.get(start..end).ok_or("palette outside ROM")?;
-            if sha256::hex(data) != json_string(&input["decoded_sha256"], "palette digest")? {
-                return Err("raw palette differs".into());
-            }
+            digests.insert(input_key(input), sha256::hex(data));
             for (slot, bank) in input["banks"]
                 .as_array()
                 .ok_or("missing palette banks")?
@@ -568,9 +519,7 @@ pub fn extract(root: &Path, rom_path: &Path, target: &DecompTarget) -> Result<()
         if kind == "metatiles" {
             decoded = decode_metatiles(&decoded, address(&input["transform_mode"])? as u8)?;
         }
-        if sha256::hex(&decoded) != json_string(&input["decoded_sha256"], "input digest")? {
-            return Err(format!("decoded input differs at {target:#x}"));
-        }
+        digests.insert(input_key(input), sha256::hex(&decoded));
         if kind == "palette" {
             for (slot, bank) in input["banks"]
                 .as_array()
@@ -594,27 +543,21 @@ pub fn extract(root: &Path, rom_path: &Path, target: &DecompTarget) -> Result<()
             } else {
                 (&mut maps, address(&input["source_offset"])?)
             };
-            let data = files.entry(source.into()).or_default();
-            let end = offset
-                .checked_add(decoded.len())
-                .ok_or("decoded extent overflows")?;
-            if data.len() < end {
-                data.resize(end, 0);
-            }
-            data[offset..end].copy_from_slice(&decoded);
+            place(files.entry(source.into()).or_default(), offset, &decoded)
+                .map_err(|e| format!("{source}: {e}"))?;
         }
     }
     let gray: Vec<u8> = (0u16..16)
         .flat_map(|i| (i | i << 5 | i << 10).to_le_bytes())
         .collect();
     for (source, data) in maps {
-        write(root, &source, &data)?;
+        write(root, &source, &data.bytes)?;
     }
     for (source, data) in tiles {
         write(
             root,
             &source,
-            &psynergy::assets::image::png_from_gba_tiles(&data, &gray, GbaBpp::Bpp4, 32)
+            &psynergy::assets::image::png_from_gba_tiles(&data.bytes, &gray, GbaBpp::Bpp4, 32)
                 .map_err(|e| e.to_string())?,
         )?;
     }
@@ -630,11 +573,45 @@ pub fn extract(root: &Path, rom_path: &Path, target: &DecompTarget) -> Result<()
         &paths.colors,
         &json!({"format":"bgr555-banks","colors_per_bank":16,"banks":colors,"tables":tables}),
     )?;
+    document(
+        root,
+        &private_index_path(target),
+        &json!({"format":1,"registry_sha256":sha256::hex(&registry),"digests":digests}),
+    )?;
     println!(
         "extracted={} checksum=verified",
         index["private_inputs"].as_array().unwrap().len()
     );
     Ok(())
+}
+
+/// The key of one private input in the generated digest index: the digest of
+/// its canonical registry row.
+pub(in crate::build_assets) fn input_key(input: &Value) -> String {
+    sha256::hex(canonical_json(input).as_bytes())
+}
+/// Where extraction records what each private input decodes to in the verified
+/// reference ROM. It is derived, ignored and rewritten whenever the registry
+/// changes.
+fn private_index_path(target: &DecompTarget) -> String {
+    format!("{}/private-index.json", target.output_dir)
+}
+/// The decoded digest of every private input, when the index extraction wrote
+/// matches the current registry.
+pub(in crate::build_assets) fn private_digests(
+    root: &Path,
+    target: &DecompTarget,
+) -> Result<Option<BTreeMap<String, String>>, String> {
+    let registry = fs::read(root.join(NativePaths::of(target).index)).map_err(|e| e.to_string())?;
+    let Ok(index) = json(&root.join(private_index_path(target))) else {
+        return Ok(None);
+    };
+    if index["registry_sha256"] != sha256::hex(&registry) {
+        return Ok(None);
+    }
+    serde_json::from_value(index["digests"].clone())
+        .map(Some)
+        .map_err(|e| format!("{}: {e}", private_index_path(target)))
 }
 
 /// Regenerate absent private inputs in isolation, preserving existing edits.
@@ -652,7 +629,7 @@ pub fn extract_missing(root: &Path, rom_path: &Path, target: &DecompTarget) -> R
             missing.insert(source.to_string());
         }
     }
-    if missing.is_empty() {
+    if missing.is_empty() && private_digests(root, target)?.is_some() {
         return Ok(());
     }
     let stage = tempfile::tempdir().map_err(|e| e.to_string())?;
@@ -677,7 +654,10 @@ pub fn extract_missing(root: &Path, rom_path: &Path, target: &DecompTarget) -> R
             plans(part, names);
         }
     }
-    let mut names = BTreeSet::from([paths.index.clone()]);
+    let mut names = BTreeSet::from([
+        paths.index.clone(),
+        format!("{}/text.json", target.recon_dir()),
+    ]);
     for region in index["regions"].as_array().ok_or("missing regions")? {
         plans(region, &mut names);
     }
@@ -700,11 +680,41 @@ pub fn extract_missing(root: &Path, rom_path: &Path, target: &DecompTarget) -> R
         std::fs::copy(root_path(root, name)?, destination).map_err(|e| e.to_string())?;
     }
     extract(stage.path(), rom_path, target)?;
+    let index = private_index_path(target);
+    fs::create_dir_all(root.join(target.output_dir)).map_err(|e| e.to_string())?;
+    fs::copy(stage.path().join(&index), root.join(&index)).map_err(|e| format!("{index}: {e}"))?;
     for name in &missing {
         let bytes = std::fs::read(root_path(stage.path(), name)?).map_err(|e| e.to_string())?;
         create_missing(&root.join("out/private").join(name), &bytes)?;
     }
     println!("restored private cache files: {}", missing.len());
+    Ok(())
+}
+
+/// The bytes extracted into one source file so far, and which of them were
+/// written. Two inputs may place the same bytes at the same offset (a map
+/// shared by two containers); any other overlap refuses extraction.
+#[derive(Default)]
+struct Placed {
+    bytes: Vec<u8>,
+    written: Vec<bool>,
+}
+fn place(file: &mut Placed, offset: usize, data: &[u8]) -> Result<(), String> {
+    let end = offset
+        .checked_add(data.len())
+        .ok_or("decoded extent overflows")?;
+    if file.bytes.len() < end {
+        file.bytes.resize(end, 0);
+        file.written.resize(end, false);
+    }
+    for (index, &byte) in data.iter().enumerate() {
+        let at = offset + index;
+        if file.written[at] && file.bytes[at] != byte {
+            return Err(format!("extracted sections overlap at {at:#x}"));
+        }
+        file.bytes[at] = byte;
+        file.written[at] = true;
+    }
     Ok(())
 }
 
@@ -750,8 +760,14 @@ fn byte_inputs_extract_raw_contained_and_compressed_spans_by_digest() {
         r#"{"codec":"golden-sun-general-lz","decoded_size":6}"#,
     )
     .unwrap();
+    fs::create_dir_all(root.join(target.recon_dir())).unwrap();
+    fs::write(
+        root.join(format!("{}/text.json", target.recon_dir())),
+        json!([{"target":target.id.as_str(),"rom_sha256":sha256::hex(&rom)}]).to_string(),
+    )
+    .unwrap();
     let mut index = json!({
-        "format":"camelot-style-golden-sun-native","reference_sha256":sha256::hex(&rom),"layouts":[],
+        "format":"camelot-style-golden-sun-native",
         "regions":[
             {"address":"0x08000010","size":3,"kind":"u8-array","format":"binary","source":bin,"source_offset":0,"source_length":3},
             {"address":"0x08000020","size":6,"kind":"components","components":[
@@ -760,8 +776,8 @@ fn byte_inputs_extract_raw_contained_and_compressed_spans_by_digest() {
             {"address":"0x08000040","size":stream.len(),"kind":"golden-sun-general-lz","plan":"plan.json","components":[
                 {"kind":"u8-array","format":"binary","source":bin,"size":6,"source_offset":7,"source_length":6}]}],
         "private_inputs":[
-            {"kind":"bytes","source":bin,"regions":["0x08000010","0x08000020"],"decoded_sha256":sha256::hex(&[7, 8, 9, 1, 2, 3, 4])},
-            {"kind":"bytes","source":bin,"source_offset":7,"region_address":"0x08000040","decoded_sha256":sha256::hex(&decoded)}]});
+            {"kind":"bytes","source":bin,"regions":["0x08000010","0x08000020"]},
+            {"kind":"bytes","source":bin,"source_offset":7,"region_address":"0x08000040"}]});
     let paths = NativePaths::of(&target);
     document(root, &paths.index, &index).unwrap();
     extract(root, &root.join("rom.gba"), &target).unwrap();
@@ -769,13 +785,21 @@ fn byte_inputs_extract_raw_contained_and_compressed_spans_by_digest() {
         fs::read(root.join(&bin)).unwrap(),
         [7, 8, 9, 1, 2, 3, 4, 5, 5, 5, 5, 6, 7]
     );
-    // A digest over different bytes, or a moved span, refuses extraction.
-    index["private_inputs"][0]["decoded_sha256"] = json!(sha256::hex(&[7, 8, 9]));
-    document(root, &paths.index, &index).unwrap();
-    assert!(extract(root, &root.join("rom.gba"), &target).is_err());
-    index["private_inputs"][0]["decoded_sha256"] = json!(sha256::hex(&[7, 8, 9, 1, 2, 3, 4]));
+    // The generated index records each input's span as the ROM decodes it,
+    // for the registry it was extracted from.
+    let digests = private_digests(root, &target).unwrap().unwrap();
+    assert_eq!(
+        digests[&input_key(&index["private_inputs"][0])],
+        sha256::hex(&[7, 8, 9, 1, 2, 3, 4])
+    );
+    assert_eq!(
+        digests[&input_key(&index["private_inputs"][1])],
+        sha256::hex(&decoded)
+    );
+    // A moved span refuses extraction.
     index["private_inputs"][1]["source_offset"] = json!(8);
     document(root, &paths.index, &index).unwrap();
+    assert!(private_digests(root, &target).unwrap().is_none());
     assert!(extract(root, &root.join("rom.gba"), &target).is_err());
 }
 #[test]
@@ -814,17 +838,13 @@ fn decode_metatiles(data: &[u8], mode: u8) -> Result<Vec<u8>, String> {
 }
 
 #[test]
-fn map_sections_reject_overlap_and_incomplete_metatiles() {
-    let layout = json!({"map":"map.bin","grid_offset":0,"grid_length":65536,"metatile_offset":65536,"metatile_length":8});
-    let mut index =
-        json!({"format":"camelot-style-golden-sun-native","layouts":[layout],"regions":[]});
-    validate(&index).unwrap();
-    index["layouts"][0]["metatile_length"] = json!(6);
-    assert!(validate(&index).is_err());
-    index["layouts"][0]["metatile_length"] = json!(8);
-    let duplicate = index["layouts"][0].clone();
-    index["layouts"].as_array_mut().unwrap().push(duplicate);
-    assert!(validate(&index).is_err());
+fn extracted_sections_may_repeat_but_never_overlap_differently() {
+    let mut file = Placed::default();
+    place(&mut file, 0, &[1, 2, 3, 4]).unwrap();
+    place(&mut file, 0, &[1, 2, 3, 4]).unwrap();
+    place(&mut file, 4, &[5]).unwrap();
+    assert!(place(&mut file, 2, &[3, 9]).is_err());
+    assert_eq!(file.bytes, [1, 2, 3, 4, 5]);
 }
 #[test]
 fn extracted_metatile_transforms_preserve_palette_and_flip_bits() {

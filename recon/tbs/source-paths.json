@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "main:080fb700": {
+      "name": "MusicTrack_SetVoiceAttack",
+      "source": "SOUND/MUSIC_TRACK_SET_VOICE_ATTACK.C"
+    },
     "main:080fb6ec": {
       "name": "MusicTrack_SetVoiceKind",
       "source": "SOUND/MUSIC_TRACK_SET_VOICE_KIND.C"

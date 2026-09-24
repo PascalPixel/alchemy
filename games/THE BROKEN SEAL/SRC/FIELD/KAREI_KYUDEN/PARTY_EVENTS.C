@@ -15,24 +15,17 @@ void Func_02001b1a();
 void Func_02001c06();
 void Func_02001c6c();
 void Func_02001c72();
-void Func_020004ae(void);
 void Func_02001cc0();
 void Func_02001cc6();
 u8 *Func_02001d46();
-void Func_0200174a();
 u8 *Func_02001d82();
 void Func_02001d58_handoff(s32);
-void Func_0200069c();
 void Func_0200191e();
-void Func_02001b74();
 void Func_02001bbe();
 void Func_02001f4e();
-void Func_02001fb2();
 void Func_02001ffc();
 void Func_02002258();
-void Func_02002266();
 void Func_020022c2();
-void Func_020023c6();
 void Func_02002410();
 void Func_02002646();
 void Func_020026ae();
@@ -256,7 +249,7 @@ s32 SceneState_SetWord448To209AndRun(void)
 {
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
     if (gGameState.scene == (s32)(u32)&Value_00000067) {
-        Func_020004ae();
+        FieldScene_DispatchSceneByIndex();
     }
     return 0;
 }
@@ -287,7 +280,7 @@ void FieldScene_DispatchSceneByIndex(void)
             *(u16 *)(rec + 6) = h;
 
             if (GameFlag_IsSet(0x914) == 0) {
-                Func_0200174a();
+                Scene_RunPartySequence();
             }
         } else {
             Actor_SetPosition(9, 0, 0);
@@ -319,7 +312,7 @@ void FieldScene_DispatchSceneByIndex(void)
     case 20:
         Actor_SetPosition(9, 0, 0);
         if (GameFlag_IsSet(0x109) == 0) {
-            Func_0200069c();
+            RunEventScript01();
         }
         break;
 
@@ -450,7 +443,7 @@ void RunEventScript01(void)
     Event_Wait(40);
     Actor_FaceDirection(8, 0xd000, 20);
     Actor_ShowEmote(8, 0x105, 60);
-    Func_02001b74(60);
+    ConfigureFourSceneChannelsAndHandoff(60);
     Func_02001bbe(40);
     Actor_WalkToAndWait(8, 0x358, 0x1b8);
     Event_Wait(40);
@@ -559,7 +552,7 @@ void RunEventScript01(void)
     Event_ShowMessageAndWait(0x2002, 0, 10);
     Actor_SetAnimationAndWait(8, 4);
     Event_ShowMessageAndWait(8, 0, 10);
-    Func_02001fb2(40);
+    ConfigureFourSceneChannelsAndHandoff(40);
     Func_02001ffc(20);
     Actor_ShowEmote(8, 0x105, 60);
     Event_ShowMessageAndWait(8, 0, 10);
@@ -632,7 +625,7 @@ void RunEventScript01(void)
     Actor_SetAttachedEffect(8, 0x102);
     Event_Wait(60);
     Event_ShowMessageAndWait(8, 0, 10);
-    Func_02002266(40);
+    ConfigureFourSceneChannelsAndHandoff(40);
     Actor_SetAnimationAndWait(8, 4);
     Event_ShowMessageAndWait(8, 0, 10);
     Func_020022c2(20);
@@ -669,7 +662,7 @@ void RunEventScript01(void)
     Actor_ShowEmote(8, 0x100, 40);
     Actor_FaceDirection(8, 0x3000, 10);
     Event_ShowMessageAndWait(8, 0, 10);
-    Func_020023c6(40);
+    ConfigureFourSceneChannelsAndHandoff(40);
     Func_02002410(20);
     Actor_RunRepeatedMotion(1, 1);
     Event_ShowMessageAndWait(1, 0, 10);

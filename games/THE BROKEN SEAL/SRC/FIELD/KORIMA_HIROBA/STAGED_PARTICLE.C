@@ -68,7 +68,6 @@ extern u8 Value_02008c4d;
 s32 Func_02000e7a(Query *result);
 void Func_02001026(Query result);
 void Func_0200164e();
-u16 Func_02001614(u16, s32);
 void Func_020016d2();
 void Func_020016b6();
 OrbitingSceneObject *Func_02001af4(void);
@@ -139,13 +138,13 @@ s32 FieldScene_SetupEntryActors8To11(void)
 
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
     if (GameFlag_IsSet(0xfd3) == 0) {
-        Func_0200173a(11);
+        SceneEffect_InitOrbitingParticle(11);
     }
     Func_0200134c(8);
     Func_02001352(9);
     Func_02001358(10);
     if (GameFlag_IsSet(0x845) == 0) {
-        Func_02001564(11);
+        SceneEffect_AdjustPaletteWindow(11);
     }
     return 0;
 }
@@ -165,7 +164,7 @@ void SceneEffect_AdjustPaletteWindow(s32 adj)
         if ((u32)(phase + 0xffef0000) > 0x60000) {
             win = (idx + 0xff3f) << 16;
             if (win > 0x70000)
-                pal[idx] = Func_02001614(pal[idx], adj);
+                pal[idx] = SceneEffect_AdjustColorChannels(pal[idx], adj);
         }
         next = phase + 0x10000;
         phase = next;

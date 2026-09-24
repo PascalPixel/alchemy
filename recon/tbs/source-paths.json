@@ -500,6 +500,9 @@
       "name": "Shop_Run",
       "source": "MENU/SHOP/RUN.C"
     },
+    "main:080b1260": {
+      "name": "Shop_DrawEquipComparison"
+    },
     "main:080b211c": {
       "name": "Shop_SelRepair",
       "source": "MENU/SHOP/SELECT_REPAIR_ITEM.C"

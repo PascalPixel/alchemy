@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_3c8:020016a4": {
+      "name": "VinasuHeya_UpdateFloorSwitch",
+      "source": "FIELD/VINASU_HEYA/FLOOR_SWITCH.C"
+    },
     "resource_3b4:02000f40": {
       "name": "TakaraAshiba_OpenPassage",
       "source": "FIELD/TAKARA_ASHIBA/OPEN_PASSAGE.C"

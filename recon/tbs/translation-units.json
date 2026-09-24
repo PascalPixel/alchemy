@@ -78436,6 +78436,66 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "scene-3c8-020016a4",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/VINASU_HEYA/FLOOR_SWITCH.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3c8",
+      "absolute_symbols": {
+        "Engine_ActorGet": {
+          "address": "0x0200ceac",
+          "kind": "thumb"
+        },
+        "Engine_MapCopyCellsTo": {
+          "address": "0x0200ce1c",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagClear": {
+          "address": "0x0200ce84",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagIsSet": {
+          "address": "0x0200ce74",
+          "kind": "thumb"
+        },
+        "Engine_EventBegin": {
+          "address": "0x0200ce94",
+          "kind": "thumb"
+        },
+        "Engine_EventWait": {
+          "address": "0x0200ce8c",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagSet": {
+          "address": "0x0200ce7c",
+          "kind": "thumb"
+        },
+        "Engine_AudioPlayCue": {
+          "address": "0x0200cffc",
+          "kind": "thumb"
+        },
+        "Engine_EventEnd": {
+          "address": "0x0200ce9c",
+          "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x020016a4",
+          "extent": 220,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

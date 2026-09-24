@@ -47613,11 +47613,7 @@
           "address": "0x0200d5f0",
           "kind": "thumb"
         },
-        "Func_02000c68": {
-          "address": "0x020080c4",
-          "kind": "thumb"
-        },
-        "Func_02001b44": {
+        "FieldScene_SetPositionPairs": {
           "address": "0x02008d54",
           "kind": "thumb"
         },
@@ -47661,20 +47657,8 @@
           "address": "0x0200d650",
           "kind": "thumb"
         },
-        "Func_02006240_a": {
-          "address": "0x02008d54",
-          "kind": "thumb"
-        },
         "Func_02006244": {
           "address": "0x0200d650",
-          "kind": "thumb"
-        },
-        "Func_02006250": {
-          "address": "0x02008d54",
-          "kind": "thumb"
-        },
-        "Func_02006260": {
-          "address": "0x02008d54",
           "kind": "thumb"
         },
         "Func_0200629c": {
@@ -47996,6 +47980,10 @@
         "gGameState": {
           "address": "0x02000240",
           "kind": "data"
+        },
+        "StagedActor_AdvancePair": {
+          "address": "0x020080c4",
+          "kind": "thumb"
         },
         "Village_FinishActorRestore": {
           "address": "0x0200d5f8",

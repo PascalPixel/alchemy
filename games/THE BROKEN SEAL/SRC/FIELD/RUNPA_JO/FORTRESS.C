@@ -174,11 +174,9 @@ SceneActor *Func_020070da(void);
 SceneActor *Func_0200703e(s32);
 SceneActor *Func_0200709a(s32);
 u8 *Func_020061ca(s32);
-void Func_02000c68(void);
 s32 Func_02006244();
 s32 Func_0200629c();
 s32 Func_020062f2();
-void Func_02001b44();
 s32 Func_020063de();
 s32 Func_02006542();
 s32 Func_02006492();
@@ -226,9 +224,6 @@ struct ObjectRuntime *Func_0200aa52();
 struct ObjectRuntime *Func_0200aa6c();
 struct ObjectRuntime *Func_0200aa84();
 void Village_FinishActorRestore();
-void Func_02006240_a(s32);
-void Func_02006250(s32);
-void Func_02006260(s32);
 void Func_0200a7f8();
 void Func_0200a816();
 struct ObjectRuntime *Func_0200a874();
@@ -762,7 +757,7 @@ void RunSceneObjectSetup(void)
     extern u32 Data_0200dfa4;
     extern u8 Data_03001e70[];
 
-    Func_02000c68();
+    StagedActor_AdvancePair();
 }
 
 void FieldScene_StartActorTwelveTransition(void)
@@ -850,7 +845,7 @@ void FieldScene_UpdateObjectPairB(void)
     work = Data_03001ebc;
     if (Func_020063de(234) != -1) {
         trigger = work->touched_trigger;
-        Func_02001b44(trigger - 40);
+        FieldScene_SetPositionPairs(trigger - 40);
         Audio_PlayCue(157);
         Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
         Work_SetValuesIfNonNegative(-1, -1, 0xe666);
@@ -3603,13 +3598,13 @@ void FieldScene_ActivateTwoActorGroup(void)
 void FieldScene_ActivateAlternateActorGroup(void)
 {
     if (GameFlag_IsSet(0x355)) {
-        Func_02006240_a(0);
+        FieldScene_SetPositionPairs(0);
     }
     if (GameFlag_IsSet(0x356)) {
-        Func_02006250(1);
+        FieldScene_SetPositionPairs(1);
     }
     if (GameFlag_IsSet(0x357)) {
-        Func_02006260(2);
+        FieldScene_SetPositionPairs(2);
     }
 }
 

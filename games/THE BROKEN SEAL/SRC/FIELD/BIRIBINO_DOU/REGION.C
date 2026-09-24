@@ -11,33 +11,6 @@
 #define SecondaryOverlayData Data_02008a64
 #define TertiaryOverlayData Data_02008b24
 #define DefaultOverlayData Data_020089bc
-#define RunSceneCommand Func_02000e04
-#define FinishSceneSetup Func_02000e64
-#define SceneState_ApplyArgMode0AndReturnZero Func_02000030
-#define SceneData_SelectByRuntimeSelector Func_02000040
-#define SceneData_GetTable8bcc Func_02000098
-#define SceneData_SelectSecondaryDataByRuntimeSelector Func_020000a0
-#define SceneData_SelectDataByRuntimeSelector Func_020000f4
-#define SceneState_ConfigureRegion1_0_21x14 Func_02000148
-#define SceneState_ConfigureRegion0_0_21x14 Func_02000168
-#define SceneState_ApplyTwoRects Func_02000188
-#define FieldScene_RunTwoLayoutSteps Func_020001bc
-#define FieldScene_RunActor9Flag882Scene Func_020001f0
-#define FieldScene_RunScene398SequenceA Func_02000214
-#define FieldScene_RunActorFifteenScene Func_02000280
-#define FieldScene_RunActorSixteenScene Func_020002ac
-#define FieldScene_RunActor17Steps28AndD2 Func_020002d8
-#define FieldScene_RunScene398SequenceB Func_02000304
-#define ActorPresentation_SetSceneCell31AndFlag305 Func_02000424
-#define SceneState_SetGlobalByte17 Func_0200044c
-#define SceneState_ClearRuntimeByte17 Func_0200045c
-#define FieldScene_DispatchByScenarioId Func_0200046c
-#define RunGuardedSceneSetup Func_020004b4
-#define SceneState_SetRuntimeWord448To516 Func_020004e8
-#define FieldScene_RunScene398SequenceC Func_02000538
-#define SceneActor_FindSlotAtTile Func_020007c4
-#define StagedActor_PushActorAhead Func_020007f8
-#define Resource398_ImportBankNoOp Func_02000904
 
 #include "SELECT_OVERLAY_DATA_BY_RUNTIME_SELECTOR.H"
 
@@ -53,102 +26,22 @@ extern u8 Data_02008efc[];
 extern u8 Data_02008f80[];
 extern u8 Data_02008e9c[];
 
-void Func_02000c7c_a();
-void Func_02000d6a_a();
-void Func_0200101a_a();
-void Func_02000a8e(s32, s32, s32, s32, s32, s32);
-void Func_02000aae(s32, s32, s32, s32, s32, s32);
-void Func_02000ac6(s32, s32, s32, s32, s32, s32);
-void Func_02000ae2(s32, s32, s32, s32, s32, s32);
-void Func_02000afa(s32, s32, s32, s32, s32, s32);
-void Func_02000b16(s32, s32, s32, s32, s32, s32);
-void Func_02000b5c(void);
-s32 Func_02000b7e(s32, s32, s32);
-void Func_02000b54(s32);
-void Func_02000b78(void);
-void Func_02000bec(void);
-s32 Func_02000c24(s32, s32);
-void Func_02000bf2(s32);
-void Func_02000c30(s32, s32);
-void Func_02000c14(void);
-void Func_02000c18(void);
-s32 Func_02000c50(s32, s32);
-void Func_02000c1e(s32);
-void Func_02000c5c(s32, s32);
-void Func_02000c44(void);
-void Func_02000c4a(s32);
-void Func_02000c98(s32);
-void Func_02000c88(s32, s32);
-void Func_02000d90(s32);
 void Func_02000936(void);
 void Func_020009d2(void);
-s32 Func_02000e04();
-void Func_02000e04_a(s32, s32, s32, s32, s32, s32);
-void Func_02000e64();
-void Func_02000e86(s32, s32);
-void Func_02000e8e(s32, s32);
-s32 Func_02000e54(s32);
-void Func_02000e9a(s32, s32, s32);
 u8 *Func_02000e9a_b(s32);
-void Func_02000e68(u8 *, s32);
 u8 *Func_02001180();
 s32 *Func_02000ff6();
 s32 Func_020011c0();
-void Func_020011a4();
-void Func_020011a4_a(s32);
-void Func_0200124a();
 void Func_020011ca();
 void Func_020011dc();
 void Func_020011ea();
-void Func_020011f0();
 void Func_02000be8(void);
-void Func_02000b7a();
-void Func_02000b82();
-void Func_02000b90();
-void Func_02000ba0();
-void Func_02000ba4();
-struct FieldActor *Func_02000bb6();
-struct FieldActor *Func_02000bc2();
-void Func_02000bc8();
-void Func_02000be4();
-void Func_02000bfc();
 s32 Func_02000c84();
 s32 Func_02000c8c();
-void Func_02000c8c_a(s32);
-void Func_02000c9c();
-s32 Func_02000ca4();
-void Func_02000cae();
-s32 Func_02000cb0();
-s32 Func_02000cba();
-void Func_02000cd2();
-void Func_02000ce0();
-void Func_02000ce2();
-void Func_02000ce4();
-s32 Func_02000d0e();
-s32 Func_02000d0e_a(s32);
-void Func_02000d1e();
-void Func_02000d26();
-void Func_02000d28();
-void Func_02000d2e();
-void Func_02000d34();
-void Func_02000d36();
-void Func_02000d38();
-void Func_02000d72();
-void Func_02000d7c();
-void Func_02000d82();
-void Func_02000e94();
-void Func_02000ea0();
-void Func_02000eac();
-void Func_02000eb8();
-void Func_02000ec4();
 u8 *Func_02000ec6();
-void Func_02000ed0();
 u8 *Func_02000ed2();
-void Func_02000edc();
 u8 *Func_02000ede();
-void Func_02000ee8();
 u8 *Func_02000eea();
-void Func_02000ef4();
 u8 *Func_02000ef6();
 u8 *Func_02000f02();
 u8 *Func_02000f0e();
@@ -157,56 +50,19 @@ u8 *Func_02000f26();
 void Func_02000f36();
 void Func_02000f3c();
 void Func_02000f42();
-void Func_02000f44();
 void Func_02000f48();
-void Func_02000f4c();
 void Func_02000f4e();
-void Func_02000f54();
 void Func_02000f54_a(s32);
 void Func_02000f5a();
-void Func_02000f5c();
 void Func_02000f60();
-void Func_02000f64();
 void Func_02000f66();
-void Func_02000f6c();
 void Func_02000f6c_a(s32);
 void Func_02000f72();
-void Func_02000f74();
 void Func_02000f78();
-void Func_02000f7c();
 void Func_02000f7e();
-void Func_02000f84();
 void Func_02000f84_a(s32);
 void Func_02000f8a();
-void Func_02000f8c();
-void Func_02000f94();
-void Func_02000f9c();
-void Func_02000fa4();
-void Func_02000fac();
-void Func_02000fb4();
-s32 Func_02000fd4();
-void Func_02001014();
-struct FieldActor *Func_02001020();
-void Func_0200102a();
-struct FieldActor *Func_0200102c();
-struct FieldActor *Func_02001036();
-void Func_0200103a();
-s32 Func_02001058();
-void Func_02001060();
 u8 *Func_0200106c();
-void Func_02001070();
-void Func_02001072();
-void Func_02001076();
-void Func_0200108a();
-void Func_02001090();
-void Func_02001092();
-void Func_020010a2();
-void Func_020010a4();
-s32 Func_020010c0();
-void Func_020010d4();
-s32 Func_020010d8();
-void Func_02001108();
-void Func_02001120();
 
 /*
  * Table getter at 0x02000098. The eight-byte owner includes its one pool word
@@ -246,30 +102,16 @@ void Func_02001120();
 /* The scene step counter at 0x1d8 of the shared scene work record. */
 static __inline__ void Call1(void (*f)(), s32 a0)
 {
-    extern u8 Data_03001ebc[];
-
     f(a0);
 }
 
 static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
 {
-    extern u8 Data_03001ebc[];
-
     f(a0, a1, a2, a3, a4, a5);
-}
-
-static __inline__ void bump_step(s32 amount)
-{
-    extern u8 Data_03001ebc[];
-
-    u8 *work = *(u8 **)Data_03001ebc;
-
-    *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
 }
 
 static __inline__ s32 Value1(s32 (*f)(), s32 a0)
 {
-    extern u8 Data_03001ebc[];
     void Func_02000c7c();
     void Func_02000d6a();
 
@@ -278,7 +120,6 @@ static __inline__ s32 Value1(s32 (*f)(), s32 a0)
 
 static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
 {
-    extern u8 Data_03001ebc[];
     void Func_0200101a();
 
     f(a0, a1, a2);
@@ -308,7 +149,6 @@ extern u8 Data_02008ea8[];
 
 s32 SceneState_ApplyArgMode0AndReturnZero(s32 no)
 {
-    extern u8 *Data_03001ebc;
     s32 Func_02000c7c(s32, s32);
     s32 Func_02000d6a(s32, s32, s32, s32, s32, s32);
     s32 *Func_0200101a();
@@ -321,7 +161,6 @@ s32 SceneState_ApplyArgMode0AndReturnZero(s32 no)
 
 s32 SceneData_SelectByRuntimeSelector(void)
 {
-    extern u8 *Data_03001ebc;
     s32 Func_02000c7c(s32, s32);
     s32 Func_02000d6a(s32, s32, s32, s32, s32, s32);
     s32 *Func_0200101a();
@@ -342,7 +181,6 @@ s32 SceneData_SelectByRuntimeSelector(void)
 
 s32 Func_02000094(void)
 {
-    extern u8 *Data_03001ebc;
     s32 Func_02000c7c(s32, s32);
     s32 Func_02000d6a(s32, s32, s32, s32, s32, s32);
     s32 *Func_0200101a();
@@ -352,7 +190,6 @@ s32 Func_02000094(void)
 
 u8 *SceneData_GetTable8bcc(void)
 {
-    extern u8 *Data_03001ebc;
     s32 Func_02000c7c(s32, s32);
     s32 Func_02000d6a(s32, s32, s32, s32, s32, s32);
     s32 *Func_0200101a();
@@ -362,7 +199,6 @@ u8 *SceneData_GetTable8bcc(void)
 
 s32 SceneData_SelectSecondaryDataByRuntimeSelector(void)
 {
-    extern u8 *Data_03001ebc;
     s32 Func_02000c7c(s32, s32);
     s32 Func_02000d6a(s32, s32, s32, s32, s32, s32);
     s32 *Func_0200101a();
@@ -383,7 +219,6 @@ s32 SceneData_SelectSecondaryDataByRuntimeSelector(void)
 
 s32 SceneData_SelectDataByRuntimeSelector(void)
 {
-    extern u8 *Data_03001ebc;
     s32 Func_02000c7c(s32, s32);
     s32 Func_02000d6a(s32, s32, s32, s32, s32, s32);
     s32 *Func_0200101a();
@@ -404,7 +239,6 @@ s32 SceneData_SelectDataByRuntimeSelector(void)
 
 void SceneState_ConfigureRegion1_0_21x14(void)
 {
-    extern u8 *Data_03001ebc;
     s32 Func_02000c7c(s32, s32);
     s32 Func_02000d6a(s32, s32, s32, s32, s32, s32);
     s32 *Func_0200101a();
@@ -412,12 +246,11 @@ void SceneState_ConfigureRegion1_0_21x14(void)
     s32 w = 21;
     s32 h = 14;
 
-    Func_02000a8e(1, 0, 1, 1, w, h);
+    Map_CopyCellAttributes(1, 0, 1, 1, w, h);
 }
 
 void SceneState_ConfigureRegion0_0_21x14(void)
 {
-    extern u8 *Data_03001ebc;
     s32 Func_02000c7c(s32, s32);
     s32 Func_02000d6a(s32, s32, s32, s32, s32, s32);
     s32 *Func_0200101a();
@@ -425,12 +258,11 @@ void SceneState_ConfigureRegion0_0_21x14(void)
     s32 w = 21;
     s32 h = 14;
 
-    Func_02000aae(0, 0, 1, 1, w, h);
+    Map_CopyCellAttributes(0, 0, 1, 1, w, h);
 }
 
 void SceneState_ApplyTwoRects(void)
 {
-    extern u8 *Data_03001ebc;
     s32 Func_02000c7c(s32, s32);
     s32 Func_02000d6a(s32, s32, s32, s32, s32, s32);
     s32 *Func_0200101a();
@@ -439,19 +271,18 @@ void SceneState_ApplyTwoRects(void)
         s32 a5 = 1;
         s32 a6 = 3;
 
-        Func_02000ac6(111, 37, 97, 21, a5, a6);
+        Map_CopyCellsTo(111, 37, 97, 21, a5, a6);
     }
     {
         s32 a5 = 32;
         s32 a6 = 24;
 
-        Func_02000ae2(46, 38, 3, 2, a5, a6);
+        Map_CopyCellAttributes(46, 38, 3, 2, a5, a6);
     }
 }
 
 void FieldScene_RunTwoLayoutSteps(void)
 {
-    extern u8 *Data_03001ebc;
     s32 Func_02000c7c(s32, s32);
     s32 Func_02000d6a(s32, s32, s32, s32, s32, s32);
     s32 *Func_0200101a();
@@ -460,100 +291,93 @@ void FieldScene_RunTwoLayoutSteps(void)
         s32 fifth = 1;
         s32 sixth = 3;
 
-        Func_02000afa(95, 21, 97, 21, fifth, sixth);
+        Map_CopyCellsTo(95, 21, 97, 21, fifth, sixth);
     }
     {
         s32 fifth = 32;
         s32 sixth = 25;
 
-        Func_02000b16(46, 38, 3, 1, fifth, sixth);
+        Map_CopyCellAttributes(46, 38, 3, 1, fifth, sixth);
     }
 }
 
 void FieldScene_RunActor9Flag882Scene(void)
 {
-    extern u8 *Data_03001ebc;
     s32 Func_02000c7c(s32, s32);
     s32 Func_02000d6a(s32, s32, s32, s32, s32, s32);
     s32 *Func_0200101a();
 
-    Func_02000b5c();
-    Func_02000b7e(9, 0, 0);
-    Func_02000b54(0x882);
-    Func_02000b78();
+    Event_Begin();
+    Actor_SetPosition(9, 0, 0);
+    GameFlag_Set(0x882);
+    Event_End();
 }
 
 void FieldScene_RunScene398SequenceA(void)
 {
-    extern u8 Data_03001ebc[];
-
-    Func_02000b82();
-    Func_02000ba4(8, 0, 0);
-    Call1(Func_02000b7a, 0x883);
-    Func_02000b90(40);
-    Func_02000bc8(15, 2);
-    Func_02000bb6(15)->motion_flags = 0;
-    Func_02000bc2(15)->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
-    Func_02000bfc(15, 2);
-    Call6(Func_02000ba0, 0, 0, 1, 1, 18, 14);
-    Func_02000be4();
+    Event_Begin();
+    Actor_SetPosition(8, 0, 0);
+    GameFlag_Set(0x883);
+    Event_Wait(40);
+    Actor_SetAnimationAndWait(15, 2);
+    Actor_Get(15)->motion_flags = 0;
+    Actor_Get(15)->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
+    Actor_SetSpritePriority(15, 2);
+    Map_CopyCellAttributes(0, 0, 1, 1, 18, 14);
+    Event_End();
 }
 
 void FieldScene_RunActorFifteenScene(void)
 {
-    extern u8 *Data_03001ebc;
     s32 Func_02000c7c(s32, s32);
     s32 Func_02000d6a(s32, s32, s32, s32, s32, s32);
     s32 *Func_0200101a();
 
-    void Func_02000c40(s32);
+    void Audio_PlayCue(s32);
 
-    Func_02000bec();
-    Func_02000c24(0xF, 0);
-    Func_02000bf2(0x28);
-    Func_02000c40(0xD2);
-    Func_02000c30(0xF, 6);
-    Func_02000c14();
+    Event_Begin();
+    Actor_SetChildValue(0xF, 0);
+    Event_Wait(0x28);
+    Audio_PlayCue(0xD2);
+    Actor_SetAnimationAndWait(0xF, 6);
+    Event_End();
 }
 
 void FieldScene_RunActorSixteenScene(void)
 {
-    extern u8 *Data_03001ebc;
     s32 Func_02000c7c(s32, s32);
     s32 Func_02000d6a(s32, s32, s32, s32, s32, s32);
     s32 *Func_0200101a();
 
-    void Func_02000c40_a(void);
-    void Func_02000c6c(s32);
+    void Event_End(void);
+    void Audio_PlayCue(s32);
 
-    Func_02000c18();
-    Func_02000c50(0x10, 0);
-    Func_02000c1e(0x28);
-    Func_02000c6c(0xD2);
-    Func_02000c5c(0x10, 6);
-    Func_02000c40_a();
+    Event_Begin();
+    Actor_SetChildValue(0x10, 0);
+    Event_Wait(0x28);
+    Audio_PlayCue(0xD2);
+    Actor_SetAnimationAndWait(0x10, 6);
+    Event_End();
 }
 
 void FieldScene_RunActor17Steps28AndD2(void)
 {
-    extern u8 *Data_03001ebc;
     s32 Func_02000c7c(s32, s32);
     s32 Func_02000d6a(s32, s32, s32, s32, s32, s32);
     s32 *Func_0200101a();
 
-    void Func_02000c6c_a(void);
+    void Event_End(void);
 
-    Func_02000c44();
+    Event_Begin();
     Func_02000c7c(0x11, 0);
-    Func_02000c4a(0x28);
-    Func_02000c98(0xD2);
-    Func_02000c88(0x11, 6);
-    Func_02000c6c_a();
+    Event_Wait(0x28);
+    Audio_PlayCue(0xD2);
+    Actor_SetAnimationAndWait(0x11, 6);
+    Event_End();
 }
 
 void FieldScene_RunScene398SequenceB(void)
 {
-    extern u8 Data_03001ebc[];
     void Func_02000c7c();
     void Func_02000d6a();
 
@@ -569,56 +393,55 @@ void FieldScene_RunScene398SequenceB(void)
         if ((*(s32 *)(rec7 + 16) >> 20) != 23) {
             goto L_02000330;
         }
-        Call1(Func_02000c7c_a, 0x303);
+        GameFlag_Set(0x303);
     } else {
         L_02000330:;
-        Call1(Func_02000c8c_a, 0x303);
+        GameFlag_Clear(0x303);
     }
     if ((*(s32 *)(rec8 + 8) >> 20) == 35) {
         if ((*(s32 *)(rec8 + 16) >> 20) != 23) {
             goto L_02000350;
         }
-        Call1(Func_02000c9c, 0x304);
+        GameFlag_Set(0x304);
     } else {
         L_02000350:;
-        Call1(Func_02000cae, 0x304);
+        GameFlag_Clear(0x304);
     }
-    if (Value1(Func_02000ca4, 0x303) == 0) {
-        record = Value1(Func_02000cb0, 0x304);
+    if (GameFlag_IsSet(0x303) == 0) {
+        record = GameFlag_IsSet(0x304);
         if (record == 0) {
             goto L_020003c2;
         }
     }
-    if (Value1(Func_02000cba, 0x302) == 0) {
-        Func_02000ce2();
-        Func_02000ce0(40);
-        Func_02000d2e(210);
+    if (GameFlag_IsSet(0x302) == 0) {
+        Event_Begin();
+        Event_Wait(40);
+        Audio_PlayCue(210);
         v5 = 36;
-        Func_02000d1e(17, 6);
-        Call6(Func_02000cd2, 0, 1, 1, 1, v5, 22);
-        Call6(Func_02000ce4, 0, 2, 1, 1, v5, 24);
-        Func_02000d28();
+        Actor_SetAnimationAndWait(17, 6);
+        Map_CopyCellAttributes(0, 1, 1, 1, v5, 22);
+        Map_CopyCellAttributes(0, 2, 1, 1, v5, 24);
+        Event_End();
     }
-    Call1(Func_02000d0e, 0x302);
+    GameFlag_Set(0x302);
     goto L_02000414;
     L_020003c2:;
-    if (Value1(Func_02000d0e_a, 0x302) != 0) {
-        Func_02000d36();
-        Func_02000d34(40);
-        Func_02000d82(220);
+    if (GameFlag_IsSet(0x302) != 0) {
+        Event_Begin();
+        Event_Wait(40);
+        Audio_PlayCue(220);
         v5 = 36;
-        Func_02000d72(17, 2);
-        Call6(Func_02000d26, 1, 1, 1, 1, v5, 22);
-        Call6(Func_02000d38, 1, 2, 1, 1, v5, 24);
-        Func_02000d7c();
+        Actor_SetAnimationAndWait(17, 2);
+        Map_CopyCellAttributes(1, 1, 1, 1, v5, 22);
+        Map_CopyCellAttributes(1, 2, 1, 1, v5, 24);
+        Event_End();
     }
-    Call1(Func_02000d6a_a, 0x302);
+    GameFlag_Clear(0x302);
     L_02000414:;
 }
 
 void ActorPresentation_SetSceneCell31AndFlag305(void)
 {
-    extern u8 *Data_03001ebc;
     s32 Func_02000c7c(s32, s32);
     s32 Func_02000d6a(s32, s32, s32, s32, s32, s32);
     s32 *Func_0200101a();
@@ -627,12 +450,11 @@ void ActorPresentation_SetSceneCell31AndFlag305(void)
     s32 height = 13;
 
     Func_02000d6a(31, 0, 1, 1, width, height);
-    Func_02000d90(0x305);
+    GameFlag_Set(0x305);
 }
 
 void SceneState_SetGlobalByte17(void)
 {
-    extern u8 *Data_03001ebc;
     s32 Func_02000c7c(s32, s32);
     s32 Func_02000d6a(s32, s32, s32, s32, s32, s32);
     s32 *Func_0200101a();
@@ -642,7 +464,6 @@ void SceneState_SetGlobalByte17(void)
 
 void SceneState_ClearRuntimeByte17(void)
 {
-    extern u8 *Data_03001ebc;
     s32 Func_02000c7c(s32, s32);
     s32 Func_02000d6a(s32, s32, s32, s32, s32, s32);
     s32 *Func_0200101a();
@@ -659,7 +480,6 @@ void SceneState_ClearRuntimeByte17(void)
  */
 s32 FieldScene_DispatchByScenarioId(void)
 {
-    extern u8 *Data_03001ebc;
     s32 Func_02000c7c(s32, s32);
     s32 Func_02000d6a(s32, s32, s32, s32, s32, s32);
     s32 *Func_0200101a();
@@ -680,17 +500,16 @@ s32 FieldScene_DispatchByScenarioId(void)
 
 void RunGuardedSceneSetup(void)
 {
-    extern u8 *Data_03001ebc;
     s32 Func_02000c7c(s32, s32);
     s32 Func_02000d6a(s32, s32, s32, s32, s32, s32);
     s32 *Func_0200101a();
 
-    if (RunSceneCommand(0x305) != 0) {
+    if (GameFlag_IsSet(0x305) != 0) {
         s32 width = 8;
         s32 height = 13;
 
-        Func_02000e04_a(31, 0, 1, 1, width, height);
-        FinishSceneSetup(8, 0);
+        Map_CopyCellAttributes(31, 0, 1, 1, width, height);
+        Actor_SetAnimation(8, 0);
     }
 }
 
@@ -705,13 +524,13 @@ void SceneState_SetRuntimeWord448To516(void)
      * 68; the two are not one running offset. */
     *(s32 *)(Data_03001ebc + 448) = 516;
 
-    Func_02000e86(8, 1);
-    Func_02000e8e(10, 2);
+    Actor_SetAnimation(8, 1);
+    Actor_SetAnimation(10, 2);
 
-    if (Func_02000e54(0x882) != 0) {
-        Func_02000e9a(9, 0, 0);
+    if (GameFlag_IsSet(0x882) != 0) {
+        Actor_SetPosition(9, 0, 0);
     } else {
-        Func_02000e68(Func_02000e9a_b(9), 0);
+        Actor_SetSpriteFlags(Func_02000e9a_b(9), 0);
     }
 }
 
@@ -726,38 +545,38 @@ void FieldScene_RunScene398SequenceC(void)
 
     Data_03001ebc->start_transition = 0x204;
     record = Func_02000ec6(18);
-    Func_02000e94((s32)record, 0);
+    Actor_SetSpriteFlags((s32)record, 0);
     record = Func_02000ed2(19);
-    Func_02000ea0((s32)record, 0);
+    Actor_SetSpriteFlags((s32)record, 0);
     record = Func_02000ede(20);
-    Func_02000eac((s32)record, 0);
+    Actor_SetSpriteFlags((s32)record, 0);
     record = Func_02000eea(21);
-    Func_02000eb8((s32)record, 0);
+    Actor_SetSpriteFlags((s32)record, 0);
     record = Func_02000ef6(22);
-    Func_02000ec4((s32)record, 0);
+    Actor_SetSpriteFlags((s32)record, 0);
     record = Func_02000f02(23);
-    Func_02000ed0((s32)record, 0);
+    Actor_SetSpriteFlags((s32)record, 0);
     record = Func_02000f0e(24);
-    Func_02000edc((s32)record, 0);
+    Actor_SetSpriteFlags((s32)record, 0);
     record = Func_02000f1a(25);
-    Func_02000ee8((s32)record, 0);
+    Actor_SetSpriteFlags((s32)record, 0);
     record = Func_02000f26(26);
-    Func_02000ef4((s32)record, 0);
-    Func_02000f44(18, 5);
-    Func_02000f4c(19, 5);
-    Func_02000f54(20, 5);
-    Func_02000f5c(21, 5);
-    Func_02000f64(22, 5);
-    Func_02000f6c(23, 3);
-    Func_02000f74(24, 3);
-    Func_02000f7c(25, 3);
-    Func_02000f84(26, 3);
-    Func_02000f8c(9, 2);
-    Func_02000f94(10, 2);
-    Func_02000f9c(11, 2);
-    Func_02000fa4(12, 2);
-    Func_02000fac(13, 2);
-    Func_02000fb4(14, 2);
+    Actor_SetSpriteFlags((s32)record, 0);
+    Actor_SetAnimation(18, 5);
+    Actor_SetAnimation(19, 5);
+    Actor_SetAnimation(20, 5);
+    Actor_SetAnimation(21, 5);
+    Actor_SetAnimation(22, 5);
+    Actor_SetAnimation(23, 3);
+    Actor_SetAnimation(24, 3);
+    Actor_SetAnimation(25, 3);
+    Actor_SetAnimation(26, 3);
+    Actor_SetAnimation(9, 2);
+    Actor_SetAnimation(10, 2);
+    Actor_SetAnimation(11, 2);
+    Actor_SetAnimation(12, 2);
+    Actor_SetAnimation(13, 2);
+    Actor_SetAnimation(14, 2);
     Func_02000f36(18);
     Func_02000f3c(19);
     Func_02000f42(20);
@@ -773,37 +592,37 @@ void FieldScene_RunScene398SequenceC(void)
     Func_02000f7e(12);
     Func_02000f84_a(13);
     Func_02000f8a(14);
-    if (Value1(Func_02000fd4, 0x883) != 0) {
-        Func_0200101a_a(8, 0, 0);
-        Func_0200102a(15, 5);
-        Func_02001020(15)->motion_flags = 0;
-        Func_0200102c(15)->y.fixed = -0x40000;
-        Func_02001036(15)->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
-        Func_02001070(15, 2);
-        Call6(Func_02001014, 0, 0, 1, 1, 18, 14);
+    if (GameFlag_IsSet(0x883) != 0) {
+        Actor_SetPosition(8, 0, 0);
+        Actor_SetAnimation(15, 5);
+        Actor_Get(15)->motion_flags = 0;
+        Actor_Get(15)->y.fixed = -0x40000;
+        Actor_Get(15)->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
+        Actor_SetSpritePriority(15, 2);
+        Map_CopyCellAttributes(0, 0, 1, 1, 18, 14);
     } else {
-        Func_02001076(8, 2);
+        Actor_SetAnimation(8, 2);
         record = Func_0200106c(8);
-        Func_0200103a((s32)record, 0);
-        Func_0200108a(15, 1);
+        Actor_SetSpriteFlags((s32)record, 0);
+        Actor_SetAnimation(15, 1);
     }
-    Func_02001092(16, 1);
-    if (Value1(Func_02001058, 0x302) != 0) {
+    Actor_SetAnimation(16, 1);
+    if (GameFlag_IsSet(0x302) != 0) {
         v5 = 36;
-        Func_020010a4(17, 1);
-        Call6(Func_02001060, 0, 1, 1, 1, v5, 22);
-        Call6(Func_02001072, 0, 2, 1, 1, v5, 24);
+        Actor_SetAnimation(17, 1);
+        Map_CopyCellAttributes(0, 1, 1, 1, v5, 22);
+        Map_CopyCellAttributes(0, 2, 1, 1, v5, 24);
     } else {
         v5 = 36;
-        Func_020010d4(17, 5);
-        Call6(Func_02001090, 1, 1, 1, 1, v5, 22);
-        Call6(Func_020010a2, 1, 2, 1, 1, v5, 24);
+        Actor_SetAnimation(17, 5);
+        Map_CopyCellAttributes(1, 1, 1, 1, v5, 22);
+        Map_CopyCellAttributes(1, 2, 1, 1, v5, 24);
     }
-    if (Value1(Func_020010c0, 0x303) != 0) {
-        Call3(Func_02001108, 11, 0x23a0000, 0x1780000);
+    if (GameFlag_IsSet(0x303) != 0) {
+        Actor_SetPosition(11, 0x23a0000, 0x1780000);
     }
-    if (Value1(Func_020010d8, 0x304) != 0) {
-        Call3(Func_02001120, 12, 0x23a0000, 0x1780000);
+    if (GameFlag_IsSet(0x304) != 0) {
+        Actor_SetPosition(12, 0x23a0000, 0x1780000);
     }
 }
 
@@ -829,7 +648,6 @@ s32 *SceneActor_FindSlotAtTile(s32 x, s32 z)
 
 void StagedActor_PushActorAhead(void)
 {
-    extern u8 *Data_03001ebc;
     s32 Func_02000c7c(s32, s32);
     s32 Func_02000d6a(s32, s32, s32, s32, s32, s32);
     s32 *Func_0200101a();
@@ -868,9 +686,9 @@ void StagedActor_PushActorAhead(void)
 
     if (Func_020011c0(target, pos) > 0) return;
 
-    Func_020011a4(player, 8);
-    Func_020011a4_a(15);
-    Func_0200124a(185);
+    Object_SetAnimation(player, 8);
+    Task_Wait(15);
+    Audio_PlayCue(185);
 
     *(s32 *)(target + 48) = 0x3333;
     *(s32 *)(target + 52) = 0x3333;
@@ -887,13 +705,12 @@ void StagedActor_PushActorAhead(void)
     *(s32 *)(target + 36) = (s32)blocker;
     *(s32 *)(target + 44) = (s32)blocker;
 
-    Func_020011f0(player, 1);
+    Object_SetAnimation(player, 1);
     Func_02000be8();
 }
 
 void Resource398_ImportBankNoOp(void)
 {
-    extern u8 *Data_03001ebc;
     s32 Func_02000c7c(s32, s32);
     s32 Func_02000d6a(s32, s32, s32, s32, s32, s32);
     s32 *Func_0200101a();

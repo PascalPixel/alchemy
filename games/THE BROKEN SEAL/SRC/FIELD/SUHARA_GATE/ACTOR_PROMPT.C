@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "FIELD_EVENT.H"
 #include "SCENE.H"
 
 extern u8 Value_000000aa;

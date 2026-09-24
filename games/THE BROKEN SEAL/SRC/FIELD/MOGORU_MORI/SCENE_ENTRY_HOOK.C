@@ -1,6 +1,5 @@
 #include "TYPES.H"
 
-#define FieldScene_RunSceneEntryHook Func_02002500
 
 extern u8 Data_02000240[];
 

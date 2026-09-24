@@ -1,10 +1,12 @@
-//! The dashboard's game font and tab icons. The two faces come from every
-//! registered ROM (see `fonts`); the icons from the tracked icon banks and the
-//! ROM palette. All are built into the dashboard cache and served from there;
-//! none may ever be committed.
+//! The dashboard's lettering and tab icons. Every string is drawn from the
+//! tracked glyph sheets (see `coverage::letters`), cut as CSS mask sprites at
+//! one pixel scale: labels in the upright menu font, quoted game text in the
+//! dialogue fonts. The icons come from the tracked icon banks and the ROM
+//! palette. The images are built into the dashboard cache and served from
+//! there; none is a font file and none may ever be committed.
 use super::cache::{self, Store};
-use super::fonts::{self, Face};
 use crate::build_assets::{icon_bank_source, raw_palette_bank, ICON_BANKS, ICON_PALETTE_BANK};
+use crate::coverage::letters::{Letters, PIXEL};
 use psynergy::assets::image::{indexed_png, IndexedImage};
 use std::{collections::BTreeMap, path::Path, sync::Mutex};
 
@@ -16,90 +18,376 @@ pub(super) const TAB_ICONS: [(&str, u8, u32); 5] = [
     ("Maps", 4, 167),
     ("Text", 4, 176),
 ];
-/// Font units per glyph pixel: a sixteen-pixel em draws each glyph pixel as
-/// two CSS pixels at 32px, the dashboard's one text size.
-const UNIT: i32 = 64;
-const EM: u16 = 1024;
-/// Every face shares one baseline: thirteen pixels above, three below.
-const ASCENT: i32 = 13;
-const DESCENT: i32 = 3;
-pub(super) const FAMILY: &str = "Alchemy";
+/// The served glyph sheets are drawn at two device pixels per game pixel,
+/// so a retina display shows them without resampling.
+pub(super) const SHEET_SCALE: u32 = 2;
+pub(super) const SHEET_COLUMNS: u32 = 16;
 
+/// The faces by the class that selects them: `u` the menu font for every
+/// label, `d` the Western dialogue font and `j` the Japanese one for quoted
+/// game text (a `data-face` attribute on the element that holds it).
+pub(super) const FACES: [&str; 3] = ["u", "d", "j"];
+
+#[derive(Clone)]
+pub(super) struct Face {
+    pub class: &'static str,
+    pub stamp: String,
+    pub letters: Letters,
+}
 #[derive(Clone, Default)]
 pub(super) struct Assets {
-    pub font: Option<String>,
-    pub italic: Option<String>,
+    pub faces: Vec<Face>,
     pub icons: Option<String>,
 }
 static ASSETS: Mutex<Assets> = Mutex::new(Assets {
-    font: None,
-    italic: None,
+    faces: Vec::new(),
     icons: None,
 });
 pub(super) fn current() -> Assets {
     ASSETS.lock().unwrap_or_else(|e| e.into_inner()).clone()
 }
-
-/// Build (or reuse) the cached files; each failure leaves the others usable.
-pub(super) fn refresh(root: &Path) -> Result<String, String> {
-    let store = Store::at(root);
-    let faces = font_files(root, &store);
-    let icons = icon_file(root, &store);
-    let mut assets = ASSETS.lock().unwrap_or_else(|e| e.into_inner());
-    let (font, italic) = faces.as_ref().ok().cloned().unzip();
-    (assets.font, assets.italic) = (font, italic);
-    assets.icons = icons.as_ref().ok().cloned();
-    match (faces, icons) {
-        (Ok(_), Ok(_)) => Ok("fonts and icons cached".into()),
-        (Err(error), _) => Err(format!("font: {error}")),
-        (_, Err(error)) => Err(format!("icons: {error}")),
+impl Assets {
+    pub(super) fn face(&self, class: &str) -> Option<&Face> {
+        self.faces.iter().find(|face| face.class == class)
     }
 }
-/// A cached file's bytes by its published name, `font-<stamp>.ttf`,
-/// `italic-<stamp>.ttf` or `icons-<stamp>.png`; only current stamps are served.
+
+/// Build (or reuse) the cached images; each failure leaves the rest usable.
+pub(super) fn refresh(root: &Path) -> Result<String, String> {
+    let store = Store::at(root);
+    let mut faces = Vec::new();
+    let mut failures = Vec::new();
+    for class in FACES {
+        let letters = match class {
+            "u" => Letters::menu(root),
+            "d" => Letters::dialogue(root),
+            _ => Letters::japanese(root),
+        };
+        match letters.and_then(|letters| face_file(&store, class, letters)) {
+            Ok(face) => faces.push(face),
+            Err(error) => failures.push(format!("{class}: {error}")),
+        }
+    }
+    let icons = icon_file(root, &store);
+    let mut assets = ASSETS.lock().unwrap_or_else(|e| e.into_inner());
+    assets.faces = faces;
+    assets.icons = icons.as_ref().ok().cloned();
+    if let Err(error) = icons {
+        failures.push(format!("icons: {error}"));
+    }
+    if failures.is_empty() {
+        Ok("lettering and icons cached".into())
+    } else {
+        Err(failures.join("; "))
+    }
+}
+/// A cached file's bytes by its published name, `letters<class>-<stamp>.png`
+/// or `icons-<stamp>.png`; only current stamps are served.
 pub(super) fn file(root: &Path, name: &str) -> Option<(&'static str, Vec<u8>)> {
     let assets = current();
     let (stem, extension) = name.rsplit_once('.')?;
     let (kind, stamp) = stem.split_once('-')?;
-    let (current, mime) = match (kind, extension) {
-        ("font", "ttf") => (assets.font, "font/ttf"),
-        ("italic", "ttf") => (assets.italic, "font/ttf"),
-        ("icons", "png") => (assets.icons, "image/png"),
-        _ => return None,
+    if extension != "png" {
+        return None;
+    }
+    let known = match kind {
+        _ if kind.starts_with("letters") => assets
+            .faces
+            .iter()
+            .any(|face| kind == format!("letters{}", face.class) && face.stamp == stamp),
+        "icons" => assets.icons.as_deref() == Some(stamp),
+        _ => false,
     };
-    (current.as_deref() == Some(stamp))
+    known
         .then(|| Store::at(root).load(kind, stamp, extension))
         .flatten()
-        .map(|bytes| (mime, bytes))
+        .map(|bytes| ("image/png", bytes))
 }
 
 fn read(root: &Path, path: &str) -> Result<Vec<u8>, String> {
     std::fs::read(root.join(path)).map_err(|error| format!("{path}: {error}"))
 }
-/// Both faces, stamped by the glyphs they draw rather than by whole ROMs.
-fn font_files(root: &Path, store: &Store) -> Result<(String, String), String> {
-    let (upright, italic) = fonts::faces(root)?;
-    let mut stamps = Vec::new();
-    for (kind, face, slanted) in [("font", &upright, false), ("italic", &italic, true)] {
-        let stamp = cache::stamp(&[cache::code_identity().as_bytes(), &serialise(face)]);
-        store.get_or_build(kind, &stamp, "ttf", || truetype(face, slanted))?;
-        stamps.push(stamp);
-    }
-    Ok((stamps[0].clone(), stamps[1].clone()))
+fn face_file(store: &Store, class: &'static str, letters: Letters) -> Result<Face, String> {
+    let sheet = mask_sheet(&letters)?;
+    // Each face keeps its own cache name, so saving one never retires another.
+    let stamp = cache::stamp(&[cache::code_identity().as_bytes(), &sheet]);
+    store.get_or_build(&format!("letters{class}"), &stamp, "png", || Ok(sheet))?;
+    Ok(Face {
+        class,
+        stamp,
+        letters,
+    })
 }
-fn serialise(face: &Face) -> Vec<u8> {
+/// A face's frames as an alpha mask, ink opaque, `SHEET_SCALE` device pixels
+/// to the game pixel, sixteen frames to a row.
+fn mask_sheet(letters: &Letters) -> Result<Vec<u8>, String> {
+    let (cell_w, cell_h) = letters.cell;
+    let frames = letters.rows.len() as u32;
+    let (width, height) = (
+        SHEET_COLUMNS * cell_w * SHEET_SCALE,
+        frames.div_ceil(SHEET_COLUMNS).max(1) * cell_h * SHEET_SCALE,
+    );
+    let mut alpha = vec![0u8; (width * height) as usize];
+    for frame in 0..frames {
+        let (left, top) = (
+            frame % SHEET_COLUMNS * cell_w,
+            frame / SHEET_COLUMNS * cell_h,
+        );
+        for y in 0..cell_h * SHEET_SCALE {
+            for x in 0..cell_w * SHEET_SCALE {
+                if letters.ink(frame as usize, x / SHEET_SCALE, y / SHEET_SCALE) {
+                    let at = (top * SHEET_SCALE + y) * width + left * SHEET_SCALE + x;
+                    alpha[at as usize] = 255;
+                }
+            }
+        }
+    }
     let mut out = Vec::new();
-    for (character, glyph) in face {
-        out.extend((*character as u32).to_le_bytes());
-        out.extend([
-            glyph.advance as u8,
-            glyph.baseline as u8,
-            glyph.rows.len() as u8,
-        ]);
-        out.extend(glyph.rows.iter().flat_map(|row| row.to_le_bytes()));
+    let mut encoder = png::Encoder::new(&mut out, width, height);
+    encoder.set_color(png::ColorType::GrayscaleAlpha);
+    encoder.set_depth(png::BitDepth::Eight);
+    let pixels = alpha.iter().flat_map(|a| [255, *a]).collect::<Vec<_>>();
+    encoder
+        .write_header()
+        .and_then(|mut writer| writer.write_image_data(&pixels))
+        .map_err(|e| e.to_string())?;
+    Ok(out)
+}
+/// The lettering rules: per face, a sprite per frame with its advance and
+/// place on the sheet, lengths in game pixels.
+pub(super) fn lettering_css() -> String {
+    let mut css = String::new();
+    for face in current().faces {
+        let Face {
+            class,
+            stamp,
+            letters,
+        } = &face;
+        let (cell_w, cell_h) = letters.cell;
+        let size = format!(
+            "{}px {}px",
+            SHEET_COLUMNS * cell_w,
+            (letters.rows.len() as u32).div_ceil(SHEET_COLUMNS).max(1) * cell_h
+        );
+        css.push_str(&format!(
+            ".{class} i{{display:block;height:{cell_h}px;-webkit-mask:url(/cache/letters{class}-{stamp}.png) 0 0/{size} no-repeat;mask:url(/cache/letters{class}-{stamp}.png) 0 0/{size} no-repeat}}"
+        ));
+        for (frame, advance) in letters.advance.iter().enumerate() {
+            if *advance == 0 {
+                continue;
+            }
+            let frame = frame as u32;
+            let (x, y) = (
+                frame % SHEET_COLUMNS * cell_w,
+                frame / SHEET_COLUMNS * cell_h,
+            );
+            css.push_str(&format!(
+                ".{class} .g{frame:02x}{{width:{advance}px;-webkit-mask-position:-{x}px -{y}px;mask-position:-{x}px -{y}px}}"
+            ));
+        }
+    }
+    super::chrome::pixels(&css)
+}
+/// Every text node of a page's body drawn from the sheets: words as unbroken
+/// sprite runs, the text itself kept for readers, search and copying.
+/// Script, style, title and option text is left alone, and so is any
+/// character a face lacks, which falls back to the system face.
+pub(super) fn letter(html: &str) -> String {
+    let assets = current();
+    let faces = assets
+        .faces
+        .iter()
+        .map(|face| (face.class, &face.letters))
+        .collect::<Vec<_>>();
+    if faces.is_empty() {
+        return html.to_string();
+    }
+    letter_with(&faces, html)
+}
+pub(super) fn letter_with(faces: &[(&str, &Letters)], html: &str) -> String {
+    let face = |class: &str| {
+        faces
+            .iter()
+            .find(|(name, _)| *name == class)
+            .or(faces.first())
+            .copied()
+    };
+    let mut out = String::with_capacity(html.len() * 3);
+    let mut rest = html;
+    let mut raw: Option<String> = None;
+    let mut body = false;
+    // The element that chose a quoted-text face, and the face.
+    let mut quoted: Option<(String, &str)> = None;
+    while !rest.is_empty() {
+        // Raw text runs verbatim to its own closing tag, whatever it holds.
+        if let Some(open) = &raw {
+            let close = rest.find(&format!("</{open}")).unwrap_or(rest.len());
+            out.push_str(&rest[..close]);
+            rest = &rest[close..];
+            if rest.is_empty() {
+                break;
+            }
+        }
+        let next = rest.find('<').unwrap_or(rest.len());
+        let (text, tail) = rest.split_at(next);
+        let chosen = face(quoted.as_ref().map_or("u", |(_, class)| class));
+        match chosen {
+            Some((class, letters)) if body && raw.is_none() && !text.trim().is_empty() => {
+                out.push_str(&run(class, letters, &unescape(text)));
+            }
+            _ => out.push_str(text),
+        }
+        if tail.is_empty() {
+            break;
+        }
+        let end = tail.find('>').map_or(tail.len(), |at| at + 1);
+        let tag = &tail[..end];
+        out.push_str(tag);
+        rest = &tail[end..];
+        let name = tag
+            .trim_start_matches('<')
+            .split(|c: char| c.is_whitespace() || c == '>' || c == '/')
+            .find(|part| !part.is_empty())
+            .unwrap_or("")
+            .to_ascii_lowercase();
+        let closing = tag.starts_with("</");
+        match &raw {
+            Some(open) if closing && name == *open => raw = None,
+            Some(_) => {}
+            None if !closing
+                && matches!(
+                    name.as_str(),
+                    "script" | "style" | "title" | "option" | "textarea"
+                ) =>
+            {
+                raw = Some(name.clone())
+            }
+            None if name == "body" => body = !closing,
+            None => {}
+        }
+        if closing && quoted.as_ref().is_some_and(|(open, _)| *open == name) {
+            quoted = None;
+        } else if !closing {
+            if let Some(at) = tag.find("data-face=\"") {
+                let value = &tag[at + 11..];
+                let value = &value[..value.find('"').unwrap_or(0)];
+                if let Some(class) = FACES.iter().find(|class| **class == value) {
+                    quoted = Some((name, class));
+                }
+            }
+        }
     }
     out
 }
+fn unescape(text: &str) -> String {
+    let mut out = String::with_capacity(text.len());
+    let mut rest = text;
+    while let Some(at) = rest.find('&') {
+        out.push_str(&rest[..at]);
+        rest = &rest[at..];
+        let Some(end) = rest.find(';').filter(|end| *end <= 10) else {
+            out.push('&');
+            rest = &rest[1..];
+            continue;
+        };
+        let entity = &rest[1..end];
+        let decoded = match entity {
+            "amp" => Some('&'),
+            "lt" => Some('<'),
+            "gt" => Some('>'),
+            "quot" => Some('"'),
+            "apos" => Some('\''),
+            "nbsp" => Some('\u{a0}'),
+            _ => entity
+                .strip_prefix("#x")
+                .map(|hex| u32::from_str_radix(hex, 16))
+                .or_else(|| entity.strip_prefix('#').map(str::parse))
+                .and_then(Result::ok)
+                .and_then(char::from_u32),
+        };
+        match decoded {
+            Some(character) => {
+                out.push(character);
+                rest = &rest[end + 1..];
+            }
+            None => {
+                out.push('&');
+                rest = &rest[1..];
+            }
+        }
+    }
+    out.push_str(rest);
+    out
+}
+/// One text node as `<span class="t CLASS">`: the hidden text, then each word
+/// as an unbreakable run of glyphs with its following space, lines split at
+/// newlines, and characters the face lacks in the system face.
+fn run(class: &str, letters: &Letters, text: &str) -> String {
+    let escaped = crate::coverage::boxtree::esc(text);
+    let mut out = format!(
+        "<span class=\"t {class}\"><span class=\"sr\">{escaped}</span><span aria-hidden=\"true\">"
+    );
+    let mut word = String::new();
+    let mut fallback = String::new();
+    let flush_fallback = |word: &mut String, fallback: &mut String| {
+        if !fallback.is_empty() {
+            word.push_str(&format!(
+                "<span class=\"f\">{}</span>",
+                crate::coverage::boxtree::esc(fallback)
+            ));
+            fallback.clear();
+        }
+    };
+    for character in text.chars() {
+        if character == '\n' {
+            flush_fallback(&mut word, &mut fallback);
+            if !word.is_empty() {
+                out.push_str(&format!("<b>{word}</b>"));
+                word.clear();
+            }
+            out.push_str("<br>");
+            continue;
+        }
+        let character = if character == '\t' { ' ' } else { character };
+        match letters.frame(character) {
+            Some(frame) => {
+                flush_fallback(&mut word, &mut fallback);
+                word.push_str(&format!("<i class=\"g{frame:02x}\"></i>"));
+            }
+            None => fallback.push(character),
+        }
+        if character == ' ' || character == '\u{3000}' {
+            flush_fallback(&mut word, &mut fallback);
+            out.push_str(&format!("<b>{word}</b>"));
+            word.clear();
+        }
+    }
+    flush_fallback(&mut word, &mut fallback);
+    if !word.is_empty() {
+        out.push_str(&format!("<b>{word}</b>"));
+    }
+    out.push_str("</span></span>");
+    out
+}
+/// A label's width in CSS pixels in the menu font, for layout that must know
+/// it ahead.
+pub(super) fn width(text: &str) -> u32 {
+    match current().face("u") {
+        Some(face) => face.letters.width(text) * PIXEL,
+        None => text.chars().count() as u32 * 6 * PIXEL,
+    }
+}
+/// The menu face's sheet and advances, for script-drawn text.
+pub(super) fn menu_meta() -> Option<(String, Vec<u32>, (u32, u32))> {
+    current().face("u").map(|face| {
+        (
+            format!("lettersu-{}", face.stamp),
+            face.letters.advance.clone(),
+            face.letters.cell,
+        )
+    })
+}
+
 fn icon_file(root: &Path, store: &Store) -> Result<String, String> {
     let target = crate::targets::decomp_target(Some("tbs-en"))?;
     let rom = read(root, target.rom)?;
@@ -163,399 +451,47 @@ fn icon_strip(banks: &BTreeMap<u8, IndexedImage>, colors: &[u16; 16]) -> Result<
     Ok(out)
 }
 
-fn u16be(out: &mut Vec<u8>, value: i32) {
-    out.extend_from_slice(&(value as u16).to_be_bytes());
-}
-fn u32be(out: &mut Vec<u8>, value: u32) {
-    out.extend_from_slice(&value.to_be_bytes());
-}
-/// Horizontal runs of ink, one rectangle each; `baseline` rows sit above y = 0.
-fn outline(rows: &[u16], baseline: i32) -> Vec<[(i32, i32); 4]> {
-    let mut boxes = Vec::new();
-    for (y, row) in rows.iter().enumerate() {
-        let mut x = 0;
-        while x < 16 {
-            if row >> (15 - x) & 1 == 0 {
-                x += 1;
-                continue;
-            }
-            let start = x;
-            while x < 16 && row >> (15 - x) & 1 == 1 {
-                x += 1;
-            }
-            let top = (baseline - y as i32) * UNIT;
-            let bottom = top - UNIT;
-            let (left, right) = (start * UNIT, x * UNIT);
-            // Clockwise, as TrueType outlines expect for filled contours.
-            boxes.push([(left, bottom), (left, top), (right, top), (right, bottom)]);
-        }
-    }
-    boxes
-}
-fn glyph_data(boxes: &[[(i32, i32); 4]]) -> Vec<u8> {
-    if boxes.is_empty() {
-        return Vec::new();
-    }
-    let points = boxes.iter().flatten().collect::<Vec<_>>();
-    let mut out = Vec::new();
-    u16be(&mut out, boxes.len() as i32);
-    u16be(&mut out, points.iter().map(|p| p.0).min().unwrap());
-    u16be(&mut out, points.iter().map(|p| p.1).min().unwrap());
-    u16be(&mut out, points.iter().map(|p| p.0).max().unwrap());
-    u16be(&mut out, points.iter().map(|p| p.1).max().unwrap());
-    for index in 0..boxes.len() {
-        u16be(&mut out, (index * 4 + 3) as i32);
-    }
-    u16be(&mut out, 0);
-    out.extend(std::iter::repeat_n(1u8, points.len()));
-    for axis in 0..2 {
-        let mut previous = 0;
-        for point in &points {
-            let value = if axis == 0 { point.0 } else { point.1 };
-            u16be(&mut out, value - previous);
-            previous = value;
-        }
-    }
-    while out.len() % 4 != 0 {
-        out.push(0);
-    }
-    out
-}
-fn character_map(codes: &[u32]) -> Vec<u8> {
-    let mut segments: Vec<(u32, u32, u32)> = Vec::new();
-    for (index, code) in codes.iter().enumerate() {
-        let glyph = index as u32 + 1;
-        match segments.last_mut() {
-            Some(last) if last.1 + 1 == *code => last.1 = *code,
-            _ => segments.push((*code, *code, glyph)),
-        }
-    }
-    segments.push((0xffff, 0xffff, 0));
-    let count = segments.len() as i32;
-    let search = 1 << (31 - (count as u32).leading_zeros());
-    let mut table = Vec::new();
-    for value in [4, 16 + 8 * count, 0, count * 2, search * 2] {
-        u16be(&mut table, value);
-    }
-    u16be(&mut table, search.trailing_zeros() as i32);
-    u16be(&mut table, count * 2 - search * 2);
-    for segment in &segments {
-        u16be(&mut table, segment.1 as i32);
-    }
-    u16be(&mut table, 0);
-    for segment in &segments {
-        u16be(&mut table, segment.0 as i32);
-    }
-    for segment in &segments {
-        let delta = if segment.0 == 0xffff {
-            1
-        } else {
-            segment.2.wrapping_sub(segment.0) & 0xffff
-        };
-        u16be(&mut table, delta as i32);
-    }
-    for _ in &segments {
-        u16be(&mut table, 0);
-    }
-    let mut out = Vec::new();
-    for value in [0, 1, 3, 1] {
-        u16be(&mut out, value);
-    }
-    u32be(&mut out, 12);
-    out.extend(table);
-    out
-}
-fn names(slanted: bool) -> Vec<u8> {
-    let style = if slanted { "Italic" } else { "Regular" };
-    let (full, postscript) = (format!("{FAMILY} {style}"), format!("{FAMILY}-{style}"));
-    let strings = [
-        (1, FAMILY),
-        (2, style),
-        (3, "Alchemy dashboard cache"),
-        (4, full.as_str()),
-        (5, "Version 1.0"),
-        (6, postscript.as_str()),
-    ];
-    let mut records = Vec::new();
-    let mut storage = Vec::new();
-    for (id, text) in strings {
-        let data = text
-            .encode_utf16()
-            .flat_map(u16::to_be_bytes)
-            .collect::<Vec<_>>();
-        for value in [3, 1, 0x409, id, data.len() as i32, storage.len() as i32] {
-            u16be(&mut records, value);
-        }
-        storage.extend(data);
-    }
-    let mut out = Vec::new();
-    for value in [0, strings.len() as i32, 6 + 12 * strings.len() as i32] {
-        u16be(&mut out, value);
-    }
-    out.extend(records);
-    out.extend(storage);
-    out
-}
-/// A minimal TrueType font whose outlines are the glyph pixels themselves.
-fn truetype(glyphs: &Face, slanted: bool) -> Result<Vec<u8>, String> {
-    let capital = glyphs.get(&'H').ok_or("face has no H")?;
-    let (ascent, descent) = (ASCENT * UNIT, -DESCENT * UNIT);
-    let characters = glyphs.keys().copied().collect::<Vec<_>>();
-    let codes = characters.iter().map(|c| *c as u32).collect::<Vec<_>>();
-    let outlines = characters
-        .iter()
-        .map(|character| outline(&glyphs[character].rows, glyphs[character].baseline))
-        .collect::<Vec<_>>();
-    let mut glyf = Vec::new();
-    let mut loca = vec![0u32];
-    let mut metrics = Vec::new();
-    let (mut points, mut contours) = (0, 0);
-    for (index, boxes) in std::iter::once(Vec::new()).chain(outlines).enumerate() {
-        glyf.extend(glyph_data(&boxes));
-        loca.push(glyf.len() as u32);
-        points = points.max(boxes.len() * 4);
-        contours = contours.max(boxes.len());
-        let advance = match index {
-            0 => 4 * UNIT,
-            _ => glyphs[&characters[index - 1]].advance * UNIT,
-        };
-        let bearing = boxes.iter().flatten().map(|p| p.0).min().unwrap_or(0);
-        u16be(&mut metrics, advance);
-        u16be(&mut metrics, bearing);
-    }
-    let count = codes.len() as i32 + 1;
-    let long = glyf.len() > 0x1fffe;
-    let mut locations = Vec::new();
-    for offset in &loca {
-        if long {
-            u32be(&mut locations, *offset);
-        } else {
-            u16be(&mut locations, (*offset / 2) as i32);
-        }
-    }
-    let widest = glyphs.values().map(|g| g.advance).max().unwrap_or(8) * UNIT;
-    let mut head = Vec::new();
-    u32be(&mut head, 0x0001_0000);
-    u32be(&mut head, 0x0001_0000);
-    u32be(&mut head, 0);
-    u32be(&mut head, 0x5f0f_3cf5);
-    u16be(&mut head, 0b1001);
-    u16be(&mut head, i32::from(EM));
-    head.extend([0; 16]);
-    for value in [
-        0,
-        descent,
-        16 * UNIT,
-        ascent,
-        if slanted { 2 } else { 0 },
-        8,
-        2,
-        i32::from(long),
-        0,
-    ] {
-        u16be(&mut head, value);
-    }
-    let mut hhea = Vec::new();
-    u32be(&mut hhea, 0x0001_0000);
-    for value in [
-        ascent,
-        descent,
-        0,
-        widest,
-        0,
-        0,
-        16 * UNIT,
-        1,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-    ] {
-        u16be(&mut hhea, value);
-    }
-    u16be(&mut hhea, count);
-    let mut maxp = Vec::new();
-    u32be(&mut maxp, 0x0001_0000);
-    for value in [
-        count,
-        points as i32,
-        contours as i32,
-        0,
-        0,
-        2,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-    ] {
-        u16be(&mut maxp, value);
-    }
-    let mut os2 = Vec::new();
-    let average = widest / 2;
-    for value in [4, average, 400, 5, 0] {
-        u16be(&mut os2, value);
-    }
-    for value in [
-        5 * UNIT,
-        5 * UNIT,
-        0,
-        UNIT,
-        5 * UNIT,
-        5 * UNIT,
-        0,
-        3 * UNIT,
-        UNIT,
-        2 * UNIT,
-        0,
-    ] {
-        u16be(&mut os2, value);
-    }
-    os2.extend([0; 10]);
-    for value in [0b11u32, 0, 0, 0] {
-        u32be(&mut os2, value);
-    }
-    os2.extend(b"ALCH");
-    let last = *codes.last().ok_or("glyph table is empty")? as i32;
-    for value in [
-        if slanted { 1 } else { 0x40 },
-        codes[0] as i32,
-        last,
-        ascent,
-        descent,
-        0,
-        ascent,
-        -descent,
-    ] {
-        u16be(&mut os2, value);
-    }
-    u32be(&mut os2, 1);
-    u32be(&mut os2, 0);
-    let capital_height =
-        (capital.baseline - capital.rows.iter().position(|r| *r != 0).unwrap() as i32) * UNIT;
-    for value in [capital_height * 2 / 3, capital_height, 0, 32, 1] {
-        u16be(&mut os2, value);
-    }
-    let mut post = Vec::new();
-    u32be(&mut post, 0x0003_0000);
-    u32be(&mut post, 0);
-    for value in [-UNIT, UNIT] {
-        u16be(&mut post, value);
-    }
-    post.extend([0; 20]);
-    let mut tables: Vec<(&[u8; 4], Vec<u8>)> = vec![
-        (b"OS/2", os2),
-        (b"cmap", character_map(&codes)),
-        (b"glyf", glyf),
-        (b"head", head),
-        (b"hhea", hhea),
-        (b"hmtx", metrics),
-        (b"loca", locations),
-        (b"maxp", maxp),
-        (b"name", names(slanted)),
-        (b"post", post),
-    ];
-    tables.sort_by_key(|(tag, _)| **tag);
-    let count = tables.len() as i32;
-    let search = 1 << (31 - (count as u32).leading_zeros());
-    let mut out = Vec::new();
-    u32be(&mut out, 0x0001_0000);
-    for value in [
-        count,
-        search * 16,
-        search.trailing_zeros() as i32,
-        count * 16 - search * 16,
-    ] {
-        u16be(&mut out, value);
-    }
-    let mut offset = 12 + 16 * tables.len() as u32;
-    let mut body = Vec::new();
-    for (tag, mut data) in tables {
-        let length = data.len() as u32;
-        while data.len() % 4 != 0 {
-            data.push(0);
-        }
-        let sum = data.chunks_exact(4).fold(0u32, |sum, word| {
-            sum.wrapping_add(u32::from_be_bytes([word[0], word[1], word[2], word[3]]))
-        });
-        out.extend_from_slice(tag);
-        u32be(&mut out, sum);
-        u32be(&mut out, offset);
-        u32be(&mut out, length);
-        offset += data.len() as u32;
-        body.extend(data);
-    }
-    out.extend(body);
-    Ok(out)
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
-    /// A face with a space, an H (two stems of seven rows joined by a bar)
-    /// and one twelve-row kanji on its own baseline.
-    fn face() -> Face {
-        let mut h = vec![0x8800u16; 7];
-        h[3] = 0xf800;
-        h.push(0);
-        let glyph = |advance, baseline, rows| fonts::Glyph {
-            advance,
-            baseline,
-            rows,
-        };
-        Face::from([
-            (' ', glyph(4, 7, vec![0; 8])),
-            ('H', glyph(6, 7, h)),
-            ('神', glyph(12, 11, vec![0xffe0; 12])),
-        ])
-    }
     #[test]
-    fn faces_become_well_formed_truetype_fonts() {
-        for slanted in [false, true] {
-            let font = truetype(&face(), slanted).unwrap();
-            assert_eq!(&font[..4], &[0, 1, 0, 0]);
-            let tables = u16::from_be_bytes([font[4], font[5]]) as usize;
-            let mut tags = Vec::new();
-            for index in 0..tables {
-                let record = &font[12 + index * 16..28 + index * 16];
-                let offset = u32::from_be_bytes(record[8..12].try_into().unwrap()) as usize;
-                let length = u32::from_be_bytes(record[12..16].try_into().unwrap()) as usize;
-                assert!(offset % 4 == 0 && offset + length <= font.len());
-                tags.push(String::from_utf8(record[..4].to_vec()).unwrap());
-            }
-            assert_eq!(
-                tags,
-                ["OS/2", "cmap", "glyf", "head", "hhea", "hmtx", "loca", "maxp", "name", "post"]
-            );
-        }
-        // Six stem rows of two runs and the joined bar: thirteen runs, all above
-        // the baseline; the kanji keeps one row below it.
-        let face = face();
-        let boxes = outline(&face[&'H'].rows, 7);
-        assert_eq!(boxes.len(), 13);
-        assert!(boxes.iter().flatten().all(|point| point.1 >= 0));
-        let kanji = outline(&face[&'神'].rows, 11);
-        assert_eq!(kanji.iter().flatten().map(|p| p.1).min(), Some(-UNIT));
-    }
-    #[test]
-    fn cmap_segments_map_consecutive_codes_to_consecutive_glyphs() {
-        let map = character_map(&[0x20, 0x21, 0x41]);
-        let subtable = &map[12..];
-        assert_eq!(u16::from_be_bytes([subtable[6], subtable[7]]), 6);
-        let ends = &subtable[14..20];
-        assert_eq!(ends, [0x00, 0x21, 0x00, 0x41, 0xff, 0xff]);
+    fn body_text_becomes_glyph_runs_in_its_face_and_raw_text_does_not() {
+        let letters = crate::coverage::letters::fixture();
+        let faces = [("u", &letters), ("d", &letters)];
+        let html = "<html><head><title>A&amp;B</title><style>p{x:1}</style></head><body><a class=\"tab\">Up &amp; 神</a><select><option>Keep</option></select><script>let a=1<2</script><td data-face=\"d\">Hi</td><td>Hi</td>\n</body></html>";
+        let lettered = letter_with(&faces, html);
+        assert!(
+            lettered.contains("<title>A&amp;B</title>")
+                && lettered.contains("<style>p{x:1}</style>")
+        );
+        assert!(
+            lettered.contains("<option>Keep</option>")
+                && lettered.contains("<script>let a=1<2</script>")
+        );
+        assert!(lettered.contains("<span class=\"t u\"><span class=\"sr\">Up &amp; 神</span>"));
+        assert!(lettered
+            .contains("<b><i class=\"g35\"></i><i class=\"g50\"></i><i class=\"g00\"></i></b>"));
+        assert!(lettered.contains(
+            "<b><i class=\"g06\"></i><i class=\"g00\"></i></b><b><span class=\"f\">神</span></b>"
+        ));
+        assert!(lettered.contains("<td data-face=\"d\"><span class=\"t d\">"));
+        assert!(lettered.contains("</td><td><span class=\"t u\">"));
+        assert_eq!(unescape("&lt;a&gt; &#233;&#x41;&unknown"), "<a> éA&unknown");
     }
     #[test]
     fn served_names_accept_only_current_stamps() {
         let root = tempfile::tempdir().unwrap();
+        assert!(file(root.path(), "lettersu-0123456789abcdef.png").is_none());
         assert!(file(root.path(), "font-0123456789abcdef.ttf").is_none());
-        assert!(file(root.path(), "../font-x.ttf").is_none());
+        assert!(file(root.path(), "../letters-x.png").is_none());
         assert!(file(root.path(), "icons.png").is_none());
+    }
+    #[test]
+    fn the_mask_sheet_doubles_every_glyph_pixel() {
+        let letters = crate::coverage::letters::fixture();
+        let png = mask_sheet(&letters).unwrap();
+        let decoder = png::Decoder::new(std::io::Cursor::new(png));
+        let reader = decoder.read_info().unwrap();
+        assert_eq!((reader.info().width, reader.info().height), (512, 448));
     }
 }

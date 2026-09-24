@@ -6410,6 +6410,18 @@ fn stage_stamp_with_signature(
                 fs::read(root.join(spec.rom)).map_err(|error| format!("{}: {error}", spec.rom))?;
             stamp_record(&mut stream, spec.rom, &bytes);
         }
+        let editions = document["edition_regions"]
+            .as_array()
+            .into_iter()
+            .flatten()
+            .filter_map(|entry| entry["rom"].as_str())
+            .collect::<BTreeSet<_>>();
+        for edition in editions {
+            let target = crate::targets::decomp_target(Some(edition))?;
+            let bytes = fs::read(root.join(target.rom))
+                .map_err(|error| format!("{}: {error}", target.rom))?;
+            stamp_record(&mut stream, target.rom, &bytes);
+        }
     }
     stamp_record(
         &mut stream,
@@ -6687,6 +6699,36 @@ fn reusable_asset_manifest(
 /// input this build read, or named by the game's declared review plan. Code
 /// and the registries of the game's `recon` scaffolding are exempt by
 /// category (`generated_files::unconsumed_material`); nothing else is.
+/// Another edition's own asset, such as a Japanese font: built from its
+/// tracked sources by the same rules as a region and compared byte for byte
+/// with that edition's ROM, which the game's own ROM does not contain.
+fn build_edition_region(
+    ctx: &mut Context,
+    root: &Path,
+    entry: &Value,
+    source_only: bool,
+) -> Result<Vec<String>, String> {
+    let edition = json_string(&entry["rom"], "edition region ROM")?;
+    let address = number(&entry["address"], "edition region address")?;
+    let size = number(&entry["size"], "edition region size")?;
+    let failure = |error: String| format!("{edition} asset at 0x{address:08x}: {error}");
+    let (bytes, sources, _) = build_entry(ctx, entry).map_err(failure)?;
+    if bytes.len() != size {
+        return Err(failure(format!("built {} bytes, not {size}", bytes.len())));
+    }
+    if !source_only {
+        let target = crate::targets::decomp_target(Some(edition))?;
+        let rom = fs::read(root.join(target.rom))
+            .map_err(|error| failure(format!("{}: {error}", target.rom)))?;
+        let at = address
+            .checked_sub(ROM_BASE)
+            .ok_or_else(|| failure("below the ROM".into()))?;
+        if rom.get(at..at + size) != Some(bytes.as_slice()) {
+            return Err(failure("differs from the edition ROM".into()));
+        }
+    }
+    Ok(sources)
+}
 fn audit_material_consumers(
     root: &Path,
     manifest: &Path,
@@ -6978,6 +7020,17 @@ fn native_asset_main(arguments: &[String]) -> Result<(), String> {
                 all_sources.extend(sources);
                 regions.push(region);
             }
+            Err(failure) => record_asset_failure(&mut failures, failure),
+        }
+    }
+    for entry in manifest
+        .get("edition_regions")
+        .and_then(Value::as_array)
+        .into_iter()
+        .flatten()
+    {
+        match build_edition_region(&mut ctx, &root, entry, options.source_only) {
+            Ok(sources) => all_sources.extend(sources),
             Err(failure) => record_asset_failure(&mut failures, failure),
         }
     }

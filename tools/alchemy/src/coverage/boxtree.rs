@@ -1,5 +1,4 @@
-use super::jsnum::commas;
-use crate::coverage::model::{treemap, Category, Rect, Tile, UNIDENTIFIED};
+use crate::coverage::model::{Category, Tile, UNIDENTIFIED};
 
 pub(crate) const DISPLAY_CATEGORIES: [(Category, &str); 5] = [
     (Category::Unknown, UNIDENTIFIED),
@@ -17,19 +16,16 @@ pub(crate) fn display_bytes(categories: &[i64; 6], category: Category) -> i64 {
             0
         }
 }
-use crate::coverage::pipeline::{source_container, CoverageMap};
-use crate::coverage::tree::root;
+use crate::coverage::pipeline::source_container;
 use sha1::{Digest, Sha1};
 
-pub const BOX_TREES: [&str; 1] = ["files"];
-pub(crate) const CHART_BACKGROUND: &str = "#1f7f93";
-// One palette for the figure and dashboard: each kind of file has its own
-// clear pastel on the teal chart; assembly and executable code sit in teal.
+// The file-type palette of the figure and dashboard: each kind of file has
+// its own clear pastel on the teal chart (the chrome is in `palette`); assembly and executable code sit in teal.
 pub(crate) const UNKNOWN: &str = "#d9d9d4";
 pub(crate) const C_TEAL: &str = "#326b7d";
 const DRAFTED: &str = "#96c8c9";
 pub(crate) const ASSEMBLY: &str = "#6cafb2";
-const DRAFT_ASSEMBLY: &str = "#b4ccd2";
+pub(crate) const DRAFT_ASSEMBLY: &str = "#b4ccd2";
 const TEXT_CYAN: &str = "#85cbd2";
 /// C source and its headers in rose-greys, drafts paler; sprite sheets purple,
 /// stills blue, maps green; registries a quiet lavender. Translation text (a
@@ -49,21 +45,6 @@ const MIDI_GREEN: &str = "#81d6b2";
 const PCM_ORANGE: &str = "#efbb82";
 const OTHER_TAN: &str = "#bda995";
 const HEADER_GOLD: &str = "#eadb83";
-pub(crate) const BEVEL_LIGHT: &str = "#c9e1dc";
-pub(crate) const BEVEL_DARK: &str = "#103840";
-/// The figure's frame and label tones, named for the dashboard's window
-/// chrome so both draw from this one palette.
-pub(crate) const CHROME: [(&str, &str); 9] = [
-    ("face", CHART_BACKGROUND),
-    ("light", BEVEL_LIGHT),
-    ("soft", ASSEMBLY),
-    ("shadow", BEVEL_DARK),
-    ("title", C_TEAL),
-    ("gold", HEADER_GOLD),
-    ("hover", "#fff3ac"),
-    ("unknown", UNKNOWN),
-    ("mist", DRAFT_ASSEMBLY),
-];
 const SOUND_TYPES: [(&str, &str); 5] = [
     ("MIDI music", MIDI_GREEN),
     ("SFX", "#f29b91"),
@@ -150,7 +131,8 @@ fn file_style(extension: &str, source: &str) -> (&'static str, &'static str) {
         "c" if recon => ("Drafted C", DRAFT_ROSE),
         "c" => ("C", SOURCE_ROSE),
         "h" | "inc" => ("Headers", HEADER_ROSE),
-        "s" => ("Assembly", ASSEMBLY),
+        "s-credited" => ("Assembly", CREDITED_ASSEMBLY),
+        "s" => (NOT_YET_C, ASSEMBLY),
         "wav" => ("WAV audio", PCM_ORANGE),
         "mid" => ("MIDI music", MIDI_GREEN),
         "po" | "md" | "txt" => ("Translations", TRANSLATION_GREY),
@@ -169,7 +151,11 @@ fn file_style(extension: &str, source: &str) -> (&'static str, &'static str) {
 /// as one box per game under its TEXT heading, and the frozen compression
 /// answers, which wait to be replaced by encoder options.
 const COMPRESSION_ANSWERS: &str = "Compression answers";
-fn quiet(tile: &Tile) -> bool {
+/// Uncredited assembly: C that is not written yet (AGENTS.md rule 5).
+pub(crate) const NOT_YET_C: &str = "Not yet C";
+/// Library or handwritten assembly its header credits, a deeper teal.
+const CREDITED_ASSEMBLY: &str = "#4f94a0";
+pub(crate) fn quiet(tile: &Tile) -> bool {
     matches!(content_style(tile).0, "Translations" | COMPRESSION_ANSWERS)
 }
 /// The content types of a tile's files and their bytes, largest first.
@@ -192,24 +178,6 @@ pub(crate) fn content_mix(tile: &Tile) -> Vec<(&'static str, &'static str, i64)>
     mix.sort_by(|a, b| b.2.cmp(&a.2).then(a.0.cmp(b.0)));
     mix
 }
-fn asset_note(tile: &Tile, verification: Option<&str>) -> &'static str {
-    if tile
-        .group
-        .as_deref()
-        .is_some_and(|kind| kind.starts_with("indexed-"))
-    {
-        return " · ROM index: format evidence only; no reconstructed source or DONE credit";
-    }
-    if tile.group.as_deref() == Some("unreconstructed-data") {
-        return " · No reconstructed source; not asset-build verified";
-    }
-    match verification {
-        Some("rom") => " · Last asset build: ROM bytes matched; appearance not verified",
-        Some("source_only") => " · Last asset build: not compared with ROM",
-        _ => " · Asset verification unavailable",
-    }
-}
-
 #[test]
 fn indexed_formats_have_colors_without_claiming_reconstructed_assets() {
     for (kind, name) in [
@@ -223,8 +191,6 @@ fn indexed_formats_have_colors_without_claiming_reconstructed_assets() {
             ..Tile::default()
         };
         assert_eq!(content_style(&tile).0, name);
-        assert!(!asset_note(&tile, Some("rom")).contains("ROM bytes matched"));
-        assert!(asset_note(&tile, Some("rom")).contains("no reconstructed source"));
     }
 }
 pub(crate) fn leaves<'a>(tiles: &[&'a Tile]) -> Vec<&'a Tile> {
@@ -334,253 +300,6 @@ pub(crate) fn source_name(source: &str) -> &str {
     trimmed.rsplit('/').next().unwrap_or(trimmed)
 }
 
-fn draw_tiles(
-    out: &mut Vec<String>,
-    tiles: &[&Tile],
-    frame: Rect,
-    parent_source: Option<&str>,
-    reserved: &[Rect],
-    asset_verification: Option<&str>,
-) {
-    for placed in treemap(tiles, |tile| tile.bytes, frame) {
-        let tile = tiles[placed.index];
-        let rect = placed.rect;
-        let container = !tile.children.is_empty();
-        let folder = container
-            && tile
-                .source
-                .as_deref()
-                .is_some_and(|source| source.ends_with('/'));
-        let address = tile
-            .address
-            .map(|a| format!(" data-address=\"0x{a:08x}\""))
-            .unwrap_or_default();
-        let source = tile
-            .source
-            .as_ref()
-            .map(|s| format!(" data-source=\"{}\"", esc(s)))
-            .unwrap_or_default();
-        let kind = if container { "container" } else { "leaf" };
-        let mut status = DISPLAY_CATEGORIES
-            .iter()
-            .filter(|(category, _)| display_bytes(&tile.categories, *category) > 0)
-            .map(|(category, name)| match category {
-                Category::AssetData if !folder => content_style(tile).0,
-                _ => *name,
-            })
-            .collect::<Vec<_>>()
-            .join(", ");
-        if !folder && tile.categories[Category::AssetData as usize] == tile.bytes {
-            status.push_str(asset_note(tile, asset_verification));
-        }
-        let label = format!(
-            "{}: {} bytes · {}{}{}",
-            if folder {
-                source_name(tile.source.as_deref().unwrap())
-            } else {
-                &tile.label
-            },
-            commas(tile.bytes),
-            status,
-            if container {
-                format!(" · {} items", tile.children.len())
-            } else {
-                String::new()
-            },
-            tile.address
-                .map(|address| format!(" · 0x{address:08x}"))
-                .unwrap_or_default()
-        );
-        out.push(format!(
-            "<g aria-label=\"{}\" data-node=\"{kind}\" data-kind=\"{}\" data-bytes=\"{}\"{address}{source}>",
-            esc(&label),
-            if folder { "folder" } else { "file" },
-            tile.bytes
-        ));
-        out.push(format!("<title>{}</title>", esc(&label)));
-        let inset = (if container { 2.0_f64 } else { 0.5 })
-            .min(rect.width / 4.0)
-            .min(rect.height / 4.0);
-        let mut body = Rect {
-            x: rect.x + inset,
-            y: rect.y + inset,
-            width: rect.width - 2.0 * inset,
-            height: rect.height - 2.0 * inset,
-        };
-        let expanded = container && body.width >= 44.0 && body.height >= 34.0;
-        if expanded {
-            out.push(format!("<rect class=\"container-frame\" x=\"{}\" y=\"{}\" width=\"{}\" height=\"{}\" fill=\"{CHART_BACKGROUND}\"/>", rect.x, rect.y, rect.width, rect.height));
-            bevel(out, rect);
-        } else if tile.categories[Category::AssetData as usize] == tile.bytes {
-            // A folder too small to open shows the types of the files inside
-            // it by bytes, largest at the bottom, never its first file's type.
-            let mut y = body.y + body.height;
-            for (name, color, bytes) in content_mix(tile) {
-                let height = body.height * bytes as f64 / tile.bytes.max(1) as f64;
-                y -= height;
-                out.push(format!("<rect data-content-type=\"{name}\" x=\"{}\" y=\"{}\" width=\"{}\" height=\"{}\" style=\"fill:{color}\"/>", body.x, y, body.width, height));
-            }
-        } else {
-            let mut y = body.y + body.height;
-            for (category, _) in DISPLAY_CATEGORIES {
-                let n = display_bytes(&tile.categories, category);
-                if n <= 0 {
-                    continue;
-                }
-                let height = body.height * n as f64 / tile.bytes.max(1) as f64;
-                y -= height;
-                out.push(format!(
-                    "<rect x=\"{}\" y=\"{}\" width=\"{}\" height=\"{}\" style=\"{}\"/>",
-                    body.x,
-                    y,
-                    body.width,
-                    height,
-                    fill(category)
-                ));
-            }
-        }
-        let name = match tile.source.as_deref() {
-            Some(source) if !source.ends_with('/') || container => source_name(source),
-            Some(_) => &tile.label,
-            None => "",
-        };
-        let caption = caption(name, body, folder).filter(|(_, bounds)| {
-            (folder || container || !quiet(tile))
-                && (tile.source.is_none()
-                    || tile.source.as_deref() != parent_source
-                    || (!container
-                        && tile
-                            .source
-                            .as_deref()
-                            .is_some_and(|path| path.ends_with('/'))))
-                && !reserved.iter().any(|r| {
-                    bounds.x < r.x + r.width
-                        && bounds.x + bounds.width > r.x
-                        && bounds.y < r.y + r.height
-                        && bounds.y + bounds.height > r.y
-                })
-        });
-        let mut reserved = reserved.to_vec();
-        if let Some((text, bounds)) = &caption {
-            if folder {
-                out.push(text.clone());
-            } else {
-                reserved.push(*bounds);
-            }
-        }
-        if let Some((_, bounds)) = &caption {
-            if folder && expanded {
-                let heading = bounds.height + 2.0;
-                body.y += heading;
-                body.height -= heading;
-            }
-        }
-        if expanded {
-            draw_tiles(
-                out,
-                &tile.children.iter().collect::<Vec<_>>(),
-                body,
-                tile.source.as_deref(),
-                &reserved,
-                asset_verification,
-            );
-        }
-        if let Some((text, _)) = caption.filter(|_| !folder) {
-            out.push(text);
-        }
-        out.push("</g>".into());
-    }
-}
-
-/// One advance per character for 13px system sans labels, wide enough for
-/// the upper-case folder names; SF Pro capitals average about 8px.
-const LABEL_ADVANCE: f64 = 8.0;
-
-pub(crate) fn label_width(name: &str) -> f64 {
-    name.chars().count() as f64 * LABEL_ADVANCE
-}
-fn caption(name: &str, body: Rect, folder: bool) -> Option<(String, Rect)> {
-    if folder {
-        let width = label_width(name);
-        if name.is_empty() || body.width < width + 4.0 || body.height < 20.0 {
-            return None;
-        }
-        let bounds = Rect {
-            x: body.x + 2.0,
-            y: body.y,
-            width,
-            height: 18.0,
-        };
-        return Some((format!("<text class=\"label rectangle-label folder-label\" x=\"{}\" y=\"{}\" pointer-events=\"none\">{}</text>", bounds.x, body.y + 14.0, esc(name)), bounds));
-    }
-    let columns = ((body.width - 8.0) / LABEL_ADVANCE).max(0.0) as usize;
-    if columns == 0 || name.is_empty() || body.height < 28.0 || (!folder && body.width < 64.0) {
-        return None;
-    }
-    let mut lines = Vec::new();
-    let mut line = String::new();
-    for part in name.split_inclusive(['_', '.', '-', ' ']) {
-        if part.chars().count() > columns {
-            return None;
-        }
-        if line.chars().count() + part.chars().count() > columns {
-            lines.push(std::mem::take(&mut line));
-        }
-        line.push_str(part);
-    }
-    if !line.is_empty() {
-        lines.push(line);
-    }
-    let rows = lines.len();
-    if (folder && rows > 1) || rows as f64 * 18.0 + 8.0 > body.height {
-        return None;
-    }
-    let width = lines
-        .iter()
-        .map(|line| line.chars().count())
-        .max()
-        .unwrap_or(0) as f64
-        * LABEL_ADVANCE;
-    let height = rows as f64 * 18.0;
-    let bounds = Rect {
-        x: if folder {
-            body.x + 2.0
-        } else {
-            body.x + (body.width - width) / 2.0
-        },
-        y: if folder {
-            body.y
-        } else {
-            body.y + (body.height - height) / 2.0
-        },
-        width,
-        height,
-    };
-    let text = if folder {
-        format!("<text class=\"label rectangle-label folder-label\" x=\"{}\" y=\"{}\" pointer-events=\"none\">{}</text>", bounds.x, body.y + 16.0, esc(name))
-    } else {
-        let x = body.x + body.width / 2.0;
-        let lines = lines
-            .iter()
-            .enumerate()
-            .map(|(row, line)| {
-                format!(
-                    "<tspan x=\"{x}\" y=\"{}\">{}</tspan>",
-                    bounds.y + row as f64 * 18.0 + 9.0,
-                    esc(line)
-                )
-            })
-            .collect::<String>();
-        format!("<text class=\"label rectangle-label file-label\" text-anchor=\"middle\" dominant-baseline=\"middle\" pointer-events=\"none\">{lines}</text>")
-    };
-    Some((text, bounds))
-}
-
-fn bevel(out: &mut Vec<String>, rect: Rect) {
-    out.push(format!("<path class=\"bevel-light\" d=\"M{} {} V{} H{}\" fill=\"none\" stroke=\"{BEVEL_LIGHT}\" stroke-width=\"1\" vector-effect=\"non-scaling-stroke\"/>", rect.x, rect.y + rect.height, rect.y, rect.x + rect.width));
-    out.push(format!("<path class=\"bevel-dark\" d=\"M{} {} H{} V{}\" fill=\"none\" stroke=\"{BEVEL_DARK}\" stroke-width=\"1\" vector-effect=\"non-scaling-stroke\"/>", rect.x, rect.y + rect.height, rect.x + rect.width, rect.y));
-}
-
 pub(crate) fn esc(value: &str) -> String {
     value
         .replace('&', "&amp;")
@@ -598,188 +317,6 @@ pub(crate) fn color(category: Category) -> &'static str {
         Category::AssetData => "#92a8ac",
     }
 }
-fn fill(category: Category) -> String {
-    format!("fill:{}", color(category))
-}
-fn tree_tiles(map: &CoverageMap) -> Vec<&Tile> {
-    map.rom_areas
-        .iter()
-        .flat_map(|area| area.tiles.iter())
-        .collect()
-}
-pub fn svg(tree: &str, map: &CoverageMap, width: f64) -> String {
-    svg_at(tree, map, width, "")
-}
-
-pub fn svg_at(tree: &str, map: &CoverageMap, width: f64, folder: &str) -> String {
-    svg_sized(tree, map, width, width * 16.0 / 9.0, folder)
-}
-pub fn svg_sized(tree: &str, map: &CoverageMap, width: f64, height: f64, folder: &str) -> String {
-    assert!(matches!(tree, "rom" | "files"));
-    // The published figure shows only tracked files; the local dashboard also
-    // shows the private inputs this checkout extracted from its own ROM.
-    let published = map.document["published"].as_bool() == Some(true);
-    let disk = (tree == "files").then(|| {
-        let tiles = disk_tiles(&root());
-        if published {
-            tracked_only(&root(), tiles)
-        } else {
-            tiles
-        }
-    });
-    let source_tiles = if let Some(disk) = &disk {
-        disk.iter().collect::<Vec<_>>()
-    } else {
-        leaves(&tree_tiles(map))
-    };
-    let shared = if tree == "files" {
-        Vec::new()
-    } else {
-        map.document["shared_map_assets"][folder]
-            .as_array()
-            .cloned()
-            .unwrap_or_default()
-    };
-    let tiles: Vec<_> = source_tiles
-        .into_iter()
-        .filter(|tile| {
-            folder.is_empty()
-                || tile
-                    .source
-                    .as_deref()
-                    .is_some_and(|source| source.starts_with(folder))
-        })
-        .collect();
-    let description = if tree == "files" {
-        "Repository files; area is size on disk"
-    } else {
-        "ROM contents"
-    };
-    let identity = (tree == "rom")
-        .then(|| map.document["target"].as_str())
-        .flatten()
-        .map(|target| target.replace('-', " ").to_uppercase());
-    let title = if folder.is_empty() {
-        if tree == "files" {
-            "Alchemy files"
-        } else {
-            "Alchemy"
-        }
-        .into()
-    } else {
-        let location = source_name(folder);
-        identity.map_or_else(|| location.into(), |id| format!("{id} · {location}"))
-    };
-    let displayed_bytes: i64 = tiles.iter().map(|tile| tile.bytes).sum();
-    let labels: Vec<_> = legend_items(&tiles)
-        .into_iter()
-        .map(|(name, color, bytes)| {
-            let percent = 100.0 * bytes as f64 / displayed_bytes.max(1) as f64;
-            (format!("{name} {percent:.1}%"), format!("fill:{color}"))
-        })
-        .collect();
-    let mut row_width = 8.0;
-    let mut rows = 1;
-    for (label, _) in &labels {
-        let size = 24.0 + label_width(label);
-        if row_width > 8.0 && row_width + size > width - 8.0 {
-            rows += 1;
-            row_width = 8.0;
-        }
-        row_width += size;
-    }
-    let frame = Rect {
-        x: 4.0,
-        y: 32.0,
-        width: width - 8.0,
-        height: height - 44.0 - rows as f64 * 24.0 - if shared.is_empty() { 0.0 } else { 24.0 },
-    };
-    let mut out = vec![format!("<title>{}</title>", esc(&title))];
-    out.push("<style>.label{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:13px;fill:#fff;text-shadow:1px 1px 0 #000;}</style>".into());
-    out.push(format!(
-        "<svg x=\"{}\" y=\"0\" width=\"{}\" height=\"30\" overflow=\"hidden\"><text class=\"label\" x=\"0\" y=\"22\">{}</text></svg>",
-        if folder.is_empty() { 8 } else { 36 },
-        (width - if folder.is_empty() { 112.0 } else { 140.0 }).max(0.0),
-        esc(&title)
-    ));
-    let corner = commas(displayed_bytes);
-    out.push(format!(
-        "<text class=\"label\" x=\"{}\" y=\"22\" text-anchor=\"end\">{}</text>",
-        width - 8.0,
-        corner
-    ));
-    out.push(format!(
-        "<rect x=\"{}\" y=\"{}\" width=\"{}\" height=\"{}\" fill=\"#fff\"/>",
-        frame.x, frame.y, frame.width, frame.height
-    ));
-    let nested = directories(tiles.iter().map(|tile| (*tile).clone()).collect(), folder);
-    draw_tiles(
-        &mut out,
-        &nested.iter().collect::<Vec<_>>(),
-        frame,
-        None,
-        &[],
-        map.document
-            .get("asset_verification")
-            .and_then(serde_json::Value::as_str),
-    );
-    let mut legend_x = 8.0;
-    let mut legend_y = frame.y + frame.height + 12.0;
-    if !shared.is_empty() {
-        out.push(format!("<g data-action=\"shared\" role=\"button\" tabindex=\"0\" aria-label=\"Show shared map files\"><text class=\"label\" x=\"8\" y=\"{}\">Shared files ({})</text></g>", legend_y + 12.0, shared.len()));
-        legend_y += 24.0;
-    }
-    for (display, color) in labels {
-        let entry_width = 24.0 + label_width(&display);
-        if legend_x > 8.0 && legend_x + entry_width > width - 8.0 {
-            legend_x = 8.0;
-            legend_y += 24.0;
-        }
-        out.push(format!(
-            "<rect x=\"{}\" y=\"{}\" width=\"16\" height=\"16\" style=\"{}\"/>",
-            legend_x, legend_y, color
-        ));
-        out.push(format!(
-            "<text class=\"label legend-label\" x=\"{}\" y=\"{}\" dominant-baseline=\"middle\">{}</text>",
-            legend_x + 20.0,
-            legend_y + 8.0,
-            esc(&display)
-        ));
-        legend_x += entry_width;
-    }
-    let mut rendered = vec![format!("<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 {width} {height}\" width=\"{width}\" height=\"{height}\" shape-rendering=\"crispEdges\" role=\"img\" aria-label=\"{description} box tree\">"), format!("<rect x=\"0\" y=\"0\" width=\"{width}\" height=\"{height}\" fill=\"{CHART_BACKGROUND}\"/>")];
-    rendered.extend(out);
-    rendered.insert(
-        1,
-        format!(
-            "<metadata data-shared=\"{}\" data-usage-revision=\"{}\"/>",
-            esc(&serde_json::to_string(&shared).unwrap()),
-            svg_cache_version(&map.document["shared_map_assets"].to_string())
-        ),
-    );
-    rendered.push("<g class=\"chart-frame\" pointer-events=\"none\">".into());
-    bevel(
-        &mut rendered,
-        Rect {
-            x: 0.5,
-            y: 0.5,
-            width: width - 1.0,
-            height: height - 1.0,
-        },
-    );
-    rendered.push("</g></svg>".into());
-    rendered.join("\n") + "\n"
-}
-
-pub fn render_box_trees(map: &CoverageMap) -> Vec<(&'static str, String)> {
-    BOX_TREES
-        .iter()
-        .map(|tree| (*tree, svg(tree, map, 830.0)))
-        .collect()
-}
-/// Every nonempty file of the Camelot-shaped game trees and of the
-/// Keep only the tiles of files Git tracks, so a figure drawn from them is the
-/// same on every checkout whatever private inputs it has extracted.
 pub(crate) fn tracked_only(repository: &std::path::Path, tiles: Vec<Tile>) -> Vec<Tile> {
     let Ok(output) = std::process::Command::new("git")
         .args(["ls-files", "-z", "--", "games", "recon"])
@@ -822,6 +359,19 @@ fn published_view_leaves_out_untracked_private_inputs() {
 }
 
 /// reconstruction scaffolding kept beside them under `recon/`.
+/// Whether an assembly module's header credits it (`@ credit: library|
+/// handwritten — <object>`).
+fn credited(path: &std::path::Path) -> bool {
+    use std::io::Read;
+    let mut head = [0u8; 512];
+    let read = std::fs::File::open(path)
+        .and_then(|mut file| file.read(&mut head))
+        .unwrap_or(0);
+    String::from_utf8_lossy(&head[..read]).lines().any(|line| {
+        line.trim_start().starts_with("@ credit: library")
+            || line.trim_start().starts_with("@ credit: handwritten")
+    })
+}
 pub(crate) fn disk_tiles(repository: &std::path::Path) -> Vec<Tile> {
     ["games", "recon"]
         .into_iter()
@@ -839,12 +389,17 @@ pub(crate) fn disk_tiles(repository: &std::path::Path) -> Vec<Tile> {
                 .ok()?
                 .to_str()?
                 .to_string();
-            let extension = entry
+            let mut extension = entry
                 .path()
                 .extension()
                 .and_then(|e| e.to_str())
                 .unwrap_or("")
                 .to_ascii_lowercase();
+            // Assembly counts as assembly only when its header credits it as
+            // library or handwritten code; the rest is C not yet written.
+            if extension == "s" && credited(entry.path()) {
+                extension = "s-credited".into();
+            }
             Some(Tile {
                 label: entry.file_name().to_string_lossy().into(),
                 bytes,
@@ -856,128 +411,19 @@ pub(crate) fn disk_tiles(repository: &std::path::Path) -> Vec<Tile> {
         })
         .collect()
 }
-pub fn files_svg(width: f64) -> String {
-    let map = CoverageMap {
-        document: serde_json::json!({"view":"files","published":true}),
-        rom_areas: Vec::new(),
-        executable_areas: Vec::new(),
-    };
-    svg("files", &map, width)
-}
-pub fn svg_cache_version(svg: &str) -> String {
-    format!("{:x}", Sha1::digest(svg.as_bytes()))[..16].into()
+/// A short content digest for cache stamps.
+pub fn content_version(text: &str) -> String {
+    format!("{:x}", Sha1::digest(text.as_bytes()))[..16].into()
 }
 
 #[test]
 fn content_version_uses_standard_sha1_prefix() {
-    assert_eq!(svg_cache_version("abc"), "a9993e364706816a");
+    assert_eq!(content_version("abc"), "a9993e364706816a");
 }
-pub fn box_tree_path(target: &str, tree: &str) -> std::path::PathBuf {
-    root().join(format!("out/{target}/reports/{tree}.svg"))
-}
-
 #[cfg(test)]
 mod tests {
-    #[test]
-    fn folder_names_fit_at_one_label_advance() {
-        let body = super::Rect {
-            x: 0.0,
-            y: 0.0,
-            width: 28.0,
-            height: 20.0,
-        };
-        let (text, bounds) = super::caption("LIB", body, true).unwrap();
-        assert_eq!(bounds.width, 24.0);
-        assert!(text.contains(">LIB</text>"));
-        assert_eq!(super::caption("WWW", body, true).unwrap().1.width, 24.0);
-        assert!(super::caption("LIBS", body, true).is_none());
-        assert!(super::caption(
-            "LIB",
-            super::Rect {
-                height: 19.0,
-                ..body
-            },
-            true
-        )
-        .is_none());
-        assert!(super::caption("LIB", body, false).is_none());
-        // Files are named only on boxes large enough to read at a glance.
-        let large = super::Rect {
-            width: 96.0,
-            height: 40.0,
-            ..body
-        };
-        assert!(super::caption("STILL.PNG", large, false).is_some());
-    }
-    use super::{
-        content_style, directories, draw_tiles, leaves, sound_type, svg, tree_tiles, BOX_TREES,
-        SOUND_TYPES,
-    };
-    use crate::coverage::model::{Area, Category, Rect, Tile};
-    use crate::coverage::pipeline::CoverageMap;
-    use serde_json::Value;
-
-    #[test]
-    fn file_details_expose_mixed_status_without_claiming_all_bytes_are_c() {
-        let map = CoverageMap {
-            document: Value::Null,
-            executable_areas: vec![],
-            rom_areas: vec![Area {
-                tiles: vec![Tile {
-                    label: "Battle loop".into(),
-                    source: Some("MAIN.C".into()),
-                    bytes: 100,
-                    categories: [10, 20, 30, 0, 40, 0],
-                    ..Tile::default()
-                }],
-                ..Area::default()
-            }],
-        };
-        let rendered = super::svg_at("rom", &map, 540.0, "");
-        assert!(rendered.contains("Unidentified, Drafted, Assembly, C"));
-        assert!(!rendered.contains("Proven ASM"));
-        assert!(!rendered.contains("Draft ASM"));
-    }
-
-    #[test]
-    fn folder_view_uses_only_its_files_without_scaling_the_font() {
-        let map = CoverageMap {
-            document: serde_json::json!({"target":"tbs-en", "shared_map_assets": {
-                "FIELD/XIAN/": ["GRAPHICS/TILE/SHARED.PNG"]
-            }}),
-            executable_areas: vec![],
-            rom_areas: vec![Area {
-                tiles: vec![super::source_container(
-                    "PACK.json".into(),
-                    ["FIELD/XIAN/ROOMS.C", "FIELD/HEIDIA/ROOMS.C"]
-                        .iter()
-                        .map(|path| Tile {
-                            source: Some((*path).into()),
-                            bytes: 100,
-                            categories: [100, 0, 0, 0, 0, 0],
-                            ..Tile::default()
-                        })
-                        .collect(),
-                )],
-                ..Area::default()
-            }],
-        };
-        let rendered = super::svg_at("rom", &map, 540.0, "FIELD/XIAN/");
-        assert!(rendered.contains("FIELD/XIAN/ROOMS.C"));
-        assert!(!rendered.contains("HEIDIA"));
-        assert!(rendered.contains("font-size:13px"));
-        assert!(rendered.contains("sans-serif"));
-        for embedded in ["base64", "@font-face", "data:", "url("] {
-            assert!(!rendered.contains(embedded), "{embedded}");
-        }
-        assert!(rendered.contains("viewBox=\"0 0 540 960\""));
-        assert!(rendered.contains("TBS EN · XIAN"));
-        assert!(rendered.contains("Shared files (1)"));
-        assert!(rendered.contains("GRAPHICS/TILE/SHARED.PNG"));
-        assert!(rendered.contains("data-usage-revision="));
-        assert!(!super::svg_at("rom", &map, 540.0, "FIELD/HEIDIA/").contains("Shared files"));
-        assert!(super::svg_at("rom", &map, 320.0, "").contains("<title>Alchemy</title>"));
-    }
+    use super::{content_style, directories, leaves, sound_type, SOUND_TYPES};
+    use crate::coverage::model::{Category, Tile};
 
     #[test]
     fn all_directories_wrap_files_without_duplicating_bytes() {
@@ -1020,100 +466,6 @@ mod tests {
     }
 
     #[test]
-    fn unreconstructed_data_has_no_fictitious_file_or_extra_folder() {
-        let pending = Tile {
-            label: "Unidentified".into(),
-            source: Some("games/THE LOST AGE/".into()),
-            group: Some("unreconstructed-data".into()),
-            bytes: 100,
-            categories: [0, 0, 0, 0, 0, 100],
-            ..Tile::default()
-        };
-        let file = Tile {
-            label: "DIRECTORY.JSON".into(),
-            source: Some("games/THE LOST AGE/SRC/SYSTEM/RESOURCE/DIRECTORY.JSON".into()),
-            bytes: 20,
-            categories: [0, 0, 0, 0, 0, 20],
-            ..Tile::default()
-        };
-        let grouped = directories(vec![pending.clone(), file], "");
-        let game = &grouped[0].children[0];
-        assert_eq!(game.source.as_deref(), Some("games/THE LOST AGE/"));
-        assert_eq!(game.bytes, 120);
-        assert_eq!(game.children.len(), 2);
-        assert_eq!(game.children[0].label, "Unidentified");
-        assert!(game.children[0].children.is_empty());
-        let mut out = Vec::new();
-        draw_tiles(
-            &mut out,
-            &[&pending],
-            Rect {
-                x: 0.0,
-                y: 0.0,
-                width: 400.0,
-                height: 200.0,
-            },
-            None,
-            &[],
-            Some("rom"),
-        );
-        let rendered = out.join("\n");
-        assert!(rendered.contains("Unidentified"));
-        assert!(rendered.contains("not asset-build verified"));
-        assert!(!rendered.contains("ROM bytes matched"));
-        assert!(!rendered.contains("data-kind=\"folder\""));
-    }
-
-    #[test]
-    fn folders_have_one_pixel_bevels_and_files_have_only_fitting_centered_labels() {
-        let tile = Tile {
-            source: Some("sound/wave.wav".into()),
-            bytes: 100,
-            categories: [0, 0, 0, 0, 0, 100],
-            ..Tile::default()
-        };
-        let grouped = directories(vec![tile], "");
-        for (width, height, visible) in
-            [(200.0, 100.0, true), (40.0, 20.0, false), (8.0, 8.0, false)]
-        {
-            let mut out = Vec::new();
-            draw_tiles(
-                &mut out,
-                &grouped.iter().collect::<Vec<_>>(),
-                Rect {
-                    x: 0.0,
-                    y: 0.0,
-                    width,
-                    height,
-                },
-                None,
-                &[],
-                Some("rom"),
-            );
-            let svg = out.join("\n");
-            assert_eq!(svg.matches("data-kind=\"folder\"").count(), 1);
-            assert_eq!(
-                svg.matches("Last asset build: ROM bytes matched").count(),
-                if visible { 2 } else { 0 }
-            );
-            assert_eq!(svg.contains("class=\"bevel-light\""), visible);
-            assert_eq!(svg.contains("class=\"bevel-dark\""), visible);
-            assert_eq!(
-                svg.matches("stroke-width=\"1\" vector-effect=\"non-scaling-stroke\"")
-                    .count(),
-                if visible { 2 } else { 0 }
-            );
-            assert_eq!(svg.contains(">wave.wav</tspan>"), visible);
-            assert_eq!(
-                svg.contains("text-anchor=\"middle\" dominant-baseline=\"middle\""),
-                visible
-            );
-            assert!(!svg.contains("height=\"10\""));
-            assert!(!svg.contains("..."));
-        }
-    }
-
-    #[test]
     fn content_colors_use_types_not_the_card_theme() {
         let mut tile = Tile {
             group: Some("golden-sun-static-sprite-series".into()),
@@ -1133,7 +485,11 @@ mod tests {
             group: Some(format!("file:{extension}")),
             ..Tile::default()
         };
-        assert_eq!(content_style(&tile("s")), ("Assembly", super::ASSEMBLY));
+        assert_eq!(content_style(&tile("s")), ("Not yet C", super::ASSEMBLY));
+        assert_eq!(
+            content_style(&tile("s-credited")),
+            ("Assembly", super::CREDITED_ASSEMBLY)
+        );
         assert_eq!(content_style(&tile("c")), ("C", super::SOURCE_ROSE));
         let draft = Tile {
             source: Some("recon/tbs/en/main/08006878.c".into()),
@@ -1252,25 +608,6 @@ mod tests {
                 ("Unidentified", super::UNKNOWN)
             );
         }
-        let map = CoverageMap {
-            document: Value::Null,
-            rom_areas: vec![Area {
-                tiles,
-                ..Area::default()
-            }],
-            executable_areas: vec![],
-        };
-        let svg = svg("rom", &map, 540.0);
-        assert_eq!(svg.matches("Unidentified 30.0%").count(), 1);
-        assert!(svg.contains("Tables 70.0%"));
-        for obsolete in [
-            "Unknown",
-            "Unclassified",
-            "Unreconstructed data",
-            "Other data",
-        ] {
-            assert!(!svg.contains(obsolete), "{obsolete}");
-        }
     }
 
     #[test]
@@ -1300,117 +637,5 @@ mod tests {
             };
             assert_ne!(content_style(&tile).0, super::UNIDENTIFIED, "{kind}");
         }
-    }
-
-    #[test]
-    fn code_and_data_combine_all_members_without_double_counting() {
-        let tile = |bytes, categories| Tile {
-            bytes,
-            categories,
-            ..Tile::default()
-        };
-        let map = CoverageMap {
-            document: Value::Null,
-            executable_areas: vec![
-                Area {
-                    tiles: vec![tile(100, [0, 0, 0, 0, 100, 0])],
-                    ..Area::default()
-                },
-                Area {
-                    tiles: vec![tile(300, [0, 0, 300, 0, 0, 0])],
-                    ..Area::default()
-                },
-            ],
-            rom_areas: vec![
-                Area {
-                    id: "rom-data".into(),
-                    tiles: vec![
-                        Tile {
-                            group: Some("golden-sun-pcm-wave".into()),
-                            ..tile(40, [0, 0, 0, 0, 0, 40])
-                        },
-                        Tile {
-                            source: Some("image.png".into()),
-                            ..tile(60, [0, 0, 0, 0, 0, 60])
-                        },
-                    ],
-                    ..Area::default()
-                },
-                Area {
-                    id: "compressed-code".into(),
-                    tiles: vec![tile(500, [0, 0, 0, 0, 0, 500])],
-                    ..Area::default()
-                },
-            ],
-        };
-        assert_eq!(BOX_TREES, ["files"]);
-        // Physical streams, not decoded executable owners, determine ROM area.
-        assert_eq!(tree_tiles(&map).iter().map(|t| t.bytes).sum::<i64>(), 600);
-        for width in [320.0, 540.0, 830.0] {
-            let rendered = svg("rom", &map, width);
-            assert!(rendered.contains(&format!("viewBox=\"0 0 {width} {}\"", width * 16.0 / 9.0)));
-            assert!(rendered.contains("font-size:13px"));
-            assert!(!rendered.contains("DONE"));
-            assert!(rendered.contains("PCM samples"));
-        }
-    }
-
-    #[test]
-    fn rom_tree_displays_code_status_without_redefining_done() {
-        let mut categories = [0; 6];
-        categories[Category::Unknown as usize] = 25;
-        categories[Category::DraftAsm as usize] = 15;
-        categories[Category::DraftC as usize] = 10;
-        categories[Category::ProvenAsm as usize] = 25;
-        categories[Category::ProvenC as usize] = 25;
-        let area = Area {
-            id: "main-code".into(),
-            label: "Main game".into(),
-            bytes: 100,
-            categories,
-            tiles: vec![Tile {
-                label: "owner".into(),
-                bytes: 100,
-                categories,
-                address: Some(0x080bbb0c),
-                ..Tile::default()
-            }],
-        };
-        let map = CoverageMap {
-            document: Value::Null,
-            rom_areas: vec![area],
-            executable_areas: Vec::new(),
-        };
-        let rendered = svg("rom", &map, 540.0);
-        for tree in ["rom"] {
-            let chart = svg(tree, &map, 540.0);
-            assert!(chart.contains("fill=\"#1f7f93\""));
-            assert!(chart.contains("class=\"chart-frame\""));
-            assert!(!chart.contains("rx="));
-            assert!(!chart.contains("font-size:8px"));
-            assert!(!chart.contains("font-size:12px"));
-            assert!(chart.contains("fill:#fff;text-shadow:1px 1px 0 #000;"));
-        }
-        assert!(!rendered.contains("DONE"));
-        let unknown = rendered.find("Unidentified 25.0%").unwrap();
-        let draft_c = rendered.find("Drafted 10.0%").unwrap();
-        let proven_asm = rendered.find("Assembly 40.0%").unwrap();
-        let proven_c = rendered.find("C 25.0%").unwrap();
-        assert!(!rendered.contains("Draft ASM"));
-        assert!(!rendered.contains("Proven ASM"));
-        assert!(!rendered.contains("Proven C"));
-        assert!(!rendered.contains("Draft C"));
-        assert!(!rendered.contains("Exact C"));
-        assert_eq!(rendered.matches("Assembly 40.0%").count(), 1);
-        assert!(unknown < draft_c);
-        assert!(draft_c < proven_asm);
-        assert!(proven_asm < proven_c);
-        assert!(rendered.contains("legend-label"));
-        assert!(rendered.contains("data-address=\"0x080bbb0c\""));
-        assert!(rendered.contains(
-            "<title>owner: 100 bytes · Unidentified, Drafted, Assembly, C · 0x080bbb0c</title>"
-        ));
-        assert!(!rendered.contains(">owner</tspan>"));
-        assert!(!rendered.contains(">0x080bbb0c</tspan>"));
     }
 }

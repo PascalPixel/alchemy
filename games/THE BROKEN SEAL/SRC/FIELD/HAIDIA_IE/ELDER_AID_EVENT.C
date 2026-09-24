@@ -1,6 +1,5 @@
 #include "TYPES.H"
-
-#define FieldScene_RunElderAidEvent Func_02000bbc
+#include "FIELD_EVENT.H"
 
 extern u8 Data_0200aef0[];
 extern u8 Data_0200af50[];
@@ -37,10 +36,6 @@ void Func_02003360();
 void Func_02003364();
 void Func_0200338e();
 void Func_02003390();
-void Func_0200339a();
-void Func_0200339a_a();
-void Func_020033aa();
-void Func_020033aa_a();
 void Func_020033ae();
 void Func_020033b6();
 void Func_020033b8();
@@ -53,8 +48,6 @@ void Func_020033dc();
 void Func_020033e2();
 void Func_020033f8();
 void Func_020033fc();
-void Func_02003402();
-s32 Func_02003402_a();
 void Func_02003422();
 void Func_02003424();
 void Func_0200342a();
@@ -66,8 +59,6 @@ s32 Func_0200346a();
 void Func_020034a4();
 void Func_020034a6();
 void Func_020034b2();
-void Func_020034b4();
-void Func_020034b4_a();
 void Func_020034cc();
 void Func_020034d2();
 void Func_020034d8();
@@ -77,8 +68,6 @@ void Func_020034f0();
 void Func_0200350e();
 s32 Func_02003512();
 void Func_0200357e();
-void Func_020035a6();
-void Func_020035a6_a();
 void Func_020035a8();
 void Func_020035b4();
 void Func_020035dc();
@@ -100,28 +89,17 @@ s32 Func_0200367c();
 void Func_0200367e();
 void Func_0200368a();
 void Func_020036aa();
-void Func_020036ac();
 s32 Func_020036ac_a();
 void Func_020036be();
 void Func_020036c6();
 void Func_020036ca();
-void Func_020036ce();
-void Func_020036ce_a();
-void Func_020036dc();
 s32 Func_020036dc_a();
-void Func_020036ee();
-void Func_020036ee_a();
-void Func_020036f6();
-void Func_020036f6_a();
 void Func_020036fe();
 void Func_0200370c();
-void Func_0200371e();
-void Func_0200371e_a();
 void Func_0200372e();
 void Func_0200373c();
 void Func_0200374e();
 void Func_020037a2();
-
 
 static __inline__ void Call1(void (*f)(), s32 a0)
 {
@@ -172,7 +150,7 @@ void FieldScene_RunElderAidEvent(void)
     if (Value1(Func_02003238, 0x834) != 0 && Value1(Func_02003246, 0x840) == 0) {
         Func_02003278();
         Call2(Func_02003390, 0x19999, 0x3333);
-        Call4(Func_020033aa, 0xc50000, -1, 0x3000000, 1);
+        Camera_MoveTo(0xc50000, -1, 0x3000000, 1);
         Func_020033b6();
         Call1(Func_02003364, 0xeb6);
         Func_02003344(19, 2);
@@ -187,9 +165,9 @@ void FieldScene_RunElderAidEvent(void)
         Call3(Func_0200335c, 25, 179, 0x324);
         Func_020033ae(0, 25, 40);
         Func_020033f8(0, 0, 0);
-        Func_02003402(25, 0, 0);
-        Func_0200339a(17, 3);
-        Func_020033aa_a(18, 3);
+        Actor_FaceDirection(25, 0, 0);
+        Actor_SetAnimation(17, 3);
+        Actor_SetAnimationAndWait(18, 3);
         Func_020033dc(17, 18, 0);
         Func_0200332a(20);
         Func_020033d2(17, 1);
@@ -203,11 +181,11 @@ void FieldScene_RunElderAidEvent(void)
         Call3(Func_020033b8, 17, 0x19999, 0xcccc);
         Call3(Func_020033c2, 18, 0x19999, 0xcccc);
         Func_020033d4(17, (s32)Data_0200aef0);
-        Func_0200339a_a(20);
+        Event_Wait(20);
         Func_020033e2(18, (s32)Data_0200aef0);
         Call3(Func_020034a6, 0, 0xc000, 0);
         Call3(Func_020034b2, 25, 0xc000, 60);
-        Value2(Func_02003402_a, 0, (s32)Data_0200af50);
+        Value2(Engine_ActorEnableActionCallback, 0, (s32)Data_0200af50);
         Call2(Func_02003422, 25, (s32)Data_0200af78);
         Func_020033d0(20);
         Func_020034d2(0, 0, 0);
@@ -215,10 +193,10 @@ void FieldScene_RunElderAidEvent(void)
         Func_020034cc(25, 0);
         Call3(Func_020034f0, 19, 0x8000, 0);
         Value3(Func_02003050, 26, 0x6000, 20);
-        Func_020034b4(26, 2);
+        Actor_RunRepeatedMotion(26, 2);
         Func_02003048(26, 10);
         Func_020034a4(0, 3);
-        Func_020034b4_a(25, 3);
+        Actor_SetAnimationAndWait(25, 3);
         Func_0200342a(20);
         Func_020034da(19, 2);
         Value2(Func_02003512, 0x4013, 0);
@@ -249,7 +227,7 @@ void FieldScene_RunElderAidEvent(void)
         Func_0200366e();
         Call2(Func_02003666, 0xcccc, 0x1999);
         Call4(Func_0200367e, 0xcd0000, -1, 0x30a0000, 1);
-        Call2(Func_020035a6, 22, (s32)Data_0200a874);
+        Actor_EnableActionCallback(22, (s32)Data_0200a874);
         Func_020035b4(22);
         Value3(Func_020031c4, 22, 0x2000, 60);
         Func_02003628(19, 2);
@@ -257,7 +235,7 @@ void FieldScene_RunElderAidEvent(void)
         Func_02003620(22, 3);
         Func_020031cc(22, 20);
         Func_02003630(19, 3);
-        Func_020035a6_a(10);
+        Event_Wait(10);
         Func_020031fe(19, unk, 30);
         Func_020031ee(unk + 19, 10);
         Func_02003212(26, 0xe000, 30);
@@ -265,38 +243,38 @@ void FieldScene_RunElderAidEvent(void)
         Func_02003226(19, 0x8000, 30);
         Func_0200368a(19, 2);
         Func_0200321e(unk + 19, 10);
-        Func_020036ac(0, 25, 40);
-        Func_020036f6(0, 0, 0);
+        Actor_FaceEachOther(0, 25, 40);
+        Actor_FaceDirection(0, 0, 0);
         Func_02003254(25, 0, 20);
         Func_0200325e(26, 0x8000, 30);
         Func_020036aa(26, 3);
         Func_02003256(26, 30);
         Value3(Func_0200327a, 26, 0xc000, 30);
         Func_020036c6(26, 3);
-        Func_020036ce(22, 3);
-        Func_020036ce_a(25, 2);
+        Actor_SetAnimationAndWait(22, 3);
+        Actor_SetAnimation(25, 2);
         record = Value1(Func_0200367c, 0);
         if (record != 0) {
             Func_020036be(25, *(s16 *)(record + 10), *(s16 *)(record + 18));
         }
-        Func_020036dc(25);
-        Func_020036ee(25, 0, 0);
+        Actor_WaitForMove(25);
+        Actor_SetPosition(25, 0, 0);
         Func_020036fe(26, 2);
         record = Value1(Func_020036ac_a, 0);
         if (record != 0) {
-            Func_020036ee_a(26, *(s16 *)(record + 10), *(s16 *)(record + 18));
+            Actor_SetDestination(26, *(s16 *)(record + 10), *(s16 *)(record + 18));
         }
         Func_0200370c(26);
-        Func_0200371e(26, 0, 0);
+        Actor_SetPosition(26, 0, 0);
         Func_0200372e(22, 2);
         record = Value1(Func_020036dc_a, 0);
         if (record != 0) {
-            Func_0200371e_a(22, *(s16 *)(record + 10), *(s16 *)(record + 18));
+            Actor_SetDestination(22, *(s16 *)(record + 10), *(s16 *)(record + 18));
         }
         Func_0200373c(22);
         Func_0200374e(22, 0, 0);
         Call3(Func_020037a2, 19, 0x10000, (s32)Data_0200ac00);
         Call1(Func_020036ca, 0x840);
-        Func_020036f6_a();
+        Event_End();
     }
 }

@@ -1,5 +1,5 @@
 #include "TYPES.H"
-
+#include "FIELD_EVENT.H"
 
 extern u8 Data_03001ebc[];
 void Func_020051f8();
@@ -21,12 +21,9 @@ void Func_0200566e();
 void Func_020059ae();
 void Func_020059c4();
 void Func_020059f2();
-void Func_020059fc_a();
-void Func_020059fc_b();
 void Func_02005a1c();
 struct ObjectRuntime;
 struct ObjectRuntime *Func_02005a30(u32);
-void Func_02005a38_a();
 struct ObjectRuntime *Func_02005a38_b(u32);
 void Func_02005a50();
 void Func_02005a58();
@@ -51,41 +48,28 @@ void Func_02005b64();
 void Func_02005b68();
 void Func_02005b70();
 void Func_02005b76();
-void Func_02005b7c_a();
 struct ObjectRuntime *Func_02005b7c_b(u32);
 void Func_02005b86();
 void Func_02005b88();
 void Func_02005ba4();
 void Func_02005ba6();
 void Func_02005bb6();
-void Func_02005bbc_a();
-void Func_02005bbc_b();
 void Func_02005bc8();
-void Func_02005bd2_a();
-void Func_02005bd2_b();
 void Func_02005bde();
-void Func_02005be0_a();
-void Func_02005be0_b();
 void Func_02005bf2();
 void Func_02005c0a();
 void Func_02005c16();
 void Func_02005c18();
 void Func_02005c26();
 void Func_02005c3a();
-void Func_02005c3e_a();
-void Func_02005c3e_b();
 void Func_02005c48();
 void Func_02005c4e();
-void Func_02005c50_a();
-void Func_02005c50_b();
 void Func_02005c54();
 void Func_02005c5a();
 void Func_02005c5c();
 void Func_02005c64();
 void Func_02005c82();
 void Func_02005caa();
-void Func_02005cb4_a();
-void Func_02005cb4_b();
 void Func_02005cca();
 void Func_02005cce();
 void Func_02005cd2();
@@ -113,8 +97,6 @@ void Func_02005e30();
 void Func_02005e3a();
 void Func_02005e4a();
 void Func_02005e52();
-void Func_02005e5c_a();
-void Func_02005e5c_b();
 void Func_02005e62();
 void Func_02005e68();
 void Func_02005e76();
@@ -174,18 +156,18 @@ void FieldScene_RunElementalStarDemand(void)
 
     Func_02005aae(61);
     Func_020059ae(10, 4);
-    Call1(Func_020059fc_a, 0x107d);
+    Event_SetMessage(0x107d);
     Func_020051f8(10, 10);
     Func_020059c4(11, 4);
     Func_02005208(11, 30);
     Call3(Func_02005a58, 9, 0x102, 60);
     Func_020059f2(9, 4, 10);
-    Func_020059fc_b(9, 6, 30);
+    Actor_Jump(9, 6, 30);
     Func_02005230(9, 10);
     Func_02005a1c(10, 1);
     Call3(Func_02005a78, 10, 0xb000, 10);
     Func_0200524c(10, 20);
-    Call2(Func_02005a38_a, 11, 1);
+    Actor_RunRepeatedMotion(11, 1);
     Call3(Func_02005a94, 11, 0xd000, 20);
     Func_02005268(11, 30);
     Call3(Func_02005ab8, 9, 0x102, 60);
@@ -216,13 +198,13 @@ void FieldScene_RunElementalStarDemand(void)
     Call3(Func_02005b68, 9, 0x100, 30);
     Call3(Func_02005b64, 5, 0xc000, 0);
     Call3(Func_02005b70, 9, 0xb000, 10);
-    Call3(Func_02005b7c_a, 11, 0xd000, 0);
+    Actor_FaceDirection(11, 0xd000, 0);
     Call3(Func_02005b88, 10, 0xb000, 0);
-    Call2(Func_02005bbc_a, 0x20000, 0x4000);
-    Call4(Func_02005bd2_a, 0x1d70000, -1, 0x1350000, 1);
+    Camera_SetSpeed(0x20000, 0x4000);
+    Camera_MoveTo(0x1d70000, -1, 0x1350000, 1);
     Func_02005bde();
     Call3(Func_02005b3a, 8, 0x1d70000, 0x1220000);
-    Func_02005c50_a(190);
+    Audio_PlayCue(190);
     Func_02005bc8(12, 2);
     for (cnt = 0; cnt != 90; cnt++) {
         *(s32 *)(record12 + 12) += -0x1999;
@@ -242,7 +224,7 @@ void FieldScene_RunElementalStarDemand(void)
     Func_02005b36(30);
     *field_80_38 = 1;
     Func_02005bb6(8, 0, 0);
-    Func_02005c3e_a(12, 1);
+    Actor_SetSpritePriority(12, 1);
     {
         u8 *flags = (u8 *)Func_02005b7c_b(12) + 35;
         cnt = 1;
@@ -251,18 +233,18 @@ void FieldScene_RunElementalStarDemand(void)
     }
     Func_02005c16(12, 0);
     Call3(Func_02005ba4, 12, 0x8000, 0x4000);
-    Call3(Func_02005be0_a, 12, 0x1d7, 0x132);
+    Actor_WalkToAndWait(12, 0x1d7, 0x132);
     Func_02005b86(40);
     Func_02005c26(12, 2);
     Call2(Func_0200544a, 0x400c, 20);
     Func_02005c48(5, 9, 0);
     Func_02005ba6(20);
-    Func_02005c3e_b(5, 2);
+    Actor_StartRepeatedMotion(5, 2);
     Func_02005c4e(9, 2);
-    Func_02005bbc_b(40);
+    Event_Wait(40);
     Func_02005c54(10, 1);
     Func_02005c64(11, 1);
-    Func_02005bd2_b(20);
+    Event_Wait(20);
     Func_02005c5a(10, 4);
     Call3(Func_02005cce, 10, 0x5000, 0);
     Call3(Func_02005cda, 11, 0x5000, 10);
@@ -273,11 +255,11 @@ void FieldScene_RunElementalStarDemand(void)
     Func_02005c18(10);
     Func_020054d4(11, 30);
     Call3(Func_02005d14, 11, 0xd000, 30);
-    Func_02005cb4_a(11, 3);
+    Actor_SetAnimationAndWait(11, 3);
     Func_02005c3a(20);
     Func_020054f6(11, 30);
     Func_02005cca(12, 3);
-    Func_02005c50_b(20);
+    Event_Wait(20);
     Call3(Func_02005d44, 11, 0x5000, 40);
     Call3(Func_02005d50, 9, 0x5000, 0);
     Call3(Func_02005d5c, 5, 0x6000, 20);
@@ -286,11 +268,11 @@ void FieldScene_RunElementalStarDemand(void)
     Func_02005dde();
     Func_02005dea();
     Call4(Func_02005db4, 0x1080000, -1, 0x1cc0000, 0);
-    Func_02005be0_b();
+    Map_Redraw();
     Func_02005b76(1);
     Func_02005dfa();
     Func_02005e0e();
-    Func_02005cb4_b(40);
+    Event_Wait(40);
     Func_02005570(10, 40);
     Func_02005d54(0, 3);
     Func_02005d64(1, 3);
@@ -300,7 +282,7 @@ void FieldScene_RunElementalStarDemand(void)
         SkipMessage(1);
     }
     Func_02005dd8(9, 0, 20);
-    Func_02005e5c_a();
+    Event_CloseScreen();
     Func_02005e68();
     Call4(Func_02005e30, 0x1dd0000, -1, 0x14e0000, 0);
     Func_02005c5c();
@@ -309,7 +291,7 @@ void FieldScene_RunElementalStarDemand(void)
     Func_02005eba();
     Func_02005d60(20);
     Func_02005e00(10, 2);
-    Call3(Func_02005e5c_b, 10, 0xb000, 10);
+    Actor_FaceDirection(10, 0xb000, 10);
     Call1(Func_02005e3a, 0x108d);
     Func_02005636(10, 20);
     Call3(Func_02005e76, 5, 0x2000, 0);

@@ -847,6 +847,10 @@
       "name": "BattleEffect_SetupBlendedDisplay",
       "source": "BATTLE/EFFECT/SETUP_BLENDED_DISPLAY.C"
     },
+    "main:08011568": {
+      "name": "MapAnimation_PresentFrame",
+      "source": "FIELD/COMMON/MAP/ANIMATION_PRESENT_FRAME.C"
+    },
     "main:08011590": {
       "name": "MapAnimation_Start",
       "source": "FIELD/COMMON/MAP/ANIMATION_START.C"

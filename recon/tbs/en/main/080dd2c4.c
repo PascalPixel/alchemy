@@ -1,4 +1,7 @@
-/* 2026-09-24: 37 differing halfwords (was 66). The puff blits now read
+/* 2026-09-24: 28 differing halfwords (was 66). The member blits read the
+   cell offset first and then reuse the texture index (u32, so the width
+   halves with lsrs) for the width, which puts the index in r4 as the
+   reference does. The puff blits now read
    the width and height tables inline at each use, as the rising pillars
    (RISING_PILLARS.C) do, which gives the reference's load order and pool
    order there; the blitters are value-returning (BATTLE_EFX.H). The do-while
@@ -263,7 +266,7 @@ void Func_080dd2c4(void *object, s32 arg1)
                             M2C_FIELD(work, s32 *, 0x77A8) = 2;
                         }
                         if (sp24 > sp0C) {
-                            s32 texture_index = Func_080022fc(i, 3);
+                            u32 texture_index = Func_080022fc(i, 3);
 
                             var_r5_297 = (sp24 - sp0C) * 8;
                             temp_r3_298 = M2C_FIELD(var_sl_273, s32 *, 0x10);
@@ -271,31 +274,25 @@ void Func_080dd2c4(void *object, s32 arg1)
                                 var_r5_297 = temp_r3_298;
                             }
                             if (mode == 0) {
-                                do { temp_r4_315 = Data_080eeb48[texture_index]; } while (0);
-                                ((DrawRectangleFn)
-                                    slot_pair[1 & i])(
-                                    draw_destination,
-                                    (u8 *)work + Data_080eeb4e[texture_index],
-                                    M2C_FIELD(var_sl_273, s32 *, 0)
-                                        - (temp_r4_315 >> 1),
-                                    M2C_FIELD(var_sl_273, s32 *, 4)
-                                        - var_r5_297,
-                                    temp_r4_315, var_r5_297);
+                                {
+                                    s32 cell = Data_080eeb4e[texture_index];
+                                    texture_index = Data_080eeb48[texture_index];
+                                    ((DrawRectangleFn)slot_pair[1 & i])(draw_destination, (u8 *)work + cell,
+                                        M2C_FIELD(var_sl_273, s32 *, 0) - (texture_index >> 1),
+                                        M2C_FIELD(var_sl_273, s32 *, 4) - var_r5_297, texture_index, var_r5_297);
+                                }
                             } else {
                                 temp_r3_335 = Data_080eeb71[7 & i];
                                 if (var_r5_297 > temp_r3_335) {
                                     var_r5_297 = temp_r3_335;
                                 }
-                                do { temp_r4_348 = Data_080eeb54[texture_index]; } while (0);
-                                ((DrawRectangleFn)
-                                    slot_pair[1 & i])(
-                                    draw_destination,
-                                    (u8 *)work + Data_080eeb58[texture_index],
-                                    M2C_FIELD(var_sl_273, s32 *, 0)
-                                        - (temp_r4_348 >> 1),
-                                    M2C_FIELD(var_sl_273, s32 *, 4)
-                                        - var_r5_297,
-                                    temp_r4_348, var_r5_297);
+                                {
+                                    s32 cell = Data_080eeb58[texture_index];
+                                    texture_index = Data_080eeb54[texture_index];
+                                    ((DrawRectangleFn)slot_pair[1 & i])(draw_destination, (u8 *)work + cell,
+                                        M2C_FIELD(var_sl_273, s32 *, 0) - (texture_index >> 1),
+                                        M2C_FIELD(var_sl_273, s32 *, 4) - var_r5_297, texture_index, var_r5_297);
+                                }
                             }
                         }
                         var_r6_367 = 0;

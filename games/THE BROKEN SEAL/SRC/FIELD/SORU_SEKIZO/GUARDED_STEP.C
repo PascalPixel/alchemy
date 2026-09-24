@@ -1,17 +1,6 @@
 #include "TYPES.H"
 
 #define NULL ((void *)0)
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
-#define SceneEventRuntime_GetScriptData Func_02000030
-#define SceneEventRuntime_ReturnZero Func_02000038
-#define SceneEventRuntime_GetMessageData Func_0200003c
-#define SceneEventRuntime_GetActorData Func_02000044
-#define SceneEventRuntime_GetEffectData Func_0200004c
-#define SceneEventRuntime_SelectInitialSceneByFlags Func_02000054
-#define FieldScene_RunLoopedLayoutSequence Func_02000098
-#define SceneEffect_UpdateScrollingSpriteRows Func_02000eb0
-#define SceneState_RunWhenSlotZeroFacingC000 Func_02000fe4
-#define SceneState_RunWhenActorZeroFacing4000 Func_02001000
 #define GameFlag_IsSet_1(args...) Func_02003456_a(args)
 #define BattleRuntime_Reset_1() Call0(Func_0200347e)
 #define Scene_GetRecord_1(a0) Call1(Func_0200349c, a0)
@@ -20,32 +9,6 @@
 #define BattleRuntime_ScheduleShoulderButtonModeUpdate_1() Call0(Func_020034a6)
 #define TARGET_ID 9
 #define GATE_CODE 2059
-#define FieldScene_RunPrimarySequenceHead Func_0200101c
-#define FieldScene_RunClosingSequence Func_02001624
-#define FieldScene_RunScene37bSequenceA Func_0200195c
-#define FieldScene_RunFiveValueStep9 Func_020019e4
-#define FieldScene_RunFiveValueStep11 Func_02001a04
-#define FieldScene_RunFiveValueStep15 Func_02001a44
-#define FieldScene_RunScene37b_02002244 Func_02002244
-#define FieldScene_RunScene37b_020022f4 Func_020022f4
-#define FieldScene_CallWhenCheck9_31_9 Func_02001574
-#define ConfigureSceneAndCheckActors Func_020015d4
-#define FieldScene_ApplyRect13_31_12_30_12 Func_02001a24
-#define FieldScene_ApplyRect10_14_7_13_7 Func_02001a64
-#define FieldScene_ApplyRect12_21_7_22_7 Func_02001ad4
-#define FieldScene_RunGuardedStep11 Func_0200158c
-#define FieldScene_RunGuardedStep13 Func_020015a4
-#define FieldScene_RunGuardedStep15 Func_020015bc
-#define SceneActor_UseActorTenCellAndNext Func_02001a84
-#define SceneActor_ApplyActorTwelveZCellPair Func_02001af4
-#define SceneActor_IsActorAtTile Func_02001be8
-#define SceneActor_MoveActor10ByRow Func_02001aac
-#define SceneActor_RunSlot12ColumnStep Func_02001b1c
-#define SceneData_InitTableA980 Func_02001c14
-#define SceneData_FillTableA980 Func_02001d14
-#define SceneData_InitTableA980AndRunB Func_02001e10
-#define SceneData_BuildTableA980 Func_02001f0c
-#define FieldScene_RunSplitPairSteps Func_020023a4
 
 struct Ent {
     s32 f00;
@@ -68,7 +31,6 @@ extern u8 SceneEventRuntime_ActorData[];
 extern u8 SceneEventRuntime_EffectData[];
 extern struct Cam *Data_03001e70;
 extern s32 Data_0200a974;
-extern u8 Data_02000240[];
 extern u8 Data_03001ebc[];
 extern u16 Data_02000240_t[][1];
 extern s32 Data_0200a980[];
@@ -369,16 +331,6 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
     extern u8 Data_0200aa50[];
 
     f(a0, a1, a2, a3, a4, a5);
-}
-
-/* The scene step counter at 0x1d8 of the shared scene work record. */
-static __inline__ void bump_step(s32 amount)
-{
-    extern u8 Data_0200aa50[];
-
-    u8 *work = *(u8 **)Data_03001ebc;
-
-    *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
 }
 
 /* Call sites spelled through these wrappers pass their constants straight

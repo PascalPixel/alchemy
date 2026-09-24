@@ -5791,7 +5791,7 @@
       "source": "FIELD/KUUPUAPPU_HEYA/PROMPT.C"
     },
     "resource_37b:02000098": {
-      "name": "Scene_RunLoopedLayoutSequence",
+      "name": "FieldScene_RunLoopedLayoutSequence",
       "source": "FIELD/SORU_SEKIZO/GUARDED_STEP.C"
     },
     "resource_372:02002180": {
@@ -5883,7 +5883,7 @@
       "source": "FIELD/FUNE_HOBASHIRA/OBJECT_SCALE.C"
     },
     "resource_37b:02001c14": {
-      "name": "SceneData_InitEntTbl",
+      "name": "SceneData_InitTableA980",
       "source": "FIELD/SORU_SEKIZO/GUARDED_STEP.C"
     },
     "resource_386:020001c4": {
@@ -5984,7 +5984,7 @@
     },
     "resource_38e:02000090": "FIELD/BIRIBINO_NIWA/GET_TERTIARY_DEFAULT_RESULT.C",
     "resource_37b:02000eb0": {
-      "name": "Effect_UpdateScrollingSpriteRows",
+      "name": "SceneEffect_UpdateScrollingSpriteRows",
       "source": "FIELD/SORU_SEKIZO/GUARDED_STEP.C"
     },
     "resource_3ca:020000a8": {
@@ -6008,7 +6008,7 @@
       "source": "FIELD/TOREBI_HEYA/FACING_EVENTS.C"
     },
     "resource_37b:020019e4": {
-      "name": "Scene_RunFiveValueStep9",
+      "name": "FieldScene_RunFiveValueStep9",
       "source": "FIELD/SORU_SEKIZO/GUARDED_STEP.C"
     },
     "resource_3ca:02000168": {
@@ -6060,7 +6060,7 @@
       "source": "FIELD/VINASU_HEYA/ENTRY_SETUP.C"
     },
     "resource_37b:02001000": {
-      "name": "State_RunWhenActorZeroFacing4000",
+      "name": "SceneState_RunWhenActorZeroFacing4000",
       "source": "FIELD/SORU_SEKIZO/GUARDED_STEP.C"
     },
     "resource_380:02000314": {
@@ -6202,7 +6202,7 @@
       "source": "FIELD/KUUPUAPPU_MURA_SAI/MOTION_EVENT.C"
     },
     "resource_37b:02001af4": {
-      "name": "Actor_ApplyActorTwelveZCellPair",
+      "name": "SceneActor_ApplyActorTwelveZCellPair",
       "source": "FIELD/SORU_SEKIZO/GUARDED_STEP.C"
     },
     "resource_398:02000168": {
@@ -6234,7 +6234,7 @@
       "source": "FIELD/KOROSSEO_KAWA/COORDINATOR.C"
     },
     "resource_37b:020023a4": {
-      "name": "Scene_RunSplitPairSteps",
+      "name": "FieldScene_RunSplitPairSteps",
       "source": "FIELD/SORU_SEKIZO/GUARDED_STEP.C"
     },
     "resource_3a3:02000298": {
@@ -6246,7 +6246,7 @@
       "source": "FIELD/COMMON/RUNPA_SUHARA/INTERIORS.C"
     },
     "resource_37b:02001a04": {
-      "name": "Scene_RunFiveValueStep11",
+      "name": "FieldScene_RunFiveValueStep11",
       "source": "FIELD/SORU_SEKIZO/GUARDED_STEP.C"
     },
     "resource_3cd:0200003c": {
@@ -6270,7 +6270,7 @@
       "source": "FIELD/SORU_STAR/PARTY_INTRO.C"
     },
     "resource_37b:02001d14": {
-      "name": "SceneData_FillEntTbl",
+      "name": "SceneData_FillTableA980",
       "source": "FIELD/SORU_SEKIZO/GUARDED_STEP.C"
     },
     "resource_390:02000030": {
@@ -6558,7 +6558,7 @@
       "source": "FIELD/VINASU_HEYA/ENTRY_SETUP.C"
     },
     "resource_37b:02001e10": {
-      "name": "SceneData_InitEntTblAndRunB",
+      "name": "SceneData_InitTableA980AndRunB",
       "source": "FIELD/SORU_SEKIZO/GUARDED_STEP.C"
     },
     "resource_3cb:02000058": {
@@ -6574,7 +6574,7 @@
       "source": "FIELD/KORIMA_HEYA/ENTRY_LAYOUT.C"
     },
     "resource_37b:02001a44": {
-      "name": "Scene_RunFiveValueStep15",
+      "name": "FieldScene_RunFiveValueStep15",
       "source": "FIELD/SORU_SEKIZO/GUARDED_STEP.C"
     },
     "resource_3a1:02000570": {
@@ -7267,7 +7267,7 @@
       "source": "FIELD/COMMON/SHIAN_JIIN/TEMPLE_ROOMS.C"
     },
     "resource_37b:02001f0c": {
-      "name": "SceneData_BuildEntTbl",
+      "name": "SceneData_BuildTableA980",
       "source": "FIELD/SORU_SEKIZO/GUARDED_STEP.C"
     },
     "resource_3ac:02000044": {
@@ -7327,7 +7327,7 @@
       "source": "FIELD/SORU_FUNKA/EXTENDED_EFFECT.C"
     },
     "resource_37b:02001b1c": {
-      "name": "Actor_RunSlot12ColumnStep",
+      "name": "SceneActor_RunSlot12ColumnStep",
       "source": "FIELD/SORU_SEKIZO/GUARDED_STEP.C"
     },
     "resource_374:02000920": {
@@ -7567,7 +7567,7 @@
       "source": "FIELD/KUUPUAPPU_HEYA/PROMPT.C"
     },
     "resource_37b:02001be8": {
-      "name": "Actor_IsActorAtTile",
+      "name": "SceneActor_IsActorAtTile",
       "source": "FIELD/SORU_SEKIZO/GUARDED_STEP.C"
     },
     "resource_386:02000078": {
@@ -7651,7 +7651,7 @@
       "source": "FIELD/VINASU_CHOJO/SCRIPTED_PRESENTATION.C"
     },
     "resource_37b:020015bc": {
-      "name": "Scene_RunGuardedStep15",
+      "name": "FieldScene_RunGuardedStep15",
       "source": "FIELD/SORU_SEKIZO/GUARDED_STEP.C"
     },
     "resource_3b1:02000fac": {
@@ -7663,7 +7663,7 @@
       "source": "FIELD/IMIRU_MURA/FLAGGED_CHOREOGRAPHY.C"
     },
     "resource_37b:02001aac": {
-      "name": "Actor_MoveActor10ByRow",
+      "name": "SceneActor_MoveActor10ByRow",
       "source": "FIELD/SORU_SEKIZO/GUARDED_STEP.C"
     },
     "resource_3b9:020002e4": {
@@ -8343,7 +8343,7 @@
       "source": "FIELD/KUUPUAPPU_MURA_SAI/MOTION_EVENT.C"
     },
     "resource_37b:02001a84": {
-      "name": "Actor_UseActorTenCellAndNext",
+      "name": "SceneActor_UseActorTenCellAndNext",
       "source": "FIELD/SORU_SEKIZO/GUARDED_STEP.C"
     },
     "resource_3b1:020016cc": {
@@ -8579,7 +8579,7 @@
       "source": "FIELD/BABI_FUNE/TABLE_AUDIO.C"
     },
     "resource_37b:0200158c": {
-      "name": "Scene_RunGuardedStep11",
+      "name": "FieldScene_RunGuardedStep11",
       "source": "FIELD/SORU_SEKIZO/GUARDED_STEP.C"
     },
     "resource_384:020001b0": {
@@ -8635,7 +8635,7 @@
       "source": "FIELD/KUUPUAPPU_HEYA/PROMPT.C"
     },
     "resource_37b:02001574": {
-      "name": "Scene_CallWhenCheck9_31_9",
+      "name": "FieldScene_CallWhenCheck9_31_9",
       "source": "FIELD/SORU_SEKIZO/GUARDED_STEP.C"
     },
     "resource_383:02000354": {
@@ -8699,7 +8699,7 @@
       "source": "FIELD/KORIMA_HEYA/ENTRY_LAYOUT.C"
     },
     "resource_37b:02001ad4": {
-      "name": "Scene_ApplyRect12_21_7_22_7",
+      "name": "FieldScene_ApplyRect12_21_7_22_7",
       "source": "FIELD/SORU_SEKIZO/GUARDED_STEP.C"
     },
     "resource_3b9:02001c48": {
@@ -9071,7 +9071,7 @@
       "source": "FIELD/HAIDIA_HEYA/TIMED_EVENTS.C"
     },
     "resource_37b:02001a64": {
-      "name": "Scene_ApplyRect10_14_7_13_7",
+      "name": "FieldScene_ApplyRect10_14_7_13_7",
       "source": "FIELD/SORU_SEKIZO/GUARDED_STEP.C"
     },
     "resource_383:02000454": {
@@ -9119,7 +9119,7 @@
       "source": "FIELD/KORIMA_MAGARI/PRESET_LAYOUT.C"
     },
     "resource_37b:02000fe4": {
-      "name": "State_RunWhenSlotZeroFacingC000",
+      "name": "SceneState_RunWhenSlotZeroFacingC000",
       "source": "FIELD/SORU_SEKIZO/GUARDED_STEP.C"
     },
     "resource_386:02000074": {
@@ -9163,7 +9163,7 @@
       "source": "FIELD/KUUPUAPPU_HEYA/PROMPT.C"
     },
     "resource_37b:020015a4": {
-      "name": "Scene_RunGuardedStep13",
+      "name": "FieldScene_RunGuardedStep13",
       "source": "FIELD/SORU_SEKIZO/GUARDED_STEP.C"
     },
     "resource_394:02000be4": {
@@ -9219,7 +9219,7 @@
       "source": "FIELD/VINASU_HEYA/ENTRY_SETUP.C"
     },
     "resource_37b:02001a24": {
-      "name": "Scene_ApplyRect13_31_12_30_12",
+      "name": "FieldScene_ApplyRect13_31_12_30_12",
       "source": "FIELD/SORU_SEKIZO/GUARDED_STEP.C"
     },
     "resource_3c2:02000040": {
@@ -10024,7 +10024,7 @@
       "source": "FIELD/SUHARA_GATE/ACTOR_PROMPT.C"
     },
     "resource_37b:02001624": {
-      "name": "Scene_RunClosingSequence",
+      "name": "FieldScene_RunClosingSequence",
       "source": "FIELD/SORU_SEKIZO/GUARDED_STEP.C"
     },
     "resource_3c8:02001150": {
@@ -10194,7 +10194,7 @@
       "source": "GRAPHICS/WINDOW/FIT_ON_SCREEN.C"
     },
     "resource_37b:0200101c": {
-      "name": "Scene_RunPrimarySequenceHead",
+      "name": "FieldScene_RunPrimarySequenceHead",
       "source": "FIELD/SORU_SEKIZO/GUARDED_STEP.C"
     },
     "resource_374:02000780": {
@@ -10293,11 +10293,11 @@
       "source": "FIELD/HAIDIA_HEYA/TIMED_EVENTS.C"
     },
     "resource_37b:02002244": {
-      "name": "Scene_RunGuard",
+      "name": "FieldScene_RunScene37b_02002244",
       "source": "FIELD/SORU_SEKIZO/GUARDED_STEP.C"
     },
     "resource_37b:020022f4": {
-      "name": "Scene_RunGuard",
+      "name": "FieldScene_RunScene37b_020022f4",
       "source": "FIELD/SORU_SEKIZO/GUARDED_STEP.C"
     },
     "resource_383:0200091c": {
@@ -10737,7 +10737,7 @@
       "source": "FIELD/TOREBI_HEYA/FACING_EVENTS.C"
     },
     "resource_37b:0200195c": {
-      "name": "Scene_RunGuardSequenceA",
+      "name": "FieldScene_RunScene37bSequenceA",
       "source": "FIELD/SORU_SEKIZO/GUARDED_STEP.C"
     },
     "resource_372:02001828": {

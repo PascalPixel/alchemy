@@ -2,6 +2,38 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_EFFECT.H"
 
+enum FlaggedChoreographyMessage {
+    MSG_BRRRRR_CHOO_IM_FREEZING_MIA = 0x1529,
+    MSG_HI_NEW_IN_IMIL = 0x152a,
+    MSG_ONE_TWO_THREE_FOUR = 0x152d,
+    MSG_MIA_SHOULD_HERE_BY_NOW = 0x152f,
+    MSG_MIA_RUNNING_AROUND_TOWN_CARING = 0x1533,
+    MSG_HES_ALWAYS_EXAGGERATING_THINGS_BUT = 0x153b,
+    MSG_DO_WANT_WEAPONS = 0x153f,
+    MSG_WHY_HAVE_TWO_GROUPS_TRAVELERS = 0x154b,
+    MSG_DO_WANT_SEE_RESTAURANT_MENU = 0x154d,
+    MSG_MAY_ONLY_STUDENT_BUT_CAN = 0x1553,
+    MSG_LOOKING_FOR_MIA = 0x1554,
+    MSG_HAVE_VISITED_OLD_COUPLE_WHO = 0x1557,
+    MSG_THESE_FOLK_OKAY_THEY_DONT = 0x155a,
+    MSG_MIA_WAS_SAYING_SHE_HAS = 0x155b,
+    MSG_HOW_FEELING = 0x155c,
+    MSG_HAPPENED_IN_LIGHTHOUSE_NORTHEAST = 0x156d,
+    MSG_MIA_GOOD_GIRL_WISH_HAD = 0x156e,
+    MSG_MIA_CLAN_ONCE_LIVED_HERE = 0x156f,
+    MSG_EVEN_IF_MIA_HEALS_US = 0x1570,
+    MSG_CANT_UNDERSTAND_WHY_ANY_ONE = 0x1571,
+    MSG_AM_HEALER_WHILE_MIA_OUT = 0x1572,
+    MSG_FEEL_LIKE_GROWN_UP_WHEN = 0x1573,
+    MSG_EVERYONE_COUNTS_ON_MIA_THATS = 0x1574,
+    MSG_WE_HAVE_DO_WHATEVER_WE = 0x1575,
+    MSG_ONE_TWO_THREE_FOUR_2 = 0x163c,
+    MSG_ITS_ALMOST_TIME_FOR_LEAVE = 0x1653,
+    MSG_MIA = 0x165b,
+    MSG_MIA_GOING_ON_JOURNEY_WITH = 0x1671
+};
+
+
 #define NULL ((void *)0)
 #define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 #define ObjectMotion_SetAngleToward_1(a0, a1, a2) Value3(Engine_ActorFaceActor, a0, a1, a2)
@@ -646,9 +678,9 @@ void SceneDialogue_RunActorEightFlagGatedDialogue(void)
 {
     Event_Begin();
     if (GameFlag_IsSet(3) != 0) {
-        Event_SetMessage(0x1570);
+        Event_SetMessage(MSG_EVEN_IF_MIA_HEALS_US);
     } else {
-        Event_SetMessage(0x1529);
+        Event_SetMessage(MSG_BRRRRR_CHOO_IM_FREEZING_MIA);
     }
     {
         s32 val = 0;
@@ -662,9 +694,9 @@ void SceneDialogue_ShowLine1571Or152F(void)
 {
     Event_Begin();
     if (GameFlag_IsSet(3) != 0) {
-        Event_SetMessage(0x1571);
+        Event_SetMessage(MSG_CANT_UNDERSTAND_WHY_ANY_ONE);
     } else {
-        Event_SetMessage(0x152f);
+        Event_SetMessage(MSG_MIA_SHOULD_HERE_BY_NOW);
     }
     Event_ShowMessage(8, 0);
     Event_End();
@@ -674,7 +706,7 @@ void SceneDialogue_RunActor9Line(void)
 {
     Event_Begin();
     Actor_FaceActor(9, 0, 10);
-    Event_SetMessage(0x152a);
+    Event_SetMessage(MSG_HI_NEW_IN_IMIL);
     Event_AskYesNo(9, 0);
     Event_End();
 }
@@ -691,7 +723,7 @@ void SceneDialogue_RunActorTenFlag881Dialogue(void)
     Event_Begin();
 
     if (GameFlag_IsSet(0x881) != 0) {
-        Event_SetMessage(0x163c);
+        Event_SetMessage(MSG_ONE_TWO_THREE_FOUR_2);
         Event_ShowMessage(10, 0);
         Actor_SetAttachedEffect(10, 258);
         Event_Wait(40);
@@ -702,7 +734,7 @@ void SceneDialogue_RunActorTenFlag881Dialogue(void)
         Call_02002630(10, 0x3000, 10);
         Actor_SetAnimation(10, 9);
     } else {
-        Event_SetMessage(0x152d);
+        Event_SetMessage(MSG_ONE_TWO_THREE_FOUR);
         Event_ShowMessage(10, 0);
         Actor_SetAttachedEffect(10, 258);
         Event_Wait(40);
@@ -779,7 +811,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
 void SceneDialogue_RunActor12Line(void)
 {
     Event_Begin();
-    Event_SetMessage(0x153f);
+    Event_SetMessage(MSG_DO_WANT_WEAPONS);
     Event_AskYesNo(12, 0);
     Event_End();
 }
@@ -787,7 +819,7 @@ void SceneDialogue_RunActor12Line(void)
 void SceneDialogue_RunActor18Line(void)
 {
     Event_Begin();
-    Event_SetMessage(0x154d);
+    Event_SetMessage(MSG_DO_WANT_SEE_RESTAURANT_MENU);
     Event_AskYesNo(18, 0);
     Event_End();
 }
@@ -796,10 +828,10 @@ void SceneDialogue_RunActor20BranchScene(void)
 {
     Event_Begin();
     if (GameFlag_IsSet(3) != 0) {
-        Event_SetMessage(0x1574);
+        Event_SetMessage(MSG_EVERYONE_COUNTS_ON_MIA_THATS);
         Event_ShowMessage(20, 0);
     } else {
-        Event_SetMessage(0x1557);
+        Event_SetMessage(MSG_HAVE_VISITED_OLD_COUPLE_WHO);
         Event_AskYesNo(20, 0);
         GameFlag_Set(0x82a);
         GameFlag_Set(0x82c);
@@ -811,9 +843,9 @@ void SceneDialogue_RunActor20FlaggedLine(void)
 {
     Event_Begin();
     if (GameFlag_IsSet(3) != 0) {
-        Event_SetMessage(0x1575);
+        Event_SetMessage(MSG_WE_HAVE_DO_WHATEVER_WE);
     } else {
-        Event_SetMessage(0x155B);
+        Event_SetMessage(MSG_MIA_WAS_SAYING_SHE_HAS);
     }
     Event_ShowMessage(20, 0);
     Event_End();
@@ -825,7 +857,7 @@ void FieldScene_RunScene399_020005dc(void)
     s32 record;
 
     Event_Begin();
-    Event_SetMessage(0x156d);
+    Event_SetMessage(MSG_HAPPENED_IN_LIGHTHOUSE_NORTHEAST);
     Event_ShowMessage(8, 0);
     Actor_FaceDirection(8, 0x3000, 10);
     Event_End();
@@ -835,11 +867,11 @@ void SceneDialogue_RunActorEightBranchedDialogue(void)
 {
     Event_Begin();
     if (GameFlag_IsSet(0x82b) != 0) {
-        Event_SetMessage(0x156f);
+        Event_SetMessage(MSG_MIA_CLAN_ONCE_LIVED_HERE);
     } else if (GameFlag_IsSet(0x82c) != 0) {
-        Event_SetMessage(0x153b);
+        Event_SetMessage(MSG_HES_ALWAYS_EXAGGERATING_THINGS_BUT);
     } else {
-        Event_SetMessage(0x1533);
+        Event_SetMessage(MSG_MIA_RUNNING_AROUND_TOWN_CARING);
     }
     Event_ShowMessage(8, 0);
     Event_End();
@@ -853,7 +885,7 @@ void FieldScene_RunSingleStep(void)
 void SceneDialogue_ShowLine156E(void)
 {
     Event_Begin();
-    Event_SetMessage(0x156e);
+    Event_SetMessage(MSG_MIA_GOOD_GIRL_WISH_HAD);
     Event_ShowMessage(10, 0);
     Event_End();
 }
@@ -862,9 +894,9 @@ void SceneDialogue_ShowLine1573Or155A(void)
 {
     Event_Begin();
     if (GameFlag_IsSet(3) != 0) {
-        Event_SetMessage(0x1573);
+        Event_SetMessage(MSG_FEEL_LIKE_GROWN_UP_WHEN);
     } else {
-        Event_SetMessage(0x155a);
+        Event_SetMessage(MSG_THESE_FOLK_OKAY_THEY_DONT);
     }
     Event_ShowMessage(19, 0);
     Event_End();
@@ -881,10 +913,10 @@ void FieldScene_RunScene399_02000a3c(void)
         Event_Begin();
         Actor_FaceActor(16, 0, 10);
         if (GameFlag_IsSet(0x881) != 0) {
-            Event_SetMessage(0x1653);
+            Event_SetMessage(MSG_ITS_ALMOST_TIME_FOR_LEAVE);
             Event_AskYesNo(16, 0);
         } else {
-            Event_SetMessage(0x154b);
+            Event_SetMessage(MSG_WHY_HAVE_TWO_GROUPS_TRAVELERS);
             Event_ShowMessage(16, 0);
         }
         Actor_FaceDirection(16, 0x3000, 10);
@@ -900,7 +932,7 @@ void FieldScene_RunScene399_02000abc(void)
     if ((u16)(leader->facing + 0x5fff) <= 0x3ffe) {
         Event_Begin();
         if (GameFlag_IsSet(0x82d) == 0) {
-            Event_SetMessage(0x1553);
+            Event_SetMessage(MSG_MAY_ONLY_STUDENT_BUT_CAN);
             Event_ShowMessage(19, 0);
             GameFlag_Set(0x82d);
         }
@@ -909,13 +941,13 @@ void FieldScene_RunScene399_02000abc(void)
     } else {
         Event_Begin();
         if (GameFlag_IsSet(0x881) != 0) {
-            Event_SetMessage(0x1671);
+            Event_SetMessage(MSG_MIA_GOING_ON_JOURNEY_WITH);
             Event_ShowMessage(19, 0);
         } else if (GameFlag_IsSet(3) != 0) {
-            Event_SetMessage(0x1572);
+            Event_SetMessage(MSG_AM_HEALER_WHILE_MIA_OUT);
             Event_ShowMessage(19, 0);
         } else {
-            Event_SetMessage(0x1554);
+            Event_SetMessage(MSG_LOOKING_FOR_MIA);
             (void)Event_AskYesNo(19, 0);
             Actor_FaceDirection(19, 0x3000, 10);
         }
@@ -968,7 +1000,7 @@ void FieldScene_RunPrimaryScriptChoreography(void)
     Actor_SetAttachedEffect(3, 0x102);
     Event_Wait(40);
     Actor_RunRepeatedMotion(3, 1);
-    Event_SetMessage(0x155c);
+    Event_SetMessage(MSG_HOW_FEELING);
     Event_ShowMessageAndWait(3, 0, 20);
     Value2_02000f90(Engine_ActorEnableActionCallback, 9, tbl);
     Event_ShowMessageAndWait(9, 0, 20);
@@ -1345,7 +1377,7 @@ void FieldScene_RunThreeActorChoreography(void)
     Actor_StartRepeatedMotion(19, 2);
     Actor_RunRepeatedMotion(20, 2);
     Event_Wait(40);
-    Event_SetMessage(0x165b);
+    Event_SetMessage(MSG_MIA);
     Event_ShowMessageAndWait(19, 0, 10);
     Actor_FaceDirection(3, 0xe000, 40);
     Actor_SetAnimationAndWait(3, 3);

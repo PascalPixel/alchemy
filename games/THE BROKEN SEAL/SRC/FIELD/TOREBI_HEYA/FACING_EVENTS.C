@@ -1,6 +1,20 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
+enum FacingEventsMessage {
+    MSG_IF_CAN_MAKE_NAME_FOR = 0x1fd9,
+    MSG_WASTE_STUCK_HERE_WHEN_SUCH = 0x1feb,
+    MSG_HEY_WHATS_THIS = 0x2394,
+    MSG_OH_HELLO = 0x239c,
+    MSG_HO_HUM_IM_FINE_ITS = 0x239d,
+    MSG_GRRR_CHEF_IN_BAD_MOOD = 0x23a1,
+    MSG_HE_WONT_SAIL_SHIP_EVEN = 0x23a4,
+    MSG_GRRR_SCAM_WHY_WONT_THEY = 0x23a8,
+    MSG_HEH_HEH_SHE_JUST_HID = 0x23b3,
+    MSG_THING_FOUND_DEFINITELY_SAME_AS = 0x23b4
+};
+
+
 struct Ent { s32 a; u16 b; u16 c; };
 
 extern u8 Data_020099d0[];
@@ -181,7 +195,7 @@ void FieldScene_RunScene3b6SequenceA(void)
     s32 record;
 
     Event_Begin();
-    Event_SetMessage(0x2394);
+    Event_SetMessage(MSG_HEY_WHATS_THIS);
     Event_Wait(40);
     rec7 = Value4(Func_02000afe, 0x11c, 0x2580000, 0, 0x3380000);
     Actor_SetSpriteFlags(rec7, 0);
@@ -242,7 +256,7 @@ void FieldScene_RunActorsThirtyOneToThirtyThreeChoreography(void)
     void Event_SetMessage(s32);
 
     Event_Begin();
-    Event_SetMessage(0x23A4);
+    Event_SetMessage(MSG_HE_WONT_SAIL_SHIP_EVEN);
     Event_Wait(30);
     /* Same import, same first two arguments, differing only in the third.
      * Two call sites, not a loop. */
@@ -381,7 +395,7 @@ void SceneDialogue_RunFacingAction(s32 no)
             Scene_Call1(Engine_EventSetMessage, 0x221d);
             Event_ShowMessage(no, 0);
         } else {
-            Event_SetMessage(0x1fd9);
+            Event_SetMessage(MSG_IF_CAN_MAKE_NAME_FOR);
             Event_ShowMessage(no, 0);
         }
     }
@@ -416,7 +430,7 @@ void SceneDialogue_RunMessage239eStep(s32 subject)
 void SceneDialogue_RunActorLine23a1(s32 no)
 {
     Func_02001122(no);
-    Event_SetMessage(0x23A1);
+    Event_SetMessage(MSG_GRRR_CHEF_IN_BAD_MOOD);
     Event_ShowMessage(no, 0);
     Event_End();
 }
@@ -470,13 +484,13 @@ void FieldScene_RunScene3b6_020007b0(s32 a0)
     } else {
         if (GameFlag_IsSet(0x8be) == 0) {
             GameFlag_Set(0x8be);
-            Event_SetMessage(0x239c);
+            Event_SetMessage(MSG_OH_HELLO);
             Event_ShowMessage(a0, 0);
             Event_Wait(10);
             Actor_RunRepeatedMotion(a0, 2);
             Event_Wait(20);
         }
-        Event_SetMessage(0x239d);
+        Event_SetMessage(MSG_HO_HUM_IM_FINE_ITS);
         Event_ShowMessage(a0, 0);
     }
     Event_End();
@@ -488,9 +502,9 @@ void SceneDialogue_RunActor25FlaggedLine(void)
 
     Event_Begin();
     if (GameFlag_IsSet(0x8BE) == 0) {
-        Event_SetMessage(0x23B3);
+        Event_SetMessage(MSG_HEH_HEH_SHE_JUST_HID);
     } else {
-        Event_SetMessage(0x23B4);
+        Event_SetMessage(MSG_THING_FOUND_DEFINITELY_SAME_AS);
     }
     Event_ShowMessage(25, 0);
     Event_End();
@@ -502,7 +516,7 @@ void FieldScene_RunScene3b6_02000898(s32 a0)
     s32 record;
 
     Event_Begin();
-    Event_SetMessage(0x23a8);
+    Event_SetMessage(MSG_GRRR_SCAM_WHY_WONT_THEY);
     Actor_ShowEmote(31, 0x103, 40);
     Event_ShowMessage(a0, 0);
     Event_End();
@@ -549,7 +563,7 @@ void SceneDialogue_RunFacingMessage(s32 no)
             Scene_Call1(Engine_EventSetMessage, 0x2231);
             Event_ShowMessage(no, 0);
         } else {
-            Event_SetMessage(0x1feb);
+            Event_SetMessage(MSG_WASTE_STUCK_HERE_WHEN_SUCH);
             Event_ShowMessage(no, 0);
         }
     }

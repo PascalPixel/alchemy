@@ -272,7 +272,6 @@
     "MENU/ABILITY/SET_SHORTCUT.C": "#define gGameState @D02000240\n",
     "FIELD/COMMON/MAP/REGION_COLLISION.C": "#define gEventWork @D03001ebc\n#define gGameState @D02000240\n",
     "FIELD/COMMON/OBJECT/EFFECTS_CONTEXT_EFFECT.C": "#define gEventWork @D03001ebc\n#define gGameState @D02000240\n",
-    "FIELD/COMMON/OBJECT/MOTION_ACTION.C": "#define gGameState @D02000240\n",
     "FIELD/COMMON/OBJECT/GET_TRIGGER_TILE_AHEAD_OF_CURRENT.C": "#define gGameState @D02000240\n",
     "FIELD/COMMON/OBJECT/TABLE_DESTROY_AT_INDEX.C": "#define gEventWork @D03001ebc\n",
     "FIELD/COMMON/OBJECT/TABLE_VALUES.C": "#define gEventWork @D03001ebc\n",
@@ -293,6 +292,7 @@
     "FIELD/COMMON/EFFECT/WATCH_LEADER_DISTANCE.C": "#define gEventWork @D03001ebc\n#define gGameState @D02000240\n",
     "FIELD/COMMON/EVENT/PACKED_ID.C": "#define gGameState @D02000240\n",
     "GRAPHICS/PALETTE/TINT.C": "#define gGameState @D02000240\n",
-    "BATTLE/PARTY/DAMAGE.C": "#define FunctionHead_08077120 @F08077120\n#define FunctionHead_08077148 @F08077148\n#define gCell @D02000240\n#define gGameState @D02000240\n"
+    "BATTLE/PARTY/DAMAGE.C": "#define FunctionHead_08077120 @F08077120\n#define FunctionHead_08077148 @F08077148\n#define gCell @D02000240\n#define gGameState @D02000240\n",
+    "FIELD/COMMON/OBJECT/ACTION.C": "#define gGameState @D02000240\n"
   }
 }

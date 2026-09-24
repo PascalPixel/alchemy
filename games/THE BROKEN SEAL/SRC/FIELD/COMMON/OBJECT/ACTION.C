@@ -1,3 +1,16 @@
+#include "TYPES.H"
+
+#define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
+
+s32 ObjectDispatch_SetSingleChildField26Far(void *, s32);
+
+s32 Object_ResetAndClearField59(void *obj)
+{
+    ObjectDispatch_SetSingleChildField26Far(obj, 0);
+    FIELD_AT_OFFSET(obj, s8 *, 0x59) = 0;
+    return 0;
+}
+
 #include "OBJECT_RUNTIME.H"
 
 u16 ArcTan2(s32, s32);
@@ -110,4 +123,82 @@ void ObjectMotion_SetActionCallback(struct ObjectRuntime *object, s32 kind)
         break;
     }
     Object_SetCallback(object, (void *)kind);
+}
+
+#include "TYPES.H"
+#include "FIXED_MATH.H"
+#include "GLOBAL_CELLS.H"
+
+struct FacingRecord {
+    u8 unknown_00[0x28];
+    s16 *id;
+};
+
+struct FacingEntry {
+    void *data;
+    u8 unknown_04[2];
+    u16 facing;
+    s32 x;
+    s32 y;
+    s32 z;
+    u8 unknown_14[0x3c];
+    struct FacingRecord *record;
+    u8 kind;
+    u8 unknown_55[0x1b];
+};
+
+
+struct FacingEntry *Object_FindNearestFacingTarget(struct FacingEntry *self, s32 id)
+{
+    struct FacingEntry *entry;
+    struct FacingEntry *found;
+    struct FacingEntry *result;
+    s32 cnt;
+    s32 best;
+    s32 dy;
+    s32 dx;
+    s32 dz;
+    s32 dist;
+    s32 angle;
+    s32 turn;
+
+    found = NULL;
+    best = 40;
+    entry = *(struct FacingEntry **)ADDR_03001E64;
+    for (cnt = 0; cnt < 64; cnt++, entry++) {
+        if (entry->data == NULL)
+            continue;
+        if (entry == self)
+            continue;
+        if (entry->kind != 1)
+            continue;
+        dy = entry->y - self->y;
+        if (dy >= 0) {
+            if (dy > 0x2fffff)
+                continue;
+        } else {
+            if (self->y - entry->y > 0x2fffff)
+                continue;
+        }
+        dx = (entry->x - self->x) / 0x10000;
+        dz = (entry->z - self->z) / 0x10000;
+        dist = ((s32 (*)(s32))0x030001d8)(dx *dx + dz *dz);
+        if (dist >= best)
+            continue;
+        angle = (u16)ArcTan2(entry->z - self->z, entry->x - self->x);
+        if (dist > 23) {
+            turn = (s16)(angle - self->facing);
+            if (turn < -0x2fff)
+                continue;
+            if (turn > 0x2fff)
+                continue;
+        }
+        found = entry;
+        best = dist;
+    }
+    if (found == NULL)
+        return NULL;
+    if (*found->record->id != id)
+        return NULL;
+    return found;
 }

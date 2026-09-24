@@ -79301,30 +79301,6 @@
       "overlay": null
     },
     {
-      "id": "object-motion-action",
-      "game": "tbs",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/MOTION_ACTION.C",
-      "compiler_route": "canonical-gcc296",
-      "owners": [
-        {
-          "address": "0x0809397c",
-          "extent": 152,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08093a14",
-          "extent": 88,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08093a6c",
-          "extent": 140,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
       "id": "math-geometry",
       "game": "tbs",
       "source": "games/THE BROKEN SEAL/SRC/LIB/GEOMETRY.C",
@@ -124802,6 +124778,40 @@
         {
           "address": "0x080175c0",
           "extent": 96,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "object-action",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/ACTION.C",
+      "compiler_route": "canonical-gcc296",
+      "owners": [
+        {
+          "address": "0x08093964",
+          "extent": 24,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0809397c",
+          "extent": 152,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08093a14",
+          "extent": 88,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08093a6c",
+          "extent": 140,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08093af8",
+          "extent": 264,
           "state": "exact-c"
         }
       ],

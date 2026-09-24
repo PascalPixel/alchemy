@@ -1769,8 +1769,7 @@
     "main:0801ec6c": "FIELD/COMMON/OBJECT/SIDE_CREATE.C",
     "main:0801fe2c": "FIELD/COMMON/OBJECT/PLACEMENT_CREATE_GROUP.C",
     "main:0809397c": {
-      "name": "ObjectMotion_MoveTowardTarget",
-      "source": "FIELD/COMMON/OBJECT/MOTION_ACTION.C"
+      "name": "ObjectMotion_MoveTowardTarget"
     },
     "main:080933f8": {
       "name": "place_within_camera_bounds"
@@ -4809,7 +4808,7 @@
     },
     "main:08093964": {
       "name": "Object_ResetAndClearField59",
-      "source": "FIELD/COMMON/OBJECT/RESET_AND_CLEAR_FIELD59.C"
+      "source": "FIELD/COMMON/OBJECT/ACTION.C"
     },
     "main:08094354": {
       "name": "ObjectEffect_BeginContextEffect26"
@@ -10159,8 +10158,7 @@
       "source": "BATTLE/PRESENTATION/UPDATE_CAMERA.C"
     },
     "main:08093af8": {
-      "name": "Object_FindNearestFacingTarget",
-      "source": "FIELD/COMMON/OBJECT/FACING_FIND_NEAREST_TARGET.C"
+      "name": "Object_FindNearestFacingTarget"
     },
     "main:0801868c": {
       "name": "UiWindow_FitOnScreen",

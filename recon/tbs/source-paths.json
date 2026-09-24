@@ -1017,6 +1017,10 @@
       "name": "Owner_RatioNoOp",
       "source": "GAME/CHARACTER/RATIOS.C"
     },
+    "main:08078320": {
+      "name": "Owner_UpdateSecondInputAndRatios",
+      "source": "GAME/CHARACTER/RATIOS_SECOND_INPUT.C"
+    },
     "main:08079004": {
       "name": "Owner_LevelNoOp"
     },
@@ -1456,7 +1460,8 @@
       "source": "GRAPHICS/DISPLAY/SCROLL_DISARM_HBLANK_DMA.C"
     },
     "main:080a8904": {
-      "name": "Runtime_RunBusyWaitDelay"
+      "name": "Runtime_RunBusyWaitDelay",
+      "source": "SYSTEM/RUN_BUSY_WAIT_DELAY.C"
     },
     "main:080a8914": {
       "name": "ItemMenu_DrawOwnerStatus",
@@ -20032,6 +20037,10 @@
     "main:080bd7a4": {
       "name": "Dma_StopAllThenRunHook",
       "source": "SYSTEM/DMA_STOP_ALL_THEN_RUN_HOOK.C"
+    },
+    "main:080c0130": {
+      "name": "BattlePres_UpdateHBlankScroll",
+      "source": "BATTLE/PRESENTATION/UPDATE_HBLANK_SCROLL.C"
     },
     "main:080c0700": {
       "name": "BattlePresentation_SetPaletteLevel",

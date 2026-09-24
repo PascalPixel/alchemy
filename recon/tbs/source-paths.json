@@ -1,6 +1,14 @@
 {
   "format": 3,
   "owners": {
+    "resource_39f:020019b8": {
+      "name": "MogoruMori_RunProbedLandingScene",
+      "source": "FIELD/MOGORU_MORI/PROBED_LANDING.C"
+    },
+    "resource_3a6:020015cc": {
+      "name": "HaidiaDou_RunLoweredActorScene",
+      "source": "FIELD/HAIDIA_DOU/LOWERED_ACTOR_SCENE.C"
+    },
     "resource_3bc:02002e54": {
       "name": "Korosseo_LoadPortrait",
       "source": "FIELD/COMMON/KOROSSEO/PORTRAIT.C"

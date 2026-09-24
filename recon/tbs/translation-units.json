@@ -69220,6 +69220,66 @@
           }
         }
       }
+    },
+    {
+      "id": "mogoru-mori-probed-landing",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/MOGORU_MORI/PROBED_LANDING.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_39f",
+      "absolute_symbols": {
+        "Engine_EventBegin": {
+          "address": "0x0200ada4",
+          "kind": "thumb"
+        },
+        "Engine_MapCopyCellAttributes": {
+          "address": "0x0200ad4c",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpritePriority": {
+          "address": "0x0200ae3c",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagSet": {
+          "address": "0x0200ad94",
+          "kind": "thumb"
+        },
+        "Engine_EventEnd": {
+          "address": "0x0200adac",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetAnimation": {
+          "address": "0x0200adfc",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetDestinationOffset": {
+          "address": "0x0200ade4",
+          "kind": "thumb"
+        },
+        "Engine_EventWait": {
+          "address": "0x0200ad9c",
+          "kind": "thumb"
+        },
+        "Engine_AudioPlayCue": {
+          "address": "0x0200aeb4",
+          "kind": "thumb"
+        },
+        "Engine_ActorGet": {
+          "address": "0x0200adbc",
+          "kind": "thumb"
+        },
+        "Engine_SetTriggerFlag": {
+          "address": "0x0200ad94",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x020019b8",
+          "extent": 272,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

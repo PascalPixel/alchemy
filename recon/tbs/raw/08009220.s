@@ -1,7 +1,9 @@
 .syntax unified
 	.thumb
+	.global CheckMapPositionCellOccupiedFar
 	.global Func_08009220
 	.thumb_func
+CheckMapPositionCellOccupiedFar:
 Func_08009220:
 	ldr	r4, [pc, #0]
 	bx	r4

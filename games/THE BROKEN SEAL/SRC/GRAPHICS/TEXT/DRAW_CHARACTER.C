@@ -4,8 +4,8 @@
 #define UiText_DrawCharacter Func_08021d88
 
 
-void Func_08021cb8(u8 *base, u32 value, s32 slot_a, s32 slot_b);
-s32 Func_08021c64(u16 packed, u32 value);
+void UiText_LoadRemappedGlyph(u8 *base, u32 value, s32 slot_a, s32 slot_b);
+s32 Resource_LoadIndexedIntoBuffer(u16 packed, u32 value);
 
 typedef struct
 {
@@ -22,7 +22,7 @@ void UiText_DrawCharacter(u8 *base, s32 index, u32 value)
 
     offset = index * 28;
     entry = base + offset + 0x104;
-    Func_08021cb8(base, value, index * 16, index * 16);
+    UiText_LoadRemappedGlyph(base, value, index * 16, index * 16);
     store_offset = offset + 0x11C;
     *(u32 *)(base + store_offset) = value;
     /* FAKEMATCH: the empty do-while around this store only moves the
@@ -31,5 +31,5 @@ void UiText_DrawCharacter(u8 *base, s32 index, u32 value)
     *(u32 *)(entry + 8) = 0;
     load_offset = offset + 0x110;
     ((CharacterCell *)(entry + 8))->code =
-        Func_08021c64(*(u16 *)(base + load_offset), value);
+        Resource_LoadIndexedIntoBuffer(*(u16 *)(base + load_offset), value);
 }

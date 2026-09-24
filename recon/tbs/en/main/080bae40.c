@@ -7,6 +7,12 @@
  *    Ours keeps a 2*index giv alive across the loop test (GCSE copy of the
  *    test's address), so loop 1 has 33 real insns in the second loop pass and
  *    the constant is "not desirable" to move (loop 2 has 28 and moves).
+ *    Spelling the loop as for (slot = turn_order->normal; *slot != 255;
+ *    slot++) hoists the constant, places both pools where the ROM has them
+ *    and walks turn_order + 88 in place, but GCSE then shares the test load
+ *    with the body (ldrh carried in r2) where the ROM reloads with ldrsh at
+ *    the loop top; volatile, do/while with an explicit pre-check and goto
+ *    loops all keep the sharing.
  *  - Sort/selection: the ROM keeps `selected` in r1 with caller-saves around
  *    the calls and spills the unit_ids base to [sp, #16]; ours spills
  *    `selected` to [sp, #16].

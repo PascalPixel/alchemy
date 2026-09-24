@@ -1,6 +1,5 @@
 #include "TYPES.H"
 
-#define FieldScene_RunDualArrivalSequence Func_02001c20
 
 extern s16 Data_02000240[];
 

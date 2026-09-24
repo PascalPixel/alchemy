@@ -1,9 +1,10 @@
 .syntax unified
-.text
 	.thumb
-	.global Fragment_080c91a4
+	.global BattleFx_ArmWin0HBlankDma
+	.global Func_080c91a4
 	.thumb_func
-Fragment_080c91a4:
+BattleFx_ArmWin0HBlankDma:
+Func_080c91a4:
 	ldr	r3, [pc, #28]
 	ldr	r2, [pc, #32]
 	ldrh	r1, [r3, #10]

@@ -1143,3 +1143,4 @@ Func_080e698c:
 	pop	{r5, r6, r7}
 	pop	{r0}
 	bx	r0
+	.2byte 0x0000

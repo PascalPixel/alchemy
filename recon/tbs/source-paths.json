@@ -13611,9 +13611,6 @@
       "name": "ArutinYama_Func02001838",
       "source": "FIELD/ARUTIN_YAMA/F_01838.C"
     },
-    "resource_3a4:02001d14": {
-      "name": "FieldScene_RunMultiPhasePresentation"
-    },
     "resource_3a4:02000ec0": {
       "name": "FieldScene_RunSharedSetPiece",
       "source": "FIELD/ARUTIN_YAMA/SET_PIECE.C"
@@ -21027,6 +21024,17 @@
     "resource_3c8:020047c0": {
       "name": "VinasuHeya_Func020047c0",
       "source": "FIELD/VINASU_HEYA/F_047C0.C"
+    },
+    "resource_3a4:02001d0c": {
+      "name": "FieldScene_RunMultiPhasePresentation"
+    },
+    "resource_3c8:020026f8": {
+      "name": "VinasuHeya_Func020026f8",
+      "source": "FIELD/VINASU_HEYA/F_026F8.C"
+    },
+    "resource_3c8:0200290c": {
+      "name": "VinasuHeya_Func0200290c",
+      "source": "FIELD/VINASU_HEYA/F_0290C.C"
     }
   },
   "symbols": {

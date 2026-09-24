@@ -679,7 +679,7 @@
     },
     {
       "overlay": "resource_3a4",
-      "start": "0x02001d14",
+      "start": "0x02001d0c",
       "end": "0x02002020",
       "kind": "not_yet_decompiled",
       "retention": "not_yet_c",

@@ -1,8 +1,11 @@
-/* NONMATCHING: 636 of 636 bytes, 102 differing halfwords (2026-09-24). Readable
- * unit source (evconv Engine_* veneers). Remaining: the dust-drift temporaries
- * land in r2 instead of r3, the -0xcccc bias is added into dx in place in the
- * reference, and the params pointer and inner counter spill to swapped slots
- * (sp+16 and sp+20). */
+/* NONMATCHING: 636 of 636 bytes, 21 differing halfwords (2026-09-24).
+ * Readable unit source (evconv Engine_* veneers); both drifts are one STEP()
+ * multiply by 0x3333 in the call, and declaring j before p gives the
+ * reference spill slots (p at sp+16, j at sp+20). Remaining: in each
+ * Effect_Spawn call reload takes r2 for the spilled params pointer where the
+ * reference reuses r3 after the lift store, so sched2 hoists the load and
+ * reorders the stack-argument stores (reload register rotation; counter
+ * types, register and a split assignment do not move it). */
 #include "TYPES.H"
 
 void Engine_AudioPlayCue(s32 cue);
@@ -23,16 +26,14 @@ struct EffectParams {
 #define STEP() ((s32)((Engine_RandomNext() << 3) >> 16) * 0x3333)
 
 /* Slide one of three stone doors two cells open, with dust along its edge. */
-void MakyuriHeya_Func02001db4(s32 side)
+void Local_02001db4(s32 side)
 {
     struct EffectParams params;
+    u32 j;
     struct EffectParams *p;
     u32 i;
-    u32 j;
     s32 down;
     s32 up;
-    s32 dx;
-    u32 r;
 
     Engine_AudioPlayCue(211);
     if (side == 0) {
@@ -56,26 +57,11 @@ void MakyuriHeya_Func02001db4(s32 side)
         for (; j <= 7; j++) {
             if (j & 1) {
                 if (side == 0) {
-                    r = (Engine_RandomNext() << 3) >> 16;
-                    dx = r << 1;
-                    dx += r;
-                    dx += dx << 4;
-                    dx += dx << 8;
-                    Effect_Spawn(0x3180000, 0, up, dx + -0xcccc, 0, STEP() + -0xcccc, 0x90000, p);
+                    Effect_Spawn(0x3180000, 0, up, STEP() + -0xcccc, 0, STEP() + -0xcccc, 0x90000, p);
                 } else if (side == 1) {
-                    r = (Engine_RandomNext() << 3) >> 16;
-                    dx = r << 1;
-                    dx += r;
-                    dx += dx << 4;
-                    dx += dx << 8;
-                    Effect_Spawn(up + 0x600000, 0, 0x2ea0000, dx + -0xcccc, 0, STEP() + -0xcccc, 0x90000, p);
+                    Effect_Spawn(up + 0x600000, 0, 0x2ea0000, STEP() + -0xcccc, 0, STEP() + -0xcccc, 0x90000, p);
                 } else {
-                    r = (Engine_RandomNext() << 3) >> 16;
-                    dx = r << 1;
-                    dx += r;
-                    dx += dx << 4;
-                    dx += dx << 8;
-                    Effect_Spawn(down, 0, 0x2ca0000, dx + -0xcccc, 0, STEP() + -0xcccc, 0x90000, p);
+                    Effect_Spawn(down, 0, 0x2ca0000, STEP() + -0xcccc, 0, STEP() + -0xcccc, 0x90000, p);
                 }
                 Engine_EventWait(1);
             }

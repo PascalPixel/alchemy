@@ -28,13 +28,18 @@
  * +102 and +108, and whether 0x100000 in the second position call is a speed
  * or a flag word.  The cue/message numbers are reproduced, not interpreted.
  *
- * Residual against the reference: 1,488 of 1,488 bytes, topology equal, 128
- * differing halfwords, 42 wrong instructions.  What is left is scheduling and
- * allocation noise - the counter decrement drifting one store earlier in each
- * of the four wait loops, the argument-setup order of a handful of otherwise
- * identical calls, the register chosen for the +85 mode pointer and for the
- * two pool constants, and the one interworking branch described below.  No
- * branch, loop, call, argument or store is missing.
+ * Residual against the reference (2026-09-24): 1,488 of 1,488 bytes, topology
+ * equal, 118 differing halfwords.  The wait loops written as counting-up for
+ * loops now match, and page = 0 set before the flag test gives the reference
+ * its early zero in r5.  What is left is reload-register choice: the reference
+ * loads the two anchor pool constants and the +85 mode-pointer store address
+ * through r1, so r1 is among its spill registers (the reload round robin starts
+ * there); here the spill set is only r2/r3 (see the -dg dump), which also costs
+ * the reload inheritance of the mode pointer (mov r8, r2 after its store).
+ * Moving the mode store into the position call arguments, direct calls and
+ * pointer temporaries did not add r1.  Plus the argument-setup order of a few
+ * calls and the one interworking branch described below.  No branch, loop,
+ * call, argument or store is missing.
  *
  * Read that figure with the caveat below: the call-shape helpers are a source
  * spelling device, not recovered structure.  The same statements written as
@@ -190,6 +195,7 @@ void FieldScene_RunScene371_02001ca4(void)
     record = Scene_GetRecord_Veneer(LEADER);
     mid_x = (*(s32 *)(record + 8) - ANCHOR_X) / 2 + ANCHOR_X;
     mid_y = (*(s32 *)(record + 16) - ANCHOR_Y) / 2 + ANCHOR_Y;
+    page = 0;
     if (Value1(GameFlag_IsSet_Veneer, 0x16e) == 0) {
         /* First visit: claim the flag and play the long presentation. */
         Func_02005fc0(1);
@@ -223,16 +229,14 @@ void FieldScene_RunScene371_02001ca4(void)
         *(s32 *)(rec8 + 72) = 0x4000;
         *(s32 *)(rec8 + 48) = 0x10000;
         *(s32 *)(rec8 + 52) = 0x10000;
-        *(s32 *)(rec8 + 40) = 0;
-        *(s32 *)(rec8 + 20) = 0;
+        *(s32 *)(rec8 + 40) = page;
+        *(s32 *)(rec8 + 20) = page;
         Object_SetPosition_Veneer(rec8, ANCHOR_X, 0, ANCHOR_Y);
-        cnt = 15;
-        do {
+        for (cnt = 0; cnt < 16; cnt++) {
             *(s32 *)(rec8 + 24) += 0x800;
             *(s32 *)(rec8 + 28) += 0x800;
-            cnt = cnt - 1;
             WaitFrames_Veneer(1);
-        } while (cnt >= 0);
+        }
         Func_020060ca(ACTOR, 0, 0);
         Func_020060ca(0, ACTOR, 0);
         WaitFrames_Veneer(16);
@@ -243,8 +247,7 @@ void FieldScene_RunScene371_02001ca4(void)
         Audio_PlayCue_Veneer(131);
         Func_02006284(140, 0);
         /* Sixty frames of the alternating idle mode, refreshed every 16. */
-        cnt = 59;
-        do {
+        for (cnt = 0; cnt < 60; cnt++) {
             if ((FRAME_COUNTER & 2) != 0) {
                 Func_02006050(rec8, 7);
             } else {
@@ -253,9 +256,8 @@ void FieldScene_RunScene371_02001ca4(void)
             if ((FRAME_COUNTER & 15) == 0) {
                 Func_02005eb6(rec8);
             }
-            cnt = cnt - 1;
             WaitFrames_Veneer(1);
-        } while (cnt >= 0);
+        }
         Func_020062ea();
         Func_02006050(rec8, 0);
         Func_02006202(ACTOR, 2);
@@ -279,23 +281,19 @@ void FieldScene_RunScene371_02001ca4(void)
         Func_02006128(ACTOR, 0);
         *mode = page;
         Call4(Object_SetPosition_Veneer, rec8, mid_x, 0x100000, mid_y);
-        cnt = 15;
-        do {
+        for (cnt = 0; cnt < 16; cnt++) {
             *(u16 *)(rec8 + 6) += 0x1000;
-            cnt = cnt - 1;
             WaitFrames_Veneer(1);
-        } while (cnt >= 0);
+        }
         Func_0200621e(0, 1);
         Call2(Func_02006128, ACTOR, 0);
         *mode = 2;
         *(s32 *)(rec8 + 40) = 0;
         *(s32 *)(rec8 + 20) = 0;
-        cnt = 7;
-        do {
+        for (cnt = 0; cnt < 8; cnt++) {
             *(u16 *)(rec8 + 6) += 0x1000;
-            cnt = cnt - 1;
             WaitFrames_Veneer(1);
-        } while (cnt >= 0);
+        }
         Func_0200621e(0, 22);
         Func_02006128(ACTOR, 0);
         Call3(Func_02006122, ACTOR, 0x102, 30);

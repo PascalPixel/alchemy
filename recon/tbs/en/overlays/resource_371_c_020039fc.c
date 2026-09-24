@@ -1,3 +1,18 @@
+/* NONMATCHING: 1300 bytes, candidate 1300, 60 differing halfwords
+ * (2026-09-24). Single-overlay unit binding Engine_* at their import veneers.
+ * Remaining: scheduling only. QueueTransfer is a macro (the source is
+ * computed inside the count check), writes IME its own address's low half
+ * through the Value_04000208 symbol (so the address loads after the
+ * decompress call), reads the count through a u16 lvalue and fills the entry
+ * through a post-incremented word pointer. In every call the reference copies
+ * the saved IME into its register before the IME write (here sched2 puts that
+ * copy, used only after the join, after the count load); the first call loads
+ * the queue address before IME; and the callback calls set r0 before r1
+ * (wrappers and casts do not change it). Needs the unit symbols
+ * gWorldMapTransferQueue=0x02002090, gWorldMapBlend=0x0200e7a0,
+ * gWorldMapPalettes=0x0200c4ac, gWorldMapPackedTiles=0x0200c7a6,
+ * gWorldMapPackedFrames=0x0200c4ec (data), WorldMap_RestoreBlend=0x0200b8fc,
+ * WorldMap_UpdateBlend=0x0200b95c. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
@@ -15,105 +30,102 @@ struct DisplayTransferQueue {
 
 extern struct DisplayTransferQueue gWorldMapTransferQueue;
 extern u16 gWorldMapBlend;
+extern volatile u16 Value_04000208;
 extern const u8 gWorldMapPalettes[];
 extern const u8 gWorldMapPackedTiles[];
 extern const u8 gWorldMapPackedFrames[];
 
-void *Func_0200c1c4(s32 size);
-void Func_0200c1cc(void *buffer);
-s32 Func_0200c1d4(const void *source, void *destination);
-void Func_0200c184(s32 mode);
-void Func_0200c24c(void);
-void Func_0200c254(void);
-void Func_0200c43c(void);
-void Func_0200c444(void);
-void Func_0200c44c(void);
+void *Main_08000170(s32 size);
+void Main_08000178(void *buffer);
+s32 Main_080001a8(const void *source, void *destination);
+void Main_08009230(void);
+void Main_08009238(void);
 void WorldMap_RestoreBlend(void);
 void WorldMap_UpdateBlend(void);
 
 /* Each request preserves IME while publishing one complete DMA transfer.
  * The original writes 0x0208 to IME; its enable bit is clear. */
-static inline void QueueTransfer(const void *source, void *destination, u32 control)
-{
-    volatile u16 *ime = (volatile u16 *)0x04000208;
-    u16 saved = *ime;
-    struct DisplayTransfer *entry;
-
-    *ime = 0x0208;
-    if (gWorldMapTransferQueue.count < 32) {
-        entry = &gWorldMapTransferQueue.entries[gWorldMapTransferQueue.count++];
-        entry->source = source;
-        entry->destination = destination;
-        entry->control = control;
-    }
-    *ime = saved;
+#define QueueTransfer(source, destination, control) \
+{ \
+    struct DisplayTransferQueue *q = &gWorldMapTransferQueue; \
+    volatile u16 *ime = &Value_04000208; \
+    u32 saved = *ime; \
+    u32 *p; \
+    s32 n; \
+    *ime = (u16)(u32)ime; \
+    n = *(u16 *)&gWorldMapTransferQueue; \
+    if (n < 32) { \
+        p = (u32 *)&q->entries[n]; \
+        *(u16 *)&gWorldMapTransferQueue = n + 1; \
+        *p++ = (u32)(source); \
+        *p++ = (u32)(destination); \
+        *p = (control); \
+    } \
+    *ime = saved; \
 }
 
-static inline void QueueFrame(const u8 *buffer, s32 offset)
-{
-    QueueTransfer(buffer + offset, (void *)0x06002000, 0x84000140);
-}
+#define QueueFrame(buffer, offset) QueueTransfer((buffer) + (offset), 0x06002000, 0x84000140)
 
-void Scene_RunScene371SequenceA(s32 palette)
+void Local_020039fc(s32 palette)
 {
-    u8 *buffer = Func_0200c1c4(0x4000);
+    u8 *buffer = Main_08000170(0x4000);
 
-    Func_0200c184(1);
+    Engine_TaskWait(1);
     Engine_GameFlagClear(0x109);
-    Func_0200c24c();
-    Func_0200c1d4(gWorldMapPackedTiles, buffer);
-    Func_0200c1d4(gWorldMapPackedFrames, buffer + 0x1000);
-    QueueTransfer(gWorldMapPalettes + palette * 32, (void *)0x050001c0, 0x80000010);
-    QueueTransfer(buffer, (void *)0x06001000, 0x84000400);
+    Main_08009230();
+    Main_080001a8(gWorldMapPackedTiles, buffer);
+    Main_080001a8(gWorldMapPackedFrames, buffer + 0x1000);
+    QueueTransfer(gWorldMapPalettes + palette * 32, (void *)0x050001c0, 0x80000010)
+    QueueTransfer(buffer, (void *)0x06001000, 0x84000400)
     Engine_TaskAddCallback(WorldMap_RestoreBlend, 0xc80);
-    Engine_EventEnd();
-    QueueFrame(buffer, 0x3a80);
-    Engine_ActorLookup(gGameState.selected_actor)->active = 0;
+    Engine_EventBegin();
+    QueueFrame(buffer, 0x3a80)
+    Engine_ActorGet(gGameState.selected_actor)->active = 0;
     gEventWork->transition_frames = 16;
-    Func_0200c43c();
-    Func_0200c44c();
+    Engine_EventOpenScreen();
+    Engine_EventWaitForScreen();
     Engine_AudioPlayCue(246);
 
     gWorldMapBlend = 0xe00;
-    QueueFrame(buffer, 0x3480);
+    QueueFrame(buffer, 0x3480)
     Engine_EventWait(2);
     gWorldMapBlend = 0xd00;
-    QueueFrame(buffer, 0x2e80);
+    QueueFrame(buffer, 0x2e80)
     Engine_EventWait(2);
     gWorldMapBlend = 0xc00;
-    QueueFrame(buffer, 0x2880);
+    QueueFrame(buffer, 0x2880)
     Engine_EventWait(2);
     gWorldMapBlend = 0xb00;
-    QueueFrame(buffer, 0x2280);
+    QueueFrame(buffer, 0x2280)
     Engine_EventWait(2);
     gWorldMapBlend = 0xa00;
-    QueueFrame(buffer, 0x1c80);
+    QueueFrame(buffer, 0x1c80)
     Engine_EventWait(2);
     gWorldMapBlend = 0x900;
-    QueueFrame(buffer, 0x1680);
+    QueueFrame(buffer, 0x1680)
     Engine_EventWait(2);
     gWorldMapBlend = 0x800;
-    QueueFrame(buffer, 0x1080);
+    QueueFrame(buffer, 0x1080)
     Engine_EventWait(140);
 
-    QueueFrame(buffer, 0x1680);
+    QueueFrame(buffer, 0x1680)
     Engine_EventWait(4);
-    QueueFrame(buffer, 0x1c80);
+    QueueFrame(buffer, 0x1c80)
     Engine_EventWait(4);
-    QueueFrame(buffer, 0x2280);
+    QueueFrame(buffer, 0x2280)
     Engine_EventWait(4);
     gWorldMapBlend = 0x900;
-    QueueFrame(buffer, 0x2880);
+    QueueFrame(buffer, 0x2880)
     Engine_EventWait(4);
     gWorldMapBlend = 0xa00;
-    QueueFrame(buffer, 0x2e80);
+    QueueFrame(buffer, 0x2e80)
     Engine_EventWait(4);
     gWorldMapBlend = 0xb00;
-    QueueFrame(buffer, 0x3480);
+    QueueFrame(buffer, 0x3480)
     Engine_EventWait(4);
     gWorldMapBlend = 0xc00;
-    QueueFrame(buffer, 0x3a80);
-    Func_0200c254();
+    QueueFrame(buffer, 0x3a80)
+    Main_08009238();
     Engine_TaskAddCallback(WorldMap_UpdateBlend, 0xc80);
     Engine_AudioPlayCue(141);
     gWorldMapBlend = 0xd00;
@@ -124,8 +136,8 @@ void Scene_RunScene371SequenceA(s32 palette)
     Engine_EventWait(4);
     gWorldMapBlend = 0x1000;
     Engine_EventWait(45);
-    Func_0200c444();
-    Func_0200c44c();
-    Func_0200c1cc(buffer);
+    Engine_EventCloseScreen();
+    Engine_EventWaitForScreen();
+    Main_08000178(buffer);
     Engine_GameFlagSet(0x101);
 }

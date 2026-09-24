@@ -56,7 +56,7 @@ will open to outside contributions once both games are complete. If you're a
 developer and curious about how it works, the technical details live in
 [AGENTS.md](AGENTS.md).
 
-## Thanks
+## Acknowledgements
 
 _Golden Sun_, its characters, music, art and original code were created by
 Camelot Software Planning and published by Nintendo. Alchemy is an unofficial
@@ -66,13 +66,13 @@ Thank you to:
 
 - The [r/GoldenSun community](https://www.reddit.com/r/GoldenSun/), for sharing
   Alchemy, cheering it on, and keeping the love for these games alive.
-- Tarpman and Karathan, for working out exactly how Camelot built the games.
+- Tarpman and Karathan, for identifying the compiler and flags Camelot used.
 - Coaltergeist, for [camelot-gcc](https://github.com/Coaltergeist/camelot-gcc),
-  which got Alchemy started.
-- [pret](https://github.com/pret), the team behind the Pokémon decompilations,
-  whose work set the standard Alchemy follows and whose
-  [agbcc](https://github.com/pret/agbcc) Alchemy uses.
+  the compiler Alchemy first built with.
+- [pret](https://github.com/pret), whose decompilations set the standard Alchemy
+  measures itself against, and whose [agbcc](https://github.com/pret/agbcc)
+  Alchemy builds the games' library code with.
 - Brankale and Pokefan531, for the
   [Handheld Color Space Project](https://github.com/Brankale/Handheld-Color-Space-Project),
-  which makes our map viewer show colours as they looked on the original
-  Game Boy Advance screens.
+  whose screen measurements drive the map viewer's GBA, GBA SP and Game Boy
+  Micro colour filters.

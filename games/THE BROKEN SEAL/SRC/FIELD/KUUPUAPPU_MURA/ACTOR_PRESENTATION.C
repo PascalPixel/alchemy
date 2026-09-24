@@ -77,9 +77,6 @@ struct OverlayEffectMotion {
 extern u8 *Data_03001e8c[];
 extern u8 Data_000012c0[];
 
-s32 Func_020019c6();
-void Func_02001a06();
-s32 Func_02001a72(u8 *, const u8 *, s32, s32);
 u8 *Func_02001dc6(int);
 void Func_02001f28(void);
 u8 *Func_02001dde(int);
@@ -115,7 +112,7 @@ typedef s32(*IwramSqrt02001638)(s32);
  * not fixed per name, and each call site names the veneer it reaches rather
  * than the import behind it -- one import reached from several sites carries
  * several names, and naming the import instead makes fresh veneers.
- * Func_02001a06 is void because its result is discarded. Func_020019c6
+ * SceneActor_CheckFacingAndRange is void because its result is discarded. SceneActor_CheckFacingAndRange
  * returns s32 so that testing it emits no narrowing shift.
  */
 
@@ -256,7 +253,7 @@ s32 SceneActor_UpdateProximityToLeader(u8 *self)
     } else {
         partner = Actor_Get(14);
     }
-    if (Func_020019c6(self, partner, 32, 0) != 0) {
+    if (SceneActor_CheckFacingAndRange(self, partner, 32, 0) != 0) {
         return 0;
     }
 
@@ -273,7 +270,7 @@ s32 SceneActor_UpdateProximityToLeader(u8 *self)
         }
     }
 
-    Func_02001a06(self, player, range, force);
+    SceneActor_CheckFacingAndRange(self, player, range, force);
     return 0;
 }
 
@@ -293,7 +290,7 @@ s32 ActorPresentation_UpdateEntityFromLeader(u8 *entity)
         selector = 26;
         flag = 1;
     }
-    Func_02001a72(entity, leader, selector, flag);
+    SceneActor_CheckFacingAndRange(entity, leader, selector, flag);
     return 0;
 }
 

@@ -34650,7 +34650,7 @@
     {
       "id": "retained-overlay-3bb-02000a1c",
       "game": "tbs",
-      "source": "recon/tbs/en/overlays/resource_3bb_c_02000a1c.c",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_KABE/STAGE_START.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3bb",
       "absolute_symbols": {
@@ -34667,7 +34667,7 @@
         {
           "address": "0x02000a1c",
           "extent": 276,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ]
     },
@@ -68885,7 +68885,7 @@
     {
       "id": "retained-overlay-3ba-02000840",
       "game": "tbs",
-      "source": "recon/tbs/en/overlays/resource_3ba_c_02000840.c",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_KAWA/STAGE_START.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3ba",
       "absolute_symbols": {
@@ -68910,14 +68910,14 @@
         {
           "address": "0x02000840",
           "extent": 276,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ]
     },
     {
       "id": "retained-overlay-3bc-02000c5c",
       "game": "tbs",
-      "source": "recon/tbs/en/overlays/resource_3bc_c_02000c5c.c",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_MARUTA/STAGE_START.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3bc",
       "absolute_symbols": {
@@ -68934,7 +68934,7 @@
         {
           "address": "0x02000c5c",
           "extent": 276,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ]
     },

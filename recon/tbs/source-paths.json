@@ -14,10 +14,12 @@
       "source": "FIELD/HAIDIA_ARASHI/SECOND_EVENT_SEQUENCE.C"
     },
     "resource_3bc:02000c5c": {
-      "name": "Scene_RunOverlay3bcSequence0C5C"
+      "name": "KorosseoMaruta_RunStageStart",
+      "source": "FIELD/KOROSSEO_MARUTA/STAGE_START.C"
     },
     "resource_3ba:02000840": {
-      "name": "Scene_RunOverlay3baSequence0840"
+      "name": "KorosseoKawa_RunStageStart",
+      "source": "FIELD/KOROSSEO_KAWA/STAGE_START.C"
     },
     "resource_3b1:02001978": {
       "name": "FuneHeya_RunFlagBranchSequence",
@@ -16591,7 +16593,8 @@
       "source": "FIELD/KOROSSEO_KABE/TASK.C"
     },
     "resource_3bb:02000a1c": {
-      "name": "FieldScene_RunOpeningAuxiliarySequence"
+      "name": "KorosseoKabe_RunStageStart",
+      "source": "FIELD/KOROSSEO_KABE/STAGE_START.C"
     },
     "resource_3bb:02000714": {
       "name": "FieldScene_RunSupplementalSequenceOne",

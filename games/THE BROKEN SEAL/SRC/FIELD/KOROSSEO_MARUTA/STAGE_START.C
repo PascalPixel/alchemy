@@ -1,6 +1,6 @@
 #include "TYPES.H"
 
-#define Function Func_02000c5c
+#define KorosseoMaruta_RunStageStart Func_02000c5c
 
 extern u8 Data_00000091[];
 extern u8 Data_02000240[];
@@ -52,21 +52,20 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
 void Func_02005766_a();
 void Func_02005766_b();
 
-/* NONMATCHING: 276 of 276 bytes, 16 halfword edits (2026-09-24), psynergy
- * decompile with disambiguated call words; not yet reviewed by hand. */
-void Function(void)
+void KorosseoMaruta_RunStageStart(void)
 {
-    u32 i;
     s32 rec8;
     s32 record;
     s32 v5;
+    s32 base;
     s32 base3_2000240;
 
+    base = 4;
     Func_02004920();
     Func_02005664();
     rec8 = Value2(Func_02004a48, 3, 17);
-    v5 = 9;
     Func_02004942();
+    v5 = 9;
     do {
         Func_020056b4(8);
         v5 = (v5 - 1);
@@ -88,9 +87,15 @@ void Function(void)
     Func_0200578e(0, 16);
     Func_02005796(8, 9);
     Func_02005724(10);
-    Value2(Func_02005850, 72, ((4 - rec8) + 1));
+    /* FAKEMATCH: base is set at the top of the function, so 4 - rec8 + 1
+     * is not folded into 5 - rec8. */
+    Value2(Func_02005850, 72, base - rec8 + 1);
     base3_2000240 = (s32)Data_02000240;
-    *(u8 *)((base3_2000240 + 0x22b)) = 3;
+    /* FAKEMATCH: the do/while keeps the stage flag store ahead of the
+     * pool load that follows it. */
+    do {
+        *(u8 *)((base3_2000240 + 0x22b)) = 3;
+    } while (0);
     Value2(Func_0200586c, (s32)Data_00000091, 4);
     Func_0200587c((s32)Data_00000091, 5);
     Call1(Func_02005714, 0x11a);

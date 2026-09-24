@@ -1,6 +1,6 @@
 #include "TYPES.H"
 
-#define Function Func_02000840
+#define KorosseoKawa_RunStageStart Func_02000840
 
 extern u8 Data_0000008f[];
 extern u8 Data_02000240[];
@@ -53,21 +53,20 @@ void Func_0200455e_b();
 void Func_020045a0_a();
 void Func_020045a0_b();
 
-/* NONMATCHING: 276 of 276 bytes, 16 halfword edits (2026-09-24), psynergy
- * decompile with disambiguated call words; not yet reviewed by hand. */
-void Function(void)
+void KorosseoKawa_RunStageStart(void)
 {
-    u32 i;
     s32 rec8;
     s32 record;
     s32 v5;
+    s32 base;
     s32 base3_2000240;
 
+    base = 0;
     Func_020037d4();
     Func_020044e8();
     rec8 = Value2(Func_020038fc, 120, 127);
-    v5 = 9;
     Func_020037f6();
+    v5 = 9;
     do {
         Func_02004530(8);
         v5 = (v5 - 1);
@@ -89,9 +88,15 @@ void Function(void)
     Func_02004602(0, 16);
     Func_0200460a(8, 9);
     Func_020045a8(10);
-    Value2(Func_020046ac, 72, ((0 - rec8) + 1));
+    /* FAKEMATCH: base is 0 from the top of the function, so 0 - rec8 + 1
+     * is not folded into 1 - rec8. */
+    Value2(Func_020046ac, 72, base - rec8 + 1);
     base3_2000240 = (s32)Data_02000240;
-    *(u8 *)((base3_2000240 + 0x22b)) = 3;
+    /* FAKEMATCH: the do/while keeps the stage flag store ahead of the
+     * 0x8f pool load, which comes through a link symbol. */
+    do {
+        *(u8 *)((base3_2000240 + 0x22b)) = 3;
+    } while (0);
     Value2(Func_020046c8, (s32)Data_0000008f, 4);
     Func_020046d8((s32)Data_0000008f, 5);
     Call1(Func_020045a0_b, 0x11a);

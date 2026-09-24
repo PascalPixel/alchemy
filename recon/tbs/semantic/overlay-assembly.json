@@ -3,19 +3,6 @@
   "comment": "Retained assembly ranges. Handwritten/library credit requires original-source evidence. Pascal-authorized reconstructed_veneer credit applies only to byte-exact fixed overlay linkage inside audited veneer ranges; it makes no original-authorship claim. Other strong entries remain unverified. Complete owner bounds live in semantic/regions.json.",
   "regions": [
     {
-      "overlay": "resource_3ba",
-      "start": "0x02000840",
-      "end": "0x02000954",
-      "kind": "structured_scene_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "Complete reviewed 276-byte scene owner remains retained assembly; the ordinary C candidate is 16 halfwords from exact under canonical GCC 2.96.",
-        "Call sites that share a legacy call word but reach different veneers are declared as separate _a/_b runtime symbols in its translation unit.",
-        "This is unresolved reconstruction, not evidence of compiler impossibility or Proven ASM."
-      ]
-    },
-    {
       "overlay": "resource_372",
       "start": "0x0200173c",
       "end": "0x02001828",
@@ -2054,18 +2041,6 @@
       ]
     },
     {
-      "overlay": "resource_3bb",
-      "start": "0x02000a1c",
-      "end": "0x02000b30",
-      "kind": "structured_scene_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "complete executable body accounts for 26 calls, 1 loop(s), 0 memory operation(s), and its audited boundary",
-        "recon/tbs/en/dossiers.json#resource_3bb:02000a1c"
-      ]
-    },
-    {
       "overlay": "resource_380",
       "start": "0x02004260",
       "end": "0x02004328",
@@ -2119,19 +2094,6 @@
       "confidence": "strong",
       "evidence": [
         "2 zero bytes of alignment padding before the exact owner at 0x02000ba4; no instructions"
-      ]
-    },
-    {
-      "overlay": "resource_3bc",
-      "start": "0x02000c5c",
-      "end": "0x02000d70",
-      "kind": "structured_scene_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "complete production body accounts for 40 calls, 1 loop(s), 0 memory operation(s), and its audited boundary",
-        "recon/tbs/en/dossiers.json#resource_3bc:02000ba2",
-        "region split around the exact C owner at 0x02000ba4..0x02000c5c; the retained bytes after it keep their classification"
       ]
     },
     {

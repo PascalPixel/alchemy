@@ -19732,6 +19732,11 @@
     "main:0808b3ec": "Event_SpawnObjectTable",
     "main:08091e9c": "Event_SetValue170",
     "main:08015420": "Party_ShowJoinedMessageFar",
-    "main:08015428": "Party_ShowPairJoinedMessageFar"
+    "main:08015428": "Party_ShowPairJoinedMessageFar",
+    "main:08009220": "CheckMapPositionCellOccupiedFar",
+    "main:08015258": "UiText_RenderWideStringAtOffsetFar",
+    "main:08077258": "Owner_GetLevelThresholdFar",
+    "main:080b5070": "Battle_GetObjectTableValueFar",
+    "main:080b5078": "BattleMotion_ApproachTargetFar"
   }
 }

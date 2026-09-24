@@ -1,6 +1,6 @@
 #include "TYPES.H"
 
-extern s32 Func_08002322(s32 angle);
+extern s32 Trig_Sin(s32 angle);
 
 /* Cycles the four object palette colours at 0x050001d0 through a sine glow
    driven by the frame phase at 0x03001800. */
@@ -16,7 +16,7 @@ void PaletteGlow_UpdateSine(void)
     palette = (volatile u16 *)0x050001D0;
     index = 0;
     do {
-        value = Func_08002322((*phase + index * 8) * 0x300);
+        value = Trig_Sin((*phase + index * 8) * 0x300);
         if (value < 0) {
             value += 0x3FFF;
         }

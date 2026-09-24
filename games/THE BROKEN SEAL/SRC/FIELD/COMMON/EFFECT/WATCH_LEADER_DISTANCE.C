@@ -12,9 +12,9 @@ struct FieldPartyState {
     s32 leader;
 };
 
-extern u8 *Data_03001ebc;
+extern u8 *gEventWork;
 extern u8 Value_00002090[];
-extern struct FieldPartyState Data_02000240;
+extern struct FieldPartyState gGameState;
 
 struct FieldActor *ObjectTable_Get(s32 index);
 
@@ -28,8 +28,8 @@ void FieldEffect_WatchLeaderDistance(void)
     s32 dx;
     s32 dz;
 
-    work = Data_03001ebc;
-    actor = ObjectTable_Get(Data_02000240.leader);
+    work = gEventWork;
+    actor = ObjectTable_Get(gGameState.leader);
     if (*(s16 *)(work + 0xcc0) != 0) {
         timer = (s16 *)(work + 0xcba);
         if (*timer != 0)

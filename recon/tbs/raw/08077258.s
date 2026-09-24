@@ -1,7 +1,9 @@
 .syntax unified
 	.thumb
+	.global Owner_GetLevelThresholdFar
 	.global Func_08077258
 	.thumb_func
+Owner_GetLevelThresholdFar:
 Func_08077258:
 	ldr	r4, [pc, #0]
 	bx	r4

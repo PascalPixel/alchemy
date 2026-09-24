@@ -1,7 +1,9 @@
 .syntax unified
 	.thumb
+	.global Battle_GetObjectTableValueFar
 	.global Func_080b5070
 	.thumb_func
+Battle_GetObjectTableValueFar:
 Func_080b5070:
 	ldr	r4, [pc, #0]
 	bx	r4

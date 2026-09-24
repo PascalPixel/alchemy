@@ -29,15 +29,15 @@ struct SparkAnchor {
     s32 z;
 };
 
-extern struct SparkAnchor *Data_03001f30;
-extern u32 Data_03001e40;
+extern struct SparkAnchor *gEffectWork;
+extern u32 gFrameCount;
 
-s32 Func_08002322(s32 angle);
+s32 Trig_Sin(s32 angle);
 u32 Random16(void);
-u32 Func_08002304(u32 value, u32 divisor);
+u32 Math_ModU(u32 value, u32 divisor);
 void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position);
 struct SparkObject *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
-void Func_08009240(struct SparkObject *object, s32 value);
+void Animation_ApplyChildValuesFar(struct SparkObject *object, s32 value);
 void ObjectDispatch_InitializeFar(struct SparkObject *object, s32 data);
 void BattleFx_SwayParticle(struct SparkObject *object);
 
@@ -51,15 +51,15 @@ void BattleFx_RunSparkEmitter(struct SparkObject *object)
     s32 position[3];
 
     phase = &object->phase;
-    anchor = Data_03001f30;
+    anchor = gEffectWork;
     if (*phase != -1) {
-        object->x = anchor->x + Iwram_MulQ16(0x60000, Func_08002322(*phase << 10));
+        object->x = anchor->x + Iwram_MulQ16(0x60000, Trig_Sin(*phase << 10));
         object->y = anchor->y + 0x100000;
         object->z = anchor->z;
         (*phase)++;
         *phase = (*phase + 64) % 64;
     }
-    if (Func_08002304(Data_03001e40, 3) == 0) {
+    if (Math_ModU(gFrameCount, 3) == 0) {
         position[0] = object->x;
         position[1] = object->y + 0x20000;
         position[2] = object->z;
@@ -72,7 +72,7 @@ void BattleFx_RunSparkEmitter(struct SparkObject *object)
             spark->speed = 458;
             spark->phase = Random16() >> 9;
             spark->anchor_x = spark->x;
-            Func_08009240(spark, 9);
+            Animation_ApplyChildValuesFar(spark, 9);
             spark->unknown_5e = 72;
             ObjectDispatch_InitializeFar(spark, 0x0809f0b0);
         }

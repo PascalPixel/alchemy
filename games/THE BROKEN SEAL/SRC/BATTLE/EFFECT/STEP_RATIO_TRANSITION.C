@@ -1,9 +1,9 @@
 #include "IWRAM_CALL.H"
 
-extern u8 *Data_03001e70;
+extern u8 *gMapWork;
 
 u8 *Runtime_AllocateBlock(s32 kind, s32 size);
-s32 Func_080022ec(s32 dividend, s32 divisor);
+s32 Math_Div(s32 dividend, s32 divisor);
 void Scheduler_RemoveCallback(s32 (*callback)(void));
 s32 BattleFx_StepRatioTransition(void);
 
@@ -19,7 +19,7 @@ s32 BattleFx_StepRatioTransition(void)
     s32 offset;
     s32 delta;
 
-    work = Data_03001e70;
+    work = gMapWork;
     if ((*(u8 **)(Runtime_AllocateBlock(27, 0xccc) + 480))[91] != 0)
         return;
     duration = (s16 *)(work + 0x358);
@@ -29,7 +29,7 @@ s32 BattleFx_StepRatioTransition(void)
     delta = *(s32 *)(work + 0x354) - *from;
     step = (s16 *)(work + 0x35a);
     (*step)++;
-    offset = *from + Func_080022ec(delta * *step, *duration);
+    offset = *from + Math_Div(delta * *step, *duration);
     *(s32 *)(work + 0x34c) = Iwram_MulQ16(*(s32 *)(work + 0x348), offset);
     *(u32 *)0x03001af4 = *(u16 *)(work + 0x118) + 1;
     if (*step == *duration) {

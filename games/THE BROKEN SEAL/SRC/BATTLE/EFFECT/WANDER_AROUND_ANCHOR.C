@@ -17,10 +17,10 @@ struct OrbitEffect {
     void (*update)(struct OrbitEffect *);
 };
 
-s32 Func_0800231c(s32 angle);
-s32 Func_08002322(s32 angle);
+s32 Trig_Cos(s32 angle);
+s32 Trig_Sin(s32 angle);
 u32 Random16(void);
-void Func_08009098(struct OrbitEffect *effect, s32 data);
+void ObjectDispatch_InitializeFar(struct OrbitEffect *effect, s32 data);
 
 /* Drifts along a slowly turning heading with random pauses, then ends the
    effect after 101 frames. */
@@ -33,8 +33,8 @@ void BattleFx_WanderAroundAnchor(struct OrbitEffect *effect)
 
     radius = Random16() + 0x20000;
     angle = effect->angle;
-    dx = Iwram_MulQ16(radius, Func_0800231c(angle));
-    dz = Iwram_MulQ16(radius, Func_08002322(angle));
+    dx = Iwram_MulQ16(radius, Trig_Cos(angle));
+    dz = Iwram_MulQ16(radius, Trig_Sin(angle));
     effect->x += dx;
     effect->z += dz;
     effect->angle += 0xfff0;
@@ -45,5 +45,5 @@ void BattleFx_WanderAroundAnchor(struct OrbitEffect *effect)
         effect->pause = ((Random16() << 4) >> 16) + 8;
     }
     if (++effect->timer == 101)
-        Func_08009098(effect, 0x0809f0b0);
+        ObjectDispatch_InitializeFar(effect, 0x0809f0b0);
 }

@@ -16,7 +16,7 @@ struct EffectObject {
     u8 flags;
 };
 
-void Func_08009008(struct EffectSprite *sprite, s32 *position, s32 *scale, s32 mode);
+void Object_ApplyProjectedPlacementFar(struct EffectSprite *sprite, s32 *position, s32 *scale, s32 mode);
 
 /* Draws an effect object at its position, scaled by its own and its
    sprite's factors, when it lies near the screen; flag 4 mirrors it about
@@ -39,5 +39,5 @@ void BattleFx_DrawScaledObject(struct EffectObject *object)
     position[2] = object->y + offset;
     position[3] = 0;
     if (object->x > -0x200000 && object->x < 0x1100000 && object->y > -0x200000 && object->y < 0xe00000)
-        Func_08009008(sprite, position, scale, 0);
+        Object_ApplyProjectedPlacementFar(sprite, position, scale, 0);
 }

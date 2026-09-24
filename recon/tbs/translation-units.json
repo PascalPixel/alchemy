@@ -23718,92 +23718,60 @@
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_374",
       "absolute_symbols": {
-        "Func_0200339a": {
-          "address": "0x200a71c",
+        "Engine_ActorEnableActionCallback": {
+          "address": "0x200a6d4",
           "kind": "thumb"
         },
-        "Func_0200339a_a": {
-          "address": "0x200a694",
-          "kind": "thumb"
-        },
-        "Func_020033aa": {
-          "address": "0x200a7b4",
-          "kind": "thumb"
-        },
-        "Func_020033aa_a": {
-          "address": "0x200a724",
-          "kind": "thumb"
-        },
-        "Func_02003402": {
+        "Engine_ActorFaceDirection": {
           "address": "0x200a78c",
           "kind": "thumb"
         },
-        "Func_02003402_a": {
-          "address": "0x200a6d4",
+        "Engine_ActorFaceEachOther": {
+          "address": "0x200a74c",
           "kind": "thumb"
         },
-        "Func_020034b4": {
+        "Engine_ActorRunRepeatedMotion": {
           "address": "0x200a73c",
           "kind": "thumb"
         },
-        "Func_020034b4_a": {
+        "Engine_ActorSetAnimation": {
+          "address": "0x200a71c",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetAnimationAndWait": {
           "address": "0x200a724",
           "kind": "thumb"
         },
-        "Func_020035a6": {
-          "address": "0x200a6d4",
+        "Engine_ActorSetDestination": {
+          "address": "0x200a6f4",
           "kind": "thumb"
         },
-        "Func_020035a6_a": {
+        "Engine_ActorSetPosition": {
+          "address": "0x200a714",
+          "kind": "thumb"
+        },
+        "Engine_ActorWaitForMove": {
+          "address": "0x200a70c",
+          "kind": "thumb"
+        },
+        "Engine_CameraMoveTo": {
+          "address": "0x200a7b4",
+          "kind": "thumb"
+        },
+        "Engine_EventEnd": {
+          "address": "0x200a6a4",
+          "kind": "thumb"
+        },
+        "Engine_EventWait": {
           "address": "0x200a694",
-          "kind": "thumb"
-        },
-        "Func_020036ac": {
-          "address": "0x200a74c",
           "kind": "thumb"
         },
         "Func_020036ac_a": {
           "address": "0x200a6c4",
           "kind": "thumb"
         },
-        "Func_020036ce": {
-          "address": "0x200a724",
-          "kind": "thumb"
-        },
-        "Func_020036ce_a": {
-          "address": "0x200a71c",
-          "kind": "thumb"
-        },
-        "Func_020036dc": {
-          "address": "0x200a70c",
-          "kind": "thumb"
-        },
         "Func_020036dc_a": {
           "address": "0x200a6c4",
-          "kind": "thumb"
-        },
-        "Func_020036ee": {
-          "address": "0x200a714",
-          "kind": "thumb"
-        },
-        "Func_020036ee_a": {
-          "address": "0x200a6f4",
-          "kind": "thumb"
-        },
-        "Func_020036f6": {
-          "address": "0x200a78c",
-          "kind": "thumb"
-        },
-        "Func_020036f6_a": {
-          "address": "0x200a6a4",
-          "kind": "thumb"
-        },
-        "Func_0200371e": {
-          "address": "0x200a714",
-          "kind": "thumb"
-        },
-        "Func_0200371e_a": {
-          "address": "0x200a6f4",
           "kind": "thumb"
         }
       },

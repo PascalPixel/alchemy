@@ -10595,6 +10595,9 @@
     "main:080a24d0": {
       "name": "RunAssetSelectionScreen"
     },
+    "main:080a2680": {
+      "name": "AssetSelection_RunLoop"
+    },
     "main:080b3444": {
       "name": "Shop_PickUnitItem",
       "source": "MENU/SHOP/ITEM_SELECTION.C"

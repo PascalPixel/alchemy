@@ -1,7 +1,23 @@
+/*
+ * RunAssetSelectionScreen (main:080a24d0, 432 bytes)
+ *
+ * Draft, not exact (2026-09-24): candidate=432 reference=432
+ * differing_halfwords=122.  Split from AssetSelection_RunLoop (main:080a2680),
+ * which the old listing bundled.  Every call and argument lines up; the two
+ * IWRAM routines are called through function pointers (_call_via_fp for the
+ * word copy at 0x03001388, _call_via_r3 for the fill at 0x03000168).
+ * Remaining: the reference computes &globals->process_state once into r6
+ * (r8 + 36) and reuses it for the three 0xea6 stores, which spends every
+ * callee-saved register and makes it rematerialise 0x06004000 from the pool
+ * at each copy; here the field is addressed as [r8 + 36] each time, the VRAM
+ * address stays in r7 and the backup moves to r6.  A pointer local for the
+ * field folds back to a separate constant (constant and extern-struct
+ * spellings alike).
+ */
 #include "TYPES.H"
 
 struct AssetSelectionGlobals {
-    void *display_state;
+    struct { u16 unk0; u16 unk2; s16 busy; } *display_state;
     u8 reserved_004[0x20];
     u8 *process_state;
     u8 reserved_028[0x2c];
@@ -20,94 +36,102 @@ struct AssetSelectionScreen {
     u8 session_mode;
 };
 
-#define ASSET_SELECTION_GLOBALS ((struct AssetSelectionGlobals *)0x03001e68)
+extern struct AssetSelectionGlobals Data_03001e68;
 
-void *Func_08004970(s32 size);
-struct AssetSelectionScreen *Func_080048b0(s32 asset_id, s32 size);
-void Func_08015408(s32, s32, s32, s32);
+typedef void (*CopyFn)(const void *src, void *dst, s32 size);
+typedef void (*FillFn)(void *dst, s32 size, u32 value);
+
+void *Runtime_BumpAllocateAlternatePool(s32 size);
+struct AssetSelectionScreen *Runtime_AllocateHeapBlock(s32 id, s32 size);
+void UiWindow_DrawFrameFar(s32, s32, s32, s32);
 void WaitFrames(s32 frames);
-void Func_080a1090(s32);
-s32 Func_08077158(void *session);
-void Func_080a3354(s32, s32, s32, s32);
+void UiWindow_InitializeWork(s32);
+s32 Party_ListActiveOwnersFar(void *session);
+void ItemMenu_Init(s32, s32, s32, s32);
 void Func_080a5534(void);
-void Func_080a2144(s32);
-void Func_08015418(void *address);
+void Palette_LightenBankHighlight(s32);
+void Link_DrawShiftedTilePairFar(void *address);
 s32 UiWindow_CreateFar(s32, s32, s32, s32, s32);
-void Func_080a1070(void);
-typedef void (*CopyFn)(const void *source, void *destination, s32 size);
-void Func_080072f0(const void *, s32, u32, void *);
+void Scheduler_EnableOverlayCallbacksWithFlags(void);
 void Func_080153e0(s32);
-void Func_080a2474(void);
-s32 Func_080a2680(s32 *category, s32 *value, s32 *index);
-void Func_080a2490(void);
-void Func_08015278(s32);
-void Func_080a34c0(void);
-void Func_080ae8dc(void);
-void Func_08002dd8(s32);
+void Menu_CancelSoundReset(void);
+s32 AssetSelection_RunLoop(s32 *category, s32 *value, s32 *index);
+void Menu_EnsureCancelSound(void);
+void RenderOutput_ClearListFar(s32);
+void ItemMenu_Close(void);
+void Menu_ResetTwoResourceEntries(void);
+void Runtime_ReleaseHeapBlock(s32);
 void Func_080152a8(void);
-void Func_08002df0(void *);
-void Func_080a1050(void);
-void Func_08015410(s32, s32, s32, s32);
-void Func_0808a548(void);
+void Runtime_BumpFree(void *);
+void Scheduler_DisableOverlayCallbacksWithFlags(void);
+void UiWindow_EraseBorderRectFar(s32, s32, s32, s32);
+void Event_ClearInvalidPackedValuesFar(void);
 
-#define RunAssetSelectionScreen Func_080a24d0
+extern u8 Value_00000001;
 
 /* Run the modal asset-selection screen and publish an accepted selection. */
 s32 RunAssetSelectionScreen(void)
 {
-    void *display_backup;
+#define globals (&Data_03001e68)
+    void *backup;
     struct AssetSelectionScreen *screen;
-    s32 selected_index;
-    s32 selected_value;
-    s32 selected_category;
+    s32 index;
+    s32 value;
+    s32 category;
     s32 result;
-    CopyFn copy_fn = (CopyFn)0x03001388;
+    s32 size;
+    CopyFn copy;
 
-    display_backup = Func_08004970(0x2000);
-    screen = Func_080048b0(0x37, 0xa70);
-    *(s16 *)((u8 *)ASSET_SELECTION_GLOBALS->display_state + 4) = 1;
-    Func_08015408(0, 0, 30, 20);
+    size = 0x2000;
+    backup = Runtime_BumpAllocateAlternatePool(size);
+    screen = Runtime_AllocateHeapBlock(0x37, 0xa70);
+    globals->display_state->busy = 1;
+    UiWindow_DrawFrameFar(0, 0, 30, 20);
     WaitFrames(1);
-    Func_080a1090(0);
-    screen->session_mode = Func_08077158(screen->session);
-    Func_080a3354(0, 3, 0, 7);
+    UiWindow_InitializeWork(0);
+    screen->session_mode = Party_ListActiveOwnersFar(screen->session);
+    ItemMenu_Init(0, 3, 0, 7);
     Func_080a5534();
-    Func_080a2144(14);
-    Func_08015418((void *)0x06002500);
+    Palette_LightenBankHighlight(14);
+    Link_DrawShiftedTilePairFar((void *)0x06002500);
     screen->window = UiWindow_CreateFar(13, 0, 17, 3, 2);
-    Func_080a1070();
-    copy_fn(display_backup, (void *)0x06004000, 0x2000);
-    Func_080072f0((void *)0x06004000, 0x2000, 0x33333333, (void *)0x03000168);
+    Scheduler_EnableOverlayCallbacksWithFlags();
+    copy = (CopyFn)0x03001388;
+    copy(backup, (void *)0x06004000, size);
+    ((FillFn)0x03000168)((void *)0x06004000, size, 0x33333333);
     Func_080153e0(1);
-    Func_080a2474();
-    result = Func_080a2680(&selected_category, &selected_value, &selected_index);
-    Func_080a2490();
+    Menu_CancelSoundReset();
+    result = AssetSelection_RunLoop(&category, &value, &index);
+    Menu_EnsureCancelSound();
 
     if (result == 1) {
-        u8 *selection = ASSET_SELECTION_GLOBALS->selection_state;
+        u8 *selection = globals->selection_state;
 
-        *(u16 *)(selection + 0x180) =
-            (selected_category << 10) | (selected_index & 0x1ff);
-        *(u16 *)(selection + 0x19a) = screen->selection_style;
+        u16 packed = (category << 10) | (index & 0x1ff);
+        s32 style;
+
+        *(u16 *)(selection + 0x180) = packed;
+        style = screen->selection_style;
+        *(u16 *)(selection + 0x19a) = style;
     }
 
-    Func_08015278(screen->resource_handle);
-    ASSET_SELECTION_GLOBALS->process_state[0xea6] = 1;
-    Func_080a34c0();
-    Func_08015408(0, 0, 30, 20);
-    Func_080ae8dc();
-    Func_08002dd8(0x37);
-    *(s16 *)((u8 *)ASSET_SELECTION_GLOBALS->display_state + 4) = 0;
+    RenderOutput_ClearListFar(screen->resource_handle);
+    globals->process_state[0xea6] = (s32)&Value_00000001;
+    ItemMenu_Close();
+    UiWindow_DrawFrameFar(0, 0, 30, 20);
+    Menu_ResetTwoResourceEntries();
+    Runtime_ReleaseHeapBlock(0x37);
+    globals->display_state->busy = 0;
     Func_080152a8();
     Func_080153e0(0);
-    copy_fn((void *)0x06004000, display_backup, 0x2000);
-    ASSET_SELECTION_GLOBALS->process_state[0xea6] = 0;
-    Func_08002df0(display_backup);
+    copy((void *)0x06004000, backup, size);
+    globals->process_state[0xea6] = 0;
+    Runtime_BumpFree(backup);
     WaitFrames(1);
-    Func_080a1050();
+    Scheduler_DisableOverlayCallbacksWithFlags();
     WaitFrames(1);
-    Func_08015410(0, 0, 30, 20);
-    ASSET_SELECTION_GLOBALS->process_state[0xea6] = 0;
-    Func_0808a548();
+    UiWindow_EraseBorderRectFar(0, 0, 30, 20);
+    globals->process_state[0xea6] = 0;
+    Event_ClearInvalidPackedValuesFar();
     return result;
 }

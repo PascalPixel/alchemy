@@ -79820,6 +79820,34 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "scene-3af-020008e0",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/F_008E0.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3af",
+      "absolute_symbols": {
+        "Engine_RandomNext": {
+          "address": "0x0200c26c",
+          "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x020008e0",
+          "extent": 86,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

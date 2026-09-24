@@ -1544,52 +1544,8 @@ AlchemyC_0200089c:
 	.2byte 0x0000
 AlchemyC_020008c0:
 	.space 0x20
-	push	{r5, r6, r7, lr}
-	adds	r5, r0, #0
-	adds	r6, r5, #0
-	adds	r6, #98
-	ldrb	r3, [r6, #0]
-	adds	r7, r3, #0
-	cmp	r7, #0
-	beq.n	.L_020008f4
-	adds	r3, #255
-	b.n	.L_0200092c
-.L_020008f4:
-	bl	sub_02004b62
-	lsls	r2, r0, #2
-	adds	r2, r2, r0
-	lsls	r3, r2, #4
-	subs	r3, r3, r2
-	lsls	r3, r3, #2
-	lsrs	r3, r3, #16
-	cmp	r3, #200
-	bls.n	.L_02000910
-	movs	r3, #208
-	lsls	r3, r3, #8
-	strh	r3, [r5, #6]
-	b.n	.L_0200091e
-.L_02000910:
-	cmp	r3, #100
-	bls.n	.L_0200091c
-	movs	r3, #160
-	lsls	r3, r3, #7
-	strh	r3, [r5, #6]
-	b.n	.L_0200091e
-.L_0200091c:
-	strh	r7, [r5, #6]
-.L_0200091e:
-	bl	sub_02004b8c
-	lsls	r3, r0, #2
-	adds	r3, r3, r0
-	lsls	r3, r3, #4
-	lsrs	r3, r3, #16
-	adds	r3, #80
-.L_0200092c:
-	strb	r3, [r6, #0]
-	movs	r0, #1
-	pop	{r5, r6, r7}
-	pop	{r1}
-	bx	r1
+AlchemyC_020008e0:
+	.space 0x56
 	.2byte 0x0000
 AlchemyC_02000938:
 	.space 0x8

@@ -71860,6 +71860,21 @@
           }
         }
       }
+    },
+    {
+      "id": "haidia-ie-f-01084",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_IE/F_01084.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_374",
+      "absolute_symbols": {},
+      "owners": [
+        {
+          "address": "0x02001084",
+          "extent": 496,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

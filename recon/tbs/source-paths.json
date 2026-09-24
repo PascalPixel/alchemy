@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_374:02001084": {
+      "name": "HaidiaIe_Func02001084",
+      "source": "FIELD/HAIDIA_IE/F_01084.C"
+    },
     "resource_381:0200330c": {
       "name": "SoruStar_Func0200478c",
       "source": "FIELD/SORU_STAR/F_0478C.C"

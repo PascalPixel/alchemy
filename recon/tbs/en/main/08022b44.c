@@ -70,6 +70,7 @@ s32 Func_080040b4(s32);
 s32 Func_080040d0(s32, const void *);
 void Func_08016584(struct RenderInput *, struct RenderOutput *);
 extern u8 Data_000008ae[];
+extern u8 Value_00000333[];
 extern u8 Data_080313a4[];
 extern u8 Data_08031424[];
 s32 UiText_FormatNumberToHalfwords(s16 *out, s32 value);
@@ -233,7 +234,7 @@ struct RenderInput *Ui_ShowAbilityChangePreview(
                 UiWork_SetParamNibble(15);
 
             dir = list[i] & 0x3fff;
-            UiText_DrawCharacterAtOffset(dir + 0x333, win, 16, n * 16);
+            UiText_DrawCharacterAtOffset(dir + (s32)Value_00000333, win, 16, n * 16);
             UiWindow_SetTilemapEntry(win, 0xf01f, 11, n * 2, 0);
             UiWindow_SetTilemapEntry(win, 0xf01e, 12, n * 2, 0);
             UiText_DrawNumberInWindow(

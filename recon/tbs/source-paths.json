@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "main:080c0130": {
+      "name": "BattlePres_UpdateHBlankScroll",
+      "source": "BATTLE/PRESENTATION/UPDATE_HBLANK_SCROLL.C"
+    },
     "resource_39c:02005388": {
       "name": "MakyuriHeya_SpawnSparkPair",
       "source": "FIELD/COMMON/MAKYURI/SPARK_PAIR.C"

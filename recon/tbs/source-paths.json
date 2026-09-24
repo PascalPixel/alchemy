@@ -10056,7 +10056,8 @@
       "name": "MusicTrack_ClearModulationState"
     },
     "main:080fb2a4": {
-      "name": "MusicPlayer_SetPitchAndUpdateFrequency"
+      "name": "MusicPlayer_SetPitchAndUpdateFrequency",
+      "source": "SOUND/MUSIC_PLAYER_SET_PITCH_AND_UPDATE_FREQUENCY.C"
     },
     "main:08002dd8": {
       "name": "Runtime_ReleaseHeapBlock"

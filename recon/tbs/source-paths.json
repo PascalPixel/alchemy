@@ -774,6 +774,18 @@
       "name": "SceneTransform_ApplyRotation",
       "source": "GRAPHICS/RENDER/TRANSFORM_APPLY_ROTATION.C"
     },
+    "main:08004cf0": {
+      "name": "SceneTransform_ApplyTranslation"
+    },
+    "main:08004d2c": {
+      "name": "SceneTransform_ApplyRotationTranslation"
+    },
+    "main:08004e54": {
+      "name": "Func_08004e54"
+    },
+    "main:08004fe4": {
+      "name": "Graphics_PrepareTransfer"
+    },
     "main:0800f9f4": {
       "name": "Tilemap_DecodeStagedBuffer",
       "source": "GRAPHICS/TILE/DECODE_STAGED_BUFFER.C"
@@ -20704,7 +20716,6 @@
     "main:080153b0": "Menu_RunConfirmSelectionAtFar",
     "main:08077088": "OwnerAction_AddFar",
     "main:0801965c": "UiText_CopyMessageString",
-    "main:08004fe4": "Graphics_PrepareTransfer",
     "main:080772d8": "Inventory_CountItemFar",
     "main:08077d38": "GameState_InitDefaults",
     "main:0808a008": "Game_ResetForNewGameFar",

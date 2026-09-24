@@ -10,7 +10,8 @@
    volatile s16 store of an s16 value with a running index. Residual: the
    pool order of BG2PD and its 0x100, and the tile-map loop reduces the
    store address in the inner loop where the reference adds the running
-   offset to the base each time (keeping the value in fp). */include "TYPES.H"
+   offset to the base each time (keeping the value in fp). */
+#include "TYPES.H"
 
 #define FIELD(p, type, off) (*(type *)((u8 *)(p) + (off)))
 #include "IO_WRITE_QUEUE.H"

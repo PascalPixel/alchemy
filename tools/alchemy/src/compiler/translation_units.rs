@@ -588,6 +588,21 @@ impl TranslationUnit {
     pub fn exact(&self) -> bool {
         self.exact_owner_count() == self.owners.len()
     }
+    /// An exact unit links as one object only while its members are adjacent,
+    /// apart from the alignment halfword a function may leave. Exact twins
+    /// declared in one unit sit apart in the image, so each links as its own
+    /// owner slice, as the exact members of a partly retained unit do.
+    pub fn linked_whole(&self) -> bool {
+        let mut spans = self
+            .symbols()
+            .map(|(address, _, extent)| (u64::from(address), extent as u64))
+            .collect::<Vec<_>>();
+        spans.sort_unstable();
+        self.exact()
+            && spans
+                .windows(2)
+                .all(|pair| pair[1].0 <= pair[0].0 + pair[0].1 + 2)
+    }
     /// Place the shared source in the main image using the existing main
     /// compiler and linker. Overlay addresses never fall back into this link.
     pub fn main_placement(&self) -> Result<Option<Self>, String> {
@@ -1990,6 +2005,27 @@ mod tests {
         // Separate-source mixed units still require their direct includes.
         assert!(validate_production_state(root, unit, &source, false, &names).is_err());
     }
+    #[test]
+    fn exact_twins_apart_in_the_image_link_as_owner_slices() {
+        let manifest = TranslationUnits::load(crate::compiler::routing::root()).unwrap();
+        let whole = manifest
+            .unit("runtime-memory-schedule-callback-and-release-block-32-a")
+            .unwrap();
+        assert!(whole.exact() && whole.linked_whole());
+        let twins = manifest.unit("graphics-clear-bg0-vofs").unwrap();
+        assert!(twins.exact() && !twins.linked_whole());
+        let mut adjacent = twins.clone();
+        adjacent.owners[1].address =
+            adjacent.owners[0].address + adjacent.owners[0].extent as u32 + 2;
+        assert!(adjacent.linked_whole());
+        adjacent.owners[1].address += 2;
+        assert!(!adjacent.linked_whole());
+        let mut retained = adjacent.clone();
+        retained.owners[1].address -= 2;
+        retained.owners[1].state = OwnerState::RetainedAssembly;
+        assert!(!retained.linked_whole());
+    }
+
     #[test]
     fn loads_typed_main_and_overlay_units() {
         let manifest = TranslationUnits::load(crate::compiler::routing::root()).unwrap();

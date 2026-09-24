@@ -20,8 +20,10 @@
 	.set sub_080e396c, 0x080e396c
 	.set sub_080ed408, 0x080ed408
 	.set sub_080f9010, 0x080f9010
+	.global Unnamed_080e2538
 	.global Func_080e2538
 	.thumb_func
+Unnamed_080e2538:
 Func_080e2538:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

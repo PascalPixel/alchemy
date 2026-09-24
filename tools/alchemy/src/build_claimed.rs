@@ -198,7 +198,7 @@ fn module_contract(
     let Some(unit) = units.unit_for_game_owner(game, source.owner) else {
         return Ok(Vec::new());
     };
-    if root.join(&unit.source) == source.path && unit.exact() {
+    if root.join(&unit.source) == source.path && unit.linked_whole() {
         return unit
             .members_in("main")
             .map(|member| {
@@ -808,7 +808,7 @@ pub fn build(options: &Options, root: &str, cwd: &str) -> Result<BuildSummary> {
     for unit in units
         .units
         .iter()
-        .filter(|unit| unit.overlay.is_none() && !unit.exact())
+        .filter(|unit| unit.overlay.is_none() && !unit.linked_whole())
     {
         let path = Path::new(root).join(&unit.source);
         if !sources.iter().any(|source| source.path == path) {
@@ -899,7 +899,7 @@ pub fn build(options: &Options, root: &str, cwd: &str) -> Result<BuildSummary> {
     let mut unit_compiles = Vec::new();
     let mut unit_imports = Vec::new();
     for unit in &declared_units {
-        let mixed = !unit.exact();
+        let mixed = !unit.linked_whole();
         let work = if mixed {
             object_dir.join("tu").join(&unit.id)
         } else {
@@ -1221,7 +1221,7 @@ pub fn build(options: &Options, root: &str, cwd: &str) -> Result<BuildSummary> {
             "size": size,
             "end": end,
             "translation_unit": production_unit.map(|unit| unit.id.as_str()),
-            "composition": production_unit.map(|unit| if unit.exact() { "complete-tu-object" } else { "complete-tu-owner-slice" }),
+            "composition": production_unit.map(|unit| if unit.linked_whole() { "complete-tu-object" } else { "complete-tu-owner-slice" }),
             "byte_verification": if rom.is_some() { "rom" } else { "source_only" },
         }));
         total += size;

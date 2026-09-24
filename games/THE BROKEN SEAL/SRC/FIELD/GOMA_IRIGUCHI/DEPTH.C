@@ -33,8 +33,6 @@ struct OverlayActorState {
     u8 flags;
 };
 
-extern u8 Data_03001ebc[];
-
 struct OverlayActorPosition *Func_02001e54_a();
 void Func_02001af6();
 void Func_020016d8();
@@ -193,17 +191,17 @@ void FieldScene_RunScene387SequenceC(void)
 
 void FieldScene_RunScene387SequenceD(void)
 {
-    u8 *p5;
+    struct EventWork *p5;
     s32 v5;
 
-    p5 = *(u8 **)Data_03001ebc;
+    p5 = gEventWork;
     Event_Begin();
     Actor_SetAnimation(0, 8);
     Event_Wait(20);
     Actor_SetSpeed(0, 0x3333, 0x1999);
     Actor_SetSpeed(9, 0x3333, 0x1999);
     Audio_PlayCue(185);
-    v5 = (11 - (*(s16 *)(p5 + 0x16c) << 1)) << 4;
+    v5 = (11 - (p5->touched_trigger << 1)) << 4;
     Actor_SetDestinationOffset(0, v5, 0);
     Actor_SetDestinationOffset(9, v5, 0);
     Actor_WaitForMove(0);

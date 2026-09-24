@@ -21997,6 +21997,10 @@
         "Func_020020b2": {
           "address": "0x020090fc",
           "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
         }
       },
       "owners": [
@@ -40220,6 +40224,10 @@
         "Func_02006c82": {
           "address": "0x0200b828",
           "kind": "thumb"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
         }
       },
       "owners": [

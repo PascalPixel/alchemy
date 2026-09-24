@@ -1,6 +1,58 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
+enum PromptMessage {
+    MSG_ROBIN_CHECKED_CHEST = 0x929,
+    MSG_ROBIN_CHECKED_BARREL = 0x92b,
+    MSG_BUT_CHEST_WAS_EMPTY = 0x949,
+    MSG_BUT_DIDNT_FIND_ANYTHING = 0x94b,
+    MSG_IF_ONLY_THESE_ROCKS_WERE = 0x1243,
+    MSG_OK_MISTER_LET_ME_SEE = 0x1245,
+    MSG_MISTER_FUN_SEE_STRANGE_NEW = 0x1247,
+    MSG_WONDER_OUTSIDE_WORLD_LIKE = 0x124b,
+    MSG_JUST_ME_OR_AM_MISSING = 0x124c,
+    MSG_COULD_THEY_THIEVES_GOOD_DONT = 0x124e,
+    MSG_COULD_SOMEONE_PLEASE_HELP_IVAN = 0x1250,
+    MSG_IVAN_HAS_GREAT_POWERS_WOULDNT = 0x1253,
+    MSG_DO_POSSESS_STRANGE_POWERS = 0x1256,
+    MSG_WOULD_REALLY_WOULD_HELP_ME = 0x125d,
+    MSG_YOURE_GOING_HELP_IVAN = 0x1276,
+    MSG_PLEASE_LOOK_AFTER_IVAN = 0x1278,
+    MSG_TICKLES_BEING_TICKLED_BY_BOY = 0x127c,
+    MSG_THIEVES_DIDNT_HIT_OUR_HOUSE = 0x1282,
+    MSG_DID_JUST_ARRIVE_IN_TOWN = 0x1284,
+    MSG_EVERYONE_THINKS_OUR_GUESTS_THIEVES = 0x128d,
+    MSG_THOSE_THREE_STRANGERS_SURE_HAVE = 0x128e,
+    MSG_MASTER_HIS_WIFE_BLINDED_BY = 0x1294,
+    MSG_ROBIN_TAKE_LEAD = 0x129f,
+    MSG_OW_STOP = 0x12ac,
+    MSG_WE_DONT_HAVE_TIME_FOR = 0x12bb,
+    MSG_THESE_KIDS_NOTHING_WORRY_ABOUT = 0x12dd,
+    MSG_THEY_THEY_GOT_US = 0x12e4,
+    MSG_SEE_THATS_HAPPENED = 0x12f2,
+    MSG_WAIT_DONT_WANT_TAKE_YOUR = 0x132a,
+    MSG_THANK_GOODNESS_THOSE_THIEVES_WERE = 0x1353,
+    MSG_IF_ROCK_WORTHLESS_MAYBE_THATS = 0x1355,
+    MSG_DID_THOSE_THIEVES_COME_FROM = 0x1356,
+    MSG_MY_FATHER_WORRIED_ABOUT_THOSE = 0x1359,
+    MSG_FATHER_LOOKS_SAD_WORRYING_LIKE = 0x135b,
+    MSG_THIEVES_HID_STOLEN_TREASURE_IN = 0x135c,
+    MSG_GUESS_NOTHING_IN_OUR_HOUSE = 0x135e,
+    MSG_HEADING_OUT_BEYOND_GOMA_RANGE = 0x1364,
+    MSG_HEARD_DEFEATED_THOSE_THIEVES = 0x1368,
+    MSG_CAVE_IN_GOMA_RANGE_DANGEROUS = 0x136c,
+    MSG_WE_FOUND_OUR_STOLEN_WEAPONS = 0x1370,
+    MSG_IF_YOURE_GONNA_HEAD_INTO = 0x1372,
+    MSG_WITH_BRIDGE_OUT_WILL_QUITE = 0x1374,
+    MSG_THEY_HID_THOSE_STOLEN_GOODS = 0x137b,
+    MSG_HAVE_LOT_LEFTOVER_BONES_FROM = 0x137c,
+    MSG_GEE_ALWAYS_GET_HUNGRY_WHEN = 0x1382,
+    MSG_WOW_HAVE_MANY_THINGS_ARENT = 0x1384,
+    MSG_WANT_MORE_BONES = 0x1385,
+    MSG_HE_REALLY_LIKES_BONES_WONDER = 0x1cf4
+};
+
+
 #define Scene_GetRecord_1(args...) Func_02005ae2(args)
 #define Scene_GetRecord_2(args...) Func_02005b1c(args)
 #define Audio_PlayCueForPartyMember_1(args...) Func_02005cca(args)
@@ -619,7 +671,7 @@ void FieldScene_RunActorNineteenAngleDialogue(void)
         if (GameFlag_IsSet(0x855) == 0) {
             Event_SetMessage((s32)&Value_00001280);
         } else {
-            Event_SetMessage(0x1370);
+            Event_SetMessage(MSG_WE_FOUND_OUR_STOLEN_WEAPONS);
         }
         Event_ShowMessage(19, 0);
     }
@@ -635,9 +687,9 @@ void FieldScene_RunActorTwentyAngleDialogue(void)
         Shop_Open(5, 20);
     } else {
         if (GameFlag_IsSet(0x855) == 0) {
-            Event_SetMessage(0x1282);
+            Event_SetMessage(MSG_THIEVES_DIDNT_HIT_OUR_HOUSE);
         } else {
-            Event_SetMessage(0x1372);
+            Event_SetMessage(MSG_IF_YOURE_GONNA_HEAD_INTO);
         }
         Event_ShowMessage(20, 0);
     }
@@ -653,9 +705,9 @@ void FieldScene_RunActorTwentyThreeAngleDialogue(void)
         Inn_Open(1, 23);
     } else {
         if (GameFlag_IsSet(0x855) == 0) {
-            Event_SetMessage(0x128d);
+            Event_SetMessage(MSG_EVERYONE_THINKS_OUR_GUESTS_THIEVES);
         } else {
-            Event_SetMessage(0x137b);
+            Event_SetMessage(MSG_THEY_HID_THOSE_STOLEN_GOODS);
         }
         Event_ShowMessage(23, 0);
     }
@@ -668,7 +720,7 @@ void FieldScene_RunActorEighteenConditionalScene(void)
     if (Func_02004f98() == 0) {
         Actor_SetAnimationAndWait(18, 4);
         Event_Wait(20);
-        Event_SetMessage(0x1384);
+        Event_SetMessage(MSG_WOW_HAVE_MANY_THINGS_ARENT);
         Event_ShowMessage(18, 0);
     } else {
         Item_ShowFound(231, 3);
@@ -680,23 +732,23 @@ void FieldScene_RunActorEighteenConditionalScene(void)
 void SceneDialogue_ShowLine12BB(void)
 {
     Func_0200513c();
-    Event_SetMessage(0x12bb);
+    Event_SetMessage(MSG_WE_DONT_HAVE_TIME_FOR);
     Event_ShowMessage(1, 0);
 }
 
 void SceneState_SetFlags92bAnd94b(void)
 {
     Event_Begin();
-    Message_ShowCentered(0x92b, 1);
-    Message_ShowCentered(0x94b, 1);
+    Message_ShowCentered(MSG_ROBIN_CHECKED_BARREL, 1);
+    Message_ShowCentered(MSG_BUT_DIDNT_FIND_ANYTHING, 1);
     Event_End();
 }
 
 void SceneState_SetFlags929And949(void)
 {
     Event_Begin();
-    Message_ShowCentered(0x929, 1);
-    Message_ShowCentered(0x949, 1);
+    Message_ShowCentered(MSG_ROBIN_CHECKED_CHEST, 1);
+    Message_ShowCentered(MSG_BUT_CHEST_WAS_EMPTY, 1);
     Event_End();
 }
 
@@ -751,7 +803,7 @@ void SceneDialogue_PromptAndCountSkip(s32 x)
 void SceneDialogue_RunActorElevenDialogue(void)
 {
     Event_Begin();
-    Event_SetMessage(0x1247);
+    Event_SetMessage(MSG_MISTER_FUN_SEE_STRANGE_NEW);
     Actor_SetAnimation(11, 1);
     SceneDialogue_PromptAndCountSkip(11);
     Event_End();
@@ -763,7 +815,7 @@ void FieldScene_RunScene383_02000428(void)
     s32 record;
 
     Event_Begin();
-    Event_SetMessage(0x1253);
+    Event_SetMessage(MSG_IVAN_HAS_GREAT_POWERS_WOULDNT);
     SceneDialogue_PromptAndCountSkip(15);
     Actor_FaceDirection(15, 0x8000, 0);
     Event_End();
@@ -777,10 +829,10 @@ void SceneState_BranchOnSlotZeroFacingAndFlag855(void)
     if (value >= 0xa001 && value <= 0xdfff) {
         Shop_Open(6, 21);
     } else if (GameFlag_IsSet(0x855) == 0) {
-        Event_SetMessage(0x1284);
+        Event_SetMessage(MSG_DID_JUST_ARRIVE_IN_TOWN);
         SceneDialogue_PromptAndCountSkip(21);
     } else {
-        Event_SetMessage(0x1374);
+        Event_SetMessage(MSG_WITH_BRIDGE_OUT_WILL_QUITE);
         Event_ShowMessage(21, 0);
     }
     Event_End();
@@ -790,9 +842,9 @@ void SceneDialogue_RunActor9FlaggedLine(void)
 {
     Event_Begin();
     if (GameFlag_IsSet(0x855) == 0) {
-        Event_SetMessage(0x1243);
+        Event_SetMessage(MSG_IF_ONLY_THESE_ROCKS_WERE);
     } else {
-        Event_SetMessage(0x1353);
+        Event_SetMessage(MSG_THANK_GOODNESS_THOSE_THIEVES_WERE);
     }
     ActorPresentation_RunActorModeOneThenZeroWithStep(9);
     Event_End();
@@ -802,9 +854,9 @@ void SceneDialogue_RunActorTwelveFlaggedDialogue(void)
 {
     Event_Begin();
     if (GameFlag_IsSet(0x855) != 0) {
-        Event_SetMessage(0x135c);
+        Event_SetMessage(MSG_THIEVES_HID_STOLEN_TREASURE_IN);
     } else {
-        Event_SetMessage(0x124c);
+        Event_SetMessage(MSG_JUST_ME_OR_AM_MISSING);
     }
     ActorPresentation_RunActorModeOneThenZeroWithStep(12);
     Event_End();
@@ -817,16 +869,16 @@ void FieldScene_RunFlag856DialogueBranch(void)
     Event_Begin();
     if (GameFlag_IsSet(0x856) != 0) {
         if (GameFlag_IsSet(g) == 0) {
-            Event_SetMessage(0x1276);
+            Event_SetMessage(MSG_YOURE_GOING_HELP_IVAN);
             ActorPresentation_RunActorModeOneThenZeroWithStep(16);
             Event_Wait(10);
             SceneEffect_ApplyThreeValuesAndFinish(16, 3, 20);
             GameFlag_Set(g);
         } else {
-            Event_SetMessage(0x1278);
+            Event_SetMessage(MSG_PLEASE_LOOK_AFTER_IVAN);
         }
     } else {
-        Event_SetMessage(0x1250);
+        Event_SetMessage(MSG_COULD_SOMEONE_PLEASE_HELP_IVAN);
     }
     ActorPresentation_RunActorModeOneThenZeroWithStep(16);
     Event_End();
@@ -835,7 +887,7 @@ void FieldScene_RunFlag856DialogueBranch(void)
 void SceneDialogue_ShowLine128E(void)
 {
     Event_Begin();
-    Event_SetMessage(0x128e);
+    Event_SetMessage(MSG_THOSE_THREE_STRANGERS_SURE_HAVE);
     ActorPresentation_RunActorModeOneThenZeroWithStep(18);
     Event_End();
 }
@@ -850,7 +902,7 @@ void SceneActor_StepActor24AnimationByFacing(void)
     p = Func_0200533e(24);
     Event_Begin();
     Actor_RunRepeatedMotion(24, 2);
-    Event_SetMessage(0x12ac);
+    Event_SetMessage(MSG_OW_STOP);
     Event_ShowMessage(24, 0);
     Actor_SetSpeed(24, 0x40000, 0x20000);
     if ((u32)((p->unk6 & 0xf000) - 0x5000) <= 0x6000) {
@@ -889,7 +941,7 @@ clamp:
 void SceneDialogue_RunActor10Line(void)
 {
     Event_Begin();
-    Event_SetMessage(0x1356);
+    Event_SetMessage(MSG_DID_THOSE_THIEVES_COME_FROM);
     SceneDialogue_PromptAndCountSkip(10);
     Event_End();
 }
@@ -897,7 +949,7 @@ void SceneDialogue_RunActor10Line(void)
 void SceneDialogue_RunActor11Line(void)
 {
     Event_Begin();
-    Event_SetMessage(0x1359);
+    Event_SetMessage(MSG_MY_FATHER_WORRIED_ABOUT_THOSE);
     ActorPresentation_RunActorModeOneThenZeroWithStep(11);
     Event_End();
 }
@@ -905,7 +957,7 @@ void SceneDialogue_RunActor11Line(void)
 void SceneDialogue_RunActor14Line(void)
 {
     Event_Begin();
-    Event_SetMessage(0x1368);
+    Event_SetMessage(MSG_HEARD_DEFEATED_THOSE_THIEVES);
     SceneDialogue_PromptAndCountSkip(14);
     Event_End();
 }
@@ -937,7 +989,7 @@ void FieldScene_RunScene383SequenceC(void)
         GameFlag_Set(0x857);
         Party_GiveItem(189, 0);
     }
-    Event_SetMessage(0x1364);
+    Event_SetMessage(MSG_HEADING_OUT_BEYOND_GOMA_RANGE);
     Event_OpenMessage(16, 0);
     Event_Wait(20);
     if (Event_ChooseYesNo(0, 0) != 0) {
@@ -956,10 +1008,10 @@ void FieldScene_RunScene383_0200091c(void)
     Event_Begin();
     SceneActor_SetPairZeroAndValue(18, 0, 2);
     if (GameFlag_IsSet(0x85b) == 0) {
-        Event_SetMessage(0x137c);
+        Event_SetMessage(MSG_HAVE_LOT_LEFTOVER_BONES_FROM);
         Event_OpenMessage(18, 0);
     } else {
-        Event_SetMessage(0x1385);
+        Event_SetMessage(MSG_WANT_MORE_BONES);
         Event_OpenMessage(18, 0);
     }
     if (Event_ChooseYesNo(0, 0) == 0) {
@@ -971,7 +1023,7 @@ void FieldScene_RunScene383_0200091c(void)
         if (Value0(Func_020056b8) == 0) {
             Actor_SetAnimationAndWait(18, 4);
             Event_Wait(20);
-            Event_SetMessage(0x1384);
+            Event_SetMessage(MSG_WOW_HAVE_MANY_THINGS_ARENT);
             Event_ShowMessage(18, 0);
             goto L_020009ec;
         }
@@ -994,9 +1046,9 @@ void SceneDialogue_RunActorNineFlaggedDialogue(void)
 {
     Event_Begin();
     if (GameFlag_IsSet(0x855) == 0) {
-        Event_SetMessage(0x1245);
+        Event_SetMessage(MSG_OK_MISTER_LET_ME_SEE);
     } else {
-        Event_SetMessage(0x1355);
+        Event_SetMessage(MSG_IF_ROCK_WORTHLESS_MAYBE_THATS);
     }
     SceneState_RunGuardedActorStep(9);
     Event_End();
@@ -1006,9 +1058,9 @@ void SceneDialogue_RunActorElevenFlaggedDialogue(void)
 {
     Event_Begin();
     if (GameFlag_IsSet(0x855) == 0) {
-        Event_SetMessage(0x124b);
+        Event_SetMessage(MSG_WONDER_OUTSIDE_WORLD_LIKE);
     } else {
-        Event_SetMessage(0x135b);
+        Event_SetMessage(MSG_FATHER_LOOKS_SAD_WORRYING_LIKE);
     }
     SceneState_RunGuardedActorStep(11);
     Event_End();
@@ -1018,9 +1070,9 @@ void SceneDialogue_ShowLine124EOr135E(void)
 {
     Event_Begin();
     if (GameFlag_IsSet(0x855) == 0) {
-        Event_SetMessage(0x124e);
+        Event_SetMessage(MSG_COULD_THEY_THIEVES_GOOD_DONT);
     } else {
-        Event_SetMessage(0x135e);
+        Event_SetMessage(MSG_GUESS_NOTHING_IN_OUR_HOUSE);
     }
     SceneState_RunGuardedActorStep(12);
     Event_End();
@@ -1030,9 +1082,9 @@ void SceneDialogue_RunActor16FlaggedLine(void)
 {
     Event_Begin();
     if (GameFlag_IsSet(0x855) == 0) {
-        Event_SetMessage(0x127c);
+        Event_SetMessage(MSG_TICKLES_BEING_TICKLED_BY_BOY);
     } else {
-        Event_SetMessage(0x136c);
+        Event_SetMessage(MSG_CAVE_IN_GOMA_RANGE_DANGEROUS);
     }
     SceneState_RunGuardedActorStep(16);
     Event_End();
@@ -1042,11 +1094,11 @@ void SceneDialogue_RunActorEighteenBranchedDialogue(void)
 {
     Event_Begin();
     if (GameFlag_IsSet(0x855) == 0) {
-        Event_SetMessage(0x1294);
+        Event_SetMessage(MSG_MASTER_HIS_WIFE_BLINDED_BY);
     } else if (GameFlag_IsSet(0x85b) == 0) {
-        Event_SetMessage(0x1382);
+        Event_SetMessage(MSG_GEE_ALWAYS_GET_HUNGRY_WHEN);
     } else {
-        Event_SetMessage(0x1cf4);
+        Event_SetMessage(MSG_HE_REALLY_LIKES_BONES_WONDER);
     }
     SceneState_RunGuardedActorStep(18);
     Event_End();
@@ -1080,7 +1132,7 @@ void FieldScene_RunSetupSequence(void)
         SceneEffect_ApplyPairWithValue141(2, 0);
         Event_Wait(40);
         SceneState_SetValue2ThenFinish();
-        Event_SetMessage(0x1256);
+        Event_SetMessage(MSG_DO_POSSESS_STRANGE_POWERS);
         Audio_PlayCue(60);
         Event_Wait(30);
         Func_02005232(2, 3, 30);
@@ -1124,7 +1176,7 @@ void FieldScene_RunSetupSequence(void)
         goto L_join_setup_paths;
     }
     Audio_PlayCue(60);
-    Event_SetMessage(0x125d);
+    Event_SetMessage(MSG_WOULD_REALLY_WOULD_HELP_ME);
     Event_OpenMessage(2, 0);
     L_join_setup_paths:;
     if (Event_ChooseYesNo(0, 0) == 0) {
@@ -1301,7 +1353,7 @@ void FieldScene_RunScene383SequenceB(void)
     Event_Wait(60);
     Func_020063b8(2, 3, 20);
     Func_02006378(2, 30);
-    Event_SetMessage(0x129f);
+    Event_SetMessage(MSG_ROBIN_TAKE_LEAD);
     Event_ShowMessage(1, 0);
     Actor_FaceDirection(0, 0x4000, 0);
     Event_Wait(40);
@@ -1446,7 +1498,7 @@ void FieldScene_RunLateSequence(void)
     SceneState_SetWord1c0To209AndRun();
     Event_Wait(60);
     SceneEffect_ApplyThreeValuesAndFinish(10, 3, 20);
-    Event_SetMessage(0x12dd);
+    Event_SetMessage(MSG_THESE_KIDS_NOTHING_WORRY_ABOUT);
     Func_0200731c(10, 30);
     Func_02007324(8, 30);
     Actor_WalkTo(11, 0x328, 0x1c8);
@@ -1535,7 +1587,7 @@ void RunEventScript01(void)
     Event_Wait(30);
     Actor_EnableActionCallback(12, base5_200d17c);
     Event_Wait(30);
-    Event_SetMessage(0x12e4);
+    Event_SetMessage(MSG_THEY_THEY_GOT_US);
     Func_0200770c(10, 20);
     Actor_ShowEmote(8, 0x102, 0);
     Event_Wait(60);
@@ -1628,7 +1680,7 @@ void RunEventScript01(void)
     Actor_ShowEmote(2, 0x102, 0);
     Event_Wait(60);
     SceneEffect_ApplyThreeValuesAndFinish(2, 4, 20);
-    Event_SetMessage(0x12f2);
+    Event_SetMessage(MSG_SEE_THATS_HAPPENED);
     Func_02007a56_a(2, 20);
     Actor_SetAnimation(0, 3);
     Func_02007ab0(1, 3, 40);
@@ -2121,7 +2173,7 @@ void RunDialoguePromptScene(void)
         s32 saved = *(s16 *)slot;
 
         if (Value0(OverlayObject_GetObjectTwoByte118)!= 0) {
-            Event_SetMessage(0x132a);
+            Event_SetMessage(MSG_WAIT_DONT_WANT_TAKE_YOUR);
             Event_ShowMessage(2, 0);
             OverlayObject_RunObjectTwoWhenFlagged();
         }

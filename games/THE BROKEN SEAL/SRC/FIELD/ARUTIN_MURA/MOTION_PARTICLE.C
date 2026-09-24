@@ -1,6 +1,30 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
+enum MotionParticleMessage {
+    MSG_YOUR_FIRST_TIME_VISIT_ALTIN = 0x18bd,
+    MSG_WE_CANT_DRINK_WATER_MONSTERS = 0x18c7,
+    MSG_TRYING_FIND_YOUR_WAY_WEST = 0x18d9,
+    MSG_DEFEATED_THOSE_MONSTERS_DIDNT = 0x18e1,
+    MSG_DO_WANT_WEAPONS = 0x18e7,
+    MSG_THANK_GOODNESS_WATER_HAS_RECEDED = 0x18ea,
+    MSG_MY_STORE_SUBMERGED_WANT_SELL = 0x18ed,
+    MSG_ITS_GREAT_CAN_SELL_ARMOR = 0x18ee,
+    MSG_WILL_DO_IF_MY_MERCHANDISE = 0x18f1,
+    MSG_NONE_MY_GOODS_WERE_DAMAGED = 0x18f2,
+    MSG_WE_GOT_LITTLE_DAMP_BUT = 0x18f5,
+    MSG_DID_SEE_WATER_GUSHING_OUT = 0x1918,
+    MSG_ONES_WHO_DEFEATED_WATER_BEASTS = 0x191f,
+    MSG_TRUE_FOUND_ANCIENT_RUINS_IN = 0x1924,
+    MSG_GIRL_FROM_XIAN_WAS_ASKING = 0x1932,
+    MSG_YOULL_HAVE_FIND_PASSAGE_IN = 0x1941,
+    MSG_HOW_ABOUT_ARENT_IMPRESSED_BY = 0x1943,
+    MSG_GIRL_FROM_XIAN_BOUGHT_LOT = 0x1945,
+    MSG_THERE_SMALL_TEMPLE_WEST_ALTIN = 0x1947,
+    MSG_THERE_FEW_BEASTS_IN_MINE = 0x194a
+};
+
+
 #define Scene_GetRecord_1(args...) Func_020010e0(args)
 #define RuntimeBlock_GetOffset1e0Pointer_1(args...) Func_020011a6(args)
 #define Scene_GetRecord_2(args...) Func_0200112a(args)
@@ -227,7 +251,7 @@ void FieldScene_RunActorEightPromptDialogue(void)
     u8 *work;
 
     Event_Begin();
-    Event_SetMessage(0x18bd);
+    Event_SetMessage(MSG_YOUR_FIRST_TIME_VISIT_ALTIN);
     /* r1 is set before r0; the argument order is unchanged. */
     Event_OpenMessage(8, 0);
 
@@ -245,7 +269,7 @@ void FieldScene_RunActorEightPromptDialogue(void)
 void SceneDialogue_ShowLine1918(void)
 {
     Event_Begin();
-    Event_SetMessage(0x1918);
+    Event_SetMessage(MSG_DID_SEE_WATER_GUSHING_OUT);
     Event_AskYesNo(9, 0);
     Event_End();
 }
@@ -265,11 +289,11 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
 
     Event_Begin();
     if (GameFlag_IsSet(0x909) != 0) {
-        Event_SetMessage(0x191f);
+        Event_SetMessage(MSG_ONES_WHO_DEFEATED_WATER_BEASTS);
         Event_AskYesNo(14, 0); /* object 14, action 0 */
     } else {
         Actor_SetAnimation(14, 4); /* object 14, action 4 */
-        Event_SetMessage(0x18c7);
+        Event_SetMessage(MSG_WE_CANT_DRINK_WATER_MONSTERS);
         Event_ShowMessageAndWait(14, 0, 10);
         ready_flag = GameFlag_IsSet(0x8ff);
         if (ready_flag == 0) {
@@ -296,7 +320,7 @@ void SceneDialogue_RunActor17Message1924(void)
     void Event_End(void);
 
     Event_Begin();
-    Event_SetMessage(0x1924);
+    Event_SetMessage(MSG_TRUE_FOUND_ANCIENT_RUINS_IN);
     Event_AskYesNo(17, 0);
     Event_End();
 }
@@ -305,7 +329,7 @@ void SceneDialogue_RunActor9Message1932(void)
 {
 
     Event_Begin();
-    Event_SetMessage(0x1932);
+    Event_SetMessage(MSG_GIRL_FROM_XIAN_WAS_ASKING);
     Event_AskYesNo(9, 0);
     Event_End();
 }
@@ -316,7 +340,7 @@ void SceneDialogue_RunActor10Message18d9(void)
     void Event_End(void);
 
     Event_Begin();
-    Event_SetMessage(0x18D9);
+    Event_SetMessage(MSG_TRYING_FIND_YOUR_WAY_WEST);
     Event_AskYesNo(10, 0);
     Event_End();
 }
@@ -325,7 +349,7 @@ void SceneDialogue_RunActor14Message18e1(void)
 {
 
     Event_Begin();
-    Event_SetMessage(0x18E1);
+    Event_SetMessage(MSG_DEFEATED_THOSE_MONSTERS_DIDNT);
     Event_AskYesNo(14, 0);
     Event_End();
 }
@@ -334,7 +358,7 @@ void SceneDialogue_RunActor21Message194a(void)
 {
 
     Event_Begin();
-    Event_SetMessage(0x194A);
+    Event_SetMessage(MSG_THERE_FEW_BEASTS_IN_MINE);
     Event_AskYesNo(21, 0);
     Event_End();
 }
@@ -356,7 +380,7 @@ void FieldScene_RunActorFifteenFlagBranch(void)
 
     if (GameFlag_IsSet(0x242) == 0) {
         Event_Begin();
-        Event_SetMessage(0x18e7);
+        Event_SetMessage(MSG_DO_WANT_WEAPONS);
         /* r1 is set before r0 here; the argument order is unchanged. */
         Event_AskYesNo(15, 0);
         Event_End();
@@ -369,9 +393,9 @@ void FieldScene_RunActorFifteenFlagBranch(void)
     }
 
     Event_Begin();
-    Event_SetMessage(0x18ea);
+    Event_SetMessage(MSG_THANK_GOODNESS_WATER_HAS_RECEDED);
     if (GameFlag_IsSet(0x909) != 0) {
-        Event_SetMessage(0x1941);
+        Event_SetMessage(MSG_YOULL_HAVE_FIND_PASSAGE_IN);
     }
     Event_ShowMessage(15, 0);
     Event_End();
@@ -385,7 +409,7 @@ void FieldScene_RunActorTwentyFlagBranch(void)
 
     if (GameFlag_IsSet(0x241) == 0) {
         Event_Begin();
-        Event_SetMessage(0x18ED);
+        Event_SetMessage(MSG_MY_STORE_SUBMERGED_WANT_SELL);
         Event_ShowMessage(20, 0);
         Event_End();
         return;
@@ -397,9 +421,9 @@ void FieldScene_RunActorTwentyFlagBranch(void)
     }
 
     Event_Begin();
-    Event_SetMessage(0x18EE);
+    Event_SetMessage(MSG_ITS_GREAT_CAN_SELL_ARMOR);
     if (GameFlag_IsSet(0x909) != 0) {
-        Event_SetMessage(0x1943);
+        Event_SetMessage(MSG_HOW_ABOUT_ARENT_IMPRESSED_BY);
     }
     Event_ShowMessage(17, 0);
     Event_End();
@@ -409,7 +433,7 @@ void FieldScene_RunActorTwentyOneFlagBranch(void)
 {
     if (GameFlag_IsSet(0x240) == 0) {
         Event_Begin();
-        Event_SetMessage(0x18f1);
+        Event_SetMessage(MSG_WILL_DO_IF_MY_MERCHANDISE);
         Event_ShowMessage(21, 0);
         Event_End();
         return;
@@ -421,9 +445,9 @@ void FieldScene_RunActorTwentyOneFlagBranch(void)
     }
 
     Event_Begin();
-    Event_SetMessage(0x18f2);
+    Event_SetMessage(MSG_NONE_MY_GOODS_WERE_DAMAGED);
     if (GameFlag_IsSet(0x909) != 0) {
-        Event_SetMessage(0x1945);
+        Event_SetMessage(MSG_GIRL_FROM_XIAN_BOUGHT_LOT);
     }
     Event_ShowMessage(16, 0);
     Event_End();
@@ -443,10 +467,10 @@ void FieldScene_RunFacingGatedDialogue18(void)
     Event_Begin();
 
     if (GameFlag_IsSet(0x909) != 0) {
-        Event_SetMessage(0x1947);
+        Event_SetMessage(MSG_THERE_SMALL_TEMPLE_WEST_ALTIN);
         Event_ShowMessage(18, 0);
     } else {
-        Event_SetMessage(0x18f5);
+        Event_SetMessage(MSG_WE_GOT_LITTLE_DAMP_BUT);
         Event_AskYesNo(18, 0);
     }
 

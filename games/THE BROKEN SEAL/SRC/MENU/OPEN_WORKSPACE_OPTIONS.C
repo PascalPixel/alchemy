@@ -1,27 +1,8 @@
 #include "TYPES.H"
 #include "DMA.H"
 #include "RENDER_INPUT.H"
+#include "WORKSPACE_OPTIONS.H"
 
-/* A menu cursor record (object pointer and cursor state).
-   FAKEMATCH: declared as a union so the stores of its object pointer stay
-   ordered against the window reads that follow them. */
-union MenuCursor {
-    struct RenderOutput *output;
-    u8 data[0x10];
-};
-
-struct WorkspaceWork {
-    u8 unknown_000[0x594];
-    s8 value[5];
-    s8 step[5];
-    u8 unknown_59e[6];
-    union MenuCursor cursor;
-    union MenuCursor marker[2];
-    u8 unknown_5d4[0x18];
-    void *frame[3][3];
-};
-
-extern struct WorkspaceWork *Data_03001ea0;
 extern u8 Value_00000c07;
 extern u8 Value_00000c0d;
 extern s8 Data_080367c9[];
@@ -103,7 +84,7 @@ struct RenderInput *Menu_OpenWorkspaceOptions(void)
         ((u8 *)&out->packed)[1] |= 32;
         work->marker[0].output = out;
         x = win->x * 8 + 140;
-        x += Math_Div(work->value[0] * 60, work->step[0]);
+        x += Math_Div(work->option[0] * 60, work->option_count[0]);
         y = win->y * 8 + 4;
         Func_080b0038(&work->marker[0], x, y);
     }
@@ -115,7 +96,7 @@ struct RenderInput *Menu_OpenWorkspaceOptions(void)
         ((u8 *)&out->packed)[1] |= 32;
         work->marker[1].output = out;
         x = win->x * 8 + 140;
-        x += Math_Div(work->value[1] * 60, work->step[1]);
+        x += Math_Div(work->option[1] * 60, work->option_count[1]);
         y = win->y * 8 + 20;
         Func_080b0038(&work->marker[1], x, y);
     }

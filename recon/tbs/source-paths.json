@@ -6423,6 +6423,10 @@
     "main:080dd2b8": {
       "name": "BattleFx_RunDualTableMode1"
     },
+    "main:080dd2c4": {
+      "name": "BattleFx_RunDualTable",
+      "source": "BATTLE/EFFECT/RUN_DUAL_TABLE.C"
+    },
     "main:080e3a14": {
       "name": "ObjectGroup_ProbeKeysWhenField24High",
       "source": "FIELD/COMMON/OBJECT/GROUP_PROBE_KEYS_WHEN_FIELD24_HIGH.C"
@@ -20796,7 +20800,6 @@
     "main:0808a530": "BattleFx_ClearOwnedSlotFar",
     "main:0808a510": "EffectSlot_SetPositionFar",
     "main:0809b8f4": "EffectSlot_UpdateMotion",
-    "main:080dd2c4": "BattleFx_RunDualTable",
     "main:08009270": "ResourceSlot_LoadFar",
     "main:0800b6b8": "ResourceSlot_Load",
     "main:08077198": "Owner_GetRecordFar",

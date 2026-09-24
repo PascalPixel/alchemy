@@ -47,10 +47,10 @@
 	.set sub_080c1798, 0x080c1798
 	.set sub_080c23e8, 0x080c23e8
 	.set sub_080f9010, 0x080f9010
-	.global FunctionHead_080be378
+	.global BattleCommand_BuildPlan
 	.global Func_080be378
 	.thumb_func
-FunctionHead_080be378:
+BattleCommand_BuildPlan:
 Func_080be378:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

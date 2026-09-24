@@ -72938,6 +72938,54 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "torebi-izumi-walk-to-spring",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/TOREBI_IZUMI/WALK_TO_SPRING.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3b7",
+      "absolute_symbols": {
+        "Engine_GameFlagIsSet": {
+          "address": "0x020098e4",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagSet": {
+          "address": "0x020098ec",
+          "kind": "thumb"
+        },
+        "Local_02000880": {
+          "address": "0x02008880",
+          "kind": "thumb"
+        },
+        "Engine_EventBegin": {
+          "address": "0x0200991c",
+          "kind": "thumb"
+        },
+        "Engine_ActorWalkToAndWait": {
+          "address": "0x02009944",
+          "kind": "thumb"
+        },
+        "Engine_ActorFaceDirection": {
+          "address": "0x0200997c",
+          "kind": "thumb"
+        },
+        "Local_02000ac8": {
+          "address": "0x02008ac8",
+          "kind": "thumb"
+        },
+        "Engine_EventEnd": {
+          "address": "0x02009924",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02000104",
+          "extent": 80,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

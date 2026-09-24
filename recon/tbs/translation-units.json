@@ -71599,6 +71599,18 @@
         "Korosseo_CompetitorStartAngle": {
           "address": "0x0200dbc8",
           "kind": "data"
+        },
+        "Korosseo_LinkedZero": {
+          "address": "0x00000000",
+          "kind": "data"
+        },
+        "gGameStateBytes": {
+          "address": "0x02000240",
+          "kind": "data"
+        },
+        "gGameStateRows": {
+          "address": "0x02000240",
+          "kind": "data"
         }
       },
       "owners": [
@@ -71656,6 +71668,18 @@
             "Korosseo_CompetitorStartAngle": {
               "address": "0x0200c788",
               "kind": "data"
+            },
+            "Korosseo_LinkedZero": {
+              "address": "0x00000000",
+              "kind": "data"
+            },
+            "gGameStateBytes": {
+              "address": "0x02000240",
+              "kind": "data"
+            },
+            "gGameStateRows": {
+              "address": "0x02000240",
+              "kind": "data"
             }
           }
         },
@@ -71705,6 +71729,18 @@
             },
             "Korosseo_CompetitorStartAngle": {
               "address": "0x0200cc28",
+              "kind": "data"
+            },
+            "Korosseo_LinkedZero": {
+              "address": "0x00000000",
+              "kind": "data"
+            },
+            "gGameStateBytes": {
+              "address": "0x02000240",
+              "kind": "data"
+            },
+            "gGameStateRows": {
+              "address": "0x02000240",
               "kind": "data"
             }
           }

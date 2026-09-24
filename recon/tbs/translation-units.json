@@ -128185,44 +128185,36 @@
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_37f",
       "absolute_symbols": {
-        "Func_020026c0_a": {
+        "Engine_ActorSetPosition": {
+          "address": "0x02009bfc",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpriteFlags": {
+          "address": "0x02009b74",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagIsSet": {
           "address": "0x02009b8c",
           "kind": "thumb"
         },
-        "Func_020026c0_b": {
-          "address": "0x02009b74",
+        "Engine_MapCopyCellsTo": {
+          "address": "0x02009b5c",
+          "kind": "thumb"
+        },
+        "Engine_MapRedraw": {
+          "address": "0x02009b44",
           "kind": "thumb"
         },
         "Func_0200277e": {
           "address": "0x02009bcc",
           "kind": "thumb"
         },
-        "Func_0200277e_a": {
-          "address": "0x02009b8c",
-          "kind": "thumb"
-        },
         "Func_02002800": {
           "address": "0x02009bcc",
           "kind": "thumb"
         },
-        "Func_02002800_a": {
-          "address": "0x02009bfc",
-          "kind": "thumb"
-        },
-        "Func_0200281c": {
-          "address": "0x02009b5c",
-          "kind": "thumb"
-        },
-        "Func_0200281c_a": {
-          "address": "0x02009b44",
-          "kind": "thumb"
-        },
         "Func_02002824": {
           "address": "0x02009bcc",
-          "kind": "thumb"
-        },
-        "Func_02002824_a": {
-          "address": "0x02009b8c",
           "kind": "thumb"
         }
       },

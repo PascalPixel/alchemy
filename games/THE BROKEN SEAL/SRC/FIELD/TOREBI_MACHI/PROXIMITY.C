@@ -375,7 +375,6 @@ void Func_02001a3a(s32);
  */
 static __inline__ void Call1(void (*f)(), s32 a0)
 {
-    extern u8 Data_03001ebc[];
     void Func_020013d2();
     void Func_0200141a();
 
@@ -384,7 +383,6 @@ static __inline__ void Call1(void (*f)(), s32 a0)
 
 static __inline__ s32 Value1(s32 (*f)(), s32 a0)
 {
-    extern u8 Data_03001ebc[];
     void Func_020013d2();
     void Func_0200141a();
 
@@ -393,7 +391,6 @@ static __inline__ s32 Value1(s32 (*f)(), s32 a0)
 
 static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 {
-    extern u8 Data_03001ebc[];
     void Func_020013d2();
     void Func_0200141a();
 
@@ -414,7 +411,6 @@ static __inline__ void bump_step(s32 amount)
 
 static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
 {
-    extern u8 Data_03001ebc[];
     void Func_020013d2();
     void Func_0200141a();
 
@@ -423,7 +419,6 @@ static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
 
 static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
 {
-    extern u8 Data_03001ebc[];
     void Func_020013d2();
     void Func_0200141a();
 
@@ -442,25 +437,16 @@ static __inline__ void PlaceActor_02001104(s32 actor, s32 x, s32 y)
 
 static __inline__ void bump_step_02000528(s32 amount)
 {
-    extern u8 Data_03001ebc[];
-
-    u8 *work = *(u8 **)Data_03001ebc;
-
-    *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
+    gEventWork->message += amount;
 }
 
 static __inline__ void bump_step_02000568(s32 amount)
 {
-    extern u8 Data_03001ebc[];
-
-    u8 *work = *(u8 **)Data_03001ebc;
-
-    *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
+    gEventWork->message += amount;
 }
 
 static __inline__ void Call1_02000644(void (*f)(), s32 a)
 {
-    extern u8 *Data_03001ebc;
     u8 *Func_020013d2(s32);
     u8 *Func_0200141a(s32);
 
@@ -469,7 +455,6 @@ static __inline__ void Call1_02000644(void (*f)(), s32 a)
 
 static __inline__ void Call3_02000644(void (*f)(), s32 a, s32 b, s32 c)
 {
-    extern u8 *Data_03001ebc;
     u8 *Func_020013d2(s32);
     u8 *Func_0200141a(s32);
 
@@ -478,31 +463,21 @@ static __inline__ void Call3_02000644(void (*f)(), s32 a, s32 b, s32 c)
 
 static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
 {
-    extern u8 Data_03001ebc[];
-
     f(a0, a1);
 }
 
 static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
 {
-    extern u8 Data_03001ebc[];
-
     return f(a0, a1, a2);
 }
 
 static __inline__ void bump_step_02000728(s32 amount)
 {
-    extern u8 Data_03001ebc[];
-
-    u8 *work = *(u8 **)Data_03001ebc;
-
-    *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
+    gEventWork->message += amount;
 }
 
 static __inline__ s32 Value4(s32 (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 {
-    extern u8 Data_03001ebc[];
-
     return f(a0, a1, a2, a3);
 }
 
@@ -669,7 +644,6 @@ u8 *SceneData_GetTable9238(void)
 
 void FieldScene_RunScene3b5_02000224(void)
 {
-    extern u8 Data_03001ebc[];
     void Func_020013d2();
     void Func_0200141a();
 
@@ -823,8 +797,6 @@ void SceneDialogue_RunActor24Message1f9d(void)
 
 void FieldScene_RunScene3b5_02000528(void)
 {
-    extern u8 Data_03001ebc[];
-
     u32 i;
     s32 record;
 
@@ -839,8 +811,6 @@ void FieldScene_RunScene3b5_02000528(void)
 
 void FieldScene_RunScene3b5_02000568(void)
 {
-    extern u8 Data_03001ebc[];
-
     u32 i;
     s32 record;
 
@@ -870,7 +840,6 @@ void SceneDialogue_RunActor24Message235f(void)
 
 void FieldScene_RunScene3b5_020005dc(void)
 {
-    extern u8 Data_03001ebc[];
     void Func_020013d2();
     void Func_0200141a();
 
@@ -944,14 +913,12 @@ void SceneActor_CopyPlayerModeToActor(union FieldObject *object)
 
 s32 Func_02000728(s32 a0)
 {
-    extern struct EventWork *Data_03001ebc;
-
     u32 i;
     s32 record;
     s32 handler;
     s32 hidden;
 
-    Data_03001ebc->start_transition = 0x100;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Call3(Func_020014f8, 16, 0x1600000, 0x1600000);
     Actor_EnableActionCallback(16, 0x2008ec0);
     record = Value1(Func_020014ce, 16);
@@ -996,7 +963,6 @@ s32 Func_02000728(s32 a0)
 
 void FieldScene_RunScene3b5SequenceA(void)
 {
-    extern u8 Data_03001ebc[];
     void Func_020013d2();
     void Func_0200141a();
 

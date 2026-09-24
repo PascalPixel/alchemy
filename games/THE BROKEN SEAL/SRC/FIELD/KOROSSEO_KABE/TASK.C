@@ -797,7 +797,7 @@ void SceneActor_MovePairByTileOffset(s32 a0, s32 a1, s32 a2)
     s32 x;
     s32 y;
 
-    p = Func_02004282(Data_02000240[125]);
+    p = Func_02004282(gGameState.selected_actor);
     q = Func_0200428a(a0);
     Event_Begin();
     {
@@ -906,7 +906,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
     s32 yd;
     s32 record;
 
-    rec8 = Func_02004674(Data_02000240[125]);
+    rec8 = Func_02004674(gGameState.selected_actor);
     for (i = 22; i <= 25; i++) {
         rec7 = Value1(Func_0200467e, i);
         *(u8 *)(rec7 + 91) = 0;
@@ -1232,7 +1232,7 @@ void Func_02001c78(void)
     extern u8 *Data_03001ebc;
 
     u8 *state = Data_03001ebc;
-    s32 v = Data_02000240[125];
+    s32 v = gGameState.selected_actor;
 
     if (v != 0 && ((s32)(s16)*(u16 *)(state + 382) >> 10) == v
         && GameFlag_IsSet(321) != 0) {
@@ -1250,7 +1250,7 @@ void Func_02001cc0(void)
     u8 *state = Data_03001ebc;
     s32 best = 8;
     s32 bestd = 0x100000;
-    s32 n = Data_02000240[125];
+    s32 n = gGameState.selected_actor;
     Obj *p = Func_02005c38(n);
     s32 i;
     s32 *q;

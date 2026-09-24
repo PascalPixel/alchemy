@@ -486,7 +486,7 @@ s32 FieldScene_DispatchByScenarioId(void)
 
     void Func_02000976_a(void);
 
-    s16 variant = Data_02000240[224];
+    s16 variant = gGameState.scene;
 
     if (variant == (s32)&Value_00000031) {
         Func_02000936();
@@ -515,14 +515,13 @@ void RunGuardedSceneSetup(void)
 
 void SceneState_SetRuntimeWord448To516(void)
 {
-    extern u8 *Data_03001ebc;
     s32 Func_02000c7c(s32, s32);
     s32 Func_02000d6a(s32, s32, s32, s32, s32, s32);
     s32 *Func_0200101a();
 
     /* 448 is built as 224 << 1 and the stored 516 as that same register plus
      * 68; the two are not one running offset. */
-    *(s32 *)(Data_03001ebc + 448) = 516;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
 
     Actor_SetAnimation(8, 1);
     Actor_SetAnimation(10, 2);
@@ -536,14 +535,13 @@ void SceneState_SetRuntimeWord448To516(void)
 
 void FieldScene_RunScene398SequenceC(void)
 {
-    extern struct EventWork *Data_03001ebc;
     void Func_0200101a();
 
     u32 i;
     u8 *record;
     s32 v5;
 
-    Data_03001ebc->start_transition = 0x204;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
     record = Func_02000ec6(18);
     Actor_SetSpriteFlags((s32)record, 0);
     record = Func_02000ed2(19);

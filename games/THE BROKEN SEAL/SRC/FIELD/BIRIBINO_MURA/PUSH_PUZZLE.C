@@ -116,14 +116,10 @@ static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
     return f(a0, a1, a2);
 }
 
-/* The scene step counter at 0x1d8 of the shared scene work record. */
+/* Moves the next dialogue line on by amount messages. */
 static __inline__ void bump_step(s32 amount)
 {
-    extern u8 Data_03001ebc[];
-
-    u8 *work = *(u8 **)Data_03001ebc;
-
-    *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
+    gEventWork->message += amount;
 }
 
 static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
@@ -206,11 +202,7 @@ static __inline__ void Call1_020001ec(void (*f)(), s32 a0)
 
 static __inline__ void bump_step_020001ec(s32 amount)
 {
-    extern u8 Data_03001ebc[];
-
-    u8 *work = *(u8 **)Data_03001ebc;
-
-    *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
+    gEventWork->message += amount;
 }
 
 /* Call sites spelled through these wrappers pass their constants straight
@@ -276,7 +268,7 @@ s32 SceneData_SelectOverlayDataByRuntimeSelector(void)
 
 s32 SceneData_GetTable93FCWhenState20(void)
 {
-    if (Data_02000240[224] == (s32)&Value_00000020) {
+    if (gGameState.scene == (s32)&Value_00000020) {
         return (s32)Data_020093fc;
     }
     return 0;
@@ -627,17 +619,15 @@ void FieldScene_RunScene38b_02000584(void)
 
 s32 Scene_DispatchPuzzleEvent(void)
 {
-    extern u8 Data_03001ebc[];
-
-    *(s32 *)(*(u8 **)Data_03001ebc + 0x1c0) = 0x100;
-    if (Data_02000240[224] == (s32)&Value_0000001e) {
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+    if (gGameState.scene == (s32)&Value_0000001e) {
         Func_0200119c();
     } else {
-        if (Data_02000240[224] == (s32)&Value_00000023) {
+        if (gGameState.scene == (s32)&Value_00000023) {
             Func_02001398();
             Call2_02000890(Func_020018e2, 0x2008ed9, 0xc80);
         } else {
-            if (Data_02000240[224] == (s32)&Value_00000020) {
+            if (gGameState.scene == (s32)&Value_00000020) {
                 Func_020015de();
             }
         }
@@ -861,13 +851,11 @@ void ActorPresentation_RepaintTenCellsAndActorEightCell(void)
 
 void FieldScene_RunScene38b_02000d10(void)
 {
-    extern u8 Data_03001ebc[];
-
     s32 arg0;
     s32 rec7;
     s32 record;
 
-    *(s32 *)((*(u8 **)Data_03001ebc + 0x1c0)) = 0x204;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
     Func_02001cc2_a();
     record = ReadU16Elem((u16 *)Data_02000240, 225);
     if ((u32)((record - 3) << 16) <= 0x10000) {

@@ -21,7 +21,6 @@
 
 /* Robin's mother, as in the repair-morning scene of this overlay. */
 enum {
-    ACTOR_JASMINE = 5,
     ACTOR_DORA = 21
 };
 

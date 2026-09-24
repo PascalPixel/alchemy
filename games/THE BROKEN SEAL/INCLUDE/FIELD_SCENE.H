@@ -131,6 +131,7 @@ enum {
     ACTOR_GERALD = 1,
     ACTOR_IVAN = 2,
     ACTOR_MIA = 3,
+    ACTOR_JASMINE = 5,
     ACTOR_FIRST_PLACED = 8
 };
 

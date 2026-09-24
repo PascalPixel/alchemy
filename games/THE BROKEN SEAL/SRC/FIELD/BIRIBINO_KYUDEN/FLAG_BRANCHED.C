@@ -704,7 +704,7 @@ s32 SceneData_SelectRecordByScene21(void)
     u8 *p;
 
     /* A signed halfword read. */
-    if (Data_02000240[224] == (s32)&Value_00000021) {
+    if (gGameState.scene == (s32)&Value_00000021) {
         p = Data_0200a9b4;
         Func_02002536(p);
 
@@ -724,7 +724,7 @@ s32 SceneData_SelectRecordByScene21(void)
 
 s32 SceneData_SelectTableac9cByState(void)
 {
-    if (Data_02000240[224] == (s32)&Value_00000021) {
+    if (gGameState.scene == (s32)&Value_00000021) {
         return (s32)Data_0200aca8;
     }
     return (s32)Data_0200ac9c;
@@ -961,7 +961,7 @@ void FieldScene_RunScene38d_020005f4(void)
         Actor_SetSpeed(19, 0xcccc, 0x6666);
         Actor_WalkToAndWait(19, 0x23a, 0x2f6);
         Actor_SetPosition(19, 0, 0);
-        *(s32 *)(*(u8 **)Data_03001ebc + 0x1c0) = 0x209;
+        gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
         GameFlag_Set(0x85e);
         GameFlag_Set(0x333);
         Event_End();
@@ -987,8 +987,8 @@ void FieldScene_RunLongBranchingChoreography(void)
     }
     Func_02002d62();
     Func_02002d50(1);
-    *(s32 *)(*(u8 **)Data_03001ebc + 0x1c0) = 0x100;
-    *(s32 *)(*(u8 **)Data_03001ebc + 0x1c8) = 40;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+    gEventWork->transition_frames = 40;
     Func_02002efa();
     Func_02002f0e();
     if (Value1(Func_02002dbc, 0x85f) == 0) {
@@ -1121,7 +1121,7 @@ void FieldScene_RunLongBranchingChoreography(void)
         Call1(Func_0200323c, 0x85f);
         Call3(Func_02003292, 0, 0x10000, 0x8000);
         Actor_WalkToAndWait(0, 0x37e, 0x2f0);
-        *(s32 *)(*(u8 **)Data_03001ebc + 0x1c8) = 16;
+        gEventWork->transition_frames = 16;
         Func_020033b0();
         Func_020033bc();
         goto L_0200177e;
@@ -1384,7 +1384,7 @@ L_02000f86:
     Func_02003c3e(3, 0, 0);
     Call3(Func_02003bf4, 0, 0x10000, 0x8000);
     Call3(Func_02003c38, 0, 0x37e, 0x2f0);
-    *(s32 *)(*(u8 **)Data_03001ebc + 0x1c8) = 16;
+    gEventWork->transition_frames = 16;
     Event_CloseScreen();
     Func_02003d1e();
     Call1(Func_02003bd4, 0x321);

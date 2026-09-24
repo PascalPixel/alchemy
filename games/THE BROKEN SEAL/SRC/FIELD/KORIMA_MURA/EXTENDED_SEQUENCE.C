@@ -62,7 +62,6 @@ struct Obj_02002608 {
     u8 f55;
 };
 
-extern s16 Data_02000240[];
 extern u8 Value_00000027;
 extern u8 Value_00000026;
 extern u8 Data_0200af80[];
@@ -75,7 +74,6 @@ extern u8 Data_0200b368[];
 extern u8 Data_0200b080[];
 extern u8 Data_0200b590[];
 extern u8 Data_0200b3b0[];
-extern u8 Data_03001ebc[];
 extern u8 Data_0200add8[];
 extern u8 Data_0200b2d8[];
 extern s32 Data_03001e40;
@@ -215,7 +213,7 @@ s32 SceneActor_TurnTowardTarget(struct Ent *p)
 
 s32 SceneData_SelectTableAe60BySelector(void)
 {
-    s16 v = Data_02000240[224];
+    s16 v = gGameState.scene;
 
     if (v == (s32)&Value_00000027) {
         return (s32)Data_0200af80;
@@ -228,7 +226,7 @@ s32 SceneData_SelectTableAe60BySelector(void)
 
 s32 SceneData_GetTableB010ForSelector26(void)
 {
-    if (Data_02000240[224] == (s32)&Value_00000026) {
+    if (gGameState.scene == (s32)&Value_00000026) {
         return (s32)Data_0200b010;
     }
     return 0;
@@ -248,7 +246,7 @@ u8 *SceneData_GetTableB040(void)
 
 s32 SceneData_SelectTableB080BySelector(void)
 {
-    s32 v = Data_02000240[224];
+    s32 v = gGameState.scene;
     if (v == (s32)&Value_00000024) {
         if (GameFlag_IsSet(0x845) == 0) {
             Func_0200029e((s32)Data_0200b098);
@@ -282,7 +280,7 @@ void FieldScene_RunActor27Step(void)
 
 s32 SceneData_SelectTableB3b0BySelector(void)
 {
-    if (Data_02000240[224] == (s32)&Value_00000027) {
+    if (gGameState.scene == (s32)&Value_00000027) {
         return (s32)Data_0200b590;
     }
     return (s32)Data_0200b3b0;
@@ -297,7 +295,7 @@ void FieldScene_ConfigureActor0ThenRun(s32 a0)
     Actor_SetSpeed(0, 0x8000, 0x4000);
     Actor_SetAnimation(0, 2);
     Actor_SetDestinationOffset(0, 0, -8);
-    *(s32 *)((*(u8 **)Data_03001ebc + 0x1c8)) = 16;
+    gEventWork->transition_frames = 16;
     Event_RequestExit(a0);
 }
 
@@ -309,7 +307,7 @@ s32 FieldScene_SetupEntryBySelector(void)
     s32 x;
     s32 y;
 
-    step = Data_02000240[224];
+    step = gGameState.scene;
 
     if (step == (s32)&Value_00000027) {
         Func_02002fbc();
@@ -344,7 +342,7 @@ s32 FieldScene_SetupEntryBySelector(void)
     }
 
     if (GameFlag_IsSet(0x843) == 0) {
-        if (Data_02000240[225] == 1) {
+        if (gGameState.entrance == 1) {
             Func_02001078();
         }
     }
@@ -430,7 +428,6 @@ void FieldScene_RunSequenceA(void)
 }
 
 #include "OBJECT_RUNTIME.H"
-
 
 struct ObjectRuntime *Func_02002a54();
 void Func_02002a74();

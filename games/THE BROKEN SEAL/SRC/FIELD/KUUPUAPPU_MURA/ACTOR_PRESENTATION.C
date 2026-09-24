@@ -180,14 +180,10 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
     f(a0, a1, a2);
 }
 
-/* Advance the scene step counter at 0x1d8 of the shared scene work record. */
+/* Moves the next dialogue line on by amount messages. */
 static __inline__ void bump_step(s32 amount)
 {
-    extern u8 Data_03001ebc[];
-
-    u8 *work = *(u8 **)Data_03001ebc;
-
-    *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
+    gEventWork->message += amount;
 }
 
 static __inline__ void SetScale(s32 actor, s32 horizontal, s32 vertical)
@@ -637,7 +633,6 @@ void SceneDialogue_RunActor13Line(void) { Engine_EventBegin(); Engine_EventSetMe
 
 void ActorPresentation_RunActorFourteenDialogueAndAdvanceStory(void)
 {
-    extern u8 *Data_03001ebc;
     void Task_Wait(s32);
 
     struct SceneActor *actor = Func_02002432(14);
@@ -650,7 +645,7 @@ void ActorPresentation_RunActorFourteenDialogueAndAdvanceStory(void)
     Event_Begin();
     Engine_EventSetMessage(0x1339);
     if (GameFlag_IsSet(2) != 0)
-        ++*(u16 *)(Data_03001ebc + 472);
+        ++gEventWork->message;
     Actor_SetAnimation(14, 0);
     Func_020021e4(14, 0, 2);
     Func_020021d4(14, 10);
@@ -747,8 +742,6 @@ void SceneDialogue_RunActor13FlaggedLine(void)
 
 void ActorPresentation_RunActorFourteenFlaggedDialogue(void)
 {
-    extern u8 *Data_03001ebc;
-
     Func_020026e2(14)->presentation_flags |= 2;
     Event_Begin();
     if (GameFlag_IsSet(0x855) == 0) {
@@ -756,7 +749,7 @@ void ActorPresentation_RunActorFourteenFlaggedDialogue(void)
     } else {
         Event_SetMessage(0x1349);
         if (GameFlag_IsSet(2) != 0)
-            ++*(u16 *)(Data_03001ebc + 472);
+            ++gEventWork->message;
     }
     Func_0200168c(14);
     Event_End();
@@ -826,11 +819,9 @@ void SceneState_Apply200ThenPlace23_23(void)
 
 void SceneActor_PlaceActor0AndSetSceneDelay(s32 x, s32 y, s32 continuation)
 {
-    extern u8 *Data_03001ebc;
-
     SetScale(0, 0x8000, 0x4000);
     Actor_WalkTo(0, x, y);
-    *(s32 *)(Data_03001ebc + 456) = 16;
+    gEventWork->transition_frames = 16;
     Event_RequestExit(continuation);
 }
 

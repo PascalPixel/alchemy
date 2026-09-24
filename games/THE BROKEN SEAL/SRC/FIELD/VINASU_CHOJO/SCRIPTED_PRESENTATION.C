@@ -147,7 +147,6 @@ extern unsigned char Data_0200e464[];
 extern unsigned char Data_0200e478[];
 extern unsigned char Data_0200e6ec[];
 extern Spr *Data_0200e6e8;
-extern s16 Data_02000240[];
 
 s32 Func_02005f8e(Spr *);
 s32 Func_02005f74(s32, s32);
@@ -670,7 +669,7 @@ s32 FieldScene_InitActorsAndDispatchBySubstate(void)
         i++;
     } while (i <= 17);
 
-    mode = Data_02000240[225];
+    mode = gGameState.entrance;
 
     switch (mode) {
     case 1:

@@ -63,7 +63,6 @@ typedef struct OrbitingSceneObject {
     u32 callback;
 } OrbitingSceneObject;
 
-extern u8 *Data_03001ebc;
 extern u8 Value_02008c4d;
 
 s32 Func_02000e7a(Query *result);
@@ -138,7 +137,7 @@ s32 FieldScene_SetupEntryActors8To11(void)
     void SceneEffect_AdjustPaletteWindow(s32 id);
     void Func_02000cb4(s32 id);
 
-    *(s32 *)(Data_03001ebc + 448) = 516;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
     if (GameFlag_IsSet(0xfd3) == 0) {
         Func_0200173a(11);
     }

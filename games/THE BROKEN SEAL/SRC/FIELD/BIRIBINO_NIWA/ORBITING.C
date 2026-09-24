@@ -165,7 +165,7 @@ u8 *SceneData_GetTable8C50(void)
 
 u8 *SceneData_SelectRecordByScene22(void)
 {
-    if (Data_02000240[224] == (s32)&Value_00000022) {
+    if (gGameState.scene == (s32)&Value_00000022) {
         if (GameFlag_IsSet(0x84f) != 0)
             Data_02008c7c[118] = 1;
         if (GameFlag_IsSet(0x845) != 0)
@@ -195,7 +195,7 @@ void FieldScene_RunStepWithValue29de(void)
 
 s32 SceneData_SelectTable8d24ByState(void)
 {
-    if (Data_02000240[224] == (s32)&Value_00000022) {
+    if (gGameState.scene == (s32)&Value_00000022) {
         return (s32)Data_02008d30;
     }
     return (s32)Data_02008d24;
@@ -227,14 +227,12 @@ void SceneDialogue_RunActor11Message1751(void)
 
 void FieldScene_RunScene38e_0200045c(void)
 {
-    extern u8 Data_03001ebc[];
-
     Event_Begin();
     if (GameFlag_IsSet(0x200) == 0) {
         Func_02000d58();
     }
     Actor_SetSpeed(0, 0x8000, 0x4000);
-    *(s32 *)(*(u8 **)Data_03001ebc + 0x1c0) = 0x100;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Actor_SetAnimation(0, 2);
     Actor_CenterAndWalk(0, 2, -16);
     Event_Wait(16);
@@ -271,7 +269,7 @@ s32 FieldScene_RunEntryZeroAndScene22Body(void)
     zero -= 13;
     h->flags09 = (u8)((h->flags09 & zero) | 0x04);
 
-    if (Data_02000240[224] == (s32)&Value_00000022) {
+    if (gGameState.scene == (s32)&Value_00000022) {
         Func_02000a00();
     }
 

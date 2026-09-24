@@ -5,8 +5,6 @@
 
 #include "RESOURCE_38C.H"
 
-extern u8 Data_03001ebc[];
-
 void Func_02000574(s32);
 u8 *Func_0200059a(s32);
 u8 *Func_020005fa(s32);
@@ -74,9 +72,7 @@ static __inline__ void bump_step(s32 amount)
 {
     s32 Func_02000662();
 
-    u8 *work = *(u8 **)Data_03001ebc;
-
-    *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
+    gEventWork->message += amount;
 }
 
 static __inline__ void SetScale(s32 actor, s32 scale, s32 duration)

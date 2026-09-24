@@ -4,7 +4,6 @@
 extern u8 Value_000025b8;
 extern u8 Value_000025dc;
 extern s16 Data_020085d0[];
-extern s16 Data_02000240[];
 
 void Func_0200035e();
 
@@ -134,7 +133,7 @@ s32 SceneState_InitEntryWorkspaceAndFlag96f(void)
     u8 *work;
 
     /* Record arrival on map 90, then publish the initial scene phase/timer. */
-    if (Data_02000240[225] == 90) {
+    if (gGameState.entrance == 90) {
         GameFlag_Set(0x96f);
     }
 

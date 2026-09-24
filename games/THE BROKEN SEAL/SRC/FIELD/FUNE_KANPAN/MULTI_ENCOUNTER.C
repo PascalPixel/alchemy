@@ -354,22 +354,16 @@ s32 Func_0200854e();
  * A value-returning call also sets r0 last of its arguments. */
 static __inline__ void Call1(void (*f)(), s32 a0)
 {
-    extern u8 Data_03001ebc[];
-
     f(a0);
 }
 
 static __inline__ s32 Value1(s32 (*f)(), s32 a0)
 {
-    extern u8 Data_03001ebc[];
-
     return f(a0);
 }
 
 static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
 {
-    extern u8 Data_03001ebc[];
-
     f(a0, a1, a2);
 }
 
@@ -383,29 +377,21 @@ static __inline__ void bump_step(s32 amount)
 
 static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
 {
-    extern u8 Data_03001ebc[];
-
     f(a0, a1, a2, a3, a4, a5);
 }
 
 static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
 {
-    extern u8 Data_03001ebc[];
-
     f(a0, a1);
 }
 
 static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
 {
-    extern u8 Data_03001ebc[];
-
     return f(a0, a1);
 }
 
 static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 {
-    extern u8 Data_03001ebc[];
-
     f(a0, a1, a2, a3);
 }
 
@@ -415,8 +401,6 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
  * A value-returning call also sets r0 last of its arguments. */
 static __inline__ s32 Value1_020010a0(s32 (*f)(), s32 a0)
 {
-    extern u8 Data_03001ebc[];
-
     return f(a0);
 }
 
@@ -426,15 +410,11 @@ static __inline__ s32 Value1_020010a0(s32 (*f)(), s32 a0)
  * A value-returning call also sets r0 last of its arguments. */
 static __inline__ s32 Value1_020011c8(s32 (*f)(), s32 a0)
 {
-    extern u8 Data_03001ebc[];
-
     return f(a0);
 }
 
 static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
 {
-    extern u8 Data_03001ebc[];
-
     return f(a0, a1, a2);
 }
 
@@ -444,8 +424,6 @@ static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
  * A value-returning call also sets r0 last of its arguments. */
 static __inline__ void Call3_02001a98(void (*f)(), s32 a0, s32 a1, s32 a2)
 {
-    extern u8 Data_03001ebc[];
-
     f(a0, a1, a2);
 }
 
@@ -455,8 +433,6 @@ static __inline__ void Call3_02001a98(void (*f)(), s32 a0, s32 a1, s32 a2)
  * A value-returning call also sets r0 last of its arguments. */
 static __inline__ void Call1_02001b58(void (*f)(), s32 a0)
 {
-    extern u8 Data_03001ebc[];
-
     f(a0);
 }
 
@@ -466,8 +442,6 @@ static __inline__ void Call1_02001b58(void (*f)(), s32 a0)
  * A value-returning call also sets r0 last of its arguments. */
 static __inline__ void Call1_02001c14(void (*f)(), s32 a0)
 {
-    extern u8 Data_03001ebc[];
-
     f(a0);
 }
 
@@ -477,7 +451,6 @@ static __inline__ void Call1_02001c14(void (*f)(), s32 a0)
  * A value-returning call also sets r0 last of its arguments. */
 static __inline__ void Call1_020029d4(void (*f)(), s32 a0)
 {
-    extern u8 Data_03001ebc[];
     u8 *Func_02007d48();
     u8 *Func_02007d62();
 
@@ -490,8 +463,6 @@ static __inline__ void Call1_020029d4(void (*f)(), s32 a0)
  * A value-returning call also sets r0 last of its arguments. */
 static __inline__ void Call1_02002b7c(void (*f)(), s32 a0)
 {
-    extern u8 Data_03001ebc[];
-
     f(a0);
 }
 
@@ -503,7 +474,6 @@ static __inline__ void Call1_02003a0c(void (*f)(), s32 a0)
 {
     extern u8 Data_0200db50[];
     extern u8 Data_0200db60[];
-    extern u8 Data_03001ebc[];
     s32 Func_02007d48();
     s32 Func_02007d62();
 
@@ -534,8 +504,6 @@ static __inline__ void Call1_02003f30(void (*f)(), s32 a0)
  * A value-returning call also sets r0 last of its arguments. */
 static __inline__ void Call3_02004218(void (*f)(), s32 a0, s32 a1, s32 a2)
 {
-    extern u8 Data_03001ebc[];
-
     f(a0, a1, a2);
 }
 
@@ -789,8 +757,6 @@ void SceneDialogue_RunActor21Line(void)
 
 void FieldScene_RunScene3af_02000bb8(void)
 {
-    extern u8 Data_03001ebc[];
-
     u32 i;
     s32 record;
 
@@ -803,8 +769,6 @@ void FieldScene_RunScene3af_02000bb8(void)
 
 void FieldScene_RunScene3af_02000bf0(void)
 {
-    extern u8 Data_03001ebc[];
-
     u32 i;
     s32 record;
 
@@ -1030,8 +994,6 @@ void FieldScene_RunScene3af_020011c8(void)
 
 void FieldScene_RunScene3af_020012f0(void)
 {
-    extern u8 Data_03001ebc[];
-
     u32 i;
     s32 record;
 
@@ -1253,9 +1215,7 @@ void FieldScene_RunScene3af_02001b58(void)
 
 void FieldScene_RunScene3af_02001c14(s32 a0, s32 a1)
 {
-    extern u8 *Data_03001ebc;
-
-    *(s32 *)(Data_03001ebc + 0x1c0) = 0x100;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Event_OpenScreen();
     Event_WaitForScreen();
     Event_Wait(20);
@@ -1274,7 +1234,7 @@ void FieldScene_RunScene3af_02001c14(s32 a0, s32 a1)
     Actor_StartRepeatedMotion(a1, 2);
     Event_SetMessage(0x1e39);
     Event_ShowMessageAndWait(a1, 0, 20);
-    *(s32 *)(Data_03001ebc + 0x1c0) = 0x202;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
     Event_CloseScreen();
     Event_WaitForScreen();
     Event_RequestExit(10);
@@ -1309,8 +1269,6 @@ void FieldScene_RunActorTwentyDialogueSequence(void)
  * flags) and advances the shared scene phase before the scene runs. */
 void FieldScene_ConfigureLeadActors(void)
 {
-    extern u8 *Data_03001ebc;
-
     u8 *record;
 
     Event_Begin();
@@ -1337,7 +1295,7 @@ void FieldScene_ConfigureLeadActors(void)
     }
     Actor_SetSpeed(21, 0xcccc, 0x6666);
     Actor_EnableActionCallback(21, 0x200c628);
-    *(s32 *)(Data_03001ebc + 0x1c0) = 0x100;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Event_OpenScreen();
     Event_WaitForScreen();
     Event_Wait(20);
@@ -1364,7 +1322,7 @@ void FieldScene_ConfigureLeadActors(void)
     Event_Wait(10);
     Actor_WalkToAndWait(20, 216, 0x244);
     Actor_SetPosition(20, 0, 0);
-    *(s32 *)(Data_03001ebc + 0x1c0) = 0x209;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
     GameFlag_Set(0x92b);
     GameFlag_Clear(0x302);
     Event_End();
@@ -1789,7 +1747,6 @@ void FieldScene_ConfigureFourActorPresentation(void)
 {
     extern s32 Data_0200db50[];
     extern s32 Data_0200db60;
-    extern u8 *Data_03001ebc;
     s32 Func_02007d48();
     s32 Func_02007d62();
 
@@ -1827,7 +1784,7 @@ void FieldScene_ConfigureFourActorPresentation(void)
     record = Scene_GetRecord_4_02003a0c(0);
     Actor_SetSpriteFlags(record, 0);
     Task_Wait(1);
-    *(s32 *)(Data_03001ebc + 0x1c0) = 0x202;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
     Event_OpenScreen();
     Event_WaitForScreen();
     Actor_SetSpeed(21, 0xcccc, 0x6666);

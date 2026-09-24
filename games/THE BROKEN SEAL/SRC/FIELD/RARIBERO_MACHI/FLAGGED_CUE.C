@@ -233,9 +233,7 @@ void SceneActor_SetupActor18Event(void)
 
 void Scene_RunTableTransition(void)
 {
-    extern u8 *Data_03001ebc;
-
-    s32 no = *(s16 *)(Data_03001ebc + 0x16c);
+    s32 no = gEventWork->touched_trigger;
     s32 x = Data_02009ca8[no][0];
     s32 y = Data_02009ca8[no][1];
 
@@ -249,7 +247,7 @@ void Scene_RunTableTransition(void)
         Scene_Call3(Engine_ActorCenterAndWalk, 0, 2, -16);
     }
     Event_Wait(10);
-    *(s32 *)(Data_03001ebc + 0x1c8) = 16;
+    gEventWork->transition_frames = 16;
     Event_RequestExit(no);
 }
 

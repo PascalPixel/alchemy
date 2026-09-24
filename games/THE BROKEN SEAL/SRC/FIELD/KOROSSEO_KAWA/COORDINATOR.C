@@ -452,8 +452,6 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
     extern s16 Data_02000240_t[][1];
     extern u8 Data_0200c41c[];
 
-    extern u8 Data_03001ebc[];
-
     f(a0, a1, a2, a3, a4, a5);
 }
 
@@ -463,11 +461,7 @@ static __inline__ void bump_step(s32 amount)
     extern s16 Data_02000240_t[][1];
     extern u8 Data_0200c41c[];
 
-    extern u8 Data_03001ebc[];
-
-    u8 *work = *(u8 **)Data_03001ebc;
-
-    *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
+    gEventWork->message += amount;
 }
 
 /* Call sites spelled through these wrappers pass their constants straight
@@ -479,8 +473,6 @@ static __inline__ void Call1(void (*f)(), s32 a0)
     extern s16 Data_02000240_t[][1];
     extern u8 Data_0200c41c[];
 
-    extern u8 Data_03001ebc[];
-
     f(a0);
 }
 
@@ -488,8 +480,6 @@ static __inline__ s32 Value1(s32 (*f)(), s32 a0)
 {
     extern s16 Data_02000240_t[][1];
     extern u8 Data_0200c41c[];
-
-    extern u8 Data_03001ebc[];
 
     return f(a0);
 }
@@ -499,8 +489,6 @@ static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
     extern s16 Data_02000240_t[][1];
     extern u8 Data_0200c41c[];
 
-    extern u8 Data_03001ebc[];
-
     f(a0, a1);
 }
 
@@ -509,8 +497,6 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
     extern s16 Data_02000240_t[][1];
     extern u8 Data_0200c41c[];
 
-    extern u8 Data_03001ebc[];
-
     f(a0, a1, a2, a3);
 }
 
@@ -518,8 +504,6 @@ static __inline__ void Call6_02000270(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a
 {
     extern s16 Data_02000240_t[][1];
     extern u8 Data_0200c41c[];
-
-    extern u8 Data_03001ebc[];
 
     f(a0, a1, a2, a3, a4, a5);
 }
@@ -533,8 +517,6 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
     extern s16 Data_02000240_t[][1];
     extern u8 Data_0200c41c[];
 
-    extern u8 Data_03001ebc[];
-
     f(a0, a1, a2);
 }
 
@@ -542,8 +524,6 @@ static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
 {
     extern s16 Data_02000240_t[][1];
     extern u8 Data_0200c41c[];
-
-    extern u8 Data_03001ebc[];
 
     return f(a0, a1);
 }
@@ -553,8 +533,6 @@ static __inline__ void Call3_02000db8(void (*f)(), s32 a0, s32 a1, s32 a2)
     extern s16 Data_02000240_t[][1];
     extern u8 Data_0200c41c[];
 
-    extern u8 Data_03001ebc[];
-
     f(a0, a1, a2);
 }
 
@@ -563,9 +541,6 @@ static __inline__ void Call3_020015e0(void (*f)(), s32 a0, s32 a1, s32 a2)
     extern s16 Data_02000240_t[][1];
     extern u8 Data_0200c41c[];
 
-    extern u8 Data_02000240[];
-    extern u8 Data_03001ebc[];
-
     f(a0, a1, a2);
 }
 
@@ -573,9 +548,6 @@ static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
 {
     extern s16 Data_02000240_t[][1];
     extern u8 Data_0200c41c[];
-
-    extern u8 Data_02000240[];
-    extern u8 Data_03001ebc[];
 
     return f(a0, a1, a2);
 }
@@ -586,36 +558,26 @@ static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
  * A value-returning call also sets r0 last of its arguments. */
 static __inline__ void Call1_020016ec(void (*f)(), s32 a0)
 {
-    extern s16 Data_02000240[];
-
     f(a0);
 }
 
 static __inline__ void Call2_020016ec(void (*f)(), s32 a0, s32 a1)
 {
-    extern s16 Data_02000240[];
-
     f(a0, a1);
 }
 
 static __inline__ void Call3_020016ec(void (*f)(), s32 a0, s32 a1, s32 a2)
 {
-    extern s16 Data_02000240[];
-
     f(a0, a1, a2);
 }
 
 static __inline__ s32 Value3_020016ec(s32 (*f)(), s32 a0, s32 a1, s32 a2)
 {
-    extern s16 Data_02000240[];
-
     return f(a0, a1, a2);
 }
 
 static __inline__ void Call4_020016ec(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 {
-    extern s16 Data_02000240[];
-
     f(a0, a1, a2, a3);
 }
 
@@ -635,53 +597,39 @@ static inline void InitializeSelectedActor(s32 actorId)
  * A value-returning call also sets r0 last of its arguments. */
 static __inline__ s32 Value0(s32 (*f)())
 {
-    extern u8 Data_02000240[];
-
     return f();
 }
 
 static __inline__ void Call1_02001e7c(void (*f)(), s32 a0)
 {
-    extern u8 Data_02000240[];
-
     f(a0);
 }
 
 static __inline__ s32 Value1_02001e7c(s32 (*f)(), s32 a0)
 {
-    extern u8 Data_02000240[];
-
     return f(a0);
 }
 
 static __inline__ s32 Value2_02001e7c(s32 (*f)(), s32 a0, s32 a1)
 {
-    extern u8 Data_02000240[];
-
     return f(a0, a1);
 }
 
 static __inline__ void Call3_02001e7c(void (*f)(), s32 a0, s32 a1, s32 a2)
 {
-    extern u8 Data_02000240[];
-
     f(a0, a1, a2);
 }
 
 static __inline__ s32 Value3_02001e7c(s32 (*f)(), s32 a0, s32 a1, s32 a2)
 {
-    extern u8 Data_02000240[];
-
     return f(a0, a1, a2);
 }
 
 static __inline__ void Call1_02002844(void (*f)(), s32 a0)
 {
-    extern u8 Data_02000240[];
     extern u8 Data_02000240_t[][2];
     extern struct ModeRecord Data_0200be76;
     extern struct ModeRecord Data_0200c628;
-    extern u8 Data_03001ebc[];
     void Func_02002ba8();
     void Func_02002d84();
     void Task_Wait();
@@ -692,11 +640,9 @@ static __inline__ void Call1_02002844(void (*f)(), s32 a0)
 
 static __inline__ s32 Value2_02002844(s32 (*f)(), s32 a0, s32 a1)
 {
-    extern u8 Data_02000240[];
     extern u8 Data_02000240_t[][2];
     extern struct ModeRecord Data_0200be76;
     extern struct ModeRecord Data_0200c628;
-    extern u8 Data_03001ebc[];
     void Func_02002ba8();
     void Func_02002d84();
     void Task_Wait();
@@ -707,11 +653,9 @@ static __inline__ s32 Value2_02002844(s32 (*f)(), s32 a0, s32 a1)
 
 static __inline__ void Call3_02002844(void (*f)(), s32 a0, s32 a1, s32 a2)
 {
-    extern u8 Data_02000240[];
     extern u8 Data_02000240_t[][2];
     extern struct ModeRecord Data_0200be76;
     extern struct ModeRecord Data_0200c628;
-    extern u8 Data_03001ebc[];
     void Func_02002ba8();
     void Func_02002d84();
     void Task_Wait();
@@ -723,19 +667,15 @@ static __inline__ void Call3_02002844(void (*f)(), s32 a0, s32 a1, s32 a2)
 /* The scene step counter at 0x1d8 of the shared scene work record. */
 static __inline__ void bump_step_02002844(s32 amount)
 {
-    extern u8 Data_02000240[];
     extern u8 Data_02000240_t[][2];
     extern struct ModeRecord Data_0200be76;
     extern struct ModeRecord Data_0200c628;
-    extern u8 Data_03001ebc[];
     void Func_02002ba8();
     void Func_02002d84();
     void Task_Wait();
     void Func_02006d62();
 
-    u8 *work = *(u8 **)Data_03001ebc;
-
-    *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
+    gEventWork->message += amount;
 }
 
 u8 *Func_020072c6();            /* allocate a record by (id, size) */
@@ -746,23 +686,17 @@ u8 *Func_02007478();            /* scene record for an actor selector */
 
 u8 *Func_02007480();            /* scene record for an actor selector */
 
-
 void Func_02007356();           /* upload image data to a handle */
 
 s32 Func_0200737a();            /* next palette slot index */
-
 
 void Func_02007326();           /* install a per-frame task (callback, rate) */
 
 void Func_02007374();           /* release a graphics handle */
 
-
 u8 *Func_02006d88();           /* veneer to Scene_GetRecord */
 
 void Func_02006d02();          /* veneer to Object_SetPosition */
-
-
-
 
 s32 Func_02005242();           /* local thunk to Func_020020e8, site A */
 
@@ -780,16 +714,11 @@ SceneRecord *Func_020075cc();   /* scene record for a subject handle */
 
 s32 Func_020075e6(SceneRecord *, Position3 *);  /* terrain probe */
 
-
-
 void Func_020075da(SceneRecord *, s32, s32, s32);   /* place at (x, y, z) */
 
 void Func_020075ea(SceneRecord *, s32, s32, s32);   /* place at (x, y, z) */
 
-
 void Func_020075fe(SceneRecord *);              /* re-attach the camera */
-
-
 
 /* Contiguous unnamed leaf-owner run for resource_3ba. */
 u8 *SceneData_GetTableC194(void)
@@ -862,7 +791,6 @@ void SceneState_ResetCounterAndStartTask(void)
 {
     extern s16 Data_02001000;
     extern s32 Data_0200c41c;
-    extern u8 *Data_03001ebc;
 
     Task02000134 task;
 
@@ -876,7 +804,6 @@ void SceneState_SetMode66AndPassOpeningSequence(void)
 {
     extern s16 Data_02001000;
     extern s32 Data_0200c41c;
-    extern u8 *Data_03001ebc;
 
     s32 value = 66;
     s32 *mode = (s32 *)0x0200C41C;
@@ -887,7 +814,6 @@ void SceneState_SetMode66AndPassOpeningSequence(void)
 
 void SceneState_WaitUntilWordC41cIs22(void)
 {
-    extern s16 Data_02000240[];
     extern u16 Data_02001000;
     extern u32 Data_0200c41c;
 
@@ -957,7 +883,6 @@ void SceneState_ApplyRectAndSend303(void)
 {
     extern s16 Data_02001000;
     extern s32 Data_0200c41c;
-    extern u8 *Data_03001ebc;
 
     {
         s32 x = 47;
@@ -972,8 +897,6 @@ void FieldScene_RunScene3ba_02000270(void)
 {
     extern s16 Data_02000240_t[][1];
     extern u8 Data_0200c41c[];
-
-    extern u8 Data_03001ebc[];
 
     u32 i;
     u8 *rec7;
@@ -1005,14 +928,12 @@ void FieldScene_RunScene3ba_02000270(void)
 
 void StagedActor_PlacePairAtOffsetAndRun(s32 a0, s32 a1, s32 a2)
 {
-    extern s32 Data_02000240[];
-
     Obj_0200033c *p;
     Obj_0200033c *q;
     s32 x;
     s32 y;
 
-    p = Func_02004016(Data_02000240[125]);
+    p = Func_02004016(gGameState.selected_actor);
     q = Func_0200401e(a0);
     Event_Begin();
     {
@@ -1046,13 +967,11 @@ void StagedActor_PlacePairAtOffsetAndRun(s32 a0, s32 a1, s32 a2)
 
 void SceneActor_ShiftActorSeventeenByLeaderRow(void)
 {
-    extern s32 Data_02000240[];
-
     Obj_0200042c *o;
     s32 v;
     s32 t;
 
-    o = Func_020040f4(Data_02000240[125]);
+    o = Func_020040f4(gGameState.selected_actor);
     v = o->f10 >> 20;
     t = -48;
     if (v <= 8) {
@@ -1067,14 +986,12 @@ void SceneActor_ShiftActorSeventeenByLeaderRow(void)
 
 void SceneActor_ShiftActorEighteenByInputAndLeaderColumn(void)
 {
-    extern s32 Data_02000240[];
-
     Obj_0200042c *o;
     s32 a;
     s32 b;
     s32 s;
 
-    o = Func_02004158(Data_02000240[125]);
+    o = Func_02004158(gGameState.selected_actor);
     a = o->f08 >> 20;
     if ((Data_03001ae8 & 32) != 0) {
         s = -1;
@@ -1113,7 +1030,6 @@ void SceneState_ApplyValue768(void)
 {
     extern s16 Data_02001000;
     extern s32 Data_0200c41c;
-    extern u8 *Data_03001ebc;
 
     GameFlag_Set(768);
 }
@@ -1141,8 +1057,6 @@ void FieldScene_RunScene3ba_02000974(s32 a0)
     extern s16 Data_02000240_t[][1];
     extern u8 Data_0200c41c[];
 
-    extern u8 Data_03001ebc[];
-
     u32 i;
     s32 record;
 
@@ -1169,8 +1083,6 @@ void FieldScene_RunScene3ba_02000974(s32 a0)
 
 void SceneActor_MarkObjectAtTiles94To95(void)
 {
-    extern s32 Data_02000240[];
-
     Obj_02000a10 *o;
     s32 x;
     s32 y;
@@ -1319,9 +1231,6 @@ void FieldScene_RunScene3ba_020015e0(s32 a0)
     extern s16 Data_02000240_t[][1];
     extern u8 Data_0200c41c[];
 
-    extern u8 Data_02000240[];
-    extern u8 Data_03001ebc[];
-
     u32 i;
     s32 rec8;
     s32 record;
@@ -1419,8 +1328,6 @@ void Func_020016ec(s32 scene)
 
 void SceneActor_PlaceSlots1To3FromWork(void)
 {
-    extern s32 Data_02000240[];
-
     {
         s32 x = Func_02005508(896);
         s32 y = Func_02005512(904);
@@ -1459,10 +1366,8 @@ void SceneState_SetStateHalfword386To99WhenMatched(void)
     extern s32 Data_0200c41c;
     extern u8 *Data_03001ebc;
 
-    extern s32 Data_02000240[];
-
     u8 *state = Data_03001ebc;
-    s32 sel = Data_02000240[125];
+    s32 sel = gGameState.selected_actor;
 
     if (sel != 0 && ((s32)(s16)*(u16 *)(state + 382) >> 10) == sel
         && GameFlag_IsSet(321) != 0) {
@@ -1477,14 +1382,12 @@ void FieldScene_RunNearestActor165Scene(void)
 {
     extern s16 Data_02000240_t[][1];
     extern u8 Data_0200c41c[];
-
-    extern s32 Data_02000240[];
     extern u8 *Data_03001ebc;
 
     u8 *state = Data_03001ebc;
     s32 best = 8;
     s32 bestd = 0x100000;
-    s32 n = Data_02000240[125];
+    s32 n = gGameState.selected_actor;
     Obj *p = Func_02005708(n);
     s32 i;
     s32 *q;
@@ -1584,7 +1487,6 @@ void FieldScene_RunSixSteps380To3A8(void)
 
 s32 SceneDialogue_RunFlagGatedPromptInteraction(s32 a, s32 b)
 {
-    extern s16 Data_02000240[];
     extern u16 Data_02001000;
     extern u32 Data_0200c41c;
 
@@ -1594,7 +1496,7 @@ s32 SceneDialogue_RunFlagGatedPromptInteraction(s32 a, s32 b)
 
     Func_02005b3c();
     Func_02005994(b, 5);
-    v = Data_02000240[224];
+    v = gGameState.scene;
     if (v == (s32)&Value_0000008f) {
         id = (s32)&Value_00002076;
     } else if (v == (s32)&Value_00000090) {
@@ -1627,15 +1529,12 @@ void SceneState_SendIdBySceneId(s32 a, s32 b)
 {
     extern s16 Data_02001000;
     extern s32 Data_0200c41c;
-    extern u8 *Data_03001ebc;
-
-    extern s16 Data_02000240[];
 
     s32 v;
     s32 id;
 
     Func_02005a4a(b, 5);
-    v = Data_02000240[224];
+    v = gGameState.scene;
     if (v == (s32)&Value_0000008f) {
         id = (s32)&Value_00002076;
     } else if (v == (s32)&Value_00000090) {
@@ -1851,11 +1750,9 @@ void FieldScene_RunTwoArmSequence(s32 a)
 
 void FieldScene_RunLateSequence(s32 a0)
 {
-    extern u8 Data_02000240[];
     extern u8 Data_02000240_t[][2];
     extern struct ModeRecord Data_0200be76;
     extern struct ModeRecord Data_0200c628;
-    extern u8 Data_03001ebc[];
     void Func_02002ba8();
     void Func_02002d84();
     void Task_Wait();
@@ -1909,7 +1806,6 @@ void SceneState_InitHalfwordC6a6Once(void)
 {
     extern s16 Data_02001000;
     extern s32 Data_0200c41c;
-    extern u8 *Data_03001ebc;
 
     if (Data_0200c6a6 == -1) {
         Data_0200c6a6 = Func_02006816();
@@ -1920,7 +1816,6 @@ void SceneState_StoreParamsAndInitTable(s32 a, s32 b, s32 c)
 {
     extern s16 Data_02001000;
     extern s32 Data_0200c41c;
-    extern u8 *Data_03001ebc;
 
     Func_02005902();
     Data_0200c7f4 = a;
@@ -1939,7 +1834,6 @@ void SceneState_InitTableWordsAndLoad3200(s32 a, s32 b, s32 c)
 {
     extern s16 Data_02001000;
     extern s32 Data_0200c41c;
-    extern u8 *Data_03001ebc;
 
     Data_0200c760 = a;
     Data_0200c800 = b;
@@ -1958,7 +1852,6 @@ void SceneState_ReleaseTableAndResetC6a6(void)
 {
     extern s16 Data_02001000;
     extern s32 Data_0200c41c;
-    extern u8 *Data_03001ebc;
 
     Func_02006906(Data_0200abed);
     Func_02006960(Data_0200c6a6);
@@ -2021,7 +1914,6 @@ void Resource3ba_NoOpCallback(void)
 
 void SceneState_SetHalfword1000To9(void)
 {
-    extern s16 Data_02000240[];
     extern u16 Data_02001000;
     extern u32 Data_0200c41c;
 
@@ -2035,7 +1927,6 @@ void SceneState_WaitUntilWord1000IsNine(void)
 {
     extern s16 Data_02001000;
     extern s32 Data_0200c41c;
-    extern u8 *Data_03001ebc;
 
     s16 *p = &Data_02001000;
 
@@ -2083,8 +1974,6 @@ void SceneEffect_SpawnKind285AtRandomChance(Obj_02002fc4 *a)
 
 s32 SceneActor_PlaceLinkedActorAbove(Obj_02003058 *a)
 {
-    extern s32 Data_02000240[];
-
     Obj_02003058 *o = Func_02006d24(a->f64);
 
     Func_02006c56(o, a->f08, a->f0c + 0x240000, a->f10);
@@ -2235,7 +2124,6 @@ void SceneState_SetStateHalfword220(s32 a)
 {
     extern s16 Data_02001000;
     extern s32 Data_0200c41c;
-    extern u8 *Data_03001ebc;
 
     u8 *p = Data_03001f3c;
 

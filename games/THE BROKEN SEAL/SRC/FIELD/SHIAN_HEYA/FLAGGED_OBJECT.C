@@ -20,13 +20,11 @@ union Slot {
 
 extern u8 Data_02008778[];
 extern u8 Data_02008868[];
-extern s16 Data_02000240[];
 extern u8 Data_020089c8[];
 extern u8 Data_02008890[];
 extern u8 Value_00001a40;
 extern u8 Data_02008d4c[];
 extern u8 Data_02008a28[];
-extern u8 *Data_03001ebc;
 
 void *Func_020006de(s32, s32, s32, s32);
 void Func_020009b0(void *);
@@ -109,7 +107,7 @@ s32 SceneData_GetTable8868(void)
 
 s32 SceneData_SelectTable89c8Or8890(void)
 {
-    if (Data_02000240[225] == 8) {
+    if (gGameState.entrance == 8) {
         return (s32)Data_020089c8;
     }
     Func_020009b0(Data_02008890);
@@ -234,7 +232,7 @@ void SceneDialogue_RunActor9MotionDialogue(void)
 
 s32 SceneData_SelectTable8d4cOr8a28(void)
 {
-    if (Data_02000240[225] == 8) {
+    if (gGameState.entrance == 8) {
         return (s32)Data_02008d4c;
     }
     return (s32)Data_02008a28;
@@ -246,8 +244,8 @@ s32 SceneState_SetRuntimeWord448To521(void)
 
     s16 scene;
 
-    *(s32 *)(Data_03001ebc + 448) = 521;
-    scene = Data_02000240[225];
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+    scene = gGameState.entrance;
     if (scene == 4 || scene == 7) {
         Func_02000686_a(0x00f80000, 0, 0x01a10000, 20);
     } else if (scene == 6) {

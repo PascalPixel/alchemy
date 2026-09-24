@@ -618,8 +618,6 @@ void FieldScene_RunPrimarySequence(void)
 
 void Func_02000e78(void)
 {
-    extern u8 *Data_03001ebc;
-
     s32 ensemble;
     s32 selector;
 
@@ -637,7 +635,7 @@ void Func_02000e78(void)
     Func_02001944(14);
     Func_0200194a(15);
     Actor_EnableActionCallback(8, 33592220);
-    *(s32 *)(Data_03001ebc + 448) = 515;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 3);
     Event_OpenScreen();
     Event_WaitForScreen();
     Event_Wait(400);
@@ -674,7 +672,7 @@ void Func_02000e78(void)
     Actor_Jump(8, 6, 20);
     Event_SetMessage(7908);
     Event_ShowMessageAndWait(8, 0, 20);
-    *(s32 *)(Data_03001ebc + 448) = 514;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
     Event_CloseScreen();
     Event_WaitForScreen();
     Data_02000240[226] = (s32)&Value_0000006f;

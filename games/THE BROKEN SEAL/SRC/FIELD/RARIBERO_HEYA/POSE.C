@@ -14,7 +14,6 @@
 #define FieldScene_RunPrimaryScript Func_02000508
 #define FieldScene_RunSecondaryScript Func_02000eec
 
-extern s16 Data_02000240[];
 extern u8 Value_000000b3;
 extern u8 Data_02009690[];
 extern u8 Data_020096b0[];
@@ -166,7 +165,7 @@ u8 *SceneData_GetTable9438(void)
 
 s32 SceneData_SelectTableByWord224(void)
 {
-    if (Data_02000240[224] == (s32)&Value_000000b3) {
+    if (gGameState.scene == (s32)&Value_000000b3) {
         return (s32)Data_02009690;
     }
     return (s32)Data_020096b0;
@@ -179,7 +178,7 @@ u8 *SceneData_GetTable96d0(void)
 
 u8 *SceneData_SelectTableBySceneIdAndFlag9a7(void)
 {
-    if (Data_02000240[224] == (s32)&Value_000000b4) {
+    if (gGameState.scene == (s32)&Value_000000b4) {
         if (GameFlag_IsSet(0x9A7) != 0) {
             return Data_02009974;
         }
@@ -231,7 +230,7 @@ u8 *SceneData_SelectScriptBySceneIdAndFlag9a7(void)
 {
     s32 GameFlag_IsSet();
 
-    if (Data_02000240[224] == (s32)&Value_000000b4) {
+    if (gGameState.scene == (s32)&Value_000000b4) {
         if (GameFlag_IsSet(0x9a7) != 0) {
             return Data_0200a010;
         }

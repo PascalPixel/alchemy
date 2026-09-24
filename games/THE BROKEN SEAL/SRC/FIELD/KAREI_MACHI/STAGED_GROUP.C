@@ -1,7 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
-
 #define NULL ((void *)0)
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 #define RunEffectAction3 Func_02003bcc
@@ -154,7 +153,6 @@ typedef struct OrbitingSceneObject {
     u32 callback;
 } OrbitingSceneObject;
 
-extern s16 Data_02000240[];
 extern u8 Data_0200beac[];
 extern u8 Value_00000063;
 extern u8 Value_00000066;
@@ -303,26 +301,18 @@ u8 *Func_02007604(s32, s32);
  * A value-returning call also sets r0 last of its arguments. */
 static __inline__ void Call1(void (*f)(), s32 a0)
 {
-    extern u8 Data_03001ebc[];
-
     f(a0);
 }
 
 static __inline__ s32 Value1(s32 (*f)(), s32 a0)
 {
-    extern u8 Data_03001ebc[];
-
     return f(a0);
 }
 
-/* The scene step counter at 0x1d8 of the shared scene work record. */
+/* Moves the next dialogue line on by amount messages. */
 static __inline__ void bump_step(s32 amount)
 {
-    extern u8 Data_03001ebc[];
-
-    u8 *work = *(u8 **)Data_03001ebc;
-
-    *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
+    gEventWork->message += amount;
 }
 
 /* Contiguous unnamed leaf-owner run for resource_3a8. */
@@ -330,8 +320,6 @@ static __inline__ void bump_step(s32 amount)
 /* resource_3a8 owner at 0x02000504, 138 bytes. Scene arrival sequence. */
 static __inline__ void SetOffset(s32 actor, s32 axis, s32 offset)
 {
-    extern u8 *Data_03001ebc;
-
     Actor_SetDestinationOffset(actor, axis, offset);
 }
 
@@ -362,26 +350,18 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
  * A value-returning call also sets r0 last of its arguments. */
 static __inline__ void Call1_020015b4(void (*f)(), s32 a0)
 {
-    extern u8 Data_03001ebc[];
-
     f(a0);
 }
 
 static __inline__ s32 Value1_020015b4(s32 (*f)(), s32 a0)
 {
-    extern u8 Data_03001ebc[];
-
     return f(a0);
 }
 
 /* The scene step counter at 0x1d8 of the shared scene work record. */
 static __inline__ void bump_step_020015b4(s32 amount)
 {
-    extern u8 Data_03001ebc[];
-
-    u8 *work = *(u8 **)Data_03001ebc;
-
-    *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
+    gEventWork->message += amount;
 }
 
 /* Loader-relocated overlay calls: each symbol names the pre-relocation call
@@ -404,41 +384,26 @@ static __inline__ void bump_step_020015b4(s32 amount)
  * A value-returning call also sets r0 last of its arguments. */
 static __inline__ void Call1_0200164c(void (*f)(), s32 a0)
 {
-    extern u8 Data_03001ebc[];
-
-
     f(a0);
 }
 
 static __inline__ s32 Value1_0200164c(s32 (*f)(), s32 a0)
 {
-    extern u8 Data_03001ebc[];
-
-
     return f(a0);
 }
 
 static __inline__ void Call2_0200164c(void (*f)(), s32 a0, s32 a1)
 {
-    extern u8 Data_03001ebc[];
-
-
     f(a0, a1);
 }
 
 static __inline__ void Call3_0200164c(void (*f)(), s32 a0, s32 a1, s32 a2)
 {
-    extern u8 Data_03001ebc[];
-
-
     f(a0, a1, a2);
 }
 
 static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
 {
-    extern u8 Data_03001ebc[];
-
-
     f(a0, a1, a2, a3, a4, a5);
 }
 
@@ -447,7 +412,6 @@ static __inline__ void bump_step_0200164c(s32 amount)
 {
     extern u8 Data_03001ebc[];
 
-
     u8 *work = *(u8 **)Data_03001ebc;
 
     *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
@@ -455,15 +419,11 @@ static __inline__ void bump_step_0200164c(s32 amount)
 
 static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
 {
-    extern u8 Data_03001ebc[];
-
     return f(a0, a1);
 }
 
 static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 {
-    extern u8 Data_03001ebc[];
-
     f(a0, a1, a2, a3);
 }
 
@@ -473,50 +433,36 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
  * A value-returning call also sets r0 last of its arguments. */
 static __inline__ s32 Value0(s32 (*f)())
 {
-    extern u8 Data_03001ebc[];
-
     return f();
 }
 
 static __inline__ void Call1_02003768(void (*f)(), s32 a0)
 {
-    extern u8 Data_03001ebc[];
-
     f(a0);
 }
 
 static __inline__ s32 Value4(s32 (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 {
-    extern u8 Data_03001ebc[];
-
     return f(a0, a1, a2, a3);
 }
 
 static __inline__ void Call1_02003864(void (*f)(), s32 a0)
 {
-    extern u8 Data_03001ebc[];
-
     f(a0);
 }
 
 static __inline__ void Call1_020026c0(void (*f)(), s32 a0)
 {
-    extern struct SceneWork *Data_03001ebc;
-
     f(a0);
 }
 
 static __inline__ void Call2_020026c0(void (*f)(), s32 a0, s32 a1)
 {
-    extern struct SceneWork *Data_03001ebc;
-
     f(a0, a1);
 }
 
 static __inline__ void Call6_020026c0(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
 {
-    extern struct SceneWork *Data_03001ebc;
-
     f(a0, a1, a2, a3, a4, a5);
 }
 
@@ -579,7 +525,7 @@ done:
 /* Contiguous unnamed leaf-owner run for resource_3a8. */
 s32 SceneData_SelectTableByWord224(void)
 {
-    s16 v = Data_02000240[224];
+    s16 v = gGameState.scene;
 
     if (v == (s32)&Value_00000063) {
         return (s32)Data_0200c2c8;
@@ -614,7 +560,7 @@ u8 *SceneData_GetTablec6b8(void)
 
 s32 SceneData_SelectTableByWord224B(void)
 {
-    s16 v = Data_02000240[224];
+    s16 v = gGameState.scene;
 
     if (v == (s32)&Value_00000063) {
         return (s32)Data_0200c768;
@@ -633,8 +579,6 @@ s32 SceneData_SelectTableByWord224B(void)
 
 void FieldScene_RunStepWithValue29df(void)
 {
-    extern u8 *Data_03001ebc;
-
     Event_Begin();
     Message_ShowCentered(0x947, 1);
     Message_ShowCentered(0x29df, 1);
@@ -643,8 +587,6 @@ void FieldScene_RunStepWithValue29df(void)
 
 void FieldScene_RunStepWithValueFd6(void)
 {
-    extern u8 *Data_03001ebc;
-
     Event_Begin();
     Actor_SetPosition(12, 0, 0);
     GameFlag_Set(0xfd6);
@@ -655,7 +597,7 @@ void FieldScene_RunStepWithValueFd6(void)
 
 s32 SceneData_SelectTableBySelector224(void)
 {
-    s16 v = Data_02000240[224];
+    s16 v = gGameState.scene;
 
     if (v == (s32)&Value_00000063) {
         return (s32)Data_0200cbf4;
@@ -776,8 +718,6 @@ void FieldScene_RunActorTwentyFourAngleDialogue(void)
 
 void RunSceneArrivalSetup(void)
 {
-    extern u8 *Data_03001ebc;
-
     s32 two = 2;
 
     Event_Begin();
@@ -1358,14 +1298,10 @@ void SceneDialogue_RunActor181Line916(void)
 
 s32 FieldScene_DispatchBySceneId(void)
 {
-    extern u8 Data_03001ebc[];
-
-    extern s16 Data_02000240[];
-
     s32 v;
 
     GameFlag_Set(0x87a);
-    v = Data_02000240[224];
+    v = gGameState.scene;
     if (v == (s32)&Value_00000063) {
         Func_02002d24();
     } else if (v == (s32)&Value_00000066) {
@@ -1391,7 +1327,7 @@ void SceneState_CheckFlags941And940(void)
     if (GameFlag_IsSet(0x940) != 0) {
         GameFlag_Set(0x321);
     }
-    if (Data_02000240[225] != 0) {
+    if (gGameState.entrance != 0) {
         if (GameFlag_IsSet(0x912) == 0) {
             Func_02003842();
         }
@@ -1409,16 +1345,14 @@ void SceneState_ApplyFlagGatedActorEightSetup(void)
         o = Func_02005494(8);
         o->f06 = 0;
     }
-    if (Data_02000240[225] == 10) {
+    if (gGameState.entrance == 10) {
         Func_02003f50();
     }
 }
 
 void SceneState_SetWork448AndRunFlag915Step(void)
 {
-    extern u8 *Data_03001ebc;
-
-    *(s32 *)(Data_03001ebc + 448) = 516;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
     if (GameFlag_IsSet(0x915) != 0) {
         s32 k = 2;
         Map_CopyCellsTo(58, 5, 58, 8, k, 3);
@@ -1427,7 +1361,7 @@ void SceneState_SetWork448AndRunFlag915Step(void)
         Map_Redraw();
         Task_Wait(1);
     }
-    if (Data_02000240[225] <= 3) {
+    if (gGameState.entrance <= 3) {
         Func_0200567c(170);
     }
 }
@@ -1435,7 +1369,6 @@ void SceneState_SetWork448AndRunFlag915Step(void)
 void FieldScene_RunMiddleSequence(void)
 {
     extern u8 Data_03001ebc[];
-
 
     u32 i;
     s32 rec7;
@@ -2133,8 +2066,6 @@ s32 *SceneActor_FindAtTileXZ(s32 x, s32 z)
 
 void FieldScene_RunLateSequence(void)
 {
-    extern u8 Data_03001ebc[];
-
     s32 tmp[3];
     s32 record;
     s32 rec;
@@ -2186,8 +2117,6 @@ void FieldScene_RunLateSequence(void)
 
 void Func_020032a4(void)
 {
-    extern u8 Data_03001ebc[];
-
     s32 rec8;
     s32 rec4;
     s32 rec7;
@@ -2337,8 +2266,6 @@ void SceneEffect_UpdateMotionWithDamping(struct Obj_020036f8 *p)
 
 void FieldScene_RunSupplementalSequenceOne(s32 a0)
 {
-    extern u8 Data_03001ebc[];
-
     s32 rec7;
     s32 rec8;
     s32 record;
@@ -2393,8 +2320,6 @@ void FieldScene_RunSupplementalSequenceOne(s32 a0)
 
 void Func_02003864(s32 a0, s32 a1, s32 a2)
 {
-    extern u8 Data_03001ebc[];
-
     s32 p8;
     u8 *rec7;
     s32 value;
@@ -2449,8 +2374,6 @@ void SceneEffect_UpdateLobeOrbitEffect26(void)
 
 void FieldScene_DrawTilesAndRaiseActor11(void)
 {
-    extern u8 *Data_03001ebc;
-
     Effect *effect = Func_02007594(11);
 
     Map_CopyCellAttributes(0, 0, 1, 1, 9, 14);

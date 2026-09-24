@@ -1,11 +1,15 @@
 /* Draft, not exact (2026-09-24): candidate=1056 reference=1056
-   differing_halfwords=200 (was 341 at 1052 bytes). The cue test written as
-   frame - 4 == i * 8 + 8 keeps the 8i + 12 counter from merging into 8i + 8,
-   which brings the size to 1056; a temporary for a * 6 stops the a * 3
-   reduction. Earlier notes: prologue, frame (52 bytes), the X-table pointer
-   (sp+16), a = frame - 8 - 8i in r8, the in-body spawn pointer and the puff
-   loop match; the reference keeps 8i+8 (sp+12) and 8i+12 (sp+20) as
-   separate spilled inductions. */
+   differing_halfwords=329 but halfword_edits=58, binary similarity 89.0%.
+   The pillar loop now has the reference's inductions (read from the -dL
+   loop dump): the start frame st = 8i + 8 as its own variable (spilled at
+   sp+12, with st + 1 and st + 3 derived from it), a = frame - (8i + 8)
+   computed before the test so that it is reduced itself (r8), the cue
+   frame st + 4 as a separate induction (sp+20), and the X-table pointer
+   (sp+16). A u8 kind makes the loop large enough (loop.c's threshold) that
+   a * 3 is no longer strength-reduced. Residual: the reference copies kind
+   before the < 2 test (adds r3, r2, #0) and so is 2 bytes longer there,
+   compensated elsewhere; total - 64 and total - 16 swap stack slots; the
+   work->transfer_value store is scheduled before the blit47 load. */
 #include "TYPES.H"
 #include "BATTLE_EFFECT_WORK.H"
 #include "BATTLE_EFX.H"
@@ -62,7 +66,6 @@ void FunctionHead_080dd9c0(struct BattleEffectArgument *efx)
     s32 i;
     s32 j;
     s32 a;
-    s8 *xp;
     s32 st;
 
     cache = (u32 *)(gWorkSlot + 39 * 4);
@@ -101,18 +104,16 @@ void FunctionHead_080dd9c0(struct BattleEffectArgument *efx)
         }
 
         for (i = 0; i != BattleFxPillar_Counts[work->effect->variant]; i++) {
-            if (frame > i * 8 + 8) {
-                s32 kind = BattleFxPillar_Kinds[i];
+            a = frame - (i * 8 + 8);
+            st = i * 8 + 8;
+            if (frame > st) {
+                u8 kind = BattleFxPillar_Kinds[i];
                 s32 h;
                 s32 w;
-                a = frame - (i * 8 + 8);
-                if ((u32)kind < 2) {
+
+                if (kind < 2) {
                     h = a * 16;
-                    /* FAKEMATCH: a temporary for a * 6 keeps loop.c from reducing a * 3. */
-                    {
-                        s32 t = a * 6;
-                        w = t;
-                    }
+                    w = a * 6;
                     if (h > 80) {
                         h = 80;
                     }
@@ -139,10 +140,10 @@ void FunctionHead_080dd9c0(struct BattleEffectArgument *efx)
                         blit46(dst, work->sheet + 0xf00, BattleFxPillar_X[i] + w, 108 - h, 32, h);
                     }
                 }
-                if (frame == i * 8 + 8 + 1) {
+                if (frame == st + 1) {
                     work->shake = 3;
                 }
-                if (frame < i * 8 + 8 + 3) {
+                if (frame < st + 3) {
                     s32 y = (Random16() & 31) + 72;
                     struct EffectStep *p;
                     for (j = 0; j != 64; j++) {
@@ -161,8 +162,7 @@ void FunctionHead_080dd9c0(struct BattleEffectArgument *efx)
             }
             {
             for (j = 0; j != work->effect->count; j++) {
-                /* frame - 4 keeps 8i + 12 apart from the 8i + 8 induction. */
-                if (frame - 4 == i * 8 + 8) {
+                if (frame == st + 4) {
                     Audio_PlayCue(132);
                     ObjectGroup_UpdateMembers(work->effect->actors[j], 7, 5, j, 3);
                 }

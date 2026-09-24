@@ -1,6 +1,9 @@
 {
   "format": 3,
   "owners": {
+    "resource_3c8:02001808": {
+      "name": "Scene_RunActorLeapSequence"
+    },
     "resource_39c:02000d58": {
       "name": "Makyuri_CyclePalette",
       "source": "FIELD/COMMON/MAKYURI/PALETTE_CYCLE.C"

@@ -68773,6 +68773,26 @@
           }
         }
       }
+    },
+    {
+      "id": "retained-overlay-3c8-02001808",
+      "game": "tbs",
+      "source": "recon/tbs/en/overlays/resource_3c8_c_02001808.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3c8",
+      "absolute_symbols": {
+        "Func_0200672a_a": {
+          "address": "0x0200ced4",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02001808",
+          "extent": 240,
+          "state": "retained-assembly"
+        }
+      ]
     }
   ]
 }

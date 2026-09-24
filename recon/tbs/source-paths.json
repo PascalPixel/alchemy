@@ -16118,7 +16118,7 @@
       "source": "FIELD/SORU_IRIGUCHI/SCENARIO_DISPATCH.C"
     },
     "resource_37f:02000f8c": {
-      "name": "FieldScene_RunFourEntitySequence",
+      "name": "Scene_SukuretaSuspectsHiddenPassage",
       "source": "FIELD/SORU_IRIGUCHI/SCENARIO_DISPATCH.C"
     },
     "resource_37f:02000258": {

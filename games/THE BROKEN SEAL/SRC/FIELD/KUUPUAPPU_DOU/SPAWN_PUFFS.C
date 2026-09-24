@@ -6,7 +6,6 @@ void SceneActor_TransformAndApplyRecordPosition(struct FieldActor *object, s32 s
 extern const s32 KuupuappuDou_PuffScript[];
 
 /* Spawn up to four small type-240 objects at the source, rising with a random speed and a random turn, each running the puff script. */
-/* Adopt KuupuappuDou_SpawnPuffs resource_3a7:02000b8c (124 bytes) */
 void KuupuappuDou_SpawnPuffs(struct FieldActor *source)
 {
     struct FieldActor *puff;

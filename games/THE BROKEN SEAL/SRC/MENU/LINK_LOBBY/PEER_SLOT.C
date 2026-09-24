@@ -18,7 +18,6 @@ struct LinkPeer {
 extern struct LinkPeer LinkLobby_PeerValues[2];
 
 /* Record whether a link is up (flag 0x303) and whether this player is a child (flag 0x302), then report whether the other player's word for this slot equals the slot's expected value. */
-/* Adopt LinkLobby_PeerSlotMatches resource_3cb:0200008c (156 bytes, fake match) */
 s32 LinkLobby_PeerSlotMatches(s32 slot)
 {
     s32 id = -1;

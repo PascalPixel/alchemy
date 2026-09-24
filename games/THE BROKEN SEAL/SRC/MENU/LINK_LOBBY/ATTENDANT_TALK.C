@@ -22,7 +22,6 @@ static __inline__ s32 Call2(s32 (*f)(s32, s32), s32 a0, s32 a1)
 }
 
 /* Link lobby attendants: face the selected subject and say the actor's line, advanced by flags 0x304 and 0x305. */
-/* Adopt LinkLobby_TalkToAttendant resource_3cb:0200106c (124 bytes) */
 s32 LinkLobby_TalkToAttendant(s32 actor)
 {
     s32 message;

@@ -1,4 +1,4 @@
-/* Draft, not exact (2026-09-24): 596 bytes for the 608-byte owner, 287
+/* Draft, not exact (2026-09-24): 596 bytes for the 608-byte owner, 288
    halfwords differ, nearly all of them branch offsets. The spawn body
    matches instruction for instruction (the object slot store needs the
    offset local, as ObjectTable_Get's does). Residuals: the reference keeps
@@ -13,7 +13,7 @@
 
 /* One row of a scene's object table; a row whose id is -1 ends it. */
 struct EventObjectEntry {
-    u16 id;                     /* 0x00 */
+    s16 id;                     /* 0x00 */
     s16 condition;              /* 0x02 */
     s32 action;                 /* 0x04 */
     s32 x;                      /* 0x08 */
@@ -81,6 +81,7 @@ void Event_SpawnObjectTable(struct EventObjectEntry *entry, s32 slot)
     s32 index;
     u32 offset;
     s16 id;
+    u16 uid;
     s32 character;
     s32 condition;
     u8 resource;

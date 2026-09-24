@@ -12791,7 +12791,10 @@
       "name": "FieldScene_RunScene3a4SequenceH",
       "source": "FIELD/ARUTIN_YAMA/SET_PIECE.C"
     },
-    "resource_3a6:02000030": "FIELD/HAIDIA_DOU/STAGED_PAIR_REGION.C",
+    "resource_3a6:02000030": {
+      "name": "SetEffectRecordMode",
+      "source": "FIELD/HAIDIA_DOU/STAGED_PAIR_REGION.C"
+    },
     "resource_3a6:0200013c": {
       "name": "Effect_Spawn",
       "source": "FIELD/COMMON/EFFECT/SPAWN.C"

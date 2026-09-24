@@ -4,7 +4,8 @@
 #include "OBJECT_EFFECT.H"
 #include "GLOBAL_CELLS.H"
 #include "OBJECT_RUNTIME.H"
-#include "SYSTEM.H"
+
+void WaitFrames(s32);
 
 /* object/attach_work_target_to_object.c */
 /* object/attach_work_target_to_object.c */

@@ -24,7 +24,6 @@ void Menu_EnsureCancelSound(void);
 s32 Ability_GetData(s32 flags);
 void RenderOutput_ClearListFar(s32 screen_handle);
 void ItemMenu_Close(void);
-void Runtime_ReleaseHeapBlock(s32 kind);
 void UiWindow_EraseBorderRectFar(s32 x, s32 y, s32 width, s32 height);
 void Event_ClearInvalidPackedValuesFar(void);
 

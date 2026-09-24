@@ -3,7 +3,8 @@
 #include "SCENE.H"
 #include "FIXED_MATH.H"
 #include "GLOBAL_CELLS.H"
-#include "SYSTEM.H"
+
+void WaitFrames(s32);
 
 struct EffectObject_0808f1c0;
 void Object_Destroy(struct EffectObject_0808f1c0 *);

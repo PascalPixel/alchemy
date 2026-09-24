@@ -61,7 +61,6 @@ extern struct EffectSceneWork *gEffectWork;
 extern u32 gFrameCount;
 
 void NormalizeVector(struct Output *);
-u32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 #define Rand Random16
 void RotateVectorByMagnitude(s32, s32, struct Output *);
@@ -134,7 +133,6 @@ void Object_SetMode(void *, s32);
 void Animation_ApplyChildValuesFar(void *, s32);
 void ObjectDispatch_SetSingleChildField26Far(void *, s32);
 void EffectSlot_Initialize(void *, s32, s32, s32);
-u32 Random16(void);
 void ObjectGroup_SetChildValueUnlessFifteenFar(void *, s32);
 void BattleFx_PrepareBufferInterpolation(void);
 void apply_random_child_values(void);

@@ -7,7 +7,6 @@ struct DisplayTransitionState {
     s16 timer;
 };
 
-void *Runtime_AllocateBlock(s32, s32);
 void DisplayTransition_FillTilemapAndSolidTile(s32);
 void Scheduler_AddOrUpdateCallback(void (*)(void), s32);
 void DisplayTransition_UpdateFrame(void);

@@ -1,5 +1,5 @@
 #include "DMA.H"
-void *Runtime_AllocateBlock(s32, s32);
+#include "SYSTEM.H"
 s32 Scheduler_AddOrUpdateCallback(void (*)(void), s32);
 void Menu_RunSelectedWorkspaceEntry(void);
 void Menu_InitializeSelectedWorkspace(void)

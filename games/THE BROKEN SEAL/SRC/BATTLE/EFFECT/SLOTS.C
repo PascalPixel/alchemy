@@ -7,7 +7,6 @@
 
 void *Runtime_AllocateHeapBlock(s32, s32);
 void BattleFx_ClearOwnedSlot(struct EffectSlot *);
-void Runtime_ReleaseHeapBlock(s32);
 
 struct EffectScene {
     u8 unknown_00[0x58];

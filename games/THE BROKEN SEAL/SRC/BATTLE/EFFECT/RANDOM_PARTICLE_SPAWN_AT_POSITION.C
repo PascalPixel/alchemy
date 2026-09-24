@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "FIXED_MATH.H"
+#include "SYSTEM.H"
 
 struct Values_0808f28c {
     u32 first;
@@ -22,7 +23,6 @@ struct Object_0808f28c {
     struct Child_0808f28c *child;
 };
 
-extern u32 Random16(void);
 extern void RotateVectorByMagnitude(s32, s32, struct Values_0808f28c *);
 extern struct Object_0808f28c *Object_Spawn(s32, u32, u32, u32);
 extern void Object_SetCallback(struct Object_0808f28c *, void *);

@@ -1,12 +1,12 @@
 #include "TYPES.H"
 #include "RESOURCE.H"
+#include "SYSTEM.H"
 
 extern u8 Data_000000f1[];
 
 s32 Runtime_AllocateHeapBlock(s32 arg0, s32 arg1);
 u32 Resource_DecodeByteLz(const void *, void *);
 s32 Resource_GetBuffer(s32 index, s32 value);
-void Runtime_ReleaseHeapBlock(s32);
 
 s32 Resource_LoadIndexedIntoBuffer(s32 arg0, s32 arg1)
 {

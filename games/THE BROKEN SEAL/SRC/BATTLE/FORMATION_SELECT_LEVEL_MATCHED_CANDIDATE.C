@@ -4,9 +4,9 @@
 #include "TBS_EDITION.H"
 #include "BATTLE_SUMMON.H"
 #include "BATTLE_FORMATION.H"
+#include "SYSTEM.H"
 
 /* battle/formation/select_level_matched_candidate.c */
-u32 Random16(void);
 
 struct BattleUnitLevel {
     u8 reserved_00[0x0f];

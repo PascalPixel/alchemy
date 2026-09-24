@@ -45,7 +45,6 @@ struct BattleObjectSlot {
 void BattleFx_ClearOwnedSlot(struct BattleEffectSceneObject *object);
 void Resource_ResetEntry(s32 handle);
 void BattleFx_PlayQueuedSound(void);
-void Runtime_ReleaseHeapBlock(s32 asset_id);
 
 /* Drain effect objects, restore the scene position, and release effect data. */
 void BattleEffect_CleanupSceneObjects(void)

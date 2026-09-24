@@ -1,4 +1,5 @@
 #include "DMA.H"
+#include "SYSTEM.H"
 
 struct RuntimeCells {
     u8 unknown_000[196];
@@ -9,7 +10,6 @@ extern struct RuntimeCells gWorkSlot;
 extern u8 Value_00000278[];
 
 void *Runtime_AllocateHeapBlock(s32 kind, s32 size);
-void Runtime_ReleaseHeapBlock(s32 kind);
 
 /* Copies the ARM routine at 0x08015afc (Value_00000278 bytes) to a heap
    block and runs the routine installed at 0x03001f14 on the work's

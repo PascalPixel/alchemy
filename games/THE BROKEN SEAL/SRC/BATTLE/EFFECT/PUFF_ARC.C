@@ -23,7 +23,6 @@ void Audio_PlayCue(s32);
 void BattleEventRuntime_BeginPhaseFar(s32);
 void ObjectGroup_UpdateMembers(s32, s32, s32, s32, s32);
 void ObjectGroup_TickMemberTimers(void);
-void Runtime_ReleaseHeapBlock(s32);
 s32 BattleFx_EndCanvasLayer(void);
 
 /* Six animation cells, one entry each: width, height, vertical bias, and the

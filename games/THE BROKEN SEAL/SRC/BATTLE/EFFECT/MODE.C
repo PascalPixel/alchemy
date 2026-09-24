@@ -1,10 +1,10 @@
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
+#include "SYSTEM.H"
 
 typedef void (*Callback)(s32 *);
 
 s32 Runtime_AllocateHeapBlock(s32 arg0, s32 arg1);
-void Runtime_ReleaseHeapBlock(s32);
 void BattleEffect_RunCirclingFallingScene(s32 *);
 void BattleEffect_RunEmberColumns(s32 *);
 void Unnamed_080eb754(s32 *);

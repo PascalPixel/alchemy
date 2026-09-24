@@ -1,5 +1,5 @@
 #include "DMA.H"
-void *Runtime_AllocateBlock(s32, s32);
+#include "SYSTEM.H"
 extern u32 *gTransitionWork;
 void BattlePresentation_InitializeWorkAndResetState(void)
 {

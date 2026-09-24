@@ -54,7 +54,6 @@ void Object_Destroy(struct EfxObj *obj);
 void *Runtime_AllocateHeapBlock(s32 kind, s32 size);
 void ItemIcon_LoadTilesFar(s32 item);
 s32 VramBlock_LoadCached(u32 slot, u32 size, const void *src);
-void Runtime_ReleaseHeapBlock(s32 kind);
 void EmitRandomParticleEffect(void);
 void BattleFx_SpawnRandomParticleAtPosition(const void *src);
 

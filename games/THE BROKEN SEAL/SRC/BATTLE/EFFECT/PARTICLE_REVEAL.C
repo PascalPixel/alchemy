@@ -63,7 +63,6 @@ void BattleFx_BeginCanvasLayer(s32 mode);
 void BattleFx_PrepareCanvasEffect(void *object, s32 a, s32 b, s32 c, s32 *out_a, s32 *out_b);
 void BattleFx_FetchRectangleBlitters(s32 flag, DrawRectangleFn *out_callbacks);
 void EffectPosition_ApplyAlternateStepAndYOffset(s16 a, s32 *out_pair);
-u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
 void EffectStep_AdvanceWithGravity3D(void *particle, s32 a, s32 b);
@@ -72,7 +71,6 @@ void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 void BattleMotion_ApplyVariantMotionFar(s32 member_id, s32 b);
 void Camera_ApplyShake(s32 a, s32 b);
 void ObjectGroup_TickMemberTimers(void);
-void Runtime_ReleaseHeapBlock(s32 id);
 void BattleFx_EndCanvasLayer(void);
 
 void BattleFx_RunParticleReveal(void *object)

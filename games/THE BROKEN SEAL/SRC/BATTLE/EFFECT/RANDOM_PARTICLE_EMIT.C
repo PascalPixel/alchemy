@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "FIXED_MATH.H"
 #include "OBJECT_EFFECT.H"
+#include "SYSTEM.H"
 
 struct ParticlePosition {
     s32 x;
@@ -43,7 +44,6 @@ typedef char ParticleEffectObject_child_offset[
 ];
 #undef OBJECT_0808EEE4_OFFSET
 
-extern u32 Random16(void);
 extern void RotateVectorByMagnitude(s32, s32, struct ParticlePosition *);
 extern void Object_SetCallback(struct ParticleEffectObject *, void *);
 extern void Object_SetMode(struct ParticleEffectObject *, s32);

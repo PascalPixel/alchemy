@@ -111,7 +111,6 @@ s32 BattleObject_IsValidId(u32 object_id)
 }
 
 /* battle/escape/play_run.c */
-u32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 #define Rand Random16
 

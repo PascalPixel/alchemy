@@ -31,7 +31,6 @@ struct ObjectSlot_080b8b48 {
 extern s32 *gIw;
 
 void Runtime_GetObject(s32);
-u32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 #define Rand Random16
 void UiText_DrawQuantity(s32, s32);

@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "SYSTEM.H"
 
 u32 BattleFx_CheckDescriptorKind3Result(s32 descriptor, s32 value)
 {
@@ -19,7 +20,6 @@ u32 BattleFx_CheckDescriptorKind3Result(s32 descriptor, s32 value)
   }
   return result;
 }
-
 
 struct EffectDescriptor {
     s32 flags;
@@ -107,7 +107,6 @@ struct EffectDescriptor *BattleFx_FindDescriptor(s32 kind, s32 value)
     return 0;
 }
 
-
 typedef s32 (*WorkEntryFn)(void);
 
 void Runtime_CallWorkBlockEntry(void)
@@ -115,7 +114,6 @@ void Runtime_CallWorkBlockEntry(void)
     s32 base = 0x02008000;
     ((WorkEntryFn)*(s32 *)(base + 4))();
 }
-
 
 struct EffectSelectionWork {
     u8 unk_00[0x24a];
@@ -141,14 +139,12 @@ s32 BattleFx_FindDescriptorWithOverride(s32 arg0)
     return (s32)result;
 }
 
-
 struct BattleEffectAction {
     s16 id;
     u8 unused_02[20];
     s8 mode;
     u8 unused_17;
 };
-
 
 struct BattleActionObject {
     void **states;
@@ -166,7 +162,6 @@ struct BattleActionObject {
 extern struct ActionDescriptor *BattleAction_FindDescriptor(s32);
 extern struct BattleActionObject *Object_GetById(s32);
 extern s32 BattleFx_GetFlags(s32);
-extern u32 Random16(void);
 extern void Battle_Reset(void);
 extern void Event_SetValue1d8(s32);
 extern void BattleEv_RunWait(s32, s32);
@@ -286,8 +281,6 @@ finish:
     return result;
 }
 
-
-
 s32 BattleFx_RunKind6DescriptorAction(s32 arg0)
 {
     s32 val;
@@ -313,7 +306,6 @@ s32 BattleFx_RunKind6DescriptorAction(s32 arg0)
     }
     return ret;
 }
-
 
 typedef struct {
     s32 flags;

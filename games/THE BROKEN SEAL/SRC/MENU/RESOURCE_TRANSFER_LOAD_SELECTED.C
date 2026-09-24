@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "RESOURCE.H"
+#include "SYSTEM.H"
 
 struct SelectionNode_0801c188 {
     u8 padding_00[8];
@@ -32,7 +33,6 @@ struct ResourceBuffer_0801c188 *Runtime_AllocateHeapBlock(s32 owner, s32 size);
 void Resource_DecodeByteLz(void *source, void *destination);
 u16 Resource_FindFreeEntry(void);
 u16 Resource_CopyData(s32 handle, s32 size, void *buffer);
-void Runtime_ReleaseHeapBlock(s32 owner);
 
 void Menu_LoadSelectedResource(void)
 {

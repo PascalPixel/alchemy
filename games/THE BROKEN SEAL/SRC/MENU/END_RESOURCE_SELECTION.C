@@ -6,7 +6,6 @@
 void ScheduleCallback(void *);
 void UiWork_Finalize(struct Work *work, s32 release);
 s32 Resource_ResetEntry(u32 index);
-void Runtime_ReleaseHeapBlock(s32);
 extern u8 Data_08028195;
 
 void Menu_EndResourceSelection(void)

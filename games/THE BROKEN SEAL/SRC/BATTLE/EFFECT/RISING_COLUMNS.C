@@ -24,7 +24,6 @@ void ObjectGroup_UpdateMembers(s32, s32, s32, s32, s32);
 s32 Math_Mod(s32, s32);
 void Camera_ApplyShake(s32, s32);
 void ObjectGroup_TickMemberTimers(void);
-void Runtime_ReleaseHeapBlock(s32);
 s32 BattleFx_EndCanvasLayer(void);
 #define WORK_EFFECT ((struct BattleEffectArgument *)work->effect)
 

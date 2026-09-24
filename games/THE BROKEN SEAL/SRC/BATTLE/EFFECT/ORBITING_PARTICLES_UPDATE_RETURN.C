@@ -1,5 +1,6 @@
 #include "FIXED_MATH.H"
 #include "EFFECT_0809B11C.H"
+#include "SYSTEM.H"
 
 struct Output_08097f80 {
     s32 x;
@@ -7,7 +8,6 @@ struct Output_08097f80 {
     s32 z;
 };
 
-u32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 #define Rand Random16
 void RotateVectorByMagnitude(s32, s32, struct Output_08097f80 *);

@@ -32,6 +32,8 @@ void Engine_EventRequestExit();
 void Engine_EventEnd();
 
 
+/* FAKEMATCH: ids the reference loads from the literal pool rather than
+ * building inline are spelled as link symbols at those values. */
 extern u8 Data_00001720[];
 
 /* Call sites spelled through these wrappers pass their constants straight

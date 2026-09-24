@@ -82,7 +82,8 @@ fn trailer_model(trailer: &str) -> Option<(String, bool)> {
 fn author_model(author: &str) -> Option<&'static str> {
     match author.trim() {
         "Codex" => Some("Codex"),
-        "Cursor Agent" => Some("Cursor"),
+        // Cursor's agent ran Grok (Pascal, 2026-09-24).
+        "Cursor Agent" => Some("Grok"),
         "Claude" => Some("Claude"),
         _ => None,
     }
@@ -441,8 +442,8 @@ pub(crate) fn label(
         .map(|(n, _)| n.clone())
         .or_else(|| author_model(&commit.author).map(String::from));
     let before = vec![hint.clone().unwrap_or_else(|| UNTAGGED.into())];
-    // Cursor left no logs, so another agent's session says nothing of it.
-    if hint.as_deref() == Some("Cursor") {
+    // Cursor (Grok) left no logs, so another agent's session says nothing of it.
+    if hint.as_deref() == Some("Grok") {
         return (before.clone(), before);
     }
     let family_of = hint.as_deref().and_then(family);
@@ -612,7 +613,7 @@ mod tests {
             ("Opus 5", 1),
             ("Sol 5.6", 2),
             ("Grok 4.6", 1),
-            ("Cursor", 1),
+            ("Grok", 1),
         ] {
             assert_eq!(day.get(model), Some(&count), "{model}");
         }

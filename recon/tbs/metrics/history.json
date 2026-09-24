@@ -74,8 +74,8 @@
     {"date": "2026-09-08", "tbs": {"percent": 67.64}, "models": {"Sol 5.6": 74}},
     {"date": "2026-09-09", "tbs": {"percent": 43.56}, "models": {"Astra 6": 1, "Opus 5": 14, "Sol 5.6": 8}},
     {"date": "2026-09-10", "tbs": {"percent": 50.42}, "models": {"Fable 5.1": 142, "Opus 5": 91, "Sonnet 5": 14}},
-    {"date": "2026-09-11", "tbs": {"percent": 50.64}, "models": {"Cursor": 19, "Fable 5.1": 5}},
-    {"date": "2026-09-12", "tbs": {"percent": 50.64}, "models": {"Cursor": 193, "Sol 5.6": 9}},
+    {"date": "2026-09-11", "tbs": {"percent": 50.64}, "models": {"Fable 5.1": 5, "Grok": 19}},
+    {"date": "2026-09-12", "tbs": {"percent": 50.64}, "models": {"Grok": 193, "Sol 5.6": 9}},
     {"date": "2026-09-13", "tbs": {"percent": 50.97}, "models": {"Astra 6": 16, "Luna 5.6": 2, "Sol 5.6": 81}},
     {"date": "2026-09-14", "tbs": {"percent": 51.51}, "models": {"Astra 6": 12, "Sol 5.6": 7}},
     {"date": "2026-09-15", "tbs": {"percent": 51.63}, "models": {"Astra 6": 2, "Luna 5.6": 29, "Sol 5.6": 10}},
@@ -104,16 +104,16 @@
     {"date": "2026-09-23", "tbs": {"percent": 57.37}, "tla": {"percent": 2.14}, "models": {"Opus 5.5": 92}},
     {
       "date": "2026-09-24",
-      "tbs": {"done": 922224, "executable": 1375934},
+      "tbs": {"done": 924922, "executable": 1375934},
       "tla": {"done": 42186, "executable": 1975640},
-      "models": {"Opus 5.5": 1038}
+      "models": {"Opus 5.5": 1050}
     }
   ],
   "figures": {
     "date": "2026-09-24",
-    "tbs": {"done": 922224, "executable": 1375934},
+    "tbs": {"done": 924922, "executable": 1375934},
     "tla": {"done": 42186, "executable": 1975640},
-    "models": {"Opus 5.5": 1038},
-    "files": "5f9226c35dac5bb8"
+    "models": {"Opus 5.5": 1050},
+    "files": "4ad4f95ff35a682b"
   }
 }

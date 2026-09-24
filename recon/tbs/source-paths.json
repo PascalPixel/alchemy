@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_39c:02001164": {
+      "name": "MakyuriHeya_RunPushedBlockScene",
+      "source": "FIELD/MAKYURI_HEYA/PUSHED_BLOCK_SCENE.C"
+    },
     "resource_39c:02002318": {
       "name": "MakyuriHeya_RunColumnProbeScene",
       "source": "FIELD/MAKYURI_HEYA/COLUMN_PROBE_SCENE.C"

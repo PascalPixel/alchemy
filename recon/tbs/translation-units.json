@@ -69380,6 +69380,66 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "makyuri-heya-pushed-block-scene",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_HEYA/PUSHED_BLOCK_SCENE.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_39c",
+      "absolute_symbols": {
+        "Engine_EventBegin": {
+          "address": "0x0200dab4",
+          "kind": "thumb"
+        },
+        "Engine_EventWait": {
+          "address": "0x0200daac",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagSet": {
+          "address": "0x0200da8c",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagClear": {
+          "address": "0x0200da94",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagIsSet": {
+          "address": "0x0200da84",
+          "kind": "thumb"
+        },
+        "Engine_EventEnd": {
+          "address": "0x0200dabc",
+          "kind": "thumb"
+        },
+        "StagedActor_FindClearPosition": {
+          "address": "0x02008758",
+          "kind": "thumb"
+        },
+        "SceneActor_MoveAndRedraw": {
+          "address": "0x020088ec",
+          "kind": "thumb"
+        },
+        "SceneEffect_SpawnRandomizedBurst": {
+          "address": "0x0200bc48",
+          "kind": "thumb"
+        },
+        "FieldScene_RunScene39c_020010c0": {
+          "address": "0x020090c0",
+          "kind": "thumb"
+        },
+        "Engine_MapCopyCells": {
+          "address": "0x0200da04",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02001164",
+          "extent": 476,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

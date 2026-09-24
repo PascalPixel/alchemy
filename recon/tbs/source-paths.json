@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_3cb:02000f8c": {
+      "name": "LinkLobby_TalkByProgress",
+      "source": "MENU/LINK_LOBBY/PROGRESS_TALK.C"
+    },
     "resource_3cb:020010e8": {
       "name": "LinkLobby_TalkAlternating",
       "source": "MENU/LINK_LOBBY/ALTERNATE_TALK.C"

@@ -78656,6 +78656,90 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "scene-3cb-02000f8c",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/MENU/LINK_LOBBY/PROGRESS_TALK.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3cb",
+      "absolute_symbols": {
+        "Local_02000f30": {
+          "address": "0x02008f30",
+          "kind": "thumb"
+        },
+        "Engine_EventBegin": {
+          "address": "0x02009844",
+          "kind": "thumb"
+        },
+        "Engine_ActorFaceActor": {
+          "address": "0x0200987c",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagIsSet": {
+          "address": "0x0200980c",
+          "kind": "thumb"
+        },
+        "Engine_EventSetMessage": {
+          "address": "0x02009884",
+          "kind": "thumb"
+        },
+        "Engine_EventShowMessage": {
+          "address": "0x02009894",
+          "kind": "thumb"
+        },
+        "Engine_EventEnd": {
+          "address": "0x0200984c",
+          "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
+        },
+        "gGameStateRows": {
+          "address": "0x2000240",
+          "kind": "data"
+        },
+        "Data_0000294e": {
+          "address": "0x294e",
+          "kind": "data"
+        },
+        "Data_00002953": {
+          "address": "0x2953",
+          "kind": "data"
+        },
+        "Data_00002958": {
+          "address": "0x2958",
+          "kind": "data"
+        },
+        "Data_00002967": {
+          "address": "0x2967",
+          "kind": "data"
+        },
+        "Data_0000296c": {
+          "address": "0x296c",
+          "kind": "data"
+        },
+        "Data_00002971": {
+          "address": "0x2971",
+          "kind": "data"
+        },
+        "Data_00002976": {
+          "address": "0x2976",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02000f8c",
+          "extent": 196,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

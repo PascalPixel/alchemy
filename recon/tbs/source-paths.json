@@ -19060,7 +19060,8 @@
       "name": "ObjectSystem_Initialize"
     },
     "main:0800bb20": {
-      "name": "ObjectSystem_Configure"
+      "name": "ObjectSystem_Configure",
+      "source": "FIELD/COMMON/OBJECT/CONFIGURE_SYSTEM.C"
     },
     "main:0800cacc": {
       "name": "Object_UpdateAllThumb"

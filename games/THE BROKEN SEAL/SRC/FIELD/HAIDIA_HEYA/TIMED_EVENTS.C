@@ -48,7 +48,6 @@ extern u8 Data_02009738[];
 extern u8 Data_020095b8[];
 extern u8 Data_000011a4[];
 extern u8 Data_00001c40[];
-extern u8 Data_02000240[];
 extern s16 Data_02000240_t[][1];
 extern u8 Data_020092fc[];
 extern u8 Data_02009400[];
@@ -119,8 +118,6 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
 
 static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
 {
-    extern u8 Data_03001ebc[];
-
     f(a0, a1);
 }
 
@@ -136,14 +133,11 @@ static __inline__ void bump_step(s32 amount)
 
 static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
 {
-    extern u8 Data_03001ebc[];
-
     return f(a0, a1);
 }
 
 static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 {
-    extern u8 Data_03001ebc[];
     void Camera_MoveTo();
 
     f(a0, a1, a2, a3);
@@ -151,7 +145,6 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 
 static __inline__ void Call11(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6, s32 a7, s32 a8, s32 a9, s32 a10)
 {
-    extern u8 Data_03001ebc[];
     void Camera_MoveTo();
 
     f(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10);
@@ -304,8 +297,6 @@ void SceneDialogue_RunActor10Message1c3d(void)
 
 void FieldScene_RunScene376_02000298(void)
 {
-    extern u8 Data_03001ebc[];
-
     u32 i;
     s32 record;
 
@@ -457,11 +448,11 @@ void FieldScene_RunByActorDirectionAndFlags(void)
 
     Event_Begin();
     if (GameFlag_IsSet(0x87a) != 0) {
-        Func_02001750(0x1c06);
+        Event_SetMessage(0x1c06);
         Event_AskYesNo(21, 0);
     } else {
         if (GameFlag_IsSet(0x815) != 0) {
-            Func_0200176a(0x11a2);
+            Event_SetMessage(0x11a2);
         } else {
             Event_SetMessage(0x0f53);
         }
@@ -472,8 +463,6 @@ void FieldScene_RunByActorDirectionAndFlags(void)
 
 void FieldScene_RunScene376_0200055c(void)
 {
-    extern u8 Data_03001ebc[];
-
     struct FieldActor *actor;
 
     actor = Actor_Get(0);
@@ -497,8 +486,6 @@ void FieldScene_RunScene376_0200055c(void)
 
 void FieldScene_RunScene376_020005d4(void)
 {
-    extern u8 Data_03001ebc[];
-
     struct FieldActor *actor;
 
     actor = Actor_Get(0);

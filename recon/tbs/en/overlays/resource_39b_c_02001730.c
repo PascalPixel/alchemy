@@ -1,141 +1,128 @@
+/* NONMATCHING: 572 bytes, candidate 564, 262 differing halfwords
+ * (2026-09-24). Single-overlay unit binding Engine_* at their import veneers.
+ * Remaining: the body matches instruction for instruction (0x200a820 and the
+ * 254 mask hoisted to r7/r8, counter r5 from 1 down); the reference also sets
+ * sl to 0 before the loop and never reads it, which costs the sl save and
+ * restore (8 bytes) and shifts everything after. Not the dbra reversal
+ * (has_call forbids it), not a bitfield (that gives a -2 mask); some dead
+ * zero pseudo survives to global-alloc there. */
 #include "TYPES.H"
 
-/* AUDITED GENERATED CALL SCRIPT for FieldScene_RunActorExchangeChoreography:
- * all 53 calls, the two-pass exchange, and fourteen actor/effect memory
- * operations across the complete actor-3/8 presentation owner. */
+void Engine_EventBegin();
+s32 Engine_ActorGet();
+void Engine_ActorSetPosition();
+void Engine_ActorSetSpeed();
+void Engine_CameraSetSpeed();
+void Engine_CameraMoveTo();
+void Engine_EventOpenScreen();
+void Engine_EventWaitForScreen();
+void Engine_ActorRunRepeatedMotion();
+void Engine_EventWait();
+void Engine_ActorWalkTo();
+void Engine_ActorEnableActionCallback();
+void Engine_ActorWaitForMove();
+void Engine_ActorFaceDirection();
+void Engine_ActorShowEmote();
+void Engine_CameraMoveToActor();
+void Engine_ActorWalkToAndWait();
+void Engine_CameraWaitForMove();
+void Engine_MapCopyCellAttributes();
+void Engine_EventEnd();
 
-#define FieldScene_RunActorExchangeChoreography Func_02001730
 
-void *Func_02003c18();
-void *Func_02003c2e();
-void *Func_02003c38();
-void *Func_02003c40();
-void Func_02003c82();
-void Func_02003c90();
-void Func_02003c90_a();
-void Func_02003c9a();
-void Func_02003c9e();
-void Func_02003cac();
-void Func_02003cba();
-void *Func_02003cc2();
-void Func_02003cd8();
-void Func_02003d08();
-void Func_02003d0a();
-void Func_02003d14();
-void *Func_02003d18();
-void Func_02003d1a();
-void Func_02003d32();
-void Func_02003d36();
-void Func_02003d3c();
-void *Func_02003d46();
-void Func_02003d4a();
-void Func_02003d4c();
-void Func_02003d4c_a();
-void Func_02003d4c_b();
-void Func_02003d6a();
-void Func_02003d74();
-void Func_02003d78();
-void Func_02003d7c();
-void Func_02003d7e();
-void Func_02003d82();
-void *Func_02003d92();
-void Func_02003d94();
-void Func_02003d98();
-void Func_02003daa();
-void Func_02003dac();
-void Func_02003db4();
-void Func_02003dc4();
-void Func_02003dc4_a();
-void Func_02003dc6();
-void *Func_02003dc8();
-void Func_02003dde();
-void Func_02003de8();
-void *Func_02003dee();
-void Func_02003df2();
-void Func_02003df6();
-void Func_02003e1a();
-void Func_02003e20();
-void Func_02003e34();
-void Func_02003e70();
-void Func_02003eaa();
-void Func_02003eb8();
 
-void Func_02001730(void)
+/* Call sites spelled through these wrappers pass their constants straight
+ * into the argument registers; a direct call precomputes a costly constant
+ * into a pseudo that the compiler then shares with later uses in the block.
+ * A value-returning call also sets r0 last of its arguments. */
+
+static __inline__ s32 Value1(s32 (*f)(), s32 a0)
 {
-    void *p1;
-    void *p16;
-    void *p2;
-    void *p24;
-    void *p29;
-    void *p3;
-    void *p38;
-    void *p4;
-    void *p44;
-    void *p47;
-    s32 i1;
+    return f(a0);
+}
 
-    p1 = Func_02003c18();
-    p2 = Func_02003c2e(12);
-    *(s32 *)(p2 + 24) = 4294901760;
-    p3 = Func_02003c38(13);
-    *(s32 *)(p3 + 24) = 4294901760;
-    p4 = Func_02003c40(14);
-    *(s32 *)(p4 + 24) = 4294901760;
-    Func_02003c90(3, 8912896, 12058624);
-    Func_02003c9e(0, 8912896, 19398656);
-    Func_02003cac(8, 8912896, 9961472);
-    Func_02003c82(3, 98304, 49152);
-    Func_02003c90_a(8, 98304, 49152);
-    Func_02003c9a(0, 52428, 26214);
-    Func_02003d32(52428, 6553);
-    Func_02003d4c(8912896, -1, 12058624, 0);
-    Func_02003d98();
-    Func_02003dac();
-    Func_02003d14(3, 1);
-    p16 = Func_02003cc2(8);
-    *(u8 *)((u8 *)(p16) + 90) &= 0xfe;
-    Func_02003cba(20);
-    for (i1 = 1; i1 >= 0; i1--) {
-        Func_02003d0a(3, 152, 168, 0);
-        Func_02003cd8(10);
-        Func_02003d08(8, 33597640);
-        Func_02003d36(3);
-        Func_02003d82(3, 49152, 30);
-        Func_02003d6a(3, 1);
-        p24 = Func_02003d18(3);
-        *(u8 *)((u8 *)(p24) + 90) &= 0xfe;
-        Func_02003d4c_a(3, 136, 184);
-        Func_02003d1a(10);
-        Func_02003d4a(8, 33597472);
-        Func_02003d78(3);
-        p29 = Func_02003d46(3);
-        *(u8 *)((u8 *)(p29) + 90) |= 0x1;
-        Func_02003d3c(30);
-        Func_02003d7e(3, 120, 168);
-        Func_02003d4c_b(5);
-        Func_02003d7c(8, 33597556);
-        Func_02003daa(3);
-        Func_02003df6(3, 49152, 30);
-        Func_02003dde(3, 1);
-        Func_02003d74(15);
-        p38 = Func_02003d92(3);
-        *(u8 *)((u8 *)(p38) + 90) &= 0xfe;
-        Func_02003dc6(3, 136, 184);
-        Func_02003d94(15);
-        Func_02003dc4(8, 33597472);
-        Func_02003df2(3);
-        Func_02003e1a(3, 1);
-        p44 = Func_02003dc8(3);
-        *(u8 *)((u8 *)(p44) + 90) |= 0x1;
+static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
+{
+    f(a0, a1);
+}
+
+static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
+{
+    f(a0, a1, a2);
+}
+
+static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
+{
+    f(a0, a1, a2, a3);
+}
+
+static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
+{
+    f(a0, a1, a2, a3, a4, a5);
+}
+
+void Local_02001730(void)
+{
+    s32 i;
+    s32 record;
+
+    Engine_EventBegin();
+    record = Engine_ActorGet(12);
+    *(s32 *)(record + 24) = -0x10000;
+    record = Value1(Engine_ActorGet, 13);
+    *(s32 *)(record + 24) = -0x10000;
+    record = Engine_ActorGet(14);
+    *(s32 *)(record + 24) = -0x10000;
+    Call3(Engine_ActorSetPosition, 3, 0x880000, 0xb80000);
+    Call3(Engine_ActorSetPosition, 0, 0x880000, 0x1280000);
+    Call3(Engine_ActorSetPosition, 8, 0x880000, 0x980000);
+    Call3(Engine_ActorSetSpeed, 3, 0x18000, 0xc000);
+    Call3(Engine_ActorSetSpeed, 8, 0x18000, 0xc000);
+    Call3(Engine_ActorSetSpeed, 0, 0xcccc, 0x6666);
+    Call2(Engine_CameraSetSpeed, 0xcccc, 0x1999);
+    Call4(Engine_CameraMoveTo, 0x880000, -1, 0xb80000, 0);
+    Engine_EventOpenScreen();
+    Engine_EventWaitForScreen();
+    Engine_ActorRunRepeatedMotion(3, 1);
+    *(u8 *)(Engine_ActorGet(8) + 90) &= 254;
+    Engine_EventWait(20);
+    for (i = 1; i >= 0; i--) {
+        Engine_ActorWalkTo(3, 152, 168);
+        Engine_EventWait(10);
+        Call2(Engine_ActorEnableActionCallback, 8, 0x200a8c8);
+        Engine_ActorWaitForMove(3);
+        Call3(Engine_ActorFaceDirection, 3, 0xc000, 30);
+        Engine_ActorRunRepeatedMotion(3, 1);
+        *(u8 *)(Engine_ActorGet(3) + 90) &= 254;
+        Engine_ActorWalkTo(3, 136, 184);
+        Engine_EventWait(10);
+        Engine_ActorEnableActionCallback(8, 0x200a820);
+        Engine_ActorWaitForMove(3);
+        *(u8 *)(Engine_ActorGet(3) + 90) |= 1;
+        Engine_EventWait(30);
+        Engine_ActorWalkTo(3, 120, 168);
+        Engine_EventWait(5);
+        Call2(Engine_ActorEnableActionCallback, 8, 0x200a874);
+        Engine_ActorWaitForMove(3);
+        Call3(Engine_ActorFaceDirection, 3, 0xc000, 30);
+        Engine_ActorRunRepeatedMotion(3, 1);
+        Engine_EventWait(15);
+        *(u8 *)(Engine_ActorGet(3) + 90) &= 254;
+        Engine_ActorWalkTo(3, 136, 184);
+        Engine_EventWait(15);
+        Engine_ActorEnableActionCallback(8, 0x200a820);
+        Engine_ActorWaitForMove(3);
+        Engine_ActorRunRepeatedMotion(3, 1);
+        *(u8 *)(Engine_ActorGet(3) + 90) |= 1;
     }
-    Func_02003dc4_a(20);
-    Func_02003e70(3, 258, 60);
-    p47 = Func_02003dee(3);
-    *(s32 *)(p47 + 108) = 33590617;
-    Func_02003eaa(0, 1);
-    Func_02003de8(30);
-    Func_02003e34(0, 136, 264);
-    Func_02003eb8();
-    Func_02003db4(0, 0, 3, 3, 7, 9);
-    Func_02003e20();
+    Engine_EventWait(20);
+    Call3(Engine_ActorShowEmote, 3, 0x102, 60);
+    record = Engine_ActorGet(3);
+    *(s32 *)(record + 108) = 0x2008d59;
+    Engine_CameraMoveToActor(0, 1);
+    Engine_EventWait(30);
+    Call3(Engine_ActorWalkToAndWait, 0, 136, 0x108);
+    Engine_CameraWaitForMove();
+    Call6(Engine_MapCopyCellAttributes, 0, 0, 3, 3, 7, 9);
+    Engine_EventEnd();
 }

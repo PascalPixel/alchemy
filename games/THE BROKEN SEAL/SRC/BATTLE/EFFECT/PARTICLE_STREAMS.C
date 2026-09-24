@@ -2,7 +2,8 @@
 #include "DMA.H"
 #include "BATTLE_EFX.H"
 #include "CALLBACK_SCHEDULER.H"
-#include "SYSTEM.H"
+
+void WaitFrames(s32);
 
 /* Nested particle allocators capture this sequence's work block. */
 

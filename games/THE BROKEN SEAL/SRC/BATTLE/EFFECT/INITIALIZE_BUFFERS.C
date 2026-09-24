@@ -1,9 +1,8 @@
 #include "DMA.H"
 #include "CALLBACK_SCHEDULER.H"
+#include "SYSTEM.H"
 
-void *Runtime_AllocateBlock(s32, s32);
 void BattleFx_BuildBuffer(s32, s32, s32, s32);
-
 
 void BattleEffect_InitializeBuffers(void)
 {

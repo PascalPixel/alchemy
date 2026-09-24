@@ -43,7 +43,6 @@ extern u8 CounterReveal_PanelY[];
 s32 Unnamed_080cdb24(s32 mode);
 void *Resource_GetTableEntry(s32 id);
 u32 Resource_DecodeType01(const void *source, void *destination);
-void Runtime_ReleaseHeapBlock(s32 id);
 s32 BattleFx_EndCanvasLayer(void);
 void **GetBattleObjectSlotFar(s32 member_id);
 void EffectPosition_ApplyStepAndYOffset(s32 member_id, void *out);

@@ -1,7 +1,7 @@
 #include "TYPES.H"
+#include "SYSTEM.H"
 
 s32 BattleParty_ListLivingUnits(s32 side, u16 *out_units);
-u32 Random16(void);
 u8 *Owner_GetStateFar(s32 unit_id);
 void BattleCommand_SelectAutomatic(void *entry, s32 arg1);
 

@@ -2,7 +2,8 @@
 #include "BATTLE_EFFECT_WORK.H"
 #include "BATTLE_EFX.H"
 #include "CALLBACK_SCHEDULER.H"
-#include "SYSTEM.H"
+
+void WaitFrames(s32);
 
 /* Six drawn arguments: destination, source cell, x, y, width, height.
    Called through the r4 bx bank, so it is an indirect call through a

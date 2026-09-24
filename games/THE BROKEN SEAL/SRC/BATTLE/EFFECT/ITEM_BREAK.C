@@ -2,6 +2,7 @@
 #include "TYPES.H"
 #include "OBJECT_EFX.H"
 #include "SOUND_IDS.H"
+#include "SYSTEM.H"
 
 extern void *Object_Spawn(s32, s32, s32, s32);
 extern void set_target_position_from_magnitude_angle(
@@ -9,7 +10,6 @@ extern void set_target_position_from_magnitude_angle(
 extern void Object_SetMode(void *, s32);
 extern void Object_SetCallback(void *, void *);
 extern void BattleFx_UpdateItemBreakFragment(void *);
-extern u32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 #define Rand Random16
 extern void Audio_PlayCue(s32);

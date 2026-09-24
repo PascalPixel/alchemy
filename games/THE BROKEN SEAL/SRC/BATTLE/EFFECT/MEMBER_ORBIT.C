@@ -27,7 +27,6 @@ void EffectPosition_ApplyBaseAndYOffset(void *source, void *screen);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
-void Runtime_ReleaseHeapBlock(s32 id);
 s32 BattleFx_EndCanvasLayer(void);
 
 /*

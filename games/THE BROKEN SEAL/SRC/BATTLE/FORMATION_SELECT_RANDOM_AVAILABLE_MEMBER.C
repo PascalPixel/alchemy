@@ -1,7 +1,7 @@
 #include "TYPES.H"
 #include "FIXED_MATH.H"
 #include "BATTLE_FORMATION.H"
-u32 Random16(void);
+#include "SYSTEM.H"
 
 s32 BattleFormation_SelectRandomAvailableMember(s32 record_id)
 {

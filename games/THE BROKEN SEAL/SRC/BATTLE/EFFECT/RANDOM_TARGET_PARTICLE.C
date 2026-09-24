@@ -1,5 +1,6 @@
 #include "EFFECT_0809B11C.H"
 #include "FIXED_MATH.H"
+#include "SYSTEM.H"
 
 struct EffectVector {
     s32 x;
@@ -16,7 +17,6 @@ extern s32 gGameState[];
 #define PARTY_STATE gGameState
 
 struct EffectPositionSource *Object_GetById(s32 id);
-u32 Random16(void);
 void RotateVectorByMagnitude(
     s32 magnitude,
     s32 angle,

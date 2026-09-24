@@ -1,7 +1,7 @@
 #include "TYPES.H"
+#include "SYSTEM.H"
 
 extern u8 Data_08011bf5;
-void Runtime_ReleaseHeapBlock(s32);
 void ScheduleCallback(void *);
 
 void Runtime_ScheduleCallbackAndReleaseBlock28(void)

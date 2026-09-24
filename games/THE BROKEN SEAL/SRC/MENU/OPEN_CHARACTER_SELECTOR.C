@@ -60,7 +60,6 @@ LAYOUT_OFFSET_GUARD(
 extern struct MenuObjectControl *gMenuCtrlWork;
 
 struct CharacterSelectorState *Runtime_AllocateHeapBlock(s32, s32);
-void Runtime_ReleaseHeapBlock(s32);
 void RenderOutput_ClearListFar(s32);
 void UiWindow_DrawFrameFar(s32, s32, s32, s32);
 s32 UiWindow_CreateFar(s32, s32, s32, s32, s32);

@@ -2,7 +2,8 @@
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
 #include "TBS_EDITION.H"
-#include "SYSTEM.H"
+
+void WaitFrames(s32);
 
 extern u8 RomBytes_08029a10[];
 extern u8 RomBytes_08029e00[];

@@ -1,6 +1,7 @@
 #include "FIXED_MATH.H"
 #include "TYPES.H"
 #include "OBJECT_EFX.H"
+#include "SYSTEM.H"
 
 struct ItemBreakFragmentPosition {
     s32 x;
@@ -30,7 +31,6 @@ struct ItemBreakFragmentObject {
 };
 
 extern s32 ArcTan2(s32, s32);
-extern u32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 #define Rand Random16
 extern void RotateVectorByMagnitude(s32, s32, struct ItemBreakFragmentPosition *);

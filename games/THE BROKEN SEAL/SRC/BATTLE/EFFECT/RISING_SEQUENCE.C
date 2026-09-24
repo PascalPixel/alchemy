@@ -1,6 +1,7 @@
 #include "FIXED_MATH.H"
 #include "TYPES.H"
-#include "SYSTEM.H"
+
+void WaitFrames(s32);
 
 #define FIELD_S32(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
 #define OBJECT_X(object) FIELD_S32(object, 0x08)

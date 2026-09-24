@@ -14,7 +14,6 @@ static __inline__ void CopyWords(WordCopy copy, void *destination,
 }
 extern u8 gWorkSlot[];
 #define PIXEL_BUFFER ((u8 *)0x02010000)
-u32 Random16(void);
 
 void Graphics_ConvertBackgroundToBlueRamp(void)
 {

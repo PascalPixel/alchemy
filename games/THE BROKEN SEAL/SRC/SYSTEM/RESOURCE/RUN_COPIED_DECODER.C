@@ -1,4 +1,5 @@
 #include "DMA.H"
+#include "SYSTEM.H"
 
 struct RuntimeCells {
     u8 unknown_000[196];
@@ -10,7 +11,6 @@ extern u8 Value_0000027c[];
 extern u8 gDecodeBuffer[];
 
 void *Runtime_AllocateHeapBlock(s32 kind, s32 size);
-void Runtime_ReleaseHeapBlock(s32 kind);
 
 /* Copies the ARM decoder at 0x08009e7c (Value_0000027c bytes) to a heap
    block and runs the decoder installed at 0x03001f14 on a and b. */

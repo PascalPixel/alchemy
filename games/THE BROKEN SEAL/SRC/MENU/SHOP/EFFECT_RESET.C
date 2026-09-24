@@ -1,7 +1,7 @@
 #include "TYPES.H"
+#include "SYSTEM.H"
 
 /* shop/effect/reset.c */
-u32 Random16(void);
 void Effect_Do(s32);
 void Effect_Apply(s32, u32);
 

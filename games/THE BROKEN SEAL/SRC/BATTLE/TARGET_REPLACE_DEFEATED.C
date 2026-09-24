@@ -3,8 +3,7 @@
 #include "BATTLE_PARTY.H"
 #include "BATTLE_RUNTIME.H"
 #include "BATTLE_TARGET.H"
-
-u32 Random16(void);
+#include "SYSTEM.H"
 
 s32 BattleTarget_ReplaceDefeated(const u8 *action)
 {

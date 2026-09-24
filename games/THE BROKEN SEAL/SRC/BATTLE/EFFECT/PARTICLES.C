@@ -3,6 +3,7 @@
 #include "SCENE.H"
 #include "OBJECT_EFFECT.H"
 #include "OBJECT_EFX.H"
+#include "SYSTEM.H"
 
 struct Vector_08099d18 {
     s32 x;
@@ -36,7 +37,6 @@ typedef char State_08099d18_source_offset[
 
 extern struct State_08099d18 *gIw;
 
-u32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 #define Rand Random16
 void RotateVectorByMagnitude(s32, s32, struct Vector_08099d18 *);

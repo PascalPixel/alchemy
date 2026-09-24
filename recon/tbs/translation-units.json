@@ -76841,6 +76841,74 @@
           }
         }
       }
+    },
+    {
+      "id": "scene-39e-02003e58",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHIAN_JIIN/ENTRY_STATE.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_39e",
+      "absolute_symbols": {
+        "Engine_GameFlagIsSet": {
+          "address": "0x0200c3bc",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetAnimation": {
+          "address": "0x0200c454",
+          "kind": "thumb"
+        },
+        "FieldScene_RunScene39e_020027ec": {
+          "address": "0x0200a7ec",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagClear": {
+          "address": "0x0200c3cc",
+          "kind": "thumb"
+        },
+        "Engine_ActorGet": {
+          "address": "0x0200c404",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetPosition": {
+          "address": "0x0200c44c",
+          "kind": "thumb"
+        },
+        "Engine_MapCopyCellAttributes": {
+          "address": "0x0200c39c",
+          "kind": "thumb"
+        },
+        "NewEffectObject": {
+          "address": "0x02008048",
+          "kind": "thumb"
+        },
+        "FieldScene_RunRoofEnsembleSequence": {
+          "address": "0x0200aad0",
+          "kind": "thumb"
+        },
+        "Main_0808a5e0": {
+          "address": "0x0200c564",
+          "kind": "thumb"
+        },
+        "Engine_ActorFaceDirection": {
+          "address": "0x0200c4c4",
+          "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02003e58",
+          "extent": 644,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

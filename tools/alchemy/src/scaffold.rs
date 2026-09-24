@@ -155,7 +155,6 @@ fn run(args: &[String]) -> Result<(), String> {
         "owners": rows.iter().filter(|r| r.include.is_some()).map(|r| json!({
             "address": format!("0x{:08x}", r.address),
             "extent": r.extent,
-            "state": r.state,
         })).collect::<Vec<_>>(),
     });
     println!(

@@ -1,3 +1,7 @@
+/* Battle: order the turn queue by priority, highest first. Commands of
+   kind 5 whose action has effect 46, 47 or 53 are raised by 10000 first;
+   the sort is a bubble sort of 16-byte entries through the IWRAM word
+   copier. */
 #include "BATTLE_RUNTIME.H"
 #include "BATTLE_TYPES.H"
 #include "TYPES.H"
@@ -13,7 +17,7 @@ struct BattleQueueEntry {
 
 s32 Func_080771e8(s32 group, s32 index);
 
-typedef void (*WordCopy)(void *destination, const void *source, s32 size);
+typedef s32 (*WordCopy)(void *destination, const void *source, s32 size);
 
 static __inline__ void CopyWords(
     void *destination, const void *source, s32 size)
@@ -21,9 +25,7 @@ static __inline__ void CopyWords(
     ((WordCopy)0x03001388)(destination, source, size);
 }
 
-extern u8 Value_0000000f;
-
-void Func_080b9470(struct BattleQueueEntry *entries, s32 count)
+void BattleQueue_SortByPriority(struct BattleQueueEntry *entries, s32 count)
 {
     s32 i;
     s32 j;
@@ -34,15 +36,11 @@ void Func_080b9470(struct BattleQueueEntry *entries, s32 count)
 
         if (entry->command_kind == 5) {
             struct BattleAction *action;
-            s8 group;
-            u8 effect;
 
             Func_08077008(entry->owner_id);
-            group = (s8)(entry->encoded_action >> 8);
             action = BattleAction_Get(Func_080771e8(
-                group & (s32)&Value_0000000f, entry->encoded_action & 0xff));
-            effect = action->effect;
-            if (effect == 46 || effect == 47 || effect == 53) {
+                (s16)entry->encoded_action >> 8 & 15, entry->encoded_action & 0xff));
+            if (action->effect == 46 || action->effect == 47 || action->effect == 53) {
                 entry->priority += 10000;
             }
         }

@@ -1,235 +1,158 @@
+/* NONMATCHING: 964 bytes, candidate 880, 469 differing halfwords (2026-09-24).
+ * Structure follows the ROM: seven OAM entries written through a cursor, one
+ * register call per entry. The ROM spills the cursor to sp+12 and holds the
+ * shape bits (0x8000, 0x40000000) and 0xe400 in r9/sl across calls; this
+ * build keeps the cursor in r7 and rematerialises the constants. */
 #include "TYPES.H"
+#include "DMA.H"
 
 #define FieldScene_RunScene3bcSequenceB Func_020040d0
 
-s32 Func_020089f4();
-void Func_02008a0e();
-void Func_02008a1a();
-void Func_02008a34();
-void Func_02008a46();
-void Func_02008abc();
-s32 Func_02008ad4();
-void Func_02008afe();
-void Func_02008b3e();
-void Func_02008b6e();
-s32 Func_02008bac();
-void Func_02008bb4();
-s32 Func_02008bc2();
-void Func_02008c0a();
-s32 Func_02008c34();
-s32 Func_02008c4a();
-void Func_02008ca6();
-void Func_02008d28();
-s32 Func_02008eca();
-s32 Func_02008f52();
+struct HudBlock {
+    u16 base;
+    u16 offset;
+};
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
+struct HudWork {
+    u32 oam[18][3];
+    s16 block;
+    s16 level;
+    s16 shown;
+    s16 marker_b;
+    s16 marker_a;
+    s16 pad226;
+    s16 pad228;
+    s16 count;
+    s32 cam_x;
+    s32 cam_z;
+};
 
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
+struct HudEntry {
+    u32 a0;
+    u32 a1;
+    u32 a2;
+};
+
+struct HudObject {
+    u8 pad00[8];
+    s32 x;
+    u8 pad0c[4];
+    s32 z;
+};
+
+extern struct HudBlock Data_03001b10[];
+
+s32 Func_020089f4(s32 size);
+void Func_02008a0e(const void *src, s32 dst);
+void Func_02008a1a(s32 buf);
+void Func_02008a34(s32 block, s32 size, s32 buf);
+void Func_02008a46(s32 block);
+void Func_02008abc(void *e, s32 pri);
+s32 Func_02008ad4(s32 flag);
+void Func_02008afe(void *e, s32 pri);
+void Func_02008b3e(void *e, s32 pri);
+void Func_02008b6e(void *e, s32 pri);
+s32 Func_02008bac(s32 a, s32 b);
+void Func_02008bb4(void *e, s32 pri);
+s32 Func_02008bc2(s32 a, s32 b);
+void Func_02008c0a(void *e, s32 pri);
+s32 Func_02008c34(s32 a, s32 b);
+s32 Func_02008c4a(s32 a, s32 b);
+void Func_02008ca6(void *e, s32 pri);
+void Func_02008d28(void *e, s32 pri);
+struct HudObject *Func_02008eca(s32 id);
+struct HudObject *Func_02008f52(s32 id);
+
+void FieldScene_RunScene3bcSequenceB(void)
 {
-    return f(a0);
-}
-
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-static __inline__ s32 Value4(s32 (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    return f(a0, a1, a2, a3);
-}
-
-void FieldScene_RunScene3bcSequenceB(s32 a0)
-{
+    struct HudWork *work = *(struct HudWork **)0x03001f3c;
+    u32 *oam = (u32 *)work;
+    struct HudWork *hud = work;
+    struct HudEntry *ent = (struct HudEntry *)work;
+    s32 tile;
+    s32 count;
+    s32 y;
+    s32 x;
     u32 i;
-    s32 p10;
-    s32 p10b;
-    s32 p11;
-    s32 p11b;
-    s32 p8;
-    s32 p8b;
-    s32 p9;
-    s32 rec6;
-    s32 rec7;
-    s32 rec8;
-    s32 record;
-    s32 r9;
-    s32 v3;
-    s32 v5;
-    s32 base6_0;
-    s32 v8;
-    s32 v4;
-    s32 base10_800000;
-    s32 v6;
-    s32 none;
-    s32 v7;
-    s32 slot12;
-    s32 slot16;
-    s32 slot8;
-    s32 slot4;
-    s32 slot0;
+    s32 buf;
+    u32 shape;
+    struct HudObject *obj;
 
-    p8 = *(s32 *)0x03001f3c;
-    slot12 = *(s32 *)0x03001f3c;
-    slot16 = *(s32 *)0x03001f3c;
-    slot8 = ((u32)*(u16 *)(((s32)(*(s16 *)(p8 + 216) << 2) + 0x3001b10) + 2) >> 5);
-    p11 = *(s16 *)(p8 + 230);
-    if (*(s16 *)(((p8 + 230) - 10)) != 0) {
-        {
-            s32 shown = 2;
-        
-            *(u16 *)(p8 + 218) = shown;
+    tile = Data_03001b10[work->block].offset >> 5;
+    count = work->count;
+    if (work->shown != 0) {
+        work->level = 2;
+    } else if (Func_02008ad4(0x106) != 0) {
+        if (work->level > 0) {
+            work->level--;
         }
-    } else {
-        if (Value1(Func_02008ad4, 0x106) != 0) {
-            if (*(s16 *)(p8 + 218) <= 0) {
-                goto L_0200418c;
-            }
-            *(u16 *)(p8 + 218) = (*(u16 *)(p8 + 218) - 1);
-        } else {
-            if (*(s16 *)(p8 + 218) <= 1) {
-                v3 = (*(u16 *)(p8 + 218) + 1);
-                *(u16 *)(p8 + 218) += 1;
-                if ((v3 << 16) == 0x10000) {
-                    *(s32 *)(0x40000d4) = 0x200cd60;
-                    *(s32 *)(0x40000d4 + 4) = 0x50003c0;
-                    *(s32 *)(0x40000d4 + 8) = -0x7ffffff0;
-                    rec7 = Value4(Func_020089f4, 0x200, 0x50003c0, -0x7ffffff0, ((0x40000d4 + 12) - 12));
-                    Call2(Func_02008a0e, 0x200cd80, rec7);
-                    Call3(Func_02008a34, *(s16 *)(p8 + 216), 0x200, rec7);
-                    Func_02008a1a(rec7);
-                }
-            }
+    } else if (work->level <= 1) {
+        if (++work->level == 1) {
+            Dma_Set((const void *)0x0200cd60, (void *)0x050003c0, 0x80000010, (volatile u32 *)0x040000d4);
+            buf = Func_020089f4(0x200);
+            Func_02008a0e((const void *)0x0200cd80, buf);
+            Func_02008a34(work->block, 0x200, buf);
+            Func_02008a1a(buf);
         }
     }
-    L_0200418c:;
-    if (*(s16 *)(p8 + 218) == 0) {
-        Func_02008a46(*(s16 *)(slot12 + 216));
-        v5 = r9;
-        v7 = (p8 + 216);
-    } else {
-        slot4 = ((s32)p11 << 4);
-        *(s32 *)(slot12) = 0;
-        slot12 = (slot12 + 4);
-        *(s32 *)((slot12 + 4)) = ((s32)(((104 - slot4) << 16) | (s32)((s32)(((s32)((s32)(*(s16 *)(p8 + 218) << 1) + *(s16 *)(p8 + 218)) << 1) - 8) & 255)) | 0x8000);
-        slot12 = ((slot12 + 4) + 4);
-        *(s32 *)(((slot12 + 4) + 4)) = (slot8 | 0xe400);
-        slot12 = (((slot12 + 4) + 4) + 4);
-            base6_0 = 0;
-        v8 = (p8 + 12);
-        Func_02008abc(p8, 255);
-        if ((u32)0 < p11) {
-            p10 = ((slot8 + 2) | 0xe400);
-            v5 = slot12;
-            v8 = (p8 + 12);
-            do {
-                *(s32 *)(v5) = 0;
-                *(s32 *)(v5 + 4) = ((s32)(((96 - (base6_0 << 4)) << 16) | (s32)((s32)(((s32)((s32)(*(s16 *)(p8 + 218) << 1) + *(s16 *)(p8 + 218)) << 1) - 8) & 255)) | 0x40000000);
-                *(s32 *)(v5 + 8) = p10;
-                slot12 = (slot12 + 12);
-                base6_0 = (base6_0 + 1);
-                v8 = (v8 + 12);
-                v5 = (v5 + 12);
-                Func_02008afe(v8, 255);
-            } while ((u32)base6_0 < p11);
+    if (work->level == 0) {
+        Func_02008a46(((struct HudWork *)oam)->block);
+        return;
+    }
+    y = (work->level * 6 - 8) & 0xff;
+    x = count << 4;
+    shape = 0x8000;
+    *oam++ = 0;
+    *oam++ = ((104 - x) << 16) | y | shape;
+    *oam++ = tile | 0xe400;
+    Func_02008abc(ent++, 255);
+    shape = 0x40000000;
+    for (i = 0; i < count; i++) {
+        *oam++ = 0;
+        *oam++ = ((96 - (i << 4)) << 16) | y | shape;
+        *oam++ = (tile + 2) | 0xe400;
+        Func_02008afe(ent++, 255);
+    }
+    shape = 0x8000;
+    *oam++ = 0;
+    *oam++ = (112 << 16) | y | shape;
+    *oam++ = (tile + 6) | 0xe400;
+    Func_02008b3e(ent++, 255);
+    *oam++ = 0;
+    *oam++ = (120 << 16) | y | shape | 0x10000000;
+    *oam++ = (tile + 6) | 0xe400;
+    Func_02008b6e(ent++, 255);
+    shape = 0x40000000;
+    for (i = 0; i < count; i++) {
+        *oam++ = 0;
+        *oam++ = ((128 + (i << 4)) << 16) | y | shape | 0x10000000;
+        *oam++ = (tile + 2) | 0xe400;
+        Func_02008bb4(ent++, 255);
+    }
+    shape = 0x8000;
+    *oam++ = 0;
+    *oam++ = ((x + 128) << 16) | y | shape | 0x10000000;
+    *oam++ = tile | 0xe400;
+    Func_02008c0a(ent++, 255);
+    if ((*(u32 *)0x03001e40 & 15) > 4) {
+        shape = 0x40000000;
+        obj = Func_02008eca(hud->marker_a);
+        if (obj != 0) {
+            x = Func_02008bac(obj->x - hud->cam_x, 0xe0000) + 112;
+            y = (Func_02008bc2(obj->z - hud->cam_z, 0xe0000) + hud->level * 6 - 4) & 0xff;
+            *oam++ = 0;
+            *oam++ = (x << 16) | y | shape;
+            *oam++ = (tile + 12) | 0xe400;
+            Func_02008ca6(ent++, 255);
         }
-            base6_0 = 0;
-        *(s32 *)(slot12) = 0;
-        slot12 = (slot12 + 4);
-        v5 = ((slot8 + 6) | 0xe400);
-        *(s32 *)((slot12 + 4)) = ((s32)(0x700000 | (s32)((s32)(((s32)((s32)(*(s16 *)(p8 + 218) << 1) + *(s16 *)(p8 + 218)) << 1) - 8) & 255)) | 0x8000);
-        *(s32 *)(((slot12 + 4) + 4)) = ((slot8 + 6) | 0xe400);
-        slot12 = (((slot12 + 4) + 4) + 4);
-        Func_02008b3e(v8, 255);
-        *(s32 *)(slot12) = 0;
-        slot12 = (slot12 + 4);
-        *(s32 *)((slot12 + 4)) = ((s32)((s32)(0x780000 | (s32)((s32)(((s32)((s32)(*(s16 *)(p8 + 218) << 1) + *(s16 *)(p8 + 218)) << 1) - 8) & 255)) | 0x8000) | 0x10000000);
-        slot12 = ((slot12 + 4) + 4);
-        v8 = ((v8 + 12) + 12);
-        *(s32 *)(((slot12 + 4) + 4)) = ((slot8 + 6) | 0xe400);
-        slot12 = (((slot12 + 4) + 4) + 4);
-        v6 = 0;
-        Func_02008b6e((v8 + 12), 255);
-        if ((u32)0 < p11) {
-            base10_800000 = 0x800000;
-            v4 = ((slot8 + 2) | 0xe400);
-            v5 = slot12;
-            v8 = ((v8 + 12) + 12);
-            do {
-                *(s32 *)(v5) = 0;
-                *(s32 *)(v5 + 4) = ((s32)((s32)((s32)((s32)(((s32)((s32)(*(s16 *)(p8 + 218) << 1) + *(s16 *)(p8 + 218)) << 1) - 8) & 255) | base10_800000) | 0x40000000) | 0x10000000);
-                *(s32 *)(v5 + 8) = v4;
-                slot0 = v4;
-                slot12 = (slot12 + 12);
-                v8 = (v8 + 12);
-                Func_02008bb4(v8, 255);
-                base6_0 = (base6_0 + 1);
-                v5 = (v5 + 12);
-                base10_800000 = (base10_800000 + 0x100000);
-                v4 = slot0;
-            } while ((u32)base6_0 < p11);
-            v6 = base6_0;
-        }
-        *(s32 *)(slot12) = 0;
-        none = 0;
-        slot12 = (slot12 + 4);
-        *(s32 *)((slot12 + 4)) = ((s32)((s32)((s32)((s32)(((s32)((s32)(*(s16 *)(p8 + 218) << 1) + *(s16 *)(p8 + 218)) << 1) - 8) & 255) | ((slot4 + 128) << 16)) | 0x8000) | 0x10000000);
-        *(s32 *)(((slot12 + 4) + 4)) = (slot8 | 0xe400);
-        slot12 = (((slot12 + 4) + 4) + 4);
-        Func_02008c0a(v8, 255);
-        if ((u32)(*(s32 *)0x03001e40 & 15) <= 4) {
-            v7 = ((s32)((s32)((s32)((s32)(((s32)((s32)(*(s16 *)(p8 + 218) << 1) + *(s16 *)(p8 + 218)) << 1) - 8) & 255) | ((slot4 + 128) << 16)) | 0x8000) | 0x10000000);
-        } else {
-            rec8 = Value1(Func_02008eca, *(s16 *)(slot16 + 224));
-            v7 = ((s32)((s32)((s32)((s32)(((s32)((s32)(*(s16 *)(p8 + 218) << 1) + *(s16 *)(p8 + 218)) << 1) - 8) & 255) | ((slot4 + 128) << 16)) | 0x8000) | 0x10000000);
-            v8 = (v8 + 12);
-            if (rec8 != 0) {
-                rec6 = Func_02008bac((*(s32 *)(rec8 + 8) - *(s32 *)(slot16 + 232)), 0xe0000);
-                slot0 = (rec6 + 112);
-                record = Value2(Func_02008bc2, (*(s32 *)(rec8 + 16) - *(s32 *)(slot16 + 236)), 0xe0000);
-                *(s32 *)(slot12) = none;
-                slot12 = (slot12 + 4);
-                v7 = (((((record + (((*(s16 *)(slot16 + 218) << 1) + *(s16 *)(slot16 + 218)) << 1)) - 4) & 255) | (slot0 << 16)) | 0x40000000);
-                *(s32 *)((slot12 + 4)) = (((((record + (((*(s16 *)(slot16 + 218) << 1) + *(s16 *)(slot16 + 218)) << 1)) - 4) & 255) | (slot0 << 16)) | 0x40000000);
-                slot12 = ((slot12 + 4) + 4);
-                *(s32 *)(slot12) = ((slot8 + 12) | 0xe400);
-                slot12 = (slot12 + 4);
-                v8 = (v8 + 12);
-                Func_02008ca6((v8 + 12), 255);
-                v5 = 0xe0000;
-            }
-            rec8 = Value1(Func_02008f52, *(s16 *)(slot16 + 222));
-            if (rec8 != 0) {
-                rec6 = Func_02008c34((*(s32 *)(rec8 + 8) - *(s32 *)(slot16 + 232)), 0xe0000);
-                slot0 = (rec6 + 112);
-                record = Value2(Func_02008c4a, (*(s32 *)(rec8 + 16) - *(s32 *)(slot16 + 236)), 0xe0000);
-                *(s32 *)(slot12) = none;
-                slot12 = (slot12 + 4);
-                v7 = (((((record + (((*(s16 *)(slot16 + 218) << 1) + *(s16 *)(slot16 + 218)) << 1)) - 4) & 255) | (slot0 << 16)) | 0x40000000);
-                *(s32 *)((slot12 + 4)) = (((((record + (((*(s16 *)(slot16 + 218) << 1) + *(s16 *)(slot16 + 218)) << 1)) - 4) & 255) | (slot0 << 16)) | 0x40000000);
-                slot12 = ((slot12 + 4) + 4);
-                *(s32 *)(slot12) = ((slot8 + 8) | 0xe400);
-                Func_02008d28(v8, 255);
-                v5 = 0xe0000;
-            }
+        obj = Func_02008f52(hud->marker_b);
+        if (obj != 0) {
+            x = Func_02008c34(obj->x - hud->cam_x, 0xe0000) + 112;
+            y = (Func_02008c4a(obj->z - hud->cam_z, 0xe0000) + hud->level * 6 - 4) & 0xff;
+            *oam++ = 0;
+            *oam++ = (x << 16) | y | shape;
+            *oam++ = (tile + 8) | 0xe400;
+            Func_02008d28(ent++, 255);
         }
     }
-    p8b = (*(s32 *)0x03001e40 & 15);
-    p9 = v5;
-    p10b = p8 + 218;
-    p11b = v7;
 }

@@ -2030,7 +2030,7 @@ fn typed_pointer_tables_use_their_own_games_register() {
     }
     fs::write(
         root.join("TABLE.JSON"),
-        r#"{"format":1,"kind":"typed-table","address":0,"size":4,"segments":[
+        r#"{"format":1,"kind":"typed-table","size":4,"segments":[
             {"end":4,"stride":4,"element":"thumb-pointer","values":["Callback_Run"]}]}"#,
     )
     .unwrap();
@@ -2043,6 +2043,20 @@ fn typed_pointer_tables_use_their_own_games_register() {
         let mut ctx = Context::for_game(root, crate::targets::target_for(id));
         assert_eq!(build_entry(&mut ctx, &entry).unwrap().0, expected, "{id}");
     }
+    // The region places the table; a table that records its own address is refused.
+    fs::write(
+        root.join("PLACED.JSON"),
+        r#"{"format":1,"kind":"typed-table","address":0,"size":4,"segments":[
+            {"end":4,"stride":4,"element":"le-u32","values":[0]}]}"#,
+    )
+    .unwrap();
+    let placed =
+        serde_json::json!({"kind":"typed-table","source":"PLACED.JSON","address":0,"size":4});
+    let mut ctx = Context::for_game(
+        root,
+        crate::targets::target_for(crate::targets::DecompTargetId::TbsEn),
+    );
+    assert!(build_entry(&mut ctx, &placed).is_err());
 }
 
 /// Derive a stream directory: one `le-u32` word per index giving where that
@@ -2187,6 +2201,44 @@ fn resolve_table_bitmaps(document: &mut Value, root: &Path) -> Result<Vec<String
         sources.push(name.to_string());
     }
     Ok(sources)
+}
+
+/// Where a registry region places the typed table at `source` and
+/// `pointer` (the whole document when `pointer` is empty): a placed table
+/// records no address of its own.
+pub(crate) fn placed_address(root: &Path, source: &str, pointer: &str) -> Result<usize, String> {
+    fn find(region: &Value, source: &str, pointer: &str) -> Option<usize> {
+        if region["source"] == source
+            && region.get("pointer").and_then(Value::as_str).unwrap_or("") == pointer
+            && region.get("address").is_some()
+        {
+            return number(&region["address"], "region address").ok();
+        }
+        region["components"]
+            .as_array()
+            .into_iter()
+            .flatten()
+            .find_map(|part| find(part, source, pointer))
+    }
+    for target in native::games() {
+        if !source.starts_with(&format!("{}/", target.game_dir())) {
+            continue;
+        }
+        for registry in [
+            format!("{}/assets.json", target.recon_dir()),
+            native::NativePaths::of(&target).index,
+        ] {
+            let document = json(&root.join(&registry))?;
+            if let Some(address) = ["regions", "edition_regions"]
+                .iter()
+                .flat_map(|key| document[*key].as_array().into_iter().flatten())
+                .find_map(|region| find(region, source, pointer))
+            {
+                return Ok(address);
+            }
+        }
+    }
+    Err(format!("no region places {source}{pointer}"))
 }
 
 /// Where each segment of a typed table starts. Segments follow one another
@@ -6143,10 +6195,14 @@ fn build_entry_native_tail(
             } else {
                 &source
             };
-            if number(&document["address"], "table address")? != address {
-                return Err("table address differs from manifest".into());
+            // The region places the table; the table itself records no address.
+            if document.get("address").is_some() {
+                return Err(format!(
+                    "the table placed at {address:#x} records its own address; its region places it"
+                ));
             }
             let mut document = document.clone();
+            document["address"] = Value::from(address);
             resolve_stream_offsets(&mut document, &source)?;
             let has_symbols = document["segments"]
                 .as_array()

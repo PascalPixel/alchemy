@@ -697,7 +697,11 @@
       "source": "BATTLE/PARTY/COLLECT_UNIT_LIST.C"
     },
     "main:080b5ad4": {
-      "name": "BattlePresentation_InitializeTilePattern"
+      "name": "BattlePresentation_InitializeTilePattern",
+      "source": "BATTLE/PRESENTATION/INITIALIZE_TILE_PATTERN.C"
+    },
+    "main:080b5b08": {
+      "name": "BattlePresentation_ClearBg0VerticalOffset"
     },
     "main:080b5c08": {
       "name": "BattlePlacement_UpdateEntries",

@@ -5,7 +5,7 @@
 extern const s32 Data_0200d2cc[];
 
 /* Every fourth frame, sprays a rising effect (type 286) from a random point
- * within three cells of actor, with cue 246 every eighth frame. */
+ * within 24 pixels of actor, with cue 246 every eighth frame. */
 s32 VinasuHeya_Func02004968(struct FieldActor *actor)
 {
     struct EffectOptions options;

@@ -7,15 +7,7 @@ the world. This project hopes to do something similar for the games
 themselves: to bring **The Broken Seal** ☀️ and **The Lost Age** ⚓️ back to a
 form that fans can read, change and build on.
 
-## Status: ☀️ 62.61% · ⚓️ 2.14%
-
-<img src="PROGRESS.svg" width="830" alt="Alchemy progress for The Broken Seal and The Lost Age, above a map of the project's files">
-
-The gold bars show how far each game has come. The Broken Seal is well past
-halfway. The Lost Age has only just begun, but it is built much like the first
-game, which gives it a head start.
-
-## What is this?
+## Why Alchemy?
 
 When Camelot made Golden Sun, they wrote it as human-readable instructions
 and then turned those into the unreadable code that sits on the cartridge.
@@ -24,37 +16,31 @@ Those original instructions were never released.
 Alchemy works backwards. Piece by piece, it rewrites the game in readable form,
 and every piece is checked against the original until the two are identical.
 The result isn't a guess at how Golden Sun works: it is Golden Sun, in a form
-people can finally read.
-
-We also try to make it look the way Camelot's own work might have looked in
-2001, down to names taken from the Japanese release: Sukureta for Kraden,
-Gerald for Garet.
-
-## What it isn't
-
-Alchemy is not a remake, a mod, an emulator or a download of the games. It
-doesn't include the games themselves; you'll need your own copies.
-
-## Why do this?
+people can finally read. We also try to make it look the way Camelot's own
+work might have looked in 2001, down to names taken from the Japanese release:
+Sukureta for Kraden, Gerald for Garet.
 
 Once a game can be read, it can be changed. That opens the door to things fans
-have wanted for years:
+have wanted for years: Golden Sun running natively on PC, phones and modern
+consoles, widescreen and smoother frame rates, quality-of-life fixes, new
+translations, and new storylines, quests and Djinn. Alchemy doesn't do these
+things itself; it lays the foundation that makes them possible.
 
-- Golden Sun running natively on PC, phones and modern consoles
-- widescreen and smoother frame rates
-- quality-of-life fixes
-- new translations
-- new storylines, quests and Djinn
+Alchemy is not a remake, a mod, an emulator or a download of the games. It
+doesn't include the games themselves; you'll need your own copies. For now,
+the best way to help is to share the project and cheer it on. It will open to
+outside contributions once both games are complete, and developers can find
+the technical details in [AGENTS.md](AGENTS.md).
 
-Alchemy doesn't do these things itself. It lays the foundation that makes them
-possible.
+## Progress
 
-## How can I help?
+**☀️ 62.61% · ⚓️ 2.14%**
 
-For now, the best way to help is to share the project and cheer it on. Alchemy
-will open to outside contributions once both games are complete. If you're a
-developer and curious about how it works, the technical details live in
-[AGENTS.md](AGENTS.md).
+<img src="PROGRESS.svg" width="830" alt="Alchemy progress for The Broken Seal and The Lost Age, above a map of the project's files">
+
+The gold bars show how far each game has come. The Broken Seal is well past
+halfway. The Lost Age has only just begun, but it is built much like the first
+game, which gives it a head start.
 
 ## Acknowledgements
 

@@ -168,13 +168,14 @@ fn readme_metrics(proven_c: f64, proven_asm: f64, executable: f64) -> String {
         share(done)
     )
 }
-/// The README status line: ☀️ The Broken Seal and ⚓️ The Lost Age, each
-/// pending until its executable audit gives it a denominator.
+/// The README status line under "## Progress": ☀️ The Broken Seal and
+/// ⚓️ The Lost Age, each pending until its executable audit gives it a
+/// denominator.
 fn status_line(sun: Option<GameDone>, anchor: Option<GameDone>) -> String {
     let show = |done: Option<GameDone>| {
         done.map_or("pending".to_string(), |d| format!("{:.2}%", d.percent()))
     };
-    format!("## Status: ☀️ {} · ⚓️ {}", show(sun), show(anchor))
+    format!("**☀️ {} · ⚓️ {}**", show(sun), show(anchor))
 }
 fn update_readme(
     text: &str,
@@ -189,7 +190,7 @@ fn update_readme(
     let percent =
         crate::coverage::jsnum::done_percent(proven_c as i64, proven_asm as i64, executable as i64);
     let mut out = text.to_string();
-    if let Some(start) = out.find("## Status:") {
+    if let Some(start) = out.find("**☀️ ").or_else(|| out.find("## Status:")) {
         if let Some(end) = out[start..].find('\n') {
             out.replace_range(start..start + end, status);
         }
@@ -262,16 +263,16 @@ mod tests {
             ..GameDone::default()
         };
         let status = status_line(Some(sun), None);
-        assert_eq!(status, "## Status: ☀️ 59.00% · ⚓️ pending");
+        assert_eq!(status, "**☀️ 59.00% · ⚓️ pending**");
         let updated = update_readme(
-            "# Alchemy\n\n## Status: 52% DONE\n\nDetails\n",
+            "# Alchemy\n\n## Progress\n\n**☀️ 52% · ⚓️ 1%**\n\nDetails\n",
             "tbs-en",
             &map,
             &[],
             &status,
         );
-        assert!(updated.contains("## Status: ☀️ 59.00% · ⚓️ pending"));
-        assert!(!updated.contains("52% DONE"));
+        assert!(updated.contains("## Progress\n\n**☀️ 59.00% · ⚓️ pending**\n"));
+        assert!(!updated.contains("52%"));
     }
 }
 fn run(argv: &[String]) -> Result<String, String> {

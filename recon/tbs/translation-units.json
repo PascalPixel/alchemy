@@ -70990,6 +70990,118 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "korosseo-maruta-stage-intro",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_MARUTA/STAGE_INTRO.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3bc",
+      "absolute_symbols": {
+        "Local_0200288c": {
+          "address": "0x0200a88c",
+          "kind": "thumb"
+        },
+        "Engine_EventBegin": {
+          "address": "0x0200ca00",
+          "kind": "thumb"
+        },
+        "ColossoLogRollingStage_RunStateInteraction": {
+          "address": "0x0200aa94",
+          "kind": "thumb"
+        },
+        "Engine_EventSetMessage": {
+          "address": "0x0200cab0",
+          "kind": "thumb"
+        },
+        "Local_02000188": {
+          "address": "0x02008188",
+          "kind": "thumb"
+        },
+        "Engine_CameraSetSpeed": {
+          "address": "0x0200caf8",
+          "kind": "thumb"
+        },
+        "Engine_CameraMoveTo": {
+          "address": "0x0200cb00",
+          "kind": "thumb"
+        },
+        "Engine_CameraWaitForMove": {
+          "address": "0x0200cb08",
+          "kind": "thumb"
+        },
+        "Engine_EventWait": {
+          "address": "0x0200c9f8",
+          "kind": "thumb"
+        },
+        "Engine_EventShowMessage": {
+          "address": "0x0200cac0",
+          "kind": "thumb"
+        },
+        "Local_020001b4": {
+          "address": "0x020081b4",
+          "kind": "thumb"
+        },
+        "Local_02003640": {
+          "address": "0x0200b640",
+          "kind": "thumb"
+        },
+        "Engine_ActorFaceDirection": {
+          "address": "0x0200cad0",
+          "kind": "thumb"
+        },
+        "Local_020001c8": {
+          "address": "0x020081c8",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpeed": {
+          "address": "0x0200ca28",
+          "kind": "thumb"
+        },
+        "ColossoLogRollingStage_PositionScaledObject": {
+          "address": "0x0200bb40",
+          "kind": "thumb"
+        },
+        "Engine_TaskWait": {
+          "address": "0x0200c840",
+          "kind": "thumb"
+        },
+        "Local_02000b30": {
+          "address": "0x02008b30",
+          "kind": "thumb"
+        },
+        "Engine_ActorShowEmote": {
+          "address": "0x0200cae0",
+          "kind": "thumb"
+        },
+        "Korosseo_RestoreCompetitor": {
+          "address": "0x0200b81c",
+          "kind": "thumb"
+        },
+        "Engine_CameraFollowActor": {
+          "address": "0x0200caf0",
+          "kind": "thumb"
+        },
+        "ColossoLogRollingStage_InitializeStateInteraction": {
+          "address": "0x0200ab50",
+          "kind": "thumb"
+        },
+        "FieldScene_RunMiddleSequence": {
+          "address": "0x0200abac",
+          "kind": "thumb"
+        },
+        "Engine_EventEnd": {
+          "address": "0x0200ca08",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02001f90",
+          "extent": 352,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

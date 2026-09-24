@@ -16954,7 +16954,8 @@
       "source": "FIELD/KOROSSEO_MARUTA/LOG_ROLLING.C"
     },
     "resource_3bc:02001f90": {
-      "name": "FieldScene_RunTimedArrivalSequence"
+      "name": "KorosseoMaruta_RunStageIntro",
+      "source": "FIELD/KOROSSEO_MARUTA/STAGE_INTRO.C"
     },
     "resource_3bc:020020f0": {
       "name": "FieldScene_RunFourStepActorMotion",

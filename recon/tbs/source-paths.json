@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_3ca:020012ac": {
+      "name": "BabiFune_ScheduleFade",
+      "source": "FIELD/BABI_FUNE/SCHEDULE_FADE.C"
+    },
     "resource_3ca:02000100": {
       "name": "BabiFune_UpdateDriftingObject",
       "source": "FIELD/BABI_FUNE/DRIFTING_OBJECT.C"

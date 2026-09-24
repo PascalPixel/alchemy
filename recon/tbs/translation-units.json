@@ -73574,6 +73574,38 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "babi-fune-schedule-fade",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/BABI_FUNE/SCHEDULE_FADE.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3ca",
+      "absolute_symbols": {
+        "Main_08000170": {
+          "address": "0x0200934c",
+          "kind": "thumb"
+        },
+        "Main_080001d0": {
+          "address": "0x0200935c",
+          "kind": "thumb"
+        },
+        "Engine_VramLoad": {
+          "address": "0x02009354",
+          "kind": "thumb"
+        },
+        "Engine_TaskAddCallback": {
+          "address": "0x02009324",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x020012ac",
+          "extent": 104,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

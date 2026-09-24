@@ -1,6 +1,6 @@
-/* Draft, not exact (2026-09-24): candidate=3448 reference=3452, binary
-   similarity 60%. The 116-byte frame and every spill slot match; work lands
-   in r9 instead of fp, so the high registers and most loops differ. */
+/* Draft, not exact (2026-09-24): candidate=3456 reference=3452, binary
+   similarity 81%. Frame, spill slots and the high registers (i r8, frame sl,
+   t r9, work fp) match; loops still differ in low-register choices. */
 #include "TYPES.H"
 #include "BATTLE_EFFECT_WORK.H"
 #include "BATTLE_EFX.H"
@@ -103,6 +103,7 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
     s32 vy;
     s32 scroll;
     s32 *spot;
+    s32 j;
     s32 burst;
     s32 bx;
     u32 *cache;
@@ -110,10 +111,10 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
     s32 frame;
     s32 t;
     s32 i;
-    s32 j;
     s32 n;
     s32 s;
     struct EffectStep *p;
+    struct EffectStep *q;
     DrawRectangle blit[2];
     Scale scale;
 
@@ -276,7 +277,7 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
         t = frame - 152;
         if (t >= 0 && t < 88) {
             for (i = 0, p = work->sparks; i != 32; i++, p++) {
-                if (t >= i / 4 && t < i / 4 + 32) {
+                if (frame >= i / 4 + 152 && frame < i / 4 + 152 + 32) {
                     s = (i & 3) + 5;
                     blit[0](dst, work->sheet + BattleFx6_FlareCells[s - 1] + 0x4e20,
                         HI(p->x) + 112 - s, HI(p->y) + 62 - s, s * 2, s * 2);
@@ -336,8 +337,8 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
             }
             for (i = 0; i != n; i++) {
                 s32 w;
-                j = (i + 1) / 2;
-                w = n * 2 - j * 4;
+                s32 d = (i + 1) / 2;
+                w = n * 2 - d * 4;
                 if (w < 12) {
                     w = 12;
                 }
@@ -345,9 +346,9 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
                     w = 63;
                 }
                 if (i & 1) {
-                    j = -j;
+                    d = -d;
                 }
-                Func_080cde90(j + 48, 0, j / 2 + 111, 63 - (j + 1) / 2, w);
+                Func_080cde90(d + 48, 0, d / 2 + 111, 63 - (d + 1) / 2, w);
             }
         }
 

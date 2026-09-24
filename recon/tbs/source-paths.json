@@ -1959,6 +1959,10 @@
       "name": "BattleFx_LoadResourceGroup",
       "source": "BATTLE/EFFECT/DATA_LOAD_RESOURCE_GROUP.C"
     },
+    "main:0808ace0": {
+      "name": "BattleFx_SelectLocationRule",
+      "source": "BATTLE/EFFECT/DATA_SELECT_LOCATION_RULE.C"
+    },
     "main:0808adf0": {
       "name": "BattleFx_LookupResult",
       "source": "BATTLE/EFFECT/DATA_LOOKUP_RESULT.C"

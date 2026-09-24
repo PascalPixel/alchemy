@@ -53,12 +53,6 @@ s32 Func_02001a0c(s32);
 void Func_020030f6(s32);
 void Func_02002d4e(void);
 void Func_0200329a(void);
-void Func_0200061c(s32);
-void Func_02000644(s32);
-void Func_02000658(s32);
-void Func_0200066c(s32);
-void Func_02000680(s32);
-void Func_020006bc(s32);
 s32 Func_02002766();
 s32 Func_02002c98();
 s32 Func_02002c9e();
@@ -68,11 +62,6 @@ void Func_02002d70();
 void Func_02003106(s32);
 void Func_02002d9a(void);
 void Func_02001d34(void);
-void Func_02000608(s32);
-void Func_02000630(s32);
-void Func_02000694(s32);
-void Func_020006a8(s32);
-void Func_020006d0(s32);
 void Func_02002c00(u8 *);
 s32 Func_02002da4(s32, s32);
 void Func_02002c3c(u8 *);
@@ -291,67 +280,67 @@ void SceneState_SetWork448To521AndRun(s32 object)
 void SceneState_SetValue123Mode1(void)
 {
     Audio_PlayCue(0x7B);
-    Func_02000608(1);
+    SceneState_SetWork448To521AndRun(1);
 }
 
 void FieldScene_RunStep7BThen2(void)
 {
     Audio_PlayCue(0x7B);
-    Func_0200061c(2);
+    SceneState_SetWork448To521AndRun(2);
 }
 
 void SceneState_SetValue123Mode3(void)
 {
     Audio_PlayCue(0x7B);
-    Func_02000630(3);
+    SceneState_SetWork448To521AndRun(3);
 }
 
 void FieldScene_RunStep7BThen4(void)
 {
     Audio_PlayCue(0x7B);
-    Func_02000644(4);
+    SceneState_SetWork448To521AndRun(4);
 }
 
 void FieldScene_RunStep80Then5(void)
 {
     Audio_PlayCue(0x80);
-    Func_02000658(5);
+    SceneState_SetWork448To521AndRun(5);
 }
 
 void FieldScene_RunStep7BThen6(void)
 {
     Audio_PlayCue(0x7B);
-    Func_0200066c(6);
+    SceneState_SetWork448To521AndRun(6);
 }
 
 void FieldScene_RunStep80Then7(void)
 {
     Audio_PlayCue(0x80);
-    Func_02000680(7);
+    SceneState_SetWork448To521AndRun(7);
 }
 
 void SceneState_SetValue129Mode8(void)
 {
     Audio_PlayCue(0x81);
-    Func_02000694(8);
+    SceneState_SetWork448To521AndRun(8);
 }
 
 void SceneState_SetValue129Mode9(void)
 {
     Audio_PlayCue(0x81);
-    Func_020006a8(9);
+    SceneState_SetWork448To521AndRun(9);
 }
 
 void FieldScene_RunStep7BThen10(void)
 {
     Audio_PlayCue(0x7B);
-    Func_020006bc(10);
+    SceneState_SetWork448To521AndRun(10);
 }
 
 void SceneState_ApplyValues123And11(void)
 {
     Audio_PlayCue(0x7B);
-    Func_020006d0(11);
+    SceneState_SetWork448To521AndRun(11);
 }
 
 void FieldScene_RunScene377_02000e34(void)

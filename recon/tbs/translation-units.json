@@ -68199,50 +68199,6 @@
           "address": "0x02009844",
           "kind": "thumb"
         },
-        "Func_02000608": {
-          "address": "0x020082e0",
-          "kind": "thumb"
-        },
-        "Func_0200061c": {
-          "address": "0x020082e0",
-          "kind": "thumb"
-        },
-        "Func_02000630": {
-          "address": "0x020082e0",
-          "kind": "thumb"
-        },
-        "Func_02000644": {
-          "address": "0x020082e0",
-          "kind": "thumb"
-        },
-        "Func_02000658": {
-          "address": "0x020082e0",
-          "kind": "thumb"
-        },
-        "Func_0200066c": {
-          "address": "0x020082e0",
-          "kind": "thumb"
-        },
-        "Func_02000680": {
-          "address": "0x020082e0",
-          "kind": "thumb"
-        },
-        "Func_02000694": {
-          "address": "0x020082e0",
-          "kind": "thumb"
-        },
-        "Func_020006a8": {
-          "address": "0x020082e0",
-          "kind": "thumb"
-        },
-        "Func_020006bc": {
-          "address": "0x020082e0",
-          "kind": "thumb"
-        },
-        "Func_020006d0": {
-          "address": "0x020082e0",
-          "kind": "thumb"
-        },
         "Func_0200186e": {
           "address": "0x0200981c",
           "kind": "thumb"

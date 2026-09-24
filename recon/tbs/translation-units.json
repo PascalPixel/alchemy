@@ -79932,6 +79932,34 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "scene-36f-02000238",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/MENU/TITLE/SPRITE_ROW.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_36f",
+      "absolute_symbols": {
+        "Main_080001e8": {
+          "address": "0x02008570",
+          "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02000238",
+          "extent": 176,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

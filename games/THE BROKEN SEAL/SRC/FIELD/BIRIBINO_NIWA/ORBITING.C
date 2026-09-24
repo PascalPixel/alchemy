@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "FIELD_SCENE.H"
 
 #define NULL ((void *)0)
 #define CalculateFacingAngle Func_02000aae
@@ -238,10 +239,10 @@ void FieldScene_RunScene38e_0200045c(void)
     if (GameFlag_IsSet(0x200) == 0) {
         FieldScene_SetupWithDescriptor8BD4();
     }
-    Actor_SetSpeed(0, 0x8000, 0x4000);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-    Actor_SetAnimation(0, 2);
-    Actor_CenterAndWalk(0, 2, -16);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, 2);
+    Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 2, -16);
     Event_Wait(16);
     Event_RequestExit(2);
     Event_End();

@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "FIELD_SCENE.H"
 #include "FIELD_EFFECT.H"
 
 #define NULL ((void *)0)
@@ -411,7 +412,7 @@ void FieldScene_RunPrimarySequence(void)
     u8 *base;
     u8 slot16[40];
 
-    rec = Actor_Get(0);
+    rec = Actor_Get(ACTOR_PARTY_LEADER);
     flag = Data_03001e40 & 3;
     if (flag == 0) {
         base = slot16;
@@ -439,7 +440,7 @@ s32 Func_02001268(void)
     s32 *p;
     s32 buf[3];
 
-    rec = Actor_Get(0);
+    rec = Actor_Get(ACTOR_PARTY_LEADER);
     pflag = rec + 85;
     saved = *pflag;
     mode = (*(u16 *)(rec + 6) + 0x2000) & 0xc000;
@@ -477,7 +478,7 @@ s32 Func_02001268(void)
     *(s32 *)(rec + 40) = 0x40000;
     *pflag &= 126;
     Actor_SetSpriteFlags((s32)rec, 0);
-    Actor_MoveToAndWait(0, *(s16 *)((u8 *)p + 2), *(s16 *)((u8 *)p + 10));
+    Actor_MoveToAndWait(ACTOR_PARTY_LEADER, *(s16 *)((u8 *)p + 2), *(s16 *)((u8 *)p + 10));
     Object_SetAnimation((s32)rec, 6);
     Actor_SetSpriteFlags((s32)rec, 1);
     *pflag = saved;
@@ -722,12 +723,12 @@ void FieldScene_RunScene3b3_02001fd4(void)
         Func_02003d8c();
         {
             u8 bits = 1;
-            u8 *flags = (u8 *)Actor_Get(0) + 85;
+            u8 *flags = (u8 *)Actor_Get(ACTOR_PARTY_LEADER) + 85;
             u8 value = *flags;
 
             value |= bits;
             *flags = value;
-            flags = (u8 *)Actor_Get(0) + 35;
+            flags = (u8 *)Actor_Get(ACTOR_PARTY_LEADER) + 35;
             bits |= *flags;
             *flags = bits;
         }
@@ -744,7 +745,7 @@ void FieldScene_RunSingleStep(void)
 /* Complete scene/entity linker through return and its sole pool word. */
 void SceneState_LinkActorZeroToWork24(void)
 {
-    u8 *obj = Actor_Get(0);
+    u8 *obj = Actor_Get(ACTOR_PARTY_LEADER);
     *(u8 **)(Data_03001ee0 + 24) = obj;
     obj[98] = 1;
 }
@@ -756,7 +757,7 @@ void SceneState_LinkActorZeroToWork24(void)
  */
 void SceneState_ClearWord24AndObjectByte62(void)
 {
-    u8 *obj = Actor_Get(0);
+    u8 *obj = Actor_Get(ACTOR_PARTY_LEADER);
 
     *(s32 *)(Data_03001ee0 + 24) = 0;
     obj[0x62] = 0;
@@ -780,7 +781,7 @@ void SceneState_ClearWord24AndObjectByte62(void)
  */
 s32 SceneActor_UpdateBit1ByPositionToSlotZero(u8 *actor)
 {
-    u8 *ref = Actor_Get(0);
+    u8 *ref = Actor_Get(ACTOR_PARTY_LEADER);
 
     if (*(s32 *)(actor + 16) > *(s32 *)(ref + 16)) {
         actor[35] = (u8)(actor[35] & 0xfd);
@@ -827,7 +828,7 @@ void FieldScene_RunScene3b3_0200215c(void)
     s32 record;
     u8 *p6;
 
-    rec7 = Value1(Engine_ActorGet, 0);
+    rec7 = Value1(Engine_ActorGet, ACTOR_PARTY_LEADER);
     record = Actor_Get(13);
     p6 = *(s32 *)0x03001f30;
     if ((*(s32 *)(record + 8) >> 20) == (*(s32 *)(rec7 + 8) >> 20)) {
@@ -976,7 +977,7 @@ void OverlayObject_SetCallbackAndMode2(void)
 
 void SceneActor_CheckActors8To11NearSlotZero(void)
 {
-    u8 *hero = Actor_Get(0);
+    u8 *hero = Actor_Get(ACTOR_PARTY_LEADER);
     u32 selector = 8;
     u8 *actor;
 
@@ -996,7 +997,7 @@ loop:
 
     {
         Handle *handle = *(Handle **)(actor + 80);
-        Actor_SetSpritePriority(0, handle->mode);
+        Actor_SetSpritePriority(ACTOR_PARTY_LEADER, handle->mode);
     }
     goto done;
 

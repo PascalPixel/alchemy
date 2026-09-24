@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "FIELD_SCENE.H"
 
 enum ActorEntrySequenceMessage {
     MSG_ROBIN = 0x278e
@@ -87,8 +88,8 @@ void Scene_RunActorEntrySequence(void)
     *(u8 *)(Func_02005e4c() + 85) = hidden;
     Camera_SetSpeed(0xcccc, 0x1999);
     Camera_MoveTo(0x14c0000, 0x200000, 0xb40000, 1);
-    Actor_SetSpeed(0, 0x10000, 0x8000);
-    Actor_WalkToAndWait(0, 0x154, 184);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
+    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x154, 184);
     Func_020008a8(0, 0x8000);
     Actor_RunRepeatedMotion(21, 1);
     Event_SetMessage(MSG_ROBIN);
@@ -96,26 +97,26 @@ void Scene_RunActorEntrySequence(void)
     *(u8 *)(Func_02005e4c() + 85) = hidden;
     Camera_SetSpeed(0xcccc, 0x1999);
     Camera_MoveTo(0x1300000, 0x200000, 0xb40000, 1);
-    Actor_SetSpeed(1, 0x10000, 0x8000);
-    Actor_SetSpeed(2, 0x10000, 0x8000);
-    Actor_SetSpeed(3, 0x16666, 0xb333);
+    Actor_SetSpeed(ACTOR_GERALD, 0x10000, 0x8000);
+    Actor_SetSpeed(ACTOR_IVAN, 0x10000, 0x8000);
+    Actor_SetSpeed(ACTOR_MIA, 0x16666, 0xb333);
     object = Func_02005d4c(0);
     if (object != 0) {
-        Actor_SetPosition(1, *(s32 *)((s32)object + 8), *(s32 *)((s32)object + 16));
+        Actor_SetPosition(ACTOR_GERALD, *(s32 *)((s32)object + 8), *(s32 *)((s32)object + 16));
     }
     object = Func_02005d4c(0);
     if (object != 0) {
-        Actor_SetPosition(2, *(s32 *)((s32)object + 8), *(s32 *)((s32)object + 16));
+        Actor_SetPosition(ACTOR_IVAN, *(s32 *)((s32)object + 8), *(s32 *)((s32)object + 16));
     }
     object = Func_02005d4c(0);
     if (object != 0) {
-        Actor_SetPosition(3, *(s32 *)((s32)object + 8), *(s32 *)((s32)object + 16));
+        Actor_SetPosition(ACTOR_MIA, *(s32 *)((s32)object + 8), *(s32 *)((s32)object + 16));
     }
-    Actor_WalkTo(1, 0x148, 168);
-    Actor_WalkTo(2, 0x154, 196);
-    Actor_WalkToAndWait(3, 0x146, 204);
-    Actor_SetAnimation(1, 1);
-    Actor_SetAnimation(2, 1);
+    Actor_WalkTo(ACTOR_GERALD, 0x148, 168);
+    Actor_WalkTo(ACTOR_IVAN, 0x154, 196);
+    Actor_WalkToAndWait(ACTOR_MIA, 0x146, 204);
+    Actor_SetAnimation(ACTOR_GERALD, 1);
+    Actor_SetAnimation(ACTOR_IVAN, 1);
     Engine_ObjectMotionArmCallback(1, 0x8000, 0);
     Engine_ObjectMotionArmCallback(2, 0x8000, 0);
     Func_020008a8(3, 0x8000);
@@ -138,10 +139,10 @@ void Scene_RunActorEntrySequence(void)
     Actor_RunRepeatedMotion(20, 1);
     Func_020008a8(20, 0x8000);
     Func_02000894(actor20Key);
-    Actor_SetAttachedEffect(3, 0x102);
-    Actor_StartRepeatedMotion(3, 2);
+    Actor_SetAttachedEffect(ACTOR_MIA, 0x102);
+    Actor_StartRepeatedMotion(ACTOR_MIA, 2);
     Func_02000894(3);
-    Actor_RunRepeatedMotion(2, 1);
+    Actor_RunRepeatedMotion(ACTOR_IVAN, 1);
     Func_02000894(2);
     Func_020008a8(19, 0);
     Func_02000894(19);
@@ -311,11 +312,11 @@ void Scene_RunActorEntrySequence(void)
     Call3(Engine_ObjectMotionArmCallback, 3, 0xe000, 0);
     if (Value2(Engine_UiWorkWaitThenFinalizeCapacity, 0, 0) == 0) {
         Event_Wait(20);
-        Actor_SetAnimation(2, 3);
+        Actor_SetAnimation(ACTOR_IVAN, 3);
         advanceStep = 1;
     } else {
         Event_Wait(20);
-        Actor_SetAnimation(2, 4);
+        Actor_SetAnimation(ACTOR_IVAN, 4);
         *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
         advanceStep = 0;
     }
@@ -323,7 +324,7 @@ void Scene_RunActorEntrySequence(void)
     if (advanceStep != 0) {
         *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
     }
-    Actor_RunRepeatedMotion(1, 2);
+    Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
     Func_020008a8(1, 0x4000);
     Func_02000894(1);
     Actor_RunRepeatedMotion(19, 1);
@@ -331,13 +332,13 @@ void Scene_RunActorEntrySequence(void)
     Call3(Engine_ObjectMotionArmCallback, 1, 0x8000, 0);
     Call3(Engine_ObjectMotionArmCallback, 2, 0x8000, 0);
     Func_020008a8(3, 0x8000);
-    Actor_SetAnimationAndWait(1, 4);
+    Actor_SetAnimationAndWait(ACTOR_GERALD, 4);
     Actor_SetAnimationAndWait(20, 3);
     Event_ShowMessageAndWait(20, 0, 20);
-    Actor_SetAnimation(0, 3);
-    Actor_SetAnimation(1, 3);
-    Actor_SetAnimation(2, 3);
-    Actor_SetAnimationAndWait(3, 3);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, 3);
+    Actor_SetAnimation(ACTOR_GERALD, 3);
+    Actor_SetAnimation(ACTOR_IVAN, 3);
+    Actor_SetAnimationAndWait(ACTOR_MIA, 3);
     Func_020008a8(19, 0x3000);
     Actor_SetAnimation(19, 3);
     Func_02000894(19);
@@ -406,7 +407,7 @@ void Scene_RunActorEntrySequence(void)
     Engine_ObjectMotionArmCallback(21, 0, 0);
     Engine_ObjectMotionArmCallback(20, (facing << 7), 0);
     Call3(Engine_ObjectMotionArmCallback, 6, 0xd000, 20);
-    Actor_Jump(3, 2, 20);
+    Actor_Jump(ACTOR_MIA, 2, 20);
     Func_020008a8(3, 0xa000);
     Func_02000894(3);
     Engine_ObjectMotionArmCallback(21, 0, 0);
@@ -419,14 +420,14 @@ void Scene_RunActorEntrySequence(void)
     Func_02000894(20);
     Engine_ObjectMotionArmCallback(21, 0x3000, 0);
     Call3(Engine_ObjectMotionArmCallback, 6, 0xb000, 20);
-    Actor_StartRepeatedMotion(2, 2);
+    Actor_StartRepeatedMotion(ACTOR_IVAN, 2);
     Func_02000894(2);
     Func_020008a8(19, 0x3000);
     Actor_SetAnimationAndWait(19, 3);
     Func_02000894(19);
     Engine_ObjectMotionArmCallback(21, 0, 0);
     Func_020008a8(6, 0xd000);
-    Actor_SetAnimation(3, 3);
+    Actor_SetAnimation(ACTOR_MIA, 3);
     Func_02000894(3);
     Actor_ShowEmote(20, 0x100, 20);
     Engine_ObjectMotionArmCallback(20, 0x3000, 20);
@@ -435,8 +436,8 @@ void Scene_RunActorEntrySequence(void)
     Actor_ShowEmote(21, 0x102, 60);
     Engine_ObjectMotionArmCallback(6, 0, 0);
     Func_020008a8(21, 0);
-    Actor_ShowEmote(1, 0x103, 40);
-    Actor_StartRepeatedMotion(1, 2);
+    Actor_ShowEmote(ACTOR_GERALD, 0x103, 40);
+    Actor_StartRepeatedMotion(ACTOR_GERALD, 2);
     Func_02000894(1);
     Func_020008a8(19, 0);
     Actor_SetAnimationAndWait(19, 4);
@@ -446,30 +447,30 @@ void Scene_RunActorEntrySequence(void)
     Func_02000894(20);
     Engine_ObjectMotionArmCallback(6, 0xd000, 0);
     Actor_ShowEmote(6, 0x101, 0);
-    Actor_ShowEmote(3, 0x101, 60);
-    Event_ShowMessageAndWait(3, 0, 20);
+    Actor_ShowEmote(ACTOR_MIA, 0x101, 60);
+    Event_ShowMessageAndWait(ACTOR_MIA, 0, 20);
     Func_020008a8(19, 0x3000);
     Actor_SetAnimation(19, 4);
     Func_02000894(19);
-    Actor_SetAttachedEffect(2, 0x102);
-    Event_ShowMessageAndWait(2, 0, 20);
+    Actor_SetAttachedEffect(ACTOR_IVAN, 0x102);
+    Event_ShowMessageAndWait(ACTOR_IVAN, 0, 20);
     Func_020008a8(19, 0);
     Actor_SetAnimationAndWait(20, 3);
     Func_02000894(20);
-    Actor_StartRepeatedMotion(0, 2);
-    Actor_StartRepeatedMotion(1, 2);
-    Actor_StartRepeatedMotion(2, 2);
-    Actor_RunRepeatedMotion(3, 2);
+    Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
+    Actor_StartRepeatedMotion(ACTOR_GERALD, 2);
+    Actor_StartRepeatedMotion(ACTOR_IVAN, 2);
+    Actor_RunRepeatedMotion(ACTOR_MIA, 2);
     Engine_ObjectMotionArmCallback(0, 0xa000, 0);
     Call3(Engine_ObjectMotionArmCallback, 1, 0x2000, 0);
     Call3(Engine_ObjectMotionArmCallback, 2, 0x6000, 0);
     Call3(Engine_ObjectMotionArmCallback, 3, 0xe000, 40);
-    Actor_RunRepeatedMotion(3, 1);
+    Actor_RunRepeatedMotion(ACTOR_MIA, 1);
     Func_020008a8(3, 0xa000);
     Func_02000894(3);
     Call3(Engine_ObjectMotionArmCallback, 1, 0x8000, 20);
-    Actor_ShowEmote(1, 0x103, 20);
-    Actor_StartRepeatedMotion(1, 2);
+    Actor_ShowEmote(ACTOR_GERALD, 0x103, 20);
+    Actor_StartRepeatedMotion(ACTOR_GERALD, 2);
     Func_02000894(1);
     Engine_ObjectMotionArmCallback(6, 0, 0);
     Engine_ObjectMotionArmCallback(0, 0x8000, 0);
@@ -497,10 +498,10 @@ void Scene_RunActorEntrySequence(void)
         finalMask &= *actor;
         *actor = finalMask;
     }
-    Actor_EnableActionCallback(0, groupActions);
-    Actor_EnableActionCallback(1, groupActions);
-    Actor_EnableActionCallback(2, groupActions);
-    Actor_EnableActionCallback(3, groupActions);
+    Actor_EnableActionCallback(ACTOR_PARTY_LEADER, groupActions);
+    Actor_EnableActionCallback(ACTOR_GERALD, groupActions);
+    Actor_EnableActionCallback(ACTOR_IVAN, groupActions);
+    Actor_EnableActionCallback(ACTOR_MIA, groupActions);
     pairActions = SceneAction_EntryPair;
     Actor_EnableActionCallback(19, pairActions);
     Actor_EnableActionCallback(20, pairActions);

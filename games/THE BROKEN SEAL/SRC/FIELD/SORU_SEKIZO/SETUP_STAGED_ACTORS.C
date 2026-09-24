@@ -150,9 +150,9 @@ void FieldScene_SetupStagedActors(void)
     Event_Wait(30);
     Actor_SetAnimationAndWait(ACTOR_SUKURETA, ANIM_SHAKE_HEAD);
     Event_SayThenWait(ACTOR_SUKURETA, 6);
-    Actor_FaceEachOther(ACTOR_PARTY_LEADER, 1, 0);
+    Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GERALD, 0);
     Event_Wait(40);
-    Actor_FaceEachOther(ACTOR_PARTY_LEADER, 5, 0);
+    Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_JASMINE, 0);
     Event_Wait(40);
     Actor_SetAnimationAndWait(ACTOR_SUKURETA, ANIM_NOD);
     Event_SayThenWait(ACTOR_SUKURETA, 6);

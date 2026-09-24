@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "FIELD_SCENE.H"
 
 extern u8 Value_00000015[];
 
@@ -206,7 +207,7 @@ void Func_02001348(void)
     s32 base;
 
     Func_02006090();
-    Actor_SetSpeed(0, 52428, 26214);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 52428, 26214);
     Call3(Func_020060e4, 1, 52428, 26214);
     Call3(Func_020060ee, 2, 52428, 26214);
     Func_0200616e(0, 3);
@@ -277,7 +278,7 @@ void Func_02001348(void)
     Call3(Func_020063f8, 10, 12288, 0);
     Func_0200630e(70);
     Func_020063e0(0, 10, 0);
-    Actor_FaceActor(1, 10, 0);
+    Actor_FaceActor(ACTOR_GERALD, 10, 0);
     Func_020063f4(2, 10, 0);
     Func_020063fe(8, 10, 0);
     Call2(Func_0200638e, 11, 33608264);
@@ -300,14 +301,14 @@ void Func_02001348(void)
     Func_02005cc8(10, 4, 20);
     Func_02005c88(10, 20);
     Call3(Func_020064da, 0, 257, 0);
-    Actor_ShowEmote(1, 257, 0);
+    Actor_ShowEmote(ACTOR_GERALD, 257, 0);
     Event_Wait(60);
     Call3(Func_020064f6, 8, 256, 0);
     Func_020063fc(40);
     Func_020064c4(8, 2);
     Func_0200640a(20);
     Func_02005cca(8, 20);
-    Actor_FaceActor(0, 8, 0);
+    Actor_FaceActor(ACTOR_PARTY_LEADER, 8, 0);
     Func_020064ee(1, 8, 0);
     Func_02005d00(2, 8, 20);
     Func_02005d3a(8, 4, 30);
@@ -324,7 +325,7 @@ void Func_02001348(void)
     Func_020064b0(10);
     Func_02005d70(10, 20);
     Func_0200658a(0, 10, 0);
-    Actor_FaceActor(1, 10, 0);
+    Actor_FaceActor(ACTOR_GERALD, 10, 0);
     Func_02005da6(2, 10, 20);
     Func_02005de0(11, 3, 20);
     Func_02005da0(11, 20);
@@ -342,7 +343,7 @@ void Func_02001348(void)
     if (Func_02006590(0, 0) == 0) {
         Func_02006562(40);
         Func_02006634(1, 10, 0);
-        Actor_FaceActor(2, 10, 0);
+        Actor_FaceActor(ACTOR_IVAN, 10, 0);
         Actor_RunRepeatedMotion(10, 2);
         Func_02006584(20);
         Func_02006674(10, 0);

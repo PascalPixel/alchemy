@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "FIELD_SCENE.H"
 
 #include "RESOURCE_3A9.H"
 
@@ -240,13 +241,13 @@ void FieldScene_RunArrivalPlacement(void)
         Map_AnimateCells(Data_02008ef8[idx].destination, x, y);
     }
 
-    Actor_SetSpeed(0, 0x00008000, 0x00004000);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x00008000, 0x00004000);
 
     p = Func_020006e6(0);
     p[85] = 0;
 
-    Actor_SetAnimation(0, 2);
-    Actor_CenterAndWalk(0, 3, -8);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, 2);
+    Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 3, -8);
     Event_Wait(10);
 
     Event_RequestExit(*(s16 *)(work + 364));

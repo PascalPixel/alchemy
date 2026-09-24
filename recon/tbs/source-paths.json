@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_3b7:020008f8": {
+      "name": "TorebiIzumi_Func020008f8",
+      "source": "FIELD/TOREBI_IZUMI/F_008F8.C"
+    },
     "resource_3bd:02003ad4": {
       "name": "ArutamiraDou_Func02003ad4",
       "source": "FIELD/ARUTAMIRA_DOU/F_03AD4.C"

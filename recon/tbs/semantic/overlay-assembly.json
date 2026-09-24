@@ -5045,18 +5045,6 @@
     },
     {
       "overlay": "resource_371",
-      "start": "0x020024a8",
-      "end": "0x02002768",
-      "kind": "structured_scene_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "Actor sequence with one nullable leader lookup, a wait loop on the leader field at0x64, actor-field0x5a updates, dialogue and motion calls, flags0x234/0x9bf, and saved scene2/entrance78. Automatic draft duplicated one actor lookup and inserted volatile ordinary RAM access; repaired from the original call sites. All64 compiled call targets retain reference order.",
-        "Complete reviewed owner remains assembled while the ordinary C draft is nonexact. No handwritten, library or compiler-impossibility credit."
-      ]
-    },
-    {
-      "overlay": "resource_371",
       "start": "0x02002768",
       "end": "0x020027dc",
       "kind": "structured_scene_module",

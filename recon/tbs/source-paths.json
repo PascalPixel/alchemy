@@ -19344,7 +19344,8 @@
       "source": "FIELD/WORLD_MAP/ENTER_SCENE.C"
     },
     "resource_371:020024a8": {
-      "name": "WorldMap_RunActorSequence"
+      "name": "WorldMap_RunBlackOrbScene",
+      "source": "FIELD/WORLD_MAP/BLACK_ORB_SCENE.C"
     },
     "resource_371:02002768": {
       "name": "WorldMap_PrepareTriggerActor"

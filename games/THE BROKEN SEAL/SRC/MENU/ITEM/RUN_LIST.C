@@ -64,7 +64,7 @@ s32 Unnamed_080a1fd4(s32 mode, s32 count, s32 page_size, s32 *row, s32 *page);
 void Audio_PlayCue(s32 cue);
 
 /*
- * types.h already supplies WaitFrames, Modulo, Audio_PlayCue, GameFlag_IsSet,
+ * types.h already supplies WaitFrames, Math_Mod, Audio_PlayCue, GameFlag_IsSet,
  * Ability_GetData, UiText_DrawAt, UiIcon_PrepareObject and
  * Object_InitializeMode; only the names it does not carry are declared here.
  */
@@ -216,7 +216,7 @@ s32 ItemMenu_RunList(s32 pane)
                         } else {
                             tab--;
                         }
-                        tab = Modulo(tab + menu->owner_count, menu->owner_count);
+                        tab = Math_Mod(tab + menu->owner_count, menu->owner_count);
                         menu->field_008 = menu->owner_table[tab];
                         menu->owner_ids[pane] = menu->owner_table[tab];
                         menu->tab_index[pane] = tab;

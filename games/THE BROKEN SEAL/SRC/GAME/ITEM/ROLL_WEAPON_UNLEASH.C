@@ -3,7 +3,7 @@
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
-s32 FixedPoint_Ratio(s32, s32);
+s32 Math_Div(s32, s32);
 
 u16 RollWeaponUnleash(void *owner)
 {
@@ -20,7 +20,7 @@ u16 RollWeaponUnleash(void *owner)
     if (FIELD_AT_OFFSET(item, u16, 0xE) == 0) {
         return 1;
     }
-    rate = FixedPoint_Ratio(
+    rate = Math_Div(
         (Equipment_GetUnleashRateBonus((s32)owner) +
          (FIELD_AT_OFFSET(item, u8, 0xB) * 5)) << 0x10,
         100);

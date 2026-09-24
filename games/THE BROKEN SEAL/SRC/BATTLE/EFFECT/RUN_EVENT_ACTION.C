@@ -66,7 +66,7 @@ void ObjectGroup_ApplyRandomChildValues(void *owner)
                 count = initial_count;
                 do {
                     current = *entry++;
-                    value = UnsignedModulo(*global, 6);
+                    value = Math_ModU(*global, 6);
                     count--;
                     *(u8 *)((u8 *)current + 5) = value;
                 } while (count != 0);

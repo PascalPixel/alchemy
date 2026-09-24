@@ -1,7 +1,7 @@
 #include "TYPES.H"
 
-s32 FixedPoint_Ratio(s32 dividend, s32 divisor);
-s32 Modulo(s32 dividend, s32 divisor);
+s32 Math_Div(s32 dividend, s32 divisor);
+s32 Math_Mod(s32 dividend, s32 divisor);
 
 u8 *Text_FormatNumber(u8 *buffer, s32 input, s32 width)
 {
@@ -23,8 +23,8 @@ u8 *Text_FormatNumber(u8 *buffer, s32 input, s32 width)
 
     buffer[0] = ' ';
     for (offset = 12; offset != 0; offset--) {
-        buffer[offset] = Modulo(value, 10) + '0';
-        value = FixedPoint_Ratio(value, 10);
+        buffer[offset] = Math_Mod(value, 10) + '0';
+        value = Math_Div(value, 10);
     }
 
     offset = 0;

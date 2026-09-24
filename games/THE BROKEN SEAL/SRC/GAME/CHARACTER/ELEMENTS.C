@@ -54,7 +54,7 @@ struct OwnerResistanceState {
 
 void *Owner_GetState(s32);
 s32 Owner_GetDigitValues(s32 record, const u8 *source, s32 *output);
-s32 FixedPoint_Ratio(s32, s32);
+s32 Math_Div(s32, s32);
 
 s32 Owner_GetResistanceValue(s32 owner, s32 index)
 {
@@ -64,7 +64,7 @@ s32 Owner_GetResistanceValue(s32 owner, s32 index)
 
     if (index <= 3) {
         Owner_GetDigitValues(state->record, state->source, values);
-        result = FixedPoint_Ratio(values[index], 10);
+        result = Math_Div(values[index], 10);
     }
     return result;
 }

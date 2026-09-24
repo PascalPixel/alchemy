@@ -9,7 +9,7 @@
 
 s32 Party_CountActiveOwnersFar();
 struct BattleUnit *Runtime_GetObject(s32 unit_id);
-s32 FixedPoint_Ratio(s32 value, s32 divisor);
+s32 Math_Div(s32 value, s32 divisor);
 void Owner_AdjustFirstValueFar(s32 owner, s32 amount);
 void Owner_AdjustSecondValueFar(s32 owner, s32 amount);
 void BattleFx_ApplyColorToSourceBuffer(s32 color, s32 mode);
@@ -62,7 +62,7 @@ void BattleParty_ApplyHealthDelta(s32 amount, s32 scaled)
         if (!scaled) {
             value = amount;
         } else {
-            value = FixedPoint_Ratio(unit->max_hp * amount, 100);
+            value = Math_Div(unit->max_hp * amount, 100);
             if (value == 0) {
                 value = amount;
                 if (value < 0)
@@ -93,14 +93,14 @@ s32 BattleParty_ApplyStatusDamage(void)
 
             switch ((s8)object[0x131]) {
             case 1:
-                amount = -FixedPoint_Ratio(*(s16 *)(object + 0x34) + 10, 20);
+                amount = -Math_Div(*(s16 *)(object + 0x34) + 10, 20);
                 if (amount == 0)
                     amount = -1;
                 if (result <= 0)
                     result = 1;
                 break;
             case 2:
-                amount = -FixedPoint_Ratio(*(s16 *)(object + 0x34) + 5, 10);
+                amount = -Math_Div(*(s16 *)(object + 0x34) + 5, 10);
                 if (amount == 0)
                     amount = -1;
                 if (result <= 1)

@@ -77,11 +77,11 @@ s32 Menu_ReservedStatusZero(void)
 }
 
 /* menu/core/get_modulo_of_sum.c */
-s32 Modulo(s32);
+s32 Math_Mod(s32);
 
 s32 Menu_GetModuloOfSum(s32 arg0, s32 arg1)
 {
-    return Modulo(arg0 + arg1);
+    return Math_Mod(arg0 + arg1);
 }
 
 /* menu/entry/set_first_object_row_coordinates.c */

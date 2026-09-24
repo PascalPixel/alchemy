@@ -1,7 +1,7 @@
 #include "TYPES.H"
 #include "FIXED_MATH.H"
 
-s32 FixedPoint_Ratio(s32 numerator, s32 denominator);
+s32 Math_Div(s32 numerator, s32 denominator);
 extern const u16 Math_ArcTanTable[];
 
 u16 ArcTan2(s32 x, s32 y)
@@ -23,7 +23,7 @@ u16 ArcTan2(s32 x, s32 y)
         if (value < 0)
             value = -value;
 
-        ratio = FixedPoint_Ratio(value << 8, ratio);
+        ratio = Math_Div(value << 8, ratio);
         result = 0x4000;
         if (ratio <= 0xFB6A) {
             table = Math_ArcTanTable;

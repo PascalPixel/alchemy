@@ -56,7 +56,7 @@ void BattleMotion_SetupEscapeObject(s32 object_id)
 /* battle/motion/interpolate_position.c */
 extern s8 gIw;
 
-s32 FixedPoint_Ratio(s32, s32);
+s32 Math_Div(s32, s32);
 
 void BattleMotion_InterpolatePosition(void **start_slot, void **end_slot, s32 progress)
 {
@@ -71,10 +71,10 @@ void BattleMotion_InterpolatePosition(void **start_slot, void **end_slot, s32 pr
     start = *start_slot;
     end = *end_slot;
     start_x = FIELD_AT_OFFSET(start, s32 *, 8);
-    x = start_x + FixedPoint_Ratio(progress *(FIELD_AT_OFFSET(end, s32 *, 8) - start_x), 0x64);
+    x = start_x + Math_Div(progress *(FIELD_AT_OFFSET(end, s32 *, 8) - start_x), 0x64);
     end_z = FIELD_AT_OFFSET(end, s32 *, 0x10);
     start_z = FIELD_AT_OFFSET(start, s32 *, 0x10);
-    z_step = FixedPoint_Ratio(progress *(end_z - start_z), 0x64);
+    z_step = Math_Div(progress *(end_z - start_z), 0x64);
     *(s16 *)0x04000050 = 0;
     FIELD_AT_OFFSET(start, s32 *, 0x34) = 0x20000;
     FIELD_AT_OFFSET(start, s32 *, 0x30) = 0x80000;

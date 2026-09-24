@@ -78,7 +78,7 @@ s32 Sanctum_RunPartyService(void)
 
         if (redraw != 0) {
             redraw = 0;
-            selection = Modulo(
+            selection = Math_Mod(
                 selection + shop->party_member_count,
                 shop->party_member_count);
             unit_id = shop->party_member_ids[selection];

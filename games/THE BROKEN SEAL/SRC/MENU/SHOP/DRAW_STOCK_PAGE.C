@@ -1,6 +1,6 @@
 #include "SHOP.H"
 
-s32 Modulo(s32 value, s32 divisor);
+s32 Math_Mod(s32 value, s32 divisor);
 void UiWindow_Clear(s32 window);
 u8 *UiIcon_DrawWithFlags(u16 no, u32 flags, s32 window, s32 x, s32 y);
 u8 *UiIcon_Draw(s32 no, s32 kind, s32 window, s32 x, s32 y);
@@ -24,7 +24,7 @@ void Shop_DrawStock(s32 window, s32 selected)
     shop = SHOP_RUNTIME;
     item_ids = shop->stock_item_ids;
     item_count = shop->stock_count;
-    first = selected - Modulo(selected, 7);
+    first = selected - Math_Mod(selected, 7);
     if (window != 0) {
         UiWindow_Clear(window);
         if (first != 0) {

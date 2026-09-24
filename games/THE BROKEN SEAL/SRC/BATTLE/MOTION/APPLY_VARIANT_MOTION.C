@@ -8,7 +8,7 @@ u8 *Runtime_GetObject(s32);
 void Object_ResetMotion(struct MotionObject *);
 void Object_SetPosition(struct MotionObject *, s32, s32, s32);
 void Object_SetMode(struct MotionObject *, s32);
-s32 FixedPoint_Ratio(s32, s32);
+s32 Math_Div(s32, s32);
 
 extern s32 gRom[];
 extern s32 gRom2[];
@@ -42,7 +42,7 @@ void BattleMotion_ApplyVariantMotion(s32 id, s32 variant)
         Object_ResetMotion(object);
         scale = slot->anchor_x;
         table = gRom4;
-        x = FixedPoint_Ratio(scale * *(s32 *)((u8 *)table + index), 100);
+        x = Math_Div(scale * *(s32 *)((u8 *)table + index), 100);
         Object_SetPosition(object, x, 0, slot->anchor_z);
     }
     Object_SetMode(object, 5);
@@ -64,10 +64,10 @@ void BattleMotion_ApproachTarget(
     s32 scale = 75;
     s32 difference_x = target->x - object->x;
     s32 start_x = object->x;
-    s32 delta_x = FixedPoint_Ratio(scale *difference_x, 100);
+    s32 delta_x = Math_Div(scale *difference_x, 100);
     s32 difference_z = target->z - object->z;
     s32 start_z = object->z;
-    s32 delta_z = FixedPoint_Ratio(scale *difference_z, 100);
+    s32 delta_z = Math_Div(scale *difference_z, 100);
     s32 x = start_x + delta_x;
     s32 z = start_z + delta_z;
     s32 short_x = delta_x >> 8;
@@ -76,7 +76,7 @@ void BattleMotion_ApproachTarget(
 
     distance = ((s32 (*)(s32))0x030001d8)(
         short_x *short_x + short_z *short_z);
-    distance = FixedPoint_Ratio(distance << 8, travel_divisor);
+    distance = Math_Div(distance << 8, travel_divisor);
     object->acceleration = distance;
     object->speed_limit = distance;
     object->snap_to_target = 1;

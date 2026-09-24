@@ -5,7 +5,7 @@
 #include "TYPES.H"
 #include "SCENE.H"
 
-s32 FixedPoint_Ratio(s32, s32);
+s32 Math_Div(s32, s32);
 
 /*
  * Obj_SetMode names a `bx rN` slot, so the call is indirect through the
@@ -50,8 +50,8 @@ s32 Object_ApproachLinkedObject(void *arg0)
   {
     dx2 = dx;
     n = len - 0x10;
-    mx = FixedPoint_Ratio(dx2 *n, len);
-    mz = FixedPoint_Ratio(dz *n, len);
+    mx = Math_Div(dx2 *n, len);
+    mz = Math_Div(dz *n, len);
     Obj_SetMode2(arg0, (*((s32 *)(p + 8))) + mx, *((s32 *)(p + 0xC)), (*((s32 *)(p + 0x10))) + mz);
     ObjectDispatch_ApplyArgumentToChildren(arg0, 2);
     *((u16 *)(p + 4)) = (u16)((*((u16 *)(p + 4))) + 1);

@@ -20,14 +20,14 @@ s32 FixedPoint_Multiply8_8(s32 arg0, s32 arg1)
     return (s16)(adjusted >> 8);
 }
 
-s32 FixedPoint_Ratio(s32, s32);
+s32 Math_Div(s32, s32);
 
 s16 scale_by_ratio_fixed(s16 arg0, s16 arg1)
 {
-    return FixedPoint_Ratio(arg0 << 8, arg1);
+    return Math_Div(arg0 << 8, arg1);
 }
 
 s16 FixedPoint_Reciprocal(s16 value)
 {
-    return FixedPoint_Ratio(0x10000, value);
+    return Math_Div(0x10000, value);
 }

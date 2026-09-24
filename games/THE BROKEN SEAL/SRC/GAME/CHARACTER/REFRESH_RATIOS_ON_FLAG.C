@@ -2,7 +2,7 @@
 #include "PARTY_STATE.H"
 #include "GAME_FLAGS.H"
 
-extern s32 FixedPoint_Ratio(s32, s32);
+extern s32 Math_Div(s32, s32);
 extern const u8 Character_ElementGroupTable[];
 
 void Owner_RefreshRatiosOnFlag(void)
@@ -48,7 +48,7 @@ void Owner_RefreshRatiosOnFlag(void)
 
         v38 = *(s16 *)(obj + 0x38);
         v34 = *(s16 *)(obj + 0x34);
-        t = FixedPoint_Ratio(v38 << 14, v34);
+        t = Math_Div(v38 << 14, v34);
         v14 = 0x4000;
         if (t <= 0x4000) {
             v14 = 0;
@@ -64,7 +64,7 @@ void Owner_RefreshRatiosOnFlag(void)
 
         v3A = *(s16 *)(obj + 0x3A);
         v36 = *(s16 *)(obj + 0x36);
-        t = FixedPoint_Ratio(v3A << 14, v36);
+        t = Math_Div(v3A << 14, v36);
         v16 = 0x4000;
         if (t <= 0x4000) {
             v16 = 0;

@@ -109,7 +109,7 @@ s32 PsynergyMenu_IsActionRestricted(s32 encoded_action);
 void Audio_PlayCue(s32 cue);
 
 /*
- * types.h already supplies WaitFrames, Modulo, Audio_PlayCue, GameFlag_IsSet,
+ * types.h already supplies WaitFrames, Math_Mod, Audio_PlayCue, GameFlag_IsSet,
  * Ability_GetData, UiText_DrawAt, UiIcon_PrepareObject and
  * Object_InitializeMode; only the names it does not carry are declared here.
  */
@@ -301,7 +301,7 @@ s32 PsynergyMenu_RunList(s32 pane)
                     } else {
                         tab = tab - 1;
                     }
-                    tab = Modulo(tab + menu->owner_count, menu->owner_count);
+                    tab = Math_Mod(tab + menu->owner_count, menu->owner_count);
                     menu->field_008 = menu->owner_table[tab];
                     menu->owner_ids[0] = menu->owner_table[tab];
                     menu->psynergy_count = PsynergyMenu_CollectActions(

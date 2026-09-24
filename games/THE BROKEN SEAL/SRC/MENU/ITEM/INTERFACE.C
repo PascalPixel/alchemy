@@ -85,7 +85,7 @@ void ItemMenu_HideAllIcons(void)
     }
 }
 
-s32 Modulo(s32, s32);
+s32 Math_Mod(s32, s32);
 
 void ItemMenu_HidePageIcons(void)
 {
@@ -97,7 +97,7 @@ void ItemMenu_HidePageIcons(void)
     do {
         struct InventoryMenuIcon *icon = *icon_slot++;
 
-        if (icon != 0 && Modulo(slot, 5) == 0) {
+        if (icon != 0 && Math_Mod(slot, 5) == 0) {
             icon->state = hidden_state;
         }
         slot++;

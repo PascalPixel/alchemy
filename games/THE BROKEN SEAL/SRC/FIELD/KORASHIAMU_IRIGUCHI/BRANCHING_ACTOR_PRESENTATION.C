@@ -1,6 +1,5 @@
 #include "TYPES.H"
 
-#define Scene_RunBranchingActorPresentation Func_02000710
 
 extern u8 Data_0200ad3c[];
 extern u8 Data_0200ad74[];

@@ -1,7 +1,9 @@
 .syntax unified
 	.thumb
+	.global ObjectDispatch_InitFromTable4WithArgumentFar
 	.global Func_080090e0
 	.thumb_func
+ObjectDispatch_InitFromTable4WithArgumentFar:
 Func_080090e0:
 	ldr	r4, [pc, #0]
 	bx	r4

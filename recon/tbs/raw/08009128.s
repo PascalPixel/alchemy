@@ -1,7 +1,9 @@
 .syntax unified
 	.thumb
+	.global Map_ApplyWorkOriginAndSpanFar
 	.global Func_08009128
 	.thumb_func
+Map_ApplyWorkOriginAndSpanFar:
 Func_08009128:
 	ldr	r4, [pc, #0]
 	bx	r4

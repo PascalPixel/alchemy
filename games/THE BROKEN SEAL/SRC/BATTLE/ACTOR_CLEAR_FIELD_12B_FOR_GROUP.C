@@ -137,7 +137,7 @@ s32 BattlePres_BuildUnitEntries(
         s32 appended;
 
         entries += entry_count;
-        appended = Battle_Place(entries, excluded_units, excluded_count);
+        appended = Battle_CollectPartyCommandsFar(entries, excluded_units, excluded_count);
         if (appended < 0) {
             unit_count = -1;
         } else {

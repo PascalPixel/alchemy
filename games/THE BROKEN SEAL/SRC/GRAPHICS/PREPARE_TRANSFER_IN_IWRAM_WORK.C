@@ -1,13 +1,13 @@
 #include "TYPES.H"
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
-void Sys_Place(void *src, void *dst, void *work);
+void Graphics_PrepareTransfer(void *src, void *dst, void *work);
 
 /* graphics/prepare_transfer_in_iwram_work.c */
 /* graphics/prepare_transfer_in_iwram_work.c */
 void Graphics_PrepareTransferInIwramWork(s32 src, s32 dst)
 {
-    Sys_Place((void *)src, (void *)dst, (void *)0x03000350);
+    Graphics_PrepareTransfer((void *)src, (void *)dst, (void *)0x03000350);
 }
 
 /* graphics/prepare_transfer_and_run.c */
@@ -17,7 +17,7 @@ void Graphics_PrepareTransferAndRun(void *src, void *dst)
 {
     u8 work[48];
 
-    Sys_Place(src, dst, work);
+    Graphics_PrepareTransfer(src, dst, work);
     ((WorkFunc)0x030002c0)(work);
 }
 

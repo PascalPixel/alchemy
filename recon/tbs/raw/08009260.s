@@ -1,7 +1,9 @@
 .syntax unified
 	.thumb
+	.global ResourceMetadata_SumCommandLengthsFar
 	.global Func_08009260
 	.thumb_func
+ResourceMetadata_SumCommandLengthsFar:
 Func_08009260:
 	ldr	r4, [pc, #0]
 	bx	r4

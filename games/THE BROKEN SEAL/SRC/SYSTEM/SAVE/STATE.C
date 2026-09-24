@@ -42,7 +42,7 @@ u32 SaveState_SelectWriteSlot(s32 mode)
 
 /* save/state/write_workspace_slot.c */
 s32 State_SetMode(s32, s32, s32, s32);
-s32 State_Apply(u16, s32);
+s32 Flash_VerifySector(u16, s32);
 
 struct Work_08005868 {
     u8 unknown_00[64];
@@ -63,7 +63,7 @@ u16 code;
                        (s32)param, *param) << 0x10) != 0) {
         return 1U;
     }
-    result = State_Apply(value, (s32)&work->data);
+    result = Flash_VerifySector(value, (s32)&work->data);
     return (u32)((0 - result) | result) >> 0x1F;
 }
 

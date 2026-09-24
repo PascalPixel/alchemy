@@ -2,8 +2,10 @@
 	.thumb
 	.set sub_08006ac0, 0x08006ac0
 	.set sub_080072f0, 0x080072f0
+	.global Flash_VerifySector
 	.global Func_08006c68
 	.thumb_func
+Flash_VerifySector:
 Func_08006c68:
 	push	{r4, r5, lr}
 	sub	sp, #256

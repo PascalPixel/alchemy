@@ -9,8 +9,10 @@
 	.set sub_08021750, 0x08021750
 	.set sub_080770c0, 0x080770c0
 	.set sub_080b0038, 0x080b0038
+	.global Menu_CreateWorkspaceWindows
 	.global Func_0801d9d4
 	.thumb_func
+Menu_CreateWorkspaceWindows:
 Func_0801d9d4:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

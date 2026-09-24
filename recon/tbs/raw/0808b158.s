@@ -1,8 +1,10 @@
 .syntax unified
 	.thumb
 	.set sub_0808a8d0, 0x0808a8d0
+	.global BattleFx_FindConditionResource
 	.global Func_0808b158
 	.thumb_func
+BattleFx_FindConditionResource:
 Func_0808b158:
 	push	{r5, r6, r7, lr}
 	mov	r7, r8

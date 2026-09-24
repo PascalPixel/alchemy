@@ -13,9 +13,9 @@ s32 UiWindow_Create(s32, s32, s32, s32, s32);
 void UiWork_Finalize(struct Work *work, s32 release);
 
 #if defined(TBS_EDITION_JA)
-void Ui_Place(s32, s16 *, s32);
+void UiText_CopyMessageString(s32, s16 *, s32);
 #else
-s32 Ui_Place(s32, s16 *, s32);
+s32 UiText_CopyMessageString(s32, s16 *, s32);
 #endif
 
 extern u8 gGameState[];
@@ -48,7 +48,7 @@ s32 UiText_ShowLocalizedMessageAndWait(void)
 active:
         work = UiWindow_Create(0, 7, 30, 4, 42);
         Ui_FillVramBlockPattern();
-        Ui_Place((s32)&Value_00000845, buffer, TEXT_COUNT);
+        UiText_CopyMessageString((s32)&Value_00000845, buffer, TEXT_COUNT);
         UiText_RenderWideStringAtOffset(buffer, work, 0, 4);
         do {
             WaitFrames(1);

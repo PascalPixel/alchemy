@@ -41,7 +41,7 @@ void BattleFx_UpdateRadialMotion(struct Effect_080b2f4c *effect)
         position.x = effect->source_x;
         position.z = effect->source_z;
         Vector_AddPolarOffset(0x280000, Rand(), &position);
-        Battle_Place(effect, position.x, position.z);
+        EffectSlot_SetPositionFar(effect, position.x, position.z);
         position.x = effect->source_x;
         position.z = effect->source_z;
         Vector_AddPolarOffset(0x40000, Rand(), &position);
@@ -52,11 +52,11 @@ void BattleFx_UpdateRadialMotion(struct Effect_080b2f4c *effect)
         effect->flag = state;
         *state_pointer = (u8)*state_pointer + 1;
     } else if (state == 1) {
-        result = Battle_Check(effect);
+        result = BattleFx_HasReachedTargetFar(effect);
         if (result == 0)
             *state_pointer = result;
     } else if (state == 2) {
-        if (Battle_Check(effect) == 0)
-            Battle_Do(effect);
+        if (BattleFx_HasReachedTargetFar(effect) == 0)
+            BattleFx_ClearOwnedSlotFar(effect);
     }
 }

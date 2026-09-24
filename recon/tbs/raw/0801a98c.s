@@ -6,8 +6,10 @@
 	.set sub_0801b36c, 0x0801b36c
 	.set sub_080770c0, 0x080770c0
 	.set sub_080b50b0, 0x080b50b0
+	.global MenuSelection_DrawFrame
 	.global Func_0801a98c
 	.thumb_func
+MenuSelection_DrawFrame:
 Func_0801a98c:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

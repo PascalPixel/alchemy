@@ -1,7 +1,9 @@
 .syntax unified
 	.thumb
+	.global Game_ResetForNewGameFar
 	.global Func_0808a008
 	.thumb_func
+Game_ResetForNewGameFar:
 Func_0808a008:
 	ldr	r4, [pc, #0]
 	bx	r4

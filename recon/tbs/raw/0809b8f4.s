@@ -6,8 +6,10 @@
 	.set sub_080045d4, 0x080045d4
 	.set sub_080072f0, 0x080072f0
 	.set sub_0809ba5c, 0x0809ba5c
+	.global EffectSlot_UpdateMotion
 	.global Func_0809b8f4
 	.thumb_func
+EffectSlot_UpdateMotion:
 Func_0809b8f4:
 	push	{r5, r6, r7, lr}
 	adds	r6, r0, #0

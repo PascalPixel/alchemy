@@ -37,6 +37,6 @@ s32 Battle_ApplyPresetItemsAndFlags(void)
     FIELD((void *)Owner_GetStateFar(3), s8 *, 0x131) = 1;
     FIELD((void *)Owner_GetStateFar(5), s8 *, 0x131) = 1;
     FIELD((void *)Owner_GetStateFar(2), s8 *, 0x140) = 1;
-    Battle_Apply3(FINAL_ARG, 0x1e);
+    Shop_Run(FINAL_ARG, 0x1e);
     return 0;
 }

@@ -67,7 +67,7 @@ void Battle_PlaceActorsByFormationKind(void)
     }
 
     for (i = 0; i < cnt; i++) {
-        Battle_SetMode(actor, (s32 *)(tbl + i * 16), (s32 *)&scale, angle);
+        Render_ApplyProjectedPlacement(actor, (s32 *)(tbl + i * 16), (s32 *)&scale, angle);
         actor += 56;
         angle += step;
         if (i & 1)

@@ -1,7 +1,9 @@
 .syntax unified
 	.thumb
+	.global Menu_RunConfirmSelectionAtFar
 	.global Func_080153b0
 	.thumb_func
+Menu_RunConfirmSelectionAtFar:
 Func_080153b0:
 	ldr	r4, [pc, #0]
 	bx	r4

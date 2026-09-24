@@ -24,14 +24,14 @@ void Object_AttachWorkTargetToObject(s32 id, s32 flag)
     p = *(s32 **)ADDR_03001E70;
     if (obj != 0) {
         *p = (s32)((u8 *)target + 8);
-        FunctionHead_080090e0(target, (void *)obj);
+        ObjectDispatch_InitFromTable4WithArgumentFar(target, (void *)obj);
         if (flag == 0) {
             FIELD_AT_OFFSET(target, s32 *, 8) = (s32)FIELD_AT_OFFSET(obj, s32 *, 8);
             FIELD_AT_OFFSET(target, s32 *, 0xC) = (s32)FIELD_AT_OFFSET(obj, s32 *, 0xC);
             FIELD_AT_OFFSET(target, s32 *, 0x10) = (s32)FIELD_AT_OFFSET(obj, s32 *, 0x10);
             WaitFrames(1);
             if (FIELD_AT_OFFSET(work, s16 *, 0x19E) != 3) {
-                FunctionHead_08009128();
+                Map_ApplyWorkOriginAndSpanFar();
             }
         }
     }
@@ -114,7 +114,7 @@ void Motion_CamBounds(s32 requested_x, s32 requested_y, s32 requested_z, s32 use
         FIELD_AT_OFFSET(object, s32, 0x10) = position_z;
         WaitFrames(1U);
         if (FIELD_AT_OFFSET(runtime_block, s16, 0x19E) != 3) {
-            FunctionHead_08009128();
+            Map_ApplyWorkOriginAndSpanFar();
         }
     } else {
         Object_SetPosition(object, position_x, position_y, position_z);
@@ -167,7 +167,7 @@ void BattleFx_LinkObjectToTarget(void *target, s32 keep_current_position)
 
     object = FIELD_AT_OFFSET(Runtime_AllocateBlock(0x1B, 0xCCC), void **, 0x1E0);
     if (target != NULL) {
-        Battle_Run(object, NULL);
+        ObjectDispatch_InitFromTable4WithArgumentFar(object, NULL);
         FIELD_AT_OFFSET(object, void **, 0x68) = target;
         if (keep_current_position == 0) {
             FIELD_AT_OFFSET(object, s32 *, 8) = FIELD_AT_OFFSET(target, s32 *, 8);

@@ -29,7 +29,7 @@ s32 Battle_ClassifyEntryKind(const u8 *entry)
     if (k == 0x40) {
         ret = 6;
     }
-    if (Battle_Check(entry[3]) != 0) {
+    if (BattleFx_IsReviveFar(entry[3]) != 0) {
         ret = 5;
     }
     return ret;

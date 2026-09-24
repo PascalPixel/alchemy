@@ -54,11 +54,11 @@ block_10:
 
 /* resource/Resource_ScheduleOwnerResetDelayed.c */
 s32 Scheduler_AddOrUpdateCallback(s32, s32);
-void Sys_Run(void);
+void MenuSelection_DrawFrame(void);
 
 void Resource_ScheduleOwnerResetDelayed(void)
 {
-    Scheduler_AddOrUpdateCallback((s32)Sys_Run, 0xC80);
+    Scheduler_AddOrUpdateCallback((s32)MenuSelection_DrawFrame, 0xC80);
 }
 
 /* resource/Resource_ScheduleOwnerReset.c */
@@ -66,5 +66,5 @@ s32 Scheduler_RemoveCallback(s32);
 
 void Resource_ScheduleOwnerReset(void)
 {
-    Scheduler_RemoveCallback((s32)Sys_Run);
+    Scheduler_RemoveCallback((s32)MenuSelection_DrawFrame);
 }

@@ -20,7 +20,7 @@ struct OwnerProgressState *Owner_GetStateFar(s32 owner_id);
 u32 Owner_GetLevelThresholdFar(s32 owner_id, s32 level);
 void UiWork_PushValueSlotFar(u32 quantity, s32 style);
 void *Runtime_BumpAllocate(s32 size);
-void Func_08015030(s32 message_id, void *buffer, s32 length);
+void UiText_CopyMessageStringFar(s32 message_id, void *buffer, s32 length);
 void UiText_RenderWideStringAtOffsetFar(void *buffer, void *destination, s32 offset, s32 terminator);
 void Runtime_BumpFree(void *buffer);
 
@@ -53,7 +53,7 @@ void StatusMenu_ShowOwnerProgressMessage(
     }
 
     buffer = Runtime_BumpAllocate(0x100);
-    Func_08015030(message_variant + (s32)&Value_00000be6, buffer, 0x80);
+    UiText_CopyMessageStringFar(message_variant + (s32)&Value_00000be6, buffer, 0x80);
     UiText_RenderWideStringAtOffsetFar(buffer, destination, 0, -1);
     Runtime_BumpFree(buffer);
 }

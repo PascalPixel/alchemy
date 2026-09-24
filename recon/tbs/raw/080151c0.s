@@ -1,7 +1,9 @@
 .syntax unified
 	.thumb
+	.global Battle_CollectPartyCommandsFar
 	.global Func_080151c0
 	.thumb_func
+Battle_CollectPartyCommandsFar:
 Func_080151c0:
 	ldr	r4, [pc, #0]
 	bx	r4

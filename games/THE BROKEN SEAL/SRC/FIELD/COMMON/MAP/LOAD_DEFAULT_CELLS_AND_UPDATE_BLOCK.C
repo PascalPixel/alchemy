@@ -3,7 +3,7 @@
 
 /* map/shared/load_default_cells_and_update_block.c */
 extern u8 gVal[];
-void FunctionHead_0801161c(void);
+void Map_UploadDefaultCells(void);
 void Resource_DecodeType01(s32, s32);
 void *GetResource(s32);
 void Map_UpdateCurrentTileBlock(void);
@@ -19,7 +19,7 @@ struct MapInitWork {
 void Map_LoadDefaultCellsAndUpdateBlock(void)
 {
     struct MapInitWork *work = *(struct MapInitWork **)ADDR_03001E70;
-    *(s32 *)ADDR_03001CFC = (s32)FunctionHead_0801161c;
+    *(s32 *)ADDR_03001CFC = (s32)Map_UploadDefaultCells;
     work->first = 0;
     work->second = 0x9f;
     WaitFrames(1U);

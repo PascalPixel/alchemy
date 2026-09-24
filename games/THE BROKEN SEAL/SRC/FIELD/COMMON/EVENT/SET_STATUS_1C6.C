@@ -3,24 +3,24 @@
 #include "TYPES.H"
 
 /* event/set_status_1c6.c */
-void FunctionHead_0808fefc(s32 first, s32 second);
+void Event_ApplyPairEffect(s32 first, s32 second);
 
 void Event_SetStatus1c6(void)
 {
     struct EventRuntime *runtime = gWork;
 
-    FunctionHead_0808fefc(runtime->value_1c0, runtime->value_1c8);
+    Event_ApplyPairEffect(runtime->value_1c0, runtime->value_1c8);
     runtime->status_1c6 = 1;
 }
 
 /* event/clear_status_1c6.c */
-u32 Sys_Apply(s32 first, s32 second);
+u32 Event_RevertPairEffect(s32 first, s32 second);
 
 void Event_ClearStatus1c6(void)
 {
     struct EventRuntime *runtime = gWork;
 
-    Sys_Apply(runtime->value_1c0, runtime->value_1c8);
+    Event_RevertPairEffect(runtime->value_1c0, runtime->value_1c8);
     runtime->status_1c6 = 0;
 }
 

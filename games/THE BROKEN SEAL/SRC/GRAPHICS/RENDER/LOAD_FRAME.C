@@ -19,7 +19,7 @@ void RenderResource_LoadFrame(s32 index, s32 value, s32 flag)
     if (value <= 95) {
         Resource_DecodeByteLz((void *)((u32)base + base[index]), buffer);
         if (flag != 0)
-            Sys_Apply2(buffer, 768);
+            Runtime_RemapBytesByTableFar(buffer, 768);
         VramBlock_LoadCached(value, size, buffer);
         Runtime_ReleaseHeapBlock(14);
     }

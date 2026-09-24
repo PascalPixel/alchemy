@@ -20,8 +20,10 @@
 	.set sub_080a6614, 0x080a6614
 	.set sub_080a68ec, 0x080a68ec
 	.set sub_080f9010, 0x080f9010
+	.global PsynergyMenu_SetupActionIcons
 	.global Func_080a60d4
 	.thumb_func
+PsynergyMenu_SetupActionIcons:
 Func_080a60d4:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

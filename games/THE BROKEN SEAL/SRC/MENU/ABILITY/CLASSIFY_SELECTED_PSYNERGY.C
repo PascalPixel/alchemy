@@ -4,7 +4,7 @@
 
 /* menu/psynergy_menu/classify_selected_psynergy.c */
 u8 *BattleAction_Get(s32 action);
-s32 FunctionHead_0808a488(u8 effect);
+s32 BattleFx_HasMatchingEvent5Far(u8 effect);
 
 s32 PsynergyMenu_ClassifySelectedPsynergy(void)
 {
@@ -16,7 +16,7 @@ s32 PsynergyMenu_ClassifySelectedPsynergy(void)
         (s32)(0x3fff &
               (*(struct PsynergyMenuState **)ADDR_03001F2C)
                   ->selected_psynergy));
-    if (FunctionHead_0808a488(psynergy[0x0c]) != 0) {
+    if (BattleFx_HasMatchingEvent5Far(psynergy[0x0c]) != 0) {
         return 0;
     }
     ret = 2;
@@ -37,7 +37,7 @@ struct Cur { unsigned short mark : 8; };
 extern struct PsynergyMenuState *gMenuWork;
 void *Owner_GetStateFar(s32);
 s32 UiMenu_SlideCursor(s32, s32);
-s32 FunctionHead_080a60d4(void *, void *);
+s32 PsynergyMenu_SetupActionIcons(void *, void *);
 void UiIcon_PrepareObject(void *cursor);
 
 s32 PsynergyMenu_SelectPartySlot(s32 party_slot)
@@ -82,7 +82,7 @@ s32 PsynergyMenu_SelectPartySlot(s32 party_slot)
     p456 = menu + 456;
     badge = PsynergyMenu_CollectActions(obj_ptr, p456, 2);
     *(u8 *)(menu + 536) = (u8)badge;
-    result = FunctionHead_080a60d4(menu + 520, p456);
+    result = PsynergyMenu_SetupActionIcons(menu + 520, p456);
 
     cursor_offset2 = party_slot * 4 + 20;
     icon = *(void **)(menu + cursor_offset2);

@@ -14,7 +14,7 @@ extern void *gSelectionWork;
 extern u8 gDebugMode;
 extern s8 Menu_WorkspaceIconFrames[];
 
-void *Menu_Run(void);
+void *Menu_CreateWorkspaceWindows(void);
 void UiIcon_PrepareObjectFar(void *);
 
 void *RenderOutput_CreatePair(s32, void *, s32, s32);
@@ -46,7 +46,7 @@ s32 Menu_RunWorkspaceSelectionLoop(void)
     sp4 = 0;
     Menu_PrepareWorkspacePage();
     temp_sl_29 = gSelectionWork;
-    sp10 = Menu_Run();
+    sp10 = Menu_CreateWorkspaceWindows();
     var_r4_35 = -0x18;
     if (gDebugMode != 0) {
         var_r4_35 = -0x10;
@@ -87,7 +87,7 @@ loop_6:
         temp_e2 = FIELD_AT_OFFSET(sp10, u16 *, 0xE);
         temp_c = FIELD_AT_OFFSET(sp10, u16 *, 0xC) * 8;
         var_r4_35 = (((var_r8_51 * 3) + temp_e2) * 8) + 0x10;
-        Menu_SetMode(
+        Shop_SetCursorFar(
             (u8 *)temp_sl_29 + 0x5A4,
             temp_c,
             var_r4_35,

@@ -32819,86 +32819,6 @@
       ]
     },
     {
-      "id": "retained-scene-state-sequence-3b7",
-      "game": "tbs",
-      "source": "recon/tbs/en/overlays/resource_3b7_c_020001d8.c",
-      "compiler_route": "canonical-gcc296",
-      "overlay": "resource_3b7",
-      "absolute_symbols": {
-        "Func_02001b6e": {
-          "address": "0x02009954",
-          "kind": "thumb"
-        },
-        "Func_02001b6e_a": {
-          "address": "0x0200993c",
-          "kind": "thumb"
-        },
-        "Func_02001b76": {
-          "address": "0x02009954",
-          "kind": "thumb"
-        },
-        "Func_02001b76_a": {
-          "address": "0x0200993c",
-          "kind": "thumb"
-        },
-        "Func_02001c24": {
-          "address": "0x0200995c",
-          "kind": "thumb"
-        },
-        "Func_02001c24_a": {
-          "address": "0x02009914",
-          "kind": "thumb"
-        },
-        "Func_02001c4e": {
-          "address": "0x0200995c",
-          "kind": "thumb"
-        },
-        "Func_02001c4e_a": {
-          "address": "0x02009944",
-          "kind": "thumb"
-        },
-        "Func_02001cce": {
-          "address": "0x02009974",
-          "kind": "thumb"
-        },
-        "Func_02001cce_a": {
-          "address": "0x02009964",
-          "kind": "thumb"
-        },
-        "Func_02001d3a": {
-          "address": "0x02009994",
-          "kind": "thumb"
-        },
-        "Func_02001d3a_a": {
-          "address": "0x02009914",
-          "kind": "thumb"
-        },
-        "Func_02001d4e": {
-          "address": "0x02009974",
-          "kind": "thumb"
-        },
-        "Func_02001d4e_a": {
-          "address": "0x02009914",
-          "kind": "thumb"
-        },
-        "Func_02001d84": {
-          "address": "0x02009974",
-          "kind": "thumb"
-        },
-        "Func_02001d84_a": {
-          "address": "0x02009924",
-          "kind": "thumb"
-        }
-      },
-      "owners": [
-        {
-          "address": "0x020001d8",
-          "extent": 740,
-          "state": "not-yet-c"
-        }
-      ]
-    },
-    {
       "id": "retained-scene-event-sequence-396",
       "game": "tbs",
       "source": "games/THE BROKEN SEAL/SRC/FIELD/TORETO_HEYA/TABLE_SCENE.C",
@@ -79534,6 +79454,126 @@
         {
           "start": "0x0200059a",
           "end": "0x0200059c"
+        }
+      ]
+    },
+    {
+      "id": "scene-3b7-020001d8",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/TOREBI_IZUMI/F_001D8.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3b7",
+      "absolute_symbols": {
+        "Engine_ActorSetAnimation": {
+          "address": "0x02009954",
+          "kind": "thumb"
+        },
+        "Engine_ActorGet": {
+          "address": "0x0200993c",
+          "kind": "thumb"
+        },
+        "Engine_EventOpenScreen": {
+          "address": "0x02009994",
+          "kind": "thumb"
+        },
+        "SceneState_InitFourActorRecordsAndInstallTask": {
+          "address": "0x020096a8",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagIsSet": {
+          "address": "0x020098e4",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetPosition": {
+          "address": "0x0200994c",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetChildValue": {
+          "address": "0x0200995c",
+          "kind": "thumb"
+        },
+        "Engine_EventBegin": {
+          "address": "0x0200991c",
+          "kind": "thumb"
+        },
+        "Engine_EventWaitForScreen": {
+          "address": "0x0200999c",
+          "kind": "thumb"
+        },
+        "Engine_EventWait": {
+          "address": "0x02009914",
+          "kind": "thumb"
+        },
+        "Engine_ActorWalkToAndWait": {
+          "address": "0x02009944",
+          "kind": "thumb"
+        },
+        "Engine_AudioPlayCue": {
+          "address": "0x020099c4",
+          "kind": "thumb"
+        },
+        "Engine_EventSetMessage": {
+          "address": "0x02009964",
+          "kind": "thumb"
+        },
+        "Main_08015120": {
+          "address": "0x020098c4",
+          "kind": "thumb"
+        },
+        "Engine_EventShowMessage": {
+          "address": "0x02009974",
+          "kind": "thumb"
+        },
+        "Main_080b0060": {
+          "address": "0x020099bc",
+          "kind": "thumb"
+        },
+        "Engine_EventEnd": {
+          "address": "0x02009924",
+          "kind": "thumb"
+        },
+        "Local_020008f8": {
+          "address": "0x020088f8",
+          "kind": "thumb"
+        },
+        "SceneDialogue_PickTopicVariantId": {
+          "address": "0x02008d70",
+          "kind": "thumb"
+        },
+        "Engine_ItemShowFound": {
+          "address": "0x020099a4",
+          "kind": "thumb"
+        },
+        "Engine_PartyGiveItem": {
+          "address": "0x0200992c",
+          "kind": "thumb"
+        },
+        "Engine_ActorFaceDirection": {
+          "address": "0x0200997c",
+          "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
+        },
+        "TorebiIzumi_AndYouWonMessage": {
+          "address": "0x00000e30",
+          "kind": "data"
+        },
+        "Data_000000bd": {
+          "address": "0x000000bd",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x020001d8",
+          "extent": 740,
+          "state": "exact-c"
         }
       ]
     }

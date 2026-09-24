@@ -14742,7 +14742,8 @@
       "source": "FIELD/TOREBI_IZUMI/TOPIC.C"
     },
     "resource_3b7:020001d8": {
-      "name": "FieldScene_RunPrimaryScript"
+      "name": "TorebiIzumi_Func020001d8",
+      "source": "FIELD/TOREBI_IZUMI/F_001D8.C"
     },
     "resource_3b7:02000e5c": {
       "name": "FieldScene_RunSecondaryScript"

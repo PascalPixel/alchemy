@@ -285,9 +285,11 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
         if (t >= 0 && t < 88) {
             for (i = 0, q2 = work->sparks; i != 32; i++, q2++) {
                 if (frame >= i / 4 + 152 && frame < i / 4 + 152 + 32) {
-                    s = (i & 3) + 5;
-                    blit[0](dst, work->sheet + BattleFx6_FlareCells[s - 1] + 0x4e20,
-                        HI(q2->x) + 112 - s, HI(q2->y) + 62 - s, s * 2, s * 2);
+                    s32 fx = HI(q2->x) + 112;
+                    s32 fy = HI(q2->y) + 62;
+                    s32 r = (i & 3) + 5;
+                    s = r * 2;
+                    blit[0](dst, work->sheet + BattleFx6_FlareCells[r - 1] + 0x4e20, fx - r, fy - r, s, s);
                     q2->x += q2->velocity_x;
                     q2->y += q2->velocity_y;
                 }

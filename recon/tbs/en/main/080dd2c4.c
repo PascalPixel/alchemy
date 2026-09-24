@@ -1,5 +1,15 @@
 /* 2026-09-24: 14 differing halfwords (was 66). The blitter index 1 & i is
-   taken into its own local before the cell and width reads. The member blits read the
+   taken into its own local before the cell and width reads. Residual, three
+   places, all register choice: (1) the member-loop latch loads the
+   increment constants 1 and 28 into r3 and r5 where the reference has 28 in
+   r3 and 1 in r5; the sched2 dump shows the constant in r3 anti-depends on
+   the Counts reload, so whichever add owns r3 is scheduled first (the
+   reference advances the cell pointer before i). Swapping the two source
+   increments, an explicit sp0C accumulator (frame grows to 60) and a
+   declaration-order sweep did not fix it. (2) The member-loop preheader
+   swaps r1/r2 between the cell pointer and the 8 that seeds sp0C. (3) The
+   cue loop's preheader loads the 36 before hoisting i & 1 and the effect
+   pointer. The member blits read the
    cell offset first and then reuse the texture index (u32, so the width
    halves with lsrs) for the width, which puts the index in r4 as the
    reference does. The puff blits now read

@@ -20822,6 +20822,10 @@
     "main:080b3050": {
       "name": "Shop_RunPartyMemberIconBurst",
       "source": "MENU/SHOP/PARTY_MEMBER_ICON_BURST.C"
+    },
+    "main:080b5b18": {
+      "name": "BattleParty_ResetActiveRuntimeFields",
+      "source": "BATTLE/PARTY/RESET_ACTIVE_RUNTIME_FIELDS.C"
     }
   },
   "symbols": {

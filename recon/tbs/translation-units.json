@@ -26205,15 +26205,15 @@
           "address": "0x00002547",
           "kind": "data"
         },
-        "LinkedMessage_GaretHeadsForKalay": {
+        "LinkedMessage_GeraldHeadsForKalay": {
           "address": "0x00002558",
           "kind": "data"
         },
-        "LinkedMessage_GaretSawSomeone": {
+        "LinkedMessage_GeraldSawSomeone": {
           "address": "0x0000250d",
           "kind": "data"
         },
-        "LinkedMessage_GaretStays": {
+        "LinkedMessage_GeraldStays": {
           "address": "0x0000254e",
           "kind": "data"
         },
@@ -34035,11 +34035,11 @@
           "address": "0x03001ebc",
           "kind": "data"
         },
-        "gGaretAction": {
+        "gGeraldAction": {
           "address": "0x0200e5cc",
           "kind": "data"
         },
-        "gJennaAction": {
+        "gJasmineAction": {
           "address": "0x0200e614",
           "kind": "data"
         },
@@ -43457,10 +43457,6 @@
         },
         "Func_02001a22": {
           "address": "0x02008d3c",
-          "kind": "thumb"
-        },
-        "Func_02002768": {
-          "address": "0x0200a768",
           "kind": "thumb"
         },
         "Func_02002780": {

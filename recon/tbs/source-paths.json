@@ -6299,7 +6299,7 @@
       "source": "FIELD/FUNE_HEYA/EXTENDED_CHOREOGRAPHY.C"
     },
     "resource_3ad:0200134c": {
-      "name": "Garet_ChecksNothingLeftToDo",
+      "name": "Gerald_ChecksNothingLeftToDo",
       "source": "FIELD/RUNPA_DOU/CAVE.C"
     },
     "resource_388:0200003c": {
@@ -6375,7 +6375,7 @@
       "source": "FIELD/SUHARA_GATE/ACTOR_PROMPT.C"
     },
     "resource_3ad:0200141c": {
-      "name": "Garet_AsksAboutThingsToDo",
+      "name": "Gerald_AsksAboutThingsToDo",
       "source": "FIELD/RUNPA_DOU/CAVE.C"
     },
     "resource_399:02001990": {
@@ -6511,7 +6511,7 @@
       "source": "FIELD/FUNE_HEYA/EXTENDED_CHOREOGRAPHY.C"
     },
     "resource_380:02004248": {
-      "name": "FieldScene_RunSplitPairSteps",
+      "name": "Event_SayThenWait",
       "source": "FIELD/SORU_STAR/PARTY_INTRO.C"
     },
     "resource_3b1:02004890": {
@@ -6672,7 +6672,7 @@
       "source": "FIELD/VINASU_CHOJO/SCRIPTED_PRESENTATION.C"
     },
     "resource_374:020022c8": {
-      "name": "FieldScene_RunSplitPairSteps",
+      "name": "Event_SayThenWait",
       "source": "FIELD/HAIDIA_IE/EXTENDED.C"
     },
     "resource_3b0:02001130": {
@@ -6948,7 +6948,7 @@
       "source": "FIELD/IMIRU_MURA/FLAGGED_CHOREOGRAPHY.C"
     },
     "resource_3ad:020012c4": {
-      "name": "Garet_AsksIfNotRiding",
+      "name": "Gerald_AsksIfNotRiding",
       "source": "FIELD/RUNPA_DOU/CAVE.C"
     },
     "resource_399:02001960": {
@@ -7440,7 +7440,7 @@
       "source": "FIELD/VINASU_CHOJO/SCRIPTED_PRESENTATION.C"
     },
     "resource_3ad:020012f0": {
-      "name": "Garet_AsksAboutUnfinishedBusiness",
+      "name": "Gerald_AsksAboutUnfinishedBusiness",
       "source": "FIELD/RUNPA_DOU/CAVE.C"
     },
     "resource_372:02000198": {
@@ -14755,7 +14755,7 @@
       "source": "FIELD/RUNPA_MURA/VILLAGE.C"
     },
     "resource_3ab:02000b0c": {
-      "name": "Garet_RefusesToReturn",
+      "name": "Gerald_RefusesToReturn",
       "source": "FIELD/RUNPA_MURA/VILLAGE.C"
     },
     "resource_3ab:0200131c": {
@@ -14976,7 +14976,7 @@
       "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_391:02002768": {
-      "name": "FieldScene_RunSplitPairSteps",
+      "name": "Event_SayThenWait",
       "source": "FIELD/KORIMA_HASHI/BRANCHING_FORMATION.C"
     },
     "resource_391:020009fc": {

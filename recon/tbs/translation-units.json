@@ -76015,6 +76015,78 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "scene-3a6-02001984",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_DOU/ENTRY_STATE.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3a6",
+      "absolute_symbols": {
+        "Engine_ActorSetSpritePriority": {
+          "address": "0x02009d1c",
+          "kind": "thumb"
+        },
+        "OverlayObject_CreateConfiguredB": {
+          "address": "0x020080a0",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagIsSet": {
+          "address": "0x02009c8c",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagSet": {
+          "address": "0x02009c94",
+          "kind": "thumb"
+        },
+        "Engine_TaskWait": {
+          "address": "0x02009c1c",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetPosition": {
+          "address": "0x02009cf4",
+          "kind": "thumb"
+        },
+        "Engine_ActorGet": {
+          "address": "0x02009cbc",
+          "kind": "thumb"
+        },
+        "Engine_MapCopyCellAttributes": {
+          "address": "0x02009c6c",
+          "kind": "thumb"
+        },
+        "DialogueLayout_ConfigureRowsByFlag301": {
+          "address": "0x02009770",
+          "kind": "thumb"
+        },
+        "StagedActor_FillGridAttributeRectangle": {
+          "address": "0x02008528",
+          "kind": "thumb"
+        },
+        "FieldScene_RedrawActorFootprint": {
+          "address": "0x02008ba4",
+          "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
+        },
+        "SceneActor_FaceActorZero": {
+          "address": "0x02008cf8",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02001984",
+          "extent": 632,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

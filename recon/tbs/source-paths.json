@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_383:020047fc": {
+      "name": "KuupuappuHeya_IsActorNearPoint",
+      "source": "FIELD/KUUPUAPPU_HEYA/ACTOR_NEAR_POINT.C"
+    },
     "resource_399:02000b70": {
       "name": "ImiruMura_Func02000b70",
       "source": "FIELD/IMIRU_MURA/F_00B70.C"

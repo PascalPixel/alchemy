@@ -125,36 +125,26 @@ void Func_02003fcc(void);
  * word the image holds. */
 static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
 {
-    extern u8 Data_0200aa50[];
-
     return f(a0, a1);
 }
 
 static __inline__ void Call0(void (*f)())
 {
-    extern u8 Data_0200aa50[];
-
     f();
 }
 
 static __inline__ void Call1(void (*f)(), s32 a0)
 {
-    extern u8 Data_0200aa50[];
-
     f(a0);
 }
 
 static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
 {
-    extern u8 Data_0200aa50[];
-
     f(a0, a1);
 }
 
 static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
 {
-    extern u8 Data_0200aa50[];
-
     f(a0, a1, a2);
 }
 
@@ -164,36 +154,26 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
  * A value-returning call also sets r0 last of its arguments. */
 static __inline__ void Call1_0200105c(void (*f)(), s32 a0)
 {
-    extern u8 Data_0200aa50[];
-
     f(a0);
 }
 
 static __inline__ s32 Value1(s32 (*f)(), s32 a0)
 {
-    extern u8 Data_0200aa50[];
-
     return f(a0);
 }
 
 static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
 {
-    extern u8 Data_0200aa50[];
-
     return f(a0, a1, a2);
 }
 
 static __inline__ s32 Value4(s32 (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 {
-    extern u8 Data_0200aa50[];
-
     return f(a0, a1, a2, a3);
 }
 
 static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
 {
-    extern u8 Data_0200aa50[];
-
     f(a0, a1, a2, a3, a4, a5);
 }
 
@@ -203,8 +183,6 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
  * A value-returning call also sets r0 last of its arguments. */
 static __inline__ void Call1_020014b8(void (*f)(), s32 a0)
 {
-    extern u8 Data_0200aa50[];
-
     f(a0);
 }
 
@@ -214,15 +192,11 @@ static __inline__ void Call1_020014b8(void (*f)(), s32 a0)
  * A value-returning call also sets r0 last of its arguments. */
 static __inline__ s32 Value1_02001624(s32 (*f)(), s32 a0)
 {
-    extern u8 Data_0200aa50[];
-
     return f(a0);
 }
 
 static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 {
-    extern u8 Data_0200aa50[];
-
     f(a0, a1, a2, a3);
 }
 
@@ -232,8 +206,6 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
  * A value-returning call also sets r0 last of its arguments. */
 static __inline__ s32 Value1_0200195c(s32 (*f)(), s32 a0)
 {
-    extern u8 Data_0200aa50[];
-
     return f(a0);
 }
 
@@ -243,8 +215,6 @@ static __inline__ s32 Value1_0200195c(s32 (*f)(), s32 a0)
  * A value-returning call also sets r0 last of its arguments. */
 static __inline__ void Call1_020019e4(void (*f)(), s32 a0)
 {
-    extern u8 Data_0200aa50[];
-
     f(a0);
 }
 
@@ -395,8 +365,6 @@ void SceneState_RunWhenActorZeroFacing4000(void)
  * taking a pair of numeric arguments. */
 void FieldScene_RunPrimarySequenceHead(void)
 {
-    extern u8 Data_0200aa50[];
-
     if (GameFlag_IsSet(GATE_CODE) == 0) {
         Event_Begin();
         Scene_GetRecord_1(TARGET_ID);
@@ -408,8 +376,6 @@ void FieldScene_RunPrimarySequenceHead(void)
 
 s32 Func_0200105c(void)
 {
-    extern u8 Data_0200aa50[];
-
     u8 *record;
 
     *(s32 *)(*(u8 **)Data_03001ebc + 0x1c0) = 0x204;
@@ -608,8 +574,6 @@ void Func_020015fc(void)
 
 void FieldScene_RunClosingSequence(void)
 {
-    extern u8 Data_0200aa50[];
-
     s32 first;
     s32 kind;
     s32 second;
@@ -627,8 +591,6 @@ void FieldScene_RunClosingSequence(void)
 
 void FieldScene_RunScene37bSequenceA(void)
 {
-    extern u8 Data_0200aa50[];
-
     u32 i;
     s32 record;
 
@@ -653,16 +615,12 @@ void FieldScene_RunScene37bSequenceA(void)
 
 void FieldScene_RunFiveValueStep9(void)
 {
-    extern u8 Data_0200aa50[];
-
     Func_0200353a(9, 31, 9, 30, 9);
     Func_0200360e();
 }
 
 void FieldScene_RunFiveValueStep11(void)
 {
-    extern u8 Data_0200aa50[];
-
     Func_0200355a(11, 40, 9, 41, 9);
     Func_0200372e_a();
 }
@@ -675,8 +633,6 @@ void FieldScene_ApplyRect13_31_12_30_12(void)
 
 void FieldScene_RunFiveValueStep15(void)
 {
-    extern u8 Data_0200aa50[];
-
     Func_0200359a(15, 40, 12, 41, 12);
     Func_02003966();
 }
@@ -974,8 +930,6 @@ void SceneData_BuildTableA980(void)
 
 void FieldScene_RunScene37b_02002244(void)
 {
-    extern u8 Data_0200aa50[];
-
     u32 i;
     s32 record;
 
@@ -1003,8 +957,6 @@ void FieldScene_RunScene37b_02002244(void)
 
 void FieldScene_RunScene37b_020022f4(void)
 {
-    extern u8 Data_0200aa50[];
-
     u32 i;
     s32 record;
 

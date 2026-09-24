@@ -89,19 +89,19 @@
       "source": "FIELD/TOREBI_HEYA/FACING_EVENTS.C"
     },
     "resource_3b6:02000500": {
-      "name": "Dialogue_RunFacingPrompt",
+      "name": "SceneDialogue_RunFacingPrompt",
       "source": "FIELD/TOREBI_HEYA/FACING_EVENTS.C"
     },
     "resource_3b6:020005a8": {
-      "name": "Dialogue_RunFacingActionPrompt",
+      "name": "SceneDialogue_RunFacingActionPrompt",
       "source": "FIELD/TOREBI_HEYA/FACING_EVENTS.C"
     },
     "resource_3b6:0200066c": {
-      "name": "Dialogue_RunFacingAction",
+      "name": "SceneDialogue_RunFacingAction",
       "source": "FIELD/TOREBI_HEYA/FACING_EVENTS.C"
     },
     "resource_3b6:0200091c": {
-      "name": "Dialogue_RunFacingMessage",
+      "name": "SceneDialogue_RunFacingMessage",
       "source": "FIELD/TOREBI_HEYA/FACING_EVENTS.C"
     },
     "resource_3ad:02001760": {
@@ -6005,7 +6005,7 @@
       "source": "FIELD/KOROSSEO_KAWA/COORDINATOR.C"
     },
     "resource_3b6:0200009c": {
-      "name": "State_SetWork1c0AndRun",
+      "name": "SceneState_SetWork1c0AndRun",
       "source": "FIELD/TOREBI_HEYA/FACING_EVENTS.C"
     },
     "resource_37b:020019e4": {
@@ -6367,7 +6367,7 @@
       "source": "FIELD/SORU_FUNKA/EXTENDED_EFFECT.C"
     },
     "resource_3b6:02000760": {
-      "name": "Dialogue_RunMessage1FBBStep",
+      "name": "SceneDialogue_RunMessage1FBBStep",
       "source": "FIELD/TOREBI_HEYA/FACING_EVENTS.C"
     },
     "resource_3c3:0200008c": {
@@ -6976,7 +6976,7 @@
       "source": "FIELD/KAREI_KYUDEN/PARTY_EVENTS.C"
     },
     "resource_3b6:020006ec": {
-      "name": "Dialogue_RunMessage239eStep",
+      "name": "SceneDialogue_RunMessage239eStep",
       "source": "FIELD/TOREBI_HEYA/FACING_EVENTS.C"
     },
     "resource_38c:02000470": {
@@ -7104,7 +7104,7 @@
       "source": "FIELD/HAIDIA_IE/EXTENDED.C"
     },
     "resource_3b6:0200085c": {
-      "name": "Dialogue_RunActor25FlaggedLine",
+      "name": "SceneDialogue_RunActor25FlaggedLine",
       "source": "FIELD/TOREBI_HEYA/FACING_EVENTS.C"
     },
     "resource_383:0200080c": {
@@ -7244,7 +7244,7 @@
       "source": "FIELD/KUUPUAPPU_HEYA/PROMPT.C"
     },
     "resource_3b6:020008cc": {
-      "name": "Dialogue_RunMessage23acStep",
+      "name": "SceneDialogue_RunMessage23acStep",
       "source": "FIELD/TOREBI_HEYA/FACING_EVENTS.C"
     },
     "resource_36f:02000038": {
@@ -7556,7 +7556,7 @@
       "source": "FIELD/HAIDIA_IE/EXTENDED.C"
     },
     "resource_3b6:0200073c": {
-      "name": "Dialogue_RunActorLine23a1",
+      "name": "SceneDialogue_RunActorLine23a1",
       "source": "FIELD/TOREBI_HEYA/FACING_EVENTS.C"
     },
     "resource_385:02000e90": {
@@ -7852,7 +7852,7 @@
       "source": "FIELD/COMMON/RUNPA_SUHARA/INTERIORS.C"
     },
     "resource_3b6:02000328": {
-      "name": "Scene_RunActorsThirtyOneToThirtyThreeChoreography",
+      "name": "FieldScene_RunActorsThirtyOneToThirtyThreeChoreography",
       "source": "FIELD/TOREBI_HEYA/FACING_EVENTS.C"
     },
     "resource_3c2:02000038": {
@@ -10061,7 +10061,7 @@
       "source": "FIELD/KOROSSEO_KAWA/COORDINATOR.C"
     },
     "resource_3b6:020000c0": {
-      "name": "Scene_RunPrimarySequence",
+      "name": "FieldScene_RunPrimarySequence",
       "source": "FIELD/TOREBI_HEYA/FACING_EVENTS.C"
     },
     "resource_3b1:02001804": {
@@ -10422,7 +10422,7 @@
       "source": "FIELD/FUNE_HEYA/EXTENDED_CHOREOGRAPHY.C"
     },
     "resource_3b6:020007b0": {
-      "name": "Scene_RunScene3b6",
+      "name": "FieldScene_RunScene3b6_020007b0",
       "source": "FIELD/TOREBI_HEYA/FACING_EVENTS.C"
     },
     "resource_3b9:02000334": {
@@ -10590,7 +10590,7 @@
       "source": "FIELD/IMIRU_MURA/FLAGGED_CHOREOGRAPHY.C"
     },
     "resource_3b6:02000898": {
-      "name": "Scene_RunScene3b6",
+      "name": "FieldScene_RunScene3b6_02000898",
       "source": "FIELD/TOREBI_HEYA/FACING_EVENTS.C"
     },
     "resource_3c6:020011bc": {
@@ -10734,7 +10734,7 @@
       "source": "FIELD/SUHARA_GATE/ACTOR_PROMPT.C"
     },
     "resource_3b6:0200013c": {
-      "name": "Scene_RunScene3b6SequenceA",
+      "name": "FieldScene_RunScene3b6SequenceA",
       "source": "FIELD/TOREBI_HEYA/FACING_EVENTS.C"
     },
     "resource_37b:0200195c": {

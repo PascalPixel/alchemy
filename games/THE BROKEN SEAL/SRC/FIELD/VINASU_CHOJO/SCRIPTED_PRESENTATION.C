@@ -270,11 +270,6 @@ static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
     f(a0, a1);
 }
 
-static __inline__ void Call3_02003924(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
 static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 {
     f(a0, a1, a2, a3);
@@ -285,24 +280,9 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
     f(a0, a1, a2, a3, a4, a5);
 }
 
-static __inline__ void Call3_02004b28(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-static __inline__ void Call2_02003e9c(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
 static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
 {
     return f(a0, a1);
-}
-
-static __inline__ void Call3_02003e9c(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
 }
 
 void Func_02008410();  /* Func_02004b28, this overlay's own */

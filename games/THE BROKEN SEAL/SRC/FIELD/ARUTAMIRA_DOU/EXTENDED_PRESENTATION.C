@@ -265,7 +265,6 @@
 #include "STAGED_ACTOR.H"
 #include "SELECT_OVERLAY_DATA_BY_RUNTIME_SELECTOR.H"
 
-
 typedef struct {
     u8 filler0[0x28];
     s16 *unk28;
@@ -326,34 +325,6 @@ extern s8 Data_02001002;
 extern u8 Data_02008ee1;
 
 void Func_02004794(s32, s32);
-void Func_080770c8();
-void Func_080f9010();
-void Func_0808a010();
-void Func_0808a018();
-void Func_0808a020();
-s32 Func_0808a070();
-u8 *Func_0808a080();
-void Func_0808a090();
-void Func_0808a0b8();
-void Func_0808a0d0();
-void Func_0808a0e8();
-void Func_0808a0f0();
-void Func_0808a100();
-void Func_0808a110();
-void Func_0808a138();
-void Func_0808a148();
-void Func_0808a150();
-void Func_0808a170();
-void Func_0808a178();
-void Func_0808a180();
-void Func_0808a1b8();
-void Func_0808a1e8();
-void Func_0808a1f0();
-void Func_0808a210();
-void Func_0808a460();
-void Func_0808a4f0();
-void Func_0808a570();
-void Func_0808a580();
 void Func_020068dc();
 void Func_02006ac2();
 void Func_02006906();
@@ -748,7 +719,6 @@ static __inline__ s32 Value4(s32 (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
     return f(a0, a1, a2, a3);
 }
 
-
 void FieldScene_SetActor13Value41(void)
 {
     Func_02004794(13, 0x41);
@@ -757,28 +727,21 @@ void FieldScene_SetActor13Value41(void)
 /* Contiguous unnamed leaf-owner run for resource_3bd. */
 u8 *SceneData_GetTablebf70(void)
 {
-    extern s16 Data_02000240[];
-
     return Data_0200bf70;
 }
 
 s32 SceneData_ReturnZero(void)
 {
-    extern s16 Data_02000240[];
-
     return 0;
 }
 
 u8 *SceneData_GetTablec138(void)
 {
-    extern s16 Data_02000240[];
-
     return Data_0200c138;
 }
 
 s32 SceneData_SelectDataByRuntimeSelector(void)
 {
-    extern s16 Data_02000240[];
 
 #include "SELECT_OVERLAY_DATA_BY_RUNTIME_SELECTOR_BODY.INC"
 }

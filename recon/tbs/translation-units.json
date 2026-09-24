@@ -71198,6 +71198,58 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "arutin-yama-area-scene",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/AREA_SCENE.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3a4",
+      "absolute_symbols": {
+        "ArutinYama_ApplyEntryState": {
+          "address": "0x0200a0d0",
+          "kind": "thumb"
+        },
+        "FieldScene_RunScene3a4_02002310": {
+          "address": "0x0200a310",
+          "kind": "thumb"
+        },
+        "FieldScene_RunScene3a4_02002428": {
+          "address": "0x0200a428",
+          "kind": "thumb"
+        },
+        "FieldScene_RunScene3a4_02002490": {
+          "address": "0x0200a490",
+          "kind": "thumb"
+        },
+        "FieldScene_RunScene3a4_020025c0": {
+          "address": "0x0200a5c0",
+          "kind": "thumb"
+        },
+        "FieldScene_RunScene3a4_020026c0": {
+          "address": "0x0200a6c0",
+          "kind": "thumb"
+        },
+        "Local_02002804": {
+          "address": "0x0200a804",
+          "kind": "thumb"
+        },
+        "FieldScene_RunScene3a4_02002934": {
+          "address": "0x0200a934",
+          "kind": "thumb"
+        },
+        "FieldScene_RunScene3a4_020029dc": {
+          "address": "0x0200a9dc",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02002020",
+          "extent": 176,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

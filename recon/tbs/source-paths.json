@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_3a4:02002020": {
+      "name": "ArutinYama_RunAreaScene",
+      "source": "FIELD/ARUTIN_YAMA/AREA_SCENE.C"
+    },
     "resource_3af:020019c0": {
       "name": "FuneKanpan_PlaceDeckActors",
       "source": "FIELD/FUNE_KANPAN/DECK_ACTORS.C"

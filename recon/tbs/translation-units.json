@@ -61538,104 +61538,52 @@
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b5",
       "absolute_symbols": {
-        "SceneActor_Find": {
+        "Engine_ActorEnableActionCallback": {
+          "address": "0x02008d8c",
+          "kind": "thumb"
+        },
+        "Engine_ActorFaceDirection": {
+          "address": "0x02008e1c",
+          "kind": "thumb"
+        },
+        "Engine_ActorGet": {
           "address": "0x02008d7c",
           "kind": "thumb"
         },
-        "Func_020013d2": {
-          "address": "0x02008dbc",
-          "kind": "thumb"
-        },
-        "Func_0200141a": {
-          "address": "0x02008df4",
-          "kind": "thumb"
-        },
-        "SceneDialogue_ShowMessage": {
-          "address": "0x02008df4",
-          "kind": "thumb"
-        },
-        "SceneFlag_Test": {
-          "address": "0x02008d44",
-          "kind": "thumb"
-        },
-        "Func_0200188a_a": {
-          "address": "0x02008e24",
-          "kind": "thumb"
-        },
-        "Func_0200188a_b": {
-          "address": "0x02008dfc",
-          "kind": "thumb"
-        },
-        "Func_02001904_a": {
-          "address": "0x02008d94",
-          "kind": "thumb"
-        },
-        "Func_02001904_b": {
-          "address": "0x02008d54",
-          "kind": "thumb"
-        },
-        "Func_02001914_a": {
-          "address": "0x02008d94",
-          "kind": "thumb"
-        },
-        "Func_02001914_b": {
-          "address": "0x02008d54",
-          "kind": "thumb"
-        },
-        "Func_02001854_a": {
+        "Engine_ActorRunRepeatedMotion": {
           "address": "0x02008dd4",
           "kind": "thumb"
         },
-        "Func_02001854_b": {
-          "address": "0x02008d54",
+        "Engine_ActorSetAttachedEffect": {
+          "address": "0x02008e24",
           "kind": "thumb"
         },
-        "Func_02001840_a": {
-          "address": "0x02008e1c",
+        "Engine_ActorWalkTo": {
+          "address": "0x02008d94",
           "kind": "thumb"
         },
-        "Func_02001840_b": {
-          "address": "0x02008d54",
-          "kind": "thumb"
-        },
-        "Func_02000fa6_a": {
-          "address": "0x02008d7c",
-          "kind": "thumb"
-        },
-        "Func_02000fa6_b": {
-          "address": "0x02008d4c",
-          "kind": "thumb"
-        },
-        "Func_0200133c_a": {
+        "Engine_EventBegin": {
           "address": "0x02008d5c",
           "kind": "thumb"
         },
-        "Func_0200133c_b": {
-          "address": "0x02008d4c",
-          "kind": "thumb"
-        },
-        "Func_020016ce_a": {
-          "address": "0x02008e1c",
-          "kind": "thumb"
-        },
-        "Func_020016ce_b": {
+        "Engine_EventOpenMessage": {
           "address": "0x02008dfc",
           "kind": "thumb"
         },
-        "Func_020014d8_a": {
-          "address": "0x02008d8c",
+        "Engine_EventWait": {
+          "address": "0x02008d54",
           "kind": "thumb"
         },
-        "Func_020014d8_b": {
+        "Engine_GameFlagIsSet": {
           "address": "0x02008d44",
           "kind": "thumb"
         },
-        "Func_02001500_a": {
-          "address": "0x02008d8c",
+        "Engine_GameFlagSet": {
+          "address": "0x02008d4c",
           "kind": "thumb"
         },
-        "Func_02001500_b": {
-          "address": "0x02008d44",
+        "Engine_ObjectSetAnimation": {
+          "address": "0x02008d0c",
           "kind": "thumb"
         },
         "Func_02000040": {
@@ -61650,19 +61598,19 @@
           "address": "0x02008d04",
           "kind": "thumb"
         },
-        "Func_02000e24": {
-          "address": "0x02008d0c",
+        "Func_02000fa6_a": {
+          "address": "0x02008d7c",
           "kind": "thumb"
         },
-        "Func_02000e4a": {
-          "address": "0x02008d0c",
+        "Func_020013d2": {
+          "address": "0x02008dbc",
           "kind": "thumb"
         },
-        "Func_02000e60": {
-          "address": "0x02008d0c",
+        "Func_0200141a": {
+          "address": "0x02008df4",
           "kind": "thumb"
         },
-        "Func_02000e9e": {
+        "SceneActor_Find": {
           "address": "0x02008d7c",
           "kind": "thumb"
         },
@@ -61672,6 +61620,14 @@
         },
         "SceneActor_SetMode": {
           "address": "0x02008d0c",
+          "kind": "thumb"
+        },
+        "SceneDialogue_ShowMessage": {
+          "address": "0x02008df4",
+          "kind": "thumb"
+        },
+        "SceneFlag_Test": {
+          "address": "0x02008d44",
           "kind": "thumb"
         }
       },

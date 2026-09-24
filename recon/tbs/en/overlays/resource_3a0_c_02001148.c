@@ -1,5 +1,21 @@
 #include "TYPES.H"
 
+/* Unit bindings for scoring (declare as absolute_symbols of a unit on
+ * resource_3a0:02001148):
+ *   Main_0808a5e0 = 0x020094a8 (thumb)
+ *   Engine_GameFlagClear = 0x020093b0 (thumb)
+ *   Engine_GameFlagIsSet = 0x020093a0 (thumb)
+ *   Engine_ActorFaceDirection = 0x02009480 (thumb)
+ *   Engine_ActorSetPosition = 0x02009428 (thumb)
+ *   Engine_ActorGet = 0x020093d0 (thumb)
+ *   Engine_ActorSetSpriteFlags = 0x02009390 (thumb)
+ *   Engine_ObjectSetPalette = 0x02009458 (thumb)
+ *   Engine_ActorSetAnimation = 0x02009430 (thumb)
+ *   Engine_MapCopyCellAttributes = 0x02009380 (thumb)
+ *   Engine_TaskAddCallback = 0x02009340 (thumb)
+ *   Engine_ActorSetChildValue = 0x02009450 (thumb)
+ */
+
 void Main_0808a5e0();
 void Engine_GameFlagClear();
 s32 Engine_GameFlagIsSet();

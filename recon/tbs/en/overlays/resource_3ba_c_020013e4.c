@@ -1,5 +1,29 @@
 #include "TYPES.H"
 
+/* Unit bindings for scoring (declare as absolute_symbols of a unit on
+ * resource_3ba:020013e4):
+ *   Local_02001b5c = 0x02009b5c (thumb)
+ *   Engine_EventBegin = 0x0200bca0 (thumb)
+ *   SceneDialogue_RunFlagGatedPromptInteraction = 0x02009d64 (thumb)
+ *   Engine_EventSetMessage = 0x0200bd30 (thumb)
+ *   Engine_CameraSetSpeed = 0x0200bd70 (thumb)
+ *   Engine_CameraMoveTo = 0x0200bd78 (thumb)
+ *   Engine_CameraWaitForMove = 0x0200bd80 (thumb)
+ *   Engine_EventWait = 0x0200bc98 (thumb)
+ *   Engine_EventShowMessage = 0x0200bd40 (thumb)
+ *   SceneState_StoreParamsAndInitTable = 0x0200ad28 (thumb)
+ *   SceneState_InitTableWordsAndLoad3200 = 0x0200ad8c (thumb)
+ *   SceneState_ReleaseTableAndResetC6a6 = 0x0200ade8 (thumb)
+ *   Engine_TaskWait = 0x0200bb08 (thumb)
+ *   Engine_ActorGet = 0x0200bcb8 (thumb)
+ *   Engine_ObjectSetPosition = 0x0200bbd8 (thumb)
+ *   Engine_ObjectCommitPosition = 0x0200bbe0 (thumb)
+ *   Engine_CameraFollowActor = 0x0200bd68 (thumb)
+ *   SceneState_SendIdBySceneId = 0x02009e20 (thumb)
+ *   FieldScene_RunMiddleSequence = 0x02009e7c (thumb)
+ *   Engine_EventEnd = 0x0200bca8 (thumb)
+ */
+
 void Local_02001b5c();
 void Engine_EventBegin();
 s32 SceneDialogue_RunFlagGatedPromptInteraction();

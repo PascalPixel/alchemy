@@ -1,5 +1,19 @@
 #include "TYPES.H"
 
+/* Unit bindings for scoring (declare as absolute_symbols of a unit on
+ * resource_3a8:020016bc):
+ *   Engine_GameFlagIsSet = 0x0200bbd4 (thumb)
+ *   Engine_GameFlagSet = 0x0200bbdc (thumb)
+ *   Engine_ActorSetPosition = 0x0200bc74 (thumb)
+ *   Engine_ActorSetChildValue = 0x0200bcac (thumb)
+ *   Engine_ActorGet = 0x0200bc1c (thumb)
+ *   Engine_HeapAllocate = 0x0200bb44 (thumb)
+ *   Engine_ItemLoadIcon = 0x0200bbcc (thumb)
+ *   Engine_VramLoad = 0x0200bb54 (thumb)
+ *   Engine_HeapRelease = 0x0200bb4c (thumb)
+ *   Engine_TaskAddCallback = 0x0200bb1c (thumb)
+ */
+
 s32 Engine_GameFlagIsSet();
 s32 Engine_GameFlagSet();
 void Engine_ActorSetPosition();

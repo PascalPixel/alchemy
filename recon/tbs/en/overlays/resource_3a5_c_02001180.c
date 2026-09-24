@@ -1,4 +1,20 @@
 #include "TYPES.H"
+
+/* Unit bindings for scoring (declare as absolute_symbols of a unit on
+ * resource_3a5:02001180):
+ *   Engine_ActorGet = 0x02009d74 (thumb)
+ *   Engine_GameFlagSet = 0x02009d4c (thumb)
+ *   Engine_ActorSetAnimation = 0x02009dac (thumb)
+ *   Engine_ActorFaceActor = 0x02009dcc (thumb)
+ *   Engine_EventWait = 0x02009d5c (thumb)
+ *   Engine_ActorSetAttachedEffect = 0x02009df4 (thumb)
+ *   Engine_ActorStartRepeatedMotion = 0x02009dbc (thumb)
+ *   Main_0808a108 = 0x02009db4 (thumb)
+ *   Engine_ActorSetSpeed = 0x02009d7c (thumb)
+ *   Engine_ActorSetDestination = 0x02009d84 (thumb)
+ *   Engine_ActorShowEmote = 0x02009dec (thumb)
+ *   Engine_Import0808a250 = 0x02009e04 (thumb)
+ */
 extern u8 Data_02000240[];
 extern s16 Data_02000240_t[][1];
 

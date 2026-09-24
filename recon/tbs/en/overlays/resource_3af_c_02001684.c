@@ -1,4 +1,15 @@
 #include "TYPES.H"
+
+/* Unit bindings for scoring (declare as absolute_symbols of a unit on
+ * resource_3af:02001684):
+ *   Engine_ActorSetSpritePriority = 0x0200c3e4 (thumb)
+ *   Engine_GameFlagIsSet = 0x0200c2cc (thumb)
+ *   Engine_ActorSetPosition = 0x0200c36c (thumb)
+ *   Engine_ActorGet = 0x0200c30c (thumb)
+ *   Engine_RandomNext = 0x0200c26c (thumb)
+ *   Local_030003e0 = 0x0200c254 (thumb)
+ *   Engine_ActorEnableActionCallback = 0x0200c324 (thumb)
+ */
 extern u8 Data_0200c4d8[];
 
 void Engine_ActorSetSpritePriority();

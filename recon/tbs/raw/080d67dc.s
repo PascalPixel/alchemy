@@ -2,8 +2,10 @@
 	.thumb
 	.set sub_080030f8, 0x080030f8
 	.set sub_080b5040, 0x080b5040
+	.global BattleFx_RestoreBackgroundDisplay
 	.global Func_080d67dc
 	.thumb_func
+BattleFx_RestoreBackgroundDisplay:
 Func_080d67dc:
 	push	{r5, r6, lr}
 	mov	r6, r8

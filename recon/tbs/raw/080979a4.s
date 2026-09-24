@@ -2,8 +2,10 @@
 	.thumb
 	.set sub_080072f0, 0x080072f0
 	.set sub_08097a10, 0x08097a10
+	.global BattleFx_ComputeHueChannel
 	.global Func_080979a4
 	.thumb_func
+BattleFx_ComputeHueChannel:
 Func_080979a4:
 	push	{r5, r6, lr}
 	adds	r6, r1, #0

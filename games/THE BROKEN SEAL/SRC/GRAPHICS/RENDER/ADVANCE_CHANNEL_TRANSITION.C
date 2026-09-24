@@ -20,7 +20,7 @@ struct RenderChannel {
     u16 countdown;
 };
 
-void Func_080170f8(s32 x, s32 y, s32 width, s32 height);
+void UiWindow_DrawFrame(s32 x, s32 y, s32 width, s32 height);
 void UiWindow_EraseBorderRect(s32 x, s32 y, u32 width, u32 height);
 
 
@@ -40,12 +40,12 @@ void UiWork_AdvanceChannelTransition(struct RenderChannel *channel)
     if (transition != 4)
         return;
 
-    Func_080170f8(x - 1, y - 1, width + 2, height + 2);
+    UiWindow_DrawFrame(x - 1, y - 1, width + 2, height + 2);
     channel->countdown--;
     if (channel->countdown != 0)
         return;
 
     channel->work->transition = 0;
     UiWindow_EraseBorderRect(x - 1, y - 1, width + 2, height + 2);
-    Func_080170f8(x, y, width, height);
+    UiWindow_DrawFrame(x, y, width, height);
 }

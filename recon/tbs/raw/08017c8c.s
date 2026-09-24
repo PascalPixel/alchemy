@@ -1,8 +1,10 @@
 .syntax unified
 	.thumb
 	.set sub_08018efc, 0x08018efc
+	.global UiText_RenderWideStringInWindow
 	.global Func_08017c8c
 	.thumb_func
+UiText_RenderWideStringInWindow:
 Func_08017c8c:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl

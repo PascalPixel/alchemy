@@ -2,7 +2,7 @@
 #include "OBJECT_COMMANDS.H"
 #include "SCRIPT_OBJECT_RUNTIME.H"
 
-void Func_0800d14c(void *, s32, s32, s32);
+void Object_SetMoveTarget(void *, s32, s32, s32);
 u16 ArcTan2(s32, s32);
 
 void Object_SetPositionAndResetMotion(struct ScriptInterpreter *, s32, s32, s32);
@@ -40,7 +40,7 @@ s32 Script_ApplyAbsolutePosition(struct ScriptInterpreter *interpreter)
     second = *argument;
     argument++;
     third = *argument;
-    Func_0800d14c(interpreter, first, second, third);
+    Object_SetMoveTarget(interpreter, first, second, third);
     interpreter->cursor = (u16)interpreter->cursor + 4;
     return 1;
 }
@@ -53,7 +53,7 @@ s32 Script_ApplyRelativePosition(struct ScriptObjectRuntime *object)
     s32 second = *cursor++;
     s32 third = *cursor;
 
-    Func_0800d14c(object, object->x + first,
+    Object_SetMoveTarget(object, object->x + first,
         object->y + second, object->z + third);
     object->script_cursor += 4;
     return 1;
@@ -76,7 +76,7 @@ s32 Script_ApplyLinkedObjectPosition(struct ScriptObjectRuntime *object)
     struct ScriptObjectRuntime *target;
 
     target = object->linked_object;
-    Func_0800d14c(object, target->x, target->y, target->z);
+    Object_SetMoveTarget(object, target->x, target->y, target->z);
     object->script_cursor++;
     return 1;
 }

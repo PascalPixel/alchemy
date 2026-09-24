@@ -10,7 +10,7 @@ struct MapTileWindow_08010d48 {
 
 extern struct MapTileWindow_08010d48 *gMapWork;
 
-s32 Func_080108e4(s32 layer, s32 x, s32 y, s32 tile, s32 update);
+s32 Map_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update);
 
 void Map_SetWindowCellTile(s32 x, s32 y, s32 px, s32 py)
 {
@@ -39,7 +39,7 @@ void Map_SetWindowCellTile(s32 x, s32 y, s32 px, s32 py)
     window->tiles[(py / 2) & 15][(px / 2) & 15] = tile;
 
     if (ABS(origin_x - px) <= 1 && ABS(origin_y - py) <= 1) {
-        Func_080108e4(0, px / 2, py / 2, tile, 1);
-        Func_080108e4(1, px / 2, py / 2, tile + 0x140, 1);
+        Map_WriteLayerCellTile(0, px / 2, py / 2, tile, 1);
+        Map_WriteLayerCellTile(1, px / 2, py / 2, tile + 0x140, 1);
     }
 }

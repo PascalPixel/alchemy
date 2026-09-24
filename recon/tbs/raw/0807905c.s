@@ -10,8 +10,10 @@
 	.set sub_08078bf0, 0x08078bf0
 	.set sub_08078ed8, 0x08078ed8
 	.set sub_08079008, 0x08079008
+	.global Owner_LevelUp
 	.global Func_0807905c
 	.thumb_func
+Owner_LevelUp:
 Func_0807905c:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

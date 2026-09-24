@@ -1,8 +1,10 @@
 .syntax unified
 	.thumb
 	.set sub_0801e260, 0x0801e260
+	.global UiWindow_DrawDividerLine
 	.global Func_0801e41c
 	.thumb_func
+UiWindow_DrawDividerLine:
 Func_0801e41c:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl

@@ -3,7 +3,7 @@
 s32 BattleParty_ListLivingUnits(s32 side, u16 *out_units);
 u32 Random16(void);
 u8 *Owner_GetStateFar(s32 unit_id);
-void Func_080bd424(void *entry, s32 arg1);
+void BattleCommand_SelectAutomatic(void *entry, s32 arg1);
 
 struct BattlePresentationOpponentEntry {
     u16 unit_id;
@@ -74,7 +74,7 @@ s32 BattlePres_BuildOpponentEntries(
                 entry->mode = 0;
                 entry->height = 0x100;
             } else {
-                Func_080bd424(entry, 0);
+                BattleCommand_SelectAutomatic(entry, 0);
             }
 
             entry_count++;

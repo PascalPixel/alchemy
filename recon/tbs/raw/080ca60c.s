@@ -10,8 +10,10 @@
 	.set sub_080e0524, 0x080e0524
 	.set sub_080e396c, 0x080e396c
 	.set sub_080e3980, 0x080e3980
+	.global BattleFx_RunTwelveMode
 	.global Func_080ca60c
 	.thumb_func
+BattleFx_RunTwelveMode:
 Func_080ca60c:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

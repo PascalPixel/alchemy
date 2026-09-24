@@ -6,8 +6,10 @@
 	.set sub_080770c0, 0x080770c0
 	.set sub_080772c8, 0x080772c8
 	.set sub_0808b320, 0x0808b320
+	.global Encounter_SelectEnemyGroup
 	.global Func_0808ae74
 	.thumb_func
+Encounter_SelectEnemyGroup:
 Func_0808ae74:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

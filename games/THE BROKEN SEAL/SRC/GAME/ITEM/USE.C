@@ -23,7 +23,7 @@ extern struct ItemUseWork *gMenuWork;
 
 struct ItemOwner *Runtime_GetObject(s32);
 struct ItemData *Item_GetData(s32);
-u8 Func_08077058(s32, s32);
+u8 Inventory_RemoveFar(s32, s32);
 u32 ItemMenu_Collect(struct ItemOwner *, u16 *, s32);
 s32 BattleEffect_ApplyToTargets(s32, s32, s32, s32);
 
@@ -47,7 +47,7 @@ s32 Item_Use(s32 slot, s32 owner_id, s32 target_id)
     if (result != -1) {
         item = Item_GetData(owner->items[slot]);
         if (item->kind == 1) {
-            Func_08077058(owner_id, slot);
+            Inventory_RemoveFar(owner_id, slot);
             work->entry_count =
                 ItemMenu_Collect(owner, work->entries, 0);
         }
@@ -61,7 +61,7 @@ s32 Item_Use(s32 slot, s32 owner_id, s32 target_id)
     return result;
 }
 
-s32 Func_080a9f0c(void)
+s32 Item_ReturnOne(void)
 {
     return 1;
 }

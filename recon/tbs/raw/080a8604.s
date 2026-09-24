@@ -15,8 +15,10 @@
 	.set sub_080a8b10, 0x080a8b10
 	.set sub_080a9d3c, 0x080a9d3c
 	.set sub_080a9dc4, 0x080a9dc4
+	.global CharacterMenu_DrawStatusAilments
 	.global Func_080a8604
 	.thumb_func
+CharacterMenu_DrawStatusAilments:
 Func_080a8604:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

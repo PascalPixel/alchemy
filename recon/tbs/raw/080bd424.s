@@ -10,8 +10,10 @@
 	.set sub_080bae40, 0x080bae40
 	.set sub_080bd3c8, 0x080bd3c8
 	.set sub_080bd3e4, 0x080bd3e4
+	.global BattleCommand_SelectAutomatic
 	.global Func_080bd424
 	.thumb_func
+BattleCommand_SelectAutomatic:
 Func_080bd424:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

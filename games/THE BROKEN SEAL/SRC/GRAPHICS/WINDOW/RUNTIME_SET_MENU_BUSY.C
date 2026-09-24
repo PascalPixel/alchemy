@@ -11,7 +11,7 @@ void UiWork_SetMenuBusy(void)
     *p = flag;
 }
 
-void Func_080a2420(void)
+void UiWork_ClearMenuBusy(void)
 {
     u8 *base = gWindowWork;
     u8 *p = base + RENDER_MENU_BUSY_OFS;

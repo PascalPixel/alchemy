@@ -8,7 +8,7 @@ struct State_0801c304 {
 };
 
 extern struct State_0801c304 *gResQueueWork;
-void Func_0801a7f4(u32);
+void MenuSelection_BuildEntries(u32);
 void Menu_SetupSelectionBothSides(void);
 void Menu_OpenSelectionWindow(u32, u32);
 void Resource_ScheduleOwnerResetDelayed(void);
@@ -23,7 +23,7 @@ u32 Menu_RunSelectionForValue(u32 value)
     /* 値、使用中フラグの順に設定する。 */
     state->value = value;
     state->active = 1;
-    Func_0801a7f4(value);
+    MenuSelection_BuildEntries(value);
     Menu_SetupSelectionBothSides();
     Menu_OpenSelectionWindow(0, 5);
     Resource_ScheduleOwnerResetDelayed();

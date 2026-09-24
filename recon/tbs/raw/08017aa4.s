@@ -2,8 +2,10 @@
 	.thumb
 	.set sub_080173ac, 0x080173ac
 	.set sub_08018cac, 0x08018cac
+	.global UiText_RenderWideStringAtOffset
 	.global Func_08017aa4
 	.thumb_func
+UiText_RenderWideStringAtOffset:
 Func_08017aa4:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl

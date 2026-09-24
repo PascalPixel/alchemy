@@ -1,7 +1,9 @@
 .syntax unified
 	.thumb
+	.global Palette_CopyMenuBgToObjPalette
 	.global Func_080a22f4
 	.thumb_func
+Palette_CopyMenuBgToObjPalette:
 Func_080a22f4:
 	ldr	r3, [pc, #20]
 	ldr	r0, [pc, #24]

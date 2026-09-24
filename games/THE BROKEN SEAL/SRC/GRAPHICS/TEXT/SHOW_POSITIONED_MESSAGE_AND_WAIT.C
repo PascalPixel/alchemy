@@ -6,8 +6,8 @@
 struct Work;
 
 s32 UiText_GetResourceDimensions(s32 no, s32 arg1, s32 arg2, s32 arg3, s32 arg4);
-struct Work *Func_08017658(s32 no, s32 x, s32 y, s32 flags);
-s32 Func_0808a278(s32 object, s32 *out);
+struct Work *UiText_OpenMessageWindow(s32 no, s32 x, s32 y, s32 flags);
+s32 Object_GetScreenPositionFar(s32 object, s32 *out);
 s32 UiWork_IsComplete(void);
 void UiWork_Finalize(struct Work *work, s32 release);
 s32 UiWork_IsIdle(struct Work *work);
@@ -60,7 +60,7 @@ void UiText_ShowPositionedMessageAndWait(s32 no, s32 flags)
     {
         s32 dy;
 
-        Func_0808a278(PARTY_STATE[125], pos);
+        Object_GetScreenPositionFar(PARTY_STATE[125], pos);
         dy = pos[1] >> 3;
         if (dy > 9)
         {
@@ -72,7 +72,7 @@ void UiText_ShowPositionedMessageAndWait(s32 no, s32 flags)
         }
     }
 
-    work = Func_08017658(no, x, y, release);
+    work = UiText_OpenMessageWindow(no, x, y, release);
 
     if (work != NULL)
     {

@@ -110,7 +110,7 @@ receive_loop:
 #ifndef SERIAL_RUNTIME_TU
 typedef void (*InterruptHandler)(void);
 
-void Func_0800307c(s32, s32, InterruptHandler);
+void Runtime_SetIrqHandler(s32, s32, InterruptHandler);
 #endif
 
 void SerialRuntime_RemoveIrqHandlers(void)
@@ -123,10 +123,10 @@ void SerialRuntime_RemoveIrqHandlers(void)
         do {
         } while (0);
         *work = 0;
-        Func_0800307c(7, 0, (InterruptHandler)(handler = 0));
+        Runtime_SetIrqHandler(7, 0, (InterruptHandler)(handler = 0));
     } while (0);
     handler = 6;
-    Func_0800307c(handler, 0, 0);
+    Runtime_SetIrqHandler(handler, 0, 0);
 }
 
 extern volatile u16 Data_03001f64;

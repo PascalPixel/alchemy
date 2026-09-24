@@ -6,7 +6,7 @@ struct State_080792fc {
 };
 
 void *Owner_GetState(s32);
-s32 Func_0807905c();
+s32 Owner_LevelUp();
 void Owner_RecalculateStats(s32);
 
 void Party_AdvanceOwnerCountToTarget(s32 owner, s32 target)
@@ -15,7 +15,7 @@ void Party_AdvanceOwnerCountToTarget(s32 owner, s32 target)
     s32 count = ((struct State_080792fc *)Owner_GetState(owner))->count;
 
     while (count < target) {
-        Func_0807905c(owner, buf);
+        Owner_LevelUp(owner, buf);
         count++;
     }
     Owner_RecalculateStats(owner);

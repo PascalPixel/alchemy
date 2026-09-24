@@ -20,8 +20,10 @@
 	.set sub_080aae14, 0x080aae14
 	.set sub_080ae958, 0x080ae958
 	.set sub_080ae9f0, 0x080ae9f0
+	.global DjinnMenu_DrawStatPreview
 	.global Func_080acab8
 	.thumb_func
+DjinnMenu_DrawStatPreview:
 Func_080acab8:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

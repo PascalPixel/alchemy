@@ -9,7 +9,7 @@ struct State_080208e4 {
 s32 SaveState_InitializeWorkspace(void);
 void SaveState_LoadSummaryRecords(void);
 void UiText_ShowPositionedMessageAndWait(s32, s32);
-s32 Func_08020244(s16, s32);
+s32 SaveMenu_SelectSlot(s16, s32);
 s32 SaveState_ReadRecordPayload(s32, void *);
 
 extern char Value_0000000a;
@@ -34,7 +34,7 @@ s32 SaveState_LoadRecordIntoWork(s32 arg)
         s32 value;
 
         SaveState_LoadSummaryRecords();
-        value = Func_08020244(Data_02002004, arg);
+        value = SaveMenu_SelectSlot(Data_02002004, arg);
         if (value == -1) {
             ret = value;
         } else {

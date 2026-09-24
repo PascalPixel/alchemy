@@ -34,8 +34,8 @@ extern s8 Data_080373f7[];
 s32 Party_SumDjinnCountsFar(s32);
 void *AffineEffect_InitializeWork(void);
 void Menu_AppendResourceEntry(s32 arg0);
-void Func_08028808(s32, s32, s32);
-s32 Func_08028574(s32);
+void Menu_CenterResourceEntries(s32, s32, s32);
+s32 Menu_RunResourceSelectionLoop(s32);
 void Menu_EndResourceSelection(void);
 
 static __inline__ s32 TblGet(s8 *tbl, s32 index)
@@ -70,8 +70,8 @@ s32 Menu_SelectTopEntry(s32 sel)
     }
     Menu_AppendResourceEntry(2);
     Menu_AppendResourceEntry(7);
-    Func_08028808(17, SELECT_MENU_WIDTH, 0);
-    ret = Func_08028574(sel);
+    Menu_CenterResourceEntries(17, SELECT_MENU_WIDTH, 0);
+    ret = Menu_RunResourceSelectionLoop(sel);
     Menu_EndResourceSelection();
 
     if (ret >= 0) {
@@ -93,7 +93,7 @@ s32 Menu_AnimateSelectionToEntry(s32 arg0, s32 arg1)
     Menu_AppendResourceEntry(0xF);
     Menu_AppendResourceEntry(2);
     Menu_AppendResourceEntry(7);
-    Func_08028808(0x11, 7, 0);
+    Menu_CenterResourceEntries(0x11, 7, 0);
     arg1 = Menu_SelectResource(arg0, arg1 - 1);
     Menu_EndResourceSelection();
     UiWork_CloseAndRelease();
@@ -145,8 +145,8 @@ s32 Menu_SelectSaveSlotAction(void)
     if ((*(s16 *)0x02002010) != 0) {
         Menu_AppendResourceEntry(0x1E);
     }
-    Func_08028808(0x11, TYPE_MENU_WIDTH, 0);
-    ret = Func_08028574(initial);
+    Menu_CenterResourceEntries(0x11, TYPE_MENU_WIDTH, 0);
+    ret = Menu_RunResourceSelectionLoop(initial);
     Menu_EndResourceSelection();
     if (ret >= 0) {
         ret = Data_0803740f[ret + (group * 6)];
@@ -163,7 +163,7 @@ struct MenuModeLabelState {
     s16 previous_mode;
 };
 
-extern void Func_080164d4(void *, s32, s32, s32, s32);
+extern void UiWindow_ClearInteriorTiles(void *, s32, s32, s32, s32);
 extern void UiText_DrawCharacterAtOffset(s32, void *, s32, s32);
 
 void Menu_DrawModeLabel(void)
@@ -172,7 +172,7 @@ void Menu_DrawModeLabel(void)
 
     if (state->previous_mode != state->mode) {
         state->previous_mode = state->mode;
-        Func_080164d4(state->window, 8, 40, 144, 80);
+        UiWindow_ClearInteriorTiles(state->window, 8, 40, 144, 80);
 
         if (state->mode != 1) {
             if (state->mode > 1)

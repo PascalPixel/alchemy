@@ -1,7 +1,7 @@
 #include "TYPES.H"
 
 void RenderOutput_PrepareForRedraw(void);
-void Func_0801e41c(s32, s32, s32, s32, s32);
+void UiWindow_DrawDividerLine(s32, s32, s32, s32, s32);
 void UiText_DrawStringAtOffset(void *, s32, s32, s32);
 void UiText_DrawStringInWindow(s32, s32, s32, s32);
 void UiText_DrawNumberAtOffset(s32, s32, s32, s32, s32);
@@ -26,7 +26,7 @@ void StatusMenu_DrawCharacterSummary(s32 surface, u8 *st)
 
     if (surface != 0) {
         RenderOutput_PrepareForRedraw();
-        Func_0801e41c(surface, 0, 4, 13, 4);
+        UiWindow_DrawDividerLine(surface, 0, 4, 13, 4);
         UiText_DrawStringAtOffset(st + 16, surface, 0, 0);
         extra = 0;
         UiText_DrawStringInWindow((s32)StatusPanelLayout, surface, 72, 0);

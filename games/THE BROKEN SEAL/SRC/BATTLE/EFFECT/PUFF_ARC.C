@@ -16,7 +16,7 @@ extern u8 gWorkSlot[];
    than materializing with a mov. */
 extern u8 Value_000000b4;
 
-void Func_080cd594(s32);
+void BattleFx_BeginCanvasLayer(s32);
 s32 Trig_Sin(s32);
 s32 Trig_Cos(s32);
 void Audio_PlayCue(s32);
@@ -24,7 +24,7 @@ void BattleEventRuntime_BeginPhaseFar(s32);
 void ObjectGroup_UpdateMembers(s32, s32, s32, s32, s32);
 void ObjectGroup_TickMemberTimers(void);
 void Runtime_ReleaseHeapBlock(s32);
-s32 Func_080cdbc0(void);
+s32 BattleFx_EndCanvasLayer(void);
 
 /* Six animation cells, one entry each: width, height, vertical bias, and the
    byte offset of the cell inside the kind-39 work block.  The three byte
@@ -89,7 +89,7 @@ void BattleFx_RunPuffArc(struct BattleEffectArgument *efx)
     work = (struct BattleEffectWork *)*entry++;
     dst = (void *)*entry;
     work->effect = efx;
-    Func_080cd594(0);
+    BattleFx_BeginCanvasLayer(0);
     *(s16 *)0x04000050 = 0x3F46;
     *(s16 *)0x04000052 = 0x100E;
     Resource_LoadAndDecompress((s32)&Value_000000b4, work, 1, 1);
@@ -173,5 +173,5 @@ void BattleFx_RunPuffArc(struct BattleEffectArgument *efx)
     } while (frame != 80);
     Runtime_ReleaseHeapBlock(46);
     Scheduler_RemoveCallback(0x080CD261);
-    Func_080cdbc0();
+    BattleFx_EndCanvasLayer();
 }

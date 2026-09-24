@@ -1,7 +1,9 @@
 .syntax unified
 	.thumb
+	.global Object_GetScreenPositionFar
 	.global Func_0808a278
 	.thumb_func
+Object_GetScreenPositionFar:
 Func_0808a278:
 	ldr	r4, [pc, #0]
 	bx	r4

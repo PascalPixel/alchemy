@@ -1,7 +1,7 @@
 #include "OWNER_STATE.H"
 
 void *Owner_GetState(s32);
-void Func_08078bf0(s32);
+void Owner_RefreshClassActions(s32);
 s32 Owner_GetValueIfLevelThresholdReached(s32, s32);
 
 s32 OwnerAction_Add(s32 state_index, s32 value)
@@ -35,7 +35,7 @@ s32 OwnerAction_Add(s32 state_index, s32 value)
         }
     }
 
-    Func_08078bf0(state_index);
+    Owner_RefreshClassActions(state_index);
     for (index = 0; index <= 31; index++) {
         if (state->action_slots[index].encoded_action == key) {
             break;

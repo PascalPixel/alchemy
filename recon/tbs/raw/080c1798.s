@@ -12,8 +12,10 @@
 	.set sub_080c9030, 0x080c9030
 	.set sub_080c9038, 0x080c9038
 	.set sub_080c9040, 0x080c9040
+	.global BattleFx_PlayUnitElementEffect
 	.global Func_080c1798
 	.thumb_func
+BattleFx_PlayUnitElementEffect:
 Func_080c1798:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

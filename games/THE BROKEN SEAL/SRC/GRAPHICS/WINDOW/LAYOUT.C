@@ -74,7 +74,7 @@ void UiWindow_BuildLayoutBounds(s32 flags)
 
 
 void UiWindow_BuildLayoutBounds(s32 flags);
-void Func_0801f200(s32);
+void UiWindow_DrawPartyStatusContents(s32);
 void *Runtime_AllocateBlock(s32 flags, s32 arg1);
 s32 UiWindow_Create(u16, u16, u16, u16, s32);
 
@@ -91,6 +91,6 @@ void UiWindow_CreateWithLayoutBounds(s32 flags)
     UiWindow_BuildLayoutBounds(flags);
     window->handle = UiWindow_Create(
         window->left, window->top, window->right, window->height, 6);
-    Func_0801f200(flags);
+    UiWindow_DrawPartyStatusContents(flags);
     *busy = zero;
 }

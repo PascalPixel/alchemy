@@ -2,8 +2,10 @@
 	.thumb
 	.set sub_080022ec, 0x080022ec
 	.set sub_080162d4, 0x080162d4
+	.global Menu_CenterResourceEntries
 	.global Func_08028808
 	.thumb_func
+Menu_CenterResourceEntries:
 Func_08028808:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl

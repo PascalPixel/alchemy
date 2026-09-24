@@ -25,7 +25,7 @@ struct BattleEventActor *Runtime_GetObject();
 s32 Owner_UpdateRatioPairFar(void *, s32);
 struct BattleEventObjectSlot *GetBattleObjectSlot(s32 arg0);
 s32 ActivateBattleObjectSlot(s32 arg0);
-s32 Func_080bac6c(s32);
+s32 BattleActor_RemoveFromLists(s32);
 
 s32 BattleActor_DestroyTemporaryObject(s32 arg0)
 {
@@ -36,7 +36,7 @@ s32 BattleActor_DestroyTemporaryObject(s32 arg0)
     creature = Runtime_GetObject();
     if (creature->field_12a == 1) {
         Owner_UpdateRatioPairFar(creature, 0);
-        Func_080bac6c(arg0);
+        BattleActor_RemoveFromLists(arg0);
         ActivateBattleObjectSlot(arg0);
         runtime = GetBattleObjectSlot(arg0);
         result = Object_Destroy(runtime->field_00);
@@ -77,10 +77,10 @@ void BattlePresentation_WaitForAdvance(void);
 void UiWork_ClearValueNameTablesFar(void);
 void Audio_PlayCue(u32);
 void BattleMotion_RunValueSequence(u32, u32, u32);
-void Func_080c24f0(u32, u32);
+void BattleEnemy_RecordDefeat(u32, u32);
 void BattleActor_ResetRuntimeFields(u32);
 void BattleMotion_InitializeActorRecords(u32);
-void Func_08015130(u32);
+void UiWindow_DrawPartyStatusContentsFar(u32);
 void BattleUnit_BuildStatusFlags(u32, u32);
 void BattlePres_SetActorModeAndAction(u32);
 u32 BattleEventRuntime_Reset(void);
@@ -119,12 +119,12 @@ u32 BattleEv_DispatchQueued(void)
         {
             u32 operand_offset = i * 4 + 64;
             u32 auxiliary = runtime->actor_auxiliary;
-            Func_080c24f0(FIELD(queue, u32, operand_offset), auxiliary);
+            BattleEnemy_RecordDefeat(FIELD(queue, u32, operand_offset), auxiliary);
             BattleActor_ResetRuntimeFields(FIELD(queue, u32, operand_offset));
             BattleMotion_InitializeActorRecords(FIELD(queue, u32, operand_offset));
             break;
         }
-        case 10: Func_08015130(gBattleWork[65]); break;
+        case 10: UiWindow_DrawPartyStatusContentsFar(gBattleWork[65]); break;
         case 11:
             BattleUnit_BuildStatusFlags(queue->operands[i], (u32)GetBattleObjectSlot(queue->operands[i]));
             BattlePres_SetActorModeAndAction(queue->operands[i]);

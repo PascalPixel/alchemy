@@ -3,7 +3,7 @@
 void *Runtime_AllocateBlock(s32, u32);
 void Unnamed_080f3078(u32, void *, void *, s32);
 void Scheduler_AddOrUpdateCallback(void (*)(void), s32);
-void Func_080f2f10(void);
+void TitlePalette_UpdateFade(void);
 
 
 void TitlePalette_InitializeBuffers(void)
@@ -19,5 +19,5 @@ void TitlePalette_InitializeBuffers(void)
     Dma_Set((void *)0x05000200, buffer + 512, 0x84000080, (volatile u32 *)0x040000d4);
     Unnamed_080f3078(0x10000, buffer, buffer + 4096, 0);
     operation = 3200;
-    Scheduler_AddOrUpdateCallback(Func_080f2f10, operation);
+    Scheduler_AddOrUpdateCallback(TitlePalette_UpdateFade, operation);
 }

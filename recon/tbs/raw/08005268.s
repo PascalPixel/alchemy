@@ -1,8 +1,10 @@
 .syntax unified
 	.thumb
 	.set sub_080072f0, 0x080072f0
+	.global Camera_ProjectPoint
 	.global Func_08005268
 	.thumb_func
+Camera_ProjectPoint:
 Func_08005268:
 	push	{r5, r6, r7, lr}
 	adds	r5, r1, #0

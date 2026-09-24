@@ -48,7 +48,7 @@ s32 Resource_LoadIndexedEntryToBuffer(s32 resource, s32 index)
     return ret;
 }
 
-s32 Func_0801a4fc(u32, s32, s32 *, s32 *, s32, s32);
+s32 UiGlyph_LoadEntryWithPalette(u32, s32, s32 *, s32 *, s32, s32);
 s32 GameFlag_IsSet(s32);
 
 s32 Ui_LoadEntryForKind(u32 kind, s32 value)
@@ -72,6 +72,6 @@ s32 Ui_LoadEntryForKind(u32 kind, s32 value)
             break;
         }
     }
-    Func_0801a4fc(no, 0, &cur, &out, 0xE, 1);
+    UiGlyph_LoadEntryWithPalette(no, 0, &cur, &out, 0xE, 1);
     return out;
 }

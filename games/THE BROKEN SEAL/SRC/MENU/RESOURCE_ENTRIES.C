@@ -86,7 +86,7 @@ extern u8 Data_000000f1[];
 u32 Runtime_BumpAllocate(s32 size);
 u32 Resource_DecodeByteLz(const void *, void *);
 void Resource_CopyData(s32, s32, void *);
-void Func_08002df0(void *);
+void Runtime_BumpFree(void *);
 
 void Menu_LoadResourceSlot(s32 slot, s32 index)
 {
@@ -97,7 +97,7 @@ void Menu_LoadResourceSlot(s32 slot, s32 index)
     /* 表内の相対位置から転送元を求める。 */
     Resource_DecodeByteLz((void *)((u32)base + base[index]), buffer);
     Resource_CopyData(slot, size, buffer);
-    Func_08002df0(buffer);
+    Runtime_BumpFree(buffer);
 }
 
 extern s32 Resource_FindFreeEntry(void);

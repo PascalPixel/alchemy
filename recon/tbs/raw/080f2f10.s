@@ -1,7 +1,9 @@
 .syntax unified
 	.thumb
+	.global TitlePalette_UpdateFade
 	.global Func_080f2f10
 	.thumb_func
+TitlePalette_UpdateFade:
 Func_080f2f10:
 	push	{r5, r6, r7, lr}
 	ldr	r3, [pc, #76]

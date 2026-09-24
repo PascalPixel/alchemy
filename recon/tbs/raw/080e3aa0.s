@@ -26,8 +26,10 @@
 	.set sub_080e3958, 0x080e3958
 	.set sub_080e396c, 0x080e396c
 	.set sub_080ed408, 0x080ed408
+	.global BattlePres_RunBeamSequence
 	.global Func_080e3aa0
 	.thumb_func
+BattlePres_RunBeamSequence:
 Func_080e3aa0:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

@@ -48,7 +48,7 @@ s32 UiMessage_ShowChoice(s32 value);
 void Shop_DrawUnitGrid(s32 value, s32 unit_id);
 void Audio_PlayCue(s32 cue);
 void UiWork_FinalizePendingCoreFar(void);
-s32 Func_08015038(s32 a, s32 b, s32 c, s32 d);
+s32 UiText_OpenMessageWindowFar(s32 a, s32 b, s32 c, s32 d);
 s32 UiWork_IsCompleteFar(void);
 
 extern struct ShopRuntime *gMenuWork;
@@ -92,7 +92,7 @@ s32 Shop_ConfirmEquip(s32 unit_id, s32 slot)
     if (info->flags & 1) {
         Audio_PlayCue(103);
         UiWork_FinalizePendingCoreFar();
-        Func_08015038((s32)Value_00000ad0, 8, 4, 2);
+        UiText_OpenMessageWindowFar((s32)Value_00000ad0, 8, 4, 2);
         while (UiWork_IsCompleteFar() == 0) {
             WaitFrames(1);
         }
@@ -102,7 +102,7 @@ s32 Shop_ConfirmEquip(s32 unit_id, s32 slot)
     return 1;
 }
 
-void Func_080b1f4c(s32, s32, s32);
+void Shop_SellItem(s32, s32, s32);
 
 s32 Shop_SellOld(s32 unit_id, s32 slot)
 {
@@ -125,7 +125,7 @@ s32 Shop_SellOld(s32 unit_id, s32 slot)
     {
         return 0;
     }
-    Func_080b1f4c(unit_id, slot, -1);
+    Shop_SellItem(unit_id, slot, -1);
     return 1;
 }
 
@@ -247,7 +247,7 @@ extern u8 Value_00000caa;
  * Sell flow reached from Shop_SelectPartyMember when the shop's party action
  * is "sell": browse the chosen member's inventory, priced one slot at a
  * time, and hand a confirmed slot off to Shop_SelectSaleQuantity before
- * writing the sale back through Func_080b1f4c.
+ * writing the sale back through Shop_SellItem.
  */
 s32 Shop_SelSell(s32 unit_id)
 {
@@ -345,7 +345,7 @@ done:
 
         quantity = Shop_SelectSaleQuantity(unit_id, selection);
         if (quantity != -1)
-            Func_080b1f4c(unit_id, selection, quantity);
+            Shop_SellItem(unit_id, selection, quantity);
         UiMessage_ShowAndWait((s32)&Value_00000caa);
         if (Ability_GetAvailability(unit_id) == 0)
             break;
@@ -412,7 +412,7 @@ void Shop_DrawUnitGrid(s32 window, s32 unit_id)
 
 s32 Shop_GetSelectionState(s32, s32);
 void UiMessage_ShowAndWait(s32);
-s32 Func_080b1614(s32, s32, s32);
+s32 Shop_RunQuantitySelector(s32, s32, s32);
 void UiIcon_PrepareObjectFar(void *);
 extern char Value_00000cad;
 
@@ -444,7 +444,7 @@ s32 Shop_SelSellNum(s32 unit_id, s32 slot)
         shop->cursor.anchor->kind = 4;
         shop->mode = 0xc;
         Shop_PlaceCursor(NULL, EFFECT_X, 0x30);
-        result = Func_080b1614(0, selection, effect);
+        result = Shop_RunQuantitySelector(0, selection, effect);
         WaitFrames(1);
         UiIcon_PrepareObjectFar(shop->cursor.anchor);
         Shop_PlaceCursor(NULL, saved_x, saved_y);

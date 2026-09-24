@@ -4,7 +4,7 @@ s32 Modulo(s32 value, s32 divisor);
 void UiWindow_Clear(s32 window);
 u8 *UiIcon_DrawWithFlags(u16 no, u32 flags, s32 window, s32 x, s32 y);
 u8 *UiIcon_Draw(s32 no, s32 kind, s32 window, s32 x, s32 y);
-u8 *Func_080b0744(s16 value, s32 window, s32 x, s32 y);
+u8 *Shop_CreatePriceSprite(s16 value, s32 window, s32 x, s32 y);
 
 void Shop_DrawStock(s32 window, s32 selected)
 {
@@ -60,7 +60,7 @@ void Shop_DrawStock(s32 window, s32 selected)
                     *(u16 *)(icon + 12) = highlight;
                     icon[15] = 253;
                 }
-                icon = Func_080b0744(definition->price, window, x, 0);
+                icon = Shop_CreatePriceSprite(definition->price, window, x, 0);
                 icon[15] = 251;
             }
         }

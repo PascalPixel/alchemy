@@ -9,8 +9,10 @@
 	.set sub_08077198, 0x08077198
 	.set sub_080771a0, 0x080771a0
 	.set sub_080c2470, 0x080c2470
+	.global BattleEnemy_RecordDefeat
 	.global Func_080c24f0
 	.thumb_func
+BattleEnemy_RecordDefeat:
 Func_080c24f0:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

@@ -3,8 +3,10 @@
 	.set sub_0800231c, 0x0800231c
 	.set sub_08002322, 0x08002322
 	.set sub_080072f0, 0x080072f0
+	.global SceneTransform_ApplyRoll
 	.global Func_08004c6c
 	.thumb_func
+SceneTransform_ApplyRoll:
 Func_08004c6c:
 	push	{r5, r6, lr}
 	sub	sp, #48

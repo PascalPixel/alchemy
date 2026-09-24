@@ -5,7 +5,7 @@ extern volatile u32 Data_03001ae8;
 void BattleEv_RunWait(s32 action)
 {
     u8 *runtime = *(u8 **)0x03001ebc;
-    s32 wait_token = Func_08092c40();
+    s32 wait_token = UiText_OpenMessageAtObject();
     s32 resolved_action;
     u32 frames = 0;
 

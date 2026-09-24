@@ -6,8 +6,10 @@
 	.set sub_08077290, 0x08077290
 	.set sub_08077300, 0x08077300
 	.set sub_0808a5d0, 0x0808a5d0
+	.global SaveState_BuildSummaryHeader
 	.global Func_0801f818
 	.thumb_func
+SaveState_BuildSummaryHeader:
 Func_0801f818:
 	push	{r5, r6, r7, lr}
 	mov	r7, r8

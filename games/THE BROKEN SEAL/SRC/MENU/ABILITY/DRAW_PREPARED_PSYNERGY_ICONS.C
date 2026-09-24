@@ -12,6 +12,6 @@ void PsynergyMenu_DrawPreparedPsynergyIcons(s32 unused, s32 owner_id)
     PsynergyMenu_DrawPsynergyIcons(menu->psynergies);
 }
 
-void Func_080a939c(void)
+void PsynergyMenu_ReservedNoOp939C(void)
 {
 }

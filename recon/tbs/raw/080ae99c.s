@@ -1,8 +1,10 @@
 .syntax unified
 	.thumb
 	.set sub_080150c8, 0x080150c8
+	.global UiIcon_CreateStatChangeArrow
 	.global Func_080ae99c
 	.thumb_func
+UiIcon_CreateStatChangeArrow:
 Func_080ae99c:
 	push	{r5, r6, lr}
 	adds	r5, r3, #0

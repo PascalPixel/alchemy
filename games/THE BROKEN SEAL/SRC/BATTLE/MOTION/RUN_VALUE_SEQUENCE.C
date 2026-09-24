@@ -15,10 +15,10 @@ extern struct Runtime_080babdc *gBattleWork;
 void *Runtime_GetObject(s32 id);
 struct ObjectSlot_080babdc *GetBattleObjectSlot(s32 id);
 void Object_SetMode(void *object, s32 mode);
-void Func_080152b8(u16 *selection);
+void BattleLayout_HighlightPartyPanelsFar(u16 *selection);
 void BattleMotion_SetRecordChildValues(void *object, s32 value);
 s32 BattleMotion_GetSlotField14(s32 id);
-void Func_08015130(s32 mode);
+void UiWindow_DrawPartyStatusContentsFar(s32 mode);
 
 void BattleMotion_RunValueSequence(s32 id)
 {
@@ -36,16 +36,16 @@ void BattleMotion_RunValueSequence(s32 id)
         target = 0xff;
         sel[1] = target;
         sel[0] = id;
-        Func_080152b8(sel);
+        BattleLayout_HighlightPartyPanelsFar(sel);
         BattleMotion_SetRecordChildValues(GetBattleObjectSlot(id)->object, 7);
         WaitFrames(2);
 
         sel[0] = id;
-        Func_080152b8(sel);
+        BattleLayout_HighlightPartyPanelsFar(sel);
         BattleMotion_SetRecordChildValues(GetBattleObjectSlot(id)->object, BattleMotion_GetSlotField14(id));
         WaitFrames(2);
         remaining--;
     } while (remaining >= 0);
 
-    Func_08015130(gBattleWork->mode);
+    UiWindow_DrawPartyStatusContentsFar(gBattleWork->mode);
 }

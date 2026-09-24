@@ -10,7 +10,7 @@ struct DisplayTransitionState {
 void *Runtime_AllocateBlock(s32, s32);
 void DisplayTransition_FillTilemapAndSolidTile(s32);
 void Scheduler_AddOrUpdateCallback(void (*)(void), s32);
-void Func_08090658(void);
+void DisplayTransition_UpdateFrame(void);
 
 void DisplayTransition_InitializeState(s32 value)
 {
@@ -23,6 +23,6 @@ void DisplayTransition_InitializeState(s32 value)
     DisplayTransition_FillTilemapAndSolidTile(0);
     state->value = value;
     state->timer = 0;
-    Scheduler_AddOrUpdateCallback(Func_08090658, 0xc80);
+    Scheduler_AddOrUpdateCallback(DisplayTransition_UpdateFrame, 0xc80);
     WaitFrames(0x78);
 }

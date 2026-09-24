@@ -2,8 +2,10 @@
 	.thumb
 	.set sub_080170c4, 0x080170c4
 	.set sub_0801e260, 0x0801e260
+	.global UiWindow_DrawFrame
 	.global Func_080170f8
 	.thumb_func
+UiWindow_DrawFrame:
 Func_080170f8:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

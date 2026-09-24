@@ -33,7 +33,7 @@ struct AnimationObject {
 extern struct AnimationObject *Data_03001e5c[];
 extern u8 Data_00000000[];
 
-struct AnimationMetadata *Func_08185000(s32 id);
+struct AnimationMetadata *Resource_GetMetadataRecordFar(s32 id);
 s32 Animation_LookupValueByKey(s32 key);
 
 
@@ -54,7 +54,7 @@ struct AnimationObject *AnimationObject_Allocate(s32 id)
     s32 zero;
 
     found = NULL;
-    metadata = Func_08185000(id);
+    metadata = Resource_GetMetadataRecordFar(id);
     entry = Data_03001e5c[0];
     object = NULL;
 

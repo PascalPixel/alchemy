@@ -3,8 +3,10 @@
 	.set sub_0801a910, 0x0801a910
 	.set sub_0801bd98, 0x0801bd98
 	.set sub_0801c188, 0x0801c188
+	.global MenuSelection_BuildEntries
 	.global Func_0801a7f4
 	.thumb_func
+MenuSelection_BuildEntries:
 Func_0801a7f4:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

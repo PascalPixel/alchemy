@@ -3,8 +3,10 @@
 	.set sub_08077018, 0x08077018
 	.set sub_080a17c4, 0x080a17c4
 	.set sub_080a9cbc, 0x080a9cbc
+	.global ItemMenu_ArrangeCategoryItemIcons
 	.global Func_080a9c18
 	.thumb_func
+ItemMenu_ArrangeCategoryItemIcons:
 Func_080a9c18:
 	push	{r5, r6, r7, lr}
 	mov	r7, r8

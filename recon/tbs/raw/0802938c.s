@@ -3,8 +3,10 @@
 	.set sub_080770c0, 0x080770c0
 	.set sub_080770c8, 0x080770c8
 	.set sub_080770d0, 0x080770d0
+	.global Menu_HandleFlagGridInput
 	.global Func_0802938c
 	.thumb_func
+Menu_HandleFlagGridInput:
 Func_0802938c:
 	push	{r5, r6, lr}
 	ldr	r6, [pc, #312]

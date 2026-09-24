@@ -9,8 +9,8 @@ typedef struct {
     u8 field_0f;
 } Object0f;
 
-void *Func_080150d8(s32, s32, s32, s32, s32, s32);
-void Func_080a8604(s32, s32, s32);
+void *SideObject_CreateFar(s32, s32, s32, s32, s32, s32);
+void CharacterMenu_DrawStatusAilments(s32, s32, s32);
 s32 Menu_CreateEightEntryObjects(s32 resource);
 
 void Menu_CreateWindowAndEntryObjects(s32 resource)
@@ -28,14 +28,14 @@ void Menu_CreateWindowAndEntryObjects(s32 resource)
         handle = state->handle;
     }
     if (created != 0) {
-        object = Func_080150d8(resource, 0, 0, handle, 0, 0);
+        object = SideObject_CreateFar(resource, 0, 0, handle, 0, 0);
         state->object = object;
         if ((((Object0f *)object)->field_0f = 0xF0, state->mode) == 3) {
             Menu_SpawnIconEntries(state, handle);
         }
         Menu_CreateEightEntryObjects(handle);
-        Func_080a8604(handle, resource, 0x100);
+        CharacterMenu_DrawStatusAilments(handle, resource, 0x100);
         return;
     }
-    Func_080a8604(handle, resource, 0);
+    CharacterMenu_DrawStatusAilments(handle, resource, 0);
 }

@@ -1,7 +1,9 @@
 .syntax unified
 	.thumb
+	.global Map_GetTerrainHeightFar
 	.global Func_080091a8
 	.thumb_func
+Map_GetTerrainHeightFar:
 Func_080091a8:
 	ldr	r4, [pc, #0]
 	bx	r4

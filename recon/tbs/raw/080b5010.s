@@ -1,7 +1,9 @@
 .syntax unified
 	.thumb
+	.global BattleActor_SpawnObjectsForListFar
 	.global Func_080b5010
 	.thumb_func
+BattleActor_SpawnObjectsForListFar:
 Func_080b5010:
 	ldr	r4, [pc, #0]
 	bx	r4

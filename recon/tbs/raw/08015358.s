@@ -1,7 +1,9 @@
 .syntax unified
 	.thumb
+	.global Djinn_ShowJoinedMessageFar
 	.global Func_08015358
 	.thumb_func
+Djinn_ShowJoinedMessageFar:
 Func_08015358:
 	ldr	r4, [pc, #0]
 	bx	r4

@@ -6,8 +6,10 @@
 	.set sub_080b5070, 0x080b5070
 	.set sub_080b5098, 0x080b5098
 	.set sub_080b50d8, 0x080b50d8
+	.global EffectPosition_ResolveAnimatedAnchor
 	.global Func_080e3994
 	.thumb_func
+EffectPosition_ResolveAnimatedAnchor:
 Func_080e3994:
 	push	{r5, r6, lr}
 	mov	r6, sl

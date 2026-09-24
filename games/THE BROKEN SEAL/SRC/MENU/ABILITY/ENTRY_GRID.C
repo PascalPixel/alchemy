@@ -5,7 +5,7 @@ s32 UiMenu_CreateCursor(void *menu);
 s32 InitializeEntryObjects(s32, s32, s32, s32, s32);
 s32 UiWindow_CreateFar(s32, s32, s32, s32, s32);
 struct PsynergyMenuIcon *UiIcon_CreateWithResourceVariant(s32, s32, s32);
-void *Func_080150d8(s32, s32, s32, s32, s32, s32);
+void *SideObject_CreateFar(s32, s32, s32, s32, s32, s32);
 struct PsynergyMenuIcon *RenderOutput_CreateFromResourceFar(s32, s32, s32, s32, s32);
 
 void PsynergyMenu_CreateEntryGrid(void)
@@ -32,7 +32,7 @@ void PsynergyMenu_CreateEntryGrid(void)
     cursor = UiIcon_CreateWithResourceVariant(window, 0, 4);
     cursor->state = 13;
     menu->entry_grid_cursor = cursor;
-    Func_080150d8(0, 0, 0, window, 0, 0);
+    SideObject_CreateFar(0, 0, 0, window, 0, 0);
 
     y = 8;
     index = 0;

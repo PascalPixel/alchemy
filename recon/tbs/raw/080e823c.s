@@ -31,8 +31,10 @@
 	.set sub_080e3908, 0x080e3908
 	.set sub_080ed408, 0x080ed408
 	.set sub_080f9010, 0x080f9010
+	.global BattleEffect_RunCirclingFallingScene
 	.global Func_080e823c
 	.thumb_func
+BattleEffect_RunCirclingFallingScene:
 Func_080e823c:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

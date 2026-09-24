@@ -4,8 +4,10 @@
 	.set sub_08016478, 0x08016478
 	.set sub_0801e7c0, 0x0801e7c0
 	.set sub_080f9010, 0x080f9010
+	.global Menu_RunResourceSelectionLoop
 	.global Func_08028574
 	.thumb_func
+Menu_RunResourceSelectionLoop:
 Func_08028574:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

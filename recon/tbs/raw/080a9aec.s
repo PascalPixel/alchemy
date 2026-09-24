@@ -2,8 +2,10 @@
 	.thumb
 	.set sub_08015080, 0x08015080
 	.set sub_08077018, 0x08077018
+	.global ItemMenu_DrawEquippedItemNames
 	.global Func_080a9aec
 	.thumb_func
+ItemMenu_DrawEquippedItemNames:
 Func_080a9aec:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl

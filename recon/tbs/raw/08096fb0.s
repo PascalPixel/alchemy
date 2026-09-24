@@ -7,8 +7,10 @@
 	.set sub_08077080, 0x08077080
 	.set sub_08096c24, 0x08096c24
 	.set sub_080970f8, 0x080970f8
+	.global BattleFx_LoadActionEffectResources
 	.global Func_08096fb0
 	.thumb_func
+BattleFx_LoadActionEffectResources:
 Func_08096fb0:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl

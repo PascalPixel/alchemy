@@ -1,49 +1,49 @@
 #include "EFFECT_STEP.H"
 
-void Func_080e2974(struct EffectStep *, s32);
+void BattlePres_RunBurstScene(struct EffectStep *, s32);
 
 void EffectStep_RunAnimationMode6Or7Or8(struct EffectStep *step)
 {
     if (step->variant == 0) {
-        Func_080e2974(step, 6);
+        BattlePres_RunBurstScene(step, 6);
         return;
     }
     if (step->variant == 1) {
-        Func_080e2974(step, 7);
+        BattlePres_RunBurstScene(step, 7);
         return;
     }
-    Func_080e2974(step, 8);
+    BattlePres_RunBurstScene(step, 8);
 }
 
 void EffectStep_RunAnimationMode0(struct EffectStep *step)
 {
-    Func_080e2974(step, 0);
+    BattlePres_RunBurstScene(step, 0);
 }
 
 void EffectStep_RunAnimationMode0Alternate(struct EffectStep *step)
 {
-    Func_080e2974(step, 0);
+    BattlePres_RunBurstScene(step, 0);
 }
 
 void EffectStep_RunAnimationMode1(struct EffectStep *step)
 {
-    Func_080e2974(step, 1);
+    BattlePres_RunBurstScene(step, 1);
 }
 
 void EffectStep_RunAnimationMode2(struct EffectStep *step)
 {
-    Func_080e2974(step, 2);
+    BattlePres_RunBurstScene(step, 2);
 }
 
 void EffectStep_RunAnimationMode3Or4Or5(struct EffectStep *step)
 {
     if (step->variant == 0) {
-        Func_080e2974(step, 3);
+        BattlePres_RunBurstScene(step, 3);
         return;
     }
     if (step->variant == 1) {
-        Func_080e2974(step, 4);
+        BattlePres_RunBurstScene(step, 4);
         return;
     }
-    Func_080e2974(step, 5);
+    BattlePres_RunBurstScene(step, 5);
 }

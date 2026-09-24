@@ -4,8 +4,10 @@
 	.set sub_08002f40, 0x08002f40
 	.set sub_08004938, 0x08004938
 	.set sub_080072f0, 0x080072f0
+	.global UiText_RenderStringTiles
 	.global Func_0801de5c
 	.thumb_func
+UiText_RenderStringTiles:
 Func_0801de5c:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

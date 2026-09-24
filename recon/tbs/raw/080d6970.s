@@ -34,8 +34,10 @@
 	.set sub_080e6eac, 0x080e6eac
 	.set sub_080ed408, 0x080ed408
 	.set sub_080f9010, 0x080f9010
+	.global BattleEffect_RunDitherDissolveScene
 	.global Func_080d6970
 	.thumb_func
+BattleEffect_RunDitherDissolveScene:
 Func_080d6970:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

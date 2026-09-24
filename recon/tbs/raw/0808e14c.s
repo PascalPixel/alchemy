@@ -4,8 +4,10 @@
 	.set sub_0808bd24, 0x0808bd24
 	.set sub_0808d428, 0x0808d428
 	.set sub_0808ddec, 0x0808ddec
+	.global Event_FindFacingTrigger
 	.global Func_0808e14c
 	.thumb_func
+Event_FindFacingTrigger:
 Func_0808e14c:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

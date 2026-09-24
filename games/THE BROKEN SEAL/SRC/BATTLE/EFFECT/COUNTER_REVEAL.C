@@ -44,7 +44,7 @@ s32 Unnamed_080cdb24(s32 mode);
 void *Resource_GetTableEntry(s32 id);
 u32 Resource_DecodeType01(const void *source, void *destination);
 void Runtime_ReleaseHeapBlock(s32 id);
-s32 Func_080cdbc0(void);
+s32 BattleFx_EndCanvasLayer(void);
 void **GetBattleObjectSlotFar(s32 member_id);
 void EffectPosition_ApplyStepAndYOffset(s32 member_id, void *out);
 s32 Trig_Sin(s32 angle);
@@ -52,7 +52,7 @@ s32 Trig_Cos(s32 angle);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 void Audio_PlayCue(s32 cue);
 void Object_SetPosition(void *object, s32 a, s32 b, s32 c);
-void Func_080b5040(s32 a, s32 b, s32 c);
+void BattleBackground_LoadFar(s32 a, s32 b, s32 c);
 
 void BattleFx_RunCounterReveal(void *object)
 {
@@ -260,8 +260,8 @@ void BattleFx_RunCounterReveal(void *object)
     }
     Scheduler_RemoveCallback((void *)0x080CD261);
     Scheduler_RemoveCallback((void *)0x080DBB9D);
-    Func_080b5040(1, (*(u16 *)((u8 *)(gBattleWork) + (0x648))), 24);
+    BattleBackground_LoadFar(1, (*(u16 *)((u8 *)(gBattleWork) + (0x648))), 24);
     Runtime_ReleaseHeapBlock(47);
     Runtime_ReleaseHeapBlock(46);
-    Func_080cdbc0();
+    BattleFx_EndCanvasLayer();
 }

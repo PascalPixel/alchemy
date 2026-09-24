@@ -29,9 +29,9 @@ struct Target {
 extern s32 gGameState[];
 #define PARTY_STATE gGameState
 
-void Func_0800447c(s32, s32, struct Vec *);
+void Math_AdvanceVectorByAngle(s32, s32, struct Vec *);
 struct Target *Object_GetById(s32);
-void Func_080974d8(struct Vec *);
+void Camera_WorldToScreen(struct Vec *);
 void BattleFx_ClearOwnedSlot(struct Actor *);
 
 void BattleFx_RunAngledApproachPhases(struct Actor *actor)
@@ -58,7 +58,7 @@ void BattleFx_RunAngledApproachPhases(struct Actor *actor)
         pos.x = target->pos.x;
         pos.y = target->pos.y + 0x140000;
         pos.z = target->pos.z;
-        Func_080974d8(&pos);
+        Camera_WorldToScreen(&pos);
         actor->x += (pos.x - actor->x) / 8;
         actor->z += (pos.z - actor->z) / 8;
         if (actor->timer == 40) {
@@ -77,7 +77,7 @@ void BattleFx_RunAngledApproachPhases(struct Actor *actor)
     }
     pos.x = actor->x;
     pos.z = actor->z;
-    Func_0800447c(actor->yaw << 16, actor->pitch << 11, &pos);
+    Math_AdvanceVectorByAngle(actor->yaw << 16, actor->pitch << 11, &pos);
     actor->screenX = pos.x;
     actor->screenZ = pos.z;
 }

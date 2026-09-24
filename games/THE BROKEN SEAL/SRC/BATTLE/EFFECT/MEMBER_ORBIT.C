@@ -17,7 +17,7 @@ typedef s32 (*WordCopyFn)(void *dest, const void *src, s32 words);
  * literal pool word, which an ordinary integer literal cannot produce. */
 extern u8 Value_000000af;
 
-void Func_080cd594(s32 mode);
+void BattleFx_BeginCanvasLayer(s32 mode);
 void *Resource_GetTableEntry(s32 id);
 u32 Resource_DecodeType01(const void *source, void *destination);
 void Render_ResetTransformState(void);
@@ -28,7 +28,7 @@ s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 void Runtime_ReleaseHeapBlock(s32 id);
-s32 Func_080cdbc0(void);
+s32 BattleFx_EndCanvasLayer(void);
 
 /*
  * Sets the BG2 affine scale, loads the palette and the 32x32 sprite frames
@@ -61,7 +61,7 @@ void BattleFx_RunMemberOrbit(void *object)
     work = *cursor++;
     canvas = *cursor;
     FIELD_AT_OFFSET(work, void **, 0x7828) = object;
-    Func_080cd594(0);
+    BattleFx_BeginCanvasLayer(0);
     FIELD_AT_OFFSET((void *)0x04000020, s16 *, 0) = 0x100;
     palette = Resource_GetTableEntry((s32)&Value_000000af);
     status = ((WordCopyFn)0x03001388)((void *)0x05000000, palette, 128);
@@ -163,5 +163,5 @@ void BattleFx_RunMemberOrbit(void *object)
     Scheduler_RemoveCallback((void *)0x080DBB9D);
     Runtime_ReleaseHeapBlock(47);
     Runtime_ReleaseHeapBlock(46);
-    Func_080cdbc0();
+    BattleFx_EndCanvasLayer();
 }

@@ -1,18 +1,18 @@
 #include "TYPES.H"
 
-s32 Func_080ceb54(s32, s32);
+s32 BattleFx_RunMemberBurst(s32, s32);
 
 void BattleFx_RunMemberBurstMode0(s32 arg0)
 {
-    Func_080ceb54(arg0, 0);
+    BattleFx_RunMemberBurst(arg0, 0);
 }
 
 void BattleFx_RunMemberBurstMode1(s32 arg0)
 {
-    Func_080ceb54(arg0, 1);
+    BattleFx_RunMemberBurst(arg0, 1);
 }
 
 void BattleFx_RunMemberBurstMode2(s32 arg0)
 {
-    Func_080ceb54(arg0, 2);
+    BattleFx_RunMemberBurst(arg0, 2);
 }

@@ -14,8 +14,10 @@
 	.set sub_080b0840, 0x080b0840
 	.set sub_080b0894, 0x080b0894
 	.set sub_080f9010, 0x080f9010
+	.global Shop_RunPartyMemberIconBurst
 	.global Func_080b3050
 	.thumb_func
+Shop_RunPartyMemberIconBurst:
 Func_080b3050:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

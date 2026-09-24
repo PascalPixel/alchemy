@@ -21,7 +21,7 @@ extern volatile u32 gFrameCount;
 typedef s32 (*SignedDivide)(s32, s32);
 
 s32 Scheduler_RemoveCallback(void (*callback)(void));
-void Func_0800307c(s32 irq, s32 flags, s32 handler);
+void Runtime_SetIrqHandler(s32 irq, s32 flags, s32 handler);
 
 
 /* Steps the transition value from start to end over duration frames; once
@@ -44,7 +44,7 @@ void DisplayTransition_UpdateFromCentre(void)
         if (*step >= *duration) {
             *duration = 0;
             Scheduler_RemoveCallback(DisplayTransition_UpdateFromCentre);
-            Func_0800307c(1, 0, 0);
+            Runtime_SetIrqHandler(1, 0, 0);
             return;
         } else {
             s32 delta = state->end - state->start;

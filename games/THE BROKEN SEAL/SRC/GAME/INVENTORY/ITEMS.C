@@ -176,7 +176,7 @@ s32 PartyInventory_FindOwner(s32 item_id)
     return -1;
 }
 
-void Func_08078bf0(s32 owner);
+void Owner_RefreshClassActions(s32 owner);
 void Owner_RecalculateStats(s32 owner);
 
 s32 Inventory_Equip(s32 owner, s32 slot)
@@ -221,7 +221,7 @@ s32 Inventory_Equip(s32 owner, s32 slot)
     }
 
     inv->inventory[slot] |= 0x200;
-    Func_08078bf0(owner);
+    Owner_RefreshClassActions(owner);
     Owner_RecalculateStats(owner);
     return 0;
 }

@@ -3,8 +3,10 @@
 	.set sub_08003f3c, 0x08003f3c
 	.set sub_08009020, 0x08009020
 	.set sub_080090c8, 0x080090c8
+	.global BattleFx_SpawnScaledArcObjects
 	.global Func_08096ddc
 	.thumb_func
+BattleFx_SpawnScaledArcObjects:
 Func_08096ddc:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

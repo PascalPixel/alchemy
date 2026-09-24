@@ -40,13 +40,13 @@ void Owner_AdjustSecondValueFar(s32, s32);
  */
 s32 BattleFx_FindMatchingEvent(s32, s32, void *);
 void GameFlag_SetBitFar(s32); s32 BattleEffect_SelectNearbyTargetObject(s32, s32); void BattleEffect_ClearOutOfBoundsObjects(void);
-void Func_08096fb0(s32, s32); void BattleFx_SetupObjectPair(s32, s32); void EventObject_Initialize(void);
+void BattleFx_LoadActionEffectResources(s32, s32); void BattleFx_SetupObjectPair(s32, s32); void EventObject_Initialize(void);
 /*
  * Returns s32 to match the shared prototype, although every call site
  * discards the value.
  */
 s32 BattleFx_RunEventAction(void *, s32, s32); void BattleFx_DispatchRequestKind(void); void BattleFx_Run(void);
-void EffectRuntime_StopCurrentObject(void); void BattleFx_ClearChildValueOnMismatch(void); void BattleEffect_CleanupSceneObjects(void); void Func_0808b98c(void);
+void EffectRuntime_StopCurrentObject(void); void BattleFx_ClearChildValueOnMismatch(void); void BattleEffect_CleanupSceneObjects(void); void BattleEffect_ClearAllObjects(void);
 
 s32 BattleCommand_ExecuteSelectedAction(u32 encodedAction)
 {
@@ -122,7 +122,7 @@ s32 BattleCommand_ExecuteSelectedAction(u32 encodedAction)
     } else GameFlag_ClearBitFar(0x141);
 
     if (runtime->battle_mode == 3) BattleEffect_ClearOutOfBoundsObjects();
-    Func_08096fb0(actionId, 0); runtime->resolving_action = 1;
+    BattleFx_LoadActionEffectResources(actionId, 0); runtime->resolving_action = 1;
     BattleFx_SetupObjectPair(PARTY_STATE.object_id, targetId); EventObject_Initialize();
     BattleFx_RunEventAction(primary, actor, targetId);
     if (GameFlag_TestFar(0x140)) {
@@ -132,6 +132,6 @@ s32 BattleCommand_ExecuteSelectedAction(u32 encodedAction)
     if (GameFlag_TestFar(0x140)) BattleFx_ClearChildValueOnMismatch();
     GameFlag_ClearBitFar(0x140); GameFlag_ClearBitFar(0x141); runtime->resolving_action = 0;
     BattleEffect_CleanupSceneObjects();
-    if (runtime->battle_mode == 3) Func_0808b98c();
+    if (runtime->battle_mode == 3) BattleEffect_ClearAllObjects();
     return 0;
 }

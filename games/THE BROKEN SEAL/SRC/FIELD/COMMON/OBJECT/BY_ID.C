@@ -5,7 +5,7 @@ void ObjectMotion_SetActionVariant(u32, s32);
 void ObjectMotion_SetHorizontalPositionWithTerrain(u32, s32, s32);
 void Object_SetCallback(struct ObjectRuntime *, const void *);
 void Object_SetAction(struct ObjectRuntime *, s32);
-s32 Func_080091a8(u8, s32, s32);
+s32 Map_GetTerrainHeightFar(u8, s32, s32);
 void Battle_WaitMode0(s32);
 void Audio_PlayCue(s32);
 
@@ -269,7 +269,7 @@ void ObjectMotion_SetHorizontalPositionWithTerrain(u32 object_id, s32 x, s32 z)
                 tile_z += 0xFFFF;
             }
             tile_z = tile_z >> 0x10;
-            terrain_height = Func_080091a8(terrain_id, tile_x, tile_z) << 0x10;
+            terrain_height = Map_GetTerrainHeightFar(terrain_id, tile_x, tile_z) << 0x10;
             object->y = (object->y - object->terrain_height) + terrain_height;
             object->terrain_height = terrain_height;
         }
@@ -306,7 +306,7 @@ void ObjectMotion_SetPositionWithTerrain(u32 object_id, s32 x, s32 y, s32 z)
                 tile_z += 0xFFFF;
             }
             terrain_height =
-                Func_080091a8(terrain_id, tile_x, tile_z >> 0x10) << 0x10;
+                Map_GetTerrainHeightFar(terrain_id, tile_x, tile_z >> 0x10) << 0x10;
             object->y = (object->y - object->terrain_height) + terrain_height;
             object->terrain_height = terrain_height;
         }

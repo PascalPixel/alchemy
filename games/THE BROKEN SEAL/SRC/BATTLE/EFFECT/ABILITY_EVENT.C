@@ -77,7 +77,7 @@ s32 BattleFx_FindMatchingEvent(s32 requested_flags, s32 group, void *result)
  * selected_object, matching main:0808e23c's use of the same shared symbol. */
 
 u8 *Ability_GetData(s32);
-void Func_08096fb0(s32, s32);
+void BattleFx_LoadActionEffectResources(s32, s32);
 void BattleFx_SetupObjectPair(s32, s32);
 s32 BattleFx_RunEventAction(void *, s32, s32);
 void FieldEvent_RunTypeHandler(void);
@@ -99,7 +99,7 @@ s32 BattleFx_ExecutePackedAbilityEffect(s32 packed)
     ObjectTable_Get(PARTY_STATE.object_id);
     first = (void *)BattleFx_FindMatchingEvent(0x30000005, object, &output);
     second = (void *)BattleFx_FindMatchingEvent(0x20000005, object, &output);
-    Func_08096fb0(index, 0);
+    BattleFx_LoadActionEffectResources(index, 0);
     BattleFx_SetupObjectPair(PARTY_STATE.object_id, output);
     BattleFx_RunEventAction(first, mode, output);
     FieldEvent_RunTypeHandler();

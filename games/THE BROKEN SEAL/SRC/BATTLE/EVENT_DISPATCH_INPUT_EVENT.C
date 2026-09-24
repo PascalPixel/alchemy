@@ -16,7 +16,7 @@ extern u8 gGameState;
 extern volatile u32 Data_03001ae8;
 
 void BattleFx_RunRisingObjectSequence(s32, s32, s32);
-void Func_08093c00(void);
+void Field_TryJumpForward(void);
 void FieldEffect_UpdateGridPlacement(void);
 void battle_owner_69(void);
 
@@ -35,7 +35,7 @@ s32 Battle_DispatchInputEvent(s32 event)
     case 0xF9:
     case 0xFE:
         if (state->delay > 12) {
-            Func_08093c00();
+            Field_TryJumpForward();
             state->delay = 0;
         }
         break;

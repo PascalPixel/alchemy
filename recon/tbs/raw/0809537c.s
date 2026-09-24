@@ -15,8 +15,10 @@
 	.set sub_08096bec, 0x08096bec
 	.set sub_08096c48, 0x08096c48
 	.set sub_080f9010, 0x080f9010
+	.global EventActor_RunHopAndLeapSequence
 	.global Func_0809537c
 	.thumb_func
+EventActor_RunHopAndLeapSequence:
 Func_0809537c:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

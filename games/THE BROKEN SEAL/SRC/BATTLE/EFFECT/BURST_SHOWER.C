@@ -28,7 +28,7 @@ extern u8 Value_000000a1;
 extern u8 Value_000000b9;
 extern u8 Value_000000ce;
 
-void Func_080cd594(s32);
+void BattleFx_BeginCanvasLayer(s32);
 void BattleFx_FetchRectangleBlitters(s32, u32 *);
 void *Resource_GetTableEntry(s32);
 void EffectPosition_ApplyAnimationAndYOffset(s32, s32 *);
@@ -43,7 +43,7 @@ void ObjectGroup_UpdateMembers(s32, s32, s32, s32, s32);
 void Camera_ApplyShake(s32, s32);
 void ObjectGroup_TickMemberTimers(void);
 void Runtime_ReleaseHeapBlock(s32);
-s32 Func_080cdbc0(void);
+s32 BattleFx_EndCanvasLayer(void);
 
 typedef struct BattleEffectArgument Efx;
 
@@ -129,7 +129,7 @@ void BattleEffect_RunBurstShower(Efx *efx, s32 mode)
     work = (struct BattleEffectWork *)cache[39 - 40];
     aux = (u8 *)cache[41 - 40];
     work->effect = efx;
-    Func_080cd594(0);
+    BattleFx_BeginCanvasLayer(0);
     *(s16 *)0x04000052 = 0x1010;
 
     if (mode == 7) {
@@ -340,5 +340,5 @@ void BattleEffect_RunBurstShower(Efx *efx, s32 mode)
     Scheduler_RemoveCallback(0x080CD261);
     Runtime_ReleaseHeapBlock(47);
     Runtime_ReleaseHeapBlock(46);
-    Func_080cdbc0();
+    BattleFx_EndCanvasLayer();
 }

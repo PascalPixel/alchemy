@@ -16,8 +16,10 @@
 	.set sub_080a3ddc, 0x080a3ddc
 	.set sub_080a3e88, 0x080a3e88
 	.set sub_080f9010, 0x080f9010
+	.global ItemMenu_RunOwnerSelection
 	.global Func_080a35f8
 	.thumb_func
+ItemMenu_RunOwnerSelection:
 Func_080a35f8:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

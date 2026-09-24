@@ -16,8 +16,10 @@
 	.set sub_080b1dec, 0x080b1dec
 	.set sub_080b20e8, 0x080b20e8
 	.set sub_080f9010, 0x080f9010
+	.global Shop_RepairItem
 	.global Func_080b2328
 	.thumb_func
+Shop_RepairItem:
 Func_080b2328:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

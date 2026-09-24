@@ -11,8 +11,10 @@
 	.set sub_080b7b30, 0x080b7b30
 	.set sub_080b7dd0, 0x080b7dd0
 	.set sub_08185000, 0x08185000
+	.global BattleActor_SpawnObjectsForList
 	.global Func_080b7b6c
 	.thumb_func
+BattleActor_SpawnObjectsForList:
 Func_080b7b6c:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

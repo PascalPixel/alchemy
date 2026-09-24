@@ -2,22 +2,22 @@
 
 extern u8 *gEventWork;
 
-extern s32 Func_0808ae74();
+extern s32 Encounter_SelectEnemyGroup();
 
 s32 EffectRuntime_LookupByTableEntry(u32 index)
 {
     u8 *table = gEventWork + 0x1a0;
 
     /* 第2引数は呼出元のr1を引き継ぐ特殊な呼出規約。 */
-    return Func_0808ae74(table[index]);
+    return Encounter_SelectEnemyGroup(table[index]);
 }
 
 s32 BattleFx_LookupResult(void *);
-s32 Func_0808ae74(s32, s32);
+s32 Encounter_SelectEnemyGroup(s32, s32);
 
 s32 BattleFx_ApplyLookupResult(s32 arg0, s32 arg1)
 {
-    return Func_0808ae74(BattleFx_LookupResult((void *)arg0), arg1);
+    return Encounter_SelectEnemyGroup(BattleFx_LookupResult((void *)arg0), arg1);
 }
 
 extern u16 Data_0809c610[];

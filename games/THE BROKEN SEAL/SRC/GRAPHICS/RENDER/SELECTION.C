@@ -36,7 +36,7 @@ struct AnimationSetupState {
     struct AnimationObject *entries[4];
 };
 
-extern struct AnimationMetadata *Func_08185000(s32 id);
+extern struct AnimationMetadata *Resource_GetMetadataRecordFar(s32 id);
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
@@ -48,7 +48,7 @@ void Animation_SetWorkEntry(void *work, s32 no)
 
     hi = 0x80 & no;
     if (FIELD_AT_OFFSET(work, s32, 0x0c) != 0) {
-        info = Func_08185000((s32)FIELD_AT_OFFSET(work, s16, 0));
+        info = Resource_GetMetadataRecordFar((s32)FIELD_AT_OFFSET(work, s16, 0));
         if (no < (s32)FIELD_AT_OFFSET(info, u8, 5)) {
             value = *(s32 *)((u8 *)FIELD_AT_OFFSET(work, s32, 0x0c) + (no * 4));
             FIELD_AT_OFFSET(work, u8, 4) = (u8)FIELD_AT_OFFSET(info, u8, 4);
@@ -84,7 +84,7 @@ entry_loop:
             if (entry->animation_table == 0)
                 goto next_entry;
 
-            metadata = Func_08185000(entry->id);
+            metadata = Resource_GetMetadataRecordFar(entry->id);
             if (flags >= metadata->animation_count)
                 goto next_entry;
 

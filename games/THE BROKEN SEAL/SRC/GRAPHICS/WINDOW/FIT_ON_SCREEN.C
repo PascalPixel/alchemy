@@ -2,7 +2,7 @@
 #include "RUNTIME_INTERFACES.H"
 #include "TBS_EDITION.H"
 
-s32 Func_08018a50(s32 start, s32 *width, s32 *count, s32 mode);
+s32 UiText_MeasureStringVariant(s32 start, s32 *width, s32 *count, s32 mode);
 
 extern u8 *gWindowWork;
 
@@ -24,9 +24,9 @@ void UiWindow_FitOnScreen(s32 no, s32 *px, s32 *py, u32 *pw, u32 *ph, s32 mode, 
 
     if (!(flags & 2)) {
         if (flags & 1)
-            Func_08018a50(no, (s32 *)pw, (s32 *)ph, mode);
+            UiText_MeasureStringVariant(no, (s32 *)pw, (s32 *)ph, mode);
         else
-            Func_08018850(no, (s32 *)pw, (s32 *)ph, mode);
+            UiText_MeasureEntryDimensions(no, (s32 *)pw, (s32 *)ph, mode);
     }
 
     if (*pw == 0 && *ph == 0)

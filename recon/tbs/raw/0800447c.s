@@ -1,8 +1,10 @@
 .syntax unified
 	.thumb
 	.set sub_08002322, 0x08002322
+	.global Math_AdvanceVectorByAngle
 	.global Func_0800447c
 	.thumb_func
+Math_AdvanceVectorByAngle:
 Func_0800447c:
 	push	{r5, r6, lr}
 	mov	r6, sl

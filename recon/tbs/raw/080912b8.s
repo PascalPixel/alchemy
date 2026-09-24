@@ -2,8 +2,10 @@
 	.thumb
 	.set sub_08003dec, 0x08003dec
 	.set sub_080091a8, 0x080091a8
+	.global Object_EffectSpawnCallback
 	.global Func_080912b8
 	.thumb_func
+Object_EffectSpawnCallback:
 Func_080912b8:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

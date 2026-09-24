@@ -26,7 +26,6 @@ enum StatusDispatchMessage {
     MSG_LOOK_IM_SORRY_BUT_WE = 0x225e
 };
 
-
 #define RuntimeBlock_GetOffset1e0Pointer_1(args...) Func_02003f06(args)
 #define RuntimeBlock_GetOffset1e0Pointer_2(args...) Func_02003f06(args)
 #define SCENE_PHASE (*(s32 *)(*(u8 **)0x03001ebc + 0x1c0))
@@ -320,32 +319,9 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
     f(a0, a1, a2, a3);
 }
 
-static __inline__ s32 Value1_020025f0(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ void Call3_02002904(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
 static __inline__ __attribute__((always_inline)) void bump_step_020006bc(s32 amount)
 {
     gEventWork->message += amount;
-}
-
-/* A call site spelled through one of these wrappers passes its constants
- * straight into the argument registers; a direct call lets the compiler
- * precompute a costly constant into a pseudo and share it with later uses in
- * the block. Most sites here want the first shape; the three action-callback
- * sites near the end want the second, because the reference reaches all three
- * of them through one shared pointer register. The adopted sibling
- * run_scene_3b9_conditional_scene_setup.c uses the same device for the same
- * reason. */
-static __inline__ void Call1_02001cd4(void (*f)(), s32 a0)
-{
-    f(a0);
 }
 
 #if defined(TBS_EDITION_JA)

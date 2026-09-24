@@ -53429,10 +53429,6 @@
           "address": "0x0200b380",
           "kind": "thumb"
         },
-        "Func_02005a06": {
-          "address": "0x020080c4",
-          "kind": "thumb"
-        },
         "Func_020073a4": {
           "address": "0x0200dffc",
           "kind": "thumb"
@@ -53672,6 +53668,10 @@
         "gEventWork": {
           "address": "0x03001ebc",
           "kind": "data"
+        },
+        "StagedActor_AdvancePair": {
+          "address": "0x020080c4",
+          "kind": "thumb"
         }
       },
       "owners": [

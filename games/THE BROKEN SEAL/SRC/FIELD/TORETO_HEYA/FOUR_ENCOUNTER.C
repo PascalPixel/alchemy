@@ -3,7 +3,6 @@
 
 #define NULL ((void *)0)
 #define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
-#define AcquireOverlayObject      Func_02001aca
 #define CreateOverlayObject Func_02001b22
 #define SetOverlayObjectMode Func_02001b7c
 #define SetOverlayObjectSlot Func_02001c2c
@@ -36,7 +35,6 @@ extern u8 Data_0200adc0[];
 extern u8 Data_0200adcc[];
 extern u8 Data_03001ebc[];
 
-void *Func_02001aca(s32, s32, s32, s32);
 void Func_020007d6(int, int, int, int);
 void Func_020007e8(int, int, int, int);
 void Func_02000800(int, int, int, int);
@@ -58,7 +56,6 @@ void Func_02000958(int, int, int, int);
 void Func_02000970(int, int, int, int);
 void Func_02000988(int, int, int, int);
 void Func_020009a2(int, int, int, int);
-void Func_02001884(void);
 void Func_02001e14();
 void Func_02001f34();
 void Func_02001f46();
@@ -72,10 +69,6 @@ void Func_02002240();
 void Func_02002418();
 s32 Func_02002420();
 s32 Func_0200243a();
-s32 Func_02002496();
-s32 Func_020024b0_a();
-s32 Func_020024c6();
-s32 Func_020024e0_a();
 void Func_02002806();
 void Func_0200281a();
 void Func_0200293c();
@@ -169,7 +162,7 @@ void *OverlayObject_PrepareSpawnedObject(s32 x, s32 y, s32 z, s32 kind)
     void *rec;
     s32 mask;
 
-    obj = AcquireOverlayObject(kind, x, y, z);
+    obj = Object_Create(kind, x, y, z);
     if (obj != NULL) {
         rec = FIELD_AT_OFFSET(obj, void *, 0x50);
         mask = -0xD;
@@ -287,17 +280,17 @@ void FieldScene_RunFourActorEncounter(void)
     Actor_SetSpeed(3, 0xcccc, 0x6666);
     Actor_SetPosition(0, 0xa60000, 0x500000);
     v6 = 192;
-    record = Func_02002496(0);
+    record = Actor_Get(0);
     *(u16 *)(record + 6) = (v6 << 8);
     Actor_SetPosition(1, 0x940000, 0x5a0000);
-    record = Func_020024b0_a(1);
+    record = Actor_Get(1);
     *(u16 *)(record + 6) = (v6 << 8);
     Actor_SetPosition(2, 0xb60000, 0x5a0000);
-    record = Value1(Func_020024c6, 2);
+    record = Value1(Engine_ActorGet, 2);
     *(u16 *)(record + 6) = (v6 << 8);
     if (rec != 0) {
         Actor_SetPosition(3, 0xa60000, 0x680000);
-        record = Value1(Func_020024e0_a, 3);
+        record = Value1(Engine_ActorGet, 3);
         *(u16 *)(record + 6) = (v6 << 8);
     }
     Func_02001e14(0);
@@ -464,7 +457,7 @@ void FieldScene_RunFourActorEncounter(void)
 void SceneState_ApplyRectsByFlag844(s32 flag)
 {
     if (flag != 0 && GameFlag_IsSet(0x109) == 0)
-        Func_02001884();
+        FieldScene_RunFourActorEncounter();
 
     Task_Wait(1);
     if (GameFlag_IsSet(0x844) != 0) {

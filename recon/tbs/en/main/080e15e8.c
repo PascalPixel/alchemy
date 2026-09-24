@@ -1,5 +1,5 @@
 /* Draft, not exact (2026-09-24): candidate=3920 reference=3920,
-   differing_halfwords=1015, binary similarity 76.1%. Phase one (170
+   differing_halfwords=1010, binary similarity 76.4%. Phase one (170
    frames, A or B skips it) draws three dotted beams between six projected
    points, a ring of dots and a falling column; phase two (192 frames)
    bursts sparks, flashes and smoke and pans the camera. Residual: the
@@ -21,6 +21,9 @@
 #include "TYPES.H"
 #include "BATTLE_EFFECT_WORK.H"
 #include "BATTLE_EFX.H"
+/* As in mode 6, the blitters return a value the effect ignores. */
+typedef s32 (*DrawRectangleResult)(void *, const void *, s32, s32, s32, s32);
+#define DrawRectangle DrawRectangleResult
 #include "CALLBACK_SCHEDULER.H"
 #include "EFFECT_STEP.H"
 #include "FIXED_MATH.H"

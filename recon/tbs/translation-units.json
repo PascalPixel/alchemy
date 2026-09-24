@@ -80076,6 +80076,62 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "scene-3c7-020000c8",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/RARIBERO_HEYA/F_000C8.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3c7",
+      "absolute_symbols": {
+        "Engine_ActorGet": {
+          "address": "0x02009214",
+          "kind": "thumb"
+        },
+        "Engine_ShopOpen": {
+          "address": "0x020092f4",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagIsSet": {
+          "address": "0x020091dc",
+          "kind": "thumb"
+        },
+        "Engine_EventSetMessage": {
+          "address": "0x0200927c",
+          "kind": "thumb"
+        },
+        "Engine_EventShowMessage": {
+          "address": "0x0200928c",
+          "kind": "thumb"
+        },
+        "Engine_EventOpenMessage": {
+          "address": "0x02009284",
+          "kind": "thumb"
+        },
+        "Engine_UiWorkWaitThenFinalizeCapacity": {
+          "address": "0x0200920c",
+          "kind": "thumb"
+        },
+        "Engine_EventWait": {
+          "address": "0x020091f4",
+          "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x020000c8",
+          "extent": 148,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

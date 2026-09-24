@@ -8,7 +8,12 @@
  * [sp+4] and derives (u32)angle >> 16 afresh after each join, where GCSE
  * here keeps one copy (so r6/r8/fp/r9 roles shift); the footprint phase is
  * read twice (ldrsh for == 2, ldrh for the flip) with the flip's zero from
- * the pool; mode and facing trade [sp+8]/[sp+12] with declaration order. */
+ * the pool; mode and facing trade [sp+8]/[sp+12] with declaration order.
+ * Tried: angle = the raw s16 table value with every use spelled (u16)angle
+ * (and the clamp's difference through its own local) reproduces [sp+4] =
+ * angle << 16 and the 104-byte frame, but the u16 is still carried in r6
+ * across the first probe (758 halfwords); (void)&angle, an s16 angle and
+ * u16 or s16 spellings of the first test all regress. */
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 

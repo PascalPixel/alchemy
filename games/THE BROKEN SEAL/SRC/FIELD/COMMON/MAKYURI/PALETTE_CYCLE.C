@@ -40,3 +40,22 @@ void Makyuri_CyclePalette(void)
     }
     *(u16 *)0x050000d2 = gPaletteCycleRed | bits;
 }
+
+/* Clear palette colours 105..111. */
+void Makyuri_ClearPalette(void)
+{
+    u32 i;
+    u16 *p;
+    s32 z;
+
+    /* FAKEMATCH: the zero comes from a HImode pool constant, which dumps
+     * the literal pool before the loop. */
+    z = (u16)(u32)Makyuri_ZeroWord;
+    i = 0;
+    p = (u16 *)0x050000de;
+    do {
+        i++;
+        *p = z;
+        p--;
+    } while (i <= 6);
+}

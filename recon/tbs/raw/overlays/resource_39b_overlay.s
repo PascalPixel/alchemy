@@ -348,23 +348,8 @@ AlchemyC_02000d58:
 	.space 0x40
 AlchemyC_02000d98:
 	.space 0xa4
-	push	{lr}
-	ldr	r1, [pc, #8]
-	ldr	r3, [pc, #8]
-	movs	r2, #0
-	b.n	.L_02000e50
-	.2byte 0x0000
-	.4byte 0x00000000
-	.2byte 0x00de
-	.2byte 0x0500
-.L_02000e50:
-	adds	r2, #1
-	strh	r1, [r3, #0]
-	subs	r3, #2
-	cmp	r2, #6
-	bls.n	.L_02000e50
-	pop	{r0}
-	bx	r0
+AlchemyC_02000e3c:
+	.space 0x22
 	.2byte 0x0000
 AlchemyC_02000e60:
 	.space 0xa

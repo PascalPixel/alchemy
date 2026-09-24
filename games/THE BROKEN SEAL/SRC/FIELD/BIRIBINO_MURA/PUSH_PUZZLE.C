@@ -125,38 +125,9 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 
 /* Shared cross-overlay scene-record block; +450 is the scene sub-state. */
 
-static __inline__ void Call1_020008f0(void (*f)(), s32 a0)
-{
-
-    f(a0);
-}
-
-static __inline__ s32 Value1_020008f0(s32 (*f)(), s32 a0)
-{
-
-    return f(a0);
-}
-
-static __inline__ void Call3_020008f0(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-
-    f(a0, a1, a2);
-}
-
-static __inline__ s32 Value1_02000ae0(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
 static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
 {
     f(a0, a1, a2, a3, a4, a5);
-}
-
-static __inline__ s32 Value1_02000d10(s32 (*f)(), s32 a0)
-{
-
-    return f(a0);
 }
 
 static __inline__ u16 ReadU16Elem(u16 *base, s32 idx)
@@ -165,30 +136,9 @@ static __inline__ u16 ReadU16Elem(u16 *base, s32 idx)
     return *(u16 *)(base + idx);
 }
 
-static __inline__ void Call4_020008f0(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-
-    f(a0, a1, a2, a3);
-}
-
-static __inline__ void Call1_020001ec(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
 static __inline__ void bump_step_020001ec(s32 amount)
 {
     gEventWork->message += amount;
-}
-
-static __inline__ void Call2_02000890(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
-static __inline__ s32 Value1_02000890(s32 (*f)(), s32 a0)
-{
-    return f(a0);
 }
 
 s32 SceneActor_UpdateFacingTowardTarget(struct FacingObject *object)
@@ -593,7 +543,7 @@ s32 Scene_DispatchPuzzleEvent(void)
     } else {
         if (gGameState.scene == (s32)&Value_00000023) {
             FieldScene_RunScene38bSequenceA();
-            Call2_02000890(Func_020018e2, 0x2008ed9, 0xc80);
+            Call2(Func_020018e2, 0x2008ed9, 0xc80);
         } else {
             if (gGameState.scene == (s32)&Value_00000020) {
                 FieldScene_RunScene38b_02000d10();
@@ -657,8 +607,8 @@ void Scene_UpdatePuzzleActors(void)
     s32 p6;
     s32 row;
 
-    rec7 = Value1_02000890(Engine_ActorGet, ACTOR_PARTY_LEADER);
-    record = Value1_02000890(Engine_ActorGet, 20);
+    rec7 = Value1(Engine_ActorGet, ACTOR_PARTY_LEADER);
+    record = Value1(Engine_ActorGet, 20);
     row = *(s32 *)(record + 16) >> 20;
     p9 = (*(s32 *)(rec7 + 8) >> 20);
     p10 = (*(s32 *)(rec7 + 16) >> 20);
@@ -700,8 +650,8 @@ void FieldScene_RunScene38bSequenceA(void)
     struct FieldActor *rec8;
     s32 record;
 
-    rec8 = Value1_02000ae0(Engine_ActorGet, 10);
-    rec = Value1_02000ae0(Engine_ActorGet, 11);
+    rec8 = Value1(Engine_ActorGet, 10);
+    rec = Value1(Engine_ActorGet, 11);
     record = Actor_Get(8);
     Actor_SetSpriteFlags(record, 0);
     rec7 = GameFlag_IsSet(0x845);
@@ -828,7 +778,7 @@ void FieldScene_RunScene38b_02000d10(void)
     record = ReadU16Elem((u16 *)Data_02000240, 225);
     if ((u32)((record - 3) << 16) <= 0x10000) {
         if (GameFlag_IsSet(0x109) == 0) {
-            rec7 = Value1_02000d10(Engine_ActorGet, ACTOR_PARTY_LEADER);
+            rec7 = Value1(Engine_ActorGet, ACTOR_PARTY_LEADER);
             Event_Begin();
             arg0 = *(s32 *)(rec7 + 8);
             *(s32 *)(rec7 + 12) = 0x100000;

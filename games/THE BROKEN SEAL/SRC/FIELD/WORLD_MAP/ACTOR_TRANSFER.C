@@ -13,7 +13,6 @@ enum ActorTransferMessage {
     MSG_SUKURETA_HOW_LONG_WILL_ISLAND = 0x2913
 };
 
-
 #define RatioHistory_RecordAndScheduleCallback_1(a0, a1) Call2(Func_020077c6, a0, a1)
 #define SCENE_PHASE (*(s32 *)(*(u8 **)0x03001ebc + 0x1c0))
 #define ACTOR 8
@@ -245,63 +244,15 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
     f(a0, a1, a2);
 }
 
-static __inline__ void Call4_020017fc(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-
-    f(a0, a1, a2, a3);
-}
-
-static __inline__ void Call4_02001888(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-
-    f(a0, a1, a2, a3);
-}
-
-static __inline__ void Call4_02001938(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-
-    f(a0, a1, a2, a3);
-}
-
-static __inline__ void Call4_020019e8(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-
-    f(a0, a1, a2, a3);
-}
-
 static __inline__ s32 Value0(s32 (*f)())
 {
 
     return f();
 }
 
-static __inline__ void Call1_02001a98(void (*f)(), s32 a0)
-{
-
-    f(a0);
-}
-
-static __inline__ void Call4_02001a98(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-
-    f(a0, a1, a2, a3);
-}
-
 /* Phase/status word at 0x1c0 of the shared scene work record. */
 
 /* The actor index every call in this scene step operates on. */
-
-static __inline__ void Call1_02001b5c(void (*f)(), s32 a0)
-{
-
-    f(a0);
-}
-
-static __inline__ void Call4_02001b5c(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-
-    f(a0, a1, a2, a3);
-}
 
 static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
 {
@@ -321,20 +272,9 @@ static __inline__ void Call11(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a
     f(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10);
 }
 
-static __inline__ void Call2_020032f0(void (*f)(), s32 a0, s32 a1)
-{
-
-    f(a0, a1);
-}
-
 static __inline__ u8 *Pointer1(u8 *(*f)(), s32 a0)
 {
     return f(a0);
-}
-
-static __inline__ void Call4_02000c28(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    f(a0, a1, a2, a3);
 }
 
 /*

@@ -132,19 +132,9 @@ static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
  * overlay veneer table): each macro names what that source shows the
  * function doing, keeping the site's own calling form. */
 
-static __inline__ void Call1_02000838(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
 static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
 {
     f(a0, a1, a2);
-}
-
-static __inline__ s32 Value1_02000d24(s32 (*f)(), s32 a0)
-{
-    return f(a0);
 }
 
 static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
@@ -155,11 +145,6 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
 static __inline__ s32 Value6(s32 (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
 {
     return f(a0, a1, a2, a3, a4, a5);
-}
-
-static __inline__ s32 Value2_02000dc8(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
 }
 
 /* Runs a scene step only when three preceding gate checks all pass;
@@ -471,7 +456,7 @@ s32 Func_02000d24(s32 a0)
         MapObject_SetPosition(100, 0, 0);
         Map_CopyCellAttributes(12, 71, 1, 1, 127, 127);
         Value6(Engine_MapCopyCellAttributes, 11, 71, 1, 1, 12, 71);
-        record = Value1_02000d24(Func_02001fa8, 0x2008ce5);
+        record = Value1(Func_02001fa8, 0x2008ce5);
         do {
             s32 shown = *(u16 *)Data_02009a00;
 
@@ -497,7 +482,7 @@ s32 Func_02000dc8(s32 a0)
         MapObject_SetPosition(100, -1, -1);
         Func_0200218c();
         Map_CopyCellAttributes(127, 127, 1, 1, 12, 71);
-        record = Value2_02000dc8(Func_02002042, 0x2008ce5, 0xc80);
+        record = Value2(Func_02002042, 0x2008ce5, 0xc80);
         return record;
     }
     return a0;

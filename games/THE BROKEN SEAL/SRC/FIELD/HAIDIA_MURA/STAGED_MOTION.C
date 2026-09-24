@@ -313,21 +313,6 @@ static __inline__ void bump_step(s32 amount)
     gEventWork->message += amount;
 }
 
-static __inline__ void Call3_02000dc0(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-static __inline__ void Call3_02000e54(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-static __inline__ void Call3_02000e84(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
 static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
 {
     return f(a0, a1);
@@ -338,42 +323,9 @@ static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
     return f(a0, a1, a2);
 }
 
-static __inline__ void Call1_02000f5c(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
 static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
 {
     f(a0, a1);
-}
-
-static __inline__ void Call3_02000f8c(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-/* Runs four fixed steps in order: a single-argument call, a call that takes
- * the address of the byte at Value_0200f55a plus two constants, another
- * three-constant call, and a final single-argument call. */
-static __inline__ s32 Value2_02000fbc(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
-static __inline__ void Call1_02000fbc(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ s32 Value1_020011d8(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ s32 Value2_02002cb0(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
 }
 
 static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
@@ -384,31 +336,6 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 /* Newly identified engine calls: each macro below names the site's own
  * engine function from its reconstructed C source, and keeps the site's
  * own calling form. */
-
-static __inline__ void Call1_02002f14(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ s32 Value2_02002f14(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
-static __inline__ s32 Value2_020031b4(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
-static __inline__ s32 Value1_020034c8(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ s32 Value2_020034c8(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
 
 static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
 {
@@ -431,26 +358,10 @@ static __inline__ void Call11(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a
  * in arity.
  */
 
-/*
- * Calls spelled through these wrappers pass their constants straight into the
- * argument registers. A direct call instead precomputes a costly constant into
- * a pseudo shared with later uses in the block, and a value-returning call
- * sets r0 last of its arguments.
- */
-static __inline__ void Call1_02003fb0(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
 static __inline__ void Call6_02003fb0(
     void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
 {
     f(a0, a1, a2, a3, a4, a5);
-}
-
-static __inline__ s32 Value2_02003fb0(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
 }
 
 s32 MapStagedScene_SelectPrimaryData(void)
@@ -1213,8 +1124,8 @@ void FieldScene_RunLargeStagingSequence(void)
     s32 p2;
     s32 facing;
 
-    rec3 = Value1_020034c8(Engine_ActorGet, ACTOR_PARTY_LEADER);
-    rec8 = Value1_020034c8(Engine_ActorGet, 14);
+    rec3 = Value1(Engine_ActorGet, ACTOR_PARTY_LEADER);
+    rec8 = Value1(Engine_ActorGet, 14);
     Event_Begin();
     Camera_MoveTo(-1, -1, -1, 0);
     Task_Wait(1);
@@ -1349,7 +1260,7 @@ void FieldScene_RunLargeStagingSequence(void)
     p1 = 0x200d5b1;
     Call2(Func_020097e0, p1, 0xc80);
     p2 = 0x200d5d1;
-    Value2_020034c8(Func_020097ee, p2, 0xc80);
+    Value2(Func_020097ee, p2, 0xc80);
     record = Engine_ActorGet(14);
     Actor_SetSpriteFlags((s32)record, 0);
     none2 = 0;
@@ -1607,7 +1518,7 @@ void Scene_RepairTheHouse(void)
     Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 1);
     /* Callback symbols are pooled loads that stay after the preceding call. */
     callback_a = (s32)Func_0200d5c1;
-    Value2_02003fb0(Func_0200a0a8, callback_a, 3200);
+    Value2(Func_0200a0a8, callback_a, 3200);
     callback_b = (s32)Func_0200d5e1;
     Call2(Func_0200a0b4_a, callback_b, 3200);
     Actor_SetSpeed(23, 0x3333, 0x1999);
@@ -1651,7 +1562,7 @@ void Scene_RepairTheHouse(void)
     }
     Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 1);
     callback_c = (s32)Func_0200d5c1;
-    Value2_02003fb0(Func_0200a1ea, callback_c, 3200);
+    Value2(Func_0200a1ea, callback_c, 3200);
     callback_d = (s32)Func_0200d5f1;
     Call2(Func_0200a1f6, callback_d, 3200);
     Actor_SetSpeed(24, 0x3333, 0x1999);
@@ -1696,9 +1607,9 @@ void Scene_RepairTheHouse(void)
     }
     Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 1);
     callback_e = (s32)Func_0200d5c1;
-    Value2_02003fb0(Func_0200a384, callback_e, 3200);
+    Value2(Func_0200a384, callback_e, 3200);
     callback_f = (s32)Func_0200d601;
-    Value2_02003fb0(Func_0200a390, callback_f, 3200);
+    Value2(Func_0200a390, callback_f, 3200);
     Actor_SetSpeed(25, 0x3333, 0x1999);
     Actor_MoveToAndWait(25, 390, 832);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);

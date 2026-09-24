@@ -464,11 +464,6 @@ static __inline__ s32 Value0(s32 (*f)())
     return f();
 }
 
-static __inline__ void Call1_0200082c(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
 static __inline__ s32 Value1(s32 (*f)(), s32 a0)
 {
     return f(a0);
@@ -479,29 +474,14 @@ static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
     return f(a0, a1);
 }
 
-static __inline__ void Call1_0200091c(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
 static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
 {
     return f(a0, a1, a2);
 }
 
-static __inline__ void Call1_020019a4(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
 static __inline__ void Call0(void (*f)())
 {
     f();
-}
-
-static __inline__ void Call1_020019e4(void (*f)(), s32 a0)
-{
-    f(a0);
 }
 
 static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
@@ -537,24 +517,9 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
 
 /* Phase/status word at 0x1c0 of the shared scene work record. */
 
-static __inline__ void Call1_02001ba0(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
 static __inline__ void Call6_02001ba0(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
 {
     f(a0, a1, a2, a3, a4, a5);
-}
-
-static __inline__ s32 Value1_02001e80(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ void Call1_020036f8(void (*f)(), s32 a0)
-{
-    f(a0);
 }
 
 /* The scene step counter at 0x1d8 of the shared scene work record. */
@@ -1307,7 +1272,7 @@ void FieldScene_RunScene383SequenceB(void)
     actor24 = Scene_GetRecord_1_02001ba0(24);
     actor25 = Scene_GetRecord_2_02001ba0(25);
     Event_Begin();
-    Call1_02001ba0(Func_02006838, 0x200aba1);
+    Call1(Func_02006838, 0x200aba1);
     GameFlag_Clear(0x300);
     if (*(s16 *)(actor24 + 100) <= 3) {
         Engine_ActorEnableActionCallback(24, 0x200d678);

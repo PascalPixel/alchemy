@@ -144,54 +144,9 @@ static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
     return f(a0, a1, a2);
 }
 
-static __inline__ void Call1_02000750(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ void Call1_02000780(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
 static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
 {
     f(a0, a1, a2, a3, a4, a5);
-}
-
-static __inline__ void Call1_020007ec(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ s32 Value2_0200081c(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
-static __inline__ void Call1_0200081c(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ s32 Value2_0200084c(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
-static __inline__ s32 Value2_0200087c(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
-static __inline__ s32 Value2_020008ac(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
-static __inline__ void Call1_020001c4(void (*f)(), s32 a0)
-{
-    f(a0);
 }
 
 s32 Object_UpdateFacingTowardTarget(struct FacingObject *object)
@@ -542,7 +497,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
     Audio_PlayCue(158);
     Map_AnimateCells((s32)&Value_0200beb4, 44, 7);
     Actor_WalkTo(ACTOR_PARTY_LEADER, 248, 0x117);
-    Call1_02000750(SceneState_SetWork1c0AndRun, 1);
+    Call1(SceneState_SetWork1c0AndRun, 1);
 }
 
 /* Sets step 188, then runs a pair of 6-argument setup calls for indices 0
@@ -559,7 +514,7 @@ void FieldScene_RunSupplementalSequenceTwo(void)
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 352, 306);
     Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 3);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 352, 296);
-    Call1_02000780(SceneState_SetWork1c0AndRun, 2);
+    Call1(SceneState_SetWork1c0AndRun, 2);
 }
 
 /* Runs four fixed scene-helper calls in sequence, one of them passed the
@@ -569,7 +524,7 @@ void FieldScene_RunSupplementalSequenceThree(void)
     Audio_PlayCue(158);
     Map_AnimateCells((s32)&Value_0200beb4, 43, 15); /* main:08009178 */
     Actor_WalkTo(ACTOR_PARTY_LEADER, 230, 0x197);
-    Call1_020007ec(SceneState_SetWork1c0AndRun, 3);
+    Call1(SceneState_SetWork1c0AndRun, 3);
 }
 
 /* Runs four scene calls in sequence: a single-argument call, a call that
@@ -580,7 +535,7 @@ void FieldScene_RunSupplementalSequenceFour(void)
     Audio_PlayCue(158);
     Map_AnimateCells((s32)&Value_0200beb4, 52, 18); /* main:08009178 */
     Actor_WalkTo(ACTOR_PARTY_LEADER, 374, 0x1a3); /* object_id 0, x 374, z 0x1a3 */
-    Call1_0200081c(SceneState_SetWork1c0AndRun, 4);
+    Call1(SceneState_SetWork1c0AndRun, 4);
 }
 
 /* Runs a fixed sequence of four scripted calls: one keyed off Value_0200beb4
@@ -591,7 +546,7 @@ void FieldScene_RunSupplementalSequenceFive(void)
     Audio_PlayCue(158);
     Map_AnimateCells((s32)&Value_0200beb4, 41, 32); /* main:08009178 */
     Actor_WalkTo(ACTOR_PARTY_LEADER, 200, 0x222);
-    Call1_0200081c(SceneState_SetWork1c0AndRun, 5);
+    Call1(SceneState_SetWork1c0AndRun, 5);
 }
 
 /* Runs four scripted calls with fixed literal arguments: a single-argument
@@ -603,7 +558,7 @@ void FieldScene_RunSupplementalSequenceSix(void)
     Audio_PlayCue(158);
     Map_AnimateCells((s32)&Value_0200beb4, 35, 36); /* main:08009178 */
     Actor_WalkTo(ACTOR_PARTY_LEADER, 102, 0x263); /* object_id 0, x 102, z 611 */
-    Call1_0200081c(SceneState_SetWork1c0AndRun, 6);
+    Call1(SceneState_SetWork1c0AndRun, 6);
 }
 
 /* Runs four scripted scene calls in sequence, passing a byte's address and a
@@ -613,7 +568,7 @@ void FieldScene_RunSupplementalSequenceSeven(void)
     Audio_PlayCue(158);
     Map_AnimateCells((s32)&Value_0200beb4, 51, 39); /* main:08009178 */
     Actor_WalkTo(ACTOR_PARTY_LEADER, 358, 0x29e);
-    Call1_0200081c(SceneState_SetWork1c0AndRun, 7);
+    Call1(SceneState_SetWork1c0AndRun, 7);
 }
 
 void FieldScene_RunStep7BThen8(void)

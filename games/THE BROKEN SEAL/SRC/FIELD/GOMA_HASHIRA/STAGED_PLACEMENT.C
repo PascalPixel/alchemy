@@ -147,16 +147,6 @@ static __inline__ void Call7(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
     f(a0, a1, a2, a3, a4, a5, a6);
 }
 
-static __inline__ void Call1_0200115c(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ void Call1_0200121c(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
 #include "TYPES.H"
 
 void Func_02001f5c(void);
@@ -171,7 +161,6 @@ void Func_020025a8(void);
 enum StagedPlacementMessage {
     MSG_GOT_WOW_THATS_PRETTY_IMPRESSIVE = 0x132f
 };
-
 
 void ConfigureActorThirteenSceneParameters(void)
 {
@@ -474,7 +463,7 @@ static __inline__ void SetFlagBits(u8 *flags, u8 bits)
 
 void FieldScene_RunScene389_0200115c(void)
 {
-    Call1_0200115c(Func_0200251a, 0x20090c9);
+    Call1(Func_0200251a, 0x20090c9);
     Event_Begin();
     Actor_ShowEmote(13, 0x100, 30);
     Actor_RunRepeatedMotion(13, 2);
@@ -537,7 +526,7 @@ L_0200131c:
         Event_Wait(60);
         *(u8 *)(Func_0200279a(9) + 34) = 2;
         Actor_MoveToAndWait(9, 0x198, 192);
-        Call1_0200121c((void (*)())Engine_EventWait, 60);
+        Call1((void (*)())Engine_EventWait, 60);
         Func_02002046();
     }
     if (Data_02000240[282] != 0) {

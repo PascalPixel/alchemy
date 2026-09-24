@@ -49,13 +49,13 @@ struct BattleUnitRecord {
 #define UiText_FormatNumberToHalfwords Func_080228bc
 
 void Func_08002df0(void *block);
-void Func_080072f0(void *dst, const void *src, s32 size, s32 proc);
-void Func_08017c8c(s16 *text, struct RenderInput *win, s32 x, s32 y);
+s32 Func_080072f0(void *dst, const void *src, s32 size, s32 proc);
+s32 Func_08017c8c(s16 *text, struct RenderInput *win, s32 x, s32 y);
 void Func_0801e41c(struct RenderInput *win, s32 x, s32 y, s32 w, s32 h);
 void UiWork_SetParamNibble(s32 nibble);
 void UiWindow_SetTilemapEntry(
     struct RenderInput *win, s32 tile, s32 x, s32 y, s32 flags);
-void UiWindow_DrawThreeTileColumn(
+s32 UiWindow_DrawThreeTileColumn(
     struct RenderInput *win, s32 x, s32 y, s32 tile, s32 flags);
 struct PreviewSprite {
     u32 unknown;

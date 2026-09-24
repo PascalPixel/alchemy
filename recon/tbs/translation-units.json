@@ -66352,12 +66352,36 @@
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_37a",
       "absolute_symbols": {
+        "Engine_ActorGet": {
+          "address": "0x200a9ec",
+          "kind": "thumb"
+        },
+        "Engine_ActorJump": {
+          "address": "0x200aa34",
+          "kind": "thumb"
+        },
         "Engine_ActorSetAnimation": {
           "address": "0x200aa24",
           "kind": "thumb"
         },
+        "Engine_ActorSetAnimationAndWait": {
+          "address": "0x200aa2c",
+          "kind": "thumb"
+        },
+        "Engine_ActorWalkTo": {
+          "address": "0x200aa04",
+          "kind": "thumb"
+        },
+        "Engine_ActorWalkToAndWait": {
+          "address": "0x200aa0c",
+          "kind": "thumb"
+        },
         "Engine_EventWait": {
           "address": "0x200a9cc",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagIsSet": {
+          "address": "0x200a9b4",
           "kind": "thumb"
         },
         "Engine_MapCopyCellsTo": {
@@ -66366,34 +66390,6 @@
         },
         "Engine_TaskWait": {
           "address": "0x200a96c",
-          "kind": "thumb"
-        },
-        "Func_0200472c": {
-          "address": "0x200aa34",
-          "kind": "thumb"
-        },
-        "Func_0200472c_a": {
-          "address": "0x200aa0c",
-          "kind": "thumb"
-        },
-        "Func_02004730": {
-          "address": "0x200aa04",
-          "kind": "thumb"
-        },
-        "Func_02004730_a": {
-          "address": "0x200a9b4",
-          "kind": "thumb"
-        },
-        "Func_020048f6": {
-          "address": "0x200aa2c",
-          "kind": "thumb"
-        },
-        "Func_02004902": {
-          "address": "0x200a9ec",
-          "kind": "thumb"
-        },
-        "Func_0200491e": {
-          "address": "0x200aa2c",
           "kind": "thumb"
         }
       },

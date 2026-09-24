@@ -9988,7 +9988,8 @@
       "name": "FunctionHead_080be378"
     },
     "main:080c91a4": {
-      "name": "BattleFx_ArmWin0HBlankDma"
+      "name": "BattleFx_ArmWin0HBlankDma",
+      "source": "BATTLE/EFFECT/ARM_WIN0_HBLANK_DMA.C"
     },
     "main:080c00d8": {
       "name": "BattlePresentation_BuildTilemap"
@@ -10028,7 +10029,8 @@
       "name": "RunParticleFieldEffect"
     },
     "main:080dbb9c": {
-      "name": "BattleFx_ArmBg2AffineHBlankDma"
+      "name": "BattleFx_ArmBg2AffineHBlankDma",
+      "source": "BATTLE/EFFECT/ARM_BG2_AFFINE_HBLANK_DMA.C"
     },
     "main:080dbc30": {
       "name": "BattleEffect_RunBurstShower"
@@ -10052,7 +10054,8 @@
       "name": "FunctionHead_080e47b8"
     },
     "main:080e72e0": {
-      "name": "BattleFx_ArmPaletteHBlankDma"
+      "name": "BattleFx_ArmPaletteHBlankDma",
+      "source": "BATTLE/EFFECT/ARM_PALETTE_HBLANK_DMA.C"
     },
     "main:080ec100": {
       "name": "FunctionHead_080ec100"

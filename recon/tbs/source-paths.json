@@ -20818,6 +20818,10 @@
     "resource_3a4:020039c8": {
       "name": "ArutinYama_Func020039c8",
       "source": "FIELD/ARUTIN_YAMA/F_039C8.C"
+    },
+    "main:080b3050": {
+      "name": "Shop_RunPartyMemberIconBurst",
+      "source": "MENU/SHOP/PARTY_MEMBER_ICON_BURST.C"
     }
   },
   "symbols": {
@@ -21036,7 +21040,6 @@
     "main:0801e41c": "UiWindow_DrawDividerLine",
     "main:080153c8": "UiWindow_SetPaletteBitRectFar",
     "main:080acab8": "DjinnMenu_DrawStatPreview",
-    "main:080b3050": "Shop_RunPartyMemberIconBurst",
     "main:08015038": "UiText_OpenMessageWindowFar",
     "main:080164d4": "UiWindow_ClearInteriorTiles",
     "main:080a8604": "CharacterMenu_DrawStatusAilments",

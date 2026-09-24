@@ -54755,10 +54755,6 @@
           "address": "0x0200ae00",
           "kind": "thumb"
         },
-        "Func_020011c0": {
-          "address": "0x020080c4",
-          "kind": "thumb"
-        },
         "Func_0200190c": {
           "address": "0x02008ae8",
           "kind": "thumb"
@@ -54769,10 +54765,6 @@
         },
         "Func_02002130": {
           "address": "0x02009030",
-          "kind": "thumb"
-        },
-        "Func_020027f2": {
-          "address": "0x020080c4",
           "kind": "thumb"
         },
         "Func_02003b90": {
@@ -54914,6 +54906,10 @@
         "SceneStateBytes": {
           "address": "0x02000240",
           "kind": "data"
+        },
+        "StagedActor_AdvancePair": {
+          "address": "0x020080c4",
+          "kind": "thumb"
         }
       },
       "owners": [

@@ -72255,6 +72255,42 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "mogoru-mori-f-00e18",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/MOGORU_MORI/F_00E18.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_39f",
+      "absolute_symbols": {
+        "Engine_ActorGet": {
+          "address": "0x0200adbc",
+          "kind": "thumb"
+        },
+        "Engine_AudioPlayCue": {
+          "address": "0x0200aeb4",
+          "kind": "thumb"
+        },
+        "Engine_MathCos": {
+          "address": "0x0200ad04",
+          "kind": "thumb"
+        },
+        "Engine_MathSin": {
+          "address": "0x0200acfc",
+          "kind": "thumb"
+        },
+        "Local_03000380": {
+          "address": "0x0200ace4",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02000e18",
+          "extent": 144,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

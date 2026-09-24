@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_39f:02000e18": {
+      "name": "MogoruMori_Func02000e18",
+      "source": "FIELD/MOGORU_MORI/F_00E18.C"
+    },
     "resource_380:020043bc": {
       "name": "SoruStar_Func020043bc",
       "source": "FIELD/SORU_STAR/F_043BC.C"

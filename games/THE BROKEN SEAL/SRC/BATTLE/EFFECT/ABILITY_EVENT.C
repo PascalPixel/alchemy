@@ -2,7 +2,7 @@
 #include "EFFECT_RUNTIME.H"
 #include "OBJECT_LOOKUP.H"
 #include "BATTLE_EFFECT_RUNTIME.H"
-#define PARTY_STATE Data_02000240
+#define PARTY_STATE gGameState
 
 u8 *BattleAction_Get(s32);
 void *ObjectTable_Get(u32);
@@ -32,7 +32,7 @@ struct BattleEffectValueRecord {
 s32 BattleFx_FindMatchingEvent(s32 requested_flags, s32 group, void *result)
 {
     struct BattleEffectRuntime *runtime =
-        (struct BattleEffectRuntime *)Data_03001ebc;
+        (struct BattleEffectRuntime *)gEventWork;
     struct BattleEffectEventRecord *event = runtime->events;
     s32 reference = ((struct BattleEffectValueRecord *)ObjectTable_Get(
         PARTY_STATE.object_id))->value;
@@ -72,7 +72,7 @@ s32 BattleFx_FindMatchingEvent(s32 requested_flags, s32 group, void *result)
     return 0;
 }
 
-/* Data_02000240 is struct BattleWork (battle_effect_runtime.h); its
+/* gGameState is struct BattleWork (battle_effect_runtime.h); its
  * object_id field sits at the same 0x1f4 offset this owner reads as
  * selected_object, matching main:0808e23c's use of the same shared symbol. */
 

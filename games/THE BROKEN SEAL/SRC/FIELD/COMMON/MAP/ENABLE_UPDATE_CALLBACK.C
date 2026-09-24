@@ -5,6 +5,6 @@ void MapAnimation_Update(void);
 
 void Map_EnableUpdateCallback(void)
 {
-    if (Data_03001e70->active == 0)
+    if (gMapWork->active == 0)
         Scheduler_EnableCallbacks((u32)MapAnimation_Update);
 }

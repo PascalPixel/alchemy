@@ -7,7 +7,7 @@ struct State_0801c304 {
     u16 active;
 };
 
-extern struct State_0801c304 *Data_03001e98;
+extern struct State_0801c304 *gResQueueWork;
 void Func_0801a7f4(u32);
 void Menu_SetupSelectionBothSides(void);
 void Menu_OpenSelectionWindow(u32, u32);
@@ -17,7 +17,7 @@ void Resource_ResetOwnerEntries(void);
 
 u32 Menu_RunSelectionForValue(u32 value)
 {
-    struct State_0801c304 *state = Data_03001e98;
+    struct State_0801c304 *state = gResQueueWork;
     u32 result;
 
     /* 値、使用中フラグの順に設定する。 */

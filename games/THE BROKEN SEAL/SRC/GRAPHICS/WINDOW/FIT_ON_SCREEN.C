@@ -4,7 +4,7 @@
 
 s32 Func_08018a50(s32 start, s32 *width, s32 *count, s32 mode);
 
-extern u8 *Data_03001e8c;
+extern u8 *gWindowWork;
 
 void UiWindow_FitOnScreen(s32 no, s32 *px, s32 *py, u32 *pw, u32 *ph, s32 mode, u32 flags)
 {
@@ -17,7 +17,7 @@ void UiWindow_FitOnScreen(s32 no, s32 *px, s32 *py, u32 *pw, u32 *ph, s32 mode, 
     s32 over;
     s32 pos;
 
-    base = Data_03001e8c;
+    base = gWindowWork;
     x = *px;
     y = *py;
     limit = 30;

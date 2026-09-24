@@ -18,7 +18,7 @@ struct FieldObject {
     u16 y;
 };
 
-extern struct FieldEffectState *Data_03001ebc;
+extern struct FieldEffectState *gEventWork;
 
 s32 Party_ListActiveOwnersFar(s16 *);
 void Party_AdjustSixDigitCounterAFar(s32);
@@ -62,8 +62,8 @@ struct InnObject {
     struct InnObjectComponent *component;
 };
 
-extern struct InnGlobalState Data_02000240;
-#define PARTY_STATE Data_02000240
+extern struct InnGlobalState gGameState;
+#define PARTY_STATE gGameState
 extern char Value_00000d1c;
 
 void Shop_InitializeCursorWork(void);
@@ -80,7 +80,7 @@ struct InnObject *Scene_GetRecord(s32);
 
 s32 Inn_RoomPrice(s32 mode)
 {
-    u8 *global = (u8 *)Data_03001f2c;
+    u8 *global = (u8 *)gMenuWork;
     u8 *base;
     s32 active = 0;
     s32 factor = Data_080b4ab6[mode];
@@ -111,7 +111,7 @@ s32 Inn_CheckIn(s32 mode, s32 object_id)
     s32 message_base;
 
     Shop_InitializeCursorWork();
-    state = Data_03001f2c;
+    state = gMenuWork;
     state->active = 1;
     if (mode == 5)
         state->special_active = 1;
@@ -174,7 +174,7 @@ void Inn_PlaySleep(s32 room_price)
         }
     }
 
-    state = Data_03001ebc;
+    state = gEventWork;
     state->effect = 0x209;
     state->delay = 60;
     WaitFrames(20);
@@ -186,5 +186,5 @@ void Inn_PlaySleep(s32 room_price)
     Event_SetStatus1c6Far();
     Event_WaitValue1c8FramesFar();
     WaitFrames(30);
-    Data_03001ebc->delay = 16;
+    gEventWork->delay = 16;
 }

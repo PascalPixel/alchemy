@@ -3,7 +3,7 @@
 #include "BATTLE_PARTY.H"
 #include "BATTLE_INTRO.H"
 
-extern u8 *Data_03001e74;
+extern u8 *gBattleWork;
 
 void UiWork_ClearValueNameTablesFar(void);
 void UiText_DrawQuantity(s32, s32);
@@ -18,7 +18,7 @@ void BattleIntro_AnnounceEncounter(s32 enemy_count)
     s16 *enemy;
     s32 announced;
 
-    battle_state = Data_03001e74;
+    battle_state = gBattleWork;
     UiWork_ClearValueNameTablesFar();
     BattleParty_ListPresentEnemies(enemies);
 

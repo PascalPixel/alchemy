@@ -29,7 +29,7 @@ void ItemMenu_DrawMsg(s32 unused, s32 message)
 {
     struct InventoryMenuState *menu;
 
-    menu = Data_03001f2c;
+    menu = gMenuWork;
     UiWindow_Commit(menu->message_window);
     UiText_DrawAt(message, menu->message_window, 0, 0);
 }
@@ -39,7 +39,7 @@ void UiIcon_PrepareObject(void *icon);
 
 void Menu_HideEmptyEntryIcons(const u16 *items)
 {
-    struct InventoryMenuState *menu = Data_03001f2c;
+    struct InventoryMenuState *menu = gMenuWork;
     s32 slot;
 
     for (slot = 0; slot < 32; slot++) {

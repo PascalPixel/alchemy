@@ -17,8 +17,8 @@ struct GlobalState {
     u32 saved_callback;
 };
 
-extern struct GlobalState Data_02000240;
-#define PARTY_STATE Data_02000240
+extern struct GlobalState gGameState;
+#define PARTY_STATE gGameState
 
 void BattleEffect_SetRandomTableValueOnObject(s32 arg0)
 {

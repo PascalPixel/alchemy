@@ -1,7 +1,7 @@
 #include "TYPES.H"
 
-extern u16 Data_02000240[];
-#define PARTY_STATE Data_02000240
+extern u16 gGameState[];
+#define PARTY_STATE gGameState
 extern u8 Value_00000038;
 extern u8 Value_0000003a;
 extern u8 Value_0000003c;

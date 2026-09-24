@@ -32,7 +32,7 @@ typedef s32 (*WordCopyFn)(void *dest, const void *src, s32 words);
 
 extern u8 Value_000000ab;
 extern u8 Value_000000ac;
-extern u8 *Data_03001e74;
+extern u8 *gBattleWork;
 /* The two seven-byte-stride rectangle tables are plain, non-const arrays:
  * their element loads are ordered against the outgoing-argument stores at
  * each blit call site, which a const spelling would let float away. */
@@ -261,7 +261,7 @@ void BattleFx_RunCounterReveal(void *object)
     }
     Scheduler_RemoveCallback((void *)0x080CD261);
     Scheduler_RemoveCallback((void *)0x080DBB9D);
-    Func_080b5040(1, (*(u16 *)((u8 *)(Data_03001e74) + (0x648))), 24);
+    Func_080b5040(1, (*(u16 *)((u8 *)(gBattleWork) + (0x648))), 24);
     Runtime_ReleaseHeapBlock(47);
     Runtime_ReleaseHeapBlock(46);
     Func_080cdbc0();

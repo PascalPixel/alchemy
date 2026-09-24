@@ -12,7 +12,7 @@ struct UiTextMessageWorkGlobals {
     void *control;
 };
 
-extern volatile struct UiTextMessageWorkGlobals Data_03001e8c;
+extern volatile struct UiTextMessageWorkGlobals gWindowWork;
 
 s32 UiText_BuildRenderEntries(s32, s32);
 struct Work *UiWindow_Create(s32, s32, s32, s32, s32);
@@ -31,8 +31,8 @@ void UiText_PrepareMessageWork(s32 argument)
     void *state;
     void *control;
 
-    state = Data_03001e8c.state;
-    control = Data_03001e8c.control;
+    state = gWindowWork.state;
+    control = gWindowWork.control;
     result = 0;
     FIELD(state, s8, RENDER_MENU_STATE_OFS) = 2;
     index = UiText_BuildRenderEntries(argument, 1);

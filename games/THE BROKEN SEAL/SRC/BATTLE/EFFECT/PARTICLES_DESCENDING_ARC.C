@@ -1,7 +1,7 @@
 #include "TYPES.H"
 
-extern s16 Data_02000240[];
-#define PARTY_STATE Data_02000240
+extern s16 gGameState[];
+#define PARTY_STATE gGameState
 extern u8 Value_00000001;
 
 void Object_Destroy(void);

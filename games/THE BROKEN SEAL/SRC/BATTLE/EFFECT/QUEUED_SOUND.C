@@ -5,12 +5,12 @@ struct BattleEventState {
     s16 queued_sound;
 };
 
-extern struct BattleEventState *Data_03001ebc;
+extern struct BattleEventState *gEventWork;
 void Audio_PlayCue(s32);
 
 void BattleFx_SetQueuedSoundAndPlay(s32 sound_id)
 {
-    Data_03001ebc->queued_sound = sound_id;
+    gEventWork->queued_sound = sound_id;
     if ((s16)sound_id == -1) {
         sound_id = 0x121;
     }
@@ -20,7 +20,7 @@ void BattleFx_SetQueuedSoundAndPlay(s32 sound_id)
 
 void BattleFx_PlayQueuedSound(void)
 {
-    s16 sound_id = Data_03001ebc->queued_sound;
+    s16 sound_id = gEventWork->queued_sound;
 
     if (sound_id != -1)
         Audio_PlayCue(sound_id);

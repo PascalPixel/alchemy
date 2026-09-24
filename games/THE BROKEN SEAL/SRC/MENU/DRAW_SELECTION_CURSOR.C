@@ -5,7 +5,7 @@ struct State_080a847c {
     u8 *object;
 };
 
-extern struct State_080a847c *volatile Data_03001f2c;
+extern struct State_080a847c *volatile gMenuWork;
 extern u8 Data_080af2fc[];
 
 void Func_080a2268(const u8 *, s32, s32, s32, s32, u32);
@@ -13,7 +13,7 @@ void Func_080a2268(const u8 *, s32, s32, s32, s32, u32);
 void CharacterMenu_DrawSelectionCursor(s32 mode, s32 selected,
     u8 *entries, s32 invert)
 {
-    struct State_080a847c *state = Data_03001f2c;
+    struct State_080a847c *state = gMenuWork;
     u32 different;
     s32 count;
     s32 index;

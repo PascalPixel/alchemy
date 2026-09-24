@@ -12,8 +12,8 @@ struct EffectPositionSource {
     struct EffectVector position;
 };
 
-extern s32 Data_02000240[];
-#define PARTY_STATE Data_02000240
+extern s32 gGameState[];
+#define PARTY_STATE gGameState
 
 struct EffectPositionSource *Object_GetById(s32 id);
 u32 Random16(void);

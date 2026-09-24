@@ -11,7 +11,7 @@ s32 UiWindow_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 style);
 
 void ItemMenu_Init(void)
 {
-    struct InventoryMenuState *menu = Data_03001f2c;
+    struct InventoryMenuState *menu = gMenuWork;
     s32 index;
 
     InitializeEntryObjects(UiMenu_CreateCursor(menu), 2, 2, 8, 0);
@@ -76,7 +76,7 @@ void Menu_SpawnIconEntries(struct State080a8088 *state, s32 arg1)
 void ItemMenu_HideAllIcons(void)
 {
     s32 hidden_state = 13;
-    struct InventoryMenuIcon **icons = Data_03001f2c->entry_icons;
+    struct InventoryMenuIcon **icons = gMenuWork->entry_icons;
     s32 slot;
 
     for (slot = 31; slot >= 0; slot--) {
@@ -91,7 +91,7 @@ s32 Modulo(s32, s32);
 
 void ItemMenu_HidePageIcons(void)
 {
-    struct InventoryMenuState *menu = Data_03001f2c;
+    struct InventoryMenuState *menu = gMenuWork;
     s32 slot = 0;
     s32 hidden_state = 13;
     struct InventoryMenuIcon **icon_slot = menu->entry_icons;

@@ -1,7 +1,7 @@
 #include "TYPES.H"
 #include "BATTLE_EFX.H"
 
-extern u8 Data_03001e50[];
+extern u8 gWorkSlot[];
 
 void BattleFx_FetchRectangleBlitters(s32 alternate, u32 *output)
 {
@@ -10,7 +10,7 @@ void BattleFx_FetchRectangleBlitters(s32 alternate, u32 *output)
         u32 value;
 
         BattleEffect_LoadWork(alternate = 46, 7, 7, 3, 2);
-        state = Data_03001e50;
+        state = gWorkSlot;
         value = *(u32 *)(state + 184);
         alternate = 47;
         output[0] = value;
@@ -21,7 +21,7 @@ void BattleFx_FetchRectangleBlitters(s32 alternate, u32 *output)
         u32 value;
 
         BattleEffect_LoadWork(alternate = 46, 7, 7, 7, 2);
-        state = Data_03001e50;
+        state = gWorkSlot;
         value = *(u32 *)(state + 184);
         alternate = 47;
         output[0] = value;

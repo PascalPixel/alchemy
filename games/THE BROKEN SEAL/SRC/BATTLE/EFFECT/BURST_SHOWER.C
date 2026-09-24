@@ -12,9 +12,9 @@
    the r3 bx bank. */
 typedef s32 (*CopyWords)(void *, const void *, s32);
 
-/* Heap-allocation cache: Data_03001e50[kind] holds kind's block address.
+/* Heap-allocation cache: gWorkSlot[kind] holds kind's block address.
    This owner reads kinds 39 (its work block), 40, 41, 46 and 47. */
-extern u8 Data_03001e50[];
+extern u8 gWorkSlot[];
 
 /* Value_ symbols carry a literal the reference loads from its pool rather
    than materializing with a mov. */
@@ -125,7 +125,7 @@ void BattleEffect_RunBurstShower(Efx *efx, s32 mode)
     s32 width;
     s32 height;
 
-    cache = (u32 *)(Data_03001e50 + 40 * 4);
+    cache = (u32 *)(gWorkSlot + 40 * 4);
     dst = (void *)cache[40 - 40];
     work = (struct BattleEffectWork *)cache[39 - 40];
     aux = (u8 *)cache[41 - 40];

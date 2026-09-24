@@ -7,11 +7,11 @@ struct BlendScriptState {
     u16 paused;
 };
 
-extern u8 *Data_03001e70;
+extern u8 *gMapWork;
 
 void DisplayBlend_RunScript(void)
 {
-    u8 *base = Data_03001e70;
+    u8 *base = gMapWork;
     struct BlendScriptState *state;
     u16 *cursor;
     u32 command;

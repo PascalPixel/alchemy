@@ -18,12 +18,12 @@ LAYOUT_OFFSET_GUARD(
     State_080a9cbc_objects_offset, struct State_080a9cbc, objects, 72);
 LAYOUT_SIZE_GUARD(State_080a9cbc_size, struct State_080a9cbc, 200);
 
-extern struct State_080a9cbc *Data_03001f2c;
+extern struct State_080a9cbc *gMenuWork;
 void UiIcon_PrepareObject(void *obj);
 
 void ItemMenu_PosCategory(void)
 {
-    struct State_080a9cbc *state = Data_03001f2c;
+    struct State_080a9cbc *state = gMenuWork;
     s32 value1 = 248;
     struct Object_080a9cbc **entry = state->objects;
     s32 value2 = 168;

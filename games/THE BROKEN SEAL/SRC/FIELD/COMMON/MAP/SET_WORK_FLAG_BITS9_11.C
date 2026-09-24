@@ -5,11 +5,11 @@ struct State_080108c4 {
     u16 flags;
 };
 
-extern struct State_080108c4 *volatile Data_03001e70;
+extern struct State_080108c4 *volatile gMapWork;
 
 void Map_SetWorkFlagBits9To11(u32 v)
 {
-    struct State_080108c4 *state = Data_03001e70;
+    struct State_080108c4 *state = gMapWork;
     u32 mask = v & 0xe00;
     u32 flags = state->flags;
 

@@ -1,6 +1,6 @@
 #include "MAP.H"
 
-extern struct MapState *Data_03001e70;
+extern struct MapState *gMapWork;
 
 s32 CheckMapPositionCellOccupied(struct WorldPosition *position)
 {
@@ -13,7 +13,7 @@ s32 CheckMapPositionCellOccupied(struct WorldPosition *position)
 
     x = position->x / 65536;
     y = (position->y - *(s32 *)((u8 *)position + 4)) / 65536;
-    work = Data_03001e70;
+    work = gMapWork;
     if (work == NULL)
         return 0;
     cell = (u8 *)work->layers[2].cells;

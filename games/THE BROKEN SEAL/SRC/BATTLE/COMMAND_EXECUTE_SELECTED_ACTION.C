@@ -1,6 +1,6 @@
 #include "TYPES.H"
 #include "BATTLE_EFFECT_RUNTIME.H"
-#define PARTY_STATE Data_02000240
+#define PARTY_STATE gGameState
 
 struct BattleActionDefinition { u8 pad00[9]; u8 pp_cost; u8 pad0a[2]; u8 target_mode; };
 struct BattleUnitRecord { u8 pad00[58]; s16 pp; };
@@ -15,7 +15,7 @@ struct BattleCommandRuntime {
  * battle_effect_runtime.h; the local view of the same storage is obtained by
  * a cast below.
  */
-extern struct BattleRuntime *Data_03001ebc;
+extern struct BattleRuntime *gEventWork;
 extern u8 Value_00000920;
 /*
  * Returns u8 * to match the prototype shared with the other callers; the raw
@@ -51,7 +51,7 @@ void EffectRuntime_StopCurrentObject(void); void BattleFx_ClearChildValueOnMisma
 s32 BattleCommand_ExecuteSelectedAction(u32 encodedAction)
 {
     s32 actionId = encodedAction & 0x3ff;
-    struct BattleCommandRuntime *runtime = (struct BattleCommandRuntime *)Data_03001ebc;
+    struct BattleCommandRuntime *runtime = (struct BattleCommandRuntime *)gEventWork;
     struct BattleTargetCandidate *primary;
     struct BattleTargetCandidate *secondary;
     struct BattleTargetCandidate *tertiary;

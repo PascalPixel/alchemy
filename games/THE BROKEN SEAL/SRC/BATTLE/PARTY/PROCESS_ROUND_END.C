@@ -16,7 +16,7 @@ struct BattleState {
     u16 palette_648;
 };
 
-extern struct BattleState *Data_03001e74;
+extern struct BattleState *gBattleWork;
 
 /* The two party groups in the order their round-end effects resolve. */
 struct BattleGroupOrder {
@@ -76,7 +76,7 @@ s32 Battle_ProcessRoundEnd(void)
     struct DjinnRecoveryEntry *timed_entry;
     struct DjinnRecoveryEntry *expired_entry;
 
-    work = Data_03001e74;
+    work = gBattleWork;
     sides = (work->two_sided != 0) + 1;
     for (side = 0; side < sides; side++) {
         list = &Trade_GetOfferStateFar(side)->list;
@@ -126,7 +126,7 @@ s32 Battle_ProcessRoundEnd(void)
             } while (i < list->count);
         }
     }
-    BattlePresentation_ConfigurePaletteFade(2, Data_03001e74->palette_648, 0);
+    BattlePresentation_ConfigurePaletteFade(2, gBattleWork->palette_648, 0);
     {
     s32 *group_list;
     struct BattleGroupOrder order = Data_080c35bc;

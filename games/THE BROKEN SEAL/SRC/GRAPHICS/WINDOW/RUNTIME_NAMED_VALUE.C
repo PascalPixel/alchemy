@@ -8,14 +8,14 @@ struct UiNamedValueWork {
     u16 flags[8];
 };
 
-extern u8 *Data_03001e8c;
+extern u8 *gWindowWork;
 
 void UiWork_ClearValueNameTables(void)
 {
     s32 no;
     struct UiNamedValueWork *work;
 
-    work = (struct UiNamedValueWork *)Data_03001e8c;
+    work = (struct UiNamedValueWork *)gWindowWork;
     no = 0;
 
     /* 対応する値と識別子は同じ順序で消去する。 */
@@ -28,7 +28,7 @@ void UiWork_ClearValueNameTables(void)
 
 void UiWork_PushValueSlot(u32 value, u32 flag)
 {
-    struct UiNamedValueWork *work = (struct UiNamedValueWork *)Data_03001e8c;
+    struct UiNamedValueWork *work = (struct UiNamedValueWork *)gWindowWork;
     u32 no = 0;
     u32 limit = 8;
 

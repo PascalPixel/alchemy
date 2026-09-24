@@ -11,7 +11,7 @@ void PsynergyMenu_RefreshOwnerPsynergy(s32 owner_id)
     struct PsynergyMenuState *menu;
     struct OwnerActionState *owner;
 
-    menu = Data_03001f2c;
+    menu = gMenuWork;
     owner = (struct OwnerActionState *)OwnerState_GetFar(owner_id);
     psynergies = menu->psynergies;
     menu->psynergy_count =

@@ -1,12 +1,12 @@
 #include "TYPES.H"
 
-extern u8 *Data_03001ebc;
+extern u8 *gEventWork;
 
 extern s32 Func_0808ae74();
 
 s32 EffectRuntime_LookupByTableEntry(u32 index)
 {
-    u8 *table = Data_03001ebc + 0x1a0;
+    u8 *table = gEventWork + 0x1a0;
 
     /* 第2引数は呼出元のr1を引き継ぐ特殊な呼出規約。 */
     return Func_0808ae74(table[index]);
@@ -48,8 +48,8 @@ unsigned char BattleFx_GetPhaseResult(s32 phase_index)
       weighted_row, *((u16 *)(((u8 *)entry_address) + 2)));
 }
 
-extern s16 Data_02000240[];
-#define PARTY_STATE Data_02000240
+extern s16 gGameState[];
+#define PARTY_STATE gGameState
 
 struct SceneInteractionEntry {
     s16 id;

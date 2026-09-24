@@ -10,12 +10,12 @@ struct State_080a9dc4 {
     struct Entry_080a9dc4 *entries[5];
 };
 
-extern struct State_080a9dc4 *Data_03001f2c;
+extern struct State_080a9dc4 *gMenuWork;
 extern void Resource_LoadByModeIntoSlotFar(s32, s32, s32, s32);
 
 s32 CharacterMenu_UpdateSelectionIcons(const u8 *enabled)
 {
-    struct State_080a9dc4 *state = Data_03001f2c;
+    struct State_080a9dc4 *state = gMenuWork;
     s32 index = 0;
 
     do {

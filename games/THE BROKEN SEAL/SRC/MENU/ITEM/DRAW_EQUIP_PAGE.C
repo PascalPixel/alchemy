@@ -47,7 +47,7 @@ struct ItemListWork {
     u8 mode;                                  /* 0x268 */
 };
 
-extern struct ItemListWork *Data_03001f2c;
+extern struct ItemListWork *gMenuWork;
 
 extern u8 Value_00000075;
 
@@ -69,7 +69,7 @@ s32 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct MenuResult *state)
     s32 base;
     s32 row;
 
-    menu = Data_03001f2c;
+    menu = gMenuWork;
     base = state->page * 5;
     state->selected_index = base + state->row;
     RenderOutput_RedrawSavedRectFar((s32)menu->info_window);

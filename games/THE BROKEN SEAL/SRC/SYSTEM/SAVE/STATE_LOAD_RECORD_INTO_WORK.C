@@ -16,8 +16,8 @@ extern char Value_0000000a;
 extern char Value_0000000c;
 extern char Data_02000000;
 extern s16 Data_02002004;
-extern struct State_080208e4 Data_02000240;
-#define PARTY_STATE Data_02000240
+extern struct State_080208e4 gGameState;
+#define PARTY_STATE gGameState
 extern s32 Data_03001c9c;
 extern u8 Data_03001d08;
 extern s16 Data_03001d24;

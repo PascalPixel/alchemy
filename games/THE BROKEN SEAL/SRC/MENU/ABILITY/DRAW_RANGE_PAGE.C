@@ -46,7 +46,7 @@ struct PsynergyListWork {
     u8 mode;                                  /* 0x268 */
 };
 
-extern struct PsynergyListWork *Data_03001f2c;
+extern struct PsynergyListWork *gMenuWork;
 
 extern u8 Value_0000053a;
 extern u8 Value_00000b13;
@@ -76,7 +76,7 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused, struct MenuResult *state)
     s32 row;
     s32 base;
 
-    menu = Data_03001f2c;
+    menu = gMenuWork;
     state->selected_index = state->page * 5 + state->row;
     RenderOutput_RedrawSavedRectFar((s32)menu->info_window);
     WaitFrames(1);

@@ -8,7 +8,7 @@ struct MapTileWindow_08010d48 {
     u16 tiles[16][16];
 };
 
-extern struct MapTileWindow_08010d48 *Data_03001e70;
+extern struct MapTileWindow_08010d48 *gMapWork;
 
 s32 Func_080108e4(s32 layer, s32 x, s32 y, s32 tile, s32 update);
 
@@ -20,7 +20,7 @@ void Map_SetWindowCellTile(s32 x, s32 y, s32 px, s32 py)
     s32 origin_y;
     s32 tile;
 
-    window = Data_03001e70;
+    window = gMapWork;
     origin_x = 0;
     origin_y = 0;
     position = window->position;

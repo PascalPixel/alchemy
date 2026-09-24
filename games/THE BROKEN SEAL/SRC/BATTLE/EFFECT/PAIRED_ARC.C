@@ -10,9 +10,9 @@ struct BattleEffect16GlobalState {
     u32 active_object_id;
 };
 
-extern struct BattleEffect16GlobalState Data_02000240;
-#define PARTY_STATE Data_02000240
-extern u32 Data_03001e40;
+extern struct BattleEffect16GlobalState gGameState;
+#define PARTY_STATE gGameState
+extern u32 gFrameCount;
 extern u8 Value_00000001;
 s32 UnsignedModulo(u32, s32);
 s32 Modulo(s32, s32);
@@ -28,7 +28,7 @@ void BattleFx_UpdateEffect16State(void)
 
     effect_state = *(u8 **)(ObjectTable_Get(PARTY_STATE.active_object_id) + 0x50);
     child_state = *(u8 **)(effect_state + 0x28);
-    phase = UnsignedModulo(Data_03001e40, 5);
+    phase = UnsignedModulo(gFrameCount, 5);
     if (phase == 0) {
         state_byte = effect_state + 0x25;
         *state_byte = 1;

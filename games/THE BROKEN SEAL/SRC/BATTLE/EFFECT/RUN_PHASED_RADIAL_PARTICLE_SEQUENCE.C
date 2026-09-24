@@ -2,7 +2,7 @@
 #include "FIXED_MATH.H"
 
 
-extern s32 Data_02000240[];
+extern s32 gGameState[];
 void Motion_SetVarCbAndRefresh(s32, s32);
 void ObjectGroup_SetChildValueUnlessFifteenFar(s32, s32);
 
@@ -37,7 +37,7 @@ void BattleEffect_RunPhasedRadialParticleSequence(s32 arg)
     s8 *slot_state;
 
     source_object = Object_GetById(arg);
-    target_object = Object_GetById(Data_02000240[125]);
+    target_object = Object_GetById(gGameState[125]);
     if (source_object == NULL)
         return;
 
@@ -84,9 +84,9 @@ void BattleEffect_RunPhasedRadialParticleSequence(s32 arg)
     } while (remaining >= 0);
 
     WaitFrames(60);
-    Motion_ArmCb(Data_02000240[125], 0x4000, 0);
+    Motion_ArmCb(gGameState[125], 0x4000, 0);
     WaitFrames(20);
-    Object_SetMode(Object_GetById(Data_02000240[125]), 28);
+    Object_SetMode(Object_GetById(gGameState[125]), 28);
     {
         s32 next_state;
 

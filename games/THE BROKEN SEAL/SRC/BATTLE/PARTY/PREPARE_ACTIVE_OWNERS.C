@@ -4,7 +4,7 @@
 #include "PARTY_STATE.H"
 
 
-extern struct PartyState Data_02000240;
+extern struct PartyState gGameState;
 
 s32 Party_CountActiveOwnersFar(void);
 struct BattleUnit *Runtime_GetObject(s32 unit_id);

@@ -17,13 +17,13 @@ struct BattleActorDefinition {
     u8 unavailable;
 };
 
-extern struct SummonChargeState *Data_03001e74;
+extern struct SummonChargeState *gBattleWork;
 
 struct BattleActorDefinition *Owner_GetStateFar(s32 actor_id);
 
 s32 Summon_ReleaseCharge(s32 actor_id)
 {
-    struct SummonChargeState *state = Data_03001e74;
+    struct SummonChargeState *state = gBattleWork;
     struct BattleActorDefinition *actor;
     s32 count = state->count;
     s32 index;

@@ -12,8 +12,8 @@ void UiWork_Finalize(struct Work *work, s32 release);
 s32 UiWork_IsIdle(struct Work *work);
 void WaitFrames(s32 frames);
 
-extern s32 Data_02000240[];
-#define PARTY_STATE Data_02000240
+extern s32 gGameState[];
+#define PARTY_STATE gGameState
 
 
 /* Shows message no in a window centred across the screen and waits until it

@@ -7,10 +7,10 @@
 
 typedef void (*WordCopy)(void *, const void *, s32);
 
-/* Heap-allocation cache: Data_03001e50[kind] holds kind's block address.
+/* Heap-allocation cache: gWorkSlot[kind] holds kind's block address.
    This owner reads kinds 39 (its work block), 40 (the draw destination)
    and 46 (the rectangle entry BattleEffect_LoadWork loads), plus kind 44. */
-extern void *Data_03001e50[];
+extern void *gWorkSlot[];
 
 /* Two IWRAM cells the reference addresses through one base register
    plus a field offset, so each is named as an aggregate rather than
@@ -239,7 +239,7 @@ s32 BattleEffect_RunParticleStreams(s32 arg0, s32 arg1)
 
 
 
-    cursor = &Data_03001e50[40];
+    cursor = &gWorkSlot[40];
     sp4C = arg1;
     sp3C = &particle_work;
     draw_destination = *cursor;
@@ -390,7 +390,7 @@ loop_33:
     (*(s16 *)((u8 *)((void *)0x04000050) + (2))) = 0x1010;
     sp38 = (s32) Data_03001ad0.unk04;
     sp34 = (s32) Data_03001ad0.unk06;
-    display = &Data_03001e50[44];
+    display = &gWorkSlot[44];
     sp30 = display[0];
     Data_03001ad0.unk04 = 0U;
     Data_03001ad0.unk06 = 0x20U;
@@ -637,7 +637,7 @@ loop_84:
     (*(s16 *)((u8 *)((void *)0x04000020) + (0x32))) = 0x1010;
     (*(s16 *)((u8 *)((void *)0x04000020) + (-0x14))) = 0x2784;
     BattleEffect_LoadWork(0x2E, 7, 7, 3, 2);
-    draw_rectangle = (DrawRectangle) Data_03001e50[46];
+    draw_rectangle = (DrawRectangle) gWorkSlot[46];
     Resource_LoadAndDecompress(0xc0, *sp3C, 1, 0);
     var_r8_1221 = 0;
     var_r6_1223 = 0;

@@ -14,7 +14,7 @@ struct MenuSelectionState {
     s16 resource_base;
 };
 
-extern struct MenuSelectionState *Data_03001f38;
+extern struct MenuSelectionState *gMenuSelectWork;
 extern u8 Data_080373ef[];
 extern u8 Data_0000001f;
 
@@ -43,7 +43,7 @@ s32 Menu_SelectResource(s32 start, s32 goal)
     const u8 *tbl;
     struct MenuSelectionState *state;
 
-    state = Data_03001f38;
+    state = gMenuSelectWork;
     step = 1;
     delay = 12;
     state->selection = (s16)start;

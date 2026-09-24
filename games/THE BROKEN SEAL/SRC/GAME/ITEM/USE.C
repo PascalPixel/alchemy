@@ -19,7 +19,7 @@ struct ItemUseWork {
     u8 entry_count;
 };
 
-extern struct ItemUseWork *Data_03001f2c;
+extern struct ItemUseWork *gMenuWork;
 
 struct ItemOwner *Runtime_GetObject(s32);
 struct ItemData *Item_GetData(s32);
@@ -36,7 +36,7 @@ s32 Item_Use(s32 slot, s32 owner_id, s32 target_id)
     struct ItemData *item;
 
     owner = Runtime_GetObject(owner_id);
-    work = Data_03001f2c;
+    work = gMenuWork;
     item_id = 0x1ff & owner->items[slot];
     item = Item_GetData(item_id);
     result = BattleEffect_ApplyToTargets(

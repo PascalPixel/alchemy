@@ -34,8 +34,8 @@ struct MenuCursorWork {
 
 extern u8 Data_080af294[];
 extern u8 Data_080af29d[];
-extern volatile u32 Data_03001e40;
-extern struct MenuCursorWork *Data_03001f2c;
+extern volatile u32 gFrameCount;
+extern struct MenuCursorWork *gMenuWork;
 
 
 /* Places the menu cursor at the given pixel offset from the top-left tile of
@@ -43,12 +43,12 @@ extern struct MenuCursorWork *Data_03001f2c;
  * the frame counter. */
 void UiMenu_PositionCursor(s32 x_offset, s32 y_offset)
 {
-    struct MenuCursorWork *work = Data_03001f2c;
+    struct MenuCursorWork *work = gMenuWork;
 
     work->cursor->attributes.x = work->cursor->x =
-        Data_080af294[(Data_03001e40 >> 1) & 7] + x_offset
+        Data_080af294[(gFrameCount >> 1) & 7] + x_offset
         + work->window->x * 8 + 8;
     work->cursor->attributes.y = work->cursor->y =
-        Data_080af29d[(Data_03001e40 >> 1) & 7] + y_offset
+        Data_080af29d[(gFrameCount >> 1) & 7] + y_offset
         + work->window->y * 8 + 8;
 }

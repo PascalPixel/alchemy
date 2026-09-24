@@ -1,5 +1,5 @@
 #include "PSYNERGY_MENU.H"
-#define PARTY_STATE Data_02000240
+#define PARTY_STATE gGameState
 
 s32 PsynergyMenu_SetShortcut(s32 owner, s32 psynergy, s32 shortcut)
 {

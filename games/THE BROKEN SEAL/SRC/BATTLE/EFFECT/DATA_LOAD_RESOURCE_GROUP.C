@@ -5,8 +5,8 @@ struct Work {
     s16 index;
 };
 
-extern struct Work Data_02000240;
-#define PARTY_STATE Data_02000240
+extern struct Work gGameState;
+#define PARTY_STATE gGameState
 extern u8 Data_0809f1a8[];
 extern u8 Data_02008000[];
 

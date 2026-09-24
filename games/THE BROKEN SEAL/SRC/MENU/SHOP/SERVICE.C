@@ -10,7 +10,7 @@ struct ShopServiceWork {
 };
 
 u8 *Runtime_GetObject(s32);
-extern struct ShopServiceWork *Data_03001f2c;
+extern struct ShopServiceWork *gMenuWork;
 s32 Shop_CanServe(s32 selection, s32 variant);
 extern u8 Value_00000d24;
 extern u8 Value_00000d2e;
@@ -56,7 +56,7 @@ s32 Shop_CanServe(s32 entry_no, s32 kind)
 
 s32 Shop_CountUnits(void)
 {
-    u8 *work = (u8 *)Data_03001f2c;
+    u8 *work = (u8 *)gMenuWork;
     u8 *base;
     s32 active = 0;
     s32 variant = (s8)work[0x3AA];
@@ -79,7 +79,7 @@ s32 Shop_CountUnits(void)
 
 s32 Shop_MsgByMode(s32 value)
 {
-    s8 mode = Data_03001f2c->mode;
+    s8 mode = gMenuWork->mode;
 
     if (mode == 1) {
         value += (u32)&Value_00000d2e - (u32)&Value_00000d24;
@@ -97,7 +97,7 @@ void UiMessage_ShowResolvedAndWait(s32 value)
 {
     s32 no;
 
-    no = BattleFx_GetResourceIdFar(Data_03001f2c->value);
+    no = BattleFx_GetResourceIdFar(gMenuWork->value);
     UiWork_FinalizePending();
     value = Shop_MsgByMode(value);
     UiWork_Create(value, 5, 0, (no << 0x10) | 0x22);
@@ -114,7 +114,7 @@ void UiMessage_ShowResolvedAndRestoreState(s32 arg0)
     s32 value;
     u8 saved;
 
-    state = Data_03001f2c;
+    state = gMenuWork;
     slot = &state->mode_state;
     saved = *(u8 *)((u8 *)*slot + 5);
     value = BattleFx_GetResourceIdFar(state->value);

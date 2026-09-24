@@ -24,7 +24,7 @@ struct ResourceBuffer_0801c188 {
     void *resource;
 };
 
-extern u8 *Data_03001e98;
+extern u8 *gResQueueWork;
 extern u8 Value_000000f1;
 
 struct SelectionNode_0801c188 *NodeChain_GetNodeAtCount(void *state);
@@ -36,7 +36,7 @@ void Runtime_ReleaseHeapBlock(s32 owner);
 
 void Menu_LoadSelectedResource(void)
 {
-    u8 *state = Data_03001e98;
+    u8 *state = gResQueueWork;
     struct SelectionNode_0801c188 *selection = NodeChain_GetNodeAtCount(state);
     struct TransferState_0801c188 *transfer;
     struct ResourceBuffer_0801c188 *buffer;

@@ -16,7 +16,7 @@ struct DisplayTransitionWindow {
     u16 second_line;
 };
 
-extern volatile u32 Data_03001e40;
+extern volatile u32 gFrameCount;
 
 typedef s32 (*SignedDivide)(s32, s32);
 
@@ -60,7 +60,7 @@ void DisplayTransition_UpdateFromCentre(void)
     if (value > 79) {
         window->first_line = 200;
         window->second_line = 250;
-    } else if (value != 0 && (Data_03001e40 & 1)) {
+    } else if (value != 0 && (gFrameCount & 1)) {
         window->first_line = value + 80;
         window->second_line = 80 - value;
     } else {

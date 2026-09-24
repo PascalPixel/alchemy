@@ -11,7 +11,7 @@ extern s32 Func_080a9c18(void *);
 
 void ItemMenu_DrawCategory(s32 window, s32 owner_id, s32 mode)
 {
-    struct InventoryMenuState *menu = Data_03001f2c;
+    struct InventoryMenuState *menu = gMenuWork;
     u8 *items;
 
     OwnerState_GetFar(owner_id);

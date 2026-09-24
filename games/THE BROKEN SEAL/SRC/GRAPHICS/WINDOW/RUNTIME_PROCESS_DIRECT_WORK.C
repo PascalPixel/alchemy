@@ -20,7 +20,7 @@ struct Work {
     s16 previous_height;
 };
 
-extern u8 *Data_03001e8c;
+extern u8 *gWindowWork;
 
 void UiWindow_UpdateInterpolatedGeometry(void *window, s32 save_position);
 void UiWindow_EraseBorderRect(s32 x, s32 y, u32 width, u32 height);
@@ -28,7 +28,7 @@ void UiWork_DrawByAttributes(void *arg0);
 
 void UiWork_ProcessDirectWork(void)
 {
-    u8 *base = Data_03001e8c;
+    u8 *base = gWindowWork;
     struct Work *work = (struct Work *)(base + 0x500);
     s32 index = 0;
     u8 dirty;

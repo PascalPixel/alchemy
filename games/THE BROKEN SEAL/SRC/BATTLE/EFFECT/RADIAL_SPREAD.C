@@ -33,8 +33,8 @@ struct PositionSource_08096048 {
     struct Output_08096048 position;
 };
 
-extern s32 Data_02000240[];
-#define PARTY_STATE Data_02000240
+extern s32 gGameState[];
+#define PARTY_STATE gGameState
 extern u32 Data_03001800;
 
 s32 Object_GetById(u32);

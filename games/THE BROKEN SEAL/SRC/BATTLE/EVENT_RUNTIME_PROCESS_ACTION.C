@@ -1,8 +1,8 @@
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
 
-extern u8 Data_02000240;
-#define PARTY_STATE Data_02000240
+extern u8 gGameState;
+#define PARTY_STATE gGameState
 
 s32 Func_08092c40(s32);
 s32 Inventory_PromptAndSetObjectMode(void *, s32);

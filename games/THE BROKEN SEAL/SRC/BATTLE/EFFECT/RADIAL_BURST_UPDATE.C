@@ -37,7 +37,7 @@ struct RadialBurstEffect {
     u8 enabled;
 };
 
-extern struct EffectRuntime *Data_03001f30;
+extern struct EffectRuntime *gEffectWork;
 
 s32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
@@ -49,7 +49,7 @@ void BattleFx_ClearOwnedSlot(struct RadialBurstEffect *effect);
 
 void UpdateRadialBurstEffect(struct RadialBurstEffect *effect)
 {
-    struct EffectRuntime *runtime = Data_03001f30;
+    struct EffectRuntime *runtime = gEffectWork;
     struct EffectPosition value;
     s32 state;
 

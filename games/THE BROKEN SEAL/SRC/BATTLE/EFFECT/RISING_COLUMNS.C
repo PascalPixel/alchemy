@@ -13,7 +13,7 @@ typedef struct Column {
     s32 x;
     s32 unused[6];
 } Column;
-extern u8 Data_03001e50[];
+extern u8 gWorkSlot[];
 extern s8 Data_080eeb96[];
 extern u8 Value_000000a6;
 void Func_080cd594(s32);
@@ -40,7 +40,7 @@ void BattleEffect_RunRisingColumns(struct BattleEffectArgument *effect)
     s32 i, frame, cell, height, offset, middle;
     Column *column;
 
-    cache = (u32 *)(Data_03001e50 + 39 * 4);
+    cache = (u32 *)(gWorkSlot + 39 * 4);
     entry = cache;
     work = (struct BattleEffectWork *)*entry++;
     dst = (void *)*entry;

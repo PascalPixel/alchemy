@@ -10,8 +10,8 @@ struct ResultWork {
     u16 request;
 };
 
-extern struct ResultWork Data_02000240;
-#define PARTY_STATE Data_02000240
+extern struct ResultWork gGameState;
+#define PARTY_STATE gGameState
 extern u8 Value_00000021;
 u16 BattleFx_GetWeightedResult(s32 arg0, s32 arg1);
 s16 BattleFx_GetPhaseResult(s32 value);
@@ -23,7 +23,7 @@ void BattleFx_SetWeightedResult(s32 arg0, s32 arg1)
 {
     register s32 first = arg0;
     register s32 second = arg1;
-    register struct EventRuntime *runtime = Data_03001ebc;
+    register struct EventRuntime *runtime = gEventWork;
 
     runtime->value_17c = BattleFx_GetWeightedResult(first, second);
     if (first == 98 && second == 0)
@@ -39,7 +39,7 @@ void BattleFx_SetPhaseRequest(s32 flags, s32 value)
     struct ResultWork *shared;
     s32 high;
 
-    state = Data_03001ebc;
+    state = gEventWork;
     high = flags & 0x800;
     flags &= 0xff;
 

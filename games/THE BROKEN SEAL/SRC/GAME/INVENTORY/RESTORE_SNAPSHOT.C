@@ -1,7 +1,7 @@
 #include "TYPES.H"
 #include "OWNER_STATE.H"
 #include "PSYNERGY_MENU.H"
-#define PARTY_STATE Data_02000240
+#define PARTY_STATE gGameState
 
 #define INVENTORY_SNAPSHOT_SENTINEL 0x6774
 

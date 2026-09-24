@@ -56,7 +56,7 @@ LAYOUT_OFFSET_GUARD(
     flags,
     0x220);
 
-extern struct MenuObjectControl *Data_03001e68;
+extern struct MenuObjectControl *gMenuCtrlWork;
 
 struct CharacterSelectorState *Runtime_AllocateHeapBlock(s32, s32);
 void Runtime_ReleaseHeapBlock(s32);
@@ -81,7 +81,7 @@ s32 Menu_OpenCharacterSelector(void)
     s32 result;
     s32 index;
 
-    Data_03001e68->suspended = 1;
+    gMenuCtrlWork->suspended = 1;
     Func_08015408(0, 0, 30, 20);
     WaitFrames(1);
     UiWindow_InitializeWork(0);
@@ -98,7 +98,7 @@ s32 Menu_OpenCharacterSelector(void)
 
     RenderOutput_ClearListFar(state->screen_handle);
     InventoryMenu_CloseWindows();
-    Data_03001e68->suspended = 0;
+    gMenuCtrlWork->suspended = 0;
     WaitFrames(1);
     Runtime_ReleaseHeapBlock(55);
     return result;

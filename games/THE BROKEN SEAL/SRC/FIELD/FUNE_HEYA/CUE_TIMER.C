@@ -7,7 +7,6 @@
  * to 80.
  */
 
-#define Scene_UpdateCueTimer Func_02005c48
 
 extern void Func_0200c0ee();
 extern s32 Func_0200c09c();

@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_08004a94
+	.global SceneTransform_ResetMatrix
 	.thumb_func
-Func_08004a94:
+SceneTransform_ResetMatrix:
 	ldr	r3, [pc, #20]
 	adds	r0, r3, #0
 	movs	r1, #128

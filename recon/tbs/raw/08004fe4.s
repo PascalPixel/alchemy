@@ -4,9 +4,9 @@
 	.set sub_080072f0, 0x080072f0
 	.set sub_080072f4, 0x080072f4
 	.set sub_08007310, 0x08007310
-	.global Func_08004fe4
+	.global Graphics_PrepareTransfer
 	.thumb_func
-Func_08004fe4:
+Graphics_PrepareTransfer:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl

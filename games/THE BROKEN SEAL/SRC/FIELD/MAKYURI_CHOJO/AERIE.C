@@ -31,36 +31,6 @@ extern void Func_02003208();
 extern void Func_080000c0();
 extern s32 Func_080091e0();
 extern void Func_0808a010();
-extern void Func_0808a018();
-extern void Func_0808a020();
-extern s32 Func_0808a070();
-extern u8 *Func_0808a080();
-extern void Func_0808a090();
-extern void Func_0808a0c0();
-extern void Func_0808a0c8();
-extern void Func_0808a0d0();
-extern void Func_0808a0e8();
-extern void Func_0808a0f0();
-extern void Func_0808a100();
-extern s32 Func_0808a110();
-extern void Func_0808a130();
-extern void Func_0808a138();
-extern void Func_0808a150();
-extern void Func_0808a170();
-extern void Func_0808a178();
-extern void Func_0808a180();
-extern void Func_0808a188();
-extern void Func_0808a1b8();
-extern void Func_0808a1e0();
-extern void Func_0808a1e8();
-extern void Func_0808a1f0();
-extern void Func_0808a208();
-extern void Func_0808a210();
-extern void Func_0808a218();
-extern u8 *Func_0808a228();
-extern void Func_0808a250();
-extern void Func_0808a260();
-extern void Func_080f9010();
 
 /*
  * Loader-relocated ROM calls: each name spells the pre-relocation call word
@@ -522,8 +492,6 @@ static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
     return f(a0, a1, a2);
 }
 
-
-
 #include "TYPES.H"
 
 /* Ordinary C field access retained from the reviewed disassembly dataflow. */
@@ -544,47 +512,12 @@ extern u8 *Data_03001e70;
  * does with its per-site targets.
  */
 
-extern void Func_02002f18();
-extern void Func_02003060();
 extern void Func_02003208();
-extern void Func_02003324();
 extern void Func_080000c0();
-extern void Func_08009128();
-extern void Func_08009180();
 extern s32 Func_080091e0();
-extern void Func_080770c8();
 extern void Func_0808a010();
-extern void Func_020036d8();
-extern void Func_020036e0();
-extern s32 Func_020036e8();
-extern u8 *Func_020036f0();
-extern void Func_020036f8();
 extern void Func_02003710();
-extern void Func_02003718();
-extern void Func_02003720();
 extern void Func_02003728();
-extern void Func_02003730();
-extern void Func_02003738();
-extern void Func_02003740();
-extern void Func_02003748();
-extern void Func_02003750();
-extern void Func_02003758();
-extern void Func_02003768();
-extern s32 Func_02003770();
-extern void Func_02003778();
-extern void Func_02003780();
-extern void Func_02003788();
-extern void Func_02003790();
-extern void Func_02003798();
-extern void Func_020037a0();
-extern void Func_020037a8();
-extern void Func_020037b0();
-extern void Func_020037b8();
-extern u8 *Func_020037c0();
-extern void Func_020037f8();
-extern void Func_02003800();
-extern void Func_02003838();
-extern void Func_02003840();
 
 /* Loader-relocated ROM calls: each site names the pre-relocation call word the image holds. */
 void Func_020051ce();
@@ -1088,28 +1021,10 @@ void Func_02006496();
 void Func_0200649a();
 void Func_020064a4();
 
-
-
-
-
-
-
-
-
-
-
 static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
 {
     f(a0, a1, a2, a3, a4, a5);
 }
-
-
-
-
-
-
-
-
 
 #include "TYPES.H"
 
@@ -1124,7 +1039,6 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
 #define SetOverlayObjectMode Func_0200376c
 #define SetOverlayObjectSlot Func_02003844
 void Effect_Move(union Slot *object);
-#define OverlayObject_ApplyVelocity Effect_Move
 
 #include "OVERLAY_OBJECT.H"
 #include "CREATE_CONFIGURED_OVERLAY_OBJECT.H"
@@ -1147,23 +1061,11 @@ void Func_02003710(void *, s32);
 void Func_02003728(void *, s32);
 void Func_020037e8(void *, s32);
 
-
-
-
-
-
-
-
-
 #include "TYPES.H"
 
 extern u8 Data_0200b938[];
 
-
-
 #include "TYPES.H"
-
-
 
 #include "TYPES.H"
 
@@ -1205,16 +1107,6 @@ void Func_02006c82(void);
 /* Contiguous unnamed leaf-owner run for resource_39d. */
 
 /* Configure and publish the scene's presentation layer. */
-
-
-
-
-
-
-
-
-
-
 
 #include "TYPES.H"
 
@@ -1462,25 +1354,6 @@ void Func_020066d4();
  * into a pseudo that the compiler then shares with later uses in the block.
  * A value-returning call also sets r0 last of its arguments. */
 
-
-
-
-
-
-
-
-/* The scene step counter at 0x1d8 of the shared scene work record. */
-static __inline__ void bump_step(s32 amount)
-{
-    u8 *work = Data_03001ebc;
-
-    *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
-}
-
-
-
-
-
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
  * into a pseudo that the compiler then shares with later uses in the block.
@@ -1494,18 +1367,9 @@ static __inline__ void Call3_02002eb8(void (*f)(), s32 a0, s32 a1, s32 a2)
  * drives handles 1-3 through a sequence of timed calls, some of which use
  * the two s16 fields read back from an actor slot record. */
 
-
-
-
-
-
-
-
 #include "TYPES.H"
 
 typedef s32(*IwramIntegerSquareRoot)(s32);
-
-
 
 #include "TYPES.H"
 
@@ -1525,14 +1389,10 @@ typedef struct {
 Actor *Func_02003fd0(s32 actor_id);
 s32 Func_02001196(u8 *a, u8 *b);
 
-
-
 #include "TYPES.H"
 
 s32 Func_02006aca();
 s32 Func_02006ad8();
-
-
 
 void SetOverlayObjectRecordField1(struct OverlayObject *object, s32 value)
 {

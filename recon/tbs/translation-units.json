@@ -68721,47 +68721,7 @@
           "address": "0x0200b760",
           "kind": "thumb"
         },
-        "Func_020037f4": {
-          "address": "0x0200b670",
-          "kind": "thumb"
-        },
-        "Func_020037fe": {
-          "address": "0x0200b660",
-          "kind": "thumb"
-        },
-        "Func_02003818": {
-          "address": "0x0200b668",
-          "kind": "thumb"
-        },
         "Func_02003844": {
-          "address": "0x0200b760",
-          "kind": "thumb"
-        },
-        "Func_0200384e": {
-          "address": "0x0200b6f0",
-          "kind": "thumb"
-        },
-        "Func_020038a4": {
-          "address": "0x0200b628",
-          "kind": "thumb"
-        },
-        "Func_020038bc": {
-          "address": "0x0200b628",
-          "kind": "thumb"
-        },
-        "Func_020038ca": {
-          "address": "0x0200b628",
-          "kind": "thumb"
-        },
-        "Func_02003918": {
-          "address": "0x0200b660",
-          "kind": "thumb"
-        },
-        "Func_02003928": {
-          "address": "0x0200b668",
-          "kind": "thumb"
-        },
-        "Func_0200397a": {
           "address": "0x0200b760",
           "kind": "thumb"
         },

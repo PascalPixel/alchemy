@@ -1,6 +1,3 @@
-/* NONMATCHING: 120 of 120 bytes, 3 halfword edits (2026-09-24). Hand-written from the
- * resolved jump-table disassembly as a single-overlay unit binding Engine_* at
- * their import veneers. Remaining: 3 halfwords: the reference advances the alpha pointer between loading and storing the step, and sets r0 = 8 after the store */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
@@ -12,7 +9,8 @@ struct Workspace {
 extern struct Workspace *gWorkspace;
 extern const u16 TorebiIzumi_AlphaSteps[];
 
-void Local_02000880(void)
+/* Lifts the workspace actor sixteen pixels with a cue, then steps the blend alpha through its eight-entry table. */
+void TorebiIzumi_RiseAndFadeIn(void)
 {
     u8 *p = (u8 *)gWorkspace;
     s32 i;
@@ -32,6 +30,8 @@ void Local_02000880(void)
         }
         *(volatile u16 *)0x04000052 = *(u16 *)p;
         p += 2;
+        /* FAKEMATCH: the empty do/while keeps the step pointer's advance ahead of the wait's argument. */
+        do { } while (0);
         Engine_TaskWait(8);
     }
 }

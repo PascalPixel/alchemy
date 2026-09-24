@@ -40533,14 +40533,6 @@
           "address": "0x020088c0",
           "kind": "thumb"
         },
-        "Func_02001564": {
-          "address": "0x02008abc",
-          "kind": "thumb"
-        },
-        "Func_02001614": {
-          "address": "0x02008b24",
-          "kind": "thumb"
-        },
         "Func_0200164e": {
           "address": "0x02008b8c",
           "kind": "thumb"
@@ -40551,10 +40543,6 @@
         },
         "Func_020016d2": {
           "address": "0x02008bcc",
-          "kind": "thumb"
-        },
-        "Func_0200173a": {
-          "address": "0x02008cb4",
           "kind": "thumb"
         },
         "Func_02001aec": {

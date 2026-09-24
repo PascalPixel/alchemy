@@ -1,32 +1,49 @@
+/* Draft, not exact (2026-09-24): 69 differing halfwords, 160 of 160 bytes.
+   Rewritten on a menu struct (entries of 20 bytes, count/width/height/row
+   at 0x8e..0x94). Residual: the reference loads the count into r6 before
+   the Math_Div call and uses it for the first loop test (later tests
+   reread menu->count through r9); here the count is reread after the
+   call, which shifts the registers of the loop. */
 #include "TYPES.H"
 
-extern u8 Data_03001f38;
+struct CenterEntry {
+    u8 pad00[12];
+    s16 x;
+    s16 y;
+    u8 pad10[4];
+};
 
-s32 Func_080022ec(s32, s32);
-s32 Func_080162d4(s32, s32, s32, s32, s32);
+struct CenterMenu {
+    struct CenterEntry entries[6];
+    u8 pad78[0x8e - 0x78];
+    s16 count;
+    s16 width;
+    s16 height;
+    s16 row;
+};
 
-void Func_08028808(s32 p1, s32 p2, s32 p3)
+extern struct CenterMenu *Data_03001f38;
+
+s32 Func_080022ec(s32 numerator, s32 denominator);
+s32 Func_080162d4(s32 x, s32 y, s32 width, s32 height, s32 mode);
+
+void Menu_CenterResourceEntries(s32 row, s32 width, s32 height)
 {
-    u8 *state = *(u8 **)&Data_03001f38;
-    s32 count;
-    s32 width;
+    struct CenterMenu *menu = Data_03001f38;
     s32 x;
     s32 i;
+    s32 count;
+    s32 half;
 
-    *(u16 *)(state + 144) = (u16)(p2 + 2);
-    *(u16 *)(state + 146) = (u16)p3;
-    *(u16 *)(state + 148) = (u16)p1;
-
-    count = *(s16 *)(state + 142);
-    width = Func_080022ec(*(s16 *)(state + 144) * 2, 3);
-    x = 15 - (count * 3 + width) / 2;
-
-    for (i = 0; i < count; i++) {
-        *(u16 *)(state + i * 20 + 12) = (u16)(x << 3);
-        *(u16 *)(state + i * 20 + 14) = (u16)(p1 << 3);
+    menu->width = width + 2;
+    menu->height = height;
+    menu->row = row;
+    count = menu->count;
+    x = 15 - (count * 3 + Func_080022ec(menu->width * 2, 3)) / 2;
+    for (i = 0; i < menu->count; i++) {
+        menu->entries[i].x = x * 8;
+        menu->entries[i].y = row * 8;
         x += 3;
     }
-
-    *(s32 *)(state + 120) =
-        Func_080162d4(x, p1, *(s16 *)(state + 144), 3, 2);
+    *(s32 *)((u8 *)menu + 120) = Func_080162d4(x, row, menu->width, 3, 2);
 }

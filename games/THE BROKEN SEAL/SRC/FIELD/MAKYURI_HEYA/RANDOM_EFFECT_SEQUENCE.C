@@ -1,16 +1,13 @@
 #include "MAKYURI_HEYA.H"
 
-#define Scene_Begin Func_0200dab4
-#define Scene_Wait Func_0200daac
-#define Map_CopyCellsTo Func_0200da04
+#define Map_CopyCellsTo Engine_MapCopyCellsTo
 #define Random_Next Func_0200d994
-#define Audio_PlayCue Func_0200dc64
+#define Audio_PlayCue Engine_AudioPlayCue
 #define Effect_Spawn Func_0200813c
 #define Camera_SetSpeed Engine_WorkSetValuesIfNonNegative
-#define SceneFlag_IsSet Func_0200da84
 
-void Scene_Begin();
-void Scene_Wait();
+void Engine_EventBegin();
+void Engine_EventWait();
 void Func_0200ae08();
 void Func_0200d98c();
 void Map_CopyCellsTo();
@@ -19,13 +16,8 @@ u32 Random_Next(void);
 void Effect_Spawn(s32, s32, s32, s32, s32, s32, s32, void *);
 void Camera_SetSpeed();
 void Func_0200dc5c();
-s32 SceneFlag_IsSet(s32);
-void Func_0200dadc();
+s32 Engine_GameFlagIsSet(s32);
 void Func_0200ae6c();
-void Func_0200dabc();
-void Func_0200db24();
-void Func_0200db1c();
-void Func_0200dba4();
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
@@ -81,12 +73,12 @@ void FieldScene_RunRandomEffectActorSequence(void)
     s32 velocity_x;
     struct ConfiguredEffectOptions options;
 
-    Scene_Begin();
-    Scene_Wait(20);
+    Event_Begin();
+    Event_Wait(20);
     Func_0200ae08();
     Call1(Func_0200d98c, 0x200adcd);
     Call6(Map_CopyCellsTo, 45, 77, 45, 73, 9, 4);
-    Scene_Wait(30);
+    Event_Wait(30);
     effect = &options;
     effect->mode_bits = 1;
     effect->mode = 5;
@@ -111,10 +103,10 @@ void FieldScene_RunRandomEffectActorSequence(void)
         z <<= 16;
         z += 0x880000;
         Effect_Spawn(x, 0, z, 0, 0, 0, 0x330001, effect);
-        Call1((void (*)())Scene_Wait, 2);
+        Call1((void (*)())Engine_EventWait, 2);
         phase = (phase + 1);
     } while ((u32)phase <= 15);
-    Scene_Wait(40);
+    Event_Wait(40);
     zero = 0;
     phase = zero;
     do {
@@ -137,13 +129,13 @@ void FieldScene_RunRandomEffectActorSequence(void)
         value = Value0(Random_Next);
         speed = -((value * 10 >> 16) * 0x3333) - 0x3333;
         Effect_Spawn(x, 0, z, 0, 0, speed, 0x330001, effect);
-        Scene_Wait(2);
+        Event_Wait(2);
         phase = (phase + 1);
     } while ((u32)phase <= 15);
-    Scene_Wait(60);
+    Event_Wait(60);
     Audio_PlayCue(141);
     Call3(Camera_SetSpeed, 0x50000, 0x50000, 0x10000);
-    Scene_Wait(60);
+    Event_Wait(60);
     effect->mode = 7;
     effect->accum18 = 0xb333;
     effect->accum1c = 0xb333;
@@ -164,7 +156,7 @@ void FieldScene_RunRandomEffectActorSequence(void)
             speed = 0x1999 * ((u32)(Random_Next() << 3) >> 16);
             Effect_Spawn(x, 0, ((s32)(-((u32)particle >> 1) - row_offset) << 16) + 0xc00000, velocity_x, 0, speed, 0xd0001, effect);
             particle = (particle + 1);
-            Scene_Wait(2);
+            Event_Wait(2);
         } while ((u32)particle <= 31);
         phase = (phase + 1);
     } while ((u32)phase <= 3);
@@ -172,66 +164,66 @@ void FieldScene_RunRandomEffectActorSequence(void)
     Call3(Camera_SetSpeed, -1, -1, 0xe666);
     MapRender_WaitForValues();
     Func_0200dc5c();
-    Scene_Wait(30);
-    if (Value1(SceneFlag_IsSet, 0x881) != 0) {
-        Call3(Func_0200dadc, 0, 0xcccc, 0x6666);
+    Event_Wait(30);
+    if (GameFlag_IsSet(0x881) != 0) {
+        Actor_SetSpeed(0, 0xcccc, 0x6666);
         Actor_WalkToAndWait(0, 0x338, 232);
         Actor_WalkToAndWait(0, 0x318, 232);
         Actor_WalkToAndWait(0, 0x318, 208);
-        Call3(Func_0200dadc, 0, 0x20000, 0x10000);
+        Actor_SetSpeed(0, 0x20000, 0x10000);
         Actor_Jump(0, 4, 0);
         Actor_WalkTo(0, 0x318, 200);
-        Scene_Wait(10);
+        Event_Wait(10);
         Actor_SetAnimation(0, 18);
         Func_0200ae6c(0);
-        Scene_Wait(60);
+        Event_Wait(60);
         Call1(Func_0200d98c, 0x200adcd);
         ColorBuffer_ApplySource(0x10000, 0);
         ColorBuffer_ApplyTarget(0x10005, 0);
         ColorBuffer_Interpolate(120);
-        Scene_Wait(120);
+        Event_Wait(120);
         ColorBuffer_ApplyTarget(0x7fff, 0);
         ColorBuffer_Interpolate(60);
-        Scene_Wait(60);
+        Event_Wait(60);
         Event_RequestExit(9);
-        Func_0200dabc();
+        Event_End();
     } else {
-        Call3(Func_0200dadc, 0, 0xcccc, 0x6666);
-        Call3(Func_0200dadc, 1, 0xcccc, 0x6666);
-        Call3(Func_0200dadc, 2, 0xcccc, 0x6666);
-        Call3(Func_0200dadc, 3, 0xcccc, 0x6666);
+        Actor_SetSpeed(0, 0xcccc, 0x6666);
+        Actor_SetSpeed(1, 0xcccc, 0x6666);
+        Actor_SetSpeed(2, 0xcccc, 0x6666);
+        Actor_SetSpeed(3, 0xcccc, 0x6666);
         Actor_WalkToAndWait(0, 0x338, 240);
         Actor_FaceDirection(0, 0xa000, 20);
-        Call3(Func_0200db24, 3, 0x3380000, 0xf00000);
+        Actor_SetPosition(3, 0x3380000, 0xf00000);
         Actor_WalkToAndWait(3, 0x318, 232);
         Actor_FaceDirection(3, 0xc000, 0);
-        Scene_Wait(60);
+        Event_Wait(60);
         Actor_FaceDirection(3, 0x2000, 20);
         Actor_SetAnimationAndWait(3, 3);
-        Scene_Wait(40);
+        Event_Wait(40);
         Actor_FaceDirection(3, 0xc000, 20);
         Actor_WalkToAndWait(3, 0x318, 200);
         Func_0200ae6c(3);
-        Scene_Wait(20);
+        Event_Wait(20);
         Actor_RunRepeatedMotion(0, 2);
-        Scene_Wait(30);
+        Event_Wait(30);
         Actor_WalkToAndWait(0, 0x318, 232);
         Actor_FaceDirection(0, 0xc000, 0);
-        Call3(Func_0200db24, 1, 0x3180000, 0xe80000);
-        Call3(Func_0200db24, 2, 0x3180000, 0xe80000);
+        Actor_SetPosition(1, 0x3180000, 0xe80000);
+        Actor_SetPosition(2, 0x3180000, 0xe80000);
         Actor_WalkTo(1, 0x330, 224);
         Actor_WalkToAndWait(2, 0x300, 224);
-        Func_0200db1c(1);
+        Actor_WaitForMove(1);
         Actor_FaceDirection(1, 0xa000, 0);
         Actor_FaceDirection(2, 0xe000, 20);
-        Call3(Func_0200dba4, 0, 0x102, 0);
-        Call3(Func_0200dba4, 1, 0x102, 0);
-        Call3(Func_0200dba4, 2, 0x102, 80);
+        Actor_ShowEmote(0, 0x102, 0);
+        Actor_ShowEmote(1, 0x102, 0);
+        Actor_ShowEmote(2, 0x102, 80);
         Actor_FaceDirection(1, 0x6000, 0);
         Actor_FaceDirection(2, 0x2000, 20);
         Actor_RunRepeatedMotion(0, 1);
-        Scene_Wait(60);
-        Call3(Func_0200dadc, 0, 0x8000, 0x4000);
+        Event_Wait(60);
+        Actor_SetSpeed(0, 0x8000, 0x4000);
         Actor_WalkToAndWait(0, 0x318, 224);
         Actor_FaceDirection(1, 0x8000, 0);
         Actor_FaceDirection(2, 0, 0);
@@ -239,42 +231,42 @@ void FieldScene_RunRandomEffectActorSequence(void)
         Actor_FaceDirection(1, 0xa000, 0);
         Actor_FaceDirection(2, 0xe000, 20);
         Actor_SetAnimationAndWait(0, 3);
-        Scene_Wait(20);
-        Call3(Func_0200dadc, 0, 0x20000, 0x10000);
+        Event_Wait(20);
+        Actor_SetSpeed(0, 0x20000, 0x10000);
         Actor_Jump(0, 4, 0);
         Actor_WalkTo(0, 0x318, 200);
-        Scene_Wait(10);
+        Event_Wait(10);
         Actor_SetAnimation(0, 18);
-        Call3(Func_0200dba4, 1, 0x100, 0);
-        Call3(Func_0200dba4, 2, 0x100, 0);
+        Actor_ShowEmote(1, 0x100, 0);
+        Actor_ShowEmote(2, 0x100, 0);
         Actor_StartRepeatedMotion(1, 2);
         Actor_StartRepeatedMotion(2, 2);
         Func_0200ae6c(0);
-        Scene_Wait(60);
-        Call3(Func_0200dba4, 1, 0x102, 0);
-        Call3(Func_0200dba4, 2, 0x102, 80);
+        Event_Wait(60);
+        Actor_ShowEmote(1, 0x102, 0);
+        Actor_ShowEmote(2, 0x102, 80);
         Actor_FaceEachOther(1, 2, 20);
         Actor_SetAnimation(1, 3);
         Actor_SetAnimationAndWait(2, 3);
-        Scene_Wait(40);
+        Event_Wait(40);
         Actor_WalkToAndWait(1, 0x318, 216);
         Actor_FaceDirection(2, 0xe000, 0);
         Actor_WalkToAndWait(1, 0x318, 200);
-        Scene_Wait(30);
+        Event_Wait(30);
         Func_0200ae6c(1);
         Actor_WalkToAndWait(2, 0x318, 216);
         Actor_WalkToAndWait(2, 0x318, 200);
-        Scene_Wait(30);
+        Event_Wait(30);
         Func_0200ae6c(2);
         ColorBuffer_ApplySource(0x10000, 0);
         Call1(Func_0200d98c, 0x200adcd);
         ColorBuffer_ApplyTarget(0x10005, 0);
         ColorBuffer_Interpolate(120);
-        Scene_Wait(120);
+        Event_Wait(120);
         ColorBuffer_ApplyTarget(0x7fff, 0);
         ColorBuffer_Interpolate(60);
-        Scene_Wait(60);
-        Func_0200dabc();
+        Event_Wait(60);
+        Event_End();
         Event_RequestExit(8);
     }
 }

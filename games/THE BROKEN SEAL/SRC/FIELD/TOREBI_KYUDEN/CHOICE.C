@@ -770,8 +770,6 @@ void Func_020080a8();
 void Func_020080ae();
 void Func_020080b0();
 void Func_020080b8();
-s16 *Func_020080c0();
-s16 *Func_020080c0_a();
 void Func_020080c2();
 void Func_020080ca();
 void Func_020080ce();
@@ -932,12 +930,7 @@ extern u8 Data_0200d004[];
 extern u8 Value_00001ff8;
 extern u8 Data_0200c570[];
 
-u8 *Func_02004510();
-void Func_02004626();
-void Func_0200462c();
 void Func_02004630();
-void Func_020047cc();
-void Func_02004868();
 void Func_0200550e();
 
 /* Primary effect sequence of the resource_3b8 overlay: two hundred and fifty scene calls with constant arguments. */
@@ -1070,7 +1063,6 @@ void Func_02004e80();
 void Func_02004e8c();
 void Func_02004e98();
 void Func_02004ea0();
-s32 Func_02004ea6();
 void Func_02004eae();
 void Func_02004eb0();
 void Func_02004eba();
@@ -1181,7 +1173,6 @@ void Func_02005344();
 void Func_0200534a();
 void Func_0200534e();
 s32 Func_02005354();
-s32 Func_02005384();
 void Func_0200538a();
 void Func_0200538e();
 void Func_02005398();
@@ -1211,8 +1202,6 @@ extern u8 Value_00002352;
 extern u8 Value_00000f31;
 
 s32 Engine_GameFlagIsSet();
-void Func_02004626();
-void Func_0200462c();
 void Engine_EventBegin();
 void Engine_EventWait();
 void Func_020046a6_scene_primary_script();
@@ -1231,11 +1220,9 @@ void Engine_EventSetMessage();
 void Func_02004776_scene_primary_script();
 void Engine_EventShowMessage();
 void Func_020047bc_scene_primary_script();
-void Func_020047cc();
 void Engine_ActorWalkByAndWait();
 void Func_0200484c_scene_primary_script();
 s32 Engine_GameFlagIsSet();
-void Func_02004868();
 void Engine_EventBegin();
 void Engine_EventWait();
 void Engine_EventWait();
@@ -1351,7 +1338,7 @@ void RunOpeningAuxiliarySequence(s32 a)
     s32 c;
     s32 t;
 
-    ret = Func_02004510(0);
+    ret = Actor_Get(0);
     v = (*(u16 *)(ret + 6) + 0x2000) & 0xc000;
     Event_Begin();
     Func_02004630();
@@ -1406,8 +1393,8 @@ void FieldScene_RunScene3b8_02000264(s32 a0)
     Event_Begin();
     Func_02004776_scene_primary_script();
     if (GameFlag_IsSet(0x966) == 0) {
-        Call1(Func_02004626, 0x966);
-        Call1(Func_0200462c, 0x967);
+        GameFlag_Set(0x966);
+        GameFlag_Set(0x967);
         Actor_FaceDirection(a0, 0x4000, 0);
         Actor_WalkToAndWait(0, 120, 96);
         Actor_FaceDirection(0, 0xc000, 0);
@@ -1430,7 +1417,7 @@ void FieldScene_RunScene3b8_02000264(s32 a0)
         Func_0200484c_scene_primary_script(a0, 0, 48);
     } else {
         Call1(Func_020047bc_scene_primary_script, 0x2245);
-        Func_020047cc(a0, 0);
+        Event_OpenMessage(a0, 0);
     }
     Event_End();
 }
@@ -1497,7 +1484,7 @@ void FieldScene_RunScene3b8_0200049c(s32 unused0, s32 a1)
     Event_SetMessage(0x2052);
     Event_ShowMessage(a1, 0);
     if (GameFlag_IsSet(0x968) == 0) {
-        Call1(Func_02004868, 0x968);
+        GameFlag_Set(0x968);
         Psynergy_Cancel();
         Event_Wait(50);
         Actor_ShowEmote(a1, 0x100, 70);
@@ -1711,7 +1698,7 @@ void FieldScene_RunScene3b8SequenceB(void)
     Func_02004ede(3);
     Func_02004ef0(3, 0, 0);
     Func_02004f00(2, 2);
-    record = Value1(Func_02004ea6, 0);
+    record = Value1(Engine_ActorGet, 0);
     if (record != 0) {
         Func_02004ee0(2, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
@@ -1868,7 +1855,7 @@ void FieldScene_RunScene3b8SequenceA(void)
         Actor_WaitForMove(1);
         Func_020053ce(1, 0, 0);
         Func_020053de(3, 2);
-        record = Value1(Func_02005384, 0);
+        record = Value1(Engine_ActorGet, 0);
         if (record != 0) {
             Func_020053be(3, *(s16 *)(record + 10), *(s16 *)(record + 18));
         }
@@ -3304,7 +3291,7 @@ void FieldScene_RunMainCutsceneSequence(void)
     Func_020080a0(0, 3);
     Func_020080a8(1, 3);
     Func_020080b0(3, 3);
-    Func_020080c0(2, 3);
+    Actor_SetAnimationAndWait(2, 3);
     Func_02008036(30);
     Func_020081ac(17);
     Call3(Func_02008076, 1, 0x13333, 0x9999);
@@ -3317,7 +3304,7 @@ void FieldScene_RunMainCutsceneSequence(void)
     Func_020080f8(1);
     Func_0200810a(1, 0, 0);
     Actor_SetAnimation(2, 2);
-    position = Func_020080c0_a(0);
+    position = Actor_Get(0);
     if (position != 0)
         Func_020080fa(2, position[5], position[9]);
     Scene_UpdateSlot(2);

@@ -14076,10 +14076,6 @@
           "address": "0x02009084",
           "kind": "thumb"
         },
-        "Func_0200222a": {
-          "address": "0x02009410",
-          "kind": "thumb"
-        },
         "Func_02002f1e": {
           "address": "0x0200ad48",
           "kind": "thumb"
@@ -14211,6 +14207,10 @@
         "gGameState": {
           "address": "0x02000240",
           "kind": "data"
+        },
+        "Scene_RunExtendedEffectPresentation": {
+          "address": "0x02009410",
+          "kind": "thumb"
         }
       },
       "owners": [

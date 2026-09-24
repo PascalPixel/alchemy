@@ -67,17 +67,12 @@ extern s32 Data_0200b390;
 extern u8 Data_0200b2e4[];
 
 u32 Func_0200359e(void);
-s32 Func_02000eea(struct PlacementResult_02000a68 *res);
 void Func_02001096(struct PlacementResult_02000a68 res);
 u8 *Func_020036ee(s32);
 s32 Func_02000d3c_grid(s32, s32, s32, s32, s32, s32);
 u8 *Func_0200372a(s32);
 struct StagedActorEffect *Func_0200374e(s32 actor_index);
 struct Struct3848 *Func_02003848(s32 arg0);
-s32 Func_02000ef4();
-void Func_02001530();
-void Func_02001582();
-void Func_02001588();
 s32 Func_020038a6();
 s32 Func_020038da();
 struct Obj *Func_020053a6(s32, s32, s32, s32);
@@ -122,6 +117,8 @@ struct Struct5702 *Func_0200577a(s32 arg0);
  */
 
 /* The scene-transition phase flag in the field-scene table. */
+s32 StagedActor_FindClearPosition(struct StagedActorProbe *probe);
+
 static __inline__ void DrawPlacement_02000a68(
     s32 left, s32 top, s32 width, s32 height, s32 tile, s32 palette)
 {
@@ -174,7 +171,7 @@ void FieldScene_RunTile10x20Transition(void)
     struct PlacementResult_02000a68 res;
     Event_Begin();
 
-    if (Func_02000eea(&res)) {
+    if (StagedActor_FindClearPosition(&res)) {
         Func_02001096(res);
         if (res.words[1] == 10 && (res.words[2] >> 20) == 20) {
             u8 *actor;
@@ -264,17 +261,17 @@ s32 FieldScene_RunScene391_02000c68(void)
     s32 record;
     s32 zero;
 
-    Func_02001530(10);
+    FieldScene_RedrawActorFootprint(10);
     if (GameFlag_IsSet(0x200) != 0) {
         zero = 0;
         *(u8 *)(Func_020038a6(10) + 35) = 2;
         Map_CopyCellAttributes(0, 17, 2, 4, 19, 17);
-        record = Func_02000ef4(2, 20, 17, 1, 4, zero);
+        record = StagedActor_FillGridAttributeRectangle(2, 20, 17, 1, 4, zero);
         record = Func_020038da(10);
         Actor_SetSpriteFlags(record, 0);
     }
-    Func_02001582(8);
-    Func_02001588(9);
+    FieldScene_RedrawActorFootprint(8);
+    FieldScene_RedrawActorFootprint(9);
     if (SceneTransition_Phase == 4) {
         if (GameFlag_IsSet(0x843) == 0) {
             FieldScene_RunBranchingFormationPresentation();

@@ -39159,32 +39159,16 @@
           "address": "0x0200ab84",
           "kind": "thumb"
         },
+        "FieldScene_RedrawActorFootprint": {
+          "address": "0x020088c0",
+          "kind": "thumb"
+        },
         "Func_02000d3c_grid": {
-          "address": "0x02008244",
-          "kind": "thumb"
-        },
-        "Func_02000eea": {
-          "address": "0x02008474",
-          "kind": "thumb"
-        },
-        "Func_02000ef4": {
           "address": "0x02008244",
           "kind": "thumb"
         },
         "Func_02001096": {
           "address": "0x02008608",
-          "kind": "thumb"
-        },
-        "Func_02001530": {
-          "address": "0x020088c0",
-          "kind": "thumb"
-        },
-        "Func_02001582": {
-          "address": "0x020088c0",
-          "kind": "thumb"
-        },
-        "Func_02001588": {
-          "address": "0x020088c0",
           "kind": "thumb"
         },
         "Func_02002780": {
@@ -39277,6 +39261,14 @@
         },
         "Func_0200577a": {
           "address": "0x0200ac24",
+          "kind": "thumb"
+        },
+        "StagedActor_FillGridAttributeRectangle": {
+          "address": "0x02008244",
+          "kind": "thumb"
+        },
+        "StagedActor_FindClearPosition": {
+          "address": "0x02008474",
           "kind": "thumb"
         }
       },

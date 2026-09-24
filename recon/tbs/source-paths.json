@@ -20616,6 +20616,9 @@
     },
     "main:0801f818": {
       "name": "SaveState_BuildSummaryHeader"
+    },
+    "main:080f2f10": {
+      "name": "TitlePalette_UpdateFade"
     }
   },
   "symbols": {
@@ -20803,7 +20806,6 @@
     "main:080ae99c": "UiIcon_CreateStatChangeArrow",
     "main:08017aa4": "UiText_RenderWideStringAtOffset",
     "main:08017c8c": "UiText_RenderWideStringInWindow",
-    "main:080f2f10": "TitlePalette_UpdateFade",
     "main:080f9c44": "Sound_TickDmaRestartTimer",
     "main:08077058": "Inventory_RemoveFar",
     "main:080a9f0c": "Item_ReturnOne",

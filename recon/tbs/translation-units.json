@@ -5176,7 +5176,7 @@
         },
         {
           "address": "0x080be378",
-          "extent": 1012,
+          "extent": 3728,
           "state": "retained-assembly"
         }
       ]
@@ -5190,7 +5190,7 @@
       "owners": [
         {
           "address": "0x080d4ce8",
-          "extent": 874,
+          "extent": 1392,
           "state": "retained-assembly"
         }
       ]
@@ -5204,7 +5204,7 @@
       "owners": [
         {
           "address": "0x080dd9c0",
-          "extent": 124,
+          "extent": 1056,
           "state": "retained-assembly"
         }
       ]
@@ -27761,6 +27761,25 @@
         {
           "address": "0x080cd4b4",
           "extent": 84,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "graphics-clear-bg0-vofs",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/CLEAR_BG0_VOFS.C",
+      "compiler_route": "canonical-gcc296",
+      "owners": [
+        {
+          "address": "0x080b5b08",
+          "extent": 12,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080c0298",
+          "extent": 12,
           "state": "exact-c"
         }
       ],

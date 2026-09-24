@@ -10,13 +10,13 @@ void BattleEffect_RunEmberColumns(s32 *);
 void Unnamed_080eb754(s32 *);
 void BattleEffect_RunStagedParticles(s32 *);
 void BattleEffect_RunDitherDissolveScene(s32 *);
-void FunctionHead_080ec100(s32 *);
+void BattleFx_InitializeMode6(s32 *);
 void BattleFx_RenderAnimationMode0(s32 arg0);
 void Unnamed_080d1714(s32 *);
 void Unnamed_080ea0d8(s32 *);
-void FunctionHead_080d765c(s32 *);
+void BattleFx_InitializeMode10(s32 *);
 void BattleFx_InitializeDefaultMode(s32 arg0);
-void FunctionHead_080e15e8(s32 *);
+void BattleFx_InitializeMode12(s32 *);
 
 void BattleFx_InitializeMode(s32 *arg0)
 {
@@ -44,7 +44,7 @@ void BattleFx_InitializeMode(s32 *arg0)
             BattleEffect_RunDitherDissolveScene(arg0);
             break;
         case 6:
-            FunctionHead_080ec100(arg0);
+            BattleFx_InitializeMode6(arg0);
             break;
         case 7:
             BattleFx_RenderAnimationMode0(arg0);
@@ -56,13 +56,13 @@ void BattleFx_InitializeMode(s32 *arg0)
             Unnamed_080ea0d8(arg0);
             break;
         case 10:
-            FunctionHead_080d765c(arg0);
+            BattleFx_InitializeMode10(arg0);
             break;
         case 11:
             BattleFx_InitializeDefaultMode(arg0);
             break;
         case 12:
-            FunctionHead_080e15e8(arg0);
+            BattleFx_InitializeMode12(arg0);
             break;
         }
     }

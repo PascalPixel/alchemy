@@ -819,6 +819,9 @@
     "main:080a7440": {
       "name": "CharacterSelector_Run"
     },
+    "main:080a7478": {
+      "name": "Unnamed_080a7478"
+    },
     "main:08002f4c": {
       "name": "PackedTable_AdjustMarkedOffsets"
     },
@@ -1154,7 +1157,8 @@
       "source": "BATTLE/PRESENTATION/INITIALIZE_TILE_PATTERN.C"
     },
     "main:080b5b08": {
-      "name": "BattlePresentation_ClearBg0VerticalOffset"
+      "name": "BattlePresentation_ClearBg0VerticalOffset",
+      "source": "GRAPHICS/DISPLAY/CLEAR_BG0_VOFS.C"
     },
     "main:080b5c08": {
       "name": "BattlePlacement_UpdateEntries",
@@ -5856,8 +5860,7 @@
       "source": "BATTLE/PRESENTATION/TRANS_TIMER.C"
     },
     "main:080c0298": {
-      "name": "Graphics_ClearBg0Vofs",
-      "source": "GRAPHICS/DISPLAY/CLEAR_BG0_VOFS.C"
+      "name": "Graphics_ClearBg0Vofs"
     },
     "main:080c08e0": {
       "name": "Runtime_ReleaseHeapBlock10",
@@ -9902,6 +9905,9 @@
     "main:080bb65c": {
       "name": "BattlePresentation_WaitForAdvance"
     },
+    "main:080bb7c0": {
+      "name": "Unnamed_080bb7c0"
+    },
     "main:08092f84": {
       "name": "BattleEv_RunWait",
       "source": "BATTLE/PRESENTATION/RUN_ACTION_AND_WAIT.C"
@@ -9985,7 +9991,11 @@
       "name": "RunBattlePresentation"
     },
     "main:080be378": {
-      "name": "FunctionHead_080be378"
+      "name": "BattleCommand_BuildPlan"
+    },
+    "main:080c91a4": {
+      "name": "BattleFx_ArmWin0HBlankDma",
+      "source": "BATTLE/EFFECT/ARM_WIN0_HBLANK_DMA.C"
     },
     "main:080c00d8": {
       "name": "BattlePresentation_BuildTilemap"
@@ -9997,44 +10007,20 @@
       "name": "BattlePres_SetupTransitionScene",
       "source": "BATTLE/PRESENTATION/TRANS_SETUP.C"
     },
-    "main:080be76c": {
-      "name": "Region_080be76c"
-    },
-    "main:080beb08": {
-      "name": "Region_080beb08"
-    },
-    "main:080bef88": {
-      "name": "Region_080bef88"
-    },
     "main:080d0ee0": {
       "name": "Region_080d0ee0"
     },
-    "main:080d12a8": {
-      "name": "Fragment_080d12a8"
+    "main:080d1350": {
+      "name": "Unnamed_080d1350"
     },
     "main:080d4ce8": {
       "name": "Region_080d4ce8"
     },
-    "main:080d5094": {
-      "name": "Fragment_080d5094"
-    },
     "main:080d765c": {
-      "name": "FunctionHead_080d765c"
+      "name": "BattleFx_InitializeMode10"
     },
-    "main:080d76f0": {
-      "name": "Continuation_080d76f0"
-    },
-    "main:080d77b4": {
-      "name": "Region_080d77b4"
-    },
-    "main:080d7c08": {
-      "name": "Region_080d7c08"
-    },
-    "main:080d7ea0": {
-      "name": "Region_080d7ea0"
-    },
-    "main:080d8258": {
-      "name": "Fragment_080d8258"
+    "main:080d82b0": {
+      "name": "Unnamed_080d82b0"
     },
     "main:080d89ac": {
       "name": "BattleEffectA"
@@ -10048,107 +10034,85 @@
     "main:080db6e0": {
       "name": "RunParticleFieldEffect"
     },
+    "main:080dbb9c": {
+      "name": "BattleFx_ArmBg2AffineHBlankDma",
+      "source": "BATTLE/EFFECT/ARM_BG2_AFFINE_HBLANK_DMA.C"
+    },
     "main:080dbc30": {
       "name": "BattleEffect_RunBurstShower"
     },
     "main:080dd9c0": {
       "name": "FunctionHead_080dd9c0"
     },
-    "main:080dda3c": {
-      "name": "Continuation_080dda3c"
-    },
-    "main:080ddb34": {
-      "name": "Region_080ddb34"
-    },
     "main:080ddde0": {
       "name": "Region_080ddde0"
     },
-    "main:080de0d4": {
-      "name": "Continuation_080de0d4"
+    "main:080de2f8": {
+      "name": "BattleFx_PrepareCanvasEffect"
     },
     "main:080e15e8": {
-      "name": "FunctionHead_080e15e8"
+      "name": "BattleFx_InitializeMode12"
     },
-    "main:080e1724": {
-      "name": "Fragment_080e1724"
-    },
-    "main:080e17c4": {
-      "name": "Continuation_080e17c4"
-    },
-    "main:080e1a48": {
-      "name": "Fragment_080e1a48"
-    },
-    "main:080e1acc": {
-      "name": "Region_080e1acc"
-    },
-    "main:080e1df8": {
-      "name": "Region_080e1df8"
-    },
-    "main:080e21e8": {
-      "name": "Region_080e21e8"
+    "main:080e2538": {
+      "name": "Unnamed_080e2538"
     },
     "main:080e47b8": {
       "name": "FunctionHead_080e47b8"
     },
-    "main:080e4ab8": {
-      "name": "Fragment_080e4ab8"
+    "main:08094820": {
+      "name": "Unnamed_08094820"
     },
-    "main:080e4b4c": {
-      "name": "Region_080e4b4c"
+    "main:080949a8": {
+      "name": "Unnamed_080949a8"
     },
-    "main:080e4e0c": {
-      "name": "Region_080e4e0c"
+    "main:08094ac8": {
+      "name": "Unnamed_08094ac8"
     },
-    "main:080e547c": {
-      "name": "Fragment_080e547c"
+    "main:08094bbc": {
+      "name": "Unnamed_08094bbc"
     },
-    "main:080e5504": {
-      "name": "Region_080e5504"
+    "main:08094da0": {
+      "name": "Unnamed_08094da0"
     },
-    "main:080e57b4": {
-      "name": "Region_080e57b4"
+    "main:08094e7c": {
+      "name": "Unnamed_08094e7c"
     },
-    "main:080e5afc": {
-      "name": "Region_080e5afc"
+    "main:0809509c": {
+      "name": "Unnamed_0809509c"
     },
-    "main:080e5e28": {
-      "name": "Region_080e5e28"
+    "main:08095680": {
+      "name": "Unnamed_08095680"
     },
-    "main:080e6288": {
-      "name": "Region_080e6288"
+    "main:08095778": {
+      "name": "Unnamed_08095778"
+    },
+    "main:0809bcf8": {
+      "name": "Unnamed_0809bcf8"
+    },
+    "main:0809c138": {
+      "name": "Unnamed_0809c138"
+    },
+    "main:080e698c": {
+      "name": "Unnamed_080e698c"
+    },
+    "main:080e6d3c": {
+      "name": "Unnamed_080e6d3c"
+    },
+    "main:080e6eac": {
+      "name": "Unnamed_080e6eac"
+    },
+    "main:080e727c": {
+      "name": "Palette_BrightenBgEntries"
+    },
+    "main:080e72e0": {
+      "name": "BattleFx_ArmPaletteHBlankDma",
+      "source": "BATTLE/EFFECT/ARM_PALETTE_HBLANK_DMA.C"
     },
     "main:080ec100": {
-      "name": "FunctionHead_080ec100"
-    },
-    "main:080ec190": {
-      "name": "Continuation_080ec190"
-    },
-    "main:080ec264": {
-      "name": "Continuation_080ec264"
-    },
-    "main:080ec474": {
-      "name": "Region_080ec474"
-    },
-    "main:080ec728": {
-      "name": "Region_080ec728"
-    },
-    "main:080ecae8": {
-      "name": "Region_080ecae8"
+      "name": "BattleFx_InitializeMode6"
     },
     "main:080f4168": {
       "name": "FunctionHead_080f4168"
-    },
-    "main:080f4318": {
-      "name": "Region_080f4318"
-    },
-    "main:080f47bc": {
-      "name": "Region_080f47bc"
-    },
-    "main:080f4af0": {
-      "name": "Region_080f4af0"
-    },
-    "main:080f4f04": {
-      "name": "Region_080f4f04"
     },
     "main:080fa264": {
       "name": "Audio_ResumePlayer",
@@ -20390,7 +20354,6 @@
     "main:080c24f0": "BattleEnemy_RecordDefeat",
     "main:08096fb0": "BattleFx_LoadActionEffectResources",
     "main:0808b98c": "BattleEffect_ClearAllObjects",
-    "main:080de2f8": "BattleFx_PrepareCanvasEffect",
     "main:080912b8": "Object_EffectSpawnCallback",
     "main:080152b8": "BattleLayout_HighlightPartyPanelsFar",
     "main:08028574": "Menu_RunResourceSelectionLoop",
@@ -20435,7 +20398,6 @@
     "main:0808ae74": "Encounter_SelectEnemyGroup",
     "main:080c9048": "BattlePres_ConfigureEffectDisplay",
     "main:08004c6c": "SceneTransform_ApplyRoll",
-    "main:080e727c": "Palette_BrightenBgEntries",
     "main:08015358": "Djinn_ShowJoinedMessageFar",
     "main:080e3aa0": "BattlePres_RunBeamSequence",
     "main:080ecef4": "BattleFx_RunRevealColumn",

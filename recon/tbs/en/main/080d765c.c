@@ -177,7 +177,7 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *efx)
 
     Audio_PlayCue(141);
 
-    for (frame = 0; frame != 288 && (k = gKeysRepeat & 3, count = 16, !k || frame <= 16); frame++) {
+    for (frame = 0; frame != 288 && (count = 16, !(gKeysRepeat & 3) || frame <= 16); frame++) {
         if (frame >= 0 && frame < 16) {
             u16 *phase = (u16 *)0x02010000;
             if (frame == 1) {
@@ -357,12 +357,14 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *efx)
             }
             if (frame == 228) {
                 for (i = 0; i != 128; i++) {
-                    TRAILS[i].x = PARTICLES[i].x;
-                    TRAILS[i].y = PARTICLES[i].y;
-                    TRAILS[i].variant = 0;
+                    p = &PARTICLES[i];
+                    q = &TRAILS[i];
+                    q->x = p->x;
+                    q->y = p->y;
+                    q->variant = 0;
                 }
             }
-            for (i = 0, p = PARTICLES, q = TRAILS; i != 128; i++, p++, q++) {
+            for (i = 0, q = TRAILS, p = PARTICLES; i != 128; i++, q++, p++) {
                 if (frame >= i + 228) {
                     s32 n = Math_Mod(q->variant / 2, 9);
                     s32 sz = BattleFx_PuffSizes[n];
@@ -427,10 +429,9 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *efx)
         if (frame <= 71) {
             for (i = 0; i != count; i++) {
                 s32 n = Math_Mod(i, 3);
-                s32 sz = BattleFx10_BoulderHeights[n];
                 blit46(dst, work->sheet + BattleFx10_BoulderCells[n],
-                    BattleFx10_Points[i][0] - 56, BattleFx10_Points[i][1] - sz,
-                    BattleFx10_BoulderWidths[n], sz);
+                    BattleFx10_Points[i][0] - 56, BattleFx10_Points[i][1] - BattleFx10_BoulderHeights[n],
+                    BattleFx10_BoulderWidths[n], BattleFx10_BoulderHeights[n]);
             }
         }
         if (frame == 72) {

@@ -137,7 +137,8 @@ void FunctionHead_080dd9c0(struct BattleEffectArgument *efx)
                 if (frame < i * 8 + 8 + 3) {
                     s32 y = (Random16() & 31) + 72;
                     struct EffectStep *p;
-                    for (j = 0, p = PARTICLES; j != 64; j++, p++) {
+                    for (j = 0; j != 64; j++) {
+                        p = &PARTICLES[j];
                         if (p->variant == -1) {
                             p->x = BattleFxPillar_X[i] + (Random16() & 31) + 32;
                             if (p->x > 96) {

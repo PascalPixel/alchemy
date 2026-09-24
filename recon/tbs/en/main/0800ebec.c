@@ -2,7 +2,7 @@
  * similarity; every call site is in the ROM's order. Rewritten from the ROM:
  * the four delay loops are goto loops (a do/while is unrolled away); the
  * timer and footprint-phase stores go through the actor's members so the
- * constants become movs; FootprintSpawn takes the kind first; the ungated
+ * constants become movs; Func_0800c150 takes the kind first; the ungated
  * path squares the x and z velocity through Iwram_MulQ16, takes FixedSqrt
  * and redirects it along the facing. Remaining: the ROM keeps angle << 16 in
  * [sp+4] and derives (u32)angle >> 16 afresh after each join, where GCSE

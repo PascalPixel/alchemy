@@ -6,7 +6,7 @@ void FieldScene_RunScene3b3_02001fd4(void);
 s32 FieldScene_RunScene3b3SequenceD(void);
 void Main_0808a2a8(void);
 
-/* Runs the scene when a staged actor stands one cell south of the leader,
+/* Runs the scene when a staged actor stands in the cell a step further along z,
  * otherwise falls back to sequence D. */
 void TakaraHashira_Func02002040(void)
 {

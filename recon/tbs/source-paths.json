@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_39c:02002844": {
+      "name": "MakyuriHeya_Func02002844",
+      "source": "FIELD/MAKYURI_HEYA/F_02844.C"
+    },
     "resource_39c:02002e08": {
       "name": "MakyuriHeya_Func02002e08",
       "source": "FIELD/MAKYURI_HEYA/F_02E08.C"

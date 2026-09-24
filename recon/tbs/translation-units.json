@@ -73167,6 +73167,26 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "makyuri-heya-f-02844",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_HEYA/F_02844.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_39c",
+      "absolute_symbols": {
+        "Engine_TaskWait": {
+          "address": "0x0200d97c",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02002844",
+          "extent": 106,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

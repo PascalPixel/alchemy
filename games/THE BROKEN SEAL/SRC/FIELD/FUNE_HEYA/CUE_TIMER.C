@@ -7,7 +7,6 @@
  * to 80.
  */
 
-
 extern void Func_0200c0ee();
 extern s32 Func_0200c09c();
 extern void Func_0200c2de();

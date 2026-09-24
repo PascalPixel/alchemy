@@ -29,9 +29,6 @@ void Func_02001122(s32);
 
 /* Contiguous unnamed leaf-owner run for resource_3b6. */
 
-/* Loader-relocated overlay calls: each symbol names the pre-relocation call
- * word the image holds. */
-
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
  * into a pseudo that the compiler then shares with later uses in the block.

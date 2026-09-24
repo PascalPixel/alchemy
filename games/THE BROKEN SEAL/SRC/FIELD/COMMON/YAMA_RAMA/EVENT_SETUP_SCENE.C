@@ -70,9 +70,6 @@ u8 *Func_0200266c();
 
 /* Value-returning: the reference sets r1 before r0 at this site. */
 
-/* Loader-relocated overlay calls: each symbol names the pre-relocation call
- * word the image holds. */
-
 /* Call sites spelled through these wrappers pass their constants straight into
  * the argument registers; a direct call instead precomputes a costly constant
  * into a pseudo shared with later uses in the block. A value-returning call

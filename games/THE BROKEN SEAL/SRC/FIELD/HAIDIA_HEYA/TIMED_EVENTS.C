@@ -45,7 +45,6 @@ enum ValeHouseMessage {
     MSG_DID_YOU_HEAR_ABOUT_DORA = 0x1c3d
 };
 
-
 typedef struct {
     u8 pad_to_position[8];
     s32 x;

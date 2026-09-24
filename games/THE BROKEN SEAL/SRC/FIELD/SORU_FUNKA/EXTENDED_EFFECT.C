@@ -133,9 +133,6 @@ void Func_02006620(void);
 /* Set up the scene actors, run the two presentation phases, and dismiss the
  * actors through the shared exit sequence. Retained pending an exact build. */
 
-/* Loader-relocated overlay calls: each symbol names the pre-relocation call
- * word the image holds. */
-
 void SceneEffect_AdvanceTenEntryTimers(void);
 
 static __inline__ void Call1(void (*f)(), s32 a0)

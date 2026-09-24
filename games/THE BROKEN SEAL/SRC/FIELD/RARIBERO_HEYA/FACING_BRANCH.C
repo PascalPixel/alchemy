@@ -5,7 +5,6 @@
  * the door line plays; otherwise a flag picks one of the two default lines.
  */
 
-
 u16 *Func_02001378(s32);
 s32 Func_0200136c(s32);
 void Func_02001476(s32, s32);

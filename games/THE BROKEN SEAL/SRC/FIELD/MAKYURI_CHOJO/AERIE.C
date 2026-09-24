@@ -1011,16 +1011,6 @@ s32 Func_02006516();
 s32 Func_020065ec();
 void Func_020060fc();
 
-/* Loader-relocated overlay calls: each symbol names the pre-relocation call
- * word the image holds. */
-
-/* Resolved engine calls: each pseudo symbol is the per-site call word the
- * overlay image holds (a word can serve two sites with different targets),
- * and the macro names the engine function the site reaches through the
- * overlay veneer and the main-image veneer island, keeping the site's own
- * calling form. Names without a repository binding are provisional.
- */
-
 /* Newly named call sites: the mechanical pass left these spelled raw because
  * their calling form (a cast, or an odd argument count) did not match its
  * patterns, or because the engine function itself had no name yet. */
@@ -1035,10 +1025,6 @@ void Func_020060fc();
  * into a pseudo that the compiler then shares with later uses in the block.
  * A value-returning call also sets r0 last of its arguments. */
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
 static __inline__ void Call3_02002eb8(void (*f)(), s32 a0, s32 a1, s32 a2)
 {
     f(a0, a1, a2);

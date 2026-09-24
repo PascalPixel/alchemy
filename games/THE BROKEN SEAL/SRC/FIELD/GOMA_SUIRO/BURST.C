@@ -79,9 +79,6 @@ void Func_02000b98(s32 frames);
 
 /* Complete eight-byte literal-address getter, including its sole pool word. */
 
-/* Loader-relocated overlay calls: each symbol names the pre-relocation call
- * word the image holds. */
-
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
  * into a pseudo that the compiler then shares with later uses in the block.
@@ -333,7 +330,6 @@ void Func_020007ac();
 void Func_02000dd2(s32);
 void Func_02000dca(s32, s32);
 void Func_02000d86(void);
-
 
 /* Mixed object and option views preserve the reference's alias ordering. */
 void SceneEffect_RunActorBurst(s32 no)

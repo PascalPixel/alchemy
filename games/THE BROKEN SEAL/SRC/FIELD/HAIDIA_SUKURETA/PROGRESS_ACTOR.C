@@ -40,7 +40,6 @@ enum CottageMessage {
     MSG_MEMORIES_OF_THIS_COTTAGE = 0x1c96
 };
 
-
 extern u8 Data_0200a028[];
 extern u8 Data_02009fb0[];
 extern u8 Data_02009efc[];
@@ -249,10 +248,6 @@ static __inline__ void Scene_SetActorDirection(s32 actor, s32 angle, s32 frames)
     Actor_FaceDirection(actor, angle, frames);
 }
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
 static __inline__ void Call1_02000be0(void (*f)(), s32 a0)
 {
     f(a0);
@@ -600,18 +595,11 @@ void Scene_PlanSanctumVisit(void)
     }
 }
 
-/* Loader-relocated overlay calls: each symbol names the pre-relocation call
- * word the image holds. */
-
 /* Contiguous unnamed state-owner run for resource_375. */
 
 /* The same import at two sites, so two names: the flag set at +0x1e and again
  * at +0x2e. */
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
 void Scene_LeaveForMtAleph(void)
 {
     s32 record;

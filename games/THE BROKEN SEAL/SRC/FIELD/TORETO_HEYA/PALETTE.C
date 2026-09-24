@@ -6,7 +6,6 @@
  * the palette RAM and waits on the DMA status register.
  */
 
-
 void ToretoPalette_CaptureBank(void)
 {
     Dma_Set((const void *)0x05000000, *(void **)0x03001ed0, 0x84000070,

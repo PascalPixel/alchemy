@@ -12,7 +12,6 @@
  * reads, so the spelling is kept as-is.
  */
 
-
 struct SceneActor {
     u8 unk_00[6];
     u16 facing;

@@ -1,6 +1,5 @@
 #include "TYPES.H"
 
-
 extern u8 Data_02000240[];
 
 extern u8 Value_00000044;

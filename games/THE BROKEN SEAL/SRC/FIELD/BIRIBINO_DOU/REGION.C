@@ -58,9 +58,6 @@ void Func_020011ea();
 
 /* Deliberate no-op callback. */
 
-/* Loader-relocated overlay calls: each symbol names the pre-relocation call
- * word the image holds. */
-
 /* Call sites spelled through these wrappers pass their constants straight into
  * the argument registers; a direct call instead precomputes a costly constant
  * into a pseudo shared with later uses in the block. A value-returning call

@@ -127,9 +127,6 @@ u8 *Func_0200599c(s32, s32);
 
 /* Copy the low two mode bits into the object's owner record. */
 
-/* Loader-relocated overlay calls: each symbol names the pre-relocation call
- * word the image holds. */
-
 /* 0x02003fb6 serves the two-argument presentation select and, twice later,
  * one-argument imports; the `_b` alias carries the two-argument one. */
 
@@ -161,10 +158,6 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
     f(a0, a1, a2);
 }
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
 static __inline__ void Call1(void (*f)(), s32 a0)
 {
     f(a0);

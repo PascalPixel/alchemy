@@ -55,9 +55,6 @@ void Func_020020b2(s32 group, s32 index);
 
 /* Old-style: the two imports are called with different arities. */
 
-/* Loader-relocated overlay calls: each symbol names the pre-relocation call
- * word the image holds. */
-
 /* resource_387 three-call story-flag wrapper at 0x020004d4. */
 
 /* Call sites spelled through these wrappers pass their constants straight

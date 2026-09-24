@@ -154,9 +154,6 @@ void SceneState_SetMode(s32 mode);
 u8 *SceneActor_Find(s32 actor);
 void SceneActor_Place(s32 actor, s32 x, s32 z);
 
-/* Loader-relocated overlay calls: each symbol names the pre-relocation call
- * word the image holds. */
-
 /*
  * Distance between two three-component 16.16 fixed-point positions.
  *
@@ -276,9 +273,6 @@ static __inline__ void SetScale(s32 actor, s32 horizontal, s32 vertical)
     Actor_SetSpeed(actor, horizontal, vertical);
 }
 
-/* Loader-relocated overlay calls: each symbol names the pre-relocation call
- * word the image holds. */
-
 /*
  * Complete actor-21 mode-four reset wrapper.
  *
@@ -288,13 +282,6 @@ static __inline__ void SetScale(s32 actor, s32 horizontal, s32 vertical)
  * veneer is sub_02001f26, not a main-image address guessed from elsewhere.
  */
 
-/* Loader-relocated overlay calls: each symbol names the pre-relocation call
- * word the image holds. */
-
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
 static __inline__ void Call1_02000640(void (*f)(), s32 a0)
 {
     f(a0);
@@ -305,10 +292,6 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
     f(a0, a1, a2, a3);
 }
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
 static __inline__ void Call1_02000d74(void (*f)(), s32 a0)
 {
     f(a0);

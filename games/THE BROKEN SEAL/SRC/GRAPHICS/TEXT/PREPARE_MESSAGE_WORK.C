@@ -16,7 +16,7 @@ extern volatile struct UiTextMessageWorkGlobals gWindowWork;
 
 s32 UiText_BuildRenderEntries(s32, s32);
 struct Work *UiWindow_Create(s32, s32, s32, s32, s32);
-void Func_08017248(s32, s32, s32, s32, s32);
+void UiWindow_MapTextCanvasTiles(s32, s32, s32, s32, s32);
 struct Slot *UiWork_ActivateChannel(struct Work *, s32, s32);
 void UiWork_Finalize(struct Work *, s32);
 
@@ -49,7 +49,7 @@ void UiText_PrepareMessageWork(s32 argument)
             work = UiWindow_Create(0, 15, 30, 6, 10);
             existing = work;
             FIELD(control, struct Work *, 0) = existing;
-            Func_08017248(0, 15, 30, 6, one);
+            UiWindow_MapTextCanvasTiles(0, 15, 30, 6, one);
             FIELD(control, s32, 8) = result;
             goto have_work;
         }

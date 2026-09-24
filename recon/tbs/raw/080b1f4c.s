@@ -11,8 +11,10 @@
 	.set sub_080b19cc, 0x080b19cc
 	.set sub_080b1dec, 0x080b1dec
 	.set sub_080f9010, 0x080f9010
+	.global Shop_SellItem
 	.global Func_080b1f4c
 	.thumb_func
+Shop_SellItem:
 Func_080b1f4c:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

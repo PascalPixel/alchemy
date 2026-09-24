@@ -12,8 +12,10 @@
 	.set sub_08092158, 0x08092158
 	.set sub_08093af8, 0x08093af8
 	.set sub_080f9010, 0x080f9010
+	.global Field_TryJumpForward
 	.global Func_08093c00
 	.thumb_func
+Field_TryJumpForward:
 Func_08093c00:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

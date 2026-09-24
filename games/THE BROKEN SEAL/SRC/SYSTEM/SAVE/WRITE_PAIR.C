@@ -4,7 +4,7 @@
 s32 SaveState_InitializeWorkspace(void);
 s32 SaveState_WriteRecord(s32, void *);
 void UiText_ShowPositionedMessageAndWait(s32, s32);
-void Func_0801f818(void);
+void SaveState_BuildSummaryHeader(void);
 extern char Data_02000000;
 extern char Value_0000000a;
 extern char Value_0000000b;
@@ -25,7 +25,7 @@ s16 SaveState_WriteCurrentSlotPair(void)
             error = 9;
             goto set_error;
         }
-        Func_0801f818();
+        SaveState_BuildSummaryHeader();
         {
             void *base = &Data_02000000;
             s32 next;

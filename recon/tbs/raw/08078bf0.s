@@ -3,8 +3,10 @@
 	.set sub_08077394, 0x08077394
 	.set sub_08078414, 0x08078414
 	.set sub_08079ad8, 0x08079ad8
+	.global Owner_RefreshClassActions
 	.global Func_08078bf0
 	.thumb_func
+Owner_RefreshClassActions:
 Func_08078bf0:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

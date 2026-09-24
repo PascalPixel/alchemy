@@ -22,8 +22,10 @@
 	.set sub_080b0048, 0x080b0048
 	.set sub_080b0050, 0x080b0050
 	.set sub_080f9010, 0x080f9010
+	.global BattleFx_RunMercuryDjinnCapture
 	.global Func_080965a8
 	.thumb_func
+BattleFx_RunMercuryDjinnCapture:
 Func_080965a8:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

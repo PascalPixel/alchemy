@@ -12,7 +12,7 @@
 
 extern u8 Value_00000182;
 
-void Func_08015070(s32 window, s32 x, s32 width, s32 height, s32 style);
+void UiWindow_DrawDividerLineFar(s32 window, s32 x, s32 width, s32 height, s32 style);
 void UiText_DrawAt(s32 message, s32 window, s32 x, s32 y);
 void UiWindow_Commit(s32 window);
 void Menu_DrawPageIndicator(s32 window, s32 count, s32 page_size, s32 page, s32 style);
@@ -34,7 +34,7 @@ s32 ItemMenu_DrawNamePage(
     (void)unused;
 
     UiWindow_Commit(window);
-    Func_08015070(window, 0, 11, 16, 11);
+    UiWindow_DrawDividerLineFar(window, 0, 11, 16, 11);
 
     page = state->page;
     first_entry = page * 5;

@@ -16,7 +16,7 @@ extern u8 Value_00000021;
 u16 BattleFx_GetWeightedResult(s32 arg0, s32 arg1);
 s16 BattleFx_GetPhaseResult(s32 value);
 s32 BattleFx_LookupResult(void *arg0);
-void Func_0809537c(s32 flags);
+void EventActor_RunHopAndLeapSequence(s32 flags);
 s32 BattleFx_SelectBattleCue(s32, s32);
 
 void BattleFx_SetWeightedResult(s32 arg0, s32 arg1)
@@ -44,7 +44,7 @@ void BattleFx_SetPhaseRequest(s32 flags, s32 value)
     flags &= 0xff;
 
     if (high == 0)
-        Func_0809537c(flags);
+        EventActor_RunHopAndLeapSequence(flags);
 
     shared = &PARTY_STATE;
     shared->request = (value + 0x12c) | high;

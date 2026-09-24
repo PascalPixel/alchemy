@@ -54,7 +54,7 @@ extern u8 Value_00000b13;
 extern u8 Value_00000b14;
 extern u8 Value_00000b15;
 
-void Func_08015068(s32 window, s32 x, s32 y, s32 width, s32 height);
+void UiWindow_ClearInteriorTilesFar(s32 window, s32 x, s32 y, s32 width, s32 height);
 void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 void RenderOutput_RedrawSavedRectFar(s32 window);
 void UiWindow_SetTilemapEntryFar(s32 window, s32 icon, s32 x, s32 y, s32 palette);
@@ -83,7 +83,7 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused, struct MenuResult *state)
                 + (s32)&Value_0000053a,
             (s32)menu->info_window, 0, 0);
         ability = BattleAction_Get(menu->psynergies[state->selected_index] & ACTION_ID_MASK);
-        Func_08015068(window, 0, 96, 224, 104);
+        UiWindow_ClearInteriorTilesFar(window, 0, 96, 224, 104);
         row = 0;
         if (ability->type_0c != 0 || (ability->target_flags & 0x40) != 0) {
             row = 2;

@@ -4,7 +4,7 @@
 extern u8 Data_00000182[];
 extern u8 Data_00000af7[];
 extern u8 gMenuWork[];
-void Func_08015068();
+void UiWindow_ClearInteriorTilesFar();
 void UiText_DrawCharacterAtOffsetFar();
 void UiText_DrawStringAtOffsetFar();
 void UiText_DrawNumberInWindowFar();
@@ -42,7 +42,7 @@ s32 Shop_DrawItemPage(s32 a0, s32 a1, s32 a2)
 
     p9 = *(s32 *)gMenuWork;
     rec5 = Owner_GetStateFar(*(u8 *)((0x21a + p9)));
-    Func_08015068(a0, 128, 8, 224, 96);
+    UiWindow_ClearInteriorTilesFar(a0, 128, 8, 224, 96);
     p8 = ((*(s32 *)(a2 + 8) << 2) + *(s32 *)(a2 + 8));
     p10 = ((u32)(s32)((s32)(*(s32 *)(a2 + 20) - (s32)p8) << 24) >> 24);
     v10 = p10;

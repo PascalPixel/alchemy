@@ -9,15 +9,15 @@ struct OwnerDerivedState {
 };
 
 void *Owner_GetState(s32);
-s32 Func_08078bf0(s32);
+s32 Owner_RefreshClassActions(s32);
 u32 Owner_BuildDigitTiles(s32, void *);
-s8 Func_080799b0(u8, const u8 *);
+s8 Owner_DetermineClass(u8, const u8 *);
 
 void Owner_RefreshDerivedData(s32 owner_no)
 {
     struct OwnerDerivedState *owner = Owner_GetState(owner_no);
 
-    owner->value_129 = Func_080799b0(owner->value_128, owner->values_f8);
-    Func_08078bf0(owner_no);
+    owner->value_129 = Owner_DetermineClass(owner->value_128, owner->values_f8);
+    Owner_RefreshClassActions(owner_no);
     Owner_BuildDigitTiles(owner_no, owner->data_024);
 }

@@ -8,8 +8,10 @@
 	.set sub_08077028, 0x08077028
 	.set sub_080a112c, 0x080a112c
 	.set sub_080a40ac, 0x080a40ac
+	.global ItemMenu_DrawEquipPreview
 	.global Func_080a3ef0
 	.thumb_func
+ItemMenu_DrawEquipPreview:
 Func_080a3ef0:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

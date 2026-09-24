@@ -5,7 +5,7 @@ s32 Script_ApplyLocalOffsetPosition(u8 *arg0)
 {
     s32 offset[3];
 
-    Func_0800d14c(
+    Object_SetMoveTarget(
         arg0,
         *(s32 *)(arg0 + 8) + offset[0],
         *(s32 *)(arg0 + 12) + offset[1],

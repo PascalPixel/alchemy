@@ -11,8 +11,8 @@
  * 080ce85c) and games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/PUFF_ARC.C (owner
  * 080d9fc8): same heap_cache=(void**)0x03001EEC / cursor / work / canvas
  * prologue, same the +0x7828 field=object republish, same
- * Func_080cd594(0)/Scheduler_AddOrUpdateCallback(0x080CD261,0x480)/Scheduler_RemoveCallback(0x080CD261)/
- * Runtime_ReleaseHeapBlock(id)/Func_080cdbc0() bracket, and the same
+ * BattleFx_BeginCanvasLayer(0)/Scheduler_AddOrUpdateCallback(0x080CD261,0x480)/Scheduler_RemoveCallback(0x080CD261)/
+ * Runtime_ReleaseHeapBlock(id)/BattleFx_EndCanvasLayer() bracket, and the same
  * BattleFx_FetchRectangleBlitters(flag, DrawRectangleFn callbacks[2]) two-word blit-routine
  * resolver already established in recon/tbs/en/main/080e01e4.c.
  *
@@ -59,8 +59,8 @@ extern u8 Data_080eec5f[];
 extern u8 Data_080eec63[];
 extern u16 Data_080eec68[];
 
-void Func_080cd594(s32 mode);
-void Func_080de2f8(void *object, s32 a, s32 b, s32 c, s32 *out_a, s32 *out_b);
+void BattleFx_BeginCanvasLayer(s32 mode);
+void BattleFx_PrepareCanvasEffect(void *object, s32 a, s32 b, s32 c, s32 *out_a, s32 *out_b);
 void BattleFx_FetchRectangleBlitters(s32 flag, DrawRectangleFn *out_callbacks);
 void EffectPosition_ApplyAlternateStepAndYOffset(s16 a, s32 *out_pair);
 u32 Random16(void);
@@ -73,7 +73,7 @@ void BattleMotion_ApplyVariantMotionFar(s32 member_id, s32 b);
 void Camera_ApplyShake(s32 a, s32 b);
 void ObjectGroup_TickMemberTimers(void);
 void Runtime_ReleaseHeapBlock(s32 id);
-void Func_080cdbc0(void);
+void BattleFx_EndCanvasLayer(void);
 
 void BattleFx_RunParticleReveal(void *object)
 {
@@ -95,8 +95,8 @@ void BattleFx_RunParticleReveal(void *object)
     work = *cursor++;
     canvas = *cursor;
     (*(void **)((u8 *)(work) + (0x7828))) = object;
-    Func_080cd594(0);
-    Func_080de2f8(object, 1,
+    BattleFx_BeginCanvasLayer(0);
+    BattleFx_PrepareCanvasEffect(object, 1,
         (*(s32 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (4))), 2,
         &screen_x, &screen_y);
     BattleFx_FetchRectangleBlitters(
@@ -209,5 +209,5 @@ void BattleFx_RunParticleReveal(void *object)
     Scheduler_RemoveCallback((void *)0x080CD261);
     Runtime_ReleaseHeapBlock(0x2F);
     Runtime_ReleaseHeapBlock(0x2E);
-    Func_080cdbc0();
+    BattleFx_EndCanvasLayer();
 }

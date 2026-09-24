@@ -16,7 +16,7 @@ extern u32 gFrameCount;
 extern u8 Value_00000001;
 s32 UnsignedModulo(u32, s32);
 s32 Modulo(s32, s32);
-void Func_0809b450(void *);
+void BattleFx_SpawnDescendingArcParticles(void *);
 
 void BattleFx_UpdateEffect16State(void)
 {
@@ -57,9 +57,9 @@ void BattleFx_UpdatePairedArcSpawner(void *arg0)
 
     if (PARTY_STATE.value_1da == (s32)&Value_00000001) {
         if (Modulo(counter, 7) == 0)
-            Func_0809b450(arg0);
+            BattleFx_SpawnDescendingArcParticles(arg0);
     } else if (Modulo(counter, 5) == 0) {
-        Func_0809b450(arg0);
+        BattleFx_SpawnDescendingArcParticles(arg0);
     }
 
     if (field64 == 1)

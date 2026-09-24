@@ -5,7 +5,7 @@
 void Object_SetMode(struct ObjectRuntime *, s32);
 void ObjectDispatch_SetSingleChildField26Far(struct ObjectRuntime *, s32);
 void Audio_PlayCue(s32);
-s32 Func_080091a8(s32, s32, s32);
+s32 Map_GetTerrainHeightFar(s32, s32, s32);
 
 s32 EffectRuntime_FindSlotByObject(s32 id)
 {
@@ -157,7 +157,7 @@ void EffectRuntime_SetCurrentPosition(s32 id, s32 x, s32 y)
                 object_y = (slot_data->tileY << 20) + 0x80000;
             object->x = object_x;
             object->z = object_y;
-            height = Func_080091a8(0, object_x, object_y);
+            height = Map_GetTerrainHeightFar(0, object_x, object_y);
             object->terrain_height = height;
             object->y = height;
         }

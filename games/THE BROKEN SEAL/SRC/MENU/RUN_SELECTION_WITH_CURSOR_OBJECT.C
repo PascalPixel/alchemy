@@ -4,7 +4,7 @@
 s32 UiWindow_Create(s32, s32, s32, s32, s32);
 void Menu_DrawFlagBitTable(s32, s32);
 void UiTextResource_Initialize(struct Object_0801c0dc *obj, s32 *slot);
-s32 Func_0802938c(s32, s32 *, s32 *);
+s32 Menu_HandleFlagGridInput(s32, s32 *, s32 *);
 void UiTextResource_SetPosition(struct Obj *obj, s32 arg1, s32 arg2);
 void UiTextResource_Release(s32);
 void UiWork_Finalize(struct Work *work, s32 release);
@@ -27,7 +27,7 @@ s32 Menu_RunSelectionWithCursorObject(void)
     UiTextResource_Initialize(obj, &res);
     for (;;) {
         WaitFrames(1);
-        ev = Func_0802938c(win, &sel, pos);
+        ev = Menu_HandleFlagGridInput(win, &sel, pos);
         if (ev == -1)
             break;
         if (ev == 1)

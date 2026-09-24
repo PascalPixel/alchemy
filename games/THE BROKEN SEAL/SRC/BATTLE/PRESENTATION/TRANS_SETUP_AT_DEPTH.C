@@ -7,8 +7,7 @@ void SceneTransform_ApplyPosition(s32 *);
 void SceneTransform_ApplyYaw(s32);
 void SceneTransform_ApplyPitch(s32);
 void Graphics_PrepareTransferInIwramWork();
-s32 Func_08005268(); /* returns a value its callers here ignore */
-#define Battle_unk8_2 Func_08005268
+s32 Camera_ProjectPoint(); /* returns a value its callers here ignore */
 void BattleCamera_SetRange();
 
 /* BattlePres_SetupTransitionScene with the depth bound taken from the scene
@@ -54,7 +53,7 @@ void BattlePres_SetupTransitionSceneAtDepth(s32 x, s32 depth, s32 y)
     hud[4] = 120;
     Render_ResetTransformState();
     Graphics_PrepareTransferInIwramWork(scene, position);
-    Battle_unk8_2(source_bounds, measured_bounds);
+    Camera_ProjectPoint(source_bounds, measured_bounds);
 
     BattleCamera_SetRange(
         0x780000,

@@ -63,7 +63,7 @@ void Ui_FillGridColumnFromMetadata(s32 slot, s32 value)
     do {
         entry = *(struct UiGridEntry **)(work + offset);
         if (entry->table_0c != 0) {
-            metadata = Func_08185000(entry->no);
+            metadata = Resource_GetMetadataRecordFar(entry->no);
             if (value < metadata[5]) {
                 entry->value_04 = metadata[4];
                 entry->value_10 = entry->table_0c[value];
@@ -89,7 +89,7 @@ void Ui_SetGridColumnNumber(s32 slot, s32 no)
     s32 offset;
     s32 count;
 
-    Func_08185000(no);
+    Resource_GetMetadataRecordFar(no);
     offset = (slot & 3) * 4 + 40;
     count = 9;
     do {

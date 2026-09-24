@@ -5,11 +5,11 @@ typedef void (*Callback)(s32 *);
 
 s32 Runtime_AllocateHeapBlock(s32 arg0, s32 arg1);
 void Runtime_ReleaseHeapBlock(s32);
-void Func_080e823c(s32 *);
-void Func_080d2d98(s32 *);
+void BattleEffect_RunCirclingFallingScene(s32 *);
+void BattleEffect_RunEmberColumns(s32 *);
 void Unnamed_080eb754(s32 *);
 void BattleEffect_RunStagedParticles(s32 *);
-void Func_080d6970(s32 *);
+void BattleEffect_RunDitherDissolveScene(s32 *);
 void FunctionHead_080ec100(s32 *);
 void BattleFx_RenderAnimationMode0(s32 arg0);
 void Unnamed_080d1714(s32 *);
@@ -29,10 +29,10 @@ void BattleFx_InitializeMode(s32 *arg0)
     } else {
         switch (*arg0) {
         case 1:
-            Func_080e823c(arg0);
+            BattleEffect_RunCirclingFallingScene(arg0);
             break;
         case 2:
-            Func_080d2d98(arg0);
+            BattleEffect_RunEmberColumns(arg0);
             break;
         case 3:
             Unnamed_080eb754(arg0);
@@ -41,7 +41,7 @@ void BattleFx_InitializeMode(s32 *arg0)
             BattleEffect_RunStagedParticles(arg0);
             break;
         case 5:
-            Func_080d6970(arg0);
+            BattleEffect_RunDitherDissolveScene(arg0);
             break;
         case 6:
             FunctionHead_080ec100(arg0);

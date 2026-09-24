@@ -23,7 +23,7 @@ struct MetadataRecord {
 };
 
 s32 AnimationObject_Allocate(s32);
-struct MetadataRecord *Func_08185000(s32);
+struct MetadataRecord *Resource_GetMetadataRecordFar(s32);
 void ResourceMetadata_ClearRecord(void *);
 
 s32 ResourceMetadata_Register(struct MetadataSlotState *state, s32 id)
@@ -49,7 +49,7 @@ s32 ResourceMetadata_Register(struct MetadataSlotState *state, s32 id)
     if (value == 0)
         return 0;
     state->slots[index] = value;
-    metadata = Func_08185000(id);
+    metadata = Resource_GetMetadataRecordFar(id);
     if (state->count == 0) {
         state->first = metadata->first;
         state->second = metadata->second;

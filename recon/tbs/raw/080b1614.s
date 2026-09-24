@@ -13,8 +13,10 @@
 	.set sub_080150c8, 0x080150c8
 	.set sub_080b06c0, 0x080b06c0
 	.set sub_080f9010, 0x080f9010
+	.global Shop_RunQuantitySelector
 	.global Func_080b1614
 	.thumb_func
+Shop_RunQuantitySelector:
 Func_080b1614:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

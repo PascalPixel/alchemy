@@ -59,7 +59,7 @@ s32 BattleUnit_TickCounter13e(s32 unit_id);
 s32 BattleUnit_TickCounter13f(s32 unit_id);
 s32 BattleUnit_TickCounter146(s32 unit_id);
 void BattlePresentation_ConfigurePaletteFade(s32 mode, s32 value, s32 arg);
-s32 Func_080c1798(s32 unit_id, s32 element, s32 mode, s32 arg);
+s32 BattleFx_PlayUnitElementEffect(s32 unit_id, s32 element, s32 mode, s32 arg);
 
 /* Round-end processing. Each side's set-aside Djinn count down and return
    to their owners; then every listed unit ticks its counters, regenerates
@@ -116,7 +116,7 @@ s32 Battle_ProcessRoundEnd(void)
                         Djinn_ActivateFar(id, element, expired_entry->index);
                         Trade_RemoveOfferFar(id, expired_entry->element, expired_entry->index);
                         Owner_RecalculateStatsFar(id);
-                        Func_080c1798(id, element, 3, 0);
+                        BattleFx_PlayUnitElementEffect(id, element, 3, 0);
                         BattleEventRuntime_WaitForReady();
                     }
                 } else {

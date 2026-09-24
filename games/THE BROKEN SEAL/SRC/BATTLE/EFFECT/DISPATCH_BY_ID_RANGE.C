@@ -3,7 +3,7 @@
 void *Runtime_ReleaseHeapBlock(s32);
 s32 Runtime_AllocateHeapBlock(s32 arg0, s32 arg1);
 void *Runtime_AllocateBlock(s32 arg0, s32 arg1);
-void *Func_080e3aa0(s32 *);
+void *BattlePres_RunBeamSequence(s32 *);
 void *Unnamed_080e40a4(s32 *);
 void *FunctionHead_080e47b8(s32 *);
 void BattleFx_DispatchByIdRange(s32 *arg0)
@@ -26,7 +26,7 @@ void BattleFx_DispatchByIdRange(s32 *arg0)
     Unnamed_080e40a4(arg0);
   } else
   {
-    Func_080e3aa0(arg0);
+    BattlePres_RunBeamSequence(arg0);
   }
   Runtime_ReleaseHeapBlock(0x28);
   Runtime_ReleaseHeapBlock(0x27);

@@ -2,14 +2,14 @@
 
 /* Mode entries of the particle pool effect. */
 
-s32 Func_080ca1fc(s32, s32);
+s32 BattleFx_RunParticlePool(s32, s32);
 
 void BattleFx_RunParticlePoolMode1(s32 arg0)
 {
-    Func_080ca1fc(arg0, 1);
+    BattleFx_RunParticlePool(arg0, 1);
 }
 
 void BattleFx_RunParticlePoolMode0(s32 arg0)
 {
-    Func_080ca1fc(arg0, 0);
+    BattleFx_RunParticlePool(arg0, 0);
 }

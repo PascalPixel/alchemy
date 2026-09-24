@@ -3,7 +3,7 @@
 extern u8 *gMenuWork;
 
 s32 Party_CountActiveOwnersFar(void);
-void Func_08009008(void *, s32 *, s32 *, s32);
+void Object_ApplyProjectedPlacementFar(void *, s32 *, s32 *, s32);
 
 void Menu_UpdateEntryObjectTransforms(void)
 {
@@ -38,7 +38,7 @@ void Menu_UpdateEntryObjectTransforms(void)
                 tp[0] = hp[0] << 16;
                 tp[2] = (hp[8] << 16) + top;
                 tp[3] = 0;
-                Func_08009008(obj, (s32 *)tp, pp, 0x4000);
+                Object_ApplyProjectedPlacementFar(obj, (s32 *)tp, pp, 0x4000);
             }
             i++;
             hp++;

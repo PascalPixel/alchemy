@@ -12,14 +12,14 @@ extern u8 *Data_03001f1c;
 
 s32 SaveState_InitializeWorkspace(void);
 void SaveState_LoadSummaryRecords(void);
-s32 Func_08020244(s16 a, s32 b);
+s32 SaveMenu_SelectSlot(s16 a, s32 b);
 void UiText_ShowPositionedMessageAndWait(s32 msg, s32 mode);
 s32 UiWork_IsComplete(void);
 s32 Menu_RunConfirmSelection(s32 a, s32 b, s32 c, s32 d);
 void UiWork_FinalizePendingCore(void);
 void Audio_PlayCue(u8 mode);
-void Func_0801f818(void);
-void Func_0808a5b0(void);
+void SaveState_BuildSummaryHeader(void);
+void SaveState_CaptureObjectTableFar(void);
 s32 SaveState_WriteRecord(s32 a, void *b);
 void SaveState_ReleaseWorkspace(void);
 
@@ -38,7 +38,7 @@ s32 Save_WriteSelectedSlot(void)
     } else {
         SaveState_LoadSummaryRecords();
         base = Data_03001f1c;
-        slot = Func_08020244(Data_02002004, 0);
+        slot = SaveMenu_SelectSlot(Data_02002004, 0);
         if (slot == -1) {
             result = slot;
         } else {
@@ -60,8 +60,8 @@ s32 Save_WriteSelectedSlot(void)
             while (UiWork_IsComplete() == 0) {
                 WaitFrames(1);
             }
-            Func_0801f818();
-            Func_0808a5b0();
+            SaveState_BuildSummaryHeader();
+            SaveState_CaptureObjectTableFar();
             flag = SaveState_WriteRecord(slot, Data_02000000);
             flag |= SaveState_WriteRecord(slot + 3, Data_02000000 + 0x1000);
             UiWork_FinalizePendingCore();

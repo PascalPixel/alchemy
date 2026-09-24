@@ -10,7 +10,7 @@ void Map_ClearLayerEntryFlag(u32 no)
     *(u16 *)(entry + 0x22) = value;
 }
 
-void Func_080118c0(u32 no)
+void Map_SetLayerEntryFlag(u32 no)
 {
     u8 *base = gMapWork;
     u8 *entry = base + no * 12;

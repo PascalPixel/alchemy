@@ -14,7 +14,7 @@ void UiMessage_ShowResolvedAndWait(s32 message);
 void UiMessage_ShowResolvedAndRestoreState(s32 message);
 s32 UiMessage_ShowChoiceVariant(s32 arg0);
 s32 Shop_CountUnits(void);
-void Func_080b3050(s32 member);
+void Shop_RunPartyMemberIconBurst(s32 member);
 s32 Party_AdjustSixDigitCounterAFar(s32 amount);
 void PsynergyMenu_InitializeEntryObjectsFar(s32, s32, s32, s32, s32);
 void Menu_ReleaseEntryObjectsFar(void);
@@ -114,7 +114,7 @@ s32 Sanctum_RunPartyService(void)
             UiMessage_ShowResolvedAndWait(message + 3);
             UiWork_FinalizePending();
             BattleUnit_ResetStateByMode(unit_id, kind);
-            Func_080b3050(selection);
+            Shop_RunPartyMemberIconBurst(selection);
             Party_AdjustSixDigitCounterAFar(-price);
             Shop_DrawMoney();
             UiText_DrawQuantity(unit_id, 1);

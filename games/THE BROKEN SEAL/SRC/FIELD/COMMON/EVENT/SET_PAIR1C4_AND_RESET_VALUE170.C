@@ -22,7 +22,7 @@ void Event_SetPair1c4AndResetValue170(u16 first, u16 second)
     gGameState.second = second;
 }
 
-void Func_08091e9c(u16 value)
+void Event_SetValue170(u16 value)
 {
     struct State_08091e6c *state = gEventWork;
     state->value = value;

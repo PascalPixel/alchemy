@@ -3,7 +3,7 @@
 
 
 void UiWindow_Commit(s32 window);
-void Func_08015070(s32 window, s32 x, s32 width, s32 height, s32 style);
+void UiWindow_DrawDividerLineFar(s32 window, s32 x, s32 width, s32 height, s32 style);
 void UiText_DrawAt(s32 message, s32 window, s32 x, s32 y);
 void Menu_SetPageIcons(s32 page_size, s32 first_entry, s32 window, s32 x, s32 y);
 void Menu_DrawPageIndicator(s32 window, s32 count, s32 page_size, s32 page, s32 style);
@@ -26,7 +26,7 @@ s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused, const struct MenuResult 
     (void)unused;
 
     UiWindow_Commit(window);
-    Func_08015070(window, 0, 11, 16, 11);
+    UiWindow_DrawDividerLineFar(window, 0, 11, 16, 11);
 
     if (2 & *(u16 *)((u8 *)menu + 0x220)) {
         UiText_DrawAt(0xae1, window, 0, 88);

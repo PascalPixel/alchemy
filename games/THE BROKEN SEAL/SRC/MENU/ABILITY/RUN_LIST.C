@@ -88,13 +88,13 @@ extern struct PsynergyListWork *gMenuWork;
 
 s32 Math_Mod(s32 value, s32 divisor);
 void AnimationObjects_SelectAnimationFar(s32 object, s32 mode);
-void Func_08015068(s32 window, s32 x, s32 y, s32 width, s32 height);
+void UiWindow_ClearInteriorTilesFar(s32 window, s32 x, s32 y, s32 width, s32 height);
 void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 struct BattleUnit *Owner_GetStateFar(s32 owner);
 struct BattleAction *BattleAction_Get(s32 action);
 s32 GameFlag_TestFar(s32 message);
 void UiWindow_UpdateOrCreate(s32 *window, s32 x, s32 y, s32 width, s32 height, s32 style);
-void Func_080a112c(s32 window, s32 owner, s32 unused0, s32 unused1);
+void Menu_DrawOwnerStatusPanel(s32 window, s32 owner, s32 unused0, s32 unused1);
 void UiIcon_PrepareObject(struct MenuEntryIcon *icon);
 void PsynergyMenu_CallIconRoutineWithValue(void *work, s32 value);
 void UiMenu_PositionCursor(s32 x, s32 y);
@@ -233,14 +233,14 @@ s32 PsynergyMenu_RunList(s32 pane)
                         Audio_PlayCue(174);
                         prompt = 1;
                         menu->flags |= 2;
-                        Func_08015068(window, 0, 88, 120, 96);
+                        UiWindow_ClearInteriorTilesFar(window, 0, 88, 120, 96);
                         UiText_DrawAt(0xae1, window, 0, 88);
                     }
                 }
                 if ((INPUT_HELD_KEYS & KEY_SELECT) == 0 && prompt == 1) {
                     prompt = 0;
                     menu->flags &= 0xfffd;
-                    Func_08015068(window, 0, 88, 120, 96);
+                    UiWindow_ClearInteriorTilesFar(window, 0, 88, 120, 96);
                     UiText_DrawAt(0xb89, window, 0, 88);
                 }
             }
@@ -313,7 +313,7 @@ s32 PsynergyMenu_RunList(s32 pane)
                     menu->tab_colors[i] = 30;
                 }
                 menu->tab_colors[tab] = 26;
-                Func_080a112c(menu->field_024, menu->owner_table[tab], 0, 0);
+                Menu_DrawOwnerStatusPanel(menu->field_024, menu->owner_table[tab], 0, 0);
                 PsynergyMenu_CallIconRoutineWithValue(
                     menu, menu->owner_table[tab]);
                 break;

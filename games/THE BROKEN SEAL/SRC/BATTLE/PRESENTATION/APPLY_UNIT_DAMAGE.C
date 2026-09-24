@@ -13,7 +13,7 @@ struct BattleMotionSlot {
 struct CharacterRuntimeRecord *Owner_GetStateFar(s32 unit_id);
 struct BattleMotionSlot *GetBattleObjectSlot(s32 unit_id);
 void Object_SetMode(void *actor, s32 mode);
-void Func_08015130(s32 mode);
+void UiWindow_DrawPartyStatusContentsFar(s32 mode);
 void UiWork_ClearValueNameTablesFar(void);
 void UiWork_PushValueSlotFar(s32 value, s32 mode);
 void UiText_ShowMessageAndWaitCoreFar(s32 message_id);
@@ -45,7 +45,7 @@ void BattlePresentation_ApplyUnitDamage(u32 unit_id, s32 damage, s32 show_messag
 
     slot = GetBattleObjectSlot(unit_id);
     Object_SetMode(slot->actor, 5);
-    Func_08015130(0);
+    UiWindow_DrawPartyStatusContentsFar(0);
     UiWork_ClearValueNameTablesFar();
 
     if (unit_id <= 7) {

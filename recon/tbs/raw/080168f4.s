@@ -12,8 +12,10 @@
 	.set sub_0801999c, 0x0801999c
 	.set sub_080199ec, 0x080199ec
 	.set sub_080f9010, 0x080f9010
+	.global UiWork_StepChannelScript
 	.global Func_080168f4
 	.thumb_func
+UiWork_StepChannelScript:
 Func_080168f4:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

@@ -3,8 +3,10 @@
 	.set sub_080022ec, 0x080022ec
 	.set sub_08009008, 0x08009008
 	.set sub_08015418, 0x08015418
+	.global FourObjectMotion_UpdateBottomRow
 	.global Func_080ad40c
 	.thumb_func
+FourObjectMotion_UpdateBottomRow:
 Func_080ad40c:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

@@ -6,8 +6,10 @@
 	.set sub_080b5028, 0x080b5028
 	.set sub_080b5038, 0x080b5038
 	.set sub_080cd508, 0x080cd508
+	.global BattleFx_BeginCanvasLayer
 	.global Func_080cd594
 	.thumb_func
+BattleFx_BeginCanvasLayer:
 Func_080cd594:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

@@ -1,7 +1,9 @@
 .syntax unified
 	.thumb
+	.global SaveState_CaptureObjectTableFar
 	.global Func_0808a5b0
 	.thumb_func
+SaveState_CaptureObjectTableFar:
 Func_0808a5b0:
 	ldr	r4, [pc, #0]
 	bx	r4

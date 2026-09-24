@@ -3,8 +3,10 @@
 	.set sub_08004458, 0x08004458
 	.set sub_0800fec8, 0x0800fec8
 	.set sub_0800ff54, 0x0800ff54
+	.global Map_UpdateLayerScroll
 	.global Func_08010000
 	.thumb_func
+Map_UpdateLayerScroll:
 Func_08010000:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

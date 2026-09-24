@@ -2,8 +2,10 @@
 	.thumb
 	.set sub_080045d4, 0x080045d4
 	.set sub_080072f0, 0x080072f0
+	.global Object_SetMoveTarget
 	.global Func_0800d14c
 	.thumb_func
+Object_SetMoveTarget:
 Func_0800d14c:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl

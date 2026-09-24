@@ -2,8 +2,10 @@
 	.thumb
 	.set sub_080022ec, 0x080022ec
 	.set sub_080030f8, 0x080030f8
+	.global UiMenu_SlideCursor
 	.global Func_080a1ac0
 	.thumb_func
+UiMenu_SlideCursor:
 Func_080a1ac0:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

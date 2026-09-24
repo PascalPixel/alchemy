@@ -4,7 +4,7 @@
 extern u8 Data_00000b20[];
 void UiText_DrawCharacterAtOffsetFar();
 void UiText_DrawNumberAtOffsetFar();
-void Func_080ae99c();
+void UiIcon_CreateStatChangeArrow();
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
@@ -30,9 +30,9 @@ void UiText_DrawStatComparison(s32 alt, s32 base, s32 work)
     if (*(u16 *)(p + 60) != *(u16 *)(base + 60)) {
         UiText_DrawNumberAtOffsetFar(*(u16 *)(p + 60), 3, work, 64, 40);
         if (*(u16 *)(p + 60) > *(u16 *)(base + 60)) {
-            Func_080ae99c(work, 44, 36, 0);
+            UiIcon_CreateStatChangeArrow(work, 44, 36, 0);
         } else {
-            Func_080ae99c(work, 44, 36, 1);
+            UiIcon_CreateStatChangeArrow(work, 44, 36, 1);
         }
     }
     Call4(UiText_DrawCharacterAtOffsetFar, 0xb1d, work, 0, 48);
@@ -40,9 +40,9 @@ void UiText_DrawStatComparison(s32 alt, s32 base, s32 work)
     if (*(u16 *)(p + 62) != *(u16 *)(base + 62)) {
         UiText_DrawNumberAtOffsetFar(*(u16 *)(p + 62), 3, work, 64, 56);
         if (*(u16 *)(p + 62) > *(u16 *)(base + 62)) {
-            Func_080ae99c(work, 44, 52, 0);
+            UiIcon_CreateStatChangeArrow(work, 44, 52, 0);
         } else {
-            Func_080ae99c(work, 44, 52, 1);
+            UiIcon_CreateStatChangeArrow(work, 44, 52, 1);
         }
     }
     UiText_DrawCharacterAtOffsetFar((s32)Data_00000b20, work, 0, 64);
@@ -50,9 +50,9 @@ void UiText_DrawStatComparison(s32 alt, s32 base, s32 work)
     if (*(u16 *)(p + 64) != *(u16 *)(base + 64)) {
         UiText_DrawNumberAtOffsetFar(*(u16 *)(p + 64), 3, work, 64, 72);
         if (*(u16 *)(p + 64) > *(u16 *)(base + 64)) {
-            Func_080ae99c(work, 44, 68, 0);
+            UiIcon_CreateStatChangeArrow(work, 44, 68, 0);
         } else {
-            Func_080ae99c(work, 44, 68, 1);
+            UiIcon_CreateStatChangeArrow(work, 44, 68, 1);
         }
     }
     tmp = *(u16 *)(base + 64);

@@ -35,29 +35,29 @@ extern struct Cells03001ce0 Data_03001ce0;
    biased literal. */
 extern u16 Data_080ede48[];
 
-void *Func_08009030(s32);
+void *ResourceObject_CreateFar(s32);
 void **GetBattleObjectSlotFar(s32);
-void Func_080cd594(s32);
+void BattleFx_BeginCanvasLayer(s32);
 void ObjectGroup_UpdateMembers(s32, s32, s32, s32, s32);
 void Audio_PlayCue(s32);
-void Func_080c9048(void);
+void BattlePres_ConfigureEffectDisplay(void);
 void Unnamed_080cd104(s32, s32);
 void AnimationObjects_SelectAnimationFar(void *, s32);
 void BattleFx_SpawnObjects(s32, s32, s32);
 void *Resource_GetTableEntry(s32);
 s32 Random16(void);
 void BattleFx_SelectLivingTargets(s32);
-void Func_08009008(s32, void *, void *, s32);
+void Object_ApplyProjectedPlacementFar(s32, void *, void *, s32);
 s32 Trig_Sin(s32);
 s32 Trig_Cos(s32);
 void Render_ResetTransformState(void);
 void SceneTransform_ApplyPosition(void *);
-void Func_08004c6c(s32);
+void SceneTransform_ApplyRoll(s32);
 void SceneTransform_ApplyYaw(s32);
 void EffectPosition_ApplyBaseAndYOffset(const void *, void *);
 void Runtime_ReleaseHeapBlock(s32);
-void Func_080d67dc(void);
-void Func_080e727c(s32, s32, s32);
+void BattleFx_RestoreBackgroundDisplay(void);
+void Palette_BrightenBgEntries(s32, s32, s32);
 void ResourceObject_ReleaseFar(s32);
 void BattleActor_CommitPlacementFar(void);
 void BattleEventRuntime_BeginPhaseFar(s32);
@@ -65,7 +65,7 @@ void Graphics_PrepareTransferInIwramWork(s32, s32);
 void EffectStep_AdvanceWithGravity3D(void *, s32, s32);
 s32 Math_Div(s32, s32);
 void Camera_ApplyShake(s32, s32);
-s32 Func_080cdbc0(void);
+s32 BattleFx_EndCanvasLayer(void);
 
 s32 BattleEffect_RunParticleStreams(s32 arg0, s32 arg1)
 {
@@ -243,7 +243,7 @@ s32 BattleEffect_RunParticleStreams(s32 arg0, s32 arg1)
     temp_r3_24 = cursor[-1];
     *sp3C = temp_r3_24;
     (*(s32 *)((u8 *)(temp_r3_24) + (0x7828))) = arg0;
-    Func_080cd594(0x2000);
+    BattleFx_BeginCanvasLayer(0x2000);
     (*(s16 *)((u8 *)((void *)0x04000020) + (0))) = 0x100;
     if (sp4C == 1) {
         temp_r2_46 = *GetBattleObjectSlotFar((*(s32 *)((u8 *)((*(void **)((u8 *)(*sp3C) + (0x7828)))) + (8))));
@@ -258,7 +258,7 @@ s32 BattleEffect_RunParticleStreams(s32 arg0, s32 arg1)
     } else {
         sp40 = -1;
     }
-    Func_080c9048();
+    BattlePres_ConfigureEffectDisplay();
     (*(s16 *)((u8 *)((void *)0x05000000) + (0))) = 0;
     (*(s16 *)((u8 *)((void *)0x05000000) + (2))) = 0;
     (*(s32 *)((u8 *)(*sp3C) + (0x7780))) = 0;
@@ -270,7 +270,7 @@ s32 BattleEffect_RunParticleStreams(s32 arg0, s32 arg1)
         var_r6_136 = 0x1E3;
         var_r8_137 = 0;
         do {
-            temp_r0_140 = Func_08009030(var_r6_136);
+            temp_r0_140 = ResourceObject_CreateFar(var_r6_136);
             *(void **)((u8 *)*sp3C + var_r5_135) = temp_r0_140;
             if (temp_r0_140 != NULL) {
                 (*(s8 *)((u8 *)(temp_r0_140) + (0x26))) = 0;
@@ -491,15 +491,15 @@ block_56:
             (*(s32 *)((u8 *)(sp2C) + (4))) = var_r6_763;
             (*(s32 *)((u8 *)(sp18) + (0))) = (s32) ((var_r7_718 << 0x10) + 0x500000);
             (*(s32 *)((u8 *)(sp18) + (8))) = (s32) ((0x40 - temp_r3_748) << 0x10);
-            Func_08009008((*(s32 *)((u8 *)(*sp28) + (0x77D8))), sp18, sp2C, 0);
-            Func_08009008((*(s32 *)((u8 *)(*sp28) + (0x77DC))), sp18, sp2C, 0);
+            Object_ApplyProjectedPlacementFar((*(s32 *)((u8 *)(*sp28) + (0x77D8))), sp18, sp2C, 0);
+            Object_ApplyProjectedPlacementFar((*(s32 *)((u8 *)(*sp28) + (0x77DC))), sp18, sp2C, 0);
         } else {
             var_r6_763 = sp10 + 0x10000;
             sp58[0] = var_r6_763;
             (*(s32 *)((u8 *)(sp2C) + (4))) = var_r6_763;
             (*(s32 *)((u8 *)(sp18) + (0))) = (s32) ((var_r7_718 << 0x10) + 0x600000);
             (*(s32 *)((u8 *)(sp18) + (8))) = (s32) ((0x60 - temp_r3_748) << 0x10);
-            Func_08009008((*(s32 *)((u8 *)(*sp3C) + (0x77D8))), sp18, sp2C, 0);
+            Object_ApplyProjectedPlacementFar((*(s32 *)((u8 *)(*sp3C) + (0x77D8))), sp18, sp2C, 0);
         }
         var_r8_826 = 0;
         var_r2_830 = 0;
@@ -532,7 +532,7 @@ loop_84:
         sp60[2] = 0x02000000;
         Render_ResetTransformState();
         SceneTransform_ApplyPosition(sp60);
-        Func_08004c6c(0x800);
+        SceneTransform_ApplyRoll(0x800);
         SceneTransform_ApplyYaw(sp10);
         var_r7_911 = (void *)0x080EEE76;
         var_r8_912 = 0;
@@ -627,7 +627,7 @@ loop_84:
     Data_03001ad0.unk04 = (u16) sp38;
     Data_03001ad0.unk06 = (u16) sp34;
     Runtime_ReleaseHeapBlock(0x2E);
-    Func_080d67dc();
+    BattleFx_RestoreBackgroundDisplay();
     (*(s16 *)((u8 *)((void *)0x04000020) + (0))) = 0x80;
     *(s32 *)0x04000028 = 0;
     (*(s32 *)((u8 *)((void *)0x04000020) + (0xC))) = 0xFFFFF000;
@@ -684,7 +684,7 @@ loop_121:
     temp_r5_1334 = *(s32 *)0x03001E80;
     sp24 = temp_r1_1333;
     if (temp_r1_1333 > 0x13) {
-        Func_080e727c(2, 2, 2);
+        Palette_BrightenBgEntries(2, 2, 2);
     }
     if (var_fp_1329 == 0) {
         Audio_PlayCue(0x9C);
@@ -816,14 +816,14 @@ loop_121:
         (*(s32 *)((u8 *)(sp1C) + (4))) = sp14;
         (*(s32 *)((u8 *)(sp18) + (0))) = (s32) ((var_r1_1643 << 0x10) + 0x600000);
         (*(s32 *)((u8 *)(sp18) + (8))) = (s32) ((0x60 - temp_r0_1683) << 0x10);
-        Func_08009008((*(s32 *)((u8 *)(*sp20) + (0x77D8))), sp18, sp1C, 0);
-        Func_08009008((*(s32 *)((u8 *)(*sp20) + (0x77DC))), sp18, sp1C, 0);
+        Object_ApplyProjectedPlacementFar((*(s32 *)((u8 *)(*sp20) + (0x77D8))), sp18, sp1C, 0);
+        Object_ApplyProjectedPlacementFar((*(s32 *)((u8 *)(*sp20) + (0x77DC))), sp18, sp1C, 0);
     } else {
         sp50[0] = temp_r2_1687;
         (*(s32 *)((u8 *)(sp1C) + (4))) = temp_r2_1687;
         (*(s32 *)((u8 *)(sp18) + (0))) = (s32) ((var_r1_1643 << 0x10) + 0x600000);
         (*(s32 *)((u8 *)(sp18) + (8))) = (s32) ((0x60 - temp_r0_1683) << 0x10);
-        Func_08009008((*(s32 *)((u8 *)(*sp3C) + (0x77D8))), sp18, sp1C, 0);
+        Object_ApplyProjectedPlacementFar((*(s32 *)((u8 *)(*sp3C) + (0x77D8))), sp18, sp1C, 0);
     }
     (*(s32 *)((u8 *)(*sp20) + (0x77A8))) = 1;
     Camera_ApplyShake(8, 8);
@@ -839,5 +839,5 @@ loop_121:
     if (sp4C == 0) {
         ResourceObject_ReleaseFar((*(s32 *)((u8 *)(*sp3C) + (0x77D8))));
     }
-    return Func_080cdbc0();
+    return BattleFx_EndCanvasLayer();
 }

@@ -1,7 +1,9 @@
 .syntax unified
 	.thumb
+	.global Map_SetCameraCenter
 	.global Func_08010230
 	.thumb_func
+Map_SetCameraCenter:
 Func_08010230:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

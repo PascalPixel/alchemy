@@ -83,19 +83,19 @@ void render_animated_tile_frameFar(void *record, s32 frame);
 s32 UiWork_IsCompleteFar(void);
 void UiWork_ClearValueNameTablesFar(void);
 void UiWork_PushValueSlotFar(s32 value, s32 style);
-void Func_08015130(s32 mode);
+void UiWindow_DrawPartyStatusContentsFar(s32 mode);
 void UiText_PrepareMessageWorkFar(void);
-void Func_080152b8(u16 *selection);
+void BattleLayout_HighlightPartyPanelsFar(u16 *selection);
 void BattleUnit_BuildStatusFlags(s32 actor_id, void *slot);
 s32 BattleMotion_GetSlotField14(s32 actor_id);
 void BattlePres_SetActorModeAndAction(s32 actor_id);
 s32 ActivateBattleObjectSlot(s32 actor_id);
 void Unnamed_080ba918(void *object, s32 value);
-void Func_080bac6c(s32 actor_id);
+void BattleActor_RemoveFromLists(s32 actor_id);
 void BattleActor_ResetRuntimeFields(s32 actor_id);
 void BattleActor_DestroyTemporaryObject(s32 actor_id);
 void Battle_SetRuntimeFlagBit0(struct BattlePlaybackState *state, s32 value);
-void Func_080c24f0(s32 actor_id, s32 mode);
+void BattleEnemy_RecordDefeat(s32 actor_id, s32 mode);
 s32 Summon_GetEntryByte3Kind(s32 class_id);
 void Audio_PlayCue(s32 sound_id);
 
@@ -230,7 +230,7 @@ void BattleEvent_Playback(void)
                         void *record;
 
                         state->actor_id = state->events.operands[event_index];
-                        Func_080c24f0(
+                        BattleEnemy_RecordDefeat(
                             state->events.operands[event_index],
                             state->actor_mode);
                         BattleActor_ResetRuntimeFields(state->actor_id);
@@ -252,7 +252,7 @@ void BattleEvent_Playback(void)
                         break;
                     }
                     case BATTLE_EVENT_REFRESH:
-                        Func_08015130(
+                        UiWindow_DrawPartyStatusContentsFar(
                             ((u8 *)*(void **)0x03001e74)[65]);
                         break;
                     case BATTLE_EVENT_ACTOR_FINISH:
@@ -368,7 +368,7 @@ void BattleEvent_Playback(void)
                     slot = GetBattleObjectSlot(state->actor_id);
                     Unnamed_080ba918(slot->object, 7);
                 }
-                Func_080152b8(phase_locals.selection);
+                BattleLayout_HighlightPartyPanelsFar(phase_locals.selection);
             }
 
             state->timer++;
@@ -439,7 +439,7 @@ void BattleEvent_Playback(void)
                     }
                 }
             } else if (timer == 4) {
-                Func_080bac6c(state->actor_id);
+                BattleActor_RemoveFromLists(state->actor_id);
             } else if (timer > 4) {
                 struct BattleObjectSlot *slot;
                 void **record_cursor;

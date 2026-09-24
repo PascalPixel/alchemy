@@ -13,8 +13,10 @@
 	.set sub_0808ba1c, 0x0808ba1c
 	.set sub_0808d428, 0x0808d428
 	.set sub_08093a6c, 0x08093a6c
+	.global Event_SpawnObjectTable
 	.global Func_0808b3ec
 	.thumb_func
+Event_SpawnObjectTable:
 Func_0808b3ec:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

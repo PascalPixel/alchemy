@@ -8,8 +8,10 @@
 	.set sub_080048f4, 0x080048f4
 	.set sub_080150c8, 0x080150c8
 	.set sub_080b06ec, 0x080b06ec
+	.global Shop_CreatePriceSprite
 	.global Func_080b0744
 	.thumb_func
+Shop_CreatePriceSprite:
 Func_080b0744:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl

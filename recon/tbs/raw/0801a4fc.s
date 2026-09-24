@@ -6,8 +6,10 @@
 	.set sub_08004080, 0x08004080
 	.set sub_080048b0, 0x080048b0
 	.set sub_0801a5a4, 0x0801a5a4
+	.global UiGlyph_LoadEntryWithPalette
 	.global Func_0801a4fc
 	.thumb_func
+UiGlyph_LoadEntryWithPalette:
 Func_0801a4fc:
 	push	{r5, r6, r7, lr}
 	mov	r7, r8

@@ -1,7 +1,9 @@
 .syntax unified
 	.thumb
+	.global Palette_BuildTintedColor
 	.global Func_0801cbd4
 	.thumb_func
+Palette_BuildTintedColor:
 Func_0801cbd4:
 	push	{r5, r6, r7, lr}
 	adds	r5, r0, #0

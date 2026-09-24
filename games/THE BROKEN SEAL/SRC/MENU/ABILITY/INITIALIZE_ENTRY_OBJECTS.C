@@ -35,7 +35,7 @@ extern u8 *gMenuWork;
 
 s32 Party_ListActiveOwnersFar(u16 *out);
 s32 Party_RemapCharacterIdByFlagsFar(u16 value);
-void *Func_08009030(s32 value);
+void *ResourceObject_CreateFar(s32 value);
 void Object_InitializeMode(void *object, s32 value);
 void ScheduleCallbackAfterFrames(void (*callback)(void), s32 value);
 void Menu_UpdateEntryObjectTransforms(void);
@@ -49,7 +49,7 @@ void InitializeEntryObjects(void *source, s32 origin_x, s32 origin_y, s32 spacin
 
     entry_state[0x1e] = entry_count;
     for (i = 0; i < entry_count; i++) {
-        void *entry_object = Func_08009030(Party_RemapCharacterIdByFlagsFar(entry_ids[i]));
+        void *entry_object = ResourceObject_CreateFar(Party_RemapCharacterIdByFlagsFar(entry_ids[i]));
         if (entry_object != 0) {
             s32 entry_x;
             s32 source_x;

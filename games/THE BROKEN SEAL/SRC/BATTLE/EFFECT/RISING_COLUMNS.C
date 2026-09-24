@@ -16,8 +16,8 @@ typedef struct Column {
 extern u8 gWorkSlot[];
 extern s8 Data_080eeb96[];
 extern u8 Value_000000a6;
-void Func_080cd594(s32);
-void Func_080de2f8(void *, s32, s32, s32, s32 *, s32 *);
+void BattleFx_BeginCanvasLayer(s32);
+void BattleFx_PrepareCanvasEffect(void *, s32, s32, s32, s32 *, s32 *);
 void EffectPosition_ApplyStepAndYOffset(s32, s32 *);
 void Audio_PlayCue(s32);
 void ObjectGroup_UpdateMembers(s32, s32, s32, s32, s32);
@@ -25,7 +25,7 @@ s32 Math_Mod(s32, s32);
 void Camera_ApplyShake(s32, s32);
 void ObjectGroup_TickMemberTimers(void);
 void Runtime_ReleaseHeapBlock(s32);
-s32 Func_080cdbc0(void);
+s32 BattleFx_EndCanvasLayer(void);
 #define WORK_EFFECT ((struct BattleEffectArgument *)work->effect)
 
 void BattleEffect_RunRisingColumns(struct BattleEffectArgument *effect)
@@ -44,8 +44,8 @@ void BattleEffect_RunRisingColumns(struct BattleEffectArgument *effect)
     work = (struct BattleEffectWork *)*entry++;
     dst = (void *)*entry;
     WORK_EFFECT = effect;
-    Func_080de2f8(effect, 4, effect->side, 4, &origin_x, &origin_y);
-    Func_080cd594(1);
+    BattleFx_PrepareCanvasEffect(effect, 4, effect->side, 4, &origin_x, &origin_y);
+    BattleFx_BeginCanvasLayer(1);
     *(s16 *)0x04000020 = 0x100;
     *(s16 *)0x04000050 = 0;
     Resource_LoadAndDecompress((s32)&Value_000000a6, work, 1, 1);
@@ -105,5 +105,5 @@ void BattleEffect_RunRisingColumns(struct BattleEffectArgument *effect)
     Scheduler_RemoveCallback(0x080cd261);
     Runtime_ReleaseHeapBlock(47);
     Runtime_ReleaseHeapBlock(46);
-    Func_080cdbc0();
+    BattleFx_EndCanvasLayer();
 }

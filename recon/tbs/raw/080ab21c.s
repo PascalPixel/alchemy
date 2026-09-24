@@ -1,7 +1,9 @@
 .syntax unified
 	.thumb
+	.global UiWindow_SetRectPalette
 	.global Func_080ab21c
 	.thumb_func
+UiWindow_SetRectPalette:
 Func_080ab21c:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

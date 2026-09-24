@@ -8,9 +8,9 @@ extern u8 *gWindowWork;
 s32 UiText_BuildRenderEntries(s32 character, s32 count);
 s16 *Runtime_BumpAllocateAlternatePool(s32 size);
 u8 *Text_FormatNumber(u8 *output, s32 value, s32 width);
-void Func_08017aa4(void *text, s32 work, s32 x, s32 y);
-void Func_08017c8c(u16 *text, s32 work, s32 x, s32 y);
-s32 Func_0801de5c(void *text, s32 source, s32 destination, s32 phase);
+void UiText_RenderWideStringAtOffset(void *text, s32 work, s32 x, s32 y);
+void UiText_RenderWideStringInWindow(u16 *text, s32 work, s32 x, s32 y);
+s32 UiText_RenderStringTiles(void *text, s32 source, s32 destination, s32 phase);
 
 void UiText_DrawResource(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 {
@@ -25,7 +25,7 @@ void UiText_DrawResource(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
     *(u16 *)(base + offset) = zero;
     *counter = (*counter + 1) & RENDER_ENTRY_MASK;
     /* 0xeb0から始まる列を次の処理へ渡す。 */
-    Func_08017aa4(base + RENDER_ENTRY_TBL_OFS, arg1, arg2, arg3);
+    UiText_RenderWideStringAtOffset(base + RENDER_ENTRY_TBL_OFS, arg1, arg2, arg3);
 }
 
 void UiText_DrawCharacterAtOffset(
@@ -58,7 +58,7 @@ void UiText_DrawCharacterAtOffset(
         byte_offset = cell * 2;
         vram_address = byte_offset + 0x06002000;
         text = (u16 *)(base + RENDER_ENTRY_TBL_OFS);
-        Func_0801de5c(
+        UiText_RenderStringTiles(
             text,
             (s32)(base + byte_offset),
             vram_address,
@@ -83,8 +83,8 @@ void UiText_DrawString(u8 *text, s32 arg1, s32 arg2, s32 arg3)
         } while (*input != 0);
     }
     *output = 0;
-    Func_08017aa4(buffer, arg1, arg2, arg3);
-    Func_08002df0(buffer);
+    UiText_RenderWideStringAtOffset(buffer, arg1, arg2, arg3);
+    Runtime_BumpFree(buffer);
 }
 
 void UiText_DrawStringAtOffset(
@@ -123,12 +123,12 @@ void UiText_DrawStringAtOffset(
         dst = vram + cell;
         src = (s32)base + cell;
         phase = offset_x & 7;
-        Func_0801de5c(
+        UiText_RenderStringTiles(
             buffer,
             src,
             dst,
             phase);
-        Func_08002df0(buffer);
+        Runtime_BumpFree(buffer);
     }
 }
 
@@ -145,8 +145,8 @@ void UiText_DrawStringInWindow(u8 *text, s32 arg1, u32 x, u32 y)
     *output = 0;
     x >>= 3;
     y >>= 3;
-    Func_08017c8c(buffer, arg1, x, y);
-    Func_08002df0(buffer);
+    UiText_RenderWideStringInWindow(buffer, arg1, x, y);
+    Runtime_BumpFree(buffer);
 }
 
 void UiText_DrawNumber(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4)
@@ -217,7 +217,7 @@ void UiText_DrawPrefixedNumberAtOffset(
         dst = vram + cell;
         src = (s32)base + cell;
         phase = offset_x & 7;
-        Func_0801de5c(
+        UiText_RenderStringTiles(
             output,
             src,
             dst,

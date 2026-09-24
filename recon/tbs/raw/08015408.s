@@ -1,7 +1,9 @@
 .syntax unified
 	.thumb
+	.global UiWindow_DrawFrameFar
 	.global Func_08015408
 	.thumb_func
+UiWindow_DrawFrameFar:
 Func_08015408:
 	ldr	r4, [pc, #0]
 	bx	r4

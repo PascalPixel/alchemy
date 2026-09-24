@@ -1,7 +1,9 @@
 .syntax unified
 	.thumb
+	.global ResourceObject_CreateFar
 	.global Func_08009030
 	.thumb_func
+ResourceObject_CreateFar:
 Func_08009030:
 	ldr	r4, [pc, #0]
 	bx	r4

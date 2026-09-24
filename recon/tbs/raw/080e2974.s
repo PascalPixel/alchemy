@@ -26,8 +26,10 @@
 	.set sub_080e396c, 0x080e396c
 	.set sub_080ed408, 0x080ed408
 	.set sub_080f9010, 0x080f9010
+	.global BattlePres_RunBurstScene
 	.global Func_080e2974
 	.thumb_func
+BattlePres_RunBurstScene:
 Func_080e2974:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

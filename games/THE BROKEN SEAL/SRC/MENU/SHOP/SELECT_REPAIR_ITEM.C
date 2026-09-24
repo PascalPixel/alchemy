@@ -10,7 +10,7 @@ void UiWindow_Close(s32, s32);
 s32 Ability_GetAvailability(s32);
 void Audio_PlayCue(s32);
 void UiMessage_ShowAndWait(s32);
-void Func_080b2328(s32, s32);
+void Shop_RepairItem(s32, s32);
 
 extern u8 Value_00000075;
 extern u8 Value_00000cc2;
@@ -18,7 +18,7 @@ extern u8 Value_00000cc2;
 /*
  * Repair flow reached from Shop_SelectPartyMember when the shop's party
  * action is not "sell": browse the chosen member's inventory, priced one
- * slot at a time, and hand a confirmed slot off to Func_080b2328 before
+ * slot at a time, and hand a confirmed slot off to Shop_RepairItem before
  * showing the repair-result message.
  */
 s32 Shop_SelRepair(s32 unit_id)
@@ -115,7 +115,7 @@ done:
         if (result != 0)
             break;
 
-        Func_080b2328(unit_id, selection);
+        Shop_RepairItem(unit_id, selection);
         UiMessage_ShowAndWait((s32)&Value_00000cc2);
         if (Ability_GetAvailability(unit_id) == 0)
             break;

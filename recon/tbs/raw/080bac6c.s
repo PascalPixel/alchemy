@@ -2,8 +2,10 @@
 	.thumb
 	.set sub_08077008, 0x08077008
 	.set sub_080c1ebc, 0x080c1ebc
+	.global BattleActor_RemoveFromLists
 	.global Func_080bac6c
 	.thumb_func
+BattleActor_RemoveFromLists:
 Func_080bac6c:
 	push	{r5, r6, lr}
 	ldr	r3, [pc, #40]

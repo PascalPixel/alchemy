@@ -8,7 +8,7 @@ struct Work_08017c1c {
 
 extern u8 *gWindowWork;
 
-s32 Func_0801de5c(u16 *, s32, s32, s32);
+s32 UiText_RenderStringTiles(u16 *, s32, s32, s32);
 
 void UiText_RenderGlyphTileAtWorkOffset(
     u16 *buffer,
@@ -39,7 +39,7 @@ void UiText_RenderGlyphTileAtWorkOffset(
         dst = 0x06002000 + cell;
         src = (s32)base + cell;
 
-        Func_0801de5c(
+        UiText_RenderStringTiles(
             buffer,
             src,
             dst,

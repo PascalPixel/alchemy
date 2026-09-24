@@ -12,8 +12,10 @@
 	.set sub_080915ac, 0x080915ac
 	.set sub_08092ba8, 0x08092ba8
 	.set sub_08094154, 0x08094154
+	.global UiText_OpenMessageAtObject
 	.global Func_08092c40
 	.thumb_func
+UiText_OpenMessageAtObject:
 Func_08092c40:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

@@ -6,8 +6,8 @@ extern u8 Value_00000b24;
 
 extern void ItemMenu_PosCategory(void);
 extern void UiText_DrawAt(void *, s32, s32, s32);
-extern s32 Func_080a9aec(s32, void *);
-extern s32 Func_080a9c18(void *);
+extern s32 ItemMenu_DrawEquippedItemNames(s32, void *);
+extern s32 ItemMenu_ArrangeCategoryItemIcons(void *);
 
 void ItemMenu_DrawCategory(s32 window, s32 owner_id, s32 mode)
 {
@@ -22,10 +22,10 @@ void ItemMenu_DrawCategory(s32 window, s32 owner_id, s32 mode)
     UiText_DrawAt(&Value_00000b24 + 2, window, 0, 16);
     UiText_DrawAt(&Value_00000b24 + 3, window, 0, 48);
     items = (u8 *)menu->items;
-    Func_080a9aec(window, items);
+    ItemMenu_DrawEquippedItemNames(window, items);
     if (mode == 0) {
         WaitFrames(1);
         InventoryMenu_DrawItemIcons((u16 *)items, 1);
-        Func_080a9c18(items);
+        ItemMenu_ArrangeCategoryItemIcons(items);
     }
 }

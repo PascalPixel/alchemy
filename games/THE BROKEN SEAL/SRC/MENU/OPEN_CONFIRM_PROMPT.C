@@ -11,7 +11,7 @@ struct MenuObjectControl {
 extern struct MenuObjectControl *gMenuCtrlWork;
 
 s32 Runtime_AllocateHeapBlock(s32 kind, s32 size);
-void Func_08015408(s32 x, s32 y, s32 width, s32 height);
+void UiWindow_DrawFrameFar(s32 x, s32 y, s32 width, s32 height);
 void UiWindow_InitializeWork(s32 unused);
 s32 Party_ListActiveOwnersFar(const u16 *ids);
 void ItemMenu_Init(s32, s32, s32, s32);
@@ -45,7 +45,7 @@ s32 Menu_OpenConfirmPrompt(void)
     s32 result;
 
     gMenuCtrlWork->suspended = 1;
-    Func_08015408(0, 0, 30, 20);
+    UiWindow_DrawFrameFar(0, 0, 30, 20);
     WaitFrames(1);
     UiWindow_InitializeWork(0);
     FIELD(state, u8, 0x219) = (u8)Party_ListActiveOwnersFar((const u16 *)((u8 *)state + 0x208));
@@ -67,7 +67,7 @@ s32 Menu_OpenConfirmPrompt(void)
     RenderOutput_ClearListFar(FIELD(state, s32, 0x24));
     FIELD(FIELD(&gMenuCtrlWork, void *, 0x24), u8, 0xea6) = 1;
     ItemMenu_Close();
-    Func_08015408(0, 0, 30, 20);
+    UiWindow_DrawFrameFar(0, 0, 30, 20);
     Runtime_ReleaseHeapBlock(0x37);
     gMenuCtrlWork->suspended = 0;
     WaitFrames(1);

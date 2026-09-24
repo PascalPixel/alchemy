@@ -18,8 +18,10 @@
 	.set sub_080e3980, 0x080e3980
 	.set sub_080ed408, 0x080ed408
 	.set sub_080f9010, 0x080f9010
+	.global BattleFx_RunFortyEightFrameEffect
 	.global Func_080ceff8
 	.thumb_func
+BattleFx_RunFortyEightFrameEffect:
 Func_080ceff8:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

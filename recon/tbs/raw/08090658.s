@@ -2,8 +2,10 @@
 	.thumb
 	.set sub_08004278, 0x08004278
 	.set sub_080072f0, 0x080072f0
+	.global DisplayTransition_UpdateFrame
 	.global Func_08090658
 	.thumb_func
+DisplayTransition_UpdateFrame:
 Func_08090658:
 	push	{r5, r6, r7, lr}
 	ldr	r3, [pc, #276]

@@ -9,8 +9,10 @@
 	.set sub_08015e8c, 0x08015e8c
 	.set sub_08016584, 0x08016584
 	.set sub_080178b0, 0x080178b0
+	.global UiText_MeasureEntryDimensions
 	.global Func_08018850
 	.thumb_func
+UiText_MeasureEntryDimensions:
 Func_08018850:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

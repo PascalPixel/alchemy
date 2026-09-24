@@ -24,8 +24,10 @@
 	.set sub_080e6d3c, 0x080e6d3c
 	.set sub_080e6eac, 0x080e6eac
 	.set sub_080f9010, 0x080f9010
+	.global BattleEffect_RunEmberColumns
 	.global Func_080d2d98
 	.thumb_func
+BattleEffect_RunEmberColumns:
 Func_080d2d98:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

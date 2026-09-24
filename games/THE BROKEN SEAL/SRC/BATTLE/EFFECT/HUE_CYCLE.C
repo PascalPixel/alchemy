@@ -2,7 +2,7 @@
 
 extern u8 *Data_03001ea8;
 
-s32 Func_080979a4(s32, s32, s32);
+s32 BattleFx_ComputeHueChannel(s32, s32, s32);
 void BattleFx_ComputeHueChannels(s32 value, s32 *maximum, s32 *center, s32 *minimum);
 
 void BattleFx_AdvanceHueCycle(void)
@@ -41,7 +41,7 @@ void BattleFx_AdvanceHueCycle(void)
 
 void BattleFx_ComputeHueChannels(s32 value, s32 *maximum, s32 *center, s32 *minimum)
 {
-    *maximum = Func_080979a4(value + 0x780000, 0, 0x1F0000);
-    *center = Func_080979a4(value, 0, 0x1F0000);
-    *minimum = Func_080979a4(value + 0xFF880000, 0, 0x1F0000);
+    *maximum = BattleFx_ComputeHueChannel(value + 0x780000, 0, 0x1F0000);
+    *center = BattleFx_ComputeHueChannel(value, 0, 0x1F0000);
+    *minimum = BattleFx_ComputeHueChannel(value + 0xFF880000, 0, 0x1F0000);
 }

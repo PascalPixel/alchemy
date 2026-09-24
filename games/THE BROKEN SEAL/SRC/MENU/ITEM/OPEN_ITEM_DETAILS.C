@@ -8,9 +8,8 @@ struct InventoryMenuDetailsState {
 };
 
 s32 UiWindow_UpdateOrCreate(s32 *, s32, s32, s32, s32, s32);
-void Func_080a22f4(void);
-void Func_080a4924(s32, s32);
-#define InventoryMenu_DrawItemDetails Func_080a4924
+void Palette_CopyMenuBgToObjPalette(void);
+void ItemMenu_DrawItemDetails(s32, s32);
 
 s32 ItemMenu_OpenDetail(s32 item_index)
 {
@@ -18,10 +17,10 @@ s32 ItemMenu_OpenDetail(s32 item_index)
         (struct InventoryMenuDetailsState *)gMenuWork;
 
     UiWindow_UpdateOrCreate(&menu->details_window, 0, 0, 13, 10, 2);
-    Func_080a22f4();
+    Palette_CopyMenuBgToObjPalette();
 
     if (menu->item_ids[item_index] != 0)
-        InventoryMenu_DrawItemDetails(
+        ItemMenu_DrawItemDetails(
             menu->details_window, menu->item_ids[item_index]);
 
     return 1;

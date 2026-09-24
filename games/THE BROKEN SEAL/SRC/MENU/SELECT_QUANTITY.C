@@ -11,15 +11,15 @@ void Menu_UpdateEntryObjectTransforms(void);
 
 s32 UiWindow_CreateFar(s32, s32, s32, s32, s32);
 void Scheduler_RemoveCallback(void (*callback)(void));
-void Func_080a22f4(void);
+void Palette_CopyMenuBgToObjPalette(void);
 s32 GameFlag_TestFar(s32);
 s32 Math_Mod(s32, s32);
-void Func_080a4924(s32, s32);
+void ItemMenu_DrawItemDetails(s32, s32);
 s32 RenderOutput_RedrawSavedRectFar(s32);
 void UiWork_FinalizeFar(s32, s32);
 void Unnamed_080a2144(s32);
 void Scheduler_AddOrUpdateCallback(const void *, s32);
-void Func_08015408(s32, s32, s32, s32);
+void UiWindow_DrawFrameFar(s32, s32, s32, s32);
 
 s32 Menu_SelectQuantity(s32 value)
 {
@@ -37,7 +37,7 @@ s32 Menu_SelectQuantity(s32 value)
         u8 *iconState = MENU_SUBOBJECT(menu, 380);
         iconState[5] = 13;
     }
-    Func_080a22f4();
+    Palette_CopyMenuBgToObjPalette();
     WaitFrames(1);
 
     goto check_exit;
@@ -64,7 +64,7 @@ check_exit:
     if (changed != 0) {
         changed = 0;
         quantity = Math_Mod(quantity + 5, 5);
-        Func_080a4924(window, value);
+        ItemMenu_DrawItemDetails(window, value);
     }
 
     {
@@ -95,7 +95,7 @@ done:
         u8 *iconState = MENU_SUBOBJECT(menu, 380);
         iconState[5] = 1;
     }
-    Func_08015408(13, 0, 17, 10);
+    UiWindow_DrawFrameFar(13, 0, 17, 10);
 
     return quantity;
 }

@@ -3,7 +3,7 @@
 extern volatile s32 gFrameCount;
 s32 Math_ModU(s32, s32);
 void Animation_ApplyChildValuesFar(s32, s32);
-void Func_08096ddc(s32);
+void BattleFx_SpawnScaledArcObjects(s32);
 
 void BattleFx_FlickerObjectAndTick(s32 arg0)
 {
@@ -13,7 +13,7 @@ void BattleFx_FlickerObjectAndTick(s32 arg0)
         Animation_ApplyChildValuesFar(arg0, 0);
     }
     if ((gFrameCount & 15) == 0) {
-        Func_08096ddc(arg0);
+        BattleFx_SpawnScaledArcObjects(arg0);
     }
 }
 
@@ -25,6 +25,6 @@ void BattleFx_CycleObjectValueByCounter(s32 arg0)
         Animation_ApplyChildValuesFar(arg0, value);
     }
     if ((gFrameCount & 15) == 0) {
-        Func_08096ddc(arg0);
+        BattleFx_SpawnScaledArcObjects(arg0);
     }
 }

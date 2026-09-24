@@ -3,19 +3,19 @@
 #define PARTY_STATE gGameState
 
 s32 Scheduler_EnableCallbacks(u32 callback);
-void Func_080912b8(void);
+void Object_EffectSpawnCallback(void);
 
 void Object_EnableEffectSpawnCallback(void)
 {
-    Scheduler_EnableCallbacks((u32)Func_080912b8);
+    Scheduler_EnableCallbacks((u32)Object_EffectSpawnCallback);
 }
 
 s32 Scheduler_DisableCallbacks(u32 callback);
-void Func_080912b8(void);
+void Object_EffectSpawnCallback(void);
 
 void Object_DisableEffectSpawnCallback(void)
 {
-    Scheduler_DisableCallbacks((u32)Func_080912b8);
+    Scheduler_DisableCallbacks((u32)Object_EffectSpawnCallback);
 }
 
 extern struct BattleEffectEntry Data_0809e9f0[];

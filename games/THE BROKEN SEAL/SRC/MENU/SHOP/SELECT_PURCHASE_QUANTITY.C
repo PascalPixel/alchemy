@@ -13,7 +13,7 @@ extern void UiMessage_ShowAndWait(s32);
 extern s32 Item_FindSlot(s32, s32);
 extern s32 Math_DivU(s32, s32);
 extern s32 Ability_GetMaximum(s32, s32);
-extern s32 Func_080b1614(s32, s32, s32);
+extern s32 Shop_RunQuantitySelector(s32, s32, s32);
 
 s32 Shop_SelBuyNum(s32 unit_id, s32 item_id)
 {
@@ -58,7 +58,7 @@ s32 Shop_SelBuyNum(s32 unit_id, s32 item_id)
 
         shop->mode = 12;
         Shop_PlaceCursor(0, ACTION_Y, 0x30);
-        result = Func_080b1614(quantity, chance, item->price);
+        result = Shop_RunQuantitySelector(quantity, chance, item->price);
     }
     return result;
 }

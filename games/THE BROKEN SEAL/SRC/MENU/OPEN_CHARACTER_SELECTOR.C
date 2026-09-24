@@ -62,7 +62,7 @@ extern struct MenuObjectControl *gMenuCtrlWork;
 struct CharacterSelectorState *Runtime_AllocateHeapBlock(s32, s32);
 void Runtime_ReleaseHeapBlock(s32);
 void RenderOutput_ClearListFar(s32);
-void Func_08015408(s32, s32, s32, s32);
+void UiWindow_DrawFrameFar(s32, s32, s32, s32);
 s32 UiWindow_CreateFar(s32, s32, s32, s32, s32);
 s32 Party_ListActiveOwnersFar(const u16 *);
 void UiWindow_InitializeWork(s32);
@@ -82,7 +82,7 @@ s32 Menu_OpenCharacterSelector(void)
     s32 index;
 
     gMenuCtrlWork->suspended = 1;
-    Func_08015408(0, 0, 30, 20);
+    UiWindow_DrawFrameFar(0, 0, 30, 20);
     WaitFrames(1);
     UiWindow_InitializeWork(0);
 

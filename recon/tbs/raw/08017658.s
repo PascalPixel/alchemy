@@ -5,8 +5,10 @@
 	.set sub_080165d8, 0x080165d8
 	.set sub_08018038, 0x08018038
 	.set sub_0801868c, 0x0801868c
+	.global UiText_OpenMessageWindow
 	.global Func_08017658
 	.thumb_func
+UiText_OpenMessageWindow:
 Func_08017658:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl

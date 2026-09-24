@@ -3,8 +3,10 @@
 	.set sub_080090d0, 0x080090d0
 	.set sub_0808b3ec, 0x0808b3ec
 	.set sub_0808b824, 0x0808b824
+	.global BattleEffect_ClearAllObjects
 	.global Func_0808b98c
 	.thumb_func
+BattleEffect_ClearAllObjects:
 Func_0808b98c:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl

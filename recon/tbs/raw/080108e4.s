@@ -21,8 +21,10 @@
 	.set sub_080072f4, 0x080072f4
 	.set sub_080118d8, 0x080118d8
 	.set sub_080123f4, 0x080123f4
+	.global Map_WriteLayerCellTile
 	.global Func_080108e4
 	.thumb_func
+Map_WriteLayerCellTile:
 Func_080108e4:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl

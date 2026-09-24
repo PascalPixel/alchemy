@@ -16,8 +16,8 @@ struct Object {
 
 extern s32 gGameState[];
 
-void Func_0800447c(s32, s32, struct Vec *);
-s32 Func_080091a8(s32, s32, s32);
+void Math_AdvanceVectorByAngle(s32, s32, struct Vec *);
+s32 Map_GetTerrainHeightFar(s32, s32, s32);
 struct Object *ObjectTable_Get(s32);
 s32 BattleFx_FindDescriptor(s32, s32);
 
@@ -41,7 +41,7 @@ s32 Object_GetTriggerTileAheadOfCurrent(void)
         pos.x = obj->pos.x;
         pos.y = obj->pos.y;
         pos.z = obj->pos.z;
-        Func_0800447c(0x100000, obj->angle, &pos);
+        Math_AdvanceVectorByAngle(0x100000, obj->angle, &pos);
         if (*(s16 *)(state + 0x19e) == 3) {
             cell = (u8 *)0x02020000 + ((((pos.x / 0x200000) & 31) + (((pos.z / 0x200000) & 31) << 5)) << 2);
         } else {
@@ -50,7 +50,7 @@ s32 Object_GetTriggerTileAheadOfCurrent(void)
         }
         kind = cell[2];
         if ((u32)(kind - 242) <= 5) {
-            height = Func_080091a8(obj->kind, pos.x, pos.z);
+            height = Map_GetTerrainHeightFar(obj->kind, pos.x, pos.z);
             if (height >= obj->pos.y && height <= obj->pos.y + 0x400000) {
                 result = kind;
             }

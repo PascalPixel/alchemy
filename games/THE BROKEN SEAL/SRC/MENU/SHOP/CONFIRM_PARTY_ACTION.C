@@ -3,7 +3,7 @@
 s32 Object_GetByIdFar(s32 unit_id);
 s32 UiWindow_CreateWithSideObjectFar(s32 resource, s32 x, s32 y, s32 flags);
 s32 UiWindow_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 style);
-void Func_080150d8(s32 a, s32 b, s32 c, s32 window, s32 d, s32 e);
+void SideObject_CreateFar(s32 a, s32 b, s32 c, s32 window, s32 d, s32 e);
 struct ShopCursorAnchor *RenderOutput_CreateFar(
     u32 resource,
     u32 flags,
@@ -45,7 +45,7 @@ s32 Shop_ConfirmAct(s32 unit_id)
     }
     if (list_window == 0) {
         list_window = UiWindow_CreateFar(0, 0, 5, 5, 2);
-        Func_080150d8(2, 0, 0, list_window, -4, -4);
+        SideObject_CreateFar(2, 0, 0, list_window, -4, -4);
     }
 
     cursor_anchor = RenderOutput_CreateFar(

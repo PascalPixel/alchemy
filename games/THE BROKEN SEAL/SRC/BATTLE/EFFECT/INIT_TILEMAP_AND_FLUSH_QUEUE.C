@@ -1,10 +1,10 @@
 #include "TYPES.H"
 
 s32 Unnamed_080cdb24(s32);
-s32 Func_080cdbc0();
+s32 BattleFx_EndCanvasLayer();
 
 void BattleFx_InitTilemapAndFlushQueue(void)
 {
     Unnamed_080cdb24(1);
-    Func_080cdbc0();
+    BattleFx_EndCanvasLayer();
 }

@@ -1,8 +1,10 @@
 .syntax unified
 	.thumb
 	.set sub_08005268, 0x08005268
+	.global Camera_WorldToScreen
 	.global Func_080974d8
 	.thumb_func
+Camera_WorldToScreen:
 Func_080974d8:
 	push	{r5, r6, lr}
 	ldr	r2, [pc, #92]

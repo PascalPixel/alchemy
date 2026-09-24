@@ -24,8 +24,10 @@
 	.set sub_080e38b8, 0x080e38b8
 	.set sub_080e3944, 0x080e3944
 	.set sub_080f9010, 0x080f9010
+	.global BattleFx_RunMemberBurst
 	.global Func_080ceb54
 	.thumb_func
+BattleFx_RunMemberBurst:
 Func_080ceb54:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

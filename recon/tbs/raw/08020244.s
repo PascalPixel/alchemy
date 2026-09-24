@@ -24,8 +24,10 @@
 	.set sub_080216b4, 0x080216b4
 	.set sub_08077300, 0x08077300
 	.set sub_080f9010, 0x080f9010
+	.global SaveMenu_SelectSlot
 	.global Func_08020244
 	.thumb_func
+SaveMenu_SelectSlot:
 Func_08020244:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

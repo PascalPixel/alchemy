@@ -50,13 +50,13 @@ extern struct ItemListWork *gMenuWork;
 
 s32 Math_Mod(s32 value, s32 divisor);
 void AnimationObjects_SelectAnimationFar(s32 object, s32 mode);
-void Func_08015068(s32 window, s32 x, s32 y, s32 width, s32 height);
+void UiWindow_ClearInteriorTilesFar(s32 window, s32 x, s32 y, s32 width, s32 height);
 void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 struct BattleUnit *Owner_GetStateFar(s32 owner);
 struct BattleAction *BattleAction_Get(s32 action);
 s32 GameFlag_TestFar(s32 message);
 void UiWindow_UpdateOrCreate(s32 *window, s32 x, s32 y, s32 width, s32 height, s32 style);
-void Func_080a112c(s32 window, s32 owner, s32 unused0, s32 unused1);
+void Menu_DrawOwnerStatusPanel(s32 window, s32 owner, s32 unused0, s32 unused1);
 void UiIcon_PrepareObject(struct MenuEntryIcon *icon);
 void PsynergyMenu_CallIconRoutineWithValue(void *work, s32 value);
 void UiMenu_PositionCursor(s32 x, s32 y);
@@ -85,7 +85,7 @@ extern u8 Value_00000b89;
 u8 ItemMenu_Collect(struct BattleUnit *owner, u16 *items, s32 mode);
 void ItemMenu_DrawIcons(u16 *items, s32 style);
 /* Takes a fourth argument; this caller passes the owner there as well. */
-s32 Func_080a3ef0(s32 owner, s32 slot, s32 mode, s32 arg3);
+s32 ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 arg3);
 s32 ItemMenu_PageResult(struct MenuResult *result, s32 pane);
 s32 ItemMenu_DrawItemDetailPage(s32 window, s32 *work, struct MenuResult *result);
 s32 ItemMenu_DrawNamePage(s32 window, s32 unused, struct MenuResult *result);
@@ -151,7 +151,7 @@ s32 ItemMenu_RunList(s32 pane)
                 }
                 ItemMenu_DrawItemDetailPage(window, work, &state);
                 menu->pane_action[pane] = menu->items[state.selected_index];
-                Func_080a3ef0(menu->owner_ids[pane], state.selected_index, 0, menu->owner_ids[pane]);
+                ItemMenu_DrawEquipPreview(menu->owner_ids[pane], state.selected_index, 0, menu->owner_ids[pane]);
                 if (menu->items[state.selected_index] != 0) {
                     icon = menu->entry_icons[state.selected_index];
                     icon->state = 9;
@@ -233,7 +233,7 @@ s32 ItemMenu_RunList(s32 pane)
         }
     }
 
-    Func_08015068(window, 0, 88, 120, 96);
+    UiWindow_ClearInteriorTilesFar(window, 0, 88, 120, 96);
     UiIcon_PrepareObject(menu->entry_grid_cursor);
     menu->pane_row[pane] = state.selected_index;
     menu->selected_index_by_owner[menu->owner_ids[pane]] = state.selected_index;

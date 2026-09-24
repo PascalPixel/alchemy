@@ -145,13 +145,13 @@ s32 BattlePresentation_AppendLinkedActions(
             action->kind ^= 0x80;
         }
 
-        Func_08002df0(state);
+        Runtime_BumpFree(state);
         return result;
     }
 
 fail:
     BattleLink_ResetTransferState();
     SerialRuntime_RemoveIrqHandlers();
-    Func_08002df0(state);
+    Runtime_BumpFree(state);
     return -1;
 }

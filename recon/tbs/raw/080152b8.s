@@ -1,7 +1,9 @@
 .syntax unified
 	.thumb
+	.global BattleLayout_HighlightPartyPanelsFar
 	.global Func_080152b8
 	.thumb_func
+BattleLayout_HighlightPartyPanelsFar:
 Func_080152b8:
 	ldr	r4, [pc, #0]
 	bx	r4

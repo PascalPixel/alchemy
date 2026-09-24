@@ -10,7 +10,7 @@ extern u16 Data_02003038;
 extern u8 Data_02004210[];
 extern u8 Data_02004290[];
 
-void Func_080f9c44(void);
+void Sound_TickDmaRestartTimer(void);
 void MusicPlayer_SetPitchAndUpdateFrequency(u8 *, s32);
 void MusicPlayer_SetVolume(u8 *, s32, s32);
 void MusicPlayer_SetPitch(u8 *, s32, s32);
@@ -54,5 +54,5 @@ void MusicPlayer_StepVolumeAndPitchTowardTargets(void)
         MusicPlayer_SetPitchAndUpdateFrequency(Data_02004290, Data_02003038);
         MusicPlayer_SetPitch(Data_02004290, 255, (s16)((s16)Data_02003038 * 12 - 3072));
     }
-    Func_080f9c44();
+    Sound_TickDmaRestartTimer();
 }

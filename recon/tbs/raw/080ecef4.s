@@ -16,8 +16,10 @@
 	.set sub_080e155c, 0x080e155c
 	.set sub_080ed408, 0x080ed408
 	.set sub_080f9010, 0x080f9010
+	.global BattleFx_RunRevealColumn
 	.global Func_080ecef4
 	.thumb_func
+BattleFx_RunRevealColumn:
 Func_080ecef4:
 	push	{r5, r6, r7, lr}
 	mov	r7, r8

@@ -19,8 +19,10 @@
 	.set sub_080a153c, 0x080a153c
 	.set sub_080a15f0, 0x080a15f0
 	.set sub_080a8b10, 0x080a8b10
+	.global Menu_DrawOwnerStatusPanel
 	.global Func_080a112c
 	.thumb_func
+Menu_DrawOwnerStatusPanel:
 Func_080a112c:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

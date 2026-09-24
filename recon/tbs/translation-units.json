@@ -72759,6 +72759,46 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "title-f-001c0",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/MENU/TITLE/F_001C0.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_36f",
+      "absolute_symbols": {
+        "Main_08000170": {
+          "address": "0x02008548",
+          "kind": "thumb"
+        },
+        "Main_080001d0": {
+          "address": "0x02008568",
+          "kind": "thumb"
+        },
+        "Main_08000290": {
+          "address": "0x02008578",
+          "kind": "thumb"
+        },
+        "Main_080001a8": {
+          "address": "0x02008558",
+          "kind": "thumb"
+        },
+        "Engine_VramLoad": {
+          "address": "0x02008560",
+          "kind": "thumb"
+        },
+        "Main_08000178": {
+          "address": "0x02008550",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x020001c0",
+          "extent": 120,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

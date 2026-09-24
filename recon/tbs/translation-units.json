@@ -78772,6 +78772,62 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "scene-3b0-020010a0",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/FUNE_HOBASHIRA/SWAY.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3b0",
+      "absolute_symbols": {
+        "Engine_MathCos": {
+          "address": "0x020091d4",
+          "kind": "thumb"
+        },
+        "Engine_MathSin": {
+          "address": "0x020091cc",
+          "kind": "thumb"
+        },
+        "Engine_RandomNext": {
+          "address": "0x020091c4",
+          "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
+        },
+        "gWorkspace": {
+          "address": "0x3001e70",
+          "kind": "data"
+        },
+        "FuneHobashira_SwayX": {
+          "address": "0x2009940",
+          "kind": "data"
+        },
+        "FuneHobashira_SwayY": {
+          "address": "0x2009928",
+          "kind": "data"
+        },
+        "FuneHobashira_DriftX": {
+          "address": "0x2009924",
+          "kind": "data"
+        },
+        "FuneHobashira_DriftY": {
+          "address": "0x2009920",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x020010a0",
+          "extent": 144,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

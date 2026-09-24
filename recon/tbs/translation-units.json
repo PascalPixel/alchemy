@@ -124684,6 +124684,30 @@
         }
       ],
       "overlay": null
+    },
+    {
+      "id": "item-counter",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/GAME/ITEM/COUNTER.C",
+      "compiler_route": "canonical-gcc296",
+      "owners": [
+        {
+          "address": "0x08078a8c",
+          "extent": 18,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08078aa0",
+          "extent": 48,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08078ad0",
+          "extent": 40,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
     }
   ]
 }

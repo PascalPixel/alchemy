@@ -2765,15 +2765,13 @@
     },
     "main:08078a8c": {
       "name": "Item_GetTargetMode",
-      "source": "GAME/ITEM/GET_TARGET_MODE.C"
+      "source": "GAME/ITEM/COUNTER.C"
     },
     "main:08078aa0": {
-      "name": "ItemCounter_Adjust",
-      "source": "GAME/ITEM/ADJUST_COUNTER_SLOT.C"
+      "name": "ItemCounter_Adjust"
     },
     "main:08078ad0": {
-      "name": "Item_AdjustCounter",
-      "source": "GAME/ITEM/ADJUST_COUNTER.C"
+      "name": "Item_AdjustCounter"
     },
     "main:08078af8": {
       "name": "Inventory_CountItem",

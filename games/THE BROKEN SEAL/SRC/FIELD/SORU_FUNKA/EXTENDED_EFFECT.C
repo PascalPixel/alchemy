@@ -93,7 +93,6 @@ void Func_0200b4dc();
 u8 *Func_0200b4ec(s32);
 void *Func_020010bc();
 void Func_02001570();
-void Func_0200222a();
 void Func_02002f1e();
 void Func_02002f4a();
 void Func_02002f5e();
@@ -629,7 +628,7 @@ void FieldScene_RunTwoPhaseActorSequence(void)
     Event_Wait(20);
     Event_ShowMessageAndWait(14, 0, 30);
     FieldScene_RunScene381_02000e30(14);
-    Func_0200222a();
+    Scene_RunExtendedEffectPresentation();
     Func_0200b4dc(5);
 }
 

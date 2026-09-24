@@ -18614,6 +18614,10 @@
         "Func_02008e00": {
           "address": "0x0200c89c",
           "kind": "thumb"
+        },
+        "LinkedFlag_BoulderFell": {
+          "address": "0x00000838",
+          "kind": "data"
         }
       },
       "owners": [

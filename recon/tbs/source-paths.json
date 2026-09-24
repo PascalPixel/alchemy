@@ -10003,7 +10003,7 @@
       "source": "FIELD/RUNPA_DOU/CAVE.C"
     },
     "resource_372:02001b18": {
-      "name": "FieldScene_RunReturnScript",
+      "name": "Scene_BoulderFalls",
       "source": "FIELD/HAIDIA_ARASHI/GROUP_DEPARTURE.C"
     },
     "resource_383:020019a2": {

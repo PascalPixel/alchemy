@@ -24,8 +24,10 @@
 	.set sub_080771b0, 0x080771b0
 	.set sub_080771b8, 0x080771b8
 	.set sub_08077208, 0x08077208
+	.global DjinnMenu_ShowChangePreview
 	.global Func_08022b44
 	.thumb_func
+DjinnMenu_ShowChangePreview:
 Func_08022b44:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

@@ -101,7 +101,7 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
     s32 py;
     s32 vx;
     s32 vy;
-    u16 scroll;
+    s32 scroll;
     s32 *spot;
     s32 burst;
     s32 bx;
@@ -276,7 +276,7 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
         t = frame - 152;
         if (t >= 0 && t < 88) {
             for (i = 0, p = work->sparks; i != 32; i++, p++) {
-                if (frame >= i / 4 + 152 && frame < i / 4 + 152 + 32) {
+                if (t >= i / 4 && t < i / 4 + 32) {
                     s = (i & 3) + 5;
                     blit[0](dst, work->sheet + BattleFx6_FlareCells[s - 1] + 0x4e20,
                         HI(p->x) + 112 - s, HI(p->y) + 62 - s, s * 2, s * 2);
@@ -396,10 +396,11 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
         }
 
         if (frame > 27) {
+            DrawRectangle draw = blit[1];
             for (i = 0; i != 1024; i++) {
                 if (PARTICLES[i].variant >= 0) {
                     s32 k = Math_Mod(i, 3) + 2;
-                    blit[1](dst, aux + ParticleStreams_CellOffsets[k - 1],
+                    draw(dst, aux + ParticleStreams_CellOffsets[k - 1],
                         HI(PARTICLES[i].x) - k / 2, HI(PARTICLES[i].y) - k, k, k * 2);
                     EffectStep_AdvanceWithGravity2D(&PARTICLES[i], 62, BattleFx6_Gravity[i & 3]);
                     PARTICLES[i].variant++;

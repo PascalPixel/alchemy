@@ -1,59 +1,45 @@
-/* Draft, not exact (2026-09-24): candidate=96 reference=96 differing_halfwords=26. Constants the reference loads from
-   the literal pool are spelled as link-time Value_ symbols, which restores
-   the reference size; wraps marked FAKEMATCH only move scheduling. */
-#include "TYPES.H"
-extern u8 Value_00001000;
-extern u8 Value_00002000;
+/* Draft, not exact (2026-09-24): 94 of 96 bytes, one instruction short.
+   SIOCNT read through a multiplayer bitfield gives the reference's
+   lsls 26 / lsrs 30 id test. Residual: the reference computes the packed
+   masks in r2 and copies them into r0 (adds r0, r2, #0) before the
+   is_parent test; here packed and result coalesce into r0. Types, a
+   do-while and a (u16) cast on the copy did not keep the copy. */
+#include "SERIAL_RUNTIME.H"
 
-#ifndef SERIAL_RUNTIME_TU
-struct SerialRuntime {
-    u8 mode;
-    u8 phase;
-    u8 received_mask;
-    u8 current_mask;
-    u8 channel_flags[4];
-    u8 transfer_enabled;
-    u8 is_parent;
-    u8 reserved_0a;
-    u8 sequence;
-    u8 reserved_0c[8];
-    s32 send_index;
-    s32 receive_index[2];
-    u8 reserved_20[8];
-    u16 *send_buffer[2];
-    u16 *incoming_buffer[4];
-    u16 *ready_buffer[4];
-    u16 *pending_buffer[4];
-    u8 storage[0x100];
+struct SioMultiControl {
+    u32 baud_rate:2;
+    u32 si:1;
+    u32 sd:1;
+    u32 id:2;
+    u32 error:1;
+    u32 start:1;
+    u32 unused:6;
+    u32 irq:1;
+    u32 pad:17;
 };
-
-#define SERIAL_RUNTIME ((struct SerialRuntime *)0x02002240)
-#define REG_SIOCNT (*(volatile u32 *)0x04000128)
 
 void Func_080060e8(void *payload);
 u8 Func_0800615c(void *payload);
-#endif
 
-s32 Func_08006088(s32 arg0, s32 arg1)
+s32 SerialRuntime_ExchangePayloads(void *send, void *receive)
 {
-    u32 control = REG_SIOCNT;
+    struct SioMultiControl control = *(struct SioMultiControl *)0x04000128;
     struct SerialRuntime *state = SERIAL_RUNTIME;
-    s32 packed;
+    u32 packed;
     s32 result;
 
     if (state->phase == 1) {
-        Func_0800615c((void *)arg1);
-        Func_080060e8((void *)arg0);
+        Func_0800615c(receive);
+        Func_080060e8(send);
         state->sequence++;
     }
-    packed = state->current_mask;
-    packed |= state->received_mask << 8;
+    packed = state->current_mask | (state->received_mask << 8);
     if (state->mode == 8)
         packed |= 0x80;
     result = packed;
-    if (state->is_parent != 0)
+    if (state->is_parent)
         result |= 0x1000;
-    if (((control << 26) >> 30) > 1)
-        result |= (s32)&Value_00002000;
+    if ((u32)control.id > 1)
+        result |= 0x2000;
     return result;
 }

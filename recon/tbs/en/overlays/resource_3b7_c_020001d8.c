@@ -1,171 +1,134 @@
+/* NONMATCHING: 740 of 740 bytes, 14 halfword edits (2026-09-24). Hand-written from the
+ * resolved jump-table disassembly as a single-overlay unit binding Engine_* at
+ * their import veneers. Remaining: the blend-register writes load the address before the value (the reference loads 0x3f42 into sl first, then 0x04000050 into r8), and two scheduling slots differ (movs r0, #24 and the p = list copy); 14 halfwords. The 0xe30 message is a link symbol, bound as TorebiIzumi_AndYouWonMessage. */
 #include "TYPES.H"
+#include "FIELD_EVENT.H"
 
-#define RunSceneStateSequence Func_020001d8
+void SceneState_InitFourActorRecordsAndInstallTask(void);
+void Main_08015120(s32 value, s32 digits);
+void Main_080b0060(void);
+void Local_020008f8(s32 mode);
+s32 SceneDialogue_PickTopicVariantId(s32 topic);
 
-void Func_02000cba();
-s32 Func_02001170();
-void Func_0200190a();
-s32 Func_02001b4e();
-u8 *Func_02001b64();
-s32 Func_02001b6a();
-void Func_02001b6e();
-u8 *Func_02001b6e_a();
-void Func_02001b76();
-u8 *Func_02001b76_a();
-u8 *Func_02001b82();
-s32 Func_02001bbe();
-void Func_02001be0();
-void Func_02001be2();
-void Func_02001bfe();
-void Func_02001c14();
-void Func_02001c16();
-void Func_02001c1c();
-void Func_02001c24();
-void Func_02001c24_a();
-void Func_02001c36();
-void Func_02001c46();
-void Func_02001c4e();
-void Func_02001c4e_a();
-void Func_02001c58();
-s32 Func_02001c78();
-void Func_02001c8a();
-void Func_02001c96();
-void Func_02001ca2();
-void Func_02001cae();
-void Func_02001cbe();
-void Func_02001cc4();
-void Func_02001ccc();
-void Func_02001cce();
-void Func_02001cce_a();
-void Func_02001cec();
-void Func_02001cee();
-void Func_02001cfa();
-void Func_02001d02();
-void Func_02001d1a();
-void Func_02001d36();
-void Func_02001d3a();
-void Func_02001d3a_a();
-void Func_02001d46();
-void Func_02001d4c();
-void Func_02001d4e();
-void Func_02001d4e_a();
-void Func_02001d54();
-void Func_02001d5c();
-void Func_02001d84();
-void Func_02001d84_a();
-void Func_02001dae();
-void Func_02001db8();
-void Func_02001dbc();
-void Func_02001dd0();
+union GameStateRows {
+    u8 bytes[512][2];
+    s16 halves[512][1];
+    s32 words[256];
+};
 
-s32 RunSceneStateSequence(void)
+extern union GameStateRows Data_02000240_t;
+extern u8 Data_000000bd[];
+extern u8 TorebiIzumi_AndYouWonMessage;
+
+static __inline__ void Io_SetBlendControl(s32 value)
 {
-    s16 *state = (s16 *)0x02000240;
-    u8 *work;
-    u8 *actor;
-    s32 delta;
-    s32 topic;
-    s8 *entry;
-    s8 stop;
+    *(volatile u16 *)0x04000050 = value;
+}
 
-    if (state[224] == 0xbd) {
-        work = *(u8 **)0x03001ebc;
-        *(u32 *)(work + 0x1c0) = 0x100;
-        *(volatile u16 *)0x04000050 = 0x3f42;
-        *(volatile u16 *)0x04000052 = 0x080c;
-        Func_02001b6e(24, 2);
-        Func_02001b76(25, 2);
-        actor = Func_02001b64(24);
-        *(s32 *)(actor + 24) = -0x10000;
-        actor = Func_02001b6e_a(25);
-        *(s32 *)(actor + 24) = -0x10000;
-        actor = Func_02001b76_a(24);
-        actor[35] = 2;
-        actor = Func_02001b82(25);
-        actor[35] = 2;
-        Func_02001be2();
-        if (state[225] != 1)
-            return 0;
-        Func_0200190a();
-        if (Func_02001b4e(0x200) == 0)
-            return 0;
-        *(volatile u16 *)0x04000050 = 0x3f42;
-        *(volatile u16 *)0x04000052 = 0x1000;
-        return 0;
-    }
+static __inline__ void Io_SetBlendAlpha(s32 value)
+{
+    *(volatile u16 *)0x04000052 = value;
+}
 
-    if (Func_02001b6a(0x950) != 0)
-        Func_02001be0(17, 0, 0);
-    *(u8 *)0x03001d18 = 1;
-    work = *(u8 **)0x03001ebc;
-    *(u32 *)(work + 0x1c0) = 0x209;
+s32 Local_020001d8(void)
+{
+    s32 diff;
+    s8 *list;
+    s8 *p;
+    s32 item;
 
-    if (state[225] == 10) {
-        Func_02001c1c(8, 1);
-        Func_02001c24(9, 2);
-    }
-    if ((u16)state[225] == 13 && Func_02001bbe(0x109) == 0) {
-        Func_02001bfe();
-        Func_02001c46(8, 1);
-        Func_02001c4e(9, 2);
-        Func_02001c8a();
-        Func_02001c96();
-        Func_02001c14(10);
-        Func_02001c4e_a(0, 120, 112);
-        Func_02001c24_a(20);
-        delta = *(s32 *)0x02000250 - *(s32 *)0x02001000;
-        if (delta > 0) {
-            if (delta > 20000)
-                Func_02001cec(93);
-            else if (delta > 5000)
-                Func_02001cfa(92);
-            else
-                Func_02001d02(91);
-            Func_02001c58(20);
-            Func_02001cae(0xe13);
-            Func_02001c16(delta, 5);
-            Func_02001cce(9, 0);
-            Func_02001d1a();
-        } else if (delta < 0) {
-            Func_02001cce_a(0xe14);
-            Func_02001c36(-delta, 5);
-            Func_02001cee(9, 0);
-        }
-        Func_02001ca2();
-    }
-
-    if (state[225] == 12 && Func_02001c78(0x109) == 0) {
-        entry = (s8 *)0x0200036c;
-        Func_02001cbe();
-        Func_02001d3a();
-        Func_02001d46();
-        Func_02001cc4(10);
-        if (*entry == -1) {
-            Func_02000cba(1);
-        } else if (*entry != -2) {
-            Func_02001d36(0xe2e);
-            Func_02001d4e(8, 0);
-            stop = -1;
-            while (*entry != stop) {
-                if (entry == (s8 *)0x0200036c)
-                    Func_02001d54(0xe2f);
-                else
-                    Func_02001d5c(0xe30);
-                topic = Func_02001170(*entry);
-                Func_02001ccc(topic, 2);
-                Func_02001d84(8, 0);
-                Func_02001dbc(topic, 3);
-                Func_02001d4c(topic, 0);
-                Func_02001d3a_a(10);
-                Func_02001dae(0, 0xc000, 0);
-                entry++;
-                Func_02001d4e_a(30);
+    if (Data_02000240_t.halves[224][0] == (s32)Data_000000bd) {
+        gEventWork->start_transition = 0x100;
+        Io_SetBlendControl(0x3f42);
+        Io_SetBlendAlpha(0x80c);
+        Engine_ActorSetAnimation(24, 2);
+        Engine_ActorSetAnimation(25, 2);
+        Engine_ActorGet(24)->scale_x = -0x10000;
+        Engine_ActorGet(25)->scale_x = -0x10000;
+        Engine_ActorGet(24)->priority_flags = 2;
+        Engine_ActorGet(25)->priority_flags = 2;
+        Engine_EventOpenScreen();
+        if (Data_02000240_t.halves[225][0] == 1) {
+            SceneState_InitFourActorRecordsAndInstallTask();
+            if (Engine_GameFlagIsSet(0x200)) {
+                Io_SetBlendControl(0x3f42);
+                Io_SetBlendAlpha(0x1000);
             }
-            *(u8 *)0x0200036c = 0xfe;
-            Func_02001db8(0xe31);
-            Func_02001dd0(8, 0);
         }
-        Func_02001d84_a();
+    } else {
+        if (Engine_GameFlagIsSet(0x950)) {
+            Engine_ActorSetPosition(17, 0, 0);
+        }
+        *(u8 *)0x03001d18 = 1;
+        gEventWork->start_transition = 0x209;
+        if (Data_02000240_t.halves[225][0] == 10) {
+            Engine_ActorSetChildValue(8, 1);
+            Engine_ActorSetChildValue(9, 2);
+        }
+        if (Data_02000240_t.halves[225][0] == 13 && !Engine_GameFlagIsSet(0x109)) {
+            Engine_EventBegin();
+            Engine_ActorSetChildValue(8, 1);
+            Engine_ActorSetChildValue(9, 2);
+            Engine_EventOpenScreen();
+            Engine_EventWaitForScreen();
+            Engine_EventWait(10);
+            Engine_ActorWalkToAndWait(0, 120, 112);
+            Engine_EventWait(20);
+            diff = Data_02000240_t.words[4] - *(s32 *)0x02001000;
+            if (diff > 0) {
+                if (diff > 19999) {
+                    Engine_AudioPlayCue(93);
+                } else if (diff > 4999) {
+                    Engine_AudioPlayCue(92);
+                } else {
+                    Engine_AudioPlayCue(91);
+                }
+                Engine_EventWait(20);
+                Engine_EventSetMessage(0xe13);
+                Main_08015120(diff, 5);
+                Engine_EventShowMessage(9, 0);
+                Main_080b0060();
+            } else if (diff < 0) {
+                Engine_EventSetMessage(0xe14);
+                Main_08015120(-diff, 5);
+                Engine_EventShowMessage(9, 0);
+            }
+            Engine_EventEnd();
+        }
+        if (Data_02000240_t.halves[225][0] == 12 && !Engine_GameFlagIsSet(0x109)) {
+            list = (s8 *)Data_02000240_t.bytes[150];
+            Engine_EventBegin();
+            Engine_EventOpenScreen();
+            Engine_EventWaitForScreen();
+            Engine_EventWait(10);
+            if (list[0] == -1) {
+                Local_020008f8(1);
+            } else if (list[0] != -2) {
+                Engine_EventSetMessage(0xe2e);
+                Engine_EventShowMessage(8, 0);
+                if (*list != -1) {
+                    for (p = list; *p != -1; p++) {
+                        if (p == list) {
+                            Engine_EventSetMessage(0xe2f);
+                        } else {
+                            Engine_EventSetMessage((s32)&TorebiIzumi_AndYouWonMessage);
+                        }
+                        item = SceneDialogue_PickTopicVariantId(*p);
+                        Main_08015120(item, 2);
+                        Engine_EventShowMessage(8, 0);
+                        Engine_ItemShowFound(item, 3);
+                        Engine_PartyGiveItem(item, 0);
+                        Engine_EventWait(10);
+                        Engine_ActorFaceDirection(0, 0xc000, 0);
+                        Engine_EventWait(30);
+                    }
+                }
+                Data_02000240_t.bytes[150][0] = 0xfe;
+                Engine_EventSetMessage(0xe31);
+                Engine_EventShowMessage(8, 0);
+            }
+            Engine_EventEnd();
+        }
     }
     return 0;
 }

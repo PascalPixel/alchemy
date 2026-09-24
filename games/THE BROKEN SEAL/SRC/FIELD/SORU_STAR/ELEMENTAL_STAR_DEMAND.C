@@ -1,6 +1,5 @@
 #include "TYPES.H"
 
-
 extern u8 Data_03001ebc[];
 void Func_020051f8();
 void Func_02005208();

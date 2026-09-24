@@ -80132,6 +80132,42 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "scene-3b4-02001308",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/TAKARA_ASHIBA/F_01308.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3b4",
+      "absolute_symbols": {
+        "Engine_ActorGet": {
+          "address": "0x0200a540",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagIsSet": {
+          "address": "0x0200a508",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagSet": {
+          "address": "0x0200a510",
+          "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02001308",
+          "extent": 132,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

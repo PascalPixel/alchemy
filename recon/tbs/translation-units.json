@@ -72215,6 +72215,46 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "soru-star-f-043bc",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/SORU_STAR/F_043BC.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_380",
+      "absolute_symbols": {
+        "Engine_ActorGet": {
+          "address": "0x0200c9bc",
+          "kind": "thumb"
+        },
+        "Engine_AudioPlayCue": {
+          "address": "0x0200cb14",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpriteFlags": {
+          "address": "0x0200c8fc",
+          "kind": "thumb"
+        },
+        "Engine_EventWait": {
+          "address": "0x0200c994",
+          "kind": "thumb"
+        },
+        "Engine_RandomNext": {
+          "address": "0x0200c874",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetChildValue": {
+          "address": "0x0200ca44",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x020043bc",
+          "extent": 224,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

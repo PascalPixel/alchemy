@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_380:020043bc": {
+      "name": "SoruStar_Func020043bc",
+      "source": "FIELD/SORU_STAR/F_043BC.C"
+    },
     "resource_39c:02003948": {
       "name": "MakyuriHeya_Func02003948",
       "source": "FIELD/MAKYURI_HEYA/F_03948.C"

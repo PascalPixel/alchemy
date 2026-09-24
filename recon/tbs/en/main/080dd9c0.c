@@ -1,14 +1,14 @@
 /* Draft, not exact (2026-09-24): candidate=1056 reference=1056
-   differing_halfwords=329 but halfword_edits=58, binary similarity 89.0%.
+   differing_halfwords=29, halfword_edits=28.
    The pillar loop now has the reference's inductions (read from the -dL
    loop dump): the start frame st = 8i + 8 as its own variable (spilled at
    sp+12, with st + 1 and st + 3 derived from it), a = frame - (8i + 8)
    computed before the test so that it is reduced itself (r8), the cue
    frame st + 4 as a separate induction (sp+20), and the X-table pointer
    (sp+16). A u8 kind makes the loop large enough (loop.c's threshold) that
-   a * 3 is no longer strength-reduced. Residual: the reference copies kind
-   before the < 2 test (adds r3, r2, #0) and so is 2 bytes longer there,
-   compensated elsewhere; total - 64 and total - 16 swap stack slots; the
+   a * 3 is no longer strength-reduced. The kind test kind >> 1 == 0 has the
+   reference's length; the reference instead copies kind and compares
+   (adds r3, r2, #0; cmp r3, #1; bhi). Residual: that test, total - 64 and total - 16 swap stack slots; the
    work->transfer_value store is scheduled before the blit47 load. */
 #include "TYPES.H"
 #include "BATTLE_EFFECT_WORK.H"
@@ -111,7 +111,7 @@ void FunctionHead_080dd9c0(struct BattleEffectArgument *efx)
                 s32 h;
                 s32 w;
 
-                if (kind < 2) {
+                if (kind >> 1 == 0) {
                     h = a * 16;
                     w = a * 6;
                     if (h > 80) {

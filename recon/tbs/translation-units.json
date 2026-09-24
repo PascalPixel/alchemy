@@ -71058,6 +71058,26 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "fune-heya-step-script",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/FUNE_HEYA/STEP_SCRIPT.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3b1",
+      "absolute_symbols": {
+        "Engine_GameFlagIsSet": {
+          "address": "0x0200e4a0",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x0200037c",
+          "extent": 464,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

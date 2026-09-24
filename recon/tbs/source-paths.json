@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_3b1:0200037c": {
+      "name": "FuneHeya_GetStepScript",
+      "source": "FIELD/FUNE_HEYA/STEP_SCRIPT.C"
+    },
     "resource_3b9:0200007c": {
       "name": "KorashiamuIriguchi_GetAreaScript",
       "source": "FIELD/KORASHIAMU_IRIGUCHI/AREA_SCRIPT.C"

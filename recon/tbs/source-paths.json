@@ -1,6 +1,27 @@
 {
   "format": 3,
   "owners": {
+    "resource_3c0:02000f50": {
+      "name": "SuharaSabaku_ApplyEntryState"
+    },
+    "resource_3af:02001684": {
+      "name": "FuneKanpan_ApplyCrewState"
+    },
+    "resource_3a8:020016bc": {
+      "name": "KareiMachi_ApplyEntryState"
+    },
+    "resource_3c0:02000594": {
+      "name": "SuharaSabaku_RunFadeScene"
+    },
+    "resource_3a5:02001180": {
+      "name": "RamakanSabaku_FaceNearestActor"
+    },
+    "resource_3a0:02001148": {
+      "name": "ShianMura_ApplyEntryState"
+    },
+    "resource_3ba:020013e4": {
+      "name": "KorosseoKawa_RunGateIntro"
+    },
     "resource_3a4:02002020": {
       "name": "ArutinYama_RunAreaScene",
       "source": "FIELD/ARUTIN_YAMA/AREA_SCENE.C"

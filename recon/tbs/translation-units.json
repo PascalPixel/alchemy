@@ -71078,6 +71078,54 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "takara-shima-area-entry",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/TAKARA_SHIMA/AREA_ENTRY.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3b2",
+      "absolute_symbols": {
+        "Engine_GameFlagIsSet": {
+          "address": "0x0200b058",
+          "kind": "thumb"
+        },
+        "Engine_EventBegin": {
+          "address": "0x0200b070",
+          "kind": "thumb"
+        },
+        "Engine_GameStateSetReturn": {
+          "address": "0x0200b0e8",
+          "kind": "thumb"
+        },
+        "Engine_Import0808a250": {
+          "address": "0x0200b0e0",
+          "kind": "thumb"
+        },
+        "Engine_EventEnd": {
+          "address": "0x0200b078",
+          "kind": "thumb"
+        },
+        "Engine_MapAnimateCells": {
+          "address": "0x0200b020",
+          "kind": "thumb"
+        },
+        "Engine_AudioPlayCue": {
+          "address": "0x0200b118",
+          "kind": "thumb"
+        },
+        "Engine_EventRequestExit": {
+          "address": "0x0200b0d8",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x020013ac",
+          "extent": 232,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

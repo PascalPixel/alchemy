@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_3b2:020013ac": {
+      "name": "TakaraShima_RunAreaEntry",
+      "source": "FIELD/TAKARA_SHIMA/AREA_ENTRY.C"
+    },
     "resource_3b1:0200037c": {
       "name": "FuneHeya_GetStepScript",
       "source": "FIELD/FUNE_HEYA/STEP_SCRIPT.C"

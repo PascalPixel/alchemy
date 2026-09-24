@@ -5828,7 +5828,7 @@
       "source": "FIELD/BIRIBINO_NIWA/ORBITING.C"
     },
     "resource_398:0200044c": {
-      "name": "State_SetGlobalByte17",
+      "name": "SceneState_SetGlobalByte17",
       "source": "FIELD/BIRIBINO_DOU/REGION.C"
     },
     "resource_376:02000308": {
@@ -5936,7 +5936,7 @@
       "source": "FIELD/FUNE_HEYA/EXTENDED_CHOREOGRAPHY.C"
     },
     "resource_398:020001bc": {
-      "name": "Scene_RunTwoLayoutSteps",
+      "name": "FieldScene_RunTwoLayoutSteps",
       "source": "FIELD/BIRIBINO_DOU/REGION.C"
     },
     "resource_3c7:02000030": {
@@ -6207,7 +6207,7 @@
       "source": "FIELD/SORU_SEKIZO/GUARDED_STEP.C"
     },
     "resource_398:02000168": {
-      "name": "State_ConfigureRegion0_0_21x14",
+      "name": "SceneState_ConfigureRegion0_0_21x14",
       "source": "FIELD/BIRIBINO_DOU/REGION.C"
     },
     "resource_3c2:020001d4": {
@@ -6319,7 +6319,7 @@
       "source": "FIELD/FUNE_HEYA/EXTENDED_CHOREOGRAPHY.C"
     },
     "resource_398:020002d8": {
-      "name": "Scene_RunActor17Steps28AndD2",
+      "name": "FieldScene_RunActor17Steps28AndD2",
       "source": "FIELD/BIRIBINO_DOU/REGION.C"
     },
     "resource_3cc:0200003c": {
@@ -6547,7 +6547,7 @@
       "source": "FIELD/KORIMA_MAGARI/PRESET_LAYOUT.C"
     },
     "resource_398:020004e8": {
-      "name": "State_SetRuntimeWord448To516",
+      "name": "SceneState_SetRuntimeWord448To516",
       "source": "FIELD/BIRIBINO_DOU/REGION.C"
     },
     "resource_3c7:020003f4": {
@@ -6603,7 +6603,7 @@
       "source": "FIELD/KOROSSEO_KAWA/COORDINATOR.C"
     },
     "resource_398:0200045c": {
-      "name": "State_ClearRuntimeByte17",
+      "name": "SceneState_ClearRuntimeByte17",
       "source": "FIELD/BIRIBINO_DOU/REGION.C"
     },
     "resource_3c9:0200211c": {
@@ -6868,7 +6868,7 @@
       "source": "FIELD/SORU_FUNKA/EXTENDED_EFFECT.C"
     },
     "resource_398:02000188": {
-      "name": "State_ApplyTwoRects",
+      "name": "SceneState_ApplyTwoRects",
       "source": "FIELD/BIRIBINO_DOU/REGION.C"
     },
     "resource_383:02004704": {
@@ -7408,11 +7408,11 @@
       "source": "FIELD/FUNE_HEYA/EXTENDED_CHOREOGRAPHY.C"
     },
     "resource_398:020001f0": {
-      "name": "Scene_RunActor9Flag882Scene",
+      "name": "FieldScene_RunActor9Flag882Scene",
       "source": "FIELD/BIRIBINO_DOU/REGION.C"
     },
     "resource_398:020007c4": {
-      "name": "Actor_FindSlotAtTile",
+      "name": "SceneActor_FindSlotAtTile",
       "source": "FIELD/BIRIBINO_DOU/REGION.C"
     },
     "resource_3b1:02001594": {
@@ -8252,7 +8252,7 @@
       "source": "FIELD/KUUPUAPPU_HEYA/PROMPT.C"
     },
     "resource_398:02000424": {
-      "name": "ActorDraw_SetSceneCell31AndFlag305",
+      "name": "ActorPresentation_SetSceneCell31AndFlag305",
       "source": "FIELD/BIRIBINO_DOU/REGION.C"
     },
     "resource_3c8:02003fe4": {
@@ -8436,7 +8436,7 @@
       "source": "FIELD/VINASU_HEYA/ENTRY_SETUP.C"
     },
     "resource_398:02000030": {
-      "name": "State_ApplyArgMode0AndReturnZero",
+      "name": "SceneState_ApplyArgMode0AndReturnZero",
       "source": "FIELD/BIRIBINO_DOU/REGION.C"
     },
     "resource_3ba:02002fa0": {
@@ -8744,7 +8744,7 @@
       "source": "FIELD/FUNE_HEYA/EXTENDED_CHOREOGRAPHY.C"
     },
     "resource_398:02000148": {
-      "name": "State_ConfigureRegion1_0_21x14",
+      "name": "SceneState_ConfigureRegion1_0_21x14",
       "source": "FIELD/BIRIBINO_DOU/REGION.C"
     },
     "resource_3ac:02000294": {
@@ -8780,7 +8780,7 @@
       "source": "FIELD/RUNPA_DOU/CAVE.C"
     },
     "resource_398:02000280": {
-      "name": "Scene_RunActorFifteenScene",
+      "name": "FieldScene_RunActorFifteenScene",
       "source": "FIELD/BIRIBINO_DOU/REGION.C"
     },
     "resource_38e:020004bc": {
@@ -8844,7 +8844,7 @@
       "source": "FIELD/GOMA_IKE/GATE_PLACEMENT.C"
     },
     "resource_398:0200046c": {
-      "name": "Scene_DispatchByScenarioId",
+      "name": "FieldScene_DispatchByScenarioId",
       "source": "FIELD/BIRIBINO_DOU/REGION.C"
     },
     "resource_3ba:02000038": {
@@ -9324,7 +9324,7 @@
       "source": "FIELD/SORU_STAR/PARTY_INTRO.C"
     },
     "resource_398:020002ac": {
-      "name": "Scene_RunActorSixteenScene",
+      "name": "FieldScene_RunActorSixteenScene",
       "source": "FIELD/BIRIBINO_DOU/REGION.C"
     },
     "resource_376:020000d8": {
@@ -10706,7 +10706,7 @@
       "source": "FIELD/KUUPUAPPU_HEYA/PROMPT.C"
     },
     "resource_398:02000214": {
-      "name": "Scene_RunScene398SequenceA",
+      "name": "FieldScene_RunScene398SequenceA",
       "source": "FIELD/BIRIBINO_DOU/REGION.C"
     },
     "resource_3c8:02001218": {
@@ -10758,7 +10758,7 @@
       "source": "FIELD/FUNE_HEYA/EXTENDED_CHOREOGRAPHY.C"
     },
     "resource_398:02000538": {
-      "name": "Scene_RunScene398SequenceC",
+      "name": "FieldScene_RunScene398SequenceC",
       "source": "FIELD/BIRIBINO_DOU/REGION.C"
     },
     "resource_39e:020026d8": {
@@ -10782,7 +10782,7 @@
       "source": "FIELD/HAIDIA_ARASHI/GROUP_DEPARTURE.C"
     },
     "resource_398:02000304": {
-      "name": "Scene_RunScene398SequenceB",
+      "name": "FieldScene_RunScene398SequenceB",
       "source": "FIELD/BIRIBINO_DOU/REGION.C"
     },
     "resource_3b1:02000cc8": {

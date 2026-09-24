@@ -1,4 +1,5 @@
-/* 2026-09-24: 28 differing halfwords (was 66). The member blits read the
+/* 2026-09-24: 14 differing halfwords (was 66). The blitter index 1 & i is
+   taken into its own local before the cell and width reads. The member blits read the
    cell offset first and then reuse the texture index (u32, so the width
    halves with lsrs) for the width, which puts the index in r4 as the
    reference does. The puff blits now read
@@ -275,9 +276,10 @@ void Func_080dd2c4(void *object, s32 arg1)
                             }
                             if (mode == 0) {
                                 {
+                                    s32 sel = 1 & i;
                                     s32 cell = Data_080eeb4e[texture_index];
                                     texture_index = Data_080eeb48[texture_index];
-                                    ((DrawRectangleFn)slot_pair[1 & i])(draw_destination, (u8 *)work + cell,
+                                    ((DrawRectangleFn)slot_pair[sel])(draw_destination, (u8 *)work + cell,
                                         M2C_FIELD(var_sl_273, s32 *, 0) - (texture_index >> 1),
                                         M2C_FIELD(var_sl_273, s32 *, 4) - var_r5_297, texture_index, var_r5_297);
                                 }
@@ -287,9 +289,10 @@ void Func_080dd2c4(void *object, s32 arg1)
                                     var_r5_297 = temp_r3_335;
                                 }
                                 {
+                                    s32 sel = 1 & i;
                                     s32 cell = Data_080eeb58[texture_index];
                                     texture_index = Data_080eeb54[texture_index];
-                                    ((DrawRectangleFn)slot_pair[1 & i])(draw_destination, (u8 *)work + cell,
+                                    ((DrawRectangleFn)slot_pair[sel])(draw_destination, (u8 *)work + cell,
                                         M2C_FIELD(var_sl_273, s32 *, 0) - (texture_index >> 1),
                                         M2C_FIELD(var_sl_273, s32 *, 4) - var_r5_297, texture_index, var_r5_297);
                                 }

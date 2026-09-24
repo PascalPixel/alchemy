@@ -80240,6 +80240,58 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "scene-3b1-020045d0",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/FUNE_HEYA/F_045D0.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3b1",
+      "absolute_symbols": {
+        "Engine_GameFlagIsSet": {
+          "address": "0x0200e4a0",
+          "kind": "thumb"
+        },
+        "Engine_ObjectCreate": {
+          "address": "0x0200e460",
+          "kind": "thumb"
+        },
+        "Engine_HeapAllocate": {
+          "address": "0x0200e438",
+          "kind": "thumb"
+        },
+        "Engine_ItemLoadIcon": {
+          "address": "0x0200e498",
+          "kind": "thumb"
+        },
+        "Engine_VramLoad": {
+          "address": "0x0200e448",
+          "kind": "thumb"
+        },
+        "Engine_HeapRelease": {
+          "address": "0x0200e440",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagSet": {
+          "address": "0x0200e4a8",
+          "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x020045d0",
+          "extent": 160,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

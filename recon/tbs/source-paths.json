@@ -19980,7 +19980,8 @@
       "source": "GRAPHICS/DISPLAY/BG0_CLEAR_TILEMAP.C"
     },
     "main:08095160": {
-      "name": "BattleFx_StartTwelveFrameBlend"
+      "name": "BattleFx_StartTwelveFrameBlend",
+      "source": "BATTLE/EFFECT/START_TWELVE_FRAME_BLEND.C"
     },
     "main:08090a5c": {
       "name": "BattleFx_BuildBuffer"

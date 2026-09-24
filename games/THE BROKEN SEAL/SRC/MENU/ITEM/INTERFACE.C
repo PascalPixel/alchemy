@@ -4,6 +4,7 @@
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
 #include "SYSTEM.H"
+#include "FIXED_MATH.H"
 
 s32 UiMenu_CreateCursor(void *menu);
 void InitializeEntryObjects(s32 source, s32 x, s32 y, s32 spacing, s32 style);
@@ -84,8 +85,6 @@ void ItemMenu_HideAllIcons(void)
         }
     }
 }
-
-s32 Math_Mod(s32, s32);
 
 void ItemMenu_HidePageIcons(void)
 {

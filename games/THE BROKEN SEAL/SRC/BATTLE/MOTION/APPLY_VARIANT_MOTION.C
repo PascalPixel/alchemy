@@ -2,13 +2,13 @@
 #include "SCENE.H"
 #include "MOTION_OBJECT.H"
 #include "BATTLE_MOTION.H"
+#include "FIXED_MATH.H"
 
 /* battle/motion/apply_variant_motion.c */
 u8 *Runtime_GetObject(s32);
 void Object_ResetMotion(struct MotionObject *);
 void Object_SetPosition(struct MotionObject *, s32, s32, s32);
 void Object_SetMode(struct MotionObject *, s32);
-s32 Math_Div(s32, s32);
 
 extern s32 gRom[];
 extern s32 gRom2[];

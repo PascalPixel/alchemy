@@ -3,6 +3,7 @@
 #include "BATTLE_EFX.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "SYSTEM.H"
+#include "FIXED_MATH.H"
 
 /* Sixteen columns grow and retract in staggered windows. Five image cells
  * cycle with frame and column, using the alternating cached blitters.
@@ -21,7 +22,6 @@ void BattleFx_PrepareCanvasEffect(void *, s32, s32, s32, s32 *, s32 *);
 void EffectPosition_ApplyStepAndYOffset(s32, s32 *);
 void Audio_PlayCue(s32);
 void ObjectGroup_UpdateMembers(s32, s32, s32, s32, s32);
-s32 Math_Mod(s32, s32);
 void Camera_ApplyShake(s32, s32);
 void ObjectGroup_TickMemberTimers(void);
 s32 BattleFx_EndCanvasLayer(void);

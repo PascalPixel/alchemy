@@ -3,6 +3,7 @@
 #include "TBS_EDITION.H"
 #include "SOUND_IDS.H"
 #include "SYSTEM.H"
+#include "FIXED_MATH.H"
 
 s32 Inventory_AddItemFar(s32, s32);
 s32 Inventory_FindEquippedFar(s32, u8);
@@ -151,7 +152,6 @@ s32 Shop_SalePrice(s32 item_id)
 #define BASE_W 12
 #endif
 
-s32 Math_Mod(s32, s32);
 s32 UiWindow_CreateFar(s32, s32, s32, s32, s32);
 void UiWindow_Close(s32, s32);
 s32 Ability_GetAvailability(s32);
@@ -237,7 +237,6 @@ s32 Shop_PickUnit(void)
     }
 }
 
-s32 Math_Div(s32, s32);
 void UiMessage_ShowAndWait(s32);
 
 extern u8 Value_00000075;

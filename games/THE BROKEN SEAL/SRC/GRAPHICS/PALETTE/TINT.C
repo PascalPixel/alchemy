@@ -1,11 +1,11 @@
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
+#include "FIXED_MATH.H"
 
 /* Palette tint: three BGR channels kept at work + 0x576, driven by the
    day counters in the game state and scaled into palette bank 15. */
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
-s32 Math_Mod(s32, s32);
 extern u8 gGameState[];
 #define PARTY_STATE gGameState
 extern u8 PaletteGlow_WaveTable[];

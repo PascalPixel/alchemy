@@ -25,7 +25,6 @@ extern const u8 ObjectMotion_MoveTowardTargetScript[];
 extern const u8 ObjectMotion_TurnTowardLinkedScript[];
 extern const u8 ObjectMotion_ResetActionScript[];
 
-s32 Math_Div(s32, s32);
 s32 Object_SetPosition(s32, s32, s32, s32);
 s32 Object_SetMode(s32, s32);
 
@@ -146,7 +145,6 @@ struct FacingEntry {
     u8 kind;
     u8 unknown_55[0x1b];
 };
-
 
 struct FacingEntry *Object_FindNearestFacingTarget(struct FacingEntry *self, s32 id)
 {

@@ -2,9 +2,8 @@
 #include "BATTLE_RUNTIME.H"
 #include "SOUND_IDS.H"
 #include "SYSTEM.H"
+#include "FIXED_MATH.H"
 
-s32 Math_Mod(s32, s32);
-s32 Math_Div(s32, s32);
 s32 UiWindow_CreateFar(s32, s32, s32, s32, s32);
 void UiWindow_Close(s32, s32);
 s32 Ability_GetAvailability(s32);

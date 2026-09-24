@@ -2,6 +2,7 @@
 #include "TYPES.H"
 #include "RUNTIME_INTERFACES.H"
 #include "BATTLE_RANDOM.H"
+#include "FIXED_MATH.H"
 
 s32 BattleFx_GetBaseSuccessRate(s32 effect_id)
 {
@@ -113,7 +114,6 @@ s32 BattleFx_IsRevive(s32 effect_id)
 
 #define FIELD_AT_OFFSET(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
-s32 Math_Div(s32, s32);
 u8 *Owner_GetState(s32);
 s32 Owner_GetResistanceValue(s32, s32);
 s32 BattleRandomPercent(void);

@@ -4,6 +4,7 @@
 #include "BATTLE_RUNTIME.H"
 #include "BATTLE_TYPES.H"
 #include "MOTION_OBJECT.H"
+#include "FIXED_MATH.H"
 
 /*
  * Battle-event playback.  The resolver immediately before this owner fills
@@ -75,8 +76,6 @@ void QueueIoWriteDelay10(s32 reg, s32 value);
 void QueueIoWriteDelay6(s32 reg, s32 value);
 void Runtime_PushSlotEntry(void *entry, s32 slot);
 s32 Resource_GetBuffer(s32 index, s32 table);
-s32 Math_Mod(s32 numerator, s32 denominator);
-s32 Trig_Sin(s32 angle);
 void AnimationObjects_SelectAnimationFar(void *record, s32 animation);
 void Object_SetMode(void *object, s32 animation);
 void render_animated_tile_frameFar(void *record, s32 frame);
@@ -98,7 +97,6 @@ void Battle_SetRuntimeFlagBit0(struct BattlePlaybackState *state, s32 value);
 void BattleEnemy_RecordDefeat(s32 actor_id, s32 mode);
 s32 Summon_GetEntryByte3Kind(s32 class_id);
 void Audio_PlayCue(s32 sound_id);
-
 
 #define REG_DISPCNT_SUB (*(volatile u32 *)0x03001e40)
 #define FRAME_COUNTER   (*(volatile s32 *)0x03001800)

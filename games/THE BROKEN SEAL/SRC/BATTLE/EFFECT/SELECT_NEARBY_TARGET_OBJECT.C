@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "OBJECT_LOOKUP.H"
+#include "FIXED_MATH.H"
 
 struct BattleTargetObject {
     u8 reserved_00[6];
@@ -12,7 +13,6 @@ struct BattleTargetObject {
 };
 
 s32 BattleFx_MapKeyThroughTable(s32 battleMode);
-s32 Math_Div(s32 numerator, s32 denominator);
 s32 ArcTan2(s32 deltaZ, s32 deltaX);
 
 s32 BattleEffect_SelectNearbyTargetObject(s32 sourceId, s32 battleMode)

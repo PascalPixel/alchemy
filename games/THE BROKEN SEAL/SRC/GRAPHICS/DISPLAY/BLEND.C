@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
+#include "FIXED_MATH.H"
 
 extern u8 gBlendFramesLeft;
 extern volatile u8 gBlendTargetLevel;
@@ -7,8 +8,6 @@ extern u8 gBlendStartLevel;
 extern volatile u8 gBlendDuration;
 extern u8 gBlendBrighten;
 extern u16 gBlendLayers;
-
-s32 Math_Div(s32 numerator, s32 denominator);
 
 void BlendTransition_Update(void)
 {
@@ -44,8 +43,6 @@ void BlendTransition_Update(void)
     }
 }
 
-
-
 void Blend_SetDarkenTarget16(s32 duration)
 {
     gBlendBrighten = 0;
@@ -55,8 +52,6 @@ void Blend_SetDarkenTarget16(s32 duration)
     gBlendDuration = duration;
     gBlendFramesLeft = gBlendDuration;
 }
-
-
 
 void Blend_SetDarkenTarget0(s32 duration)
 {
@@ -68,8 +63,6 @@ void Blend_SetDarkenTarget0(s32 duration)
     gBlendFramesLeft = gBlendDuration;
 }
 
-
-
 void Blend_SetBrightenTarget16(s32 duration)
 {
     gBlendBrighten = 1;
@@ -80,8 +73,6 @@ void Blend_SetBrightenTarget16(s32 duration)
     gBlendFramesLeft = gBlendDuration;
 }
 
-
-
 void Blend_SetBrightenTarget0(s32 duration)
 {
     gBlendBrighten = 1;
@@ -91,8 +82,6 @@ void Blend_SetBrightenTarget0(s32 duration)
     gBlendDuration = duration;
     gBlendFramesLeft = gBlendDuration;
 }
-
-
 
 void Blend_ConfigureTransition(s8 mode, s32 coefficient, u32 start, s32 target, s32 duration)
 {

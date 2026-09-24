@@ -1,4 +1,5 @@
 #include "DMA.H"
+#include "FIXED_MATH.H"
 
 struct UiSprite {
     u8 unknown_00[24];
@@ -12,7 +13,6 @@ s32 Resource_FindFreeEntry(void);
 s32 VramBlock_LoadCached(u32 slot, u32 size, const void *source);
 struct UiSprite *RenderOutput_CreateFar(s32 slot, s32 attributes, s32 window, s32 x, s32 y);
 void Audio_PlayCue(s32 cue);
-s32 Math_Mod(s32 value, s32 divisor);
 void Shop_FillSelector(s32 value, s32 x, void *buffer);
 void UiText_DrawNumberInWindowFar(s32 value, s32 digits, s32 window, s32 x, s32 y);
 void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);

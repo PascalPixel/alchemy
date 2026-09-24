@@ -4,8 +4,7 @@
  */
 #include "TYPES.H"
 #include "SCENE.H"
-
-s32 Math_Div(s32, s32);
+#include "FIXED_MATH.H"
 
 /*
  * Obj_SetMode names a `bx rN` slot, so the call is indirect through the

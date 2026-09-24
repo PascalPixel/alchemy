@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "SYSTEM.H"
+#include "FIXED_MATH.H"
 
 #define MENU_SUBOBJECT(menu, offset) (*(u8 **)((u8 *)(menu) + (offset)))
 
@@ -13,7 +14,6 @@ s32 UiWindow_CreateFar(s32, s32, s32, s32, s32);
 void Scheduler_RemoveCallback(void (*callback)(void));
 void Palette_CopyMenuBgToObjPalette(void);
 s32 GameFlag_TestFar(s32);
-s32 Math_Mod(s32, s32);
 void ItemMenu_DrawItemDetails(s32, s32);
 s32 RenderOutput_RedrawSavedRectFar(s32);
 void UiWork_FinalizeFar(s32, s32);

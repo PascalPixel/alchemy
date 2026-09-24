@@ -1,6 +1,5 @@
 #include "IWRAM_CALL.H"
-
-s32 Trig_Sin(s32 angle);
+#include "FIXED_MATH.H"
 
 /* Moves an (x, y, z) position radius along angle in the x-z plane. */
 void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position)

@@ -1,9 +1,8 @@
 #include "INVENTORY.H"
 #include "BATTLE_RANDOM.H"
+#include "FIXED_MATH.H"
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
-
-s32 Math_Div(s32, s32);
 
 u16 RollWeaponUnleash(void *owner)
 {

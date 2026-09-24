@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "FIXED_MATH.H"
 
 typedef void *(*WordCopy)(void *destination, const void *source, s32 size);
 
@@ -7,8 +8,6 @@ static __inline__ void CopyPalette(WordCopy copy, void *destination,
 {
     copy(destination, source, size);
 }
-
-s32 Trig_Sin(s32 angle);
 
 void Graphics_UpdatePhasePalette(s32 frame, s32 red_phase, s32 green_phase, s32 blue_phase)
 {

@@ -1,9 +1,8 @@
 #include "PSYNERGY_MENU.H"
 #include "GLOBAL_CELLS.H"
+#include "FIXED_MATH.H"
 
 s32 Runtime_GetObject(s32);
-s32 Math_Div(s32, s32);
-s32 Math_Mod(s32, s32);
 
 s32 PsynergyMenu_BuildPageResult(struct MenuResult *result, s32 index)
 {

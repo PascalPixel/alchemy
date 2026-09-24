@@ -1,6 +1,5 @@
 #include "TYPES.H"
-
-extern s32 Trig_Sin(s32 angle);
+#include "FIXED_MATH.H"
 
 /* Cycles the four object palette colours at 0x050001d0 through a sine glow
    driven by the frame phase at 0x03001800. */

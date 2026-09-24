@@ -37,7 +37,6 @@ struct BattleEscapeState {
     u8 failed_attempts;
 };
 
-s32 Math_Div(s32, s32);
 u32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 #define Rand Random16

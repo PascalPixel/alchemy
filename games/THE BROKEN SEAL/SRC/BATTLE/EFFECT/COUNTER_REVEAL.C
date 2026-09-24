@@ -2,6 +2,7 @@
 #include "BATTLE_EFX.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "SYSTEM.H"
+#include "FIXED_MATH.H"
 
 /*
  * Battle-presentation sub-effect at 0x080cfef4, structurally related to the
@@ -46,8 +47,6 @@ u32 Resource_DecodeType01(const void *source, void *destination);
 s32 BattleFx_EndCanvasLayer(void);
 void **GetBattleObjectSlotFar(s32 member_id);
 void EffectPosition_ApplyStepAndYOffset(s32 member_id, void *out);
-s32 Trig_Sin(s32 angle);
-s32 Trig_Cos(s32 angle);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 void Audio_PlayCue(s32 cue);
 void Object_SetPosition(void *object, s32 a, s32 b, s32 c);

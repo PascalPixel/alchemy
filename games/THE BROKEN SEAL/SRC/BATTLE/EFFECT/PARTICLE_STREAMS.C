@@ -2,6 +2,7 @@
 #include "DMA.H"
 #include "BATTLE_EFX.H"
 #include "CALLBACK_SCHEDULER.H"
+#include "FIXED_MATH.H"
 
 void WaitFrames(s32);
 
@@ -49,8 +50,6 @@ void *Resource_GetTableEntry(s32);
 s32 Random16(void);
 void BattleFx_SelectLivingTargets(s32);
 void Object_ApplyProjectedPlacementFar(s32, void *, void *, s32);
-s32 Trig_Sin(s32);
-s32 Trig_Cos(s32);
 void Render_ResetTransformState(void);
 void SceneTransform_ApplyPosition(void *);
 void SceneTransform_ApplyRoll(s32);
@@ -64,7 +63,6 @@ void BattleActor_CommitPlacementFar(void);
 void BattleEventRuntime_BeginPhaseFar(s32);
 void Graphics_PrepareTransferInIwramWork(s32, s32);
 void EffectStep_AdvanceWithGravity3D(void *, s32, s32);
-s32 Math_Div(s32, s32);
 void Camera_ApplyShake(s32, s32);
 s32 BattleFx_EndCanvasLayer(void);
 

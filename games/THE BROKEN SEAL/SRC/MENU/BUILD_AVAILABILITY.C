@@ -2,6 +2,7 @@
 #include "MENU_RESULT.H"
 #include "TBS_EDITION.H"
 #include "SCENE.H"
+#include "FIXED_MATH.H"
 
 /* menu/character_menu/build_availability.c */
 u8 *Runtime_GetObject(s32 owner);
@@ -50,9 +51,6 @@ s32 CharacterMenu_BuildAvailability(u8 *output, s32 requested, s32 id)
 #else
 #define GROUP_LEN 5
 #endif
-
-s32 Math_Div(s32, s32);
-s32 Math_Mod(s32, s32);
 
 static __inline__ u8 LoadByte(s32 base, s32 offset)
 {

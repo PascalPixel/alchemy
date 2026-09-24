@@ -1,4 +1,5 @@
 #include "CURVE.H"
+#include "FIXED_MATH.H"
 
 s32 Curve_GetFirstSampleA(const s8 *samples)
 {
@@ -78,8 +79,6 @@ s32 Curve_StepAtDifferencePosition(const s8 *samples, s32 start, s32 end)
     }
     return second;
 }
-
-s32 Math_Div(s32 dividend, s32 divisor);
 
 s32 Curve_LerpThreeSamplesByRatio(const s8 *samples, s32 start, s32 end)
 {

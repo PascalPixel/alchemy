@@ -1,3 +1,8 @@
+/* Draft, not exact (2026-09-24): 272 of 272 bytes, 37 differing halfwords (was
+   139). The reset loop counts up with an unsigned counter (bls). Residual:
+   actions and count take r6 and r7 the other way round; the tagging-loop
+   counter (reg 38 in the lreg dump) outranks count in global allocation and
+   takes r6 first. for, while and do spellings of that loop keep it. */
 #include "TYPES.H"
 
 #define BattlePres_BuildActions Func_080b9934
@@ -51,13 +56,14 @@ s32 BattlePres_BuildActions(struct BattleActionRecord *actions)
         struct BattleActionRecord *reset_record =
             (struct BattleActionRecord *)(battle + 187 * 4);
 
-        i = 0;
+        u32 n = 0;
+
         do {
-            i++;
+            n++;
             reset_record->unit_id = 0xff;
             reset_record->value = 0x8000;
             reset_record++;
-        } while (i <= 19);
+        } while (n <= 19);
     }
 
     Func_080b90ac();

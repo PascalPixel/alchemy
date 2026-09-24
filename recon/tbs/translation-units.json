@@ -71232,6 +71232,106 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "haidia-ie-entry-state",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_IE/ENTRY_STATE.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_374",
+      "absolute_symbols": {
+        "Engine_GameFlagIsSet": {
+          "address": "0x0200a674",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetPosition": {
+          "address": "0x0200a714",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagSet": {
+          "address": "0x0200a67c",
+          "kind": "thumb"
+        },
+        "Engine_EventRequestExit": {
+          "address": "0x0200a7cc",
+          "kind": "thumb"
+        },
+        "SceneState_SetValues352_365_2116_2117_40": {
+          "address": "0x0200a5b0",
+          "kind": "thumb"
+        },
+        "Engine_ActorGet": {
+          "address": "0x0200a6c4",
+          "kind": "thumb"
+        },
+        "Engine_MapCopyCellsTo": {
+          "address": "0x0200a644",
+          "kind": "thumb"
+        },
+        "Engine_MapRedraw": {
+          "address": "0x0200a634",
+          "kind": "thumb"
+        },
+        "Engine_TaskWait": {
+          "address": "0x0200a5ec",
+          "kind": "thumb"
+        },
+        "Main_0808a2c0": {
+          "address": "0x0200a7ec",
+          "kind": "thumb"
+        },
+        "Main_0808a2c8": {
+          "address": "0x0200a7f4",
+          "kind": "thumb"
+        },
+        "Engine_MapCopyCellAttributes": {
+          "address": "0x0200a64c",
+          "kind": "thumb"
+        },
+        "Main_0808a168": {
+          "address": "0x0200a75c",
+          "kind": "thumb"
+        },
+        "Scene_RunExtendedActorSequence": {
+          "address": "0x020097c8",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpriteFlags": {
+          "address": "0x0200a654",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetAnimation": {
+          "address": "0x0200a71c",
+          "kind": "thumb"
+        },
+        "HaidiaIe_RunScene015B4": {
+          "address": "0x020095b4",
+          "kind": "thumb"
+        },
+        "Local_02001084": {
+          "address": "0x02009084",
+          "kind": "thumb"
+        },
+        "Engine_EventOpenScreen": {
+          "address": "0x0200a814",
+          "kind": "thumb"
+        },
+        "Engine_EventWaitForScreen": {
+          "address": "0x0200a824",
+          "kind": "thumb"
+        },
+        "Main_0808a2e0": {
+          "address": "0x0200a80c",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02000940",
+          "extent": 636,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

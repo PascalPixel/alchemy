@@ -132,7 +132,7 @@ fn cases() -> [Case<'static>; 5] {
         },
         Case {
             owner: 0x0808c3a4,
-            source: "games/THE BROKEN SEAL/SRC/BATTLE/PARTY/APPLY_STATUS_DAMAGE.C",
+            source: "games/THE BROKEN SEAL/SRC/BATTLE/PARTY/DAMAGE.C",
             edits: &[("if (result < count)", "if (count > result)", 1)],
             expected: "mirror_relational_guards",
         },

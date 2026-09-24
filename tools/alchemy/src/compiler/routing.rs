@@ -417,8 +417,12 @@ mod target_tests {
         );
     }
     #[test]
-    fn agbcc_family_has_one_flag_set() {
-        for owner in ["080fb670.c", "08006878.c", "080fa514.c"] {
+    fn agbcc_families_keep_their_flag_sets() {
+        assert_eq!(
+            cflags_for_target_source(CompilerTarget::Tbs, "08006878.c"),
+            agbcc_flash_cflags()
+        );
+        for owner in ["080fb670.c", "080fa514.c"] {
             assert_eq!(
                 cflags_for_target_source(CompilerTarget::Tbs, owner),
                 agbcc_cflags()

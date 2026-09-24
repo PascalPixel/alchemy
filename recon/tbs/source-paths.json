@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_396:020015ac": {
+      "name": "ToretoHeya_Func020015ac",
+      "source": "FIELD/TORETO_HEYA/F_015AC.C"
+    },
     "resource_39a:02001d78": {
       "name": "ImiruFuchin_Func02001d78",
       "source": "FIELD/COMMON/IMIRU_FUCHIN/F_01D78.C"

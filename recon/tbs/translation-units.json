@@ -73119,6 +73119,34 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "toreto-heya-f-015ac",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/TORETO_HEYA/F_015AC.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_396",
+      "absolute_symbols": {
+        "Main_08000128": {
+          "address": "0x02009a50",
+          "kind": "thumb"
+        },
+        "Main_080001b8": {
+          "address": "0x02009a58",
+          "kind": "thumb"
+        },
+        "Engine_ObjectDispatchRelease": {
+          "address": "0x02009a78",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x020015ac",
+          "extent": 128,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

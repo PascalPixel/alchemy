@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_3c0:02001094": {
+      "name": "SuharaSabaku_Func02001094",
+      "source": "FIELD/SUHARA_SABAKU/F_01094.C"
+    },
     "resource_3c4:02001abc": {
       "name": "BabiChika_Func02001abc",
       "source": "FIELD/BABI_CHIKA/F_01ABC.C"

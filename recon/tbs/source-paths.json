@@ -20610,6 +20610,9 @@
     "main:0809b450": {
       "name": "BattleFx_SpawnDescendingArcParticles",
       "source": "BATTLE/EFFECT/SPAWN_DESCENDING_ARC_PARTICLES.C"
+    },
+    "main:08096fb0": {
+      "name": "BattleFx_LoadActionEffectResources"
     }
   },
   "symbols": {
@@ -20777,7 +20780,6 @@
     "main:080b7b6c": "BattleActor_SpawnObjectsForList",
     "main:08092c40": "UiText_OpenMessageAtObject",
     "main:080c24f0": "BattleEnemy_RecordDefeat",
-    "main:08096fb0": "BattleFx_LoadActionEffectResources",
     "main:080912b8": "Object_EffectSpawnCallback",
     "main:080152b8": "BattleLayout_HighlightPartyPanelsFar",
     "main:08028574": "Menu_RunResourceSelectionLoop",

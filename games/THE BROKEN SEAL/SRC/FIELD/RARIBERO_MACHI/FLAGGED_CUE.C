@@ -6,17 +6,13 @@
 
 #define NULL ((void *)0)
 #define ObjectMotion_RealignToTrackedObjectAndArmCallback_1(a0, a1, a2, a3) Call4(Func_02001882, a0, a1, a2, a3)
-#define Scene_GetRecord_1(args...) Func_02001cd6(args)
-#define BattleRuntime_WaitIfModeZero_71(args...) Func_02001cd6_a(args)
 #define ObjectMotion_RealignToTrackedObjectAndArmCallback_1_020007c4(a0, a1, a2, a3) Call4(Func_02001e12, a0, a1, a2, a3)
 #define ObjectMotion_RealignToTrackedObjectAndArmCallback_2(a0, a1, a2, a3) Call4(Func_02001e22, a0, a1, a2, a3)
 #define ObjectMotion_RealignToTrackedObjectAndArmCallback_3(a0, a1, a2, a3) Call4(Func_02001e30, a0, a1, a2, a3)
 #define Scene_GetRecord_1_020007c4(args...) Func_02001ee4(args)
-#define Scene_GetRecord_2(args...) Func_02002342(args)
-#define Scene_GetRecord_3(args...) Func_0200235e(args)
-#define Scene_GetRecord_4(a0) Value1(Func_0200252a, a0)
-#define Scene_GetRecord_5(a0) Value1(Func_02002578, a0)
-#define Scene_GetRecord_6(a0) Value1(Func_020025a8, a0)
+#define Scene_GetRecord_4(a0) Value1(Engine_ActorGet, a0)
+#define Scene_GetRecord_5(a0) Value1(Engine_ActorGet, a0)
+#define Scene_GetRecord_6(a0) Value1(Engine_ActorGet, a0)
 #define SCENE_STEP (*(u16 *)(*(u8 **)0x03001ebc + 0x1d8))
 #define REC_S16(rec, off) (*(s16 *)((rec) + (off)))
 #define Scene_RunTableTransition Func_02000158
@@ -41,24 +37,15 @@ extern u8 Data_02009cee[];
 extern u8 Data_02009cd8[];
 
 void Func_0200164a(s32, s32, s32);
-s32 Func_020015ce();
-s32 Func_020015da();
 void Func_02001882();
-u8 *Func_02001cd6();
-u8 *Func_02001cd6_a();
 void Func_02001d8c_a(void);
 void Func_02001e12();
 void Func_02001e22();
 void Func_02001e30();
 void Func_02001eb6();
 void Func_02001ef0();
-s32 Func_02002342();
 void Func_020023d2();
 void Func_0200240a();
-s32 Func_0200252a();
-s32 Func_02002578();
-s32 Func_020025a8();
-u8 *Func_0200235e();
 u8 *Func_020016c6(s32);
 
 /* A signed 16-bit field of an actor record returned by one of the record
@@ -193,9 +180,9 @@ void SceneActor_SetupActorForTable9638(s32 actor)
 
     struct FieldActor *object;
 
-    object = (struct FieldActor *)Func_020015ce(actor);
+    object = (struct FieldActor *)Actor_Get(actor);
     object->scale_x = 0x10000;
-    object = (struct FieldActor *)Value1(Func_020015da, actor);
+    object = (struct FieldActor *)Value1(Engine_ActorGet, actor);
     object->scale_y = 0x10000;
     Event_SetMessage(0x26af);
     Event_ShowMessage(actor, 0);
@@ -447,14 +434,14 @@ void FieldScene_RunPrimarySequence(void)
     Event_Wait(30);
     Actor_SetSpeed(22, 0x13333, 0x9999);
     Actor_SetAnimation(22, 2);
-    record = Scene_GetRecord_1(0);
+    record = Actor_Get(0);
     if (record != 0) {
         /* Pass the record's s16 fields at +10 and +18 through to entity 22. */
         Actor_SetDestination(22, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
     Actor_WaitForMove(22);
     Actor_SetPosition(22, 0, 0);
-    BattleRuntime_WaitIfModeZero_71(10);
+    Event_Wait(10);
     Event_End();
 }
 
@@ -664,9 +651,9 @@ void FieldScene_RunSecondarySequence(void)
     Event_Wait(10);
     /* Clear bit 0 of the actor flag byte, then set it back through a second
      * record accessor. */
-    ((struct FieldActor *)Scene_GetRecord_2(22))->unknown_5a &= ~1;
+    ((struct FieldActor *)Actor_Get(22))->unknown_5a &= ~1;
     Actor_WalkByAndWait(22, 0, -16);
-    ((struct FieldActor *)Scene_GetRecord_3(22))->unknown_5a |= 1;
+    ((struct FieldActor *)Actor_Get(22))->unknown_5a |= 1;
     Actor_FaceDirection(22, 0x4100, 0);
     Event_Wait(30);
     Event_Wait(10);

@@ -4,7 +4,6 @@
 #define INPUT_REPEAT_KEYS (*(volatile u32 *)ADDR_03001B04)
 
 s32 Math_Mod(s32 value, s32 divisor);
-s32 UiWindow_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 style);
 void UiWindow_Close(s32 window, s32 style);
 struct ShopCursorAnchor *RenderOutput_CreateFar(
     u32 resource,
@@ -117,11 +116,11 @@ done:
 #include "GLOBAL_CELLS.H"
 #include "BATTLE_CALC.H"
 #include "SYSTEM.H"
+#include "UI.H"
 
 s32 Ability_GetAvailability(s32);
 s32 Inventory_CheckDiscardFar(s32, s32);
 s32 UiWork_Create(s32, s32, s32, s32);
-s32 UiWork_IsCompleteFar(void);
 void UiWork_FinalizePending(void);
 
 extern u8 Value_00000075;
@@ -265,7 +264,6 @@ extern u8 Value_00000c8d;
 
 void *Owner_GetStateFar(s32);
 void RenderOutput_RedrawSavedRectFar(s32);
-void UiText_DrawCharacterAtOffsetFar(s32, s32, s32, s32);
 s32 Shop_SalePrice(s32);
 void UiText_DrawNumberInWindowFar(s32, s32, s32, s32, s32);
 

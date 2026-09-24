@@ -2,11 +2,11 @@
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
 #include "SYSTEM.H"
+#include "UI.H"
 
 /* ui/message/show_and_wait.c */
 void UiWork_FinalizePending(void);
 void UiWork_Create(s32, s32, s32, s32);
-s32 UiWork_IsCompleteFar(void);
 extern u8 gVal[];
 extern u8 gVal2[];
 extern u8 gVal3[];

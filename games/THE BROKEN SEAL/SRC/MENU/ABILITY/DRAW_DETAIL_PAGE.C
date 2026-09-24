@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "SYSTEM.H"
+#include "UI.H"
 
 extern void *gMenuWork;
 extern u8 Value_0000053a;
@@ -7,7 +8,6 @@ extern u8 Value_0000053a;
 s32 GameFlag_TestFar(s32 flag);
 void GameFlag_ClearBitFar(s32 flag);
 void RenderOutput_RedrawSavedRectFar(s32);
-void UiText_DrawCharacterAtOffsetFar(s32, s32, s32, s32);
 s32 Render_SetTilemapFlagRect(s32, s32, s32, s32, s32, s32);
 
 /* The Psynergy counterpart of ItemMenu_DrawItemDetailPage: while flag

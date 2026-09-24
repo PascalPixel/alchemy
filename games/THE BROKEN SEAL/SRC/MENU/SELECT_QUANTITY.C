@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "SYSTEM.H"
 #include "FIXED_MATH.H"
+#include "UI.H"
 
 #define MENU_SUBOBJECT(menu, offset) (*(u8 **)((u8 *)(menu) + (offset)))
 
@@ -10,7 +11,6 @@ extern volatile s32 gKeysRepeat;
 extern volatile u32 gKeyState;
 void Menu_UpdateEntryObjectTransforms(void);
 
-s32 UiWindow_CreateFar(s32, s32, s32, s32, s32);
 void Scheduler_RemoveCallback(void (*callback)(void));
 void Palette_CopyMenuBgToObjPalette(void);
 s32 GameFlag_TestFar(s32);

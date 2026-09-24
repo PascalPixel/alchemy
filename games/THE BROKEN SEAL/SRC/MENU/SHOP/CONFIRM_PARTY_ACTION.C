@@ -1,8 +1,8 @@
 #include "SHOP.H"
+#include "UI.H"
 
 s32 Object_GetByIdFar(s32 unit_id);
 s32 UiWindow_CreateWithSideObjectFar(s32 resource, s32 x, s32 y, s32 flags);
-s32 UiWindow_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 style);
 void SideObject_CreateFar(s32 a, s32 b, s32 c, s32 window, s32 d, s32 e);
 struct ShopCursorAnchor *RenderOutput_CreateFar(
     u32 resource,
@@ -18,8 +18,6 @@ s32 Shop_CountUnits(void);
 void Sanctum_RunPartyService(void);
 s32 Menu_SelectEntry19To1cFar(s32 prev);
 void UiWindow_Close(s32 window, s32 style);
-
-
 
 /* Run the shop's yes/no party-action confirmation prompt for one unit. */
 s32 Shop_ConfirmAct(s32 unit_id)

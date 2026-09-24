@@ -4,6 +4,7 @@
 #include "INVENTORY_MENU.H"
 #include "CHARACTER_MENU.H"
 #include "SYSTEM.H"
+#include "UI.H"
 
 #if defined(TBS_EDITION_JA)
 #define ROW_CNT 4
@@ -62,7 +63,6 @@ extern struct MenuObjectControl *gMenuCtrlWork;
 struct CharacterSelectorState *Runtime_AllocateHeapBlock(s32, s32);
 void RenderOutput_ClearListFar(s32);
 void UiWindow_DrawFrameFar(s32, s32, s32, s32);
-s32 UiWindow_CreateFar(s32, s32, s32, s32, s32);
 s32 Party_ListActiveOwnersFar(const u16 *);
 void UiWindow_InitializeWork(s32);
 void Menu_InitSelectorCursorAndEntries(s32, s32, s32, s32);

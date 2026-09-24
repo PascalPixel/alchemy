@@ -3,6 +3,7 @@
 #include "ITEM.H"
 #include "MENU_RESULT.H"
 #include "SYSTEM.H"
+#include "UI.H"
 
 struct MenuEntryIcon {
     u8 unknown_00[5];
@@ -52,7 +53,6 @@ extern struct ItemListWork *gMenuWork;
 
 extern u8 Value_00000075;
 
-void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 void RenderOutput_RedrawSavedRectFar(s32 window);
 void UiWindow_SetTilemapEntryFar(s32 window, s32 icon, s32 x, s32 y, s32 palette);
 void Render_SetTilemapFlagRect(s32, s32, s32, s32, s32, s32);

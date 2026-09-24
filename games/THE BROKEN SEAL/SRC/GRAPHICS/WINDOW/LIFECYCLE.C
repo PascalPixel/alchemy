@@ -1,9 +1,8 @@
 #include "FAR_RUNTIME.H"
 #include "TYPES.H"
+#include "UI.H"
 
 s32 UiWindow_Close(void *handle);
-
-s32 UiWindow_CreateFar(s32 first, s32 second, s32 third, s32 fourth, s32 flags);
 
 s32 UiWindow_UpdateOrCreate(s32 *handle, s32 first, s32 second, s32 third, s32 fourth, s32 flags)
 {

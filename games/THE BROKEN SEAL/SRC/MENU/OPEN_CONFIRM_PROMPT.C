@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "SYSTEM.H"
+#include "UI.H"
 
 #define FIELD(ptr, type, offset) (*(type *)((u8 *)(ptr) + (offset)))
 
@@ -15,7 +16,6 @@ void UiWindow_DrawFrameFar(s32 x, s32 y, s32 width, s32 height);
 void UiWindow_InitializeWork(s32 unused);
 s32 Party_ListActiveOwnersFar(const u16 *ids);
 void ItemMenu_Init(s32, s32, s32, s32);
-s32 UiWindow_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 style);
 void Unnamed_080a2144(s32 index);
 void Link_DrawShiftedTilePairFar(s32 addr);
 void Menu_CancelSoundReset(void);

@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "SYSTEM.H"
+#include "UI.H"
 
 struct Runtime_080931ec {
     u8 unknown_000[0x1d8];
@@ -13,7 +14,6 @@ s32 ObjectTable_ReadActiveValue(s32);
 s32 BattleFx_GetResourceId(u32);
 s32 UiWork_Create(s32, s32, s32, s32);
 s32 UiWindow_CreateWithSideObjectFar(s32, s32, s32, s32);
-s32 UiWork_IsCompleteFar(void);
 s32 UiWork_IsIdleFar(s32);
 void UiWork_FinalizeEntityMatchingLocalizedIdFar(s32);
 void UiWork_FinalizePending(void);

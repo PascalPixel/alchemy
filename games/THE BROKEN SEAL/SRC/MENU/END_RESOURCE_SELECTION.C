@@ -6,7 +6,7 @@
 void ScheduleCallback(void *);
 void UiWork_Finalize(struct Work *work, s32 release);
 s32 Resource_ResetEntry(u32 index);
-extern u8 Data_08028195;
+void AffineEffect_UpdateFrame(void);
 
 void Menu_EndResourceSelection(void)
 {
@@ -16,7 +16,7 @@ void Menu_EndResourceSelection(void)
     void *work;
 
     work = *(void **)ADDR_03001F38;
-    ScheduleCallback(&Data_08028195);
+    ScheduleCallback(AffineEffect_UpdateFrame);
     child = FIELD_AT_OFFSET(work, struct Work *, 0x78);
     if (child != 0) {
         UiWork_Finalize(child, 2);

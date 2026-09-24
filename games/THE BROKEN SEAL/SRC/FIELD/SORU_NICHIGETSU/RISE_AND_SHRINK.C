@@ -1,6 +1,5 @@
 #include "FIELD_EVENT.H"
 
-
 /*
  * Exact 2026-09-23 (1,120 bytes), with two tagged fake matches for the
  * zero stores of the two presentations. Both rise-and-shrink loops of each
@@ -160,7 +159,7 @@ void FieldScene_RunSanctumRiseAndShrink(void)
         Func_02004742(40);
         if (Value1(Func_02004730_a, 0x819) != 0) {
         } else {
-            Call6(Engine_MapCopyCellsTo, 36, 62, 17, 36, 2, 3);
+            Map_CopyCellsTo(36, 62, 17, 36, 2, 3);
             Call6(Func_0200473e, 44, 59, 17, 38, 2, 1);
             Func_0200477c(10);
             Call6(Func_02004756, 38, 62, 17, 36, 2, 3);
@@ -175,11 +174,11 @@ void FieldScene_RunSanctumRiseAndShrink(void)
             Call6(Func_020047ce, 42, 62, 17, 36, 2, 3);
             Call6(Func_020047de, 0, 32, 17, 40, 2, 1);
             Call6(Func_020047ee, 44, 59, 17, 41, 2, 1);
-            Engine_EventWait(10);
+            Event_Wait(10);
             Call6(Func_02004804, 0, 32, 17, 41, 2, 1);
             Call6(Func_02004814, 44, 59, 17, 42, 2, 1);
             Func_02004852(10);
-            Call6(Engine_MapCopyCellsTo, 0, 32, 17, 42, 2, 3);
+            Map_CopyCellsTo(0, 32, 17, 42, 2, 3);
             Func_0200486a(80);
             Func_02004840(9);
             Func_02004846(10);
@@ -188,13 +187,13 @@ void FieldScene_RunSanctumRiseAndShrink(void)
         Func_020048fe(16, 0, 30);
         Func_020048e6(16, 3);
         Func_020048f6(0, 3);
-        Engine_ActorSetAnimation(16, 1);
+        Actor_SetAnimation(16, 1);
         base5_8010 = 0x8010;
         Func_02004900(0, 0);
         Call1(Func_02004936, 0x102e);
         Func_020044e6(base5_8010, 6);
         Func_0200491e(16, 3);
-        Engine_ActorSetAnimation(16, 1);
+        Actor_SetAnimation(16, 1);
         Func_02004966(base5_8010, 0);
         Func_0200492e(0, 3);
         Func_020048dc(60);
@@ -216,7 +215,7 @@ void FieldScene_RunSanctumRiseAndShrink(void)
         sprite->flags = 0;
         do {
             actor->y.fixed += 0x3333;
-            Call1(Engine_TaskWait, 1);
+            Task_Wait(1);
             base5_0++;
         } while (base5_0 != 120);
         Func_02004a94(190);

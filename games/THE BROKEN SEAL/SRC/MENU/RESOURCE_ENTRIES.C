@@ -2,6 +2,7 @@
 #include "SOUND_IDS.H"
 #include "RESOURCE.H"
 #include "GLOBAL_CELLS.H"
+#include "SYSTEM.H"
 
 struct MenuSelectionState {
     u8 padding000[0x78];
@@ -20,7 +21,6 @@ extern u8 Data_0000001f;
 
 void RenderOutput_PrepareForRedraw(void *work);
 void UiText_DrawCharacterAtOffset(s32 resource_id, void *work, s32 x, s32 y);
-void WaitFrames(s32 frames);
 void Audio_PlayCue(s32 sound_id);
 
 static inline s32 AbsoluteDifference(s32 diff, s32 lhs, s32 rhs)
@@ -81,7 +81,6 @@ s32 Menu_SelectResource(s32 start, s32 goal)
     return goal;
 }
 
-
 extern u8 Data_000000f1[];
 
 u32 Runtime_BumpAllocate(s32 size);
@@ -100,7 +99,6 @@ void Menu_LoadResourceSlot(s32 slot, s32 index)
     Resource_CopyData(slot, size, buffer);
     Func_08002df0(buffer);
 }
-
 
 extern s32 find_free_slot(void);
 

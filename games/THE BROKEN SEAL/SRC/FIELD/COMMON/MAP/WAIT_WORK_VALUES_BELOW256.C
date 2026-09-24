@@ -1,10 +1,9 @@
 #include "TYPES.H"
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
+#include "SYSTEM.H"
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
-
-void WaitFrames(s32);
 
 void Map_WaitWorkValuesBelow256(void)
 {

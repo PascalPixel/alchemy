@@ -1,6 +1,7 @@
 #include "OBJECT_LOOKUP.H"
 #include "TYPES.H"
 #include "SCENE.H"
+#include "SYSTEM.H"
 
 struct Child_08091c44 {
     u8 padding[36];
@@ -12,8 +13,6 @@ struct Object_08091c44 {
     struct Child_08091c44 *child;
     u8 active;
 };
-
-void WaitFrames(s32);
 
 void Object_WaitUntilChildValueDiffers(s32 object_id, s32 value)
 {

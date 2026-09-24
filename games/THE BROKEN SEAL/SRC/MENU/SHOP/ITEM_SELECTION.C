@@ -4,7 +4,6 @@
 #define INPUT_REPEAT_KEYS (*(volatile u32 *)ADDR_03001B04)
 
 s32 Modulo(s32 value, s32 divisor);
-void WaitFrames(s32 frames);
 s32 UiWindow_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 style);
 void UiWindow_Close(s32 window, s32 style);
 struct ShopCursorAnchor *RenderOutput_CreateFar(
@@ -117,7 +116,7 @@ done:
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
 #include "BATTLE_CALC.H"
-
+#include "SYSTEM.H"
 
 s32 Ability_GetAvailability(s32);
 s32 Inventory_CheckDiscardFar(s32, s32);
@@ -258,7 +257,6 @@ exit_loop:
     WaitFrames(1);
     return result;
 }
-
 
 extern u8 Value_00000182;
 extern u8 Value_00000c94;

@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "SYSTEM.H"
 
 #define MENU_SUBOBJECT(menu, offset) (*(u8 **)((u8 *)(menu) + (offset)))
 
@@ -11,7 +12,6 @@ void Menu_UpdateEntryObjectTransforms(void);
 s32 UiWindow_CreateFar(s32, s32, s32, s32, s32);
 void Scheduler_RemoveCallback(void (*callback)(void));
 void Func_080a22f4(void);
-void WaitFrames(s32);
 s32 GameFlag_TestFar(s32);
 s32 Math_Mod(s32, s32);
 void Func_080a4924(s32, s32);

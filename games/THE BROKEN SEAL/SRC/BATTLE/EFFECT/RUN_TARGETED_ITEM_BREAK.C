@@ -1,5 +1,5 @@
 #include "TYPES.H"
-
+#include "SYSTEM.H"
 
 struct BattleEffectScene {
     u8 reserved_00[4];
@@ -24,7 +24,6 @@ extern struct BattleEffectScene *gEffectWork;
 void BattleEffect_InitializeSharedScene(void);
 void *SpawnItemBreakEffectMode3(s32 x, s32 y, s32 z, s32 angle);
 void Object_SetCallback(void *object, const void *callback);
-void WaitFrames(s32 frames);
 void Motion_SetTargetPositionFromMagnitudeAngle(
     void *object, s32 magnitude, s32 angle);
 void Object_CommitPosition(void *object);

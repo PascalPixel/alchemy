@@ -1,8 +1,8 @@
 #include "TYPES.H"
 #include "SCENE.H"
+#include "SYSTEM.H"
 
 /* battle/effects/wait_then_set_field.c */
-void WaitFrames(s32);
 
 void BattleFx_WaitThenSetField18To4(void *arg0)
 {

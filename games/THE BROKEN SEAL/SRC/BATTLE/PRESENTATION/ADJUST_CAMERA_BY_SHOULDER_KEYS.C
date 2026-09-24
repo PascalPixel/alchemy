@@ -7,6 +7,7 @@
 #include "BATTLE_TARGET.H"
 #include "FIXED_MATH.H"
 #include "BATTLE_PARTY.H"
+#include "SYSTEM.H"
 
 /* battle/presentation/cam/shoulder.c */
 extern u16 Value_fffffe00;
@@ -42,7 +43,6 @@ extern struct BattlePresentationTransition *gIw;
 void *Runtime_GetObject(s32);
 
 void UiText_ShowMessageAndWait(s32);
-void WaitFrames(s32);
 void UiWork_ResetFreeChannelFar(void);
 
 s32 BattlePres_RunAction(s16 *action)
@@ -115,7 +115,6 @@ u32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 #define Rand Random16
 
-
 s32 BattleEscape_PlayRun(s16 *action)
 {
     s16 party_members[14];
@@ -147,7 +146,6 @@ s32 BattleEscape_PlayRun(s16 *action)
 
 /* battle/presentation/misc/msg_field38.c */
 #define FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
-
 
 void UiText_DrawQuantity(s32, s32);
 

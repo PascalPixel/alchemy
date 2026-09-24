@@ -1,4 +1,5 @@
 #include "DMA.H"
+#include "SYSTEM.H"
 
 struct DisplayTransitionState {
     u8 data[0x528];
@@ -9,9 +10,7 @@ struct DisplayTransitionState {
 void *Runtime_AllocateBlock(s32, s32);
 void DisplayTransition_FillTilemapAndSolidTile(s32);
 void Scheduler_AddOrUpdateCallback(void (*)(void), s32);
-void WaitFrames(u32);
 void Func_08090658(void);
-
 
 void DisplayTransition_InitializeState(s32 value)
 {

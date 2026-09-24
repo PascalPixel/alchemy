@@ -1,10 +1,10 @@
 #include "TYPES.H"
+#include "SYSTEM.H"
 
 extern void *gMenuWork;
 extern u8 Value_00000075;
 
 void RenderOutput_RedrawSavedRectFar(s32);
-void WaitFrames(s32);
 void UiText_DrawCharacterAtOffsetFar(s32, s32, s32, s32);
 s32 Func_080a2268(s32, s32, s32, s32, s32, s32);
 

@@ -1,7 +1,6 @@
 #include "TYPES.H"
 #include "SCENE.H"
-
-void WaitFrames(s32);
+#include "SYSTEM.H"
 
 void AudioCommand_WaitForStateByteClear(void)
 {

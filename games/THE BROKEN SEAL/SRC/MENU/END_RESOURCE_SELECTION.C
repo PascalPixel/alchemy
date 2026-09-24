@@ -1,12 +1,12 @@
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
+#include "SYSTEM.H"
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 void ScheduleCallback(void *);
 void UiWork_Finalize(struct Work *work, s32 release);
 s32 Resource_ResetEntry(u32 index);
 void Runtime_ReleaseHeapBlock(s32);
-void WaitFrames(u32);
 extern u8 Data_08028195;
 
 void Menu_EndResourceSelection(void)

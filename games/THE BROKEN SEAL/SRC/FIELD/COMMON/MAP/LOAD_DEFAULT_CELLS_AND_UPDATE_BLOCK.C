@@ -1,8 +1,8 @@
 #include "TYPES.H"
+#include "SYSTEM.H"
 
 /* map/shared/load_default_cells_and_update_block.c */
 extern u8 gVal[];
-void WaitFrames(s32);
 void FunctionHead_0801161c(void);
 void Map_Apply(s32, s32);
 void *GetResource(s32);

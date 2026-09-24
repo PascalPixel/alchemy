@@ -1,12 +1,12 @@
 #include "INVENTORY_MENU.H"
 #include "OWNER_STATE.H"
+#include "SYSTEM.H"
 
 extern u8 Value_00000b24;
 
 extern void ItemMenu_PosCategory(void);
 extern void UiText_DrawAt(void *, s32, s32, s32);
 extern s32 Func_080a9aec(s32, void *);
-extern void WaitFrames(s32);
 extern s32 Func_080a9c18(void *);
 
 void ItemMenu_DrawCategory(s32 window, s32 owner_id, s32 mode)

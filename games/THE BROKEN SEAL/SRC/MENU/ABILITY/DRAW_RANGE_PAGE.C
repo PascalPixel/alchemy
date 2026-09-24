@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "BATTLE_TYPES.H"
 #include "MENU_RESULT.H"
+#include "SYSTEM.H"
 
 struct MenuEntryIcon {
     u8 unknown_00[5];
@@ -53,7 +54,6 @@ extern u8 Value_00000b13;
 extern u8 Value_00000b14;
 extern u8 Value_00000b15;
 
-void WaitFrames(s32 frames);
 void Func_08015068(s32 window, s32 x, s32 y, s32 width, s32 height);
 void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 void RenderOutput_RedrawSavedRectFar(s32 window);
@@ -62,8 +62,6 @@ struct BattleAction *BattleAction_Get(s32 action);
 void Func_080a2268(s32, s32, s32, s32, s32, s32);
 
 #define ACTION_ID_MASK 0x3fff
-
-
 
 /* The Psynergy page with the element and range icons: names the selected
    entry and its targeting class (0xb13-0xb15), then redraws the five rows

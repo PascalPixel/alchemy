@@ -1,6 +1,6 @@
 #include "TYPES.H"
+#include "SYSTEM.H"
 
-void WaitFrames(s32);
 s32 Object_IsTargetUnset(void *arg0);
 
 void Script_WaitForEventTimeout(s32 arg0)

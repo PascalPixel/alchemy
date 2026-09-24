@@ -2,6 +2,7 @@
 #include "TBS_EDITION.H"
 #include "INN_RUNTIME.H"
 #include "SHOP.H"
+#include "SYSTEM.H"
 
 struct FieldEffectState {
     u8 padding0[0x1C0];
@@ -24,7 +25,6 @@ s32 Party_ListActiveOwnersFar(s16 *);
 void Party_AdjustSixDigitCounterAFar(s32);
 struct FieldObject *Runtime_GetObject(s32);
 void Owner_RecalculateRatiosFar(s32);
-void WaitFrames(s32);
 void Event_ClearStatus1c6Far(void);
 void Event_WaitValue1c8FramesFar(void);
 void Audio_PlayCue(s32);

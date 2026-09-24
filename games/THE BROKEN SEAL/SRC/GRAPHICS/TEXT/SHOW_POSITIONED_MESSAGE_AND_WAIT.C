@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
 #include "TBS_EDITION.H"
+#include "SYSTEM.H"
 
 struct Work;
 
@@ -10,11 +11,9 @@ s32 Func_0808a278(s32 object, s32 *out);
 s32 UiWork_IsComplete(void);
 void UiWork_Finalize(struct Work *work, s32 release);
 s32 UiWork_IsIdle(struct Work *work);
-void WaitFrames(s32 frames);
 
 extern s32 gGameState[];
 #define PARTY_STATE gGameState
-
 
 /* Shows message no in a window centred across the screen and waits until it
  * has printed. Flag 8 places the window high and flag 0x40 lower; otherwise it

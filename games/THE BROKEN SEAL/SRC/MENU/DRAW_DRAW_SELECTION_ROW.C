@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "SCENE.H"
 #include "TBS_EDITION.H"
+#include "SYSTEM.H"
 
 /* menu/draw/draw_selection_row.c */
 struct Work;
@@ -47,8 +48,6 @@ extern volatile u32 gIw;
 struct Work *UiWindow_Create(s32 kind, s32 x, s32 y, s32 width, s32 layer);
 void Menu_DrawSelectionRow(
     struct Work *work, s16 primary, const s16 *secondary);
-
-void WaitFrames(s32);
 
 void UiWork_Finalize(struct Work *work, s32 release);
 

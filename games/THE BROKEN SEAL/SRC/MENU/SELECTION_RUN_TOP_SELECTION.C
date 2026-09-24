@@ -2,6 +2,7 @@
 #include "SCENE.H"
 #include "TBS_EDITION.H"
 #include "GLOBAL_CELLS.H"
+#include "SYSTEM.H"
 
 /* menu/selection/run_top_selection.c */
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || \
@@ -11,7 +12,6 @@
 
 extern u8 *gWork;
 
-void WaitFrames(s32);
 s32 Object_GetTriggerTileAheadOfCurrentFar(void);
 s32 Menu_OpenConfirmPromptFar(void);
 s32 RunAssetSelectionScreenFar(void);

@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
+#include "SYSTEM.H"
 
 /* map/shared/render_animated_tile_frame.c */
 struct MapBase {
@@ -52,7 +53,6 @@ void Map_RenderAnimatedTileFrame(u8 *object, u32 position)
 }
 
 /* map/shared/render_animated_tile_frames_for_object.c */
-void WaitFrames(s32);
 void Map_RenderAnimatedTileFrame(u8 *object, u32 position);
 
 void Map_RenderAnimatedTileFramesForObject(u8 *object)
@@ -72,7 +72,6 @@ void Map_RenderAnimatedTileFramesForObject(u8 *object)
 
 /* map/shared/render_all_animated_tile_frames.c */
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
-
 
 void Map_RenderAllAnimatedTileFrames(u8 **tbl, s32 cnt)
 {

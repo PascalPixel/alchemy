@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
+#include "SYSTEM.H"
 
 struct BattleEffectSceneObject {
     u8 reserved_00[0x45];
@@ -42,11 +43,9 @@ struct BattleObjectSlot {
 #define BATTLE_OBJECT_SLOTS (*(struct BattleObjectSlot **)0x03001e64)
 
 void BattleFx_ClearOwnedSlot(struct BattleEffectSceneObject *object);
-void WaitFrames(s32 frames);
 void Resource_ResetEntry(s32 handle);
 void BattleFx_PlayQueuedSound(void);
 void Runtime_ReleaseHeapBlock(s32 asset_id);
-
 
 /* Drain effect objects, restore the scene position, and release effect data. */
 void BattleEffect_CleanupSceneObjects(void)

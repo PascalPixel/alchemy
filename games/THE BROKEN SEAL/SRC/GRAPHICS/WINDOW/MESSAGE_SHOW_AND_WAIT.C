@@ -1,12 +1,12 @@
 #include "TYPES.H"
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
+#include "SYSTEM.H"
 
 /* ui/message/show_and_wait.c */
 void UiWork_FinalizePending(void);
 void UiWork_Create(s32, s32, s32, s32);
 s32 UiWork_IsCompleteFar(void);
-void WaitFrames(s32);
 extern u8 gVal[];
 extern u8 gVal2[];
 extern u8 gVal3[];
@@ -34,7 +34,6 @@ void UiMessage_ShowAndWait(s32 arg0)
 }
 
 /* ui/message/show_and_restore_state.c */
-
 
 void UiMessage_ShowAndRestoreState(s32 message_id)
 {

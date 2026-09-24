@@ -1,7 +1,7 @@
 #include "EFFECT_RUNTIME.H"
 #include "OBJECT_RUNTIME.H"
+#include "SYSTEM.H"
 
-void WaitFrames(s32);
 void Object_SetMode(struct ObjectRuntime *, s32);
 void ObjectDispatch_SetSingleChildField26Far(struct ObjectRuntime *, s32);
 void Audio_PlayCue(s32);

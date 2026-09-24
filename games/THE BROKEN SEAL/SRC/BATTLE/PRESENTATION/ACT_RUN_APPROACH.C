@@ -3,6 +3,7 @@
 #include "SCENE.H"
 #include "BATTLE_MSG.H"
 #include "BATTLE_MOTION.H"
+#include "SYSTEM.H"
 
 struct Input_080b8b48 {
     s16 primary_id;
@@ -28,8 +29,6 @@ struct ObjectSlot_080b8b48 {
 };
 
 extern s32 *gIw;
-
-void WaitFrames(s32);
 
 void Runtime_GetObject(s32);
 u32 Random16(void);

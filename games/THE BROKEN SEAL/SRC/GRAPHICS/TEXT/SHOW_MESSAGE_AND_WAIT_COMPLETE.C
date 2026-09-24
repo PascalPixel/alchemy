@@ -1,6 +1,6 @@
 #include "TYPES.H"
+#include "SYSTEM.H"
 
-void WaitFrames(s32);
 s32 UiWork_IsComplete(void);
 s32 Func_08017658(s32, s32, s32, s32);
 

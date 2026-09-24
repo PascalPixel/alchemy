@@ -1,4 +1,5 @@
 #include "CALLBACK_SCHEDULER.H"
+#include "SYSTEM.H"
 
 extern u8 *gEventWork;
 extern s16 gGameState[];
@@ -7,10 +8,8 @@ extern s16 gGameState[];
 void *ObjectTable_Get(u32);
 void Audio_PlayCue(s32);
 void Object_SetMode(void *, s32);
-void WaitFrames(s32);
 void run_tile_trigger_sequence(void);
 void check_object_tile(void);
-
 
 typedef struct {
     u8 unknown_00[37];

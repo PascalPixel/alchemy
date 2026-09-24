@@ -4,11 +4,11 @@
 #include "OBJECT_EFFECT.H"
 #include "GLOBAL_CELLS.H"
 #include "OBJECT_RUNTIME.H"
+#include "SYSTEM.H"
 
 /* object/attach_work_target_to_object.c */
 /* object/attach_work_target_to_object.c */
 void *Runtime_AllocateBlock(s32 arg0, s32 arg1);
-void WaitFrames(s32);
 
 void Object_AttachWorkTargetToObject(s32 id, s32 flag)
 {
@@ -151,7 +151,6 @@ void BattleFx_CommitObjectPositionAndWait(void)
 
 /* battle/get_work_object_1e0.c */
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
-
 
 s32 Battle_GetWorkObject1e0(void)
 {

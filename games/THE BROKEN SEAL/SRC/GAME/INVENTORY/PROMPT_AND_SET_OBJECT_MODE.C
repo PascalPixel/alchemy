@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "SCENE.H"
+#include "SYSTEM.H"
 
 struct Entry_08091c7c {
     u8 unknown_00[10];
@@ -22,7 +23,6 @@ extern struct Runtime_08091c7c *gWork;
 extern volatile s32 gIw;
 
 s16 *Sys_Run(s32);
-void WaitFrames(s32);
 s32 UiWork_IsCompleteFar(void);
 s32 Inventory_RequestMode(s32, s32, s32, s32);
 

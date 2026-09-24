@@ -3,6 +3,7 @@
 #include "SCENE.H"
 #include "FIXED_MATH.H"
 #include "GLOBAL_CELLS.H"
+#include "SYSTEM.H"
 
 struct EffectObject_0808f1c0;
 void Object_Destroy(struct EffectObject_0808f1c0 *);
@@ -37,7 +38,6 @@ struct Object_0808f0d8 {
 
 extern struct State_0808f0d8 gCell;
 void Object_SetPosition(struct Object_0808f0d8 *, s32, s32, s32);
-void WaitFrames(s32);
 void Object_SetMode(void *, s32);
 void Object_SetCallback(void *, const void *);
 extern const u8 RomBytes_0809e75c[];

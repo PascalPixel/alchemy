@@ -1,9 +1,9 @@
 #include "EVENT_RUNTIME.H"
 #include "OBJECT_LOOKUP.H"
+#include "SYSTEM.H"
 
 extern struct EventValueWork gGameState;
 
-void WaitFrames(s32);
 void FunctionHead_0808b674(s32);
 void Event_NoOpHook(void);
 s32 Func_0808b3ec(s32 event_id, s32 state);

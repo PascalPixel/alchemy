@@ -3,6 +3,7 @@
 #include "TBS_EDITION.H"
 #include "INVENTORY_MENU.H"
 #include "CHARACTER_MENU.H"
+#include "SYSTEM.H"
 
 #if defined(TBS_EDITION_JA)
 #define ROW_CNT 4
@@ -60,7 +61,6 @@ extern struct MenuObjectControl *gMenuCtrlWork;
 
 struct CharacterSelectorState *Runtime_AllocateHeapBlock(s32, s32);
 void Runtime_ReleaseHeapBlock(s32);
-void WaitFrames(s32);
 void RenderOutput_ClearListFar(s32);
 void Func_08015408(s32, s32, s32, s32);
 s32 UiWindow_CreateFar(s32, s32, s32, s32, s32);

@@ -2,6 +2,7 @@
 #include "TYPES.H"
 #include "SCENE.H"
 #include "MAP.H"
+#include "SYSTEM.H"
 
 /* map/shared/events/check_object_tile.c */
 struct MapObject {
@@ -111,7 +112,6 @@ struct Object_08099738 {
 void Audio_PlayCue(s32);
 s32 ScheduleCallback(void (*callback)(void));
 void Object_SetMode(struct Object_08099738 *, s32);
-void WaitFrames(s32);
 void CheckObjectMapTile(void);
 
 void MapEvent_RunTileTriggerSequence(void)

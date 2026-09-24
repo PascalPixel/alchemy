@@ -1,14 +1,13 @@
 #include "OBJECT_RUNTIME.H"
+#include "SYSTEM.H"
 
 void ObjectMotion_SetActionVariant(u32, s32);
 void ObjectMotion_SetHorizontalPositionWithTerrain(u32, s32, s32);
 void Object_SetCallback(struct ObjectRuntime *, const void *);
 void Object_SetAction(struct ObjectRuntime *, s32);
 s32 Func_080091a8(u8, s32, s32);
-void WaitFrames(s32);
 void Battle_WaitMode0(s32);
 void Audio_PlayCue(s32);
-
 
 void Object_ResetMotion(struct ObjectRuntime *);
 void Object_SetPosition(struct ObjectRuntime *, s32, s32, s32);

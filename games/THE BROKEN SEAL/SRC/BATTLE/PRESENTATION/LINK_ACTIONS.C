@@ -1,12 +1,11 @@
 #include "TYPES.H"
+#include "SYSTEM.H"
 extern volatile u16 Data_03001f64;
 extern volatile u16 Data_02002238;
 u32 Math_DivU(u32, u32);
 s32 SerialRuntime_BeginTransferA(void *, s32);
 s32 SerialRuntime_BeginTransferB(void *);
 s32 SerialRuntime_GetActiveTransfers(void);
-void WaitFrames(s32);
-
 
 struct BattleLinkedAction {
     s16 unit_id;
@@ -33,7 +32,6 @@ s32 BattlePresentation_AppendLinkedActions(
     s32 allocation_size = Math_DivU(count * 16 + 19, 20) * 20;
     struct BattleLinkedActionState *state = Runtime_BumpAllocateAlternatePool(40);
     s32 index;
-
 
     s32 BattleLink_SendActions(void)
     {

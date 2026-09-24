@@ -84,11 +84,6 @@ extern u8 Value_0200aba5;
 void Func_02003b4c(s32 a, s32 b);
 s32 *Func_020042f4(s32);
 s32 *Func_020042ec(s32);
-s32 Func_02001796(s32, s32, s32, s32, s32, s32);
-s32 Func_020017aa(s32, s32, s32, s32, s32, s32);
-s32 Func_020017bc(s32, s32, s32, s32, s32, s32);
-s32 Func_020017ce(s32, s32, s32, s32, s32, s32);
-s32 Func_020017e0(s32, s32, s32, s32, s32, s32);
 s32 Func_02003a40(s32 *p, s16 *q);
 void Func_02001e58(s32, s32, s32, s32, s32, s32, s32, s32);
 void Func_020023b4(s32, s32, s32, s32, s32, s32, s32, s32);
@@ -102,18 +97,10 @@ u8 *Func_02004082_a();
 u8 *Func_0200408c();
 void Func_02004184();
 void Func_020041c8_a(s32 a);
-s32 Func_020018d6(struct Resource39fProbe *);
 void Func_02001a82(struct Resource39fProbe);
 u8 *Func_0200429c(s32);
-s32 Func_02001752(s32, s32, s32, s32, s32, s32);
 void Func_02002222(s32, s32, s32, s32, s32, s32, s32, s32);
 void Func_02002658();
-s32 Func_02001eb0();
-void Func_02001ec2();
-void Func_02001ed2();
-s32 Func_02001ee2();
-s32 Func_02001ef4();
-void Func_02001f30();
 void Func_02002834();
 void Func_02004c3c();
 void Func_02002912(s32, s32, s32, s32, s32, s32, s32, s32);
@@ -124,11 +111,6 @@ void Func_02002cf0();
 void Func_02001ce8(s32 no);
 s32 *Func_02004950();
 s32 *Func_02004958();
-s32 Func_02001dfa();
-s32 Func_02001e0e();
-s32 Func_02001e20();
-s32 Func_02001e32();
-s32 Func_02001e44();
 OrbitingSceneObject *Func_020059d4(void);
 u8 *Func_0200599c(s32, s32);
 
@@ -172,6 +154,8 @@ u8 *Func_0200599c(s32, s32);
  * into the argument registers; a direct call precomputes a costly constant
  * into a pseudo that the compiler then shares with later uses in the block.
  * A value-returning call also sets r0 last of its arguments. */
+s32 StagedActor_FindClearPosition(struct StagedActorProbe *probe);
+
 static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
 {
     f(a0, a1, a2);
@@ -674,7 +658,7 @@ void FieldScene_RunProbedActorEightOrTenScene(void)
     /* No argument register is written before this branch. */
     Event_Begin();
 
-    if (Func_020018d6(&probe) != 0) {
+    if (StagedActor_FindClearPosition(&probe) != 0) {
         Func_02001a82(probe);
 
         if (probe.word[1] == 8 && (probe.word[4] >> 20) == 23) {
@@ -698,7 +682,7 @@ void FieldScene_RunProbedActorEightOrTenScene(void)
             sixth = 30;
             Map_CopyCellAttributes(44, 30, 2, 4, fifth, sixth);
             height = 4;
-            Func_02001752(2, 35, 30, 1, height, value);
+            StagedActor_FillGridAttributeRectangle(2, 35, 30, 1, height, value);
         }
     }
 
@@ -719,11 +703,11 @@ void SceneState_ApplyCrossRectsAroundActor11(void)
     x = Func_020042ec(11)[2] >> 20;
     z = Func_020042f4(11)[4] >> 20;
 
-    Func_02001796(2, x, z, 1, 1, 0xff);
-    Func_020017aa(2, x + 1, z, 1, 1, 0);
-    Func_020017bc(2, x - 1, z, 1, 1, 0);
-    Func_020017ce(2, x, z + 1, 1, 1, 0);
-    Func_020017e0(2, x, z - 1, 1, 1, 0);
+    StagedActor_FillGridAttributeRectangle(2, x, z, 1, 1, 0xff);
+    StagedActor_FillGridAttributeRectangle(2, x + 1, z, 1, 1, 0);
+    StagedActor_FillGridAttributeRectangle(2, x - 1, z, 1, 1, 0);
+    StagedActor_FillGridAttributeRectangle(2, x, z + 1, 1, 1, 0);
+    StagedActor_FillGridAttributeRectangle(2, x, z - 1, 1, 1, 0);
 
     if (x == 36 && z == 24) {
         u8 *p = (u8 *)Actor_Get(11);
@@ -917,11 +901,11 @@ void SceneActor_MarkActorThirteenTileAndPark(void)
     x = Func_02004950(13)[2] >> 20;
     z = Func_02004958(13)[4] >> 20;
 
-    Func_02001dfa(2, x, z, 1, 1, 0xff);
-    Func_02001e0e(2, x + 1, z, 1, 1, 0);
-    Func_02001e20(2, x - 1, z, 1, 1, 0);
-    Func_02001e32(2, x, z + 1, 1, 1, 0);
-    Func_02001e44(2, x, z - 1, 1, 1, 0);
+    StagedActor_FillGridAttributeRectangle(2, x, z, 1, 1, 0xff);
+    StagedActor_FillGridAttributeRectangle(2, x + 1, z, 1, 1, 0);
+    StagedActor_FillGridAttributeRectangle(2, x - 1, z, 1, 1, 0);
+    StagedActor_FillGridAttributeRectangle(2, x, z + 1, 1, 1, 0);
+    StagedActor_FillGridAttributeRectangle(2, x, z - 1, 1, 1, 0);
 
     if (x == 45 && z == 6) {
         u8 *record = (u8 *)Actor_Get(13);
@@ -949,11 +933,11 @@ void FieldScene_RunSupplementalSequenceOne(void)
     y = *(s32 *)(record + 16);
     x >>= 20;
     y >>= 20;
-    Func_02001eb0(2, x, y, 1, 1, 255);
-    Call6(Func_02001ec2, 2, x + 1, y, 1, 1, 0);
-    Call6(Func_02001ed2, 2, x - 1, y, 1, 1, 0);
-    Func_02001ee2(2, x, y + 1, 1, 1, 0);
-    Func_02001ef4(2, x, y - 1, 1, 1, 0);
+    StagedActor_FillGridAttributeRectangle(2, x, y, 1, 1, 255);
+    Call6(StagedActor_FillGridAttributeRectangle, 2, x + 1, y, 1, 1, 0);
+    Call6(StagedActor_FillGridAttributeRectangle, 2, x - 1, y, 1, 1, 0);
+    StagedActor_FillGridAttributeRectangle(2, x, y + 1, 1, 1, 0);
+    StagedActor_FillGridAttributeRectangle(2, x, y - 1, 1, 1, 0);
     record = Value1(Engine_ActorGet, 14);
     if ((*(s32 *)(record + 16) >> 20) == 27) {
         record = Value1(Engine_ActorGet, 14);
@@ -961,7 +945,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
         *(s32 *)(record + 20) = -0x20000;
         *(s32 *)(record + 12) = -0x20000;
         GameFlag_Set(0x214);
-        Call6(Func_02001f30, 2, 43, 23, 1, 1, 255);
+        Call6(StagedActor_FillGridAttributeRectangle, 2, 43, 23, 1, 1, 255);
     }
     Event_End();
 }

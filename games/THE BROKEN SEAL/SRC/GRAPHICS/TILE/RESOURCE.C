@@ -1,6 +1,6 @@
 #include "TYPES.H"
+#include "RESOURCE.H"
 
-extern s32 Resource_FindFreeEntry(void);
 extern s32 Resource_CopyData();
 extern s32 UiIcon_DrawWithFlags();
 extern u8 UiIcon_ResourceTiles[];

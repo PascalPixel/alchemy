@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "RESOURCE.H"
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
@@ -13,7 +14,6 @@ typedef struct {
 
 extern s32 Runtime_AllocateHeapBlock(s32 no0, s32 no1);
 extern s32 UiGlyph_DecodeWithHeapRoutines(T *, s32);
-extern s32 Resource_FindFreeEntry(void);
 extern s32 Resource_CopyData(s32, s32, u8 *);
 extern s32 Runtime_ReleaseHeapBlock(s32);
 extern s32 UiIcon_FramePointerTable[];

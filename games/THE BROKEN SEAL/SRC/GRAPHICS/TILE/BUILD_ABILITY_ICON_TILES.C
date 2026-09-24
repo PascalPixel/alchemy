@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
+#include "RESOURCE.H"
 
 extern u8 RomBytes_080308a0[];
 
@@ -19,7 +20,6 @@ typedef struct {
 extern FontTransfer *Runtime_AllocateHeapBlock(s32 arg0, s32 arg1);
 extern void Ui_Apply(FontTransfer *work, s32 slot);
 
-extern s32 Resource_FindFreeEntry(void);
 extern s32 Resource_CopyData(s32 index, s32 size, u8 *destination);
 
 extern s32 RomBytes_08029a10[];

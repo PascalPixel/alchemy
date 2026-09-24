@@ -1,10 +1,10 @@
 #include "DMA.H"
 #include "CALLBACK_SCHEDULER.H"
+#include "RESOURCE.H"
 
 void *Runtime_AllocateHeapBlock(s32 kind, s32 size);
 void Battle_ResetEffectCounterFar(void);
 u8 Party_ListActiveOwnersFar(void *);
-s32 Resource_FindFreeEntry(void);
 s32 VramBlock_LoadCached(u32 slot, u32 size, const void *src);
 
 /* Shop work block (heap kind 55): clear it, set up the cursor state at

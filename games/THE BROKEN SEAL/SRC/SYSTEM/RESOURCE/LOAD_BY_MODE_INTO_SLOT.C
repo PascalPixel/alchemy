@@ -1,6 +1,6 @@
 #include "TYPES.H"
+#include "RESOURCE.H"
 
-extern s32 Resource_FindFreeEntry(void);
 extern void Ui_BuildPairedPatternsToSlot(s32 arg0, s32 arg1, s32 *arg2, s32 *arg3, s32 arg4);
 extern s32 UiIcon_CopyResourceToSlot(s32 arg0, s32 arg1, s32 arg2);
 extern s32 Ui_BuildPatternToSlot(s32 arg0, s32 arg1, s32 arg2);

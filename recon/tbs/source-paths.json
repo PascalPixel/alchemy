@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_378:0200267c": {
+      "name": "ShindenHeya_Func0200267c",
+      "source": "FIELD/COMMON/SHINDEN_HEYA/F_0267C.C"
+    },
     "resource_378:02003144": {
       "name": "ShindenHeya_Func02003144",
       "source": "FIELD/COMMON/SHINDEN_HEYA/F_03144.C"

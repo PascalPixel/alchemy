@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_39c:02002e6c": {
+      "name": "MakyuriHeya_Func02002e6c",
+      "source": "FIELD/MAKYURI_HEYA/F_02E6C.C"
+    },
     "resource_371:020034a0": {
       "name": "WorldMap_Func020034a0",
       "source": "FIELD/WORLD_MAP/F_034A0.C"

@@ -53,8 +53,6 @@ extern u8 Data_02009ce0[];
 extern s16 Data_02000240_t[][1];
 extern u8 Data_000023cc[];
 
-void Func_020014f4(void);
-void Func_02002314();
 s32 *Func_02002698();
 
 /* Loader-relocated overlay calls: each symbol names the pre-relocation call
@@ -360,7 +358,7 @@ void ActorPresentation_RunActorEightThresholdScene(void)
         s32 *actor = Actor_Get(8);
 
         if ((actor[2] >> 20) <= 30) {
-            Func_02002314(8);
+            StagedActorPairScene_RunSpinningLeap(8);
             {
                 s32 x = 27;
                 s32 y = 19;
@@ -375,7 +373,7 @@ void ActorPresentation_RunActorEightThresholdScene(void)
 
 void StagedActorPairScene_RunUpdate(void)
 {
-    Func_020014f4();
+    StagedActor_AdvancePair();
     ActorPresentation_RunActorNineThresholdScene();
 }
 

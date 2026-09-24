@@ -177,9 +177,7 @@ s32 *Func_020080e0(s32);
 /* Complete scene-entry wrapper through return, alignment and its sole pool. */
 
 extern u8 Data_02b20000[];
-void Func_020017b8(void);
 void Func_020052c0(s32, s32, s32);
-void Func_020028b4(void);
 void Func_02004a2c(void);
 
 extern s16 Data_02000240[];
@@ -776,7 +774,7 @@ void FieldScene_RunScene39c_02001340(void)
 void FieldScene_RunFourCallSequence(void)
 {
     Event_Begin();
-    Func_020017b8();
+    StagedActor_AdvancePair();
     Event_End();
     FieldScene_RunActorElevenAtTile5And13();
 }
@@ -1186,7 +1184,7 @@ s32 SceneData_ApplyTableA2c5AndReturnZero(void)
 void FieldScene_RunFourStepSequence(void)
 {
     Event_Begin();
-    Func_020028b4();
+    StagedActor_AdvancePair();
     Func_02004a2c();
     Event_End();
 }

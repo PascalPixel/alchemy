@@ -184,7 +184,6 @@ s32 Func_02007d38(u32, s32);
 void Func_0200434e(s32);
 void Func_020081fc(s32);
 void Func_02004476(void);
-void Func_02008784();
 void Func_020090a2();
 void Func_020090d4();
 void Func_02009106();
@@ -1020,7 +1019,7 @@ void FieldScene_RunScene3c9_02003924(void)
     Event_OpenScreen();
     Event_WaitForScreen();
     Event_Wait(40);
-    Func_02008784();
+    Scene_RunExtendedActorTransition();
     GameFlag_Set(0x9a7);
     Event_RequestExit(2);
 }

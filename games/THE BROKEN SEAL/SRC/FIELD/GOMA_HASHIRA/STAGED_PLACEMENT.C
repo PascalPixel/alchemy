@@ -167,7 +167,6 @@ static __inline__ void Call1_0200121c(void (*f)(), s32 a0)
 #include "TYPES.H"
 
 void Func_02001f5c(void);
-void Func_02001168(void);
 void Func_02001f74(void);
 
 #include "TYPES.H"
@@ -454,7 +453,7 @@ void FieldScene_RunThreeCallSequence(void)
 void FieldScene_RunFourStepSequence(void)
 {
     Event_Begin();
-    Func_02001168();
+    StagedActor_AdvancePair();
     Func_02001f74();
     Event_End();
 }

@@ -71776,6 +71776,90 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "soru-star-f-0478c",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/SORU_STAR/F_0478C.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_380",
+      "absolute_symbols": {
+        "Engine_AllocateBlock": {
+          "address": "0x0200c89c",
+          "kind": "thumb"
+        },
+        "Engine_ActorGet": {
+          "address": "0x0200c9bc",
+          "kind": "thumb"
+        },
+        "Engine_ObjectSetBlendMode": {
+          "address": "0x0200c904",
+          "kind": "thumb"
+        },
+        "Engine_TaskAddCallback": {
+          "address": "0x0200c86c",
+          "kind": "thumb"
+        },
+        "Soru_RingOffsetX": {
+          "address": "0x0200d140",
+          "kind": "data"
+        },
+        "Soru_RingOffsetZ": {
+          "address": "0x0200d168",
+          "kind": "data"
+        },
+        "Soru_UpdateRing": {
+          "address": "0x0200c49c",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x0200478c",
+          "extent": 200,
+          "state": "exact-c"
+        }
+      ],
+      "instances": {
+        "resource_381": {
+          "owners": {
+            "SoruStar_Func0200478c": {
+              "address": "0x0200330c",
+              "extent": 200
+            }
+          },
+          "absolute_symbols": {
+            "Engine_AllocateBlock": {
+              "address": "0x0200b41c",
+              "kind": "thumb"
+            },
+            "Engine_ActorGet": {
+              "address": "0x0200b4ec",
+              "kind": "thumb"
+            },
+            "Engine_ObjectSetBlendMode": {
+              "address": "0x0200b48c",
+              "kind": "thumb"
+            },
+            "Engine_TaskAddCallback": {
+              "address": "0x0200b3ec",
+              "kind": "thumb"
+            },
+            "Soru_RingOffsetX": {
+              "address": "0x0200ba68",
+              "kind": "data"
+            },
+            "Soru_RingOffsetZ": {
+              "address": "0x0200ba90",
+              "kind": "data"
+            },
+            "Soru_UpdateRing": {
+              "address": "0x0200b01c",
+              "kind": "thumb"
+            }
+          }
+        }
+      }
     }
   ]
 }

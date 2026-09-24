@@ -1,10 +1,6 @@
-/* NONMATCHING: 380:0200478c and its twin 381:0200330c, 200 of 200 bytes, 3
- * halfword edits (2026-09-24). Written as an instanced unit source with
- * absolute symbols (Engine_* at each overlay's runtime import veneer; the
- * offset tables at 380 0x0200d140/0x0200d168, 381 0x0200ba68/0x0200ba90;
- * the update callback at 380 0x0200c49c, 381 0x0200b01c). Remaining: the
- * X table constant loads into r2 in the reference, r3 here, which flips
- * both indexed-load operand orders. */
+/* Instanced unit: 380:0200478c and its twin 381:0200330c. Engine_* bind at
+ * each overlay's runtime import veneer; the offset tables and the update
+ * callback are per-overlay absolute symbols. */
 #include "DMA.H"
 
 struct SoruRingObject {
@@ -29,19 +25,18 @@ void Soru_UpdateRing(void);
 struct SoruRingEntry *Engine_AllocateBlock(s32 slot, s32 size);
 struct SoruRingObject *Engine_ActorGet(s32 actor);
 void Engine_ObjectSetBlendMode(struct SoruRingObject *obj, s32 mode);
-s32 Engine_ScheduleCallback(void *callback, s32 priority);
+s32 Engine_TaskAddCallback(void *callback, s32 priority);
 
 /* Mt. Aleph (Sol Sanctum and the crater): claim heap block 33 for up to ten
  * ring entries, one per actor from first, each blended, placed at its fixed
  * offset, and schedule the ring's update. The same function sits in both
  * overlays. */
-void Soru_StartActorRing(s32 first, u32 count)
+void SoruStar_Func0200478c(s32 first, u32 count)
 {
     struct SoruRingEntry *list;
     struct SoruRingEntry *entry;
     struct SoruRingObject *obj;
     u32 i;
-    s32 k;
     s32 none;
     s32 cleared;
     volatile u32 zero;
@@ -56,7 +51,6 @@ void Soru_StartActorRing(s32 first, u32 count)
     i = none;
     if (count != 0) {
         cleared = none;
-        k = 0;
         do {
             obj = Engine_ActorGet(first);
             {
@@ -67,15 +61,14 @@ void Soru_StartActorRing(s32 first, u32 count)
             }
             obj->state = cleared;
             Engine_ObjectSetBlendMode(Engine_ActorGet(first), 1);
-            entry->x = *(s32 *)(k + (u8 *)Soru_RingOffsetX);
-            entry->z = -*(s32 *)((u8 *)Soru_RingOffsetZ + k);
+            entry->x = Soru_RingOffsetX[i];
+            entry->z = -Soru_RingOffsetZ[i];
             entry->kind = 3;
             i++;
-            k += 4;
             entry++;
             first++;
         } while (i != count);
     }
     *(u16 *)((u8 *)list + 0x190) = count;
-    Engine_ScheduleCallback((void *)Soru_UpdateRing, 0xc80);
+    Engine_TaskAddCallback((void *)Soru_UpdateRing, 0xc80);
 }

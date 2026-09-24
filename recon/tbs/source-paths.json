@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_37b:020016dc": {
+      "name": "SoruSekizo_RunStatueDropScene",
+      "source": "FIELD/SORU_SEKIZO/STATUE_DROP_SCENE.C"
+    },
     "resource_387:020004f4": {
       "name": "GomaIriguchi_RestoreEntryState",
       "source": "FIELD/GOMA_IRIGUCHI/ENTRY_STATE.C"

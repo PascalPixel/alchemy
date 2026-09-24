@@ -70928,6 +70928,98 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "soru-sekizo-statue-drop-scene",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/SORU_SEKIZO/STATUE_DROP_SCENE.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_37b",
+      "absolute_symbols": {
+        "Engine_ActorGet": {
+          "address": "0x0200a46c",
+          "kind": "thumb"
+        },
+        "Main_08009278": {
+          "address": "0x0200a424",
+          "kind": "thumb"
+        },
+        "Engine_EventBegin": {
+          "address": "0x0200a454",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagIsSet": {
+          "address": "0x0200a434",
+          "kind": "thumb"
+        },
+        "Engine_ActorWalkToAndWait": {
+          "address": "0x0200a494",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagSet": {
+          "address": "0x0200a43c",
+          "kind": "thumb"
+        },
+        "Engine_CameraSetSpeed": {
+          "address": "0x0200a514",
+          "kind": "thumb"
+        },
+        "Engine_CameraMoveTo": {
+          "address": "0x0200a51c",
+          "kind": "thumb"
+        },
+        "Engine_CameraWaitForMove": {
+          "address": "0x0200a524",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpeed": {
+          "address": "0x0200a474",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpritePriority": {
+          "address": "0x0200a4fc",
+          "kind": "thumb"
+        },
+        "Engine_AudioPlayCue": {
+          "address": "0x0200a564",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetDestination": {
+          "address": "0x0200a47c",
+          "kind": "thumb"
+        },
+        "Engine_EventWait": {
+          "address": "0x0200a44c",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetPosition": {
+          "address": "0x0200a4a4",
+          "kind": "thumb"
+        },
+        "Engine_WorkSetValuesIfNonNegative": {
+          "address": "0x0200a41c",
+          "kind": "thumb"
+        },
+        "Engine_MessageShowCentered": {
+          "address": "0x0200a42c",
+          "kind": "thumb"
+        },
+        "Engine_MapCopyCellAttributes": {
+          "address": "0x0200a40c",
+          "kind": "thumb"
+        },
+        "Engine_EventEnd": {
+          "address": "0x0200a45c",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x020016dc",
+          "extent": 640,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

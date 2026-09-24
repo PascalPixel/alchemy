@@ -9386,7 +9386,8 @@
       "name": "Fragment_0808b7b8"
     },
     "main:08097540": {
-      "name": "RunSceneTransitionEffect"
+      "name": "RunSceneTransitionEffect",
+      "source": "BATTLE/EFFECT/RUN_SCENE_TRANSITION.C"
     },
     "main:080983a0": {
       "name": "RunBattleEffect08"

@@ -1,6 +1,14 @@
 {
   "format": 3,
   "owners": {
+    "resource_3c4:02000f4c": {
+      "name": "BabiChika_UpdateFlickerEffect",
+      "source": "FIELD/BABI_CHIKA/FLICKER_EFFECT.C"
+    },
+    "resource_3b0:020010a0": {
+      "name": "FuneHobashira_UpdateSway",
+      "source": "FIELD/FUNE_HOBASHIRA/SWAY.C"
+    },
     "resource_3cb:02000f8c": {
       "name": "LinkLobby_TalkByProgress",
       "source": "MENU/LINK_LOBBY/PROGRESS_TALK.C"
@@ -19436,7 +19444,8 @@
       "source": "FIELD/WORLD_MAP/BLACK_ORB_SCENE.C"
     },
     "resource_371:02002768": {
-      "name": "WorldMap_PrepareTriggerActor"
+      "name": "WorldMap_ActivateSite138",
+      "source": "FIELD/WORLD_MAP/SITE_138.C"
     },
     "resource_371:020027dc": {
       "name": "WorldMap_RestoreExitTrigger",

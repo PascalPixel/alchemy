@@ -2023,6 +2023,10 @@
     "main:08096048": {
       "name": "BattleFx_UpdateRadialSpread"
     },
+    "main:08096140": {
+      "name": "BattleFx_RunVenusDjinnCapture",
+      "source": "BATTLE/EFFECT/RUN_VENUS_DJINN_CAPTURE.C"
+    },
     "main:0809641c": {
       "name": "BattleFx_UpdateRandomTargetParticle",
       "source": "BATTLE/EFFECT/RANDOM_TARGET_PARTICLE.C"
@@ -20164,7 +20168,6 @@
     "main:08004c6c": "SceneTransform_ApplyRoll",
     "main:080e727c": "Palette_BrightenBgEntries",
     "main:08015358": "Djinn_ShowJoinedMessageFar",
-    "main:08096140": "BattleFx_RunVenusDjinnCapture",
     "main:080965a8": "BattleFx_RunMercuryDjinnCapture",
     "main:080e3aa0": "BattlePres_RunBeamSequence",
     "main:080ecef4": "BattleFx_RunRevealColumn",

@@ -1107,9 +1107,7 @@ void *SceneData_GetTableb9c8(void)
 
 void *SceneData_GetTableB9d4AfterStateCheck(void)
 {
-    extern s16 Data_02000240[];
-
-    if (Data_02000240[225] != 1) {
+    if (gGameState.entrance != 1) {
         GameFlag_Set(0x253);
     }
     return Data_0200b9d4;

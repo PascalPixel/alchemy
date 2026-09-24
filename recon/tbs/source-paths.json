@@ -19538,7 +19538,8 @@
       "name": "EffectSlot_Initialize"
     },
     "main:0800c004": {
-      "name": "ObjectSystem_Initialize"
+      "name": "ObjectSystem_Initialize",
+      "source": "FIELD/COMMON/OBJECT/INITIALIZE_SYSTEM.C"
     },
     "main:0800bb20": {
       "name": "ObjectSystem_Configure",

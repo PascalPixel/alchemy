@@ -42154,22 +42154,6 @@
           "address": "0x0200a99c",
           "kind": "thumb"
         },
-        "Func_0200029e": {
-          "address": "0x020080a0",
-          "kind": "thumb"
-        },
-        "Func_020008ac": {
-          "address": "0x020088ac",
-          "kind": "thumb"
-        },
-        "Func_020008d8": {
-          "address": "0x020088d8",
-          "kind": "thumb"
-        },
-        "Func_02001078": {
-          "address": "0x020088ec",
-          "kind": "thumb"
-        },
         "Func_020025a8": {
           "address": "0x0200a5a8",
           "kind": "thumb"
@@ -42224,10 +42208,6 @@
         },
         "Func_02002e3a": {
           "address": "0x0200abbc",
-          "kind": "thumb"
-        },
-        "Func_02002fbc": {
-          "address": "0x0200a910",
           "kind": "thumb"
         },
         "Func_0200311e": {

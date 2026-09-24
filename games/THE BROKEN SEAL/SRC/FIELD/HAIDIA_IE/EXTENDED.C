@@ -2,11 +2,6 @@
 
 #define NULL ((void *)0)
 #define CalculateFacingAngle Func_02002656
-#define Object_UpdateFacingTowardTarget Func_02000030
-#define SceneData_GetTableAfa0 Func_02000088
-#define SceneData_SelectTableByFlag834 Func_02000094
-#define SceneData_SelectTableByFlags834And87a Func_020000b8
-#define SceneData_SelectTableByFlags87a_815_834 Func_02000158
 #define Audio_PlayCue_1(a0) Call1(Func_02002fa2, a0)
 #define ObjectMotion_ResetAndSetPositionInMode2_1(a0, a1, a2) Call3(Func_02002e66, a0, a1, a2)
 #define Audio_PlayCue_1_02000780(a0) Call1(Func_02002fd4, a0)
@@ -15,14 +10,6 @@
 #define ObjectMotion_SetPositionAndReset_2(a0, a1, a2) Call3(Func_02002ede, a0, a1, a2)
 #define Audio_PlayCue_1_020007ec(a0) Call1(Func_0200303e, a0)
 #define ObjectMotion_ResetAndSetPositionInMode2_1_020007ec(a0, a1, a2) Call3(Func_02002f02, a0, a1, a2)
-#define FieldScene_RunSequence111F Func_0200010c
-#define FieldScene_RunOpeningAuxiliarySequence Func_02000248
-#define SceneDialogue_RunFlagGatedMessageStep Func_020003b4
-#define FieldScene_RunActorTwentySixEffectPresentation Func_02000444
-#define FieldScene_RunMiddleAuxiliarySequence Func_020004d4
-#define FieldScene_RunSupplementalSequenceOne Func_02000750
-#define FieldScene_RunSupplementalSequenceTwo Func_02000780
-#define FieldScene_RunSupplementalSequenceThree Func_020007ec
 #define Audio_PlayCue_1_0200081c(a0) Call1(Func_0200306e, a0)
 #define ObjectMotion_ResetAndSetPositionInMode2_1_0200081c(a0, a1, a2) Call3(Func_02002f34, a0, a1, a2)
 #define Audio_PlayCue_1_0200084c(a0) Call1(Func_0200309e, a0)
@@ -31,35 +18,6 @@
 #define ObjectMotion_ResetAndSetPositionInMode2_1_0200087c(a0, a1, a2) Call3(Func_02002f92, a0, a1, a2)
 #define Audio_PlayCue_1_020008ac(a0) Call1(Func_020030fe, a0)
 #define ObjectMotion_ResetAndSetPositionInMode2_1_020008ac(a0, a1, a2) Call3(Func_02002fc4, a0, a1, a2)
-#define FieldScene_RunSupplementalSequenceFour Func_0200081c
-#define FieldScene_RunSupplementalSequenceFive Func_0200084c
-#define FieldScene_RunSupplementalSequenceSix Func_0200087c
-#define FieldScene_RunSupplementalSequenceSeven Func_020008ac
-#define FieldScene_RunStep7BThen8 Func_020008dc
-#define FieldScene_RunStep15 Func_02002580
-#define FieldScene_RunStep17 Func_02002590
-#define FieldScene_RunStep20 Func_020025a0
-#define SceneDialogue_RunActor23Line Func_020001c4
-#define SceneDialogue_ShowLineF3F Func_020001f0
-#define SceneDialogue_ShowLineF44 Func_0200021c
-#define SceneDialogue_ShowLineEB1OrEB0 Func_020005e8
-#define SceneDialogue_RunActorElevenFlaggedDialogue Func_02000634
-#define FieldScene_RunActorTwentyOneSetup Func_02000674
-#define SceneState_SetWork1c0AndRun Func_02000714
-#define SceneState_ApplyFlag815Branch Func_020008f0
-#define SceneState_ApplyFlag90b Func_02000910
-#define SceneState_ApplyFlag90c Func_02000920
-#define SceneState_ApplyFlag90d Func_02000930
-#define SceneState_ApplyPair140And0 Func_02002564
-#define SceneState_SetValues352_365_2116_2117_40 Func_020025b0
-#define FieldScene_RunSplitPairSteps Func_020022c8
-#define FieldScene_Forward4dac Func_02002574
-#define SceneActor_SetPairZeroAndValue Func_020022e0
-#define OverlayObject_UpdateOnFrameBit1 Func_020022f8
-#define SceneEffect_UpdateByFrameBits Func_02002334
-#define SceneEffect_UpdateByFrameBit Func_02002370
-#define SceneEffect_AnimateVerticalPositive Func_0200239c
-#define SceneEffect_AnimateVerticalNegative Func_020023ec
 
 #include "FACING_OBJECT.H"
 

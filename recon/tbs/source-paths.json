@@ -1845,6 +1845,12 @@
       "name": "UiText_FormatNumber",
       "source": "GRAPHICS/TEXT/FORMAT_NUMBER.C"
     },
+    "main:08017e88": {
+      "name": "UiText_AppendArticleName"
+    },
+    "main:08018038": {
+      "name": "UiText_BuildRenderEntries"
+    },
     "main:0801e858": {
       "name": "UiText_DrawString"
     },

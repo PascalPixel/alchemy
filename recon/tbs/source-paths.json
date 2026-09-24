@@ -5708,7 +5708,7 @@
       "source": "FIELD/KUUPUAPPU_HEYA/PROMPT.C"
     },
     "resource_390:020000e4": {
-      "name": "Scene_RunActor17MessageBranch",
+      "name": "FieldScene_RunActor17MessageBranch",
       "source": "FIELD/KORIMA_HEYA/ENTRY_LAYOUT.C"
     },
     "resource_394:0200036c": {
@@ -5993,7 +5993,7 @@
       "source": "FIELD/BABI_FUNE/TABLE_AUDIO.C"
     },
     "resource_390:0200009c": {
-      "name": "Scene_RunActor16MessageBranch",
+      "name": "FieldScene_RunActor16MessageBranch",
       "source": "FIELD/KORIMA_HEYA/ENTRY_LAYOUT.C"
     },
     "resource_3ac:02000338": {
@@ -6279,7 +6279,7 @@
       "source": "FIELD/KORIMA_HEYA/ENTRY_LAYOUT.C"
     },
     "resource_390:02000174": {
-      "name": "Scene_RunActor19MessageBranch",
+      "name": "FieldScene_RunActor19MessageBranch",
       "source": "FIELD/KORIMA_HEYA/ENTRY_LAYOUT.C"
     },
     "resource_371:020006dc": {
@@ -7284,7 +7284,7 @@
       "source": "FIELD/COMMON/EFFECT/SPAWN.C"
     },
     "resource_390:0200012c": {
-      "name": "Scene_RunActor18MessageBranch",
+      "name": "FieldScene_RunActor18MessageBranch",
       "source": "FIELD/KORIMA_HEYA/ENTRY_LAYOUT.C"
     },
     "resource_385:02000784": {
@@ -8696,7 +8696,7 @@
       "source": "FIELD/RARIBERO_MACHI/FLAGGED_CUE.C"
     },
     "resource_390:020001c4": {
-      "name": "Scene_SetupEntryLayoutsBySelector",
+      "name": "FieldScene_SetupEntryLayoutsBySelector",
       "source": "FIELD/KORIMA_HEYA/ENTRY_LAYOUT.C"
     },
     "resource_37b:02001ad4": {

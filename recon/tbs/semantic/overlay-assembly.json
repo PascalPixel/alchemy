@@ -872,20 +872,6 @@
       ]
     },
     {
-      "overlay": "resource_399",
-      "start": "0x02000f84",
-      "end": "0x02000f90",
-      "kind": "not_yet_decompiled",
-      "retention": "not_yet_c",
-      "confidence": "strong",
-      "evidence": [
-        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
-        "02000f84 is a literal loaded by 02000f38 in owner02000b70; terminal return02000f80 precedes this pool and actual next head is02000f90.",
-        "The candidate has two for loops initialized0 with condition<0; reference loops at02001284–02001298 and020013e0–020013f4 repeatedly call and inspect signed object halfword+100. Thus the recorded complete reconstruction is false.",
-        "recon/tbs/en/dossiers.json#resource_399:02000f84"
-      ]
-    },
-    {
       "overlay": "resource_377",
       "start": "0x02000578",
       "end": "0x02000a0c",

@@ -22914,62 +22914,6 @@
           "address": "0x0200908c",
           "kind": "thumb"
         },
-        "Func_020007f8": {
-          "address": "0x02008348",
-          "kind": "thumb"
-        },
-        "Func_02000cb0": {
-          "address": "0x02008314",
-          "kind": "thumb"
-        },
-        "Func_02000cfc": {
-          "address": "0x02008314",
-          "kind": "thumb"
-        },
-        "Func_02000d6c": {
-          "address": "0x02008314",
-          "kind": "thumb"
-        },
-        "Func_02000d92": {
-          "address": "0x02008314",
-          "kind": "thumb"
-        },
-        "Func_02000dda": {
-          "address": "0x02008314",
-          "kind": "thumb"
-        },
-        "Func_02000e0a": {
-          "address": "0x02008314",
-          "kind": "thumb"
-        },
-        "Func_02000e4a": {
-          "address": "0x02008314",
-          "kind": "thumb"
-        },
-        "Func_02000eaa": {
-          "address": "0x02008314",
-          "kind": "thumb"
-        },
-        "Func_02000ec0": {
-          "address": "0x02008314",
-          "kind": "thumb"
-        },
-        "Func_02000eec": {
-          "address": "0x02008314",
-          "kind": "thumb"
-        },
-        "Func_02000f3a": {
-          "address": "0x02008314",
-          "kind": "thumb"
-        },
-        "Func_02000f60": {
-          "address": "0x02008314",
-          "kind": "thumb"
-        },
-        "Func_0200110e": {
-          "address": "0x020090b4",
-          "kind": "thumb"
-        },
         "Func_02001166": {
           "address": "0x020090b4",
           "kind": "thumb"
@@ -22982,32 +22926,12 @@
           "address": "0x020091bc",
           "kind": "thumb"
         },
-        "Func_02001494": {
-          "address": "0x02009144",
-          "kind": "thumb"
-        },
-        "Func_0200151c": {
-          "address": "0x02009144",
-          "kind": "thumb"
-        },
-        "Func_02001550": {
-          "address": "0x02009144",
-          "kind": "thumb"
-        },
         "Func_020016c2": {
           "address": "0x02008d68",
           "kind": "thumb"
         },
         "Func_020016d8": {
           "address": "0x02009224",
-          "kind": "thumb"
-        },
-        "Func_020017fc": {
-          "address": "0x02009144",
-          "kind": "thumb"
-        },
-        "Func_02001866": {
-          "address": "0x02009144",
           "kind": "thumb"
         },
         "Func_020018a6": {
@@ -23031,10 +22955,6 @@
           "kind": "thumb"
         },
         "Func_02001e54_a": {
-          "address": "0x02009144",
-          "kind": "thumb"
-        },
-        "Func_02001e68": {
           "address": "0x02009144",
           "kind": "thumb"
         },

@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "main:08007098": {
+      "name": "EraseAtmelFlashSector",
+      "source": "SYSTEM/SAVE/ERASE_ATMEL_FLASH_SECTOR.C"
+    },
     "main:08006c68": {
       "name": "Flash_VerifySector",
       "source": "SYSTEM/SAVE/VERIFY_FLASH_SECTOR.C"

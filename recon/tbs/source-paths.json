@@ -10317,7 +10317,8 @@
       "source": "BATTLE/EFFECT/ARM_PALETTE_HBLANK_DMA.C"
     },
     "main:080ec100": {
-      "name": "BattleFx_InitializeMode6"
+      "name": "BattleFx_InitializeMode6",
+      "source": "BATTLE/EFFECT/INITIALIZE_MODE6.C"
     },
     "main:080f4168": {
       "name": "FunctionHead_080f4168"

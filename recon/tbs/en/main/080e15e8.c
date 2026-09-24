@@ -10,7 +10,9 @@
    offset lvl * 0x302 at 84, camera 80..68). Here count, the beam offset
    and the ring offset are expression temporaries spilled after the camera
    words, so every stack offset from 100 down shifts. What helped: count =
-   frame * 2 with the beam length written from count * 2 (one giv chain),
+   frame * 2 with the beam length written from count * 2 (one giv chain;
+   count still gets a hard register in global alloc and is spilled late
+   by reload, where the reference leaves it unallocated),
    gWorkSlot read through a base pointer for blit46 (sym + 184), masks
    loaded into the result register (speed = 0x3ff; speed &= Random16()),
    and Trig_Sin(angle) * speed operand order. */
@@ -157,8 +159,10 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
     Resource_LoadAndDecompress((s32)&Value_00000075, work->sheet + 0x1800, 0, 0);
     Resource_LoadAndDecompress((s32)&Value_00000073, aux, 0, 0);
 
-    for (i = 0, n = 0, count = 64; i != 8; i++) {
-        s32 lim = count;
+    {
+    s32 top = 64;
+    for (i = 0, n = 0; i != 8; i++) {
+        s32 lim = top;
         u8 *src = aux;
         u8 *out = work->sheet + n + 0x2710;
         for (j = 0; j != 0x302; j++) {
@@ -172,7 +176,8 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
             *out++ = v;
         }
         n += j;
-        count -= 7;
+        top -= 7;
+    }
     }
 
     BattlePres_ConfigureEffectDisplay();

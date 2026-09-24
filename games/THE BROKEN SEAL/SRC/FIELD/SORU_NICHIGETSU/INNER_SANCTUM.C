@@ -1115,7 +1115,6 @@ void FieldScene_PrepareStatueTransition(void)
 {
     u32 i;
     s32 record;
-    u8 *work;
 
     Camera_MoveTo(-1, -1, -1, 0);
     Map_CopyCellsTo(30, 43, 32, 40, 8, 3);
@@ -1132,9 +1131,8 @@ void FieldScene_PrepareStatueTransition(void)
     GameFlag_Set(0x201);
     GameFlag_Clear(0x200);
     GameFlag_Clear(0x202);
-    work = *(u8 **)Data_03001ebc;
-    *(s32 *)(((s32)work + 0x1c0)) = 0x100;
-    *(s32 *)(((s32)work + 0x1c8)) = 32;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+    gEventWork->transition_frames = 32;
     Event_OpenScreen();
     ((void (*)())Engine_EventWaitForScreen)();
     Event_Wait(40);
@@ -1220,7 +1218,6 @@ void Scene_SpringStatueTrap(void)
 void FieldScene_RunClosingSequence(void)
 {
     s32 i;
-    u8 *work;
     Event_Begin();
     FieldScene_PrepareStatueTransition();
     Data_0200ade4 = 0;
@@ -1294,9 +1291,8 @@ void FieldScene_RunClosingSequence(void)
     Func_020040a2((s32)UpdateStatueLight2);
     Func_020040a8((s32)UpdateStatueLight3);
     Func_020040ae((s32)UpdateStatueLight4);
-    work = *(u8 **)Data_03001ebc;
-    *(s32 *)(work + 0x1c0) = 0x100;
-    *(s32 *)(work + 0x1c8) = 32;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+    gEventWork->transition_frames = 32;
     Event_CloseScreen();
     Event_WaitForScreen();
     Event_RequestExit(4);
@@ -1305,7 +1301,6 @@ void FieldScene_RunClosingSequence(void)
 void FieldScene_RunFlaggedSequence(void)
 {
     s32 base;
-    u8 *work;
     s32 i6;
     s32 i7;
     s32 i8;
@@ -1393,9 +1388,8 @@ void FieldScene_RunFlaggedSequence(void)
         Actor_SetAnimationAndWait(ACTOR_SUKURETA, 3);
         Func_02003ff0(base, 6);
     }
-    work = *(u8 **)Data_03001ebc;
-    *(s32 *)(work + 0x1c0) = 0x100;
-    *(s32 *)(work + 0x1c8) = 32;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+    gEventWork->transition_frames = 32;
     Event_CloseScreen();
     Func_020044f6_field_scene();
     Event_RequestExit(5);

@@ -57773,6 +57773,10 @@
         "StagedActor_FindClearPosition": {
           "address": "0x02008474",
           "kind": "thumb"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
         }
       },
       "owners": [
@@ -62891,6 +62895,10 @@
         "Func_02003282": {
           "address": "0x02009a30",
           "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
         }
       },
       "owners": [

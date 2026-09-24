@@ -902,12 +902,9 @@ void FieldScene_RunBracketedSceneWithFlag282(void)
 
 void FieldScene_RunScene3c9_02003924(void)
 {
-    extern u8 Data_03001ebc[];
-
     u32 i;
     s32 rec4;
     s32 record;
-    u8 *work;
 
     rec4 = Value1(Engine_ActorGet, 0);
     Event_Begin();
@@ -1002,9 +999,8 @@ void FieldScene_RunScene3c9_02003924(void)
     record = Actor_Get(23);
     *(s32 *)(record + 12) = 0x280000;
     Call2(Engine_TaskAddCallback, 0x200da29, 0xc80);
-    work = *(u8 **)Data_03001ebc;
-    *(s32 *)(work + 0x1c0) = 0x200;
-    *(s32 *)(work + 0x1c8) = 24;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
+    gEventWork->transition_frames = 24;
     Event_OpenScreen();
     Event_WaitForScreen();
     Event_Wait(40);

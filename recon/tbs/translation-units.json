@@ -77728,6 +77728,86 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "scene-399-020006c0",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/IMIRU_MURA/EXIT_DOOR.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_399",
+      "absolute_symbols": {
+        "Engine_EventBegin": {
+          "address": "0x0200a230",
+          "kind": "thumb"
+        },
+        "Engine_ActorGet": {
+          "address": "0x0200a248",
+          "kind": "thumb"
+        },
+        "Engine_AudioPlayCue": {
+          "address": "0x0200a3e8",
+          "kind": "thumb"
+        },
+        "Engine_MapAnimateCells": {
+          "address": "0x0200a1e0",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpeed": {
+          "address": "0x0200a250",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetAnimation": {
+          "address": "0x0200a2b8",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpritePriority": {
+          "address": "0x0200a328",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetDestinationOffset": {
+          "address": "0x0200a2a0",
+          "kind": "thumb"
+        },
+        "Engine_ActorCenterAndWalk": {
+          "address": "0x0200a298",
+          "kind": "thumb"
+        },
+        "Engine_EventWait": {
+          "address": "0x0200a228",
+          "kind": "thumb"
+        },
+        "Engine_EventRequestExit": {
+          "address": "0x0200a360",
+          "kind": "thumb"
+        },
+        "Engine_EventEnd": {
+          "address": "0x0200a238",
+          "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
+        },
+        "ImiruMura_ExitCellSteps": {
+          "address": "0x0200b190",
+          "kind": "data"
+        },
+        "ImiruMura_ExitCellPoints": {
+          "address": "0x0200b1a8",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x020006c0",
+          "extent": 228,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

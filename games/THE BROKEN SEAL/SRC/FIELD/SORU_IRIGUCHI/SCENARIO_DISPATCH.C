@@ -1,11 +1,5 @@
 #include "TYPES.H"
 
-#define SceneData_SelectOverlayDataBySelector Func_02000030
-#define SceneData_GetTable9F14 Func_02000074
-#define FieldScene_RunScene37fSequenceA Func_02000154
-#define SceneDialogue_RunFlag81aMessageBranch Func_02000200
-#define FieldScene_RunOpeningAuxiliarySequence Func_02000258
-#define FieldScene_RunFlag821Dialogue Func_020003bc
 #define GATE_ID 2081
 #define GameFlag_IsSet_1(a0) Value1(Func_02001fb4, a0)
 #define GameFlag_IsSet_2(a0) Value1(Func_02001fc0, a0)
@@ -207,25 +201,6 @@
 #define RECORD_B32(rec) (*(s32 *)((rec) + 16))
 #define RECORD_A16(rec) (*(s16 *)((rec) + 10))
 #define RECORD_B16(rec) (*(s16 *)((rec) + 18))
-#define Scene_RunTransitionCue Func_0200161c
-#define Scene_RunActorFormation Func_020017c0
-#define Scene_UpdateCueTimer Func_02001ac8
-#define FieldScene_RunScriptedStep953 Func_02001aac
-#define FieldScene_RunSupplementalSequenceTwo Func_02000420
-#define Scene_UpdateOuterActor9Flags Func_0200056c
-#define Scene_UpdateOuterActor10Flags Func_020005ac
-#define Scene_UpdateFormationActor9Flags Func_020005ec
-#define Scene_UpdateFormationActor10Flags Func_02000634
-#define Scene_UpdateFormationActor11Flags Func_0200067c
-#define Scene_UpdateFormationActor12Flags Func_020006c4
-#define Scene_UpdateFormationActor13Flags Func_0200070c
-#define Scene_UpdateFormationActor14Flags Func_02000754
-#define SceneActor_FindSlotByTilePosition Func_0200079c
-#define FieldScene_DispatchByScenarioId Func_020008f4
-#define FieldScene_RunScene37f_0200092c Func_0200092c
-#define FieldScene_RunScene37f_02000d1c Func_02000d1c
-#define FieldScene_RunFourEntitySequence Func_02000f8c
-#define SceneData_SelectFormationTable Func_020000ec
 
 extern u8 Value_00000013;
 extern u8 Value_00000010;
@@ -466,7 +441,6 @@ void Func_02002b42();
 void Func_02002b4a();
 void Func_0808a018();
 void Func_0808a020();
-int Func_0808a070();
 s32 Func_02002b3c();
 s32 Func_02002b6a();
 s32 Func_02002b7e();
@@ -805,26 +779,12 @@ void Func_020037ca();
  */
 static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
 {
-    extern u8 Data_03001ebc[];
-
     f(a0, a1, a2);
 }
 
 static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
 {
-    extern u8 Data_03001ebc[];
-
     f(a0, a1, a2, a3, a4, a5);
-}
-
-/* The scene step counter at 0x1d8 of the shared scene work record. */
-static __inline__ void bump_step(s32 amount)
-{
-    extern u8 Data_03001ebc[];
-
-    u8 *work = *(u8 **)Data_03001ebc;
-
-    *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
 }
 
 /*
@@ -835,29 +795,21 @@ static __inline__ void bump_step(s32 amount)
  */
 static __inline__ void Call1(void (*f)(), s32 a0)
 {
-    extern u8 Data_03001ebc[];
-
     f(a0);
 }
 
 static __inline__ s32 Value1(s32 (*f)(), s32 a0)
 {
-    extern u8 Data_03001ebc[];
-
     return f(a0);
 }
 
 static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
 {
-    extern u8 Data_03001ebc[];
-
     f(a0, a1);
 }
 
 static __inline__ void Call3_02000258(void (*f)(), s32 a0, s32 a1, s32 a2)
 {
-    extern u8 Data_03001ebc[];
-
     f(a0, a1, a2);
 }
 

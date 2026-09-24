@@ -64382,10 +64382,6 @@
           "address": "0x02008528",
           "kind": "thumb"
         },
-        "Func_02001c9e": {
-          "address": "0x02009c44",
-          "kind": "thumb"
-        },
         "Func_02001cf6": {
           "address": "0x02009c44",
           "kind": "thumb"
@@ -64410,52 +64406,12 @@
           "address": "0x02009c2c",
           "kind": "thumb"
         },
-        "Func_020029bc": {
-          "address": "0x02009cbc",
-          "kind": "thumb"
-        },
         "Func_02002a16": {
           "address": "0x02009d4c",
           "kind": "thumb"
         },
         "Func_02002d90": {
           "address": "0x02009c74",
-          "kind": "thumb"
-        },
-        "Func_02002da8": {
-          "address": "0x02009cbc",
-          "kind": "thumb"
-        },
-        "Func_02002edc": {
-          "address": "0x02009cbc",
-          "kind": "thumb"
-        },
-        "Func_02002fa2_a": {
-          "address": "0x02009cbc",
-          "kind": "thumb"
-        },
-        "Func_02002fe8": {
-          "address": "0x02009cbc",
-          "kind": "thumb"
-        },
-        "Func_02002ff0": {
-          "address": "0x02009cbc",
-          "kind": "thumb"
-        },
-        "Func_02002ffa": {
-          "address": "0x02009cbc",
-          "kind": "thumb"
-        },
-        "Func_02003002": {
-          "address": "0x02009cbc",
-          "kind": "thumb"
-        },
-        "Func_0200304e": {
-          "address": "0x02009770",
-          "kind": "thumb"
-        },
-        "Func_02003092": {
-          "address": "0x02009770",
           "kind": "thumb"
         },
         "Func_0200309c": {
@@ -64486,15 +64442,7 @@
           "address": "0x02009cbc",
           "kind": "thumb"
         },
-        "Func_020031d2": {
-          "address": "0x02009cbc",
-          "kind": "thumb"
-        },
         "Func_0200320e": {
-          "address": "0x02009cbc",
-          "kind": "thumb"
-        },
-        "Func_02003224": {
           "address": "0x02009cbc",
           "kind": "thumb"
         },
@@ -64506,18 +64454,6 @@
           "address": "0x02009c54",
           "kind": "thumb"
         },
-        "Func_020034b6_a": {
-          "address": "0x02009cbc",
-          "kind": "thumb"
-        },
-        "Func_020034b6_b": {
-          "address": "0x02009c34",
-          "kind": "thumb"
-        },
-        "Func_020034be": {
-          "address": "0x02009cbc",
-          "kind": "thumb"
-        },
         "Func_020034c2": {
           "address": "0x02009c54",
           "kind": "thumb"
@@ -64526,19 +64462,15 @@
           "address": "0x02009c5c",
           "kind": "thumb"
         },
-        "Func_02003602": {
-          "address": "0x02009cbc",
-          "kind": "thumb"
-        },
-        "SceneStateWords": {
-          "address": "0x02000240",
-          "kind": "data"
-        },
         "gEventWork": {
           "address": "0x03001ebc",
           "kind": "data"
         },
         "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
+        },
+        "SceneStateWords": {
           "address": "0x02000240",
           "kind": "data"
         }

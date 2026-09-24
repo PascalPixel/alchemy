@@ -4,7 +4,6 @@
 void Main_080091b8(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x, s32 dest_y);
 
 /* Passage n (low byte of arg, four cells apart): with bit 8 set, play cue 157, set the work values and show the 1x3 tiles from (79, 29) for 40 frames first; then draw the tiles from (80, 29) and copy the row-40 cell attributes down to rows 41 and 42. */
-/* Adopt TakaraAshiba_OpenPassage resource_3b4:02000f40 (156 bytes) */
 void TakaraAshiba_OpenPassage(s32 arg)
 {
     s32 step = (arg & 0xff) * 4;

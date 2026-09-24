@@ -9,7 +9,7 @@ s32 VramBlock_LoadCached(u32 slot, u32 size, const void *source)
     s32 offset;
     void *destination;
 
-    entry = &Data_03001b10[slot];
+    entry = &gVramBlockCache[slot];
     if (slot > 95)
         return 0;
     if (size > 0x2000)

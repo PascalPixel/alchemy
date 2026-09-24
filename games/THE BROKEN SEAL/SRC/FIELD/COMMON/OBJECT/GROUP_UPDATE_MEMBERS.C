@@ -3,7 +3,7 @@
 void *GetMotionRecordFar(void *, s32);
 s32 BattleMotion_GetSlotField14Far(s32);
 void Object_InitializeMode(void *, s32);
-extern u32 Data_03001eec;
+extern u32 gBattleFxWork;
 
 void ObjectGroup_UpdateMembers(s32 set_id, s32 object_value, s32 group_value,
                                s32 state_slot, s32 state_value)
@@ -14,7 +14,7 @@ void ObjectGroup_UpdateMembers(s32 set_id, s32 object_value, s32 group_value,
     s32 group_index;
 
     set = GetBattleObjectSlotFar(set_id);
-    state = (u8 *)Data_03001eec;
+    state = (u8 *)gBattleFxWork;
     group_index = 0;
 
     while ((group = GetMotionRecordFar(set->object, group_index)) != NULL) {

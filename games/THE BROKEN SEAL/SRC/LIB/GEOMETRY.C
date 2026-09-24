@@ -2,7 +2,7 @@
 #include "FIXED_MATH.H"
 
 s32 FixedPoint_Ratio(s32 numerator, s32 denominator);
-extern const u16 Data_08007676[];
+extern const u16 Math_ArcTanTable[];
 
 u16 ArcTan2(s32 x, s32 y)
 {
@@ -26,7 +26,7 @@ u16 ArcTan2(s32 x, s32 y)
         ratio = FixedPoint_Ratio(value << 8, ratio);
         result = 0x4000;
         if (ratio <= 0xFB6A) {
-            table = Data_08007676;
+            table = Math_ArcTanTable;
             result = 0;
 
             value = *table;

@@ -1,8 +1,8 @@
 #include "TYPES.H"
 
-extern const u8 Data_0800779c[];
+extern const u8 System_BasicColorPalette[];
 
 s32 Runtime_GetLowTableAddress(void)
 {
-    return (s32)Data_0800779c;
+    return (s32)System_BasicColorPalette;
 }

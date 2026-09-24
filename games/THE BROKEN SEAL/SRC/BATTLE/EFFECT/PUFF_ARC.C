@@ -30,15 +30,15 @@ s32 BattleFx_EndCanvasLayer(void);
    byte offset of the cell inside the kind-39 work block.  The three byte
    tables sit six apart and every cell's width * height matches its source
    span, so the cells are 8bpp and the widths are also the source pitch. */
-extern u8 Data_080ede9f[];
-extern u8 Data_080edea5[];
-extern u8 Data_080edeab[];
-extern u16 Data_080edeb2[];
+extern u8 PuffArc_CellWidths[];
+extern u8 PuffArc_CellHeights[];
+extern u8 PuffArc_CellBiasY[];
+extern u16 PuffArc_CellSourceOffsets[];
 
-#define CELL_W Data_080ede9f
-#define CELL_H Data_080edea5
-#define CELL_DY Data_080edeab
-#define CELL_SRC Data_080edeb2
+#define CELL_W PuffArc_CellWidths
+#define CELL_H PuffArc_CellHeights
+#define CELL_DY PuffArc_CellBiasY
+#define CELL_SRC PuffArc_CellSourceOffsets
 
 /* One 28-byte record; the array starts at work + 0x7080. */
 typedef struct Puff {

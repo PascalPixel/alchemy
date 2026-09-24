@@ -59,7 +59,7 @@ void ObjectMotion_EnableActionAndResetMotion(u32 object_id)
     }
 }
 
-extern const u8 Data_0809ff40[];
+extern const u8 ObjectMotion_LinkedActionScript[];
 
 void Object_LinkObjectAndSetCallback(u32 object_id, u32 linked_object_id)
 {
@@ -67,7 +67,7 @@ void Object_LinkObjectAndSetCallback(u32 object_id, u32 linked_object_id)
 
     if (object != NULL) {
         object->linked_object = Object_GetById(linked_object_id);
-        ObjectMotion_SetActionCallback(object, (s32)Data_0809ff40);
+        ObjectMotion_SetActionCallback(object, (s32)ObjectMotion_LinkedActionScript);
     }
 }
 
@@ -208,7 +208,7 @@ void ObjectMotion_CommitPositionAndActivate(u32 object_id, s32 x_offset, s32 z_o
 }
 
 extern s32 gGameState[];
-extern u8 Data_0809fbcc;
+extern u8 ObjectMotion_LaunchScript;
 
 void Motion_LaunchFromFocusedObject(u32 arg0, s32 arg1, s32 arg2, s32 arg3)
 {
@@ -224,7 +224,7 @@ void Motion_LaunchFromFocusedObject(u32 arg0, s32 arg1, s32 arg2, s32 arg3)
         object->movement_state = 0;
         Object_SetMode(object, 2);
         ObjectMotion_OffsetPositionAndResetMotion(arg0, arg1, arg2);
-        Object_SetCallback(object, &Data_0809fbcc);
+        Object_SetCallback(object, &ObjectMotion_LaunchScript);
         object->action = arg3;
     }
 }
@@ -382,7 +382,7 @@ void ObjectMotion_Launch(u32 object_id, s32 speed, s32 event_id)
     }
 }
 
-extern const u8 Data_0809ebfc[];
+extern const u8 ObjectMotion_VariantScripts[];
 
 void ObjectMotion_SetVariantCallback(u32 object_id, s32 variant)
 {
@@ -394,7 +394,7 @@ void ObjectMotion_SetVariantCallback(u32 object_id, s32 variant)
             variant = 3;
         }
         Object_SetCallback(object,
-            Data_0809ebfc + ((3 - variant) << 7));
+            ObjectMotion_VariantScripts + ((3 - variant) << 7));
     }
 }
 

@@ -148,7 +148,7 @@ s32 Curve_LerpTwoSamplesByTable(const s8 *samples, s32 position, s32 row)
     start = samples[0] << CURVE_VALUE_SHIFT;
     return start
         + (((samples[1] << CURVE_VALUE_SHIFT) - start)
-           * Data_080132fc[position + (row *CURVE_FULL_STEPS)]);
+           * Curve_LerpWeightTable[position + (row *CURVE_FULL_STEPS)]);
 }
 
 s32 Curve_StepAtHalf(const s8 *samples, u32 position)
@@ -233,14 +233,14 @@ s32 Curve_LerpThreeSamplesAtHalfB(u8 *samples, u32 unused, u32 position)
 
 s32 Curve_LookupSampleByTable(const s8 *samples, u32 position, u32 row)
 {
-    return samples[Data_080133fc[position + (row << 4)]]
+    return samples[Curve_SampleIndexTable[position + (row << 4)]]
         << CURVE_VALUE_SHIFT;
 }
 
 s32 Curve_LookupSampleByTableReversed(const s8 *samples, u32 position, u32 row)
 {
     return samples[
-        Data_080133fc[((row << 4) - position) + CURVE_FULL_STEPS - 1]]
+        Curve_SampleIndexTable[((row << 4) - position) + CURVE_FULL_STEPS - 1]]
         << CURVE_VALUE_SHIFT;
 }
 

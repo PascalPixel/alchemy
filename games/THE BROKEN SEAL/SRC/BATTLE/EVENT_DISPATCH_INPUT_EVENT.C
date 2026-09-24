@@ -13,7 +13,7 @@ struct GlobalData_0808d8f0 {
 extern void *gEventWork;
 extern u8 gGameState;
 #define PARTY_STATE gGameState
-extern volatile u32 Data_03001ae8;
+extern volatile u32 gKeysHeld;
 
 void BattleFx_RunRisingObjectSequence(s32, s32, s32);
 void Field_TryJumpForward(void);
@@ -27,7 +27,7 @@ s32 Battle_DispatchInputEvent(s32 event)
 
     switch (event) {
     case 0xFC:
-        if (state->delay > 12 && (Data_03001ae8 & 0x80)) {
+        if (state->delay > 12 && (gKeysHeld & 0x80)) {
             BattleFx_RunRisingObjectSequence(selected_object, 6, 0);
             state->delay = 0;
         }
@@ -41,9 +41,9 @@ s32 Battle_DispatchInputEvent(s32 event)
         break;
     case 0xFD:
         if (state->delay > 12) {
-            if (Data_03001ae8 & 0x80) {
+            if (gKeysHeld & 0x80) {
                 FieldEffect_UpdateGridPlacement();
-            } else if (Data_03001ae8 & 0x40) {
+            } else if (gKeysHeld & 0x40) {
                 battle_owner_69();
             }
             state->delay = 0;

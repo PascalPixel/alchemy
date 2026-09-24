@@ -1,10 +1,10 @@
 #include "ITEM.H"
 
-extern struct ItemDefinition Data_0807b6a8[];
+extern struct ItemDefinition Item_DefinitionTable[];
 
 struct ItemDefinition *Item_GetDirect(s32 item_id)
 {
-    return Data_0807b6a8 + (item_id & 0x1ff);
+    return Item_DefinitionTable + (item_id & 0x1ff);
 }
 #include "OWNER_STATE.H"
 

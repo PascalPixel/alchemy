@@ -2,7 +2,7 @@
 #include "OBJECT_LOOKUP.H"
 #include "TYPES.H"
 
-extern s8 Data_0809f160[];
+extern s8 BattleFx_RandomChildValues[];
 
 u32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
@@ -22,7 +22,7 @@ extern struct GlobalState gGameState;
 
 void BattleEffect_SetRandomTableValueOnObject(s32 arg0)
 {
-    s8 *table = Data_0809f160;
+    s8 *table = BattleFx_RandomChildValues;
     s32 index = Rand();
     Animation_ApplyChildValuesFar((void *)arg0, table[(u32)(index * 8) >> 16]);
 }

@@ -129,38 +129,38 @@ void ObjectDispatch_RegisterChildMetadata(struct DispatchObject *object, s32 val
 
 void ObjectDispatch_InitFromTable5WithArgument(struct DispatchObject *object, s32 argument)
 {
-    ObjectDispatch_Initialize(object, (u32)Data_08013608);
+    ObjectDispatch_Initialize(object, (u32)ObjectDispatch_Table5Script);
     object->argument = argument;
 }
 
 void ObjectDispatch_InitFromTable0(struct DispatchObject *object)
 {
-    ObjectDispatch_Initialize(object, (u32)Data_08013590);
+    ObjectDispatch_Initialize(object, (u32)ObjectDispatch_Table0Script);
 }
 
 void ObjectDispatch_InitFromTable1(struct DispatchObject *object)
 {
-    ObjectDispatch_Initialize(object, (u32)Data_080135a8);
+    ObjectDispatch_Initialize(object, (u32)ObjectDispatch_Table1Script);
 }
 
 void ObjectDispatch_InitFromTable2(struct DispatchObject *object)
 {
-    ObjectDispatch_Initialize(object, (u32)Data_080135c0);
+    ObjectDispatch_Initialize(object, (u32)ObjectDispatch_Table2Script);
 }
 
 void ObjectDispatch_InitFromTable3(struct DispatchObject *object)
 {
-    ObjectDispatch_Initialize(object, (u32)Data_080135d8);
+    ObjectDispatch_Initialize(object, (u32)ObjectDispatch_Table3Script);
 }
 
 void ObjectDispatch_InitFromTable6(struct DispatchObject *object)
 {
-    ObjectDispatch_Initialize(object, (u32)Data_08013620);
+    ObjectDispatch_Initialize(object, (u32)ObjectDispatch_Table6Script);
 }
 
 void ObjectDispatch_InitFromTable4WithArgument(struct DispatchObject *object, s32 argument)
 {
-    ObjectDispatch_Initialize(object, (u32)Data_080135f0);
+    ObjectDispatch_Initialize(object, (u32)ObjectDispatch_Table4Script);
     if (argument != 0) {
         object->value_34 = 0x8000;
         object->value_30 = 0x40000;

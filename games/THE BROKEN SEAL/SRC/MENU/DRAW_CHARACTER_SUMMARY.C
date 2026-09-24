@@ -10,9 +10,9 @@ s32 Text_FormatPlayTime(s32, void *);
 void UiText_DrawNumberInWindow(s32, s32, s32, s32, s32);
 extern u8 Value_00000009;
 extern u8 Value_00000741;
-extern u8 Data_080371e0[];
+extern u8 StatusMenu_LevelLetterString[];
 
-#define StatusPanelLayout Data_080371e0
+#define StatusPanelLayout StatusMenu_LevelLetterString
 #define ClassNameMessageBase Value_00000741
 #define StatusLabelMessage Value_00000009
 

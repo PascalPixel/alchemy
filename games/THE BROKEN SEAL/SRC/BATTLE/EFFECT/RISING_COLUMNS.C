@@ -14,7 +14,7 @@ typedef struct Column {
     s32 unused[6];
 } Column;
 extern u8 gWorkSlot[];
-extern s8 Data_080eeb96[];
+extern s8 RisingColumns_ColumnOffsets[];
 extern u8 Value_000000a6;
 void BattleFx_BeginCanvasLayer(s32);
 void BattleFx_PrepareCanvasEffect(void *, s32, s32, s32, s32 *, s32 *);
@@ -62,7 +62,7 @@ void BattleEffect_RunRisingColumns(struct BattleEffectArgument *effect)
     column = (Column *)((u8 *)work + 0x7080);
     i = 0;
     do {
-        column[i].x = Data_080eeb96[i] + 64;
+        column[i].x = RisingColumns_ColumnOffsets[i] + 64;
         i++;
     } while (i != 16);
     work->transfer_mode = 1;

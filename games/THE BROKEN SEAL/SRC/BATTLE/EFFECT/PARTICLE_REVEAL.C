@@ -55,9 +55,9 @@ typedef struct {
 extern u8 Value_0000006e;
 extern u8 Value_000000b8;
 extern u8 Value_00000092;
-extern u8 Data_080eec5f[];
-extern u8 Data_080eec63[];
-extern u16 Data_080eec68[];
+extern u8 ParticleReveal_CellWidths[];
+extern u8 ParticleReveal_CellHeights[];
+extern u16 ParticleReveal_CellSourceOffsets[];
 
 void BattleFx_BeginCanvasLayer(s32 mode);
 void BattleFx_PrepareCanvasEffect(void *object, s32 a, s32 b, s32 c, s32 *out_a, s32 *out_b);
@@ -166,9 +166,9 @@ void BattleFx_RunParticleReveal(void *object)
 
                 index = (p->rot / 128) & 3;
                 routine[i & 1](
-                    canvas, (u8 *)work + 0x400 + Data_080eec68[index],
-                    (*(s16 *)((u8 *)(p) + (2))) - (w = Data_080eec5f[index]) / 2,
-                    (*(s16 *)((u8 *)(p) + (6))) - (h = Data_080eec63[index]) / 2,
+                    canvas, (u8 *)work + 0x400 + ParticleReveal_CellSourceOffsets[index],
+                    (*(s16 *)((u8 *)(p) + (2))) - (w = ParticleReveal_CellWidths[index]) / 2,
+                    (*(s16 *)((u8 *)(p) + (6))) - (h = ParticleReveal_CellHeights[index]) / 2,
                     w, h);
                 EffectStep_AdvanceWithGravity3D(p, 0x3F, 0x1000);
             }

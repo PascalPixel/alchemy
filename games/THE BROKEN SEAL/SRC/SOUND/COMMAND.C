@@ -65,13 +65,13 @@ void MusicCommand_SetPitch(s16 pitch)
   while (0);
 }
 
-extern u16 Data_02003030;
-extern u16 Data_0200300c;
+extern u16 gMusicPitchTarget;
+extern u16 gMusicPitchStep;
 
 void Audio_SetWorkPairB(u16 primary, u16 secondary)
 {
-    Data_02003030 = primary;
-    Data_0200300c = secondary;
+    gMusicPitchTarget = primary;
+    gMusicPitchStep = secondary;
 }
 
 void MusicPlayer_SetVolume(struct Work *work, u32 mask, u32 value);
@@ -93,13 +93,13 @@ void MusicCommand_SetVolume(s16 volume)
   }
 }
 
-extern u16 Data_02003034;
-extern u16 Data_02003010;
+extern u16 gMusicVolumeTarget;
+extern u16 gMusicVolumeStep;
 
 void Audio_SetWorkPairA(u16 primary, u16 secondary)
 {
-    Data_02003034 = primary;
-    Data_02003010 = secondary;
+    gMusicVolumeTarget = primary;
+    gMusicVolumeStep = secondary;
 }
 
 void Audio_StopAllPlayers(void);

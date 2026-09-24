@@ -33,7 +33,7 @@ void BattleFx_UpdateShrinkingOrbitObject(u8 *arg)
             *(s32 *)(arg + 12) = local.y;
             *(s32 *)(arg + 16) = local.z;
         } else {
-            Object_SetCallback(arg, Data_0809f0b0);
+            Object_SetCallback(arg, BattleFx_CommonParticleScript);
         }
     }
 }

@@ -4,13 +4,13 @@ u16 ArcTan2(s32, s32);
 void *Object_GetById(u32);
 void Object_SetCallback(void *, void *);
 extern s16 gGameState[];
-extern const u8 Data_0809fe00[];
-extern const u8 Data_0809fd44[];
-extern const u8 Data_0809fe10[];
-extern const u8 Data_0809fecc[];
-extern const u8 Data_0809ff18[];
-extern const u8 Data_0809ff2c[];
-extern const u8 Data_0809fe04[];
+extern const u8 ObjectMotion_ActionKind1Script[];
+extern const u8 ObjectMotion_ActionKind2Script[];
+extern const u8 ObjectMotion_ActionKind3Script[];
+extern const u8 ObjectMotion_ActionKind4Script[];
+extern const u8 ObjectMotion_MoveTowardTargetScript[];
+extern const u8 ObjectMotion_TurnTowardLinkedScript[];
+extern const u8 ObjectMotion_ResetActionScript[];
 
 s32 FixedPoint_Ratio(s32, s32);
 s32 Object_SetPosition(s32, s32, s32, s32);
@@ -84,27 +84,27 @@ void ObjectMotion_SetActionCallback(struct ObjectRuntime *object, s32 kind)
 
     switch ((u32)(kind - 1)) {
     case 0:
-        kind = (s32)Data_0809fe00;
+        kind = (s32)ObjectMotion_ActionKind1Script;
         break;
     case 1:
-        kind = (s32)Data_0809fd44;
+        kind = (s32)ObjectMotion_ActionKind2Script;
         break;
     case 2:
-        kind = (s32)Data_0809fe10;
+        kind = (s32)ObjectMotion_ActionKind3Script;
         break;
     case 3:
-        kind = (s32)Data_0809fecc;
+        kind = (s32)ObjectMotion_ActionKind4Script;
         break;
     case 4:
-        kind = (s32)Data_0809ff18;
+        kind = (s32)ObjectMotion_MoveTowardTargetScript;
         break;
     case 5:
         index = 250;
         object->linked_object = Object_GetById(*(u32 *)&gGameState[index]);
-        kind = (s32)Data_0809ff2c;
+        kind = (s32)ObjectMotion_TurnTowardLinkedScript;
         break;
     case 6:
-        kind = (s32)Data_0809fe04;
+        kind = (s32)ObjectMotion_ResetActionScript;
         break;
     default:
         break;

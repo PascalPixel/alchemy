@@ -7,14 +7,14 @@ typedef struct {
     u16 second;
 } State;
 
-extern u32 Data_03001800;
-extern State Data_03001ad0;
+extern u32 gFrameTick;
+extern State gBgScroll;
 extern u8 Value_0000ffff;
 
 void DisplayScroll_StepPositionEveryFourFrames(void)
 {
-    if ((Data_03001800 & 3) == 0) {
-        State *state = &Data_03001ad0;
+    if ((gFrameTick & 3) == 0) {
+        State *state = &gBgScroll;
         u32 decrement = (u32)&Value_0000ffff;
         state->first += decrement;
         state->second += decrement;

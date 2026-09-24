@@ -18,8 +18,8 @@ s32 Trig_Cos(s32 angle);
 s32 Trig_Sin(s32 angle);
 s32 FixedPoint_Ratio(s32 numerator, s32 denominator);
 
-extern u8 Data_03001d00;
-extern union AffineMatrix Data_03001d40[];
+extern u8 gObjAffineCount;
+extern union AffineMatrix gObjAffineMatrices[];
 
 s32 AffineMatrix_BuildForEffect(struct Effect *source)
 {
@@ -30,14 +30,14 @@ s32 AffineMatrix_BuildForEffect(struct Effect *source)
     s32 angle;
     u8 index;
 
-    index = Data_03001d00;
+    index = gObjAffineCount;
     x_scale = (s16)source->x;
     y_scale = (s16)source->y;
     angle = source->angle;
     if (index > 31)
         return 0;
 
-    matrix = &Data_03001d40[index];
+    matrix = &gObjAffineMatrices[index];
     coefficient = matrix->coefficients;
     if ((x_scale == y_scale || -x_scale == y_scale) && angle == 0) {
         SignedDivide divide;
@@ -67,6 +67,6 @@ s32 AffineMatrix_BuildForEffect(struct Effect *source)
         *coefficient = FixedPoint_Ratio(cosine, y_scale);
     }
 
-    Data_03001d00 = index + 1;
+    gObjAffineCount = index + 1;
     return index;
 }

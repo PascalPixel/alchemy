@@ -45,8 +45,8 @@ void Object_SetMode(void *, s32);
 extern void Object_SetCallback(struct Object_08092624 *, const void *);
 extern void ObjectGroup_SetChildValue(struct Object_08092624 *);
 extern s32 Math_ModU(s32, s32);
-extern const u8 Data_0809fbec[];
-extern const u8 Data_0809fc04[];
+extern const u8 BattleFx_BurstParticleScriptA[];
+extern const u8 BattleFx_BurstParticleScriptB[];
 s32 Object_GetById(u32);
 void Audio_PlayCue(s32);
 void Object_SetPosition(void *, s32, s32, s32);
@@ -68,11 +68,11 @@ void BattleFx_SpawnBurstParticle(struct Object_08092624 *source, s32 optional)
         switch (Rand() & 1) {
         case 1:
             Object_SetMode(object, 2);
-            Object_SetCallback(object, Data_0809fbec);
+            Object_SetCallback(object, BattleFx_BurstParticleScriptA);
             break;
         default:
             Object_SetMode(object, 1);
-            Object_SetCallback(object, Data_0809fc04);
+            Object_SetCallback(object, BattleFx_BurstParticleScriptB);
             break;
         }
 

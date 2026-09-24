@@ -1,7 +1,7 @@
 #include "FOUR_OBJECT_MOTION.H"
 
 extern struct FourObjectMotionState *gMenuWork;
-extern s32 Data_080af304[];
+extern s32 FourObjectMotion_ResourceIds[];
 
 void ResourceObject_ReleaseFar(void *);
 void *ResourceObject_CreateFar(s32);
@@ -24,7 +24,7 @@ void FourObjectMotion_InitializeBottomRow(void)
         }
     }
     for (index = 0; index < 4; index++) {
-        void *object = ResourceObject_CreateFar(Data_080af304[index]);
+        void *object = ResourceObject_CreateFar(FourObjectMotion_ResourceIds[index]);
 
         if (object != NULL)
             Object_InitializeMode(object, 2);
@@ -62,7 +62,7 @@ s32 FourObjectMotion_ReplaceSlot(s32 index, s32 kind, s32 value)
         state->objects[index] = NULL;
     }
     {
-        void *object = ResourceObject_CreateFar(Data_080af304[kind]);
+        void *object = ResourceObject_CreateFar(FourObjectMotion_ResourceIds[kind]);
 
         if (object != NULL)
             Object_InitializeMode(object, value);

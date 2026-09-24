@@ -1,14 +1,14 @@
 #include "TYPES.H"
 
-extern u8 Data_02003000;
-extern u16 Data_02003008;
-extern u16 Data_0200300c;
-extern u16 Data_02003010;
-extern u16 Data_02003030;
-extern u16 Data_02003034;
-extern u16 Data_02003038;
-extern u8 Data_02004210[];
-extern u8 Data_02004290[];
+extern u8 gMusicRestoreDelay;
+extern u16 gMusicVolume;
+extern u16 gMusicPitchStep;
+extern u16 gMusicVolumeStep;
+extern u16 gMusicPitchTarget;
+extern u16 gMusicVolumeTarget;
+extern u16 gMusicPitch;
+extern u8 gMusicPlayerFanfare[];
+extern u8 gMusicPlayerBgm[];
 
 void Sound_TickDmaRestartTimer(void);
 void MusicPlayer_SetPitchAndUpdateFrequency(u8 *, s32);
@@ -19,40 +19,40 @@ void MusicPlayer_StepVolumeAndPitchTowardTargets(void)
 {
     s32 delta;
 
-    if (Data_02003000 != 0) {
-        if (Data_02003000 == 1) {
-            if (Data_02004210[4] == 0) {
-                Data_02003000 = 0;
-                Data_02003034 = 0x100;
+    if (gMusicRestoreDelay != 0) {
+        if (gMusicRestoreDelay == 1) {
+            if (gMusicPlayerFanfare[4] == 0) {
+                gMusicRestoreDelay = 0;
+                gMusicVolumeTarget = 0x100;
             }
         } else {
-            Data_02003000 -= 1;
+            gMusicRestoreDelay -= 1;
         }
     }
-    if ((s16)Data_02003034 != (s16)Data_02003008) {
-        delta = (s16)Data_02003034 - (s16)Data_02003008;
+    if ((s16)gMusicVolumeTarget != (s16)gMusicVolume) {
+        delta = (s16)gMusicVolumeTarget - (s16)gMusicVolume;
         if (delta > 0) {
-            Data_02003008 = Data_02003008 + Data_02003010;
+            gMusicVolume = gMusicVolume + gMusicVolumeStep;
         } else {
-            Data_02003008 = Data_02003008 - Data_02003010;
+            gMusicVolume = gMusicVolume - gMusicVolumeStep;
         }
-        if ((((s16)Data_02003034 - (s16)Data_02003008) ^ delta) < 0) {
-            Data_02003008 = Data_02003034;
+        if ((((s16)gMusicVolumeTarget - (s16)gMusicVolume) ^ delta) < 0) {
+            gMusicVolume = gMusicVolumeTarget;
         }
-        MusicPlayer_SetVolume(Data_02004290, 255, Data_02003008);
+        MusicPlayer_SetVolume(gMusicPlayerBgm, 255, gMusicVolume);
     }
-    if ((s16)Data_02003030 != (s16)Data_02003038) {
-        delta = (s16)Data_02003030 - (s16)Data_02003038;
+    if ((s16)gMusicPitchTarget != (s16)gMusicPitch) {
+        delta = (s16)gMusicPitchTarget - (s16)gMusicPitch;
         if (delta > 0) {
-            Data_02003038 = Data_02003038 + Data_0200300c;
+            gMusicPitch = gMusicPitch + gMusicPitchStep;
         } else {
-            Data_02003038 = Data_02003038 - Data_0200300c;
+            gMusicPitch = gMusicPitch - gMusicPitchStep;
         }
-        if ((((s16)Data_02003030 - (s16)Data_02003038) ^ delta) < 0) {
-            Data_02003038 = Data_02003030;
+        if ((((s16)gMusicPitchTarget - (s16)gMusicPitch) ^ delta) < 0) {
+            gMusicPitch = gMusicPitchTarget;
         }
-        MusicPlayer_SetPitchAndUpdateFrequency(Data_02004290, Data_02003038);
-        MusicPlayer_SetPitch(Data_02004290, 255, (s16)((s16)Data_02003038 * 12 - 3072));
+        MusicPlayer_SetPitchAndUpdateFrequency(gMusicPlayerBgm, gMusicPitch);
+        MusicPlayer_SetPitch(gMusicPlayerBgm, 255, (s16)((s16)gMusicPitch * 12 - 3072));
     }
     Sound_TickDmaRestartTimer();
 }

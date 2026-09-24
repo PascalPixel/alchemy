@@ -23,7 +23,7 @@ struct BattleGroupOrder {
     s32 group[2];
 };
 
-extern const struct BattleGroupOrder Data_080c35bc;
+extern const struct BattleGroupOrder BattleParty_RoundEndGroupOrder;
 
 struct DjinnRecoveryTable *Trade_GetOfferStateFar(s32 side);
 struct BattleUnit *Owner_GetStateFar(s32 unit_id);
@@ -129,7 +129,7 @@ s32 Battle_ProcessRoundEnd(void)
     BattlePresentation_ConfigurePaletteFade(2, gBattleWork->palette_648, 0);
     {
     s32 *group_list;
-    struct BattleGroupOrder order = Data_080c35bc;
+    struct BattleGroupOrder order = BattleParty_RoundEndGroupOrder;
     u16 ids[14];
     s32 group;
     s32 j;

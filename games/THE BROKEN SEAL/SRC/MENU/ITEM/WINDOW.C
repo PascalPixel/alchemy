@@ -1,10 +1,10 @@
 #include "INVENTORY_MENU.H"
 #include "M7_INTERFACES.H"
 
-extern u8 Data_080af224;
-extern u8 Data_080af228;
-#define InventoryMenu_IncreaseGlyph Data_080af224
-#define InventoryMenu_DecreaseGlyph Data_080af228
+extern u8 Menu_PlusSignString;
+extern u8 Menu_MinusSignString;
+#define InventoryMenu_IncreaseGlyph Menu_PlusSignString
+#define InventoryMenu_DecreaseGlyph Menu_MinusSignString
 
 void UiNumber_DrawAt(s32, s32, s32, s32, s32);
 void UiText_DrawStringInWindowFar(u8 *, s32, s32, s32);

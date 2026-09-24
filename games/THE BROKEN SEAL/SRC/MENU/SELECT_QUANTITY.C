@@ -5,7 +5,7 @@
 
 struct InventoryMenuState;
 extern struct InventoryMenuState *gMenuWork;
-extern volatile s32 Data_03001b04;
+extern volatile s32 gKeysRepeat;
 extern volatile u32 gKeyState;
 void Menu_UpdateEntryObjectTransforms(void);
 
@@ -44,7 +44,7 @@ s32 Menu_SelectQuantity(s32 value)
 
 adjust:
     {
-        volatile s32 *keys = &Data_03001b04;
+        volatile s32 *keys = &gKeysRepeat;
 
         if (*keys & 0x40) {
             quantity -= 1;

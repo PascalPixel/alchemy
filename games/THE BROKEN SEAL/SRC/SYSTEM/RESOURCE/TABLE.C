@@ -21,7 +21,7 @@ void Resource_LoadWorkHeader(void)
 
 #include "TYPES.H"
 
-extern u32 Data_08320000[];
+extern u32 Resource_DirectoryTable[];
 
 void RuntimeDispatch_NoOpHook(void)
 {
@@ -29,7 +29,7 @@ void RuntimeDispatch_NoOpHook(void)
 
 u32 Resource_GetTableEntry(u32 index)
 {
-    return Data_08320000[index];
+    return Resource_DirectoryTable[index];
 }
 
 #include "TYPES.H"

@@ -47,11 +47,11 @@ struct TextResourceSetup {
 
 s32 Resource_FindFreeEntry(void);
 s32 Resource_CopyData(s32, s32, const void *);
-extern const u8 Data_080342f8[];
+extern const u8 Menu_CursorObjectTiles[];
 
 void TextResource_Initialize(struct TextResourceSetup *object, s32 *slot)
 {
-    const void *data = Data_080342f8;
+    const void *data = Menu_CursorObjectTiles;
     s32 value = Resource_FindFreeEntry();
 
     /* ビットフィールドは生成時の設定順を保持する。 */

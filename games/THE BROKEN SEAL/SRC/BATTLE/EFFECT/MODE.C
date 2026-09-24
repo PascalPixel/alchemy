@@ -72,7 +72,7 @@ void BattleFx_InitializeMode(s32 *arg0)
     Runtime_ReleaseHeapBlock(41);
 }
 
-extern Callback Data_080ee2b4[];
+extern Callback BattleFx_ModeHandlers[];
 
 void BattleFx_DispatchMode(s32 *state)
 {
@@ -89,7 +89,7 @@ void BattleFx_DispatchMode(s32 *state)
     if (index == 0)
         state[6] = 0;
     else
-        Data_080ee2b4[index - 1](state);
+        BattleFx_ModeHandlers[index - 1](state);
 
     Runtime_ReleaseHeapBlock(40);
     Runtime_ReleaseHeapBlock(39);

@@ -6,7 +6,7 @@ struct State_080a847c {
 };
 
 extern struct State_080a847c *volatile gMenuWork;
-extern u8 Data_080af2fc[];
+extern u8 CharacterMenu_CursorWidths[];
 
 void Render_SetTilemapFlagRect(const u8 *, s32, s32, s32, s32, u32);
 
@@ -31,7 +31,7 @@ void CharacterMenu_DrawSelectionCursor(s32 mode, s32 selected,
         while (index <= 4) {
             if (entries[index] != 0) {
                 if (selected == count) {
-                    width = Data_080af2fc[index];
+                    width = CharacterMenu_CursorWidths[index];
                     break;
                 }
                 count++;

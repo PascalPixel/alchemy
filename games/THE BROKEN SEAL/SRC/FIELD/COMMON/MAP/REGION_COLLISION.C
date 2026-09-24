@@ -103,7 +103,7 @@ struct MapRegionServices {
     MapRegionProvider region_provider;
 };
 
-extern struct MapRegionServices Data_02008000;
+extern struct MapRegionServices gOverlayArea;
 
 s32 GameFlag_IsConditionActive(s32 condition);
 void Audio_PlayCue(s32 sound_id);
@@ -130,7 +130,7 @@ void UpdateMapRegionAtPosition(s32 position_x, s32 position_y, s32 position_z)
     x = position_x;
     y = position_y;
     z = position_z;
-    region = Data_02008000.region_provider();
+    region = gOverlayArea.region_provider();
     if (region != 0 &&
         (runtime = gEventWork, min_x = region->min_x, min_x != -1)) {
 loop:

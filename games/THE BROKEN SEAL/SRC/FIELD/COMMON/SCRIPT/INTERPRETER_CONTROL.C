@@ -131,13 +131,13 @@ u32 Script_JumpIfFalse(struct ScriptInterpreter *interpreter)
     return 1;
 }
 
-extern const s32 Data_08013240[];
+extern const s32 Script_MainScript[];
 
 s32 Script_LoadMainScript(struct ScriptInterpreter *interpreter)
 {
     s32 result;
 
-    interpreter->script = Data_08013240;
+    interpreter->script = Script_MainScript;
     interpreter->cursor = (result = 0);
     return result;
 }

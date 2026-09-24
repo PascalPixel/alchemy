@@ -1,13 +1,13 @@
 #include "TYPES.H"
 
-extern u8 *Data_03001ea8;
+extern u8 *gBattleBgFxWork;
 
 s32 BattleFx_HueChannelRamp(s32, s32, s32);
 void BattleFx_ComputeHueChannels(s32 value, s32 *maximum, s32 *center, s32 *minimum);
 
 void BattleFx_AdvanceHueCycle(void)
 {
-    u8 *base = Data_03001ea8;
+    u8 *base = gBattleBgFxWork;
     s32 out1 = 0;
     s32 out2 = 0;
     s32 out3 = 0;

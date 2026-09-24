@@ -30,7 +30,7 @@ struct AnimationObject {
     u8 marker;
 };
 
-extern struct AnimationObject *Data_03001e5c[];
+extern struct AnimationObject *gAnimationObjects[];
 extern u8 Data_00000000[];
 
 struct AnimationMetadata *Resource_GetMetadataRecordFar(s32 id);
@@ -55,7 +55,7 @@ struct AnimationObject *AnimationObject_Allocate(s32 id)
 
     found = NULL;
     metadata = Resource_GetMetadataRecordFar(id);
-    entry = Data_03001e5c[0];
+    entry = gAnimationObjects[0];
     object = NULL;
 
     if (metadata->width != 0) {

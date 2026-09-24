@@ -47,7 +47,7 @@ extern u32 Random16(void);
 extern void RotateVectorByMagnitude(s32, s32, struct ParticlePosition *);
 extern void Object_SetCallback(struct ParticleEffectObject *, void *);
 extern void Object_SetMode(struct ParticleEffectObject *, s32);
-extern const u8 Data_0809e87c[];
+extern const u8 BattleFx_ParticleScript[];
 
 void EmitRandomParticleEffect(struct ParticleEmitter *emitter)
 {
@@ -72,7 +72,7 @@ void EmitRandomParticleEffect(struct ParticleEmitter *emitter)
         s32 mask;
         u8 flags;
 
-        Object_SetCallback(object, (void *)Data_0809e87c);
+        Object_SetCallback(object, (void *)BattleFx_ParticleScript);
         Object_SetMode(object, 0);
         mask = 13;
         flags = object->child->flags;

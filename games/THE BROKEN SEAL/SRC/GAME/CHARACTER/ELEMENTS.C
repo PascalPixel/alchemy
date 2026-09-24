@@ -1,7 +1,7 @@
 #include "RUNTIME_INTERFACES.H"
 #include "PRESET_TABLE.H"
 
-extern struct PresetValues Data_08088e38[];
+extern struct PresetValues Enemy_ElementPresetTable[];
 
 struct OwnerBonusValues {
     u8 unknown[2];
@@ -25,7 +25,7 @@ s32 Owner_GetDigitValues(s32 record, const u8 *source, s32 output[4])
         i = 0;
         cursor = output;
         for (; i <= 3; i++)
-            *cursor++ = Data_08088e38[index].digits[i] * 10;
+            *cursor++ = Enemy_ElementPresetTable[index].digits[i] * 10;
     } else {
         cursor = output;
         source += 36;
@@ -88,5 +88,5 @@ s32 Owner_GetDefaultElement(struct OwnerElementState *state)
 
     if ((u32)value > 43)
         value = 0;
-    return Data_08088e38[value].first;
+    return Enemy_ElementPresetTable[value].first;
 }

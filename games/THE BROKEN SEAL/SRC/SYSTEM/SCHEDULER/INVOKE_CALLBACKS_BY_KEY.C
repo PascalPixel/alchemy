@@ -2,12 +2,10 @@
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 typedef s32 (*KeyCallbackFn)(void);
-extern u8 Data_03001d34;
-extern u8 Data_03001a20[];
+extern u8 gSchedulerTaskCount;
+extern u8 gSchedulerTaskTable[];
 
 /* The scheduler's retained globals (defined in the scheduler unit). */
-#define gSchedulerTaskCount Data_03001d34
-#define gSchedulerTaskTable Data_03001a20
 void Runtime_InvokeCallbacksByKey(s32 arg0)
 {
     s32 key = arg0;

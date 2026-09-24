@@ -10,13 +10,13 @@ s32 SerialRuntime_PollStatus(void)
 
     siocnt = &REG_SIOCNT;
     control = *siocnt;
-    if (Data_02002240.phase == 0) {
+    if (gSerialRuntime.phase == 0) {
         u8 mode = control & 0x88;
 
         if (mode == 8) {
             u8 serial_error = control & 4;
 
-            if (serial_error == 0 && Data_02002240.send_index == -1) {
+            if (serial_error == 0 && gSerialRuntime.send_index == -1) {
                 u32 ie;
 
                 /* FAKEMATCH: the do/while blocks and the separate enable
@@ -40,15 +40,15 @@ s32 SerialRuntime_PollStatus(void)
                     REG_IF = 0xc0;
                     REG_TM3CNT = 0xc963;
                 } while (0);
-                Data_02002240.mode = mode;
+                gSerialRuntime.mode = mode;
             }
-            Data_02002240.phase = 1;
+            gSerialRuntime.phase = 1;
         }
-        Data_02002240.sequence++;
+        gSerialRuntime.sequence++;
     }
 
-    status = Data_02002240.current_mask | (Data_02002240.received_mask << 8);
-    if (Data_02002240.mode == 8)
+    status = gSerialRuntime.current_mask | (gSerialRuntime.received_mask << 8);
+    if (gSerialRuntime.mode == 8)
         status |= 0x80;
     result = SerialRuntime_AddParentFlag(status);
     if (((control << 26) >> 30) > 1)

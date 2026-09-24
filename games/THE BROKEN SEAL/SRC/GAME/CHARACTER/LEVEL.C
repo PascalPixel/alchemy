@@ -7,7 +7,7 @@ struct OwnerLevelState {
 };
 
 void *Owner_GetState(s32);
-extern u32 Data_0807a830[];
+extern u32 Character_LevelExpTable[];
 
 void Owner_LevelNoOp(void)
 {
@@ -22,7 +22,7 @@ u32 Owner_GetLevelThreshold(s32 owner, s32 level)
             return 0;
         }
         if (level <= 99 && state->type <= 7) {
-            return Data_0807a830[state->type * 99 + level - 1];
+            return Character_LevelExpTable[state->type * 99 + level - 1];
         }
     }
     return (u32)-1;

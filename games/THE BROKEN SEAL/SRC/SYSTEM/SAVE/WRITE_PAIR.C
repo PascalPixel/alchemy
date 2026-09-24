@@ -5,7 +5,7 @@ s32 SaveState_InitializeWorkspace(void);
 s32 SaveState_WriteRecord(s32, void *);
 void UiText_ShowPositionedMessageAndWait(s32, s32);
 void SaveState_BuildSummaryHeader(void);
-extern char Data_02000000;
+extern char gSaveBuffer;
 extern char Value_0000000a;
 extern char Value_0000000b;
 
@@ -27,7 +27,7 @@ s16 SaveState_WriteCurrentSlotPair(void)
         }
         SaveState_BuildSummaryHeader();
         {
-            void *base = &Data_02000000;
+            void *base = &gSaveBuffer;
             s32 next;
 
             found = SaveState_WriteRecord(*(s16 *)0x02002004, base);
@@ -59,7 +59,7 @@ s32 SaveState_WriteSlotPair(s32 arg0)
         UiText_ShowPositionedMessageAndWait((s32)&Value_0000000a, 1);
         result = -9;
     } else {
-        void *base = &Data_02000000;
+        void *base = &gSaveBuffer;
 
         found = SaveState_WriteRecord(arg0, base);
         base = (char *)base + 0x1000;

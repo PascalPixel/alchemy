@@ -1,10 +1,10 @@
 #include "FLASH.H"
 
-extern u8 *Data_02004c08;
+extern u8 *gFlash;
 
 s32 CountRemainingErasedFlashBytes(u8 *ptr)
 {
-    s32 remaining = *(s32 *)(Data_02004c08 + 4);
+    s32 remaining = *(s32 *)(gFlash + 4);
 
     while (remaining != 0) {
         u8 byte = *ptr;

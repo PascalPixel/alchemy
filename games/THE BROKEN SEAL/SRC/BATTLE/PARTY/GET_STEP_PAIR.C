@@ -1,7 +1,7 @@
 #include "TYPES.H"
 
 /* Step table for battle placement: signed bytes in (x, y) pairs. */
-extern const s8 Data_080c2a62[];
+extern const s8 BattlePlacement_StepPairs[];
 
 /*
  * Read one (x, y) pair from the step table.  Entries are pairs, so the index
@@ -13,6 +13,6 @@ extern const s8 Data_080c2a62[];
 void BattlePlacement_GetStepPair(s32 index, s32 *x, s32 *y)
 {
     index *= 2;
-    *x = Data_080c2a62[index];
-    *y = Data_080c2a62[index + 1];
+    *x = BattlePlacement_StepPairs[index];
+    *y = BattlePlacement_StepPairs[index + 1];
 }

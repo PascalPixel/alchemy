@@ -1,10 +1,10 @@
 #include "TYPES.H"
 
-extern s16 Data_0809e686[];
+extern s16 BattleFx_TargetRangeByMode[];
 
 s32 BattleFx_MapKeyThroughTable(s32 key)
 {
-    s16 *entry = Data_0809e686;
+    s16 *entry = BattleFx_TargetRangeByMode;
     s32 result = 16;
     s32 current = *entry;
 

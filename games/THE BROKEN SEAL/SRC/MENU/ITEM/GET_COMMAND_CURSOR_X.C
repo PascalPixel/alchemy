@@ -1,7 +1,7 @@
 #include "INVENTORY_MENU.H"
 
-extern s32 Data_080af2e4[];
-#define InventoryMenu_CommandCursorXTable Data_080af2e4
+extern s32 ItemMenu_CommandColumnXTable[];
+#define InventoryMenu_CommandCursorXTable ItemMenu_CommandColumnXTable
 
 s32 ItemMenu_CmdCursorX(s32 column, s32 row)
 {

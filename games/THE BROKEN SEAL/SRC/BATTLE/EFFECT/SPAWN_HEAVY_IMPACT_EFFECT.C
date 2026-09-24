@@ -48,13 +48,13 @@ s32 SpawnHeavyImpactEffect(struct ImpactSource *source)
     if (object != NULL) {
         object->mode_55 = 0;
         object->field_5e = 20;
-        Object_SetCallback(object, Data_0809f0b0);
+        Object_SetCallback(object, BattleFx_CommonParticleScript);
     }
 
     for (i = 0; i < 12; i++) {
         fragment = Object_Spawn(0x11d, position.x, position.y, position.z);
         if (fragment != NULL) {
-            Object_SetCallback(fragment, &Data_0809f0d4);
+            Object_SetCallback(fragment, &BattleFx_FragmentScript);
             fragment->field_30 = Random16() + 0x10000;
             fragment->field_34 = 0x10000;
             fragment->mode_55 = 0;

@@ -1,7 +1,7 @@
 #include "TYPES.H"
 #include "SYSTEM.H"
-extern volatile u16 Data_03001f64;
-extern volatile u16 Data_02002238;
+extern volatile u16 gLinkStatus;
+extern volatile u16 gSerialReceivedSize;
 u32 Math_DivU(u32, u32);
 s32 SerialRuntime_BeginTransferA(void *, s32);
 s32 SerialRuntime_BeginTransferB(void *);
@@ -44,7 +44,7 @@ s32 BattlePresentation_AppendLinkedActions(
         while (SerialRuntime_GetActiveTransfers()) {
             WaitFrames(1);
             if (--timeout < 0) return -1;
-            if ((Data_03001f64 & 3) != 3) {
+            if ((gLinkStatus & 3) != 3) {
                 if (++disconnected > 24) return -1;
             } else disconnected = 0;
         }
@@ -54,7 +54,7 @@ s32 BattlePresentation_AppendLinkedActions(
             while (SerialRuntime_GetActiveTransfers()) {
             WaitFrames(1);
             if (--timeout < 0) return -1;
-            if ((Data_03001f64 & 3) != 3) {
+            if ((gLinkStatus & 3) != 3) {
                 if (++disconnected > 24) return -1;
             } else disconnected = 0;
             }
@@ -70,27 +70,27 @@ s32 BattlePresentation_AppendLinkedActions(
         timeout = 300;
         if (status == -1) return status;
         while (SerialRuntime_GetActiveTransfers()) {
-            if (Data_02002238 > 20) return -1;
+            if (gSerialReceivedSize > 20) return -1;
             WaitFrames(1);
             if (--timeout < 0) return -1;
-            if ((Data_03001f64 & 3) != 3) {
+            if ((gLinkStatus & 3) != 3) {
                 if (++disconnected > 24) return -1;
             } else disconnected = 0;
         }
-        if (Data_02002238 != 20) return -1;
+        if (gSerialReceivedSize != 20) return -1;
         result = state->count;
         if (state->count) {
             status = SerialRuntime_BeginTransferB(actions + count);
             if (status == -1) return status;
             while (SerialRuntime_GetActiveTransfers()) {
-                if (Data_02002238 > Math_DivU(result * 16 + 19, 20) * 20) return -1;
+                if (gSerialReceivedSize > Math_DivU(result * 16 + 19, 20) * 20) return -1;
             WaitFrames(1);
             if (--timeout < 0) return -1;
-            if ((Data_03001f64 & 3) != 3) {
+            if ((gLinkStatus & 3) != 3) {
                 if (++disconnected > 24) return -1;
             } else disconnected = 0;
             }
-            if (Data_02002238 != Math_DivU(result * 16 + 19, 20) * 20) return -1;
+            if (gSerialReceivedSize != Math_DivU(result * 16 + 19, 20) * 20) return -1;
         }
         return 0;
     }

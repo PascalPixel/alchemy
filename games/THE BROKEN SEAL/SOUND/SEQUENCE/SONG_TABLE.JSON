@@ -2,7 +2,6 @@
   "format": 1,
   "kind": "typed-table",
   "id": "sound_table",
-  "address": "0x080fc684",
   "end": "0x080fd044",
   "size": 2496,
   "segments": [

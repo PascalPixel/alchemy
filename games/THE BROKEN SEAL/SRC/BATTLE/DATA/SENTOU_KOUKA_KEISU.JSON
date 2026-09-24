@@ -1,7 +1,6 @@
 {
   "format": 1,
   "kind": "typed-table",
-  "address": "0x080eda78",
   "end": "0x080edaf0",
   "size": 120,
   "consumers": {

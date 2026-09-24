@@ -372,7 +372,6 @@
     "data": {
       "format": 1,
       "kind": "typed-table",
-      "address": "0x08033e24",
       "size": 28,
       "segments": [
         {"end": "0x08033e28", "stride": 1, "element": "ascii-fixed", "text": ""},

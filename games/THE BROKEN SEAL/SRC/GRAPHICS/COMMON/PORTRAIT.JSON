@@ -13,7 +13,6 @@
   "offset_table": {
     "format": 1,
     "kind": "typed-table",
-    "address": "0x084366f8",
     "size": 160,
     "segments": [
       {

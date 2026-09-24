@@ -7,7 +7,6 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x086d02d0",
         "size": "0x3c",
         "segments": [
           {
@@ -129,7 +128,6 @@
       "sparse_cells": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x086d1b6c",
         "size": "0x1b",
         "record_size": 3,
         "segments": [
@@ -159,7 +157,6 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x086d1d0c",
         "size": "0x3c",
         "segments": [
           {
@@ -291,7 +288,6 @@
       "sparse_cells": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x086d378c",
         "size": "0xf",
         "record_size": 3,
         "segments": [

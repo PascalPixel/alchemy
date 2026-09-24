@@ -4,7 +4,6 @@
   "chunk_directory": {
     "format": 1,
     "kind": "typed-table",
-    "address": "0x088f1748",
     "size": "0x2000",
     "segments": [
       {

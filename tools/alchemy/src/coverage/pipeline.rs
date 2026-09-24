@@ -465,11 +465,10 @@ fn candidate_overlay(
             continue;
         }
         for owner in array(unit, "owners") {
-            if text(owner, "state") != "not-yet-c" {
+            let Some(entry) = address(owner, "address") else {
                 continue;
-            }
-            let (Some(entry), Some(size)) = (address(owner, "address"), integer(owner, "extent"))
-            else {
+            };
+            let Some(size) = extents.get(&(id.clone(), entry)).copied() else {
                 continue;
             };
             let Some(end) = entry.checked_add(size).filter(|end| *end > entry) else {
@@ -3486,8 +3485,8 @@ mod tests {
             json!({"units": [{
                 "id": "staged-actor", "source": source, "overlay": "resource_3bf",
                 "owners": [
-                    {"address": "0x0200034c", "extent": 1394, "state": "exact-c"},
-                    {"address": "0x020008c0", "extent": 284, "state": "exact-c"}
+                    {"address": "0x0200034c", "extent": 1394},
+                    {"address": "0x020008c0", "extent": 284}
                 ],
                 "instances": {"resource_39b": {
                     "owners": {
@@ -3559,20 +3558,22 @@ mod tests {
             std::fs::create_dir_all(path.parent().unwrap()).unwrap();
             std::fs::write(path, source).unwrap();
         };
-        for name in [
-            "actor_sequence",
-            "unregistered",
-            "resource_test_c_02000160",
-            "resource_test_c_02000180",
-        ] {
+        for name in ["actor_sequence", "unregistered", "resource_test_c_02000160"] {
             write(
                 &format!("{directory}/{name}.c"),
                 "void Actor_Run(void) {}\n",
             );
         }
         write(&format!("{directory}/uncanonical.c"), "M2C_ERROR\n");
-        let owner =
-            |entry, extent, state| json!({"address": entry, "extent": extent, "state": state});
+        // The listing bounds each not-yet-C owner by its label.
+        write(
+            "recon/tbs/raw/overlays/resource_test_overlay.s",
+            "\t.space 0x100\nActor_A:\n\t.space 0x20\nActor_B:\n\t.space 0x20\n\
+             \t.size Actor_B, .-Actor_B\n\t.space 0x20\nActor_C:\n\t.space 0x10\n\
+             \t.size Actor_C, .-Actor_C\n\t.space 0x20\nActor_D:\n\t.space 0x10\n\
+             Actor_E:\n\t.space 0x10\n",
+        );
+        let owner = |entry| json!({"address": entry});
         let unit = |name, owners| {
             json!({
                 "overlay": "resource_test",
@@ -3581,20 +3582,15 @@ mod tests {
         };
         let named = unit(
             "actor_sequence",
-            json!([
-                owner("0x02000100", 0x20, "not-yet-c"),
-                owner("0x02000120", 0x20, "not-yet-c"),
-                owner("0x02000140", 0x20, "exact-c")
-            ]),
+            json!([owner("0x02000100"), owner("0x02000120")]),
         );
         write(
             "recon/tbs/translation-units.json",
             &json!({"units": [
                 named.clone(), named,
-                unit("resource_test_c_02000160", json!([owner("0x02000160", 0x10, "not-yet-c")])),
-                unit("resource_test_c_02000180", json!([owner("0x02000180", 0x10, "exact-c")])),
-                unit("missing", json!([owner("0x02000190", 0x10, "not-yet-c")])),
-                unit("uncanonical", json!([owner("0x020001a0", 0x10, "not-yet-c")]))
+                unit("resource_test_c_02000160", json!([owner("0x02000160")])),
+                unit("missing", json!([owner("0x02000190")])),
+                unit("uncanonical", json!([owner("0x020001a0")]))
             ]})
             .to_string(),
         );

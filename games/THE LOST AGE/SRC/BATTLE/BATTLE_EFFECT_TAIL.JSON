@@ -5,7 +5,6 @@
     "before": {
       "format": 1,
       "kind": "typed-table",
-      "address": "0x080eff22",
       "end": "0x080f0c04",
       "size": 3298,
       "segments": [
@@ -294,7 +293,6 @@
     "before_2": {
       "format": 1,
       "kind": "typed-table",
-      "address": "0x080f0e54",
       "end": "0x080f1140",
       "size": 748,
       "segments": [
@@ -514,7 +512,6 @@
     "after": {
       "format": 1,
       "kind": "typed-table",
-      "address": "0x080f21d0",
       "end": "0x080f3798",
       "size": 5576,
       "segments": [

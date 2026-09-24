@@ -402,7 +402,6 @@
   "kana_marks": {
     "format": 1,
     "kind": "typed-table",
-    "address": "0x0805c0e0",
     "size": 16,
     "segments": [
       {"end": "0x0805c0e8", "stride": 2, "consumers": [], "element": "le-u16", "values": [0, 222, 223, 0]},
@@ -413,7 +412,6 @@
     "data": {
       "format": 1,
       "kind": "typed-table",
-      "address": "0x0805c0f0",
       "size": 28,
       "segments": [
         {"end": "0x0805c0f4", "stride": 1, "element": "ascii-fixed", "text": ""},

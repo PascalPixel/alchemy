@@ -21055,6 +21055,22 @@
     "main:080a9c18": {
       "name": "ItemMenu_ArrangeCategoryItemIcons",
       "source": "MENU/ITEM/ARRANGE_CATEGORY_ITEM_ICONS.C"
+    },
+    "main:080a9aec": {
+      "name": "ItemMenu_DrawEquippedItemNames",
+      "source": "MENU/ITEM/DRAW_EQUIPPED_ITEM_NAMES.C"
+    },
+    "main:080b9470": {
+      "name": "BattleQueue_SortByPriority",
+      "source": "BATTLE/QUEUE_SORT_BY_PRIORITY.C"
+    },
+    "main:08017aa4": {
+      "name": "UiText_RenderWideStringAtOffset",
+      "source": "GRAPHICS/TEXT/RENDER_WIDE_STRING_AT_OFFSET.C"
+    },
+    "main:0808f498": {
+      "name": "BattleFx_StartWindowHBlankDma",
+      "source": "BATTLE/EFFECT/WINDOW_HBLANK_DMA.C"
     }
   },
   "symbols": {
@@ -21240,7 +21256,6 @@
     "main:08028194": "AffineEffect_UpdateFrame",
     "main:0808a278": "Object_GetScreenPositionFar",
     "main:080ae99c": "UiIcon_CreateStatChangeArrow",
-    "main:08017aa4": "UiText_RenderWideStringAtOffset",
     "main:08017c8c": "UiText_RenderWideStringInWindow",
     "main:080f9c44": "Sound_TickDmaRestartTimer",
     "main:08077058": "Inventory_RemoveFar",
@@ -21275,7 +21290,6 @@
     "main:08015038": "UiText_OpenMessageWindowFar",
     "main:080164d4": "UiWindow_ClearInteriorTiles",
     "main:080a8604": "CharacterMenu_DrawStatusAilments",
-    "main:080a9aec": "ItemMenu_DrawEquippedItemNames",
     "main:080a3ef0": "ItemMenu_DrawEquipPreview",
     "main:080a1ac0": "UiMenu_SlideCursor",
     "main:080a35f8": "ItemMenu_RunOwnerSelection",

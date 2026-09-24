@@ -1,3 +1,6 @@
+/* NONMATCHING: 432 bytes, 6 differing halfwords, register-only (2026-09-24).
+ * The ROM keeps &params in fp and the row offset z in r9; this build swaps
+ * them. Declaration order, loop spelling and a params pointer moved nothing. */
 #include "TYPES.H"
 #include "CONFIGURED_EFFECT_SPAWN.H"
 
@@ -33,6 +36,16 @@ void Func_020096fa(void);
 void Func_02009704(s32, s32, s32, s32);
 void Func_02009736(s32);
 
+static __inline__ void Call4(void (*f)(s32, s32, s32, s32), s32 a, s32 b, s32 c, s32 d)
+{
+    f(a, b, c, d);
+}
+
+static __inline__ void Call6(void (*f)(s32, s32, s32, s32, s32, s32), s32 a, s32 b, s32 c, s32 d, s32 e, s32 g)
+{
+    f(a, b, c, d, e, g);
+}
+
 void Lifted_02004610(void)
 {
     s32 z;
@@ -60,12 +73,9 @@ void Lifted_02004610(void)
     row = 0;
     z = 0;
     do {
-        value = Func_02009442();
-        params.accum18 = (((u32)(value << 1) >> 16) * 0x4ccc) + 0x17ffc;
-        value = Func_02009456();
-        params.accum1c = (((u32)(value << 1) >> 16) * 0x4ccc) + 0x17ffc;
-        value = Func_0200946a();
-        params.step = (((u32)(value << 12) >> 16) + 0xf800);
+        params.accum18 = (((u32)(Func_02009442() << 1) >> 16) * 0x4ccc) + 0x17ffc;
+        params.accum1c = (((u32)(Func_02009456() << 1) >> 16) * 0x4ccc) + 0x17ffc;
+        params.step = (((u32)(Func_0200946a() << 12) >> 16) + 0xf800);
         L_020046c8:;
         i = 0;
         base = 0xc00000 + z;
@@ -86,13 +96,13 @@ void Lifted_02004610(void)
                 Func_020094dc(0x200c5f1, 0xc80);
             }
         }
-        Func_02009562(53, row + 12, 26, row + 12, 3, 1);
-        row = row + 1;
+        Call6(Func_02009562, 53, row + 12, 26, row + 12, 3, 1);
         z = z + 0x100000;
+        row = row + 1;
     } while ((u32)row <= 12);
-    Func_02009586(81, 41, 89, 14, 9, 2);
+    Call6(Func_02009586, 81, 41, 89, 14, 9, 2);
     Func_020096fa();
-    Func_02009704(-1, -1, -1, 0);
+    Call4(Func_02009704, -1, -1, -1, 0);
     Func_020094e4(60);
     Func_02009608(0x306);
     Func_02009736(19);

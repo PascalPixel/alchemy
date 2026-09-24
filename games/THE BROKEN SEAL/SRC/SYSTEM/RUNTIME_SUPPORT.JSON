@@ -6,7 +6,6 @@
       "name": "number_format",
       "format": 1,
       "kind": "typed-table",
-      "address": "0x0800795c",
       "size": "0x38",
       "segments": [
         {
@@ -29,7 +28,6 @@
       "name": "transfer_test",
       "format": 1,
       "kind": "typed-table",
-      "address": "0x080079b0",
       "size": "0x70",
       "segments": [
         {"name": "identity", "end": "0x080079b8", "element": "ascii-fixed", "stride": 1, "text": "CAMELOT"},
@@ -62,7 +60,6 @@
       "name": "flash_region_a",
       "format": 1,
       "kind": "typed-table",
-      "address": "0x08007aa4",
       "size": "0x70",
       "segments": [
         {
@@ -160,7 +157,6 @@
       "name": "flash_region_b",
       "format": 1,
       "kind": "typed-table",
-      "address": "0x08007b3c",
       "size": "0x88",
       "segments": [
         {
@@ -265,7 +261,6 @@
       "name": "flash_region_c",
       "format": 1,
       "kind": "typed-table",
-      "address": "0x08007bcc",
       "size": "0x70",
       "segments": [
         {

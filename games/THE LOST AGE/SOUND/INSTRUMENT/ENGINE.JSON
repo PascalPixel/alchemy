@@ -2,7 +2,6 @@
   "format": 1,
   "kind": "typed-table",
   "id": "audio_engine_data",
-  "address": "0x081c342e",
   "end": "0x081c4530",
   "size": 4354,
   "note": "Ordered byte-exact TLA audio-engine data between the engine code and the sound table: 0x081c342e-0x081c3714 SMSH engine control tables: command dispatch, pitch, frequency and wait lookups, aligned as the engine code placed them; 0x081c3714-0x081c43b0 the two SMSH voice banks; 0x081c43b0-0x081c44d0 the packed CGB waveforms; 0x081c44d0-0x081c4530 the music-player storage assignments.",

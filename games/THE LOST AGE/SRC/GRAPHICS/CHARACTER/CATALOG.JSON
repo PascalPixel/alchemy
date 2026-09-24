@@ -7,7 +7,6 @@
   "descriptors": {
     "format": 1,
     "kind": "typed-table",
-    "address": "0x08300000",
     "size": "0x00007478",
     "segments": [
       {
@@ -15491,7 +15490,6 @@
   "scripts": {
     "format": 1,
     "kind": "typed-table",
-    "address": "0x08311d98",
     "size": "0x0000738e",
     "segments": [
       {

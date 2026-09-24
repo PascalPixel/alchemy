@@ -7,7 +7,6 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x0868d070",
         "size": "0x3c",
         "segments": [
           {
@@ -101,7 +100,6 @@
       "sparse_cells": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x0868f004",
         "size": "0x9",
         "record_size": 3,
         "segments": [
@@ -122,7 +120,6 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x086a0dac",
         "size": "0x3c",
         "segments": [
           {
@@ -215,7 +212,6 @@
       "sparse_cells": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x086a1f20",
         "size": "0x3",
         "record_size": 3,
         "segments": [{"name": "terminator", "end": "0x086a1f23", "stride": 1, "element": "u8", "fill": 255}]
@@ -233,7 +229,6 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x0872e3a4",
         "size": "0x3c",
         "segments": [
           {
@@ -335,7 +330,6 @@
       "sparse_cells": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x0872f678",
         "size": "0x18",
         "record_size": 3,
         "segments": [
@@ -364,7 +358,6 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x0872548c",
         "size": "0x3c",
         "segments": [
           {
@@ -470,7 +463,6 @@
       "sparse_cells": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x08729348",
         "size": "0x3",
         "record_size": 3,
         "segments": [{"name": "terminator", "end": "0x0872934b", "stride": 1, "element": "u8", "fill": 255}]
@@ -488,7 +480,6 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x0872950c",
         "size": "0x3c",
         "segments": [
           {
@@ -606,7 +597,6 @@
       "sparse_cells": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x0872a674",
         "size": "0x6",
         "record_size": 3,
         "segments": [
@@ -627,7 +617,6 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x0872a7d4",
         "size": "0x3c",
         "segments": [
           {
@@ -729,7 +718,6 @@
       "sparse_cells": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x0872b870",
         "size": "0x3",
         "record_size": 3,
         "segments": [{"name": "terminator", "end": "0x0872b873", "stride": 1, "element": "u8", "fill": 255}]

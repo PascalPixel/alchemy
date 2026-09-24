@@ -2,7 +2,6 @@
   "format": 1,
   "kind": "typed-table",
   "id": "staff_roll",
-  "address": "0x081a1928",
   "end": "0x081a2400",
   "size": 2776,
   "segments": [

@@ -7,7 +7,6 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x08ea2a60",
         "size": "0x40",
         "segments": [
           {
@@ -179,7 +178,6 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x08ea3668",
         "size": "0x40",
         "segments": [
           {
@@ -431,7 +429,6 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x08ea9f28",
         "size": "0x40",
         "segments": [
           {

@@ -7,7 +7,6 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x0872f690",
         "size": "0x3c",
         "segments": [
           {
@@ -113,7 +112,6 @@
       "sparse_cells": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x087318c4",
         "size": "0x9",
         "record_size": 3,
         "segments": [
@@ -140,7 +138,6 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x087319c8",
         "size": "0x3c",
         "segments": [
           {
@@ -194,7 +191,6 @@
       "sparse_cells": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x0873442c",
         "size": "0xc",
         "record_size": 3,
         "segments": [
@@ -221,7 +217,6 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x08734438",
         "size": "0x3c",
         "segments": [
           {
@@ -328,7 +323,6 @@
       "sparse_cells": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x08735d0c",
         "size": "0x3",
         "record_size": 3,
         "segments": [{"name": "terminator", "end": "0x08735d0f", "stride": 1, "element": "u8", "fill": 255}]

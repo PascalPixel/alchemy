@@ -7,7 +7,6 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x08b9ac88",
         "size": "0x40",
         "segments": [
           {
@@ -245,7 +244,6 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x08b9c5ac",
         "size": "0x40",
         "segments": [
           {
@@ -493,7 +491,6 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x08b9e07c",
         "size": "0x40",
         "segments": [
           {
@@ -744,7 +741,6 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x08b9f4f0",
         "size": "0x40",
         "segments": [
           {
@@ -983,7 +979,6 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x08ba0bb4",
         "size": "0x40",
         "segments": [
           {
@@ -1226,7 +1221,6 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x08ba20d8",
         "size": "0x40",
         "segments": [
           {
@@ -1457,7 +1451,6 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x08b91ca4",
         "size": "0x40",
         "segments": [
           {
@@ -1707,7 +1700,6 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x08ba3218",
         "size": "0x40",
         "segments": [
           {
@@ -1959,7 +1951,6 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x08ba5650",
         "size": "0x40",
         "segments": [
           {
@@ -2202,7 +2193,6 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x08ba6304",
         "size": "0x40",
         "segments": [
           {
@@ -2433,7 +2423,6 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x08ba6fb4",
         "size": "0x40",
         "segments": [
           {
@@ -2638,7 +2627,6 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x08ba7d34",
         "size": "0x40",
         "segments": [
           {

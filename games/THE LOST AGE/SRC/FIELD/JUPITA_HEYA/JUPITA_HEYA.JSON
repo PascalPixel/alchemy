@@ -7,7 +7,6 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x08e27d78",
         "size": "0x40",
         "segments": [
           {
@@ -162,7 +161,6 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x08e29134",
         "size": "0x40",
         "segments": [
           {
@@ -328,7 +326,6 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x08e2aa7c",
         "size": "0x40",
         "segments": [
           {
@@ -503,7 +500,6 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x08e2c12c",
         "size": "0x40",
         "segments": [
           {
@@ -686,7 +682,6 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x08e2d9d8",
         "size": "0x40",
         "segments": [
           {
@@ -843,7 +838,6 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x08e2ec80",
         "size": "0x40",
         "segments": [
           {
@@ -1012,7 +1006,6 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x08e20d08",
         "size": "0x40",
         "segments": [
           {
@@ -1171,7 +1164,6 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x08e21558",
         "size": "0x40",
         "segments": [
           {
@@ -1318,7 +1310,6 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x08e30454",
         "size": "0x40",
         "segments": [
           {
@@ -1494,7 +1485,6 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x08e315e8",
         "size": "0x40",
         "segments": [
           {
@@ -1659,7 +1649,6 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x08e32bc4",
         "size": "0x40",
         "segments": [
           {

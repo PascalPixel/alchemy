@@ -66,6 +66,44 @@ pub fn placeholder_block(lines: &[&str], address: i64) -> Option<Placeholder> {
     }
     (span > 0).then_some(Placeholder { start, end, span })
 }
+/// Every `AlchemyC_` placeholder's address and extent, as `placeholder_extent`
+/// reads each; a placeholder spelled twice or without space is left out.
+pub fn placeholder_extents(text: &str) -> BTreeMap<u32, usize> {
+    let lines = text.lines().collect::<Vec<_>>();
+    let mut extents = BTreeMap::new();
+    let mut refused = BTreeSet::new();
+    for (index, line) in lines.iter().enumerate() {
+        let Some(address) = line
+            .trim()
+            .strip_prefix("AlchemyC_")
+            .and_then(|rest| rest.strip_suffix(':'))
+            .and_then(|hex| u32::from_str_radix(hex, 16).ok())
+        else {
+            continue;
+        };
+        let mut span = Some(0i64);
+        for line in lines[index + 1..].iter().map(|line| line.trim()) {
+            if line.starts_with(".space ") {
+                span = span
+                    .zip(space_size(line))
+                    .and_then(|(span, size)| span.checked_add(size));
+            } else if !(line.starts_with(".L_") && line.ends_with(':')) {
+                break;
+            }
+        }
+        match span
+            .filter(|span| *span > 0)
+            .and_then(|span| usize::try_from(span).ok())
+        {
+            Some(span) if extents.insert(address, span).is_none() => {}
+            _ => {
+                refused.insert(address);
+            }
+        }
+    }
+    extents.retain(|address, _| !refused.contains(address));
+    extents
+}
 pub fn placeholder_extent(text: &str, address: u32) -> Option<usize> {
     let lines = text.lines().collect::<Vec<_>>();
     usize::try_from(placeholder_block(&lines, i64::from(address))?.span).ok()

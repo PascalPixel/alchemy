@@ -4,7 +4,6 @@
   "regions": [
     {
       "name": "range_081a8378",
-      "address": "0x081a8378",
       "end": "0x081ac000",
       "format": 1,
       "kind": "typed-table",
@@ -149,7 +148,6 @@
     },
     {
       "name": "range_081ad386",
-      "address": "0x081ad386",
       "end": "0x081b2000",
       "format": 1,
       "kind": "typed-table",
@@ -179,7 +177,6 @@
     },
     {
       "name": "range_081b4888",
-      "address": "0x081b4888",
       "end": "0x081b8000",
       "format": 1,
       "kind": "typed-table",

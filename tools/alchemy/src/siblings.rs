@@ -810,16 +810,24 @@ impl Model<'_> {
         if self.declared.get(&place) == home {
             return None;
         }
-        let extent = self
-            .reviewed
-            .get(&place)
-            .copied()
-            .or_else(|| self.owner(place).map(|found| found.extent))
-            .unwrap_or(length);
+        let image = &self.edition.names[place.0];
         let address = SourceOwner::parse(&self.edition.id(place)).map_or(0, SourceOwner::address);
+        // An overlay's placeholder bounds the member there; only the main
+        // image declares an extent.
+        let extent = match image.as_str() {
+            "main" => {
+                let extent = self
+                    .reviewed
+                    .get(&place)
+                    .copied()
+                    .or_else(|| self.owner(place).map(|found| found.extent))
+                    .unwrap_or(length);
+                format!(",\"extent\":{extent}")
+            }
+            _ => String::new(),
+        };
         Some(format!(
-            "{unit} instances.{}.owners.{name}={{\"address\":\"0x{address:08x}\",\"extent\":{extent}}}",
-            self.edition.names[place.0]
+            "{unit} instances.{image}.owners.{name}={{\"address\":\"0x{address:08x}\"{extent}}}"
         ))
     }
 
@@ -1735,7 +1743,7 @@ mod tests {
         let alone = json!({
             "id": "alone", "source": "games/THE BROKEN SEAL/SRC/FIELD/ALONE.C",
             "overlay": "resource_394",
-            "owners": [{"address": "0x02000100", "extent": 4, "state": "exact-c"}]
+            "owners": [{"address": "0x02000100"}]
         });
         repository.units(json!([staged_actor(), alone]));
         let units = TranslationUnits::declared(root).unwrap();
@@ -1775,7 +1783,7 @@ mod tests {
         let exact = build(&edition, &[((2, TWIN), 20, true, member)]);
         let error = exact.guard(&[((1, TWIN), 20)]).unwrap_err();
         assert!(
-            error.contains(r#"R2: resource_380:02000100 and exact twin resource_381:02000100 would be two sources; needs staged-actor instances.resource_380.owners.Twin={"address":"0x02000100","extent":20}"#),
+            error.contains(r#"R2: resource_380:02000100 and exact twin resource_381:02000100 would be two sources; needs staged-actor instances.resource_380.owners.Twin={"address":"0x02000100"}"#),
             "{error}"
         );
     }

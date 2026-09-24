@@ -19602,16 +19602,16 @@
           "address": "0x0200a41c",
           "kind": "thumb"
         },
-        "Func_0200157c": {
+        "FieldScene_RunStagedActorScene": {
+          "address": "0x02008614",
+          "kind": "thumb"
+        },
+        "FieldScene_SetupStagedActors": {
           "address": "0x02008150",
           "kind": "thumb"
         },
         "Func_0200181c": {
           "address": "0x020096dc",
-          "kind": "thumb"
-        },
-        "Func_02001a82": {
-          "address": "0x02008614",
           "kind": "thumb"
         },
         "Func_0200252c": {

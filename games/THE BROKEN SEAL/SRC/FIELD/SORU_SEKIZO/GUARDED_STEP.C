@@ -37,8 +37,6 @@ void Func_0200339c(struct Ent *, s32);
 u16 *Func_02003456(s32);
 u16 *Func_02003472(s32);
 void Func_0200349c();
-void Func_0200157c();
-void Func_02001a82();
 void Func_0200252c();
 s32 Func_020034ee();
 u8 *Func_02003506();
@@ -446,7 +444,7 @@ s32 Func_0200105c(void)
             Actor_SetPosition(1, 0, 0);
             Actor_SetPosition(5, 0, 0);
         } else if (GameFlag_IsSet(0x109) == 0) {
-            Func_0200157c();
+            FieldScene_SetupStagedActors();
             GameFlag_Set(0x30a);
         }
     }
@@ -455,7 +453,7 @@ s32 Func_0200105c(void)
             Actor_SetPosition(1, 0, 0);
             Actor_SetPosition(5, 0, 0);
         } else if (GameFlag_IsSet(0x109) == 0) {
-            Func_02001a82();
+            FieldScene_RunStagedActorScene();
             GameFlag_Set(0x30b);
         }
     }

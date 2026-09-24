@@ -12571,10 +12571,6 @@
           "address": "0x02008eec",
           "kind": "thumb"
         },
-        "Func_020016a4": {
-          "address": "0x02009254",
-          "kind": "thumb"
-        },
         "Func_020016d6": {
           "address": "0x020092d4",
           "kind": "thumb"
@@ -12593,18 +12589,6 @@
         },
         "Func_02001888": {
           "address": "0x020092dc",
-          "kind": "thumb"
-        },
-        "Func_02002064": {
-          "address": "0x02009214",
-          "kind": "thumb"
-        },
-        "Func_02002094": {
-          "address": "0x02009214",
-          "kind": "thumb"
-        },
-        "Func_020020c4": {
-          "address": "0x02009214",
           "kind": "thumb"
         },
         "gEventWork": {

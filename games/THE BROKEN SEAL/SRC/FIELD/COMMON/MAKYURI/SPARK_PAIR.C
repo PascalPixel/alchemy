@@ -1,6 +1,3 @@
-/* NONMATCHING: 200 of 208 bytes, 29 halfword edits (2026-09-24). Hand-written from the
- * resolved jump-table disassembly as a single-overlay unit binding Engine_* at
- * their import veneers. Remaining: instructions match; the reference loads the first flags zero from a pool it dumps mid-function (after the second ObjectSetScript) while this draft pools at the end, and one byte store is scheduled before str r7,[r5,#104]. Twin of resource_39b:02001df8 (29 edits). */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
@@ -27,10 +24,13 @@ struct EventSpawns {
 };
 
 extern union GameStateRows Data_02000240_t;
-extern u8 Data_00000000[];
 extern s32 MakyuriHeya_SparkScript[];
 
-void Local_02005388(void)
+/* Spawns the two sparks at the event's spawn point, one on each sprite layer, and plays their cue. */
+/* Spawns the two sparks at the event's spawn point, one on each sprite layer, and plays their cue. */
+/* Spawns the two sparks at the event's spawn point, one on each sprite layer, and plays their cue. */
+/* Spawns the two sparks at the event's spawn point, one on each sprite layer, and plays their cue. */
+void MakyuriHeya_SpawnSparkPair(void)
 {
     struct SpawnPoint *point;
     struct FieldActor *spark;
@@ -47,7 +47,7 @@ void Local_02005388(void)
         *(struct SpawnPoint **)&spark->unknown_68 = point;
         if (sprite != NULL) {
             Main_08009020(sprite, 2);
-            sprite->flags = (u32)Data_00000000;
+            sprite->flags = 0;
             sprite->priority = 1;
         }
     }
@@ -58,11 +58,11 @@ void Local_02005388(void)
         Engine_ObjectSetScript(spark, MakyuriHeya_SparkScript);
         spark->motion_flags = 0;
         spark->unknown_64 = 0;
-        spark->priority_flags = 2;
         *(struct SpawnPoint **)&spark->unknown_68 = point;
+        spark->priority_flags = 2;
         if (sprite != NULL) {
             Main_08009020(sprite, 1);
-            sprite->flags = (u32)Data_00000000;
+            sprite->flags = 0;
         }
     }
     Engine_AudioPlayCue(130);

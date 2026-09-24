@@ -1,6 +1,3 @@
-/* NONMATCHING: 378 of 378 bytes, 3 halfword edits (2026-09-24). Hand-written from the
- * resolved jump-table disassembly as a single-overlay unit binding Engine_* at
- * their import veneers. Remaining: the QImode zero from the pool (its 32-byte pool range forces the mid-function pool) lands in r6 as in the reference only when assigned before Engine_ActorGet(11), and then its load stays before that call; the reference loads it right after the call (3 halfwords). */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
@@ -13,7 +10,6 @@ union GameStateRows {
 };
 
 extern union GameStateRows Data_02000240_t;
-extern u8 Data_00000000[];
 
 /* The sprite's attribute bytes as the scene scripts write them. */
 struct SpriteBytes {
@@ -42,7 +38,8 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
     f(a0, a1, a2, a3, a4, a5);
 }
 
-void Local_02000958(void)
+/* Places the flagged actors: the guards and posts moved by flags 0x8aa and 0x8ab, and the cells opened by flag 0x950. */
+void FieldScene_ConfigureFlaggedActors(void)
 {
     struct FieldActor *actor;
     u8 zero;
@@ -75,13 +72,10 @@ void Local_02000958(void)
         actor->priority_flags = ACTOR_PRIORITY_UNDERFOOT;
         ((u8 *)actor->sprite)[9] |= 12;
         ((u8 *)actor->sprite)[38] = 0;
-        zero = (u32)Data_00000000;
+        zero = 0;
         ((struct SpriteBytes *)actor->sprite)->rotation = 0xc000;
         actor = Engine_ActorGet(11);
-        {
-
-            actor->priority_flags = zero;
-        }
+        actor->priority_flags = zero;
         ((u8 *)actor->sprite)[9] |= 12;
         ((u8 *)actor->sprite)[21] |= 12;
     }

@@ -1,6 +1,18 @@
 {
   "format": 3,
   "owners": {
+    "resource_39c:02005388": {
+      "name": "MakyuriHeya_SpawnSparkPair",
+      "source": "FIELD/COMMON/MAKYURI/SPARK_PAIR.C"
+    },
+    "resource_3a4:02002804": {
+      "name": "ArutinYama_PlaceFlaggedActors",
+      "source": "FIELD/ARUTIN_YAMA/FLAGGED_ACTORS.C"
+    },
+    "resource_38d:020021bc": {
+      "name": "BiribinoKyuden_RunActorRowScene",
+      "source": "FIELD/BIRIBINO_KYUDEN/ACTOR_ROW_SCENE.C"
+    },
     "resource_3c4:02000f4c": {
       "name": "BabiChika_UpdateFlickerEffect",
       "source": "FIELD/BABI_CHIKA/FLICKER_EFFECT.C"
@@ -13857,7 +13869,8 @@
       "source": "FIELD/KAREI_MACHI/STAGED_GROUP.C"
     },
     "resource_3ae:02000958": {
-      "name": "FieldScene_ConfigureFlaggedActors"
+      "name": "FieldScene_ConfigureFlaggedActors",
+      "source": "FIELD/COMMON/KAREI_TOREBI/FLAGGED_ACTORS.C"
     },
     "resource_3ae:02000328": {
       "name": "SceneDialogue_RunActor12Event",
@@ -20483,6 +20496,10 @@
     "resource_3a8:02001f14": {
       "name": "KareiMachi_AlternateDance",
       "source": "FIELD/KAREI_MACHI/DANCE_ALTERNATION.C"
+    },
+    "resource_39b:02001df8": {
+      "name": "MakyuriHeya_SpawnSparkPair",
+      "source": "FIELD/COMMON/MAKYURI/SPARK_PAIR.C"
     }
   },
   "symbols": {

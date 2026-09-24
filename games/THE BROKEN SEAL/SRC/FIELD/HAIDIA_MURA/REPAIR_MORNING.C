@@ -3,15 +3,23 @@
 #include "FIELD_SCENE.H"
 
 /*
- * Outside the protagonist's house in Vale. He boards up three holes in the
- * wall while his mother watches, then she talks with him about his father
+ * Outside Robin's house in Vale. He boards up three holes in the wall
+ * while his mother Dora watches, then she talks with him about his father
  * until Gerald and Jasmine arrive to fetch him for the trip to Mt. Aleph with
  * Sukureta.
  */
 
+enum HouseMessage {
+    MSG_DORA_GOOD_JOB = 0xf03,
+    MSG_DORA_STUDYING_PSYNERGY_TO_THE_BONE = 0xf0a,
+    MSG_DORA_DEVASTATED_WHEN_KYLE_DIED = 0xf0e,
+    MSG_AS_STUBBORN_AS_YOUR_FATHER = 0xf27
+};
+
 enum HouseActor {
     ACTOR_JASMINE = 5,
-    ACTOR_MOTHER = 21,
+    /* Robin's mother; the villagers call her Dora. */
+    ACTOR_DORA = 21,
     ACTOR_BOARD = 23,
     ACTOR_LAST_BOARD = 24
 };
@@ -57,11 +65,11 @@ void HouseScene_RunRepairMorning(void)
     leader_motion_flags = *leader_motion;
     *leader_motion = 0;
     Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(407), PIXELS(690));
-    Actor_SetPosition(ACTOR_MOTHER, PIXELS(392), PIXELS(896));
+    Actor_SetPosition(ACTOR_DORA, PIXELS(392), PIXELS(896));
     Actor_SetPosition(ACTOR_GERALD, PIXELS(298), PIXELS(736));
     Actor_SetPosition(ACTOR_JASMINE, PIXELS(298), PIXELS(760));
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-    Actor_FaceDirection(ACTOR_MOTHER, FACING_NORTH, 0);
+    Actor_FaceDirection(ACTOR_DORA, FACING_NORTH, 0);
     Actor_FaceDirection(ACTOR_GERALD, FACING_WEST, 0);
     Actor_FaceDirection(ACTOR_JASMINE, FACING_WEST, 0);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_HAMMER);
@@ -144,7 +152,7 @@ void HouseScene_RunRepairMorning(void)
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
     Event_Wait(20);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 360, 855);
-    Actor_FaceDirection(ACTOR_MOTHER, FACING_NORTHWEST + FACING_STEP, 10);
+    Actor_FaceDirection(ACTOR_DORA, FACING_NORTHWEST + FACING_STEP, 10);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 30);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH + FACING_STEP, 20);
     Actor_SetChildValue(ACTOR_PARTY_LEADER, 2);
@@ -167,85 +175,85 @@ void HouseScene_RunRepairMorning(void)
     leader->scale_y = 0x10000;
 
     /* His mother praises the work and talks about his father. */
-    Event_SetMessage(0xf03);
-    Actor_Jump(ACTOR_MOTHER, 2, 20);
-    Event_ShowMessageAndWait(ACTOR_MOTHER, 0, 20);
+    Event_SetMessage(MSG_DORA_GOOD_JOB);
+    Actor_Jump(ACTOR_DORA, 2, 20);
+    Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_STEP, 20);
-    HouseScene_ClimbUp(ACTOR_MOTHER, 5, 6, 0);
-    Actor_SetSpeed(ACTOR_MOTHER, 0x4ccc, 0x2666);
-    Actor_WalkToAndWait(ACTOR_MOTHER, 397, 832);
+    HouseScene_ClimbUp(ACTOR_DORA, 5, 6, 0);
+    Actor_SetSpeed(ACTOR_DORA, 0x4ccc, 0x2666);
+    Actor_WalkToAndWait(ACTOR_DORA, 397, 832);
     Event_Wait(20);
-    Actor_FaceDirection(ACTOR_MOTHER, FACING_SOUTH, 60);
-    Actor_FaceDirection(ACTOR_MOTHER, FACING_NORTH, 60);
-    Actor_SetAnimationAndWait(ACTOR_MOTHER, ANIM_NOD);
-    Actor_SetAnimationAndWait(ACTOR_MOTHER, ANIM_NOD);
+    Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH, 60);
+    Actor_FaceDirection(ACTOR_DORA, FACING_NORTH, 60);
+    Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
+    Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
     Event_Wait(10);
-    Event_ShowMessageAndWait(ACTOR_MOTHER, 0, 20);
-    Actor_WalkToAndWait(ACTOR_MOTHER, 372, 832);
+    Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
+    Actor_WalkToAndWait(ACTOR_DORA, 372, 832);
     Event_Wait(20);
-    Actor_FaceDirection(ACTOR_MOTHER, FACING_SOUTH, 40);
-    Actor_FaceDirection(ACTOR_MOTHER, FACING_WEST, 40);
-    Actor_SetAnimationAndWait(ACTOR_MOTHER, ANIM_NOD);
-    Actor_SetAnimationAndWait(ACTOR_MOTHER, ANIM_NOD);
+    Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH, 40);
+    Actor_FaceDirection(ACTOR_DORA, FACING_WEST, 40);
+    Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
+    Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
     Event_Wait(10);
-    Event_ShowMessageAndWait(ACTOR_MOTHER, 0, 20);
-    Actor_FaceDirection(ACTOR_MOTHER, FACING_SOUTH + FACING_STEP, 30);
-    Actor_SetAnimationAndWait(ACTOR_MOTHER, ANIM_NOD);
+    Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
+    Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH + FACING_STEP, 30);
+    Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
     Event_Wait(10);
-    Event_ShowMessageAndWait(ACTOR_MOTHER, 0, 20);
+    Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
     Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
     Event_Wait(40);
-    Actor_SetAnimationAndWait(ACTOR_MOTHER, ANIM_SHAKE_HEAD);
+    Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_SHAKE_HEAD);
     Event_Wait(20);
-    Event_OpenMessage(ACTOR_MOTHER, 0);
+    Event_OpenMessage(ACTOR_DORA, 0);
     if (Event_ChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0) {
         gEventWork->message++;
     }
-    Actor_SetAnimationAndWait(ACTOR_MOTHER, ANIM_SHAKE_HEAD);
+    Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_SHAKE_HEAD);
     Event_Wait(20);
-    Event_ShowMessageAndWait(ACTOR_MOTHER, 0, 20);
-    Event_SetMessage(0xf0a);
-    Actor_WalkToAndWait(ACTOR_MOTHER, 386, 841);
+    Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
+    Event_SetMessage(MSG_DORA_STUDYING_PSYNERGY_TO_THE_BONE);
+    Actor_WalkToAndWait(ACTOR_DORA, 386, 841);
     Event_Wait(10);
-    Actor_FaceDirection(ACTOR_MOTHER, FACING_NORTH + FACING_STEP, 60);
-    Actor_RunRepeatedMotion(ACTOR_MOTHER, 2);
+    Actor_FaceDirection(ACTOR_DORA, FACING_NORTH + FACING_STEP, 60);
+    Actor_RunRepeatedMotion(ACTOR_DORA, 2);
     Event_Wait(20);
-    Event_ShowMessageAndWait(ACTOR_MOTHER, 0, 20);
-    Actor_FaceDirection(ACTOR_MOTHER, FACING_SOUTH + FACING_STEP, 30);
-    Event_OpenMessage(ACTOR_MOTHER, 0);
+    Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
+    Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH + FACING_STEP, 30);
+    Event_OpenMessage(ACTOR_DORA, 0);
     if (Event_ChooseYesNo(ACTOR_PARTY_LEADER, 0) == 1) {
         gEventWork->message++;
     }
     Event_Wait(20);
-    Event_ShowMessageAndWait(ACTOR_MOTHER, 0, 20);
-    Actor_FaceDirection(ACTOR_MOTHER, FACING_NORTH + FACING_STEP, 60);
-    Actor_RunRepeatedMotion(ACTOR_MOTHER, 2);
+    Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
+    Actor_FaceDirection(ACTOR_DORA, FACING_NORTH + FACING_STEP, 60);
+    Actor_RunRepeatedMotion(ACTOR_DORA, 2);
     Event_Wait(20);
-    Event_SetMessage(0xf0e);
-    Event_ShowMessageAndWait(ACTOR_MOTHER, 0, 20);
-    Actor_WalkToAndWait(ACTOR_MOTHER, 386, 825);
+    Event_SetMessage(MSG_DORA_DEVASTATED_WHEN_KYLE_DIED);
+    Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
+    Actor_WalkToAndWait(ACTOR_DORA, 386, 825);
     Event_Wait(10);
-    Actor_SetAnimationAndWait(ACTOR_MOTHER, ANIM_SHAKE_HEAD);
+    Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_SHAKE_HEAD);
     Event_Wait(60);
-    Event_ShowMessageAndWait(ACTOR_MOTHER, 0, 60);
-    Actor_FaceDirection(ACTOR_MOTHER, FACING_SOUTH + FACING_STEP, 10);
-    Event_ShowMessageAndWait(ACTOR_MOTHER, 0, 20);
-    Actor_WalkToAndWait(ACTOR_MOTHER, 372, 832);
-    Actor_FaceDirection(ACTOR_MOTHER, FACING_SOUTH + FACING_STEP, 20);
+    Event_ShowMessageAndWait(ACTOR_DORA, 0, 60);
+    Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH + FACING_STEP, 10);
+    Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
+    Actor_WalkToAndWait(ACTOR_DORA, 372, 832);
+    Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH + FACING_STEP, 20);
     Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
     Event_Wait(20);
-    Actor_SetAnimationAndWait(ACTOR_MOTHER, ANIM_NOD);
+    Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
     Event_Wait(20);
-    Event_ShowMessageAndWait(ACTOR_MOTHER, 0, 20);
+    Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 60);
-    Actor_RunRepeatedMotion(ACTOR_MOTHER, 2);
+    Actor_RunRepeatedMotion(ACTOR_DORA, 2);
     Event_Wait(20);
-    Event_ShowMessageAndWait(ACTOR_MOTHER, 0, 20);
+    Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
     Event_Wait(30);
-    Actor_SetAnimationAndWait(ACTOR_MOTHER, ANIM_NOD);
+    Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
     Event_Wait(20);
-    Event_ShowMessageAndWait(ACTOR_MOTHER, 0, 10);
+    Event_ShowMessageAndWait(ACTOR_DORA, 0, 10);
 
     /* Gerald and Jasmine arrive. */
     Camera_SetSpeed(0x6666, 0xccc);
@@ -258,25 +266,25 @@ void HouseScene_RunRepairMorning(void)
     HouseScene_ClimbUp(ACTOR_JASMINE, 10, 11, 0);
     Actor_FaceDirection(ACTOR_JASMINE, FACING_NORTHWEST, 0);
     Event_ShowMessageAndWait(ACTOR_JASMINE, 0, 10);
-    Actor_RunRepeatedMotion(ACTOR_MOTHER, 2);
+    Actor_RunRepeatedMotion(ACTOR_DORA, 2);
     Event_Wait(10);
-    Actor_FaceDirection(ACTOR_MOTHER, FACING_SOUTHEAST + FACING_STEP, 0);
+    Actor_FaceDirection(ACTOR_DORA, FACING_SOUTHEAST + FACING_STEP, 0);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_STEP, 30);
     Actor_Jump(ACTOR_JASMINE, 4, 0);
     Actor_WalkToAndWait(ACTOR_JASMINE, 392, 843);
     Actor_FaceDirection(ACTOR_JASMINE, FACING_WEST + FACING_STEP, 0);
-    Actor_FaceDirection(ACTOR_MOTHER, FACING_SOUTHEAST + FACING_STEP, 0);
+    Actor_FaceDirection(ACTOR_DORA, FACING_SOUTHEAST + FACING_STEP, 0);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH + FACING_STEP, 40);
-    Actor_SetAnimationAndWait(ACTOR_MOTHER, ANIM_NOD);
+    Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
     Event_Wait(20);
-    Event_ShowMessageAndWait(ACTOR_MOTHER, 0, 20);
+    Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
     Actor_SetAnimationAndWait(ACTOR_JASMINE, ANIM_NOD);
     Event_Wait(20);
     Event_ShowMessageAndWait(ACTOR_JASMINE, 0, 20);
-    Actor_SetAnimation(ACTOR_MOTHER, ANIM_NOD);
+    Actor_SetAnimation(ACTOR_DORA, ANIM_NOD);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
     Event_Wait(20);
-    Event_ShowMessageAndWait(ACTOR_MOTHER, 0, 20);
+    Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
     HouseScene_ClimbUp(ACTOR_GERALD, 10, 11, 0);
     Actor_SetSpeed(ACTOR_JASMINE, 0x4ccc, 0x2666);
     Actor_SetSpeed(ACTOR_GERALD, 0x4ccc, 0x2666);
@@ -289,106 +297,106 @@ void HouseScene_RunRepairMorning(void)
     Actor_WaitForMove(ACTOR_GERALD);
     Actor_SetAnimation(ACTOR_GERALD, ANIM_STAND);
     Actor_FaceDirection(ACTOR_GERALD, FACING_WEST, 30);
-    Actor_Jump(ACTOR_MOTHER, 4, 30);
-    Event_ShowMessageAndWait(ACTOR_MOTHER, 0, 20);
+    Actor_Jump(ACTOR_DORA, 4, 30);
+    Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
     Actor_SetAnimationAndWait(ACTOR_GERALD, ANIM_NOD);
     Event_Wait(30);
-    Actor_FaceDirection(ACTOR_MOTHER, FACING_SOUTH + FACING_STEP, 30);
-    Event_ShowMessageAndWait(ACTOR_MOTHER, 0, 20);
+    Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH + FACING_STEP, 30);
+    Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH + FACING_STEP, 0);
     Actor_Jump(ACTOR_PARTY_LEADER, 2, 30);
     Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2);
     Event_Wait(60);
-    Actor_FaceDirection(ACTOR_MOTHER, FACING_SOUTHEAST + FACING_STEP, 40);
+    Actor_FaceDirection(ACTOR_DORA, FACING_SOUTHEAST + FACING_STEP, 40);
     Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
     Event_ShowMessageAndWait(ACTOR_GERALD, 0, 20);
-    Actor_ShowEmote(ACTOR_MOTHER, EMOTE_IN_FRONT | 1, 80);
-    Actor_FaceDirection(ACTOR_MOTHER, FACING_SOUTH + FACING_STEP, 30);
+    Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | 1, 80);
+    Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH + FACING_STEP, 30);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 80);
-    Actor_FaceDirection(ACTOR_MOTHER, FACING_SOUTHEAST + FACING_STEP, 0);
+    Actor_FaceDirection(ACTOR_DORA, FACING_SOUTHEAST + FACING_STEP, 0);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH + FACING_STEP, 40);
-    Event_ShowMessageAndWait(ACTOR_MOTHER, 0, 20);
+    Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
     Actor_SetAnimationAndWait(ACTOR_GERALD, ANIM_NOD);
     Event_Wait(100);
     Actor_FaceEachOther(ACTOR_JASMINE, ACTOR_GERALD, 30);
     Actor_StartRepeatedMotion(ACTOR_GERALD, 2);
     Actor_RunRepeatedMotion(ACTOR_JASMINE, 2);
     Event_Wait(10);
-    Actor_ShowEmote(ACTOR_MOTHER, EMOTE_IN_FRONT | 5, 60);
-    Event_ShowMessageAndWait(ACTOR_MOTHER, 0, 20);
+    Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | 5, 60);
+    Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
     Actor_FaceDirection(ACTOR_JASMINE, FACING_WEST, 0);
     Actor_FaceDirection(ACTOR_GERALD, FACING_WEST, 30);
     Actor_RunRepeatedMotion(ACTOR_JASMINE, 2);
     Event_Wait(30);
     Event_ShowMessageAndWait(ACTOR_JASMINE, 0, 20);
-    Actor_StartRepeatedMotion(ACTOR_MOTHER, 2);
+    Actor_StartRepeatedMotion(ACTOR_DORA, 2);
     Event_Wait(30);
-    Event_ShowMessageAndWait(ACTOR_MOTHER, 0, 20);
+    Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
     Actor_SetAnimation(ACTOR_GERALD, ANIM_NOD);
     Actor_SetAnimationAndWait(ACTOR_JASMINE, ANIM_NOD);
     Event_Wait(30);
-    Actor_SetAnimationAndWait(ACTOR_MOTHER, ANIM_SHAKE_HEAD);
+    Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_SHAKE_HEAD);
     Event_Wait(20);
-    Event_ShowMessageAndWait(ACTOR_MOTHER, 0, 20);
+    Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
     Actor_SetAnimation(ACTOR_GERALD, ANIM_NOD);
     Actor_SetAnimationAndWait(ACTOR_JASMINE, ANIM_NOD);
     Event_Wait(10);
-    Actor_SetAnimationAndWait(ACTOR_MOTHER, ANIM_NOD);
+    Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
     Event_Wait(20);
-    Event_ShowMessageAndWait(ACTOR_MOTHER, 0, 20);
+    Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
     Actor_SetAnimation(ACTOR_GERALD, ANIM_NOD);
     Actor_SetAnimationAndWait(ACTOR_JASMINE, ANIM_NOD);
     Event_Wait(10);
-    Actor_RunRepeatedMotion(ACTOR_MOTHER, 2);
+    Actor_RunRepeatedMotion(ACTOR_DORA, 2);
     Event_Wait(30);
-    Event_ShowMessageAndWait(ACTOR_MOTHER, 0, 20);
+    Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
     Camera_SetSpeed(0x9999, 0x1333);
     Camera_MoveTo(PIXELS(373), PIXELS(160), PIXELS(837), 1);
-    Actor_WalkToAndWait(ACTOR_MOTHER, 364, 816);
+    Actor_WalkToAndWait(ACTOR_DORA, 364, 816);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH + FACING_STEP, 0);
-    Actor_FaceDirection(ACTOR_MOTHER, FACING_SOUTHEAST + FACING_STEP, 30);
-    Event_ShowMessageAndWait(ACTOR_MOTHER, 0, 40);
+    Actor_FaceDirection(ACTOR_DORA, FACING_SOUTHEAST + FACING_STEP, 30);
+    Event_ShowMessageAndWait(ACTOR_DORA, 0, 40);
     Actor_FaceEachOther(ACTOR_JASMINE, ACTOR_GERALD, 30);
     Actor_StartRepeatedMotion(ACTOR_GERALD, 2);
     Actor_RunRepeatedMotion(ACTOR_JASMINE, 2);
     Event_Wait(30);
     Actor_FaceDirection(ACTOR_GERALD, FACING_WEST, 0);
     Actor_FaceDirection(ACTOR_JASMINE, FACING_WEST, 30);
-    Actor_FaceDirection(ACTOR_MOTHER, FACING_SOUTH + FACING_STEP, 30);
-    Event_ShowMessageAndWait(ACTOR_MOTHER, 0, 30);
+    Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH + FACING_STEP, 30);
+    Event_ShowMessageAndWait(ACTOR_DORA, 0, 30);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 5, 60);
-    Actor_SetAnimationAndWait(ACTOR_MOTHER, ANIM_SHAKE_HEAD);
+    Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_SHAKE_HEAD);
     Event_Wait(10);
-    Event_OpenMessage(ACTOR_MOTHER, 0);
+    Event_OpenMessage(ACTOR_DORA, 0);
     if (Event_ChooseYesNo(ACTOR_PARTY_LEADER, 0) == 1) {
         gEventWork->message++;
     }
     Event_Wait(40);
-    Event_ShowMessageAndWait(ACTOR_MOTHER, 0, 20);
+    Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
 
     /* She slips from the step; Gerald catches her. */
-    Event_SetMessage(0xf27);
-    Actor_ShowEmote(ACTOR_MOTHER, EMOTE_IN_FRONT | 3, 0);
-    Actor_RunRepeatedMotion(ACTOR_MOTHER, 3);
+    Event_SetMessage(MSG_AS_STUBBORN_AS_YOUR_FATHER);
+    Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | 3, 0);
+    Actor_RunRepeatedMotion(ACTOR_DORA, 3);
     Event_Wait(30);
-    Event_ShowMessageAndWait(ACTOR_MOTHER, 0, 20);
-    Actor_Jump(ACTOR_MOTHER, 4, 0);
-    Actor_RunRepeatedMotion(ACTOR_MOTHER, 3);
-    Actor_SetAnimation(ACTOR_MOTHER, 7);
+    Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
+    Actor_Jump(ACTOR_DORA, 4, 0);
+    Actor_RunRepeatedMotion(ACTOR_DORA, 3);
+    Actor_SetAnimation(ACTOR_DORA, 7);
     Event_Wait(5);
-    Event_ShowTwoMessagesAndWait(ACTOR_MOTHER, 14, 2, 24, 2, ACTOR_GERALD, 10, 14, 4, 14, 0);
-    actor = Actor_Get(ACTOR_MOTHER);
+    Event_ShowTwoMessagesAndWait(ACTOR_DORA, 14, 2, 24, 2, ACTOR_GERALD, 10, 14, 4, 14, 0);
+    actor = Actor_Get(ACTOR_DORA);
     actor->sprite->flags = 0;
     actor->unknown_5a &= 0xfe;
-    Actor_SetSpeed(ACTOR_MOTHER, 0x30000, 0x18000);
-    Actor_WalkToAndWait(ACTOR_MOTHER, 364, 815);
+    Actor_SetSpeed(ACTOR_DORA, 0x30000, 0x18000);
+    Actor_WalkToAndWait(ACTOR_DORA, 364, 815);
     Event_Wait(4);
     for (i = 0; i != 4; i++) {
         actor->z.fixed += 0x18000;
         actor->scale_y -= 0x1999;
         Event_Wait(1);
     }
-    Actor_SetPosition(ACTOR_MOTHER, 0, 0);
+    Actor_SetPosition(ACTOR_DORA, 0, 0);
     Actor_SetSpeed(ACTOR_GERALD, 0x30000, 0x18000);
     Actor_Jump(ACTOR_GERALD, 6, 0);
     Actor_WalkToAndWait(ACTOR_GERALD, 374, 827);
@@ -407,9 +415,9 @@ void HouseScene_RunRepairMorning(void)
     MapRender_SetValues(-1, -1, 0xe666);
     MapRender_WaitForValues();
     Actor_ShowEmote(ACTOR_GERALD, EMOTE_IN_FRONT | 2, 80);
-    Actor_SetAnimation(ACTOR_MOTHER, 8);
+    Actor_SetAnimation(ACTOR_DORA, 8);
     actor->scale_y = 0x8000;
-    Actor_SetPosition(ACTOR_MOTHER, PIXELS(364), PIXELS(811));
+    Actor_SetPosition(ACTOR_DORA, PIXELS(364), PIXELS(811));
     for (i = 0; i != 5; i++) {
         actor->scale_y += 0x1999;
         Event_Wait(1);
@@ -420,26 +428,26 @@ void HouseScene_RunRepairMorning(void)
     Actor_StartRepeatedMotion(ACTOR_GERALD, 2);
     Actor_RunRepeatedMotion(ACTOR_JASMINE, 2);
     Event_Wait(60);
-    Actor_RunRepeatedMotion(ACTOR_MOTHER, 2);
+    Actor_RunRepeatedMotion(ACTOR_DORA, 2);
     Event_Wait(20);
-    Event_ShowMessageAndWait(ACTOR_MOTHER, 0, 20);
+    Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
     Camera_SetSpeed(0x4ccc, 0x999);
     Camera_MoveTo(PIXELS(372), PIXELS(160), PIXELS(859), 1);
-    Actor_SetSpeed(ACTOR_MOTHER, 0x30000, 0x18000);
-    Actor_Jump(ACTOR_MOTHER, 6, 0);
-    Actor_WalkToAndWait(ACTOR_MOTHER, 359, 835);
+    Actor_SetSpeed(ACTOR_DORA, 0x30000, 0x18000);
+    Actor_Jump(ACTOR_DORA, 6, 0);
+    Actor_WalkToAndWait(ACTOR_DORA, 359, 835);
     Event_Wait(30);
-    Actor_FaceDirection(ACTOR_MOTHER, FACING_SOUTH, 30);
-    Actor_RunRepeatedMotion(ACTOR_MOTHER, 2);
+    Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH, 30);
+    Actor_RunRepeatedMotion(ACTOR_DORA, 2);
     Event_Wait(30);
-    actor = Actor_Get(ACTOR_MOTHER);
+    actor = Actor_Get(ACTOR_DORA);
     actor->priority_flags &= ~ACTOR_PRIORITY_AUTOMATIC;
-    Event_ShowMessageAndWait(ACTOR_MOTHER, 0, 80);
-    Actor_ShowEmote(ACTOR_MOTHER, EMOTE_IN_FRONT | 1, 80);
-    Actor_FaceDirection(ACTOR_MOTHER, FACING_EAST, 60);
-    Actor_RunRepeatedMotion(ACTOR_MOTHER, 3);
-    Event_ShowMessageAndWait(ACTOR_MOTHER, 0, 20);
-    Actor_SetAttachedEffect(ACTOR_MOTHER, EMOTE_IN_FRONT | 2);
+    Event_ShowMessageAndWait(ACTOR_DORA, 0, 80);
+    Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | 1, 80);
+    Actor_FaceDirection(ACTOR_DORA, FACING_EAST, 60);
+    Actor_RunRepeatedMotion(ACTOR_DORA, 3);
+    Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
+    Actor_SetAttachedEffect(ACTOR_DORA, EMOTE_IN_FRONT | 2);
     Event_Wait(80);
     Actor_FaceDirection(ACTOR_GERALD, FACING_SOUTH + FACING_STEP, 30);
     Actor_ShowEmote(ACTOR_GERALD, EMOTE_IN_FRONT | 2, 80);
@@ -477,7 +485,7 @@ void HouseScene_RunRepairMorning(void)
     Actor_WalkToAndWait(ACTOR_JASMINE, 408, 855);
     Event_Wait(60);
     Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
-    Actor_ShowEmote(ACTOR_MOTHER, EMOTE_IN_FRONT | 5, 60);
+    Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | 5, 60);
     Actor_StartRepeatedMotion(ACTOR_JASMINE, 3);
     Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 3);
     Event_Wait(80);
@@ -486,59 +494,59 @@ void HouseScene_RunRepairMorning(void)
     Event_Wait(10);
     Actor_SetAnimationAndWait(ACTOR_JASMINE, ANIM_SHAKE_HEAD);
     Event_Wait(80);
-    Actor_SetAnimationAndWait(ACTOR_MOTHER, ANIM_NOD);
+    Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
     Event_Wait(10);
-    Event_ShowMessageAndWait(ACTOR_MOTHER, 0, 20);
+    Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
     Actor_FaceDirection(ACTOR_JASMINE, FACING_NORTHWEST + FACING_STEP, 0);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-    Actor_FaceDirection(ACTOR_MOTHER, FACING_EAST, 60);
-    Actor_FaceDirection(ACTOR_MOTHER, FACING_SOUTH, 60);
-    Actor_SetAnimationAndWait(ACTOR_MOTHER, ANIM_SHAKE_HEAD);
+    Actor_FaceDirection(ACTOR_DORA, FACING_EAST, 60);
+    Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH, 60);
+    Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_SHAKE_HEAD);
     Event_Wait(60);
-    Actor_FaceDirection(ACTOR_MOTHER, FACING_EAST, 80);
-    Actor_ShowEmote(ACTOR_MOTHER, EMOTE_IN_FRONT | 5, 80);
-    Event_ShowMessageAndWait(ACTOR_MOTHER, 0, 60);
+    Actor_FaceDirection(ACTOR_DORA, FACING_EAST, 80);
+    Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | 5, 80);
+    Event_ShowMessageAndWait(ACTOR_DORA, 0, 60);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1, 0);
     Actor_ShowEmote(ACTOR_JASMINE, EMOTE_IN_FRONT | 1, 0);
     Actor_ShowEmote(ACTOR_GERALD, EMOTE_IN_FRONT | 1, 60);
-    Actor_SetAnimationAndWait(ACTOR_MOTHER, ANIM_SHAKE_HEAD);
+    Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_SHAKE_HEAD);
     Event_Wait(30);
-    Event_ShowMessageAndWait(ACTOR_MOTHER, 0, 70);
+    Event_ShowMessageAndWait(ACTOR_DORA, 0, 70);
     Actor_StartRepeatedMotion(ACTOR_GERALD, 2);
     Actor_RunRepeatedMotion(ACTOR_JASMINE, 2);
     Event_Wait(20);
     Actor_FaceDirection(ACTOR_JASMINE, FACING_WEST, 60);
-    Actor_FaceDirection(ACTOR_MOTHER, FACING_SOUTH, 30);
-    Event_ShowMessageAndWait(ACTOR_MOTHER, 0, 30);
+    Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH, 30);
+    Event_ShowMessageAndWait(ACTOR_DORA, 0, 30);
     Actor_SetAnimationAndWait(ACTOR_JASMINE, ANIM_NOD);
     Event_Wait(10);
     Event_ShowMessageAndWait(ACTOR_JASMINE, 0, 20);
-    Actor_FaceDirection(ACTOR_MOTHER, FACING_EAST, 30);
-    Actor_SetAnimationAndWait(ACTOR_MOTHER, ANIM_SHAKE_HEAD);
+    Actor_FaceDirection(ACTOR_DORA, FACING_EAST, 30);
+    Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_SHAKE_HEAD);
     Event_Wait(20);
-    Event_ShowMessageAndWait(ACTOR_MOTHER, 0, 20);
+    Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
     Actor_SetAnimationAndWait(ACTOR_JASMINE, ANIM_NOD);
     Event_Wait(20);
     Actor_RunRepeatedMotion(ACTOR_GERALD, 3);
     Event_Wait(10);
     Event_ShowMessageAndWait(ACTOR_GERALD, 0, 20);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH + FACING_STEP, 0);
-    Actor_ShowEmote(ACTOR_MOTHER, EMOTE_IN_FRONT | 0, 0);
-    Actor_RunRepeatedMotion(ACTOR_MOTHER, 3);
+    Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | 0, 0);
+    Actor_RunRepeatedMotion(ACTOR_DORA, 3);
     Event_Wait(30);
-    Event_ShowMessageAndWait(ACTOR_MOTHER, 0, 60);
+    Event_ShowMessageAndWait(ACTOR_DORA, 0, 60);
     Actor_RunRepeatedMotion(ACTOR_GERALD, 3);
     Actor_SetSpeed(ACTOR_GERALD, 0x10000, 0x8000);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_GERALD), 0);
     Actor_Jump(ACTOR_GERALD, 4, 0);
     Actor_WalkToAndWait(ACTOR_GERALD, 398, 828);
     Event_Wait(60);
-    Actor_FaceDirection(ACTOR_MOTHER, FACING_SOUTH, 0);
+    Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH, 0);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 60);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
     Event_Wait(60);
-    Actor_SetAnimationAndWait(ACTOR_MOTHER, ANIM_NOD);
+    Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
     Event_Wait(60);
 
     /* The three set off together. */
@@ -567,12 +575,12 @@ void HouseScene_RunRepairMorning(void)
     HouseScene_ClimbDown(ACTOR_PARTY_LEADER, 13, 10, 0);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 376, 912);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-    Actor_Get(ACTOR_MOTHER)->unknown_5a |= 1;
-    HouseScene_ClimbDown(ACTOR_MOTHER, 6, 5, 0);
-    Actor_WalkToAndWait(ACTOR_MOTHER, 373, 887);
-    Actor_FaceDirection(ACTOR_MOTHER, FACING_SOUTH, 0);
+    Actor_Get(ACTOR_DORA)->unknown_5a |= 1;
+    HouseScene_ClimbDown(ACTOR_DORA, 6, 5, 0);
+    Actor_WalkToAndWait(ACTOR_DORA, 373, 887);
+    Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH, 0);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 40);
-    Actor_SetAnimation(ACTOR_MOTHER, ANIM_NOD);
+    Actor_SetAnimation(ACTOR_DORA, ANIM_NOD);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
     Event_Wait(20);
     Camera_FollowActor(ACTOR_PARTY_LEADER, 1);

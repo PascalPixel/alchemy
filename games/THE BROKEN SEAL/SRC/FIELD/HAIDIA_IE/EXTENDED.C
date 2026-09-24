@@ -259,7 +259,7 @@ void *SceneData_SelectTableByFlags834And87a(void)
     return Data_0200b170;
 }
 
-void FieldScene_RunSequence111F(void)
+void Scene_CheckPsynergyStone(void)
 {
     Event_Begin();
     Message_ShowCentered(MSG_CHECKED_THE_PSYNERGY_STONE, 1);
@@ -289,7 +289,7 @@ void *SceneData_SelectTableByFlags87a_815_834(void)
     return Data_0200b938;
 }
 
-void SceneDialogue_RunActor23Line(void)
+void Villager_AskAboutMeditation(void)
 {
     Event_Begin();
     Event_SetMessage(MSG_MEDITATE_ON_MT_ALEPH_DAILY);
@@ -298,7 +298,7 @@ void SceneDialogue_RunActor23Line(void)
     Event_End();
 }
 
-void SceneDialogue_ShowLineF3F(void)
+void Villager_RecallThreeYearsAgo(void)
 {
     Event_Begin();
     Event_SetMessage(MSG_A_DIFFICULT_TIME_THREE_YEARS_AGO);
@@ -307,7 +307,7 @@ void SceneDialogue_ShowLineF3F(void)
     Event_End();
 }
 
-void SceneDialogue_ShowLineF44(void)
+void Villager_AskAboutTheTravelers(void)
 {
     Event_Begin();
     Event_SetMessage(MSG_DID_THE_TRAVELERS_MEET_THE_MAYOR);
@@ -316,7 +316,7 @@ void SceneDialogue_ShowLineF44(void)
     Event_End();
 }
 
-void FieldScene_RunOpeningAuxiliarySequence(void)
+void Villager_ShowOffPsynergy(void)
 {
     u32 i;
     s32 base5_1197;
@@ -402,7 +402,7 @@ void SceneDialogue_RunFlagGatedMessageStep(void)
     Event_End();
 }
 
-void FieldScene_RunActorTwentySixEffectPresentation(void)
+void Scene_StoneFellOnTheHut(void)
 {
     Event_Begin();
     Actor_SetAnimation(26, 1);
@@ -481,7 +481,7 @@ void SceneDialogue_ShowLineEB1OrEB0(void)
     Event_End();
 }
 
-void SceneDialogue_RunActorElevenFlaggedDialogue(void)
+void Villager_WelcomeBack(void)
 {
     u32 i;
     s32 record;
@@ -497,7 +497,7 @@ void SceneDialogue_RunActorElevenFlaggedDialogue(void)
     Event_End();
 }
 
-void FieldScene_RunActorTwentyOneSetup(void)
+void Scene_PsynergyStoneIsGone(void)
 {
     struct Obj *p = Func_02002d3e(21);
     Event_Begin();

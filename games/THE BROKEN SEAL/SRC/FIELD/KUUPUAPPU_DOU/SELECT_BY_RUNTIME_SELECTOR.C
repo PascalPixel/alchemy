@@ -111,16 +111,6 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
     f(a0, a1, a2, a3, a4, a5);
 }
 
-static __inline__ void Call1_020008a8(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ void Call1_020009c0(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
 static __inline__ void Call1_02000aa0(void (*f)(), s32 a0)
 {
     void Func_02001b8a();
@@ -191,7 +181,6 @@ enum SelectByRuntimeSelectorMessage {
     MSG_DOOR_TIGHTLY_LOCKED = 0x953,
     MSG_ROBIN_FLIPPED_SWITCH = 0x1528
 };
-
 
 extern u8 *Func_020016ac(s32);
 

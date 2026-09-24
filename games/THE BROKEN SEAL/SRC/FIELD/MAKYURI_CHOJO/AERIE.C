@@ -1026,11 +1026,6 @@ void Func_020060fc();
  * into a pseudo that the compiler then shares with later uses in the block.
  * A value-returning call also sets r0 last of its arguments. */
 
-static __inline__ void Call3_02002eb8(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
 /* Configures four actor slots (0-3), advances the shared scene phase, then
  * drives handles 1-3 through a sequence of timed calls, some of which use
  * the two s16 fields read back from an actor slot record. */

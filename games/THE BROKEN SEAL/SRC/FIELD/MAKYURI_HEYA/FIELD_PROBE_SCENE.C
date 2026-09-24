@@ -334,27 +334,10 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 
 /* The scene step counter at 0x1d8 of the shared scene work record. */
 
-static __inline__ void Call3_020036ac(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-
-    f(a0, a1, a2);
-}
-
-static __inline__ s32 Value1_02003788(s32 (*f)(), s32 a0)
-{
-
-    return f(a0);
-}
-
 static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
 {
 
     return f(a0, a1, a2);
-}
-
-static __inline__ void Call3_02004f44(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
 }
 
 /* Sets up actor 3 and actor 20, branches on the result of a query call
@@ -1308,12 +1291,12 @@ void FieldScene_RunScene39cSequenceB(void)
         Map_CopyCellsTo(92, 46, 92, 40, 3, 2);
         FIELD_AT_OFFSET(Actor_Get(0), s32, 72) = 0x8000;
         Actor_SetSpritePriority(0, 2);
-        Call3_020036ac(Func_02009296_tail, 0, 6, -1);
+        Call3(Func_02009296_tail, 0, 6, -1);
         *(s32 *)(Data_03001ebc + 0x1c0) = 0x203;
         Event_Wait(60);
         Event_RequestExit(8);
     } else {
-        Call3_020036ac(Func_020092be_tail, 0, 6, -1);
+        Call3(Func_020092be_tail, 0, 6, -1);
     }
     Event_End();
 }

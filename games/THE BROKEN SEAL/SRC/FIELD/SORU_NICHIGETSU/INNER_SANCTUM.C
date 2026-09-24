@@ -292,26 +292,6 @@ static __inline__ s32 Value0(s32 (*f)())
 
 /* The scene step counter at 0x1d8 of the shared scene work record. */
 
-static __inline__ void Call1_02000108(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ void Call1_020001ec(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ void Call1_020009f4(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ void Call1_02002924(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
 /*
  * Inner sanctum scene state: clear the backdrop colour, light the statue
  * groups whose progress flags are set, and step an actor. Overlay

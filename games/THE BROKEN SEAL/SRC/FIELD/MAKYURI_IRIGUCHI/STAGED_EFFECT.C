@@ -116,22 +116,6 @@ static __inline__ void Call8(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
     f(a0, a1, a2, a3, a4, a5, a6, a7);
 }
 
-/* A value-returning call sets r0 last of its arguments. */
-static __inline__ s32 Value1_0200116c(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ s32 Value1_02001208(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ void Call3_02001208(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
 static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
 {
     return f(a0, a1, a2);
@@ -140,16 +124,6 @@ static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
 static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 {
     f(a0, a1, a2, a3);
-}
-
-static __inline__ void Call1_0200196c(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ void Call3_0200196c(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
 }
 
 void SetEffectRecordMode(struct EffectWork *work, s32 mode)
@@ -401,7 +375,7 @@ void FieldScene_RunScene39b_0200116c(void)
     s32 field8;
     s32 quotient;
 
-    record = Value1_0200116c(Engine_ActorGet, ACTOR_PARTY_LEADER);
+    record = Value1(Engine_ActorGet, ACTOR_PARTY_LEADER);
     field8 = *(s32 *)(record + 8);
     quotient = field8 / 0x100000;
     GameFlag_Set(0x205);
@@ -418,7 +392,7 @@ void FieldScene_RunScene39b_02001208(void)
     s32 flag;
     s32 record;
 
-    actor = (struct FieldActor *)Value1_02001208(Engine_ActorGet, ACTOR_PARTY_LEADER);
+    actor = (struct FieldActor *)Value1(Engine_ActorGet, ACTOR_PARTY_LEADER);
     flag = GameFlag_IsSet(0x109);
     if (flag == 0) {
         Event_Begin();

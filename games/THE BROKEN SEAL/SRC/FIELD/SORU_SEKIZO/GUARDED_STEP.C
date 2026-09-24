@@ -133,15 +133,6 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
     f(a0, a1, a2);
 }
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-static __inline__ void Call1_0200105c(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
 static __inline__ s32 Value1(s32 (*f)(), s32 a0)
 {
     return f(a0);
@@ -162,29 +153,9 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
     f(a0, a1, a2, a3, a4, a5);
 }
 
-static __inline__ void Call1_020014b8(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ s32 Value1_02001624(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
 static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 {
     f(a0, a1, a2, a3);
-}
-
-static __inline__ s32 Value1_0200195c(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ void Call1_020019e4(void (*f)(), s32 a0)
-{
-    f(a0);
 }
 
 static __inline__ void ConfigureScene(s32 actor, s32 x, s32 y, s32 mode)
@@ -547,9 +518,9 @@ void FieldScene_RunClosingSequence(void)
     s32 kind;
     s32 second;
 
-    first = Value1_02001624(Func_02003a96, 0);
+    first = Value1(Func_02003a96, 0);
     kind = *(s32 *)(first + 8) >> 20;
-    second = Value1_02001624(Func_02003aa0, 0);
+    second = Value1(Func_02003aa0, 0);
     if ((*(s32 *)(second + 16) >> 20) == 8) {
         if ((u32)(kind - 17) <= 1) {
             Call4(Func_02003a78, 2, 0x1100000, 0x800000, 255);
@@ -563,7 +534,7 @@ void FieldScene_RunScene37bSequenceA(void)
     u32 i;
     s32 record;
 
-    record = Value1_0200195c(Func_02003dce, 17);
+    record = Value1(Func_02003dce, 17);
     if (record != 0) {
         if ((*(s32 *)(record + 16) >> 20) == 8) {
             Event_Begin();

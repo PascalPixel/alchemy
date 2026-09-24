@@ -14,7 +14,6 @@ enum StagedPairMessage {
     MSG_WHY_GOING_BACK_ROBIN_DO = 0x23da
 };
 
-
 struct EffectRecord {
     u8 pad[9];
     u8 flags_lo : 2;
@@ -92,11 +91,6 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
 static __inline__ void bump_step(s32 amount)
 {
     gEventWork->message += amount;
-}
-
-static __inline__ s32 Value1_02000fd0(s32 (*f)(), s32 a0)
-{
-    return f(a0);
 }
 
 static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)

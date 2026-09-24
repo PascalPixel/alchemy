@@ -31,7 +31,6 @@ enum TempleRoomsMessage {
     MSG_HSU_DID_NOT_PRACTICE_JUMPING = 0x1a5b
 };
 
-
 #define NULL ((void *)0)
 #define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 #define NewEffectObject           Func_02000048
@@ -263,11 +262,6 @@ static __inline__ void bump_step(s32 amount)
  * through an unresolved veneer island until its own source was read; the
  * per-site macro keeps the site's original calling form. */
 
-static __inline__ void Call1_02001dbc(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
 static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
 {
     f(a0, a1);
@@ -283,29 +277,9 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
     f(a0, a1, a2, a3);
 }
 
-static __inline__ void Call3_0200268c(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
 static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
 {
     return f(a0, a1, a2);
-}
-
-static __inline__ void Call2_020026d8(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
-/* Call sites spelled through these wrappers pass their constants straight into
- * the argument registers; a direct call precomputes a costly constant into a
- * pseudo that the compiler then shares with later uses in the block. A
- * value-returning site also writes r0 last of its arguments. The same wrappers
- * carry the sibling beat at 0x02001dbc. */
-static __inline__ void Call1_02001494(void (*f)(), s32 a0)
-{
-    f(a0);
 }
 
 static __inline__ u8 *Record1(u8 *(*f)(), s32 a0)
@@ -319,51 +293,6 @@ static __inline__ void Scene_BumpStep(s32 amount)
     u8 *work = *(u8 **)0x03001ebc;
 
     *(u16 *)(work + 472) = (u16)(*(u16 *)(work + 472) + amount);
-}
-
-static __inline__ void Call3_02002778(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-static __inline__ void Call1_02002778(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ void Call3_020027ec(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-static __inline__ void Call3_02002ad0(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-static __inline__ void Call1_0200071c(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ s32 Value1_0200071c(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ void Call2_0200071c(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
-static __inline__ s32 Value2_0200071c(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
-static __inline__ void Call3_0200071c(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
 }
 
 static __inline__ void Scene_Call3(void (*func)(s32, s32, s32), s32 a0, s32 a1, s32 a2)
@@ -554,7 +483,7 @@ void Scene_RunScene39eSequenceB(void)
     } else {
         Event_SetMessage(MSG_MMMM_WHO_WHO_SPEAKS_MY);
         FieldScene_SetFlag140AndFinishSequence(0, 8);
-        Call1_0200071c((void (*)())Engine_EventWait, 30);
+        Call1((void (*)())Engine_EventWait, 30);
         Event_ShowMessage(8, 0);
         FieldScene_FinishSequence();
         Event_Wait(20);
@@ -1530,7 +1459,7 @@ void FieldScene_RunScene39eSequenceA(void)
 
     Event_Begin();
     base5_200a5b9 = (s32)Func_0200a5b9;
-    Call2_020026d8(Func_02006a34, base5_200a5b9, 0xc80);
+    Call2(Func_02006a34, base5_200a5b9, 0xc80);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x3333, 0x1999);
     gEventWork->transition_frames = 60;
     Event_CloseScreen();
@@ -2084,7 +2013,7 @@ void FieldScene_RunRoofEnsembleSequence(void)
     Event_ShowMessageAndWait(ACTOR_GERALD, 0, 20);
     Actor_StartRepeatedMotion(8, 2);
     Actor_ShowEmote(8, 0x102, 60);
-    Call3_02002ad0((void (*)())Engine_ActorFaceDirection, 10, 0xd000, 0);
+    Call3((void (*)())Engine_ActorFaceDirection, 10, 0xd000, 0);
     Actor_FaceDirection(8, 0xd000, 20);
     Event_ShowMessageAndWait(8, 0, 20);
     Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);

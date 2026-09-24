@@ -20,54 +20,16 @@
 	.set sub_080cd594, 0x080cd594
 	.set sub_080cdbc0, 0x080cdbc0
 	.set sub_080d6888, 0x080d6888
-	.set sub_080d7f08, 0x080d7f08
 	.set sub_080e0524, 0x080e0524
-	.set sub_080e155c, 0x080e155c
 	.set sub_080e3908, 0x080e3908
 	.set sub_080e3944, 0x080e3944
 	.set sub_080ed408, 0x080ed408
 	.set sub_080f9010, 0x080f9010
-	.global Func_080d8258
+	.global Unnamed_080d82b0
+	.global Func_080d82b0
 	.thumb_func
-Func_080d8258:
-	movs	r0, #2
-	movs	r1, #2
-	bl	sub_080e155c
-	ldr	r3, [sp, #44]
-	ldr	r4, [pc, #68]
-	adds	r2, r3, r4
-	movs	r3, #1
-	str	r3, [r2, #0]
-	movs	r0, #1
-	bl	sub_080030f8
-	ldr	r7, [sp, #40]
-	movs	r5, #14
-	adds	r7, #1
-	add	r9, r5
-	str	r7, [sp, #40]
-	cmp	r7, #146
-	beq.n	.L_080d8280
-	b.n	sub_080d7f08
-.L_080d8280:
-	movs	r0, #47
-	bl	sub_08002dd8
-	movs	r0, #46
-	bl	sub_08002dd8
-	ldr	r0, [pc, #28]
-	bl	sub_08004278
-	bl	sub_080cdbc0
-	add	sp, #332
-	pop	{r3, r5, r6, r7}
-	mov	r8, r3
-	mov	r9, r5
-	mov	sl, r6
-	mov	fp, r7
-	pop	{r5, r6, r7}
-	pop	{r0}
-	bx	r0
-	.4byte 0x00007824
-	.2byte 0xd261
-	.2byte 0x080c
+Unnamed_080d82b0:
+Func_080d82b0:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl

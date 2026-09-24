@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_3cb:0200106c": {
+      "name": "LinkLobby_TalkToAttendant",
+      "source": "MENU/LINK_LOBBY/ATTENDANT_TALK.C"
+    },
     "resource_3a8:02000464": {
       "name": "KareiMachi_RunExitDoor",
       "source": "FIELD/KAREI_MACHI/EXIT_DOOR.C"

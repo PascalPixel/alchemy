@@ -90,13 +90,9 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 /* NONMATCHING: 496 of 496 bytes, 11 halfword edits (2026-09-24). Script call run;
  * 0x8017 and 0x2018 are shared constants whose registers (r6/r8) and pool
  * order still differ from the reference. */
-void Func_02001084(void)
+void HaidiaIe_Func02001084(void)
 {
-    s32 base_2018;
-    u32 i;
     u8 *rec7;
-    s32 record;
-    s32 base6_8017;
 
     rec7 = Value0(Func_02003850);
     Func_0200372e();
@@ -131,24 +127,22 @@ void Func_02001084(void)
     Value3(Func_02003472, 24, 0x7000, 10);
     Func_020038be(23, 3);
     Func_020038c6(24, 4);
-    base_2018 = 0x2018;
-    base6_8017 = 0x8017;
     Call2(Func_02003920, 0x2018, 0);
     Func_020038f2(23, 2);
-    Func_02003488(base6_8017, 30);
+    Func_02003488(0x8017, 30);
     Func_020034aa(24, 0xb000, 20);
-    Func_0200349e(base_2018, 10);
+    Func_0200349e(0x2018, 10);
     Value3(Func_020034c0, 23, 0xb000, 40);
-    Func_0200395c(base6_8017, 0);
+    Func_0200395c(0x8017, 0);
     Func_02003914(24, 4);
-    Func_0200396c(base_2018, 0);
+    Func_0200396c(0x2018, 0);
     Value3(Func_020034e4, 23, 0xf000, 10);
     Func_02003948(23, 2);
-    Func_02003988(base6_8017, 0);
+    Func_02003988(0x8017, 0);
     Value3(Func_02003500, 24, 0x6000, 20);
     Func_0200394c(24, 3);
     Func_020038c2(20);
-    Func_020034fe(base_2018, 20);
+    Func_020034fe(0x2018, 20);
     Func_020024ae();
     Func_020038e2();
 }

@@ -78257,25 +78257,6 @@
       ]
     },
     {
-      "id": "resource-table-entry",
-      "game": "tbs",
-      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESOURCE/TABLE_ENTRY.C",
-      "compiler_route": "canonical-gcc296",
-      "owners": [
-        {
-          "address": "0x08002f3c",
-          "extent": 2,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08002f40",
-          "extent": 12,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
       "id": "script-interpreter-control",
       "game": "tbs",
       "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/SCRIPT/INTERPRETER_CONTROL.C",
@@ -124565,26 +124546,6 @@
       ]
     },
     {
-      "id": "resource-load-code",
-      "game": "tbs",
-      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESOURCE/LOAD_CODE.C",
-      "compiler_route": "canonical-gcc296",
-      "overlay": null,
-      "absolute_symbols": {
-        "Resource_PatchThumbBranchCodeSize": {
-          "address": "0x0000007c",
-          "kind": "data"
-        }
-      },
-      "owners": [
-        {
-          "address": "0x08002fb0",
-          "extent": 88,
-          "state": "exact-c"
-        }
-      ]
-    },
-    {
       "id": "graphics-transfer-work",
       "game": "tbs",
       "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/TRANSFER_WORK.C",
@@ -124714,6 +124675,46 @@
         {
           "address": "0x08091858",
           "extent": 56,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "resource-table",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESOURCE/TABLE.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {
+        "Resource_PatchThumbBranchCodeSize": {
+          "address": "0x0000007c",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x08002f10",
+          "extent": 44,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08002f3c",
+          "extent": 2,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08002f40",
+          "extent": 12,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08002f4c",
+          "extent": 100,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08002fb0",
+          "extent": 88,
           "state": "exact-c"
         }
       ],

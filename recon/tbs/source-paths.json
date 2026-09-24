@@ -341,8 +341,7 @@
       "name": "RuntimeDispatch_ReturnZero"
     },
     "main:08002f3c": {
-      "name": "RuntimeDispatch_NoOpHook",
-      "source": "SYSTEM/RESOURCE/TABLE_ENTRY.C"
+      "name": "RuntimeDispatch_NoOpHook"
     },
     "main:08006798": {
       "name": "RuntimeWait_BusyLoopTick",
@@ -365,8 +364,7 @@
       "name": "CharacterSelector_Run"
     },
     "main:08002f4c": {
-      "name": "PackedTable_AdjustMarkedOffsets",
-      "source": "SYSTEM/RESOURCE/PACKED_TABLE_ADJUST_MARKED_OFFSETS.C"
+      "name": "PackedTable_AdjustMarkedOffsets"
     },
     "main:08096c24": "SYSTEM/RESOURCE/TABLE_COUNT_FREE_BLOCKS.C",
     "main:0800a97c": {
@@ -18993,7 +18991,7 @@
     },
     "main:08002f10": {
       "name": "Resource_LoadWorkHeader",
-      "source": "SYSTEM/RESOURCE/LOAD_WORK_HEADER.C"
+      "source": "SYSTEM/RESOURCE/TABLE.C"
     },
     "main:0800d340": {
       "name": "Object_UpdateAllMotion"
@@ -19103,8 +19101,7 @@
       "name": "Tilemap_ConvertBuffer"
     },
     "main:08002fb0": {
-      "name": "Resource_LoadCode",
-      "source": "SYSTEM/RESOURCE/LOAD_CODE.C"
+      "name": "Resource_LoadCode"
     },
     "main:080b010c": {
       "name": "Shop_InitializeCursorWork",

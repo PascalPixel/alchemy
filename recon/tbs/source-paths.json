@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "main:0808b98c": {
+      "name": "BattleEffect_ClearAllObjects",
+      "source": "BATTLE/EFFECT/CLEAR_ALL_OBJECTS.C"
+    },
     "main:08078320": {
       "name": "Owner_SetSecondValueAndRatios",
       "source": "GAME/CHARACTER/SET_SECOND_VALUE_AND_RATIOS.C"
@@ -20750,7 +20754,6 @@
     "main:08092c40": "UiText_OpenMessageAtObject",
     "main:080c24f0": "BattleEnemy_RecordDefeat",
     "main:08096fb0": "BattleFx_LoadActionEffectResources",
-    "main:0808b98c": "BattleEffect_ClearAllObjects",
     "main:080912b8": "Object_EffectSpawnCallback",
     "main:080152b8": "BattleLayout_HighlightPartyPanelsFar",
     "main:08028574": "Menu_RunResourceSelectionLoop",

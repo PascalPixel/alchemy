@@ -20613,6 +20613,9 @@
     },
     "main:08096fb0": {
       "name": "BattleFx_LoadActionEffectResources"
+    },
+    "main:0801f818": {
+      "name": "SaveState_BuildSummaryHeader"
     }
   },
   "symbols": {
@@ -20771,7 +20774,6 @@
     "main:08009008": "Object_ApplyProjectedPlacementFar",
     "main:080150d8": "SideObject_CreateFar",
     "main:08015408": "UiWindow_DrawFrameFar",
-    "main:0801f818": "SaveState_BuildSummaryHeader",
     "main:08020244": "SaveMenu_SelectSlot",
     "main:08018850": "UiText_MeasureEntryDimensions",
     "main:08017248": "UiWindow_MapTextCanvasTiles",

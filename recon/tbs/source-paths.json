@@ -759,6 +759,10 @@
       "name": "System_Initialize",
       "source": "SYSTEM/INITIALIZE.C"
     },
+    "main:08003650": {
+      "name": "System_VBlankHandler",
+      "source": "SYSTEM/VBLANK_HANDLER.C"
+    },
     "main:0800479c": {
       "name": "Ui_LoadWindowGraphics",
       "source": "GRAPHICS/WINDOW/LOAD_GRAPHICS.C"

@@ -10,8 +10,10 @@
 	.set sub_08005340, 0x08005340
 	.set sub_080072f0, 0x080072f0
 	.set sub_080c9000, 0x080c9000
+	.global BattleFx_InitializeStarField
 	.global Func_080c1470
 	.thumb_func
+BattleFx_InitializeStarField:
 Func_080c1470:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

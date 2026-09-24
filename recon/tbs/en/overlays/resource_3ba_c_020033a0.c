@@ -1,235 +1,149 @@
+/* NONMATCHING: 832 of 964 bytes, 458 differing halfwords (2026-09-24). Hand-written from the
+ * disassembly; twins resource_3bb:02003638 and resource_3bc:020040d0 are binding-equivalent, so the
+ * finished source becomes one instanced unit. Matched shape: the rise branches spell state->rise
+ * directly (gcse gives each branch its own address copy and the join reloads with ldrsh); the
+ * in-loop *p++ stores give the separate loop address giv. Remaining: the reference keeps three
+ * copies of the work pointer (r8 entry walker, sp12 sprite pointer, sp16 state) and spills the
+ * sprite pointer, re-reading the id through it on the early return; the candidate unifies them
+ * and keeps p in r6. The OAM attribute constants (0x8000, 0x40000000, 0xe400) live in r9/sl across
+ * calls instead of folding; a u32 tall = 0x8000 local reproduces that for the middle pair only. */
 #include "TYPES.H"
+#include "DMA.H"
 
-#define Scene_RunScene3baSequenceA Func_020033a0
+s32 Engine_GameFlagIsSet(s32 flag);
+s32 Main_08000170(s32 size);
+void Main_080001a8(const void *source, void *destination);
+void Engine_VramLoad(s32 id, s32 size, void *buffer);
+void Main_08000178(void *buffer);
+void Main_080001c0(s32 id);
+void Main_080001e8(void *entry, s32 mode);
+struct KawaActor *Main_0808a400(s32 actor);
+s32 Engine_MathDivide(s32 dividend, s32 divisor);
 
-s32 Func_02006f8c();
-void Func_02006fa6();
-void Func_02006fb2();
-void Func_02006fcc();
-void Func_02006fde();
-s32 Func_0200704c();
-void Func_02007054();
-void Func_02007096();
-void Func_020070d6();
-void Func_02007106();
-s32 Func_0200714c();
-s32 Func_0200714c_a();
-s32 Func_02007162();
-void Func_020071a2();
-s32 Func_020071d4();
-s32 Func_020071ea();
-void Func_0200723e();
-void Func_020072c0();
-s32 Func_020073fa();
-s32 Func_02007482();
+struct KawaActor {
+    u8 unknown_00[8];
+    s32 x;
+    u8 unknown_0c[4];
+    s32 z;
+};
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
+struct KawaState {
+    u8 unknown_00[216];
+    s16 id;
+    s16 rise;
+    s16 raised;
+    s16 marker_b;
+    s16 marker_a;
+    u8 unknown_e2[4];
+    s16 count;
+    s32 origin_x;
+    s32 origin_z;
+};
 
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
+struct TileEntry {
+    u16 unknown_0;
+    u16 tile;
+};
+
+extern u8 *Data_03001f3c;
+extern struct TileEntry Data_03001b10[];
+extern u32 Data_03001e40;
+
+void Func_020033a0(void)
 {
-    return f(a0);
-}
-
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-static __inline__ s32 Value4(s32 (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    return f(a0, a1, a2, a3);
-}
-
-void Scene_RunScene3baSequenceA(s32 a0)
-{
+    struct KawaState *state;
+    u32 *p;
+    u8 *entry;
+    s16 *id;
+    s16 *rise;
+    u32 tile;
+    s32 count;
+    s32 y;
     u32 i;
-    s32 p10;
-    s32 p10b;
-    s32 p11;
-    s32 p11b;
-    s32 p8;
-    s32 p8b;
-    s32 p9;
-    s32 rec6;
-    s32 rec7;
-    s32 rec8;
-    s32 record;
-    s32 r9;
-    s32 v3;
-    s32 v5;
-    s32 base6_0;
-    s32 v8;
-    s32 v4;
-    s32 base10_800000;
-    s32 v6;
-    s32 none;
-    s32 v7;
-    s32 slot12;
-    s32 slot16;
-    s32 slot8;
-    s32 slot4;
-    s32 slot0;
+    u32 tall;
+    s32 x;
+    u8 *buffer;
+    struct KawaActor *actor;
 
-    p8 = *(s32 *)0x03001f3c;
-    slot12 = *(s32 *)0x03001f3c;
-    slot16 = *(s32 *)0x03001f3c;
-    slot8 = ((u32)*(u16 *)(((s32)(*(s16 *)(p8 + 216) << 2) + 0x3001b10) + 2) >> 5);
-    p11 = *(s16 *)(p8 + 230);
-    if (*(s16 *)(((p8 + 230) - 10)) != 0) {
-        {
-            s32 shown = 2;
-        
-            *(u16 *)(p8 + 218) = shown;
-        }
-    } else {
-        if (Value1(Func_0200704c, 0x106) != 0) {
-            if (*(s16 *)(p8 + 218) <= 0) {
-                goto L_0200345c;
-            }
-            *(u16 *)(p8 + 218) = (*(u16 *)(p8 + 218) - 1);
-        } else {
-            if (*(s16 *)(p8 + 218) <= 1) {
-                v3 = (*(u16 *)(p8 + 218) + 1);
-                *(u16 *)(p8 + 218) += 1;
-                if ((v3 << 16) == 0x10000) {
-                    *(s32 *)(0x40000d4) = 0x200bef4;
-                    *(s32 *)(0x40000d4 + 4) = 0x50003c0;
-                    *(s32 *)(0x40000d4 + 8) = -0x7ffffff0;
-                    rec7 = Value4(Func_02006f8c, 0x200, 0x50003c0, -0x7ffffff0, ((0x40000d4 + 12) - 12));
-                    Call2(Func_02006fa6, 0x200bf14, rec7);
-                    Call3(Func_02006fcc, *(s16 *)(p8 + 216), 0x200, rec7);
-                    Func_02006fb2(rec7);
-                }
-            }
-        }
+    entry = Data_03001f3c;
+    p = (u32 *)entry;
+    state = (struct KawaState *)entry;
+    id = &state->id;
+    tile = Data_03001b10[*id].tile >> 5;
+    count = state->count;
+    if (state->raised != 0) {
+        state->rise = 2;
+    } else if (Engine_GameFlagIsSet(0x106)) {
+        if (state->rise > 0)
+            state->rise--;
+    } else if (state->rise <= 1 && ++state->rise == 1) {
+        Dma_Set((const void *)0x200bef4, (void *)0x50003c0, 0x80000010, (volatile u32 *)0x040000d4);
+        buffer = (u8 *)Main_08000170(0x200);
+        Main_080001a8((const void *)0x200bf14, buffer);
+        Engine_VramLoad(*id, 0x200, buffer);
+        Main_08000178(buffer);
     }
-    L_0200345c:;
-    if (*(s16 *)(p8 + 218) == 0) {
-        Func_02006fde(*(s16 *)(slot12 + 216));
-        v5 = r9;
-        v7 = (p8 + 216);
-    } else {
-        slot4 = ((s32)p11 << 4);
-        *(s32 *)(slot12) = 0;
-        slot12 = (slot12 + 4);
-        *(s32 *)((slot12 + 4)) = ((s32)(((104 - slot4) << 16) | (s32)((s32)(((s32)((s32)(*(s16 *)(p8 + 218) << 1) + *(s16 *)(p8 + 218)) << 1) - 8) & 255)) | 0x8000);
-        slot12 = ((slot12 + 4) + 4);
-        *(s32 *)(((slot12 + 4) + 4)) = (slot8 | 0xe400);
-        slot12 = (((slot12 + 4) + 4) + 4);
-            base6_0 = 0;
-        v8 = (p8 + 12);
-        Func_02007054(p8, 255);
-        if ((u32)0 < p11) {
-            p10 = ((slot8 + 2) | 0xe400);
-            v5 = slot12;
-            v8 = (p8 + 12);
-            do {
-                *(s32 *)(v5) = 0;
-                *(s32 *)(v5 + 4) = ((s32)(((96 - (base6_0 << 4)) << 16) | (s32)((s32)(((s32)((s32)(*(s16 *)(p8 + 218) << 1) + *(s16 *)(p8 + 218)) << 1) - 8) & 255)) | 0x40000000);
-                *(s32 *)(v5 + 8) = p10;
-                slot12 = (slot12 + 12);
-                base6_0 = (base6_0 + 1);
-                v8 = (v8 + 12);
-                v5 = (v5 + 12);
-                Func_02007096(v8, 255);
-            } while ((u32)base6_0 < p11);
-        }
-            base6_0 = 0;
-        *(s32 *)(slot12) = 0;
-        slot12 = (slot12 + 4);
-        v5 = ((slot8 + 6) | 0xe400);
-        *(s32 *)((slot12 + 4)) = ((s32)(0x700000 | (s32)((s32)(((s32)((s32)(*(s16 *)(p8 + 218) << 1) + *(s16 *)(p8 + 218)) << 1) - 8) & 255)) | 0x8000);
-        *(s32 *)(((slot12 + 4) + 4)) = ((slot8 + 6) | 0xe400);
-        slot12 = (((slot12 + 4) + 4) + 4);
-        Func_020070d6(v8, 255);
-        *(s32 *)(slot12) = 0;
-        slot12 = (slot12 + 4);
-        *(s32 *)((slot12 + 4)) = ((s32)((s32)(0x780000 | (s32)((s32)(((s32)((s32)(*(s16 *)(p8 + 218) << 1) + *(s16 *)(p8 + 218)) << 1) - 8) & 255)) | 0x8000) | 0x10000000);
-        slot12 = ((slot12 + 4) + 4);
-        v8 = ((v8 + 12) + 12);
-        *(s32 *)(((slot12 + 4) + 4)) = ((slot8 + 6) | 0xe400);
-        slot12 = (((slot12 + 4) + 4) + 4);
-        v6 = 0;
-        Func_02007106((v8 + 12), 255);
-        if ((u32)0 < p11) {
-            base10_800000 = 0x800000;
-            v4 = ((slot8 + 2) | 0xe400);
-            v5 = slot12;
-            v8 = ((v8 + 12) + 12);
-            do {
-                *(s32 *)(v5) = 0;
-                *(s32 *)(v5 + 4) = ((s32)((s32)((s32)((s32)(((s32)((s32)(*(s16 *)(p8 + 218) << 1) + *(s16 *)(p8 + 218)) << 1) - 8) & 255) | base10_800000) | 0x40000000) | 0x10000000);
-                *(s32 *)(v5 + 8) = v4;
-                slot0 = v4;
-                slot12 = (slot12 + 12);
-                v8 = (v8 + 12);
-                Call2((void (*)())Func_0200714c, v8, 255);
-                base6_0 = (base6_0 + 1);
-                v5 = (v5 + 12);
-                base10_800000 = (base10_800000 + 0x100000);
-                v4 = slot0;
-            } while ((u32)base6_0 < p11);
-            v6 = base6_0;
-        }
-        *(s32 *)(slot12) = 0;
-        none = 0;
-        slot12 = (slot12 + 4);
-        *(s32 *)((slot12 + 4)) = ((s32)((s32)((s32)((s32)(((s32)((s32)(*(s16 *)(p8 + 218) << 1) + *(s16 *)(p8 + 218)) << 1) - 8) & 255) | ((slot4 + 128) << 16)) | 0x8000) | 0x10000000);
-        *(s32 *)(((slot12 + 4) + 4)) = (slot8 | 0xe400);
-        slot12 = (((slot12 + 4) + 4) + 4);
-        Func_020071a2(v8, 255);
-        if ((u32)(*(s32 *)0x03001e40 & 15) <= 4) {
-            v7 = ((s32)((s32)((s32)((s32)(((s32)((s32)(*(s16 *)(p8 + 218) << 1) + *(s16 *)(p8 + 218)) << 1) - 8) & 255) | ((slot4 + 128) << 16)) | 0x8000) | 0x10000000);
-        } else {
-            rec8 = Value1(Func_020073fa, *(s16 *)(slot16 + 224));
-            v7 = ((s32)((s32)((s32)((s32)(((s32)((s32)(*(s16 *)(p8 + 218) << 1) + *(s16 *)(p8 + 218)) << 1) - 8) & 255) | ((slot4 + 128) << 16)) | 0x8000) | 0x10000000);
-            v8 = (v8 + 12);
-            if (rec8 != 0) {
-                rec6 = Func_0200714c_a((*(s32 *)(rec8 + 8) - *(s32 *)(slot16 + 232)), 0xe0000);
-                slot0 = (rec6 + 112);
-                record = Value2(Func_02007162, (*(s32 *)(rec8 + 16) - *(s32 *)(slot16 + 236)), 0xe0000);
-                *(s32 *)(slot12) = none;
-                slot12 = (slot12 + 4);
-                v7 = (((((record + (((*(s16 *)(slot16 + 218) << 1) + *(s16 *)(slot16 + 218)) << 1)) - 4) & 255) | (slot0 << 16)) | 0x40000000);
-                *(s32 *)((slot12 + 4)) = (((((record + (((*(s16 *)(slot16 + 218) << 1) + *(s16 *)(slot16 + 218)) << 1)) - 4) & 255) | (slot0 << 16)) | 0x40000000);
-                slot12 = ((slot12 + 4) + 4);
-                *(s32 *)(slot12) = ((slot8 + 12) | 0xe400);
-                slot12 = (slot12 + 4);
-                v8 = (v8 + 12);
-                Func_0200723e((v8 + 12), 255);
-                v5 = 0xe0000;
-            }
-            rec8 = Value1(Func_02007482, *(s16 *)(slot16 + 222));
-            if (rec8 != 0) {
-                rec6 = Func_020071d4((*(s32 *)(rec8 + 8) - *(s32 *)(slot16 + 232)), 0xe0000);
-                slot0 = (rec6 + 112);
-                record = Value2(Func_020071ea, (*(s32 *)(rec8 + 16) - *(s32 *)(slot16 + 236)), 0xe0000);
-                *(s32 *)(slot12) = none;
-                slot12 = (slot12 + 4);
-                v7 = (((((record + (((*(s16 *)(slot16 + 218) << 1) + *(s16 *)(slot16 + 218)) << 1)) - 4) & 255) | (slot0 << 16)) | 0x40000000);
-                *(s32 *)((slot12 + 4)) = (((((record + (((*(s16 *)(slot16 + 218) << 1) + *(s16 *)(slot16 + 218)) << 1)) - 4) & 255) | (slot0 << 16)) | 0x40000000);
-                slot12 = ((slot12 + 4) + 4);
-                *(s32 *)(slot12) = ((slot8 + 8) | 0xe400);
-                Func_020072c0(v8, 255);
-                v5 = 0xe0000;
-            }
-        }
+    if (state->rise == 0) {
+        Main_080001c0(((struct KawaState *)p)->id);
+        return;
     }
-    p8b = (*(s32 *)0x03001e40 & 15);
-    p9 = v5;
-    p10b = p8 + 218;
-    p11b = v7;
+    y = (state->rise * 6 - 8) & 0xff;
+    *p++ = 0;
+    *p++ = ((104 - count * 16) << 16) | y | 0x8000;
+    *p++ = tile | 0xe400;
+    Main_080001e8(entry, 255);
+    entry += 12;
+    for (i = 0; i < count; i++) {
+        *p++ = 0;
+        *p++ = ((96 - i * 16) << 16) | y | 0x40000000;
+        *p++ = (tile + 2) | 0xe400;
+        Main_080001e8(entry, 255);
+        entry += 12;
+    }
+    i = 0;
+    *p++ = i;
+    tall = 0x8000;
+    *p++ = (112 << 16) | y | tall;
+    *p++ = (tile + 6) | 0xe400;
+    Main_080001e8(entry, 255);
+    entry += 12;
+    *p++ = i;
+    *p++ = (120 << 16) | y | tall | 0x10000000;
+    *p++ = (tile + 6) | 0xe400;
+    Main_080001e8(entry, 255);
+    entry += 12;
+    for (; i < count; i++) {
+        p[0] = 0;
+        p[1] = ((128 + i * 16) << 16) | y | 0x40000000 | 0x10000000;
+        p[2] = (tile + 2) | 0xe400;
+        p += 3;
+        Main_080001e8(entry, 255);
+        entry += 12;
+    }
+    *p++ = 0;
+    *p++ = ((count * 16 + 128) << 16) | y | 0x8000 | 0x10000000;
+    *p++ = tile | 0xe400;
+    Main_080001e8(entry, 255);
+    entry += 12;
+    if ((Data_03001e40 & 15) <= 4)
+        return;
+    actor = Main_0808a400(state->marker_a);
+    if (actor != 0) {
+        x = Engine_MathDivide(actor->x - state->origin_x, 0xe0000) + 112;
+        y = (Engine_MathDivide(actor->z - state->origin_z, 0xe0000) + state->rise * 6 - 4) & 0xff;
+        *p++ = 0;
+        *p++ = (x << 16) | y | 0x40000000;
+        *p++ = (tile + 12) | 0xe400;
+        Main_080001e8(entry, 255);
+        entry += 12;
+    }
+    actor = Main_0808a400(state->marker_b);
+    if (actor != 0) {
+        x = Engine_MathDivide(actor->x - state->origin_x, 0xe0000) + 112;
+        y = (Engine_MathDivide(actor->z - state->origin_z, 0xe0000) + state->rise * 6 - 4) & 0xff;
+        *p++ = 0;
+        *p++ = (x << 16) | y | 0x40000000;
+        *p = (tile + 8) | 0xe400;
+        Main_080001e8(entry, 255);
+    }
 }

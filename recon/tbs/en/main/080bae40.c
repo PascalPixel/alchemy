@@ -1,22 +1,22 @@
 /*
- * BattleTarget_SelectForAction draft: 1864 of 1864 bytes, 77.0% aligned
+ * BattleTarget_SelectForAction draft: 1864 of 1864 bytes, 81.0% aligned
  * similarity. The normal-order scan tests turn_order->normal[target_index]
  * and reads the unit through slot = &turn_order->normal[target_index],
  * which gives the ROM pre-check ([turn_order, #88]), the in-place walk of
- * turn_order + 88 and both ldrsh loads. Case 2 rolls before selected = 0 so
- * selected crosses only the four sort calls: caller-saves become profitable
- * and it lives in a low register saved at [sp, #0], as in the ROM.
- * Remaining:
- *  - The ROM hoists the 0x100 halfword pool constant into r5 before the
- *    normal scan (pool mid-loop, first pool at +0x40). Ours has 36 real
- *    insns in that loop in the second loop pass (2*i kept live by the GCSE
- *    copy it shares with the mirrored scan, plus the reg34 + 2i and + 88
- *    givs), above the move threshold the mirrored scan (28) passes.
- *    for (slot = turn_order->normal; *slot != 255; slot++) hoists it but lets
- *    GCSE share the test load with the body.
+ * turn_order + 88 and both ldrsh loads. The 0x100 mark goes through a
+ * one-halfword struct set beside its use, so loop.c hoists it as a HImode
+ * pool load into r5 and both pools land where the ROM has them (the loop is
+ * over the move threshold for a bare constant). Case 2 rolls before
+ * selected = 0, so selected crosses only the four sort calls and is
+ * caller-saved at [sp, #0] as in the ROM.
+ * Remaining (all register choice, same instructions):
+ *  - Both scans: the ROM uses r0/r2/r4 for the pointer setup and r6 for the
+ *    zero, ours r6/r0/r2 and r3; setting the mark before the loop instead
+ *    gives the ROM registers but schedules its load into the pre-check.
  *  - Sort: the ROM spills the unit_ids base (mov r4, sp; adds r4, #56) to
- *    [sp, #16] and keeps selected in r1; ours holds the base in fp, selected
- *    in r4, so the spill slots shift by one.
+ *    [sp, #16] and keeps selected in r1; ours holds the base in fp and
+ *    selected in r4, so the spill slots shift by one. Declaration order moves
+ *    nothing (380 permutations).
  *  - CHECK_EFFECT hp compare picks r0/r1 where the ROM picks r1/r3.
  */
 #include "TYPES.H"
@@ -239,6 +239,7 @@ s32 BattleTarget_SelectForAction(
     s32 damage_class;
     u32 roll;
     s16 *slot;
+    struct { u16 v; } mark;
 
     turn_order = BATTLE_TURN_ORDER;
     target_count = 0;
@@ -263,8 +264,9 @@ s32 BattleTarget_SelectForAction(
             if (unit_id != 254) {
                 if (action->target_mode != 4 || unit_id == actor_id) {
                     unit_ids[candidate_count] = unit_id;
+                    mark.v = 0x100;
                     order_positions[candidate_count] =
-                        target_index | 0x100;
+                        target_index | mark.v;
                     candidate_count++;
                 }
             }

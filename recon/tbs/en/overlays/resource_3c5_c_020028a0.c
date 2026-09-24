@@ -1,295 +1,202 @@
+/* NONMATCHING: 1236 of 1240 bytes, 275 halfword edits (2026-09-24). Hand-written from the
+ * resolved jump-table disassembly as a single-overlay unit binding Engine_* at
+ * their import veneers. Remaining: the game-state base lands in r8 instead of r6 and the area id is not copied to ip, so the first literal pool is not dumped after the Colosso-exit branch; the 0xaf entrance switch keeps an extra copy of its index. The panel actors (11-14) and the 0xae block match. */
 #include "TYPES.H"
+#include "FIELD_EVENT.H"
 
-#define FieldScene_RunScene3c5SequenceB Func_020028a0
+void SceneState_ApplyRectsAtActors8And9(void);
+void SceneState_ConfigureRegion82_7AndApply768(void);
+void OverlayObject_SpawnConfiguredObject(s32 x, s32 y, s32 z, s32 kind);
+void FieldScene_RunScene3c5SequenceA(s32 value);
+void FieldScene_RunSupplementalSequenceOne(void);
 
+struct PanelSprite {
+    u8 unknown_00[9];
+    u8 flags;
+    u8 unknown_0a[0x14];
+    u16 angle;
+    u8 unknown_20[6];
+    u8 fade;
+};
+
+struct PanelActor {
+    u8 unknown_00[0x23];
+    u8 priority_flags;
+    u8 unknown_24[0x2c];
+    struct PanelSprite *sprite;
+    u8 unknown_54[5];
+    u8 collision_flags;
+    u8 unknown_5a[4];
+    u16 delay;
+};
+
+union GameStateRows {
+    u8 bytes[512][2];
+    s16 halves[512][1];
+};
+
+extern union GameStateRows Data_02000240_t;
 extern u8 Data_00000000[];
 extern u8 Data_000000ae[];
 extern u8 Data_000000af[];
 extern u8 Data_000000b0[];
 extern u8 Data_000000b1[];
-extern u8 Data_02000240[];
-extern u16 Data_02000240_t[][2];
-void Func_02003a7c();
-void Func_02005172();
-void Func_0200517c();
-void Func_0200562c();
-s32 Func_02005730();
-s32 Func_02005754();
-s32 Func_02005784();
-s32 Func_020057a8();
-s32 Func_020057b0();
-s32 Func_020057ce();
-void Func_020057d6();
-s32 Func_020057de();
-void Func_020057e8();
-void Func_020057f0();
-void Func_02005808();
-s32 Func_02005818();
-void Func_02005852();
-s32 Func_0200585a();
-void Func_02005894();
-s32 Func_02005896();
-void Func_020058ac();
-void Func_020058d0();
-void Func_020058d0_a();
-s32 Func_020058e2();
-s32 Func_020058e2_a();
-void Func_02005906();
-s32 Func_020059da();
-s32 Func_020059de();
-s32 Func_020059ec();
-void Func_020059fe();
-s32 Func_02005a04();
-void Func_02005a0a();
-void Func_02005a0e();
-void Func_02005a18();
-void Func_02005a82();
-s32 Func_02005a86();
-void Func_02005a90();
-void Func_02005a96();
-void Func_02005a9e();
-void Func_02005aac();
-void Func_02005aba();
-s32 Func_02005ae0();
-void Func_02005aea();
-void Func_02005af2();
-void Func_02005b08();
-void Func_02005b2c();
-void Func_02005b38();
-s32 Func_02005b40();
-void Func_02005b44();
-void Func_02005b50();
-void Func_02005b62();
-void Func_02005b70();
-void Func_02005b7c();
-void Func_02005b88();
-void Func_02005b94();
-void Func_02005ba0();
-void Func_02005bac();
-void Func_02005bca();
-void Func_02005be4();
-void Func_02005bee();
-
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    f(a0, a1, a2, a3);
-}
 
 static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
 {
     f(a0, a1, a2, a3, a4, a5);
 }
 
-s32 Func_020028a0(void)
+s32 Local_020028a0(void)
 {
-    u32 i;
-    s32 rec7;
-    u8 *record;
-    s32 v1;
-    s32 v2;
-    s32 v6;
-    u8 slot1008[4];
-    u8 slot336[416];
+    struct FieldActor *actor;
+    struct PanelActor *panel;
+    s32 scene;
+    union GameStateRows *rows;
+    s32 x;
+    s32 z;
 
-    Func_0200562c(1);
+    Engine_TaskWait(1);
     *(s32 *)(*(s32 *)0x03001ebc + 0x1c0) = 0x204;
-    if (*(s16 *)(0x2000240 + 448) != (s32)Data_000000b1) {
-        {
-            s32 shown = 1;
-        
-            *(u16 *)0x02000482 = shown;
-        }
-        v2 = (s32)Data_000000b0;
-        Data_02000240_t[144][0] = (s32)Data_000000b0;
-        v1 = *(s16 *)(0x2000240 + 448);
+    rows = &Data_02000240_t;
+    scene = rows->halves[224][0];
+    if (scene != (s32)Data_000000b1) {
+        rows->halves[289][0] = 1;
+        rows->halves[288][0] = (s32)Data_000000b0;
     } else {
-        record = Value1(Func_02005730, 12);
-        v2 = (*(s32 *)((s32)record + 8) >> 20);
-        if ((*(s32 *)((s32)record + 8) >> 20) != 20) {
-            goto L_02002d3c;
-        }
-        if ((*(s32 *)((s32)record + 16) >> 20) != 12) {
-            goto L_02002d3c;
-        }
-        v1 = 12;
-        goto L_02002af2;
-    }
-    if (*(s16 *)(0x2000240 + 448) != v2) {
-        v6 = 0x2000240;
-    } else {
-        Func_020057e8(8, 6, (*(s32 *)((s32)record + 8) >> 20), (*(s32 *)((s32)record + 16) >> 20));
-        Func_020057f0(9, 6);
-        if (*(s16 *)(0x2000402) == 5) {
-            if (Value1(Func_02005754, 0x109) == 0) {
-                Call3(Func_020057d6, 9, 0x1380000, 0x1480000);
+        actor = Engine_ActorGet(12);
+        x = actor->x.fixed >> 20;
+        if (x == 20) {
+            z = actor->z.fixed >> 20;
+            if (z == 12) {
+                Call6(Engine_MapCopyCellAttributes, 38, 12, 1, 1, x, z);
             }
         }
-        Func_02005172();
-        rec7 = Value1(Func_020057a8, 9);
-        record = Value1(Func_020057b0, 9);
-        *(s32 *)(rec7 + 12) = *(s32 *)((s32)record + 20);
-        if (Value1(Func_02005784, 0x300) != 0) {
-            Func_02005808(10, 4);
-            *(u8 *)(Func_020057ce(10) + 89) = 254;
-            Func_0200517c();
-        }
-        record = Value1(Func_020057de, 11);
-        record[89] = 0;
-        *(u8 *)((((s32)record + 89) - 54)) = 0;
-        {
-            s32 shown = 0;
-        
-            *(u16 *)((((s32)record + 89) - 54) + 59) = shown;
-        }
-        v6 = 12;
-        *(u8 *)(*(s32 *)((s32)record + 80) + 9) |= 12;
-        *(u8 *)(*(s32 *)((s32)record + 80) + 38) = (s32)Data_00000000;
-        {
-            s32 target = *(s32 *)((s32)record + 80);
-            s32 shown = 0xc000;
-        
-            *(u16 *)(target + 30) = shown;
-        }
-        Func_02005852(11, 0);
-        record = Value1(Func_02005818, 12);
-        record[89] = (s32)Data_00000000;
-        *(u8 *)((((s32)record + 89) - 54)) = (s32)Data_00000000;
-        {
-            s32 shown = 30;
-        
-            *(u16 *)((s32)record + 94) = shown;
-        }
-        *(u8 *)(*(s32 *)((s32)record + 80) + 9) |= 12;
-        *(u8 *)(*(s32 *)((s32)record + 80) + 38) = (s32)Data_00000000;
-        {
-            s32 target = *(s32 *)((s32)record + 80);
-            s32 shown = 0x4000;
-        
-            *(u16 *)(target + 30) = shown;
-        }
-        Func_02005894(12, 0);
-        record = Value1(Func_0200585a, 13);
-        record[89] = (s32)Data_00000000;
-        *(u8 *)((((s32)record + 89) - 54)) = (s32)Data_00000000;
-        {
-            s32 shown = 60;
-        
-            *(u16 *)((s32)record + 94) = shown;
-        }
-        *(u8 *)(*(s32 *)((s32)record + 80) + 9) |= 12;
-        *(u8 *)(*(s32 *)((s32)record + 80) + 38) = (s32)Data_00000000;
-        {
-            s32 target = *(s32 *)((s32)record + 80);
-            s32 shown = 0x8000;
-        
-            *(u16 *)(target + 30) = shown;
-        }
-        Func_020058d0(13, 0);
-        record = Value1(Func_02005896, 14);
-        record[89] = (s32)Data_00000000;
-        *(u8 *)((((s32)record + 89) - 54)) = (s32)Data_00000000;
-        {
-            s32 shown = 90;
-        
-            *(u16 *)((s32)record + 94) = shown;
-        }
-        *(u8 *)(*(s32 *)((s32)record + 80) + 9) |= 12;
-        *(u8 *)(*(s32 *)((s32)record + 80) + 38) = (s32)Data_00000000;
-        {
-            s32 target = *(s32 *)((s32)record + 80);
-            s32 shown = 0x8000;
-        
-            *(u16 *)(target + 30) = shown;
-        }
-        Func_02005906(14, 0);
-        goto L_02002d3c;
+        return 0;
     }
-    if (*(s16 *)(0x2000240 + 448) == (s32)Data_000000af) {
-        if ((u32)(*(s16 *)((v6 + 0x1c2)) - 10) > 7) {
-            goto L_02002d3c;
+    if (scene == (s32)Data_000000b0) {
+        Engine_ActorSetChildValue(8, 6);
+        Engine_ActorSetChildValue(9, 6);
+        if (rows->halves[225][0] == 5 && Engine_GameFlagIsSet(0x109) == 0) {
+            Engine_ActorSetPosition(9, 0x1380000, 0x1480000);
         }
-        Call4(Func_020058e2, 0x980, v1, slot1008, slot336);
-        if (Value1(Func_020058e2_a, 0x980) == 0) {
-            goto L_02002d3c;
+        SceneState_ApplyRectsAtActors8And9();
+        actor = Engine_ActorGet(9);
+        actor->y.fixed = *(s32 *)Engine_ActorGet(9)->unknown_14;
+        if (Engine_GameFlagIsSet(0x300) != 0) {
+            Engine_ActorSetAnimation(10, 4);
+            Engine_ActorGet(10)->collision_flags = 0xfe;
+            SceneState_ConfigureRegion82_7AndApply768();
         }
-        Call6(Func_020058ac, 120, 7, 109, 7, 1, 3);
-        L_02002af2:;
-        Call6(Func_020058d0_a, 38, 12, 1, 1, 45, 9);
-    } else {
-        if (v1 != (s32)Data_000000ae) {
-        } else {
-            *(u8 *)(Func_020059da(8) + 90) &= 254;
-            *(u8 *)(Func_020059ec(9) + 90) &= 254;
-            Call3(Func_02005a0a, 8, 0x10000, 0x8000);
-            Call3(Func_02005a18, 9, 0x10000, 0x8000);
-            if (Value1(Func_020059de, 0x109) == 0) {
-                if (*(s16 *)((v6 + 0x1c2)) == 1) {
-                    Call1(Func_020059fe, 0x301);
-                } else {
-                    Call1(Func_02005a0e, 0x301);
-                }
+        panel = (struct PanelActor *)Engine_ActorGet(11);
+        panel->collision_flags = 0;
+        panel->priority_flags = 0;
+        panel->delay = 0;
+        ((u8 *)panel->sprite)[9] |= 12;
+        ((u8 *)panel->sprite)[38] = (s32)Data_00000000;
+        panel->sprite->angle = 0xc000;
+        Engine_ActorSetAnimation(11, 0);
+        panel = (struct PanelActor *)Engine_ActorGet(12);
+        panel->collision_flags = (s32)Data_00000000;
+        panel->priority_flags = (s32)Data_00000000;
+        panel->delay = 30;
+        ((u8 *)panel->sprite)[9] |= 12;
+        ((u8 *)panel->sprite)[38] = (s32)Data_00000000;
+        panel->sprite->angle = 0x4000;
+        Engine_ActorSetAnimation(12, 0);
+        panel = (struct PanelActor *)Engine_ActorGet(13);
+        panel->collision_flags = (s32)Data_00000000;
+        panel->priority_flags = (s32)Data_00000000;
+        panel->delay = 60;
+        ((u8 *)panel->sprite)[9] |= 12;
+        ((u8 *)panel->sprite)[38] = (s32)Data_00000000;
+        panel->sprite->angle = 0x8000;
+        Engine_ActorSetAnimation(13, 0);
+        panel = (struct PanelActor *)Engine_ActorGet(14);
+        panel->collision_flags = (s32)Data_00000000;
+        panel->priority_flags = (s32)Data_00000000;
+        panel->delay = 90;
+        ((u8 *)panel->sprite)[9] |= 12;
+        ((u8 *)panel->sprite)[38] = (s32)Data_00000000;
+        panel->sprite->angle = 0x8000;
+        Engine_ActorSetAnimation(14, 0);
+    } else if (scene == (s32)Data_000000af) {
+        switch (rows->halves[225][0]) {
+        case 10:
+            Engine_GameFlagSet(0x980);
+        case 11:
+            if (Engine_GameFlagIsSet(0x980) != 0) {
+                Call6(Engine_MapCopyCellsTo, 120, 7, 109, 7, 1, 3);
+                Call6(Engine_MapCopyCellAttributes, 45, 8, 1, 1, 45, 9);
             }
-            if (Value1(Func_02005a04, 0x988) == 0) {
-                Call3(Func_02005a82, 10, -0x400000, -0x400000);
-                Call3(Func_02005a90, 11, 0x1180000, 0x1280000);
-                Call3(Func_02005a9e, 12, 0x1380000, 0xf80000);
-                Call3(Func_02005aac, 13, 0x1280000, 0xf80000);
-                Call3(Func_02005aba, 14, 0x1400000, 0x1280000);
-                Func_02005b2c(11, 0, 0);
-                Call3(Func_02005b38, 12, 0xc000, 0);
-                Call3(Func_02005b44, 13, 0xc000, 0);
-                Call3(Func_02005b50, 14, 0x8000, 0);
-                Func_02005a96(5);
+            break;
+        case 14:
+            OverlayObject_SpawnConfiguredObject(0x1b80000, 0, 0x1220000, 223);
+            Call6(Engine_MapCopyCellAttributes, 22, 13, 1, 1, 27, 13);
+            FieldScene_RunScene3c5SequenceA(14);
+            break;
+        case 16:
+            OverlayObject_SpawnConfiguredObject(0x1c00000, 0, 0x1220000, 223);
+            Call6(Engine_MapCopyCellAttributes, 22, 12, 1, 1, 28, 10);
+            FieldScene_RunScene3c5SequenceA(16);
+            break;
+        case 17:
+            OverlayObject_SpawnConfiguredObject(0xe80000, 0, 0x2520000, 223);
+            Call6(Engine_MapCopyCellAttributes, 22, 12, 1, 1, 14, 33);
+            FieldScene_RunScene3c5SequenceA(17);
+            break;
+        case 12:
+        case 13:
+        case 15:
+            if (Engine_GameFlagIsSet(0x109) == 0) {
+                FieldScene_RunSupplementalSequenceOne();
+            }
+            break;
+        }
+    } else if (scene == (s32)Data_000000ae) {
+        Engine_ActorGet(8)->unknown_5a &= 0xfe;
+        Engine_ActorGet(9)->unknown_5a &= 0xfe;
+        Engine_ActorSetSpeed(8, 0x10000, 0x8000);
+        Engine_ActorSetSpeed(9, 0x10000, 0x8000);
+        if (Engine_GameFlagIsSet(0x109) == 0) {
+            if (rows->halves[225][0] == 1) {
+                Engine_GameFlagSet(0x301);
             } else {
-                if (Value1(Func_02005a86, 0x989) != 0) {
-                    Call3(Func_02005b08, 10, 0x1380000, 0x1380000);
-                    Call3(Func_02005b7c, 10, 0xb000, 0);
-                    Call3(Func_02005b88, 11, 0xb000, 0);
-                    Call3(Func_02005b94, 12, 0xb000, 0);
-                    Call3(Func_02005ba0, 13, 0xb000, 0);
-                    Call3(Func_02005bac, 14, 0xb000, 0);
-                    Func_02005af2(5);
-                }
+                Engine_GameFlagClear(0x301);
             }
-            if (Value1(Func_02005ae0, 0x985) != 0) {
-                Call3(Func_02005b62, 8, 0x1180000, 0xf00000);
-                Call3(Func_02005b70, 9, 0x1480000, 0xf00000);
-                Call3(Func_02005be4, 8, 0x8000, 0);
-                Func_02005bee(9, 0, 0);
-                Call6(Func_02005aea, 81, 14, 4, 1, 17, 14);
-            }
-            if (*(s16 *)(0x2000402) != 3) {
-                goto L_02002d3c;
-            }
-            record = Value1(Func_02005b40, 0x109);
-            if ((s32)record != 0) {
-                goto L_02002d3c;
-            }
-            Func_02003a7c();
-            goto L_02002d3c;
         }
-        Func_02005bca(12, 2);
+        if (Engine_GameFlagIsSet(0x988) == 0) {
+            Engine_ActorSetPosition(10, -0x400000, -0x400000);
+            Engine_ActorSetPosition(11, 0x1180000, 0x1280000);
+            Engine_ActorSetPosition(12, 0x1380000, 0xf80000);
+            Engine_ActorSetPosition(13, 0x1280000, 0xf80000);
+            Engine_ActorSetPosition(14, 0x1400000, 0x1280000);
+            Engine_ActorFaceDirection(11, 0, 0);
+            Engine_ActorFaceDirection(12, 0xc000, 0);
+            Engine_ActorFaceDirection(13, 0xc000, 0);
+            Engine_ActorFaceDirection(14, 0x8000, 0);
+            Engine_EventWait(5);
+        } else if (Engine_GameFlagIsSet(0x989) != 0) {
+            Engine_ActorSetPosition(10, 0x1380000, 0x1380000);
+            Engine_ActorFaceDirection(10, 0xb000, 0);
+            Engine_ActorFaceDirection(11, 0xb000, 0);
+            Engine_ActorFaceDirection(12, 0xb000, 0);
+            Engine_ActorFaceDirection(13, 0xb000, 0);
+            Engine_ActorFaceDirection(14, 0xb000, 0);
+            Engine_EventWait(5);
+        }
+        if (Engine_GameFlagIsSet(0x985) != 0) {
+            Engine_ActorSetPosition(8, 0x1180000, 0xf00000);
+            Engine_ActorSetPosition(9, 0x1480000, 0xf00000);
+            Engine_ActorFaceDirection(8, 0x8000, 0);
+            Engine_ActorFaceDirection(9, 0, 0);
+            Call6(Engine_MapCopyCellAttributes, 81, 14, 4, 1, 17, 14);
+        }
+        if (Data_02000240_t.halves[225][0] == 3 && Engine_GameFlagIsSet(0x109) == 0) {
+            FieldScene_RunSupplementalSequenceOne();
+        }
+    } else {
+        Engine_ActorSetAnimation(12, 2);
     }
-    L_02002d3c:;
     return 0;
 }

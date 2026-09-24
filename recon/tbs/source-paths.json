@@ -1,6 +1,66 @@
 {
   "format": 3,
   "owners": {
+    "resource_3b4:02001fd8": {
+      "name": "TakaraAshiba_UpdateItemIcons",
+      "source": "FIELD/TAKARA_ASHIBA/ITEM_ICONS.C"
+    },
+    "resource_378:020005cc": {
+      "name": "ShindenHeya_ApplyEntryState",
+      "source": "FIELD/COMMON/SHINDEN_HEYA/ENTRY_STATE.C"
+    },
+    "resource_372:02003ce4": {
+      "name": "HaidiaArashi_UpdatePulsingGlow",
+      "source": "FIELD/HAIDIA_ARASHI/PULSING_GLOW.C"
+    },
+    "resource_3af:02000724": {
+      "name": "FuneKanpan_UpdateFlyByForActor22",
+      "source": "FIELD/FUNE_KANPAN/FLY_BY_22.C"
+    },
+    "resource_3af:02000598": {
+      "name": "FuneKanpan_UpdateFlyByForActor21",
+      "source": "FIELD/FUNE_KANPAN/FLY_BY_21.C"
+    },
+    "resource_395:020015a0": {
+      "name": "KorimaKi_SpawnOrbitSparks",
+      "source": "FIELD/KORIMA_KI/ORBIT_SPARKS.C"
+    },
+    "resource_396:02001424": {
+      "name": "ToretoHeya_PlayGesture",
+      "source": "FIELD/TORETO_HEYA/GESTURE.C"
+    },
+    "resource_3b0:02000240": {
+      "name": "FuneHobashira_ApplyEntryState",
+      "source": "FIELD/FUNE_HOBASHIRA/ENTRY_STATE.C"
+    },
+    "resource_3af:02001444": {
+      "name": "FuneKanpan_ApplyEntryState",
+      "source": "FIELD/FUNE_KANPAN/ENTRY_STATE.C"
+    },
+    "resource_395:020012f4": {
+      "name": "KorimaKi_PlayGesture",
+      "source": "FIELD/KORIMA_KI/GESTURE.C"
+    },
+    "resource_3a6:02001984": {
+      "name": "HaidiaDou_ApplyEntryState",
+      "source": "FIELD/HAIDIA_DOU/ENTRY_STATE.C"
+    },
+    "resource_3ba:02000a3c": {
+      "name": "KorosseoKawa_ApplyEntryState",
+      "source": "FIELD/KOROSSEO_KAWA/ENTRY_STATE.C"
+    },
+    "resource_3b1:02002ff0": {
+      "name": "FuneHeya_ApplyEntryState",
+      "source": "FIELD/FUNE_HEYA/ENTRY_STATE.C"
+    },
+    "resource_39b:020012e0": {
+      "name": "MakyuriIriguchi_ApplyEntryState",
+      "source": "FIELD/MAKYURI_IRIGUCHI/ENTRY_STATE.C"
+    },
+    "resource_3bb:02000bd4": {
+      "name": "KorosseoKabe_ApplyEntryState",
+      "source": "FIELD/KOROSSEO_KABE/ENTRY_STATE.C"
+    },
     "resource_38f:02000304": {
       "name": "KorimaMura_Func02000304",
       "source": "FIELD/KORIMA_MURA/F_00304.C"
@@ -19227,7 +19287,8 @@
       "source": "FIELD/KUUPUAPPU_MURA/SCENE_CELLS.C"
     },
     "resource_371:020006ec": {
-      "name": "WorldMap_EnterScene"
+      "name": "WorldMap_EnterScene",
+      "source": "FIELD/WORLD_MAP/ENTER_SCENE.C"
     },
     "resource_371:020024a8": {
       "name": "WorldMap_RunActorSequence"

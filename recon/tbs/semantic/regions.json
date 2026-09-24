@@ -474,7 +474,7 @@
     {
       "overlay": "resource_372",
       "entry": "0x02003ce4",
-      "span_bytes": 296
+      "span_bytes": 308
     },
     {
       "overlay": "resource_372",
@@ -7344,7 +7344,7 @@
     {
       "overlay": "resource_3b0",
       "entry": "0x02000240",
-      "span_bytes": 452
+      "span_bytes": 460
     },
     {
       "overlay": "resource_3b0",
@@ -8404,7 +8404,7 @@
     {
       "overlay": "resource_3b4",
       "entry": "0x02001fd8",
-      "span_bytes": 220
+      "span_bytes": 236
     },
     {
       "overlay": "resource_3b4",
@@ -8959,7 +8959,7 @@
     {
       "overlay": "resource_3ba",
       "entry": "0x02000a3c",
-      "span_bytes": 880
+      "span_bytes": 892
     },
     {
       "overlay": "resource_3ba",
@@ -9194,7 +9194,7 @@
     {
       "overlay": "resource_3bb",
       "entry": "0x02000bd4",
-      "span_bytes": 1276
+      "span_bytes": 1288
     },
     {
       "overlay": "resource_3bb",

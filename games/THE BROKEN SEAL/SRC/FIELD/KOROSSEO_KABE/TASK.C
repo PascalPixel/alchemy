@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "FIELD_SCENE.H"
 
 enum TaskMessage {
     MSG_WOULD_LIKE_FRIEND_CHEER_FOR = 0x207d,
@@ -456,7 +457,7 @@ static __inline__ void Call4_02001538(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a
 
 static inline void InitializeActorZero(void)
 {
-    Actor_SetSpeed(0, 0x10000, 0x8000);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
 }
 
 static inline void InitializeSelectedActor(s32 actorId)
@@ -1050,15 +1051,15 @@ void FieldScene_RunScene3bb_02000b38(s32 a0)
     Func_02004a74(1);
     Event_Begin();
     Actor_SetPosition(8, 0x580000, 0x1000000);
-    Actor_SetPosition(0, 0x780000, 0x1000000);
+    Actor_SetPosition(ACTOR_PARTY_LEADER, 0x780000, 0x1000000);
     Actor_FaceActor(8, 0x4000, 0);
-    Actor_FaceActor(0, 0x4000, 0);
+    Actor_FaceActor(ACTOR_PARTY_LEADER, 0x4000, 0);
     if (a0 < 0) {
         Actor_SetAnimation(8, 10);
-        Actor_SetAnimation(0, 35);
+        Actor_SetAnimation(ACTOR_PARTY_LEADER, 35);
     } else {
         Actor_SetAnimation(8, 8);
-        Actor_SetAnimation(0, 28);
+        Actor_SetAnimation(ACTOR_PARTY_LEADER, 28);
     }
     Task_Wait(1);
     Camera_MoveTo(0x680000, 0, 0xc00000, 0);
@@ -1091,7 +1092,7 @@ void FieldScene_RunSecondActorInteraction(s32 a0)
             Event_ShowMessage(a0, 0);
             Func_02004046(0, 0x438, 0x108);
             Event_Wait(15);
-            Actor_SetSpeed(0, 0x18000, 0xc000);
+            Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
             Value3(SceneActor_PlaceWithScale14000, 0, 0x438, 216);
             Value3(SceneActor_PlaceWithScale14000, 0, 0x428, 216);
             SceneState_WaitForStatusWords();
@@ -1099,7 +1100,7 @@ void FieldScene_RunSecondActorInteraction(s32 a0)
             Camera_MoveTo(-1, -1, -1, 0);
             Event_ShowMessage(a0, 0);
             Func_02004274(0);
-            Camera_FollowActor(0, 0);
+            Camera_FollowActor(ACTOR_PARTY_LEADER, 0);
             Func_020035b8(a0, 2);
         } else {
             if (rec == 1) {
@@ -1138,7 +1139,7 @@ void FieldScene_RunSceneThreeCoordinator(s32 a0)
             Event_ShowMessage(a0, 0);
             Func_0200417a(0, 0x358, 0x108);
             Event_Wait(10);
-            Actor_SetSpeed(0, 0x18000, 0xc000);
+            Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
             Value3_02001538(SceneActor_PlaceWithScale14000, 0, 0x358, 0x108);
             Value3_02001538(SceneActor_PlaceWithScale14000, 0, 0x358, 232);
             Event_ShowMessage(a0, 0);
@@ -1146,15 +1147,15 @@ void FieldScene_RunSceneThreeCoordinator(s32 a0)
             Event_Wait(10);
             Value3_02001538(SceneActor_MovePairByTileOffset, 33, -64, 0);
             Camera_MoveTo(0x2f00000, -1, 0xd80000, 1);
-            Actor_SetAnimation(0, 1);
+            Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
             Event_Wait(10);
-            Actor_SetSpeed(0, 0x10000, 0x8000);
-            Actor_WalkToAndWait(0, 0x2f8, 232);
+            Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
+            Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x2f8, 232);
             Event_Wait(10);
-            Actor_FaceDirection(0, 0x4000, 30);
+            Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 30);
             Event_ShowMessage(a0, 0);
             Func_020043fe(0);
-            Camera_FollowActor(0, 0);
+            Camera_FollowActor(ACTOR_PARTY_LEADER, 0);
             Actor_SetPosition(33, 0x3480000, 0xe80000);
             Func_02003750(a0, 3);
             goto L_020016b0;
@@ -1179,7 +1180,7 @@ void Func_02001b30(void)
         x += 0x80000;
         y <<= 20;
         y += 0x80000;
-        Actor_SetPosition(1, x, y);
+        Actor_SetPosition(ACTOR_GERALD, x, y);
     }
     {
         s32 x = Func_02005a60(912);
@@ -1189,7 +1190,7 @@ void Func_02001b30(void)
         x += 0x80000;
         y <<= 20;
         y += 0x80000;
-        Actor_SetPosition(2, x, y);
+        Actor_SetPosition(ACTOR_IVAN, x, y);
     }
     {
         s32 x = Func_02005a84(928);
@@ -1199,7 +1200,7 @@ void Func_02001b30(void)
         x += 0x80000;
         y <<= 20;
         y += 0x80000;
-        Actor_SetPosition(3, x, y);
+        Actor_SetPosition(ACTOR_MIA, x, y);
     }
 }
 
@@ -1300,8 +1301,8 @@ void RunPartyCountInteractionCopyA(s32 actorId)
             InitializeSelectedActor(actorId);
             Actor_WalkTo(actorId, x, y + 0x40);
             Event_Wait(15);
-            Actor_WalkToAndWait(0, x, y);
-            Actor_WalkToAndWait(0, x, y + 0x20);
+            Actor_WalkToAndWait(ACTOR_PARTY_LEADER, x, y);
+            Actor_WalkToAndWait(ACTOR_PARTY_LEADER, x, y + 0x20);
             Event_CloseScreen();
             Event_WaitForScreen();
             Event_RequestExit(11);
@@ -1461,7 +1462,7 @@ L_main:
     ((void (*)())Func_020060ec_a)(obj, 1);
     Event_SetMessage(MSG_ROBIN_WILL_CHEER_FOR_WAY);
     Event_ShowMessage(owner, 0);
-    Actor_SetSpeed(0, 0x10000, 0x8000);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
     Actor_SetSpeed(obj, 0x10000, 0x8000);
     Actor_SetSpeed(owner, 0x10000, 0x8000);
     record = Value1_02002114(Func_020061ca, 0);
@@ -1472,10 +1473,10 @@ L_main:
     Actor_WalkToAndWait(obj, p9, hi);
     lo = p9 + 16;
     Value3_02002114(Engine_ActorWalkToAndWait, 0, lo, hi);
-    Actor_FaceEachOther(obj, 0, 30);
+    Actor_FaceEachOther(obj, ACTOR_PARTY_LEADER, 30);
     Actor_SetAnimation(obj, 3);
     tail = hi - 32;
-    Actor_SetAnimationAndWait(0, 3);
+    Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
     Actor_WalkToAndWait(owner, p9, tail);
     Value3_02002114(Engine_ActorWalkTo, owner, lo, tail);
     Func_02006374(0, obj);

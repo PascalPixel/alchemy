@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "FIELD_SCENE.H"
 
 #define WORKSPACE (*(u8 **) 0x03001EBC)
 
@@ -195,7 +196,7 @@ void FieldScene_RunActor17MessageBranch(void)
     } else {
         if (GameFlag_IsSet(0x845) == 0) {
             Event_SetMessage(MSG_HAVE_EVER_HEARD_OCEAN);
-            Actor_FaceActor(17, 0, 0);
+            Actor_FaceActor(17, ACTOR_PARTY_LEADER, 0);
             Event_Wait(10);
             Event_AskYesNo(17, 0);
             Actor_FaceDirection(17, 0x3000, 10);
@@ -211,7 +212,7 @@ void FieldScene_ConfigureActor21Scene(void)
 {
     Event_Begin();
     Event_SetMessage(MSG_IM_REALLY_WORRIED_ABOUT_KOLIMA);
-    Actor_FaceActor(21, 0, 0);
+    Actor_FaceActor(21, ACTOR_PARTY_LEADER, 0);
     Event_ShowMessage(21, 0);
     SetScale(21, 0xc000, 10);
     Event_End();
@@ -225,7 +226,7 @@ void FieldScene_RunActor24Sequence(void)
     Event_Begin();
     Event_SetMessage(MSG_GRRR);
     Event_ShowMessageAndWait(24, 0, 20);
-    Actor_FaceActor(24, 0, 0);
+    Actor_FaceActor(24, ACTOR_PARTY_LEADER, 0);
     Event_Wait(10);
     Event_OpenMessage(24, 0);
     if (Event_ChooseYesNo(0, 0) != 0) {
@@ -245,7 +246,7 @@ void FieldScene_RunActor27Sequence(void)
 
     Event_Begin();
     Event_SetMessage(MSG_DO_BELIEVE_TREE_SPIRIT_CAN);
-    Actor_FaceActor(27, 0, 0);
+    Actor_FaceActor(27, ACTOR_PARTY_LEADER, 0);
     Event_Wait(10);
     Event_OpenMessage(27, 0);
     if (Event_ChooseYesNo(0, 0) != 0) {
@@ -314,7 +315,7 @@ void FieldScene_RunActor21SequenceOnFlag300(void)
         Event_Wait(10);
         GameFlag_Set(0x300);
     }
-    Actor_FaceActor(21, 0, 0);
+    Actor_FaceActor(21, ACTOR_PARTY_LEADER, 0);
     Event_SetMessage(MSG_IF_WANT_MEAL_SPEAK_WAITRESS);
     Event_ShowMessage(21, 0);
     Actor_FaceDirection(21, 0xc000, 10);
@@ -328,7 +329,7 @@ void FieldScene_ConfigureActor22Scene(void)
     Event_Begin();
     Event_SetMessage(MSG_REALLY_THINK_HEAD_CHEF_HAS);
     Event_ShowMessage(0x16, 0);
-    Actor_FaceActor(0x16, 0, 0);
+    Actor_FaceActor(0x16, ACTOR_PARTY_LEADER, 0);
     Event_ShowMessage(0x16, 0);
     Actor_FaceDirection(0x16, 0, 0xA);
     Event_End();
@@ -340,7 +341,7 @@ void FieldScene_ConfigureActor23Scene(void)
     Event_Begin();
     Event_SetMessage(MSG_LETS_SEE_SERVE_THEM_WATER);
     Event_ShowMessage(23, 0);
-    Actor_FaceActor(23, 0, 0);
+    Actor_FaceActor(23, ACTOR_PARTY_LEADER, 0);
     Event_ShowMessage(23, 0);
     SetScale_020009d8(23, 0xc000, 10);
     Event_End();

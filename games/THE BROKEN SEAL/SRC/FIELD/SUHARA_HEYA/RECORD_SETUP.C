@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "FIELD_SCENE.H"
 #include "SCENE.H"
 
 enum RecordSetupMessage {
@@ -110,14 +111,14 @@ void Dialogue_HandleFacingChoice(s32 no)
 {
     extern u8 *gWork;
 
-    u16 facing = (Actor_Run(0)[3] + 0x2000) & ~0x3fff;
+    u16 facing = (Actor_Run(ACTOR_PARTY_LEADER)[3] + 0x2000) & ~0x3fff;
     if (facing == 0xc000) {
         Actor_Apply(31, no);
     } else if (Actor_unk2(0x96f)) {
         s32 msg = (s32)&SceneMessage_FacingChoiceBase;
         Actor_Do(msg);
         Actor_Apply2(no, 0);
-        if (Actor_Apply3(0, 0) == 0) {
+        if (Actor_Apply3(ACTOR_PARTY_LEADER, 0) == 0) {
             Actor_unk2_2(10);
             Actor_unk3_2(msg + 1);
         } else {
@@ -134,7 +135,7 @@ void Dialogue_HandleFacingBranch(s32 no)
 {
     extern u8 *gWork;
 
-    u16 facing = (Actor_unk3_4(0)[3] + 0x2000) & ~0x3fff;
+    u16 facing = (Actor_unk3_4(ACTOR_PARTY_LEADER)[3] + 0x2000) & ~0x3fff;
     if (facing == 0xc000) {
         Actor_Apply6(10, no);
     } else if (Actor_unk3(0x96f)) {
@@ -150,7 +151,7 @@ void Dialogue_HandleFacingAction(s32 no)
 {
     extern u8 *gWork;
 
-    u16 facing = (Actor_unk2_4(0)[3] + 0x2000) & ~0x3fff;
+    u16 facing = (Actor_unk2_4(ACTOR_PARTY_LEADER)[3] + 0x2000) & ~0x3fff;
     if (facing == 0xc000) {
         Actor_unk8_2(no);
     } else if (Actor_unk4(0x96f)) {
@@ -169,7 +170,7 @@ void Scene_RunActorCueBranch(s32 obj)
     s32 cue = (s32)&Value_00002624;
     Actor_unk10_2(cue);
     Actor_Apply11(obj, 0);
-    if (Actor_Apply12(0, 0) == 0) {
+    if (Actor_Apply12(ACTOR_PARTY_LEADER, 0) == 0) {
         Actor_unk11_2(10);
         Actor_unk12_2(cue + 1);
     } else {

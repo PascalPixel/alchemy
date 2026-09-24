@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "FIELD_SCENE.H"
 
 enum ElementalStarDemandMessage {
     MSG_LOOKS_LIKE_THEYVE_SPOTTED_US = 0x107d
@@ -241,7 +242,7 @@ void FieldScene_RunElementalStarDemand(void)
     Call2(Func_0200544a, 0x400c, 20);
     Func_02005c48(5, 9, 0);
     Func_02005ba6(20);
-    Actor_StartRepeatedMotion(5, 2);
+    Actor_StartRepeatedMotion(ACTOR_JASMINE, 2);
     Func_02005c4e(9, 2);
     Event_Wait(40);
     Func_02005c54(10, 1);

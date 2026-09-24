@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "FIELD_SCENE.H"
 
 #include "COLOSSO_LOG_ROLLING_STAGE.H"
 
@@ -1424,7 +1425,7 @@ void FieldScene_RunMultiPhaseActorSequence(s32 a0)
         Actor_SetAnimation(8, 8);
     }
     ObjectMotion_EnableActionAndSetCallback_1(8, 0x200d668);
-    Actor_SetPosition(0, 0x5e00000, 0xc00000);
+    Actor_SetPosition(ACTOR_PARTY_LEADER, 0x5e00000, 0xc00000);
     record = Scene_GetRecord_1(0);
     {
         /* Clear the visibility/active flag at +6. */
@@ -1433,13 +1434,13 @@ void FieldScene_RunMultiPhaseActorSequence(s32 a0)
         *(u16 *)(record + 6) = shown;
     }
     ObjectMotion_EnableActionAndSetCallback_2(0, 0x200d738);
-    Actor_SetAnimation(0, 35);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, 35);
     ObjectMotion_SetSpeedParameters_1(1, 0x10000, 0x8000);
-    Actor_SetSpeed(2, 0x10000, 0x8000);
-    Actor_SetSpeed(3, 0x10000, 0x8000);
-    Actor_SetPosition(1, 0x5b80000, 0xb80000);
-    Actor_SetPosition(2, 0x5b80000, 0xc80000);
-    Actor_SetPosition(3, 0x5a80000, 0xc00000);
+    Actor_SetSpeed(ACTOR_IVAN, 0x10000, 0x8000);
+    Actor_SetSpeed(ACTOR_MIA, 0x10000, 0x8000);
+    Actor_SetPosition(ACTOR_GERALD, 0x5b80000, 0xb80000);
+    Actor_SetPosition(ACTOR_IVAN, 0x5b80000, 0xc80000);
+    Actor_SetPosition(ACTOR_MIA, 0x5a80000, 0xc00000);
     record = Scene_GetRecord_2(1);
     {
         /* Clear the visibility/active flag at +6. */
@@ -1470,7 +1471,7 @@ void FieldScene_RunMultiPhaseActorSequence(s32 a0)
     Event_SetMessage(MSG_ROBIN);
     Event_Wait(60);
     data_table_addr = (s32)Data_0200d950;
-    Actor_EnableActionCallback(0, data_table_addr);
+    Actor_EnableActionCallback(ACTOR_PARTY_LEADER, data_table_addr);
     record = Scene_GetRecord_5(0);
     *(s32 *)(record + 24) = 0x10000;
     record = Scene_GetRecord_6(0);
@@ -1483,56 +1484,56 @@ void FieldScene_RunMultiPhaseActorSequence(s32 a0)
     Actor_SetSpriteFlags(record, 0);
     Event_Wait(20);
     ObjectMotion_EnableActionAndSetCallback_4(0, 0x200d808);
-    Event_ShowMessage(1, 0);
+    Event_ShowMessage(ACTOR_GERALD, 0);
     Event_Wait(20);
     ObjectMotion_SetPositionAndReset_2(1, 0x5e0, 176);
-    Actor_FaceDirection(1, 0x4000, 10);
+    Actor_FaceDirection(ACTOR_GERALD, 0x4000, 10);
     BattleEffect_SpawnLinkedResourceObject_1(1, 0x100, 20);
-    Event_ShowMessage(2, 0);
+    Event_ShowMessage(ACTOR_IVAN, 0);
     Object_LinkObjectAndSetCallback_1(1, 2);
     Event_Wait(30);
-    Actor_WalkToAndWait(2, 0x5d0, 176);
-    Actor_WalkTo(1, 0x5f0, 184);
-    Actor_WalkToAndWait(2, 0x5e0, 176);
-    Actor_SetAnimation(1, 1);
-    Actor_FaceDirection(1, 0x6000, 0);
-    Actor_FaceDirection(2, 0x4000, 10);
-    Actor_RunRepeatedMotion(2, 2);
+    Actor_WalkToAndWait(ACTOR_IVAN, 0x5d0, 176);
+    Actor_WalkTo(ACTOR_GERALD, 0x5f0, 184);
+    Actor_WalkToAndWait(ACTOR_IVAN, 0x5e0, 176);
+    Actor_SetAnimation(ACTOR_GERALD, 1);
+    Actor_FaceDirection(ACTOR_GERALD, 0x6000, 0);
+    Actor_FaceDirection(ACTOR_IVAN, 0x4000, 10);
+    Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
     Event_Wait(10);
     Object_LinkObjectAndSetCallback_2(2, 1);
     Event_Wait(30);
     ObjectMotion_CallThenWaitForAnimationChange_2(1, 4);
     Event_Wait(30);
-    Event_ShowMessage(3, 0);
+    Event_ShowMessage(ACTOR_MIA, 0);
     Object_LinkObjectAndSetCallback_3(1, 3);
     Object_LinkObjectAndSetCallback_4(2, 3);
-    Actor_WalkToAndWait(3, 0x5d0, 184);
+    Actor_WalkToAndWait(ACTOR_MIA, 0x5d0, 184);
     Object_LinkObjectAndSetCallback_5(2, 0);
     Object_LinkObjectAndSetCallback_6(1, 0);
-    Actor_ShowEmote(1, 0x102, 60);
+    Actor_ShowEmote(ACTOR_GERALD, 0x102, 60);
     Object_LinkObjectAndSetCallback_7(2, 1);
     Object_LinkObjectAndSetCallback_8(1, 2);
     Event_Wait(40);
-    Actor_RunRepeatedMotion(3, 2);
+    Actor_RunRepeatedMotion(ACTOR_MIA, 2);
     BattleRuntime_WaitIfModeZero_12(10);
     Object_LinkObjectAndSetCallback_9(2, 3);
     Object_LinkObjectAndSetCallback_10(1, 3);
     BattleRuntime_WaitIfModeZero_13(20);
-    Event_ShowMessage(3, 0);
+    Event_ShowMessage(ACTOR_MIA, 0);
     ObjectMotion_EnableActionAndSetCallback_5(0, 0x200d8ac);
-    Actor_RunRepeatedMotion(1, 2);
+    Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
     Object_LinkObjectAndSetCallback_11(1, 0);
     Event_Wait(20);
-    Event_ShowMessage(1, 0);
-    Actor_RunRepeatedMotion(2, 2);
+    Event_ShowMessage(ACTOR_GERALD, 0);
+    Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
     Object_LinkObjectAndSetCallback_12(2, 0);
     Event_Wait(20);
-    Event_ShowMessage(2, 0);
-    Actor_RunRepeatedMotion(3, 2);
+    Event_ShowMessage(ACTOR_IVAN, 0);
+    Actor_RunRepeatedMotion(ACTOR_MIA, 2);
     Object_LinkObjectAndSetCallback_13(3, 0);
     Event_Wait(20);
-    Event_ShowMessage(3, 0);
-    Actor_EnableActionCallback(0, data_table_addr);
+    Event_ShowMessage(ACTOR_MIA, 0);
+    Actor_EnableActionCallback(ACTOR_PARTY_LEADER, data_table_addr);
     Event_Wait(60);
     callback_target = (s32)Func_020093c1;
     PENDING_CALLBACK_FLAG = 9;
@@ -1540,18 +1541,18 @@ void FieldScene_RunMultiPhaseActorSequence(s32 a0)
     Event_Wait(5);
     Func_02006002_head(callback_target);
     Event_Wait(55);
-    Actor_ShowEmote(1, 0x101, 60);
+    Actor_ShowEmote(ACTOR_GERALD, 0x101, 60);
     Call2(Func_02006014_head, callback_target, 0xc80);
     Event_Wait(20);
     Func_02006028_head(callback_target);
     Event_Wait(40);
-    Actor_ShowEmote(2, 0x101, 60);
+    Actor_ShowEmote(ACTOR_IVAN, 0x101, 60);
     PENDING_CALLBACK_FLAG = 9;
     Call2(Func_0200603e_head, callback_target, 0xc80);
     Event_Wait(35);
     Func_02006052_head(callback_target);
     Event_Wait(25);
-    Actor_ShowEmote(3, 0x102, 60);
+    Actor_ShowEmote(ACTOR_MIA, 0x102, 60);
     PENDING_CALLBACK_FLAG = 9;
     Call2(Func_0200606a_head, callback_target, 0xc80);
     Event_Wait(35);
@@ -1568,43 +1569,43 @@ void FieldScene_RunMultiPhaseActorSequence(s32 a0)
     Event_Wait(35);
     Func_020060d0_head(callback_target);
     Event_Wait(25);
-    Actor_ShowEmote(3, 0x108, 60);
-    Actor_StartRepeatedMotion(1, 3);
+    Actor_ShowEmote(ACTOR_MIA, 0x108, 60);
+    Actor_StartRepeatedMotion(ACTOR_GERALD, 3);
     ObjectMotion_SetVariantCallback_2(2, 3);
     ObjectMotion_SetVariantCallbackAndInvokeObject_6(3, 3);
     Object_LinkObjectAndSetCallback_18(3, 2);
     Object_LinkObjectAndSetCallback_19(1, 2);
     PENDING_CALLBACK_FLAG = 9;
     Call2(Func_02006140_head, callback_target, 0xc80);
-    Actor_SetAnimation(1, 3);
-    Actor_SetAnimation(2, 3);
-    Actor_SetAnimation(3, 3);
+    Actor_SetAnimation(ACTOR_GERALD, 3);
+    Actor_SetAnimation(ACTOR_IVAN, 3);
+    Actor_SetAnimation(ACTOR_MIA, 3);
     Event_Wait(60);
-    Actor_WalkTo(3, 0x5b8, 200);
+    Actor_WalkTo(ACTOR_MIA, 0x5b8, 200);
     BattleRuntime_WaitIfModeZero_30(5);
-    Actor_WalkTo(2, 0x558, 184);
+    Actor_WalkTo(ACTOR_IVAN, 0x558, 184);
     BattleRuntime_WaitIfModeZero_31(3);
-    Actor_WalkToAndWait(1, 0x5e8, 184);
-    Actor_WalkTo(1, 0x558, 184);
-    Actor_WaitForMove(3);
+    Actor_WalkToAndWait(ACTOR_GERALD, 0x5e8, 184);
+    Actor_WalkTo(ACTOR_GERALD, 0x558, 184);
+    Actor_WaitForMove(ACTOR_MIA);
     Object_SetModeById_8(3, 1);
     Object_LinkObjectAndSetCallback_20(3, 0);
     Event_Wait(60);
-    Actor_WalkToAndWait(3, 0x598, 200);
-    Actor_WalkTo(3, 0x558, 184);
+    Actor_WalkToAndWait(ACTOR_MIA, 0x598, 200);
+    Actor_WalkTo(ACTOR_MIA, 0x558, 184);
     Event_CloseScreen();
     Event_WaitForScreen();
     Event_Wait(30);
-    Actor_SetPosition(1, 0x5e80000, 0xb00000);
-    Actor_SetPosition(2, 0x5b80000, 0xc00000);
-    Actor_SetPosition(3, 0x6180000, 0xc80000);
+    Actor_SetPosition(ACTOR_GERALD, 0x5e80000, 0xb00000);
+    Actor_SetPosition(ACTOR_IVAN, 0x5b80000, 0xc00000);
+    Actor_SetPosition(ACTOR_MIA, 0x6180000, 0xc80000);
     Func_02006322_b_head();
     ColorBuffer_ApplyTarget(0x10000, 2);
     ColorBuffer_Interpolate(1);
     Event_SetMessage(MSG_ROBIN_FELL_ASLEEP);
-    Event_ShowMessage(1, 0);
-    Event_ShowMessage(2, 0);
-    Event_ShowMessage(3, 0);
+    Event_ShowMessage(ACTOR_GERALD, 0);
+    Event_ShowMessage(ACTOR_IVAN, 0);
+    Event_ShowMessage(ACTOR_MIA, 0);
     Event_Wait(60);
     Event_End();
 }
@@ -1627,7 +1628,7 @@ void Func_02001df8(s32 scene)
     Event_Wait(30);
     Event_ShowMessage(scene, 0);
     Func_020054a8_arrival(0, 280, 200);
-    Actor_SetSpeed(0, 98304, 49152);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 98304, 49152);
     Func_02005a00_arrival(0, 280, 152);
     Call3(Func_02005a0c_arrival, 0, 296, 152);
     Event_Wait(10);
@@ -1639,7 +1640,7 @@ void Func_02001df8(s32 scene)
     Value3(Engine_ActorFaceDirection, 0, 0, 15);
     Leader_CheckAhead();
     Camera_MoveTo(-1, -1, -1, 0);
-    Actor_FaceDirection(0, 16384, 15);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, 16384, 15);
     Event_ShowMessage(scene, 0);
     Value3(Func_02005960_arrival, 96, 40, 0);
     Func_020059ce_arrival(128, 40, 10);
@@ -1651,7 +1652,7 @@ void Func_02001df8(s32 scene)
     Event_ShowMessage(scene, 0);
     Func_02005a5c_arrival();
     Func_02005766_arrival(0);
-    Camera_FollowActor(0, 0);
+    Camera_FollowActor(ACTOR_PARTY_LEADER, 0);
     Func_02004aaa_arrival(scene, 2);
     } else if (state == 1) {
         Event_SetMessage(MSG_YOUR_GOAL_IN_STAGE_SIMPLE);
@@ -1706,34 +1707,34 @@ void FieldScene_RunFourStepActorMotion(s32 a0)
             Event_ShowMessage(a0, 0);
             Event_ShowMessage(a0, 0);
             Value3(Func_020057b2_motion, 0, 0x330, 200);
-            Actor_SetSpeed(0, 0x10000, 0x8000);
-            Actor_WalkToAndWait(0, 0x348, 200);
+            Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
+            Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x348, 200);
             Value3(Engine_ActorFaceDirection, 0, 0xc000, 20);
             Func_02006cd4_motion();
             Camera_MoveTo(-1, -1, -1, 0);
-            Actor_SetSpeed(0, 0x8000, 0x4000);
+            Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
             actor = Value1(Func_02006bda_motion, 0);
             y = *(s32 *)(actor + 12);
             x = *(s32 *)(actor + 8);
-            Actor_SetSpeed(0, 0x8000, 0x4000);
-            Actor_SetAnimation(0, 10);
+            Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
+            Actor_SetAnimation(ACTOR_PARTY_LEADER, 10);
             raised_y = 0x60000 + y;
             Func_02006b02_motion(actor, x, raised_y, *(s32 *)(actor + 16));
             Func_02006b10_motion(actor);
-            Actor_SetAnimation(0, 14);
+            Actor_SetAnimation(ACTOR_PARTY_LEADER, 14);
             shifted_x = 0x400000 + x;
             Func_02006b24_motion(actor, shifted_x, raised_y, *(s32 *)(actor + 16));
             Func_02006b32_motion(actor);
-            Actor_SetAnimation(0, 10);
+            Actor_SetAnimation(ACTOR_PARTY_LEADER, 10);
             Func_02006b44_motion(actor, shifted_x, y + 0x360000, *(s32 *)(actor + 16));
             Func_02006b52_motion(actor);
-            Actor_SetAnimation(0, 15);
+            Actor_SetAnimation(ACTOR_PARTY_LEADER, 15);
             Func_02006b64_motion(actor, x + 0x300000, y + 0x360000, *(s32 *)(actor + 16));
             Func_02006b72_motion(actor);
-            Actor_SetAnimation(0, 12);
+            Actor_SetAnimation(ACTOR_PARTY_LEADER, 12);
             Event_ShowMessage(a0, 0);
             Func_02005a8c_motion(0);
-            Camera_FollowActor(0, 0);
+            Camera_FollowActor(ACTOR_PARTY_LEADER, 0);
             Func_02004dd0_motion(a0, 4);
         } else if (result == 1) {
             Event_SetMessage(MSG_CLEAR_STAGE_MUST_ABLE_CHANGE);
@@ -1810,17 +1811,17 @@ void FieldScene_RunOpeningAuxiliarySequence(s32 a0)
             Event_ShowMessage(a0, 0);
             Event_ShowMessage(a0, 0);
             Value3(Func_020059ea_opening, 0, 0x3d8, 184);
-            Actor_SetSpeed(0, 0x18000, 0xc000);
+            Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
             Func_020046b8_opening(0, 0x3e0, 184);
-            Actor_SetSpeed(0, 0x4ccc, 0x2666);
+            Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x4ccc, 0x2666);
             Call3(Func_0200469e_opening, 0, 0x460, 184);
             Event_Wait(120);
-            Actor_SetAttachedEffect(0, 0x101);
+            Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x101);
             Event_Wait(120);
             Func_02005cd0_opening(0);
-            Actor_SetAnimation(0, 1);
-            Actor_SetAttachedEffect(0, 0x100);
-            Actor_ShowEmote(0, 0x105, 0);
+            Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
+            Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x100);
+            Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x105, 0);
             rec7 = Func_02006e2e_opening(0);
             for (i = 119; i >= 0; i--) {
                 if (*(s32 *)(rec7 + 8) > 0x3e00000) {
@@ -1828,7 +1829,7 @@ void FieldScene_RunOpeningAuxiliarySequence(s32 a0)
                 }
                 Task_Wait(1);
             }
-            Actor_ShowEmote(0, 0x103, 60);
+            Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x103, 60);
             Value3(Func_02004710_opening, 0, 0x460, 184);
             Event_ShowMessage(a0, 0);
             Func_02005d36_opening(0);
@@ -1838,7 +1839,7 @@ void FieldScene_RunOpeningAuxiliarySequence(s32 a0)
                 flag[498] = 1;
             }
             Func_02005c88_opening(0);
-            Camera_FollowActor(0, 0);
+            Camera_FollowActor(ACTOR_PARTY_LEADER, 0);
             Func_02004fcc_opening(a0, 5);
             goto L_02002494;
         }
@@ -1882,7 +1883,7 @@ void ColossoLogRollingStage_RunLogRollingInteraction(s32 actor)
         Event_ShowMessage(actor, 0);
         ColossoLogRollingStage_StopPaletteTask();
         Event_Wait(2);
-        Camera_FollowActor(0, 0);
+        Camera_FollowActor(ACTOR_PARTY_LEADER, 0);
         ColossoLogRollingStage_InitializeStateInteraction(actor, 6);
     } else if (state == 1) {
         Event_SetMessage(MSG_HERE_MUST_FIGURE_OUT_HOW);
@@ -1905,7 +1906,7 @@ void ColossoLogRollingStage_RestoreActorPositions(void)
         x += center;
         z <<= 20;
         z += center;
-        Actor_SetPosition(1, x, z);
+        Actor_SetPosition(ACTOR_GERALD, x, z);
     }
     {
         s32 x = Func_02006fc0(912);
@@ -1914,7 +1915,7 @@ void ColossoLogRollingStage_RestoreActorPositions(void)
         x += center;
         z <<= 20;
         z += center;
-        Actor_SetPosition(2, x, z);
+        Actor_SetPosition(ACTOR_IVAN, x, z);
     }
     {
         s32 x = Func_02006fe4(928);
@@ -1923,7 +1924,7 @@ void ColossoLogRollingStage_RestoreActorPositions(void)
         x += center;
         z <<= 20;
         z += center;
-        Actor_SetPosition(3, x, z);
+        Actor_SetPosition(ACTOR_MIA, x, z);
     }
 }
 
@@ -2045,7 +2046,7 @@ s32 Func_0200739a_party(void);
 
 static inline void InitializeActorZero(void)
 {
-    Actor_SetSpeed(0, 0x10000, 0x8000);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
 }
 
 static inline void InitializeSelectedActor(s32 actorId)
@@ -2071,8 +2072,8 @@ void RunPartyCountInteractionCopyB(s32 actorId)
             InitializeSelectedActor(actorId);
             Actor_WalkTo(actorId, x, y + 0x40);
             Event_Wait(15);
-            Actor_WalkToAndWait(0, x, y);
-            Actor_WalkToAndWait(0, x, y + 0x20);
+            Actor_WalkToAndWait(ACTOR_PARTY_LEADER, x, y);
+            Actor_WalkToAndWait(ACTOR_PARTY_LEADER, x, y + 0x20);
             Event_CloseScreen();
             Event_WaitForScreen();
             Event_RequestExit(11);
@@ -2245,7 +2246,7 @@ L_main:
     ((void (*)())Func_0200764c_b_middle)(obj, 1);
     Call1(Func_0200778a_b_middle, 0x207f);
     Event_ShowMessage(owner, 0);
-    Actor_SetSpeed(0, 0x10000, 0x8000);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
     Actor_SetSpeed(obj, 0x10000, 0x8000);
     Actor_SetSpeed(owner, 0x10000, 0x8000);
     record = Value1(Func_0200772a_middle, 0);
@@ -2256,10 +2257,10 @@ L_main:
     Actor_WalkToAndWait(obj, p9, hi);
     lo = p9 + 16;
     Value3(Engine_ActorWalkToAndWait, 0, lo, hi);
-    Actor_FaceEachOther(obj, 0, 30);
+    Actor_FaceEachOther(obj, ACTOR_PARTY_LEADER, 30);
     Actor_SetAnimation(obj, 3);
     tail = hi - 32;
-    Actor_SetAnimationAndWait(0, 3);
+    Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
     Actor_WalkToAndWait(owner, p9, tail);
     Value3(Engine_ActorWalkTo, owner, lo, tail);
     Func_020078fc_middle(0, obj);

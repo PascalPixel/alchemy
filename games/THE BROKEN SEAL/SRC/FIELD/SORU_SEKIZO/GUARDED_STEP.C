@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "FIELD_SCENE.H"
 
 /*
  * The two statues at the head of the statue hall each shine a beam of light
@@ -360,8 +361,8 @@ s32 Func_0200105c(void)
     *(u8 *)(Func_02003512(18) + 35) &= 254;
     Actor_SetSpritePriority(18, 1);
     if ((u32)((Data_02000240_t[225][0] - 3) << 16) > 0x10000) {
-        Actor_SetPosition(5, 0, 0);
-        Actor_SetPosition(1, 0, 0);
+        Actor_SetPosition(ACTOR_JASMINE, 0, 0);
+        Actor_SetPosition(ACTOR_GERALD, 0, 0);
     }
     if (GameFlag_IsSet(0x818) != 0) {
         Actor_SetPosition(18, 0x1200000, 0xb20000);
@@ -424,8 +425,8 @@ s32 Func_0200105c(void)
 
     if (state[225] == 3) {
         if (GameFlag_IsSet(0x30a) != 0) {
-            Actor_SetPosition(1, 0, 0);
-            Actor_SetPosition(5, 0, 0);
+            Actor_SetPosition(ACTOR_GERALD, 0, 0);
+            Actor_SetPosition(ACTOR_JASMINE, 0, 0);
         } else if (GameFlag_IsSet(0x109) == 0) {
             FieldScene_SetupStagedActors();
             GameFlag_Set(0x30a);
@@ -433,8 +434,8 @@ s32 Func_0200105c(void)
     }
     if (state[225] == 4) {
         if (GameFlag_IsSet(0x30b) != 0) {
-            Actor_SetPosition(1, 0, 0);
-            Actor_SetPosition(5, 0, 0);
+            Actor_SetPosition(ACTOR_GERALD, 0, 0);
+            Actor_SetPosition(ACTOR_JASMINE, 0, 0);
         } else if (GameFlag_IsSet(0x109) == 0) {
             FieldScene_RunStagedActorScene();
             GameFlag_Set(0x30b);
@@ -568,14 +569,14 @@ void FieldScene_RunScene37bSequenceA(void)
             Event_Begin();
             Audio_PlayCue(185);
             Actor_SetSpeed(17, 0x3333, 0x1999);
-            Actor_SetSpeed(0, 0x3333, 0x1999);
+            Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x3333, 0x1999);
             *(u8 *)(Func_02003dfe(17) + 90) &= 254;
-            Actor_SetAnimation(0, 8);
+            Actor_SetAnimation(ACTOR_PARTY_LEADER, 8);
             record = Func_02003e16(0);
-            Actor_SetDestination(0, *(s16 *)(record + 10), 136);
+            Actor_SetDestination(ACTOR_PARTY_LEADER, *(s16 *)(record + 10), 136);
             Actor_SetDestination(17, 0x120, 120);
             Actor_WaitForMove(17);
-            Actor_SetAnimation(0, 1);
+            Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
             Event_End();
         }
     }
@@ -912,7 +913,7 @@ void Scene_ShineLeftBeam(void)
             if (GameFlag_IsSet(FLAG_RIGHT_BEAM_SHINING) != 0) {
                 Map_CopyCellsTo(8, 60, 17, 39, 2, 2);
             }
-            Actor_FaceDirection(0, 0, 0);
+            Actor_FaceDirection(ACTOR_PARTY_LEADER, 0, 0);
             Event_Wait(30);
             GameFlag_Set(FLAG_LEFT_BEAM_SHINING);
             if (GameFlag_IsSet(FLAG_RIGHT_BEAM_SHINING) != 0) {
@@ -939,7 +940,7 @@ void Scene_ShineRightBeam(void)
             if (GameFlag_IsSet(FLAG_LEFT_BEAM_SHINING) != 0) {
                 Map_CopyCellsTo(8, 60, 17, 39, 2, 2);
             }
-            Actor_FaceDirection(0, 0x8000, 0);
+            Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x8000, 0);
             Event_Wait(30);
             GameFlag_Set(FLAG_RIGHT_BEAM_SHINING);
             if (GameFlag_IsSet(FLAG_LEFT_BEAM_SHINING) != 0) {

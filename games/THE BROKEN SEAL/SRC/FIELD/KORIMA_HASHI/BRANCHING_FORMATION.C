@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "FIELD_SCENE.H"
 
 #define GetStagedActorEffect Func_0200374e
 #define CanStartStagedActorEffect Func_0200371e
@@ -213,7 +214,7 @@ s32 StagedActor_RunStepEffect(struct StagedActorEffectRequest *request)
         actor->elevation_rate = 0x40000;
         *flags &= 0x7e;
         Actor_SetSpriteFlags(actor, 0);
-        Actor_MoveToAndWait(0, request->cell_x, request->cell_z);
+        Actor_MoveToAndWait(ACTOR_PARTY_LEADER, request->cell_x, request->cell_z);
         Object_SetAnimation(actor, 6);
         Actor_SetSpriteFlags(actor, 1);
         *flags = (u8)ret;
@@ -408,77 +409,77 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Actor_EnableActionCallback(19, entry_action);
     Actor_EnableActionCallback(20, entry_action);
     Actor_EnableActionCallback(21, entry_action);
-    Actor_SetPosition(0, 0x740000, 0x25a0000);
+    Actor_SetPosition(ACTOR_PARTY_LEADER, 0x740000, 0x25a0000);
     Task_Wait(1);
     Map_Redraw();
     Task_Wait(1);
     Event_OpenScreen();
     Event_WaitForScreen();
-    Actor_SetSpeed(0, 0xcccc, 0x6666);
-    Actor_WalkToAndWait(0, 254, 0x251);
-    Actor_SetSpeed(1, 0x9999, 0x4ccc);
-    Actor_SetSpeed(2, 0x9999, 0x4ccc);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
+    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 254, 0x251);
+    Actor_SetSpeed(ACTOR_GERALD, 0x9999, 0x4ccc);
+    Actor_SetSpeed(ACTOR_IVAN, 0x9999, 0x4ccc);
     {
         u8 *record = Record1(Func_02002c24, 0);
 
         if (record != 0) {
-            Actor_SetPosition(1, *(s32 *)((s32)record + 8), *(s32 *)((s32)record + 16));
+            Actor_SetPosition(ACTOR_GERALD, *(s32 *)((s32)record + 8), *(s32 *)((s32)record + 16));
         }
     }
     {
         u8 *record = Record1(Func_02002c24, 0);
 
         if (record != 0) {
-            Actor_SetPosition(2, *(s32 *)((s32)record + 8), *(s32 *)((s32)record + 16));
+            Actor_SetPosition(ACTOR_IVAN, *(s32 *)((s32)record + 8), *(s32 *)((s32)record + 16));
         }
     }
-    Actor_EnableActionCallback(1, (s32)Data_0200ae20);
-    Actor_EnableActionCallback(2, (s32)Data_0200ae54);
+    Actor_EnableActionCallback(ACTOR_GERALD, (s32)Data_0200ae20);
+    Actor_EnableActionCallback(ACTOR_IVAN, (s32)Data_0200ae54);
     if (*flag_work != 0) {
-        Actor_SetSpeed(3, 0x9999, 0x4ccc);
+        Actor_SetSpeed(ACTOR_MIA, 0x9999, 0x4ccc);
         {
             u8 *record = Record1(Func_02002c24, 0);
 
             if (record != 0) {
-                Actor_SetPosition(3, *(s32 *)((s32)record + 8), *(s32 *)((s32)record + 16));
+                Actor_SetPosition(ACTOR_MIA, *(s32 *)((s32)record + 8), *(s32 *)((s32)record + 16));
             }
         }
-        Actor_EnableActionCallback(3, (s32)Data_0200ae88);
+        Actor_EnableActionCallback(ACTOR_MIA, (s32)Data_0200ae88);
     }
     Func_02002c3c(2);
     Func_02002780(2, 0x2000, 40);
     Func_02002780(2, 0x8000, 20);
     Func_02002780(2, 0x4000, 40);
-    Actor_ShowEmote(2, 0x101, 0);
+    Actor_ShowEmote(ACTOR_IVAN, 0x101, 0);
     Event_Wait(60);
-    Actor_FaceDirection(1, 0x4000, 0);
+    Actor_FaceDirection(ACTOR_GERALD, 0x4000, 0);
     Func_02002780(0, 0x6000, 60);
     value = 160;
     Func_02002780(3, 0x2000, 10);
-    Actor_FaceDirection(1, 0x2000, 0);
+    Actor_FaceDirection(ACTOR_GERALD, 0x2000, 0);
     Func_02002780(0, (value << 8), 10);
-    Actor_ShowEmote(1, 0x101, 0);
-    Actor_ShowEmote(0, 0x101, 0);
+    Actor_ShowEmote(ACTOR_GERALD, 0x101, 0);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 0);
     Event_Wait(40);
-    Actor_FaceDirection(1, 0x4000, 0);
+    Actor_FaceDirection(ACTOR_GERALD, 0x4000, 0);
     Func_02002780(0, 0x6000, 10);
-    Actor_RunRepeatedMotion(1, 2);
+    Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
     Event_SetMessage(MSG_MATTER_IVAN);
-    Event_SayThenWait(1, 10);
+    Event_SayThenWait(ACTOR_GERALD, 10);
     Event_SetMessage(MSG_SPARKLY_STUFF_ON_GROUND);
     Func_02002780(2, 0xc000, 20);
-    Actor_SetAnimationAndWait(2, 3);
-    Event_SayThenWait(2, 20);
+    Actor_SetAnimationAndWait(ACTOR_IVAN, 3);
+    Event_SayThenWait(ACTOR_IVAN, 20);
     Func_02002780(1, 0, 20);
     Func_02002780(0, (value << 8), 40);
     Func_02002780(1, 0x4000, 20);
     Func_02002780(0, 0x6000, 30);
     Func_02002780(1, 0x6000, 20);
     Func_02002780(0, 0xe000, 30);
-    Actor_RunRepeatedMotion(2, 2);
-    Actor_ShowEmote(2, 0x100, 0);
+    Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
+    Actor_ShowEmote(ACTOR_IVAN, 0x100, 0);
     Event_Wait(40);
-    Actor_FaceDirection(1, 0x4000, 0);
+    Actor_FaceDirection(ACTOR_GERALD, 0x4000, 0);
     Func_02002780(0, 0x6000, 20);
     Func_02002780(2, 0xc000, 10);
     Audio_PlayCue(17);
@@ -494,18 +495,18 @@ void FieldScene_RunBranchingFormationPresentation(void)
     ColorBuffer_Interpolate(120);
     Task_Wait(60);
     motion_action = (s32)Data_0200aebc;
-    Actor_EnableActionCallback(0, motion_action);
-    Actor_EnableActionCallback(1, motion_action);
-    Actor_EnableActionCallback(2, motion_action);
-    Actor_EnableActionCallback(3, motion_action);
+    Actor_EnableActionCallback(ACTOR_PARTY_LEADER, motion_action);
+    Actor_EnableActionCallback(ACTOR_GERALD, motion_action);
+    Actor_EnableActionCallback(ACTOR_IVAN, motion_action);
+    Actor_EnableActionCallback(ACTOR_MIA, motion_action);
     Event_Wait(100);
-    Event_SayThenWait(1, 20);
-    Event_SayThenWait(2, 40);
+    Event_SayThenWait(ACTOR_GERALD, 20);
+    Event_SayThenWait(ACTOR_IVAN, 40);
     if (Data_0200b394 != 0) {
         Event_Wait(40);
-        Actor_ShowEmote(3, 0x102, 0);
+        Actor_ShowEmote(ACTOR_MIA, 0x102, 0);
         Event_Wait(40);
-        Event_SayThenWait(3, 40);
+        Event_SayThenWait(ACTOR_MIA, 40);
     } else {
         *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
     }
@@ -516,41 +517,41 @@ void FieldScene_RunBranchingFormationPresentation(void)
         record = Func_02002c24(3);
         *(s32 *)((s32)record + 40) = (value << 10);
         Event_Wait(10);
-        Actor_SetSpeed(3, (value << 10), (value << 10));
-        Actor_SetDestinationOffset(3, -2, 0);
-        Actor_EnableActionCallback(3, (s32)Data_0200af48);
+        Actor_SetSpeed(ACTOR_MIA, (value << 10), (value << 10));
+        Actor_SetDestinationOffset(ACTOR_MIA, -2, 0);
+        Actor_EnableActionCallback(ACTOR_MIA, (s32)Data_0200af48);
         record = Func_02002c24(3);
         Actor_SetSpriteFlags((s32)record, 0);
-        Actor_SetAnimation(3, 19);
+        Actor_SetAnimation(ACTOR_MIA, 19);
         Event_Wait(10);
     }
     value = 128;
     record = Func_02002c24(0);
     *(s32 *)((s32)record + 40) = (value << 10);
     Event_Wait(10);
-    Actor_SetSpeed(0, (value << 10), (value << 10));
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, (value << 10), (value << 10));
     reset_action = (s32)Data_0200af48;
-    Actor_EnableActionCallback(0, reset_action);
+    Actor_EnableActionCallback(ACTOR_PARTY_LEADER, reset_action);
     record = Func_02002c24(0);
     Actor_SetSpriteFlags((s32)record, 0);
-    Actor_SetAnimation(0, 19);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, 19);
     Event_Wait(20);
     record = Record1(Func_02002c24, 1);
     *(s32 *)((s32)record + 40) = (value << 10);
     Event_Wait(10);
-    Actor_SetSpeed(1, (value << 10), (value << 10));
-    Actor_EnableActionCallback(1, reset_action);
+    Actor_SetSpeed(ACTOR_GERALD, (value << 10), (value << 10));
+    Actor_EnableActionCallback(ACTOR_GERALD, reset_action);
     record = Func_02002c24(1);
     Actor_SetSpriteFlags((s32)record, 0);
-    Actor_SetAnimation(1, 19);
+    Actor_SetAnimation(ACTOR_GERALD, 19);
     Event_Wait(40);
     record = Record1(Func_02002c24, 2);
     *(s32 *)((s32)record + 40) = (value << 10);
     Event_Wait(10);
-    Actor_EnableActionCallback(2, reset_action);
+    Actor_EnableActionCallback(ACTOR_IVAN, reset_action);
     record = Func_02002c24(2);
     Actor_SetSpriteFlags((s32)record, 0);
-    Actor_SetAnimation(2, 19);
+    Actor_SetAnimation(ACTOR_IVAN, 19);
     Data_0200b398 = 0;
     Event_Wait(160);
     Value1(Func_02002b94, (s32)Data_0200a7c9);
@@ -565,34 +566,34 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Value2(Func_02002b8c, (s32)Data_0200a975, 0xc80);
     Event_Wait(180);
     Audio_PlayCue(21);
-    Event_SayThenWait(1, 80);
-    Event_SayThenWait(2, 40);
-    Actor_ShowEmote(0, 0x102, 0);
-    Actor_ShowEmote(1, 0x102, 0);
-    Actor_ShowEmote(2, 0x102, 0);
-    Actor_ShowEmote(3, 0x102, 0);
+    Event_SayThenWait(ACTOR_GERALD, 80);
+    Event_SayThenWait(ACTOR_IVAN, 40);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 0);
+    Actor_ShowEmote(ACTOR_GERALD, 0x102, 0);
+    Actor_ShowEmote(ACTOR_IVAN, 0x102, 0);
+    Actor_ShowEmote(ACTOR_MIA, 0x102, 0);
     Event_Wait(60);
-    Event_SayThenWait(2, 20);
+    Event_SayThenWait(ACTOR_IVAN, 20);
     *effect_phase = 2;
-    Actor_StartRepeatedMotion(2, 2);
+    Actor_StartRepeatedMotion(ACTOR_IVAN, 2);
     Event_Wait(20);
-    Actor_StartRepeatedMotion(1, 1);
+    Actor_StartRepeatedMotion(ACTOR_GERALD, 1);
     Event_Wait(40);
-    Actor_StartRepeatedMotion(0, 2);
-    Actor_StartRepeatedMotion(3, 1);
+    Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
+    Actor_StartRepeatedMotion(ACTOR_MIA, 1);
     Event_Wait(20);
-    Actor_StartRepeatedMotion(2, 3);
+    Actor_StartRepeatedMotion(ACTOR_IVAN, 3);
     Event_Wait(40);
-    Actor_StartRepeatedMotion(0, 1);
+    Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
     Event_Wait(20);
-    Actor_StartRepeatedMotion(1, 2);
+    Actor_StartRepeatedMotion(ACTOR_GERALD, 2);
     Event_Wait(20);
-    Actor_StartRepeatedMotion(3, 2);
-    Actor_ShowEmote(1, 0x102, 0);
-    Event_SayThenWait(1, 20);
+    Actor_StartRepeatedMotion(ACTOR_MIA, 2);
+    Actor_ShowEmote(ACTOR_GERALD, 0x102, 0);
+    Event_SayThenWait(ACTOR_GERALD, 20);
     if (*party_flag != 0) {
-        Actor_ShowEmote(3, 0x102, 0);
-        Event_SayThenWait(3, 10);
+        Actor_ShowEmote(ACTOR_MIA, 0x102, 0);
+        Event_SayThenWait(ACTOR_MIA, 10);
     } else {
         *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
     }
@@ -602,11 +603,11 @@ void FieldScene_RunBranchingFormationPresentation(void)
     *(u8 *)(Func_02002c24(1) + 35) &= 254;
     *(u8 *)(Func_02002c24(2) + 35) &= 254;
     *(u8 *)(Func_02002c24(3) + 35) &= 254;
-    Actor_SetSpritePriority(0, 3);
-    Actor_SetSpritePriority(1, 3);
-    Actor_SetSpritePriority(2, 3);
+    Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 3);
+    Actor_SetSpritePriority(ACTOR_GERALD, 3);
+    Actor_SetSpritePriority(ACTOR_IVAN, 3);
     value = 0;
-    Actor_SetSpritePriority(3, 3);
+    Actor_SetSpritePriority(ACTOR_MIA, 3);
     Data_0200b390 = value;
     Value2(Func_02002b8c, (s32)Data_0200aad9, 0xc80);
     Audio_PlayCue(220);
@@ -657,100 +658,100 @@ void FieldScene_RunBranchingFormationPresentation(void)
     }
     Func_02002c4c(16, finish_action);
     Event_Wait(80);
-    Actor_RunRepeatedMotion(1, 2);
+    Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
     Event_Wait(40);
-    Event_OpenMessage(1, 0);
+    Event_OpenMessage(ACTOR_GERALD, 0);
     Actor_SetPosition(11, 0xdc0000, 0x1ee0000);
     Actor_SetPosition(12, 0xdc0000, 0x1ee0000);
     Task_Wait(1);
     if (Event_ChooseYesNo(11, 0) == 1) {
         *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
     }
-    Actor_RunRepeatedMotion(0, 1);
+    Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 1);
     Event_Wait(20);
-    Actor_RunRepeatedMotion(2, 2);
-    Event_SayThenWait(2, 20);
+    Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
+    Event_SayThenWait(ACTOR_IVAN, 20);
     if (*formation_flag != 0) {
-        Actor_RunRepeatedMotion(3, 2);
+        Actor_RunRepeatedMotion(ACTOR_MIA, 2);
         Event_Wait(10);
         Event_SetMessage(MSG_KNOW_THOSE_FIELDS_WERE);
-        Event_SayThenWait(3, 40);
+        Event_SayThenWait(ACTOR_MIA, 40);
     }
-    Actor_StartRepeatedMotion(1, 1);
-    Actor_ShowEmote(1, 0x101, 0);
+    Actor_StartRepeatedMotion(ACTOR_GERALD, 1);
+    Actor_ShowEmote(ACTOR_GERALD, 0x101, 0);
     Event_Wait(80);
-    Actor_RunRepeatedMotion(2, 2);
+    Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
     Event_SetMessage(MSG_WAS_OUR_PSYNERGY);
-    Event_SayThenWait(2, 40);
-    Actor_RunRepeatedMotion(1, 3);
+    Event_SayThenWait(ACTOR_IVAN, 40);
+    Actor_RunRepeatedMotion(ACTOR_GERALD, 3);
     Event_Wait(40);
-    Actor_SetSpritePriority(1, 2);
+    Actor_SetSpritePriority(ACTOR_GERALD, 2);
     *(u8 *)(Func_02002c24(1) + 35) |= 1;
     record = Func_02002c24(1);
     Actor_SetSpriteFlags((s32)record, 1);
-    Actor_Jump(1, 6, 0);
-    Actor_SetDestinationOffset(1, -3, 0);
-    Actor_SetAnimation(1, 1);
+    Actor_Jump(ACTOR_GERALD, 6, 0);
+    Actor_SetDestinationOffset(ACTOR_GERALD, -3, 0);
+    Actor_SetAnimation(ACTOR_GERALD, 1);
     Func_02002780(1, 0x4000, 60);
-    Event_SayThenWait(1, 20);
-    Actor_StartRepeatedMotion(1, 2);
-    Event_SayThenWait(1, 10);
-    Actor_RunRepeatedMotion(0, 3);
+    Event_SayThenWait(ACTOR_GERALD, 20);
+    Actor_StartRepeatedMotion(ACTOR_GERALD, 2);
+    Event_SayThenWait(ACTOR_GERALD, 10);
+    Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 3);
     Func_02002780(1, 0x2000, 20);
-    Actor_ShowEmote(1, 0x101, 0);
+    Actor_ShowEmote(ACTOR_GERALD, 0x101, 0);
     Event_Wait(40);
     Func_02002780(1, 0x6000, 40);
     Func_02002780(1, 0x2000, 20);
     Func_02002780(1, 0x6000, 20);
     Func_02002780(1, 0x2000, 10);
-    Actor_Jump(1, 2, 0);
+    Actor_Jump(ACTOR_GERALD, 2, 0);
     Event_Wait(40);
-    Actor_Jump(1, 2, 0);
+    Actor_Jump(ACTOR_GERALD, 2, 0);
     Event_Wait(10);
-    Actor_Jump(1, 4, 0);
+    Actor_Jump(ACTOR_GERALD, 4, 0);
     Event_Wait(20);
-    Event_SayThenWait(1, 20);
+    Event_SayThenWait(ACTOR_GERALD, 20);
     if (*formation_flag != 0) {
-        Actor_ShowEmote(3, 0x100, 0);
+        Actor_ShowEmote(ACTOR_MIA, 0x100, 0);
         Event_Wait(60);
-        Actor_RunRepeatedMotion(3, 2);
+        Actor_RunRepeatedMotion(ACTOR_MIA, 2);
         Event_Wait(80);
-        Actor_SetSpritePriority(3, 2);
+        Actor_SetSpritePriority(ACTOR_MIA, 2);
         *(u8 *)(Func_02002c24(3) + 35) |= 1;
         record = Func_02002c24(3);
         Actor_SetSpriteFlags((s32)record, 1);
-        Actor_Jump(3, 4, 0);
-        Actor_SetDestinationOffset(3, -2, 0);
-        Actor_SetAnimation(3, 1);
+        Actor_Jump(ACTOR_MIA, 4, 0);
+        Actor_SetDestinationOffset(ACTOR_MIA, -2, 0);
+        Actor_SetAnimation(ACTOR_MIA, 1);
         Func_02002780(3, 0xe000, 60);
-        Actor_RunRepeatedMotion(3, 2);
+        Actor_RunRepeatedMotion(ACTOR_MIA, 2);
         Event_Wait(20);
-        Event_SayThenWait(3, 20);
+        Event_SayThenWait(ACTOR_MIA, 20);
     } else {
         *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
     }
-    Actor_Jump(1, 2, 0);
+    Actor_Jump(ACTOR_GERALD, 2, 0);
     Func_02002780(1, 0x4000, 20);
-    Actor_SetAnimationAndWait(1, 3);
+    Actor_SetAnimationAndWait(ACTOR_GERALD, 3);
     Func_02002780(1, 0x2000, 10);
-    Event_SayThenWait(1, 20);
-    Actor_SetAnimationAndWait(1, 3);
+    Event_SayThenWait(ACTOR_GERALD, 20);
+    Actor_SetAnimationAndWait(ACTOR_GERALD, 3);
     Event_Wait(10);
-    Actor_RunRepeatedMotion(2, 1);
+    Actor_RunRepeatedMotion(ACTOR_IVAN, 1);
     Event_Wait(40);
-    Actor_RunRepeatedMotion(2, 2);
+    Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
     Event_Wait(20);
     value = 1;
-    Actor_SetSpritePriority(2, 2);
+    Actor_SetSpritePriority(ACTOR_IVAN, 2);
     *(u8 *)(Func_02002c24(2) + 35) |= value;
     record = Func_02002c24(2);
     Actor_SetSpriteFlags((s32)record, 1);
-    Actor_Jump(2, 4, 0);
-    Actor_SetAnimation(2, 1);
-    Actor_FaceDirection(2, 0xc000, 0);
-    Actor_RunRepeatedMotion(0, 2);
+    Actor_Jump(ACTOR_IVAN, 4, 0);
+    Actor_SetAnimation(ACTOR_IVAN, 1);
+    Actor_FaceDirection(ACTOR_IVAN, 0xc000, 0);
+    Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
     Event_Wait(10);
-    Actor_SetSpritePriority(0, 2);
+    Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 2);
     {
         u8 *record = Func_02002c24(0);
         u8 flags = (u8)(value | record[35]);
@@ -759,101 +760,101 @@ void FieldScene_RunBranchingFormationPresentation(void)
     }
     record = Func_02002c24(0);
     Actor_SetSpriteFlags((s32)record, 1);
-    Actor_Jump(0, 4, 0);
-    Actor_SetAnimation(0, 1);
+    Actor_Jump(ACTOR_PARTY_LEADER, 4, 0);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
     Func_02002780(0, 0x6000, 60);
-    Actor_ShowEmote(0, 0x105, 0);
-    Actor_ShowEmote(2, 0x105, 0);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x105, 0);
+    Actor_ShowEmote(ACTOR_IVAN, 0x105, 0);
     Event_Wait(60);
     Func_02002780(0, 0xa000, 20);
-    Actor_SetAnimationAndWait(1, 3);
-    Actor_SetAnimationAndWait(0, 3);
+    Actor_SetAnimationAndWait(ACTOR_GERALD, 3);
+    Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
     Func_02002780(0, 0x6000, 10);
     Func_02002780(1, 0x4000, 10);
-    Actor_FaceDirection(2, 0xc000, 0);
-    Actor_SetAnimationAndWait(2, 3);
-    Event_SayThenWait(2, 20);
-    Actor_SetAnimation(0, 3);
-    Actor_SetAnimation(3, 3);
-    Actor_SetAnimationAndWait(1, 3);
+    Actor_FaceDirection(ACTOR_IVAN, 0xc000, 0);
+    Actor_SetAnimationAndWait(ACTOR_IVAN, 3);
+    Event_SayThenWait(ACTOR_IVAN, 20);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, 3);
+    Actor_SetAnimation(ACTOR_MIA, 3);
+    Actor_SetAnimationAndWait(ACTOR_GERALD, 3);
     Event_Wait(20);
-    Actor_RunRepeatedMotion(2, 1);
+    Actor_RunRepeatedMotion(ACTOR_IVAN, 1);
     Event_Wait(20);
-    Event_OpenMessage(2, 0);
-    Actor_SetAnimation(2, 3);
-    Actor_FaceDirection(2, 0xe000, 0);
-    Actor_FaceDirection(1, 0x2000, 0);
+    Event_OpenMessage(ACTOR_IVAN, 0);
+    Actor_SetAnimation(ACTOR_IVAN, 3);
+    Actor_FaceDirection(ACTOR_IVAN, 0xe000, 0);
+    Actor_FaceDirection(ACTOR_GERALD, 0x2000, 0);
     if (Event_ChooseYesNo(0, 0) == 0) {
-        Actor_SetAnimation(2, 3);
-        Actor_SetAnimationAndWait(1, 3);
+        Actor_SetAnimation(ACTOR_IVAN, 3);
+        Actor_SetAnimationAndWait(ACTOR_GERALD, 3);
         *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
     } else {
-        Actor_RunRepeatedMotion(1, 2);
+        Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
         Func_02002780(1, 0x2000, 10);
-        Actor_StartRepeatedMotion(1, 2);
-        Event_ShowMessage(1, 0);
+        Actor_StartRepeatedMotion(ACTOR_GERALD, 2);
+        Event_ShowMessage(ACTOR_GERALD, 0);
     }
     Func_02002780(1, 0x4000, 10);
-    Actor_SetAnimationAndWait(1, 4);
-    Event_SayThenWait(1, 20);
+    Actor_SetAnimationAndWait(ACTOR_GERALD, 4);
+    Event_SayThenWait(ACTOR_GERALD, 20);
     Func_02002780(2, 0xc000, 10);
-    Actor_SetAnimationAndWait(2, 3);
-    Event_SayThenWait(2, 10);
+    Actor_SetAnimationAndWait(ACTOR_IVAN, 3);
+    Event_SayThenWait(ACTOR_IVAN, 10);
     if (Data_0200b394 != 0) {
-        Actor_RunRepeatedMotion(3, 2);
+        Actor_RunRepeatedMotion(ACTOR_MIA, 2);
         Func_02002780(3, 0, 20);
         Func_02002780(3, 0x2000, 10);
-        Actor_SetAnimation(3, 4);
-        Event_SayThenWait(3, 10);
+        Actor_SetAnimation(ACTOR_MIA, 4);
+        Event_SayThenWait(ACTOR_MIA, 10);
     } else {
         *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
     }
-    Actor_FaceDirection(1, 0x2000, 0);
+    Actor_FaceDirection(ACTOR_GERALD, 0x2000, 0);
     Func_02002780(0, 0xa000, 10);
-    Actor_SetAnimation(0, 3);
-    Actor_SetAnimationAndWait(1, 3);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, 3);
+    Actor_SetAnimationAndWait(ACTOR_GERALD, 3);
     value = 128;
     Event_Wait(20);
-    Actor_FaceDirection(0, 0x6000, 0);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x6000, 0);
     Func_02002780(1, (value << 7), 10);
-    Actor_SetAnimationAndWait(2, 4);
+    Actor_SetAnimationAndWait(ACTOR_IVAN, 4);
     Event_Wait(20);
-    Actor_ShowEmote(0, 0x102, 0);
-    Actor_ShowEmote(1, 0x102, 0);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 0);
+    Actor_ShowEmote(ACTOR_GERALD, 0x102, 0);
     Event_Wait(80);
     Func_02002780(2, 0xe000, 10);
-    Actor_StartRepeatedMotion(2, 2);
-    Event_SayThenWait(2, 20);
-    Actor_FaceDirection(1, 0x2000, 0);
+    Actor_StartRepeatedMotion(ACTOR_IVAN, 2);
+    Event_SayThenWait(ACTOR_IVAN, 20);
+    Actor_FaceDirection(ACTOR_GERALD, 0x2000, 0);
     Func_02002780(0, 0xa000, 40);
-    Actor_FaceDirection(1, (value << 7), 0);
+    Actor_FaceDirection(ACTOR_GERALD, (value << 7), 0);
     Func_02002780(0, 0x6000, 10);
     Func_02002780(2, 0xc000, 10);
-    Actor_SetAnimationAndWait(2, 3);
-    Event_SayThenWait(2, 10);
-    Actor_SetAttachedEffect(1, 0x102);
+    Actor_SetAnimationAndWait(ACTOR_IVAN, 3);
+    Event_SayThenWait(ACTOR_IVAN, 10);
+    Actor_SetAttachedEffect(ACTOR_GERALD, 0x102);
     Event_Wait(40);
-    Event_SayThenWait(1, 20);
-    Actor_SetAnimationAndWait(2, 3);
+    Event_SayThenWait(ACTOR_GERALD, 20);
+    Actor_SetAnimationAndWait(ACTOR_IVAN, 3);
     Event_Wait(20);
-    Actor_ShowEmote(1, 0x102, 0);
+    Actor_ShowEmote(ACTOR_GERALD, 0x102, 0);
     Event_Wait(40);
-    Event_SayThenWait(1, 20);
-    Actor_SetAnimation(2, 3);
-    Event_SayThenWait(2, 10);
-    Actor_RunRepeatedMotion(1, 2);
+    Event_SayThenWait(ACTOR_GERALD, 20);
+    Actor_SetAnimation(ACTOR_IVAN, 3);
+    Event_SayThenWait(ACTOR_IVAN, 10);
+    Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
     Func_02002780(1, 0x2000, 10);
-    Event_OpenMessage(1, 0);
-    Actor_FaceDirection(0, 0xa000, 0);
+    Event_OpenMessage(ACTOR_GERALD, 0);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xa000, 0);
     if (Event_ChooseYesNo(0, 0) == 0) {
-        Actor_SetAnimationAndWait(1, 3);
+        Actor_SetAnimationAndWait(ACTOR_GERALD, 3);
     } else {
         Event_Wait(20);
-        Actor_RunRepeatedMotion(1, 2);
+        Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
         Event_Wait(40);
         *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
     }
-    Event_ShowMessage(1, 0);
+    Event_ShowMessage(ACTOR_GERALD, 0);
     Audio_PlayCue(21);
     ColorBuffer_ApplyTarget(0x406218, 1);
     ColorBuffer_Interpolate(60);
@@ -864,14 +865,14 @@ void FieldScene_RunBranchingFormationPresentation(void)
     *sequence_phase = 1;
     Value2(Func_02002b8c, (s32)Data_0200a975, 0xc80);
     Event_Wait(80);
-    Actor_StartRepeatedMotion(0, 2);
-    Actor_StartRepeatedMotion(1, 2);
-    Actor_StartRepeatedMotion(3, 2);
-    Actor_RunRepeatedMotion(2, 2);
+    Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
+    Actor_StartRepeatedMotion(ACTOR_GERALD, 2);
+    Actor_StartRepeatedMotion(ACTOR_MIA, 2);
+    Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
     Event_Wait(60);
     Func_02002780(2, 0xc000, 10);
     Event_SetMessage(MSG_WATCH_OUT_ITS_HAPPENING_AGAIN);
-    Event_SayThenWait(2, 10);
+    Event_SayThenWait(ACTOR_IVAN, 10);
     Func_02002780(1, 0xc000, 10);
     Func_02002780(0, 0xc000, 10);
     sequence_flag = &Data_0200b394;
@@ -882,10 +883,10 @@ void FieldScene_RunBranchingFormationPresentation(void)
     *(u8 *)(Func_02002c24(1) + 35) &= 254;
     *(u8 *)(Func_02002c24(2) + 35) &= 254;
     *(u8 *)(Func_02002c24(3) + 35) &= 254;
-    Actor_SetSpritePriority(0, 3);
-    Actor_SetSpritePriority(1, 3);
-    Actor_SetSpritePriority(2, 3);
-    Actor_SetSpritePriority(3, 3);
+    Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 3);
+    Actor_SetSpritePriority(ACTOR_GERALD, 3);
+    Actor_SetSpritePriority(ACTOR_IVAN, 3);
+    Actor_SetSpritePriority(ACTOR_MIA, 3);
     *sequence_phase = 2;
     Audio_PlayCue(220);
     Actor_SetPosition(13, 0xfd0000, 0x25b0000);
@@ -906,96 +907,96 @@ void FieldScene_RunBranchingFormationPresentation(void)
     } while (Data_0200b38c != 0);
     Event_SayThenWait(11, 80);
     Event_SayThenWait(12, 20);
-    Actor_ShowEmote(0, 0x101, 0);
-    Actor_ShowEmote(1, 0x101, 0);
-    Actor_ShowEmote(2, 0x101, 0);
-    Actor_ShowEmote(3, 0x101, 0);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 0);
+    Actor_ShowEmote(ACTOR_GERALD, 0x101, 0);
+    Actor_ShowEmote(ACTOR_IVAN, 0x101, 0);
+    Actor_ShowEmote(ACTOR_MIA, 0x101, 0);
     Event_Wait(60);
     Event_SayThenWait(12, 20);
-    Actor_SetAnimation(0, 3);
-    Actor_SetAnimation(1, 3);
-    Actor_SetAnimation(3, 3);
-    Actor_SetAnimationAndWait(2, 3);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, 3);
+    Actor_SetAnimation(ACTOR_GERALD, 3);
+    Actor_SetAnimation(ACTOR_MIA, 3);
+    Actor_SetAnimationAndWait(ACTOR_IVAN, 3);
     Event_SayThenWait(12, 10);
-    Actor_SetAnimation(0, 3);
-    Actor_SetAnimation(1, 3);
-    Actor_SetAnimation(3, 3);
-    Actor_SetAnimationAndWait(2, 3);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, 3);
+    Actor_SetAnimation(ACTOR_GERALD, 3);
+    Actor_SetAnimation(ACTOR_MIA, 3);
+    Actor_SetAnimationAndWait(ACTOR_IVAN, 3);
     Event_SayThenWait(12, 10);
-    Actor_ShowEmote(0, 0x100, 0);
-    Actor_ShowEmote(1, 0x100, 0);
-    Actor_ShowEmote(2, 0x100, 0);
-    Actor_ShowEmote(3, 0x100, 0);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x100, 0);
+    Actor_ShowEmote(ACTOR_GERALD, 0x100, 0);
+    Actor_ShowEmote(ACTOR_IVAN, 0x100, 0);
+    Actor_ShowEmote(ACTOR_MIA, 0x100, 0);
     Event_Wait(40);
     Event_SayThenWait(11, 10);
-    Actor_FaceDirection(0, 0x8000, 0);
-    Actor_FaceDirection(1, 0x4000, 0);
-    Actor_FaceDirection(3, 0, 0);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x8000, 0);
+    Actor_FaceDirection(ACTOR_GERALD, 0x4000, 0);
+    Actor_FaceDirection(ACTOR_MIA, 0, 0);
     Func_02002780(2, 0xc000, 40);
     Event_SayThenWait(12, 10);
-    Actor_ShowEmote(0, 0x102, 0);
-    Actor_ShowEmote(1, 0x102, 0);
-    Actor_ShowEmote(2, 0x102, 0);
-    Actor_ShowEmote(3, 0x102, 0);
-    Actor_FaceDirection(0, 0xc000, 0);
-    Actor_FaceDirection(1, 0xc000, 0);
-    Actor_FaceDirection(2, 0xc000, 0);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 0);
+    Actor_ShowEmote(ACTOR_GERALD, 0x102, 0);
+    Actor_ShowEmote(ACTOR_IVAN, 0x102, 0);
+    Actor_ShowEmote(ACTOR_MIA, 0x102, 0);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
+    Actor_FaceDirection(ACTOR_GERALD, 0xc000, 0);
+    Actor_FaceDirection(ACTOR_IVAN, 0xc000, 0);
     Func_02002780(3, 0xc000, 80);
     Event_SayThenWait(12, 10);
-    Actor_FaceDirection(0, 0x8000, 0);
-    Actor_FaceDirection(1, 0x4000, 0);
-    Actor_FaceDirection(2, 0xc000, 0);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x8000, 0);
+    Actor_FaceDirection(ACTOR_GERALD, 0x4000, 0);
+    Actor_FaceDirection(ACTOR_IVAN, 0xc000, 0);
     Func_02002780(3, 0, 40);
     Event_SayThenWait(11, 10);
-    Actor_FaceDirection(0, 0xc000, 0);
-    Actor_FaceDirection(1, 0xc000, 0);
-    Actor_FaceDirection(2, 0xc000, 0);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
+    Actor_FaceDirection(ACTOR_GERALD, 0xc000, 0);
+    Actor_FaceDirection(ACTOR_IVAN, 0xc000, 0);
     Func_02002780(3, 0xc000, 10);
-    Actor_SetAnimation(0, 4);
-    Actor_SetAnimation(1, 4);
-    Actor_SetAnimation(3, 4);
-    Actor_SetAnimationAndWait(2, 4);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, 4);
+    Actor_SetAnimation(ACTOR_GERALD, 4);
+    Actor_SetAnimation(ACTOR_MIA, 4);
+    Actor_SetAnimationAndWait(ACTOR_IVAN, 4);
     Event_Wait(60);
     Event_SayThenWait(12, 10);
-    Actor_SetAnimation(0, 3);
-    Actor_SetAnimation(1, 3);
-    Actor_SetAnimation(3, 3);
-    Actor_SetAnimationAndWait(2, 3);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, 3);
+    Actor_SetAnimation(ACTOR_GERALD, 3);
+    Actor_SetAnimation(ACTOR_MIA, 3);
+    Actor_SetAnimationAndWait(ACTOR_IVAN, 3);
     Event_SayThenWait(12, 20);
-    Actor_FaceDirection(0, 0x8000, 0);
-    Actor_FaceDirection(1, 0x4000, 0);
-    Actor_FaceDirection(2, 0xc000, 0);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x8000, 0);
+    Actor_FaceDirection(ACTOR_GERALD, 0x4000, 0);
+    Actor_FaceDirection(ACTOR_IVAN, 0xc000, 0);
     Func_02002780(3, 0, 20);
     Event_SayThenWait(12, 10);
-    Actor_StartRepeatedMotion(0, 2);
-    Actor_StartRepeatedMotion(1, 2);
-    Actor_StartRepeatedMotion(3, 2);
-    Actor_RunRepeatedMotion(2, 2);
-    Actor_FaceDirection(0, 0xc000, 0);
-    Actor_FaceDirection(1, 0xc000, 0);
-    Actor_FaceDirection(2, 0xc000, 0);
-    Actor_FaceDirection(3, 0xc000, 0);
+    Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
+    Actor_StartRepeatedMotion(ACTOR_GERALD, 2);
+    Actor_StartRepeatedMotion(ACTOR_MIA, 2);
+    Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
+    Actor_FaceDirection(ACTOR_GERALD, 0xc000, 0);
+    Actor_FaceDirection(ACTOR_IVAN, 0xc000, 0);
+    Actor_FaceDirection(ACTOR_MIA, 0xc000, 0);
     Event_SayThenWait(12, 20);
-    Actor_FaceDirection(0, 0x8000, 0);
-    Actor_FaceDirection(1, 0x4000, 0);
-    Actor_FaceDirection(2, 0xc000, 0);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x8000, 0);
+    Actor_FaceDirection(ACTOR_GERALD, 0x4000, 0);
+    Actor_FaceDirection(ACTOR_IVAN, 0xc000, 0);
     Func_02002780(3, 0, 20);
     Event_SayThenWait(11, 20);
-    Actor_ShowEmote(0, 0x102, 0);
-    Actor_ShowEmote(1, 0x102, 0);
-    Actor_ShowEmote(3, 0x102, 0);
-    Actor_ShowEmote(2, 0x102, 0);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 0);
+    Actor_ShowEmote(ACTOR_GERALD, 0x102, 0);
+    Actor_ShowEmote(ACTOR_MIA, 0x102, 0);
+    Actor_ShowEmote(ACTOR_IVAN, 0x102, 0);
     Event_Wait(40);
     Event_SayThenWait(12, 10);
-    Actor_FaceDirection(0, 0xc000, 0);
-    Actor_FaceDirection(1, 0xc000, 0);
-    Actor_FaceDirection(2, 0xc000, 0);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
+    Actor_FaceDirection(ACTOR_GERALD, 0xc000, 0);
+    Actor_FaceDirection(ACTOR_IVAN, 0xc000, 0);
     Func_02002780(3, 0xc000, 10);
     Event_SayThenWait(12, 10);
-    Actor_SetAnimation(0, 3);
-    Actor_SetAnimation(1, 3);
-    Actor_SetAnimation(3, 3);
-    Actor_SetAnimationAndWait(2, 3);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, 3);
+    Actor_SetAnimation(ACTOR_GERALD, 3);
+    Actor_SetAnimation(ACTOR_MIA, 3);
+    Actor_SetAnimationAndWait(ACTOR_IVAN, 3);
     Event_Wait(60);
     Event_ShowMessage(12, 0);
     Event_ShowMessage(11, 0);
@@ -1018,11 +1019,11 @@ void FieldScene_RunBranchingFormationPresentation(void)
     }
     Func_02002c4c(16, finish_action);
     Event_Wait(20);
-    Actor_SetSpritePriority(0, 2);
-    Actor_SetSpritePriority(1, 2);
-    Actor_SetSpritePriority(2, 2);
+    Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 2);
+    Actor_SetSpritePriority(ACTOR_GERALD, 2);
+    Actor_SetSpritePriority(ACTOR_IVAN, 2);
     value = 1;
-    Actor_SetSpritePriority(3, 2);
+    Actor_SetSpritePriority(ACTOR_MIA, 2);
     *(u8 *)(Func_02002c24(0) + 35) |= value;
     *(u8 *)(Func_02002c24(1) + 35) |= value;
     *(u8 *)(Func_02002c24(2) + 35) |= value;
@@ -1032,175 +1033,175 @@ void FieldScene_RunBranchingFormationPresentation(void)
 
         record[35] = flags;
     }
-    Actor_RunRepeatedMotion(2, 2);
+    Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
     Func_02002780(2, 0xe000, 10);
-    Event_OpenMessage(2, 0);
-    Actor_FaceDirection(1, 0x2000, 0);
-    Actor_FaceDirection(3, 0, 0);
+    Event_OpenMessage(ACTOR_IVAN, 0);
+    Actor_FaceDirection(ACTOR_GERALD, 0x2000, 0);
+    Actor_FaceDirection(ACTOR_MIA, 0, 0);
     if (Event_ChooseYesNo(0, 0) != 0) {
     } else {
-        Actor_RunRepeatedMotion(1, 2);
+        Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
         Event_Wait(10);
-        Event_OpenMessage(1, 0);
+        Event_OpenMessage(ACTOR_GERALD, 0);
         if (Event_ChooseYesNo(0, 0) == 0) {
             Func_02002780(3, 0, 20);
-            Actor_ShowEmote(1, 0x101, 0);
-            Actor_ShowEmote(2, 0x101, 0);
-            Actor_ShowEmote(3, 0x101, 0);
+            Actor_ShowEmote(ACTOR_GERALD, 0x101, 0);
+            Actor_ShowEmote(ACTOR_IVAN, 0x101, 0);
+            Actor_ShowEmote(ACTOR_MIA, 0x101, 0);
             Event_Wait(40);
             Func_02002780(1, 0x4000, 20);
-            Event_SayThenWait(1, 10);
+            Event_SayThenWait(ACTOR_GERALD, 10);
             Func_02002780(2, 0xc000, 20);
             Func_02002780(2, 0xe000, 20);
-            Actor_SetAnimationAndWait(2, 3);
-            Event_SayThenWait(2, 20);
+            Actor_SetAnimationAndWait(ACTOR_IVAN, 3);
+            Event_SayThenWait(ACTOR_IVAN, 20);
             Func_02002780(1, 0x2000, 20);
         } else {
             Func_02002780(3, 0, 20);
-            Actor_ShowEmote(1, 0x102, 0);
-            Actor_ShowEmote(2, 0x102, 0);
-            Actor_ShowEmote(3, 0x102, 0);
+            Actor_ShowEmote(ACTOR_GERALD, 0x102, 0);
+            Actor_ShowEmote(ACTOR_IVAN, 0x102, 0);
+            Actor_ShowEmote(ACTOR_MIA, 0x102, 0);
             Event_Wait(40);
             Func_02002780(1, 0x4000, 20);
             Event_SetMessage(MSG_HES_AS_STUMPED_AS_WE);
-            Event_SayThenWait(1, 20);
-            Actor_SetAnimationAndWait(2, 3);
-            Event_SayThenWait(2, 20);
+            Event_SayThenWait(ACTOR_GERALD, 20);
+            Actor_SetAnimationAndWait(ACTOR_IVAN, 3);
+            Event_SayThenWait(ACTOR_IVAN, 20);
         }
-        Actor_SetAnimation(3, 3);
-        Actor_SetAnimationAndWait(1, 3);
+        Actor_SetAnimation(ACTOR_MIA, 3);
+        Actor_SetAnimationAndWait(ACTOR_GERALD, 3);
         goto L_02002528;
     }
     Event_Wait(20);
-    Actor_SetAnimationAndWait(1, 3);
+    Actor_SetAnimationAndWait(ACTOR_GERALD, 3);
     Event_Wait(10);
     Event_SetMessage(MSG_YOURE_ROBIN_THERE_ISNT_MUCH);
-    Event_SayThenWait(1, 10);
-    Actor_FaceDirection(1, 0x4000, 0);
+    Event_SayThenWait(ACTOR_GERALD, 10);
+    Actor_FaceDirection(ACTOR_GERALD, 0x4000, 0);
     Func_02002780(0, 0x6000, 20);
-    Actor_SetAnimation(1, 3);
-    Actor_SetAnimationAndWait(0, 3);
+    Actor_SetAnimation(ACTOR_GERALD, 3);
+    Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
     Event_Wait(10);
-    Actor_SetAnimationAndWait(2, 4);
-    Event_OpenMessage(2, 0);
+    Actor_SetAnimationAndWait(ACTOR_IVAN, 4);
+    Event_OpenMessage(ACTOR_IVAN, 0);
     if (Event_ChooseYesNo(0, 0) != 0) {
     } else {
         Event_Wait(20);
-        Actor_ShowEmote(2, 0x103, 0);
+        Actor_ShowEmote(ACTOR_IVAN, 0x103, 0);
         Event_Wait(40);
         Func_02002780(2, 0xe000, 10);
-        Event_SayThenWait(2, 10);
+        Event_SayThenWait(ACTOR_IVAN, 10);
         if (*finish_flag != 0) {
             Func_02002780(3, 0, 10);
-            Actor_StartRepeatedMotion(3, 3);
-            Event_SayThenWait(3, 20);
+            Actor_StartRepeatedMotion(ACTOR_MIA, 3);
+            Event_SayThenWait(ACTOR_MIA, 20);
         } else {
             *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
         }
-        Actor_ShowEmote(0, 0x102, 0);
-        Actor_ShowEmote(1, 0x102, 0);
+        Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 0);
+        Actor_ShowEmote(ACTOR_GERALD, 0x102, 0);
         Event_Wait(40);
-        Actor_RunRepeatedMotion(1, 2);
-        Event_SayThenWait(1, 20);
-        Actor_ShowEmote(1, 0x105, 0);
+        Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
+        Event_SayThenWait(ACTOR_GERALD, 20);
+        Actor_ShowEmote(ACTOR_GERALD, 0x105, 0);
         Event_Wait(120);
-        Event_SayThenWait(2, 40);
+        Event_SayThenWait(ACTOR_IVAN, 40);
         if (Data_0200b394 != 0) {
             Func_02002780(3, 0x2000, 10);
-            Actor_SetAnimationAndWait(3, 4);
-            Event_SayThenWait(3, 10);
+            Actor_SetAnimationAndWait(ACTOR_MIA, 4);
+            Event_SayThenWait(ACTOR_MIA, 10);
         } else {
             *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
         }
         Event_Wait(60);
-        Actor_RunRepeatedMotion(2, 2);
+        Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
         if (Data_0200b394 != 0) {
             Func_02002780(2, 0xa000, 40);
             Func_02002780(2, 0xe000, 20);
         }
-        Event_SayThenWait(2, 10);
-        Actor_StartRepeatedMotion(0, 2);
-        Actor_RunRepeatedMotion(1, 2);
+        Event_SayThenWait(ACTOR_IVAN, 10);
+        Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
+        Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
         Event_Wait(40);
-        Event_SayThenWait(2, 20);
-        Actor_SetAnimationAndWait(0, 3);
-        Actor_SetAnimationAndWait(1, 3);
+        Event_SayThenWait(ACTOR_IVAN, 20);
+        Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
+        Actor_SetAnimationAndWait(ACTOR_GERALD, 3);
         Event_Wait(20);
-        Actor_SetAnimation(3, 3);
+        Actor_SetAnimation(ACTOR_MIA, 3);
         L_02002528:;
-        Actor_SetAnimationAndWait(2, 3);
+        Actor_SetAnimationAndWait(ACTOR_IVAN, 3);
         goto L_02002660;
     }
-    Actor_ShowEmote(2, 0x105, 0);
+    Actor_ShowEmote(ACTOR_IVAN, 0x105, 0);
     Event_Wait(40);
-    Actor_SetAnimationAndWait(2, 3);
+    Actor_SetAnimationAndWait(ACTOR_IVAN, 3);
     Event_SetMessage(MSG_THATS_RELIEF_ROBIN_THOUGHT_YOUD);
-    Event_SayThenWait(2, 20);
+    Event_SayThenWait(ACTOR_IVAN, 20);
     if (*finish_flag != 0) {
         Func_02002780(3, 0, 10);
-        Actor_StartRepeatedMotion(3, 1);
-        Event_SayThenWait(3, 20);
+        Actor_StartRepeatedMotion(ACTOR_MIA, 1);
+        Event_SayThenWait(ACTOR_MIA, 20);
     } else {
         *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
     }
-    Actor_ShowEmote(1, 0x102, 0);
-    Actor_ShowEmote(0, 0x102, 0);
+    Actor_ShowEmote(ACTOR_GERALD, 0x102, 0);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 0);
     Event_Wait(40);
-    Actor_RunRepeatedMotion(1, 2);
-    Event_SayThenWait(1, 20);
-    Actor_ShowEmote(2, 0x105, 0);
+    Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
+    Event_SayThenWait(ACTOR_GERALD, 20);
+    Actor_ShowEmote(ACTOR_IVAN, 0x105, 0);
     Event_Wait(80);
-    Event_SayThenWait(2, 40);
+    Event_SayThenWait(ACTOR_IVAN, 40);
     if (Data_0200b394 != 0) {
         Func_02002780(3, 0x2000, 20);
-        Actor_SetAnimation(3, 4);
-        Event_SayThenWait(3, 40);
+        Actor_SetAnimation(ACTOR_MIA, 4);
+        Event_SayThenWait(ACTOR_MIA, 40);
     } else {
         *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
     }
-    Actor_RunRepeatedMotion(2, 2);
+    Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
     Event_Wait(20);
-    Event_SayThenWait(2, 20);
-    Actor_StartRepeatedMotion(1, 2);
-    Actor_RunRepeatedMotion(0, 2);
+    Event_SayThenWait(ACTOR_IVAN, 20);
+    Actor_StartRepeatedMotion(ACTOR_GERALD, 2);
+    Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
     Event_Wait(40);
-    Event_SayThenWait(2, 20);
+    Event_SayThenWait(ACTOR_IVAN, 20);
     L_02002660:;
     Audio_PlayCue(17);
-    Actor_SetSpeed(1, 0x13333, 0x9999);
-    Actor_SetSpeed(2, 0x13333, 0x9999);
-    Actor_SetSpeed(3, 0x13333, 0x9999);
-    Actor_SetAnimation(1, 2);
+    Actor_SetSpeed(ACTOR_GERALD, 0x13333, 0x9999);
+    Actor_SetSpeed(ACTOR_IVAN, 0x13333, 0x9999);
+    Actor_SetSpeed(ACTOR_MIA, 0x13333, 0x9999);
+    Actor_SetAnimation(ACTOR_GERALD, 2);
     {
         u8 *record = Record1(Func_02002c24, 0);
 
         if (record != 0) {
-            Actor_SetDestination(1, *(s16 *)((s32)record + 10), *(s16 *)((s32)record + 18));
+            Actor_SetDestination(ACTOR_GERALD, *(s16 *)((s32)record + 10), *(s16 *)((s32)record + 18));
         }
     }
-    Actor_WaitForMove(1);
-    Actor_SetPosition(1, 0, 0);
-    Actor_SetAnimation(2, 2);
+    Actor_WaitForMove(ACTOR_GERALD);
+    Actor_SetPosition(ACTOR_GERALD, 0, 0);
+    Actor_SetAnimation(ACTOR_IVAN, 2);
     {
         u8 *record = Record1(Func_02002c24, 0);
 
         if (record != 0) {
-            Actor_SetDestination(2, *(s16 *)((s32)record + 10), *(s16 *)((s32)record + 18));
+            Actor_SetDestination(ACTOR_IVAN, *(s16 *)((s32)record + 10), *(s16 *)((s32)record + 18));
         }
     }
-    Actor_WaitForMove(2);
-    Actor_SetPosition(2, 0, 0);
+    Actor_WaitForMove(ACTOR_IVAN);
+    Actor_SetPosition(ACTOR_IVAN, 0, 0);
     if (Data_0200b394 != 0) {
-        Actor_SetAnimation(3, 2);
+        Actor_SetAnimation(ACTOR_MIA, 2);
         {
             u8 *record = Record1(Func_02002c24, 0);
 
             if (record != 0) {
-                Actor_SetDestination(3, *(s16 *)((s32)record + 10), *(s16 *)((s32)record + 18));
+                Actor_SetDestination(ACTOR_MIA, *(s16 *)((s32)record + 10), *(s16 *)((s32)record + 18));
             }
         }
-        Actor_WaitForMove(3);
-        Actor_SetPosition(3, 0, 0);
+        Actor_WaitForMove(ACTOR_MIA);
+        Actor_SetPosition(ACTOR_MIA, 0, 0);
     }
     GameFlag_Set(0x843);
     Actor_SetPosition(11, 0, 0);

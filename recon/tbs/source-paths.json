@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_39b:020011b4": {
+      "name": "MakyuriIriguchi_OpenEntrance",
+      "source": "FIELD/MAKYURI_IRIGUCHI/OPEN_ENTRANCE.C"
+    },
     "resource_38f:020026cc": {
       "name": "KorimaMura_TriggerRegionScript",
       "source": "FIELD/KORIMA_MURA/REGION_TRIGGER.C"

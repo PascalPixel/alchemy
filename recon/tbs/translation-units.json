@@ -79620,6 +79620,42 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "scene-3c4-0200252c",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/BABI_CHIKA/F_0252C.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3c4",
+      "absolute_symbols": {
+        "Engine_MapCopyCellAttributes": {
+          "address": "0x0200b09c",
+          "kind": "thumb"
+        },
+        "Engine_ActorGet": {
+          "address": "0x0200b10c",
+          "kind": "thumb"
+        },
+        "StagedActor_FillGridAttributeRectangle": {
+          "address": "0x02008244",
+          "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x0200252c",
+          "extent": 112,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

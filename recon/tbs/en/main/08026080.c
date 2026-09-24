@@ -2,6 +2,21 @@
 
 /* Select a combatant, display its condition and animate the target markers.
  * Confirmation returns an encoded side/index; cancellation returns -1.
+ *
+ * Draft, not exact (2026-09-24): 3,660 of 3,584 bytes, 46.0% aligned
+ * similarity. Every call site is in the ROM's order. Proven from the ROM:
+ * the id copies read runtime->first_ids[i] directly (movs r3, #88; ldrsh);
+ * the status search and the sel lookup both sit inside if (mode == 2), with
+ * case 5 setting sel itself; the two per-frame tbl loops ascend (GCC counts
+ * r7 down while the pointer walks up); the frame is 88 bytes of spills
+ * below efx (sp+88), targetPos 96, namePos 108, name 120, pos 152,
+ * selSlot 164, selIds 172, markPos 200, tbl 212, entries 236, ids 308.
+ * Remaining: the candidate needs one more spill slot (every local sits 4
+ * bytes higher); infoWin lives in r9 in the ROM; case 4 keeps the five
+ * status-byte addresses in r7, r8, sl, [sp+40] and r6 across
+ * UiWindow_Create where the candidate recomputes them; the 0xFFFF mask of
+ * the sleep halfword is hoisted into r4 (ldrh; ands r3, r4); ids[cursor+i]
+ * in the spread loop is indexed, not strength-reduced.
  */
 
 #define BattleTarget_RunSelection Func_08026080
@@ -156,6 +171,7 @@ s32 Func_08026080(s32 preferred, s32 mode, u32 spread, u32 kind)
     struct BattleUnit *unit;
     struct CursorSlot *slot;
     struct DisplayEntry *entry;
+    struct DisplayEntry *head;
     s16 *src;
     s32 sel;
     s32 slotId;
@@ -180,6 +196,11 @@ s32 Func_08026080(s32 preferred, s32 mode, u32 spread, u32 kind)
     s32 pressed;
     s32 repeat;
     s32 result;
+    u8 *pd;
+    u8 *ps;
+    u8 *pl;
+    u8 *pp;
+    u8 *pc;
 
     runtime = Data_03001e74.runtime;
     cnt = 0;
@@ -199,87 +220,86 @@ s32 Func_08026080(s32 preferred, s32 mode, u32 spread, u32 kind)
 
     cursor = -1;
     if (mode == 2) {
-        src = runtime->first_ids;
         i = 0;
-        if (src[0] != 0xFF) {
+        if (runtime->first_ids[0] != 0xFF) {
             do {
-                ids[cnt] = src[i];
+                ids[cnt] = runtime->first_ids[i];
                 cnt++;
                 i++;
                 if (i > 5)
                     break;
-            } while (src[i] != 0xFF);
+            } while (runtime->first_ids[i] != 0xFF);
         }
     } else if (mode == 4) {
         ids[0] = (u16)sel;
         cnt = 1;
     } else {
-        src = runtime->second_ids;
         i = 0;
-        if (src[0] != 0xFF) {
+        if (runtime->second_ids[0] != 0xFF) {
             do {
-                ids[cnt] = src[i];
+                ids[cnt] = runtime->second_ids[i];
                 cnt++;
                 i++;
                 if (i > 5)
                     break;
-            } while (src[i] != 0xFF);
+            } while (runtime->second_ids[i] != 0xFF);
         }
     }
     ids[cnt] = 0xFF;
     total = cnt;
 
-    if (mode == 2 && spread != 0xFF && kind != 0) {
-        for (i = 0; i < cnt; i++) {
-            if (ids[i] == 0xFE)
-                continue;
-            unit = BattleUnit_Get(ids[i]);
+    if (mode == 2) {
+        if (spread != 0xFF && kind != 0) {
             found = 0;
-            switch (kind) {
-            case 3:
-                if (unit->poison != 0)
-                    found = 1;
-                break;
-            case 4:
-                if ((*(u32 *)&unit->delusion & 0xFF0000FF) != 0)
-                    found = 1;
-                else if ((*(u16 *)&unit->sleep & 0xFFFF) != 0)
-                    found = 1;
-                else if (unit->death_count != 0)
-                    found = 1;
-                break;
-            case 5:
-                if (unit->hp == 0)
-                    found = 1;
-                break;
-            case 6:
-                if ((*(u32 *)&unit->delusion & 0xFF0000FF) != 0)
-                    found = 1;
-                else if ((*(u16 *)&unit->sleep & 0xFFFF) != 0)
-                    found = 1;
-                else if (unit->death_count != 0)
-                    found = 1;
-                else if (unit->poison != 0)
-                    found = 1;
-                else if (unit->evil_spirit != 0)
-                    found = 1;
-                break;
-            default:
-                break;
-            }
-            if (found != 0) {
-                sel = ids[i];
-                break;
+            for (i = 0; i < cnt; i++) {
+                if (ids[i] == 0xFE)
+                    continue;
+                unit = BattleUnit_Get(ids[i]);
+                switch (kind) {
+                case 3:
+                    if (unit->poison != 0)
+                        found = 1;
+                    break;
+                case 4:
+                    if ((*(u32 *)&unit->delusion & 0xFF0000FF) != 0)
+                        found = 1;
+                    else if ((*(u16 *)&unit->sleep & 0xFFFF) != 0)
+                        found = 1;
+                    else if (unit->death_count != 0)
+                        found = 1;
+                    break;
+                case 5:
+                    if (unit->hp == 0) {
+                        sel = ids[i];
+                        found = 1;
+                    }
+                    break;
+                case 6:
+                    if ((*(u32 *)&unit->delusion & 0xFF0000FF) != 0)
+                        found = 1;
+                    else if ((*(u16 *)&unit->sleep & 0xFFFF) != 0)
+                        found = 1;
+                    else if (unit->death_count != 0)
+                        found = 1;
+                    else if (unit->poison != 0)
+                        found = 1;
+                    else if (unit->evil_spirit != 0)
+                        found = 1;
+                    break;
+                }
+                if (found != 0) {
+                    sel = ids[i];
+                    break;
+                }
             }
         }
+        for (i = 0; i < cnt; i++) {
+            if (ids[i] == sel)
+                break;
+        }
+        if (i != cnt)
+            cursor = i;
     }
-
-    for (j = 0; j < cnt; j++) {
-        if (ids[j] == sel)
-            break;
-    }
-    if (j != cnt)
-        cursor = j;
 
     if (cursor < 0)
         cursor = (cnt - 1) / 2;
@@ -304,13 +324,14 @@ step_back:
     }
 
     window = UiWindow_Create(0, 12, 30, 4, 74);
+    head = entries;
 
     for (;;) {
         pending = 0;
         Func_080b50b8(ids[cursor], &pos);
-        M2C_FIELD(&entries[0], s32 *, 4) = 0x40002000;
-        M2C_FIELD(&entries[0], s32 *, 8) = pending;
-        entries[0].tile = Resource_GetBuffer(
+        M2C_FIELD(head, s32 *, 4) = 0x40002000;
+        M2C_FIELD(head, s32 *, 8) = pending;
+        head->tile = Resource_GetBuffer(
             slotId, (((Data_03001e40 >> 2) & 31) << 8) + 0x080346F8);
         i = Func_08002322(Data_03001e40 << 12);
         if (i < 0)
@@ -320,12 +341,8 @@ step_back:
         if (tbl[0].flags & 1) {
             nx = (pos.x + tbl[0].x) / 2;
             ny = (y + tbl[0].y) / 2;
-            if (pos.x - nx < 0) {
-                if (nx - pos.x <= 7)
-                    pending = 1;
-            } else if (pos.x - nx <= 7) {
+            if (((pos.x - nx) < 0 ? -(pos.x - nx) : (pos.x - nx)) <= 7)
                 pending = 1;
-            }
             pos.x = nx;
             pos.y = ny;
             tbl[0].x = (u8)nx;
@@ -343,9 +360,9 @@ step_back:
             if ((u8)tbl[0].flags <= 3)
                 tbl[0].flags = 1;
         }
-        entries[0].x = pos.x - 8;
-        entries[0].y = (u8)(pos.y - 16);
-        Runtime_PushSlotEntry(&entries[0], 240);
+        head->x = pos.x - 8;
+        head->y = (u8)(pos.y - 16);
+        Runtime_PushSlotEntry(head, 240);
 
         if (spread == 0xFF) {
             efx.x = 256;
@@ -361,12 +378,13 @@ step_back:
             goto frame_end;
 
         cnt = 0;
-        for (i = 5; i >= 0; i--)
+        for (i = 0; i < 6; i++)
             tbl[i].flags &= (u8)~2;
 
         for (i = 0; (u32)i < spread; i++) {
-            if (cursor + i < total && ids[cursor + i] != 0xFE) {
-                selIds[cnt] = ids[cursor + i];
+            j = cursor + i;
+            if (j < total && ids[j] != 0xFE) {
+                selIds[cnt] = ids[j];
                 tbl[i].flags |= 2;
                 if (tbl[i].index != i) {
                     tbl[i].flags &= (u8)~1;
@@ -375,8 +393,8 @@ step_back:
                 selSlot[cnt] = (u8)i;
                 cnt++;
             }
-            if (i != 0 && cursor - i >= 0 && ids[cursor - i] != 0xFE) {
-                selIds[cnt] = ids[cursor - i];
+            if (i != 0 && (j = cursor - i) >= 0 && ids[j] != 0xFE) {
+                selIds[cnt] = ids[j];
                 slot = &tbl[6 - i];
                 slot->flags |= 2;
                 if (slot->index != -i) {
@@ -388,7 +406,7 @@ step_back:
             }
         }
 
-        for (i = 5; i >= 0; i--) {
+        for (i = 0; i < 6; i++) {
             if ((tbl[i].flags & 2) == 0)
                 tbl[i].index = 6;
         }
@@ -459,15 +477,15 @@ step_back:
             goto frame_tail;
         case 4:
             count = 0;
-            if (unit->delusion != 0)
+            if (*(pd = &unit->delusion) != 0)
                 count = 1;
-            if (unit->stun != 0)
+            if (*(ps = &unit->stun) != 0)
                 count++;
-            if (unit->sleep != 0)
+            if (*(pl = &unit->sleep) != 0)
                 count++;
-            if (unit->psy_seal != 0)
+            if (*(pp = &unit->psy_seal) != 0)
                 count++;
-            if (unit->death_count != 0)
+            if (*(pc = &unit->death_count) != 0)
                 count++;
             if (count == 0)
                 count = 1;
@@ -479,23 +497,23 @@ step_back:
                 column = 14;
             infoWin = UiWindow_Create(column, rows, 16, count + 2, 6);
             count = 0;
-            if (unit->delusion != 0) {
+            if (*pd != 0) {
                 UiText_DrawCharacterAtOffset(0x8A5, infoWin, 0, 0);
                 count = 1;
             }
-            if (unit->stun != 0) {
+            if (*ps != 0) {
                 UiText_DrawCharacterAtOffset(0x8A6, infoWin, 0, count * 8);
                 count++;
             }
-            if (unit->sleep != 0) {
+            if (*pl != 0) {
                 UiText_DrawCharacterAtOffset(0x8A7, infoWin, 0, count * 8);
                 count++;
             }
-            if (unit->psy_seal != 0) {
+            if (*pp != 0) {
                 UiText_DrawCharacterAtOffset(0x8A8, infoWin, 0, count * 8);
                 count++;
             }
-            if (unit->death_count != 0) {
+            if (*pc != 0) {
                 UiText_DrawCharacterAtOffset(0x8A9, infoWin, 0, count * 8);
                 count++;
             }
@@ -577,15 +595,13 @@ draw_name:
         Func_080b50b8(ids[cursor], &namePos);
         namePos.y += Func_08002322(Data_03001e40 << 12) / 32768;
         if (unit->class_id == 125 || unit->class_id == 122) {
-            i = 0x80E;
+            width = 0x80E;
             if (unit->class_id == 125)
-                i++;
-            Func_0801965c(i, name, 14);
+                width++;
+            Func_0801965c(width, name, 14);
         } else {
-            for (i = 0; i <= 13; ) {
-                j = unit->name[i];
-                name[i] = j;
-                i++;
+            for (i = 0; i <= 13; i++) {
+                name[i] = j = unit->name[i];
                 if (j == 0)
                     break;
             }
@@ -605,12 +621,12 @@ frame_tail:
         redraw &= ~1;
 frame_end:
         if (pending != 0) {
-            entry = entries + 1;
+            entry = head + 1;
             for (i = 1; i < cnt; i++, entry++) {
                 slot = &tbl[selSlot[i]];
                 Func_080b50b8(selIds[i], &targetPos);
                 targetPos.y += Func_08002322(Data_03001e40 << 12) / 32768;
-                *entry = entries[0];
+                *entry = *head;
                 if (slot->flags & 1) {
                     targetPos.x = (targetPos.x + slot->x) / 2;
                     targetPos.y = (targetPos.y + slot->y) / 2;

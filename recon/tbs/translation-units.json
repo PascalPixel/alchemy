@@ -72835,6 +72835,46 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "makyuri-heya-f-0251c",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_HEYA/F_0251C.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_39c",
+      "absolute_symbols": {
+        "Engine_EventBegin": {
+          "address": "0x0200dab4",
+          "kind": "thumb"
+        },
+        "Engine_ActorGet": {
+          "address": "0x0200dad4",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagSet": {
+          "address": "0x0200da8c",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagClear": {
+          "address": "0x0200da94",
+          "kind": "thumb"
+        },
+        "Engine_MapCopyCellAttributes": {
+          "address": "0x0200da1c",
+          "kind": "thumb"
+        },
+        "Engine_EventEnd": {
+          "address": "0x0200dabc",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x0200251c",
+          "extent": 228,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

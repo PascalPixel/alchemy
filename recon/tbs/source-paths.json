@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "main:08006d50": {
+      "name": "EraseFlashSector",
+      "source": "SYSTEM/SAVE/ERASE_FLASH_SECTOR.C"
+    },
     "main:08006a00": {
       "name": "StartFlashTimer",
       "source": "SYSTEM/SAVE/START_FLASH_TIMER.C"

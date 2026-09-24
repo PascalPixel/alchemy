@@ -1,6 +1,14 @@
 {
   "format": 3,
   "owners": {
+    "resource_383:02002db4": {
+      "name": "KuupuappuHeya_RunVaultEvent",
+      "source": "FIELD/KUUPUAPPU_HEYA/VAULT_EVENT.C"
+    },
+    "resource_38e:020001e4": {
+      "name": "BiribinoNiwa_RunGardenEvent",
+      "source": "FIELD/BIRIBINO_NIWA/GARDEN_EVENT.C"
+    },
     "resource_372:02001348": {
       "name": "HaidiaArashi_RunSecondEventSequence",
       "source": "FIELD/HAIDIA_ARASHI/SECOND_EVENT_SEQUENCE.C"

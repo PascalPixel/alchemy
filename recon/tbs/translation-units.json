@@ -68961,6 +68961,78 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "retained-overlay-38e-020001e4",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_NIWA/GARDEN_EVENT.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_38e",
+      "absolute_symbols": {
+        "Func_02000da4_a": {
+          "address": "0x02008b54",
+          "kind": "thumb"
+        },
+        "Func_02000da4_b": {
+          "address": "0x02008afc",
+          "kind": "thumb"
+        },
+        "Func_02000e58_a": {
+          "address": "0x02008b7c",
+          "kind": "thumb"
+        },
+        "Func_02000e58_b": {
+          "address": "0x02008b2c",
+          "kind": "thumb"
+        },
+        "Func_02000e72_a": {
+          "address": "0x02008b6c",
+          "kind": "thumb"
+        },
+        "Func_02000e72_b": {
+          "address": "0x02008af4",
+          "kind": "thumb"
+        },
+        "Func_02000e90_a": {
+          "address": "0x02008b6c",
+          "kind": "thumb"
+        },
+        "Func_02000e90_b": {
+          "address": "0x02008b3c",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x020001e4",
+          "extent": 632,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "retained-overlay-383-02002db4",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_HEYA/VAULT_EVENT.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_383",
+      "absolute_symbols": {
+        "Func_02007bf8_a": {
+          "address": "0x0200cdcc",
+          "kind": "thumb"
+        },
+        "Func_02007bf8_b": {
+          "address": "0x0200cd3c",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02002db4",
+          "extent": 464,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

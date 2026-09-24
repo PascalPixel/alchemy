@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_3b1:02004fa8": {
+      "name": "FuneHeya_FindFirstSetFlag",
+      "source": "FIELD/FUNE_HEYA/FIRST_SET_FLAG.C"
+    },
     "resource_3cb:02001158": {
       "name": "LinkLobby_ShowCountMessage",
       "source": "MENU/LINK_LOBBY/COUNT_MESSAGE.C"

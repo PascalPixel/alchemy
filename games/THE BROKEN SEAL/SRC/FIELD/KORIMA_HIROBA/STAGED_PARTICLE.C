@@ -7,6 +7,11 @@
 
 #include "STAGED_ACTOR.H"
 
+enum {
+    /* Message 0x182 + 181. */
+    ITEM_NUT = 181
+};
+
 typedef struct { s32 lo, hi; } Pair;
 
 typedef struct { s32 w0, w1, w2, w3; Pair tail; } Query;
@@ -114,8 +119,8 @@ void FieldScene_SetupActor11Effect181(void)
     Event_Begin();
     Actor_SetPosition(11, 0, 0);
     GameFlag_Set(0xfd3);
-    Item_ShowFound(181, 3);
-    Party_GiveItem(181, 0);
+    Item_ShowFound(ITEM_NUT, 3);
+    Party_GiveItem(ITEM_NUT, 0);
     Event_End();
 }
 
@@ -251,7 +256,7 @@ void SceneEffect_InitOrbitingParticle(void)
     actor->visible = 1;
 
     transfer = AllocateEffectTransfer(17, 0x608);
-    Item_LoadIcon(181);
+    Item_LoadIcon(ITEM_NUT);
     transfer += 0x400;
     Vram_Load(sprite->pal, 128, transfer);
     Heap_Release(17);

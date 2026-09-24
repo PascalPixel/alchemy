@@ -24,6 +24,11 @@
 #include "FIELD_SCENE.H"
 #include "SELECT_OVERLAY_DATA_BY_RUNTIME_SELECTOR.H"
 
+enum {
+    /* Message 0x182 + 194. */
+    ITEM_HARD_NUT = 194
+};
+
 enum PushPuzzleMessage {
     MSG_ROBIN_PEERED_INTO = 0x947,
     MSG_ITS_TREE_BUT_ALMOST_LOOKS = 0x13ae,
@@ -40,7 +45,6 @@ enum PushPuzzleMessage {
     MSG_JILL_GAVE_ROBIN_SPECIAL_GIFT = 0x177a,
     MSG_BOTTOM_NOT_VISIBLE_LOOKS_VERY = 0x29dd
 };
-
 
 extern s16 Data_02000240[];
 extern u8 Value_00000020;
@@ -550,8 +554,8 @@ void FieldScene_RunScene38b_02000584(void)
             Event_ShowMessageAndWait(14, 0, 10);
             Message_ShowCentered(MSG_JILL_GAVE_ROBIN_SPECIAL_GIFT, 1);
             bump_step(1);
-            Item_ShowFound(194, 3);
-            Party_GiveItem(194, 0);
+            Item_ShowFound(ITEM_HARD_NUT, 3);
+            Party_GiveItem(ITEM_HARD_NUT, 0);
             Actor_SetAnimationAndWait(14, 3);
             Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
             Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);

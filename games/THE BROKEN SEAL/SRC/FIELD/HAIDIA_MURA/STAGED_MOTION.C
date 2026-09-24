@@ -19,6 +19,11 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 
+enum {
+    /* Message 0x182 + 181. */
+    ITEM_NUT = 181
+};
+
 /* Robin's mother, as in the repair-morning scene of this overlay. */
 enum {
     ACTOR_DORA = 21
@@ -480,8 +485,8 @@ void SceneDialogue_RunActor181Scene(void)
     Event_Begin();
     Actor_SetPosition(26, 0, 0);
     GameFlag_Set(0xfd0);
-    Item_ShowFound(0xb5, 3);
-    Party_GiveItem(0xb5, 0);
+    Item_ShowFound(ITEM_NUT, 3);
+    Party_GiveItem(ITEM_NUT, 0);
     Event_End();
 }
 
@@ -490,8 +495,8 @@ void FieldScene_RunActor181Scene(void)
     Event_Begin();
     Actor_SetPosition(20, 0, 0);
     GameFlag_Set(0xfd0);
-    Item_ShowFound(0xb5, 3);
-    Party_GiveItem(0xb5, 0);
+    Item_ShowFound(ITEM_NUT, 3);
+    Party_GiveItem(ITEM_NUT, 0);
     Event_End();
 }
 
@@ -2406,7 +2411,7 @@ void InitializeStagedActorSceneOrbitingEffect(void)
     actor->visible = 1;
 
     transfer = AllocateEffectTransfer(17, 0x608);
-    Item_LoadIcon(181);
+    Item_LoadIcon(ITEM_NUT);
     transfer += 0x400;
     Vram_Load(sprite->palette, 128, transfer);
     Heap_Release(17);

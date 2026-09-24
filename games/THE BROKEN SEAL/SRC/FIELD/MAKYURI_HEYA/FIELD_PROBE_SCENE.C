@@ -1,5 +1,10 @@
 #include "MAKYURI_HEYA.H"
 
+enum {
+    /* Message 0x182 + 184. */
+    ITEM_HERMES_WATER = 184
+};
+
 enum FieldProbeSceneMessage {
     MSG_DOOR_TIGHTLY_LOCKED = 0x953,
     MSG_FOUNTAIN_HEALING_WATER_HERMES_BRINGS = 0x1576,
@@ -10,7 +15,6 @@ enum FieldProbeSceneMessage {
     MSG_STRANGE_FORCES_AT_WORK_SEEMS = 0x1637,
     MSG_ROBIN_GOT = 0x1638
 };
-
 
 void Func_020067e8_wrapper();
 
@@ -1283,7 +1287,7 @@ void FieldScene_RunActor184Sequence(void)
 {
     Event_Begin();
     Audio_PlayCue(0x53);
-    Item_ShowFound(0xb8, 3);
+    Item_ShowFound(ITEM_HERMES_WATER, 3);
     Func_0200860a_tail(0xb9, 0xb8);
     Func_020090da_tail(Func_020090fc_tail(0xb8), 1);
     Func_020090e2_a_tail(0xb8, 2);

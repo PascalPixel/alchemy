@@ -2,12 +2,16 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 
+enum {
+    /* Message 0x182 + 230. */
+    ITEM_DRAGONS_EYE = 230
+};
+
 enum TransitionMessage {
     MSG_DRAGONS_FLAME_ILLUMINATES_PATH_TRUTH = 0x17e1,
     MSG_SECRET_KI_SHALL_REVEALED_DISCIPLES = 0x17e2,
     MSG_RAYS_LIGHT_GIVE_BIRTH_SHADOWS = 0x17e3
 };
-
 
 #define NULL ((void *)0)
 
@@ -1395,7 +1399,7 @@ void FieldScene_RunScene39a_02001b1c(void)
         rec[85] = record;
         rec[92] = 1;
         rec7 = Value2(Func_02003df4, 17, 0x608);
-        Item_LoadIcon(230);
+        Item_LoadIcon(ITEM_DRAGONS_EYE);
         Vram_Load(p6[28], 128, (rec7 + 0x400));
         Heap_Release(17);
         *(s32 *)Data_0200a488 = (s32)rec;

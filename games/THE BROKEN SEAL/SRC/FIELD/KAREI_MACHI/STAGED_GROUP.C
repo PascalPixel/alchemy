@@ -42,6 +42,11 @@
 
 #include "RESOURCE_3A8_EFFECT.H"
 
+enum {
+    /* Message 0x182 + 181. */
+    ITEM_NUT = 181
+};
+
 enum StagedGroupMessage {
     MSG_ROBIN_PEERED_INTO = 0x947,
     MSG_CAME_KALAY_BECAUSE_DIDNT_LIKE = 0x1a7c,
@@ -56,7 +61,6 @@ enum StagedGroupMessage {
     MSG_LAYANA_WAS_VERY_HARD_ON = 0x25b3,
     MSG_VERY_CLEAN_MAINTAINED = 0x29df
 };
-
 
 struct Obj {
     u8 filler00[6];
@@ -516,8 +520,8 @@ void FieldScene_RunStepWithValueFd6(void)
     Event_Begin();
     Actor_SetPosition(12, 0, 0);
     GameFlag_Set(0xfd6);
-    Item_ShowFound(181, 3);
-    Party_GiveItem(181, 0);
+    Item_ShowFound(ITEM_NUT, 3);
+    Party_GiveItem(ITEM_NUT, 0);
     Event_End();
 }
 
@@ -1216,8 +1220,8 @@ void SceneDialogue_RunActor181Line916(void)
     Task_Wait(1);
     Actor_SetPosition(26, 0, 0);
     GameFlag_Set(0x916);
-    Item_ShowFound(181, 3);
-    Party_GiveItem(181, 0);
+    Item_ShowFound(ITEM_NUT, 3);
+    Party_GiveItem(ITEM_NUT, 0);
 }
 
 s32 FieldScene_DispatchBySceneId(void)
@@ -2356,7 +2360,7 @@ void InitializeOrbitingRenderEffect(void)
     actor->visible = 1;
 
     transfer = AllocateEffectTransfer(17, 0x608);
-    Item_LoadIcon(181);
+    Item_LoadIcon(ITEM_NUT);
     transfer += 0x400;
     Vram_Load(sprite->palette, 128, transfer);
     Heap_Release(17);

@@ -2,6 +2,13 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 
+enum {
+    /* Message 0x182 + 189. */
+    ITEM_WATER_OF_LIFE = 189,
+    /* Message 0x182 + 231. */
+    ITEM_BONE = 231
+};
+
 enum PromptMessage {
     MSG_ROBIN_CHECKED_CHEST = 0x929,
     MSG_ROBIN_CHECKED_BARREL = 0x92b,
@@ -52,7 +59,6 @@ enum PromptMessage {
     MSG_WANT_MORE_BONES = 0x1385,
     MSG_HE_REALLY_LIKES_BONES_WONDER = 0x1cf4
 };
-
 
 #define Scene_GetRecord_1(args...) Func_02005ae2(args)
 #define Scene_GetRecord_2(args...) Func_02005b1c(args)
@@ -724,8 +730,8 @@ void FieldScene_RunActorEighteenConditionalScene(void)
         Event_SetMessage(MSG_WOW_HAVE_MANY_THINGS_ARENT);
         Event_ShowMessage(18, 0);
     } else {
-        Item_ShowFound(231, 3);
-        Party_GiveItem(231, 0);
+        Item_ShowFound(ITEM_BONE, 3);
+        Party_GiveItem(ITEM_BONE, 0);
     }
     Event_End();
 }
@@ -988,7 +994,7 @@ void FieldScene_RunScene383SequenceC(void)
             goto L_02000906;
         }
         GameFlag_Set(0x857);
-        Party_GiveItem(189, 0);
+        Party_GiveItem(ITEM_WATER_OF_LIFE, 0);
     }
     Event_SetMessage(MSG_HEADING_OUT_BEYOND_GOMA_RANGE);
     Event_OpenMessage(16, 0);
@@ -1028,8 +1034,8 @@ void FieldScene_RunScene383_0200091c(void)
             Event_ShowMessage(18, 0);
             goto L_020009ec;
         }
-        Item_ShowFound(231, 3);
-        Party_GiveItem(231, 0);
+        Item_ShowFound(ITEM_BONE, 3);
+        Party_GiveItem(ITEM_BONE, 0);
         GameFlag_Set(0x85b);
     } else {
         bump_step(1);

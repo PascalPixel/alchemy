@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_394:020007e0": {
+      "name": "KorimaMagari_RunReturnSequence",
+      "source": "FIELD/KORIMA_MAGARI/RETURN_SEQUENCE.C"
+    },
     "resource_3c8:02001808": {
       "name": "Scene_RunActorLeapSequence"
     },

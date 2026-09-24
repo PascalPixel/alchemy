@@ -6,7 +6,7 @@ extern u8 Value_0000c00f;
 
 extern s32 Data_02002090;
 extern u8 Data_03001ac4;
-extern u8 Data_03001f54;
+extern u8 gDebugMode;
 extern u8 Data_03001f58;
 extern s32 Data_03007800;
 extern u8 Data_03001d18;
@@ -46,7 +46,7 @@ void System_Initialize(void)
     Func_0800300c();
     Data_02002090 = 0;
     Data_03001ac4 = 0;
-    Data_03001f54 = 0;
+    gDebugMode = 0;
     Data_03001f58 = 0;
     Resource_LoadWorkHeader();
     Func_0800479c();

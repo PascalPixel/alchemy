@@ -493,6 +493,13 @@
       "name": "Shop_SellItem",
       "source": "MENU/SHOP/SELL_ITEM.C"
     },
+    "main:080b0aac": {
+      "name": "Shop_SelBuy"
+    },
+    "main:080b0278": {
+      "name": "Shop_Run",
+      "source": "MENU/SHOP/RUN.C"
+    },
     "main:080b211c": {
       "name": "Shop_SelRepair",
       "source": "MENU/SHOP/SELECT_REPAIR_ITEM.C"
@@ -20243,7 +20250,6 @@
     "main:08077210": "Trade_CanOfferDjinnFar",
     "main:080771c8": "Trade_AddOfferFar",
     "main:080772b8": "BattleFx_IsReviveFar",
-    "main:080b0278": "Shop_Run",
     "main:080d4604": "BattleFx_RunSparkGroups",
     "main:0808a508": "BattleFx_HasReachedTargetFar",
     "main:0808a530": "BattleFx_ClearOwnedSlotFar",

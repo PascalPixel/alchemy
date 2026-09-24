@@ -80083,14 +80083,6 @@
         "Main_08000110": {
           "address": "0x0200a40c",
           "kind": "thumb"
-        },
-        "gEventWork": {
-          "address": "0x03001ebc",
-          "kind": "data"
-        },
-        "gGameState": {
-          "address": "0x02000240",
-          "kind": "data"
         }
       },
       "owners": [
@@ -80099,7 +80091,23 @@
           "extent": 324,
           "state": "exact-c"
         }
-      ]
+      ],
+      "instances": {
+        "resource_39c": {
+          "owners": {
+            "Makyuri_FollowLeader": {
+              "address": "0x02005244",
+              "extent": 324
+            }
+          },
+          "absolute_symbols": {
+            "Main_08000110": {
+              "address": "0x0200d99c",
+              "kind": "thumb"
+            }
+          }
+        }
+      }
     }
   ]
 }

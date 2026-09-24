@@ -1,6 +1,11 @@
 {
   "format": 3,
   "owners": {
+    "resource_39c:02005244": {
+      "name": "Makyuri_FollowLeader",
+      "call_via": "02005c6c",
+      "source": "FIELD/COMMON/MAKYURI/FOLLOW_LEADER.C"
+    },
     "resource_39b:02001cb4": {
       "name": "Makyuri_FollowLeader",
       "call_via": "0200261c",

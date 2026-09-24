@@ -1,6 +1,6 @@
-/* NONMATCHING: 3964 of 3964 bytes, 7 halfword edits (2026-09-24). Hand-written from the
+/* NONMATCHING: 3964 of 3964 bytes, 5 halfword edits (2026-09-24). Hand-written from the
  * resolved jump-table disassembly as a single-overlay unit binding Engine_* at
- * their import veneers. Remaining: 7 halfwords: case 7/8 of area 0xb8 stores zero to REG_BLDCNT with the value in r2 and the address in r3; the reference sets r3 = 0 before loading the address into r2 (value first). A plain constant store instead takes the zero from the pool as ldrh and forces an early pool (531 halfwords). The b9 opening-auxiliary call is spelled through a value-returning cast so cross-jumping keeps the two identical blocks apart (FAKEMATCH when closed). */
+ * their import veneers. Remaining: 5 halfwords: in case 7/8 of area 0xb8 the REG_BLDCNT zero store (inside a do/while that keeps its zero out of the pool) schedules the address load before the zero; the reference sets r3 = 0 first, then loads the address into r2. Every other instruction, pool and jump table matches. The b9 opening-auxiliary call is spelled through a value-returning cast so cross-jumping keeps the two identical blocks apart (tag FAKEMATCH when closed). */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
@@ -282,7 +282,7 @@ s32 Local_02003068(void)
         case 8:
             Main_0808a5e0(170);
             Main_080091a0();
-            { s32 z = 0; REG_BLDCNT = z; }
+            do { volatile u16 *reg = (volatile u16 *)0x4000050; s32 z = 0; *reg = z; } while (0);
             if (Engine_GameFlagIsSet(0x300)) {
                 Call6((void (*)())Engine_MapCopyCellsTo, 15, 96, 9, 96, 3, 3);
                 Call6((void (*)())Engine_MapCopyCellsTo, 12, 96, 15, 96, 3, 3);

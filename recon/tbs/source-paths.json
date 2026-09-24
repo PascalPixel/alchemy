@@ -13785,7 +13785,8 @@
       "source": "FIELD/KAREI_MACHI/STAGED_GROUP.C"
     },
     "resource_3ae:02000958": {
-      "name": "FieldScene_ConfigureFlaggedActors"
+      "name": "FieldScene_ConfigureFlaggedActors",
+      "source": "FIELD/COMMON/KAREI_TOREBI/FLAGGED_ACTORS.C"
     },
     "resource_3ae:02000328": {
       "name": "SceneDialogue_RunActor12Event",

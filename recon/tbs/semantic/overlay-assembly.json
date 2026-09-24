@@ -27,18 +27,6 @@
       ]
     },
     {
-      "overlay": "resource_3ae",
-      "start": "0x02000958",
-      "end": "0x02000ad2",
-      "kind": "not_yet_decompiled",
-      "retention": "not_yet_c",
-      "confidence": "strong",
-      "evidence": [
-        "Complete reviewed 378-byte owner in semantic/regions.json, including pool and continuation at 0x02000a98. Branches at 0x020009ca and 0x02000a80 reach that continuation, which unwinds this entry frame.",
-        "Ordinary C recovery candidate remains unverified; no compiler-impossibility or DONE claim."
-      ]
-    },
-    {
       "overlay": "resource_3c8",
       "start": "0x02001808",
       "end": "0x020018f8",

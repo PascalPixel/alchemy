@@ -32343,58 +32343,6 @@
       ]
     },
     {
-      "id": "retained-scene-flagged-actor-setup-3ae",
-      "game": "tbs",
-      "source": "recon/tbs/en/overlays/configure_flagged_actors.c",
-      "compiler_route": "canonical-gcc296",
-      "overlay": "resource_3ae",
-      "absolute_symbols": {
-        "Data_02000240_t": {
-          "address": "0x02000240",
-          "kind": "data"
-        },
-        "Scene_PlaceSlots": {
-          "address": "0x02008af8",
-          "kind": "thumb"
-        },
-        "Scene_CheckFlag": {
-          "address": "0x02009550",
-          "kind": "thumb"
-        },
-        "Scene_SetFlag": {
-          "address": "0x02009560",
-          "kind": "thumb"
-        },
-        "Scene_SetMode": {
-          "address": "0x02009610",
-          "kind": "thumb"
-        },
-        "Scene_SetPosition": {
-          "address": "0x020095d8",
-          "kind": "thumb"
-        },
-        "Scene_SetFacing": {
-          "address": "0x02009640",
-          "kind": "thumb"
-        },
-        "Scene_GetActor": {
-          "address": "0x020095a0",
-          "kind": "thumb"
-        },
-        "Scene_SetTiles": {
-          "address": "0x02009508",
-          "kind": "thumb"
-        }
-      },
-      "owners": [
-        {
-          "address": "0x02000958",
-          "extent": 378,
-          "state": "not-yet-c"
-        }
-      ]
-    },
-    {
       "id": "retained-scene-extended-actor-presentation-3bd",
       "game": "tbs",
       "source": "games/THE BROKEN SEAL/SRC/FIELD/ARUTAMIRA_DOU/ACTOR_PRESENTATION.C",
@@ -79119,6 +79067,66 @@
         {
           "address": "0x020021bc",
           "extent": 588,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "scene-3ae-02000958",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/KAREI_TOREBI/FLAGGED_ACTORS.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3ae",
+      "absolute_symbols": {
+        "FieldScene_PlaceSlots14And15": {
+          "address": "0x02008af8",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagIsSet": {
+          "address": "0x02009550",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetChildValue": {
+          "address": "0x02009610",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagClear": {
+          "address": "0x02009560",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetPosition": {
+          "address": "0x020095d8",
+          "kind": "thumb"
+        },
+        "Engine_ActorFaceDirection": {
+          "address": "0x02009640",
+          "kind": "thumb"
+        },
+        "Engine_ActorGet": {
+          "address": "0x020095a0",
+          "kind": "thumb"
+        },
+        "Engine_MapCopyCellAttributes": {
+          "address": "0x02009508",
+          "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
+        },
+        "Data_02000240_t": {
+          "address": "0x02000240",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02000958",
+          "extent": 378,
           "state": "exact-c"
         }
       ]

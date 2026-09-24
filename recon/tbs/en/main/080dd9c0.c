@@ -58,6 +58,8 @@ void FunctionHead_080dd9c0(struct BattleEffectArgument *efx)
     s32 i;
     s32 j;
     s32 a;
+    s8 *xp;
+    s32 st;
 
     cache = (u32 *)(gWorkSlot + 39 * 4);
     cursor = cache;
@@ -94,11 +96,12 @@ void FunctionHead_080dd9c0(struct BattleEffectArgument *efx)
             *(u16 *)0x04000052 = (total - frame - 1) | 0x1000;
         }
 
-        for (i = 0, a = frame - 8; i != BattleFxPillar_Counts[work->effect->variant]; i++, a -= 8) {
+        for (i = 0; i != BattleFxPillar_Counts[work->effect->variant]; i++) {
             if (frame > i * 8 + 8) {
                 s32 kind = BattleFxPillar_Kinds[i];
                 s32 h;
                 s32 w;
+                a = frame - (i * 8 + 8);
                 if ((u32)kind < 2) {
                     h = a * 16;
                     w = a * 6;

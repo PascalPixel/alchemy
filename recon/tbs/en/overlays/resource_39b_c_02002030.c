@@ -1,236 +1,158 @@
+/* NONMATCHING: 832 bytes, candidate 832, 3 differing halfwords (2026-09-24).
+ * Hand-written; twin of resource_39c:020055c0. Unit symbols beyond the resolved
+ * Engine_ veneers: gPushAngles = 0x0200a7f4 (data). Remaining: (1) the
+ * collision call passes pos as add r1, sp, #16 in the reference, here as the
+ * fp copy of &pos that the earlier stores use (pointer variables and casts do
+ * not change it); (2) before the spark loop the reference loads 15 (for sl)
+ * before the 0x03001c94 address: sched2 ties them at priority 3 and prefers
+ * the address because the reload of 15 into r1 depends on the preceding call. */
 #include "TYPES.H"
-
-#define Scene_RunScene39bSequenceA Func_02002030
+#include "FIELD_EFFECT.H"
+#include "IWRAM_CALL.H"
 
 extern u8 Data_00000000[];
-void Func_02003ec6();
-void Func_020044fa();
-s32 Func_02004588();
-s32 Func_02004588_a();
-s32 Func_020045a8();
-s32 Func_020045be();
-void Func_020045ca();
-void Func_020045f8();
-void Func_020045fa();
-void Func_0200461c();
-void Func_0200462c();
-void Func_02004638();
-void Func_0200466e();
-void Func_02004676();
-void Func_0200467e();
-void Func_0200468a();
-void Func_020046a0();
-void Func_020046ba();
-s32 Func_020046c8();
-void Func_020046d8();
-void Func_02004700();
-void Func_02004702();
-s32 Func_02004712();
-void Func_02004732();
-void Func_02004788();
-void Func_020047b4();
-void Func_02004816();
-void Func_0200485a();
-void Func_020048c2();
-void Func_020048f0();
-void Func_02004924();
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
+void Main_08000128(s32 radius, s32 angle, union FieldCoordinate *pos);
+s32 Main_080091d8(struct FieldActor *actor, union FieldCoordinate *pos);
+s32 Main_08009020(struct FieldSprite *sprite, s32 animation);
+void OverlayObject_SpawnKind24AtActor(struct FieldActor *actor);
 
-static __inline__ void Call1(void (*f)(), s32 a0)
+/* One cell of the height map: the third byte is the cell's floor level. */
+struct MapCell {
+    u8 unknown_0[2];
+    u8 level;
+    u8 unknown_3;
+};
+
+struct EventActors {
+    u8 unknown_00[20];
+    struct FieldActor *actors[1];
+};
+
+extern s16 gPushAngles[];
+
+struct PushState {
+    s32 count;
+    s32 level;
+    s32 active;
+    s32 target_x;
+    s32 target_z;
+    struct FieldActor *source;
+    struct FieldActor *effect;
+};
+
+#define MAP_CELLS ((struct MapCell *)0x02010000)
+
+void Local_02002030(void)
 {
-    f(a0);
-}
+    u8 *work;
+    struct PushState *state;
+    struct FieldActor *actor;
+    struct FieldActor *source;
+    struct FieldActor *obj;
+    struct FieldSprite *sprite;
+    struct MapCell *from;
+    struct MapCell *to;
+    u8 saved;
+    u8 *flags;
+    s32 angle;
+    s32 n;
+    s32 i;
+    u8 zero;
+    union FieldCoordinate pos[3];
 
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
+    state = **(struct PushState ***)((u8 *)&gEventWork + 32);
+    work = (u8 *)gEventWork;
+    actor = ((struct EventActors *)work)->actors[gGameState.selected_actor];
+    flags = &actor->motion_flags;
+    saved = *flags;
+    angle = (u16)gPushAngles[(*(u32 *)0x03001ae8 >> 4) & 15];
+    if (gPushAngles[(*(u32 *)0x03001ae8 >> 4) & 15] == -1)
+        return;
+    pos[0].fixed = (actor->x.fixed & -0x100000) + 0x80000;
+    pos[1].fixed = *(s32 *)((u8 *)actor + 20);
+    pos[2].fixed = (actor->z.fixed & -0x100000) + 0x80000;
+    from = &MAP_CELLS[(pos[2].fixed / 0x100000 << 7) + pos[0].fixed / 0x100000];
+    Main_08000128(0x200000, angle, pos);
+    to = &MAP_CELLS[(pos[2].fixed / 0x100000 << 7) + pos[0].fixed / 0x100000];
+    if (from->level != state->level && to->level == state->level && state->count == 0)
+        return;
 
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-static __inline__ s32 Value4(s32 (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    return f(a0, a1, a2, a3);
-}
-
-void Scene_RunScene39bSequenceA(void)
-{
-    u32 i;
-    s32 p10;
-    s32 p8;
-    s32 p8b;
-    u8 *p9;
-    s32 p9b;
-    s32 rec4;
-    u8 *rec7;
-    s32 record;
-    s32 r9;
-    s32 v2;
-    s32 v3;
-    s32 v5;
-    s32 base5_0;
-    s32 base6_3001c94;
-    s32 v6;
-    s32 slot12;
-    u8 *slot0;
-    u8 slot4[12];
-    s32 slot8;
-    u8 *p7;
-    u8 *p6;
-    u8 *p4;
-    u8 *p5;
-    u8 *p6b;
-    u8 slot16[12];
-
-    (*(s32 *)((*(s32 *)slot4) + 8)) = *(s32 *)0x03001ebc;
-    p7 = *(s32 *)((*(s32 *)((*(s32 *)slot4) + 8)) + ((*(s32 *)0x02000434 << 2) + 20));
-    p8 = *(s32 *)(*(s32 *)0x03001edc);
-    slot0 = ((s32)p7 + 85);
-    (*(s32 *)slot4) = p7[85];
-    p6 = *(u16 *)(0x0200a7f4 + ((((u32)*(s32 *)0x03001ae8 >> 4) & 15) << 1));
-    if (*(s16 *)(0x0200a7f4 + ((((u32)*(s32 *)0x03001ae8 >> 4) & 15) << 1)) == -1) {
-        v3 = *(s16 *)(0x0200a7f4 + ((((u32)*(s32 *)0x03001ae8 >> 4) & 15) << 1));
-        v5 = r9;
-        v6 = (s32)p6;
-    } else {
-        p4 = *(s32 *)((s32)p7 + 8);
-        v3 = ((s32)((s32)p4 & -0x100000) + 0x80000);
-        *(s32 *)0x00000010 = ((s32)((s32)p4 & -0x100000) + 0x80000);
-        *(s32 *)0x00000014 = *(s32 *)((s32)p7 + 20);
-        v2 = ((s32)(*(s32 *)((s32)p7 + 16) & -0x100000) + 0x80000);
-        *(s32 *)0x00000018 = ((s32)(*(s32 *)((s32)p7 + 16) & -0x100000) + 0x80000);
-        if (((s32)(*(s32 *)((s32)p7 + 16) & -0x100000) + 0x80000) < 0) {
-            v2 = ((s32)(*(s32 *)((s32)p7 + 16) & -0x100000) + 0x17ffff);
+    Engine_EventBegin();
+    if (Main_080091d8(actor, pos) != 0)
+        return;
+    obj = state->effect;
+    if (obj != NULL) {
+        ((union FieldObject *)obj)->effect.spin = 0;
+        Engine_ObjectSetScript(obj, (const s32 *)0x0200a7dc);
+        Engine_ObjectSetAnimation(obj, 7);
+        state->effect = NULL;
+    }
+    if (to->level == state->level && state->count != 0) {
+        source = state->source;
+        obj = Engine_ObjectCreate(26, source->x.fixed, source->y.fixed, source->z.fixed);
+        if (obj != NULL) {
+            sprite = obj->sprite;
+            *(s32 *)((u8 *)obj + 20) = *(s32 *)((u8 *)source + 20);
+            Engine_ObjectSetScript(obj, (const s32 *)0x0200a7d0);
+            obj->motion_flags = 0;
+            ((union FieldObject *)obj)->effect.spin = 0;
+            obj->priority_flags = 2;
+            obj->speed = 0x40000;
+            obj->acceleration = 0x20000;
+            Engine_ObjectSetPosition(obj, pos[0].fixed, pos[1].fixed, pos[2].fixed);
+            if (sprite != NULL) {
+                Main_08009020(sprite, 6);
+                zero = 0;
+                ((u8 *)sprite)[38] = zero;
+            }
+            state->effect = obj;
         }
-        if (((s32)((s32)p4 & -0x100000) + 0x80000) < 0) {
-            v3 = ((s32)((s32)p4 & -0x100000) + 0x17ffff);
-        }
-        Call3(Func_020044fa, 0x200000, (s32)p6, 16);
-        (*(s32 *)((*(s32 *)slot4) + 4)) = (((((*(s32 *)0x00000018 / 0x100000) << 7) + (*(s32 *)0x00000010 / 0x100000)) << 2) + 0x2010000);
-        if (*(u8 *)((((((v2 >> 20) << 7) + (v3 >> 20)) << 2) + 0x2010000) + 2) != *(s32 *)(p8 + 4)) {
-            if ((*(s32 *)((*(s32 *)slot4) + 4))[2] != *(s32 *)(p8 + 4)) {
-                goto L_0200211a;
-            }
-            v3 = *(s32 *)p8;
-            if (*(s32 *)p8 != 0) {
-                goto L_0200211a;
-            }
-            v5 = (((((v2 >> 20) << 7) + (v3 >> 20)) << 2) + 0x2010000);
-            v6 = (s32)p6;
-        } else {
-            L_0200211a:;
-            Func_020045f8();
-            rec4 = Value2(Func_020045a8, (s32)p7, slot16);
-            if (rec4 != 0) {
-                v5 = (((((v2 >> 20) << 7) + (v3 >> 20)) << 2) + 0x2010000);
-                v6 = (s32)p6;
-            } else {
-                p5 = *(s32 *)(p8 + 24);
-                if ((s32)p5 != 0) {
-                    *(u16 *)((s32)p5 + 100) = rec4;
-                    Value2(Func_02004588, (s32)p5, 0x200a7dc);
-                    ((void (*)())Func_02004588_a)((s32)p5, 7);
-                    *(s32 *)(p8 + 24) = rec4;
-                }
-                if ((*(s32 *)((*(s32 *)slot4) + 4))[2] == *(s32 *)(p8 + 4)) {
-                    if (*(s32 *)p8 != 0) {
-                        p6b = *(s32 *)(p8 + 20);
-                        rec7 = Value4(Func_020045be, 26, *(s32 *)((s32)p6b + 8), *(s32 *)((s32)p6b + 12), *(s32 *)((s32)p6b + 16));
-                        if ((s32)rec7 != 0) {
-                            p9 = *(s32 *)((s32)rec7 + 80);
-                            *(s32 *)((s32)rec7 + 20) = *(s32 *)((s32)p6b + 20);
-                            Call2(Func_020045ca, (s32)rec7, 0x200a7d0);
-                            rec7[85] = rec4;
-                            *(u16 *)(((s32)rec7 + 85) + 15) = rec4;
-                            rec7[35] = 2;
-                            *(s32 *)((s32)rec7 + 48) = 0x40000;
-                            *(s32 *)((s32)rec7 + 52) = 0x20000;
-                            Func_0200461c((s32)rec7, *(s32 *)0x00000010, *(s32 *)0x00000014, *(s32 *)0x00000018);
-                            if ((s32)p9 != 0) {
-                                Func_020045fa((s32)p9, 6);
-                                p9[38] = (s32)Data_00000000;
-                            }
-                            *(s32 *)(p8 + 24) = (s32)rec7;
-                        }
-                        v5 = (*(s32 *)p8 - 1);
-                        *(s32 *)p8 = (*(s32 *)p8 - 1);
-                        if (v5 == 0) {
-                            Func_02004638(*(s32 *)(p8 + 20));
-                            *(s32 *)(p8 + 20) = v5;
-                            Call1(Func_020046ba, 0x161);
-                        } else {
-                            if (*(s32 *)(p8 + 20) != 0) {
-                                Func_0200466e(*(s32 *)(p8 + 20), (6 - v5));
-                            }
-                        }
-                    }
-                }
-                Func_02004676((s32)p7, 6);
-                Func_0200462c(3);
-                Func_0200485a(152);
-                Func_0200468a((s32)p7, 7);
-                *(s32 *)((s32)p7 + 48) = 0x30000;
-                *(s32 *)((s32)p7 + 52) = 0x20000;
-                *(s32 *)((s32)p7 + 40) = 0x40000;
-                slot0[0] &= 126;
-                Func_02004700((s32)p7, 0);
-                Func_02004788(0, *(s16 *)(16 + 2), *(s16 *)(16 + 10));
-                Value2(Func_020046c8, (s32)p7, 6);
-                Func_0200467e(2);
-                if ((*(s32 *)((*(s32 *)slot4) + 4))[2] != *(s32 *)(p8 + 4)) {
-                    Func_02004732((s32)p7, 1);
-                } else {
-                    Func_020048c2(215);
-                }
-                Func_020046a0(1);
-                slot0[0] = (*(s32 *)slot4);
-                if ((*(s32 *)((*(s32 *)slot4) + 4))[2] == *(s32 *)(p8 + 4)) {
-                    if (*(s32 *)(p8 + 24) == 0) {
-                        Value2(Func_02004712, (s32)p7, 18);
-                        Func_020048f0(241);
-                        base5_0 = 0;
-                        base6_3001c94 = 0x3001c94;
-                        for (;;) {
-                            if ((base5_0 & 15) == 0) {
-                                Func_02003ec6((s32)p7);
-                            }
-                            if (!(base5_0 <= 31)) break;
-                            v5 = base5_0;
-                            L_020022e8:;
-                            Func_020046d8(1);
-                            v5 = (v5 + 1);
-                        }
-                        if (*(s32 *)base6_3001c94 == 0) {
-                            goto L_020022e8;
-                        }
-                        Call1(Func_02004924, 0x120);
-                        Func_02004702(1);
-                        *(s32 *)((s32)p7 + 8) = *(s32 *)(p8 + 12);
-                        *(s32 *)((s32)p7 + 16) = *(s32 *)(p8 + 16);
-                        Func_020047b4((s32)p7, 1);
-                    }
-                }
-                *(s32 *)(p8 + 8) = 0;
-                Func_02004816();
-                v6 = base6_3001c94;
-            v3 = ((*(s32 *)((*(s32 *)slot4) + 8)) + 0x1b0);
-            }
+        n = state->count - 1;
+        state->count = n;
+        if (n == 0) {
+            Engine_ObjectDispatchRelease(state->source);
+            state->source = NULL;
+            Engine_GameFlagClear(0x161);
+        } else if (state->source != NULL) {
+            Engine_ObjectSetAnimation(state->source, 6 - n);
         }
     }
-    p8b = v3;
-    p9b = v5;
-    p10 = v6;
-    /* unlifted: 0x020020e0..0x020020e4 (2), 0x020020f0..0x020020f4 (2) */
+    Engine_ObjectSetAnimation(actor, 6);
+    Engine_TaskWait(3);
+    Engine_AudioPlayCue(152);
+    Engine_ObjectSetAnimation(actor, 7);
+    actor->speed = 0x30000;
+    actor->acceleration = 0x20000;
+    actor->velocity_y = 0x40000;
+    *flags &= 0x7e;
+    Engine_ActorSetSpriteFlags(actor, 0);
+    Engine_ObjectMotionSetPositionAndCommit(0, pos[0].part.pixel, pos[2].part.pixel);
+    Engine_ObjectSetAnimation(actor, 6);
+    Engine_TaskWait(2);
+    if (to->level != state->level)
+        Engine_ActorSetSpriteFlags(actor, 1);
+    else
+        Engine_AudioPlayCue(215);
+    Engine_TaskWait(1);
+    *flags = saved;
+    if (to->level == state->level && state->effect == NULL) {
+        Engine_ObjectSetAnimation(actor, 18);
+        Engine_AudioPlayCue(241);
+        for (i = 0;; i++) {
+            if ((i & 15) == 0)
+                OverlayObject_SpawnKind24AtActor(actor);
+            if (i > 31 && *(s32 *)0x03001c94 != 0)
+                break;
+            Engine_TaskWait(1);
+        }
+        Engine_AudioPlayCue(0x120);
+        Engine_TaskWait(1);
+        actor->x.fixed = state->target_x;
+        actor->z.fixed = state->target_z;
+        Engine_ActorSetSpriteFlags(actor, 1);
+    }
+    state->active = 0;
+    Engine_EventEnd();
+    *(s32 *)(work + 0x1b4) += Iwram_MulQ16(*(s32 *)(work + 0x1b0), 0x200000);
 }

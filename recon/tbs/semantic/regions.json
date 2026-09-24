@@ -3874,7 +3874,7 @@
     {
       "overlay": "resource_396",
       "entry": "0x02000334",
-      "span_bytes": 352
+      "span_bytes": 350
     },
     {
       "overlay": "resource_396",
@@ -5164,7 +5164,7 @@
     {
       "overlay": "resource_39d",
       "entry": "0x020031c0",
-      "span_bytes": 68
+      "span_bytes": 72
     },
     {
       "overlay": "resource_39d",
@@ -6114,7 +6114,7 @@
     {
       "overlay": "resource_3a4",
       "entry": "0x02003850",
-      "span_bytes": 376
+      "span_bytes": 374
     },
     {
       "overlay": "resource_3a4",
@@ -8129,7 +8129,7 @@
     {
       "overlay": "resource_3b3",
       "entry": "0x020025f8",
-      "span_bytes": 68
+      "span_bytes": 66
     },
     {
       "overlay": "resource_3b3",
@@ -9734,7 +9734,7 @@
     {
       "overlay": "resource_3bd",
       "entry": "0x02003610",
-      "span_bytes": 52
+      "span_bytes": 50
     },
     {
       "overlay": "resource_3bd",

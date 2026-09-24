@@ -1,11 +1,3 @@
-/* NONMATCHING: 1236 of 1236 bytes, 4 halfword edits (2026-09-24). The zero is
- * a one-halfword struct so its movhi pool load reaches 64 bytes and the pool
- * lands where the reference has it; the Main_0808a168 callback passed through
- * a local closes the tail. What remains is one sched2 tie: the r8 copy of the
- * step address (a reload insn) and the 0x2009771 callback constant load tie
- * on priority and dependents (5 each), so LUID order schedules the r8 copy
- * first; the reference loads the constant first. Every permutation of the six
- * stores leaves it. */
 #include "TYPES.H"
 
 struct ActorMotion {
@@ -36,7 +28,6 @@ void Engine_GameFlagSet();
 void Engine_EventEnd();
 
 
-extern u8 Data_00000000[];
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
@@ -74,12 +65,15 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
 }
 
 struct Half { u16 v; };
+extern u8 Value_02009771;
+extern u8 Value_0200bd34;
 
-void Func_02001838(void)
+/* The zero is a one-halfword struct, so its movhi pool load reaches 64 bytes
+ * and the pool lands where the ROM has it; the motion callbacks are Value_
+ * link symbols. */
+void ArutinYama_Func02001838(void)
 {
-    u32 i;
     struct Half p10;
-    s32 p10b;
     s32 p8;
     u8 *rec3;
     s32 rec7;
@@ -102,7 +96,7 @@ void Func_02001838(void)
     p10.v = 0;
     ((struct ActorMotion *)rec3)->step[1] = 0;
     *(s32 *)((s32)rec3 + 72) = 0x6666;
-    ((struct ActorMotion *)rec3)->callback = 0x2009771;
+    ((struct ActorMotion *)rec3)->callback = (s32)&Value_02009771;
     Call3(Engine_ActorSetSpeed, 10, 0x13333, 0x9999);
     Call3(Engine_ObjectMotionSetPositionAndCommit, 10, 0x134, 0x123);
     Call3(Engine_ObjectMotionSetPositionAndCommit, 10, 0x137, 215);
@@ -125,7 +119,7 @@ void Func_02001838(void)
     ((struct ActorMotion *)rec3)->phase = 0;
     ((struct ActorMotion *)rec3)->step[0] = 0;
     ((struct ActorMotion *)rec3)->step[1] = 0;
-    ((struct ActorMotion *)rec3)->callback = 0x2009771;
+    ((struct ActorMotion *)rec3)->callback = (s32)&Value_02009771;
     Call3(Engine_ObjectMotionSetPositionAndCommit, 10, 0x140, 232);
     Call3(Engine_ObjectMotionSetPositionAndCommit, 10, 0x154, 0x106);
     Call3(Engine_ObjectMotionSetPositionAndCommit, 10, 0x176, 0x106);
@@ -158,7 +152,7 @@ void Func_02001838(void)
     ((struct ActorMotion *)rec3)->phase = 0;
     ((struct ActorMotion *)rec3)->step[0] = 0;
     ((struct ActorMotion *)rec3)->step[1] = 0;
-    ((struct ActorMotion *)rec3)->callback = 0x2009771;
+    ((struct ActorMotion *)rec3)->callback = (s32)&Value_02009771;
     Call3(Engine_ObjectMotionSetPositionAndCommit, 10, 0x149, 219);
     ((struct ActorMotion *)rec3)->callback = 0;
     Engine_ActorSetAnimation(10, 1);
@@ -213,8 +207,7 @@ void Func_02001838(void)
     Call2(Engine_CameraSetSpeed, 0x4cccc, 0x9999);
     Engine_CameraMoveTo(*(s32 *)(rec7 + 8), *(s32 *)(rec7 + 12), *(s32 *)(rec7 + 16), 1);
     Engine_CameraWaitForMove();
-    { s32 cb = 0x200bd34; Call3(Main_0808a168, 10, 0x10000, cb); }
+    Call3(Main_0808a168, 10, 0x10000, (s32)&Value_0200bd34);
     Call1(Engine_GameFlagSet, 0x904);
     Engine_EventEnd();
-    p10b = (v6 << 11);
 }

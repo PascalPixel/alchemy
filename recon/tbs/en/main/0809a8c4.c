@@ -1,3 +1,9 @@
+/* Draft, not exact (2026-09-24): 11 differing halfwords, 468 of 468 bytes.
+   The first loop compares step with 11 (blt) only when the bound is a local;
+   a literal folds to <= 10. Residual: reload picks r3 where the reference
+   picks r2 (and the reverse) for the r9 origin copies, the 0x4000 add and
+   the step increment. Expression order, cursor pointers and operand swaps
+   leave it unchanged. */
 #include "TYPES.H"
 
 struct EffectVector { s32 x, y, z; };
@@ -39,6 +45,7 @@ void RunBattleEffect14(void)
     void *spawned_object;
     s32 step;
     struct EffectParticle *particle;
+    s32 count = 11;
 
     step = 0;
     origin.x = *(s32 *)(main_object + 8);
@@ -71,7 +78,7 @@ void RunBattleEffect14(void)
         *(s32 *)(object + 28) = scale;
         Func_080030f8(1);
         step++;
-    } while (step < 11);
+    } while (step < count);
     *(s32 *)(object + 24) = 0x1b333;
     *(s32 *)(object + 28) = 0x14ccc;
     Func_080f9010(0xa3);

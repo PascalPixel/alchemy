@@ -1,13 +1,4 @@
-/* NONMATCHING: 378 of 376 bytes, 82 halfword edits (2026-09-24). Hand-written
- * from the resolved disassembly as a single-overlay unit binding Engine_*,
- * Main_* and the overlay's own functions at their veneers. The rolling-object
- * driver: finds a heading whose step keeps the object level, starts the roll
- * and then dispatches on the tile under it each frame. Remaining: the
- * reference computes the probe pointer (mov r5, sp) once before the search
- * loop and again after the setup, with the shared zero in r5 between;
- * hoisting the pointer here (one variable, two block-scoped arrays or a
- * second pointer) always keeps it live across the setup and costs an extra
- * callee-saved register, so this draft computes it inside the loop. */
+/* NONMATCHING: 374 of 376 bytes (the last halfword is alignment padding). */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
@@ -22,6 +13,11 @@ void Local_020035ac(struct FieldActor *object);
 void Local_02003668(struct FieldActor *object);
 void ArutinYama_Func02003484(struct FieldActor *object);
 void ArutinYama_Func02003738(struct FieldActor *object);
+
+static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
+{
+    f(a0, a1);
+}
 
 struct Byte {
     u8 v;
@@ -41,12 +37,11 @@ void Local_02003850(s32 id, s32 heading)
         heading = object->facing;
     }
     for (n = 0; n <= 3; n++) {
-        p = pos;
-        p[0].fixed = object->x.fixed;
-        p[1].fixed = object->y.fixed;
-        p[2].fixed = object->z.fixed;
-        Main_08000128(0x100000, heading, p);
-        if (Main_080091a8(2, p[0].fixed, p[2].fixed) == object->y.fixed) {
+        pos[0].fixed = object->x.fixed;
+        pos[1].fixed = object->y.fixed;
+        pos[2].fixed = object->z.fixed;
+        Main_08000128(0x100000, heading, pos);
+        if (Main_080091a8(2, pos[0].fixed, pos[2].fixed) == object->y.fixed) {
             break;
         }
         heading += 0x4000;
@@ -60,7 +55,7 @@ void Local_02003850(s32 id, s32 heading)
     Main_08009048(object->sprite, 16);
     Engine_CameraFollowActor(id, 1);
     Engine_CameraWaitForMove();
-    Engine_CameraSetSpeed(0x100000, 0x20000);
+    Call2((void (*)())Engine_CameraSetSpeed, 0x100000, 0x20000);
     object->facing = heading;
     object->speed = 0x20000;
     object->acceleration = 0xccc;
@@ -68,12 +63,11 @@ void Local_02003850(s32 id, s32 heading)
     object->unknown_5b = zero.v;
     object->unknown_64 = object->y.fixed / 0x10000;
     object->unknown_66 = 0;
-    p = pos;
-    p[0].fixed = object->x.fixed;
-    p[1].fixed = object->y.fixed;
-    p[2].fixed = object->z.fixed;
-    Main_08000128(0x180000, heading, p);
-    Engine_ObjectSetPosition(object, p[0].fixed, object->y.fixed, p[2].fixed);
+    pos[0].fixed = object->x.fixed;
+    pos[1].fixed = object->y.fixed;
+    pos[2].fixed = object->z.fixed;
+    Main_08000128(0x180000, heading, pos);
+    Engine_ObjectSetPosition(object, pos[0].fixed, object->y.fixed, pos[2].fixed);
     Engine_ObjectCommitPosition(object);
     Engine_AudioPlayCue(233);
     for (;;) {
@@ -88,11 +82,12 @@ void Local_02003850(s32 id, s32 heading)
             SceneState_SetRecordWord102AndPlayCue288(object);
             break;
         case 99:
-            ArutinYama_Func02003484(object);
-            Engine_EventEnd();
-            return;
+            goto arrived;
         }
         ArutinYama_Func02003738(object);
         Engine_TaskWait(1);
     }
+arrived:
+    ArutinYama_Func02003484(object);
+    Engine_EventEnd();
 }

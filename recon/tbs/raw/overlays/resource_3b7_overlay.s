@@ -1065,66 +1065,8 @@ AlchemyC_020009f8:
 	.2byte 0x0200
 AlchemyC_02000d70:
 	.space 0x60
-	push	{r5, r6, r7, lr}
-	mov	r7, r8
-	push	{r7}
-	adds	r6, r1, #0
-	mov	r8, r2
-	adds	r7, r3, #0
-	bl	sub_0200271a
-	adds	r5, r0, #0
-	cmp	r5, #0
-	beq.n	.L_02000e0a
-	ldmia	r6!, {r3}
-	str	r3, [r5, #8]
-	ldmia	r6!, {r3}
-	str	r3, [r5, #12]
-	ldr	r3, [r6, #0]
-	str	r3, [r5, #16]
-	mov	r3, r8
-	strh	r3, [r5, #6]
-	ldr	r2, [pc, #40]
-	adds	r3, r5, #0
-	adds	r3, #85
-	strb	r2, [r3, #0]
-	ldr	r3, [r5, #80]
-	adds	r3, #38
-	strb	r2, [r3, #0]
-	ldr	r1, [sp, #20]
-	bl	sub_0200269c
-.L_02000e0a:
-	ldr	r0, [r5, #80]
-	adds	r3, r0, #0
-	adds	r3, #39
-	ldrb	r3, [r3, #0]
-	cmp	r3, #0
-	beq.n	.L_02000e3a
-	movs	r4, #255
-	adds	r0, #40
-	adds	r1, r3, #0
-	b.n	.L_02000e24
-	.2byte 0x0000
-	.2byte 0x0000
-	.2byte 0x0000
-.L_02000e24:
-	ldmia	r0!, {r2}
-	ldrb	r3, [r2, #5]
-	cmp	r3, r7
-	beq.n	.L_02000e34
-	ldrb	r3, [r2, #22]
-	orrs	r3, r4
-	strb	r7, [r2, #5]
-	strb	r3, [r2, #22]
-.L_02000e34:
-	subs	r1, #1
-	cmp	r1, #0
-	bne.n	.L_02000e24
-.L_02000e3a:
-	pop	{r3}
-	mov	r8, r3
-	pop	{r5, r6, r7}
-	pop	{r0}
-	bx	r0
+AlchemyC_02000dd0:
+	.space 0x74
 AlchemyC_02000e44:
 	.space 0x18
 	push	{r5, r6, r7, lr}

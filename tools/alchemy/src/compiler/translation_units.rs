@@ -2053,7 +2053,7 @@ mod tests {
         let root = crate::compiler::routing::root();
         let names = SourcePaths::load_for_game(root, "tbs").unwrap();
         let candidate = manifest
-            .unit("retained-multi-phase-presentation-3a4")
+            .unit("retained-actor-group-departure-sequence-372")
             .unwrap();
         assert!(!candidate.exact());
         let invalid_state = |unit: &TranslationUnit| {

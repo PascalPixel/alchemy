@@ -1,10 +1,3 @@
-/* NONMATCHING: 320 bytes, candidate 324, 129 differing halfwords
- * (2026-09-24). Single-overlay unit binding Engine_* at their import veneers.
- * Remaining: a third member of the linked-effect family (371:02004058,
- * 374:02002440) with the same +85/+100 residual: in the reference the +85
- * address takes r3 and reload derives +100 by adding 15; here regclass
- * prefers STACK_REG for the +85 pseudo, so local-alloc leaves it and it lands
- * in r1. The tail stores of the second effect are also ordered differently. */
 #include "TYPES.H"
 #include "FIELD_EFFECT.H"
 
@@ -54,7 +47,8 @@ struct WorldMapOam {
     u16 size : 2;
 };
 
-void Local_02002eb0(union PairObject *parent)
+/* Spawns the linked pair of effect objects above the parent actor and gives the two their update routines and priorities. */
+void HaidiaBabi_Func0200168c(union PairObject *parent)
 {
     union PairObject *pair[2];
     union PairObject *child;
@@ -63,7 +57,6 @@ void Local_02002eb0(union PairObject *parent)
     struct PairWork *work = Data_03001f30;
     s32 i;
 
-    Engine_AudioPlayCue(292);
     for (i = 0; i < 2; ++i) {
         child = (union PairObject *)Engine_ObjectCreate(26,
             parent->object.actor.x.fixed, parent->object.actor.y.fixed,
@@ -81,7 +74,10 @@ void Local_02002eb0(union PairObject *parent)
                 sprite->flags = 0;
                 Main_080001b8(sprite->vram_block);
                 sprite->vram_block = work->vram_block;
-                sprite->unknown_1d |= 1;
+                /* FAKEMATCH: a plain byte access; the struct field store
+                 * leaves a dead QImode zero that takes r3 from the +85
+                 * address. */
+                *(u8 *)&sprite->unknown_1d |= 1;
                 sprite->tile = (Data_03001b10[sprite->vram_block].offset >> 5) & 0x3ff;
                 sprite->full_color = 0;
                 sprite->shape = 1;
@@ -90,13 +86,19 @@ void Local_02002eb0(union PairObject *parent)
             }
         }
     }
-    pair[0]->object.actor.update = (void (*)(union FieldObject *))0x0200ae5d;
-    pair[0]->object.actor.sprite->priority = Engine_ActorGet(15)->sprite->priority;
     {
-        union PairObject *p = pair[1];
+        union PairObject *p = pair[0];
+        struct FieldSprite *sp = p->object.actor.sprite;
 
-        p->object.actor.sprite->priority = Engine_ActorGet(15)->sprite->priority;
-        p->object.actor.update = (void (*)(union FieldObject *))0x0200ae0d;
-        p->object.actor.priority_flags = 2;
+        p->object.actor.update = (void (*)(union FieldObject *))0x02009639;
+        sp->priority = 2;
+    }
+    {
+        struct FieldActor *p = &pair[1]->object.actor;
+        struct FieldSprite *sp = p->sprite;
+
+        sp->priority = 2;
+        p->update = (void (*)(union FieldObject *))0x020095e9;
+        p->priority_flags = 2;
     }
 }

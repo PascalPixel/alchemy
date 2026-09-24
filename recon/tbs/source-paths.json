@@ -1,6 +1,38 @@
 {
   "format": 3,
   "owners": {
+    "resource_378:0200074c": {
+      "name": "ShindenHeya_Func0200074c",
+      "source": "FIELD/COMMON/SHINDEN_HEYA/F_0074C.C"
+    },
+    "resource_373:02005950": {
+      "name": "HaidiaMura_Func02005950",
+      "source": "FIELD/HAIDIA_MURA/F_05950.C"
+    },
+    "resource_378:02003098": {
+      "name": "ShindenHeya_Func02003098",
+      "source": "FIELD/COMMON/SHINDEN_HEYA/F_03098.C"
+    },
+    "resource_372:0200441c": {
+      "name": "HaidiaArashi_Func0200441c",
+      "source": "FIELD/HAIDIA_ARASHI/F_0441C.C"
+    },
+    "resource_377:0200168c": {
+      "name": "HaidiaBabi_Func0200168c",
+      "source": "FIELD/COMMON/HAIDIA_BABI/F_0168C.C"
+    },
+    "resource_381:02002eb0": {
+      "name": "SoruFunka_Func02002eb0",
+      "source": "FIELD/SORU_FUNKA/F_02EB0.C"
+    },
+    "resource_373:02005d68": {
+      "name": "WorldMap_CreateLinkedEffects",
+      "source": "FIELD/WORLD_MAP/LINKED_EFFECTS.C"
+    },
+    "resource_374:02002440": {
+      "name": "HaidiaIe_Func02002440",
+      "source": "FIELD/HAIDIA_IE/F_02440.C"
+    },
     "resource_383:020047bc": {
       "name": "KuupuappuHeya_IsRecordNearPoint",
       "source": "FIELD/KUUPUAPPU_HEYA/F_047BC.C"
@@ -10788,7 +10820,8 @@
       "source": "FIELD/HAIDIA_ARASHI/GROUP_DEPARTURE.C"
     },
     "resource_3a0:02000f30": {
-      "name": "Scene_RunActorNineteenScript"
+      "name": "ShianMura_Func02000f30",
+      "source": "FIELD/SHIAN_MURA/F_00F30.C"
     },
     "resource_3b1:020027d8": {
       "name": "FieldScene_RunBranchingActorPresentation",
@@ -13570,7 +13603,8 @@
       "source": "FIELD/ARUTIN_YAMA/SET_PIECE.C"
     },
     "resource_3a4:02001838": {
-      "name": "FieldScene_BuildMultiPhasePresentation"
+      "name": "ArutinYama_Func02001838",
+      "source": "FIELD/ARUTIN_YAMA/F_01838.C"
     },
     "resource_3a4:02001d14": {
       "name": "FieldScene_RunMultiPhasePresentation"
@@ -19656,7 +19690,8 @@
       "source": "FIELD/WORLD_MAP/RAISE_ACTORS.C"
     },
     "resource_371:02004058": {
-      "name": "WorldMap_CreateLinkedEffects"
+      "name": "WorldMap_CreateLinkedEffects",
+      "source": "FIELD/WORLD_MAP/LINKED_EFFECTS.C"
     },
     "resource_371:020001c4": {
       "name": "WorldMap_UpdateBobbingMarker",
@@ -20888,6 +20923,89 @@
     "resource_3a0:020009dc": {
       "name": "ShianMura_Func020009dc",
       "source": "FIELD/SHIAN_MURA/F_009DC.C"
+    },
+    "resource_3b3:02001be8": {
+      "name": "TakaraHashira_Func02001be8",
+      "source": "FIELD/TAKARA_HASHIRA/F_01BE8.C"
+    },
+    "resource_3b3:02001aa8": {
+      "name": "TakaraHashira_Func02001aa8",
+      "source": "FIELD/TAKARA_HASHIRA/F_01AA8.C"
+    },
+    "resource_3a5:02001054": {
+      "name": "RamakanSabaku_Func02001054",
+      "source": "FIELD/RAMAKAN_SABAKU/F_01054.C"
+    },
+    "resource_3b3:020025f8": {
+      "name": "TakaraHashira_Func020025f8",
+      "source": "FIELD/TAKARA_HASHIRA/F_025F8.C"
+    },
+    "resource_3a7:02000704": {
+      "name": "KuupuappuDou_Func02000704",
+      "source": "FIELD/KUUPUAPPU_DOU/F_00704.C"
+    },
+    "resource_3a4:02003a44": {
+      "name": "ArutinYama_Func02003a44",
+      "source": "FIELD/ARUTIN_YAMA/F_03A44.C"
+    },
+    "resource_3b7:02000dd0": {
+      "name": "TorebiIzumi_Func02000dd0",
+      "source": "FIELD/TOREBI_IZUMI/F_00DD0.C"
+    },
+    "resource_3a4:02003850": {
+      "name": "ArutinYama_Func02003850",
+      "source": "FIELD/ARUTIN_YAMA/F_03850.C"
+    },
+    "resource_3cb:02000148": {
+      "name": "LinkLobby_Func02000148",
+      "source": "MENU/LINK_LOBBY/F_00148.C"
+    },
+    "resource_3c0:020009cc": {
+      "name": "SuharaSabaku_Func020009cc",
+      "source": "FIELD/SUHARA_SABAKU/F_009CC.C"
+    },
+    "resource_3cb:02000f30": {
+      "name": "LinkLobby_Func02000f30",
+      "source": "MENU/LINK_LOBBY/F_00F30.C"
+    },
+    "resource_3bd:02003610": {
+      "name": "ArutamiraDou_Func02003610",
+      "source": "FIELD/ARUTAMIRA_DOU/F_03610.C"
+    },
+    "resource_3bd:02000ee0": {
+      "name": "ArutamiraDou_Func02000ee0",
+      "source": "FIELD/ARUTAMIRA_DOU/F_00EE0.C"
+    },
+    "resource_3cb:02000128": {
+      "name": "LinkLobby_Func02000128",
+      "source": "MENU/LINK_LOBBY/F_00128.C"
+    },
+    "resource_387:02000fc8": {
+      "name": "GomaIriguchi_Func02000fc8",
+      "source": "FIELD/GOMA_IRIGUCHI/F_00FC8.C"
+    },
+    "resource_396:02000334": {
+      "name": "ToretoHeya_Func02000334",
+      "source": "FIELD/TORETO_HEYA/F_00334.C"
+    },
+    "resource_394:02000980": {
+      "name": "KorimaMagari_Func02000980",
+      "source": "FIELD/KORIMA_MAGARI/F_00980.C"
+    },
+    "resource_39d:020031c0": {
+      "name": "MakyuriChojo_Func020031c0",
+      "source": "FIELD/MAKYURI_CHOJO/F_031C0.C"
+    },
+    "resource_39d:02003324": {
+      "name": "MakyuriChojo_Func02003324",
+      "source": "FIELD/MAKYURI_CHOJO/F_03324.C"
+    },
+    "main:080c1c54": {
+      "name": "Owner_ApplyLevelGains",
+      "source": "BATTLE/APPLY_LEVEL_GAINS.C"
+    },
+    "main:080109e8": {
+      "name": "Map_InitializePerspectiveScene"
     }
   },
   "symbols": {

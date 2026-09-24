@@ -497,6 +497,21 @@ fn main_call_via_base(root: &Path, game: CompilerTarget) -> Result<u64> {
         })
 }
 
+/// The owner a linked symbol stands for: its own name, or, for a nested
+/// function a whole unit keeps local (`Func_XXXXXXXX.N`), the address name
+/// no other symbol in the image already carries.
+fn linked_owner_name<'a>(
+    name: &'a str,
+    defined: &BTreeSet<String>,
+    plain: &BTreeSet<&str>,
+) -> Option<&'a str> {
+    if defined.contains(name) {
+        return Some(name);
+    }
+    crate::compiler::symbols::nested_function_base(name)
+        .filter(|base| defined.contains(*base) && !plain.contains(base))
+}
+
 #[allow(clippy::too_many_arguments)]
 fn materialize_unit_owner(
     root: &str,
@@ -1120,14 +1135,24 @@ pub fn build(options: &Options, root: &str, cwd: &str) -> Result<BuildSummary> {
         root,
     )?;
     let mut symbols = BTreeMap::new();
+    let plain = nm
+        .lines()
+        .filter_map(|line| line.split_whitespace().nth(3))
+        .collect::<BTreeSet<_>>();
     for line in nm.lines() {
         let f: Vec<_> = line.split_whitespace().collect();
-        if f.len() == 4 && defined.contains(f[3]) {
-            if !function_name(f[3]) || !matches!(f[2], "T" | "t") {
+        let Some(name) = f
+            .get(3)
+            .and_then(|name| linked_owner_name(name, &defined, &plain))
+        else {
+            continue;
+        };
+        if f.len() == 4 {
+            if !function_name(name) || !matches!(f[2], "T" | "t") {
                 return Err(format!("linked symbol is not a Thumb function: {}", f[3]));
             }
             if let (Some(a), Some(s)) = (address(f[0]), address(f[1])) {
-                if symbols.insert(f[3].into(), (a, s as usize)).is_some() {
+                if symbols.insert(name.to_string(), (a, s as usize)).is_some() {
                     return Err(format!("duplicate linked function {}", f[3]));
                 }
             }
@@ -1441,5 +1466,26 @@ mod tests {
             nested_call_aliases(listing, "Func_08022a7c.0", "\tbx\tlr\n"),
             ""
         );
+    }
+    #[test]
+    fn whole_unit_links_a_local_nested_owner_by_its_address_name() {
+        let defined = ["Func_08015fb8".to_string(), "Func_08016018".to_string()]
+            .into_iter()
+            .collect::<BTreeSet<_>>();
+        let local = ["Func_08015fb8.0", "Func_08016018"].into_iter().collect();
+        assert_eq!(
+            linked_owner_name("Func_08015fb8.0", &defined, &local),
+            Some("Func_08015fb8")
+        );
+        assert_eq!(
+            linked_owner_name("Func_08016018", &defined, &local),
+            Some("Func_08016018")
+        );
+        let exported = ["Func_08015fb8.0", "Func_08015fb8"].into_iter().collect();
+        assert_eq!(
+            linked_owner_name("Func_08015fb8.0", &defined, &exported),
+            None
+        );
+        assert_eq!(linked_owner_name("Func_0800abcd.1", &defined, &local), None);
     }
 }

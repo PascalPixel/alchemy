@@ -1,14 +1,5 @@
-/* NONMATCHING: 252 bytes, candidate 248, 76 differing halfwords (2026-09-24).
- * Single-overlay unit binding Engine_* at their import veneers. Remaining:
- * offset constants: the reference loads 0xe5a and 0xe5c from the pool
- * separately and derives only 0xe5e by adding 2, and loads 0x2a01, 0x2a02 and
- * 0x2a03 separately; here each address is derived from the previous one. The
- * first lamp takes the pool zero (Value_00000000 through a u8), which should
- * also place the pool mid-function. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
-
-extern u8 Value_00000000;
 
 struct ShrineWork {
     u8 unknown_0000[0xe5a];
@@ -20,7 +11,8 @@ struct ShrineWork {
 void Main_08015210(s32 message, s32 a1, s32 a2);
 s32 Local_020027d4(void);
 
-void Local_0200074c(void)
+/* Shrine room: the party faces the altar, the room fades to blue, three of the four lamps light, and the scene exits by the altar's answer. */
+void ShindenHeya_Func0200074c(void)
 {
     struct ShrineWork *work;
     u8 zero;
@@ -40,7 +32,9 @@ void Local_0200074c(void)
     work->colors[0] = 0x7c00;
     work->colors[1] = 0x7c00;
     work->colors[2] = 0x7c00;
-    zero = (u8)(u32)&Value_00000000;
+    /* FAKEMATCH: the first lamp is cleared through a u8 local zero, which
+     * the compiler loads from the pool. */
+    zero = 0;
     work->lamps[0] = zero;
     work->lamps[1] = 1;
     work->lamps[2] = 1;

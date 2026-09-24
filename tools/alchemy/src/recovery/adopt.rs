@@ -511,6 +511,16 @@ fn register_adoption(
 /// rebuild in the shared bundle mid-check cannot pass as a result.
 const REPEAT_RUNS: usize = 30;
 
+/// One repeat compile agrees with the exact first assembly: identical, or
+/// short only by the alignment halfword that ends a word-aligned span, which
+/// the owner's listing assembles and the lone C object cannot carry.
+fn repeats_exactly(score: &crate::recovery::owners::Score) -> bool {
+    score.differing == 0
+        || (score.reference % 4 == 0
+            && score.candidate + 2 == score.reference
+            && score.differing == 1)
+}
+
 pub fn repeatable(root: &Path, source: &Path, owner: &str, span: u32) -> Result<String, String> {
     let cc1 = crate::compiler::routing::bundle().join("cc1");
     let pin = |cc1: &Path| -> Result<String, String> {
@@ -530,7 +540,8 @@ pub fn repeatable(root: &Path, source: &Path, owner: &str, span: u32) -> Result<
                     let mut exact = 0;
                     while next.fetch_add(1, std::sync::atomic::Ordering::Relaxed) < REPEAT_RUNS {
                         let work = tempfile::tempdir().map_err(|e| e.to_string())?;
-                        if score_in(root, source, owner, span, Some(work.path()))?.differing == 0 {
+                        if repeats_exactly(&score_in(root, source, owner, span, Some(work.path()))?)
+                        {
                             exact += 1;
                         }
                     }
@@ -606,6 +617,20 @@ fn adopt_unit_source(unit: &mut Value, root: &Path, destination: &Path) -> Resul
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn a_trailing_alignment_halfword_repeats_as_exact() {
+        use crate::recovery::owners::Score;
+        let score = |candidate, reference, differing| Score {
+            candidate,
+            reference,
+            differing,
+        };
+        assert!(repeats_exactly(&score(172, 172, 0)));
+        assert!(repeats_exactly(&score(182, 184, 1)));
+        assert!(!repeats_exactly(&score(182, 184, 2)));
+        assert!(!repeats_exactly(&score(180, 184, 1)));
+        assert!(!repeats_exactly(&score(184, 186, 1)));
+    }
 
     #[test]
     fn named_draft_lookup_is_overlay_qualified() {

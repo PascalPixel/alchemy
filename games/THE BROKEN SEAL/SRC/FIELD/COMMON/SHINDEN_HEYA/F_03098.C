@@ -1,7 +1,3 @@
-/* NONMATCHING: 172 bytes, candidate 176, 36 differing halfwords (2026-09-24).
- * The byte-5 clear is a one-bit field (reference ands with -33). Remaining:
- * the loop's stored zero is copied from the counter's initial zero in r8 in
- * the reference; here it is a separate constant, which shifts the pool. */
 #include "TYPES.H"
 
 
@@ -10,7 +6,7 @@ void Func_0200661a();
 s32 Func_02006636();
 void Func_0200664c();
 void Func_0200665c();
-void Func_0200665e();
+s32 Func_0200665e();
 void Func_02006698();
 void Func_020066ae();
 
@@ -40,12 +36,15 @@ static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
  * the loop zero is not shared with the counter in r5. */
 struct Spr5 { u8 pad[5]; u8 lo:5; u8 bit5:1; u8 hi:2; };
 
-void Func_02003098(s32 item)
+/* Shrine room: raises an item icon object, loads the item's icon into its sprite and clears its motion flags while it rises for sixty frames. */
+void ShindenHeya_Func02003098(s32 item)
 {
     u8 *obj;
     u8 *spr;
     s32 buf;
     s32 zero;
+    s32 z;
+    u8 *flag;
     u32 i;
 
     obj = Value1(Func_02006614, 22);
@@ -63,9 +62,11 @@ void Func_02003098(s32 item)
         Func_020066ae(item);
         Func_0200665e(spr[28], 128, buf + 0x400);
         Func_0200665c(17);
-        for (i = 0; i <= 59; i++) {
+        /* FAKEMATCH: the stored zero is a variable set after the flag
+         * address, so it copies the counter's zero after that address. */
+        for (i = 0, flag = obj + 85, z = 0; i <= 59; i++) {
             if ((u32)(*(s32 *)(obj + 40) + 255) <= 0x1fe)
-                obj[85] = 0;
+                *flag = z;
             Func_0200664c(1);
         }
         Func_02006698((s32)obj, 0x200ba9c);

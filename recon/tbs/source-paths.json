@@ -10283,6 +10283,10 @@
       "name": "Owner_LevelUp",
       "source": "GAME/CHARACTER/LEVEL_UP.C"
     },
+    "main:080799b0": {
+      "name": "Owner_DetermineClass",
+      "source": "GAME/CHARACTER/DETERMINE_CLASS.C"
+    },
     "main:080a2324": {
       "name": "Menu_SetPageIcons"
     },
@@ -20382,7 +20386,6 @@
     "main:08017c8c": "UiText_RenderWideStringInWindow",
     "main:080f2f10": "TitlePalette_UpdateFade",
     "main:080f9c44": "Sound_TickDmaRestartTimer",
-    "main:080799b0": "Owner_DetermineClass",
     "main:08077058": "Inventory_RemoveFar",
     "main:080a9f0c": "Item_ReturnOne",
     "main:080c1798": "BattleFx_PlayUnitElementEffect",

@@ -1,13 +1,24 @@
-/* Draft, not exact (2026-09-24): 784-byte candidate for the 788-byte owner.
-   Control flow, stores, calls and the stack frame agree. Residual: the
-   reference reloads r1 (adds r1, r4) before the second of each pair of
-   Iwram_MulQ16 calls sharing one ratio; IWRAM_CALL.H declares r1 an input
-   the asm leaves intact, so GCC reuses it and the three missing moves
-   shift the alignment nops and the mid-function pool. Declaring the factor
-   "+r" restores the reloads but costs the register allocation (320 differ),
-   so the header was left alone. Also one scheduling pair at entry (y is
-   loaded into r3 here, r4 there) and the bounce magnitude lives in r0
-   instead of r1. */
+/* Draft (2026-09-24): exact (788 bytes, 0 differ) once the reviewed
+   Iwram_Call2 in IWRAM_CALL.H lists r1 as clobbered and ends its template
+   in "\n\t"; with the header as reviewed it is 4 bytes short. Both changes
+   keep TBS and TLA byte-identical (checked with make compare-all), but the
+   body is pinned by IWRAM_CALL_BODY_SHA256 in compiler/no_asm.rs, so it
+   waits for that review. Why: the ROM sets r1 again before the second of
+   each pair of calls sharing a factor, which GCC only does when the asm
+   clobbers r1, and the extra template line is what places the literal
+   pool mid-function. The proposed body:
+
+       __asm__ volatile(
+           ".align 2\n\t"
+           "mov ip, pc\n\t"
+           "bx %2\n\t"
+           : "+r"(result)
+           : "r"(factor), "r"(routine)
+           : "r1", "r2", "ip", "cc");
+
+   Other facts that closed it: load x, y, z and add the velocities in that
+   order; the bounce is obj->vy = -Iwram_MulQ16(...) then an ABS test of
+   obj->vy. */
 
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
@@ -15,8 +26,6 @@
 /* Moves each of the fourteen entries of the object table toward its target,
    applies gravity with bounce, notices when an axis target was passed and
    turns the entry to face its motion. */
-
-#define Object_UpdateAllMotion Func_0800d340
 
 #define TARGET_UNSET ((s32)0x80000000)
 
@@ -76,8 +85,8 @@ void Object_UpdateAllMotion(void)
     for (cnt = 13; cnt >= 0; cnt--, obj++) {
         if (obj->active == 0)
             continue;
-        y = obj->y;
         x = obj->x;
+        y = obj->y;
         z = obj->z;
         if (obj->frozen == 0) {
             arrived = 0;
@@ -131,18 +140,14 @@ void Object_UpdateAllMotion(void)
                     obj->vy -= obj->gravity;
                 } else if (obj->vy < 0) {
                     y = obj->floor;
-                    vy = Iwram_MulQ16(obj->vy, obj->bounce);
-                    obj->vy = -vy;
-                    dist = -vy;
-                    if (dist < 0)
-                        dist = vy;
-                    if (dist <= obj->gravity)
+                    obj->vy = -Iwram_MulQ16(obj->vy, obj->bounce);
+                    if ((obj->vy < 0 ? -obj->vy : obj->vy) <= obj->gravity)
                         obj->vy = 0;
                 }
             }
         }
-        y += obj->vy;
         x += obj->vx;
+        y += obj->vy;
         z += obj->vz;
         if (obj->arrive_axis != 0) switch (obj->arrive_axis) {
         case 16:

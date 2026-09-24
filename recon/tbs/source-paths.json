@@ -489,6 +489,10 @@
       "name": "Shop_RepairItem",
       "source": "MENU/SHOP/REPAIR_ITEM.C"
     },
+    "main:080b1f4c": {
+      "name": "Shop_SellItem",
+      "source": "MENU/SHOP/SELL_ITEM.C"
+    },
     "main:080b211c": {
       "name": "Shop_SelRepair",
       "source": "MENU/SHOP/SELECT_REPAIR_ITEM.C"
@@ -20195,7 +20199,6 @@
     "main:080b0744": "Shop_CreatePriceSprite",
     "main:080b3050": "Shop_RunPartyMemberIconBurst",
     "main:08015038": "UiText_OpenMessageWindowFar",
-    "main:080b1f4c": "Shop_SellItem",
     "main:080164d4": "UiWindow_ClearInteriorTiles",
     "main:080a8604": "CharacterMenu_DrawStatusAilments",
     "main:080a9aec": "ItemMenu_DrawEquippedItemNames",

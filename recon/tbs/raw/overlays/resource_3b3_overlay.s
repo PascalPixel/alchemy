@@ -1936,34 +1936,8 @@ AlchemyC_02002498:
 	.2byte 0x0000
 	.2byte 0x0000
 	.2byte 0xfffe
-	.2byte 0xb520
-	sub	sp, #32
-	bl	sub_0200504e
-	add	r5, sp, #8
-	adds	r0, r5, #0
-	bl	sub_02002ca2
-	cmp	r0, #0
-	beq.n	.L_02002566
-	mov	r2, sp
-	add	r3, sp, #24
-	ldmia	r3!, {r0, r1}
-	stmia	r2!, {r0, r1}
-	ldr	r0, [r5, #0]
-	ldr	r1, [r5, #4]
-	ldr	r2, [r5, #8]
-	ldr	r3, [r5, #12]
-	bl	sub_02002e4e
-	b.n	.L_02002572
-.L_02002566:
-	bl	sub_02004a00
-	bl	.L_02002914
-	bl	sub_02004a3c
-.L_02002572:
-	bl	sub_02005088
-	add	sp, #32
-	pop	{r5}
-	pop	{r0}
-	bx	r0
+AlchemyC_0200253c:
+	.space 0x42
 	.2byte 0x0000
 AlchemyC_02002580:
 	.space 0x78

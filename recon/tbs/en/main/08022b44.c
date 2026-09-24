@@ -11,7 +11,12 @@
  * Storing the zero through output->table right after entry is formed keeps
  * the allocation (r8 x, sl y, fp rising, r9 chain, r6 output, r7 entry) and
  * leaves only the store order and the zero's base register.
- */
+ * Cause, from the RTL dumps (alchemy build allocator): the byte stores
+ * output->one5/one4 = 1 expand as load/and 0/or 1/store, and CSE reuses that
+ * and-mask zero (set before the slot-load call) for the later tile zero, so
+ * it crosses the call and takes r8. Storing the bytes through a u8 cast
+ * removes the mask and the hoist, but the static chain is then copied to r7
+ * and x moves to r9. */
 #include "RENDER_INPUT.H"
 
 /* Preview setting or resting one Djinn: toggle it on the live owner record,

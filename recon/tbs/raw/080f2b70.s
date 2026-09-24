@@ -10,8 +10,10 @@
 	.set sub_0800479c, 0x0800479c
 	.set sub_08005340, 0x08005340
 	.set sub_080f9010, 0x080f9010
+	.global Title_ShowSplashScreen
 	.global Func_080f2b70
 	.thumb_func
+Title_ShowSplashScreen:
 Func_080f2b70:
 	push	{r5, r6, r7, lr}
 	mov	r7, r8

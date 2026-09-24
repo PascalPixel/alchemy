@@ -1436,6 +1436,10 @@
           "address": "0x200de6c",
           "kind": "thumb"
         },
+        "LinkedMessage_RobinHandedOverShamansRod": {
+          "address": "0x000027ba",
+          "kind": "data"
+        },
         "SceneAction_EntryGroup": {
           "address": "0x0200e004",
           "kind": "data"
@@ -8805,6 +8809,10 @@
         "gGameState": {
           "address": "0x02000240",
           "kind": "data"
+        },
+        "LinkedMessage_HaveYouSeenBarricadeWe": {
+          "address": "0x000013c0",
+          "kind": "data"
         }
       },
       "owners": [
@@ -15978,6 +15986,10 @@
         },
         "gGameState": {
           "address": "0x02000240",
+          "kind": "data"
+        },
+        "LinkedMessage_WouldYouLikeHearDescription": {
+          "address": "0x0000207c",
           "kind": "data"
         }
       },
@@ -25065,6 +25077,50 @@
         },
         "gGameState": {
           "address": "0x02000240",
+          "kind": "data"
+        },
+        "LinkedMessage_DontFeelDontTalkMe": {
+          "address": "0x00001f47",
+          "kind": "data"
+        },
+        "LinkedMessage_HaHaHaChosenOarsman": {
+          "address": "0x00001e9f",
+          "kind": "data"
+        },
+        "LinkedMessage_IfYouveChosenOarsmanLets": {
+          "address": "0x00001ea4",
+          "kind": "data"
+        },
+        "LinkedMessage_LooksLikeYouveBeenChosen": {
+          "address": "0x00001e9e",
+          "kind": "data"
+        },
+        "LinkedMessage_Monsters": {
+          "address": "0x00001e40",
+          "kind": "data"
+        },
+        "LinkedMessage_ThatsWhoYouPickedOarsman": {
+          "address": "0x00001ea3",
+          "kind": "data"
+        },
+        "LinkedMessage_TheresWholeBunchReallyMuscular": {
+          "address": "0x00001d50",
+          "kind": "data"
+        },
+        "LinkedMessage_YouCameAskCaptainSet": {
+          "address": "0x00001dd1",
+          "kind": "data"
+        },
+        "LinkedMessage_YouFinallyPickedSomeoneDidnt": {
+          "address": "0x00001ea0",
+          "kind": "data"
+        },
+        "LinkedMessage_YouGoingRow": {
+          "address": "0x00001e19",
+          "kind": "data"
+        },
+        "LinkedMessage_YouveBeenChosenAsOarsman": {
+          "address": "0x00001ea5",
           "kind": "data"
         },
         "Scene_UpdateCueTimer": {
@@ -42332,6 +42388,10 @@
         "LinkedMessage_TooYoungForTheJob": {
           "address": "0x00001440",
           "kind": "data"
+        },
+        "LinkedMessage_YouWillingGoKolimaForest": {
+          "address": "0x00001420",
+          "kind": "data"
         }
       },
       "owners": [
@@ -47965,6 +48025,62 @@
           "address": "0x02000240",
           "kind": "data"
         },
+        "LinkedMessage_AllRightAllRightWe": {
+          "address": "0x00002440",
+          "kind": "data"
+        },
+        "LinkedMessage_CouldSwearJustHeardSomeone": {
+          "address": "0x00002411",
+          "kind": "data"
+        },
+        "LinkedMessage_Dad": {
+          "address": "0x000024a6",
+          "kind": "data"
+        },
+        "LinkedMessage_DodonpaPulledLever": {
+          "address": "0x0000247e",
+          "kind": "data"
+        },
+        "LinkedMessage_DonpaKnowsHeCoddledDodonpa": {
+          "address": "0x00002455",
+          "kind": "data"
+        },
+        "LinkedMessage_DoorTightlyLocked": {
+          "address": "0x00000953",
+          "kind": "data"
+        },
+        "LinkedMessage_DoYouKnowWhereDodonpa": {
+          "address": "0x00002459",
+          "kind": "data"
+        },
+        "LinkedMessage_MyShiftUpAlready": {
+          "address": "0x00002424",
+          "kind": "data"
+        },
+        "LinkedMessage_ShhhPleaseDontWakeDonpa": {
+          "address": "0x0000244f",
+          "kind": "data"
+        },
+        "LinkedMessage_ThereYouShouldAbleGet": {
+          "address": "0x0000248e",
+          "kind": "data"
+        },
+        "LinkedMessage_UhnnGetOffMe": {
+          "address": "0x00002481",
+          "kind": "data"
+        },
+        "LinkedMessage_WhoYou": {
+          "address": "0x0000240d",
+          "kind": "data"
+        },
+        "LinkedMessage_WhWhWhoGoesThere": {
+          "address": "0x0000242e",
+          "kind": "data"
+        },
+        "LinkedMessage_YouDontLookNearlyAs": {
+          "address": "0x00002430",
+          "kind": "data"
+        },
         "StagedActor_AdvancePair": {
           "address": "0x020080c4",
           "kind": "thumb"
@@ -50019,6 +50135,10 @@
         },
         "gEventWork": {
           "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "LinkedMessage_TheresNothingWeCanDo": {
+          "address": "0x00001d40",
           "kind": "data"
         }
       },

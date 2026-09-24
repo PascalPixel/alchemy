@@ -126,8 +126,8 @@ extern u8 Data_0200f9c0[];
 extern u8 Data_0200fb58[];
 extern u8 Data_0200fd44[];
 extern u8 Data_0200fedc[];
-extern u8 Value_00001f47;
-extern u8 Value_00001ea0;
+extern u8 LinkedMessage_DontFeelDontTalkMe;
+extern u8 LinkedMessage_YouFinallyPickedSomeoneDidnt;
 extern u8 Value_0000092b;
 extern u8 Value_00001e7e;
 extern u8 Value_00000993;
@@ -136,39 +136,39 @@ extern u8 Value_0000091a;
 extern u8 Value_00000929;
 extern u8 Value_00000938;
 extern u8 Value_0000092f;
-extern u8 Value_00001ea4;
+extern u8 LinkedMessage_IfYouveChosenOarsmanLets;
 extern u8 Value_00000996;
 extern u8 Value_00001e8b;
 extern u8 Value_0000091d;
 extern u8 Value_0000093b;
 extern u8 Value_00000932;
-extern u8 Value_00001ea5;
+extern u8 LinkedMessage_YouveBeenChosenAsOarsman;
 extern u8 Value_00000997;
 extern u8 Value_00001e8e;
 extern u8 Value_0000091e;
 extern u8 Value_0000093c;
 extern u8 Value_00000933;
-extern u8 Data_00001e40[];
+extern u8 LinkedMessage_Monsters[];
 extern u8 Data_0200e8e4[];
 extern u8 Data_00001e46[];
 extern u8 Data_0200e7c8[];
-extern u8 Value_00001dd1;
+extern u8 LinkedMessage_YouCameAskCaptainSet;
 extern u8 Value_00000925;
-extern u8 Value_00001e19;
-extern u8 Value_00001d50;
-extern u8 Value_00001e9e;
+extern u8 LinkedMessage_YouGoingRow;
+extern u8 LinkedMessage_TheresWholeBunchReallyMuscular;
+extern u8 LinkedMessage_LooksLikeYouveBeenChosen;
 extern u8 Value_00001e78;
 extern u8 Value_00000917;
 extern u8 Value_00000935;
 extern u8 Value_0000092c;
 extern u8 Value_00000928;
-extern u8 Value_00001e9f;
+extern u8 LinkedMessage_HaHaHaChosenOarsman;
 extern u8 Value_00000992;
 extern u8 Value_00001e7b;
 extern u8 Value_00000919;
 extern u8 Value_00000937;
 extern u8 Value_0000092e;
-extern u8 Value_00001ea3;
+extern u8 LinkedMessage_ThatsWhoYouPickedOarsman;
 extern u8 Value_00000995;
 extern u8 Value_00001e88;
 extern u8 Value_0000091c;
@@ -845,7 +845,7 @@ void FieldScene_RunScene3b1_02000670(void)
 void SceneDialogue_RunActor12Line(void)
 {
     Event_Begin();
-    Event_SetMessage((s32)&Value_00001dd1);
+    Event_SetMessage((s32)&LinkedMessage_YouCameAskCaptainSet);
     Event_AskYesNo(12, 0);
     Event_End();
 }
@@ -910,10 +910,10 @@ void SceneDialogue_ShowLine1E19Or1D50(void)
 {
     Event_Begin();
     if (GameFlag_IsSet((s32)&Value_00000925) != 0) {
-        Event_SetMessage((s32)&Value_00001e19);
+        Event_SetMessage((s32)&LinkedMessage_YouGoingRow);
         Event_AskYesNo(10, 0);
     } else {
-        Event_SetMessage((s32)&Value_00001d50);
+        Event_SetMessage((s32)&LinkedMessage_TheresWholeBunchReallyMuscular);
         Event_ShowMessage(10, 0);
     }
     Event_End();
@@ -957,7 +957,7 @@ void SceneState_RunFlagBranchedActor8Setup(void)
 
         Event_Begin();
         Func_02001a98(obj);
-        Event_SetMessage((s32)&Value_00001e9e);
+        Event_SetMessage((s32)&LinkedMessage_LooksLikeYouveBeenChosen);
         FieldScene_RunStepThen10(8);
         Actor_SetAnimation(obj, 2);
         p = Func_02006e0a(0);
@@ -986,7 +986,7 @@ void SceneDialogue_RunActorTenFlaggedDialogue(void)
 
         Event_Begin();
         Func_02001b60(o);
-        Event_SetMessage((s32)&Value_00001e9f);
+        Event_SetMessage((s32)&LinkedMessage_HaHaHaChosenOarsman);
         FieldScene_RunStepThen10(10);
         Actor_SetAnimation(o, 2);
         p = Func_02006ed2(0);
@@ -1013,7 +1013,7 @@ void FieldScene_RunActor11FlagDialogue(void)
         Event_Begin();
         Actor_SetAttachedEffect(11, 0x102);
         Event_Wait(40);
-        Event_SetMessage((s32)&Value_00001f47);
+        Event_SetMessage((s32)&LinkedMessage_DontFeelDontTalkMe);
         Event_ShowMessage(11, 0);
         Event_End();
     } else if (GameFlag_IsSet(0x300) != 0) {
@@ -1022,7 +1022,7 @@ void FieldScene_RunActor11FlagDialogue(void)
 
         Event_Begin();
         Func_02001c60(o);
-        Event_SetMessage((s32)&Value_00001ea0);
+        Event_SetMessage((s32)&LinkedMessage_YouFinallyPickedSomeoneDidnt);
         FieldScene_RunStepThen10(11);
         Actor_SetAnimation(o, 2);
         p = Func_02006fd2(0);
@@ -1163,7 +1163,7 @@ void SceneDialogue_RunActorThirteenFlag300Branch(void)
 
         Event_Begin();
         Func_02001fc0(o);
-        Event_SetMessage((s32)&Value_00001ea3);
+        Event_SetMessage((s32)&LinkedMessage_ThatsWhoYouPickedOarsman);
         FieldScene_RunStepThen10(13);
         Actor_SetAnimation(o, 2);
         p = Func_02007332(0);
@@ -1192,7 +1192,7 @@ void FieldScene_RunFlag300BranchDialogue(void)
 
         Event_Begin();
         Func_0200208c(o);
-        Event_SetMessage((s32)&Value_00001ea4);
+        Event_SetMessage((s32)&LinkedMessage_IfYouveChosenOarsmanLets);
         FieldScene_RunStepThen10(14);
         Actor_SetAnimation(o, 2);
         p = Func_020073fe(0);
@@ -1221,7 +1221,7 @@ void FieldScene_RunActor15FlagDialogue(void)
 
         Event_Begin();
         Func_02002158(o);
-        Event_SetMessage((s32)&Value_00001ea5);
+        Event_SetMessage((s32)&LinkedMessage_YouveBeenChosenAsOarsman);
         FieldScene_RunStepThen10(15);
         Actor_SetAnimation(o, 2);
         p = Func_020074ca(0);
@@ -2667,7 +2667,7 @@ void FieldScene_RunScene3b1_020040e8(void)
     Event_Wait(10);
     Actor_FaceDirection(8, 0x3000, 20);
     Actor_StartRepeatedMotion(8, 2);
-    Event_SetMessage((s32)Data_00001e40);
+    Event_SetMessage((s32)LinkedMessage_Monsters);
     Event_ShowMessageAndWait(8, 0, 20);
     Func_02008a1a(9, 14, 0);
 }

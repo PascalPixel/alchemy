@@ -7,7 +7,7 @@ enum ActorEntrySequenceMessage {
 };
 
 
-extern u8 Value_000027ba[];
+extern u8 LinkedMessage_RobinHandedOverShamansRod[];
 
 extern u8 Value_000000bb[];
 
@@ -375,7 +375,7 @@ void Scene_RunActorEntrySequence(void)
      * written. The reference loads this constant from the pool after the two
      * preceding calls, which the integer spelling does not reproduce.
      */
-    message = (s32)Value_000027ba;
+    message = (s32)LinkedMessage_RobinHandedOverShamansRod;
     Message_ShowCentered(message, 1);
     Actor_WalkToAndWait(21, 0x136, 192);
     Engine_ObjectMotionArmCallback(19, 0x8000, 0);

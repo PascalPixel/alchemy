@@ -98,7 +98,7 @@ extern u8 Data_02008c7c[];
 extern u8 Data_02008c64[];
 extern u8 Data_02008d30[];
 extern u8 Data_02008d24[];
-extern u8 Value_000013c0;
+extern u8 LinkedMessage_HaveYouSeenBarricadeWe;
 extern u8 Value_0200890d;
 
 s32 Func_02000aae(s32, s32);
@@ -216,7 +216,7 @@ s32 SceneData_SelectTable8d24ByState(void)
 void SceneDialogue_RunActor9Message13c0(void)
 {
     Event_Begin();
-    Event_SetMessage((s32)&Value_000013c0);
+    Event_SetMessage((s32)&LinkedMessage_HaveYouSeenBarricadeWe);
     Event_AskYesNo(9, 0);
     Event_End();
 }

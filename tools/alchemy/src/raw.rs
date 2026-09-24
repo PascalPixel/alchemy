@@ -558,7 +558,7 @@ fn rebuild_main(
         .iter()
         .filter(|unit| unit.overlay.is_none())
         .flat_map(|unit| unit.owners.iter())
-        .filter(|owner| owner.state == OwnerState::RetainedAssembly)
+        .filter(|owner| owner.state == OwnerState::NotYetC)
         .map(|owner| {
             (
                 i64::from(owner.address),

@@ -385,6 +385,7 @@ fn assembly_accounting(regions: &[Region]) -> Result<AssemblyAccounting, String>
     let retained = [
         "keep_asm",
         "keep_structured_asm",
+        "not_yet_c",
         "adjacent_section_alignment",
         "container_runtime",
     ];
@@ -496,7 +497,7 @@ struct InventoryMember {
 fn owner_state(state: OwnerState) -> &'static str {
     match state {
         OwnerState::ExactC => "exact-c",
-        OwnerState::RetainedAssembly => "retained-assembly",
+        OwnerState::NotYetC => "not-yet-c",
     }
 }
 fn absolute_kind(kind: AbsoluteSymbolKind) -> &'static str {
@@ -761,7 +762,10 @@ fn semantic_overlay_spans(
         .as_array()
         .ok_or("overlay assembly regions differ")?
     {
-        if row["retention"].as_str() != Some("keep_structured_asm") {
+        if !matches!(
+            row["retention"].as_str(),
+            Some("keep_structured_asm" | "not_yet_c")
+        ) {
             continue;
         }
         let overlay = row["overlay"]
@@ -857,11 +861,7 @@ fn owner_inventory(
         let exact = member.map_or(registered_source.is_some(), |member| {
             member.state.unwrap_or("exact-c") == "exact-c"
         });
-        let state = if exact {
-            "exact-c"
-        } else {
-            "retained-assembly"
-        };
+        let state = if exact { "exact-c" } else { "not-yet-c" };
         let (source, spans, extent_evidence, artifact_value) = match owner {
             SourceOwner::Main(address) => {
                 let (region, spans) = if exact {
@@ -995,7 +995,7 @@ fn owner_inventory(
             let source = game.overlay_listing(&owner.overlay_id().unwrap_or_default());
             let evidence = evidence.clone();
             spans.iter().map(move |(start, size)| {
-                json!({"role":"unregistered-retained-region","container":{"kind":"overlay-image","overlay":owner.overlay_id()},"address":hex(*start),"extent":size,"source":source,"retention":"keep_structured_asm","evidence":evidence})
+                json!({"role":"unregistered-retained-region","container":{"kind":"overlay-image","overlay":owner.overlay_id()},"address":hex(*start),"extent":size,"source":source,"retention":"not_yet_c","evidence":evidence})
             })
         })
         .collect::<Vec<_>>();
@@ -1089,7 +1089,7 @@ fn validate_translation_units(
                         == 1
                 }
                 OwnerState::ExactC => true,
-                OwnerState::RetainedAssembly => {
+                OwnerState::NotYetC => {
                     assembly
                         .iter()
                         .filter(|region| region.is_owner(address, owner.extent))

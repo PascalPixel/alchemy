@@ -520,17 +520,14 @@ mod tests {
             .find(|unit| {
                 unit.overlay.is_some()
                     && unit.owners.iter().any(|owner| {
-                        owner.state
-                            == crate::compiler::translation_units::OwnerState::RetainedAssembly
+                        owner.state == crate::compiler::translation_units::OwnerState::NotYetC
                     })
             })
             .expect("a retained overlay unit exists");
         let owner = unit
             .owners
             .iter()
-            .find(|owner| {
-                owner.state == crate::compiler::translation_units::OwnerState::RetainedAssembly
-            })
+            .find(|owner| owner.state == crate::compiler::translation_units::OwnerState::NotYetC)
             .unwrap();
         let work = tempfile::tempdir().unwrap();
         let mut options = crate::score::cli::Options::tbs(String::new());

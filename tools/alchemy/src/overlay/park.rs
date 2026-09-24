@@ -2,7 +2,6 @@ pub(crate) use crate::compiler::overlay::placeholder_block;
 use crate::compiler::{
     overlay::space_size,
     source_paths::{SourceOwner, SourcePaths},
-    thumb::standalone_wide_transfer_lines as thumb_standalone_wide_transfer_lines,
     translation_units::TranslationUnits,
 };
 use crate::overlay::assembly::OVERLAY_BASE;
@@ -27,81 +26,6 @@ fn number(row: &serde_json::Value, key: &str) -> Option<i64> {
                 .and_then(|text| i64::from_str_radix(text.trim_start_matches("0x"), 16).ok())
         })
     })
-}
-fn audit_multi_register_evidence(root: &Path, overlays: &[String]) -> Result<Vec<String>, String> {
-    let evidence: serde_json::Value = serde_json::from_slice(
-        &fs::read(root.join("recon/tbs/semantic/overlay-assembly.json"))
-            .map_err(|e| e.to_string())?,
-    )
-    .map_err(|e| e.to_string())?;
-    let wanted: std::collections::BTreeSet<_> = overlays.iter().cloned().collect();
-    let owners: Vec<_> = crate::overlay::reviewed_spans(root)?
-        .into_iter()
-        .filter_map(|(owner, span)| {
-            let overlay = owner.overlay_id()?;
-            wanted
-                .contains(&overlay)
-                .then_some((overlay, i64::from(owner.address()), span as i64))
-        })
-        .collect();
-    let claimed: std::collections::BTreeSet<_> = evidence["regions"]
-        .as_array()
-        .into_iter()
-        .flatten()
-        .filter(|row| row["kind"].as_str() == Some("thumb_multi_register_module"))
-        .filter_map(|row| {
-            let overlay = row["overlay"].as_str()?.to_string();
-            let start = number(row, "start")?;
-            let end = number(row, "end")?;
-            wanted.contains(&overlay).then_some((overlay, start, end))
-        })
-        .collect();
-    let mut found = std::collections::BTreeSet::new();
-    for overlay in &wanted {
-        let path = overlay_assembly(root, overlay);
-        let offsets: std::collections::BTreeMap<_, _> =
-            listing_offsets(&path)?.into_iter().collect();
-        let source = fs::read_to_string(&path).map_err(|e| e.to_string())?;
-        for line in thumb_standalone_wide_transfer_lines(&source) {
-            let Some(offset) = offsets.get(&(line as i64)) else {
-                continue;
-            };
-            let address = OVERLAY_BASE + offset;
-            if let Some((_, entry, span)) = owners.iter().find(|(id, entry, span)| {
-                id == overlay && address >= *entry && address < *entry + *span
-            }) {
-                found.insert((overlay.clone(), *entry, *entry + *span));
-            }
-        }
-    }
-    let mut findings = Vec::new();
-    for row in &found {
-        let mut parts: Vec<_> = claimed
-            .iter()
-            .filter(|part| part.0 == row.0 && part.1 >= row.1 && part.2 <= row.2)
-            .collect();
-        parts.sort_by_key(|part| part.1);
-        if parts.first().is_none_or(|part| part.1 != row.1)
-            || parts.last().is_none_or(|part| part.2 != row.2)
-        {
-            findings.push(format!(
-                "{}:{:08x}\tUNCLAIMED_MULTI_REGISTER_OWNER\tend={:08x}",
-                row.0, row.1, row.2
-            ));
-        }
-    }
-    for row in &claimed {
-        if !found
-            .iter()
-            .any(|owner| owner.0 == row.0 && row.1 >= owner.1 && row.2 <= owner.2)
-        {
-            findings.push(format!(
-                "{}:{:08x}\tSTALE_MULTI_REGISTER_EVIDENCE\tend={:08x}",
-                row.0, row.1, row.2
-            ));
-        }
-    }
-    Ok(findings)
 }
 fn placeholder_address(line: &str) -> Option<i64> {
     i64::from_str_radix(
@@ -377,10 +301,6 @@ pub fn run_audit(root: &Path, argv: &[String]) -> Result<i32, String> {
         argv.to_vec()
     };
     let mut findings = 0;
-    for line in audit_multi_register_evidence(root, &overlays)? {
-        println!("{line}");
-        findings += 1;
-    }
     let rom = CanonicalRom::load(root)?;
     let total = overlays.len();
     let workers = std::thread::available_parallelism()
@@ -507,7 +427,7 @@ fn retire_owner_in_units(
         let mut hit = false;
         for owner in owners.iter_mut() {
             if owner["address"].as_str() == Some(wanted.as_str()) {
-                owner["state"] = "retained-assembly".into();
+                owner["state"] = "not-yet-c".into();
                 hit = true;
             }
         }
@@ -568,8 +488,8 @@ fn restore_retained_row(
         "overlay": overlay,
         "start": format!("0x{start:08x}"),
         "end": format!("0x{end:08x}"),
-        "kind": "unclassified_retained_module",
-        "retention": "keep_structured_asm",
+        "kind": "not_yet_decompiled",
+        "retention": "not_yet_c",
         "confidence": "strong",
         "evidence": [
             "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
@@ -975,7 +895,7 @@ mod tests {
         let row = &after["regions"][1];
         assert_eq!(row["start"], "0x02001be8");
         assert_eq!(row["end"], "0x02001ca8");
-        assert_eq!(row["retention"], "keep_structured_asm");
+        assert_eq!(row["retention"], "not_yet_c");
         let text = row["evidence"].to_string();
         assert!(text.contains("Credit withdrawn") && text.contains("not reproducible"));
         let overlap =
@@ -1136,7 +1056,7 @@ mod tests {
         let unit = &after["units"][0];
         assert_eq!(unit["id"], "overlay-37a-actor");
         assert_eq!(unit["source"], "recon/tbs/en/overlays/x.c");
-        assert_eq!(unit["owners"][0]["state"], "retained-assembly");
+        assert_eq!(unit["owners"][0]["state"], "not-yet-c");
         assert_eq!(
             unit["absolute_symbols"]["Func_02004698_a"]["address"],
             "0x0200aa54"
@@ -1144,35 +1064,15 @@ mod tests {
         let shared = &after["units"][1];
         assert_eq!(shared["id"], "shared-37a");
         assert_eq!(shared["source"], "games/THE BROKEN SEAL/SRC/b.c");
-        assert_eq!(shared["owners"][0]["state"], "retained-assembly");
+        assert_eq!(shared["owners"][0]["state"], "not-yet-c");
         assert_eq!(shared["owners"][1]["state"], "exact-c");
         assert_eq!(after["units"][2]["owners"][0]["state"], "exact-c");
     }
-    use super::{audit_with_rom, thumb_standalone_wide_transfer_lines};
+    use super::audit_with_rom;
     use crate::overlay::adopt::audited_span;
     use crate::targets::{target_for, DEFAULT_TARGET};
     use std::fs;
     use tempfile::tempdir;
-    #[test]
-    fn recognizes_only_standalone_wide_thumb_transfers() {
-        assert_eq!(
-            thumb_standalone_wide_transfer_lines("stmia r2!, {r0-r3} @ wide store"),
-            vec![1]
-        );
-        assert!(thumb_standalone_wide_transfer_lines(
-            "\tldmia r3!, {r0-r2}\n\tstmia r4!, {r0, r1, r2}"
-        )
-        .is_empty());
-        assert_eq!(
-            thumb_standalone_wide_transfer_lines(
-                "\tldmia r3!, {r0-r2}\n.L_target:\n\tstmia r4!, {r0-r2}"
-            ),
-            vec![1, 3]
-        );
-        assert!(thumb_standalone_wide_transfer_lines("\tldmia r3!, {r0}").is_empty());
-        assert!(thumb_standalone_wide_transfer_lines("@ stmia r3!, {r0-r2}").is_empty());
-        assert!(thumb_standalone_wide_transfer_lines("\tpush {r4, r5, lr}").is_empty());
-    }
     #[test]
     fn audit_reports_a_placeholder_without_exact_source() {
         let root = tempdir().unwrap();

@@ -16,7 +16,7 @@ extern volatile u16 Data_04000208;
 
 /*
  * The scheduler's retained globals and the hardware interrupt master-enable
- * word. The hex symbols are the retained-assembly bindings; the aliases are
+ * word. The hex symbols are the not-yet-c bindings; the aliases are
  * how this unit names them.
  */
 #define REG_IME Data_04000208

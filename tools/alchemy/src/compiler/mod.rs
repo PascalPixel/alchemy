@@ -16,5 +16,4 @@ pub(crate) mod source_bindings;
 pub(crate) mod source_inputs;
 pub(crate) mod source_paths;
 pub(crate) mod symbols;
-pub(crate) mod thumb;
 pub(crate) mod translation_units;

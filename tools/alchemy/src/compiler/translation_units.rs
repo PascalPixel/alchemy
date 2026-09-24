@@ -123,7 +123,7 @@ pub struct AbsoluteSymbol {
 #[serde(rename_all = "kebab-case")]
 pub enum OwnerState {
     ExactC,
-    RetainedAssembly,
+    NotYetC,
 }
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq)]
 #[serde(deny_unknown_fields)]
@@ -1043,7 +1043,7 @@ fn validate_production_state(
         && unit
             .owners
             .iter()
-            .all(|owner| owner.state == OwnerState::RetainedAssembly)
+            .all(|owner| owner.state == OwnerState::NotYetC)
         && source.starts_with(
             root.join(crate::compiler::routing::recon_directory(&unit.game))
                 .join("en/overlays"),
@@ -1177,7 +1177,7 @@ fn validate_production_state(
                             .is_ok_and(|path| direct_includes.contains(&path)))
             })
         };
-        if requires_direct && matches!(member.state, OwnerState::RetainedAssembly) {
+        if requires_direct && matches!(member.state, OwnerState::NotYetC) {
             let parent = source.parent().unwrap_or(root);
             let candidate = parent.join(format!("../main/{:08x}.c", member.address));
             if !candidate
@@ -1194,7 +1194,7 @@ fn validate_production_state(
         }
         let valid = match member.state {
             OwnerState::ExactC => exact_source && !retained,
-            OwnerState::RetainedAssembly => mapped.is_none() && retained,
+            OwnerState::NotYetC => mapped.is_none() && retained,
         };
         if !valid {
             return Err(format!(
@@ -1706,7 +1706,7 @@ mod tests {
                     unit.overlay = None
                 }),
                 ("instances require a wholly exact unit", |unit| {
-                    unit.owners[0].state = OwnerState::RetainedAssembly
+                    unit.owners[0].state = OwnerState::NotYetC
                 }),
             ],
         );
@@ -2000,7 +2000,7 @@ mod tests {
         invalid.owners[2].state = OwnerState::ExactC;
         assert!(validate_production_state(root, &invalid, &source, true, &names).is_err());
         invalid = unit.clone();
-        invalid.owners[1].state = OwnerState::RetainedAssembly;
+        invalid.owners[1].state = OwnerState::NotYetC;
         assert!(validate_production_state(root, &invalid, &source, true, &names).is_err());
         // Separate-source mixed units still require their direct includes.
         assert!(validate_production_state(root, unit, &source, false, &names).is_err());
@@ -2022,7 +2022,7 @@ mod tests {
         assert!(!adjacent.linked_whole());
         let mut retained = adjacent.clone();
         retained.owners[1].address -= 2;
-        retained.owners[1].state = OwnerState::RetainedAssembly;
+        retained.owners[1].state = OwnerState::NotYetC;
         assert!(!retained.linked_whole());
     }
 
@@ -2150,7 +2150,7 @@ mod tests {
             assert!(validate_unit_data(unit, UnitData { address, extent }).is_err());
         }
         let mut inexact = unit.clone();
-        inexact.owners[0].state = OwnerState::RetainedAssembly;
+        inexact.owners[0].state = OwnerState::NotYetC;
         assert!(validate_unit_data(&inexact, data).is_err());
         let mut main = unit.clone();
         main.overlay = None;

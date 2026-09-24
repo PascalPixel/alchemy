@@ -466,7 +466,7 @@ fn candidate_overlay(
             continue;
         }
         for owner in array(unit, "owners") {
-            if text(owner, "state") != "retained-assembly" {
+            if text(owner, "state") != "not-yet-c" {
                 continue;
             }
             let (Some(entry), Some(size)) = (address(owner, "address"), integer(owner, "extent"))
@@ -814,6 +814,7 @@ fn main_assembly_classification_for(
             let evidence = text(region, "evidence");
             let classified = retention == "keep_asm"
                 || retention == "keep_structured_asm"
+                || retention == "not_yet_c"
                 || matches!(
                     retention.as_str(),
                     "merge_with_owner"
@@ -947,8 +948,10 @@ fn overlay_assembly_classification_document_for(
             .ok_or_else(|| format!("assembly classification {index} has no end"))?;
         let span = Span::new(start, end);
         let evidence = array(row, "evidence");
-        if text(row, "retention") != "keep_structured_asm"
-            || evidence.is_empty()
+        if !matches!(
+            text(row, "retention").as_str(),
+            "keep_structured_asm" | "not_yet_c"
+        ) || evidence.is_empty()
             || evidence
                 .iter()
                 .any(|item| !matches!(item.as_str(), Some(text) if !text.trim().is_empty()))
@@ -3660,18 +3663,22 @@ mod tests {
         let named = unit(
             "actor_sequence",
             json!([
-                owner("0x02000100", 0x20, "retained-assembly"),
-                owner("0x02000120", 0x20, "retained-assembly"),
+                owner("0x02000100", 0x20, "not-yet-c"),
+                owner("0x02000120", 0x20, "not-yet-c"),
                 owner("0x02000140", 0x20, "exact-c")
             ]),
         );
-        write("recon/tbs/translation-units.json", &json!({"units": [
-            named.clone(), named,
-            unit("resource_test_c_02000160", json!([owner("0x02000160", 0x10, "retained-assembly")])),
-            unit("resource_test_c_02000180", json!([owner("0x02000180", 0x10, "exact-c")])),
-            unit("missing", json!([owner("0x02000190", 0x10, "retained-assembly")])),
-            unit("uncanonical", json!([owner("0x020001a0", 0x10, "retained-assembly")]))
-        ]}).to_string());
+        write(
+            "recon/tbs/translation-units.json",
+            &json!({"units": [
+                named.clone(), named,
+                unit("resource_test_c_02000160", json!([owner("0x02000160", 0x10, "not-yet-c")])),
+                unit("resource_test_c_02000180", json!([owner("0x02000180", 0x10, "exact-c")])),
+                unit("missing", json!([owner("0x02000190", 0x10, "not-yet-c")])),
+                unit("uncanonical", json!([owner("0x020001a0", 0x10, "not-yet-c")]))
+            ]})
+            .to_string(),
+        );
         let tree = crate::coverage::tree::work_tree_at(root.path().to_path_buf());
         let expected = vec![
             Span::new(0x02000100, 0x02000140),

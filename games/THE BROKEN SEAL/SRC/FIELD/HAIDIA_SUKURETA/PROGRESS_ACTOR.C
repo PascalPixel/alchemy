@@ -114,7 +114,7 @@ void Func_02002e46();
  * source to shave the tool triage number rather than to recover the real
  * shape. That warning is not a rule to leave this open: reaching zero here
  * with an honest, ordinary spelling is a good outcome, and the integrator
- * adopts it via `alchemy adopt`, which retires the retained-assembly region.
+ * adopts it via `alchemy adopt`, which retires the not-yet-c region.
  * A prior version of this comment claimed the retained-corpus gate forbids a
  * byte-exact candidate; that was wrong on the facts and is corrected here.
  * candidate-corpus-check only scans routes registered in the Makefile

@@ -78496,6 +78496,90 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "scene-3c0-02000c00",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/SUHARA_SABAKU/DROP_AND_LEAVE.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3c0",
+      "absolute_symbols": {
+        "Main_080770e0": {
+          "address": "0x02009264",
+          "kind": "thumb"
+        },
+        "Engine_ActorGet": {
+          "address": "0x0200928c",
+          "kind": "thumb"
+        },
+        "Engine_EventBegin": {
+          "address": "0x0200927c",
+          "kind": "thumb"
+        },
+        "Engine_CameraMoveTo": {
+          "address": "0x0200932c",
+          "kind": "thumb"
+        },
+        "Engine_AudioPlayCue": {
+          "address": "0x02009374",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpriteFlags": {
+          "address": "0x0200923c",
+          "kind": "thumb"
+        },
+        "Engine_TaskWait": {
+          "address": "0x020091f4",
+          "kind": "thumb"
+        },
+        "Engine_EventCloseScreen": {
+          "address": "0x0200934c",
+          "kind": "thumb"
+        },
+        "Engine_EventWaitForScreen": {
+          "address": "0x02009354",
+          "kind": "thumb"
+        },
+        "Engine_EventEnd": {
+          "address": "0x02009284",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagSet": {
+          "address": "0x02009254",
+          "kind": "thumb"
+        },
+        "Main_0808a238": {
+          "address": "0x02009334",
+          "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
+        },
+        "gGameStateRows": {
+          "address": "0x2000240",
+          "kind": "data"
+        },
+        "Data_00000002": {
+          "address": "0x2",
+          "kind": "data"
+        },
+        "Data_000000a5": {
+          "address": "0xa5",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02000c00",
+          "extent": 228,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

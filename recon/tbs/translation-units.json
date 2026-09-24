@@ -72963,6 +72963,70 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "biribino-kyuden-f-00338",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_KYUDEN/F_00338.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_38d",
+      "absolute_symbols": {
+        "Engine_GameFlagIsSet": {
+          "address": "0x0200a450",
+          "kind": "thumb"
+        },
+        "Engine_AudioPlayCue": {
+          "address": "0x0200a5b8",
+          "kind": "thumb"
+        },
+        "Main_08009188": {
+          "address": "0x0200a428",
+          "kind": "thumb"
+        },
+        "Engine_EventBegin": {
+          "address": "0x0200a470",
+          "kind": "thumb"
+        },
+        "Engine_EventWait": {
+          "address": "0x0200a468",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpeed": {
+          "address": "0x0200a4a0",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetAnimation": {
+          "address": "0x0200a500",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetDestinationOffset": {
+          "address": "0x0200a4e8",
+          "kind": "thumb"
+        },
+        "Engine_ActorCenterAndWalk": {
+          "address": "0x0200a4e0",
+          "kind": "thumb"
+        },
+        "Engine_EventRequestExit": {
+          "address": "0x0200a590",
+          "kind": "thumb"
+        },
+        "Engine_EventEnd": {
+          "address": "0x0200a478",
+          "kind": "thumb"
+        },
+        "Main_08009190": {
+          "address": "0x0200a430",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02000338",
+          "extent": 180,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

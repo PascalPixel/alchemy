@@ -394,7 +394,7 @@ void RunEventScript01(void)
     Event_CloseScreen();
     Work_SetValuesIfNonNegative(-1, -1, 0xe666);
     MapRender_WaitForValues();
-    GameFlag_Clear(0x12f);
+    GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);
     GameFlag_Set(0x879);
     Event_RequestExit(1);
     Event_End();

@@ -579,7 +579,7 @@ void HouseScene_RunRepairMorning(void)
     Camera_WaitForMove();
     Event_Wait(100);
     GameFlag_Set(0x202);
-    GameFlag_Clear(0x12f);
+    GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);
     *leader_motion = leader_motion_flags;
     Event_End();
 }

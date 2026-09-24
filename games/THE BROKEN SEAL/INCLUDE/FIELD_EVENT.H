@@ -607,6 +607,14 @@ static inline void Work_SetValuesIfNonNegative(s32 first, s32 second, s32 third)
     Engine_WorkSetValuesIfNonNegative(first, second, third);
 }
 
+/*
+ * Story scenes all over the world clear this flag as they finish, and an
+ * entry script sets it for an entrance whose arrival plays an event.
+ */
+enum {
+    FLAG_ARRIVAL_EVENT_PENDING = 0x12f
+};
+
 static inline s32 GameFlag_IsSet(s32 flag)
 {
     return Engine_GameFlagIsSet(flag);

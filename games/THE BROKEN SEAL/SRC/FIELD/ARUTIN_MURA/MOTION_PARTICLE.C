@@ -679,7 +679,7 @@ L_020009da:
         Call2(Func_02001832, 0x2008d09, 0xc80);
     }
     if (Data_02000240_t[225][0] == 3) {
-        GameFlag_Clear(0x12f);
+        GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);
     }
     Map_CopyCellAttributes(0, 33, 4, 3, 20, 41);
     if (GameFlag_IsSet(0x906) != 0) {

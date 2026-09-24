@@ -605,7 +605,7 @@ void FieldScene_RunScene38b_020008f0(void)
         Actor_SetPosition(8, 0, 0);
     } else {
         if (sub_state == 9) {
-            GameFlag_Clear(0x12f);
+            GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);
         }
     }
     if (GameFlag_IsSet(0x109) == 0) {

@@ -1245,7 +1245,7 @@ void FieldScene_RunScene3a4_02002428(void)
     {
         s32 index = 225;
         if ((u32)((((u16 *)Data_02000240)[index] - 6) << 16) <= 0x10000) {
-            GameFlag_Clear(0x12f);
+            GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);
         }
     }
 }
@@ -1852,7 +1852,7 @@ void RunEventScript01(void)
     ObjectMotion_MarkActiveAndSetActionCallback_3(3, addr_0200c12c);
     Event_Wait(20);
     *(s32 *)(*(u8 **)Data_03001ebc + 0x1c0) = 0x204;
-    GameFlag_Clear(0x12f);
+    GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);
     *(s32 *)(*(u8 **)Data_03001ebc + 0x1c8) = 16;
     GameFlag_Set(0x909);
     Event_End();

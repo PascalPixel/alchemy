@@ -958,7 +958,7 @@ s32 SceneSetup_InitializeActorsAndFlags(void)
         PlaceActor(SceneActor_Place, 21, 0x1980000, 0x780000);
     scene = SceneState_Table;
     if (scene[225] == 11)
-        SceneFlag_Set(0x12f);
+        SceneFlag_Set(FLAG_ARRIVAL_EVENT_PENDING);
     if (scene[225] == 13)
         SceneFlag_Set(0x120);
     return 0;

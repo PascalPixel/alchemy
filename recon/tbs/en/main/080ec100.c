@@ -415,11 +415,12 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
         if (frame > 27) {
             DrawRectangle draw = blit[1];
             for (i = 0; i != 1024; i++) {
+                s32 m = 3;
                 if (PARTICLES[i].variant >= 0) {
                     s32 k = Math_Mod(i, 3) + 2;
                     draw(dst, aux + ParticleStreams_CellOffsets[k - 1],
                         HI(PARTICLES[i].x) - k / 2, HI(PARTICLES[i].y) - k, k, k * 2);
-                    EffectStep_AdvanceWithGravity2D(&PARTICLES[i], 62, BattleFx6_Gravity[i & 3]);
+                    EffectStep_AdvanceWithGravity2D(&PARTICLES[i], 62, BattleFx6_Gravity[i & m]);
                     PARTICLES[i].variant++;
                     if (PARTICLES[i].velocity_y > 0 && HI(PARTICLES[i].y) > 104) {
                         PARTICLES[i].variant = -1;

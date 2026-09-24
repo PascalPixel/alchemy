@@ -1,59 +1,46 @@
+/*
+ * BattleLayout_HighlightPartyPanels (main:0802281c, 160 bytes)
+ *
+ * Clears the highlight over the whole party panel strip, then highlights
+ * the panel of every unit in the 0xff-terminated id list (at most four)
+ * that sits in the battle's four placed-unit slots at +88.
+ *
+ * Draft, not exact (2026-09-24): candidate=168 reference=160
+ * differing_halfwords=81.  Block layout and both loop rotations match the
+ * reference.  The reference keeps both loops unreduced: it recomputes
+ * j * 2 + 88 against the battle base and reloads ids[i] through an i * 2
+ * offset on every pass, and keeps the unit count in r8 and the battle base
+ * in r7.  Here loop strength reduction walks both pointers instead.  Index
+ * types (u8/s16/u16), a volatile id list, and a goto-built copy of the
+ * reference layout (86 halfwords) did not stop the reduction.
+ */
 #include "TYPES.H"
 
 extern u8 *Data_03001e74;
 
 s32 Func_080b5090(s32 side, s32 group);
-void Func_08022768(s32 x, s32 y, s32 width, s32 height, s32 style);
+void Ui_SetRectHighlight(s32 x, s32 y, s32 width, s32 height, s32 alt);
 
-#define BattleLayout_HighlightPartyPanels Func_0802281c
-
-s32 BattleLayout_HighlightPartyPanels(u16 *argument)
+s32 BattleLayout_HighlightPartyPanels(u16 *ids)
 {
-    s16 placed_unit;
-    s32 party_size;
-    s32 unit_offset;
-    s32 slot;
-    s32 unit_index;
-    u8 *battle;
+    u8 *battle = Data_03001e74;
+    s32 count;
+    s32 i;
+    s32 j;
 
-    battle = Data_03001e74;
-    party_size = Func_080b5090(1, 0);
-    Func_08022768(29 - party_size * 6, 0, 25, 5, 15);
-
-    unit_index = 0;
-    if (*argument != 0xff) {
-        unit_offset = 0;
-loop_unit:
-        placed_unit = *(s16 *)(battle + 88);
-        slot = 0;
-loop_slot:
-        if (placed_unit == *(volatile u16 *)((u8 *)argument + unit_offset))
-            goto slot_done;
-        if (placed_unit == 0xff) {
-            slot = 4;
-            goto slot_done;
+    count = Func_080b5090(1, 0);
+    Ui_SetRectHighlight(29 - count * 6, 0, 25, 5, 15);
+    for (i = 0; i < 4 && ids[i] != 0xff; i++) {
+        for (j = 0; j < 4; j++) {
+            if (((s16 *)(battle + 88))[j] == ids[i])
+                break;
+            if (((s16 *)(battle + 88))[j] == 0xff) {
+                j = 4;
+                break;
+            }
         }
-        slot++;
-        if (slot <= 3) {
-            placed_unit = *(s16 *)(battle + slot * 2 + 88);
-            goto loop_slot;
-        }
-slot_done:
-        if (slot != 4) {
-            Func_08022768(
-                29 - (party_size - slot) * 6,
-                0,
-                7,
-                5,
-                14);
-        }
-        unit_index++;
-        if (unit_index <= 3) {
-            unit_offset = unit_index * 2;
-            if (*(u16 *)((u8 *)argument + unit_offset) != 0xff)
-                goto loop_unit;
-        }
+        if (j != 4)
+            Ui_SetRectHighlight(29 - (count - j) * 6, 0, 7, 5, 14);
     }
-
     return 0;
 }

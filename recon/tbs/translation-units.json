@@ -72363,9 +72363,9 @@
       "overlay": null
     },
     {
-      "id": "save-state-select-write-slot",
+      "id": "save-state",
       "game": "tbs",
-      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/SAVE/STATE_SELECT_WRITE_SLOT.C",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/SAVE/STATE.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {
         "Data_02004c14": {
@@ -72386,6 +72386,66 @@
         {
           "address": "0x08005868",
           "extent": 68,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080058ac",
+          "extent": 88,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08005904",
+          "extent": 28,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08005920",
+          "extent": 344,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08005a78",
+          "extent": 72,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08005ac0",
+          "extent": 30,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08005ae0",
+          "extent": 68,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08005b24",
+          "extent": 64,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08005b64",
+          "extent": 164,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08005c08",
+          "extent": 34,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08005c2c",
+          "extent": 60,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08005c68",
+          "extent": 144,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08005cf8",
+          "extent": 22,
           "state": "exact-c"
         }
       ],

@@ -727,24 +727,19 @@
       "name": "SaveState_InitializeWorkspace"
     },
     "main:080058ac": {
-      "name": "SaveState_ReadSlotAndCheckChecksum",
-      "source": "SYSTEM/SAVE/STATE_READ_SLOT_AND_CHECK_CHECKSUM.C"
+      "name": "SaveState_ReadSlotAndCheckChecksum"
     },
     "main:08005920": {
-      "name": "SaveState_WriteRecord",
-      "source": "SYSTEM/SAVE/WRITE_RECORD.C"
+      "name": "SaveState_WriteRecord"
     },
     "main:08005a78": {
-      "name": "SaveState_ReadRecordPayload",
-      "source": "SYSTEM/SAVE/READ_RECORD_PAYLOAD.C"
+      "name": "SaveState_ReadRecordPayload"
     },
     "main:08005b64": {
-      "name": "SaveState_InvalidateSlot",
-      "source": "SYSTEM/SAVE/INVALIDATE_SLOT.C"
+      "name": "SaveState_InvalidateSlot"
     },
     "main:08005c68": {
-      "name": "SaveState_LoadSummaryRecords",
-      "source": "SYSTEM/SAVE/LOAD_SUMMARY_RECORDS.C"
+      "name": "SaveState_LoadSummaryRecords"
     },
     "main:08005d10": {
       "name": "SerialRuntime_Initialize"
@@ -3641,38 +3636,31 @@
     },
     "main:08005810": {
       "name": "SaveState_SelectWriteSlot",
-      "source": "SYSTEM/SAVE/STATE_SELECT_WRITE_SLOT.C"
+      "source": "SYSTEM/SAVE/STATE.C"
     },
     "main:08005868": {
       "name": "SaveState_WriteWorkspaceSlot"
     },
     "main:08005904": {
-      "name": "SaveState_EraseSlotSector",
-      "source": "SYSTEM/SAVE/STATE_ERASE_SLOT_SECTOR.C"
+      "name": "SaveState_EraseSlotSector"
     },
     "main:08005ac0": {
-      "name": "SaveState_DeleteRecord",
-      "source": "SYSTEM/SAVE/STATE_DELETE_RECORD.C"
+      "name": "SaveState_DeleteRecord"
     },
     "main:08005ae0": {
-      "name": "SaveState_ChecksumWorkspace",
-      "source": "SYSTEM/SAVE/STATE_CHECKSUM_WORKSPACE.C"
+      "name": "SaveState_ChecksumWorkspace"
     },
     "main:08005b24": {
-      "name": "SaveState_FindLatestSlot",
-      "source": "SYSTEM/SAVE/STATE_FIND_LATEST_SLOT.C"
+      "name": "SaveState_FindLatestSlot"
     },
     "main:08005c08": {
-      "name": "SaveState_CompareBytes",
-      "source": "SYSTEM/SAVE/STATE_COMPARE_BYTES.C"
+      "name": "SaveState_CompareBytes"
     },
     "main:08005c2c": {
-      "name": "SaveState_GetLatestSequence",
-      "source": "SYSTEM/SAVE/STATE_GET_LATEST_SEQUENCE.C"
+      "name": "SaveState_GetLatestSequence"
     },
     "main:08005cf8": {
-      "name": "SaveState_ReleaseWorkspace",
-      "source": "SYSTEM/SAVE/STATE_RELEASE_WORKSPACE.C"
+      "name": "SaveState_ReleaseWorkspace"
     },
     "main:08005e70": {
       "name": "SerialRuntime_EnableTransferTimer",

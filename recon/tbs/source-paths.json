@@ -1,6 +1,18 @@
 {
   "format": 3,
   "owners": {
+    "resource_3bc:02002e54": {
+      "name": "Korosseo_LoadPortrait",
+      "source": "FIELD/COMMON/KOROSSEO/PORTRAIT.C"
+    },
+    "resource_3bb:020023bc": {
+      "name": "Korosseo_LoadPortrait",
+      "source": "FIELD/COMMON/KOROSSEO/PORTRAIT.C"
+    },
+    "resource_3ba:02002124": {
+      "name": "Korosseo_LoadPortrait",
+      "source": "FIELD/COMMON/KOROSSEO/PORTRAIT.C"
+    },
     "resource_3a6:02001390": {
       "name": "HaidiaDou_RunProbedColumnScene",
       "source": "FIELD/HAIDIA_DOU/PROBED_COLUMN_SCENE.C"
@@ -19627,6 +19639,11 @@
     }
   },
   "symbols": {
+    "main:08000170": "Runtime_BumpAllocateAlternatePoolFar",
+    "main:08000178": "Runtime_BumpFreeFar",
+    "main:080001a8": "Resource_DecodeType01Far",
+    "main:080001d0": "Resource_FindFreeEntryFar",
+    "main:08000290": "Resource_GetTableEntryFar",
     "main:08000148": "Runtime_AllocateBlockFar",
     "main:0808a400": "ObjectTable_GetFar",
     "main:08000140": "Runtime_AllocateHeapBlockFar",

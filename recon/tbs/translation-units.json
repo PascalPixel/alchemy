@@ -69146,6 +69146,80 @@
           }
         }
       }
+    },
+    {
+      "id": "korosseo-portrait",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/KOROSSEO/PORTRAIT.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3ba",
+      "absolute_symbols": {
+        "Korosseo_PortraitResource": {
+          "address": "0x000000e7",
+          "kind": "data"
+        },
+        "Korosseo_PortraitSlot": {
+          "address": "0x0200c57c",
+          "kind": "data"
+        },
+        "Korosseo_PortraitPaletteOffsets": {
+          "address": "0x0200be44",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02002124",
+          "extent": 148,
+          "state": "exact-c"
+        }
+      ],
+      "instances": {
+        "resource_3bb": {
+          "owners": {
+            "Korosseo_LoadPortrait": {
+              "address": "0x020023bc",
+              "extent": 148
+            }
+          },
+          "absolute_symbols": {
+            "Korosseo_PortraitResource": {
+              "address": "0x000000e7",
+              "kind": "data"
+            },
+            "Korosseo_PortraitSlot": {
+              "address": "0x0200ca1c",
+              "kind": "data"
+            },
+            "Korosseo_PortraitPaletteOffsets": {
+              "address": "0x0200c0c4",
+              "kind": "data"
+            }
+          }
+        },
+        "resource_3bc": {
+          "owners": {
+            "Korosseo_LoadPortrait": {
+              "address": "0x02002e54",
+              "extent": 148
+            }
+          },
+          "absolute_symbols": {
+            "Korosseo_PortraitResource": {
+              "address": "0x000000e7",
+              "kind": "data"
+            },
+            "Korosseo_PortraitSlot": {
+              "address": "0x0200d9a4",
+              "kind": "data"
+            },
+            "Korosseo_PortraitPaletteOffsets": {
+              "address": "0x0200ccb0",
+              "kind": "data"
+            }
+          }
+        }
+      }
     }
   ]
 }

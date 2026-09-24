@@ -70870,6 +70870,42 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "ramakan-sabaku-enter-area",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/RAMAKAN_SABAKU/ENTER_AREA.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3a5",
+      "absolute_symbols": {
+        "Local_02001c1c": {
+          "address": "0x02009c1c",
+          "kind": "thumb"
+        },
+        "Engine_TaskAddCallback": {
+          "address": "0x02009c94",
+          "kind": "thumb"
+        },
+        "Main_080091b8": {
+          "address": "0x02009d14",
+          "kind": "thumb"
+        },
+        "Main_0808a5e0": {
+          "address": "0x02009e3c",
+          "kind": "thumb"
+        },
+        "RamakanSabaku_ApplyEntryState": {
+          "address": "0x020084e4",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02001638",
+          "extent": 572,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

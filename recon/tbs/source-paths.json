@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_3a5:02001638": {
+      "name": "RamakanSabaku_EnterArea",
+      "source": "FIELD/RAMAKAN_SABAKU/ENTER_AREA.C"
+    },
     "resource_3bb:02002d84": {
       "name": "Korosseo_RestoreCompetitor",
       "source": "FIELD/COMMON/KOROSSEO/RESTORE_COMPETITOR.C"

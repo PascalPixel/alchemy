@@ -299,9 +299,7 @@ u8 *SceneData_GetTablea1dc(void)
 
 s32 SelectSceneDataByState(void)
 {
-    extern s16 Data_02000240[];
-
-    s16 state = Data_02000240[224];
+    s16 state = gGameState.scene;
 
     if (state == (s32)&SceneState5D) {
         return (s32)SceneDataA234;
@@ -546,9 +544,7 @@ s32 SceneData_SelectSecondaryByRuntimeSelector(void)
  */
 void SceneAudio_PlayCue123AndDispatchWork364(void)
 {
-    extern u8 *Data_03001ebc;
-
-    s32 val = *(s16 *)(Data_03001ebc + 364);
+    s32 val = gEventWork->touched_trigger;
 
     Audio_PlayCue(123);
     Event_RequestExit(val);

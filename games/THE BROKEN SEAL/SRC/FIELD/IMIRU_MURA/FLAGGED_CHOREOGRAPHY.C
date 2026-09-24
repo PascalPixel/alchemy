@@ -631,9 +631,7 @@ s32 OverlayObject_UpdateFacingTowardTarget(void *obj)
  */
 s32 SceneData_SelectTableByWord224(void)
 {
-    extern s16 Data_02000240[];
-
-    if (Data_02000240[224] == (s32)&Value_00000033) {
+    if (gGameState.scene == (s32)&Value_00000033) {
         return (s32)Data_0200a8a0;
     }
     return (s32)Data_0200a798;
@@ -659,11 +657,9 @@ u8 *SceneData_GetTableA990(void)
  */
 u8 *SceneData_SelectScriptByScene33AndFlag881(void)
 {
-    extern s16 Data_02000240[];
-
     u8 *script;
 
-    if (Data_02000240[224] == ((s32)&Value_00000033)) {
+    if (gGameState.scene == ((s32)&Value_00000033)) {
         script = Data_0200aad0;
         Func_020023c6(script);
         if (GameFlag_IsSet(0x881) != 0) {
@@ -688,9 +684,7 @@ void FieldScene_Forward2188(void)
 
 s32 SceneData_SelectTableByWord224B(void)
 {
-    extern s16 Data_02000240[];
-
-    if (Data_02000240[224] == (s32)&Value_00000033) {
+    if (gGameState.scene == (s32)&Value_00000033) {
         return (s32)Data_0200adb8;
     }
     return (s32)Data_0200ac80;

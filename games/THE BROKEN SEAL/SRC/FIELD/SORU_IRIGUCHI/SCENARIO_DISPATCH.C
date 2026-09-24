@@ -350,9 +350,7 @@ static __inline__ s32 Value0_0200161c(s32 (*f)())
  * closing pass over the same four entities. */
 s32 SceneData_SelectOverlayDataBySelector(void)
 {
-    extern s16 Data_02000240[];
-
-    s16 v = Data_02000240[224];
+    s16 v = gGameState.scene;
 
     if (v == (s32)&Value_00000013) {
         return (s32)Data_02009d04;
@@ -769,9 +767,7 @@ s32 *SceneActor_FindSlotByTilePosition(s32 x, s32 z)
 
 s32 FieldScene_DispatchByScenarioId(void)
 {
-    extern s16 Data_02000240[];
-
-    s32 scenario = Data_02000240[224];
+    s32 scenario = gGameState.scene;
 
     if (scenario == (s32)&Value_00000013) {
         Func_02001236();
@@ -808,12 +804,10 @@ void FieldScene_RunScene37f_0200092c(void)
 
 void FieldScene_RunScene37f_02000d1c(void)
 {
-    extern u8 *Data_03001ebc;
-
     s32 record;
 
     Event_Begin();
-    *(s32 *)(Data_03001ebc + 0x1c0) = 0x100;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Event_OpenScreen();
     ((void (*)())Engine_ActorSetAnimation)(0, 0);
     Event_Wait(4);
@@ -883,7 +877,7 @@ void FieldScene_RunScene37f_02000d1c(void)
     Actor_SetAnimation(5, 1);
     Actor_SetAnimation(8, 1);
     GameFlag_Set(0x802);
-    *(s32 *)(Data_03001ebc + 0x1c0) = 0x204;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
     GameFlag_Clear(0x12f);
     Event_End();
 }

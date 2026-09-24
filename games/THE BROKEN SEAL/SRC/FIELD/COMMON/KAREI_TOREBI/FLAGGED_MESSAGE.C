@@ -196,7 +196,6 @@ static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
 
 #include "TYPES.H"
 
-
 extern u8 Data_00001d20[];
 
 u8 *Func_020018ce();
@@ -257,7 +256,7 @@ u8 *SceneData_GetTable98a0(void)
 
 s32 SceneData_SelectDataBySelectorAndFlags(void)
 {
-    s16 room = Data_02000240[224];
+    s16 room = gGameState.scene;
 
     if (room == (s32)&Value_0000006b) {
         if (GameFlag_IsSet(0x93e) != 0) {
@@ -304,7 +303,7 @@ void FieldScene_RunScene3ae_02000144(void)
 
 s32 SceneData_SelectSecondaryDataBySelectorAndFlags(void)
 {
-    s16 scene = Data_02000240[224];
+    s16 scene = gGameState.scene;
 
     if (scene == (s32)&Value_0000006b) {
         if (GameFlag_IsSet(0x93e) != 0) {

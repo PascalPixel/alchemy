@@ -203,12 +203,10 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
     f(a0, a1, a2);
 }
 
-/* The scene step counter at 0x1d8 of the shared scene work record. */
+/* Moves the next dialogue line on by amount messages. */
 static __inline__ void bump_step(s32 amount)
 {
-    u8 *work = *(u8 **)Data_03001ebc;
-
-    *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
+    gEventWork->message += amount;
 }
 
 static __inline__ void Scene_SetActorDirection(s32 actor, s32 angle, s32 frames)
@@ -559,7 +557,7 @@ void FieldScene_RunActorPositionSequence(void)
         Actor_ShowEmote(0, 0x101, 0);
         Actor_ShowEmote(1, 0x101, 0);
         Actor_ShowEmote(5, 0x101, 60);
-        *(s32 *)((*(u8 **)Data_03001ebc + 0x1c0)) = 0x202;
+        gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
         Event_CloseScreen();
         Event_WaitForScreen();
         Event_RequestExit(13);
@@ -594,7 +592,7 @@ void FieldScene_RunScene375_02000964(void)
     record = Func_0200243c(5);
     *(u16 *)(record + 6) = facing;
     Map_AnimateCells(0x200a0ac, 43, 8);
-    *(s32 *)(*(u8 **)Data_03001ebc + 0x1c0) = 0x202;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
     Event_OpenScreen();
     Event_WaitForScreen();
     Event_Wait(40);
@@ -648,7 +646,7 @@ void FieldScene_RunScene375_02000964(void)
     Actor_SetPosition(14, 0, 0);
     Actor_SetPosition(15, 0, 0);
     GameFlag_Set(0x801);
-    *(s32 *)(*(u8 **)Data_03001ebc + 0x1c0) = 0x100;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     ColorBuffer_ApplySource(0x10000, 0);
     GameFlag_Set(0x242);
     Event_End();

@@ -8,7 +8,6 @@ typedef struct {
     s32 unk12;
 } T;
 
-extern u8 *Data_03001ebc;
 extern s32 Data_020097f4;
 extern s32 Data_020097f0;
 extern s32 Data_0200980c;
@@ -73,7 +72,7 @@ u8 *SceneData_GetTable971c(void)
 
 void PlayWorkspaceCueAndClearPaletteZero(void)
 {
-    Event_RequestExit(*(s16 *)(Data_03001ebc + 364));
+    Event_RequestExit(gEventWork->touched_trigger);
     do {
         u16 color = PALETTE == 0;
         register volatile u16 *palette = PALETTE;

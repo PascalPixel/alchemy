@@ -191,7 +191,6 @@ typedef struct Slot_020023a0 {
     s32 row;               /* +16, 12.20 fixed point */
 } Slot_020023a0;
 
-extern s16 Data_02000240[];
 extern u8 Value_000000ac;
 extern u8 Value_000000ad;
 extern u8 Data_0200b474[];
@@ -807,7 +806,7 @@ void SceneEffect_SpawnNineRadialEffects(void)
 /* Return this overlay's state block. */
 s32 SceneData_SelectDataByRuntimeSelector(void)
 {
-    s16 v = Data_02000240[224];
+    s16 v = gGameState.scene;
 
     if (v == (s32)&Value_000000ac) {
         return (s32)Data_0200b474;
@@ -820,7 +819,7 @@ s32 SceneData_SelectDataByRuntimeSelector(void)
 
 s32 SceneData_SelectTableB81cByWord224(void)
 {
-    if (Data_02000240[224] == (s32)&Value_000000ad) {
+    if (gGameState.scene == (s32)&Value_000000ad) {
         return (s32)Data_0200b81c;
     }
     return 0;
@@ -832,7 +831,7 @@ u8 *SceneData_SelectAndApplyTableBySceneId(void)
 {
     u8 *tbl;
 
-    if (Data_02000240[224] == (s32)&Value_000000ac) {
+    if (gGameState.scene == (s32)&Value_000000ac) {
         tbl = Data_0200b8f4;
     } else {
         tbl = Data_0200ba74;
@@ -1594,7 +1593,7 @@ void FieldScene_RunScriptedStep953(void)
 
 s32 SceneData_SelectTableByWord224(void)
 {
-    if (Data_02000240[224] == (s32)&Value_000000ac) {
+    if (gGameState.scene == (s32)&Value_000000ac) {
         return (s32)Data_0200bc0c;
     }
     return (s32)Data_0200bef4;

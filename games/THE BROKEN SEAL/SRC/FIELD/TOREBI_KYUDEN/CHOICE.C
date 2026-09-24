@@ -1299,9 +1299,7 @@ s32 Func_02004a00_dialogue_layout(s32, s32);
 
 s32 SceneData_SelectTablec614ByState(void)
 {
-    extern s16 Data_02000240[];
-
-    if (Data_02000240[224] == (s32)&Value_0000008b) {
+    if (gGameState.scene == (s32)&Value_0000008b) {
         return (s32)Data_0200ca1c;
     }
     return (s32)Data_0200c614;
@@ -3470,7 +3468,7 @@ void FieldScene_RunStepWithValue29e0(void)
 
 s32 SceneData_SelectTableD004ByStateAndFlags(void)
 {
-    if (Data_02000240[224] == (s32)&Value_0000008b) {
+    if (gGameState.scene == (s32)&Value_0000008b) {
         if (GameFlag_IsSet(0x950) != 0) {
             return (s32)Data_0200dad8;
         }

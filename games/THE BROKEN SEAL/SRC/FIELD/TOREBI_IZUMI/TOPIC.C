@@ -1,7 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
-extern s16 Data_02000240[];
 /* Signed topic cursors share the scene workspace with its halfword state. */
 extern s8 SceneWork_Bytes[];
 extern u8 Value_000000bd;
@@ -42,7 +41,7 @@ u8 *SceneData_GetTable9ac8(void)
 
 s32 SceneData_SelectTable9cfcByState(void)
 {
-    if (Data_02000240[224] == (s32)&Value_000000bd) {
+    if (gGameState.scene == (s32)&Value_000000bd) {
         return (s32)Data_02009aec;
     }
     return (s32)Data_02009cfc;
@@ -99,7 +98,7 @@ void FieldScene_RunIndexedStep0(void)
 
 s32 SceneData_SelectTable9e1cByState(void)
 {
-    if (Data_02000240[224] == (s32)&Value_000000bd) {
+    if (gGameState.scene == (s32)&Value_000000bd) {
         return (s32)Data_02009f30;
     }
     return (s32)Data_02009e1c;

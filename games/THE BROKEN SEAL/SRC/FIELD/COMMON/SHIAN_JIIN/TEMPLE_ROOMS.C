@@ -89,7 +89,6 @@ struct Descriptor_020041ec {
     u8 unused32[8];
 };
 
-extern s16 Data_02000240[];
 extern u8 Value_0000003c;
 extern u8 Data_0200c7a8[];
 extern u8 Data_0200c838[];
@@ -292,14 +291,10 @@ static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
     return f(a0, a1);
 }
 
-/* The scene step counter at 0x1d8 of the shared scene work record. */
+/* Moves the next dialogue line on by amount messages. */
 static __inline__ void bump_step(s32 amount)
 {
-    extern u8 Data_03001ebc[];
-
-    u8 *work = *(u8 **)Data_03001ebc;
-
-    *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
+    gEventWork->message += amount;
 }
 
 /* Newly named raw call sites: each engine function below was reached only
@@ -522,7 +517,7 @@ s32 FaceXianActorToPlayer(void *actor)
 
 s32 GetXianScriptData(void)
 {
-    if (Data_02000240[224] == (s32)&Value_0000003c) {
+    if (gGameState.scene == (s32)&Value_0000003c) {
         return (s32)Data_0200c7a8;
     }
     return (s32)Data_0200c838;
@@ -1526,10 +1521,10 @@ void FieldScene_ShowDialogue17DF(void)
 
 s32 FieldScene_SelectData(void)
 {
-    if (Data_02000240[224] == (s32)&Value_0000003c) {
+    if (gGameState.scene == (s32)&Value_0000003c) {
         return (s32)Data_0200cb90;
     }
-    if (Data_02000240[225] == 3) {
+    if (gGameState.entrance == 3) {
         return (s32)Data_0200d184;
     }
     return (s32)Data_0200cd40;
@@ -1601,8 +1596,6 @@ void FieldScene_RunOpeningAuxiliarySequence(s32 a0, s32 a1)
 
 void FieldScene_RunScene39eSequenceA(void)
 {
-    extern u8 Data_03001ebc[];
-
     u32 i;
     s32 record;
     s32 base5_200a5b9;
@@ -1611,7 +1604,7 @@ void FieldScene_RunScene39eSequenceA(void)
     base5_200a5b9 = (s32)Func_0200a5b9;
     Call2_020026d8(Func_02006a34, base5_200a5b9, 0xc80);
     Actor_SetSpeed(0, 0x3333, 0x1999);
-    *(s32 *)(*(u8 **)Data_03001ebc + 0x1c8) = 60;
+    gEventWork->transition_frames = 60;
     Event_CloseScreen();
     Audio_PlayCue(154);
     Actor_SetAnimation(0, 2);
@@ -1634,8 +1627,6 @@ void FieldScene_PlaySound123AndEnable(void)
 
 void FieldScene_RunScene39e_02002778(void)
 {
-    extern u8 Data_03001ebc[];
-
     u32 i;
     s32 record;
 
@@ -1644,7 +1635,7 @@ void FieldScene_RunScene39e_02002778(void)
     Map_AnimateCells(0x200c764, 77, 8);
     *(u8 *)(Func_02006b96(0) + 85) = 0;
     Actor_SetSpeed(0, 0xcccc, 0x6666);
-    *(s32 *)(*(u8 **)Data_03001ebc + 0x1c0) = 0x100;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Actor_SetAnimation(0, 2);
     Actor_SetDestinationOffset(0, 0, -16);
     Event_Wait(16);
@@ -1654,15 +1645,13 @@ void FieldScene_RunScene39e_02002778(void)
 
 void FieldScene_RunScene39e_020027ec(void)
 {
-    extern u8 Data_03001ebc[];
-
     u32 i;
     s32 record;
 
     Event_Begin();
     Actor_SetSpeed(0, 0x8000, 0x4000);
     Actor_WalkTo(0, 168, 0x1f8);
-    *(s32 *)(*(u8 **)Data_03001ebc + 0x1c0) = 0x100;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Event_OpenScreen();
     Event_WaitForScreen();
     Actor_WaitForMove(0);

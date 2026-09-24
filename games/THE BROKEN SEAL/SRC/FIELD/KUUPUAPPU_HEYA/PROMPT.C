@@ -441,14 +441,10 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
     f(a0, a1, a2);
 }
 
-/* The scene step counter at 0x1d8 of the shared scene work record. */
+/* Moves the next dialogue line on by amount messages. */
 static __inline__ void bump_step(s32 amount)
 {
-    extern u8 Data_03001ebc[];
-
-    u8 *work = *(u8 **)Data_03001ebc;
-
-    *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
+    gEventWork->message += amount;
 }
 
 /* Call sites spelled through these wrappers pass their constants straight
@@ -813,12 +809,10 @@ void SceneState_RunGuardedActorStep(s32 x)
 
 void SceneDialogue_PromptAndCountSkip(s32 x)
 {
-    extern u8 *Data_03001ebc;
-
     Func_020049ea(x, 0, 2);
     Event_OpenMessage(x, 0);
     if (Event_ChooseYesNo(0, 0) != 0) {
-        *(u16 *)(Data_03001ebc + 472) += 1;
+        gEventWork->message += 1;
     }
     Event_ShowMessage(x, 0);
 }
@@ -1484,8 +1478,6 @@ void SceneActor_FaceActors24And25TowardActorZero(void)
 
 void FieldScene_RunLateSequence(void)
 {
-    extern u8 *Data_03001ebc;
-
     u32 i;
     s32 record;
     s32 v5;
@@ -1516,7 +1508,7 @@ void FieldScene_RunLateSequence(void)
     record = Func_02007a52(1);
     Actor_SetSpriteFlags(record, 0);
     Actor_FaceDirection(8, 0xb000, 0);
-    *(s32 *)(Data_03001ebc + 0x1c0) = 0x209;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
     Camera_FollowActor(0, 0);
     Camera_WaitForMove();
     Map_Redraw();
@@ -1603,7 +1595,7 @@ void RunEventScript01(void)
     Actor_FaceDirection(2, 0xb000, 0);
     Actor_SetSpeed(8, 0xcccc, 0x6666);
     Actor_FaceDirection(8, 0xb000, 0);
-    *(s32 *)(Data_03001ebc + 0x1c0) = 0x209;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
     Camera_FollowActor(0, 0);
     Camera_WaitForMove();
     Map_Redraw();

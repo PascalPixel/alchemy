@@ -80,7 +80,6 @@ struct Actor_02002e5c {
 };
 
 extern u8 *Data_03001ec4[];
-extern s16 Data_02000240[];
 extern s32 Data_0200bb68;
 extern s32 Data_0200bb00;
 extern s32 Data_0200bb6c;
@@ -699,7 +698,7 @@ void Resource381_NoOpCallbackB(void)
 
 s32 FieldScene_RunWhenWord225Is10(void)
 {
-    if (Data_02000240[225] == 10) {
+    if (gGameState.entrance == 10) {
         Func_02004528();
         Func_02000f9c();
     }

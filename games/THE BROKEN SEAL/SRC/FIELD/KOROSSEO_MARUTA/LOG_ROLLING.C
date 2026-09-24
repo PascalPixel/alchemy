@@ -1619,10 +1619,9 @@ void FieldScene_RunMultiPhaseActorSequence(s32 a0)
 
 void Func_02001df8(s32 scene)
 {
-    extern s16 Data_02000240[];
     s32 state;
 
-    if (Data_02000240[225] == 2) {
+    if (gGameState.entrance == 2) {
         Func_0200469a_arrival();
         return;
     }
@@ -1873,11 +1872,9 @@ void FieldScene_RunOpeningAuxiliarySequence(s32 a0)
 
 void ColossoLogRollingStage_RunLogRollingInteraction(s32 actor)
 {
-    extern s16 Data_02000240[];
-
     s32 state;
 
-    if (Data_02000240[225] == 2) {
+    if (gGameState.entrance == 2) {
         Func_02004d72();
         return;
     }
@@ -2118,15 +2115,13 @@ void ColossoLogRollingStage_ClearSavedActorPositions(void)
 
 s32 ColossoLogRollingStage_RunStateInteraction(s32 actor_handle, s32 interaction_base)
 {
-    extern s16 Data_02000240[];
-
     s32 stage_variant;
     s32 script_id;
     s32 result;
 
     Func_0200760c();
     Func_0200741c(interaction_base, 5);
-    stage_variant = Data_02000240[224];
+    stage_variant = gGameState.scene;
     if (stage_variant == (s32)&Value_0000008f) {
         script_id = (s32)&Value_00002076;
     } else if (stage_variant == (s32)&Value_00000090) {
@@ -2157,13 +2152,11 @@ s32 ColossoLogRollingStage_RunStateInteraction(s32 actor_handle, s32 interaction
 
 void ColossoLogRollingStage_InitializeStateInteraction(s32 actor_handle, s32 interaction_base)
 {
-    extern s16 Data_02000240[];
-
     s32 stage_variant;
     s32 script_id;
 
     Func_020074d2(interaction_base, 5);
-    stage_variant = Data_02000240[224];
+    stage_variant = gGameState.scene;
     if (stage_variant == (s32)&Value_0000008f) {
         script_id = (s32)&Value_00002076;
     } else if (stage_variant == (s32)&Value_00000090) {
@@ -2174,7 +2167,6 @@ void ColossoLogRollingStage_InitializeStateInteraction(s32 actor_handle, s32 int
     Event_SetMessage(script_id + 1);
     Event_ShowMessage(actor_handle, 0);
 }
-
 
 /* Loader-relocated overlay calls: each symbol names the pre-relocation call
  * word the image holds. */

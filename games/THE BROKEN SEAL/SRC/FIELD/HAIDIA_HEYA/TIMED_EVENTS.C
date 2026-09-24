@@ -121,14 +121,10 @@ static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
     f(a0, a1);
 }
 
-/* Advance the scene step counter at 0x1d8 of the shared scene work record. */
+/* Moves the next dialogue line on by amount messages. */
 static __inline__ void bump_step(s32 amount)
 {
-    extern u8 Data_03001ebc[];
-
-    u8 *work = *(u8 **)Data_03001ebc;
-
-    *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
+    gEventWork->message += amount;
 }
 
 static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
@@ -309,13 +305,11 @@ void FieldScene_RunScene376_02000298(void)
 /* The 76-byte shared numbered-scene owner includes its two pool words. */
 void SceneState_SetRuntimeWord448To521AndRun(s32 value)
 {
-    extern u8 *Data_03001ebc;
-
     if (GameFlag_IsSet(0x834) != 0)
         Func_02001588();
     Audio_PlayCue(123);
-    *(s32 *)(Data_03001ebc + 448) = 521;
-    *(s32 *)(Data_03001ebc + 456) = 16;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+    gEventWork->transition_frames = 16;
     Event_CloseScreen();
     Event_WaitForScreen();
     Event_RequestExit(value);
@@ -512,7 +506,6 @@ void FieldScene_RunScene376_020005d4(void)
 
 void FieldScene_RunLongPresentationSequence(void)
 {
-    extern u8 Data_03001ebc[];
     void Camera_MoveTo();
 
     u32 i;
@@ -546,7 +539,7 @@ void FieldScene_RunLongPresentationSequence(void)
     base7_20090c1 = (s32)Func_020090c1;
     Call2(Func_02001864, base7_20090c1, 0xc80);
     Task_Wait(1);
-    *(s32 *)(*(u8 **)Data_03001ebc + 0x1c8) = 32;
+    gEventWork->transition_frames = 32;
     Event_OpenScreen();
     Event_WaitForScreen();
     Actor_WaitForMove(0);

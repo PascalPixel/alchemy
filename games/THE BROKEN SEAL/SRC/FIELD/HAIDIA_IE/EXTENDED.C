@@ -38,7 +38,6 @@ struct SceneVerticalEffect {
 
 extern u8 Data_0200b144[];
 extern u8 Data_0200b108[];
-extern s16 Data_02000240[];
 extern u8 Data_0200b380[];
 extern u8 Data_0200b560[];
 extern u8 Data_0200b7d0[];
@@ -49,7 +48,6 @@ extern u8 Data_0200bb30[];
 extern u8 Data_0200ba64[];
 extern u8 Data_0200b938[];
 extern u8 Data_00001197[];
-extern u8 Data_03001ebc[];
 extern u8 Value_0200beb4;
 extern u8 Value_00000eb0;
 extern u8 Data_0200ae34[];
@@ -139,12 +137,10 @@ static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
     return f(a0, a1);
 }
 
-/* The scene step counter at 0x1d8 of the shared scene work record. */
+/* Moves the next dialogue line on by amount messages. */
 static __inline__ void bump_step(s32 amount)
 {
-    u8 *work = *(u8 **)Data_03001ebc;
-
-    *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
+    gEventWork->message += amount;
 }
 
 static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
@@ -279,7 +275,7 @@ void *SceneData_SelectTableByFlags834And87a(void)
     if (GameFlag_IsSet(0x834) != 0) {
         return Data_0200b380;
     }
-    if (Data_02000240[225] == 12) {
+    if (gGameState.entrance == 12) {
         return Data_0200b560;
     }
     if (GameFlag_IsSet(0x87a) != 0) {
@@ -309,7 +305,7 @@ void *SceneData_SelectTableByFlags87a_815_834(void)
     if (GameFlag_IsSet(0x815) != 0) {
         return Data_0200bb3c;
     }
-    if (Data_02000240[225] == 12) {
+    if (gGameState.entrance == 12) {
         return Data_0200bb30;
     }
     if (GameFlag_IsSet(0x834) != 0) {

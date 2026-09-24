@@ -275,11 +275,7 @@ static __inline__ void Call4_02001238(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a
 /* The scene step counter at 0x1d8 of the shared scene work record. */
 static __inline__ void bump_step_02001238(s32 amount)
 {
-    extern u8 Data_03001ebc[];
-
-    u8 *work = *(u8 **)Data_03001ebc;
-
-    *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
+    gEventWork->message += amount;
 }
 
 void Func_020009dc(u8 *object, s32 mode)
@@ -514,9 +510,7 @@ s32 SceneData_SelectByRuntimeSelector(void)
 
 s32 SceneData_SelectTableB5b8ByState(void)
 {
-    extern s16 Data_02000240[];
-
-    if (Data_02000240[224] == (s32)&Value_000000b0) {
+    if (gGameState.scene == (s32)&Value_000000b0) {
         return (s32)Data_0200b5b8;
     }
     return 0;

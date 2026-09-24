@@ -1,7 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
-
 struct Ent { s32 a; u16 b; u16 c; };
 
 extern u8 Data_020099d0[];
@@ -281,12 +280,10 @@ void FieldScene_RunActorsThirtyOneToThirtyThreeChoreography(void)
 /* Keep the first byte store and zero initialization as one assignment. */
 s32 Scene_InitFacingActors(void)
 {
-    extern u8 Data_03001ebc[];
-
     u8 *record;
     s32 none;
 
-    *(s32 *)((*(u8 **)Data_03001ebc + 0x1c0)) = 0x209;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
     if (SceneInit_Value1(Engine_GameFlagIsSet, 0x950) != 0) {
         SceneInit_Call6(Engine_MapCopyCellAttributes, 51, 47, 3, 1, 51, 45);
         record = Func_02000e0e(31);

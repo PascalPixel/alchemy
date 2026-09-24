@@ -284,8 +284,6 @@ static __inline__ s32 Value1_02002310(s32 (*f)(), s32 a0)
 {
     extern u8 Data_0200d238[];
 
-    extern u8 Data_02000240[];
-
     return f(a0);
 }
 
@@ -297,8 +295,6 @@ static __inline__ s32 Value1_02002490(s32 (*f)(), s32 a0)
 {
     extern u8 Data_0200d238[];
 
-    extern u8 Data_02000240[];
-
     return f(a0);
 }
 
@@ -309,8 +305,6 @@ static __inline__ s32 Value1_02002490(s32 (*f)(), s32 a0)
 static __inline__ s32 Value1_020025c0(s32 (*f)(), s32 a0)
 {
     extern u8 Data_0200d238[];
-
-    extern u8 Data_02000240[];
 
     return f(a0);
 }
@@ -334,8 +328,6 @@ static __inline__ s32 Value1_02002934(s32 (*f)(), s32 a0)
 {
     extern u8 Data_0200d238[];
 
-    extern s16 Data_02000240[];
-
     return f(a0);
 }
 
@@ -346,8 +338,6 @@ static __inline__ s32 Value1_02002934(s32 (*f)(), s32 a0)
 static __inline__ void Call3_020029dc(void (*f)(), s32 a0, s32 a1, s32 a2)
 {
     extern u8 Data_0200d238[];
-
-    extern s16 Data_02000240[];
 
     f(a0, a1, a2);
 }
@@ -375,8 +365,6 @@ static __inline__ void Call0(void (*f)())
 {
     extern u8 Data_0200d238[];
 
-    extern u8 Data_02000240[];
-
     f();
 }
 
@@ -384,16 +372,12 @@ static __inline__ s32 Value0_02002f10(s32 (*f)())
 {
     extern u8 Data_0200d238[];
 
-    extern u8 Data_02000240[];
-
     return f();
 }
 
 static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
 {
     extern u8 Data_0200d238[];
-
-    extern u8 Data_02000240[];
 
     return f(a0, a1, a2);
 }
@@ -430,17 +414,7 @@ s32 Func_020068d2();           /* per-site veneer -> Func_0808a5e0 */
 
 s32 Func_0200664c();           /* per-site veneer -> Func_080000d0 */
 
-
-
-
-
-
-
-
-
 void Func_02006a32_a();          /* site veneer -> Func_0808a440 */
-
-
 
 /*
  * Read the low three bits of the runtime word at 0x03001e40 and, on two of the
@@ -462,7 +436,6 @@ void Func_02006a32_a();          /* site veneer -> Func_0808a440 */
  */
 void SceneState_SetValue14Mode23(void)
 {
-    extern u8 Data_02000240[];
     extern s32 Data_03001e40;
 
     Func_02003cd8(0xE, 0x17);
@@ -543,9 +516,7 @@ s32 OverlayObject_IntegrateAndDamp(u8 *p)
  */
 s32 SceneData_SelectTableByWord224(void)
 {
-    extern s16 Data_02000240[];
-
-    s16 v = Data_02000240[224];
+    s16 v = gGameState.scene;
 
     if (v == (s32)&Value_0000004d) {
         return (s32)Data_0200c194;
@@ -585,9 +556,7 @@ s32 SceneData_SelectTableByWord224(void)
 
 s32 SceneData_SelectTableC80cOrC83c(void)
 {
-    extern s16 Data_02000240[];
-
-    s16 v = Data_02000240[224];
+    s16 v = gGameState.scene;
 
     if (v == (s32)&Value_00000055) {
         return (s32)Data_0200c80c;
@@ -600,16 +569,12 @@ s32 SceneData_SelectTableC80cOrC83c(void)
 
 u8 *SceneData_GetTableC85c(void)
 {
-    extern s16 Data_02000240[];
-
     return Data_0200c85c;
 }
 
 s32 SceneData_SelectDataByRuntimeSelector(void)
 {
-    extern s16 Data_02000240[];
-
-    s16 v = Data_02000240[224];
+    s16 v = gGameState.scene;
 
     if (v == (s32)&Value_0000004d) {
         return (s32)Data_0200c940;
@@ -731,7 +696,6 @@ void ActorPresentation_SetCellAndLowerActorEight(void)
 
 void SceneState_ApplyRectAndSetActor9Byte55(void)
 {
-    extern u8 Data_02000240[];
     extern s32 Data_03001e40;
 
     s32 *p;
@@ -784,7 +748,6 @@ void SceneActor_RaiseSlot9StepB(void)
 
 void SceneState_ApplyRectAndLowerActor9(void)
 {
-    extern u8 Data_02000240[];
     extern s32 Data_03001e40;
 
     s32 *rec;
@@ -823,7 +786,6 @@ void SceneActor_RaiseSlot11AndSetFlag201(void)
 
 void SceneActor_AdjustSlot12AndSetFlag204(void)
 {
-    extern u8 Data_02000240[];
     extern s32 Data_03001e40;
 
     s32 *p;
@@ -1397,8 +1359,6 @@ void FieldScene_RunScene3a4_02002490(void)
 {
     extern u8 Data_0200d238[];
 
-    extern u8 Data_02000240[];
-
     u32 i;
     u8 *record;
 
@@ -1441,8 +1401,6 @@ void FieldScene_RunScene3a4_02002490(void)
 void FieldScene_RunScene3a4_020025c0(void)
 {
     extern u8 Data_0200d238[];
-
-    extern u8 Data_02000240[];
 
     u32 i;
     u8 *rec7;
@@ -1533,8 +1491,6 @@ void FieldScene_RunScene3a4_02002934(void)
 {
     extern u8 Data_0200d238[];
 
-    extern s16 Data_02000240[];
-
     s32 rec7;
     s32 record;
     s16 flag;
@@ -1551,7 +1507,7 @@ void FieldScene_RunScene3a4_02002934(void)
         Actor_SetSpriteFlags(record, 0);
         *(u8 *)(Func_02006514(9) + 89) = rec7;
     }
-    flag = Data_02000240[225];
+    flag = gGameState.entrance;
     if (flag == 1 || flag == 98) {
         if (GameFlag_IsSet(0x109) == 0) {
             rec7 = Value1_02002934(Func_0200653c_a, 0);
@@ -1571,13 +1527,11 @@ void FieldScene_RunScene3a4_020029dc(void)
 {
     extern u8 Data_0200d238[];
 
-    extern s16 Data_02000240[];
-
     s32 record;
 
     record = Func_0200657a(9);
     Actor_SetSpriteFlags(record, 0);
-    if (Data_02000240[225] == 2) {
+    if (gGameState.entrance == 2) {
         Actor_SetPosition(9, 0xb80000, 0x1480000);
     }
 }
@@ -1707,7 +1661,6 @@ void FieldScene_RunScene3a4SequenceG(void)
 
 void SceneState_ForwardByRuntimeSelector(s32 arg)
 {
-    extern u8 Data_02000240[];
     extern s32 Data_03001e40;
 
     s32 sel = Data_03001e40 & 7;
@@ -1746,7 +1699,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
     Event_Begin();
     Actor_SetPosition(10, 0, 0);
     Actor_SetPosition(8, 0, 0);
-    *(s32 *)(*(u8 **)Data_03001ebc + 0x1c0) = 0x201;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
     Event_OpenScreen();
     Event_WaitForScreen();
     Event_Wait(20);
@@ -1761,7 +1714,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
     Camera_MoveTo(*(s32 *)(rec7 + 8), *(s32 *)(rec7 + 12), *(s32 *)(rec7 + 16), 1);
     Camera_WaitForMove();
     Call1(Func_0200696e, 0x200cd6c);
-    *(s32 *)(*(u8 **)Data_03001ebc + 0x1c0) = 0x204;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
     Event_End();
 }
 
@@ -1779,11 +1732,11 @@ void FieldScene_RunScene3a4SequenceF(void)
     Func_0200382e();
     Map_Redraw();
     Task_Wait(1);
-    *(s32 *)(*(u8 **)Data_03001ebc + 0x1c0) = 0x201;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
     Event_OpenScreen();
     Event_WaitForScreen();
     Func_0200364c();
-    *(s32 *)(*(u8 **)Data_03001ebc + 0x1c0) = 0x204;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
     Event_End();
 }
 
@@ -1801,11 +1754,11 @@ void FieldScene_RunScene3a4SequenceE(void)
     Func_0200393e();
     Map_Redraw();
     Task_Wait(1);
-    *(s32 *)(*(u8 **)Data_03001ebc + 0x1c0) = 0x201;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
     Event_OpenScreen();
     Event_WaitForScreen();
     Func_020037a0();
-    *(s32 *)(*(u8 **)Data_03001ebc + 0x1c0) = 0x204;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
     Event_End();
 }
 
@@ -2012,7 +1965,6 @@ void RunEventScript01(void)
 
 void SceneState_SetWorkspaceHalfword382To1018(void)
 {
-    extern u8 Data_02000240[];
     extern s32 Data_03001e40;
 
     *(u16 *)(*(u8 **)Data_03001ebc + (191 << 1)) = (int)&Value_00001018;

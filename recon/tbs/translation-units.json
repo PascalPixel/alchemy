@@ -5827,6 +5827,10 @@
         "Func_02005b7c_b": {
           "address": "0x0200c9bc",
           "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
         }
       },
       "owners": [
@@ -7869,6 +7873,10 @@
         "Func_020022bc": {
           "address": "0x020091c4",
           "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
         }
       },
       "owners": [
@@ -8220,6 +8228,10 @@
         "Func_02001612": {
           "address": "0x02008bd8",
           "kind": "thumb"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
         }
       },
       "owners": [
@@ -8685,6 +8697,14 @@
         "Func_02000b98": {
           "address": "0x020085e4",
           "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
         }
       },
       "owners": [
@@ -15898,6 +15918,10 @@
         "Func_0200131c": {
           "address": "0x020089f8",
           "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
         }
       },
       "owners": [
@@ -21983,6 +22007,10 @@
         "Func_020024c0": {
           "address": "0x0200932c",
           "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
         }
       },
       "owners": [
@@ -24727,6 +24755,10 @@
         "Func_0200b4ec": {
           "address": "0x0200b4ec",
           "kind": "thumb"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
         }
       },
       "owners": [
@@ -25725,6 +25757,10 @@
         },
         "LinkedMessage_AlexAsksForStars": {
           "address": "0x000010b6",
+          "kind": "data"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
           "kind": "data"
         }
       },
@@ -36613,6 +36649,14 @@
         "Func_02004dac": {
           "address": "0x0200a834",
           "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
         }
       },
       "owners": [
@@ -37260,6 +37304,10 @@
         },
         "SceneEventRuntime_ScriptData": {
           "address": "0x0200a5c0",
+          "kind": "data"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
           "kind": "data"
         }
       },
@@ -39009,6 +39057,10 @@
         "Func_02009a54": {
           "address": "0x0200ce64",
           "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
         }
       },
       "owners": [
@@ -41440,6 +41492,10 @@
         "Func_02004358": {
           "address": "0x0200a398",
           "kind": "thumb"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
         }
       },
       "owners": [
@@ -45222,6 +45278,14 @@
         "Func_0200c71c": {
           "address": "0x0200e3ac",
           "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
         }
       },
       "owners": [
@@ -58687,6 +58751,10 @@
         "StageSceneWork": {
           "address": "0x03001ebc",
           "kind": "data"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
         }
       },
       "owners": [
@@ -66821,6 +66889,10 @@
         "Func_02002944": {
           "address": "0x020095a0",
           "kind": "thumb"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
         }
       },
       "owners": [
@@ -67218,6 +67290,10 @@
         "Func_0200218c": {
           "address": "0x02009364",
           "kind": "thumb"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
         }
       },
       "owners": [
@@ -67672,6 +67748,10 @@
         "Func_02001d8a": {
           "address": "0x02009130",
           "kind": "thumb"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
         }
       },
       "owners": [
@@ -69825,6 +69905,14 @@
         "Func_080f9078": {
           "address": "0x0200b738",
           "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
         }
       },
       "owners": [
@@ -70789,6 +70877,10 @@
         "Scene_WaitFrames": {
           "address": "0x0200c340",
           "kind": "thumb"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
         }
       },
       "owners": [
@@ -75584,6 +75676,14 @@
         "Village_GetActor": {
           "address": "0x0200d650",
           "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
         }
       },
       "owners": [
@@ -83072,6 +83172,10 @@
         "Func_02005616": {
           "address": "0x0200b10c",
           "kind": "thumb"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
         }
       },
       "owners": [
@@ -88420,6 +88524,10 @@
         "Func_0200bb38": {
           "address": "0x0200dfe4",
           "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
         }
       },
       "owners": [
@@ -90308,6 +90416,14 @@
           "kind": "thumb"
         },
         "SceneStateBytes": {
+          "address": "0x02000240",
+          "kind": "data"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gGameState": {
           "address": "0x02000240",
           "kind": "data"
         }
@@ -96952,6 +97068,14 @@
         "Func_02006ffc": {
           "address": "0x0200bb98",
           "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
         }
       },
       "owners": [
@@ -97575,6 +97699,14 @@
           "kind": "thumb"
         },
         "SceneStateWords": {
+          "address": "0x02000240",
+          "kind": "data"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gGameState": {
           "address": "0x02000240",
           "kind": "data"
         }
@@ -102782,6 +102914,14 @@
         "Func_0200329a": {
           "address": "0x02009a94",
           "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
         }
       },
       "owners": [
@@ -103408,6 +103548,14 @@
         "Func_02002824": {
           "address": "0x02009bcc",
           "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
         }
       },
       "owners": [
@@ -103732,6 +103880,14 @@
         "Func_0200332e": {
           "address": "0x02009bcc",
           "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
         }
       },
       "owners": [
@@ -103988,6 +104144,10 @@
           "kind": "thumb"
         },
         "SceneWork_Bytes": {
+          "address": "0x02000240",
+          "kind": "data"
+        },
+        "gGameState": {
           "address": "0x02000240",
           "kind": "data"
         }
@@ -108410,6 +108570,10 @@
         "Func_020035a4": {
           "address": "0x02009b94",
           "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
         }
       },
       "owners": [
@@ -109388,6 +109552,14 @@
         "Func_02008704": {
           "address": "0x0200c404",
           "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
         }
       },
       "owners": [

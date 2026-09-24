@@ -11918,7 +11918,7 @@
       "source": "FIELD/SORU_NICHIGETSU/INNER_SANCTUM.C"
     },
     "resource_37a:02001380": {
-      "name": "StartSolShindenTrapEvent",
+      "name": "Scene_SpringStatueTrap",
       "source": "FIELD/SORU_NICHIGETSU/INNER_SANCTUM.C"
     },
     "resource_37a:02001790": {
@@ -11942,11 +11942,11 @@
       "source": "FIELD/SORU_NICHIGETSU/INNER_SANCTUM.C"
     },
     "resource_37a:02002924": {
-      "name": "FieldScene_RunScene37a_02002924",
+      "name": "Sukureta_Talk",
       "source": "FIELD/SORU_NICHIGETSU/INNER_SANCTUM.C"
     },
     "resource_37a:020009f4": {
-      "name": "FieldScene_RunScene37a_020009f4",
+      "name": "Scene_EnterInnerSanctum",
       "source": "FIELD/SORU_NICHIGETSU/INNER_SANCTUM.C"
     },
     "resource_37a:02000108": {
@@ -11966,7 +11966,7 @@
       "source": "FIELD/SORU_NICHIGETSU/INNER_SANCTUM.C"
     },
     "resource_37a:02001a58": {
-      "name": "FieldScene_RunScene37aSequenceE",
+      "name": "Scene_ChangeLunaPictureToSol",
       "source": "FIELD/SORU_NICHIGETSU/INNER_SANCTUM.C"
     },
     "resource_37a:02002108": {

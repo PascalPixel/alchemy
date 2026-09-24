@@ -41810,6 +41810,14 @@
         "Func_0200458e": {
           "address": "0x0200a9ec",
           "kind": "thumb"
+        },
+        "LinkedMessage_LookFartherUpThePassage": {
+          "address": "0x00000ffc",
+          "kind": "data"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
         }
       },
       "owners": [

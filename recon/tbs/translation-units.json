@@ -49086,18 +49086,6 @@
           "address": "0x0200c340",
           "kind": "thumb"
         },
-        "Func_02004510": {
-          "address": "0x0200c400",
-          "kind": "thumb"
-        },
-        "Func_02004626": {
-          "address": "0x0200c3a8",
-          "kind": "thumb"
-        },
-        "Func_0200462c": {
-          "address": "0x0200c3a8",
-          "kind": "thumb"
-        },
         "Func_02004630": {
           "address": "0x0200c508",
           "kind": "thumb"
@@ -49126,16 +49114,8 @@
           "address": "0x0200c498",
           "kind": "thumb"
         },
-        "Func_020047cc": {
-          "address": "0x0200c4a0",
-          "kind": "thumb"
-        },
         "Func_0200484c_scene_primary_script": {
           "address": "0x0200c530",
-          "kind": "thumb"
-        },
-        "Func_02004868": {
-          "address": "0x0200c3a8",
           "kind": "thumb"
         },
         "Func_02004a00_dialogue_layout": {
@@ -49150,14 +49130,6 @@
           "address": "0x0200c508",
           "kind": "thumb"
         },
-        "Func_02004ea6": {
-          "address": "0x0200c400",
-          "kind": "thumb"
-        },
-        "Func_02005384": {
-          "address": "0x0200c400",
-          "kind": "thumb"
-        },
         "Func_0200550e": {
           "address": "0x0200c508",
           "kind": "thumb"
@@ -49168,14 +49140,6 @@
         },
         "Func_02007f9c": {
           "address": "0x0200c538",
-          "kind": "thumb"
-        },
-        "Func_020080c0": {
-          "address": "0x0200c468",
-          "kind": "thumb"
-        },
-        "Func_020080c0_a": {
-          "address": "0x0200c400",
           "kind": "thumb"
         },
         "Func_020080e0": {
@@ -49202,6 +49166,10 @@
           "address": "0x0200c370",
           "kind": "thumb"
         },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
+        },
         "Scene_PauseScript": {
           "address": "0x0200c3d8",
           "kind": "thumb"
@@ -49213,10 +49181,6 @@
         "Scene_WaitFrames": {
           "address": "0x0200c340",
           "kind": "thumb"
-        },
-        "gGameState": {
-          "address": "0x02000240",
-          "kind": "data"
         }
       },
       "owners": [

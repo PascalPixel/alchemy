@@ -65,14 +65,17 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
     f(a0, a1, a2, a3, a4, a5);
 }
 
-/* NONMATCHING: 1236 of 1240 bytes, 140 halfword edits (2026-09-24). The
- * halfword zero pool constant forces the first literal pool three
- * instructions before the reference's barrier; the step pair is a struct so
+/* NONMATCHING: 1236 of 1236 bytes, 6 halfword edits (2026-09-24). The
+ * zero is a one-halfword struct so its movhi pool load reaches 64 bytes and
+ * the pool lands where the reference has it; what remains is sched2 order
+ * of the callback load against the step-address copy to r8; the step pair is a struct so
  * the +104/+108 stores keep their order. */
+struct Half { u16 v; };
+
 void Func_02001838(void)
 {
     u32 i;
-    s32 p10;
+    struct Half p10;
     s32 p10b;
     s32 p8;
     u8 *rec3;
@@ -93,7 +96,7 @@ void Func_02001838(void)
     ((struct ActorMotion *)rec3)->phase = 0;
     ((struct ActorMotion *)rec3)->step[0] = 0;
     p8 = (s32)rec3 + 100;
-    p10 = (u16)(u32)Data_00000000;
+    p10.v = 0;
     ((struct ActorMotion *)rec3)->step[1] = 0;
     *(s32 *)((s32)rec3 + 72) = 0x6666;
     ((struct ActorMotion *)rec3)->callback = 0x2009771;
@@ -101,7 +104,7 @@ void Func_02001838(void)
     Call3(Engine_ObjectMotionSetPositionAndCommit, 10, 0x134, 0x123);
     Call3(Engine_ObjectMotionSetPositionAndCommit, 10, 0x137, 215);
     ((struct ActorMotion *)rec3)->callback = 0;
-    rec3[91] = p10;
+    rec3[91] = p10.v;
     Engine_EventWait(16);
     Engine_ActorSetAnimation(10, 1);
     Engine_AudioPlayCue(229);
@@ -163,7 +166,7 @@ void Func_02001838(void)
     Call3(Engine_WorkSetValuesIfNonNegative, -1, -1, 0xe666);
     Engine_EventWait(40);
     Call3(Engine_ActorFaceDirection, 10, 0x8000, 40);
-    *(u8 *)(Engine_ActorGet(9) + 85) = p10;
+    *(u8 *)(Engine_ActorGet(9) + 85) = p10.v;
     Call6(Engine_MapCopyCellAttributes, 3, 0, 1, 1, 17, 13);
     Call6(Engine_MapCopyCellAttributes, 3, 0, 1, 1, 18, 13);
     Call6(Engine_MapCopyCellAttributes, 3, 0, 1, 1, 19, 13);

@@ -35,12 +35,12 @@ void Shop_FillSelector(s32 count, s32 selector, u8 *base)
 }
 
 /* shop/draw/glyphs.c */
-extern u8 gRom2[];
+extern u8 Shop_GlyphBytes[];
 
 /* 4行分の非0バイトを指定配置へ順にコピーする。 */
 void Shop_CopyGlyphs(s32 arg0, s32 arg1, u32 arg2)
 {
-    u8 *src = gRom2 + ((u32)arg0 << 5);
+    u8 *src = Shop_GlyphBytes + ((u32)arg0 << 5);
     u8 *dst =
         (u8 *)((u32)arg1 + RomBytes_080b413c[arg2] + 2);
     s32 count = 3;

@@ -21,7 +21,7 @@ s32 Ui_Place(s32, s16 *, s32);
 extern u8 gGameState[];
 extern void *gBattleWork;
 extern volatile s32 gKeyState;
-extern void *gIw2;
+extern void *gLinkCountdownWork;
 extern char Value_00000845;
 
 s32 UiText_ShowLocalizedMessageAndWait(void)
@@ -53,7 +53,7 @@ active:
         do {
             WaitFrames(1);
         } while ((gKeyState & 3) == 0 &&
-                 *(s32 *)((u8 *)gIw2 + 0x4C) != 0);
+                 *(s32 *)((u8 *)gLinkCountdownWork + 0x4C) != 0);
         UiWork_Finalize(work, 1);
     }
     return result;

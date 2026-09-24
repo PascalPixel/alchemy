@@ -6,10 +6,10 @@ s32 Inventory_FindEquippedFar(s32, s32);
 u32 Resource_FindFreeSlot(s32);
 
 extern u16 RomBytes_080c2a1c[];
-extern u16 gRom2[];
-extern u16 gRom3[];
-extern u16 gRom4[];
-extern u16 gRom5[];
+extern u16 BattleUnit_WeaponAnimsClass1[];
+extern u16 BattleUnit_WeaponAnimsClass2[];
+extern u16 BattleUnit_WeaponAnimsClass3[];
+extern u16 BattleUnit_WeaponAnimsClass5[];
 
 s32 BattleUnit_LookupWeaponValueByClass(s32 id)
 {
@@ -31,18 +31,18 @@ s32 BattleUnit_LookupWeaponValueByClass(s32 id)
             result = RomBytes_080c2a1c[sel];
             break;
         case 1:
-            result = gRom2[sel];
+            result = BattleUnit_WeaponAnimsClass1[sel];
             break;
         case 2:
-            result = gRom3[sel];
+            result = BattleUnit_WeaponAnimsClass2[sel];
             break;
         case 3:
-            result = gRom4[sel];
+            result = BattleUnit_WeaponAnimsClass3[sel];
             break;
         case 4:
             break;
         case 5:
-            result = gRom5[sel];
+            result = BattleUnit_WeaponAnimsClass5[sel];
             break;
         }
     }

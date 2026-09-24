@@ -113,7 +113,7 @@ struct BurstParticleVector {
 void Vector_AddPolarOffset(s32, s32, struct BurstParticleVector *);
 void *Object_Spawn(s32, s32, s32, s32);
 void Object_SetCallback(void *, const void *);
-extern const u8 gRom[];
+extern const u8 BattleFx_BurstParticleObjectScript[];
 
 void BattleFx_RunBurstParticles(void)
 {
@@ -142,7 +142,7 @@ void BattleFx_RunBurstParticles(void)
             p->values[2]
         );
         if (object != 0) {
-            Object_SetCallback(object, gRom);
+            Object_SetCallback(object, BattleFx_BurstParticleObjectScript);
             *((u8 *)object + 0x55) = 2;
         }
         WaitFrames((((u32)Rand() * 2) >> 16) + 2);

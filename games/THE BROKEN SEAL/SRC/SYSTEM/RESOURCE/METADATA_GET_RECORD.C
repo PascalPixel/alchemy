@@ -1,9 +1,9 @@
 #include "TYPES.H"
 #include "SCENE.H"
 
-extern u8 gUnk[];
+extern u8 Character_DescriptorTable[];
 
 u8 *Resource_GetMetadataRecord(u32 arg0)
 {
-    return &gUnk[(arg0 & 0xfff) * 20];
+    return &Character_DescriptorTable[(arg0 & 0xfff) * 20];
 }

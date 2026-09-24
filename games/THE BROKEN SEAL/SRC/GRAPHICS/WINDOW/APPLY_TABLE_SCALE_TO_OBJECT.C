@@ -25,12 +25,12 @@ struct Object {
 };
 
 extern u32 gFrameTick;
-extern s32 gRom[];
+extern s32 Ui_ObjectPulseScales[];
 s32 AffineMatrix_BuildForEffect(struct Effect *efx);
 
 void Ui_ApplyTableScaleToObject(struct Object *obj)
 {
-    s32 v = gRom[(gFrameTick >> 1) & 7];
+    s32 v = Ui_ObjectPulseScales[(gFrameTick >> 1) & 7];
     struct Effect efx;
 
     if (v < 0)

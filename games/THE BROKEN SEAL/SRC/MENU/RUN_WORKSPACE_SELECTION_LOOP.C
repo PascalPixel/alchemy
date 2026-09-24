@@ -12,7 +12,7 @@
 
 extern void *gSelectionWork;
 extern u8 gDebugMode;
-extern s8 gRom[];
+extern s8 Menu_WorkspaceIconFrames[];
 
 void *Menu_Run(void);
 void UiIcon_PrepareObjectFar(void *);
@@ -69,7 +69,7 @@ loop_6:
         i = 0;
         if (i < var_fp_21) {
             j = sp4;
-            tbl = gRom;
+            tbl = Menu_WorkspaceIconFrames;
             do {
                 temp_r5_90 = ((void **)((u8 *)temp_sl_29 + 0x610))[i];
                 FIELD_AT_OFFSET(temp_r5_90, u8 *, 0xF) = 0xFB;

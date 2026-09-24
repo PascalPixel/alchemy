@@ -9,11 +9,11 @@ extern u16 gMusicVolume;
 extern u16 gMusicPitchStep;
 extern u16 gMusicVolumeStep;
 extern u8 gOv6;
-extern u16 gOv7;
+extern u16 gMusicPlayerVolumes;
 extern u16 gMusicPitchTarget;
 extern u16 gMusicVolumeTarget;
 extern u16 gMusicPitch;
-extern u8 gOv11;
+extern u8 gAudioSecondaryState;
 extern u8 Audio_CommandMask;
 
 void Audio_InitializeRuntimeDefaults(void)
@@ -22,7 +22,7 @@ void Audio_InitializeRuntimeDefaults(void)
     s32 remaining;
 
     Audio_Initialize();
-    gOv11 = 0xff;
+    gAudioSecondaryState = 0xff;
     RomBytes_02003000 = 0;
     gMusicVolumeTarget = 0x100;
     gMusicVolume = 0x100;
@@ -32,7 +32,7 @@ void Audio_InitializeRuntimeDefaults(void)
     gMusicPitchStep = 4;
     gOv6 = 0;
     Audio_CommandMask = 0;
-    player_volume = &gOv7;
+    player_volume = &gMusicPlayerVolumes;
     RomBytes_02003004 = 0;
     remaining = 7;
     do {

@@ -1,7 +1,7 @@
 #include "TYPES.H"
 
 /* runtime/remap_bytes_by_table.c */
-extern u8 gRom[];
+extern u8 Runtime_ByteRemapTable[];
 
 void Runtime_RemapBytesByTable(u8 *buf, s32 cnt)
 {
@@ -10,7 +10,7 @@ void Runtime_RemapBytesByTable(u8 *buf, s32 cnt)
     u8 *tbl;
 
     p = buf;
-    tbl = gRom;
+    tbl = Runtime_ByteRemapTable;
     n = cnt - 1;
     if (n != -1) {
         do {

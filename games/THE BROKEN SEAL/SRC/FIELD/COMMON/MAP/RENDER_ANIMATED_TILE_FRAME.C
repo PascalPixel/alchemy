@@ -9,7 +9,7 @@ struct MapBase {
     u16 offset;
 };
 
-extern u8 gRom[];
+extern u8 Map_TileDissolveOrder[];
 
 void Map_RenderAnimatedTileFrame(u8 *object, u32 position)
 {
@@ -27,7 +27,7 @@ void Map_RenderAnimatedTileFrame(u8 *object, u32 position)
     row = 0;
 
     if (row < (u32)count) {
-        table = gRom;
+        table = Map_TileDissolveOrder;
         high_mask = 0xFF00;
         index_mask = 0x3F;
         offset_mask = 0x3E;

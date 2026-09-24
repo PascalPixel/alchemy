@@ -179,7 +179,6 @@ void Func_020035c6();
 void Func_020035cc();
 void Func_020035d0();
 void Func_020035da();
-void Func_020035de();
 void Func_020035e4();
 s32 Func_020035ec();
 void Func_020035fc();
@@ -202,7 +201,6 @@ void Func_020036a2();
 void Func_020036ae();
 void Func_020036b0();
 void Func_020036c8();
-void Func_020036ec();
 void Func_020036f0();
 void Func_02003702();
 void Func_0200370c();
@@ -246,7 +244,6 @@ void Func_02003888();
 void Func_0200388e();
 void Func_02003890();
 void Func_02003898();
-void Func_020038ac();
 void Func_020038b2();
 void Func_020038b8();
 s32 Func_020038ba();
@@ -496,16 +493,10 @@ s32 Func_02002ab4(s32, s32, s32);
 #include "TYPES.H"
 
 s32 Func_02002878(void);
-void Func_0200081c(void);
-void Func_0200083e(void);
 void Func_02000872(s32);
-s32 Func_02000948(s32, s32, s32);
 void Func_0200089c(s32);
-s32 Func_02000970(s32, s32, s32);
 void Func_020008c8(s32);
-s32 Func_0200099c(s32, s32, s32);
 void Func_020008f4(s32);
-s32 Func_020009c8(s32, s32, s32);
 
 #include "TYPES.H"
 
@@ -595,14 +586,7 @@ extern u8 Data_03001ebc[];
 extern u8 Data_0200a5c0[];
 extern u8 Data_0200a5d4[];
 
-void Func_020035de();
-void Func_020036ec();
 void Func_02003748_channels();
-void Func_0200376a();
-void Func_020037d4();
-void Func_02003846();
-void Func_020038ac();
-void Func_020038fc();
 void *Func_02003f58();
 void *Func_02003fb0();
 void *Func_02003fc4();
@@ -852,9 +836,9 @@ void FieldScene_RunStepWithValue174e(void)
 void FieldScene_RunBranchedStep(void)
 {
     if (Func_02002878() != 0) {
-        Func_0200081c();
+        FieldScene_RunStepWithValue174d();
     } else {
-        Func_0200083e();
+        FieldScene_RunStepWithValue174e();
     }
 }
 
@@ -863,7 +847,7 @@ void FieldScene_RunStep210ByFlag84e(void)
     if (GameFlag_IsSet(0x84E) != 0) {
         Func_02000872(0x210);
     } else {
-        Func_02000948(21, 182, 0x210);
+        FieldScene_RunSlotSubjectBranch(21, 182, 0x210);
     }
 }
 
@@ -872,7 +856,7 @@ void FieldScene_RunStep211ByFlag84e(void)
     if (GameFlag_IsSet(0x84E) != 0) {
         Func_0200089c(0x211);
     } else {
-        Func_02000970(22, 183, 0x211);
+        FieldScene_RunSlotSubjectBranch(22, 183, 0x211);
     }
 }
 
@@ -881,7 +865,7 @@ void FieldScene_RunStep212ByFlag84e(void)
     if (GameFlag_IsSet(0x84E) != 0) {
         Func_020008c8(0x212);
     } else {
-        Func_0200099c(23, 186, 0x212);
+        FieldScene_RunSlotSubjectBranch(23, 186, 0x212);
     }
 }
 
@@ -890,7 +874,7 @@ void FieldScene_RunStep213ByFlag84e(void)
     if (GameFlag_IsSet(0x84E) != 0) {
         Func_020008f4(0x213);
     } else {
-        Func_020009c8(24, 189, 0x213);
+        FieldScene_RunSlotSubjectBranch(24, 189, 0x213);
     }
 }
 
@@ -1575,7 +1559,7 @@ void RunEventScript02(void)
         bump_step(1);
     }
 
-    Func_020035de(); /* ConfigurePrimarySceneChannels, 0x02001958 */
+    ConfigurePrimarySceneChannels(); /* ConfigurePrimarySceneChannels, 0x02001958 */
     Event_Wait(20);
     if (GameFlag_IsSet(0x84f) != 0) {
         Actor_ShowEmote(0, 258, 60);
@@ -1604,7 +1588,7 @@ void RunEventScript02(void)
         /* legacy word Func_02004290, veneer 0x0200a508 */
         Actor_SetAnimationAndWait(18, 4);
         Event_OpenMessage(0x2012, 0);
-        Func_020036ec(); /* ConfigurePrimarySceneChannels, 0x02001958 */
+        ConfigurePrimarySceneChannels(); /* ConfigurePrimarySceneChannels, 0x02001958 */
         flag = 1;
         if (Event_ChooseYesNo(0, 0) != 0) {
             bump_step(1);
@@ -1624,7 +1608,7 @@ void RunEventScript02(void)
     }
 
     Event_OpenMessage(0x2012, 0);
-    Func_0200376a(); /* ConfigurePrimarySceneChannels, 0x02001958 */
+    ConfigurePrimarySceneChannels(); /* ConfigurePrimarySceneChannels, 0x02001958 */
     if (Event_ChooseYesNo(0, 0) == 0) {
         /* legacy word Func_0200435c, veneer 0x0200a538 */
         Event_SetMessage(0x1737);
@@ -1632,7 +1616,7 @@ void RunEventScript02(void)
         Event_SetMessage(0x1738);
     }
 
-    Func_020037d4(); /* ConfigureSecondarySceneChannels, 0x02001984 */
+    ConfigureSecondarySceneChannels(); /* ConfigureSecondarySceneChannels, 0x02001984 */
     Event_ShowMessageAndWait(0x2012, 0, 20);
     Actor_RunRepeatedMotion(19, 1);
     Event_SetMessage(0x1739);
@@ -1645,7 +1629,7 @@ void RunEventScript02(void)
     Actor_RunRepeatedMotion(18, 2);
     Event_ShowMessageAndWait(0x2012, 0, 10);
     Actor_FaceDirection(0, 0xc000, 0);
-    Func_02003846(); /* ConfigureSecondarySceneChannels, 0x02001984 */
+    ConfigureSecondarySceneChannels(); /* ConfigureSecondarySceneChannels, 0x02001984 */
     Event_Wait(10);
     Actor_ShowEmote(18, 261, 60);
     /* legacy word Func_0200442c, veneer 0x0200a550 */
@@ -1667,13 +1651,13 @@ void RunEventScript02(void)
     /* legacy word Func_02004490, veneer 0x0200a540 */
     Event_OpenMessage(0x2012, 0);
 
-    Func_020038ac(); /* ConfigurePrimarySceneChannels, 0x02001958 */
+    ConfigurePrimarySceneChannels(); /* ConfigurePrimarySceneChannels, 0x02001958 */
     flag = 1;
     if (Event_ChooseYesNo(0, 0) == 1) {
         bump_step(1);
         flag = 0;
     }
-    Func_020038fc(); /* ConfigureSecondarySceneChannels, 0x02001984 */
+    ConfigureSecondarySceneChannels(); /* ConfigureSecondarySceneChannels, 0x02001984 */
     Event_ShowMessageAndWait(0x2012, 0, 10);
     if (flag != 0) {
         bump_step(1);

@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_3af:02000724": {
+      "name": "FuneKanpan_UpdateFlyByForActor22",
+      "source": "FIELD/FUNE_KANPAN/FLY_BY_22.C"
+    },
     "resource_3af:02000598": {
       "name": "FuneKanpan_UpdateFlyByForActor21",
       "source": "FIELD/FUNE_KANPAN/FLY_BY_21.C"

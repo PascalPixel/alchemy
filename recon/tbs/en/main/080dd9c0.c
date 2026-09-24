@@ -1,14 +1,17 @@
-/* Draft, not exact (2026-09-24): candidate=1052 reference=1056
-   differing_halfwords=341, binary similarity 79%. Prologue, frame (52 bytes),
-   the X-table pointer (sp+16), a = frame - 8 - 8i in r8, the in-body spawn
-   pointer and the puff loop match. Remaining: the reference keeps 8i+8
-   (sp+12) and 8i+12 (sp+20) as separate spilled inductions and does not
-   reduce a*3; here 8i is one induction and a*3 is reduced, which moves work
-   from r9 to sl. Reading the kind straight from the table reproduces the
-   copy-and-compare of the reference but costs elsewhere. */
+/* Draft, not exact (2026-09-24): candidate=1056 reference=1056
+   differing_halfwords=200 (was 341 at 1052 bytes). The cue test written as
+   frame - 4 == i * 8 + 8 keeps the 8i + 12 counter from merging into 8i + 8,
+   which brings the size to 1056; a temporary for a * 6 stops the a * 3
+   reduction. Earlier notes: prologue, frame (52 bytes), the X-table pointer
+   (sp+16), a = frame - 8 - 8i in r8, the in-body spawn pointer and the puff
+   loop match; the reference keeps 8i+8 (sp+12) and 8i+12 (sp+20) as
+   separate spilled inductions. */
 #include "TYPES.H"
 #include "BATTLE_EFFECT_WORK.H"
 #include "BATTLE_EFX.H"
+/* As in mode 6, the blitters return a value the effect ignores. */
+typedef s32 (*DrawRectangleResult)(void *, const void *, s32, s32, s32, s32);
+#define DrawRectangle DrawRectangleResult
 #include "CALLBACK_SCHEDULER.H"
 #include "EFFECT_STEP.H"
 
@@ -105,7 +108,11 @@ void FunctionHead_080dd9c0(struct BattleEffectArgument *efx)
                 a = frame - (i * 8 + 8);
                 if ((u32)kind < 2) {
                     h = a * 16;
-                    w = a * 6;
+                    /* FAKEMATCH: a temporary for a * 6 keeps loop.c from reducing a * 3. */
+                    {
+                        s32 t = a * 6;
+                        w = t;
+                    }
                     if (h > 80) {
                         h = 80;
                     }
@@ -153,9 +160,9 @@ void FunctionHead_080dd9c0(struct BattleEffectArgument *efx)
                 }
             }
             {
-            s32 cue = i * 8 + 12;
             for (j = 0; j != work->effect->count; j++) {
-                if (frame == cue) {
+                /* frame - 4 keeps 8i + 12 apart from the 8i + 8 induction. */
+                if (frame - 4 == i * 8 + 8) {
                     Audio_PlayCue(132);
                     ObjectGroup_UpdateMembers(work->effect->actors[j], 7, 5, j, 3);
                 }

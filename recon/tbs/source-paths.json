@@ -19714,6 +19714,8 @@
     "main:08015258": "UiText_RenderWideStringAtOffsetFar",
     "main:08077258": "Owner_GetLevelThresholdFar",
     "main:080b5070": "Battle_GetObjectTableValueFar",
-    "main:080b5078": "BattleMotion_ApproachTargetFar"
+    "main:080b5078": "BattleMotion_ApproachTargetFar",
+    "main:080c9ca8": "BattleFx_RunFiveMode",
+    "main:080ccc38": "BattleFx_RunTwoResource"
   }
 }

@@ -14,7 +14,10 @@ struct ItemMenuIcon {
 
 struct ItemCommandWork {
     u8 unknown_000[0x14];
-    struct ItemMenuIcon *list_icon;  /* 0x014 */
+    union {
+        struct ItemMenuIcon *icon;
+        u32 word;
+    } list;                         /* 0x014 */
     u8 unknown_018[0x0c];
     s32 status_window;              /* 0x024 */
     u8 unknown_028[4];
@@ -122,20 +125,21 @@ s32 Func_080a5788(s32 mode);
  * still spelled as raw offsets. The named state numbers are the reference
  * jump-table order, not recovered constants.
  *
- * DRAFT, not yet C (2026-09-24): 1266 of 1294 listing lines, 126 lines differ
- * (62 once registers are normalised). Proven: the handlers set the next
+ * DRAFT, not yet C (2026-09-24): 1264 of 1294 listing lines, 68 lines differ
+ * (42 once registers are normalised). Proven: the handlers set the next
  * state inside each exit branch (if-conversion hoists it, so cse never sees
  * a redundant set); one result variable (r6) and one command variable (r7)
  * are shared across the handlers; clearing the command on cancel lets the
- * -1 compare register reach ret; the preview call passes the owner again in
- * r3; the 0x03001388 copy routine goes through _call_via with an inline
- * wrapper; the 0x17a item is a short-lived temporary; 0x200 comes from the
- * pool; the selected item icon pointer is volatile. The drop handler loads
- * 0x1ff into the state variable and never reassigns it on success, which
- * ends the menu through the default case (FAKEMATCH candidate). Remaining:
- * the stack count in the give handler is sign-extended at its use, the
- * list-icon stores schedule the menu copy one slot early, and case 12
- * keeps its result in r6.
+ * -1 compare register reach ret; the list icon at 0x14 is read through a
+ * union so the selected-icon stores stay ordered before it; the give
+ * handler needs a label between the stack count and its sign-extended use
+ * (a FAKEMATCH do-while for now); the 0x03001388 copy routine goes through
+ * _call_via with an inline wrapper; 0x200 comes from the pool. The drop
+ * handler loads 0x1ff into the state variable and never reassigns it on
+ * success, which ends the menu through the default case (FAKEMATCH
+ * candidate). Remaining: the backup copy loads the routine address one slot
+ * early, the 0x17a item lands in r0 instead of r2, and case 12 keeps its
+ * result in r6 (which also moves the far-branch layout of case 7 and 3).
  */
 s32 ItemMenu_RunItemCommand(s32 *owner_out, s32 *target_out, s32 *item_out)
 {
@@ -196,7 +200,7 @@ s32 ItemMenu_RunItemCommand(s32 *owner_out, s32 *target_out, s32 *item_out)
             ItemMenu_SetMsgWin3();
             ItemMenu_SetItemWin3();
             menu->selected_item_icon->state = 13;
-            menu->list_icon->state = 1;
+            menu->list.icon->state = 1;
             ItemMenu_DrawMsg(0, (s32)&Value_00000ad9);
             sel = ItemMenu_SelectPartyMember(0);
             state = 0;
@@ -232,7 +236,7 @@ s32 ItemMenu_RunItemCommand(s32 *owner_out, s32 *target_out, s32 *item_out)
                     Func_08015278(menu->info_window);
                     ItemMenu_ShowModalMessage(
                         menu->message_offset + (s32)&Value_00000bef, 0, -1);
-                    menu->list_icon->state =
+                    menu->list.icon->state =
                         13;
                     menu->item_count = ItemMenu_Collect(
                         OwnerState_GetFar(menu->item_owner), menu->items, 0);
@@ -285,7 +289,7 @@ s32 ItemMenu_RunItemCommand(s32 *owner_out, s32 *target_out, s32 *item_out)
                     Func_08015278(menu->info_window);
                     ItemMenu_ShowModalMessage(
                         menu->message_offset + (s32)&Value_00000bef, 0, -1);
-                    menu->list_icon->state =
+                    menu->list.icon->state =
                         13;
                     ItemMenu_TryBreak();
                     state = 1;
@@ -353,7 +357,7 @@ s32 ItemMenu_RunItemCommand(s32 *owner_out, s32 *target_out, s32 *item_out)
                 ItemMenu_SetItemWin3();
                 ItemMenu_RefreshOwner(menu->item_owner, 0);
                 menu->selected_item_icon->state = 13;
-                menu->list_icon->state = 13;
+                menu->list.icon->state = 13;
                 WaitFrames(1);
                 Func_08015278(menu->info_window);
                 ItemMenu_ShowModalMessage((s32)&Value_00000b7d, 14, 13);
@@ -382,7 +386,9 @@ s32 ItemMenu_RunItemCommand(s32 *owner_out, s32 *target_out, s32 *item_out)
                 }
                 stack = (menu->selected_item >> 11) + 1;
                 if (aborted == 0) {
-                    amount = stack;
+                    do {
+                        amount = stack;
+                    } while (0); /* FAKEMATCH */
                     if (qty + amount > 30) {
                         amount = 30 - qty;
                     }
@@ -437,7 +443,7 @@ s32 ItemMenu_RunItemCommand(s32 *owner_out, s32 *target_out, s32 *item_out)
                 break;
             }
             ItemMenu_RefreshOwner(menu->target_owner, 1);
-            menu->list_icon->state = 13;
+            menu->list.icon->state = 13;
             WaitFrames(1);
             if (aborted == 1) {
                 Func_08015278(menu->info_window);
@@ -594,7 +600,7 @@ s32 ItemMenu_RunItemCommand(s32 *owner_out, s32 *target_out, s32 *item_out)
             }
             Func_08077010(menu->item_owner);
             Func_080772c0(menu->item_owner);
-            menu->list_icon->state = 13;
+            menu->list.icon->state = 13;
             menu->item_count = ItemMenu_Collect(
                 OwnerState_GetFar(menu->item_owner), menu->items, 0);
             ItemMenu_DrawIcons(menu->items, 0);
@@ -617,7 +623,7 @@ s32 ItemMenu_RunItemCommand(s32 *owner_out, s32 *target_out, s32 *item_out)
                 &= 0xfdff;
             Func_08077010(menu->item_owner);
             Func_080772c0(menu->item_owner);
-            menu->list_icon->state = 13;
+            menu->list.icon->state = 13;
             menu->item_count = ItemMenu_Collect(
                 OwnerState_GetFar(menu->item_owner), menu->items, 0);
             ItemMenu_DrawIcons(menu->items, 0);
@@ -632,11 +638,11 @@ s32 ItemMenu_RunItemCommand(s32 *owner_out, s32 *target_out, s32 *item_out)
             break;
 
         case 10:
-            menu->list_icon->state = 13;
+            menu->list.icon->state = 13;
             Func_080a4800(menu->selected_item);
             UiWindow_Commit(menu->status_window);
             Func_080a3ef0(menu->item_owner, menu->selected_slot, 0, menu->item_owner);
-            menu->list_icon->state = 1;
+            menu->list.icon->state = 1;
             state = 9;
             break;
 

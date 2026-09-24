@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_3b1:0200012c": {
+      "name": "FuneHeya_RunWalkerStep",
+      "source": "FIELD/FUNE_HEYA/WALKER_STEP.C"
+    },
     "resource_39d:0200035c": {
       "name": "MakyuriChojo_ApplyEntryState",
       "source": "FIELD/MAKYURI_CHOJO/ENTRY_STATE.C"

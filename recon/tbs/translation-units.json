@@ -77337,6 +77337,50 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "scene-3b1-0200012c",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/FUNE_HEYA/WALKER_STEP.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3b1",
+      "absolute_symbols": {
+        "Engine_ActorGet": {
+          "address": "0x0200e4e8",
+          "kind": "thumb"
+        },
+        "Engine_ObjectSetAnimation": {
+          "address": "0x0200e450",
+          "kind": "thumb"
+        },
+        "Engine_ObjectSetPosition": {
+          "address": "0x0200e470",
+          "kind": "thumb"
+        },
+        "StagedActor_CountdownUntilPositionUnset": {
+          "address": "0x020080fc",
+          "kind": "thumb"
+        },
+        "StagedActor_AdvanceCounter98": {
+          "address": "0x020080d8",
+          "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x0200012c",
+          "extent": 342,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

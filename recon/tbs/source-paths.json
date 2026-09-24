@@ -4512,7 +4512,8 @@
       "source": "SYSTEM/MEMORY/NODE_CHAIN_GET_NODE_AT_COUNT.C"
     },
     "main:0801b664": {
-      "name": "Menu_StepRight"
+      "name": "Menu_StepRight",
+      "source": "MENU/SELECTION_STEP_RIGHT.C"
     },
     "main:0801b810": {
       "name": "Menu_StepLeft"

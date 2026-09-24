@@ -4,10 +4,8 @@
 #define NULL ((void *)0)
 #define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 #define OverlayObject_PrepareSceneObject        Func_02000048
-#define AcquireOverlayObject      Func_02001992
-#define CreateOverlayObject Func_020019ea
 #define SceneDialogue_RunActor13FlaggedLine      Func_02000cc4
-#define SetSceneActor     Func_0200161e
+#define SetSceneActor     SceneActor_RunActorCommandWithFlag91
 
 struct EffectRecord {
     u8 pad[9];
@@ -79,13 +77,8 @@ struct OverlayEffectMotion {
 extern u8 *Data_03001e8c[];
 extern u8 Data_000012c0[];
 
-void *Func_02001992(s32, s32, s32, s32);
-void *Func_020019ea(s32, s32, s32, s32);
-u8 *Func_02001d26();
 s32 Func_020019c6();
-u8 *Func_02001d3c();
 void Func_02001a06();
-u8 *Func_02001db2(s32);
 s32 Func_02001a72(u8 *, const u8 *, s32, s32);
 u8 *Func_02001dc6(int);
 void Func_02001f28(void);
@@ -97,52 +90,22 @@ void Func_02001d64();
 void Func_02001dcc(int, int, int);
 void Func_02001e20(int, int, int);
 void Func_02001e74(int, int, int);
-void Func_02001094(int);
-void Func_020010b4(int);
 void Func_02001f10(int, int, int);
 void Func_02001f62(s32, s32, s32);
-struct SceneActor *Func_020021d6(s32);
-void Func_02001fc2(s32, s32);
 void Func_02001fd2(s32, s32, s32);
-struct SceneActor *Func_02002246(s32);
 void Func_0200201c();
 void Func_02002060(int, int, int);
 s32 Func_02002322(void);
-void Func_020012ec(int);
-void Func_02001326(int);
-void Func_02001348(int);
-void Func_020021d4(s32, s32);
 void Func_020021e4(s32, s32, s32);
-struct SceneActor *Func_02002432(s32);
-void Func_02002232(s32, s32);
 void Func_02002242(s32, s32, s32);
-struct SceneActor *Func_020024b6(s32);
 void Func_02002294(int, int, int);
 void Func_020022e8(int, int, int);
 void Func_02002344(s32, s32, s32);
 s32 Func_0200259e(s32);
-void Func_020015e6(int);
-void Func_0200161e(s32);
-void Func_0200168c(s32);
 struct SceneActor *Func_020026e2(s32);
 struct SceneActor *Func_0200273e(s32);
-void Func_020016ee(s32);
 struct SceneActor *Func_0200275e(s32);
 struct SceneActor *Func_020027a0(s32);
-void Func_0200172e(int);
-u8 *Func_020027f2(int);
-void Func_020017cc(int);
-void Func_02001e4e(int, int, int);
-void Func_02001e76(int, int, int);
-void Func_02001e9c(int, int, int);
-void Func_02001ef6(s32, s32, s32);
-struct SceneActor *Func_0200299c(s32);
-struct SceneActor *Func_020029f8(s32);
-void Func_02001f7a(int, int, int);
-void Func_0200207c(s32, s32, s32);
-void Func_0200209e(int, int, int);
-u8 *Func_02002ba2(int);
-void Func_0200243c();
 void Func_02002c6e();
 typedef s32(*IwramSqrt02001638)(s32);
 
@@ -161,6 +124,8 @@ typedef s32(*IwramSqrt02001638)(s32);
  * registers. A direct call precomputes an expensive constant into a value the
  * compiler then shares with later uses in the same block.
  */
+void SceneActor_RunActorCommandWithFlag91(s32 x);
+
 static __inline__ void Call1(void (*f)(), s32 a0)
 {
     f(a0);
@@ -223,7 +188,7 @@ void *OverlayObject_PrepareSceneObject(s32 first, s32 second, s32 third, s32 fou
     void *rec;
     s32 mask;
 
-    obj = AcquireOverlayObject(fourth, first, second, third);
+    obj = Object_Create(fourth, first, second, third);
     if (obj != NULL) {
         rec = FIELD_AT_OFFSET(obj, void *, 0x50);
         mask = -0xD;
@@ -240,7 +205,7 @@ void *OverlayObject_PrepareSceneObject(s32 first, s32 second, s32 third, s32 fou
 
 void *OverlayObject_CreateConfiguredObject(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 {
-    u8 *result = CreateOverlayObject(arg3, arg0, arg1, arg2);
+    u8 *result = Object_Create(arg3, arg0, arg1, arg2);
 
     if (result != NULL) {
         u8 *object = *(u8 **)(result + 0x50);
@@ -287,15 +252,15 @@ s32 SceneActor_UpdateProximityToLeader(u8 *self)
      * expression: the conditional form folds to arithmetic on the flag.
      */
     if ((*flags & 1) != 0) {
-        partner = Func_02001d26(15);
+        partner = Actor_Get(15);
     } else {
-        partner = Func_02001d26(14);
+        partner = Actor_Get(14);
     }
     if (Func_020019c6(self, partner, 32, 0) != 0) {
         return 0;
     }
 
-    player = Func_02001d3c(0);
+    player = Actor_Get(0);
 
     /*
      * Widen the range when the scene counter at workspace + 376 is already
@@ -323,7 +288,7 @@ s32 ActorPresentation_UpdateEntityFromLeader(u8 *entity)
     if (*(s32 *)(entity + 56) == (s32)0x80000000)
         return 0;
 
-    leader = Func_02001db2(0);
+    leader = Actor_Get(0);
     if (*(s16 *)(workspace + 376) != 0 || base[0x0ea4] != 0) {
         selector = 26;
         flag = 1;
@@ -380,9 +345,6 @@ s32 OverlayObject_RunObject2WhenFlagged(void)
 /* Loader-relocated overlay calls: each symbol names the pre-relocation call
  * word the image holds. */
 
-s32 Func_020009ae();
-void Func_020009d8();
-s32 Func_02001eb4();
 void Func_02001f50();
 
 /* Call sites spelled through these wrappers pass their constants straight
@@ -408,7 +370,7 @@ void FieldScene_RunScene382_020004a0(void)
         return;
     }
     Event_Begin();
-    record = Value1(Func_02001eb4, 0);
+    record = Value1(Engine_ActorGet, 0);
     if (record != 0) {
         Actor_SetPosition(2, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
@@ -426,10 +388,10 @@ void FieldScene_RunScene382_020004a0(void)
     Event_SetMessage(0x1327);
     Event_ShowMessageAndWait(0x9002, 0, 20);
     Actor_SetAnimationAndWait(0, 3);
-    if (Value0(Func_020009ae)!= 0) {
+    if (Value0(OverlayObject_GetObject2Byte280)!= 0) {
         Event_SetMessage(0x132a);
         Event_ShowMessage(2, 0);
-        Func_020009d8();
+        OverlayObject_RunObject2WhenFlagged();
         Task_Wait(20);
     }
     Func_02001f50(2);
@@ -522,9 +484,9 @@ void ActorPresentation_RunActorEighteenSceneSetup(void)
     Event_End();
 }
 
-void SceneDialogue_RunActor11Line(void) { Engine_EventBegin(); Engine_EventSetMessage(0x1227); Func_02001094(11); Engine_EventEnd(); }
+void SceneDialogue_RunActor11Line(void) { Engine_EventBegin(); Engine_EventSetMessage(0x1227); SceneActor_RunActorStep(11); Engine_EventEnd(); }
 
-void SceneDialogue_RunActor16Line(void) { Engine_EventBegin(); Engine_EventSetMessage(0x122e); Func_020010b4(16); Engine_EventEnd(); }
+void SceneDialogue_RunActor16Line(void) { Engine_EventBegin(); Engine_EventSetMessage(0x122e); SceneActor_RunActorStep(16); Engine_EventEnd(); }
 
 void SceneDialogue_RunActor19Line(void)
 {
@@ -536,10 +498,9 @@ void SceneDialogue_RunActor19Line(void)
 
 void ActorPresentation_RunActorFourteenDialogue(void)
 {
-    void Func_02001f52(s32, s32);
     void Actor_SetAnimation(s32, s32);
 
-    struct SceneActor *actor = Func_020021d6(14);
+    struct SceneActor *actor = Actor_Get(14);
     s16 saved = actor->temporary_state;
 
     actor->presentation_flags |= 2;
@@ -547,7 +508,7 @@ void ActorPresentation_RunActorFourteenDialogue(void)
     Engine_EventSetMessage(0x122c);
     Actor_SetAnimation(14, 0);
     Func_02001f62(14, 0, 2);
-    Func_02001f52(14, 10);
+    SceneActor_ApplyActorZeroThenWait(14, 10);
     actor->temporary_state = saved;
     Task_Wait(1);
     Event_End();
@@ -556,7 +517,7 @@ void ActorPresentation_RunActorFourteenDialogue(void)
 
 void ActorPresentation_RunActorFifteenDialogue(void)
 {
-    struct SceneActor *actor = Func_02002246(15);
+    struct SceneActor *actor = Actor_Get(15);
     s16 saved = actor->temporary_state;
 
     actor->presentation_flags |= 2;
@@ -564,7 +525,7 @@ void ActorPresentation_RunActorFifteenDialogue(void)
     Engine_EventSetMessage(0x122d);
     Actor_SetAnimation(15, 0);
     Func_02001fd2(15, 0, 2);
-    Func_02001fc2(15, 10);
+    SceneActor_ApplyActorZeroThenWait(15, 10);
     actor->temporary_state = saved;
     Task_Wait(1);
     Event_End();
@@ -619,23 +580,23 @@ void ActorPresentation_RunActorEightSceneSetup(void)
     Event_ShowMessage(8, 0); Event_End();
 }
 
-void SceneDialogue_RunActor11SecondLine(void) { Engine_EventBegin(); Engine_EventSetMessage(0x1335); Func_020012ec(11); Engine_EventEnd(); }
+void SceneDialogue_RunActor11SecondLine(void) { Engine_EventBegin(); Engine_EventSetMessage(0x1335); SceneActor_RunActorStep(11); Engine_EventEnd(); }
 
 void SceneDialogue_RunActor12LineAndAdvance(void)
 {
     u8 *workspace;
     Event_Begin(); Event_SetMessage(0x1336);
     if (GameFlag_IsSet(2) != 0) { workspace = *(u8 **)0x03001ebc; ++*(u16 *)(workspace + 472); }
-    Func_02001326(12); Event_End();
+    SceneActor_RunActorStep(12); Event_End();
 }
 
-void SceneDialogue_RunActor13Line(void) { Engine_EventBegin(); Engine_EventSetMessage(0x1338); Func_02001348(13); Engine_EventEnd(); }
+void SceneDialogue_RunActor13Line(void) { Engine_EventBegin(); Engine_EventSetMessage(0x1338); SceneActor_RunActorStep(13); Engine_EventEnd(); }
 
 void ActorPresentation_RunActorFourteenDialogueAndAdvanceStory(void)
 {
     void Task_Wait(s32);
 
-    struct SceneActor *actor = Func_02002432(14);
+    struct SceneActor *actor = Actor_Get(14);
     u16 *flags = &actor->presentation_flags;
     s16 saved = actor->temporary_state;
     /* tmp keeps the flag result live in a register; do not fold it away. */
@@ -648,7 +609,7 @@ void ActorPresentation_RunActorFourteenDialogueAndAdvanceStory(void)
         ++gEventWork->message;
     Actor_SetAnimation(14, 0);
     Func_020021e4(14, 0, 2);
-    Func_020021d4(14, 10);
+    SceneActor_ApplyActorZeroThenWait(14, 10);
     actor->temporary_state = saved;
     Task_Wait(1);
     Event_End();
@@ -657,7 +618,7 @@ void ActorPresentation_RunActorFourteenDialogueAndAdvanceStory(void)
 
 void ActorPresentation_RunActorFifteenFollowupDialogue(void)
 {
-    struct SceneActor *actor = Func_020024b6(15);
+    struct SceneActor *actor = Actor_Get(15);
     s16 saved = actor->temporary_state;
 
     actor->presentation_flags |= 2;
@@ -665,7 +626,7 @@ void ActorPresentation_RunActorFifteenFollowupDialogue(void)
     Engine_EventSetMessage(0x133b);
     Actor_SetAnimation(15, 0);
     Func_02002242(15, 0, 2);
-    Func_02002232(15, 10);
+    SceneActor_ApplyActorZeroThenWait(15, 10);
     actor->temporary_state = saved;
     Task_Wait(1);
     Event_End();
@@ -725,7 +686,7 @@ void SceneDialogue_RunActor11FlaggedLine(void)
 
     Event_Begin();
     if (GameFlag_IsSet(0x855) == 0) Event_SetMessage(0x1239); else Event_SetMessage(0x1346);
-    Func_020015e6(11); Event_End();
+    SceneActor_RunActorCommandWithFlag91(11); Event_End();
 }
 
 void SceneDialogue_RunActor13FlaggedLine(void)
@@ -751,7 +712,7 @@ void ActorPresentation_RunActorFourteenFlaggedDialogue(void)
         if (GameFlag_IsSet(2) != 0)
             ++gEventWork->message;
     }
-    Func_0200168c(14);
+    SceneActor_RunActorCommandWithFlag91(14);
     Event_End();
     Func_0200273e(14)->presentation_flags &= 1;
 }
@@ -766,7 +727,7 @@ void ActorPresentation_RunActorFifteenScriptBranch(void)
         Event_SetMessage(0x123d);
     else
         Event_SetMessage(0x134b);
-    Func_020016ee(15);
+    SceneActor_RunActorCommandWithFlag91(15);
     Event_End();
     Func_020027a0(15)->presentation_flags &= 1;
 }
@@ -777,14 +738,14 @@ void ActorPresentation_RunActorSixteenScriptBranch(void)
 
     Event_Begin();
     if (GameFlag_IsSet(0x855) == 0) Event_SetMessage(0x123e); else Event_SetMessage(0x134c);
-    Func_0200172e(16); Event_End();
+    SceneActor_RunActorCommandWithFlag91(16); Event_End();
 }
 
 void ActorPresentation_RunActorNineteenScriptBranch(void)
 {
     void Event_Wait(int);
 
-    u8 *actor = Func_020027f2(19); actor[91] = 1; Event_Begin();
+    u8 *actor = Actor_Get(19); actor[91] = 1; Event_Begin();
     if (GameFlag_IsSet(0x855) == 0) {
         Event_SetMessage(0x1241); Actor_SetAnimation(19, 0); Event_Wait(2);
     } else if (GameFlag_IsSet(0x858) != 0) {
@@ -795,7 +756,7 @@ void ActorPresentation_RunActorNineteenScriptBranch(void)
     Event_ShowMessage(19, 0); Event_End(); actor[91] = 0;
 }
 
-void SceneDialogue_RunActor21Line(void) { Engine_EventBegin(); Engine_EventSetMessage(0x12c1); Func_020017cc(21); Engine_EventEnd(); }
+void SceneDialogue_RunActor21Line(void) { Engine_EventBegin(); Engine_EventSetMessage(0x12c1); SceneActor_RunActorCommandWithFlag91(21); Engine_EventEnd(); }
 
 void SceneState_Apply200ThenPlace55_26(void)
 {
@@ -827,18 +788,18 @@ void SceneActor_PlaceActor0AndSetSceneDelay(s32 x, s32 y, s32 continuation)
 
 void FieldScene_SetupScene5At408_320(void)
 {
-    Audio_PlayCue(158); Map_AnimateCells((void *)0x0200a828, 56, 19); Func_02001e4e(408, 320, 5);
+    Audio_PlayCue(158); Map_AnimateCells((void *)0x0200a828, 56, 19); SceneActor_PlaceActor0AndSetSceneDelay(408, 320, 5);
 }
 
 void FieldScene_SetupScene6At312_304(void)
-{ Engine_AudioPlayCue(158); Engine_MapAnimateCells((void *)0x0200a83e, 50, 18); Func_02001e76(312, 304, 6); }
+{ Engine_AudioPlayCue(158); Engine_MapAnimateCells((void *)0x0200a83e, 50, 18); SceneActor_PlaceActor0AndSetSceneDelay(312, 304, 6); }
 
 void FieldScene_SetupScene7At216_288(void)
-{ Engine_AudioPlayCue(158); Engine_MapAnimateCells((void *)0x0200a854, 44, 17); Func_02001e9c(216, 288, 7); }
+{ Engine_AudioPlayCue(158); Engine_MapAnimateCells((void *)0x0200a854, 44, 17); SceneActor_PlaceActor0AndSetSceneDelay(216, 288, 7); }
 
 void ActorPresentation_SetupActorZeroForSceneEightAt376_224(void)
 {
-    struct SceneActor_02000fb4 *actor = Func_0200299c(0);
+    struct SceneActor_02000fb4 *actor = Actor_Get(0);
     struct Presentation *presentation = actor->presentation;
     u8 flags;
 
@@ -854,14 +815,13 @@ void ActorPresentation_SetupActorZeroForSceneEightAt376_224(void)
     flags = presentation->flags;
     flags |= 12;
     presentation->flags = flags;
-    Func_02001ef6(376, 224, 8);
+    SceneActor_PlaceActor0AndSetSceneDelay(376, 224, 8);
 }
 
 void ActorPresentation_SetupActorZeroForSceneNineAt296_176(void)
 {
-    void Func_02001f52_a(s32, s32, s32);
 
-    struct SceneActor_02001010 *actor = Func_020029f8(0);
+    struct SceneActor_02001010 *actor = Actor_Get(0);
     struct Presentation *presentation = actor->presentation;
     u8 flags;
 
@@ -877,17 +837,16 @@ void ActorPresentation_SetupActorZeroForSceneNineAt296_176(void)
     flags = presentation->flags;
     flags |= 12;
     presentation->flags = flags;
-    Func_02001f52_a(296, 176, 9);
+    SceneActor_PlaceActor0AndSetSceneDelay(296, 176, 9);
 }
 
 void FieldScene_SetupScene10At120_144(void)
-{ Engine_AudioPlayCue(158); Engine_MapAnimateCells((void *)0x0200a896, 38, 6); Func_02001f7a(120, 144, 10); }
+{ Engine_AudioPlayCue(158); Engine_MapAnimateCells((void *)0x0200a896, 38, 6); SceneActor_PlaceActor0AndSetSceneDelay(120, 144, 10); }
 
 void ActorPresentation_SetupActorZeroForSceneTwelveAt72_160(void)
 {
-    struct SceneActor *Func_02002b24(s32);
 
-    struct SceneActor_0200113c *actor = Func_02002b24(0);
+    struct SceneActor_0200113c *actor = Actor_Get(0);
     struct Presentation *presentation = actor->presentation;
     u8 flags;
 
@@ -903,17 +862,17 @@ void ActorPresentation_SetupActorZeroForSceneTwelveAt72_160(void)
     flags = presentation->flags;
     flags |= 12;
     presentation->flags = flags;
-    Func_0200207c(72, 160, 12);
+    SceneActor_PlaceActor0AndSetSceneDelay(72, 160, 12);
 }
 
-void FieldScene_SetupScene13At152_264(void) { Engine_AudioPlayCue(123); Func_0200209e(152, 264, 13); }
+void FieldScene_SetupScene13At152_264(void) { Engine_AudioPlayCue(123); SceneActor_PlaceActor0AndSetSceneDelay(152, 264, 13); }
 
 void ActorPresentation_MoveActorToPositionAndWait(int actor, int x, int z, int field40)
 {
     void Task_Wait(int);
     void Actor_SetPosition(int, int, int);
 
-    u8 *record = Func_02002ba2(actor); int frames;
+    u8 *record = Actor_Get(actor); int frames;
     Actor_SetSpeed(actor, 0x30000, 0x18000); *(s32 *)(record + 72) = 0x8000;
     *(s32 *)(record + 68) = 0; *(s32 *)(record + 40) = field40; Actor_SetSpriteFlags(record, 0);
     Actor_MoveToAndWait(actor, x, z); Actor_SetPosition(actor, x << 16, z << 16);
@@ -937,7 +896,7 @@ void FieldScene_RunActor23SequenceOnceByFlag867(void)
         Event_Wait(12);
         Actor_Jump(23, 4, 0);
         Event_Wait(20);
-        Call4(Func_0200243c, 23, 0x188, 104, 0x70000);
+        Call4(ActorPresentation_MoveActorToPositionAndWait, 23, 0x188, 104, 0x70000);
         Event_Wait(20);
         Actor_WalkToAndWait(23, 0x198, 104);
         Actor_WalkToAndWait(23, 0x198, 120);

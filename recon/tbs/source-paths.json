@@ -10275,7 +10275,8 @@
       "name": "Unnamed_08094820"
     },
     "main:080949a8": {
-      "name": "Unnamed_080949a8"
+      "name": "BattleFx_UpdateStormFlash",
+      "source": "BATTLE/EFFECT/STORM_FLASH.C"
     },
     "main:08094ac8": {
       "name": "Unnamed_08094ac8"

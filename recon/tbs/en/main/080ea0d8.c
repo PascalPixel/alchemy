@@ -3,11 +3,13 @@
    (160 frames, A or B skips after frame 4), then a second 320-frame pass
    draws concentric ellipses, falling objects and palette ramps.
 
-   DRAFT, not yet C: 41.4% aligned similarity, 2678 differing halfwords
-   (candidate 5660 bytes, reference 5756). Remaining: register allocation
+   DRAFT, not yet C: 41.9% aligned similarity, 2684 differing halfwords
+   (candidate 5664 bytes, reference 5756). Remaining: register allocation
    in the frame<0 spark block and the dust loop, the IO write queue inline
    (reference stores 0x208 through a reloaded IME address), the ellipse
-   plotter, and the rain placement loop. Stack slots follow the reference
+   plotter, the rain placement loop, and the petal blocks (the reference
+   calls draw through a high-register copy, as if through an inline
+   helper taking the blitter as a parameter). Stack slots follow the reference
    (canvas 104, work 100, ctrl 96, draw2 92, draw 88, frame 84). */
 #include "TYPES.H"
 #include "DMA.H"
@@ -208,6 +210,7 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
     s32 wide;
     struct EffectStep *p;
     DrawRectangle blit;
+    s32 z;
     s32 amp;
 
     cache = (u32 *)0x03001ef0;
@@ -312,13 +315,14 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
                 if (scene[2] > 900) {
                     scene[2] = 900;
                 }
-                scene[2] -= 100;
-                size = Math_Div(scene[2], 100) + 1;
-                if (near > scene[2]) {
-                    near = scene[2];
+                z = scene[2] - 100;
+                scene[2] = z;
+                size = Math_Div(z, 100) + 1;
+                if (near > z) {
+                    near = z;
                 }
-                if (far < scene[2]) {
-                    far = scene[2];
+                if (far < z) {
+                    far = z;
                 }
                 draw(canvas, ramp + BattleFx_DotCells[size - 1], scene[0] - size / 2, scene[1] - size, size,
                     size * 2);

@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_38f:020026cc": {
+      "name": "KorimaMura_TriggerRegionScript",
+      "source": "FIELD/KORIMA_MURA/REGION_TRIGGER.C"
+    },
     "resource_3b1:02001190": {
       "name": "FuneHeya_TurnActorToOpenSide",
       "source": "FIELD/FUNE_HEYA/TURN_ACTOR.C"

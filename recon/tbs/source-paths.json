@@ -688,6 +688,10 @@
     "main:080a8904": {
       "name": "Runtime_RunBusyWaitDelay"
     },
+    "main:080a8914": {
+      "name": "ItemMenu_DrawOwnerStatus",
+      "source": "MENU/ITEM/DRAW_OWNER_STATUS.C"
+    },
     "main:080b5a0c": {
       "name": "BattleParty_CollectUnitList",
       "source": "BATTLE/PARTY/COLLECT_UNIT_LIST.C"

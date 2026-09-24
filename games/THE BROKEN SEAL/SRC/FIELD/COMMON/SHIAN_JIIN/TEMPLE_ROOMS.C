@@ -4,19 +4,13 @@
 #define NULL ((void *)0)
 #define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 #define NewEffectObject           Func_02000048
-#define AcquireOverlayObject      Func_020043e6
 #define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
-#define Scene_GetRecord_1(args...) Func_020061c6(args)
-#define Scene_GetRecord_2(a0) Value1(Func_020061d0, a0)
-#define Scene_GetRecord_3(a0) Value1(Func_020061d8, a0)
-#define Scene_GetRecord_4(a0) Value1(Func_020061e0, a0)
-#define Scene_GetRecord_5(args...) Func_020061e8(args)
+#define Scene_GetRecord_2(a0) Value1(Engine_ActorGet, a0)
+#define Scene_GetRecord_3(a0) Value1(Engine_ActorGet, a0)
+#define Scene_GetRecord_4(a0) Value1(Engine_ActorGet, a0)
 #define Object_SetModeById_1(a0, a1) Value2(Engine_ActorSetAnimation, a0, a1)
 #define ObjectMotion_CallThenWaitForAnimationChange_9(args...) ((void (*)())Engine_ActorSetAnimationAndWait)(args)
 #define ObjectMotion_EnableActionAndSetCallback_1(a0, a1) Value2(Engine_ActorEnableActionCallback, a0, a1)
-#define Scene_GetRecord_6(args...) Func_020067fe(args)
-#define Scene_GetRecord_7(args...) Func_0200680a(args)
-#define Scene_GetRecord_8(args...) Func_02006816(args)
 #define ACTOR_FIELD_108(rec) (*(s32 *)((rec) + 108))
 #define ClearSceneExitGateAtEntry Func_02004f0a
 #define GetSceneExitPendingWork Func_02004f1e
@@ -24,21 +18,13 @@
 #define SetSceneExitCompletionMode Func_02004f34
 #define ClearSceneExitField40 Func_02004f40
 #define SetSceneExitGate Func_02004f48
-#define SetSceneExitHeading Func_02004fa2
 #define ClearSceneExitGateBeforeDescriptor Func_02004fae
-#define GetSceneRecord          Func_0200573e
 #define RunFacingVariantA       Func_020021f6
-#define RunFacingVariantB       Func_02001f68
-#define RunFacingVariantC       Func_0200213c
+#define RunFacingVariantB       FieldScene_RunForwardArcBurst
+#define RunFacingVariantC       FieldScene_RunDescentBurst
 #define RunFacingVariantD       Func_02002062
 #define RunSceneVariant         Func_020023c8
-#define Func_0808a080 Func_020059c6
-#define Scene_GetRecord_1_02002778(args...) Func_02006f90(args)
-#define Scene_GetRecord_2_02002778(args...) Func_02006fa4(args)
-#define Scene_GetRecord_3_02002778(args...) Func_02006fb8(args)
 #define Scene_GetRecord_4_02002778(args...) Func_02007e22(args)
-#define Scene_GetRecord_5_02002778(args...) Func_02007e46_a(args)
-#define BattleRuntime_WaitIfModeZero_88(args...) Func_02007e46_b(args)
 
 struct EffectRec {
     u8 pad[9];
@@ -99,21 +85,9 @@ extern u8 Data_0200cd40[];
 extern s32 Data_03001e40;
 extern u8 Data_000017e0[];
 
-void *Func_020043e6(s32, s32, s32, s32);
-void *Func_0200443e(s32, s32, s32, s32);
-void *Func_02004730(s32);
 s16 Func_020046a2(s32, s32);
-s32 Func_020061c6();
-s32 Func_020061d0();
-s32 Func_020061d8();
-s32 Func_020061e0();
-s32 Func_020061e8();
-s32 Func_020067fe();
-s32 Func_0200680a();
-s32 Func_02006816();
 void Func_02006a34();
 void Func_02006a92();
-s32 Func_02006b36();
 void Func_0200a5b9();
 u8 *Func_02004f0a(s32 slot);
 u8 *Func_02004f1e(s32 slot);
@@ -121,76 +95,41 @@ u8 *Func_02004f2a(s32 slot);
 u8 *Func_02004f34(s32 slot);
 u8 *Func_02004f40(s32 slot);
 u8 *Func_02004f48(s32 slot);
-u8 *Func_02004fa2(s32 slot);
 u8 *Func_02004fae(s32 slot);
-u8 *Func_02005004();
 void Func_02000dae();
 void Func_02000dc6();
 void Func_02000de4();
-u8 *Func_020051c6(s32 id);
 void Func_02000f4c(s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6, u32 flags, u8 *extra);
 void Func_02000f62(s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6, u32 flags, u8 *extra);
 void Func_02000f86(s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6, u32 flags, u8 *extra);
 void Func_02000fa2(s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6, u32 flags, u8 *extra);
 u8 *Func_020056ee(s32 slot);
 u8 *Func_020056fe(s32 slot);
-void Func_02001efc(void);
 void Func_02001fe2(void);
 void Func_0200247c(void);
 void Func_02002350(s32 arg0);
-struct SceneActor_02001334 *Func_0200573e(s32 slot);
-void Func_02001f68(void);
-void Func_0200213c(void);
 void Func_02002062(void);
 void Func_020021f6(void);
 void Func_020023c8(s32 variant);
-u8 *Func_020057c2();
 void Func_0200226c(void);
-void Func_02001fde(void);
-void Func_020021b2(void);
 void Func_020020d8(void);
 void Func_0200246a();
 void Func_020025a4(void);
 void Func_02002486();
-void Func_020028fe(void);
-void Func_0200322c(void);
-u8 *Func_02006912();
-u8 *Func_020069c4(s32 arg0);
-void Func_02004cf2(s32 arg0, s32 arg1);
 void Func_02004d00(s32 arg0, s32 arg1);
 void Func_02004d12(s32 arg0, s32 arg1);
-u8 *Func_0200854c(s32 id);
 void Func_020042d6(s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6, u32 flags, u8 *extra);
 u8 *Func_02008606(s32 id);
 u8 *Func_0200863a(s32 id);
-u8 *Func_02008648(s32 id);
 u8 *Func_020086fa(s32 id);
 u8 *Func_02008704(s32 id);
 void Func_020043fe(s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6, u32 flags, u8 *extra);
-u8 *Func_020059c6();
 s32 Func_02006b96();
 s32 Func_02006c4e();
-s32 Func_02006c60();
-u8 *Func_02006f90();
-u8 *Func_02006fa4();
-u8 *Func_02006fb8();
-void Func_02007c42();
 u8 *Func_02007e22();
 void Func_02007e60();
-u8 *Func_02007e46();
-u8 *Func_02007e46_a();
-u8 *Func_02007e46_b();
-void Func_0200486a();
-void Func_020048c8();
-void Func_02004902();
-void Func_02004966();
-void Func_02004990();
-void Func_020049f4();
 s32 Func_02004b56();
-void Func_02004b64();
-s32 Func_02004b68();
 s32 Func_02004bd4();
-s32 Func_02004bde();
 
 /*
  * resource_39e owner at 0x02001494, 2236 bytes.
@@ -250,6 +189,10 @@ s32 Func_02004bde();
 /* Veneer aliases this overlay binds; see Call binding above. */
 
 /* The main-image helper each veneer above reaches. */
+void FieldScene_RunForwardArcBurst(void);
+
+void FieldScene_RunDescentBurst(void);
+
 static __inline__ void SetScale(s32 actor, s32 horizontal, s32 vertical)
 {
     Actor_SetSpeed(actor, horizontal, vertical);
@@ -463,7 +406,7 @@ void *NewEffectObject(s32 first, s32 second, s32 third, s32 fourth)
     void *object_record;
     s32 flags_mask;
 
-    overlay_object = AcquireOverlayObject(fourth, first, second, third);
+    overlay_object = Object_Create(fourth, first, second, third);
     if (overlay_object != NULL) {
         object_record = FIELD_AT_OFFSET(overlay_object, void *, 0x50);
         flags_mask = -0xD;
@@ -480,7 +423,7 @@ void *NewEffectObject(s32 first, s32 second, s32 third, s32 fourth)
 
 void *NewFlippedEffectObject(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 {
-    u8 *result = Func_0200443e(arg3, arg0, arg1, arg2);
+    u8 *result = Object_Create(arg3, arg0, arg1, arg2);
 
     if (result != NULL) {
         u8 *object = *(u8 **)(result + 0x50);
@@ -510,7 +453,7 @@ s32 StopXianActor(void *actor)
 
 s32 FaceXianActorToPlayer(void *actor)
 {
-    void *player = Func_02004730(0);
+    void *player = Actor_Get(0);
     FIELD(actor, u16, 6) = Func_020046a2(FIELD(player, s32, 0x10) - FIELD(actor, s32, 0x10), FIELD(player, s32, 8) - FIELD(actor, s32, 8));
     return 0;
 }
@@ -618,24 +561,24 @@ void Scene_RunScene39eSequenceB(void)
         Actor_FaceDirection(0, 0xc000, 20);
         *(u8 *)(Func_02004b56(8) + 91) = 0;
         Audio_PlayCue(152);
-        record = Func_02004b68(8);
+        record = Actor_Get(8);
         *(s32 *)(record + 40) = 0x80000;
         Actor_SetAnimation(8, 1);
         Event_Wait(30);
         Event_SetMessage(0x17ac);
     } else {
         Event_SetMessage(0x179f);
-        Func_0200486a(0, 8);
+        FieldScene_SetFlag140AndFinishSequence(0, 8);
         Call1_0200071c((void (*)())Engine_EventWait, 30);
         Event_ShowMessage(8, 0);
-        Func_020048c8();
+        FieldScene_FinishSequence();
         Event_Wait(20);
         Actor_WalkToAndWait(0, 168, 0x1f8);
         Event_Wait(5);
         Actor_FaceDirection(0, 0xc000, 20);
         Audio_PlayCue(152);
         *(u8 *)(Func_02004bd4(8) + 91) = rec7;
-        record = Func_02004bde(8);
+        record = Actor_Get(8);
         *(s32 *)(record + 40) = 0x80000;
         Actor_SetAnimation(8, 1);
         Event_Wait(30);
@@ -645,11 +588,11 @@ void Scene_RunScene39eSequenceB(void)
             Event_Wait(20);
             Event_ShowMessage(8, 0);
             ((void (*)())Engine_EventWait)(20);
-            Func_02004902(8, 0);
+            FieldScene_SetFlag140AndFinishSequence(8, 0);
             Event_Wait(30);
             Actor_RunRepeatedMotion(0, 2);
             Event_Wait(50);
-            Func_02004966();
+            FieldScene_FinishSequence();
             Event_Wait(30);
             Actor_SetAnimationAndWait(8, 3);
             Event_ShowMessage(8, 0);
@@ -664,11 +607,11 @@ void Scene_RunScene39eSequenceB(void)
         Event_OpenMessage(8, 0);
         if (Event_ChooseYesNo(0, 0) == 1) {
             Actor_ShowEmote(8, 0x105, 60);
-            Func_02004990(8, 0);
+            FieldScene_SetFlag140AndFinishSequence(8, 0);
             Event_Wait(30);
             Actor_RunRepeatedMotion(0, 2);
             Event_Wait(50);
-            Func_020049f4();
+            FieldScene_FinishSequence();
             Event_Wait(30);
             Event_ShowMessage(8, 0);
             *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
@@ -713,7 +656,7 @@ void Scene_RunScene39eSequenceB(void)
         ColorBuffer_Interpolate(30);
         Event_WaitForScreen();
         Camera_WaitForMove();
-        Func_02004b64();
+        FieldScene_SpawnEightShots();
         ColorBuffer_ApplyTarget(0x10000, 0);
         ColorBuffer_Interpolate(30);
         Event_ShowMessage(8, 0);
@@ -780,7 +723,7 @@ testPendingWork:
 
     Event_ShowMessage(12, 0);
 
-    ((struct SceneRecordHeading *)SetSceneExitHeading(12))->heading = 128 << 7;
+    ((struct SceneRecordHeading *)Actor_Get(12))->heading = 128 << 7;
 
     ClearSceneExitGateBeforeDescriptor(12)[91] = 0;
 
@@ -798,7 +741,7 @@ void FieldScene_ShowDialogue182D(void)
 
 void FieldScene_RunForwardArcBurst(void)
 {
-    u8 *record = Func_02005004(19);
+    u8 *record = Actor_Get(19);
     u32 index;
     s32 angle;
 
@@ -831,7 +774,7 @@ void FieldScene_RunForwardArcBurst(void)
 
 void FieldScene_RunDescentBurst(void)
 {
-    u8 *record = Func_020051c6(19);
+    u8 *record = Actor_Get(19);
     u32 i = 0;
     s32 step = 8;
     s32 zero;
@@ -865,7 +808,7 @@ void FieldScene_DispatchApproachByFacing(void)
 
     if (*(u16 *)(Func_020056ee(0) + 6) > (128 << 7)
         && *(u16 *)(Func_020056fe(0) + 6) < (192 << 8)) {
-        Func_02001efc();
+        FieldScene_RunForwardArcBurst();
     } else {
         Func_02001fe2();
     }
@@ -881,7 +824,7 @@ void FieldScene_DispatchApproachByFacing(void)
 
 void FieldScene_DispatchByFacing(void)
 {
-    struct SceneActor_02001334 *record = GetSceneRecord(0);
+    struct SceneActor_02001334 *record = Actor_Get(0);
     u16 angle;
 
     Event_Begin();
@@ -907,7 +850,7 @@ void FieldScene_DispatchByFacing(void)
 
 void FieldScene_DispatchByFacingAndFlags(void)
 {
-    u8 *record = Func_020057c2(0);
+    u8 *record = Actor_Get(0);
     u16 facing;
 
     Event_Begin();
@@ -916,9 +859,9 @@ void FieldScene_DispatchByFacingAndFlags(void)
     if ((u16)(facing - 0x2000) <= 0x3fff) {
         Func_0200226c();
     } else if ((u16)(facing - 0x6000) <= 0x3fff) {
-        Func_02001fde();
+        FieldScene_RunForwardArcBurst();
     } else if ((u16)(facing + 0x6000) <= 0x3fff) {
-        Func_020021b2();
+        FieldScene_RunDescentBurst();
     } else {
         Func_020020d8();
     }
@@ -944,9 +887,9 @@ firstSceneComplete:
     if (GameFlag_IsSet(0x89b) != 0) {
         Func_02002486(2);
     } else if (GameFlag_IsSet(0x89a) == 0) {
-        Func_020028fe();
+        FieldScene_RunSecondEnsembleBeat();
     } else {
-        Func_0200322c();
+        FieldScene_RunEnsembleStoryBeat();
     }
     Event_End();
 }
@@ -989,11 +932,11 @@ void FieldScene_RunSecondEnsembleBeat(void)
     Actor_RunRepeatedMotion(16, 2);
     Event_Wait(20);
     Actor_SetSpeed(16, 192 << 9, 192 << 8);
-    rec = Record1(Func_0808a080, 16);
+    rec = Record1(Engine_ActorGet, 16);
     rec[90] &= 0xfe;
     Actor_WalkToAndWait(16, 154 << 1, 136 << 1);
     Event_Wait(1);
-    rec = Record1(Func_0808a080, 16);
+    rec = Record1(Engine_ActorGet, 16);
     {
         /*
          * A result temporary, not the compound or-assign the matching
@@ -1154,13 +1097,13 @@ void FieldScene_RunSecondEnsembleBeat(void)
     Event_Wait(20);
     Actor_SetPosition(19, 232 << 16, 168 << 16);
     Actor_SetPosition(20, 232 << 16, 168 << 16);
-    rec = Record1(Func_0808a080, 19);
+    rec = Record1(Engine_ActorGet, 19);
     *(s32 *)(rec + 12) = 0xc0000;
-    rec = Record1(Func_0808a080, 19);
+    rec = Record1(Engine_ActorGet, 19);
     *(s32 *)(rec + 60) = -0x80000000;
-    rec = Record1(Func_0808a080, 19);
+    rec = Record1(Engine_ActorGet, 19);
     *(s32 *)(rec + 24) = 0xcccc;
-    rec = Record1(Func_0808a080, 19);
+    rec = Record1(Engine_ActorGet, 19);
     {
         u8 *target = *(u8 **)(rec + 80);
         s32 shown = 0x8000;
@@ -1262,7 +1205,7 @@ void FieldScene_RunEnsembleStoryBeat(void)
     u32 i;
     s32 actor;
 
-    actor = Scene_GetRecord_1(18);
+    actor = Actor_Get(18);
     ACTOR_FIELD_108(actor) = 0;
     actor = Scene_GetRecord_2(13);
     ACTOR_FIELD_108(actor) = 0;
@@ -1270,7 +1213,7 @@ void FieldScene_RunEnsembleStoryBeat(void)
     ACTOR_FIELD_108(actor) = 0;
     actor = Scene_GetRecord_4(15);
     ACTOR_FIELD_108(actor) = 0;
-    actor = Scene_GetRecord_5(16);
+    actor = Actor_Get(16);
     ACTOR_FIELD_108(actor) = 0;
     Object_SetModeById_1(11, 1);
     Camera_SetSpeed(0x8000, 0x1000);
@@ -1445,11 +1388,11 @@ void FieldScene_RunEnsembleStoryBeat(void)
     Actor_FaceDirection(15, 0xc000, 20);
     Actor_RunRepeatedMotion(15, 3);
     Actor_SetPosition(19, 0xe80000, 0xa80000);
-    actor = Scene_GetRecord_6(19);
+    actor = Actor_Get(19);
     *(s32 *)(actor + 12) = 0xc0000;
-    actor = Scene_GetRecord_7(19);
+    actor = Actor_Get(19);
     *(s32 *)(actor + 60) = -0x80000000;
-    actor = Scene_GetRecord_8(19);
+    actor = Actor_Get(19);
     {
         s32 target = *(s32 *)(actor + 80);
         s32 shown = 0x8000;
@@ -1495,7 +1438,7 @@ void FieldScene_DispatchByRange(void)
     u8 *record;
     u32 biased;
 
-    record = Func_02006912(0);
+    record = Actor_Get(0);
     biased = *(u16 *)(record + 6);
     Event_Begin();
 
@@ -1537,7 +1480,7 @@ void FieldScene_SpawnRandomizedParticle(void)
     s32 draw;
     s32 offset;
 
-    record = Func_020069c4(0);
+    record = Actor_Get(0);
 
     params.field1 = 7;
     draw = (u32)(Random_Next() * 7) >> 16;
@@ -1566,7 +1509,7 @@ void FieldScene_SpawnRandomizedParticle(void)
 
 void FieldScene_ApplyOffset0Neg32(void)
 {
-    Func_02004cf2(0, -32);
+    FieldScene_RunOpeningAuxiliarySequence(0, -32);
 }
 
 void FieldScene_ApplyOffset0Pos32(void)
@@ -1611,7 +1554,7 @@ void FieldScene_RunScene39eSequenceA(void)
     Actor_SetDestinationOffset(0, 0, -6);
     Actor_WaitForMove(0);
     Actor_SetChildValue(0, 15);
-    record = Func_02006b36(0);
+    record = Actor_Get(0);
     Actor_SetSpriteFlags(record, 0);
     Func_02006a92(base5_200a5b9);
     Event_WaitForScreen();
@@ -1661,7 +1604,7 @@ void FieldScene_RunScene39e_020027ec(void)
     Event_Wait(60);
     *(u8 *)(Func_02006c4e(8) + 91) = 0;
     Audio_PlayCue(152);
-    record = Func_02006c60(8);
+    record = Actor_Get(8);
     *(s32 *)(record + 40) = 0x80000;
     Actor_SetAnimation(8, 1);
     Event_SetMessage(0x17be);
@@ -1774,15 +1717,15 @@ void FieldScene_RunRoofEnsembleSequence(void)
     Actor_FaceDirection(9, 0xd000, 0);
     /* Copy the pair of s32 fields at +8/+16 from actor 0's record (as seen
      * through each accessor) into the matching setter for another actor. */
-    source_record = Scene_GetRecord_1_02002778(0);
+    source_record = Actor_Get(0);
     if (source_record != 0) {
         Actor_SetPosition(1, *(s32 *)(source_record + 8), *(s32 *)(source_record + 16));
     }
-    source_record = Scene_GetRecord_2_02002778(0);
+    source_record = Actor_Get(0);
     if (source_record != 0) {
         Actor_SetPosition(2, *(s32 *)(source_record + 8), *(s32 *)(source_record + 16));
     }
-    source_record = Scene_GetRecord_3_02002778(0);
+    source_record = Actor_Get(0);
     if (source_record != 0) {
         Actor_SetPosition(3, *(s32 *)(source_record + 8), *(s32 *)(source_record + 16));
     }
@@ -2156,7 +2099,7 @@ void FieldScene_RunRoofEnsembleSequence(void)
     Event_ShowMessageAndWait(1, 0, 20);
     Actor_StartRepeatedMotion(8, 2);
     Actor_ShowEmote(8, 0x102, 60);
-    Call3_02002ad0((void (*)())Func_02007e46, 10, 0xd000, 0);
+    Call3_02002ad0((void (*)())Engine_ActorFaceDirection, 10, 0xd000, 0);
     Actor_FaceDirection(8, 0xd000, 20);
     Event_ShowMessageAndWait(8, 0, 20);
     Actor_StartRepeatedMotion(0, 2);
@@ -2179,17 +2122,17 @@ void FieldScene_RunRoofEnsembleSequence(void)
     Event_Wait(1);
     {
         /* Set bit 0 of the flag byte at +90. */
-        u8 *record = Scene_GetRecord_5_02002778(0);
+        u8 *record = Actor_Get(0);
         u8 value = record[90] | 1;
 
         record[90] = value;
     }
     Event_Wait(20);
-    Func_02007c42();
+    FieldScene_RunParticleRain();
     Event_Wait(60);
     Func_02007e60(2, 144);
     Actor_SetAnimationAndWait(8, 3);
-    BattleRuntime_WaitIfModeZero_88(20);
+    Event_Wait(20);
     Event_ShowMessageAndWait(8, 0, 20);
     Actor_SetAnimation(0, 3);
     Actor_SetAnimation(1, 3);
@@ -2325,7 +2268,7 @@ void FieldScene_SpawnEightShots(void)
     u8 *record;
     u32 i;
 
-    record = Func_0200854c(8);
+    record = Actor_Get(8);
     descriptor.field0 = 1;
     descriptor.field24 = 0x0119;
     descriptor.field28 = 0x0200d1d8;
@@ -2371,7 +2314,7 @@ void FieldScene_RunParticleRain(void)
     Audio_PlayCue(0x83);
     *(u32 *)(Func_0200863a(2) + 108) = 0x0200c1c5;
     Event_Wait(120);
-    record = Func_02008648(8);
+    record = Actor_Get(8);
     descriptor.field0 = 1;
     descriptor.field4 = 2;
     descriptor.field24 = 0x011d;

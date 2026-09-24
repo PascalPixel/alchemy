@@ -6,10 +6,10 @@
 	.set sub_080b5028, 0x080b5028
 	.set sub_080b5038, 0x080b5038
 	.set sub_080cd508, 0x080cd508
-	.global Unnamed_080cd86c
+	.global BattleFx_OpenCanvasLayer
 	.global Func_080cd86c
 	.thumb_func
-Unnamed_080cd86c:
+BattleFx_OpenCanvasLayer:
 Func_080cd86c:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

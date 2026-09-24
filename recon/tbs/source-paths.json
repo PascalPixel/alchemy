@@ -10473,7 +10473,8 @@
       "name": "Unnamed_0809bcf8"
     },
     "main:0809c138": {
-      "name": "Unnamed_0809c138"
+      "name": "Map_ShowWorldMap",
+      "source": "FIELD/COMMON/MAP/SHOW_WORLD_MAP.C"
     },
     "main:080e698c": {
       "name": "Unnamed_080e698c"
@@ -20120,7 +20121,7 @@
       "name": "Unnamed_080cd104"
     },
     "main:080cd86c": {
-      "name": "Unnamed_080cd86c"
+      "name": "BattleFx_OpenCanvasLayer"
     },
     "main:080cdb24": {
       "name": "Unnamed_080cdb24"
@@ -20723,6 +20724,32 @@
     "resource_3a0:02000d0c": {
       "name": "ShianMura_Func02000d0c",
       "source": "FIELD/SHIAN_MURA/F_00D0C.C"
+    },
+    "main:0809bb64": {
+      "name": "BattleFx_SetupResourcesAndWindow",
+      "source": "BATTLE/EFFECT/SETUP_RESOURCES_AND_WINDOW.C"
+    },
+    "main:080a4f08": {
+      "name": "ItemMenu_SelectGiveQuantity"
+    },
+    "main:080c1470": {
+      "name": "BattleFx_InitializeStarField"
+    },
+    "main:0809b450": {
+      "name": "BattleFx_SpawnDescendingArcParticles",
+      "source": "BATTLE/EFFECT/SPAWN_DESCENDING_ARC_PARTICLES.C"
+    },
+    "main:08096fb0": {
+      "name": "BattleFx_LoadActionEffectResources"
+    },
+    "main:0801f818": {
+      "name": "SaveState_BuildSummaryHeader"
+    },
+    "main:080f2f10": {
+      "name": "TitlePalette_UpdateFade"
+    },
+    "main:080f2b70": {
+      "name": "Title_ShowSplashScreen"
     }
   },
   "symbols": {
@@ -20881,7 +20908,6 @@
     "main:08009008": "Object_ApplyProjectedPlacementFar",
     "main:080150d8": "SideObject_CreateFar",
     "main:08015408": "UiWindow_DrawFrameFar",
-    "main:0801f818": "SaveState_BuildSummaryHeader",
     "main:08020244": "SaveMenu_SelectSlot",
     "main:08018850": "UiText_MeasureEntryDimensions",
     "main:08017248": "UiWindow_MapTextCanvasTiles",
@@ -20890,7 +20916,6 @@
     "main:080b7b6c": "BattleActor_SpawnObjectsForList",
     "main:08092c40": "UiText_OpenMessageAtObject",
     "main:080c24f0": "BattleEnemy_RecordDefeat",
-    "main:08096fb0": "BattleFx_LoadActionEffectResources",
     "main:080912b8": "Object_EffectSpawnCallback",
     "main:080152b8": "BattleLayout_HighlightPartyPanelsFar",
     "main:08028574": "Menu_RunResourceSelectionLoop",
@@ -20912,7 +20937,6 @@
     "main:080ae99c": "UiIcon_CreateStatChangeArrow",
     "main:08017aa4": "UiText_RenderWideStringAtOffset",
     "main:08017c8c": "UiText_RenderWideStringInWindow",
-    "main:080f2f10": "TitlePalette_UpdateFade",
     "main:080f9c44": "Sound_TickDmaRestartTimer",
     "main:08077058": "Inventory_RemoveFar",
     "main:080a9f0c": "Item_ReturnOne",
@@ -20926,7 +20950,6 @@
     "main:08096ddc": "BattleFx_SpawnScaledArcObjects",
     "main:080cf8e0": "BattleFx_RunSevenMode",
     "main:080cf2b8": "BattleFx_RunMemberBeam",
-    "main:0809b450": "BattleFx_SpawnDescendingArcParticles",
     "main:080974d8": "Camera_WorldToScreen",
     "main:080ca1fc": "BattleFx_RunParticlePool",
     "main:080ceb54": "BattleFx_RunMemberBurst",

@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_378:020031b8": {
+      "name": "ShindenHeya_Func020031b8",
+      "source": "FIELD/COMMON/SHINDEN_HEYA/F_031B8.C"
+    },
     "resource_378:0200074c": {
       "name": "ShindenHeya_Func0200074c",
       "source": "FIELD/COMMON/SHINDEN_HEYA/F_0074C.C"
@@ -10856,7 +10860,8 @@
       "source": "FIELD/FUNE_HOBASHIRA/OBJECT_SCALE.C"
     },
     "resource_3b0:02000564": {
-      "name": "Scene_RunFourActorStagingSequence"
+      "name": "FuneHobashira_Func02000564",
+      "source": "FIELD/FUNE_HOBASHIRA/F_00564.C"
     },
     "resource_3ba:020021b8": {
       "name": "CommandInterpolationRenderer_Update"
@@ -21006,6 +21011,22 @@
     },
     "main:080109e8": {
       "name": "Map_InitializePerspectiveScene"
+    },
+    "resource_396:02001004": {
+      "name": "ToretoHeya_Func02001004",
+      "source": "FIELD/TORETO_HEYA/F_01004.C"
+    },
+    "resource_3b1:02003364": {
+      "name": "FuneHeya_Func02003364",
+      "source": "FIELD/FUNE_HEYA/F_03364.C"
+    },
+    "resource_3a5:020012fc": {
+      "name": "RamakanSabaku_Func020012fc",
+      "source": "FIELD/RAMAKAN_SABAKU/F_012FC.C"
+    },
+    "resource_3c8:020047c0": {
+      "name": "VinasuHeya_Func020047c0",
+      "source": "FIELD/VINASU_HEYA/F_047C0.C"
     }
   },
   "symbols": {

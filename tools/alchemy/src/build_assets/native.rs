@@ -25,7 +25,6 @@ use crate::targets::{target_for, DecompTarget, DecompTargetId};
 pub(in crate::build_assets) struct NativePaths {
     pub index: String,
     pub colors: String,
-    pub recipes: String,
     pub source: &'static str,
 }
 impl NativePaths {
@@ -33,7 +32,6 @@ impl NativePaths {
         Self {
             index: format!("{}/private-inputs.json", target.recon_dir()),
             colors: format!("{}/GRAPHICS/COMMON/PALETTE.JSON", target.source_dir),
-            recipes: format!("{}/GRAPHICS/COMMON/COMPRESSION.JSON", target.source_dir),
             source: target.source_dir,
         }
     }

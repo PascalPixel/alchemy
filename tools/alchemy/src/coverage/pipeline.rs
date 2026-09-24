@@ -386,6 +386,7 @@ pub(crate) fn authoritative_inventory(
 
 /// A target's generated executable inventory in a checkout, with the
 /// intervals [`validated_inventory`] admits. A revision has none.
+#[cfg(test)]
 fn read_inventory(
     tree: &SourceTree,
     target: DecompTarget,

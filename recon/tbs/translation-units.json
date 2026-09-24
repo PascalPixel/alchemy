@@ -50064,8 +50064,16 @@
           "address": "0x0200dad4",
           "kind": "thumb"
         },
+        "Engine_ActorRunRepeatedMotion": {
+          "address": "0x0200db4c",
+          "kind": "thumb"
+        },
         "Engine_ActorSetAnimation": {
           "address": "0x0200db2c",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetAnimationAndWait": {
+          "address": "0x0200db34",
           "kind": "thumb"
         },
         "Engine_ActorSetSpeed": {
@@ -50112,24 +50120,8 @@
           "address": "0x0200daac",
           "kind": "thumb"
         },
-        "Func_0200a5f8": {
-          "address": "0x0200db4c",
-          "kind": "thumb"
-        },
-        "Func_0200a5f8_a": {
-          "address": "0x0200db34",
-          "kind": "thumb"
-        },
         "Func_0200a650": {
           "address": "0x0200db34",
-          "kind": "thumb"
-        },
-        "Func_0200a650_a": {
-          "address": "0x0200da1c",
-          "kind": "thumb"
-        },
-        "Func_0200a754": {
-          "address": "0x0200dba4",
           "kind": "thumb"
         },
         "LinkedMessage_MercuryDialogue": {

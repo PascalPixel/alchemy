@@ -71018,6 +71018,26 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "arutin-yama-area-script",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/AREA_SCRIPT.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3a4",
+      "absolute_symbols": {
+        "Engine_GameFlagIsSet": {
+          "address": "0x0200bb50",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02001678",
+          "extent": 248,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

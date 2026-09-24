@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_3a4:02001678": {
+      "name": "ArutinYama_GetAreaScript",
+      "source": "FIELD/ARUTIN_YAMA/AREA_SCRIPT.C"
+    },
     "resource_3c9:020037c4": {
       "name": "VinasuChojo_UpdateBeamActors",
       "source": "FIELD/VINASU_CHOJO/BEAM_ACTORS.C"

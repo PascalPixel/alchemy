@@ -167,8 +167,13 @@ work than by working alone.
   after `git fetch`, then `make worktree-setup`. A stale local `main` silently
   costs an agent everything landed since.
 - **Commit every adoption immediately** and every draft before moving on. An
-  agent with no commit in 30 minutes is checked; one with none in an hour is
-  stopped and its slice rebriefed.
+  agent with no adoption in 45 minutes, or under 1 KB landed per 250k tokens,
+  is stopped and its slice rebriefed.
+- **Spend tokens on bytes.** A residual that is only register choice gets one
+  attempt guided by the allocator dump, then its draft header records it and
+  the lane moves on. Send `make verify` and hook output to a log and read the
+  errors. Brief from one ranked target list rebuilt at each landing, and keep
+  one shared set of lane scripts rather than a copy per lane.
 - **Land every 30 minutes** from one landing worktree: merge each finished
   branch, merge registries with a structural three-way JSON merge (keep both
   sides' additions), run `make compare-all`, `make test`, `make coverage` and

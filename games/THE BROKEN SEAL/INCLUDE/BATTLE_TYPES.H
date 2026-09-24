@@ -75,7 +75,10 @@ struct BattleAction {
 struct BattleUnit {
     u8 name[0x0f];                  /* 0x000 */
     u8 level;                       /* 0x00f */
-    u8 unknown_010[0x24];
+    u8 unknown_010[4];
+    s16 hp_gauge;                   /* 0x014, hp / max_hp in 1/0x4000 */
+    s16 pp_gauge;                   /* 0x016 */
+    u8 unknown_018[0x1c];
     s16 max_hp;                     /* 0x034 */
     s16 max_pp;                     /* 0x036 */
     s16 hp;                         /* 0x038 */

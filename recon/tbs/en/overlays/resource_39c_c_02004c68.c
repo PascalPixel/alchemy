@@ -1,6 +1,11 @@
-/* NONMATCHING: 728 of 732 bytes, 50 halfword edits (2026-09-24). Hand-written from the
- * resolved jump-table disassembly as a single-overlay unit binding Engine_* at
- * their import veneers. Remaining: the lift scene is written in full; the store of 0x4000000 after the lowering loop reuses the loop's compare constant (the reference rematerialises it), which shifts the rest by 4 bytes, and the second loop's speed update and a few argument orders differ (50 edits). */
+/* NONMATCHING: 732 bytes, candidate 732, 45 differing halfwords (2026-09-24).
+ * Hand-written from the resolved disassembly as a single-overlay unit binding
+ * Engine_* at their import veneers. Remaining: the lowering loop. As a for
+ * (;;) with a break the sizes agree but loop.c rotates the loop (enters at
+ * the wait, 43 halfwords); as a goto loop the layout is the reference's but
+ * CSE reuses the compare's 0x4000000 for the store after the loop, which the
+ * reference rebuilds (4 bytes short). One scheduling pair after the walk
+ * (zero before the unknown_44 store). */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
@@ -52,20 +57,17 @@ void Local_02004c68(void)
     Engine_EventWait(60);
     Main_080091a0();
     Engine_AudioPlayCue(223);
-lower:
-    {
+    for (;;) {
         layer->y -= speed;
         Engine_ActorGet(0)->z.fixed += speed;
         Engine_ActorGet(0)->target_z = Engine_ActorGet(0)->z.fixed;
         Engine_ActorGet(13)->z.fixed += speed;
         Engine_ActorGet(13)->target_z = Engine_ActorGet(13)->z.fixed;
-        if (layer->y > 0x4000000) {
-            if ((*(u32 *)0x03001e40 & 15) == 0 && speed > 0xccb) {
-                speed += -0x560;
-            }
-            Engine_TaskWait(1);
-            goto lower;
-        }
+        if (layer->y <= 0x4000000)
+            break;
+        if ((*(u32 *)0x03001e40 & 15) == 0 && speed > 0xccb)
+            speed += -0x560;
+        Engine_TaskWait(1);
     }
     layer->y = 0x4000000;
     Engine_MapRedraw();

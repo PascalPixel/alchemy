@@ -17,7 +17,6 @@ mod flatten;
 mod format;
 mod generated_files;
 mod http;
-mod matching;
 mod overlay;
 mod parallel;
 mod raw;
@@ -34,7 +33,6 @@ const USAGE: &str = "usage: alchemy <command> [args]\n\
   inspect OWNER         resolve calls and symbols; --asm shows annotated instructions, --siblings twins\n\
   score SOURCE          compile through the approved route and compare the owner\n\
   adopt OWNER           verify and integrate candidate C\n\
-  match SOURCE          search decoder-named, catalogued source repairs\n\
   unit                  scaffold or flatten translation units\n\
   cross-edition         compare historical editions\n\
   build                 build compilers, ROM stages, assets or allocator dumps\n\
@@ -91,7 +89,6 @@ fn main() -> ExitCode {
             Err(error) => result(Err(error)),
         },
         "cross-edition" => result(cross_edition::run(rest)),
-        "match" => result(matching::run(rest)),
         "-h" | "--help" => {
             println!("{USAGE}");
             ExitCode::SUCCESS

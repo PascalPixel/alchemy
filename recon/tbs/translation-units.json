@@ -70764,6 +70764,82 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "haidia-arashi-storm-scene-00d5c",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_ARASHI/STORM_SCENE_00D5C.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_372",
+      "absolute_symbols": {
+        "Engine_GameFlagIsSet": {
+          "address": "0x0200c6dc",
+          "kind": "thumb"
+        },
+        "Engine_EventBegin": {
+          "address": "0x0200c6fc",
+          "kind": "thumb"
+        },
+        "Engine_ActorGet": {
+          "address": "0x0200c72c",
+          "kind": "thumb"
+        },
+        "Engine_WorkSetValuesIfNonNegative": {
+          "address": "0x0200c6bc",
+          "kind": "thumb"
+        },
+        "Engine_AudioPlayCue": {
+          "address": "0x0200c8b4",
+          "kind": "thumb"
+        },
+        "Engine_TaskWait": {
+          "address": "0x0200c63c",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetPosition": {
+          "address": "0x0200c78c",
+          "kind": "thumb"
+        },
+        "Engine_ActorWalkToAndWait": {
+          "address": "0x0200c77c",
+          "kind": "thumb"
+        },
+        "Engine_EventWait": {
+          "address": "0x0200c6f4",
+          "kind": "thumb"
+        },
+        "Engine_MapWaitWorkValuesBelow256": {
+          "address": "0x0200c6c4",
+          "kind": "thumb"
+        },
+        "Main_0808a5e8": {
+          "address": "0x0200c8ac",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagSet": {
+          "address": "0x0200c6e4",
+          "kind": "thumb"
+        },
+        "FieldScene_RunScene372_02000ec4": {
+          "address": "0x02008ec4",
+          "kind": "thumb"
+        },
+        "SceneActor_RunActor22PlacementSequence": {
+          "address": "0x02009a64",
+          "kind": "thumb"
+        },
+        "Engine_EventEnd": {
+          "address": "0x0200c704",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02000d5c",
+          "extent": 360,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

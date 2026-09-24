@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_372:02000d5c": {
+      "name": "HaidiaArashi_RunScene00D5C",
+      "source": "FIELD/HAIDIA_ARASHI/STORM_SCENE_00D5C.C"
+    },
     "resource_38f:020003c8": {
       "name": "KorimaMura_RunObjectSpreadScene",
       "source": "FIELD/KORIMA_MURA/OBJECT_SPREAD_SCENE.C"

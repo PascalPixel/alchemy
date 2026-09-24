@@ -147,11 +147,14 @@ void FunctionHead_080dd9c0(struct BattleEffectArgument *efx)
                     }
                 }
             }
+            {
+            s32 cue = i * 8 + 12;
             for (j = 0; j != work->effect->count; j++) {
-                if (frame == i * 8 + 12) {
+                if (frame == cue) {
                     Audio_PlayCue(132);
                     ObjectGroup_UpdateMembers(work->effect->actors[j], 7, 5, j, 3);
                 }
+            }
             }
         }
 

@@ -20031,7 +20031,8 @@
       "name": "Unnamed_080ed408"
     },
     "main:080f02b0": {
-      "name": "Unnamed_080f02b0"
+      "name": "Graphics_LoadCharacterBlockAndPalette",
+      "source": "GRAPHICS/TILE/LOAD_CHARACTER_BLOCK_AND_PALETTE.C"
     },
     "main:080f0538": {
       "name": "Unnamed_080f0538"

@@ -5792,7 +5792,7 @@
       "source": "FIELD/KUUPUAPPU_HEYA/PROMPT.C"
     },
     "resource_37b:02000098": {
-      "name": "FieldScene_RunLoopedLayoutSequence",
+      "name": "Scene_OpenTheHole",
       "source": "FIELD/SORU_SEKIZO/GUARDED_STEP.C"
     },
     "resource_372:02002180": {
@@ -10294,11 +10294,11 @@
       "source": "FIELD/HAIDIA_HEYA/TIMED_EVENTS.C"
     },
     "resource_37b:02002244": {
-      "name": "FieldScene_RunScene37b_02002244",
+      "name": "Scene_ShineLeftBeam",
       "source": "FIELD/SORU_SEKIZO/GUARDED_STEP.C"
     },
     "resource_37b:020022f4": {
-      "name": "FieldScene_RunScene37b_020022f4",
+      "name": "Scene_ShineRightBeam",
       "source": "FIELD/SORU_SEKIZO/GUARDED_STEP.C"
     },
     "resource_383:0200091c": {

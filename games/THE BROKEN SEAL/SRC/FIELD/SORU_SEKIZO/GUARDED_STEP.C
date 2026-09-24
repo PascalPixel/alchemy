@@ -1,6 +1,17 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
+/*
+ * The two statues at the head of the statue hall each shine a beam of light
+ * into the floor; once both shine, the floor flickers and a hole opens.
+ */
+enum StatueHallFlag {
+    FLAG_STATUE_TRAP_SPRUNG = 0x813,
+    /* The beams drawn at map columns 15 and 17. */
+    FLAG_LEFT_BEAM_SHINING = 0x816,
+    FLAG_RIGHT_BEAM_SHINING = 0x817
+};
+
 #define NULL ((void *)0)
 #define Scene_GetRecord_1(a0) Call1(Func_0200349c, a0)
 #define TARGET_ID 9
@@ -215,7 +226,7 @@ s32 SceneEventRuntime_SelectInitialSceneByFlags(void)
     s32 no;
 
     if (GameFlag_IsSet(0x818) != 0) {
-        if (GameFlag_IsSet(0x813) == 0) {
+        if (GameFlag_IsSet(FLAG_STATUE_TRAP_SPRUNG) == 0) {
             no = 3;
             goto apply;
         }
@@ -231,7 +242,7 @@ fail:
     return -1;
 }
 
-void FieldScene_RunLoopedLayoutSequence(void)
+void Scene_OpenTheHole(void)
 {
     s32 i;
 
@@ -363,8 +374,8 @@ s32 Func_0200105c(void)
         Map_CopyCellsTo(4, 59, 17, 38, 4, 3);
         Map_CopyCellsTo(8, 60, 17, 39, 2, 2);
         Map_CopyCellAttributes(0, 1, 2, 1, 17, 7);
-    } else if (GameFlag_IsSet(0x816) != 0
-                && GameFlag_IsSet(0x817) != 0) {
+    } else if (GameFlag_IsSet(FLAG_LEFT_BEAM_SHINING) != 0
+                && GameFlag_IsSet(FLAG_RIGHT_BEAM_SHINING) != 0) {
         Actor_SetPosition(10, 0xe80000, 0x780000);
         Actor_SetPosition(12, 0x1580000, 0x780000);
         Map_CopyCellsTo(0, 28, 17, 8, 2, 1);
@@ -375,11 +386,11 @@ s32 Func_0200105c(void)
         Map_CopyCellsTo(8, 60, 17, 39, 2, 2);
         Map_CopyCellAttributes(0, 0, 2, 1, 17, 8);
     } else {
-        if (GameFlag_IsSet(0x816) != 0) {
+        if (GameFlag_IsSet(FLAG_LEFT_BEAM_SHINING) != 0) {
             Actor_SetPosition(10, 0xe80000, 0x780000);
             Map_CopyCellsTo(0, 59, 15, 38, 4, 3);
         }
-        if (GameFlag_IsSet(0x817) != 0) {
+        if (GameFlag_IsSet(FLAG_RIGHT_BEAM_SHINING) != 0) {
             Actor_SetPosition(12, 0x1580000, 0x780000);
             Map_CopyCellsTo(4, 59, 17, 38, 4, 3);
         }
@@ -517,7 +528,7 @@ void ConfigureSceneAndCheckActors(void)
 {
     ConfigureScene(2, 0x00d00000, 0x00700000, 0);
     if (SceneActor_IsActorAtTile(10, 14, 7) != 0) {
-        FieldScene_RunScene37b_02002244();
+        Scene_ShineLeftBeam();
     }
 }
 
@@ -525,7 +536,7 @@ void Func_020015fc(void)
 {
     ConfigureScene_02003a30(2, 23068672, 7340032, 0);
     if (SceneActor_IsActorAtTile(12, 21, 7) != 0) {
-        FieldScene_RunScene37b_020022f4();
+        Scene_ShineRightBeam();
     }
 }
 
@@ -885,54 +896,54 @@ void SceneData_BuildTableA980(void)
     Func_02003fcc();
 }
 
-void FieldScene_RunScene37b_02002244(void)
+void Scene_ShineLeftBeam(void)
 {
     u32 i;
     s32 record;
 
     Event_Begin();
     if (GameFlag_IsSet(0x818) == 0) {
-        if (GameFlag_IsSet(0x816) == 0) {
+        if (GameFlag_IsSet(FLAG_LEFT_BEAM_SHINING) == 0) {
             Camera_SetSpeed(0x20000, 0x4000);
             Camera_MoveTo(0x11e0000, -1, 0x920000, 1);
             Camera_WaitForMove();
             Audio_PlayCue(186);
             Map_CopyCellsTo(0, 59, 15, 38, 4, 3);
-            if (GameFlag_IsSet(0x817) != 0) {
+            if (GameFlag_IsSet(FLAG_RIGHT_BEAM_SHINING) != 0) {
                 Map_CopyCellsTo(8, 60, 17, 39, 2, 2);
             }
             Actor_FaceDirection(0, 0, 0);
             Event_Wait(30);
-            GameFlag_Set(0x816);
-            if (GameFlag_IsSet(0x817) != 0) {
-                FieldScene_RunLoopedLayoutSequence();
+            GameFlag_Set(FLAG_LEFT_BEAM_SHINING);
+            if (GameFlag_IsSet(FLAG_RIGHT_BEAM_SHINING) != 0) {
+                Scene_OpenTheHole();
             }
         }
     }
     Event_End();
 }
 
-void FieldScene_RunScene37b_020022f4(void)
+void Scene_ShineRightBeam(void)
 {
     u32 i;
     s32 record;
 
     Event_Begin();
     if (GameFlag_IsSet(0x818) == 0) {
-        if (GameFlag_IsSet(0x817) == 0) {
+        if (GameFlag_IsSet(FLAG_RIGHT_BEAM_SHINING) == 0) {
             Camera_SetSpeed(0x20000, 0x4000);
             Camera_MoveTo(0x11e0000, -1, 0x920000, 1);
             Camera_WaitForMove();
             Audio_PlayCue(186);
             Map_CopyCellsTo(4, 59, 17, 38, 4, 3);
-            if (GameFlag_IsSet(0x816) != 0) {
+            if (GameFlag_IsSet(FLAG_LEFT_BEAM_SHINING) != 0) {
                 Map_CopyCellsTo(8, 60, 17, 39, 2, 2);
             }
             Actor_FaceDirection(0, 0x8000, 0);
             Event_Wait(30);
-            GameFlag_Set(0x817);
-            if (GameFlag_IsSet(0x816) != 0) {
-                FieldScene_RunLoopedLayoutSequence();
+            GameFlag_Set(FLAG_RIGHT_BEAM_SHINING);
+            if (GameFlag_IsSet(FLAG_LEFT_BEAM_SHINING) != 0) {
+                Scene_OpenTheHole();
             }
         }
     }

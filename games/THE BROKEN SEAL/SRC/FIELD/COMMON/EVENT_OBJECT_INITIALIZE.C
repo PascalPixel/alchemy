@@ -36,7 +36,7 @@ void ObjectGroup_SetActionForOthers(void *object, s32 mode, s32 value);
 #define MESSAGE_NO      0x926
 #endif
 
-void InitializeEventObject(void)
+void EventObject_Initialize(void)
 {
     s32 zero;
     s32 event_value;

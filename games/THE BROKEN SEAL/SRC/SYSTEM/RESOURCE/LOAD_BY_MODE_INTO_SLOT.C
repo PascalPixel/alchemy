@@ -4,7 +4,7 @@ extern s32 Resource_FindFreeEntry(void);
 extern void Ui_BuildPairedPatternsToSlot(s32 arg0, s32 arg1, s32 *arg2, s32 *arg3, s32 arg4);
 extern s32 UiIcon_CopyResourceToSlot(s32 arg0, s32 arg1, s32 arg2);
 extern s32 Ui_BuildPatternToSlot(s32 arg0, s32 arg1, s32 arg2);
-extern s32 Func_0801a32c(u32 value, s32 unused, void *destination);
+extern s32 RenderResource_LoadTableEntry(u32 value, s32 unused, void *destination);
 extern void Ability_LoadGlyph(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4);
 
 s32 Resource_LoadByModeIntoSlot(s32 mode, s32 value, s32 result, s32 option)
@@ -36,7 +36,7 @@ s32 Resource_LoadByModeIntoSlot(s32 mode, s32 value, s32 result, s32 option)
         Ui_BuildPatternToSlot(value, 0, result);
         break;
     case 9:
-        Func_0801a32c(value, 0, (void *)result);
+        RenderResource_LoadTableEntry(value, 0, (void *)result);
         break;
     }
 

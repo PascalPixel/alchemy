@@ -40,7 +40,7 @@ void Owner_AdjustSecondValueFar(s32, s32);
  */
 s32 BattleFx_FindMatchingEvent(s32, s32, void *);
 void GameFlag_SetBitFar(s32); s32 BattleEffect_SelectNearbyTargetObject(s32, s32); void BattleEffect_ClearOutOfBoundsObjects(void);
-void Func_08096fb0(s32, s32); void BattleFx_SetupObjectPair(s32, s32); void Func_0809728c(void);
+void Func_08096fb0(s32, s32); void BattleFx_SetupObjectPair(s32, s32); void EventObject_Initialize(void);
 /*
  * Returns s32 to match the shared prototype, although every call site
  * discards the value.
@@ -123,7 +123,7 @@ s32 BattleCommand_ExecuteSelectedAction(u32 encodedAction)
 
     if (runtime->battle_mode == 3) BattleEffect_ClearOutOfBoundsObjects();
     Func_08096fb0(actionId, 0); runtime->resolving_action = 1;
-    BattleFx_SetupObjectPair(PARTY_STATE.object_id, targetId); Func_0809728c();
+    BattleFx_SetupObjectPair(PARTY_STATE.object_id, targetId); EventObject_Initialize();
     BattleFx_RunEventAction(primary, actor, targetId);
     if (GameFlag_TestFar(0x140)) {
         if (GameFlag_TestFar(0x141)) BattleFx_DispatchRequestKind(); else BattleFx_Run();

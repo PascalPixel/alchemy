@@ -1638,7 +1638,7 @@
       "name": "BattleFx_UpdateObjectMotionScaleAndLinkedAngle",
       "source": "BATTLE/EFFECT/UPDATE_OBJECT_MOTION_SCALE_AND_LINKED_ANGLE.C"
     },
-    "main:080a2268": "GRAPHICS/TILE/SET_FLAG_RECT.C",
+    "main:080a2268": { "name": "Render_SetTilemapFlagRect", "source": "GRAPHICS/TILE/SET_FLAG_RECT.C" },
     "main:080ad608": {
       "name": "FourObjectMotion_ReplaceSlot"
     },
@@ -1755,7 +1755,7 @@
     "main:080912a8": {
       "name": "BattleFx_ClampRgb555Component"
     },
-    "main:0809728c": "FIELD/COMMON/EVENT_OBJECT_INITIALIZE.C",
+    "main:0809728c": { "name": "EventObject_Initialize", "source": "FIELD/COMMON/EVENT_OBJECT_INITIALIZE.C" },
     "main:08099678": {
       "name": "check_object_tile",
       "source": "FIELD/COMMON/MAP/EVENTS_CHECK_OBJECT_TILE.C"
@@ -2097,7 +2097,7 @@
     "main:080187ac": {
       "name": "UiText_GetResourceDimensions"
     },
-    "main:0801a32c": "GRAPHICS/RENDER/LOAD_TABLE_ENTRY.C",
+    "main:0801a32c": { "name": "RenderResource_LoadTableEntry", "source": "GRAPHICS/RENDER/LOAD_TABLE_ENTRY.C" },
     "main:0801e74c": {
       "name": "UiText_DrawResource",
       "source": "GRAPHICS/TEXT/RENDER.C"

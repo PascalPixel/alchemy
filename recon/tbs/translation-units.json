@@ -80152,6 +80152,70 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "scene-381-02000f64",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/SORU_FUNKA/ERUPTION_RING.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_381",
+      "absolute_symbols": {
+        "Engine_ActorGet": {
+          "address": "0x0200b4ec",
+          "kind": "thumb"
+        },
+        "Engine_ActorStop": {
+          "address": "0x0200b504",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpriteFlags": {
+          "address": "0x0200b484",
+          "kind": "thumb"
+        },
+        "Engine_ObjectSetAnimation": {
+          "address": "0x0200b444",
+          "kind": "thumb"
+        },
+        "Engine_AudioPlayCue": {
+          "address": "0x0200b624",
+          "kind": "thumb"
+        },
+        "Engine_MathCos": {
+          "address": "0x0200b40c",
+          "kind": "thumb"
+        },
+        "Engine_MathSin": {
+          "address": "0x0200b404",
+          "kind": "thumb"
+        },
+        "Engine_ObjectSetPosition": {
+          "address": "0x0200b46c",
+          "kind": "thumb"
+        },
+        "Engine_EventWait": {
+          "address": "0x0200b4cc",
+          "kind": "thumb"
+        },
+        "Engine_ActorWaitForMove": {
+          "address": "0x0200b52c",
+          "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02000f64",
+          "extent": 288,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

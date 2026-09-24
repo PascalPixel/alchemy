@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_381:02000f64": {
+      "name": "SoruFunka_ThrowEruptionRing",
+      "source": "FIELD/SORU_FUNKA/ERUPTION_RING.C"
+    },
     "resource_39e:02000cd4": {
       "name": "ShianJiin_SpinAway",
       "source": "FIELD/COMMON/SHIAN_JIIN/SPIN_AWAY.C"

@@ -5176,7 +5176,7 @@
         },
         {
           "address": "0x080be378",
-          "extent": 1012,
+          "extent": 3728,
           "state": "retained-assembly"
         }
       ]
@@ -5190,7 +5190,7 @@
       "owners": [
         {
           "address": "0x080d4ce8",
-          "extent": 874,
+          "extent": 1392,
           "state": "retained-assembly"
         }
       ]
@@ -5204,7 +5204,7 @@
       "owners": [
         {
           "address": "0x080dd9c0",
-          "extent": 124,
+          "extent": 1056,
           "state": "retained-assembly"
         }
       ]

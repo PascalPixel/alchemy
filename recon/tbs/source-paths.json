@@ -10000,11 +10000,17 @@
     "main:080d0ee0": {
       "name": "Region_080d0ee0"
     },
+    "main:080d1350": {
+      "name": "Unnamed_080d1350"
+    },
     "main:080d4ce8": {
       "name": "Region_080d4ce8"
     },
     "main:080d765c": {
       "name": "FunctionHead_080d765c"
+    },
+    "main:080d82b0": {
+      "name": "Unnamed_080d82b0"
     },
     "main:080d89ac": {
       "name": "BattleEffectA"
@@ -10027,8 +10033,14 @@
     "main:080ddde0": {
       "name": "Region_080ddde0"
     },
+    "main:080de2f8": {
+      "name": "BattleFx_PrepareCanvasEffect"
+    },
     "main:080e15e8": {
       "name": "FunctionHead_080e15e8"
+    },
+    "main:080e2538": {
+      "name": "Unnamed_080e2538"
     },
     "main:080e47b8": {
       "name": "FunctionHead_080e47b8"
@@ -20279,7 +20291,6 @@
     "main:080c24f0": "BattleEnemy_RecordDefeat",
     "main:08096fb0": "BattleFx_LoadActionEffectResources",
     "main:0808b98c": "BattleEffect_ClearAllObjects",
-    "main:080de2f8": "BattleFx_PrepareCanvasEffect",
     "main:080912b8": "Object_EffectSpawnCallback",
     "main:080152b8": "BattleLayout_HighlightPartyPanelsFar",
     "main:08028574": "Menu_RunResourceSelectionLoop",

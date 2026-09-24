@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_3b2:02002984": {
+      "name": "TakaraShima_SettlePushedBlockWest",
+      "source": "FIELD/TAKARA_SHIMA/SETTLE_BLOCK_WEST.C"
+    },
     "resource_3b2:02002a98": {
       "name": "TakaraShima_SettlePushedBlock",
       "source": "FIELD/TAKARA_SHIMA/SETTLE_BLOCK.C"

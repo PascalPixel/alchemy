@@ -37,6 +37,6 @@ LAYOUT_OFFSET_GUARD(
     special_active,
     0x3ac);
 
-extern struct InnRuntimeState *Data_03001f2c;
+extern struct InnRuntimeState *gMenuWork;
 
 #endif

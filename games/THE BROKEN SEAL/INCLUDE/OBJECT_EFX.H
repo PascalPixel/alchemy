@@ -3,7 +3,7 @@
 
 #include "TYPES.H"
 
-extern u8 Data_0809f0b0[];
-extern u8 Data_0809f0d4;
+extern u8 BattleFx_CommonParticleScript[];
+extern u8 BattleFx_FragmentScript;
 
 #endif

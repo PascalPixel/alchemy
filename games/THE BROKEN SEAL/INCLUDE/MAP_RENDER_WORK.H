@@ -14,6 +14,6 @@ struct MapRenderWork {
     u16 rotation;
 };
 
-extern struct MapRenderWork *Data_03001e70;
+extern struct MapRenderWork *gMapWork;
 
 #endif

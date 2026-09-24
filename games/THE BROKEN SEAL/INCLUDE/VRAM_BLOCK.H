@@ -8,6 +8,6 @@ struct VramBlockCacheEntry {
     u16 offset;
 };
 
-extern struct VramBlockCacheEntry Data_03001b10[];
+extern struct VramBlockCacheEntry gVramBlockCache[];
 
 #endif

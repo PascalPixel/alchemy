@@ -31,12 +31,12 @@ struct DispatchObject {
 
 void ObjectDispatch_Initialize(struct DispatchObject *object, u32 value);
 
-extern const u32 Data_08013590[];
-extern const u32 Data_080135a8[];
-extern const u32 Data_080135c0[];
-extern const u32 Data_080135d8[];
-extern const u32 Data_080135f0[];
-extern const u32 Data_08013608[];
-extern const u32 Data_08013620[];
+extern const u32 ObjectDispatch_Table0Script[];
+extern const u32 ObjectDispatch_Table1Script[];
+extern const u32 ObjectDispatch_Table2Script[];
+extern const u32 ObjectDispatch_Table3Script[];
+extern const u32 ObjectDispatch_Table4Script[];
+extern const u32 ObjectDispatch_Table5Script[];
+extern const u32 ObjectDispatch_Table6Script[];
 
 #endif

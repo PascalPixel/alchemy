@@ -138,7 +138,7 @@ LAYOUT_SIZE_GUARD(
     struct InventoryMenuState,
     0x25c);
 
-extern struct InventoryMenuState *Data_03001f2c;
+extern struct InventoryMenuState *gMenuWork;
 extern char Value_00000ad7;
 
 s32 Func_080a3ce4(s32 item);

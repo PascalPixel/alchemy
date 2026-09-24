@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "main:08007028": {
+      "name": "EraseAtmelFlashChip",
+      "source": "SYSTEM/SAVE/ERASE_ATMEL_FLASH_CHIP.C"
+    },
     "main:08006b84": {
       "name": "ReadFlashCore",
       "source": "SYSTEM/SAVE/READ_FLASH_CORE.C"

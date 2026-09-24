@@ -72838,6 +72838,50 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "fune-kanpan-random-actors",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/RANDOM_ACTORS.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3af",
+      "absolute_symbols": {
+        "Engine_ActorSetSpritePriority": {
+          "address": "0x0200c3e4",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagIsSet": {
+          "address": "0x0200c2cc",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetPosition": {
+          "address": "0x0200c36c",
+          "kind": "thumb"
+        },
+        "Engine_ActorGet": {
+          "address": "0x0200c30c",
+          "kind": "thumb"
+        },
+        "Engine_RandomNext": {
+          "address": "0x0200c26c",
+          "kind": "thumb"
+        },
+        "Local_030003e0": {
+          "address": "0x0200c254",
+          "kind": "thumb"
+        },
+        "Engine_ActorEnableActionCallback": {
+          "address": "0x0200c324",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02001684",
+          "extent": 284,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

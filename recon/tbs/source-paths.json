@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_3af:02001684": {
+      "name": "FuneKanpan_PlaceRandomDeckActors",
+      "source": "FIELD/FUNE_KANPAN/RANDOM_ACTORS.C"
+    },
     "resource_3a8:020016bc": {
       "name": "KareiMachi_SetupEntryActors",
       "source": "FIELD/KAREI_MACHI/ENTRY_ACTORS.C"

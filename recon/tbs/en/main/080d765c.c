@@ -119,6 +119,7 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *efx)
     s32 i;
     s32 j;
     s32 k;
+    s32 skip;
     s32 ox;
     s32 oy;
     s32 h;
@@ -222,17 +223,16 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *efx)
         }
 
         for (i = 0; i != count; i++) {
-            k = Math_Mod(i, 3);
-            h = BattleFx10_RockHeights[k];
-            blit46(dst, work->sheet + BattleFx10_RockCells[k],
-                BattleFx10_Points[i][0] - ox, BattleFx10_Points[i][1] - h - oy,
-                BattleFx10_RockWidths[k], h);
+            s32 n = Math_Mod(i, 3);
+            blit46(dst, work->sheet + BattleFx10_RockCells[n],
+                BattleFx10_Points[i][0] - ox, BattleFx10_Points[i][1] - BattleFx10_RockHeights[n] - oy,
+                BattleFx10_RockWidths[n], BattleFx10_RockHeights[n]);
         }
 
         scale = BattleFx10_UnitScale;
         if (frame == 174) {
             for (i = 0; i != 9; i++) {
-                ((u8 *)work->objects[i])[9] &= ~12;
+                ((struct { u8 pad[9]; u8 tile_hi : 2; u8 priority : 2; u8 palette : 4; } *)work->objects[i])->priority = 0;
             }
         }
         if (frame > 208) {
@@ -314,13 +314,14 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *efx)
         if (frame >= 32 && frame < 208) {
             for (i = 0; i != 64; i++) {
                 if (PARTICLES[i].variant >= 0) {
+                    s32 n;
                     if (frame > 191) {
-                        k = Math_Mod(i, 7) + 4;
+                        n = Math_Mod(i, 7) + 4;
                     } else {
-                        k = i & 3;
+                        n = i & 3;
                     }
-                    blit47(dst, work->sheet + BattleFx10_DebrisCells[k], HI(PARTICLES[i].x), HI(PARTICLES[i].y),
-                        BattleFx10_DebrisWidths[k], BattleFx10_DebrisHeights[k]);
+                    blit47(dst, work->sheet + BattleFx10_DebrisCells[n], HI(PARTICLES[i].x), HI(PARTICLES[i].y),
+                        BattleFx10_DebrisWidths[n], BattleFx10_DebrisHeights[n]);
                     PARTICLES[i].x += PARTICLES[i].velocity_x;
                     PARTICLES[i].y += PARTICLES[i].velocity_y;
                     PARTICLES[i].velocity_y += 0x2000;
@@ -340,10 +341,10 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *efx)
             }
             for (i = 0; i != 128; i++) {
                 if (frame >= i / 4 + 224) {
-                    k = Math_Mod(i, 3);
+                    s32 n = Math_Mod(i, 3);
                     if ((i & 1) == 0) {
-                        blit46(dst, work->sheet + BattleFx10_SprayCells[k], HI(PARTICLES[i].x), HI(PARTICLES[i].y),
-                            BattleFx10_SprayWidths[k], BattleFx10_SprayHeights[k]);
+                        blit46(dst, work->sheet + BattleFx10_SprayCells[n], HI(PARTICLES[i].x), HI(PARTICLES[i].y),
+                            BattleFx10_SprayWidths[n], BattleFx10_SprayHeights[n]);
                     }
                     PARTICLES[i].x += PARTICLES[i].velocity_x;
                     PARTICLES[i].y += PARTICLES[i].velocity_y;

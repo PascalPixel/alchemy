@@ -1,9 +1,10 @@
-/* Draft, not exact (2026-09-24): candidate=1008 reference=1056, binary
-   similarity 57%. Rewritten from the listing (the earlier split-owner draft
+/* Draft, not exact (2026-09-24): candidate=1028 reference=1056, binary
+   similarity 61%. Rewritten from the listing (the earlier split-owner draft
    is in git history). The prologue, the slot cursor and the per-frame blend
    ramp match; the reference spills frame (sp+44) and keeps 8j+8, 8j+12 and
    the X-table pointer as spilled induction values, so most of the pillar
-   loop still allocates differently. */
+   loop still allocates differently (8i+8 and 8i+12 share one giv here).
+   The tables are plain arrays: the reference reloads them after each draw. */
 #include "TYPES.H"
 #include "BATTLE_EFFECT_WORK.H"
 #include "BATTLE_EFX.H"
@@ -24,12 +25,12 @@ s32 BattleFx_EndCanvasLayer(void);
 extern u8 gWorkSlot[];
 extern u8 Value_0000007e;
 
-extern const u8 BattleFxPillar_Kinds[];
-extern const s8 BattleFxPillar_X[];
-extern const u8 BattleFxPillar_Counts[];
-extern const s8 BattleFxPillar_PuffWidths[];
-extern const u8 BattleFxPillar_PuffHeights[];
-extern const u16 BattleFxPillar_PuffCells[];
+extern u8 BattleFxPillar_Kinds[];
+extern s8 BattleFxPillar_X[];
+extern u8 BattleFxPillar_Counts[];
+extern s8 BattleFxPillar_PuffWidths[];
+extern u8 BattleFxPillar_PuffHeights[];
+extern u16 BattleFxPillar_PuffCells[];
 
 struct PillarWork {
     u8 sheet[0x7780];
@@ -155,14 +156,13 @@ void FunctionHead_080dd9c0(struct BattleEffectArgument *efx)
         }
 
         for (i = 0; i != 64; i++) {
+            u8 *hts = BattleFxPillar_PuffHeights;
             if (PARTICLES[i].variant >= 0) {
                 s32 n = PARTICLES[i].variant / 2;
-                s32 hh = (s8)BattleFxPillar_PuffHeights[n];
                 blit46(dst, work->sheet + BattleFxPillar_PuffCells[n], PARTICLES[i].x - BattleFxPillar_PuffWidths[n],
-                    PARTICLES[i].y - hh / 2, BattleFxPillar_PuffWidths[n], hh);
-                hh = (s8)BattleFxPillar_PuffHeights[n];
+                    PARTICLES[i].y - (s8)hts[n] / 2, BattleFxPillar_PuffWidths[n], (s8)hts[n]);
                 blit47(dst, work->sheet + BattleFxPillar_PuffCells[n], PARTICLES[i].x,
-                    PARTICLES[i].y - hh / 2, BattleFxPillar_PuffWidths[n], hh);
+                    PARTICLES[i].y - (s8)hts[n] / 2, BattleFxPillar_PuffWidths[n], (s8)hts[n]);
                 if (++PARTICLES[i].variant == 14) {
                     PARTICLES[i].variant = -1;
                 }

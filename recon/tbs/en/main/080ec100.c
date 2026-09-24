@@ -78,7 +78,7 @@ extern const u8 BattleFx6_ObjectX[];
 extern const u8 BattleFx6_ObjectY[];
 extern const s32 BattleFx6_Gravity[];
 extern const u16 BattleFx6_FlareCells[];
-extern const u16 ParticleStreams_CellOffsets[];
+extern u16 ParticleStreams_CellOffsets[];
 
 /* The effect's work block (heap slot 39). */
 struct Mode6Work {
@@ -330,7 +330,7 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
         }
         if (frame > 221) {
             for (i = 0; i != 64; i++) {
-                const u16 *cells = BattleFx6_FlareCells;
+                u16 *cells = BattleFx6_FlareCells;
                 s32 r = 1;
                 if (frame >= i / 2 + 222) {
                     blit[0](dst, work->sheet + cells[r - 1] + 0x4e20,

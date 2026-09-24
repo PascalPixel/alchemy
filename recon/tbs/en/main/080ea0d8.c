@@ -3,14 +3,17 @@
    (160 frames, A or B skips after frame 4), then a second 320-frame pass
    draws concentric ellipses, falling objects and palette ramps.
 
-   DRAFT, not yet C: 41.9% aligned similarity, 2684 differing halfwords
-   (candidate 5664 bytes, reference 5756). Remaining: register allocation
-   in the frame<0 spark block and the dust loop, the IO write queue inline
-   (reference stores 0x208 through a reloaded IME address), the ellipse
-   plotter, the rain placement loop, and the petal blocks (the reference
-   calls draw through a high-register copy, as if through an inline
-   helper taking the blitter as a parameter). Stack slots follow the reference
-   (canvas 104, work 100, ctrl 96, draw2 92, draw 88, frame 84). */
+   DRAFT, not yet C: 46.9% aligned similarity, 2584 differing halfwords
+   (candidate 5732 bytes, reference 5756). Every call lines up with the
+   reference; what remains is register allocation and spill-slot order.
+   Known: the reference spills draw2 at sp+92 in the second pass (this
+   draft keeps it in a register, shifting frame and later slots by 4);
+   the dead frame<0 spark block keeps &scene in two high registers; the
+   IO write queue inline stores 0x208 through a reloaded IME address; the
+   petal blocks call draw through a callee-saved copy. Evidence used:
+   (x * sx) / 8 with sx = 8 in a variable (the reference divides after a
+   shift), the ring radius derived from the frame (a strength-reduced
+   giv at sp+12), the gWorkSlot base spilled at sp+56 for slot 47. */
 #include "TYPES.H"
 #include "DMA.H"
 #include "BATTLE_EFFECT_WORK.H"
@@ -168,9 +171,11 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
     s32 near;
     s32 far;
     u32 *cache;
+    DrawRectangle *slots;
     s32 cx;
     s32 cy;
     s32 squash;
+    s32 sx;
     s32 ring;
     s32 rings;
     s32 shift;
@@ -292,6 +297,7 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
     work->transfer_value = 50;
     *(u16 *)0x0400000c = 0x784;
 
+    slots = (DrawRectangle *)gWorkSlot;
     for (frame = 0; frame != 160 && (frame <= 4 || !(gKeysRepeat & 3)); frame++) {
         if (frame == 143) {
             ((WordFill)0x03000168)(canvas, 0x4000, 0x2a2a2a2a);
@@ -437,21 +443,22 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
             s32 top = (frame << 4) - 2272;
             s32 n;
             Unnamed_080ed408(47, 7, 7, 3, 3);
-            (((DrawRectangle *)gWorkSlot)[47])(canvas, work, 36, top, 24, 64);
+            (slots[47])(canvas, work, 36, top, 24, 64);
             Runtime_ReleaseHeapBlock(47);
             Unnamed_080ed408(47, 7, 7, 7, 3);
-            (((DrawRectangle *)gWorkSlot)[47])(canvas, work, 60, top, 24, 64);
+            (slots[47])(canvas, work, 60, top, 24, 64);
             Runtime_ReleaseHeapBlock(47);
 
             n = (frame - 144) / 2;
             work->transfer_value = 75;
             if (n <= 6) {
                 u8 *cell = work->sheet + n * 770 + BattleFx_DotCells[7] + 0x2710;
+                high = 8;
                 Unnamed_080ed408(47, 7, 7, 3, 2);
-                blit = ((DrawRectangle *)gWorkSlot)[47];
+                blit = slots[47];
                 for (i10 = 0; i10 != 128; i10++) {
                     s32 angle = i10 << 9;
-                    x = (((frame * 10 - 1424) * Trig_Sin(angle)) >> 16) - 4;
+                    x = (((frame * 10 - 1424) * Trig_Sin(angle)) >> 16) - high / 2;
                     y = ((frame * 10 - 1424) * Trig_Cos(angle)) >> 17;
                     blit(canvas, cell, x + 60, y + 72, 8, 16);
                 }
@@ -510,6 +517,7 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
     shift = 0;
     ring = 0;
     squash = 6;
+    sx = 8;
     rings = 2;
     work->transfer_mode = 2;
     work->transfer_value = 75;
@@ -719,10 +727,10 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
                     s32 bottom;
 
                     half = radius / 2;
-                    right = cx + (half * 8) / 8;
-                    left = cx - (half * 8) / 8;
+                    right = cx + (half * sx) / 8;
+                    left = cx - (half * sx) / 8;
                     bottom = cy + (slope * squash) / 8;
-                    top = cy - (slope * 8) / 8;
+                    top = cy - (slope * sx) / 8;
                     if (top < 0) {
                         top = 0;
                     }
@@ -753,10 +761,10 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
                     work->sheet[top * 120 + left] = 20;
 
                     half = slope / 2;
-                    right = cx + (half * 8) / 8;
-                    left = cx - (half * 8) / 8;
+                    right = cx + (half * sx) / 8;
+                    left = cx - (half * sx) / 8;
                     bottom = cy + (radius * squash) / 8;
-                    top = cy - (radius * 8) / 8;
+                    top = cy - (radius * sx) / 8;
                     if (left < 0) {
                         left = 0;
                     }

@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "main:08078320": {
+      "name": "Owner_SetSecondValueAndRatios",
+      "source": "GAME/CHARACTER/SET_SECOND_VALUE_AND_RATIOS.C"
+    },
     "resource_399:02000b70": {
       "name": "ImiruMura_Func02000b70",
       "source": "FIELD/IMIRU_MURA/F_00B70.C"

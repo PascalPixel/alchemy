@@ -763,6 +763,10 @@
       "name": "Ui_LoadWindowGraphics",
       "source": "GRAPHICS/WINDOW/LOAD_GRAPHICS.C"
     },
+    "main:080aad10": {
+      "name": "Menu_OpenBackdropScreen",
+      "source": "MENU/OPEN_BACKDROP_SCREEN.C"
+    },
     "main:080b0744": {
       "name": "Shop_CreatePriceSprite",
       "source": "MENU/SHOP/CREATE_PRICE_SPRITE.C"

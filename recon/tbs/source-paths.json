@@ -14040,7 +14040,8 @@
       "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_3bd:02003644": {
-      "name": "FieldScene_RunScene3bdSequenceA"
+      "name": "ArutamiraDou_ApplyEntryState",
+      "source": "FIELD/ARUTAMIRA_DOU/ENTRY_STATE.C"
     },
     "resource_3be:02000d18": {
       "name": "StagedActorPairScene_GetMessageData",

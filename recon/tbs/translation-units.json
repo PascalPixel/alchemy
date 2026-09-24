@@ -77233,6 +77233,110 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "scene-3bd-02003644",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/ARUTAMIRA_DOU/ENTRY_STATE.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3bd",
+      "absolute_symbols": {
+        "Engine_GameFlagSet": {
+          "address": "0x0200bc90",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagClear": {
+          "address": "0x0200bc98",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagIsSet": {
+          "address": "0x0200bc88",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetPosition": {
+          "address": "0x0200bd18",
+          "kind": "thumb"
+        },
+        "Engine_ActorGet": {
+          "address": "0x0200bcc8",
+          "kind": "thumb"
+        },
+        "FieldScene_RedrawActorFootprint": {
+          "address": "0x020088c0",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetAnimation": {
+          "address": "0x0200bd20",
+          "kind": "thumb"
+        },
+        "Engine_MapCopyCellAttributes": {
+          "address": "0x0200bc48",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpriteFlags": {
+          "address": "0x0200bc60",
+          "kind": "thumb"
+        },
+        "Main_080091c8": {
+          "address": "0x0200bc50",
+          "kind": "thumb"
+        },
+        "Engine_MathDivide": {
+          "address": "0x0200bbe8",
+          "kind": "thumb"
+        },
+        "SceneActor_PlaceFiveActorsInRow": {
+          "address": "0x02008f6c",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetChildValue": {
+          "address": "0x0200bd58",
+          "kind": "thumb"
+        },
+        "SceneEffect_SetupBlendByFlag201": {
+          "address": "0x02008b30",
+          "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
+        },
+        "Data_00000092": {
+          "address": "0x92",
+          "kind": "data"
+        },
+        "Data_00000093": {
+          "address": "0x93",
+          "kind": "data"
+        },
+        "Data_00000094": {
+          "address": "0x94",
+          "kind": "data"
+        },
+        "Data_00000095": {
+          "address": "0x95",
+          "kind": "data"
+        },
+        "Data_00000096": {
+          "address": "0x96",
+          "kind": "data"
+        },
+        "Data_00000097": {
+          "address": "0x97",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02003644",
+          "extent": 1004,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

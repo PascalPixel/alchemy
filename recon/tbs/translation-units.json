@@ -39751,24 +39751,12 @@
           "address": "0x02008ecc",
           "kind": "thumb"
         },
-        "Func_02001900_a": {
-          "address": "0x02008c8c",
-          "kind": "thumb"
-        },
         "Func_02001918": {
           "address": "0x02008e84",
           "kind": "thumb"
         },
-        "Func_020019b4": {
-          "address": "0x02008ecc",
-          "kind": "thumb"
-        },
         "Func_020019b4_a": {
           "address": "0x02008e94",
-          "kind": "thumb"
-        },
-        "Func_020019b4_b": {
-          "address": "0x02008cf4",
           "kind": "thumb"
         }
       },

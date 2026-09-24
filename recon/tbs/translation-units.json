@@ -70212,6 +70212,130 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "kuupuappu-heya-scene-021c8",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_HEYA/SCENE_021C8.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_383",
+      "absolute_symbols": {
+        "Engine_AudioPlaySceneCue": {
+          "address": "0x0200cf04",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpritePriority": {
+          "address": "0x0200ce34",
+          "kind": "thumb"
+        },
+        "Engine_ActorGet": {
+          "address": "0x0200cd7c",
+          "kind": "thumb"
+        },
+        "Main_0808a230": {
+          "address": "0x0200ce64",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpeed": {
+          "address": "0x0200cd84",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetPosition": {
+          "address": "0x0200cdcc",
+          "kind": "thumb"
+        },
+        "Engine_ActorFaceEachOther": {
+          "address": "0x0200ce0c",
+          "kind": "thumb"
+        },
+        "FieldScene_RunSplitTripleSteps": {
+          "address": "0x0200c60c",
+          "kind": "thumb"
+        },
+        "Engine_CameraFollowActor": {
+          "address": "0x0200ce4c",
+          "kind": "thumb"
+        },
+        "Engine_CameraWaitForMove": {
+          "address": "0x0200ce5c",
+          "kind": "thumb"
+        },
+        "Engine_MapRedraw": {
+          "address": "0x0200ccc4",
+          "kind": "thumb"
+        },
+        "Engine_EventWait": {
+          "address": "0x0200cd3c",
+          "kind": "thumb"
+        },
+        "Engine_EventOpenScreen": {
+          "address": "0x0200ce9c",
+          "kind": "thumb"
+        },
+        "Engine_EventWaitForScreen": {
+          "address": "0x0200ceac",
+          "kind": "thumb"
+        },
+        "Engine_ActorRunRepeatedMotion": {
+          "address": "0x0200cdfc",
+          "kind": "thumb"
+        },
+        "Engine_EventSetMessage": {
+          "address": "0x0200ce14",
+          "kind": "thumb"
+        },
+        "SceneActor_SetModeZeroAndValue": {
+          "address": "0x0200c5f4",
+          "kind": "thumb"
+        },
+        "SceneEffect_ApplyThreeValuesAndFinish": {
+          "address": "0x0200c63c",
+          "kind": "thumb"
+        },
+        "SceneActor_SetPairZeroAndValue": {
+          "address": "0x0200c624",
+          "kind": "thumb"
+        },
+        "Engine_ActorFaceActor": {
+          "address": "0x0200ce04",
+          "kind": "thumb"
+        },
+        "Engine_EventShowMessage": {
+          "address": "0x0200ce24",
+          "kind": "thumb"
+        },
+        "Engine_ActorShowEmote": {
+          "address": "0x0200ce3c",
+          "kind": "thumb"
+        },
+        "Engine_EventOpenMessage": {
+          "address": "0x0200ce1c",
+          "kind": "thumb"
+        },
+        "Engine_UiWorkWaitThenFinalizeCapacity": {
+          "address": "0x0200cd74",
+          "kind": "thumb"
+        },
+        "Engine_ActorStartRepeatedMotion": {
+          "address": "0x0200cdf4",
+          "kind": "thumb"
+        },
+        "Engine_ActorWalkTo": {
+          "address": "0x0200cdac",
+          "kind": "thumb"
+        },
+        "Engine_ActorWalkToAndWait": {
+          "address": "0x0200cdb4",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x020021c8",
+          "extent": 924,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

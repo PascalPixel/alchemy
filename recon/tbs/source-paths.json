@@ -10068,7 +10068,8 @@
       "source": "FIELD/KUUPUAPPU_HEYA/SELECT_ACTOR_PAIR.C"
     },
     "resource_383:020021c8": {
-      "name": "Scene_RunConditionalActorSequence"
+      "name": "KuupuappuHeya_RunScene021C8",
+      "source": "FIELD/KUUPUAPPU_HEYA/SCENE_021C8.C"
     },
     "resource_3b9:02001cd4": {
       "name": "FieldScene_BuildActorPresentationSequence",

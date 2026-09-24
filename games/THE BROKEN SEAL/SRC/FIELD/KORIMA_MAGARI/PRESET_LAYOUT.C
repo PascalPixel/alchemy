@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "FIELD_EVENT.H"
 #include "SCENE.H"
 
 struct TileRun {

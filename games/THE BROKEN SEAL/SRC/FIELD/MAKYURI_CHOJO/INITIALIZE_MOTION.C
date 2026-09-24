@@ -7,7 +7,6 @@
  * cues before restoring the saved flags.
  */
 
-#define SceneActor_InitializeMotion Func_02000928
 struct SceneActor {
     u8 unk_00[6]; u16 angle; s32 x,y,z; u8 unk_14[20];
     s32 motion28; u8 unk_2c[4]; s32 motion30,motion34;

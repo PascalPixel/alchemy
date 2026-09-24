@@ -93,13 +93,6 @@ typedef struct ActiveSubjectSlot {
 } ActiveSubjectSlot;
 
 extern void Func_02004d72(void);       /* site 0x20024e4 -> Func_0200288c veneer */
-extern s32 Func_02004f88(s32 actor, s32 slot); /* site 0x20024f2 -> Func_02002a94 veneer */
-extern void Func_02005f92(s32 x, s32 z, s32 mode); /* site 0x2002538 -> Func_02003a58 veneer */
-extern void Func_0200600e(s32 x, s32 z, s32 mode); /* site 0x2002550 -> Func_02003abc veneer #1 */
-extern void Func_02006026(s32 x, s32 z, s32 mode); /* site 0x2002568 -> Func_02003abc veneer #2 */
-extern void Func_02006094(void);         /* site 0x200257a -> Func_02003b18 veneer */
-extern void Func_020050e2(s32 actor, s32 slot); /* site 0x2002590 -> Func_02002b50 veneer */
-extern s32 Func_0200515c(s32 state, s32 actor, s32 slot); /* site 0x20025ae -> Func_02002bac veneer */
 extern u8 Value_0000008f;
 extern u8 Value_00000090;
 extern u8 Value_00002076;
@@ -119,17 +112,11 @@ extern s32 Data_0200d9d2;   /* handler for mode == 4 */
 extern struct ModeRecord Data_0200cce2;
 extern struct ModeRecord Data_0200da50;
 extern void Func_020062e0(s32 mode);          /* Func_02002e54 veneer #1 */
-extern void Func_0200686c(s32 style, s32 variant); /* Func_020033d8 veneer #1 */
 extern void Func_02006324(s32 mode);          /* Func_02002e54 veneer #2 */
-extern void Func_020068b0(s32 style, s32 variant); /* Func_020033d8 veneer #2 */
 extern s32 Func_02008092(void);               /* Func_080f9048 veneer (loop check) */
 extern void Func_0200634e(s32 mode);          /* Func_02002e54 veneer #3 */
-extern void Func_020068da(s32 style, s32 variant); /* Func_020033d8 veneer #3 */
-extern void Func_020068ee(s32 style, s32 variant); /* Func_020033d8 veneer #4 */
 extern void Func_0200637c(s32 mode);          /* Func_02002e54 veneer #4 */
-extern void Func_02006908(s32 style, s32 variant); /* Func_020033d8 veneer #5 */
 extern void Func_02006396(s32 mode);          /* Func_02002e54 veneer #5 */
-extern void Func_02006922(s32 style, s32 variant); /* Func_020033d8 veneer #6 */
 extern void Func_020080cc(void);              /* Func_0808a4f0 veneer */
 extern s16 Data_0200dace;
 extern u16 Data_0200dc34;
@@ -177,12 +164,10 @@ u8 *Func_020086f0(s32 object_id);
 void Func_020084a4(void);
 void Func_020084c8(u8 *object, s32 x, s32 y, s32 z);
 void Func_020084d6(u8 *object);
-u32 Func_02008568(void);
 void Func_020085a6(s32, s32, s32 *);
 StageEffect *Func_0200863a(s32, s32, s32, s32);
 StageEffect *Func_020087b4(s16);
 void Func_020086be(StageEffect *, s32, s32, s32);
-u8 *Func_02008818_b();
 u8 *Func_02008d2e();
 s32 Func_02008d48();
 u8 *Func_02008f08();
@@ -1880,7 +1865,7 @@ void ColossoLogRollingStage_RunLogRollingInteraction(s32 actor)
     }
 
     Event_Begin();
-    state = Func_02004f88(actor, 6);
+    state = ColossoLogRollingStage_RunStateInteraction(actor, 6);
 
     if (state == 0) {
         Event_SetMessage(0x20c7);
@@ -1889,25 +1874,25 @@ void ColossoLogRollingStage_RunLogRollingInteraction(s32 actor)
         Camera_WaitForMove();
         Event_Wait(30);
         Event_ShowMessage(actor, 0);
-        Func_02005f92(0xb4, 0x58, 0);
+        ColossoLogRollingStage_StartPaletteTask(0xb4, 0x58, 0);
         Event_Wait(60);
         Event_ShowMessage(actor, 0);
-        Func_0200600e(0x20, 0x54, 10);
+        ColossoLogRollingStage_StartPaletteTaskFromState(0x20, 0x54, 10);
         Event_Wait(30);
         Event_ShowMessage(actor, 0);
-        Func_02006026(0x60, 0x54, 30);
+        ColossoLogRollingStage_StartPaletteTaskFromState(0x60, 0x54, 30);
         Event_Wait(60);
         Event_ShowMessage(actor, 0);
-        Func_02006094();
+        ColossoLogRollingStage_StopPaletteTask();
         Event_Wait(2);
         Camera_FollowActor(0, 0);
-        Func_020050e2(actor, 6);
+        ColossoLogRollingStage_InitializeStateInteraction(actor, 6);
     } else if (state == 1) {
         Event_SetMessage(0x20c6);
         Event_ShowMessage(actor, 0);
     }
 
-    Func_0200515c(state, actor, 6);
+    FieldScene_RunMiddleSequence(state, actor, 6);
     Event_End();
 }
 
@@ -2371,7 +2356,7 @@ void ColossoLogRollingStage_RunScriptedTransition(s32 mode)
         Event_Wait(30);
         Audio_PlayCue(0x59);
         Func_020062e0(0);
-        Func_0200686c(1, 0);
+        ColossoLogRollingStage_InitializeModeTask(1, 0);
         Event_Wait(120);
         Event_End();
         return;
@@ -2388,7 +2373,7 @@ void ColossoLogRollingStage_RunScriptedTransition(s32 mode)
     Event_Wait(30);
     Audio_PlayCue(mode + 0x5a);
     Func_02006324(mode);
-    Func_020068b0(1, 0);
+    ColossoLogRollingStage_InitializeModeTask(1, 0);
     Event_Wait(120);
 
     goto check_transition;
@@ -2400,18 +2385,18 @@ check_transition:
 
     Audio_PlayCue(0x121);
     Func_0200634e(5);
-    Func_020068da(2, 0);
+    ColossoLogRollingStage_InitializeModeTask(2, 0);
     Audio_PlayCue(0xec);
     Event_Wait(60);
-    Func_020068ee(2, 1);
+    ColossoLogRollingStage_InitializeModeTask(2, 1);
     Audio_PlayCue(0xec);
     Event_Wait(60);
     Func_0200637c(6);
-    Func_02006908(2, 0);
+    ColossoLogRollingStage_InitializeModeTask(2, 0);
     Audio_PlayCue(0xec);
     Event_Wait(60);
     Func_02006396(7);
-    Func_02006922(4, 0);
+    ColossoLogRollingStage_InitializeModeTask(4, 0);
     Audio_PlayCue(0xed);
     Func_020080cc();
     Event_End();
@@ -2625,7 +2610,7 @@ void ColossoLogRollingStage_SpawnRandomSceneEffect(StageEffect *source)
     if (source->vertical_motion >= -255 && source->vertical_motion <= 255) {
         source->state = 0;
     }
-    random_value = Func_02008568();
+    random_value = Random_Next();
     if (random_value * 100 >> 16 <= 9) {
         StageEffect *effect;
         s32 angle;
@@ -2704,7 +2689,7 @@ s32 ColossoLogRollingStage_PositionActiveActor(s32 first_handle, s32 second_hand
     *(s32 *)(record + 48) = 0x10000;
 
     Func_0200876a(record, x, 0, z);
-    Func_02008818_b(0x211);
+    GameFlag_Set(0x211);
     Object_SetScript(record, (void *)0x0200db24);
 
     while (*waitp != 0) {

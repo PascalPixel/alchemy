@@ -38536,10 +38536,6 @@
           "address": "0x0200c940",
           "kind": "thumb"
         },
-        "Func_02004f88": {
-          "address": "0x0200aa94",
-          "kind": "thumb"
-        },
         "Func_02004fac_configure_actor_thirteen": {
           "address": "0x0200ca18",
           "kind": "thumb"
@@ -38584,10 +38580,6 @@
           "address": "0x0200ca18",
           "kind": "thumb"
         },
-        "Func_020050e2": {
-          "address": "0x0200ab50",
-          "kind": "thumb"
-        },
         "Func_020050f4_check_obstacle_destination": {
           "address": "0x0200ca18",
           "kind": "thumb"
@@ -38598,10 +38590,6 @@
         },
         "Func_02005154_head": {
           "address": "0x0200c878",
-          "kind": "thumb"
-        },
-        "Func_0200515c": {
-          "address": "0x0200abac",
           "kind": "thumb"
         },
         "Func_020051a0_head": {
@@ -38872,10 +38860,6 @@
           "address": "0x0200ca18",
           "kind": "thumb"
         },
-        "Func_02005f92": {
-          "address": "0x0200ba58",
-          "kind": "thumb"
-        },
         "Func_02005fba_head": {
           "address": "0x0200ca18",
           "kind": "thumb"
@@ -38900,16 +38884,8 @@
           "address": "0x0200c850",
           "kind": "thumb"
         },
-        "Func_0200600e": {
-          "address": "0x0200babc",
-          "kind": "thumb"
-        },
         "Func_02006014_head": {
           "address": "0x0200c848",
-          "kind": "thumb"
-        },
-        "Func_02006026": {
-          "address": "0x0200babc",
           "kind": "thumb"
         },
         "Func_02006028_head": {
@@ -38946,10 +38922,6 @@
         },
         "Func_0200607e_head": {
           "address": "0x0200c850",
-          "kind": "thumb"
-        },
-        "Func_02006094": {
-          "address": "0x0200bb18",
           "kind": "thumb"
         },
         "Func_020060bc_head": {
@@ -39114,30 +39086,6 @@
         },
         "Func_020064f0_head": {
           "address": "0x0200cb88",
-          "kind": "thumb"
-        },
-        "Func_0200686c": {
-          "address": "0x0200b3d8",
-          "kind": "thumb"
-        },
-        "Func_020068b0": {
-          "address": "0x0200b3d8",
-          "kind": "thumb"
-        },
-        "Func_020068da": {
-          "address": "0x0200b3d8",
-          "kind": "thumb"
-        },
-        "Func_020068ee": {
-          "address": "0x0200b3d8",
-          "kind": "thumb"
-        },
-        "Func_02006908": {
-          "address": "0x0200b3d8",
-          "kind": "thumb"
-        },
-        "Func_02006922": {
-          "address": "0x0200b3d8",
           "kind": "thumb"
         },
         "Func_02006996_sequence": {
@@ -39464,10 +39412,6 @@
           "address": "0x0200c918",
           "kind": "thumb"
         },
-        "Func_02008568": {
-          "address": "0x0200c858",
-          "kind": "thumb"
-        },
         "Func_020085a6": {
           "address": "0x0200c868",
           "kind": "thumb"
@@ -39506,10 +39450,6 @@
         },
         "Func_02008818_a": {
           "address": "0x0200ca18",
-          "kind": "thumb"
-        },
-        "Func_02008818_b": {
-          "address": "0x0200c9b8",
           "kind": "thumb"
         },
         "Func_0200881c": {
@@ -39616,12 +39556,12 @@
           "address": "0x0200ca18",
           "kind": "thumb"
         },
-        "StageSceneWork": {
-          "address": "0x03001ebc",
-          "kind": "data"
-        },
         "gGameState": {
           "address": "0x02000240",
+          "kind": "data"
+        },
+        "StageSceneWork": {
+          "address": "0x03001ebc",
           "kind": "data"
         }
       },

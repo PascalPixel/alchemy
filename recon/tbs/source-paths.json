@@ -1,6 +1,16 @@
 {
   "format": 3,
   "owners": {
+    "main:0808ba38": {
+      "name": "ObjectTable_Snapshot",
+      "source": "FIELD/COMMON/OBJECT/TABLE_SNAPSHOT.C"
+    },
+    "main:0808bb2c": {
+      "name": "ObjectTable_Restore"
+    },
+    "main:0808e9c0": {
+      "name": "Battle_PlaceMapMarkers"
+    },
     "main:080a96d8": {
       "name": "ItemMenu_SelectItem",
       "source": "MENU/ITEM/SELECT_ITEM.C"

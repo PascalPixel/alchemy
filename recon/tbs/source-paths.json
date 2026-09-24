@@ -20762,6 +20762,62 @@
     "resource_39a:02001fac": {
       "name": "ImiruFuchin_StartFadeIn",
       "source": "FIELD/COMMON/IMIRU_FUCHIN/FADE_IN.C"
+    },
+    "resource_3a4:02003738": {
+      "name": "ArutinYama_Func02003738",
+      "source": "FIELD/ARUTIN_YAMA/F_03738.C"
+    },
+    "resource_3b7:020008f8": {
+      "name": "TorebiIzumi_Func020008f8",
+      "source": "FIELD/TOREBI_IZUMI/F_008F8.C"
+    },
+    "resource_3bd:02003ad4": {
+      "name": "ArutamiraDou_Func02003ad4",
+      "source": "FIELD/ARUTAMIRA_DOU/F_03AD4.C"
+    },
+    "resource_3bb:02001898": {
+      "name": "KorosseoKabe_Func02001898",
+      "source": "FIELD/KOROSSEO_KABE/F_01898.C"
+    },
+    "resource_3a4:02003484": {
+      "name": "ArutinYama_Func02003484",
+      "source": "FIELD/ARUTIN_YAMA/F_03484.C"
+    },
+    "resource_3af:020031a8": {
+      "name": "FuneKanpan_Func020031a8",
+      "source": "FIELD/FUNE_KANPAN/F_031A8.C"
+    },
+    "resource_3b0:020000c0": {
+      "name": "FuneHobashira_Func020000c0",
+      "source": "FIELD/FUNE_HOBASHIRA/F_000C0.C"
+    },
+    "resource_3bb:02000400": {
+      "name": "KorosseoKabe_Func02000400",
+      "source": "FIELD/KOROSSEO_KABE/F_00400.C"
+    },
+    "resource_3c8:02004968": {
+      "name": "VinasuHeya_Func02004968",
+      "source": "FIELD/VINASU_HEYA/F_04968.C"
+    },
+    "resource_3bd:02000de8": {
+      "name": "ArutamiraDou_Func02000de8",
+      "source": "FIELD/ARUTAMIRA_DOU/F_00DE8.C"
+    },
+    "resource_3b3:02001938": {
+      "name": "TakaraHashira_Func02001938",
+      "source": "FIELD/TAKARA_HASHIRA/F_01938.C"
+    },
+    "resource_3b3:020019f0": {
+      "name": "TakaraHashira_Func020019f0",
+      "source": "FIELD/TAKARA_HASHIRA/F_019F0.C"
+    },
+    "resource_3b1:020045d0": {
+      "name": "FuneHeya_Func020045d0",
+      "source": "FIELD/FUNE_HEYA/F_045D0.C"
+    },
+    "resource_3a4:020039c8": {
+      "name": "ArutinYama_Func020039c8",
+      "source": "FIELD/ARUTIN_YAMA/F_039C8.C"
     }
   },
   "symbols": {

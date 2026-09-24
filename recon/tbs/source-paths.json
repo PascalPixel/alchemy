@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_3c4:02001abc": {
+      "name": "BabiChika_Func02001abc",
+      "source": "FIELD/BABI_CHIKA/F_01ABC.C"
+    },
     "resource_3a6:02000e04": {
       "name": "HaidiaDou_Func02000e04",
       "source": "FIELD/HAIDIA_DOU/F_00E04.C"

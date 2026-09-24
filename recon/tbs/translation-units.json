@@ -81168,6 +81168,58 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "scene-3c4-02001abc",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/BABI_CHIKA/F_01ABC.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3c4",
+      "absolute_symbols": {
+        "Engine_ActorSetSpeed": {
+          "address": "0x0200b114",
+          "kind": "thumb"
+        },
+        "Engine_AudioPlayCue": {
+          "address": "0x0200b1ac",
+          "kind": "thumb"
+        },
+        "Engine_ActorGet": {
+          "address": "0x0200b10c",
+          "kind": "thumb"
+        },
+        "Engine_ObjectSetPosition": {
+          "address": "0x0200b074",
+          "kind": "thumb"
+        },
+        "Engine_ActorWaitForMove": {
+          "address": "0x0200b134",
+          "kind": "thumb"
+        },
+        "Engine_MapCopyCellAttributes": {
+          "address": "0x0200b09c",
+          "kind": "thumb"
+        },
+        "Engine_EventWait": {
+          "address": "0x0200b0ec",
+          "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02001abc",
+          "extent": 368,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

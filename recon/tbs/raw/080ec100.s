@@ -32,10 +32,10 @@
 	.set sub_080e396c, 0x080e396c
 	.set sub_080ed408, 0x080ed408
 	.set sub_080f9010, 0x080f9010
-	.global FunctionHead_080ec100
+	.global BattleFx_InitializeMode6
 	.global Func_080ec100
 	.thumb_func
-FunctionHead_080ec100:
+BattleFx_InitializeMode6:
 Func_080ec100:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

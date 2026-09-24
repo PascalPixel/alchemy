@@ -9991,7 +9991,7 @@
       "name": "RunBattlePresentation"
     },
     "main:080be378": {
-      "name": "FunctionHead_080be378"
+      "name": "BattleCommand_BuildPlan"
     },
     "main:080c91a4": {
       "name": "BattleFx_ArmWin0HBlankDma",
@@ -10017,7 +10017,7 @@
       "name": "Region_080d4ce8"
     },
     "main:080d765c": {
-      "name": "FunctionHead_080d765c"
+      "name": "BattleFx_InitializeMode10"
     },
     "main:080d82b0": {
       "name": "Unnamed_080d82b0"
@@ -10051,7 +10051,7 @@
       "name": "BattleFx_PrepareCanvasEffect"
     },
     "main:080e15e8": {
-      "name": "FunctionHead_080e15e8"
+      "name": "BattleFx_InitializeMode12"
     },
     "main:080e2538": {
       "name": "Unnamed_080e2538"
@@ -10109,7 +10109,7 @@
       "source": "BATTLE/EFFECT/ARM_PALETTE_HBLANK_DMA.C"
     },
     "main:080ec100": {
-      "name": "FunctionHead_080ec100"
+      "name": "BattleFx_InitializeMode6"
     },
     "main:080f4168": {
       "name": "FunctionHead_080f4168"

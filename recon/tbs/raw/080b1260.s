@@ -11,8 +11,10 @@
 	.set sub_08077018, 0x08077018
 	.set sub_08077218, 0x08077218
 	.set sub_08077228, 0x08077228
+	.global Shop_DrawEquipComparison
 	.global Func_080b1260
 	.thumb_func
+Shop_DrawEquipComparison:
 Func_080b1260:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

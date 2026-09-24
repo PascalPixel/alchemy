@@ -32,8 +32,10 @@
 	.set sub_080b17e4, 0x080b17e4
 	.set sub_080b24e4, 0x080b24e4
 	.set sub_080f9010, 0x080f9010
+	.global Shop_SelBuy
 	.global Func_080b0aac
 	.thumb_func
+Shop_SelBuy:
 Func_080b0aac:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

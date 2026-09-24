@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "main:08006f84": {
+      "name": "ProgramFlashSector",
+      "source": "SYSTEM/SAVE/PROGRAM_FLASH_SECTOR.C"
+    },
     "main:08007220": {
       "name": "ProgramAtmelFlashBlock",
       "source": "SYSTEM/SAVE/PROGRAM_ATMEL_FLASH_BLOCK.C"

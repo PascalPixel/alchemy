@@ -47565,14 +47565,6 @@
           "address": "0x0200a408",
           "kind": "thumb"
         },
-        "Func_0200081c": {
-          "address": "0x020083ec",
-          "kind": "thumb"
-        },
-        "Func_0200083e": {
-          "address": "0x02008408",
-          "kind": "thumb"
-        },
         "Func_02000872": {
           "address": "0x02008424",
           "kind": "thumb"
@@ -47587,22 +47579,6 @@
         },
         "Func_020008f4": {
           "address": "0x02008424",
-          "kind": "thumb"
-        },
-        "Func_02000948": {
-          "address": "0x020084ec",
-          "kind": "thumb"
-        },
-        "Func_02000970": {
-          "address": "0x020084ec",
-          "kind": "thumb"
-        },
-        "Func_0200099c": {
-          "address": "0x020084ec",
-          "kind": "thumb"
-        },
-        "Func_020009c8": {
-          "address": "0x020084ec",
           "kind": "thumb"
         },
         "Func_02002536": {
@@ -47621,35 +47597,7 @@
           "address": "0x0200a5b0",
           "kind": "thumb"
         },
-        "Func_020035de": {
-          "address": "0x02009958",
-          "kind": "thumb"
-        },
-        "Func_020036ec": {
-          "address": "0x02009958",
-          "kind": "thumb"
-        },
         "Func_02003748_channels": {
-          "address": "0x02009984",
-          "kind": "thumb"
-        },
-        "Func_0200376a": {
-          "address": "0x02009958",
-          "kind": "thumb"
-        },
-        "Func_020037d4": {
-          "address": "0x02009984",
-          "kind": "thumb"
-        },
-        "Func_02003846": {
-          "address": "0x02009984",
-          "kind": "thumb"
-        },
-        "Func_020038ac": {
-          "address": "0x02009958",
-          "kind": "thumb"
-        },
-        "Func_020038fc": {
           "address": "0x02009984",
           "kind": "thumb"
         },
@@ -47693,16 +47641,16 @@
           "address": "0x0200a530",
           "kind": "thumb"
         },
-        "LinkedMessage_TooYoungForTheJob": {
-          "address": "0x00001440",
-          "kind": "data"
-        },
         "gEventWork": {
           "address": "0x03001ebc",
           "kind": "data"
         },
         "gGameState": {
           "address": "0x02000240",
+          "kind": "data"
+        },
+        "LinkedMessage_TooYoungForTheJob": {
+          "address": "0x00001440",
           "kind": "data"
         }
       },

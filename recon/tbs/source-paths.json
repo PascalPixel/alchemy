@@ -19606,7 +19606,8 @@
       "name": "UiWork_ShiftPanelRowsLeft"
     },
     "main:08011644": {
-      "name": "Map_LoadAreaGraphics"
+      "name": "Map_LoadAreaGraphics",
+      "source": "FIELD/COMMON/MAP/LOAD_AREA_GRAPHICS.C"
     },
     "main:0801d014": {
       "name": "OptionMenu_InitializeWork"

@@ -77017,6 +77017,54 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "scene-39e-02000388",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHIAN_JIIN/AREA_EVENTS.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_39e",
+      "absolute_symbols": {
+        "Engine_GameFlagIsSet": {
+          "address": "0x0200c3bc",
+          "kind": "thumb"
+        },
+        "Main_0808a038": {
+          "address": "0x0200c3ec",
+          "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
+        },
+        "ShianJiin_AreaEventsA": {
+          "address": "0x0200c8f0",
+          "kind": "data"
+        },
+        "ShianJiin_AreaEventsB": {
+          "address": "0x0200cae8",
+          "kind": "data"
+        },
+        "ShianJiin_AreaEventsC": {
+          "address": "0x0200c998",
+          "kind": "data"
+        },
+        "Data_0000003c": {
+          "address": "0x0000003c",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02000388",
+          "extent": 140,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

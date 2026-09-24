@@ -10249,7 +10249,8 @@
       "name": "BattleEffect_RunBurstShower"
     },
     "main:080dd9c0": {
-      "name": "FunctionHead_080dd9c0"
+      "name": "FunctionHead_080dd9c0",
+      "source": "BATTLE/EFFECT/RISING_PILLARS.C"
     },
     "main:080ddde0": {
       "name": "Region_080ddde0"

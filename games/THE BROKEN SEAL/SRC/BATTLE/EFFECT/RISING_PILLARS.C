@@ -1,18 +1,13 @@
-/* Draft, not exact (2026-09-24): candidate=1056 reference=1056
-   differing_halfwords=3. The pillar loop has the reference's inductions
-   (read from the -dL loop dump): the start frame st = 8i + 8 as its own
-   variable (spilled at sp+12, with st + 1 and st + 3 derived from it),
-   a = frame - (8i + 8) computed after st but before the test so that it is
-   reduced itself (r8), the cue frame st + 4 as a separate induction
-   (sp+20), and the X-table pointer (sp+16). A u8 kind makes the loop large
-   enough (loop.c's threshold) that a * 3 is no longer strength-reduced.
-   Reading blit47 through a DrawRectangle pointer lets the scheduler lift
-   it over the transfer_value store, and reading the puff heights table
-   directly (no local) gives the reference's allocation and slots.
-   Residual: the kind test. The reference copies kind and compares the
-   copy (adds r3, r2, #0; cmp r3, #1; bhi); kind >> 1 == 0 has that
-   length (lsrs r3, r2, #1; cmp r3, #0; bne), and kind < 2 compares r2
-   directly, 2 bytes shorter. */
+/* Battle effect: a row of pillars rises out of the ground one after another,
+   eight frames apart, each kicking up a puff of dust and shaking the camera
+   while the targets flinch; the screen fades back over the last 16 frames.
+   Kinds 0 and 1 are tall columns that slide outwards as they grow, kinds 2
+   and 3 short stumps; odd kinds slide left.
+
+   The pillar loop keeps the reference's inductions: the start frame is its
+   own variable (the frame tests are start, start + 1, start + 3 and
+   start + 4), the pillar's age is computed before the start test, and the
+   kind is read from its table at each test. */
 #include "TYPES.H"
 #include "BATTLE_EFFECT_WORK.H"
 #include "BATTLE_EFX.H"
@@ -68,8 +63,8 @@ void FunctionHead_080dd9c0(struct BattleEffectArgument *efx)
     struct PillarWork *work;
     s32 i;
     s32 j;
-    s32 a;
-    s32 st;
+    s32 age;
+    s32 start;
 
     cache = (u32 *)(gWorkSlot + 39 * 4);
     cursor = cache;
@@ -107,46 +102,45 @@ void FunctionHead_080dd9c0(struct BattleEffectArgument *efx)
         }
 
         for (i = 0; i != BattleFxPillar_Counts[work->effect->variant]; i++) {
-            st = i * 8 + 8;
-            a = frame - (i * 8 + 8);
-            if (frame > st) {
-                u8 kind = BattleFxPillar_Kinds[i];
+            start = i * 8 + 8;
+            age = frame - (i * 8 + 8);
+            if (frame > start) {
                 s32 h;
                 s32 w;
 
-                if (kind >> 1 == 0) {
-                    h = a * 16;
-                    w = a * 6;
+                if (BattleFxPillar_Kinds[i] < 2) {
+                    h = age * 16;
+                    w = age * 6;
                     if (h > 80) {
                         h = 80;
                     }
                     if (w > 30) {
                         w = 30;
                     }
-                    if (kind & 1) {
+                    if (BattleFxPillar_Kinds[i] & 1) {
                         blit47(dst, work->sheet, BattleFxPillar_X[i] - w, 108 - h, 48, h);
                     } else {
                         blit46(dst, work->sheet, BattleFxPillar_X[i] + w, 108 - h, 48, h);
                     }
                 } else {
-                    h = a * 8;
-                    w = a;
+                    h = age * 8;
+                    w = age;
                     if (h > 64) {
                         h = 64;
                     }
-                    if (a > 8) {
+                    if (age > 8) {
                         w = 8;
                     }
-                    if (kind & 1) {
+                    if (BattleFxPillar_Kinds[i] & 1) {
                         blit47(dst, work->sheet + 0xf00, BattleFxPillar_X[i] - w, 108 - h, 32, h);
                     } else {
                         blit46(dst, work->sheet + 0xf00, BattleFxPillar_X[i] + w, 108 - h, 32, h);
                     }
                 }
-                if (frame == st + 1) {
+                if (frame == start + 1) {
                     work->shake = 3;
                 }
-                if (frame < st + 3) {
+                if (frame < start + 3) {
                     s32 y = (Random16() & 31) + 72;
                     struct EffectStep *p;
                     for (j = 0; j != 64; j++) {
@@ -163,13 +157,11 @@ void FunctionHead_080dd9c0(struct BattleEffectArgument *efx)
                     }
                 }
             }
-            {
             for (j = 0; j != work->effect->count; j++) {
-                if (frame == st + 4) {
+                if (frame == start + 4) {
                     Audio_PlayCue(132);
                     ObjectGroup_UpdateMembers(work->effect->actors[j], 7, 5, j, 3);
                 }
-            }
             }
         }
 

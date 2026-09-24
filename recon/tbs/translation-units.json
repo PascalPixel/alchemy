@@ -5214,20 +5214,6 @@
       ]
     },
     {
-      "id": "unit-giant-affinefx",
-      "game": "tbs",
-      "source": "recon/tbs/en/units/unit-giant-affinefx.c",
-      "compiler_route": "canonical-gcc296",
-      "overlay": null,
-      "owners": [
-        {
-          "address": "0x080dd9c0",
-          "extent": 1056,
-          "state": "not-yet-c"
-        }
-      ]
-    },
-    {
       "id": "overlay-37d-unit",
       "game": "tbs",
       "source": "games/THE BROKEN SEAL/SRC/FIELD/SORU_MEIRO/SCENE_37D.C",

@@ -138,7 +138,7 @@ LAYOUT_OFFSET_GUARD(
     psynergy_shortcuts,
     0x220);
 
-extern struct PsynergyMenuState *Data_03001f2c;
+extern struct PsynergyMenuState *gMenuWork;
 extern struct PsynergyMenuGlobalState Data_02000240;
 extern char Value_00000af2;
 

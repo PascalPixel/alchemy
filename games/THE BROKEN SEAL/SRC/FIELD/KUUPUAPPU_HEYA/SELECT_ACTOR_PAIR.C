@@ -5,7 +5,6 @@ extern struct EventRuntime *Data_03001ebc;
 
 void Func_0200cc7c();
 void Func_0200c5f4();
-void Func_0200c658();
 void Func_0200cefc();
 void Func_0200c684();
 u8 *Func_0200cd7c();
@@ -93,7 +92,7 @@ void FieldScene_SelectActorPair(void)
     Actor_RunRepeatedMotion(2, 2);
     Event_Wait(20);
     Func_0200c5f4(2, 20);
-    Func_0200c658(2, actor);
+    SceneEffect_ApplyPairWithValue141(2, actor);
     Func_0200cefc();
     Event_Wait(60);
     Actor_RunRepeatedMotion(24, 2);

@@ -6594,10 +6594,6 @@
           "address": "0x0200c5f4",
           "kind": "thumb"
         },
-        "Func_0200c658": {
-          "address": "0x0200c658",
-          "kind": "thumb"
-        },
         "Func_0200c684": {
           "address": "0x0200c684",
           "kind": "thumb"
@@ -6616,6 +6612,10 @@
         },
         "Func_0200cefc": {
           "address": "0x0200cefc",
+          "kind": "thumb"
+        },
+        "SceneEffect_ApplyPairWithValue141": {
+          "address": "0x0200c658",
           "kind": "thumb"
         }
       },

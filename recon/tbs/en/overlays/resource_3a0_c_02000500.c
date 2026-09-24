@@ -1,4 +1,4 @@
-/* NONMATCHING: undefined of undefined bytes, undefined halfword edits (2026-09-24). Hand-written from the
+/* NONMATCHING: 154 of 156 bytes, 1 halfword edit (2026-09-24). Hand-written from the
  * resolved jump-table disassembly as a single-overlay unit binding Engine_* at
  * their import veneers. Remaining: every instruction and the pool match (154 bytes); the owner's 156-byte extent ends in a 2-byte alignment gap, and alchemy overlay adopt reports exact in 1 of 30 compiles, so it refuses; register the tail as a compiler gap (or diagnose the layout split) and adopt this as is. */
 #include "TYPES.H"

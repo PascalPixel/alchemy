@@ -69980,6 +69980,54 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "biribino-niwa-entry-state",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_NIWA/ENTRY_STATE.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_38e",
+      "absolute_symbols": {
+        "Engine_GameFlagIsSet": {
+          "address": "0x02008ab4",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagClear": {
+          "address": "0x02008ac4",
+          "kind": "thumb"
+        },
+        "InitializeOrbitingSceneEntity": {
+          "address": "0x02008974",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetPosition": {
+          "address": "0x02008b24",
+          "kind": "thumb"
+        },
+        "Engine_ObjectSetTargetAndCallback": {
+          "address": "0x02008b4c",
+          "kind": "thumb"
+        },
+        "Engine_ActorFaceDirection": {
+          "address": "0x02008b7c",
+          "kind": "thumb"
+        },
+        "BiribinoNiwa_RunGardenScene": {
+          "address": "0x020085dc",
+          "kind": "thumb"
+        },
+        "BiribinoNiwa_GuardScript": {
+          "address": "0x02008bf4",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x0200050c",
+          "extent": 208,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

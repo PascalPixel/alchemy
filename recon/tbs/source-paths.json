@@ -9890,7 +9890,8 @@
       "source": "FIELD/KUUPUAPPU_HEYA/PROMPT.C"
     },
     "resource_38e:0200050c": {
-      "name": "RunEventScript01"
+      "name": "BiribinoNiwa_ApplyEntryState",
+      "source": "FIELD/BIRIBINO_NIWA/ENTRY_STATE.C"
     },
     "resource_399:020019bc": {
       "name": "RunEventScript02",

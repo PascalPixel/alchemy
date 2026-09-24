@@ -80256,6 +80256,42 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "scene-39e-02000f80",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHIAN_JIIN/WALK_BY_FACING.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_39e",
+      "absolute_symbols": {
+        "Engine_ActorGet": {
+          "address": "0x0200c404",
+          "kind": "thumb"
+        },
+        "Engine_ActorWalkToAndWait": {
+          "address": "0x0200c434",
+          "kind": "thumb"
+        },
+        "Engine_ActorFaceDirection": {
+          "address": "0x0200c4c4",
+          "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02000f80",
+          "extent": 172,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

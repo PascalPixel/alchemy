@@ -957,55 +957,8 @@ AlchemyC_02002410:
 AlchemyC_02002480:
 	.space 0xaa
 	.2byte 0x0000
-	push	{r5, r6, lr}
-	mov	r6, r8
-	push	{r6}
-	sub	sp, #8
-	movs	r3, #44
-	movs	r2, #19
-	str	r3, [sp, #0]
-	str	r2, [sp, #4]
-	movs	r1, #19
-	movs	r2, #4
-	movs	r3, #1
-	movs	r0, #108
-	bl	sub_020055e2
-	movs	r0, #17
-	bl	sub_02005658
-	ldr	r5, [r0, #8]
-	movs	r0, #17
-	bl	sub_02005660
-	ldr	r2, [r0, #16]
-	asrs	r5, r5, #20
-	movs	r3, #1
-	adds	r1, r5, #0
-	asrs	r2, r2, #20
-	movs	r6, #255
-	movs	r0, #0
-	str	r3, [sp, #0]
-	str	r6, [sp, #4]
-	mov	r8, r3
-	bl	sub_020027b0
-	movs	r0, #18
-	bl	sub_0200567e
-	ldr	r5, [r0, #8]
-	movs	r0, #18
-	bl	sub_02005686
-	ldr	r2, [r0, #16]
-	asrs	r5, r5, #20
-	mov	r3, r8
-	asrs	r2, r2, #20
-	adds	r1, r5, #0
-	movs	r0, #0
-	str	r3, [sp, #0]
-	str	r6, [sp, #4]
-	bl	sub_020027d2
-	add	sp, #8
-	pop	{r3}
-	mov	r8, r3
-	pop	{r5, r6}
-	pop	{r0}
-	bx	r0
+AlchemyC_0200252c:
+	.space 0x70
 AlchemyC_0200259c:
 	.space 0xa78
 	.include "games/THE BROKEN SEAL/SRC/FIELD/BABI_CHIKA/IMPORT.INC"

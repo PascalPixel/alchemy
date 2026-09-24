@@ -28,9 +28,13 @@ enum StatueHallMessage {
     MSG_SUKURETA_I_WILL_WATCH_FROM_LUNA
 };
 
-/* Cleared once the hall is safe. */
+/*
+ * Story scenes all over the world clear this as they finish, and an entry
+ * script sets it for one entrance, so it marks an arrival event still to
+ * play rather than anything about the statue hall.
+ */
 enum {
-    FLAG_STATUE_HALL_TRAP_ARMED = 0x12f
+    FLAG_ARRIVAL_EVENT_PENDING = 0x12f
 };
 
 void Event_SayThenWait(s32 speaker, s32 frames);
@@ -201,7 +205,7 @@ void FieldScene_SetupStagedActors(void)
     }
     Actor_WaitForMove(ACTOR_JASMINE);
     Actor_SetPosition(ACTOR_JASMINE, 0, 0);
-    GameFlag_Clear(FLAG_STATUE_HALL_TRAP_ARMED);
+    GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
     gEventWork->transition_frames = 16;
     Event_End();

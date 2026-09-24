@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "main:08006cdc": {
+      "name": "EraseFlashChip",
+      "source": "SYSTEM/SAVE/ERASE_FLASH_CHIP.C"
+    },
     "main:08006f84": {
       "name": "ProgramFlashSector",
       "source": "SYSTEM/SAVE/PROGRAM_FLASH_SECTOR.C"

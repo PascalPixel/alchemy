@@ -1,10 +1,11 @@
-/* Draft, not exact (2026-09-24): candidate=1028 reference=1056, binary
-   similarity 61%. Rewritten from the listing (the earlier split-owner draft
-   is in git history). The prologue, the slot cursor and the per-frame blend
-   ramp match; the reference spills frame (sp+44) and keeps 8j+8, 8j+12 and
-   the X-table pointer as spilled induction values, so most of the pillar
-   loop still allocates differently (8i+8 and 8i+12 share one giv here).
-   The tables are plain arrays: the reference reloads them after each draw. */
+/* Draft, not exact (2026-09-24): candidate=1052 reference=1056
+   differing_halfwords=341, binary similarity 79%. Prologue, frame (52 bytes),
+   the X-table pointer (sp+16), a = frame - 8 - 8i in r8, the in-body spawn
+   pointer and the puff loop match. Remaining: the reference keeps 8i+8
+   (sp+12) and 8i+12 (sp+20) as separate spilled inductions and does not
+   reduce a*3; here 8i is one induction and a*3 is reduced, which moves work
+   from r9 to sl. Reading the kind straight from the table reproduces the
+   copy-and-compare of the reference but costs elsewhere. */
 #include "TYPES.H"
 #include "BATTLE_EFFECT_WORK.H"
 #include "BATTLE_EFX.H"

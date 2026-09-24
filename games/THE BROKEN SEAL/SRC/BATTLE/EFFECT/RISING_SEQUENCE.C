@@ -36,26 +36,23 @@ struct Object_08092624 {
     void (*callback_6c)(void);
 };
 
-extern struct Object_08092624 *Func_080090c8(s32, s32, s32, s32);
-#define Object_CreateFar Func_080090c8
+extern struct Object_08092624 *Object_CreateFar(s32, s32, s32, s32);
 extern s32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 #define Rand Random16
 void Object_SetMode(void *, s32);
 extern void Object_SetCallback(struct Object_08092624 *, const void *);
 extern void ObjectGroup_SetChildValue(struct Object_08092624 *);
-extern s32 Func_08002304(s32, s32);
+extern s32 Math_ModU(s32, s32);
 extern const u8 Data_0809fbec[];
 extern const u8 Data_0809fc04[];
 s32 Object_GetById(u32);
 void Audio_PlayCue(s32);
 void WaitFrames(u32);
 void Object_SetPosition(void *, s32, s32, s32);
-void Func_08092adc(s32 arg0, s32 arg1, s32 arg2);
-#define ObjectMotion_ArmCallback Func_08092adc
+void ObjectMotion_ArmCallback(s32 arg0, s32 arg1, s32 arg2);
 void Object_CommitPosition(void *);
-void Func_0809202c(void);
-#define BattleFx_PlayQueuedSound Func_0809202c
+void BattleFx_PlayQueuedSound(void);
 
 void ParticleEffect_UpdateLinearMotion(void *particle);
 
@@ -83,9 +80,9 @@ void BattleFx_SpawnBurstParticle(struct Object_08092624 *source, s32 optional)
             ObjectGroup_SetChildValue(object);
 
         object->mode_55 = 0;
-        value = Func_08002304(Rand(), 10) + 5;
+        value = Math_ModU(Rand(), 10) + 5;
         object->field_34 = -0x1999 * value;
-        value = Func_08002304(Rand(), 15) - 7;
+        value = Math_ModU(Rand(), 15) - 7;
         value <<= 1;
         object->field_30 = 0x1999 * value;
         object->field_64 = 0;

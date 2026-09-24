@@ -25,40 +25,40 @@ struct BattleGroupOrder {
 
 extern const struct BattleGroupOrder Data_080c35bc;
 
-struct DjinnRecoveryTable *Func_08077000(s32 side);
-struct BattleUnit *Func_08077008(s32 unit_id);
-void Func_08077010(s32 unit_id);
-s32 Func_08077118(s32 unit_id, s32 amount);
-s32 Func_08077120(s32 unit_id, s32 amount);
-s32 Func_080771b0(u8 unit_id, u8 element, u8 index);
-void Func_080771c0(u8 unit_id, u8 element, u8 index);
-void Func_08009080(void *object, s32 animation);
-void Func_08009088(void *object, s32 flags);
-void Func_08015120(s32 value, s32 slot);
-void Func_080151c8(s32 message_id);
-void Func_080f9010(s32 cue);
-s32 Func_080b6c08(s32 group, u16 *ids);
-void Func_080b78e4(s32 unit_id, void *slot);
-void Func_080b7aac(s32 unit_id);
-struct BattleMotionSlot *Func_080b7dd0(s32 unit_id);
-void Func_080bb65c(void);
-s32 Func_080bbabc(u32 opcode, u32 operand);
-void Func_080bd808(s32 phase);
-u32 Func_080bdfec(void);
-void Func_080be02c(void);
-s32 Func_080bf250(s32 unit_id);
-s32 Func_080bf2b4(s32 unit_id);
-s32 Func_080bf318(s32 unit_id);
-s32 Func_080bf37c(s32 unit_id);
-s32 Func_080bf3bc(s32 unit_id);
-s32 Func_080bf400(s32 unit_id);
-s32 Func_080bf440(s32 unit_id);
-s32 Func_080bf484(s32 unit_id);
-s32 Func_080bf4c4(s32 unit_id);
-s32 Func_080bf524(s32 unit_id);
-s32 Func_080bf54c(s32 unit_id);
-s32 Func_080bf574(s32 unit_id);
-void Func_080c0774(s32 mode, s32 value, s32 arg);
+struct DjinnRecoveryTable *Trade_GetOfferStateFar(s32 side);
+struct BattleUnit *Owner_GetStateFar(s32 unit_id);
+void Owner_RecalculateStatsFar(s32 unit_id);
+s32 Owner_AdjustFirstValueFar(s32 unit_id, s32 amount);
+s32 Owner_AdjustSecondValueFar(s32 unit_id, s32 amount);
+s32 Djinn_ActivateFar(u8 unit_id, u8 element, u8 index);
+void Trade_RemoveOfferFar(u8 unit_id, u8 element, u8 index);
+void Object_SetMode(void *object, s32 animation);
+void ObjectDispatch_ApplyValueToChildrenFar(void *object, s32 flags);
+void UiWork_PushValueSlotFar(s32 value, s32 slot);
+void UiText_ShowMessageAndWaitCoreFar(s32 message_id);
+void Audio_PlayCue(s32 cue);
+s32 BattleParty_ListActorIds(s32 group, u16 *ids);
+void BattleUnit_BuildStatusFlags(s32 unit_id, void *slot);
+void BattlePres_SetActorModeAndAction(s32 unit_id);
+struct BattleMotionSlot *GetBattleObjectSlot(s32 unit_id);
+void BattlePresentation_WaitForAdvance(void);
+s32 BattleEv_Push(u32 opcode, u32 operand);
+void BattleEventRuntime_SchedulePhase(s32 phase);
+u32 BattleEventRuntime_Reset(void);
+void BattleEventRuntime_WaitForReady(void);
+s32 BattleUnit_TickCounter132(s32 unit_id);
+s32 BattleUnit_TickCounter134(s32 unit_id);
+s32 BattleUnit_TickCounter136(s32 unit_id);
+s32 BattleUnit_TickCounter138(s32 unit_id);
+s32 BattleUnit_TickCounter139(s32 unit_id);
+s32 BattleUnit_TickCounter13a(s32 unit_id);
+s32 BattleUnit_TickCounter13b(s32 unit_id);
+s32 BattleUnit_TickCounter13c(s32 unit_id);
+s32 Battle_AdvanceCounterAndCheckChance(s32 unit_id);
+s32 BattleUnit_TickCounter13e(s32 unit_id);
+s32 BattleUnit_TickCounter13f(s32 unit_id);
+s32 BattleUnit_TickCounter146(s32 unit_id);
+void BattlePresentation_ConfigurePaletteFade(s32 mode, s32 value, s32 arg);
 s32 Func_080c1798(s32 unit_id, s32 element, s32 mode, s32 arg);
 
 /* Round-end processing. Each side's set-aside Djinn count down and return
@@ -79,13 +79,13 @@ s32 Battle_ProcessRoundEnd(void)
     work = Data_03001e74;
     sides = (work->two_sided != 0) + 1;
     for (side = 0; side < sides; side++) {
-        list = &Func_08077000(side)->list;
+        list = &Trade_GetOfferStateFar(side)->list;
         i = 0;
         if (i < list->count) {
             timed_entry = list->entries;
             do {
-                if (timed_entry->turns > 0 && Func_080b7dd0(timed_entry->unit_id) != 0
-                    && Func_08077008(timed_entry->unit_id)->hp != 0) {
+                if (timed_entry->turns > 0 && GetBattleObjectSlot(timed_entry->unit_id) != 0
+                    && Owner_GetStateFar(timed_entry->unit_id)->hp != 0) {
                     timed_entry->turns--;
                 }
                 i++;
@@ -100,24 +100,24 @@ s32 Battle_ProcessRoundEnd(void)
                     u8 id = expired_entry->unit_id;
                     s32 element;
 
-                    if (Func_080b7dd0(id) != 0) {
-                        Func_080bdfec();
-                        Func_080bd808(30);
-                        Func_080bbabc(0, id);
-                        Func_080bbabc(3, expired_entry->element * 20 + expired_entry->index + 300);
-                        Func_080bbabc(14, 175);
-                        Func_080bbabc(10, 0);
-                        Func_080bbabc(4, MSG_DJINN_SET);
-                        Func_080bbabc(11, id);
-                        Func_080f9010(212);
-                        Func_08009080(Func_080b7dd0(id)->object, 3);
-                        Func_08009088(Func_080b7dd0(id)->object, 32);
+                    if (GetBattleObjectSlot(id) != 0) {
+                        BattleEventRuntime_Reset();
+                        BattleEventRuntime_SchedulePhase(30);
+                        BattleEv_Push(0, id);
+                        BattleEv_Push(3, expired_entry->element * 20 + expired_entry->index + 300);
+                        BattleEv_Push(14, 175);
+                        BattleEv_Push(10, 0);
+                        BattleEv_Push(4, MSG_DJINN_SET);
+                        BattleEv_Push(11, id);
+                        Audio_PlayCue(212);
+                        Object_SetMode(GetBattleObjectSlot(id)->object, 3);
+                        ObjectDispatch_ApplyValueToChildrenFar(GetBattleObjectSlot(id)->object, 32);
                         element = expired_entry->element;
-                        Func_080771b0(id, element, expired_entry->index);
-                        Func_080771c0(id, expired_entry->element, expired_entry->index);
-                        Func_08077010(id);
+                        Djinn_ActivateFar(id, element, expired_entry->index);
+                        Trade_RemoveOfferFar(id, expired_entry->element, expired_entry->index);
+                        Owner_RecalculateStatsFar(id);
                         Func_080c1798(id, element, 3, 0);
-                        Func_080be02c();
+                        BattleEventRuntime_WaitForReady();
                     }
                 } else {
                     expired_entry++;
@@ -126,7 +126,7 @@ s32 Battle_ProcessRoundEnd(void)
             } while (i < list->count);
         }
     }
-    Func_080c0774(2, Data_03001e74->palette_648, 0);
+    BattlePresentation_ConfigurePaletteFade(2, Data_03001e74->palette_648, 0);
     {
     s32 *group_list;
     struct BattleGroupOrder order = Data_080c35bc;
@@ -140,12 +140,12 @@ s32 Battle_ProcessRoundEnd(void)
     }
     group_list = order.group;
     for (group = 0; group <= 1; group++) {
-        count = Func_080b6c08(group_list[group], ids);
+        count = BattleParty_ListActorIds(group_list[group], ids);
         for (j = 0; j < count; j++) {
             s32 hp_amount;
             s32 pp_amount;
             s32 id = ids[j];
-            struct BattleUnit *unit = Func_08077008(id);
+            struct BattleUnit *unit = Owner_GetStateFar(id);
 
             if (unit->ready_pose != 0) {
                 unit->ready_pose--;
@@ -156,107 +156,107 @@ s32 Battle_ProcessRoundEnd(void)
                     if (unit->hp + hp_amount > unit->max_hp) {
                         hp_amount = unit->max_hp - unit->hp;
                     }
-                    Func_08077118(id, hp_amount);
-                    Func_08015120(id, 1);
-                    Func_08015120(hp_amount, 5);
+                    Owner_AdjustFirstValueFar(id, hp_amount);
+                    UiWork_PushValueSlotFar(id, 1);
+                    UiWork_PushValueSlotFar(hp_amount, 5);
                     if (unit->hp == unit->max_hp) {
-                        Func_080151c8(MSG_HP_FULL);
+                        UiText_ShowMessageAndWaitCoreFar(MSG_HP_FULL);
                     } else {
-                        Func_080151c8(MSG_HP_RECOVER);
+                        UiText_ShowMessageAndWaitCoreFar(MSG_HP_RECOVER);
                     }
-                    Func_080f9010(175);
-                    Func_080bb65c();
+                    Audio_PlayCue(175);
+                    BattlePresentation_WaitForAdvance();
                 }
                 if (unit->pp_regen != 0 && unit->pp != unit->max_pp) {
                     pp_amount = unit->pp_regen;
                     if (unit->pp + pp_amount > unit->max_pp) {
                         pp_amount = unit->max_pp - unit->pp;
                     }
-                    Func_08077120(id, pp_amount);
-                    Func_08015120(id, 1);
-                    Func_08015120(pp_amount, 5);
+                    Owner_AdjustSecondValueFar(id, pp_amount);
+                    UiWork_PushValueSlotFar(id, 1);
+                    UiWork_PushValueSlotFar(pp_amount, 5);
                     if (unit->pp == unit->max_pp) {
-                        Func_080151c8(MSG_PP_FULL);
+                        UiText_ShowMessageAndWaitCoreFar(MSG_PP_FULL);
                     } else {
-                        Func_080151c8(MSG_PP_RECOVER);
+                        UiText_ShowMessageAndWaitCoreFar(MSG_PP_RECOVER);
                     }
-                    Func_080f9010(175);
-                    Func_080bb65c();
+                    Audio_PlayCue(175);
+                    BattlePresentation_WaitForAdvance();
                 }
             }
-            if (Func_080bf574(id) != 0) {
-                Func_080b78e4(id, Func_080b7dd0(id));
-                Func_08015120(id, 1);
-                Func_080151c8(MSG_AGI_NORMAL);
-                Func_080bb65c();
+            if (BattleUnit_TickCounter146(id) != 0) {
+                BattleUnit_BuildStatusFlags(id, GetBattleObjectSlot(id));
+                UiWork_PushValueSlotFar(id, 1);
+                UiText_ShowMessageAndWaitCoreFar(MSG_AGI_NORMAL);
+                BattlePresentation_WaitForAdvance();
             }
-            if (Func_080bf250(id) != 0) {
-                Func_080b78e4(id, Func_080b7dd0(id));
-                Func_08015120(id, 1);
-                Func_080151c8(MSG_ATK_NORMAL);
-                Func_080bb65c();
+            if (BattleUnit_TickCounter132(id) != 0) {
+                BattleUnit_BuildStatusFlags(id, GetBattleObjectSlot(id));
+                UiWork_PushValueSlotFar(id, 1);
+                UiText_ShowMessageAndWaitCoreFar(MSG_ATK_NORMAL);
+                BattlePresentation_WaitForAdvance();
             }
-            if (Func_080bf2b4(id) != 0) {
-                Func_080b78e4(id, Func_080b7dd0(id));
-                Func_08015120(id, 1);
-                Func_080151c8(MSG_DEF_NORMAL);
-                Func_080bb65c();
+            if (BattleUnit_TickCounter134(id) != 0) {
+                BattleUnit_BuildStatusFlags(id, GetBattleObjectSlot(id));
+                UiWork_PushValueSlotFar(id, 1);
+                UiText_ShowMessageAndWaitCoreFar(MSG_DEF_NORMAL);
+                BattlePresentation_WaitForAdvance();
             }
-            if (Func_080bf318(id) != 0) {
-                Func_080b78e4(id, Func_080b7dd0(id));
-                Func_08015120(id, 1);
-                Func_080151c8(MSG_RES_NORMAL);
-                Func_080bb65c();
+            if (BattleUnit_TickCounter136(id) != 0) {
+                BattleUnit_BuildStatusFlags(id, GetBattleObjectSlot(id));
+                UiWork_PushValueSlotFar(id, 1);
+                UiText_ShowMessageAndWaitCoreFar(MSG_RES_NORMAL);
+                BattlePresentation_WaitForAdvance();
             }
-            if (Func_080bf37c(id) != 0) {
-                Func_080b78e4(id, Func_080b7dd0(id));
-                Func_08015120(id, 1);
-                Func_080151c8(MSG_CURE_DELUSION);
-                Func_080bb65c();
+            if (BattleUnit_TickCounter138(id) != 0) {
+                BattleUnit_BuildStatusFlags(id, GetBattleObjectSlot(id));
+                UiWork_PushValueSlotFar(id, 1);
+                UiText_ShowMessageAndWaitCoreFar(MSG_CURE_DELUSION);
+                BattlePresentation_WaitForAdvance();
             }
-            if (Func_080bf3bc(id) != 0) {
-                Func_080b78e4(id, Func_080b7dd0(id));
-                Func_08015120(id, 1);
-                Func_080151c8(MSG_CONSCIOUS);
-                Func_080bb65c();
+            if (BattleUnit_TickCounter139(id) != 0) {
+                BattleUnit_BuildStatusFlags(id, GetBattleObjectSlot(id));
+                UiWork_PushValueSlotFar(id, 1);
+                UiText_ShowMessageAndWaitCoreFar(MSG_CONSCIOUS);
+                BattlePresentation_WaitForAdvance();
             }
-            if (Func_080bf400(id) != 0) {
-                Func_080b78e4(id, Func_080b7dd0(id));
-                Func_08015120(id, 1);
-                Func_080151c8(MSG_CONSCIOUS_2);
-                Func_080bb65c();
+            if (BattleUnit_TickCounter13a(id) != 0) {
+                BattleUnit_BuildStatusFlags(id, GetBattleObjectSlot(id));
+                UiWork_PushValueSlotFar(id, 1);
+                UiText_ShowMessageAndWaitCoreFar(MSG_CONSCIOUS_2);
+                BattlePresentation_WaitForAdvance();
             }
-            if (Func_080bf440(id) != 0) {
-                Func_080b78e4(id, Func_080b7dd0(id));
-                Func_08015120(id, 1);
-                Func_080b7aac(id);
-                Func_080151c8(MSG_CURE_STUN);
-                Func_080bb65c();
+            if (BattleUnit_TickCounter13b(id) != 0) {
+                BattleUnit_BuildStatusFlags(id, GetBattleObjectSlot(id));
+                UiWork_PushValueSlotFar(id, 1);
+                BattlePres_SetActorModeAndAction(id);
+                UiText_ShowMessageAndWaitCoreFar(MSG_CURE_STUN);
+                BattlePresentation_WaitForAdvance();
             }
-            if (Func_080bf484(id) != 0) {
-                Func_080b78e4(id, Func_080b7dd0(id));
-                Func_08015120(id, 1);
-                Func_080b7aac(id);
-                Func_080151c8(MSG_WAKES);
-                Func_080bb65c();
+            if (BattleUnit_TickCounter13c(id) != 0) {
+                BattleUnit_BuildStatusFlags(id, GetBattleObjectSlot(id));
+                UiWork_PushValueSlotFar(id, 1);
+                BattlePres_SetActorModeAndAction(id);
+                UiText_ShowMessageAndWaitCoreFar(MSG_WAKES);
+                BattlePresentation_WaitForAdvance();
             }
-            if (Func_080bf4c4(id) != 0) {
-                Func_080b78e4(id, Func_080b7dd0(id));
-                Func_08015120(id, 1);
-                Func_080151c8(MSG_CURE_SEAL);
-                Func_080bb65c();
+            if (Battle_AdvanceCounterAndCheckChance(id) != 0) {
+                BattleUnit_BuildStatusFlags(id, GetBattleObjectSlot(id));
+                UiWork_PushValueSlotFar(id, 1);
+                UiText_ShowMessageAndWaitCoreFar(MSG_CURE_SEAL);
+                BattlePresentation_WaitForAdvance();
             }
-            if (Func_080bf524(id) != 0) {
-                Func_080b78e4(id, Func_080b7dd0(id));
-                Func_08015120(id, 1);
-                Func_080151c8(MSG_REFRAIN_END);
-                Func_080bb65c();
+            if (BattleUnit_TickCounter13e(id) != 0) {
+                BattleUnit_BuildStatusFlags(id, GetBattleObjectSlot(id));
+                UiWork_PushValueSlotFar(id, 1);
+                UiText_ShowMessageAndWaitCoreFar(MSG_REFRAIN_END);
+                BattlePresentation_WaitForAdvance();
             }
-            if (Func_080bf54c(id) != 0) {
-                Func_080b78e4(id, Func_080b7dd0(id));
-                Func_08015120(id, 1);
-                Func_080151c8(MSG_REFLECT_END);
-                Func_080bb65c();
+            if (BattleUnit_TickCounter13f(id) != 0) {
+                BattleUnit_BuildStatusFlags(id, GetBattleObjectSlot(id));
+                UiWork_PushValueSlotFar(id, 1);
+                UiText_ShowMessageAndWaitCoreFar(MSG_REFLECT_END);
+                BattlePresentation_WaitForAdvance();
             }
         }
     }

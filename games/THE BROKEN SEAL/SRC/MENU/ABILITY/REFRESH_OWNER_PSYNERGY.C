@@ -2,8 +2,7 @@
 #include "OWNER_STATE.H"
 #include "PSYNERGY_MENU.H"
 
-void Func_080a1bdc(s32 x, s32 y, s32 spacing);
-#define PsynergyMenu_RefreshOwnerEntries Func_080a1bdc
+void PsynergyMenu_RefreshOwnerEntries(s32 x, s32 y, s32 spacing);
 void UiText_DrawAt(s32 message, s32 *, s32 x, s32 y);
 
 void PsynergyMenu_RefreshOwnerPsynergy(s32 owner_id)

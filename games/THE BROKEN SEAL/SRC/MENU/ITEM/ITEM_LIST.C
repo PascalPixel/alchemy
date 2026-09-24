@@ -35,8 +35,7 @@ void ItemMenu_DrawMsg(s32 unused, s32 message)
 }
 
 
-void Func_080a17c4(void *icon);
-#define UiIcon_PrepareObject Func_080a17c4
+void UiIcon_PrepareObject(void *icon);
 
 void Menu_HideEmptyEntryIcons(const u16 *items)
 {

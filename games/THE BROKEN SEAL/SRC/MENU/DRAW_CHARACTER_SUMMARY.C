@@ -1,20 +1,13 @@
 #include "TYPES.H"
 
-void Func_08016478(void);
-#define RenderOutput_PrepareForRedraw Func_08016478
+void RenderOutput_PrepareForRedraw(void);
 void Func_0801e41c(s32, s32, s32, s32, s32);
-void Func_0801e8b0(void *, s32, s32, s32);
-#define UiText_DrawStringAtOffset Func_0801e8b0
-void Func_0801e940(s32, s32, s32, s32);
-#define UiText_DrawStringInWindow Func_0801e940
-void Func_0801e9d4(s32, s32, s32, s32, s32);
-#define UiText_DrawNumberAtOffset Func_0801e9d4
-void Func_0801e7c0(s32, s32, s32, s32);
-#define UiText_DrawCharacterAtOffset Func_0801e7c0
-s32 Func_0801f680(s32, void *);
-#define Text_FormatPlayTime Func_0801f680
-void Func_0801ea08(s32, s32, s32, s32, s32);
-#define UiText_DrawNumberInWindow Func_0801ea08
+void UiText_DrawStringAtOffset(void *, s32, s32, s32);
+void UiText_DrawStringInWindow(s32, s32, s32, s32);
+void UiText_DrawNumberAtOffset(s32, s32, s32, s32, s32);
+void UiText_DrawCharacterAtOffset(s32, s32, s32, s32);
+s32 Text_FormatPlayTime(s32, void *);
+void UiText_DrawNumberInWindow(s32, s32, s32, s32, s32);
 extern u8 Value_00000009;
 extern u8 Value_00000741;
 extern u8 Data_080371e0[];
@@ -22,7 +15,6 @@ extern u8 Data_080371e0[];
 #define StatusPanelLayout Data_080371e0
 #define ClassNameMessageBase Value_00000741
 #define StatusLabelMessage Value_00000009
-#define StatusMenu_DrawCharacterSummary Func_08020198
 
 /* Draws one character entry into the summary surface: its name, the two-digit
  * value at +0x1c, the class message selected by +0x1d, the formatted value at

@@ -1,7 +1,6 @@
 #include "VRAM_BLOCK.H"
 #include "DMA.H"
 
-#define VramBlock_LoadCached Func_08003fa4
 
 
 s32 VramBlock_LoadCached(u32 slot, u32 size, const void *source)

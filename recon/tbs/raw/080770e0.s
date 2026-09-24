@@ -1,7 +1,9 @@
 .syntax unified
 	.thumb
+	.global GameFlag_GetByteFar
 	.global Func_080770e0
 	.thumb_func
+GameFlag_GetByteFar:
 Func_080770e0:
 	ldr	r4, [pc, #0]
 	bx	r4

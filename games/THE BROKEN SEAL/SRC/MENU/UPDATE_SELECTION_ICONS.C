@@ -11,7 +11,7 @@ struct State_080a9dc4 {
 };
 
 extern struct State_080a9dc4 *Data_03001f2c;
-extern void Func_08015298(s32, s32, s32, s32);
+extern void Resource_LoadByModeIntoSlotFar(s32, s32, s32, s32);
 
 s32 CharacterMenu_UpdateSelectionIcons(const u8 *enabled)
 {
@@ -29,7 +29,7 @@ s32 CharacterMenu_UpdateSelectionIcons(const u8 *enabled)
             case 4: kind = 7; break;
             default: kind = 0; break;
             }
-            Func_08015298(8, kind, state->entries[index]->value, 0);
+            Resource_LoadByModeIntoSlotFar(8, kind, state->entries[index]->value, 0);
         }
         index++;
     } while (index <= 4);

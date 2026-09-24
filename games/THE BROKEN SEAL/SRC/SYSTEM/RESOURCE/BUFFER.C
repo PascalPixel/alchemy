@@ -1,11 +1,9 @@
 #include "TYPES.H"
 
-s32 Func_08002dd8(s32);
-#define Runtime_ReleaseHeapBlock Func_08002dd8
+s32 Runtime_ReleaseHeapBlock(s32);
 s32 Resource_GetBuffer(s32 index, s32 value);
 void *Runtime_AllocateBlock(s32 arg0, s32 arg1);
-void Func_0801a4c0(u32 index);
-#define Ui_PrepareTransferFromTableEntry Func_0801a4c0
+void Ui_PrepareTransferFromTableEntry(u32 index);
 
 s32 Resource_LoadTableEntryToBuffer(s32 resource, s32 index)
 {
@@ -19,7 +17,7 @@ s32 Resource_LoadTableEntryToBuffer(s32 resource, s32 index)
     return result;
 }
 
-s32 Func_0801a088(s32, s32);
+s32 ItemIcon_Compose(s32, s32);
 
 s32 Resource_LoadKind26EntryToBuffer(s32 resource, s32 index)
 {
@@ -27,14 +25,13 @@ s32 Resource_LoadKind26EntryToBuffer(s32 resource, s32 index)
     u8 *work;
 
     work = Runtime_AllocateBlock(0x11, 0x608);
-    Func_0801a088(resource, 0x1a);
+    ItemIcon_Compose(resource, 0x1a);
     result = Resource_GetBuffer(index, (s32)(work + 0x400));
     Runtime_ReleaseHeapBlock(0x11);
     return result;
 }
 
-void Func_0801a3d0(s32, s32, s32 *, s32 *, s32);
-#define Ability_LoadGlyph Func_0801a3d0
+void Ability_LoadGlyph(s32, s32, s32 *, s32 *, s32);
 
 s32 Resource_LoadIndexedEntryToBuffer(s32 resource, s32 index)
 {

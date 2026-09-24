@@ -7,8 +7,7 @@ struct State_080792fc {
 
 void *Owner_GetState(s32);
 s32 Func_0807905c();
-void Func_08077428(s32);
-#define Owner_RecalculateStats Func_08077428
+void Owner_RecalculateStats(s32);
 
 void Party_AdvanceOwnerCountToTarget(s32 owner, s32 target)
 {

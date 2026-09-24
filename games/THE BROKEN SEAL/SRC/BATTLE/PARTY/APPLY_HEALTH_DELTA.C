@@ -3,10 +3,10 @@
 #include "PARTY_STATE.H"
 #include "SOUND_IDS.H"
 
-s32 Func_08077148(void);
+s32 Party_CountActiveOwnersFar(void);
 struct BattleUnit *Runtime_GetObject(s32 unit_id);
 s32 FixedPoint_Ratio(s32 value, s32 divisor);
-void Func_08077118(s32 owner, s32 amount);
+void Owner_AdjustFirstValueFar(s32 owner, s32 amount);
 void BattleFx_ApplyColorToSourceBuffer(s32 color, s32 mode);
 void BattleFx_StartBufferInterpolation(s32 frames);
 void Audio_PlayCue(s32 cue);
@@ -34,7 +34,7 @@ void BattleParty_ApplyHealthDelta(s32 amount, s32 scaled)
         Audio_PlayCue(SOUND_RECOVERY);
     }
 
-    count = Func_08077148();
+    count = Party_CountActiveOwnersFar();
     for (i = 0; i < count; i++) {
         unit = Runtime_GetObject(PARTY_STATE.active_owners[i]);
         if (!scaled) {
@@ -47,6 +47,6 @@ void BattleParty_ApplyHealthDelta(s32 amount, s32 scaled)
                     value = -value;
             }
         }
-        Func_08077118(PARTY_STATE.active_owners[i], value);
+        Owner_AdjustFirstValueFar(PARTY_STATE.active_owners[i], value);
     }
 }

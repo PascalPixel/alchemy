@@ -1,7 +1,7 @@
 #include "TYPES.H"
 #include "MOTION_OBJECT.H"
 
-void Func_08009038(void *);
+void ResourceObject_ReleaseFar(void *);
 void ReleaseBattleObjectRecords(s32 object_id)
 {
     struct BattleObjectSlot *slot;
@@ -17,7 +17,7 @@ void ReleaseBattleObjectRecords(s32 object_id)
             slot->runtime_word_24 = 0;
             record_index = 0;
             while ((record = GetMotionRecord(object, record_index)) != NULL) {
-                Func_08009038(record);
+                ResourceObject_ReleaseFar(record);
                 record_index += 1;
             }
             object->record_storage_kind = (s8)record;

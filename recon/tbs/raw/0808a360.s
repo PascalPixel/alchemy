@@ -1,7 +1,9 @@
 .syntax unified
 	.thumb
+	.global Event_SetStatus1c6Far
 	.global Func_0808a360
 	.thumb_func
+Event_SetStatus1c6Far:
 Func_0808a360:
 	ldr	r4, [pc, #0]
 	bx	r4

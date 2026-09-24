@@ -8,8 +8,7 @@ extern volatile u8 Data_03001c98;
 extern u8 Data_03001cd4;
 extern u16 Data_03001cf8;
 
-s32 Func_080022ec(s32 numerator, s32 denominator);
-#define Math_Div Func_080022ec
+s32 Math_Div(s32 numerator, s32 denominator);
 
 void BlendTransition_Update(void)
 {

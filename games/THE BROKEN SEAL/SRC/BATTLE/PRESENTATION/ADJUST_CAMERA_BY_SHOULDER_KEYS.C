@@ -43,7 +43,7 @@ void *Runtime_GetObject(s32);
 
 void UiText_ShowMessageAndWait(s32);
 void WaitFrames(s32);
-void Func_08015220(void);
+void UiWork_ResetFreeChannelFar(void);
 
 s32 BattlePres_RunAction(s16 *action)
 {
@@ -94,7 +94,7 @@ s32 BattlePres_RunAction(s16 *action)
         break;
     }
 
-    Func_08015220();
+    UiWork_ResetFreeChannelFar();
     return 0;
 }
 

@@ -5,9 +5,8 @@ struct BattleActorDefinition {
     u8 class_id;
 };
 
-struct BattleActorDefinition *Func_08077008(s32 actor_id);
-s32 Func_080c23c0(u8 class_id);
-#define Summon_IsEntryFlagged Func_080c23c0
+struct BattleActorDefinition *Owner_GetStateFar(s32 actor_id);
+s32 Summon_IsEntryFlagged(u8 class_id);
 
 void Summon_LayoutPositions(u16 *actor_ids, s32 count, s32 *x_positions, s32 *z_positions)
 {
@@ -24,7 +23,7 @@ void Summon_LayoutPositions(u16 *actor_ids, s32 count, s32 *x_positions, s32 *z_
 
             spacing = 25;
             if ((u16)(actor_ids[index] - 254) > 1) {
-                actor = Func_08077008(actor_ids[index]);
+                actor = Owner_GetStateFar(actor_ids[index]);
                 spacing = Summon_IsEntryFlagged(actor->class_id) ? 27 : 38;
                 if (actor->class_id == 148 || actor->class_id == 121) {
                     x_positions[index] = -50;
@@ -35,7 +34,7 @@ void Summon_LayoutPositions(u16 *actor_ids, s32 count, s32 *x_positions, s32 *z_
         z_positions[index] = z;
         spacing = 25;
         if ((u16)(actor_ids[index] - 254) > 1) {
-            struct BattleActorDefinition *actor = Func_08077008(actor_ids[index]);
+            struct BattleActorDefinition *actor = Owner_GetStateFar(actor_ids[index]);
 
             spacing = Summon_IsEntryFlagged(actor->class_id) ? 27 : 38;
         }

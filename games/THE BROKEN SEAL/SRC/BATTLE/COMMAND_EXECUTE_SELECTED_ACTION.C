@@ -21,40 +21,32 @@ extern u8 Value_00000920;
  * Returns u8 * to match the prototype shared with the other callers; the raw
  * pointer is cast to the local action-definition view below.
  */
-u8 *Func_08077080(s32);
-#define BattleAction_Get Func_08077080
+u8 *BattleAction_Get(s32);
 /*
  * Returns void * because callers view the same record through different
  * structs; each casts the shared pointer to its own view locally.
  */
-void *Func_08077008(s32);
-void *Func_0808ba1c(s32);
-void Func_08091660(void); void Func_080770d0(s32); s32 Func_080770c0(s32);
-#define BattleFlag_Test Func_080770c0
-#define Battle_InitializeRenderObject Func_08091660
-void Func_08015120(s32, s32); void Func_08015040(s32, s32);
-s32 Func_08091d84(s32); void Func_08015140(void);
-#define Object_CallSpawnRoutineAtOrigin Func_08091d84
+void *Owner_GetStateFar(s32);
+void *ObjectTable_Get(s32);
+void Battle_InitializeRenderObject(void); void GameFlag_ClearBitFar(s32); s32 GameFlag_TestFar(s32);
+void UiWork_PushValueSlotFar(s32, s32); void UiText_ShowPositionedMessageAndWaitFar(s32, s32);
+s32 Object_CallSpawnRoutineAtOrigin(s32); void UiWork_FinalizePendingCoreFar(void);
 /* Takes an s32 to match the definition of the packed effect argument. */
-s32 Func_0808e5d8(s32);
-#define BattleFx_ExecutePackedAbilityEffect Func_0808e5d8
-void Func_08077120(s32, s32);
+s32 BattleFx_ExecutePackedAbilityEffect(s32);
+void Owner_AdjustSecondValueFar(s32, s32);
 /*
  * Matches the shared prototype: s32-returning, with a void * out parameter.
  * Results are cast back to struct BattleTargetCandidate * here.
  */
-s32 Func_0808e4b4(s32, s32, void *);
-#define BattleFx_FindMatchingEvent Func_0808e4b4
-void Func_080770c8(s32); s32 BattleEffect_SelectNearbyTargetObject(s32, s32); void BattleEffect_ClearOutOfBoundsObjects(void);
+s32 BattleFx_FindMatchingEvent(s32, s32, void *);
+void GameFlag_SetBitFar(s32); s32 BattleEffect_SelectNearbyTargetObject(s32, s32); void BattleEffect_ClearOutOfBoundsObjects(void);
 void Func_08096fb0(s32, s32); void BattleFx_SetupObjectPair(s32, s32); void Func_0809728c(void);
 /*
  * Returns s32 to match the shared prototype, although every call site
  * discards the value.
  */
-s32 Func_08096b28(void *, s32, s32); void BattleFx_DispatchRequestKind(void); void Func_08096810(void);
-#define BattleFx_RunEventAction Func_08096b28
-void Func_08097174(void); void BattleFx_ClearChildValueOnMismatch(void); void BattleEffect_CleanupSceneObjects(void); void Func_0808b98c(void);
-#define EffectRuntime_StopCurrentObject Func_08097174
+s32 BattleFx_RunEventAction(void *, s32, s32); void BattleFx_DispatchRequestKind(void); void BattleFx_Run(void);
+void EffectRuntime_StopCurrentObject(void); void BattleFx_ClearChildValueOnMismatch(void); void BattleEffect_CleanupSceneObjects(void); void Func_0808b98c(void);
 
 s32 BattleCommand_ExecuteSelectedAction(u32 encodedAction)
 {
@@ -72,27 +64,27 @@ s32 BattleCommand_ExecuteSelectedAction(u32 encodedAction)
 
     targetMode = ((struct BattleActionDefinition *)(void *)BattleAction_Get(actionId))->target_mode;
     actor = (encodedAction >> 10) & 15;
-    Func_0808ba1c(PARTY_STATE.object_id);
+    ObjectTable_Get(PARTY_STATE.object_id);
     specialResult = 0;
     Battle_InitializeRenderObject();
-    Func_080770d0(0x145);
+    GameFlag_ClearBitFar(0x145);
     if (actor == 15) actor = 0;
 
-    if (BattleFlag_Test(0x17e)) {
-        Func_08015120(actor, 1); Func_08015120(actionId, 4); Func_08015040(0x91f, 1);
+    if (GameFlag_TestFar(0x17e)) {
+        UiWork_PushValueSlotFar(actor, 1); UiWork_PushValueSlotFar(actionId, 4); UiText_ShowPositionedMessageAndWaitFar(0x91f, 1);
         return 0;
     }
     if (runtime->battle_mode == 3 && actionId == 0x90) {
-        Func_08015120(actor, 1); Func_08015120(0x90, 4); Func_08015040(0x91f, 1);
+        UiWork_PushValueSlotFar(actor, 1); UiWork_PushValueSlotFar(0x90, 4); UiText_ShowPositionedMessageAndWaitFar(0x91f, 1);
         return 0;
     }
     if (actionId == 0x95) {
-        if (BattleFlag_Test(0x144)) {
-            Func_08015120(actor, 1); Func_08015120(0x95, 4); Func_08015040(0x921, 1);
+        if (GameFlag_TestFar(0x144)) {
+            UiWork_PushValueSlotFar(actor, 1); UiWork_PushValueSlotFar(0x95, 4); UiText_ShowPositionedMessageAndWaitFar(0x921, 1);
             return 0;
         }
-        Func_08015120(0x95, 4); Func_08015040((s32)&Value_00000920, 13);
-        status = Object_CallSpawnRoutineAtOrigin(1); Func_08015140();
+        UiWork_PushValueSlotFar(0x95, 4); UiText_ShowPositionedMessageAndWaitFar((s32)&Value_00000920, 13);
+        status = Object_CallSpawnRoutineAtOrigin(1); UiWork_FinalizePendingCoreFar();
         if (status != 0) return 0;
         {
             u16 *work = (u16 *)&PARTY_STATE;
@@ -109,36 +101,36 @@ s32 BattleCommand_ExecuteSelectedAction(u32 encodedAction)
 
     if (actor <= 7) {
         cost = ((struct BattleActionDefinition *)(void *)BattleAction_Get(actionId))->pp_cost;
-        if (((struct BattleUnitRecord *)Func_08077008(actor))->pp < cost) {
-            Func_08015120(actor, 1); Func_08015120(actionId, 4); Func_08015040(0x91e, 1);
+        if (((struct BattleUnitRecord *)Owner_GetStateFar(actor))->pp < cost) {
+            UiWork_PushValueSlotFar(actor, 1); UiWork_PushValueSlotFar(actionId, 4); UiText_ShowPositionedMessageAndWaitFar(0x91e, 1);
             if (specialResult)runtime->result_code = 0;
             return 0;
         }
-        Func_08077120(actor, -cost);
+        Owner_AdjustSecondValueFar(actor, -cost);
     }
 
     primary = (struct BattleTargetCandidate *)BattleFx_FindMatchingEvent(0x10000005, targetMode, &targetId);
     secondary = (struct BattleTargetCandidate *)BattleFx_FindMatchingEvent(5, targetMode, &targetId);
     tertiary = (struct BattleTargetCandidate *)BattleFx_FindMatchingEvent(0x50000005, targetMode, &targetId);
     targetId = -1;
-    Func_080770c8(0x140); Func_080770c8(0x141);
+    GameFlag_SetBitFar(0x140); GameFlag_SetBitFar(0x141);
     if (primary || secondary || tertiary) {
         targetId = BattleEffect_SelectNearbyTargetObject(PARTY_STATE.object_id, targetMode);
         if (secondary && (secondary->flags & 0x400)) {
-            Func_080770d0(0x140); Func_080770d0(0x141);
+            GameFlag_ClearBitFar(0x140); GameFlag_ClearBitFar(0x141);
         }
-    } else Func_080770d0(0x141);
+    } else GameFlag_ClearBitFar(0x141);
 
     if (runtime->battle_mode == 3) BattleEffect_ClearOutOfBoundsObjects();
     Func_08096fb0(actionId, 0); runtime->resolving_action = 1;
     BattleFx_SetupObjectPair(PARTY_STATE.object_id, targetId); Func_0809728c();
     BattleFx_RunEventAction(primary, actor, targetId);
-    if (BattleFlag_Test(0x140)) {
-        if (BattleFlag_Test(0x141)) BattleFx_DispatchRequestKind(); else Func_08096810();
+    if (GameFlag_TestFar(0x140)) {
+        if (GameFlag_TestFar(0x141)) BattleFx_DispatchRequestKind(); else BattleFx_Run();
     }
     EffectRuntime_StopCurrentObject(); BattleFx_RunEventAction(secondary, actor, targetId);
-    if (BattleFlag_Test(0x140)) BattleFx_ClearChildValueOnMismatch();
-    Func_080770d0(0x140); Func_080770d0(0x141); runtime->resolving_action = 0;
+    if (GameFlag_TestFar(0x140)) BattleFx_ClearChildValueOnMismatch();
+    GameFlag_ClearBitFar(0x140); GameFlag_ClearBitFar(0x141); runtime->resolving_action = 0;
     BattleEffect_CleanupSceneObjects();
     if (runtime->battle_mode == 3) Func_0808b98c();
     return 0;

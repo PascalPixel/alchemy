@@ -39,31 +39,21 @@ extern u8 *Data_03001e74;
 extern u8 Data_080ee10c[];
 extern u8 Data_080ee11a[];
 
-s32 Func_080cdb24(s32 mode);
-void *Func_08002f40(s32 id);
-#define Resource_GetTableEntry Func_08002f40
-u32 Func_08005340(const void *source, void *destination);
-void Func_080030f8(s32 frames);
-#define WaitFrames Func_080030f8
-void Func_08002dd8(s32 id);
-#define Runtime_ReleaseHeapBlock Func_08002dd8
+s32 Unnamed_080cdb24(s32 mode);
+void *Resource_GetTableEntry(s32 id);
+u32 Resource_DecodeType01(const void *source, void *destination);
+void WaitFrames(s32 frames);
+void Runtime_ReleaseHeapBlock(s32 id);
 s32 Func_080cdbc0(void);
-void **Func_080b5098(s32 member_id);
-void Func_080e396c(s32 member_id, void *out);
-#define EffectPosition_ApplyStepAndYOffset Func_080e396c
-s32 Func_08002322(s32 angle);
-#define Engine_MathSin Func_08002322
-s32 Func_0800231c(s32 angle);
-#define Engine_MathCos Func_0800231c
-void Func_080d6888(s32 member_id, s32 b, s32 c, s32 d, s32 e);
-#define ObjectGroup_UpdateMembers Func_080d6888
-void Func_080f9010(s32 cue);
-#define Audio_PlayCue Func_080f9010
-void Func_08009150(void *object, s32 a, s32 b, s32 c);
-#define Object_SetPosition Func_08009150
+void **GetBattleObjectSlotFar(s32 member_id);
+void EffectPosition_ApplyStepAndYOffset(s32 member_id, void *out);
+s32 Trig_Sin(s32 angle);
+s32 Trig_Cos(s32 angle);
+void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
+void Audio_PlayCue(s32 cue);
+void Object_SetPosition(void *object, s32 a, s32 b, s32 c);
 void Func_080b5040(s32 a, s32 b, s32 c);
 
-#define BattleFx_RunCounterReveal Func_080cfef4
 
 void BattleFx_RunCounterReveal(void *object)
 {
@@ -91,17 +81,17 @@ void BattleFx_RunCounterReveal(void *object)
     canvas = *cursor;
     zero_val = 0;
     (*(void **)((u8 *)(work) + (0x7828))) = object;
-    Func_080cdb24(0);
+    Unnamed_080cdb24(0);
     (*(s16 *)((u8 *)((void *)0x04000020) + (0))) = 0x100;
     (*(s16 *)((u8 *)((void *)0x04000020) + (0x32))) = 0x1010;
     palette = Resource_GetTableEntry((s32)&Value_000000ab);
     status = ((WordCopyFn)0x03001388)((void *)0x05000000, palette, 128);
     palette = (u8 *)palette + 128;
-    status = Func_08005340(palette, work);
+    status = Resource_DecodeType01(palette, work);
     sprite_vram = (void *)0x02010000;
     palette = Resource_GetTableEntry((s32)&Value_000000ac);
     palette = (u8 *)palette + 128;
-    status = Func_08005340(palette, sprite_vram);
+    status = Resource_DecodeType01(palette, sprite_vram);
     status = BattleEffect_LoadWork(46, 7, 7, 3, 1);
     rectangle[0] = heap_cache[7];
     status = BattleEffect_LoadWork(47, 7, 7, 7, 1);
@@ -129,8 +119,8 @@ void BattleFx_RunCounterReveal(void *object)
         s32 *scanline;
 
         spin = frame << 9;
-        screen_x = (curve[0] >> 16) + ((Engine_MathSin(spin) << 4) >> 16) + 48;
-        screen_y = (curve[1] >> 16) + ((Engine_MathCos(spin) << 2) >> 16) + 16;
+        screen_x = (curve[0] >> 16) + ((Trig_Sin(spin) << 4) >> 16) + 48;
+        screen_y = (curve[1] >> 16) + ((Trig_Cos(spin) << 2) >> 16) + 16;
         if (frame == 88) {
             Audio_PlayCue(134);
         }
@@ -188,7 +178,7 @@ void BattleFx_RunCounterReveal(void *object)
         angle = frame << 11;
         for (; i != 160; i++) {
             *scanline++ =
-                row_base - ((Engine_MathSin(angle) * amp) >> 10);
+                row_base - ((Trig_Sin(angle) * amp) >> 10);
             angle += 0x800;
         }
         if (draw_enabled != 0) {
@@ -249,7 +239,7 @@ void BattleFx_RunCounterReveal(void *object)
             }
         }
         if (frame == 88) {
-            member_object = *Func_080b5098((*(s16 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (0x24))));
+            member_object = *GetBattleObjectSlotFar((*(s16 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (0x24))));
             (*(s32 *)((u8 *)(member_object) + (0x28))) = 0x10000;
             (*(s32 *)((u8 *)(member_object) + (0x34))) = 0x20000;
             (*(s32 *)((u8 *)(member_object) + (0x30))) = 0x20000;
@@ -264,7 +254,7 @@ void BattleFx_RunCounterReveal(void *object)
                 5, -1, 0);
         }
         if (frame == 120) {
-            (*(s32 *)((u8 *)(*Func_080b5098((*(s16 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (0x24))))) + (0x48))) = 0xAB85;
+            (*(s32 *)((u8 *)(*GetBattleObjectSlotFar((*(s16 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (0x24))))) + (0x48))) = 0xAB85;
         }
         (*(s32 *)((u8 *)(work) + (0x7824))) = 1;
         WaitFrames(1);

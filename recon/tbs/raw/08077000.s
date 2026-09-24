@@ -1,7 +1,9 @@
 .syntax unified
 	.thumb
+	.global Trade_GetOfferStateFar
 	.global Func_08077000
 	.thumb_func
+Trade_GetOfferStateFar:
 Func_08077000:
 	ldr	r4, [pc, #0]
 	bx	r4

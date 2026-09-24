@@ -16,7 +16,7 @@ extern u8 Value_00000d24;
 extern u8 Value_00000d2e;
 extern u8 Value_00000d38;
 extern u8 Value_00000d42;
-s32 Func_0808a540(u16);
+s32 BattleFx_GetResourceIdFar(u16);
 void UiWork_FinalizePending(void);
 s32 Shop_MsgByMode(s32 value);
 void UiWork_Create(s32, s32, s32, s32);
@@ -97,7 +97,7 @@ void UiMessage_ShowResolvedAndWait(s32 value)
 {
     s32 no;
 
-    no = Func_0808a540(Data_03001f2c->value);
+    no = BattleFx_GetResourceIdFar(Data_03001f2c->value);
     UiWork_FinalizePending();
     value = Shop_MsgByMode(value);
     UiWork_Create(value, 5, 0, (no << 0x10) | 0x22);
@@ -117,7 +117,7 @@ void UiMessage_ShowResolvedAndRestoreState(s32 arg0)
     state = Data_03001f2c;
     slot = &state->mode_state;
     saved = *(u8 *)((u8 *)*slot + 5);
-    value = Func_0808a540(state->value);
+    value = BattleFx_GetResourceIdFar(state->value);
     arg0 = Shop_MsgByMode(arg0);
     *(u8 *)((u8 *)*slot + 5) = 13;
     UiWork_FinalizePending();

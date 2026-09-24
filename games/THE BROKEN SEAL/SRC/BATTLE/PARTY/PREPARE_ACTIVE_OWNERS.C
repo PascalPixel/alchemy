@@ -3,11 +3,10 @@
 #include "BATTLE_WORK.H"
 #include "PARTY_STATE.H"
 
-#define BattleParty_PrepareActiveOwners Func_080b6a60
 
 extern struct PartyState Data_02000240;
 
-s32 Func_08077148(void);
+s32 Party_CountActiveOwnersFar(void);
 struct BattleUnit *Runtime_GetObject(s32 unit_id);
 
 /* Caps the active party at four owners, or three in the alternate battle mode,
@@ -23,7 +22,7 @@ s32 BattleParty_PrepareActiveOwners(u16 *owners)
     if (((u8 *)BattleWorkPtr)[68] != 0)
         limit = 3;
 
-    count = Func_08077148();
+    count = Party_CountActiveOwnersFar();
     if (count > limit)
         count = limit;
 

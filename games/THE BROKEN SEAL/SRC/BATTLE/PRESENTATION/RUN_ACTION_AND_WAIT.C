@@ -18,16 +18,16 @@ void BattleEv_RunWait(s32 action)
             resolved_action = masked_action;
         }
     }
-    Func_08015100(resolved_action);
+    UiWork_FinalizeEntityMatchingLocalizedIdFar(resolved_action);
 
     if (*(s32 *)(runtime + 0x1cc) == 0) {
-        while (Func_08015050(wait_token) == 0) {
+        while (UiWork_IsIdleFar(wait_token) == 0) {
             WaitFrames(1);
             frames++;
             if (frames > 600 ||
                 ((Data_03001ae8 & 4) && (Data_03001ae8 & 0x100) &&
                  (Data_03001ae8 & 0x200) && (Data_03001ae8 & 1))) {
-                Func_08015140();
+                UiWork_FinalizePendingCoreFar();
             }
         }
     }

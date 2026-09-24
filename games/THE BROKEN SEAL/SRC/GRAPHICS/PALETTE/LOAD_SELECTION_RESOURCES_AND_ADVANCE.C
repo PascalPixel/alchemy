@@ -6,11 +6,10 @@
 extern u8 *Data_03001ea0;
 extern u8 Data_000000e8[];
 
-void Func_080b0020(void *);
-void Func_080b0028(void *);
+void ShopCursor_AdvanceFar(void *);
+void ShopCursor_MoveTowardTargetFar(void *);
 s32 Resource_CopyData(s32, s32, s32);
-void Func_080217a4(void *);
-#define Ui_ApplyTableScaleToObject Func_080217a4
+void Ui_ApplyTableScaleToObject(void *);
 
 void GraphicsPalette_LoadSelectionResourcesAndAdvance(void)
 {
@@ -21,9 +20,9 @@ void GraphicsPalette_LoadSelectionResourcesAndAdvance(void)
 
     base = Data_03001ea0;
     sel = FIELD(base, u16, 0x574);
-    Func_080b0020(base + 0x5A4);
-    Func_080b0028(base + 0x5B4);
-    Func_080b0028(base + 0x5C4);
+    ShopCursor_AdvanceFar(base + 0x5A4);
+    ShopCursor_MoveTowardTargetFar(base + 0x5B4);
+    ShopCursor_MoveTowardTargetFar(base + 0x5C4);
 
     if (sel == 0) {
         src0 = (FIELD(base, u16, 0x57C) & 7) +

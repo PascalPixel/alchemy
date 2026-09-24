@@ -9,7 +9,7 @@ struct State_0801a4c0 {
 
 extern struct State_0801a4c0 *Data_03001e94;
 extern u32 Data_080308a0[];
-void Func_0801a5a4(struct State_0801a4c0 *, u32);
+void UiGlyph_DecodeWithHeapRoutines(struct State_0801a4c0 *, u32);
 
 void Ui_PrepareTransferFromTableEntry(u32 index)
 {
@@ -18,5 +18,5 @@ void Ui_PrepareTransferFromTableEntry(u32 index)
     state->value = Data_080308a0[index];
     state->first = 2;
     state->second = 2;
-    Func_0801a5a4(state, 0);
+    UiGlyph_DecodeWithHeapRoutines(state, 0);
 }

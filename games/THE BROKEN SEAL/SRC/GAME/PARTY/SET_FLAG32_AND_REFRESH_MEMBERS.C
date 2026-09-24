@@ -7,10 +7,8 @@
 /* party/set_flag32_and_refresh_members.c */
 void Owner_RefreshDerivedData(s32 arg0);
 s32 Party_Check(s32);
-s32 Func_08079358(s32 flag);
-#define GameFlag_SetBit Func_08079358
-void Func_08079374(s32 flag);
-#define GameFlag_ClearBit Func_08079374
+s32 GameFlag_SetBit(s32 flag);
+void GameFlag_ClearBit(s32 flag);
 
 void Party_SetFlag32AndRefreshMembers(void)
 {

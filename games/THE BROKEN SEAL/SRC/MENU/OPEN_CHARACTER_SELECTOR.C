@@ -59,19 +59,15 @@ LAYOUT_OFFSET_GUARD(
 extern struct MenuObjectControl *Data_03001e68;
 
 struct CharacterSelectorState *Runtime_AllocateHeapBlock(s32, s32);
-void Func_08002dd8(s32);
-#define Runtime_ReleaseHeapBlock Func_08002dd8
+void Runtime_ReleaseHeapBlock(s32);
 void WaitFrames(s32);
-void Func_08015278(s32);
+void RenderOutput_ClearListFar(s32);
 void Func_08015408(s32, s32, s32, s32);
 s32 UiWindow_CreateFar(s32, s32, s32, s32, s32);
-s32 Func_08077158(const u16 *);
-void Func_080a1090(s32);
-#define UiWindow_InitializeWork Func_080a1090
-void Func_080a8034(s32, s32, s32, s32);
-#define Menu_InitSelectorCursorAndEntries Func_080a8034
-s32 Func_080a7440(void);
-#define CharacterSelector_Run Func_080a7440
+s32 Party_ListActiveOwnersFar(const u16 *);
+void UiWindow_InitializeWork(s32);
+void Menu_InitSelectorCursorAndEntries(s32, s32, s32, s32);
+s32 CharacterSelector_Run(void);
 
 /*
  * Open the compact character selector, run its blocking interaction body,
@@ -91,7 +87,7 @@ s32 Menu_OpenCharacterSelector(void)
     UiWindow_InitializeWork(0);
 
     state->character_count =
-        (u8)Func_08077158(state->character_ids);
+        (u8)Party_ListActiveOwnersFar(state->character_ids);
     Menu_InitSelectorCursorAndEntries(0, 3, 0, 7);
     state->selector_window = UiWindow_CreateFar(13, 0, 17, 5, 2);
     for (index = 0; index < ROW_CNT; index++)
@@ -100,7 +96,7 @@ s32 Menu_OpenCharacterSelector(void)
 
     result = CharacterSelector_Run();
 
-    Func_08015278(state->screen_handle);
+    RenderOutput_ClearListFar(state->screen_handle);
     InventoryMenu_CloseWindows();
     Data_03001e68->suspended = 0;
     WaitFrames(1);

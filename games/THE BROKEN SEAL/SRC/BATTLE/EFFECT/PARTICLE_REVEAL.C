@@ -2,7 +2,6 @@
 #include "BATTLE_EFX.H"
 #include "CALLBACK_SCHEDULER.H"
 
-#define BattleFx_RunParticleReveal Func_080e0c84
 
 /*
  * Battle-presentation sub-effect at 0x080e0c84.
@@ -29,7 +28,7 @@
  * `bl`, not a real function -- both addresses fall inside the
  * container-built `_call_via_rN` bank at 0x080072e4 (r4 slot at
  * +0x10, ip/r12 slot at +0x30). All such call sites here go through
- * `routine[]`, a two-entry DrawRectangleFn array Func_080cef64 fills.
+ * `routine[]`, a two-entry DrawRectangleFn array BattleFx_FetchRectangleBlitters fills.
  *
  * All three Resource_LoadAndDecompress id arguments are loaded from the reference's
  * literal pool rather than built with a `movs` immediate, matching the
@@ -63,30 +62,19 @@ extern u16 Data_080eec68[];
 
 void Func_080cd594(s32 mode);
 void Func_080de2f8(void *object, s32 a, s32 b, s32 c, s32 *out_a, s32 *out_b);
-void Func_080cef64(s32 flag, DrawRectangleFn *out_callbacks);
-#define BattleFx_FetchRectangleBlitters Func_080cef64
-void Func_080e3980(s16 a, s32 *out_pair);
-#define EffectPosition_ApplyAlternateStepAndYOffset Func_080e3980
-u32 Func_08004458(void);
-#define Random16 Func_08004458
-s32 Func_08002322(s32 angle);
-#define Engine_MathSin Func_08002322
-s32 Func_0800231c(s32 angle);
-#define Engine_MathCos Func_0800231c
-void Func_080e38b8(void *particle, s32 a, s32 b);
-#define EffectStep_AdvanceWithGravity3D Func_080e38b8
-void Func_080b50e8(s32 id);
-void Func_080d6888(s32 member_id, s32 b, s32 c, s32 d, s32 e);
-#define ObjectGroup_UpdateMembers Func_080d6888
-void Func_080b5088(s32 member_id, s32 b);
-void Func_080e155c(s32 a, s32 b);
-#define Camera_ApplyShake Func_080e155c
-void Func_080cd52c(void);
-#define ObjectGroup_TickMemberTimers Func_080cd52c
-void Func_080030f8(s32 frames);
-#define WaitFrames Func_080030f8
-void Func_08002dd8(s32 id);
-#define Runtime_ReleaseHeapBlock Func_08002dd8
+void BattleFx_FetchRectangleBlitters(s32 flag, DrawRectangleFn *out_callbacks);
+void EffectPosition_ApplyAlternateStepAndYOffset(s16 a, s32 *out_pair);
+u32 Random16(void);
+s32 Trig_Sin(s32 angle);
+s32 Trig_Cos(s32 angle);
+void EffectStep_AdvanceWithGravity3D(void *particle, s32 a, s32 b);
+void BattleEventRuntime_BeginPhaseFar(s32 id);
+void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
+void BattleMotion_ApplyVariantMotionFar(s32 member_id, s32 b);
+void Camera_ApplyShake(s32 a, s32 b);
+void ObjectGroup_TickMemberTimers(void);
+void WaitFrames(s32 frames);
+void Runtime_ReleaseHeapBlock(s32 id);
 void Func_080cdbc0(void);
 
 void BattleFx_RunParticleReveal(void *object)
@@ -138,8 +126,8 @@ void BattleFx_RunParticleReveal(void *object)
         PARTICLE_POOL[i].x =
             ((spawn[0] / 2 + (Random16() & 0xF)) - 8) << 16;
         PARTICLE_POOL[i].y = (spawn[1] + 8) << 16;
-        PARTICLE_POOL[i].vx = (Engine_MathSin(angle) * amp) >> 9;
-        PARTICLE_POOL[i].vy = (Engine_MathCos(angle) * amp) >> 6;
+        PARTICLE_POOL[i].vx = (Trig_Sin(angle) * amp) >> 9;
+        PARTICLE_POOL[i].vy = (Trig_Cos(angle) * amp) >> 6;
         PARTICLE_POOL[i].rot = Random16() & 0x7F;
         PARTICLE_POOL[i].unk14 = Random16() & 0x7F;
         PARTICLE_POOL[i].unk18 = (Random16() & 0xF) + 32;
@@ -160,9 +148,9 @@ void BattleFx_RunParticleReveal(void *object)
             s32 y;
 
             orbit_angle = frame << 11;
-            x = (((-Engine_MathSin(orbit_angle)) << 2) >> 16)
+            x = (((-Trig_Sin(orbit_angle)) << 2) >> 16)
                 + screen_x / 2 - 10;
-            y = ((Engine_MathCos(orbit_angle) << 1) >> 16) + screen_y - 22;
+            y = ((Trig_Cos(orbit_angle) << 1) >> 16) + screen_y - 22;
             if (frame > 0x45) {
                 y = (y - frame * 2) + 0x8A;
             }
@@ -190,11 +178,11 @@ void BattleFx_RunParticleReveal(void *object)
 
         if (frame == 8) {
             (*(s32 *)((u8 *)(work) + (0x77A8))) = frame;
-            Func_080b50e8(0x86);
+            BattleEventRuntime_BeginPhaseFar(0x86);
             ObjectGroup_UpdateMembers(
                 (*(s16 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (0x24))),
                 7, 5, 0, 16);
-            Func_080b5088(
+            BattleMotion_ApplyVariantMotionFar(
                 (*(s16 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (0x24))), 3);
         }
 

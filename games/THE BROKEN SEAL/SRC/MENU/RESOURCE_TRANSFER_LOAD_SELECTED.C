@@ -27,15 +27,12 @@ struct ResourceBuffer_0801c188 {
 extern u8 *Data_03001e98;
 extern u8 Value_000000f1;
 
-struct SelectionNode_0801c188 *Func_0801b36c(void *state);
-#define NodeChain_GetNodeAtCount Func_0801b36c
+struct SelectionNode_0801c188 *NodeChain_GetNodeAtCount(void *state);
 struct ResourceBuffer_0801c188 *Runtime_AllocateHeapBlock(s32 owner, s32 size);
-void Func_080053e8(void *source, void *destination);
-u16 Func_08004080(void);
-#define find_free_slot Func_08004080
+void Resource_DecodeByteLz(void *source, void *destination);
+u16 find_free_slot(void);
 u16 Resource_CopyData(s32 handle, s32 size, void *buffer);
-void Func_08002dd8(s32 owner);
-#define Runtime_ReleaseHeapBlock Func_08002dd8
+void Runtime_ReleaseHeapBlock(s32 owner);
 
 void Menu_LoadSelectedResource(void)
 {
@@ -60,7 +57,7 @@ void Menu_LoadSelectedResource(void)
             + *(u16 *)(tbl + selection->no * 2);
         *destination = resource;
     }
-    Func_080053e8(resource, buffer);
+    Resource_DecodeByteLz(resource, buffer);
 
     if (transfer->active == 0)
         transfer->handle = find_free_slot();

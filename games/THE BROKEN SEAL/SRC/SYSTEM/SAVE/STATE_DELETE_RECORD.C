@@ -1,9 +1,7 @@
 #include "TYPES.H"
 
-u32 Func_08005b24(s32);
-#define SaveState_FindLatestSlot Func_08005b24
-s32 Func_08005b64(s32);
-#define SaveState_InvalidateSlot Func_08005b64
+u32 SaveState_FindLatestSlot(s32);
+s32 SaveState_InvalidateSlot(s32);
 
 u32 SaveState_DeleteRecord(s32 record_id)
 {

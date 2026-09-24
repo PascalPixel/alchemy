@@ -1,7 +1,6 @@
 #include "TYPES.H"
 #include "TBS_EDITION.H"
 
-#define Summon_ResetCharge Func_080c1f50
 
 u8 *Runtime_GetObject(s32);
 

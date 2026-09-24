@@ -1,10 +1,8 @@
 #include "TYPES.H"
 
-s32 Func_080b6b40(s32 side, u16 *out_units);
-#define BattleParty_ListLivingUnits Func_080b6b40
-u32 Func_08004458(void);
-#define Random16 Func_08004458
-u8 *Func_08077008(s32 unit_id);
+s32 BattleParty_ListLivingUnits(s32 side, u16 *out_units);
+u32 Random16(void);
+u8 *Owner_GetStateFar(s32 unit_id);
 void Func_080bd424(void *entry, s32 arg1);
 
 struct BattlePresentationOpponentEntry {
@@ -56,7 +54,7 @@ s32 BattlePres_BuildOpponentEntries(
 
     for (i = 0; i < unit_count; i++) {
         s32 unit_id = unit_ids[i];
-        u8 *unit = Func_08077008(unit_id);
+        u8 *unit = Owner_GetStateFar(unit_id);
         s32 copy_index;
 
         for (copy_index = 0; copy_index < unit[0x43]; copy_index++) {

@@ -7,7 +7,7 @@ struct EffectObjectWork {
 };
 
 void WaitFrames(s32);
-void Func_08009240(void *, s32);
+void Animation_ApplyChildValuesFar(void *, s32);
 
 void EffectRuntime_StopCurrentObject(void)
 {
@@ -15,6 +15,6 @@ void EffectRuntime_StopCurrentObject(void)
     u8 *object = work->object;
 
     *(s32 *)(object + 0x6c) = 0;
-    Func_08009240(object, 0);
+    Animation_ApplyChildValuesFar(object, 0);
     WaitFrames(1);
 }

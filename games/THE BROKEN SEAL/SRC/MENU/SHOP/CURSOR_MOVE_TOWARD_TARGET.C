@@ -1,7 +1,6 @@
 #include "TYPES.H"
 #include "SHOP.H"
 
-#define ShopCursor_MoveTowardTarget Func_080b0958
 
 struct ShopCursorSprite {
     u8 unknown_00[6];

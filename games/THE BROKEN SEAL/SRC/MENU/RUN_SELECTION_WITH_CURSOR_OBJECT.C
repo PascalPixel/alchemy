@@ -1,16 +1,12 @@
 #include "TYPES.H"
 
 s32 UiWindow_Create(s32, s32, s32, s32, s32);
-void Func_080292c4(s32, s32);
-#define Menu_DrawFlagBitTable Func_080292c4
-void Func_0801c0dc(struct Object_0801c0dc *obj, s32 *slot);
-#define UiTextResource_Initialize Func_0801c0dc
+void Menu_DrawFlagBitTable(s32, s32);
+void UiTextResource_Initialize(struct Object_0801c0dc *obj, s32 *slot);
 void WaitFrames(s32);
 s32 Func_0802938c(s32, s32 *, s32 *);
-void Func_0801c154(struct Obj *obj, s32 arg1, s32 arg2);
-#define UiTextResource_SetPosition Func_0801c154
-void Func_0801c17c(s32);
-#define UiTextResource_Release Func_0801c17c
+void UiTextResource_SetPosition(struct Obj *obj, s32 arg1, s32 arg2);
+void UiTextResource_Release(s32);
 void UiWork_Finalize(struct Work *work, s32 release);
 
 s32 Menu_RunSelectionWithCursorObject(void)

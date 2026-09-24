@@ -19,8 +19,7 @@ void RenderResource_LoadPair(s32 group_index, s32 resource_index)
 }
 
 /* graphics/resource/create_pair.c */
-s32 Func_08004080(void);
-#define find_free_slot Func_08004080
+s32 find_free_slot(void);
 void RenderResource_LoadPair(s32 arg0, s32 arg1);
 void *RenderResource_CreatePair(
     s32 arg0,

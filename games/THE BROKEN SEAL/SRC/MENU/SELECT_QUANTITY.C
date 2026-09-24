@@ -6,28 +6,22 @@ struct InventoryMenuState;
 extern struct InventoryMenuState *Data_03001f2c;
 extern volatile s32 Data_03001b04;
 extern volatile u32 Data_03001c94;
-void Func_080a19a0(void);
-#define Menu_UpdateEntryObjectTransforms Func_080a19a0
+void Menu_UpdateEntryObjectTransforms(void);
 
-s32 Func_08015010(s32, s32, s32, s32, s32);
-void Func_08004278(void (*callback)(void));
-#define Scheduler_RemoveCallback Func_08004278
+s32 UiWindow_CreateFar(s32, s32, s32, s32, s32);
+void Scheduler_RemoveCallback(void (*callback)(void));
 void Func_080a22f4(void);
-void Func_080030f8(s32);
-#define WaitFrames Func_080030f8
-s32 Func_080770c0(s32);
-#define BattleFlag_Test Func_080770c0
-s32 Func_080022fc(s32, s32);
+void WaitFrames(s32);
+s32 GameFlag_TestFar(s32);
+s32 Math_Mod(s32, s32);
 void Func_080a4924(s32, s32);
-s32 Func_08015270(s32);
-void Func_08015018(s32, s32);
-void Func_080a2144(s32);
-void Func_080041d8(const void *, s32);
-#define Scheduler_AddOrUpdateCallback Func_080041d8
+s32 RenderOutput_RedrawSavedRectFar(s32);
+void UiWork_FinalizeFar(s32, s32);
+void Unnamed_080a2144(s32);
+void Scheduler_AddOrUpdateCallback(const void *, s32);
 void Func_08015408(s32, s32, s32, s32);
 
-s32 Func_080a4800(s32 value)
-#define Menu_SelectQuantity Func_080a4800
+s32 Menu_SelectQuantity(s32 value)
 {
     s32 changed = 1;
     u8 *menu = (u8 *)Data_03001f2c;
@@ -36,8 +30,8 @@ s32 Func_080a4800(s32 value)
     s32 quantity = 0;
 
     confirmState[5] = 13;
-    window = Func_08015010(0, 0, 30, 10, 2);
-    Scheduler_RemoveCallback(Func_080a19a0);
+    window = UiWindow_CreateFar(0, 0, 30, 10, 2);
+    Scheduler_RemoveCallback(Menu_UpdateEntryObjectTransforms);
 
     {
         u8 *iconState = MENU_SUBOBJECT(menu, 380);
@@ -64,12 +58,12 @@ adjust:
     WaitFrames(1);
 
 check_exit:
-    if (BattleFlag_Test(336) != 0)
+    if (GameFlag_TestFar(336) != 0)
         goto done;
 
     if (changed != 0) {
         changed = 0;
-        quantity = Func_080022fc(quantity + 5, 5);
+        quantity = Math_Mod(quantity + 5, 5);
         Func_080a4924(window, value);
     }
 
@@ -86,15 +80,15 @@ check_exit:
     goto adjust;
 
 done:
-    Func_08015270(window);
+    RenderOutput_RedrawSavedRectFar(window);
     WaitFrames(1);
-    Func_08015018(window, 1);
-    Func_08015270(*(s32 *)(menu + 16));
-    Func_080a2144(14);
+    UiWork_FinalizeFar(window, 1);
+    RenderOutput_RedrawSavedRectFar(*(s32 *)(menu + 16));
+    Unnamed_080a2144(14);
     {
         s32 delay = 0xc80;
 
-        Scheduler_AddOrUpdateCallback((const void *)Func_080a19a0, delay);
+        Scheduler_AddOrUpdateCallback((const void *)Menu_UpdateEntryObjectTransforms, delay);
     }
 
     {

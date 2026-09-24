@@ -3,12 +3,11 @@
 extern void *Data_03001f2c;
 extern u8 Value_0000053a;
 
-s32 Func_080770c0(s32 flag);
-void Func_080770d0(s32 flag);
-void Func_08015270(s32);
-void Func_080030f8(s32);
-#define WaitFrames Func_080030f8
-void Func_08015080(s32, s32, s32, s32);
+s32 GameFlag_TestFar(s32 flag);
+void GameFlag_ClearBitFar(s32 flag);
+void RenderOutput_RedrawSavedRectFar(s32);
+void WaitFrames(s32);
+void UiText_DrawCharacterAtOffsetFar(s32, s32, s32, s32);
 s32 Func_080a2268(s32, s32, s32, s32, s32, s32);
 
 /* The Psynergy counterpart of ItemMenu_DrawItemDetailPage: while flag
@@ -26,18 +25,18 @@ s32 PsynergyMenu_DrawDetailPage(s32 arg0, s32 arg1, void *state)
     combined += *(s32 *)(state + 16);
     *(s32 *)(state + 24) = combined;
 
-    if (Func_080770c0(0x151) == 0) {
-        Func_08015270(*(s32 *)(menu + 44));
+    if (GameFlag_TestFar(0x151) == 0) {
+        RenderOutput_RedrawSavedRectFar(*(s32 *)(menu + 44));
         WaitFrames(1);
 
         combined = *(s32 *)(state + 24);
         off = combined * 2 + 456;
         if (*(u16 *)((char *)menu + off) != 0) {
             s32 masked = (*(u16 *)((char *)menu + off) & 0x1ff) + (s32)&Value_0000053a;
-            Func_08015080(masked, *(s32 *)(menu + 44), 0, 0);
+            UiText_DrawCharacterAtOffsetFar(masked, *(s32 *)(menu + 44), 0, 0);
         }
     } else {
-        Func_080770d0(0x2ff);
+        GameFlag_ClearBitFar(0x2ff);
     }
 
     row = 0;

@@ -1,8 +1,7 @@
 #include "LOW_RUNTIME.H"
 #include "GLOBAL_CELLS.H"
 
-void Func_08004620(s32);
-#define Text_FormatSignedDecimalToWork Func_08004620
+void Text_FormatSignedDecimalToWork(s32);
 
 void Text_DrawSignedDecimalRightAligned(s32 value, s32 width)
 {

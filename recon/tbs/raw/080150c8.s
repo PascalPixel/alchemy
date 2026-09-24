@@ -1,7 +1,9 @@
 .syntax unified
 	.thumb
+	.global RenderOutput_CreateFar
 	.global Func_080150c8
 	.thumb_func
+RenderOutput_CreateFar:
 Func_080150c8:
 	ldr	r4, [pc, #0]
 	bx	r4

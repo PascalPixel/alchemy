@@ -14,8 +14,7 @@ struct State080a8034 {
     s8 field_113;
 };
 
-s32 Func_080a1814(void *);
-#define UiMenu_CreateCursor Func_080a1814
+s32 UiMenu_CreateCursor(void *);
 s32 InitializeEntryObjects(s32, s32, s32, s32, s32);
 
 void Menu_InitSelectorCursorAndEntries(void)

@@ -28,24 +28,18 @@ struct BattleEffectLinkedObject {
     void (*callback)(void);
 };
 
-struct BattleEffectLinkedObject *Func_080090c8(
-#define Object_CreateFar Func_080090c8
+struct BattleEffectLinkedObject *Object_CreateFar(
     s32 kind,
     s32 x,
     s32 y,
     s32 z);
-void Func_08009098(
-#define ObjectDispatch_InitializeFar Func_08009098
+void ObjectDispatch_InitializeFar(
     struct BattleEffectLinkedObject *object,
     const void *configuration);
-void Func_08009080(struct BattleEffectLinkedObject *object, s32 mode);
-#define Object_SetMode Func_08009080
-void Func_080f9010(s32 cue);
-#define Audio_PlayCue Func_080f9010
-void Func_0809163c(s32 state);
-#define Battle_WaitMode0 Func_0809163c
-void Func_0809376c(void);
-#define BattleFx_CopyLinkedObjectPosition Func_0809376c
+void Object_SetMode(struct BattleEffectLinkedObject *object, s32 mode);
+void Audio_PlayCue(s32 cue);
+void Battle_WaitMode0(s32 state);
+void BattleFx_CopyLinkedObjectPosition(void);
 extern const u8 Data_0809fc2c[];
 
 void BattleFx_SpawnLinked(
@@ -70,7 +64,7 @@ void BattleFx_SpawnLinked(
             object->value_55 = 0;
             object->counter = 0;
             object->resource_id = resource_id;
-            object->callback = Func_0809376c;
+            object->callback = BattleFx_CopyLinkedObjectPosition;
             object->visual->value_26 = 0;
             object->resource = resource;
 

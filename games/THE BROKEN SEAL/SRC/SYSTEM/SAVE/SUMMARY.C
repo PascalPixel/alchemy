@@ -18,10 +18,8 @@ u32 SaveState_FindFreeSummarySlot(void)
 #include "RUNTIME_INTERFACES.H"
 
 
-s32 Func_080056cc(void);
-#define SaveState_InitializeWorkspace Func_080056cc
-s32 Func_08005c68(void);
-#define SaveState_LoadSummaryRecords Func_08005c68
+s32 SaveState_InitializeWorkspace(void);
+s32 SaveState_LoadSummaryRecords(void);
 
 s32 SaveState_CountRecordsExcludingFlagged(s32 flag)
 {

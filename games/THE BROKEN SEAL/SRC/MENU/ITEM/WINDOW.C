@@ -7,8 +7,7 @@ extern u8 Data_080af228;
 #define InventoryMenu_DecreaseGlyph Data_080af228
 
 void UiNumber_DrawAt(s32, s32, s32, s32, s32);
-void Func_08015098(u8 *, s32, s32, s32);
-#define UiText_DrawStringInWindowFar Func_08015098
+void UiText_DrawStringInWindowFar(u8 *, s32, s32, s32);
 
 void ItemMenu_DrawStat(
     s32 delta, s32 unused, s32 window, s32 x, s32 y)

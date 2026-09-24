@@ -15,13 +15,10 @@ extern u8 Data_02000240;
 #define PARTY_STATE Data_02000240
 extern volatile u32 Data_03001ae8;
 
-void Func_08092708(s32, s32, s32);
-#define BattleFx_RunRisingObjectSequence Func_08092708
+void BattleFx_RunRisingObjectSequence(s32, s32, s32);
 void Func_08093c00(void);
-void Func_08093e28(void);
-#define FieldEffect_UpdateGridPlacement Func_08093e28
-void Func_08093fa0(void);
-#define battle_owner_69 Func_08093fa0
+void FieldEffect_UpdateGridPlacement(void);
+void battle_owner_69(void);
 
 s32 Battle_DispatchInputEvent(s32 event)
 {

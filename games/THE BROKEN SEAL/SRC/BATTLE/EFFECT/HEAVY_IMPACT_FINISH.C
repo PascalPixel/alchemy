@@ -3,12 +3,9 @@
 
 extern s32 Data_02000240[];
 #define PARTY_STATE Data_02000240
-int Func_080958e4();
-#define BattleFx_ClearActiveSlotsAndScheduleUpdates Func_080958e4
-int Func_08092adc();
-#define ObjectMotion_ArmCallback Func_08092adc
-int Func_08092560();
-#define ObjectMotion_Launch Func_08092560
+int BattleFx_ClearActiveSlotsAndScheduleUpdates();
+int ObjectMotion_ArmCallback();
+int ObjectMotion_Launch();
 
 void BattleFx_FinishHeavyImpact(s32 arg)
 {
@@ -37,7 +34,7 @@ void BattleFx_FinishHeavyImpact(s32 arg)
         }
         BattleFx_InitializeSlots();
         base = (*((s32 *)0x03001F30));
-        Func_080b0048(0x20118C);
+        Unnamed_080b0840Far(0x20118C);
         Audio_PlayCue(0xAD);
         Motion_SetVarCbAndRefresh(id, 1);
     }
@@ -65,7 +62,7 @@ void BattleFx_FinishHeavyImpact(s32 arg)
         count = 0x17;
         do
         {
-            Func_0809ba90(work, 0x11C, pos.x, pos.z);
+            EffectSlot_Initialize(work, 0x11C, pos.x, pos.z);
             EffectSlot_SetCallback(work, 0x08095939);
             /* This boundary keeps the work pointer ahead of the constant. */
             do
@@ -73,8 +70,8 @@ void BattleFx_FinishHeavyImpact(s32 arg)
             EffectSlot_SetObjectMode(work, 7);
             }
             while (0);
-            Func_08009248(*((s32 *)(head = (((s8 *)work) + 0))), ((u32)(Random16() * 7)) >> 0x10);
-            value = (Func_080022f4(Random16(), 3) + 0x10000);
+            ObjectGroup_SetChildValueUnlessFifteenFar(*((s32 *)(head = (((s8 *)work) + 0))), ((u32)(Random16() * 7)) >> 0x10);
+            value = (Math_DivU(Random16(), 3) + 0x10000);
             (*((s32 *)(((s8 *)work) + 0x2C))) = value;
             (*((s32 *)(((s8 *)work) + 0x28))) = value;
             count = (count - 1);
@@ -91,6 +88,6 @@ void BattleFx_FinishHeavyImpact(s32 arg)
     WaitFrames(0x28);
     Audio_PlayCue(0xA4);
     WaitFrames(0x64);
-    Func_080b0050();
+    Shop_InitEffectFar();
     BattleFx_ClearActiveSlotsAndScheduleUpdates();
 }

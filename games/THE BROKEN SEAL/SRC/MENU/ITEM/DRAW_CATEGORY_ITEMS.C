@@ -3,8 +3,7 @@
 
 extern u8 Value_00000b24;
 
-extern void Func_080a9cbc(void);
-#define ItemMenu_PosCategory Func_080a9cbc
+extern void ItemMenu_PosCategory(void);
 extern void UiText_DrawAt(void *, s32, s32, s32);
 extern s32 Func_080a9aec(s32, void *);
 extern void WaitFrames(s32);

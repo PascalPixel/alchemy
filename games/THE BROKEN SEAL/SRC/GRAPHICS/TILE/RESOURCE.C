@@ -1,7 +1,6 @@
 #include "TYPES.H"
 
-extern s32 Func_08004080(void);
-#define find_free_slot Func_08004080
+extern s32 find_free_slot(void);
 extern s32 Resource_CopyData();
 extern s32 UiIcon_DrawWithFlags();
 extern u8 Data_080aea4c[];

@@ -1,8 +1,7 @@
 #include "TYPES.H"
 #include "OBJECT_EFX.H"
 
-s32 Func_08002322(s32 angle);
-#define Engine_MathSin Func_08002322
+s32 Trig_Sin(s32 angle);
 
 struct ArcObject {
     u8 pad00[8];
@@ -29,7 +28,7 @@ void BattleFx_UpdateScaledArcObjectA(struct ArcObject *obj)
         Object_SetCallback((s32)obj, Data_0809f0b0);
         return;
     }
-    v = Engine_MathSin(v << 10);
+    v = Trig_Sin(v << 10);
     obj->scale_x = v;
     obj->scale_y = v;
     obj->x = link->x;
@@ -48,7 +47,7 @@ void BattleFx_UpdateScaledArcObjectB(struct ArcObject *obj)
         Object_SetCallback((s32)obj, Data_0809f0b0);
         return;
     }
-    v = Engine_MathSin(v << 10);
+    v = Trig_Sin(v << 10);
     obj->scale_x = v;
     obj->scale_y = -v;
     obj->x = link->x;

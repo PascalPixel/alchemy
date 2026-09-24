@@ -1,7 +1,6 @@
 #include "SAVE_STATE.H"
 
-s32 Func_08005b64(s32 index)
-#define SaveState_InvalidateSlot Func_08005b64
+s32 SaveState_InvalidateSlot(s32 index)
 {
     struct SaveWorkspace *work;
     struct SaveSlotHeader header;

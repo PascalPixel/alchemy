@@ -6,8 +6,7 @@ struct Work;
 
 void UiWork_Finalize(struct Work *, s32);
 s32 Func_080168f4(void *);
-void Func_08019854(void *);
-#define UiWork_AdvanceChannelTransition Func_08019854
+void UiWork_AdvanceChannelTransition(void *);
 
 void UiWork_ProcessRenderChannels(void)
 {

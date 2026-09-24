@@ -23,7 +23,6 @@ struct RenderChannel {
 void Func_080170f8(s32 x, s32 y, s32 width, s32 height);
 void UiWindow_EraseBorderRect(s32 x, s32 y, u32 width, u32 height);
 
-#define UiWork_AdvanceChannelTransition Func_08019854
 
 /* Runs transition 4 of a render channel's work: each call draws a border one
  * tile outside the window and counts down; when the count reaches zero it

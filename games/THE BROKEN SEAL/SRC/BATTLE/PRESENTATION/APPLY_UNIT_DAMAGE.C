@@ -1,8 +1,5 @@
 #include "TYPES.H"
 
-#define BattlePresentation_ApplyUnitDamage Func_080b8db8
-#define Character_GetRuntimeRecord Func_08077008
-#define GetBattleObjectSlot Func_080b7dd0
 
 struct CharacterRuntimeRecord {
     u8 reserved_00[56];
@@ -13,16 +10,14 @@ struct BattleMotionSlot {
     void *actor;
 };
 
-struct CharacterRuntimeRecord *Func_08077008(s32 unit_id);
-struct BattleMotionSlot *Func_080b7dd0(s32 unit_id);
-void Func_08009080(void *actor, s32 mode);
-#define Object_SetMode Func_08009080
+struct CharacterRuntimeRecord *Owner_GetStateFar(s32 unit_id);
+struct BattleMotionSlot *GetBattleObjectSlot(s32 unit_id);
+void Object_SetMode(void *actor, s32 mode);
 void Func_08015130(s32 mode);
-void Func_08015118(void);
-void Func_08015120(s32 value, s32 mode);
-void Func_080151c8(s32 message_id);
-void Func_080b8ec4(s32 unit_id);
-#define BattleMotion_SetMode5AndActivateSlot Func_080b8ec4
+void UiWork_ClearValueNameTablesFar(void);
+void UiWork_PushValueSlotFar(s32 value, s32 mode);
+void UiText_ShowMessageAndWaitCoreFar(s32 message_id);
+void BattleMotion_SetMode5AndActivateSlot(s32 unit_id);
 
 /* Takes damage from a unit's HP, stopping at zero, and reports it with the
  * unit posed in mode 5: an optional opening line (a bitter blow for units 0
@@ -43,7 +38,7 @@ void BattlePresentation_ApplyUnitDamage(u32 unit_id, s32 damage, s32 show_messag
         context[3] = 0;
     }
 
-    character = Character_GetRuntimeRecord(unit_id);
+    character = Owner_GetStateFar(unit_id);
     character->hp -= damage;
     if (character->hp < 0)
         character->hp = 0;
@@ -51,32 +46,32 @@ void BattlePresentation_ApplyUnitDamage(u32 unit_id, s32 damage, s32 show_messag
     slot = GetBattleObjectSlot(unit_id);
     Object_SetMode(slot->actor, 5);
     Func_08015130(0);
-    Func_08015118();
+    UiWork_ClearValueNameTablesFar();
 
     if (unit_id <= 7) {
         if (show_message != 0)
-            Func_080151c8(0x823);
-        Func_08015120(damage, 5);
-        Func_08015120(unit_id, 1);
-        Func_080151c8(0x827);
+            UiText_ShowMessageAndWaitCoreFar(0x823);
+        UiWork_PushValueSlotFar(damage, 5);
+        UiWork_PushValueSlotFar(unit_id, 1);
+        UiText_ShowMessageAndWaitCoreFar(0x827);
     } else {
         if (show_message != 0)
-            Func_080151c8(0x822);
-        Func_08015120(damage, 5);
-        Func_08015120(unit_id, 1);
-        Func_080151c8(0x826);
-        Func_08015120(unit_id, 1);
+            UiText_ShowMessageAndWaitCoreFar(0x822);
+        UiWork_PushValueSlotFar(damage, 5);
+        UiWork_PushValueSlotFar(unit_id, 1);
+        UiText_ShowMessageAndWaitCoreFar(0x826);
+        UiWork_PushValueSlotFar(unit_id, 1);
     }
 
     BattleMotion_SetMode5AndActivateSlot(unit_id);
     if (unit_id <= 7) {
         if (character->hp <= 0) {
-            Func_08015120(unit_id, 1);
-            Func_080151c8(0x825);
+            UiWork_PushValueSlotFar(unit_id, 1);
+            UiText_ShowMessageAndWaitCoreFar(0x825);
         }
     } else if (character->hp <= 0) {
-        Func_08015120(unit_id, 1);
-        Func_080151c8(0x838);
+        UiWork_PushValueSlotFar(unit_id, 1);
+        UiText_ShowMessageAndWaitCoreFar(0x838);
     }
 
     slot = GetBattleObjectSlot(unit_id);

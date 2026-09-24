@@ -1,6 +1,6 @@
 #include "RESOURCE.H"
 
-void Func_08005340(void *, void *);
+void Resource_DecodeType01(void *, void *);
 
 void Resource_LoadAndDecompress(s32 resource_id, void *destination,
     s32 skip_palette, s32 copy_palette)
@@ -14,5 +14,5 @@ void Resource_LoadAndDecompress(s32 resource_id, void *destination,
     }
     if (skip_palette != 0)
         resource += 0x80;
-    Func_08005340(resource, destination);
+    Resource_DecodeType01(resource, destination);
 }

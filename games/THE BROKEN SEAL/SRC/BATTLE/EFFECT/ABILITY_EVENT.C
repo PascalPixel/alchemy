@@ -4,10 +4,8 @@
 #include "BATTLE_EFFECT_RUNTIME.H"
 #define PARTY_STATE Data_02000240
 
-u8 *Func_08077080(s32);
-#define BattleAction_Get Func_08077080
-void *Func_0808ba1c(u32);
-#define ObjectTable_Get Func_0808ba1c
+u8 *BattleAction_Get(s32);
+void *ObjectTable_Get(u32);
 
 struct BattleEffectEventRecord {
     s32 flags;
@@ -80,14 +78,11 @@ s32 BattleFx_FindMatchingEvent(s32 requested_flags, s32 group, void *result)
 
 u8 *Ability_GetData(s32);
 void Func_08096fb0(s32, s32);
-void Func_080970f8(s32, s32);
-#define BattleFx_SetupObjectPair Func_080970f8
-s32 Func_08096b28(void *, s32, s32);
-#define BattleFx_RunEventAction Func_08096b28
+void BattleFx_SetupObjectPair(s32, s32);
+s32 BattleFx_RunEventAction(void *, s32, s32);
 void FieldEvent_RunTypeHandler(void);
 void EffectRuntime_StopCurrentObject(void);
-void Func_08097194(void);
-#define BattleEffect_CleanupSceneObjects Func_08097194
+void BattleEffect_CleanupSceneObjects(void);
 
 s32 BattleFx_ExecutePackedAbilityEffect(s32 packed)
 {

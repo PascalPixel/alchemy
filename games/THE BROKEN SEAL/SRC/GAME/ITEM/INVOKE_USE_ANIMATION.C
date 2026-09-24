@@ -1,8 +1,7 @@
 #include "TYPES.H"
 
 void *Item_GetData();
-s32 Func_080aa460(s32);
-#define Ability_PlayUseAnimation Func_080aa460
+s32 Ability_PlayUseAnimation(s32);
 
 void Item_PlayUseAnimation(void)
 {

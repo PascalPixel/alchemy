@@ -1,6 +1,5 @@
 #include "TYPES.H"
 
-#define BattleEffect_RunTargetedItemBreak Func_08098848
 
 struct BattleEffectScene {
     u8 reserved_00[4];
@@ -22,8 +21,7 @@ struct EffectChild {
 
 extern struct BattleEffectScene *Data_03001f30;
 
-void Func_08097384(void);
-#define BattleEffect_InitializeSharedScene Func_08097384
+void BattleEffect_InitializeSharedScene(void);
 void *SpawnItemBreakEffectMode3(s32 x, s32 y, s32 z, s32 angle);
 void Object_SetCallback(void *object, const void *callback);
 void WaitFrames(s32 frames);

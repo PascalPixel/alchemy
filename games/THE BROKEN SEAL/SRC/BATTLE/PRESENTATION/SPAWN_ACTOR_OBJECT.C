@@ -35,26 +35,18 @@ typedef struct {
     /* 0x59 */ u8 field_59;
 } Object;
 
-Object *Func_080090c8(s32, s32, s32);
-#define Object_CreateFar Func_080090c8
-void Func_08009098(Object *, const void *);
-#define ObjectDispatch_InitializeFar Func_08009098
-Unit *Func_08077008(s32);
-s32 Func_08077078(Unit *, s32);
-s32 Func_080b6d30(s32);
-#define SummonSlot_RegisterActorSprites Func_080b6d30
-s32 Func_080b6eb4(s32);
-#define BattleUnit_LookupWeaponValueByClass Func_080b6eb4
-s32 Func_080c2384(s32);
-#define Summon_GetEntryValue Func_080c2384
-s32 Func_080c23a0(s32);
-#define Summon_GetEntryFlag1Field Func_080c23a0
-s32 Func_080044d0(s32, s32);
-#define ArcTan2 Func_080044d0
+Object *Object_CreateFar(s32, s32, s32);
+void ObjectDispatch_InitializeFar(Object *, const void *);
+Unit *Owner_GetStateFar(s32);
+s32 Inventory_GetEquippedItemFar(Unit *, s32);
+s32 SummonSlot_RegisterActorSprites(s32);
+s32 BattleUnit_LookupWeaponValueByClass(s32);
+s32 Summon_GetEntryValue(s32);
+s32 Summon_GetEntryFlag1Field(s32);
+s32 ArcTan2(s32, s32);
 extern const u8 Data_080c5938[];
 
-void Func_080b6f44(Actor *actor, s32 unit, s32 x, s32 y)
-#define BattlePresentation_SpawnActorObject Func_080b6f44
+void BattlePresentation_SpawnActorObject(Actor *actor, s32 unit, s32 x, s32 y)
 {
     s32 fixed_x;
     s32 fixed_y;
@@ -71,7 +63,7 @@ void Func_080b6f44(Actor *actor, s32 unit, s32 x, s32 y)
     fixed_x = x << 16;
     fixed_y = y << 16;
     object = Object_CreateFar(0xf000, fixed_x, 0);
-    unit_record = Func_08077008(unit);
+    unit_record = Owner_GetStateFar(unit);
     actor_flag = 0;
     existing_sprite = SummonSlot_RegisterActorSprites(unit);
 
@@ -158,7 +150,7 @@ void Func_080b6f44(Actor *actor, s32 unit, s32 x, s32 y)
     class_id = unit_record->class_id;
     actor->anim = anim;
 
-    if (class_id <= 1 && Func_08077078(unit_record, 1) == 15) {
+    if (class_id <= 1 && Inventory_GetEquippedItemFar(unit_record, 1) == 15) {
         if (unit_record->class_id == 0) {
             sprite = 480;
             actor->sprite = sprite;

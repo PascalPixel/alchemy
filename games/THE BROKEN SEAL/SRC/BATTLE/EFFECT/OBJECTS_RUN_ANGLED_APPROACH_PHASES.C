@@ -30,14 +30,11 @@ extern s32 Data_02000240[];
 #define PARTY_STATE Data_02000240
 
 void Func_0800447c(s32, s32, struct Vec *);
-struct Target *Func_08092054(s32);
-#define Object_GetById Func_08092054
+struct Target *Object_GetById(s32);
 void Func_080974d8(struct Vec *);
-void Func_0809bb34(struct Actor *);
-#define BattleFx_ClearOwnedSlot Func_0809bb34
+void BattleFx_ClearOwnedSlot(struct Actor *);
 
-void Func_08095938(struct Actor *actor)
-#define BattleFx_RunAngledApproachPhases Func_08095938
+void BattleFx_RunAngledApproachPhases(struct Actor *actor)
 {
     struct Target *target;
     struct Vec pos;

@@ -7,17 +7,12 @@ struct BattleEffectScene {
 
 extern struct BattleEffectScene *Data_03001f30;
 
-void Func_08097384(void);
-#define BattleEffect_InitializeSharedScene Func_08097384
-void *Func_08098070(void *object);
-#define BattleFx_StartItemBreak Func_08098070
-void Func_08098184(void *object);
-#define BattleFx_SnapScaleToFull Func_08098184
-void Func_08009080(void *object, s32 mode);
-#define Object_SetMode Func_08009080
+void BattleEffect_InitializeSharedScene(void);
+void *BattleFx_StartItemBreak(void *object);
+void BattleFx_SnapScaleToFull(void *object);
+void Object_SetMode(void *object, s32 mode);
 void WaitFrames(s32 frames);
-void Func_0809748c(void);
-#define BattleFx_PrepareBufferInterpolation Func_0809748c
+void BattleFx_PrepareBufferInterpolation(void);
 void UpdateRisingParticleBurst(void *object);
 
 void BattleFx_RunItemBreakSequence(void)

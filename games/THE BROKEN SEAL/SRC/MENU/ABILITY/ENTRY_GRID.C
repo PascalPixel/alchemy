@@ -1,14 +1,12 @@
 #include "PSYNERGY_MENU.H"
 #include "GLOBAL_CELLS.H"
 
-s32 Func_080a1814(void *menu);
-#define UiMenu_CreateCursor Func_080a1814
+s32 UiMenu_CreateCursor(void *menu);
 s32 InitializeEntryObjects(s32, s32, s32, s32, s32);
 s32 UiWindow_CreateFar(s32, s32, s32, s32, s32);
-struct PsynergyMenuIcon *Func_080a1778(s32, s32, s32);
-#define UiIcon_CreateWithResourceVariant Func_080a1778
+struct PsynergyMenuIcon *UiIcon_CreateWithResourceVariant(s32, s32, s32);
 void *Func_080150d8(s32, s32, s32, s32, s32, s32);
-struct PsynergyMenuIcon *Func_080150d0(s32, s32, s32, s32, s32);
+struct PsynergyMenuIcon *RenderOutput_CreateFromResourceFar(s32, s32, s32, s32, s32);
 
 void PsynergyMenu_CreateEntryGrid(void)
 {
@@ -41,7 +39,7 @@ void PsynergyMenu_CreateEntryGrid(void)
     output = &menu->entry_icons[0];
     x = 96;
     do {
-        *output++ = Func_080150d0(4, index, window, x, y);
+        *output++ = RenderOutput_CreateFromResourceFar(4, index, window, x, y);
         index++;
         x += 16;
     } while (index <= 7);
@@ -51,7 +49,7 @@ void PsynergyMenu_CreateEntryGrid(void)
     output = &menu->entry_icons[8];
     x = 96;
     do {
-        *output++ = Func_080150d0(4, index, window, x, y);
+        *output++ = RenderOutput_CreateFromResourceFar(4, index, window, x, y);
         index++;
         x += 16;
     } while (index <= 15);
@@ -71,7 +69,7 @@ void PsynergyMenu_CloseWindows(void)
     UiWindow_Close(menu->message_window, 1);
 }
 
-void Func_08015298(s32 style, u16 action, u8 target, s32 flags);
+void Resource_LoadByModeIntoSlotFar(s32 style, u16 action, u8 target, s32 flags);
 
 void PsynergyMenu_DrawPsynergyIcons(u16 *psynergies)
 {
@@ -87,7 +85,7 @@ void PsynergyMenu_DrawPsynergyIcons(u16 *psynergies)
     do {
         psynergy_id = *p++;
         if (psynergy_id != 0) {
-            Func_08015298(
+            Resource_LoadByModeIntoSlotFar(
                 4, psynergy_id, (*icons)->render_target, 0);
         }
         icons++;

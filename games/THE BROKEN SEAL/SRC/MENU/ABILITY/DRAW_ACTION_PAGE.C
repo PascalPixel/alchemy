@@ -1,19 +1,15 @@
 #include "BATTLE_TYPES.H"
 #include "PSYNERGY_MENU.H"
 
-#define PsynergyMenu_DrawActionPage Func_080a6b64
 
 void UiWindow_Commit(s32 window);
 void Func_08015070(s32 window, s32 x, s32 width, s32 height, s32 style);
 void UiText_DrawAt(s32 message, s32 window, s32 x, s32 y);
-void Func_080a2324(s32 page_size, s32 first_entry, s32 window, s32 x, s32 y);
-#define Menu_SetPageIcons Func_080a2324
-void Func_080a21b0(s32 window, s32 count, s32 page_size, s32 page, s32 style);
-#define Menu_DrawPageIndicator Func_080a21b0
+void Menu_SetPageIcons(s32 page_size, s32 first_entry, s32 window, s32 x, s32 y);
+void Menu_DrawPageIndicator(s32 window, s32 count, s32 page_size, s32 page, s32 style);
 s32 UiPalette_SetColor(s32 color);
-void Func_080150a8(s32 value, s32 digits, s32 layer, s32 x, s32 y);
-#define UiText_DrawNumberAtOffsetFar Func_080150a8
-struct BattleUnit *Func_08077008(s32 owner);
+void UiText_DrawNumberAtOffsetFar(s32 value, s32 digits, s32 layer, s32 x, s32 y);
+struct BattleUnit *Owner_GetStateFar(s32 owner);
 struct BattleAction *Ability_GetData(s32 action);
 extern u8 Value_00000333;
 
@@ -52,7 +48,7 @@ s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused, const struct MenuResult 
     if (visible_count > row) {
         cursor = first_entry * 2 + 0x1c8;
         do {
-            owner = Func_08077008(menu->owner_ids[0]);
+            owner = Owner_GetStateFar(menu->owner_ids[0]);
             ability = Ability_GetData(0x3fff & *(const u16 *)(cursor + (s32)menu));
 
             if (ability->pp_cost > owner->pp) {

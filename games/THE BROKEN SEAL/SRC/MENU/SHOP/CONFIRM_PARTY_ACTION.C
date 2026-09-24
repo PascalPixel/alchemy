@@ -1,32 +1,25 @@
 #include "SHOP.H"
 
-s32 Func_0808a080(s32 unit_id);
-s32 Func_080150f8(s32 resource, s32 x, s32 y, s32 flags);
+s32 Object_GetByIdFar(s32 unit_id);
+s32 UiWindow_CreateWithSideObjectFar(s32 resource, s32 x, s32 y, s32 flags);
 s32 UiWindow_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 style);
 void Func_080150d8(s32 a, s32 b, s32 c, s32 window, s32 d, s32 e);
-struct ShopCursorAnchor *Func_080150c8(
+struct ShopCursorAnchor *RenderOutput_CreateFar(
     u32 resource,
     u32 flags,
     s32 window,
     s32 x,
     s32 y);
-void Func_080b0a20(struct ShopCursor *cursor, s32 target_x, s32 target_y);
-#define ShopCursor_SetPositionImmediate Func_080b0a20
-void Func_080b28d4(s32 message);
-#define UiMessage_ShowResolvedAndWait Func_080b28d4
-void Func_080b010c(void);
-void Func_080b0204(void);
-#define Inn_Cleanup Func_080b0204
-s32 Func_080b280c(void);
-#define Shop_CountUnits Func_080b280c
-void Func_080b2b10(void);
-#define Sanctum_RunPartyService Func_080b2b10
-s32 Func_08015388(s32 prev);
+void ShopCursor_SetPositionImmediate(struct ShopCursor *cursor, s32 target_x, s32 target_y);
+void UiMessage_ShowResolvedAndWait(s32 message);
+void Shop_InitializeCursorWork(void);
+void Inn_Cleanup(void);
+s32 Shop_CountUnits(void);
+void Sanctum_RunPartyService(void);
+s32 Menu_SelectEntry19To1cFar(s32 prev);
 void UiWindow_Close(s32 window, s32 style);
 
-#define Shop_DrawMoney Func_080b10cc
 
-#define Shop_ConfirmAct Func_080b29a8
 
 /* Run the shop's yes/no party-action confirmation prompt for one unit. */
 s32 Shop_ConfirmAct(s32 unit_id)
@@ -36,17 +29,17 @@ s32 Shop_ConfirmAct(s32 unit_id)
     struct ShopRuntime *shop;
     struct ShopCursorAnchor *cursor_anchor;
 
-    Func_080b010c();
+    Shop_InitializeCursorWork();
     shop = SHOP_RUNTIME;
     shop->party_action = list_window;
 
     {
         s32 shown =
-            *(u16 *)(*(u32 *)(*(u32 *)((u8 *)Func_0808a080(unit_id) + 80) + 40));
+            *(u16 *)(*(u32 *)(*(u32 *)((u8 *)Object_GetByIdFar(unit_id) + 80) + 40));
         *(u16 *)((u8 *)shop + 0x3a4) = shown;
     }
 
-    list_window = Func_080150f8(*(u16 *)((u8 *)shop + 0x3a4), 0, 0, 0);
+    list_window = UiWindow_CreateWithSideObjectFar(*(u16 *)((u8 *)shop + 0x3a4), 0, 0, 0);
     if (list_window == 0) {
         list_window = UiWindow_CreateFar(-5, 0, 5, 5, 2);
     }
@@ -55,7 +48,7 @@ s32 Shop_ConfirmAct(s32 unit_id)
         Func_080150d8(2, 0, 0, list_window, -4, -4);
     }
 
-    cursor_anchor = Func_080150c8(
+    cursor_anchor = RenderOutput_CreateFar(
         *(u16 *)((u8 *)shop + 0x390),
         0x40000000,
         list_window,
@@ -71,7 +64,7 @@ s32 Shop_ConfirmAct(s32 unit_id)
     Shop_DrawMoney();
 
     for (;;) {
-        party_action = Func_08015388(party_action);
+        party_action = Menu_SelectEntry19To1cFar(party_action);
         shop->party_action = party_action;
         if (party_action == -1)
             break;

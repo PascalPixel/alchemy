@@ -33,8 +33,8 @@ struct UiWindowBounds {
     u16 flags;
 };
 
-extern s32 Func_080b50c8(s32);
-extern s32 Func_08077148(void);
+extern s32 BattleParty_PrepareActiveOwnersFar(s32);
+extern s32 Party_CountActiveOwnersFar(void);
 
 void UiWindow_BuildLayoutBounds(s32 flags)
 {
@@ -47,10 +47,10 @@ void UiWindow_BuildLayoutBounds(s32 flags)
     s32 left;
 
     if (base[RENDER_MENU_STATE_OFS] != 0) {
-        n = Func_080b50c8(0);
+        n = BattleParty_PrepareActiveOwnersFar(0);
         height = 3;
     } else {
-        n = Func_08077148();
+        n = Party_CountActiveOwnersFar();
     }
     if (flags & 1)
         height++;
@@ -73,7 +73,7 @@ void UiWindow_BuildLayoutBounds(s32 flags)
 
 
 
-void Func_0801eea0(s32 flags);
+void UiWindow_BuildLayoutBounds(s32 flags);
 void Func_0801f200(s32);
 void *Runtime_AllocateBlock(s32 flags, s32 arg1);
 s32 UiWindow_Create(u16, u16, u16, u16, s32);
@@ -88,7 +88,7 @@ void UiWindow_CreateWithLayoutBounds(s32 flags)
     busy = (s8 *)((u8 *)*(void **)ADDR_03001E8C + RENDER_MENU_BUSY_OFS);
     zero = 0;
     *busy = 1;
-    Func_0801eea0(flags);
+    UiWindow_BuildLayoutBounds(flags);
     window->handle = UiWindow_Create(
         window->left, window->top, window->right, window->height, 6);
     Func_0801f200(flags);

@@ -12,12 +12,10 @@ typedef struct {
 } T;
 
 extern s32 Runtime_AllocateHeapBlock(s32 no0, s32 no1);
-extern s32 Func_0801a5a4(T *, s32);
-extern s32 Func_08004080(void);
-#define find_free_slot Func_08004080
+extern s32 UiGlyph_DecodeWithHeapRoutines(T *, s32);
+extern s32 find_free_slot(void);
 extern s32 Resource_CopyData(s32, s32, u8 *);
-extern s32 Func_08002dd8(s32);
-#define Runtime_ReleaseHeapBlock Func_08002dd8
+extern s32 Runtime_ReleaseHeapBlock(s32);
 extern s32 Data_08029a10[];
 extern s32 Data_08029e00[];
 
@@ -29,11 +27,11 @@ void Ui_BuildPairedPatternsToSlot(s32 no0, s32 no1, s32 *slot, s32 *ret, s32 fla
     work->f604 = Data_08029a10[no1];
     work->f600 = 2;
     work->f602 = 2;
-    Func_0801a5a4(work, 0);
+    UiGlyph_DecodeWithHeapRoutines(work, 0);
     work->f604 = Data_08029e00[no0];
     work->f600 = 2;
     work->f602 = 2;
-    Func_0801a5a4(work, 1);
+    UiGlyph_DecodeWithHeapRoutines(work, 1);
     if (flag == 0) {
         *slot = find_free_slot();
     }

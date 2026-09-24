@@ -6,8 +6,7 @@ struct ObjectTableWork {
 };
 
 extern struct ObjectTableWork *Data_03001ebc;
-void *Func_0808ba1c(s32);
-#define ObjectTable_Get Func_0808ba1c
+void *ObjectTable_Get(s32);
 void Object_Destroy(void *);
 
 void ObjectTable_DestroyAtIndex(s32 index)

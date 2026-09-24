@@ -1,7 +1,9 @@
 .syntax unified
 	.thumb
+	.global Owner_AdjustFirstValueFar
 	.global Func_08077118
 	.thumb_func
+Owner_AdjustFirstValueFar:
 Func_08077118:
 	ldr	r4, [pc, #0]
 	bx	r4

@@ -4,9 +4,8 @@
 extern struct EventValueWork Data_02000240;
 
 void WaitFrames(s32);
-void Func_0808b674(s32);
-#define FunctionHead_0808b674 Func_0808b674
-void Func_0809177c(void);
+void FunctionHead_0808b674(s32);
+void Event_NoOpHook(void);
 s32 Func_0808b3ec(s32 event_id, s32 state);
 s32 ObjectTable_FindLastActiveId(void);
 
@@ -17,7 +16,7 @@ void Event_NoOpHook(void)
 
 void Event_RunObjectHookAndWait(s32 object_id)
 {
-    Func_0809177c();
+    Event_NoOpHook();
     FunctionHead_0808b674(object_id);
     WaitFrames(1);
     ObjectTable_Get(Data_02000240.value);

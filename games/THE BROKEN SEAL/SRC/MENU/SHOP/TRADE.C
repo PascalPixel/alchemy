@@ -5,12 +5,11 @@
 
 
 
-s32 Func_08077028(s32, s32);
-s32 Func_08077228(s32, u8);
-s32 Func_08077230(s32);
-s32 Func_08077298(s16);
-void Func_080b0574(s32 message);
-#define UiMessage_ShowAndRestoreState Func_080b0574
+s32 Inventory_AddItemFar(s32, s32);
+s32 Inventory_FindEquippedFar(s32, u8);
+s32 Party_AdjustSixDigitCounterAFar(s32);
+s32 Party_AdjustSixDigitCounterBFar(s16);
+void UiMessage_ShowAndRestoreState(s32 message);
 void Audio_PlayCue(s32);
 extern char Value_00000ca1;
 
@@ -24,14 +23,14 @@ void Shop_BuyDone(s32 unit_id, s32 item_id, s32 quantity)
     remaining = quantity;
     item = Item_Get(item_id);
     added_slot = 0;
-    replaced_slot = Func_08077228(unit_id, item->type);
+    replaced_slot = Inventory_FindEquippedFar(unit_id, item->type);
     Audio_PlayCue(SOUND_SHOP_PURCHASE);
     if (added_slot < remaining) {
         do {
-            added_slot = Func_08077028(unit_id, item_id);
-            Func_08077230(0 - item->price);
+            added_slot = Inventory_AddItemFar(unit_id, item_id);
+            Party_AdjustSixDigitCounterAFar(0 - item->price);
             remaining -= 1;
-            Func_08077298(item->price);
+            Party_AdjustSixDigitCounterBFar(item->price);
             Shop_DrawMoney();
         } while (remaining != 0);
     }
@@ -45,19 +44,17 @@ void Shop_BuyDone(s32 unit_id, s32 item_id, s32 quantity)
 
 
 
-s32 Func_08077218(s32 unit_id, s32 item_id);
-#define Item_CanOwnerEquip Func_08077218
-s32 Func_08077228(s32 unit_id, u8 kind);
-void Func_08077050(s32 unit_id, s32 slot);
-void Func_08015120(u32 unit_id, u32 mode);
-void Func_080b04dc(s32 message);
-s32 Func_080b0634(s32 value);
-#define UiMessage_ShowChoice Func_080b0634
-void Func_080b1dec(s32 value, s32 unit_id);
-void Func_080f9010(s32 cue);
-void Func_08015140(void);
+s32 Item_CanOwnerEquip(s32 unit_id, s32 item_id);
+s32 Inventory_FindEquippedFar(s32 unit_id, u8 kind);
+void Inventory_EquipFar(s32 unit_id, s32 slot);
+void UiWork_PushValueSlotFar(u32 unit_id, u32 mode);
+void UiMessage_ShowAndWait(s32 message);
+s32 UiMessage_ShowChoice(s32 value);
+void Shop_DrawUnitGrid(s32 value, s32 unit_id);
+void Audio_PlayCue(s32 cue);
+void UiWork_FinalizePendingCoreFar(void);
 s32 Func_08015038(s32 a, s32 b, s32 c, s32 d);
-s32 Func_08015048(void);
+s32 UiWork_IsCompleteFar(void);
 void WaitFrames(s32 frames);
 
 extern struct ShopRuntime *Data_03001f2c;
@@ -80,7 +77,7 @@ s32 Shop_ConfirmEquip(s32 unit_id, s32 slot)
     if (Item_CanOwnerEquip(unit_id, item_id) == 0)
         return 0;
 
-    replaced = Func_08077228(unit_id, info->type);
+    replaced = Inventory_FindEquippedFar(unit_id, info->type);
     if (replaced != -1) {
         struct ItemDefinition *old_info = Item_Get(unit->inventory[replaced]);
 
@@ -88,21 +85,21 @@ s32 Shop_ConfirmEquip(s32 unit_id, s32 slot)
             return 0;
     }
 
-    Func_08015120(unit_id, 1);
-    Func_080b04dc((s32)&Value_00000ca2);
+    UiWork_PushValueSlotFar(unit_id, 1);
+    UiMessage_ShowAndWait((s32)&Value_00000ca2);
     if (UiMessage_ShowChoice(0) != 0)
         return 0;
 
-    Func_08077050(unit_id, slot);
+    Inventory_EquipFar(unit_id, slot);
     menu_value = menu->item_window;
     if (menu_value != 0)
-        Func_080b1dec(menu_value, unit_id);
+        Shop_DrawUnitGrid(menu_value, unit_id);
 
     if (info->flags & 1) {
-        Func_080f9010(103);
-        Func_08015140();
+        Audio_PlayCue(103);
+        UiWork_FinalizePendingCoreFar();
         Func_08015038((s32)Value_00000ad0, 8, 4, 2);
-        while (Func_08015048() == 0) {
+        while (UiWork_IsCompleteFar() == 0) {
             WaitFrames(1);
         }
     }
@@ -174,11 +171,10 @@ void WaitFrames(s32);
 s32 UiWindow_CreateFar(s32, s32, s32, s32, s32);
 void UiWindow_Close(s32, s32);
 s32 Ability_GetAvailability(s32);
-void Func_080a1028(s32, s32, s32, s32, s32);
-void Func_080a1030(void);
-s32 Func_080b1bd0(s32);
-void Func_080b211c(s32);
-#define Shop_SelRepair Func_080b211c
+void PsynergyMenu_InitializeEntryObjectsFar(s32, s32, s32, s32, s32);
+void Menu_ReleaseEntryObjectsFar(void);
+s32 Shop_SelSell(s32);
+void Shop_SelRepair(s32);
 
 /*
  * Keep an actor-selection menu active while dispatching the chosen actor into
@@ -198,7 +194,7 @@ s32 Shop_PickUnit(void)
     list_window = UiWindow_CreateFar(0, 14, 13, 3, 2);
     shop->cursor.anchor->kind = 4;
     shop->mode = 12;
-    Func_080a1028(list_window, 2, 0, 8, 0);
+    PsynergyMenu_InitializeEntryObjectsFar(list_window, 2, 0, 8, 0);
 
     for (;;) {
         if (redraw != 0) {
@@ -223,7 +219,7 @@ s32 Shop_PickUnit(void)
             } else {
                 Audio_PlayCue(SOUND_MENU_CONFIRM);
                 if (shop->party_action == 1)
-                    Func_080b1bd0(unit_id);
+                    Shop_SelSell(unit_id);
                 else
                     Shop_SelRepair(unit_id);
                 shop->cursor.anchor->kind = 4;
@@ -235,7 +231,7 @@ s32 Shop_PickUnit(void)
 
         if ((*(volatile u32 *)ADDR_03001C94 & 2) != 0) {
             Audio_PlayCue(SOUND_MENU_CANCEL);
-            Func_080a1030();
+            Menu_ReleaseEntryObjectsFar();
             UiWindow_Close(list_window, 2);
             UiWindow_Close(shop->item_window, 2);
             UiWindow_Close(shop->money_window, 2);
@@ -261,7 +257,6 @@ s32 Shop_PickUnit(void)
 
 
 
-#define Shop_SelSell Func_080b1bd0
 
 s32 FixedPoint_Ratio(s32, s32);
 void UiMessage_ShowAndWait(s32);
@@ -444,9 +439,9 @@ void Shop_DrawUnitGrid(s32 window, s32 unit_id)
 #endif
 
 s32 Shop_GetSelectionState(s32, s32);
-void Func_080b04dc(s32);
+void UiMessage_ShowAndWait(s32);
 s32 Func_080b1614(s32, s32, s32);
-void Func_080a1038(void *);
+void UiIcon_PrepareObjectFar(void *);
 extern char Value_00000cad;
 
 s32 Shop_SelSellNum(s32 unit_id, s32 slot)
@@ -471,7 +466,7 @@ s32 Shop_SelSellNum(s32 unit_id, s32 slot)
     state = Shop_GetSelectionState(unit_id, slot);
     selection = state;
     if ((item->flags & 0x10) && state > 1) {
-        Func_080b04dc((s32)&Value_00000cad);
+        UiMessage_ShowAndWait((s32)&Value_00000cad);
         saved_x = shop->cursor.target_x;
         saved_y = shop->cursor.target_y;
         shop->cursor.anchor->kind = 4;
@@ -479,7 +474,7 @@ s32 Shop_SelSellNum(s32 unit_id, s32 slot)
         Shop_PlaceCursor(NULL, EFFECT_X, 0x30);
         result = Func_080b1614(0, selection, effect);
         WaitFrames(1);
-        Func_080a1038(shop->cursor.anchor);
+        UiIcon_PrepareObjectFar(shop->cursor.anchor);
         Shop_PlaceCursor(NULL, saved_x, saved_y);
     }
     return result;

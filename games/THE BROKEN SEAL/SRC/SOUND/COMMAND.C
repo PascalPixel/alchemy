@@ -102,10 +102,8 @@ void Audio_SetWorkPairA(u16 primary, u16 secondary)
     Data_02003010 = secondary;
 }
 
-void Func_080fa458(void);
-#define Audio_StopAllPlayers Func_080fa458
-void Func_080fa490(void);
-#define Audio_ResumeAllPlayers Func_080fa490
+void Audio_StopAllPlayers(void);
+void Audio_ResumeAllPlayers(void);
 s32 WaitFrames(s32);
 
 u8 AudioCommand_GetStateByte(void)

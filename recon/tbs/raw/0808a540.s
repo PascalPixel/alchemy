@@ -1,7 +1,9 @@
 .syntax unified
 	.thumb
+	.global BattleFx_GetResourceIdFar
 	.global Func_0808a540
 	.thumb_func
+BattleFx_GetResourceIdFar:
 Func_0808a540:
 	ldr	r4, [pc, #0]
 	bx	r4

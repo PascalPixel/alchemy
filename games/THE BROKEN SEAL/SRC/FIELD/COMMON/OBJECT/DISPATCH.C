@@ -2,10 +2,8 @@
 #include "TYPES.H"
 #include "SCENE.H"
 
-s32 Func_0800ba30(void *, s32);
-#define AnimationObjects_SelectAnimation Func_0800ba30
-void Func_0800baf8(void *, s32);
-#define AnimationObjects_SetField15OnActive Func_0800baf8
+s32 AnimationObjects_SelectAnimation(void *, s32);
+void AnimationObjects_SetField15OnActive(void *, s32);
 
 void ObjectDispatch_Initialize(struct DispatchObject *object, u32 value)
 {
@@ -229,8 +227,7 @@ void Animation_SetStateField1dBit1(u8 *obj, u32 v)
     }
 }
 
-s32 Func_0800b684(s32);
-#define ObjectGroup_SetChildValueUnlessFifteen Func_0800b684
+s32 ObjectGroup_SetChildValueUnlessFifteen(s32);
 
 void Animation_ApplyChildValues(void *obj)
 {
@@ -240,31 +237,29 @@ void Animation_ApplyChildValues(void *obj)
 }
 
 s32 WaitFrames(s32);
-s32 Func_080042c8(u32 value);
-#define Scheduler_EnableCallbacks Func_080042c8
-s32 Func_0808a330(s32, s32);
-s32 Func_0808a348(s32);
-void Func_0800c62c(void);
-void Func_0800c880(void);
+s32 Scheduler_EnableCallbacks(u32 value);
+s32 BattleFx_ApplyColorToTargetBufferFar(s32, s32);
+s32 BattleFx_StartBufferInterpolationFar(s32);
+void ObjectSystem_UpdateCamera(void);
+void ObjectSystem_UpdateCameraFixed(void);
 
 void Graphics_EnableObjLayerAndCallbacks(void)
 {
-    Scheduler_EnableCallbacks((u32)Func_0800c62c);
-    Scheduler_EnableCallbacks((u32)Func_0800c880);
-    Func_0808a330(0x10000, 1);
-    Func_0808a348(1);
+    Scheduler_EnableCallbacks((u32)ObjectSystem_UpdateCamera);
+    Scheduler_EnableCallbacks((u32)ObjectSystem_UpdateCameraFixed);
+    BattleFx_ApplyColorToTargetBufferFar(0x10000, 1);
+    BattleFx_StartBufferInterpolationFar(1);
     WaitFrames(1);
     *(u16 *)0x04000000 = (0xF1FF & *(u16 *)0x04000000) | 0x1000;
 }
 
-s32 Func_0800439c(u32 value);
-#define Scheduler_DisableCallbacks Func_0800439c
-void Func_0800c62c(void);
-void Func_0800c880(void);
+s32 Scheduler_DisableCallbacks(u32 value);
+void ObjectSystem_UpdateCamera(void);
+void ObjectSystem_UpdateCameraFixed(void);
 
 void ObjectDispatch_StopCallbacksAndHideLayers(void)
 {
-    Scheduler_DisableCallbacks((u32)Func_0800c62c);
-    Scheduler_DisableCallbacks((u32)Func_0800c880);
+    Scheduler_DisableCallbacks((u32)ObjectSystem_UpdateCamera);
+    Scheduler_DisableCallbacks((u32)ObjectSystem_UpdateCameraFixed);
     *(u16 *)0x04000000 &= 0xE1FF;
 }

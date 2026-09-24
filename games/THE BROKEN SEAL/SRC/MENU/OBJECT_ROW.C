@@ -54,7 +54,7 @@ void Menu_SpawnFourObjectsAtOrigin(struct PlacementOrigin *origin, s32 x, s32 y)
 
 
 void ScheduleCallback(s32);
-void Func_08009038(void *);
+void ResourceObject_ReleaseFar(void *);
 
 void Menu_ClearSecondObjectRowAndScheduleUpdate(void)
 {
@@ -71,7 +71,7 @@ void Menu_ClearSecondObjectRowAndScheduleUpdate(void)
         void *entry = *(void **)(offset + (unsigned int)base);
 
         if (entry != 0) {
-            Func_08009038(entry);
+            ResourceObject_ReleaseFar(entry);
             *(s32 *)(offset + (unsigned int)base) = zero;
         }
         count--;

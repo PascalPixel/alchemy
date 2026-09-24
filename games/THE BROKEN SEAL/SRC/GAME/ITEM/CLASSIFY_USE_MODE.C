@@ -2,12 +2,10 @@
 
 #define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
-struct ItemDefinition *Func_08077018(s32);
-s32 Func_0808a490(s32);
-void *Func_08077080(s32);
-#define BattleAction_Get Func_08077080
-s32 Func_08077218(s32, s32);
-#define Item_CanOwnerEquip Func_08077218
+struct ItemDefinition *Item_Get(s32);
+s32 BattleFx_HasTriggerFar(s32);
+void *BattleAction_Get(s32);
+s32 Item_CanOwnerEquip(s32, s32);
 
 s32 Item_ClassifyUseMode(s32 owner, s32 itemId)
 {
@@ -16,9 +14,9 @@ s32 Item_ClassifyUseMode(s32 owner, s32 itemId)
     s32 result = -1;
 
     masked &= 0x1ff;
-    itemData = Func_08077018(masked);
+    itemData = Item_Get(masked);
 
-    if (Func_0808a490(masked)!= 0) {
+    if (BattleFx_HasTriggerFar(masked)!= 0) {
         return 0;
     }
 

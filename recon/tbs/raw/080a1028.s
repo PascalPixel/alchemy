@@ -1,7 +1,9 @@
 .syntax unified
 	.thumb
+	.global PsynergyMenu_InitializeEntryObjectsFar
 	.global Func_080a1028
 	.thumb_func
+PsynergyMenu_InitializeEntryObjectsFar:
 Func_080a1028:
 	ldr	r4, [pc, #0]
 	bx	r4

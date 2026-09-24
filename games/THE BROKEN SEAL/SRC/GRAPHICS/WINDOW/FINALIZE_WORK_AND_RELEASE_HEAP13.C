@@ -7,8 +7,7 @@ void UiWork_Finalize(struct Work *work, s32 release);
 s32 UiWork_IsIdle(void *arg0);
 void WaitFrames(s32);
 s32 Resource_ResetEntry(u32 index);
-void Func_08002dd8(s32);
-#define Runtime_ReleaseHeapBlock Func_08002dd8
+void Runtime_ReleaseHeapBlock(s32);
 
 void Ui_FinalizeWorkAndReleaseHeap13(void)
 {

@@ -2,8 +2,7 @@
 
 #define FIELD_AT_OFFSET(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
-s32 Func_080a10d0(s32 *arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5);
-#define UiWindow_UpdateOrCreate Func_080a10d0
+s32 UiWindow_UpdateOrCreate(s32 *arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5);
 s32 UiIcon_CreateWithResourceVariant(s32 arg0, s32 arg1, s32 arg2);
 
 s32 UiMenu_CreateCursor(void *work)

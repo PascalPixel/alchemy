@@ -4,9 +4,8 @@
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
-s32 Func_080090f0(void *, s32, s32, s32);
-s32 Func_0809a8c4();
-#define RunBattleEffect14 Func_0809a8c4
+s32 Object_SetPositionAndResetMotionFar(void *, s32, s32, s32);
+s32 RunBattleEffect14();
 
 void BattleFx_ShrinkObjectScaleUntilHalf(void *obj)
 {
@@ -16,7 +15,7 @@ void BattleFx_ShrinkObjectScaleUntilHalf(void *obj)
     FIELD_AT_OFFSET(obj, s32 *, 0x1C) = scale;
     FIELD_AT_OFFSET(obj, s32 *, 0x18) = scale;
     if (scale < 0x8000) {
-        Func_080090f0(obj, 0, 0, 0);
+        Object_SetPositionAndResetMotionFar(obj, 0, 0, 0);
         FIELD_AT_OFFSET(obj, s32 *, 0x6C) = 0;
     }
 }

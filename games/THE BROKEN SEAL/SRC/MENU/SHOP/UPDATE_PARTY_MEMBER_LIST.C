@@ -1,7 +1,7 @@
 #include "SHOP.H"
 
 void Object_InitializeMode(void *, s32);
-s32 Func_08077220(s16, s32);
+s32 Item_IsCompatibleWithOwnerFar(s16, s32);
 
 extern u8 *Data_03001f2c;
 
@@ -34,7 +34,7 @@ void Shop_DrawParty(s32 window, s32 selected, s32 requirement)
                 icon_entry[16] = 0x10000;
                 unit_id = ((union ShopPartyMemberId *)(
                     party_member_base + offset))->half[0];
-                if (Func_08077220(unit_id, requirement) == 0)
+                if (Item_IsCompatibleWithOwnerFar(unit_id, requirement) == 0)
                     icon_entry[16] = 0xcccc;
                 index++;
                 offset += 2;

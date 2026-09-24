@@ -56,8 +56,7 @@ void ItemIcon_LoadTilesFar(s32 item);
 s32 VramBlock_LoadCached(u32 slot, u32 size, const void *src);
 void Runtime_ReleaseHeapBlock(s32 kind);
 void EmitRandomParticleEffect(void);
-void Func_0808f28c(const void *src);
-#define BattleFx_SpawnRandomParticleAtPosition Func_0808f28c
+void BattleFx_SpawnRandomParticleAtPosition(const void *src);
 
 #define EfxWork Data_03001ebc
 #define EmitterData Data_0809e6c0
@@ -96,7 +95,7 @@ struct EfxObj *BattleFx_StartRandomParticleEmitter(s32 obj_id, s32 item)
 
         do {
             if (ent->data != 0) {
-                if (ent->proc == (void (*)(void))Func_0808f28c) {
+                if (ent->proc == (void (*)(void))BattleFx_SpawnRandomParticleAtPosition) {
                     Object_Destroy(ent);
                 }
                 if (ent->data == (s32)ParticleData) {

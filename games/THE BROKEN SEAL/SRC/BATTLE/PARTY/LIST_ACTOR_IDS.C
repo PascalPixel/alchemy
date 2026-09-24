@@ -1,7 +1,6 @@
 #include "TYPES.H"
 #include "BATTLE_COMMAND.H"
 
-#define BattleParty_ListActorIds Func_080b6c08
 
 /* Counts the units in the turn orders selected by groups, bit 0 for the
  * normal order and bit 1 for the mirrored one, skipping empty 254 entries.

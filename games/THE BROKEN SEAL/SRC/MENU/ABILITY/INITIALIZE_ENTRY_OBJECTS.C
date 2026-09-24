@@ -33,24 +33,23 @@ union EntrySlot {
 
 extern u8 *Data_03001f2c;
 
-s32 Func_08077158(u16 *out);
-s32 Func_0808a288(u16 value);
+s32 Party_ListActiveOwnersFar(u16 *out);
+s32 Party_RemapCharacterIdByFlagsFar(u16 value);
 void *Func_08009030(s32 value);
 void Object_InitializeMode(void *object, s32 value);
 void ScheduleCallbackAfterFrames(void (*callback)(void), s32 value);
-void Func_080a19a0(void);
-#define Menu_UpdateEntryObjectTransforms Func_080a19a0
+void Menu_UpdateEntryObjectTransforms(void);
 
 void InitializeEntryObjects(void *source, s32 origin_x, s32 origin_y, s32 spacing)
 {
     u16 entry_ids[14];
     u8 *entry_state = Data_03001f2c;
-    s32 entry_count = (u16)Func_08077158(entry_ids);
+    s32 entry_count = (u16)Party_ListActiveOwnersFar(entry_ids);
     s32 i;
 
     entry_state[0x1e] = entry_count;
     for (i = 0; i < entry_count; i++) {
-        void *entry_object = Func_08009030(Func_0808a288(entry_ids[i]));
+        void *entry_object = Func_08009030(Party_RemapCharacterIdByFlagsFar(entry_ids[i]));
         if (entry_object != 0) {
             s32 entry_x;
             s32 source_x;
@@ -76,6 +75,6 @@ void InitializeEntryObjects(void *source, s32 origin_x, s32 origin_y, s32 spacin
     {
         s32 delay_frames = 200;
         delay_frames <<= 4;
-        ScheduleCallbackAfterFrames(Func_080a19a0, delay_frames);
+        ScheduleCallbackAfterFrames(Menu_UpdateEntryObjectTransforms, delay_frames);
     }
 }

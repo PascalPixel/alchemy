@@ -11,15 +11,11 @@ extern u8 Data_02004210[];
 extern u8 Data_02004290[];
 
 void Func_080f9c44(void);
-void Func_080fb2a4(u8 *, s32);
-#define MusicPlayer_SetPitchAndUpdateFrequency Func_080fb2a4
-void Func_080fb2cc(u8 *, s32, s32);
-#define MusicPlayer_SetVolume Func_080fb2cc
-void Func_080fb334(u8 *, s32, s32);
-#define MusicPlayer_SetPitch Func_080fb334
+void MusicPlayer_SetPitchAndUpdateFrequency(u8 *, s32);
+void MusicPlayer_SetVolume(u8 *, s32, s32);
+void MusicPlayer_SetPitch(u8 *, s32, s32);
 
-void Func_080f91e8(void)
-#define MusicPlayer_StepVolumeAndPitchTowardTargets Func_080f91e8
+void MusicPlayer_StepVolumeAndPitchTowardTargets(void)
 {
     s32 delta;
 

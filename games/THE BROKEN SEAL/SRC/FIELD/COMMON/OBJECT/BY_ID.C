@@ -14,9 +14,8 @@ void Object_ResetMotion(struct ObjectRuntime *);
 void Object_SetPosition(struct ObjectRuntime *, s32, s32, s32);
 void Object_CommitPosition(struct ObjectRuntime *);
 void Object_SetMode(struct ObjectRuntime *, s32);
-void Func_08009148(struct ObjectRuntime *);
-void Func_08093a6c(struct ObjectRuntime *, s32);
-#define ObjectMotion_SetActionCallback Func_08093a6c
+void ObjectDispatch_WaitForValue16Far(struct ObjectRuntime *);
+void ObjectMotion_SetActionCallback(struct ObjectRuntime *, s32);
 
 struct ObjectRuntime *Object_GetById(u32 object_id)
 {
@@ -78,7 +77,7 @@ void Object_RefreshSelectorById(u32 object_id)
     struct ObjectRuntime *object = ObjectTable_Get(object_id);
 
     if (object != NULL)
-        Func_08009148(object);
+        ObjectDispatch_WaitForValue16Far(object);
 }
 
 void Object_SetActionCallbackAndRefreshById(u32 object_id, s32 action)
@@ -90,7 +89,7 @@ void Object_SetActionCallbackAndRefreshById(u32 object_id, s32 action)
         value |= object->action_flags;
         object->action_flags = value;
         ObjectMotion_SetActionCallback(object, action);
-        Func_08009148(object);
+        ObjectDispatch_WaitForValue16Far(object);
     }
 }
 

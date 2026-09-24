@@ -10,8 +10,7 @@
 u32 Random16();
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 #define Rand Random16
-s32 Func_080a1d08(s32, s32, s32);
-#define InventoryMenu_ShowModalMessage Func_080a1d08
+s32 InventoryMenu_ShowModalMessage(s32, s32, s32);
 s32 Audio_PlayCue(s32);
 
 void ItemMenu_TryBreak(void)

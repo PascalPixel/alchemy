@@ -2,8 +2,7 @@
 #include "BATTLE_EFFECT_RUNTIME.H"
 #define PARTY_STATE Data_02000240
 
-s32 Func_080042c8(u32 callback);
-#define Scheduler_EnableCallbacks Func_080042c8
+s32 Scheduler_EnableCallbacks(u32 callback);
 void Func_080912b8(void);
 
 void Object_EnableEffectSpawnCallback(void)
@@ -11,8 +10,7 @@ void Object_EnableEffectSpawnCallback(void)
     Scheduler_EnableCallbacks((u32)Func_080912b8);
 }
 
-s32 Func_0800439c(u32 callback);
-#define Scheduler_DisableCallbacks Func_0800439c
+s32 Scheduler_DisableCallbacks(u32 callback);
 void Func_080912b8(void);
 
 void Object_DisableEffectSpawnCallback(void)
@@ -117,10 +115,9 @@ void Battle_InitializeRenderObject(void)
     Object_SetMode((s32)object, 1);
 }
 
-void Func_08015208(void);
-void Func_08091660(void);
-void Func_0808e118(void);
-#define Battle_ResetEffectCounter Func_0808e118
+void UiTimedNotice_CloseIfActiveFar(void);
+void Battle_InitializeRenderObject(void);
+void Battle_ResetEffectCounter(void);
 void ScheduleCallbackAfterFrames(const void *, s32);
 u32 GameFlag_Clear(s32);
 
@@ -128,8 +125,8 @@ void Battle_Reset(void)
 {
     struct BattleRuntime *runtime = Data_03001ebc;
 
-    Func_08015208();
-    Func_08091660();
+    UiTimedNotice_CloseIfActiveFar();
+    Battle_InitializeRenderObject();
     if (runtime->unknown_cb6 != 0) {
         Battle_ResetEffectCounter();
     }
@@ -150,13 +147,12 @@ void Battle_Reset(void)
 }
 
 void ScheduleCallback(u32);
-void Func_080772f0(void);
-void Func_0809335c(s32 value, s32 enabled);
-#define Object_AttachWorkTargetToObject Func_0809335c
+void GameFlag_RefreshLureCapFar(void);
+void Object_AttachWorkTargetToObject(s32 value, s32 enabled);
 
 void BattleFx_FinishAction(void)
 {
     ScheduleCallback((u32)Battle_UpdateModeFromShoulderButtons);
     Object_AttachWorkTargetToObject(PARTY_STATE.object_id, 1);
-    Func_080772f0();
+    GameFlag_RefreshLureCapFar();
 }

@@ -45,8 +45,7 @@ s32 Random16(void);
 void RotateVectorByMagnitude(s32 magnitude, s32 angle, struct EffectPosition *output);
 void NormalizeVector(struct EffectPosition *value);
 s32 EffectSlot_HasReachedTarget(struct RadialBurstEffect *effect);
-void Func_0809bb34(struct RadialBurstEffect *effect);
-#define BattleFx_ClearOwnedSlot Func_0809bb34
+void BattleFx_ClearOwnedSlot(struct RadialBurstEffect *effect);
 
 void UpdateRadialBurstEffect(struct RadialBurstEffect *effect)
 {

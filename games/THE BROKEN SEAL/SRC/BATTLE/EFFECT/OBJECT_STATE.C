@@ -1,7 +1,6 @@
 #include "TYPES.H"
 
-s32 Func_0808e4b4(s32, s32, void *);
-#define BattleFx_FindMatchingEvent Func_0808e4b4
+s32 BattleFx_FindMatchingEvent(s32, s32, void *);
 
 s32 BattleFx_HasMatchingEvent5(s32 effectId)
 {

@@ -7,7 +7,6 @@ struct DisplayScrollState {
 
 extern struct DisplayScrollState *Data_03001ed8;
 
-#define DisplayScroll_ArmHBlankDma Func_080944ec
 
 void DisplayScroll_ArmHBlankDma(void)
 {

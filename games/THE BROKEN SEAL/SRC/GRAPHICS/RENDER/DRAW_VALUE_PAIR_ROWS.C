@@ -1,11 +1,8 @@
 #include "TYPES.H"
 
-void Func_08015090(s32 image, s32 layer, s32 x, s32 y);
-#define UiText_DrawStringAtOffsetFar Func_08015090
-void Func_08015098(s32 image, s32 layer, s32 x, s32 y);
-#define UiText_DrawStringInWindowFar Func_08015098
-void Func_080a14f0(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
-#define UiText_DrawNumberRightAlignedFar Func_080a14f0
+void UiText_DrawStringAtOffsetFar(s32 image, s32 layer, s32 x, s32 y);
+void UiText_DrawStringInWindowFar(s32 image, s32 layer, s32 x, s32 y);
+void UiText_DrawNumberRightAlignedFar(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 s32 UiPalette_SetColor(s32 color);
 
 void Ui_DrawValuePairRows(void *obj, s32 layer)

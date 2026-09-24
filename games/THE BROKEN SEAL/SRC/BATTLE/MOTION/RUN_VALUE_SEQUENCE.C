@@ -17,8 +17,7 @@ void Object_SetMode(void *object, s32 mode);
 void Func_080152b8(u16 *selection);
 void BattleMotion_SetRecordChildValues(void *object, s32 value);
 void WaitFrames(s32 frames);
-s32 Func_080b6cd0(s32 id);
-#define BattleMotion_GetSlotField14 Func_080b6cd0
+s32 BattleMotion_GetSlotField14(s32 id);
 void Func_08015130(s32 mode);
 
 void BattleMotion_RunValueSequence(s32 id)

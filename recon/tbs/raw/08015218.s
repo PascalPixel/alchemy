@@ -1,7 +1,9 @@
 .syntax unified
 	.thumb
+	.global UiWork_FinalizeSharedSlotFar
 	.global Func_08015218
 	.thumb_func
+UiWork_FinalizeSharedSlotFar:
 Func_08015218:
 	ldr	r4, [pc, #0]
 	bx	r4

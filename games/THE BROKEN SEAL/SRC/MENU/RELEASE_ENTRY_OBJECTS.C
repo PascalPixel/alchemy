@@ -1,8 +1,8 @@
 #include "TYPES.H"
 
 extern u8 *Data_03001f2c;
-s32 Func_08077158(void *);
-void Func_08009038(void *);
+s32 Party_ListActiveOwnersFar(void *);
+void ResourceObject_ReleaseFar(void *);
 void ScheduleCallback(void (*callback)(void));
 extern u8 Data_080a19a1;
 
@@ -14,7 +14,7 @@ void Menu_ReleaseEntryObjects(void)
     void **p;
     s32 i;
 
-    count = (u16)Func_08077158(buf);
+    count = (u16)Party_ListActiveOwnersFar(buf);
     if (count != 0) {
         p = (void **)(base + 276);
         i = count;
@@ -22,7 +22,7 @@ void Menu_ReleaseEntryObjects(void)
             void *entry = *p++;
 
             if (entry != 0) {
-                Func_08009038(entry);
+                ResourceObject_ReleaseFar(entry);
             }
         } while (--i != 0);
     }

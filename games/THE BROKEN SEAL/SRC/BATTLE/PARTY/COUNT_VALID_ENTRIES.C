@@ -4,9 +4,8 @@ struct PlacementEntry { u8 x; u8 y; u8 id; s8 timer; };
 struct PlacementList { struct PlacementEntry entries[64]; s32 count; };
 struct PlacementTable { u8 padding[8]; struct PlacementList list; };
 
-s32 Func_080b6c08(s32, u16 *);
-#define BattleParty_ListActorIds Func_080b6c08
-struct PlacementTable *Func_08077000(s32 owner);
+s32 BattleParty_ListActorIds(s32, u16 *);
+struct PlacementTable *Trade_GetOfferStateFar(s32 owner);
 
 s32 BattlePlacement_CountValidEntries(u32 arg0, u8 *counts)
 {
@@ -27,7 +26,7 @@ s32 BattlePlacement_CountValidEntries(u32 arg0, u8 *counts)
     owner = 0;
     if (arg0 > 7)
         owner = 1;
-    list = &Func_08077000(owner)->list;
+    list = &Trade_GetOfferStateFar(owner)->list;
     if (counts != 0)
         for (j = 3; j >= 0; j--)
             counts[j] = 0;

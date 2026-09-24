@@ -1,11 +1,10 @@
 #include "INVENTORY_MENU.H"
 
-void Func_08015278(s32);
+void RenderOutput_ClearListFar(s32);
 void Func_080a1ac0(s32, s32);
 s32 Runtime_GetObject(s32);
 s32 Func_080a35f8(void *, void *);
-void Func_080a17c4(void *icon);
-#define UiIcon_PrepareObject Func_080a17c4
+void UiIcon_PrepareObject(void *icon);
 void WaitFrames(s32);
 
 s32 ItemMenu_PrepOwner(s32 party_slot)
@@ -17,7 +16,7 @@ s32 ItemMenu_PrepOwner(s32 party_slot)
     u8 *owner_slots;
 
     owner_index = *(s8 *)(menu + offset);
-    Func_08015278(*(s32 *)(menu + 44));
+    RenderOutput_ClearListFar(*(s32 *)(menu + 44));
     owner_slots = menu + 2;
     owner_slots[offset] = *(u8 *)(menu + 0x219);
     if (owner_index == -1) {

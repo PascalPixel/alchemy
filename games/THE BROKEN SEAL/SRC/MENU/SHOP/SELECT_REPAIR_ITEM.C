@@ -2,7 +2,6 @@
 #include "BATTLE_RUNTIME.H"
 #include "SOUND_IDS.H"
 
-#define Shop_SelRepair Func_080b211c
 
 s32 Modulo(s32, s32);
 s32 FixedPoint_Ratio(s32, s32);

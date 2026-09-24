@@ -1,7 +1,9 @@
 .syntax unified
 	.thumb
+	.global RunAssetSelectionScreenFar
 	.global Func_080a1000
 	.thumb_func
+RunAssetSelectionScreenFar:
 Func_080a1000:
 	ldr	r4, [pc, #0]
 	bx	r4

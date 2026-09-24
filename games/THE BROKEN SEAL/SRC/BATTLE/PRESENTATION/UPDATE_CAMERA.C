@@ -39,18 +39,13 @@ struct LinkWork {
 #define LINK_STAT (*(u16 *)0x03001f64)
 #define REG_SIOCNT (*(volatile u32 *)0x04000128)
 
-void Func_080049ac(void);
-#define Render_ResetTransformState Func_080049ac
-void Func_08004cb4(void *);
-#define SceneTransform_ApplyPosition Func_08004cb4
-void Func_08004c1c(s32);
-#define SceneTransform_ApplyYaw Func_08004c1c
-void Func_08004bd4(s32);
-#define SceneTransform_ApplyPitch Func_08004bd4
-void Func_080c0a24(u32, u32, s32, s32, u32);
+void Render_ResetTransformState(void);
+void SceneTransform_ApplyPosition(void *);
+void SceneTransform_ApplyYaw(s32);
+void SceneTransform_ApplyPitch(s32);
+void Unnamed_080c0a24(u32, u32, s32, s32, u32);
 
-void Func_080b5864(void)
-#define BattlePresentation_UpdateCamera Func_080b5864
+void BattlePresentation_UpdateCamera(void)
 {
     void **slot = (void **)ADDR_03001E80;
     struct SceneCameraState *state = slot[0];
@@ -99,6 +94,6 @@ void Func_080b5864(void)
     ((void (*)(struct SceneCameraTransfer *, struct SceneCameraState *))0x03000250)(&local, state);
 
     if (transition->flag == 0) {
-        Func_080c0a24(0x780000, 0x780000, 0, 0, 0x10000);
+        Unnamed_080c0a24(0x780000, 0x780000, 0, 0, 0x10000);
     }
 }

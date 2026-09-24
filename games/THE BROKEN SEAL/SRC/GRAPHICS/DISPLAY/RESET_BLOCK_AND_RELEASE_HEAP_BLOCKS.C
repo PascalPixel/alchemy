@@ -6,8 +6,7 @@
  * 0x03000164. Its argument count is not established.
  */
 void Func_080072f0(u32, s32, s32, u32);
-void Func_08002dd8(s32);
-#define Runtime_ReleaseHeapBlock Func_08002dd8
+void Runtime_ReleaseHeapBlock(s32);
 s32 ScheduleCallback(u32);
 extern u8 Data_080c1439;
 extern u8 Data_080c11ed;

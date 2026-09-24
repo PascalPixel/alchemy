@@ -57,8 +57,7 @@ block_18:
     return 0 - battle_result;
 }
 
-s32 Func_08079ad8(s32 arg0);
-#define Owner_GetRecordStride84 Func_08079ad8
+s32 Owner_GetRecordStride84(s32 arg0);
 
 s32 BattleTarget_IsWeakToEffect(const u8 *state, s32 effect_id)
 {

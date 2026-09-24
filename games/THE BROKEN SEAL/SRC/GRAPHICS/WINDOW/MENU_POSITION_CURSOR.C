@@ -37,7 +37,6 @@ extern u8 Data_080af29d[];
 extern volatile u32 Data_03001e40;
 extern struct MenuCursorWork *Data_03001f2c;
 
-#define UiMenu_PositionCursor Func_080a1a40
 
 /* Places the menu cursor at the given pixel offset from the top-left tile of
  * the menu window, plus eight pixels and a small diagonal bob that follows

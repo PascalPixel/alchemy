@@ -1,11 +1,11 @@
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
 
-s32 Func_0808a330(s32, s32);
-s32 Func_0808a348(s32);
+s32 BattleFx_ApplyColorToTargetBufferFar(s32, s32);
+s32 BattleFx_StartBufferInterpolationFar(s32);
 
 void Shop_InitEffect(void)
 {
-    Func_0808a330(*(s32 *)ADDR_03001EBC + 0x236, 1);
-    Func_0808a348(0x10);
+    BattleFx_ApplyColorToTargetBufferFar(*(s32 *)ADDR_03001EBC + 0x236, 1);
+    BattleFx_StartBufferInterpolationFar(0x10);
 }

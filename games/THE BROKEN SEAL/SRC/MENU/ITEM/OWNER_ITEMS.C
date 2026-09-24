@@ -1,7 +1,6 @@
 #include "INVENTORY_MENU.H"
 #include "OWNER_STATE.H"
 
-#define ItemMenu_Collect Func_080a3ddc
 
 s32 ItemMenu_Collect(struct OwnerInventoryState *owner, u16 *items, s32 mode)
 {
@@ -52,8 +51,7 @@ void ItemMenu_DrawIcons(u16 *items, s32 style)
 
 
 void UiWindow_Commit(s32 window);
-void Func_080a1cb0(s32 mode);
-#define ItemMenu_RefreshEntry Func_080a1cb0
+void ItemMenu_RefreshEntry(s32 mode);
 void UiText_DrawAt(s32 message, s32 window, s32 x, s32 y);
 
 void ItemMenu_RefreshOwner(s32 owner_id, s32 mode)

@@ -3,20 +3,18 @@
 extern u8 Data_02000240[];
 #define PARTY_STATE Data_02000240
 
-s32 Func_08077148(void);
+s32 Party_CountActiveOwnersFar(void);
 u8 *Runtime_GetObject(s32);
 s32 FixedPoint_Ratio(s32, s32);
-void Func_08077118(s32, s32);
-void Func_08091220(void *, s32);
-#define BattleFx_ApplyColorToSourceBuffer Func_08091220
-void Func_08091254(s32);
-#define BattleFx_StartBufferInterpolation Func_08091254
+void Owner_AdjustFirstValueFar(s32, s32);
+void BattleFx_ApplyColorToSourceBuffer(void *, s32);
+void BattleFx_StartBufferInterpolation(s32);
 void Audio_PlayCue(s32);
 
 s32 BattleParty_ApplyStatusDamage(void)
 {
     s32 result = 0;
-    s32 count = Func_08077148();
+    s32 count = Party_CountActiveOwnersFar();
 
     if (result < count) {
         s32 offset = 252;
@@ -52,7 +50,7 @@ s32 BattleParty_ApplyStatusDamage(void)
             }
 
             remaining--;
-            Func_08077118(*entry, amount);
+            Owner_AdjustFirstValueFar(*entry, amount);
             entry++;
         } while (remaining != 0);
     }

@@ -1,7 +1,6 @@
 #include "TYPES.H"
 
-s32 Func_080b6c08(s32, u16 *);
-#define BattleParty_ListActorIds Func_080b6c08
+s32 BattleParty_ListActorIds(s32, u16 *);
 
 u32 BattleParty_IsUnitListed(u32 arg0)
 {

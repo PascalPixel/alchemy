@@ -1,11 +1,10 @@
 #include "TYPES.H"
 #include "FIXED_MATH.H"
 
-#define BattleFx_RunPhasedRadialParticleSequence Func_08095dd0
 
 extern s32 Data_02000240[];
-void Func_080925cc(s32, s32);
-void Func_08009248(s32, s32);
+void Motion_SetVarCbAndRefresh(s32, s32);
+void ObjectGroup_SetChildValueUnlessFifteenFar(s32, s32);
 
 struct PhasedRadialSequenceObject {
     u8 unknown_00[8];
@@ -21,7 +20,7 @@ struct PhasedRadialSequenceObject {
     void *callback;
 };
 
-void BattleFx_RunPhasedRadialParticleSequence(s32 arg)
+void BattleEffect_RunPhasedRadialParticleSequence(s32 arg)
 {
     s8 *object_pointer;
     struct {
@@ -42,18 +41,18 @@ void BattleFx_RunPhasedRadialParticleSequence(s32 arg)
     if (source_object == NULL)
         return;
 
-    Func_080958a8();
+    BattleFx_InitializeSlots();
     effect_slots = *(void **)0x03001F30;
-    Func_080b0048(0x201090);
+    Unnamed_080b0840Far(0x201090);
     WaitFrames(30);
     Motion_ArmCb(arg, 0x4000, 0);
     WaitFrames(20);
     Audio_PlayCue(173);
-    Func_080925cc(arg, 1);
+    Motion_SetVarCbAndRefresh(arg, 1);
     Audio_PlayCue(174);
-    Func_080925cc(arg, 1);
+    Motion_SetVarCbAndRefresh(arg, 1);
     Audio_PlayCue(175);
-    Func_080925cc(arg, 1);
+    Motion_SetVarCbAndRefresh(arg, 1);
     WaitFrames(20);
     Audio_PlayCue(140);
     source_object->callback = (void *)0x08095bad;
@@ -70,13 +69,13 @@ void BattleFx_RunPhasedRadialParticleSequence(s32 arg)
     slot = (u8 *)effect_slots + 88;
     remaining = 23;
     do {
-        Func_0809ba90(slot, 284, position.x, position.z);
+        EffectSlot_Initialize(slot, 284, position.x, position.z);
         EffectSlot_SetCallback(slot, (void *)0x08095c09);
         EffectSlot_SetObjectMode(slot, 7);
         object_pointer = slot;
         value = *(s32 *)object_pointer;
-        Func_08009248(value, 10);
-        value = Func_080022f4(Random16(), 3) + 0x10000;
+        ObjectGroup_SetChildValueUnlessFifteenFar(value, 10);
+        value = Math_DivU(Random16(), 3) + 0x10000;
         *(s32 *)((u8 *)slot + 44) = value;
         *(s32 *)((u8 *)slot + 40) = value;
         remaining--;
@@ -129,6 +128,6 @@ void BattleFx_RunPhasedRadialParticleSequence(s32 arg)
     target_object->scale_x = 0x10000;
     target_object->scale_y = 0x10000;
     WaitFrames(30);
-    Func_080b0050();
+    Shop_InitEffectFar();
     BattleFx_ClearActiveSlotsAndScheduleUpdates();
 }

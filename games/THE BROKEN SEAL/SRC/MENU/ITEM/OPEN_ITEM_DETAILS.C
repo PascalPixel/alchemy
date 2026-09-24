@@ -7,8 +7,7 @@ struct InventoryMenuDetailsState {
     u16 item_ids[0x100];
 };
 
-s32 Func_080a10d0(s32 *, s32, s32, s32, s32, s32);
-#define UiWindow_UpdateOrCreate Func_080a10d0
+s32 UiWindow_UpdateOrCreate(s32 *, s32, s32, s32, s32, s32);
 void Func_080a22f4(void);
 void Func_080a4924(s32, s32);
 #define InventoryMenu_DrawItemDetails Func_080a4924

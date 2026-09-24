@@ -9,13 +9,12 @@ extern struct Runtime_080931ec *Data_03001ebc;
 extern volatile u32 Data_03001c94;
 
 s32 ObjectTable_ReadActiveValue(s32);
-s32 Func_080915ac(u32);
-#define BattleFx_GetResourceId Func_080915ac
+s32 BattleFx_GetResourceId(u32);
 s32 UiWork_Create(s32, s32, s32, s32);
-s32 Func_080150f8(s32, s32, s32, s32);
+s32 UiWindow_CreateWithSideObjectFar(s32, s32, s32, s32);
 s32 UiWork_IsCompleteFar(void);
-s32 Func_08015050(s32);
-void Func_08015100(s32);
+s32 UiWork_IsIdleFar(s32);
+void UiWork_FinalizeEntityMatchingLocalizedIdFar(s32);
 void UiWork_FinalizePending(void);
 void WaitFrames(s32);
 
@@ -33,12 +32,12 @@ void Battle_ShowPairedUnitWorkAndWait(
     h0 = UiWork_Create(
         rt->effect_count++, first_x, first_y,
         BattleFx_GetResourceId(id0) << 16);
-    Func_080150f8(id0, 0, first_arg, first_extra);
+    UiWindow_CreateWithSideObjectFar(id0, 0, first_arg, first_extra);
 
     h1 = UiWork_Create(
         rt->effect_count++, second_x, second_y,
         BattleFx_GetResourceId(id1) << 16);
-    Func_080150f8(id1, 0, second_arg, second_extra);
+    UiWindow_CreateWithSideObjectFar(id1, 0, second_arg, second_extra);
 
     while (UiWork_IsCompleteFar() == 0)
         WaitFrames(1);
@@ -48,14 +47,14 @@ void Battle_ShowPairedUnitWorkAndWait(
         WaitFrames(1);
 
     WaitFrames(1);
-    Func_08015100(id0);
-    Func_08015100(id1);
+    UiWork_FinalizeEntityMatchingLocalizedIdFar(id0);
+    UiWork_FinalizeEntityMatchingLocalizedIdFar(id1);
     UiWork_FinalizePending();
     WaitFrames(1);
 
-    while (Func_08015050(h0) == 0)
+    while (UiWork_IsIdleFar(h0) == 0)
         WaitFrames(1);
-    while (Func_08015050(h1) == 0)
+    while (UiWork_IsIdleFar(h1) == 0)
         WaitFrames(1);
 
     WaitFrames(1);

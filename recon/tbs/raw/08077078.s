@@ -1,7 +1,9 @@
 .syntax unified
 	.thumb
+	.global Inventory_GetEquippedItemFar
 	.global Func_08077078
 	.thumb_func
+Inventory_GetEquippedItemFar:
 Func_08077078:
 	ldr	r4, [pc, #0]
 	bx	r4

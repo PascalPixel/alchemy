@@ -71,48 +71,33 @@ typedef char BattlePlaybackState_Actor[
 typedef char BattlePlaybackRuntime_State[
     (u32)&((struct BattlePlaybackRuntime *)0)->playback == 0x6b8 ? 1 : -1];
 
-void Func_080039fc(s32 reg, s32 value);
-#define QueueIoWriteDelay10 Func_080039fc
-void Func_0800393c(s32 reg, s32 value);
-#define QueueIoWriteDelay6 Func_0800393c
-void Func_08003dec(void *entry, s32 slot);
-#define Runtime_PushSlotEntry Func_08003dec
-s32 Func_080040d0(s32 index, s32 table);
-#define Resource_GetBuffer Func_080040d0
-s32 Func_080022fc(s32 numerator, s32 denominator);
-s32 Func_08002322(s32 angle);
-#define Engine_MathSin Func_08002322
-void Func_08009020(void *record, s32 animation);
-void Func_08009080(void *object, s32 animation);
-#define Object_SetMode Func_08009080
-void Func_080090f8(void *record, s32 frame);
-s32 Func_08015048(void);
-void Func_08015118(void);
-void Func_08015120(s32 value, s32 style);
+void QueueIoWriteDelay10(s32 reg, s32 value);
+void QueueIoWriteDelay6(s32 reg, s32 value);
+void Runtime_PushSlotEntry(void *entry, s32 slot);
+s32 Resource_GetBuffer(s32 index, s32 table);
+s32 Math_Mod(s32 numerator, s32 denominator);
+s32 Trig_Sin(s32 angle);
+void AnimationObjects_SelectAnimationFar(void *record, s32 animation);
+void Object_SetMode(void *object, s32 animation);
+void render_animated_tile_frameFar(void *record, s32 frame);
+s32 UiWork_IsCompleteFar(void);
+void UiWork_ClearValueNameTablesFar(void);
+void UiWork_PushValueSlotFar(s32 value, s32 style);
 void Func_08015130(s32 mode);
-void Func_080151d0(void);
+void UiText_PrepareMessageWorkFar(void);
 void Func_080152b8(u16 *selection);
-void Func_080b78e4(s32 actor_id, void *slot);
-#define BattleUnit_BuildStatusFlags Func_080b78e4
-s32 Func_080b6cd0(s32 actor_id);
-#define BattleMotion_GetSlotField14 Func_080b6cd0
-void Func_080b7aac(s32 actor_id);
-#define BattlePres_SetActorModeAndAction Func_080b7aac
-s32 Func_080b7e60(s32 actor_id);
-#define ActivateBattleObjectSlot Func_080b7e60
-void Func_080ba918(void *object, s32 value);
+void BattleUnit_BuildStatusFlags(s32 actor_id, void *slot);
+s32 BattleMotion_GetSlotField14(s32 actor_id);
+void BattlePres_SetActorModeAndAction(s32 actor_id);
+s32 ActivateBattleObjectSlot(s32 actor_id);
+void Unnamed_080ba918(void *object, s32 value);
 void Func_080bac6c(s32 actor_id);
-void Func_080bb588(s32 actor_id);
-#define BattleActor_ResetRuntimeFields Func_080bb588
-void Func_080bb8e8(s32 actor_id);
-#define BattleActor_DestroyTemporaryObject Func_080bb8e8
-void Func_080bb928(struct BattlePlaybackState *state, s32 value);
-#define Battle_SetRuntimeFlagBit0 Func_080bb928
+void BattleActor_ResetRuntimeFields(s32 actor_id);
+void BattleActor_DestroyTemporaryObject(s32 actor_id);
+void Battle_SetRuntimeFlagBit0(struct BattlePlaybackState *state, s32 value);
 void Func_080c24f0(s32 actor_id, s32 mode);
-s32 Func_080c2368(s32 class_id);
-#define Summon_GetEntryByte3Kind Func_080c2368
-void Func_080f9010(s32 sound_id);
-#define Audio_PlayCue Func_080f9010
+s32 Summon_GetEntryByte3Kind(s32 class_id);
+void Audio_PlayCue(s32 sound_id);
 
 
 #define REG_DISPCNT_SUB (*(volatile u32 *)0x03001e40)
@@ -185,22 +170,22 @@ void BattleEvent_Playback(void)
                             state->events.operands[event_index]);
                         break;
                     case BATTLE_EVENT_UNIT:
-                        Func_08015120(
+                        UiWork_PushValueSlotFar(
                             state->events.operands[event_index],
                             1);
                         break;
                     case BATTLE_EVENT_VALUE:
-                        Func_08015120(
+                        UiWork_PushValueSlotFar(
                             state->events.operands[event_index],
                             5);
                         break;
                     case BATTLE_EVENT_ITEM:
-                        Func_08015120(
+                        UiWork_PushValueSlotFar(
                             state->events.operands[event_index] & 0x1ff,
                             2);
                         break;
                     case BATTLE_EVENT_ACTION:
-                        Func_08015120(
+                        UiWork_PushValueSlotFar(
                             state->events.operands[event_index] & 0x3fff,
                             4);
                         break;
@@ -209,17 +194,17 @@ void BattleEvent_Playback(void)
                         break;
                     case BATTLE_EVENT_TEXT:
                         if ((s32)state->events.operands[event_index] >= 0)
-                            Func_080151d0();
+                            UiText_PrepareMessageWorkFar();
                         state->phase = 3;
                         BATTLE_INPUT_2 = 0;
                         break;
                     case BATTLE_EVENT_TEXT_CONTINUE:
                         if ((s32)state->events.operands[event_index] >= 0)
-                            Func_080151d0();
+                            UiText_PrepareMessageWorkFar();
                         state->phase = 13;
                         break;
                     case BATTLE_EVENT_RESET:
-                        Func_08015118();
+                        UiWork_ClearValueNameTablesFar();
                         break;
                     case BATTLE_EVENT_ACTOR_EFFECT:
                         BattleActor_DestroyTemporaryObject(state->events.operands[event_index]);
@@ -255,9 +240,9 @@ void BattleEvent_Playback(void)
                                     GetBattleObjectSlot(state->actor_id)->object,
                                     record_index)) != NULL) {
                             if (unit->status_12a != 1)
-                                Func_08009020(record, 4);
+                                AnimationObjects_SelectAnimationFar(record, 4);
                             else
-                                Func_08009020(record, 5);
+                                AnimationObjects_SelectAnimationFar(record, 5);
                             record_index++;
                         }
                         if (unit->status_12a == 1) {
@@ -280,7 +265,7 @@ void BattleEvent_Playback(void)
                                 state->events.operands[event_index]));
                         slot = GetBattleObjectSlot(
                             state->events.operands[event_index]);
-                        Func_080ba918(
+                        Unnamed_080ba918(
                             slot->object,
                             BattleMotion_GetSlotField14(
                                 state->events.operands[event_index]));
@@ -301,7 +286,7 @@ void BattleEvent_Playback(void)
         }
 
         if (phase == 3 || phase == 13) {
-            if (Func_08015048() == 0)
+            if (UiWork_IsCompleteFar() == 0)
                 return;
             if (state->phase == 13) {
                 state->phase = 2;
@@ -331,7 +316,7 @@ void BattleEvent_Playback(void)
             if (state->display_source == -1)
                 state->display_source = runtime->plan.outcome;
 
-            Func_08015118();
+            UiWork_ClearValueNameTablesFar();
             QueueIoWriteDelay10(0x0400004a, 4);
             QueueIoWriteDelay6(0x0400004a, 0x10);
             *(u32 *)(entry + 4) = 0xa000;
@@ -345,7 +330,7 @@ void BattleEvent_Playback(void)
                 (*(u16 *)(entry + 6) & 0xfe00)
                 | (display_x & 0x1ff);
 
-            wave = Engine_MathSin(REG_DISPCNT_SUB << 12);
+            wave = Trig_Sin(REG_DISPCNT_SUB << 12);
             if (wave < 0)
                 wave += 0x7fff;
             entry[4] = (viewport->scroll_y >> 8)
@@ -372,7 +357,7 @@ void BattleEvent_Playback(void)
 
                     phase_locals.selection[0] = 0xff;
                     slot = GetBattleObjectSlot(state->actor_id);
-                    Func_080ba918(
+                    Unnamed_080ba918(
                         slot->object,
                         BattleMotion_GetSlotField14(state->actor_id));
                 } else {
@@ -381,7 +366,7 @@ void BattleEvent_Playback(void)
                     phase_locals.selection[0] = state->actor_id;
                     phase_locals.selection[1] = 0xff;
                     slot = GetBattleObjectSlot(state->actor_id);
-                    Func_080ba918(slot->object, 7);
+                    Unnamed_080ba918(slot->object, 7);
                 }
                 Func_080152b8(phase_locals.selection);
             }
@@ -432,7 +417,7 @@ void BattleEvent_Playback(void)
                     step = state->timer - 0x400;
                     if (step < 0)
                         step = state->timer - 0x3f9;
-                    frame = Func_080022fc(step >> 3, 5) + 1;
+                    frame = Math_Mod(step >> 3, 5) + 1;
                 }
 
                 if (frame == 6 || (state->timer & 7) == 0) {
@@ -499,11 +484,11 @@ void BattleEvent_Playback(void)
                     record_cursor = phase_locals.records;
                     remaining = count;
                     do {
-                        Func_080090f8(*record_cursor, frame);
-                        Func_080090f8(*record_cursor, scaled_timer - 19);
-                        Func_080090f8(*record_cursor, scaled_timer - 18);
+                        render_animated_tile_frameFar(*record_cursor, frame);
+                        render_animated_tile_frameFar(*record_cursor, scaled_timer - 19);
+                        render_animated_tile_frameFar(*record_cursor, scaled_timer - 18);
                         remaining--;
-                        Func_080090f8(*record_cursor++, scaled_timer - 17);
+                        render_animated_tile_frameFar(*record_cursor++, scaled_timer - 17);
                     } while (remaining != 0);
                 }
             }

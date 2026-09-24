@@ -21,7 +21,6 @@ extern struct ObjectTableWork *Data_03001ebc;
 
 void Object_Destroy(struct FieldObject *object);
 
-#define BattleEffect_ClearOutOfBoundsObjects Func_0808b8e8
 
 /* Destroys every object in table slots 8 to 65 that has left the area around
  * the anchor object, 160 units either side of it in x and from 200 less to

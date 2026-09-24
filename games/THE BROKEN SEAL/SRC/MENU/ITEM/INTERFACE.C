@@ -51,7 +51,7 @@ void Menu_SpawnIconEntries(struct State080a8088 *state, s32 arg1)
     fifth0 = 0xA8;
     output0 = &state->entries[0];
     do {
-        *output0++ = Func_080150d0(2, index0, arg1, 0xF8, fifth0);
+        *output0++ = RenderOutput_CreateFromResourceFar(2, index0, arg1, 0xF8, fifth0);
         index0++;
     } while (index0 <= 7);
 
@@ -59,7 +59,7 @@ void Menu_SpawnIconEntries(struct State080a8088 *state, s32 arg1)
     fifth1 = 0xA8;
     output1 = &state->entries[8];
     do {
-        *output1++ = Func_080150d0(2, index1, arg1, 0x100, fifth1);
+        *output1++ = RenderOutput_CreateFromResourceFar(2, index1, arg1, 0x100, fifth1);
         index1++;
     } while (index1 <= 15);
 
@@ -67,7 +67,7 @@ void Menu_SpawnIconEntries(struct State080a8088 *state, s32 arg1)
     fifth2 = 0xA8;
     output2 = &state->entries[16];
     do {
-        *output2++ = Func_080150d0(2, index2, arg1, 0x100, fifth2);
+        *output2++ = RenderOutput_CreateFromResourceFar(2, index2, arg1, 0x100, fifth2);
         index2++;
     } while (index2 <= 31);
 }
@@ -108,8 +108,7 @@ void ItemMenu_HidePageIcons(void)
 
 
 void WaitFrames(s32);
-void Func_080a1114(void *, s32);
-#define UiWindow_CloseIfOpen Func_080a1114
+void UiWindow_CloseIfOpen(void *, s32);
 void Menu_ReleaseEntryObjects(void);
 
 void ItemMenu_Close(void)

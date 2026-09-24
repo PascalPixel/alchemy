@@ -3,10 +3,8 @@
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
-s32 Func_08004080();
-#define find_free_slot Func_08004080
-s32 Func_08021b30(s32 input, s32 arg1);
-#define Resource_LoadIndexedEntryToBuffer Func_08021b30
+s32 find_free_slot();
+s32 Resource_LoadIndexedEntryToBuffer(s32 input, s32 arg1);
 
 s32 Ui_CreateOutputFromResourceSlot(
     struct RenderInput *input,

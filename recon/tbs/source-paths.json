@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "main:08007220": {
+      "name": "ProgramAtmelFlashBlock",
+      "source": "SYSTEM/SAVE/PROGRAM_ATMEL_FLASH_BLOCK.C"
+    },
     "main:08006e24": {
       "name": "ProgramFlashSectorWithEraseRetry",
       "source": "SYSTEM/SAVE/PROGRAM_FLASH_SECTOR_WITH_ERASE_RETRY.C"

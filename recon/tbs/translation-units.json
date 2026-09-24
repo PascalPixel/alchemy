@@ -72371,6 +72371,70 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "goma-iriguchi-f-00dd8",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/GOMA_IRIGUCHI/F_00DD8.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_387",
+      "absolute_symbols": {
+        "Engine_ActorGet": {
+          "address": "0x02009144",
+          "kind": "thumb"
+        },
+        "Engine_TaskWait": {
+          "address": "0x0200908c",
+          "kind": "thumb"
+        },
+        "Engine_MathCos": {
+          "address": "0x0200909c",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpeed": {
+          "address": "0x0200914c",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetDestination": {
+          "address": "0x02009154",
+          "kind": "thumb"
+        },
+        "Engine_ActorWaitForMove": {
+          "address": "0x02009174",
+          "kind": "thumb"
+        },
+        "OverlayObject_WaitForHeight": {
+          "address": "0x02008db8",
+          "kind": "thumb"
+        },
+        "Engine_AudioPlayCue": {
+          "address": "0x0200922c",
+          "kind": "thumb"
+        },
+        "Engine_WorkSetValuesIfNonNegative": {
+          "address": "0x020090d4",
+          "kind": "thumb"
+        },
+        "Engine_MathSin": {
+          "address": "0x02009094",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetAnimation": {
+          "address": "0x02009184",
+          "kind": "thumb"
+        },
+        "Engine_MapWaitWorkValuesBelow256": {
+          "address": "0x020090dc",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02000dd8",
+          "extent": 436,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

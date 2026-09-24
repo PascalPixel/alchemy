@@ -93,9 +93,9 @@ s32 FieldObject_UpdatePlayerControl(struct FieldActor *actor)
     s16 deltas[6];
     s32 blocked;
     s32 handled;
-    s32 mode;
-    s32 angle;
     s16 facing;
+    s32 angle;
+    s32 mode;
     s32 dir;
     s32 i;
     struct FieldActor *entry;
@@ -385,8 +385,7 @@ tail:
                 diff = -0x1000;
             actor->facing += diff;
         }
-        timer = &actor->step_timer;
-        *timer = 0;
+        actor->step_timer = 0;
         actor->step_phase = 2;
     } else {
         s32 speed;
@@ -397,13 +396,12 @@ tail:
         actor->velocity_x = 0;
         actor->velocity_z = 0;
         Vector_AddPolarOffset(speed, (u16)facing, &actor->velocity_x);
-        timer = &actor->step_timer;
-        if (*timer != 0)
-            *timer -= 1;
+        if (actor->step_timer != 0)
+            actor->step_timer--;
     }
 
     dir = (u32)angle >> 16;
-    if (Data_03001e70->footprints != 0 && *timer == 0 && blocked == 0) {
+    if (Data_03001e70->footprints != 0 && actor->step_timer == 0 && blocked == 0) {
         struct FieldActor *print;
 
         print = Func_0800c150(25, actor->pos[0], actor->pos[1], actor->pos[2]);
@@ -423,20 +421,19 @@ tail:
                 sprite->angle = dir + 0x4000;
                 sprite->flags |= 0xc;
             }
-            phase = &actor->step_phase;
-            flip = *phase;
-            if ((s16)*phase == 2) {
+            flip = actor->step_phase;
+            if ((s16)actor->step_phase == 2) {
                 AnimationObjects_SelectAnimation(sprite, 2);
-                *phase = blocked;
+                actor->step_phase = blocked;
                 flip = 0;
             }
             if (flip != 0)
                 print->facing = 0x8000;
             if (mode == 5)
-                *timer = 12;
+                actor->step_timer = 12;
             else
-                *timer = 18;
-            *phase ^= 1;
+                actor->step_timer = 18;
+            actor->step_phase ^= 1;
         }
     }
 

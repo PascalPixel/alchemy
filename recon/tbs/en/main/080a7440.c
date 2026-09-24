@@ -1,6 +1,7 @@
-/* Draft, not exact (2026-09-24): candidate=52 reference=56 differing_halfwords=22.
-   Residual: the reference zeroes r2 before forming the 0x174 offset and keeps
-   the result in r2 (copied before the -1 compare, moved to r0 at the end).
+/* Draft, not exact (2026-09-24): candidate=56 reference=56 differing_halfwords=4.
+   The tail, registers and pool match. Residual: the scheduler hoists the
+   0x174 offset (movs/lsls) above the load of the work pointer and the zero;
+   the reference keeps source order (ldr r5; movs r2, #0; movs r1, #186).
    The owner was bundled with main:080a7478 until 2026-09-24. */
 #include "TYPES.H"
 
@@ -18,12 +19,12 @@ s32 Func_080a77a4(s32 mode);
 s32 CharacterSelector_Run(void)
 {
     struct CharacterSelectorWork *work = *(struct CharacterSelectorWork **)0x03001f2c;
-    s32 result;
-    s32 zero = 0;
+    s32 result = 0;
 
-    work->cursor = zero;
-    result = Func_080a77a4(0);
-    if (result != -1)
+    work->cursor = result;
+    if (Func_080a77a4(0) == -1)
+        result = -1;
+    else
         result = work->choice;
     return result;
 }

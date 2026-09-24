@@ -4,7 +4,7 @@
 
 #define NULL ((void *)0)
 #define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
-#define ObjectMotion_SetAngleToward_1(a0, a1, a2) Value3(Func_0200267c, a0, a1, a2)
+#define ObjectMotion_SetAngleToward_1(a0, a1, a2) Value3(Engine_ActorFaceActor, a0, a1, a2)
 #define BattleRuntime_WaitIfModeZero_1(a0) Value1(Engine_EventWait, a0)
 #define SceneWork_SetStepValue_1(a0) Value1(Engine_EventSetMessage, a0)
 #define SceneWork_SetStepValue_2(a0) Value1(Engine_EventSetMessage, a0)
@@ -172,19 +172,11 @@ s32 Func_02002282(s32, s32);
 struct SceneService_02001990 *Func_02003be2(s32 index);
 void Func_02004138(T *, s32);
 void Func_020023c6();
-void Func_02002188(void);
-s32 Func_020009e4(void);
 void Func_020026dc_b();
-void *Func_0200267c();
 void *Func_0200264e();
 void *Func_02002708();
 s32 Func_02002c8a();
 s32 Func_02002d0a_a();
-void Func_02002ebe();
-void Func_02002ef8();
-void Func_02002f30();
-void Func_02002f68();
-void Func_02002f9e();
 s32 Func_02003906();
 s32 Func_0200393c();
 s32 Func_02003968();
@@ -203,7 +195,6 @@ s32 Func_02004130();
 void Data_0200a218();
 void Data_0200a370();
 void Data_0200a378();
-void Func_02002800();
 s32 Func_02003270();
 s32 Func_02003284();
 void Func_0200336a();
@@ -322,7 +313,7 @@ void Func_020042e8();
  * 0x0200a368, 0x0200a370, 0x0200a378) have no repository name yet and keep
  * their raw spellings.
  *
- * Func_02002800 is the one intra-overlay direct call; it reaches
+ * SceneState_StoreTable96adToWork is the one intra-overlay direct call; it reaches
  * SceneState_StoreTable96adToWork at 0x020016c8.
  *
  * STATUS: drafted, not adopted. 1468 candidate bytes against 1468 reference
@@ -679,7 +670,7 @@ u8 *SceneData_SelectScriptByScene33AndFlag881(void)
 
 void FieldScene_Forward2188(void)
 {
-    Func_02002188();
+    StagedActor_RunHeadingProbeStep();
 }
 
 s32 SceneData_SelectTableByWord224B(void)
@@ -895,7 +886,7 @@ void SceneDialogue_RunActorEightBranchedDialogue(void)
 
 void FieldScene_RunSingleStep(void)
 {
-    Func_020009e4();
+    FieldScene_RunSupplementalSequenceOne();
 }
 
 void SceneDialogue_ShowLine156E(void)
@@ -1031,7 +1022,7 @@ void FieldScene_RunPrimaryScriptChoreography(void)
     Event_ShowMessageAndWait(3, 0, 10);
     Value2_02000f90(Engine_ActorEnableActionCallback, 9, tbl);
     /* SceneState_StoreTable96adToWork at 0x020016c8. */
-    Func_02002800();
+    SceneState_StoreTable96adToWork();
     Actor_ShowEmote(3, 0x101, 60);
     Event_ShowMessageAndWait(3, 0, 40);
     Event_ShowMessageAndWait(9, 0, 20);
@@ -1227,7 +1218,7 @@ void FieldScene_RunScene399SequenceA(void)
     if (Value2_02001794(Func_02003906, *frame, 60) == 0) {
         object = (union FieldObject *)Value4(Func_02003968, 222, 0x1cf0000, 0, 0x1240000);
         if (object != NULL) {
-            Func_02002ebe(object);
+            SceneActor_ResetActorAndCenterOffsets(object);
             object->effect.countdown = 60;
             object->effect.update = FieldScene_RunSupplementalSequenceTwo;
             Object_SetAnimation(object, 5);
@@ -1236,7 +1227,7 @@ void FieldScene_RunScene399SequenceA(void)
     if (Value2_02001794(Func_0200393c, *frame + 30, 60) == 0) {
         object = (union FieldObject *)Value4(Func_020039a2, 222, 0x1400000, 0x200000, 0x1640000);
         if (object != NULL) {
-            Func_02002ef8(object);
+            SceneActor_ResetActorAndCenterOffsets(object);
             object->effect.countdown = 60;
             object->effect.update = FieldScene_RunSupplementalSequenceTwo;
             Object_SetAnimation(object, 5);
@@ -1245,7 +1236,7 @@ void FieldScene_RunScene399SequenceA(void)
     if (Value2_02001794(Func_02003976, *frame + 10, 60) == 0) {
         object = (union FieldObject *)Value4(Func_020039da, 222, 0x760000, 0, 0x460000);
         if (object != NULL) {
-            Func_02002f30(object);
+            SceneActor_ResetActorAndCenterOffsets(object);
             object->effect.countdown = 60;
             object->effect.update = FieldScene_RunSupplementalSequenceTwo;
             Object_SetAnimation(object, 5);
@@ -1254,7 +1245,7 @@ void FieldScene_RunScene399SequenceA(void)
     if (Value2_02001794(Func_020039ae, *frame + 50, 60) == 0) {
         object = (union FieldObject *)Value4(Func_02003a12, 222, 0x1560000, 0, 0x7c0000);
         if (object != NULL) {
-            Func_02002f68(object);
+            SceneActor_ResetActorAndCenterOffsets(object);
             object->effect.countdown = 60;
             object->effect.update = FieldScene_RunSupplementalSequenceTwo;
             Object_SetAnimation(object, 5);
@@ -1263,7 +1254,7 @@ void FieldScene_RunScene399SequenceA(void)
     if (Value2_02001794(Func_020039e6, *frame + 80, 60) == 0) {
         object = (union FieldObject *)Value4(Func_02003a48, 222, 0x1af0000, 0, 0xab0000);
         if (object != NULL) {
-            Func_02002f9e(object);
+            SceneActor_ResetActorAndCenterOffsets(object);
             object->effect.countdown = 60;
             object->effect.update = FieldScene_RunSupplementalSequenceTwo;
             Object_SetAnimation(object, 5);

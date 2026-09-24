@@ -73312,6 +73312,46 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "suhara-sabaku-scene-script",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/SUHARA_SABAKU/SCENE_SCRIPT.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3c0",
+      "absolute_symbols": {
+        "Main_080770e0": {
+          "address": "0x02009264",
+          "kind": "thumb"
+        },
+        "Engine_TaskAddCallback": {
+          "address": "0x020091fc",
+          "kind": "thumb"
+        },
+        "FieldScene_RunOpeningAuxiliarySequence": {
+          "address": "0x02008d24",
+          "kind": "thumb"
+        },
+        "Local_02000f50": {
+          "address": "0x02008f50",
+          "kind": "thumb"
+        },
+        "Local_02001094": {
+          "address": "0x02009094",
+          "kind": "thumb"
+        },
+        "Engine_AudioPlayCue": {
+          "address": "0x02009374",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02000e8c",
+          "extent": 196,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

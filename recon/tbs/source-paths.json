@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_3c0:02000e8c": {
+      "name": "SuharaSabaku_RunSceneScript",
+      "source": "FIELD/SUHARA_SABAKU/SCENE_SCRIPT.C"
+    },
     "resource_3a6:020016f0": {
       "name": "HaidiaDou_RunSceneScript",
       "source": "FIELD/HAIDIA_DOU/SCENE_SCRIPT.C"

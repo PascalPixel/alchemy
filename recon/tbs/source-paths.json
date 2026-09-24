@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_3b1:02001190": {
+      "name": "FuneHeya_TurnActorToOpenSide",
+      "source": "FIELD/FUNE_HEYA/TURN_ACTOR.C"
+    },
     "resource_37b:02001b44": {
       "name": "SoruSekizo_RunEventSequence",
       "source": "FIELD/SORU_SEKIZO/EVENT_SEQUENCE.C"

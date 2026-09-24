@@ -339,6 +339,36 @@ s32 OverlayObject_RunObject2WhenFlagged(void)
 
 #include "TYPES.H"
 
+enum ActorPresentationMessage {
+    MSG_ROBIN_PEERED_INTO = 0x947,
+    MSG_WASNT_ERUPTION_MT_ALEPH_INCREDIBLE = 0x1223,
+    MSG_THOSE_TRAVELERS_LEFT_IN_BIG = 0x1229,
+    MSG_ACCUSING_US_STEALING_HAMMETS_TREASURED = 0x122f,
+    MSG_OFF_ON_ADVENTURE = 0x1232,
+    MSG_RUFF_RRRUFF = 0x1235,
+    MSG_MAN_SHOULD_STEAL_FROM_ANOTHER = 0x1239,
+    MSG_GROUP_TRAVELERS_WAS_STRANGE_BUNCH = 0x123b,
+    MSG_BET_WAS_THOSE_THREE_CREEPS = 0x123c,
+    MSG_SUPPOSE_DOESNT_MATTER_HOW_RICH = 0x123d,
+    MSG_EVERYONE_KNOWS_THOSE_THREE_AT = 0x123e,
+    MSG_STEALING_IN_MIDST_VOLCANIC_ERUPTION = 0x1241,
+    MSG_LEAVING_IM_STILL_WORRIED_ABOUT = 0x1327,
+    MSG_WAIT_DONT_WANT_TAKE_YOUR = 0x132a,
+    MSG_YOURE_HITTING_ROAD_AGAIN = 0x1330,
+    MSG_TALKING_ABOUT_HAMMETS_SERVANT_IVAN = 0x1336,
+    MSG_THOSE_MEN_CAPTURED_THEYRE_IN = 0x133c,
+    MSG_ONES_WHO_CAPTURED_THIEVES = 0x133f,
+    MSG_RUFF_RRRUFF_2 = 0x1342,
+    MSG_WITH_ROAD_OUT_ONLY_WAY = 0x1348,
+    MSG_WHERE_DID_IVAN_GO_BY = 0x1349,
+    MSG_MUST_STRONGER_THAN_LOOK_HAVE = 0x134b,
+    MSG_IF_BRING_ME_BONE_ILL = 0x134e,
+    MSG_THANK_FOR_OTHER_DAY_LEAVING = 0x137f,
+    MSG_CAREFUL_SEARCH_WILL_REVEAL_PASSAGE = 0x13ab,
+    MSG_CAN_HEAR_WATER_RUMBLING_DOWN = 0x29dc
+};
+
+
 /* Loader-relocated overlay calls: each symbol names the pre-relocation call
  * word the image holds. */
 
@@ -381,11 +411,11 @@ void FieldScene_RunScene382_020004a0(void)
     }
     Actor_FaceEachOther(0, 2, 0);
     Event_Wait(20);
-    Event_SetMessage(0x1327);
+    Event_SetMessage(MSG_LEAVING_IM_STILL_WORRIED_ABOUT);
     Event_ShowMessageAndWait(0x9002, 0, 20);
     Actor_SetAnimationAndWait(0, 3);
     if (Value0(OverlayObject_GetObject2Byte280)!= 0) {
-        Event_SetMessage(0x132a);
+        Event_SetMessage(MSG_WAIT_DONT_WANT_TAKE_YOUR);
         Event_ShowMessage(2, 0);
         OverlayObject_RunObject2WhenFlagged();
         Task_Wait(20);
@@ -400,8 +430,8 @@ void FieldScene_RunScene382_020004a0(void)
 void SceneState_SetFlags947And29dc(void)
 {
     Event_Begin();
-    Message_ShowCentered(0x947, 1);
-    Message_ShowCentered(0x29dc, 1);
+    Message_ShowCentered(MSG_ROBIN_PEERED_INTO, 1);
+    Message_ShowCentered(MSG_CAN_HEAR_WATER_RUMBLING_DOWN, 1);
     Event_End();
 }
 
@@ -418,7 +448,7 @@ void SceneDialogue_RunActor9LineAndAdvance(void)
     s32 record;
 
     Event_Begin();
-    Event_SetMessage(0x1223);
+    Event_SetMessage(MSG_WASNT_ERUPTION_MT_ALEPH_INCREDIBLE);
     Func_02001d64(9, 0, 2);
     Event_OpenMessage(9, 0);
     if (Event_ChooseYesNo(0, 0) != 0) {
@@ -434,7 +464,7 @@ void ActorPresentation_RunActorThirteenSceneSetup(void)
     u8 *workspace;
 
     Event_Begin();
-    Event_SetMessage(0x1229);
+    Event_SetMessage(MSG_THOSE_TRAVELERS_LEFT_IN_BIG);
     Actor_SetAnimation(13, 1);
     Func_02001dcc(13, 0, 2);
     Event_OpenMessage(13, 0);
@@ -453,7 +483,7 @@ void ActorPresentation_RunActorSeventeenSceneSetup(void)
     u8 *workspace;
 
     Event_Begin();
-    Event_SetMessage(0x122f);
+    Event_SetMessage(MSG_ACCUSING_US_STEALING_HAMMETS_TREASURED);
     Func_02001e20(17, 0, 2);
     Event_OpenMessage(17, 0);
     if (Event_ChooseYesNo(0, 0) != 0) {
@@ -469,7 +499,7 @@ void ActorPresentation_RunActorEighteenSceneSetup(void)
     u8 *workspace;
 
     Event_Begin();
-    Event_SetMessage(0x1232);
+    Event_SetMessage(MSG_OFF_ON_ADVENTURE);
     Func_02001e74(18, 0, 2);
     Event_OpenMessage(18, 0);
     if (Event_ChooseYesNo(0, 0) != 0) {
@@ -488,7 +518,7 @@ void SceneDialogue_RunActor19Line(void)
 {
     void Event_ShowMessage(int, int);
 
-    Event_Begin(); Event_SetMessage(0x1235); Actor_SetAnimation(19, 0);
+    Event_Begin(); Event_SetMessage(MSG_RUFF_RRRUFF); Actor_SetAnimation(19, 0);
     Func_02001f10(19, 0, 2); Event_ShowMessage(19, 0); Event_End();
 }
 
@@ -571,7 +601,7 @@ void ActorPresentation_RunActorEightSceneSetup(void)
     void Func_020020cc_a(int, int, int);
 
     u8 *workspace;
-    Event_Begin(); Event_SetMessage(0x1330); Func_020020cc_a(8, 0, 2); Event_OpenMessage(8, 0);
+    Event_Begin(); Event_SetMessage(MSG_YOURE_HITTING_ROAD_AGAIN); Func_020020cc_a(8, 0, 2); Event_OpenMessage(8, 0);
     if (Event_ChooseYesNo(0, 0) != 0) { workspace = *(u8 **)0x03001ebc; ++*(u16 *)(workspace + 472); }
     Event_ShowMessage(8, 0); Event_End();
 }
@@ -581,7 +611,7 @@ void SceneDialogue_RunActor11SecondLine(void) { Engine_EventBegin(); Engine_Even
 void SceneDialogue_RunActor12LineAndAdvance(void)
 {
     u8 *workspace;
-    Event_Begin(); Event_SetMessage(0x1336);
+    Event_Begin(); Event_SetMessage(MSG_TALKING_ABOUT_HAMMETS_SERVANT_IVAN);
     if (GameFlag_IsSet(2) != 0) { workspace = *(u8 **)0x03001ebc; ++*(u16 *)(workspace + 472); }
     SceneActor_RunActorStep(12); Event_End();
 }
@@ -632,7 +662,7 @@ void ActorPresentation_RunActorFifteenFollowupDialogue(void)
 void ActorPresentation_RunActorSixteenSceneSetup(void)
 {
     u8 *workspace;
-    Event_Begin(); Event_SetMessage(0x133c); Actor_SetAnimation(16, 1); Func_02002294(16, 0, 2); Event_OpenMessage(16, 0);
+    Event_Begin(); Event_SetMessage(MSG_THOSE_MEN_CAPTURED_THEYRE_IN); Actor_SetAnimation(16, 1); Func_02002294(16, 0, 2); Event_OpenMessage(16, 0);
     if (Event_ChooseYesNo(0, 0) != 0) { workspace = *(u8 **)0x03001ebc; ++*(u16 *)(workspace + 472); }
     Event_ShowMessage(16, 0); Event_End();
 }
@@ -642,7 +672,7 @@ void ActorPresentation_RunActorEighteenFollowupSceneSetup(void)
     void Event_ShowMessage(int, int);
 
     u8 *workspace;
-    Event_Begin(); Event_SetMessage(0x133f); Func_020022e8(18, 0, 2); Event_OpenMessage(18, 0);
+    Event_Begin(); Event_SetMessage(MSG_ONES_WHO_CAPTURED_THIEVES); Func_020022e8(18, 0, 2); Event_OpenMessage(18, 0);
     if (Event_ChooseYesNo(0, 0) != 0) { workspace = *(u8 **)0x03001ebc; ++*(u16 *)(workspace + 472); }
     Event_ShowMessage(18, 0); Event_End();
 }
@@ -654,7 +684,7 @@ void ActorPresentation_RunActorNineteenDialogueAndSetSceneState(void)
     void Actor_SetAnimation(s32, s32);
 
     Event_Begin();
-    Event_SetMessage(0x1342);
+    Event_SetMessage(MSG_RUFF_RRRUFF_2);
     Actor_SetAnimation(19, 0);
     Func_02002344(19, 0, 2);
     Event_ShowMessage(19, 0);
@@ -672,7 +702,7 @@ void SceneDialogue_RunActor20Line(void)
 {
     void Func_020023a4_a(int, int, int);
 
-    Event_Begin(); Event_SetMessage(0x137f); Func_020023a4_a(20, 0, 2); Actor_SetAnimationAndWait(20, 3);
+    Event_Begin(); Event_SetMessage(MSG_THANK_FOR_OTHER_DAY_LEAVING); Func_020023a4_a(20, 0, 2); Actor_SetAnimationAndWait(20, 3);
     Event_Wait(20); Event_ShowMessage(20, 0); Event_End();
 }
 
@@ -681,7 +711,7 @@ void SceneDialogue_RunActor11FlaggedLine(void)
     int GameFlag_IsSet(int);
 
     Event_Begin();
-    if (GameFlag_IsSet(0x855) == 0) Event_SetMessage(0x1239); else Event_SetMessage(0x1346);
+    if (GameFlag_IsSet(0x855) == 0) Event_SetMessage(MSG_MAN_SHOULD_STEAL_FROM_ANOTHER); else Event_SetMessage(0x1346);
     SceneActor_RunActorCommandWithFlag91(11); Event_End();
 }
 
@@ -689,9 +719,9 @@ void SceneDialogue_RunActor13FlaggedLine(void)
 {
     Event_Begin();
     if (GameFlag_IsSet(0x855) == 0) {
-        Event_SetMessage(0x123b);
+        Event_SetMessage(MSG_GROUP_TRAVELERS_WAS_STRANGE_BUNCH);
     } else {
-        Event_SetMessage(0x1348);
+        Event_SetMessage(MSG_WITH_ROAD_OUT_ONLY_WAY);
     }
     SetSceneActor(13);
     Event_End();
@@ -702,9 +732,9 @@ void ActorPresentation_RunActorFourteenFlaggedDialogue(void)
     Func_020026e2(14)->presentation_flags |= 2;
     Event_Begin();
     if (GameFlag_IsSet(0x855) == 0) {
-        Event_SetMessage(0x123c);
+        Event_SetMessage(MSG_BET_WAS_THOSE_THREE_CREEPS);
     } else {
-        Event_SetMessage(0x1349);
+        Event_SetMessage(MSG_WHERE_DID_IVAN_GO_BY);
         if (GameFlag_IsSet(2) != 0)
             ++gEventWork->message;
     }
@@ -720,9 +750,9 @@ void ActorPresentation_RunActorFifteenScriptBranch(void)
     Func_0200275e(15)->presentation_flags |= 2;
     Event_Begin();
     if (GameFlag_IsSet(0x855) == 0)
-        Event_SetMessage(0x123d);
+        Event_SetMessage(MSG_SUPPOSE_DOESNT_MATTER_HOW_RICH);
     else
-        Event_SetMessage(0x134b);
+        Event_SetMessage(MSG_MUST_STRONGER_THAN_LOOK_HAVE);
     SceneActor_RunActorCommandWithFlag91(15);
     Event_End();
     Func_020027a0(15)->presentation_flags &= 1;
@@ -733,7 +763,7 @@ void ActorPresentation_RunActorSixteenScriptBranch(void)
     void Event_SetMessage(int);
 
     Event_Begin();
-    if (GameFlag_IsSet(0x855) == 0) Event_SetMessage(0x123e); else Event_SetMessage(0x134c);
+    if (GameFlag_IsSet(0x855) == 0) Event_SetMessage(MSG_EVERYONE_KNOWS_THOSE_THREE_AT); else Event_SetMessage(0x134c);
     SceneActor_RunActorCommandWithFlag91(16); Event_End();
 }
 
@@ -743,11 +773,11 @@ void ActorPresentation_RunActorNineteenScriptBranch(void)
 
     u8 *actor = Actor_Get(19); actor[91] = 1; Event_Begin();
     if (GameFlag_IsSet(0x855) == 0) {
-        Event_SetMessage(0x1241); Actor_SetAnimation(19, 0); Event_Wait(2);
+        Event_SetMessage(MSG_STEALING_IN_MIDST_VOLCANIC_ERUPTION); Actor_SetAnimation(19, 0); Event_Wait(2);
     } else if (GameFlag_IsSet(0x858) != 0) {
-        Event_SetMessage(0x13ab);
+        Event_SetMessage(MSG_CAREFUL_SEARCH_WILL_REVEAL_PASSAGE);
     } else {
-        Event_SetMessage(0x134e);
+        Event_SetMessage(MSG_IF_BRING_ME_BONE_ILL);
     }
     Event_ShowMessage(19, 0); Event_End(); actor[91] = 0;
 }

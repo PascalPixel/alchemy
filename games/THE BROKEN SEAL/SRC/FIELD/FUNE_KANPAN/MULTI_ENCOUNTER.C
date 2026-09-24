@@ -38,6 +38,26 @@
 
 #include "RESOURCE_3AF_MOTION.H"
 
+enum MultiEncounterMessage {
+    MSG_WONDER_COULD_HAVE_HAPPENED = 0x1d26,
+    MSG_TOLD_WERE_LEAVING_SOON_SET = 0x1d36,
+    MSG_IF_WE_DONT_LEAVE_SOON = 0x1d37,
+    MSG_SOMEBODY_STOP_THEM = 0x1d6f,
+    MSG_THEY_CANT_PLANNING_MUTINY = 0x1d70,
+    MSG_DIDNT_DO_ANYTHING = 0x1d8d,
+    MSG_NOW_WE_HAVE_PROTECT_SHIP = 0x1e08,
+    MSG_HAVE_MAKE_THEM_PROMISE_HELP = 0x1e09,
+    MSG_PREPARATIONS_READY = 0x1e39,
+    MSG_AYE_CAPTAIN_SEA_MONSTERS = 0x1e41,
+    MSG_THANK_ROBIN_DID_GOOD_AGAINST = 0x1ee1,
+    MSG_CAN_SEE_LAND = 0x1ee5,
+    MSG_ROBIN_DONT_TALK_LIKE_SHOULDNT = 0x1f53,
+    MSG_ROBIN_TALKED_PASSENGERS_DIDNT_TOUR = 0x1f55,
+    MSG_SEE_YOURE_GOING_GO_FOR = 0x1f5b,
+    MSG_HOW_WAS_ROBIN_DID_EXPLORE = 0x1f69
+};
+
+
 union Slot {
     s32 w;
     s16 h[2];
@@ -506,12 +526,12 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
 
     ((void (*)())Engine_EventBegin)();
     if (GameFlag_IsSet(0x925) != 0) {
-        Event_SetMessage(0x1e08);
+        Event_SetMessage(MSG_NOW_WE_HAVE_PROTECT_SHIP);
         Event_ShowMessage(21, 0);
     } else {
         if (GameFlag_IsSet(0x922) != 0) {
             Actor_RunRepeatedMotion(21, 2);
-            Event_SetMessage(0x1d6f);
+            Event_SetMessage(MSG_SOMEBODY_STOP_THEM);
             Event_ShowMessage(21, 0);
             rec7 = Value1(Func_02004d98, 21);
             record = Random_Next();
@@ -521,7 +541,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
         } else {
             Actor_ShowEmote(21, 0x103, 0);
             Actor_StartRepeatedMotion(21, 3);
-            Event_SetMessage(0x1d36);
+            Event_SetMessage(MSG_TOLD_WERE_LEAVING_SOON_SET);
             Event_ShowMessage(21, 0);
         }
     }
@@ -536,12 +556,12 @@ void Func_02000af0(void)
 
     ((void (*)())Engine_EventBegin)();
     if (GameFlag_IsSet(0x925) != 0) {
-        Event_SetMessage(0x1e09);
+        Event_SetMessage(MSG_HAVE_MAKE_THEM_PROMISE_HELP);
         Event_ShowMessage(24, 0);
     } else {
         if (GameFlag_IsSet(0x922) != 0) {
             Actor_RunRepeatedMotion(24, 2);
-            Event_SetMessage(0x1d70);
+            Event_SetMessage(MSG_THEY_CANT_PLANNING_MUTINY);
             Event_ShowMessage(24, 0);
             rec7 = Value1(Func_02004e40, 24);
             record = Random_Next();
@@ -551,7 +571,7 @@ void Func_02000af0(void)
         } else {
             Actor_ShowEmote(24, 0x103, 0);
             Actor_StartRepeatedMotion(24, 3);
-            Event_SetMessage(0x1d37);
+            Event_SetMessage(MSG_IF_WE_DONT_LEAVE_SOON);
             Event_ShowMessage(24, 0);
         }
     }
@@ -619,7 +639,7 @@ void FieldScene_RunActorAndEffectPresentationSetup(void)
         Camera_WaitForMove();
         Event_Wait(40);
         Actor_RunRepeatedMotion(22, 1);
-        Event_SetMessage(0x1d26);
+        Event_SetMessage(MSG_WONDER_COULD_HAVE_HAPPENED);
         FieldScene_RunStepThen10(0x4016);
         Actor_ShowEmote(20, 0x102, 60);
         Actor_StartRepeatedMotion(20, 2);
@@ -837,7 +857,7 @@ void FieldScene_RunScene3af_020012f0(void)
     Actor_ShowEmote(20, 0x100, 20);
     Actor_FaceActor(20, 0, 20);
     Actor_StartRepeatedMotion(20, 2);
-    Event_SetMessage(0x1d8d);
+    Event_SetMessage(MSG_DIDNT_DO_ANYTHING);
     Event_ShowMessageAndWait(20, 0, 20);
     Value3(Engine_ActorShowEmote, 20, 0x102, 0);
     GameFlag_Set(0x923);
@@ -1056,7 +1076,7 @@ void FieldScene_RunScene3af_02001c14(s32 a0, s32 a1)
     Call2(Func_020056ac, a1, 0x5000);
     Actor_Jump(a1, 4, 40);
     Actor_StartRepeatedMotion(a1, 2);
-    Event_SetMessage(0x1e39);
+    Event_SetMessage(MSG_PREPARATIONS_READY);
     Event_ShowMessageAndWait(a1, 0, 20);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
     Event_CloseScreen();
@@ -1078,7 +1098,7 @@ void FieldScene_RunActorTwentyDialogueSequence(void)
     Event_WaitForScreen();
     Event_Wait(20);
     Actor_RunRepeatedMotion(20, 1);
-    Event_SetMessage(0x1e41);
+    Event_SetMessage(MSG_AYE_CAPTAIN_SEA_MONSTERS);
     Event_ShowMessageAndWait(20, 0, 10);
     FieldScene_CallPairWith10(22, 0x5000);
     Actor_Jump(22, 4, 20);
@@ -1128,7 +1148,7 @@ void FieldScene_ConfigureLeadActors(void)
     Func_02006476(20, 0);
     Value2(Func_02006480_a, 0, 0x8000);
     Actor_RunRepeatedMotion(20, 1);
-    Event_SetMessage(0x1ee1);
+    Event_SetMessage(MSG_THANK_ROBIN_DID_GOOD_AGAINST);
     ((void (*)())Func_02006480_b)(20);
     Actor_SetAnimationAndWait(0, 3);
     Event_Wait(40);
@@ -1198,7 +1218,7 @@ void FieldScene_ConfigureThreeActors(void)
     Event_Wait(20);
     Actor_Jump(22, 4, 10);
     Actor_Jump(22, 6, 20);
-    Event_SetMessage(0x1ee5);
+    Event_SetMessage(MSG_CAN_SEE_LAND);
     FieldScene_RunStepThen10(22);
     Actor_SetAnimationAndWait(20, 3);
     Actor_SetSpeed(21, 0x30000, 0x18000);
@@ -1697,7 +1717,7 @@ void FieldScene_RunThreeActorEncounter(void)
     Actor_FaceDirection(2, 0x8000, 0);
     Value2(FieldScene_CallPairWith10, 3, 0x8000);
     FieldScene_CallPairWith10(22, 0);
-    Event_SetMessage(0x1f55);
+    Event_SetMessage(MSG_ROBIN_TALKED_PASSENGERS_DIDNT_TOUR);
     Call1_02003c88(FieldScene_RunStepThen10, 22);
     Value2(FieldScene_CallPairWith10, 21, 0xd000);
     Event_ShowMessageAndWait(21, 0, 40);
@@ -1718,14 +1738,14 @@ void FieldScene_RunThreeActorEncounter(void)
         L_02003dfa:;
         if (Event_ChooseYesNo(0, 0) == 1) {
             Actor_RunRepeatedMotion(2, 1);
-            Event_SetMessage(0x1f53);
+            Event_SetMessage(MSG_ROBIN_DONT_TALK_LIKE_SHOULDNT);
             Event_OpenMessage(2, 0);
             goto L_02003dfa;
         }
     }
     Event_Wait(20);
     Actor_SetAnimationAndWait(22, 3);
-    Event_SetMessage(0x1f5b);
+    Event_SetMessage(MSG_SEE_YOURE_GOING_GO_FOR);
     FieldScene_RunStepThen10(22);
     Actor_SetSpeed(22, 0x10000, 0x8000);
     Actor_SetSpeed(21, 0x10000, 0x8000);
@@ -1786,7 +1806,7 @@ void FieldScene_RunEncounterClosingSequence(void)
     Actor_ShowEmote(22, 0x100, 0);
     Actor_RunRepeatedMotion(22, 1);
     FieldScene_CallPairWith10(22, 0x5000);
-    Event_SetMessage(0x1f69);
+    Event_SetMessage(MSG_HOW_WAS_ROBIN_DID_EXPLORE);
     Event_OpenMessage(0x2016, 0);
     Actor_FaceDirection(0, 0xe000, 0);
     if (Event_ChooseYesNo(0, 0) == 1) {

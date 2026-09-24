@@ -2,6 +2,11 @@
 #include "FIELD_EVENT.H"
 #include "SCENE.H"
 
+enum RecordSetupMessage {
+    MSG_GET_SICK_THINKING_ABOUT_LALIVERO = 0x25d5
+};
+
+
 #define STEP_COUNTER (*(u16 *)(*(u8 **)0x03001ebc + 0x1d8))
 
 struct SceneRecord {
@@ -152,7 +157,7 @@ void Dialogue_HandleFacingAction(s32 no)
         Actor_unk9_2(0x262c);
         Actor_Apply9(no, 0);
     } else {
-        Event_SetMessage(0x25d5);
+        Event_SetMessage(MSG_GET_SICK_THINKING_ABOUT_LALIVERO);
         Actor_Apply10(no, 0);
     }
 }

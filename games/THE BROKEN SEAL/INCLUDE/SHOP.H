@@ -37,7 +37,9 @@ struct ShopRuntime {
     u8 unknown_390[2];
     u16 previous_page_icon;             /* 0x392 */
     u16 next_page_icon;                 /* 0x394 */
-    u8 unknown_396[0x10];
+    u8 unknown_396[8];
+    u16 selected_item;                  /* 0x39e */
+    u8 unknown_3a0[6];
     s8 stock_count;                     /* 0x3a6 */
     s8 party_member_count;              /* 0x3a7 */
     u8 mode;                            /* 0x3a8 */

@@ -7,7 +7,12 @@
  * (cell - 128: +6), and the height goes through its own local so it is
  * added as y + (h - 0x200000). Remaining: the cell and row-above pointers
  * land in r1/r2 where the ROM has r2/r1, with their constants in r0/r4
- * (register asm("r2") on cell gives the registers but reschedules: 11). */
+ * (register asm("r2") on cell gives the registers but reschedules: 11).
+ * Holding the row-above base in its own pointer loaded before the cell also
+ * gives cell r2 and above r1, but both bases are then loaded first and the
+ * pool order flips (11). Declaration order, block scope, const or register
+ * qualifiers, u32/int pos, << 7, pointer arithmetic, byte offsets, 2D rows
+ * and every && grouping leave it at 7 (180 variants). */
 #include "TYPES.H"
 
 /* One row of a scene's object table; a row whose id is -1 ends it. */

@@ -37,7 +37,10 @@ struct ShopRuntime {
     u16 cursor_icon;                    /* 0x390 */
     u16 previous_page_icon;             /* 0x392 */
     u16 next_page_icon;                 /* 0x394 */
-    u8 unknown_396[8];
+    u16 unknown_396;
+    u16 stat_down_icon;                 /* 0x398 */
+    u16 stat_up_icon;                   /* 0x39a */
+    u16 unknown_39c;
     u16 selected_item;                  /* 0x39e */
     u8 unknown_3a0[4];
     u16 keeper_resource;                /* 0x3a4 */

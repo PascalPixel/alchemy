@@ -50,14 +50,6 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
     f(a0, a1, a2);
 }
 
-/* The scene step counter at 0x1d8 of the shared scene work record. */
-static __inline__ void bump_step(s32 amount)
-{
-    u8 *work = *(u8 **)Data_03001ebc;
-
-    *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
-}
-
 /*
  * Withdrawn on 2026-09-10 as not reproducible, and reinstated the same night
  * once the cause was found and removed.
@@ -86,7 +78,6 @@ extern u8 Data_00000ff0[];
 extern u8 Data_00000ff1[];
 extern u8 Data_00000ff2[];
 
-#define FieldScene_RunScene37aSequenceF Func_02000488
 
 /*
  * resource_37a owner 0x02000488..0x020009f3 (0x56c = 1388 bytes).
@@ -152,8 +143,6 @@ extern u8 Data_00000ff2[];
  * which the reference's bare `push {lr}` frame shows did not happen.
  * A value-returning call also sets r0 last of its arguments. */
 
-
-
 static __inline__ s32 Value1(s32 (*f)(), s32 a0)
 {
     return f(a0);
@@ -168,8 +157,6 @@ static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
 {
     return f(a0, a1);
 }
-
-
 
 static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 {
@@ -215,18 +202,12 @@ void Func_020033b4();  /* Func_0808a020 */
 
 #include "TYPES.H"
 
-#define GetSolShindenScriptData Func_02000030
-#define GetSolShindenInitialState Func_02000038
-#define GetSolShindenMessageData Func_0200003c
-#define GetSolShindenActorData Func_02000044
-#define GetSolShindenEffectData Func_0200004c
 /*
  * Returns 0x0200aafc, an address inside this overlay's image; its contents
  * are not established. The eight-byte owner includes its one pool word,
  * which sits past the bx lr. The address is published in the descriptor
  * table, not reached by any call.
  */
-
 
 /*
  * Returns zero. The four-byte owner carries no pool word, since a constant
@@ -235,7 +216,6 @@ void Func_020033b4();  /* Func_0808a020 */
  * an integer is not established.
  */
 
-
 /*
  * Returns 0x0200abec, an address inside this overlay's image; its contents
  * are not established. The eight-byte owner includes its one pool word,
@@ -243,14 +223,12 @@ void Func_020033b4();  /* Func_0808a020 */
  * table, not reached by any call.
  */
 
-
 /*
  * Returns 0x0200ac14, an address inside this overlay's image; its contents
  * are not established. The eight-byte owner includes its one pool word,
  * which sits past the bx lr. The address is published in the descriptor
  * table, not reached by any call.
  */
-
 
 /*
  * Returns 0x0200ad34, an address inside this overlay's image; its contents
@@ -261,13 +239,6 @@ void Func_020033b4();  /* Func_0808a020 */
 
 #include "TYPES.H"
 
-#define FieldScene_RunScene37aSequenceA Func_02000054
-#define FieldScene_RunScene37aSequenceB Func_02000108
-#define FieldScene_RunScene37aSequenceC Func_02000150
-#define FieldScene_RunScene37aSequenceD Func_020001ec
-#define FieldScene_RunScene37a_020009f4 Func_020009f4
-#define FieldScene_RunScene37aSequenceE Func_02001a58
-#define FieldScene_RunScene37a_02002924 Func_02002924
 /* Loader-relocated overlay calls: each symbol names the pre-relocation call
  * word the image holds. */
 extern u8 Data_03001ebc[];
@@ -440,14 +411,7 @@ static __inline__ s32 Value0(s32 (*f)())
     return f();
 }
 
-
-
-
-
-
-
 /* The scene step counter at 0x1d8 of the shared scene work record. */
-
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
@@ -476,12 +440,6 @@ static __inline__ void Call1_020009f4(void (*f)(), s32 a0)
     f(a0);
 }
 
-
-
-
-
-
-
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
  * into a pseudo that the compiler then shares with later uses in the block.
@@ -499,12 +457,6 @@ static __inline__ void Call1_02002924(void (*f)(), s32 a0)
 
 #include "TYPES.H"
 
-#define ClearSolShindenBackdrop Func_0200022c
-#define SetStatueLightGroup1 Func_02000238
-#define SetStatueLightGroup2 Func_020002cc
-#define SetStatueLightGroup3 Func_02000360
-#define SetStatueLightGroup4 Func_020003f4
-#define SetSolShindenActorStep Func_020025fc
 /* Declared old-style: this parameter list is not established here. */
 extern void Func_02005068();
 
@@ -543,16 +495,6 @@ void Func_02002e02(s32, s32, s32, s32, s32, s32);
 /* Declared old-style: this parameter list is not established here. */
 void Func_02004fd6();
 
-
-
-
-
-
-
-
-
-
-
 /*
  * Passes the step to one routine with a zero and the wait to another. Both
  * arguments are read before either incoming register is overwritten, so the
@@ -562,11 +504,6 @@ void Func_02004fd6();
 
 #include "TYPES.H"
 
-#define UpdateStatueTrapActor Func_02000c00
-#define UpdateStatueLight1 Func_02000d9c
-#define UpdateStatueLight2 Func_02000ef8
-#define UpdateStatueLight3 Func_0200101c
-#define UpdateStatueLight4 Func_02001140
 typedef struct {
     u8 filler0[8];
     s32 unk8;
@@ -669,9 +606,6 @@ s32 Func_02003bbe(void);
 
 #include "TYPES.H"
 
-#define FieldScene_PrepareStatueTransition Func_02001264
-#define FieldScene_RunClosingSequence Func_02001510
-#define FieldScene_RunFlaggedSequence Func_02001790
 /* Loader-relocated overlay calls: each symbol names the pre-relocation call
  * word the image holds. */
 extern u8 Data_03001ebc[];
@@ -847,15 +781,6 @@ void UpdateStatueLight4(void);
  * into a pseudo that the compiler then shares with later uses in the block.
  * A value-returning call also sets r0 last of its arguments. */
 
-
-
-
-
-
-
-
-
-
 static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
 {
     f(a0, a1, a2, a3, a4, a5);
@@ -865,8 +790,6 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
 
 #include "TYPES.H"
 
-#define StartSolShindenTrapEvent Func_02001380
-#define CheckAllStatueLights Func_020025b0
 
 void Func_02001616();
 void Func_0200163e();

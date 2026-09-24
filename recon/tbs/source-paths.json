@@ -1867,6 +1867,12 @@
     "main:0802592c": {
       "name": "BattleMenu_RunActionSelection"
     },
+    "main:0801d108": {
+      "name": "Menu_OpenWorkspaceOptions"
+    },
+    "main:0801d4cc": {
+      "name": "Menu_RunWorkspaceOptions"
+    },
     "main:0801e858": {
       "name": "UiText_DrawString"
     },

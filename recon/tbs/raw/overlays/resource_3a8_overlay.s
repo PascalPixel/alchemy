@@ -1353,76 +1353,8 @@ AlchemyC_02001ea4:
 	.space 0x34
 AlchemyC_02001ed8:
 	.space 0x3c
-	push	{lr}
-	ldr	r3, [pc, #224]
-	ldr	r3, [r3, #0]
-	cmp	r3, #4
-	bhi.n	.L_02001ff2
-	ldr	r2, [pc, #220]
-	lsls	r3, r3, #2
-	ldr	r3, [r3, r2]
-	mov	pc, r3
-	.2byte 0x0000
-	.4byte 0x02009f3c
-	.4byte 0x02009f58
-	.4byte 0x02009f84
-	.4byte 0x02009fb0
-	.4byte 0x02009fdc
-	.4byte 0xf0032015
-	.4byte 0x2300fe0d
-	.4byte 0x80033064
-	.4byte 0x2015492d
-	.4byte 0xfe19f003
-	.4byte 0x68134a29
-	.4byte 0xe04b3301
-	.4byte 0xf0032015
-	.4byte 0x3064fe0d
-	.4byte 0x5e832200
-	.4byte 0xd0442b00
-	.4byte 0xf0032014
-	.4byte 0x2300fe0d
-	.4byte 0x80033064
-	.4byte 0x20144923
-	.4byte 0xfe19f003
-	.4byte 0x68134a1e
-	.4byte 0xe0353301
-	.4byte 0xf0032014
-	.4byte 0x3064fe0d
-	.4byte 0x5e832200
-	.4byte 0xd02e2b00
-	.4byte 0xf0032014
-	.4byte 0x2300fe0d
-	.4byte 0x80033064
-	.4byte 0x20144917
-	.4byte 0xfe19f003
-	.4byte 0x68134a13
-	.4byte 0xe01f3301
-	.4byte 0xf0032014
-	.4byte 0x3064fe0d
-	.4byte 0x5e832200
-	.4byte 0xd0182b00
-	.4byte 0xf0032015
-	.4byte 0x2300fe0d
-	.4byte 0x80033064
-	.4byte 0x2015490d
-	.4byte 0xfe19f003
-	.4byte 0x68134a08
-	.4byte 0xe0093301
-	.4byte 0xf0032015
-	.4byte 0x3064fe0d
-	.4byte 0x5e832200
-	.4byte 0xd0022b00
-	.4byte 0x23004a02
-	.2byte 0x6013
-.L_02001ff2:
-	pop	{r0}
-	bx	r0
-	.2byte 0x0000
-	.4byte 0x0200d144
-	.4byte 0x02009f28
-	.4byte 0x0200bec0
-	.2byte 0xbfb0
-	.2byte 0x0200
+AlchemyC_02001f14:
+	.space 0xf4
 AlchemyC_02002008:
 	.space 0x6b8
 AlchemyC_020026c0:

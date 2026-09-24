@@ -72746,6 +72746,42 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "karei-machi-dance-alternation",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/KAREI_MACHI/DANCE_ALTERNATION.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3a8",
+      "absolute_symbols": {
+        "Engine_ActorGet": {
+          "address": "0x0200bc1c",
+          "kind": "thumb"
+        },
+        "Engine_ActorEnableActionCallback": {
+          "address": "0x0200bc34",
+          "kind": "thumb"
+        },
+        "KareiMachi_DanceStep": {
+          "address": "0x0200d144",
+          "kind": "data"
+        },
+        "KareiMachi_DanceScriptA": {
+          "address": "0x0200bec0",
+          "kind": "data"
+        },
+        "KareiMachi_DanceScriptB": {
+          "address": "0x0200bfb0",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02001f14",
+          "extent": 244,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

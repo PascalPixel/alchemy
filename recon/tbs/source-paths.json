@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_3a8:02001f14": {
+      "name": "KareiMachi_AlternateDance",
+      "source": "FIELD/KAREI_MACHI/DANCE_ALTERNATION.C"
+    },
     "resource_37b:020016a4": {
       "name": "SoruSekizo_CheckTileTrigger016A4",
       "source": "FIELD/SORU_SEKIZO/TILE_TRIGGER_016A4.C"

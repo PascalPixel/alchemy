@@ -16722,7 +16722,8 @@
       "source": "FIELD/KOROSSEO_KABE/TASK.C"
     },
     "resource_3bb:020010dc": {
-      "name": "FieldScene_ConfigureActorFormation"
+      "name": "Korosseo_RunGreetScene",
+      "source": "FIELD/COMMON/KOROSSEO/GREET_SCENE.C"
     },
     "resource_3bb:020012f0": {
       "name": "FieldScene_RunFirstActorInteraction"
@@ -16931,7 +16932,8 @@
       "source": "FIELD/KOROSSEO_MARUTA/LOG_ROLLING.C"
     },
     "resource_3bc:02001a0c": {
-      "name": "FieldScene_ArrangeFourActors"
+      "name": "Korosseo_RunGreetScene",
+      "source": "FIELD/COMMON/KOROSSEO/GREET_SCENE.C"
     },
     "resource_3bc:02001c20": {
       "name": "FieldScene_RunDualArrivalSequence",

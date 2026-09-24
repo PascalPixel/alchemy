@@ -34728,46 +34728,6 @@
       ]
     },
     {
-      "id": "retained-overlay-3bc-02001a0c",
-      "game": "tbs",
-      "source": "recon/tbs/en/overlays/resource_3bc_c_02001a0c.c",
-      "compiler_route": "canonical-gcc296",
-      "overlay": "resource_3bc",
-      "absolute_symbols": {
-        "Func_0200663a": {
-          "address": "0x0200cb60",
-          "kind": "thumb"
-        },
-        "Func_0200663a_a": {
-          "address": "0x0200ca50",
-          "kind": "thumb"
-        },
-        "Func_02006590": {
-          "address": "0x0200cab0",
-          "kind": "thumb"
-        },
-        "Func_02006590_a": {
-          "address": "0x0200ca88",
-          "kind": "thumb"
-        },
-        "Func_020065a0": {
-          "address": "0x0200ca88",
-          "kind": "thumb"
-        },
-        "Func_020065a0_a": {
-          "address": "0x0200ca70",
-          "kind": "thumb"
-        }
-      },
-      "owners": [
-        {
-          "address": "0x02001a0c",
-          "extent": 532,
-          "state": "retained-assembly"
-        }
-      ]
-    },
-    {
       "id": "retained-overlay-3bc-020040d0",
       "game": "tbs",
       "source": "recon/tbs/en/overlays/resource_3bc_c_020040d0.c",
@@ -70626,6 +70586,178 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "korosseo-greet-scene",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/KOROSSEO/GREET_SCENE.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3bb",
+      "absolute_symbols": {
+        "Engine_ActorGet": {
+          "address": "0x0200bf50",
+          "kind": "thumb"
+        },
+        "Engine_EventBegin": {
+          "address": "0x0200bf38",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpeed": {
+          "address": "0x0200bf60",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetPosition": {
+          "address": "0x0200bf90",
+          "kind": "thumb"
+        },
+        "Engine_CameraFollowActor": {
+          "address": "0x0200c010",
+          "kind": "thumb"
+        },
+        "Engine_EventOpenScreen": {
+          "address": "0x0200c060",
+          "kind": "thumb"
+        },
+        "Engine_EventWaitForScreen": {
+          "address": "0x0200c070",
+          "kind": "thumb"
+        },
+        "Engine_EventSetMessage": {
+          "address": "0x0200bfd0",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetAnimationAndWait": {
+          "address": "0x0200bfa0",
+          "kind": "thumb"
+        },
+        "Engine_EventShowMessage": {
+          "address": "0x0200bfe0",
+          "kind": "thumb"
+        },
+        "Engine_ActorRunRepeatedMotion": {
+          "address": "0x0200bfa8",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetAnimation": {
+          "address": "0x0200bf98",
+          "kind": "thumb"
+        },
+        "Engine_EventWait": {
+          "address": "0x0200bf30",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetDestination": {
+          "address": "0x0200bf70",
+          "kind": "thumb"
+        },
+        "Engine_ActorWalkToAndWait": {
+          "address": "0x0200bf80",
+          "kind": "thumb"
+        },
+        "Engine_ActorFaceDirection": {
+          "address": "0x0200bff0",
+          "kind": "thumb"
+        },
+        "Engine_EventEnd": {
+          "address": "0x0200bf40",
+          "kind": "thumb"
+        },
+        "Korosseo_GreetMessage": {
+          "address": "0x000020e9",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x020010dc",
+          "extent": 532,
+          "state": "exact-c"
+        }
+      ],
+      "instances": {
+        "resource_3bc": {
+          "owners": {
+            "Korosseo_RunGreetScene": {
+              "address": "0x02001a0c",
+              "extent": 532
+            }
+          },
+          "absolute_symbols": {
+            "Engine_ActorGet": {
+              "address": "0x0200ca18",
+              "kind": "thumb"
+            },
+            "Engine_EventBegin": {
+              "address": "0x0200ca00",
+              "kind": "thumb"
+            },
+            "Engine_ActorSetSpeed": {
+              "address": "0x0200ca28",
+              "kind": "thumb"
+            },
+            "Engine_ActorSetPosition": {
+              "address": "0x0200ca68",
+              "kind": "thumb"
+            },
+            "Engine_CameraFollowActor": {
+              "address": "0x0200caf0",
+              "kind": "thumb"
+            },
+            "Engine_EventOpenScreen": {
+              "address": "0x0200cb50",
+              "kind": "thumb"
+            },
+            "Engine_EventWaitForScreen": {
+              "address": "0x0200cb60",
+              "kind": "thumb"
+            },
+            "Engine_EventSetMessage": {
+              "address": "0x0200cab0",
+              "kind": "thumb"
+            },
+            "Engine_ActorSetAnimationAndWait": {
+              "address": "0x0200ca78",
+              "kind": "thumb"
+            },
+            "Engine_EventShowMessage": {
+              "address": "0x0200cac0",
+              "kind": "thumb"
+            },
+            "Engine_ActorRunRepeatedMotion": {
+              "address": "0x0200ca88",
+              "kind": "thumb"
+            },
+            "Engine_ActorSetAnimation": {
+              "address": "0x0200ca70",
+              "kind": "thumb"
+            },
+            "Engine_EventWait": {
+              "address": "0x0200c9f8",
+              "kind": "thumb"
+            },
+            "Engine_ActorSetDestination": {
+              "address": "0x0200ca40",
+              "kind": "thumb"
+            },
+            "Engine_ActorWalkToAndWait": {
+              "address": "0x0200ca50",
+              "kind": "thumb"
+            },
+            "Engine_ActorFaceDirection": {
+              "address": "0x0200cad0",
+              "kind": "thumb"
+            },
+            "Engine_EventEnd": {
+              "address": "0x0200ca08",
+              "kind": "thumb"
+            },
+            "Korosseo_GreetMessage": {
+              "address": "0x000020ed",
+              "kind": "data"
+            }
+          }
+        }
+      }
     }
   ]
 }

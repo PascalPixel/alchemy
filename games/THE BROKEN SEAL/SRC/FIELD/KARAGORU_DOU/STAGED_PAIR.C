@@ -60,7 +60,7 @@ extern u8 Data_02009bcc[];
 extern u8 Data_02009c80[];
 extern u8 Data_02009ce0[];
 extern s16 Data_02000240_t[][1];
-extern u8 Data_000023cc[];
+extern u8 LinkedMessage_DoYouWishCrossInto[];
 
 s32 *Func_02002698();
 
@@ -300,7 +300,7 @@ void FieldScene_RunScene3be_02000fd0(void)
     s32 record;
     s32 base5_23cc;
 
-    base5_23cc = (s32)Data_000023cc;
+    base5_23cc = (s32)LinkedMessage_DoYouWishCrossInto;
     Event_SetMessage(base5_23cc);
     Event_OpenMessage(8, 0);
     if (Event_ChooseYesNo(0, 0) == 0) {

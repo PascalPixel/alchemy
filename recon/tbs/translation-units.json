@@ -79892,6 +79892,46 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "scene-394-02000a90",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/KORIMA_MAGARI/PLACE_OBJECTS.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_394",
+      "absolute_symbols": {
+        "Engine_ObjectCreate": {
+          "address": "0x0200903c",
+          "kind": "thumb"
+        },
+        "Engine_ObjectSetAnimation": {
+          "address": "0x02009034",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpriteFlags": {
+          "address": "0x0200907c",
+          "kind": "thumb"
+        },
+        "Main_080091a8": {
+          "address": "0x02009064",
+          "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02000a90",
+          "extent": 172,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

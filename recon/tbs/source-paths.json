@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_394:02000a90": {
+      "name": "KorimaMagari_PlaceObjects",
+      "source": "FIELD/KORIMA_MAGARI/PLACE_OBJECTS.C"
+    },
     "resource_370:020002f4": {
       "name": "Clear_NameEntryCharacter",
       "source": "MENU/CLEAR/NAME_CHARACTER.C"

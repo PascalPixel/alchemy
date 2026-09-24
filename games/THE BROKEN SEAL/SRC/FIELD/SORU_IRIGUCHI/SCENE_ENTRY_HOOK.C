@@ -1,6 +1,5 @@
 #include "TYPES.H"
-
-#define FieldScene_RunSceneEntryHook Func_02000a24
+#include "FIELD_EVENT.H"
 
 extern s16 Data_02000240[];
 extern u8 Data_03001ebc[];
@@ -15,8 +14,6 @@ void Func_02002650();
 void Func_02002654();
 void Func_0200266c();
 void Func_0200268e();
-s32 Func_020026c0_a(s32);
-void Func_020026c0_b(s32, s32);
 void Func_020026cc(s32, s32);
 void Func_020026d8();
 s32 Func_020026e0();
@@ -42,7 +39,6 @@ s32 Func_02002766();
 s32 Func_02002764(s32);
 s32 Func_02002772();
 s32 Func_0200277e();
-s32 Func_0200277e_a(s32);
 s32 Func_0200278a();
 s32 Func_02002796(s32);
 s32 Func_020027a6(s32);
@@ -59,13 +55,9 @@ s32 Func_02002818();
 s32 Func_02002830();
 s32 Func_0200283c();
 s32 Func_02002800();
-void Func_02002800_a();
 s32 Func_02002808(s32);
 void Func_0200280a();
-void Func_0200281c();
-void Func_0200281c_a(void);
 s32 Func_02002824();
-s32 Func_02002824_a(s32);
 void Func_02002826();
 void Func_02002838();
 s32 Func_0200244a();
@@ -129,14 +121,14 @@ void FieldScene_RunSceneEntryHook(void)
     case 8:
         Data_02000240[288] = (s32)&Value_00000010;
         Data_02000240[289] = 8;
-        if (Value1(Func_020026c0_a, 0x802) == 0)
+        if (GameFlag_IsSet(0x802) == 0)
             Func_0200185a();
         break;
 
     case 11:
     case 12:
     case 13:
-        Func_020026c0_b(Func_02002712(9), 0);
+        Actor_SetSpriteFlags(Func_02002712(9), 0);
         Func_020026cc(Func_0200271e(10), 0);
         Func_020026d8(Func_0200272a(11), 0);
         Func_020026e4(Func_02002736(12), 0);
@@ -151,8 +143,8 @@ void FieldScene_RunSceneEntryHook(void)
             Func_02001b5e();
         if (Value1(Func_02002764, 0x303) != 0)
             Call3(Func_020027e6, 9, 0x5d80000, 0x880000);
-        else if (Value1(Func_0200277e_a, 0x302) != 0)
-            Call3(Func_02002800_a, 9, 0x5f80000, 0x880000);
+        else if (GameFlag_IsSet(0x302) != 0)
+            Actor_SetPosition(9, 0x5f80000, 0x880000);
         if (Value1(Func_02002796, 0x301) != 0)
             Call3(Func_02002828, 10, 0x7180000, 0x880000);
         else if (Value1(Func_020027a6, 0x300) != 0)
@@ -172,11 +164,11 @@ void FieldScene_RunSceneEntryHook(void)
             Func_020022a0();
         Func_0200244a(1);
         Func_02002826(0x234);
-        if (Value1(Func_02002824_a, 0x821) != 0) {
+        if (GameFlag_IsSet(0x821) != 0) {
             Call6(Func_0200280a, 0, 71, 100, 71, 1, 1);
-            Call6(Func_0200281c, 122, 20, 120, 30, 1, 2);
+            Map_CopyCellsTo(122, 20, 120, 30, 1, 2);
             Call6(Func_02002838, 122, 20, 1, 2, 120, 30);
-            Func_0200281c_a();
+            Map_Redraw();
         }
         break;
 

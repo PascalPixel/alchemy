@@ -79984,6 +79984,66 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "scene-399-020015b4",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/IMIRU_MURA/SWAY_SPARKS.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_399",
+      "absolute_symbols": {
+        "Engine_MathSin": {
+          "address": "0x0200a190",
+          "kind": "thumb"
+        },
+        "Engine_MathModulo": {
+          "address": "0x0200a168",
+          "kind": "thumb"
+        },
+        "Engine_RandomNext": {
+          "address": "0x0200a180",
+          "kind": "thumb"
+        },
+        "Main_08000128": {
+          "address": "0x0200a198",
+          "kind": "thumb"
+        },
+        "Engine_ObjectCreate": {
+          "address": "0x0200a1b8",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpriteFlags": {
+          "address": "0x0200a208",
+          "kind": "thumb"
+        },
+        "Engine_ObjectSetAnimation": {
+          "address": "0x0200a1a0",
+          "kind": "thumb"
+        },
+        "Engine_ObjectSetPalette": {
+          "address": "0x0200a2f0",
+          "kind": "thumb"
+        },
+        "Engine_ObjectSetScript": {
+          "address": "0x0200a1b0",
+          "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x020015b4",
+          "extent": 248,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

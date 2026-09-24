@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_399:020015b4": {
+      "name": "ImiruMura_SwayAndSpark",
+      "source": "FIELD/IMIRU_MURA/SWAY_SPARKS.C"
+    },
     "resource_370:020011e4": {
       "name": "Clear_EncodePassword",
       "source": "MENU/CLEAR/ENCODE_PASSWORD.C"

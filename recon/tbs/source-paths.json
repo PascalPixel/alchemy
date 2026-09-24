@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_377:020003f8": {
+      "name": "HaidiaBabi_RestoreEntryState",
+      "source": "FIELD/COMMON/HAIDIA_BABI/ENTRY_STATE.C"
+    },
     "resource_374:020015b4": {
       "name": "HaidiaIe_RunScene015B4",
       "source": "FIELD/HAIDIA_IE/FAMILY_SCENE_015B4.C"

@@ -796,6 +796,9 @@
       "name": "Tilemap_DecodeStagedBuffer",
       "source": "GRAPHICS/TILE/DECODE_STAGED_BUFFER.C"
     },
+    "main:0800fb38": {
+      "name": "Func_0800fb38"
+    },
     "main:0801edec": {
       "name": "UiWindow_FillFromScene",
       "source": "GRAPHICS/WINDOW/FILL_FROM_SCENE.C"

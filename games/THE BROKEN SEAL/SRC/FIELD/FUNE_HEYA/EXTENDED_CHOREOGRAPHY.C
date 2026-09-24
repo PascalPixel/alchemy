@@ -341,7 +341,6 @@ u8 *Func_0200bd42();
 s32 Func_0200c01e();
 void Func_0200c0f0();
 u8 *Func_0200beea_a();
-void Func_02005c48(void);
 void Func_0200ade4();
 void *Func_0200ad8a();
 void Func_020082ba();
@@ -426,6 +425,8 @@ u8 *Func_0200b52c();
 void FieldScene_CallPairWith10(s32 a, u16 b);
 
 void SceneState_ScanTwoArraysAndCrossNotify(u8 *a, u8 *b);
+
+void Scene_UpdateCueTimer(s32 a0, s32 a1, s32 a2);
 
 static __inline__ void Call1(void (*f)(), s32 a0)
 {
@@ -3523,7 +3524,7 @@ void FieldScene_RunExtendedFormationPresentation(void)
     Func_0200c0f0(3, action);
     GameFlag_Set(0x302);
     *(s32 *)0x0200ff84 = 0;
-    Value2(Func_0200c01e, (s32)Func_02005c48, 0xc80);
+    Value2(Func_0200c01e, (s32)Scene_UpdateCueTimer, 0xc80);
     FieldScene_RunSceneStep(23, 0, 0);
     Actor_Destroy(27);
     GameFlag_Clear(0x12f);

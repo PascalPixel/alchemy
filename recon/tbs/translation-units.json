@@ -24191,10 +24191,6 @@
           "address": "0x02009190",
           "kind": "thumb"
         },
-        "Func_02005c48": {
-          "address": "0x0200dc48",
-          "kind": "thumb"
-        },
         "Func_020062b6": {
           "address": "0x0200cfa8",
           "kind": "thumb"
@@ -25058,6 +25054,10 @@
         "gGameState": {
           "address": "0x02000240",
           "kind": "data"
+        },
+        "Scene_UpdateCueTimer": {
+          "address": "0x0200dc48",
+          "kind": "thumb"
         }
       },
       "owners": [

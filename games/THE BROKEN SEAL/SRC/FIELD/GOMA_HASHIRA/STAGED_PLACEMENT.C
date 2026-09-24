@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "FIELD_SCENE.H"
 
 #include "STAGED_ACTOR.H"
 
@@ -477,7 +478,7 @@ void FieldScene_RunScene389_0200115c(void)
     Event_Begin();
     Actor_ShowEmote(13, 0x100, 30);
     Actor_RunRepeatedMotion(13, 2);
-    Actor_FaceDirection(0, 0xa000, 0);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xa000, 0);
     Event_SetMessage(MSG_GOT_WOW_THATS_PRETTY_IMPRESSIVE);
     Event_ShowMessage(13, 0);
     Actor_SetAnimationAndWait(13, 3);

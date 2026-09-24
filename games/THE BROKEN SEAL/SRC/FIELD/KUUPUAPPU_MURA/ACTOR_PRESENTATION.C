@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "FIELD_SCENE.H"
 
 #define NULL ((void *)0)
 #define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
@@ -257,7 +258,7 @@ s32 SceneActor_UpdateProximityToLeader(u8 *self)
         return 0;
     }
 
-    player = Actor_Get(0);
+    player = Actor_Get(ACTOR_PARTY_LEADER);
 
     /*
      * Widen the range when the scene counter at workspace + 376 is already
@@ -285,7 +286,7 @@ s32 ActorPresentation_UpdateEntityFromLeader(u8 *entity)
     if (*(s32 *)(entity + 56) == (s32)0x80000000)
         return 0;
 
-    leader = Actor_Get(0);
+    leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (*(s16 *)(workspace + 376) != 0 || base[0x0ea4] != 0) {
         selector = 26;
         flag = 1;
@@ -396,27 +397,27 @@ void FieldScene_RunScene382_020004a0(void)
         return;
     }
     Event_Begin();
-    record = Value1(Engine_ActorGet, 0);
+    record = Value1(Engine_ActorGet, ACTOR_PARTY_LEADER);
     if (record != 0) {
-        Actor_SetPosition(2, *(s32 *)(record + 8), *(s32 *)(record + 16));
+        Actor_SetPosition(ACTOR_IVAN, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
-    Actor_SetSpeed(2, 0xcccc, 0x6666);
+    Actor_SetSpeed(ACTOR_IVAN, 0xcccc, 0x6666);
     if (p5->touched_trigger == 20) {
-        Actor_WalkToAndWait(2, 0x190, 0x1c0);
+        Actor_WalkToAndWait(ACTOR_IVAN, 0x190, 0x1c0);
     } else {
         Camera_SetSpeed(0xcccc, 0x1999);
         Camera_MoveTo(0xe00000, -1, 0xa20000, 1);
-        Actor_WalkToAndWait(2, 224, 162);
+        Actor_WalkToAndWait(ACTOR_IVAN, 224, 162);
         Camera_WaitForMove();
     }
-    Actor_FaceEachOther(0, 2, 0);
+    Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_IVAN, 0);
     Event_Wait(20);
     Event_SetMessage(MSG_LEAVING_IM_STILL_WORRIED_ABOUT);
     Event_ShowMessageAndWait(0x9002, 0, 20);
-    Actor_SetAnimationAndWait(0, 3);
+    Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
     if (Value0(OverlayObject_GetObject2Byte280)!= 0) {
         Event_SetMessage(MSG_WAIT_DONT_WANT_TAKE_YOUR);
-        Event_ShowMessage(2, 0);
+        Event_ShowMessage(ACTOR_IVAN, 0);
         OverlayObject_RunObject2WhenFlagged();
         Task_Wait(20);
     }
@@ -807,7 +808,7 @@ void SceneState_Apply200ThenPlace23_23(void)
 void SceneActor_PlaceActor0AndSetSceneDelay(s32 x, s32 y, s32 continuation)
 {
     SetScale(0, 0x8000, 0x4000);
-    Actor_WalkTo(0, x, y);
+    Actor_WalkTo(ACTOR_PARTY_LEADER, x, y);
     gEventWork->transition_frames = 16;
     Event_RequestExit(continuation);
 }
@@ -825,7 +826,7 @@ void FieldScene_SetupScene7At216_288(void)
 
 void ActorPresentation_SetupActorZeroForSceneEightAt376_224(void)
 {
-    struct SceneActor_02000fb4 *actor = Actor_Get(0);
+    struct SceneActor_02000fb4 *actor = Actor_Get(ACTOR_PARTY_LEADER);
     struct Presentation *presentation = actor->presentation;
     u8 flags;
 
@@ -847,7 +848,7 @@ void ActorPresentation_SetupActorZeroForSceneEightAt376_224(void)
 void ActorPresentation_SetupActorZeroForSceneNineAt296_176(void)
 {
 
-    struct SceneActor_02001010 *actor = Actor_Get(0);
+    struct SceneActor_02001010 *actor = Actor_Get(ACTOR_PARTY_LEADER);
     struct Presentation *presentation = actor->presentation;
     u8 flags;
 
@@ -872,7 +873,7 @@ void FieldScene_SetupScene10At120_144(void)
 void ActorPresentation_SetupActorZeroForSceneTwelveAt72_160(void)
 {
 
-    struct SceneActor_0200113c *actor = Actor_Get(0);
+    struct SceneActor_0200113c *actor = Actor_Get(ACTOR_PARTY_LEADER);
     struct Presentation *presentation = actor->presentation;
     u8 flags;
 

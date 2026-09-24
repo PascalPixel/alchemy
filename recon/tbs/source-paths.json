@@ -11245,7 +11245,7 @@
       "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_375:02000170": {
-      "name": "FieldScene_RunActorPositionSequence",
+      "name": "Scene_PlanSanctumVisit",
       "source": "FIELD/HAIDIA_SUKURETA/PROGRESS_ACTOR.C"
     },
     "resource_375:02000ba8": {
@@ -11299,11 +11299,11 @@
       "name": "FieldScene_RunProgressDependentActorSequence"
     },
     "resource_375:02000964": {
-      "name": "FieldScene_RunScene375_02000964",
+      "name": "Scene_LeaveForMtAleph",
       "source": "FIELD/HAIDIA_SUKURETA/PROGRESS_ACTOR.C"
     },
     "resource_375:02000be0": {
-      "name": "FieldScene_RunGatedActorSequence",
+      "name": "Scene_OverhearSaturosAndMenardi",
       "source": "FIELD/HAIDIA_SUKURETA/PROGRESS_ACTOR.C"
     },
     "resource_377:02000088": {

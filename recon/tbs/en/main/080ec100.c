@@ -1,9 +1,14 @@
-/* Draft, not exact (2026-09-24): candidate=3456 reference=3452, binary
-   similarity 83%. Frame, spill slots and the high registers (i r8, frame sl,
-   t r9, work fp) match, and each spark loop has its own pointer. Remaining:
-   the flare loop keeps its size in r0 (a separate variable there breaks the
-   prologue's low registers), the draw blocks keep size in r4, and a few
-   low-register choices in phase two. */
+/* Draft, not exact (2026-09-24): candidate=3452 reference=3452
+   differing_halfwords=241, binary similarity 96%. Everything through the
+   phase-one draws matches except two scheduling swaps (the 192 block loads
+   0x4e20 before the size stores; the strip loop loads dst after x). Phase
+   two differs in reload temporaries (r0/r1 against r6/r7), the burst loop
+   builds 112 << 16 from a register holding 112 and loads its masks into the
+   result register (0x3ff & r, 0x7fff & a), which suggests they were
+   variables with constant equivalents; declaring them moves the frame. What
+   closed the rest: loop-top locals that loop.c hoists (the cells pointer and
+   radius in the >221 loop, the constant 3 in the particle loop), centre
+   temporaries for the flare draw, and one pointer variable per spark loop. */
 #include "TYPES.H"
 #include "BATTLE_EFFECT_WORK.H"
 #include "BATTLE_EFX.H"

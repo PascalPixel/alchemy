@@ -7,10 +7,9 @@ struct BattleMotionRecord {
     s32 scale_18;
 };
 
-void Func_080b7ed8(void);
-s32 Func_08005268(const s32 *, s32 *);
+void Camera_ApplyTransformByFlag(void);
+s32 Render_ProjectPoint(const s32 *, s32 *);
 
-#define BattleMotion_ProjectPosition Func_080b7f20
 
 s32 BattleMotion_ProjectPosition(s32 id, s32 *projected)
 {
@@ -19,11 +18,11 @@ s32 BattleMotion_ProjectPosition(s32 id, s32 *projected)
     s32 position[3];
     s32 scaled;
 
-    Func_080b7ed8();
+    Camera_ApplyTransformByFlag();
     position[0] = object->x;
     position[1] = object->y;
     position[2] = object->z;
-    scaled = Func_08005268(position, projected);
+    scaled = Render_ProjectPoint(position, projected);
     (void)Iwram_MulQ16(scaled, record->scale_18);
     return 0;
 }

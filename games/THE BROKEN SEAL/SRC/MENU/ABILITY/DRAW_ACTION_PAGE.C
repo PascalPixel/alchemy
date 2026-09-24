@@ -7,7 +7,7 @@ void UiWindow_DrawDividerLineFar(s32 window, s32 x, s32 width, s32 height, s32 s
 void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 void Menu_SetPageIcons(s32 page_size, s32 first_entry, s32 window, s32 x, s32 y);
 void Menu_DrawPageIndicator(s32 window, s32 count, s32 page_size, s32 page, s32 style);
-s32 UiPalette_SetColor(s32 color);
+s32 UiWork_SetParamNibbleFar(s32 color);
 void UiText_DrawNumberAtOffsetFar(s32 value, s32 digits, s32 layer, s32 x, s32 y);
 struct BattleUnit *Owner_GetStateFar(s32 owner);
 struct BattleAction *BattleAction_Get(s32 action);
@@ -52,18 +52,18 @@ s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused, const struct MenuResult 
             ability = BattleAction_Get(0x3fff & *(const u16 *)(cursor + (s32)menu));
 
             if (ability->pp_cost > owner->pp) {
-                UiPalette_SetColor(2);
+                UiWork_SetParamNibbleFar(2);
             } else if (PsynergyMenu_IsActionRestricted(0x3fff & *(const u16 *)(cursor + (s32)menu)) != 0) {
-                UiPalette_SetColor(4);
+                UiWork_SetParamNibbleFar(4);
             } else {
-                UiPalette_SetColor(15);
+                UiWork_SetParamNibbleFar(15);
             }
 
             UiText_DrawCharacterAtOffsetFar(
                 (0x3fff & *(const u16 *)(cursor + (s32)menu)) + (s32)&MsgAbilityName,
                 window, 16, row * 16 + 8);
             UiText_DrawNumberAtOffsetFar(ability->pp_cost, 2, window, 104, row * 16 + 8);
-            UiPalette_SetColor(15);
+            UiWork_SetParamNibbleFar(15);
 
             row++;
             cursor += 2;

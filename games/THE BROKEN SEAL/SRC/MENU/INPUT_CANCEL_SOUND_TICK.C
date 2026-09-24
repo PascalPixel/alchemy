@@ -41,23 +41,23 @@ void Menu_EnsureCancelSound(void)
 
 /* ui/render/palette_set_color15.c */
 /* ui/render/set_palette_color_15.c */
-s32 UiPalette_SetColor(s32);
+s32 UiWork_SetParamNibbleFar(s32);
 
 void UiPalette_SetColor15(void)
 {
-    UiPalette_SetColor(15);
+    UiWork_SetParamNibbleFar(15);
 }
 
 /* ui/render/set_palette_color_2.c */
 
 void UiPalette_SetColor2(void)
 {
-    UiPalette_SetColor(2);
+    UiWork_SetParamNibbleFar(2);
 }
 
 /* ui/render/set_palette_color_4.c */
 
 void UiPalette_SetColor4(void)
 {
-    UiPalette_SetColor(4);
+    UiWork_SetParamNibbleFar(4);
 }

@@ -140,6 +140,26 @@
       "name": "SceneData_SelectFlaggedTable",
       "source": "FIELD/HAIDIA_HEYA/TIMED_EVENTS.C"
     },
+    "main:08002e00": {
+      "name": "System_Initialize",
+      "source": "SYSTEM/INITIALIZE.C"
+    },
+    "main:080d67dc": {
+      "name": "BattleEffect_SetupBlendedDisplay",
+      "source": "BATTLE/EFFECT/SETUP_BLENDED_DISPLAY.C"
+    },
+    "main:08011590": {
+      "name": "MapAnimation_Start",
+      "source": "FIELD/COMMON/MAP/ANIMATION_START.C"
+    },
+    "main:0801161c": {
+      "name": "Map_ShowBg1FromBuffer",
+      "source": "FIELD/COMMON/MAP/SHOW_BG1_FROM_BUFFER.C"
+    },
+    "main:080a22f4": {
+      "name": "Palette_CopyObjectBankToBackground14",
+      "source": "GRAPHICS/PALETTE/COPY_OBJECT_BANK_TO_BACKGROUND14.C"
+    },
     "main:080c91dc": {
       "name": "BattleEffect_RunFallingParticles"
     },
@@ -686,12 +706,20 @@
     "main:080a8904": {
       "name": "Runtime_RunBusyWaitDelay"
     },
+    "main:080a8914": {
+      "name": "ItemMenu_DrawOwnerStatus",
+      "source": "MENU/ITEM/DRAW_OWNER_STATUS.C"
+    },
     "main:080b5a0c": {
       "name": "BattleParty_CollectUnitList",
       "source": "BATTLE/PARTY/COLLECT_UNIT_LIST.C"
     },
     "main:080b5ad4": {
-      "name": "BattlePresentation_InitializeTilePattern"
+      "name": "BattlePresentation_InitializeTilePattern",
+      "source": "BATTLE/PRESENTATION/INITIALIZE_TILE_PATTERN.C"
+    },
+    "main:080b5b08": {
+      "name": "BattlePresentation_ClearBg0VerticalOffset"
     },
     "main:080b5c08": {
       "name": "BattlePlacement_UpdateEntries",
@@ -702,16 +730,20 @@
       "source": "BATTLE/PRESENTATION/SPAWN_ACTOR_OBJECT.C"
     },
     "main:080b7f20": {
-      "name": "BattleMotion_ProjectPosition"
+      "name": "BattleMotion_ProjectPosition",
+      "source": "BATTLE/MOTION/PROJECT_POSITION.C"
     },
     "main:080b81c8": {
-      "name": "BattleMotion_InitializeObject"
+      "name": "BattleMotion_InitializeObject",
+      "source": "BATTLE/MOTION/INITIALIZE_OBJECT.C"
     },
     "main:080b845c": {
-      "name": "BattleMotion_ProjectScaledPosition"
+      "name": "BattleMotion_ProjectScaledPosition",
+      "source": "BATTLE/MOTION/PROJECT_SCALED_POSITION.C"
     },
     "main:080b84c0": {
-      "name": "BattleMotion_ProjectConditionalPosition"
+      "name": "BattleMotion_ProjectConditionalPosition",
+      "source": "BATTLE/MOTION/PROJECT_CONDITIONAL_POSITION.C"
     },
     "main:080c0184": {
       "name": "BattlePresentation_UploadTileVariant",
@@ -9344,7 +9376,8 @@
       "name": "Fragment_0808b7b8"
     },
     "main:08097540": {
-      "name": "RunSceneTransitionEffect"
+      "name": "RunSceneTransitionEffect",
+      "source": "BATTLE/EFFECT/RUN_SCENE_TRANSITION.C"
     },
     "main:080983a0": {
       "name": "RunBattleEffect08"
@@ -19013,7 +19046,8 @@
       "name": "ObjectSystem_Initialize"
     },
     "main:0800bb20": {
-      "name": "ObjectSystem_Configure"
+      "name": "ObjectSystem_Configure",
+      "source": "FIELD/COMMON/OBJECT/CONFIGURE_SYSTEM.C"
     },
     "main:0800cacc": {
       "name": "Object_UpdateAllThumb"
@@ -19038,7 +19072,8 @@
       "source": "GRAPHICS/PALETTE/GLOW_UPDATE.C"
     },
     "main:0801cc50": {
-      "name": "Color_ScaleComponents"
+      "name": "Color_ScaleComponents",
+      "source": "GRAPHICS/PALETTE/SCALE_COMPONENTS.C"
     },
     "main:0801a5a4": {
       "name": "UiGlyph_DecodeWithHeapRoutines"
@@ -19113,7 +19148,8 @@
       "name": "Unnamed_080a1fd4"
     },
     "main:080a2144": {
-      "name": "Unnamed_080a2144"
+      "name": "Palette_LightenBankHighlight",
+      "source": "GRAPHICS/PALETTE/LIGHTEN_BANK_HIGHLIGHT.C"
     },
     "main:080a40ac": {
       "name": "Unnamed_080a40ac"
@@ -19137,7 +19173,8 @@
       "name": "Unnamed_080ae2f4"
     },
     "main:080b0840": {
-      "name": "Unnamed_080b0840"
+      "name": "Shop_RestoreSceneTiles",
+      "source": "MENU/SHOP/RESTORE_SCENE_TILES.C"
     },
     "main:080b24e4": {
       "name": "Unnamed_080b24e4"
@@ -19152,7 +19189,8 @@
       "name": "Unnamed_080ba918"
     },
     "main:080bd7a4": {
-      "name": "Unnamed_080bd7a4"
+      "name": "Dma_StopAllThenRunHook",
+      "source": "SYSTEM/DMA_STOP_ALL_THEN_RUN_HOOK.C"
     },
     "main:080c0700": {
       "name": "Unnamed_080c0700"
@@ -19600,7 +19638,6 @@
     "main:0800307c": "Runtime_SetIrqHandler",
     "main:08002df0": "Runtime_BumpFree",
     "main:08078bf0": "Owner_RefreshClassActions",
-    "main:080a22f4": "Palette_CopyMenuBgToObjPalette",
     "main:080bac6c": "BattleActor_RemoveFromLists",
     "main:08009008": "Object_ApplyProjectedPlacementFar",
     "main:080150d8": "SideObject_CreateFar",
@@ -19665,7 +19702,6 @@
     "main:0808ae74": "Encounter_SelectEnemyGroup",
     "main:080c9048": "BattlePres_ConfigureEffectDisplay",
     "main:08004c6c": "SceneTransform_ApplyRoll",
-    "main:080d67dc": "BattleFx_RestoreBackgroundDisplay",
     "main:080e727c": "Palette_BrightenBgEntries",
     "main:08015358": "Djinn_ShowJoinedMessageFar",
     "main:08096140": "BattleFx_RunVenusDjinnCapture",
@@ -19761,13 +19797,14 @@
     "main:08029094": "Menu_HandleSelectionRowInput",
     "main:0801d9d4": "Menu_CreateWorkspaceWindows",
     "main:080b0030": "Shop_SetCursorFar",
-    "main:0801161c": "Map_UploadDefaultCells",
     "main:08015390": "Menu_RunConfirmSelectionFar",
     "main:080090e0": "ObjectDispatch_InitFromTable4WithArgumentFar",
     "main:08009128": "Map_ApplyWorkOriginAndSpanFar",
     "main:0808fefc": "Event_ApplyPairEffect",
     "main:080901c0": "Event_RevertPairEffect",
     "main:080b50d0": "Camera_ConfigureSceneFar",
-    "main:08015030": "UiText_CopyMessageStringFar"
+    "main:08015030": "UiText_CopyMessageStringFar",
+    "main:080150b8": "UiWork_SetParamNibbleFar",
+    "main:080f9008": "Audio_InitializeRuntimeDefaultsFar"
   }
 }

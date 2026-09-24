@@ -56,7 +56,7 @@ void SceneTransform_ApplyRoll(s32);
 void SceneTransform_ApplyYaw(s32);
 void EffectPosition_ApplyBaseAndYOffset(const void *, void *);
 void Runtime_ReleaseHeapBlock(s32);
-void BattleFx_RestoreBackgroundDisplay(void);
+void BattleEffect_SetupBlendedDisplay(void);
 void Palette_BrightenBgEntries(s32, s32, s32);
 void ResourceObject_ReleaseFar(s32);
 void BattleActor_CommitPlacementFar(void);
@@ -626,7 +626,7 @@ loop_84:
     gBgScroll.unk04 = (u16) sp38;
     gBgScroll.unk06 = (u16) sp34;
     Runtime_ReleaseHeapBlock(0x2E);
-    BattleFx_RestoreBackgroundDisplay();
+    BattleEffect_SetupBlendedDisplay();
     (*(s16 *)((u8 *)((void *)0x04000020) + (0))) = 0x80;
     *(s32 *)0x04000028 = 0;
     (*(s32 *)((u8 *)((void *)0x04000020) + (0xC))) = 0xFFFFF000;

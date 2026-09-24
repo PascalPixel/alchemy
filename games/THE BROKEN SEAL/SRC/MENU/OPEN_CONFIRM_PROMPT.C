@@ -16,7 +16,7 @@ void UiWindow_DrawFrameFar(s32 x, s32 y, s32 width, s32 height);
 void UiWindow_InitializeWork(s32 unused);
 s32 Party_ListActiveOwnersFar(const u16 *ids);
 void ItemMenu_Init(s32, s32, s32, s32);
-void Unnamed_080a2144(s32 index);
+void Palette_LightenBankHighlight(s32 index);
 void Link_DrawShiftedTilePairFar(s32 addr);
 void Menu_CancelSoundReset(void);
 s32 Menu_ResolveSelectedAction(s32 *, s32 *, s32 *);
@@ -50,7 +50,7 @@ s32 Menu_OpenConfirmPrompt(void)
     FIELD(state, u8, 0x219) = (u8)Party_ListActiveOwnersFar((const u16 *)((u8 *)state + 0x208));
     ItemMenu_Init(0, 3, 0, 7);
     FIELD(state, s32, 0x10c) = UiWindow_CreateFar(13, 0, 17, 3, 2);
-    Unnamed_080a2144(14);
+    Palette_LightenBankHighlight(14);
     Link_DrawShiftedTilePairFar(0x06002500);
     Menu_CancelSoundReset();
     result = Menu_ResolveSelectedAction(

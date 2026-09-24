@@ -1,6 +1,3 @@
-/* NONMATCHING: 960 of 956 bytes, 118 halfword edits (2026-09-24). Hand-written from the
- * resolved jump-table disassembly as a single-overlay unit binding Engine_* at
- * their import veneers. Remaining: the u8 zero stored to actor 25 is a QImode pool constant that places a mid-function pool; the reference loads it after Engine_ActorGet(25) into r5 and dumps the pool after the actor 22 block, the candidate dumps it right after the load (118 edits, mostly pool offsets). */
 #include "TYPES.H"
 
 void Engine_EventBegin();
@@ -32,7 +29,6 @@ void Engine_Import0808a250();
 void Engine_EventEnd();
 
 
-extern u8 Data_00000000[];
 extern u8 Data_0000006d[];
 extern u8 Data_0000006f[];
 extern u8 Data_02000240[];
@@ -68,7 +64,8 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
     f(a0, a1, a2);
 }
 
-void Local_02002618(void)
+/* Runs the deck scene: the leader jumps and walks, actors 22 and 25 move into place, and the scene sets its return map. */
+void FuneKanpan_Func02002618(void)
 {
     u32 i;
     s32 record;
@@ -109,9 +106,11 @@ void Local_02002618(void)
     Engine_EventWait(10);
     Call3(Engine_ActorFaceDirection, 0, 0xc000, 20);
     {
-        u8 zero = (u32)Data_00000000;
+        /* FAKEMATCH: a one-halfword struct zero is loaded from a halfword pool entry with the reach the reference pool placement needs */
+        struct { u16 v; } zero;
 
-        *(u8 *)(Engine_ActorGet(25) + 85) = zero;
+        zero.v = 0;
+        *(u8 *)(Engine_ActorGet(25) + 85) = zero.v;
     }
     Call3(Engine_ActorSetSpeed, 25, 0x20000, 0x10000);
     Call3(Engine_ActorSetDestination, 25, 216, 0x264);
@@ -179,12 +178,8 @@ void Local_02002618(void)
     Call3(Engine_ActorWalkTo, 3, 248, 0x234);
     Engine_EventWait(20);
     Data_02000240_t[226][0] = (s32)Data_0000006f;
-    {
-        s32 shown = 30;
-    
-        Data_02000240_t[227][0] = shown;
-    }
-    *(u8 *)0x0200046b = 3;
+    do { Data_02000240_t[227][0] = 30; } while (0); /* FAKEMATCH: keeps row 227 from being derived from row 226 */
+    ((u8 *)Data_02000240_t)[0x22b] = 3;
     Engine_GameStateSetReturn((s32)Data_0000006d, 16);
     Engine_Import0808a250(62, 3);
     Engine_EventEnd();

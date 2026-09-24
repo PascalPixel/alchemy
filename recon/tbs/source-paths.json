@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_375:020012a0": {
+      "name": "HaidiaSukureta_RunArrivalScene",
+      "source": "FIELD/HAIDIA_SUKURETA/ARRIVAL_SCENE.C"
+    },
     "resource_373:02003380": {
       "name": "HaidiaMura_RunWalkScene03380",
       "source": "FIELD/HAIDIA_MURA/WALK_SCENE_03380.C"
@@ -11549,10 +11553,12 @@
       "source": "FIELD/HAIDIA_SUKURETA/PROGRESS_ACTOR.C"
     },
     "resource_375:0200150c": {
-      "name": "FieldScene_ConfigureProgressDependentActors"
+      "name": "HaidiaSukureta_RestoreEntryState",
+      "source": "FIELD/HAIDIA_SUKURETA/ENTRY_STATE.C"
     },
     "resource_375:02001760": {
-      "name": "FieldScene_RunProgressDependentActorSequence"
+      "name": "HaidiaSukureta_RunActorSequence",
+      "source": "FIELD/HAIDIA_SUKURETA/ACTOR_SEQUENCE.C"
     },
     "resource_375:02000964": {
       "name": "Scene_LeaveForMtAleph",

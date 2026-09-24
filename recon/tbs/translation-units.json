@@ -61496,40 +61496,64 @@
     {
       "id": "scene-progress-actor-setup-375",
       "game": "tbs",
-      "source": "recon/tbs/en/overlays/resource_375_c_0200150c.c",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_SUKURETA/ENTRY_STATE.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_375",
       "absolute_symbols": {
-        "Func_02003058_a": {
-          "address": "0x02009ae4",
+        "Engine_GameFlagClear": {
+          "address": "0x02009a74",
           "kind": "thumb"
         },
-        "Func_02003058_b": {
-          "address": "0x02009a9c",
+        "Engine_GameFlagIsSet": {
+          "address": "0x02009a64",
           "kind": "thumb"
         },
-        "Func_02003062_a": {
-          "address": "0x02009ae4",
-          "kind": "thumb"
-        },
-        "Func_02003062_b": {
-          "address": "0x02009a5c",
-          "kind": "thumb"
-        },
-        "Func_0200306c_a": {
-          "address": "0x02009ae4",
-          "kind": "thumb"
-        },
-        "Func_0200306c_b": {
-          "address": "0x02009a8c",
-          "kind": "thumb"
-        },
-        "Func_020030ea_a": {
+        "Main_0808a2c0": {
           "address": "0x02009b9c",
           "kind": "thumb"
         },
-        "Func_020030ea_b": {
-          "address": "0x02009a64",
+        "Main_0808a2c8": {
+          "address": "0x02009ba4",
+          "kind": "thumb"
+        },
+        "Engine_EventBegin": {
+          "address": "0x02009a84",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetPosition": {
+          "address": "0x02009ae4",
+          "kind": "thumb"
+        },
+        "Engine_ActorGet": {
+          "address": "0x02009a9c",
+          "kind": "thumb"
+        },
+        "Engine_ActorWalkToAndWait": {
+          "address": "0x02009ad4",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetAnimation": {
+          "address": "0x02009aec",
+          "kind": "thumb"
+        },
+        "Engine_ActorEnableActionCallback": {
+          "address": "0x02009aac",
+          "kind": "thumb"
+        },
+        "Engine_EventEnd": {
+          "address": "0x02009a8c",
+          "kind": "thumb"
+        },
+        "Engine_MapCopyCellAttributes": {
+          "address": "0x02009a5c",
+          "kind": "thumb"
+        },
+        "Scene_LeaveForMtAleph": {
+          "address": "0x02008964",
+          "kind": "thumb"
+        },
+        "Main_0808a168": {
+          "address": "0x02009b24",
           "kind": "thumb"
         }
       },
@@ -61537,7 +61561,7 @@
         {
           "address": "0x0200150c",
           "extent": 596,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ]
     },
@@ -64001,56 +64025,120 @@
     {
       "id": "scene-progress-actor-sequence-375",
       "game": "tbs",
-      "source": "recon/tbs/en/overlays/resource_375_c_02001760.c",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_SUKURETA/ACTOR_SEQUENCE.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_375",
       "absolute_symbols": {
-        "Func_0200328e_a": {
+        "Engine_GameFlagIsSet": {
+          "address": "0x02009a64",
+          "kind": "thumb"
+        },
+        "Engine_EventBegin": {
+          "address": "0x02009a84",
+          "kind": "thumb"
+        },
+        "Engine_ActorRunRepeatedMotion": {
           "address": "0x02009b0c",
           "kind": "thumb"
         },
-        "Func_0200328e_b": {
-          "address": "0x02009a9c",
-          "kind": "thumb"
-        },
-        "Func_020032b4_a": {
+        "Engine_EventSetMessage": {
           "address": "0x02009b2c",
           "kind": "thumb"
         },
-        "Func_020032b4_b": {
-          "address": "0x02009b0c",
+        "Engine_EventShowMessage": {
+          "address": "0x02009b3c",
           "kind": "thumb"
         },
-        "Func_020032b4_c": {
-          "address": "0x02009ad4",
-          "kind": "thumb"
-        },
-        "Func_02003378_a": {
-          "address": "0x02009b2c",
-          "kind": "thumb"
-        },
-        "Func_02003378_b": {
-          "address": "0x02009aec",
-          "kind": "thumb"
-        },
-        "Func_020033f6_a": {
-          "address": "0x02009b44",
-          "kind": "thumb"
-        },
-        "Func_020033f6_b": {
+        "Engine_EventEnd": {
           "address": "0x02009a8c",
           "kind": "thumb"
         },
-        "LinkedMessage_ValeInjuredVillager": {
-          "address": "0x00000e85",
-          "kind": "data"
+        "Engine_ActorStop": {
+          "address": "0x02009ab4",
+          "kind": "thumb"
+        },
+        "Engine_EventShowMessageAndWait": {
+          "address": "0x02009b44",
+          "kind": "thumb"
+        },
+        "Engine_ActorShowEmote": {
+          "address": "0x02009b5c",
+          "kind": "thumb"
+        },
+        "Engine_CameraMoveTo": {
+          "address": "0x02009b7c",
+          "kind": "thumb"
+        },
+        "Engine_ActorWalkToAndWait": {
+          "address": "0x02009ad4",
+          "kind": "thumb"
+        },
+        "Engine_ActorFaceDirection": {
+          "address": "0x02009b54",
+          "kind": "thumb"
+        },
+        "Engine_ActorGet": {
+          "address": "0x02009a9c",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetPosition": {
+          "address": "0x02009ae4",
+          "kind": "thumb"
+        },
+        "Engine_EventWait": {
+          "address": "0x02009a7c",
+          "kind": "thumb"
+        },
+        "Engine_EventOpenMessage": {
+          "address": "0x02009b34",
+          "kind": "thumb"
+        },
+        "Engine_UiWorkWaitThenFinalizeCapacity": {
+          "address": "0x02009a94",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagSet": {
+          "address": "0x02009a6c",
+          "kind": "thumb"
+        },
+        "Engine_ActorFaceActor": {
+          "address": "0x02009b14",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetAnimation": {
+          "address": "0x02009aec",
+          "kind": "thumb"
+        },
+        "Engine_ActorJump": {
+          "address": "0x02009afc",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetAnimationAndWait": {
+          "address": "0x02009af4",
+          "kind": "thumb"
+        },
+        "Main_0808a168": {
+          "address": "0x02009b24",
+          "kind": "thumb"
+        },
+        "Main_0808a0b0": {
+          "address": "0x02009abc",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetDestination": {
+          "address": "0x02009ac4",
+          "kind": "thumb"
+        },
+        "Engine_ActorWaitForMove": {
+          "address": "0x02009adc",
+          "kind": "thumb"
         }
       },
       "owners": [
         {
           "address": "0x02001760",
           "extent": 580,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ]
     },
@@ -71497,6 +71585,118 @@
         {
           "address": "0x02003380",
           "extent": 220,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "haidia-sukureta-arrival-scene",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_SUKURETA/ARRIVAL_SCENE.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_375",
+      "absolute_symbols": {
+        "Engine_GameFlagIsSet": {
+          "address": "0x02009a64",
+          "kind": "thumb"
+        },
+        "Engine_EventBegin": {
+          "address": "0x02009a84",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpeed": {
+          "address": "0x02009aa4",
+          "kind": "thumb"
+        },
+        "Engine_EventSetMessage": {
+          "address": "0x02009b2c",
+          "kind": "thumb"
+        },
+        "Engine_EventShowMessage": {
+          "address": "0x02009b3c",
+          "kind": "thumb"
+        },
+        "Engine_ActorGet": {
+          "address": "0x02009a9c",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetPosition": {
+          "address": "0x02009ae4",
+          "kind": "thumb"
+        },
+        "Engine_ActorWalkTo": {
+          "address": "0x02009acc",
+          "kind": "thumb"
+        },
+        "Engine_ActorWalkToAndWait": {
+          "address": "0x02009ad4",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetAnimation": {
+          "address": "0x02009aec",
+          "kind": "thumb"
+        },
+        "Engine_ActorFaceDirection": {
+          "address": "0x02009b54",
+          "kind": "thumb"
+        },
+        "Engine_CameraMoveTo": {
+          "address": "0x02009b7c",
+          "kind": "thumb"
+        },
+        "Engine_CameraWaitForMove": {
+          "address": "0x02009b84",
+          "kind": "thumb"
+        },
+        "Engine_ActorRunRepeatedMotion": {
+          "address": "0x02009b0c",
+          "kind": "thumb"
+        },
+        "Engine_EventWait": {
+          "address": "0x02009a7c",
+          "kind": "thumb"
+        },
+        "Engine_EventShowMessageAndWait": {
+          "address": "0x02009b44",
+          "kind": "thumb"
+        },
+        "Engine_ActorJump": {
+          "address": "0x02009afc",
+          "kind": "thumb"
+        },
+        "Engine_ActorShowEmote": {
+          "address": "0x02009b5c",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetAnimationAndWait": {
+          "address": "0x02009af4",
+          "kind": "thumb"
+        },
+        "Engine_CameraFollowActor": {
+          "address": "0x02009b6c",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetDestination": {
+          "address": "0x02009ac4",
+          "kind": "thumb"
+        },
+        "Engine_ActorWaitForMove": {
+          "address": "0x02009adc",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagSet": {
+          "address": "0x02009a6c",
+          "kind": "thumb"
+        },
+        "Engine_EventEnd": {
+          "address": "0x02009a8c",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x020012a0",
+          "extent": 620,
           "state": "exact-c"
         }
       ]

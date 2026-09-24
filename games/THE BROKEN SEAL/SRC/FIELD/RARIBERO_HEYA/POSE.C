@@ -2,6 +2,13 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 
+enum PoseMessage {
+    MSG_HOW_DID_SEARCH_FOR_SHEBA = 0x2850,
+    MSG_DO_NOT_WORRY_ABOUT_SHEBA = 0x2861,
+    MSG_PLEASE_WAIT_FOR_ME_OUTSIDE = 0x288b
+};
+
+
 #define SceneActor_SetActor14Pose258 Func_02000030
 #define SceneData_GetTable9438 Func_02000044
 #define SceneData_SelectTableByWord224 Func_0200004c
@@ -194,7 +201,7 @@ void FieldScene_RunSequenceA(void)
     Camera_MoveTo(0x780000, -1, 0x600000, 1);
     Camera_WaitForMove();
     Event_Wait(0x1E);
-    Event_SetMessage(0x288B);
+    Event_SetMessage(MSG_PLEASE_WAIT_FOR_ME_OUTSIDE);
     Event_ShowMessage(0xC, 0);
     Event_Wait(0xA);
     Actor_FaceActor(0, 0xC, 0);
@@ -209,7 +216,7 @@ void FieldScene_RunThreeCallSequence(void)
     void Event_ShowMessage(s32, s32);
 
     GameFlag_Set(0x9BC);
-    Event_SetMessage(0x288B);
+    Event_SetMessage(MSG_PLEASE_WAIT_FOR_ME_OUTSIDE);
     Event_ShowMessage(0xC, 0);
 }
 
@@ -248,7 +255,7 @@ void FieldScene_RunPrimaryScript(void)
     Actor_FaceDirection(0, 49152, 0);
     Actor_FaceDirection(11, 0, 0);
     Value3(Engine_ActorFaceDirection, 12, 32768, 0);
-    Event_SetMessage(10320);
+    Event_SetMessage(MSG_HOW_DID_SEARCH_FOR_SHEBA);
     Value0(Engine_EventOpenScreen);
     Value0(Engine_EventWaitForScreen);
     Value1(Engine_EventWait, 10);
@@ -339,7 +346,7 @@ void FieldScene_RunPrimaryScript(void)
     Actor_FaceActor(2, 0, 30);
     Event_OpenMessage(8194, 0);
     }
-    Event_SetMessage(10337);
+    Event_SetMessage(MSG_DO_NOT_WORRY_ABOUT_SHEBA);
     Value1(Engine_EventWait, 10);
     Actor_FaceDirection(0, 16384, 0);
     Actor_FaceActor(1, 0, 20);

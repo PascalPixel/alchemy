@@ -2,6 +2,11 @@
 #include "FIELD_EVENT.H"
 #include "STAGED_ACTOR.H"
 
+enum ExtendedActorTransitionMessage {
+    MSG_WHY_HAPPENING_PROTECT_VENUS_LIGHTHOUSE = 0x282e
+};
+
+
 struct SceneWork {
     u8 unknown_000[0x1c0];
     s32 request;
@@ -114,7 +119,7 @@ void Scene_RunExtendedActorTransition(void)
     struct SceneWork *work;
 
     step_pending = 0;
-    Event_SetMessage(0x282e);
+    Event_SetMessage(MSG_WHY_HAPPENING_PROTECT_VENUS_LIGHTHOUSE);
     Actor_SetAttachedEffect(21, 0x102);
     Event_Wait(20);
     Event_ShowMessageAndWait(0x2015, 0, 20);

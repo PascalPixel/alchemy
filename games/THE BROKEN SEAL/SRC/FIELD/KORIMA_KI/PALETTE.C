@@ -6,6 +6,23 @@
 
 #include "PALETTE_SCENE.H"
 
+enum PaletteMessage {
+    MSG_HEALING_WATERS_MERCURY_LIGHTHOUSE_MIGHT = 0x14c8,
+    MSG_SILENCE = 0x14c9,
+    MSG_CONTROL_TRETS_HEART_SHALL_NOT = 0x14cc,
+    MSG_SILENCE_2 = 0x14eb,
+    MSG_PEOPLE_KOLIMA_FORGIVE_ME = 0x14ec,
+    MSG_WATER_HERMES_SEEPED_INTO_TRET = 0x14ed,
+    MSG_FEEL_GREAT_POWER_SPREADING_THROUGH = 0x14ee,
+    MSG_SHOULD_DO_PEOPLE_KOLIMA_CURSED = 0x14fb,
+    MSG_WAS_INDEED_ANGRY_PEOPLE_HAD = 0x1501,
+    MSG_OWE_GREAT_DEBT_HAVE_SAVED = 0x1519,
+    MSG_NOW_HAVE_SUCH_POWER_AXE = 0x151c,
+    MSG_KNOW_CANNOT_STOP_BUT_PLEASE = 0x151e,
+    MSG_MUST_HORRIBLE_BEYOND_RIVER_AM = 0x151f
+};
+
+
 struct PaletteEffectFrame {
     s32 pad00[6];
     s32 progress;
@@ -207,13 +224,13 @@ void FieldScene_RunScene395_02000158(void)
     Event_Begin();
     if (GameFlag_IsSet(0x845) != 0) {
         Func_02001462(10, 1);
-        Event_SetMessage(0x151c);
+        Event_SetMessage(MSG_NOW_HAVE_SUCH_POWER_AXE);
         Event_ShowMessage(8, 0);
         Func_02001478(10, 0);
     } else {
         if (GameFlag_IsSet(0x844) != 0) {
             Func_0200148c(10, 1);
-            Event_SetMessage(0x14eb);
+            Event_SetMessage(MSG_SILENCE_2);
             Event_ShowMessage(8, 0);
             Value2(Func_020014a2, 10, 0);
             record = Func_02001b2c(184);
@@ -227,7 +244,7 @@ void FieldScene_RunScene395_02000158(void)
                 *target = shown;
             }
         } else {
-            Event_SetMessage(0x14c9);
+            Event_SetMessage(MSG_SILENCE);
             Event_ShowMessage(8, 0);
             ColorBuffer_ApplyTarget(0x406218, 1);
             ColorBuffer_Interpolate(20);
@@ -248,9 +265,9 @@ void PaletteScene_RunActorNineBranch(void)
 {
     Event_Begin();
     if (GameFlag_IsSet(0x845) != 0) {
-        Event_SetMessage(0x151F);
+        Event_SetMessage(MSG_MUST_HORRIBLE_BEYOND_RIVER_AM);
     } else {
-        Event_SetMessage(0x14C8);
+        Event_SetMessage(MSG_HEALING_WATERS_MERCURY_LIGHTHOUSE_MIGHT);
     }
     Event_ShowMessage(9, 0);
     Event_End();
@@ -260,9 +277,9 @@ void PaletteScene_RunActorEightBranch(void)
 {
     Event_Begin();
     if (GameFlag_IsSet(0x845) != 0) {
-        Event_SetMessage(0x151E);
+        Event_SetMessage(MSG_KNOW_CANNOT_STOP_BUT_PLEASE);
     } else {
-        Event_SetMessage(0x14EC);
+        Event_SetMessage(MSG_PEOPLE_KOLIMA_FORGIVE_ME);
     }
     Event_ShowMessage(8, 0);
     Event_End();
@@ -326,7 +343,7 @@ void RunEventScript01(void)
         record[90] = flags;
     }
     Event_Wait(80);
-    Event_SetMessage(0x14cc);
+    Event_SetMessage(MSG_CONTROL_TRETS_HEART_SHALL_NOT);
     Event_ShowMessageAndWait(0x200e, 0, 20);
     Actor_RunRepeatedMotion(0, 2);
     Event_Wait(20);
@@ -366,7 +383,7 @@ void PaletteScene_RunActorTransitionSequence(void)
     Actor_WalkToAndWait(0, 0x148, 212);
     Actor_FaceDirection(0, 0xc000, 20);
     Audio_PlayCue(17);
-    Message_ShowCentered(0x14ed, 1);
+    Message_ShowCentered(MSG_WATER_HERMES_SEEPED_INTO_TRET, 1);
     Actor_SetSpeed(1, 0x10000, 0x8000);
     Actor_SetSpeed(2, 0x10000, 0x8000);
     object = Actor_Get(0);
@@ -438,7 +455,7 @@ void PaletteScene_RunActorTransitionSequence(void)
     Func_020012f4(10, 1);
     Event_Wait(40);
     Audio_PlayCue(7);
-    Event_SetMessage(0x14ee);
+    Event_SetMessage(MSG_FEEL_GREAT_POWER_SPREADING_THROUGH);
     Event_ShowMessage(8, 0);
     Actor_StartRepeatedMotion(0, 2);
     Actor_StartRepeatedMotion(1, 2);
@@ -542,7 +559,7 @@ void PaletteScene_RunActorTransitionSequence(void)
     Event_Wait(40);
     Func_020012f4(10, 1);
     Event_Wait(10);
-    Event_SetMessage(0x14fb);
+    Event_SetMessage(MSG_SHOULD_DO_PEOPLE_KOLIMA_CURSED);
     Event_ShowMessage(0x8008, 0);
     Actor_SetAnimation(0, 3);
     Actor_SetAnimation(1, 3);
@@ -566,7 +583,7 @@ void PaletteScene_RunActorTransitionSequence(void)
     Event_ShowMessage(1, 0);
     Func_020012f4(10, 4);
     Event_Wait(20);
-    Event_SetMessage(0x1501);
+    Event_SetMessage(MSG_WAS_INDEED_ANGRY_PEOPLE_HAD);
     Event_ShowMessage(0x8008, 0);
     Actor_FaceDirection(0, 0xc000, 0);
     Actor_FaceDirection(1, 0xc000, 0);
@@ -715,7 +732,7 @@ void PaletteScene_RunActorTransitionSequence(void)
     Func_020012f4(10, 4);
     Func_020012f4(10, 4);
     Event_Wait(20);
-    Event_SetMessage(0x1519);
+    Event_SetMessage(MSG_OWE_GREAT_DEBT_HAVE_SAVED);
     Event_ShowMessage(0x8008, 0);
     Func_020012f4(11, 4);
     Func_020012f4(11, 4);

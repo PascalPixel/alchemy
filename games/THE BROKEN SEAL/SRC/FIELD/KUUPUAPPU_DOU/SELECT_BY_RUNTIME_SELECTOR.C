@@ -186,6 +186,12 @@ extern u8 Data_0200989c[];
 
 #include "TYPES.H"
 
+enum SelectByRuntimeSelectorMessage {
+    MSG_DOOR_TIGHTLY_LOCKED = 0x953,
+    MSG_ROBIN_FLIPPED_SWITCH = 0x1528
+};
+
+
 extern u8 *Func_020016ac(s32);
 
 s32 SceneData_SelectByRuntimeSelector(void)
@@ -266,7 +272,7 @@ void SceneState_ApplyFlag300(void)
 
 void SceneState_SetFlag953(void)
 {
-    Message_ShowCentered(0x953, 1);
+    Message_ShowCentered(MSG_DOOR_TIGHTLY_LOCKED, 1);
 }
 
 s32 SceneData_SelectDataByRuntimeSelector(void)
@@ -648,7 +654,7 @@ void FieldScene_RunScene3a7SequenceB(void)
     s32 v6;
 
     if (GameFlag_IsSet(0x9a8) == 0) {
-        Message_ShowCentered(0x1528, 1);
+        Message_ShowCentered(MSG_ROBIN_FLIPPED_SWITCH, 1);
         GameFlag_Set(0x9a8);
         v5 = 27;
         v6 = 92;

@@ -1,86 +1,128 @@
 #include "TYPES.H"
-#include "MAP.H"
-#include "GLOBAL_CELLS.H"
-#include "SCRIPT_OBJECT_ENTRY.H"
+#include "IWRAM_CALL.H"
 
-/* FunctionHead_0800ebec / Region_0800ee14 / Fragment_0800f1fa are one large
-   C function split across three retained-assembly labels by literal-pool and
-   branch-range boundaries: control reaches sub_0800ee14 by plain 'bne' with
-   the FunctionHead prologue's frame still live, and Region_0800ee14 tail
-   branches into Fragment_0800f1fa through a 'mov r12,pc / bx r4' veneer.
-   One stack frame, one register set, one literal pool. This source covers
-   the whole span. Restored from repository history after a self-including
-   scaffold replaced the draft; this is not an exact-C claim. The retained
-   range includes an IP-linked call that this ordinary-C draft does not model.
-   Score the full 1804-byte range diagnostically, never its 552-byte head as
-   an independent function; production retains the audited assembly. */
+/* One 0x70-byte field object: the player's actor and the entries of the
+ * object table it is tested against. */
+struct FieldActor {
+    void *data;                 /* 0x00 */
+    u16 tick;                   /* 0x04 */
+    u16 facing;                 /* 0x06 */
+    s32 pos[6];                 /* 0x08 x, y, z, ... */
+    u16 radius;                 /* 0x20 */
+    u8 unknown_22;
+    u8 kind;                    /* 0x23 */
+    s32 velocity_x;             /* 0x24 */
+    s32 velocity_y;             /* 0x28 */
+    s32 velocity_z;             /* 0x2c */
+    s32 speed;                  /* 0x30 */
+    s32 accel;                  /* 0x34 */
+    s32 target[3];              /* 0x38 */
+    u8 unknown_44[0x0c];
+    struct FieldSprite *sprite; /* 0x50 */
+    u8 unknown_54;
+    u8 blocked;                 /* 0x55 */
+    u8 unknown_56[2];
+    union {
+        u32 word;               /* 0x58 */
+        u8 bytes[4];            /* 0x59 bit 0: solid */
+    } flags;
+    u8 unknown_5c[8];
+    s16 step_timer;             /* 0x64 */
+    u16 step_phase;             /* 0x66 */
+    u8 unknown_68[8];
+};
+
+struct FieldSprite {
+    u8 unknown_00[9];
+    u8 flags;                   /* 0x09 */
+    u8 unknown_0a[0x14];
+    u16 angle;                  /* 0x1e */
+    u8 unknown_20[6];
+    u8 blocked;                 /* 0x26 */
+};
+
+struct CameraState {
+    u8 unknown_00[0x17];
+    u8 footprints;              /* 0x17 */
+};
+
+struct PlayerState {
+    u8 unknown_000[0x1f4];
+    s32 leader;                 /* 0x1f4 */
+    u8 unknown_1f8[0x24];
+    u16 dash_keys;              /* 0x21c */
+};
+
+struct OwnerState {
+    u8 unknown_00[0x38];
+    s16 hp;                     /* 0x38 */
+};
 
 extern volatile u8 Data_03001f54;
-extern u8 Data_03001810_a[];
+extern u8 Data_03001810[];
 extern volatile u32 Data_03001ae8;
-extern u16 Data_02000240[];
+extern struct PlayerState Data_02000240;
 extern s16 Data_08013254[];
+extern s16 Data_08013274[];
+extern struct FieldActor *Data_03001e64;
+extern u16 *Data_03001ebc;
+extern struct CameraState *Data_03001e70;
 
-s32 Func_080770c0(s32 flag);
-void Func_080f9010(s32 cue);
-void Func_0800447c(s32 magnitude, s32 angle, struct WorldPosition *out);
-s32 Func_080120dc(struct ScriptObjectEntry *object, struct WorldPosition *position);
-s32 Func_0800eba0(s32 *a, s32 arg1, s32 *b, s32 arg3);
-s32 Func_0800d924(struct ScriptObjectEntry *object, s32 *values);
-s32 Func_080044d0(s32, s32);
-void Func_0800c300(void *object, s32 argument);
-void Func_0800c2d8(void *object, void *table);
-struct ScriptObjectEntry *Func_0800c150(s32 x, s32 y, s32 z, s32 kind);
-void Func_0800ba30(void *object, s32 argument);
-void Func_0800d14c(void *object, s32 arg1, s32 arg2, s32 arg3);
-void *Func_08077008(s32 id);
-void Func_0800eaf8(void);
+s32 GameFlag_TestFar(s32 flag);
+void Audio_PlayCue(s32 cue);
+void Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 *pos);
+s32 Func_080120dc(struct FieldActor *actor, s32 *pos);
+s32 Runtime_CheckRadiusOverlap(s32 *a, s32 ra, s32 *b, s32 rb);
+s32 ScriptObject_CheckOverlap(struct FieldActor *actor, s32 *pos);
+s32 ArcTan2(s32 y, s32 x);
+void ObjectDispatch_ApplyArgumentToChildren(struct FieldActor *actor, s32 argument);
+void ObjectDispatch_Initialize(struct FieldActor *actor, s16 *table);
+struct FieldActor *Func_0800c150(s32 kind, s32 x, s32 y, s32 z);
+void AnimationObjects_SelectAnimation(struct FieldSprite *sprite, s32 animation);
+void Object_SetMoveTarget(struct FieldActor *actor, s32 x, s32 y, s32 z);
+struct OwnerState *Owner_GetStateFar(s32 id);
+s32 FixedSqrt(s32 value);
+void Field_CheckConfiguredKeys(void);
 
-extern s16 Data_08013274_a[];
-extern void *Data_03000118;
-
-s32 Func_0800ebec(struct ScriptObjectEntry *actor)
+s32 FieldObject_UpdatePlayerControl(struct FieldActor *actor)
 {
-    s32 blocked_flags;
-    s32 handled_flags;
-    s32 mode;
-    s32 angle_q16;
-    s32 dir;
-    s32 final_dir;
     s32 posA[3];
     s32 posB[3];
     s32 posC[3];
+    s32 unused[8];
     s16 deltas[6];
-    s32 extra[7];
+    s32 blocked;
+    s32 handled;
+    s32 mode;
+    s32 angle;
+    s16 facing;
+    s32 dir;
     s32 i;
-    struct ScriptObjectEntry *entry;
-    u8 *base;
-    u16 *p100;
+    struct FieldActor *entry;
+    s16 *timer;
 
-    blocked_flags = 0;
-    handled_flags = 0;
+    blocked = 0;
+    handled = 0;
 
-    if (Data_03001f54 != 0) {
-        if (Func_080770c0(350) != 0) {
-            s32 count;
-            u8 *p;
-            s32 n;
+    if (Data_03001f54 != 0 && GameFlag_TestFar(350) != 0) {
+        s32 count;
+        u8 *p;
+        s32 n;
 
-            count = 0;
-            p = Data_03001810_a;
-            n = 512;
-            do {
-                u8 v;
+        count = 0;
+        p = Data_03001810;
+        n = 512;
+        do {
+            u8 v;
 
-                v = *p;
-                p++;
-                if (v == 0xff)
-                    count++;
-                n--;
-            } while (n != 0);
-            if (count - 136 < 0)
-                Func_080f9010(135);
-        }
+            v = *p;
+            p++;
+            if (v == 0xff)
+                count++;
+            n--;
+        } while (n != 0);
+        if (count - 136 < 0)
+            Audio_PlayCue(135);
     }
 
     if (Data_03001f54 != 0) {
@@ -91,98 +133,98 @@ s32 Func_0800ebec(struct ScriptObjectEntry *actor)
             s32 count;
 
             count = mask;
-            do {
-                count--;
-            } while (count != 0);
+wait_a:
+            count--;
+            if (count != 0)
+                goto wait_a;
             count = 95;
-            do {
-                count--;
-            } while (count >= 0);
+wait_b:
+            count--;
+            if (count >= 0)
+                goto wait_b;
             count = 63;
-            do {
-                count--;
-            } while (count >= 0);
+wait_c:
+            count--;
+            if (count >= 0)
+                goto wait_c;
             count = 63;
-            do {
-                count--;
-            } while (count >= 0);
+wait_d:
+            count--;
+            if (count >= 0)
+                goto wait_d;
         }
     }
 
-    if (Data_03001ae8 & Data_02000240[270]) {
-        *(s32 *)((u8 *)actor + 48) = 0x18000;
-        *(s32 *)((u8 *)actor + 52) = 0x4000;
+    if (Data_03001ae8 & Data_02000240.dash_keys) {
+        actor->speed = 0x18000;
+        actor->accel = 0x4000;
         mode = 5;
     } else {
-        *(s32 *)((u8 *)actor + 48) = 0x10000;
-        *(s32 *)((u8 *)actor + 52) = 0x4000;
+        actor->speed = 0x10000;
+        actor->accel = 0x4000;
         mode = 2;
     }
 
-    if (Func_080770c0(0x17f /* 383 */) != 0) {
-        if (Data_03001ae8 & 2) {
-            *(s32 *)((u8 *)actor + 48) = 0x40000;
-            *(s32 *)((u8 *)actor + 52) = 0x10000;
-            mode = 5;
-        }
+    if (GameFlag_TestFar(0x17f) != 0 && (Data_03001ae8 & 2)) {
+        actor->speed = 0x40000;
+        actor->accel = 0x10000;
+        mode = 5;
     }
 
-    dir = Data_08013254[(Data_03001ae8 >> 4) & 15];
-    angle_q16 = dir << 16;
-    if (((u32)angle_q16 >> 16) == 0xffffu) {
-        blocked_flags |= 4;
-        goto tail_merge;
+    angle = Data_08013254[(Data_03001ae8 >> 4) & 15] << 16;
+    if ((u32)angle >> 16 == 0xffff) {
+        blocked |= 4;
+        goto tail;
     }
 
-    dir = (u16)angle_q16;
-
-    posA[0] = actor->values_08[0];
-    posA[1] = actor->values_08[1];
-    posA[2] = actor->values_08[2];
-    Func_0800447c(0x80000, dir, (struct WorldPosition *)posA);
+    blocked = 0;
+    posA[0] = actor->pos[0];
+    posA[1] = actor->pos[1];
+    posA[2] = actor->pos[2];
+    Vector_AddPolarOffset(0x80000, (u32)angle >> 16, posA);
 
     if (Data_03001f54 != 0) {
-        if (Data_03001ae8 & 0x200) {
-            goto tail_merge;
-        }
+        facing = angle >> 16;
+        if (Data_03001ae8 & 0x200)
+            goto tail;
     }
 
-    if (Func_080120dc(actor, (struct WorldPosition *)posA) != 0)
-        goto region_search;
+    if (Func_080120dc(actor, posA) != 0)
+        goto search;
 
-    posB[0] = actor->values_08[0];
-    posB[1] = actor->values_08[1];
-    posB[2] = actor->values_08[2];
-    Func_0800447c(0x80000, dir + 0x1000, (struct WorldPosition *)posB);
-    if (Func_080120dc(actor, (struct WorldPosition *)posB) != 0)
-        goto region_search;
+    posB[0] = actor->pos[0];
+    posB[1] = actor->pos[1];
+    posB[2] = actor->pos[2];
+    Vector_AddPolarOffset(0x80000, ((u32)angle >> 16) + 0x1000, posB);
+    if (Func_080120dc(actor, posB) != 0)
+        goto search;
 
-    posB[0] = actor->values_08[0];
-    posB[1] = actor->values_08[1];
-    posB[2] = actor->values_08[2];
-    Func_0800447c(0x80000, dir - 0x1000, (struct WorldPosition *)posB);
-    if (Func_080120dc(actor, (struct WorldPosition *)posB) != 0)
-        goto region_search;
+    posB[0] = actor->pos[0];
+    posB[1] = actor->pos[1];
+    posB[2] = actor->pos[2];
+    Vector_AddPolarOffset(0x80000, ((u32)angle >> 16) - 0x1000, posB);
+    if (Func_080120dc(actor, posB) != 0)
+        goto search;
 
-    posB[0] = actor->values_08[0];
-    posB[1] = actor->values_08[1];
-    posB[2] = actor->values_08[2];
-    Func_0800447c(0x80000, dir + 0x2000, (struct WorldPosition *)posB);
-    if (Func_080120dc(actor, (struct WorldPosition *)posB) != 0)
-        goto region_search;
+    posB[0] = actor->pos[0];
+    posB[1] = actor->pos[1];
+    posB[2] = actor->pos[2];
+    Vector_AddPolarOffset(0x80000, ((u32)angle >> 16) + 0x2000, posB);
+    if (Func_080120dc(actor, posB) != 0)
+        goto search;
 
-    posB[0] = actor->values_08[0];
-    posB[1] = actor->values_08[1];
-    posB[2] = actor->values_08[2];
-    Func_0800447c(0x80000, dir - 0x2000, (struct WorldPosition *)posB);
-    if (Func_080120dc(actor, (struct WorldPosition *)posB) != 0)
-        goto region_search;
+    posB[0] = actor->pos[0];
+    posB[1] = actor->pos[1];
+    posB[2] = actor->pos[2];
+    Vector_AddPolarOffset(0x80000, ((u32)angle >> 16) - 0x2000, posB);
+    if (Func_080120dc(actor, posB) != 0)
+        goto search;
 
-    final_dir = dir;
-    goto success_tail;
+    facing = angle >> 16;
+    goto move;
 
-region_search:
-    dir = (u16)angle_q16;
+search:
+    dir = (u32)angle >> 16;
     deltas[0] = dir + 0x1000;
     deltas[1] = dir - 0x1000;
     deltas[2] = dir + 0x2000;
@@ -191,264 +233,214 @@ region_search:
     deltas[5] = dir - 0x3000;
 
     for (i = 0; i < 6; i++) {
-        s32 cand;
-        s32 cand_u16;
+        facing = deltas[i];
 
-        cand = deltas[i];
-        final_dir = cand;
-        cand_u16 = (u16)cand;
-
-        posA[0] = actor->values_08[0];
-        posA[1] = actor->values_08[1];
-        posA[2] = actor->values_08[2];
-        Func_0800447c(0x80000, cand_u16, (struct WorldPosition *)posA);
-        if (Func_080120dc(actor, (struct WorldPosition *)posA) != 0)
+        posA[0] = actor->pos[0];
+        posA[1] = actor->pos[1];
+        posA[2] = actor->pos[2];
+        Vector_AddPolarOffset(0x80000, (u16)facing, posA);
+        if (Func_080120dc(actor, posA) != 0)
             continue;
 
-        posB[0] = actor->values_08[0];
-        posB[1] = actor->values_08[1];
-        posB[2] = actor->values_08[2];
-        Func_0800447c(0x80000, cand_u16 + 0x1000, (struct WorldPosition *)posB);
-        if (Func_080120dc(actor, (struct WorldPosition *)posB) != 0)
+        posB[0] = actor->pos[0];
+        posB[1] = actor->pos[1];
+        posB[2] = actor->pos[2];
+        Vector_AddPolarOffset(0x80000, (u16)facing + 0x1000, posB);
+        if (Func_080120dc(actor, posB) != 0)
             continue;
 
-        posB[0] = actor->values_08[0];
-        posB[1] = actor->values_08[1];
-        posB[2] = actor->values_08[2];
-        Func_0800447c(0x80000, cand_u16 - 0x1000, (struct WorldPosition *)posB);
-        if (Func_080120dc(actor, (struct WorldPosition *)posB) != 0)
+        posB[0] = actor->pos[0];
+        posB[1] = actor->pos[1];
+        posB[2] = actor->pos[2];
+        Vector_AddPolarOffset(0x80000, (u16)facing - 0x1000, posB);
+        if (Func_080120dc(actor, posB) != 0)
             continue;
 
-        posB[0] = actor->values_08[0];
-        posB[1] = actor->values_08[1];
-        posB[2] = actor->values_08[2];
-        Func_0800447c(0x80000, cand_u16 + 0x2000, (struct WorldPosition *)posB);
-        if (Func_080120dc(actor, (struct WorldPosition *)posB) != 0)
+        posB[0] = actor->pos[0];
+        posB[1] = actor->pos[1];
+        posB[2] = actor->pos[2];
+        Vector_AddPolarOffset(0x80000, (u16)facing + 0x2000, posB);
+        if (Func_080120dc(actor, posB) != 0)
             continue;
 
-        posB[0] = actor->values_08[0];
-        posB[1] = actor->values_08[1];
-        posB[2] = actor->values_08[2];
-        Func_0800447c(0x80000, cand_u16 - 0x2000, (struct WorldPosition *)posB);
-        if (Func_080120dc(actor, (struct WorldPosition *)posB) == 0)
-            goto success_tail;
+        posB[0] = actor->pos[0];
+        posB[1] = actor->pos[1];
+        posB[2] = actor->pos[2];
+        Vector_AddPolarOffset(0x80000, (u16)facing - 0x2000, posB);
+        if (Func_080120dc(actor, posB) == 0)
+            goto move;
     }
 
-    posA[0] = actor->values_08[0];
-    posA[1] = actor->values_08[1];
-    posA[2] = actor->values_08[2];
-    blocked_flags |= 1;
+    posA[0] = actor->pos[0];
+    posA[1] = actor->pos[1];
+    posA[2] = actor->pos[2];
+    blocked |= 1;
 
-success_tail:
-    posC[0] = actor->values_08[0];
-    posC[1] = actor->values_08[1];
-    posC[2] = actor->values_08[2];
-    Func_0800447c(0x40000, (u16)final_dir, (struct WorldPosition *)posC);
+move:
+    posC[0] = actor->pos[0];
+    posC[1] = actor->pos[1];
+    posC[2] = actor->pos[2];
+    Vector_AddPolarOffset(0x40000, (u16)facing, posC);
 
-    entry = (struct ScriptObjectEntry *)(*(u8 **)ADDR_03001E64);
-    for (i = 63; i >= 0; i--) {
-        s32 dist;
+    entry = Data_03001e64;
+    for (i = 63; i >= 0; i--, entry++) {
+        s32 radius;
+        s32 push;
 
-        if (entry->data == NULL)
-            goto scan_next;
-        if (!(entry->flags_59 & 1))
-            goto scan_next;
+        radius = actor->radius - 2;
+        if (entry->data == 0)
+            continue;
+        if (!(entry->flags.bytes[1] & 1))
+            continue;
         if (entry == actor)
-            goto scan_next;
+            continue;
+        if (Runtime_CheckRadiusOverlap(entry->pos, radius, posC, entry->radius - 2) < 0)
+            continue;
+        if ((entry->flags.word & 0xff000200) != 0x200)
+            goto push_blocked;
 
-        dist = Func_0800eba0(entry->values_08, actor->value_20 - 2,
-                posC, entry->value_20 - 2);
-        if (dist < 0)
-            goto scan_next;
+        push = ArcTan2(entry->pos[2] - actor->pos[2], entry->pos[0] - actor->pos[0]);
+        facing = push;
+        push = (u16)push;
 
-        base = (u8 *)entry;
-        if ((*(u32 *)(base + 88) & 0xff000200) != 0x200) {
-            blocked_flags |= 2;
-            goto scan_next;
-        }
+        posB[0] = entry->pos[0];
+        posB[1] = entry->pos[1];
+        posB[2] = entry->pos[2];
+        Vector_AddPolarOffset(0x4000, push, posB);
+        if (ScriptObject_CheckOverlap(entry, posB) != 0)
+            goto push_blocked;
 
-        {
-            s32 dy;
-            s32 dx;
-            s32 angle_raw;
-            s16 angle_signed;
-            s32 angle_u16;
+        posB[0] = entry->pos[0];
+        posB[1] = entry->pos[1];
+        posB[2] = entry->pos[2];
+        Vector_AddPolarOffset(0xa0000, push, posB);
+        if (Func_080120dc(entry, posB) != 0)
+            goto push_blocked;
 
-            dy = entry->values_08[2] - actor->values_08[2];
-            dx = entry->values_08[0] - actor->values_08[0];
-            angle_raw = Func_080044d0(dy, dx);
-            angle_signed = (s16)angle_raw;
-            (void)angle_signed;
-            angle_u16 = (u16)angle_raw;
+        posB[0] = entry->pos[0];
+        posB[1] = entry->pos[1];
+        posB[2] = entry->pos[2];
+        Vector_AddPolarOffset(0xa0000, push + 0x1000, posB);
+        if (Func_080120dc(entry, posB) != 0)
+            goto push_blocked;
+        if (Func_080120dc(entry, posB) != 0)
+            goto push_blocked;
 
-            posB[0] = entry->values_08[0];
-            posB[1] = entry->values_08[1];
-            posB[2] = entry->values_08[2];
-            Func_0800447c(0x4000, angle_u16, (struct WorldPosition *)posB);
-            if (Func_0800d924(entry, posB) != 0) {
-                blocked_flags |= 2;
-                goto scan_next;
-            }
+        posB[0] = entry->pos[0];
+        posB[1] = entry->pos[1];
+        posB[2] = entry->pos[2];
+        Vector_AddPolarOffset(0xa0000, push - 0x1000, posB);
+        if (Func_080120dc(entry, posB) != 0)
+            goto push_blocked;
 
-            posB[0] = entry->values_08[0];
-            posB[1] = entry->values_08[1];
-            posB[2] = entry->values_08[2];
-            Func_0800447c(0xa0000, angle_u16, (struct WorldPosition *)posB);
-            if (Func_080120dc(entry, (struct WorldPosition *)posB) != 0) {
-                blocked_flags |= 2;
-                goto scan_next;
-            }
-
-            posB[0] = entry->values_08[0];
-            posB[1] = entry->values_08[1];
-            posB[2] = entry->values_08[2];
-            Func_0800447c(0xa0000, angle_u16 + 0x1000, (struct WorldPosition *)posB);
-            if (Func_080120dc(entry, (struct WorldPosition *)posB) != 0) {
-                blocked_flags |= 2;
-                goto scan_next;
-            }
-
-            if (Func_080120dc(entry, (struct WorldPosition *)posB) != 0) {
-                blocked_flags |= 2;
-                goto scan_next;
-            }
-
-            posB[0] = entry->values_08[0];
-            posB[1] = entry->values_08[1];
-            posB[2] = entry->values_08[2];
-            Func_0800447c(0xa0000, angle_u16 - 0x1000, (struct WorldPosition *)posB);
-            if (Func_080120dc(entry, (struct WorldPosition *)posB) != 0) {
-                blocked_flags |= 2;
-                goto scan_next;
-            }
-
-            Func_0800447c(0x4000, angle_u16, (struct WorldPosition *)entry->values_08);
-            *(s32 *)(base + 56) = 0x80000000;
-            *(s32 *)(base + 60) = 0x80000000;
-            *(s32 *)(base + 64) = 0x80000000;
-            handled_flags |= 1;
-        }
-
-scan_next:
-        entry++;
+        Vector_AddPolarOffset(0x4000, push, entry->pos);
+        entry->target[0] = 0x80000000;
+        entry->target[1] = 0x80000000;
+        entry->target[2] = 0x80000000;
+        handled |= 1;
+        continue;
+push_blocked:
+        blocked |= 2;
     }
 
-    if (blocked_flags == 0 && handled_flags != 0) {
-        *(s32 *)((u8 *)actor + 48) = 0x4000;
-        *(s32 *)((u8 *)actor + 52) = 0x2000;
+    if (blocked == 0 && handled != 0) {
+        actor->speed = 0x4000;
+        actor->accel = 0x2000;
     }
 
-tail_merge:
-    {
-        u16 *table_ptr;
-
-        table_ptr = *(u16 **)Data_03001ebc_a;
-        if (table_ptr != 0) {
-            if (blocked_flags & 3) {
-                table_ptr[206]++;
-            } else {
-                table_ptr[206] = 0;
-            }
-        }
+tail:
+    if (Data_03001ebc != 0) {
+        if (blocked & 3)
+            Data_03001ebc[206]++;
+        else
+            Data_03001ebc[206] = 0;
     }
-    if (handled_flags != 0) {
-        Func_0800c300(actor, 8);
-    } else if (blocked_flags != 0) {
-        void *record;
+
+    if (handled != 0) {
+        ObjectDispatch_ApplyArgumentToChildren(actor, 8);
+    } else if (blocked != 0) {
         s32 kind;
 
-        record = Func_08077008(Data_02000240[250]);
-        kind = *(s16 *)((u8 *)record + 56);
-        Func_0800c300(actor, kind != 0 ? 9 : 22);
+        kind = 9;
+        if (Owner_GetStateFar(Data_02000240.leader)->hp == 0)
+            kind = 22;
+        ObjectDispatch_ApplyArgumentToChildren(actor, kind);
     } else {
-        Func_0800c300(actor, mode);
+        ObjectDispatch_ApplyArgumentToChildren(actor, mode);
     }
 
-    if (blocked_flags != 0) {
-        *(s32 *)((u8 *)actor + 56) = 0x80000000;
-        *(s32 *)((u8 *)actor + 60) = 0x80000000;
-        *(s32 *)((u8 *)actor + 64) = 0x80000000;
-        *(s32 *)((u8 *)actor + 36) = 0;
-        *(s32 *)((u8 *)actor + 44) = 0;
-
-        if (blocked_flags & 3) {
+    if (blocked != 0) {
+        actor->target[0] = 0x80000000;
+        actor->target[1] = 0x80000000;
+        actor->target[2] = 0x80000000;
+        actor->velocity_x = 0;
+        actor->velocity_z = 0;
+        if (blocked & 3) {
             s32 diff;
-            u16 *field6;
 
-            field6 = (u16 *)((u8 *)actor + 6);
-            diff = (s16)((u16)(angle_q16 >> 16) - *field6);
+            diff = (s16)(((u32)angle >> 16) - actor->facing);
             if (diff > 0x1000)
                 diff = 0x1000;
             if (diff < -0x1000)
                 diff = -0x1000;
-            *field6 = *field6 + diff;
+            actor->facing += diff;
         }
-
-        p100 = (u16 *)((u8 *)actor + 100);
-        *p100 = 0;
-        *(u16 *)((u8 *)actor + 102) = 2;
-
-        goto fragment_tail;
+        timer = &actor->step_timer;
+        *timer = 0;
+        actor->step_phase = 2;
     } else {
-        Func_0800d14c(actor, posA[0], posA[1], posA[2]);
-        goto fragment_tail;
+        s32 speed;
+
+        Object_SetMoveTarget(actor, posA[0], posA[1], posA[2]);
+        speed = FixedSqrt(Iwram_MulQ16(actor->velocity_x, actor->velocity_x)
+                          + Iwram_MulQ16(actor->velocity_z, actor->velocity_z));
+        actor->velocity_x = 0;
+        actor->velocity_z = 0;
+        Vector_AddPolarOffset(speed, (u16)facing, &actor->velocity_x);
+        timer = &actor->step_timer;
+        if (*timer != 0)
+            *timer -= 1;
     }
 
-fragment_tail:
-    {
-        void *global_table;
-        s32 spawned_flag;
-        s32 facing_final;
-        struct ScriptObjectEntry *spawned;
-        void *child;
+    dir = (u32)angle >> 16;
+    if (Data_03001e70->footprints != 0 && *timer == 0 && blocked == 0) {
+        struct FieldActor *print;
 
-        global_table = Data_03000118;
-        spawned_flag = ((u8 *)global_table)[23];
-        facing_final = (u16)(angle_q16 >> 16);
+        print = Func_0800c150(25, actor->pos[0], actor->pos[1], actor->pos[2]);
+        if (print != 0) {
+            struct FieldSprite *sprite;
+            u16 *phase;
+            u16 flip;
 
-        if (spawned_flag != 0 && *(s16 *)p100 == 0 && blocked_flags == 0) {
-            spawned = Func_0800c150(actor->values_08[0], actor->values_08[1],
-                    actor->values_08[2], 25);
-            if (spawned != NULL) {
-                spawned->values_08[3] = actor->values_08[3];
-                child = *(void **)((u8 *)spawned + 80);
-                Func_0800c2d8(spawned, Data_08013274_a);
-                *(u8 *)((u8 *)spawned + 35) = 2;
-                *(u8 *)((u8 *)spawned + 85) = (u8)blocked_flags;
-
-                if (child != NULL) {
-                    Func_0800ba30(child, 1);
-                    *(u8 *)((u8 *)child + 38) = (u8)blocked_flags;
-                    *(u16 *)((u8 *)child + 30) = 0x4000 + facing_final;
-                    *(u8 *)((u8 *)child + 9) |= 0xc;
-                }
-
-                {
-                    u16 v;
-
-                    v = *(u16 *)((u8 *)actor + 102);
-                    if (v == 2) {
-                        Func_0800ba30(child, 2);
-                        *(u16 *)((u8 *)actor + 102) = (u16)blocked_flags;
-                        v = 0;
-                    }
-
-                    if (v != 0) {
-                        *(u16 *)((u8 *)spawned + 6) = 0x8000;
-                    }
-                }
-
-                if (mode == 5) {
-                    *p100 = 12;
-                } else {
-                    *p100 = 18;
-                }
-                *(u16 *)((u8 *)actor + 102) ^= 1;
+            print->pos[3] = actor->pos[3];
+            sprite = print->sprite;
+            ObjectDispatch_Initialize(print, Data_08013274);
+            print->kind = 2;
+            print->blocked = blocked;
+            if (sprite != 0) {
+                AnimationObjects_SelectAnimation(sprite, 1);
+                sprite->blocked = blocked;
+                sprite->angle = dir + 0x4000;
+                sprite->flags |= 0xc;
             }
+            phase = &actor->step_phase;
+            flip = *phase;
+            if ((s16)*phase == 2) {
+                AnimationObjects_SelectAnimation(sprite, 2);
+                *phase = blocked;
+                flip = 0;
+            }
+            if (flip != 0)
+                print->facing = 0x8000;
+            if (mode == 5)
+                *timer = 12;
+            else
+                *timer = 18;
+            *phase ^= 1;
         }
     }
 
-    Func_0800eaf8();
-    *(u16 *)((u8 *)actor + 4) += 1;
+    Field_CheckConfiguredKeys();
+    actor->tick++;
     return 1;
 }

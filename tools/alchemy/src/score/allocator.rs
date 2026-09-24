@@ -25,7 +25,6 @@ fn split_pointer_rejects_induction() {
 #[derive(Clone, Debug)]
 pub struct Report {
     pub text: String,
-    pub dimensions: Vec<&'static str>,
     pub repair: Option<RepairPlan>,
 }
 
@@ -33,9 +32,6 @@ impl Report {
     fn new(text: impl Into<String>, repair: Option<RepairPlan>) -> Self {
         Self {
             text: text.into(),
-            dimensions: repair
-                .as_ref()
-                .map_or_else(Vec::new, RepairPlan::dimensions),
             repair,
         }
     }

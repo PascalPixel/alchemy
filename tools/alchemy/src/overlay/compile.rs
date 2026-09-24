@@ -220,26 +220,6 @@ fn registered_symbols(
     }
     Ok(symbols)
 }
-/// Compile one overlay owner for the default target, answering from the cache.
-pub fn compile_overlay_c(
-    source: &Path,
-    work: &Path,
-    overlay: &str,
-    extent: usize,
-    routing_source: Option<&Path>,
-    extra_flags: &[String],
-) -> Result<Compiled, String> {
-    compile_overlay_c_for(
-        crate::targets::target_for(crate::targets::DEFAULT_TARGET),
-        source,
-        work,
-        overlay,
-        extent,
-        routing_source,
-        extra_flags,
-        true,
-    )
-}
 /// One fresh compile of an overlay unit in its canonical image, every member
 /// placed at its own address: the object the production listing links.
 pub fn compile_overlay_unit_fresh(unit: &TranslationUnit) -> Result<Vec<Compiled>, String> {
@@ -255,7 +235,7 @@ pub fn compile_overlay_c_fresh(
     overlay: &str,
     extent: usize,
 ) -> Result<Compiled, String> {
-    compile_overlay_c_for(target, source, work, overlay, extent, None, &[], false)
+    compile_overlay_c_for(target, source, work, overlay, extent, false)
 }
 fn translation_unit_signature(game: CompilerTarget) -> Result<Vec<u8>, String> {
     let path = root().join(game.recon()).join("translation-units.json");
@@ -269,30 +249,26 @@ fn translation_unit_signature(game: CompilerTarget) -> Result<Vec<u8>, String> {
         Err(error) => Err(format!("{}: {error}", path.display())),
     }
 }
-#[allow(clippy::too_many_arguments)]
 fn compile_overlay_c_for(
     target: DecompTarget,
     source: &Path,
     work: &Path,
     overlay: &str,
     extent: usize,
-    routing_source: Option<&Path>,
-    extra_flags: &[String],
     cached: bool,
 ) -> Result<Compiled, String> {
     let game = target.compiler.as_str();
     let source_display = source.to_string_lossy().to_string();
     let source_paths = source_paths(game)?;
-    let route = routing_source.unwrap_or(source);
     let owner = source_paths
-        .overlay_owner_for_path(overlay, route)?
+        .overlay_owner_for_path(overlay, source)?
         .or_else(|| {
-            SourceOwner::from_legacy_stem(&route.file_stem()?.to_str()?.to_ascii_lowercase())
+            SourceOwner::from_legacy_stem(&source.file_stem()?.to_str()?.to_ascii_lowercase())
         })
         .ok_or_else(|| {
             format!(
                 "{} has no overlay owner; supply a registered route",
-                route.display()
+                source.display()
             )
         })?;
     let owner = if owner.is_main() {
@@ -345,7 +321,6 @@ fn compile_overlay_c_for(
     let binding_text = crate::compiler::source_bindings::with_register(&register, &recovered);
     let bindings = write_overlay_bindings(overlay, &binding_text)?;
     options.preprocessor_flags = vec!["-include".into(), bindings.to_string_lossy().into_owned()];
-    options.support_flags = extra_flags.to_vec();
     let steps = source_to_assembly_plan(&options)?;
     let configuration = crate::candidate::CandidateCompilerConfiguration {
         overlay_extent: Some(extent),
@@ -375,10 +350,7 @@ fn compile_overlay_c_for(
         address,
         &source_inputs,
     )?;
-    // Compiles with local includes or diagnostic dumps are throwaway by
-    // construction and must never be persisted: every candidate has unique
-    // source, so caching them would grow the database without bound.
-    if cached && extra_flags.is_empty() {
+    if cached {
         if let Ok(cache) = overlay_c_cache() {
             let hit = cache
                 .get(&cache_key)
@@ -396,14 +368,13 @@ fn compile_overlay_c_for(
         &stem,
         &reference,
         &work_display,
-        extra_flags,
+        &[],
         f64::from(overlay::RESOURCE_BASE),
         target.compiler,
         &configuration,
     )?
     .actual;
-    // Mirror the read-side guard above: never persist a flag-mutated compile.
-    if cached && extra_flags.is_empty() {
+    if cached {
         if let Ok(cache) = overlay_c_cache() {
             let _ = cache.put(&cache_key, &[("payload", &data)]);
         }
@@ -1729,7 +1700,7 @@ fn compile_production_overlay(
         let extent = placeholder_extent(&text, *address)
             .ok_or_else(|| format!("{} has no complete placeholder extent", owner.id()))?;
         compiled.push(
-            compile_overlay_c_for(target, &path, work, overlay, extent, None, &[], true)
+            compile_overlay_c_for(target, &path, work, overlay, extent, true)
                 .map_err(|error| format!("{}: {error}", owner.id()))?,
         );
     }

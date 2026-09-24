@@ -20087,7 +20087,8 @@
       "source": "GRAPHICS/PALETTE/LIGHTEN_BANK_HIGHLIGHT.C"
     },
     "main:080a40ac": {
-      "name": "Unnamed_080a40ac"
+      "name": "Inventory_RemoveFirstUnflagged",
+      "source": "GAME/INVENTORY/REMOVE_FIRST_UNFLAGGED.C"
     },
     "main:080a5388": {
       "name": "Unnamed_080a5388"
@@ -21071,6 +21072,18 @@
     "main:0808f498": {
       "name": "BattleFx_StartWindowHBlankDma",
       "source": "BATTLE/EFFECT/WINDOW_HBLANK_DMA.C"
+    },
+    "main:080ab21c": {
+      "name": "UiWindow_SetRectPalette",
+      "source": "GRAPHICS/WINDOW/SET_RECT_PALETTE.C"
+    },
+    "resource_3b3:02001074": {
+      "name": "TakaraHashira_LowerActorToLedge",
+      "source": "FIELD/TAKARA_HASHIRA/LOWER_ACTOR_TO_LEDGE.C"
+    },
+    "resource_3ca:02000da4": {
+      "name": "BabiFune_SetupScene",
+      "source": "FIELD/BABI_FUNE/SETUP_SCENE.C"
     }
   },
   "symbols": {
@@ -21251,7 +21264,6 @@
     "main:08018a50": "UiText_MeasureStringVariant",
     "main:080191cc": "UiWork_AnimateSpriteSlots",
     "main:080168f4": "UiWork_StepChannelScript",
-    "main:080ab21c": "UiWindow_SetRectPalette",
     "main:08090658": "DisplayTransition_UpdateFrame",
     "main:08028194": "AffineEffect_UpdateFrame",
     "main:0808a278": "Object_GetScreenPositionFar",

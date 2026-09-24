@@ -3711,7 +3711,6 @@
     },
     {
       "id": "battle-staged-particle-presentation",
-      "source": "recon/tbs/en/units/battle-staged-particle-presentation.c",
       "overlay": null,
       "owners": [
         {
@@ -3722,7 +3721,6 @@
     },
     {
       "id": "battle-palette-particle-presentation",
-      "source": "recon/tbs/en/units/battle-palette-particle-presentation.c",
       "overlay": null,
       "owners": [
         {
@@ -3733,7 +3731,6 @@
     },
     {
       "id": "battle-particle-distance-presentation",
-      "source": "recon/tbs/en/units/battle-particle-distance-presentation.c",
       "overlay": null,
       "owners": [
         {
@@ -3744,7 +3741,6 @@
     },
     {
       "id": "battle-tile-palette-animation",
-      "source": "recon/tbs/en/units/battle-tile-palette-animation.c",
       "overlay": null,
       "absolute_symbols": {
         "BattlePieceStartX": {
@@ -4305,7 +4301,6 @@
     },
     {
       "id": "unit-08004bd4",
-      "source": "recon/tbs/en/units/unit-08004bd4.c",
       "overlay": null,
       "owners": [
         {
@@ -4320,7 +4315,6 @@
     },
     {
       "id": "unit-08004cb4",
-      "source": "recon/tbs/en/units/unit-08004cb4.c",
       "overlay": null,
       "owners": [
         {
@@ -4342,16 +4336,11 @@
     },
     {
       "id": "unit-0808fe38",
-      "source": "recon/tbs/en/units/unit-0808fe38.c",
       "overlay": null,
       "owners": [
         {
           "address": "0x0808fe38",
           "extent": 120
-        },
-        {
-          "address": "0x0808feb0",
-          "extent": 28
         }
       ]
     },
@@ -4368,7 +4357,6 @@
     },
     {
       "id": "unit-08093fa0",
-      "source": "recon/tbs/en/units/unit-08093fa0.c",
       "overlay": null,
       "owners": [
         {
@@ -4379,7 +4367,6 @@
     },
     {
       "id": "unit-080ae9f0",
-      "source": "recon/tbs/en/units/unit-080ae9f0.c",
       "overlay": null,
       "owners": [
         {
@@ -4390,22 +4377,16 @@
     },
     {
       "id": "unit-080c0774",
-      "source": "recon/tbs/en/units/unit-080c0774.c",
       "overlay": null,
       "owners": [
         {
           "address": "0x080c0774",
           "extent": 308
-        },
-        {
-          "address": "0x080c08e0",
-          "extent": 12
         }
       ]
     },
     {
       "id": "unit-giant-dispatcher",
-      "source": "recon/tbs/en/units/unit-giant-dispatcher.c",
       "overlay": null,
       "owners": [
         {
@@ -4420,7 +4401,6 @@
     },
     {
       "id": "unit-giant-orbitfx",
-      "source": "recon/tbs/en/units/unit-giant-orbitfx.c",
       "overlay": null,
       "owners": [
         {
@@ -4481,7 +4461,6 @@
     },
     {
       "id": "battle-falling-particles",
-      "source": "recon/tbs/en/units/battle-falling-particles.c",
       "overlay": null,
       "owners": [
         {
@@ -23622,7 +23601,6 @@
     },
     {
       "id": "owner-get-state",
-      "source": "recon/tbs/en/units/unit-08077394.c",
       "owners": [
         {
           "address": "0x08077394",
@@ -25007,7 +24985,6 @@
     },
     {
       "id": "menu-core-compute-entry-values-retained",
-      "source": "recon/tbs/en/units/menu-core-compute-entry-values-retained.c",
       "owners": [
         {
           "address": "0x080aae14",
@@ -25018,46 +24995,24 @@
     },
     {
       "id": "link-serial-enable-transfer-timer-retained",
-      "source": "recon/tbs/en/units/link-serial-enable-transfer-timer-retained.c",
       "owners": [
         {
           "address": "0x08005d10",
           "extent": 350
         },
         {
-          "address": "0x08005ee0",
-          "extent": 234
-        },
-        {
-          "address": "0x08005fcc",
-          "extent": 186
-        },
-        {
-          "address": "0x080060e8",
-          "extent": 116
-        },
-        {
           "address": "0x0800615c",
           "extent": 228
         },
         {
-          "address": "0x080063bc",
-          "extent": 76
-        },
-        {
           "address": "0x08006408",
           "extent": 80
-        },
-        {
-          "address": "0x0800651c",
-          "extent": 64
         }
       ],
       "overlay": null
     },
     {
       "id": "battle-effects-run-palette-ramp-mode0-retained",
-      "source": "recon/tbs/en/units/battle-effects-run-palette-ramp-mode0-retained.c",
       "owners": [
         {
           "address": "0x080d9ae8",
@@ -25068,7 +25023,6 @@
     },
     {
       "id": "save-state-select-write-slot-retained",
-      "source": "recon/tbs/en/units/save-state-select-write-slot-retained.c",
       "owners": [
         {
           "address": "0x080056cc",
@@ -25079,7 +25033,18 @@
     },
     {
       "id": "runtime-reserved-no-op-f-retained",
-      "source": "recon/tbs/en/units/runtime-reserved-no-op-f-retained.c",
+      "absolute_symbols": {},
+      "owners": [
+        {
+          "address": "0x08003e58",
+          "extent": 124
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "runtime-copy-and-call-routine",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/MEMORY/COPY_AND_CALL_ROUTINE.C",
       "absolute_symbols": {
         "LoadedRuntime_Size": {
           "address": "0x000000e0",
@@ -25090,10 +25055,6 @@
         {
           "address": "0x08003e10",
           "extent": 72
-        },
-        {
-          "address": "0x08003e58",
-          "extent": 124
         }
       ],
       "overlay": null
@@ -25153,7 +25114,6 @@
     },
     {
       "id": "inventory-has-equipment-value-retained",
-      "source": "recon/tbs/en/units/inventory-has-equipment-value-retained.c",
       "owners": [
         {
           "address": "0x08079460",
@@ -25164,12 +25124,7 @@
     },
     {
       "id": "battle-effects-play-cue-and-start-emitter-on-target-retained",
-      "source": "recon/tbs/en/units/battle-effects-play-cue-and-start-emitter-on-target-retained.c",
       "owners": [
-        {
-          "address": "0x0808df1c",
-          "extent": 348
-        },
         {
           "address": "0x0808e23c",
           "extent": 632
@@ -25179,7 +25134,6 @@
     },
     {
       "id": "menu-run-workspace-selection-loop-retained",
-      "source": "recon/tbs/en/units/menu-run-workspace-selection-loop-retained.c",
       "owners": [
         {
           "address": "0x0801e318",
@@ -25190,7 +25144,6 @@
     },
     {
       "id": "battle-party-apply-drain-retained",
-      "source": "recon/tbs/en/units/battle-party-apply-drain-retained.c",
       "owners": [
         {
           "address": "0x0808d394",
@@ -25201,22 +25154,16 @@
     },
     {
       "id": "battle-effects-set-block30-values-max-zero-retained",
-      "source": "recon/tbs/en/units/battle-effects-set-block30-values-max-zero-retained.c",
       "owners": [
         {
           "address": "0x08095c08",
           "extent": 456
-        },
-        {
-          "address": "0x08095dd0",
-          "extent": 460
         }
       ],
       "overlay": null
     },
     {
       "id": "battle-unit-lookup-weapon-value-by-class-retained",
-      "source": "recon/tbs/en/units/battle-unit-lookup-weapon-value-by-class-retained.c",
       "owners": [
         {
           "address": "0x080b7548",
@@ -74601,6 +74548,62 @@
       "owners": [
         {
           "address": "0x0200162c"
+        }
+      ]
+    },
+    {
+      "id": "takara-hashira-lower-actor-to-ledge",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/TAKARA_HASHIRA/LOWER_ACTOR_TO_LEDGE.C",
+      "overlay": "resource_3b3",
+      "absolute_symbols": {
+        "Engine_ActorGet": {
+          "address": "0x0200ab1c",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpriteFlags": {
+          "address": "0x0200aad4",
+          "kind": "thumb"
+        },
+        "Engine_ObjectDispatchRelease": {
+          "address": "0x0200aa7c",
+          "kind": "thumb"
+        },
+        "Main_080091a8": {
+          "address": "0x0200aaac",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02001074"
+        }
+      ]
+    },
+    {
+      "id": "babi-fune-setup-scene",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/BABI_FUNE/SETUP_SCENE.C",
+      "overlay": "resource_3ca",
+      "absolute_symbols": {
+        "Data_03001e70": {
+          "address": "0x03001e70",
+          "kind": "data"
+        },
+        "Engine_ActorGet": {
+          "address": "0x020093d4",
+          "kind": "thumb"
+        },
+        "Engine_MapRedraw": {
+          "address": "0x02009384",
+          "kind": "thumb"
+        },
+        "Main_08077028": {
+          "address": "0x020093a4",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02000da4"
         }
       ]
     }

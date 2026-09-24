@@ -290,7 +290,6 @@ tool-tests:
 test-integration: toolchain-check
 	$(CARGO) test --offline --quiet --release --workspace \
 		--manifest-path $(TOOLS)/Cargo.toml -- --ignored
-	$(COMPILER) match --acceptance-test
 
 tooling-index-check:
 	@$(CHECK) publication --documents

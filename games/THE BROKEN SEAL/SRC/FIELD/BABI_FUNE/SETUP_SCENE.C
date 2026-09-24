@@ -1,14 +1,8 @@
-/* NONMATCHING: 396 of 396 bytes, 7 halfword edits (2026-09-24). Hand-written
- * from the resolved disassembly as a single-overlay unit binding Engine_* at
- * their import veneers. Matched: the sprite priorities are the FieldSprite
- * bitfields read through an s32 view of actor->sprite (so the pointer reloads
- * after each byte store and the mask is -13 derived from the 2 in r5); the BG
- * priorities 2 and 3 are one-halfword structs (short pool reach puts the pool
- * after the blend registers, as in the ROM); the layers go through a struct
- * MapLayer pointer (base +308, field +12). Remaining: sched2 hoists the
- * BLDCNT address load above the BG1CNT store (the store is class 2 against
- * the cnt spill's output dependence); the reference stores BG1CNT first, then
- * loads 0x2648 before the address (7 edits). */
+/* Sets up the scene: actor collision and sprite priorities, the BG priorities,
+ * the blend, and lowers map layers 6 and 7. The sprite priorities are the
+ * FieldSprite bitfields read through an s32 view of actor->sprite; the BG
+ * priorities 2 and 3 are one-halfword structs, whose short pool reach puts
+ * the pool after the blend registers as in the ROM. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
@@ -55,7 +49,7 @@ extern u8 Data_00000003[];
 #define REG_BLDCNT (*(volatile u16 *)0x04000050)
 #define REG_BLDALPHA (*(volatile u16 *)0x04000052)
 
-s32 Local_02000da4(void)
+s32 BabiFune_SetupScene(void)
 {
     struct MapWork *map;
     volatile u16 cnt;
@@ -120,8 +114,12 @@ s32 Local_02000da4(void)
     {
         s32 v = 0x2648;
 
-        REG_BLDCNT = v;
-        v = 0x810;
+        /* FAKEMATCH: a do-while(0) keeps the BG1CNT store ahead of the
+           BLDCNT address load, as in the reference */
+        do {
+            REG_BLDCNT = v;
+            v = 0x810;
+        } while (0);
         REG_BLDALPHA = v;
     }
     {

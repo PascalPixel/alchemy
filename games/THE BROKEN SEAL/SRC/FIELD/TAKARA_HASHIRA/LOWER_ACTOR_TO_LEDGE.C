@@ -1,11 +1,6 @@
-/* NONMATCHING: 256 of 256 bytes, 4 differing halfwords (2026-09-24).
- * Hand-written: steps the actor's column row by row until the terrain rises
- * above its own level, then prepares object 223 or 253 at that step and waits
- * for the actor to fall to it. Binds the scene unit's Engine_*,
- * Main_080091a8, OverlayObject_PrepareObject and
- * SceneActor_WaitHeightBelowLimit. Remaining: sched2 schedules found = 1 (r2,
- * spilled to sp+4) into the load stall after the PrepareObject call; the
- * reference schedules the height arithmetic first. */
+/* Steps the actor's column row by row until the terrain rises above its own
+ * level, then prepares object 223 or 253 at that step and waits for the actor
+ * to fall to it. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
@@ -13,7 +8,7 @@ s32 Main_080091a8(s32 layer, s32 x, s32 z);
 s32 OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 kind);
 void SceneActor_WaitHeightBelowLimit(struct FieldActor *actor, s32 limit);
 
-s32 Func_02001074(s32 id, s32 far)
+s32 TakaraHashira_LowerActorToLedge(s32 id, s32 far)
 {
     struct FieldActor *actor = Engine_ActorGet(id);
     s32 found;
@@ -54,8 +49,12 @@ s32 Func_02001074(s32 id, s32 far)
                 y = top << 20;
                 kind = 253;
             }
-            object = OverlayObject_PrepareObject(x, y, z, kind);
-            height = actor->z.fixed - z + y;
+            /* FAKEMATCH: a do-while(0) around the object and height lets sched2
+               issue the height arithmetic first, as the reference does */
+            do {
+                object = OverlayObject_PrepareObject(x, y, z, kind);
+                height = actor->z.fixed - z + y;
+            } while (0);
             found = 1;
             break;
         }

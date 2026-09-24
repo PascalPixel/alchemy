@@ -240,7 +240,7 @@ tooling must fix a demonstrated recurring blocker and carry a test.
 | Tool | Responsibility |
 | --- | --- |
 | [alchemy](tools/alchemy/) | Golden Sun commands: `inspect` (owners, `--asm`, `--siblings`), `extract`, `score` (owner or `--unit`, `--all-instances`), `adopt` and `overlay adopt`, `check integrate` (main-image adoption), `unit`, `raw rebuild`, `build` (`full`, `assets`, `allocator`), `coverage`, `check` (publication, owners, siblings, progress), `cross-edition`, `dashboard`, `format`, `bootstrap`. |
-| [psynergy](tools/psynergy/) | Portable commands over explicit files: `decompile`, `disassemble`, `discover`, `reconstruct-asm`, `diff`, `repair`, `inspect allocator`, `convert`, plus the Thumb decoder, C recovery, comparison, twin search and the image, sound, text and LZ codecs. |
+| [psynergy](tools/psynergy/) | Portable commands over explicit files: `decompile`, `disassemble`, plus the Thumb decoder, code discovery, C recovery, comparison, twin search and the image, sound, text and LZ codecs. |
 
 ## Open work
 

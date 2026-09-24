@@ -3,20 +3,9 @@
 // constant-tracker so literal pools and jump tables resolve, then re-seed from
 // pointer tables and prologue shapes until nothing new appears.
 //
-// WHY a Rust port: this walker is the bottom of the tool dependency graph.
-// `tools/lib/overlay_disasm.ts` seeds a `Discovery` to decide which overlay
-// bytes are code, and `overlay_inventory`, `overlay_call_order_check` and
-// `executable_gap_sources` all build on that. None of them can leave
-// TypeScript while `Discovery` only exists there, so this file is the unblock.
-//
-// Ported from tools/lib/discover.ts. The walk is byte-for-byte behavioural:
-// the same seeds in the same order, the same instruction classification, the
-// same jump-table heuristics, and a report whose canonical JSON is compared
-// against the TypeScript writer's output in the parity run.
+// `alchemy raw` seeds a `Discovery` to decide which ROM bytes are code and
+// where each unresolved function ends.
 
-pub mod json;
-
-use json::Json;
 use std::collections::{BTreeMap, BTreeSet, HashMap, HashSet};
 
 pub const ROM_BASE: i64 = 0x0800_0000;
@@ -130,25 +119,6 @@ impl FunctionTable {
     }
 }
 
-/// `Map`-backed set of `[source, target, mode]` triples, keyed the way the
-/// TypeScript keys it (a string join), so the same duplicates collapse.
-#[derive(Default, Clone, Debug)]
-struct CallSet {
-    order: Vec<(i64, i64, Mode)>,
-    seen: HashSet<(i64, i64, Mode)>,
-}
-
-impl CallSet {
-    fn add(&mut self, call: (i64, i64, Mode)) {
-        if self.seen.insert(call) {
-            self.order.push(call);
-        }
-    }
-    fn len(&self) -> usize {
-        self.order.len()
-    }
-}
-
 /// Registers r0..r15 tracked as literal constants. The TypeScript uses a
 /// `Map<number, number>` that is only ever get/set/delete/has'd by register
 /// number, so a fixed array is observationally identical and copies cheaply
@@ -178,8 +148,6 @@ pub struct Discovery {
     pub limit: i64,
     functions: FunctionTable,
     pub instructions: BTreeMap<i64, Instruction>,
-    calls: CallSet,
-    external_calls: CallSet,
     pub unresolved: BTreeSet<i64>,
     pub conflicts: Vec<(i64, Mode, Mode, String)>,
     pub data_refs: BTreeSet<i64>,
@@ -198,8 +166,6 @@ impl Discovery {
             limit: base + data.len() as i64,
             functions: FunctionTable::default(),
             instructions: BTreeMap::new(),
-            calls: CallSet::default(),
-            external_calls: CallSet::default(),
             unresolved: BTreeSet::new(),
             conflicts: Vec::new(),
             data_refs: BTreeSet::new(),
@@ -213,14 +179,6 @@ impl Discovery {
 
     pub fn function_count(&self) -> usize {
         self.functions.len()
-    }
-
-    pub fn call_count(&self) -> usize {
-        self.calls.len()
-    }
-
-    pub fn external_call_count(&self) -> usize {
-        self.external_calls.len()
     }
 
     /// Every seeded function entry, in first-seen (insertion) order — the same
@@ -384,11 +342,9 @@ impl Discovery {
         };
         if !self.inside(target, if mode == Mode::Thumb { 2 } else { 4 }) {
             delta.external_callees.insert(target);
-            self.external_calls.add((source, target, mode));
             return;
         }
         delta.callees.insert(target);
-        self.calls.add((source, target, mode));
         self.add_seed(target, mode, &format!("call:{}", hex(source)));
     }
 
@@ -1149,8 +1105,6 @@ impl Discovery {
     pub fn reset_flow(&mut self) {
         self.functions.clear();
         self.instructions.clear();
-        self.calls = CallSet::default();
-        self.external_calls = CallSet::default();
         self.unresolved.clear();
         self.conflicts.clear();
         self.data_refs.clear();
@@ -1288,190 +1242,6 @@ impl Discovery {
         }
         entry
     }
-
-    pub fn report(&self, entry: i64, details: bool) -> Json {
-        let numbers = |values: &BTreeSet<i64>| -> Json {
-            Json::Arr(values.iter().map(|&value| Json::Int(value)).collect())
-        };
-        let mut functions: Vec<i64> = self.functions.keys().collect();
-        functions.sort_unstable();
-        let function_rows: Vec<Json> = functions
-            .iter()
-            .map(|&address| {
-                let info = &self.functions.entries[&address];
-                let insns: Vec<i64> = info.instructions.iter().copied().collect();
-                let last = insns.last().copied();
-                Json::Obj(vec![
-                    ("entry".into(), Json::Int(address)),
-                    ("mode".into(), Json::Str(info.mode.as_str().into())),
-                    (
-                        "sources".into(),
-                        Json::Arr(
-                            info.sources
-                                .iter()
-                                .map(|source| Json::Str(source.clone()))
-                                .collect(),
-                        ),
-                    ),
-                    ("blocks".into(), Json::Int(info.blocks.len() as i64)),
-                    ("instruction_count".into(), Json::Int(insns.len() as i64)),
-                    (
-                        "min_address".into(),
-                        insns.first().map_or(Json::Null, |&v| Json::Int(v)),
-                    ),
-                    (
-                        "max_address".into(),
-                        last.map_or(Json::Null, |v| Json::Int(v + self.instructions[&v].size)),
-                    ),
-                    ("callees".into(), numbers(&info.callees)),
-                    ("external_callees".into(), numbers(&info.external_callees)),
-                    ("unresolved".into(), numbers(&info.unresolved)),
-                ])
-            })
-            .collect();
-
-        let mut report: Vec<(String, Json)> = vec![
-            ("rom_base".into(), Json::Int(self.base)),
-            ("rom_size".into(), Json::Int(self.data.len() as i64)),
-            ("reset_entry".into(), Json::Int(entry)),
-            (
-                "function_count".into(),
-                Json::Int(function_rows.len() as i64),
-            ),
-            (
-                "instruction_count".into(),
-                Json::Int(self.instructions.len() as i64),
-            ),
-            ("call_count".into(), Json::Int(self.calls.len() as i64)),
-            (
-                "external_call_count".into(),
-                Json::Int(self.external_calls.len() as i64),
-            ),
-            (
-                "unresolved_count".into(),
-                Json::Int(self.unresolved.len() as i64),
-            ),
-            (
-                "pointer_table_count".into(),
-                Json::Int(self.pointer_tables.len() as i64),
-            ),
-            (
-                "jump_table_count".into(),
-                Json::Int(self.jump_tables.len() as i64),
-            ),
-            (
-                "conflicts".into(),
-                Json::Arr(
-                    self.conflicts
-                        .iter()
-                        .map(|(address, old, new, source)| {
-                            Json::Obj(vec![
-                                ("address".into(), Json::Int(*address)),
-                                ("old".into(), Json::Str(old.as_str().into())),
-                                ("new".into(), Json::Str(new.as_str().into())),
-                                ("source".into(), Json::Str(source.clone())),
-                            ])
-                        })
-                        .collect(),
-                ),
-            ),
-            ("functions".into(), Json::Arr(function_rows)),
-        ];
-
-        if details {
-            report.push((
-                "instructions".into(),
-                Json::Arr(
-                    self.instructions
-                        .iter()
-                        .map(|(address, instruction)| {
-                            Json::Obj(vec![
-                                ("address".into(), Json::Int(*address)),
-                                ("size".into(), Json::Int(instruction.size)),
-                                ("mode".into(), Json::Str(instruction.mode.as_str().into())),
-                                ("kind".into(), Json::Str(instruction.kind.into())),
-                            ])
-                        })
-                        .collect(),
-                ),
-            ));
-            // PORT NOTE: the TypeScript breaks ties with
-            // `a[2].localeCompare(b[2])`, ICU collation of "arm" vs "thumb".
-            // Both are lowercase ASCII, where ICU, UTF-16 and byte order all
-            // agree, so the derived `Ord` on `Mode` (Arm < Thumb) matches.
-            report.push(("calls".into(), sorted_calls(&self.calls)));
-            report.push(("external_calls".into(), sorted_calls(&self.external_calls)));
-            report.push(("unresolved".into(), numbers(&self.unresolved)));
-            report.push(("data_refs".into(), numbers(&self.data_refs)));
-            report.push(("literal_slots".into(), numbers(&self.literal_slots)));
-            report.push((
-                "pointer_tables".into(),
-                Json::Arr(
-                    self.pointer_tables
-                        .iter()
-                        .map(|(address, targets)| {
-                            Json::Obj(vec![
-                                ("address".into(), Json::Int(*address)),
-                                (
-                                    "targets".into(),
-                                    Json::Arr(
-                                        targets.iter().map(|&value| Json::Int(value)).collect(),
-                                    ),
-                                ),
-                            ])
-                        })
-                        .collect(),
-                ),
-            ));
-            report.push((
-                "jump_tables".into(),
-                Json::Arr(
-                    self.jump_tables
-                        .iter()
-                        .map(|(address, targets)| {
-                            let mut sites: Vec<i64> = self
-                                .jump_table_sites
-                                .iter()
-                                .filter(|(_, table)| *table == address)
-                                .map(|(site, _)| *site)
-                                .collect();
-                            sites.sort_unstable();
-                            Json::Obj(vec![
-                                ("address".into(), Json::Int(*address)),
-                                (
-                                    "targets".into(),
-                                    Json::Arr(
-                                        targets.iter().map(|&value| Json::Int(value)).collect(),
-                                    ),
-                                ),
-                                (
-                                    "sites".into(),
-                                    Json::Arr(sites.into_iter().map(Json::Int).collect()),
-                                ),
-                            ])
-                        })
-                        .collect(),
-                ),
-            ));
-        }
-        Json::Obj(report)
-    }
-}
-
-fn sorted_calls(calls: &CallSet) -> Json {
-    let mut rows = calls.order.clone();
-    rows.sort_by(|a, b| a.0.cmp(&b.0).then(a.1.cmp(&b.1)).then(a.2.cmp(&b.2)));
-    Json::Arr(
-        rows.into_iter()
-            .map(|(source, target, mode)| {
-                Json::Obj(vec![
-                    ("source".into(), Json::Int(source)),
-                    ("target".into(), Json::Int(target)),
-                    ("mode".into(), Json::Str(mode.as_str().into())),
-                ])
-            })
-            .collect(),
-    )
 }
 
 #[cfg(test)]
@@ -1661,8 +1431,7 @@ mod tests {
         discovery.walk_function(ROM_BASE + 0x300);
         let info = discovery.function(ROM_BASE + 0x300).expect("seeded");
         assert!(info.external_callees.contains(&0x0300_0000));
-        assert_eq!(discovery.external_calls.len(), 1);
-        assert_eq!(discovery.calls.len(), 0);
+        assert!(info.callees.is_empty());
     }
 
     #[test]
@@ -1865,18 +1634,31 @@ mod tests {
     }
 
     #[test]
-    fn the_report_carries_the_counts_and_the_sorted_rows() {
+    fn a_run_finds_the_arm_reset_entry_without_conflicts() {
         let mut image = Image::new(0x400);
         image.reset_to(0x200);
         image.u32(0x200, 0xe1a0_f00e);
         let mut discovery = Discovery::new(&image.bytes, ROM_BASE);
         let entry = discovery.run();
-        let text = json::canonical_json(&discovery.report(entry, true));
-        assert!(text.starts_with("{\n  \"rom_base\": 134217728,\n  \"rom_size\": 1024,"));
-        assert!(text.contains("\"reset_entry\": 134218240"));
-        assert!(text.contains("\"conflicts\": []"));
-        assert!(text.contains("\"calls\": []"));
-        assert!(text.contains("\"mode\": \"arm\""));
+        assert_eq!(entry, ROM_BASE + 0x200);
+        assert_eq!(discovery.function(entry).unwrap().mode, Mode::Arm);
+        assert!(discovery.conflicts.is_empty());
+        assert!(discovery.function(entry).unwrap().callees.is_empty());
+    }
+
+    fn snapshot(discovery: &Discovery) -> Vec<(i64, Vec<String>, Vec<i64>)> {
+        discovery
+            .function_entries()
+            .into_iter()
+            .map(|entry| {
+                let info = discovery.function(entry).unwrap();
+                (
+                    entry,
+                    info.sources.iter().cloned().collect(),
+                    info.instructions.iter().copied().collect(),
+                )
+            })
+            .collect()
     }
 
     #[test]
@@ -1897,15 +1679,17 @@ mod tests {
         }
         let first = {
             let mut discovery = Discovery::new(&image.bytes, ROM_BASE);
-            let entry = discovery.run();
-            json::canonical_json(&discovery.report(entry, true))
+            discovery.run();
+            snapshot(&discovery)
         };
         let second = {
             let mut discovery = Discovery::new(&image.bytes, ROM_BASE);
-            let entry = discovery.run();
-            json::canonical_json(&discovery.report(entry, true))
+            discovery.run();
+            snapshot(&discovery)
         };
         assert_eq!(first, second);
-        assert!(first.contains("prologue-boundary"));
+        assert!(first
+            .iter()
+            .any(|(_, sources, _)| sources.iter().any(|s| s.starts_with("prologue-boundary:"))));
     }
 }

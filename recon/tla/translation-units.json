@@ -2377,7 +2377,6 @@
     },
     {
       "id": "tla-summon-0815f16c",
-      "source": "recon/tla/en/units/tla-summon-0815f16c.c",
       "local_symbols": [],
       "absolute_symbols": {
         "__divsi3": {
@@ -2407,7 +2406,6 @@
     },
     {
       "id": "tla-summon-08175f74",
-      "source": "recon/tla/en/units/tla-summon-08175f74.c",
       "local_symbols": [],
       "absolute_symbols": {
         "__divsi3": {
@@ -2437,7 +2435,6 @@
     },
     {
       "id": "tla-battle-summon-ulysses",
-      "source": "recon/tla/en/units/battle-summon-ulysses-retained.c",
       "local_symbols": [],
       "absolute_symbols": {
         "__divsi3": {

@@ -81,7 +81,7 @@
  * for the phase-two seeding loop, an explicit negated-spin accumulator alone,
  * and a different declaration order.  The axis is closed on present evidence;
  * reopening it needs allocator dumps (alchemy build allocator 080d5e54, then
- * psynergy inspect allocator), not another source spelling.
+ * read the .lreg and .greg dumps), not another source spelling.
  *
  * Call targets carry the names "alchemy inspect" resolves and that the owner
  * register already holds.  The names it prints for Resource_LoadAndDecompress

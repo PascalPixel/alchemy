@@ -184,6 +184,9 @@ pub struct TranslationUnit {
     /// The game whose manifest declares the unit.
     #[serde(skip)]
     pub game: String,
+    /// The C file the unit compiles. A main-image unit of drafts alone
+    /// declares none: its source is the composite `draft_composite` writes.
+    #[serde(default)]
     pub source: PathBuf,
     pub overlay: Option<String>,
     #[serde(default, deserialize_with = "unique_keys")]
@@ -740,6 +743,9 @@ impl TranslationUnits {
                     owner.extent = placement.placeholder(image, owner.address).unwrap_or(0);
                 }
             }
+            if unit.source.as_os_str().is_empty() {
+                unit.source = draft_composite(root, game, unit)?;
+            }
         }
         Ok(document)
     }
@@ -1164,17 +1170,18 @@ fn validate_production_state(
             })
         };
         if requires_direct && matches!(member.state, OwnerState::NotYetC) {
-            let parent = source.parent().unwrap_or(root);
-            let candidate = parent.join(format!("../main/{:08x}.c", member.address));
-            if !candidate
+            let draft = root
+                .join(crate::compiler::routing::recon_directory(&unit.game))
+                .join(format!("en/main/{:08x}.c", member.address));
+            if !draft
                 .canonicalize()
                 .is_ok_and(|path| direct_includes.contains(&path))
             {
                 return Err(format!(
-                    "{}: {} retained C body must be included from ../main/{:08x}.c",
+                    "{}: {} retained C body must be included from {}",
                     unit.id,
                     owner.id(),
-                    member.address
+                    draft.display()
                 ));
             }
         }
@@ -1191,6 +1198,53 @@ fn validate_production_state(
         }
     }
     Ok(())
+}
+/// The composite a unit of main-image drafts compiles: each owner's draft,
+/// `recon/<game>/en/main/<address>.c`, included in address order. It is
+/// derived from the manifest, so it is written under `out/` and never
+/// tracked; an exact owner compiles from its own registered source instead.
+fn draft_composite(
+    root: &Path,
+    game: CompilerTarget,
+    unit: &TranslationUnit,
+) -> Result<PathBuf, String> {
+    if !unit_id(&unit.id) || unit.overlay.is_some() {
+        return Err(format!(
+            "{}: only a main-image unit may omit its source",
+            unit.id
+        ));
+    }
+    let mut owners = unit.owners.iter().collect::<Vec<_>>();
+    owners.sort_by_key(|owner| owner.address);
+    let mut text = format!(
+        "/* Generated from {}/translation-units.json: the drafts of unit {}. */\n",
+        game.recon(),
+        unit.id
+    );
+    for owner in owners {
+        let draft = format!("{}/en/main/{:08x}.c", game.recon(), owner.address);
+        if owner.state != OwnerState::NotYetC || !root.join(&draft).is_file() {
+            return Err(format!(
+                "{}: 0x{:08x} is not a not-yet-C owner with a draft at {draft}",
+                unit.id, owner.address
+            ));
+        }
+        text.push_str(&format!("#include \"../../../{draft}\"\n"));
+    }
+    let relative = PathBuf::from(format!("out/units/{}/{}.c", game.as_str(), unit.id));
+    let path = root.join(&relative);
+    if std::fs::read_to_string(&path).ok().as_deref() != Some(text.as_str()) {
+        let directory = path.parent().expect("composite directory");
+        std::fs::create_dir_all(directory)
+            .map_err(|error| format!("{}: {error}", directory.display()))?;
+        // Written whole and renamed, so a concurrent reader never sees a
+        // partial composite.
+        let staged = directory.join(format!(".{}.{}", unit.id, std::process::id()));
+        std::fs::write(&staged, &text)
+            .and_then(|()| std::fs::rename(&staged, &path))
+            .map_err(|error| format!("{}: {error}", path.display()))?;
+    }
+    Ok(relative)
 }
 /// Each overlay listing's layout as the manifest reads it, read once. Without
 /// its listing nothing is placed: the owner stays unbounded and not yet C,

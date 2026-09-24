@@ -1,15 +1,18 @@
-/* Draft, not exact (2026-09-24): candidate=1172 reference=1136,
-   differing_halfwords=429, binary similarity 52.4% (the previous draft
-   scored 37.5%). Three projectiles leave the caster twelve frames apart
-   and fly to the first target over 60 frames; each draws a ten-point
-   spinning ring joined by dotted segments and knocks the target back on
-   arrival. `DrawRectangle blit[2]` with only blit[0] used reproduces the
-   unreferenced slot above blit46 (one DImode pseudo spilled as 8 bytes).
-   Residual: the reference frame is 116 bytes (this one 124); its
-   slots run work 76, dst 72, frame 68, an unreferenced slot at 64 (the
-   same gap mode 12 keeps between frame and blit46), blit46 60, k 56,
-   aux 52, transfer work 48, peak 44. The ring and segment loops still
-   differ in induction variables. */
+/* Draft, not exact (2026-09-24): candidate=1152 reference=1136,
+   halfword_edits=221 (was 278 at 1172 bytes). Three projectiles leave the
+   caster twelve frames apart and fly to the first target over 60 frames;
+   each draws a ten-point spinning ring joined by dotted segments and
+   knocks the target back on arrival. The frame is now the reference's 116
+   bytes and the prologue matches up to the transfer_mode store: the
+   projectile loop keeps its start frame (12k) and ring index (10k) as
+   plain counters stepped in the for statement, as the reference does
+   (sp+16, sp+24), and only the projectile pointer (sp+20) is a reduced
+   induction; the ring stores index TRAIL[idx + m] (reduced inside the
+   ring loop only). Residual: GCSE hoists age << 10 out of the ring loop
+   into its own spill slot, where the reference keeps age at sp+40 and
+   shifts it every iteration; that extra slot moves idx, grow and peak.
+   `DrawRectangle blit[2]` with only blit[0] used reproduces the
+   unreferenced slot above blit46. */
 #include "TYPES.H"
 #include "BATTLE_EFFECT_WORK.H"
 #include "BATTLE_EFX.H"
@@ -104,6 +107,8 @@ void Func_080d0ee0(struct BattleEffectArgument *efx)
     s32 m;
     s32 s;
     s32 size;
+    s32 start;
+    s32 idx;
 
     work = *(struct BoltWork **)(gWorkSlot + 39 * 4);
     dst = *(void **)(gWorkSlot + 40 * 4);
@@ -152,16 +157,16 @@ void Func_080d0ee0(struct BattleEffectArgument *efx)
                 t->scroll += d;
             }
         }
-        for (k = 0; k != 3; k++) {
+        for (k = 0, idx = 0, start = 0; k != 3; idx += 10, start += 12, k++) {
             s32 age;
             s32 peak;
             s32 grow;
             struct EffectStep *trail;
-            if (frame < k * 12) {
+            if (frame < start) {
                 continue;
             }
             q = &work->bolts[k];
-            age = frame - k * 12;
+            age = frame - start;
             size = age / 4 + 2;
             if (size > 10) {
                 size = 10;
@@ -171,8 +176,7 @@ void Func_080d0ee0(struct BattleEffectArgument *efx)
             SceneTransform_ApplyPosition(q);
             peak = 0;
             grow = (age << 12) + 0x1000;
-            trail = &TRAIL[k * 10];
-            for (m = 0; m != 10; m++, trail++) {
+            for (m = 0; m != 10; m++) {
                 s32 r;
                 Graphics_SaveTransferWorkOnce();
                 SceneTransform_ApplyRoll(age << 10);
@@ -190,6 +194,7 @@ void Func_080d0ee0(struct BattleEffectArgument *efx)
                     peak = r;
                 }
                 out[0] >>= 1;
+                trail = &TRAIL[idx + m];
                 trail->velocity_x = out[0] + base[0];
                 trail->velocity_y = out[1] + base[1];
                 trail->velocity_x = out[0];
@@ -198,10 +203,10 @@ void Func_080d0ee0(struct BattleEffectArgument *efx)
             }
             if (peak <= 399999) {
                 for (m = 0; m != 10;) {
-                    struct EffectStep *a = &TRAIL[k * 10 + m];
+                    struct EffectStep *a = &TRAIL[idx + m];
                     struct EffectStep *b;
                     m++;
-                    b = &TRAIL[k * 10 + Math_Mod(m, 10)];
+                    b = &TRAIL[idx + Math_Mod(m, 10)];
                     for (s = 0; s != 16; s++) {
                         s32 x = a->velocity_x + (b->velocity_x - a->velocity_x) * s / 16;
                         s32 y = a->velocity_y + (b->velocity_y - a->velocity_y) * s / 16;
@@ -212,7 +217,7 @@ void Func_080d0ee0(struct BattleEffectArgument *efx)
             q->x += q->velocity_x;
             q->y += q->velocity_y;
             q->z += q->velocity_z;
-            if (frame == k * 12 + k + 10) {
+            if (frame == start + k + 10) {
                 target->unknown_34 = 0x20000;
                 target->unknown_30 = 0x80000;
                 target->unknown_28 = 0x50000;

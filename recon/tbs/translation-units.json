@@ -52489,26 +52489,6 @@
           "address": "0x0200a4e8",
           "kind": "thumb"
         },
-        "Func_02001c78": {
-          "address": "0x020080c4",
-          "kind": "thumb"
-        },
-        "Func_02001d24": {
-          "address": "0x020080c4",
-          "kind": "thumb"
-        },
-        "Func_02001e30": {
-          "address": "0x020080c4",
-          "kind": "thumb"
-        },
-        "Func_02001f2c": {
-          "address": "0x020080c4",
-          "kind": "thumb"
-        },
-        "Func_02001f4c": {
-          "address": "0x020080c4",
-          "kind": "thumb"
-        },
         "Func_02002038": {
           "address": "0x02008f40",
           "kind": "thumb"
@@ -52724,6 +52704,10 @@
         "gEventWork": {
           "address": "0x03001ebc",
           "kind": "data"
+        },
+        "StagedActor_AdvancePair": {
+          "address": "0x020080c4",
+          "kind": "thumb"
         }
       },
       "owners": [

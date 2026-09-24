@@ -18618,6 +18618,10 @@
         "LinkedFlag_BoulderFell": {
           "address": "0x00000838",
           "kind": "data"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
         }
       },
       "owners": [

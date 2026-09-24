@@ -79832,6 +79832,42 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "scene-371-020001c4",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/WORLD_MAP/BOBBING_MARKER.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_371",
+      "absolute_symbols": {
+        "Engine_ObjectSetPartPalettes": {
+          "address": "0x0200c25c",
+          "kind": "thumb"
+        },
+        "Engine_MathSin": {
+          "address": "0x0200c1a4",
+          "kind": "thumb"
+        },
+        "Main_08000128": {
+          "address": "0x0200c1ac",
+          "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x020001c4",
+          "extent": 140,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

@@ -19619,7 +19619,8 @@
       "name": "WorldMap_CreateLinkedEffects"
     },
     "resource_371:020001c4": {
-      "name": "WorldMap_UpdateOrbitActor"
+      "name": "WorldMap_UpdateBobbingMarker",
+      "source": "FIELD/WORLD_MAP/BOBBING_MARKER.C"
     },
     "resource_391:02002974": {
       "name": "FieldScene_UpdateFallingEffect",

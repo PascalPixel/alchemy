@@ -10018,7 +10018,8 @@
       "name": "Region_080d4ce8"
     },
     "main:080d765c": {
-      "name": "BattleFx_InitializeMode10"
+      "name": "BattleFx_InitializeMode10",
+      "source": "BATTLE/EFFECT/INITIALIZE_MODE10.C"
     },
     "main:080d82b0": {
       "name": "Unnamed_080d82b0"

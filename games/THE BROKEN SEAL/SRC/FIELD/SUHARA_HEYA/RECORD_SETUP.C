@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "FIELD_EVENT.H"
 #include "SCENE.H"
 
 #define STEP_COUNTER (*(u16 *)(*(u8 **)0x03001ebc + 0x1d8))
@@ -151,7 +152,7 @@ void Dialogue_HandleFacingAction(s32 no)
         Actor_unk9_2(0x262c);
         Actor_Apply9(no, 0);
     } else {
-        Engine_EventSetMessage(0x25d5);
+        Event_SetMessage(0x25d5);
         Actor_Apply10(no, 0);
     }
 }

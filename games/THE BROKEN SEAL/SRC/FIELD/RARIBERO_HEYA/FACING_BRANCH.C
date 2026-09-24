@@ -5,7 +5,6 @@
  * the door line plays; otherwise a flag picks one of the two default lines.
  */
 
-#define Dialogue_HandleFacingBranch Func_0200015c
 
 u16 *Func_02001378(s32);
 s32 Func_0200136c(s32);

@@ -1,11 +1,13 @@
 /* Draft, not exact (2026-09-24): candidate=3920 reference=3920,
-   differing_halfwords=1059, binary similarity 72.2%. Phase one (170
+   differing_halfwords=1010, binary similarity 76.4%. Phase one (170
    frames, A or B skips it) draws three dotted beams between six projected
    points, a ring of dots and a falling column; phase two (192 frames)
    bursts sparks, flashes and smoke and pans the camera. Residual: the
-   reference frame is 336 bytes, 4 more than this one, and its spill slots
+   frame now matches at 336 bytes: the unreferenced slot is the unused
+   upper word of `DrawRectangle blit[2]`, an array small enough to live in
+   one DImode pseudo, so reload spills it as one 8-byte slot. The spill slots
    follow declaration order (ctrl 132, work 128, dst 124, aux 120, frame
-   116, an unreferenced slot at 112, blit46 108, size 104, count 100, the
+   116, an unreferenced slot at 112, blit[0] 108, size 104, count 100, the
    scale pointer 96, the beam y offset 24k + 4 at 92, blit47 88, the ring
    offset lvl * 0x302 at 84, camera 80..68). Here count, the beam offset
    and the ring offset are expression temporaries spilled after the camera
@@ -13,12 +15,15 @@
    frame * 2 with the beam length written from count * 2 (one giv chain;
    count still gets a hard register in global alloc and is spilled late
    by reload, where the reference leaves it unallocated),
-   gWorkSlot read through a base pointer for blit46 (sym + 184), masks
+   gWorkSlot read through a base pointer for blit[0] (sym + 184), masks
    loaded into the result register (speed = 0x3ff; speed &= Random16()),
    and Trig_Sin(angle) * speed operand order. */
 #include "TYPES.H"
 #include "BATTLE_EFFECT_WORK.H"
 #include "BATTLE_EFX.H"
+/* As in mode 6, the blitters return a value the effect ignores. */
+typedef s32 (*DrawRectangleResult)(void *, const void *, s32, s32, s32, s32);
+#define DrawRectangle DrawRectangleResult
 #include "CALLBACK_SCHEDULER.H"
 #include "EFFECT_STEP.H"
 #include "FIXED_MATH.H"
@@ -128,7 +133,7 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
     void *dst;
     u8 *aux;
     s32 frame;
-    DrawRectangle blit46;
+    DrawRectangle blit[2];
     s32 size;
     s32 count;
     s32 *sc;
@@ -198,7 +203,7 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
     Unnamed_080cd104(0, 1);
     *(u16 *)0x04000020 = 0x80;
     BattleEffect_LoadWork(46, 7, 7, 3, 3);
-    blit46 = (DrawRectangle)cache[46];
+    blit[0] = (DrawRectangle)cache[46];
     *(u16 *)0x04000000 = 0x7741;
     *(u16 *)0x04000020 = 0x80;
     *(u16 *)0x04000052 = 0x100f;
@@ -302,7 +307,7 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
                     for (j = 0; j != len; j++) {
                         s32 x = pts[i * 2].x + Iwram_MulQ16(j * (pts[i * 2 + 1].x - pts[i * 2].x), 0x555);
                         s32 y = pts[i * 2].y + Iwram_MulQ16(j * (pts[i * 2 + 1].y - pts[i * 2].y), 0x555);
-                        blit46(dst, aux + BattleFx12_DotCells[size - 1], x - size / 2, y - size, size, size * 2);
+                        blit[0](dst, aux + BattleFx12_DotCells[size - 1], x - size / 2, y - size, size, size * 2);
                     }
                 }
             }
@@ -352,11 +357,11 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
             }
             for (i = 1; i != 10; i++) {
                 if (w + i <= 15) {
-                    blit46(dst, &ramp[w + i], w + 48 + i, 16 - i, 32 - w * 2 - i * 2, 1);
+                    blit[0](dst, &ramp[w + i], w + 48 + i, 16 - i, 32 - w * 2 - i * 2, 1);
                 }
             }
             for (i = 0; i != h; i++) {
-                blit46(dst, ramp + w, w + 48, i + 16, 32 - w * 2, 1);
+                blit[0](dst, ramp + w, w + 48, i + 16, 32 - w * 2, 1);
             }
             BattleEffect_LoadWork(47, 7, 7, 3, 2);
             ((DrawRectangle)SLOT(47))(dst, work, 32, h - 56, 32, 96);
@@ -414,10 +419,10 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
             s32 start = j * 128 + 8;
             if (frame >= start && frame < j * 128 + 17) {
                 if (frame >= j * 128 + 9 && frame < j * 128 + 12) {
-                    blit46(dst, work->sheet, 36, 0, 48, 112);
+                    blit[0](dst, work->sheet, 36, 0, 48, 112);
                 }
                 if (frame >= j * 128 + 12 && frame < start + 8) {
-                    blit46(dst, work->sheet + 0x1500, 36, 0, 48, 112);
+                    blit[0](dst, work->sheet + 0x1500, 36, 0, 48, 112);
                 }
                 if (frame == start + 2) {
                     n = 0;

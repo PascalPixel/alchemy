@@ -12,6 +12,7 @@ struct ItemMenuIcon {
     u8 render_target;               /* 0x0e */
 };
 
+/* The item menu work block at 0x03001F2C, as this loop sees it. */
 struct ItemCommandWork {
     u8 unknown_000[0x14];
     union {
@@ -47,9 +48,17 @@ struct ItemCommandWork {
     u8 list_mode;                   /* 0x25d */
 };
 
-#define ItemMenu_RunItemCommand Func_080a2680
+typedef s32 (*WordCopyFn)(void *dst, const void *src, s32 size);
 
-/* Message-table cells reached through the shared Value_<id> address symbols. */
+/* The resident word copier, addressed from the IWRAM runtime base. */
+extern u8 Value_03000000[];
+#define IWRAM_COPY_WORDS ((WordCopyFn)(Value_03000000 + 0x1388))
+
+static __inline__ s32 CopyWords(WordCopyFn copy, void *dst, const void *src, s32 size)
+{
+    return copy(dst, src, size);
+}
+
 extern char Value_00000ad8;
 extern char Value_00000ad9;
 extern char Value_00000adb;
@@ -65,84 +74,71 @@ extern char Value_00000b84;
 extern char Value_00000b85;
 extern char Value_00000bef;
 
-void Func_080030f8(s32 frames);
-void *Func_08004938(s32 size);
-void Func_08002df0(void *buffer);
-typedef s32 (*WordCopyFn)(void *dst, const void *src, s32 size);
-
-static __inline__ s32 CopyWords(WordCopyFn copy, void *dst, const void *src, s32 size)
-{
-    return copy(dst, src, size);
-}
-void Func_08015068(s32 window, s32 unused, s32 x, s32 y, s32 height);
-void Func_08015080(s32 message, s32 window, s32 x, s32 y);
-void Func_08015270(s32 window);
-void Func_08015278(s32 window);
-void Func_08015298(s32 kind, s32 item, s32 target, s32 flags);
-void Func_080f9010(s32 cue);
-void Func_08077010(s32 owner);
-s32 Func_08077028(s32 owner, s32 item);
-s32 Func_08077050(s32 owner, s32 slot);
-s32 Func_08077058(s32 owner, s32 slot);
-s32 Func_080770c0(s32 flag);
+void WaitFrames(s32 frames);
+void *Runtime_BumpAllocate(s32 size);
+void Runtime_BumpFree(void *buffer);
+void UiWindow_ClearInteriorTilesFar(s32 window, s32 unused, s32 x, s32 y, s32 height);
+void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
+void RenderOutput_RedrawSavedRectFar(s32 window);
+void RenderOutput_ClearListFar(s32 window);
+void Resource_LoadByModeIntoSlotFar(s32 kind, s32 item, s32 target, s32 flags);
+void Audio_PlayCue(s32 cue);
+void Owner_RecalculateStatsFar(s32 owner);
+s32 Inventory_AddItemFar(s32 owner, s32 item);
+s32 Inventory_EquipFar(s32 owner, s32 slot);
+s32 Inventory_RemoveFar(s32 owner, s32 slot);
+s32 GameFlag_TestFar(s32 flag);
 void Func_08077240(s32 item, s32 mode);
 void Func_080772c0(s32 owner);
-s32 Func_0808a490(s32 item);
-void Func_0808a548(void);
-void Func_080a112c(s32 window, s32 owner, s32 unused, s32 style);
-void Func_080a1d08(s32 message, s32 acknowledgement_mode, s32 window_mode);
-void Func_080a23c0(s32 window);
+s32 BattleFx_HasTriggerFar(s32 item);
+void Event_ClearInvalidPackedValuesFar(void);
+void Menu_DrawOwnerStatusPanel(s32 window, s32 owner, s32 unused, s32 style);
+void InventoryMenu_ShowModalMessage(s32 message, s32 acknowledgement_mode, s32 window_mode);
+void UiText_DrawWorkValueWithLabel(s32 window);
 s32 Func_080a38d0(s32 mode);
 s32 Func_080a3d9c(s32 owner, s32 item);
-void Func_080a3ef0(s32 owner, s32 slot, s32 unused, s32 owner2);
+/* Takes a fourth argument; this caller passes the owner there as well. */
+void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 arg3);
 s32 Func_080a414c(void);
-s32 Func_080a46b4(s32 owner, s32 item);
-void Func_080a4800(s32 item);
+s32 Item_ClassifyUseMode(s32 owner, s32 item);
+void Menu_SelectQuantity(s32 item);
 s32 Func_080a4f08(s32 unused, s32 limit, s32 mode);
 s32 Func_080a524c(s32 index);
-s32 Func_080a5388(s32 mode);
-s32 Func_080a5788(s32 mode);
-
-#define ItemMenu_GetCommandChoice  Func_080a414c
-#define ItemMenu_ShowModalMessage  Func_080a1d08
-#define ItemMenu_SelectPartyMember Func_080a5788
-#define Item_ClassifyUseMode            Func_080a46b4
-#define UiText_DrawWorkValueWithLabel   Func_080a23c0
+s32 Unnamed_080a5388(s32 mode);
+s32 ItemMenu_RunList(s32 pane);
+s32 ItemMenu_PrepOwner();
+s32 ItemMenu_Count();
+s32 ItemMenu_Use();
+s32 ItemMenu_IsSpecial();
+s32 ItemMenu_Collect();
+s32 ItemMenu_SetMsgWin3();
+s32 ItemMenu_SetMsgWin5();
+s32 ItemMenu_SetMsgWin6();
+s32 ItemMenu_SetItemWin3();
+s32 ItemMenu_SetItemWin5();
+s32 ItemMenu_DrawMsg();
+s32 ItemMenu_HideAllIcons();
+s32 ItemMenu_HidePageIcons();
+s32 ItemMenu_DrawIcons();
+s32 ItemMenu_DrawItemHead();
+s32 ItemMenu_TryBreak();
+s32 ItemMenu_RefreshOwner();
+s32 UiIcon_PrepareObject();
 
 /*
- * Item command driver for the field inventory menu.
+ * The item menu command loop.  Each pass of the state machine runs one
+ * screen: 0 picks the owner, 1 the item, 9 the command, and the handlers
+ * use (2), equip (3), give (6, then 4 or the trade in 7), drop (5), unequip
+ * (11) and inspect (10).  The loop ends when a handler sets done or flag
+ * 0x150 is raised.  Using an item outside the menu fills the three out
+ * parameters and returns 1; cancelling the owner returns -1, as does flag
+ * 0x150; anything else returns 0.
  *
- * One frame-driven state machine: `state` selects the current screen (item
- * list, command list, target picker, give/trade/drop/remove handlers) and the
- * loop runs until a handler sets `done` or the abort flag 0x150 is raised.
- * The three out parameters carry a "use this item outside the menu" request
- * back to the caller, and the return value is 1 when such a request was made,
- * -1 when flag 0x150 aborted the menu, 0 otherwise.
- *
- * Uncertain: the roles of the two menu cells at 0x25c and 0x25d (written but
- * never read here) and of the two window handles at 0x24 and 0x34; both are
- * still spelled as raw offsets. The named state numbers are the reference
- * jump-table order, not recovered constants.
- *
- * DRAFT, not yet C (2026-09-24): 1266 of 1294 listing lines, 58 lines differ
- * (38 once registers are normalised). Proven: the handlers set the next
- * state inside each exit branch (if-conversion hoists it, so cse never sees
- * a redundant set); one result variable (r6) and one command variable (r7)
- * are shared across the handlers; clearing the command on cancel lets the
- * -1 compare register reach ret; the list icon at 0x14 is read through a
- * union so the selected-icon stores stay ordered before it; the give
- * handler needs a label between the stack count and its sign-extended use
- * (a FAKEMATCH do-while for now); the swap handler tests the 0x17a item
- * directly, so both masks are halfword pool constants and force the pool
- * into the loop; the 0x03001388 copy routine goes through _call_via with an
- * inline wrapper. The drop handler loads 0x1ff into the state variable and
- * never reassigns it on success, which ends the menu through the default
- * case (FAKEMATCH candidate). Remaining: the backup copy loads the routine
- * address one slot early, and case 12 keeps its result in r6 in the
- * reference (a live copy this draft loses, so case 11 and 12 share their
- * state = 1 tail and the final reload registers shift).
+ * Every handler sets the next state inside the branch that leaves it, and
+ * the trade backs both inventories up through the resident word copier so a
+ * failed swap can restore them.
  */
-s32 ItemMenu_RunItemCommand(s32 *owner_out, s32 *target_out, s32 *item_out)
+s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
 {
     s32 done;
     s32 sel;
@@ -171,7 +167,7 @@ s32 ItemMenu_RunItemCommand(s32 *owner_out, s32 *target_out, s32 *item_out)
     state = 0;
     menu = *(struct ItemCommandWork **)ADDR_03001F2C;
 
-    while (done == 0 && Func_080770c0(0x150) == 0) {
+    while (done == 0 && GameFlag_TestFar(0x150) == 0) {
         switch (state) {
         case 0:
             menu->selected_slot = 0;
@@ -179,7 +175,7 @@ s32 ItemMenu_RunItemCommand(s32 *owner_out, s32 *target_out, s32 *item_out)
             ItemMenu_SetItemWin3();
             menu->selected_item_icon->state = 13;
             ItemMenu_DrawMsg(0, (s32)&Value_00000ad8);
-            UiWindow_Commit(menu->info_window);
+            RenderOutput_RedrawSavedRectFar(menu->info_window);
             UiText_DrawWorkValueWithLabel(menu->info_window);
             command = ItemMenu_PrepOwner(0);
             if (command == -1) {
@@ -187,7 +183,7 @@ s32 ItemMenu_RunItemCommand(s32 *owner_out, s32 *target_out, s32 *item_out)
                 ret = -1;
                 done = 1;
             }
-            UiWindow_Commit(menu->info_window);
+            RenderOutput_RedrawSavedRectFar(menu->info_window);
             ItemMenu_HideAllIcons();
             state = 1;
             break;
@@ -202,7 +198,7 @@ s32 ItemMenu_RunItemCommand(s32 *owner_out, s32 *target_out, s32 *item_out)
             menu->selected_item_icon->state = 13;
             menu->list.icon->state = 1;
             ItemMenu_DrawMsg(0, (s32)&Value_00000ad9);
-            sel = ItemMenu_SelectPartyMember(0);
+            sel = ItemMenu_RunList(0);
             state = 0;
             if (sel == -1) {
                 break;
@@ -212,13 +208,13 @@ s32 ItemMenu_RunItemCommand(s32 *owner_out, s32 *target_out, s32 *item_out)
             break;
 
         case 9:
-            command = ItemMenu_GetCommandChoice();
+            command = Func_080a414c();
             if (command == -1) {
                 state = 1;
                 menu->completion_flag = 1;
             }
             if (command == 0) {
-                if (Func_0808a490(menu->selected_item & 0x1ff) != 0) {
+                if (BattleFx_HasTriggerFar(menu->selected_item & 0x1ff) != 0) {
                     done = 1;
                     *owner_out = menu->item_owner;
                     *target_out = command;
@@ -233,11 +229,10 @@ s32 ItemMenu_RunItemCommand(s32 *owner_out, s32 *target_out, s32 *item_out)
                 }
                 if (result == 2) {
                     ItemMenu_Use();
-                    Func_08015278(menu->info_window);
-                    ItemMenu_ShowModalMessage(
+                    RenderOutput_ClearListFar(menu->info_window);
+                    InventoryMenu_ShowModalMessage(
                         menu->message_offset + (s32)&Value_00000bef, 0, -1);
-                    menu->list.icon->state =
-                        13;
+                    menu->list.icon->state = 13;
                     menu->item_count = ItemMenu_Collect(
                         OwnerState_GetFar(menu->item_owner), menu->items, 0);
                     ItemMenu_DrawIcons(menu->items, 0);
@@ -272,9 +267,9 @@ s32 ItemMenu_RunItemCommand(s32 *owner_out, s32 *target_out, s32 *item_out)
             ItemMenu_HideAllIcons();
             ItemMenu_SetMsgWin5();
             ItemMenu_SetItemWin5();
-            UiWindow_Commit(menu->message_window);
+            RenderOutput_RedrawSavedRectFar(menu->message_window);
             ItemMenu_DrawItemHead();
-            UiText_DrawAt(
+            UiText_DrawCharacterAtOffsetFar(
                 (s32)&Value_00000adb, menu->message_window, 16, 16);
             if (Func_080a38d0(0) != -1) {
                 command = 0;
@@ -283,14 +278,13 @@ s32 ItemMenu_RunItemCommand(s32 *owner_out, s32 *target_out, s32 *item_out)
                     command = 8;
                 }
                 result = ItemMenu_Use();
-                Func_080a112c(
+                Menu_DrawOwnerStatusPanel(
                     menu->status_window, menu->target_owner, 0, command);
                 if (result != -1) {
-                    Func_08015278(menu->info_window);
-                    ItemMenu_ShowModalMessage(
+                    RenderOutput_ClearListFar(menu->info_window);
+                    InventoryMenu_ShowModalMessage(
                         menu->message_offset + (s32)&Value_00000bef, 0, -1);
-                    menu->list.icon->state =
-                        13;
+                    menu->list.icon->state = 13;
                     ItemMenu_TryBreak();
                     state = 1;
                 }
@@ -306,14 +300,15 @@ s32 ItemMenu_RunItemCommand(s32 *owner_out, s32 *target_out, s32 *item_out)
         case 6:
             ItemMenu_SetMsgWin5();
             ItemMenu_SetItemWin5();
-            UiWindow_Commit(menu->message_window);
+            RenderOutput_RedrawSavedRectFar(menu->message_window);
             ItemMenu_DrawItemHead();
-            UiText_DrawAt(
+            UiText_DrawCharacterAtOffsetFar(
                 (s32)&Value_00000adc, menu->message_window, 16, 16);
             n = Func_080a38d0(1);
             state = 4;
             if (n == -1) {
-                Func_080a3ef0(menu->item_owner, menu->selected_slot, 0, menu->item_owner);
+                ItemMenu_DrawEquipPreview(
+                    menu->item_owner, menu->selected_slot, 0, menu->item_owner);
                 state = 9;
             }
             break;
@@ -334,8 +329,7 @@ s32 ItemMenu_RunItemCommand(s32 *owner_out, s32 *target_out, s32 *item_out)
                 break;
             }
             menu->target_owner = 0;
-            state = 0x1ff;
-            Func_08015298(
+            Resource_LoadByModeIntoSlotFar(
                 2,
                 (menu->selected_item & 0x1ff) | (result << 11),
                 menu->selected_item_icon->render_target,
@@ -344,30 +338,31 @@ s32 ItemMenu_RunItemCommand(s32 *owner_out, s32 *target_out, s32 *item_out)
             menu->selected_item_icon->x = 120;
             menu->selected_item_icon->y = 28;
             UiIcon_PrepareObject(menu->selected_item_icon);
-            Func_08015068(menu->preview_window, 0, 72, 120, 96);
-            UiWindow_Commit(menu->message_window);
+            UiWindow_ClearInteriorTilesFar(menu->preview_window, 0, 72, 120, 96);
+            RenderOutput_RedrawSavedRectFar(menu->message_window);
             if (Func_080a524c(sel) == 0) {
                 command = menu->item_owner;
                 OwnerState_GetFar(command);
                 for (work = 0; work < result + 1; work++) {
-                    Func_08077058(command, menu->selected_slot);
+                    Inventory_RemoveFar(command, menu->selected_slot);
                     Func_08077240(menu->selected_item & 0x1ff, 1);
                 }
-                Func_08077010(command);
+                Owner_RecalculateStatsFar(command);
                 ItemMenu_SetItemWin3();
                 ItemMenu_RefreshOwner(menu->item_owner, 0);
                 menu->selected_item_icon->state = 13;
                 menu->list.icon->state = 13;
                 WaitFrames(1);
-                Func_08015278(menu->info_window);
-                ItemMenu_ShowModalMessage((s32)&Value_00000b7d, 14, 13);
+                RenderOutput_ClearListFar(menu->info_window);
+                InventoryMenu_ShowModalMessage((s32)&Value_00000b7d, 14, 13);
                 menu->completion_flag = 1;
+                state = 1;
             } else {
                 state = 9;
             }
-            Func_08077010(menu->item_owner);
+            Owner_RecalculateStatsFar(menu->item_owner);
             menu->selected_item_icon->state = 13;
-            Func_0808a548();
+            Event_ClearInvalidPackedValuesFar();
             break;
 
         case 4:
@@ -386,9 +381,11 @@ s32 ItemMenu_RunItemCommand(s32 *owner_out, s32 *target_out, s32 *item_out)
                 }
                 stack = (menu->selected_item >> 11) + 1;
                 if (aborted == 0) {
+                    /* FAKEMATCH: the loop only places a label between the
+                       count and its sign-extended use. */
                     do {
                         amount = stack;
-                    } while (0); /* FAKEMATCH */
+                    } while (0);
                     if (qty + amount > 30) {
                         amount = 30 - qty;
                     }
@@ -402,10 +399,10 @@ s32 ItemMenu_RunItemCommand(s32 *owner_out, s32 *target_out, s32 *item_out)
                         break;
                     }
                     for (command = 0; command < result + 1; command++) {
-                        qty = Inventory_AddForOwner(
+                        qty = Inventory_AddItemFar(
                             menu->target_owner, menu->selected_item & 0x5ff);
                         if (qty != -1) {
-                            Func_08077058(
+                            Inventory_RemoveFar(
                                 menu->item_owner, menu->selected_slot);
                             menu->target_slot = qty;
                         } else {
@@ -414,20 +411,20 @@ s32 ItemMenu_RunItemCommand(s32 *owner_out, s32 *target_out, s32 *item_out)
                     }
                 }
             } else {
-                result = Inventory_AddForOwner(
+                result = Inventory_AddItemFar(
                     menu->target_owner, menu->selected_item & 0x5ff);
                 if (result == -1) {
                     state = 7;
                     break;
                 }
                 menu->target_slot = result;
-                result = Func_08077058(menu->item_owner, menu->selected_slot);
+                result = Inventory_RemoveFar(menu->item_owner, menu->selected_slot);
                 if (result == -1) {
                     aborted = 1;
                 }
             }
-            Func_08077010(menu->item_owner);
-            Func_08077010(menu->target_owner);
+            Owner_RecalculateStatsFar(menu->item_owner);
+            Owner_RecalculateStatsFar(menu->target_owner);
             Func_080772c0(menu->item_owner);
             Func_080772c0(menu->target_owner);
             result = 1;
@@ -435,38 +432,39 @@ s32 ItemMenu_RunItemCommand(s32 *owner_out, s32 *target_out, s32 *item_out)
                 menu->item_owner = menu->target_owner;
                 menu->selected_item &= 0x1ff;
                 ItemMenu_SetMsgWin6();
-                UiWindow_Commit(menu->message_window);
+                RenderOutput_RedrawSavedRectFar(menu->message_window);
                 ItemMenu_DrawItemHead();
-                result = Func_080a5388(0);
+                result = Unnamed_080a5388(0);
             }
-            if (Func_080770c0(0x150) != 0) {
+            if (GameFlag_TestFar(0x150) != 0) {
                 break;
             }
             ItemMenu_RefreshOwner(menu->target_owner, 1);
             menu->list.icon->state = 13;
             WaitFrames(1);
             if (aborted == 1) {
-                Func_08015278(menu->info_window);
-                ItemMenu_ShowModalMessage((s32)&Value_00000b85, 15, 14);
+                RenderOutput_ClearListFar(menu->info_window);
+                InventoryMenu_ShowModalMessage((s32)&Value_00000b85, 15, 14);
             } else {
-                Func_08015278(menu->info_window);
+                RenderOutput_ClearListFar(menu->info_window);
                 if (result == 1) {
-                    ItemMenu_ShowModalMessage(
+                    InventoryMenu_ShowModalMessage(
                         (s32)&Value_00000b7f, 15, 14);
                 } else {
-                    Func_080a3ef0(menu->target_owner, menu->target_slot, 0, menu->target_owner);
-                    ItemMenu_ShowModalMessage(
+                    ItemMenu_DrawEquipPreview(
+                        menu->target_owner, menu->target_slot, 0, menu->target_owner);
+                    InventoryMenu_ShowModalMessage(
                         (s32)&Value_00000b7c, 15, 14);
                     item = Item_Get(menu->selected_item);
                     if ((item->flags & 1) != 0) {
                         Audio_PlayCue(0x67);
-                        Func_08015278(menu->info_window);
-                        ItemMenu_ShowModalMessage(
+                        RenderOutput_ClearListFar(menu->info_window);
+                        InventoryMenu_ShowModalMessage(
                             (s32)&Value_00000b7c + 7, 14, 14);
                     }
                 }
             }
-            Func_0808a548();
+            Event_ClearInvalidPackedValuesFar();
             state = 0;
             break;
 
@@ -475,7 +473,7 @@ s32 ItemMenu_RunItemCommand(s32 *owner_out, s32 *target_out, s32 *item_out)
             ItemMenu_SetMsgWin3();
             ItemMenu_SetItemWin3();
             ItemMenu_DrawMsg(0, (s32)&Value_00000add);
-            sel = ItemMenu_SelectPartyMember(1);
+            sel = ItemMenu_RunList(1);
             if (sel == -1) {
                 state = 6;
                 break;
@@ -484,11 +482,11 @@ s32 ItemMenu_RunItemCommand(s32 *owner_out, s32 *target_out, s32 *item_out)
             target = OwnerState_GetFar(menu->target_owner);
             source_copy = Runtime_BumpAllocate(0x14c);
             target_copy = Runtime_BumpAllocate(0x14c);
-            CopyWords((WordCopyFn)0x03001388, source_copy, source, 0x14c);
-            CopyWords((WordCopyFn)0x03001388, target_copy, target, 0x14c);
+            CopyWords(IWRAM_COPY_WORDS, source_copy, source, 0x14c);
+            CopyWords(IWRAM_COPY_WORDS, target_copy, target, 0x14c);
             moved_source = 0;
             while (moved_source <= 29) {
-                result = Func_08077058(menu->item_owner, menu->selected_slot);
+                result = Inventory_RemoveFar(menu->item_owner, menu->selected_slot);
                 if (result == 2) {
                     break;
                 }
@@ -507,7 +505,7 @@ s32 ItemMenu_RunItemCommand(s32 *owner_out, s32 *target_out, s32 *item_out)
                         aborted = 1;
                     }
                 }
-                result = Func_08077058(
+                result = Inventory_RemoveFar(
                     menu->target_owner, menu->target_slot);
                 if (result == 2) {
                     break;
@@ -520,7 +518,7 @@ s32 ItemMenu_RunItemCommand(s32 *owner_out, s32 *target_out, s32 *item_out)
             }
             moved_target++;
             while (moved_source != 0) {
-                result = Inventory_AddForOwner(
+                result = Inventory_AddItemFar(
                     menu->target_owner, menu->selected_item & 0x5ff);
                 if (result == -1) {
                     aborted = 1;
@@ -530,7 +528,7 @@ s32 ItemMenu_RunItemCommand(s32 *owner_out, s32 *target_out, s32 *item_out)
                 moved_source--;
             }
             while (moved_target != 0) {
-                result = Inventory_AddForOwner(
+                result = Inventory_AddItemFar(
                     menu->item_owner, menu->target_item & 0x5ff);
                 if (result == -1) {
                     aborted = 1;
@@ -541,77 +539,79 @@ s32 ItemMenu_RunItemCommand(s32 *owner_out, s32 *target_out, s32 *item_out)
             }
             WaitFrames(1);
             if (aborted == 1) {
-                CopyWords((WordCopyFn)0x03001388, source, source_copy, 0x14c);
-                CopyWords((WordCopyFn)0x03001388, target, target_copy, 0x14c);
-                Func_08015278(menu->info_window);
-                ItemMenu_ShowModalMessage((s32)&Value_00000b84, 15, 14);
+                CopyWords(IWRAM_COPY_WORDS, source, source_copy, 0x14c);
+                CopyWords(IWRAM_COPY_WORDS, target, target_copy, 0x14c);
+                RenderOutput_ClearListFar(menu->info_window);
+                InventoryMenu_ShowModalMessage((s32)&Value_00000b84, 15, 14);
             } else {
-                Func_08077010(menu->item_owner);
-                Func_08077010(menu->target_owner);
+                Owner_RecalculateStatsFar(menu->item_owner);
+                Owner_RecalculateStatsFar(menu->target_owner);
                 Func_080772c0(menu->item_owner);
                 Func_080772c0(menu->target_owner);
                 ItemMenu_SetMsgWin5();
                 ItemMenu_SetMsgWin6();
                 ItemMenu_HidePageIcons();
-                UiWindow_Commit(menu->message_window);
+                RenderOutput_RedrawSavedRectFar(menu->message_window);
                 menu->item_owner = menu->target_owner;
                 menu->selected_item &= 0x1ff;
                 ItemMenu_DrawItemHead();
-                result = Func_080a5388(0);
-                if (Func_080770c0(0x150) == 0) {
-                    Func_08015278(menu->info_window);
+                result = Unnamed_080a5388(0);
+                if (GameFlag_TestFar(0x150) == 0) {
+                    RenderOutput_ClearListFar(menu->info_window);
                     ItemMenu_SetItemWin5();
                     ItemMenu_RefreshOwner(menu->target_owner, 1);
                     if (result == 0) {
-                        Func_080a3ef0(menu->target_owner, menu->target_slot, 0, menu->target_owner);
-                        ItemMenu_ShowModalMessage(
+                        ItemMenu_DrawEquipPreview(
+                            menu->target_owner, menu->target_slot, 0, menu->target_owner);
+                        InventoryMenu_ShowModalMessage(
                             (s32)&Value_00000b7c, 15, 14);
                         item = Item_Get(menu->selected_item);
                         if ((item->flags & 1) != 0) {
                             Audio_PlayCue(0x67);
-                            Func_08015278(menu->info_window);
-                            ItemMenu_ShowModalMessage(
+                            RenderOutput_ClearListFar(menu->info_window);
+                            InventoryMenu_ShowModalMessage(
                                 (s32)&Value_00000b7c + 7, 14, 14);
                         }
                     } else {
-                        ItemMenu_ShowModalMessage(
+                        InventoryMenu_ShowModalMessage(
                             (s32)&Value_00000b81, 15, 14);
                     }
                 }
             }
-            Func_08002df0(target_copy);
-            Func_08002df0(source_copy);
-            Func_0808a548();
+            Runtime_BumpFree(target_copy);
+            Runtime_BumpFree(source_copy);
+            Event_ClearInvalidPackedValuesFar();
             state = 0;
             break;
 
         case 3:
-            result = Func_08077050(menu->item_owner, menu->selected_slot);
+            result = Inventory_EquipFar(menu->item_owner, menu->selected_slot);
             if (result == -1) {
                 state = 1;
                 break;
             }
             if (result == -2) {
-                Func_08015278(menu->info_window);
-                ItemMenu_ShowModalMessage((s32)&Value_00000b82, 0, -1);
+                RenderOutput_ClearListFar(menu->info_window);
+                InventoryMenu_ShowModalMessage((s32)&Value_00000b82, 0, -1);
                 state = 1;
                 break;
             }
-            Func_08077010(menu->item_owner);
+            Owner_RecalculateStatsFar(menu->item_owner);
             Func_080772c0(menu->item_owner);
             menu->list.icon->state = 13;
             menu->item_count = ItemMenu_Collect(
                 OwnerState_GetFar(menu->item_owner), menu->items, 0);
             ItemMenu_DrawIcons(menu->items, 0);
             WaitFrames(1);
-            Func_080a3ef0(menu->item_owner, menu->selected_slot, 0, menu->item_owner);
-            Func_08015278(menu->info_window);
-            ItemMenu_ShowModalMessage((s32)&Value_00000b7c, 15, 8);
+            ItemMenu_DrawEquipPreview(
+                menu->item_owner, menu->selected_slot, 0, menu->item_owner);
+            RenderOutput_ClearListFar(menu->info_window);
+            InventoryMenu_ShowModalMessage((s32)&Value_00000b7c, 15, 8);
             item = Item_Get(menu->selected_item);
             if ((item->flags & 1) != 0) {
                 Audio_PlayCue(0x67);
-                Func_08015278(menu->info_window);
-                ItemMenu_ShowModalMessage(
+                RenderOutput_ClearListFar(menu->info_window);
+                InventoryMenu_ShowModalMessage(
                     (s32)&Value_00000b7c + 7, 14, 8);
             }
             state = 1;
@@ -620,7 +620,7 @@ s32 ItemMenu_RunItemCommand(s32 *owner_out, s32 *target_out, s32 *item_out)
         case 11:
             OwnerState_GetFar(menu->item_owner)->inventory[menu->selected_slot]
                 &= 0xfdff;
-            Func_08077010(menu->item_owner);
+            Owner_RecalculateStatsFar(menu->item_owner);
             Func_080772c0(menu->item_owner);
             menu->list.icon->state = 13;
             menu->item_count = ItemMenu_Collect(
@@ -628,25 +628,30 @@ s32 ItemMenu_RunItemCommand(s32 *owner_out, s32 *target_out, s32 *item_out)
             ItemMenu_DrawIcons(menu->items, 0);
             WaitFrames(1);
             menu->equip_preview = 1;
-            Func_080a3ef0(menu->item_owner, menu->selected_slot, 0, menu->item_owner);
+            ItemMenu_DrawEquipPreview(
+                menu->item_owner, menu->selected_slot, 0, menu->item_owner);
             menu->equip_preview = 0;
-            Func_08015278(menu->info_window);
-            ItemMenu_ShowModalMessage((s32)&Value_00000b80, 14, 8);
-            Func_0808a548();
+            RenderOutput_ClearListFar(menu->info_window);
+            InventoryMenu_ShowModalMessage((s32)&Value_00000b80, 14, 8);
+            Event_ClearInvalidPackedValuesFar();
             state = 1;
             break;
 
         case 10:
             menu->list.icon->state = 13;
-            Func_080a4800(menu->selected_item);
-            UiWindow_Commit(menu->status_window);
-            Func_080a3ef0(menu->item_owner, menu->selected_slot, 0, menu->item_owner);
+            Menu_SelectQuantity(menu->selected_item);
+            RenderOutput_RedrawSavedRectFar(menu->status_window);
+            ItemMenu_DrawEquipPreview(
+                menu->item_owner, menu->selected_slot, 0, menu->item_owner);
             menu->list.icon->state = 1;
             state = 9;
             break;
 
         case 12:
             result = Func_080a4f08(0, 30, 0);
+            if (result != -1) {
+                qty = result;
+            }
             state = 1;
             break;
 
@@ -659,7 +664,7 @@ s32 ItemMenu_RunItemCommand(s32 *owner_out, s32 *target_out, s32 *item_out)
         }
     }
 
-    if (Func_080770c0(0x150) != 0) {
+    if (GameFlag_TestFar(0x150) != 0) {
         ret = -1;
     }
     return ret;

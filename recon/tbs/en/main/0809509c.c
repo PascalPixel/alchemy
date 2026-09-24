@@ -1,9 +1,11 @@
-/* Draft, not exact (2026-09-24): 11 differing halfwords (194 bytes plus
+/* Draft, not exact (2026-09-24): 10 differing halfwords (194 bytes plus
    the 2-byte pad). Writing the timer as (i & 15) + 1 with a literal lets
    GCC pool the halfword 15 in the first slot and reload it per iteration,
    as the reference does; the Value_0000000f local cost 40 halfwords.
-   Residual: the fill zero takes r3 (reference r1), and the particle word
-   pointer and the leader pointer take r2 and r0 (reference r1 and r2). */
+   The fill zero passes through a block-local int, which builds the zero
+   before the sp copy as the ROM does. Residual: the zero takes r3
+   (reference r1), and the particle word pointer and the leader pointer
+   take r2 and r0 (reference r1 and r2). */
 #include "TYPES.H"
 #include "DMA.H"
 
@@ -50,7 +52,10 @@ void Func_0809509c(void)
     u32 i;
     s32 clear;
 
-    zero = 0;
+    {
+        u32 value = 0;
+        zero = value;
+    }
     Dma_Set(&zero, work, 0x85000104, (volatile u32 *)0x040000d4);
     buf = Runtime_AllocateBlock(14, 0x400);
     Resource_DecodeByteLz(Data_080a00b8, buf);

@@ -1,3 +1,11 @@
+/* NONMATCHING: 1236 of 1236 bytes, 4 halfword edits (2026-09-24). The zero is
+ * a one-halfword struct so its movhi pool load reaches 64 bytes and the pool
+ * lands where the reference has it; the Main_0808a168 callback passed through
+ * a local closes the tail. What remains is one sched2 tie: the r8 copy of the
+ * step address (a reload insn) and the 0x2009771 callback constant load tie
+ * on priority and dependents (5 each), so LUID order schedules the r8 copy
+ * first; the reference loads the constant first. Every permutation of the six
+ * stores leaves it. */
 #include "TYPES.H"
 
 struct ActorMotion {
@@ -65,11 +73,6 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
     f(a0, a1, a2, a3, a4, a5);
 }
 
-/* NONMATCHING: 1236 of 1236 bytes, 6 halfword edits (2026-09-24). The
- * zero is a one-halfword struct so its movhi pool load reaches 64 bytes and
- * the pool lands where the reference has it; what remains is sched2 order
- * of the callback load against the step-address copy to r8; the step pair is a struct so
- * the +104/+108 stores keep their order. */
 struct Half { u16 v; };
 
 void Func_02001838(void)
@@ -210,7 +213,7 @@ void Func_02001838(void)
     Call2(Engine_CameraSetSpeed, 0x4cccc, 0x9999);
     Engine_CameraMoveTo(*(s32 *)(rec7 + 8), *(s32 *)(rec7 + 12), *(s32 *)(rec7 + 16), 1);
     Engine_CameraWaitForMove();
-    Call3(Main_0808a168, 10, 0x10000, 0x200bd34);
+    { s32 cb = 0x200bd34; Call3(Main_0808a168, 10, 0x10000, cb); }
     Call1(Engine_GameFlagSet, 0x904);
     Engine_EventEnd();
     p10b = (v6 << 11);

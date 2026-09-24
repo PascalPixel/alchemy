@@ -2,7 +2,7 @@
  * RunAssetSelectionScreen (main:080a24d0, 432 bytes)
  *
  * Draft, not exact (2026-09-24): candidate=432 reference=432
- * differing_halfwords=122.  Split from AssetSelection_RunLoop (main:080a2680),
+ * differing_halfwords=122.  Split from ItemMenu_RunCommands (main:080a2680),
  * which the old listing bundled.  Every call and argument lines up; the two
  * IWRAM routines are called through function pointers (_call_via_fp for the
  * word copy at 0x03001388, _call_via_r3 for the fill at 0x03000168).
@@ -55,7 +55,7 @@ s32 UiWindow_CreateFar(s32, s32, s32, s32, s32);
 void Scheduler_EnableOverlayCallbacksWithFlags(void);
 void Func_080153e0(s32);
 void Menu_CancelSoundReset(void);
-s32 AssetSelection_RunLoop(s32 *category, s32 *value, s32 *index);
+s32 ItemMenu_RunCommands(s32 *category, s32 *value, s32 *index);
 void Menu_EnsureCancelSound(void);
 void RenderOutput_ClearListFar(s32);
 void ItemMenu_Close(void);
@@ -101,7 +101,7 @@ s32 RunAssetSelectionScreen(void)
     ((FillFn)0x03000168)((void *)0x06004000, size, 0x33333333);
     Func_080153e0(1);
     Menu_CancelSoundReset();
-    result = AssetSelection_RunLoop(&category, &value, &index);
+    result = ItemMenu_RunCommands(&category, &value, &index);
     Menu_EnsureCancelSound();
 
     if (result == 1) {

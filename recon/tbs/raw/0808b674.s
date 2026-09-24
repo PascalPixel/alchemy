@@ -1,16 +1,17 @@
 .syntax unified
 	.thumb
+	.set sub_08009048, 0x08009048
 	.set sub_08009080, 0x08009080
+	.set sub_080090c8, 0x080090c8
+	.set sub_080090e0, 0x080090e0
 	.set sub_080091a8, 0x080091a8
 	.set sub_080091e0, 0x080091e0
 	.set sub_0808b3ec, 0x0808b3ec
-	.set sub_0808b7b8, 0x0808b7b8
-	.set sub_0808b7c4, 0x0808b7c4
 	.set sub_0808b9f8, 0x0808b9f8
-	.global FunctionHead_0808b674
+	.global ObjectTable_ResetForObject
 	.global Func_0808b674
 	.thumb_func
-FunctionHead_0808b674:
+ObjectTable_ResetForObject:
 Func_0808b674:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
@@ -115,13 +116,13 @@ Func_0808b674:
 	adds	r3, r6, r0
 	ldr	r3, [r3, #0]
 	cmp	r3, #0
-	beq.n	sub_0808b7b8
+	beq.n	.L_0808b7b8
 	ldrb	r3, [r2, #2]
 	cmp	r3, #253
-	bne.n	sub_0808b7b8
+	bne.n	.L_0808b7b8
 	ldrb	r3, [r1, #2]
 	cmp	r3, #253
-	bne.n	sub_0808b7b8
+	bne.n	.L_0808b7b8
 	movs	r1, #249
 	lsls	r1, r1, #1
 	adds	r2, r6, r1
@@ -149,7 +150,7 @@ Func_0808b674:
 	adds	r0, r5, #0
 	movs	r1, #12
 	bl	sub_08009080
-	b.n	sub_0808b7c4
+	b.n	.L_0808b7c4
 	movs	r0, r0
 	.4byte 0x00000000
 	.4byte 0x03001ebc
@@ -160,4 +161,57 @@ Func_0808b674:
 	.4byte 0x02010000
 	.4byte 0x0200fe00
 	.4byte 0xfff00000
-	.4byte 0xffe00000
+	.2byte 0x0000
+	.2byte 0xffe0
+.L_0808b7b8:
+	.2byte 0x4b18
+	movs	r0, #249
+	lsls	r0, r0, #1
+	adds	r2, r3, r0
+	movs	r3, #0
+	strb	r3, [r2, #0]
+.L_0808b7c4:
+	movs	r0, #128
+	ldr	r1, [r5, #8]
+	ldr	r2, [r5, #12]
+	ldr	r3, [r5, #16]
+	lsls	r0, r0, #8
+	bl	sub_080090c8
+	ldr	r3, [r5, #20]
+	adds	r6, r0, #0
+	str	r3, [r6, #20]
+	adds	r1, r5, #0
+	bl	sub_080090e0
+	movs	r3, #207
+	lsls	r3, r3, #1
+	add	r3, r8
+	movs	r1, #0
+	ldrsh	r3, [r3, r1]
+	cmp	r3, #3
+	bne.n	.L_0808b7fc
+	ldr	r0, [r5, #80]
+	movs	r1, #23
+	bl	sub_08009048
+	movs	r3, #15
+	strb	r3, [r0, #5]
+	movs	r3, #9
+	strb	r3, [r0, #6]
+.L_0808b7fc:
+	ldr	r3, [pc, #32]
+	ldr	r2, [r3, #0]
+	adds	r3, r6, #0
+	adds	r3, #8
+	str	r3, [r2, #0]
+	movs	r3, #240
+	lsls	r3, r3, #1
+	add	r3, r8
+	str	r6, [r3, #0]
+	pop	{r3, r5}
+	mov	r8, r3
+	mov	sl, r5
+	pop	{r5, r6, r7}
+	pop	{r0}
+	bx	r0
+	movs	r0, r0
+	.4byte 0x02000240
+	.4byte 0x03001e70

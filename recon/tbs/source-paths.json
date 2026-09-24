@@ -2473,6 +2473,10 @@
       "name": "BattlePres_ConfigureEffectDisplay",
       "source": "BATTLE/PRESENTATION/CONFIGURE_EFFECT_DISPLAY.C"
     },
+    "main:080cdbc0": {
+      "name": "BattleFx_EndCanvasLayer",
+      "source": "BATTLE/EFFECT/END_CANVAS_LAYER.C"
+    },
     "main:080cd260": {
       "name": "BattlePresentation_ProcessPendingGraphicsTransfer",
       "source": "BATTLE/PRESENTATION/PROCESS_PENDING_GRAPHICS_TRANSFER.C"
@@ -20118,7 +20122,8 @@
       "name": "Unnamed_080ed408"
     },
     "main:080f02b0": {
-      "name": "Unnamed_080f02b0"
+      "name": "Graphics_LoadCharacterBlockAndPalette",
+      "source": "GRAPHICS/TILE/LOAD_CHARACTER_BLOCK_AND_PALETTE.C"
     },
     "main:080f0538": {
       "name": "Unnamed_080f0538"
@@ -20650,7 +20655,6 @@
     "main:080b5118": "BattleActor_CommitPlacementFar",
     "main:080c9008": "BattleFx_DispatchByIdRangeFar",
     "main:080f9048": "AudioCommand_GetStateByteFar",
-    "main:080cdbc0": "BattleFx_EndCanvasLayer",
     "main:080cd594": "BattleFx_BeginCanvasLayer",
     "main:08185000": "Resource_GetMetadataRecordFar",
     "main:080170f8": "UiWindow_DrawFrame",

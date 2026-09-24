@@ -1,108 +1,95 @@
+/* Draft, not exact (2026-09-24): 380 of 380 bytes, 8 differing halfwords
+   (was 189 at 372). Once a palette blend is running, add the step table
+   into the working colours (or, on the last step, copy the targets in and
+   stop), pack the working colours into the back palette buffer, flip
+   buffers and queue both halves for the next frame. The green and blue
+   masks are u16 values of link symbols (halfword pool constants, which
+   place the pool before the pack loop), and the queue writes use the IO
+   write queue idiom of SYSTEM/IO_WRITE_QUEUE.C with function-level queue
+   and IME pointers. Residual: in the pack loop preheader the reference sets
+   the count before the source pointer, and it computes the first queued
+   address ahead of the IME pointer load and keeps the saved IME word in r1
+   (here r7). */
 #include "TYPES.H"
+#include "IO_WRITE_QUEUE.H"
 
-#define Function Func_080908e0
+s32 Func_080770c0(s32 flag);
 
-extern u8 Data_0000001f[];
-extern u8 Data_000003e0[];
-extern u8 Data_00002a01[];
-extern u8 Data_02002090[];
-extern u8 Data_04000208[];
-void Func_080072f0();
-s32 Func_080770c0();
+extern volatile u16 Data_04000208;
+extern u8 Value_000003e0;
+extern u8 Value_0000001f;
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
+struct Rgb16 {
+    s16 r;
+    s16 g;
+    s16 b;
+};
 
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
+typedef s32 (*CopyWordsFn)(void *destination, const void *source, s32 size);
+
+#define QUEUE_WRITE(value, address, control) {                             \
+        u32 saved;                                                          \
+        s32 count;                                                          \
+                                                                            \
+        do {                                                                \
+            saved = *ime;                                                   \
+        } while (0);                                                        \
+        *ime = (u16)ime;                                                    \
+        count = q->count;                                                   \
+        if (count <= 31) {                                                  \
+            u32 *destination = (u32 *)((u8 *)q + count * 12 + 4);           \
+            *(u16 *)&q->count = count + 1;                                  \
+            *destination++ = (value);                                       \
+            *destination++ = (address);                                     \
+            *destination = (control);                                       \
+        }                                                                   \
+        *ime = saved;                                                       \
+    }
+
+void Func_080908e0(void)
 {
-    return f(a0);
-}
+    u8 *p = *(u8 **)0x03001ed0;
+    u16 *add = (u16 *)(p + 0x1880);
+    volatile u16 *ime;
+    struct IoWriteQueue *q;
+    u8 *base;
+    s32 i;
 
-static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    f(a0, a1, a2, a3);
-}
-
-void Function(void)
-{
-    s32 v2;
-    s32 v0;
-    s32 v1;
-    s32 v5;
-    s32 v4;
-    s32 base4_4000208;
-    s32 base5_2002090;
-    s32 v3;
-    s32 v6;
-    s32 idx;
-    s32 f;
-    s32 base;
-    s32 dest1;
-    s32 *q;
-    u8 *p6;
-
-    p6 = *(s32 *)0x03001ed0;
-    v5 = ((s32)p6 + 0x1880);
     if (Func_080770c0(0x152) != 0) {
+        return;
+    }
+    if (*(s8 *)(p + 0x2a01) == 0) {
+        return;
+    }
+    if (++*(s8 *)(p + 0x2a02) < *(s8 *)(p + 0x2a01)) {
+        u16 *sum = (u16 *)(p + 0x380);
+        for (i = 0; i < 0x540; i++) {
+            *sum++ += *add++;
+        }
     } else {
-        if (*(s8 *)((s32)p6 + (s32)Data_00002a01) == 0) {
-        } else {
-            v2 = (*(u8 *)((s32)p6 + (s32)Data_00002a01 + 1) + 1);
-            *(u8 *)((s32)p6 + (s32)Data_00002a01 + 1) += 1;
-            if (((v2 << 24) >> 24) < *(s8 *)((s32)p6 + (s32)Data_00002a01)) {
-                v0 = 0;
-                v1 = ((s32)p6 + 0x380);
-                do {
-                    v0 = (v0 + 1);
-                    *(u16 *)(v1) += *(u16 *)(v5);
-                    v5 = (v5 + 2);
-                    v1 = (v1 + 2);
-                } while (v0 <= 0x53f);
-            } else {
-                Call4(Func_080072f0, ((s32)p6 + 0x380), ((s32)p6 + 0xe00), 0xa80, 0x3001388);
-                *(u8 *)((s32)p6 + (s32)Data_00002a01) = 0;
-            }
-            v0 = 0x1c0;
-            v1 = ((s32)p6 + 0x380);
-            v4 = ((s32)((s32)p6 + (s32)((s32)((s32)((s32)(1 ^ *(u8 *)(((s32)p6 + 0x2a00))) << 3) - (s32)(1 ^ *(u8 *)(((s32)p6 + 0x2a00)))) << 7)) + 0x2300);
-            do {
-                v0 = (v0 - 1);
-                *(u16 *)(v4) = (((0x7c00 & *(u16 *)(v1)) | (((*(u16 *)(v1 + 2) << 16) >> 21) & (s32)Data_000003e0)) | (((*(u16 *)(v1 + 4) << 16) >> 26) & (s32)Data_0000001f));
-                v1 = (v1 + 6);
-                v4 = (v4 + 2);
-            } while (v0 != 0);
-            *(u8 *)(((s32)p6 + 0x2a00)) ^= 1;
-            f = *(u8 *)(((s32)p6 + 0x2a00));
-            base = (s32)p6 + (((f << 3) - f) << 7);
-            base4_4000208 = (s32)Data_04000208;
-            base5_2002090 = (s32)Data_02002090;
-            dest1 = base + 0x2300;
-            v1 = *(u16 *)base4_4000208;
-            *(u16 *)base4_4000208 = base4_4000208;
-            idx = *(u16 *)base5_2002090;
-            if (idx <= 31) {
-                v3 = ((((idx << 1) + idx) << 2) + base5_2002090) + 4;
-                *(u16 *)base5_2002090 = idx + 1;
-                q = (s32 *)v3;
-                *q++ = dest1;
-                *q++ = 0x5000000;
-                *q = -0x7bffff90;
-            }
-            *(u16 *)base4_4000208 = v1;
-            v6 = *(u16 *)base4_4000208;
-            *(u16 *)base4_4000208 = base4_4000208;
-            idx = *(u16 *)base5_2002090;
-            if (idx <= 31) {
-                v3 = ((((idx << 1) + idx) << 2) + base5_2002090) + 4;
-                *(u16 *)base5_2002090 = idx + 1;
-                q = (s32 *)v3;
-                *q++ = base + 0x24c0;
-                *q++ = 0x5000200;
-                *q = -0x7bffff90;
-            }
-            *(u16 *)base4_4000208 = v6;
+        CopyWordsFn copy = (CopyWordsFn)0x03001388;
+        copy(p + 0x380, p + 0xe00, 0xa80);
+        *(s8 *)(p + 0x2a01) = 0;
+    }
+
+    {
+        s16 (*in)[3] = (s16 (*)[3])(p + 0x380);
+        u16 *out = (u16 *)(p + (1 ^ p[0x2a00]) * 0x380 + 0x2300);
+        u16 green = (u16)(s32)&Value_000003e0;
+        u16 blue = (u16)(s32)&Value_0000001f;
+
+        for (i = 0; i < 0x1c0; i++) {
+            *out++ = (in[i][0] & 0x7c00) | ((in[i][1] >> 5) & green) | ((in[i][2] >> 10) & blue);
         }
     }
+
+    p[0x2a00] ^= 1;
+    base = p + p[0x2a00] * 0x380;
+    q = &gIoWriteQueue;
+    ime = &Data_04000208;
+    {
+        u32 bg = (u32)(base + 0x2300);
+        QUEUE_WRITE(bg, 0x05000000, 0x84000070);
+    }
+    QUEUE_WRITE((u32)(base + 0x24c0), 0x05000200, 0x84000070);
 }

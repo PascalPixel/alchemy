@@ -357,13 +357,12 @@ static __inline__ s32 Value0(s32 (*f)())
 
 void FieldScene_RunScene382_020004a0(void)
 {
-    extern u8 Data_03001ebc[];
     s32 record;
-    u8 *p5;
+    struct EventWork *p5;
 
-    p5 = *(u8 **)Data_03001ebc;
+    p5 = gEventWork;
     if (GameFlag_IsSet(0x855) != 0 || GameFlag_IsSet(0x856) == 0) {
-        Event_RequestExit(*(s16 *)(p5 + 0x16c) - 19);
+        Event_RequestExit(p5->touched_trigger - 19);
         return;
     }
     Event_Begin();
@@ -372,7 +371,7 @@ void FieldScene_RunScene382_020004a0(void)
         Actor_SetPosition(2, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
     Actor_SetSpeed(2, 0xcccc, 0x6666);
-    if (*(s16 *)(p5 + 0x16c) == 20) {
+    if (p5->touched_trigger == 20) {
         Actor_WalkToAndWait(2, 0x190, 0x1c0);
     } else {
         Camera_SetSpeed(0xcccc, 0x1999);
@@ -392,7 +391,7 @@ void FieldScene_RunScene382_020004a0(void)
         Task_Wait(20);
     }
     Func_02001f50(2);
-    Event_RequestExit(*(s16 *)(p5 + 0x16c) - 19);
+    Event_RequestExit(p5->touched_trigger - 19);
     Event_CloseScreen();
     Event_WaitForScreen();
     Event_End();

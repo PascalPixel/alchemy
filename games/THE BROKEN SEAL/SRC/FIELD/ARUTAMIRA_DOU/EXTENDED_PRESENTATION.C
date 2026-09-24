@@ -947,9 +947,7 @@ void FieldScene_RunFlagGatedActorEightDialogue(void)
 
 s32 SceneData_SelectTableBySceneId(void)
 {
-    extern s16 Data_02000240[];
-
-    s16 v = Data_02000240[224];
+    s16 v = gGameState.scene;
 
     if (v == (s32)&Value_00000093) {
         return (s32)Data_0200c688;

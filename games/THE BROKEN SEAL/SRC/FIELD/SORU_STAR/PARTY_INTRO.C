@@ -108,7 +108,6 @@ extern s32 Data_0200cdb8[];
 extern s32 Data_0200cdc4[];
 extern s32 Data_0200cfa4[];
 extern u8 LinkedMessage_MercuryStarBagged[];
-extern u8 Data_03001ebc[];
 extern u8 LinkedMessage_TakeTheStarsToThem[];
 extern u8 LinkedMessage_TheyWontLetJasmineGo[];
 extern u8 LinkedMessage_AlexAsksForStars;
@@ -1313,7 +1312,6 @@ void Scene_EnterStarRoom(void)
     u8 *rec;
     u8 *rec2;
     u8 *record;
-    u8 *work;
     s32 base5_4009;
     s32 v6;
     s32 base5_8009;
@@ -1337,9 +1335,8 @@ void Scene_EnterStarRoom(void)
     p10 = rec + 85;
     *p10 = 0;
     *(s32 *)(rec + 12) = 0x280000;
-    work = *(u8 **)Data_03001ebc;
-    *(s32 *)(((s32)work + 0x1c0)) = 0x203;
-    *(s32 *)(((s32)work + 0x1c8)) = 32;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 3);
+    gEventWork->transition_frames = 32;
     Event_OpenScreen();
     Event_WaitForScreen();
     Event_Wait(20);

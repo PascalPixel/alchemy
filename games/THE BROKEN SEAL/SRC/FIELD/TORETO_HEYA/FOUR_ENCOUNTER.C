@@ -33,7 +33,6 @@ extern s16 *Data_0200add0;
 extern u8 Data_02009ec8[];
 extern u8 Data_0200adc0[];
 extern u8 Data_0200adcc[];
-extern u8 Data_03001ebc[];
 
 void Func_020007d6(int, int, int, int);
 void Func_020007e8(int, int, int, int);
@@ -257,7 +256,6 @@ void FieldScene_RunFourActorEncounter(void)
     u32 i;
     s32 rec;
     s32 record;
-    u8 *work;
     s32 v6;
     s32 v5;
     s32 base5_200962d;
@@ -292,9 +290,8 @@ void FieldScene_RunFourActorEncounter(void)
     }
     Func_02001e14(0);
     Task_Wait(10);
-    work = *(u8 **)Data_03001ebc;
-    *(s32 *)(((s32)work + 0x1c0)) = 0x100;
-    *(s32 *)(((s32)work + 0x1c8)) = 48;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+    gEventWork->transition_frames = 48;
     Event_OpenScreen();
     Event_WaitForScreen();
     Event_Wait(20);

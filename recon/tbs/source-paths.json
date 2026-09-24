@@ -9850,28 +9850,13 @@
       "name": "RelocatedQ16DotProduct"
     },
     "main:0800ebec": {
-      "name": "FunctionHead_0800ebec"
-    },
-    "main:0800ee14": {
-      "name": "Region_0800ee14"
-    },
-    "main:0800f1fa": {
-      "name": "Fragment_0800f1fa"
+      "name": "FieldObject_UpdatePlayerControl"
     },
     "main:08026080": {
-      "name": "Region_08026080"
-    },
-    "main:0802691c": {
-      "name": "Continuation_0802691c"
-    },
-    "main:08026b44": {
-      "name": "Region_08026b44"
+      "name": "BattleTarget_RunSelection"
     },
     "main:0808b674": {
-      "name": "FunctionHead_0808b674"
-    },
-    "main:0808b7b8": {
-      "name": "Fragment_0808b7b8"
+      "name": "ObjectTable_ResetForObject"
     },
     "main:08097540": {
       "name": "RunSceneTransitionEffect",
@@ -10291,7 +10276,12 @@
       "name": "Runtime_ReleaseHeapBlock"
     },
     "main:08077428": {
-      "name": "Owner_RecalculateStats"
+      "name": "Owner_RecalculateStats",
+      "source": "GAME/CHARACTER/RECALCULATE_STATS.C"
+    },
+    "main:0807905c": {
+      "name": "Owner_LevelUp",
+      "source": "GAME/CHARACTER/LEVEL_UP.C"
     },
     "main:080a2324": {
       "name": "Menu_SetPageIcons"
@@ -20364,7 +20354,6 @@
     "main:08017248": "UiWindow_MapTextCanvasTiles",
     "main:08017658": "UiText_OpenMessageWindow",
     "main:0801de5c": "UiText_RenderStringTiles",
-    "main:0807905c": "Owner_LevelUp",
     "main:080b7b6c": "BattleActor_SpawnObjectsForList",
     "main:08092c40": "UiText_OpenMessageAtObject",
     "main:080c24f0": "BattleEnemy_RecordDefeat",

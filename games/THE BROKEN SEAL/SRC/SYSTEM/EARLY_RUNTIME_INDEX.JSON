@@ -246,7 +246,7 @@
             "Object_ApproachLinkedObject", 134273776, "Script_RepeatOrJump", "Script_JumpToLabel", "Script_JumpIfTrue",
             "Script_JumpIfFalse", "Script_LoadMainScript", "Script_TestFlag", "Script_SetFlagAndTest",
             "Script_ClearFlagAndTest", "Script_ToggleFlagAndTest", "Script_ApplyOperandSet", "Script_ApplyOperandAdd",
-            "Script_ApplyOperandCompare", "FunctionHead_0800ebec", 134281204, 134279928,
+            "Script_ApplyOperandCompare", "FieldObject_UpdatePlayerControl", 134281204, 134279928,
             "ObjectDispatch_RunHookAndReturnZero", "Script_ApplyObjectArgument", "Script_SkipCommand",
             "Script_PlayAudioCue", "Script_AdvancePastCursor", "Script_ClearByte54", "Script_SetByte54",
             "Script_InvokeCallback", "Field_CheckConfiguredKeysAndCount", "Script_LoadMainScript",

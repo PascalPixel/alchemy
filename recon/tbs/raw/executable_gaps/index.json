@@ -3,8 +3,8 @@
   "kind": "golden-sun-executable-gap-source-package",
   "rom_base": "0x08000000",
   "limit": "0x080fb792",
-  "planned_gaps": 50,
-  "planned_gap_bytes": 3864,
+  "planned_gaps": 40,
+  "planned_gap_bytes": 3164,
   "gaps": [
     {
       "address": "0x080003c0",
@@ -989,36 +989,6 @@
       ]
     },
     {
-      "address": "0x0800f1bc",
-      "size": 62,
-      "sections": [
-        {
-          "address": "0x0800f1bc",
-          "size": 62,
-          "kind": "thumb",
-          "source": "0800f1bc.s",
-          "instruction_bytes": 62,
-          "literal_words": 0,
-          "undefined_words": 0
-        }
-      ]
-    },
-    {
-      "address": "0x0800fd5c",
-      "size": 320,
-      "sections": [
-        {
-          "address": "0x0800fd5c",
-          "size": 320,
-          "kind": "thumb",
-          "source": "0800fd5c.s",
-          "instruction_bytes": 276,
-          "literal_words": 11,
-          "undefined_words": 0
-        }
-      ]
-    },
-    {
       "address": "0x080118a8",
       "size": 48,
       "sections": [
@@ -1059,21 +1029,6 @@
           "source": "0801e738.s",
           "instruction_bytes": 12,
           "literal_words": 2,
-          "undefined_words": 0
-        }
-      ]
-    },
-    {
-      "address": "0x080268da",
-      "size": 66,
-      "sections": [
-        {
-          "address": "0x080268da",
-          "size": 66,
-          "kind": "thumb",
-          "source": "080268da.s",
-          "instruction_bytes": 66,
-          "literal_words": 0,
           "undefined_words": 0
         }
       ]

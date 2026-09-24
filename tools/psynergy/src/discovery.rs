@@ -670,8 +670,28 @@ impl Discovery {
                 let popped = register < 8
                     && (previous & 0xff00) == 0xbc00
                     && (previous & (1 << register)) != 0;
+                // `mov ip, pc; bx rN` is the IWRAM call idiom: the routine
+                // returns through ip to the halfword after the `bx`.
+                let ip_linked = register < 12 && previous == 0x46fc;
                 if register == 14 || popped || (register == 12 && self.u16(entry) == 0x46f4) {
                     kind = "return";
+                } else if ip_linked {
+                    kind = "call";
+                    if let Some(value) = constants[register] {
+                        let mode = if (value & 1) != 0 {
+                            Mode::Thumb
+                        } else {
+                            Mode::Arm
+                        };
+                        self.call(delta, pc, value, mode);
+                    } else {
+                        delta.unresolved.insert(pc);
+                        self.unresolved.insert(pc);
+                    }
+                    for register in [0usize, 1, 2, 3, 12, 14] {
+                        constants[register] = None;
+                    }
+                    successors.push(pc + 2);
                 } else {
                     kind = "indirect";
                     if let Some(value) = constants[register] {
@@ -1592,6 +1612,22 @@ mod tests {
         discovery.walk_function(ROM_BASE + 0x300);
         assert!(discovery.unresolved.contains(&(ROM_BASE + 0x300)));
         assert_eq!(discovery.instructions[&(ROM_BASE + 0x300)].kind, "indirect");
+    }
+
+    #[test]
+    fn an_ip_linked_branch_returns_after_itself() {
+        let mut image = Image::new(0x400);
+        image.u16(0x300, 0x4a01); // ldr r2, [pc, #4] -> literal at 0x308
+        image.u16(0x302, 0x46fc); // mov ip, pc
+        image.u16(0x304, 0x4710); // bx r2
+        image.u16(0x306, 0x4770); // bx lr, reached through ip
+        image.u32(0x308, 0x0300_0118); // ARM routine outside the image
+        let mut discovery = Discovery::new(&image.bytes, ROM_BASE);
+        discovery.add_seed(ROM_BASE + 0x300, Mode::Thumb, "test");
+        discovery.walk_function(ROM_BASE + 0x300);
+        assert_eq!(discovery.instructions[&(ROM_BASE + 0x304)].kind, "call");
+        assert_eq!(discovery.instructions[&(ROM_BASE + 0x306)].kind, "return");
+        assert!(discovery.unresolved.is_empty());
     }
 
     #[test]

@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_3a5:02001180": {
+      "name": "RamakanSabaku_FaceNearestActor",
+      "source": "FIELD/RAMAKAN_SABAKU/NEAREST_ACTOR.C"
+    },
     "resource_3bc:0200288c": {
       "name": "Korosseo_FinishSoloRound",
       "source": "FIELD/COMMON/KOROSSEO/SOLO_ROUND.C"

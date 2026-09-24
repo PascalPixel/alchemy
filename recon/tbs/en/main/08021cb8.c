@@ -1,93 +1,67 @@
-/* Draft, not exact (2026-09-24): candidate=208 reference=208 differing_halfwords=68. Constants the reference loads from
-   the literal pool are spelled as link-time Value_ symbols, which restores
-   the reference size; wraps marked FAKEMATCH only move scheduling. */
-#include "TYPES.H"
-extern u8 Value_00000608;
-extern u8 Value_00000604;
-extern u8 Value_00000400;
-extern u8 Value_00000100;
-/* Draft, not exact: 70 differing halfwords, 204-byte candidate for the
-   208-byte owner (2026-09-23). Residual: two local differences in the remap
-   loop: the reference compares a copy of the loaded map entry and, when the
-   palette is full, emits the stored count rather than a reload. Every
-   readable form that expresses both (u8 colour, entry re-read after the if)
-   makes loop optimisation hoist 0x100 and 0x05000000 and spill.
-   UiText_LoadRemappedGlyph: glyph palette map, resource 0xf1 glyphs, byte-LZ
-   decode, 1024-byte remap, DMA to 0x06004000 + tile * 64. */
+/* Draft, not exact (2026-09-24): 50 differing halfwords, 208 of 208 bytes.
+   The remap loop is a goto loop: the ROM rebuilds 0x400, 0x100 and
+   0x05000000 inside it, which loop.c would have hoisted out of a for loop.
+   Residual: the ROM keeps the output colour (r2) apart from the value it
+   compares and the palette count (r3), so the full-palette path copies the
+   stored count with adds r2, r3 after a b.n; here the count is masked to a
+   byte instead. */
 
 #include "DMA.H"
-#include "types.h"
 
-#define Function Func_08021cb8
+/* A text window's glyph palette: the slot each font colour was given, 0xff
+   while unassigned, and the number of slots used. */
+struct GlyphPalette {
+    u8 slot[256];
+    s32 count;
+};
 
-extern u8 Data_000000f1[];
-void Func_08002dd8();
-void Func_08002df0();
-s32 Func_08002f40();
-s32 Func_080048b0();
-s32 Func_08004938();
-void Func_080053e8();
+extern u8 Value_000000f1;
+u8 *Runtime_AllocateHeapBlock(s32 slot, s32 size);
+u8 *Resource_GetTableEntry(u32 index);
+s32 Resource_DecodeByteLz(const void *source, void *destination);
+u8 *Runtime_BumpAllocate(s32 size);
+void Runtime_BumpFree(void *block);
+void Runtime_ReleaseHeapBlock(s32 slot);
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
+/* Decodes one glyph of the font resource, remaps its colours through the
+   window's glyph palette (assigning and uploading new colours while slots
+   remain) and copies the tile to character block 1. */
+void UiText_LoadRemappedGlyph(struct GlyphPalette *palette, s32 glyph, s32 tile)
 {
-    return f(a0);
-}
+    u8 *decoded;
+    u8 *font;
+    u8 *remapped;
+    u8 *src;
+    u8 *dst;
+    s32 i;
+    u32 index;
+    u32 colour;
 
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
-void Function(s32 a0, s32 a1, s32 a2)
-{
-    u32 i;
-    s32 p10;
-    s32 p10b;
-    s32 p8;
-    s32 rec7;
-    s32 rec8;
-    s32 record;
-    u8 *v5;
-    u8 *v6;
-    s32 v12;
-    s32 v2;
-    u8 *p4;
-
-    p8 = a2;
-    rec8 = Value2(Func_080048b0, 17, 0x608);
-    record = Func_08002f40((s32)Data_000000f1);
-    *(s32 *)((rec8 + 0x604)) = (record + *(u16 *)((a1 << 1) + record));
-    Func_080053e8((record + *(u16 *)((a1 << 1) + record)), rec8);
-    rec7 = Value1(Func_08004938, (s32)&Value_00000400);
-    v5 = rec7;
-    v6 = rec8;
-    v12 = 0;
-    do {
-        p4 = v6[0];
-        v2 = *(u8 *)(a0 + (s32)p4);
-        v6 = ((s32)v6 + 1);
-        if (*(u8 *)(a0 + (s32)p4) == 255) {
-            *(u8 *)(a0 + (s32)p4) = *(s32 *)((a0 + 0x100));
-            if (*(s32 *)((a0 + 0x100)) <= 63) {
-                p10 = (0x5000000 + (*(s32 *)((a0 + 0x100)) << 1));
-                *(u16 *)p10 = *(u16 *)(((s32)((s32)p4 << 1) + 0x5000200));
-                *(s32 *)((a0 + 0x100)) += 1;
-                v2 = *(u8 *)(a0 + (s32)p4);
-            } else {
-                v2 = *(s32 *)((a0 + 0x100));
+    decoded = Runtime_AllocateHeapBlock(17, 0x608);
+    font = Resource_GetTableEntry((u32)&Value_000000f1);
+    *(u8 **)(decoded + 0x604) = font + ((u16 *)font)[glyph];
+    Resource_DecodeByteLz(*(u8 **)(decoded + 0x604), decoded);
+    remapped = Runtime_BumpAllocate(0x400);
+    src = decoded;
+    dst = remapped;
+    i = 0;
+loop:
+    {
+        index = *src++;
+        colour = palette->slot[index];
+        if (palette->slot[index] == 255) {
+            colour = palette->slot[index] = palette->count;
+            if (palette->count <= 63) {
+                ((u16 *)0x05000000)[palette->count] = ((u16 *)0x05000200)[index];
+                palette->count++;
+                colour = palette->slot[index];
             }
         }
-        v5[0] = v2;
-        v12 = (v12 + 1);
-        do { v5 = ((s32)v5 + 1); } while (0); /* FAKEMATCH */
-    } while (v12 < 0x400);
-    Dma_Set((const void *)(rec7), (void *)(((s32)((s32)p8 << 6) + 0x6004000)), -0x7bffff00, (volatile u32 *)(0x40000d4));
-    Func_08002df0(rec7);
-    Func_08002dd8(17);
-    p10b = (s32)v5;
+        *dst++ = colour;
+    }
+    if (++i < 0x400)
+        goto loop;
+    Dma_Set(remapped, (void *)(0x06004000 + tile * 64), 0x84000100, (volatile u32 *)0x040000d4);
+    Runtime_BumpFree(remapped);
+    Runtime_ReleaseHeapBlock(17);
 }

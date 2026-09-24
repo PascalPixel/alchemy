@@ -297,7 +297,8 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
         }
 
         if (frame == 222) {
-            for (i = 0, q3 = work->sparks; i != 64; i++, q3++) {
+            for (i = 0; i != 64; i++) {
+                q3 = &work->sparks[i];
                 q3->x = (Random16() & 15) - 8;
                 q3->y = (Random16() & 15) - 8;
                 if (q3->x < 0) {

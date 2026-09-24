@@ -1,6 +1,6 @@
 /* NONMATCHING: 168 of 168 bytes, 2 halfword edits (2026-09-24). Hand-written from the
  * resolved jump-table disassembly as a single-overlay unit binding Engine_* at
- * their import veneers. Remaining: 2 halfwords: the reference sets r1 = 5 before loading the count into r0 for Main_08015120 */
+ * their import veneers. Remaining: 2 halfwords: the reference sets r1 = 5 before loading the count into r0 for Main_08015120 The -fsched-verbose=5 sched2 dump shows both argument insns ready together after the Main_08015118 call; the ldrh wins on priority (load latency), so the reference must reach sched2 with the count load not yet ready or the r1 store earlier in RTL. Direct, cast, CallN, reversed-parameter inline wrappers, volatile and typed-prototype spellings all keep 2. */
 #include "TYPES.H"
 
 union GameStateRows {

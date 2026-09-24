@@ -20827,6 +20827,42 @@
     "resource_3a4:020039c8": {
       "name": "ArutinYama_Func020039c8",
       "source": "FIELD/ARUTIN_YAMA/F_039C8.C"
+    },
+    "resource_3a4:02002a48": {
+      "name": "ArutinYama_Func02002a48",
+      "source": "FIELD/ARUTIN_YAMA/F_02A48.C"
+    },
+    "resource_3b7:0200173c": {
+      "name": "TorebiIzumi_Func0200173c",
+      "source": "FIELD/TOREBI_IZUMI/F_0173C.C"
+    },
+    "resource_3a7:02000170": {
+      "name": "KuupuappuDou_Func02000170",
+      "source": "FIELD/KUUPUAPPU_DOU/F_00170.C"
+    },
+    "resource_3c0:02001094": {
+      "name": "SuharaSabaku_Func02001094",
+      "source": "FIELD/SUHARA_SABAKU/F_01094.C"
+    },
+    "resource_3c4:02001abc": {
+      "name": "BabiChika_Func02001abc",
+      "source": "FIELD/BABI_CHIKA/F_01ABC.C"
+    },
+    "resource_3a6:02000e04": {
+      "name": "HaidiaDou_Func02000e04",
+      "source": "FIELD/HAIDIA_DOU/F_00E04.C"
+    },
+    "resource_3a6:02000f78": {
+      "name": "HaidiaDou_Func02000f78",
+      "source": "FIELD/HAIDIA_DOU/F_00F78.C"
+    },
+    "resource_3bb:020004c0": {
+      "name": "KorosseoKabe_Func020004c0",
+      "source": "FIELD/KOROSSEO_KABE/F_004C0.C"
+    },
+    "resource_3bb:020019bc": {
+      "name": "KorosseoKabe_Func020019bc",
+      "source": "FIELD/KOROSSEO_KABE/F_019BC.C"
     }
   },
   "symbols": {

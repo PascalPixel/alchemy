@@ -1,6 +1,3 @@
-/* NONMATCHING: 276 of 280 bytes, 32 halfword edits (2026-09-24). Hand-written from the
- * resolved jump-table disassembly as a single-overlay unit binding Engine_* at
- * their import veneers. Remaining: the frame counter's and the leader row's addresses are loop invariants the reference hoists (the frame address copied from the init store's register into r6); this draft reaches the frame through a pointer variable, which changes the setup order and pool layout (32 edits). */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
@@ -30,13 +27,13 @@ extern s32 Data_0200a0c0;
 extern s32 Data_0200a130;
 extern s32 Data_0200a134;
 extern s32 Data_0200a138;
-extern s32 Data_02000434;
 
-s32 Local_0200173c(s32 side)
+/* Launches the spring ride from side 0 or 1: plays the spring cue at frame
+ * 50, starts the leader and the ride at frame 16, and waits for the ride to
+ * report that it has ended; returns its result. */
+s32 TorebiIzumi_Func0200173c(s32 side)
 {
     struct SpringRide *ride;
-    s32 *frame;
-    s32 *leader;
 
     ride = &Data_0200a070;
     ride->y = 0;
@@ -46,14 +43,12 @@ s32 Local_0200173c(s32 side)
     Data_0200a0c0 = side;
     Data_0200a134 = 0;
     ride->hold = 0xffff;
-    frame = &Data_0200a130;
-    leader = &Data_02000434;
-    for (*frame = 0;; (*frame)++) {
-        if (*frame == 50) {
+    for (Data_0200a130 = 0;; Data_0200a130++) {
+        if (Data_0200a130 == 50) {
             Engine_AudioPlayCue(300);
         }
-        if (*frame == 16) {
-            Engine_ActorSetAnimation(*leader, 29);
+        if (Data_0200a130 == 16) {
+            Engine_ActorSetAnimation(gGameState.selected_actor, 29);
             ride->hold = 0;
             ride->speed = 0x14ccc;
             ride->lift = 0x40000;

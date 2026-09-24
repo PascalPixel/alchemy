@@ -767,6 +767,10 @@
       "name": "Ui_LoadWindowGraphics",
       "source": "GRAPHICS/WINDOW/LOAD_GRAPHICS.C"
     },
+    "main:0801edec": {
+      "name": "UiWindow_FillFromScene",
+      "source": "GRAPHICS/WINDOW/FILL_FROM_SCENE.C"
+    },
     "main:0808ab74": {
       "name": "Scene_ResetFlagsOnEnter",
       "source": "FIELD/COMMON/SCENE_RESET_FLAGS_ON_ENTER.C"

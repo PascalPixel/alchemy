@@ -2,10 +2,10 @@
 	.thumb
 	.set sub_080072ec, 0x080072ec
 	.set sub_080770c0, 0x080770c0
-	.global Unnamed_080c0a24
+	.global BattleCamera_SetRange
 	.global Func_080c0a24
 	.thumb_func
-Unnamed_080c0a24:
+BattleCamera_SetRange:
 Func_080c0a24:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

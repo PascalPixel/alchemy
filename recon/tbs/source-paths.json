@@ -429,7 +429,7 @@
       "name": "Party_ApplyStatePreset"
     },
     "main:0807808c": {
-      "name": "refresh_active_ratios"
+      "name": "Owner_RefreshActiveRatios"
     },
     "main:0807822c": {
       "name": "Owner_RecalculateRatios"
@@ -578,7 +578,7 @@
       "source": "SYSTEM/RESOURCE/INITIALIZE.C"
     },
     "main:08004080": {
-      "name": "find_free_slot"
+      "name": "Resource_FindFreeEntry"
     },
     "main:080040d0": {
       "name": "Resource_GetBuffer"
@@ -19172,7 +19172,7 @@
       "name": "Unnamed_080c0700"
     },
     "main:080c0a24": {
-      "name": "Unnamed_080c0a24"
+      "name": "BattleCamera_SetRange"
     },
     "main:080c0be4": {
       "name": "BattlePres_SetupTransitionSceneAtDepth",

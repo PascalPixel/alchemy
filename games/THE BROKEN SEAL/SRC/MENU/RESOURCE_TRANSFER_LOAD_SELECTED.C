@@ -30,7 +30,7 @@ extern u8 Value_000000f1;
 struct SelectionNode_0801c188 *NodeChain_GetNodeAtCount(void *state);
 struct ResourceBuffer_0801c188 *Runtime_AllocateHeapBlock(s32 owner, s32 size);
 void Resource_DecodeByteLz(void *source, void *destination);
-u16 find_free_slot(void);
+u16 Resource_FindFreeEntry(void);
 u16 Resource_CopyData(s32 handle, s32 size, void *buffer);
 void Runtime_ReleaseHeapBlock(s32 owner);
 
@@ -60,7 +60,7 @@ void Menu_LoadSelectedResource(void)
     Resource_DecodeByteLz(resource, buffer);
 
     if (transfer->active == 0)
-        transfer->handle = find_free_slot();
+        transfer->handle = Resource_FindFreeEntry();
     transfer->transfer_id =
         Resource_CopyData(transfer->handle, 0x400, buffer);
     transfer->active = 1;

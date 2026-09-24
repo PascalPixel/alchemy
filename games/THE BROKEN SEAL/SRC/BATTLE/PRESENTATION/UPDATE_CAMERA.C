@@ -43,7 +43,7 @@ void Render_ResetTransformState(void);
 void SceneTransform_ApplyPosition(void *);
 void SceneTransform_ApplyYaw(s32);
 void SceneTransform_ApplyPitch(s32);
-void Unnamed_080c0a24(u32, u32, s32, s32, u32);
+void BattleCamera_SetRange(u32, u32, s32, s32, u32);
 
 void BattlePresentation_UpdateCamera(void)
 {
@@ -94,6 +94,6 @@ void BattlePresentation_UpdateCamera(void)
     ((void (*)(struct SceneCameraTransfer *, struct SceneCameraState *))0x03000250)(&local, state);
 
     if (transition->flag == 0) {
-        Unnamed_080c0a24(0x780000, 0x780000, 0, 0, 0x10000);
+        BattleCamera_SetRange(0x780000, 0x780000, 0, 0, 0x10000);
     }
 }

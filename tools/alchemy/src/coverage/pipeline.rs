@@ -699,9 +699,11 @@ fn runtime_credit_for(
 #[cfg(test)]
 const OVERLAY_VENEER_MACRO: &str = "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC";
 
-/// A maintained SRC module whose header declares library or handwritten
-/// provenance, with the byte-comparison evidence the assembly build adds only
-/// when the module reproduces the ROM.
+/// A maintained SRC module whose header declares library, handwritten or
+/// reconstructed-veneer provenance, with the byte-comparison evidence the
+/// assembly build adds only when the module reproduces the ROM. The build
+/// admits a reconstructed veneer only as a table of whole far-call veneers
+/// built from the shared veneer macro (Pascal, 2026-09-24).
 fn maintained_assembly_credit(region: &Value, target: &DecompTarget) -> bool {
     let source = text(region, "source");
     let provenance = &region["provenance"];
@@ -710,7 +712,7 @@ fn maintained_assembly_credit(region: &Value, target: &DecompTarget) -> bool {
         && source.starts_with(&source_root)
         && matches!(
             text(provenance, "credit").as_str(),
-            "handwritten" | "library"
+            "handwritten" | "library" | "reconstructed_veneer"
         )
         && array(provenance, "evidence")
             .iter()
@@ -2386,7 +2388,7 @@ pub fn build_coverage_map(options: &BuildOptions) -> Result<CoverageMap, String>
             "proven_source": options.exact.id(),
             "draft_source": options.recon.map_or("absent", |tree| tree.id()),
             "draft_sources": draft_sources as i64,
-            "proven_assembly_standard": "handwritten-or-library-proven; audited-overlay-veneer-reconstruction; container-built-compiler-runtime",
+            "proven_assembly_standard": "handwritten-or-library-proven; audited-overlay-veneer-reconstruction; main-far-call-veneer-tables; container-built-compiler-runtime",
             "credited_assembly_bytes": bytes(&retained_main) + mapped_bytes(&retained_overlay),
             "withdrawn_assembly_bytes": withdrawn_assembly,
             "main_assembly_classification": format!("{}/full/asm/manifest.json", target.output_dir),

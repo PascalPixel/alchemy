@@ -131,6 +131,8 @@ pub enum CompilerFamily {
     Game,
     /// Library code built with agbcc.
     Agbcc,
+    /// The flash library, built with agbcc at -O.
+    AgbccFlash,
 }
 pub(crate) fn include_flag(target: CompilerTarget) -> String {
     format!(
@@ -190,6 +192,13 @@ pub fn agbcc_cflags() -> Vec<String> {
         .map(|s| (*s).to_string())
         .collect()
 }
+/// The flash library's agbcc flags: the library family's set at -O.
+pub fn agbcc_flash_cflags() -> Vec<String> {
+    ["-mthumb-interwork", "-O", "-fno-builtin", "-ffreestanding"]
+        .iter()
+        .map(|s| (*s).to_string())
+        .collect()
+}
 /// The compiler runtime the images linked from the toolchain library, built
 /// from the licensed agscc container (`compiler::runtime`): the canonical
 /// flags without interworking, with the stock r4 callee-saved ABI and without
@@ -231,14 +240,21 @@ pub fn family_for_source(target: CompilerTarget, source: &str) -> CompilerFamily
     if has(agbcc, owner) {
         return CompilerFamily::Agbcc;
     }
+    if target == CompilerTarget::Tbs && has(AGBCC_FLASH_SOURCES, owner) {
+        return CompilerFamily::AgbccFlash;
+    }
     CompilerFamily::Game
 }
 pub fn uses_agbcc_compiler(target: CompilerTarget, source: &str) -> bool {
-    family_for_source(target, source) == CompilerFamily::Agbcc
+    matches!(
+        family_for_source(target, source),
+        CompilerFamily::Agbcc | CompilerFamily::AgbccFlash
+    )
 }
 pub fn cflags_for_target_source(target: CompilerTarget, source: &str) -> Vec<String> {
     match (family_for_source(target, source), target) {
         (CompilerFamily::Agbcc, _) => agbcc_cflags(),
+        (CompilerFamily::AgbccFlash, _) => agbcc_flash_cflags(),
         (CompilerFamily::Game, CompilerTarget::Tbs) => cflags(),
         (CompilerFamily::Game, CompilerTarget::Tla) => base_cflags(CompilerTarget::Tla),
     }

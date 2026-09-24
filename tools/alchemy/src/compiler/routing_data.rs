@@ -10,6 +10,8 @@
 
 // Library code built with agbcc.
 pub static AGBCC_SOURCES: &[&str] = &[
+    "main:08006f48",
+    "main:08006a78",
     "main:080fb73c",
     // Voice-field setters beside the decay, sustain and release setters.
     "main:080fb6ec",
@@ -20,27 +22,6 @@ pub static AGBCC_SOURCES: &[&str] = &[
     "main:080fb714",
     "main:080fb75c",
     "main:080fb750",
-    "main:08006878",
-    // The flash read loop sits inside the agbcc flash library.
-    "main:08006b84",
-    "main:080069a4",
-    "main:08006a00",
-    "main:08006a78",
-    "main:08006af8",
-    "main:08006ba8",
-    "main:08006c24",
-    "main:08006c68",
-    "main:08006cdc",
-    "main:08006d50",
-    "main:08006dec",
-    "main:08006e24",
-    "main:08006f48",
-    "main:08006f84",
-    "main:08007028",
-    "main:08007098",
-    "main:0800711c",
-    "main:080071a8",
-    "main:08007220",
     "main:080f9a30",
     "main:080f9a50",
     "main:080fada0",
@@ -78,7 +59,6 @@ pub static AGBCC_SOURCES: &[&str] = &[
     "main:080fb4a4",
     "main:080fb670",
     "main:080fb6a4",
-    "main:08006910",
     "main:080fa280",
     "main:080fa4cc",
     "main:080fa798",
@@ -139,4 +119,30 @@ pub static TLA_AGBCC_SOURCES: &[&str] = &[
     "main:081c33d8",
     "main:081c33ec",
     "main:081c33f8",
+];
+
+// The flash library, built with agbcc at -O rather than -O2: under -O2 its
+// drafts differ in allocation and scheduling throughout, under -O the twelve
+// drafted flash routines (erase, program, read, verify, the Atmel variants)
+// reproduce their bytes exactly.
+pub static AGBCC_FLASH_SOURCES: &[&str] = &[
+    "main:08006878",
+    "main:08006910",
+    "main:080069a4",
+    "main:08006a00",
+    "main:08006af8",
+    "main:08006b84",
+    "main:08006ba8",
+    "main:08006c24",
+    "main:08006c68",
+    "main:08006cdc",
+    "main:08006d50",
+    "main:08006dec",
+    "main:08006e24",
+    "main:08006f84",
+    "main:08007028",
+    "main:08007098",
+    "main:0800711c",
+    "main:080071a8",
+    "main:08007220",
 ];

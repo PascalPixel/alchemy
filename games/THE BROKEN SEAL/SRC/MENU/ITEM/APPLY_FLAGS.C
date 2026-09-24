@@ -1,5 +1,9 @@
-/* 2026-09-24: 3 differing halfwords (from 12) after a do-while wrap and
-   statement-swap sweep; the do-while wraps are search artefacts. */
+/* Item menu: after resetting the category, place the flagged entries of
+   the five category sprites in a column 16 pixels apart, starting at 88.
+
+   FAKEMATCH: the x store goes through its own pointer, which is what keeps
+   the flag index as a counter over the flags base (loop.c otherwise turns
+   flags[index] into a walking pointer). */
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
 
@@ -25,10 +29,14 @@ void ItemMenu_ApplyFlags(const u8 *flags)
         if (entry != 0 && flags[index] != 0) {
             kind = 8;
             *(u16 *)((u8 *)entry + 6) = kind;
-            *(u16 *)((u8 *)entry + 8) = value;
+            {
+                u16 *x = (u16 *)((u8 *)entry + 8);
+
+                *x = value;
+            }
             *(u8 *)((u8 *)entry + 15) = 240;
-            value += 16;
             Func_080a17c4(entry);
+            value += 16;
         }
         index++;
     } while (index <= 4);

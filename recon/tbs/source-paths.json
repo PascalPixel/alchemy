@@ -2040,6 +2040,10 @@
       "name": "ItemMenu_PosCategory",
       "source": "MENU/ITEM/POSITION_CATEGORY_ITEMS.C"
     },
+    "main:080a9d3c": {
+      "name": "ItemMenu_ApplyFlags",
+      "source": "MENU/ITEM/APPLY_FLAGS.C"
+    },
     "main:080a9d84": {
       "name": "ItemMenu_ResetCategory",
       "source": "MENU/ITEM/RESET_CATEGORY_ITEM_POSITIONS.C"
@@ -20017,7 +20021,8 @@
       "source": "SYSTEM/DMA_STOP_ALL_THEN_RUN_HOOK.C"
     },
     "main:080c0700": {
-      "name": "Unnamed_080c0700"
+      "name": "BattlePresentation_SetPaletteLevel",
+      "source": "BATTLE/PRESENTATION/SET_PALETTE_LEVEL.C"
     },
     "main:080c0a24": {
       "name": "BattleCamera_SetRange"

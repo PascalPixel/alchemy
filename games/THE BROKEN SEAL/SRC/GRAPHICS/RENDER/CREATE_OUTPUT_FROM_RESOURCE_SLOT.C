@@ -3,7 +3,7 @@
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
-s32 find_free_slot();
+s32 Resource_FindFreeEntry();
 s32 Resource_LoadIndexedEntryToBuffer(s32 input, s32 arg1);
 
 s32 Ui_CreateOutputFromResourceSlot(
@@ -14,7 +14,7 @@ s32 Ui_CreateOutputFromResourceSlot(
 {
     s32 slot;
 
-    slot = find_free_slot();
+    slot = Resource_FindFreeEntry();
     if (slot != 0x60) {
         Resource_LoadIndexedEntryToBuffer(resource, slot);
         RenderOutput_Create(slot, 0x40000000, input, arg1, arg2);

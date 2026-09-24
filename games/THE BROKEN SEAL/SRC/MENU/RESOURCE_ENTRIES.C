@@ -100,7 +100,7 @@ void Menu_LoadResourceSlot(s32 slot, s32 index)
     Func_08002df0(buffer);
 }
 
-extern s32 find_free_slot(void);
+extern s32 Resource_FindFreeEntry(void);
 
 void Menu_AppendResourceEntry(s32 no)
 {
@@ -117,7 +117,7 @@ void Menu_AppendResourceEntry(s32 no)
     {
         *(u16 *)(base + 142) = *(u16 *)(base + 142) + 1;
         entry = base + index * 20;
-        slot = find_free_slot();
+        slot = Resource_FindFreeEntry();
         Menu_LoadResourceSlot(slot, no);
         *(u16 *)(entry + 12) = index * 24 + 32;
         flags = 136;

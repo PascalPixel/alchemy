@@ -13,7 +13,7 @@ typedef struct {
 
 extern s32 Runtime_AllocateHeapBlock(s32 no0, s32 no1);
 extern s32 UiGlyph_DecodeWithHeapRoutines(T *, s32);
-extern s32 find_free_slot(void);
+extern s32 Resource_FindFreeEntry(void);
 extern s32 Resource_CopyData(s32, s32, u8 *);
 extern s32 Runtime_ReleaseHeapBlock(s32);
 extern s32 Data_08029a10[];
@@ -33,7 +33,7 @@ void Ui_BuildPairedPatternsToSlot(s32 no0, s32 no1, s32 *slot, s32 *ret, s32 fla
     work->f602 = 2;
     UiGlyph_DecodeWithHeapRoutines(work, 1);
     if (flag == 0) {
-        *slot = find_free_slot();
+        *slot = Resource_FindFreeEntry();
     }
     *ret = Resource_CopyData(*slot, 0x80, &work->f400);
     Runtime_ReleaseHeapBlock(0x11);

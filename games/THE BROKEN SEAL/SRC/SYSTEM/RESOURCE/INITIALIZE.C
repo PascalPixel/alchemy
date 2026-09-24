@@ -38,8 +38,8 @@ void Resource_InitializeTable(void)
     }
 }
 
-/* resource/table/find_free_slot.c */
-s32 find_free_slot(void)
+/* resource/table/Resource_FindFreeEntry.c */
+s32 Resource_FindFreeEntry(void)
 {
   s32 free_slot;
   s32 slot_index;
@@ -79,7 +79,7 @@ s32 Resource_LoadIntoFreeSlot(s32 arg0)
 {
     s32 slot;
 
-    slot = find_free_slot();
+    slot = Resource_FindFreeEntry();
     Resource_CopyData(slot, arg0, 0);
     return slot;
 }

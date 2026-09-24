@@ -26,7 +26,7 @@ void RenderResource_LoadFrame(s32 index, s32 value, s32 flag)
 }
 
 /* graphics/resource/create_frame.c */
-s32 find_free_slot(void);
+s32 Resource_FindFreeEntry(void);
 void RenderResource_LoadFrame(s32 index, s32 value, s32 flag);
 void *RenderResource_CreateFrame(
     s32 arg0,
@@ -38,7 +38,7 @@ void *RenderResource_CreateFrame(
     s32 index;
     struct RenderOutput *entity;
 
-    index = find_free_slot();
+    index = Resource_FindFreeEntry();
     entity = NULL;
     if (index != 0x60) {
         RenderResource_LoadFrame(arg0, index, arg1);

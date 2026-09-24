@@ -111,7 +111,7 @@ void Party_ApplyStatePreset(void)
     PARTY_STATE.money += 300;
 }
 
-/* owner/refresh_active_ratios.c */
+/* owner/Owner_RefreshActiveRatios.c */
 s32 Party_CountActiveOwners();
 
 void Owner_RefreshActiveRatios(s32 arg0)

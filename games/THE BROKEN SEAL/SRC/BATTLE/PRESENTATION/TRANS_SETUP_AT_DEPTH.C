@@ -9,7 +9,7 @@ void SceneTransform_ApplyPitch(s32);
 void Graphics_PrepareTransferInIwramWork();
 s32 Func_08005268(); /* returns a value its callers here ignore */
 #define Battle_unk8_2 Func_08005268
-void Unnamed_080c0a24();
+void BattleCamera_SetRange();
 
 /* BattlePres_SetupTransitionScene with the depth bound taken from the scene
    (+0x20) instead of the fixed span. It reads its scale percentage from an
@@ -56,7 +56,7 @@ void BattlePres_SetupTransitionSceneAtDepth(s32 x, s32 depth, s32 y)
     Graphics_PrepareTransferInIwramWork(scene, position);
     Battle_unk8_2(source_bounds, measured_bounds);
 
-    Unnamed_080c0a24(
+    BattleCamera_SetRange(
         0x780000,
         0x780000,
         (120 - measured_bounds[0]) << 8,

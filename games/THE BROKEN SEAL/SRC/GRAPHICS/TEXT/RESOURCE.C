@@ -45,14 +45,14 @@ struct TextResourceSetup {
     u16 field_8c : 4;
 };
 
-s32 find_free_slot(void);
+s32 Resource_FindFreeEntry(void);
 s32 Resource_CopyData(s32, s32, const void *);
 extern const u8 Data_080342f8[];
 
 void TextResource_Initialize(struct TextResourceSetup *object, s32 *slot)
 {
     const void *data = Data_080342f8;
-    s32 value = find_free_slot();
+    s32 value = Resource_FindFreeEntry();
 
     /* ビットフィールドは生成時の設定順を保持する。 */
     *slot = value;

@@ -1,6 +1,6 @@
 #include "TYPES.H"
 
-extern s32 find_free_slot(void);
+extern s32 Resource_FindFreeEntry(void);
 extern void Ui_BuildPairedPatternsToSlot(s32 arg0, s32 arg1, s32 *arg2, s32 *arg3, s32 arg4);
 extern s32 UiIcon_CopyResourceToSlot(s32 arg0, s32 arg1, s32 arg2);
 extern s32 Ui_BuildPatternToSlot(s32 arg0, s32 arg1, s32 arg2);
@@ -13,7 +13,7 @@ s32 Resource_LoadByModeIntoSlot(s32 mode, s32 value, s32 result, s32 option)
     s32 original = result;
 
     if (result == -1) {
-        result = find_free_slot();
+        result = Resource_FindFreeEntry();
         if (result == 0x60)
             return original;
     }

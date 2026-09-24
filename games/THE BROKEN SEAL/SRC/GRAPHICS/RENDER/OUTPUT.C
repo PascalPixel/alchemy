@@ -69,7 +69,7 @@ void *RenderOutput_CreateFromResource(
     return RenderOutput_Create(no, 0x40000000, arg2, arg3, arg4);
 }
 
-s32 find_free_slot(void);
+s32 Resource_FindFreeEntry(void);
 s32 UiIcon_CopyResourceToSlot(s32 arg0, s32 arg1, s32 arg2);
 void *RenderOutput_CreateLoaded(
     s32 arg0,
@@ -81,7 +81,7 @@ void *RenderOutput_CreateLoaded(
     s32 no;
     void *result;
 
-    no = find_free_slot();
+    no = Resource_FindFreeEntry();
     result = NULL;
     if (no != 0x60) {
         UiIcon_CopyResourceToSlot(arg0, arg1, no);
@@ -101,7 +101,7 @@ void *RenderOutput_CreateWithTransform(
     s32 unused;
     u8 *result;
 
-    count = find_free_slot();
+    count = Resource_FindFreeEntry();
     if (count == 0x60) {
         return NULL;
     }
@@ -121,7 +121,7 @@ void *RenderOutput_CreateFromTable(
     s32 slot;
     void *output;
 
-    slot = find_free_slot();
+    slot = Resource_FindFreeEntry();
     output = NULL;
     if (slot != 0x60) {
         RenderResource_LoadTableEntry(table_entry, 0, (void *)slot);

@@ -1872,7 +1872,8 @@
       "source": "MENU/OPEN_WORKSPACE_OPTIONS.C"
     },
     "main:0801d4cc": {
-      "name": "Menu_RunWorkspaceOptions"
+      "name": "Menu_RunWorkspaceOptions",
+      "source": "MENU/RUN_WORKSPACE_OPTIONS.C"
     },
     "main:0801e858": {
       "name": "UiText_DrawString"

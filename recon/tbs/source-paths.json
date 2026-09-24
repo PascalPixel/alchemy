@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_3bb:02000160": {
+      "name": "KorosseoKabe_SpinActorAway",
+      "source": "FIELD/KOROSSEO_KABE/SPIN_ACTOR.C"
+    },
     "resource_39b:020011b4": {
       "name": "MakyuriIriguchi_OpenEntrance",
       "source": "FIELD/MAKYURI_IRIGUCHI/OPEN_ENTRANCE.C"

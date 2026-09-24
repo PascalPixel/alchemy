@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "FIELD_SCENE.H"
 
 enum TransitionMessage {
     MSG_DRAGONS_FLAME_ILLUMINATES_PATH_TRUTH = 0x17e1,
@@ -1344,8 +1345,8 @@ void FieldScene_RunScene39aSequenceA(void)
     record = Func_02003b02(8);
     Actor_SetSpriteFlags(record, 0);
     Event_OpenScreen();
-    Actor_SetSpeed(0, 0x20000, 0x1999);
-    Actor_MoveToAndWait(0, 0x108, 196);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x20000, 0x1999);
+    Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 0x108, 196);
     Event_End();
 }
 
@@ -1365,12 +1366,12 @@ void FieldScene_RunScene39a_02001ad0(s32 a0, s32 a1)
     s32 record;
 
     Event_Begin();
-    Actor_SetSpeed(0, 0x28000, 0x14000);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x28000, 0x14000);
     Value3(Engine_ActorSetDestinationOffset, 0, a0, a1);
-    Actor_Jump(0, 4, 0);
-    Actor_SetAnimation(0, 7);
-    Actor_WaitForMove(0);
-    Actor_SetAnimation(0, 6);
+    Actor_Jump(ACTOR_PARTY_LEADER, 4, 0);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, 7);
+    Actor_WaitForMove(ACTOR_PARTY_LEADER);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, 6);
     Event_End();
 }
 

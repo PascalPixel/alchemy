@@ -21,6 +21,7 @@
 
 #include "FACING_OBJECT.H"
 #include "FIELD_EVENT.H"
+#include "FIELD_SCENE.H"
 #include "SELECT_OVERLAY_DATA_BY_RUNTIME_SELECTOR.H"
 
 enum PushPuzzleMessage {
@@ -411,19 +412,19 @@ void FieldScene_RunEarlySequence(void)
     a2 = *(s16 *)(tbl + off2);
     tbl2 = (u8 *)0x02009cf0;
     Value3(Engine_MapAnimateCells, *(s32 *)(tbl2 + off), a1, a2);
-    Actor_SetSpeed(0, 0x8000, 0x4000);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
     *(u8 *)(Func_02001460(0) + 85) = 0;
     *(s32 *)((*(u8 **)Data_03001ebc + 0x1c0)) = 0x100;
     if (v5 == 6) {
-        Actor_SetAnimation(0, 2);
-        Actor_SetDestinationOffset(0, 0, -4);
+        Actor_SetAnimation(ACTOR_PARTY_LEADER, 2);
+        Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, -4);
     } else {
-        Actor_CenterAndWalk(0, 3, -16);
+        Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 3, -16);
     }
     if (v5 == 4) {
-        Actor_SetSpritePriority(0, 3);
+        Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 3);
     } else {
-        Actor_SetSpritePriority(0, 2);
+        Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 2);
     }
     Event_Wait(16);
     Event_RequestExit(v5 + 3);
@@ -435,40 +436,40 @@ void FieldScene_RunScene38bSequenceC(void)
     struct FieldActor *rec;
     struct FieldActor *rec7;
 
-    rec = (struct FieldActor *)Value1(Engine_ActorGet, 0);
+    rec = (struct FieldActor *)Value1(Engine_ActorGet, ACTOR_PARTY_LEADER);
     rec7 = (struct FieldActor *)Value1(Engine_ActorGet, 11);
     if ((rec7->x.fixed >> 20) == 6) {
         Event_Begin();
         Actor_SetSpritePriority(11, 1);
-        Actor_RunRepeatedMotion(0, 2);
+        Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
         Event_Wait(20);
-        Actor_SetSpeed(0, 0x3333, 0x1999);
+        Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x3333, 0x1999);
         Actor_SetSpeed(11, 0x3333, 0x1999);
-        Actor_Get(0)->unknown_5a &= ~1;
+        Actor_Get(ACTOR_PARTY_LEADER)->unknown_5a &= ~1;
         rec7->motion_flags = 0;
         rec->scale_x = -0x10000;
-        Actor_SetAttachedEffect(0, 0x102);
-        Actor_SetAnimation(0, 16);
+        Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
+        Actor_SetAnimation(ACTOR_PARTY_LEADER, 16);
         Actor_MoveToAndWait(11, 111, 196);
         rec->scale_x = 0x10000;
-        Actor_WalkToAndWait(0, 128, 185);
+        Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 128, 185);
         Event_Wait(20);
         rec->scale_x = -0x10000;
-        Actor_SetAttachedEffect(0, 0x102);
-        Actor_SetAnimation(0, 16);
+        Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
+        Actor_SetAnimation(ACTOR_PARTY_LEADER, 16);
         Actor_MoveToAndWait(11, 121, 190);
         rec->scale_x = 0x10000;
-        Actor_WalkToAndWait(0, 141, 189);
+        Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 141, 189);
         Event_Wait(20);
         rec->scale_x = -0x10000;
-        Actor_SetAttachedEffect(0, 0x102);
-        Actor_SetAnimation(0, 16);
+        Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
+        Actor_SetAnimation(ACTOR_PARTY_LEADER, 16);
         Actor_MoveToAndWait(11, 132, 186);
         rec->scale_x = 0x10000;
-        Actor_Get(0)->unknown_5a |= 1;
-        Actor_SetSpeed(0, 0x9999, 0x4ccc);
-        Actor_WalkToAndWait(0, 166, 185);
-        Actor_FaceDirection(0, 0x8000, 20);
+        Actor_Get(ACTOR_PARTY_LEADER)->unknown_5a |= 1;
+        Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x9999, 0x4ccc);
+        Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 166, 185);
+        Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x8000, 20);
         Actor_SetSpritePriority(11, 2);
         Func_020016ca(0, 11);
         Task_Wait(10);
@@ -493,7 +494,7 @@ void FieldScene_RunScene38b_02000584(void)
     struct FieldActor *record;
     s32 base5_20091c0;
 
-    rec7 = Value1(Engine_ActorGet, 0);
+    rec7 = Value1(Engine_ActorGet, ACTOR_PARTY_LEADER);
     if (GameFlag_IsSet(0x845) == 0) {
     } else {
         if (GameFlag_IsSet(0x848) == 0) {
@@ -520,8 +521,8 @@ void FieldScene_RunScene38b_02000584(void)
             Actor_FaceDirection(14, 0x3000, 0);
             Actor_FaceDirection(12, 0x5000, 0);
             Actor_FaceDirection(13, 0x3000, 0);
-            Actor_WalkToAndWait(0, 0x10c, 184);
-            Actor_FaceDirection(0, 0xc000, 40);
+            Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x10c, 184);
+            Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 40);
             Actor_RunRepeatedMotion(13, 2);
             Event_ShowMessageAndWait(13, 0, 10);
             Actor_FaceDirection(13, 0, 0);
@@ -552,8 +553,8 @@ void FieldScene_RunScene38b_02000584(void)
             Item_ShowFound(194, 3);
             Party_GiveItem(194, 0);
             Actor_SetAnimationAndWait(14, 3);
-            Actor_SetAnimation(0, 1);
-            Actor_FaceDirection(0, 0xc000, 0);
+            Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
+            Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
             Actor_SetSpeed(14, 0x10000, 0x8000);
             *(u8 *)(Func_020018a2(14) + 90) &= 254;
             Actor_WalkToAndWait(14, 0x106, 156);
@@ -652,7 +653,7 @@ void Scene_UpdatePuzzleActors(void)
     s32 p6;
     s32 row;
 
-    rec7 = Value1_02000890(Engine_ActorGet, 0);
+    rec7 = Value1_02000890(Engine_ActorGet, ACTOR_PARTY_LEADER);
     record = Value1_02000890(Engine_ActorGet, 20);
     row = *(s32 *)(record + 16) >> 20;
     p9 = (*(s32 *)(rec7 + 8) >> 20);
@@ -672,15 +673,15 @@ void Scene_UpdatePuzzleActors(void)
     if (p9 == 16) {
         if (p10 == 13) {
             Event_Begin();
-            Actor_ShowEmote(0, 0x100, 20);
-            Actor_SetSpeed(0, 0x20000, 0x10000);
-            Actor_Jump(0, 6, 0);
+            Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x100, 20);
+            Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x20000, 0x10000);
+            Actor_Jump(ACTOR_PARTY_LEADER, 6, 0);
             if (row == 13) {
-                Actor_MoveToAndWait(0, 0x106, 196);
-                Actor_FaceDirection(0, 0x4000, 20);
+                Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 0x106, 196);
+                Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 20);
             } else {
-                Actor_MoveToAndWait(0, 0x11e, 218);
-                Actor_FaceDirection(0, 0x8000, 20);
+                Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 0x11e, 218);
+                Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x8000, 20);
             }
             Event_End();
         }
@@ -823,7 +824,7 @@ void FieldScene_RunScene38b_02000d10(void)
     record = ReadU16Elem((u16 *)Data_02000240, 225);
     if ((u32)((record - 3) << 16) <= 0x10000) {
         if (GameFlag_IsSet(0x109) == 0) {
-            rec7 = Value1_02000d10(Engine_ActorGet, 0);
+            rec7 = Value1_02000d10(Engine_ActorGet, ACTOR_PARTY_LEADER);
             Event_Begin();
             arg0 = *(s32 *)(rec7 + 8);
             *(s32 *)(rec7 + 12) = 0x100000;

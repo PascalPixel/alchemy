@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "FIELD_SCENE.H"
 
 #define NULL ((void *)0)
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
@@ -208,7 +209,7 @@ void PaletteScene_Initialize(void)
 
     scene = *(void **)0x03001EBC;
     Event_Begin();
-    Actor_WalkByAndWait(0, 0, 0);
+    Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 0, 0);
     Event_RequestExit(FIELD_AT_OFFSET(scene, s16 *, 0x16C));
     Event_End();
 }
@@ -250,7 +251,7 @@ void FieldScene_RunScene395_02000158(void)
             ColorBuffer_Interpolate(20);
             Task_Wait(40);
             Event_ShowMessageAndWait(0x200e, 0, 10);
-            Actor_RunRepeatedMotion(0, 2);
+            Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
             Event_ShowMessage(0x200e, 0);
             ColorBuffer_ApplyTarget(0x10000, 1);
             ColorBuffer_Interpolate(20);
@@ -304,7 +305,7 @@ void RunEventScript01(void)
     u32 i;
     s32 rec8;
 
-    rec8 = Actor_Get(0);
+    rec8 = Actor_Get(ACTOR_PARTY_LEADER);
     Value3(Engine_ActorFaceDirection, 0, 0xc000, 0);
     ColorBuffer_ApplyTarget(0x406218, 1);
     ColorBuffer_Interpolate(20);
@@ -315,15 +316,15 @@ void RunEventScript01(void)
     Task_Wait(30);
     Data_02009dd0 = 0;
     Camera_MoveTo(0x1480000, -1, 0xeb0000, 1);
-    Actor_SetSpritePriority(0, 1);
+    Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 1);
     *(u8 *)(Func_02001d04(0) + 90) &= 254;
-    Actor_SetAnimation(0, 16);
-    Actor_SetSpeed(0, 0x20000, 0x20000);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, 16);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x20000, 0x20000);
     Audio_PlayCue(133);
     *(s32 *)(rec8 + 40) = 0x50000;
     *(s32 *)(rec8 + 72) = 0x4000;
     *(s32 *)(rec8 + 68) = 0xa000;
-    Actor_MoveToAndWait(0, 0x14f, 0x102);
+    Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 0x14f, 0x102);
     while (*(s32 *)(rec8 + 40) >= 0) {
         Task_Wait(1);
     }
@@ -331,13 +332,13 @@ void RunEventScript01(void)
         Task_Wait(1);
     } while (*(s32 *)(rec8 + 40) <= 0);
     Audio_PlayCue(161);
-    Actor_SetAnimation(0, 19);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, 19);
     Event_Wait(120);
     Call1_020002ec(Func_02001cea, 0x2009219);
     Task_Wait(40);
     *(s32 *)(rec8 + 68) = 0x4000;
     {
-        u8 *record = Actor_Get(0);
+        u8 *record = Actor_Get(ACTOR_PARTY_LEADER);
         u8 flags = record[90] | 1;
 
         record[90] = flags;
@@ -345,7 +346,7 @@ void RunEventScript01(void)
     Event_Wait(80);
     Event_SetMessage(MSG_CONTROL_TRETS_HEART_SHALL_NOT);
     Event_ShowMessageAndWait(0x200e, 0, 20);
-    Actor_RunRepeatedMotion(0, 2);
+    Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
     Event_Wait(20);
     Event_ShowMessage(0x200e, 0);
     Func_02001ebc();
@@ -359,10 +360,10 @@ void RunEventScript01(void)
     }
     *(s32 *)(rec8 + 72) = 0x10000;
     *(s32 *)(rec8 + 68) = 0x4000;
-    Actor_RunRepeatedMotion(0, 2);
+    Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
     Event_Wait(40);
-    Actor_Jump(0, 4, 0);
-    Actor_SetAnimation(0, 1);
+    Actor_Jump(ACTOR_PARTY_LEADER, 4, 0);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
     Event_Wait(20);
 }
 
@@ -380,29 +381,29 @@ void PaletteScene_RunActorTransitionSequence(void)
     const s32 *finalActions;
 
     actorThreeEnabled = GameFlag_IsSet(3);
-    Actor_WalkToAndWait(0, 0x148, 212);
-    Actor_FaceDirection(0, 0xc000, 20);
+    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x148, 212);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 20);
     Audio_PlayCue(17);
     Message_ShowCentered(MSG_WATER_HERMES_SEEPED_INTO_TRET, 1);
-    Actor_SetSpeed(1, 0x10000, 0x8000);
-    Actor_SetSpeed(2, 0x10000, 0x8000);
-    object = Actor_Get(0);
+    Actor_SetSpeed(ACTOR_GERALD, 0x10000, 0x8000);
+    Actor_SetSpeed(ACTOR_IVAN, 0x10000, 0x8000);
+    object = Actor_Get(ACTOR_PARTY_LEADER);
     if (object != 0) {
-        Actor_SetPosition(1, *(s32 *)(object + 8), *(s32 *)(object + 16));
+        Actor_SetPosition(ACTOR_GERALD, *(s32 *)(object + 8), *(s32 *)(object + 16));
     }
-    object = Actor_Get(0);
+    object = Actor_Get(ACTOR_PARTY_LEADER);
     if (object != 0) {
-        Actor_SetPosition(2, *(s32 *)(object + 8), *(s32 *)(object + 16));
+        Actor_SetPosition(ACTOR_IVAN, *(s32 *)(object + 8), *(s32 *)(object + 16));
     }
-    Actor_EnableActionCallback(1, SceneAction_ActorOneEntry);
-    Actor_EnableActionCallback(2, SceneAction_ActorTwoEntry);
+    Actor_EnableActionCallback(ACTOR_GERALD, SceneAction_ActorOneEntry);
+    Actor_EnableActionCallback(ACTOR_IVAN, SceneAction_ActorTwoEntry);
     if (actorThreeEnabled != 0) {
-        Actor_SetSpeed(3, 0x10000, 0x8000);
-        object = Actor_Get(0);
+        Actor_SetSpeed(ACTOR_MIA, 0x10000, 0x8000);
+        object = Actor_Get(ACTOR_PARTY_LEADER);
         if (object != 0) {
-            Actor_SetPosition(3, *(s32 *)(object + 8), *(s32 *)(object + 16));
+            Actor_SetPosition(ACTOR_MIA, *(s32 *)(object + 8), *(s32 *)(object + 16));
         }
-        Actor_EnableActionCallback(3, SceneAction_ActorThreeEntry);
+        Actor_EnableActionCallback(ACTOR_MIA, SceneAction_ActorThreeEntry);
     }
     Func_020019c8(2);
     Event_Wait(40);
@@ -413,19 +414,19 @@ void PaletteScene_RunActorTransitionSequence(void)
     *transitionState = 0;
     Value2(Func_02001910, (s32)PaletteScene_AdvanceTransition, 0xc80);
     Event_Wait(40);
-    Actor_FaceDirection(1, 0x6000, 20);
+    Actor_FaceDirection(ACTOR_GERALD, 0x6000, 20);
     Camera_SetSpeed(0x33333, 0x6666);
     Camera_MoveTo(0x1000000, -1, 0xfe0000, 1);
     Camera_WaitForMove();
     Audio_PlayCue(246);
     Event_Wait(40);
-    Actor_FaceDirection(2, 0x2000, 20);
+    Actor_FaceDirection(ACTOR_IVAN, 0x2000, 20);
     Camera_MoveTo(0x19d0000, -1, 0x1050000, 1);
     Camera_WaitForMove();
     Audio_PlayCue(246);
     Event_Wait(40);
-    Actor_FaceDirection(0, 0x4000, 0);
-    Actor_FaceDirection(3, 0x4000, 20);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 0);
+    Actor_FaceDirection(ACTOR_MIA, 0x4000, 20);
     Camera_MoveTo(0x1460000, -1, 0x1800000, 1);
     Camera_WaitForMove();
     Audio_PlayCue(246);
@@ -457,14 +458,14 @@ void PaletteScene_RunActorTransitionSequence(void)
     Audio_PlayCue(7);
     Event_SetMessage(MSG_FEEL_GREAT_POWER_SPREADING_THROUGH);
     Event_ShowMessage(8, 0);
-    Actor_StartRepeatedMotion(0, 2);
-    Actor_StartRepeatedMotion(1, 2);
-    Actor_StartRepeatedMotion(3, 2);
-    Actor_RunRepeatedMotion(2, 2);
-    Actor_FaceDirection(0, 0xc000, 0);
-    Actor_FaceDirection(1, 0xc000, 0);
-    Actor_FaceDirection(3, 0xc000, 0);
-    Actor_FaceDirection(2, 0xc000, 20);
+    Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
+    Actor_StartRepeatedMotion(ACTOR_GERALD, 2);
+    Actor_StartRepeatedMotion(ACTOR_MIA, 2);
+    Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
+    Actor_FaceDirection(ACTOR_GERALD, 0xc000, 0);
+    Actor_FaceDirection(ACTOR_MIA, 0xc000, 0);
+    Actor_FaceDirection(ACTOR_IVAN, 0xc000, 20);
     Func_020012f4(10, 2);
     Event_Wait(20);
     Func_020012f4(10, 3);
@@ -472,10 +473,10 @@ void PaletteScene_RunActorTransitionSequence(void)
     Func_020012f4(10, 1);
     Event_Wait(20);
     Event_ShowMessage(8, 0);
-    Actor_ShowEmote(0, 0x105, 0);
-    Actor_ShowEmote(1, 0x105, 0);
-    Actor_ShowEmote(3, 0x105, 0);
-    Actor_ShowEmote(2, 0x105, 40);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x105, 0);
+    Actor_ShowEmote(ACTOR_GERALD, 0x105, 0);
+    Actor_ShowEmote(ACTOR_MIA, 0x105, 0);
+    Actor_ShowEmote(ACTOR_IVAN, 0x105, 40);
     Camera_MoveTo(0xea0000, 0, 0xe80000, 1);
     Camera_WaitForMove();
     Event_Wait(40);
@@ -486,10 +487,10 @@ void PaletteScene_RunActorTransitionSequence(void)
     Event_ShowMessageAndWait(0x4009, 0, 20);
     Func_020012f4(11, 2);
     Event_Wait(10);
-    Actor_FaceDirection(0, 0x6000, 0);
-    Actor_FaceDirection(1, 0x6000, 0);
-    Actor_FaceDirection(2, 0x6000, 0);
-    Actor_FaceDirection(3, 0x6000, 20);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x6000, 0);
+    Actor_FaceDirection(ACTOR_GERALD, 0x6000, 0);
+    Actor_FaceDirection(ACTOR_IVAN, 0x6000, 0);
+    Actor_FaceDirection(ACTOR_MIA, 0x6000, 20);
     Func_020012f4(11, 3);
     Event_Wait(20);
     Func_020012f4(11, 2);
@@ -502,36 +503,36 @@ void PaletteScene_RunActorTransitionSequence(void)
     Func_020012f4(10, 1);
     Event_Wait(20);
     Event_OpenMessage(0x8008, 0);
-    Actor_FaceDirection(0, 0xc000, 0);
-    Actor_FaceDirection(1, 0xe000, 0);
-    Actor_FaceDirection(2, 0xa000, 0);
-    Actor_FaceDirection(3, 0xc000, 0);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
+    Actor_FaceDirection(ACTOR_GERALD, 0xe000, 0);
+    Actor_FaceDirection(ACTOR_IVAN, 0xa000, 0);
+    Actor_FaceDirection(ACTOR_MIA, 0xc000, 0);
     if (Event_ChooseYesNo(0, 0) == 0) {
         Event_ShowMessage(0x4009, 0);
         Event_ShowMessage(0x8008, 0);
     } else {
         sceneWorkSlot = 0x3001ebc;
         *(u16 *)((*(s32 *)sceneWorkSlot + 0x1d8)) += 2;
-        Actor_ShowEmote(3, 0x103, 0);
-        Actor_ShowEmote(1, 0x103, 0);
-        Actor_ShowEmote(2, 0x103, 40);
-        Actor_SetAnimation(1, 4);
-        Event_ShowMessage(1, 0);
+        Actor_ShowEmote(ACTOR_MIA, 0x103, 0);
+        Actor_ShowEmote(ACTOR_GERALD, 0x103, 0);
+        Actor_ShowEmote(ACTOR_IVAN, 0x103, 40);
+        Actor_SetAnimation(ACTOR_GERALD, 4);
+        Event_ShowMessage(ACTOR_GERALD, 0);
         if (actorThreeEnabled != 0) {
-            Actor_RunRepeatedMotion(3, 2);
-            Event_ShowMessage(3, 0);
+            Actor_RunRepeatedMotion(ACTOR_MIA, 2);
+            Event_ShowMessage(ACTOR_MIA, 0);
         } else {
             *(u16 *)((*(s32 *)sceneWorkSlot + 0x1d8)) += 1;
         }
-        Actor_SetAnimationAndWait(2, 3);
-        Event_ShowMessage(2, 0);
+        Actor_SetAnimationAndWait(ACTOR_IVAN, 3);
+        Event_ShowMessage(ACTOR_IVAN, 0);
         Event_ShowMessage(0x4009, 0);
         Event_ShowMessage(0x8008, 0);
     }
-    Actor_SetAnimation(0, 3);
-    Actor_SetAnimation(1, 3);
-    Actor_SetAnimation(3, 3);
-    Actor_SetAnimationAndWait(2, 3);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, 3);
+    Actor_SetAnimation(ACTOR_GERALD, 3);
+    Actor_SetAnimation(ACTOR_MIA, 3);
+    Actor_SetAnimationAndWait(ACTOR_IVAN, 3);
     Camera_MoveTo(0x1480000, 0x80000, 0xd40000, 1);
     Camera_WaitForMove();
     Event_Wait(20);
@@ -561,37 +562,37 @@ void PaletteScene_RunActorTransitionSequence(void)
     Event_Wait(10);
     Event_SetMessage(MSG_SHOULD_DO_PEOPLE_KOLIMA_CURSED);
     Event_ShowMessage(0x8008, 0);
-    Actor_SetAnimation(0, 3);
-    Actor_SetAnimation(1, 3);
-    Actor_SetAnimation(3, 3);
-    Actor_SetAnimationAndWait(2, 3);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, 3);
+    Actor_SetAnimation(ACTOR_GERALD, 3);
+    Actor_SetAnimation(ACTOR_MIA, 3);
+    Actor_SetAnimationAndWait(ACTOR_IVAN, 3);
     Camera_MoveTo(0xea0000, 0, 0xe80000, 1);
     Camera_WaitForMove();
     Event_Wait(20);
     Event_ShowMessage(0x4009, 0);
     Event_ShowMessageAndWait(0x8008, 0, 10);
-    Actor_RunRepeatedMotion(1, 2);
-    Actor_FaceDirection(0, 0x6000, 0);
-    Actor_FaceDirection(1, 0xe000, 10);
-    Event_OpenMessage(1, 0);
+    Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x6000, 0);
+    Actor_FaceDirection(ACTOR_GERALD, 0xe000, 10);
+    Event_OpenMessage(ACTOR_GERALD, 0);
     if (Event_ChooseYesNo(0, 0) == 0) {
-        Actor_ShowEmote(1, 0x102, 40);
+        Actor_ShowEmote(ACTOR_GERALD, 0x102, 40);
     } else {
-        Actor_SetAnimationAndWait(1, 4);
+        Actor_SetAnimationAndWait(ACTOR_GERALD, 4);
         *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
     }
-    Event_ShowMessage(1, 0);
+    Event_ShowMessage(ACTOR_GERALD, 0);
     Func_020012f4(10, 4);
     Event_Wait(20);
     Event_SetMessage(MSG_WAS_INDEED_ANGRY_PEOPLE_HAD);
     Event_ShowMessage(0x8008, 0);
-    Actor_FaceDirection(0, 0xc000, 0);
-    Actor_FaceDirection(1, 0xc000, 0);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
+    Actor_FaceDirection(ACTOR_GERALD, 0xc000, 0);
     Event_ShowMessage(0x8008, 0);
-    Actor_SetAnimation(0, 3);
-    Actor_SetAnimation(1, 3);
-    Actor_SetAnimation(3, 3);
-    Actor_SetAnimationAndWait(2, 3);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, 3);
+    Actor_SetAnimation(ACTOR_GERALD, 3);
+    Actor_SetAnimation(ACTOR_MIA, 3);
+    Actor_SetAnimationAndWait(ACTOR_IVAN, 3);
     Func_020012f4(10, 4);
     Event_Wait(20);
     Event_ShowMessageAndWait(0x8008, 0, 20);
@@ -605,10 +606,10 @@ void PaletteScene_RunActorTransitionSequence(void)
     Func_020012f4(10, 2);
     Event_Wait(20);
     Event_ShowMessage(0x8008, 0);
-    Actor_ShowEmote(0, 0x102, 0);
-    Actor_ShowEmote(1, 0x102, 0);
-    Actor_ShowEmote(3, 0x102, 0);
-    Actor_ShowEmote(2, 0x102, 80);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 0);
+    Actor_ShowEmote(ACTOR_GERALD, 0x102, 0);
+    Actor_ShowEmote(ACTOR_MIA, 0x102, 0);
+    Actor_ShowEmote(ACTOR_IVAN, 0x102, 80);
     Func_020012f4(11, 5);
     Event_Wait(60);
     Func_020012f4(11, 3);
@@ -619,17 +620,17 @@ void PaletteScene_RunActorTransitionSequence(void)
     Func_020012f4(10, 2);
     Event_Wait(20);
     Event_ShowMessageAndWait(0x4008, 0, 20);
-    Actor_RunRepeatedMotion(1, 2);
-    Actor_FaceDirection(1, 0x8000, 10);
-    Event_ShowMessage(1, 0);
-    Actor_FaceDirection(2, 0x8000, 20);
+    Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
+    Actor_FaceDirection(ACTOR_GERALD, 0x8000, 10);
+    Event_ShowMessage(ACTOR_GERALD, 0);
+    Actor_FaceDirection(ACTOR_IVAN, 0x8000, 20);
     Event_ShowMessage(0x8002, 0);
     Func_020012f4(11, 4);
     Event_Wait(20);
     Event_ShowMessageAndWait(0x4009, 0, 20);
-    Actor_FaceDirection(1, 0xe000, 0);
-    Actor_FaceDirection(0, 0x6000, 10);
-    Event_ShowMessageAndWait(1, 0, 20);
+    Actor_FaceDirection(ACTOR_GERALD, 0xe000, 0);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x6000, 10);
+    Event_ShowMessageAndWait(ACTOR_GERALD, 0, 20);
     Func_020012f4(10, 1);
     Event_ShowMessageAndWait(0x8008, 0, 10);
     Func_020012f4(10, 2);
@@ -651,35 +652,35 @@ void PaletteScene_RunActorTransitionSequence(void)
     Data_02009dc0[2] = 0x1020000;
     Value2(Func_02001910, effectCallback, 0xc80);
     Event_Wait(100);
-    Actor_FaceDirection(0, 0x6000, 0);
-    Actor_FaceDirection(1, 0x6000, 0);
-    Actor_FaceDirection(3, 0x6000, 0);
-    Actor_FaceDirection(2, 0x6000, 40);
-    Actor_StartRepeatedMotion(2, 1);
-    Actor_ShowEmote(2, 0x100, 20);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x6000, 0);
+    Actor_FaceDirection(ACTOR_GERALD, 0x6000, 0);
+    Actor_FaceDirection(ACTOR_MIA, 0x6000, 0);
+    Actor_FaceDirection(ACTOR_IVAN, 0x6000, 40);
+    Actor_StartRepeatedMotion(ACTOR_IVAN, 1);
+    Actor_ShowEmote(ACTOR_IVAN, 0x100, 20);
     Event_ShowMessageAndWait(0x8002, 0, 10);
-    Actor_RunRepeatedMotion(0, 2);
-    Actor_FaceDirection(0, 0x2000, 10);
-    Actor_SetAnimationAndWait(0, 3);
+    Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x2000, 10);
+    Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
     Func_020012f4(10, 4);
     Event_Wait(20);
     Event_ShowMessage(0x8008, 0);
-    Actor_ShowEmote(2, 0x101, 60);
-    Actor_FaceDirection(2, 0xc000, 10);
+    Actor_ShowEmote(ACTOR_IVAN, 0x101, 60);
+    Actor_FaceDirection(ACTOR_IVAN, 0xc000, 10);
     Event_ShowMessageAndWait(0x8002, 0, 10);
-    Actor_FaceDirection(0, 0xc000, 0);
-    Actor_FaceDirection(3, 0xc000, 0);
-    Actor_FaceDirection(1, 0xc000, 20);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
+    Actor_FaceDirection(ACTOR_MIA, 0xc000, 0);
+    Actor_FaceDirection(ACTOR_GERALD, 0xc000, 20);
     Event_ShowMessageAndWait(0x8008, 0, 10);
-    Actor_SetAnimation(0, 3);
-    Actor_SetAnimation(1, 3);
-    Actor_SetAnimation(3, 3);
-    Actor_SetAnimationAndWait(2, 3);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, 3);
+    Actor_SetAnimation(ACTOR_GERALD, 3);
+    Actor_SetAnimation(ACTOR_MIA, 3);
+    Actor_SetAnimationAndWait(ACTOR_IVAN, 3);
     Event_Wait(10);
-    Actor_FaceDirection(0, 0x6000, 0);
-    Actor_FaceDirection(1, 0x6000, 0);
-    Actor_FaceDirection(3, 0x6000, 0);
-    Actor_FaceDirection(2, 0x6000, 120);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x6000, 0);
+    Actor_FaceDirection(ACTOR_GERALD, 0x6000, 0);
+    Actor_FaceDirection(ACTOR_MIA, 0x6000, 0);
+    Actor_FaceDirection(ACTOR_IVAN, 0x6000, 120);
     Func_02001918(effectCallback);
     Event_Wait(60);
     KorimaPalette_Restore(0);
@@ -693,16 +694,16 @@ void PaletteScene_RunActorTransitionSequence(void)
     Func_020012f4(11, 4);
     Event_Wait(20);
     Event_ShowMessageAndWait(0x4009, 0, 10);
-    Actor_StartRepeatedMotion(0, 2);
-    Actor_StartRepeatedMotion(1, 2);
-    Actor_StartRepeatedMotion(3, 2);
-    Actor_RunRepeatedMotion(2, 2);
+    Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
+    Actor_StartRepeatedMotion(ACTOR_GERALD, 2);
+    Actor_StartRepeatedMotion(ACTOR_MIA, 2);
+    Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
     Func_020012f4(10, 1);
     Event_OpenMessage(0x8008, 0);
-    Actor_FaceDirection(0, 0xc000, 0);
-    Actor_FaceDirection(1, 0xe000, 0);
-    Actor_FaceDirection(3, 0xc000, 0);
-    Actor_FaceDirection(2, 0xa000, 0);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
+    Actor_FaceDirection(ACTOR_GERALD, 0xe000, 0);
+    Actor_FaceDirection(ACTOR_MIA, 0xc000, 0);
+    Actor_FaceDirection(ACTOR_IVAN, 0xa000, 0);
     if (Event_ChooseYesNo(0, 0) == 1) {
         *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
     }
@@ -714,19 +715,19 @@ void PaletteScene_RunActorTransitionSequence(void)
     Func_020012f4(10, 1);
     Event_Wait(20);
     Event_ShowMessageAndWait(0x8008, 0, 10);
-    Actor_FaceDirection(0, 0x4000, 0);
-    Actor_FaceDirection(1, 0, 0);
-    Actor_FaceDirection(3, 0xc000, 0);
-    Actor_FaceDirection(2, 0x8000, 10);
-    Actor_SetAnimation(0, 3);
-    Actor_SetAnimation(1, 3);
-    Actor_SetAnimation(3, 3);
-    Actor_SetAnimationAndWait(2, 3);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 0);
+    Actor_FaceDirection(ACTOR_GERALD, 0, 0);
+    Actor_FaceDirection(ACTOR_MIA, 0xc000, 0);
+    Actor_FaceDirection(ACTOR_IVAN, 0x8000, 10);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, 3);
+    Actor_SetAnimation(ACTOR_GERALD, 3);
+    Actor_SetAnimation(ACTOR_MIA, 3);
+    Actor_SetAnimationAndWait(ACTOR_IVAN, 3);
     Audio_PlayCue(17);
     finalActions = SceneAction_GroupFinish;
-    Actor_EnableActionCallback(1, finalActions);
+    Actor_EnableActionCallback(ACTOR_GERALD, finalActions);
     if (actorThreeEnabled != 0) {
-        Actor_EnableActionCallback(3, finalActions);
+        Actor_EnableActionCallback(ACTOR_MIA, finalActions);
     }
     Call2(Func_020019d0, 2, (s32)finalActions);
     Func_020012f4(10, 4);
@@ -738,7 +739,7 @@ void PaletteScene_RunActorTransitionSequence(void)
     Func_020012f4(11, 4);
     Event_Wait(20);
     Event_ShowMessageAndWait(0x4009, 0, 10);
-    Actor_SetAnimationAndWait(0, 3);
+    Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
     GameFlag_Set(0x845);
     Audio_PlayCue(1);
     PaletteScene_SetRecordValue(184, 185);

@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "FIELD_SCENE.H"
 
 #define NULL ((void *)0)
 #define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
@@ -402,7 +403,7 @@ s32 UpdateActorProximity(u8 *actor)
         return 0;
     }
 
-    player = Actor_Get(0);
+    player = Actor_Get(ACTOR_PARTY_LEADER);
 
     if (*(s16 *)(work + 376) != 0 || scene[0x0ea4] != 0) {
         range = 26;
@@ -447,7 +448,7 @@ void ActorPresentation_RunActorModeOneThenZero(s32 actor)
 void SceneDialogue_RunActor8FlagScene(void)
 {
     Event_Begin();
-    Actor_FaceActor(8, 0, 2);
+    Actor_FaceActor(8, ACTOR_PARTY_LEADER, 2);
     GameFlag_Set(0x305);
     Event_SetMessage(0x1cab);
     Event_ShowMessage(8, 0);
@@ -467,7 +468,7 @@ void SceneDialogue_RunActor11Line(void)
  */
 
     Event_SetMessage(0x1cae);
-    Actor_FaceEachOther(11, 0, 2);
+    Actor_FaceEachOther(11, ACTOR_PARTY_LEADER, 2);
     ActorPresentation_RunActorModeOneThenZero(11);
 }
 
@@ -484,7 +485,7 @@ void SceneDialogue_RunActor12TwoFlagScene(void)
  */
 
     Event_Begin();
-    Actor_FaceActor(12, 0, 2);
+    Actor_FaceActor(12, ACTOR_PARTY_LEADER, 2);
     GameFlag_Set(0x306);
     GameFlag_Set(0x868);
     Event_SetMessage(0x1caf);
@@ -503,7 +504,7 @@ void SceneDialogue_ShowLine1CB0ForActor13(void)
  */
 
     Event_SetMessage(0x1cb0);
-    Actor_FaceEachOther(13, 0, 2);
+    Actor_FaceEachOther(13, ACTOR_PARTY_LEADER, 2);
     ActorPresentation_RunActorModeOneThenZero(13);
 }
 
@@ -518,7 +519,7 @@ void SceneDialogue_RunActorFourteenFlagDialogue(void)
     text = (s32)&SceneMessage_ActorFourteenBase;
     Event_SetMessage(text);
     Actor_SetAnimation(14, 0);
-    Actor_FaceEachOther(14, 0, 2);
+    Actor_FaceEachOther(14, ACTOR_PARTY_LEADER, 2);
     if (Scene_QueryFlag(Engine_GameFlagIsSet, 0x300) == 0) {
         Scene_Call3(Engine_ActorShowEmote, 14, 256, 60);
         Event_ShowMessageAndWait(14, 0, 10);
@@ -548,7 +549,7 @@ void SceneDialogue_RunActorFifteenFacingPreservedDialogue(void)
     Event_Begin();
     Event_SetMessage(0x1cb4);
     Actor_SetAnimation(15, 0);
-    Actor_FaceEachOther(15, 0, 2);
+    Actor_FaceEachOther(15, ACTOR_PARTY_LEADER, 2);
     Event_ShowMessageAndWait(15, 0, 10);
     actor->facing = (u16)facing0;
     Task_Wait(1);
@@ -562,7 +563,7 @@ void SceneDialogue_RunActor16CountedDialogue(void)
 
     Event_Begin();
     Event_SetMessage(0x1cb5);
-    Actor_FaceEachOther(16, 0, 2);
+    Actor_FaceEachOther(16, ACTOR_PARTY_LEADER, 2);
     Event_OpenMessage(16, 0);
     if (Event_ChooseYesNo(0, 0) != 0) {
         Data_03001ebc->branch_counter += 1;
@@ -577,7 +578,7 @@ void SceneDialogue_RunActorEightTimedDialogue(void)
     Event_Begin();
     Actor_RunRepeatedMotion(8, 1);
     Event_Wait(20);
-    Actor_FaceActor(8, 0, 20);
+    Actor_FaceActor(8, ACTOR_PARTY_LEADER, 20);
     GameFlag_Set(0x305);
     Event_SetMessage(0x1cab);
     Event_ShowMessageAndWait(8, 0, 20);
@@ -597,7 +598,7 @@ void SceneDialogue_RunActor12TimedTwoFlagScene(void)
     Event_Begin();
     Actor_RunRepeatedMotion(12, 1);
     Event_Wait(20);
-    Actor_FaceActor(12, 0, 20);
+    Actor_FaceActor(12, ACTOR_PARTY_LEADER, 20);
     GameFlag_Set(0x306);
     GameFlag_Set(0x868);
     Event_SetMessage(0x1caf);
@@ -758,7 +759,7 @@ void FieldScene_SetupWithDescriptor976C(void)
 
 void ActorPresentation_SetupActorZeroForSceneEight(void)
 {
-    struct SceneActor_020004b4 *actor = Actor_Get(0);
+    struct SceneActor_020004b4 *actor = Actor_Get(ACTOR_PARTY_LEADER);
     struct Presentation *presentation = actor->presentation;
     u8 flags;
 
@@ -779,7 +780,7 @@ void ActorPresentation_SetupActorZeroForSceneEight(void)
 
 void ActorPresentation_SetupActorZeroForSceneNine(void)
 {
-    struct SceneActor_020004b4 *actor = Actor_Get(0);
+    struct SceneActor_020004b4 *actor = Actor_Get(ACTOR_PARTY_LEADER);
     struct Presentation *presentation = actor->presentation;
     u8 flags;
 
@@ -807,7 +808,7 @@ void FieldScene_SetupWithDescriptor97AE(void)
 
 void ActorPresentation_SetupActorZeroForSceneTwelve(void)
 {
-    struct SceneActor_02000c1c *actor = Actor_Get(0);
+    struct SceneActor_02000c1c *actor = Actor_Get(ACTOR_PARTY_LEADER);
     struct Presentation_02000c1c *presentation = actor->presentation;
     u8 flags;
 
@@ -902,7 +903,7 @@ void FieldScene_RunActorEighteenDialogue(void)
     Event_Begin();
     Event_SetMessage(0x1342);
     Actor_SetAnimation(18, 0);
-    Actor_FaceEachOther(18, 0, 0);
+    Actor_FaceEachOther(18, ACTOR_PARTY_LEADER, 0);
     Event_Wait(2);
     Event_ShowMessage(18, 0);
     Actor_SetAnimation(18, 1);

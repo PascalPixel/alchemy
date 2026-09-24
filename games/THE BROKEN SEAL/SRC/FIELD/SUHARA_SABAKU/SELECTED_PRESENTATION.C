@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "FIELD_SCENE.H"
 
 #define NULL ((void *)0)
 #define CreateOverlayObject Func_020012d6
@@ -387,19 +388,19 @@ void FieldScene_RunActorThirteenRestoration(void)
                 Event_Begin();
                 Event_SetMessage(0x2633);
                 /* Record layout observed here: s32 at +8, s32 at +16. */
-                record = Actor_Get(0);
+                record = Actor_Get(ACTOR_PARTY_LEADER);
                 if (record != 0) {
                     Actor_SetPosition(ACTOR_ID, *(s32 *)(record + 8), *(s32 *)(record + 16));
                 }
                 Actor_FaceActor(ACTOR_ID, 0xc000, 0);
-                Actor_WalkToAndWait(0, 0x1b8, 0x4e8);
+                Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x1b8, 0x4e8);
                 Actor_FaceDirection(ACTOR_ID, 0x4000, 0);
-                Actor_WalkToAndWait(0, 0x1bc, 0x4d8);
-                Actor_ShowEmote(0, 0x100, 40);
-                Actor_FaceDirection(0, 0x4000, 30);
+                Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x1bc, 0x4d8);
+                Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x100, 40);
+                Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 30);
                 Actor_SetAnimationAndWait(ACTOR_ID, 4);
                 Event_ShowMessage(ACTOR_ID, 0);
-                Actor_ShowEmote(0, 0x105, 60);
+                Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x105, 60);
                 Actor_ShowEmote(ACTOR_ID, 0x105, 60);
                 Event_ShowMessage(ACTOR_ID, 0);
                 Event_Wait(30);
@@ -415,10 +416,10 @@ void FieldScene_RunActorThirteenRestoration(void)
                 Actor_SetSpeed(ACTOR_ID, 0xb333, 0x5999);
                 Actor_WalkToAndWait(ACTOR_ID, 0x1b8, 0x4e8);
                 Event_ShowMessage(ACTOR_ID, 0);
-                Actor_SetAnimationAndWait(0, 3);
+                Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
                 Actor_SetAnimation(ACTOR_ID, 2);
                 /* Record layout observed here: s16 at +10, s16 at +18. */
-                record = Actor_Get(0);
+                record = Actor_Get(ACTOR_PARTY_LEADER);
                 if (record != 0) {
                     Actor_SetDestination(ACTOR_ID, *(s16 *)(record + 10), *(s16 *)(record + 18));
                 }

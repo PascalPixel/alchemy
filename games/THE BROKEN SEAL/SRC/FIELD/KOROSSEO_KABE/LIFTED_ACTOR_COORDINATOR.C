@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "FIELD_SCENE.H"
 
 enum LiftedActorCoordinatorMessage {
     MSG_FANS_JUST_CALL_WALL = 0x20aa
@@ -99,7 +100,7 @@ void FieldScene_RunLiftedActorCoordinator(s32 scene)
         Func_0200577a();
         Func_0200573a(scene, 0);
         Func_02004310(0, 632, 264);
-        Actor_SetSpeed(0, 65536, 32768);
+        Actor_SetSpeed(ACTOR_PARTY_LEADER, 65536, 32768);
         Call3(Func_02005702, 0, 616, 264);
         Value3(Func_0200577e, 0, 49152, 20);
         Func_020057ea();

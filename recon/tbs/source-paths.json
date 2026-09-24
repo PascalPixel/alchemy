@@ -9892,7 +9892,8 @@
       "source": "FIELD/HAIDIA_ARASHI/GROUP_DEPARTURE.C"
     },
     "resource_372:02002dec": {
-      "name": "RunEventScript02"
+      "name": "HaidiaArashi_RunScene02DEC",
+      "source": "FIELD/HAIDIA_ARASHI/STORM_SCENE_02DEC.C"
     },
     "resource_374:020017c8": {
       "name": "Scene_RunExtendedActorSequence"

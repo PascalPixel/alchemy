@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_37b:02001ff4": {
+      "name": "SoruSekizo_OpenSeal",
+      "source": "FIELD/SORU_SEKIZO/OPEN_SEAL.C"
+    },
     "resource_373:02002a54": {
       "name": "HaidiaMura_ApplyEntryState",
       "source": "FIELD/HAIDIA_MURA/ENTRY_STATE.C"

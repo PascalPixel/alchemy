@@ -23,8 +23,6 @@ pub static AGBCC_SOURCES: &[&str] = &[
     "main:080fb714",
     "main:080fb75c",
     "main:080fb750",
-    "main:080f9a30",
-    "main:080f9a50",
     "main:080fada0",
     "main:080fadf0",
     "main:080fa1fc",

@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "main:080fb77c": {
+      "name": "MusicTrack_SetVoicePanOrSweep",
+      "source": "SOUND/MUSIC_TRACK_SET_VOICE_PAN_OR_SWEEP.C"
+    },
     "main:080fb768": {
       "name": "MusicTrack_SetVoiceLength",
       "source": "SOUND/MUSIC_TRACK_SET_VOICE_LENGTH.C"

@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "main:080fb768": {
+      "name": "MusicTrack_SetVoiceLength",
+      "source": "SOUND/MUSIC_TRACK_SET_VOICE_LENGTH.C"
+    },
     "main:080fb700": {
       "name": "MusicTrack_SetVoiceAttack",
       "source": "SOUND/MUSIC_TRACK_SET_VOICE_ATTACK.C"

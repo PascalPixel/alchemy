@@ -1,3 +1,9 @@
+/* NONMATCHING: 72 bytes, candidate 72, 16 differing halfwords (2026-09-24).
+ * Single-overlay unit binding Engine_* at their import veneers. Remaining:
+ * the region stops before the owner pool word; with the span extended to 72
+ * bytes (as done for 39e:02000cd4 and 39e:02000f80) the residual is 16
+ * halfwords of allocation: the reference keeps the list pointer in r1 (after
+ * copying y to r2) and the slot in r4, here they swap. */
 #include "TYPES.H"
 /*
  * resource_39d owner at 0x020031c0, 68 bytes.
@@ -16,16 +22,20 @@ struct Rec_39d {
     s32 f16;                    /* +16 */
 };
 
-void Func_020031c0(s32 *out, s32 y)
+void Local_020031c0(s32 *out, s32 y)
 {
-    struct Rec_39d **list = *(struct Rec_39d ***)0x03001ebc;
-    s32 base = 64 - (y >> 20);
-    s32 low = base + 8;
-    s32 high = base + 11;
-    s32 slot;
+    struct Rec_39d **list;
+    s32 base;
+    s32 low;
+    s32 high;
+    u32 slot;
 
+    list = *(struct Rec_39d ***)0x03001ebc;
+    base = y >> 20;
+    base = 64 - base;
+    high = base + 11;
+    low = base + 8;
     list = (struct Rec_39d **)((u8 *)list + 20);
-
     for (slot = 0; slot <= 65; slot++) {
         struct Rec_39d *rec = *list++;
 

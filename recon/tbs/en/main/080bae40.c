@@ -1,29 +1,23 @@
 /*
- * BattleTarget_SelectForAction draft: 79.6% (1908/1864 bytes).
- * Remaining difference:
- *  - Normal-order scan: the ROM hoists the 0x100 halfword pool constant into
- *    r5 before the loop (pool placed mid-loop) and does the pre-check as
- *    normal[0] = [turn_order, #88] before walking turn_order + 88 in place.
- *    Ours keeps a 2*index giv alive across the loop test (GCSE copy of the
- *    test's address), so loop 1 has 33 real insns in the second loop pass and
- *    the constant is "not desirable" to move (loop 2 has 28 and moves).
- *    Spelling the loop as for (slot = turn_order->normal; *slot != 255;
- *    slot++) hoists the constant, places both pools where the ROM has them
- *    and walks turn_order + 88 in place, but GCSE then shares the test load
- *    with the body (ldrh carried in r2) where the ROM reloads with ldrsh at
- *    the loop top; volatile, do/while with an explicit pre-check and goto
- *    loops all keep the sharing. Best loop shape so far: test
- *    turn_order->normal[target_index] != 255 and body
- *    slot = &turn_order->normal[target_index]; unit_id = *slot; gives the
- *    ROM pre-check, the in-place walk and both ldrsh loads exactly (71.5%
- *    overall only because the pools shift); it still counts 36 real insns in
- *    the second loop pass (2*i kept live by GCSE register 613 shared with the
- *    mirrored loop, plus the reg34 + 2i and + 88 givs), so 0x100 is not
- *    hoisted. A separate index variable for the loop drops the [sp, #24]
- *    spill instead.
- *  - Sort/selection: the ROM keeps `selected` in r1 with caller-saves around
- *    the calls and spills the unit_ids base to [sp, #16]; ours spills
- *    `selected` to [sp, #16].
+ * BattleTarget_SelectForAction draft: 1864 of 1864 bytes, 77.0% aligned
+ * similarity. The normal-order scan tests turn_order->normal[target_index]
+ * and reads the unit through slot = &turn_order->normal[target_index],
+ * which gives the ROM pre-check ([turn_order, #88]), the in-place walk of
+ * turn_order + 88 and both ldrsh loads. Case 2 rolls before selected = 0 so
+ * selected crosses only the four sort calls: caller-saves become profitable
+ * and it lives in a low register saved at [sp, #0], as in the ROM.
+ * Remaining:
+ *  - The ROM hoists the 0x100 halfword pool constant into r5 before the
+ *    normal scan (pool mid-loop, first pool at +0x40). Ours has 36 real
+ *    insns in that loop in the second loop pass (2*i kept live by the GCSE
+ *    copy it shares with the mirrored scan, plus the reg34 + 2i and + 88
+ *    givs), above the move threshold the mirrored scan (28) passes.
+ *    for (slot = turn_order->normal; *slot != 255; slot++) hoists it but lets
+ *    GCSE share the test load with the body.
+ *  - Sort: the ROM spills the unit_ids base (mov r4, sp; adds r4, #56) to
+ *    [sp, #16] and keeps selected in r1; ours holds the base in fp, selected
+ *    in r4, so the spill slots shift by one.
+ *  - CHECK_EFFECT hp compare picks r0/r1 where the ROM picks r1/r3.
  */
 #include "TYPES.H"
 #include "BATTLE_COMMAND.H"
@@ -263,9 +257,9 @@ s32 BattleTarget_SelectForAction(
         }
 
         target_index = 0;
-        slot = turn_order->normal;
-        while (slot[target_index] != 255) {
-            unit_id = slot[target_index];
+        while (turn_order->normal[target_index] != 255) {
+            slot = &turn_order->normal[target_index];
+            unit_id = *slot;
             if (unit_id != 254) {
                 if (action->target_mode != 4 || unit_id == actor_id) {
                     unit_ids[candidate_count] = unit_id;
@@ -353,8 +347,8 @@ scan_complete:
             selected = 0;
             break;
         case 2:
-            selected = 0;
             roll = (u32)(11 * Random16()) >> 16;
+            selected = 0;
             if (roll > 5)
                 selected = 1;
             break;

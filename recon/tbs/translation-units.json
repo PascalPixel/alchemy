@@ -79130,6 +79130,78 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "scene-3a4-02002804",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/FLAGGED_ACTORS.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3a4",
+      "absolute_symbols": {
+        "Engine_ActorGet": {
+          "address": "0x0200bb98",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetPosition": {
+          "address": "0x0200bbe8",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpriteFlags": {
+          "address": "0x0200bb30",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagIsSet": {
+          "address": "0x0200bb50",
+          "kind": "thumb"
+        },
+        "Engine_MapCopyCellsTo": {
+          "address": "0x0200bb08",
+          "kind": "thumb"
+        },
+        "Engine_MapCopyCellAttributes": {
+          "address": "0x0200bb28",
+          "kind": "thumb"
+        },
+        "Engine_MapRedraw": {
+          "address": "0x0200baf0",
+          "kind": "thumb"
+        },
+        "Engine_TaskWait": {
+          "address": "0x0200ba78",
+          "kind": "thumb"
+        },
+        "Engine_EventBegin": {
+          "address": "0x0200bb70",
+          "kind": "thumb"
+        },
+        "Engine_CameraMoveTo": {
+          "address": "0x0200bc80",
+          "kind": "thumb"
+        },
+        "Engine_EventEnd": {
+          "address": "0x0200bb78",
+          "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
+        },
+        "Data_02000240_t": {
+          "address": "0x02000240",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02002804",
+          "extent": 304,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

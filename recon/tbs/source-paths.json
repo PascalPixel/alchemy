@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_3a4:02002804": {
+      "name": "ArutinYama_PlaceFlaggedActors",
+      "source": "FIELD/ARUTIN_YAMA/FLAGGED_ACTORS.C"
+    },
     "resource_38d:020021bc": {
       "name": "BiribinoKyuden_RunActorRowScene",
       "source": "FIELD/BIRIBINO_KYUDEN/ACTOR_ROW_SCENE.C"

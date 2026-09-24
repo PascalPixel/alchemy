@@ -29,7 +29,6 @@
  *    words whose low ten bits that helper uses as a tile index.
  */
 
-#define BattleMenu_RunActionSelection Func_0802592c
 
 #define ACTION_ID_MASK 0x3fff
 #define PAGE_ROWS 5

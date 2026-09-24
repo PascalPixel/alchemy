@@ -1855,6 +1855,36 @@
       "name": "UiText_FormatNumber",
       "source": "GRAPHICS/TEXT/FORMAT_NUMBER.C"
     },
+    "main:08017e88": {
+      "name": "UiText_AppendArticleName"
+    },
+    "main:08018038": {
+      "name": "UiText_BuildRenderEntries"
+    },
+    "main:08021e6c": {
+      "name": "Ui_RunSelectionScreen"
+    },
+    "main:08022768": {
+      "name": "Ui_SetRectHighlight",
+      "source": "GRAPHICS/WINDOW/SET_RECT_HIGHLIGHT.C"
+    },
+    "main:0802281c": {
+      "name": "BattleLayout_HighlightPartyPanels"
+    },
+    "main:08025200": {
+      "name": "ItemList_SelectEntry"
+    },
+    "main:0802592c": {
+      "name": "BattleMenu_RunActionSelection"
+    },
+    "main:0801d108": {
+      "name": "Menu_OpenWorkspaceOptions",
+      "source": "MENU/OPEN_WORKSPACE_OPTIONS.C"
+    },
+    "main:0801d4cc": {
+      "name": "Menu_RunWorkspaceOptions",
+      "source": "MENU/RUN_WORKSPACE_OPTIONS.C"
+    },
     "main:0801e858": {
       "name": "UiText_DrawString"
     },
@@ -10589,6 +10619,9 @@
     },
     "main:080a24d0": {
       "name": "RunAssetSelectionScreen"
+    },
+    "main:080a2680": {
+      "name": "AssetSelection_RunLoop"
     },
     "main:080b3444": {
       "name": "Shop_PickUnitItem",
@@ -20139,8 +20172,8 @@
     "main:080dc6bc": {
       "name": "Unnamed_080dc6bc"
     },
-    "main:080df864": {
-      "name": "Unnamed_080df864"
+    "main:080dea70": {
+      "name": "BattleFx_RunProjectileVolley"
     },
     "main:080e01e4": {
       "name": "Unnamed_080e01e4"
@@ -20802,7 +20835,6 @@
     "main:080974d8": "Camera_WorldToScreen",
     "main:080ca1fc": "BattleFx_RunParticlePool",
     "main:080ceb54": "BattleFx_RunMemberBurst",
-    "main:080dea70": "BattleFx_RunProjectileVolley",
     "main:0808ae74": "Encounter_SelectEnemyGroup",
     "main:08004c6c": "SceneTransform_ApplyRoll",
     "main:08015358": "Djinn_ShowJoinedMessageFar",
@@ -20811,7 +20843,6 @@
     "main:080b5010": "BattleActor_SpawnObjectsForListFar",
     "main:0808e14c": "Event_FindFacingTrigger",
     "main:080ceff8": "BattleFx_RunFortyEightFrameEffect",
-    "main:0802281c": "BattleLayout_HighlightPartyPanels",
     "main:08093c00": "Field_TryJumpForward",
     "main:080b5e10": "BattleSummon_ReservedNoOp",
     "main:080bd424": "BattleCommand_SelectAutomatic",

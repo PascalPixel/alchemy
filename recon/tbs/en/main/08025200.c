@@ -16,7 +16,6 @@
  * with the result discarded in two places.
  */
 
-#define ItemList_SelectEntry             Func_08025200
 
 #define Resource_LoadIntoFreeSlot        Func_080040b4
 #define Ui_FillVramBlockPattern          Func_08016738

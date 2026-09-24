@@ -1,6 +1,62 @@
 {
   "format": 3,
   "owners": {
+    "resource_3cb:02000f8c": {
+      "name": "LinkLobby_TalkByProgress",
+      "source": "MENU/LINK_LOBBY/PROGRESS_TALK.C"
+    },
+    "resource_3cb:020010e8": {
+      "name": "LinkLobby_TalkAlternating",
+      "source": "MENU/LINK_LOBBY/ALTERNATE_TALK.C"
+    },
+    "resource_3c0:02000c00": {
+      "name": "SuharaSabaku_DropAndLeave",
+      "source": "FIELD/SUHARA_SABAKU/DROP_AND_LEAVE.C"
+    },
+    "resource_3c8:020016a4": {
+      "name": "VinasuHeya_UpdateFloorSwitch",
+      "source": "FIELD/VINASU_HEYA/FLOOR_SWITCH.C"
+    },
+    "resource_3b4:02000f40": {
+      "name": "TakaraAshiba_OpenPassage",
+      "source": "FIELD/TAKARA_ASHIBA/OPEN_PASSAGE.C"
+    },
+    "resource_3cb:0200008c": {
+      "name": "LinkLobby_PeerSlotMatches",
+      "source": "MENU/LINK_LOBBY/PEER_SLOT.C"
+    },
+    "resource_3a7:02000b8c": {
+      "name": "KuupuappuDou_SpawnPuffs",
+      "source": "FIELD/KUUPUAPPU_DOU/SPAWN_PUFFS.C"
+    },
+    "resource_3cb:0200106c": {
+      "name": "LinkLobby_TalkToAttendant",
+      "source": "MENU/LINK_LOBBY/ATTENDANT_TALK.C"
+    },
+    "resource_3a8:02000464": {
+      "name": "KareiMachi_RunExitDoor",
+      "source": "FIELD/KAREI_MACHI/EXIT_DOOR.C"
+    },
+    "resource_3b7:020009f8": {
+      "name": "TorebiIzumi_PayToPlay",
+      "source": "FIELD/TOREBI_IZUMI/PAY_TO_PLAY.C"
+    },
+    "resource_3b1:020037d8": {
+      "name": "FuneHeya_PlaceFoundActors",
+      "source": "FIELD/FUNE_HEYA/PLACE_FOUND_ACTORS.C"
+    },
+    "resource_39c:020021cc": {
+      "name": "MakyuriHeya_StartPillarPush",
+      "source": "FIELD/MAKYURI_HEYA/PUSH_PILLAR.C"
+    },
+    "resource_3b2:02002700": {
+      "name": "TakaraShima_SettleSecondBlockNorth",
+      "source": "FIELD/TAKARA_SHIMA/SETTLE_BLOCK_NORTH_B.C"
+    },
+    "resource_3b2:020024c8": {
+      "name": "TakaraShima_SettlePushedBlockNorth",
+      "source": "FIELD/TAKARA_SHIMA/SETTLE_BLOCK_NORTH.C"
+    },
     "resource_3b2:02002984": {
       "name": "TakaraShima_SettlePushedBlockWest",
       "source": "FIELD/TAKARA_SHIMA/SETTLE_BLOCK_WEST.C"

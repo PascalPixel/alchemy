@@ -53788,12 +53788,24 @@
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39c",
       "absolute_symbols": {
+        "Engine_ActorFaceDirection": {
+          "address": "0x200db94",
+          "kind": "thumb"
+        },
         "Engine_ActorGet": {
           "address": "0x0200dad4",
           "kind": "thumb"
         },
+        "Engine_ActorRunRepeatedMotion": {
+          "address": "0x200db4c",
+          "kind": "thumb"
+        },
         "Engine_ActorSetAnimation": {
           "address": "0x200db2c",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetAnimationAndWait": {
+          "address": "0x200db34",
           "kind": "thumb"
         },
         "Engine_ActorSetDestination": {
@@ -53808,12 +53820,20 @@
           "address": "0x0200db1c",
           "kind": "thumb"
         },
+        "Engine_ActorWalkToAndWait": {
+          "address": "0x200db0c",
+          "kind": "thumb"
+        },
         "Engine_ColorBufferApplySource": {
           "address": "0x200dbe4",
           "kind": "thumb"
         },
         "Engine_ColorBufferApplyTarget": {
           "address": "0x200dbdc",
+          "kind": "thumb"
+        },
+        "Engine_ColorBufferInterpolate": {
+          "address": "0x200dbec",
           "kind": "thumb"
         },
         "Engine_EventChooseYesNo": {
@@ -53836,52 +53856,24 @@
           "address": "0x200db8c",
           "kind": "thumb"
         },
-        "Func_020084ec_a": {
-          "address": "0x200db0c",
-          "kind": "thumb"
-        },
-        "Func_02008552": {
-          "address": "0x200db4c",
-          "kind": "thumb"
-        },
         "Func_02008552_a": {
           "address": "0x200daac",
-          "kind": "thumb"
-        },
-        "Func_02008592": {
-          "address": "0x200db94",
           "kind": "thumb"
         },
         "Func_020085b6": {
           "address": "0x200db8c",
           "kind": "thumb"
         },
-        "Func_020085b6_a": {
-          "address": "0x200db34",
-          "kind": "thumb"
-        },
         "Func_020085e6": {
           "address": "0x200db1c",
-          "kind": "thumb"
-        },
-        "Func_02008644": {
-          "address": "0x200db4c",
           "kind": "thumb"
         },
         "Func_02008644_a": {
           "address": "0x200daac",
           "kind": "thumb"
         },
-        "Func_0200869e": {
-          "address": "0x200db94",
-          "kind": "thumb"
-        },
         "Func_0200869e_a": {
           "address": "0x200daac",
-          "kind": "thumb"
-        },
-        "Func_0200881e": {
-          "address": "0x200dbec",
           "kind": "thumb"
         },
         "Func_0200881e_a": {

@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_370:020001fc": {
+      "name": "Clear_CheckButtonCodes",
+      "source": "MENU/CLEAR/BUTTON_CODES.C"
+    },
     "resource_399:020015b4": {
       "name": "ImiruMura_SwayAndSpark",
       "source": "FIELD/IMIRU_MURA/SWAY_SPARKS.C"

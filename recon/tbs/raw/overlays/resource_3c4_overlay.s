@@ -538,6 +538,7 @@ AlchemyC_02001038:
 AlchemyC_02001068:
 	.space 0x5a
 	.2byte 0x0000
+Func_020010c4:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r8

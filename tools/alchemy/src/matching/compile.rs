@@ -2,13 +2,11 @@ use std::fs;
 use std::path::{Path, PathBuf};
 
 use crate::candidate::{verify_candidate_owned_routed, CandidateCompilerConfiguration, ROM_BASE};
-use crate::compiler::build_io::read_json;
 use crate::compiler::routing::{root, CompilerTarget};
 use crate::compiler::source_paths::{SourceOwner, SourcePaths};
 use crate::overlay::assembly::OVERLAY_BASE;
 use crate::overlay::compile::compile_overlay_c;
 use serde::Serialize;
-use serde_json::Value;
 use tempfile::tempdir;
 
 #[derive(Clone, Debug)]
@@ -60,31 +58,15 @@ fn local_flags(path: &Path) -> Vec<String> {
         .unwrap_or_default()
 }
 
-fn hexadecimal(value: &Value) -> Option<u64> {
-    value.as_u64().or_else(|| {
-        value
-            .as_str()
-            .and_then(|text| u64::from_str_radix(text.trim_start_matches("0x"), 16).ok())
-    })
-}
-
 fn overlay_span(name: &str, address: u32) -> Result<usize, String> {
-    let path = root().join("recon/tbs/semantic/regions.json");
-    let document: Value = read_json(&path)?;
-    document["manual_regions"]
-        .as_array()
-        .into_iter()
-        .flatten()
-        .find(|region| {
-            region["overlay"].as_str() == Some(name)
-                && hexadecimal(&region["entry"]) == Some(u64::from(address))
-        })
-        .and_then(|region| region["span_bytes"].as_u64())
-        .and_then(|span| usize::try_from(span).ok())
+    let owner = SourceOwner::parse(&format!("{name}:{address:08x}"))?;
+    crate::overlay::owner_spans(root())?
+        .get(&owner)
+        .copied()
         .ok_or_else(|| {
             format!(
-                "{name} 0x{address:08x} has no reviewed owner span in {}",
-                path.display()
+                "{} has no placeholder or owner label in its listing",
+                owner.id()
             )
         })
 }

@@ -938,6 +938,7 @@ AlchemyC_02001a9c:
 	.space 0x38
 .L_02001ad4:
 	.space 0x1c
+Func_02001af0:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -1216,6 +1217,7 @@ AlchemyC_02001d48:
 AlchemyC_02001f28:
 	.space 0x36
 	.2byte 0x0000
+Func_02001f60:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -1601,6 +1603,7 @@ AlchemyC_020023d4:
 	.space 0x22
 .L_02002422:
 	.space 0x5a
+Func_0200247c:
 	.2byte 0xb5e0
 	mov	r7, fp
 	mov	r6, sl
@@ -1903,6 +1906,7 @@ AlchemyC_0200290c:
 	.space 0xce
 .L_02002a24:
 	.space 0xf0
+Scene_RunScene3c8SequenceA:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -2381,6 +2385,7 @@ AlchemyC_0200300c:
 AlchemyC_02003050:
 	.space 0x16
 	.2byte 0x0000
+Scene_RunEntrySetup:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -3612,6 +3617,7 @@ AlchemyC_02004014:
 	.space 0x1c
 AlchemyC_02004030:
 	.space 0x18
+Func_02004048:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -3913,6 +3919,7 @@ AlchemyC_02004030:
 	.4byte 0x00007ffd
 	.2byte 0xb333
 	.2byte 0x0005
+Func_020042bc:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -4194,6 +4201,7 @@ AlchemyC_02004030:
 	.4byte 0x00017ffc
 	.2byte 0x0121
 	.2byte 0x0000
+Func_02004520:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r8
@@ -4295,6 +4303,7 @@ AlchemyC_020045f0:
 	.space 0x10
 AlchemyC_02004600:
 	.space 0x10
+Scene_RunParticleWaveSequence:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -4500,6 +4509,7 @@ AlchemyC_02004a2c:
 	.space 0xfe
 .L_02004b2a:
 	.space 0xae
+Func_02004bd8:
 	push	{r5, r6, r7, lr}
 	adds	r5, r0, #0
 	ldr	r3, [r5, #8]

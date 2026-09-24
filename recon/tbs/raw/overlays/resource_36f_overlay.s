@@ -71,6 +71,7 @@ AlchemyC_020001c0:
 	.space 0x78
 AlchemyC_02000238:
 	.space 0xb0
+Func_020002e8:
 	push	{r5, r6, r7, lr}
 	bl	sub_02000740
 	movs	r0, #30
@@ -244,6 +245,7 @@ AlchemyC_02000238:
 	.4byte 0x04000052
 	.2byte 0x1ebc
 	.2byte 0x0300
+Func_02000454:
 	push	{r5, r6, lr}
 	movs	r0, #0
 	ldr	r5, [pc, #64]

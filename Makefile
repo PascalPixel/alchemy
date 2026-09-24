@@ -259,10 +259,6 @@ corpus-check:
 		printf 'legacy draft/ directory found; use recon/tbs/<edition>/\n'; \
 		exit 1; \
 	fi
-	@if find "recon/tbs/semantic" -maxdepth 1 -name '*.c' -print | grep -q .; then \
-		printf 'source hypotheses belong in recon/tbs/<edition>/, not recon/tbs/semantic/ metadata\n'; \
-		exit 1; \
-	fi
 	@roots=$$(git ls-files -- games | cut -d/ -f2 | grep -vx COMMON | LC_ALL=C sort -u | tr '\n' '|'); \
 	test "$$roots" = 'THE BROKEN SEAL|THE LOST AGE|' || { \
 		printf 'games/ holds only the two game roots and the COMMON shared source root, found: %s\n' "$$roots"; exit 1; \

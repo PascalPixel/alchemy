@@ -345,7 +345,7 @@ impl<'a> Model<'a> {
                 }
             }
         }
-        let reviewed = crate::compiler::translation_units::reviewed_overlay_spans(root)?
+        let reviewed = crate::overlay::owner_spans(root)?
             .into_iter()
             .filter_map(|(owner, extent)| Some((site(owner).ok()?, extent)))
             .collect();

@@ -429,6 +429,7 @@ AlchemyC_02001ec8:
 	.space 0x120
 AlchemyC_02001fe8:
 	.space 0x48
+FieldScene_RunScene39bSequenceA:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl

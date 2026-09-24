@@ -1919,6 +1919,7 @@ AlchemyC_02005600:
 	.space 0x10
 AlchemyC_02005610:
 	.space 0x3c
+Func_0200564c:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl

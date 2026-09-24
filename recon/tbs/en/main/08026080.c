@@ -377,8 +377,9 @@ step_back:
             tbl[i].flags &= (u8)~2;
 
         for (i = 0; (u32)i < spread; i++) {
-            if (cursor + i < total && ids[cursor + i] != 0xFE) {
-                selIds[cnt] = ids[cursor + i];
+            j = cursor + i;
+            if (j < total && ids[j] != 0xFE) {
+                selIds[cnt] = ids[j];
                 tbl[i].flags |= 2;
                 if (tbl[i].index != i) {
                     tbl[i].flags &= (u8)~1;
@@ -387,8 +388,8 @@ step_back:
                 selSlot[cnt] = (u8)i;
                 cnt++;
             }
-            if (i != 0 && cursor - i >= 0 && ids[cursor - i] != 0xFE) {
-                selIds[cnt] = ids[cursor - i];
+            if (i != 0 && (j = cursor - i) >= 0 && ids[j] != 0xFE) {
+                selIds[cnt] = ids[j];
                 slot = &tbl[6 - i];
                 slot->flags |= 2;
                 if (slot->index != -i) {

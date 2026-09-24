@@ -53,17 +53,8 @@ extern u8 Data_02009ce0[];
 extern s16 Data_02000240_t[][1];
 extern u8 Data_000023cc[];
 
-void *Func_0200150e(s32, s32, s32, s32);
-void *Func_02001566(s32, s32, s32, s32);
 void Func_020014f4(void);
-void Func_020022a8(void);
-s32 Func_02002356();
-s32 Func_02002412();
-s32 Func_02002990();
-void *Func_020024c4();
 void Func_02002314();
-void Func_02002638();
-s32 *Func_02002642();
 s32 *Func_02002698();
 
 /* Loader-relocated overlay calls: each symbol names the pre-relocation call
@@ -125,7 +116,7 @@ void SetEffectRecordMode(struct EffectWork *work, s32 mode)
 
 void *StagedActorPairScene_SpawnPrimaryEffect(s32 x, s32 y, s32 z, s32 kind)
 {
-    u8 *effect = Func_0200150e(kind, x, y, z);
+    u8 *effect = Object_Create(kind, x, y, z);
 
     if (effect != NULL) {
         u8 *sprite = *(u8 **)(effect + 0x50);
@@ -148,7 +139,7 @@ void *StagedActorPairScene_SpawnPrimaryEffect(s32 x, s32 y, s32 z, s32 kind)
 
 void *StagedActorPairScene_SpawnSecondaryEffect(s32 x, s32 y, s32 z, s32 kind)
 {
-    u8 *effect = Func_02001566(kind, x, y, z);
+    u8 *effect = Object_Create(kind, x, y, z);
 
     if (effect != NULL) {
         u8 *sprite = *(u8 **)(effect + 0x50);
@@ -240,7 +231,7 @@ void FieldScene_RunScene3beSequenceB(void)
     if (GameFlag_IsSet(0x98a) == 0 && GameFlag_IsSet(0x9a0) != 0) {
         Event_Begin();
         Actor_SetSpeed(11, 0x10000, 0x8000);
-        record = Value1(Func_02002356, 0);
+        record = Value1(Engine_ActorGet, 0);
         if (record != 0) {
             Actor_SetPosition(11, *(s32 *)(record + 8), *(s32 *)(record + 16));
         }
@@ -263,7 +254,7 @@ void FieldScene_RunScene3beSequenceB(void)
             bump_step(1);
             Event_ShowMessage(11, 0);
             Actor_SetAnimation(11, 2);
-            record = Value1(Func_02002412, 0);
+            record = Value1(Engine_ActorGet, 0);
             if (record != 0) {
                 Actor_SetDestination(11, *(s16 *)(record + 10), *(s16 *)(record + 18));
             }
@@ -291,7 +282,7 @@ void ActorPresentation_RunActorElevenRecoveryScene(void)
     Event_ShowMessage(11, 0);
     Actor_SetAnimation(11, 2);
     {
-        s16 *position = Func_020024c4(0);
+        s16 *position = Actor_Get(0);
 
         if (position != 0)
             Actor_SetDestination(11, position[5], position[9]);
@@ -363,10 +354,10 @@ void StagedActorPairScene_RunStep(void)
 
 void ActorPresentation_RunActorEightThresholdScene(void)
 {
-    Func_02002638(8);
+    Actor_Get(8);
     Event_Begin();
     {
-        s32 *actor = Func_02002642(8);
+        s32 *actor = Actor_Get(8);
 
         if ((actor[2] >> 20) <= 30) {
             Func_02002314(8);
@@ -385,7 +376,7 @@ void ActorPresentation_RunActorEightThresholdScene(void)
 void StagedActorPairScene_RunUpdate(void)
 {
     Func_020014f4();
-    Func_020022a8();
+    ActorPresentation_RunActorNineThresholdScene();
 }
 
 void ActorPresentation_RunActorNineThresholdScene(void)
@@ -463,7 +454,7 @@ s32 FieldScene_RunScene3be_02001394(void)
             Actor_SetPosition(10, 0x2b80000, 0x1200000);
             Actor_SetAnimation(10, 2);
         }
-        record = Func_02002990(12);
+        record = Actor_Get(12);
         Actor_SetSpriteFlags(record, 0);
     }
     return 0;

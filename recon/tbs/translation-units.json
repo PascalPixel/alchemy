@@ -109121,6 +109121,10 @@
           "address": "0x0200df7c",
           "kind": "thumb"
         },
+        "Engine_ObjectDispatchRelease": {
+          "address": "0x0200df0c",
+          "kind": "thumb"
+        },
         "Engine_ObjectSetAnimation": {
           "address": "0x0200def4",
           "kind": "thumb"
@@ -109739,14 +109743,6 @@
         },
         "Func_0200bb38": {
           "address": "0x0200dfe4",
-          "kind": "thumb"
-        },
-        "Func_0200bbec": {
-          "address": "0x0200df0c",
-          "kind": "thumb"
-        },
-        "Func_0200bc3c": {
-          "address": "0x0200df0c",
           "kind": "thumb"
         }
       },

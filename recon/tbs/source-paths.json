@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_3a8:020016bc": {
+      "name": "KareiMachi_SetupEntryActors",
+      "source": "FIELD/KAREI_MACHI/ENTRY_ACTORS.C"
+    },
     "resource_3a8:02001f14": {
       "name": "KareiMachi_AlternateDance",
       "source": "FIELD/KAREI_MACHI/DANCE_ALTERNATION.C"

@@ -72782,6 +72782,62 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "karei-machi-entry-actors",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/KAREI_MACHI/ENTRY_ACTORS.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3a8",
+      "absolute_symbols": {
+        "Engine_GameFlagIsSet": {
+          "address": "0x0200bbd4",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagSet": {
+          "address": "0x0200bbdc",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetPosition": {
+          "address": "0x0200bc74",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetChildValue": {
+          "address": "0x0200bcac",
+          "kind": "thumb"
+        },
+        "Engine_ActorGet": {
+          "address": "0x0200bc1c",
+          "kind": "thumb"
+        },
+        "Engine_HeapAllocate": {
+          "address": "0x0200bb44",
+          "kind": "thumb"
+        },
+        "Engine_ItemLoadIcon": {
+          "address": "0x0200bbcc",
+          "kind": "thumb"
+        },
+        "Engine_VramLoad": {
+          "address": "0x0200bb54",
+          "kind": "thumb"
+        },
+        "Engine_HeapRelease": {
+          "address": "0x0200bb4c",
+          "kind": "thumb"
+        },
+        "Engine_TaskAddCallback": {
+          "address": "0x0200bb1c",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x020016bc",
+          "extent": 300,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

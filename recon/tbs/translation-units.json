@@ -75340,6 +75340,58 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "scene-38f-02000304",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/KORIMA_MURA/F_00304.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_38f",
+      "absolute_symbols": {
+        "Engine_EventBegin": {
+          "address": "0x0200aa34",
+          "kind": "thumb"
+        },
+        "Engine_AudioPlayCue": {
+          "address": "0x0200abcc",
+          "kind": "thumb"
+        },
+        "Engine_ActorGet": {
+          "address": "0x0200aa54",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpeed": {
+          "address": "0x0200aa64",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetDestinationOffset": {
+          "address": "0x0200aaa4",
+          "kind": "thumb"
+        },
+        "Engine_EventRequestExit": {
+          "address": "0x0200ab5c",
+          "kind": "thumb"
+        },
+        "Engine_EventEnd": {
+          "address": "0x0200aa3c",
+          "kind": "thumb"
+        },
+        "Engine_MapAnimateCells": {
+          "address": "0x0200a9f4",
+          "kind": "thumb"
+        },
+        "FieldScene_ConfigureActor0ThenRun": {
+          "address": "0x020082b4",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02000304",
+          "extent": 196,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

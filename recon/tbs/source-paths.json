@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_38f:02000304": {
+      "name": "KorimaMura_Func02000304",
+      "source": "FIELD/KORIMA_MURA/F_00304.C"
+    },
     "resource_3b1:020047cc": {
       "name": "FuneHeya_Func020047cc",
       "source": "FIELD/FUNE_HEYA/F_047CC.C"

@@ -68567,6 +68567,128 @@
         }
       ],
       "overlay": null
+    },
+    {
+      "id": "korosseo-solo-competitor",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/KOROSSEO/SOLO_COMPETITOR.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3ba",
+      "absolute_symbols": {
+        "Korosseo_ZeroWord": {
+          "address": "0x00000000",
+          "kind": "data"
+        },
+        "Engine_PartyRemoveActiveOwner": {
+          "address": "0x0200bc88",
+          "kind": "thumb"
+        },
+        "Engine_PartyAddActiveOwner": {
+          "address": "0x0200bc80",
+          "kind": "thumb"
+        },
+        "Engine_ObjectAttachWorkTarget": {
+          "address": "0x0200bd68",
+          "kind": "thumb"
+        },
+        "Engine_OwnerGetState": {
+          "address": "0x0200bc40",
+          "kind": "thumb"
+        },
+        "Engine_MathDivide": {
+          "address": "0x0200bb00",
+          "kind": "thumb"
+        },
+        "Engine_EventClearInvalidPackedValues": {
+          "address": "0x0200bde0",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02001910",
+          "extent": 208,
+          "state": "exact-c"
+        }
+      ],
+      "instances": {
+        "resource_3bb": {
+          "owners": {
+            "Korosseo_SelectSoloCompetitor": {
+              "address": "0x02001ba8",
+              "extent": 208
+            }
+          },
+          "absolute_symbols": {
+            "Korosseo_ZeroWord": {
+              "address": "0x00000000",
+              "kind": "data"
+            },
+            "Engine_PartyRemoveActiveOwner": {
+              "address": "0x0200bf20",
+              "kind": "thumb"
+            },
+            "Engine_PartyAddActiveOwner": {
+              "address": "0x0200bf18",
+              "kind": "thumb"
+            },
+            "Engine_ObjectAttachWorkTarget": {
+              "address": "0x0200c010",
+              "kind": "thumb"
+            },
+            "Engine_OwnerGetState": {
+              "address": "0x0200bed0",
+              "kind": "thumb"
+            },
+            "Engine_MathDivide": {
+              "address": "0x0200bd98",
+              "kind": "thumb"
+            },
+            "Engine_EventClearInvalidPackedValues": {
+              "address": "0x0200c090",
+              "kind": "thumb"
+            }
+          }
+        },
+        "resource_3bc": {
+          "owners": {
+            "Korosseo_SelectSoloCompetitor": {
+              "address": "0x02002640",
+              "extent": 208
+            }
+          },
+          "absolute_symbols": {
+            "Korosseo_ZeroWord": {
+              "address": "0x00000000",
+              "kind": "data"
+            },
+            "Engine_PartyRemoveActiveOwner": {
+              "address": "0x0200c9e8",
+              "kind": "thumb"
+            },
+            "Engine_PartyAddActiveOwner": {
+              "address": "0x0200c9e0",
+              "kind": "thumb"
+            },
+            "Engine_ObjectAttachWorkTarget": {
+              "address": "0x0200caf0",
+              "kind": "thumb"
+            },
+            "Engine_OwnerGetState": {
+              "address": "0x0200c998",
+              "kind": "thumb"
+            },
+            "Engine_MathDivide": {
+              "address": "0x0200c830",
+              "kind": "thumb"
+            },
+            "Engine_EventClearInvalidPackedValues": {
+              "address": "0x0200cb80",
+              "kind": "thumb"
+            }
+          }
+        }
+      }
     }
   ]
 }

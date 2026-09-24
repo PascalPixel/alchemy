@@ -1,6 +1,18 @@
 {
   "format": 3,
   "owners": {
+    "resource_3bc:02002640": {
+      "name": "Korosseo_SelectSoloCompetitor",
+      "source": "FIELD/COMMON/KOROSSEO/SOLO_COMPETITOR.C"
+    },
+    "resource_3bb:02001ba8": {
+      "name": "Korosseo_SelectSoloCompetitor",
+      "source": "FIELD/COMMON/KOROSSEO/SOLO_COMPETITOR.C"
+    },
+    "resource_3ba:02001910": {
+      "name": "Korosseo_SelectSoloCompetitor",
+      "source": "FIELD/COMMON/KOROSSEO/SOLO_COMPETITOR.C"
+    },
     "resource_3ab:02000104": {
       "name": "Effect_Move",
       "source": "FIELD/COMMON/EFFECT/MOVE.C"

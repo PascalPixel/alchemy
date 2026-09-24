@@ -3,15 +3,12 @@
 
 #define NULL ((void *)0)
 #define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
-#define AcquireOverlayObject      Func_020010da
 #define CreateOverlayObject Func_02001132
 #define SetOverlayObjectMode Func_0200117c
 #define SetOverlayObjectSlot Func_02001244
 void Effect_Move(void *object);
-#define Scene_GetPartnerActor Func_02001532
-#define Actor_CheckProximity Func_0200078e
-#define Scene_GetPlayerActor Func_02001548
-#define Actor_UpdateProximity Func_020007ce
+#define Actor_CheckProximity SceneActor_UpdateProximity
+#define Actor_UpdateProximity SceneActor_UpdateProximity
 
 #include "CREATE_CONFIGURED_OVERLAY_OBJECT.H"
 
@@ -126,11 +123,9 @@ extern const unsigned char Data_020095a0[];
 extern const unsigned char Data_020095d8[];
 extern const u8 Data_020097dc[];
 extern struct Actor_020007d4 *Func_020018e0(s32 actor);  /* Scene_GetRecord */
-extern void Func_02000ca0(s32 actor);                    /* Func_020004b4 */
 extern struct Actor_020007d4 *Func_020018f2(s32 actor);  /* Scene_GetRecord */
 extern const u8 Data_02009756[];
 extern struct Actor_02000754 *Func_02001860(s32 actor);  /* Scene_GetRecord */
-extern void Func_02000c20(s32 actor);                    /* Func_020004b4 */
 extern struct Actor_02000754 *Func_02001872(s32 actor);  /* Scene_GetRecord */
 extern u8 Data_00000002[];
 extern u8 Data_00001cc0[];
@@ -139,12 +134,6 @@ extern const u8 Data_0200976c[];
 extern const u8 Data_020097ae[];
 extern s16 SceneState_Table[];
 
-void *Func_020010da(s32, s32, s32, s32);
-struct SceneActor *Func_02001696(s32);
-struct SceneActor *Func_0200196a(s32);
-void Func_02000d38(s32);
-struct SceneActor *Func_0200198e(s32);
-void Func_02000e04();
 s32 Func_020019c0();
 s32 Func_02001a1e_a();
 s32 Func_02001a44_a();
@@ -152,32 +141,11 @@ s32 Func_02001a56();
 typedef s32(*IwramIntegerSquareRoot)(s32);
 s32 Func_0200068c(s32 *, s32 *);
 u32 Func_020013fc(s32, s32);
-u8 *Func_02001532();
-s32 Func_0200078e();
-u8 *Func_02001548();
-void Func_020007ce();
-u8 *Func_02001a82(int);
-void Func_0200158e(s32 x, s32 y, s32 value);
-void Func_0200160e(s32, s32, s32);
-struct SceneActor *Func_02001c48(s32);
-void Func_0200166a(s32, s32, s32);
-struct SceneActor *Func_02001ca4(s32);
-void Func_02001794(s32, s32, s32);
-struct SceneActor *Func_02001dd0(s32);
 s32 Func_02001f80(s32 cue);
-void Func_020009d6(s32 actor);
-void Func_02000a36(s32 actor);
-struct Actor_02000640 *Func_0200174c(s32 actor);
-void Func_02000ce2();
-void Func_02000dce();
 s32 Func_0200190a();
-u8 *Func_02001952();
 void Func_020013bc();
 void Func_02001f26(s32 actor, s32 mode, s32 value);
 void Func_02001e62();
-void Func_02001566(s32 x, s32 y, s32 value);
-void Func_020015b4_a(s32 x, s32 y, s32 value);
-void Func_02001692(s32 x, s32 y, s32 value);
 s32 SceneFlag_Check(s32 flag);
 void SceneFlag_Set(s32 flag);
 void SceneMap_UpdateRect(s32, s32, s32, s32, s32, s32);
@@ -349,7 +317,6 @@ static __inline__ void Call1_02000d74(void (*f)(), s32 a0)
 static __inline__ void PlaceActor(void (*place)(s32, s32, s32),
                                  s32 actor, s32 x, s32 z)
 {
-    void *Func_020000a0(s32, s32, s32, s32);
 
     place(actor, x, z);
 }
@@ -358,7 +325,6 @@ static __inline__ void UpdateRect(void (*update)(s32, s32, s32, s32, s32, s32),
                                  s32 x, s32 z, s32 width, s32 height,
                                  s32 sourceX, s32 sourceZ)
 {
-    void *Func_020000a0(s32, s32, s32, s32);
 
     update(x, z, width, height, sourceX, sourceZ);
 }
@@ -374,7 +340,7 @@ void *OverlayObject_CreateConfigured(s32 first, s32 second, s32 third, s32 fourt
     void *rec;
     s32 mask;
 
-    obj = AcquireOverlayObject(fourth, first, second, third);
+    obj = Object_Create(fourth, first, second, third);
     if (obj != NULL) {
         rec = FIELD_AT_OFFSET(obj, void *, 0x50);
         mask = -0xD;
@@ -445,15 +411,15 @@ s32 UpdateActorProximity(u8 *actor)
     u8 *player;
 
     if ((*flags & 1) != 0) {
-        partner = Scene_GetPartnerActor(15);
+        partner = Actor_Get(15);
     } else {
-        partner = Scene_GetPartnerActor(14);
+        partner = Actor_Get(14);
     }
     if (Actor_CheckProximity(actor, partner, 32, 0) != 0) {
         return 0;
     }
 
-    player = Scene_GetPlayerActor(0);
+    player = Actor_Get(0);
 
     if (*(s16 *)(work + 376) != 0 || scene[0x0ea4] != 0) {
         range = 26;
@@ -519,7 +485,7 @@ void SceneDialogue_RunActor11Line(void)
 
     Event_SetMessage(0x1cae);
     Actor_FaceEachOther(11, 0, 2);
-    Func_020009d6(11);
+    ActorPresentation_RunActorModeOneThenZero(11);
 }
 
 void SceneDialogue_RunActor12TwoFlagScene(void)
@@ -555,12 +521,12 @@ void SceneDialogue_ShowLine1CB0ForActor13(void)
 
     Event_SetMessage(0x1cb0);
     Actor_FaceEachOther(13, 0, 2);
-    Func_02000a36(13);
+    ActorPresentation_RunActorModeOneThenZero(13);
 }
 
 void SceneDialogue_RunActorFourteenFlagDialogue(void)
 {
-    struct SceneActor *actor = Func_02001696(14);
+    struct SceneActor *actor = Actor_Get(14);
     s16 facing = (s16)actor->facing;
     s32 text;
 
@@ -593,7 +559,7 @@ void SceneDialogue_RunActorFifteenFacingPreservedDialogue(void)
     struct Actor_02000640 *actor;
     s16 facing0;
 
-    actor = Func_0200174c(15);
+    actor = Actor_Get(15);
     facing0 = (s16)actor->facing;
     actor->state_flags |= 2;
     Event_Begin();
@@ -639,7 +605,7 @@ void SceneDialogue_RunActor11AcceptanceDialogue(void)
 {
     Event_SetMessage(0x1cbd);
     Func_02001860(11)->accepted = 1;
-    Func_02000c20(11);
+    ActorPresentation_RunActorModeOneThenZero(11);
     Func_02001872(11)->accepted = 0;
 }
 
@@ -660,7 +626,7 @@ void ActorPresentation_RunActor13AcceptanceDialogue(void)
 {
     Event_SetMessage(0x1cbf);
     Func_020018e0(13)->accepted = 1;
-    Func_02000ca0(13);
+    ActorPresentation_RunActorModeOneThenZero(13);
     Func_020018f2(13)->accepted = 0;
 }
 
@@ -678,14 +644,14 @@ void FieldScene_RunSupplementalSequenceOne(void)
     Event_Begin();
     if (GameFlag_IsSet(0x307) != 0) {
         Event_SetMessage((s32)Data_00001cc0);
-        Func_02000ce2(14);
+        ActorPresentation_RunActorModeOneThenZero(14);
     } else {
-        Func_02000dce();
+        SceneDialogue_RunActorFourteenFlagDialogue();
         GameFlag_Set(0x307);
     }
     Event_End();
     {
-        u8 *record = Func_02001952(14);
+        u8 *record = Actor_Get(14);
         s32 shown = 1;
 
         *(volatile u16 *)((s32)record + 100) = shown;
@@ -695,16 +661,16 @@ void FieldScene_RunSupplementalSequenceOne(void)
 void SceneDialogue_RunActorFifteenDialogue(void)
 {
     {
-        struct SceneActor *actor = Func_0200196a(15);
+        struct SceneActor *actor = Actor_Get(15);
         actor->state_flags |= 2;
     }
     Event_Begin();
     Event_SetMessage(0x1cc1);
-    Func_02000d38(15);
+    ActorPresentation_RunActorModeOneThenZero(15);
     Event_End();
     {
         s32 clear = 0;
-        struct SceneActor *actor = Func_0200198e(15);
+        struct SceneActor *actor = Actor_Get(15);
         actor->state_flags = clear;
     }
 }
@@ -737,7 +703,7 @@ void FieldScene_RunScene385SequenceA(void)
     } else {
         Event_SetMessage(0x1cc2);
         *(u8 *)(Func_02001a44_a(16) + 91) = 1;
-        Func_02000e04(16);
+        ActorPresentation_RunActorModeOneThenZero(16);
         v5 = 0;
         *(u8 *)(Func_02001a56(16) + 91) = v5;
     }
@@ -745,7 +711,7 @@ void FieldScene_RunScene385SequenceA(void)
 
 void Func_02000970(int actor, int x, int z, int field40)
 {
-    u8 *record = Func_02001a82(actor); int frames;
+    u8 *record = Actor_Get(actor); int frames;
     Actor_SetSpeed(actor, 0x30000, 0x18000); *(s32 *)(record + 72) = 0x8000;
     *(s32 *)(record + 68) = 0; *(s32 *)(record + 40) = field40; Actor_SetSpriteFlags(record, 0);
     Actor_MoveToAndWait(actor, x, z); Actor_SetPosition(actor, x << 16, z << 16);
@@ -790,26 +756,26 @@ void FieldScene_SetupDescriptor9740(void)
 {
     Audio_PlayCue(158);
     Map_AnimateCells(Data_02009740, 56, 19);
-    Func_02001566(408, 320, 5);
+    PlaceActorAndSetSceneDelay(408, 320, 5);
 }
 
 void ActorPresentation_SetupActorEighteenAt312_304(void)
 {
     Audio_PlayCue(158);
     Map_AnimateCells(Data_02009756, 50, 18);
-    Func_0200158e(312, 304, 6);
+    PlaceActorAndSetSceneDelay(312, 304, 6);
 }
 
 void FieldScene_SetupWithDescriptor976C(void)
 {
     Audio_PlayCue(158);
     Map_AnimateCells(Data_0200976c, 44, 17);
-    Func_020015b4_a(216, 288, 7);
+    PlaceActorAndSetSceneDelay(216, 288, 7);
 }
 
 void ActorPresentation_SetupActorZeroForSceneEight(void)
 {
-    struct SceneActor_020004b4 *actor = Func_02001c48(0);
+    struct SceneActor_020004b4 *actor = Actor_Get(0);
     struct Presentation *presentation = actor->presentation;
     u8 flags;
 
@@ -825,12 +791,12 @@ void ActorPresentation_SetupActorZeroForSceneEight(void)
     flags = presentation->flags;
     flags |= 12;
     presentation->flags = flags;
-    Func_0200160e(376, 224, 8);
+    PlaceActorAndSetSceneDelay(376, 224, 8);
 }
 
 void ActorPresentation_SetupActorZeroForSceneNine(void)
 {
-    struct SceneActor_020004b4 *actor = Func_02001ca4(0);
+    struct SceneActor_020004b4 *actor = Actor_Get(0);
     struct Presentation *presentation = actor->presentation;
     u8 flags;
 
@@ -846,19 +812,19 @@ void ActorPresentation_SetupActorZeroForSceneNine(void)
     flags = presentation->flags;
     flags |= 12;
     presentation->flags = flags;
-    Func_0200166a(296, 176, 9);
+    PlaceActorAndSetSceneDelay(296, 176, 9);
 }
 
 void FieldScene_SetupWithDescriptor97AE(void)
 {
     Audio_PlayCue(158);
     Map_AnimateCells(Data_020097ae, 38, 6);
-    Func_02001692(120, 144, 10);
+    PlaceActorAndSetSceneDelay(120, 144, 10);
 }
 
 void ActorPresentation_SetupActorZeroForSceneTwelve(void)
 {
-    struct SceneActor_02000c1c *actor = Func_02001dd0(0);
+    struct SceneActor_02000c1c *actor = Actor_Get(0);
     struct Presentation_02000c1c *presentation = actor->presentation;
     u8 flags;
 
@@ -874,7 +840,7 @@ void ActorPresentation_SetupActorZeroForSceneTwelve(void)
     flags = presentation->flags;
     flags |= 12;
     presentation->flags = flags;
-    Func_02001794(72, 160, 12);
+    PlaceActorAndSetSceneDelay(72, 160, 12);
 }
 
 void SceneState_SetFlag200AndConfigureRegion55_26(void)
@@ -980,7 +946,6 @@ const u8 *SceneData_GetTable97dc(void)
 
 s32 SceneSetup_InitializeActorsAndFlags(void)
 {
-    void *Func_020000a0(s32, s32, s32, s32);
 
     u8 *actor;
     s16 *scene;

@@ -154,7 +154,6 @@ void Func_02002442(s32, s32, s32);
 void Func_020023f0(s32, s32);
 struct SceneService_02000fcc *Func_02003326(s32 index);
 s32 Func_02003a6e(s32);
-void Func_0200358a(s32, s32);
 void Func_0200359a(s32, s32);
 s32 Func_02004290();
 Obj *Func_020024f2(s32);
@@ -163,144 +162,7 @@ void Func_020024b2(Obj *, s32, s32, s32);
 void Func_020024de(Obj *, s32, s32, s32);
 void Func_0200250a(Obj *);
 struct Rec_39a *Func_02003362();
-s32 Func_020003f6(s32, s32, s32);
-void Func_020012dc(void);
-s32 Func_020004a6(s32, s32, s32);
-void Func_0200138c(void);
-s32 Func_020004dc(s32, s32, s32);
-void Func_020013c2(void);
-s32 Func_0200064c(s32, s32, s32);
-void Func_02001636(void);
-void Func_020006b8(s32, s32, s32);
-void Func_020006c2(s32, s32, s32);
-void Func_020016ac(void);
-void Func_0200081e(s32, s32, s32);
-void Func_0200197a(void);
-void Func_0200085e(s32, s32, s32);
-void Func_020019ba();
-s32 Func_0200088e(s32, s32, s32);
-void Func_020019f0(void);
-s32 Func_02000b62(s32, s32, s32);
-void Func_02001cca(void);
-s32 Func_02000e08(s32, s32, s32);
-void Func_0200185a(void);
-void Func_02001f68(void);
-s32 Func_02000e38(s32, s32, s32);
-void Func_0200188a(void);
-void Func_02001f98(void);
-s32 Func_02000e68(s32, s32, s32);
-void Func_020018ba(void);
-void Func_02001fc8(void);
-s32 Func_02000ec8(s32, s32, s32);
-void Func_0200233a(void);
-s32 Func_02000f68(s32, s32, s32);
-void Func_020023dc(void);
-void Func_02000f9c(s32, s32, s32);
-void Func_0200240e(void);
-void Func_02000430(s32, s32, s32);
-void Func_0200043a(s32, s32, s32);
-void Func_02001320(void);
-s32 Func_02000470(s32, s32, s32);
-void Func_02001356(void);
-s32 Func_02000512(s32, s32, s32);
-void Func_020013f8(void);
-s32 Func_02000548(s32, s32, s32);
-void Func_02001534(void);
-s32 Func_0200057e(s32, s32, s32);
-void Func_02001570(void);
-s32 Func_020005be(s32, s32, s32);
-void Func_020015a8(void);
-void Func_020005fe(s32, s32, s32);
-void Func_02000610(s32, s32, s32);
-void Func_020015fc(void);
-s32 Func_02000682(s32, s32, s32);
-void Func_0200166c(void);
-s32 Func_020007ca(s32, s32, s32);
-void Func_02001926(void);
-s32 Func_020008c4(s32, s32, s32);
-void Func_02001a26(void);
-void Func_0200098c();
-void Func_020009b8();
-void Func_020009e2();
-void Func_02000a08();
-void Func_02001b7e();
-void Func_02000a5e(s32, s32, s32);
-void Func_02001bd4(void);
-void Func_02000aba();
-void Func_02000ae6();
-void Func_02000b0c();
-void Func_02001c82();
-void Func_02000ba0(s32, s32, s32);
-void Func_02001d16(void);
-void Func_02000bf2(s32, s32, s32);
-void Func_02001d68(void);
-s32 Func_02000c44(s32, s32, s32);
-void Func_02001dba(void);
-void Func_02000706(s32, s32, s32);
-void Func_02000712(s32, s32, s32);
-void Func_020016fc(void);
-void Func_02000760(s32, s32, s32);
-void Func_0200077c(s32, s32, s32);
-void Func_020018e6(void);
-void Func_02000906(s32, s32, s32);
-void Func_0200092e(s32, s32, s32);
-void Func_02001aa4(void);
-void Func_02000cac();
-void Func_02000cda();
-void Func_02000d02();
-void Func_02001e78();
-void Func_02000d84(s32, s32, s32);
-void Func_020017d0(void);
-void Func_02001ee4(void);
-s32 Func_02000db6(s32, s32, s32);
-void Func_02001f2c(void);
-void Func_02000e98(s32, s32, s32);
-void Func_020018ea(void);
-void Func_02001ff8(void);
-s32 Func_02000efe(s32, s32, s32);
-void Func_02002370(void);
-s32 Func_02000f36(s32, s32, s32);
-void Func_020023aa(void);
-void Func_02000fd2(s32, s32, s32);
-void Func_02002444(void);
 struct Actor_39a *Func_020031a2();
-void Func_02003090(void);
-void Func_0200207e();
-void Func_0200209c();
-void Func_020020c4();
-void Func_020020e4();
-void Func_0200210c();
-void Func_0200212c();
-void Func_02002184();
-void Func_020021a4();
-void Func_020021cc();
-void Func_02002208();
-void Func_0200223c();
-void Func_0200225c();
-void Func_02002284();
-void Func_020022a4();
-void Func_020022fc();
-void Func_02002326();
-void Func_0200236a();
-void Func_02002392();
-void Func_020023b2();
-void Func_020023da();
-void Func_0200240e_a();
-void Func_02002450();
-void Func_02002494();
-void Func_020024d8();
-void Func_020024ec();
-void Func_02002520();
-void Func_02002552();
-void Func_02002584();
-void Func_020025b6();
-void Func_02002636();
-void Func_02002656();
-void Func_02002680();
-void Func_020026a0();
-void Func_020026c8();
-void Func_020026e8();
-void Func_02002f30();
 void Func_02002f72_a();
 s32 Func_02003b02();
 s32 Func_02003de6();
@@ -527,11 +389,11 @@ void ActorPresentation_SetupActorEightForFlag301(void)
 
     Audio_PlayCue(0xF1);
     SceneActor_PlacePairAtOffset(8, 0x70, 0);
-    Func_020003f6(8, 0x70, 0);
+    SceneActor_PlacePairAtOffset(8, 0x70, 0);
     Audio_PlayCue(0x121);
     GameFlag_Set(0x301);
     Task_Wait(2);
-    Func_020012dc();
+    DialogueLayout_ConfigureGroupOne();
 }
 
 void SceneState_RunSlot8OffsetStep(void)
@@ -540,23 +402,23 @@ void SceneState_RunSlot8OffsetStep(void)
 
     offset = -offset;
     Audio_PlayCue(0xF1);
-    Func_02000430(8, offset, 0);
-    Func_0200043a(8, offset, 0);
+    SceneActor_PlacePairAtOffset(8, offset, 0);
+    SceneActor_PlacePairAtOffset(8, offset, 0);
     Audio_PlayCue(0x121);
     GameFlag_Clear(0x301);
     Task_Wait(2);
-    Func_02001320();
+    DialogueLayout_ConfigureGroupOne();
 }
 
 /* Imports; the queried ones are typed for their return value. */
 void FieldScene_RunActor9Transition302(void)
 {
     Audio_PlayCue(0xF1);
-    Func_02000470(9, 0, 0x40);
+    SceneActor_PlacePairAtOffset(9, 0, 0x40);
     Audio_PlayCue(0x121);
     GameFlag_Clear(0x302);
     Task_Wait(2);
-    Func_02001356();
+    DialogueLayout_ConfigureGroupOne();
 }
 
 void ActorPresentation_SetupActorNineForFlag302(void)
@@ -564,11 +426,11 @@ void ActorPresentation_SetupActorNineForFlag302(void)
     void SceneActor_PlacePairAtOffset(s32, s32, s32);
 
     Audio_PlayCue(0xF1);
-    Func_020004a6(9, 0, -64);
+    SceneActor_PlacePairAtOffset(9, 0, -64);
     Audio_PlayCue(0x121);
     GameFlag_Set(0x302);
     Task_Wait(2);
-    Func_0200138c();
+    DialogueLayout_ConfigureGroupOne();
 }
 
 void ActorPresentation_SetupActorTenForFlag303(void)
@@ -576,52 +438,52 @@ void ActorPresentation_SetupActorTenForFlag303(void)
     void SceneActor_PlacePairAtOffset(s32, s32, s32);
 
     Audio_PlayCue(0xF1);
-    Func_020004dc(0xA, 0, 0x40);
+    SceneActor_PlacePairAtOffset(0xA, 0, 0x40);
     Audio_PlayCue(0x121);
     GameFlag_Clear(0x303);
     Task_Wait(2);
-    Func_020013c2();
+    DialogueLayout_ConfigureGroupOne();
 }
 
 void FieldScene_RunActor10Transition303(void)
 {
     Audio_PlayCue(0xF1);
-    Func_02000512(0xA, 0, -64);
+    SceneActor_PlacePairAtOffset(0xA, 0, -64);
     Audio_PlayCue(0x121);
     GameFlag_Set(0x303);
     Task_Wait(2);
-    Func_020013f8();
+    DialogueLayout_ConfigureGroupOne();
 }
 
 void FieldScene_RunActor8Transition304(void)
 {
     Audio_PlayCue(0xF1);
-    Func_02000548(8, 0x90, 0);
+    SceneActor_PlacePairAtOffset(8, 0x90, 0);
     Audio_PlayCue(0x121);
     GameFlag_Set(0x304);
     Task_Wait(2);
-    Func_02001534();
+    DialogueLayout_ConfigureGroupTwo();
 }
 
 void FieldScene_RunActor8Transition304And305(void)
 {
     Audio_PlayCue(0xF1);
-    Func_0200057e(8, -144, 0);
+    SceneActor_PlacePairAtOffset(8, -144, 0);
     Audio_PlayCue(0x121);
     GameFlag_Clear(0x304);
     GameFlag_Set(0x305);
     Task_Wait(2);
-    Func_02001570();
+    DialogueLayout_ConfigureGroupTwo();
 }
 
 void FieldScene_RunActor8Transition305(void)
 {
     Audio_PlayCue(0xF1);
-    Func_020005be(8, -14, 0);
+    SceneActor_PlacePairAtOffset(8, -14, 0);
     Audio_PlayCue(0x121);
     GameFlag_Set(0x305);
     Task_Wait(2);
-    Func_020015a8();
+    DialogueLayout_ConfigureGroupTwo();
 }
 
 void FieldScene_RunActor8FlaggedSequence(void)
@@ -629,17 +491,17 @@ void FieldScene_RunActor8FlaggedSequence(void)
     Audio_PlayCue((s32) 0xF1);
 
     if (GameFlag_IsSet((s32) 0x306) != 0) {
-        Func_020005fe(8, 16, 0);
+        SceneActor_PlacePairAtOffset(8, 16, 0);
         GameFlag_Clear((s32) 0x305);
     } else {
-        Func_02000610(8, 144, 0);
+        SceneActor_PlacePairAtOffset(8, 144, 0);
         /* movs r0,#0xc1 / lsls r0,#2 builds 0x304. */
         GameFlag_Set((s32) 0x304);
     }
 
     Audio_PlayCue((s32) 0x121);
     Task_Wait(2);
-    Func_020015fc();
+    DialogueLayout_ConfigureGroupTwo();
 }
 
 void ActorPresentation_SetupActorNineForFlag306(void)
@@ -647,21 +509,21 @@ void ActorPresentation_SetupActorNineForFlag306(void)
     void SceneActor_PlacePairAtOffset(s32, s32, s32);
 
     Audio_PlayCue(0xF1);
-    Func_0200064c(9, 0, 0x40);
+    SceneActor_PlacePairAtOffset(9, 0, 0x40);
     Audio_PlayCue(0x121);
     GameFlag_Set(0x306);
     Task_Wait(2);
-    Func_02001636();
+    DialogueLayout_ConfigureGroupTwo();
 }
 
 void FieldScene_RunActor9Flag306Sequence(void)
 {
     Audio_PlayCue(0xF1);
-    Func_02000682(9, 0, -64);
+    SceneActor_PlacePairAtOffset(9, 0, -64);
     Audio_PlayCue(0x121);
     GameFlag_Clear(0x306);
     Task_Wait(2);
-    Func_0200166c();
+    DialogueLayout_ConfigureGroupTwo();
 }
 
 void ActorPresentation_SetupActorTenForFlag307(void)
@@ -669,12 +531,12 @@ void ActorPresentation_SetupActorTenForFlag307(void)
     void SceneActor_PlacePairAtOffset(s32, s32, s32);
 
     Audio_PlayCue(0xF1);
-    Func_020006b8(10, 0, 144);
-    Func_020006c2(10, 0, 128);
+    SceneActor_PlacePairAtOffset(10, 0, 144);
+    SceneActor_PlacePairAtOffset(10, 0, 128);
     Audio_PlayCue(0x121);
     GameFlag_Clear(0x307);
     Task_Wait(2);
-    Func_020016ac();
+    DialogueLayout_ConfigureGroupTwo();
 }
 
 /* Three sites of one import, so three names. */
@@ -687,12 +549,12 @@ void FieldScene_RunActorTenDepthSequence(void)
 
     Audio_PlayCue((s32) 0xF1);
     SceneActor_PlacePairAtOffset(10, 0, depth);
-    Func_02000706(10, 0, depth);
-    Func_02000712(10, 0, -80);
+    SceneActor_PlacePairAtOffset(10, 0, depth);
+    SceneActor_PlacePairAtOffset(10, 0, -80);
     Audio_PlayCue((s32) 0x121);
     GameFlag_Set((s32) 0x307);
     Task_Wait(2);
-    Func_020016fc();
+    DialogueLayout_ConfigureGroupTwo();
 }
 
 void FieldScene_PlaceActorEightByFlags(void)
@@ -702,18 +564,18 @@ void FieldScene_PlaceActorEightByFlags(void)
     /* movs r0,#0xc4 / lsls r0,#2 builds 0x310. The second test is only reached
      * when the first fails, and both truths take the same path. */
     if (GameFlag_IsSet((s32) 0x310) != 0 || GameFlag_IsSet((s32) 0x30D) != 0) {
-        Func_02000760(8, -48, 0);
+        SceneActor_PlacePairAtOffset(8, -48, 0);
         GameFlag_Clear((s32) 0x308);
         GameFlag_Set((s32) 0x309);
     } else {
-        Func_0200077c(8, -96, 0);
+        SceneActor_PlacePairAtOffset(8, -96, 0);
         GameFlag_Set((s32) 0x308);
         GameFlag_Clear((s32) 0x309);
     }
 
     Audio_PlayCue((s32) 0x121);
     Task_Wait(2);
-    Func_020018e6();
+    DialogueLayout_ConfigureGroupThree();
 }
 
 void FieldScene_RunActor8Transition308And309(void)
@@ -721,10 +583,10 @@ void FieldScene_RunActor8Transition308And309(void)
     Audio_PlayCue(0xF1);
     GameFlag_Clear(0x308);
     GameFlag_Clear(0x309);
-    Func_020007ca(8, 0x30, 0);
+    SceneActor_PlacePairAtOffset(8, 0x30, 0);
     Audio_PlayCue(0x121);
     Task_Wait(2);
-    Func_02001926();
+    DialogueLayout_ConfigureGroupThree();
 }
 
 void ActorPresentation_SetupActorEightForFlags308And309Guarded(void)
@@ -744,10 +606,10 @@ void ActorPresentation_SetupActorEightForFlags308And309Guarded(void)
     GameFlag_Set((s32) 0x308);
     GameFlag_Clear((s32) 0x309);
     /* movs r1,#0x30 / negs r1,r1 */
-    Func_0200081e(8, -48, 0);
+    SceneActor_PlacePairAtOffset(8, -48, 0);
     Audio_PlayCue((s32) 0x121);
     Task_Wait(2);
-    Func_0200197a();
+    DialogueLayout_ConfigureGroupThree();
 }
 
 void ActorPresentation_SetupActorEightForFlags308And309(void)
@@ -757,10 +619,10 @@ void ActorPresentation_SetupActorEightForFlags308And309(void)
     Audio_PlayCue(0xF1);
     GameFlag_Clear(0x308);
     GameFlag_Clear(0x309);
-    Func_0200085e(8, 0x60, 0);
+    SceneActor_PlacePairAtOffset(8, 0x60, 0);
     Audio_PlayCue(0x121);
     Task_Wait(2);
-    Func_020019ba();
+    DialogueLayout_ConfigureGroupThree();
 }
 
 void ActorPresentation_SetupActorNineForFlag30a(void)
@@ -768,34 +630,34 @@ void ActorPresentation_SetupActorNineForFlag30a(void)
     void SceneActor_PlacePairAtOffset(s32, s32, s32);
 
     Audio_PlayCue(0xF1);
-    Func_0200088e(9, -32, 0);
+    SceneActor_PlacePairAtOffset(9, -32, 0);
     Audio_PlayCue(0x121);
     GameFlag_Set(0x30A);
     Task_Wait(2);
-    Func_020019f0();
+    DialogueLayout_ConfigureGroupThree();
 }
 
 void FieldScene_RunActor9Transition30A(void)
 {
     Audio_PlayCue(0xF1);
-    Func_020008c4(9, 0x20, 0);
+    SceneActor_PlacePairAtOffset(9, 0x20, 0);
     Audio_PlayCue(0x121);
     GameFlag_Clear(0x30A);
     Task_Wait(2);
-    Func_02001a26();
+    DialogueLayout_ConfigureGroupThree();
 }
 
 void FieldScene_PlaceActorTenByFlags(void)
 {
     Audio_PlayCue(241);
     if (GameFlag_IsSet(0x308) != 0) {
-        Func_02000906(10, 0, -64);
+        SceneActor_PlacePairAtOffset(10, 0, -64);
         GameFlag_Clear(0x30b);
         GameFlag_Set(0x30c);
         GameFlag_Clear(0x30d);
         GameFlag_Clear(0x30e);
     } else {
-        Func_0200092e(10, 0, -128);
+        SceneActor_PlacePairAtOffset(10, 0, -128);
         GameFlag_Set(0x30b);
         GameFlag_Clear(0x30c);
         GameFlag_Clear(0x30d);
@@ -803,7 +665,7 @@ void FieldScene_PlaceActorTenByFlags(void)
     }
     Audio_PlayCue(0x121);
     Task_Wait(2);
-    Func_02001aa4();
+    DialogueLayout_ConfigureGroupThree();
 }
 
 /*
@@ -818,26 +680,26 @@ void FieldScene_RunFlag308DialogueBranch(void)
     Audio_PlayCue((s32)0xf1);
     /* 0x308 is built by shifting. */
     if (GameFlag_IsSet((s32)0x308) != 0) {
-        Func_0200098c(10, 0, 16);
+        SceneActor_PlacePairAtOffset(10, 0, 16);
         GameFlag_Clear((s32)0x30b);
         GameFlag_Set((s32)0x30c);
         GameFlag_Clear((s32)0x30d);
         GameFlag_Clear((s32)0x30e);
         /* 0x310 is built by shifting. */
     } else if (GameFlag_IsSet((s32)0x310) != 0) {
-        Func_020009b8(10, 0, 16);
+        SceneActor_PlacePairAtOffset(10, 0, 16);
         GameFlag_Clear((s32)0x30b);
         GameFlag_Set((s32)0x30c);
         GameFlag_Clear((s32)0x30d);
         GameFlag_Clear((s32)0x30e);
     } else if (GameFlag_IsSet((s32)0x311) != 0) {
-        Func_020009e2(10, 0, 64);
+        SceneActor_PlacePairAtOffset(10, 0, 64);
         GameFlag_Clear((s32)0x30b);
         GameFlag_Clear((s32)0x30c);
         GameFlag_Set((s32)0x30d);
         GameFlag_Clear((s32)0x30e);
     } else {
-        Func_02000a08(10, 0, 128);
+        SceneActor_PlacePairAtOffset(10, 0, 128);
         GameFlag_Clear((s32)0x30b);
         GameFlag_Clear((s32)0x30c);
         GameFlag_Clear((s32)0x30d);
@@ -845,20 +707,20 @@ void FieldScene_RunFlag308DialogueBranch(void)
     }
     Audio_PlayCue((s32)0x121);
     Task_Wait(2);
-    Func_02001b7e();
+    DialogueLayout_ConfigureGroupThree();
 }
 
 void FieldScene_RunActor10Transition30BTo30E(void)
 {
     Audio_PlayCue(241);
-    Func_02000a5e(10, 0, -16);
+    SceneActor_PlacePairAtOffset(10, 0, -16);
     Audio_PlayCue(0x121);
     GameFlag_Set(0x30b);
     GameFlag_Clear(0x30c);
     GameFlag_Clear(0x30d);
     GameFlag_Clear(0x30e);
     Task_Wait(2);
-    Func_02001bd4();
+    DialogueLayout_ConfigureGroupThree();
 }
 
 /*
@@ -873,7 +735,7 @@ void FieldScene_RunFlag311DialogueBranch(void)
 {
     Audio_PlayCue((s32)0xf1);
     if (GameFlag_IsSet((s32)0x311) != 0) {
-        Func_02000aba(10, 0, 48);
+        SceneActor_PlacePairAtOffset(10, 0, 48);
         GameFlag_Clear((s32)0x30b);
         /* 0x30c is built by shifting; the result is unused. */
         GameFlag_Clear((s32)0x30c);
@@ -881,13 +743,13 @@ void FieldScene_RunFlag311DialogueBranch(void)
         GameFlag_Clear((s32)0x30e);
         /* 0x310 is built by shifting. */
     } else if (GameFlag_IsSet((s32)0x310) != 0) {
-        Func_02000ae6(10, 0, 32);
+        SceneActor_PlacePairAtOffset(10, 0, 32);
         GameFlag_Clear((s32)0x30b);
         GameFlag_Set((s32)0x30c);
         GameFlag_Clear((s32)0x30d);
         GameFlag_Clear((s32)0x30e);
     } else {
-        Func_02000b0c(10, 0, 112);
+        SceneActor_PlacePairAtOffset(10, 0, 112);
         GameFlag_Clear((s32)0x30b);
         GameFlag_Clear((s32)0x30c);
         GameFlag_Clear((s32)0x30d);
@@ -895,7 +757,7 @@ void FieldScene_RunFlag311DialogueBranch(void)
     }
     Audio_PlayCue((s32)0x121);
     Task_Wait(2);
-    Func_02001c82();
+    DialogueLayout_ConfigureGroupThree();
 }
 
 void ActorPresentation_SetupActorTenForFlags30bAnd30d(void)
@@ -903,51 +765,51 @@ void ActorPresentation_SetupActorTenForFlags30bAnd30d(void)
     void SceneActor_PlacePairAtOffset(s32, s32, s32);
 
     Audio_PlayCue(0xF1);
-    Func_02000b62(0xA, 0, -64);
+    SceneActor_PlacePairAtOffset(0xA, 0, -64);
     Audio_PlayCue(0x121);
     GameFlag_Set(0x30B);
     GameFlag_Clear(0x30D);
     Task_Wait(2);
-    Func_02001cca();
+    DialogueLayout_ConfigureGroupThree();
 }
 
 void FieldScene_RunActor10Flags30bTo30eSequenceA(void)
 {
     Audio_PlayCue(241);
-    Func_02000ba0(10, 0, 64);
+    SceneActor_PlacePairAtOffset(10, 0, 64);
     Audio_PlayCue(0x121);
     GameFlag_Clear(0x30b);
     GameFlag_Clear(0x30c);
     GameFlag_Clear(0x30d);
     GameFlag_Clear(0x30e);
     Task_Wait(2);
-    Func_02001d16();
+    DialogueLayout_ConfigureGroupThree();
 }
 
 void FieldScene_RunActor10Flags30bTo30eSequenceB(void)
 {
     Audio_PlayCue(241);
-    Func_02000bf2(10, 0, -80);
+    SceneActor_PlacePairAtOffset(10, 0, -80);
     Audio_PlayCue(0x121);
     GameFlag_Set(0x30b);
     GameFlag_Clear(0x30c);
     GameFlag_Clear(0x30d);
     GameFlag_Clear(0x30e);
     Task_Wait(2);
-    Func_02001d68();
+    DialogueLayout_ConfigureGroupThree();
 }
 
 void FieldScene_RunActor10Flags30bTo30eSequenceC(void)
 {
     Audio_PlayCue(0xF1);
-    Func_02000c44(0xA, 0, 0x40);
+    SceneActor_PlacePairAtOffset(0xA, 0, 0x40);
     Audio_PlayCue(0x121);
     GameFlag_Clear(0x30B);
     GameFlag_Clear(0x30C);
     GameFlag_Clear(0x30D);
     GameFlag_Clear(0x30E);
     Task_Wait(2);
-    Func_02001dba();
+    DialogueLayout_ConfigureGroupThree();
 }
 
 /*
@@ -962,20 +824,20 @@ void FieldScene_RunActorElevenFlaggedSteps(void)
     Audio_PlayCue((s32)0xf1);
     /* 0x308 is built by shifting a small immediate, not loaded whole. */
     if (GameFlag_IsSet((s32)0x308) != 0 || GameFlag_IsSet((s32)0x30d) != 0) {
-        Func_02000cac(11, 0, -64);
+        SceneActor_PlacePairAtOffset(11, 0, -64);
         GameFlag_Clear((s32)0x30f);
         GameFlag_Clear((s32)0x310);
         GameFlag_Set((s32)0x311);
         GameFlag_Clear((s32)0x312);
         /* 0x30c is built by shifting a small immediate, not loaded whole. */
     } else if (GameFlag_IsSet((s32)0x30c) != 0) {
-        Func_02000cda(11, 0, -112);
+        SceneActor_PlacePairAtOffset(11, 0, -112);
         GameFlag_Clear((s32)0x30f);
         GameFlag_Set((s32)0x310);
         GameFlag_Clear((s32)0x311);
         GameFlag_Clear((s32)0x312);
     } else {
-        Func_02000d02(11, 0, -128);
+        SceneActor_PlacePairAtOffset(11, 0, -128);
         GameFlag_Set((s32)0x30f);
         GameFlag_Clear((s32)0x310);
         GameFlag_Clear((s32)0x311);
@@ -983,7 +845,7 @@ void FieldScene_RunActorElevenFlaggedSteps(void)
     }
     Audio_PlayCue((s32)0x121);
     Task_Wait(2);
-    Func_02001e78();
+    DialogueLayout_ConfigureGroupThree();
 }
 
 void FieldScene_RunSteps30FTo312(void)
@@ -997,24 +859,24 @@ void FieldScene_RunSteps30FTo312(void)
 void FieldScene_RunActor11Offset128Sequence(void)
 {
     Audio_PlayCue(241);
-    Func_02000d84(11, 0, 128);
-    Func_020017d0();
+    SceneActor_PlacePairAtOffset(11, 0, 128);
+    FieldScene_RunSteps30FTo312();
     Audio_PlayCue(0x121);
     Task_Wait(2);
-    Func_02001ee4();
+    DialogueLayout_ConfigureGroupThree();
 }
 
 void FieldScene_RunActor11Flags30fTo312Sequence(void)
 {
     Audio_PlayCue(0xF1);
-    Func_02000db6(0xB, 0, -16);
+    SceneActor_PlacePairAtOffset(0xB, 0, -16);
     Audio_PlayCue(0x121);
     GameFlag_Set(0x30F);
     GameFlag_Clear(0x310);
     GameFlag_Clear(0x311);
     GameFlag_Clear(0x312);
     Task_Wait(2);
-    Func_02001f2c();
+    DialogueLayout_ConfigureGroupThree();
 }
 
 void ActorPresentation_SetupActorElevenAt0_112(void)
@@ -1022,11 +884,11 @@ void ActorPresentation_SetupActorElevenAt0_112(void)
     void SceneActor_PlacePairAtOffset(s32, s32, s32);
 
     Audio_PlayCue(241);
-    Func_02000e08(11, 0, 112);
+    SceneActor_PlacePairAtOffset(11, 0, 112);
     Audio_PlayCue(0x121);
-    Func_0200185a();
+    FieldScene_RunSteps30FTo312();
     Task_Wait(2);
-    Func_02001f68();
+    DialogueLayout_ConfigureGroupThree();
 }
 
 void ActorPresentation_SetupActorElevenAt0_64(void)
@@ -1034,11 +896,11 @@ void ActorPresentation_SetupActorElevenAt0_64(void)
     void SceneActor_PlacePairAtOffset(s32, s32, s32);
 
     Audio_PlayCue(0xF1);
-    Func_02000e38(0xB, 0, 0x40);
+    SceneActor_PlacePairAtOffset(0xB, 0, 0x40);
     Audio_PlayCue(0x121);
-    Func_0200188a();
+    FieldScene_RunSteps30FTo312();
     Task_Wait(2);
-    Func_02001f98();
+    DialogueLayout_ConfigureGroupThree();
 }
 
 void ActorPresentation_SetupActorElevenAt0_80(void)
@@ -1046,21 +908,21 @@ void ActorPresentation_SetupActorElevenAt0_80(void)
     void SceneActor_PlacePairAtOffset(s32, s32, s32);
 
     Audio_PlayCue(0xF1);
-    Func_02000e68(0xB, 0, 0x50);
+    SceneActor_PlacePairAtOffset(0xB, 0, 0x50);
     Audio_PlayCue(0x121);
-    Func_020018ba();
+    FieldScene_RunSteps30FTo312();
     Task_Wait(2);
-    Func_02001fc8();
+    DialogueLayout_ConfigureGroupThree();
 }
 
 void FieldScene_RunActor11Transition(void)
 {
     Audio_PlayCue(241);
-    Func_02000e98(11, 0, 48);
+    SceneActor_PlacePairAtOffset(11, 0, 48);
     Audio_PlayCue(0x121);
-    Func_020018ea();
+    FieldScene_RunSteps30FTo312();
     Task_Wait(2);
-    Func_02001ff8();
+    DialogueLayout_ConfigureGroupThree();
 }
 
 void ActorPresentation_SetupActorEightForFlag313(void)
@@ -1068,31 +930,31 @@ void ActorPresentation_SetupActorEightForFlag313(void)
     void SceneActor_PlacePairAtOffset(s32, s32, s32);
 
     Audio_PlayCue(0xF1);
-    Func_02000ec8(8, 0, 0x70);
+    SceneActor_PlacePairAtOffset(8, 0, 0x70);
     Audio_PlayCue(0x121);
     GameFlag_Set(0x313);
     Task_Wait(2);
-    Func_0200233a();
+    FieldScene_RunFlagBranchedLayoutSteps();
 }
 
 void FieldScene_RunActor8Transition313(void)
 {
     Audio_PlayCue(0xF1);
-    Func_02000efe(8, 0, -112);
+    SceneActor_PlacePairAtOffset(8, 0, -112);
     Audio_PlayCue(0x121);
     GameFlag_Clear(0x313);
     Task_Wait(2);
-    Func_02002370();
+    FieldScene_RunFlagBranchedLayoutSteps();
 }
 
 void FieldScene_RunActor9Flag314Sequence(void)
 {
     Audio_PlayCue(0xF1);
-    Func_02000f36(9, -128, 0);
+    SceneActor_PlacePairAtOffset(9, -128, 0);
     Audio_PlayCue(0x121);
     GameFlag_Set(0x314);
     Task_Wait(2);
-    Func_020023aa();
+    FieldScene_RunFlagBranchedLayoutSteps();
 }
 
 void ActorPresentation_SetupActorNineForFlag314(void)
@@ -1100,11 +962,11 @@ void ActorPresentation_SetupActorNineForFlag314(void)
     void SceneActor_PlacePairAtOffset(s32, s32, s32);
 
     Audio_PlayCue(0xF1);
-    Func_02000f68(9, 0x80, 0);
+    SceneActor_PlacePairAtOffset(9, 0x80, 0);
     Audio_PlayCue(0x121);
     GameFlag_Clear(0x314);
     Task_Wait(2);
-    Func_020023dc();
+    FieldScene_RunFlagBranchedLayoutSteps();
 }
 
 void ActorPresentation_SetupActorTenForFlag315(void)
@@ -1112,21 +974,21 @@ void ActorPresentation_SetupActorTenForFlag315(void)
     void SceneActor_PlacePairAtOffset(s32, s32, s32);
 
     Audio_PlayCue(241);
-    Func_02000f9c(10, 160, 0);
+    SceneActor_PlacePairAtOffset(10, 160, 0);
     Audio_PlayCue(0x121);
     GameFlag_Set(0x315);
     Task_Wait(2);
-    Func_0200240e();
+    FieldScene_RunFlagBranchedLayoutSteps();
 }
 
 void FieldScene_RunActor10Flag315Sequence(void)
 {
     Audio_PlayCue(241);
-    Func_02000fd2(10, -160, 0);
+    SceneActor_PlacePairAtOffset(10, -160, 0);
     Audio_PlayCue(0x121);
     GameFlag_Clear(0x315);
     Task_Wait(2);
-    Func_02002444();
+    FieldScene_RunFlagBranchedLayoutSteps();
 }
 
 void ActorPresentation_AdvanceActorEightStates(void)
@@ -1217,7 +1079,7 @@ void SceneState_SetServiceZeroValue06(void)
 
 void FieldScene_RunSingleStep(void)
 {
-    Func_02003090();
+    SceneActor_StepSubjectAlongHeading();
 }
 
 void SceneActor_PlaceAtTileAndMark(s32 id, s32 x, s32 y)
@@ -1248,26 +1110,26 @@ void DialogueLayout_ConfigureGroupOne(void)
     { s32 f1 = 8; s32 g1 = 29; Map_CopyCellAttributes(8, 42, 15, 5,  f1, g1); }
 
     if (GameFlag_IsSet((s32)0x301) != 0) {
-        Func_0200207e(8, 22, 31);
+        SceneActor_PlaceAtTileAndMark(8, 22, 31);
         { s32 f2 = 8; s32 g2 = 30; Map_CopyCellAttributes(9, 30, 1, 3,  f2, g2); }
     } else {
-        Func_0200209c(8, 8, 31);
+        SceneActor_PlaceAtTileAndMark(8, 8, 31);
         { s32 f3 = 22; s32 g3 = 30; Map_CopyCellAttributes(9, 30, 1, 3,  f3, g3); }
     }
 
     if (GameFlag_IsSet((s32)0x302) != 0) {
-        Func_020020c4(9, 12, 29);
+        SceneActor_PlaceAtTileAndMark(9, 12, 29);
         { s32 f4 = 11; s32 g4 = 33; Map_CopyCellAttributes(14, 33, 3, 1,  f4, g4); }
     } else {
-        Func_020020e4(9, 12, 33);
+        SceneActor_PlaceAtTileAndMark(9, 12, 33);
         { s32 f5 = 11; s32 g5 = 29; Map_CopyCellAttributes(14, 29, 3, 1,  f5, g5); }
     }
 
     if (GameFlag_IsSet((s32)0x303) != 0) {
-        Func_0200210c(10, 18, 29);
+        SceneActor_PlaceAtTileAndMark(10, 18, 29);
         { s32 f6 = 17; s32 g6 = 33; Map_CopyCellAttributes(14, 33, 3, 1,  f6, g6); }
     } else {
-        Func_0200212c(10, 18, 33);
+        SceneActor_PlaceAtTileAndMark(10, 18, 33);
         { s32 f7 = 17; s32 g7 = 29; Map_CopyCellAttributes(14, 29, 3, 1,  f7, g7); }
     }
 }
@@ -1277,37 +1139,37 @@ void DialogueLayout_ConfigureGroupTwo(void)
     { s32 f1 = 12; s32 g1 = 8; Map_CopyCellAttributes(0, 28, 10, 18,  f1, g1); }
 
     if (GameFlag_IsSet((s32)0x304) != 0) {
-        Func_02002184(8, 21, 20);
+        SceneActor_PlaceAtTileAndMark(8, 21, 20);
         { s32 f2 = 13; s32 g2 = 19; Map_CopyCellAttributes(20, 19, 1, 3,  f2, g2); }
     } else {
-        Func_020021a4(8, 13, 20);
+        SceneActor_PlaceAtTileAndMark(8, 13, 20);
         { s32 f3 = 21; s32 g3 = 19; Map_CopyCellAttributes(20, 19, 1, 3,  f3, g3); }
     }
 
     if (GameFlag_IsSet((s32)0x305) != 0) {
-        Func_020021cc(8, 12, 20);
+        SceneActor_PlaceAtTileAndMark(8, 12, 20);
         { s32 f4 = 12; s32 g4 = 19; Map_CopyCellAttributes(5, 19, 1, 3,  f4, g4); }
         { s32 f5 = 13; s32 g5 = 19; Map_CopyCellAttributes(20, 19, 1, 3,  f5, g5); }
         if (GameFlag_IsSet((s32)0x304) != 0) {
-            Func_02002208(8, 21, 20);
+            SceneActor_PlaceAtTileAndMark(8, 21, 20);
             { s32 f6 = 13; s32 g6 = 19; Map_CopyCellAttributes(20, 19, 1, 3,  f6, g6); }
             { s32 f7 = 12; s32 g7 = 19; Map_CopyCellAttributes(20, 19, 1, 3,  f7, g7); }
         }
     }
 
     if (GameFlag_IsSet((s32)0x306) != 0) {
-        Func_0200223c(9, 15, 21);
+        SceneActor_PlaceAtTileAndMark(9, 15, 21);
         { s32 f8 = 14; s32 g8 = 17; Map_CopyCellAttributes(14, 18, 3, 1,  f8, g8); }
     } else {
-        Func_0200225c(9, 15, 17);
+        SceneActor_PlaceAtTileAndMark(9, 15, 17);
         { s32 f9 = 14; s32 g9 = 21; Map_CopyCellAttributes(14, 18, 3, 1,  f9, g9); }
     }
 
     if (GameFlag_IsSet((s32)0x307) != 0) {
-        Func_02002284(10, 19, 8);
+        SceneActor_PlaceAtTileAndMark(10, 19, 8);
         { s32 f10 = 18; s32 g10 = 25; Map_CopyCellAttributes(14, 18, 3, 1,  f10, g10); }
     } else {
-        Func_020022a4(10, 19, 25);
+        SceneActor_PlaceAtTileAndMark(10, 19, 25);
         { s32 f11 = 18; s32 g11 = 8; Map_CopyCellAttributes(14, 18, 3, 1,  f11, g11); }
     }
 }
@@ -1317,85 +1179,85 @@ void DialogueLayout_ConfigureGroupThree(void)
     { s32 k5 = 12, k6 = 21; Map_CopyCellAttributes(12, 3, 9, 16, k5, k6); }
 
     if (GameFlag_IsSet((s32)0x308) != 0) {
-        Func_020022fc(8, 14, 25);
+        SceneActor_PlaceAtTileAndMark(8, 14, 25);
         { s32 k5 = 20, k6 = 24; Map_CopyCellAttributes(16, 24, 1, 3, k5, k6); }
     } else if (GameFlag_IsSet((s32)0x309) != 0) {
-        Func_02002326(8, 17, 25);
+        SceneActor_PlaceAtTileAndMark(8, 17, 25);
         { s32 k6 = 24;
           Map_CopyCellAttributes(18, 24, 1, 3, 20, k6);
           Map_CopyCellAttributes(18, 24, 1, 3, 14, k6);
           Map_CopyCellAttributes(8, 41, 1, 3, 17, k6);
         }
     } else {
-        Func_0200236a(8, 20, 25);
+        SceneActor_PlaceAtTileAndMark(8, 20, 25);
         { s32 k5 = 14, k6 = 24; Map_CopyCellAttributes(16, 24, 1, 3, k5, k6); }
     }
 
     if (GameFlag_IsSet((s32)0x30a) != 0) {
-        Func_02002392(9, 13, 35);
+        SceneActor_PlaceAtTileAndMark(9, 13, 35);
         { s32 k5 = 15, k6 = 34; Map_CopyCellAttributes(14, 34, 1, 3, k5, k6); }
     } else {
-        Func_020023b2(9, 15, 35);
+        SceneActor_PlaceAtTileAndMark(9, 15, 35);
         { s32 k5 = 13, k6 = 34; Map_CopyCellAttributes(14, 34, 1, 3, k5, k6); }
     }
 
     if (GameFlag_IsSet((s32)0x30b) != 0) {
-        Func_020023da(10, 15, 22);
+        SceneActor_PlaceAtTileAndMark(10, 15, 22);
         { s32 k5 = 14;
           Map_CopyCellAttributes(14, 29, 3, 1, k5, 30);
           Map_CopyCellAttributes(5, 41, 3, 1, k5, 22);
         }
     } else if (GameFlag_IsSet((s32)0x30c) != 0) {
-        Func_0200240e_a(10, 15, 23);
+        SceneActor_PlaceAtTileAndMark(10, 15, 23);
         { s32 k5 = 14;
           Map_CopyCellAttributes(5, 42, 3, 1, k5, 23);
           Map_CopyCellAttributes(14, 29, 3, 1, k5, 30);
           Map_CopyCellAttributes(10, 44, 3, 1, k5, 21);
         }
     } else if (GameFlag_IsSet((s32)0x30d) != 0) {
-        Func_02002450(10, 15, 26);
+        SceneActor_PlaceAtTileAndMark(10, 15, 26);
         { s32 k5 = 14;
           Map_CopyCellAttributes(14, 29, 3, 1, k5, 22);
           Map_CopyCellAttributes(5, 43, 3, 1, k5, 26);
           Map_CopyCellAttributes(14, 29, 3, 1, k5, 30);
         }
     } else if (GameFlag_IsSet((s32)0x30e) != 0) {
-        Func_02002494(10, 15, 27);
+        SceneActor_PlaceAtTileAndMark(10, 15, 27);
         { s32 k5 = 14;
           Map_CopyCellAttributes(14, 29, 3, 1, k5, 22);
           Map_CopyCellAttributes(14, 29, 3, 1, k5, 30);
           Map_CopyCellAttributes(5, 44, 3, 1, k5, 27);
         }
     } else {
-        Func_020024d8(10, 15, 30);
+        SceneActor_PlaceAtTileAndMark(10, 15, 30);
     }
 
     if (GameFlag_IsSet((s32)0x30f) != 0) {
-        Func_020024ec(11, 15, 23);
+        SceneActor_PlaceAtTileAndMark(11, 15, 23);
         { s32 k5 = 14;
           Map_CopyCellAttributes(14, 29, 3, 1, k5, 31);
           Map_CopyCellAttributes(10, 40, 3, 1, k5, 23);
         }
     } else if (GameFlag_IsSet((s32)0x310) != 0) {
-        Func_02002520(11, 15, 24);
+        SceneActor_PlaceAtTileAndMark(11, 15, 24);
         { s32 k5 = 14;
           Map_CopyCellAttributes(14, 29, 3, 1, k5, 31);
           Map_CopyCellAttributes(10, 41, 3, 1, k5, 24);
         }
     } else if (GameFlag_IsSet((s32)0x311) != 0) {
-        Func_02002552(11, 15, 27);
+        SceneActor_PlaceAtTileAndMark(11, 15, 27);
         { s32 k5 = 14;
           Map_CopyCellAttributes(14, 29, 3, 1, k5, 31);
           Map_CopyCellAttributes(10, 42, 3, 1, k5, 27);
         }
     } else if (GameFlag_IsSet((s32)0x312) != 0) {
-        Func_02002584(11, 15, 28);
+        SceneActor_PlaceAtTileAndMark(11, 15, 28);
         { s32 k5 = 14;
           Map_CopyCellAttributes(14, 29, 3, 1, k5, 31);
           Map_CopyCellAttributes(10, 43, 3, 1, k5, 28);
         }
     } else {
-        Func_020025b6(11, 15, 31);
+        SceneActor_PlaceAtTileAndMark(11, 15, 31);
     }
 }
 
@@ -1422,27 +1284,27 @@ void FieldScene_RunFlagBranchedLayoutSteps(void)
     }
 
     if (GameFlag_IsSet((s32)0x313) != 0) {
-        Func_02002636(8, 20, 17);
+        SceneActor_PlaceAtTileAndMark(8, 20, 17);
         { s32 f3 = 19; s32 g3 = 10; Map_CopyCellAttributes(19, 11, 3, 1,  f3, g3); }
     } else {
-        Func_02002656(8, 20, 10);
+        SceneActor_PlaceAtTileAndMark(8, 20, 10);
         { s32 f4 = 19; s32 g4 = 17; Map_CopyCellAttributes(19, 11, 3, 1,  f4, g4); }
     }
 
     /* 0x314 is built by shifting. */
     if (GameFlag_IsSet((s32)0x314) != 0) {
-        Func_02002680(9, 14, 16);
+        SceneActor_PlaceAtTileAndMark(9, 14, 16);
         { s32 f5 = 22; s32 g5 = 15; Map_CopyCellAttributes(16, 15, 1, 3,  f5, g5); }
     } else {
-        Func_020026a0(9, 22, 16);
+        SceneActor_PlaceAtTileAndMark(9, 22, 16);
         { s32 f6 = 14; s32 g6 = 15; Map_CopyCellAttributes(16, 15, 1, 3,  f6, g6); }
     }
 
     if (GameFlag_IsSet((s32)0x315) != 0) {
-        Func_020026c8(10, 17, 46);
+        SceneActor_PlaceAtTileAndMark(10, 17, 46);
         { s32 f7 = 7; s32 g7 = 45; Map_CopyCellAttributes(15, 15, 1, 3,  f7, g7); }
     } else {
-        Func_020026e8(10, 7, 46);
+        SceneActor_PlaceAtTileAndMark(10, 7, 46);
         { s32 f8 = 17; s32 g8 = 45; Map_CopyCellAttributes(15, 15, 1, 3,  f8, g8); }
     }
 }
@@ -1470,7 +1332,7 @@ s32 Func_02001750(void)
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
     if (GameFlag_IsSet(0x109) == 0 && Data_02000240_t[224][0] == (s32)Data_00000034) {
         GameFlag_Set(0x144);
-        Func_02002f30();
+        FieldScene_RunScene39aSequenceA();
     } else {
         Func_02002f72_a();
     }
@@ -1493,7 +1355,7 @@ void FieldScene_RunScene39aSequenceA(void)
 
 void FieldScene_ApplyOffset0Neg32(void)
 {
-    Func_0200358a(0, -32);
+    FieldScene_RunScene39a_02001ad0(0, -32);
 }
 
 void SceneState_ApplyOffsetMinus32(void)

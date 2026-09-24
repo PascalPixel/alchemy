@@ -4,7 +4,6 @@
 #define NULL ((void *)0)
 #define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 #define OverlayObject_CreateConfigured      Func_02000048
-#define AcquireOverlayObject      Func_020024a6
 #define CreateOverlayObject Func_020024fe
 #define SetOverlayObjectMode Func_02002568
 #define SetOverlayObjectSlot Func_02002640
@@ -57,27 +56,12 @@ struct Work_39c {
 extern u8 Value_02008cc1;
 extern s32 **Data_03001edc;
 
-void *Func_020024a6(s32, s32, s32, s32);
-u8 *Func_02004020();
 void Func_02004038();
 u8 **Func_020047ec(s32, s32);
-u8 *Func_020033c4(s32);
-s32 Func_02003400(s32);
 void Func_02000e6a();
-s32 Func_02003464();
 void Func_020011e8();
 s32 Func_020034cc();
-s32 Func_020034d2_a();
-s32 Func_020034e4();
-s32 Func_0200365e();
-s32 Func_020036fa();
-s32 Func_02003748();
-s32 Func_02003782();
 void Func_020038cc();
-s32 Func_02003e76();
-s32 Func_02003e80();
-s32 Func_02003e88();
-u8 *Func_0200324c(s32 id);
 u16 Func_0200317c_a(s32 deltaZ, s32 deltaX);
 void Func_020031d4(void);
 void Func_02002eac(void);
@@ -193,7 +177,7 @@ void *OverlayObject_CreateConfigured(s32 first, s32 second, s32 third, s32 fourt
     void *rec;
     s32 mask;
 
-    obj = AcquireOverlayObject(fourth, first, second, third);
+    obj = Object_Create(fourth, first, second, third);
     if (obj != NULL) {
         rec = FIELD_AT_OFFSET(obj, void *, 0x50);
         mask = -0xD;
@@ -251,7 +235,7 @@ s32 SceneAudio_PlayCue118AndReturnZero(void)
 /* Keep this object facing actor 0 while the actor remains near ground level. */
 s32 SceneActor_FaceLeaderWhileGrounded(u8 *object)
 {
-    u8 *leader = Func_0200324c(0);
+    u8 *leader = Actor_Get(0);
 
     if ((*(s32 *)(leader + 16) >> 19) <= 22) {
         *(u16 *)(object + 6) = Func_0200317c_a(
@@ -303,7 +287,7 @@ void FieldScene_RunStepWithValue1632(void)
 
 void Func_02000ed0(s32 a)
 {
-    u8 *v = Func_020033c4(0);
+    u8 *v = Actor_Get(0);
     Event_Begin();
     Audio_PlayCue(0xe4);
     F(v, s32, 0x6c) = (s32)&Value_02008cc1;
@@ -312,7 +296,7 @@ void Func_02000ed0(s32 a)
     Actor_SetDestinationOffset(0, 0, -6);
     Actor_WaitForMove(0);
     Actor_SetChildValue(0, 15);
-    Actor_SetSpriteFlags(Func_02003400(0), 0);
+    Actor_SetSpriteFlags(Actor_Get(0), 0);
     F(v, s32, 0x6c) = 0;
     Event_Wait(30);
     Event_CloseScreen();
@@ -331,7 +315,7 @@ void FieldScene_RunScene39b_02000f48(s32 a0)
     Actor_SetSpeed(0, 0x6666, 0x3333);
     Actor_SetSpritePriority(0, 2);
     Actor_SetDestinationOffset(0, 0, -8);
-    record = Func_02003464(0);
+    record = Actor_Get(0);
     Actor_SetSpriteFlags(record, 0);
     Event_Wait(8);
     Actor_SetPosition(0, ((a0 << 19) + 0x80000), 0);
@@ -371,8 +355,8 @@ void FieldScene_RunSupplementalSequenceTwo(void)
     u8 *slot;
     u8 slot16[40];
 
-    a = *(s32 *)(Value1(Func_020034d2_a, 0) + 8) / 0x100000;
-    b = *(s32 *)(Value1(Func_020034e4, 0) + 16) / 0x100000;
+    a = *(s32 *)(Value1(Engine_ActorGet, 0) + 8) / 0x100000;
+    b = *(s32 *)(Value1(Engine_ActorGet, 0) + 16) / 0x100000;
     if (a == 12 && b == 32) {
         Event_Begin();
         ColorBuffer_ApplyTarget(0x10000, 0);
@@ -431,7 +415,7 @@ void FieldScene_RunScene39b_0200116c(void)
     s32 field8;
     s32 quotient;
 
-    record = Value1_0200116c(Func_0200365e, 0);
+    record = Value1_0200116c(Engine_ActorGet, 0);
     field8 = *(s32 *)(record + 8);
     quotient = field8 / 0x100000;
     GameFlag_Set(0x205);
@@ -448,7 +432,7 @@ void FieldScene_RunScene39b_02001208(void)
     s32 flag;
     s32 record;
 
-    actor = (struct FieldActor *)Value1_02001208(Func_020036fa, 0);
+    actor = (struct FieldActor *)Value1_02001208(Engine_ActorGet, 0);
     flag = GameFlag_IsSet(0x109);
     if (flag == 0) {
         Event_Begin();
@@ -456,7 +440,7 @@ void FieldScene_RunScene39b_02001208(void)
         actor->motion_flags = 0;
         Value3(Engine_ActorSetPosition, 0, actor->x.part.pixel << 16, (actor->z.part.pixel << 16) + -0x100000);
         Actor_SetChildValue(0, 15);
-        record = Func_02003748(0);
+        record = Actor_Get(0);
         Actor_SetSpriteFlags(record, 0);
         Event_OpenScreen();
         Event_WaitForScreen();
@@ -465,7 +449,7 @@ void FieldScene_RunScene39b_02001208(void)
         Actor_SetSpeed(0, 0x6666, 0x3333);
         Actor_WalkByAndWait(0, 0, 8);
         Actor_SetChildValue(0, 0);
-        record = Func_02003782(0);
+        record = Actor_Get(0);
         Actor_SetSpriteFlags(record, 1);
         actor->sprite->priority = 1;
         Actor_WalkByAndWait(0, 0, 10);
@@ -483,11 +467,11 @@ void FieldScene_RunScene39b_0200196c(void)
     if (GameFlag_IsSet(0x250) == 0) {
         GameFlag_Set(0x250);
         Event_Begin();
-        record = Func_02003e76(12);
+        record = Actor_Get(12);
         *(s32 *)(record + 24) = -0x10000;
-        record = Value1(Func_02003e80, 13);
+        record = Value1(Engine_ActorGet, 13);
         *(s32 *)(record + 24) = -0x10000;
-        record = Func_02003e88(14);
+        record = Actor_Get(14);
         *(s32 *)(record + 24) = -0x10000;
         Actor_SetPosition(3, 0x880000, 0x900000);
         Actor_FaceDirection(3, 0x4000, 10);
@@ -512,7 +496,7 @@ void FieldScene_RunScene39b_0200196c(void)
 /* Spawn and configure the compact companion object at a source position. */
 void OverlayObject_SpawnKind24AtActor(u8 *src)
 {
-    u8 *obj = Func_02004020(24, *(int *)(src + 8),
+    u8 *obj = Object_Create(24, *(int *)(src + 8),
                               *(int *)(src + 12), *(int *)(src + 16));
     if (obj != 0) {
         u8 *rec = *(u8 **)(obj + 80);

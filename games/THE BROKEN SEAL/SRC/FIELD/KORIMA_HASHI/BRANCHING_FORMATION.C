@@ -297,7 +297,7 @@ s32 FieldScene_RunScene391_02000c68(void)
 u8 * Func_02002c24();
 void Func_02002c3c();
 void Func_02002780();
-void Func_02002768();
+void Event_SayThenWait(s32 speaker, s32 frames);
 s32 Func_02002b8c();
 s32 Func_02002b94();
 void Func_02002c4c();
@@ -457,11 +457,11 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Func_02002780(0, 0x6000, 10);
     Actor_RunRepeatedMotion(1, 2);
     Event_SetMessage(0x1474);
-    Func_02002768(1, 10);
+    Event_SayThenWait(1, 10);
     Event_SetMessage(0x147c);
     Func_02002780(2, 0xc000, 20);
     Actor_SetAnimationAndWait(2, 3);
-    Func_02002768(2, 20);
+    Event_SayThenWait(2, 20);
     Func_02002780(1, 0, 20);
     Func_02002780(0, (value << 8), 40);
     Func_02002780(1, 0x4000, 20);
@@ -492,13 +492,13 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Actor_EnableActionCallback(2, motion_action);
     Actor_EnableActionCallback(3, motion_action);
     Event_Wait(100);
-    Func_02002768(1, 20);
-    Func_02002768(2, 40);
+    Event_SayThenWait(1, 20);
+    Event_SayThenWait(2, 40);
     if (Data_0200b394 != 0) {
         Event_Wait(40);
         Actor_ShowEmote(3, 0x102, 0);
         Event_Wait(40);
-        Func_02002768(3, 40);
+        Event_SayThenWait(3, 40);
     } else {
         *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
     }
@@ -558,14 +558,14 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Value2(Func_02002b8c, (s32)Data_0200a975, 0xc80);
     Event_Wait(180);
     Audio_PlayCue(21);
-    Func_02002768(1, 80);
-    Func_02002768(2, 40);
+    Event_SayThenWait(1, 80);
+    Event_SayThenWait(2, 40);
     Actor_ShowEmote(0, 0x102, 0);
     Actor_ShowEmote(1, 0x102, 0);
     Actor_ShowEmote(2, 0x102, 0);
     Actor_ShowEmote(3, 0x102, 0);
     Event_Wait(60);
-    Func_02002768(2, 20);
+    Event_SayThenWait(2, 20);
     *effect_phase = 2;
     Actor_StartRepeatedMotion(2, 2);
     Event_Wait(20);
@@ -582,10 +582,10 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Event_Wait(20);
     Actor_StartRepeatedMotion(3, 2);
     Actor_ShowEmote(1, 0x102, 0);
-    Func_02002768(1, 20);
+    Event_SayThenWait(1, 20);
     if (*party_flag != 0) {
         Actor_ShowEmote(3, 0x102, 0);
-        Func_02002768(3, 10);
+        Event_SayThenWait(3, 10);
     } else {
         *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
     }
@@ -662,19 +662,19 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Actor_RunRepeatedMotion(0, 1);
     Event_Wait(20);
     Actor_RunRepeatedMotion(2, 2);
-    Func_02002768(2, 20);
+    Event_SayThenWait(2, 20);
     if (*formation_flag != 0) {
         Actor_RunRepeatedMotion(3, 2);
         Event_Wait(10);
         Event_SetMessage(0x1488);
-        Func_02002768(3, 40);
+        Event_SayThenWait(3, 40);
     }
     Actor_StartRepeatedMotion(1, 1);
     Actor_ShowEmote(1, 0x101, 0);
     Event_Wait(80);
     Actor_RunRepeatedMotion(2, 2);
     Event_SetMessage(0x1489);
-    Func_02002768(2, 40);
+    Event_SayThenWait(2, 40);
     Actor_RunRepeatedMotion(1, 3);
     Event_Wait(40);
     Actor_SetSpritePriority(1, 2);
@@ -685,9 +685,9 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Actor_SetDestinationOffset(1, -3, 0);
     Actor_SetAnimation(1, 1);
     Func_02002780(1, 0x4000, 60);
-    Func_02002768(1, 20);
+    Event_SayThenWait(1, 20);
     Actor_StartRepeatedMotion(1, 2);
-    Func_02002768(1, 10);
+    Event_SayThenWait(1, 10);
     Actor_RunRepeatedMotion(0, 3);
     Func_02002780(1, 0x2000, 20);
     Actor_ShowEmote(1, 0x101, 0);
@@ -702,7 +702,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Event_Wait(10);
     Actor_Jump(1, 4, 0);
     Event_Wait(20);
-    Func_02002768(1, 20);
+    Event_SayThenWait(1, 20);
     if (*formation_flag != 0) {
         Actor_ShowEmote(3, 0x100, 0);
         Event_Wait(60);
@@ -718,7 +718,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
         Func_02002780(3, 0xe000, 60);
         Actor_RunRepeatedMotion(3, 2);
         Event_Wait(20);
-        Func_02002768(3, 20);
+        Event_SayThenWait(3, 20);
     } else {
         *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
     }
@@ -726,7 +726,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Func_02002780(1, 0x4000, 20);
     Actor_SetAnimationAndWait(1, 3);
     Func_02002780(1, 0x2000, 10);
-    Func_02002768(1, 20);
+    Event_SayThenWait(1, 20);
     Actor_SetAnimationAndWait(1, 3);
     Event_Wait(10);
     Actor_RunRepeatedMotion(2, 1);
@@ -765,7 +765,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Func_02002780(1, 0x4000, 10);
     Actor_FaceDirection(2, 0xc000, 0);
     Actor_SetAnimationAndWait(2, 3);
-    Func_02002768(2, 20);
+    Event_SayThenWait(2, 20);
     Actor_SetAnimation(0, 3);
     Actor_SetAnimation(3, 3);
     Actor_SetAnimationAndWait(1, 3);
@@ -788,16 +788,16 @@ void FieldScene_RunBranchingFormationPresentation(void)
     }
     Func_02002780(1, 0x4000, 10);
     Actor_SetAnimationAndWait(1, 4);
-    Func_02002768(1, 20);
+    Event_SayThenWait(1, 20);
     Func_02002780(2, 0xc000, 10);
     Actor_SetAnimationAndWait(2, 3);
-    Func_02002768(2, 10);
+    Event_SayThenWait(2, 10);
     if (Data_0200b394 != 0) {
         Actor_RunRepeatedMotion(3, 2);
         Func_02002780(3, 0, 20);
         Func_02002780(3, 0x2000, 10);
         Actor_SetAnimation(3, 4);
-        Func_02002768(3, 10);
+        Event_SayThenWait(3, 10);
     } else {
         *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
     }
@@ -816,24 +816,24 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Event_Wait(80);
     Func_02002780(2, 0xe000, 10);
     Actor_StartRepeatedMotion(2, 2);
-    Func_02002768(2, 20);
+    Event_SayThenWait(2, 20);
     Actor_FaceDirection(1, 0x2000, 0);
     Func_02002780(0, 0xa000, 40);
     Actor_FaceDirection(1, (value << 7), 0);
     Func_02002780(0, 0x6000, 10);
     Func_02002780(2, 0xc000, 10);
     Actor_SetAnimationAndWait(2, 3);
-    Func_02002768(2, 10);
+    Event_SayThenWait(2, 10);
     Actor_SetAttachedEffect(1, 0x102);
     Event_Wait(40);
-    Func_02002768(1, 20);
+    Event_SayThenWait(1, 20);
     Actor_SetAnimationAndWait(2, 3);
     Event_Wait(20);
     Actor_ShowEmote(1, 0x102, 0);
     Event_Wait(40);
-    Func_02002768(1, 20);
+    Event_SayThenWait(1, 20);
     Actor_SetAnimation(2, 3);
-    Func_02002768(2, 10);
+    Event_SayThenWait(2, 10);
     Actor_RunRepeatedMotion(1, 2);
     Func_02002780(1, 0x2000, 10);
     Event_OpenMessage(1, 0);
@@ -864,7 +864,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Event_Wait(60);
     Func_02002780(2, 0xc000, 10);
     Event_SetMessage(0x149d);
-    Func_02002768(2, 10);
+    Event_SayThenWait(2, 10);
     Func_02002780(1, 0xc000, 10);
     Func_02002780(0, 0xc000, 10);
     sequence_flag = &Data_0200b394;
@@ -897,35 +897,35 @@ void FieldScene_RunBranchingFormationPresentation(void)
     do {
         Task_Wait(1);
     } while (Data_0200b38c != 0);
-    Func_02002768(11, 80);
-    Func_02002768(12, 20);
+    Event_SayThenWait(11, 80);
+    Event_SayThenWait(12, 20);
     Actor_ShowEmote(0, 0x101, 0);
     Actor_ShowEmote(1, 0x101, 0);
     Actor_ShowEmote(2, 0x101, 0);
     Actor_ShowEmote(3, 0x101, 0);
     Event_Wait(60);
-    Func_02002768(12, 20);
+    Event_SayThenWait(12, 20);
     Actor_SetAnimation(0, 3);
     Actor_SetAnimation(1, 3);
     Actor_SetAnimation(3, 3);
     Actor_SetAnimationAndWait(2, 3);
-    Func_02002768(12, 10);
+    Event_SayThenWait(12, 10);
     Actor_SetAnimation(0, 3);
     Actor_SetAnimation(1, 3);
     Actor_SetAnimation(3, 3);
     Actor_SetAnimationAndWait(2, 3);
-    Func_02002768(12, 10);
+    Event_SayThenWait(12, 10);
     Actor_ShowEmote(0, 0x100, 0);
     Actor_ShowEmote(1, 0x100, 0);
     Actor_ShowEmote(2, 0x100, 0);
     Actor_ShowEmote(3, 0x100, 0);
     Event_Wait(40);
-    Func_02002768(11, 10);
+    Event_SayThenWait(11, 10);
     Actor_FaceDirection(0, 0x8000, 0);
     Actor_FaceDirection(1, 0x4000, 0);
     Actor_FaceDirection(3, 0, 0);
     Func_02002780(2, 0xc000, 40);
-    Func_02002768(12, 10);
+    Event_SayThenWait(12, 10);
     Actor_ShowEmote(0, 0x102, 0);
     Actor_ShowEmote(1, 0x102, 0);
     Actor_ShowEmote(2, 0x102, 0);
@@ -934,12 +934,12 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Actor_FaceDirection(1, 0xc000, 0);
     Actor_FaceDirection(2, 0xc000, 0);
     Func_02002780(3, 0xc000, 80);
-    Func_02002768(12, 10);
+    Event_SayThenWait(12, 10);
     Actor_FaceDirection(0, 0x8000, 0);
     Actor_FaceDirection(1, 0x4000, 0);
     Actor_FaceDirection(2, 0xc000, 0);
     Func_02002780(3, 0, 40);
-    Func_02002768(11, 10);
+    Event_SayThenWait(11, 10);
     Actor_FaceDirection(0, 0xc000, 0);
     Actor_FaceDirection(1, 0xc000, 0);
     Actor_FaceDirection(2, 0xc000, 0);
@@ -949,17 +949,17 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Actor_SetAnimation(3, 4);
     Actor_SetAnimationAndWait(2, 4);
     Event_Wait(60);
-    Func_02002768(12, 10);
+    Event_SayThenWait(12, 10);
     Actor_SetAnimation(0, 3);
     Actor_SetAnimation(1, 3);
     Actor_SetAnimation(3, 3);
     Actor_SetAnimationAndWait(2, 3);
-    Func_02002768(12, 20);
+    Event_SayThenWait(12, 20);
     Actor_FaceDirection(0, 0x8000, 0);
     Actor_FaceDirection(1, 0x4000, 0);
     Actor_FaceDirection(2, 0xc000, 0);
     Func_02002780(3, 0, 20);
-    Func_02002768(12, 10);
+    Event_SayThenWait(12, 10);
     Actor_StartRepeatedMotion(0, 2);
     Actor_StartRepeatedMotion(1, 2);
     Actor_StartRepeatedMotion(3, 2);
@@ -968,23 +968,23 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Actor_FaceDirection(1, 0xc000, 0);
     Actor_FaceDirection(2, 0xc000, 0);
     Actor_FaceDirection(3, 0xc000, 0);
-    Func_02002768(12, 20);
+    Event_SayThenWait(12, 20);
     Actor_FaceDirection(0, 0x8000, 0);
     Actor_FaceDirection(1, 0x4000, 0);
     Actor_FaceDirection(2, 0xc000, 0);
     Func_02002780(3, 0, 20);
-    Func_02002768(11, 20);
+    Event_SayThenWait(11, 20);
     Actor_ShowEmote(0, 0x102, 0);
     Actor_ShowEmote(1, 0x102, 0);
     Actor_ShowEmote(3, 0x102, 0);
     Actor_ShowEmote(2, 0x102, 0);
     Event_Wait(40);
-    Func_02002768(12, 10);
+    Event_SayThenWait(12, 10);
     Actor_FaceDirection(0, 0xc000, 0);
     Actor_FaceDirection(1, 0xc000, 0);
     Actor_FaceDirection(2, 0xc000, 0);
     Func_02002780(3, 0xc000, 10);
-    Func_02002768(12, 10);
+    Event_SayThenWait(12, 10);
     Actor_SetAnimation(0, 3);
     Actor_SetAnimation(1, 3);
     Actor_SetAnimation(3, 3);
@@ -1042,11 +1042,11 @@ void FieldScene_RunBranchingFormationPresentation(void)
             Actor_ShowEmote(3, 0x101, 0);
             Event_Wait(40);
             Func_02002780(1, 0x4000, 20);
-            Func_02002768(1, 10);
+            Event_SayThenWait(1, 10);
             Func_02002780(2, 0xc000, 20);
             Func_02002780(2, 0xe000, 20);
             Actor_SetAnimationAndWait(2, 3);
-            Func_02002768(2, 20);
+            Event_SayThenWait(2, 20);
             Func_02002780(1, 0x2000, 20);
         } else {
             Func_02002780(3, 0, 20);
@@ -1056,9 +1056,9 @@ void FieldScene_RunBranchingFormationPresentation(void)
             Event_Wait(40);
             Func_02002780(1, 0x4000, 20);
             Event_SetMessage(0x14b4);
-            Func_02002768(1, 20);
+            Event_SayThenWait(1, 20);
             Actor_SetAnimationAndWait(2, 3);
-            Func_02002768(2, 20);
+            Event_SayThenWait(2, 20);
         }
         Actor_SetAnimation(3, 3);
         Actor_SetAnimationAndWait(1, 3);
@@ -1068,7 +1068,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Actor_SetAnimationAndWait(1, 3);
     Event_Wait(10);
     Event_SetMessage(0x14b6);
-    Func_02002768(1, 10);
+    Event_SayThenWait(1, 10);
     Actor_FaceDirection(1, 0x4000, 0);
     Func_02002780(0, 0x6000, 20);
     Actor_SetAnimation(1, 3);
@@ -1082,11 +1082,11 @@ void FieldScene_RunBranchingFormationPresentation(void)
         Actor_ShowEmote(2, 0x103, 0);
         Event_Wait(40);
         Func_02002780(2, 0xe000, 10);
-        Func_02002768(2, 10);
+        Event_SayThenWait(2, 10);
         if (*finish_flag != 0) {
             Func_02002780(3, 0, 10);
             Actor_StartRepeatedMotion(3, 3);
-            Func_02002768(3, 20);
+            Event_SayThenWait(3, 20);
         } else {
             *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
         }
@@ -1094,14 +1094,14 @@ void FieldScene_RunBranchingFormationPresentation(void)
         Actor_ShowEmote(1, 0x102, 0);
         Event_Wait(40);
         Actor_RunRepeatedMotion(1, 2);
-        Func_02002768(1, 20);
+        Event_SayThenWait(1, 20);
         Actor_ShowEmote(1, 0x105, 0);
         Event_Wait(120);
-        Func_02002768(2, 40);
+        Event_SayThenWait(2, 40);
         if (Data_0200b394 != 0) {
             Func_02002780(3, 0x2000, 10);
             Actor_SetAnimationAndWait(3, 4);
-            Func_02002768(3, 10);
+            Event_SayThenWait(3, 10);
         } else {
             *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
         }
@@ -1111,11 +1111,11 @@ void FieldScene_RunBranchingFormationPresentation(void)
             Func_02002780(2, 0xa000, 40);
             Func_02002780(2, 0xe000, 20);
         }
-        Func_02002768(2, 10);
+        Event_SayThenWait(2, 10);
         Actor_StartRepeatedMotion(0, 2);
         Actor_RunRepeatedMotion(1, 2);
         Event_Wait(40);
-        Func_02002768(2, 20);
+        Event_SayThenWait(2, 20);
         Actor_SetAnimationAndWait(0, 3);
         Actor_SetAnimationAndWait(1, 3);
         Event_Wait(20);
@@ -1128,11 +1128,11 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Event_Wait(40);
     Actor_SetAnimationAndWait(2, 3);
     Event_SetMessage(0x14bf);
-    Func_02002768(2, 20);
+    Event_SayThenWait(2, 20);
     if (*finish_flag != 0) {
         Func_02002780(3, 0, 10);
         Actor_StartRepeatedMotion(3, 1);
-        Func_02002768(3, 20);
+        Event_SayThenWait(3, 20);
     } else {
         *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
     }
@@ -1140,24 +1140,24 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Actor_ShowEmote(0, 0x102, 0);
     Event_Wait(40);
     Actor_RunRepeatedMotion(1, 2);
-    Func_02002768(1, 20);
+    Event_SayThenWait(1, 20);
     Actor_ShowEmote(2, 0x105, 0);
     Event_Wait(80);
-    Func_02002768(2, 40);
+    Event_SayThenWait(2, 40);
     if (Data_0200b394 != 0) {
         Func_02002780(3, 0x2000, 20);
         Actor_SetAnimation(3, 4);
-        Func_02002768(3, 40);
+        Event_SayThenWait(3, 40);
     } else {
         *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
     }
     Actor_RunRepeatedMotion(2, 2);
     Event_Wait(20);
-    Func_02002768(2, 20);
+    Event_SayThenWait(2, 20);
     Actor_StartRepeatedMotion(1, 2);
     Actor_RunRepeatedMotion(0, 2);
     Event_Wait(40);
-    Func_02002768(2, 20);
+    Event_SayThenWait(2, 20);
     L_02002660:;
     Audio_PlayCue(17);
     Actor_SetSpeed(1, 0x13333, 0x9999);
@@ -1202,10 +1202,11 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Event_End();
 }
 
-void FieldScene_RunSplitPairSteps(s32 a, s32 b)
+/* Shows the next line of dialogue, then holds the scene for a moment. */
+void Event_SayThenWait(s32 speaker, s32 frames)
 {
-    Event_ShowMessage(a, 0);
-    Event_Wait(b);
+    Event_ShowMessage(speaker, 0);
+    Event_Wait(frames);
 }
 
 void SceneActor_SetPairZeroAndValue(s32 a, s32 b, s32 c)

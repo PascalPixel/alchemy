@@ -128,7 +128,7 @@ enum ActorTalkFacing {
  */
 enum {
     ACTOR_PARTY_LEADER = 0,
-    ACTOR_GARET = 1,
+    ACTOR_GERALD = 1,
     ACTOR_IVAN = 2,
     ACTOR_MIA = 3,
     ACTOR_FIRST_PLACED = 8

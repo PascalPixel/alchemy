@@ -77,35 +77,35 @@ enum {
 
 enum CaveMessage {
     MSG_FLIPPED_SWITCH = 0x1528,
-    MSG_GARET_ASKS_IF_NOT_RIDING = 0x2549,
+    MSG_GERALD_ASKS_IF_NOT_RIDING = 0x2549,
     MSG_MIA_ASKS_IF_RIDING_AFTER_ALL = 0x254a,
-    MSG_GARET_ASKS_ABOUT_UNFINISHED_BUSINESS = 0x254d,
+    MSG_GERALD_ASKS_ABOUT_UNFINISHED_BUSINESS = 0x254d,
     MSG_BUNZA_ASKS_ABOUT_UNFINISHED_BUSINESS = 0x2557,
-    MSG_GARET_ASKS_ABOUT_THINGS_TO_DO = 0x255c,
-    MSG_GARET_CHECKS_NOTHING_LEFT = 0x255d
+    MSG_GERALD_ASKS_ABOUT_THINGS_TO_DO = 0x255c,
+    MSG_GERALD_CHECKS_NOTHING_LEFT = 0x255d
 };
 
 /*
  * The conversations are runs of consecutive messages. Each script finds its
  * run's first message and speaks the lines by their place in the run.
  */
-extern u8 LinkedMessage_GaretSawSomeone;
+extern u8 LinkedMessage_GeraldSawSomeone;
 extern u8 LinkedMessage_HammetCallsOut;
 extern u8 LinkedMessage_BunzaAsksAboutRelease;
 extern u8 LinkedMessage_HammetAsksPlan;
 extern u8 LinkedMessage_BunzaLeadsToWagon;
 extern u8 LinkedMessage_IvanIsConfused;
 extern u8 LinkedMessage_IvanAsksIfStaying;
-extern u8 LinkedMessage_GaretStays;
-extern u8 LinkedMessage_GaretHeadsForKalay;
+extern u8 LinkedMessage_GeraldStays;
+extern u8 LinkedMessage_GeraldHeadsForKalay;
 
 /* The party hears someone in the dark. */
 enum SightingLine {
-    SIGHTING_GARET_SAW_SOMEONE,
+    SIGHTING_GERALD_SAW_SOMEONE,
     SIGHTING_MIA_SAW_SOMETHING,
     SIGHTING_IVAN_ASKS_IF_FOUND,
-    SIGHTING_GARET_WILL_FIGHT,
-    SIGHTING_GARET_ASKS_WHAT_ELSE
+    SIGHTING_GERALD_WILL_FIGHT,
+    SIGHTING_GERALD_ASKS_WHAT_ELSE
 };
 
 /* Hammet and Bunza know each other's voices. */
@@ -120,7 +120,7 @@ enum ReunionLine {
     REUNION_BUNZA_ASKS_ABOUT_RELEASE,
     REUNION_HAMMET_CREDITS_IVAN,
     REUNION_IVAN_CREDITS_LEADER,
-    REUNION_GARET_QUESTIONS_IVAN,
+    REUNION_GERALD_QUESTIONS_IVAN,
     REUNION_IVAN_CREDITS_EVERYONE,
     REUNION_HAMMET_THANKS_PARTY,
     REUNION_HAMMET_THANKS_IVAN,
@@ -129,7 +129,7 @@ enum ReunionLine {
     REUNION_BUNZA_CALLS_IT_CHANCE,
     REUNION_BUNZA_AVOIDED_LUNPA,
     REUNION_BUNZA_KNEW_OF_PRISON,
-    REUNION_GARET_ASKS_WHY_BUNZA_CAME,
+    REUNION_GERALD_ASKS_WHY_BUNZA_CAME,
     REUNION_BUNZA_RECALLS_ADVICE,
     REUNION_MIA_ASKS_ABOUT_TRADE,
     REUNION_BUNZA_MEANS_WISDOM,
@@ -138,14 +138,14 @@ enum ReunionLine {
     REUNION_HAMMET_ON_SELLING,
     REUNION_IVAN_ASKS_ABOUT_SERVING,
     REUNION_IVAN_ON_FATE,
-    REUNION_GARET_ASKS_ABOUT_ENTRY,
+    REUNION_GERALD_ASKS_ABOUT_ENTRY,
     REUNION_BUNZA_WAS_REFUSED,
     REUNION_MIA_ASKS_WHY_BUNZA_STILL_CAME,
     REUNION_BUNZA_MENTIONS_COMMOTION,
     REUNION_IVAN_EXPLAINS_COMMOTION,
     REUNION_BUNZA_LINKS_COMMOTION,
     REUNION_BUNZA_HAD_TO_KNOW,
-    REUNION_GARET_ASKS_ABOUT_CAVE,
+    REUNION_GERALD_ASKS_ABOUT_CAVE,
     REUNION_MIA_ON_GATE,
     REUNION_BUNZA_HID,
     REUNION_HAMMET_STARTLED_BUNZA,
@@ -155,7 +155,7 @@ enum ReunionLine {
     REUNION_BUNZA_FEARS_CAPTURE,
     REUNION_MIA_URGES_ESCAPE,
     REUNION_IVAN_WANTS_STEALTH,
-    REUNION_GARET_ASKS_TO_FIGHT,
+    REUNION_GERALD_ASKS_TO_FIGHT,
     REUNION_BUNZA_DISCOURAGES_FIGHT,
     REUNION_BUNZA_AGREES_NOT_TO_FIGHT
 };
@@ -167,18 +167,18 @@ enum PlanLine {
     PLAN_BUNZA_OFFERS_RIDE,
     PLAN_IVAN_DOUBTS_WAGON,
     PLAN_BUNZA_REASSURES,
-    PLAN_GARET_AGREES,
+    PLAN_GERALD_AGREES,
     PLAN_BUNZA_IS_UNSUSPECTED
 };
 
 enum WagonLine {
     WAGON_BUNZA_LEADS_THE_WAY,
-    WAGON_GARET_ASKS_TO_RIDE
+    WAGON_GERALD_ASKS_TO_RIDE
 };
 
 enum ConfusionLine {
     CONFUSION_IVAN_IS_CONFUSED,
-    CONFUSION_GARET_ASKS_AGAIN
+    CONFUSION_GERALD_ASKS_AGAIN
 };
 
 enum WarningLine {
@@ -188,19 +188,19 @@ enum WarningLine {
 };
 
 enum FarewellLine {
-    FAREWELL_GARET_STAYS,
+    FAREWELL_GERALD_STAYS,
     FAREWELL_MIA_STAYS,
     FAREWELL_IVAN_STAYS,
     FAREWELL_HAMMET_LETS_IVAN_GO,
     FAREWELL_BUNZA_SAYS_GOODBYE,
-    FAREWELL_GARET_SIGHS,
+    FAREWELL_GERALD_SIGHS,
     FAREWELL_MIA_HOPES_FOR_SAFETY,
     FAREWELL_IVAN_REASSURES,
-    FAREWELL_GARET_MOVES_ON
+    FAREWELL_GERALD_MOVES_ON
 };
 
 enum DepartureLine {
-    DEPARTURE_GARET_HEADS_FOR_KALAY,
+    DEPARTURE_GERALD_HEADS_FOR_KALAY,
     DEPARTURE_IVAN_THINKS_OF_LAYANA,
     DEPARTURE_HAMMET_LONGS_FOR_LAYANA,
     DEPARTURE_BUNZA_SETS_OFF
@@ -221,14 +221,14 @@ void Gate_Raise(void);
 void Reunion_Converse(void);
 void WagonChoice_Run(void);
 u8 Leader_AnswersYes(void);
-u8 Garet_AsksIfNotRiding(void);
-u8 Garet_AsksAboutUnfinishedBusiness(void);
+u8 Gerald_AsksIfNotRiding(void);
+u8 Gerald_AsksAboutUnfinishedBusiness(void);
 u8 Party_ConfirmsStaying(void);
 u8 Bunza_AsksAboutUnfinishedBusiness(void);
-u8 Garet_ChecksNothingLeftToDo(void);
+u8 Gerald_ChecksNothingLeftToDo(void);
 u8 Mia_AsksIfRidingAfterAll(void);
 u8 Bunza_CannotWait(void);
-u8 Garet_AsksAboutThingsToDo(void);
+u8 Gerald_AsksAboutThingsToDo(void);
 void Party_StaysBehind(void);
 void Party_RidesWagon(void);
 
@@ -446,18 +446,18 @@ void Reunion_Begin(void)
         Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
         leader = Actor_Get(ACTOR_PARTY_LEADER);
         if (leader != NULL) {
-            Actor_SetPosition(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
+            Actor_SetPosition(ACTOR_GERALD, leader->x.fixed, leader->z.fixed);
         }
-        Actor_SetSpeed(ACTOR_GARET, 0x14ccc, 0xa666);
-        Actor_WalkTo(ACTOR_GARET, 184, 488);
-        Actor_WaitForMove(ACTOR_GARET);
-        Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
+        Actor_SetSpeed(ACTOR_GERALD, 0x14ccc, 0xa666);
+        Actor_WalkTo(ACTOR_GERALD, 184, 488);
+        Actor_WaitForMove(ACTOR_GERALD);
+        Actor_FaceDirection(ACTOR_GERALD, FACING_NORTH, 0);
         Event_Wait(30);
 
-        Actor_RunRepeatedMotion(ACTOR_GARET, 1);
-        sighting = (s32)&LinkedMessage_GaretSawSomeone;
-        Event_SetMessage(sighting + SIGHTING_GARET_SAW_SOMEONE);
-        Event_ShowMessage(ACTOR_GARET, 0);
+        Actor_RunRepeatedMotion(ACTOR_GERALD, 1);
+        sighting = (s32)&LinkedMessage_GeraldSawSomeone;
+        Event_SetMessage(sighting + SIGHTING_GERALD_SAW_SOMEONE);
+        Event_ShowMessage(ACTOR_GERALD, 0);
         Event_Wait(30);
         Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
         Event_Wait(10);
@@ -469,14 +469,14 @@ void Reunion_Begin(void)
         Event_SetMessage(sighting + SIGHTING_IVAN_ASKS_IF_FOUND);
         Event_OpenMessage(ACTOR_IVAN, 0);
         Actor_FaceActor(ACTOR_MIA, ACTOR_PARTY_LEADER, 0);
-        Actor_FaceActor(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
+        Actor_FaceActor(ACTOR_GERALD, ACTOR_PARTY_LEADER, 0);
         Event_Wait(30);
         if (Event_ChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0) {
-            Event_SetMessage(sighting + SIGHTING_GARET_WILL_FIGHT);
-            Event_ShowMessage(ACTOR_GARET, 0);
+            Event_SetMessage(sighting + SIGHTING_GERALD_WILL_FIGHT);
+            Event_ShowMessage(ACTOR_GERALD, 0);
         } else {
-            Event_SetMessage(sighting + SIGHTING_GARET_ASKS_WHAT_ELSE);
-            Event_ShowMessage(ACTOR_GARET, 0);
+            Event_SetMessage(sighting + SIGHTING_GERALD_ASKS_WHAT_ELSE);
+            Event_ShowMessage(ACTOR_GERALD, 0);
         }
 
         Actor_ShowEmote(ACTOR_HAMMET, EMOTE_IN_FRONT | 0, 70);
@@ -484,11 +484,11 @@ void Reunion_Begin(void)
         Event_SetMessage(recognition + RECOGNITION_HAMMET_CALLS_OUT);
         Event_ShowMessage(ACTOR_HAMMET, 0);
         Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-        Actor_StartRepeatedMotion(ACTOR_GARET, 2);
+        Actor_StartRepeatedMotion(ACTOR_GERALD, 2);
         Actor_StartRepeatedMotion(ACTOR_IVAN, 2);
         Actor_StartRepeatedMotion(ACTOR_MIA, 2);
         Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-        Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
+        Actor_FaceDirection(ACTOR_GERALD, FACING_NORTH, 0);
         Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
         Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
         Actor_SetAnimation(ACTOR_HAMMET, ANIM_WALK);
@@ -526,13 +526,13 @@ void Reunion_Converse(void)
     s32 plan;
 
     Event_Begin();
-    Actor_SetPosition(ACTOR_GARET, PIXELS(200), PIXELS(544));
+    Actor_SetPosition(ACTOR_GERALD, PIXELS(200), PIXELS(544));
     Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(184), PIXELS(544));
     Actor_SetPosition(ACTOR_MIA, PIXELS(168), PIXELS(544));
     Actor_SetPosition(ACTOR_IVAN, PIXELS(212), PIXELS(528));
     Actor_SetPosition(ACTOR_HAMMET, PIXELS(200), PIXELS(512));
     Actor_SetPosition(ACTOR_BUNZA, PIXELS(168), PIXELS(512));
-    Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_NORTH, 0);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
     Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
     Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 0);
@@ -562,13 +562,13 @@ void Reunion_Converse(void)
     Event_Wait(40);
     Event_SetMessage(reunion + REUNION_IVAN_CREDITS_LEADER);
     Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_IVAN, 0);
-    Actor_FaceActor(ACTOR_GARET, ACTOR_IVAN, 0);
+    Actor_FaceActor(ACTOR_GERALD, ACTOR_IVAN, 0);
     Event_Wait(10);
-    Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | 7, 80);
-    Event_SetMessage(reunion + REUNION_GARET_QUESTIONS_IVAN);
-    Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_GARET, 0);
+    Actor_ShowEmote(ACTOR_GERALD, EMOTE_IN_FRONT | 7, 80);
+    Event_SetMessage(reunion + REUNION_GERALD_QUESTIONS_IVAN);
+    Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_GERALD, 0);
     Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | 0, 70);
-    Actor_FaceActor(ACTOR_IVAN, ACTOR_GARET, 0);
+    Actor_FaceActor(ACTOR_IVAN, ACTOR_GERALD, 0);
     Event_SetMessage(reunion + REUNION_IVAN_CREDITS_EVERYONE);
     Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_IVAN, 0);
     Actor_FaceDirection(ACTOR_HAMMET, FACING_SOUTH - FACING_STEP, 0);
@@ -580,7 +580,7 @@ void Reunion_Converse(void)
     Event_Wait(30);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
     Actor_SetAnimation(ACTOR_MIA, ANIM_NOD);
-    Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
+    Actor_SetAnimation(ACTOR_GERALD, ANIM_NOD);
     Event_Wait(120);
     Actor_FaceDirection(ACTOR_HAMMET, FACING_SOUTH - FACING_STEP, 0);
     Event_Wait(30);
@@ -615,12 +615,12 @@ void Reunion_Converse(void)
     Event_Wait(30);
     Event_SetMessage(reunion + REUNION_BUNZA_KNEW_OF_PRISON);
     Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_BUNZA, 0);
-    Actor_RunRepeatedMotion(ACTOR_GARET, 1);
+    Actor_RunRepeatedMotion(ACTOR_GERALD, 1);
     Event_Wait(20);
-    Actor_FaceActor(ACTOR_GARET, ACTOR_BUNZA, 0);
-    Event_SetMessage(reunion + REUNION_GARET_ASKS_WHY_BUNZA_CAME);
-    Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_GARET, 0);
-    Actor_FaceActor(ACTOR_BUNZA, ACTOR_GARET, 0);
+    Actor_FaceActor(ACTOR_GERALD, ACTOR_BUNZA, 0);
+    Event_SetMessage(reunion + REUNION_GERALD_ASKS_WHY_BUNZA_CAME);
+    Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_GERALD, 0);
+    Actor_FaceActor(ACTOR_BUNZA, ACTOR_GERALD, 0);
     Event_Wait(20);
     Event_SetMessage(reunion + REUNION_BUNZA_RECALLS_ADVICE);
     Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_BUNZA, 0);
@@ -654,9 +654,9 @@ void Reunion_Converse(void)
     Event_Wait(30);
     Event_SetMessage(reunion + REUNION_IVAN_ON_FATE);
     Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_IVAN, 0);
-    Actor_RunRepeatedMotion(ACTOR_GARET, 1);
-    Event_SetMessage(reunion + REUNION_GARET_ASKS_ABOUT_ENTRY);
-    Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_GARET, 0);
+    Actor_RunRepeatedMotion(ACTOR_GERALD, 1);
+    Event_SetMessage(reunion + REUNION_GERALD_ASKS_ABOUT_ENTRY);
+    Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_GERALD, 0);
     Actor_FaceDirection(ACTOR_BUNZA, FACING_SOUTH - FACING_STEP, 0);
     Actor_SetAnimationAndWait(ACTOR_BUNZA, ANIM_SHAKE_HEAD);
     Event_SetMessage(reunion + REUNION_BUNZA_WAS_REFUSED);
@@ -683,9 +683,9 @@ void Reunion_Converse(void)
     Actor_SetAttachedEffect(ACTOR_BUNZA, EMOTE_IN_FRONT | 2);
     Event_SetMessage(reunion + REUNION_BUNZA_HAD_TO_KNOW);
     Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_BUNZA, 0);
-    Actor_FaceActor(ACTOR_GARET, ACTOR_BUNZA, 0);
-    Event_SetMessage(reunion + REUNION_GARET_ASKS_ABOUT_CAVE);
-    Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_GARET, 0);
+    Actor_FaceActor(ACTOR_GERALD, ACTOR_BUNZA, 0);
+    Event_SetMessage(reunion + REUNION_GERALD_ASKS_ABOUT_CAVE);
+    Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_GERALD, 0);
     Actor_ShowEmote(ACTOR_BUNZA, EMOTE_IN_FRONT | 5, 70);
     Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_SHAKE_HEAD);
     Event_SetMessage(reunion + REUNION_MIA_ON_GATE);
@@ -733,10 +733,10 @@ void Reunion_Converse(void)
     Event_SetMessage(reunion + REUNION_BUNZA_WARNS_OF_SEARCH);
     Event_ShowMessage(ACTOR_BUNZA, 0);
     Event_Wait(20);
-    Actor_FaceEachOther(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
+    Actor_FaceEachOther(ACTOR_GERALD, ACTOR_PARTY_LEADER, 0);
     Event_Wait(60);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-    Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_NORTH, 0);
     Actor_ShowEmote(ACTOR_BUNZA, EMOTE_IN_FRONT | 2, 60);
     Event_SetMessage(reunion + REUNION_BUNZA_FEARS_CAPTURE);
     Event_ShowMessage(ACTOR_BUNZA, 0);
@@ -746,10 +746,10 @@ void Reunion_Converse(void)
     Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | 2, 60);
     Event_SetMessage(reunion + REUNION_IVAN_WANTS_STEALTH);
     Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_IVAN, 0);
-    Actor_FaceActor(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
+    Actor_FaceActor(ACTOR_GERALD, ACTOR_PARTY_LEADER, 0);
     Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | 2, 40);
-    Event_SetMessage(reunion + REUNION_GARET_ASKS_TO_FIGHT);
-    Event_OpenMessage(SPEAKER_WINDOW_ABOVE | ACTOR_GARET, 0);
+    Event_SetMessage(reunion + REUNION_GERALD_ASKS_TO_FIGHT);
+    Event_OpenMessage(SPEAKER_WINDOW_ABOVE | ACTOR_GERALD, 0);
     if (Event_ChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0) {
         Event_SetMessage(reunion + REUNION_BUNZA_DISCOURAGES_FIGHT);
         Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_BUNZA, 0);
@@ -760,7 +760,7 @@ void Reunion_Converse(void)
 
     Actor_FaceDirection(ACTOR_BUNZA, FACING_SOUTH - FACING_STEP, 0);
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_BUNZA, 0);
-    Actor_FaceActor(ACTOR_GARET, ACTOR_BUNZA, 0);
+    Actor_FaceActor(ACTOR_GERALD, ACTOR_BUNZA, 0);
     Actor_FaceActor(ACTOR_MIA, ACTOR_BUNZA, 0);
     Actor_FaceActor(ACTOR_IVAN, ACTOR_BUNZA, 0);
     Actor_FaceActor(ACTOR_HAMMET, ACTOR_BUNZA, 0);
@@ -788,13 +788,13 @@ void Reunion_Converse(void)
     Actor_SetAnimationAndWait(ACTOR_BUNZA, ANIM_SHAKE_HEAD);
     Event_SetMessage(plan + PLAN_BUNZA_REASSURES);
     Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_BUNZA, 0);
-    Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GARET, 0);
+    Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GERALD, 0);
     Event_Wait(60);
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_BUNZA, 0);
-    Actor_FaceActor(ACTOR_GARET, ACTOR_BUNZA, 0);
-    Event_SetMessage(plan + PLAN_GARET_AGREES);
-    Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_GARET, 0);
-    Actor_FaceActor(ACTOR_BUNZA, ACTOR_GARET, 0);
+    Actor_FaceActor(ACTOR_GERALD, ACTOR_BUNZA, 0);
+    Event_SetMessage(plan + PLAN_GERALD_AGREES);
+    Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_GERALD, 0);
+    Actor_FaceActor(ACTOR_BUNZA, ACTOR_GERALD, 0);
     Actor_SetAnimationAndWait(ACTOR_BUNZA, ANIM_NOD);
     Event_Wait(20);
     Event_SetMessage(plan + PLAN_BUNZA_IS_UNSUSPECTED);
@@ -805,7 +805,7 @@ void Reunion_Converse(void)
     Actor_SetAnimation(ACTOR_IVAN, ANIM_NOD);
     Event_Wait(60);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-    Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
+    Actor_SetAnimation(ACTOR_GERALD, ANIM_NOD);
     Actor_SetAnimation(ACTOR_MIA, ANIM_NOD);
     Actor_FaceActor(ACTOR_BUNZA, ACTOR_PARTY_LEADER, 0);
     Actor_SetAnimation(ACTOR_BUNZA, ANIM_NOD);
@@ -814,7 +814,7 @@ void Reunion_Converse(void)
 }
 
 /*
- * Bunza leads the way to his wagon and Garet asks whether the party rides
+ * Bunza leads the way to his wagon and Gerald asks whether the party rides
  * too. The party questions an answer that seems to change its mind until
  * the choice is settled either way.
  */
@@ -827,9 +827,9 @@ void WagonChoice_Run(void)
     wagon = (s32)&LinkedMessage_BunzaLeadsToWagon;
     Event_SetMessage(wagon + WAGON_BUNZA_LEADS_THE_WAY);
     Event_ShowMessage(ACTOR_BUNZA, 0);
-    Actor_FaceActor(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
-    Event_SetMessage(wagon + WAGON_GARET_ASKS_TO_RIDE);
-    Event_OpenMessage(ACTOR_GARET, 0);
+    Actor_FaceActor(ACTOR_GERALD, ACTOR_PARTY_LEADER, 0);
+    Event_SetMessage(wagon + WAGON_GERALD_ASKS_TO_RIDE);
+    Event_OpenMessage(ACTOR_GERALD, 0);
     Actor_FaceActor(ACTOR_IVAN, ACTOR_PARTY_LEADER, 0);
     Actor_FaceActor(ACTOR_MIA, ACTOR_PARTY_LEADER, 0);
     Actor_FaceActor(ACTOR_HAMMET, ACTOR_PARTY_LEADER, 0);
@@ -842,11 +842,11 @@ ask_about_business:
             goto ride;
         }
         insisted = FALSE;
-        if (!Garet_AsksAboutThingsToDo()) {
+        if (!Gerald_AsksAboutThingsToDo()) {
 insist_nothing_left:
             insisted = TRUE;
 check_nothing_left:
-            Garet_ChecksNothingLeftToDo();
+            Gerald_ChecksNothingLeftToDo();
             if (Event_ChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0) {
                 goto ride;
             }
@@ -859,8 +859,8 @@ check_nothing_left:
         }
         goto check_nothing_left;
     } else {
-        if (Garet_AsksIfNotRiding()) {
-            if (Garet_AsksAboutUnfinishedBusiness()) {
+        if (Gerald_AsksIfNotRiding()) {
+            if (Gerald_AsksAboutUnfinishedBusiness()) {
                 goto stay;
             }
             goto insist_nothing_left;
@@ -871,8 +871,8 @@ check_nothing_left:
             confusion = (s32)&LinkedMessage_IvanIsConfused;
             Event_SetMessage(confusion + CONFUSION_IVAN_IS_CONFUSED);
             Event_ShowMessage(ACTOR_IVAN, 0);
-            Event_SetMessage(confusion + CONFUSION_GARET_ASKS_AGAIN);
-            Event_OpenMessage(ACTOR_GARET, 0);
+            Event_SetMessage(confusion + CONFUSION_GERALD_ASKS_AGAIN);
+            Event_OpenMessage(ACTOR_GERALD, 0);
             goto ask_to_ride;
 ride:
             Party_RidesWagon();
@@ -890,17 +890,17 @@ u8 Leader_AnswersYes(void)
     return Event_ChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0;
 }
 
-u8 Garet_AsksIfNotRiding(void)
+u8 Gerald_AsksIfNotRiding(void)
 {
-    Event_SetMessage(MSG_GARET_ASKS_IF_NOT_RIDING);
-    Event_OpenMessage(ACTOR_GARET, 0);
+    Event_SetMessage(MSG_GERALD_ASKS_IF_NOT_RIDING);
+    Event_OpenMessage(ACTOR_GERALD, 0);
     return Event_ChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0;
 }
 
-u8 Garet_AsksAboutUnfinishedBusiness(void)
+u8 Gerald_AsksAboutUnfinishedBusiness(void)
 {
-    Event_SetMessage(MSG_GARET_ASKS_ABOUT_UNFINISHED_BUSINESS);
-    Event_OpenMessage(ACTOR_GARET, 0);
+    Event_SetMessage(MSG_GERALD_ASKS_ABOUT_UNFINISHED_BUSINESS);
+    Event_OpenMessage(ACTOR_GERALD, 0);
     return Event_ChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0;
 }
 
@@ -916,10 +916,10 @@ u8 Bunza_AsksAboutUnfinishedBusiness(void)
     return Event_ChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0;
 }
 
-u8 Garet_ChecksNothingLeftToDo(void)
+u8 Gerald_ChecksNothingLeftToDo(void)
 {
-    Event_SetMessage(MSG_GARET_CHECKS_NOTHING_LEFT);
-    Event_OpenMessage(ACTOR_GARET, 0);
+    Event_SetMessage(MSG_GERALD_CHECKS_NOTHING_LEFT);
+    Event_OpenMessage(ACTOR_GERALD, 0);
     return TRUE;
 }
 
@@ -951,10 +951,10 @@ u8 Bunza_CannotWait(void)
     return Event_ChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0;
 }
 
-u8 Garet_AsksAboutThingsToDo(void)
+u8 Gerald_AsksAboutThingsToDo(void)
 {
-    Event_SetMessage(MSG_GARET_ASKS_ABOUT_THINGS_TO_DO);
-    Event_OpenMessage(ACTOR_GARET, 0);
+    Event_SetMessage(MSG_GERALD_ASKS_ABOUT_THINGS_TO_DO);
+    Event_OpenMessage(ACTOR_GERALD, 0);
     return Event_ChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0;
 }
 
@@ -967,11 +967,11 @@ void Party_StaysBehind(void)
     struct FieldActor *leader;
     s32 farewell;
 
-    Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | 5, 60);
-    Actor_FaceActor(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
-    farewell = (s32)&LinkedMessage_GaretStays;
-    Event_SetMessage(farewell + FAREWELL_GARET_STAYS);
-    Event_ShowMessage(ACTOR_GARET, 0);
+    Actor_ShowEmote(ACTOR_GERALD, EMOTE_IN_FRONT | 5, 60);
+    Actor_FaceActor(ACTOR_GERALD, ACTOR_PARTY_LEADER, 0);
+    farewell = (s32)&LinkedMessage_GeraldStays;
+    Event_SetMessage(farewell + FAREWELL_GERALD_STAYS);
+    Event_ShowMessage(ACTOR_GERALD, 0);
     Actor_RunRepeatedMotion(ACTOR_MIA, 1);
     Event_SetMessage(farewell + FAREWELL_MIA_STAYS);
     Event_ShowMessage(ACTOR_MIA, 0);
@@ -990,7 +990,7 @@ void Party_StaysBehind(void)
     Event_Wait(20);
     Actor_SetAnimationAndWait(ACTOR_BUNZA, ANIM_NOD);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-    Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
+    Actor_SetAnimation(ACTOR_GERALD, ANIM_NOD);
     Actor_SetAnimation(ACTOR_IVAN, ANIM_NOD);
     Actor_SetAnimation(ACTOR_MIA, ANIM_NOD);
     Event_Wait(60);
@@ -1002,7 +1002,7 @@ void Party_StaysBehind(void)
     Actor_FaceDirection(ACTOR_HAMMET, FACING_SOUTH + FACING_STEP, 0);
     Event_Wait(30);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-    Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
+    Actor_SetAnimation(ACTOR_GERALD, ANIM_NOD);
     Actor_SetAnimation(ACTOR_IVAN, ANIM_NOD);
     Actor_SetAnimation(ACTOR_MIA, ANIM_NOD);
     Actor_WalkTo(ACTOR_BUNZA, 156, 528);
@@ -1015,19 +1015,19 @@ void Party_StaysBehind(void)
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH + FACING_STEP, 0);
     Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTH + FACING_STEP, 0);
     Actor_FaceDirection(ACTOR_MIA, FACING_SOUTH + FACING_STEP, 0);
-    Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH + FACING_STEP, 0);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_SOUTH + FACING_STEP, 0);
     Event_Wait(20);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
     Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTH, 0);
     Actor_FaceDirection(ACTOR_MIA, FACING_SOUTH, 0);
-    Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH, 0);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_SOUTH, 0);
     Event_Wait(60);
     Actor_SetPosition(ACTOR_HAMMET, 0, 0);
     Actor_SetPosition(ACTOR_BUNZA, 0, 0);
     Event_Wait(110);
 
-    Event_SetMessage(farewell + FAREWELL_GARET_SIGHS);
-    Event_ShowMessage(ACTOR_GARET, 0);
+    Event_SetMessage(farewell + FAREWELL_GERALD_SIGHS);
+    Event_ShowMessage(ACTOR_GERALD, 0);
     Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
     Event_Wait(30);
     Event_SetMessage(farewell + FAREWELL_MIA_HOPES_FOR_SAFETY);
@@ -1036,17 +1036,17 @@ void Party_StaysBehind(void)
     Event_SetMessage(farewell + FAREWELL_IVAN_REASSURES);
     Event_ShowMessage(ACTOR_IVAN, 0);
     Event_Wait(140);
-    Actor_FaceActor(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
-    Event_SetMessage(farewell + FAREWELL_GARET_MOVES_ON);
-    Event_ShowMessage(ACTOR_GARET, 0);
+    Actor_FaceActor(ACTOR_GERALD, ACTOR_PARTY_LEADER, 0);
+    Event_SetMessage(farewell + FAREWELL_GERALD_MOVES_ON);
+    Event_ShowMessage(ACTOR_GERALD, 0);
 
-    Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
+    Actor_SetAnimation(ACTOR_GERALD, ANIM_WALK);
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (leader != NULL) {
-        Actor_SetDestination(ACTOR_GARET, leader->x.part.pixel, leader->z.part.pixel);
+        Actor_SetDestination(ACTOR_GERALD, leader->x.part.pixel, leader->z.part.pixel);
     }
-    Actor_WaitForMove(ACTOR_GARET);
-    Actor_SetPosition(ACTOR_GARET, 0, 0);
+    Actor_WaitForMove(ACTOR_GERALD);
+    Actor_SetPosition(ACTOR_GERALD, 0, 0);
     Actor_SetAnimation(ACTOR_IVAN, ANIM_WALK);
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (leader != NULL) {
@@ -1077,10 +1077,10 @@ void Party_RidesWagon(void)
     struct FieldActor *leader;
     s32 departure;
 
-    Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH + FACING_STEP, 0);
-    departure = (s32)&LinkedMessage_GaretHeadsForKalay;
-    Event_SetMessage(departure + DEPARTURE_GARET_HEADS_FOR_KALAY);
-    Event_ShowMessage(ACTOR_GARET, 0);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_SOUTH + FACING_STEP, 0);
+    departure = (s32)&LinkedMessage_GeraldHeadsForKalay;
+    Event_SetMessage(departure + DEPARTURE_GERALD_HEADS_FOR_KALAY);
+    Event_ShowMessage(ACTOR_GERALD, 0);
     Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
     Event_SetMessage(departure + DEPARTURE_IVAN_THINKS_OF_LAYANA);
     Event_ShowMessage(ACTOR_IVAN, 0);
@@ -1097,7 +1097,7 @@ void Party_RidesWagon(void)
     Actor_SetAnimationAndWait(ACTOR_HAMMET, ANIM_NOD);
     Event_Wait(20);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-    Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
+    Actor_SetAnimation(ACTOR_GERALD, ANIM_NOD);
     Actor_SetAnimation(ACTOR_IVAN, ANIM_NOD);
     Actor_SetAnimation(ACTOR_MIA, ANIM_NOD);
     Event_Wait(80);
@@ -1109,7 +1109,7 @@ void Party_RidesWagon(void)
     Actor_FaceDirection(ACTOR_HAMMET, FACING_SOUTH + FACING_STEP, 0);
     Event_Wait(30);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-    Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
+    Actor_SetAnimation(ACTOR_GERALD, ANIM_NOD);
     Actor_SetAnimation(ACTOR_IVAN, ANIM_NOD);
     Actor_SetAnimation(ACTOR_MIA, ANIM_NOD);
     Actor_WalkTo(ACTOR_BUNZA, 152, 528);
@@ -1122,23 +1122,23 @@ void Party_RidesWagon(void)
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH + FACING_STEP, 0);
     Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTH + FACING_STEP, 0);
     Actor_FaceDirection(ACTOR_MIA, FACING_SOUTH + FACING_STEP, 0);
-    Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH + FACING_STEP, 0);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_SOUTH + FACING_STEP, 0);
     Event_Wait(20);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
     Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTH, 0);
     Actor_FaceDirection(ACTOR_MIA, FACING_SOUTH, 0);
-    Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH, 0);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_SOUTH, 0);
     Event_Wait(200);
     Actor_SetPosition(ACTOR_HAMMET, 0, 0);
     Actor_SetPosition(ACTOR_BUNZA, 0, 0);
 
-    Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
+    Actor_SetAnimation(ACTOR_GERALD, ANIM_WALK);
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (leader != NULL) {
-        Actor_SetDestination(ACTOR_GARET, leader->x.part.pixel, leader->z.part.pixel);
+        Actor_SetDestination(ACTOR_GERALD, leader->x.part.pixel, leader->z.part.pixel);
     }
-    Actor_WaitForMove(ACTOR_GARET);
-    Actor_SetPosition(ACTOR_GARET, 0, 0);
+    Actor_WaitForMove(ACTOR_GERALD);
+    Actor_SetPosition(ACTOR_GERALD, 0, 0);
     Actor_SetAnimation(ACTOR_IVAN, ANIM_WALK);
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (leader != NULL) {
@@ -1224,7 +1224,7 @@ const struct ScenePlacement gCavePlacements[] = {
     { SPRITE_HAMMET, CONDITION_ALWAYS, ACTOR_STAND, 0, 0, 0, FACING_WEST, TALK_KEEP_FACING, 0 },
     { ACTOR_IVAN, CONDITION_ALWAYS, ACTOR_STAND, 0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
     { ACTOR_MIA, CONDITION_ALWAYS, ACTOR_STAND, 0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
-    { ACTOR_GARET, CONDITION_ALWAYS, ACTOR_STAND, 0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
+    { ACTOR_GERALD, CONDITION_ALWAYS, ACTOR_STAND, 0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
     { SCENE_TABLE_END },
 };
 

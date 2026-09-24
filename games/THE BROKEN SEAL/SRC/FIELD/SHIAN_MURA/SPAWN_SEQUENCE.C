@@ -88,9 +88,6 @@ s32 Func_020021c0();
  * call site is spelled with its own import name.
  */
 
-/* Loader-relocated overlay calls: each symbol names the pre-relocation call
- * word the image holds. */
-
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
  * into a pseudo that the compiler then shares with later uses in the block.
@@ -126,10 +123,6 @@ static __inline__ void bump_step(s32 amount)
     gEventWork->message += amount;
 }
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
 static __inline__ void Call1_02000968(void (*f)(), s32 a0)
 {
     f(a0);
@@ -140,10 +133,6 @@ static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
     f(a0, a1);
 }
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
 static __inline__ void Call3_02000de8(void (*f)(), s32 a0, s32 a1, s32 a2)
 {
     f(a0, a1, a2);

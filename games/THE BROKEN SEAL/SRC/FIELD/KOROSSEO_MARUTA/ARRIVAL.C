@@ -1,6 +1,5 @@
 #include "TYPES.H"
 
-
 extern s16 Data_02000240[];
 
 void Func_020044c8();

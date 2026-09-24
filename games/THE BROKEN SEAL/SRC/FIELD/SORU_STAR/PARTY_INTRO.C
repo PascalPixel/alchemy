@@ -214,9 +214,6 @@ void Func_0200885a();
 
 /* Overlay-local import veneers, retained per call site. */
 
-/* Loader-relocated overlay calls: each symbol names the pre-relocation call
- * word the image holds. */
-
 /*
  * resource_380: the talk handler for actor 9, one of a bank of per-actor
  * published callbacks. The handler is published through a script record
@@ -252,17 +249,6 @@ void Func_0200885a();
  * runtime address. A callee reached from several sites therefore appears
  * several times here under different names. */
 
-/* Loader-relocated overlay calls: each symbol names the pre-relocation call
- * word the image holds. */
-
-/* Resolved engine calls: each pseudo symbol is the per-site call word the
- * overlay image holds (a word can serve two sites with different targets),
- * and the macro names the engine function the site reaches through the
- * overlay veneer and the main-image veneer island, keeping the site's own
- * calling form. Names without a repository binding are provisional.
- */
-
-/* Inline calls keep argument constants local; direct calls permit sharing. */
 static __inline__ void Call1(void (*f)(), s32 a0)
 {
     f(a0);
@@ -318,10 +304,6 @@ static __inline__ s32 Value1(s32 (*f)(), s32 a0)
     return f(a0);
 }
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
 static __inline__ s32 Value0(s32 (*f)())
 {
     return f();
@@ -332,19 +314,11 @@ static __inline__ void Call1_02002400(void (*f)(), s32 a0)
     f(a0);
 }
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
 static __inline__ void Call1_02001450(void (*f)(), s32 a0)
 {
     f(a0);
 }
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
 static __inline__ void Call1_020027f8(void (*f)(), s32 a0)
 {
     f(a0);

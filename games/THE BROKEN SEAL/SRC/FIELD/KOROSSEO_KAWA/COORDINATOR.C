@@ -389,24 +389,11 @@ s32 *Func_02007398();
  * A phase-two fast path, full and revisit branches, and all 42 calls across
  * the complete scene-four coordinator. */
 
-/* Loader-relocated overlay calls: each symbol names the pre-relocation call
- * word the image holds. */
-
 /* This overlay's own occupancy lookup for a cell. The record pointer the call
  * sites also load is spelled here, although the lookup itself uses only the
  * position. */
 
 /* In-image direction table: sixteen packed steps, high half x, low half z. */
-
-/* Loader-relocated overlay calls: each symbol names the pre-relocation call
- * word the image holds. */
-
-/* Resolved engine calls: each pseudo symbol is the per-site call word the
- * overlay image holds (a word can serve two sites with different targets),
- * and the macro names the engine function the site reaches through the
- * overlay veneer and the main-image veneer island, keeping the site's own
- * calling form. Names without a repository binding are provisional.
- */
 
 /* A countdown word this overlay owns at Data_0200c41c: each call decrements
  * it by one, and specific values select which sub-sequence runs this call.
@@ -441,10 +428,6 @@ static __inline__ void bump_step(s32 amount)
     gEventWork->message += amount;
 }
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
 static __inline__ void Call1(void (*f)(), s32 a0)
 {
     extern s16 Data_02000240_t[][1];
@@ -485,10 +468,6 @@ static __inline__ void Call6_02000270(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a
     f(a0, a1, a2, a3, a4, a5);
 }
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
 static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
 {
     extern s16 Data_02000240_t[][1];
@@ -529,10 +508,6 @@ static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
     return f(a0, a1, a2);
 }
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
 static __inline__ void Call1_020016ec(void (*f)(), s32 a0)
 {
     f(a0);
@@ -568,10 +543,6 @@ static inline void InitializeSelectedActor(s32 actorId)
     Actor_SetSpeed(actorId, 0x10000, 0x8000);
 }
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
 static __inline__ s32 Value0(s32 (*f)())
 {
     return f();

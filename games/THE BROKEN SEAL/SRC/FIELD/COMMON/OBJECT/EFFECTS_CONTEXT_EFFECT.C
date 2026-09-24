@@ -76,7 +76,6 @@ void ObjectEffect_BeginContextEffect26(void)
     GameFlag_Set(0x120);
 }
 
-
 void ObjectEffect_BeginContextEffect25(void)
 {
     ObjectEffect_PrepareContextEffect(0x19);
@@ -106,7 +105,6 @@ typedef struct {
 void Func_08009060(void *);
 void Object_SetPosition(EffectCleanupObject *, s32, s32, s32);
 void Object_CommitPosition(EffectCleanupObject *);
-
 
 void ObjectEffect_EndContextEffect(s32 arg0)
 {

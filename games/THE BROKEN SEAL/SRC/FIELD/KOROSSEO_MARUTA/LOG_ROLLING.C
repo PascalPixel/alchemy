@@ -516,24 +516,9 @@ void Func_02006472_head();
 void Func_020064f0_head();
 void Func_020093c1();
 
-/* Loader-relocated overlay calls: each symbol names the pre-relocation call
- * word the image holds. */
-
-/* Resolved engine calls: each pseudo symbol is the per-site call word the
- * overlay image holds (a word can serve two sites with different targets),
- * and the macro names the engine function the site reaches through the
- * overlay veneer and the main-image veneer island, keeping the site's own
- * calling form. Names without a repository binding are provisional.
- */
-
 /* Phase/status word at 0x1c0 of the shared scene work record. */
 
 /* Slot at 0x0200db80 set just before installing one of the callbacks below. */
-
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
 
 static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
 {
@@ -1674,11 +1659,6 @@ void Func_02006b72_motion();
 s32 Func_02006bda_motion();
 void Func_02006cd4_motion();
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-
 /* The scene step counter at 0x1d8 of the shared scene work record. */
 
 void FieldScene_RunFourStepActorMotion(s32 a0)
@@ -1783,11 +1763,6 @@ void Func_02005c88_opening();
 void Func_02005cd0_opening();
 void Func_02005d36_opening();
 s32 Func_02006e2e_opening();
-
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
 
 /* The scene step counter at 0x1d8 of the shared scene work record. */
 
@@ -2173,10 +2148,6 @@ s32 Func_02007816_middle();
 void Func_020078fc_middle();
 
 void Func_020077ae_middle();
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
 
 void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base)
 {
@@ -2403,9 +2374,6 @@ check_transition:
     GameFlag_Set(0x123);
 }
 
-/* Loader-relocated overlay calls: each symbol names the pre-relocation call
- * word the image holds. */
-
 /* The two mode records the entry point seeds; the halfword at +26 holds the
  * per-mode span in sixtieths. */
 struct ModeRecord {
@@ -2419,11 +2387,6 @@ void Func_02006436_sequence();
 s32 Func_02006996_sequence();
 s32 Func_020069c2_sequence();
 s32 Func_020081b0_sequence();
-
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
 
 /* The scene step counter at 0x1d8 of the shared scene work record. */
 

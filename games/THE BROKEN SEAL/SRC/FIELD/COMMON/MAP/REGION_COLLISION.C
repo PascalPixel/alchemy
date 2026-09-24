@@ -40,7 +40,6 @@ u8 GetFocusedObjectCollision(void)
 
     map = *(struct MapState **)(runtime_slot_address - 76);
 
-
     if (object == 0)
         return 0;
 

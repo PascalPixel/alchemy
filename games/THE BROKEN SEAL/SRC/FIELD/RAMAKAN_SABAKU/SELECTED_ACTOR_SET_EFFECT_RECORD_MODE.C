@@ -18,7 +18,6 @@ struct EffectWork {
     struct EffectRecord *record;
 };
 
-
 void SetEffectRecordMode(struct EffectWork *work, s32 mode)
 {
     work->record->mode = mode;

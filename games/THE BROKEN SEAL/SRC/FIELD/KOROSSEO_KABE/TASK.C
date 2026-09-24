@@ -304,9 +304,6 @@ SceneRecord *Func_02007726(Position3 *, SceneRecord *);
 SceneRecord *Func_02007750(Position3 *, SceneRecord *);
 SceneRecord *Func_0200777c(Position3 *, SceneRecord *);
 
-/* Loader-relocated overlay calls: each symbol names the pre-relocation call
- * word the image holds. */
-
 /*
  * Mode task setup for resource_3bb.  It seeds a second per-instance task's
  * state and picks which of five addresses that task dispatches through.  The
@@ -338,9 +335,6 @@ SceneRecord *Func_0200777c(Position3 *, SceneRecord *);
  * position. */
 
 /* In-image direction table: sixteen packed steps, high half x, low half z. */
-
-/* Loader-relocated overlay calls: each symbol names the pre-relocation call
- * word the image holds. */
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
@@ -374,10 +368,6 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
     f(a0, a1, a2, a3, a4, a5);
 }
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
 static __inline__ void Call1(void (*f)(), s32 a0)
 {
 
@@ -390,10 +380,6 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
     f(a0, a1, a2);
 }
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
 static __inline__ void Call3_02000b38(void (*f)(), s32 a0, s32 a1, s32 a2)
 {
 
@@ -462,10 +448,6 @@ static inline void InitializeSelectedActor(s32 actorId)
     Actor_SetSpeed(actorId, 0x10000, 0x8000);
 }
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
 static __inline__ s32 Value0(s32 (*f)())
 {
 

@@ -231,13 +231,6 @@ s32 Func_0200aa18();
 s32 Func_0200aa20();
 struct SceneLookupRecord *Func_0200aa1c();
 
-/* Loader-relocated overlay calls: each symbol names the pre-relocation call
- * word the image holds. */
-
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
 static __inline__ void Call1(void (*f)(), s32 a0)
 {
     f(a0);
@@ -260,22 +253,6 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
 
 /* Loader-relocated overlay calls: each symbol names the pre-relocation call
  * word the image holds. */
-
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-
-/* Loader-relocated overlay calls: each symbol names the pre-relocation call
- * word the image holds. */
-
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-
-/* Loader-relocated overlay calls: each symbol names the pre-relocation call
- * word the image holds. */
 void Func_02006f48_actor_gate();
 s32 Func_02006f58_actor_gate();
 void Func_02006f90_actor_gate();
@@ -284,19 +261,6 @@ struct FieldActor *Func_02006fbc_actor_gate();
 struct FieldActor *Func_02006fe4_actor_gate();
 struct FieldActor *Func_02006ff2_actor_gate();
 struct FieldActor *Func_02006ffa_actor_gate();
-
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-
-/* Loader-relocated overlay calls: each symbol names the pre-relocation call
- * word the image holds. */
-
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
 
 #define Scene_GetRecord_1(args...) Func_020081b4_tail(args)
 #define Scene_GetRecord_2(args...) Func_020081d6_tail(args)
@@ -330,25 +294,10 @@ void Func_020092be_tail();
 void Func_02009454_b_tail();
 void Func_0200949c_tail();
 
-/* Loader-relocated overlay calls: each symbol names the pre-relocation call
- * word the image holds. */
-
-/* Resolved engine calls: each pseudo symbol is the per-site call word the
- * overlay image holds (a word can serve two sites with different targets),
- * and the macro names the engine function the site reaches through the
- * overlay veneer and the main-image veneer island, keeping the site's own
- * calling form. Names without a repository binding are provisional.
- */
-
 /* Pointer to the shared scene work record. */
 
 /* Values below that look like 16.16 fixed-point fractions, named by that
  * fraction's decimal value. */
-
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
 
 /* The scene step counter at 0x1d8 of the shared scene work record. */
 
@@ -369,20 +318,12 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 
 /* The scene step counter at 0x1d8 of the shared scene work record. */
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
 static __inline__ void Call3_020036ac(void (*f)(), s32 a0, s32 a1, s32 a2)
 {
 
     f(a0, a1, a2);
 }
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
 static __inline__ s32 Value1_02003788(s32 (*f)(), s32 a0)
 {
 
@@ -395,10 +336,6 @@ static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
     return f(a0, a1, a2);
 }
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
 static __inline__ void Call3_02004f44(void (*f)(), s32 a0, s32 a1, s32 a2)
 {
     f(a0, a1, a2);
@@ -441,11 +378,6 @@ void Func_020053a2_run_scene_supplemental_sequence_one();
 s32 Func_02007258_run_scene_supplemental_sequence_one();
 void Func_0200731c_run_scene_supplemental_sequence_one();
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-
 /* The scene step counter at 0x1d8 of the shared scene work record. */
 
 /* Loader-relocated overlay calls: each symbol names the pre-relocation call
@@ -453,11 +385,6 @@ void Func_0200731c_run_scene_supplemental_sequence_one();
 
 void Func_02006a5e_run_scene_39c_02000ffc();
 s32 Func_02006b00_run_scene_39c_02000ffc();
-
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
 
 /* The scene step counter at 0x1d8 of the shared scene work record. */
 
@@ -470,11 +397,6 @@ struct FieldActor *Func_02006e42_run_scene_39c_02001340();
 struct FieldActor *Func_02006eb6_run_scene_39c_02001340();
 void Func_02006ebe_run_scene_39c_02001340();
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-
 void Func_02000e7a_run_scene_sequence_c();
 
 /* Loader-relocated overlay calls: each symbol names the pre-relocation call
@@ -482,11 +404,6 @@ void Func_02000e7a_run_scene_sequence_c();
 
 void Func_02001aa6_run_scene_sequence_f();
 void Func_02007326_run_scene_sequence_f();
-
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
 
 static __inline__ s32 Value0(s32 (*f)())
 {

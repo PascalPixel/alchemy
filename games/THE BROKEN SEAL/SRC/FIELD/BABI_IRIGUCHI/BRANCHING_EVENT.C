@@ -125,9 +125,6 @@ s32 Func_020056be();
 
 /* Copy the low two mode bits into the object's owner record. */
 
-/* Loader-relocated overlay calls: each symbol names the pre-relocation call
- * word the image holds. */
-
 /* Contiguous unnamed leaf-owner run for resource_3c5. */
 
 /* Call sites spelled through these wrappers pass their constants straight
@@ -154,19 +151,11 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
     f(a0, a1, a2, a3);
 }
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
 static __inline__ void Call4_02000eac(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 {
     f(a0, a1, a2, a3);
 }
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
 static __inline__ void Call1(void (*f)(), s32 a0)
 {
     f(a0);
@@ -202,10 +191,6 @@ static __inline__ void ResetSceneParameters(s32 a, s32 b, s32 c, s32 mode)
 
 /* The translation unit binds scene calls at the loader-runtime base. */
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
 static __inline__ void Call1_02001238(void (*f)(), s32 a0)
 {
     f(a0);

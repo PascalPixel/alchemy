@@ -6,7 +6,6 @@
  * decides between the two default lines.
  */
 
-
 u16 *Func_020013e4(s32);
 s32 Func_020013d8(s32);
 void Func_020014e2(s32, s32);

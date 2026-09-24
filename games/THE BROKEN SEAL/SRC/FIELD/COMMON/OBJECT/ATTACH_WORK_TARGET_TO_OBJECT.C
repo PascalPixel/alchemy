@@ -152,7 +152,6 @@ void BattleFx_CommitObjectPositionAndWait(void)
 /* battle/get_work_object_1e0.c */
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
-
 s32 Battle_GetWorkObject1e0(void)
 {
     return FIELD_AT_OFFSET(Runtime_AllocateBlock(0x1B, 0xCCC), s32 *, 0x1E0);

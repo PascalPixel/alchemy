@@ -90,9 +90,6 @@ void Func_020030ea(s32 actorId, s32 cellX, s32 cellZ);
 void Func_020030d2(s32 width, s32 top, s32 bottom);
 void Func_020030ee(s32 width, s32 top, s32 bottom);
 
-/* Loader-relocated overlay calls: each symbol names the pre-relocation call
- * word the image holds. */
-
 /*
  * Camera-shift beat for overlay resource_3a6.  Each Func_ name spells the
  * overlay's own relocated call word, not a runtime address.
@@ -125,10 +122,6 @@ static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
     return f(a0, a1, a2);
 }
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
 static __inline__ void Call1(void (*f)(), s32 a0)
 {
 
@@ -153,10 +146,6 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
     f(a0, a1, a2);
 }
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
 static __inline__ void Call0(void (*f)())
 {
 

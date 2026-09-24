@@ -19,7 +19,6 @@ void Func_02001814(struct MapActor *actor, s32 mode);
 void Func_02001828(struct MapActor *actor, s32 mode);
 void Func_02001842(struct MapActor *actor, s32 mode);
 
-
 /* Decides whether an actor tracks its target. An actor already tracking in
  * mode 0 carries on. Otherwise, when the target is closer than the distance
  * limit and lies in the actor's facing sector or one beside it, or tracking

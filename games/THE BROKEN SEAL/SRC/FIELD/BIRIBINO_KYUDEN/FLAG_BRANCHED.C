@@ -416,11 +416,6 @@ void Func_02003e18();
 void Func_02003e36();
 void Func_02003e40();
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-
 /* The scene step counter at 0x1d8 of the shared scene work record. */
 
 #include "TYPES.H"
@@ -536,14 +531,6 @@ extern u8 Data_03001ebc[];
 
 s32 Func_020029c8_scene_primary_script_head();
 
-/* Loader-relocated overlay calls: each symbol names the pre-relocation call
- * word the image holds. */
-
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-
 /* The scene step counter at 0x1d8 of the shared scene work record. */
 
 #include "TYPES.H"
@@ -597,11 +584,6 @@ void *Func_020044fe();
 void *Func_0200451e();
 void Func_0200460e();
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-
 /* The scene step counter at 0x1d8 of the shared scene work record. */
 
 /* Actor record returned by the three lookup helpers. The two halfword reads
@@ -621,11 +603,6 @@ typedef struct ActorPos {
  * word the image holds. */
 extern u8 Data_03001ebc[];
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-
 /* The scene step counter at 0x1d8 of the shared scene work record. */
 
 #include "TYPES.H"
@@ -633,11 +610,6 @@ extern u8 Data_03001ebc[];
 /* Loader-relocated overlay calls: each symbol names the pre-relocation call
  * word the image holds. */
 extern u8 Data_03001ebc[];
-
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
 
 /* The scene step counter at 0x1d8 of the shared scene work record. */
 

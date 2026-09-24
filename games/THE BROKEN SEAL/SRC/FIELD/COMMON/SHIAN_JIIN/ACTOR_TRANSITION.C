@@ -1,6 +1,5 @@
 #include "TYPES.H"
 
-
 union SceneWord {
     s32 word;
     u16 half[2];

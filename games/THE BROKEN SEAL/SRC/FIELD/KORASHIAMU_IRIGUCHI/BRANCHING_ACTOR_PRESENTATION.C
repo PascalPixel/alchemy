@@ -1,6 +1,5 @@
 #include "TYPES.H"
 
-
 extern u8 Data_0200ad3c[];
 extern u8 Data_0200ad74[];
 extern u8 Data_0200ade4[];

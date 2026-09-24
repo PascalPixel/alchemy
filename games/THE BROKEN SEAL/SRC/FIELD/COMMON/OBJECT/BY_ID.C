@@ -9,7 +9,6 @@ void WaitFrames(s32);
 void Battle_WaitMode0(s32);
 void Audio_PlayCue(s32);
 
-
 void Object_ResetMotion(struct ObjectRuntime *);
 void Object_SetPosition(struct ObjectRuntime *, s32, s32, s32);
 void Object_CommitPosition(struct ObjectRuntime *);

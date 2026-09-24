@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_3a0:02000d0c": {
+      "name": "ShianMura_Func02000d0c",
+      "source": "FIELD/SHIAN_MURA/F_00D0C.C"
+    },
     "resource_399:02000b70": {
       "name": "ImiruMura_Func02000b70",
       "source": "FIELD/IMIRU_MURA/F_00B70.C"

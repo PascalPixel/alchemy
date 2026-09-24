@@ -79752,6 +79752,74 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "scene-3a0-02000d0c",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/SHIAN_MURA/F_00D0C.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3a0",
+      "absolute_symbols": {
+        "Engine_ActorGet": {
+          "address": "0x020093d0",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagIsSet": {
+          "address": "0x020093a0",
+          "kind": "thumb"
+        },
+        "Main_08000128": {
+          "address": "0x02009358",
+          "kind": "thumb"
+        },
+        "Main_080091d8": {
+          "address": "0x02009388",
+          "kind": "thumb"
+        },
+        "Engine_EventBegin": {
+          "address": "0x020093c0",
+          "kind": "thumb"
+        },
+        "Engine_ObjectSetAnimation": {
+          "address": "0x02009360",
+          "kind": "thumb"
+        },
+        "Engine_TaskWait": {
+          "address": "0x02009338",
+          "kind": "thumb"
+        },
+        "Engine_AudioPlayCue": {
+          "address": "0x020094b8",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpriteFlags": {
+          "address": "0x02009390",
+          "kind": "thumb"
+        },
+        "Engine_ObjectMotionSetPositionAndCommit": {
+          "address": "0x020093f8",
+          "kind": "thumb"
+        },
+        "Engine_EventEnd": {
+          "address": "0x020093c8",
+          "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02000d0c",
+          "extent": 220,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

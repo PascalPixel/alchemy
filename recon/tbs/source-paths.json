@@ -2051,7 +2051,7 @@
     },
     "main:080119cc": {
       "name": "DisplayBlend_RunScript",
-      "source": "GRAPHICS/DISPLAY/BLEND_RUN_SCRIPT.C"
+      "source": "GRAPHICS/DISPLAY/BLEND_SCRIPT.C"
     },
     "main:08003d28": {
       "name": "AffineMatrix_BuildForEffect",
@@ -3889,12 +3889,10 @@
       "source": "FIELD/COMMON/MAP/DISABLE_UPDATE_CALLBACK.C"
     },
     "main:08011ae0": {
-      "name": "DisplayBlend_EnableRunScript",
-      "source": "GRAPHICS/DISPLAY/BLEND_ENABLE_RUN_SCRIPT.C"
+      "name": "DisplayBlend_EnableRunScript"
     },
     "main:08011af0": {
-      "name": "DisplayBlend_DisableRunScript",
-      "source": "GRAPHICS/DISPLAY/BLEND_DISABLE_RUN_SCRIPT.C"
+      "name": "DisplayBlend_DisableRunScript"
     },
     "main:08011b00": {
       "name": "Runtime_AllocateAndClearQueue",
@@ -19387,8 +19385,7 @@
       "source": "GRAPHICS/PALETTE/QUEUE_ADD.C"
     },
     "main:08011a84": {
-      "name": "DisplayBlend_StartScript",
-      "source": "GRAPHICS/DISPLAY/BLEND_START_SCRIPT.C"
+      "name": "DisplayBlend_StartScript"
     },
     "main:0801fd34": {
       "name": "PaletteGlow_UpdateSine",

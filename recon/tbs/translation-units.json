@@ -124719,6 +124719,35 @@
         }
       ],
       "overlay": null
+    },
+    {
+      "id": "display-blend-script",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/BLEND_SCRIPT.C",
+      "compiler_route": "canonical-gcc296",
+      "owners": [
+        {
+          "address": "0x080119cc",
+          "extent": 184,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08011a84",
+          "extent": 92,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08011ae0",
+          "extent": 16,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08011af0",
+          "extent": 16,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
     }
   ]
 }

@@ -1,6 +1,5 @@
 #include "TYPES.H"
 #include "EVENT_RUNTIME.H"
-#define FieldScene_SetupStagedActors Func_02000150
 extern struct EventRuntime *Data_03001ebc;
 void Func_0200a454();
 void Func_0200a544();

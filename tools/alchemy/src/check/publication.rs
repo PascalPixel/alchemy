@@ -213,7 +213,7 @@ fn publication_path_reason(path: &str) -> Option<&'static str> {
     if listed(suffix, BLOCKED_EXTENSIONS) && !game_data {
         return Some("private or generated file type");
     }
-    if listed(suffix, PRESENTATION_EXTENSIONS) && normalized != "PROGRESS.svg" {
+    if listed(suffix, PRESENTATION_EXTENSIONS) {
         return Some("presentation material: pret commits only editable build inputs");
     }
     if listed(suffix, BACKUP_EXTENSIONS) || leaf.ends_with('~') {
@@ -230,7 +230,7 @@ fn publication_path_reason(path: &str) -> Option<&'static str> {
         .any(|directory| directory.eq_ignore_ascii_case("preview"))
     {
         return Some(
-            "PREVIEW material belongs under ignored out/; the README figure is root PROGRESS.svg",
+            "PREVIEW material belongs under ignored out/; the README figures are root PROGRESS_CHART.png and PROGRESS.png",
         );
     }
     let report_name = leaf
@@ -516,6 +516,20 @@ fn inflate_exact(stream: &[u8], size: usize) -> Option<Vec<u8>> {
 /// ancillary chunks, one zlib stream holding exactly its non-interlaced
 /// scanlines, and pixels the asset build reads.
 fn indexed_png_bytes(data: &[u8]) -> Option<Vec<u8>> {
+    exact_indexed_stream(data)?;
+    let image = indexed_png(data).ok()?;
+    let depth = data[24];
+    Some(
+        image
+            .pixels
+            .chunks(8 / usize::from(depth))
+            .map(|group| group.iter().fold(0u32, |byte, pixel| byte << depth | pixel) as u8)
+            .collect(),
+    )
+}
+/// The chunk and stream half of `indexed_png_bytes`, for an indexed image of
+/// any size: the README figures are not tile-aligned build inputs.
+fn exact_indexed_stream(data: &[u8]) -> Option<()> {
     let chunks = png_chunks(data)?;
     let (_, header) = chunks
         .first()
@@ -557,17 +571,7 @@ fn indexed_png_bytes(data: &[u8]) -> Option<Vec<u8>> {
         .flat_map(|(_, body)| body.iter().copied())
         .collect();
     let scanlines = inflate_exact(&stream, size)?;
-    if scanlines.chunks(row).any(|line| line[0] > 4) {
-        return None;
-    }
-    let image = indexed_png(data).ok()?;
-    Some(
-        image
-            .pixels
-            .chunks(8 / usize::from(depth))
-            .map(|group| group.iter().fold(0u32, |byte, pixel| byte << depth | pixel) as u8)
-            .collect(),
-    )
+    (!scanlines.chunks(row).any(|line| line[0] > 4)).then_some(())
 }
 /// A standard MIDI file exactly as the sequence build reads it: MThd then only
 /// MTrk chunks covering the file, every track closed by end-of-track, text
@@ -637,6 +641,13 @@ fn midi_reason(data: &[u8]) -> Option<&'static str> {
 fn binary_reason(path: &str, data: &[u8], logo: Option<&[u8]>) -> Option<&'static str> {
     if data.is_empty() {
         return None;
+    }
+    // The README figures are generated, but held to the indexed build-input
+    // standard: palette pixels and standard chunks, no text payloads.
+    if matches!(path, "PROGRESS.png" | "PROGRESS_CHART.png") {
+        return exact_indexed_stream(data)
+            .is_none()
+            .then_some("README figure is not an exact indexed PNG");
     }
     let components: Vec<_> = path.split('/').collect();
     let (area, rest) = match components.as_slice() {
@@ -2518,12 +2529,7 @@ fn text_fixtures() -> Vec<Fixture> {
     let include = Some("include_bytes! or include_str!");
     let uri = Some("data URI");
     vec![
-        (
-            "PROGRESS.svg",
-            svg_uri,
-            true,
-            uri,
-        ),
+        ("README.md", svg_uri, true, uri),
         ("tools/alchemy/src/dashboard/index.html", css_uri, true, uri),
         ("tools/alchemy/src/coverage/figure.rs", rust_uri, true, uri),
         (
@@ -2685,7 +2691,7 @@ fn text_fixtures() -> Vec<Fixture> {
             "PROGRESS.svg",
             svg,
             true,
-            None,
+            Some("presentation material"),
         ),
         (
             "games/THE BROKEN SEAL/INCLUDE/ADD_PARTS_BODY.INC",
@@ -2975,7 +2981,8 @@ fn self_test(root: &Path) -> Result<(), String> {
         "README.md",
         "AGENTS.md",
         "recon/tbs/raw/080000c0.s",
-        "PROGRESS.svg",
+        "PROGRESS.png",
+        "PROGRESS_CHART.png",
         "games/THE BROKEN SEAL/SOUND/SEQUENCE/THEME.mid",
         "games/THE BROKEN SEAL/SOUND/SAMPLE/WAVE.wav",
         "recon/tbs/assets.json",
@@ -3475,7 +3482,7 @@ mod tests {
                 ("games/X/SOUND/SEQUENCE/A.MID", midi.clone()),
                 ("games/X/SRC/MAIN.C", b"void main(void) {}\n".to_vec()),
                 ("games/Y/SRC/MAIN.C", b"void main(void) {}\n".to_vec()),
-                ("PROGRESS.svg", b"<svg/>\n".to_vec()),
+                ("PROGRESS.png", indexed_fixture(4)),
                 ("tools/Cargo.lock", b"checksum = \"00ff\"\n".to_vec()),
             ],
         );

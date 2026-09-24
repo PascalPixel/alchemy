@@ -36,10 +36,13 @@ the technical details in [AGENTS.md](AGENTS.md).
 
 **☀️ 64.86% · ⚓️ 2.13%**
 
-<img src="PROGRESS.svg" width="830" alt="Alchemy progress for The Broken Seal and The Lost Age, above a map of the project's files">
+<img src="PROGRESS_CHART.png" width="830" alt="DONE by day for The Broken Seal and The Lost Age since 16 July 2026">
 
-The gold bars show how far each game has come. The Broken Seal is well past
-halfway. The Lost Age has only just begun, but it is built much like the first
+<img src="PROGRESS.png" width="830" alt="A map of the project's files by size on disk">
+
+The chart shows how far each game has come, day by day: The Broken Seal in
+gold, The Lost Age in blue. The two dips mark days the rules for what counts
+got stricter, not lost work. The Broken Seal is well past halfway. The Lost Age has only just begun, but it is built much like the first
 game, which gives it a head start.
 
 ## Acknowledgements

@@ -1,4 +1,4 @@
-//! The dashboard's disposable cache under `out/dashboard/`: the game font, the
+//! The dashboard's disposable cache under `out/dashboard/`: the glyph mask, the
 //! tab icons, ROM index summaries and rendered views. Everything here is
 //! derived, rebuildable and never tracked; deleting the folder only costs time.
 use sha1::{Digest, Sha1};

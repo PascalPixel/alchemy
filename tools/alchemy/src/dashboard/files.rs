@@ -8,6 +8,7 @@ use crate::coverage::boxtree::{
     source_name, DISPLAY_CATEGORIES,
 };
 use crate::coverage::jsnum::commas;
+use crate::coverage::letters::{LINE, PIXEL};
 use crate::coverage::model::{treemap, Category, Rect, Tile};
 use std::path::Path;
 
@@ -44,10 +45,10 @@ fn url(folder: &str) -> String {
         format!("/view/{}", encode(folder))
     }
 }
-/// The width a name needs in the dashboard's game face: its widest glyph is
-/// eight game pixels, two CSS pixels each, plus the label's own padding.
+/// The CSS width a name needs as glyph sprites, plus the label's own four
+/// pixels of padding.
 fn name_width(name: &str) -> usize {
-    name.chars().count() * 16 + 8
+    (super::glyphs::width(name) + 4 * PIXEL) as usize
 }
 fn parent(folder: &str) -> &str {
     folder
@@ -55,9 +56,9 @@ fn parent(folder: &str) -> &str {
         .rsplit_once('/')
         .map_or("", |(parent, _)| &folder[..parent.len() + 1])
 }
-/// A folder's name bar is one 32px text line whatever the window size; the layout
+/// A folder's name bar is one text line whatever the window size; the layout
 /// estimates it in chart units only to shape its children.
-const HEADING_UNITS: f64 = 12.0;
+const HEADING_UNITS: f64 = 6.0;
 /// A folder opens only when its body is this large, as in the figure; a
 /// smaller one is drawn by the file types it holds and links to its view.
 const OPEN_FOLDER: (f64, f64) = (44.0, 34.0);
@@ -286,8 +287,10 @@ fn render(root: &Path, folder: &str, selected: Option<&str>) -> Option<(String, 
     );
     out.push_str("</section><style>");
     // A folder's name bar opens exactly when its name fits, under one query.
+    // One line is LINE game pixels; the tile's border adds one on each side.
+    let (line, one, two) = (LINE * PIXEL, (LINE + 2) * PIXEL, (2 * LINE + 2) * PIXEL);
     for width in widths {
-        out.push_str(&format!("@container (min-width:{width}px) and (min-height:36px){{.label-w{width}>span{{visibility:visible}}.label-w{width}~.area.headed{{top:32px}}}}@container (min-width:{width}px) and (min-height:68px){{.label-w{width}>.file-size{{visibility:visible}}}}"));
+        out.push_str(&format!("@container (min-width:{width}px) and (min-height:{one}px){{.label-w{width}>span{{visibility:visible}}.label-w{width}~.area.headed{{top:{line}px}}}}@container (min-width:{width}px) and (min-height:{two}px){{.label-w{width}>.file-size{{visibility:visible}}}}"));
     }
     out.push_str(&format!(
         "</style><footer class=\"legend\" aria-label=\"File types\" tabindex=\"0\">{legend}</footer>"

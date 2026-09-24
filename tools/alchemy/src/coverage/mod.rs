@@ -1,14 +1,16 @@
 pub(crate) mod audit;
 pub(crate) mod boxtree;
 pub(crate) mod figure;
+pub(crate) mod history;
 pub(crate) mod jsnum;
+pub(crate) mod letters;
 pub(crate) mod model;
 pub(crate) mod pipeline;
 pub(crate) mod progress;
 pub(crate) mod proof;
+pub(crate) mod raster;
 pub(crate) mod tree;
 
-use self::boxtree::{box_tree_path, render_box_trees, BOX_TREES};
 use crate::compiler::canonical_json::canonical_json;
 use crate::coverage::jsnum::{commas, number};
 use crate::coverage::pipeline::{build_coverage_map, BuildOptions, CoverageMap};
@@ -177,13 +179,7 @@ fn status_line(sun: Option<GameDone>, anchor: Option<GameDone>) -> String {
     };
     format!("**☀️ {} · ⚓️ {}**", show(sun), show(anchor))
 }
-fn update_readme(
-    text: &str,
-    _target: &str,
-    map: &CoverageMap,
-    _trees: &[(&'static str, String)],
-    status: &str,
-) -> String {
+fn update_readme(text: &str, _target: &str, map: &CoverageMap, status: &str) -> String {
     let proven_c = field(&map.document, &["categories", "proven_c", "bytes"]);
     let proven_asm = field(&map.document, &["categories", "proven_asm", "bytes"]);
     let executable = field(&map.document, &["executable_bytes"]);
@@ -232,6 +228,77 @@ mod tests {
     use crate::coverage::progress::GameDone;
     use serde_json::json;
     #[test]
+    fn figures_are_redrawn_once_a_day_and_checked_against_their_own_day() {
+        use super::{check_figures, figure, figure_date_current, history, letters, write_figures};
+        let root = tempfile::tempdir().unwrap();
+        let root = root.path();
+        let table: serde_json::Value = serde_json::from_slice(
+            &std::fs::read(crate::coverage::tree::root().join(letters::SHEET)).unwrap(),
+        )
+        .unwrap();
+        let image = table["segments"][0]["image"]["source"].as_str().unwrap();
+        for path in [letters::SHEET, image] {
+            std::fs::create_dir_all(root.join(path).parent().unwrap()).unwrap();
+            std::fs::copy(crate::coverage::tree::root().join(path), root.join(path)).unwrap();
+        }
+        std::fs::create_dir_all(history::path(root).parent().unwrap()).unwrap();
+        std::fs::write(
+            history::path(root),
+            history::text(
+                &json!({"format": 1, "began": "2026-07-16", "stricter": [], "days": [
+                    {"date": "2026-07-16", "tbs": {"percent": 1.0}}
+                ]}),
+            ),
+        )
+        .unwrap();
+        assert!(std::process::Command::new("git")
+            .args(["init", "--quiet"])
+            .current_dir(root)
+            .status()
+            .unwrap()
+            .success());
+        assert!(std::process::Command::new("git")
+            .args(["add", "games"])
+            .current_dir(root)
+            .status()
+            .unwrap()
+            .success());
+        let done = |bytes| GameDone {
+            game_c: bytes,
+            executable: 1000,
+            ..GameDone::default()
+        };
+        write_figures(root, Some(done(600)), None).unwrap();
+        let chart = std::fs::read(root.join(figure::CHART)).unwrap();
+        let map = std::fs::read(root.join(figure::MAP)).unwrap();
+        check_figures(root).unwrap();
+        // A later count the same day moves the history, not the figures.
+        write_figures(root, Some(done(610)), None).unwrap();
+        assert_eq!(std::fs::read(root.join(figure::CHART)).unwrap(), chart);
+        assert_eq!(std::fs::read(root.join(figure::MAP)).unwrap(), map);
+        let recorded = history::load(root).unwrap();
+        let today = history::today();
+        let row = recorded["days"].as_array().unwrap().last().unwrap().clone();
+        assert_eq!(
+            (row["date"].as_str(), history::percent(&row["tbs"])),
+            (Some(today.as_str()), Some(61.0))
+        );
+        assert_eq!(history::percent(&recorded["figures"]["tbs"]), Some(60.0));
+        check_figures(root).unwrap();
+        // A tampered chart fails; yesterday's figures pass only until today has a row.
+        std::fs::write(root.join(figure::CHART), &map).unwrap();
+        assert!(check_figures(root).is_err());
+        let yesterday = history::previous(&today).unwrap();
+        assert!(figure_date_current(&today, &today, true));
+        assert!(figure_date_current(&yesterday, &today, false));
+        assert!(!figure_date_current(&yesterday, &today, true));
+        assert!(!figure_date_current(
+            &history::previous(&yesterday).unwrap(),
+            &today,
+            false
+        ));
+    }
+    #[test]
     fn readme_metrics_reports_all_done_categories() {
         assert_eq!(
             readme_metrics(282_436.0, 343_206.0, 1_347_122.0),
@@ -253,7 +320,6 @@ mod tests {
                     "proven_asm": {"bytes": 340}
                 }
             }),
-            rom_areas: Vec::new(),
             executable_areas: Vec::new(),
         };
         let sun = GameDone {
@@ -268,12 +334,102 @@ mod tests {
             "# Alchemy\n\n## Progress\n\n**☀️ 52% · ⚓️ 1%**\n\nDetails\n",
             "tbs-en",
             &map,
-            &[],
             &status,
         );
         assert!(updated.contains("## Progress\n\n**☀️ 59.00% · ⚓️ pending**\n"));
         assert!(!updated.contains("52%"));
     }
+}
+/// The digest of what the file map draws: each tracked file and its size.
+fn map_inputs(root: &Path) -> String {
+    let listing = boxtree::tracked_only(root, boxtree::disk_tiles(root))
+        .iter()
+        .map(|tile| format!("{}\t{}\n", tile.source.as_deref().unwrap_or(""), tile.bytes))
+        .collect::<String>();
+    boxtree::content_version(&listing)
+}
+/// Both README figures as drawn on the history's recorded figure date.
+fn render_figures(root: &Path, history: &serde_json::Value) -> Result<(Vec<u8>, Vec<u8>), String> {
+    let letters = letters::Letters::load(root)?;
+    let date = history["figures"]["date"]
+        .as_str()
+        .unwrap_or("")
+        .to_string();
+    let scale = letters::FIGURE_SCALE;
+    let chart = figure::chart(&letters, &history::as_drawn(history)).png(scale, &date)?;
+    let map = figure::map(&letters, root).png(scale, &date)?;
+    Ok((chart, map))
+}
+/// Record today's verified counts, and redraw the figures when the stored
+/// ones carry an earlier date: the tracked PNGs change at most once a day.
+fn write_figures(
+    root: &Path,
+    sun: Option<GameDone>,
+    anchor: Option<GameDone>,
+) -> Result<(), String> {
+    let today = history::today();
+    let mut history = history::load(root)?;
+    history::record(&mut history, &today, sun, anchor);
+    let drawn = std::fs::read(root.join(figure::CHART))
+        .ok()
+        .and_then(|png| raster::png_date(&png));
+    if drawn.as_deref() == Some(today.as_str()) && root.join(figure::MAP).exists() {
+        return write(&history::path(root), &history::text(&history));
+    }
+    // The history is itself a tracked file the map draws: write it with a
+    // placeholder of the digest's length, then record the digest of the
+    // tree as it now stands, which leaves the history's size unchanged.
+    history::mark_drawn(&mut history, &today, &"0".repeat(16));
+    write(&history::path(root), &history::text(&history))?;
+    history["figures"]["files"] = serde_json::json!(map_inputs(root));
+    write(&history::path(root), &history::text(&history))?;
+    let (chart, map) = render_figures(root, &history)?;
+    std::fs::write(root.join(figure::CHART), chart)
+        .map_err(|e| format!("{}: {e}", figure::CHART))?;
+    std::fs::write(root.join(figure::MAP), map).map_err(|e| format!("{}: {e}", figure::MAP))
+}
+/// The committed figures are current when they carry the history's figure
+/// date, that date is today (or yesterday while today has no row), the chart
+/// is exactly what that day's rows draw, and the map is exactly what the
+/// tracked files draw unless they changed since it was drawn that day.
+fn check_figures(root: &Path) -> Result<(), String> {
+    let stale = |why: &str| {
+        Err(format!(
+            "README figures are stale ({why}); run: make coverage"
+        ))
+    };
+    let history = history::load(root)?;
+    let date = history["figures"]["date"]
+        .as_str()
+        .unwrap_or("")
+        .to_string();
+    let today = history::today();
+    let has_today = history["days"]
+        .as_array()
+        .is_some_and(|days| days.iter().any(|row| row["date"] == today.as_str()));
+    if !figure_date_current(&date, &today, has_today) {
+        return stale(&format!("drawn on {date:?}"));
+    }
+    let chart =
+        std::fs::read(root.join(figure::CHART)).map_err(|e| format!("{}: {e}", figure::CHART))?;
+    let map = std::fs::read(root.join(figure::MAP)).map_err(|e| format!("{}: {e}", figure::MAP))?;
+    for (name, png) in [(figure::CHART, &chart), (figure::MAP, &map)] {
+        if raster::png_date(png).as_deref() != Some(date.as_str()) {
+            return stale(&format!("{name} does not carry {date}"));
+        }
+    }
+    let (expected_chart, expected_map) = render_figures(root, &history)?;
+    if chart != expected_chart {
+        return stale(&format!("{} differs from its rows", figure::CHART));
+    }
+    let unchanged = history["figures"]["files"].as_str() == Some(map_inputs(root).as_str());
+    if unchanged && map != expected_map {
+        return stale(&format!("{} differs from the tracked files", figure::MAP));
+    }
+    Ok(())
+}
+fn figure_date_current(date: &str, today: &str, has_today: bool) -> bool {
+    date == today || (!has_today && history::previous(today).as_deref() == Some(date))
 }
 fn run(argv: &[String]) -> Result<String, String> {
     let o = parse(argv)?;
@@ -287,22 +443,15 @@ fn run(argv: &[String]) -> Result<String, String> {
         if o.exact.is_some() || o.recon.is_some() || o.assembly_spans {
             return Err("--files accepts only --write or --check".into());
         }
-        let rendered =
-            figure::progress_svg(measured(&root(), "tbs-en")?, measured(&root(), "tla-en")?);
-        let path = root().join("PROGRESS.svg");
+        let (sun, anchor) = (measured(&root(), "tbs-en")?, measured(&root(), "tla-en")?);
         if o.check {
-            if read(&path)? != rendered {
-                return Err(
-                    "README file-size figure is stale; run: alchemy coverage --files --write"
-                        .into(),
-                );
-            }
+            check_figures(&root())?;
         } else if o.write {
-            write(&path, &rendered)?;
+            write_figures(&root(), sun, anchor)?;
         } else {
             return Err("--files requires --write or --check".into());
         }
-        return Ok(format!("files={}", path.display()));
+        return Ok(format!("figures={} {}", figure::CHART, figure::MAP));
     }
     let exact = match o.exact.as_deref() {
         None | Some("worktree") => work_tree(),
@@ -337,7 +486,6 @@ fn run(argv: &[String]) -> Result<String, String> {
             .collect::<Vec<_>>()
             .join("\n"));
     }
-    let rendered = render_box_trees(&map);
     let map_json = canonical_json(&tracked(&map.document));
     let sun = if o.target == "tbs-en" {
         Some(game_done(&map)?)
@@ -351,45 +499,26 @@ fn run(argv: &[String]) -> Result<String, String> {
     };
     let status = status_line(sun, anchor);
     if o.check {
-        for (id, svg) in &rendered {
-            if read(&box_tree_path(&o.target, id))? != *svg {
-                return Err(format!(
-                    "tracked {id} coverage figure is stale; run: make coverage"
-                ));
-            }
-        }
-        // The published figure is drawn from tracked files only.
-        if read(&root().join("PROGRESS.svg"))? != figure::progress_svg(sun, anchor) {
-            return Err("README file-size figure is stale; run: make coverage".into());
-        }
+        check_figures(&root())?;
         let readme = read(&root().join("README.md"))?;
-        if update_readme(&readme, &o.target, &map, &rendered, &status) != readme {
+        if update_readme(&readme, &o.target, &map, &status) != readme {
             return Err("README coverage values are stale; run: make coverage".into());
         }
         return Ok(format!("coverage-map=current {}", summary(&map.document)?));
     }
     if o.write {
         write(&map_path(&o.target), &map_json)?;
-        for (id, svg) in &rendered {
-            write(&box_tree_path(&o.target, id), svg)?;
-        }
-        write(
-            &root().join("PROGRESS.svg"),
-            &figure::progress_svg(sun, anchor),
-        )?;
+        write_figures(&root(), sun, anchor)?;
         let readme = read(&root().join("README.md"))?;
         write(
             &root().join("README.md"),
-            &update_readme(&readme, &o.target, &map, &rendered, &status),
+            &update_readme(&readme, &o.target, &map, &status),
         )?;
         return Ok(format!(
-            "map={} trees={} {}",
+            "map={} figures={},{} {}",
             map_path(&o.target).display(),
-            BOX_TREES
-                .iter()
-                .map(|id| box_tree_path(&o.target, id).display().to_string())
-                .collect::<Vec<_>>()
-                .join(","),
+            figure::CHART,
+            figure::MAP,
             summary(&map.document)?
         ));
     }

@@ -1,10 +1,11 @@
-//! The dashboard's one window: title bar, icon tabs in the game font, the
+//! The dashboard's one window: title bar, icon tabs lettered from the glyph sheet, the
 //! view's sheet and a status bar with DONE and background progress.
 use super::cache::{self, Phase};
 use super::glyphs::{self, TAB_ICONS};
 use super::http::Response;
 use super::status;
 use crate::coverage::boxtree::{esc, CHROME};
+use crate::coverage::letters::{LINE, PIXEL};
 
 const STYLES: &str = include_str!("style.css");
 pub(super) const TABS: [(&str, &str); 5] = [
@@ -28,27 +29,15 @@ pub(super) fn active(path: &str) -> &'static str {
         "Files"
     }
 }
-/// Palette tokens from the figure, and the cached faces and icons when built.
+/// Palette tokens from the figure, the lettering rules and the icons when built.
 fn theme() -> String {
     let assets = glyphs::current();
-    let mut css = String::new();
-    for (kind, style, stamp) in [
-        ("font", "normal", &assets.font),
-        ("italic", "italic", &assets.italic),
-    ] {
-        if let Some(stamp) = stamp {
-            css.push_str(&format!(
-                "@font-face{{font-family:\"{}\";font-style:{style};src:url(/cache/{kind}-{stamp}.ttf) format(\"truetype\");font-display:swap}}",
-                glyphs::FAMILY
-            ));
-        }
-    }
-    css.push_str(":root{");
+    let mut css = String::from(":root{");
     for (name, color) in CHROME {
         css.push_str(&format!("--{name}:{color};"));
     }
-    css.push_str(&format!("--game:\"{}\",", glyphs::FAMILY));
-    css.push_str("-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif}");
+    css.push('}');
+    css.push_str(&glyphs::lettering_css());
     if let Some(stamp) = &assets.icons {
         css.push_str(&format!(
             ".icon{{background-image:url(/cache/icons-{stamp}.png)}}"
@@ -67,7 +56,7 @@ fn tabs(current: &str) -> String {
             let icon = if icons {
                 format!(
                     "<i class=\"icon\" style=\"background-position:-{}px 0\" aria-hidden=\"true\"></i>",
-                    slot * 32
+                    slot as u32 * LINE * PIXEL
                 )
             } else {
                 String::new()
@@ -137,8 +126,10 @@ fn statusbar(note: &str) -> String {
 pub(super) fn page(path: &str, content: &str, note: &str) -> Response {
     let current = active(path);
     let body = format!(
-        "<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>Alchemy · {current}</title><style>{}</style><style>{STYLES}</style></head><body><div class=\"window\"><header class=\"titlebar\"><span>Alchemy</span></header><nav class=\"tabs\" aria-label=\"Views\">{}</nav><div class=\"sheet\">{content}</div>{}</div></body></html>",
+        "<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>Alchemy · {current}</title>{}<style>{}</style><style>{}</style></head><body><div class=\"window\"><header class=\"titlebar\"><span>Alchemy</span></header><nav class=\"tabs\" aria-label=\"Views\">{}</nav><div class=\"sheet\">{content}</div>{}</div></body></html>",
+        letters_meta(),
         theme(),
+        styles(),
         tabs(current),
         statusbar(note)
     );
@@ -147,7 +138,7 @@ pub(super) fn page(path: &str, content: &str, note: &str) -> Response {
         "OK",
         Some("text/html; charset=utf-8"),
         "no-store",
-        body,
+        glyphs::letter(&body),
     );
     let scripts = if path == "/maps" || path.starts_with("/maps/") {
         "'self'"
@@ -157,6 +148,65 @@ pub(super) fn page(path: &str, content: &str, note: &str) -> Response {
     response.headers.push(("Content-Security-Policy", format!("default-src 'self'; script-src {scripts}; style-src 'self' 'unsafe-inline'; font-src 'self'; object-src 'none'; base-uri 'none'")));
     response
 }
+/// A bare message page, such as the Finder action's result, in the same chrome.
+pub(super) fn fragment(message: &str) -> String {
+    glyphs::letter(&format!(
+        "<!doctype html><html><head><style>{}</style><style>{}</style><style>html,body{{background:transparent}}</style></head><body>{}</body></html>",
+        theme(),
+        styles(),
+        esc(message)
+    ))
+}
+/// The sheet and advances for script-drawn text (the map canvas), when built.
+fn letters_meta() -> String {
+    glyphs::current()
+        .letters
+        .map(|(stamp, letters)| {
+            let advances = letters
+                .advance
+                .iter()
+                .map(u32::to_string)
+                .collect::<Vec<_>>()
+                .join(",");
+            format!("<meta name=\"letters\" content=\"/cache/letters-{stamp}.png\" data-advances=\"{advances}\">")
+        })
+        .unwrap_or_default()
+}
+/// The stylesheet at `PIXEL`: it is written in game pixels.
 pub(super) fn styles() -> &'static str {
-    STYLES
+    static SCALED: std::sync::OnceLock<String> = std::sync::OnceLock::new();
+    SCALED.get_or_init(|| pixels(STYLES))
+}
+/// Multiply every whole `Npx` length in `css`, written in game pixels, by
+/// `PIXEL`; identifiers and colours never end in a digit run before `px`.
+pub(super) fn pixels(css: &str) -> String {
+    let mut out = String::with_capacity(css.len());
+    let mut digits = String::new();
+    let mut rest = css;
+    while let Some(c) = rest.chars().next() {
+        rest = &rest[c.len_utf8()..];
+        if c.is_ascii_digit() {
+            let boundary = digits.is_empty()
+                && out
+                    .chars()
+                    .next_back()
+                    .is_some_and(|p| p.is_ascii_alphanumeric() || p == '.' || p == '#');
+            if !boundary {
+                digits.push(c);
+                continue;
+            }
+        }
+        if !digits.is_empty() {
+            if c == 'p' && rest.starts_with('x') {
+                let value: u32 = digits.parse().expect("digit run");
+                out.push_str(&(value * PIXEL).to_string());
+            } else {
+                out.push_str(&digits);
+            }
+            digits.clear();
+        }
+        out.push(c);
+    }
+    out.push_str(&digits);
+    out
 }

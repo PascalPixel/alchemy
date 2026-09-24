@@ -12,6 +12,36 @@ const game = document.querySelector('.map-live').dataset.game;
 let map, pixels, family, overview, overviewSource, lut, visible = [], zoom = 1, x = 0, y = 0, drag, request;
 const tables = new Map();
 let bounds = {left:0, top:0, width:1, height:1};
+// Room labels sit in map pixels, which are game pixels: glyphs cut from the
+// served sheet (two device pixels per game pixel, sixteen frames a row).
+const lettersMeta = document.querySelector('meta[name=letters]');
+const letterAdvances = lettersMeta ? lettersMeta.dataset.advances.split(',').map(Number) : [];
+const letterSheet = new Image();
+if(lettersMeta) { letterSheet.src = lettersMeta.content; letterSheet.onload = () => draw(); }
+function letterFrame(c) { const code=c.codePointAt(0); const frame=code-32; return code>=32&&code<=255&&!(code>=127&&code<160)&&letterAdvances[frame]>0 ? frame : 31; }
+function lettersWidth(text) { let w=0; for(const c of text) w+=letterAdvances[letterFrame(c)]||0; return w; }
+// The server's glyph-run markup for text written after load: the same
+// sprite classes, the text kept for readers.
+function letters(text) {
+  const run=document.createElement('span');run.className='t';
+  const hidden=document.createElement('span');hidden.className='sr';hidden.textContent=text;
+  const shown=document.createElement('span');shown.setAttribute('aria-hidden','true');
+  if(!lettersMeta) return document.createTextNode(text);
+  let word=document.createElement('b');
+  for(const c of text){
+    const code=c.codePointAt(0),known=code>=32&&code<=255&&!(code>=127&&code<160)&&letterAdvances[code-32]>0;
+    if(known){const glyph=document.createElement('i');glyph.className='c'+code.toString(16).padStart(2,'0');word.append(glyph)}
+    else{const fallback=document.createElement('span');fallback.className='f';fallback.textContent=c;word.append(fallback)}
+    if(c===' '){shown.append(word);word=document.createElement('b')}
+  }
+  if(word.childNodes.length)shown.append(word);
+  run.append(hidden,shown);return run;
+}
+function setLetters(element,text){element.replaceChildren(letters(text))}
+function drawLetters(text, left, top) {
+  if(!letterSheet.complete||!letterSheet.naturalWidth) return;
+  let at=left; for(const c of text) { const frame=letterFrame(c); context.drawImage(letterSheet, frame%16*32, Math.floor(frame/16)*32, 32, 32, at, top, 16, 16); at+=letterAdvances[frame]||0; }
+}
 const raw = color => [color & 31, (color >> 5) & 31, (color >> 10) & 31];
 function shown([r,g,b]) { if(!lut) return [r<<3,g<<3,b<<3]; const at=(r|g<<5|b<<10)*3; return [lut[at],lut[at+1],lut[at+2]]; }
 function filterImage(source) {
@@ -50,7 +80,7 @@ function draw() {
     context.save();context.translate(x,y);context.scale(zoom,zoom);
     for(const room of rooms) {
       const at=worldPoint(room.x,room.z,room.floor||0),label=room.label;
-      context.fillStyle='#103840dd';context.fillRect(at.x-bounds.left,at.y-bounds.top-18,Math.max(52,label.length*7),18);context.fillStyle='white';context.font='13px sans-serif';context.fillText(label,at.x-bounds.left+3,at.y-bounds.top-5);
+      const left=Math.round(at.x-bounds.left),top=Math.round(at.y-bounds.top)-16;context.fillStyle='#103840dd';context.fillRect(left,top,lettersWidth(label)+4,16);drawLetters(label,left+2,top);
     }
     context.restore();
   }
@@ -72,11 +102,11 @@ function sceneControls(show){for(const control of document.querySelectorAll('.sc
 const progress=document.querySelector('#map-progress');
 // The bar sweeps while the server assembles, then fills as the payload arrives.
 async function download(url,signal,label){
-  progress.hidden=false;progress.classList.add('busy');progress.firstElementChild.style.width='';status.textContent=`${label}…`;
+  progress.hidden=false;progress.classList.add('busy');progress.firstElementChild.style.width='';setLetters(status,`${label}…`);
   const response=await fetch(url,{signal,cache:'no-store'});if(!response.ok)throw Error(await response.text());
   const total=Number(response.headers.get('Content-Length'))||0;if(!total||!response.body)return response.arrayBuffer();
   progress.classList.remove('busy');const bytes=new Uint8Array(total),reader=response.body.getReader();let at=0;
-  for(;;){const {done,value}=await reader.read();if(done)break;if(at+value.length>total)throw Error('Payload exceeds its length');bytes.set(value,at);at+=value.length;const percent=Math.round(at*100/total);progress.firstElementChild.style.width=`${percent}%`;progress.setAttribute('aria-valuenow',String(percent));status.textContent=`${label}… ${percent}%`}
+  for(;;){const {done,value}=await reader.read();if(done)break;if(at+value.length>total)throw Error('Payload exceeds its length');bytes.set(value,at);at+=value.length;const percent=Math.round(at*100/total);progress.firstElementChild.style.width=`${percent}%`;progress.setAttribute('aria-valuenow',String(percent));setLetters(status,`${label}… ${percent}%`)}
   return bytes.buffer;
 }
 
@@ -85,27 +115,27 @@ async function loadScene(signal) {
   if(map.format!==1||!count||count>16777216||4+size+count*map.layers.length!==bytes.byteLength)throw Error('Invalid live layer payload');
   pixels=map.layers.map((_,i)=>new Uint8Array(bytes,4+size+i*count,count));const order=map.layers.map((_,i)=>i).sort((a,b)=>map.layers[b].priority-map.layers[a].priority||map.layers[b].bg-map.layers[a].bg),backdrop=order.find(i=>map.layers[i].opaque);
   visible=map.layers.map((l,i)=>!l.opaque||i===backdrop||Boolean(map.blend&&((map.blend.control>>l.bg)&1)));palette.replaceChildren(new Option('Loaded palettes','-1'),...map.palettes.map((_,i)=>new Option(`Bank ${i}`,String(i))));document.querySelector('#layers').replaceChildren();
-  for(const [i,layer] of map.layers.entries()){const label=document.createElement('label'),checkbox=document.createElement('input');checkbox.type='checkbox';checkbox.checked=visible[i];checkbox.addEventListener('change',()=>{visible[i]=checkbox.checked;composite()});label.append(checkbox,`BG${layer.bg} (priority ${layer.priority})`);document.querySelector('#layers').append(label)}
-  bounds={left:0,top:0,width:map.width,height:map.height};status.textContent=`Scene ${map.scene} · map ${map.container} · ${map.width} × ${map.height} · ${map.unresolved} unresolved tile references.`;composite();
+  for(const [i,layer] of map.layers.entries()){const label=document.createElement('label'),checkbox=document.createElement('input');checkbox.type='checkbox';checkbox.checked=visible[i];checkbox.addEventListener('change',()=>{visible[i]=checkbox.checked;composite()});label.append(checkbox,letters(`BG${layer.bg} (priority ${layer.priority})`));document.querySelector('#layers').append(label)}
+  bounds={left:0,top:0,width:map.width,height:map.height};setLetters(status,`Scene ${map.scene} · map ${map.container} · ${map.width} × ${map.height} · ${map.unresolved} unresolved tile references.`);composite();
 }
 async function loadFamily(signal) {
   const bytes=await download(`/maps/${game}/${scene.value}/family`,signal,'Assembling rooms'),size=new DataView(bytes).getUint32(0,true);family=JSON.parse(new TextDecoder().decode(new Uint8Array(bytes,4,size)));if(family.format!==1)throw Error('Invalid assembled map payload');
   const base=4+size,overviewBytes=new Uint8Array(bytes,base,family.overview_bytes);overviewSource=await createImageBitmap(new Blob([overviewBytes],{type:'image/png'}));overview=filterImage(overviewSource);const roomBase=base+family.overview_bytes;
   for(const room of family.rooms){const imageBytes=new Uint8Array(bytes,roomBase+room.offset,room.bytes);room.source=await createImageBitmap(new Blob([imageBytes],{type:'image/png'}));room.image=filterImage(room.source);room.label=`${room.scenes.join(' ')} · L${room.floor??'?'}`}
-  bounds=mode.value==='network'?{left:0,top:0,width:overview.width,height:overview.height}:worldBounds(family.rooms);const report=family.report;status.textContent=`Scene ${family.scene} · ${family.rooms.length} cut rooms · ${report.links.length} door links · ${new Set(family.rooms.map(r=>r.floor)).size} floors.`;
+  bounds=mode.value==='network'?{left:0,top:0,width:overview.width,height:overview.height}:worldBounds(family.rooms);const report=family.report;setLetters(status,`Scene ${family.scene} · ${family.rooms.length} cut rooms · ${report.links.length} door links · ${new Set(family.rooms.map(r=>r.floor)).size} floors.`);
 }
-async function load(){request?.abort();request=new AbortController();const current=request;map=undefined;family=undefined;overview=undefined;overviewSource=undefined;draw();sceneControls(mode.value==='scene');try{if(mode.value==='scene')await loadScene(current.signal);else await loadFamily(current.signal);if(current!==request)return;history.replaceState(null,'',`/maps/${game}/${scene.value}`);document.querySelector('.refresh').href=`/maps/${game}/${scene.value}`;fit()}catch(error){if(error.name!=='AbortError')status.textContent=`Cannot render map: ${error.message}`}finally{if(current===request)progress.hidden=true}}
+async function load(){request?.abort();request=new AbortController();const current=request;map=undefined;family=undefined;overview=undefined;overviewSource=undefined;draw();sceneControls(mode.value==='scene');try{if(mode.value==='scene')await loadScene(current.signal);else await loadFamily(current.signal);if(current!==request)return;history.replaceState(null,'',`/maps/${game}/${scene.value}`);document.querySelector('.refresh').href=`/maps/${game}/${scene.value}`;fit()}catch(error){if(error.name!=='AbortError')setLetters(status,`Cannot render map: ${error.message}`)}finally{if(current===request)progress.hidden=true}}
 
 async function selectFilter() {
   const id=filter.value;try{localStorage.setItem('alchemy-map-filter',id)}catch{}
   if(id&&!tables.has(id)){const response=await fetch(`/maps/filter/${id}`,{cache:'no-store'});if(!response.ok)throw Error(await response.text());tables.set(id,new Uint8Array(await response.arrayBuffer()))}
   lut=id?tables.get(id):undefined;if(overviewSource)overview=filterImage(overviewSource);for(const room of family?.rooms??[])if(room.source)room.image=filterImage(room.source);composite();draw();
 }
-filter.addEventListener('change',()=>selectFilter().catch(error=>{status.textContent=`Cannot apply filter: ${error.message}`}));
+filter.addEventListener('change',()=>selectFilter().catch(error=>{setLetters(status,`Cannot apply filter: ${error.message}`)}));
 scene.addEventListener('change',load);mode.addEventListener('change',load);palette.addEventListener('change',composite);document.querySelector('#grid').addEventListener('change',draw);document.querySelector('#fit').addEventListener('click',fit);document.querySelector('#actual').addEventListener('click',()=>scale(1));document.querySelector('#smaller').addEventListener('click',()=>scale(zoom/1.5));document.querySelector('#larger').addEventListener('click',()=>scale(zoom*1.5));
-canvas.addEventListener('wheel',event=>{event.preventDefault();scale(zoom*Math.exp(-event.deltaY*.002),event.offsetX,event.offsetY)},{passive:false});canvas.addEventListener('pointerdown',event=>{drag={id:event.pointerId,x:event.clientX,y:event.clientY};canvas.setPointerCapture(event.pointerId)});canvas.addEventListener('pointerup',()=>{drag=undefined});canvas.addEventListener('pointercancel',()=>{drag=undefined});canvas.addEventListener('pointermove',event=>{if(drag){x+=event.clientX-drag.x;y+=event.clientY-drag.y;drag.x=event.clientX;drag.y=event.clientY;draw()}if(mode.value!=='scene'||!map)return;const px=Math.floor((event.offsetX-x)/zoom),py=Math.floor((event.offsetY-y)/zoom);if(px<0||py<0||px>=map.width||py>=map.height)return;inspector.textContent=`Pixel ${px}, ${py} · cell ${Math.floor(px/16)}, ${Math.floor(py/16)} · `+map.layers.map((l,i)=>{const v=pixels[i][py*map.width+px];return `BG${l.bg}: palette ${v>>4}, index ${v&15}`}).join(' · ')});
+canvas.addEventListener('wheel',event=>{event.preventDefault();scale(zoom*Math.exp(-event.deltaY*.002),event.offsetX,event.offsetY)},{passive:false});canvas.addEventListener('pointerdown',event=>{drag={id:event.pointerId,x:event.clientX,y:event.clientY};canvas.setPointerCapture(event.pointerId)});canvas.addEventListener('pointerup',()=>{drag=undefined});canvas.addEventListener('pointercancel',()=>{drag=undefined});canvas.addEventListener('pointermove',event=>{if(drag){x+=event.clientX-drag.x;y+=event.clientY-drag.y;drag.x=event.clientX;drag.y=event.clientY;draw()}if(mode.value!=='scene'||!map)return;const px=Math.floor((event.offsetX-x)/zoom),py=Math.floor((event.offsetY-y)/zoom);if(px<0||py<0||px>=map.width||py>=map.height)return;setLetters(inspector,`Pixel ${px}, ${py} · cell ${Math.floor(px/16)}, ${Math.floor(py/16)} · `+map.layers.map((l,i)=>{const v=pixels[i][py*map.width+px];return `BG${l.bg}: palette ${v>>4}, index ${v&15}`}).join(' · '))});
 canvas.addEventListener('keydown',event=>{if(!['+','=','-','0','ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(event.key))return;event.preventDefault();if(event.key==='0')fit();else if(event.key==='+'||event.key==='=')scale(zoom*1.5);else if(event.key==='-')scale(zoom/1.5);else{x+=event.key==='ArrowLeft'?32:event.key==='ArrowRight'?-32:0;y+=event.key==='ArrowUp'?32:event.key==='ArrowDown'?-32:0;draw()}});
 new ResizeObserver(()=>{const box=canvas.parentElement.getBoundingClientRect();canvas.width=Math.floor(box.width);canvas.height=Math.floor(box.height);draw()}).observe(canvas.parentElement);
 try{const saved=localStorage.getItem('alchemy-map-filter');if(saved&&[...filter.options].some(o=>o.value===saved))filter.value=saved}catch{}
-await selectFilter().catch(error=>{filter.value='';lut=undefined;status.textContent=`Cannot apply filter: ${error.message}`});await load();
+await selectFilter().catch(error=>{filter.value='';lut=undefined;setLetters(status,`Cannot apply filter: ${error.message}`)});await load();
 "####;

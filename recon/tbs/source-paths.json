@@ -20603,6 +20603,9 @@
     },
     "main:080a4f08": {
       "name": "ItemMenu_SelectGiveQuantity"
+    },
+    "main:080c1470": {
+      "name": "BattleFx_InitializeStarField"
     }
   },
   "symbols": {

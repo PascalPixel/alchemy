@@ -27,6 +27,15 @@
 #include "SPAWN_CONFIGURED_EFFECT.H"
 #include "SELECT_OVERLAY_DATA_BY_RUNTIME_SELECTOR.H"
 
+enum BranchingEventMessage {
+    MSG_ROBIN_FLIPPED_SWITCH = 0x1528,
+    MSG_SEEMS_LOCKED = 0x2693,
+    MSG_YOURE_SURE_THEY_WENT_THROUGH = 0x2702,
+    MSG_THE_DOOR = 0x272f,
+    MSG_TRUTH_DOOR_OPEN_THOSE_SEEING = 0x2756
+};
+
+
 struct LevelCheckRecord {
     u8 unknown_00[12];
     s32 y;                          /* +0x0c */
@@ -567,7 +576,7 @@ void FieldScene_RunStepWithValue2693(void)
 {
     Event_Begin();
     Actor_SetAnimation(0, 1);
-    Message_ShowCentered(0x2693, 1);
+    Message_ShowCentered(MSG_SEEMS_LOCKED, 1);
     Event_End();
 }
 
@@ -579,7 +588,7 @@ void FieldScene_RunBranchingActorSequence(void)
     GameFlag_Set(0x98a);
     Event_Begin();
     Func_020041b4();
-    Event_SetMessage(0x2702);
+    Event_SetMessage(MSG_YOURE_SURE_THEY_WENT_THROUGH);
     Actor_SetSpeed(0, 0x10000, 0x8000);
     Actor_WalkToAndWait(0, 0x128, 0x160);
     Actor_FaceDirection(0, 0xc000, 0);
@@ -853,7 +862,7 @@ void FieldScene_RunActorEventSequence(void)
     GameFlag_Set(0x989);
     Event_Begin();
     Func_02004a86();
-    Event_SetMessage(0x272f);
+    Event_SetMessage(MSG_THE_DOOR);
     Actor_SetSpeed(0, 0x10000, 0x8000);
     Actor_WalkToAndWait(0, 0x128, 0x138);
     Actor_FaceDirection(0, 0, 0);
@@ -1208,7 +1217,7 @@ void FieldScene_RunFlag985DialogueBranch(void)
         if (GameFlag_IsSet(0x985) == 0) {
             s32 k5 = 17, k6 = 78;
 
-            Message_ShowCentered(0x1528, 1);
+            Message_ShowCentered(MSG_ROBIN_FLIPPED_SWITCH, 1);
             Audio_PlayCue(155);
             Func_020053ea(35, 78, 1, 2, k5, k6);
             Event_Wait(10);
@@ -1217,7 +1226,7 @@ void FieldScene_RunFlag985DialogueBranch(void)
             FieldScene_RunScene3c5_020024d0();
         }
     } else {
-        Event_SetMessage(0x2756);
+        Event_SetMessage(MSG_TRUTH_DOOR_OPEN_THOSE_SEEING);
         Event_ShowMessage(-1, 0);
     }
     Event_End();

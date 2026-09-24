@@ -1,6 +1,27 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
+enum CoordinatorMessage {
+    MSG_ROBIN_GOT = 0x96a,
+    MSG_WOULD_LIKE_FRIEND_CHEER_FOR = 0x207d,
+    MSG_IF_KNOW_WHO_WANT_CHEER = 0x207e,
+    MSG_ROBIN_WILL_CHEER_FOR_WAY = 0x207f,
+    MSG_DO_YOUR_BEST = 0x2083,
+    MSG_UNFORTUNATELY_WE_HAVE_FULL_HOUSE = 0x2084,
+    MSG_MATCH_ABOUT_BEGIN_PLEASE_TAKE = 0x2085,
+    MSG_OPERATOR_BRIDGE_WILL_ALSO_CHEER = 0x2094,
+    MSG_THEY_CALL_BROKEN_BRIDGE = 0x2095,
+    MSG_LOGS_KEY_CLEARING_STAGE = 0x2098,
+    MSG_PLACE_NORMALLY_CALLED_LUMBER_WATER = 0x2099,
+    MSG_SITE_FIRST_FINALS_BATTLE = 0x20cb,
+    MSG_ASK_ATTENDANTS_FOR_EXPLANATIONS_STAGES = 0x20d4,
+    MSG_WARRIORS_ENTER_FINALS_WITHOUT_ANY = 0x20d5,
+    MSG_ROBIN_YOURE_CONTESTANT_IN_FINALS = 0x20e1,
+    MSG_ROBIN_DID_GET_GOOD_LOOK = 0x20e5,
+    MSG_WAIT_SHOULDNT_DECIDE_WHERE_BEST = 0x20e8
+};
+
+
 #define FieldScene_RunSceneFourCoordinator Func_020016ec
 #define SceneTransition_Phase Data_02000240[225]
 #define GetPartyInteractionRecord Func_0200593a
@@ -1070,7 +1091,7 @@ void FieldScene_RunCommandSequence(s32 a0)
     Camera_FollowActor(0, 0);
     Event_OpenScreen();
     Event_WaitForScreen();
-    Event_SetMessage(0x20cb);
+    Event_SetMessage(MSG_SITE_FIRST_FINALS_BATTLE);
     Event_ShowMessage(a0, 0);
     Actor_ShowEmote(3, 0x101, 60);
     Event_ShowMessage(3, 0);
@@ -1089,7 +1110,7 @@ void FieldScene_RunCommandSequence(s32 a0)
     Actor_ShowEmote(a0, 0x102, 60);
     if (Event_AskYesNo(a0, 0) == 0) {
         do {
-            Event_SetMessage(0x20d5);
+            Event_SetMessage(MSG_WARRIORS_ENTER_FINALS_WITHOUT_ANY);
             Actor_SetAnimation(2, 3);
             Event_Wait(2);
             Actor_SetAnimation(1, 3);
@@ -1126,10 +1147,10 @@ void FieldScene_RunCommandSequence(s32 a0)
             Actor_RunRepeatedMotion(a0, 2);
         } while (Event_AskYesNo(a0, 0) != 0);
         Actor_RunRepeatedMotion(a0, 2);
-        Event_SetMessage(0x20d4);
+        Event_SetMessage(MSG_ASK_ATTENDANTS_FOR_EXPLANATIONS_STAGES);
         Event_ShowMessage(a0, 0);
     }
-    Event_SetMessage(0x20e1);
+    Event_SetMessage(MSG_ROBIN_YOURE_CONTESTANT_IN_FINALS);
     Actor_RunRepeatedMotion(a0, 2);
     Event_ShowMessage(a0, 0);
     Actor_FaceDirection(0, 0x4000, 0);
@@ -1189,7 +1210,7 @@ void FieldScene_RunScene3ba_020015e0(s32 a0)
         Event_Begin();
         rec8 = Value2(SceneDialogue_RunFlagGatedPromptInteraction, a0, 3);
         if (rec8 == 0) {
-            Event_SetMessage(0x2095);
+            Event_SetMessage(MSG_THEY_CALL_BROKEN_BRIDGE);
             SceneState_ResetCounterAndStartTask();
             Camera_SetSpeed(0x30000, 0x6000);
             Camera_MoveTo(0x3480000, -1, 0xd80000, 1);
@@ -1211,7 +1232,7 @@ void FieldScene_RunScene3ba_020015e0(s32 a0)
             SceneState_SendIdBySceneId(a0, 3);
         } else {
             if (rec8 == 1) {
-                Event_SetMessage(0x2094);
+                Event_SetMessage(MSG_OPERATOR_BRIDGE_WILL_ALSO_CHEER);
                 Event_ShowMessage(a0, 0);
             }
         }
@@ -1233,7 +1254,7 @@ void Func_020016ec(s32 scene)
     Event_Begin();
     path = Func_02003474(scene, 4);
     if (path == 0) {
-        Event_SetMessage(8345);
+        Event_SetMessage(MSG_PLACE_NORMALLY_CALLED_LUMBER_WATER);
         Camera_SetSpeed(196608, 24576);
         Camera_MoveTo(71303168, -1, 11010048, 1);
         Camera_WaitForMove();
@@ -1267,7 +1288,7 @@ void Func_020016ec(s32 scene)
         Actor_SetPosition(18, 66584576, 11010048);
         SceneState_SendIdBySceneId(scene, 4);
     } else if (path == 1) {
-        Event_SetMessage(8344);
+        Event_SetMessage(MSG_LOGS_KEY_CLEARING_STAGE);
         Event_ShowMessage(scene, 0);
     }
     Value3_020016ec(FieldScene_RunMiddleSequence, path, scene, 4);
@@ -1363,7 +1384,7 @@ void FieldScene_RunNearestActor165Scene(void)
             }
         }
     }
-    Event_SetMessage(0x2085);
+    Event_SetMessage(MSG_MATCH_ABOUT_BEGIN_PLEASE_TAKE);
     Event_ShowMessage(best, 0);
     q = (s32 *)(state + 448);
     *q = 512;
@@ -1403,7 +1424,7 @@ void RunPartyCountInteraction(s32 actorId)
     Event_Begin();
 
     if (GetPartyMemberCount() <= 1) {
-        Event_SetMessage(0x20e5);
+        Event_SetMessage(MSG_ROBIN_DID_GET_GOOD_LOOK);
         if (Event_AskYesNo(actorId, 0) == 0) {
             InitializeActorZero();
             InitializeSelectedActor(actorId);
@@ -1416,7 +1437,7 @@ void RunPartyCountInteraction(s32 actorId)
             Event_RequestExit(11);
         }
     } else {
-        Event_SetMessage(0x20e8);
+        Event_SetMessage(MSG_WAIT_SHOULDNT_DECIDE_WHERE_BEST);
         Event_ShowMessage(actorId, 0);
     }
 
@@ -1522,12 +1543,12 @@ void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base)
             buf[i] = Data_02000240[504 + i];
         }
         if (count <= 1) {
-            Event_SetMessage(0x2083);
+            Event_SetMessage(MSG_DO_YOUR_BEST);
             Event_ShowMessage(owner, 0);
             return;
         }
         if (GameFlag_IsSet(base + 512) != 0) {
-            Event_SetMessage(0x2084);
+            Event_SetMessage(MSG_UNFORTUNATELY_WE_HAVE_FULL_HOUSE);
             Event_ShowMessage(owner, 0);
             return;
         }
@@ -1535,7 +1556,7 @@ void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base)
             state = 0;
             Task_Wait(6);
         } else {
-            Event_SetMessage(0x207d);
+            Event_SetMessage(MSG_WOULD_LIKE_FRIEND_CHEER_FOR);
             Event_OpenMessage(owner, 0);
             state = Event_ChooseYesNo(0, 0);
         }
@@ -1562,12 +1583,12 @@ void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base)
             }
         }
     }
-    Event_SetMessage(0x207e);
+    Event_SetMessage(MSG_IF_KNOW_WHO_WANT_CHEER);
     Event_ShowMessage(owner, 0);
     return;
 L_main:
     ((void (*)())Func_02005bc4_a)(obj, 1);
-    Event_SetMessage(0x207f);
+    Event_SetMessage(MSG_ROBIN_WILL_CHEER_FOR_WAY);
     Event_ShowMessage(owner, 0);
     Actor_SetSpeed(0, 0x10000, 0x8000);
     Actor_SetSpeed(obj, 0x10000, 0x8000);
@@ -1987,7 +2008,7 @@ s32 FieldScene_RunFlag211ApproachScene(s32 handle_a, s32 handle_b)
 
     shared = Data_02000240;
     Func_02006da4(*(s32 *)(shared + 500), 1);
-    Message_ShowCentered(0x96a, 3);
+    Message_ShowCentered(MSG_ROBIN_GOT, 3);
     Func_02006d62(rec);
 
     return flag;

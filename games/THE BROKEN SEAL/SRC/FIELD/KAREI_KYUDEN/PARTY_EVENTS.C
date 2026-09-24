@@ -1,6 +1,15 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
+enum PartyEventsMessage {
+    MSG_WHEN_HEARD_WERE_BACK_IVAN = 0x1b21,
+    MSG_LORD_HAMMET_WILL_RELEASED_SOON = 0x1b83,
+    MSG_HAS_LEGACY_LORD_HAMMETS_SILK = 0x1b88,
+    MSG_ROBIN_SNEAKED_INTO_LUNPA_THATS = 0x1b91,
+    MSG_ITS_IVAN_HIS_COMPANIONS_PERFECT = 0x2588
+};
+
+
 extern s16 Data_02000240[];
 extern u8 Value_00000067;
 extern u8 Data_02009c04[];
@@ -180,7 +189,7 @@ s32 SceneData_SelectTable9f2cByState(void)
 void SceneDialogue_RunActor13Message1b83(void)
 {
     Event_Begin();
-    Event_SetMessage(0x1B83);
+    Event_SetMessage(MSG_LORD_HAMMET_WILL_RELEASED_SOON);
     Event_AskYesNo(13, 0);
     Event_End();
 }
@@ -188,7 +197,7 @@ void SceneDialogue_RunActor13Message1b83(void)
 void SceneDialogue_RunActor16Message1b88(void)
 {
     Event_Begin();
-    Event_SetMessage(0x1B88);
+    Event_SetMessage(MSG_HAS_LEGACY_LORD_HAMMETS_SILK);
     Event_AskYesNo(16, 0);
     Event_End();
 }
@@ -199,7 +208,7 @@ void FieldScene_RunActorEightTurnDialogue(void)
 
     Event_Begin();
     Actor_ShowEmote(8, 0x100, 0x3C);
-    Event_SetMessage(0x1B91);
+    Event_SetMessage(MSG_ROBIN_SNEAKED_INTO_LUNPA_THATS);
     Event_ShowMessageAndWait(8, 0, 0xA);
     Actor_RunRepeatedMotion(8, 2);
     Event_ShowMessageAndWait(8, 0, 0xA);
@@ -396,7 +405,7 @@ void RunEventScript01(void)
     ColorBuffer_Interpolate(40);
     Task_Wait(60);
     Actor_ShowEmote(8, 0x105, 60);
-    Event_SetMessage(0x1b21);
+    Event_SetMessage(MSG_WHEN_HEARD_WERE_BACK_IVAN);
     Event_ShowMessageAndWait(8, 0, 10);
     Actor_RunRepeatedMotion(10, 2);
     Event_ShowMessageAndWait(10, 0, 10);
@@ -855,7 +864,7 @@ void Scene_RunPartySequence(void)
     Func_02002a2e(10);
     Actor_ShowEmote(9, v5, 20);
     Actor_FaceDirection(9, 0x5000, 20);
-    Event_SetMessage(0x2588);
+    Event_SetMessage(MSG_ITS_IVAN_HIS_COMPANIONS_PERFECT);
     Event_ShowMessageAndWait(0x2009, 0, 10);
     Actor_ShowEmote(8, v5, 20);
     Actor_FaceDirection(8, 0x3000, 20);

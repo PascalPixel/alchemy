@@ -289,6 +289,18 @@ s32 FieldScene_RunScene391_02000c68(void)
 
 #include "TYPES.H"
 
+enum BranchingFormationMessage {
+    MSG_MATTER_IVAN = 0x1474,
+    MSG_SPARKLY_STUFF_ON_GROUND = 0x147c,
+    MSG_KNOW_THOSE_FIELDS_WERE = 0x1488,
+    MSG_WAS_OUR_PSYNERGY = 0x1489,
+    MSG_WATCH_OUT_ITS_HAPPENING_AGAIN = 0x149d,
+    MSG_HES_AS_STUMPED_AS_WE = 0x14b4,
+    MSG_YOURE_ROBIN_THERE_ISNT_MUCH = 0x14b6,
+    MSG_THATS_RELIEF_ROBIN_THOUGHT_YOUD = 0x14bf
+};
+
+
 u8 * Func_02002c24();
 void Func_02002c3c();
 void Func_02002780();
@@ -451,9 +463,9 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Actor_FaceDirection(1, 0x4000, 0);
     Func_02002780(0, 0x6000, 10);
     Actor_RunRepeatedMotion(1, 2);
-    Event_SetMessage(0x1474);
+    Event_SetMessage(MSG_MATTER_IVAN);
     Event_SayThenWait(1, 10);
-    Event_SetMessage(0x147c);
+    Event_SetMessage(MSG_SPARKLY_STUFF_ON_GROUND);
     Func_02002780(2, 0xc000, 20);
     Actor_SetAnimationAndWait(2, 3);
     Event_SayThenWait(2, 20);
@@ -661,14 +673,14 @@ void FieldScene_RunBranchingFormationPresentation(void)
     if (*formation_flag != 0) {
         Actor_RunRepeatedMotion(3, 2);
         Event_Wait(10);
-        Event_SetMessage(0x1488);
+        Event_SetMessage(MSG_KNOW_THOSE_FIELDS_WERE);
         Event_SayThenWait(3, 40);
     }
     Actor_StartRepeatedMotion(1, 1);
     Actor_ShowEmote(1, 0x101, 0);
     Event_Wait(80);
     Actor_RunRepeatedMotion(2, 2);
-    Event_SetMessage(0x1489);
+    Event_SetMessage(MSG_WAS_OUR_PSYNERGY);
     Event_SayThenWait(2, 40);
     Actor_RunRepeatedMotion(1, 3);
     Event_Wait(40);
@@ -858,7 +870,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Actor_RunRepeatedMotion(2, 2);
     Event_Wait(60);
     Func_02002780(2, 0xc000, 10);
-    Event_SetMessage(0x149d);
+    Event_SetMessage(MSG_WATCH_OUT_ITS_HAPPENING_AGAIN);
     Event_SayThenWait(2, 10);
     Func_02002780(1, 0xc000, 10);
     Func_02002780(0, 0xc000, 10);
@@ -1050,7 +1062,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
             Actor_ShowEmote(3, 0x102, 0);
             Event_Wait(40);
             Func_02002780(1, 0x4000, 20);
-            Event_SetMessage(0x14b4);
+            Event_SetMessage(MSG_HES_AS_STUMPED_AS_WE);
             Event_SayThenWait(1, 20);
             Actor_SetAnimationAndWait(2, 3);
             Event_SayThenWait(2, 20);
@@ -1062,7 +1074,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Event_Wait(20);
     Actor_SetAnimationAndWait(1, 3);
     Event_Wait(10);
-    Event_SetMessage(0x14b6);
+    Event_SetMessage(MSG_YOURE_ROBIN_THERE_ISNT_MUCH);
     Event_SayThenWait(1, 10);
     Actor_FaceDirection(1, 0x4000, 0);
     Func_02002780(0, 0x6000, 20);
@@ -1122,7 +1134,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Actor_ShowEmote(2, 0x105, 0);
     Event_Wait(40);
     Actor_SetAnimationAndWait(2, 3);
-    Event_SetMessage(0x14bf);
+    Event_SetMessage(MSG_THATS_RELIEF_ROBIN_THOUGHT_YOUD);
     Event_SayThenWait(2, 20);
     if (*finish_flag != 0) {
         Func_02002780(3, 0, 10);

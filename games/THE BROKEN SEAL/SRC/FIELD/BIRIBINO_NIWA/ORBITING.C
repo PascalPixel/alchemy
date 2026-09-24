@@ -89,7 +89,6 @@ extern u8 Value_000013c0;
 extern u8 Value_0200890d;
 
 s32 Func_02000aae(s32, s32);
-void Func_02000d58();
 struct SceneEntity *Func_02000fc4();
 void Func_02000a00(void);
 OrbitingSceneObject *Func_02001474(void);
@@ -229,7 +228,7 @@ void FieldScene_RunScene38e_0200045c(void)
 {
     Event_Begin();
     if (GameFlag_IsSet(0x200) == 0) {
-        Func_02000d58();
+        FieldScene_SetupWithDescriptor8BD4();
     }
     Actor_SetSpeed(0, 0x8000, 0x4000);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);

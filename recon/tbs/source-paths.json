@@ -5330,6 +5330,10 @@
       "name": "UiText_DrawNumberRightAlignedFar",
       "source": "GRAPHICS/TEXT/DRAW_NUMBER_RIGHT_ALIGNED_FAR.C"
     },
+    "main:080a112c": {
+      "name": "Menu_DrawOwnerStatusPanel",
+      "source": "MENU/DRAW_OWNER_STATUS_PANEL.C"
+    },
     "main:080a153c": {
       "name": "Ui_DrawValuePairRows",
       "source": "GRAPHICS/RENDER/DRAW_VALUE_PAIR_ROWS.C"
@@ -20151,7 +20155,6 @@
     "main:08028574": "Menu_RunResourceSelectionLoop",
     "main:08028808": "Menu_CenterResourceEntries",
     "main:08015070": "UiWindow_DrawDividerLineFar",
-    "main:080a112c": "Menu_DrawOwnerStatusPanel",
     "main:080a4924": "ItemMenu_DrawItemDetails",
     "main:0800d14c": "Object_SetMoveTarget",
     "main:0801a4fc": "UiGlyph_LoadEntryWithPalette",

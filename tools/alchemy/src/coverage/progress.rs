@@ -1,5 +1,5 @@
 //! DONE accounting from verified build receipts and fixed executable inventories.
-use crate::coverage::jsnum::{commas, round_half_up};
+use crate::coverage::jsnum::{commas, floor_percent};
 use crate::coverage::model::{bytes, intersect, normalize, subtract, Span};
 use crate::coverage::pipeline::{validated_inventory, CoverageMap};
 use crate::coverage::tree::root;
@@ -21,7 +21,7 @@ fn report_json(report: &GameDone, target: &str) -> Value {
         "executable_bytes": executable,
         "remaining_bytes": executable - report.bytes(),
         "done_percent": report.percent(),
-        "exact_c_percent": round_half_up(exact, executable),
+        "exact_c_percent": floor_percent(exact, executable),
         "parts": report,
         "state": "verified",
         "audit": "complete"
@@ -61,7 +61,7 @@ impl GameDone {
         self.common_asm + self.common_c + self.game_asm + self.game_c
     }
     pub fn percent(&self) -> f64 {
-        round_half_up(self.bytes(), self.executable)
+        floor_percent(self.bytes(), self.executable)
     }
     pub fn whole(&self) -> i64 {
         crate::coverage::jsnum::done_percent_whole(self.bytes(), 0, self.executable)
@@ -220,7 +220,7 @@ fn display(report: &GameDone) -> String {
         commas(report.bytes()),
         commas(report.executable),
         report.percent(),
-        round_half_up(report.common_c + report.game_c, report.executable)
+        floor_percent(report.common_c + report.game_c, report.executable)
     )
 }
 

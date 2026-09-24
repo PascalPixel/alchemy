@@ -204,9 +204,7 @@ extern u8 Data_0200bef4[];
 
 struct SceneObject *Func_020042fa(void);
 void Func_02001d32(s32, s32, s32, s32, s32, s32, s32, struct EffectParams *);
-void Func_020013fa(void);
 void Func_020036da(void);
-void Func_020014d4(void);
 void Func_02003894(void);
 u8 *Func_0200457c(s32);
 u8 *Func_02004588(s32);
@@ -232,9 +230,7 @@ Slot_02001c2c *Func_02004dda();
 void Func_02004d4e();
 void Func_02002ecc();
 void Func_02004402(u8 *);
-void Func_02001456(void);
 void Func_020037a6(void);
-void Func_020023e2(void);
 void Func_020043c6(void);
 Slot_02002410 *Func_02005540();
 Slot_02002410 *Func_02005548();
@@ -262,8 +258,6 @@ u8 *Func_020045d0(s32);
 u8 *Func_020045dc(s32);
 u8 *Func_020045ec(s32);
 u8 *Func_02004836(s32);
-void Func_020017c0(void);
-void Func_020019c4(void);
 void Func_0200304c(void);
 u8 *Func_02004b48();
 Slot_02001a10 *Func_02004b60();
@@ -271,8 +265,6 @@ Slot_02001a10 *Func_02004b68();
 u8 *Func_02004b84_b();
 struct Record_02000ec8;
 s32 Func_02008ec8(struct Record_02000ec8 *record);
-void Func_02002028(void);
-void Func_02002090(void);
 Slot_020023a0 *Func_020054d0();
 Slot_020023a0 *Func_020054d8();
 Slot_020023a0 *Func_020054f4();
@@ -421,7 +413,7 @@ void Func_020009dc(u8 *object, s32 mode)
 u8 *OverlayObject_CreateAndInitialize(s32 x, s32 y, s32 z, s32 kind)
 {
     u8 *ret;
-    u8 *obj = Engine_ObjectCreate(kind, x, y, z);
+    u8 *obj = Object_Create(kind, x, y, z);
 
     if (obj != 0) {
         u8 *owner = *(u8 **)(obj + 80);
@@ -451,7 +443,7 @@ u8 *OverlayObject_CreateAndInitialize(s32 x, s32 y, s32 z, s32 kind)
 u8 *OverlayObject_PrepareSpawnedObjectMode4(s32 x, s32 y, s32 z, s32 kind)
 {
     u8 *ret;
-    u8 *obj = Engine_ObjectCreate(kind, x, y, z);
+    u8 *obj = Object_Create(kind, x, y, z);
 
     if (obj != 0) {
         u8 *rec = *(u8 **)(obj + 80);
@@ -499,7 +491,7 @@ s32 SceneState_ApplyArgMode0AndReturnZero(s32 no)
  */
 s32 SceneActor_MoveActorZeroToTarget(const Target_02000cd0 *target)
 {
-    Actor_02000cd0 *actor = Engine_ActorGet(0);
+    Actor_02000cd0 *actor = Actor_Get(0);
     u8 saved = actor->flags;
     s32 probe[3];
 
@@ -551,7 +543,7 @@ refuse:
 void SceneActor_PassRaisedPointOfActorZero(void)
 {
     s32 pos[3];
-    struct Actor_02000dc8 *p = Engine_ActorGet(0);
+    struct Actor_02000dc8 *p = Actor_Get(0);
 
     pos[0] = p->f08;
     pos[1] = p->f0c;
@@ -562,7 +554,7 @@ void SceneActor_PassRaisedPointOfActorZero(void)
 void SceneActor_PassActorZeroOffsetPoint(void)
 {
     s32 pos[3];
-    struct Actor_02000dc8 *actor = Engine_ActorGet(0);
+    struct Actor_02000dc8 *actor = Actor_Get(0);
 
     pos[0] = actor->f08;
     pos[1] = actor->f0c;
@@ -575,7 +567,7 @@ s32 SceneActor_SetFlagBitByRelativeDepth(struct Actor_02000ec8 *actor)
     struct Actor_02000ec8 *ref;
     u8 *fp;
     u8 flag;
-    ref = Engine_ActorGet(0);
+    ref = Actor_Get(0);
     fp = &actor->flatla3;
     flag = *fp | 2;
     *fp = flag;
@@ -595,8 +587,8 @@ s32 SceneActor_SetFlagBitByRelativeDepth(struct Actor_02000ec8 *actor)
 
 void SceneState_SwapSlotPairByRank(s32 first, s32 second)
 {
-    struct Slot02000f10 *a = Engine_ActorGet(first);
-    struct Slot02000f10 *b = Engine_ActorGet(second);
+    struct Slot02000f10 *a = Actor_Get(first);
+    struct Slot02000f10 *b = Actor_Get(second);
 
     if (a->rank <= b->rank) {
         s32 t;
@@ -610,7 +602,7 @@ void SceneState_SwapSlotPairByRank(s32 first, s32 second)
 
 s32 SceneActor_CopyActor8PositionWhenAtRow10(Record *record)
 {
-    Record *ref = Engine_ActorGet(0);
+    Record *ref = Actor_Get(0);
 
     if (ref->w12 > (s32)0xffd00000
         && (Func_0200410a(8)->w16 >> 20) == 10) {
@@ -759,7 +751,7 @@ void SceneState_RunRect73x38Step(void)
 
         Map_CopyCellAttributes(73, 38, 5, 5, width, height);
     }
-    Func_020013fa();
+    StagedActor_AdvancePair();
     Func_020036da();
     Event_End();
 }
@@ -767,7 +759,7 @@ void SceneState_RunRect73x38Step(void)
 void SceneActor_ApplyPointLeftOfActorZero(void)
 {
     s32 point[3];
-    struct Actor_02000dc8 *actor = Engine_ActorGet(0);
+    struct Actor_02000dc8 *actor = Actor_Get(0);
 
     point[0] = actor->f08 + 0xFFE00000;
     point[1] = actor->f0c;
@@ -792,7 +784,7 @@ void FieldScene_RunLayoutAt93By30(void)
 
         Map_CopyCellAttributes(93, 30, 6, 5, width, height);
     }
-    Func_02001456();
+    StagedActor_AdvancePair();
     Func_020037a6();
     Event_End();
 }
@@ -805,7 +797,7 @@ void FieldScene_RunStepWith6(void)
 void SceneActor_PassPointTwoRightOfActorZero(void)
 {
     s32 pos[3];
-    struct Actor_02000dc8 *actor = Engine_ActorGet(0);
+    struct Actor_02000dc8 *actor = Actor_Get(0);
 
     pos[0] = actor->f08 + 0x200000;
     pos[1] = actor->f0c;
@@ -820,14 +812,14 @@ void SceneState_ApplyTwoRectsAndRunThree(void)
     Event_Begin();
     Map_CopyCellAttributes(89, 49, 3, 2, lead, 49);
     Map_CopyCellAttributes(89, 51, 8, 5, lead, 51);
-    Func_020014d4();
+    StagedActor_AdvancePair();
     Func_02003894();
     Event_End();
 }
 
 void SceneActor_CheckTwoUnitsAboveActorZero(void)
 {
-    struct Actor02001424 *actor = Engine_ActorGet(0);
+    struct Actor02001424 *actor = Actor_Get(0);
     s32 target[3];
 
     target[0] = actor->x;
@@ -861,7 +853,7 @@ void SceneActor_MirrorFlag201IntoSlot14(void)
         Func_02004588(14)[89] &= (u8)0xf7;
     } else {
         Func_02004598(14)[98] = 1;
-        flags = Engine_ActorGet(14);
+        flags = Actor_Get(14);
         flags += 89;
         value = 8;
         value |= *flags;
@@ -880,7 +872,7 @@ void SceneActor_SetActor14Field98ByFlag200(void)
         Func_020045dc(14)[89] &= (u8)0xf7;
     } else {
         Func_020045ec(14)[98] = 1;
-        p = Engine_ActorGet(14);
+        p = Actor_Get(14);
         p += 89;
         val = 8;
         val |= *p;
@@ -895,7 +887,7 @@ void SceneState_ApplyFlag970(void)
 
 void SceneState_RunUnlessActorZeroAtTile32x50(void)
 {
-    struct Actor_02001510 *actor = Engine_ActorGet(0);
+    struct Actor_02001510 *actor = Actor_Get(0);
 
     if ((actor->f08 >> 20) != 32 || (actor->f10 >> 20) != 50) {
         SceneActor_ApplyPointLeftOfActorZero();
@@ -904,7 +896,7 @@ void SceneState_RunUnlessActorZeroAtTile32x50(void)
 
 void SceneState_RunUnlessActorZeroAt30_52(void)
 {
-    struct Actor_02000cc0 *actor = Engine_ActorGet(0);
+    struct Actor_02000cc0 *actor = Actor_Get(0);
 
     if ((actor->f08 >> 20) != 30 || (actor->f10 >> 20) != 52) {
         SceneActor_PassActorZeroOffsetPoint();
@@ -972,7 +964,7 @@ void FieldScene_RunFourCallSequenceB(void)
     typedef s32(*Handler_02001a10)(struct Record_02000ec8 *record);
 
     Event_Begin();
-    Func_020017c0();
+    StagedActor_AdvancePair();
     Event_End();
     FieldScene_RunSupplementalSequenceTwo();
 }
@@ -1055,7 +1047,7 @@ void FieldScene_RunFourStepSequenceA(void)
     typedef s32(*Handler_02001a10)(struct Record_02000ec8 *record);
 
     Event_Begin();
-    Func_020019c4();
+    StagedActor_AdvancePair();
     Event_End();
     Func_0200304c();
 }
@@ -1121,7 +1113,7 @@ void SceneActor_InstallSlotNineHandler(void)
 
     Actor_EnableActionCallback(8, 0x0200B3B8);
     GameFlag_Set(0x203);
-    owner = Engine_ActorGet(9);
+    owner = Actor_Get(9);
     *(s32 *)(owner + 108) = 0x02008FE9;
 }
 
@@ -1158,10 +1150,10 @@ void SceneActor_SetupSlotNineAndInstallHandler(void)
     row = Func_02004b68(9)->row >> 20;
     Map_CopyCellAttributes(26, 8, 1, 1, col >> 20, row);
 
-    desc = Engine_ActorGet(9);
+    desc = Actor_Get(9);
     *(Handler_02001a10 *)(desc + 108) = Func_02008ec8;
 
-    desc = Engine_ActorGet(8);
+    desc = Actor_Get(8);
     *(Handler_02001a10 *)(desc + 108) = Func_02008ec8;
 
     Func_02004b84_b(desc);
@@ -1170,7 +1162,7 @@ void SceneActor_SetupSlotNineAndInstallHandler(void)
 s32 OverlayObject_SetYAboveLinkedActor(u8 *owner)
 {
     s16 *id = (s16 *)(owner + 100);
-    struct Actor *actor = Engine_ActorGet(*id);
+    struct Actor *actor = Actor_Get(*id);
 
     *(s32 *)(owner + 12) = actor->f0c + 0x100000;
     return 0;
@@ -1204,7 +1196,7 @@ void SceneActor_LandOnHighestPlatform(s32 subject)
         if (best > Func_02004d86(slot)->y + 0x100000) continue;
 
         best = Func_02004d98(slot)->y + 0x100000;
-        *(u16 *)((u8 *)Engine_ActorGet(subject) + 100) = (u16)slot;
+        *(u16 *)((u8 *)Actor_Get(subject) + 100) = (u16)slot;
     }
 
     Actor_SetSpeed(subject, 0x40000, 0x20000);   /* 128 << 11, 128 << 10 */
@@ -1214,8 +1206,8 @@ void SceneActor_LandOnHighestPlatform(s32 subject)
      * fix the sequence, which argument evaluation order would not.
      */
     {
-        Slot_02001c2c *target = Engine_ActorGet(subject);
-        Slot_02001c2c *from = Engine_ActorGet(subject);
+        Slot_02001c2c *target = Actor_Get(subject);
+        Slot_02001c2c *from = Actor_Get(subject);
         s32 z = Func_02004dda(subject)->z;
 
         Func_02004d4e(target, from->x, best, z);
@@ -1238,7 +1230,7 @@ void FieldScene_RunMiddleSequence(void)
     for (i = 0; i <= 2; i++) {
         if (((struct FieldActor *)Value1_02001d04(Engine_ActorGet, i + 12))->sprite->priority == 3
             && GameFlag_IsSet(i + 0x200) == 0) {
-            Engine_ActorGet(i + 12);
+            Actor_Get(i + 12);
             Func_02002d82();
             Actor_SetPosition(i + 12, 0, 0);
             GameFlag_Set(i + 0x200);
@@ -1249,7 +1241,7 @@ void FieldScene_RunMiddleSequence(void)
             *(s32 *)(Value1_02001d04(Engine_ActorGet, i + 12) + 20) = 0;
             ((struct FieldActor *)Value1_02001d04(Engine_ActorGet, i + 12))->velocity_y = 0;
             *(s32 *)(Func_02004f26(i + 12) + 60) = -0x80000000;
-            ((struct FieldActor *)Engine_ActorGet(i + 12))->motion_flags = 0;
+            ((struct FieldActor *)Actor_Get(i + 12))->motion_flags = 0;
             *(u16 *)(Func_02004f3c(i + 12) + 100) = 0;
             found = i;
             for (j = 0; j < i; j++) {
@@ -1257,23 +1249,23 @@ void FieldScene_RunMiddleSequence(void)
                     saved.x.fixed = ((struct FieldActor *)Value1_02001d04(Engine_ActorGet, i + 12))->x.fixed;
                     saved.y.fixed = ((struct FieldActor *)Value1_02001d04(Engine_ActorGet, i + 12))->y.fixed;
                     saved.z.fixed = ((struct FieldActor *)Value1_02001d04(Engine_ActorGet, i + 12))->z.fixed;
-                    ((struct FieldActor *)Engine_ActorGet(i + 12))->x.fixed =
+                    ((struct FieldActor *)Actor_Get(i + 12))->x.fixed =
                         ((struct FieldActor *)Value1_02001d04(Engine_ActorGet, j + 12))->x.fixed;
                     ((struct FieldActor *)Value1_02001d04(Engine_ActorGet, i + 12))->y.fixed =
                         ((struct FieldActor *)Value1_02001d04(Engine_ActorGet, j + 12))->y.fixed;
                     ((struct FieldActor *)Value1_02001d04(Engine_ActorGet, i + 12))->z.fixed =
                         ((struct FieldActor *)Value1_02001d04(Engine_ActorGet, j + 12))->z.fixed;
-                    ((struct FieldActor *)Engine_ActorGet(j + 12))->x.fixed = saved.x.fixed;
-                    ((struct FieldActor *)Engine_ActorGet(j + 12))->y.fixed = saved.y.fixed;
-                    ((struct FieldActor *)Engine_ActorGet(j + 12))->z.fixed = saved.z.fixed;
+                    ((struct FieldActor *)Actor_Get(j + 12))->x.fixed = saved.x.fixed;
+                    ((struct FieldActor *)Actor_Get(j + 12))->y.fixed = saved.y.fixed;
+                    ((struct FieldActor *)Actor_Get(j + 12))->z.fixed = saved.z.fixed;
                     found = j;
                     break;
                 }
             }
             *(s32 *)(Func_02004f6a(found + 12) + 20) = 0;
-            ((struct FieldActor *)Engine_ActorGet(found + 12))->velocity_y = 0;
+            ((struct FieldActor *)Actor_Get(found + 12))->velocity_y = 0;
             *(s32 *)(Func_02004f7e(found + 12) + 60) = -0x80000000;
-            ((struct FieldActor *)Engine_ActorGet(found + 12))->motion_flags = 0;
+            ((struct FieldActor *)Actor_Get(found + 12))->motion_flags = 0;
             *(u16 *)(Func_02004f96(found + 12) + 100) = 0;
             Value2(Engine_CameraSetSpeed, 0x30000, 0x6000);
             ((struct FieldActor *)Func_0200502c())->motion_flags = 0;
@@ -1287,9 +1279,9 @@ void FieldScene_RunMiddleSequence(void)
                 (*(s16 *)(Func_02004ffe(10) + 100))--;
                 (*(s16 *)(Func_0200500c(11) + 100))++;
             }
-            ((struct FieldActor *)Engine_ActorGet(found + 12))->update = (void (*)(union FieldObject *))0x2009a99;
+            ((struct FieldActor *)Actor_Get(found + 12))->update = (void (*)(union FieldObject *))0x2009a99;
             Func_020039d4(40);
-            ((struct FieldActor *)Engine_ActorGet(found + 12))->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
+            ((struct FieldActor *)Actor_Get(found + 12))->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
             GameFlag_Set(0x200 + found);
             break;
         }
@@ -1302,7 +1294,7 @@ void FieldScene_RunThreeStepSequence(void)
     typedef s32(*Handler_02001a10)(struct Record_02000ec8 *record);
 
     Event_Begin();
-    Func_02002028();
+    StagedActor_AdvancePair();
     Event_End();
 }
 
@@ -1331,7 +1323,7 @@ void FieldScene_RunFourCallSequence(void)
     typedef s32(*Handler_02001a10)(struct Record_02000ec8 *record);
 
     Event_Begin();
-    Func_02002090();
+    StagedActor_AdvancePair();
     SceneState_SetSlot17And18Selectors();
     Event_End();
 }
@@ -1481,7 +1473,7 @@ void FieldScene_RunLayoutAt83By45(void)
 
         Map_CopyCellAttributes(83, 45, 11, 8, width, height);
     }
-    Func_020023e2();
+    StagedActor_AdvancePair();
     Func_020043c6();
     Event_End();
 }

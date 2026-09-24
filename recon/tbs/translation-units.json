@@ -50453,36 +50453,8 @@
           "address": "0x0200b0bc",
           "kind": "thumb"
         },
-        "Func_020013fa": {
-          "address": "0x020080c4",
-          "kind": "thumb"
-        },
-        "Func_02001456": {
-          "address": "0x020080c4",
-          "kind": "thumb"
-        },
-        "Func_020014d4": {
-          "address": "0x020080c4",
-          "kind": "thumb"
-        },
-        "Func_020017c0": {
-          "address": "0x020080c4",
-          "kind": "thumb"
-        },
-        "Func_020019c4": {
-          "address": "0x020080c4",
-          "kind": "thumb"
-        },
         "Func_02001d32": {
           "address": "0x02008ae8",
-          "kind": "thumb"
-        },
-        "Func_02002028": {
-          "address": "0x020080c4",
-          "kind": "thumb"
-        },
-        "Func_02002090": {
-          "address": "0x020080c4",
           "kind": "thumb"
         },
         "Func_020020de": {
@@ -50491,10 +50463,6 @@
         },
         "Func_020022dc": {
           "address": "0x02008ae8",
-          "kind": "thumb"
-        },
-        "Func_020023e2": {
-          "address": "0x020080c4",
           "kind": "thumb"
         },
         "Func_02002d82": {
@@ -50748,6 +50716,10 @@
         "gGameState": {
           "address": "0x02000240",
           "kind": "data"
+        },
+        "StagedActor_AdvancePair": {
+          "address": "0x020080c4",
+          "kind": "thumb"
         }
       },
       "owners": [

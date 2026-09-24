@@ -71612,14 +71612,6 @@
           "address": "0x02008334",
           "kind": "thumb"
         },
-        "Func_02001884": {
-          "address": "0x02008918",
-          "kind": "thumb"
-        },
-        "Func_02001aca": {
-          "address": "0x02009a70",
-          "kind": "thumb"
-        },
         "Func_02001b22": {
           "address": "0x02009a70",
           "kind": "thumb"
@@ -71681,22 +71673,6 @@
           "kind": "thumb"
         },
         "Func_0200243a": {
-          "address": "0x02009af8",
-          "kind": "thumb"
-        },
-        "Func_02002496": {
-          "address": "0x02009af8",
-          "kind": "thumb"
-        },
-        "Func_020024b0_a": {
-          "address": "0x02009af8",
-          "kind": "thumb"
-        },
-        "Func_020024c6": {
-          "address": "0x02009af8",
-          "kind": "thumb"
-        },
-        "Func_020024e0_a": {
           "address": "0x02009af8",
           "kind": "thumb"
         },

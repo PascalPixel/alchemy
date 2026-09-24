@@ -173,11 +173,6 @@ static __inline__ void Call1(void (*f)(), s32 a0)
     f(a0);
 }
 
-static __inline__ void Call3_02001818(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
 static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 {
     f(a0, a1, a2, a3);
@@ -187,12 +182,6 @@ static __inline__ s32 Value1(s32 (*f)(), s32 a0)
 {
 
     return f(a0);
-}
-
-static __inline__ void Call3_02001c34(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-
-    f(a0, a1, a2);
 }
 
 static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
@@ -207,25 +196,9 @@ static __inline__ void Call8(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
     f(a0, a1, a2, a3, a4, a5, a6, a7);
 }
 
-static __inline__ void Call3_02001d04(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-
-    f(a0, a1, a2);
-}
-
-static __inline__ void Call3_02002004(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
 static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
 {
     f(a0, a1);
-}
-
-static __inline__ void Call3_020021b0(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
 }
 
 void Func_020009dc(u8 *object, s32 mode)

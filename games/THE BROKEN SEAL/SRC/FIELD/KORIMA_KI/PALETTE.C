@@ -23,7 +23,6 @@ enum PaletteMessage {
     MSG_MUST_HORRIBLE_BEYOND_RIVER_AM = 0x151f
 };
 
-
 struct PaletteEffectFrame {
     s32 pad00[6];
     s32 progress;
@@ -142,20 +141,6 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
 static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 {
     f(a0, a1, a2, a3);
-}
-
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-static __inline__ void Call1_02000158(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ void Call1_020002ec(void (*f)(), s32 a0)
-{
-    f(a0);
 }
 
 static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
@@ -334,7 +319,7 @@ void RunEventScript01(void)
     Audio_PlayCue(161);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, 19);
     Event_Wait(120);
-    Call1_020002ec(Func_02001cea, 0x2009219);
+    Call1(Func_02001cea, 0x2009219);
     Task_Wait(40);
     *(s32 *)(rec8 + 68) = 0x4000;
     {

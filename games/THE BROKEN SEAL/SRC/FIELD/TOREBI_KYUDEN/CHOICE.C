@@ -1249,11 +1249,6 @@ void Func_02008158();
 
 /* The scene step counter at 0x1d8 of the shared scene work record. */
 
-static __inline__ void Call3_02003d40(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
 #include "TYPES.H"
 
 extern u8 Value_000022a8;

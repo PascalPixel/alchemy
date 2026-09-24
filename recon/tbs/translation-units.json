@@ -69442,7 +69442,7 @@
       ]
     },
     {
-      "id": "scene-39f-020015d0",
+      "id": "mogoru-mori-branch-hop-scene",
       "game": "tbs",
       "source": "games/THE BROKEN SEAL/SRC/FIELD/MOGORU_MORI/BRANCH_HOP_SCENE.C",
       "compiler_route": "canonical-gcc296",
@@ -69510,7 +69510,7 @@
       ]
     },
     {
-      "id": "scene-38e-020005dc",
+      "id": "biribino-niwa-garden-scene",
       "game": "tbs",
       "source": "games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_NIWA/GARDEN_SCENE.C",
       "compiler_route": "canonical-gcc296",
@@ -69646,7 +69646,7 @@
       ]
     },
     {
-      "id": "scene-3b3-02002384",
+      "id": "takara-hashira-map-shift-scene",
       "game": "tbs",
       "source": "games/THE BROKEN SEAL/SRC/FIELD/TAKARA_HASHIRA/MAP_SHIFT_SCENE.C",
       "compiler_route": "canonical-gcc296",
@@ -69729,6 +69729,86 @@
         {
           "address": "0x02002384",
           "extent": 276,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "shian-jiin-gathering-scene",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHIAN_JIIN/GATHERING_SCENE.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_39e",
+      "absolute_symbols": {
+        "Engine_ActorFaceActor": {
+          "address": "0x0200c47c",
+          "kind": "thumb"
+        },
+        "Engine_EventWait": {
+          "address": "0x0200c3d4",
+          "kind": "thumb"
+        },
+        "Engine_ActorRunRepeatedMotion": {
+          "address": "0x0200c474",
+          "kind": "thumb"
+        },
+        "Engine_EventSetMessage": {
+          "address": "0x0200c49c",
+          "kind": "thumb"
+        },
+        "Engine_EventShowMessageAndWait": {
+          "address": "0x0200c4b4",
+          "kind": "thumb"
+        },
+        "Engine_ActorShowEmote": {
+          "address": "0x0200c4cc",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetAnimationAndWait": {
+          "address": "0x0200c45c",
+          "kind": "thumb"
+        },
+        "Engine_ActorFaceEachOther": {
+          "address": "0x0200c484",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpeed": {
+          "address": "0x0200c414",
+          "kind": "thumb"
+        },
+        "Local_02000f80": {
+          "address": "0x02008f80",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetPosition": {
+          "address": "0x0200c44c",
+          "kind": "thumb"
+        },
+        "Engine_ActorGet": {
+          "address": "0x0200c404",
+          "kind": "thumb"
+        },
+        "Engine_AudioPlayCue": {
+          "address": "0x0200c57c",
+          "kind": "thumb"
+        },
+        "Engine_ActorWalkToAndWait": {
+          "address": "0x0200c434",
+          "kind": "thumb"
+        },
+        "Engine_ActorFaceDirection": {
+          "address": "0x0200c4c4",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagSet": {
+          "address": "0x0200c3c4",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02001160",
+          "extent": 384,
           "state": "exact-c"
         }
       ]

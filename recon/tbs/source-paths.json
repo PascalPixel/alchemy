@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_39e:02001160": {
+      "name": "ShianJiin_RunGatheringScene",
+      "source": "FIELD/COMMON/SHIAN_JIIN/GATHERING_SCENE.C"
+    },
     "resource_3b3:02002384": {
       "name": "TakaraHashira_RunMapShiftScene",
       "source": "FIELD/TAKARA_HASHIRA/MAP_SHIFT_SCENE.C"

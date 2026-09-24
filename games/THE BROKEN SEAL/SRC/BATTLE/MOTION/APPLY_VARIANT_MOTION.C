@@ -5,7 +5,7 @@
 #include "FIXED_MATH.H"
 
 /* battle/motion/apply_variant_motion.c */
-u8 *Runtime_GetObject(s32);
+u8 *Owner_GetStateFar(s32);
 void Object_ResetMotion(struct MotionObject *);
 void Object_SetPosition(struct MotionObject *, s32, s32, s32);
 void Object_SetMode(struct MotionObject *, s32);
@@ -26,7 +26,7 @@ void BattleMotion_ApplyVariantMotion(s32 id, s32 variant)
 
     slot = GetBattleObjectSlot(id);
     object = slot->object;
-    if (Runtime_GetObject(id)[0x128] != 0x94) {
+    if (Owner_GetStateFar(id)[0x128] != 0x94) {
         table = gRom;
         index = variant * 4;
         object->acceleration = *(s32 *)((u8 *)table + index);

@@ -85,12 +85,12 @@ void UiWindow_SetTileAttributeRect(const struct RenderInput *window,
 
 /* resource/copy_fixed_block_b.c */
 /* resource/copy_fixed_block_b.c */
-s32 Resource_CopyData(s32, s32, s32);
+s32 VramBlock_LoadCached(s32, s32, s32);
 extern u8 RomBytes_080310a4[];
 
 void Resource_CopyFixedBlockB(s32 arg0)
 {
-    Resource_CopyData(arg0, 0x80, RomBytes_080310a4);
+    VramBlock_LoadCached(arg0, 0x80, RomBytes_080310a4);
 }
 
 /* resource/copy_fixed_block_a.c */
@@ -98,7 +98,7 @@ extern const u8 RomBytes_080317e4[];
 
 void Resource_CopyFixedBlockA(s32 arg0)
 {
-    Resource_CopyData(arg0, 0x80, (s32)RomBytes_080317e4);
+    VramBlock_LoadCached(arg0, 0x80, (s32)RomBytes_080317e4);
 }
 
 /* ui/text/text_set_render_string.c */

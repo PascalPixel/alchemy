@@ -5,7 +5,7 @@
 #include "FIXED_MATH.H"
 
 /* menu/character_menu/build_availability.c */
-u8 *Runtime_GetObject(s32 owner);
+u8 *Owner_GetStateFar(s32 owner);
 
 s32 CharacterMenu_BuildAvailability(u8 *output, s32 requested, s32 id)
 {
@@ -15,7 +15,7 @@ s32 CharacterMenu_BuildAvailability(u8 *output, s32 requested, s32 id)
     s32 count;
     s32 mode;
 
-    state = Runtime_GetObject(id);
+    state = Owner_GetStateFar(id);
     zero = 0;
     for (i = 4; i >= 0; i--)
         output[i] = zero;
@@ -74,7 +74,7 @@ s32 Menu_BuildPageResult(struct MenuResult *result, s32 index)
     s32 groups;
     s32 value;
 
-    encoded = (s32)Runtime_GetObject(LoadByte(entries, offset));
+    encoded = (s32)Owner_GetStateFar(LoadByte(entries, offset));
     limit = LoadByte(base, 0x218);
     value = LoadSignedByte(base, LoadByte(entries, offset) + 0x260);
     if ((s32)(value + 1) > limit) {

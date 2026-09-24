@@ -44,12 +44,12 @@ typedef char ParticleEffectObject_child_offset[
 ];
 #undef OBJECT_0808EEE4_OFFSET
 
-extern void RotateVectorByMagnitude(s32, s32, struct ParticlePosition *);
+extern void Vector_AddPolarOffset(s32, s32, struct ParticlePosition *);
 extern void Object_SetCallback(struct ParticleEffectObject *, void *);
 extern void Object_SetMode(struct ParticleEffectObject *, s32);
 extern const u8 BattleFx_ParticleScript[];
 
-void EmitRandomParticleEffect(struct ParticleEmitter *emitter)
+void BattleFx_EmitRandomParticleFromEmitter(struct ParticleEmitter *emitter)
 {
     struct ParticlePosition position;
     struct ParticleEffectObject *object;
@@ -65,7 +65,7 @@ void EmitRandomParticleEffect(struct ParticleEmitter *emitter)
     position.y = emitter->position.y;
     position.z = emitter->position.z;
     random_angle = Random16();
-    RotateVectorByMagnitude(random_angle << 4, Random16(), &position);
+    Vector_AddPolarOffset(random_angle << 4, Random16(), &position);
     object = (struct ParticleEffectObject *)Object_Spawn(
         0x11D, position.x, position.y, position.z);
     if (object != 0) {

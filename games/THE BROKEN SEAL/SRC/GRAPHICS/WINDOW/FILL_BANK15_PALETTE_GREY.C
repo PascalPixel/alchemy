@@ -4,7 +4,7 @@
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
-s32 ScheduleCallbackAfterFrames(s32, s32);
+s32 Scheduler_AddOrUpdateCallback(s32, s32);
 void BattleFx_ArmBg0HBlankDma(void);
 
 void Ui_FillBank15PaletteGrey(void)
@@ -34,5 +34,5 @@ void Ui_FillBank15PaletteGrey(void)
     *p = 0x739C;
     p += 1;
     *p = 0x739C;
-    ScheduleCallbackAfterFrames((s32)BattleFx_ArmBg0HBlankDma, 0x480);
+    Scheduler_AddOrUpdateCallback((s32)BattleFx_ArmBg0HBlankDma, 0x480);
 }

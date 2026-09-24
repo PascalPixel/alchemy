@@ -10,12 +10,12 @@ struct State_0801a4c0 {
 
 extern struct State_0801a4c0 *gGlyphWork;
 extern u32 UiIcon_ItemIconPointers[];
-void *Item_GetData(s32);
+void *Item_Get(s32);
 
 void Ui_PrepareTransferForItem(s32 arg0)
 {
     struct State_0801a4c0 *state = gGlyphWork;
-    void *result = Item_GetData(0x1FF & arg0);
+    void *result = Item_Get(0x1FF & arg0);
 
     if (arg0 != 0) {
         state->value = UiIcon_ItemIconPointers[*(u16 *)((u8 *)result + 6)];

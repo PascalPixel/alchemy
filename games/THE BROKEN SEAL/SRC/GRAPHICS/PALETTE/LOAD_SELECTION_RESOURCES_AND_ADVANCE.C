@@ -8,7 +8,7 @@ extern u8 Data_000000e8[];
 
 void ShopCursor_AdvanceFar(void *);
 void ShopCursor_MoveTowardTargetFar(void *);
-s32 Resource_CopyData(s32, s32, s32);
+s32 VramBlock_LoadCached(s32, s32, s32);
 void Ui_ApplyTableScaleToObject(void *);
 
 void GraphicsPalette_LoadSelectionResourcesAndAdvance(void)
@@ -30,7 +30,7 @@ void GraphicsPalette_LoadSelectionResourcesAndAdvance(void)
     } else {
         src0 = (s32)Data_000000e8;
     }
-    Resource_CopyData(
+    VramBlock_LoadCached(
         FIELD(FIELD(base, void *, 0x5B4), u8, 14),
         0x100,
         (s32)GetResource(src0));
@@ -41,7 +41,7 @@ void GraphicsPalette_LoadSelectionResourcesAndAdvance(void)
     } else {
         src1 = (s32)Data_000000e8;
     }
-    Resource_CopyData(
+    VramBlock_LoadCached(
         FIELD(FIELD(base, void *, 0x5C4), u8, 14),
         0x100,
         (s32)GetResource(src1));

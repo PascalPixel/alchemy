@@ -4,7 +4,7 @@
 
 /* field/store_assigned_key_value.c */
 extern u8 *gWork;
-s32 GameFlag_IsSet(s32);
+s32 GameFlag_TestFar(s32);
 
 static __inline__ void StoreHalfword(u8 *address, s32 value)
 {
@@ -17,7 +17,7 @@ u32 Field_StoreAssignedKeyValue(u32 value)
     u32 ret = 0x3FFF & value;
     u8 *state = gWork;
 
-    if (GameFlag_IsSet(0x107) != 0) {
+    if (GameFlag_TestFar(0x107) != 0) {
         StoreHalfword(state + 0x182, 0xFA);
     } else if (*(s16 *)(state + 0x19E) == 3) {
         if (*(volatile u32 *)ADDR_03001C94 & 0x100) {

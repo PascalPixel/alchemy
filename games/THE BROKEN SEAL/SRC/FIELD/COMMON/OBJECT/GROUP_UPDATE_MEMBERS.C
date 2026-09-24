@@ -2,7 +2,7 @@
 
 void *GetMotionRecordFar(void *, s32);
 s32 BattleMotion_GetSlotField14Far(s32);
-void Object_InitializeMode(void *, s32);
+void AnimationObjects_SelectAnimationFar(void *, s32);
 extern u32 gBattleFxWork;
 
 void ObjectGroup_UpdateMembers(s32 set_id, s32 object_value, s32 group_value,
@@ -49,7 +49,7 @@ void ObjectGroup_UpdateMembers(s32 set_id, s32 object_value, s32 group_value,
                 }
             }
             if (group_value != -1)
-                Object_InitializeMode(group, group_value);
+                AnimationObjects_SelectAnimationFar(group, group_value);
         }
         group_index++;
     }

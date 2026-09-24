@@ -9,17 +9,17 @@ struct SharedWork080a23c0 {
     s32 resource;
 };
 
-extern void UiText_DrawAt(s32, s32, s32, s32);
+extern void UiText_DrawCharacterAtOffsetFar(s32, s32, s32, s32);
 extern struct SharedWork080a23c0 gGameState;
 
 void UiText_DrawWorkValueWithLabel(s32 work)
 {
     Ui_SetRange(gGameState.resource, 7, work, 8, 0);
-    UiText_DrawAt(0xB0B, work, 0x40, 0);
+    UiText_DrawCharacterAtOffsetFar(0xB0B, work, 0x40, 0);
 }
 
 /* ui/window/set_bounds.c */
-void WindowBounds_Set(struct WindowBounds *bounds, s32 right, s32 bottom,
+void UiWindow_SetBounds(struct WindowBounds *bounds, s32 right, s32 bottom,
     s32 left, s32 top) {
     if (bounds != NULL) {
         bounds->left = left;

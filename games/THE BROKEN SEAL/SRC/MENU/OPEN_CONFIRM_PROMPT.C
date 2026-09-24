@@ -21,7 +21,7 @@ void Link_DrawShiftedTilePairFar(s32 addr);
 void Menu_CancelSoundReset(void);
 s32 Menu_ResolveSelectedAction(s32 *, s32 *, s32 *);
 void Menu_EnsureCancelSound(void);
-s32 Ability_GetData(s32 flags);
+s32 BattleAction_Get(s32 flags);
 void RenderOutput_ClearListFar(s32 screen_handle);
 void ItemMenu_Close(void);
 void UiWindow_EraseBorderRectFar(s32 x, s32 y, s32 width, s32 height);
@@ -59,7 +59,7 @@ s32 Menu_OpenConfirmPrompt(void)
     if (result == 1) {
         void *target = FIELD(&gMenuCtrlWork, void *, 0x54);
         u16 flags;
-        Ability_GetData(0x3fff & FIELD(state, u16, 0x178));
+        BattleAction_Get(0x3fff & FIELD(state, u16, 0x178));
         flags = (u16)(low | (high << 10));
         FIELD(target, u16, 0x17e) = flags;
     }

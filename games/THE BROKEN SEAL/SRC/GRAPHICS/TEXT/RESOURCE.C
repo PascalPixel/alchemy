@@ -6,7 +6,7 @@ void UiTextResource_NoOpCallback(void)
 }
 
 /* Empty callback slots retained by the text-resource dispatcher. */
-void UiTextResource_NoOpCallback0(void)
+void UiTextResource_NoOpCallbackBank(void)
 {
 }
 
@@ -46,17 +46,17 @@ struct TextResourceSetup {
     u16 field_8c : 4;
 };
 
-s32 Resource_CopyData(s32, s32, const void *);
+s32 VramBlock_LoadCached(s32, s32, const void *);
 extern const u8 Menu_CursorObjectTiles[];
 
-void TextResource_Initialize(struct TextResourceSetup *object, s32 *slot)
+void UiTextResource_Initialize(struct TextResourceSetup *object, s32 *slot)
 {
     const void *data = Menu_CursorObjectTiles;
     s32 value = Resource_FindFreeEntry();
 
     /* ビットフィールドは生成時の設定順を保持する。 */
     *slot = value;
-    object->field_80 = Resource_CopyData(value, 0x80, data);
+    object->field_80 = VramBlock_LoadCached(value, 0x80, data);
     object->field_52 = 0;
     object->field_54 = 0;
     object->field_55 = 1;
@@ -75,7 +75,7 @@ struct TextResourcePosition {
     u16 rest : 7;
 };
 void Runtime_PushSlotEntry(s32 *arg0, s32 arg1);
-void TextResource_SetPosition(struct TextResourcePosition *obj, s32 arg1, s32 arg2)
+void UiTextResource_SetPosition(struct TextResourcePosition *obj, s32 arg1, s32 arg2)
 {
     obj->index = arg1;
     obj->kind = arg2;
@@ -85,7 +85,7 @@ void TextResource_SetPosition(struct TextResourcePosition *obj, s32 arg1, s32 ar
 s32 Resource_ResetEntry(s32);
 
 /* 受け取った値を呼出し先へ渡す。 */
-void TextResource_Release(s32 value)
+void UiTextResource_Release(s32 value)
 {
     Resource_ResetEntry(value);
 }

@@ -1,7 +1,7 @@
 #include "TYPES.H"
 #include "SCENE.H"
 
-void *Runtime_GetObject(u8);
+void *Owner_GetStateFar(u8);
 
 s32 BattlePres_BuildTargetList(void *desc, void *output)
 {
@@ -28,7 +28,7 @@ s32 BattlePres_BuildTargetList(void *desc, void *output)
         do {
             sp4 = out;
             sp0 = cnt;
-            if ((FIELD_AT_OFFSET(Runtime_GetObject(*p), s16 *, 0x38) != 0) || (FIELD_AT_OFFSET(desc, s32 *, 0x58) & 0x10000)) {
+            if ((FIELD_AT_OFFSET(Owner_GetStateFar(*p), s16 *, 0x38) != 0) || (FIELD_AT_OFFSET(desc, s32 *, 0x58) & 0x10000)) {
                 cnt += 1;
                 *dst = (s16)*p;
                 dst += 1;

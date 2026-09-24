@@ -39,7 +39,7 @@ extern struct State_08099d18 *gEffectWork;
 
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 #define Rand Random16
-void RotateVectorByMagnitude(s32, s32, struct Vector_08099d18 *);
+void Vector_AddPolarOffset(s32, s32, struct Vector_08099d18 *);
 void Object_SetMode(u8 *, s32);
 void Object_SetCallback(u8 *, void *);
 
@@ -59,7 +59,7 @@ void BattleFx_SpawnFallingParticles(void)
     position.z = source->z;
 
     angle = Rand() * 3;
-    RotateVectorByMagnitude((s32)(angle * 16), Rand(), &position);
+    Vector_AddPolarOffset((s32)(angle * 16), Rand(), &position);
 
     object = Object_Spawn(
         0x11d,

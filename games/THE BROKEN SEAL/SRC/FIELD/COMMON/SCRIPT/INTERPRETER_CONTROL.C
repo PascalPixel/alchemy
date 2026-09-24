@@ -1,8 +1,8 @@
 #include "SCRIPT_INTERPRETER.H"
 
-s32 GameFlag_IsSet(s32);
-s32 GameFlag_Set(s32);
-void GameFlag_Clear(s32);
+s32 GameFlag_TestFar(s32);
+s32 GameFlag_SetBitFar(s32);
+void GameFlag_ClearBitFar(s32);
 void ObjectDispatch_ApplyArgumentToChildren(void *, s32);
 void ObjectDispatch_Release(void);
 s32 Audio_PlayCue(s32);
@@ -145,7 +145,7 @@ s32 Script_LoadMainScript(struct ScriptInterpreter *interpreter)
 s32 Script_TestFlag(struct ScriptInterpreter *interpreter)
 {
     interpreter->condition_result =
-        GameFlag_IsSet(interpreter->script[interpreter->cursor + 1]);
+        GameFlag_TestFar(interpreter->script[interpreter->cursor + 1]);
     interpreter->cursor = (u16)interpreter->cursor + 2;
     return 1;
 }
@@ -155,8 +155,8 @@ s32 Script_SetFlagAndTest(struct ScriptInterpreter *interpreter)
     s32 value;
 
     value = interpreter->script[interpreter->cursor + 1];
-    interpreter->condition_result = GameFlag_IsSet(value);
-    GameFlag_Set(value);
+    interpreter->condition_result = GameFlag_TestFar(value);
+    GameFlag_SetBitFar(value);
     interpreter->cursor = (u16)interpreter->cursor + 2;
     return 1;
 }
@@ -166,8 +166,8 @@ s32 Script_ClearFlagAndTest(struct ScriptInterpreter *interpreter)
     s32 value;
 
     value = interpreter->script[interpreter->cursor + 1];
-    interpreter->condition_result = GameFlag_IsSet(value);
-    GameFlag_Clear(value);
+    interpreter->condition_result = GameFlag_TestFar(value);
+    GameFlag_ClearBitFar(value);
     interpreter->cursor = (u16)interpreter->cursor + 2;
     return 1;
 }
@@ -178,12 +178,12 @@ s32 Script_ToggleFlagAndTest(struct ScriptInterpreter *interpreter)
     s32 result;
 
     value = interpreter->script[interpreter->cursor + 1];
-    result = GameFlag_IsSet(value);
+    result = GameFlag_TestFar(value);
     interpreter->condition_result = result;
     if (((u32)result << 0x18) == 0x01000000) {
-        GameFlag_Clear(value);
+        GameFlag_ClearBitFar(value);
     } else {
-        GameFlag_Set(value);
+        GameFlag_SetBitFar(value);
     }
     interpreter->cursor = (u16)interpreter->cursor + 2;
     return 1;

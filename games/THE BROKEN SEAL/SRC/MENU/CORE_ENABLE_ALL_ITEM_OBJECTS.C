@@ -15,7 +15,7 @@ struct Work_080ad69c {
 
 extern struct Work_080ad69c *gMenuWork;
 
-void Object_InitializeMode(void *item, s32 enabled);
+void AnimationObjects_SelectAnimationFar(void *item, s32 enabled);
 
 void Menu_EnableAllItemObjects(void)
 {
@@ -23,6 +23,6 @@ void Menu_EnableAllItemObjects(void)
     s32 index;
 
     for (index = 0; index < state->count; ++index) {
-        Object_InitializeMode(state->items[index], 1);
+        AnimationObjects_SelectAnimationFar(state->items[index], 1);
     }
 }

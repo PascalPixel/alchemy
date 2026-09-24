@@ -18,7 +18,7 @@ struct FormationCandidate {
     s16 score;
 };
 
-struct BattleUnitLevel *Runtime_GetObject(s32 unit_id);
+struct BattleUnitLevel *Owner_GetStateFar(s32 unit_id);
 s16 *Runtime_BumpAllocateAlternatePool(s32 size);
 
 s32 Party_ComputeEligibleMemberAverage(s32 record_id);
@@ -45,7 +45,7 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *out_margin)
 
         i = unit_count;
         do {
-            u8 level = Runtime_GetObject((s32)*p)->level;
+            u8 level = Owner_GetStateFar((s32)*p)->level;
 
             i--;
             p++;
@@ -65,7 +65,7 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *out_margin)
 
     for (i = 0; (u32)i <= 19; i++) {
         FunctionHead_08077198(RomBytes_080c73f8[i]);
-        GameFlag_Clear(RomBytes_080c73f8[i] + 1536);
+        GameFlag_ClearBitFar(RomBytes_080c73f8[i] + 1536);
     }
 
     for (i = 0; (u32)i <= 379; i++) {

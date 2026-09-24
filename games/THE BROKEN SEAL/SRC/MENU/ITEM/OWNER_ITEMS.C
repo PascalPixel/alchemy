@@ -50,9 +50,9 @@ void ItemMenu_DrawIcons(u16 *items, s32 style)
 }
 
 
-void UiWindow_Commit(s32 window);
+void RenderOutput_RedrawSavedRectFar(s32 window);
 void ItemMenu_RefreshEntry(s32 mode);
-void UiText_DrawAt(s32 message, s32 window, s32 x, s32 y);
+void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 
 void ItemMenu_RefreshOwner(s32 owner_id, s32 mode)
 {
@@ -64,11 +64,11 @@ void ItemMenu_RefreshOwner(s32 owner_id, s32 mode)
     owner = OwnerState_GetFar(owner_id);
     items = menu->items;
     menu->item_count = InventoryMenu_CollectItems(owner, items, 0);
-    UiWindow_Commit(menu->item_window);
+    RenderOutput_RedrawSavedRectFar(menu->item_window);
     ItemMenu_RefreshEntry(mode);
     InventoryMenu_DrawItemIcons(items, 0);
     if (InventoryMenu_CountItems(owner_id) == 0)
-        UiText_DrawAt(
+        UiText_DrawCharacterAtOffsetFar(
             (s32)&InventoryMenu_EmptyMessage, menu->item_window, 8, 24);
 }
 

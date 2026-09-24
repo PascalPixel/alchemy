@@ -30,13 +30,13 @@ struct ObjectSlot_080b8b48 {
 
 extern s32 *gTransitionWork;
 
-void Runtime_GetObject(s32);
+void Owner_GetStateFar(s32);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 #define Rand Random16
-void UiText_DrawQuantity(s32, s32);
-void UiText_ShowMessageAndWait(s32);
+void UiWork_PushValueSlotFar(s32, s32);
+void UiText_ShowMessageAndWaitCoreFar(s32);
 struct ObjectSlot_080b8b48 *GetBattleObjectSlot(s32);
-void Object_SetAction(void *, s32);
+void ObjectDispatch_ApplyValueToChildrenFar(void *, s32);
 
 void Actor_ResetMotionAtAnchor(s32);
 void BattleFx_DispatchByIdRangeFar(struct Work_080b8b48 *);
@@ -61,13 +61,13 @@ s32 BattlePres_RunApproachAction(struct Input_080b8b48 *input)
     if (BattleObject_IsValidId(work.secondary_id) < 0)
         return -1;
 
-    Runtime_GetObject(work.primary_id);
-    Runtime_GetObject(work.secondary_id);
+    Owner_GetStateFar(work.primary_id);
+    Owner_GetStateFar(work.secondary_id);
     Rand();
-    UiText_DrawQuantity(work.primary_id, 1);
-    UiText_ShowMessageAndWait((s32)&Value_00000814);
+    UiWork_PushValueSlotFar(work.primary_id, 1);
+    UiText_ShowMessageAndWaitCoreFar((s32)&Value_00000814);
     BattleMotion_ApproachTarget(work.primary_id, work.secondary_id, 13, 0);
-    Object_SetAction(GetBattleObjectSlot(work.primary_id)->object, 16);
+    ObjectDispatch_ApplyValueToChildrenFar(GetBattleObjectSlot(work.primary_id)->object, 16);
     GetBattleObjectSlot(work.secondary_id);
 
     work.count = 1;

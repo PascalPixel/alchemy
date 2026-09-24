@@ -1,7 +1,7 @@
 #include "TYPES.H"
 #include "BATTLE_RUNTIME.H"
 
-u8 *Item_GetData(u16);
+u8 *Item_Get(u16);
 
 void BattleUnit_ResetStateByMode(s32 id, s32 mode)
 {
@@ -20,9 +20,9 @@ void BattleUnit_ResetStateByMode(s32 id, s32 mode)
 
         for (i = 0; i < 15; i++) {
             if (unit->inventory[i] & 0x200) {
-                if (Item_GetData(unit->inventory[i])[3] & 1) {
+                if (Item_Get(unit->inventory[i])[3] & 1) {
                     unit->inventory[i] ^= 0x200;
-                    BattleUnit_Recalculate(id);
+                    Owner_RecalculateStatsFar(id);
                 }
             }
         }

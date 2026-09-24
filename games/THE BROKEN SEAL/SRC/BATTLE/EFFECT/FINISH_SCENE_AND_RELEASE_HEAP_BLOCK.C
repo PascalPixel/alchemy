@@ -6,7 +6,7 @@
 void Animation_ApplyChildPalette(void *a, s32 b);
 void Runtime_ReleaseHeapBlock(s32 a);
 void Ui_SetBank15PaletteAndClearRenderMode(void);
-void ScheduleCallback(s32);
+void Scheduler_RemoveCallback(s32);
 void *Object_GetById(u32);
 void BattleFx_PrepareBufferInterpolation(void);
 extern u8 RomBytes_08097645;
@@ -17,7 +17,7 @@ void BattleFx_FinishSceneAndReleaseHeapBlock(void)
 
     work = *(void **)ADDR_03001EA8;
     Ui_SetBank15PaletteAndClearRenderMode();
-    ScheduleCallback((s32)&RomBytes_08097645);
+    Scheduler_RemoveCallback((s32)&RomBytes_08097645);
     Animation_ApplyChildPalette(Object_GetById(FIELD_AT_OFFSET(work, u16, 0x290)), 1);
     BattleFx_PrepareBufferInterpolation();
     Runtime_ReleaseHeapBlock(0x16);

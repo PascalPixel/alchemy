@@ -40,9 +40,9 @@ struct BattlePresentationTransition {
 
 extern struct BattlePresentationTransition *gTransitionWork;
 
-void *Runtime_GetObject(s32);
+void *Owner_GetStateFar(s32);
 
-void UiText_ShowMessageAndWait(s32);
+void UiText_ShowMessageAndWaitCoreFar(s32);
 void UiWork_ResetFreeChannelFar(void);
 
 s32 BattlePres_RunAction(s16 *action)
@@ -53,7 +53,7 @@ s32 BattlePres_RunAction(s16 *action)
     u8 *actor;
 
     actor_id = action[0];
-    actor = Runtime_GetObject(actor_id);
+    actor = Owner_GetStateFar(actor_id);
     if (*(s16 *)(actor + 0x38) == 0)
         return -1;
 
@@ -69,7 +69,7 @@ s32 BattlePres_RunAction(s16 *action)
 
     switch (action[3]) {
     case 99:
-        UiText_ShowMessageAndWait((s32)&Value_00000843);
+        UiText_ShowMessageAndWaitCoreFar((s32)&Value_00000843);
         if (BattleEscape_PlayRun(action)!= 0)
             return 1;
         break;
@@ -139,14 +139,14 @@ s32 BattleEscape_PlayRun(s16 *action)
         WaitFrames(22);
         return 1;
     }
-    UiText_ShowMessageAndWait((s32)&Value_00000844);
+    UiText_ShowMessageAndWaitCoreFar((s32)&Value_00000844);
     return 0;
 }
 
 /* battle/presentation/misc/msg_field38.c */
 #define FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
-void UiText_DrawQuantity(s32, s32);
+void UiWork_PushValueSlotFar(s32, s32);
 
 s32 BattlePres_ShowMessageWhenField38Positive(s16 *script)
 {
@@ -155,7 +155,7 @@ s32 BattlePres_ShowMessageWhenField38Positive(s16 *script)
     void *object;
 
     object_id = *script;
-    object = Runtime_GetObject(object_id);
+    object = Owner_GetStateFar(object_id);
     if (BattleObject_IsValidId(object_id) < 0) {
         return -1;
     }
@@ -164,7 +164,7 @@ s32 BattlePres_ShowMessageWhenField38Positive(s16 *script)
         return result;
     }
     UiWork_ClearValueNameTablesFar();
-    UiText_DrawQuantity(object_id, 1);
-    UiText_ShowMessageAndWait((s32)&Value_00000816);
+    UiWork_PushValueSlotFar(object_id, 1);
+    UiText_ShowMessageAndWaitCoreFar((s32)&Value_00000816);
     return 0;
 }

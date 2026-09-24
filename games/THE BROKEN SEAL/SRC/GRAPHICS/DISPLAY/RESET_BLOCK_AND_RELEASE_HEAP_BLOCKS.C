@@ -7,7 +7,7 @@
  * 0x03000164. Its argument count is not established.
  */
 void Func_080072f0(u32, s32, s32, u32);
-s32 ScheduleCallback(u32);
+s32 Scheduler_RemoveCallback(u32);
 extern u8 Data_080c1439;
 extern u8 Data_080c11ed;
 
@@ -19,6 +19,6 @@ s32 Graphics_ResetVramBlockAndReleaseHeapBlocks(s32 unused0, s32 unused1, s32 mo
     Runtime_ReleaseHeapBlock(40);
     Runtime_ReleaseHeapBlock(39);
     *(u16 *)0x04000000 = 0x1341;
-    ScheduleCallback((u32)&Data_080c1439);
-    return ScheduleCallback((u32)&Data_080c11ed);
+    Scheduler_RemoveCallback((u32)&Data_080c1439);
+    return Scheduler_RemoveCallback((u32)&Data_080c11ed);
 }

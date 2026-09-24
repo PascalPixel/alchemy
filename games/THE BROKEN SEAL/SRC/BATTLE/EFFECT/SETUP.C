@@ -118,8 +118,8 @@ void Battle_InitializeRenderObject(void)
 void UiTimedNotice_CloseIfActiveFar(void);
 void Battle_InitializeRenderObject(void);
 void Battle_ResetEffectCounter(void);
-void ScheduleCallbackAfterFrames(const void *, s32);
-u32 GameFlag_Clear(s32);
+void Scheduler_AddOrUpdateCallback(const void *, s32);
+u32 GameFlag_ClearBitFar(s32);
 
 void Battle_Reset(void)
 {
@@ -139,20 +139,20 @@ void Battle_Reset(void)
         runtime->unknown_1da = 0xFFFF;
         runtime->unknown_1dc = -1;
         runtime->unknown_1de = -1;
-        ScheduleCallbackAfterFrames((const void *)Battle_UpdateModeFromShoulderButtons, 0xC80);
-        GameFlag_Clear(0x132);
+        Scheduler_AddOrUpdateCallback((const void *)Battle_UpdateModeFromShoulderButtons, 0xC80);
+        GameFlag_ClearBitFar(0x132);
         runtime->object_id = PARTY_STATE.object_id;
         runtime->unknown_1f8 = zero;
     }
 }
 
-void ScheduleCallback(u32);
+void Scheduler_RemoveCallback(u32);
 void GameFlag_RefreshLureCapFar(void);
 void Object_AttachWorkTargetToObject(s32 value, s32 enabled);
 
 void BattleFx_FinishAction(void)
 {
-    ScheduleCallback((u32)Battle_UpdateModeFromShoulderButtons);
+    Scheduler_RemoveCallback((u32)Battle_UpdateModeFromShoulderButtons);
     Object_AttachWorkTargetToObject(PARTY_STATE.object_id, 1);
     GameFlag_RefreshLureCapFar();
 }

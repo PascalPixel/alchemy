@@ -55,7 +55,7 @@ void ObjectMotion_ArmCallback(s32 arg0, s32 arg1, s32 arg2);
 void Object_CommitPosition(void *);
 void BattleFx_PlayQueuedSound(void);
 
-void ParticleEffect_UpdateLinearMotion(void *particle);
+void BattleFx_UpdateParticleLinearMotion(void *particle);
 
 void BattleFx_SpawnBurstParticle(struct Object_08092624 *source, s32 optional)
 {
@@ -87,7 +87,7 @@ void BattleFx_SpawnBurstParticle(struct Object_08092624 *source, s32 optional)
         value <<= 1;
         object->field_30 = 0x1999 * value;
         object->field_64 = 0;
-        object->callback_6c = (void (*)(void))ParticleEffect_UpdateLinearMotion;
+        object->callback_6c = (void (*)(void))BattleFx_UpdateParticleLinearMotion;
         child->field_26 = 0;
         child->copied_09 = source->child->copied_09;
     }

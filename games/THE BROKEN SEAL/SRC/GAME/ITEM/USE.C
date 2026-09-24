@@ -21,8 +21,8 @@ struct ItemUseWork {
 
 extern struct ItemUseWork *gMenuWork;
 
-struct ItemOwner *Runtime_GetObject(s32);
-struct ItemData *Item_GetData(s32);
+struct ItemOwner *Owner_GetStateFar(s32);
+struct ItemData *Item_Get(s32);
 u8 Inventory_RemoveFar(s32, s32);
 u32 ItemMenu_Collect(struct ItemOwner *, u16 *, s32);
 s32 BattleEffect_ApplyToTargets(s32, s32, s32, s32);
@@ -35,17 +35,17 @@ s32 Item_Use(s32 slot, s32 owner_id, s32 target_id)
     struct ItemOwner *owner;
     struct ItemData *item;
 
-    owner = Runtime_GetObject(owner_id);
+    owner = Owner_GetStateFar(owner_id);
     work = gMenuWork;
     item_id = 0x1ff & owner->items[slot];
-    item = Item_GetData(item_id);
+    item = Item_Get(item_id);
     result = BattleEffect_ApplyToTargets(
         0x3fff & item->use_ability,
         owner_id,
         target_id,
         1);
     if (result != -1) {
-        item = Item_GetData(owner->items[slot]);
+        item = Item_Get(owner->items[slot]);
         if (item->kind == 1) {
             Inventory_RemoveFar(owner_id, slot);
             work->entry_count =

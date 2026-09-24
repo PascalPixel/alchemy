@@ -1,7 +1,7 @@
 #include "TYPES.H"
 
 struct BattleActorDefinition;
-struct BattleActorDefinition *Runtime_GetObject(s32);
+struct BattleActorDefinition *Owner_GetStateFar(s32);
 
 s32 Summon_FindSlot(void)
 {
@@ -10,7 +10,7 @@ s32 Summon_FindSlot(void)
 
     for (i = 0; i <= 5; i++) {
         id = i + 0x80;
-        if (((u8 *)Runtime_GetObject(id))[0x12A] == 0)
+        if (((u8 *)Owner_GetStateFar(id))[0x12A] == 0)
             break;
     }
     if (i == 6)

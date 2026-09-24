@@ -42,12 +42,12 @@ extern struct EffectRuntime *gEffectWork;
 s32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 #define Rand Random16
-void RotateVectorByMagnitude(s32 magnitude, s32 angle, struct EffectPosition *output);
-void NormalizeVector(struct EffectPosition *value);
-s32 EffectSlot_HasReachedTarget(struct RadialBurstEffect *effect);
+void Vector_AddPolarOffset(s32 magnitude, s32 angle, struct EffectPosition *output);
+void Camera_WorldToScreen(struct EffectPosition *value);
+s32 BattleFx_HasReachedTarget(struct RadialBurstEffect *effect);
 void BattleFx_ClearOwnedSlot(struct RadialBurstEffect *effect);
 
-void UpdateRadialBurstEffect(struct RadialBurstEffect *effect)
+void BattleFx_UpdateRadialBurst(struct RadialBurstEffect *effect)
 {
     struct EffectRuntime *runtime = gEffectWork;
     struct EffectPosition value;
@@ -58,7 +58,7 @@ again:
     if (state == 0) {
         value.x = effect->source_x;
         value.z = effect->source_z;
-        RotateVectorByMagnitude(0x190000, (u16)Rand(), &value);
+        Vector_AddPolarOffset(0x190000, (u16)Rand(), &value);
         effect->x = value.x;
         effect->z = value.z;
         effect->velocity_z = 0x30000;
@@ -69,7 +69,7 @@ again:
     }
 
     if (state == 1) {
-        if (EffectSlot_HasReachedTarget(effect) == 0) {
+        if (BattleFx_HasReachedTarget(effect) == 0) {
             effect->state++;
             goto again;
         }
@@ -82,9 +82,9 @@ again:
         value.x = target->x;
         value.y = target->y + 0x100000;
         value.z = target->z;
-        RotateVectorByMagnitude(0x80000, runtime->angle, &value);
-        NormalizeVector(&value);
-        RotateVectorByMagnitude(0x40000, Rand(), &value);
+        Vector_AddPolarOffset(0x80000, runtime->angle, &value);
+        Camera_WorldToScreen(&value);
+        Vector_AddPolarOffset(0x40000, Rand(), &value);
         effect->x = value.x;
         effect->z = value.z;
         effect->scale = 0x800;
@@ -93,6 +93,6 @@ again:
         return;
     }
 
-    if (state == 3 && EffectSlot_HasReachedTarget(effect) == 0)
+    if (state == 3 && BattleFx_HasReachedTarget(effect) == 0)
         BattleFx_ClearOwnedSlot(effect);
 }

@@ -27,7 +27,7 @@ struct BattleObject {
 
 struct BattleObject *Owner_GetStateFar();
 struct PlacementTable *Trade_GetOfferStateFar(s32 owner);
-void BattleUnit_Recalculate(u8 id);
+void Owner_RecalculateStatsFar(u8 id);
 void Djinn_ActivateFar(u8 id, u8 x, u8 y);
 void Trade_RemoveOfferFar(u8 id, u8 x, u8 y);
 
@@ -90,7 +90,7 @@ s32 BattlePlacement_UpdateTimedEntries(void)
 
                 Djinn_ActivateFar(id, expired_entry->x, expired_entry->y);
                 Trade_RemoveOfferFar(id, expired_entry->x, expired_entry->y);
-                BattleUnit_Recalculate(id);
+                Owner_RecalculateStatsFar(id);
                 removed = 1;
             } else {
                 expired_entry++;

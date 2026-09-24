@@ -45,7 +45,7 @@ void BattleEffect_RunPhasedRadialParticleSequence(s32 arg)
     effect_slots = *(void **)0x03001F30;
     Unnamed_080b0840Far(0x201090);
     WaitFrames(30);
-    Motion_ArmCb(arg, 0x4000, 0);
+    ObjectMotion_ArmCallback(arg, 0x4000, 0);
     WaitFrames(20);
     Audio_PlayCue(173);
     Motion_SetVarCbAndRefresh(arg, 1);
@@ -64,7 +64,7 @@ void BattleEffect_RunPhasedRadialParticleSequence(s32 arg)
     position.x = source_object->x;
     position.y = source_object->y;
     position.z = source_object->z;
-    NormalizeVector(&position);
+    Camera_WorldToScreen(&position);
 
     slot = (u8 *)effect_slots + 88;
     remaining = 23;
@@ -84,7 +84,7 @@ void BattleEffect_RunPhasedRadialParticleSequence(s32 arg)
     } while (remaining >= 0);
 
     WaitFrames(60);
-    Motion_ArmCb(gGameState[125], 0x4000, 0);
+    ObjectMotion_ArmCallback(gGameState[125], 0x4000, 0);
     WaitFrames(20);
     Object_SetMode(Object_GetById(gGameState[125]), 28);
     {

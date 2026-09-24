@@ -16,7 +16,7 @@ struct MapFocusPosition {
     s32 y;
 };
 
-void RotateVectorByMagnitude(s32, u32, struct MapFocusPosition *);
+void Vector_AddPolarOffset(s32, u32, struct MapFocusPosition *);
 
 extern struct EventPairWork1d6 gGameState;
 extern struct EventRuntime *gEventWork;
@@ -47,7 +47,7 @@ u8 GetFocusedObjectCollision(void)
     position.x = object->x;
     position.unknown_04 = object->unknown_0c;
     position.y = object->y;
-    RotateVectorByMagnitude(0x100000, object->kind, &position);
+    Vector_AddPolarOffset(0x100000, object->kind, &position);
 
     if (runtime->mode_19e == 3) {
         u32 tile_x;

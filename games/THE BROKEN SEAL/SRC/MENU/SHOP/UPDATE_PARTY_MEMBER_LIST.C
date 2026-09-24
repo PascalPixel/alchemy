@@ -1,6 +1,6 @@
 #include "SHOP.H"
 
-void Object_InitializeMode(void *, s32);
+void AnimationObjects_SelectAnimationFar(void *, s32);
 s32 Item_IsCompatibleWithOwnerFar(s16, s32);
 
 extern u8 *gMenuWork;
@@ -28,9 +28,9 @@ void Shop_DrawParty(s32 window, s32 selected, s32 requirement)
             icon_entry = (s32 *)(shop + 0x114);
             do {
                 if (index == selected)
-                    Object_InitializeMode((void *)*icon_entry, 30);
+                    AnimationObjects_SelectAnimationFar((void *)*icon_entry, 30);
                 else
-                    Object_InitializeMode((void *)*icon_entry, 1);
+                    AnimationObjects_SelectAnimationFar((void *)*icon_entry, 1);
                 icon_entry[16] = 0x10000;
                 unit_id = ((union ShopPartyMemberId *)(
                     party_member_base + offset))->half[0];

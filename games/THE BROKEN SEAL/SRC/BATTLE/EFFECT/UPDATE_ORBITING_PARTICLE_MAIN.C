@@ -45,7 +45,7 @@ struct OrbitingParticleVector {
     s32 z;
 };
 
-void RotateVectorByMagnitude(s32, s32, struct OrbitingParticleVector *);
+void Vector_AddPolarOffset(s32, s32, struct OrbitingParticleVector *);
 void BattleFx_UpdateOrbitingParticleFade(void *object);
 
 void BattleFx_UpdateOrbitingParticleLeft(struct OrbitingParticle *particle)
@@ -63,7 +63,7 @@ void BattleFx_UpdateOrbitingParticleLeft(struct OrbitingParticle *particle)
             local.x = *(s32 *)(arg + 56);
             local.y = *(s32 *)(arg + 60);
             local.z = *(s32 *)(arg + 64);
-            RotateVectorByMagnitude(life << 17,
+            Vector_AddPolarOffset(life << 17,
                           *(s16 *)(arg + 102) + (life << 11),
                           &local);
             *(s32 *)(arg + 8) = local.x;
@@ -91,7 +91,7 @@ void BattleFx_UpdateOrbitingParticleRight(struct OrbitingParticle *particle)
             local.x = *(s32 *)(arg + 56);
             local.y = *(s32 *)(arg + 60);
             local.z = *(s32 *)(arg + 64);
-            RotateVectorByMagnitude(battle_value << 17,
+            Vector_AddPolarOffset(battle_value << 17,
                           *(s16 *)(arg + 102) - (battle_value << 11),
                           &local);
             *(s32 *)(arg + 8) = local.x;
@@ -172,7 +172,7 @@ extern struct OrbitingParticleGlobals gGameState;
 
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 #define Rand Random16
-void RotateVectorByMagnitude(
+void Vector_AddPolarOffset(
     s32 magnitude,
     s32 angle,
     struct OrbitingParticleVector *vector);
@@ -228,7 +228,7 @@ void BattleFx_RunOrbitingParticles(void)
             p->y = scene->origin.y;
             p->z = scene->origin.z;
             magnitude = (Rand() << 2) + 0x20000;
-            RotateVectorByMagnitude(magnitude, Rand(), p);
+            Vector_AddPolarOffset(magnitude, Rand(), p);
             particle->orbit_center.x = p->x;
             particle->orbit_center.y = p->y;
             particle->orbit_center.z = p->z;

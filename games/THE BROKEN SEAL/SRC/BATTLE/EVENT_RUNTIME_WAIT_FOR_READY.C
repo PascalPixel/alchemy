@@ -4,7 +4,7 @@
 
 #define FIELD_AT_OFFSET(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
-void ScheduleCallback(void *);
+void Scheduler_RemoveCallback(void *);
 s32 BattleEventRuntime_Reset(void);
 void BattleEvent_Playback(void);
 
@@ -24,6 +24,6 @@ s32 BattleEventRuntime_WaitForReady(void)
             WaitFrames(1U);
         } while (FIELD_AT_OFFSET(runtime, s32 *, 0x800) != 4);
     }
-    ScheduleCallback((void *)BattleEvent_Playback);
+    Scheduler_RemoveCallback((void *)BattleEvent_Playback);
     return BattleEventRuntime_Reset();
 }

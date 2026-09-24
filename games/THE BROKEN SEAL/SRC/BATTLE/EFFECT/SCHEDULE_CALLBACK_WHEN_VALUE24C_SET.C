@@ -8,12 +8,12 @@ struct Fields_08099810 {
 
 extern struct Fields_08099810 gGameState;
 
-void ScheduleCallbackAfterFrames(s32, s32);
+void Scheduler_AddOrUpdateCallback(s32, s32);
 extern u8 gRom;
 
 void BattleFx_ScheduleCallbackWhenValue24cSet(void)
 {
     if (gGameState.value != 0) {
-        ScheduleCallbackAfterFrames((s32)&gRom, 0xc80);
+        Scheduler_AddOrUpdateCallback((s32)&gRom, 0xc80);
     }
 }

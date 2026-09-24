@@ -1,7 +1,7 @@
 #include "TYPES.H"
 #include "FIXED_MATH.H"
 
-u8 *Text_FormatNumber(u8 *buffer, s32 input, s32 width)
+u8 *UiText_FormatNumber(u8 *buffer, s32 input, s32 width)
 {
     s32 offset;
     s32 value;

@@ -103,7 +103,7 @@ void ObjectDispatch_SetChildField1e(struct DispatchObject *object, u32 value)
 
 struct State_0800b7c0;
 
-s32 InitializeAnimationObjects(struct State_0800b7c0 *);
+s32 Animation_InitializeObjects(struct State_0800b7c0 *);
 
 void Animation_SetIndexAndInitObjects(void *obj, s32 no)
 {
@@ -111,7 +111,7 @@ void Animation_SetIndexAndInitObjects(void *obj, s32 no)
         obj = FIELD_AT_OFFSET(obj, void **, 0x50);
         if (no >= 0) {
             *FIELD_AT_OFFSET(obj, s16 **, 0x28) = (s16)no;
-            InitializeAnimationObjects((struct State_0800b7c0 *)obj);
+            Animation_InitializeObjects((struct State_0800b7c0 *)obj);
         }
     }
 }

@@ -1,7 +1,7 @@
 #include "TYPES.H"
 #include "SCENE.H"
 
-u8 *Item_GetData(u32);
+u8 *Item_Get(u32);
 
 u32 Item_EncodeBankedId(u32 value)
 {
@@ -10,7 +10,7 @@ u32 Item_EncodeBankedId(u32 value)
     if (base == 0)
         return 0;
     {
-        u8 flags = Item_GetData(base)[3];
+        u8 flags = Item_Get(base)[3];
 
         if (flags & 8)
             bank = 1;

@@ -8,14 +8,14 @@
 #include "UI.H"
 
 s32 UiMenu_CreateCursor(void *menu);
-void InitializeEntryObjects(s32 source, s32 x, s32 y, s32 spacing, s32 style);
+void PsynergyMenu_InitializeEntryObjects(s32 source, s32 x, s32 y, s32 spacing, s32 style);
 
 void ItemMenu_Init(void)
 {
     struct InventoryMenuState *menu = gMenuWork;
     s32 index;
 
-    InitializeEntryObjects(UiMenu_CreateCursor(menu), 2, 2, 8, 0);
+    PsynergyMenu_InitializeEntryObjects(UiMenu_CreateCursor(menu), 2, 2, 8, 0);
     for (index = 3; index >= 0; index--)
         *(u16 *)((u8 *)menu + 324 + index * 2) = 30;
 

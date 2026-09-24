@@ -10,8 +10,8 @@ extern u8 Value_00000c8f;
 
 void UiWindow_Clear(s32 window);
 s32 Item_FindSlot(s32 unit_id, s32 item_id);
-void UiText_DrawQuantity(s32 kosuu, s32 style);
-void UiText_DrawAt(s32 message, s32 window, s32 x, s32 y);
+void UiWork_PushValueSlotFar(s32 kosuu, s32 style);
+void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 u8 *UiIcon_Draw(u16 no, s32 kind, s32 window, s32 x, s32 y);
 
 void Shop_DrawUnitItem(s32 window, s32 unit_id, s32 item_id)
@@ -37,10 +37,10 @@ void Shop_DrawUnitItem(s32 window, s32 unit_id, s32 item_id)
            足し込む順を変えると二レジスタ番地形が崩れる。 */
         if (slot != -1) {
             off = slot * 2 + 216;
-            UiText_DrawQuantity((*(u16 *)(unit + off) >> 11) + 1, 5);
-            UiText_DrawAt((s32)&Value_00000c90, window, 0, 0);
+            UiWork_PushValueSlotFar((*(u16 *)(unit + off) >> 11) + 1, 5);
+            UiText_DrawCharacterAtOffsetFar((s32)&Value_00000c90, window, 0, 0);
         } else {
-            UiText_DrawAt((s32)&Value_00000c8f, window, 0, 0);
+            UiText_DrawCharacterAtOffsetFar((s32)&Value_00000c8f, window, 0, 0);
         }
         item_index = 0;
         first_offset = 216;

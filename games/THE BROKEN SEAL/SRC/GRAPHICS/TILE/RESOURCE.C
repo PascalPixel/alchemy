@@ -1,8 +1,8 @@
 #include "TYPES.H"
 #include "RESOURCE.H"
 
-extern s32 Resource_CopyData();
-extern s32 UiIcon_DrawWithFlags();
+extern s32 VramBlock_LoadCached();
+extern s32 RenderOutput_CreateFar();
 extern u8 UiIcon_ResourceTiles[];
 s32 UiIcon_CreateWithResource(s32 first, s32 unused, s32 second, s32 third)
 {
@@ -11,14 +11,14 @@ s32 UiIcon_CreateWithResource(s32 first, s32 unused, s32 second, s32 third)
     result = 0;
     entry_no = Resource_FindFreeEntry();
     if (entry_no != 0) {
-        Resource_CopyData(entry_no, 0x80, UiIcon_ResourceTiles);
-        result = UiIcon_DrawWithFlags(entry_no, 0x40000000, first, second, third);
+        VramBlock_LoadCached(entry_no, 0x80, UiIcon_ResourceTiles);
+        result = RenderOutput_CreateFar(entry_no, 0x40000000, first, second, third);
     }
     return result;
 }
 
-s32 Resource_CopyData(s32 entry_no, s32 mode, s32 data);
-s32 UiIcon_DrawWithFlags(s32 entry_no, s32 flags, s32 first, s32 second, s32 third);
+s32 VramBlock_LoadCached(s32 entry_no, s32 mode, s32 data);
+s32 RenderOutput_CreateFar(s32 entry_no, s32 flags, s32 first, s32 second, s32 third);
 s32 UiIcon_CreateWithResourceVariant(s32 first, s32 second, s32 third)
 {
   s32 slot;
@@ -31,8 +31,8 @@ s32 UiIcon_CreateWithResourceVariant(s32 first, s32 second, s32 third)
   resource_mode = 0x80;
   if (slot != 0)
   {
-    Resource_CopyData(slot, copy_mode = resource_mode, UiIcon_ResourceTiles);
-    icon = UiIcon_DrawWithFlags(slot, 0x40000000, first, second, third);
+    VramBlock_LoadCached(slot, copy_mode = resource_mode, UiIcon_ResourceTiles);
+    icon = RenderOutput_CreateFar(slot, 0x40000000, first, second, third);
   }
   return icon;
 }

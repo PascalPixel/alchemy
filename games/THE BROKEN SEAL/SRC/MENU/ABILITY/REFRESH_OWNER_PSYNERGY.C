@@ -3,7 +3,7 @@
 #include "PSYNERGY_MENU.H"
 
 void PsynergyMenu_RefreshOwnerEntries(s32 x, s32 y, s32 spacing);
-void UiText_DrawAt(s32 message, s32 *, s32 x, s32 y);
+void UiText_DrawCharacterAtOffsetFar(s32 message, s32 *, s32 x, s32 y);
 
 void PsynergyMenu_RefreshOwnerPsynergy(s32 owner_id)
 {
@@ -16,11 +16,11 @@ void PsynergyMenu_RefreshOwnerPsynergy(s32 owner_id)
     psynergies = menu->psynergies;
     menu->psynergy_count =
         PsynergyMenu_CollectActions(owner, psynergies, 2);
-    UiWindow_Commit(menu->psynergy_window);
+    RenderOutput_RedrawSavedRectFar(menu->psynergy_window);
     PsynergyMenu_RefreshOwnerEntries(0x6c, 0x20, 8);
     PsynergyMenu_DrawPsynergyIcons(psynergies);
     if (menu->psynergy_count == 0) {
-        UiText_DrawAt(
+        UiText_DrawCharacterAtOffsetFar(
             (s32)&PsynergyMenu_EmptyMessage,
             (s32 *)menu->psynergy_window,
             0,

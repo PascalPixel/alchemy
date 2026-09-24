@@ -5,7 +5,7 @@ void Event_ClearInvalidPackedValuesFar(s32);
 s32 Inventory_Discard(s32 owner, s32 slot)
 {
     s32 item =
-        ((struct OwnerInventoryState *)OwnerState_Get(owner))->inventory[slot];
+        ((struct OwnerInventoryState *)Owner_GetState(owner))->inventory[slot];
     s32 removed_slot = Inventory_Remove(owner, slot);
 
     if (removed_slot != -1) {
@@ -16,7 +16,7 @@ s32 Inventory_Discard(s32 owner, s32 slot)
 
 s32 Inventory_CheckDiscard(s32 owner, s32 slot)
 {
-    struct OwnerInventoryState *inv = OwnerState_Get(owner);
+    struct OwnerInventoryState *inv = Owner_GetState(owner);
     s32 item_id = inv->inventory[slot] & 0x1ff;
     struct ItemDefinition *item = Item_GetDirect(item_id);
 
@@ -55,7 +55,7 @@ s32 PartyInventory_Discard(s32 item_id)
 
 s32 Inventory_Break(s32 owner, s32 slot)
 {
-    struct OwnerInventoryState *inv = OwnerState_Get(owner);
+    struct OwnerInventoryState *inv = Owner_GetState(owner);
     if (inv->inventory[slot] == 0) {
         return -1;
     }
@@ -65,7 +65,7 @@ s32 Inventory_Break(s32 owner, s32 slot)
 
 s32 Inventory_Repair(s32 owner, s32 slot)
 {
-    struct OwnerInventoryState *inv = OwnerState_Get(owner);
+    struct OwnerInventoryState *inv = Owner_GetState(owner);
     if (inv->inventory[slot] == 0) {
         return -1;
     }

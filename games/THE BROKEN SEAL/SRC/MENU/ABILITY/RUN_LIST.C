@@ -110,7 +110,7 @@ void Audio_PlayCue(s32 cue);
 
 /*
  * types.h already supplies WaitFrames, Math_Mod, Audio_PlayCue, GameFlag_IsSet,
- * Ability_GetData, UiText_DrawAt, UiIcon_PrepareObject and
+ * Ability_GetData, UiText_DrawCharacterAtOffsetFar, UiIcon_PrepareObject and
  * Object_InitializeMode; only the names it does not carry are declared here.
  */
 
@@ -234,14 +234,14 @@ s32 PsynergyMenu_RunList(s32 pane)
                         prompt = 1;
                         menu->flags |= 2;
                         UiWindow_ClearInteriorTilesFar(window, 0, 88, 120, 96);
-                        UiText_DrawAt(0xae1, window, 0, 88);
+                        UiText_DrawCharacterAtOffsetFar(0xae1, window, 0, 88);
                     }
                 }
                 if ((INPUT_HELD_KEYS & KEY_SELECT) == 0 && prompt == 1) {
                     prompt = 0;
                     menu->flags &= 0xfffd;
                     UiWindow_ClearInteriorTilesFar(window, 0, 88, 120, 96);
-                    UiText_DrawAt(0xb89, window, 0, 88);
+                    UiText_DrawCharacterAtOffsetFar(0xb89, window, 0, 88);
                 }
             }
 

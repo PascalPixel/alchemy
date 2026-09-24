@@ -14,7 +14,7 @@ void RenderResource_LoadPair(s32 group_index, s32 resource_index)
     staging_buffer = (void *)Runtime_AllocateBlock(14, 0x400);
     if ((resource_address = gRom[group_index], resource_index <= 0x5F)) {
         Resource_DecodeByteLz((const void *)resource_address, staging_buffer);
-        Resource_CopyData(resource_index, 0x200, staging_buffer);
+        VramBlock_LoadCached(resource_index, 0x200, staging_buffer);
         Runtime_ReleaseHeapBlock(14);
     }
 }

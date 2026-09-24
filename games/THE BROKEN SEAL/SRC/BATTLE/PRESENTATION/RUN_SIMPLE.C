@@ -51,11 +51,11 @@ extern s32 *gTransitionWork;
 struct PresentationObjectSlot *GetBattleObjectSlot(s32 id);
 s32 ArcTan2(s32 first, s32 second);
 
-struct BattleUnit *Runtime_GetObject(s32 id);
+struct BattleUnit *Owner_GetStateFar(s32 id);
 struct MotionRecord *GetMotionRecord(
     struct PresentationObject *object, s32 entry_index);
 
-void Object_SetAction(struct PresentationObject *object, s32 action);
+void ObjectDispatch_ApplyValueToChildrenFar(struct PresentationObject *object, s32 action);
 
 void Actor_ResetMotionAtAnchor(s32 id);
 void BattlePres_BuildTargetList(void *input, struct BattlePresentationWork *work);
@@ -98,8 +98,8 @@ s32 BattlePres_RunSimple(struct SimplePresentationInput *input, s32 flags)
 
     BattlePres_SetActorModes(0, 0);
     BattlePres_BuildTargetList(saved_input, &work);
-    Runtime_GetObject(work.primary_id);
-    Runtime_GetObject(saved_input->secondary_id);
+    Owner_GetStateFar(work.primary_id);
+    Owner_GetStateFar(saved_input->secondary_id);
 
     scripted = flags & 2;
     record = GetMotionRecord(
@@ -110,7 +110,7 @@ s32 BattlePres_RunSimple(struct SimplePresentationInput *input, s32 flags)
         saved_input->secondary_id,
         divisor,
         0);
-    Object_SetAction(GetBattleObjectSlot(work.primary_id)->object, 16);
+    ObjectDispatch_ApplyValueToChildrenFar(GetBattleObjectSlot(work.primary_id)->object, 16);
     GetBattleObjectSlot(saved_input->secondary_id);
 
     if (saved_input->secondary_id <= 7)

@@ -4,7 +4,7 @@ s32 Inventory_GetQuantity(s32 owner, s32 slot)
 {
     s32 item_id;
 
-    owner = ((struct OwnerInventoryState *)OwnerState_Get(owner))->inventory[slot];
+    owner = ((struct OwnerInventoryState *)Owner_GetState(owner))->inventory[slot];
     item_id = 0x1ff;
     item_id &= owner;
     owner = (u32)owner >> 11;
@@ -17,7 +17,7 @@ s32 Inventory_GetQuantity(s32 owner, s32 slot)
 
 s32 Inventory_Count(s32 owner)
 {
-    struct OwnerInventoryState *inv = OwnerState_Get(owner);
+    struct OwnerInventoryState *inv = Owner_GetState(owner);
     s32 count = 0;
 
     if (inv->inventory[count] != 0) {
@@ -72,9 +72,9 @@ s32 PartyInventory_CountFreeSlots(void)
 
 /* 所持品追加。積み重ね可能な品は同一番号の枠を探して個数を増やし、
    そうでなければ空き枠へ入れる。戻り値は枠番号、失敗は -1。 */
-s32 Inventory_Add(s32 owner_id, s32 item_id)
+s32 Inventory_AddItem(s32 owner_id, s32 item_id)
 {
-    struct OwnerInventoryState *inv = OwnerState_Get(owner_id);
+    struct OwnerInventoryState *inv = Owner_GetState(owner_id);
     struct ItemDefinition *item = Item_GetDirect(item_id);
     s32 slot;
 
@@ -129,7 +129,7 @@ s32 PartyInventory_Add(s32 item_id)
         do {
             s16 owner_id = *owner_cursor++;
 
-            if (Inventory_Add(owner_id, item_id) >= 0)
+            if (Inventory_AddItem(owner_id, item_id) >= 0)
                 return owner_id;
             owner_index++;
         } while (owner_index < owner_count);
@@ -139,7 +139,7 @@ s32 PartyInventory_Add(s32 item_id)
 
 s32 Inventory_Find(s32 owner, s32 item_id)
 {
-    struct OwnerInventoryState *inv = OwnerState_Get(owner);
+    struct OwnerInventoryState *inv = Owner_GetState(owner);
     s32 slot = 0;
     u16 *entry = inv->inventory;
 
@@ -181,7 +181,7 @@ void Owner_RecalculateStats(s32 owner);
 
 s32 Inventory_Equip(s32 owner, s32 slot)
 {
-    struct OwnerInventoryState *inv = OwnerState_Get(owner);
+    struct OwnerInventoryState *inv = Owner_GetState(owner);
     unsigned int mask;
     unsigned int item_id = inv->inventory[slot];
     struct ItemDefinition *item;
@@ -228,7 +228,7 @@ s32 Inventory_Equip(s32 owner, s32 slot)
 
 s32 Inventory_FindEquipped(s32 owner, s32 type)
 {
-    u8 *base = OwnerState_Get(owner);
+    u8 *base = Owner_GetState(owner);
     s32 index;
     s32 offset;
     struct ItemDefinition *item;

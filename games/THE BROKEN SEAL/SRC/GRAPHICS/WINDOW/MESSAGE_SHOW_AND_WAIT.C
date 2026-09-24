@@ -5,8 +5,8 @@
 #include "UI.H"
 
 /* ui/message/show_and_wait.c */
-void UiWork_FinalizePending(void);
-void UiWork_Create(s32, s32, s32, s32);
+void UiWork_FinalizePendingCoreFar(void);
+void UiText_OpenMessageWindowFar(s32, s32, s32, s32);
 extern u8 gVal[];
 extern u8 gVal2[];
 extern u8 gVal3[];
@@ -19,7 +19,7 @@ void UiMessage_ShowAndWait(s32 arg0)
     s32 result = arg0;
     s8 mode;
 
-    UiWork_FinalizePending();
+    UiWork_FinalizePendingCoreFar();
     mode = *(s8 *)((u8 *)state + 0x3a9);
     if (mode == 2)
         result += gVal2 - gVal;
@@ -27,7 +27,7 @@ void UiMessage_ShowAndWait(s32 arg0)
         result += gVal3 - gVal;
     if (*(s8 *)&state[235] != 0)
         result += gVal4 - gVal;
-    UiWork_Create(result, 5, 0, (value << 16) | 0x22);
+    UiText_OpenMessageWindowFar(result, 5, 0, (value << 16) | 0x22);
     while (UiWork_IsCompleteFar() == 0)
         WaitFrames(1);
     WaitFrames(1);
@@ -62,8 +62,8 @@ void UiMessage_ShowAndRestoreState(s32 message_id)
         no += (s32)gVal4 - (s32)gVal;
     }
     (*slot)[5] = 0xDU;
-    UiWork_FinalizePending();
-    UiWork_Create(no, 5, 0, (variant << 0x10) | 0x22);
+    UiWork_FinalizePendingCoreFar();
+    UiText_OpenMessageWindowFar(no, 5, 0, (variant << 0x10) | 0x22);
     while (UiWork_IsCompleteFar() == 0) {
         WaitFrames(1U);
     }

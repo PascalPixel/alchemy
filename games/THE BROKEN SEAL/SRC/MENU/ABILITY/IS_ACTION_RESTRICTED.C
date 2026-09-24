@@ -1,10 +1,10 @@
 #include "PSYNERGY_MENU.H"
 
-u8 *Ability_GetData(u32 action);
+u8 *BattleAction_Get(u32 action);
 
 s32 PsynergyMenu_IsActionRestricted(s32 no)
 {
-    u8 *action = Ability_GetData((u32)(no << 18) >> 18);
+    u8 *action = BattleAction_Get((u32)(no << 18) >> 18);
     u32 flags;
 
     if (action[12] != 0)

@@ -3,7 +3,7 @@
 
 extern u8 *gMenuWork;
 extern s32 gFrameCount;
-void Object_InitializeMode(void *, s32);
+void AnimationObjects_SelectAnimationFar(void *, s32);
 
 void EquipmentMenu_UpdateCompatibilityIndicators(void)
 {
@@ -20,11 +20,11 @@ void EquipmentMenu_UpdateCompatibilityIndicators(void)
                                    *(u16 *)(menu + 376) & 0x1FF) != 0) {
                 s32 off = member_index * 4 + 276;
                 void *indicator = *(void **)(menu + off);
-                Object_InitializeMode(indicator, 3);
+                AnimationObjects_SelectAnimationFar(indicator, 3);
             } else {
                 s32 off = member_index * 4 + 276;
                 void *indicator = *(void **)(menu + off);
-                Object_InitializeMode(indicator, 1);
+                AnimationObjects_SelectAnimationFar(indicator, 1);
             }
             member_index++;
         } while (member_index < menu[0x219]);

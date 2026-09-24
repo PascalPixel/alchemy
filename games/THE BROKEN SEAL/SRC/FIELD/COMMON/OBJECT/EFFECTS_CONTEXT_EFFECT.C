@@ -67,19 +67,19 @@ void ObjectEffect_PrepareContextEffect(s32 value)
     WaitFrames(18);
 }
 
-s32 GameFlag_Set(s32);
+s32 GameFlag_SetBitFar(s32);
 void ObjectEffect_PrepareContextEffect(s32);
 
 void ObjectEffect_BeginContextEffect26(void)
 {
     ObjectEffect_PrepareContextEffect(0x1A);
-    GameFlag_Set(0x120);
+    GameFlag_SetBitFar(0x120);
 }
 
 void ObjectEffect_BeginContextEffect25(void)
 {
     ObjectEffect_PrepareContextEffect(0x19);
-    GameFlag_Set(0x121);
+    GameFlag_SetBitFar(0x121);
 }
 
 typedef struct {
@@ -133,8 +133,8 @@ void ObjectEffect_EndContextEffect(s32 arg0)
     Object_CommitPosition(obj);
 }
 
-s32 GameFlag_IsSet(s32);
-void GameFlag_Clear(s32);
+s32 GameFlag_TestFar(s32);
+void GameFlag_ClearBitFar(s32);
 void ObjectEffect_EndContextEffect(s32 arg0);
 void Object_PlaceWithinCameraBounds(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 void Audio_PlayCue(s32);
@@ -146,23 +146,23 @@ s32 ObjectEffect_RunPendingFlagEvent(void)
     s32 result = 0;
     s32 flag = 0x120;
 
-    if (GameFlag_IsSet(flag)!= 0) {
+    if (GameFlag_TestFar(flag)!= 0) {
         ObjectEffect_EndContextEffect(24);
-        GameFlag_Clear(flag);
+        GameFlag_ClearBitFar(flag);
         result = 1;
     } else {
         flag = 0x121;
-        if (GameFlag_IsSet(flag)!= 0) {
+        if (GameFlag_TestFar(flag)!= 0) {
             ObjectEffect_EndContextEffect(23);
-            GameFlag_Clear(flag);
+            GameFlag_ClearBitFar(flag);
             result = 2;
         } else {
             flag = 0x122;
-            if (GameFlag_IsSet(flag)!= 0) {
+            if (GameFlag_TestFar(flag)!= 0) {
                 s32 id;
                 void *obj;
 
-                GameFlag_Clear(flag);
+                GameFlag_ClearBitFar(flag);
                 id = gGameState[125];
                 obj = ObjectTable_Get(id);
                 *(s32 *)((u8 *)obj + 12) += 0x00a00000;

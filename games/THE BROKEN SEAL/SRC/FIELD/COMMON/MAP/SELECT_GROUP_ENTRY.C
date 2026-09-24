@@ -72,7 +72,7 @@ void MapGroupTable_SelectEntry(s32 kind)
                 break;
             }
             if (entry_kind == 0xff || entry_kind == kind) {
-                if (flag == 0 || GameFlag_IsSet(flag) == 0) {
+                if (flag == 0 || GameFlag_TestFar(flag) == 0) {
                     result = id;
                     sub = entry_sub;
                     break;

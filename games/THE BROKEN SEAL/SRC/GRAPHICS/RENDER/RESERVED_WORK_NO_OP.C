@@ -1,5 +1,5 @@
 #include "TYPES.H"
 
-void UiWork_ReservedNoOpA90C(void)
+void UiWork_ReservedNoOp(void)
 {
 }

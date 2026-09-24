@@ -27,7 +27,7 @@ struct ImpactObject {
 void Audio_PlayCue(s32 cue);
 struct ImpactObject *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
 void Object_SetCallback(struct ImpactObject *object, const void *callback);
-void Motion_SetTargetPositionFromMagnitudeAngle(
+void set_target_position_from_magnitude_angle(
     struct ImpactObject *object, s32 magnitude, s32 angle);
 
 /* Plays the heavy impact cue and spawns effect object 0x11b 32 units above
@@ -58,7 +58,7 @@ s32 SpawnHeavyImpactEffect(struct ImpactSource *source)
             fragment->field_30 = Random16() + 0x10000;
             fragment->field_34 = 0x10000;
             fragment->mode_55 = 0;
-            Motion_SetTargetPositionFromMagnitudeAngle(
+            set_target_position_from_magnitude_angle(
                 fragment, Random16() * 24 + 0x80000, Random16());
         }
     }

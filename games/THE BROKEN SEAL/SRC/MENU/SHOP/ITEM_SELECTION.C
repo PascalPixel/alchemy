@@ -4,7 +4,7 @@
 #define INPUT_REPEAT_KEYS (*(volatile u32 *)ADDR_03001B04)
 
 s32 Math_Mod(s32 value, s32 divisor);
-void UiWindow_Close(s32 window, s32 style);
+void UiWork_FinalizeFar(s32 window, s32 style);
 struct ShopCursorAnchor *RenderOutput_CreateFar(
     u32 resource,
     u32 flags,
@@ -105,8 +105,8 @@ s32 Shop_PickUnitItem(s32 *selected_unit, s32 *selected_item)
 
 done:
     Menu_ReleaseEntryObjectsFar();
-    UiWindow_Close(list_window, 2);
-    UiWindow_Close(shop->item_window, 2);
+    UiWork_FinalizeFar(list_window, 2);
+    UiWork_FinalizeFar(shop->item_window, 2);
     WaitFrames(1);
     Inn_Cleanup();
     return result;
@@ -120,8 +120,8 @@ done:
 
 s32 Ability_GetAvailability(s32);
 s32 Inventory_CheckDiscardFar(s32, s32);
-s32 UiWork_Create(s32, s32, s32, s32);
-void UiWork_FinalizePending(void);
+s32 UiText_OpenMessageWindowFar(s32, s32, s32, s32);
+void UiWork_FinalizePendingCoreFar(void);
 
 extern u8 Value_00000075;
 
@@ -195,14 +195,14 @@ s32 Shop_SelUse(s32 actor)
                 result = selection;
                 goto exit_loop;
             } else if (status == -4) {
-                UiWork_Create(0xc96, 8, 1, 2);
+                UiText_OpenMessageWindowFar(0xc96, 8, 1, 2);
             } else if (result == -3) {
-                UiWork_Create(0xc97, 8, 1, 2);
+                UiText_OpenMessageWindowFar(0xc97, 8, 1, 2);
             }
             Audio_PlayCue(113);
             while (UiWork_IsCompleteFar() == 0)
                 WaitFrames(1);
-            UiWork_FinalizePending();
+            UiWork_FinalizePendingCoreFar();
             continue;
         }
 
@@ -251,8 +251,8 @@ s32 Shop_SelUse(s32 actor)
     }
 
 exit_loop:
-    UiWindow_Close(win2, 2);
-    UiWindow_Close(win1, 2);
+    UiWork_FinalizeFar(win2, 2);
+    UiWork_FinalizeFar(win1, 2);
     WaitFrames(1);
     return result;
 }
@@ -279,13 +279,13 @@ void Shop_DrawUseItem(s32 window, s32 unit_id, s32 item_id)
         s32 result;
 
         UiWindow_Commit(window);
-        UiText_DrawAt(masked + (s32)&Value_00000182, window, 0, 0);
+        UiText_DrawCharacterAtOffsetFar(masked + (s32)&Value_00000182, window, 0, 0);
 
         result = Inventory_CheckDiscardFar(unit_id, item_id);
         if (result == -4) {
-            UiText_DrawAt((s32)&Value_00000c94, window, 0, 8);
+            UiText_DrawCharacterAtOffsetFar((s32)&Value_00000c94, window, 0, 8);
         } else if (result == -3) {
-            UiText_DrawAt((s32)&Value_00000c95, window, 0, 8);
+            UiText_DrawCharacterAtOffsetFar((s32)&Value_00000c95, window, 0, 8);
         } else {
             s32 qty;
             s32 total;
@@ -293,9 +293,9 @@ void Shop_DrawUseItem(s32 window, s32 unit_id, s32 item_id)
             qty = Shop_ComputeSalePrice(*(u16 *)(unit + slot_offset));
             total = mult *qty;
 
-            UiText_DrawAt((s32)&Value_00000c8d, window, 8, 8);
+            UiText_DrawCharacterAtOffsetFar((s32)&Value_00000c8d, window, 8, 8);
             UiNumber_DrawAt(total, 5, window, 40, 8);
-            UiText_DrawAt((s32)&Value_00000c8d - 5, window, 80, 8);
+            UiText_DrawCharacterAtOffsetFar((s32)&Value_00000c8d - 5, window, 80, 8);
         }
     }
 }

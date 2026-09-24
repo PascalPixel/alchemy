@@ -8,8 +8,8 @@ struct MenuState {
     s16 mode;
 };
 
-s32 GameFlag_IsSet(s32);
-void GameFlag_Set(void *);
+s32 GameFlag_TestFar(s32);
+void GameFlag_SetBitFar(void *);
 s32 Djinn_AddToLeastLoadedOwnerFar(s32, void *);
 void Battle_Reset(void);
 void Battle_SetObjectFlag5bWhenMode3(void);
@@ -29,9 +29,9 @@ void BattleFx_RunPageEffectForSlot(s32 slot, s32 page, void *entries)
     s32 selection;
 
     state = *(struct MenuState **)ADDR_03001EBC;
-    if (GameFlag_IsSet(366) != 0) {
+    if (GameFlag_TestFar(366) != 0) {
         selection = 0;
-        GameFlag_Set((u8 *)entries + page * 20 + 48);
+        GameFlag_SetBitFar((u8 *)entries + page * 20 + 48);
     } else {
         selection = Djinn_AddToLeastLoadedOwnerFar(page, entries);
     }

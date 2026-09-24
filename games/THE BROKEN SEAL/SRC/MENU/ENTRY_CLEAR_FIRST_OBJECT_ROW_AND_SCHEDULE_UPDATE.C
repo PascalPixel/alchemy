@@ -3,7 +3,7 @@
 #include "INN.H"
 
 /* menu/entry/clear_first_object_row_and_schedule_update.c */
-void ScheduleCallback(s32);
+void Scheduler_RemoveCallback(s32);
 void Menu_UpdateFirstObjectRowPositions(void);
 void ResourceObject_ReleaseFar(void *);
 
@@ -14,7 +14,7 @@ void Menu_ClearFirstObjectRowAndScheduleUpdate(void)
     s32 zero;
     s32 count;
 
-    ScheduleCallback((s32)Menu_UpdateFirstObjectRowPositions);
+    Scheduler_RemoveCallback((s32)Menu_UpdateFirstObjectRowPositions);
     zero = 0;
     offset *= 2;
     count = 3;

@@ -2,7 +2,7 @@
 #include "GLOBAL_CELLS.H"
 #include "FIXED_MATH.H"
 
-s32 Runtime_GetObject(s32);
+s32 Owner_GetStateFar(s32);
 
 s32 PsynergyMenu_BuildPageResult(struct MenuResult *result, s32 index)
 {
@@ -17,7 +17,7 @@ s32 PsynergyMenu_BuildPageResult(struct MenuResult *result, s32 index)
     s32 selected_index;
     s32 owner_slot;
 
-    owner_state = Runtime_GetObject(owners[offset]);
+    owner_state = Owner_GetStateFar(owners[offset]);
     entry_count = base[0x218];
     owner_slot = owners[offset] + 0x260;
     selected_index = ((s8 *)base)[owner_slot];

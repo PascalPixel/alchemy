@@ -1,6 +1,6 @@
 #include "EFFECT_0809B11C.H"
 
-u32 EffectSlot_HasReachedTarget(struct EffectSlot *effect)
+u32 BattleFx_HasReachedTarget(struct EffectSlot *effect)
 {
     u32 value;
 
@@ -22,11 +22,11 @@ void EffectSlot_SetPosition(struct EffectSlot *effect, s32 x, s32 z)
 }
 
 
-void Object_InitializeMode(void *, s32);
+void AnimationObjects_SelectAnimationFar(void *, s32);
 
 void EffectSlot_SetObjectMode(struct EffectSlot *effect, s32 mode)
 {
-    Object_InitializeMode(effect->object, mode);
+    AnimationObjects_SelectAnimationFar(effect->object, mode);
 }
 
 

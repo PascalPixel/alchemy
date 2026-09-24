@@ -3,7 +3,7 @@
 
 void RenderOutput_ClearListFar(s32);
 void UiMenu_SlideCursor(s32, s32);
-s32 Runtime_GetObject(s32);
+s32 Owner_GetStateFar(s32);
 s32 ItemMenu_RunOwnerSelection(void *, void *);
 void UiIcon_PrepareObject(void *icon);
 
@@ -29,7 +29,7 @@ s32 ItemMenu_PrepOwner(s32 party_slot)
 
     {
         s32 off = offset + 0x208;
-        result = Runtime_GetObject(*(u16 *)(menu + off));
+        result = Owner_GetStateFar(*(u16 *)(menu + off));
     }
     offset = (s32)(menu + 0x1C8);
     *(s8 *)(menu + 0x218) =

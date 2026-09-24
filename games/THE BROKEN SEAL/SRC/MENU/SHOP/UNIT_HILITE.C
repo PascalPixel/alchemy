@@ -2,7 +2,7 @@
 #include "SCENE.H"
 
 /* shop/unit/hilite.c */
-void Object_InitializeMode(void *, s32);
+void AnimationObjects_SelectAnimationFar(void *, s32);
 
 extern u8 *gMenuWork;
 
@@ -26,9 +26,9 @@ void Shop_HiliteUnit(s32 enabled, s32 selected)
             item = (s32 *)(state + 0x114);
             do {
                 if (index == selected)
-                    Object_InitializeMode((void *)*item, 30);
+                    AnimationObjects_SelectAnimationFar((void *)*item, 30);
                 else
-                    Object_InitializeMode((void *)*item, 1);
+                    AnimationObjects_SelectAnimationFar((void *)*item, 1);
                 item[16] = 0x10000;
                 id = *(s16 *)(half_base + offset);
                 if (Shop_CanServe(id, variant) == 0)
@@ -47,7 +47,7 @@ extern u8 Value_00000d2d;
 
 void UiWindow_Clear(s32 target);
 void UiText_DrawMessageAt(s32 message, s32 target, s32 arg2, s32 arg3);
-void UiText_DrawQuantity(s32 message, s32 style);
+void UiWork_PushValueSlotFar(s32 message, s32 style);
 
 void Shop_DrawSelMsg(s32 target, s32 selection)
 {
@@ -64,7 +64,7 @@ void Shop_DrawSelMsg(s32 target, s32 selection)
             variant = (s32)&Value_00000d2d;
         }
         variant = Shop_MsgByMode(variant);
-        UiText_DrawQuantity(message, 5);
+        UiWork_PushValueSlotFar(message, 5);
         UiText_DrawMessageAt(variant, target, 0, 0);
     }
 }

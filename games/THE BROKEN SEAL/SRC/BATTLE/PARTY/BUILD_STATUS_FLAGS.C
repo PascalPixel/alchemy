@@ -1,10 +1,10 @@
 #include "TYPES.H"
 
-u8 *Runtime_GetObject(s32);
+u8 *Owner_GetStateFar(s32);
 
 s32 BattleUnit_BuildStatusFlags(s32 id, u8 *output)
 {
-    u8 *state = Runtime_GetObject(id);
+    u8 *state = Owner_GetStateFar(id);
     s8 mode = *(s8 *)(state + 0x131);
     u32 flags = 0;
 

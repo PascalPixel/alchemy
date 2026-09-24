@@ -12,11 +12,11 @@ extern volatile u32 gKeyState;
 
 s32 ObjectTable_ReadActiveValue(s32);
 s32 BattleFx_GetResourceId(u32);
-s32 UiWork_Create(s32, s32, s32, s32);
+s32 UiText_OpenMessageWindowFar(s32, s32, s32, s32);
 s32 UiWindow_CreateWithSideObjectFar(s32, s32, s32, s32);
 s32 UiWork_IsIdleFar(s32);
 void UiWork_FinalizeEntityMatchingLocalizedIdFar(s32);
-void UiWork_FinalizePending(void);
+void UiWork_FinalizePendingCoreFar(void);
 
 void Battle_ShowPairedUnitWorkAndWait(
     s32 first, s32 first_x, s32 first_y, s32 first_arg,
@@ -29,12 +29,12 @@ void Battle_ShowPairedUnitWorkAndWait(
     s32 h0;
     s32 h1;
 
-    h0 = UiWork_Create(
+    h0 = UiText_OpenMessageWindowFar(
         rt->effect_count++, first_x, first_y,
         BattleFx_GetResourceId(id0) << 16);
     UiWindow_CreateWithSideObjectFar(id0, 0, first_arg, first_extra);
 
-    h1 = UiWork_Create(
+    h1 = UiText_OpenMessageWindowFar(
         rt->effect_count++, second_x, second_y,
         BattleFx_GetResourceId(id1) << 16);
     UiWindow_CreateWithSideObjectFar(id1, 0, second_arg, second_extra);
@@ -49,7 +49,7 @@ void Battle_ShowPairedUnitWorkAndWait(
     WaitFrames(1);
     UiWork_FinalizeEntityMatchingLocalizedIdFar(id0);
     UiWork_FinalizeEntityMatchingLocalizedIdFar(id1);
-    UiWork_FinalizePending();
+    UiWork_FinalizePendingCoreFar();
     WaitFrames(1);
 
     while (UiWork_IsIdleFar(h0) == 0)

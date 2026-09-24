@@ -4,8 +4,8 @@
 extern u8 gGameState[];
 extern u8 Value_0000097d;
 
-extern void UiText_DrawQuantity(s32, s32);
-extern void UiText_DrawMessage(void *, s32);
+extern void UiWork_PushValueSlotFar(s32, s32);
+extern void UiText_ShowPositionedMessageAndWaitFar(void *, s32);
 
 s32 Party_CheckMemberValueTotal(s32 id)
 {
@@ -31,10 +31,10 @@ s32 Party_CheckMemberValueTotal(s32 id)
     }
 
     if (sum >= count * 30) {
-        UiText_DrawQuantity(id, 2);
-        UiText_DrawMessage(&Value_0000097d, 1);
-        UiText_DrawQuantity(id, 2);
-        UiText_DrawMessage(&Value_0000097d + 1, 1);
+        UiWork_PushValueSlotFar(id, 2);
+        UiText_ShowPositionedMessageAndWaitFar(&Value_0000097d, 1);
+        UiWork_PushValueSlotFar(id, 2);
+        UiText_ShowPositionedMessageAndWaitFar(&Value_0000097d + 1, 1);
         return -1;
     }
     return 0;

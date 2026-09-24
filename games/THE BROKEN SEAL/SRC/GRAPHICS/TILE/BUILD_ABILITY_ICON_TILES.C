@@ -20,7 +20,7 @@ typedef struct {
 extern FontTransfer *Runtime_AllocateHeapBlock(s32 arg0, s32 arg1);
 extern void UiGlyph_DecodeWithHeapRoutines(FontTransfer *work, s32 slot);
 
-extern s32 Resource_CopyData(s32 index, s32 size, u8 *destination);
+extern s32 VramBlock_LoadCached(s32 index, s32 size, u8 *destination);
 
 extern s32 RomBytes_08029a10[];
 extern s32 UiIcon_PsynergyIconPointers[];
@@ -53,6 +53,6 @@ void UiIcon_BuildAbilityIconTiles(u32 glyph, s32 with_base, s32 *src,
     if (reuse == 0)
         *src = Resource_FindFreeEntry();
 
-    *dst = Resource_CopyData(*src, 0x80, &work->f400);
+    *dst = VramBlock_LoadCached(*src, 0x80, &work->f400);
     Runtime_ReleaseHeapBlock(0x11);
 }

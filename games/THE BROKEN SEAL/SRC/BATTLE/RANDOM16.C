@@ -85,7 +85,7 @@ s32 Item_GetEquippedElement(void)
     struct ItemDefinition *item;
     void *owner;
 
-    owner = OwnerState_Get();
+    owner = Owner_GetState();
     if (FIELD_AT_OFFSET(owner, u8 *, 0x129) == 0) {
         return Owner_GetDefaultElement(owner);
     }

@@ -49,7 +49,7 @@ struct DisplayTransitionRegisters {
     u16 secondary_value;
 };
 
-extern s32 ScheduleCallback(void (*)(void));
+extern s32 Scheduler_RemoveCallback(void (*)(void));
 
 typedef s32 (*SignedDivide)(s32, s32);
 
@@ -67,7 +67,7 @@ void DisplayTransition_Update(void)
 
         if (*step >= *duration) {
             *duration = 0;
-            ScheduleCallback(DisplayTransition_Update);
+            Scheduler_RemoveCallback(DisplayTransition_Update);
             Runtime_SetIrqHandler(1, 0, 0);
             return;
         } else {

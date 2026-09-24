@@ -1,7 +1,7 @@
 #include "TYPES.H"
 
 /* battle/unit/lookup_weapon_value_by_class.c */
-void *Runtime_GetObject(s32 actor_id);
+void *Owner_GetStateFar(s32 actor_id);
 s32 Inventory_FindEquippedFar(s32, s32);
 u32 Resource_FindFreeSlot(s32);
 
@@ -17,7 +17,7 @@ s32 BattleUnit_LookupWeaponValueByClass(s32 id)
     s32 entry;
     s32 result;
 
-    state = Runtime_GetObject(id);
+    state = Owner_GetStateFar(id);
     entry = Inventory_FindEquippedFar(id, 1);
     result = 0;
     if (entry >= 0) {

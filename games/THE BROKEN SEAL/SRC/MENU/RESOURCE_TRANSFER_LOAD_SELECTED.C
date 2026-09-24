@@ -31,7 +31,7 @@ extern u8 Value_000000f1;
 struct SelectionNode_0801c188 *NodeChain_GetNodeAtCount(void *state);
 struct ResourceBuffer_0801c188 *Runtime_AllocateHeapBlock(s32 owner, s32 size);
 void Resource_DecodeByteLz(void *source, void *destination);
-u16 Resource_CopyData(s32 handle, s32 size, void *buffer);
+u16 VramBlock_LoadCached(s32 handle, s32 size, void *buffer);
 
 void Menu_LoadSelectedResource(void)
 {
@@ -61,7 +61,7 @@ void Menu_LoadSelectedResource(void)
     if (transfer->active == 0)
         transfer->handle = Resource_FindFreeEntry();
     transfer->transfer_id =
-        Resource_CopyData(transfer->handle, 0x400, buffer);
+        VramBlock_LoadCached(transfer->handle, 0x400, buffer);
     transfer->active = 1;
     transfer->no = no;
     transfer->x = 40;

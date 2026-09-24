@@ -9,7 +9,7 @@ struct RingOrigin {
     s32 z;
 };
 
-void ParticleEffect_UpdateMotionAndScale(union FieldObject *object)
+void BattleFx_UpdateParticleMotionAndScale(union FieldObject *object)
 {
     struct FieldEffect *effect = &object->effect;
 
@@ -32,7 +32,7 @@ void BattleFx_SpawnRadialParticleRing(struct RingOrigin *origin)
     u32 i;
 
     options.palette = 0;
-    options.update = ParticleEffect_UpdateMotionAndScale;
+    options.update = BattleFx_UpdateParticleMotionAndScale;
     options.start_scale_x = 0xCCCC;
     options.start_scale_y = 0xCCCC;
     i = 0;

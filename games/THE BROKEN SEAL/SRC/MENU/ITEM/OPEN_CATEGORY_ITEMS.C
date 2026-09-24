@@ -9,6 +9,6 @@ void ItemMenu_OpenCategory(s32 owner_id)
 
     menu = gMenuWork;
     ItemMenu_PosCategory();
-    UiWindow_Commit(menu->item_window);
+    RenderOutput_RedrawSavedRectFar(menu->item_window);
     InventoryMenu_DrawCategoryItems(menu->item_window, owner_id, 0);
 }

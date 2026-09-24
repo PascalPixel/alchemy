@@ -14,7 +14,7 @@ typedef struct {
 
 extern s32 Runtime_AllocateHeapBlock(s32 no0, s32 no1);
 extern s32 UiGlyph_DecodeWithHeapRoutines(T *, s32);
-extern s32 Resource_CopyData(s32, s32, u8 *);
+extern s32 VramBlock_LoadCached(s32, s32, u8 *);
 extern s32 Runtime_ReleaseHeapBlock(s32);
 extern s32 UiIcon_FramePointerTable[];
 extern s32 UiIcon_OverlayPointerTable[];
@@ -35,6 +35,6 @@ void Ui_BuildPairedPatternsToSlot(s32 no0, s32 no1, s32 *slot, s32 *ret, s32 fla
     if (flag == 0) {
         *slot = Resource_FindFreeEntry();
     }
-    *ret = Resource_CopyData(*slot, 0x80, &work->f400);
+    *ret = VramBlock_LoadCached(*slot, 0x80, &work->f400);
     Runtime_ReleaseHeapBlock(0x11);
 }

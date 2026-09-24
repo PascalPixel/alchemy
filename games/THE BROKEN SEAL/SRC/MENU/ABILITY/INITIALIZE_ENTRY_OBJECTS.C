@@ -36,11 +36,11 @@ extern u8 *gMenuWork;
 s32 Party_ListActiveOwnersFar(u16 *out);
 s32 Party_RemapCharacterIdByFlagsFar(u16 value);
 void *ResourceObject_CreateFar(s32 value);
-void Object_InitializeMode(void *object, s32 value);
-void ScheduleCallbackAfterFrames(void (*callback)(void), s32 value);
+void AnimationObjects_SelectAnimationFar(void *object, s32 value);
+void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 value);
 void Menu_UpdateEntryObjectTransforms(void);
 
-void InitializeEntryObjects(void *source, s32 origin_x, s32 origin_y, s32 spacing)
+void PsynergyMenu_InitializeEntryObjects(void *source, s32 origin_x, s32 origin_y, s32 spacing)
 {
     u16 entry_ids[14];
     u8 *entry_state = gMenuWork;
@@ -66,7 +66,7 @@ void InitializeEntryObjects(void *source, s32 origin_x, s32 origin_y, s32 spacin
             ENTRY_SLOT(entry_state, 0x154 + i * 4)->w = 0x10000;
             ((struct EntryObject *)entry_object)->f09_b = 0;
             FIELD(entry_object, u8 *, 38) = 0;
-            Object_InitializeMode(entry_object, 1);
+            AnimationObjects_SelectAnimationFar(entry_object, 1);
         }
     }
     for (; i < 8; i++) {
@@ -75,6 +75,6 @@ void InitializeEntryObjects(void *source, s32 origin_x, s32 origin_y, s32 spacin
     {
         s32 delay_frames = 200;
         delay_frames <<= 4;
-        ScheduleCallbackAfterFrames(Menu_UpdateEntryObjectTransforms, delay_frames);
+        Scheduler_AddOrUpdateCallback(Menu_UpdateEntryObjectTransforms, delay_frames);
     }
 }

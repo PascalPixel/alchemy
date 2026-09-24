@@ -2,7 +2,7 @@
 #include "FIXED_MATH.H"
 
 void UiWindow_Clear(s32 window);
-u8 *UiIcon_DrawWithFlags(u16 no, u32 flags, s32 window, s32 x, s32 y);
+u8 *RenderOutput_CreateFar(u16 no, u32 flags, s32 window, s32 x, s32 y);
 u8 *UiIcon_Draw(s32 no, s32 kind, s32 window, s32 x, s32 y);
 u8 *Shop_CreatePriceSprite(s16 value, s32 window, s32 x, s32 y);
 
@@ -28,7 +28,7 @@ void Shop_DrawStock(s32 window, s32 selected)
     if (window != 0) {
         UiWindow_Clear(window);
         if (first != 0) {
-            icon = UiIcon_DrawWithFlags(shop->previous_page_icon, 0x40000000,
+            icon = RenderOutput_CreateFar(shop->previous_page_icon, 0x40000000,
                                  window, 216, -16);
             clear = 0;
             icon[4] = clear;
@@ -36,7 +36,7 @@ void Shop_DrawStock(s32 window, s32 selected)
             *(u16 *)(icon + 12) = clear;
         }
         if (first + 7 < item_count) {
-            icon = UiIcon_DrawWithFlags(shop->next_page_icon, 0x40000000,
+            icon = RenderOutput_CreateFar(shop->next_page_icon, 0x40000000,
                                  window, 216, 24);
             clear = 0;
             icon[4] = clear;

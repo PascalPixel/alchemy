@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_370:020011e4": {
+      "name": "Clear_EncodePassword",
+      "source": "MENU/CLEAR/ENCODE_PASSWORD.C"
+    },
     "resource_36f:02000238": {
       "name": "Title_RevealSpriteRow",
       "source": "MENU/TITLE/SPRITE_ROW.C"

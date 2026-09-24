@@ -19518,7 +19518,8 @@
       "source": "BATTLE/PRESENTATION/TRANS_SETUP_AT_DEPTH.C"
     },
     "main:080c2724": {
-      "name": "Unnamed_080c2724"
+      "name": "Battle_AwardSpoils",
+      "source": "BATTLE/AWARD_SPOILS.C"
     },
     "main:080ca978": {
       "name": "Unnamed_080ca978"

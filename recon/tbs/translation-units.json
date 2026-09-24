@@ -72635,6 +72635,78 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "imiru-mura-f-0088c",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/IMIRU_MURA/F_0088C.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_399",
+      "absolute_symbols": {
+        "Engine_ActorGet": {
+          "address": "0x0200a248",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagIsSet": {
+          "address": "0x0200a210",
+          "kind": "thumb"
+        },
+        "Engine_ShopOpen": {
+          "address": "0x0200a3d0",
+          "kind": "thumb"
+        },
+        "Engine_EventBegin": {
+          "address": "0x0200a230",
+          "kind": "thumb"
+        },
+        "Engine_ActorFaceActor": {
+          "address": "0x0200a2e0",
+          "kind": "thumb"
+        },
+        "Engine_EventWait": {
+          "address": "0x0200a228",
+          "kind": "thumb"
+        },
+        "Engine_EventSetMessage": {
+          "address": "0x0200a300",
+          "kind": "thumb"
+        },
+        "Engine_EventShowMessage": {
+          "address": "0x0200a308",
+          "kind": "thumb"
+        },
+        "Engine_ActorFaceDirection": {
+          "address": "0x0200a320",
+          "kind": "thumb"
+        },
+        "Engine_EventEnd": {
+          "address": "0x0200a238",
+          "kind": "thumb"
+        },
+        "Engine_CameraSetSpeed": {
+          "address": "0x0200a340",
+          "kind": "thumb"
+        },
+        "Engine_CameraMoveTo": {
+          "address": "0x0200a348",
+          "kind": "thumb"
+        },
+        "Engine_CameraWaitForMove": {
+          "address": "0x0200a350",
+          "kind": "thumb"
+        },
+        "Main_0808a0b0": {
+          "address": "0x0200a270",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x0200088c",
+          "extent": 232,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

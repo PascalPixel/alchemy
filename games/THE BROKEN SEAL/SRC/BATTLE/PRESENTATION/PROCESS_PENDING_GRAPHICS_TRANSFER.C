@@ -1,10 +1,14 @@
+/* Battle presentation: once per frame, flush the effect canvas to VRAM when
+   an effect marked it pending, in the transfer mode the effect chose (plain
+   copy, copy and clear, one of two blends, or a fade by amount); otherwise
+   count the frames since the last flush. */
 #include "TYPES.H"
-
-#define BattlePres_ProcessPendingGraphicsTransfer Func_080cd260
 
 #define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
-typedef void (*CopyWordsFn)(void *destination, const void *source, s32 size);
+/* The IWRAM word copy returns a value the callers ignore; declaring it
+   changes how the scheduler orders the argument loads around the call. */
+typedef s32 (*CopyWordsFn)(void *destination, const void *source, s32 size);
 typedef void (*FillWordsFn)(void *destination, s32 size, s32 value);
 
 static __inline__ void CopyWords(void *destination, const void *source, s32 size)
@@ -22,7 +26,7 @@ void Func_080054e4(void *source, void *destination, s32 size);
 void Func_08005490(void *source, s32 amount, void *destination, s32 size);
 void Func_0800543c(void *source, s32 amount, void *destination, s32 size);
 
-void BattlePres_ProcessPendingGraphicsTransfer(void)
+void BattlePresentation_ProcessPendingGraphicsTransfer(void)
 {
     void **heap_cache = (void **)0x03001eec;
     void *work = heap_cache[0];

@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_3c8:02001d48": {
+      "name": "VinasuHeya_RunCellPushScene",
+      "source": "FIELD/VINASU_HEYA/FLAG_301_CELL_PUSH.C"
+    },
     "resource_3b3:020024cc": {
       "name": "TakaraHashira_DropActorTen",
       "source": "FIELD/TAKARA_HASHIRA/DROP_ACTOR_TEN.C"

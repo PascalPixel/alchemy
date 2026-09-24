@@ -164,10 +164,10 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *efx)
     work->transfer_mode = 2;
     work->transfer_value = 50;
 
-    for (i = 0, p = PARTICLES; i != 64; i++, p++) {
-        p->x = (Random16() & 63) + 32;
-        p->y = (Random16() & 31) + 120;
-        p->variant = -1;
+    for (i = 0; i != 64; i++) {
+        PARTICLES[i].x = (Random16() & 63) + 32;
+        PARTICLES[i].y = (Random16() & 31) + 120;
+        PARTICLES[i].variant = -1;
     }
 
     for (i = 0; i != 32; i++) {
@@ -331,12 +331,12 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *efx)
 
         if (frame > 223) {
             if (frame == 224) {
-                for (i = 0, p = PARTICLES; i != 128; i++, p++) {
-                    p->x = 0x480000;
-                    p->y = 0x380000;
-                    p->velocity_x = (-(Random16() & 127) - 64) << 11;
-                    p->velocity_y = ((Random16() & 127) + 16) << 11;
-                    p->variant = Random16();
+                for (i = 0; i != 128; i++) {
+                    PARTICLES[i].x = 0x480000;
+                    PARTICLES[i].y = 0x380000;
+                    PARTICLES[i].velocity_x = (-(Random16() & 127) - 64) << 11;
+                    PARTICLES[i].velocity_y = ((Random16() & 127) + 16) << 11;
+                    PARTICLES[i].variant = Random16();
                 }
             }
             for (i = 0; i != 128; i++) {
@@ -387,18 +387,18 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *efx)
     *(u16 *)0x04000052 = 0x1010;
     Audio_PlayCue((s32)&Value_00000121);
 
-    for (i = 0, p = work->sparks; i != 64; i++, p++) {
-        p->x = ((Random16() & 127) + 64) << 16;
-        p->z = -0x100000;
-        p->y = (-(Random16() & 127) - 64) << 16;
-        p->velocity_x = (-(Random16() & 63) - 127) << 12;
-        p->velocity_y = ((Random16() & 63) + 127) << 12;
-        p->variant = 0;
+    for (i = 0; i != 64; i++) {
+        work->sparks[i].x = ((Random16() & 127) + 64) << 16;
+        work->sparks[i].z = -0x100000;
+        work->sparks[i].y = (-(Random16() & 127) - 64) << 16;
+        work->sparks[i].velocity_x = (-(Random16() & 63) - 127) << 12;
+        work->sparks[i].velocity_y = ((Random16() & 63) + 127) << 12;
+        work->sparks[i].variant = 0;
     }
-    for (i = 0, p = PARTICLES; i != 64; i++, p++) {
-        p->x = Random16() & 127;
-        p->y = (Random16() & 63) + i / 2;
-        p->variant = -i / 2;
+    for (i = 0; i != 64; i++) {
+        PARTICLES[i].x = Random16() & 127;
+        PARTICLES[i].y = (Random16() & 63) + i / 2;
+        PARTICLES[i].variant = -i / 2;
     }
 
     for (frame = 0; frame != 146; frame++) {
@@ -434,11 +434,11 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *efx)
             }
         }
         if (frame == 72) {
-            for (i = 0, p = work->sparks; i != 64; i++, p++) {
-                p->x = (BattleFx10_Points[i & 15][0] - 56) << 16;
-                p->y = BattleFx10_Points[i & 15][1] << 16;
-                p->velocity_x = ((Random16() & 127) - 63) << 13;
-                p->velocity_y = (-(Random16() & 31) - 16) << 14;
+            for (i = 0; i != 64; i++) {
+                work->sparks[i].x = (BattleFx10_Points[i & 15][0] - 56) << 16;
+                work->sparks[i].y = BattleFx10_Points[i & 15][1] << 16;
+                work->sparks[i].velocity_x = ((Random16() & 127) - 63) << 13;
+                work->sparks[i].velocity_y = (-(Random16() & 31) - 16) << 14;
             }
             if (frame == 72) {
                 work->shake = 4;
@@ -449,12 +449,13 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *efx)
             if (frame != 72) {
                 count = 64;
             }
-            for (i = 0, q = work->sparks; i != count; i++, q++) {
+            for (i = 0; i != count; i++) {
+                q = &work->sparks[i];
                 y = HI(q->y);
                 if (y <= 135) {
-                    k = Math_Mod(i, 3);
-                    blit46(dst, work->sheet + BattleFx10_FallCells[k], HI(q->x), y - BattleFx10_FallHeights[k],
-                        BattleFx10_FallWidths[k], BattleFx10_FallHeights[k]);
+                    s32 n = Math_Mod(i, 3);
+                    blit46(dst, work->sheet + BattleFx10_FallCells[n], HI(q->x), y - BattleFx10_FallHeights[n],
+                        BattleFx10_FallWidths[n], BattleFx10_FallHeights[n]);
                     EffectStep_AdvanceWithGravity2D(q, 64, 0x10000);
                     if (HI(q->y) > 120 && q->velocity_y > 0x80000) {
                         q->velocity_y = -q->velocity_y / 4;

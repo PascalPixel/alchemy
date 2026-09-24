@@ -2062,11 +2062,10 @@
     },
     "main:080c1df4": {
       "name": "Summon_TakeCharge",
-      "source": "BATTLE/SUMMON/TAKE_CHARGE.C"
+      "source": "BATTLE/SUMMON/CHARGE.C"
     },
     "main:080c1ebc": {
-      "name": "Summon_ReleaseCharge",
-      "source": "BATTLE/SUMMON/RELEASE_CHARGE.C"
+      "name": "Summon_ReleaseCharge"
     },
     "main:080c1fa8": {
       "name": "BattleFormation_SelectRandomAvailableMember",
@@ -5404,8 +5403,7 @@
       "source": "SYSTEM/SCHEDULER/REMOVE_IRQ_HANDLER_SLOT2.C"
     },
     "main:080c1f50": {
-      "name": "Summon_ResetCharge",
-      "source": "BATTLE/SUMMON/RESET_CHARGE.C"
+      "name": "Summon_ResetCharge"
     },
     "main:080c2368": {
       "name": "Summon_GetEntryByte3Kind",

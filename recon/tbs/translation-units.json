@@ -124631,6 +124631,30 @@
         }
       ],
       "overlay": null
+    },
+    {
+      "id": "battle-summon-charge",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/BATTLE/SUMMON/CHARGE.C",
+      "compiler_route": "canonical-gcc296",
+      "owners": [
+        {
+          "address": "0x080c1df4",
+          "extent": 200,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080c1ebc",
+          "extent": 148,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080c1f50",
+          "extent": 86,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
     }
   ]
 }

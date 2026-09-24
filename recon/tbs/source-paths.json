@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_395:02000088": {
+      "name": "KorimaKi_Func02000088",
+      "source": "FIELD/KORIMA_KI/F_00088.C"
+    },
     "resource_39d:02003208": {
       "name": "MakyuriChojo_Func02003208",
       "source": "FIELD/MAKYURI_CHOJO/F_03208.C"

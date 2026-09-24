@@ -1,7 +1,7 @@
 #include "INVENTORY_MENU.H"
 
-extern u8 Value_00000182;
-#define InventoryMenu_ItemNameMessages Value_00000182
+extern u8 MsgItemName;
+#define InventoryMenu_ItemNameMessages MsgItemName
 
 extern void UiIcon_PrepareObject(void *icon);
 extern s32 Owner_GetStateFar(s32);

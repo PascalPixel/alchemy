@@ -10,7 +10,7 @@
 #define ENTRY_X 24
 #endif
 
-extern u8 Value_00000182;
+extern u8 MsgItemName;
 
 void UiWindow_DrawDividerLineFar(s32 window, s32 x, s32 width, s32 height, s32 style);
 void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
@@ -51,7 +51,7 @@ s32 ItemMenu_DrawNamePage(
         item_id = &menu->items[first_entry];
         do {
             UiText_DrawCharacterAtOffsetFar(
-                (item_id[0] & 0x1ff) + (s32)&Value_00000182,
+                (item_id[0] & 0x1ff) + (s32)&MsgItemName,
                 menu->item_window,
                 ENTRY_X,
                 row * 16 + 8

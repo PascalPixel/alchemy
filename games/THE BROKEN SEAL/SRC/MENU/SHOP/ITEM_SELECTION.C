@@ -123,7 +123,7 @@ s32 Inventory_CheckDiscardFar(s32, s32);
 s32 UiText_OpenMessageWindowFar(s32, s32, s32, s32);
 void UiWork_FinalizePendingCoreFar(void);
 
-extern u8 Value_00000075;
+extern u8 MsgItemPlainName;
 
 s32 Shop_SelUse(s32 actor)
 {
@@ -183,7 +183,7 @@ s32 Shop_SelUse(s32 actor)
             Shop_PlaceCursor(window, x, y);
             shop->mode = 3;
             Shop_DrawUseItemDetails(win1, actor, selection);
-            Shop_DrawMessage(win2, flags + (s32)&Value_00000075);
+            Shop_DrawMessage(win2, flags + (s32)&MsgItemPlainName);
         }
 
         WaitFrames(1);
@@ -257,7 +257,7 @@ exit_loop:
     return result;
 }
 
-extern u8 Value_00000182;
+extern u8 MsgItemName;
 extern u8 Value_00000c94;
 extern u8 Value_00000c95;
 extern u8 Value_00000c8d;
@@ -279,7 +279,7 @@ void Shop_DrawUseItem(s32 window, s32 unit_id, s32 item_id)
         s32 result;
 
         UiWindow_Commit(window);
-        UiText_DrawCharacterAtOffsetFar(masked + (s32)&Value_00000182, window, 0, 0);
+        UiText_DrawCharacterAtOffsetFar(masked + (s32)&MsgItemName, window, 0, 0);
 
         result = Inventory_CheckDiscardFar(unit_id, item_id);
         if (result == -4) {

@@ -11,7 +11,7 @@ s32 UiPalette_SetColor(s32 color);
 void UiText_DrawNumberAtOffsetFar(s32 value, s32 digits, s32 layer, s32 x, s32 y);
 struct BattleUnit *Owner_GetStateFar(s32 owner);
 struct BattleAction *BattleAction_Get(s32 action);
-extern u8 Value_00000333;
+extern u8 MsgAbilityName;
 
 s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused, const struct MenuResult *state)
 {
@@ -60,7 +60,7 @@ s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused, const struct MenuResult 
             }
 
             UiText_DrawCharacterAtOffsetFar(
-                (0x3fff & *(const u16 *)(cursor + (s32)menu)) + (s32)&Value_00000333,
+                (0x3fff & *(const u16 *)(cursor + (s32)menu)) + (s32)&MsgAbilityName,
                 window, 16, row * 16 + 8);
             UiText_DrawNumberAtOffsetFar(ability->pp_cost, 2, window, 104, row * 16 + 8);
             UiPalette_SetColor(15);

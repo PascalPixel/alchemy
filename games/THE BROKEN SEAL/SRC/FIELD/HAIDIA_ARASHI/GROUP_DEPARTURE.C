@@ -126,7 +126,6 @@ extern u8 Data_0200c9f4[];
 extern u8 Data_0200cec8[];
 extern u8 Data_0200c5b9[];
 extern u8 Data_02000240[];
-extern u8 Data_03001ebc[];
 extern u8 Data_00000e5c[];
 extern u8 Data_00000e67[];
 extern u8 Data_00000ed0[];
@@ -836,7 +835,6 @@ void FieldScene_RunScene372_02000a10(void)
 {
     u32 i;
     s32 record;
-    u8 *work;
     s32 base5_e5c;
 
     Event_Begin();
@@ -848,9 +846,8 @@ void FieldScene_RunScene372_02000a10(void)
     Camera_MoveTo(0x13c0000, 0xa00000, 0x3700000, 1);
     Actor_SetPosition(10, 0x1260000, 0x3640000);
     Actor_SetPosition(0, 0, 0);
-    work = *(u8 **)Data_03001ebc;
-    *(s32 *)(work + 0x1c0) = 0x100;
-    *(s32 *)(work + 0x1c8) = 16;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+    gEventWork->transition_frames = 16;
     Event_OpenScreen();
     Event_WaitForScreen();
     Func_020052ea();

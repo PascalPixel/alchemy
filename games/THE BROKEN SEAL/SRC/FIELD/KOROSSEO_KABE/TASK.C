@@ -137,7 +137,7 @@ extern u8 Value_00000090;
 extern u8 Value_00002076;
 extern u8 Value_00002078;
 extern u8 Value_0000207a;
-extern u8 Value_0000207c;
+extern u8 LinkedMessage_WouldYouLikeHearDescription;
 extern u16 Data_0200cc30;
 extern u16 Data_0200cc04;
 extern u16 Data_0200cc3c;
@@ -1365,7 +1365,7 @@ s32 Func_02001ffc(s32 a, s32 b)
         return r;
     }
     GameFlag_Set(b + 520);
-    Event_SetMessage((s32)&Value_0000207c);
+    Event_SetMessage((s32)&LinkedMessage_WouldYouLikeHearDescription);
     Event_OpenMessage(a, 0);
     return Event_ChooseYesNo(0, 0);
 }

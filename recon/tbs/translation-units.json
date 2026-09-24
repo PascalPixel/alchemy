@@ -7122,6 +7122,10 @@
           "address": "0x03001ebc",
           "kind": "data"
         },
+        "LinkedMessage_HopeYouDidntGetSick": {
+          "address": "0x00001c40",
+          "kind": "data"
+        },
         "LinkedMessage_ThisIsMyFarewellGift": {
           "address": "0x000011a4",
           "kind": "data"
@@ -10798,6 +10802,22 @@
         "gEventWork": {
           "address": "0x03001ebc",
           "kind": "data"
+        },
+        "LinkedMessage_DidYouComeAllWay": {
+          "address": "0x00002389",
+          "kind": "data"
+        },
+        "LinkedMessage_DoYouWantStayWith": {
+          "address": "0x00001fbb",
+          "kind": "data"
+        },
+        "LinkedMessage_HeeHeeDoLookLike": {
+          "address": "0x00002399",
+          "kind": "data"
+        },
+        "LinkedMessage_YourFirstTimeTolbi": {
+          "address": "0x00001fd5",
+          "kind": "data"
         }
       },
       "owners": [
@@ -12229,6 +12249,10 @@
         },
         "gGameState": {
           "address": "0x02000240",
+          "kind": "data"
+        },
+        "LinkedMessage_ButTellMeWhatJasmine": {
+          "address": "0x00002880",
           "kind": "data"
         },
         "LinkedScene_RariberoHeya": {
@@ -18649,6 +18673,26 @@
         },
         "LinkedMessage_CanTheyStopTheBoulder": {
           "address": "0x00000e5c",
+          "kind": "data"
+        },
+        "LinkedMessage_HeyRobin": {
+          "address": "0x00000e74",
+          "kind": "data"
+        },
+        "LinkedMessage_HuhRobin": {
+          "address": "0x00000e67",
+          "kind": "data"
+        },
+        "LinkedMessage_ItsGeraldChestValuables": {
+          "address": "0x00001120",
+          "kind": "data"
+        },
+        "LinkedMessage_NoMyBrother": {
+          "address": "0x00000e8c",
+          "kind": "data"
+        },
+        "LinkedMessage_RobinBoulderWeNeedGet": {
+          "address": "0x00000ed0",
           "kind": "data"
         }
       },
@@ -36216,6 +36260,22 @@
           "address": "0x02000240",
           "kind": "data"
         },
+        "LinkedMessage_StageFirstFinalsMatch": {
+          "address": "0x00002076",
+          "kind": "data"
+        },
+        "LinkedMessage_StageSecondFinalsMatch": {
+          "address": "0x00002078",
+          "kind": "data"
+        },
+        "LinkedMessage_StageThirdFinalsMatch": {
+          "address": "0x0000207a",
+          "kind": "data"
+        },
+        "LinkedMessage_WouldYouLikeHearDescription": {
+          "address": "0x0000207c",
+          "kind": "data"
+        },
         "StageSceneWork": {
           "address": "0x03001ebc",
           "kind": "data"
@@ -40771,12 +40831,16 @@
           "address": "0x0200a9ec",
           "kind": "thumb"
         },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
         "LinkedMessage_LookFartherUpThePassage": {
           "address": "0x00000ffc",
           "kind": "data"
         },
-        "gEventWork": {
-          "address": "0x03001ebc",
+        "LinkedMessage_WayLeadsOutSanctumShould": {
+          "address": "0x00001000",
           "kind": "data"
         }
       },
@@ -41272,6 +41336,10 @@
         },
         "gGameState": {
           "address": "0x02000240",
+          "kind": "data"
+        },
+        "LinkedMessage_DoYouWantGoAshore": {
+          "address": "0x00001d20",
           "kind": "data"
         }
       },
@@ -52100,6 +52168,10 @@
           "address": "0x02000240",
           "kind": "data"
         },
+        "LinkedMessage_WouldYouLikeHearDescription": {
+          "address": "0x0000207c",
+          "kind": "data"
+        },
         "SceneStateBytes": {
           "address": "0x02000240",
           "kind": "data"
@@ -61803,6 +61875,10 @@
           "address": "0x02000240",
           "kind": "data"
         },
+        "LinkedMessage_DoYouWishCrossInto": {
+          "address": "0x000023cc",
+          "kind": "data"
+        },
         "StagedActor_AdvancePair": {
           "address": "0x020083a8",
           "kind": "thumb"
@@ -64623,6 +64699,10 @@
         },
         "gGameState": {
           "address": "0x02000240",
+          "kind": "data"
+        },
+        "LinkedMessage_YouDontHaveTryHard": {
+          "address": "0x000017e0",
           "kind": "data"
         },
         "Scene_RunPrimarySequence": {

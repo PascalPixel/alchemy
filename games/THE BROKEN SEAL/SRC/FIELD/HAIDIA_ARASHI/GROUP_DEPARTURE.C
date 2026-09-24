@@ -137,14 +137,14 @@ extern u8 Data_0200cec8[];
 extern u8 Data_0200c5b9[];
 extern u8 Data_02000240[];
 extern u8 LinkedMessage_CanTheyStopTheBoulder[];
-extern u8 Data_00000e67[];
-extern u8 Data_00000ed0[];
+extern u8 LinkedMessage_HuhRobin[];
+extern u8 LinkedMessage_RobinBoulderWeNeedGet[];
 extern u32 Data_03001e40;
-extern u8 Data_00000e74[];
+extern u8 LinkedMessage_HeyRobin[];
 extern s32 Data_0200d7f8;
-extern u8 Value_00000e8c;
+extern u8 LinkedMessage_NoMyBrother;
 extern u8 Value_0000201a;
-extern u8 Value_00001120;
+extern u8 LinkedMessage_ItsGeraldChestValuables;
 extern u8 Data_00000e9b[];
 extern u8 Data_00000ea1[];
 extern u8 Value_0000030d;
@@ -1072,7 +1072,7 @@ void FieldScene_RunScene372SequenceA(void)
     Event_Wait(30);
     Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
     Actor_ShowEmote(20, 0x100, 20);
-    base5_e67 = (s32)Data_00000e67;
+    base5_e67 = (s32)LinkedMessage_HuhRobin;
     Event_SetMessage(base5_e67);
     Event_ShowMessage(20, 0);
     Event_Wait(20);
@@ -1128,7 +1128,7 @@ void FieldScene_RunScene372SequenceC(void)
         Event_Begin();
         Actor_FaceActor(22, ACTOR_PARTY_LEADER, 0);
         Event_Wait(20);
-        Event_SetMessage((s32)Data_00000ed0);
+        Event_SetMessage((s32)LinkedMessage_RobinBoulderWeNeedGet);
         Event_ShowMessage(22, 0);
         Actor_FaceDirection(22, 0xe000, 10);
         Event_End();
@@ -1153,7 +1153,7 @@ void FieldScene_RunScene372SequenceE(void)
     } else {
         Event_Begin();
         Actor_SetAttachedEffect(22, 0x100);
-        base5_e74 = (s32)Data_00000e74;
+        base5_e74 = (s32)LinkedMessage_HeyRobin;
         Event_SetMessage(base5_e74);
         Event_ShowMessage(22, 0);
         Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x100, 20);
@@ -1618,7 +1618,7 @@ void FieldScene_RunFlagGatedActorSequence(void)
     Actor_FaceDirection(23, kc000_1, 0);
     Actor_SetSpriteFlags(Actor_Get(23), 0);
     Task_Wait(3);
-    Event_SetMessage((s32)&Value_00000e8c);
+    Event_SetMessage((s32)&LinkedMessage_NoMyBrother);
     Event_ShowMessage((s32)&Value_0000201a, 0);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, k100_1, 20);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 150, k446_1);
@@ -2369,6 +2369,6 @@ void SceneState_SetValueEe4(void)
 void FieldScene_RunScriptedStep1120(void)
 {
     Event_Begin();
-    Message_ShowCentered((s32)&Value_00001120, 1);
+    Message_ShowCentered((s32)&LinkedMessage_ItsGeraldChestValuables, 1);
     Event_End();
 }

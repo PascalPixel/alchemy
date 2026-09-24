@@ -114,7 +114,7 @@ extern u8 Data_0200cb90[];
 extern u8 Data_0200d184[];
 extern u8 Data_0200cd40[];
 extern s32 Data_03001e40;
-extern u8 Data_000017e0[];
+extern u8 LinkedMessage_YouDontHaveTryHard[];
 
 s16 Func_020046a2(s32, s32);
 void Func_02006a34();
@@ -1633,7 +1633,7 @@ void FieldScene_RunScene39e_020027ec(void)
         if (Event_ChooseYesNo(0, 0) == 1) {
             Event_Wait(10);
             Actor_ShowEmote(8, 0x102, 60);
-            Event_SetMessage((s32)Data_000017e0);
+            Event_SetMessage((s32)LinkedMessage_YouDontHaveTryHard);
             Event_OpenMessage(8, 0);
             goto L_0200299c;
         }

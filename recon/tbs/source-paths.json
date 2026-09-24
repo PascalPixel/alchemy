@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_373:02003380": {
+      "name": "HaidiaMura_RunWalkScene03380",
+      "source": "FIELD/HAIDIA_MURA/WALK_SCENE_03380.C"
+    },
     "resource_382:0200136c": {
       "name": "KuupuappuMura_RestoreEntryState",
       "source": "FIELD/KUUPUAPPU_MURA/ENTRY_STATE.C"
@@ -198,7 +202,8 @@
       "source": "FIELD/FUNE_HEYA/FLAG_BRANCH_SEQUENCE.C"
     },
     "resource_373:020032b0": {
-      "name": "Scene_RunOverlay373Sequence32B0"
+      "name": "HaidiaMura_RunWalkScene032B0",
+      "source": "FIELD/HAIDIA_MURA/WALK_SCENE_032B0.C"
     },
     "resource_372:0200173c": {
       "name": "HaidiaArashi_RunCallOutSequence",

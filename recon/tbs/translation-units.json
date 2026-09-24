@@ -69018,15 +69018,35 @@
     {
       "id": "retained-overlay-373-020032b0",
       "game": "tbs",
-      "source": "recon/tbs/en/overlays/resource_373_c_020032b0.c",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_MURA/WALK_SCENE_032B0.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_373",
       "absolute_symbols": {
-        "Func_02009306_a": {
+        "Engine_ActorGet": {
+          "address": "0x0200dfe4",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpeed": {
+          "address": "0x0200dfec",
+          "kind": "thumb"
+        },
+        "Engine_ActorWalkToAndWait": {
           "address": "0x0200e024",
           "kind": "thumb"
         },
-        "Func_02009306_b": {
+        "Engine_ActorFaceDirection": {
+          "address": "0x0200e0ac",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetAnimation": {
+          "address": "0x0200e044",
+          "kind": "thumb"
+        },
+        "Engine_ObjectMotionSetPositionAndCommit": {
+          "address": "0x0200e014",
+          "kind": "thumb"
+        },
+        "Engine_EventWait": {
           "address": "0x0200dfb4",
           "kind": "thumb"
         }
@@ -69035,7 +69055,7 @@
         {
           "address": "0x020032b0",
           "extent": 208,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ]
     },
@@ -71433,6 +71453,50 @@
         {
           "address": "0x0200136c",
           "extent": 716,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "haidia-mura-walk-scene-03380",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_MURA/WALK_SCENE_03380.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_373",
+      "absolute_symbols": {
+        "Engine_ActorGet": {
+          "address": "0x0200dfe4",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpeed": {
+          "address": "0x0200dfec",
+          "kind": "thumb"
+        },
+        "Engine_ActorWalkToAndWait": {
+          "address": "0x0200e024",
+          "kind": "thumb"
+        },
+        "Engine_ActorFaceDirection": {
+          "address": "0x0200e0ac",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetAnimation": {
+          "address": "0x0200e044",
+          "kind": "thumb"
+        },
+        "Engine_ObjectMotionSetPositionAndCommit": {
+          "address": "0x0200e014",
+          "kind": "thumb"
+        },
+        "Engine_EventWait": {
+          "address": "0x0200dfb4",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02003380",
+          "extent": 220,
           "state": "exact-c"
         }
       ]

@@ -1,9 +1,3 @@
-/* NONMATCHING: 220 of 220 bytes, 2 halfword edits (2026-09-24). Written as a
- * single-overlay unit source: Engine_* names bind at the overlay's runtime
- * import veneers (listing import offset + 0x8000), Local_* at their own
- * address + 0x8000. Remaining: the reference sets
- * r0 for the animation call after both zero stores; here it is scheduled
- * between them. */
 #include "TYPES.H"
 
 s32 Engine_ActorGet();
@@ -26,7 +20,17 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
     f(a0, a1, a2);
 }
 
-void Tmp_373(s32 a0, s32 a1, s32 a2, s32 a3)
+struct Flags38 {
+    u8 pad[38];
+    u8 flags;
+};
+
+struct Flags85 {
+    u8 pad[85];
+    u8 flags;
+};
+
+void HaidiaMura_RunWalkScene03380(s32 a0, s32 a1, s32 a2, s32 a3)
 {
     u32 i;
     s32 p10;
@@ -42,14 +46,13 @@ void Tmp_373(s32 a0, s32 a1, s32 a2, s32 a3)
     p9 = a3;
     p8 = a1;
     p10 = a2;
-    rec8 = Engine_ActorGet(a0);
+    rec8 = Engine_ActorGet();
     p5 = *(s32 *)(rec8 + 80);
     Call3(Engine_ActorSetSpeed, a0, 0x10000, 0x8000);
     Call3(Engine_ActorWalkToAndWait, a0, 0x188, 0x35b);
     Call3(Engine_ActorFaceDirection, a0, 0xc000, 10);
-    p11 = rec8 + 85;
-    *p11 = 0;
-    p5[38] = 0;
+    ((struct Flags85 *)rec8)->flags = 0;
+    ((struct Flags38 *)p5)->flags = 0;
     Engine_ActorSetAnimation(a0, p8);
     Call3(Engine_ActorSetSpeed, a0, 0x10000, 0x8000);
     Call3(Engine_ObjectMotionSetPositionAndCommit, a0, 0x188, 0x36b);
@@ -60,7 +63,7 @@ void Tmp_373(s32 a0, s32 a1, s32 a2, s32 a3)
     *(s32 *)(rec8 + 40) = 0x20000;
     p5[38] = 1;
     if (p9 != 0) {
-        *p11 = 3;
+        ((struct Flags85 *)rec8)->flags = 3;
     }
     Engine_ActorSetAnimation(a0, 1);
     p9b = (s32)p5 + 38;

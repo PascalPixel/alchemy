@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+
 /* Set once the Boulder has come down. */
 enum {
     FLAG_BOULDER_FELL = 0x838
@@ -19,7 +20,6 @@ enum StormNightMessage {
     MSG_ROBIN = 0xed3,
     MSG_THE_DOOR_WONT_OPEN = 0xee4
 };
-
 
 #define UnsignedRemainder Func_020046fa
 #define ACTOR_ID 22

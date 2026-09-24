@@ -6,6 +6,25 @@
 
 #include "FACING_OBJECT.H"
 
+enum ValeMessage {
+    MSG_PARTY_PP_RESTORED = 0x974,
+    MSG_CAN_I_USE_PSYNERGY = 0xea8,
+    MSG_I_HAVE_SOME_PSYNERGY_LEFT = 0xeae,
+    MSG_BE_SURE_TO_HELP_GARCIA = 0xeb1,
+    MSG_MEDITATE_ON_MT_ALEPH_DAILY = 0xf3c,
+    MSG_A_DIFFICULT_TIME_THREE_YEARS_AGO = 0xf3f,
+    MSG_DID_THE_TRAVELERS_MEET_THE_MAYOR = 0xf44,
+    MSG_HAVE_I_SHOWN_YOU_MY_ABILITY = 0xf48,
+    MSG_BEHOLD_THE_POWER_OF_PSYNERGY = 0xf4b,
+    MSG_CHECKED_THE_PSYNERGY_STONE = 0x111f,
+    MSG_YOU_SAW_THE_WISE_ONE = 0x1191,
+    MSG_THE_STONE_FELL_ON_THE_HUT = 0x11c7,
+    MSG_YOU_CAME_BACK_HOME = 0x1be3,
+    MSG_THIS_IS_VALE = 0x1be4,
+    MSG_ANYTHING_INTERESTING_ON_YOUR_TRIP = 0x1be8,
+    MSG_THE_PSYNERGY_STONE_IS_GONE = 0x1c94
+};
+
 struct Obj {
     u8 pad00[6];
     u16 f06;
@@ -243,11 +262,11 @@ void *SceneData_SelectTableByFlags834And87a(void)
 void FieldScene_RunSequence111F(void)
 {
     Event_Begin();
-    Message_ShowCentered(0x111f, 1);
+    Message_ShowCentered(MSG_CHECKED_THE_PSYNERGY_STONE, 1);
     Audio_PlayCue(126);
     Func_02002962(0x3e7, 0);
     Event_Wait(10);
-    Message_ShowCentered(0x974, 1);
+    Message_ShowCentered(MSG_PARTY_PP_RESTORED, 1);
     Func_020027a4();
     GameFlag_Clear(322);
     Event_End();
@@ -273,7 +292,7 @@ void *SceneData_SelectTableByFlags87a_815_834(void)
 void SceneDialogue_RunActor23Line(void)
 {
     Event_Begin();
-    Event_SetMessage(0xf3c);
+    Event_SetMessage(MSG_MEDITATE_ON_MT_ALEPH_DAILY);
     Actor_FaceEachOther(23, 0, 2);
     Event_AskYesNo(23, 0);
     Event_End();
@@ -282,7 +301,7 @@ void SceneDialogue_RunActor23Line(void)
 void SceneDialogue_ShowLineF3F(void)
 {
     Event_Begin();
-    Event_SetMessage(0xf3f);
+    Event_SetMessage(MSG_A_DIFFICULT_TIME_THREE_YEARS_AGO);
     Actor_FaceEachOther(24, 0, 2);
     Event_AskYesNo(24, 0);
     Event_End();
@@ -291,7 +310,7 @@ void SceneDialogue_ShowLineF3F(void)
 void SceneDialogue_ShowLineF44(void)
 {
     Event_Begin();
-    Event_SetMessage(0xf44);
+    Event_SetMessage(MSG_DID_THE_TRAVELERS_MEET_THE_MAYOR);
     Actor_FaceEachOther(15, 0, 2);
     Event_AskYesNo(15, 0);
     Event_End();
@@ -323,7 +342,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
         Event_ShowMessage(17, 0);
     } else {
         p6 = *(volatile s32 *)(*(volatile s32 *)0x03001e70);
-        Event_SetMessage(0xf48);
+        Event_SetMessage(MSG_HAVE_I_SHOWN_YOU_MY_ABILITY);
         Actor_FaceEachOther(17, 0, 0);
         Event_AskYesNo(17, 0);
         Event_Wait(20);
@@ -354,7 +373,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
         FieldScene_Forward4dac();
         Actor_SetChildValue(17, 0);
         Event_Wait(40);
-        Event_SetMessage(0xf4b);
+        Event_SetMessage(MSG_BEHOLD_THE_POWER_OF_PSYNERGY);
         Event_ShowMessage(17, 0);
     }
     Event_End();
@@ -364,7 +383,7 @@ void SceneDialogue_RunFlagGatedMessageStep(void)
 {
     Event_Begin();
     if (GameFlag_IsSet(0x87a) != 0) {
-        Event_SetMessage(0x1be8);
+        Event_SetMessage(MSG_ANYTHING_INTERESTING_ON_YOUR_TRIP);
         Event_OpenMessage(15, 0);
         if (Event_ChooseYesNo(0, 0) == 1) {
             Event_ShowMessage(15, 0);
@@ -374,10 +393,10 @@ void SceneDialogue_RunFlagGatedMessageStep(void)
             Event_AskYesNo(15, 0);
         }
     } else if (GameFlag_IsSet(0x815) != 0) {
-        Event_SetMessage(0x1191);
+        Event_SetMessage(MSG_YOU_SAW_THE_WISE_ONE);
         Event_AskYesNo(11, 0);
     } else {
-        Event_SetMessage(0xea8);
+        Event_SetMessage(MSG_CAN_I_USE_PSYNERGY);
         Event_AskYesNo(11, 0);
     }
     Event_End();
@@ -389,7 +408,7 @@ void FieldScene_RunActorTwentySixEffectPresentation(void)
     Actor_SetAnimation(26, 1);
     Actor_FaceActor(26, 0, 20);
     Actor_FaceActor(26, 21, 40);
-    Event_SetMessage(0x11c7);
+    Event_SetMessage(MSG_THE_STONE_FELL_ON_THE_HUT);
     Func_0200273a(26, 20);
     Camera_SetSpeed(0x19999, 0x3333);
     Camera_MoveTo(0x1510000, -1, 0x1100000, 1);
@@ -413,7 +432,7 @@ void FieldScene_RunMiddleAuxiliarySequence(void)
     Event_Begin();
     Actor_WalkToAndWait(0, 82, 0x2f8);
     Actor_FaceEachOther(15, 0, 30);
-    Event_SetMessage(0xeae);
+    Event_SetMessage(MSG_I_HAVE_SOME_PSYNERGY_LEFT);
     Func_020027c8(15, 20);
     Value3(SceneActor_SetPairZeroAndValue, 15, 0xa000, 20);
     Actor_SetAttachedEffect(15, 0x102);
@@ -453,7 +472,7 @@ void SceneDialogue_ShowLineEB1OrEB0(void)
     Event_Begin();
     Actor_FaceEachOther(16, 0, 10);
     if (GameFlag_IsSet(0x840) != 0) {
-        Event_SetMessage(0xeb1);
+        Event_SetMessage(MSG_BE_SURE_TO_HELP_GARCIA);
         Event_ShowMessage(16, 0);
     } else {
         Event_SetMessage((s32)&Value_00000eb0);
@@ -469,9 +488,9 @@ void SceneDialogue_RunActorElevenFlaggedDialogue(void)
 
     Event_Begin();
     if (GameFlag_IsSet(0x302) != 0) {
-        Event_SetMessage(0x1be4);
+        Event_SetMessage(MSG_THIS_IS_VALE);
     } else {
-        Event_SetMessage(0x1be3);
+        Event_SetMessage(MSG_YOU_CAME_BACK_HOME);
         GameFlag_Set(0x302);
     }
     Event_ShowMessage(11, 0);
@@ -491,7 +510,7 @@ void FieldScene_RunActorTwentyOneSetup(void)
     p->f06 = 0xb000;
     Event_Wait(20);
     Actor_StartRepeatedMotion(21, 2);
-    Event_SetMessage(0x1c94);
+    Event_SetMessage(MSG_THE_PSYNERGY_STONE_IS_GONE);
     Event_ShowMessageAndWait(21, 0, 40);
     Actor_FaceActor(21, 0, 20);
     Actor_StartRepeatedMotion(21, 2);

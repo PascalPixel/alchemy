@@ -25,6 +25,7 @@ enum CottageFlag {
 #define CalculateFacingAngle Func_02001a9e
 
 #include "FACING_OBJECT.H"
+
 enum CottageMessage {
     MSG_SATUROS_GO = 0xf98,
     MSG_SUKURETA_OH_ROBIN = 0xfa6,

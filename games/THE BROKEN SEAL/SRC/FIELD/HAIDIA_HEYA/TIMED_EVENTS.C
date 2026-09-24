@@ -16,6 +16,7 @@
 
 #include "FACING_OBJECT.H"
 #include "FIELD_EVENT.H"
+
 enum ValeHouseFlag {
     /* The villagers speak of the party having left Vale. */
     FLAG_PARTY_LEFT_VALE = 0x815,

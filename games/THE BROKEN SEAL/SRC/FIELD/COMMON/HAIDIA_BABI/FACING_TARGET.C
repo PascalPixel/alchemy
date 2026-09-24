@@ -7,6 +7,18 @@
 #include "FACING_OBJECT.H"
 #include "FIELD_EVENT.H"
 
+enum ValeMessage {
+    MSG_THE_THREE_TRAVELERS_SEEM_ODD = 0xf58,
+    MSG_HEY_BOY = 0xf5b,
+    MSG_THE_VISITORS_CAUSED_THE_ERUPTION = 0x11a9,
+    MSG_THE_MASKED_MAN_WAS_GARCIA = 0x11aa,
+    MSG_YOUVE_GROWN_SO_MUCH = 0x1c13,
+    MSG_YOU_CAME_BACK = 0x1c14,
+    MSG_HOME_JUST_TO_STAY = 0x1c15,
+    MSG_DORA_WAS_STRUCK_WITH_ILLNESS = 0x1c1a,
+    MSG_DORA_WOULDNT_LET_HIM_STAY = 0x1c1b
+};
+
 /* The anchor pointer is read before the frame counter is stored: the reference
  * hoists `ldr r6,[r5,#104]` above the `strh`, and only that source order
  * reproduces it. */
@@ -223,7 +235,7 @@ void FieldScene_RunScene377_020001e0(void)
     Event_Begin();
     Actor_StartRepeatedMotion(16, 2);
     Event_Wait(30);
-    Event_SetMessage(0xf5b);
+    Event_SetMessage(MSG_HEY_BOY);
     Actor_FaceEachOther(0, 16, 10);
     Event_ShowMessageAndWait(16, 0, 6);
     Actor_ShowEmote(16, 0x102, 0);
@@ -247,7 +259,7 @@ void SceneDialogue_RunActorFourteenDialogue11AA(void)
 
     Event_Begin();
     Actor_FaceActor(0xE, 0, 0xA);
-    Event_SetMessage(0x11AA);
+    Event_SetMessage(MSG_THE_MASKED_MAN_WAS_GARCIA);
     Event_OpenMessage(0xE, 0);
     if (Event_ChooseYesNo(0, 0) == 0) {
         Event_ShowMessage(0xE, 0);
@@ -350,18 +362,18 @@ void FieldScene_RunScene377_02000e34(void)
             Actor_RunRepeatedMotion(13, 2);
             Actor_FaceActor(13, 0, 10);
             if (GameFlag_IsSet(0x300) == 0) {
-                Event_SetMessage(0x1c14);
+                Event_SetMessage(MSG_YOU_CAME_BACK);
                 Event_ShowMessage(13, 0);
                 GameFlag_Set(0x300);
             }
-            Event_SetMessage(0x1c15);
+            Event_SetMessage(MSG_HOME_JUST_TO_STAY);
             Event_AskYesNo(13, 0);
             Actor_FaceDirection(13, 0x9000, 10);
         } else {
             if (GameFlag_IsSet(0x815) != 0) {
-                Event_SetMessage(0x11a9);
+                Event_SetMessage(MSG_THE_VISITORS_CAUSED_THE_ERUPTION);
             } else {
-                Event_SetMessage(0xf58);
+                Event_SetMessage(MSG_THE_THREE_TRAVELERS_SEEM_ODD);
             }
             Event_ShowMessage(13, 0);
         }
@@ -373,7 +385,7 @@ void SceneDialogue_ShowLine1C13WithActor16Steps(void)
 {
     Event_Begin();
     Actor_FaceActor(0x10, 0, 0xA);
-    Event_SetMessage(0x1C13);
+    Event_SetMessage(MSG_YOUVE_GROWN_SO_MUCH);
     Event_ShowMessage(0x10, 0);
     Actor_FaceDirection(0x10, 0xB000, 0xA);
     GameFlag_Set(0x301);
@@ -383,7 +395,7 @@ void SceneDialogue_ShowLine1C13WithActor16Steps(void)
 void SceneDialogue_RunActorThirteenDialogue(void)
 {
     Event_Begin();
-    Event_SetMessage(0x1C1B);
+    Event_SetMessage(MSG_DORA_WOULDNT_LET_HIM_STAY);
     Event_ShowMessage(0xD, 0);
     GameFlag_Set(0x81C);
     Event_End();
@@ -392,7 +404,7 @@ void SceneDialogue_RunActorThirteenDialogue(void)
 void SceneDialogue_RunActor16LineAndFlag81c(void)
 {
     Event_Begin();
-    Event_SetMessage(0x1C1A);
+    Event_SetMessage(MSG_DORA_WAS_STRUCK_WITH_ILLNESS);
     Event_ShowMessage(0x10, 0);
     GameFlag_Set(0x81C);
     Event_End();

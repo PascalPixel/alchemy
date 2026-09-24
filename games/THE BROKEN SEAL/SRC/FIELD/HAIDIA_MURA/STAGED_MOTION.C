@@ -18,6 +18,30 @@
 #include "STAGED_ACTOR.H"
 #include "FIELD_EVENT.H"
 
+enum ValeMessage {
+    MSG_GOOD_JOB = 0xf03,
+    MSG_STUDYING_PSYNERGY_TO_THE_BONE = 0xf0a,
+    MSG_DEVASTATED_WHEN_KYLE_DIED = 0xf0e,
+    MSG_AS_STUBBORN_AS_YOUR_FATHER = 0xf27,
+    MSG_SUKURETA_IS_WAITING_FOR_US = 0xf39,
+    MSG_YOU_MAKE_ME_SO_MAD = 0xf63,
+    MSG_ILL_GET_YOU_FOR_MY_FLOWERS = 0xf66,
+    MSG_I_TOLD_GERALD_IT_WAS_ALL_RIGHT = 0xf68,
+    MSG_IT_WONT_RAIN_FOR_SOME_TIME = 0xf69,
+    MSG_DO_YOU_NEED_TO_GO_PAST = 0xf7c,
+    MSG_DONT_GO_BEYOND_SUKURETAS_COTTAGE = 0xf7e,
+    MSG_YOUR_GRANDPA_IS_THE_MAYOR = 0xf81,
+    MSG_NOT_SNEAKING_UP_MT_ALEPH = 0xfce,
+    MSG_YOU_CANT_BE_ROBIN = 0x11b6,
+    MSG_SUKURETA_HASNT_COME_BACK = 0x11c9,
+    MSG_THE_GROUND_STILL_SHAKES = 0x11cc,
+    MSG_HOW_HAVE_YOU_BEEN = 0x1c53,
+    MSG_IS_JASMINE_BACK_YET = 0x1c8d,
+    MSG_I_USED_TO_PLAY_HERE_WITH_GARCIA = 0x1c90,
+    MSG_I_FELT_ANOTHER_ONE = 0x1c9a,
+    MSG_NO_TRAVELERS_SINCE_THE_ERUPTION = 0x1c9d
+};
+
 /*
  * Reset or tear down a consecutive run of scene actors -- resource_373.
  */
@@ -478,10 +502,10 @@ void SceneDialogue_RunActorTenFlaggedDialogue(void)
 {
     Event_Begin();
     if (GameFlag_IsSet(0x815) != 0) {
-        Event_SetMessage(0x11cc);
+        Event_SetMessage(MSG_THE_GROUND_STILL_SHAKES);
         Event_ShowMessage(10, 0);
     } else {
-        Event_SetMessage(0xf81);
+        Event_SetMessage(MSG_YOUR_GRANDPA_IS_THE_MAYOR);
         Actor_FaceEachOther(10, 0, 4);
         Event_AskYesNo(10, 0);
     }
@@ -493,15 +517,15 @@ void SceneDialogue_RunActorFourteenTalk(void)
     s32 flag = 0x806;
     Event_Begin();
     if (GameFlag_IsSet(0x815) != 0) {
-        Event_SetMessage(0x11c9);
+        Event_SetMessage(MSG_SUKURETA_HASNT_COME_BACK);
         Event_ShowMessage(14, 0);
     } else if (GameFlag_IsSet(flag) == 0) {
         GameFlag_Set(flag);
-        Event_SetMessage(0xf7c);
+        Event_SetMessage(MSG_DO_YOU_NEED_TO_GO_PAST);
         Actor_FaceEachOther(14, 0, 4);
         Event_AskYesNo(14, 0);
     } else {
-        Event_SetMessage(0xf7e);
+        Event_SetMessage(MSG_DONT_GO_BEYOND_SUKURETAS_COTTAGE);
         Actor_FaceEachOther(14, 0, 4);
         Event_ShowMessage(14, 0);
     }
@@ -516,7 +540,7 @@ void FieldScene_RunFlag807BranchSequence(void)
     Event_Begin();
     if (GameFlag_IsSet(0x807) == 0) {
         GameFlag_Set(0x807);
-        Event_SetMessage(0xf63);
+        Event_SetMessage(MSG_YOU_MAKE_ME_SO_MAD);
         Actor_ShowEmote(18, 0x103, 0);
         Actor_FaceEachOther(0, 18, 20);
         Event_ShowMessageAndWait(18, 0, 6);
@@ -529,7 +553,7 @@ void FieldScene_RunFlag807BranchSequence(void)
         Actor_ShowEmote(0, 0x102, 60);
     } else {
         Actor_ShowEmote(18, 0x103, 0);
-        Event_SetMessage(0xf66);
+        Event_SetMessage(MSG_ILL_GET_YOU_FOR_MY_FLOWERS);
         Event_ShowMessageAndWait(18, 0, 20);
     }
     Event_End();
@@ -539,9 +563,9 @@ void SceneDialogue_RunActor21FlaggedLine(void)
 {
     Event_Begin();
     if (GameFlag_IsSet(0x202) != 0) {
-        Event_SetMessage(0xf68);
+        Event_SetMessage(MSG_I_TOLD_GERALD_IT_WAS_ALL_RIGHT);
     } else {
-        Event_SetMessage(0xf69);
+        Event_SetMessage(MSG_IT_WONT_RAIN_FOR_SOME_TIME);
     }
     Event_ShowMessage(21, 0);
     Event_End();
@@ -551,7 +575,7 @@ void SceneDialogue_RunActor10LineAndFlag81f(void)
 {
     Event_Begin();
     Actor_FaceEachOther(0, 10, 20);
-    Event_SetMessage(0x1c8d);
+    Event_SetMessage(MSG_IS_JASMINE_BACK_YET);
     Event_ShowMessage(10, 0);
     GameFlag_Set(0x81f);
     Event_End();
@@ -566,7 +590,7 @@ void FieldScene_RunScene373_02000cd0(void)
     Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
     Task_Wait(10);
     Work_SetValuesIfNonNegative(-1, -1, 0xe666);
-    Event_SetMessage(0x1c9a);
+    Event_SetMessage(MSG_I_FELT_ANOTHER_ONE);
     Event_ShowMessageAndWait(17, 0, 20);
     Actor_FaceActor(17, 0, 20);
     Event_ShowMessage(17, 0);
@@ -579,7 +603,7 @@ void SceneDialogue_RunActorNineteenDialogue(void)
     Actor_RunRepeatedMotion(19, 2);
     Event_Wait(20);
     Actor_FaceActor(19, 0, 20);
-    Event_SetMessage(0x1c9d);
+    Event_SetMessage(MSG_NO_TRAVELERS_SINCE_THE_ERUPTION);
     Event_AskYesNo(19, 0);
     GameFlag_Set(0x307);
     Event_End();
@@ -668,7 +692,7 @@ void SceneDialogue_RunFlag815GatedStep(void)
 {
     if (GameFlag_IsSet(0x815) != 0 && GameFlag_IsSet(0x87a) == 0) {
         Event_Begin();
-        Event_SetMessage(0x11b6);
+        Event_SetMessage(MSG_YOU_CANT_BE_ROBIN);
         Event_OpenMessage(21, 0);
         if (Event_ChooseYesNo(0, 0) == 0) {
             Event_ShowMessageAndWait(21, 0, 60);
@@ -743,7 +767,7 @@ void FieldScene_RunScene373SequenceC(void)
     Actor_SetSpeed(5, 0x10000, 0x8000);
     Actor_WalkToAndWait(5, 110, 0x11b);
     Actor_FaceEachOther(0, 5, 2);
-    Event_SetMessage(0xf39);
+    Event_SetMessage(MSG_SUKURETA_IS_WAITING_FOR_US);
     if (*(s32 *)(rec8 + 8) < *(s32 *)(rec7 + 8)) {
         Event_ShowMessageAndWait(0xa005, 0, 2);
     } else {
@@ -845,7 +869,7 @@ void FieldScene_RunScene373SequenceE(void)
     Actor_FaceDirection(22, 0x4000, 20);
     Actor_StartRepeatedMotion(22, 2);
     Event_Wait(20);
-    Event_SetMessage(0xfce);
+    Event_SetMessage(MSG_NOT_SNEAKING_UP_MT_ALEPH);
     Event_AskYesNo(22, 0);
     record = Actor_Get(22);
     *(s32 *)(record + 108) = 0x200d72d;
@@ -892,7 +916,7 @@ void FieldScene_RunScene373_02001490(s32 a0, s32 a1)
     record = Value1(Engine_ActorGet, 0);
     *(s32 *)(record + 24) = 0x10000;
     *(s32 *)(record + 28) = 0x10000;
-    Event_SetMessage(0xfce);
+    Event_SetMessage(MSG_NOT_SNEAKING_UP_MT_ALEPH);
     Event_AskYesNo(22, 0);
     record = Actor_Get(22);
     *(s32 *)(record + 108) = 0x200d72d;
@@ -1029,7 +1053,7 @@ void FieldScene_RunPrimaryActorSequence(void)
     }
     Actor_WalkToAndWait(1, 0x15a, 0x2e9);
     Actor_FaceDirection(1, 0xd000, 20);
-    Event_SetMessage(0x1c53);
+    Event_SetMessage(MSG_HOW_HAVE_YOU_BEEN);
     Event_ShowMessage(1, 0);
     Actor_RunRepeatedMotion(9, 2);
     Actor_ShowEmote(9, 0x100, 0);
@@ -1123,7 +1147,7 @@ void FieldScene_RunCompanionActorSequence(void)
     Actor_ShowEmote(ACTOR_D, 0x100, 40);
     Actor_RunRepeatedMotion(ACTOR_D, 2);
     Actor_FaceDirection(ACTOR_D, 0xd000, 10);
-    Event_SetMessage(0x1c90);
+    Event_SetMessage(MSG_I_USED_TO_PLAY_HERE_WITH_GARCIA);
     Event_ShowMessageAndWait(ACTOR_D, 0, 40);
     Actor_FaceActor(ACTOR_D, 0, 20);
     Event_ShowMessage(ACTOR_D, 0);
@@ -1693,7 +1717,7 @@ void FieldScene_RunStagedActorCutsceneSequence(void)
     *(s32 *)(scene + 24) = 0x10000;
     *(s32 *)(scene + 28) = 0x10000;
     Actor_Jump(21, 2, 20);
-    Event_SetMessage(0xf03);
+    Event_SetMessage(MSG_GOOD_JOB);
     Event_ShowMessageAndWait(21, 0, 10);
     Actor_FaceDirection(0, 0x1000, 10);
     Func_020078a2(21, 5, 6, 0);
@@ -1726,7 +1750,7 @@ void FieldScene_RunStagedActorCutsceneSequence(void)
         Actor_SetAnimationAndWait(21, 4);
     }
     Event_ShowMessageAndWait(21, 0, 20);
-    Event_SetMessage(0xf0a);
+    Event_SetMessage(MSG_STUDYING_PSYNERGY_TO_THE_BONE);
     Actor_WalkToAndWait(21, 386, 841);
     Event_Wait(10);
     Actor_FaceDirection(21, 0xd000, 60);
@@ -1740,7 +1764,7 @@ void FieldScene_RunStagedActorCutsceneSequence(void)
     Event_ShowMessageAndWait(21, 0, 20);
     Actor_FaceDirection(21, 0xd000, 60);
     Actor_RunRepeatedMotion(21, 2);
-    Event_SetMessage(0xf0e);
+    Event_SetMessage(MSG_DEVASTATED_WHEN_KYLE_DIED);
     Event_ShowMessageAndWait(21, 0, 20);
     Actor_WalkToAndWait(21, 386, 825);
     Event_Wait(10);
@@ -1876,7 +1900,7 @@ void FieldScene_RunStagedActorCutsceneSequence(void)
         bump_step(1);
     }
     Event_ShowMessageAndWait(21, 0, 20);
-    Event_SetMessage(0xf27);
+    Event_SetMessage(MSG_AS_STUBBORN_AS_YOUR_FATHER);
     Actor_ShowEmote(21, 259, 0);
     Actor_RunRepeatedMotion(21, 3);
     Event_ShowMessageAndWait(21, 0, 10);

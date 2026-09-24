@@ -1,6 +1,10 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
+enum ValeMessage {
+    MSG_MT_ALEPH_WAS_INACTIVE = 0x1122
+};
+
 extern u8 Data_02008cb4[];
 extern u8 Data_03001ebc[];
 
@@ -131,7 +135,7 @@ void RunEventScript01(void)
     Work_SetValuesIfNonNegative(-1, -1, 0xe666);
     MapRender_WaitForValues();
     Event_Wait(60);
-    Event_SetMessage(0x1122);
+    Event_SetMessage(MSG_MT_ALEPH_WAS_INACTIVE);
     Actor_ShowEmote(8, 0x102, 0);
     Event_Wait(60);
     Event_ShowMessage(8, 0);

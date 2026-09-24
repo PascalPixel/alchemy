@@ -759,6 +759,9 @@
       "name": "System_Initialize",
       "source": "SYSTEM/INITIALIZE.C"
     },
+    "main:0800307c": {
+      "name": "Runtime_SetIrqHandler"
+    },
     "main:08003650": {
       "name": "System_VBlankHandler",
       "source": "SYSTEM/VBLANK_HANDLER.C"
@@ -20609,7 +20612,6 @@
     "main:08009030": "ResourceObject_CreateFar",
     "main:080091a8": "Map_GetTerrainHeightFar",
     "main:08015068": "UiWindow_ClearInteriorTilesFar",
-    "main:0800307c": "Runtime_SetIrqHandler",
     "main:08002df0": "Runtime_BumpFree",
     "main:08078bf0": "Owner_RefreshClassActions",
     "main:080bac6c": "BattleActor_RemoveFromLists",

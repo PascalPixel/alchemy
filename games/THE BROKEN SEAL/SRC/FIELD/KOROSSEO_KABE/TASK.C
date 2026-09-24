@@ -17,7 +17,6 @@ enum TaskMessage {
     MSG_WAIT_SHOULDNT_DECIDE_WHERE_BEST = 0x20e8
 };
 
-
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 #define HexDigits Data_0200c250
 #define GetPartyInteractionRecord Func_02005e6a
@@ -397,12 +396,6 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
     f(a0, a1, a2);
 }
 
-static __inline__ void Call3_02000b38(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-
-    f(a0, a1, a2);
-}
-
 static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
 {
 
@@ -469,12 +462,6 @@ static __inline__ s32 Value0(s32 (*f)())
 {
 
     return f();
-}
-
-static __inline__ void Call1_02002114(void (*f)(), s32 a0)
-{
-
-    f(a0);
 }
 
 static __inline__ s32 Value1_02002114(s32 (*f)(), s32 a0)

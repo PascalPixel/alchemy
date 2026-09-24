@@ -296,16 +296,6 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
     f(a0, a1, a2);
 }
 
-static __inline__ void Call1_020015b4(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ s32 Value1_020015b4(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
 /* The scene step counter at 0x1d8 of the shared scene work record. */
 static __inline__ void bump_step_020015b4(s32 amount)
 {
@@ -315,26 +305,6 @@ static __inline__ void bump_step_020015b4(s32 amount)
 /* Field at 0x1c8 of the shared scene work record. */
 
 /* Field at 0x1c0 of the shared scene work record. */
-
-static __inline__ void Call1_0200164c(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ s32 Value1_0200164c(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ void Call2_0200164c(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
-static __inline__ void Call3_0200164c(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
 
 static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
 {
@@ -366,34 +336,9 @@ static __inline__ s32 Value0(s32 (*f)())
     return f();
 }
 
-static __inline__ void Call1_02003768(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
 static __inline__ s32 Value4(s32 (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 {
     return f(a0, a1, a2, a3);
-}
-
-static __inline__ void Call1_02003864(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ void Call1_020026c0(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ void Call2_020026c0(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
-static __inline__ void Call6_020026c0(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
-{
-    f(a0, a1, a2, a3, a4, a5);
 }
 
 void SceneState_ApplyValues12And2And3(void)
@@ -1187,7 +1132,7 @@ void SceneState_LinkRecordZeroWhenFlag200Clear(void)
 
     if (GameFlag_IsSet(0x200) == 0) {
         work = Data_03001ee0;
-        *(s32 *)(work + 24) = Value1_020015b4(Engine_ActorGet, ACTOR_PARTY_LEADER);
+        *(s32 *)(work + 24) = Value1(Engine_ActorGet, ACTOR_PARTY_LEADER);
         GameFlag_Set(0x200);
     }
 }
@@ -1313,7 +1258,7 @@ void FieldScene_RunMiddleSequence(void)
         p5 = base[9];
         r0 = GameFlag_IsSet(0x200);
         if (r0 != 0) {
-            r0 = Value1_0200164c(Engine_ActorGet, ACTOR_PARTY_LEADER);
+            r0 = Value1(Engine_ActorGet, ACTOR_PARTY_LEADER);
         }
         *(s32 *)(p5 + 24) = r0;
     } else {
@@ -1344,7 +1289,7 @@ void FieldScene_RunMiddleSequence(void)
     Actor_SetSpriteFlags((s32)record, 0);
     record = Actor_Get(9);
     Actor_SetSpriteFlags((s32)record, 0);
-    Call2_0200164c(Func_02005532, 0x200b769, 0xc80);
+    Call2(Func_02005532, 0x200b769, 0xc80);
     if (GameFlag_IsSet(0x915) != 0) {
         Actor_SetPosition(10, 0x1aa0000, 0x2da0000);
         record = Actor_Get(10);
@@ -1623,8 +1568,8 @@ void FieldScene_RunTwoActorCutsceneSequence(void)
     Actor_SetAnimationAndWait(ACTOR_IVAN, 3);
     Actor_FaceDirection(ACTOR_IVAN, 0xc000, 10);
     Actor_SetAnimationAndWait(ACTOR_IVAN, 3);
-    Call3_0200164c((void (*)())Engine_ActorSetSpeed, 8, 0xcccc, 0x6666);
-    Call3_0200164c((void (*)())Engine_ActorSetSpeed, 9, 0xcccc, 0x6666);
+    Call3((void (*)())Engine_ActorSetSpeed, 8, 0xcccc, 0x6666);
+    Call3((void (*)())Engine_ActorSetSpeed, 9, 0xcccc, 0x6666);
     record = Actor_Get(8);
     {
         /* Field at +6 of the record: a visibility/state word. */
@@ -1949,7 +1894,7 @@ void FieldScene_RunSecondaryGroupSequence(void)
     exitActions = Data_0200c230;
     Actor_EnableActionCallback(ACTOR_GERALD, exitActions);
     Actor_EnableActionCallback(ACTOR_IVAN, (s32)exitActions);
-    Call2_020026c0(Func_02003c4c, 3, (s32)exitActions);
+    Call2(Func_02003c4c, 3, (s32)exitActions);
     Camera_MoveTo(0x19a0000, -1, 0x12c0000, 1);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x1a0, 0x138);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x1b7, 0x138);
@@ -2005,7 +1950,7 @@ void FieldScene_RunLateSequence(void)
     s32 zero;
     s32 k;
 
-    record = Value1_0200164c(Engine_ActorGet, ACTOR_PARTY_LEADER);
+    record = Value1(Engine_ActorGet, ACTOR_PARTY_LEADER);
     idx = (s32)((u32)*(u16 *)(record + 6) >> 12);
     a = *(s16 *)(record + 10);
     w = Data_0200bd84[idx];
@@ -2054,13 +1999,13 @@ void Func_020032a4(void)
     s32 v6;
     s32 v7;
 
-    rec8 = Value1_0200164c(Engine_ActorGet, 8);
-    rec4 = Value1_0200164c(Engine_ActorGet, 9);
+    rec8 = Value1(Engine_ActorGet, 8);
+    rec4 = Value1(Engine_ActorGet, 9);
     rec7 = GameFlag_IsSet(0x302);
     if (rec7 != 0) {
     } else if ((*(s32 *)(rec8 + 8) >> 19) > 29) {
     } else {
-        rec2 = Value1_0200164c(Engine_ActorGet, 11);
+        rec2 = Value1(Engine_ActorGet, 11);
         Event_Begin();
         Map_CopyCellAttributes(7, 44, 1, 1, rec7, 1);
         i = 67;
@@ -2203,13 +2148,13 @@ void FieldScene_RunSupplementalSequenceOne(s32 a0)
     u8 *rp;
     u8 *p4;
 
-    rec7 = Value1_0200164c(Engine_ActorGet, 8);
+    rec7 = Value1(Engine_ActorGet, 8);
     rec8 = Actor_Get(9);
     if ((u32)(*(s16 *)(rec7 + 10) + -0x17d) <= 12) {
         if (*(s16 *)(rec7 + 18) <= 0x309) {
             goto L_020037ae;
         }
-        record = Value1_0200164c(Engine_ActorGet, ACTOR_PARTY_LEADER);
+        record = Value1(Engine_ActorGet, ACTOR_PARTY_LEADER);
         p4 = (u8 *)*(s32 *)(rec7 + 80);
         rp = (u8 *)*(s32 *)(record + 80);
         c12 = 12 & rp[9];
@@ -2223,7 +2168,7 @@ void FieldScene_RunSupplementalSequenceOne(s32 a0)
             if (*(s16 *)(rec7 + 10) <= 245) {
                 if ((*(volatile s32 *)0x03001e40 & 1) == 0) {
                     if (GameFlag_IsSet(0x202) == 0) {
-                        Call1_02003768(Func_02007540, -1);
+                        Call1(Func_02007540, -1);
                         Audio_PlayCue(230);
                         GameFlag_Set(0x202);
                     }
@@ -2236,7 +2181,7 @@ void FieldScene_RunSupplementalSequenceOne(s32 a0)
         if (*(s16 *)(rec8 + 10) <= 0x2c5) {
             if ((*(volatile s32 *)0x03001e40 & 1) == 0) {
                 if (GameFlag_IsSet(0x203) == 0) {
-                    Call1_02003768(Func_02007588, -1);
+                    Call1(Func_02007588, -1);
                     Audio_PlayCue(230);
                     GameFlag_Set(0x203);
                 }

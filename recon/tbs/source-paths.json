@@ -19339,7 +19339,8 @@
       "source": "SOUND/LOAD_PRESET_PARAMETERS.C"
     },
     "main:08004760": {
-      "name": "Bg0_ClearTilemap"
+      "name": "Bg0_ClearTilemap",
+      "source": "GRAPHICS/DISPLAY/BG0_CLEAR_TILEMAP.C"
     },
     "main:08095160": {
       "name": "BattleFx_StartTwelveFrameBlend"

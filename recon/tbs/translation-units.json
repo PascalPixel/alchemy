@@ -25450,12 +25450,16 @@
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_374",
       "absolute_symbols": {
-        "Func_02003ad4": {
-          "address": "0x200a7ac",
+        "Data_0200ac00": {
+          "address": "0x0200ac00",
+          "kind": "data"
+        },
+        "Func_0200379e": {
+          "address": "0x200a2e0",
           "kind": "thumb"
         },
-        "Func_02003ad4_a": {
-          "address": "0x200a704",
+        "Func_0200379e_a": {
+          "address": "0x200a2c8",
           "kind": "thumb"
         },
         "Func_02003a6a": {
@@ -25474,17 +25478,13 @@
           "address": "0x200a70c",
           "kind": "thumb"
         },
-        "Func_0200379e": {
-          "address": "0x200a2e0",
+        "Func_02003ad4": {
+          "address": "0x200a7ac",
           "kind": "thumb"
         },
-        "Func_0200379e_a": {
-          "address": "0x200a2c8",
+        "Func_02003ad4_a": {
+          "address": "0x200a704",
           "kind": "thumb"
-        },
-        "Data_0200ac00": {
-          "address": "0x0200ac00",
-          "kind": "data"
         }
       },
       "owners": [

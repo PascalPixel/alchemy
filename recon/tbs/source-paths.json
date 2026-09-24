@@ -20580,10 +20580,6 @@
       "name": "Menu_CopyListOrder",
       "source": "MENU/COPY_LIST_ORDER.C"
     },
-    "main:080c0130": {
-      "name": "BattlePres_UpdateHBlankScroll",
-      "source": "BATTLE/PRESENTATION/UPDATE_HBLANK_SCROLL.C"
-    },
     "main:08011568": {
       "name": "MapAnimation_PresentFrame",
       "source": "FIELD/COMMON/MAP/ANIMATION_PRESENT_FRAME.C"
@@ -20595,6 +20591,10 @@
     "main:08094154": {
       "name": "Object_GetScreenPosition",
       "source": "FIELD/COMMON/OBJECT/GET_SCREEN_POSITION.C"
+    },
+    "main:0808b98c": {
+      "name": "BattleEffect_ClearAllObjects",
+      "source": "BATTLE/EFFECT/CLEAR_ALL_OBJECTS.C"
     }
   },
   "symbols": {
@@ -20763,7 +20763,6 @@
     "main:08092c40": "UiText_OpenMessageAtObject",
     "main:080c24f0": "BattleEnemy_RecordDefeat",
     "main:08096fb0": "BattleFx_LoadActionEffectResources",
-    "main:0808b98c": "BattleEffect_ClearAllObjects",
     "main:080912b8": "Object_EffectSpawnCallback",
     "main:080152b8": "BattleLayout_HighlightPartyPanelsFar",
     "main:08028574": "Menu_RunResourceSelectionLoop",

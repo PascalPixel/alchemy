@@ -77381,6 +77381,106 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "scene-373-02002a54",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_MURA/ENTRY_STATE.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_373",
+      "absolute_symbols": {
+        "Main_08015360": {
+          "address": "0x0200df94",
+          "kind": "thumb"
+        },
+        "FieldScene_RunLargeStagingSequence": {
+          "address": "0x0200b4c8",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagIsSet": {
+          "address": "0x0200df9c",
+          "kind": "thumb"
+        },
+        "InitializeStagedActorSceneOrbitingEffect": {
+          "address": "0x0200db48",
+          "kind": "thumb"
+        },
+        "Engine_MapCopyCellsTo": {
+          "address": "0x0200df34",
+          "kind": "thumb"
+        },
+        "Engine_ActorGet": {
+          "address": "0x0200dfe4",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpriteFlags": {
+          "address": "0x0200df4c",
+          "kind": "thumb"
+        },
+        "Local_02005950": {
+          "address": "0x0200d950",
+          "kind": "thumb"
+        },
+        "Engine_TaskAddCallback": {
+          "address": "0x0200de94",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetPosition": {
+          "address": "0x0200e03c",
+          "kind": "thumb"
+        },
+        "Engine_ActorEnableActionCallback": {
+          "address": "0x0200dff4",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagClear": {
+          "address": "0x0200dfac",
+          "kind": "thumb"
+        },
+        "Scene_RepairTheHouse": {
+          "address": "0x0200bfb0",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagSet": {
+          "address": "0x0200dfa4",
+          "kind": "thumb"
+        },
+        "Engine_MapCopyCellAttributes": {
+          "address": "0x0200df3c",
+          "kind": "thumb"
+        },
+        "SceneState_Send210AndApplyRectAt40x84": {
+          "address": "0x02008d70",
+          "kind": "thumb"
+        },
+        "Main_0808a5e0": {
+          "address": "0x0200e13c",
+          "kind": "thumb"
+        },
+        "Engine_MapRedraw": {
+          "address": "0x0200df14",
+          "kind": "thumb"
+        },
+        "Engine_TaskWait": {
+          "address": "0x0200de8c",
+          "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02002a54",
+          "extent": 604,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

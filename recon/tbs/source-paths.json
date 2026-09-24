@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_373:02002a54": {
+      "name": "HaidiaMura_ApplyEntryState",
+      "source": "FIELD/HAIDIA_MURA/ENTRY_STATE.C"
+    },
     "resource_3b1:0200012c": {
       "name": "FuneHeya_RunWalkerStep",
       "source": "FIELD/FUNE_HEYA/WALKER_STEP.C"

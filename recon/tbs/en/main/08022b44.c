@@ -1,3 +1,17 @@
+/* Draft (2026-09-24): main:08022b44 is exact (1588 bytes, 0 halfwords differ)
+ * and passes alchemy check integrate, but it cannot be installed alone: the
+ * nested arrow renderer main:08022a7c is emitted first in the same object, so
+ * the build links the file at 0x08022a7c and needs the nested function exact
+ * too (the unit's two owners must be declared together). The nested
+ * function is 198+2 bytes with 7 halfwords off: in the reference the
+ * word/zero stores of the sprite attributes follow the sentinel and scale
+ * stores through the entry pointer, and its zero is materialised late in r5;
+ * written in that order here, the zero constant is hoisted above the slot
+ * load into r8 and every callee-saved assignment shifts (89 halfwords).
+ * Storing the zero through output->table right after entry is formed keeps
+ * the allocation (r8 x, sl y, fp rising, r9 chain, r6 output, r7 entry) and
+ * leaves only the store order and the zero's base register.
+ */
 #include "RENDER_INPUT.H"
 
 /* Preview setting or resting one Djinn: toggle it on the live owner record,

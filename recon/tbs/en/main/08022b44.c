@@ -232,7 +232,8 @@ struct RenderInput *Ui_ShowAbilityChangePreview(
             else
                 UiWork_SetParamNibble(15);
 
-            UiText_DrawCharacterAtOffset(0x333 + (list[i] & 0x3fff), win, 16, n * 16);
+            tile = list[i] & 0x3fff;
+            UiText_DrawCharacterAtOffset(tile + 0x333, win, 16, n * 16);
             UiWindow_SetTilemapEntry(win, 0xf01f, 11, n * 2, 0);
             UiWindow_SetTilemapEntry(win, 0xf01e, 12, n * 2, 0);
             UiText_DrawNumberInWindow(

@@ -21107,6 +21107,19 @@
     },
     "main:080fa514": {
       "name": "MusicPlayer_ResetActiveTracks"
+    },
+    "main:080aafb8": {
+      "name": "DjinnMenu_DrawElementList"
+    },
+    "main:080a7a34": {
+      "name": "CharacterSelector_RunRearrange",
+      "source": "MENU/CHARACTER_SELECTOR_RUN_REARRANGE.C"
+    },
+    "main:080b7b6c": {
+      "name": "BattleActor_SpawnObjectsForList"
+    },
+    "main:08092c40": {
+      "name": "UiText_OpenMessageAtObject"
     }
   },
   "symbols": {
@@ -21270,8 +21283,6 @@
     "main:08017248": "UiWindow_MapTextCanvasTiles",
     "main:08017658": "UiText_OpenMessageWindow",
     "main:0801de5c": "UiText_RenderStringTiles",
-    "main:080b7b6c": "BattleActor_SpawnObjectsForList",
-    "main:08092c40": "UiText_OpenMessageAtObject",
     "main:080c24f0": "BattleEnemy_RecordDefeat",
     "main:080912b8": "Object_EffectSpawnCallback",
     "main:080152b8": "BattleLayout_HighlightPartyPanelsFar",

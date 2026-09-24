@@ -8,8 +8,10 @@
 	.set sub_08077208, 0x08077208
 	.set sub_08077210, 0x08077210
 	.set sub_080ac8fc, 0x080ac8fc
+	.global DjinnMenu_DrawElementList
 	.global Func_080aafb8
 	.thumb_func
+DjinnMenu_DrawElementList:
 Func_080aafb8:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

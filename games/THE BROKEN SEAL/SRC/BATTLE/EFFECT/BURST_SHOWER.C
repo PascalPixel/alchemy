@@ -2,6 +2,7 @@
 #include "BATTLE_EFFECT_WORK.H"
 #include "BATTLE_EFX.H"
 #include "CALLBACK_SCHEDULER.H"
+#include "FIXED_MATH.H"
 
 void WaitFrames(s32);
 
@@ -34,8 +35,6 @@ void BattleFx_FetchRectangleBlitters(s32, u32 *);
 void *Resource_GetTableEntry(s32);
 void EffectPosition_ApplyAnimationAndYOffset(s32, s32 *);
 void EffectPosition_ApplyStepAndYOffset(s32, s32 *);
-s32 Math_Div(s32, s32);
-s32 Math_Mod(s32, s32);
 s32 Random16(void);
 void Audio_PlayCue(s32);
 void BattleMotion_ApplyVariantMotionFar(s32, s32);

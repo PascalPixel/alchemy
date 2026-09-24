@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EFFECT.H"
+#include "FIXED_MATH.H"
 
 struct RingOrigin {
     u8 pad00[8];
@@ -7,9 +8,6 @@ struct RingOrigin {
     s32 y;
     s32 z;
 };
-
-s32 Trig_Cos(s32);
-s32 Trig_Sin(s32);
 
 void ParticleEffect_UpdateMotionAndScale(union FieldObject *object)
 {

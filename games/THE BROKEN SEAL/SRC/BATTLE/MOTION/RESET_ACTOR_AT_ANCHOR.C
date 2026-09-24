@@ -56,8 +56,6 @@ void BattleMotion_SetupEscapeObject(s32 object_id)
 /* battle/motion/interpolate_position.c */
 extern s8 gIw;
 
-s32 Math_Div(s32, s32);
-
 void BattleMotion_InterpolatePosition(void **start_slot, void **end_slot, s32 progress)
 {
     s32 z_step;
@@ -104,7 +102,6 @@ struct Wrapper_080b8144 {
     u32 first;
     u32 fourth;
 };
-
 
 void BattleMotion_SetObjectPosition(struct Wrapper_080b8144 *slot)
 {

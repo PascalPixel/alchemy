@@ -1,7 +1,6 @@
 #include "TYPES.H"
 #include "OBJECT_EFX.H"
-
-s32 Trig_Sin(s32 angle);
+#include "FIXED_MATH.H"
 
 struct ArcObject {
     u8 pad00[8];

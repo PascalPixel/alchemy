@@ -1,9 +1,9 @@
 #include "IWRAM_CALL.H"
+#include "FIXED_MATH.H"
 
 extern u8 *gMapWork;
 
 u8 *Runtime_AllocateBlock(s32 kind, s32 size);
-s32 Math_Div(s32 dividend, s32 divisor);
 void Scheduler_RemoveCallback(s32 (*callback)(void));
 s32 BattleFx_StepRatioTransition(void);
 

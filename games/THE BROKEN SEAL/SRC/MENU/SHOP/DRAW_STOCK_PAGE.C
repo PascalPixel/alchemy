@@ -1,6 +1,6 @@
 #include "SHOP.H"
+#include "FIXED_MATH.H"
 
-s32 Math_Mod(s32 value, s32 divisor);
 void UiWindow_Clear(s32 window);
 u8 *UiIcon_DrawWithFlags(u16 no, u32 flags, s32 window, s32 x, s32 y);
 u8 *UiIcon_Draw(s32 no, s32 kind, s32 window, s32 x, s32 y);

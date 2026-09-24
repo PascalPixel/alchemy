@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "FIXED_MATH.H"
 
 typedef s32 (*SignedDivide)(s32 numerator, s32 denominator);
 
@@ -13,10 +14,6 @@ union AffineMatrix {
     s16 coefficients[4];
     u32 rows[2];
 };
-
-s32 Trig_Cos(s32 angle);
-s32 Trig_Sin(s32 angle);
-s32 Math_Div(s32 numerator, s32 denominator);
 
 extern u8 gObjAffineCount;
 extern union AffineMatrix gObjAffineMatrices[];

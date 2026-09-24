@@ -1,10 +1,9 @@
 #include "A9_MOTION.H"
 #include "TYPES.H"
+#include "FIXED_MATH.H"
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
-s32 Math_Div(s32, s32);
-s32 Math_Mod(s32, s32);
 void UiIcon_PrepareObject(void *arg0);
 
 void Menu_PlaceEntryObjectInGrid(struct Object080a9bd8 *obj, s32 index,

@@ -1,12 +1,10 @@
 #include "TYPES.H"
 #include "SCENE.H"
+#include "FIXED_MATH.H"
 
 #define PAGE_LABEL_FIRST 49
 #define PAGE_CAP_LEFT 0xf128
 #define PAGE_CAP_RIGHT 0xf129
-
-s32 Math_Div(s32 numerator, s32 denominator);
-s32 Math_Mod(s32 numerator, s32 denominator);
 
 void Menu_DrawPageIndicator(
     s32 window,

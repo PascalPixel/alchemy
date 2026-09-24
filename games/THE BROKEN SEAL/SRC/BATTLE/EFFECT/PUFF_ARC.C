@@ -3,6 +3,7 @@
 #include "BATTLE_EFX.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "SYSTEM.H"
+#include "FIXED_MATH.H"
 
 /* Six drawn arguments: destination, source cell, x, y, width, height.
    The reference calls it through the r4 bx bank, so it is an indirect
@@ -17,8 +18,6 @@ extern u8 gWorkSlot[];
 extern u8 Value_000000b4;
 
 void BattleFx_BeginCanvasLayer(s32);
-s32 Trig_Sin(s32);
-s32 Trig_Cos(s32);
 void Audio_PlayCue(s32);
 void BattleEventRuntime_BeginPhaseFar(s32);
 void ObjectGroup_UpdateMembers(s32, s32, s32, s32, s32);

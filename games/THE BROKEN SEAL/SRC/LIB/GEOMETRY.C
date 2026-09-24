@@ -1,7 +1,6 @@
 #include "TYPES.H"
 #include "FIXED_MATH.H"
 
-s32 Math_Div(s32 numerator, s32 denominator);
 extern const u16 Math_ArcTanTable[];
 
 u16 ArcTan2(s32 x, s32 y)

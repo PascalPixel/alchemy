@@ -1,7 +1,5 @@
 #include "TYPES.H"
-
-s32 Math_Div(s32 dividend, s32 divisor);
-s32 Math_Mod(s32 dividend, s32 divisor);
+#include "FIXED_MATH.H"
 
 u8 *Text_FormatNumber(u8 *buffer, s32 input, s32 width)
 {

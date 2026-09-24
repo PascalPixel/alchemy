@@ -2,6 +2,7 @@
 #include "BATTLE_EFX.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "SYSTEM.H"
+#include "FIXED_MATH.H"
 
 /*
  * Battle-presentation sub-effect at 0x080e0c84.
@@ -63,8 +64,6 @@ void BattleFx_BeginCanvasLayer(s32 mode);
 void BattleFx_PrepareCanvasEffect(void *object, s32 a, s32 b, s32 c, s32 *out_a, s32 *out_b);
 void BattleFx_FetchRectangleBlitters(s32 flag, DrawRectangleFn *out_callbacks);
 void EffectPosition_ApplyAlternateStepAndYOffset(s16 a, s32 *out_pair);
-s32 Trig_Sin(s32 angle);
-s32 Trig_Cos(s32 angle);
 void EffectStep_AdvanceWithGravity3D(void *particle, s32 a, s32 b);
 void BattleEventRuntime_BeginPhaseFar(s32 id);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);

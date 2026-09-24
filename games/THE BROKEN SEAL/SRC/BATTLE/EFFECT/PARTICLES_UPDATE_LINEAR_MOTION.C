@@ -1,6 +1,6 @@
 #include "TYPES.H"
+#include "FIXED_MATH.H"
 
-s32 Math_Div(s32, s32);
 void ParticleEffect_UpdateLinearMotion(void *particle)
 {
   s32 velocity_x;

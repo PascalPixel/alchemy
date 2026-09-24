@@ -8,6 +8,7 @@ struct OwnerDigitState {
 };
 
 #include "PRESET_TABLE.H"
+#include "FIXED_MATH.H"
 
 extern struct PresetValues Enemy_ElementPresetTable[];
 
@@ -21,8 +22,6 @@ extern const struct DigitOffsets Element_PowerResistByLevel[16];
 void *Owner_GetState(s32 owner);
 const u8 *Owner_GetRecord(s32 record);
 s32 Owner_GetDigitValues(s32 record, const u8 *source, s32 output[4]);
-s32 Math_Mod(s32 value, s32 divisor);
-s32 Math_Div(s32 value, s32 divisor);
 
 u32 Owner_BuildDigitTiles(s32 owner, s16 destination[4][2])
 {

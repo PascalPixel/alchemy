@@ -1,8 +1,8 @@
 #include "OWNER_STATE.H"
 #include "PARTY_STATE.H"
 #include "GAME_FLAGS.H"
+#include "FIXED_MATH.H"
 
-extern s32 Math_Div(s32, s32);
 extern const u8 Character_ElementGroupTable[];
 
 void Owner_RefreshRatiosOnFlag(void)

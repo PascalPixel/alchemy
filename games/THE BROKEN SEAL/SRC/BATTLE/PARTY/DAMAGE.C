@@ -3,13 +3,13 @@
 #include "BATTLE_TYPES.H"
 #include "PARTY_STATE.H"
 #include "SOUND_IDS.H"
+#include "FIXED_MATH.H"
 
 /* Party-wide HP changes in battle: drains, direct or percentage deltas, and
    the poison and venom damage applied at the end of a round. */
 
 s32 Party_CountActiveOwnersFar();
 struct BattleUnit *Runtime_GetObject(s32 unit_id);
-s32 Math_Div(s32 value, s32 divisor);
 void Owner_AdjustFirstValueFar(s32 owner, s32 amount);
 void Owner_AdjustSecondValueFar(s32 owner, s32 amount);
 void BattleFx_ApplyColorToSourceBuffer(s32 color, s32 mode);

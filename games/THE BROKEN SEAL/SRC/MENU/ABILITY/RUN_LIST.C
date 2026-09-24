@@ -3,6 +3,7 @@
 #include "GLOBAL_CELLS.H"
 #include "MENU_RESULT.H"
 #include "SYSTEM.H"
+#include "FIXED_MATH.H"
 
 /*
  * Psynergy / action list selection loop.
@@ -86,7 +87,6 @@ struct PsynergyListWork {
 
 extern struct PsynergyListWork *gMenuWork;
 
-s32 Math_Mod(s32 value, s32 divisor);
 void AnimationObjects_SelectAnimationFar(s32 object, s32 mode);
 void UiWindow_ClearInteriorTilesFar(s32 window, s32 x, s32 y, s32 width, s32 height);
 void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);

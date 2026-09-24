@@ -1,5 +1,6 @@
 #include "OBJECT_LOOKUP.H"
 #include "TYPES.H"
+#include "FIXED_MATH.H"
 
 /* Object updates of the paired arc effect (battle effect 16). */
 
@@ -15,7 +16,6 @@ extern struct BattleEffect16GlobalState gGameState;
 extern u32 gFrameCount;
 extern u8 Value_00000001;
 s32 Math_ModU(u32, s32);
-s32 Math_Mod(s32, s32);
 void BattleFx_SpawnDescendingArcParticles(void *);
 
 void BattleFx_UpdateEffect16State(void)

@@ -1,5 +1,6 @@
 #include "IWRAM_CALL.H"
 #include "SYSTEM.H"
+#include "FIXED_MATH.H"
 
 struct OrbitEffect {
     u8 unknown_00[6];
@@ -18,8 +19,6 @@ struct OrbitEffect {
     void (*update)(struct OrbitEffect *);
 };
 
-s32 Trig_Cos(s32 angle);
-s32 Trig_Sin(s32 angle);
 void BattleFx_WanderAroundAnchor(struct OrbitEffect *effect);
 
 /* Circles the anchor for 121 frames, then hands over to a random wander. */

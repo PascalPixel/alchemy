@@ -1,10 +1,9 @@
 #include "TYPES.H"
 #include "ITEM_MENU.H"
+#include "FIXED_MATH.H"
 
 /* menu/item_menu/page_result.c */
 s32 Runtime_GetObject(s32);
-s32 Math_Div(s32, s32);
-s32 Math_Mod(s32, s32);
 s32 ItemMenu_Count(s32 owner);
 
 static __inline__ u8 LoadByte(s32 base, s32 offset)

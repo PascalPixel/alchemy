@@ -1,6 +1,5 @@
 #include "IWRAM_CALL.H"
-
-s32 Trig_Sin(s32 angle);
+#include "FIXED_MATH.H"
 
 /* Sways the object four units either side of its anchor x, stepping a
    128-step phase each frame. */

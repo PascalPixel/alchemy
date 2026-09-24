@@ -1,6 +1,6 @@
 #include "TYPES.H"
+#include "FIXED_MATH.H"
 
-s32 Math_Div(s32 value, s32 divisor);
 void UiText_DrawNumberAtOffsetFar(s32 value, s32 digits, s32 layer, s32 x, s32 y);
 
 void UiText_DrawNumberRightAlignedFar(s32 number, s32 layer, s32 x, s32 y)

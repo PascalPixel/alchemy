@@ -1,5 +1,6 @@
 #include "IWRAM_CALL.H"
 #include "SYSTEM.H"
+#include "FIXED_MATH.H"
 
 struct SparkObject {
     u8 unknown_00[8];
@@ -33,7 +34,6 @@ struct SparkAnchor {
 extern struct SparkAnchor *gEffectWork;
 extern u32 gFrameCount;
 
-s32 Trig_Sin(s32 angle);
 u32 Math_ModU(u32 value, u32 divisor);
 void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position);
 struct SparkObject *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);

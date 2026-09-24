@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "SCENE.H"
 #include "SOUND_IDS.H"
+#include "FIXED_MATH.H"
 
 #define COUNTDOWN_START_FRAMES 900
 #define FRAMES_PER_SECOND 60
@@ -42,7 +43,6 @@ extern struct LinkCountdownState *gIw;
 extern struct LinkRuntimeState *gBattleWork;
 extern struct LinkSignature gOv[];
 
-s32 Math_Div(s32 dividend, s32 divisor);
 void Runtime_PushSlotEntry(struct CountdownDisplayEntry *entry, s32 value);
 
 void UiText_DrawNumberInWindow(s32 value, s32 width, s32 handle, s32 arg3, s32 arg4);

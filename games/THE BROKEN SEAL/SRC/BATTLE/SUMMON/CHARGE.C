@@ -1,5 +1,6 @@
 #include "BATTLE_SUMMON.H"
 #include "TBS_EDITION.H"
+#include "FIXED_MATH.H"
 
 /* 召喚チャージ管理。クラスごとに使用中チャンネルのビットを持ち、 */
 /* 取得・解放・名前印のリセットを行う。 */
@@ -28,7 +29,6 @@ struct BattleActorDefinition {
 
 extern struct SummonChargeState *gBattleWork;
 
-s32 Math_Mod(s32, s32);
 struct BattleActorDefinition *Owner_GetStateFar(s32 actor_id);
 
 /* 番号表を線形探索し、既存なら次の空きビットを剰余で回して確保、 */

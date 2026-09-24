@@ -1,5 +1,6 @@
 #include "RUNTIME_INTERFACES.H"
 #include "PRESET_TABLE.H"
+#include "FIXED_MATH.H"
 
 extern struct PresetValues Enemy_ElementPresetTable[];
 
@@ -54,7 +55,6 @@ struct OwnerResistanceState {
 
 void *Owner_GetState(s32);
 s32 Owner_GetDigitValues(s32 record, const u8 *source, s32 *output);
-s32 Math_Div(s32, s32);
 
 s32 Owner_GetResistanceValue(s32 owner, s32 index)
 {
@@ -78,7 +78,6 @@ struct OwnerElementRecord {
     u8 unknown[0x34];
     u8 value;
 };
-
 
 s32 Owner_GetDefaultElement(struct OwnerElementState *state)
 {

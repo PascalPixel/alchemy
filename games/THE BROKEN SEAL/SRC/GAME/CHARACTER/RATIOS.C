@@ -1,7 +1,7 @@
 #include "TYPES.H"
+#include "FIXED_MATH.H"
 
 void *Owner_GetState(s32);
-s32 Math_Div(s32, s32);
 
 void Owner_RatioNoOp(void)
 {

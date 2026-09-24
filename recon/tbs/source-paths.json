@@ -5838,7 +5838,8 @@
       "source": "BATTLE/EFFECT/DISPATCH_BY_ID_RANGE.C"
     },
     "main:080e6948": {
-      "name": "ObjectGroup_StoreObjectAndRunStep7"
+      "name": "ObjectGroup_StoreObjectAndRunStep7",
+      "source": "BATTLE/EFFECT/STORE_OBJECT_AND_RUN_STEP7.C"
     },
     "main:080ec0e0": {
       "name": "Graphics_ResetBg2Pa",

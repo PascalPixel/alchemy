@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "main:0800300c": {
+      "name": "Runtime_InstallIwramAndIrqs",
+      "source": "SYSTEM/INSTALL_IWRAM_AND_IRQS.C"
+    },
     "main:080a1f74": {
       "name": "Menu_CopyListOrder",
       "source": "MENU/COPY_LIST_ORDER.C"

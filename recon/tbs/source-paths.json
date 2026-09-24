@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_39d:0200035c": {
+      "name": "MakyuriChojo_ApplyEntryState",
+      "source": "FIELD/MAKYURI_CHOJO/ENTRY_STATE.C"
+    },
     "resource_39e:02000388": {
       "name": "ShianJiin_SelectAreaEvents",
       "source": "FIELD/COMMON/SHIAN_JIIN/AREA_EVENTS.C"

@@ -77065,6 +77065,82 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "scene-39d-0200035c",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_CHOJO/ENTRY_STATE.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_39d",
+      "absolute_symbols": {
+        "Engine_GameFlagSet": {
+          "address": "0x0200b6b8",
+          "kind": "thumb"
+        },
+        "Engine_TaskAddCallback": {
+          "address": "0x0200b638",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpritePriority": {
+          "address": "0x0200b790",
+          "kind": "thumb"
+        },
+        "Engine_ActorGet": {
+          "address": "0x0200b6f0",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagIsSet": {
+          "address": "0x0200b6b0",
+          "kind": "thumb"
+        },
+        "FindNearestF2Actor": {
+          "address": "0x020088cc",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpriteFlags": {
+          "address": "0x0200b690",
+          "kind": "thumb"
+        },
+        "FieldScene_RunFourActorPresentation": {
+          "address": "0x0200856c",
+          "kind": "thumb"
+        },
+        "Engine_MapRedraw": {
+          "address": "0x0200b678",
+          "kind": "thumb"
+        },
+        "Engine_TaskWait": {
+          "address": "0x0200b630",
+          "kind": "thumb"
+        },
+        "Engine_MapCopyCellsTo": {
+          "address": "0x0200b680",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetPosition": {
+          "address": "0x0200b728",
+          "kind": "thumb"
+        },
+        "RunScene59Sequence": {
+          "address": "0x02009af0",
+          "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x0200035c",
+          "extent": 528,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

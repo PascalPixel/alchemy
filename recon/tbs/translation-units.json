@@ -41491,12 +41491,168 @@
           "address": "0x02009dd4",
           "kind": "data"
         },
+        "Engine_ActorEnableActionCallback": {
+          "address": "0x020099c0",
+          "kind": "thumb"
+        },
+        "Engine_ActorFaceDirection": {
+          "address": "0x02009a40",
+          "kind": "thumb"
+        },
+        "Engine_ActorGet": {
+          "address": "0x020099b0",
+          "kind": "thumb"
+        },
+        "Engine_ActorJump": {
+          "address": "0x02009a00",
+          "kind": "thumb"
+        },
+        "Engine_ActorMoveToAndWait": {
+          "address": "0x020099d8",
+          "kind": "thumb"
+        },
+        "Engine_ActorRunRepeatedMotion": {
+          "address": "0x02009a10",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetAnimation": {
+          "address": "0x020099f0",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetAnimationAndWait": {
+          "address": "0x020099f8",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetPosition": {
+          "address": "0x020099e8",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpeed": {
+          "address": "0x020099b8",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpritePriority": {
+          "address": "0x02009a48",
+          "kind": "thumb"
+        },
+        "Engine_ActorShowEmote": {
+          "address": "0x02009a50",
+          "kind": "thumb"
+        },
+        "Engine_ActorStartRepeatedMotion": {
+          "address": "0x02009a08",
+          "kind": "thumb"
+        },
+        "Engine_ActorWalkByAndWait": {
+          "address": "0x02009aa8",
+          "kind": "thumb"
+        },
+        "Engine_ActorWalkToAndWait": {
+          "address": "0x020099e0",
+          "kind": "thumb"
+        },
+        "Engine_AudioPlayCue": {
+          "address": "0x02009ab0",
+          "kind": "thumb"
+        },
+        "Engine_CameraMoveTo": {
+          "address": "0x02009a60",
+          "kind": "thumb"
+        },
+        "Engine_CameraSetSpeed": {
+          "address": "0x02009a58",
+          "kind": "thumb"
+        },
+        "Engine_CameraWaitForMove": {
+          "address": "0x02009a68",
+          "kind": "thumb"
+        },
+        "Engine_ColorBufferApplyTarget": {
+          "address": "0x02009a78",
+          "kind": "thumb"
+        },
+        "Engine_ColorBufferInterpolate": {
+          "address": "0x02009a88",
+          "kind": "thumb"
+        },
+        "Engine_EventBegin": {
+          "address": "0x02009998",
+          "kind": "thumb"
+        },
+        "Engine_EventChooseYesNo": {
+          "address": "0x020099a8",
+          "kind": "thumb"
+        },
+        "Engine_EventEnd": {
+          "address": "0x020099a0",
+          "kind": "thumb"
+        },
+        "Engine_EventOpenMessage": {
+          "address": "0x02009a28",
+          "kind": "thumb"
+        },
+        "Engine_EventRequestExit": {
+          "address": "0x02009a70",
+          "kind": "thumb"
+        },
+        "Engine_EventSetMessage": {
+          "address": "0x02009a20",
+          "kind": "thumb"
+        },
+        "Engine_EventShowMessage": {
+          "address": "0x02009a30",
+          "kind": "thumb"
+        },
+        "Engine_EventShowMessageAndWait": {
+          "address": "0x02009a38",
+          "kind": "thumb"
+        },
+        "Engine_EventWait": {
+          "address": "0x02009990",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagIsSet": {
+          "address": "0x02009980",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagSet": {
+          "address": "0x02009988",
+          "kind": "thumb"
+        },
+        "Engine_MathDivide": {
+          "address": "0x020098f8",
+          "kind": "thumb"
+        },
+        "Engine_MessageShowCentered": {
+          "address": "0x02009960",
+          "kind": "thumb"
+        },
+        "Engine_ObjectDispatchRelease": {
+          "address": "0x02009948",
+          "kind": "thumb"
+        },
+        "Engine_ObjectSetAnimation": {
+          "address": "0x02009930",
+          "kind": "thumb"
+        },
+        "Engine_ObjectSetScript": {
+          "address": "0x02009938",
+          "kind": "thumb"
+        },
+        "Engine_TaskWait": {
+          "address": "0x02009908",
+          "kind": "thumb"
+        },
         "Func_020005c2": {
           "address": "0x020082ec",
           "kind": "thumb"
         },
         "Func_02000764": {
           "address": "0x02008488",
+          "kind": "thumb"
+        },
+        "Func_020012b4": {
+          "address": "0x020092b4",
           "kind": "thumb"
         },
         "Func_020012f4": {
@@ -41523,12 +41679,12 @@
           "address": "0x020095a0",
           "kind": "thumb"
         },
-        "Func_020018b8": {
-          "address": "0x020098b8",
+        "Func_0200172c": {
+          "address": "0x0200972c",
           "kind": "thumb"
         },
-        "Func_02001908": {
-          "address": "0x02009908",
+        "Func_020018b8": {
+          "address": "0x020098b8",
           "kind": "thumb"
         },
         "Func_02001910": {
@@ -41539,40 +41695,8 @@
           "address": "0x02009918",
           "kind": "thumb"
         },
-        "Func_02001960": {
-          "address": "0x02009960",
-          "kind": "thumb"
-        },
-        "Func_02001974": {
-          "address": "0x020092f4",
-          "kind": "thumb"
-        },
-        "Func_02001980": {
-          "address": "0x02009980",
-          "kind": "thumb"
-        },
-        "Func_02001988": {
-          "address": "0x02009988",
-          "kind": "thumb"
-        },
-        "Func_02001990": {
-          "address": "0x02009990",
-          "kind": "thumb"
-        },
-        "Func_020019a8": {
-          "address": "0x020099a8",
-          "kind": "thumb"
-        },
         "Func_020019b0": {
           "address": "0x020099b0",
-          "kind": "thumb"
-        },
-        "Func_020019b8": {
-          "address": "0x020099b8",
-          "kind": "thumb"
-        },
-        "Func_020019c0": {
-          "address": "0x020099c0",
           "kind": "thumb"
         },
         "Func_020019c8": {
@@ -41583,308 +41707,16 @@
           "address": "0x020099d0",
           "kind": "thumb"
         },
-        "Func_020019e0": {
-          "address": "0x020099e0",
-          "kind": "thumb"
-        },
-        "Func_020019e6": {
-          "address": "0x020092f4",
-          "kind": "thumb"
-        },
-        "Func_020019e8": {
-          "address": "0x020099e8",
-          "kind": "thumb"
-        },
-        "Func_020019f0": {
-          "address": "0x02009998",
-          "kind": "thumb"
-        },
-        "Func_020019f0_a": {
-          "address": "0x020099f0",
-          "kind": "thumb"
-        },
-        "Func_020019f4": {
-          "address": "0x020092f4",
-          "kind": "thumb"
-        },
-        "Func_020019f8": {
-          "address": "0x020099f8",
-          "kind": "thumb"
-        },
-        "Func_02001a02": {
-          "address": "0x020092f4",
-          "kind": "thumb"
-        },
-        "Func_02001a08": {
-          "address": "0x02009a08",
-          "kind": "thumb"
-        },
-        "Func_02001a10": {
-          "address": "0x02009a10",
-          "kind": "thumb"
-        },
-        "Func_02001a14": {
-          "address": "0x020099a0",
-          "kind": "thumb"
-        },
-        "Func_02001a20": {
-          "address": "0x02009a20",
-          "kind": "thumb"
-        },
-        "Func_02001a28": {
-          "address": "0x02009a28",
-          "kind": "thumb"
-        },
-        "Func_02001a30": {
-          "address": "0x02009a30",
-          "kind": "thumb"
-        },
-        "Func_02001a38": {
-          "address": "0x02009a38",
-          "kind": "thumb"
-        },
-        "Func_02001a40": {
-          "address": "0x02009a40",
-          "kind": "thumb"
-        },
-        "Func_02001a50": {
-          "address": "0x02009a50",
-          "kind": "thumb"
-        },
-        "Func_02001a58": {
-          "address": "0x02009a58",
-          "kind": "thumb"
-        },
-        "Func_02001a5a": {
-          "address": "0x020092f4",
-          "kind": "thumb"
-        },
-        "Func_02001a60": {
-          "address": "0x02009a60",
-          "kind": "thumb"
-        },
-        "Func_02001a68": {
-          "address": "0x02009a68",
-          "kind": "thumb"
-        },
-        "Func_02001a78": {
-          "address": "0x02009a78",
-          "kind": "thumb"
-        },
-        "Func_02001a80": {
-          "address": "0x020092f4",
-          "kind": "thumb"
-        },
-        "Func_02001a88": {
-          "address": "0x02009a88",
-          "kind": "thumb"
-        },
-        "Func_02001ab0": {
-          "address": "0x02009ab0",
-          "kind": "thumb"
-        },
-        "Func_02001abe": {
-          "address": "0x020092f4",
-          "kind": "thumb"
-        },
-        "Func_02001acc": {
-          "address": "0x020092f4",
-          "kind": "thumb"
-        },
-        "Func_02001ada": {
-          "address": "0x020092f4",
-          "kind": "thumb"
-        },
-        "Func_02001ae0": {
-          "address": "0x02009a70",
-          "kind": "thumb"
-        },
-        "Func_02001ae2": {
-          "address": "0x02009980",
-          "kind": "thumb"
-        },
-        "Func_02001aec": {
-          "address": "0x020092f4",
-          "kind": "thumb"
-        },
-        "Func_02001af4": {
-          "address": "0x02009998",
-          "kind": "thumb"
-        },
-        "Func_02001af6": {
-          "address": "0x02009908",
-          "kind": "thumb"
-        },
-        "Func_02001b02": {
-          "address": "0x020092f4",
-          "kind": "thumb"
-        },
-        "Func_02001b0a": {
-          "address": "0x02009aa8",
-          "kind": "thumb"
-        },
-        "Func_02001b0c": {
-          "address": "0x02009980",
-          "kind": "thumb"
-        },
-        "Func_02001b26": {
-          "address": "0x02009908",
-          "kind": "thumb"
-        },
         "Func_02001b2c": {
           "address": "0x02009978",
-          "kind": "thumb"
-        },
-        "Func_02001b94": {
-          "address": "0x02009a20",
-          "kind": "thumb"
-        },
-        "Func_02001bac": {
-          "address": "0x02009a30",
-          "kind": "thumb"
-        },
-        "Func_02001bbe": {
-          "address": "0x02009a20",
-          "kind": "thumb"
-        },
-        "Func_02001bc2": {
-          "address": "0x020099a0",
-          "kind": "thumb"
-        },
-        "Func_02001bd2": {
-          "address": "0x02009980",
-          "kind": "thumb"
-        },
-        "Func_02001bd6": {
-          "address": "0x02009a30",
-          "kind": "thumb"
-        },
-        "Func_02001be4": {
-          "address": "0x02009998",
-          "kind": "thumb"
-        },
-        "Func_02001bf2": {
-          "address": "0x02009a20",
-          "kind": "thumb"
-        },
-        "Func_02001c0a": {
-          "address": "0x02009a30",
-          "kind": "thumb"
-        },
-        "Func_02001c0e": {
-          "address": "0x02009980",
-          "kind": "thumb"
-        },
-        "Func_02001c10": {
-          "address": "0x020099a0",
-          "kind": "thumb"
-        },
-        "Func_02001c10_a": {
-          "address": "0x02009a10",
-          "kind": "thumb"
-        },
-        "Func_02001c1c": {
-          "address": "0x02009908",
-          "kind": "thumb"
-        },
-        "Func_02001c20": {
-          "address": "0x02009998",
-          "kind": "thumb"
-        },
-        "Func_02001c30": {
-          "address": "0x02009a38",
-          "kind": "thumb"
-        },
-        "Func_02001c38": {
-          "address": "0x02009a30",
-          "kind": "thumb"
-        },
-        "Func_02001c38_a": {
-          "address": "0x02009908",
           "kind": "thumb"
         },
         "Func_02001c3a": {
           "address": "0x02009910",
           "kind": "thumb"
         },
-        "Func_02001c4c": {
-          "address": "0x020099a0",
-          "kind": "thumb"
-        },
-        "Func_02001c4e": {
-          "address": "0x02009980",
-          "kind": "thumb"
-        },
-        "Func_02001c5a": {
-          "address": "0x02009a78",
-          "kind": "thumb"
-        },
-        "Func_02001c5c": {
-          "address": "0x02009998",
-          "kind": "thumb"
-        },
-        "Func_02001c5c_a": {
-          "address": "0x020092f4",
-          "kind": "thumb"
-        },
-        "Func_02001c70": {
-          "address": "0x02009a88",
-          "kind": "thumb"
-        },
-        "Func_02001c7c": {
-          "address": "0x02009a20",
-          "kind": "thumb"
-        },
-        "Func_02001c80": {
-          "address": "0x020099a0",
-          "kind": "thumb"
-        },
-        "Func_02001c84": {
-          "address": "0x02009a20",
-          "kind": "thumb"
-        },
-        "Func_02001c8a": {
-          "address": "0x02009a78",
-          "kind": "thumb"
-        },
-        "Func_02001c9c": {
-          "address": "0x02009a30",
-          "kind": "thumb"
-        },
-        "Func_02001ca0": {
-          "address": "0x02009a88",
-          "kind": "thumb"
-        },
         "Func_02001ca2": {
           "address": "0x020099b0",
-          "kind": "thumb"
-        },
-        "Func_02001cac": {
-          "address": "0x02009908",
-          "kind": "thumb"
-        },
-        "Func_02001cb8": {
-          "address": "0x02009a20",
-          "kind": "thumb"
-        },
-        "Func_02001cb8_a": {
-          "address": "0x02009908",
-          "kind": "thumb"
-        },
-        "Func_02001cc0": {
-          "address": "0x02009a20",
-          "kind": "thumb"
-        },
-        "Func_02001cd8": {
-          "address": "0x02009a30",
-          "kind": "thumb"
-        },
-        "Func_02001ce2": {
-          "address": "0x02009908",
-          "kind": "thumb"
-        },
-        "Func_02001ce8": {
-          "address": "0x020092f4",
           "kind": "thumb"
         },
         "Func_02001cea": {
@@ -41895,1160 +41727,16 @@
           "address": "0x020099b0",
           "kind": "thumb"
         },
-        "Func_02001d2c": {
-          "address": "0x020099b8",
-          "kind": "thumb"
-        },
-        "Func_02001d3a": {
-          "address": "0x02009908",
-          "kind": "thumb"
-        },
-        "Func_02001d40": {
-          "address": "0x02009a40",
-          "kind": "thumb"
-        },
-        "Func_02001d56": {
-          "address": "0x020099f0",
-          "kind": "thumb"
-        },
         "Func_02001d58": {
           "address": "0x02009a90",
-          "kind": "thumb"
-        },
-        "Func_02001d5a": {
-          "address": "0x02009990",
-          "kind": "thumb"
-        },
-        "Func_02001d70": {
-          "address": "0x020099d8",
-          "kind": "thumb"
-        },
-        "Func_02001d80": {
-          "address": "0x02009a78",
-          "kind": "thumb"
-        },
-        "Func_02001d82": {
-          "address": "0x02009990",
           "kind": "thumb"
         },
         "Func_02001d92": {
           "address": "0x020099b0",
           "kind": "thumb"
         },
-        "Func_02001d96": {
-          "address": "0x02009a88",
-          "kind": "thumb"
-        },
-        "Func_02001d96_a": {
-          "address": "0x02009a48",
-          "kind": "thumb"
-        },
-        "Func_02001da0": {
-          "address": "0x02009990",
-          "kind": "thumb"
-        },
-        "Func_02001da6": {
-          "address": "0x02009a60",
-          "kind": "thumb"
-        },
-        "Func_02001db4": {
-          "address": "0x020099f0",
-          "kind": "thumb"
-        },
-        "Func_02001dca": {
-          "address": "0x02009ab0",
-          "kind": "thumb"
-        },
-        "Func_02001dda": {
-          "address": "0x020092f4",
-          "kind": "thumb"
-        },
-        "Func_02001dde": {
-          "address": "0x02009990",
-          "kind": "thumb"
-        },
-        "Func_02001df6": {
-          "address": "0x02009990",
-          "kind": "thumb"
-        },
-        "Func_02001e02": {
-          "address": "0x020098b8",
-          "kind": "thumb"
-        },
-        "Func_02001e0e": {
-          "address": "0x02009980",
-          "kind": "thumb"
-        },
-        "Func_02001e16": {
-          "address": "0x02009960",
-          "kind": "thumb"
-        },
-        "Func_02001e18": {
-          "address": "0x02009a20",
-          "kind": "thumb"
-        },
-        "Func_02001e1a": {
-          "address": "0x02009a10",
-          "kind": "thumb"
-        },
-        "Func_02001e2a": {
-          "address": "0x02009ab0",
-          "kind": "thumb"
-        },
-        "Func_02001e36": {
-          "address": "0x020092f4",
-          "kind": "thumb"
-        },
-        "Func_02001e3a": {
-          "address": "0x02009a38",
-          "kind": "thumb"
-        },
-        "Func_02001e48": {
-          "address": "0x02009a30",
-          "kind": "thumb"
-        },
-        "Func_02001e4e": {
-          "address": "0x020092f4",
-          "kind": "thumb"
-        },
-        "Func_02001e50": {
-          "address": "0x020099f0",
-          "kind": "thumb"
-        },
-        "Func_02001e58": {
-          "address": "0x02009a10",
-          "kind": "thumb"
-        },
-        "Func_02001e58_a": {
-          "address": "0x02009a00",
-          "kind": "thumb"
-        },
-        "Func_02001e5e": {
-          "address": "0x02009908",
-          "kind": "thumb"
-        },
-        "Func_02001e60": {
-          "address": "0x020092f4",
-          "kind": "thumb"
-        },
-        "Func_02001e6c": {
-          "address": "0x02009ab0",
-          "kind": "thumb"
-        },
-        "Func_02001e6e": {
-          "address": "0x020092f4",
-          "kind": "thumb"
-        },
-        "Func_02001e76": {
-          "address": "0x02009910",
-          "kind": "thumb"
-        },
-        "Func_02001e86": {
-          "address": "0x020092f4",
-          "kind": "thumb"
-        },
-        "Func_02001e88": {
-          "address": "0x020099b0",
-          "kind": "thumb"
-        },
-        "Func_02001e8a": {
-          "address": "0x020099b8",
-          "kind": "thumb"
-        },
-        "Func_02001e9c": {
-          "address": "0x020099b0",
-          "kind": "thumb"
-        },
-        "Func_02001e9e": {
-          "address": "0x02009a78",
-          "kind": "thumb"
-        },
-        "Func_02001eb4": {
-          "address": "0x02009a88",
-          "kind": "thumb"
-        },
         "Func_02001ebc": {
           "address": "0x02009aa0",
-          "kind": "thumb"
-        },
-        "Func_02001ec2": {
-          "address": "0x020099c0",
-          "kind": "thumb"
-        },
-        "Func_02001eca": {
-          "address": "0x020099c0",
-          "kind": "thumb"
-        },
-        "Func_02001ecc": {
-          "address": "0x020092f4",
-          "kind": "thumb"
-        },
-        "Func_02001ece": {
-          "address": "0x020099e8",
-          "kind": "thumb"
-        },
-        "Func_02001ed2": {
-          "address": "0x020099b0",
-          "kind": "thumb"
-        },
-        "Func_02001eda": {
-          "address": "0x020092f4",
-          "kind": "thumb"
-        },
-        "Func_02001ede": {
-          "address": "0x020098b8",
-          "kind": "thumb"
-        },
-        "Func_02001ee2": {
-          "address": "0x020099e8",
-          "kind": "thumb"
-        },
-        "Func_02001ee8": {
-          "address": "0x02009a40",
-          "kind": "thumb"
-        },
-        "Func_02001ef0": {
-          "address": "0x020098b8",
-          "kind": "thumb"
-        },
-        "Func_02001ef2": {
-          "address": "0x020092f4",
-          "kind": "thumb"
-        },
-        "Func_02001ef8": {
-          "address": "0x020099c0",
-          "kind": "thumb"
-        },
-        "Func_02001efc": {
-          "address": "0x02009990",
-          "kind": "thumb"
-        },
-        "Func_02001f00": {
-          "address": "0x020092f4",
-          "kind": "thumb"
-        },
-        "Func_02001f06": {
-          "address": "0x020099c8",
-          "kind": "thumb"
-        },
-        "Func_02001f08": {
-          "address": "0x020098b8",
-          "kind": "thumb"
-        },
-        "Func_02001f14": {
-          "address": "0x02009908",
-          "kind": "thumb"
-        },
-        "Func_02001f18": {
-          "address": "0x020099e8",
-          "kind": "thumb"
-        },
-        "Func_02001f26": {
-          "address": "0x02009908",
-          "kind": "thumb"
-        },
-        "Func_02001f30": {
-          "address": "0x02009918",
-          "kind": "thumb"
-        },
-        "Func_02001f32": {
-          "address": "0x02009990",
-          "kind": "thumb"
-        },
-        "Func_02001f3a": {
-          "address": "0x02009908",
-          "kind": "thumb"
-        },
-        "Func_02001f48": {
-          "address": "0x020092f4",
-          "kind": "thumb"
-        },
-        "Func_02001f4e": {
-          "address": "0x02009908",
-          "kind": "thumb"
-        },
-        "Func_02001f5c": {
-          "address": "0x02009990",
-          "kind": "thumb"
-        },
-        "Func_02001f5e": {
-          "address": "0x02009ab0",
-          "kind": "thumb"
-        },
-        "Func_02001f64": {
-          "address": "0x02009908",
-          "kind": "thumb"
-        },
-        "Func_02001f82": {
-          "address": "0x020092f4",
-          "kind": "thumb"
-        },
-        "Func_02001f94": {
-          "address": "0x020092f4",
-          "kind": "thumb"
-        },
-        "Func_02001fa2": {
-          "address": "0x020092f4",
-          "kind": "thumb"
-        },
-        "Func_02001fb0": {
-          "address": "0x020092f4",
-          "kind": "thumb"
-        },
-        "Func_02001fb8": {
-          "address": "0x02009a40",
-          "kind": "thumb"
-        },
-        "Func_02001fee": {
-          "address": "0x02009a40",
-          "kind": "thumb"
-        },
-        "Func_02001ff2": {
-          "address": "0x02009a60",
-          "kind": "thumb"
-        },
-        "Func_02001ffe": {
-          "address": "0x02009a68",
-          "kind": "thumb"
-        },
-        "Func_02002008": {
-          "address": "0x02009990",
-          "kind": "thumb"
-        },
-        "Func_02002016": {
-          "address": "0x02009990",
-          "kind": "thumb"
-        },
-        "Func_02002018": {
-          "address": "0x02009a40",
-          "kind": "thumb"
-        },
-        "Func_0200201c": {
-          "address": "0x02009a60",
-          "kind": "thumb"
-        },
-        "Func_02002024": {
-          "address": "0x02009a40",
-          "kind": "thumb"
-        },
-        "Func_02002028": {
-          "address": "0x02009a68",
-          "kind": "thumb"
-        },
-        "Func_0200204c": {
-          "address": "0x02009ab0",
-          "kind": "thumb"
-        },
-        "Func_02002056": {
-          "address": "0x02009a60",
-          "kind": "thumb"
-        },
-        "Func_02002062": {
-          "address": "0x02009a68",
-          "kind": "thumb"
-        },
-        "Func_02002076": {
-          "address": "0x02009ab0",
-          "kind": "thumb"
-        },
-        "Func_0200207a": {
-          "address": "0x020092f4",
-          "kind": "thumb"
-        },
-        "Func_02002088": {
-          "address": "0x02009990",
-          "kind": "thumb"
-        },
-        "Func_02002096": {
-          "address": "0x02009990",
-          "kind": "thumb"
-        },
-        "Func_020020a4": {
-          "address": "0x02009990",
-          "kind": "thumb"
-        },
-        "Func_020020aa": {
-          "address": "0x02009a08",
-          "kind": "thumb"
-        },
-        "Func_020020b0": {
-          "address": "0x02009ab0",
-          "kind": "thumb"
-        },
-        "Func_020020b4": {
-          "address": "0x02009a88",
-          "kind": "thumb"
-        },
-        "Func_020020ba": {
-          "address": "0x02009a08",
-          "kind": "thumb"
-        },
-        "Func_020020c6": {
-          "address": "0x02009a88",
-          "kind": "thumb"
-        },
-        "Func_020020ce": {
-          "address": "0x02009a60",
-          "kind": "thumb"
-        },
-        "Func_020020da": {
-          "address": "0x02009a68",
-          "kind": "thumb"
-        },
-        "Func_020020de": {
-          "address": "0x02009a88",
-          "kind": "thumb"
-        },
-        "Func_020020ee": {
-          "address": "0x02009990",
-          "kind": "thumb"
-        },
-        "Func_020020fc": {
-          "address": "0x02009990",
-          "kind": "thumb"
-        },
-        "Func_02002106": {
-          "address": "0x02009a40",
-          "kind": "thumb"
-        },
-        "Func_0200210a": {
-          "address": "0x02009990",
-          "kind": "thumb"
-        },
-        "Func_02002112": {
-          "address": "0x02009a40",
-          "kind": "thumb"
-        },
-        "Func_0200211e": {
-          "address": "0x02009a40",
-          "kind": "thumb"
-        },
-        "Func_02002122": {
-          "address": "0x02009990",
-          "kind": "thumb"
-        },
-        "Func_0200212a": {
-          "address": "0x02009a40",
-          "kind": "thumb"
-        },
-        "Func_0200213c": {
-          "address": "0x02009ab0",
-          "kind": "thumb"
-        },
-        "Func_02002160": {
-          "address": "0x02009990",
-          "kind": "thumb"
-        },
-        "Func_02002164": {
-          "address": "0x020092f4",
-          "kind": "thumb"
-        },
-        "Func_0200216e": {
-          "address": "0x02009990",
-          "kind": "thumb"
-        },
-        "Func_02002176": {
-          "address": "0x02009a50",
-          "kind": "thumb"
-        },
-        "Func_0200217c": {
-          "address": "0x020092f4",
-          "kind": "thumb"
-        },
-        "Func_02002180": {
-          "address": "0x02009a50",
-          "kind": "thumb"
-        },
-        "Func_0200218a": {
-          "address": "0x02009a50",
-          "kind": "thumb"
-        },
-        "Func_0200218e": {
-          "address": "0x02009990",
-          "kind": "thumb"
-        },
-        "Func_02002194": {
-          "address": "0x02009a50",
-          "kind": "thumb"
-        },
-        "Func_020021a4": {
-          "address": "0x02009990",
-          "kind": "thumb"
-        },
-        "Func_020021b4": {
-          "address": "0x02009a60",
-          "kind": "thumb"
-        },
-        "Func_020021bc": {
-          "address": "0x02009a38",
-          "kind": "thumb"
-        },
-        "Func_020021c0": {
-          "address": "0x02009a68",
-          "kind": "thumb"
-        },
-        "Func_020021de": {
-          "address": "0x02009a40",
-          "kind": "thumb"
-        },
-        "Func_020021e2": {
-          "address": "0x020092f4",
-          "kind": "thumb"
-        },
-        "Func_020021ea": {
-          "address": "0x02009a40",
-          "kind": "thumb"
-        },
-        "Func_020021f6": {
-          "address": "0x02009a40",
-          "kind": "thumb"
-        },
-        "Func_020021fc": {
-          "address": "0x020099a8",
-          "kind": "thumb"
-        },
-        "Func_02002202": {
-          "address": "0x02009a40",
-          "kind": "thumb"
-        },
-        "Func_02002228": {
-          "address": "0x02009a38",
-          "kind": "thumb"
-        },
-        "Func_0200222c": {
-          "address": "0x020098b8",
-          "kind": "thumb"
-        },
-        "Func_02002236": {
-          "address": "0x02009a30",
-          "kind": "thumb"
-        },
-        "Func_02002252": {
-          "address": "0x020092f4",
-          "kind": "thumb"
-        },
-        "Func_02002260": {
-          "address": "0x020092f4",
-          "kind": "thumb"
-        },
-        "Func_02002268": {
-          "address": "0x02009a40",
-          "kind": "thumb"
-        },
-        "Func_02002274": {
-          "address": "0x02009a40",
-          "kind": "thumb"
-        },
-        "Func_02002280": {
-          "address": "0x02009a40",
-          "kind": "thumb"
-        },
-        "Func_02002288": {
-          "address": "0x02009908",
-          "kind": "thumb"
-        },
-        "Func_0200228c": {
-          "address": "0x02009a40",
-          "kind": "thumb"
-        },
-        "Func_02002290": {
-          "address": "0x02009a30",
-          "kind": "thumb"
-        },
-        "Func_020022c8": {
-          "address": "0x020099f0",
-          "kind": "thumb"
-        },
-        "Func_020022ca": {
-          "address": "0x02009910",
-          "kind": "thumb"
-        },
-        "Func_020022de": {
-          "address": "0x02009918",
-          "kind": "thumb"
-        },
-        "Func_020022ea": {
-          "address": "0x020092f4",
-          "kind": "thumb"
-        },
-        "Func_020022f0": {
-          "address": "0x02009990",
-          "kind": "thumb"
-        },
-        "Func_020022f2": {
-          "address": "0x020092f4",
-          "kind": "thumb"
-        },
-        "Func_020022fc": {
-          "address": "0x02009a10",
-          "kind": "thumb"
-        },
-        "Func_020022fe": {
-          "address": "0x02009990",
-          "kind": "thumb"
-        },
-        "Func_02002304": {
-          "address": "0x020099f8",
-          "kind": "thumb"
-        },
-        "Func_0200230c": {
-          "address": "0x02009a50",
-          "kind": "thumb"
-        },
-        "Func_0200230e": {
-          "address": "0x020092f4",
-          "kind": "thumb"
-        },
-        "Func_02002310": {
-          "address": "0x02009a30",
-          "kind": "thumb"
-        },
-        "Func_0200231c": {
-          "address": "0x020099f0",
-          "kind": "thumb"
-        },
-        "Func_02002320": {
-          "address": "0x02009a50",
-          "kind": "thumb"
-        },
-        "Func_0200232c": {
-          "address": "0x020099f0",
-          "kind": "thumb"
-        },
-        "Func_0200233c": {
-          "address": "0x020099f8",
-          "kind": "thumb"
-        },
-        "Func_02002344": {
-          "address": "0x02009a30",
-          "kind": "thumb"
-        },
-        "Func_0200234c": {
-          "address": "0x02009a30",
-          "kind": "thumb"
-        },
-        "Func_02002350": {
-          "address": "0x02009990",
-          "kind": "thumb"
-        },
-        "Func_02002354": {
-          "address": "0x02009a30",
-          "kind": "thumb"
-        },
-        "Func_0200236a": {
-          "address": "0x02009990",
-          "kind": "thumb"
-        },
-        "Func_0200237c": {
-          "address": "0x02009990",
-          "kind": "thumb"
-        },
-        "Func_0200238a": {
-          "address": "0x02009990",
-          "kind": "thumb"
-        },
-        "Func_020023b6": {
-          "address": "0x02009a60",
-          "kind": "thumb"
-        },
-        "Func_020023c2": {
-          "address": "0x02009a68",
-          "kind": "thumb"
-        },
-        "Func_020023d2": {
-          "address": "0x02009990",
-          "kind": "thumb"
-        },
-        "Func_02002402": {
-          "address": "0x02009a88",
-          "kind": "thumb"
-        },
-        "Func_02002408": {
-          "address": "0x020099f0",
-          "kind": "thumb"
-        },
-        "Func_02002410": {
-          "address": "0x020099f0",
-          "kind": "thumb"
-        },
-        "Func_02002416": {
-          "address": "0x02009a88",
-          "kind": "thumb"
-        },
-        "Func_0200242c": {
-          "address": "0x020099a8",
-          "kind": "thumb"
-        },
-        "Func_02002438": {
-          "address": "0x02009a30",
-          "kind": "thumb"
-        },
-        "Func_02002446": {
-          "address": "0x02009a78",
-          "kind": "thumb"
-        },
-        "Func_0200245c": {
-          "address": "0x02009a88",
-          "kind": "thumb"
-        },
-        "Func_0200246c": {
-          "address": "0x02009a10",
-          "kind": "thumb"
-        },
-        "Func_0200246e": {
-          "address": "0x02009a88",
-          "kind": "thumb"
-        },
-        "Func_0200247a": {
-          "address": "0x02009a30",
-          "kind": "thumb"
-        },
-        "Func_0200247c": {
-          "address": "0x02009990",
-          "kind": "thumb"
-        },
-        "Func_0200248c": {
-          "address": "0x02009a38",
-          "kind": "thumb"
-        },
-        "Func_02002498": {
-          "address": "0x02009a60",
-          "kind": "thumb"
-        },
-        "Func_020024a8": {
-          "address": "0x02009a40",
-          "kind": "thumb"
-        },
-        "Func_020024b4": {
-          "address": "0x02009a40",
-          "kind": "thumb"
-        },
-        "Func_020024be": {
-          "address": "0x020099f8",
-          "kind": "thumb"
-        },
-        "Func_020024d8": {
-          "address": "0x02009990",
-          "kind": "thumb"
-        },
-        "Func_020024e4": {
-          "address": "0x02009a50",
-          "kind": "thumb"
-        },
-        "Func_02002502": {
-          "address": "0x02009990",
-          "kind": "thumb"
-        },
-        "Func_0200250e": {
-          "address": "0x02009a30",
-          "kind": "thumb"
-        },
-        "Func_02002510": {
-          "address": "0x02009990",
-          "kind": "thumb"
-        },
-        "Func_0200251a": {
-          "address": "0x020099f0",
-          "kind": "thumb"
-        },
-        "Func_02002522": {
-          "address": "0x020099f0",
-          "kind": "thumb"
-        },
-        "Func_02002528": {
-          "address": "0x02009990",
-          "kind": "thumb"
-        },
-        "Func_0200252a": {
-          "address": "0x02009a30",
-          "kind": "thumb"
-        },
-        "Func_02002532": {
-          "address": "0x020099f8",
-          "kind": "thumb"
-        },
-        "Func_02002546": {
-          "address": "0x02009a40",
-          "kind": "thumb"
-        },
-        "Func_0200254a": {
-          "address": "0x02009a30",
-          "kind": "thumb"
-        },
-        "Func_02002552": {
-          "address": "0x02009a40",
-          "kind": "thumb"
-        },
-        "Func_0200256e": {
-          "address": "0x02009990",
-          "kind": "thumb"
-        },
-        "Func_0200257c": {
-          "address": "0x02009990",
-          "kind": "thumb"
-        },
-        "Func_02002580": {
-          "address": "0x020098b8",
-          "kind": "thumb"
-        },
-        "Func_0200258a": {
-          "address": "0x02009a38",
-          "kind": "thumb"
-        },
-        "Func_02002594": {
-          "address": "0x02009990",
-          "kind": "thumb"
-        },
-        "Func_0200259c": {
-          "address": "0x02009a38",
-          "kind": "thumb"
-        },
-        "Func_020025a2": {
-          "address": "0x02009990",
-          "kind": "thumb"
-        },
-        "Func_020025c2": {
-          "address": "0x02009a38",
-          "kind": "thumb"
-        },
-        "Func_020025d0": {
-          "address": "0x02009a30",
-          "kind": "thumb"
-        },
-        "Func_020025dc": {
-          "address": "0x02009908",
-          "kind": "thumb"
-        },
-        "Func_020025ea": {
-          "address": "0x02009990",
-          "kind": "thumb"
-        },
-        "Func_020025fc": {
-          "address": "0x02009a50",
-          "kind": "thumb"
-        },
-        "Func_02002608": {
-          "address": "0x02009a50",
-          "kind": "thumb"
-        },
-        "Func_02002614": {
-          "address": "0x02009a50",
-          "kind": "thumb"
-        },
-        "Func_0200261e": {
-          "address": "0x02009910",
-          "kind": "thumb"
-        },
-        "Func_02002620": {
-          "address": "0x02009a50",
-          "kind": "thumb"
-        },
-        "Func_0200262e": {
-          "address": "0x02009a38",
-          "kind": "thumb"
-        },
-        "Func_02002634": {
-          "address": "0x02009a10",
-          "kind": "thumb"
-        },
-        "Func_02002636": {
-          "address": "0x02009990",
-          "kind": "thumb"
-        },
-        "Func_02002644": {
-          "address": "0x02009990",
-          "kind": "thumb"
-        },
-        "Func_02002652": {
-          "address": "0x02009990",
-          "kind": "thumb"
-        },
-        "Func_02002654": {
-          "address": "0x02009a38",
-          "kind": "thumb"
-        },
-        "Func_02002668": {
-          "address": "0x02009a30",
-          "kind": "thumb"
-        },
-        "Func_02002670": {
-          "address": "0x02009a40",
-          "kind": "thumb"
-        },
-        "Func_02002678": {
-          "address": "0x02009990",
-          "kind": "thumb"
-        },
-        "Func_0200267c": {
-          "address": "0x02009a30",
-          "kind": "thumb"
-        },
-        "Func_02002684": {
-          "address": "0x02009a40",
-          "kind": "thumb"
-        },
-        "Func_0200269c": {
-          "address": "0x02009a38",
-          "kind": "thumb"
-        },
-        "Func_020026a4": {
-          "address": "0x02009990",
-          "kind": "thumb"
-        },
-        "Func_020026b0": {
-          "address": "0x02009a40",
-          "kind": "thumb"
-        },
-        "Func_020026bc": {
-          "address": "0x02009a40",
-          "kind": "thumb"
-        },
-        "Func_020026be": {
-          "address": "0x02009a38",
-          "kind": "thumb"
-        },
-        "Func_020026d0": {
-          "address": "0x02009a38",
-          "kind": "thumb"
-        },
-        "Func_02002702": {
-          "address": "0x020098b8",
-          "kind": "thumb"
-        },
-        "Func_0200271c": {
-          "address": "0x02009990",
-          "kind": "thumb"
-        },
-        "Func_02002760": {
-          "address": "0x02009a40",
-          "kind": "thumb"
-        },
-        "Func_0200276a": {
-          "address": "0x02009a88",
-          "kind": "thumb"
-        },
-        "Func_0200276c": {
-          "address": "0x02009a40",
-          "kind": "thumb"
-        },
-        "Func_02002776": {
-          "address": "0x020099f8",
-          "kind": "thumb"
-        },
-        "Func_02002778": {
-          "address": "0x02009a40",
-          "kind": "thumb"
-        },
-        "Func_02002784": {
-          "address": "0x02009a40",
-          "kind": "thumb"
-        },
-        "Func_02002798": {
-          "address": "0x02009990",
-          "kind": "thumb"
-        },
-        "Func_0200279a": {
-          "address": "0x02009a38",
-          "kind": "thumb"
-        },
-        "Func_020027a8": {
-          "address": "0x02009a50",
-          "kind": "thumb"
-        },
-        "Func_020027b6": {
-          "address": "0x02009a40",
-          "kind": "thumb"
-        },
-        "Func_020027c4": {
-          "address": "0x02009a30",
-          "kind": "thumb"
-        },
-        "Func_020027d4": {
-          "address": "0x02009990",
-          "kind": "thumb"
-        },
-        "Func_020027da": {
-          "address": "0x020099f0",
-          "kind": "thumb"
-        },
-        "Func_020027e2": {
-          "address": "0x020099f0",
-          "kind": "thumb"
-        },
-        "Func_020027ec": {
-          "address": "0x02009a38",
-          "kind": "thumb"
-        },
-        "Func_020027fa": {
-          "address": "0x020099f8",
-          "kind": "thumb"
-        },
-        "Func_02002800": {
-          "address": "0x02009a40",
-          "kind": "thumb"
-        },
-        "Func_0200280c": {
-          "address": "0x02009a40",
-          "kind": "thumb"
-        },
-        "Func_02002818": {
-          "address": "0x02009a40",
-          "kind": "thumb"
-        },
-        "Func_0200281a": {
-          "address": "0x02009a38",
-          "kind": "thumb"
-        },
-        "Func_0200281e": {
-          "address": "0x02009990",
-          "kind": "thumb"
-        },
-        "Func_02002854": {
-          "address": "0x02009a40",
-          "kind": "thumb"
-        },
-        "Func_02002860": {
-          "address": "0x02009a40",
-          "kind": "thumb"
-        },
-        "Func_0200286c": {
-          "address": "0x02009a40",
-          "kind": "thumb"
-        },
-        "Func_02002878": {
-          "address": "0x02009a40",
-          "kind": "thumb"
-        },
-        "Func_020028a0": {
-          "address": "0x02009a38",
-          "kind": "thumb"
-        },
-        "Func_020028b8": {
-          "address": "0x02009a08",
-          "kind": "thumb"
-        },
-        "Func_020028c8": {
-          "address": "0x02009a10",
-          "kind": "thumb"
-        },
-        "Func_020028d0": {
-          "address": "0x02009a38",
-          "kind": "thumb"
-        },
-        "Func_020028d6": {
-          "address": "0x020099a8",
-          "kind": "thumb"
-        },
-        "Func_020028e6": {
-          "address": "0x02009990",
-          "kind": "thumb"
-        },
-        "Func_020028f4": {
-          "address": "0x02009990",
-          "kind": "thumb"
-        },
-        "Func_02002902": {
-          "address": "0x02009990",
-          "kind": "thumb"
-        },
-        "Func_0200291e": {
-          "address": "0x02009a28",
-          "kind": "thumb"
-        },
-        "Func_02002942": {
-          "address": "0x02009a40",
-          "kind": "thumb"
-        },
-        "Func_0200294e": {
-          "address": "0x02009a40",
-          "kind": "thumb"
-        },
-        "Func_0200295a": {
-          "address": "0x02009a40",
-          "kind": "thumb"
-        },
-        "Func_02002966": {
-          "address": "0x02009a40",
-          "kind": "thumb"
-        },
-        "Func_02002994": {
-          "address": "0x02009990",
-          "kind": "thumb"
-        },
-        "Func_0200299a": {
-          "address": "0x020099c0",
-          "kind": "thumb"
-        },
-        "Func_020029a2": {
-          "address": "0x020099f0",
-          "kind": "thumb"
-        },
-        "Func_020029a6": {
-          "address": "0x020099c0",
-          "kind": "thumb"
-        },
-        "Func_020029aa": {
-          "address": "0x020099f0",
-          "kind": "thumb"
-        },
-        "Func_020029b2": {
-          "address": "0x020099f0",
-          "kind": "thumb"
-        },
-        "Func_020029b4": {
-          "address": "0x02009a38",
-          "kind": "thumb"
-        },
-        "Func_020029b8": {
-          "address": "0x02009990",
-          "kind": "thumb"
-        },
-        "Func_020029be": {
-          "address": "0x020099d0",
-          "kind": "thumb"
-        },
-        "Func_020029c2": {
-          "address": "0x020099f8",
-          "kind": "thumb"
-        },
-        "Func_020029d2": {
-          "address": "0x02009a40",
-          "kind": "thumb"
-        },
-        "Func_020029de": {
-          "address": "0x02009a40",
-          "kind": "thumb"
-        },
-        "Func_020029ea": {
-          "address": "0x02009a40",
-          "kind": "thumb"
-        },
-        "Func_02002a2a": {
-          "address": "0x02009a20",
-          "kind": "thumb"
-        },
-        "Func_02002a32": {
-          "address": "0x020099f8",
-          "kind": "thumb"
-        },
-        "Func_02002a42": {
-          "address": "0x02009a30",
-          "kind": "thumb"
-        },
-        "Func_02002a6a": {
-          "address": "0x02009a38",
-          "kind": "thumb"
-        },
-        "Func_02002a80": {
-          "address": "0x02009ab0",
-          "kind": "thumb"
-        },
-        "Func_02002af6": {
-          "address": "0x02009ab0",
-          "kind": "thumb"
-        },
-        "Func_02002b52": {
-          "address": "0x02009948",
           "kind": "thumb"
         },
         "Func_02002b7a": {
@@ -43063,28 +41751,8 @@
           "address": "0x020098b8",
           "kind": "thumb"
         },
-        "Func_02002bb4": {
-          "address": "0x02009930",
-          "kind": "thumb"
-        },
-        "Func_02002bd4": {
-          "address": "0x02009938",
-          "kind": "thumb"
-        },
         "Func_02002be4": {
           "address": "0x02009950",
-          "kind": "thumb"
-        },
-        "Func_02002ce2": {
-          "address": "0x02009ab0",
-          "kind": "thumb"
-        },
-        "Func_02002d50": {
-          "address": "0x02009a88",
-          "kind": "thumb"
-        },
-        "Func_02002d62": {
-          "address": "0x02009a88",
           "kind": "thumb"
         },
         "Func_02002e82": {
@@ -43093,10 +41761,6 @@
         },
         "Func_02002eb4": {
           "address": "0x02009928",
-          "kind": "thumb"
-        },
-        "Func_02002eda": {
-          "address": "0x02009948",
           "kind": "thumb"
         },
         "Func_02002f6c": {
@@ -43127,22 +41791,6 @@
           "address": "0x02009968",
           "kind": "thumb"
         },
-        "Func_020030ea": {
-          "address": "0x020098f8",
-          "kind": "thumb"
-        },
-        "Func_020030f8": {
-          "address": "0x020098f8",
-          "kind": "thumb"
-        },
-        "Func_02003106": {
-          "address": "0x020098f8",
-          "kind": "thumb"
-        },
-        "Func_02003238": {
-          "address": "0x02009a78",
-          "kind": "thumb"
-        },
         "SceneAction_ActorOneEntry": {
           "address": "0x02009ab8",
           "kind": "data"
@@ -43158,14 +41806,6 @@
         "SceneAction_GroupFinish": {
           "address": "0x02009b6c",
           "kind": "data"
-        },
-        "Func_020012b4": {
-          "address": "0x020092b4",
-          "kind": "thumb"
-        },
-        "Func_0200172c": {
-          "address": "0x0200972c",
-          "kind": "thumb"
         }
       },
       "owners": [

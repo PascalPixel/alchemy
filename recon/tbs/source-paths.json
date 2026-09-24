@@ -10562,7 +10562,7 @@
       "source": "FIELD/VINASU_CHOJO/SCRIPTED_PRESENTATION.C"
     },
     "resource_395:02000158": {
-      "name": "Scene_RunScene395",
+      "name": "FieldScene_RunScene395_02000158",
       "source": "FIELD/KORIMA_KI/PALETTE.C"
     },
     "resource_3b1:02000728": {

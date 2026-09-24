@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_3c4:02000f4c": {
+      "name": "BabiChika_UpdateFlickerEffect",
+      "source": "FIELD/BABI_CHIKA/FLICKER_EFFECT.C"
+    },
     "resource_3b0:020010a0": {
       "name": "FuneHobashira_UpdateSway",
       "source": "FIELD/FUNE_HOBASHIRA/SWAY.C"

@@ -78828,6 +78828,42 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "scene-3c4-02000f4c",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/BABI_CHIKA/FLICKER_EFFECT.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3c4",
+      "absolute_symbols": {
+        "Engine_ObjectSetAnimation": {
+          "address": "0x0200b054",
+          "kind": "thumb"
+        },
+        "Engine_RandomNext": {
+          "address": "0x0200b034",
+          "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
+        },
+        "gFrameCount": {
+          "address": "0x3001e40",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02000f4c",
+          "extent": 156,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

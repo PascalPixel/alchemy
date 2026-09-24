@@ -1,7 +1,9 @@
 .syntax unified
 	.thumb
+	.global Audio_InitializeRuntimeDefaultsFar
 	.global Func_080f9008
 	.thumb_func
+Audio_InitializeRuntimeDefaultsFar:
 Func_080f9008:
 	ldr	r4, [pc, #0]
 	bx	r4

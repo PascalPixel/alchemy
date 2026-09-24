@@ -6,7 +6,6 @@ void Object_SetMode(struct MotionObject *, s32);
 void Object_ResetMotion(struct MotionObject *);
 void Object_SetPosition(struct MotionObject *, s32, s32, s32);
 
-#define BattleMotion_InitializeObject Func_080b81c8
 
 void BattleMotion_InitializeObject(s32 id)
 {

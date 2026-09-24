@@ -8,7 +8,7 @@ struct InventoryMenuDetailsState {
 };
 
 s32 UiWindow_UpdateOrCreate(s32 *, s32, s32, s32, s32, s32);
-void Palette_CopyMenuBgToObjPalette(void);
+void Palette_CopyObjectBankToBackground14(void);
 void ItemMenu_DrawItemDetails(s32, s32);
 
 s32 ItemMenu_OpenDetail(s32 item_index)
@@ -17,7 +17,7 @@ s32 ItemMenu_OpenDetail(s32 item_index)
         (struct InventoryMenuDetailsState *)gMenuWork;
 
     UiWindow_UpdateOrCreate(&menu->details_window, 0, 0, 13, 10, 2);
-    Palette_CopyMenuBgToObjPalette();
+    Palette_CopyObjectBankToBackground14();
 
     if (menu->item_ids[item_index] != 0)
         ItemMenu_DrawItemDetails(

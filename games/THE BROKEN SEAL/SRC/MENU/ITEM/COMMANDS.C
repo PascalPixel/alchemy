@@ -86,38 +86,38 @@ void ItemMenu_DrawCmd(void *command_states, s32 window)
     s32 value;
     u32 message;
 
-    UiPalette_SetColor(0xf);
+    UiWork_SetParamNibbleFar(0xf);
     value = FIELD(command_states, s8 *, 0);
     disabled = -1;
     if (value == disabled)
-        UiPalette_SetColor(0xe);
+        UiWork_SetParamNibbleFar(0xe);
 
     message = (u32)&InventoryMenu_CommandUseMessage;
     UiText_DrawCharacterAtOffsetFar(message, window, 0, 0x18);
-    UiPalette_SetColor(0xf);
+    UiWork_SetParamNibbleFar(0xf);
     if (FIELD(command_states, s8 *, 1) == disabled)
-        UiPalette_SetColor(0xe);
+        UiWork_SetParamNibbleFar(0xe);
 
     UiText_DrawCharacterAtOffsetFar(message + 1, window, ITEM_TEXT_X, 0x18);
-    UiPalette_SetColor(0xf);
+    UiWork_SetParamNibbleFar(0xf);
     if (FIELD(command_states, s8 *, 3) == disabled)
-        UiPalette_SetColor(0xe);
+        UiWork_SetParamNibbleFar(0xe);
 
     UiText_DrawCharacterAtOffsetFar(message + 2, window, 0, 0x20);
-    UiPalette_SetColor(0xf);
+    UiWork_SetParamNibbleFar(0xf);
     if (FIELD(command_states, s8 *, 5) == disabled)
-        UiPalette_SetColor(0xe);
+        UiWork_SetParamNibbleFar(0xe);
 
     UiText_DrawCharacterAtOffsetFar(message + 3, window, 0x50, 0x20);
-    UiPalette_SetColor(0xf);
+    UiWork_SetParamNibbleFar(0xf);
     if (FIELD(command_states, s8 *, 2) == disabled)
-        UiPalette_SetColor(0xe);
+        UiWork_SetParamNibbleFar(0xe);
 
     UiText_DrawCharacterAtOffsetFar(message + 4, window, 0x50, 0x18);
-    UiPalette_SetColor(0xf);
+    UiWork_SetParamNibbleFar(0xf);
     if (FIELD(command_states, s8 *, 4) == disabled)
-        UiPalette_SetColor(0xe);
+        UiWork_SetParamNibbleFar(0xe);
 
     UiText_DrawCharacterAtOffsetFar(message + 5, window, ITEM_TEXT_X, 0x20);
-    UiPalette_SetColor(0xf);
+    UiWork_SetParamNibbleFar(0xf);
 }

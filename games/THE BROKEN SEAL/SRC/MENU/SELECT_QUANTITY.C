@@ -12,12 +12,12 @@ extern volatile u32 gKeyState;
 void Menu_UpdateEntryObjectTransforms(void);
 
 void Scheduler_RemoveCallback(void (*callback)(void));
-void Palette_CopyMenuBgToObjPalette(void);
+void Palette_CopyObjectBankToBackground14(void);
 s32 GameFlag_TestFar(s32);
 void ItemMenu_DrawItemDetails(s32, s32);
 s32 RenderOutput_RedrawSavedRectFar(s32);
 void UiWork_FinalizeFar(s32, s32);
-void Unnamed_080a2144(s32);
+void Palette_LightenBankHighlight(s32);
 void Scheduler_AddOrUpdateCallback(const void *, s32);
 void UiWindow_DrawFrameFar(s32, s32, s32, s32);
 
@@ -37,7 +37,7 @@ s32 Menu_SelectQuantity(s32 value)
         u8 *iconState = MENU_SUBOBJECT(menu, 380);
         iconState[5] = 13;
     }
-    Palette_CopyMenuBgToObjPalette();
+    Palette_CopyObjectBankToBackground14();
     WaitFrames(1);
 
     goto check_exit;
@@ -84,7 +84,7 @@ done:
     WaitFrames(1);
     UiWork_FinalizeFar(window, 1);
     RenderOutput_RedrawSavedRectFar(*(s32 *)(menu + 16));
-    Unnamed_080a2144(14);
+    Palette_LightenBankHighlight(14);
     {
         s32 delay = 0xc80;
 

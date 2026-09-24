@@ -1,11 +1,9 @@
-/* Draft, not exact (2026-09-24): 121 differing halfwords, 308 of 312 bytes.
-   The prologue and the first half of the loop match, bitfields included.
-   Residual: the reference loads the byte zero it stores to sprite->frame
-   and child->phase from a mid-loop literal pool (a narrow-mode pool
-   constant, which sorts first in its pool) into r8 on every iteration;
-   here the int zero loads from the end pool, which shifts everything
-   after it. u8/u16 zeros are hoisted and rebuilt with shifts; a goto loop
-   stops the zero hoist but also the 63 mask hoist the reference keeps. */
+/* Draft, not exact (2026-09-24): 15 differing halfwords, 312 of 312 bytes.
+   Storing literal zeros to sprite->frame and child->phase lets GCC keep
+   the byte zero in r8, loaded from the mid-loop pool, as the reference
+   does (a zero local cost 121 halfwords). Residual: the reference derives
+   &object->step from &object->state (adds r3, #15) after the state store;
+   here the two addresses are computed together into two registers. */
 #include "TYPES.H"
 
 struct ArcChild {
@@ -76,7 +74,6 @@ struct ArcScene {
 
 extern struct ArcScene *Data_03001f30;
 extern struct VramEntry Data_03001b10[];
-extern u8 Value_00000000;
 
 struct ArcObject *Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);
 void AnimationObjects_SelectAnimationFar(struct ArcSprite *sprite, s32 animation);
@@ -92,7 +89,6 @@ void BattleFx_SpawnScaledArcObjects(struct ArcObject *link)
     struct ArcObject *object;
     struct ArcSprite *sprite;
     s32 i;
-    s32 zero;
 
     for (i = 0; i <= 1; i++) {
         object = Object_CreateFar(26, link->x, link->y, link->z);
@@ -103,13 +99,12 @@ void BattleFx_SpawnScaledArcObjects(struct ArcObject *link)
         object->state = 0;
         object->step = 0;
         sprite = object->sprite;
-        zero = (u32)&Value_00000000;
         object->link = link;
         object->scale_y = object->scale_x = 0x1999;
         if (sprite == 0)
             continue;
         AnimationObjects_SelectAnimationFar(sprite, 0);
-        sprite->frame = zero;
+        sprite->frame = 0;
         Resource_ResetEntry(sprite->resource);
         sprite->resource = scene->resource;
         sprite->flags |= 1;
@@ -117,7 +112,7 @@ void BattleFx_SpawnScaledArcObjects(struct ArcObject *link)
         sprite->color = 0;
         sprite->shape = 1;
         sprite->size = 2;
-        sprite->child->phase = zero;
+        sprite->child->phase = 0;
     }
     objects[0]->update = BattleFx_UpdateScaledArcObjectB;
     objects[0]->sprite->priority = 0;

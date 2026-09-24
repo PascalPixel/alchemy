@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_3ba:02000a3c": {
+      "name": "KorosseoKawa_ApplyEntryState",
+      "source": "FIELD/KOROSSEO_KAWA/ENTRY_STATE.C"
+    },
     "resource_3b1:02002ff0": {
       "name": "FuneHeya_ApplyEntryState",
       "source": "FIELD/FUNE_HEYA/ENTRY_STATE.C"

@@ -10097,7 +10097,8 @@
       "name": "Unnamed_0809509c"
     },
     "main:08095680": {
-      "name": "Unnamed_08095680"
+      "name": "FieldObject_PlaceSceneActors",
+      "source": "FIELD/COMMON/OBJECT/PLACE_SCENE_ACTORS.C"
     },
     "main:08095778": {
       "name": "Unnamed_08095778"

@@ -1,19 +1,19 @@
-/* NONMATCHING: 644 of 644 bytes, 9 halfword edits (2026-09-24). Written as a
+/* NONMATCHING: 644 of 644 bytes, 3 differing halfwords (2026-09-24). Written as a
  * single-overlay unit source: Engine_* names bind at the overlay's runtime
  * import veneers (listing import offset + 0x8000), Local_* at their own
- * address + 0x8000. Remaining: the 0x1c2 field
- * offset is built around the 0x209 store in the reference, and the same
- * interleave recurs at the second entrance test. */
+ * address + 0x8000. The actor-89 flag write is a struct field and the effect
+ * call returns a value; remaining: the reference builds the 0x1c2 field
+ * offset before the 0x209 store (one scheduling slot). */
 #include "TYPES.H"
 
 s32 Engine_GameFlagIsSet();
-void Engine_ActorSetAnimation();
+u8 * Engine_ActorSetAnimation();
 void FieldScene_RunScene39e_020027ec();
 void Engine_GameFlagClear();
-u8 * Engine_ActorGet();
+s32 Engine_ActorGet();
 void Engine_ActorSetPosition();
 void Engine_MapCopyCellAttributes();
-s32 NewEffectObject();
+void NewEffectObject();
 void FieldScene_RunRoofEnsembleSequence();
 void Main_0808a5e0();
 void Engine_ActorFaceDirection();
@@ -48,6 +48,11 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
     f(a0, a1, a2);
 }
 
+static __inline__ s32 Value4(s32 (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
+{
+    return f(a0, a1, a2, a3);
+}
+
 static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 {
     f(a0, a1, a2, a3);
@@ -58,7 +63,12 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
     f(a0, a1, a2, a3, a4, a5);
 }
 
-s32 Tmp_39e2(s32 a0)
+struct Flags89 {
+    u8 pad[89];
+    u8 flags;
+};
+
+s32 Local_02003e58(s32 a0)
 {
     u32 i;
     s32 rec7;
@@ -66,7 +76,8 @@ s32 Tmp_39e2(s32 a0)
 
     if (Data_02000240_t[224][0] != (s32)Data_0000003d) {
     } else {
-        { s32 *p = (s32 *)(*(u8 **)0x03001ebc + 0x1c0); *p = 0x209; }
+        *(s32 *)((*(s32 *)0x03001ebc + 0x1c0)) = 0x209;
+        do { } while (0);
         if (Data_02000240_t[225][0] == 1) {
             if (Value1(Engine_GameFlagIsSet, 0x88f) != 0) {
                 Engine_ActorSetAnimation(8, 6);
@@ -102,7 +113,7 @@ s32 Tmp_39e2(s32 a0)
             {
                 s32 target = *(s32 *)((s32)record + 80);
                 s32 shown = 0x8000;
-
+            
                 *(u16 *)(target + 30) = shown;
             }
             record = Value1(Engine_GameFlagIsSet, 0x89a);
@@ -134,19 +145,19 @@ s32 Tmp_39e2(s32 a0)
             *(s32 *)((s32)record + 28) = 0x8000;
             {
                 u8 value = *(volatile u8 *)&record[89];
-
-                record[89] = (u8)(value | 8);
+            
+                ((struct Flags89 *)record)->flags = (u8)(value | 8);
             }
             {
                 s32 target = *(s32 *)((s32)record + 80);
                 s32 shown = 0x8000;
-
+            
                 *(u16 *)(target + 30) = shown;
             }
             Call6(Engine_MapCopyCellAttributes, 14, 11, 1, 1, 14, 10);
         }
         L_02003fb2:;
-        NewEffectObject(0x1300000, 0x180000, 0xe00000, 223);
+        Value4((s32 (*)())NewEffectObject, 0x1300000, 0x180000, 0xe00000, 223);
         Call2((void (*)())Engine_ActorSetAnimation, 10, 5);
         Engine_ActorSetAnimation(11, 5);
         goto L_02004092;
@@ -170,9 +181,7 @@ s32 Tmp_39e2(s32 a0)
     Main_0808a5e0(170);
     {
         u8 *record = Engine_ActorGet(9);
-        u8 value = *(volatile u8 *)&record[89];
-
-        record[89] = (u8)(value | 16);
+        ((struct Flags89 *)record)->flags |= 16;
     }
     if (Data_02000240_t[225][0] == 3) {
         if (Value1(Engine_GameFlagIsSet, 0xf14) != 0) {

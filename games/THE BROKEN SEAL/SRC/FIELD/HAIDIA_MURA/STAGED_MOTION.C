@@ -308,8 +308,6 @@ struct Resource373Particle *Func_0200b754();
 void Func_0200b19a();
 void Func_0200b7d4(s32, s32, s32 *);
 void Func_0200b838(s32, s32, s32, s32);
-void Func_0200bbec(s32);
-void Func_0200bc3c(s32);
 void Func_0200b6d4(void);
 s32 Func_0200b718(s32);
 void Func_0200ad9e(s32, s32, s32, s32);
@@ -2597,7 +2595,7 @@ void Effect_AnimateVerticalPositive(struct StagedVerticalEffect *effect)
     s32 *anchor = effect->f68;
     s32 frame = ++effect->f64;
     if (frame > 31) {
-        Func_0200bbec((s32)effect);
+        Engine_ObjectDispatchRelease((s32)effect);
     } else {
         s32 amplitude = Math_Sin(frame << 10);
         s32 offset;
@@ -2615,7 +2613,7 @@ void Effect_AnimateVerticalNegative(struct StagedVerticalEffect *effect)
     s32 *anchor = effect->f68;
     s32 frame = ++effect->f64;
     if (frame > 31) {
-        Func_0200bc3c((s32)effect);
+        Engine_ObjectDispatchRelease((s32)effect);
     } else {
         s32 amplitude = Math_Sin(frame << 10);
         s32 offset;

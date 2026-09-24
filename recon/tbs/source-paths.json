@@ -5065,7 +5065,8 @@
       "source": "FIELD/COMMON/MAP/SET_WORK_FOUR_VALUES.C"
     },
     "main:080936a0": {
-      "name": "BattleFx_ScheduleRatioTransition"
+      "name": "BattleFx_ScheduleRatioTransition",
+      "source": "BATTLE/EFFECT/SCHEDULE_RATIO_TRANSITION.C"
     },
     "main:08093710": {
       "name": "Event_WaitForDisplayField358Clear"

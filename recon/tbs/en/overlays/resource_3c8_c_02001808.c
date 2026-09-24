@@ -57,7 +57,7 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
     f(a0, a1, a2, a3, a4, a5);
 }
 
-/* NONMATCHING: 240 of 240 bytes, 5 halfword edits (2026-09-24). The zero
+/* NONMATCHING: 240 of 240 bytes, 2 halfword edits (2026-09-24). The zero
  * stored at +68 lives in r6 in the reference (push {r5, r6, lr}); here it
  * reuses r3 after the 0x480000 add. Argument precomputation and zero
  * variables do not move it. */
@@ -66,7 +66,9 @@ void Scene_RunActorLeapSequence(void)
     u32 i;
     s32 rec7;
     s32 record;
+    s32 zero;
 
+    zero = 0;
     rec7 = Value1(Func_020066bc, 0);
     Func_020066aa();
     Call4(Func_020067ac, -1, -1, -1, 0);
@@ -97,7 +99,7 @@ void Scene_RunActorLeapSequence(void)
     {
         s32 z = *(s32 *)(rec7 + 16) + 0x480000;
 
-        *(s32 *)(rec7 + 68) = 0;
+        *(s32 *)(rec7 + 68) = zero;
         Func_02001910(*(s32 *)(rec7 + 8), 0, z, 223);
     }
     Call6(Func_020066fe, 34, 35, 5, 1, 34, 34);

@@ -1,9 +1,17 @@
-/* Draft, not exact (2026-09-24): candidate=3456 reference=3452, binary
-   similarity 83%. Frame, spill slots and the high registers (i r8, frame sl,
-   t r9, work fp) match, and each spark loop has its own pointer. Remaining:
-   the flare loop keeps its size in r0 (a separate variable there breaks the
-   prologue's low registers), the draw blocks keep size in r4, and a few
-   low-register choices in phase two. */
+/* Draft, not exact (2026-09-24): candidate=3452 reference=3452
+   differing_halfwords=10, binary similarity 99.7%. Three scheduling swaps
+   remain, all loads moved by one slot: the 192 block loads 0x4e20 before
+   the size stores, and the strip loop and the second phase-two spark draw
+   load dst after the draw pointer. No local source change moves them
+   (argument order, temporaries, block-local sizes and helper inlines all
+   compile identically), so the cause is upstream of those blocks.
+   What closed the rest: loop-top locals that loop.c hoists (the cells
+   pointer and radius in the >221 loop, the constant 3 in the particle
+   loop), centre temporaries for the flare draw, one pointer per spark loop
+   (in-body pointers for the 222 and phase-two loops), `r = 0x3ff;
+   r &= Random16()` in the burst so the mask loads into the result
+   register, and a function-level `ground = 112` so the spawn height is
+   rematerialised as 112 << 16. */
 #include "TYPES.H"
 #include "BATTLE_EFFECT_WORK.H"
 #include "BATTLE_EFX.H"
@@ -70,7 +78,7 @@ extern const u8 BattleFx6_ObjectX[];
 extern const u8 BattleFx6_ObjectY[];
 extern const s32 BattleFx6_Gravity[];
 extern const u16 BattleFx6_FlareCells[];
-extern const u16 ParticleStreams_CellOffsets[];
+extern u16 ParticleStreams_CellOffsets[];
 
 /* The effect's work block (heap slot 39). */
 struct Mode6Work {
@@ -116,14 +124,13 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
     s32 i;
     s32 n;
     s32 s;
-    struct EffectStep *p;
     struct EffectStep *q1;
     struct EffectStep *q2;
     struct EffectStep *q3;
     struct EffectStep *q4;
-    struct EffectStep *q;
     DrawRectangle blit[2];
     Scale scale;
+    s32 ground = 112;
 
     cache = (u32 *)(gWorkSlot + 40 * 4);
     dst = (void *)cache[40 - 40];
@@ -285,9 +292,11 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
         if (t >= 0 && t < 88) {
             for (i = 0, q2 = work->sparks; i != 32; i++, q2++) {
                 if (frame >= i / 4 + 152 && frame < i / 4 + 152 + 32) {
-                    s = (i & 3) + 5;
-                    blit[0](dst, work->sheet + BattleFx6_FlareCells[s - 1] + 0x4e20,
-                        HI(q2->x) + 112 - s, HI(q2->y) + 62 - s, s * 2, s * 2);
+                    s32 fx = HI(q2->x) + 112;
+                    s32 fy = HI(q2->y) + 62;
+                    s32 r = (i & 3) + 5;
+                    s = r * 2;
+                    blit[0](dst, work->sheet + BattleFx6_FlareCells[r - 1] + 0x4e20, fx - r, fy - r, s, s);
                     q2->x += q2->velocity_x;
                     q2->y += q2->velocity_y;
                 }
@@ -295,7 +304,8 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
         }
 
         if (frame == 222) {
-            for (i = 0, q3 = work->sparks; i != 64; i++, q3++) {
+            for (i = 0; i != 64; i++) {
+                q3 = &work->sparks[i];
                 q3->x = (Random16() & 15) - 8;
                 q3->y = (Random16() & 15) - 8;
                 if (q3->x < 0) {
@@ -318,9 +328,11 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
         }
         if (frame > 221) {
             for (i = 0; i != 64; i++) {
+                u16 *cells = BattleFx6_FlareCells;
+                s32 r = 1;
                 if (frame >= i / 2 + 222) {
-                    blit[0](dst, work->sheet + BattleFx6_FlareCells[0] + 0x4e20,
-                        work->sparks[i].x - 1, work->sparks[i].y - 1, 2, 2);
+                    blit[0](dst, work->sheet + cells[r - 1] + 0x4e20,
+                        work->sparks[i].x - r, work->sparks[i].y - r, r * 2, r * 2);
                     work->sparks[i].x += work->sparks[i].velocity_x;
                     work->sparks[i].y += work->sparks[i].velocity_y;
                     if (work->sparks[i].y < 0) {
@@ -360,11 +372,12 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
         }
 
         if (t >= 0 && t < 40) {
-            s = t / 2 + 1;
-            if (s > 4) {
-                s = 4;
+            s32 z;
+            z = t / 2 + 1;
+            if (z > 4) {
+                z = 4;
             }
-            blit[1](dst, work->sheet + BattleFx6_FlareCells[s - 1] + 0x4e20, 108 - s, 60 - s, s * 2, s * 2);
+            blit[1](dst, work->sheet + BattleFx6_FlareCells[z - 1] + 0x4e20, 108 - z, 60 - z, z * 2, z * 2);
         }
         if (frame >= 192 && frame < 200) {
             s32 z;
@@ -399,9 +412,10 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
             blit[1](dst, work->sheet + z * 9 * 256 + 0x400, 63, 18, 48, 48);
         }
         if (frame > 221) {
-            s = (frame - 222) / 2 % 4 + 3;
-            blit[0](dst, work->sheet + s * 9 * 256 + 0x400, 72, 30, 48, 48);
-            if (s == 5) {
+            s32 z;
+            z = (frame - 222) / 2 % 4 + 3;
+            blit[0](dst, work->sheet + z * 9 * 256 + 0x400, 72, 30, 48, 48);
+            if (z == 5) {
                 blit[0](dst, work->sheet + 0x1600, 66, 22, 48, 48);
             }
         }
@@ -409,11 +423,12 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
         if (frame > 27) {
             DrawRectangle draw = blit[1];
             for (i = 0; i != 1024; i++) {
+                s32 m = 3;
                 if (PARTICLES[i].variant >= 0) {
                     s32 k = Math_Mod(i, 3) + 2;
                     draw(dst, aux + ParticleStreams_CellOffsets[k - 1],
                         HI(PARTICLES[i].x) - k / 2, HI(PARTICLES[i].y) - k, k, k * 2);
-                    EffectStep_AdvanceWithGravity2D(&PARTICLES[i], 62, BattleFx6_Gravity[i & 3]);
+                    EffectStep_AdvanceWithGravity2D(&PARTICLES[i], 62, BattleFx6_Gravity[i & m]);
                     PARTICLES[i].variant++;
                     if (PARTICLES[i].velocity_y > 0 && HI(PARTICLES[i].y) > 104) {
                         PARTICLES[i].variant = -1;
@@ -458,7 +473,8 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
         if (frame == 96) {
             BattleEventRuntime_BeginPhaseFar(134);
         }
-        for (i = 0, q4 = work->sparks; i != 5; i++, q4++) {
+        for (i = 0; i != 5; i++) {
+            q4 = &work->sparks[i];
             if (frame == i * 16 + 7) {
                 Audio_PlayCue(154);
             }
@@ -480,10 +496,12 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
                     }
                     for (j = 0; j != 1024; j++) {
                         if (PARTICLES[j].variant == 0) {
-                            s32 r = Random16() & 0x3ff;
-                            s32 a = (Random16() & 0x7fff) - 0x4000;
+                            s32 r = 0x3ff;
+                            s32 a;
+                            r &= Random16();
+                            a = (Random16() & 0x7fff) - 0x4000;
                             PARTICLES[j].x = bx << 16;
-                            PARTICLES[j].y = 112 << 16;
+                            PARTICLES[j].y = ground << 16;
                             r += 32;
                             PARTICLES[j].velocity_x = (Trig_Sin(a) * r) >> 7;
                             PARTICLES[j].velocity_y = -(Trig_Cos(a) * r * 2) >> 7;

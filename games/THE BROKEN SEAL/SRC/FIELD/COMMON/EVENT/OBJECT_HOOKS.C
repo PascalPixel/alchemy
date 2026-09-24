@@ -4,7 +4,7 @@
 
 extern struct EventValueWork gGameState;
 
-void FunctionHead_0808b674(s32);
+void ObjectTable_ResetForObject(s32);
 void Event_NoOpHook(void);
 s32 Event_SpawnObjectTable(s32 event_id, s32 state);
 s32 ObjectTable_FindLastActiveId(void);
@@ -17,7 +17,7 @@ void Event_NoOpHook(void)
 void Event_RunObjectHookAndWait(s32 object_id)
 {
     Event_NoOpHook();
-    FunctionHead_0808b674(object_id);
+    ObjectTable_ResetForObject(object_id);
     WaitFrames(1);
     ObjectTable_Get(gGameState.value);
 }

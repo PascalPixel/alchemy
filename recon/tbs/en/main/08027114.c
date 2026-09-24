@@ -146,7 +146,7 @@ struct DjinnDefinition {
 #define Ui_LoadEntryForKind Func_08021b80
 #define Ui_FillVramBlockPattern Func_08016738
 #define Item_ClassifyUseAbility Func_08025180
-#define Region_08026080 Func_08026080
+#define BattleTarget_RunSelection Func_08026080
 #define random_16 Func_08004458
 
 extern struct LinkWork *Data_03001e74;
@@ -192,7 +192,7 @@ u8 *Ability_GetData(s32 id);
 u8 *Item_GetData(s32 id);
 s32 GameFlag_IsSet(s32 flag);
 s32 Item_ClassifyUseAbility(s32 actor, s32 item);
-s32 Region_08026080(s32 actor, s32 a, s32 b, s32 kind);
+s32 BattleTarget_RunSelection(s32 actor, s32 a, s32 b, s32 kind);
 s32 random_16(void);
 void Func_08018efc(struct UiWindowWork *win, s32 id, s32 pos, s32 arg3, s32 arg4);
 s32 Ui_Place(s32, s16 *, s32);
@@ -486,7 +486,7 @@ mark_visible:
                 M2C_FIELD(slot, u16 *, 6) =
                     (u16)((M2C_FIELD(slot, u16 *, 6) & ~0x1ff) | 64);
                 Audio_PlayCue(112);
-                res = Region_08026080(actorId, 1, 1, 0);
+                res = BattleTarget_RunSelection(actorId, 1, 1, 0);
                 UiWork_Finalize(win, 1);
                 if (res == -1) {
                     goto mark_visible;
@@ -571,7 +571,7 @@ psynergy_menu:
                 ent->sub = (u16)cost;
                 Audio_PlayCue(112);
                 res = Battle_ClassifyEntryKind(ability);
-                res = Region_08026080(actorId, ability[0], cost, res);
+                res = BattleTarget_RunSelection(actorId, ability[0], cost, res);
                 state->entryActive[1] = 0;
                 Resource_ResetEntry(handle);
                 UiWork_Finalize(win, 1);
@@ -657,7 +657,7 @@ item_menu:
                 ent->sub = (u16)cost;
                 Audio_PlayCue(112);
                 res = Battle_ClassifyEntryKind(ability);
-                res = Region_08026080(actorId, ability[0], cost, res);
+                res = BattleTarget_RunSelection(actorId, ability[0], cost, res);
                 state->entryActive[1] = 0;
                 Resource_ResetEntry(handle);
                 UiWork_Finalize(win, 1);
@@ -707,7 +707,7 @@ summon_menu:
                     WaitFrames(1);
                     Audio_PlayCue(112);
                     res = Battle_ClassifyEntryKind(ability);
-                    res = Region_08026080(actorId, ability[0], cost, res);
+                    res = BattleTarget_RunSelection(actorId, ability[0], cost, res);
                     if (state->hintCount != 0) {
                         hint = UiText_ShowMessageAndWaitComplete(3150, 15, 8);
                         while (UiWork_IsComplete() == 0) {
@@ -735,7 +735,7 @@ summon_menu:
                     ent->sub = 1;
                     WaitFrames(1);
                     Audio_PlayCue(112);
-                    res = Region_08026080(actorId, 4, 0, 7);
+                    res = BattleTarget_RunSelection(actorId, 4, 0, 7);
                     UiWork_Finalize(win, 1);
                     if (res == -1) {
                         goto summon_menu;
@@ -803,7 +803,7 @@ djinn_menu:
                     Audio_PlayCue(114);
                 }
                 res = Battle_ClassifyEntryKind(ability);
-                res = Region_08026080(actorId, ability[0], ability[8], res);
+                res = BattleTarget_RunSelection(actorId, ability[0], ability[8], res);
                 ent->sub = ability[8];
                 state->entryActive[1] = 0;
                 Resource_ResetEntry(handle);

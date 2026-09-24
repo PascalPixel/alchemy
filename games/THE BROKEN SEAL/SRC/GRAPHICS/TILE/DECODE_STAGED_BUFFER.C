@@ -1,6 +1,10 @@
 #include "TYPES.H"
 
-void Map_DecodeTileRows(s32 arg0) {
+/* Decodes the tilemap staged at 0x02010000 (mode byte at +1) into
+   0x02020000: a plain halfword copy, a byte-planar delta, or a halfword
+   delta. */
+void Tilemap_DecodeStagedBuffer(s32 size)
+{
     u16 *destination;
     u16 *source;
     s32 count;
@@ -9,9 +13,9 @@ void Map_DecodeTileRows(s32 arg0) {
 
     source = (u16 *)0x02010002;
     destination = (u16 *)0x02020000;
-    temp = arg0 - 1;
+    temp = size - 1;
     count = (s32)(temp + (temp >> 31)) >> 1;
-    if (arg0 & 1) {
+    if (size & 1) {
         switch (*(u8 *)0x02010001) {
         case 0: {
             index = 0;
@@ -23,6 +27,9 @@ void Map_DecodeTileRows(s32 arg0) {
                     destination++;
                 } while (index < count);
             }
+            /* FAKEMATCH: an empty do-while fixes the case-1 source register */
+            do {
+            } while (0);
             break;
         }
         case 1: {

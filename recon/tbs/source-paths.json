@@ -20010,6 +20010,10 @@
       "name": "Dma_StopAllThenRunHook",
       "source": "SYSTEM/DMA_STOP_ALL_THEN_RUN_HOOK.C"
     },
+    "main:080c0130": {
+      "name": "BattlePres_UpdateHBlankScroll",
+      "source": "BATTLE/PRESENTATION/UPDATE_HBLANK_SCROLL.C"
+    },
     "main:080c0700": {
       "name": "BattlePresentation_SetPaletteLevel",
       "source": "BATTLE/PRESENTATION/SET_PALETTE_LEVEL.C"

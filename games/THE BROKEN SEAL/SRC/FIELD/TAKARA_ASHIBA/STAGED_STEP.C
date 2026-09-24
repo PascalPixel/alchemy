@@ -22,6 +22,13 @@
 #include "STAGED_ACTOR.H"
 #include "SELECT_OVERLAY_DATA_BY_RUNTIME_SELECTOR.H"
 
+enum {
+    /* Message 0x182 + 243. */
+    ITEM_RED_KEY = 243,
+    /* Message 0x182 + 244. */
+    ITEM_BLUE_KEY = 244
+};
+
 struct Actor {
     s32 f00;
     s32 f04;
@@ -591,45 +598,45 @@ void ConfigureAndPlaceActorTwelve(void)
 
 void FieldScene_RunStep8ValueEe7(void)
 {
-    Item_ShowFound(0xF4, 3);
+    Item_ShowFound(ITEM_BLUE_KEY, 3);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
-    Party_GiveItem(0xF4, 0);
+    Party_GiveItem(ITEM_BLUE_KEY, 0);
     Actor_SetPosition(8, 0, 0);
     GameFlag_Set(0xEE7);
 }
 
 void FieldScene_RunStep9ValueEe8(void)
 {
-    Item_ShowFound(0xF4, 3);
+    Item_ShowFound(ITEM_BLUE_KEY, 3);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
-    Party_GiveItem(0xF4, 0);
+    Party_GiveItem(ITEM_BLUE_KEY, 0);
     Actor_SetPosition(9, 0, 0);
     GameFlag_Set(0xEE8);
 }
 
 void FieldScene_RunStep10ValueEe9(void)
 {
-    Item_ShowFound(0xF4, 3);
+    Item_ShowFound(ITEM_BLUE_KEY, 3);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
-    Party_GiveItem(0xF4, 0);
+    Party_GiveItem(ITEM_BLUE_KEY, 0);
     Actor_SetPosition(0xA, 0, 0);
     GameFlag_Set(0xEE9);
 }
 
 void FieldScene_RunStep11ValueEea(void)
 {
-    Item_ShowFound(0xF4, 3);
+    Item_ShowFound(ITEM_BLUE_KEY, 3);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
-    Party_GiveItem(0xF4, 0);
+    Party_GiveItem(ITEM_BLUE_KEY, 0);
     Actor_SetPosition(0xB, 0, 0);
     GameFlag_Set(0xEEA);
 }
 
 void FieldScene_RunStep12ValueEeb(void)
 {
-    Item_ShowFound(0xF3, 3);
+    Item_ShowFound(ITEM_RED_KEY, 3);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
-    Party_GiveItem(0xF3, 0);
+    Party_GiveItem(ITEM_RED_KEY, 0);
     Actor_SetPosition(0xC, 0, 0);
     GameFlag_Set(0xEEB);
 }

@@ -28,12 +28,16 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 
+enum {
+    /* Message 0x182 + 202. */
+    ITEM_FROST_JEWEL = 202
+};
+
 enum SetPieceMessage {
     MSG_ROBIN_FLIPPED_SWITCH = 0x1528,
     MSG_WE_DID_ROBIN_WE_BEAT = 0x190c,
     MSG_GUARDIAN_STATUES_WERE_CREATED_LONG = 0x1910
 };
-
 
 struct Frame {
     s32 f00;
@@ -1606,8 +1610,8 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
     Event_OpenScreen();
     Event_WaitForScreen();
     Event_Wait(20);
-    Item_ShowFound(202, 3);
-    Party_GiveItem(202, 0);
+    Item_ShowFound(ITEM_FROST_JEWEL, 3);
+    Party_GiveItem(ITEM_FROST_JEWEL, 0);
     *(u8 *)(Func_02006a3c() + 85) = 0;
     Camera_SetSpeed(0x19999, 0x3333);
     Camera_MoveTo(0x640000, 0, 0xf90000, 1);

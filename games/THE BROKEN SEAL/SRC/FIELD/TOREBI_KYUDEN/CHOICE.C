@@ -1263,6 +1263,11 @@ s32 Func_02004a00_dialogue_layout(s32, s32);
 
 #include "TYPES.H"
 
+enum {
+    /* Message 0x182 + 205. */
+    ITEM_CLOAK_BALL = 205
+};
+
 enum ChoiceMessage {
     MSG_ROBIN_PEERED_INTO = 0x947,
     MSG_WE_HAVE_JUST_ENOUGH_EXTRA = 0x1ff7,
@@ -1272,7 +1277,6 @@ enum ChoiceMessage {
     MSG_BABI_WAITING_FOR_AT_COLOSSEUM = 0x223a,
     MSG_ITS_FILLED_WITH_FRESH_CLEAN = 0x29e0
 };
-
 
 /* The scene step counter at 0x1d8 of the shared scene work record. */
 
@@ -1544,9 +1548,9 @@ void SceneDialogue_RunChoiceSequence2352(void)
         Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 0);
         Event_Wait(30);
         Actor_SetPosition(16, 0, 0);
-        Item_ShowFound(205, 3);
+        Item_ShowFound(ITEM_CLOAK_BALL, 3);
         Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
-        Party_GiveItem(205, 0);
+        Party_GiveItem(ITEM_CLOAK_BALL, 0);
         GameFlag_Set((s32)&Value_00000f31);
     }
 }

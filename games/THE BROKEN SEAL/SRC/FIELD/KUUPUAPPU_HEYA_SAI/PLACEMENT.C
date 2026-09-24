@@ -11,6 +11,11 @@
 
 #include "RESOURCE_386_STATE.H"
 
+enum {
+    /* Message 0x182 + 231. */
+    ITEM_BONE = 231
+};
+
 enum PlacementMessage {
     MSG_HAVE_LOT_LEFTOVER_BONES_FROM = 0x137c,
     MSG_GEE_ALWAYS_GET_HUNGRY_WHEN = 0x1382,
@@ -28,7 +33,6 @@ enum PlacementMessage {
     MSG_DID_SOME_COOKING_NOW_IVE = 0x1cee,
     MSG_HE_REALLY_LIKES_BONES_WONDER = 0x1cf4
 };
-
 
 extern s16 Data_02000240[];
 
@@ -238,8 +242,8 @@ void FieldScene_RunActor18FlaggedSequence(void)
             Event_ShowMessage(18, 0);
             goto L_020002d4;
         }
-        Item_ShowFound(231, 3);
-        Party_GiveItem(231, 0);
+        Item_ShowFound(ITEM_BONE, 3);
+        Party_GiveItem(ITEM_BONE, 0);
         GameFlag_Set(0x85b);
     } else {
         bump_step(1);
@@ -285,8 +289,8 @@ void FieldScene_RunActor18ConditionalCue(void)
         Event_SetMessage(MSG_WOW_HAVE_MANY_THINGS_ARENT);
         Event_ShowMessage(18, 0);
     } else {
-        Item_ShowFound(0xE7, 3);
-        Party_GiveItem(0xE7, 0);
+        Item_ShowFound(ITEM_BONE, 3);
+        Party_GiveItem(ITEM_BONE, 0);
     }
 
     Event_End();

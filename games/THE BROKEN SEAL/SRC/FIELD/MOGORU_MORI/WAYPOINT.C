@@ -28,10 +28,14 @@
 #include "STAGED_ACTOR.H"
 #include "SELECT_OVERLAY_DATA_BY_RUNTIME_SELECTOR.H"
 
+enum {
+    /* Message 0x182 + 181. */
+    ITEM_NUT = 181
+};
+
 enum WaypointMessage {
     MSG_BROKEN_SIGN_READS_NORTH_FUCHIN = 0x17e6
 };
-
 
 struct Owner {
     u8 unk0[9];
@@ -641,8 +645,8 @@ void FieldScene_RunStepFD4WithActor181(s32 a)
     Func_020041c8_a(a);
     Actor_SetPosition(16, 0, 0);
     GameFlag_Set(4052);
-    Item_ShowFound(181, 3);
-    Party_GiveItem(181, 0);
+    Item_ShowFound(ITEM_NUT, 3);
+    Party_GiveItem(ITEM_NUT, 0);
     Event_End();
 }
 
@@ -1244,7 +1248,7 @@ void InitializeOrbitingEffect(void)
     actor->visible = 1;
 
     transfer = AllocateEffectTransfer(17, 0x608);
-    Item_LoadIcon(181);
+    Item_LoadIcon(ITEM_NUT);
     transfer += 0x400;
     Vram_Load(sprite->palette, 128, transfer);
     Heap_Release(17);

@@ -2,12 +2,16 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 
+enum {
+    /* Message 0x182 + 232. */
+    ITEM_ANCHOR_CHARM = 232
+};
+
 enum ObjectScaleMessage {
     MSG_SHIPS_COURSE_CLEAR = 0x1e3a,
     MSG_MONSTERS = 0x1e49,
     MSG_LAND_HO = 0x1ee4
 };
-
 
 #define Scene_GetRecord_1(args...) Func_020019fc(args)
 #define Object_NotifyLastActiveOfEvent_1(a0) Call1(Func_020019fe, a0)
@@ -255,8 +259,8 @@ void FieldScene_RunActor232SceneWhenFlag923Or922(void)
 {
     if (GameFlag_IsSet((s32)&Value_00000923) != 0 || GameFlag_IsSet((s32)&Value_00000922) != 0) {
         Event_Begin();
-        Item_ShowFound(0xE8, 3);
-        Party_GiveItem(0xE8, 0);
+        Item_ShowFound(ITEM_ANCHOR_CHARM, 3);
+        Party_GiveItem(ITEM_ANCHOR_CHARM, 0);
         GameFlag_Set((s32)&Value_00000924);
         Event_End();
     }

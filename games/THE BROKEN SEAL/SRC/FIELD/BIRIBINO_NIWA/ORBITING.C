@@ -10,13 +10,17 @@
 
 #include "FACING_OBJECT.H"
 
+enum {
+    /* Message 0x182 + 181. */
+    ITEM_NUT = 181
+};
+
 enum OrbitingMessage {
     MSG_ROBIN_PEERED_INTO = 0x947,
     MSG_TELLING_ME_IM_RESPONSIBLE_FOR = 0x13c3,
     MSG_DO_THINK_CAN_BECOME_AS = 0x1751,
     MSG_UPON_CLOSER_INSPECTION_SEEMS_DRIED = 0x29de
 };
-
 
 struct SceneHandle {
     u8 unknown_00[9];
@@ -188,8 +192,8 @@ void FieldScene_RunStepWithValueFd2(void)
     Event_Begin();
     Actor_SetPosition(0xD, 0, 0);
     GameFlag_Set(0xFD2);
-    Item_ShowFound(0xB5, 3);
-    Party_GiveItem(0xB5, 0);
+    Item_ShowFound(ITEM_NUT, 3);
+    Party_GiveItem(ITEM_NUT, 0);
     Event_End();
 }
 
@@ -351,7 +355,7 @@ void InitializeOrbitingSceneEntity(void)
     actor->visible = 1;
 
     transfer = AllocateEffectTransfer(17, 0x608);
-    Item_LoadIcon(181);
+    Item_LoadIcon(ITEM_NUT);
     transfer += 0x400;
     Vram_Load(sprite->palette, 128, transfer);
     Heap_Release(17);

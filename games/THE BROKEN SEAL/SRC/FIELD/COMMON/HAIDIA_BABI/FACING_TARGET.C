@@ -8,6 +8,11 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 
+enum {
+    /* Message 0x182 + 224. */
+    ITEM_MYTHRIL_BAG = 224
+};
+
 enum ValeMessage {
     MSG_THE_THREE_TRAVELERS_SEEM_ODD = 0xf58,
     MSG_HEY_BOY = 0xf5b,
@@ -447,7 +452,7 @@ void FieldScene_RunSupplementalSequenceOne(s32 a0)
     sprite->full_color = 0;
     sprite->palette = 0;
     rec7 = Value2(Func_02002c9e, 17, 0x608);
-    Item_LoadIcon(224);
+    Item_LoadIcon(ITEM_MYTHRIL_BAG);
     Vram_Load(sprite->vram_block, 128, rec7 + 0x400);
     Heap_Release(17);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);

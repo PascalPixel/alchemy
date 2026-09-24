@@ -9,6 +9,11 @@
 
 #include "STAGED_ACTOR.H"
 #include "FIELD_EFFECT.H"
+
+enum {
+    /* Message 0x182 + 181. */
+    ITEM_NUT = 181
+};
 #define OverlayObject_IntegrateVelocities Effect_Move
 
 /* Integrate position, velocity, rate and sprite angle for one scene effect.
@@ -744,8 +749,8 @@ void StartScriptedSceneMessage(s32 message_id)
     Func_02003fb0_a(message_id);
     Actor_SetPosition(8, 0, 0);
     GameFlag_Set(4055);
-    Item_ShowFound(181, 3);
-    Party_GiveItem(181, 0);
+    Item_ShowFound(ITEM_NUT, 3);
+    Party_GiveItem(ITEM_NUT, 0);
     Event_End();
 }
 
@@ -2122,7 +2127,7 @@ void InitializeSwayingSceneObject(void)
     actor->visible = 1;
 
     transfer = AllocateEffectTransfer(17, 0x608);
-    Item_LoadIcon(181);
+    Item_LoadIcon(ITEM_NUT);
     transfer += 0x400;
     Vram_Load(sprite->palette, 128, transfer);
     Heap_Release(17);

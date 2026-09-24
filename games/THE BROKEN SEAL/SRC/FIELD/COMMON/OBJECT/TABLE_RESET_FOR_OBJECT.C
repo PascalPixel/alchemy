@@ -1,19 +1,9 @@
-/* Draft, not exact (2026-09-24): 432 of 432 bytes, 7 halfwords differ.
- * The whole owner is hand-written. The header words are cleared by an
- * ascending index loop; GCC reverses it into the ROM's descending pointer
- * walk ending at a copy of work in ip, with movs r2, #0 hoisted first
- * (9 -> 7). The row above the player's cell is its own extern
- * (Data_0200fe00, the map row one step north) for the ROM's pool order
- * (cell - 128: +6), and the height goes through its own local so it is
- * added as y + (h - 0x200000). Remaining: the cell and row-above pointers
- * land in r1/r2 where the ROM has r2/r1, with their constants in r0/r4
- * (register asm("r2") on cell gives the registers but reschedules: 11).
- * Holding the row-above base in its own pointer loaded before the cell also
- * gives cell r2 and above r1, but both bases are then loaded first and the
- * pool order flips (11). Declaration order, block scope, const or register
- * qualifiers, u32/int pos, << 7, pointer arithmetic, byte offsets, 2D rows
- * and every && grouping leave it at 7 (180 variants). */
 #include "TYPES.H"
+
+/* Rebuild the object table for a new scene: copy the player template, spawn
+ * the leader and the scene's own objects, put the leader on a ladder when
+ * the map cell and the one north of it are both ladder cells (kind 0xfd),
+ * and create the camera object that follows it. */
 
 /* One row of a scene's object table; a row whose id is -1 ends it. */
 struct EventObjectEntry {
@@ -68,11 +58,14 @@ struct PlayerState {
     s32 leader;                 /* 0x1f4 */
 };
 
+/* One cell of the field map's 128-cell-wide collision grid in EWRAM. */
 struct MapCell {
     u8 unknown_0[2];
     u8 kind;
     u8 unknown_3;
 };
+
+#define MAP_CELLS ((struct MapCell *)0x02010000)
 
 struct ResourceMetadata {
     u8 unknown_0[5];
@@ -83,8 +76,6 @@ struct ResourceMetadata {
 extern struct ObjectWork *Data_03001ebc;
 extern struct PlayerState Data_02000240;
 extern const struct EventObjectEntry Data_0809f810[2];
-extern struct MapCell Data_02010000[];
-extern struct MapCell Data_0200fe00[];
 extern void **Data_03001e70;
 
 void ObjectTable_ClearBattleSlots(void);
@@ -128,8 +119,8 @@ void ObjectTable_ResetForObject(struct EventObjectEntry *table)
     object = work->objects[leader];
     object->terrain_id = Data_02000240.terrain_id;
     pos = (object->x / 0x100000) + (object->z / 0x100000) * 128;
-    cell = &Data_02010000[pos];
-    above = &Data_0200fe00[pos];
+    cell = &MAP_CELLS[pos];
+    above = &MAP_CELLS[pos - 128];
     if (Data_02000240.y != 0 && cell->kind == 0xfd && above->kind == 0xfd) {
         Data_02000240.on_ladder = 1;
         hgt = Map_GetTerrainHeightFar(0, object->x, object->z - 0x100000) - 0x200000;

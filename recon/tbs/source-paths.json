@@ -19882,7 +19882,8 @@
       "name": "MapAnimation_Update"
     },
     "main:0800fac8": {
-      "name": "Tilemap_ConvertBuffer"
+      "name": "Tilemap_ConvertBuffer",
+      "source": "GRAPHICS/TILE/CONVERT_BUFFER.C"
     },
     "main:08002fb0": {
       "name": "Resource_LoadCode"

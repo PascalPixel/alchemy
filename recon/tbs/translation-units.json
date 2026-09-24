@@ -70111,47 +70111,11 @@
           "address": "0x020083a8",
           "kind": "thumb"
         },
-        "Func_0200150e": {
-          "address": "0x020094b4",
-          "kind": "thumb"
-        },
-        "Func_02001566": {
-          "address": "0x020094b4",
-          "kind": "thumb"
-        },
-        "Func_020022a8": {
-          "address": "0x02009158",
-          "kind": "thumb"
-        },
         "Func_02002314": {
           "address": "0x020091f8",
           "kind": "thumb"
         },
-        "Func_02002356": {
-          "address": "0x02009534",
-          "kind": "thumb"
-        },
-        "Func_02002412": {
-          "address": "0x02009534",
-          "kind": "thumb"
-        },
-        "Func_020024c4": {
-          "address": "0x02009534",
-          "kind": "thumb"
-        },
-        "Func_02002638": {
-          "address": "0x02009534",
-          "kind": "thumb"
-        },
-        "Func_02002642": {
-          "address": "0x02009534",
-          "kind": "thumb"
-        },
         "Func_02002698": {
-          "address": "0x02009534",
-          "kind": "thumb"
-        },
-        "Func_02002990": {
           "address": "0x02009534",
           "kind": "thumb"
         },

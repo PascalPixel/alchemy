@@ -16736,7 +16736,8 @@
       "source": "FIELD/COMMON/KOROSSEO/GREET_SCENE.C"
     },
     "resource_3bb:020012f0": {
-      "name": "FieldScene_RunFirstActorInteraction"
+      "name": "KorosseoKabe_RunStageIntro",
+      "source": "FIELD/KOROSSEO_KABE/STAGE_INTRO.C"
     },
     "resource_3bb:02001424": {
       "name": "FieldScene_RunSecondActorInteraction",

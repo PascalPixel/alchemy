@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_395:020015a0": {
+      "name": "KorimaKi_SpawnOrbitSparks",
+      "source": "FIELD/KORIMA_KI/ORBIT_SPARKS.C"
+    },
     "resource_396:02001424": {
       "name": "ToretoHeya_PlayGesture",
       "source": "FIELD/TORETO_HEYA/GESTURE.C"

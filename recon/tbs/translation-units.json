@@ -76411,6 +76411,70 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "scene-395-020015a0",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/KORIMA_KI/ORBIT_SPARKS.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_395",
+      "absolute_symbols": {
+        "Engine_AudioPlayCue": {
+          "address": "0x02009ab0",
+          "kind": "thumb"
+        },
+        "Engine_ObjectCreate": {
+          "address": "0x02009940",
+          "kind": "thumb"
+        },
+        "Main_0808a498": {
+          "address": "0x02009a98",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpriteFlags": {
+          "address": "0x02009958",
+          "kind": "thumb"
+        },
+        "Engine_ObjectSetAnimation": {
+          "address": "0x02009930",
+          "kind": "thumb"
+        },
+        "Main_030003f0": {
+          "address": "0x02009900",
+          "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
+        },
+        "__udivsi3": {
+          "address": "0x02009900",
+          "kind": "thumb"
+        },
+        "PaletteScene_AdvanceOrbit": {
+          "address": "0x0200952c",
+          "kind": "thumb"
+        },
+        "Data_02009dc0": {
+          "address": "0x02009dc0",
+          "kind": "data"
+        },
+        "Data_02009dcc": {
+          "address": "0x02009dcc",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x020015a0",
+          "extent": 396,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

@@ -160,6 +160,11 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2) { f(a0, a1, a2
 static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3) { f(a0, a1, a2, a3); }
 static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5) { f(a0, a1, a2, a3, a4, a5); }
 
+/* NONMATCHING: 1692 of 1692 bytes, 6 halfword edits (2026-09-24). The
+ * lone Data_00000000 pool after the Func_0200a502 block lands 4 bytes early:
+ * the zero load is thumb_zero_extendhisi2 (pool range 60); the reference
+ * behaves like a movhi load (range 64). s16/u16/u8 spellings of zero move
+ * it to an SImode load and re-allocate the whole tail. */
 void FieldScene_RunActorTransition(void)
 {
     s32 zero;
@@ -335,12 +340,12 @@ void FieldScene_RunActorTransition(void)
     record[98] = none;
     *(u8 *)((record + 98) + 1) = 1;
     *(s32 *)(record + 76) = *(s32 *)(record + 12);
+    zero = (u16)(u32)Data_00000000;
     {
         s32 shown = 0xa000;
 
         *(u16 *)(record + 6) = shown;
     }
-    zero = (u16)(u32)Data_00000000;
     record = Pointer1(Func_0200a4e8, 1);
     record[98] = zero;
     *(u8 *)((record + 98) + 1) = 1;
@@ -359,7 +364,7 @@ void FieldScene_RunActorTransition(void)
         *(u16 *)(record + 6) = shown;
     }
     *(s32 *)(record + 76) = *(s32 *)(record + 12);
-    record = Func_0200a522(3);
+    record = Pointer1(Func_0200a522, 3);
     record[98] = zero;
     *(u8 *)((record + 98) + 1) = 1;
     {
@@ -392,7 +397,7 @@ void FieldScene_RunActorTransition(void)
     Call1(Func_0200a590, 0x11a);
     Func_0200a73c();
     Func_0200a6dc((s32)Data_00000002, 91);
-    *(u16 *)0x05000000 = 0x7fff;
+    { s32 white = 0x7fff; *(u16 *)0x05000000 = white; }
     *(s32 *)((*(s32 *)0x03001ebc + 0x1c8)) = 1;
     Func_0200a73e();
     Func_0200a74a();

@@ -13,7 +13,9 @@
  * (and the clamp's difference through its own local) reproduces [sp+4] =
  * angle << 16 and the 104-byte frame, but the u16 is still carried in r6
  * across the first probe (758 halfwords); (void)&angle, an s16 angle and
- * u16 or s16 spellings of the first test all regress. */
+ * u16 or s16 spellings of the first test all regress. The search loop exits
+ * with cmp #6; blt in the ROM where combine gives cmp #5; ble here; i <= 5,
+ * i - 6 < 0, (u32)i < 6, a sizeof bound and a goto loop all keep ble. */
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 

@@ -778,7 +778,8 @@
       "name": "SceneTransform_ApplyTranslation"
     },
     "main:08004d2c": {
-      "name": "SceneTransform_ApplyRotationTranslation"
+      "name": "SceneTransform_ApplyRotationTranslation",
+      "source": "GRAPHICS/RENDER/TRANSFORM_APPLY_ROTATION_TRANSLATION.C"
     },
     "main:08004e54": {
       "name": "Func_08004e54"

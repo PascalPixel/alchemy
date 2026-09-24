@@ -55,9 +55,6 @@ extern u8 Data_0200ae34[];
 s32 Func_02002656(s32, s32);
 void Func_02002962(s32, s32);
 void Func_020027a4(void);
-void Func_020025fa();
-void Func_02002858();
-void Func_020028dc();
 s32 Func_0200290c();
 s32 Func_0200290c_a();
 void Func_0200295a();
@@ -65,24 +62,12 @@ void Func_020029c2_a();
 void Func_0200273a(s32, s32);
 void Func_02002778(s32, s32);
 void Func_020027c8();
-s32 Func_020027ec();
-void Func_02002824();
-void Func_02002a84();
-void Func_02002b2e();
 s32 Func_02002b36();
 s32 Func_02002b40();
 void Func_02002b8a();
 void Func_02002b90();
 s32 Func_02002bec_a();
 s32 Func_02002c22();
-void Func_02000e84();
-void Func_02000ef4();
-void Func_02000f20();
-void Func_02000f52();
-void Func_02000f80();
-void Func_02000fb0();
-void Func_02000fe2();
-void Func_02000ffc(s32);
 void Func_02004c4a(s32);
 void Func_020048be(void);
 void Func_02004c5a(s32);
@@ -91,7 +76,6 @@ void Func_02004c6a(s32);
 void Func_0200491a(void);
 struct Obj *Func_02002d3e(s32);
 void Func_02002f20(void);
-void Func_0200101a(s32);
 void Func_02004dac(void);
 void Func_02004768(s32);
 s32 Func_02004930(s32, s32);
@@ -122,6 +106,8 @@ s32 Func_0200496c(s32, s32);
  * into the argument registers; a direct call precomputes a costly constant
  * into a pseudo that the compiler then shares with later uses in the block.
  * A value-returning call also sets r0 last of its arguments. */
+void SceneActor_SetPairZeroAndValue(s32 a, s32 b, s32 c);
+
 static __inline__ void Call1(void (*f)(), s32 a0)
 {
     f(a0);
@@ -373,10 +359,10 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
         Event_Wait(20);
         Actor_StartRepeatedMotion(17, 2);
         Event_Wait(15);
-        Func_02002858();
+        SceneState_ApplyPair140And0();
         base7_0 = 0;
         for (i = 0; i < 40; i++) {
-            Func_020025fa(((s32 (*)())Func_020029c2_a)(17));
+            OverlayObject_UpdateOnFrameBit1(((s32 (*)())Func_020029c2_a)(17));
             Task_Wait(1);
         }
         Value2(Func_0200290c, 0x200a591, 0xc80);
@@ -395,7 +381,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
         Audio_PlayCue(0x121);
         Call1(Func_0200295a, 0x200a591);
         Task_Wait(1);
-        Func_020028dc();
+        FieldScene_Forward4dac();
         Actor_SetChildValue(17, 0);
         Event_Wait(40);
         Event_SetMessage(0xf4b);
@@ -459,12 +445,12 @@ void FieldScene_RunMiddleAuxiliarySequence(void)
     Actor_FaceEachOther(15, 0, 30);
     Event_SetMessage(0xeae);
     Func_020027c8(15, 20);
-    Value3(Func_020027ec, 15, 0xa000, 20);
+    Value3(SceneActor_SetPairZeroAndValue, 15, 0xa000, 20);
     Actor_SetAttachedEffect(15, 0x102);
     Event_Wait(20);
-    Func_02002a84();
+    SceneState_ApplyPair140And0();
     for (i = 0; i < 40; i++) {
-        Func_02002824(Func_02002bec_a(15));
+        OverlayObject_UpdateOnFrameBit1(Func_02002bec_a(15));
         Task_Wait(1);
     }
     Value2(Func_02002b36, 0x200a581, 0xc80);
@@ -486,7 +472,7 @@ void FieldScene_RunMiddleAuxiliarySequence(void)
     Actor_SetChildValue(15, 0);
     Actor_SetChildValue(20, 0);
     Event_Wait(40);
-    Func_02002b2e();
+    FieldScene_Forward4dac();
     Actor_FaceEachOther(0, 15, 30);
     Event_ShowMessage(15, 0);
     Event_End();
@@ -566,7 +552,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
     Audio_PlayCue(158);
     Map_AnimateCells((s32)&Value_0200beb4, 44, 7);
     Actor_WalkTo(0, 248, 0x117);
-    Call1_02000750(Func_02000e84, 1);
+    Call1_02000750(SceneState_SetWork1c0AndRun, 1);
 }
 
 /* Sets step 188, then runs a pair of 6-argument setup calls for indices 0
@@ -583,7 +569,7 @@ void FieldScene_RunSupplementalSequenceTwo(void)
     Actor_WalkToAndWait(0, 352, 306);
     Actor_SetSpritePriority(0, 3);
     Actor_WalkToAndWait(0, 352, 296);
-    Call1_02000780(Func_02000ef4, 2);
+    Call1_02000780(SceneState_SetWork1c0AndRun, 2);
 }
 
 /* Runs four fixed scene-helper calls in sequence, one of them passed the
@@ -593,7 +579,7 @@ void FieldScene_RunSupplementalSequenceThree(void)
     Audio_PlayCue(158);
     Map_AnimateCells((s32)&Value_0200beb4, 43, 15); /* main:08009178 */
     Actor_WalkTo(0, 230, 0x197);
-    Call1_020007ec(Func_02000f20, 3);
+    Call1_020007ec(SceneState_SetWork1c0AndRun, 3);
 }
 
 /* Runs four scene calls in sequence: a single-argument call, a call that
@@ -604,7 +590,7 @@ void FieldScene_RunSupplementalSequenceFour(void)
     Audio_PlayCue(158);
     Map_AnimateCells((s32)&Value_0200beb4, 52, 18); /* main:08009178 */
     Actor_WalkTo(0, 374, 0x1a3); /* object_id 0, x 374, z 0x1a3 */
-    Call1_0200081c(Func_02000f52, 4);
+    Call1_0200081c(SceneState_SetWork1c0AndRun, 4);
 }
 
 /* Runs a fixed sequence of four scripted calls: one keyed off Value_0200beb4
@@ -615,7 +601,7 @@ void FieldScene_RunSupplementalSequenceFive(void)
     Audio_PlayCue(158);
     Map_AnimateCells((s32)&Value_0200beb4, 41, 32); /* main:08009178 */
     Actor_WalkTo(0, 200, 0x222);
-    Call1_0200081c(Func_02000f80, 5);
+    Call1_0200081c(SceneState_SetWork1c0AndRun, 5);
 }
 
 /* Runs four scripted calls with fixed literal arguments: a single-argument
@@ -627,7 +613,7 @@ void FieldScene_RunSupplementalSequenceSix(void)
     Audio_PlayCue(158);
     Map_AnimateCells((s32)&Value_0200beb4, 35, 36); /* main:08009178 */
     Actor_WalkTo(0, 102, 0x263); /* object_id 0, x 102, z 611 */
-    Call1_0200081c(Func_02000fb0, 6);
+    Call1_0200081c(SceneState_SetWork1c0AndRun, 6);
 }
 
 /* Runs four scripted scene calls in sequence, passing a byte's address and a
@@ -637,20 +623,20 @@ void FieldScene_RunSupplementalSequenceSeven(void)
     Audio_PlayCue(158);
     Map_AnimateCells((s32)&Value_0200beb4, 51, 39); /* main:08009178 */
     Actor_WalkTo(0, 358, 0x29e);
-    Call1_0200081c(Func_02000fe2, 7);
+    Call1_0200081c(SceneState_SetWork1c0AndRun, 7);
 }
 
 void FieldScene_RunStep7BThen8(void)
 {
     Audio_PlayCue(123);
-    Func_02000ffc(8);
+    SceneState_SetWork1c0AndRun(8);
 }
 
 void SceneState_ApplyFlag815Branch(void)
 {
     if (GameFlag_IsSet(0x815) != 0) {
         Audio_PlayCue(123);
-        Func_0200101a(10);
+        SceneState_SetWork1c0AndRun(10);
     }
 }
 

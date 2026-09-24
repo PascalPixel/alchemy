@@ -2,6 +2,21 @@
 
 /* Select a combatant, display its condition and animate the target markers.
  * Confirmation returns an encoded side/index; cancellation returns -1.
+ *
+ * Draft, not exact (2026-09-24): 3,660 of 3,584 bytes, 46.0% aligned
+ * similarity. Every call site is in the ROM's order. Proven from the ROM:
+ * the id copies read runtime->first_ids[i] directly (movs r3, #88; ldrsh);
+ * the status search and the sel lookup both sit inside if (mode == 2), with
+ * case 5 setting sel itself; the two per-frame tbl loops ascend (GCC counts
+ * r7 down while the pointer walks up); the frame is 88 bytes of spills
+ * below efx (sp+88), targetPos 96, namePos 108, name 120, pos 152,
+ * selSlot 164, selIds 172, markPos 200, tbl 212, entries 236, ids 308.
+ * Remaining: the candidate needs one more spill slot (every local sits 4
+ * bytes higher); infoWin lives in r9 in the ROM; case 4 keeps the five
+ * status-byte addresses in r7, r8, sl, [sp+40] and r6 across
+ * UiWindow_Create where the candidate recomputes them; the 0xFFFF mask of
+ * the sleep halfword is hoisted into r4 (ldrh; ands r3, r4); ids[cursor+i]
+ * in the spread loop is indexed, not strength-reduced.
  */
 
 #define BattleTarget_RunSelection Func_08026080
@@ -199,87 +214,86 @@ s32 Func_08026080(s32 preferred, s32 mode, u32 spread, u32 kind)
 
     cursor = -1;
     if (mode == 2) {
-        src = runtime->first_ids;
         i = 0;
-        if (src[0] != 0xFF) {
+        if (runtime->first_ids[0] != 0xFF) {
             do {
-                ids[cnt] = src[i];
+                ids[cnt] = runtime->first_ids[i];
                 cnt++;
                 i++;
                 if (i > 5)
                     break;
-            } while (src[i] != 0xFF);
+            } while (runtime->first_ids[i] != 0xFF);
         }
     } else if (mode == 4) {
         ids[0] = (u16)sel;
         cnt = 1;
     } else {
-        src = runtime->second_ids;
         i = 0;
-        if (src[0] != 0xFF) {
+        if (runtime->second_ids[0] != 0xFF) {
             do {
-                ids[cnt] = src[i];
+                ids[cnt] = runtime->second_ids[i];
                 cnt++;
                 i++;
                 if (i > 5)
                     break;
-            } while (src[i] != 0xFF);
+            } while (runtime->second_ids[i] != 0xFF);
         }
     }
     ids[cnt] = 0xFF;
     total = cnt;
 
-    if (mode == 2 && spread != 0xFF && kind != 0) {
-        for (i = 0; i < cnt; i++) {
-            if (ids[i] == 0xFE)
-                continue;
-            unit = BattleUnit_Get(ids[i]);
+    if (mode == 2) {
+        if (spread != 0xFF && kind != 0) {
             found = 0;
-            switch (kind) {
-            case 3:
-                if (unit->poison != 0)
-                    found = 1;
-                break;
-            case 4:
-                if ((*(u32 *)&unit->delusion & 0xFF0000FF) != 0)
-                    found = 1;
-                else if ((*(u16 *)&unit->sleep & 0xFFFF) != 0)
-                    found = 1;
-                else if (unit->death_count != 0)
-                    found = 1;
-                break;
-            case 5:
-                if (unit->hp == 0)
-                    found = 1;
-                break;
-            case 6:
-                if ((*(u32 *)&unit->delusion & 0xFF0000FF) != 0)
-                    found = 1;
-                else if ((*(u16 *)&unit->sleep & 0xFFFF) != 0)
-                    found = 1;
-                else if (unit->death_count != 0)
-                    found = 1;
-                else if (unit->poison != 0)
-                    found = 1;
-                else if (unit->evil_spirit != 0)
-                    found = 1;
-                break;
-            default:
-                break;
-            }
-            if (found != 0) {
-                sel = ids[i];
-                break;
+            for (i = 0; i < cnt; i++) {
+                if (ids[i] == 0xFE)
+                    continue;
+                unit = BattleUnit_Get(ids[i]);
+                switch (kind) {
+                case 3:
+                    if (unit->poison != 0)
+                        found = 1;
+                    break;
+                case 4:
+                    if ((*(u32 *)&unit->delusion & 0xFF0000FF) != 0)
+                        found = 1;
+                    else if ((*(u16 *)&unit->sleep & 0xFFFF) != 0)
+                        found = 1;
+                    else if (unit->death_count != 0)
+                        found = 1;
+                    break;
+                case 5:
+                    if (unit->hp == 0) {
+                        sel = ids[i];
+                        found = 1;
+                    }
+                    break;
+                case 6:
+                    if ((*(u32 *)&unit->delusion & 0xFF0000FF) != 0)
+                        found = 1;
+                    else if ((*(u16 *)&unit->sleep & 0xFFFF) != 0)
+                        found = 1;
+                    else if (unit->death_count != 0)
+                        found = 1;
+                    else if (unit->poison != 0)
+                        found = 1;
+                    else if (unit->evil_spirit != 0)
+                        found = 1;
+                    break;
+                }
+                if (found != 0) {
+                    sel = ids[i];
+                    break;
+                }
             }
         }
+        for (i = 0; i < cnt; i++) {
+            if (ids[i] == sel)
+                break;
+        }
+        if (i != cnt)
+            cursor = i;
     }
-
-    for (j = 0; j < cnt; j++) {
-        if (ids[j] == sel)
-            break;
-    }
-    if (j != cnt)
-        cursor = j;
 
     if (cursor < 0)
         cursor = (cnt - 1) / 2;
@@ -361,7 +375,7 @@ step_back:
             goto frame_end;
 
         cnt = 0;
-        for (i = 5; i >= 0; i--)
+        for (i = 0; i < 6; i++)
             tbl[i].flags &= (u8)~2;
 
         for (i = 0; (u32)i < spread; i++) {
@@ -388,7 +402,7 @@ step_back:
             }
         }
 
-        for (i = 5; i >= 0; i--) {
+        for (i = 0; i < 6; i++) {
             if ((tbl[i].flags & 2) == 0)
                 tbl[i].index = 6;
         }

@@ -2,19 +2,6 @@
 
 #define NULL ((void *)0)
 #define CalculateFacingAngle Func_02001a9e
-#define FieldScene_RunActorPositionSequence Func_02000170
-#define OverlayObject_UpdateFacingTowardTarget Func_02000030
-#define SceneData_GetTable9CF4 Func_02000088
-#define SceneData_GetTable9db4 Func_02000094
-#define SceneData_GetTable9ddc Func_0200009c
-#define SceneData_SelectTable9efcByFlags Func_020000a4
-#define FieldScene_RunScene375_02000964 Func_02000964
-#define FieldScene_SetupWithDescriptorA0ACWhenFlag242Clear Func_02000ba8
-#define SceneState_SetWorkAndFlag87d Func_020019a4
-#define SceneState_SetWorkAndFlag87e Func_020019e8
-#define SceneDialogue_RunActorSixteenDialogue Func_02001a2c
-#define Scene_RunActorTwelveDialogue Func_020000dc
-#define FieldScene_RunGatedActorSequence Func_02000be0
 
 #include "FACING_OBJECT.H"
 

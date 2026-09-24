@@ -70296,6 +70296,126 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "fune-kanpan-deck-crew-scene",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/DECK_CREW_SCENE.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3af",
+      "absolute_symbols": {
+        "Engine_EventBegin": {
+          "address": "0x0200c2ec",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetChildValue": {
+          "address": "0x0200c3a4",
+          "kind": "thumb"
+        },
+        "Engine_ActorGet": {
+          "address": "0x0200c30c",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpriteFlags": {
+          "address": "0x0200c2a4",
+          "kind": "thumb"
+        },
+        "Main_0808a030": {
+          "address": "0x0200c2fc",
+          "kind": "thumb"
+        },
+        "Engine_TaskWait": {
+          "address": "0x0200c25c",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetAnimation": {
+          "address": "0x0200c374",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetPosition": {
+          "address": "0x0200c36c",
+          "kind": "thumb"
+        },
+        "Engine_ActorEnableActionCallback": {
+          "address": "0x0200c324",
+          "kind": "thumb"
+        },
+        "Engine_EventOpenScreen": {
+          "address": "0x0200c43c",
+          "kind": "thumb"
+        },
+        "Engine_EventWaitForScreen": {
+          "address": "0x0200c44c",
+          "kind": "thumb"
+        },
+        "Engine_EventWait": {
+          "address": "0x0200c2e4",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpeed": {
+          "address": "0x0200c31c",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetDestination": {
+          "address": "0x0200c344",
+          "kind": "thumb"
+        },
+        "Engine_ObjectMotionSetPositionAndCommit": {
+          "address": "0x0200c34c",
+          "kind": "thumb"
+        },
+        "Engine_AudioPlayCue": {
+          "address": "0x0200c45c",
+          "kind": "thumb"
+        },
+        "FieldScene_CallPairWith10": {
+          "address": "0x0200ba00",
+          "kind": "thumb"
+        },
+        "FieldScene_RunScene3af_02000bb8": {
+          "address": "0x02008bb8",
+          "kind": "thumb"
+        },
+        "Main_0808a0b0": {
+          "address": "0x0200c33c",
+          "kind": "thumb"
+        },
+        "Engine_EventCloseScreen": {
+          "address": "0x0200c444",
+          "kind": "thumb"
+        },
+        "Engine_ActorStop": {
+          "address": "0x0200c334",
+          "kind": "thumb"
+        },
+        "Main_08009208": {
+          "address": "0x0200c2b4",
+          "kind": "thumb"
+        },
+        "Main_0808a1d8": {
+          "address": "0x0200c3dc",
+          "kind": "thumb"
+        },
+        "Main_08015210": {
+          "address": "0x0200c2c4",
+          "kind": "thumb"
+        },
+        "Main_08009210": {
+          "address": "0x0200c2bc",
+          "kind": "thumb"
+        },
+        "Engine_EventRequestExit": {
+          "address": "0x0200c424",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02001f90",
+          "extent": 816,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

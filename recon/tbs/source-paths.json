@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_3af:02001f90": {
+      "name": "FuneKanpan_RunDeckCrewScene",
+      "source": "FIELD/FUNE_KANPAN/DECK_CREW_SCENE.C"
+    },
     "resource_3c8:02001d48": {
       "name": "VinasuHeya_RunCellPushScene",
       "source": "FIELD/VINASU_HEYA/FLAG_301_CELL_PUSH.C"

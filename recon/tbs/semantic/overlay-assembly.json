@@ -1212,19 +1212,6 @@
       ]
     },
     {
-      "overlay": "resource_3af",
-      "start": "0x2001f90",
-      "end": "0x2002282",
-      "kind": "structured_scene_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "This segment preserves retained assembly from the historical 0x02001db0–0x02002282 range, split at the complete declared owner boundaries; no bytes were removed or counted as exact C.",
-        "The historical merged-body draft and unsuccessful flag probes do not establish compiler impossibility. Owner-bounded candidates and dated measurements are retained in the reconstruction corpus.",
-        "recon/tbs/en/dossiers.json#resource_3af:02001db0"
-      ]
-    },
-    {
       "overlay": "resource_374",
       "start": "0x020017c8",
       "end": "0x020022c8",

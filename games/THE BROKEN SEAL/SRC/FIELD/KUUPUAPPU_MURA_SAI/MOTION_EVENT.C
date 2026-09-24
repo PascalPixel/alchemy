@@ -283,19 +283,9 @@ static __inline__ void SetScale(s32 actor, s32 horizontal, s32 vertical)
  * veneer is sub_02001f26, not a main-image address guessed from elsewhere.
  */
 
-static __inline__ void Call1_02000640(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
 static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 {
     f(a0, a1, a2, a3);
-}
-
-static __inline__ void Call1_02000d74(void (*f)(), s32 a0)
-{
-    f(a0);
 }
 
 static __inline__ void PlaceActor(void (*place)(s32, s32, s32),

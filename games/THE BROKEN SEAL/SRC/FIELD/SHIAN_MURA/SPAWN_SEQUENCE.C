@@ -13,7 +13,6 @@ enum SpawnSequenceMessage {
     MSG_NOW_MUST_GET_WATER_AGAIN = 0x17fb
 };
 
-
 /* Shared 22-byte head leaf proved identical for this overlay family. */
 struct EffectRecord {
     u8 pad[9];
@@ -132,19 +131,9 @@ static __inline__ void bump_step(s32 amount)
     gEventWork->message += amount;
 }
 
-static __inline__ void Call1_02000968(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
 static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
 {
     f(a0, a1);
-}
-
-static __inline__ void Call3_02000de8(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
 }
 
 void SetEffectRecordMode(struct EffectWork *work, s32 mode)

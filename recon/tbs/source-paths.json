@@ -18414,7 +18414,7 @@
       "name": "InventoryMenu_NoOp"
     },
     "resource_3bc:02000da4": {
-      "name": "Scene_SetupLogRollingStage",
+      "name": "StageSetup_BuildAndDispatch",
       "source": "FIELD/KOROSSEO_MARUTA/LOG_ROLLING_SETUP.C"
     },
     "main:080d0468": {

@@ -771,7 +771,8 @@
       "name": "SceneTransform_ResetMatrix"
     },
     "main:08004ab0": {
-      "name": "SceneTransform_ApplyRotation"
+      "name": "SceneTransform_ApplyRotation",
+      "source": "GRAPHICS/RENDER/TRANSFORM_APPLY_ROTATION.C"
     },
     "main:0800f9f4": {
       "name": "Tilemap_DecodeStagedBuffer",

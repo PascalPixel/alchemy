@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_39e:0200102c": {
+      "name": "ShianJiin_RunMasterScene",
+      "source": "FIELD/COMMON/SHIAN_JIIN/MASTER_SCENE.C"
+    },
     "resource_39b:02002370": {
       "name": "Makyuri_TickSpawnTimer",
       "source": "FIELD/COMMON/MAKYURI/SPAWN_TIMER.C"

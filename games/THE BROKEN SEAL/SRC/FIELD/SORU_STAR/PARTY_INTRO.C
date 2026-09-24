@@ -129,7 +129,6 @@ s32 Func_02004bc6();
 void Func_02004c2c();
 void Func_0200529a();
 void Func_02001504(void);
-void Func_02001a00(void);
 void Func_02002208(void);
 void Func_02002d0a(void);
 s32 Func_02004f5c();
@@ -540,7 +539,7 @@ void Scene_HandOverStars(void)
     Event_Begin();
     Func_02001504();
     FieldScene_StagePairedActors();
-    Func_02001a00();
+    FieldScene_RunElementalStarDemand();
     Scene_OfferGuarantee();
     Func_02002208();
     Scene_AlexTakesStars();

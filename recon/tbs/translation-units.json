@@ -14647,12 +14647,12 @@
           "address": "0x0200c90c",
           "kind": "thumb"
         },
-        "Func_02001504": {
-          "address": "0x02008a98",
+        "FieldScene_RunElementalStarDemand": {
+          "address": "0x02008f8c",
           "kind": "thumb"
         },
-        "Func_02001a00": {
-          "address": "0x02008f8c",
+        "Func_02001504": {
+          "address": "0x02008a98",
           "kind": "thumb"
         },
         "Func_02002208": {

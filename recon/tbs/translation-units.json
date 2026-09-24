@@ -79486,6 +79486,46 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "scene-3b7-02000880",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/TOREBI_IZUMI/RISE_AND_FADE.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3b7",
+      "absolute_symbols": {
+        "Engine_AudioPlayCue": {
+          "address": "0x020099c4",
+          "kind": "thumb"
+        },
+        "Engine_TaskWait": {
+          "address": "0x02009864",
+          "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
+        },
+        "TorebiIzumi_AlphaSteps": {
+          "address": "0x02009fc0",
+          "kind": "data"
+        },
+        "gWorkspace": {
+          "address": "0x03001e70",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02000880",
+          "extent": 120,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

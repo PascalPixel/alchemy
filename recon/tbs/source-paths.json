@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_3b7:02000880": {
+      "name": "TorebiIzumi_RiseAndFadeIn",
+      "source": "FIELD/TOREBI_IZUMI/RISE_AND_FADE.C"
+    },
     "resource_37a:02002614": {
       "name": "SoruNichigetsu_RunLightScene",
       "source": "FIELD/SORU_NICHIGETSU/LIGHT_SCENE.C"

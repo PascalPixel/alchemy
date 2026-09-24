@@ -23934,36 +23934,36 @@
           "address": "0x0200ac00",
           "kind": "data"
         },
+        "Engine_ActorSetAnimation": {
+          "address": "0x200a71c",
+          "kind": "thumb"
+        },
+        "Engine_ActorWaitForMove": {
+          "address": "0x200a70c",
+          "kind": "thumb"
+        },
+        "Engine_ActorWalkTo": {
+          "address": "0x200a6fc",
+          "kind": "thumb"
+        },
+        "Engine_ActorWalkToAndWait": {
+          "address": "0x200a704",
+          "kind": "thumb"
+        },
+        "Engine_CameraSetSpeed": {
+          "address": "0x200a7ac",
+          "kind": "thumb"
+        },
+        "Engine_EventWait": {
+          "address": "0x200a694",
+          "kind": "thumb"
+        },
         "Func_0200379e": {
           "address": "0x200a2e0",
           "kind": "thumb"
         },
         "Func_0200379e_a": {
           "address": "0x200a2c8",
-          "kind": "thumb"
-        },
-        "Func_02003a6a": {
-          "address": "0x200a6fc",
-          "kind": "thumb"
-        },
-        "Func_02003a6a_a": {
-          "address": "0x200a694",
-          "kind": "thumb"
-        },
-        "Func_02003a98": {
-          "address": "0x200a71c",
-          "kind": "thumb"
-        },
-        "Func_02003a98_a": {
-          "address": "0x200a70c",
-          "kind": "thumb"
-        },
-        "Func_02003ad4": {
-          "address": "0x200a7ac",
-          "kind": "thumb"
-        },
-        "Func_02003ad4_a": {
-          "address": "0x200a704",
           "kind": "thumb"
         }
       },

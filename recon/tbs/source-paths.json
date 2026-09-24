@@ -1,6 +1,14 @@
 {
   "format": 3,
   "owners": {
+    "resource_3a6:02001390": {
+      "name": "HaidiaDou_RunProbedColumnScene",
+      "source": "FIELD/HAIDIA_DOU/PROBED_COLUMN_SCENE.C"
+    },
+    "resource_39f:02000f94": {
+      "name": "MogoruMori_RunProbedActorNineScene",
+      "source": "FIELD/MOGORU_MORI/PROBED_ACTOR_NINE.C"
+    },
     "resource_3ca:020000b0": {
       "name": "BabiFune_CyclePalette",
       "source": "FIELD/BABI_FUNE/PALETTE_CYCLE.C"

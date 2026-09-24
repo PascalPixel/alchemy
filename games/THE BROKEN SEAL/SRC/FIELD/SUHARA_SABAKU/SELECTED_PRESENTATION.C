@@ -8,8 +8,6 @@
 
 #include "CREATE_CONFIGURED_OVERLAY_OBJECT.H"
 
-void *Func_0200127e(s32, s32, s32, s32);
-
 #include "TYPES.H"
 
 /*
@@ -34,7 +32,6 @@ struct SceneWork_02000400 {
 
 extern volatile s32 Data_03001e40;
 
-struct Actor_02000400 *Func_0200169a(s32 actor);
 s32 Func_02001686(s32 state);
 void Func_020016bc(s32 state, s32 value);
 
@@ -85,8 +82,6 @@ extern u8 Data_020097b4[];
 
 #include "TYPES.H"
 
-#define Scene_GetRecord_1(args...) Func_02001b02(args)
-#define Scene_GetRecord_2(args...) Func_02001c12(args)
 #define ACTOR_ID 13
 
 extern u8 Data_03001ebc[];
@@ -95,14 +90,9 @@ extern u8 Data_02009a00[];
 extern s16 Data_02000240_t[][1];
 
 s32 Func_020016d4();
-s32 Func_0200170c();
-void Func_02001714();
 void Func_0200171c();
-s32 Func_0200173a();
 void Func_02001784();
 void Func_0200178e();
-u8 *Func_02001b02();
-u8 *Func_02001c12();
 s32 Func_02001fa8();
 s32 Func_02001fca();
 s32 Func_02001fd6();
@@ -200,11 +190,6 @@ static __inline__ s32 Value2_02000dc8(s32 (*f)(), s32 a0, s32 a1)
 
 #include "TYPES.H"
 
-void Func_020009c2(int actor);
-void Func_020009ce(int actor);
-void Func_020009da(int actor);
-void Func_020009e6(int actor);
-void Func_020009f2(int actor);
 void Func_02000d96(int actor);
 void Func_02000da2(int actor);
 void Func_02000dae(int actor);
@@ -242,7 +227,7 @@ void SetEffectRecordMode(struct EffectWork *work, s32 mode)
 
 void *OverlayObject_CreateAndInitialize(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 {
-    u8 *obj = Func_0200127e(arg3, arg0, arg1, arg2);
+    u8 *obj = Object_Create(arg3, arg0, arg1, arg2);
 
     if (obj != NULL) {
         u8 *sprite = *(u8 **)(obj + 0x50);
@@ -334,7 +319,7 @@ void Func_02000400(void)
     struct SceneWork_02000400 *scene;
     s32 progress;
 
-    actor = Func_0200169a(((struct Selection_02000400 *)Data_02000240)->actor_id);
+    actor = Actor_Get(((struct Selection_02000400 *)Data_02000240)->actor_id);
     scene = *(struct SceneWork_02000400 **)Data_03001ebc;
     actor->presentation = (u16)(Data_03001e40 << 12);
 
@@ -361,14 +346,14 @@ void FieldScene_RunMiddleAuxiliarySequence(s32 a0)
     base = (u8 *)Data_02000240;
     p6 = *(u8 **)(base + 500);
     p10 = a0;
-    rec7 = Value1(Func_0200170c, (s32)p6);
-    Func_02001714(p10);
+    rec7 = Value1(Engine_ActorGet, (s32)p6);
+    Actor_Get(p10);
     rec2 = GameFlag_IsSet(0x20f);
     if (rec2 == 0) {
         Event_Begin();
         Actor_SetAttachedEffect((s32)p6, 0x101);
         Actor_SetAnimation((s32)p6, 9);
-        record = Value1(Func_0200173a, p10);
+        record = Value1(Engine_ActorGet, p10);
         if (record != 0) {
             Actor_SetDestination((s32)p6, *(s16 *)(record + 10), *(s16 *)(record + 18));
         }
@@ -389,15 +374,15 @@ void FieldScene_RunMiddleAuxiliarySequence(s32 a0)
     }
 }
 
-void FieldScene_RunActor8Step(void) { Func_020009c2(8); }
+void FieldScene_RunActor8Step(void) { FieldScene_RunMiddleAuxiliarySequence(8); }
 
-void FieldScene_RunActor9Step(void) { Func_020009ce(9); }
+void FieldScene_RunActor9Step(void) { FieldScene_RunMiddleAuxiliarySequence(9); }
 
-void FieldScene_RunActor10Step(void) { Func_020009da(10); }
+void FieldScene_RunActor10Step(void) { FieldScene_RunMiddleAuxiliarySequence(10); }
 
-void FieldScene_RunActor11Step(void) { Func_020009e6(11); }
+void FieldScene_RunActor11Step(void) { FieldScene_RunMiddleAuxiliarySequence(11); }
 
-void FieldScene_RunActor12Step(void) { Func_020009f2(12); }
+void FieldScene_RunActor12Step(void) { FieldScene_RunMiddleAuxiliarySequence(12); }
 
 void FieldScene_RunLateActor8Step(void) { Func_02000d96(8); }
 
@@ -424,7 +409,7 @@ void FieldScene_RunActorThirteenRestoration(void)
                 Event_Begin();
                 Event_SetMessage(0x2633);
                 /* Record layout observed here: s32 at +8, s32 at +16. */
-                record = Scene_GetRecord_1(0);
+                record = Actor_Get(0);
                 if (record != 0) {
                     Actor_SetPosition(ACTOR_ID, *(s32 *)(record + 8), *(s32 *)(record + 16));
                 }
@@ -455,7 +440,7 @@ void FieldScene_RunActorThirteenRestoration(void)
                 Actor_SetAnimationAndWait(0, 3);
                 Actor_SetAnimation(ACTOR_ID, 2);
                 /* Record layout observed here: s16 at +10, s16 at +18. */
-                record = Scene_GetRecord_2(0);
+                record = Actor_Get(0);
                 if (record != 0) {
                     Actor_SetDestination(ACTOR_ID, *(s16 *)(record + 10), *(s16 *)(record + 18));
                 }

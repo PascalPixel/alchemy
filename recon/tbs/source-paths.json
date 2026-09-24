@@ -1,6 +1,18 @@
 {
   "format": 3,
   "owners": {
+    "resource_3b4:02001694": {
+      "name": "TakaraAshiba_RunActorElevenFollowScene",
+      "source": "FIELD/TAKARA_ASHIBA/ACTOR_ELEVEN_FOLLOW.C"
+    },
+    "resource_373:020010d8": {
+      "name": "HaidiaMura_RunCameraRiseScene",
+      "source": "FIELD/HAIDIA_MURA/CAMERA_RISE_SCENE.C"
+    },
+    "resource_377:0200133c": {
+      "name": "HaidiaBabi_RunActorEightMessageScene",
+      "source": "FIELD/COMMON/HAIDIA_BABI/ACTOR_EIGHT_MESSAGE.C"
+    },
     "resource_39c:02001164": {
       "name": "MakyuriHeya_RunPushedBlockScene",
       "source": "FIELD/MAKYURI_HEYA/PUSHED_BLOCK_SCENE.C"

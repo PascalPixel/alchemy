@@ -5808,7 +5808,7 @@
       "source": "MENU/LINK_LOBBY/DIGIT_VALUE.C"
     },
     "resource_38e:0200090c": {
-      "name": "Effect_UpdateLobeOrbitEntity",
+      "name": "SceneEffect_UpdateLobeOrbitEntity",
       "source": "FIELD/BIRIBINO_NIWA/ORBITING.C"
     },
     "resource_36f:02000044": {
@@ -5824,7 +5824,7 @@
       "source": "FIELD/FUNE_HEYA/EXTENDED_CHOREOGRAPHY.C"
     },
     "resource_38e:020000f8": {
-      "name": "Scene_RunStepWithValueFd2",
+      "name": "FieldScene_RunStepWithValueFd2",
       "source": "FIELD/BIRIBINO_NIWA/ORBITING.C"
     },
     "resource_398:0200044c": {
@@ -6131,7 +6131,7 @@
       "source": "FIELD/HAIDIA_IE/EXTENDED.C"
     },
     "resource_38e:0200012c": {
-      "name": "Scene_RunStepWithValue29de",
+      "name": "FieldScene_RunStepWithValue29de",
       "source": "FIELD/BIRIBINO_NIWA/ORBITING.C"
     },
     "resource_372:02000328": {
@@ -6387,7 +6387,7 @@
       "source": "FIELD/COMMON/EFFECT/SPAWN.C"
     },
     "resource_38e:020008e8": {
-      "name": "Scene_SetupWithDescriptor8BD4",
+      "name": "FieldScene_SetupWithDescriptor8BD4",
       "source": "FIELD/BIRIBINO_NIWA/ORBITING.C"
     },
     "resource_376:02000258": {
@@ -6519,7 +6519,7 @@
       "source": "FIELD/FUNE_HEYA/EXTENDED_CHOREOGRAPHY.C"
     },
     "resource_38e:02000184": {
-      "name": "Dialogue_RunActor9Message13c0",
+      "name": "SceneDialogue_RunActor9Message13c0",
       "source": "FIELD/BIRIBINO_NIWA/ORBITING.C"
     },
     "resource_3a3:02000874": {
@@ -7012,7 +7012,7 @@
       "source": "MENU/CLEAR/SAVE_MENU.C"
     },
     "resource_38e:02000030": {
-      "name": "Actor_UpdateFacingTowardTarget",
+      "name": "SceneActor_UpdateFacingTowardTarget",
       "source": "FIELD/BIRIBINO_NIWA/ORBITING.C"
     },
     "resource_3c9:02000030": {
@@ -7380,7 +7380,7 @@
       "source": "FIELD/KUUPUAPPU_HEYA/PROMPT.C"
     },
     "resource_38e:020001a4": {
-      "name": "Dialogue_RunActor10Message13c3",
+      "name": "SceneDialogue_RunActor10Message13c3",
       "source": "FIELD/BIRIBINO_NIWA/ORBITING.C"
     },
     "resource_3b0:0200007c": {
@@ -8500,7 +8500,7 @@
       "source": "FIELD/VINASU_HEYA/ENTRY_SETUP.C"
     },
     "resource_38e:020001c4": {
-      "name": "Dialogue_RunActor11Message1751",
+      "name": "SceneDialogue_RunActor11Message1751",
       "source": "FIELD/BIRIBINO_NIWA/ORBITING.C"
     },
     "resource_372:020045a8": {
@@ -8784,7 +8784,7 @@
       "source": "FIELD/BIRIBINO_DOU/REGION.C"
     },
     "resource_38e:020004bc": {
-      "name": "Scene_RunEntryZeroAndScene22Body",
+      "name": "FieldScene_RunEntryZeroAndScene22Body",
       "source": "FIELD/BIRIBINO_NIWA/ORBITING.C"
     },
     "resource_3c9:020004bc": {
@@ -10338,7 +10338,7 @@
       "source": "FIELD/BIRIBINO_HEYA/MESSAGE_BRANCH.C"
     },
     "resource_38e:0200045c": {
-      "name": "Scene_RunScene38e",
+      "name": "FieldScene_RunScene38e_0200045c",
       "source": "FIELD/BIRIBINO_NIWA/ORBITING.C"
     },
     "resource_399:02000a3c": {

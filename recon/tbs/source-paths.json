@@ -1440,7 +1440,8 @@
       "source": "GRAPHICS/DISPLAY/SCROLL_DISARM_HBLANK_DMA.C"
     },
     "main:080a8904": {
-      "name": "Runtime_RunBusyWaitDelay"
+      "name": "Runtime_RunBusyWaitDelay",
+      "source": "SYSTEM/RUN_BUSY_WAIT_DELAY.C"
     },
     "main:080a8914": {
       "name": "ItemMenu_DrawOwnerStatus",

@@ -621,6 +621,24 @@
     "main:080b1bd0": {
       "name": "Shop_SelSell"
     },
+    "main:080b2328": {
+      "name": "Shop_RepairItem",
+      "source": "MENU/SHOP/REPAIR_ITEM.C"
+    },
+    "main:080b1f4c": {
+      "name": "Shop_SellItem",
+      "source": "MENU/SHOP/SELL_ITEM.C"
+    },
+    "main:080b0aac": {
+      "name": "Shop_SelBuy"
+    },
+    "main:080b0278": {
+      "name": "Shop_Run",
+      "source": "MENU/SHOP/RUN.C"
+    },
+    "main:080b1260": {
+      "name": "Shop_DrawEquipComparison"
+    },
     "main:080b211c": {
       "name": "Shop_SelRepair",
       "source": "MENU/SHOP/SELECT_REPAIR_ITEM.C"
@@ -2159,6 +2177,18 @@
     "main:08096048": {
       "name": "BattleFx_UpdateRadialSpread"
     },
+    "main:08096140": {
+      "name": "BattleFx_RunVenusDjinnCapture",
+      "source": "BATTLE/EFFECT/RUN_VENUS_DJINN_CAPTURE.C"
+    },
+    "main:080965a8": {
+      "name": "BattleFx_RunMercuryDjinnCapture",
+      "source": "BATTLE/EFFECT/RUN_MERCURY_DJINN_CAPTURE.C"
+    },
+    "main:0809537c": {
+      "name": "EventActor_RunHopAndLeapSequence",
+      "source": "BATTLE/EFFECT/RUN_HOP_AND_LEAP_SEQUENCE.C"
+    },
     "main:0809641c": {
       "name": "BattleFx_UpdateRandomTargetParticle",
       "source": "BATTLE/EFFECT/RANDOM_TARGET_PARTICLE.C"
@@ -3345,6 +3375,10 @@
     "main:080a47b4": {
       "name": "ItemMenu_OpenDetail",
       "source": "MENU/ITEM/OPEN_ITEM_DETAILS.C"
+    },
+    "main:080a4924": {
+      "name": "ItemMenu_DrawItemDetails",
+      "source": "MENU/ITEM/DRAW_ITEM_DETAILS.C"
     },
     "main:080a4db4": {
       "name": "ItemMenu_DrawStat",
@@ -4613,6 +4647,13 @@
       "name": "NodeChain_GetNodeAtCount",
       "source": "SYSTEM/MEMORY/NODE_CHAIN_GET_NODE_AT_COUNT.C"
     },
+    "main:0801b664": {
+      "name": "Menu_StepRight",
+      "source": "MENU/SELECTION_STEP_RIGHT.C"
+    },
+    "main:0801b810": {
+      "name": "Menu_StepLeft"
+    },
     "main:0801b9a8": {
       "name": "Menu_ReloadNodeResource",
       "source": "MENU/SELECTION_RESOURCE.C"
@@ -5435,6 +5476,10 @@
     "main:080a14f0": {
       "name": "UiText_DrawNumberRightAlignedFar",
       "source": "GRAPHICS/TEXT/DRAW_NUMBER_RIGHT_ALIGNED_FAR.C"
+    },
+    "main:080a112c": {
+      "name": "Menu_DrawOwnerStatusPanel",
+      "source": "MENU/DRAW_OWNER_STATUS_PANEL.C"
     },
     "main:080a153c": {
       "name": "Ui_DrawValuePairRows",
@@ -19502,7 +19547,8 @@
       "name": "Object_UpdateAllThumb"
     },
     "main:0800c880": {
-      "name": "ObjectSystem_UpdateCameraFixed"
+      "name": "ObjectSystem_UpdateCameraFixed",
+      "source": "FIELD/COMMON/OBJECT/UPDATE_CAMERA_FIXED.C"
     },
     "main:0800c62c": {
       "name": "ObjectSystem_UpdateCamera"
@@ -19628,7 +19674,8 @@
       "source": "MENU/SHOP/RESTORE_SCENE_TILES.C"
     },
     "main:080b24e4": {
-      "name": "Unnamed_080b24e4"
+      "name": "Shop_BuySpecialItem",
+      "source": "MENU/SHOP/BUY_SPECIAL_ITEM.C"
     },
     "main:080b5534": {
       "name": "Unnamed_080b5534"
@@ -19654,7 +19701,8 @@
       "source": "BATTLE/PRESENTATION/TRANS_SETUP_AT_DEPTH.C"
     },
     "main:080c2724": {
-      "name": "Unnamed_080c2724"
+      "name": "Battle_AwardSpoils",
+      "source": "BATTLE/AWARD_SPOILS.C"
     },
     "main:080ca978": {
       "name": "Unnamed_080ca978"
@@ -20335,8 +20383,6 @@
     "main:08028574": "Menu_RunResourceSelectionLoop",
     "main:08028808": "Menu_CenterResourceEntries",
     "main:08015070": "UiWindow_DrawDividerLineFar",
-    "main:080a112c": "Menu_DrawOwnerStatusPanel",
-    "main:080a4924": "ItemMenu_DrawItemDetails",
     "main:0800d14c": "Object_SetMoveTarget",
     "main:0801a4fc": "UiGlyph_LoadEntryWithPalette",
     "main:0808a5b0": "SaveState_CaptureObjectTableFar",
@@ -20373,14 +20419,11 @@
     "main:080ca1fc": "BattleFx_RunParticlePool",
     "main:080ceb54": "BattleFx_RunMemberBurst",
     "main:080dea70": "BattleFx_RunProjectileVolley",
-    "main:0809537c": "EventActor_RunHopAndLeapSequence",
     "main:0808ae74": "Encounter_SelectEnemyGroup",
     "main:080c9048": "BattlePres_ConfigureEffectDisplay",
     "main:08004c6c": "SceneTransform_ApplyRoll",
     "main:080e727c": "Palette_BrightenBgEntries",
     "main:08015358": "Djinn_ShowJoinedMessageFar",
-    "main:08096140": "BattleFx_RunVenusDjinnCapture",
-    "main:080965a8": "BattleFx_RunMercuryDjinnCapture",
     "main:080e3aa0": "BattlePres_RunBeamSequence",
     "main:080ecef4": "BattleFx_RunRevealColumn",
     "main:080b5010": "BattleActor_SpawnObjectsForListFar",
@@ -20396,9 +20439,7 @@
     "main:080acab8": "DjinnMenu_DrawStatPreview",
     "main:080b0744": "Shop_CreatePriceSprite",
     "main:080b3050": "Shop_RunPartyMemberIconBurst",
-    "main:080b2328": "Shop_RepairItem",
     "main:08015038": "UiText_OpenMessageWindowFar",
-    "main:080b1f4c": "Shop_SellItem",
     "main:080164d4": "UiWindow_ClearInteriorTiles",
     "main:080a8604": "CharacterMenu_DrawStatusAilments",
     "main:080a9aec": "ItemMenu_DrawEquippedItemNames",
@@ -20442,7 +20483,6 @@
     "main:08077210": "Trade_CanOfferDjinnFar",
     "main:080771c8": "Trade_AddOfferFar",
     "main:080772b8": "BattleFx_IsReviveFar",
-    "main:080b0278": "Shop_Run",
     "main:080d4604": "BattleFx_RunSparkGroups",
     "main:0808a508": "BattleFx_HasReachedTargetFar",
     "main:0808a530": "BattleFx_ClearOwnedSlotFar",
@@ -20458,8 +20498,6 @@
     "main:08079b24": "Curve_LookupScaledValue",
     "main:0808a500": "EffectSlot_UpdateFar",
     "main:0801b248": "Menu_SetupSelectionSide",
-    "main:0801b664": "Menu_StepRight",
-    "main:0801b810": "Menu_StepLeft",
     "main:0801ba68": "Menu_ScrollSelectionList",
     "main:08077238": "Item_GetEquipmentGroupFar",
     "main:080150e0": "Ui_LoadCharacterEntryForSlotFar",

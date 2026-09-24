@@ -34,14 +34,20 @@ struct ShopRuntime {
     s16 stock_item_ids[129];            /* 0x26c */
     s16 party_member_ids[9];            /* 0x36e */
     struct ShopCursor cursor;           /* 0x380 */
-    u8 unknown_390[2];
+    u16 cursor_icon;                    /* 0x390 */
     u16 previous_page_icon;             /* 0x392 */
     u16 next_page_icon;                 /* 0x394 */
-    u8 unknown_396[0x10];
+    u16 unknown_396;
+    u16 stat_down_icon;                 /* 0x398 */
+    u16 stat_up_icon;                   /* 0x39a */
+    u16 unknown_39c;
+    u16 selected_item;                  /* 0x39e */
+    u8 unknown_3a0[4];
+    u16 keeper_resource;                /* 0x3a4 */
     s8 stock_count;                     /* 0x3a6 */
     s8 party_member_count;              /* 0x3a7 */
     u8 mode;                            /* 0x3a8 */
-    u8 unknown_3a9;
+    u8 shop_type;                       /* 0x3a9 */
     s8 party_action;                    /* 0x3aa */
 };
 

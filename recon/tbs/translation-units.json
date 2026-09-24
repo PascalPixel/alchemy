@@ -748,16 +748,16 @@
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_37b",
       "absolute_symbols": {
-        "Data_03001ebc": {
-          "address": "0x03001ebc",
-          "kind": "data"
-        },
         "Engine_ActorFaceDirection": {
           "address": "0x0200a4f4",
           "kind": "thumb"
         },
         "Engine_ActorFaceEachOther": {
           "address": "0x0200a4d4",
+          "kind": "thumb"
+        },
+        "Engine_ActorGet": {
+          "address": "0x0200a46c",
           "kind": "thumb"
         },
         "Engine_ActorJump": {
@@ -852,13 +852,13 @@
           "address": "0x0200a3bc",
           "kind": "thumb"
         },
-        "Func_0200a3a4": {
+        "Event_SayThenWait": {
           "address": "0x0200a3a4",
           "kind": "thumb"
         },
-        "Func_0200a46c": {
-          "address": "0x0200a46c",
-          "kind": "thumb"
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
         }
       },
       "owners": [

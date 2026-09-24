@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_3c8:02004968": {
+      "name": "VinasuHeya_Func02004968",
+      "source": "FIELD/VINASU_HEYA/F_04968.C"
+    },
     "resource_3bd:02000de8": {
       "name": "ArutamiraDou_Func02000de8",
       "source": "FIELD/ARUTAMIRA_DOU/F_00DE8.C"

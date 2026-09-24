@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_3af:02000c28": {
+      "name": "FuneKanpan_RunDeckStateEvent",
+      "source": "FIELD/FUNE_KANPAN/DECK_STATE_EVENT.C"
+    },
     "resource_387:02000d68": {
       "name": "GomaIriguchi_SetEntranceFlag",
       "source": "FIELD/GOMA_IRIGUCHI/SET_ENTRANCE_FLAG.C"

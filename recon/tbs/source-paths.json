@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_370:020002f4": {
+      "name": "Clear_NameEntryCharacter",
+      "source": "MENU/CLEAR/NAME_CHARACTER.C"
+    },
     "resource_383:02004754": {
       "name": "KuupuappuHeya_SnapToNearestStop",
       "source": "FIELD/KUUPUAPPU_HEYA/NEAREST_STOP.C"

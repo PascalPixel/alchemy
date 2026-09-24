@@ -1,24 +1,5 @@
-/* Draft (2026-09-24): exact (788 bytes, 0 differ) once the reviewed
-   Iwram_Call2 in IWRAM_CALL.H lists r1 as clobbered and ends its template
-   in "\n\t"; with the header as reviewed it is 4 bytes short. Both changes
-   keep TBS and TLA byte-identical (checked with make compare-all), but the
-   body is pinned by IWRAM_CALL_BODY_SHA256 in compiler/no_asm.rs, so it
-   waits for that review. Why: the ROM sets r1 again before the second of
-   each pair of calls sharing a factor, which GCC only does when the asm
-   clobbers r1, and the extra template line is what places the literal
-   pool mid-function. The proposed body:
-
-       __asm__ volatile(
-           ".align 2\n\t"
-           "mov ip, pc\n\t"
-           "bx %2\n\t"
-           : "+r"(result)
-           : "r"(factor), "r"(routine)
-           : "r1", "r2", "ip", "cc");
-
-   Other facts that closed it: load x, y, z and add the velocities in that
-   order; the bounce is obj->vy = -Iwram_MulQ16(...) then an ABS test of
-   obj->vy. */
+/* Moves every active object by its velocity each frame: position, then
+   gravity and the bounce off the ground, through the IWRAM Q16 multiply. */
 
 #include "TYPES.H"
 #include "IWRAM_CALL.H"

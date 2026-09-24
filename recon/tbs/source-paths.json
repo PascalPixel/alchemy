@@ -19494,7 +19494,8 @@
       "source": "SYSTEM/RESOURCE/TABLE.C"
     },
     "main:0800d340": {
-      "name": "Object_UpdateAllMotion"
+      "name": "Object_UpdateAllMotion",
+      "source": "FIELD/COMMON/OBJECT/UPDATE_ALL_MOTION.C"
     },
     "main:08005340": {
       "name": "Resource_DecodeType01",

@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "SCENE.H"
 #include "RENDER_INPUT.H"
+#include "RESOURCE.H"
 
 /* graphics/resource/load_pair.c */
 extern s32 gRom[];
@@ -19,7 +20,6 @@ void RenderResource_LoadPair(s32 group_index, s32 resource_index)
 }
 
 /* graphics/resource/create_pair.c */
-s32 Resource_FindFreeEntry(void);
 void RenderResource_LoadPair(s32 arg0, s32 arg1);
 void *RenderResource_CreatePair(
     s32 arg0,

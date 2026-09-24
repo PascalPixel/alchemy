@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "RESOURCE.H"
 
 void UiTextResource_NoOpCallback(void)
 {
@@ -45,7 +46,6 @@ struct TextResourceSetup {
     u16 field_8c : 4;
 };
 
-s32 Resource_FindFreeEntry(void);
 s32 Resource_CopyData(s32, s32, const void *);
 extern const u8 Menu_CursorObjectTiles[];
 

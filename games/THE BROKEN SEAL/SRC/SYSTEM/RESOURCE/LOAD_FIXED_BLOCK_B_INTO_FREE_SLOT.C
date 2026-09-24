@@ -1,8 +1,8 @@
 #include "TYPES.H"
 #include "SCENE.H"
+#include "RESOURCE.H"
 
 s32 Resource_CopyData(s32, s32, s32);
-s32 Resource_FindFreeEntry();
 extern u8 gRom[];
 
 s32 Resource_LoadFixedBlockBIntoFreeSlot(void)

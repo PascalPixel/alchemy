@@ -31,7 +31,6 @@ extern u8 Value_000000f1;
 struct SelectionNode_0801c188 *NodeChain_GetNodeAtCount(void *state);
 struct ResourceBuffer_0801c188 *Runtime_AllocateHeapBlock(s32 owner, s32 size);
 void Resource_DecodeByteLz(void *source, void *destination);
-u16 Resource_FindFreeEntry(void);
 u16 Resource_CopyData(s32 handle, s32 size, void *buffer);
 
 void Menu_LoadSelectedResource(void)

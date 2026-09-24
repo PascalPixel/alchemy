@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "SCENE.H"
+#include "RESOURCE.H"
 
 /* ui/icon/build_item_icon_tiles.c */
 typedef struct {
@@ -15,7 +16,6 @@ extern void FunctionHead_0801a5a4(FontTransfer *work, s32 slot);
 
 extern FontTransfer *Runtime_AllocateHeapBlock(s32 arg0, s32 arg1);
 
-extern s32 Resource_FindFreeEntry(void);
 extern s32 Resource_CopyData(s32 index, s32 size, u8 *destination);
 
 extern s32 gRom[];

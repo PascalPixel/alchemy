@@ -1,6 +1,7 @@
 #include "RENDER_INPUT.H"
 #include "TYPES.H"
 #include "TBS_EDITION.H"
+#include "RESOURCE.H"
 
 #if defined(TBS_EDITION_DE)
 #define TABLE_ADDR 0x03001B20
@@ -69,7 +70,6 @@ void *RenderOutput_CreateFromResource(
     return RenderOutput_Create(no, 0x40000000, arg2, arg3, arg4);
 }
 
-s32 Resource_FindFreeEntry(void);
 s32 UiIcon_CopyResourceToSlot(s32 arg0, s32 arg1, s32 arg2);
 void *RenderOutput_CreateLoaded(
     s32 arg0,

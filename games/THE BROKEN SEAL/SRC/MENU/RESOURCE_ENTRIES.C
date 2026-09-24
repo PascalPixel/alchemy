@@ -100,8 +100,6 @@ void Menu_LoadResourceSlot(s32 slot, s32 index)
     Runtime_BumpFree(buffer);
 }
 
-extern s32 Resource_FindFreeEntry(void);
-
 void Menu_AppendResourceEntry(s32 no)
 {
     u8 *base;

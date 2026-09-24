@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_3bb:02001898": {
+      "name": "KorosseoKabe_Func02001898",
+      "source": "FIELD/KOROSSEO_KABE/F_01898.C"
+    },
     "resource_3a4:02003484": {
       "name": "ArutinYama_Func02003484",
       "source": "FIELD/ARUTIN_YAMA/F_03484.C"

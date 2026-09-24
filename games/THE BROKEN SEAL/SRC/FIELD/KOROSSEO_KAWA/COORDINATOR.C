@@ -22,7 +22,6 @@ enum CoordinatorMessage {
     MSG_WAIT_SHOULDNT_DECIDE_WHERE_BEST = 0x20e8
 };
 
-
 #define FieldScene_RunSceneFourCoordinator Func_020016ec
 #define SceneTransition_Phase Data_02000240[225]
 #define GetPartyInteractionRecord Func_0200593a
@@ -482,14 +481,6 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
     f(a0, a1, a2, a3);
 }
 
-static __inline__ void Call6_02000270(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
-{
-    extern s16 Data_02000240_t[][1];
-    extern u8 Data_0200c41c[];
-
-    f(a0, a1, a2, a3, a4, a5);
-}
-
 static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
 {
     extern s16 Data_02000240_t[][1];
@@ -504,22 +495,6 @@ static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
     extern u8 Data_0200c41c[];
 
     return f(a0, a1);
-}
-
-static __inline__ void Call3_02000db8(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    extern s16 Data_02000240_t[][1];
-    extern u8 Data_0200c41c[];
-
-    f(a0, a1, a2);
-}
-
-static __inline__ void Call3_020015e0(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    extern s16 Data_02000240_t[][1];
-    extern u8 Data_0200c41c[];
-
-    f(a0, a1, a2);
 }
 
 static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
@@ -1082,7 +1057,7 @@ void FieldScene_RunCommandSequence(s32 a0)
     Actor_SetSpeed(ACTOR_GERALD, 0x10000, 0x8000);
     Actor_SetSpeed(ACTOR_IVAN, 0x10000, 0x8000);
     Actor_SetSpeed(ACTOR_MIA, 0x10000, 0x8000);
-    Call3_02000db8((void (*)())Engine_ActorSetPosition, 0, x << 16, (z << 16) - 0x300000);
+    Call3((void (*)())Engine_ActorSetPosition, 0, x << 16, (z << 16) - 0x300000);
     Actor_SetPosition(ACTOR_GERALD, (x << 16) - 0x100000, (z << 16) - 0x280000);
     Actor_SetPosition(ACTOR_IVAN, (x << 16) + 0x100000, (z << 16) - 0x280000);
     Actor_SetPosition(ACTOR_MIA, x << 16, (z << 16) - 0x200000);

@@ -445,11 +445,6 @@ static __inline__ void Call0(void (*f)())
     f();
 }
 
-static __inline__ void Call2_0200206c(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
 static __inline__ void Call1_020021c4(void (*f)(), s32 a0)
 {
     f(a0);
@@ -475,11 +470,6 @@ static __inline__ void bump_step_0200252c(s32 amount)
 static __inline__ void Call1_020025f8(void (*f)(), s32 a0)
 {
     f(a0);
-}
-
-static __inline__ s32 Value3_020025f8(s32 (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    return f(a0, a1, a2);
 }
 
 /* The scene step counter at 0x1d8 of the shared scene work record. */
@@ -515,16 +505,6 @@ static __inline__ void Call1_02003054(void (*f)(), s32 a0)
     f(a0);
 }
 
-static __inline__ void Call2_02003054(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
-static __inline__ s32 Value2_02003054(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
 static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 {
     f(a0, a1, a2, a3);
@@ -543,52 +523,15 @@ static __inline__ void Call1_02004794(void (*f)(), s32 a0)
     f(a0);
 }
 
-static __inline__ s32 Value2_02004794(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
 /* The scene step counter at 0x1d8 of the shared scene work record. */
 static __inline__ void bump_step_02004794(s32 amount)
 {
     gEventWork->message += amount;
 }
 
-/* Loader-relocated ROM calls: each site names the pre-relocation call word the image holds. */
-static __inline__ void Call0_020049a0(void (*f)())
-{
-    f();
-}
-
-static __inline__ void Call2_020049a0(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
-static __inline__ s32 Value0_020049a0(s32 (*f)())
-{
-    return f();
-}
-
-static __inline__ s32 Value2_020049a0(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
-static __inline__ s32 Value3_020049a0(s32 (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    return f(a0, a1, a2);
-}
-
 static __inline__ void Call1_02004f60(void (*f)(), s32 value)
 {
     f(value);
-}
-
-/* Scheduler_AddOrUpdateCallback returns an index even when it is ignored. */
-static __inline__ s32 Value2_02004f60(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
 }
 
 #if defined(TBS_EDITION_JA)
@@ -1896,7 +1839,7 @@ void FieldScene_RunScene3bf_020025f8(void)
     Actor_ShowEmote(ACTOR_GERALD, 0x100, 0);
     Actor_ShowEmote(ACTOR_IVAN, 0x100, 0);
     Actor_ShowEmote(ACTOR_MIA, 0x100, 0);
-    Value3_020025f8(Engine_ActorShowEmote, 12, 0x100, 0);
+    Value3(Engine_ActorShowEmote, 12, 0x100, 0);
     Event_Wait(60);
 }
 
@@ -3329,9 +3272,9 @@ void FieldScene_InstallSceneTasks(void)
     case 6:
     case 7:
         gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
-        Value2_02004f60(Func_0200a572, (s32)Data_02009719, 3200);
-        Value2_02004f60(Func_0200a57c, (s32)Data_0200975d, 3200);
-        Value2_02004f60(Func_0200a586, (s32)Data_020097bd, 3200);
+        Value2(Func_0200a572, (s32)Data_02009719, 3200);
+        Value2(Func_0200a57c, (s32)Data_0200975d, 3200);
+        Value2(Func_0200a586, (s32)Data_020097bd, 3200);
         Func_0200a650(0xe00);
         break;
     case 12:
@@ -3343,8 +3286,8 @@ void FieldScene_InstallSceneTasks(void)
     case 17:
     case 18:
         gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
-        Value2_02004f60(Func_0200a5b2, (s32)Data_02009529, 3200);
-        Value2_02004f60(Func_0200a5bc, (s32)Data_020099e9, 3200);
+        Value2(Func_0200a5b2, (s32)Data_02009529, 3200);
+        Value2(Func_0200a5bc, (s32)Data_020099e9, 3200);
         Task_Wait(1);
         Map_Redraw();
         Task_Wait(1);
@@ -3355,7 +3298,7 @@ void FieldScene_InstallSceneTasks(void)
     case 14:
     case 15:
         gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
-        Value2_02004f60(Func_0200a602, (s32)Data_0200969d, 3200);
+        Value2(Func_0200a602, (s32)Data_0200969d, 3200);
         break;
     default:
         gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);

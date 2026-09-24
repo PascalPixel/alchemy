@@ -1,5 +1,8 @@
-/* 2026-09-24: 7 differing halfwords (from 8) after a do-while wrap and
-   statement-swap sweep; the do-while wraps are search artefacts. */
+/* 2026-09-24: 4 differing halfwords, 156 of 156 bytes. Holding the
+   Data_02000240 base in a local brings the draft from 7 to 4; the rest is
+   prologue scheduling: the reference issues sub sp before the two pool
+   loads and the 224 offset before the two stores of 8. A sweep of every
+   order and do-while wrap of the four opening statements stops here. */
 #include "TYPES.H"
 #include "TBS_EDITION.H"
 
@@ -23,12 +26,13 @@ void UiTimedNotice_Create(void)
     s32 resource;
     s32 object;
     u16 *field;
+    u16 *cfg;
 
     base = Data_03001ebc;
-    do { x = 8; } while (0);
-    y = 8;
-    resource = Func_0808a5d0(Data_02000240[224], Data_02000240[225])
-             + RENDER_RESOURCE_BASE;
+    cfg = Data_02000240;
+    do { y = 8; } while (0);
+    x = 8;
+    resource = Func_0808a5d0(cfg[224], cfg[225]) + RENDER_RESOURCE_BASE;
     UiText_GetResourceDimensions(resource, (s32)&x, (s32)&y, (s32)&third, (s32)&fourth);
     x = (30 - third) >> 1;
     y = (10 - fourth) >> 1;

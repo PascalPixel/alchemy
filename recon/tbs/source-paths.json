@@ -3421,10 +3421,12 @@
       "source": "../../COMMON/SRC/SOUND/INITIALIZE_CGB.C"
     },
     "main:080fa678": {
-      "name": "AudioCommand_InvokeSlot34"
+      "name": "AudioCommand_InvokeSlot34",
+      "source": "SOUND/COMMAND_INVOKE_SLOT34.C"
     },
     "main:080fa68c": {
-      "name": "AudioCommand_InvokeSlot35"
+      "name": "AudioCommand_InvokeSlot35",
+      "source": "SOUND/COMMAND_INVOKE_SLOT35.C"
     },
     "main:080fa6a0": {
       "name": "AudioEngine_Initialize",
@@ -5105,13 +5107,16 @@
       "source": "FIELD/COMMON/MAP/SET_WORK_FOUR_VALUES.C"
     },
     "main:080936a0": {
-      "name": "BattleFx_ScheduleRatioTransition"
+      "name": "BattleFx_ScheduleRatioTransition",
+      "source": "BATTLE/EFFECT/SCHEDULE_RATIO_TRANSITION.C"
     },
     "main:08093710": {
-      "name": "Event_WaitForDisplayField358Clear"
+      "name": "Event_WaitForDisplayField358Clear",
+      "source": "EVENT/WAIT_FOR_DISPLAY_FIELD358_CLEAR.C"
     },
     "main:0809376c": {
-      "name": "BattleFx_CopyLinkedObjectPosition"
+      "name": "BattleFx_CopyLinkedObjectPosition",
+      "source": "BATTLE/EFFECT/COPY_LINKED_OBJECT_POSITION.C"
     },
     "main:08093964": {
       "name": "Object_ResetAndClearField59",
@@ -5904,7 +5909,8 @@
       "source": "BATTLE/EFFECT/DISPATCH_BY_ID_RANGE.C"
     },
     "main:080e6948": {
-      "name": "ObjectGroup_StoreObjectAndRunStep7"
+      "name": "ObjectGroup_StoreObjectAndRunStep7",
+      "source": "BATTLE/EFFECT/STORE_OBJECT_AND_RUN_STEP7.C"
     },
     "main:080ec0e0": {
       "name": "Graphics_ResetBg2Pa",
@@ -9947,7 +9953,8 @@
       "name": "Region_080f4f04"
     },
     "main:080fa264": {
-      "name": "Audio_ResumePlayer"
+      "name": "Audio_ResumePlayer",
+      "source": "SOUND/RESUME_PLAYER.C"
     },
     "resource_372:020028a4": {
       "name": "RunEventScript01",
@@ -10099,7 +10106,8 @@
       "name": "MusicTrack_ClearModulationState"
     },
     "main:080fb2a4": {
-      "name": "MusicPlayer_SetPitchAndUpdateFrequency"
+      "name": "MusicPlayer_SetPitchAndUpdateFrequency",
+      "source": "SOUND/MUSIC_PLAYER_SET_PITCH_AND_UPDATE_FREQUENCY.C"
     },
     "main:08002dd8": {
       "name": "Runtime_ReleaseHeapBlock"
@@ -19386,10 +19394,12 @@
       "source": "GRAPHICS/TEXT/FORMAT_HEX.C"
     },
     "main:080037d4": {
-      "name": "Sound_LoadPresetParameters"
+      "name": "Sound_LoadPresetParameters",
+      "source": "SOUND/LOAD_PRESET_PARAMETERS.C"
     },
     "main:08004760": {
-      "name": "Bg0_ClearTilemap"
+      "name": "Bg0_ClearTilemap",
+      "source": "GRAPHICS/DISPLAY/BG0_CLEAR_TILEMAP.C"
     },
     "main:08095160": {
       "name": "BattleFx_StartTwelveFrameBlend"
@@ -19846,6 +19856,82 @@
     "resource_3c8:02001d48": {
       "name": "VinasuHeya_RunCellPushScene",
       "source": "FIELD/VINASU_HEYA/FLAG_301_CELL_PUSH.C"
+    },
+    "main:08006878": {
+      "name": "ReadFlashId",
+      "source": "SYSTEM/SAVE/READ_FLASH_ID.C"
+    },
+    "main:08006cdc": {
+      "name": "EraseFlashChip",
+      "source": "SYSTEM/SAVE/ERASE_FLASH_CHIP.C"
+    },
+    "main:08006f84": {
+      "name": "ProgramFlashSector",
+      "source": "SYSTEM/SAVE/PROGRAM_FLASH_SECTOR.C"
+    },
+    "main:08007220": {
+      "name": "ProgramAtmelFlashBlock",
+      "source": "SYSTEM/SAVE/PROGRAM_ATMEL_FLASH_BLOCK.C"
+    },
+    "main:08006e24": {
+      "name": "ProgramFlashSectorWithEraseRetry",
+      "source": "SYSTEM/SAVE/PROGRAM_FLASH_SECTOR_WITH_ERASE_RETRY.C"
+    },
+    "main:08006d50": {
+      "name": "EraseFlashSector",
+      "source": "SYSTEM/SAVE/ERASE_FLASH_SECTOR.C"
+    },
+    "main:08006a00": {
+      "name": "StartFlashTimer",
+      "source": "SYSTEM/SAVE/START_FLASH_TIMER.C"
+    },
+    "main:08007098": {
+      "name": "EraseAtmelFlashSector",
+      "source": "SYSTEM/SAVE/ERASE_ATMEL_FLASH_SECTOR.C"
+    },
+    "main:08006c68": {
+      "name": "Flash_VerifySector",
+      "source": "SYSTEM/SAVE/VERIFY_FLASH_SECTOR.C"
+    },
+    "main:08006ba8": {
+      "name": "ReadFlash",
+      "source": "SYSTEM/SAVE/READ_FLASH.C"
+    },
+    "main:0800711c": {
+      "name": "EraseAtmelFlashBlock",
+      "source": "SYSTEM/SAVE/ERASE_ATMEL_FLASH_BLOCK.C"
+    },
+    "main:080071a8": {
+      "name": "ProgramAtmelFlashSector",
+      "source": "SYSTEM/SAVE/PROGRAM_ATMEL_FLASH_SECTOR.C"
+    },
+    "main:08007028": {
+      "name": "EraseAtmelFlashChip",
+      "source": "SYSTEM/SAVE/ERASE_ATMEL_FLASH_CHIP.C"
+    },
+    "main:08006b84": {
+      "name": "ReadFlashCore",
+      "source": "SYSTEM/SAVE/READ_FLASH_CORE.C"
+    },
+    "main:080fb77c": {
+      "name": "MusicTrack_SetVoicePanOrSweep",
+      "source": "SOUND/MUSIC_TRACK_SET_VOICE_PAN_OR_SWEEP.C"
+    },
+    "main:080fb768": {
+      "name": "MusicTrack_SetVoiceLength",
+      "source": "SOUND/MUSIC_TRACK_SET_VOICE_LENGTH.C"
+    },
+    "main:080fb700": {
+      "name": "MusicTrack_SetVoiceAttack",
+      "source": "SOUND/MUSIC_TRACK_SET_VOICE_ATTACK.C"
+    },
+    "main:080fb6ec": {
+      "name": "MusicTrack_SetVoiceKind",
+      "source": "SOUND/MUSIC_TRACK_SET_VOICE_KIND.C"
+    },
+    "main:080fa280": {
+      "name": "MusicPlayer_BeginFadeOut",
+      "source": "SOUND/MUSIC_PLAYER_BEGIN_FADE_OUT.C"
     }
   },
   "symbols": {
@@ -20116,7 +20202,6 @@
     "main:080c9ca8": "BattleFx_RunFiveMode",
     "main:080ccc38": "BattleFx_RunTwoResource",
     "main:0801a98c": "MenuSelection_DrawFrame",
-    "main:08006c68": "Flash_VerifySector",
     "main:08009288": "Runtime_RemapBytesByTableFar",
     "main:080196c4": "UiWindow_AdjustValue",
     "main:080153b0": "Menu_RunConfirmSelectionAtFar",

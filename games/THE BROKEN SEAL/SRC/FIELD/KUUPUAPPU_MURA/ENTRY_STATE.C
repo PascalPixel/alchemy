@@ -1,10 +1,3 @@
-/* NONMATCHING: 716 of 716 bytes, 8 halfword edits (2026-09-24). Written as a
- * single-overlay unit source: Engine_* names bind at the overlay's runtime
- * import veneers (listing import offset + 0x8000), Local_* at their own
- * address + 0x8000. Remaining: the one and the
- * zero kept for actors 14 and 15 live in r7 and r6 in the reference; here the
- * zero is a scratch register and its store is scheduled after the script store.
- */
 #include "TYPES.H"
 
 s32 Engine_GameFlagIsSet();
@@ -13,7 +6,7 @@ void Engine_MapCopyCellAttributes();
 void OverlayObject_CreateConfiguredObject();
 s32 Engine_ActorGet();
 void Engine_ActorSetPosition();
-void Engine_GameFlagClear();
+s32 Engine_GameFlagClear();
 void Engine_EventBegin();
 void Engine_ActorFaceEachOther();
 void Engine_EventOpenScreen();
@@ -28,7 +21,7 @@ void Engine_ActorSetAnimation();
 void Engine_ActorSetDestination();
 void Engine_ActorWaitForMove();
 void Main_0808a048();
-void Engine_EventEnd();
+s32 Engine_EventEnd();
 
 
 extern u8 Data_02000240[];
@@ -59,13 +52,13 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
     f(a0, a1, a2, a3, a4, a5);
 }
 
-s32 Tmp_382(void)
+s32 KuupuappuMura_RestoreEntryState(void)
 {
     u32 i;
     s32 rec7;
     s32 record;
     s32 v7;
-    s32 none;
+    s32 zero;
 
     if (Value1(Engine_GameFlagIsSet, 0x87a) != 0) {
         Engine_EventRequestExit(14);
@@ -75,12 +68,15 @@ s32 Tmp_382(void)
     }
     OverlayObject_CreateConfiguredObject(0x800000, 0, 0x1a40000, 223);
     v7 = 1;
+    zero = 0;
     record = Engine_ActorGet(14);
     *(u16 *)(record + 100) = v7;
     *(s32 *)(record + 108) = 0x2008315;
     record = Value1(Engine_ActorGet, 15);
-    none = 0;
-    *(u16 *)(record + 100) = none;
+    *(u16 *)(record + 100) = zero;
+    /* FAKEMATCH: the empty loop keeps the halfword store ahead of the
+     * script-pointer store, as in the reference schedule. */
+    do { } while (0);
     *(s32 *)(record + 108) = 0x2008315;
     if (Value1(Engine_GameFlagIsSet, 0x858) != 0) {
         Call3(Engine_ActorSetPosition, 19, 0xd80000, 0x1880000);

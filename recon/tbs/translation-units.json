@@ -71332,6 +71332,110 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "kuupuappu-mura-entry-state",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_MURA/ENTRY_STATE.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_382",
+      "absolute_symbols": {
+        "Engine_GameFlagIsSet": {
+          "address": "0x02009988",
+          "kind": "thumb"
+        },
+        "Engine_EventRequestExit": {
+          "address": "0x02009aa0",
+          "kind": "thumb"
+        },
+        "Engine_MapCopyCellAttributes": {
+          "address": "0x02009950",
+          "kind": "thumb"
+        },
+        "OverlayObject_CreateConfiguredObject": {
+          "address": "0x020080a0",
+          "kind": "thumb"
+        },
+        "Engine_ActorGet": {
+          "address": "0x020099e0",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetPosition": {
+          "address": "0x02009a18",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagClear": {
+          "address": "0x02009998",
+          "kind": "thumb"
+        },
+        "Engine_EventBegin": {
+          "address": "0x020099b8",
+          "kind": "thumb"
+        },
+        "Engine_ActorFaceEachOther": {
+          "address": "0x02009a40",
+          "kind": "thumb"
+        },
+        "Engine_EventOpenScreen": {
+          "address": "0x02009aa8",
+          "kind": "thumb"
+        },
+        "Engine_EventWaitForScreen": {
+          "address": "0x02009ab8",
+          "kind": "thumb"
+        },
+        "Engine_EventWait": {
+          "address": "0x020099b0",
+          "kind": "thumb"
+        },
+        "Engine_ActorRunRepeatedMotion": {
+          "address": "0x02009a38",
+          "kind": "thumb"
+        },
+        "Engine_EventSetMessage": {
+          "address": "0x02009a50",
+          "kind": "thumb"
+        },
+        "Engine_EventShowMessageAndWait": {
+          "address": "0x02009a68",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetAnimationAndWait": {
+          "address": "0x02009a28",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpeed": {
+          "address": "0x020099e8",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetAnimation": {
+          "address": "0x02009a20",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetDestination": {
+          "address": "0x020099f0",
+          "kind": "thumb"
+        },
+        "Engine_ActorWaitForMove": {
+          "address": "0x02009a10",
+          "kind": "thumb"
+        },
+        "Main_0808a048": {
+          "address": "0x020099c8",
+          "kind": "thumb"
+        },
+        "Engine_EventEnd": {
+          "address": "0x020099c0",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x0200136c",
+          "extent": 716,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

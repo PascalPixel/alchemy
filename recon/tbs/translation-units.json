@@ -70876,6 +70876,58 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "goma-iriguchi-entry-state",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/GOMA_IRIGUCHI/ENTRY_STATE.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_387",
+      "absolute_symbols": {
+        "Engine_GameFlagSet": {
+          "address": "0x0200910c",
+          "kind": "thumb"
+        },
+        "Engine_EventWait": {
+          "address": "0x02009124",
+          "kind": "thumb"
+        },
+        "Main_0808a5e0": {
+          "address": "0x0200921c",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetAnimation": {
+          "address": "0x02009184",
+          "kind": "thumb"
+        },
+        "Engine_ActorGet": {
+          "address": "0x02009144",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagIsSet": {
+          "address": "0x02009104",
+          "kind": "thumb"
+        },
+        "Engine_MapCopyCellAttributes": {
+          "address": "0x020090bc",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetPosition": {
+          "address": "0x0200917c",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpriteFlags": {
+          "address": "0x020090c4",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x020004f4",
+          "extent": 392,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

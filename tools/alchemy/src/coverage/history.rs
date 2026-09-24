@@ -5,6 +5,7 @@
 use super::progress::GameDone;
 use crate::compiler::canonical_json::canonical_json;
 use serde_json::{json, Value};
+use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
 
 pub(crate) const PATH: &str = "recon/tbs/metrics/history.json";
@@ -57,6 +58,112 @@ pub(crate) fn record(
     if row.len() == 1 {
         days.remove(at);
     }
+}
+/// The models the chart names, in its stacking order, and the label of a
+/// commit that names none.
+pub(crate) const MODELS: [&str; 10] = [
+    "Opus 5.5",
+    "Opus 5",
+    "Opus 4.8",
+    "Fable 5.1",
+    "Fable 5",
+    "Sonnet 5",
+    "Claude",
+    "Codex",
+    "Cursor",
+    UNTAGGED,
+];
+pub(crate) const UNTAGGED: &str = "Untagged";
+/// The `git log` format the model counts read: date, author, and every
+/// Co-Authored-By trailer.
+pub(crate) const MODEL_LOG: &str = "%ad|%an|%(trailers:key=Co-Authored-By,valueonly,separator=;)";
+fn trailer_model(trailer: &str) -> Option<&'static str> {
+    let name = trailer.split('<').next().unwrap_or("").trim();
+    if name.contains("Codex") || name.contains("OpenAI") {
+        return Some("Codex");
+    }
+    for (needle, model) in [
+        ("Opus 5.5", "Opus 5.5"),
+        ("Opus 4.8", "Opus 4.8"),
+        ("Opus 5", "Opus 5"),
+        ("Fable 5.1", "Fable 5.1"),
+        ("Fable 5", "Fable 5"),
+        ("Sonnet 5", "Sonnet 5"),
+    ] {
+        if name.contains(needle) {
+            return Some(model);
+        }
+    }
+    (name == "Claude").then_some("Claude")
+}
+fn author_model(author: &str) -> Option<&'static str> {
+    match author.trim() {
+        "Codex" => Some("Codex"),
+        "Cursor Agent" => Some("Cursor"),
+        "Claude" => Some("Claude"),
+        _ => None,
+    }
+}
+/// Commits per model per day from `git log --format=MODEL_LOG` lines. A
+/// commit counts once for each model its trailers name; one that names none
+/// counts for its agent author, else as untagged.
+pub(crate) fn model_counts(log: &str) -> BTreeMap<String, BTreeMap<&'static str, u64>> {
+    let mut days = BTreeMap::<String, BTreeMap<&'static str, u64>>::new();
+    for line in log.lines() {
+        let mut fields = line.splitn(3, '|');
+        let (Some(date), Some(author)) = (fields.next(), fields.next()) else {
+            continue;
+        };
+        let trailers = fields.next().unwrap_or("");
+        let mut models = trailers
+            .split(';')
+            .filter_map(trailer_model)
+            .collect::<Vec<_>>();
+        models.sort_unstable();
+        models.dedup();
+        if models.is_empty() {
+            models.push(author_model(author).unwrap_or(UNTAGGED));
+        }
+        let day = days.entry(date.to_string()).or_default();
+        for model in models {
+            *day.entry(model).or_default() += 1;
+        }
+    }
+    days
+}
+/// `date`'s model counts from every branch of the local repository.
+pub(crate) fn models_on(root: &Path, date: &str) -> Result<BTreeMap<&'static str, u64>, String> {
+    let output = std::process::Command::new("git")
+        .args([
+            "log",
+            "--all",
+            &format!("--format={MODEL_LOG}"),
+            "--date=format:%Y-%m-%d",
+        ])
+        .arg(format!(
+            "--since={} 00:00",
+            previous(date).unwrap_or_default()
+        ))
+        .current_dir(root)
+        .output()
+        .map_err(|e| format!("git log: {e}"))?;
+    Ok(model_counts(&String::from_utf8_lossy(&output.stdout))
+        .remove(date)
+        .unwrap_or_default())
+}
+/// Replace `date`'s model counts, adding the day's row if it lacks one.
+pub(crate) fn record_models(history: &mut Value, date: &str, models: &BTreeMap<&str, u64>) {
+    if models.is_empty() {
+        return;
+    }
+    let days = history["days"]
+        .as_array_mut()
+        .expect("history has a days array");
+    let at = days.partition_point(|row| row["date"].as_str().unwrap_or("") < date);
+    if days.get(at).and_then(|row| row["date"].as_str()) != Some(date) {
+        days.insert(at, json!({"date": date}));
+    }
+    days[at]["models"] = json!(models);
 }
 /// The history as the chart drawn on `date` saw it: every earlier day, and
 /// that day's row as recorded when the figures were drawn.
@@ -176,6 +283,33 @@ mod tests {
         assert!(drawn["days"][2].get("files").is_none());
         record(&mut history, "2026-09-25", None, None);
         assert_eq!(history["days"].as_array().unwrap().len(), 3);
+    }
+    #[test]
+    fn commits_count_once_per_named_model_else_by_agent_author() {
+        let log = "2026-09-24|Pascal Pixel|Claude Opus 5.5 <noreply@anthropic.com>\n\
+                   2026-09-24|Claude|Claude Fable 5 <a>;Claude Opus 5 <b>\n\
+                   2026-09-24|Codex|OpenAI Codex <c>;Codex <c>\n\
+                   2026-09-24|Cursor Agent|Pascal Pixel <p>\n\
+                   2026-09-24|Pascal Pixel|\n\
+                   2026-09-23|Pascal Pixel|Claude Opus 4.8 (1M context) <d>;Claude <e>\n";
+        let days = model_counts(log);
+        let today = &days["2026-09-24"];
+        for (model, count) in [
+            ("Opus 5.5", 1),
+            ("Fable 5", 1),
+            ("Opus 5", 1),
+            ("Codex", 1),
+            ("Cursor", 1),
+            (UNTAGGED, 1),
+        ] {
+            assert_eq!(today.get(model), Some(&count), "{model}");
+        }
+        assert_eq!(days["2026-09-23"].get("Opus 4.8"), Some(&1));
+        assert_eq!(days["2026-09-23"].get("Claude"), Some(&1));
+        let mut history = json!({"days": [{"date": "2026-09-24", "tbs": {"percent": 1.0}}]});
+        record_models(&mut history, "2026-09-24", today);
+        assert_eq!(history["days"][0]["models"]["Opus 5.5"], 1);
+        assert!(MODELS.iter().all(|model| !model.is_empty()));
     }
     #[test]
     fn civil_dates_count_days() {

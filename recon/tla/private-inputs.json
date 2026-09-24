@@ -37023,13 +37023,6 @@
       "source_length": 240
     },
     {
-      "address": "0x08682010",
-      "size": "0x2000",
-      "kind": "gba-4bpp-tiles",
-      "source": "games/THE LOST AGE/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
-      "source_rect": {"x": 0, "y": 0, "width": 128, "height": 128}
-    },
-    {
       "address": "0x08684010",
       "size": "0x8c0",
       "kind": "le-u16-array",
@@ -131212,23 +131205,6 @@
         "0x080f3984", "0x080f3c3c", "0x081055f8", "0x0810c008", "0x0810c3ca", "0x081287c4", "0x08161ac4", "0x081a8288"
       ],
       "decoded_sha256": "5cad3ff20cf93a79010e63175dfe774dac5a1f98ebf27dd376bb788334bb39a4"
-    },
-    {
-      "kind": "tile-atlas",
-      "source": "games/THE LOST AGE/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
-      "source_rect": {"x": 0, "y": 0, "width": 128, "height": 128},
-      "width": 128,
-      "height": 128,
-      "atlas_width": 256,
-      "region_address": "0x08682010",
-      "encoded_sha256": "962b55d4f30af2c5e175035aa77b5e939eb7df7d7a5c2881723b3fd43eb40e43",
-      "decoded_sha256": "ac05b269a0f1a76858b33c99d3245409abc283cded1ddbdaa88c423daf185ff7",
-      "decoded_length": "0x2000",
-      "bpp": 4,
-      "codec": "raw",
-      "identity": null,
-      "runtime_role": null,
-      "atlas_height": 17696
     },
     {
       "kind": "palette-table",

@@ -1,0 +1,26 @@
+{
+  "format": 1,
+  "kind": "components",
+  "address": "0x08320fb0",
+  "size": "0x00002000",
+  "resource": "0x013",
+  "components": [
+    {
+      "kind": "gba-4bpp-tiles",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/FONT/MENU_GLYPHS_0000_00FF.4BPP.PNG",
+      "size": 8192
+    }
+  ],
+  "glyphs": {
+    "note": "The menu and window font: 256 8x8 tiles indexed by character code, ink in colour 1 and its shadow in colour 3 over colour 4.",
+    "first_code": 0,
+    "frame_width": 8,
+    "frame_height": 8,
+    "columns": 16,
+    "advances": {
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/TABLES.JSON",
+      "pointer": "/tables/0x080370d4/segments/0/values",
+      "first_code": 32
+    }
+  }
+}

@@ -78,6 +78,22 @@
     {"kind": "golden-sun-pcm-wave-series", "index": "games/THE LOST AGE/SOUND/SAMPLE/SAMPLES.TSV"},
     {"kind": "golden-sun-native-source-series", "index": "recon/tla/private-inputs.json"}
   ],
+  "edition_regions": [
+    {
+      "rom": "tla-ja",
+      "address": "0x0805a8cc",
+      "size": "0x2500",
+      "kind": "typed-table",
+      "source": "games/THE LOST AGE/SRC/GRAPHICS/FONT/JAPANESE_GLYPHS.JSON"
+    },
+    {
+      "rom": "tla-ja",
+      "address": "0x08682010",
+      "size": "0x2000",
+      "kind": "components",
+      "source": "games/THE LOST AGE/SRC/GRAPHICS/FONT/MENU_GLYPHS_JA.JSON"
+    }
+  ],
   "regions": [
     {
       "address": "0x08000000",
@@ -493,6 +509,12 @@
       "size": "0x10",
       "kind": "typed-table",
       "source": "games/THE LOST AGE/SRC/SYSTEM/BUILD_STAMP.JSON"
+    },
+    {
+      "address": "0x08682010",
+      "size": "0x2000",
+      "kind": "components",
+      "source": "games/THE LOST AGE/SRC/GRAPHICS/FONT/MENU_GLYPHS.JSON"
     },
     {"address": "0x08f79648", "size": "0x869b8", "kind": "byte-fill", "value": 0}
   ]

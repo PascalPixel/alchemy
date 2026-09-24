@@ -4,8 +4,9 @@ use super::cache::{self, Phase};
 use super::glyphs::{self, TAB_ICONS};
 use super::http::Response;
 use super::status;
-use crate::coverage::boxtree::{esc, CHROME};
+use crate::coverage::boxtree::esc;
 use crate::coverage::letters::{LINE, PIXEL};
+use crate::coverage::palette;
 
 const STYLES: &str = include_str!("style.css");
 pub(super) const TABS: [(&str, &str); 5] = [
@@ -33,7 +34,7 @@ pub(super) fn active(path: &str) -> &'static str {
 fn theme() -> String {
     let assets = glyphs::current();
     let mut css = String::from(":root{");
-    for (name, color) in CHROME {
+    for (name, color) in palette::CSS {
         css.push_str(&format!("--{name}:{color};"));
     }
     css.push('}');
@@ -157,18 +158,21 @@ pub(super) fn fragment(message: &str) -> String {
         esc(message)
     ))
 }
-/// The sheet and advances for script-drawn text (the map canvas), when built.
+/// The menu face's sheet, cell and advances for script-drawn text (the map
+/// canvas and status lines), when built. Its frames are character codes.
 fn letters_meta() -> String {
-    glyphs::current()
-        .letters
-        .map(|(stamp, letters)| {
-            let advances = letters
-                .advance
+    glyphs::menu_meta()
+        .map(|(stamp, advance, cell)| {
+            let advances = advance
                 .iter()
                 .map(u32::to_string)
                 .collect::<Vec<_>>()
                 .join(",");
-            format!("<meta name=\"letters\" content=\"/cache/letters-{stamp}.png\" data-advances=\"{advances}\">")
+            format!(
+                "<meta name=\"letters\" content=\"/cache/{stamp}.png\" data-cell=\"{}\" data-scale=\"{}\" data-advances=\"{advances}\">",
+                cell.0,
+                glyphs::SHEET_SCALE
+            )
         })
         .unwrap_or_default()
 }

@@ -45910,13 +45910,6 @@
       "source_rect": {"x": 0, "y": 4168, "width": 56, "height": 8}
     },
     {
-      "address": "0x08320fb0",
-      "size": "0x2000",
-      "kind": "gba-4bpp-tiles",
-      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
-      "source_rect": {"x": 0, "y": 4176, "width": 128, "height": 128}
-    },
-    {
       "address": "0x083c3594",
       "size": "0x764",
       "kind": "golden-sun-general-lz",
@@ -62308,23 +62301,6 @@
       "encoded_sha256": "c671897a6ca9c7de36f77e3395932c8acbffc841e6ff4b82477126a1cda8aac0",
       "decoded_sha256": "789a1ccd8fea8ab945d493fa173b9748806ad0d9a35fca2153738d52d2bdbb66",
       "decoded_length": "0xe0",
-      "bpp": 4,
-      "codec": "raw",
-      "identity": null,
-      "runtime_role": null,
-      "atlas_height": 8576
-    },
-    {
-      "kind": "tile-atlas",
-      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
-      "source_rect": {"x": 0, "y": 4176, "width": 128, "height": 128},
-      "width": 128,
-      "height": 128,
-      "atlas_width": 1024,
-      "region_address": "0x08320fb0",
-      "encoded_sha256": "962b55d4f30af2c5e175035aa77b5e939eb7df7d7a5c2881723b3fd43eb40e43",
-      "decoded_sha256": "ac05b269a0f1a76858b33c99d3245409abc283cded1ddbdaa88c423daf185ff7",
-      "decoded_length": "0x2000",
       "bpp": 4,
       "codec": "raw",
       "identity": null,

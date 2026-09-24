@@ -1,11 +1,12 @@
 //! The dashboard's lettering and tab icons. Every string is drawn from the
-//! tracked glyph sheet (see `coverage::letters`), cut as CSS mask sprites at
-//! one pixel scale; the icons come from the tracked icon banks and the ROM
-//! palette. Both images are built into the dashboard cache and served from
-//! there; neither is a font file and neither may ever be committed.
+//! tracked glyph sheets (see `coverage::letters`), cut as CSS mask sprites at
+//! one pixel scale: labels in the upright menu font, quoted game text in the
+//! dialogue fonts. The icons come from the tracked icon banks and the ROM
+//! palette. The images are built into the dashboard cache and served from
+//! there; none is a font file and none may ever be committed.
 use super::cache::{self, Store};
 use crate::build_assets::{icon_bank_source, raw_palette_bank, ICON_BANKS, ICON_PALETTE_BANK};
-use crate::coverage::letters::{Letters, LINE, PIXEL, SHEET};
+use crate::coverage::letters::{Letters, PIXEL};
 use psynergy::assets::image::{indexed_png, IndexedImage};
 use std::{collections::BTreeMap, path::Path, sync::Mutex};
 
@@ -17,50 +18,87 @@ pub(super) const TAB_ICONS: [(&str, u8, u32); 5] = [
     ("Maps", 4, 167),
     ("Text", 4, 176),
 ];
-/// The served glyph sheet is drawn at two device pixels per game pixel, so a
-/// retina display shows it without resampling.
-const SHEET_SCALE: u32 = 2;
-const SHEET_COLUMNS: u32 = 16;
+/// The served glyph sheets are drawn at two device pixels per game pixel,
+/// so a retina display shows them without resampling.
+pub(super) const SHEET_SCALE: u32 = 2;
+pub(super) const SHEET_COLUMNS: u32 = 16;
 
+/// The faces by the class that selects them: `u` the menu font for every
+/// label, `d` the Western dialogue font and `j` the Japanese one for quoted
+/// game text (a `data-face` attribute on the element that holds it).
+pub(super) const FACES: [&str; 3] = ["u", "d", "j"];
+
+#[derive(Clone)]
+pub(super) struct Face {
+    pub class: &'static str,
+    pub stamp: String,
+    pub letters: Letters,
+}
 #[derive(Clone, Default)]
 pub(super) struct Assets {
-    pub letters: Option<(String, Letters)>,
+    pub faces: Vec<Face>,
     pub icons: Option<String>,
 }
 static ASSETS: Mutex<Assets> = Mutex::new(Assets {
-    letters: None,
+    faces: Vec::new(),
     icons: None,
 });
 pub(super) fn current() -> Assets {
     ASSETS.lock().unwrap_or_else(|e| e.into_inner()).clone()
 }
-
-/// Build (or reuse) the cached images; each failure leaves the other usable.
-pub(super) fn refresh(root: &Path) -> Result<String, String> {
-    let store = Store::at(root);
-    let letters = letters_file(root, &store);
-    let icons = icon_file(root, &store);
-    let mut assets = ASSETS.lock().unwrap_or_else(|e| e.into_inner());
-    assets.letters = letters.as_ref().ok().cloned();
-    assets.icons = icons.as_ref().ok().cloned();
-    match (letters, icons) {
-        (Ok(_), Ok(_)) => Ok("lettering and icons cached".into()),
-        (Err(error), _) => Err(format!("lettering: {error}")),
-        (_, Err(error)) => Err(format!("icons: {error}")),
+impl Assets {
+    pub(super) fn face(&self, class: &str) -> Option<&Face> {
+        self.faces.iter().find(|face| face.class == class)
     }
 }
-/// A cached file's bytes by its published name, `letters-<stamp>.png` or
-/// `icons-<stamp>.png`; only current stamps are served.
+
+/// Build (or reuse) the cached images; each failure leaves the rest usable.
+pub(super) fn refresh(root: &Path) -> Result<String, String> {
+    let store = Store::at(root);
+    let mut faces = Vec::new();
+    let mut failures = Vec::new();
+    for class in FACES {
+        let letters = match class {
+            "u" => Letters::menu(root),
+            "d" => Letters::dialogue(root),
+            _ => Letters::japanese(root),
+        };
+        match letters.and_then(|letters| face_file(&store, class, letters)) {
+            Ok(face) => faces.push(face),
+            Err(error) => failures.push(format!("{class}: {error}")),
+        }
+    }
+    let icons = icon_file(root, &store);
+    let mut assets = ASSETS.lock().unwrap_or_else(|e| e.into_inner());
+    assets.faces = faces;
+    assets.icons = icons.as_ref().ok().cloned();
+    if let Err(error) = icons {
+        failures.push(format!("icons: {error}"));
+    }
+    if failures.is_empty() {
+        Ok("lettering and icons cached".into())
+    } else {
+        Err(failures.join("; "))
+    }
+}
+/// A cached file's bytes by its published name, `letters<class>-<stamp>.png`
+/// or `icons-<stamp>.png`; only current stamps are served.
 pub(super) fn file(root: &Path, name: &str) -> Option<(&'static str, Vec<u8>)> {
     let assets = current();
     let (stem, extension) = name.rsplit_once('.')?;
     let (kind, stamp) = stem.split_once('-')?;
-    let current = match (kind, extension) {
-        ("letters", "png") => assets.letters.map(|(stamp, _)| stamp),
-        ("icons", "png") => assets.icons,
-        _ => return None,
+    if extension != "png" {
+        return None;
+    }
+    let known = match kind {
+        _ if kind.starts_with("letters") => assets
+            .faces
+            .iter()
+            .any(|face| kind == format!("letters{}", face.class) && face.stamp == stamp),
+        "icons" => assets.icons.as_deref() == Some(stamp),
+        _ => false,
     };
-    (current.as_deref() == Some(stamp))
+    known
         .then(|| Store::at(root).load(kind, stamp, extension))
         .flatten()
         .map(|bytes| ("image/png", bytes))
@@ -69,31 +107,34 @@ pub(super) fn file(root: &Path, name: &str) -> Option<(&'static str, Vec<u8>)> {
 fn read(root: &Path, path: &str) -> Result<Vec<u8>, String> {
     std::fs::read(root.join(path)).map_err(|error| format!("{path}: {error}"))
 }
-fn letters_file(root: &Path, store: &Store) -> Result<(String, Letters), String> {
-    let letters = Letters::load(root)?;
-    let mut parts = vec![cache::code_identity().into_bytes(), read(root, SHEET)?];
-    parts.extend(letters.rows.iter().map(|rows| {
-        rows.iter()
-            .flat_map(|row| row.to_le_bytes())
-            .collect::<Vec<_>>()
-    }));
-    let stamp = cache::stamp(&parts.iter().map(Vec::as_slice).collect::<Vec<_>>());
-    store.get_or_build("letters", &stamp, "png", || mask_sheet(&letters))?;
-    Ok((stamp, letters))
+fn face_file(store: &Store, class: &'static str, letters: Letters) -> Result<Face, String> {
+    let sheet = mask_sheet(&letters)?;
+    // Each face keeps its own cache name, so saving one never retires another.
+    let stamp = cache::stamp(&[cache::code_identity().as_bytes(), &sheet]);
+    store.get_or_build(&format!("letters{class}"), &stamp, "png", || Ok(sheet))?;
+    Ok(Face {
+        class,
+        stamp,
+        letters,
+    })
 }
-/// The sheet as an alpha mask, ink opaque, `SHEET_SCALE` device pixels to
-/// the game pixel, sixteen frames to a row.
+/// A face's frames as an alpha mask, ink opaque, `SHEET_SCALE` device pixels
+/// to the game pixel, sixteen frames to a row.
 fn mask_sheet(letters: &Letters) -> Result<Vec<u8>, String> {
+    let (cell_w, cell_h) = letters.cell;
     let frames = letters.rows.len() as u32;
     let (width, height) = (
-        SHEET_COLUMNS * LINE * SHEET_SCALE,
-        frames.div_ceil(SHEET_COLUMNS) * LINE * SHEET_SCALE,
+        SHEET_COLUMNS * cell_w * SHEET_SCALE,
+        frames.div_ceil(SHEET_COLUMNS).max(1) * cell_h * SHEET_SCALE,
     );
     let mut alpha = vec![0u8; (width * height) as usize];
     for frame in 0..frames {
-        let (left, top) = (frame % SHEET_COLUMNS * LINE, frame / SHEET_COLUMNS * LINE);
-        for y in 0..LINE * SHEET_SCALE {
-            for x in 0..LINE * SHEET_SCALE {
+        let (left, top) = (
+            frame % SHEET_COLUMNS * cell_w,
+            frame / SHEET_COLUMNS * cell_h,
+        );
+        for y in 0..cell_h * SHEET_SCALE {
+            for x in 0..cell_w * SHEET_SCALE {
                 if letters.ink(frame as usize, x / SHEET_SCALE, y / SHEET_SCALE) {
                     let at = (top * SHEET_SCALE + y) * width + left * SHEET_SCALE + x;
                     alpha[at as usize] = 255;
@@ -112,55 +153,89 @@ fn mask_sheet(letters: &Letters) -> Result<Vec<u8>, String> {
         .map_err(|e| e.to_string())?;
     Ok(out)
 }
-/// The lettering rules: a run of glyph sprites per text node, one class per
-/// code with its advance and place on the sheet, lengths in game pixels.
+/// The lettering rules: per face, a sprite per frame with its advance and
+/// place on the sheet, lengths in game pixels.
 pub(super) fn lettering_css() -> String {
-    let Some((stamp, letters)) = current().letters else {
-        return String::new();
-    };
-    let columns = SHEET_COLUMNS;
-    let mut css = format!(
-        ".t i{{display:block;height:{LINE}px;background:currentColor;-webkit-mask:url(/cache/letters-{stamp}.png) 0 0/{}px {}px no-repeat;mask:url(/cache/letters-{stamp}.png) 0 0/{}px {}px no-repeat}}",
-        columns * LINE,
-        (letters.rows.len() as u32).div_ceil(columns) * LINE,
-        columns * LINE,
-        (letters.rows.len() as u32).div_ceil(columns) * LINE,
-    );
-    for frame in 0..letters.rows.len() as u32 {
-        let advance = letters.advance[frame as usize];
-        if advance == 0 {
-            continue;
-        }
-        let (x, y) = (frame % columns * LINE, frame / columns * LINE);
+    let mut css = String::new();
+    for face in current().faces {
+        let Face {
+            class,
+            stamp,
+            letters,
+        } = &face;
+        let (cell_w, cell_h) = letters.cell;
+        let size = format!(
+            "{}px {}px",
+            SHEET_COLUMNS * cell_w,
+            (letters.rows.len() as u32).div_ceil(SHEET_COLUMNS).max(1) * cell_h
+        );
         css.push_str(&format!(
-            ".t .c{:02x}{{width:{advance}px;-webkit-mask-position:-{x}px -{y}px;mask-position:-{x}px -{y}px}}",
-            frame + 0x20
+            ".{class} i{{display:block;height:{cell_h}px;-webkit-mask:url(/cache/letters{class}-{stamp}.png) 0 0/{size} no-repeat;mask:url(/cache/letters{class}-{stamp}.png) 0 0/{size} no-repeat}}"
         ));
+        for (frame, advance) in letters.advance.iter().enumerate() {
+            if *advance == 0 {
+                continue;
+            }
+            let frame = frame as u32;
+            let (x, y) = (
+                frame % SHEET_COLUMNS * cell_w,
+                frame / SHEET_COLUMNS * cell_h,
+            );
+            css.push_str(&format!(
+                ".{class} .g{frame:02x}{{width:{advance}px;-webkit-mask-position:-{x}px -{y}px;mask-position:-{x}px -{y}px}}"
+            ));
+        }
     }
     super::chrome::pixels(&css)
 }
-/// Every text node of a page's body drawn from the sheet: words as unbroken
+/// Every text node of a page's body drawn from the sheets: words as unbroken
 /// sprite runs, the text itself kept for readers, search and copying.
 /// Script, style, title and option text is left alone, and so is any
-/// character the sheet lacks, which falls back to the system face.
+/// character a face lacks, which falls back to the system face.
 pub(super) fn letter(html: &str) -> String {
-    let Some((_, letters)) = current().letters else {
+    let assets = current();
+    let faces = assets
+        .faces
+        .iter()
+        .map(|face| (face.class, &face.letters))
+        .collect::<Vec<_>>();
+    if faces.is_empty() {
         return html.to_string();
-    };
-    letter_with(&letters, html)
+    }
+    letter_with(&faces, html)
 }
-pub(super) fn letter_with(letters: &Letters, html: &str) -> String {
+pub(super) fn letter_with(faces: &[(&str, &Letters)], html: &str) -> String {
+    let face = |class: &str| {
+        faces
+            .iter()
+            .find(|(name, _)| *name == class)
+            .or(faces.first())
+            .copied()
+    };
     let mut out = String::with_capacity(html.len() * 3);
     let mut rest = html;
-    let mut raw: Option<&str> = None;
+    let mut raw: Option<String> = None;
     let mut body = false;
+    // The element that chose a quoted-text face, and the face.
+    let mut quoted: Option<(String, &str)> = None;
     while !rest.is_empty() {
+        // Raw text runs verbatim to its own closing tag, whatever it holds.
+        if let Some(open) = &raw {
+            let close = rest.find(&format!("</{open}")).unwrap_or(rest.len());
+            out.push_str(&rest[..close]);
+            rest = &rest[close..];
+            if rest.is_empty() {
+                break;
+            }
+        }
         let next = rest.find('<').unwrap_or(rest.len());
         let (text, tail) = rest.split_at(next);
-        if body && raw.is_none() && !text.trim().is_empty() {
-            out.push_str(&run(letters, &unescape(text)));
-        } else {
-            out.push_str(text);
+        let chosen = face(quoted.as_ref().map_or("u", |(_, class)| class));
+        match chosen {
+            Some((class, letters)) if body && raw.is_none() && !text.trim().is_empty() => {
+                out.push_str(&run(class, letters, &unescape(text)));
+            }
+            _ => out.push_str(text),
         }
         if tail.is_empty() {
             break;
@@ -176,8 +251,8 @@ pub(super) fn letter_with(letters: &Letters, html: &str) -> String {
             .unwrap_or("")
             .to_ascii_lowercase();
         let closing = tag.starts_with("</");
-        match raw {
-            Some(open) if closing && name == open => raw = None,
+        match &raw {
+            Some(open) if closing && name == *open => raw = None,
             Some(_) => {}
             None if !closing
                 && matches!(
@@ -185,16 +260,21 @@ pub(super) fn letter_with(letters: &Letters, html: &str) -> String {
                     "script" | "style" | "title" | "option" | "textarea"
                 ) =>
             {
-                raw = Some(match name.as_str() {
-                    "script" => "script",
-                    "style" => "style",
-                    "title" => "title",
-                    "option" => "option",
-                    _ => "textarea",
-                })
+                raw = Some(name.clone())
             }
             None if name == "body" => body = !closing,
             None => {}
+        }
+        if closing && quoted.as_ref().is_some_and(|(open, _)| *open == name) {
+            quoted = None;
+        } else if !closing {
+            if let Some(at) = tag.find("data-face=\"") {
+                let value = &tag[at + 11..];
+                let value = &value[..value.find('"').unwrap_or(0)];
+                if let Some(class) = FACES.iter().find(|class| **class == value) {
+                    quoted = Some((name, class));
+                }
+            }
         }
     }
     out
@@ -239,13 +319,14 @@ fn unescape(text: &str) -> String {
     out.push_str(rest);
     out
 }
-/// One text node as `<span class="t">`: the hidden text, then each word as an
-/// unbreakable run of glyphs with its following space, lines split at
-/// newlines, and characters the sheet lacks in the system face.
-fn run(letters: &Letters, text: &str) -> String {
+/// One text node as `<span class="t CLASS">`: the hidden text, then each word
+/// as an unbreakable run of glyphs with its following space, lines split at
+/// newlines, and characters the face lacks in the system face.
+fn run(class: &str, letters: &Letters, text: &str) -> String {
     let escaped = crate::coverage::boxtree::esc(text);
-    let mut out =
-        format!("<span class=\"t\"><span class=\"sr\">{escaped}</span><span aria-hidden=\"true\">");
+    let mut out = format!(
+        "<span class=\"t {class}\"><span class=\"sr\">{escaped}</span><span aria-hidden=\"true\">"
+    );
     let mut word = String::new();
     let mut fallback = String::new();
     let flush_fallback = |word: &mut String, fallback: &mut String| {
@@ -271,11 +352,12 @@ fn run(letters: &Letters, text: &str) -> String {
         match letters.frame(character) {
             Some(frame) => {
                 flush_fallback(&mut word, &mut fallback);
-                word.push_str(&format!("<i class=\"c{:02x}\"></i>", frame + 0x20));
+                word.push_str(&format!("<i class=\"g{frame:02x}\"></i>"));
             }
             None => fallback.push(character),
         }
-        if character == ' ' {
+        if character == ' ' || character == '\u{3000}' {
+            flush_fallback(&mut word, &mut fallback);
             out.push_str(&format!("<b>{word}</b>"));
             word.clear();
         }
@@ -287,12 +369,23 @@ fn run(letters: &Letters, text: &str) -> String {
     out.push_str("</span></span>");
     out
 }
-/// A glyph run's width in CSS pixels, for layout that must know it ahead.
+/// A label's width in CSS pixels in the menu font, for layout that must know
+/// it ahead.
 pub(super) fn width(text: &str) -> u32 {
-    match current().letters {
-        Some((_, letters)) => letters.width(text) * PIXEL,
-        None => text.chars().count() as u32 * 8 * PIXEL,
+    match current().face("u") {
+        Some(face) => face.letters.width(text) * PIXEL,
+        None => text.chars().count() as u32 * 6 * PIXEL,
     }
+}
+/// The menu face's sheet and advances, for script-drawn text.
+pub(super) fn menu_meta() -> Option<(String, Vec<u32>, (u32, u32))> {
+    current().face("u").map(|face| {
+        (
+            format!("lettersu-{}", face.stamp),
+            face.letters.advance.clone(),
+            face.letters.cell,
+        )
+    })
 }
 
 fn icon_file(root: &Path, store: &Store) -> Result<String, String> {
@@ -362,10 +455,11 @@ fn icon_strip(banks: &BTreeMap<u8, IndexedImage>, colors: &[u16; 16]) -> Result<
 mod tests {
     use super::*;
     #[test]
-    fn body_text_becomes_glyph_runs_and_raw_text_does_not() {
+    fn body_text_becomes_glyph_runs_in_its_face_and_raw_text_does_not() {
         let letters = crate::coverage::letters::fixture();
-        let html = "<html><head><title>A&amp;B</title><style>p{x:1}</style></head><body><a class=\"tab\">Up &amp; 神</a><select><option>Keep</option></select><script>let a=1<2</script>\n</body></html>";
-        let lettered = letter_with(&letters, html);
+        let faces = [("u", &letters), ("d", &letters)];
+        let html = "<html><head><title>A&amp;B</title><style>p{x:1}</style></head><body><a class=\"tab\">Up &amp; 神</a><select><option>Keep</option></select><script>let a=1<2</script><td data-face=\"d\">Hi</td><td>Hi</td>\n</body></html>";
+        let lettered = letter_with(&faces, html);
         assert!(
             lettered.contains("<title>A&amp;B</title>")
                 && lettered.contains("<style>p{x:1}</style>")
@@ -374,18 +468,20 @@ mod tests {
             lettered.contains("<option>Keep</option>")
                 && lettered.contains("<script>let a=1<2</script>")
         );
-        assert!(lettered.contains("<span class=\"sr\">Up &amp; 神</span>"));
+        assert!(lettered.contains("<span class=\"t u\"><span class=\"sr\">Up &amp; 神</span>"));
         assert!(lettered
-            .contains("<b><i class=\"c55\"></i><i class=\"c70\"></i><i class=\"c20\"></i></b>"));
+            .contains("<b><i class=\"g35\"></i><i class=\"g50\"></i><i class=\"g00\"></i></b>"));
         assert!(lettered.contains(
-            "<b><i class=\"c26\"></i><i class=\"c20\"></i></b><b><span class=\"f\">神</span></b>"
+            "<b><i class=\"g06\"></i><i class=\"g00\"></i></b><b><span class=\"f\">神</span></b>"
         ));
+        assert!(lettered.contains("<td data-face=\"d\"><span class=\"t d\">"));
+        assert!(lettered.contains("</td><td><span class=\"t u\">"));
         assert_eq!(unescape("&lt;a&gt; &#233;&#x41;&unknown"), "<a> éA&unknown");
     }
     #[test]
     fn served_names_accept_only_current_stamps() {
         let root = tempfile::tempdir().unwrap();
-        assert!(file(root.path(), "letters-0123456789abcdef.png").is_none());
+        assert!(file(root.path(), "lettersu-0123456789abcdef.png").is_none());
         assert!(file(root.path(), "font-0123456789abcdef.ttf").is_none());
         assert!(file(root.path(), "../letters-x.png").is_none());
         assert!(file(root.path(), "icons.png").is_none());

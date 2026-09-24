@@ -287,8 +287,13 @@ fn render(root: &Path, folder: &str, selected: Option<&str>) -> Option<(String, 
     );
     out.push_str("</section><style>");
     // A folder's name bar opens exactly when its name fits, under one query.
-    // One line is LINE game pixels; the tile's border adds one on each side.
-    let (line, one, two) = (LINE * PIXEL, (LINE + 2) * PIXEL, (2 * LINE + 2) * PIXEL);
+    // A heading is one LINE and its bevel a pixel above and below; a file
+    // shows its size once a second line fits.
+    let (line, one, two) = (
+        (LINE + 2) * PIXEL,
+        (LINE + 4) * PIXEL,
+        (2 * LINE + 4) * PIXEL,
+    );
     for width in widths {
         out.push_str(&format!("@container (min-width:{width}px) and (min-height:{one}px){{.label-w{width}>span{{visibility:visible}}.label-w{width}~.area.headed{{top:{line}px}}}}@container (min-width:{width}px) and (min-height:{two}px){{.label-w{width}>.file-size{{visibility:visible}}}}"));
     }

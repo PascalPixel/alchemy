@@ -442,12 +442,14 @@ mod tests {
         assert!(!styles.contains("url("));
         assert!(!styles.contains("http"));
         assert!(styles.contains(".tab {"));
+        // The figures' chrome: flat faces, one-pixel bevels, no rounding.
+        assert!(!styles.contains("border-radius"));
         assert!(
-            styles.contains("border-radius:3px 3px 0 0")
-                && styles.contains("box-shadow:var(--frame)")
+            styles.contains("box-shadow:var(--raised)")
+                && styles.contains("box-shadow:var(--sunken)")
         );
         // Text is glyph sprites; the system face only fills in what the sheet lacks.
-        assert!(styles.contains(".t b {") && styles.contains("--text: 12px/16px var(--system)"));
+        assert!(styles.contains(".t b {") && styles.contains("--text: 10px/16px var(--system)"));
         assert!(!styles.contains("font-style:italic"));
         // Every length is a whole number of game pixels, each PIXEL CSS pixels.
         let source = include_str!("style.css");

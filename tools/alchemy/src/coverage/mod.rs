@@ -5,6 +5,7 @@ pub(crate) mod history;
 pub(crate) mod jsnum;
 pub(crate) mod letters;
 pub(crate) mod model;
+pub(crate) mod palette;
 pub(crate) mod pipeline;
 pub(crate) mod progress;
 pub(crate) mod proof;
@@ -232,12 +233,20 @@ mod tests {
         use super::{check_figures, figure, figure_date_current, history, letters, write_figures};
         let root = tempfile::tempdir().unwrap();
         let root = root.path();
+        let manifest = letters::sheet("THE BROKEN SEAL", letters::MENU);
         let table: serde_json::Value = serde_json::from_slice(
-            &std::fs::read(crate::coverage::tree::root().join(letters::SHEET)).unwrap(),
+            &std::fs::read(crate::coverage::tree::root().join(&manifest)).unwrap(),
         )
         .unwrap();
-        let image = table["segments"][0]["image"]["source"].as_str().unwrap();
-        for path in [letters::SHEET, image] {
+        let image = table["components"][0]["source"]
+            .as_str()
+            .unwrap()
+            .to_string();
+        let widths = table["glyphs"]["advances"]["source"]
+            .as_str()
+            .unwrap()
+            .to_string();
+        for path in [&manifest, &image, &widths] {
             std::fs::create_dir_all(root.join(path).parent().unwrap()).unwrap();
             std::fs::copy(crate::coverage::tree::root().join(path), root.join(path)).unwrap();
         }
@@ -350,7 +359,7 @@ fn map_inputs(root: &Path) -> String {
 }
 /// Both README figures as drawn on the history's recorded figure date.
 fn render_figures(root: &Path, history: &serde_json::Value) -> Result<(Vec<u8>, Vec<u8>), String> {
-    let letters = letters::Letters::load(root)?;
+    let letters = letters::Letters::menu(root)?;
     let date = history["figures"]["date"]
         .as_str()
         .unwrap_or("")
@@ -370,6 +379,7 @@ fn write_figures(
     let today = history::today();
     let mut history = history::load(root)?;
     history::record(&mut history, &today, sun, anchor);
+    history::record_models(&mut history, &today, &history::models_on(root, &today)?);
     let drawn = std::fs::read(root.join(figure::CHART))
         .ok()
         .and_then(|png| raster::png_date(&png));

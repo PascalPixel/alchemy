@@ -18,19 +18,22 @@ const lettersMeta = document.querySelector('meta[name=letters]');
 const letterAdvances = lettersMeta ? lettersMeta.dataset.advances.split(',').map(Number) : [];
 const letterSheet = new Image();
 if(lettersMeta) { letterSheet.src = lettersMeta.content; letterSheet.onload = () => draw(); }
-function letterFrame(c) { const code=c.codePointAt(0); const frame=code-32; return code>=32&&code<=255&&!(code>=127&&code<160)&&letterAdvances[frame]>0 ? frame : 31; }
+const letterCell = lettersMeta ? Number(lettersMeta.dataset.cell) : 8, letterScale = lettersMeta ? Number(lettersMeta.dataset.scale) : 2;
+// The menu font's frames are character codes; a code it lacks draws as '?'.
+function knownFrame(code) { return code>=32&&code<=255&&code!==92&&!(code>=127&&code<160)&&letterAdvances[code]>1; }
+function letterFrame(c) { const code=c.codePointAt(0); return knownFrame(code) ? code : 63; }
 function lettersWidth(text) { let w=0; for(const c of text) w+=letterAdvances[letterFrame(c)]||0; return w; }
 // The server's glyph-run markup for text written after load: the same
 // sprite classes, the text kept for readers.
 function letters(text) {
-  const run=document.createElement('span');run.className='t';
+  const run=document.createElement('span');run.className='t u';
   const hidden=document.createElement('span');hidden.className='sr';hidden.textContent=text;
   const shown=document.createElement('span');shown.setAttribute('aria-hidden','true');
   if(!lettersMeta) return document.createTextNode(text);
   let word=document.createElement('b');
   for(const c of text){
-    const code=c.codePointAt(0),known=code>=32&&code<=255&&!(code>=127&&code<160)&&letterAdvances[code-32]>0;
-    if(known){const glyph=document.createElement('i');glyph.className='c'+code.toString(16).padStart(2,'0');word.append(glyph)}
+    const code=c.codePointAt(0),known=knownFrame(code);
+    if(known){const glyph=document.createElement('i');glyph.className='g'+code.toString(16).padStart(2,'0');word.append(glyph)}
     else{const fallback=document.createElement('span');fallback.className='f';fallback.textContent=c;word.append(fallback)}
     if(c===' '){shown.append(word);word=document.createElement('b')}
   }
@@ -40,7 +43,7 @@ function letters(text) {
 function setLetters(element,text){element.replaceChildren(letters(text))}
 function drawLetters(text, left, top) {
   if(!letterSheet.complete||!letterSheet.naturalWidth) return;
-  let at=left; for(const c of text) { const frame=letterFrame(c); context.drawImage(letterSheet, frame%16*32, Math.floor(frame/16)*32, 32, 32, at, top, 16, 16); at+=letterAdvances[frame]||0; }
+  let at=left; for(const c of text) { const frame=letterFrame(c); const size=letterCell*letterScale; context.drawImage(letterSheet, frame%16*size, Math.floor(frame/16)*size, size, size, at, top+(16-letterCell)/2, letterCell, letterCell); at+=letterAdvances[frame]||0; }
 }
 const raw = color => [color & 31, (color >> 5) & 31, (color >> 10) & 31];
 function shown([r,g,b]) { if(!lut) return [r<<3,g<<3,b<<3]; const at=(r|g<<5|b<<10)*3; return [lut[at],lut[at+1],lut[at+2]]; }

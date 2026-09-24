@@ -73462,6 +73462,46 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "link-lobby-count-message",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/MENU/LINK_LOBBY/COUNT_MESSAGE.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3cb",
+      "absolute_symbols": {
+        "Engine_EventBegin": {
+          "address": "0x02009844",
+          "kind": "thumb"
+        },
+        "Engine_ActorFaceActor": {
+          "address": "0x0200987c",
+          "kind": "thumb"
+        },
+        "Main_08015120": {
+          "address": "0x020097ec",
+          "kind": "thumb"
+        },
+        "Engine_EventSetMessage": {
+          "address": "0x02009884",
+          "kind": "thumb"
+        },
+        "Engine_EventOpenMessage": {
+          "address": "0x0200988c",
+          "kind": "thumb"
+        },
+        "Engine_EventEnd": {
+          "address": "0x0200984c",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02001158",
+          "extent": 92,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

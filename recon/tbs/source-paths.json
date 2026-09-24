@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_3cb:02001158": {
+      "name": "LinkLobby_ShowCountMessage",
+      "source": "MENU/LINK_LOBBY/COUNT_MESSAGE.C"
+    },
     "resource_3b3:02000fcc": {
       "name": "TakaraHashira_ReadMapCell",
       "source": "FIELD/TAKARA_HASHIRA/READ_MAP_CELL.C"

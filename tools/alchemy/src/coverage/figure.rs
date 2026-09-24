@@ -12,11 +12,13 @@ use super::letters::{Letters, LINE};
 use super::model::{treemap, Category, Rect, Tile};
 use super::palette::{BAND, BLUE, DARK, FACE, GOLD, GRID, INK, LIGHT, MUTED, SHADOW, WELL};
 use super::raster::Canvas;
+use super::sessions::{family, Family};
 use serde_json::Value;
 use std::path::Path;
 
-/// Both figures are this many game pixels wide, shown at 830 CSS pixels.
-pub(crate) const WIDTH: i32 = 830;
+/// Both figures are this many game pixels wide, shown at 838 CSS pixels,
+/// GitHub's widest content column.
+pub(crate) const WIDTH: i32 = 838;
 pub(crate) const CHART: &str = "PROGRESS_CHART.png";
 pub(crate) const MAP: &str = "PROGRESS.png";
 // ------------------------------------------------------------------ chart
@@ -25,14 +27,15 @@ pub(crate) const MAP: &str = "PROGRESS.png";
 /// began, y is 0–100%, stricter-rule days are light bands, and today's
 /// values are labelled at the right end.
 pub(crate) fn chart(letters: &Letters, history: &Value) -> Canvas {
-    let height = 296;
+    let days = history["days"].as_array().cloned().unwrap_or_default();
+    let models = models_shown(&days);
+    let height = 296 + (legend_rows(letters, &models) - 1) * KEY_ROW;
     let mut canvas = Canvas::new(WIDTH, height, FACE);
     canvas.bevel(0, 0, WIDTH, height, LIGHT, DARK);
     let began = history["began"]
         .as_str()
         .and_then(day_number)
         .unwrap_or_default();
-    let days = history["days"].as_array().cloned().unwrap_or_default();
     let last = days
         .iter()
         .filter_map(|row| row["date"].as_str().and_then(day_number))
@@ -74,7 +77,7 @@ pub(crate) fn chart(letters: &Letters, history: &Value) -> Canvas {
         .unwrap_or(0)
         + 12;
     let (left, top) = (40, 32);
-    let (right, bottom) = (WIDTH - 8 - label_room, height - 72);
+    let (right, bottom) = (WIDTH - 8 - label_room, 224);
     let (plot_w, plot_h) = (right - left, bottom - top);
     let span = (last - began) as i32;
     let x_of = |day: i64| left + ((day - began) as i32 * (plot_w - 1) + span / 2) / span;
@@ -128,6 +131,7 @@ pub(crate) fn chart(letters: &Letters, history: &Value) -> Canvas {
         &mut canvas,
         letters,
         &days,
+        &models,
         (left, right, bottom + 24),
         &x_of,
     );
@@ -164,76 +168,146 @@ pub(crate) fn chart(letters: &Letters, history: &Value) -> Canvas {
     canvas
 }
 
-/// Each model's colour in the strip: quiet tones of the file palette, grey
-/// for commits that name no model.
-const MODEL_COLOURS: [(&str, &str); 10] = [
-    ("Opus 5.5", "#e8a6d3"),
-    ("Opus 5", "#b5a0de"),
-    ("Opus 4.8", "#9aa4c2"),
-    ("Fable 5.1", "#81d6b2"),
-    ("Fable 5", "#b5cc82"),
-    ("Sonnet 5", "#8fb7ec"),
-    ("Claude", "#c9e1dc"),
-    ("Codex", "#efbb82"),
-    ("Cursor", "#f29b91"),
-    (UNTAGGED, "#7f9ea6"),
+/// Each model's colour in the strip, each family in release order, older
+/// lighter and newer deeper: Claude in yellows to oranges, OpenAI's Codex
+/// models in lilacs to pinks, Grok in black, and greys for commits whose
+/// model no log names. A family's unversioned name takes its muted tone.
+const MODEL_COLOURS: [(&str, &str); 16] = [
+    ("Haiku 4.5", "#faf5c6"),
+    ("Opus 4.8", "#f8e7ab"),
+    ("Sonnet 5", "#f4d48f"),
+    ("Fable 5", "#f1bb74"),
+    ("Opus 5", "#ed9d59"),
+    ("Fable 5.1", "#e97a3f"),
+    ("Opus 5.5", "#e45225"),
+    ("Claude", "#c9ab84"),
+    ("GPT-5.6 Sol", "#d2b6ef"),
+    ("GPT-5.6 Luna", "#d794e6"),
+    ("GPT-5.6 Terra", "#dc73cc"),
+    ("GPT-6 Astra", "#d4518f"),
+    ("Codex", "#ad94b8"),
+    ("Grok 4.6", "#000000"),
+    ("Cursor", "#c6c6c6"),
+    (UNTAGGED, "#8c8c8c"),
 ];
+fn model_colour(model: &str) -> &'static str {
+    let known = |name: &str| {
+        MODEL_COLOURS
+            .iter()
+            .find(|(m, _)| *m == name)
+            .map(|(_, c)| *c)
+    };
+    known(model).unwrap_or_else(|| match family(model) {
+        Some(Family::Claude) => known("Claude").unwrap_or(MUTED),
+        Some(Family::Codex) => known("Codex").unwrap_or(MUTED),
+        Some(Family::Grok) => "#000000",
+        None => known(UNTAGGED).unwrap_or(MUTED),
+    })
+}
+/// The models the strip shows with their colours, in the order each first
+/// appears in the history (release order within a day), untagged last. The
+/// key reads left to right and the strip stacks bottom to top in this order.
+fn models_shown(days: &[Value]) -> Vec<(String, &'static str)> {
+    let mut first = std::collections::BTreeMap::<String, String>::new();
+    for row in days {
+        let date = row["date"].as_str().unwrap_or("");
+        for (model, count) in row["models"].as_object().into_iter().flatten() {
+            if count.as_u64().unwrap_or(0) > 0 {
+                first
+                    .entry(model.clone())
+                    .or_insert_with(|| date.to_string());
+            }
+        }
+    }
+    let rank = |model: &str| {
+        MODEL_COLOURS
+            .iter()
+            .position(|(m, _)| *m == model)
+            .unwrap_or(MODEL_COLOURS.len())
+    };
+    let mut models = first.into_iter().collect::<Vec<_>>();
+    models.sort_by(|(a, day_a), (b, day_b)| {
+        (a == UNTAGGED, day_a, rank(a), a).cmp(&(b == UNTAGGED, day_b, rank(b), b))
+    });
+    models
+        .into_iter()
+        .map(|(model, _)| {
+            let colour = model_colour(&model);
+            (model, colour)
+        })
+        .collect()
+}
+const STRIP: i32 = 8;
+const KEY_ROW: i32 = 18;
+/// One key entry's advance: swatch, gap, name, gap.
+fn key_entry(letters: &Letters, model: &str) -> i32 {
+    12 + letters.width(model) as i32 + 12
+}
+/// Each key row's entries, wrapped within the figure's margins.
+fn key_rows<'a>(
+    letters: &Letters,
+    models: &'a [(String, &'static str)],
+) -> Vec<Vec<&'a (String, &'static str)>> {
+    let mut rows: Vec<Vec<_>> = vec![Vec::new()];
+    let mut x = 40;
+    for entry in models {
+        let advance = key_entry(letters, &entry.0);
+        if x > 40 && x + advance - 12 > WIDTH - 8 {
+            rows.push(Vec::new());
+            x = 40;
+        }
+        rows.last_mut().expect("a row").push(entry);
+        x += advance;
+    }
+    rows
+}
+fn legend_rows(letters: &Letters, models: &[(String, &'static str)]) -> i32 {
+    key_rows(letters, models).len() as i32
+}
 /// A thin strip under the date axis, a column per day stacked by the day's
-/// share of commits per model, and a one-line key of the models it shows.
+/// share of commits per model, and a key of the models it shows.
 fn models_strip(
     canvas: &mut Canvas,
     letters: &Letters,
     days: &[Value],
+    models: &[(String, &'static str)],
     (left, right, top): (i32, i32, i32),
     x_of: &dyn Fn(i64) -> i32,
 ) {
-    const HEIGHT: i32 = 8;
-    let dated = days
-        .iter()
-        .filter_map(|row| {
-            Some((
-                row["date"].as_str().and_then(day_number)?,
-                row["models"].as_object()?,
-            ))
-        })
-        .collect::<Vec<_>>();
-    canvas.fill(left - 1, top - 1, right - left + 2, HEIGHT + 2, DARK);
-    let mut shown = std::collections::BTreeSet::new();
-    for (day, models) in &dated {
+    canvas.fill(left - 1, top - 1, right - left + 2, STRIP + 2, DARK);
+    for row in days {
+        let (Some(day), Some(counts)) = (
+            row["date"].as_str().and_then(day_number),
+            row["models"].as_object(),
+        ) else {
+            continue;
+        };
         // Each column spans halfway to its neighbouring days.
         let (from, to) = (
-            ((x_of(*day - 1) + x_of(*day)) / 2 + 1).max(left),
-            ((x_of(*day) + x_of(*day + 1)) / 2 + 1).min(right),
+            ((x_of(day - 1) + x_of(day)) / 2 + 1).max(left),
+            ((x_of(day) + x_of(day + 1)) / 2 + 1).min(right),
         );
-        let total: u64 = models.values().filter_map(Value::as_u64).sum();
+        let total: u64 = counts.values().filter_map(Value::as_u64).sum();
         let mut below = 0u64;
-        for (model, colour) in MODEL_COLOURS {
-            let Some(count) = models.get(model).and_then(Value::as_u64).filter(|n| *n > 0) else {
+        for (model, colour) in models {
+            let Some(count) = counts.get(model).and_then(Value::as_u64).filter(|n| *n > 0) else {
                 continue;
             };
-            shown.insert(model);
-            let y0 = top + HEIGHT - (below * HEIGHT as u64 / total) as i32;
+            let y0 = top + STRIP - (below * STRIP as u64 / total) as i32;
             below += count;
-            let y1 = top + HEIGHT - (below * HEIGHT as u64 / total) as i32;
+            let y1 = top + STRIP - (below * STRIP as u64 / total) as i32;
             canvas.fill(from, y1, (to - from).max(1), y0 - y1, colour);
         }
     }
-    let mut x = left;
-    for (model, colour) in MODEL_COLOURS
-        .iter()
-        .filter(|(model, _)| shown.contains(model))
-    {
-        canvas.fill(x, top + HEIGHT + 8, 8, 8, SHADOW);
-        canvas.fill(x - 1, top + HEIGHT + 7, 8, 8, colour);
-        x +=
-            12 + canvas.text(
-                letters,
-                x + 12,
-                top + HEIGHT + 4,
-                model,
-                MUTED,
-                Some(SHADOW),
-            ) + 12;
+    for (row, entries) in key_rows(letters, models).into_iter().enumerate() {
+        let y = top + STRIP + 4 + row as i32 * KEY_ROW;
+        let mut x = left;
+        for (model, colour) in entries {
+            canvas.fill(x, y + 4, 8, 8, SHADOW);
+            canvas.fill(x - 1, y + 3, 8, 8, colour);
+            canvas.text(letters, x + 12, y, model, MUTED, Some(SHADOW));
+            x += key_entry(letters, model);
+        }
     }
 }
 
@@ -531,16 +605,39 @@ mod tests {
             &letters,
             vec![tile("games/X/SRC/A.C", 600), tile("games/X/SRC/B.S", 400)],
         );
-        assert_eq!((canvas.width, canvas.height), (830, 1476));
+        assert_eq!((canvas.width, canvas.height), (838, 1490));
         // The outer frame's bevel, and the games folder's own at its corner.
         assert_eq!(canvas.get(0, 0), Some(super::super::raster::rgb(LIGHT)));
         assert_eq!(canvas.get(4, 32), Some(super::super::raster::rgb(LIGHT)));
-        let png = canvas.png(2, "2026-09-24").unwrap();
         let again = map_of(
             &letters,
             vec![tile("games/X/SRC/A.C", 600), tile("games/X/SRC/B.S", 400)],
         );
-        assert_eq!(png, again.png(2, "2026-09-24").unwrap());
+        assert_eq!(canvas.rgb(2), again.rgb(2));
+    }
+    #[test]
+    fn the_model_key_runs_by_first_appearance_with_untagged_last() {
+        let days = json!([
+            {"date": "2026-07-16", "models": {"Untagged": 5, "Opus 5": 0}},
+            {"date": "2026-07-17", "models": {"Opus 5.5": 1, "Fable 5": 2, "GPT-9 Nova": 1}},
+            {"date": "2026-07-18", "models": {"Grok 4.6": 1, "Opus 5": 1}}
+        ]);
+        let shown = models_shown(days.as_array().unwrap());
+        let names = shown.iter().map(|(m, _)| m.as_str()).collect::<Vec<_>>();
+        assert_eq!(
+            names,
+            [
+                "Fable 5",
+                "Opus 5.5",
+                "GPT-9 Nova",
+                "Opus 5",
+                "Grok 4.6",
+                UNTAGGED
+            ]
+        );
+        // An unknown model takes its family's muted tone.
+        assert_eq!(shown[2].1, model_colour("Codex"));
+        assert_eq!(shown[4].1, "#000000");
     }
     #[test]
     fn the_chart_starts_each_line_at_its_first_measurement() {
@@ -552,19 +649,19 @@ mod tests {
             {"date": "2026-09-24", "tbs": {"done": 6486, "executable": 10000}, "tla": {"done": 213, "executable": 10000}, "models": {"Opus 5.5": 3, "Untagged": 1}}
         ]});
         let canvas = chart(&letters, &history);
-        assert_eq!((canvas.width, canvas.height), (830, 296));
+        assert_eq!((canvas.width, canvas.height), (838, 296));
         let gold = super::super::raster::rgb(GOLD);
         let blue = super::super::raster::rgb(BLUE);
         let column = |x: i32, ink| (0..224).any(|y| canvas.get(x, y) == Some(ink));
         // Gold runs from the first day; blue only from 18 September.
         assert!(column(41, gold));
         assert!(!column(41, blue) && !column(300, blue));
-        let right = (0..830).rev().find(|x| column(*x, blue)).unwrap();
+        let right = (0..WIDTH).rev().find(|x| column(*x, blue)).unwrap();
         assert!(right > 600);
         // The last day's strip column is three quarters Opus 5.5 over grey.
-        let pink = super::super::raster::rgb("#e8a6d3");
-        let grey = super::super::raster::rgb("#7f9ea6");
-        let strip = (0..830)
+        let pink = super::super::raster::rgb(model_colour("Opus 5.5"));
+        let grey = super::super::raster::rgb(model_colour(UNTAGGED));
+        let strip = (0..WIDTH)
             .rev()
             .find(|x| (248..256).any(|y| canvas.get(*x, y) == Some(pink)))
             .unwrap();

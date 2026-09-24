@@ -442,6 +442,7 @@ fn unit_slice(root: &str, unit: &TranslationUnit, owner: u32, object: &str) -> R
             value.kind == AbsoluteSymbolKind::Thumb,
         ));
     }
+    out.push_str(&nested_call_aliases(&listing, emitted_symbol, body));
     let paths = SourcePaths::load_for_game(Path::new(root), &unit.game)?;
     for name in last_fields(&run(&strings(&["arm-none-eabi-nm", "-u", object]), root)?) {
         if symbols.contains_key(&name) || external_symbol(&name, CALL_VIA_BASE).is_some() {
@@ -457,6 +458,29 @@ fn unit_slice(root: &str, unit: &TranslationUnit, owner: u32, object: &str) -> R
         out.push_str(&format!(".size {symbol}, .-{symbol}\n"));
     }
     Ok(out)
+}
+
+/// A slice that calls a nested function it does not contain names it by the
+/// compiler's local `Func_XXXXXXXX.N`; alias that to the address-named owner
+/// the production link places (a retained member of the same unit).
+fn nested_call_aliases(listing: &str, emitted_symbol: &str, body: &str) -> String {
+    let mut out = String::new();
+    for line in listing.lines() {
+        let fields = line.split_whitespace().collect::<Vec<_>>();
+        let Some(&name) = fields.last() else {
+            continue;
+        };
+        if name == emitted_symbol || !function_name(name.rsplit_once('.').map_or("", |p| p.0)) {
+            continue;
+        }
+        let Some(base) = crate::compiler::symbols::nested_function_base(name) else {
+            continue;
+        };
+        if body.contains(&format!("\t{name}\n")) && !out.contains(&format!(".set {name},")) {
+            out.push_str(&format!(".set {name}, {base}\n"));
+        }
+    }
+    out
 }
 
 /// The `_call_via_rX` bank the game links into its main image, from its
@@ -1404,5 +1428,18 @@ mod tests {
             None
         )
         .is_err());
+    }
+    #[test]
+    fn slice_aliases_nested_calls_to_their_owner() {
+        let listing = "00000000 000000c6 t Func_08022a7c.0\n000000c8 0000062c T Func_08022b44\n";
+        let body = "\tbl\tFunc_08022a7c.0\n\tbl\tFunc_08022a7c.0\n";
+        assert_eq!(
+            nested_call_aliases(listing, "Func_08022b44", body),
+            ".set Func_08022a7c.0, Func_08022a7c\n"
+        );
+        assert_eq!(
+            nested_call_aliases(listing, "Func_08022a7c.0", "\tbx\tlr\n"),
+            ""
+        );
     }
 }

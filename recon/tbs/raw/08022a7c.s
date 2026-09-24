@@ -4,8 +4,10 @@
 	.set sub_080040d0, 0x080040d0
 	.set sub_08015e8c, 0x08015e8c
 	.set sub_08016584, 0x08016584
+	.global DjinnMenu_DrawStatArrow
 	.global Func_08022a7c
 	.thumb_func
+DjinnMenu_DrawStatArrow:
 Func_08022a7c:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

@@ -75316,6 +75316,30 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "scene-3b1-020047cc",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/FUNE_HEYA/F_047CC.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3b1",
+      "absolute_symbols": {
+        "Engine_ActorSetAnimation": {
+          "address": "0x0200e550",
+          "kind": "thumb"
+        },
+        "Main_0808a108": {
+          "address": "0x0200e558",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x020047cc",
+          "extent": 160,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

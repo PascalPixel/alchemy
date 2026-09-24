@@ -5,8 +5,6 @@ extern u8 Value_000025b8;
 extern u8 Value_000025dc;
 extern s16 Data_020085d0[];
 
-void Func_0200035e();
-
 /*
  * Scene script for overlay resource_3c1: data table getters, two actor cue
  * branches, the indexed effect setups, and the entry state.
@@ -143,7 +141,7 @@ s32 SceneState_InitEntryWorkspaceAndFlag96f(void)
 
     /* The dressing sequence and cue are unlocked by the shared event flag. */
     if (GameFlag_IsSet(0x201) != 0) {
-        Func_0200035e();
+        FieldScene_RunLayoutStepThenSet201();
         Actor_SetAnimation(16, 4);
     }
     return 0;

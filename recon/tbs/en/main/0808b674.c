@@ -1,13 +1,14 @@
-/* Draft, not exact (2026-09-24): 432 of 432 bytes, 36 halfwords differ.
+/* Draft, not exact (2026-09-24): 432 of 432 bytes, 32 halfwords differ.
  * The whole owner is hand-written. Comparing the header-clearing loop
- * against a fresh read of Data_03001ebc (not the work local) is what puts
- * work in r8 and leader in r7 as the ROM has them (63 -> 42); the ROM then
- * compares against a copy of work in ip where this reloads the pointer.
- * The row above the player's cell is addressed as its own extern
- * (Data_0200fe00, the map row one step north) to get the ROM's pool order
- * (42 -> 36); spelled cell - 128 it is 42. Remaining: temporaries in r0/r4
- * versus r2/r1 around the cell tests, and the height add y + (h - 0x200000)
- * is reassociated as (y + h) - 0x200000 in every spelling tried. */
+ * against a fresh read of Data_03001ebc (not the work local) puts work in
+ * r8 and leader in r7 as the ROM has them (63 -> 42); the ROM then compares
+ * against a copy of work in ip where this reloads the pointer, which also
+ * shifts the template copy's scratch registers. The row above the player's
+ * cell is its own extern (Data_0200fe00, the map row one step north) for
+ * the ROM's pool order (42 -> 36; cell - 128 stays at 42), and the height
+ * goes through its own local so it is added as y + (h - 0x200000) (-> 32).
+ * Remaining: the cell and row-above pointers land in r1/r2 swapped, and
+ * two constant temporaries take r6/r0 where the ROM uses r0/r1. */
 #include "TYPES.H"
 
 /* One row of a scene's object table; a row whose id is -1 ends it. */
@@ -102,6 +103,7 @@ void ObjectTable_ResetForObject(struct EventObjectEntry *table)
     s32 leader;
     s32 *header;
     s32 pos;
+    s32 hgt;
 
     work = Data_03001ebc;
     leader = Data_02000240.leader;
@@ -130,7 +132,8 @@ void ObjectTable_ResetForObject(struct EventObjectEntry *table)
     above = &Data_0200fe00[pos];
     if (Data_02000240.y != 0 && cell->kind == 0xfd && above->kind == 0xfd) {
         Data_02000240.on_ladder = 1;
-        object->y += Map_GetTerrainHeightFar(0, object->x, object->z - 0x100000) - 0x200000;
+        hgt = Map_GetTerrainHeightFar(0, object->x, object->z - 0x100000) - 0x200000;
+        object->y += hgt;
         object->ground = object->y;
         object->mode = 0;
         ObjectDispatch_SetSingleChildField26Far(object, 0);

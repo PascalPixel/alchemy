@@ -44114,10 +44114,6 @@
           "address": "0x0200813c",
           "kind": "thumb"
         },
-        "Func_020017b8": {
-          "address": "0x020083a8",
-          "kind": "thumb"
-        },
         "Func_02001998_run_scene_supplemental_sequence_one": {
           "address": "0x0200813c",
           "kind": "thumb"
@@ -44160,10 +44156,6 @@
         },
         "Func_0200248c_event": {
           "address": "0x020088ec",
-          "kind": "thumb"
-        },
-        "Func_020028b4": {
-          "address": "0x020083a8",
           "kind": "thumb"
         },
         "Func_02002e8e_run_scene_supplemental_sequence_one": {
@@ -44513,6 +44505,10 @@
         "SceneWorkCell": {
           "address": "0x03001ebc",
           "kind": "data"
+        },
+        "StagedActor_AdvancePair": {
+          "address": "0x020083a8",
+          "kind": "thumb"
         }
       },
       "owners": [

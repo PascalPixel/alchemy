@@ -16,19 +16,19 @@ void Ability_PlayUseAnimation(void)
     animation_type = 0xf & FIELD(ability, u8 *, 1);
     switch (animation_type) {
     case 1:
-        Sys_Do(0x7e);
+        Audio_PlayCueReturnOne(0x7e);
 
     case 11:
-        Sys_Do(0x7e);
+        Audio_PlayCueReturnOne(0x7e);
         return;
     default:
         target_type = FIELD(ability, u8 *, 3) - 1;
         switch (target_type) {
         case 4:
-            Sys_Do(0x52);
+            Audio_PlayCueReturnOne(0x52);
             return;
         case 2:
-            Sys_Do(0x54);
+            Audio_PlayCueReturnOne(0x54);
             return;
         default:
         case 3:
@@ -57,7 +57,7 @@ void Ability_PlayUseAnimation(void)
         case 27:
         case 28:
         case 29:
-            Sys_Do(0x5b);
+            Audio_PlayCueReturnOne(0x5b);
 
         case 0:
         case 1:
@@ -85,14 +85,14 @@ s32 Menu_GetModuloOfSum(s32 arg0, s32 arg1)
 }
 
 /* menu/entry/set_first_object_row_coordinates.c */
-extern u8 *gIw;
+extern u8 *gMenuWork;
 
 s32 Menu_SetFirstObjectRowCoordinates(s32 arg0)
 {
     u8 *current;
     s32 value;
     s32 count;
-    current = gIw + 0x134;
+    current = gMenuWork + 0x134;
     arg0 += 0x3D;
     value = 0x20;
     count = 3;

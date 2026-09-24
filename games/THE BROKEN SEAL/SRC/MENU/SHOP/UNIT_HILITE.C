@@ -4,7 +4,7 @@
 /* shop/unit/hilite.c */
 void Object_InitializeMode(void *, s32);
 
-extern u8 *gIw;
+extern u8 *gMenuWork;
 
 void Shop_HiliteUnit(s32 enabled, s32 selected)
 {
@@ -16,7 +16,7 @@ void Shop_HiliteUnit(s32 enabled, s32 selected)
     s32 variant;
     s16 id;
 
-    state = gIw;
+    state = gMenuWork;
     variant = *(s8 *)(state + 0x3aa);
     if (enabled != 0) {
         index = 0;
@@ -31,7 +31,7 @@ void Shop_HiliteUnit(s32 enabled, s32 selected)
                     Object_InitializeMode((void *)*item, 1);
                 item[16] = 0x10000;
                 id = *(s16 *)(half_base + offset);
-                if (FunctionHead_080b27b0(id, variant) == 0)
+                if (Shop_CanServe(id, variant) == 0)
                     item[16] = 0xb333;
                 index++;
                 offset += 2;
@@ -54,16 +54,16 @@ void Shop_DrawSelMsg(s32 target, s32 selection)
     s32 variant;
     s32 message;
 
-    variant = (s8)gIw[0x3AA];
-    message = FunctionHead_080b2778(selection, variant);
+    variant = (s8)gMenuWork[0x3AA];
+    message = Shop_ServicePrice(selection, variant);
     if (target != 0) {
         UiWindow_Clear(target);
-        if (Sys_Apply2(selection, variant) != 0) {
+        if (Shop_CanServe(selection, variant) != 0) {
             variant = (s32)&Value_00000d2c;
         } else {
             variant = (s32)&Value_00000d2d;
         }
-        variant = Sys_Check(variant);
+        variant = Shop_MsgByMode(variant);
         UiText_DrawQuantity(message, 5);
         UiText_DrawMessageAt(variant, target, 0, 0);
     }

@@ -2,14 +2,14 @@
 #include "BATTLE_EFFECT_RUNTIME.H"
 #include "TYPES.H"
 
-s32 Battle_SetMode(s32, s32, s32, s32);
+s32 BattleFx_BuildBuffer(s32, s32, s32, s32);
 
 void BattleFx_ApplyColorToTargetBuffer(s32 value, s32 mode)
 {
     struct BattleEffectBuffers *buffers = gIw;
 
     if (buffers != NULL) {
-        Battle_SetMode(value, (s32)buffers, (s32)buffers->buffer_e00, mode);
+        BattleFx_BuildBuffer(value, (s32)buffers, (s32)buffers->buffer_e00, mode);
     }
 }
 
@@ -18,7 +18,7 @@ void BattleFx_ApplyColorToSourceBuffer(s32 value, s32 mode)
     struct BattleEffectBuffers *buffers = gIw;
 
     if (buffers != NULL) {
-        Battle_SetMode(value, (s32)buffers, (s32)buffers->buffer_380, mode);
+        BattleFx_BuildBuffer(value, (s32)buffers, (s32)buffers->buffer_380, mode);
     }
 }
 

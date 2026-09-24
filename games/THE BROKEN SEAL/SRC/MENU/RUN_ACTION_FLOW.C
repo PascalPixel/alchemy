@@ -13,7 +13,7 @@ struct MenuActionState {
     u16 selection;
 };
 
-extern struct MenuActionState *gIw;
+extern struct MenuActionState *gMenuWork;
 
 s32 GameFlag_IsSet(s32 flag);
 s32 CharacterMenu_SelectOwner(s32 index);
@@ -23,7 +23,7 @@ s32 ItemMenu_SelectItem(void);
 
 s32 Menu_RunActionFlow(void)
 {
-    struct MenuActionState *state = gIw;
+    struct MenuActionState *state = gMenuWork;
     s32 step = 0;
     s32 finished = step;
     s32 result = 0;

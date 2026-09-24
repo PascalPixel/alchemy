@@ -6,7 +6,7 @@
 #include "BATTLE_ESCAPE.H"
 
 /* battle/actor/clear_field_12b_for_group.c */
-u8 *FunctionHead_08077008(s32);
+u8 *Owner_GetStateFar(s32);
 void BattleUnit_Recalculate(u16 id);
 
 struct ActorState_080b90ac {
@@ -24,7 +24,7 @@ void BattleUnit_ClearField12bForGroup(void)
     for (index = 0; index < count; index++) {
         struct ActorState_080b90ac *actor;
 
-        actor = (struct ActorState_080b90ac *)FunctionHead_08077008(ids[index]);
+        actor = (struct ActorState_080b90ac *)Owner_GetStateFar(ids[index]);
         actor->field_12b = 0;
         BattleUnit_Recalculate(ids[index]);
     }
@@ -65,7 +65,7 @@ s32 BattleEscape_CheckSuccess(void)
             living_units);
         level_total = 0;
         for (unit_index = escaped; unit_index < living_count; unit_index++) {
-            level_total += FunctionHead_08077008(
+            level_total += Owner_GetStateFar(
                 (s32)living_units[unit_index])[0x0f];
         }
         chance += Math_Div(level_total * 0x1F4, living_count);
@@ -74,7 +74,7 @@ s32 BattleEscape_CheckSuccess(void)
             living_units);
         level_total = 0;
         for (unit_index = 0; unit_index < living_count; unit_index++) {
-            level_total += FunctionHead_08077008(
+            level_total += Owner_GetStateFar(
                 (s32)living_units[unit_index])[0x0f];
         }
         chance -= Math_Div(level_total * 0x1F4, living_count);
@@ -91,7 +91,7 @@ s32 BattleEscape_CheckSuccess(void)
 }
 
 /* battle/presentation/list/units.c */
-u8 *FunctionHead_08004970(s32 unit_id);
+u8 *Runtime_BumpAllocateAlternatePool(s32 unit_id);
 
 struct BattlePresentationUnitEntry {
     u16 unit_id;
@@ -106,15 +106,15 @@ struct BattlePresentationUnitEntry {
 s32 BattlePres_BuildUnitEntries(
     struct BattlePresentationUnitEntry *entries)
 {
-    u16 *excluded_units = FunctionHead_08004970(17);
-    u16 *unit_ids = FunctionHead_08004970(9);
-    s32 unit_count = Battle_Apply(1, unit_ids);
+    u16 *excluded_units = Runtime_BumpAllocateAlternatePool(17);
+    u16 *unit_ids = Runtime_BumpAllocateAlternatePool(9);
+    s32 unit_count = BattleParty_ListLivingUnits(1, unit_ids);
     s32 excluded_count = 0;
     s32 entry_count = 0;
     s32 unit_index;
 
     for (unit_index = 0; unit_index < unit_count; unit_index++) {
-        u8 *unit = FunctionHead_08077008(unit_ids[unit_index]);
+        u8 *unit = Owner_GetStateFar(unit_ids[unit_index]);
         s32 copy_index;
 
         for (copy_index = 0; copy_index < unit[0x43]; copy_index++) {
@@ -143,8 +143,8 @@ s32 BattlePres_BuildUnitEntries(
         } else {
             unit_count = entry_count + appended;
         }
-        Battle_Do(unit_ids);
-        Battle_Do(excluded_units);
+        Runtime_BumpFree(unit_ids);
+        Runtime_BumpFree(excluded_units);
         return unit_count;
     }
 }

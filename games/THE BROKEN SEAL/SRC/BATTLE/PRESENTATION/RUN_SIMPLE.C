@@ -46,7 +46,7 @@ struct MotionRecord {
     struct MotionRecordValue *child;
 };
 
-extern s32 *gIw;
+extern s32 *gTransitionWork;
 
 struct PresentationObjectSlot *GetBattleObjectSlot(s32 id);
 s32 ArcTan2(s32 first, s32 second);
@@ -58,7 +58,7 @@ struct MotionRecord *GetMotionRecord(
 void Object_SetAction(struct PresentationObject *object, s32 action);
 
 void Actor_ResetMotionAtAnchor(s32 id);
-void Battle_Apply2(void *input, struct BattlePresentationWork *work);
+void BattlePres_BuildTargetList(void *input, struct BattlePresentationWork *work);
 void BattleFx_DispatchByIdRangeFar(struct BattlePresentationWork *work);
 
 s32 BattlePres_RunSimple(struct SimplePresentationInput *input, s32 flags)
@@ -76,7 +76,7 @@ s32 BattlePres_RunSimple(struct SimplePresentationInput *input, s32 flags)
     s32 divisor;
     s32 scripted;
 
-    facing = gIw;
+    facing = gTransitionWork;
     saved_input = input;
     object = GetBattleObjectSlot(saved_input->primary_id)->object;
     z = object->z;
@@ -96,8 +96,8 @@ s32 BattlePres_RunSimple(struct SimplePresentationInput *input, s32 flags)
         WaitFrames(20);
     }
 
-    FunctionHead_080c10e8(0, 0);
-    Battle_Apply2(saved_input, &work);
+    BattlePres_SetActorModes(0, 0);
+    BattlePres_BuildTargetList(saved_input, &work);
     Runtime_GetObject(work.primary_id);
     Runtime_GetObject(saved_input->secondary_id);
 
@@ -119,14 +119,14 @@ s32 BattlePres_RunSimple(struct SimplePresentationInput *input, s32 flags)
         work.secondary_is_low_id = 0;
     if (scripted != 0) {
         WaitFrames(10);
-        FunctionHead_080b8178(saved_input->secondary_id);
+        BattleMotion_ResetObjectAtScaledAnchor(saved_input->secondary_id);
         WaitFrames(2);
         WaitFrames(4);
         WaitFrames(10);
         Actor_ResetMotionAtAnchor(saved_input->secondary_id);
     } else {
         BattleFx_DispatchByIdRangeFar(&work);
-        Battle_Run();
+        BattleEv_DispatchQueued();
         Actor_ResetMotionAtAnchor(saved_input->secondary_id);
     }
     Actor_ResetMotionAtAnchor(work.primary_id);

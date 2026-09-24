@@ -25,7 +25,7 @@ s32 BattleFx_PlayCueAndStartEmitterOnTarget(s32 effect, s32 target, s32 mode)
         Audio_PlayCue(0x7C);
         Object_SetMode(object, 4);
         WaitFrames(0xC);
-        result = Battle_Apply(effect, mode);
+        result = BattleFx_StartRandomParticleEmitter(effect, mode);
     }
     return result;
 }

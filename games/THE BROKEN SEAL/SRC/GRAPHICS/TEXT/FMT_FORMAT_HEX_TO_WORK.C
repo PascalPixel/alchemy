@@ -26,7 +26,7 @@ void Text_FormatHexToWork(u32 value)
 }
 
 /* ui/text/format_signed_decimal_to_work.c */
-extern s32 FunctionHead_080022f4(u32, s32);
+extern s32 Math_DivU(u32, s32);
 extern u8 gRom[];
 extern u8 gNumberTextBuffer[];
 
@@ -63,7 +63,7 @@ void Text_FormatSignedDecimalToWork(s32 arg0) {
     if (count != 0) {
         do {
             word = *tbl++;
-            result = FunctionHead_080022f4((u32) val, word);
+            result = Math_DivU((u32) val, word);
             *out++ = result + 0x30;
             val -= result * word;
             count -= 1;

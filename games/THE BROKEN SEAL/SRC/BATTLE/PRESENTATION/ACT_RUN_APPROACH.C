@@ -28,7 +28,7 @@ struct ObjectSlot_080b8b48 {
     void *object;
 };
 
-extern s32 *gIw;
+extern s32 *gTransitionWork;
 
 void Runtime_GetObject(s32);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
@@ -39,17 +39,17 @@ struct ObjectSlot_080b8b48 *GetBattleObjectSlot(s32);
 void Object_SetAction(void *, s32);
 
 void Actor_ResetMotionAtAnchor(s32);
-void Battle_Do(struct Work_080b8b48 *);
+void BattleFx_DispatchByIdRangeFar(struct Work_080b8b48 *);
 
 s32 BattlePres_RunApproachAction(struct Input_080b8b48 *input)
 {
     struct Work_080b8b48 work;
 
-    if (*gIw == 0x2000) {
-        *gIw = 0x2000;
+    if (*gTransitionWork == 0x2000) {
+        *gTransitionWork = 0x2000;
         WaitFrames(10);
     } else {
-        *gIw = 0x2000;
+        *gTransitionWork = 0x2000;
         WaitFrames(30);
     }
 
@@ -78,7 +78,7 @@ s32 BattlePres_RunApproachAction(struct Input_080b8b48 *input)
     work.unknown1c = 0;
 
     WaitFrames(4);
-    Battle_Do(&work);
+    BattleFx_DispatchByIdRangeFar(&work);
     Actor_ResetMotionAtAnchor(work.secondary_id);
     Actor_ResetMotionAtAnchor(work.primary_id);
     return 0;

@@ -23,7 +23,7 @@ s32 Item_ClassifyUseAbility(s32 arg0, s32 arg1)
     if (FIELD_AT_OFFSET(p, u16, 0x28) == 0) {
         return ret;
     }
-    if ((FIELD_AT_OFFSET(p, u8, 2) != 0) && (Sys_Apply(arg0, arg1) == 0)) {
+    if ((FIELD_AT_OFFSET(p, u8, 2) != 0) && (Item_CanOwnerEquip(arg0, arg1) == 0)) {
         return ret;
     }
     if ((0x80 & FIELD_AT_OFFSET(Ability_GetData((s32)FIELD_AT_OFFSET(p, u16, 0x28)), u8, 1)) == 0) {

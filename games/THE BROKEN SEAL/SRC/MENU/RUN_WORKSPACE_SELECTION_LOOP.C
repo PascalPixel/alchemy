@@ -10,8 +10,8 @@
 /* Owner-local field access until this runtime workspace layout is recovered
  * elsewhere; other menu owners reach the same 0x03001EA0 pointer. */
 
-extern void *gIw;
-extern u8 gIw2;
+extern void *gSelectionWork;
+extern u8 gDebugMode;
 extern s8 gRom[];
 
 void *Menu_Run(void);
@@ -45,10 +45,10 @@ s32 Menu_RunWorkspaceSelectionLoop(void)
     temp_r0_22 = GameFlag_IsSet(0x17E);
     sp4 = 0;
     Menu_PrepareWorkspacePage();
-    temp_sl_29 = gIw;
+    temp_sl_29 = gSelectionWork;
     sp10 = Menu_Run();
     var_r4_35 = -0x18;
-    if (gIw2 != 0) {
+    if (gDebugMode != 0) {
         var_r4_35 = -0x10;
     }
     sp8 = (s32)RenderOutput_CreatePair(6, sp10, 0x28, var_r4_35);
@@ -58,7 +58,7 @@ s32 Menu_RunWorkspaceSelectionLoop(void)
         var_fp_21 = 1;
         sp4 = 2;
     }
-    if (gIw2 != 0) {
+    if (gDebugMode != 0) {
         var_fp_21 += 3;
     }
 loop_6:

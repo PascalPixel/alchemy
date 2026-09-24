@@ -43,7 +43,7 @@ void GameFlag_RefreshLureCap(void)
 }
 
 /* runtime/System_GetBuildStampTime.c */
-extern u8 gIw;
+extern u8 gDebugMode;
 extern u8 gVal[];
 
 u16 Runtime_GetBuildStampTime(void)
@@ -83,7 +83,7 @@ u16 Runtime_GetBuildStampTime(void)
     shifted = 0x80 << 21;
     shifted |= packed << 16;
     result = shifted >> 16;
-    if (gIw != 0) {
+    if (gDebugMode != 0) {
         result |= (s32)0xffff8000;
     }
     return (u16)result;

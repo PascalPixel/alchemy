@@ -21,7 +21,7 @@ static __inline__ s32 Scope_080bd3e4(void)
         s32 result;
         s32 index;
 
-        value = Battle_Check() & 0xFF;
+        value = BattleRandom16Far() & 0xFF;
         total = weights[0];
         result = 0;
         index = 0;

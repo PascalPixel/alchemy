@@ -32,6 +32,6 @@ s32 UiIcon_LoadResourceIntoSlot(s32 resource_id, s32 slot)
     selected_slot = slot;
     Ui_SetRange(resource_id, 0, &selected_slot, &resource_info, 1);
     buffer = Resource_GetBuffer(slot, allocation + 0x400);
-    Ui_Check(0x11);
+    Runtime_ReleaseHeapBlock(0x11);
     return buffer;
 }

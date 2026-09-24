@@ -2,7 +2,7 @@
 #include "SCENE.H"
 
 typedef void (*InterruptHandler)(void);
-void Sys_Place(s32, s32, InterruptHandler);
+void Runtime_SetIrqHandler(s32, s32, InterruptHandler);
 
 void Runtime_RemoveIrqHandlerSlot2(void)
 {
@@ -11,5 +11,5 @@ void Runtime_RemoveIrqHandlerSlot2(void)
   handler = 2;
   no = handler;
   handler = 0;
-  Sys_Place(no, 0, (InterruptHandler)handler);
+  Runtime_SetIrqHandler(no, 0, (InterruptHandler)handler);
 }

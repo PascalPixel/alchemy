@@ -15,7 +15,7 @@ extern u8 gVal4[];
 void UiMessage_ShowAndWait(s32 arg0)
 {
     s32 *state = *(s32 **)ADDR_03001F2C;
-    s32 value = Ui_Check(*(u16 *)&state[233]);
+    s32 value = BattleFx_GetResourceIdFar(*(u16 *)&state[233]);
     s32 result = arg0;
     s8 mode;
 
@@ -49,7 +49,7 @@ void UiMessage_ShowAndRestoreState(s32 message_id)
     slot = (u8 **)((u8 *)state + 0x380);
     saved = (*slot)[5];
     no = message_id;
-    variant = Ui_Check(FIELD_AT_OFFSET(state, u16 *, 0x3A4));
+    variant = BattleFx_GetResourceIdFar(FIELD_AT_OFFSET(state, u16 *, 0x3A4));
     mode = FIELD_AT_OFFSET(state, s8 *, 0x3A9);
     if (mode == 2) {
         no += (s32)gVal2 - (s32)gVal;
@@ -76,7 +76,7 @@ s32 UiMessage_ShowChoice(s32 arg0)
 {
     u8 **slot = (u8 **)(*(u8 **)ADDR_03001F2C + 0x380);
     u8 saved = (*slot)[5];
-    Ui_Do(*slot);
+    UiIcon_PrepareObjectFar(*slot);
     arg0 = Ui_Place(7, 5, arg0);
     (*slot)[5] = saved;
     return arg0;
@@ -87,7 +87,7 @@ s32 UiMessage_ShowChoiceVariant(s32 arg0)
 {
     u8 **slot = (u8 **)(*(u8 **)ADDR_03001F2C + 0x380);
     u8 saved = (*slot)[5];
-    Ui_Do(*slot);
+    UiIcon_PrepareObjectFar(*slot);
     arg0 = Ui_Place(7, 7, arg0);
     (*slot)[5] = saved;
     return arg0;

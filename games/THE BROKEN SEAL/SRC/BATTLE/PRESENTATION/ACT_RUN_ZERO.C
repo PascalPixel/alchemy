@@ -3,5 +3,5 @@
 
 void BattlePres_RunWithZeroArguments(void)
 {
-  Battle_Apply((unsigned long) 0, 0);
+  Unnamed_080c0700((unsigned long) 0, 0);
 }

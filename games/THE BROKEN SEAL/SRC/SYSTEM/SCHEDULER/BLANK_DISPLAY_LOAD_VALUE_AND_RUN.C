@@ -2,7 +2,7 @@
 
 /* runtime/blank_display_load_value_and_run.c */
 s32 Audio_PlayCue(s32);
-s32 Sys_Check(void);
+s32 Unnamed_080f7460(void);
 
 s32 Runtime_BlankDisplayLoadValueAndRun(void)
 {
@@ -16,7 +16,7 @@ s32 Runtime_BlankDisplayLoadValueAndRun(void)
     *p = *((s32 *)(src + 4));
   }
   Audio_PlayCue(9);
-  Sys_Check();
+  Unnamed_080f7460();
   return 0;
 }
 

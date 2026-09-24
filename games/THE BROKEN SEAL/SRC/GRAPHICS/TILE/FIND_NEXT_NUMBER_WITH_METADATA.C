@@ -22,7 +22,7 @@ s32 Ui_FindNextNumberWithMetadata(s32 start, s32 step)
                 continue;
             }
         }
-        if (*(u8 *)Ui_Run(value)) {
+        if (*(u8 *)Resource_GetMetadataRecordFar(value)) {
             return value;
         }
     }

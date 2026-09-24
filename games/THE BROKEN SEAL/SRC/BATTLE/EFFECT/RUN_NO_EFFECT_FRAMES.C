@@ -1,7 +1,7 @@
 #include "TYPES.H"
 
 /* battle/effects/common/run_no_effect_frames.c */
-void Battle_Run(void);
+void BattleFx_RunNoEffect(void);
 
 void BattleFx_RunNoEffectFrames(s32 frame_count)
 {
@@ -11,7 +11,7 @@ void BattleFx_RunNoEffectFrames(s32 frame_count)
     if (frame_count != 0) {
         do {
             frame += 1;
-            Battle_Run();
+            BattleFx_RunNoEffect();
         } while (frame != frame_count);
     }
 }

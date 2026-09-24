@@ -68,7 +68,7 @@ void DisplayTransition_Update(void)
         if (*step >= *duration) {
             *duration = 0;
             ScheduleCallback(DisplayTransition_Update);
-            Sys_Place(1, 0, 0);
+            Runtime_SetIrqHandler(1, 0, 0);
             return;
         } else {
             s32 delta = state->transition_end - state->transition_start;

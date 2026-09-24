@@ -37,13 +37,13 @@ struct TextObject {
     u8 storage[12];
 };
 
-void FunctionHead_0801c0dc(struct TextObject *object, s32 *resource);
-void FunctionHead_0801c154(struct TextObject *object, s32 x, s32 y);
+void UiTextResource_Initialize(struct TextObject *object, s32 *resource);
+void UiTextResource_SetPosition(struct TextObject *object, s32 x, s32 y);
 s16 FunctionHead_08029094(
     struct Work *work, s16 primary, s16 *secondary, s16 *mode);
 
 extern struct MenuDefaults gCell;
-extern volatile u32 gIw;
+extern volatile u32 gKeysHeld;
 
 struct Work *UiWindow_Create(s32 kind, s32 x, s32 y, s32 width, s32 layer);
 void Menu_DrawSelectionRow(
@@ -67,9 +67,9 @@ s16 Menu_RunSelection(void)
     secondary = gCell.secondary;
     work = UiWindow_Create(0, 7, 30, 5, 2);
     Menu_DrawSelectionRow(work, primary, &secondary);
-    FunctionHead_0801c0dc(&object, &resource);
+    UiTextResource_Initialize(&object, &resource);
 
-    while (gIw != 0)
+    while (gKeysHeld != 0)
         WaitFrames(1);
 
     for (;;) {
@@ -86,7 +86,7 @@ s16 Menu_RunSelection(void)
             return result;
         }
 
-        FunctionHead_0801c154(&object, MENU_TEXT_X, mode * 14 + MENU_TEXT_Y);
+        UiTextResource_SetPosition(&object, MENU_TEXT_X, mode * 14 + MENU_TEXT_Y);
         primary = result;
         WaitFrames(1);
     }

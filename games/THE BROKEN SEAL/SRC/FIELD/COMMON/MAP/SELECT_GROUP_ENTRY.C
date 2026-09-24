@@ -29,7 +29,7 @@ struct Services_0808a5f8 {
 extern struct Work_0808a5f8 gCell;
 extern struct Services_0808a5f8 gOv;
 
-void Map_Run(s32 kind)
+void MapGroupTable_SelectEntry(s32 kind)
 {
     s16 cur;
     u32 *p;

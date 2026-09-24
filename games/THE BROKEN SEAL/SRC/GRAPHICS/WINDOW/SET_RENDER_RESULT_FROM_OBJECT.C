@@ -14,11 +14,11 @@ s32 ObjectTable_ReadActiveValue(s32 key);
 
 extern u8 gCell[];
 extern u8 gRom[];
-extern struct State08093304 *gIw;
+extern struct State08093304 *gWindowWork;
 
 void Ui_SetRenderResultFromObject(s32 arg0)
 {
-    struct State08093304 *state = gIw;
+    struct State08093304 *state = gWindowWork;
     u8 value;
     s32 ret;
 

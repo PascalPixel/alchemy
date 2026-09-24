@@ -41,13 +41,13 @@ void BattleFx_FlushPendingGraphicsTransfer(void)
         break;
     case 2:
         if (work->transfer_value == 50) {
-            Battle_Place(source, (void *)0x06008000, 0x7800);
+            ColorBuffer_BackupAndHalve(source, (void *)0x06008000, 0x7800);
         } else {
-            Battle_unk2_3(source, (void *)0x06008000, 0x7800);
+            ColorBuffer_BackupAndScaleThreeQuarters(source, (void *)0x06008000, 0x7800);
         }
         break;
     case 3:
-        Battle_SetMode(source, work->transfer_value,
+        ColorBuffer_BackupAndDarken(source, work->transfer_value,
             (void *)0x06008000, 0x7800);
         break;
     }

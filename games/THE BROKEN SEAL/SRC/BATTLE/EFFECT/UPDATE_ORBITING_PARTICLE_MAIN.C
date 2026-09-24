@@ -7,15 +7,15 @@
 
 /* battle/effects/orbiting_particles/update_main.c */
 struct OrbitingParticle;
-void Battle_Apply(struct OrbitingParticle *particle, s32 battle_mode);
+void Animation_ApplyChildValuesFar(struct OrbitingParticle *particle, s32 battle_mode);
 
 void BattleFx_UpdateOrbitingParticleMain(struct OrbitingParticle *particle)
 {
     s32 battle_mode = *(s32 *)ADDR_03001E40 & 7;
     if (battle_mode == 0) {
-        Battle_Apply(particle, 2);
+        Animation_ApplyChildValuesFar(particle, 2);
     } else if (battle_mode == 2) {
-        Battle_Apply(particle, 0);
+        Animation_ApplyChildValuesFar(particle, 0);
     }
 }
 
@@ -33,7 +33,7 @@ void BattleFx_UpdateOrbitingParticleFade(void *object)
     *((s32 *)(object_bytes + 0x18)) = primary_fade;
     if (primary_fade <= 0x1000)
     {
-      Object_SetCallback(object, gRom);
+      Object_SetCallback(object, BattleFx_CommonParticleScript);
     }
   }
 }
@@ -118,12 +118,12 @@ struct OrbitingParticleState {
     s8 battle_mode;
 };
 
-extern struct OrbitingParticleState *gIw;
+extern struct OrbitingParticleState *gEffectWork;
 void BattleFx_RunOrbitingParticles(void);
 
 void BattleFx_StartOrbitingParticles(void)
 {
-    struct OrbitingParticleState *state = gIw;
+    struct OrbitingParticleState *state = gEffectWork;
     struct OrbitingParticleChild *child = state->child;
 
     if (child != 0) {
@@ -178,7 +178,7 @@ void RotateVectorByMagnitude(
     struct OrbitingParticleVector *vector);
 void Object_SetMode(struct OrbitingParticle *particle, s32 battle_mode);
 
-void *Battle_Run(u32 kind, u32 entry_index, s32 *size);
+void *BattleFx_FindMatchingEvent(u32 kind, u32 entry_index, s32 *size);
 struct OrbitingParticle *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
 
 void BattleFx_PrepareBufferInterpolation(void);
@@ -198,7 +198,7 @@ void BattleFx_RunOrbitingParticles(void)
     void *resource;
     s32 entry_count;
 
-    scene = gIw;
+    scene = gEffectWork;
     main_particle = scene->main_particle;
     BattleFx_InitializeSharedScene();
     Audio_PlayCue(0x73);
@@ -222,7 +222,7 @@ void BattleFx_RunOrbitingParticles(void)
             particle->rotation = Rand();
             particle->lifetime = 60;
             particle->orbit_angle = Rand();
-            Battle_Apply(particle, 9);
+            Animation_ApplyChildValuesFar(particle, 9);
 
             p->x = scene->origin.x;
             p->y = scene->origin.y;
@@ -247,9 +247,9 @@ void BattleFx_RunOrbitingParticles(void)
 
         entry_count = 15;
         do {
-            Battle_Apply(main_particle, 7);
+            Animation_ApplyChildValuesFar(main_particle, 7);
             WaitFrames(1);
-            Battle_Apply(main_particle, 0);
+            Animation_ApplyChildValuesFar(main_particle, 0);
             WaitFrames(4);
             entry_count--;
         } while (entry_count >= 0);
@@ -260,9 +260,9 @@ void BattleFx_RunOrbitingParticles(void)
         }
 
         main_particle->update = BattleFx_UpdateOrbitingParticleMain;
-        resource = Battle_Run(0x50000005, 6, &resource_size);
+        resource = BattleFx_FindMatchingEvent(0x50000005, 6, &resource_size);
         if (resource != NULL) {
-            Battle_Place(
+            BattleFx_RunEventAction(
                 resource,
                 gCell.resource_mode,
                 resource_size);

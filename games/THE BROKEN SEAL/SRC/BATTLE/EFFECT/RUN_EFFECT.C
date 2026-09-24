@@ -24,7 +24,7 @@ struct BattleEffectGlobals {
     s16 selected_id;
 };
 
-extern struct BattleEffectRequest *gIw;
+extern struct BattleEffectRequest *gEffectWork;
 extern struct BattleEffectGlobals gCell;
 
 void RunBattleEffect01(void);
@@ -60,8 +60,8 @@ void BattleFx_Run(void)
     s32 target_id;
     s32 obj_id;
 
-    request = gIw;
-    battle = *(struct BattleEffectState **)((u8 *)&gIw - 0x74);
+    request = gEffectWork;
+    battle = *(struct BattleEffectState **)((u8 *)&gEffectWork - 0x74);
     battle_mode = request->battle_mode;
     target_id = request->target_id;
 
@@ -102,15 +102,15 @@ void BattleFx_Run(void)
             gCell.selected_id = -1;
         }
 
-        obj_id = FunctionHead_0808df1c(gCell.selected_object, battle_mode);
+        obj_id = BattleEffect_SelectNearbyTargetObject(gCell.selected_object, battle_mode);
         obj_id = BattleFx_FilterObjectIdByFlags(obj_id);
-        if (Battle_Check(obj_id)!= 0) {
+        if (BattleFx_FindDescriptorWithOverride(obj_id)!= 0) {
             BattleFx_SetupObjectPair(gCell.selected_object, obj_id);
-            FunctionHead_0809ab98(obj_id);
+            BattleFx_MarkChildAndRunFallbackTransition(obj_id);
             BattleFx_PauseObject(obj_id);
             gCell.selected_id = obj_id;
         } else {
-            FunctionHead_0809abb4();
+            BattleEffect_RunFallbackObjectTransition();
         }
         return;
     case 2:
@@ -136,8 +136,8 @@ void BattleFx_Run(void)
 /* battle/effects/set/dispatch_request_kind.c */
 void BattleFx_DispatchRequestKind(void)
 {
-    struct BattleEffectRequest *request = gIw;
-    struct BattleEffectState *battle = *(struct BattleEffectState **)((u8 *)&gIw - 0x74);
+    struct BattleEffectRequest *request = gEffectWork;
+    struct BattleEffectState *battle = *(struct BattleEffectState **)((u8 *)&gEffectWork - 0x74);
     s32 battle_mode = request->battle_mode;
     s32 target_id = request->target_id;
 
@@ -145,10 +145,10 @@ void BattleFx_DispatchRequestKind(void)
     switch (battle_mode) {
     case 2:
         if (battle->active != 0)
-            FunctionHead_080984c0();
+            ResetSceneTransitionEffect();
         if (gCell.selected_id != request->target_id)
             *(u8 *)((u8 *)request->object + 91) = 1;
-        FunctionHead_08097540(request->source_id, target_id);
+        RunSceneTransitionEffect(request->source_id, target_id);
         break;
     case 1:
         FunctionHead_08097c3c(target_id);
@@ -207,10 +207,10 @@ void BattleFx_DispatchRequestKind(void)
 /* battle/effects/misc/clear_child_value_on_mismatch.c */
 void BattleFx_ClearChildValueOnMismatch(void)
 {
-    struct BattleEffectRequest *request = gIw;
+    struct BattleEffectRequest *request = gEffectWork;
 
     if (request->battle_mode == 2) {
-        FunctionHead_08097608();
+        BattleFx_FinishSceneAndReleaseHeapBlock();
         if (gCell.selected_id != request->target_id) {
             *(u8 *)((u8 *)request->object + 91) = 0;
         }

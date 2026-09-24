@@ -6,6 +6,6 @@ extern u8 gRom2;
 
 void BattleFx_EnableTwoCallbacks(void)
 {
-    Battle_Check((u32)&gRom);
-    Battle_Check((u32)&gRom2);
+    Scheduler_EnableCallbacks((u32)&gRom);
+    Scheduler_EnableCallbacks((u32)&gRom2);
 }

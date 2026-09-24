@@ -3,12 +3,12 @@
 #include "RESOURCE.H"
 #include "SYSTEM.H"
 
-extern volatile u32 gIw;
+extern volatile u32 gKeyState;
 
 void Runtime_IdleForever(void)
 {
     for (;;) {
-        (void)gIw;
+        (void)gKeyState;
         WaitFrames(1);
     }
 }

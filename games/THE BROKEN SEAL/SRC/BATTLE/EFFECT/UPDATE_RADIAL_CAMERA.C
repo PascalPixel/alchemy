@@ -35,7 +35,7 @@ struct RadialCameraEffect {
     u8 flag;
 };
 
-extern struct EffectCamera *gIw;
+extern struct EffectCamera *gEffectWork;
 
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 #define Rand Random16
@@ -51,7 +51,7 @@ void UpdateRadialCameraEffect(struct RadialCameraEffect *effect)
     s16 angle;
     s32 state;
 
-    camera = gIw;
+    camera = gEffectWork;
     state_pointer = &effect->state;
 top:
     state = *state_pointer;
@@ -86,7 +86,7 @@ advance:
         return;
     } else if (state == 3) {
         if (EffectSlot_HasReachedTarget(effect) == 0)
-            Battle_Do(effect);
+            BattleFx_ClearOwnedSlot(effect);
         return;
     } else {
         return;
@@ -97,5 +97,5 @@ advance:
 void BattleFx_MarkChildAndRunFallbackTransition(void)
 {
     FIELD_AT_OFFSET(FIELD_AT_OFFSET(*(void **)ADDR_03001F30, void **, 0x14), s8 *, 0x5B) = 1;
-    Battle_Check();
+    BattleEffect_RunFallbackObjectTransition();
 }

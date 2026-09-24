@@ -6,7 +6,7 @@
 
 /* party/set_flag32_and_refresh_members.c */
 void Owner_RefreshDerivedData(s32 arg0);
-s32 Party_Check(s32);
+s32 Owner_RecalculateStats(s32);
 s32 GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 
@@ -16,9 +16,9 @@ void Party_SetFlag32AndRefreshMembers(void)
     Owner_RefreshDerivedData(0);
     Owner_RefreshDerivedData(1);
     Owner_RefreshDerivedData(5);
-    Party_Check(0);
-    Party_Check(1);
-    Party_Check(5);
+    Owner_RecalculateStats(0);
+    Owner_RecalculateStats(1);
+    Owner_RecalculateStats(5);
 }
 
 /* party/apply_state_preset.c */
@@ -46,7 +46,7 @@ void Party_ApplyStatePreset(void)
     GameFlag_ClearBit(33);
     GameFlag_SetBit(0x901);
     Owner_RefreshDerivedData(5);
-    Party_Check(5);
+    Owner_RecalculateStats(5);
     GameFlag_ClearBit(0x11b);
     GameFlag_SetBit(282);
 
@@ -100,7 +100,7 @@ void Party_ApplyStatePreset(void)
         }
 
         Owner_RefreshDerivedData(id);
-        Party_Check(id);
+        Owner_RecalculateStats(id);
     }
 
     OwnerAction_Add(0, 140);

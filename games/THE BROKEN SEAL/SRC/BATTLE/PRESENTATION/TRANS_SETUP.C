@@ -42,9 +42,9 @@ void BattlePres_SetupTransitionScene(s32 x, s32 depth, s32 y, s32 mode)
     hud[4] = 120;
     Render_ResetTransformState();
     Graphics_PrepareTransferInIwramWork(scene, position);
-    Battle_unk8_2(source_bounds, measured_bounds);
+    Render_ProjectPoint(source_bounds, measured_bounds);
 
-    Battle_unk9_2(
+    BattleCamera_SetRange(
         0x780000,
         0x780000,
         (120 - measured_bounds[0]) << 8,

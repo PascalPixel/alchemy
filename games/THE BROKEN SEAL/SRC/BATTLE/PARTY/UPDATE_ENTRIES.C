@@ -25,7 +25,7 @@ struct PlacementTable {
 
 struct BattleObjectSlot;
 
-struct PlacementTable *Battle_Run(s32 side);
+struct PlacementTable *Trade_GetOfferStateFar(s32 side);
 
 struct BattleObjectSlot *GetBattleObjectSlot(s32 object_id);
 
@@ -38,14 +38,14 @@ s32 BattlePlacement_UpdateEntries(void)
     s32 x;
     s32 y;
 
-    count = Battle_Check(owners);
+    count = BattleParty_PrepareActiveOwners(owners);
 
     for (i = 0; i < count; i++) {
         owner = owners[i];
         for (x = 0; x <= 3; x++) {
             for (y = 0; y <= 19; y++) {
                 if (Battle_Place(owner, x, y) != 0) {
-                    struct PlacementList *list = &Battle_Run((u32)owner > 7 ? 1 : 0)->list;
+                    struct PlacementList *list = &Trade_GetOfferStateFar((u32)owner > 7 ? 1 : 0)->list;
                     s32 j;
 
                     for (j = 0; j < list->count; j++) {
@@ -63,7 +63,7 @@ s32 BattlePlacement_UpdateEntries(void)
         return;
 
     {
-        struct PlacementList *list = &Battle_Run(0)->list;
+        struct PlacementList *list = &Trade_GetOfferStateFar(0)->list;
         struct PlacementEntry *entry;
 
         i = 0;
@@ -77,8 +77,8 @@ s32 BattlePlacement_UpdateEntries(void)
                     u8 ex = entry->x;
                     u8 ey = entry->y;
 
-                    Battle_unk3_3(id, ex, ey);
-                    Battle_unk4_3(id, ex, ey);
+                    Djinn_ActivateFar(id, ex, ey);
+                    Trade_RemoveOfferFar(id, ex, ey);
                 }
                 i++;
                 entry++;

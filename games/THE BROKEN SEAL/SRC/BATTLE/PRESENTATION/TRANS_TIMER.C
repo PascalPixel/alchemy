@@ -59,10 +59,10 @@ void BattlePres_AdvanceTransitionTimer(void)
   next = (*timer = (*timer) + 1);
   if (next <= 0x50U)
   {
-    Battle_SetMode(0, 0, 0, 0xB4 - next);
+    BattlePres_SetupTransitionScene(0, 0, 0, 0xB4 - next);
     return;
   }
-  Battle_SetMode(0, 0, 0, 0x64);
+  BattlePres_SetupTransitionScene(0, 0, 0, 0x64);
 }
 
 /* battle/presentation/trans/draw_rows.c */

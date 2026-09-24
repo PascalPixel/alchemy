@@ -28,8 +28,8 @@ extern u8 Value_000000b4;
 extern u8 Value_000000cb;
 extern u8 Value_000000be;
 
-void *Battle_Run(s32 id);
-void Battle_unk3_4(void);
+void *Resource_GetTableEntry(s32 id);
+void Unnamed_080cc960(void);
 void BattlePres_ProcessPendingGraphicsTransfer(void);
 
 void BattlePresentation_PrepareScene(s32 kind)
@@ -40,7 +40,7 @@ void BattlePresentation_PrepareScene(s32 kind)
 
     work = (u8 *)Runtime_AllocateHeapBlock(39, 0x782c);
     Runtime_AllocateHeapBlock(40, 0x4000);
-    FunctionHead_080cd594(0);
+    BattleFx_BeginCanvasLayer(0);
     *(s32 *)(work + 0x77b4) = 24;
     *(s16 *)0x04000020 = 0x100;
     *(s16 *)0x04000052 = 0x1010;
@@ -62,13 +62,13 @@ void BattlePresentation_PrepareScene(s32 kind)
         id = (s32)&Value_000000be;
         break;
     }
-    palette = Battle_Run(id);
+    palette = Resource_GetTableEntry(id);
     ((WordCopyFn)0x03001388)((void *)0x05000000, palette, 128);
     *(s32 *)(work + 0x778c) = 0;
     *(s32 *)(work + 0x7780) = 3;
     *(s32 *)(work + 0x7784) = 0x06060606;
-    FunctionHead_080041d8((s32)Battle_unk3_4, 0xC80);
-    FunctionHead_080041d8((s32)BattlePres_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback((s32)Unnamed_080cc960, 0xC80);
+    Scheduler_AddOrUpdateCallback((s32)BattlePres_ProcessPendingGraphicsTransfer, 0x480);
 }
 
 /* battle/effects/runtime/misc/schedule_callbacks_and_release_blocks.c */
@@ -89,8 +89,8 @@ void BattleFx_ScheduleCallbacksAndReleaseBlocks(void)
         transfer((void *)0x06004000, 0x4000);
     }
     ScheduleCallback((void (*)(void))&gRom3);
-    FunctionHead_08002dd8(40);
-    FunctionHead_08002dd8(39);
+    Runtime_ReleaseHeapBlock(40);
+    Runtime_ReleaseHeapBlock(39);
 }
 
 /* battle/effects/two_resource/run_mode0.c */

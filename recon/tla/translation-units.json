@@ -429,6 +429,18 @@
         {
           "address": "0x081c2158",
           "extent": 14
+        },
+        {
+          "address": "0x081c2168",
+          "extent": 32
+        },
+        {
+          "address": "0x081c2188",
+          "extent": 40
+        },
+        {
+          "address": "0x081c21b0",
+          "extent": 72
         }
       ],
       "overlay": null

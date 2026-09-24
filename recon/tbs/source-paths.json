@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "main:080a96d8": {
+      "name": "ItemMenu_SelectItem",
+      "source": "MENU/ITEM/SELECT_ITEM.C"
+    },
     "resource_378:020031b8": {
       "name": "ShindenHeya_Func020031b8",
       "source": "FIELD/COMMON/SHINDEN_HEYA/F_031B8.C"
@@ -21084,6 +21088,25 @@
     "resource_3ca:02000da4": {
       "name": "BabiFune_SetupScene",
       "source": "FIELD/BABI_FUNE/SETUP_SCENE.C"
+    },
+    "main:0808bec0": {
+      "name": "Field_ProcessStep"
+    },
+    "main:0808cf78": {
+      "name": "BattleMap_ApplyEntranceView",
+      "source": "BATTLE/PRESENTATION/APPLY_ENTRANCE_VIEW.C"
+    },
+    "main:0808d0c8": {
+      "name": "Debug_RunPaletteEditor"
+    },
+    "main:080fa4cc": {
+      "name": "MusicPlayer_FadeOutPause"
+    },
+    "main:080fa4ec": {
+      "name": "MusicPlayer_FadeIn"
+    },
+    "main:080fa514": {
+      "name": "MusicPlayer_ResetActiveTracks"
     }
   },
   "symbols": {

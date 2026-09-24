@@ -92,6 +92,15 @@
     "main:081c2158": {
       "name": "MusicPlayer_FadeOut"
     },
+    "main:081c2168": {
+      "name": "MusicPlayer_FadeOutPause"
+    },
+    "main:081c2188": {
+      "name": "MusicPlayer_FadeIn"
+    },
+    "main:081c21b0": {
+      "name": "MusicPlayer_ResetActiveTracks"
+    },
     "main:081c21f8": {
       "name": "CgbAudio_Initialize",
       "source": "../../COMMON/SRC/SOUND/INITIALIZE_CGB.C"

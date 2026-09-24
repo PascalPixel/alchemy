@@ -284,6 +284,7 @@
     "SOUND/CGB_UPDATE_CHANNELS.C": "#define Sound_Cgb3LevelCodes @D080fba04\n",
     "SYSTEM/SAVE/IDENTIFY_FLASH.C": "#define Flash_Chips @D08007a0c\n#define Flash_Handler0 @D02004c04\n#define Flash_Handler1 @D02004c10\n#define Flash_Handler2 @D02004c14\n#define Flash_Handler3 @D02004c00\n#define Flash_Handler4 @D02004c18\n#define Flash_Layout @D02004c08\n",
     "BATTLE/EFFECT/SETUP_RESOURCES_AND_WINDOW.C": "#define gGameState @D02000240\n",
-    "FIELD/COMMON/TRY_JUMP_FORWARD.C": "#define gGameState @D02000240\n#define gEventWork @D03001ebc"
+    "FIELD/COMMON/TRY_JUMP_FORWARD.C": "#define gGameState @D02000240\n#define gEventWork @D03001ebc",
+    "BATTLE/PRESENTATION/APPLY_ENTRANCE_VIEW.C": "#define gMapWork @D03001e70\n#define gGameState @D02000240\n#define gOv @D02008000\n"
   }
 }

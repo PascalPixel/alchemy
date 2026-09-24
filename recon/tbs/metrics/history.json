@@ -110,16 +110,16 @@
     },
     {
       "date": "2026-09-25",
-      "tbs": {"done": 969378, "executable": 1375934},
-      "tla": {"done": 42186, "executable": 1975640},
-      "models": {"Opus 5.5": 20}
+      "tbs": {"done": 970588, "executable": 1375934},
+      "tla": {"done": 42332, "executable": 1975640},
+      "models": {"Opus 5.5": 23}
     }
   ],
   "figures": {
     "date": "2026-09-25",
-    "tbs": {"done": 969378, "executable": 1375934},
-    "tla": {"done": 42186, "executable": 1975640},
-    "models": {"Opus 5.5": 20},
-    "files": "585dcd435192a988"
+    "tbs": {"done": 970588, "executable": 1375934},
+    "tla": {"done": 42332, "executable": 1975640},
+    "models": {"Opus 5.5": 23},
+    "files": "3c456fd22827b9e6"
   }
 }

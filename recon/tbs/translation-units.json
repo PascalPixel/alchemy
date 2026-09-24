@@ -39058,6 +39058,18 @@
         {
           "address": "0x080fa4bc",
           "extent": 14
+        },
+        {
+          "address": "0x080fa4cc",
+          "extent": 32
+        },
+        {
+          "address": "0x080fa4ec",
+          "extent": 40
+        },
+        {
+          "address": "0x080fa514",
+          "extent": 72
         }
       ],
       "overlay": null

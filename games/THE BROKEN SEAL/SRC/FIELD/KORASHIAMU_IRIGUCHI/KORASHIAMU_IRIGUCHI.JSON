@@ -12,7 +12,6 @@
         "segments": [
           {
             "name": "parameters",
-            "address": "0x086eb670",
             "end": "0x086eb67c",
             "stride": 12,
             "element": "u8",
@@ -20,7 +19,6 @@
           },
           {
             "name": "records",
-            "address": "0x086eb67c",
             "end": "0x086eb694",
             "stride": 8,
             "element": "le-u16",
@@ -28,7 +26,6 @@
           },
           {
             "name": "component_offsets",
-            "address": "0x086eb694",
             "end": "0x086eb6ac",
             "stride": 4,
             "element": "le-u32",
@@ -114,16 +111,7 @@
         "address": "0x086ec1b8",
         "size": "0x3",
         "record_size": 3,
-        "segments": [
-          {
-            "name": "terminator",
-            "address": "0x086ec1b8",
-            "end": "0x086ec1bb",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255
-          }
-        ]
+        "segments": [{"name": "terminator", "end": "0x086ec1bb", "stride": 1, "element": "u8", "fill": 255}]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/KORASHIAMU_IRIGUCHI/KORASHIAMU_IRIGUCHI.BIN",
       "grid_offset": 0,
@@ -143,7 +131,6 @@
         "segments": [
           {
             "name": "parameters",
-            "address": "0x086f21ac",
             "end": "0x086f21b8",
             "stride": 12,
             "element": "u8",
@@ -151,7 +138,6 @@
           },
           {
             "name": "records",
-            "address": "0x086f21b8",
             "end": "0x086f21d0",
             "stride": 8,
             "element": "le-u16",
@@ -159,7 +145,6 @@
           },
           {
             "name": "component_offsets",
-            "address": "0x086f21d0",
             "end": "0x086f21e8",
             "stride": 4,
             "element": "le-u32",
@@ -271,16 +256,7 @@
         "address": "0x086f36ec",
         "size": "0x3",
         "record_size": 3,
-        "segments": [
-          {
-            "name": "terminator",
-            "address": "0x086f36ec",
-            "end": "0x086f36ef",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255
-          }
-        ]
+        "segments": [{"name": "terminator", "end": "0x086f36ef", "stride": 1, "element": "u8", "fill": 255}]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/KORASHIAMU_IRIGUCHI/KORASHIAMU_IRIGUCHI.BIN",
       "grid_offset": 135280,
@@ -300,7 +276,6 @@
         "segments": [
           {
             "name": "parameters",
-            "address": "0x086f387c",
             "end": "0x086f3888",
             "stride": 12,
             "element": "u8",
@@ -308,7 +283,6 @@
           },
           {
             "name": "records",
-            "address": "0x086f3888",
             "end": "0x086f38a0",
             "stride": 8,
             "element": "le-u16",
@@ -316,7 +290,6 @@
           },
           {
             "name": "component_offsets",
-            "address": "0x086f38a0",
             "end": "0x086f38b8",
             "stride": 4,
             "element": "le-u32",
@@ -396,16 +369,7 @@
         "address": "0x086f4954",
         "size": "0x3",
         "record_size": 3,
-        "segments": [
-          {
-            "name": "terminator",
-            "address": "0x086f4954",
-            "end": "0x086f4957",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255
-          }
-        ]
+        "segments": [{"name": "terminator", "end": "0x086f4957", "stride": 1, "element": "u8", "fill": 255}]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/KORASHIAMU_IRIGUCHI/KORASHIAMU_IRIGUCHI.BIN",
       "grid_offset": 67064,

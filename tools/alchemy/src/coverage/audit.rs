@@ -1701,11 +1701,11 @@ mod tests {
         forged["main_image_proof"]["rom_sha256"] =
             json!(crate::compiler::sha256::hex(b"another ROM"));
         std::fs::write(path("out/tbs-en/full/rebuilt.json"), forged.to_string()).unwrap();
-        unproven("is not the reference ROM recon/tbs/private-inputs.json registers");
+        unproven("is not the reference ROM recon/tbs/text.json registers");
         // Nor does a local ROM replaced by that one vouch for it.
         let reference = std::fs::read(path("roms/tbs-en.gba")).unwrap();
         std::fs::write(path("roms/tbs-en.gba"), b"another ROM").unwrap();
-        unproven("is not the reference ROM recon/tbs/private-inputs.json registers");
+        unproven("is not the reference ROM recon/tbs/text.json registers");
         std::fs::write(path("out/tbs-en/full/rebuilt.json"), &report).unwrap();
         std::fs::write(path("out/tbs-en/full/rebuilt.gba"), &reference).unwrap();
         unproven("is not the local reference ROM roms/tbs-en.gba");

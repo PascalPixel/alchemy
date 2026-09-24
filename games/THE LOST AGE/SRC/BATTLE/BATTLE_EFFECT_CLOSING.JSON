@@ -11,7 +11,6 @@
       "segments": [
         {
           "name": "table_080f393c",
-          "address": "0x080f393c",
           "end": "0x080f3940",
           "consumers": ["recon/tla/raw/080d8d68.s"],
           "element": "le-s32",
@@ -20,7 +19,6 @@
         },
         {
           "name": "table_080f3940",
-          "address": "0x080f3940",
           "end": "0x080f3944",
           "consumers": ["recon/tla/raw/080d8d68.s"],
           "element": "le-s32",
@@ -29,7 +27,6 @@
         },
         {
           "name": "table_080f3944",
-          "address": "0x080f3944",
           "end": "0x080f3950",
           "consumers": ["recon/tla/raw/080d9978.s"],
           "element": "le-s32",
@@ -38,7 +35,6 @@
         },
         {
           "name": "table_080f3950",
-          "address": "0x080f3950",
           "end": "0x080f3954",
           "consumers": ["recon/tla/raw/080da968.s"],
           "element": "le-s32",
@@ -47,7 +43,6 @@
         },
         {
           "name": "table_080f3954",
-          "address": "0x080f3954",
           "end": "0x080f3974",
           "consumers": ["recon/tla/raw/080dc244.s", "recon/tla/raw/080ea14c.s"],
           "element": "le-s32",
@@ -56,7 +51,6 @@
         },
         {
           "name": "script_080f3974",
-          "address": "0x080f3974",
           "end": "0x080f3978",
           "consumers": ["recon/tla/raw/080dcb44.s"],
           "element": "le-u32",
@@ -66,7 +60,6 @@
         },
         {
           "name": "script_pointers",
-          "address": "0x080f3978",
           "end": "0x080f3984",
           "consumers": ["recon/tla/raw/080df8e0.s"],
           "element": "le-u32",
@@ -84,7 +77,6 @@
       "segments": [
         {
           "name": "table_080f39c4",
-          "address": "0x080f39c4",
           "end": "0x080f3bc4",
           "consumers": ["recon/tla/raw/080e781c.s"],
           "element": "le-u16",
@@ -107,7 +99,6 @@
         },
         {
           "name": "table_080f3bc4",
-          "address": "0x080f3bc4",
           "end": "0x080f3bdc",
           "consumers": ["recon/tla/raw/080ea8d4.s"],
           "element": "u8",
@@ -116,7 +107,6 @@
         },
         {
           "name": "table_080f3bdc",
-          "address": "0x080f3bdc",
           "end": "0x080f3bfc",
           "consumers": ["recon/tla/raw/080eb3d0.s"],
           "element": "u8",
@@ -128,7 +118,6 @@
         },
         {
           "name": "table_080f3bfc",
-          "address": "0x080f3bfc",
           "end": "0x080f3c1c",
           "consumers": ["recon/tla/raw/080eb3d0.s"],
           "element": "u8",
@@ -140,7 +129,6 @@
         },
         {
           "name": "table_080f3c1c",
-          "address": "0x080f3c1c",
           "end": "0x080f3c3c",
           "consumers": ["recon/tla/raw/080eb3d0.s"],
           "element": "u8",

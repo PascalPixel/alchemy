@@ -14,7 +14,6 @@
       "segments": [
         {
           "id": "sound_empty",
-          "address": "0x081c5e30",
           "end": "0x081c5e34",
           "element": "record",
           "stride": 4,
@@ -39,7 +38,6 @@
       "segments": [
         {
           "id": "sound_000",
-          "address": "0x082ba798",
           "end": "0x082ba7a0",
           "element": "record",
           "stride": 8,
@@ -65,7 +63,6 @@
       "segments": [
         {
           "id": "sound_095",
-          "address": "0x082dadb0",
           "end": "0x082dadb8",
           "element": "record",
           "stride": 8,
@@ -91,7 +88,6 @@
       "segments": [
         {
           "id": "sound_288",
-          "address": "0x082ddf68",
           "end": "0x082ddf70",
           "element": "record",
           "stride": 8,
@@ -117,7 +113,6 @@
       "segments": [
         {
           "id": "sound_298",
-          "address": "0x082de094",
           "end": "0x082de09c",
           "element": "record",
           "stride": 8,

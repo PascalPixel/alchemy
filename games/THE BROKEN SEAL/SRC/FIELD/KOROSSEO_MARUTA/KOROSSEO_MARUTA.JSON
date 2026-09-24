@@ -12,7 +12,6 @@
         "segments": [
           {
             "name": "parameters",
-            "address": "0x08707960",
             "end": "0x0870796c",
             "stride": 12,
             "element": "u8",
@@ -20,7 +19,6 @@
           },
           {
             "name": "records",
-            "address": "0x0870796c",
             "end": "0x08707984",
             "stride": 8,
             "element": "le-u16",
@@ -28,7 +26,6 @@
           },
           {
             "name": "component_offsets",
-            "address": "0x08707984",
             "end": "0x0870799c",
             "stride": 4,
             "element": "le-u32",
@@ -155,20 +152,12 @@
         "segments": [
           {
             "name": "records",
-            "address": "0x087093e8",
             "end": "0x087093f1",
             "stride": 3,
             "element": "u8",
             "values": [[44, 6, 102], [12, 7, 101], [75, 13, 103]]
           },
-          {
-            "name": "terminator",
-            "address": "0x087093f1",
-            "end": "0x087093f4",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255
-          }
+          {"name": "terminator", "end": "0x087093f4", "stride": 1, "element": "u8", "fill": 255}
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_MARUTA/KOROSSEO_MARUTA.BIN",

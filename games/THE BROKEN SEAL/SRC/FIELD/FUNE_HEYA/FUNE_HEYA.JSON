@@ -12,7 +12,6 @@
         "segments": [
           {
             "name": "parameters",
-            "address": "0x086bfe14",
             "end": "0x086bfe20",
             "stride": 12,
             "element": "u8",
@@ -20,7 +19,6 @@
           },
           {
             "name": "records",
-            "address": "0x086bfe20",
             "end": "0x086bfe38",
             "stride": 8,
             "element": "le-u16",
@@ -28,7 +26,6 @@
           },
           {
             "name": "component_offsets",
-            "address": "0x086bfe38",
             "end": "0x086bfe50",
             "stride": 4,
             "element": "le-u32",
@@ -104,20 +101,12 @@
         "segments": [
           {
             "name": "records",
-            "address": "0x086c1160",
             "end": "0x086c1169",
             "stride": 3,
             "element": "u8",
             "values": [[10, 19, 100], [9, 35, 101], [26, 40, 102]]
           },
-          {
-            "name": "terminator",
-            "address": "0x086c1169",
-            "end": "0x086c116c",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255
-          }
+          {"name": "terminator", "end": "0x086c116c", "stride": 1, "element": "u8", "fill": 255}
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/FUNE_HEYA/FUNE_HEYA.BIN",

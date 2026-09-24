@@ -12,7 +12,6 @@
         "segments": [
           {
             "name": "parameters",
-            "address": "0x085f46e0",
             "end": "0x085f46ec",
             "stride": 12,
             "element": "u8",
@@ -20,7 +19,6 @@
           },
           {
             "name": "records",
-            "address": "0x085f46ec",
             "end": "0x085f4704",
             "stride": 8,
             "element": "le-u16",
@@ -28,7 +26,6 @@
           },
           {
             "name": "component_offsets",
-            "address": "0x085f4704",
             "end": "0x085f471c",
             "stride": 4,
             "element": "le-u32",
@@ -117,16 +114,7 @@
         "address": "0x085f60f4",
         "size": "0x3",
         "record_size": 3,
-        "segments": [
-          {
-            "name": "terminator",
-            "address": "0x085f60f4",
-            "end": "0x085f60f7",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255
-          }
-        ]
+        "segments": [{"name": "terminator", "end": "0x085f60f7", "stride": 1, "element": "u8", "fill": 255}]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_DOU/BIRIBINO_DOU.BIN",
       "grid_offset": 67576,
@@ -146,7 +134,6 @@
         "segments": [
           {
             "name": "parameters",
-            "address": "0x085f7674",
             "end": "0x085f7680",
             "stride": 12,
             "element": "u8",
@@ -154,7 +141,6 @@
           },
           {
             "name": "records",
-            "address": "0x085f7680",
             "end": "0x085f7698",
             "stride": 8,
             "element": "le-u16",
@@ -162,7 +148,6 @@
           },
           {
             "name": "component_offsets",
-            "address": "0x085f7698",
             "end": "0x085f76b0",
             "stride": 4,
             "element": "le-u32",
@@ -277,22 +262,8 @@
         "size": "0x6",
         "record_size": 3,
         "segments": [
-          {
-            "name": "records",
-            "address": "0x085f8ba8",
-            "end": "0x085f8bab",
-            "stride": 3,
-            "element": "u8",
-            "values": [[35, 28, 100]]
-          },
-          {
-            "name": "terminator",
-            "address": "0x085f8bab",
-            "end": "0x085f8bae",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255
-          }
+          {"name": "records", "end": "0x085f8bab", "stride": 3, "element": "u8", "values": [[35, 28, 100]]},
+          {"name": "terminator", "end": "0x085f8bae", "stride": 1, "element": "u8", "fill": 255}
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_DOU/BIRIBINO_DOU.BIN",
@@ -313,7 +284,6 @@
         "segments": [
           {
             "name": "parameters",
-            "address": "0x085faff8",
             "end": "0x085fb004",
             "stride": 12,
             "element": "u8",
@@ -321,7 +291,6 @@
           },
           {
             "name": "records",
-            "address": "0x085fb004",
             "end": "0x085fb01c",
             "stride": 8,
             "element": "le-u16",
@@ -329,7 +298,6 @@
           },
           {
             "name": "component_offsets",
-            "address": "0x085fb01c",
             "end": "0x085fb034",
             "stride": 4,
             "element": "le-u32",
@@ -446,20 +414,12 @@
         "segments": [
           {
             "name": "records",
-            "address": "0x085fc744",
             "end": "0x085fc74d",
             "stride": 3,
             "element": "u8",
             "values": [[32, 16, 100], [53, 36, 101], [52, 37, 102]]
           },
-          {
-            "name": "terminator",
-            "address": "0x085fc74d",
-            "end": "0x085fc750",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255
-          }
+          {"name": "terminator", "end": "0x085fc750", "stride": 1, "element": "u8", "fill": 255}
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_DOU/BIRIBINO_DOU.BIN",

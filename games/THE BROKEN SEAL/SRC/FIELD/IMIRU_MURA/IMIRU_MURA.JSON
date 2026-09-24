@@ -12,7 +12,6 @@
         "segments": [
           {
             "name": "parameters",
-            "address": "0x085ff240",
             "end": "0x085ff24c",
             "stride": 12,
             "element": "u8",
@@ -20,7 +19,6 @@
           },
           {
             "name": "records",
-            "address": "0x085ff24c",
             "end": "0x085ff264",
             "stride": 8,
             "element": "le-u16",
@@ -28,7 +26,6 @@
           },
           {
             "name": "component_offsets",
-            "address": "0x085ff264",
             "end": "0x085ff27c",
             "stride": 4,
             "element": "le-u32",
@@ -92,20 +89,12 @@
         "segments": [
           {
             "name": "records",
-            "address": "0x08600ecc",
             "end": "0x08600ed5",
             "stride": 3,
             "element": "u8",
             "values": [[9, 11, 100], [21, 18, 101], [7, 24, 102]]
           },
-          {
-            "name": "terminator",
-            "address": "0x08600ed5",
-            "end": "0x08600ed8",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255
-          }
+          {"name": "terminator", "end": "0x08600ed8", "stride": 1, "element": "u8", "fill": 255}
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/IMIRU_MURA/IMIRU_MURA.BIN",
@@ -126,7 +115,6 @@
         "segments": [
           {
             "name": "parameters",
-            "address": "0x08606a9c",
             "end": "0x08606aa8",
             "stride": 12,
             "element": "u8",
@@ -134,7 +122,6 @@
           },
           {
             "name": "records",
-            "address": "0x08606aa8",
             "end": "0x08606ac0",
             "stride": 8,
             "element": "le-u16",
@@ -142,7 +129,6 @@
           },
           {
             "name": "component_offsets",
-            "address": "0x08606ac0",
             "end": "0x08606ad8",
             "stride": 4,
             "element": "le-u32",
@@ -253,7 +239,6 @@
         "segments": [
           {
             "name": "records",
-            "address": "0x0860933c",
             "end": "0x08609354",
             "stride": 3,
             "element": "u8",
@@ -262,14 +247,7 @@
               [16, 46, 102]
             ]
           },
-          {
-            "name": "terminator",
-            "address": "0x08609354",
-            "end": "0x08609357",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255
-          }
+          {"name": "terminator", "end": "0x08609357", "stride": 1, "element": "u8", "fill": 255}
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/IMIRU_MURA/IMIRU_MURA.BIN",

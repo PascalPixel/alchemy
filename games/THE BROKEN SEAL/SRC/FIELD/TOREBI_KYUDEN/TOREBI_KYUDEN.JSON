@@ -12,7 +12,6 @@
         "segments": [
           {
             "name": "parameters",
-            "address": "0x086e7260",
             "end": "0x086e726c",
             "stride": 12,
             "element": "u8",
@@ -20,7 +19,6 @@
           },
           {
             "name": "records",
-            "address": "0x086e726c",
             "end": "0x086e7284",
             "stride": 8,
             "element": "le-u16",
@@ -28,7 +26,6 @@
           },
           {
             "name": "component_offsets",
-            "address": "0x086e7284",
             "end": "0x086e729c",
             "stride": 4,
             "element": "le-u32",
@@ -67,16 +64,7 @@
         "address": "0x086e88e4",
         "size": "0x3",
         "record_size": 3,
-        "segments": [
-          {
-            "name": "terminator",
-            "address": "0x086e88e4",
-            "end": "0x086e88e7",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255
-          }
-        ]
+        "segments": [{"name": "terminator", "end": "0x086e88e7", "stride": 1, "element": "u8", "fill": 255}]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/TOREBI_KYUDEN/TOREBI_KYUDEN.BIN",
       "grid_offset": 74400,
@@ -96,7 +84,6 @@
         "segments": [
           {
             "name": "parameters",
-            "address": "0x086e8a78",
             "end": "0x086e8a84",
             "stride": 12,
             "element": "u8",
@@ -104,7 +91,6 @@
           },
           {
             "name": "records",
-            "address": "0x086e8a84",
             "end": "0x086e8a9c",
             "stride": 8,
             "element": "le-u16",
@@ -112,7 +98,6 @@
           },
           {
             "name": "component_offsets",
-            "address": "0x086e8a9c",
             "end": "0x086e8ab4",
             "stride": 4,
             "element": "le-u32",
@@ -208,7 +193,6 @@
         "segments": [
           {
             "name": "records",
-            "address": "0x086eb4b8",
             "end": "0x086eb4e5",
             "stride": 3,
             "element": "u8",
@@ -218,14 +202,7 @@
               [34, 61, 100]
             ]
           },
-          {
-            "name": "terminator",
-            "address": "0x086eb4e5",
-            "end": "0x086eb4e8",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255
-          }
+          {"name": "terminator", "end": "0x086eb4e8", "stride": 1, "element": "u8", "fill": 255}
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/TOREBI_KYUDEN/TOREBI_KYUDEN.BIN",

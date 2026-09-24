@@ -6,7 +6,6 @@
   "segments": [
     {
       "name": "formations",
-      "address": "0x080c5c38",
       "end": "0x080c73f8",
       "element": "record",
       "stride": 16,
@@ -401,7 +400,6 @@
     },
     {
       "name": "preload_ids",
-      "address": "0x080c73f8",
       "end": "0x080c7420",
       "element": "le-u16",
       "stride": 2,
@@ -409,7 +407,6 @@
     },
     {
       "name": "metadata",
-      "address": "0x080c7420",
       "end": "0x080c7980",
       "element": "record",
       "stride": 8,

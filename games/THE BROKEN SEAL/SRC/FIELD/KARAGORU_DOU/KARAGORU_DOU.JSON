@@ -12,7 +12,6 @@
         "segments": [
           {
             "name": "parameters",
-            "address": "0x08717b8c",
             "end": "0x08717b98",
             "stride": 12,
             "element": "u8",
@@ -20,7 +19,6 @@
           },
           {
             "name": "records",
-            "address": "0x08717b98",
             "end": "0x08717bb0",
             "stride": 8,
             "element": "le-u16",
@@ -28,7 +26,6 @@
           },
           {
             "name": "component_offsets",
-            "address": "0x08717bb0",
             "end": "0x08717bc8",
             "stride": 4,
             "element": "le-u32",
@@ -116,16 +113,7 @@
         "address": "0x08718cec",
         "size": "0x3",
         "record_size": 3,
-        "segments": [
-          {
-            "name": "terminator",
-            "address": "0x08718cec",
-            "end": "0x08718cef",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255
-          }
-        ]
+        "segments": [{"name": "terminator", "end": "0x08718cef", "stride": 1, "element": "u8", "fill": 255}]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/KARAGORU_DOU/KARAGORU_DOU.BIN",
       "grid_offset": 0,
@@ -145,7 +133,6 @@
         "segments": [
           {
             "name": "parameters",
-            "address": "0x08718e8c",
             "end": "0x08718e98",
             "stride": 12,
             "element": "u8",
@@ -153,7 +140,6 @@
           },
           {
             "name": "records",
-            "address": "0x08718e98",
             "end": "0x08718eb0",
             "stride": 8,
             "element": "le-u16",
@@ -161,7 +147,6 @@
           },
           {
             "name": "component_offsets",
-            "address": "0x08718eb0",
             "end": "0x08718ec8",
             "stride": 4,
             "element": "le-u32",
@@ -258,20 +243,12 @@
         "segments": [
           {
             "name": "records",
-            "address": "0x0871a4cc",
             "end": "0x0871a4d2",
             "stride": 3,
             "element": "u8",
             "values": [[27, 6, 100], [24, 13, 101]]
           },
-          {
-            "name": "terminator",
-            "address": "0x0871a4d2",
-            "end": "0x0871a4d5",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255
-          }
+          {"name": "terminator", "end": "0x0871a4d5", "stride": 1, "element": "u8", "fill": 255}
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/KARAGORU_DOU/KARAGORU_DOU.BIN",
@@ -292,7 +269,6 @@
         "segments": [
           {
             "name": "parameters",
-            "address": "0x0871a618",
             "end": "0x0871a624",
             "stride": 12,
             "element": "u8",
@@ -300,7 +276,6 @@
           },
           {
             "name": "records",
-            "address": "0x0871a624",
             "end": "0x0871a63c",
             "stride": 8,
             "element": "le-u16",
@@ -308,7 +283,6 @@
           },
           {
             "name": "component_offsets",
-            "address": "0x0871a63c",
             "end": "0x0871a654",
             "stride": 4,
             "element": "le-u32",
@@ -403,16 +377,7 @@
         "address": "0x0871c3d0",
         "size": "0x3",
         "record_size": 3,
-        "segments": [
-          {
-            "name": "terminator",
-            "address": "0x0871c3d0",
-            "end": "0x0871c3d3",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255
-          }
-        ]
+        "segments": [{"name": "terminator", "end": "0x0871c3d3", "stride": 1, "element": "u8", "fill": 255}]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/KARAGORU_DOU/KARAGORU_DOU.BIN",
       "grid_offset": 69096,

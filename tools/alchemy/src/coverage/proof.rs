@@ -265,19 +265,10 @@ fn full_build_supported(target: DecompTarget) -> Result<(), String> {
 }
 
 /// The sha256 of the reference ROM a full build of `target` must reproduce,
-/// as the game's tracked private-input registry records it: the ROM its
-/// private sources are restored from. A local ROM file never vouches for
-/// itself.
+/// as the game's tracked text layout records it: the ROM its private sources
+/// are restored from. A local ROM file never vouches for itself.
 fn reference_sha256(root: &Path, target: DecompTarget) -> Result<String, String> {
-    let path = format!("{}/private-inputs.json", target.recon_dir());
-    let registry: serde_json::Value = serde_json::from_slice(
-        &std::fs::read(root.join(&path)).map_err(|e| format!("cannot read {path}: {e}"))?,
-    )
-    .map_err(|e| format!("{path}: {e}"))?;
-    registry["reference_sha256"]
-        .as_str()
-        .map(str::to_owned)
-        .ok_or_else(|| format!("{path} registers no reference_sha256"))
+    crate::text_catalog::reference_sha256(root, target.id.as_str())
 }
 
 /// The proof a full build of `target` records once it has rebuilt `rom`
@@ -298,7 +289,7 @@ pub(crate) fn full_build_proof(
     }
     if sha256::hex(rom) != reference_sha256(root, target)? {
         return Err(format!(
-            "the rebuilt ROM is not the reference ROM {}/private-inputs.json registers; its main-image proof is withheld",
+            "the rebuilt ROM is not the reference ROM {}/text.json registers; its main-image proof is withheld",
             target.recon_dir()
         ));
     }
@@ -400,7 +391,7 @@ pub(crate) fn last_full_build(
     }
     if proof.rom_sha256 != reference_sha256(root, target)? {
         return Err(format!(
-            "{rebuilt} is not the reference ROM {}/private-inputs.json registers",
+            "{rebuilt} is not the reference ROM {}/text.json registers",
             target.recon_dir()
         ));
     }
@@ -446,12 +437,16 @@ pub(crate) fn full_build_fixture(
         std::fs::write(path, bytes).unwrap();
     };
     let rom = format!("{} reference ROM", target.id).into_bytes();
-    let registry = format!("{}/private-inputs.json", target.recon_dir());
-    let mut inputs = std::fs::read(root.join(&registry))
+    let registry = format!("{}/text.json", target.recon_dir());
+    let mut layouts: Vec<serde_json::Value> = std::fs::read(root.join(&registry))
         .map(|bytes| serde_json::from_slice(&bytes).unwrap())
-        .unwrap_or_else(|_| serde_json::json!({}));
-    inputs["reference_sha256"] = serde_json::json!(sha256::hex(&rom));
-    write(&registry, inputs.to_string().as_bytes());
+        .unwrap_or_default();
+    layouts.retain(|layout| layout["target"] != target.id.as_str());
+    layouts.push(serde_json::json!({"target":target.id.as_str(),"rom_sha256":sha256::hex(&rom)}));
+    write(
+        &registry,
+        serde_json::Value::from(layouts).to_string().as_bytes(),
+    );
     write(target.rom, &rom);
     write(&full_build_rom(target), &rom);
     write(
@@ -547,19 +542,19 @@ mod tests {
         let inputs = identity(root.path(), "tbs-en").unwrap();
         let error = full_build_proof(root.path(), target, &inputs, b"another ROM").unwrap_err();
         assert!(
-            error.contains("not the reference ROM recon/tbs/private-inputs.json registers"),
+            error.contains("not the reference ROM recon/tbs/text.json registers"),
             "{error}"
         );
         let reference = b"tbs-en reference ROM";
         let error =
             full_build_proof(root.path(), target, "an earlier tree", reference).unwrap_err();
         assert!(error.contains("changed during the build"), "{error}");
-        std::fs::write(root.path().join("recon/tbs/private-inputs.json"), "{}").unwrap();
+        std::fs::write(root.path().join("recon/tbs/text.json"), "[]").unwrap();
         let inputs = identity(root.path(), "tbs-en").unwrap();
         let error = full_build_proof(root.path(), target, &inputs, reference).unwrap_err();
-        assert!(error.contains("registers no reference_sha256"), "{error}");
+        assert!(error.contains("registers no reference ROM"), "{error}");
         let error = full_build(root.path(), target).map(|_| ()).unwrap_err();
-        assert!(error.contains("registers no reference_sha256"), "{error}");
+        assert!(error.contains("registers no reference ROM"), "{error}");
     }
 
     #[test]

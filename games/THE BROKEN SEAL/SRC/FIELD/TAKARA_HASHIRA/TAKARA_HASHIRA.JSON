@@ -12,7 +12,6 @@
         "segments": [
           {
             "name": "parameters",
-            "address": "0x086cf47c",
             "end": "0x086cf488",
             "stride": 12,
             "element": "u8",
@@ -20,7 +19,6 @@
           },
           {
             "name": "records",
-            "address": "0x086cf488",
             "end": "0x086cf4a0",
             "stride": 8,
             "element": "le-u16",
@@ -28,7 +26,6 @@
           },
           {
             "name": "component_offsets",
-            "address": "0x086cf4a0",
             "end": "0x086cf4b8",
             "stride": 4,
             "element": "le-u32",
@@ -145,20 +142,12 @@
         "segments": [
           {
             "name": "records",
-            "address": "0x086d0140",
             "end": "0x086d014c",
             "stride": 3,
             "element": "u8",
             "values": [[19, 8, 100], [7, 13, 101], [18, 13, 102], [12, 17, 103]]
           },
-          {
-            "name": "terminator",
-            "address": "0x086d014c",
-            "end": "0x086d014f",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255
-          }
+          {"name": "terminator", "end": "0x086d014f", "stride": 1, "element": "u8", "fill": 255}
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/TAKARA_HASHIRA/TAKARA_HASHIRA.BIN",
@@ -179,7 +168,6 @@
         "segments": [
           {
             "name": "parameters",
-            "address": "0x086d3918",
             "end": "0x086d3924",
             "stride": 12,
             "element": "u8",
@@ -187,7 +175,6 @@
           },
           {
             "name": "records",
-            "address": "0x086d3924",
             "end": "0x086d393c",
             "stride": 8,
             "element": "le-u16",
@@ -195,7 +182,6 @@
           },
           {
             "name": "component_offsets",
-            "address": "0x086d393c",
             "end": "0x086d3954",
             "stride": 4,
             "element": "le-u32",
@@ -310,20 +296,12 @@
         "segments": [
           {
             "name": "records",
-            "address": "0x086d5644",
             "end": "0x086d5650",
             "stride": 3,
             "element": "u8",
             "values": [[13, 4, 101], [22, 4, 100], [2, 7, 102], [4, 18, 103]]
           },
-          {
-            "name": "terminator",
-            "address": "0x086d5650",
-            "end": "0x086d5653",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255
-          }
+          {"name": "terminator", "end": "0x086d5653", "stride": 1, "element": "u8", "fill": 255}
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/TAKARA_HASHIRA/TAKARA_HASHIRA.BIN",
@@ -344,7 +322,6 @@
         "segments": [
           {
             "name": "parameters",
-            "address": "0x086d58f8",
             "end": "0x086d5904",
             "stride": 12,
             "element": "u8",
@@ -352,7 +329,6 @@
           },
           {
             "name": "records",
-            "address": "0x086d5904",
             "end": "0x086d591c",
             "stride": 8,
             "element": "le-u16",
@@ -360,7 +336,6 @@
           },
           {
             "name": "component_offsets",
-            "address": "0x086d591c",
             "end": "0x086d5934",
             "stride": 4,
             "element": "le-u32",
@@ -422,20 +397,12 @@
         "segments": [
           {
             "name": "records",
-            "address": "0x086d778c",
             "end": "0x086d7798",
             "stride": 3,
             "element": "u8",
             "values": [[38, 9, 102], [50, 11, 101], [40, 16, 103], [42, 31, 100]]
           },
-          {
-            "name": "terminator",
-            "address": "0x086d7798",
-            "end": "0x086d779b",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255
-          }
+          {"name": "terminator", "end": "0x086d779b", "stride": 1, "element": "u8", "fill": 255}
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/TAKARA_HASHIRA/TAKARA_HASHIRA.BIN",
@@ -456,7 +423,6 @@
         "segments": [
           {
             "name": "parameters",
-            "address": "0x086d7924",
             "end": "0x086d7930",
             "stride": 12,
             "element": "u8",
@@ -464,7 +430,6 @@
           },
           {
             "name": "records",
-            "address": "0x086d7930",
             "end": "0x086d7948",
             "stride": 8,
             "element": "le-u16",
@@ -472,7 +437,6 @@
           },
           {
             "name": "component_offsets",
-            "address": "0x086d7948",
             "end": "0x086d7960",
             "stride": 4,
             "element": "le-u32",
@@ -597,20 +561,12 @@
         "segments": [
           {
             "name": "records",
-            "address": "0x086d8870",
             "end": "0x086d887c",
             "stride": 3,
             "element": "u8",
             "values": [[4, 12, 101], [14, 13, 100], [14, 14, 102], [25, 16, 103]]
           },
-          {
-            "name": "terminator",
-            "address": "0x086d887c",
-            "end": "0x086d887f",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255
-          }
+          {"name": "terminator", "end": "0x086d887f", "stride": 1, "element": "u8", "fill": 255}
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/TAKARA_HASHIRA/TAKARA_HASHIRA.BIN",

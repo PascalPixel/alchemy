@@ -825,9 +825,7 @@ fn run(args: &[String]) -> Result<(), String> {
 
     let entry = json!({
         "id": unit_id,
-        "game": game,
         "source": source_root.join(&unit_path).strip_prefix(&root).map_err(|e| e.to_string())?,
-        "compiler_route": "canonical-gcc296",
         "overlay": overlay,
         "absolute_symbols": split
             .iter()

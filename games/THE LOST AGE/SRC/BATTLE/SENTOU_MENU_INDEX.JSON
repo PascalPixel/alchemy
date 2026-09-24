@@ -12,7 +12,6 @@
       "segments": [
         {
           "name": "cell_offsets",
-          "address": "0x0810c348",
           "end": "0x0810c384",
           "consumers": ["recon/tla/raw/08108690.s"],
           "element": "le-u16",
@@ -24,7 +23,6 @@
         },
         {
           "name": "row_offsets",
-          "address": "0x0810c384",
           "end": "0x0810c38e",
           "consumers": ["recon/tla/raw/08108690.s"],
           "element": "le-u16",
@@ -33,7 +31,6 @@
         },
         {
           "name": "thresholds",
-          "address": "0x0810c38e",
           "end": "0x0810c3ca",
           "consumers": ["recon/tla/raw/0810a2c8.s"],
           "element": "le-s16",
@@ -55,7 +52,6 @@
       "segments": [
         {
           "name": "loadouts",
-          "address": "0x0810c3f4",
           "end": "0x0810cc34",
           "consumers": ["recon/tla/raw/0810a2c8.s"],
           "element": "record",
@@ -106,7 +102,6 @@
         },
         {
           "name": "weighted_item_results",
-          "address": "0x0810cc34",
           "end": "0x0810cf28",
           "consumers": ["recon/tla/raw/0810a2c8.s", "recon/tla/raw/0810a760.s"],
           "element": "record",
@@ -143,7 +138,6 @@
         },
         {
           "name": "sound_ids",
-          "address": "0x0810cf28",
           "end": "0x0810cf2c",
           "consumers": ["recon/tla/raw/0810b1b4.s"],
           "element": "s8",
@@ -152,14 +146,13 @@
         },
         {
           "name": "multipliers",
-          "address": "0x0810cf2c",
           "end": "0x0810cf3b",
           "consumers": ["recon/tla/raw/0810b1b4.s"],
           "element": "s8",
           "stride": 1,
           "values": [2, 4, 7, 8, 8, 10, 12, 16, 14, 15, 18, 20, 20, 22, 25]
         },
-        {"name": "alignment", "address": "0x0810cf3b", "end": "0x08118000", "element": "u8", "stride": 1, "fill": 0}
+        {"name": "alignment", "end": "0x08118000", "element": "u8", "stride": 1, "fill": 0}
       ]
     }
   ]

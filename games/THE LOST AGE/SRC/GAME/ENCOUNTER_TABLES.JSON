@@ -6,7 +6,6 @@
   "segments": [
     {
       "name": "formations",
-      "address": "0x0812ce7c",
       "end": "0x08130c5c",
       "consumers": ["recon/tla/raw/08127588.s", "recon/tla/raw/08127c80.s"],
       "element": "record",
@@ -693,7 +692,6 @@
     },
     {
       "name": "reset_flag_ids",
-      "address": "0x08130c5c",
       "end": "0x08130d0a",
       "consumers": ["recon/tla/raw/08127588.s"],
       "element": "le-u16",
@@ -705,10 +703,9 @@
         370, 371, 372, 373, 374, 375, 376, 377
       ]
     },
-    {"name": "alignment", "address": "0x08130d0a", "end": "0x08130d0c", "element": "u8", "stride": 1, "fill": 0},
+    {"name": "alignment", "end": "0x08130d0c", "element": "u8", "stride": 1, "fill": 0},
     {
       "name": "metadata",
-      "address": "0x08130d0c",
       "end": "0x08131924",
       "consumers": ["recon/tla/raw/08127c80.s"],
       "element": "record",

@@ -5,97 +5,37 @@
   "end": "0x080eefa4",
   "size": 1684,
   "segments": [
-    {
-      "name": "hyou_b_000",
-      "address": "0x080ee910",
-      "end": "0x080ee916",
-      "element": "u8",
-      "stride": 1,
-      "values": [8, 10, 9, 11, 3, 4]
-    },
+    {"name": "hyou_b_000", "end": "0x080ee916", "element": "u8", "stride": 1, "values": [8, 10, 9, 11, 3, 4]},
     {
       "name": "hyou_b_001",
-      "address": "0x080ee916",
       "end": "0x080ee920",
       "element": "u8",
       "stride": 1,
       "values": [80, 15, 92, 15, 107, 15, 115, 15, 130, 15]
     },
-    {
-      "name": "hyou_b_002",
-      "address": "0x080ee920",
-      "end": "0x080ee925",
-      "element": "u8",
-      "stride": 1,
-      "values": [2, 5, 2, 5, 3]
-    },
-    {
-      "name": "hyou_b_003",
-      "address": "0x080ee925",
-      "end": "0x080ee92a",
-      "element": "u8",
-      "stride": 1,
-      "values": [6, 3, 4, 3, 3]
-    },
-    {
-      "name": "hyou_b_004",
-      "address": "0x080ee92a",
-      "end": "0x080ee930",
-      "element": "u8",
-      "stride": 1,
-      "values": [128, 13, 128, 14, 16, 15]
-    },
-    {
-      "name": "hyou_b_005",
-      "address": "0x080ee930",
-      "end": "0x080ee934",
-      "element": "u8",
-      "stride": 1,
-      "values": [16, 12, 8, 0]
-    },
+    {"name": "hyou_b_002", "end": "0x080ee925", "element": "u8", "stride": 1, "values": [2, 5, 2, 5, 3]},
+    {"name": "hyou_b_003", "end": "0x080ee92a", "element": "u8", "stride": 1, "values": [6, 3, 4, 3, 3]},
+    {"name": "hyou_b_004", "end": "0x080ee930", "element": "u8", "stride": 1, "values": [128, 13, 128, 14, 16, 15]},
+    {"name": "hyou_b_005", "end": "0x080ee934", "element": "u8", "stride": 1, "values": [16, 12, 8, 0]},
     {
       "name": "hyou_b_006",
-      "address": "0x080ee934",
       "end": "0x080ee93e",
       "element": "u8",
       "stride": 1,
       "values": [80, 15, 92, 15, 107, 15, 115, 15, 130, 15]
     },
-    {
-      "name": "hyou_b_007",
-      "address": "0x080ee93e",
-      "end": "0x080ee943",
-      "element": "u8",
-      "stride": 1,
-      "values": [2, 5, 2, 5, 3]
-    },
-    {
-      "name": "hyou_b_008",
-      "address": "0x080ee943",
-      "end": "0x080ee948",
-      "element": "u8",
-      "stride": 1,
-      "values": [6, 3, 4, 3, 3]
-    },
+    {"name": "hyou_b_007", "end": "0x080ee943", "element": "u8", "stride": 1, "values": [2, 5, 2, 5, 3]},
+    {"name": "hyou_b_008", "end": "0x080ee948", "element": "u8", "stride": 1, "values": [6, 3, 4, 3, 3]},
     {
       "name": "hyou_b_009",
-      "address": "0x080ee948",
       "end": "0x080ee952",
       "element": "u8",
       "stride": 1,
       "values": [139, 15, 203, 15, 172, 16, 37, 17, 118, 17]
     },
-    {
-      "name": "hyou_b_010",
-      "address": "0x080ee952",
-      "end": "0x080ee958",
-      "element": "u8",
-      "stride": 1,
-      "values": [8, 15, 11, 9, 5, 0]
-    },
+    {"name": "hyou_b_010", "end": "0x080ee958", "element": "u8", "stride": 1, "values": [8, 15, 11, 9, 5, 0]},
     {
       "name": "hyou_b_011",
-      "address": "0x080ee958",
       "end": "0x080ee966",
       "element": "u8",
       "stride": 1,
@@ -103,7 +43,6 @@
     },
     {
       "name": "hyou_b_012",
-      "address": "0x080ee966",
       "end": "0x080ee974",
       "element": "u8",
       "stride": 1,
@@ -111,7 +50,6 @@
     },
     {
       "name": "hyou_b_013",
-      "address": "0x080ee974",
       "end": "0x080ee9f8",
       "element": "u8",
       "stride": 1,
@@ -125,7 +63,6 @@
     },
     {
       "name": "hyou_b_014",
-      "address": "0x080ee9f8",
       "end": "0x080eea08",
       "element": "u8",
       "stride": 1,
@@ -133,7 +70,6 @@
     },
     {
       "name": "hyou_b_015",
-      "address": "0x080eea08",
       "end": "0x080eea20",
       "element": "u8",
       "stride": 1,
@@ -141,7 +77,6 @@
     },
     {
       "name": "hyou_b_016",
-      "address": "0x080eea20",
       "end": "0x080eea2c",
       "element": "u8",
       "stride": 1,
@@ -149,7 +84,6 @@
     },
     {
       "name": "hyou_b_017",
-      "address": "0x080eea2c",
       "end": "0x080eea38",
       "element": "u8",
       "stride": 1,
@@ -157,47 +91,17 @@
     },
     {
       "name": "hyou_b_018",
-      "address": "0x080eea38",
       "end": "0x080eea41",
       "element": "u8",
       "stride": 1,
       "values": [80, 32, 2, 112, 64, 4, 144, 96, 8]
     },
-    {
-      "name": "hyou_b_019",
-      "address": "0x080eea41",
-      "end": "0x080eea44",
-      "element": "u8",
-      "stride": 1,
-      "values": [16, 32, 64]
-    },
-    {
-      "name": "hyou_b_020",
-      "address": "0x080eea44",
-      "end": "0x080eea4a",
-      "element": "u8",
-      "stride": 1,
-      "values": [24, 29, 30, 27, 24, 16]
-    },
-    {
-      "name": "hyou_b_021",
-      "address": "0x080eea4a",
-      "end": "0x080eea50",
-      "element": "u8",
-      "stride": 1,
-      "values": [23, 32, 37, 49, 53, 52]
-    },
-    {
-      "name": "hyou_b_022",
-      "address": "0x080eea50",
-      "end": "0x080eea56",
-      "element": "u8",
-      "stride": 1,
-      "values": [41, 32, 26, 11, 4, 2]
-    },
+    {"name": "hyou_b_019", "end": "0x080eea44", "element": "u8", "stride": 1, "values": [16, 32, 64]},
+    {"name": "hyou_b_020", "end": "0x080eea4a", "element": "u8", "stride": 1, "values": [24, 29, 30, 27, 24, 16]},
+    {"name": "hyou_b_021", "end": "0x080eea50", "element": "u8", "stride": 1, "values": [23, 32, 37, 49, 53, 52]},
+    {"name": "hyou_b_022", "end": "0x080eea56", "element": "u8", "stride": 1, "values": [41, 32, 26, 11, 4, 2]},
     {
       "name": "hyou_b_023",
-      "address": "0x080eea56",
       "end": "0x080eea62",
       "element": "u8",
       "stride": 1,
@@ -205,7 +109,6 @@
     },
     {
       "name": "hyou_b_024",
-      "address": "0x080eea62",
       "end": "0x080eea88",
       "element": "u8",
       "stride": 1,
@@ -216,87 +119,34 @@
     },
     {
       "name": "hyou_b_025",
-      "address": "0x080eea88",
       "end": "0x080eea91",
       "element": "u8",
       "stride": 1,
       "values": [32, 8, 85, 48, 12, 97, 64, 19, 109]
     },
-    {
-      "name": "hyou_b_026",
-      "address": "0x080eea91",
-      "end": "0x080eea99",
-      "element": "u8",
-      "stride": 1,
-      "values": [12, 10, 7, 10, 8, 8, 8, 8]
-    },
-    {
-      "name": "hyou_b_027",
-      "address": "0x080eea99",
-      "end": "0x080eeaa2",
-      "element": "u8",
-      "stride": 1,
-      "values": [9, 16, 14, 15, 8, 8, 8, 8, 0]
-    },
+    {"name": "hyou_b_026", "end": "0x080eea99", "element": "u8", "stride": 1, "values": [12, 10, 7, 10, 8, 8, 8, 8]},
+    {"name": "hyou_b_027", "end": "0x080eeaa2", "element": "u8", "stride": 1, "values": [9, 16, 14, 15, 8, 8, 8, 8, 0]},
     {
       "name": "hyou_b_028",
-      "address": "0x080eeaa2",
       "end": "0x080eeab2",
       "element": "u8",
       "stride": 1,
       "values": [0, 7, 108, 7, 12, 8, 110, 8, 4, 9, 68, 9, 132, 9, 196, 9]
     },
-    {
-      "name": "hyou_b_029",
-      "address": "0x080eeab2",
-      "end": "0x080eeab8",
-      "element": "u8",
-      "stride": 1,
-      "values": [0, 0, 0, 3, 0, 5]
-    },
-    {
-      "name": "hyou_b_030",
-      "address": "0x080eeab8",
-      "end": "0x080eeabb",
-      "element": "u8",
-      "stride": 1,
-      "values": [24, 16, 16]
-    },
-    {
-      "name": "hyou_b_031",
-      "address": "0x080eeabb",
-      "end": "0x080eeac3",
-      "element": "u8",
-      "stride": 1,
-      "values": [12, 10, 7, 10, 8, 8, 8, 8]
-    },
-    {
-      "name": "hyou_b_032",
-      "address": "0x080eeac3",
-      "end": "0x080eeacc",
-      "element": "u8",
-      "stride": 1,
-      "values": [9, 16, 14, 15, 8, 8, 8, 8, 0]
-    },
+    {"name": "hyou_b_029", "end": "0x080eeab8", "element": "u8", "stride": 1, "values": [0, 0, 0, 3, 0, 5]},
+    {"name": "hyou_b_030", "end": "0x080eeabb", "element": "u8", "stride": 1, "values": [24, 16, 16]},
+    {"name": "hyou_b_031", "end": "0x080eeac3", "element": "u8", "stride": 1, "values": [12, 10, 7, 10, 8, 8, 8, 8]},
+    {"name": "hyou_b_032", "end": "0x080eeacc", "element": "u8", "stride": 1, "values": [9, 16, 14, 15, 8, 8, 8, 8, 0]},
     {
       "name": "hyou_b_033",
-      "address": "0x080eeacc",
       "end": "0x080eeadc",
       "element": "u8",
       "stride": 1,
       "values": [0, 7, 108, 7, 12, 8, 110, 8, 4, 9, 68, 9, 132, 9, 196, 9]
     },
-    {
-      "name": "hyou_b_034",
-      "address": "0x080eeadc",
-      "end": "0x080eeae2",
-      "element": "u8",
-      "stride": 1,
-      "values": [2, 4, 2, 6, 4, 8]
-    },
+    {"name": "hyou_b_034", "end": "0x080eeae2", "element": "u8", "stride": 1, "values": [2, 4, 2, 6, 4, 8]},
     {
       "name": "hyou_b_035",
-      "address": "0x080eeae2",
       "end": "0x080eeaec",
       "element": "u8",
       "stride": 1,
@@ -304,7 +154,6 @@
     },
     {
       "name": "hyou_b_036",
-      "address": "0x080eeaec",
       "end": "0x080eeafa",
       "element": "u8",
       "stride": 1,
@@ -312,7 +161,6 @@
     },
     {
       "name": "hyou_b_037",
-      "address": "0x080eeafa",
       "end": "0x080eeb40",
       "element": "u8",
       "stride": 1,
@@ -322,65 +170,15 @@
         14, 16, 18, 20, 20, 20, 0, 0
       ]
     },
-    {
-      "name": "hyou_b_038",
-      "address": "0x080eeb40",
-      "end": "0x080eeb48",
-      "element": "u8",
-      "stride": 1,
-      "values": [0, 0, 1, 0, 0, 0, 1, 0]
-    },
-    {
-      "name": "hyou_b_039",
-      "address": "0x080eeb48",
-      "end": "0x080eeb4b",
-      "element": "u8",
-      "stride": 1,
-      "values": [21, 28, 19]
-    },
-    {
-      "name": "hyou_b_040",
-      "address": "0x080eeb4b",
-      "end": "0x080eeb4e",
-      "element": "u8",
-      "stride": 1,
-      "values": [119, 119, 102]
-    },
-    {
-      "name": "hyou_b_041",
-      "address": "0x080eeb4e",
-      "end": "0x080eeb54",
-      "element": "u8",
-      "stride": 1,
-      "values": [0, 0, 195, 9, 199, 22]
-    },
-    {
-      "name": "hyou_b_042",
-      "address": "0x080eeb54",
-      "end": "0x080eeb58",
-      "element": "u8",
-      "stride": 1,
-      "values": [10, 8, 9, 0]
-    },
-    {
-      "name": "hyou_b_043",
-      "address": "0x080eeb58",
-      "end": "0x080eeb5e",
-      "element": "u8",
-      "stride": 1,
-      "values": [0, 0, 56, 4, 96, 7]
-    },
-    {
-      "name": "hyou_b_044",
-      "address": "0x080eeb5e",
-      "end": "0x080eeb61",
-      "element": "u8",
-      "stride": 1,
-      "values": [4, 8, 12]
-    },
+    {"name": "hyou_b_038", "end": "0x080eeb48", "element": "u8", "stride": 1, "values": [0, 0, 1, 0, 0, 0, 1, 0]},
+    {"name": "hyou_b_039", "end": "0x080eeb4b", "element": "u8", "stride": 1, "values": [21, 28, 19]},
+    {"name": "hyou_b_040", "end": "0x080eeb4e", "element": "u8", "stride": 1, "values": [119, 119, 102]},
+    {"name": "hyou_b_041", "end": "0x080eeb54", "element": "u8", "stride": 1, "values": [0, 0, 195, 9, 199, 22]},
+    {"name": "hyou_b_042", "end": "0x080eeb58", "element": "u8", "stride": 1, "values": [10, 8, 9, 0]},
+    {"name": "hyou_b_043", "end": "0x080eeb5e", "element": "u8", "stride": 1, "values": [0, 0, 56, 4, 96, 7]},
+    {"name": "hyou_b_044", "end": "0x080eeb61", "element": "u8", "stride": 1, "values": [4, 8, 12]},
     {
       "name": "hyou_b_045",
-      "address": "0x080eeb61",
       "end": "0x080eeb71",
       "element": "u8",
       "stride": 1,
@@ -388,31 +186,15 @@
     },
     {
       "name": "hyou_b_046",
-      "address": "0x080eeb71",
       "end": "0x080eeb79",
       "element": "u8",
       "stride": 1,
       "values": [100, 60, 88, 96, 64, 104, 82, 98]
     },
-    {
-      "name": "hyou_b_047",
-      "address": "0x080eeb79",
-      "end": "0x080eeb80",
-      "element": "u8",
-      "stride": 1,
-      "values": [5, 7, 11, 16, 23, 27, 16]
-    },
-    {
-      "name": "hyou_b_048",
-      "address": "0x080eeb80",
-      "end": "0x080eeb88",
-      "element": "u8",
-      "stride": 1,
-      "values": [10, 14, 21, 32, 45, 50, 32, 0]
-    },
+    {"name": "hyou_b_047", "end": "0x080eeb80", "element": "u8", "stride": 1, "values": [5, 7, 11, 16, 23, 27, 16]},
+    {"name": "hyou_b_048", "end": "0x080eeb88", "element": "u8", "stride": 1, "values": [10, 14, 21, 32, 45, 50, 32, 0]},
     {
       "name": "hyou_b_049",
-      "address": "0x080eeb88",
       "end": "0x080eeb96",
       "element": "u8",
       "stride": 1,
@@ -420,23 +202,14 @@
     },
     {
       "name": "hyou_b_050",
-      "address": "0x080eeb96",
       "end": "0x080eebae",
       "element": "u8",
       "stride": 1,
       "values": [0, 14, 224, 8, 32, 208, 4, 12, 232, 24, 244, 216, 252, 240, 224, 12, 0, 3, 2, 1, 2, 3, 2, 1]
     },
-    {
-      "name": "hyou_b_051",
-      "address": "0x080eebae",
-      "end": "0x080eebb6",
-      "element": "u8",
-      "stride": 1,
-      "values": [24, 80, 24, 48, 88, 40, 8, 96]
-    },
+    {"name": "hyou_b_051", "end": "0x080eebb6", "element": "u8", "stride": 1, "values": [24, 80, 24, 48, 88, 40, 8, 96]},
     {
       "name": "hyou_b_052",
-      "address": "0x080eebb6",
       "end": "0x080eebd6",
       "element": "u8",
       "stride": 1,
@@ -447,39 +220,16 @@
     },
     {
       "name": "hyou_b_053",
-      "address": "0x080eebd6",
       "end": "0x080eebe2",
       "element": "u8",
       "stride": 1,
       "values": [16, 0, 15, 1, 32, 3, 31, 1, 128, 5, 48, 3]
     },
-    {
-      "name": "hyou_b_054",
-      "address": "0x080eebe2",
-      "end": "0x080eebe6",
-      "element": "u8",
-      "stride": 1,
-      "values": [0, 4, 8, 12]
-    },
-    {
-      "name": "hyou_b_055",
-      "address": "0x080eebe6",
-      "end": "0x080eebe9",
-      "element": "u8",
-      "stride": 1,
-      "values": [2, 2, 3]
-    },
-    {
-      "name": "hyou_b_056",
-      "address": "0x080eebe9",
-      "end": "0x080eebec",
-      "element": "u8",
-      "stride": 1,
-      "values": [24, 36, 48]
-    },
+    {"name": "hyou_b_054", "end": "0x080eebe6", "element": "u8", "stride": 1, "values": [0, 4, 8, 12]},
+    {"name": "hyou_b_055", "end": "0x080eebe9", "element": "u8", "stride": 1, "values": [2, 2, 3]},
+    {"name": "hyou_b_056", "end": "0x080eebec", "element": "u8", "stride": 1, "values": [24, 36, 48]},
     {
       "name": "hyou_b_057",
-      "address": "0x080eebec",
       "end": "0x080eec28",
       "element": "u8",
       "stride": 1,
@@ -488,105 +238,26 @@
         32, 40, 30, 24, 1, 32, 4, 6, 2, 3, 32, 4, 60, 10, 1, 32, 4, 60, 10, 1, 32, 4, 10, 10, 1, 32, 4
       ]
     },
-    {
-      "name": "hyou_b_058",
-      "address": "0x080eec28",
-      "end": "0x080eec2f",
-      "element": "u8",
-      "stride": 1,
-      "values": [12, 18, 24, 30, 36, 39, 40]
-    },
-    {
-      "name": "hyou_b_059",
-      "address": "0x080eec2f",
-      "end": "0x080eec36",
-      "element": "u8",
-      "stride": 1,
-      "values": [10, 15, 18, 22, 27, 28, 30]
-    },
-    {
-      "name": "hyou_b_060",
-      "address": "0x080eec36",
-      "end": "0x080eec3d",
-      "element": "u8",
-      "stride": 1,
-      "values": [2, 3, 4, 4, 5, 6, 6]
-    },
-    {
-      "name": "hyou_b_061",
-      "address": "0x080eec3d",
-      "end": "0x080eec44",
-      "element": "u8",
-      "stride": 1,
-      "values": [0, 3, 5, 7, 10, 12, 12]
-    },
+    {"name": "hyou_b_058", "end": "0x080eec2f", "element": "u8", "stride": 1, "values": [12, 18, 24, 30, 36, 39, 40]},
+    {"name": "hyou_b_059", "end": "0x080eec36", "element": "u8", "stride": 1, "values": [10, 15, 18, 22, 27, 28, 30]},
+    {"name": "hyou_b_060", "end": "0x080eec3d", "element": "u8", "stride": 1, "values": [2, 3, 4, 4, 5, 6, 6]},
+    {"name": "hyou_b_061", "end": "0x080eec44", "element": "u8", "stride": 1, "values": [0, 3, 5, 7, 10, 12, 12]},
     {
       "name": "hyou_b_062",
-      "address": "0x080eec44",
       "end": "0x080eec52",
       "element": "u8",
       "stride": 1,
       "values": [0, 32, 120, 32, 134, 33, 54, 35, 202, 37, 150, 41, 218, 45]
     },
-    {
-      "name": "hyou_b_063",
-      "address": "0x080eec52",
-      "end": "0x080eec5a",
-      "element": "u8",
-      "stride": 1,
-      "values": [4, 9, 68, 9, 132, 9, 196, 9]
-    },
-    {
-      "name": "hyou_b_064",
-      "address": "0x080eec5a",
-      "end": "0x080eec5f",
-      "element": "u8",
-      "stride": 1,
-      "values": [4, 7, 10, 21, 34]
-    },
-    {
-      "name": "hyou_b_065",
-      "address": "0x080eec5f",
-      "end": "0x080eec63",
-      "element": "u8",
-      "stride": 1,
-      "values": [8, 8, 8, 8]
-    },
-    {
-      "name": "hyou_b_066",
-      "address": "0x080eec63",
-      "end": "0x080eec68",
-      "element": "u8",
-      "stride": 1,
-      "values": [8, 8, 8, 8, 0]
-    },
-    {
-      "name": "hyou_b_067",
-      "address": "0x080eec68",
-      "end": "0x080eec70",
-      "element": "u8",
-      "stride": 1,
-      "values": [4, 9, 68, 9, 132, 9, 196, 9]
-    },
-    {
-      "name": "hyou_b_068",
-      "address": "0x080eec70",
-      "end": "0x080eec74",
-      "element": "u8",
-      "stride": 1,
-      "values": [3, 7, 11, 15]
-    },
-    {
-      "name": "hyou_b_069",
-      "address": "0x080eec74",
-      "end": "0x080eec7d",
-      "element": "u8",
-      "stride": 1,
-      "values": [24, 7, 7, 8, 6, 13, 10, 11, 7]
-    },
+    {"name": "hyou_b_063", "end": "0x080eec5a", "element": "u8", "stride": 1, "values": [4, 9, 68, 9, 132, 9, 196, 9]},
+    {"name": "hyou_b_064", "end": "0x080eec5f", "element": "u8", "stride": 1, "values": [4, 7, 10, 21, 34]},
+    {"name": "hyou_b_065", "end": "0x080eec63", "element": "u8", "stride": 1, "values": [8, 8, 8, 8]},
+    {"name": "hyou_b_066", "end": "0x080eec68", "element": "u8", "stride": 1, "values": [8, 8, 8, 8, 0]},
+    {"name": "hyou_b_067", "end": "0x080eec70", "element": "u8", "stride": 1, "values": [4, 9, 68, 9, 132, 9, 196, 9]},
+    {"name": "hyou_b_068", "end": "0x080eec74", "element": "u8", "stride": 1, "values": [3, 7, 11, 15]},
+    {"name": "hyou_b_069", "end": "0x080eec7d", "element": "u8", "stride": 1, "values": [24, 7, 7, 8, 6, 13, 10, 11, 7]},
     {
       "name": "hyou_b_070",
-      "address": "0x080eec7d",
       "end": "0x080eec86",
       "element": "u8",
       "stride": 1,
@@ -594,23 +265,14 @@
     },
     {
       "name": "hyou_b_071",
-      "address": "0x080eec86",
       "end": "0x080eec98",
       "element": "u8",
       "stride": 1,
       "values": [0, 0, 128, 4, 219, 4, 61, 5, 253, 5, 141, 6, 106, 7, 50, 8, 204, 8]
     },
-    {
-      "name": "hyou_b_072",
-      "address": "0x080eec98",
-      "end": "0x080eeca1",
-      "element": "u8",
-      "stride": 1,
-      "values": [0, 9, 9, 11, 10, 0, 3, 13, 7]
-    },
+    {"name": "hyou_b_072", "end": "0x080eeca1", "element": "u8", "stride": 1, "values": [0, 9, 9, 11, 10, 0, 3, 13, 7]},
     {
       "name": "hyou_b_073",
-      "address": "0x080eeca1",
       "end": "0x080eecb2",
       "element": "u8",
       "stride": 1,
@@ -618,7 +280,6 @@
     },
     {
       "name": "hyou_b_074",
-      "address": "0x080eecb2",
       "end": "0x080eecf2",
       "element": "u8",
       "stride": 1,
@@ -628,33 +289,11 @@
         0, 0, 0
       ]
     },
-    {
-      "name": "hyou_b_075",
-      "address": "0x080eecf2",
-      "end": "0x080eecf7",
-      "element": "u8",
-      "stride": 1,
-      "values": [0, 244, 12, 248, 16]
-    },
-    {
-      "name": "hyou_b_076",
-      "address": "0x080eecf7",
-      "end": "0x080eecfc",
-      "element": "u8",
-      "stride": 1,
-      "values": [8, 16, 20, 24, 32]
-    },
-    {
-      "name": "hyou_b_077",
-      "address": "0x080eecfc",
-      "end": "0x080eecff",
-      "element": "u8",
-      "stride": 1,
-      "values": [1, 3, 5]
-    },
+    {"name": "hyou_b_075", "end": "0x080eecf7", "element": "u8", "stride": 1, "values": [0, 244, 12, 248, 16]},
+    {"name": "hyou_b_076", "end": "0x080eecfc", "element": "u8", "stride": 1, "values": [8, 16, 20, 24, 32]},
+    {"name": "hyou_b_077", "end": "0x080eecff", "element": "u8", "stride": 1, "values": [1, 3, 5]},
     {
       "name": "hyou_b_078",
-      "address": "0x080eecff",
       "end": "0x080eed0e",
       "element": "u8",
       "stride": 1,
@@ -662,7 +301,6 @@
     },
     {
       "name": "hyou_b_079",
-      "address": "0x080eed0e",
       "end": "0x080eed1e",
       "element": "u8",
       "stride": 1,
@@ -670,7 +308,6 @@
     },
     {
       "name": "hyou_b_080",
-      "address": "0x080eed1e",
       "end": "0x080eed3e",
       "element": "u8",
       "stride": 1,
@@ -681,7 +318,6 @@
     },
     {
       "name": "hyou_b_081",
-      "address": "0x080eed3e",
       "end": "0x080eed7e",
       "element": "u8",
       "stride": 1,
@@ -692,7 +328,6 @@
     },
     {
       "name": "hyou_b_082",
-      "address": "0x080eed7e",
       "end": "0x080eed90",
       "element": "u8",
       "stride": 1,
@@ -700,71 +335,20 @@
     },
     {
       "name": "hyou_b_083",
-      "address": "0x080eed90",
       "end": "0x080eed9a",
       "element": "u8",
       "stride": 1,
       "values": [5, 6, 9, 12, 15, 18, 21, 32, 40, 0]
     },
-    {
-      "name": "hyou_b_084",
-      "address": "0x080eed9a",
-      "end": "0x080eeda0",
-      "element": "u8",
-      "stride": 1,
-      "values": [176, 41, 241, 44, 6, 49]
-    },
-    {
-      "name": "hyou_b_085",
-      "address": "0x080eeda0",
-      "end": "0x080eeda3",
-      "element": "u8",
-      "stride": 1,
-      "values": [17, 19, 20]
-    },
-    {
-      "name": "hyou_b_086",
-      "address": "0x080eeda3",
-      "end": "0x080eeda6",
-      "element": "u8",
-      "stride": 1,
-      "values": [49, 55, 64]
-    },
-    {
-      "name": "hyou_b_087",
-      "address": "0x080eeda6",
-      "end": "0x080eedac",
-      "element": "u8",
-      "stride": 1,
-      "values": [248, 0, 12, 184, 216, 240]
-    },
-    {
-      "name": "hyou_b_088",
-      "address": "0x080eedac",
-      "end": "0x080eedb2",
-      "element": "u8",
-      "stride": 1,
-      "values": [136, 40, 120, 56, 104, 72]
-    },
-    {
-      "name": "hyou_b_089",
-      "address": "0x080eedb2",
-      "end": "0x080eedb8",
-      "element": "u8",
-      "stride": 1,
-      "values": [38, 54, 71, 74, 77, 65]
-    },
-    {
-      "name": "hyou_b_090",
-      "address": "0x080eedb8",
-      "end": "0x080eedbe",
-      "element": "u8",
-      "stride": 1,
-      "values": [7, 9, 11, 13, 13, 11]
-    },
+    {"name": "hyou_b_084", "end": "0x080eeda0", "element": "u8", "stride": 1, "values": [176, 41, 241, 44, 6, 49]},
+    {"name": "hyou_b_085", "end": "0x080eeda3", "element": "u8", "stride": 1, "values": [17, 19, 20]},
+    {"name": "hyou_b_086", "end": "0x080eeda6", "element": "u8", "stride": 1, "values": [49, 55, 64]},
+    {"name": "hyou_b_087", "end": "0x080eedac", "element": "u8", "stride": 1, "values": [248, 0, 12, 184, 216, 240]},
+    {"name": "hyou_b_088", "end": "0x080eedb2", "element": "u8", "stride": 1, "values": [136, 40, 120, 56, 104, 72]},
+    {"name": "hyou_b_089", "end": "0x080eedb8", "element": "u8", "stride": 1, "values": [38, 54, 71, 74, 77, 65]},
+    {"name": "hyou_b_090", "end": "0x080eedbe", "element": "u8", "stride": 1, "values": [7, 9, 11, 13, 13, 11]},
     {
       "name": "hyou_b_091",
-      "address": "0x080eedbe",
       "end": "0x080eedca",
       "element": "u8",
       "stride": 1,
@@ -772,7 +356,6 @@
     },
     {
       "name": "hyou_b_092",
-      "address": "0x080eedca",
       "end": "0x080eedf4",
       "element": "u8",
       "stride": 1,
@@ -781,49 +364,19 @@
         9, 68, 9, 132, 9, 196, 9, 0, 0
       ]
     },
-    {
-      "name": "hyou_b_093",
-      "address": "0x080eedf4",
-      "end": "0x080eedfb",
-      "element": "u8",
-      "stride": 1,
-      "values": [26, 46, 63, 77, 60, 39, 32]
-    },
-    {
-      "name": "hyou_b_094",
-      "address": "0x080eedfb",
-      "end": "0x080eee02",
-      "element": "u8",
-      "stride": 1,
-      "values": [11, 20, 37, 65, 65, 54, 39]
-    },
+    {"name": "hyou_b_093", "end": "0x080eedfb", "element": "u8", "stride": 1, "values": [26, 46, 63, 77, 60, 39, 32]},
+    {"name": "hyou_b_094", "end": "0x080eee02", "element": "u8", "stride": 1, "values": [11, 20, 37, 65, 65, 54, 39]},
     {
       "name": "hyou_b_095",
-      "address": "0x080eee02",
       "end": "0x080eee10",
       "element": "u8",
       "stride": 1,
       "values": [0, 0, 30, 1, 182, 4, 209, 13, 94, 33, 154, 48, 212, 56]
     },
-    {
-      "name": "hyou_b_096",
-      "address": "0x080eee10",
-      "end": "0x080eee17",
-      "element": "u8",
-      "stride": 1,
-      "values": [53, 36, 16, 2, 2, 2, 2]
-    },
-    {
-      "name": "hyou_b_097",
-      "address": "0x080eee17",
-      "end": "0x080eee1e",
-      "element": "u8",
-      "stride": 1,
-      "values": [2, 3, 3, 3, 4, 14, 29]
-    },
+    {"name": "hyou_b_096", "end": "0x080eee17", "element": "u8", "stride": 1, "values": [53, 36, 16, 2, 2, 2, 2]},
+    {"name": "hyou_b_097", "end": "0x080eee1e", "element": "u8", "stride": 1, "values": [2, 3, 3, 3, 4, 14, 29]},
     {
       "name": "hyou_b_098",
-      "address": "0x080eee1e",
       "end": "0x080eee2a",
       "element": "u8",
       "stride": 1,
@@ -831,55 +384,18 @@
     },
     {
       "name": "hyou_b_099",
-      "address": "0x080eee2a",
       "end": "0x080eee36",
       "element": "u8",
       "stride": 1,
       "values": [0, 32, 32, 32, 64, 64, 64, 64, 96, 96, 96, 96]
     },
-    {
-      "name": "hyou_b_100",
-      "address": "0x080eee36",
-      "end": "0x080eee3e",
-      "element": "u8",
-      "stride": 1,
-      "values": [0, 32, 64, 16, 48, 0, 32, 64]
-    },
-    {
-      "name": "hyou_b_101",
-      "address": "0x080eee3e",
-      "end": "0x080eee46",
-      "element": "u8",
-      "stride": 1,
-      "values": [0, 0, 0, 32, 32, 64, 64, 64]
-    },
-    {
-      "name": "hyou_b_102",
-      "address": "0x080eee46",
-      "end": "0x080eee4e",
-      "element": "u8",
-      "stride": 1,
-      "values": [0, 40, 80, 0, 40, 80, 40, 80]
-    },
-    {
-      "name": "hyou_b_103",
-      "address": "0x080eee4e",
-      "end": "0x080eee56",
-      "element": "u8",
-      "stride": 1,
-      "values": [13, 0, 0, 53, 40, 40, 80, 80]
-    },
-    {
-      "name": "hyou_b_104",
-      "address": "0x080eee56",
-      "end": "0x080eee5e",
-      "element": "u8",
-      "stride": 1,
-      "values": [48, 48, 46, 36, 36, 32, 26, 6]
-    },
+    {"name": "hyou_b_100", "end": "0x080eee3e", "element": "u8", "stride": 1, "values": [0, 32, 64, 16, 48, 0, 32, 64]},
+    {"name": "hyou_b_101", "end": "0x080eee46", "element": "u8", "stride": 1, "values": [0, 0, 0, 32, 32, 64, 64, 64]},
+    {"name": "hyou_b_102", "end": "0x080eee4e", "element": "u8", "stride": 1, "values": [0, 40, 80, 0, 40, 80, 40, 80]},
+    {"name": "hyou_b_103", "end": "0x080eee56", "element": "u8", "stride": 1, "values": [13, 0, 0, 53, 40, 40, 80, 80]},
+    {"name": "hyou_b_104", "end": "0x080eee5e", "element": "u8", "stride": 1, "values": [48, 48, 46, 36, 36, 32, 26, 6]},
     {
       "name": "hyou_b_105",
-      "address": "0x080eee5e",
       "end": "0x080eee66",
       "element": "u8",
       "stride": 1,
@@ -887,7 +403,6 @@
     },
     {
       "name": "hyou_b_106",
-      "address": "0x080eee66",
       "end": "0x080eee76",
       "element": "u8",
       "stride": 1,
@@ -895,7 +410,6 @@
     },
     {
       "name": "hyou_b_107",
-      "address": "0x080eee76",
       "end": "0x080eeea0",
       "element": "u8",
       "stride": 1,
@@ -906,7 +420,6 @@
     },
     {
       "name": "hyou_b_108",
-      "address": "0x080eeea0",
       "end": "0x080eeebc",
       "element": "u8",
       "stride": 1,
@@ -914,7 +427,6 @@
     },
     {
       "name": "hyou_b_109",
-      "address": "0x080eeebc",
       "end": "0x080eeeca",
       "element": "u8",
       "stride": 1,
@@ -922,7 +434,6 @@
     },
     {
       "name": "hyou_b_110",
-      "address": "0x080eeeca",
       "end": "0x080eeed8",
       "element": "u8",
       "stride": 1,
@@ -930,7 +441,6 @@
     },
     {
       "name": "hyou_b_111",
-      "address": "0x080eeed8",
       "end": "0x080eeee1",
       "element": "u8",
       "stride": 1,
@@ -938,7 +448,6 @@
     },
     {
       "name": "hyou_b_112",
-      "address": "0x080eeee1",
       "end": "0x080eeeea",
       "element": "u8",
       "stride": 1,
@@ -946,7 +455,6 @@
     },
     {
       "name": "hyou_b_113",
-      "address": "0x080eeeea",
       "end": "0x080eeef8",
       "element": "u8",
       "stride": 1,
@@ -954,55 +462,24 @@
     },
     {
       "name": "hyou_b_114",
-      "address": "0x080eeef8",
       "end": "0x080eef06",
       "element": "u8",
       "stride": 1,
       "values": [16, 0, 32, 0, 48, 0, 48, 0, 48, 0, 48, 0, 48, 0]
     },
-    {
-      "name": "hyou_b_115",
-      "address": "0x080eef06",
-      "end": "0x080eef0c",
-      "element": "u8",
-      "stride": 1,
-      "values": [32, 24, 0, 96, 104, 128]
-    },
-    {
-      "name": "hyou_b_116",
-      "address": "0x080eef0c",
-      "end": "0x080eef12",
-      "element": "u8",
-      "stride": 1,
-      "values": [5, 5, 4, 3, 2, 1]
-    },
-    {
-      "name": "hyou_b_117",
-      "address": "0x080eef12",
-      "end": "0x080eef18",
-      "element": "u8",
-      "stride": 1,
-      "values": [5, 5, 4, 3, 2, 1]
-    },
+    {"name": "hyou_b_115", "end": "0x080eef0c", "element": "u8", "stride": 1, "values": [32, 24, 0, 96, 104, 128]},
+    {"name": "hyou_b_116", "end": "0x080eef12", "element": "u8", "stride": 1, "values": [5, 5, 4, 3, 2, 1]},
+    {"name": "hyou_b_117", "end": "0x080eef18", "element": "u8", "stride": 1, "values": [5, 5, 4, 3, 2, 1]},
     {
       "name": "hyou_b_118",
-      "address": "0x080eef18",
       "end": "0x080eef28",
       "element": "u8",
       "stride": 1,
       "values": [0, 128, 0, 0, 0, 64, 0, 0, 0, 64, 0, 0, 0, 32, 0, 0]
     },
-    {
-      "name": "hyou_b_119",
-      "address": "0x080eef28",
-      "end": "0x080eef30",
-      "element": "u8",
-      "stride": 1,
-      "values": [2, 3, 4, 6, 10, 11, 12, 0]
-    },
+    {"name": "hyou_b_119", "end": "0x080eef30", "element": "u8", "stride": 1, "values": [2, 3, 4, 6, 10, 11, 12, 0]},
     {
       "name": "hyou_b_120",
-      "address": "0x080eef30",
       "end": "0x080eef3e",
       "element": "u8",
       "stride": 1,
@@ -1010,31 +487,15 @@
     },
     {
       "name": "hyou_b_121",
-      "address": "0x080eef3e",
       "end": "0x080eef4a",
       "element": "u8",
       "stride": 1,
       "values": [92, 9, 169, 11, 114, 14, 59, 17, 202, 18, 26, 20]
     },
-    {
-      "name": "hyou_b_122",
-      "address": "0x080eef4a",
-      "end": "0x080eef50",
-      "element": "u8",
-      "stride": 1,
-      "values": [19, 23, 23, 19, 16, 17]
-    },
-    {
-      "name": "hyou_b_123",
-      "address": "0x080eef50",
-      "end": "0x080eef56",
-      "element": "u8",
-      "stride": 1,
-      "values": [31, 31, 31, 21, 21, 24]
-    },
+    {"name": "hyou_b_122", "end": "0x080eef50", "element": "u8", "stride": 1, "values": [19, 23, 23, 19, 16, 17]},
+    {"name": "hyou_b_123", "end": "0x080eef56", "element": "u8", "stride": 1, "values": [31, 31, 31, 21, 21, 24]},
     {
       "name": "hyou_b_124",
-      "address": "0x080eef56",
       "end": "0x080eef5f",
       "element": "u8",
       "stride": 1,
@@ -1042,7 +503,6 @@
     },
     {
       "name": "hyou_b_125",
-      "address": "0x080eef5f",
       "end": "0x080eef88",
       "element": "u8",
       "stride": 1,
@@ -1053,7 +513,6 @@
     },
     {
       "name": "hyou_b_126",
-      "address": "0x080eef88",
       "end": "0x080eef96",
       "element": "u8",
       "stride": 1,
@@ -1061,7 +520,6 @@
     },
     {
       "name": "hyou_b_127",
-      "address": "0x080eef96",
       "end": "0x080eefa4",
       "element": "u8",
       "stride": 1,

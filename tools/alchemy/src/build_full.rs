@@ -936,7 +936,7 @@ fn owner_inventory(
             "container":if owner.is_main(){json!({"kind":"main-rom","overlay":Value::Null})}else{json!({"kind":"overlay-image","overlay":owner.overlay_id()})},
             "registration":{"source_path":registered_source,"call_via":paths.registered_call_via(*owner).map(|value| hex(u64::from(value)))},
             "reconstruction_unit":unit,"production":{"state":state,"source":source,"source_group":source_group(game, &source),"extent_bytes":if spans.is_empty(){Value::Null}else{number(extent)},"extent_evidence":extent_evidence,"segments":span_values(&spans),"artifact":artifact_value},
-            "original_translation_unit":{"status":"unknown"},"role":role,"alias":alias
+            "role":role,"alias":alias
         }));
     }
     let units = units.units.iter().filter(|unit| unit.game == game.id()).map(|unit| {
@@ -946,7 +946,7 @@ fn owner_inventory(
             let members = unit.members_in(image).map(|member| json!({"owner":unit.source_owner(image, member.address).unwrap().id(),"role":if member.owner {"owner"} else {"local-symbol"},"alias":member.name,"extent":member.extent})).collect::<Vec<_>>();
             json!({"overlay":image,"members":members})
         }).collect::<Vec<_>>();
-        json!({"id":unit.id,"game":unit.game,"source":unit.source,"compiler_route":unit.compiler_route,"container":if unit.overlay.is_none(){json!({"kind":"main-rom","overlay":Value::Null})}else{json!({"kind":"overlay-image","overlay":unit.overlay})},"original_translation_unit":{"status":"unknown"},"production_composition_sections":unit.composition_sections(),"absolute_symbols":absolute_symbols,"members":members,"instances":instances})
+        json!({"id":unit.id,"game":unit.game,"source":unit.source,"container":if unit.overlay.is_none(){json!({"kind":"main-rom","overlay":Value::Null})}else{json!({"kind":"overlay-image","overlay":unit.overlay})},"production_composition_sections":unit.composition_sections(),"absolute_symbols":absolute_symbols,"members":members,"instances":instances})
     }).collect::<Vec<_>>();
     let auxiliary_regions = assembly.iter().filter(|region| !registered.contains(&SourceOwner::Main(region.address as u32))).map(|region| json!({"role":"non-owner-region","container":{"kind":"main-rom"},"address":hex(region.address),"run_address":region.run_address.map(hex),"extent":region.size,"source":region.source,"kind":region.kind,"origin":region.origin,"retention":region.retention,"confidence":region.confidence,"evidence":region.evidence})).collect::<Vec<_>>();
     let auxiliary_overlay_regions = semantic
@@ -963,7 +963,7 @@ fn owner_inventory(
     Ok(json!({
         "format":1,"kind":format!("{}-production-owner-inventory", game.id()),"scope":"derived production/retention inventory; source-paths is the sole name authority and no original translation-unit boundary is asserted",
         "target":game.target.id.as_str(),"identity_authority":game.identity_authority()?,"inputs":{"translation_units":game.translation_units(),"claimed_manifest":format!("{}/manifest.json", full.claimed_output),"asm_manifest":format!("{}/manifest.json", full.asm_output),"overlay_sources":game.overlay_listing("resource_*")},
-        "summary":{"registered":registered.len(),"main":registered.iter().filter(|owner| owner.is_main()).count(),"overlay":registered.iter().filter(|owner| !owner.is_main()).count(),"known_production_extents":known_extents,"unknown_original_translation_units":registered.len(),"complete_registered_identity_coverage":true,"states":states,"current_source_groups":groups},
+        "summary":{"registered":registered.len(),"main":registered.iter().filter(|owner| owner.is_main()).count(),"overlay":registered.iter().filter(|owner| !owner.is_main()).count(),"known_production_extents":known_extents,"complete_registered_identity_coverage":true,"states":states,"current_source_groups":groups},
         "reconstruction_units":units,"owners":owners,"auxiliary_main_assembly_regions":auxiliary_regions,"auxiliary_overlay_structured_assembly_regions":auxiliary_overlay_regions
     }))
 }

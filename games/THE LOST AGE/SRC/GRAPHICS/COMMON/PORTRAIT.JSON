@@ -17,7 +17,6 @@
     "size": 192,
     "segments": [
       {
-        "address": "0x0895bb58",
         "end": "0x0895bc18",
         "stride": 2,
         "element": "le-u16",

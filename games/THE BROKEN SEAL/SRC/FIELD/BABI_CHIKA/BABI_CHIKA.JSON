@@ -12,7 +12,6 @@
         "segments": [
           {
             "name": "parameters",
-            "address": "0x0874d83c",
             "end": "0x0874d848",
             "stride": 12,
             "element": "u8",
@@ -20,7 +19,6 @@
           },
           {
             "name": "records",
-            "address": "0x0874d848",
             "end": "0x0874d860",
             "stride": 8,
             "element": "le-u16",
@@ -28,7 +26,6 @@
           },
           {
             "name": "component_offsets",
-            "address": "0x0874d860",
             "end": "0x0874d878",
             "stride": 4,
             "element": "le-u32",
@@ -145,16 +142,7 @@
         "address": "0x0874f0a8",
         "size": "0x3",
         "record_size": 3,
-        "segments": [
-          {
-            "name": "terminator",
-            "address": "0x0874f0a8",
-            "end": "0x0874f0ab",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255
-          }
-        ]
+        "segments": [{"name": "terminator", "end": "0x0874f0ab", "stride": 1, "element": "u8", "fill": 255}]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/BABI_CHIKA/BABI_CHIKA.BIN",
       "grid_offset": 68864,
@@ -174,7 +162,6 @@
         "segments": [
           {
             "name": "parameters",
-            "address": "0x0874f22c",
             "end": "0x0874f238",
             "stride": 12,
             "element": "u8",
@@ -182,7 +169,6 @@
           },
           {
             "name": "records",
-            "address": "0x0874f238",
             "end": "0x0874f250",
             "stride": 8,
             "element": "le-u16",
@@ -190,7 +176,6 @@
           },
           {
             "name": "component_offsets",
-            "address": "0x0874f250",
             "end": "0x0874f268",
             "stride": 4,
             "element": "le-u32",
@@ -310,20 +295,12 @@
         "segments": [
           {
             "name": "records",
-            "address": "0x08750b4c",
             "end": "0x08750b52",
             "stride": 3,
             "element": "u8",
             "values": [[49, 43, 101], [8, 49, 100]]
           },
-          {
-            "name": "terminator",
-            "address": "0x08750b52",
-            "end": "0x08750b55",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255
-          }
+          {"name": "terminator", "end": "0x08750b55", "stride": 1, "element": "u8", "fill": 255}
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/BABI_CHIKA/BABI_CHIKA.BIN",

@@ -7,7 +7,6 @@
   "segments": [
     {
       "name": "rules",
-      "address": "0x0809ddd8",
       "end": "0x0809e1d8",
       "element": "record",
       "stride": 8,

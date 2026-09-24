@@ -146,7 +146,8 @@ Each of these closed real owners. Try them before inventing anything new.
 
 Matching comes first, but names are evidence too. Name things from the game
 itself: messages from `TEXT/EN.PO` (msgid is the zero-padded decimal), items
-from message 0x182 plus the item id, places from `recon/tbs/locations.tsv`.
+from message 0x182 plus the item id, places from the table
+`alchemy build assets --locations tbs-en` writes to `out/tbs-en/locations.tsv`.
 Before naming a value, check which call consumes it: a value passed to
 `GameFlag_*` is a flag, not a message (Lunpa Fortress was once misnamed after
 Vale dialogue this way). A function's name lives once, in

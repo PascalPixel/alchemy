@@ -12,7 +12,6 @@
         "segments": [
           {
             "name": "parameters",
-            "address": "0x084ee110",
             "end": "0x084ee11c",
             "stride": 12,
             "element": "u8",
@@ -20,7 +19,6 @@
           },
           {
             "name": "records",
-            "address": "0x084ee11c",
             "end": "0x084ee134",
             "stride": 8,
             "element": "le-u16",
@@ -28,7 +26,6 @@
           },
           {
             "name": "component_offsets",
-            "address": "0x084ee134",
             "end": "0x084ee14c",
             "stride": 4,
             "element": "le-u32",
@@ -118,7 +115,6 @@
         "segments": [
           {
             "name": "records",
-            "address": "0x084f11dc",
             "end": "0x084f121e",
             "stride": 3,
             "element": "u8",
@@ -128,14 +124,7 @@
               [26, 43, 203], [27, 43, 203], [28, 43, 203], [49, 45, 201], [50, 45, 201], [39, 50, 104], [27, 52, 103]
             ]
           },
-          {
-            "name": "terminator",
-            "address": "0x084f121e",
-            "end": "0x084f1221",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255
-          }
+          {"name": "terminator", "end": "0x084f1221", "stride": 1, "element": "u8", "fill": 255}
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_HEYA/HAIDIA_HEYA.BIN",

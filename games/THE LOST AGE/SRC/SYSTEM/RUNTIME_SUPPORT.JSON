@@ -11,7 +11,6 @@
       "segments": [
         {
           "name": "hexadecimal_digits",
-          "address": "0x08017cd0",
           "end": "0x08017ce4",
           "consumers": ["recon/tla/raw/08014840.s"],
           "element": "ascii-fixed",
@@ -29,7 +28,6 @@
       "segments": [
         {
           "name": "identity",
-          "address": "0x08017d08",
           "end": "0x08017d10",
           "consumers": ["recon/tla/raw/08015778.s"],
           "element": "ascii-fixed",
@@ -38,7 +36,6 @@
         },
         {
           "name": "record_marker",
-          "address": "0x08017d10",
           "end": "0x08017d1c",
           "consumers": ["recon/tla/raw/08015ca4.s", "recon/tla/raw/08015f0c.s"],
           "element": "ascii-fixed",
@@ -47,7 +44,6 @@
         },
         {
           "name": "packet_a",
-          "address": "0x08017d1c",
           "end": "0x08017d3c",
           "element": "ascii-fixed",
           "stride": 1,
@@ -55,23 +51,14 @@
         },
         {
           "name": "packet_b",
-          "address": "0x08017d3c",
           "end": "0x08017d58",
           "element": "ascii-fixed",
           "stride": 1,
           "text": "Trans Data B: Hello world."
         },
-        {
-          "name": "flash_version",
-          "address": "0x08017d58",
-          "end": "0x08017d64",
-          "element": "ascii-fixed",
-          "stride": 1,
-          "text": "FLASH_V123"
-        },
+        {"name": "flash_version", "end": "0x08017d64", "element": "ascii-fixed", "stride": 1, "text": "FLASH_V123"},
         {
           "name": "flash_directory",
-          "address": "0x08017d64",
           "end": "0x08017d78",
           "consumers": ["recon/tla/raw/08016ea4.s"],
           "element": "le-u32",
@@ -89,7 +76,6 @@
       "segments": [
         {
           "name": "flash_common",
-          "address": "0x08017dfc",
           "end": "0x08017e14",
           "element": "le-s16",
           "stride": 6,
@@ -97,7 +83,6 @@
         },
         {
           "name": "generic_callbacks",
-          "address": "0x08017e14",
           "end": "0x08017e24",
           "consumers": ["recon/tla/raw/0801713c.s", "recon/tla/raw/080171fc.s"],
           "element": "thumb-pointer",
@@ -106,7 +91,6 @@
         },
         {
           "name": "generic",
-          "address": "0x08017e24",
           "end": "0x08017e40",
           "element": "record",
           "stride": 28,
@@ -141,7 +125,6 @@
         },
         {
           "name": "bf_d4_callbacks",
-          "address": "0x08017e40",
           "end": "0x08017e50",
           "element": "thumb-pointer",
           "stride": 4,
@@ -149,7 +132,6 @@
         },
         {
           "name": "bf_d4",
-          "address": "0x08017e50",
           "end": "0x08017e6c",
           "element": "record",
           "stride": 28,
@@ -193,7 +175,6 @@
       "segments": [
         {
           "name": "flash_c2_1c",
-          "address": "0x08017e94",
           "end": "0x08017eac",
           "element": "le-s16",
           "stride": 6,
@@ -201,7 +182,6 @@
         },
         {
           "name": "flash_32_1b",
-          "address": "0x08017eac",
           "end": "0x08017ec4",
           "element": "le-s16",
           "stride": 6,
@@ -209,7 +189,6 @@
         },
         {
           "name": "c2_1c_callbacks",
-          "address": "0x08017ec4",
           "end": "0x08017ed4",
           "element": "thumb-pointer",
           "stride": 4,
@@ -217,7 +196,6 @@
         },
         {
           "name": "c2_1c",
-          "address": "0x08017ed4",
           "end": "0x08017ef0",
           "element": "record",
           "stride": 28,
@@ -252,7 +230,6 @@
         },
         {
           "name": "32_1b_callbacks",
-          "address": "0x08017ef0",
           "end": "0x08017f00",
           "element": "thumb-pointer",
           "stride": 4,
@@ -260,7 +237,6 @@
         },
         {
           "name": "32_1b",
-          "address": "0x08017f00",
           "end": "0x08017f1c",
           "element": "record",
           "stride": 28,
@@ -304,7 +280,6 @@
       "segments": [
         {
           "name": "flash_1f_3d",
-          "address": "0x08017f24",
           "end": "0x08017f3c",
           "element": "le-s16",
           "stride": 6,
@@ -312,7 +287,6 @@
         },
         {
           "name": "1f_3d_4k_callbacks",
-          "address": "0x08017f3c",
           "end": "0x08017f4c",
           "consumers": ["recon/tla/raw/08017500.s"],
           "element": "thumb-pointer",
@@ -321,7 +295,6 @@
         },
         {
           "name": "1f_3d_4k",
-          "address": "0x08017f4c",
           "end": "0x08017f68",
           "element": "record",
           "stride": 28,
@@ -356,7 +329,6 @@
         },
         {
           "name": "1f_3d_128_callbacks",
-          "address": "0x08017f68",
           "end": "0x08017f78",
           "element": "thumb-pointer",
           "stride": 4,
@@ -364,7 +336,6 @@
         },
         {
           "name": "1f_3d_128",
-          "address": "0x08017f78",
           "end": "0x08017f94",
           "element": "record",
           "stride": 28,

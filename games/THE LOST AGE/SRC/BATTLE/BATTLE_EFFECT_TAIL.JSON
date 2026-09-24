@@ -11,7 +11,6 @@
       "segments": [
         {
           "name": "table_080eff22",
-          "address": "0x080eff22",
           "end": "0x080eff28",
           "consumers": ["recon/tla/raw/080cd680.s"],
           "element": "u8",
@@ -20,7 +19,6 @@
         },
         {
           "name": "table_080eff28",
-          "address": "0x080eff28",
           "end": "0x080effd8",
           "consumers": ["recon/tla/raw/080cd680.s"],
           "element": "le-s16",
@@ -34,7 +32,6 @@
         },
         {
           "name": "script_080effd8",
-          "address": "0x080effd8",
           "end": "0x080f0074",
           "consumers": ["recon/tla/raw/080ceffc.s", "recon/tla/raw/080cf350.s"],
           "element": "le-u32",
@@ -47,7 +44,6 @@
         },
         {
           "name": "script_080f0074",
-          "address": "0x080f0074",
           "end": "0x080f0194",
           "consumers": ["recon/tla/raw/080cf350.s"],
           "element": "le-u32",
@@ -61,7 +57,6 @@
         },
         {
           "name": "script_080f0194",
-          "address": "0x080f0194",
           "end": "0x080f01b8",
           "consumers": ["recon/tla/raw/080ceffc.s", "recon/tla/raw/080cf350.s"],
           "element": "le-s32",
@@ -71,7 +66,6 @@
         },
         {
           "name": "script_080f01b8",
-          "address": "0x080f01b8",
           "end": "0x080f01bc",
           "consumers": ["recon/tla/raw/080ceffc.s", "recon/tla/raw/080cf350.s"],
           "element": "le-u32",
@@ -81,23 +75,14 @@
         },
         {
           "name": "script_080f01bc_callback",
-          "address": "0x080f01bc",
           "end": "0x080f01c0",
           "element": "thumb-pointer",
           "stride": 4,
           "values": ["0x080cf158"]
         },
-        {
-          "name": "script_080f01c0",
-          "address": "0x080f01c0",
-          "end": "0x080f01c4",
-          "element": "le-u32",
-          "stride": 4,
-          "values": [38]
-        },
+        {"name": "script_080f01c0", "end": "0x080f01c4", "element": "le-u32", "stride": 4, "values": [38]},
         {
           "name": "table_080f01c4",
-          "address": "0x080f01c4",
           "end": "0x080f01e6",
           "consumers": ["recon/tla/raw/080cf350.s"],
           "element": "u8",
@@ -109,7 +94,6 @@
         },
         {
           "name": "table_080f01e6",
-          "address": "0x080f01e6",
           "end": "0x080f0206",
           "consumers": ["recon/tla/raw/080cf350.s"],
           "element": "s8",
@@ -120,7 +104,6 @@
         },
         {
           "name": "table_080f0206",
-          "address": "0x080f0206",
           "end": "0x080f0246",
           "consumers": ["recon/tla/raw/080d0a28.s"],
           "element": "u8",
@@ -133,7 +116,6 @@
         },
         {
           "name": "table_080f0246",
-          "address": "0x080f0246",
           "end": "0x080f0286",
           "consumers": ["recon/tla/raw/080d0a28.s"],
           "element": "le-u16",
@@ -145,7 +127,6 @@
         },
         {
           "name": "table_080f0286",
-          "address": "0x080f0286",
           "end": "0x080f02c6",
           "consumers": ["recon/tla/raw/080d0a28.s"],
           "element": "le-u16",
@@ -157,7 +138,6 @@
         },
         {
           "name": "table_080f02c6",
-          "address": "0x080f02c6",
           "end": "0x080f0308",
           "consumers": ["recon/tla/raw/080d0a28.s"],
           "element": "le-u16",
@@ -169,7 +149,6 @@
         },
         {
           "name": "table_080f0308",
-          "address": "0x080f0308",
           "end": "0x080f06d8",
           "consumers": ["recon/tla/raw/080d1e18.s"],
           "element": "le-u16",
@@ -199,7 +178,6 @@
         },
         {
           "name": "script_080f06d8",
-          "address": "0x080f06d8",
           "end": "0x080f085c",
           "consumers": [],
           "element": "le-s32",
@@ -214,7 +192,6 @@
         },
         {
           "name": "script_080f085c",
-          "address": "0x080f085c",
           "end": "0x080f0874",
           "consumers": ["recon/tla/raw/080d3378.s"],
           "element": "le-u32",
@@ -224,7 +201,6 @@
         },
         {
           "name": "script_080f0874",
-          "address": "0x080f0874",
           "end": "0x080f088c",
           "consumers": ["recon/tla/raw/080d3378.s"],
           "element": "le-u32",
@@ -234,7 +210,6 @@
         },
         {
           "name": "table_080f088c",
-          "address": "0x080f088c",
           "end": "0x080f0890",
           "consumers": ["recon/tla/raw/080d3600.s"],
           "element": "u8",
@@ -243,7 +218,6 @@
         },
         {
           "name": "table_080f0890",
-          "address": "0x080f0890",
           "end": "0x080f08b0",
           "consumers": ["recon/tla/raw/080d57e4.s", "recon/tla/raw/080d5aa0.s"],
           "element": "le-u16",
@@ -254,7 +228,6 @@
         },
         {
           "name": "table_080f08b0",
-          "address": "0x080f08b0",
           "end": "0x080f0ab0",
           "consumers": ["recon/tla/raw/080d5e78.s"],
           "element": "le-s16",
@@ -280,7 +253,6 @@
         },
         {
           "name": "table_080f0ab0",
-          "address": "0x080f0ab0",
           "end": "0x080f0b50",
           "consumers": ["recon/tla/raw/080d5e78.s"],
           "element": "u8",
@@ -296,7 +268,6 @@
         },
         {
           "name": "table_080f0b50",
-          "address": "0x080f0b50",
           "end": "0x080f0b7c",
           "consumers": ["recon/tla/raw/080d5e78.s"],
           "element": "le-s16",
@@ -308,7 +279,6 @@
         },
         {
           "name": "table_080f0b7c",
-          "address": "0x080f0b7c",
           "end": "0x080f0c04",
           "consumers": ["recon/tla/raw/080d7024.s"],
           "element": "le-s16",
@@ -330,7 +300,6 @@
       "segments": [
         {
           "name": "script_080f0e54",
-          "address": "0x080f0e54",
           "end": "0x080f0e58",
           "consumers": [
             "recon/tla/raw/080d7d68.s", "recon/tla/raw/080dcf8c.s", "recon/tla/raw/080de060.s",
@@ -343,7 +312,6 @@
         },
         {
           "name": "script_080f0e58",
-          "address": "0x080f0e58",
           "end": "0x080f0e60",
           "consumers": ["recon/tla/raw/080dda30.s", "recon/tla/raw/080de060.s"],
           "element": "le-u32",
@@ -353,7 +321,6 @@
         },
         {
           "name": "script_080f0e60",
-          "address": "0x080f0e60",
           "end": "0x080f0e78",
           "consumers": ["recon/tla/raw/080dcf8c.s", "recon/tla/raw/080dda30.s", "recon/tla/raw/080debd8.s"],
           "element": "le-u32",
@@ -363,7 +330,6 @@
         },
         {
           "name": "script_080f0e78",
-          "address": "0x080f0e78",
           "end": "0x080f0e9c",
           "consumers": [
             "recon/tla/raw/080dbf94.s", "recon/tla/raw/080dd528.s", "recon/tla/raw/080dd668.s",
@@ -376,7 +342,6 @@
         },
         {
           "name": "table_080f0e9c",
-          "address": "0x080f0e9c",
           "end": "0x080f0ea4",
           "consumers": ["recon/tla/raw/080dcb44.s"],
           "element": "u8",
@@ -385,7 +350,6 @@
         },
         {
           "name": "table_080f0ea4",
-          "address": "0x080f0ea4",
           "end": "0x080f0ee4",
           "consumers": ["recon/tla/raw/080dcb44.s"],
           "element": "le-u16",
@@ -397,7 +361,6 @@
         },
         {
           "name": "table_080f0ee4",
-          "address": "0x080f0ee4",
           "end": "0x080f0ee8",
           "consumers": ["recon/tla/raw/080dcf8c.s"],
           "element": "u8",
@@ -406,7 +369,6 @@
         },
         {
           "name": "script_080f0ee8",
-          "address": "0x080f0ee8",
           "end": "0x080f0ef8",
           "consumers": ["recon/tla/raw/080dda30.s"],
           "element": "le-u32",
@@ -416,7 +378,6 @@
         },
         {
           "name": "script_080f0ef8",
-          "address": "0x080f0ef8",
           "end": "0x080f0f00",
           "consumers": ["recon/tla/raw/080de060.s"],
           "element": "le-u32",
@@ -426,7 +387,6 @@
         },
         {
           "name": "script_080f0f00_callback",
-          "address": "0x080f0f00",
           "end": "0x080f0f04",
           "element": "thumb-pointer",
           "stride": 4,
@@ -434,7 +394,6 @@
         },
         {
           "name": "script_080f0f04",
-          "address": "0x080f0f04",
           "end": "0x080f0f2c",
           "element": "le-u32",
           "stride": 4,
@@ -443,7 +402,6 @@
         },
         {
           "name": "table_080f0f2c",
-          "address": "0x080f0f2c",
           "end": "0x080f0f34",
           "consumers": ["recon/tla/raw/080e0020.s"],
           "element": "s8",
@@ -452,7 +410,6 @@
         },
         {
           "name": "table_080f0f34",
-          "address": "0x080f0f34",
           "end": "0x080f0f54",
           "consumers": ["recon/tla/raw/080e03c4.s"],
           "element": "le-s32",
@@ -461,7 +418,6 @@
         },
         {
           "name": "table_080f0f54",
-          "address": "0x080f0f54",
           "end": "0x080f0f64",
           "consumers": ["recon/tla/raw/080e03c4.s"],
           "element": "le-s32",
@@ -470,7 +426,6 @@
         },
         {
           "name": "table_080f0f64",
-          "address": "0x080f0f64",
           "end": "0x080f0f90",
           "consumers": ["recon/tla/raw/080e1f2c.s"],
           "element": "s8",
@@ -482,7 +437,6 @@
         },
         {
           "name": "table_080f0f90",
-          "address": "0x080f0f90",
           "end": "0x080f0fa0",
           "consumers": ["recon/tla/raw/080e3698.s"],
           "element": "le-s32",
@@ -491,7 +445,6 @@
         },
         {
           "name": "table_080f0fa0",
-          "address": "0x080f0fa0",
           "end": "0x080f0fc0",
           "consumers": ["recon/tla/raw/080e4730.s"],
           "element": "u8",
@@ -503,7 +456,6 @@
         },
         {
           "name": "table_080f0fc0",
-          "address": "0x080f0fc0",
           "end": "0x080f0fe0",
           "consumers": ["recon/tla/raw/080e68c8.s"],
           "element": "le-u16",
@@ -512,7 +464,6 @@
         },
         {
           "name": "table_080f0fe0",
-          "address": "0x080f0fe0",
           "end": "0x080f1040",
           "consumers": ["recon/tla/raw/080e8d80.s"],
           "element": "u8",
@@ -526,7 +477,6 @@
         },
         {
           "name": "script_080f1040",
-          "address": "0x080f1040",
           "end": "0x080f1100",
           "consumers": ["recon/tla/raw/080ea14c.s"],
           "element": "le-s32",
@@ -540,7 +490,6 @@
         },
         {
           "name": "table_080f1100",
-          "address": "0x080f1100",
           "end": "0x080f1120",
           "consumers": ["recon/tla/raw/080ec1d0.s"],
           "element": "u8",
@@ -552,7 +501,6 @@
         },
         {
           "name": "table_080f1120",
-          "address": "0x080f1120",
           "end": "0x080f1140",
           "consumers": ["recon/tla/raw/080ec1d0.s"],
           "element": "le-u16",
@@ -572,7 +520,6 @@
       "segments": [
         {
           "name": "script_080f21d0",
-          "address": "0x080f21d0",
           "end": "0x080f21d4",
           "element": "le-u32",
           "stride": 4,
@@ -581,7 +528,6 @@
         },
         {
           "name": "table_080f21d4",
-          "address": "0x080f21d4",
           "end": "0x080f2204",
           "consumers": ["recon/tla/raw/080ca6e8.s"],
           "element": "record",
@@ -608,7 +554,6 @@
         },
         {
           "name": "table_080f2204",
-          "address": "0x080f2204",
           "end": "0x080f2e9c",
           "consumers": ["recon/tla/raw/080ceb80.s"],
           "element": "le-s16",
@@ -693,7 +638,6 @@
         },
         {
           "name": "gradients",
-          "address": "0x080f2e9c",
           "end": "0x080f321c",
           "consumers": ["recon/tla/raw/080cf350.s"],
           "element": "record",
@@ -1132,7 +1076,6 @@
         },
         {
           "name": "table_080f321c",
-          "address": "0x080f321c",
           "end": "0x080f3228",
           "element": "u8",
           "stride": 1,
@@ -1140,7 +1083,6 @@
         },
         {
           "name": "table_080f3228",
-          "address": "0x080f3228",
           "end": "0x080f3230",
           "consumers": ["recon/tla/raw/080d1ee8.s"],
           "element": "le-s32",
@@ -1149,7 +1091,6 @@
         },
         {
           "name": "table_080f3230",
-          "address": "0x080f3230",
           "end": "0x080f32d0",
           "consumers": ["recon/tla/raw/080d1f18.s"],
           "element": "le-s16",
@@ -1162,7 +1103,6 @@
         },
         {
           "name": "script_080f32d0",
-          "address": "0x080f32d0",
           "end": "0x080f32e0",
           "consumers": ["games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/BY_ID.C"],
           "element": "le-u32",
@@ -1172,7 +1112,6 @@
         },
         {
           "name": "script_080f32e0",
-          "address": "0x080f32e0",
           "end": "0x080f32f8",
           "consumers": ["recon/tla/raw/080d3070.s"],
           "element": "le-u32",
@@ -1182,23 +1121,14 @@
         },
         {
           "name": "script_080f32f8_callback",
-          "address": "0x080f32f8",
           "end": "0x080f32fc",
           "element": "thumb-pointer",
           "stride": 4,
           "values": ["0x080d37d4"]
         },
-        {
-          "name": "script_080f32fc",
-          "address": "0x080f32fc",
-          "end": "0x080f3300",
-          "element": "le-u32",
-          "stride": 4,
-          "values": [17]
-        },
+        {"name": "script_080f32fc", "end": "0x080f3300", "element": "le-u32", "stride": 4, "values": [17]},
         {
           "name": "script_080f3300",
-          "address": "0x080f3300",
           "end": "0x080f3304",
           "consumers": ["recon/tla/raw/080cce94.s", "recon/tla/raw/080d37d4.s"],
           "element": "le-u32",
@@ -1208,23 +1138,14 @@
         },
         {
           "name": "script_080f3304_callback",
-          "address": "0x080f3304",
           "end": "0x080f3308",
           "element": "thumb-pointer",
           "stride": 4,
           "values": ["0x080d37d4"]
         },
-        {
-          "name": "script_080f3308",
-          "address": "0x080f3308",
-          "end": "0x080f330c",
-          "element": "le-u32",
-          "stride": 4,
-          "values": [17]
-        },
+        {"name": "script_080f3308", "end": "0x080f330c", "element": "le-u32", "stride": 4, "values": [17]},
         {
           "name": "table_080f330c",
-          "address": "0x080f330c",
           "end": "0x080f3310",
           "consumers": ["recon/tla/raw/080d41e8.s"],
           "element": "u8",
@@ -1233,7 +1154,6 @@
         },
         {
           "name": "script_080f3310",
-          "address": "0x080f3310",
           "end": "0x080f341c",
           "consumers": ["recon/tla/raw/080d476c.s"],
           "element": "le-s32",
@@ -1247,7 +1167,6 @@
         },
         {
           "name": "script_080f341c",
-          "address": "0x080f341c",
           "end": "0x080f3428",
           "consumers": ["recon/tla/raw/080d489c.s"],
           "element": "le-u32",
@@ -1257,7 +1176,6 @@
         },
         {
           "name": "script_080f3428",
-          "address": "0x080f3428",
           "end": "0x080f34e4",
           "consumers": ["recon/tla/raw/080d4ab4.s"],
           "element": "le-s32",
@@ -1271,7 +1189,6 @@
         },
         {
           "name": "script_080f34e4",
-          "address": "0x080f34e4",
           "end": "0x080f34e8",
           "consumers": ["recon/tla/raw/080d4ab4.s"],
           "element": "le-u32",
@@ -1281,7 +1198,6 @@
         },
         {
           "name": "script_080f34e8",
-          "address": "0x080f34e8",
           "end": "0x080f34ec",
           "consumers": ["recon/tla/raw/080d4ab4.s"],
           "element": "le-u32",
@@ -1291,23 +1207,14 @@
         },
         {
           "name": "script_080f34ec_callback",
-          "address": "0x080f34ec",
           "end": "0x080f34f0",
           "element": "thumb-pointer",
           "stride": 4,
           "values": ["0x080d498c"]
         },
-        {
-          "name": "script_080f34f0",
-          "address": "0x080f34f0",
-          "end": "0x080f34f4",
-          "element": "le-u32",
-          "stride": 4,
-          "values": [17]
-        },
+        {"name": "script_080f34f0", "end": "0x080f34f4", "element": "le-u32", "stride": 4, "values": [17]},
         {
           "name": "script_080f34f4",
-          "address": "0x080f34f4",
           "end": "0x080f34f8",
           "consumers": ["recon/tla/raw/080d4ab4.s"],
           "element": "le-u32",
@@ -1317,23 +1224,14 @@
         },
         {
           "name": "script_080f34f8_callback",
-          "address": "0x080f34f8",
           "end": "0x080f34fc",
           "element": "thumb-pointer",
           "stride": 4,
           "values": ["0x080d49a0"]
         },
-        {
-          "name": "script_080f34fc",
-          "address": "0x080f34fc",
-          "end": "0x080f3500",
-          "element": "le-u32",
-          "stride": 4,
-          "values": [17]
-        },
+        {"name": "script_080f34fc", "end": "0x080f3500", "element": "le-u32", "stride": 4, "values": [17]},
         {
           "name": "script_080f3500",
-          "address": "0x080f3500",
           "end": "0x080f3504",
           "consumers": ["recon/tla/raw/080d4ab4.s"],
           "element": "le-u32",
@@ -1343,23 +1241,14 @@
         },
         {
           "name": "script_080f3504_callback",
-          "address": "0x080f3504",
           "end": "0x080f3508",
           "element": "thumb-pointer",
           "stride": 4,
           "values": ["0x080d49ac"]
         },
-        {
-          "name": "script_080f3508",
-          "address": "0x080f3508",
-          "end": "0x080f350c",
-          "element": "le-u32",
-          "stride": 4,
-          "values": [17]
-        },
+        {"name": "script_080f3508", "end": "0x080f350c", "element": "le-u32", "stride": 4, "values": [17]},
         {
           "name": "script_080f350c",
-          "address": "0x080f350c",
           "end": "0x080f35c8",
           "consumers": ["recon/tla/raw/080d4ab4.s"],
           "element": "le-s32",
@@ -1373,7 +1262,6 @@
         },
         {
           "name": "script_080f35c8",
-          "address": "0x080f35c8",
           "end": "0x080f3614",
           "consumers": ["recon/tla/raw/080d4ab4.s"],
           "element": "le-s32",
@@ -1386,7 +1274,6 @@
         },
         {
           "name": "script_080f3614",
-          "address": "0x080f3614",
           "end": "0x080f373c",
           "consumers": ["recon/tla/raw/080d4ab4.s", "recon/tla/raw/080ea14c.s"],
           "element": "le-s32",
@@ -1401,7 +1288,6 @@
         },
         {
           "name": "script_080f373c",
-          "address": "0x080f373c",
           "end": "0x080f3740",
           "consumers": ["recon/tla/raw/080d4ab4.s"],
           "element": "le-u32",
@@ -1411,23 +1297,14 @@
         },
         {
           "name": "script_080f3740_callback",
-          "address": "0x080f3740",
           "end": "0x080f3744",
           "element": "thumb-pointer",
           "stride": 4,
           "values": ["0x080d49bc"]
         },
-        {
-          "name": "script_080f3744",
-          "address": "0x080f3744",
-          "end": "0x080f3750",
-          "element": "le-u32",
-          "stride": 4,
-          "values": [13, 65535, 0]
-        },
+        {"name": "script_080f3744", "end": "0x080f3750", "element": "le-u32", "stride": 4, "values": [13, 65535, 0]},
         {
           "name": "script_080f3750",
-          "address": "0x080f3750",
           "end": "0x080f3754",
           "consumers": ["recon/tla/raw/080d4ab4.s"],
           "element": "le-u32",
@@ -1437,23 +1314,14 @@
         },
         {
           "name": "script_080f3754_callback",
-          "address": "0x080f3754",
           "end": "0x080f3758",
           "element": "thumb-pointer",
           "stride": 4,
           "values": ["0x080d4a54"]
         },
-        {
-          "name": "script_080f3758",
-          "address": "0x080f3758",
-          "end": "0x080f3764",
-          "element": "le-u32",
-          "stride": 4,
-          "values": [13, 65535, 0]
-        },
+        {"name": "script_080f3758", "end": "0x080f3764", "element": "le-u32", "stride": 4, "values": [13, 65535, 0]},
         {
           "name": "script_080f3764",
-          "address": "0x080f3764",
           "end": "0x080f3768",
           "consumers": ["recon/tla/raw/080d4ab4.s"],
           "element": "le-u32",
@@ -1463,7 +1331,6 @@
         },
         {
           "name": "script_080f3768_callback",
-          "address": "0x080f3768",
           "end": "0x080f376c",
           "element": "thumb-pointer",
           "stride": 4,
@@ -1471,7 +1338,6 @@
         },
         {
           "name": "script_080f376c",
-          "address": "0x080f376c",
           "end": "0x080f3780",
           "element": "le-u32",
           "stride": 4,
@@ -1479,7 +1345,6 @@
         },
         {
           "name": "script_080f3780",
-          "address": "0x080f3780",
           "end": "0x080f3798",
           "consumers": ["games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/BY_ID.C", "recon/tla/raw/080cce94.s"],
           "element": "le-u32",

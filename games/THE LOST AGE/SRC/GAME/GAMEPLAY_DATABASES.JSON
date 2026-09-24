@@ -12,7 +12,6 @@
       "segments": [
         {
           "name": "character_flag_groups",
-          "address": "0x080b127c",
           "end": "0x080b1284",
           "consumers": ["recon/tla/raw/080ae0f0.s"],
           "element": "u8",
@@ -21,7 +20,6 @@
         },
         {
           "name": "copied_flag_ids",
-          "address": "0x080b1284",
           "end": "0x080b1290",
           "consumers": ["recon/tla/raw/080ae410.s"],
           "element": "le-u16",
@@ -30,7 +28,6 @@
         },
         {
           "name": "djinn_award_chances",
-          "address": "0x080b1290",
           "end": "0x080b12c8",
           "consumers": ["recon/tla/raw/080ae834.s"],
           "element": "le-s16",
@@ -42,7 +39,6 @@
         },
         {
           "name": "level_experience",
-          "address": "0x080b12c8",
           "end": "0x080b1f28",
           "consumers": ["recon/tla/raw/080af8d0.s"],
           "element": "le-u32",
@@ -142,7 +138,6 @@
       "segments": [
         {
           "name": "new_game_save_rows",
-          "address": "0x080b1f2c",
           "end": "0x080b1f40",
           "consumers": ["recon/tla/raw/080ad3f8.s"],
           "element": "u8",
@@ -151,7 +146,6 @@
         },
         {
           "name": "inventory_counter_slots",
-          "address": "0x080b1f40",
           "end": "0x080b2340",
           "consumers": ["recon/tla/raw/080af298.s"],
           "element": "le-u16",
@@ -180,7 +174,6 @@
         },
         {
           "name": "party_setup_order",
-          "address": "0x080b2340",
           "end": "0x080b2364",
           "consumers": ["recon/tla/raw/080af794.s"],
           "element": "le-s32",
@@ -189,7 +182,6 @@
         },
         {
           "name": "items",
-          "address": "0x080b2364",
           "end": "0x080b7c14",
           "consumers": [
             "recon/tla/raw/080464dc.s", "recon/tla/raw/080aec04.s", "recon/tla/raw/080af298.s",
@@ -3271,7 +3263,6 @@
         },
         {
           "name": "abilities",
-          "address": "0x080b7c14",
           "end": "0x080b9e7c",
           "consumers": [
             "recon/tla/raw/0803d92c.s", "recon/tla/raw/080457d0.s", "recon/tla/raw/080af404.s",
@@ -4166,7 +4157,6 @@
         },
         {
           "name": "combatants",
-          "address": "0x080b9e7c",
           "end": "0x080c0f4c",
           "consumers": [
             "recon/tla/raw/080ad348.s", "recon/tla/raw/080afb80.s", "recon/tla/raw/080affac.s",
@@ -10120,7 +10110,6 @@
         },
         {
           "name": "hero_growth",
-          "address": "0x080c0f4c",
           "end": "0x080c14ec",
           "consumers": ["recon/tla/raw/080af794.s", "recon/tla/raw/080af8d0.s", "recon/tla/raw/080affac.s"],
           "element": "record",
@@ -10232,7 +10221,6 @@
         },
         {
           "name": "summon_menu_order",
-          "address": "0x080c14ec",
           "end": "0x080c1509",
           "consumers": ["recon/tla/raw/080afb80.s"],
           "element": "u8",
@@ -10243,10 +10231,9 @@
           "index_count": 29,
           "permutation": true
         },
-        {"name": "alignment", "address": "0x080c1509", "end": "0x080c150c", "element": "u8", "stride": 1, "fill": 0},
+        {"name": "alignment", "end": "0x080c150c", "element": "u8", "stride": 1, "fill": 0},
         {
           "name": "summons",
-          "address": "0x080c150c",
           "end": "0x080c15f4",
           "consumers": ["recon/tla/raw/080464dc.s", "recon/tla/raw/080afb80.s"],
           "element": "record",
@@ -10290,7 +10277,6 @@
         },
         {
           "name": "classes",
-          "address": "0x080c15f4",
           "end": "0x080c6604",
           "consumers": [
             "recon/tla/raw/080ad3f8.s", "recon/tla/raw/080af4e4.s", "recon/tla/raw/080b005c.s",
@@ -14150,7 +14136,6 @@
         },
         {
           "name": "class_family_matrix",
-          "address": "0x080c6604",
           "end": "0x080c6644",
           "consumers": ["recon/tla/raw/080b005c.s"],
           "element": "le-s32",
@@ -14159,7 +14144,6 @@
         },
         {
           "name": "elemental_level_ratings",
-          "address": "0x080c6644",
           "end": "0x080c6684",
           "consumers": ["recon/tla/raw/080b005c.s"],
           "element": "record",
@@ -14189,7 +14173,6 @@
         },
         {
           "name": "elemental_profiles",
-          "address": "0x080c6684",
           "end": "0x080c6b04",
           "consumers": ["recon/tla/raw/080affac.s", "recon/tla/raw/080b005c.s"],
           "element": "record",
@@ -14784,7 +14767,6 @@
         },
         {
           "name": "signed_scale_curve",
-          "address": "0x080c6b04",
           "end": "0x080c6b18",
           "consumers": ["recon/tla/raw/080b0298.s"],
           "element": "record",
@@ -14800,7 +14782,6 @@
         },
         {
           "name": "effect_90_combatants",
-          "address": "0x080c6b18",
           "end": "0x080c6b76",
           "consumers": ["recon/tla/raw/080b04bc.s"],
           "element": "le-u16",
@@ -14813,7 +14794,6 @@
         },
         {
           "name": "effect_91_combatants",
-          "address": "0x080c6b76",
           "end": "0x080c6bb0",
           "consumers": ["recon/tla/raw/080b04bc.s"],
           "element": "le-u16",
@@ -14825,7 +14805,6 @@
         },
         {
           "name": "djinn",
-          "address": "0x080c6bb0",
           "end": "0x080c6f70",
           "consumers": ["recon/tla/raw/080ad3f8.s", "recon/tla/raw/080b075c.s"],
           "element": "record",
@@ -14919,7 +14898,7 @@
             {"ability": 379}
           ]
         },
-        {"name": "alignment", "address": "0x080c6f70", "end": "0x080c8000", "element": "u8", "stride": 1, "fill": 0}
+        {"name": "alignment", "end": "0x080c8000", "element": "u8", "stride": 1, "fill": 0}
       ]
     }
   ]

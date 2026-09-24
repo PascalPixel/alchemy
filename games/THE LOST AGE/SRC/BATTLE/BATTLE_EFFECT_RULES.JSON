@@ -11,7 +11,6 @@
       "segments": [
         {
           "name": "weighted_records",
-          "address": "0x080edacc",
           "end": "0x080ee6d4",
           "consumers": ["recon/tla/raw/080c9e48.s", "recon/tla/raw/080ca17c.s"],
           "element": "record",
@@ -687,7 +686,6 @@
         },
         {
           "name": "rule_table_0",
-          "address": "0x080ee6d4",
           "end": "0x080eedbc",
           "consumers": ["recon/tla/raw/080c9e48.s"],
           "element": "record",
@@ -924,7 +922,6 @@
         },
         {
           "name": "rule_table_1",
-          "address": "0x080eedbc",
           "end": "0x080eef34",
           "consumers": ["recon/tla/raw/080c9e48.s"],
           "element": "record",
@@ -987,7 +984,6 @@
         },
         {
           "name": "rule_table_1_mode_7",
-          "address": "0x080eef34",
           "end": "0x080eef54",
           "consumers": ["recon/tla/raw/080c9e48.s"],
           "element": "record",
@@ -1007,7 +1003,6 @@
         },
         {
           "name": "rule_table_2",
-          "address": "0x080eef54",
           "end": "0x080ef094",
           "consumers": ["recon/tla/raw/080ca17c.s"],
           "element": "record",
@@ -1098,7 +1093,6 @@
         },
         {
           "name": "rule_table_3",
-          "address": "0x080ef094",
           "end": "0x080ef4a4",
           "consumers": ["recon/tla/raw/080ca17c.s"],
           "element": "record",
@@ -1253,7 +1247,6 @@
       "segments": [
         {
           "name": "rule_table_5",
-          "address": "0x080ef824",
           "end": "0x080ef984",
           "consumers": ["recon/tla/raw/080ca17c.s"],
           "element": "record",
@@ -1493,7 +1486,6 @@
         },
         {
           "name": "rule_table_6",
-          "address": "0x080ef984",
           "end": "0x080efd1c",
           "consumers": ["recon/tla/raw/080ca17c.s"],
           "element": "record",
@@ -1734,7 +1726,6 @@
         },
         {
           "name": "rule_table_7",
-          "address": "0x080efd1c",
           "end": "0x080efd70",
           "consumers": ["recon/tla/raw/080ca17c.s"],
           "element": "record",

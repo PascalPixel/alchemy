@@ -11,7 +11,6 @@
       "segments": [
         {
           "name": "weighted_records",
-          "address": "0x0809c610",
           "end": "0x0809d170",
           "element": "record",
           "stride": 28,
@@ -650,7 +649,6 @@
         },
         {
           "name": "rule_table_0",
-          "address": "0x0809d170",
           "end": "0x0809d7a8",
           "element": "record",
           "stride": 8,
@@ -864,7 +862,6 @@
         },
         {
           "name": "rule_table_1",
-          "address": "0x0809d7a8",
           "end": "0x0809d8b0",
           "element": "record",
           "stride": 8,
@@ -912,7 +909,6 @@
         },
         {
           "name": "rule_table_2",
-          "address": "0x0809d8b0",
           "end": "0x0809d9f0",
           "element": "record",
           "stride": 4,
@@ -1002,7 +998,6 @@
         },
         {
           "name": "rule_table_3",
-          "address": "0x0809d9f0",
           "end": "0x0809ddd8",
           "element": "record",
           "stride": 8,
@@ -1151,7 +1146,6 @@
       "segments": [
         {
           "name": "rule_table_5",
-          "address": "0x0809e1d8",
           "end": "0x0809e270",
           "element": "record",
           "stride": 8,
@@ -1185,7 +1179,6 @@
         },
         {
           "name": "rule_table_6",
-          "address": "0x0809e270",
           "end": "0x0809e488",
           "element": "record",
           "stride": 4,
@@ -1329,7 +1322,6 @@
         },
         {
           "name": "rule_table_7",
-          "address": "0x0809e488",
           "end": "0x0809e4ce",
           "element": "record",
           "stride": 2,

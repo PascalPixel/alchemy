@@ -11,7 +11,6 @@ pub mod score;
 pub mod source;
 use crate::compiler::source_paths::SourceOwner;
 use crate::overlay::assembly::OVERLAY_BASE;
-use serde::Deserialize;
 use std::collections::BTreeMap;
 use std::fs;
 use std::path::{Path, PathBuf};
@@ -21,21 +20,6 @@ use tempfile::tempdir;
 pub struct InternalAlias {
     pub label: String,
     pub offset: i64,
-}
-#[derive(Debug, Clone, Deserialize)]
-pub struct AuditInterval {
-    pub start: i64,
-    pub end: i64,
-    pub kind: String,
-}
-#[derive(Deserialize)]
-struct AuditReport {
-    overlays: Vec<AuditOverlay>,
-}
-#[derive(Deserialize)]
-struct AuditOverlay {
-    id: String,
-    intervals: Vec<AuditInterval>,
 }
 pub(crate) fn overlay_assembly(root: &Path, overlay: &str) -> PathBuf {
     root.join(crate::targets::target_for(crate::targets::DEFAULT_TARGET).overlay_assembly(overlay))
@@ -211,30 +195,6 @@ pub fn placeholder_lines(stem: &str, span: i64, aliases: &[InternalAlias]) -> Ve
         result.push(format!("\t.space 0x{:x}", span - cursor));
     }
     result
-}
-fn audit_intervals(root: &Path, overlay: &str) -> Result<Option<Vec<AuditInterval>>, String> {
-    let target = crate::targets::target_for(crate::targets::DEFAULT_TARGET);
-    let path = root.join(target.output_dir).join("reports/executable.json");
-    if !path.exists() {
-        return Ok(None);
-    }
-    let report: AuditReport = serde_json::from_slice(
-        &fs::read(&path).map_err(|error| format!("{}: {error}", path.display()))?,
-    )
-    .map_err(|error| format!("{}: {error}", path.display()))?;
-    Ok(report
-        .overlays
-        .into_iter()
-        .find(|row| row.id == overlay)
-        .map(|row| row.intervals))
-}
-pub fn audited_kind(root: &Path, overlay: &str, entry: i64) -> Result<Option<String>, String> {
-    Ok(audit_intervals(root, overlay)?.and_then(|intervals| {
-        intervals
-            .into_iter()
-            .find(|interval| interval.start <= entry && entry < interval.end)
-            .map(|interval| interval.kind)
-    }))
 }
 pub(crate) fn owner_spans(root: &Path) -> Result<BTreeMap<SourceOwner, usize>, String> {
     owners::owner_spans(

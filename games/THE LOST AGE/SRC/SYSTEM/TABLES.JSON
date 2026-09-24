@@ -10,7 +10,6 @@
       "segments": [
         {
           "name": "interrupt_handlers",
-          "address": "0x080178b4",
           "end": "0x080178ec",
           "consumers": ["recon/tla/raw/080133c4.s"],
           "element": "thumb-pointer",
@@ -30,7 +29,6 @@
       "segments": [
         {
           "name": "arc_tangent_steps",
-          "address": "0x080178ec",
           "end": "0x08017af0",
           "consumers": ["recon/tla/raw/08014840.s"],
           "element": "le-u16",
@@ -59,7 +57,6 @@
       "size": "0xa00",
       "segments": [
         {
-          "address": "0x080203a8",
           "end": "0x08020488",
           "name": "hyou_00",
           "consumers": ["recon/tla/raw/080227e0.s"],
@@ -85,7 +82,6 @@
           ]
         },
         {
-          "address": "0x08020488",
           "end": "0x080204a8",
           "name": "hyou_00_reserved",
           "element": "u8",
@@ -93,7 +89,6 @@
           "values": [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
         },
         {
-          "address": "0x080204a8",
           "end": "0x08020588",
           "name": "hyou_01",
           "element": "u8",
@@ -118,7 +113,6 @@
           ]
         },
         {
-          "address": "0x08020588",
           "end": "0x080205a8",
           "name": "hyou_01_reserved",
           "element": "u8",
@@ -126,7 +120,6 @@
           "values": [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
         },
         {
-          "address": "0x080205a8",
           "end": "0x08020688",
           "name": "hyou_02",
           "element": "u8",
@@ -151,7 +144,6 @@
           ]
         },
         {
-          "address": "0x08020688",
           "end": "0x080206a8",
           "name": "hyou_02_reserved",
           "element": "u8",
@@ -159,7 +151,6 @@
           "values": [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
         },
         {
-          "address": "0x080206a8",
           "end": "0x08020788",
           "name": "hyou_03",
           "element": "u8",
@@ -184,7 +175,6 @@
           ]
         },
         {
-          "address": "0x08020788",
           "end": "0x080207a8",
           "name": "hyou_03_reserved",
           "element": "u8",
@@ -192,7 +182,6 @@
           "values": [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
         },
         {
-          "address": "0x080207a8",
           "end": "0x08020888",
           "name": "hyou_04",
           "element": "u8",
@@ -217,7 +206,6 @@
           ]
         },
         {
-          "address": "0x08020888",
           "end": "0x080208a8",
           "name": "hyou_04_reserved",
           "element": "u8",
@@ -225,7 +213,6 @@
           "values": [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
         },
         {
-          "address": "0x080208a8",
           "end": "0x08020988",
           "name": "hyou_05",
           "consumers": ["recon/tla/raw/08027e20.s"],
@@ -251,7 +238,6 @@
           ]
         },
         {
-          "address": "0x08020988",
           "end": "0x080209a8",
           "name": "hyou_05_reserved",
           "element": "u8",
@@ -259,7 +245,6 @@
           "values": [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
         },
         {
-          "address": "0x080209a8",
           "end": "0x08020a88",
           "name": "hyou_06",
           "consumers": ["recon/tla/raw/080219cc.s"],
@@ -285,7 +270,6 @@
           ]
         },
         {
-          "address": "0x08020a88",
           "end": "0x08020aa8",
           "name": "hyou_06_reserved",
           "element": "u8",
@@ -293,7 +277,6 @@
           "values": [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
         },
         {
-          "address": "0x08020aa8",
           "end": "0x08020b88",
           "name": "hyou_07",
           "element": "u8",
@@ -318,7 +301,6 @@
           ]
         },
         {
-          "address": "0x08020b88",
           "end": "0x08020ba8",
           "name": "hyou_07_reserved",
           "element": "u8",
@@ -326,7 +308,6 @@
           "values": [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
         },
         {
-          "address": "0x08020ba8",
           "end": "0x08020c88",
           "name": "hyou_08",
           "element": "u8",
@@ -351,7 +332,6 @@
           ]
         },
         {
-          "address": "0x08020c88",
           "end": "0x08020ca8",
           "name": "hyou_08_reserved",
           "element": "u8",
@@ -359,7 +339,6 @@
           "values": [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
         },
         {
-          "address": "0x08020ca8",
           "end": "0x08020d88",
           "name": "hyou_09",
           "element": "u8",
@@ -384,7 +363,6 @@
           ]
         },
         {
-          "address": "0x08020d88",
           "end": "0x08020da8",
           "name": "hyou_09_reserved",
           "element": "u8",

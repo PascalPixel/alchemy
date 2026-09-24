@@ -12,7 +12,6 @@
         "segments": [
           {
             "name": "parameters",
-            "address": "0x0861b4fc",
             "end": "0x0861b508",
             "stride": 12,
             "element": "u8",
@@ -20,7 +19,6 @@
           },
           {
             "name": "records",
-            "address": "0x0861b508",
             "end": "0x0861b520",
             "stride": 8,
             "element": "le-u16",
@@ -28,7 +26,6 @@
           },
           {
             "name": "component_offsets",
-            "address": "0x0861b520",
             "end": "0x0861b538",
             "stride": 4,
             "element": "le-u32",
@@ -145,20 +142,12 @@
         "segments": [
           {
             "name": "records",
-            "address": "0x0861cffc",
             "end": "0x0861d002",
             "stride": 3,
             "element": "u8",
             "values": [[8, 14, 100], [72, 14, 100]]
           },
-          {
-            "name": "terminator",
-            "address": "0x0861d002",
-            "end": "0x0861d005",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255
-          }
+          {"name": "terminator", "end": "0x0861d005", "stride": 1, "element": "u8", "fill": 255}
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_HEYA/MAKYURI_HEYA.BIN",
@@ -179,7 +168,6 @@
         "segments": [
           {
             "name": "parameters",
-            "address": "0x0861d008",
             "end": "0x0861d014",
             "stride": 12,
             "element": "u8",
@@ -187,7 +175,6 @@
           },
           {
             "name": "records",
-            "address": "0x0861d014",
             "end": "0x0861d02c",
             "stride": 8,
             "element": "le-u16",
@@ -195,7 +182,6 @@
           },
           {
             "name": "component_offsets",
-            "address": "0x0861d02c",
             "end": "0x0861d044",
             "stride": 4,
             "element": "le-u32",
@@ -315,20 +301,12 @@
         "segments": [
           {
             "name": "records",
-            "address": "0x0861ee3c",
             "end": "0x0861ee45",
             "stride": 3,
             "element": "u8",
             "values": [[55, 24, 100], [24, 34, 101], [39, 39, 102]]
           },
-          {
-            "name": "terminator",
-            "address": "0x0861ee45",
-            "end": "0x0861ee48",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255
-          }
+          {"name": "terminator", "end": "0x0861ee48", "stride": 1, "element": "u8", "fill": 255}
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_HEYA/MAKYURI_HEYA.BIN",
@@ -349,7 +327,6 @@
         "segments": [
           {
             "name": "parameters",
-            "address": "0x0861ee48",
             "end": "0x0861ee54",
             "stride": 12,
             "element": "u8",
@@ -357,7 +334,6 @@
           },
           {
             "name": "records",
-            "address": "0x0861ee54",
             "end": "0x0861ee6c",
             "stride": 8,
             "element": "le-u16",
@@ -365,7 +341,6 @@
           },
           {
             "name": "component_offsets",
-            "address": "0x0861ee6c",
             "end": "0x0861ee84",
             "stride": 4,
             "element": "le-u32",
@@ -482,16 +457,7 @@
         "address": "0x0862096c",
         "size": "0x3",
         "record_size": 3,
-        "segments": [
-          {
-            "name": "terminator",
-            "address": "0x0862096c",
-            "end": "0x0862096f",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255
-          }
-        ]
+        "segments": [{"name": "terminator", "end": "0x0862096f", "stride": 1, "element": "u8", "fill": 255}]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_HEYA/MAKYURI_HEYA.BIN",
       "grid_offset": 211048,
@@ -511,7 +477,6 @@
         "segments": [
           {
             "name": "parameters",
-            "address": "0x08620970",
             "end": "0x0862097c",
             "stride": 12,
             "element": "u8",
@@ -519,7 +484,6 @@
           },
           {
             "name": "records",
-            "address": "0x0862097c",
             "end": "0x08620994",
             "stride": 8,
             "element": "le-u16",
@@ -527,7 +491,6 @@
           },
           {
             "name": "component_offsets",
-            "address": "0x08620994",
             "end": "0x086209ac",
             "stride": 4,
             "element": "le-u32",
@@ -653,16 +616,7 @@
         "address": "0x08622ae4",
         "size": "0x3",
         "record_size": 3,
-        "segments": [
-          {
-            "name": "terminator",
-            "address": "0x08622ae4",
-            "end": "0x08622ae7",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255
-          }
-        ]
+        "segments": [{"name": "terminator", "end": "0x08622ae7", "stride": 1, "element": "u8", "fill": 255}]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_HEYA/MAKYURI_HEYA.BIN",
       "grid_offset": 69368,

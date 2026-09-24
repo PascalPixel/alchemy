@@ -8,7 +8,6 @@
   "segments": [
     {
       "id": "sound_table",
-      "address": "0x081c4530",
       "end": "0x081c5e30",
       "element": "record",
       "stride": 8,

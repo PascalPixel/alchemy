@@ -5,17 +5,9 @@
   "end": "0x080a1000",
   "size": 3833,
   "segments": [
-    {
-      "name": "alignment_080a0107",
-      "address": "0x080a0107",
-      "end": "0x080a0108",
-      "element": "u8",
-      "stride": 1,
-      "fill": 0
-    },
+    {"name": "alignment_080a0107", "end": "0x080a0108", "element": "u8", "stride": 1, "fill": 0},
     {
       "name": "table_080a0108",
-      "address": "0x080a0108",
       "end": "0x080a0128",
       "element": "record",
       "stride": 4,
@@ -33,7 +25,6 @@
     },
     {
       "name": "script_080a0128",
-      "address": "0x080a0128",
       "end": "0x080a012c",
       "element": "le-u32",
       "stride": 4,
@@ -42,7 +33,6 @@
     },
     {
       "name": "script_pointers",
-      "address": "0x080a012c",
       "end": "0x080a0138",
       "element": "le-u32",
       "stride": 4,
@@ -50,7 +40,6 @@
     },
     {
       "name": "sparse_table",
-      "address": "0x080a0138",
       "end": "0x080a0288",
       "element": "record",
       "stride": 8,
@@ -100,13 +89,6 @@
         {"key": 4294967295, "value": 0}
       ]
     },
-    {
-      "name": "alignment_080a0288",
-      "address": "0x080a0288",
-      "end": "0x080a1000",
-      "element": "u8",
-      "stride": 1,
-      "fill": 0
-    }
+    {"name": "alignment_080a0288", "end": "0x080a1000", "element": "u8", "stride": 1, "fill": 0}
   ]
 }

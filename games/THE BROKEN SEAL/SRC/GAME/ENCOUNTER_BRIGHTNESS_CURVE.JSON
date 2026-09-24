@@ -6,7 +6,6 @@
   "segments": [
     {
       "name": "phases",
-      "address": "0x080c5c10",
       "end": "0x080c5c30",
       "element": "s8",
       "stride": 16,

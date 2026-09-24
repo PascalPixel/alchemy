@@ -10,25 +10,10 @@
     "packed_decoder_copy": {"symbol": "Func_080f02b0", "source": "0x080f0024", "size": 560}
   },
   "segments": [
-    {
-      "name": "unit_q16",
-      "address": "0x080eda78",
-      "end": "0x080eda88",
-      "element": "le-s32",
-      "stride": 4,
-      "values": [65536, 65536, 65536, 65536]
-    },
-    {
-      "name": "negative_offsets",
-      "address": "0x080eda88",
-      "end": "0x080eda98",
-      "element": "le-s32",
-      "stride": 4,
-      "values": [-32, -32, -32, -32]
-    },
+    {"name": "unit_q16", "end": "0x080eda88", "element": "le-s32", "stride": 4, "values": [65536, 65536, 65536, 65536]},
+    {"name": "negative_offsets", "end": "0x080eda98", "element": "le-s32", "stride": 4, "values": [-32, -32, -32, -32]},
     {
       "name": "coordinate_pairs",
-      "address": "0x080eda98",
       "end": "0x080edab0",
       "element": "le-s16",
       "stride": 4,
@@ -36,23 +21,14 @@
     },
     {
       "name": "scale_base_q16",
-      "address": "0x080edab0",
       "end": "0x080edac0",
       "element": "le-s32",
       "stride": 4,
       "values": [65536, 65536, 65536, 65536]
     },
-    {
-      "name": "scale_enhanced_q16",
-      "address": "0x080edac0",
-      "end": "0x080edac8",
-      "element": "le-s32",
-      "stride": 4,
-      "values": [81920, 81920]
-    },
+    {"name": "scale_enhanced_q16", "end": "0x080edac8", "element": "le-s32", "stride": 4, "values": [81920, 81920]},
     {
       "name": "scale_normal_a_q16",
-      "address": "0x080edac8",
       "end": "0x080edad8",
       "element": "le-s32",
       "stride": 4,
@@ -60,19 +36,11 @@
     },
     {
       "name": "scale_normal_b_q16",
-      "address": "0x080edad8",
       "end": "0x080edae8",
       "element": "le-s32",
       "stride": 4,
       "values": [65536, 65536, 65536, 65536]
     },
-    {
-      "name": "scale_high_q16",
-      "address": "0x080edae8",
-      "end": "0x080edaf0",
-      "element": "le-s32",
-      "stride": 4,
-      "values": [98304, 98304]
-    }
+    {"name": "scale_high_q16", "end": "0x080edaf0", "element": "le-s32", "stride": 4, "values": [98304, 98304]}
   ]
 }

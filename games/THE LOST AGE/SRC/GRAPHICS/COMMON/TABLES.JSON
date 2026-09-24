@@ -11,7 +11,6 @@
       "segments": [
         {
           "name": "member_offsets",
-          "address": "0x086aa06c",
           "end": "0x086aa0c8",
           "element": "le-u32",
           "stride": 4,
@@ -31,7 +30,6 @@
       "segments": [
         {
           "name": "member_offsets",
-          "address": "0x086b1688",
           "end": "0x086b174c",
           "element": "le-u32",
           "stride": 4,
@@ -53,7 +51,6 @@
       "segments": [
         {
           "name": "member_offsets",
-          "address": "0x086cd8c8",
           "end": "0x086cd910",
           "element": "le-u32",
           "stride": 4,

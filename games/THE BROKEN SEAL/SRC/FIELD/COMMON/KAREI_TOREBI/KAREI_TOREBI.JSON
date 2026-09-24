@@ -1,126 +1,6 @@
 {
   "format": 1,
   "maps": {
-    "28c": {
-      "format": 1,
-      "kind": "golden-sun-map-container",
-      "map_class": "tokushu",
-      "header": {
-        "format": 1,
-        "kind": "typed-table",
-        "address": "0x086abcc0",
-        "size": "0x3c",
-        "segments": [
-          {
-            "name": "parameters",
-            "address": "0x086abcc0",
-            "end": "0x086abccc",
-            "stride": 12,
-            "element": "u8",
-            "values": [5, 124, 51, 188, 3, 2, 1, 1, 2, 2, 0, 0]
-          },
-          {
-            "name": "records",
-            "address": "0x086abccc",
-            "end": "0x086abce4",
-            "stride": 8,
-            "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [60, 4112, 0, 65535], [120, 4112, 0, 65535]]
-          },
-          {
-            "name": "component_offsets",
-            "address": "0x086abce4",
-            "end": "0x086abcfc",
-            "stride": 4,
-            "element": "le-u32",
-            "values": ["0x3c", "0x124c", "0x126c", "0x1ed8", "0x0", "0x1f60"]
-          }
-        ]
-      },
-      "metatiles": {
-        "format": 1,
-        "codec": "golden-sun-general-lz",
-        "decoded_size": 6913,
-        "encoded_size": 4624,
-        "tilemap_length": 6912,
-        "component": "map-metatiles-2x2",
-        "transform_mode": 1,
-        "metatiles": 864,
-        "tilemap_source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/KAREI_TOREBI/KAREI_TOREBI.BIN",
-        "tilemap_offset": 65536
-      },
-      "descriptors": {
-        "format": 1,
-        "codec": "golden-sun-general-lz",
-        "decoded_size": 48,
-        "encoded_size": 32,
-        "records": [
-          [0, 0, 0, 0], [0, 4, 0, 0], [3, 0, 4, 0], [3, 4, 0, 0], [8, 2, 0, 0], [4, 4, 0, 0], [1, 3, 2, 0],
-          [1, 2, 1, 0], [1, 1, 0, 0], [4, 254, 0, 0], [3, 252, 0, 0], [4, 0, 252, 0]
-        ],
-        "component": "map-descriptors-4byte",
-        "record_size": 4
-      },
-      "animation_queues": {
-        "format": 1,
-        "codec": "golden-sun-general-lz",
-        "decoded_size": 334,
-        "encoded_size": 136,
-        "words": [
-          [
-            "0xfd00", [1536, 4], [528, 1], [1568, 4], [560, 10], [1540, 4], [528, 1], [1572, 4], [560, 10], [1544, 4],
-            [528, 1], [1576, 4], [560, 10], [1548, 4], [528, 1], [1580, 4], [560, 10], "0xfe00"
-          ],
-          [
-            "0xfd01", [1804, 4], [855, 1], [1836, 4], [887, 1], [1868, 4], [919, 1], [1900, 4], [951, 10], [1932, 4],
-            [855, 1], [1964, 4], [887, 1], [1996, 4], [919, 1], [2028, 4], [951, 10], [1800, 4], [855, 1], [1832, 4],
-            [887, 1], [1864, 4], [919, 1], [1896, 4], [951, 10], [1932, 4], [855, 1], [1964, 4], [887, 1], [1996, 4],
-            [919, 1], [2028, 4], [951, 10], "0xfe00"
-          ],
-          [
-            "0xfd02", [1796, 4], [592, 1], [1828, 4], [624, 1], [1860, 4], [656, 1], [1892, 4], [688, 10], [1924, 4],
-            [592, 1], [1956, 4], [624, 1], [1988, 4], [656, 1], [2020, 4], [688, 10], [1792, 4], [592, 1], [1824, 4],
-            [624, 1], [1856, 4], [656, 1], [1888, 4], [688, 10], [1924, 4], [592, 1], [1956, 4], [624, 1], [1988, 4],
-            [656, 1], [2020, 4], [688, 10], "0xfe00"
-          ],
-          "0xffff"
-        ],
-        "component": "map-animation-queues",
-        "word_size": 2,
-        "terminators": ["0xfe00", "0xffff"]
-      },
-      "sparse_cells": {
-        "format": 1,
-        "kind": "typed-table",
-        "address": "0x086adc20",
-        "size": "0x6",
-        "record_size": 3,
-        "segments": [
-          {
-            "name": "records",
-            "address": "0x086adc20",
-            "end": "0x086adc23",
-            "stride": 3,
-            "element": "u8",
-            "values": [[53, 56, 101]]
-          },
-          {
-            "name": "terminator",
-            "address": "0x086adc23",
-            "end": "0x086adc26",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255
-          }
-        ]
-      },
-      "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/KAREI_TOREBI/KAREI_TOREBI.BIN",
-      "grid_offset": 0,
-      "grid_compression": {
-        "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
-        "section": "3763a3289ab2acab5eb032cd001c1a69ee216708bfa01965f8c0986bd3c0e072"
-      }
-    },
     "291": {
       "format": 1,
       "kind": "golden-sun-map-container",
@@ -132,7 +12,6 @@
         "segments": [
           {
             "name": "parameters",
-            "address": "0x086b4d80",
             "end": "0x086b4d8c",
             "stride": 12,
             "element": "u8",
@@ -140,7 +19,6 @@
           },
           {
             "name": "records",
-            "address": "0x086b4d8c",
             "end": "0x086b4da4",
             "stride": 8,
             "element": "le-u16",
@@ -148,7 +26,6 @@
           },
           {
             "name": "component_offsets",
-            "address": "0x086b4da4",
             "end": "0x086b4dbc",
             "stride": 4,
             "element": "le-u32",
@@ -238,22 +115,116 @@
         "address": "0x086b5b84",
         "size": "0x3",
         "record_size": 3,
-        "segments": [
-          {
-            "name": "terminator",
-            "address": "0x086b5b84",
-            "end": "0x086b5b87",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255
-          }
-        ]
+        "segments": [{"name": "terminator", "end": "0x086b5b87", "stride": 1, "element": "u8", "fill": 255}]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/KAREI_TOREBI/KAREI_TOREBI.BIN",
       "grid_offset": 143832,
       "grid_compression": {
         "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
         "section": "d81fbde25c590c01480187ec0cff7c8d96194fed024989f7bdbe5df61945bb33"
+      }
+    },
+    "28c": {
+      "format": 1,
+      "kind": "golden-sun-map-container",
+      "map_class": "tokushu",
+      "header": {
+        "format": 1,
+        "kind": "typed-table",
+        "address": "0x086abcc0",
+        "size": "0x3c",
+        "segments": [
+          {
+            "name": "parameters",
+            "end": "0x086abccc",
+            "stride": 12,
+            "element": "u8",
+            "values": [5, 124, 51, 188, 3, 2, 1, 1, 2, 2, 0, 0]
+          },
+          {
+            "name": "records",
+            "end": "0x086abce4",
+            "stride": 8,
+            "element": "le-u16",
+            "values": [[0, 4112, 0, 65535], [60, 4112, 0, 65535], [120, 4112, 0, 65535]]
+          },
+          {
+            "name": "component_offsets",
+            "end": "0x086abcfc",
+            "stride": 4,
+            "element": "le-u32",
+            "values": ["0x3c", "0x124c", "0x126c", "0x1ed8", "0x0", "0x1f60"]
+          }
+        ]
+      },
+      "metatiles": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 6913,
+        "encoded_size": 4624,
+        "tilemap_length": 6912,
+        "component": "map-metatiles-2x2",
+        "transform_mode": 1,
+        "metatiles": 864,
+        "tilemap_source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/KAREI_TOREBI/KAREI_TOREBI.BIN",
+        "tilemap_offset": 65536
+      },
+      "descriptors": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 48,
+        "encoded_size": 32,
+        "records": [
+          [0, 0, 0, 0], [0, 4, 0, 0], [3, 0, 4, 0], [3, 4, 0, 0], [8, 2, 0, 0], [4, 4, 0, 0], [1, 3, 2, 0],
+          [1, 2, 1, 0], [1, 1, 0, 0], [4, 254, 0, 0], [3, 252, 0, 0], [4, 0, 252, 0]
+        ],
+        "component": "map-descriptors-4byte",
+        "record_size": 4
+      },
+      "animation_queues": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 334,
+        "encoded_size": 136,
+        "words": [
+          [
+            "0xfd00", [1536, 4], [528, 1], [1568, 4], [560, 10], [1540, 4], [528, 1], [1572, 4], [560, 10], [1544, 4],
+            [528, 1], [1576, 4], [560, 10], [1548, 4], [528, 1], [1580, 4], [560, 10], "0xfe00"
+          ],
+          [
+            "0xfd01", [1804, 4], [855, 1], [1836, 4], [887, 1], [1868, 4], [919, 1], [1900, 4], [951, 10], [1932, 4],
+            [855, 1], [1964, 4], [887, 1], [1996, 4], [919, 1], [2028, 4], [951, 10], [1800, 4], [855, 1], [1832, 4],
+            [887, 1], [1864, 4], [919, 1], [1896, 4], [951, 10], [1932, 4], [855, 1], [1964, 4], [887, 1], [1996, 4],
+            [919, 1], [2028, 4], [951, 10], "0xfe00"
+          ],
+          [
+            "0xfd02", [1796, 4], [592, 1], [1828, 4], [624, 1], [1860, 4], [656, 1], [1892, 4], [688, 10], [1924, 4],
+            [592, 1], [1956, 4], [624, 1], [1988, 4], [656, 1], [2020, 4], [688, 10], [1792, 4], [592, 1], [1824, 4],
+            [624, 1], [1856, 4], [656, 1], [1888, 4], [688, 10], [1924, 4], [592, 1], [1956, 4], [624, 1], [1988, 4],
+            [656, 1], [2020, 4], [688, 10], "0xfe00"
+          ],
+          "0xffff"
+        ],
+        "component": "map-animation-queues",
+        "word_size": 2,
+        "terminators": ["0xfe00", "0xffff"]
+      },
+      "sparse_cells": {
+        "format": 1,
+        "kind": "typed-table",
+        "address": "0x086adc20",
+        "size": "0x6",
+        "record_size": 3,
+        "segments": [
+          {"name": "records", "end": "0x086adc23", "stride": 3, "element": "u8", "values": [[53, 56, 101]]},
+          {"name": "terminator", "end": "0x086adc26", "stride": 1, "element": "u8", "fill": 255}
+        ]
+      },
+      "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/KAREI_TOREBI/KAREI_TOREBI.BIN",
+      "grid_offset": 0,
+      "grid_compression": {
+        "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+        "section": "3763a3289ab2acab5eb032cd001c1a69ee216708bfa01965f8c0986bd3c0e072"
       }
     },
     "2a2": {
@@ -267,7 +238,6 @@
         "segments": [
           {
             "name": "parameters",
-            "address": "0x086c56b8",
             "end": "0x086c56c4",
             "stride": 12,
             "element": "u8",
@@ -275,7 +245,6 @@
           },
           {
             "name": "records",
-            "address": "0x086c56c4",
             "end": "0x086c56dc",
             "stride": 8,
             "element": "le-u16",
@@ -283,7 +252,6 @@
           },
           {
             "name": "component_offsets",
-            "address": "0x086c56dc",
             "end": "0x086c56f4",
             "stride": 4,
             "element": "le-u32",
@@ -355,20 +323,12 @@
         "segments": [
           {
             "name": "records",
-            "address": "0x086c742c",
             "end": "0x086c7435",
             "stride": 3,
             "element": "u8",
             "values": [[3, 3, 100], [25, 12, 101], [53, 56, 101]]
           },
-          {
-            "name": "terminator",
-            "address": "0x086c7435",
-            "end": "0x086c7438",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255
-          }
+          {"name": "terminator", "end": "0x086c7438", "stride": 1, "element": "u8", "fill": 255}
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/KAREI_TOREBI/KAREI_TOREBI.BIN",

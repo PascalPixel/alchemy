@@ -6,7 +6,6 @@
   "segments": [
     {
       "name": "rules",
-      "address": "0x080ef4a4",
       "end": "0x080ef814",
       "element": "record",
       "stride": 8,
@@ -128,13 +127,6 @@
         {"key": 96, "selector": [32767, 0], "name": 97}
       ]
     },
-    {
-      "name": "terminator",
-      "address": "0x080ef814",
-      "end": "0x080ef81c",
-      "element": "le-s16",
-      "stride": 8,
-      "values": [-1, -1, -1, -1]
-    }
+    {"name": "terminator", "end": "0x080ef81c", "element": "le-s16", "stride": 8, "values": [-1, -1, -1, -1]}
   ]
 }

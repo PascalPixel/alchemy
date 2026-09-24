@@ -12,7 +12,6 @@
         "segments": [
           {
             "name": "parameters",
-            "address": "0x086c75e0",
             "end": "0x086c75ec",
             "stride": 12,
             "element": "u8",
@@ -20,7 +19,6 @@
           },
           {
             "name": "records",
-            "address": "0x086c75ec",
             "end": "0x086c7604",
             "stride": 8,
             "element": "le-u16",
@@ -28,7 +26,6 @@
           },
           {
             "name": "component_offsets",
-            "address": "0x086c7604",
             "end": "0x086c761c",
             "stride": 4,
             "element": "le-u32",
@@ -108,20 +105,12 @@
         "segments": [
           {
             "name": "records",
-            "address": "0x086c978c",
             "end": "0x086c9795",
             "stride": 3,
             "element": "u8",
             "values": [[14, 20, 100], [22, 22, 101], [53, 56, 101]]
           },
-          {
-            "name": "terminator",
-            "address": "0x086c9795",
-            "end": "0x086c9798",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255
-          }
+          {"name": "terminator", "end": "0x086c9798", "stride": 1, "element": "u8", "fill": 255}
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/TAKARA_SHIMA/TAKARA_SHIMA.BIN",
@@ -142,7 +131,6 @@
         "segments": [
           {
             "name": "parameters",
-            "address": "0x086d8a18",
             "end": "0x086d8a24",
             "stride": 12,
             "element": "u8",
@@ -150,7 +138,6 @@
           },
           {
             "name": "records",
-            "address": "0x086d8a24",
             "end": "0x086d8a3c",
             "stride": 8,
             "element": "le-u16",
@@ -158,7 +145,6 @@
           },
           {
             "name": "component_offsets",
-            "address": "0x086d8a3c",
             "end": "0x086d8a54",
             "stride": 4,
             "element": "le-u32",
@@ -280,20 +266,12 @@
         "segments": [
           {
             "name": "records",
-            "address": "0x086d9b14",
             "end": "0x086d9b20",
             "stride": 3,
             "element": "u8",
             "values": [[12, 3, 102], [26, 4, 103], [18, 14, 101], [28, 15, 100]]
           },
-          {
-            "name": "terminator",
-            "address": "0x086d9b20",
-            "end": "0x086d9b23",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255
-          }
+          {"name": "terminator", "end": "0x086d9b23", "stride": 1, "element": "u8", "fill": 255}
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/TAKARA_SHIMA/TAKARA_SHIMA.BIN",
@@ -314,7 +292,6 @@
         "segments": [
           {
             "name": "parameters",
-            "address": "0x086d9ce0",
             "end": "0x086d9cec",
             "stride": 12,
             "element": "u8",
@@ -322,7 +299,6 @@
           },
           {
             "name": "records",
-            "address": "0x086d9cec",
             "end": "0x086d9d04",
             "stride": 8,
             "element": "le-u16",
@@ -330,7 +306,6 @@
           },
           {
             "name": "component_offsets",
-            "address": "0x086d9d04",
             "end": "0x086d9d1c",
             "stride": 4,
             "element": "le-u32",
@@ -399,22 +374,8 @@
         "size": "0x6",
         "record_size": 3,
         "segments": [
-          {
-            "name": "records",
-            "address": "0x086dc77c",
-            "end": "0x086dc77f",
-            "stride": 3,
-            "element": "u8",
-            "values": [[53, 56, 101]]
-          },
-          {
-            "name": "terminator",
-            "address": "0x086dc77f",
-            "end": "0x086dc782",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255
-          }
+          {"name": "records", "end": "0x086dc77f", "stride": 3, "element": "u8", "values": [[53, 56, 101]]},
+          {"name": "terminator", "end": "0x086dc782", "stride": 1, "element": "u8", "fill": 255}
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/TAKARA_SHIMA/TAKARA_SHIMA.BIN",
@@ -435,7 +396,6 @@
         "segments": [
           {
             "name": "parameters",
-            "address": "0x086dc8f8",
             "end": "0x086dc904",
             "stride": 12,
             "element": "u8",
@@ -443,7 +403,6 @@
           },
           {
             "name": "records",
-            "address": "0x086dc904",
             "end": "0x086dc91c",
             "stride": 8,
             "element": "le-u16",
@@ -451,7 +410,6 @@
           },
           {
             "name": "component_offsets",
-            "address": "0x086dc91c",
             "end": "0x086dc934",
             "stride": 4,
             "element": "le-u32",
@@ -509,22 +467,8 @@
         "size": "0x9",
         "record_size": 3,
         "segments": [
-          {
-            "name": "records",
-            "address": "0x086ddcd4",
-            "end": "0x086ddcda",
-            "stride": 3,
-            "element": "u8",
-            "values": [[0, 1, 100], [0, 3, 101]]
-          },
-          {
-            "name": "terminator",
-            "address": "0x086ddcda",
-            "end": "0x086ddcdd",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255
-          }
+          {"name": "records", "end": "0x086ddcda", "stride": 3, "element": "u8", "values": [[0, 1, 100], [0, 3, 101]]},
+          {"name": "terminator", "end": "0x086ddcdd", "stride": 1, "element": "u8", "fill": 255}
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/TAKARA_SHIMA/TAKARA_SHIMA.BIN",
@@ -545,7 +489,6 @@
         "segments": [
           {
             "name": "parameters",
-            "address": "0x086dde98",
             "end": "0x086ddea4",
             "stride": 12,
             "element": "u8",
@@ -553,7 +496,6 @@
           },
           {
             "name": "records",
-            "address": "0x086ddea4",
             "end": "0x086ddebc",
             "stride": 8,
             "element": "le-u16",
@@ -561,7 +503,6 @@
           },
           {
             "name": "component_offsets",
-            "address": "0x086ddebc",
             "end": "0x086dded4",
             "stride": 4,
             "element": "le-u32",
@@ -660,22 +601,8 @@
         "size": "0x9",
         "record_size": 3,
         "segments": [
-          {
-            "name": "records",
-            "address": "0x086e07b4",
-            "end": "0x086e07ba",
-            "stride": 3,
-            "element": "u8",
-            "values": [[0, 0, 100], [0, 1, 100]]
-          },
-          {
-            "name": "terminator",
-            "address": "0x086e07ba",
-            "end": "0x086e07bd",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255
-          }
+          {"name": "records", "end": "0x086e07ba", "stride": 3, "element": "u8", "values": [[0, 0, 100], [0, 1, 100]]},
+          {"name": "terminator", "end": "0x086e07bd", "stride": 1, "element": "u8", "fill": 255}
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/TAKARA_SHIMA/TAKARA_SHIMA.BIN",

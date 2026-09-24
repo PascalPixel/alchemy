@@ -12,7 +12,6 @@
         "segments": [
           {
             "name": "parameters",
-            "address": "0x086fdf50",
             "end": "0x086fdf5c",
             "stride": 12,
             "element": "u8",
@@ -20,7 +19,6 @@
           },
           {
             "name": "records",
-            "address": "0x086fdf5c",
             "end": "0x086fdf74",
             "stride": 8,
             "element": "le-u16",
@@ -28,7 +26,6 @@
           },
           {
             "name": "component_offsets",
-            "address": "0x086fdf74",
             "end": "0x086fdf8c",
             "stride": 4,
             "element": "le-u32",
@@ -142,20 +139,12 @@
         "segments": [
           {
             "name": "records",
-            "address": "0x086fffe8",
             "end": "0x086ffff4",
             "stride": 3,
             "element": "u8",
             "values": [[51, 6, 103], [23, 7, 101], [56, 7, 104], [34, 16, 102]]
           },
-          {
-            "name": "terminator",
-            "address": "0x086ffff4",
-            "end": "0x086ffff7",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255
-          }
+          {"name": "terminator", "end": "0x086ffff7", "stride": 1, "element": "u8", "fill": 255}
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_KABE/KOROSSEO_KABE.BIN",

@@ -7,7 +7,6 @@
   "segments": [
     {
       "name": "bit_masks",
-      "address": "0x081973f0",
       "end": "0x08197410",
       "consumers": ["recon/tla/raw/081963ec.s"],
       "element": "le-u16",

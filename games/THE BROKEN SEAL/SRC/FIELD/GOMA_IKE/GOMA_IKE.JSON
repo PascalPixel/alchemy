@@ -12,7 +12,6 @@
         "segments": [
           {
             "name": "parameters",
-            "address": "0x085500e0",
             "end": "0x085500ec",
             "stride": 12,
             "element": "u8",
@@ -20,7 +19,6 @@
           },
           {
             "name": "records",
-            "address": "0x085500ec",
             "end": "0x08550104",
             "stride": 8,
             "element": "le-u16",
@@ -28,7 +26,6 @@
           },
           {
             "name": "component_offsets",
-            "address": "0x08550104",
             "end": "0x0855011c",
             "stride": 4,
             "element": "le-u32",
@@ -145,16 +142,7 @@
         "address": "0x085511d0",
         "size": "0x3",
         "record_size": 3,
-        "segments": [
-          {
-            "name": "terminator",
-            "address": "0x085511d0",
-            "end": "0x085511d3",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255
-          }
-        ]
+        "segments": [{"name": "terminator", "end": "0x085511d3", "stride": 1, "element": "u8", "fill": 255}]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/GOMA_IKE/GOMA_IKE.BIN",
       "grid_offset": 0,

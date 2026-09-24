@@ -1,6 +1,98 @@
 {
   "format": 1,
   "maps": {
+    "325": {
+      "format": 1,
+      "kind": "golden-sun-map-container",
+      "header": {
+        "format": 1,
+        "kind": "typed-table",
+        "address": "0x0875b138",
+        "size": "0x3c",
+        "segments": [
+          {
+            "name": "parameters",
+            "end": "0x0875b144",
+            "stride": 12,
+            "element": "u8",
+            "values": [0, 0, 128, 128, 3, 2, 1, 0, 2, 2, 0, 0]
+          },
+          {
+            "name": "records",
+            "end": "0x0875b15c",
+            "stride": 8,
+            "element": "le-u16",
+            "values": [[0, 4112, 0, 65535], [128, 4112, 0, 65535], [32768, 4112, 0, 65535]]
+          },
+          {
+            "name": "component_offsets",
+            "end": "0x0875b174",
+            "stride": 4,
+            "element": "le-u32",
+            "values": ["0x3c", "0x3e4", "0x3f4", "0xc88", "0xc90", "0xc98"]
+          }
+        ]
+      },
+      "metatiles": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 1617,
+        "encoded_size": 936,
+        "tilemap_length": 1616,
+        "component": "map-metatiles-2x2",
+        "transform_mode": 0,
+        "metatiles": 202,
+        "tilemap_source": "games/THE BROKEN SEAL/SRC/FIELD/BABI_IRIGUCHI/BABI_IRIGUCHI.BIN",
+        "tilemap_offset": 203208
+      },
+      "descriptors": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 20,
+        "encoded_size": 16,
+        "records": [[0, 0, 0, 0], [0, 4, 0, 0], [0, 12, 0, 0], [0, 8, 0, 0], [0, 6, 0, 0]],
+        "component": "map-descriptors-4byte",
+        "record_size": 4
+      },
+      "animation_queues": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "tag": 1,
+        "decoded_size": 2,
+        "encoded_size": 8,
+        "words": ["0xffff"],
+        "component": "map-animation-queues",
+        "word_size": 2,
+        "terminators": ["0xfe00", "0xffff"]
+      },
+      "blend_animation": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "tag": 1,
+        "decoded_size": 2,
+        "encoded_size": 8,
+        "words": [["0xffff"]],
+        "component": "map-blend-animation",
+        "word_size": 2
+      },
+      "sparse_cells": {
+        "format": 1,
+        "kind": "typed-table",
+        "address": "0x0875bdd0",
+        "size": "0x6",
+        "record_size": 3,
+        "segments": [
+          {"name": "records", "end": "0x0875bdd3", "stride": 3, "element": "u8", "values": [[23, 12, 100]]},
+          {"name": "terminator", "end": "0x0875bdd6", "stride": 1, "element": "u8", "fill": 255}
+        ]
+      },
+      "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/BABI_IRIGUCHI/BABI_IRIGUCHI.BIN",
+      "grid_offset": 137672,
+      "grid_compression": {
+        "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+        "section": "2fdb8d92d2afaf692417bb040f59ac207a0919ab01baa5183fab3fff2cdddb24"
+      }
+    },
     "31b": {
       "format": 1,
       "kind": "golden-sun-map-container",
@@ -12,7 +104,6 @@
         "segments": [
           {
             "name": "parameters",
-            "address": "0x08750b58",
             "end": "0x08750b64",
             "stride": 12,
             "element": "u8",
@@ -20,7 +111,6 @@
           },
           {
             "name": "records",
-            "address": "0x08750b64",
             "end": "0x08750b7c",
             "stride": 8,
             "element": "le-u16",
@@ -28,7 +118,6 @@
           },
           {
             "name": "component_offsets",
-            "address": "0x08750b7c",
             "end": "0x08750b94",
             "stride": 4,
             "element": "le-u32",
@@ -91,20 +180,12 @@
         "segments": [
           {
             "name": "records",
-            "address": "0x08752a24",
             "end": "0x08752a30",
             "stride": 3,
             "element": "u8",
             "values": [[38, 9, 102], [50, 11, 101], [40, 16, 103], [43, 30, 100]]
           },
-          {
-            "name": "terminator",
-            "address": "0x08752a30",
-            "end": "0x08752a33",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255
-          }
+          {"name": "terminator", "end": "0x08752a33", "stride": 1, "element": "u8", "fill": 255}
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/BABI_IRIGUCHI/BABI_IRIGUCHI.BIN",
@@ -125,7 +206,6 @@
         "segments": [
           {
             "name": "parameters",
-            "address": "0x08752d30",
             "end": "0x08752d3c",
             "stride": 12,
             "element": "u8",
@@ -133,7 +213,6 @@
           },
           {
             "name": "records",
-            "address": "0x08752d3c",
             "end": "0x08752d54",
             "stride": 8,
             "element": "le-u16",
@@ -141,7 +220,6 @@
           },
           {
             "name": "component_offsets",
-            "address": "0x08752d54",
             "end": "0x08752d6c",
             "stride": 4,
             "element": "le-u32",
@@ -254,131 +332,13 @@
         "address": "0x0875396c",
         "size": "0x3",
         "record_size": 3,
-        "segments": [
-          {
-            "name": "terminator",
-            "address": "0x0875396c",
-            "end": "0x0875396f",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255
-          }
-        ]
+        "segments": [{"name": "terminator", "end": "0x0875396f", "stride": 1, "element": "u8", "fill": 255}]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/BABI_IRIGUCHI/BABI_IRIGUCHI.BIN",
       "grid_offset": 70880,
       "grid_compression": {
         "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
         "section": "bf222f9487866bd447cc6cba6bb405047179272033cab6764ab0118c1ba15f73"
-      }
-    },
-    "325": {
-      "format": 1,
-      "kind": "golden-sun-map-container",
-      "header": {
-        "format": 1,
-        "kind": "typed-table",
-        "address": "0x0875b138",
-        "size": "0x3c",
-        "segments": [
-          {
-            "name": "parameters",
-            "address": "0x0875b138",
-            "end": "0x0875b144",
-            "stride": 12,
-            "element": "u8",
-            "values": [0, 0, 128, 128, 3, 2, 1, 0, 2, 2, 0, 0]
-          },
-          {
-            "name": "records",
-            "address": "0x0875b144",
-            "end": "0x0875b15c",
-            "stride": 8,
-            "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [128, 4112, 0, 65535], [32768, 4112, 0, 65535]]
-          },
-          {
-            "name": "component_offsets",
-            "address": "0x0875b15c",
-            "end": "0x0875b174",
-            "stride": 4,
-            "element": "le-u32",
-            "values": ["0x3c", "0x3e4", "0x3f4", "0xc88", "0xc90", "0xc98"]
-          }
-        ]
-      },
-      "metatiles": {
-        "format": 1,
-        "codec": "golden-sun-general-lz",
-        "decoded_size": 1617,
-        "encoded_size": 936,
-        "tilemap_length": 1616,
-        "component": "map-metatiles-2x2",
-        "transform_mode": 0,
-        "metatiles": 202,
-        "tilemap_source": "games/THE BROKEN SEAL/SRC/FIELD/BABI_IRIGUCHI/BABI_IRIGUCHI.BIN",
-        "tilemap_offset": 203208
-      },
-      "descriptors": {
-        "format": 1,
-        "codec": "golden-sun-general-lz",
-        "decoded_size": 20,
-        "encoded_size": 16,
-        "records": [[0, 0, 0, 0], [0, 4, 0, 0], [0, 12, 0, 0], [0, 8, 0, 0], [0, 6, 0, 0]],
-        "component": "map-descriptors-4byte",
-        "record_size": 4
-      },
-      "animation_queues": {
-        "format": 1,
-        "codec": "golden-sun-tagged-palette-lz",
-        "tag": 1,
-        "decoded_size": 2,
-        "encoded_size": 8,
-        "words": ["0xffff"],
-        "component": "map-animation-queues",
-        "word_size": 2,
-        "terminators": ["0xfe00", "0xffff"]
-      },
-      "blend_animation": {
-        "format": 1,
-        "codec": "golden-sun-tagged-palette-lz",
-        "tag": 1,
-        "decoded_size": 2,
-        "encoded_size": 8,
-        "words": [["0xffff"]],
-        "component": "map-blend-animation",
-        "word_size": 2
-      },
-      "sparse_cells": {
-        "format": 1,
-        "kind": "typed-table",
-        "address": "0x0875bdd0",
-        "size": "0x6",
-        "record_size": 3,
-        "segments": [
-          {
-            "name": "records",
-            "address": "0x0875bdd0",
-            "end": "0x0875bdd3",
-            "stride": 3,
-            "element": "u8",
-            "values": [[23, 12, 100]]
-          },
-          {
-            "name": "terminator",
-            "address": "0x0875bdd3",
-            "end": "0x0875bdd6",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255
-          }
-        ]
-      },
-      "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/BABI_IRIGUCHI/BABI_IRIGUCHI.BIN",
-      "grid_offset": 137672,
-      "grid_compression": {
-        "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
-        "section": "2fdb8d92d2afaf692417bb040f59ac207a0919ab01baa5183fab3fff2cdddb24"
       }
     }
   }

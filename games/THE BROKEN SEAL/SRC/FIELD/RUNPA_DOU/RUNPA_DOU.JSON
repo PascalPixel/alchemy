@@ -12,7 +12,6 @@
         "segments": [
           {
             "name": "parameters",
-            "address": "0x086aac40",
             "end": "0x086aac4c",
             "stride": 12,
             "element": "u8",
@@ -20,7 +19,6 @@
           },
           {
             "name": "records",
-            "address": "0x086aac4c",
             "end": "0x086aac64",
             "stride": 8,
             "element": "le-u16",
@@ -28,7 +26,6 @@
           },
           {
             "name": "component_offsets",
-            "address": "0x086aac64",
             "end": "0x086aac7c",
             "stride": 4,
             "element": "le-u32",
@@ -147,16 +144,7 @@
         "address": "0x086abb70",
         "size": "0x3",
         "record_size": 3,
-        "segments": [
-          {
-            "name": "terminator",
-            "address": "0x086abb70",
-            "end": "0x086abb73",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255
-          }
-        ]
+        "segments": [{"name": "terminator", "end": "0x086abb73", "stride": 1, "element": "u8", "fill": 255}]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/RUNPA_DOU/RUNPA_DOU.BIN",
       "grid_offset": 0,

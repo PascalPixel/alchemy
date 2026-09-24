@@ -8,7 +8,6 @@
   "segments": [
     {
       "name": "progression_groups",
-      "address": "0x0807a828",
       "end": "0x0807a830",
       "element": "u8",
       "stride": 1,
@@ -16,7 +15,6 @@
     },
     {
       "name": "level_experience",
-      "address": "0x0807a830",
       "end": "0x0807b490",
       "element": "le-u32",
       "stride": 396,
@@ -105,7 +103,6 @@
     },
     {
       "name": "inventory_counter_slots",
-      "address": "0x0807b490",
       "end": "0x0807b690",
       "element": "u8",
       "stride": 1,
@@ -127,17 +124,9 @@
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
       ]
     },
-    {
-      "name": "party_order",
-      "address": "0x0807b690",
-      "end": "0x0807b6a8",
-      "element": "le-s32",
-      "stride": 4,
-      "values": [0, 1, 2, 3, 5, -1]
-    },
+    {"name": "party_order", "end": "0x0807b6a8", "element": "le-s32", "stride": 4, "values": [0, 1, 2, 3, 5, -1]},
     {
       "name": "items",
-      "address": "0x0807b6a8",
       "end": "0x0807ee58",
       "element": "record",
       "stride": 44,
@@ -2056,7 +2045,6 @@
     },
     {
       "name": "abilities",
-      "address": "0x0807ee58",
       "end": "0x08080ec8",
       "element": "record",
       "stride": 16,
@@ -2615,7 +2603,6 @@
     },
     {
       "name": "combatants",
-      "address": "0x08080ec8",
       "end": "0x080844ec",
       "element": "record",
       "stride": 84,
@@ -5396,7 +5383,6 @@
     },
     {
       "name": "hero_growth",
-      "address": "0x080844ec",
       "end": "0x08084a8c",
       "element": "record",
       "stride": 180,
@@ -5507,7 +5493,6 @@
     },
     {
       "name": "summon_order",
-      "address": "0x08084a8c",
       "end": "0x08084a9c",
       "element": "u8",
       "stride": 1,
@@ -5515,7 +5500,6 @@
     },
     {
       "name": "summons",
-      "address": "0x08084a9c",
       "end": "0x08084b1c",
       "element": "record",
       "stride": 8,
@@ -5541,7 +5525,6 @@
     },
     {
       "name": "classes",
-      "address": "0x08084b1c",
       "end": "0x08088db8",
       "element": "record",
       "stride": 84,
@@ -7430,7 +7413,6 @@
     },
     {
       "name": "class_family_matrix",
-      "address": "0x08088db8",
       "end": "0x08088e38",
       "element": "le-s32",
       "stride": 16,
@@ -7442,7 +7424,6 @@
     },
     {
       "name": "elemental_profiles",
-      "address": "0x08088e38",
       "end": "0x08089258",
       "element": "record",
       "stride": 24,
@@ -7500,7 +7481,6 @@
     },
     {
       "name": "signed_scale_curve",
-      "address": "0x08089258",
       "end": "0x0808926c",
       "element": "record",
       "stride": 4,
@@ -7515,7 +7495,6 @@
     },
     {
       "name": "djinn",
-      "address": "0x0808926c",
       "end": "0x0808962c",
       "element": "record",
       "stride": 12,
@@ -7608,6 +7587,6 @@
         {"name_message": 379, "stat_bonuses": [0, 0, 0, 0, 0, 0]}
       ]
     },
-    {"name": "alignment", "address": "0x0808962c", "end": "0x0808a000", "element": "u8", "stride": 1, "fill": 0}
+    {"name": "alignment", "end": "0x0808a000", "element": "u8", "stride": 1, "fill": 0}
   ]
 }

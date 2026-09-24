@@ -18,15 +18,8 @@
           "end": "0x08073864",
           "size": 18,
           "segments": [
-            {"id": "alignment", "address": "0x08073852", "end": "0x08073854", "element": "u8", "stride": 1, "fill": 0},
-            {
-              "id": "resource_ids",
-              "address": "0x08073854",
-              "end": "0x08073864",
-              "element": "le-u32",
-              "stride": 4,
-              "values": [90, 91, 92, 93]
-            }
+            {"id": "alignment", "end": "0x08073854", "element": "u8", "stride": 1, "fill": 0},
+            {"id": "resource_ids", "end": "0x08073864", "element": "le-u32", "stride": 4, "values": [90, 91, 92, 93]}
           ]
         },
         {
@@ -37,31 +30,16 @@
           "end": "0x08077000",
           "size": 13979,
           "segments": [
-            {
-              "id": "stream_alignment",
-              "address": "0x08073965",
-              "end": "0x08073968",
-              "element": "u8",
-              "stride": 1,
-              "fill": 0
-            },
+            {"id": "stream_alignment", "end": "0x08073968", "element": "u8", "stride": 1, "fill": 0},
             {
               "id": "ui_tile_pointer",
-              "address": "0x08073968",
               "end": "0x0807396c",
               "target": "0x080310a4",
               "element": "le-u32",
               "stride": 4,
               "values": [134418596]
             },
-            {
-              "id": "alignment_tail",
-              "address": "0x0807396c",
-              "end": "0x08077000",
-              "element": "u8",
-              "stride": 1,
-              "fill": 0
-            }
+            {"id": "alignment_tail", "end": "0x08077000", "element": "u8", "stride": 1, "fill": 0}
           ]
         }
       ]
@@ -76,7 +54,6 @@
       "segments": [
         {
           "name": "display_glyph_cells",
-          "address": "0x080af20c",
           "end": "0x080af23c",
           "element": "record",
           "stride": 4,
@@ -98,7 +75,6 @@
         },
         {
           "name": "mask_rows",
-          "address": "0x080af23c",
           "end": "0x080af26c",
           "element": "le-u32",
           "stride": 8,
@@ -117,24 +93,15 @@
       "segments": [
         {
           "name": "auxiliary_display_glyph_cells",
-          "address": "0x080af28c",
           "end": "0x080af294",
           "element": "record",
           "stride": 4,
           "fields": [{"name": "glyphs", "element": "u8", "terminated_capacity": 4, "min": 1, "max": 255}],
           "records": [{"glyphs": [76, 118]}, {"glyphs": [47]}]
         },
-        {
-          "name": "x_offsets",
-          "address": "0x080af294",
-          "end": "0x080af29d",
-          "element": "s8",
-          "stride": 1,
-          "values": [0, 1, 1, 2, 2, 1, 1, 0, 0]
-        },
+        {"name": "x_offsets", "end": "0x080af29d", "element": "s8", "stride": 1, "values": [0, 1, 1, 2, 2, 1, 1, 0, 0]},
         {
           "name": "y_offsets",
-          "address": "0x080af29d",
           "end": "0x080af2a6",
           "element": "s8",
           "stride": 1,
@@ -142,7 +109,6 @@
         },
         {
           "name": "order_0",
-          "address": "0x080af2a6",
           "end": "0x080af2b0",
           "element": "u8",
           "stride": 1,
@@ -150,17 +116,9 @@
           "index_count": 10,
           "permutation": true
         },
-        {
-          "name": "order_0_terminator",
-          "address": "0x080af2b0",
-          "end": "0x080af2b1",
-          "element": "u8",
-          "stride": 1,
-          "fill": 255
-        },
+        {"name": "order_0_terminator", "end": "0x080af2b1", "element": "u8", "stride": 1, "fill": 255},
         {
           "name": "order_1",
-          "address": "0x080af2b1",
           "end": "0x080af2bb",
           "element": "u8",
           "stride": 1,
@@ -168,17 +126,9 @@
           "index_count": 10,
           "permutation": true
         },
-        {
-          "name": "order_1_terminator",
-          "address": "0x080af2bb",
-          "end": "0x080af2bc",
-          "element": "u8",
-          "stride": 1,
-          "fill": 255
-        },
+        {"name": "order_1_terminator", "end": "0x080af2bc", "element": "u8", "stride": 1, "fill": 255},
         {
           "name": "order_2",
-          "address": "0x080af2bc",
           "end": "0x080af2cf",
           "element": "u8",
           "stride": 1,
@@ -187,17 +137,9 @@
           "max": 254,
           "unique": true
         },
-        {
-          "name": "order_2_terminator",
-          "address": "0x080af2cf",
-          "end": "0x080af2d0",
-          "element": "u8",
-          "stride": 1,
-          "fill": 255
-        },
+        {"name": "order_2_terminator", "end": "0x080af2d0", "element": "u8", "stride": 1, "fill": 255},
         {
           "name": "order_3",
-          "address": "0x080af2d0",
           "end": "0x080af2e3",
           "element": "u8",
           "stride": 1,
@@ -206,17 +148,9 @@
           "max": 254,
           "unique": true
         },
-        {
-          "name": "order_3_terminator",
-          "address": "0x080af2e3",
-          "end": "0x080af2e4",
-          "element": "u8",
-          "stride": 1,
-          "fill": 255
-        },
+        {"name": "order_3_terminator", "end": "0x080af2e4", "element": "u8", "stride": 1, "fill": 255},
         {
           "name": "lookup_ids",
-          "address": "0x080af2e4",
           "end": "0x080af2fc",
           "element": "le-u32",
           "stride": 12,
@@ -226,7 +160,6 @@
         },
         {
           "name": "mode_selectors",
-          "address": "0x080af2fc",
           "end": "0x080af301",
           "element": "u8",
           "stride": 1,
@@ -234,17 +167,9 @@
           "min": 6,
           "max": 7
         },
-        {
-          "name": "mode_selector_padding",
-          "address": "0x080af301",
-          "end": "0x080af304",
-          "element": "u8",
-          "stride": 1,
-          "fill": 0
-        },
+        {"name": "mode_selector_padding", "end": "0x080af304", "element": "u8", "stride": 1, "fill": 0},
         {
           "name": "object_resource_ids",
-          "address": "0x080af304",
           "end": "0x080af314",
           "element": "le-u32",
           "stride": 4,
@@ -252,7 +177,7 @@
           "min": 0,
           "max": 65535
         },
-        {"name": "alignment", "address": "0x080af314", "end": "0x080b0000", "element": "u8", "stride": 1, "fill": 0}
+        {"name": "alignment", "end": "0x080b0000", "element": "u8", "stride": 1, "fill": 0}
       ]
     },
     "0x080c2a0a": {
@@ -262,18 +187,10 @@
       "end": "0x080c3734",
       "size": 3370,
       "segments": [
-        {"name": "alignment", "address": "0x080c2a0a", "end": "0x080c2a0c", "element": "u8", "stride": 1, "fill": 0},
-        {
-          "name": "party_capacity",
-          "address": "0x080c2a0c",
-          "end": "0x080c2a10",
-          "element": "le-u32",
-          "stride": 4,
-          "values": [16]
-        },
+        {"name": "alignment", "end": "0x080c2a0c", "element": "u8", "stride": 1, "fill": 0},
+        {"name": "party_capacity", "end": "0x080c2a10", "element": "le-u32", "stride": 4, "values": [16]},
         {
           "name": "party_order_offsets",
-          "address": "0x080c2a10",
           "end": "0x080c2a1c",
           "element": "s8",
           "stride": 1,
@@ -281,7 +198,6 @@
         },
         {
           "name": "actor_pose_rows",
-          "address": "0x080c2a1c",
           "end": "0x080c2a62",
           "element": "le-u16",
           "stride": 14,
@@ -294,7 +210,6 @@
         },
         {
           "name": "party_positions",
-          "address": "0x080c2a62",
           "end": "0x080c2a7c",
           "element": "record",
           "stride": 2,
@@ -317,7 +232,6 @@
         },
         {
           "name": "transform_q16",
-          "address": "0x080c2a7c",
           "end": "0x080c2ab8",
           "element": "le-s32",
           "stride": 4,
@@ -325,7 +239,6 @@
         },
         {
           "name": "formula_control",
-          "address": "0x080c2ab8",
           "end": "0x080c2ac0",
           "element": "u8",
           "stride": 1,
@@ -333,7 +246,6 @@
         },
         {
           "name": "rate_tables",
-          "address": "0x080c2ac0",
           "end": "0x080c2b80",
           "element": "le-u32",
           "stride": 24,
@@ -344,7 +256,6 @@
         },
         {
           "name": "probability_curves",
-          "address": "0x080c2b80",
           "end": "0x080c2b98",
           "element": "u8",
           "stride": 8,
@@ -354,7 +265,6 @@
         },
         {
           "name": "action_modes",
-          "address": "0x080c2b98",
           "end": "0x080c2d9e",
           "element": "u8",
           "stride": 1,
@@ -378,17 +288,9 @@
           "min": 0,
           "max": 9
         },
-        {
-          "name": "action_mode_padding",
-          "address": "0x080c2d9e",
-          "end": "0x080c2da0",
-          "element": "u8",
-          "stride": 1,
-          "fill": 0
-        },
+        {"name": "action_mode_padding", "end": "0x080c2da0", "element": "u8", "stride": 1, "fill": 0},
         {
           "name": "action_display",
-          "address": "0x080c2da0",
           "end": "0x080c35bc",
           "element": "le-u32",
           "stride": 4,
@@ -441,17 +343,9 @@
             [386, 0], [135, 4], [388, 0]
           ]
         },
-        {
-          "name": "selection_defaults",
-          "address": "0x080c35bc",
-          "end": "0x080c35c4",
-          "element": "le-u32",
-          "stride": 4,
-          "values": [1, 2]
-        },
+        {"name": "selection_defaults", "end": "0x080c35c4", "element": "le-u32", "stride": 4, "values": [1, 2]},
         {
           "name": "selection_order",
-          "address": "0x080c35c4",
           "end": "0x080c35d4",
           "element": "u8",
           "stride": 1,
@@ -461,7 +355,6 @@
         },
         {
           "name": "selection_matrix_q16",
-          "address": "0x080c35d4",
           "end": "0x080c3604",
           "element": "le-s32",
           "stride": 12,
@@ -469,7 +362,6 @@
         },
         {
           "name": "particle_offsets",
-          "address": "0x080c3604",
           "end": "0x080c3620",
           "element": "le-u32",
           "stride": 4,
@@ -477,23 +369,14 @@
         },
         {
           "name": "particle_dimensions",
-          "address": "0x080c3620",
           "end": "0x080c3627",
           "element": "u8",
           "stride": 1,
           "values": [1, 2, 3, 4, 4, 4, 4]
         },
-        {
-          "name": "particle_padding",
-          "address": "0x080c3627",
-          "end": "0x080c3628",
-          "element": "u8",
-          "stride": 1,
-          "fill": 0
-        },
+        {"name": "particle_padding", "end": "0x080c3628", "element": "u8", "stride": 1, "fill": 0},
         {
           "name": "particle_sources",
-          "address": "0x080c3628",
           "end": "0x080c3638",
           "element": "le-u32",
           "stride": 4,
@@ -501,7 +384,6 @@
         },
         {
           "name": "particle_adjustments",
-          "address": "0x080c3638",
           "end": "0x080c3648",
           "element": "le-u32",
           "stride": 4,
@@ -509,7 +391,6 @@
         },
         {
           "name": "short_id_map",
-          "address": "0x080c3648",
           "end": "0x080c366c",
           "element": "record",
           "stride": 4,
@@ -528,7 +409,6 @@
         },
         {
           "name": "long_id_map",
-          "address": "0x080c366c",
           "end": "0x080c3734",
           "element": "record",
           "stride": 4,
@@ -598,7 +478,6 @@
       "segments": [
         {
           "name": "formation_00",
-          "address": "0x080c3f34",
           "end": "0x080c3f98",
           "element": "record",
           "stride": 20,
@@ -655,7 +534,6 @@
         },
         {
           "name": "formation_01",
-          "address": "0x080c3f98",
           "end": "0x080c3fd4",
           "element": "record",
           "stride": 20,
@@ -696,7 +574,6 @@
         },
         {
           "name": "formation_02",
-          "address": "0x080c3fd4",
           "end": "0x080c4024",
           "element": "record",
           "stride": 20,
@@ -745,7 +622,6 @@
         },
         {
           "name": "formation_03",
-          "address": "0x080c4024",
           "end": "0x080c4088",
           "element": "record",
           "stride": 20,
@@ -802,7 +678,6 @@
         },
         {
           "name": "formation_04",
-          "address": "0x080c4088",
           "end": "0x080c40ec",
           "element": "record",
           "stride": 20,
@@ -859,7 +734,6 @@
         },
         {
           "name": "formation_05",
-          "address": "0x080c40ec",
           "end": "0x080c4150",
           "element": "record",
           "stride": 20,
@@ -916,7 +790,6 @@
         },
         {
           "name": "formation_06",
-          "address": "0x080c4150",
           "end": "0x080c41b4",
           "element": "record",
           "stride": 20,
@@ -973,7 +846,6 @@
         },
         {
           "name": "formation_07",
-          "address": "0x080c41b4",
           "end": "0x080c4218",
           "element": "record",
           "stride": 20,
@@ -1030,7 +902,6 @@
         },
         {
           "name": "formation_08",
-          "address": "0x080c4218",
           "end": "0x080c427c",
           "element": "record",
           "stride": 20,
@@ -1087,7 +958,6 @@
         },
         {
           "name": "formation_09",
-          "address": "0x080c427c",
           "end": "0x080c42e0",
           "element": "record",
           "stride": 20,
@@ -1144,7 +1014,6 @@
         },
         {
           "name": "formation_10",
-          "address": "0x080c42e0",
           "end": "0x080c4330",
           "element": "record",
           "stride": 20,
@@ -1193,7 +1062,6 @@
         },
         {
           "name": "formation_11",
-          "address": "0x080c4330",
           "end": "0x080c4380",
           "element": "record",
           "stride": 20,
@@ -1242,7 +1110,6 @@
         },
         {
           "name": "formation_12",
-          "address": "0x080c4380",
           "end": "0x080c43bc",
           "element": "record",
           "stride": 20,
@@ -1283,7 +1150,6 @@
         },
         {
           "name": "formation_13",
-          "address": "0x080c43bc",
           "end": "0x080c440c",
           "element": "record",
           "stride": 20,
@@ -1332,7 +1198,6 @@
         },
         {
           "name": "formation_14",
-          "address": "0x080c440c",
           "end": "0x080c445c",
           "element": "record",
           "stride": 20,
@@ -1381,7 +1246,6 @@
         },
         {
           "name": "formation_15",
-          "address": "0x080c445c",
           "end": "0x080c44c0",
           "element": "record",
           "stride": 20,
@@ -1438,7 +1302,6 @@
         },
         {
           "name": "formation_16",
-          "address": "0x080c44c0",
           "end": "0x080c4524",
           "element": "record",
           "stride": 20,
@@ -1495,7 +1358,6 @@
         },
         {
           "name": "formation_17",
-          "address": "0x080c4524",
           "end": "0x080c4588",
           "element": "record",
           "stride": 20,
@@ -1552,7 +1414,6 @@
         },
         {
           "name": "formation_18",
-          "address": "0x080c4588",
           "end": "0x080c45ec",
           "element": "record",
           "stride": 20,
@@ -1609,7 +1470,6 @@
         },
         {
           "name": "formation_19",
-          "address": "0x080c45ec",
           "end": "0x080c4650",
           "element": "record",
           "stride": 20,
@@ -1666,7 +1526,6 @@
         },
         {
           "name": "formation_20",
-          "address": "0x080c4650",
           "end": "0x080c46a0",
           "element": "record",
           "stride": 20,
@@ -1715,7 +1574,6 @@
         },
         {
           "name": "formation_21",
-          "address": "0x080c46a0",
           "end": "0x080c46f0",
           "element": "record",
           "stride": 20,
@@ -1764,7 +1622,6 @@
         },
         {
           "name": "formation_22",
-          "address": "0x080c46f0",
           "end": "0x080c4740",
           "element": "record",
           "stride": 20,
@@ -1813,7 +1670,6 @@
         },
         {
           "name": "formation_23",
-          "address": "0x080c4740",
           "end": "0x080c4790",
           "element": "record",
           "stride": 20,
@@ -1862,7 +1718,6 @@
         },
         {
           "name": "formation_24",
-          "address": "0x080c4790",
           "end": "0x080c47e0",
           "element": "record",
           "stride": 20,
@@ -1911,7 +1766,6 @@
         },
         {
           "name": "formation_25",
-          "address": "0x080c47e0",
           "end": "0x080c4844",
           "element": "record",
           "stride": 20,
@@ -1968,7 +1822,6 @@
         },
         {
           "name": "formation_26",
-          "address": "0x080c4844",
           "end": "0x080c48a8",
           "element": "record",
           "stride": 20,
@@ -2025,7 +1878,6 @@
         },
         {
           "name": "formation_27",
-          "address": "0x080c48a8",
           "end": "0x080c490c",
           "element": "record",
           "stride": 20,
@@ -2082,7 +1934,6 @@
         },
         {
           "name": "formation_28",
-          "address": "0x080c490c",
           "end": "0x080c4970",
           "element": "record",
           "stride": 20,
@@ -2139,7 +1990,6 @@
         },
         {
           "name": "formation_29",
-          "address": "0x080c4970",
           "end": "0x080c49d4",
           "element": "record",
           "stride": 20,
@@ -2196,7 +2046,6 @@
         },
         {
           "name": "formation_30",
-          "address": "0x080c49d4",
           "end": "0x080c4a38",
           "element": "record",
           "stride": 20,
@@ -2253,7 +2102,6 @@
         },
         {
           "name": "formation_31",
-          "address": "0x080c4a38",
           "end": "0x080c4a9c",
           "element": "record",
           "stride": 20,
@@ -2310,7 +2158,6 @@
         },
         {
           "name": "formation_32",
-          "address": "0x080c4a9c",
           "end": "0x080c4b00",
           "element": "record",
           "stride": 20,
@@ -2367,7 +2214,6 @@
         },
         {
           "name": "formation_33",
-          "address": "0x080c4b00",
           "end": "0x080c4b64",
           "element": "record",
           "stride": 20,
@@ -2424,7 +2270,6 @@
         },
         {
           "name": "formation_34",
-          "address": "0x080c4b64",
           "end": "0x080c4bc8",
           "element": "record",
           "stride": 20,
@@ -2481,7 +2326,6 @@
         },
         {
           "name": "formation_35",
-          "address": "0x080c4bc8",
           "end": "0x080c4c2c",
           "element": "record",
           "stride": 20,
@@ -2538,7 +2382,6 @@
         },
         {
           "name": "formation_36",
-          "address": "0x080c4c2c",
           "end": "0x080c4c90",
           "element": "record",
           "stride": 20,
@@ -2595,7 +2438,6 @@
         },
         {
           "name": "formation_37",
-          "address": "0x080c4c90",
           "end": "0x080c4cf4",
           "element": "record",
           "stride": 20,
@@ -2652,7 +2494,6 @@
         },
         {
           "name": "formation_38",
-          "address": "0x080c4cf4",
           "end": "0x080c4d58",
           "element": "record",
           "stride": 20,
@@ -2709,7 +2550,6 @@
         },
         {
           "name": "formation_39",
-          "address": "0x080c4d58",
           "end": "0x080c4dbc",
           "element": "record",
           "stride": 20,
@@ -2766,7 +2606,6 @@
         },
         {
           "name": "formation_40",
-          "address": "0x080c4dbc",
           "end": "0x080c4e20",
           "element": "record",
           "stride": 20,
@@ -2823,7 +2662,6 @@
         },
         {
           "name": "formation_41",
-          "address": "0x080c4e20",
           "end": "0x080c4e84",
           "element": "record",
           "stride": 20,
@@ -2880,7 +2718,6 @@
         },
         {
           "name": "formation_42",
-          "address": "0x080c4e84",
           "end": "0x080c4ee8",
           "element": "record",
           "stride": 20,
@@ -2937,7 +2774,6 @@
         },
         {
           "name": "formation_43",
-          "address": "0x080c4ee8",
           "end": "0x080c4f4c",
           "element": "record",
           "stride": 20,
@@ -2994,7 +2830,6 @@
         },
         {
           "name": "formation_44",
-          "address": "0x080c4f4c",
           "end": "0x080c4fb0",
           "element": "record",
           "stride": 20,
@@ -3051,7 +2886,6 @@
         },
         {
           "name": "formation_45",
-          "address": "0x080c4fb0",
           "end": "0x080c5014",
           "element": "record",
           "stride": 20,
@@ -3108,7 +2942,6 @@
         },
         {
           "name": "formation_46",
-          "address": "0x080c5014",
           "end": "0x080c5078",
           "element": "record",
           "stride": 20,
@@ -3165,7 +2998,6 @@
         },
         {
           "name": "formation_47",
-          "address": "0x080c5078",
           "end": "0x080c50dc",
           "element": "record",
           "stride": 20,
@@ -3222,7 +3054,6 @@
         },
         {
           "name": "formation_48",
-          "address": "0x080c50dc",
           "end": "0x080c5140",
           "element": "record",
           "stride": 20,
@@ -3279,7 +3110,6 @@
         },
         {
           "name": "formation_49",
-          "address": "0x080c5140",
           "end": "0x080c51a4",
           "element": "record",
           "stride": 20,
@@ -3336,7 +3166,6 @@
         },
         {
           "name": "formation_50",
-          "address": "0x080c51a4",
           "end": "0x080c5208",
           "element": "record",
           "stride": 20,
@@ -3393,7 +3222,6 @@
         },
         {
           "name": "formation_51",
-          "address": "0x080c5208",
           "end": "0x080c526c",
           "element": "record",
           "stride": 20,
@@ -3450,7 +3278,6 @@
         },
         {
           "name": "formation_52",
-          "address": "0x080c526c",
           "end": "0x080c5294",
           "element": "record",
           "stride": 20,
@@ -3483,7 +3310,6 @@
         },
         {
           "name": "formation_53",
-          "address": "0x080c5294",
           "end": "0x080c52bc",
           "element": "record",
           "stride": 20,
@@ -3516,7 +3342,6 @@
         },
         {
           "name": "formation_54",
-          "address": "0x080c52bc",
           "end": "0x080c52e4",
           "element": "record",
           "stride": 20,
@@ -3549,7 +3374,6 @@
         },
         {
           "name": "formation_55",
-          "address": "0x080c52e4",
           "end": "0x080c5348",
           "element": "record",
           "stride": 20,
@@ -3606,7 +3430,6 @@
         },
         {
           "name": "formation_56",
-          "address": "0x080c5348",
           "end": "0x080c53ac",
           "element": "record",
           "stride": 20,
@@ -3663,7 +3486,6 @@
         },
         {
           "name": "formation_57",
-          "address": "0x080c53ac",
           "end": "0x080c5410",
           "element": "record",
           "stride": 20,
@@ -3720,7 +3542,6 @@
         },
         {
           "name": "formation_58",
-          "address": "0x080c5410",
           "end": "0x080c5474",
           "element": "record",
           "stride": 20,
@@ -3777,7 +3598,6 @@
         },
         {
           "name": "formation_59",
-          "address": "0x080c5474",
           "end": "0x080c54d8",
           "element": "record",
           "stride": 20,
@@ -3834,7 +3654,6 @@
         },
         {
           "name": "formation_60",
-          "address": "0x080c54d8",
           "end": "0x080c553c",
           "element": "record",
           "stride": 20,
@@ -3891,7 +3710,6 @@
         },
         {
           "name": "formation_61",
-          "address": "0x080c553c",
           "end": "0x080c55a0",
           "element": "record",
           "stride": 20,
@@ -3948,7 +3766,6 @@
         },
         {
           "name": "formation_62",
-          "address": "0x080c55a0",
           "end": "0x080c5604",
           "element": "record",
           "stride": 20,
@@ -4005,7 +3822,6 @@
         },
         {
           "name": "formation_63",
-          "address": "0x080c5604",
           "end": "0x080c5668",
           "element": "record",
           "stride": 20,
@@ -4062,7 +3878,6 @@
         },
         {
           "name": "formation_64",
-          "address": "0x080c5668",
           "end": "0x080c56cc",
           "element": "record",
           "stride": 20,
@@ -4119,7 +3934,6 @@
         },
         {
           "name": "formation_65",
-          "address": "0x080c56cc",
           "end": "0x080c5730",
           "element": "record",
           "stride": 20,
@@ -4176,7 +3990,6 @@
         },
         {
           "name": "formation_66",
-          "address": "0x080c5730",
           "end": "0x080c5794",
           "element": "record",
           "stride": 20,
@@ -4233,7 +4046,6 @@
         },
         {
           "name": "formation_67",
-          "address": "0x080c5794",
           "end": "0x080c57f8",
           "element": "record",
           "stride": 20,
@@ -4290,7 +4102,6 @@
         },
         {
           "name": "formation_68",
-          "address": "0x080c57f8",
           "end": "0x080c585c",
           "element": "record",
           "stride": 20,
@@ -4347,7 +4158,6 @@
         },
         {
           "name": "formation_69",
-          "address": "0x080c585c",
           "end": "0x080c58c0",
           "element": "record",
           "stride": 20,
@@ -4404,7 +4214,6 @@
         },
         {
           "name": "formation_70",
-          "address": "0x080c58c0",
           "end": "0x080c5924",
           "element": "record",
           "stride": 20,
@@ -4461,7 +4270,6 @@
         },
         {
           "name": "formation_71",
-          "address": "0x080c5924",
           "end": "0x080c5938",
           "element": "record",
           "stride": 20,
@@ -4493,17 +4301,9 @@
       "end": "0x080c5a30",
       "size": 248,
       "segments": [
-        {
-          "name": "object_descriptor",
-          "address": "0x080c5938",
-          "end": "0x080c593c",
-          "element": "le-u32",
-          "stride": 4,
-          "values": [16]
-        },
+        {"name": "object_descriptor", "end": "0x080c593c", "element": "le-u32", "stride": 4, "values": [16]},
         {
           "name": "weapon_map",
-          "address": "0x080c593c",
           "end": "0x080c59a2",
           "element": "le-u16",
           "stride": 2,
@@ -4516,17 +4316,9 @@
             [64, 4], [65, 4]
           ]
         },
-        {
-          "name": "weapon_map_terminator",
-          "address": "0x080c59a2",
-          "end": "0x080c59a4",
-          "element": "le-u16",
-          "stride": 2,
-          "values": [65535]
-        },
+        {"name": "weapon_map_terminator", "end": "0x080c59a4", "element": "le-u16", "stride": 2, "values": [65535]},
         {
           "name": "field_52_q16",
-          "address": "0x080c59a4",
           "end": "0x080c59c4",
           "element": "le-u32",
           "stride": 4,
@@ -4534,7 +4326,6 @@
         },
         {
           "name": "field_48_q16",
-          "address": "0x080c59c4",
           "end": "0x080c59e4",
           "element": "le-u32",
           "stride": 4,
@@ -4542,7 +4333,6 @@
         },
         {
           "name": "field_40_q16",
-          "address": "0x080c59e4",
           "end": "0x080c5a04",
           "element": "le-u32",
           "stride": 4,
@@ -4550,20 +4340,12 @@
         },
         {
           "name": "effect_percent",
-          "address": "0x080c5a04",
           "end": "0x080c5a24",
           "element": "le-u32",
           "stride": 4,
           "values": [140, 140, 150, 200, 200, 150, 100, 100]
         },
-        {
-          "name": "control",
-          "address": "0x080c5a24",
-          "end": "0x080c5a30",
-          "element": "le-u32",
-          "stride": 4,
-          "values": [0, 20, 27]
-        }
+        {"name": "control", "end": "0x080c5a30", "element": "le-u32", "stride": 4, "values": [0, 20, 27]}
       ]
     },
     "0x08411278": {
@@ -4636,7 +4418,6 @@
       "segments": [
         {
           "name": "stream_offsets",
-          "address": "0x08411474",
           "end": "0x08411e74",
           "element": "le-u32",
           "stride": 4,

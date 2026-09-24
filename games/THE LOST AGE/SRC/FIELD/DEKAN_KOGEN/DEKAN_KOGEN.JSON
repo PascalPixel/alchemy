@@ -12,7 +12,6 @@
         "segments": [
           {
             "name": "parameters",
-            "address": "0x08aff008",
             "end": "0x08aff014",
             "stride": 12,
             "element": "u8",
@@ -20,7 +19,6 @@
           },
           {
             "name": "records",
-            "address": "0x08aff014",
             "end": "0x08aff02c",
             "stride": 8,
             "element": "le-u16",
@@ -28,7 +26,6 @@
           },
           {
             "name": "component_offsets",
-            "address": "0x08aff02c",
             "end": "0x08aff048",
             "stride": 4,
             "element": "le-u32",
@@ -107,16 +104,14 @@
           "segments": [
             {
               "name": "offsets",
-              "address": "0x0",
               "end": "0x6",
               "stride": 2,
               "element": "le-u16",
               "values": ["entrances", "cell_patches_end", "camera_bounds"]
             },
-            {"name": "reserved", "address": "0x6", "end": "0x8", "stride": 2, "element": "le-u16", "values": [0]},
+            {"name": "reserved", "end": "0x8", "stride": 2, "element": "le-u16", "values": [0]},
             {
               "name": "points",
-              "address": "0x8",
               "end": "0x12",
               "stride": 5,
               "element": "record",
@@ -127,10 +122,9 @@
               ],
               "records": [{"point": 2, "x": 680, "y": 216}, {"point": 1, "x": 280, "y": 424}]
             },
-            {"name": "points_end", "address": "0x12", "end": "0x13", "stride": 1, "element": "u8", "values": [255]},
+            {"name": "points_end", "end": "0x13", "stride": 1, "element": "u8", "values": [255]},
             {
               "name": "entrances",
-              "address": "0x13",
               "end": "0x3d",
               "stride": 6,
               "element": "record",
@@ -150,18 +144,10 @@
                 {"entrance": 7, "x": 546, "y": 296, "arrival": [0, 0]}
               ]
             },
-            {"name": "entrances_end", "address": "0x3d", "end": "0x3e", "stride": 1, "element": "u8", "values": [255]},
-            {
-              "name": "cell_patches_end",
-              "address": "0x3e",
-              "end": "0x40",
-              "stride": 2,
-              "element": "le-u16",
-              "values": [65535]
-            },
+            {"name": "entrances_end", "end": "0x3e", "stride": 1, "element": "u8", "values": [255]},
+            {"name": "cell_patches_end", "end": "0x40", "stride": 2, "element": "le-u16", "values": [65535]},
             {
               "name": "camera_bounds",
-              "address": "0x40",
               "end": "0x48",
               "stride": 4,
               "element": "record",
@@ -176,14 +162,7 @@
                 {"left": 32, "top": 0, "right": 64, "bottom": 32}
               ]
             },
-            {
-              "name": "camera_bounds_end",
-              "address": "0x48",
-              "end": "0x49",
-              "stride": 1,
-              "element": "u8",
-              "values": [255]
-            }
+            {"name": "camera_bounds_end", "end": "0x49", "stride": 1, "element": "u8", "values": [255]}
           ]
         },
         "component": "map-positions"
@@ -209,7 +188,6 @@
         "segments": [
           {
             "name": "parameters",
-            "address": "0x08b062c0",
             "end": "0x08b062cc",
             "stride": 12,
             "element": "u8",
@@ -217,7 +195,6 @@
           },
           {
             "name": "records",
-            "address": "0x08b062cc",
             "end": "0x08b062e4",
             "stride": 8,
             "element": "le-u16",
@@ -225,7 +202,6 @@
           },
           {
             "name": "component_offsets",
-            "address": "0x08b062e4",
             "end": "0x08b06300",
             "stride": 4,
             "element": "le-u32",
@@ -303,16 +279,14 @@
           "segments": [
             {
               "name": "offsets",
-              "address": "0x0",
               "end": "0x6",
               "stride": 2,
               "element": "le-u16",
               "values": ["entrances", "cell_patches_end", "camera_bounds"]
             },
-            {"name": "reserved", "address": "0x6", "end": "0x8", "stride": 2, "element": "le-u16", "values": [0]},
+            {"name": "reserved", "end": "0x8", "stride": 2, "element": "le-u16", "values": [0]},
             {
               "name": "points",
-              "address": "0x8",
               "end": "0x4e",
               "stride": 5,
               "element": "record",
@@ -338,10 +312,9 @@
                 {"point": 20, "x": 264, "y": 264}
               ]
             },
-            {"name": "points_end", "address": "0x4e", "end": "0x4f", "stride": 1, "element": "u8", "values": [255]},
+            {"name": "points_end", "end": "0x4f", "stride": 1, "element": "u8", "values": [255]},
             {
               "name": "entrances",
-              "address": "0x4f",
               "end": "0x73",
               "stride": 6,
               "element": "record",
@@ -360,18 +333,10 @@
                 {"entrance": 6, "x": 544, "y": 448, "arrival": [0, 0]}
               ]
             },
-            {"name": "entrances_end", "address": "0x73", "end": "0x74", "stride": 1, "element": "u8", "values": [255]},
-            {
-              "name": "cell_patches_end",
-              "address": "0x74",
-              "end": "0x76",
-              "stride": 2,
-              "element": "le-u16",
-              "values": [65535]
-            },
+            {"name": "entrances_end", "end": "0x74", "stride": 1, "element": "u8", "values": [255]},
+            {"name": "cell_patches_end", "end": "0x76", "stride": 2, "element": "le-u16", "values": [65535]},
             {
               "name": "camera_bounds",
-              "address": "0x76",
               "end": "0x7e",
               "stride": 4,
               "element": "record",
@@ -386,14 +351,7 @@
                 {"left": 32, "top": 0, "right": 64, "bottom": 32}
               ]
             },
-            {
-              "name": "camera_bounds_end",
-              "address": "0x7e",
-              "end": "0x7f",
-              "stride": 1,
-              "element": "u8",
-              "values": [255]
-            }
+            {"name": "camera_bounds_end", "end": "0x7f", "stride": 1, "element": "u8", "values": [255]}
           ]
         },
         "component": "map-positions"
@@ -419,7 +377,6 @@
         "segments": [
           {
             "name": "parameters",
-            "address": "0x08b0d580",
             "end": "0x08b0d58c",
             "stride": 12,
             "element": "u8",
@@ -427,7 +384,6 @@
           },
           {
             "name": "records",
-            "address": "0x08b0d58c",
             "end": "0x08b0d5a4",
             "stride": 8,
             "element": "le-u16",
@@ -435,7 +391,6 @@
           },
           {
             "name": "component_offsets",
-            "address": "0x08b0d5a4",
             "end": "0x08b0d5c0",
             "stride": 4,
             "element": "le-u32",
@@ -516,16 +471,14 @@
           "segments": [
             {
               "name": "offsets",
-              "address": "0x0",
               "end": "0x6",
               "stride": 2,
               "element": "le-u16",
               "values": ["entrances", "cell_patches_end", "camera_bounds"]
             },
-            {"name": "reserved", "address": "0x6", "end": "0x8", "stride": 2, "element": "le-u16", "values": [0]},
+            {"name": "reserved", "end": "0x8", "stride": 2, "element": "le-u16", "values": [0]},
             {
               "name": "points",
-              "address": "0x8",
               "end": "0x5d",
               "stride": 5,
               "element": "record",
@@ -554,10 +507,9 @@
                 {"point": 20, "x": 376, "y": 248}
               ]
             },
-            {"name": "points_end", "address": "0x5d", "end": "0x5e", "stride": 1, "element": "u8", "values": [255]},
+            {"name": "points_end", "end": "0x5e", "stride": 1, "element": "u8", "values": [255]},
             {
               "name": "entrances",
-              "address": "0x5e",
               "end": "0x8e",
               "stride": 6,
               "element": "record",
@@ -578,18 +530,10 @@
                 {"entrance": 8, "x": 560, "y": 226, "arrival": [0, 0]}
               ]
             },
-            {"name": "entrances_end", "address": "0x8e", "end": "0x8f", "stride": 1, "element": "u8", "values": [255]},
-            {
-              "name": "cell_patches_end",
-              "address": "0x8f",
-              "end": "0x91",
-              "stride": 2,
-              "element": "le-u16",
-              "values": [65535]
-            },
+            {"name": "entrances_end", "end": "0x8f", "stride": 1, "element": "u8", "values": [255]},
+            {"name": "cell_patches_end", "end": "0x91", "stride": 2, "element": "le-u16", "values": [65535]},
             {
               "name": "camera_bounds",
-              "address": "0x91",
               "end": "0x99",
               "stride": 4,
               "element": "record",
@@ -604,14 +548,7 @@
                 {"left": 33, "top": 0, "right": 64, "bottom": 48}
               ]
             },
-            {
-              "name": "camera_bounds_end",
-              "address": "0x99",
-              "end": "0x9a",
-              "stride": 1,
-              "element": "u8",
-              "values": [255]
-            }
+            {"name": "camera_bounds_end", "end": "0x9a", "stride": 1, "element": "u8", "values": [255]}
           ]
         },
         "component": "map-positions"
@@ -637,7 +574,6 @@
         "segments": [
           {
             "name": "parameters",
-            "address": "0x08b153d4",
             "end": "0x08b153e0",
             "stride": 12,
             "element": "u8",
@@ -645,7 +581,6 @@
           },
           {
             "name": "records",
-            "address": "0x08b153e0",
             "end": "0x08b153f8",
             "stride": 8,
             "element": "le-u16",
@@ -653,7 +588,6 @@
           },
           {
             "name": "component_offsets",
-            "address": "0x08b153f8",
             "end": "0x08b15414",
             "stride": 4,
             "element": "le-u32",
@@ -739,16 +673,14 @@
           "segments": [
             {
               "name": "offsets",
-              "address": "0x0",
               "end": "0x6",
               "stride": 2,
               "element": "le-u16",
               "values": ["entrances", "cell_patches_end", "camera_bounds"]
             },
-            {"name": "reserved", "address": "0x6", "end": "0x8", "stride": 2, "element": "le-u16", "values": [0]},
+            {"name": "reserved", "end": "0x8", "stride": 2, "element": "le-u16", "values": [0]},
             {
               "name": "points",
-              "address": "0x8",
               "end": "0xd",
               "stride": 5,
               "element": "record",
@@ -759,10 +691,9 @@
               ],
               "records": [{"point": 1, "x": 664, "y": 104}]
             },
-            {"name": "points_end", "address": "0xd", "end": "0xe", "stride": 1, "element": "u8", "values": [255]},
+            {"name": "points_end", "end": "0xe", "stride": 1, "element": "u8", "values": [255]},
             {
               "name": "entrances",
-              "address": "0xe",
               "end": "0xe6",
               "stride": 6,
               "element": "record",
@@ -811,18 +742,10 @@
                 {"entrance": 43, "x": 936, "y": 392, "arrival": [4, 0]}
               ]
             },
-            {"name": "entrances_end", "address": "0xe6", "end": "0xe7", "stride": 1, "element": "u8", "values": [255]},
-            {
-              "name": "cell_patches_end",
-              "address": "0xe7",
-              "end": "0xe9",
-              "stride": 2,
-              "element": "le-u16",
-              "values": [65535]
-            },
+            {"name": "entrances_end", "end": "0xe7", "stride": 1, "element": "u8", "values": [255]},
+            {"name": "cell_patches_end", "end": "0xe9", "stride": 2, "element": "le-u16", "values": [65535]},
             {
               "name": "camera_bounds",
-              "address": "0xe9",
               "end": "0x105",
               "stride": 4,
               "element": "record",
@@ -842,14 +765,7 @@
                 {"left": 49, "top": 20, "right": 64, "bottom": 30}
               ]
             },
-            {
-              "name": "camera_bounds_end",
-              "address": "0x105",
-              "end": "0x106",
-              "stride": 1,
-              "element": "u8",
-              "values": [255]
-            }
+            {"name": "camera_bounds_end", "end": "0x106", "stride": 1, "element": "u8", "values": [255]}
           ]
         },
         "component": "map-positions"
@@ -875,7 +791,6 @@
         "segments": [
           {
             "name": "parameters",
-            "address": "0x08b1e158",
             "end": "0x08b1e164",
             "stride": 12,
             "element": "u8",
@@ -883,7 +798,6 @@
           },
           {
             "name": "records",
-            "address": "0x08b1e164",
             "end": "0x08b1e17c",
             "stride": 8,
             "element": "le-u16",
@@ -891,7 +805,6 @@
           },
           {
             "name": "component_offsets",
-            "address": "0x08b1e17c",
             "end": "0x08b1e198",
             "stride": 4,
             "element": "le-u32",
@@ -978,17 +891,15 @@
           "segments": [
             {
               "name": "offsets",
-              "address": "0x0",
               "end": "0x6",
               "stride": 2,
               "element": "le-u16",
               "values": ["entrances", "cell_patches_end", "camera_bounds"]
             },
-            {"name": "reserved", "address": "0x6", "end": "0x8", "stride": 2, "element": "le-u16", "values": [0]},
-            {"name": "points_end", "address": "0x8", "end": "0x9", "stride": 1, "element": "u8", "values": [255]},
+            {"name": "reserved", "end": "0x8", "stride": 2, "element": "le-u16", "values": [0]},
+            {"name": "points_end", "end": "0x9", "stride": 1, "element": "u8", "values": [255]},
             {
               "name": "entrances",
-              "address": "0x9",
               "end": "0x99",
               "stride": 6,
               "element": "record",
@@ -1025,18 +936,10 @@
                 {"entrance": 43, "x": 568, "y": 424, "arrival": [4, 0]}
               ]
             },
-            {"name": "entrances_end", "address": "0x99", "end": "0x9a", "stride": 1, "element": "u8", "values": [255]},
-            {
-              "name": "cell_patches_end",
-              "address": "0x9a",
-              "end": "0x9c",
-              "stride": 2,
-              "element": "le-u16",
-              "values": [65535]
-            },
+            {"name": "entrances_end", "end": "0x9a", "stride": 1, "element": "u8", "values": [255]},
+            {"name": "cell_patches_end", "end": "0x9c", "stride": 2, "element": "le-u16", "values": [65535]},
             {
               "name": "camera_bounds",
-              "address": "0x9c",
               "end": "0xa8",
               "stride": 4,
               "element": "record",
@@ -1052,14 +955,7 @@
                 {"left": 22, "top": 23, "right": 39, "bottom": 33}
               ]
             },
-            {
-              "name": "camera_bounds_end",
-              "address": "0xa8",
-              "end": "0xa9",
-              "stride": 1,
-              "element": "u8",
-              "values": [255]
-            }
+            {"name": "camera_bounds_end", "end": "0xa9", "stride": 1, "element": "u8", "values": [255]}
           ]
         },
         "component": "map-positions"

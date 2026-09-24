@@ -7,7 +7,6 @@
   "segments": [
     {
       "name": "bit_masks",
-      "address": "0x080ef014",
       "end": "0x080ef054",
       "element": "le-u16",
       "stride": 32,

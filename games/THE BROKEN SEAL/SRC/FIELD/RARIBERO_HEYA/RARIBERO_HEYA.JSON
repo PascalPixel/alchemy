@@ -12,7 +12,6 @@
         "segments": [
           {
             "name": "parameters",
-            "address": "0x08755c3c",
             "end": "0x08755c48",
             "stride": 12,
             "element": "u8",
@@ -20,7 +19,6 @@
           },
           {
             "name": "records",
-            "address": "0x08755c48",
             "end": "0x08755c60",
             "stride": 8,
             "element": "le-u16",
@@ -28,7 +26,6 @@
           },
           {
             "name": "component_offsets",
-            "address": "0x08755c60",
             "end": "0x08755c78",
             "stride": 4,
             "element": "le-u32",
@@ -132,7 +129,6 @@
         "segments": [
           {
             "name": "records",
-            "address": "0x08758938",
             "end": "0x08758950",
             "stride": 3,
             "element": "u8",
@@ -141,14 +137,7 @@
               [10, 19, 101]
             ]
           },
-          {
-            "name": "terminator",
-            "address": "0x08758950",
-            "end": "0x08758953",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255
-          }
+          {"name": "terminator", "end": "0x08758953", "stride": 1, "element": "u8", "fill": 255}
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/RARIBERO_HEYA/RARIBERO_HEYA.BIN",
@@ -169,7 +158,6 @@
         "segments": [
           {
             "name": "parameters",
-            "address": "0x08758b3c",
             "end": "0x08758b48",
             "stride": 12,
             "element": "u8",
@@ -177,7 +165,6 @@
           },
           {
             "name": "records",
-            "address": "0x08758b48",
             "end": "0x08758b60",
             "stride": 8,
             "element": "le-u16",
@@ -185,7 +172,6 @@
           },
           {
             "name": "component_offsets",
-            "address": "0x08758b60",
             "end": "0x08758b78",
             "stride": 4,
             "element": "le-u32",
@@ -295,7 +281,6 @@
         "segments": [
           {
             "name": "records",
-            "address": "0x0875b11c",
             "end": "0x0875b134",
             "stride": 3,
             "element": "u8",
@@ -304,14 +289,7 @@
               [10, 17, 204]
             ]
           },
-          {
-            "name": "terminator",
-            "address": "0x0875b134",
-            "end": "0x0875b137",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255
-          }
+          {"name": "terminator", "end": "0x0875b137", "stride": 1, "element": "u8", "fill": 255}
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/RARIBERO_HEYA/RARIBERO_HEYA.BIN",

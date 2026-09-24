@@ -13,7 +13,6 @@
         "segments": [
           {
             "name": "parameters",
-            "address": "0x08753b18",
             "end": "0x08753b24",
             "stride": 12,
             "element": "u8",
@@ -21,7 +20,6 @@
           },
           {
             "name": "records",
-            "address": "0x08753b24",
             "end": "0x08753b3c",
             "stride": 8,
             "element": "le-u16",
@@ -29,7 +27,6 @@
           },
           {
             "name": "component_offsets",
-            "address": "0x08753b3c",
             "end": "0x08753b54",
             "stride": 4,
             "element": "le-u32",
@@ -169,20 +166,12 @@
         "segments": [
           {
             "name": "records",
-            "address": "0x08755b4c",
             "end": "0x08755b55",
             "stride": 3,
             "element": "u8",
             "values": [[18, 7, 100], [15, 13, 101], [26, 25, 102]]
           },
-          {
-            "name": "terminator",
-            "address": "0x08755b55",
-            "end": "0x08755b58",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255
-          }
+          {"name": "terminator", "end": "0x08755b58", "stride": 1, "element": "u8", "fill": 255}
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/RARIBERO_MACHI/RARIBERO_MACHI.BIN",

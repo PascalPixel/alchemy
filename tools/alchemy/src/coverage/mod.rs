@@ -7,6 +7,7 @@ pub(crate) mod letters;
 pub(crate) mod model;
 pub(crate) mod palette;
 pub(crate) mod pipeline;
+pub(crate) mod places;
 pub(crate) mod progress;
 pub(crate) mod proof;
 pub(crate) mod raster;

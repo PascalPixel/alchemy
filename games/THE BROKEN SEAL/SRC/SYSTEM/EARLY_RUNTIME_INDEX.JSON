@@ -12,7 +12,6 @@
       "segments": [
         {
           "id": "signed_mode_table",
-          "address": "0x08013254",
           "end": "0x08013274",
           "source_state": "typed_values_pending",
           "consumers": ["recon/tbs/raw/0800ebec.s", "recon/tbs/raw/0800f2f8.s", "recon/tbs/raw/0800f7f4.s"],
@@ -32,7 +31,6 @@
       "segments": [
         {
           "id": "resource_slot_descriptors",
-          "address": "0x080132cc",
           "end": "0x080132fc",
           "source_state": "typed_values_pending",
           "consumers": ["recon/tbs/raw/08010e14.s"],
@@ -42,7 +40,6 @@
         },
         {
           "id": "grid_lookup_a",
-          "address": "0x080132fc",
           "end": "0x080133fc",
           "source_state": "typed_values_pending",
           "consumers": ["recon/tbs/raw/08011e2c.s"],
@@ -61,7 +58,6 @@
         },
         {
           "id": "grid_lookup_b",
-          "address": "0x080133fc",
           "end": "0x080134fc",
           "source_state": "typed_values_pending",
           "consumers": ["src/08011f14.c", "src/08011f28.c"],
@@ -80,7 +76,6 @@
         },
         {
           "id": "interpolation_coefficients",
-          "address": "0x080134fc",
           "end": "0x0801353c",
           "source_state": "typed_values_pending",
           "consumers": ["recon/tbs/raw/08011f54.s", "recon/tbs/raw/080120dc.s"],
@@ -93,7 +88,6 @@
         },
         {
           "id": "surface_lookup",
-          "address": "0x0801353c",
           "end": "0x0801356c",
           "source_state": "typed_values_pending",
           "consumers": ["recon/tbs/raw/080122c8.s"],
@@ -116,7 +110,6 @@
       "segments": [
         {
           "id": "render_limits",
-          "address": "0x08013584",
           "end": "0x0801358c",
           "source_state": "typed_values_pending",
           "consumers": ["recon/tbs/raw/08012e28.s"],
@@ -126,7 +119,6 @@
         },
         {
           "id": "program_00",
-          "address": "0x0801358c",
           "end": "0x08013590",
           "source_state": "typed_values_pending",
           "consumers": [
@@ -139,7 +131,6 @@
         },
         {
           "id": "program_01",
-          "address": "0x08013590",
           "end": "0x080135a8",
           "source_state": "typed_values_pending",
           "consumers": [
@@ -152,7 +143,6 @@
         },
         {
           "id": "program_02",
-          "address": "0x080135a8",
           "end": "0x080135c0",
           "source_state": "typed_values_pending",
           "consumers": [
@@ -165,7 +155,6 @@
         },
         {
           "id": "program_03",
-          "address": "0x080135c0",
           "end": "0x080135d8",
           "source_state": "typed_values_pending",
           "consumers": [
@@ -178,7 +167,6 @@
         },
         {
           "id": "program_04",
-          "address": "0x080135d8",
           "end": "0x080135f0",
           "source_state": "typed_values_pending",
           "consumers": [
@@ -191,7 +179,6 @@
         },
         {
           "id": "program_05",
-          "address": "0x080135f0",
           "end": "0x08013608",
           "source_state": "typed_values_pending",
           "consumers": [
@@ -204,7 +191,6 @@
         },
         {
           "id": "program_06",
-          "address": "0x08013608",
           "end": "0x08013620",
           "source_state": "typed_values_pending",
           "consumers": [
@@ -217,7 +203,6 @@
         },
         {
           "id": "program_07",
-          "address": "0x08013620",
           "end": "0x08013624",
           "source_state": "typed_values_pending",
           "consumers": [
@@ -230,7 +215,6 @@
         },
         {
           "id": "object_handlers",
-          "address": "0x08013624",
           "end": "0x08013724",
           "source_state": "typed_values_pending",
           "consumers": [

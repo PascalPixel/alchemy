@@ -12,7 +12,6 @@
         "segments": [
           {
             "name": "parameters",
-            "address": "0x086a3e6c",
             "end": "0x086a3e78",
             "stride": 12,
             "element": "u8",
@@ -20,7 +19,6 @@
           },
           {
             "name": "records",
-            "address": "0x086a3e78",
             "end": "0x086a3e90",
             "stride": 8,
             "element": "le-u16",
@@ -28,7 +26,6 @@
           },
           {
             "name": "component_offsets",
-            "address": "0x086a3e90",
             "end": "0x086a3ea8",
             "stride": 4,
             "element": "le-u32",
@@ -92,20 +89,12 @@
         "segments": [
           {
             "name": "records",
-            "address": "0x086a5e24",
             "end": "0x086a5e30",
             "stride": 3,
             "element": "u8",
             "values": [[1, 11, 100], [24, 12, 101], [7, 16, 102], [28, 31, 102]]
           },
-          {
-            "name": "terminator",
-            "address": "0x086a5e30",
-            "end": "0x086a5e33",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255
-          }
+          {"name": "terminator", "end": "0x086a5e33", "stride": 1, "element": "u8", "fill": 255}
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/RUNPA_MURA/RUNPA_MURA.BIN",
@@ -126,7 +115,6 @@
         "segments": [
           {
             "name": "parameters",
-            "address": "0x0871c3d4",
             "end": "0x0871c3e0",
             "stride": 12,
             "element": "u8",
@@ -134,7 +122,6 @@
           },
           {
             "name": "records",
-            "address": "0x0871c3e0",
             "end": "0x0871c3f8",
             "stride": 8,
             "element": "le-u16",
@@ -142,7 +129,6 @@
           },
           {
             "name": "component_offsets",
-            "address": "0x0871c3f8",
             "end": "0x0871c410",
             "stride": 4,
             "element": "le-u32",
@@ -206,16 +192,7 @@
         "address": "0x0871d718",
         "size": "0x3",
         "record_size": 3,
-        "segments": [
-          {
-            "name": "terminator",
-            "address": "0x0871d718",
-            "end": "0x0871d71b",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255
-          }
-        ]
+        "segments": [{"name": "terminator", "end": "0x0871d71b", "stride": 1, "element": "u8", "fill": 255}]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/RUNPA_MURA/RUNPA_MURA.BIN",
       "grid_offset": 72176,

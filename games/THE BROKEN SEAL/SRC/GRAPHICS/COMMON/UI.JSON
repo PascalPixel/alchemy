@@ -10,7 +10,6 @@
     "size": 98,
     "segments": [
       {
-        "address": "0x0843c024",
         "end": "0x0843c086",
         "stride": 2,
         "element": "le-u16",

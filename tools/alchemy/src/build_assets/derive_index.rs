@@ -1093,8 +1093,8 @@ fn positions_table(decoded: &[u8]) -> Option<Value> {
     ];
     let hex = |at: usize| json!(format!("0x{at:x}"));
     let mut segments = vec![
-        json!({"name":"offsets","address":hex(0),"end":hex(6),"stride":2,"element":"le-u16","values":[]}),
-        json!({"name":"reserved","address":hex(6),"end":hex(8),"stride":2,"element":"le-u16","values":[0]}),
+        json!({"name":"offsets","end":hex(6),"stride":2,"element":"le-u16","values":[]}),
+        json!({"name":"reserved","end":hex(8),"stride":2,"element":"le-u16","values":[0]}),
     ];
     let mut starts = Vec::new();
     for (list, window) in lists.iter().zip(bounds.windows(2)) {
@@ -1122,16 +1122,20 @@ fn positions_table(decoded: &[u8]) -> Option<Value> {
                     }
                 })
                 .collect::<Vec<_>>();
-            segments.push(json!({"name":list.name,"address":hex(start),"end":hex(start + body),"stride":list.stride,
-                "element":"record","fields":list.fields,"records":records}));
+            segments.push(
+                json!({"name":list.name,"end":hex(start + body),"stride":list.stride,
+                "element":"record","fields":list.fields,"records":records}),
+            );
         }
         let (element, value) = if list.terminator.len() == 2 {
             ("le-u16", 0xffff)
         } else {
             ("u8", 0xff)
         };
-        segments.push(json!({"name":end_name,"address":hex(start + body),"end":hex(end),"stride":list.terminator.len(),
-            "element":element,"values":[value]}));
+        segments.push(
+            json!({"name":end_name,"end":hex(end),"stride":list.terminator.len(),
+            "element":element,"values":[value]}),
+        );
     }
     // The first list follows the header; the offsets name the other three.
     segments[0]["values"] = json!(starts[1..]);
@@ -1249,10 +1253,7 @@ struct Staged {
 }
 #[derive(Default)]
 struct Output {
-    scenes: Vec<Value>,
-    layouts: Vec<Value>,
     regions: Vec<Value>,
-    bindings: Vec<Value>,
     private_inputs: Vec<Value>,
     previews: Vec<Preview>,
 }
@@ -1325,7 +1326,7 @@ impl<'a> Deriver<'a> {
                 .ok_or_else(|| format!("layer {} lost its region", layer.address))?;
             component["source_offset"] = json!(offset);
             component["source_length"] = json!(layer.bytes.len());
-            self.output.private_inputs.push(json!({"kind":"bytes","source":layer.map,"source_offset":offset,"region_address":layer.address,"decoded_sha256":sha256::hex(&layer.bytes)}));
+            self.output.private_inputs.push(json!({"kind":"bytes","source":layer.map,"source_offset":offset,"region_address":layer.address}));
         }
         Ok(())
     }
@@ -1411,21 +1412,6 @@ impl<'a> Deriver<'a> {
     fn scene(&mut self, request: &SceneRequest) -> Result<(), String> {
         let load = self.load_index(request.record)?;
         let row = self.load_row(load)?;
-        if let Record::Scene(index) = request.record {
-            let tables = field_tables(&self.target)?;
-            let record = tables.scenes - ROM_BASE + index * 8;
-            let overlay = u16_at(self.rom, record)? as usize;
-            let mut loader = serde_json::Map::new();
-            loader.insert("map_index".into(), json!(load));
-            loader.insert("container".into(), json!(resource_name(row[0])));
-            loader.insert("palette".into(), json!(resource_name(row[1])));
-            for (field, id) in loader_fields(&self.target).iter().zip(&row[2..]) {
-                loader.insert((*field).into(), json!(resource_name(*id)));
-            }
-            self.output.scenes.push(
-                json!({"scene_index":index,"overlay":resource_name(overlay),"loader":loader}),
-            );
-        }
         let home = self.home(request, row[0]);
         let banks = self.palette(row[1], &home)?;
         let mut tiles = Vec::new();
@@ -1480,8 +1466,9 @@ impl<'a> Deriver<'a> {
         let address = hex_address(offset + ROM_BASE);
         self.output.regions.push(json!({"address":address,"size":small_hex(span),"kind":"golden-sun-general-lz","plan":document,"plan_section":pointer,
             "components":banks.iter().map(|bank| json!({"kind":"le-u16-array","source":colors,"pointer":format!("/banks/{bank}"),"size":32})).collect::<Vec<_>>()}));
-        self.output.bindings.push(json!({"address":address,"compression":document,"compression_section":pointer,"sources":[colors],"palette_source":colors,"palette_banks":banks,"resource":key}));
-        self.output.private_inputs.push(json!({"kind":"palette","source":colors,"banks":banks,"region_address":address,"decoded_sha256":sha256::hex(&stream.decoded)}));
+        self.output
+            .private_inputs
+            .push(json!({"kind":"palette","source":colors,"banks":banks,"region_address":address}));
         Ok(banks)
     }
     /// The bank's sheet and first tile, none when the bank is left out.
@@ -1542,8 +1529,7 @@ impl<'a> Deriver<'a> {
         sheet[start..start + TILE_BANK].copy_from_slice(&stream.decoded);
         self.output.regions.push(json!({"address":address,"size":small_hex(span),"kind":"golden-sun-kind2-lz","plan":document,"plan_section":pointer,"layout":layout,
             "components":[{"kind":"gba-4bpp-tiles","source":source,"tile_offset":tile_offset,"tile_count":TILES_PER_BANK,"size":TILE_BANK}]}));
-        self.output.bindings.push(json!({"address":address,"compression":document,"compression_section":pointer,"sources":[source],"tile_offset":tile_offset,"tile_count":TILES_PER_BANK,"resource":key}));
-        self.output.private_inputs.push(json!({"kind":"tiles","source":source,"tile_offset":tile_offset,"region_address":address,"decoded_sha256":sha256::hex(&stream.decoded)}));
+        self.output.private_inputs.push(json!({"kind":"tiles","source":source,"tile_offset":tile_offset,"region_address":address}));
         Ok(Some((source, tile_offset)))
     }
     fn container(
@@ -1610,9 +1596,9 @@ impl<'a> Deriver<'a> {
         document.insert("format".into(), json!(1));
         document.insert("kind".into(), json!("golden-sun-map-container"));
         document.insert("header".into(), json!({"format":1,"kind":"typed-table","address":at(0),"size":small_hex(header),"segments":[
-            {"name":"parameters","address":at(0),"end":at(12),"stride":12,"element":"u8","values":params},
-            {"name":"records","address":at(12),"end":at(0x24),"stride":8,"element":"le-u16","values":records},
-            {"name":"component_offsets","address":at(0x24),"end":at(header),"stride":4,"element":"le-u32","values":offsets.iter().map(|o| small_hex(*o)).collect::<Vec<_>>()}]}));
+            {"name":"parameters","end":at(12),"stride":12,"element":"u8","values":params},
+            {"name":"records","end":at(0x24),"stride":8,"element":"le-u16","values":records},
+            {"name":"component_offsets","end":at(header),"stride":4,"element":"le-u32","values":offsets.iter().map(|o| small_hex(*o)).collect::<Vec<_>>()}]}));
         let mut regions = vec![
             json!({"address":at(0),"size":small_hex(header),"kind":"typed-table","source":source,"pointer":format!("/maps/{key}/header")}),
         ];
@@ -1636,7 +1622,7 @@ impl<'a> Deriver<'a> {
                     // Not a stream: keep the bytes as a typed segment until identified.
                     let values = &rom[base + offset..base + offset + span];
                     document.insert(section.into(), json!({"format":1,"kind":"typed-table","address":at(offset),"size":small_hex(span),
-                        "segments":[{"name":"values","address":at(offset),"end":at(offset + span),"stride":span,"element":"u8","values":values}]}));
+                        "segments":[{"name":"values","end":at(offset + span),"stride":span,"element":"u8","values":values}]}));
                     regions.push(json!({"address":at(offset),"size":small_hex(span),"kind":"typed-table","source":source,"pointer":pointer}));
                     continue;
                 }
@@ -1669,7 +1655,7 @@ impl<'a> Deriver<'a> {
                     regions.push(region(
                         json!([{"kind":"gba-tilemap16","size":decoded.len(),"delta_mode":mode,"source":map,"format":"binary","source_offset":metatile_offset,"source_length":metatile_length}]),
                     ));
-                    self.output.private_inputs.push(json!({"kind":"metatiles","source":map,"source_offset":metatile_offset,"region_address":at(offset),"transform_mode":mode,"decoded_sha256":sha256::hex(&words)}));
+                    self.output.private_inputs.push(json!({"kind":"metatiles","source":map,"source_offset":metatile_offset,"region_address":at(offset),"transform_mode":mode}));
                 }
                 "grid" => {
                     if decoded.len() != 65536 {
@@ -1682,7 +1668,7 @@ impl<'a> Deriver<'a> {
                     grid = Some(plan);
                     regions.push(json!({"address":at(offset),"size":small_hex(span),"kind":"golden-sun-general-lz","plan":source,"plan_section":pointer,
                         "components":[{"kind":"golden-sun-map-grid","source":map,"width":128,"height":128,"source_offset":grid_offset,"source_length":65536,"size":65536}]}));
-                    self.output.private_inputs.push(json!({"kind":"grid","source":map,"source_offset":grid_offset,"region_address":at(offset),"decoded_sha256":sha256::hex(decoded)}));
+                    self.output.private_inputs.push(json!({"kind":"grid","source":map,"source_offset":grid_offset,"region_address":at(offset)}));
                     continue;
                 }
                 "descriptors" => {
@@ -1763,12 +1749,6 @@ impl<'a> Deriver<'a> {
         document.insert("grid_source".into(), json!(map));
         document.insert("grid_offset".into(), json!(grid_offset));
         document.insert("grid_compression".into(), grid);
-        let (width, height) = (params[2] as usize * 8, params[3] as usize * 8);
-        let bytes = &self.staged.binaries[&map];
-        let payload = sha256::hex(&bytes[grid_offset..metatile_offset + metatile_length]);
-        self.output.layouts.push(json!({"container":key,"name":home.stem,"owner":home.directory,"source":source,"source_pointer":format!("/maps/{key}"),
-            "map":map,"grid_offset":grid_offset,"grid_length":65536,"metatiles":map,"metatile_offset":metatile_offset,"metatile_length":metatile_length,
-            "width":width,"height":height,"payload_sha256":payload}));
         self.document(&source)["maps"][&key] = Value::Object(document);
         self.output.regions.extend(regions);
         self.output.previews.push(Preview {
@@ -1825,7 +1805,7 @@ fn verify(
         format!("{}\n", canonical_json(&json!({"format":"bgr555-banks","colors_per_bank":16,"banks":staged.banks,"tables":{}}))).as_bytes(),
     )?;
     native::validate(
-        &json!({"format":"camelot-style-golden-sun-native","layouts":deriver.output.layouts,"regions":deriver.output.regions}),
+        &json!({"format":"camelot-style-golden-sun-native","regions":deriver.output.regions}),
     )?;
     let mut ctx = Context::new(stage);
     ctx.lz_machine = Some(machine);
@@ -2029,8 +2009,6 @@ pub(in crate::build_assets) fn render_field(map: &FieldMap) -> Result<FieldRende
 /// Never persisted or published; the same decoder also feeds image exports.
 pub(crate) fn live_scene(root: &Path, target: &str, scene: usize) -> Result<Vec<u8>, String> {
     let target = decomp_target(Some(target))?;
-    let paths = NativePaths::of(&target);
-    let index = json(&root.join(&paths.index))?;
     let scenes = json(
         &root
             .join(target.source_dir)
@@ -2043,9 +2021,7 @@ pub(crate) fn live_scene(root: &Path, target: &str, scene: usize) -> Result<Vec<
         return Err("Scene is not in the maintained scene index".into());
     }
     let rom = fs::read(root.join(target.rom)).map_err(|e| e.to_string())?;
-    if index["reference_sha256"] != sha256::hex(&rom) {
-        return Err("ROM differs from private-inputs.json checksum".into());
-    }
+    crate::text_catalog::verify_reference(root, target.id.as_str(), &rom)?;
     let mut deriver = Deriver::new(&rom, target)?;
     deriver.scene(&SceneRequest::scene(scene))?;
     let preview = deriver
@@ -2182,13 +2158,9 @@ pub(super) fn run(root: &Path, arguments: &[String]) -> Result<(), String> {
         .transpose()?
         .filter(|_| indexed);
     let reference = sha256::hex(&rom);
-    if let Some(index) = &index {
-        if index["reference_sha256"] != reference.as_str() {
-            return Err(format!(
-                "{rom_path} differs from {}'s reference ROM",
-                paths.index
-            ));
-        }
+    if index.is_some() {
+        crate::text_catalog::verify_reference(root, target.id.as_str(), &rom)
+            .map_err(|e| format!("{rom_path}: {e}"))?;
     }
     let machine = super::target_lz_machine(root, &target)?;
     let mut deriver = Deriver::new(&rom, target)?;
@@ -2255,9 +2227,6 @@ pub(super) fn run(root: &Path, arguments: &[String]) -> Result<(), String> {
         "index":deriver.paths.index,
         "reference_sha256":reference,
         "tables":field_tables(&deriver.target).map(|t| json!({"scenes":hex_address(t.scenes),"loads":hex_address(t.loads),"resource_bias":small_hex(t.bias),"indexed_edition":t.indexed}))?,
-        "scenes":deriver.output.scenes,
-        "layouts":deriver.output.layouts,
-        "bindings":deriver.output.bindings,
         "regions":deriver.output.regions,
         "private_inputs":deriver.output.private_inputs,
         "documents":deriver.staged.documents,
@@ -2274,7 +2243,7 @@ pub(super) fn run(root: &Path, arguments: &[String]) -> Result<(), String> {
             fs::write(&path, text).map_err(|e| e.to_string())?;
             eprintln!(
                 "derived scenes={} regions={} byte_exact={matched} unreproduced={} output={}",
-                deriver.output.scenes.len(),
+                requests.len(),
                 deriver.output.regions.len(),
                 failures.len(),
                 path.display()

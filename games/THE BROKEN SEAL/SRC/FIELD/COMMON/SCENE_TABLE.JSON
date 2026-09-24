@@ -7,7 +7,6 @@
   "segments": [
     {
       "name": "scenes",
-      "address": "0x0809f1a8",
       "end": "0x0809f810",
       "element": "record",
       "stride": 8,

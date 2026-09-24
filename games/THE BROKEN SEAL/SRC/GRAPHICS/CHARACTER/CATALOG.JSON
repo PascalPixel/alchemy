@@ -7,7 +7,6 @@
   "segments": [
     {
       "name": "descriptors",
-      "address": "0x08185024",
       "end": "0x08187824",
       "element": "record",
       "stride": 20,
@@ -7711,7 +7710,6 @@
     },
     {
       "name": "anm_000_commands",
-      "address": "0x08187824",
       "end": "0x081879a8",
       "element": "u8",
       "stride": 2,
@@ -7741,7 +7739,6 @@
     },
     {
       "name": "anm_000",
-      "address": "0x081879a8",
       "end": "0x08187a40",
       "element": "le-u32",
       "stride": 4,
@@ -7760,7 +7757,6 @@
     },
     {
       "name": "anm_001_commands",
-      "address": "0x08187a40",
       "end": "0x08187b04",
       "element": "u8",
       "stride": 2,
@@ -7779,7 +7775,6 @@
     },
     {
       "name": "anm_001",
-      "address": "0x08187b04",
       "end": "0x08187b80",
       "element": "le-u32",
       "stride": 4,
@@ -7796,7 +7791,6 @@
     },
     {
       "name": "anm_002_commands",
-      "address": "0x08187b80",
       "end": "0x08187c18",
       "element": "u8",
       "stride": 2,
@@ -7813,7 +7807,6 @@
     },
     {
       "name": "anm_002",
-      "address": "0x08187c18",
       "end": "0x08187c94",
       "element": "le-u32",
       "stride": 4,
@@ -7830,7 +7823,6 @@
     },
     {
       "name": "anm_003_commands",
-      "address": "0x08187c94",
       "end": "0x08187d2c",
       "element": "u8",
       "stride": 2,
@@ -7847,7 +7839,6 @@
     },
     {
       "name": "anm_003",
-      "address": "0x08187d2c",
       "end": "0x08187da8",
       "element": "le-u32",
       "stride": 4,
@@ -7864,7 +7855,6 @@
     },
     {
       "name": "anm_005_commands",
-      "address": "0x08187da8",
       "end": "0x08187e40",
       "element": "u8",
       "stride": 2,
@@ -7881,7 +7871,6 @@
     },
     {
       "name": "anm_005",
-      "address": "0x08187e40",
       "end": "0x08187ebc",
       "element": "le-u32",
       "stride": 4,
@@ -7898,7 +7887,6 @@
     },
     {
       "name": "anm_006_commands",
-      "address": "0x08187ebc",
       "end": "0x08187f10",
       "element": "u8",
       "stride": 2,
@@ -7912,7 +7900,6 @@
     },
     {
       "name": "anm_006",
-      "address": "0x08187f10",
       "end": "0x08187f34",
       "element": "le-u32",
       "stride": 4,
@@ -7924,7 +7911,6 @@
     },
     {
       "name": "anm_012_commands",
-      "address": "0x08187f34",
       "end": "0x08187fd0",
       "element": "u8",
       "stride": 2,
@@ -7941,7 +7927,6 @@
     },
     {
       "name": "anm_012",
-      "address": "0x08187fd0",
       "end": "0x0818802c",
       "element": "le-u32",
       "stride": 4,
@@ -7956,7 +7941,6 @@
     },
     {
       "name": "anm_013_commands",
-      "address": "0x0818802c",
       "end": "0x08188080",
       "element": "u8",
       "stride": 2,
@@ -7970,7 +7954,6 @@
     },
     {
       "name": "anm_013",
-      "address": "0x08188080",
       "end": "0x081880a4",
       "element": "le-u32",
       "stride": 4,
@@ -7982,7 +7965,6 @@
     },
     {
       "name": "anm_010_commands",
-      "address": "0x081880a4",
       "end": "0x081880c8",
       "element": "u8",
       "stride": 2,
@@ -7993,7 +7975,6 @@
     },
     {
       "name": "anm_010",
-      "address": "0x081880c8",
       "end": "0x081880e4",
       "element": "le-u32",
       "stride": 4,
@@ -8004,7 +7985,6 @@
     },
     {
       "name": "anm_01e_commands",
-      "address": "0x081880e4",
       "end": "0x0818811c",
       "element": "u8",
       "stride": 2,
@@ -8016,7 +7996,6 @@
     },
     {
       "name": "anm_01e",
-      "address": "0x0818811c",
       "end": "0x08188134",
       "element": "le-u32",
       "stride": 4,
@@ -8027,7 +8006,6 @@
     },
     {
       "name": "anm_020_commands",
-      "address": "0x08188134",
       "end": "0x081881ac",
       "element": "u8",
       "stride": 2,
@@ -8043,7 +8021,6 @@
     },
     {
       "name": "anm_020",
-      "address": "0x081881ac",
       "end": "0x081881e0",
       "element": "le-u32",
       "stride": 4,
@@ -8056,7 +8033,6 @@
     },
     {
       "name": "anm_021_commands",
-      "address": "0x081881e0",
       "end": "0x08188238",
       "element": "u8",
       "stride": 2,
@@ -8070,7 +8046,6 @@
     },
     {
       "name": "anm_021",
-      "address": "0x08188238",
       "end": "0x08188264",
       "element": "le-u32",
       "stride": 4,
@@ -8082,7 +8057,6 @@
     },
     {
       "name": "anm_022_commands",
-      "address": "0x08188264",
       "end": "0x08188294",
       "element": "u8",
       "stride": 2,
@@ -8094,7 +8068,6 @@
     },
     {
       "name": "anm_022",
-      "address": "0x08188294",
       "end": "0x081882a8",
       "element": "le-u32",
       "stride": 4,
@@ -8105,7 +8078,6 @@
     },
     {
       "name": "anm_01f_commands",
-      "address": "0x081882a8",
       "end": "0x08188334",
       "element": "u8",
       "stride": 2,
@@ -8122,7 +8094,6 @@
     },
     {
       "name": "anm_01f",
-      "address": "0x08188334",
       "end": "0x08188370",
       "element": "le-u32",
       "stride": 4,
@@ -8135,7 +8106,6 @@
     },
     {
       "name": "anm_023_commands",
-      "address": "0x08188370",
       "end": "0x081883ac",
       "element": "u8",
       "stride": 2,
@@ -8147,7 +8117,6 @@
     },
     {
       "name": "anm_023",
-      "address": "0x081883ac",
       "end": "0x081883c8",
       "element": "le-u32",
       "stride": 4,
@@ -8158,7 +8127,6 @@
     },
     {
       "name": "anm_024_commands",
-      "address": "0x081883c8",
       "end": "0x081883f8",
       "element": "u8",
       "stride": 2,
@@ -8170,7 +8138,6 @@
     },
     {
       "name": "anm_024",
-      "address": "0x081883f8",
       "end": "0x0818841c",
       "element": "le-u32",
       "stride": 4,
@@ -8182,7 +8149,6 @@
     },
     {
       "name": "anm_025_commands",
-      "address": "0x0818841c",
       "end": "0x08188460",
       "element": "u8",
       "stride": 2,
@@ -8194,7 +8160,6 @@
     },
     {
       "name": "anm_025",
-      "address": "0x08188460",
       "end": "0x08188474",
       "element": "le-u32",
       "stride": 4,
@@ -8205,7 +8170,6 @@
     },
     {
       "name": "anm_026_commands",
-      "address": "0x08188474",
       "end": "0x081884b4",
       "element": "u8",
       "stride": 2,
@@ -8217,7 +8181,6 @@
     },
     {
       "name": "anm_026",
-      "address": "0x081884b4",
       "end": "0x081884c8",
       "element": "le-u32",
       "stride": 4,
@@ -8228,7 +8191,6 @@
     },
     {
       "name": "anm_027_commands",
-      "address": "0x081884c8",
       "end": "0x08188514",
       "element": "u8",
       "stride": 2,
@@ -8241,7 +8203,6 @@
     },
     {
       "name": "anm_027",
-      "address": "0x08188514",
       "end": "0x08188530",
       "element": "le-u32",
       "stride": 4,
@@ -8252,7 +8213,6 @@
     },
     {
       "name": "anm_028_commands",
-      "address": "0x08188530",
       "end": "0x0818856c",
       "element": "u8",
       "stride": 2,
@@ -8264,7 +8224,6 @@
     },
     {
       "name": "anm_028",
-      "address": "0x0818856c",
       "end": "0x08188580",
       "element": "le-u32",
       "stride": 4,
@@ -8275,7 +8234,6 @@
     },
     {
       "name": "anm_029_commands",
-      "address": "0x08188580",
       "end": "0x081885d0",
       "element": "u8",
       "stride": 2,
@@ -8288,7 +8246,6 @@
     },
     {
       "name": "anm_029",
-      "address": "0x081885d0",
       "end": "0x081885ec",
       "element": "le-u32",
       "stride": 4,
@@ -8299,7 +8256,6 @@
     },
     {
       "name": "anm_02a_commands",
-      "address": "0x081885ec",
       "end": "0x0818862c",
       "element": "u8",
       "stride": 2,
@@ -8311,7 +8267,6 @@
     },
     {
       "name": "anm_02a",
-      "address": "0x0818862c",
       "end": "0x08188640",
       "element": "le-u32",
       "stride": 4,
@@ -8322,7 +8277,6 @@
     },
     {
       "name": "anm_02b_commands",
-      "address": "0x08188640",
       "end": "0x0818868c",
       "element": "u8",
       "stride": 2,
@@ -8335,7 +8289,6 @@
     },
     {
       "name": "anm_02b",
-      "address": "0x0818868c",
       "end": "0x081886a4",
       "element": "le-u32",
       "stride": 4,
@@ -8346,7 +8299,6 @@
     },
     {
       "name": "anm_02c_commands",
-      "address": "0x081886a4",
       "end": "0x081886e4",
       "element": "u8",
       "stride": 2,
@@ -8359,7 +8311,6 @@
     },
     {
       "name": "anm_02c",
-      "address": "0x081886e4",
       "end": "0x081886fc",
       "element": "le-u32",
       "stride": 4,
@@ -8370,7 +8321,6 @@
     },
     {
       "name": "anm_02d_commands",
-      "address": "0x081886fc",
       "end": "0x08188730",
       "element": "u8",
       "stride": 2,
@@ -8382,7 +8332,6 @@
     },
     {
       "name": "anm_02d",
-      "address": "0x08188730",
       "end": "0x08188744",
       "element": "le-u32",
       "stride": 4,
@@ -8393,7 +8342,6 @@
     },
     {
       "name": "anm_02e_commands",
-      "address": "0x08188744",
       "end": "0x08188778",
       "element": "u8",
       "stride": 2,
@@ -8405,7 +8353,6 @@
     },
     {
       "name": "anm_02e",
-      "address": "0x08188778",
       "end": "0x0818878c",
       "element": "le-u32",
       "stride": 4,
@@ -8416,7 +8363,6 @@
     },
     {
       "name": "anm_02f_commands",
-      "address": "0x0818878c",
       "end": "0x081887c0",
       "element": "u8",
       "stride": 2,
@@ -8428,7 +8374,6 @@
     },
     {
       "name": "anm_02f",
-      "address": "0x081887c0",
       "end": "0x081887d4",
       "element": "le-u32",
       "stride": 4,
@@ -8439,7 +8384,6 @@
     },
     {
       "name": "anm_030_commands",
-      "address": "0x081887d4",
       "end": "0x08188810",
       "element": "u8",
       "stride": 2,
@@ -8451,7 +8395,6 @@
     },
     {
       "name": "anm_030",
-      "address": "0x08188810",
       "end": "0x08188828",
       "element": "le-u32",
       "stride": 4,
@@ -8462,7 +8405,6 @@
     },
     {
       "name": "anm_031_commands",
-      "address": "0x08188828",
       "end": "0x08188868",
       "element": "u8",
       "stride": 2,
@@ -8474,7 +8416,6 @@
     },
     {
       "name": "anm_031",
-      "address": "0x08188868",
       "end": "0x0818887c",
       "element": "le-u32",
       "stride": 4,
@@ -8485,7 +8426,6 @@
     },
     {
       "name": "anm_032_commands",
-      "address": "0x0818887c",
       "end": "0x081888d4",
       "element": "u8",
       "stride": 2,
@@ -8499,7 +8439,6 @@
     },
     {
       "name": "anm_032",
-      "address": "0x081888d4",
       "end": "0x081888f4",
       "element": "le-u32",
       "stride": 4,
@@ -8510,7 +8449,6 @@
     },
     {
       "name": "anm_033_commands",
-      "address": "0x081888f4",
       "end": "0x0818893c",
       "element": "u8",
       "stride": 2,
@@ -8523,7 +8461,6 @@
     },
     {
       "name": "anm_033",
-      "address": "0x0818893c",
       "end": "0x08188958",
       "element": "le-u32",
       "stride": 4,
@@ -8534,7 +8471,6 @@
     },
     {
       "name": "anm_034_commands",
-      "address": "0x08188958",
       "end": "0x081889a8",
       "element": "u8",
       "stride": 2,
@@ -8547,7 +8483,6 @@
     },
     {
       "name": "anm_034",
-      "address": "0x081889a8",
       "end": "0x081889c0",
       "element": "le-u32",
       "stride": 4,
@@ -8558,7 +8493,6 @@
     },
     {
       "name": "anm_035_commands",
-      "address": "0x081889c0",
       "end": "0x08188a04",
       "element": "u8",
       "stride": 2,
@@ -8570,7 +8504,6 @@
     },
     {
       "name": "anm_035",
-      "address": "0x08188a04",
       "end": "0x08188a1c",
       "element": "le-u32",
       "stride": 4,
@@ -8581,7 +8514,6 @@
     },
     {
       "name": "anm_036_commands",
-      "address": "0x08188a1c",
       "end": "0x08188a58",
       "element": "u8",
       "stride": 2,
@@ -8593,7 +8525,6 @@
     },
     {
       "name": "anm_036",
-      "address": "0x08188a58",
       "end": "0x08188a6c",
       "element": "le-u32",
       "stride": 4,
@@ -8604,7 +8535,6 @@
     },
     {
       "name": "anm_037_commands",
-      "address": "0x08188a6c",
       "end": "0x08188a9c",
       "element": "u8",
       "stride": 2,
@@ -8616,7 +8546,6 @@
     },
     {
       "name": "anm_037",
-      "address": "0x08188a9c",
       "end": "0x08188acc",
       "element": "le-u32",
       "stride": 4,
@@ -8628,7 +8557,6 @@
     },
     {
       "name": "anm_08188acc",
-      "address": "0x08188acc",
       "end": "0x08188adc",
       "element": "le-u32",
       "stride": 4,
@@ -8636,7 +8564,6 @@
     },
     {
       "name": "anm_038_commands",
-      "address": "0x08188adc",
       "end": "0x08188af4",
       "element": "u8",
       "stride": 2,
@@ -8647,7 +8574,6 @@
     },
     {
       "name": "anm_038",
-      "address": "0x08188af4",
       "end": "0x08188b0c",
       "element": "le-u32",
       "stride": 4,
@@ -8658,7 +8584,6 @@
     },
     {
       "name": "anm_039_commands",
-      "address": "0x08188b0c",
       "end": "0x08188b40",
       "element": "u8",
       "stride": 2,
@@ -8670,7 +8595,6 @@
     },
     {
       "name": "anm_039",
-      "address": "0x08188b40",
       "end": "0x08188b54",
       "element": "le-u32",
       "stride": 4,
@@ -8681,7 +8605,6 @@
     },
     {
       "name": "anm_03a_commands",
-      "address": "0x08188b54",
       "end": "0x08188b94",
       "element": "u8",
       "stride": 2,
@@ -8693,7 +8616,6 @@
     },
     {
       "name": "anm_03a",
-      "address": "0x08188b94",
       "end": "0x08188ba8",
       "element": "le-u32",
       "stride": 4,
@@ -8704,7 +8626,6 @@
     },
     {
       "name": "anm_03b_commands",
-      "address": "0x08188ba8",
       "end": "0x08188bf0",
       "element": "u8",
       "stride": 2,
@@ -8717,7 +8638,6 @@
     },
     {
       "name": "anm_03b",
-      "address": "0x08188bf0",
       "end": "0x08188c0c",
       "element": "le-u32",
       "stride": 4,
@@ -8728,7 +8648,6 @@
     },
     {
       "name": "anm_03c_commands",
-      "address": "0x08188c0c",
       "end": "0x08188c58",
       "element": "u8",
       "stride": 2,
@@ -8741,7 +8660,6 @@
     },
     {
       "name": "anm_03c",
-      "address": "0x08188c58",
       "end": "0x08188c74",
       "element": "le-u32",
       "stride": 4,
@@ -8752,7 +8670,6 @@
     },
     {
       "name": "anm_03d_commands",
-      "address": "0x08188c74",
       "end": "0x08188cbc",
       "element": "u8",
       "stride": 2,
@@ -8765,7 +8682,6 @@
     },
     {
       "name": "anm_03d",
-      "address": "0x08188cbc",
       "end": "0x08188cd4",
       "element": "le-u32",
       "stride": 4,
@@ -8776,7 +8692,6 @@
     },
     {
       "name": "anm_03e_commands",
-      "address": "0x08188cd4",
       "end": "0x08188d38",
       "element": "u8",
       "stride": 2,
@@ -8790,7 +8705,6 @@
     },
     {
       "name": "anm_03e",
-      "address": "0x08188d38",
       "end": "0x08188d68",
       "element": "le-u32",
       "stride": 4,
@@ -8802,7 +8716,6 @@
     },
     {
       "name": "anm_03f_commands",
-      "address": "0x08188d68",
       "end": "0x08188de0",
       "element": "u8",
       "stride": 2,
@@ -8817,7 +8730,6 @@
     },
     {
       "name": "anm_03f",
-      "address": "0x08188de0",
       "end": "0x08188e08",
       "element": "le-u32",
       "stride": 4,
@@ -8829,7 +8741,6 @@
     },
     {
       "name": "anm_040_commands",
-      "address": "0x08188e08",
       "end": "0x08188e80",
       "element": "u8",
       "stride": 2,
@@ -8844,7 +8755,6 @@
     },
     {
       "name": "anm_040",
-      "address": "0x08188e80",
       "end": "0x08188ea8",
       "element": "le-u32",
       "stride": 4,
@@ -8856,7 +8766,6 @@
     },
     {
       "name": "anm_041_commands",
-      "address": "0x08188ea8",
       "end": "0x08188ee8",
       "element": "u8",
       "stride": 2,
@@ -8868,7 +8777,6 @@
     },
     {
       "name": "anm_041",
-      "address": "0x08188ee8",
       "end": "0x08188efc",
       "element": "le-u32",
       "stride": 4,
@@ -8879,7 +8787,6 @@
     },
     {
       "name": "anm_042_commands",
-      "address": "0x08188efc",
       "end": "0x08188f3c",
       "element": "u8",
       "stride": 2,
@@ -8891,7 +8798,6 @@
     },
     {
       "name": "anm_042",
-      "address": "0x08188f3c",
       "end": "0x08188f54",
       "element": "le-u32",
       "stride": 4,
@@ -8902,7 +8808,6 @@
     },
     {
       "name": "anm_043_commands",
-      "address": "0x08188f54",
       "end": "0x08188f90",
       "element": "u8",
       "stride": 2,
@@ -8914,7 +8819,6 @@
     },
     {
       "name": "anm_043",
-      "address": "0x08188f90",
       "end": "0x08188fa8",
       "element": "le-u32",
       "stride": 4,
@@ -8925,7 +8829,6 @@
     },
     {
       "name": "anm_044_commands",
-      "address": "0x08188fa8",
       "end": "0x08188fdc",
       "element": "u8",
       "stride": 2,
@@ -8937,7 +8840,6 @@
     },
     {
       "name": "anm_044",
-      "address": "0x08188fdc",
       "end": "0x08188ff0",
       "element": "le-u32",
       "stride": 4,
@@ -8948,7 +8850,6 @@
     },
     {
       "name": "anm_045_commands",
-      "address": "0x08188ff0",
       "end": "0x08189030",
       "element": "u8",
       "stride": 2,
@@ -8960,7 +8861,6 @@
     },
     {
       "name": "anm_045",
-      "address": "0x08189030",
       "end": "0x08189044",
       "element": "le-u32",
       "stride": 4,
@@ -8971,7 +8871,6 @@
     },
     {
       "name": "anm_046_commands",
-      "address": "0x08189044",
       "end": "0x08189078",
       "element": "u8",
       "stride": 2,
@@ -8983,7 +8882,6 @@
     },
     {
       "name": "anm_046",
-      "address": "0x08189078",
       "end": "0x0818908c",
       "element": "le-u32",
       "stride": 4,
@@ -8994,7 +8892,6 @@
     },
     {
       "name": "anm_065_commands",
-      "address": "0x0818908c",
       "end": "0x081890d0",
       "element": "u8",
       "stride": 2,
@@ -9007,7 +8904,6 @@
     },
     {
       "name": "anm_065",
-      "address": "0x081890d0",
       "end": "0x081890e8",
       "element": "le-u32",
       "stride": 4,
@@ -9018,7 +8914,6 @@
     },
     {
       "name": "anm_066_commands",
-      "address": "0x081890e8",
       "end": "0x08189120",
       "element": "u8",
       "stride": 2,
@@ -9030,7 +8925,6 @@
     },
     {
       "name": "anm_066",
-      "address": "0x08189120",
       "end": "0x08189134",
       "element": "le-u32",
       "stride": 4,
@@ -9041,7 +8935,6 @@
     },
     {
       "name": "anm_067_commands",
-      "address": "0x08189134",
       "end": "0x08189190",
       "element": "u8",
       "stride": 2,
@@ -9055,7 +8948,6 @@
     },
     {
       "name": "anm_067",
-      "address": "0x08189190",
       "end": "0x081891b8",
       "element": "le-u32",
       "stride": 4,
@@ -9067,7 +8959,6 @@
     },
     {
       "name": "anm_068_commands",
-      "address": "0x081891b8",
       "end": "0x081891dc",
       "element": "u8",
       "stride": 2,
@@ -9078,7 +8969,6 @@
     },
     {
       "name": "anm_068",
-      "address": "0x081891dc",
       "end": "0x081891ec",
       "element": "le-u32",
       "stride": 4,
@@ -9086,7 +8976,6 @@
     },
     {
       "name": "anm_06a_commands",
-      "address": "0x081891ec",
       "end": "0x08189234",
       "element": "u8",
       "stride": 2,
@@ -9099,7 +8988,6 @@
     },
     {
       "name": "anm_06a",
-      "address": "0x08189234",
       "end": "0x0818924c",
       "element": "le-u32",
       "stride": 4,
@@ -9110,7 +8998,6 @@
     },
     {
       "name": "anm_06b_commands",
-      "address": "0x0818924c",
       "end": "0x08189290",
       "element": "u8",
       "stride": 2,
@@ -9122,7 +9009,6 @@
     },
     {
       "name": "anm_06b",
-      "address": "0x08189290",
       "end": "0x081892a8",
       "element": "le-u32",
       "stride": 4,
@@ -9133,7 +9019,6 @@
     },
     {
       "name": "anm_06c_commands",
-      "address": "0x081892a8",
       "end": "0x08189324",
       "element": "u8",
       "stride": 2,
@@ -9149,7 +9034,6 @@
     },
     {
       "name": "anm_06c",
-      "address": "0x08189324",
       "end": "0x08189350",
       "element": "le-u32",
       "stride": 4,
@@ -9161,7 +9045,6 @@
     },
     {
       "name": "anm_06d_commands",
-      "address": "0x08189350",
       "end": "0x08189388",
       "element": "u8",
       "stride": 2,
@@ -9173,7 +9056,6 @@
     },
     {
       "name": "anm_06d",
-      "address": "0x08189388",
       "end": "0x0818939c",
       "element": "le-u32",
       "stride": 4,
@@ -9184,7 +9066,6 @@
     },
     {
       "name": "anm_06f_commands",
-      "address": "0x0818939c",
       "end": "0x081893e0",
       "element": "u8",
       "stride": 2,
@@ -9197,7 +9078,6 @@
     },
     {
       "name": "anm_06f",
-      "address": "0x081893e0",
       "end": "0x081893f8",
       "element": "le-u32",
       "stride": 4,
@@ -9208,7 +9088,6 @@
     },
     {
       "name": "anm_072_commands",
-      "address": "0x081893f8",
       "end": "0x08189440",
       "element": "u8",
       "stride": 2,
@@ -9221,7 +9100,6 @@
     },
     {
       "name": "anm_072",
-      "address": "0x08189440",
       "end": "0x0818945c",
       "element": "le-u32",
       "stride": 4,
@@ -9232,7 +9110,6 @@
     },
     {
       "name": "anm_073_commands",
-      "address": "0x0818945c",
       "end": "0x081894a4",
       "element": "u8",
       "stride": 2,
@@ -9245,7 +9122,6 @@
     },
     {
       "name": "anm_073",
-      "address": "0x081894a4",
       "end": "0x081894c0",
       "element": "le-u32",
       "stride": 4,
@@ -9256,7 +9132,6 @@
     },
     {
       "name": "anm_074_commands",
-      "address": "0x081894c0",
       "end": "0x08189518",
       "element": "u8",
       "stride": 2,
@@ -9270,7 +9145,6 @@
     },
     {
       "name": "anm_074",
-      "address": "0x08189518",
       "end": "0x08189540",
       "element": "le-u32",
       "stride": 4,
@@ -9282,7 +9156,6 @@
     },
     {
       "name": "anm_075_commands",
-      "address": "0x08189540",
       "end": "0x08189594",
       "element": "u8",
       "stride": 2,
@@ -9295,7 +9168,6 @@
     },
     {
       "name": "anm_075",
-      "address": "0x08189594",
       "end": "0x081895b0",
       "element": "le-u32",
       "stride": 4,
@@ -9306,7 +9178,6 @@
     },
     {
       "name": "anm_076_commands",
-      "address": "0x081895b0",
       "end": "0x081895f4",
       "element": "u8",
       "stride": 2,
@@ -9319,7 +9190,6 @@
     },
     {
       "name": "anm_076",
-      "address": "0x081895f4",
       "end": "0x0818960c",
       "element": "le-u32",
       "stride": 4,
@@ -9330,7 +9200,6 @@
     },
     {
       "name": "anm_077_commands",
-      "address": "0x0818960c",
       "end": "0x08189648",
       "element": "u8",
       "stride": 2,
@@ -9342,7 +9211,6 @@
     },
     {
       "name": "anm_077",
-      "address": "0x08189648",
       "end": "0x0818965c",
       "element": "le-u32",
       "stride": 4,
@@ -9353,7 +9221,6 @@
     },
     {
       "name": "anm_078_commands",
-      "address": "0x0818965c",
       "end": "0x08189698",
       "element": "u8",
       "stride": 2,
@@ -9365,7 +9232,6 @@
     },
     {
       "name": "anm_078",
-      "address": "0x08189698",
       "end": "0x081896ac",
       "element": "le-u32",
       "stride": 4,
@@ -9376,7 +9242,6 @@
     },
     {
       "name": "anm_079_commands",
-      "address": "0x081896ac",
       "end": "0x081896dc",
       "element": "u8",
       "stride": 2,
@@ -9388,7 +9253,6 @@
     },
     {
       "name": "anm_079",
-      "address": "0x081896dc",
       "end": "0x081896f0",
       "element": "le-u32",
       "stride": 4,
@@ -9399,7 +9263,6 @@
     },
     {
       "name": "anm_07a_commands",
-      "address": "0x081896f0",
       "end": "0x0818972c",
       "element": "u8",
       "stride": 2,
@@ -9411,7 +9274,6 @@
     },
     {
       "name": "anm_07a",
-      "address": "0x0818972c",
       "end": "0x08189744",
       "element": "le-u32",
       "stride": 4,
@@ -9422,7 +9284,6 @@
     },
     {
       "name": "anm_07c_commands",
-      "address": "0x08189744",
       "end": "0x08189780",
       "element": "u8",
       "stride": 2,
@@ -9434,7 +9295,6 @@
     },
     {
       "name": "anm_07c",
-      "address": "0x08189780",
       "end": "0x08189794",
       "element": "le-u32",
       "stride": 4,
@@ -9445,7 +9305,6 @@
     },
     {
       "name": "anm_07d_commands",
-      "address": "0x08189794",
       "end": "0x081897d8",
       "element": "u8",
       "stride": 2,
@@ -9457,7 +9316,6 @@
     },
     {
       "name": "anm_07d",
-      "address": "0x081897d8",
       "end": "0x081897ec",
       "element": "le-u32",
       "stride": 4,
@@ -9468,7 +9326,6 @@
     },
     {
       "name": "anm_081897ec",
-      "address": "0x081897ec",
       "end": "0x08189800",
       "element": "le-u32",
       "stride": 4,
@@ -9476,7 +9333,6 @@
     },
     {
       "name": "anm_08189800",
-      "address": "0x08189800",
       "end": "0x08189814",
       "element": "le-u32",
       "stride": 4,
@@ -9484,7 +9340,6 @@
     },
     {
       "name": "anm_080_commands",
-      "address": "0x08189814",
       "end": "0x08189854",
       "element": "u8",
       "stride": 2,
@@ -9496,7 +9351,6 @@
     },
     {
       "name": "anm_080",
-      "address": "0x08189854",
       "end": "0x08189868",
       "element": "le-u32",
       "stride": 4,
@@ -9507,7 +9361,6 @@
     },
     {
       "name": "anm_081_commands",
-      "address": "0x08189868",
       "end": "0x081898a8",
       "element": "u8",
       "stride": 2,
@@ -9519,7 +9372,6 @@
     },
     {
       "name": "anm_081",
-      "address": "0x081898a8",
       "end": "0x081898bc",
       "element": "le-u32",
       "stride": 4,
@@ -9530,7 +9382,6 @@
     },
     {
       "name": "anm_083_commands",
-      "address": "0x081898bc",
       "end": "0x0818991c",
       "element": "u8",
       "stride": 2,
@@ -9544,7 +9395,6 @@
     },
     {
       "name": "anm_083",
-      "address": "0x0818991c",
       "end": "0x08189934",
       "element": "le-u32",
       "stride": 4,
@@ -9555,7 +9405,6 @@
     },
     {
       "name": "anm_07b_commands",
-      "address": "0x08189934",
       "end": "0x0818998c",
       "element": "u8",
       "stride": 2,
@@ -9568,7 +9417,6 @@
     },
     {
       "name": "anm_07b",
-      "address": "0x0818998c",
       "end": "0x081899a0",
       "element": "le-u32",
       "stride": 4,
@@ -9579,7 +9427,6 @@
     },
     {
       "name": "anm_082_commands",
-      "address": "0x081899a0",
       "end": "0x081899fc",
       "element": "u8",
       "stride": 2,
@@ -9593,7 +9440,6 @@
     },
     {
       "name": "anm_082",
-      "address": "0x081899fc",
       "end": "0x08189a18",
       "element": "le-u32",
       "stride": 4,
@@ -9604,7 +9450,6 @@
     },
     {
       "name": "anm_084_commands",
-      "address": "0x08189a18",
       "end": "0x08189a58",
       "element": "u8",
       "stride": 2,
@@ -9616,7 +9461,6 @@
     },
     {
       "name": "anm_084",
-      "address": "0x08189a58",
       "end": "0x08189a70",
       "element": "le-u32",
       "stride": 4,
@@ -9627,7 +9471,6 @@
     },
     {
       "name": "anm_085_commands",
-      "address": "0x08189a70",
       "end": "0x08189ad8",
       "element": "u8",
       "stride": 2,
@@ -9641,7 +9484,6 @@
     },
     {
       "name": "anm_085",
-      "address": "0x08189ad8",
       "end": "0x08189af0",
       "element": "le-u32",
       "stride": 4,
@@ -9652,7 +9494,6 @@
     },
     {
       "name": "anm_086_commands",
-      "address": "0x08189af0",
       "end": "0x08189b38",
       "element": "u8",
       "stride": 2,
@@ -9665,7 +9506,6 @@
     },
     {
       "name": "anm_086",
-      "address": "0x08189b38",
       "end": "0x08189b50",
       "element": "le-u32",
       "stride": 4,
@@ -9676,7 +9516,6 @@
     },
     {
       "name": "anm_087_commands",
-      "address": "0x08189b50",
       "end": "0x08189b94",
       "element": "u8",
       "stride": 2,
@@ -9688,7 +9527,6 @@
     },
     {
       "name": "anm_087",
-      "address": "0x08189b94",
       "end": "0x08189ba8",
       "element": "le-u32",
       "stride": 4,
@@ -9699,7 +9537,6 @@
     },
     {
       "name": "anm_088_commands",
-      "address": "0x08189ba8",
       "end": "0x08189c00",
       "element": "u8",
       "stride": 2,
@@ -9712,7 +9549,6 @@
     },
     {
       "name": "anm_088",
-      "address": "0x08189c00",
       "end": "0x08189c10",
       "element": "le-u32",
       "stride": 4,
@@ -9720,7 +9556,6 @@
     },
     {
       "name": "anm_08f_commands",
-      "address": "0x08189c10",
       "end": "0x08189c4c",
       "element": "u8",
       "stride": 2,
@@ -9732,7 +9567,6 @@
     },
     {
       "name": "anm_08f",
-      "address": "0x08189c4c",
       "end": "0x08189c60",
       "element": "le-u32",
       "stride": 4,
@@ -9743,7 +9577,6 @@
     },
     {
       "name": "anm_090_commands",
-      "address": "0x08189c60",
       "end": "0x08189cb0",
       "element": "u8",
       "stride": 2,
@@ -9756,7 +9589,6 @@
     },
     {
       "name": "anm_090",
-      "address": "0x08189cb0",
       "end": "0x08189ccc",
       "element": "le-u32",
       "stride": 4,
@@ -9767,7 +9599,6 @@
     },
     {
       "name": "anm_091_commands",
-      "address": "0x08189ccc",
       "end": "0x08189d08",
       "element": "u8",
       "stride": 2,
@@ -9779,7 +9610,6 @@
     },
     {
       "name": "anm_091",
-      "address": "0x08189d08",
       "end": "0x08189d1c",
       "element": "le-u32",
       "stride": 4,
@@ -9790,7 +9620,6 @@
     },
     {
       "name": "anm_092_commands",
-      "address": "0x08189d1c",
       "end": "0x08189d60",
       "element": "u8",
       "stride": 2,
@@ -9802,7 +9631,6 @@
     },
     {
       "name": "anm_092",
-      "address": "0x08189d60",
       "end": "0x08189d74",
       "element": "le-u32",
       "stride": 4,
@@ -9813,7 +9641,6 @@
     },
     {
       "name": "anm_093_commands",
-      "address": "0x08189d74",
       "end": "0x08189dc8",
       "element": "u8",
       "stride": 2,
@@ -9826,7 +9653,6 @@
     },
     {
       "name": "anm_093",
-      "address": "0x08189dc8",
       "end": "0x08189de8",
       "element": "le-u32",
       "stride": 4,
@@ -9837,7 +9663,6 @@
     },
     {
       "name": "anm_069_commands",
-      "address": "0x08189de8",
       "end": "0x08189dfc",
       "element": "u8",
       "stride": 2,
@@ -9847,7 +9672,6 @@
     },
     {
       "name": "anm_069",
-      "address": "0x08189dfc",
       "end": "0x08189e10",
       "element": "le-u32",
       "stride": 4,
@@ -9858,7 +9682,6 @@
     },
     {
       "name": "anm_06e_commands",
-      "address": "0x08189e10",
       "end": "0x08189e24",
       "element": "u8",
       "stride": 2,
@@ -9868,7 +9691,6 @@
     },
     {
       "name": "anm_06e",
-      "address": "0x08189e24",
       "end": "0x08189e38",
       "element": "le-u32",
       "stride": 4,
@@ -9879,7 +9701,6 @@
     },
     {
       "name": "anm_094_commands",
-      "address": "0x08189e38",
       "end": "0x08189e84",
       "element": "u8",
       "stride": 2,
@@ -9892,7 +9713,6 @@
     },
     {
       "name": "anm_094",
-      "address": "0x08189e84",
       "end": "0x08189e9c",
       "element": "le-u32",
       "stride": 4,
@@ -9903,7 +9723,6 @@
     },
     {
       "name": "anm_070_commands",
-      "address": "0x08189e9c",
       "end": "0x08189ee4",
       "element": "u8",
       "stride": 2,
@@ -9916,7 +9735,6 @@
     },
     {
       "name": "anm_070",
-      "address": "0x08189ee4",
       "end": "0x08189f00",
       "element": "le-u32",
       "stride": 4,
@@ -9927,7 +9745,6 @@
     },
     {
       "name": "anm_071_commands",
-      "address": "0x08189f00",
       "end": "0x08189f44",
       "element": "u8",
       "stride": 2,
@@ -9940,7 +9757,6 @@
     },
     {
       "name": "anm_071",
-      "address": "0x08189f44",
       "end": "0x08189f5c",
       "element": "le-u32",
       "stride": 4,
@@ -9951,7 +9767,6 @@
     },
     {
       "name": "anm_095_commands",
-      "address": "0x08189f5c",
       "end": "0x08189f9c",
       "element": "u8",
       "stride": 2,
@@ -9963,7 +9778,6 @@
     },
     {
       "name": "anm_095",
-      "address": "0x08189f9c",
       "end": "0x08189fb0",
       "element": "le-u32",
       "stride": 4,
@@ -9974,7 +9788,6 @@
     },
     {
       "name": "anm_096_commands",
-      "address": "0x08189fb0",
       "end": "0x08189fec",
       "element": "u8",
       "stride": 2,
@@ -9986,7 +9799,6 @@
     },
     {
       "name": "anm_096",
-      "address": "0x08189fec",
       "end": "0x0818a000",
       "element": "le-u32",
       "stride": 4,
@@ -9997,7 +9809,6 @@
     },
     {
       "name": "anm_097_commands",
-      "address": "0x0818a000",
       "end": "0x0818a040",
       "element": "u8",
       "stride": 2,
@@ -10009,7 +9820,6 @@
     },
     {
       "name": "anm_097",
-      "address": "0x0818a040",
       "end": "0x0818a054",
       "element": "le-u32",
       "stride": 4,
@@ -10020,7 +9830,6 @@
     },
     {
       "name": "anm_098_commands",
-      "address": "0x0818a054",
       "end": "0x0818a094",
       "element": "u8",
       "stride": 2,
@@ -10032,7 +9841,6 @@
     },
     {
       "name": "anm_098",
-      "address": "0x0818a094",
       "end": "0x0818a0ac",
       "element": "le-u32",
       "stride": 4,
@@ -10043,7 +9851,6 @@
     },
     {
       "name": "anm_099_commands",
-      "address": "0x0818a0ac",
       "end": "0x0818a0f0",
       "element": "u8",
       "stride": 2,
@@ -10055,7 +9862,6 @@
     },
     {
       "name": "anm_099",
-      "address": "0x0818a0f0",
       "end": "0x0818a104",
       "element": "le-u32",
       "stride": 4,
@@ -10066,7 +9872,6 @@
     },
     {
       "name": "anm_09b_commands",
-      "address": "0x0818a104",
       "end": "0x0818a118",
       "element": "u8",
       "stride": 2,
@@ -10076,7 +9881,6 @@
     },
     {
       "name": "anm_09b",
-      "address": "0x0818a118",
       "end": "0x0818a128",
       "element": "le-u32",
       "stride": 4,
@@ -10084,7 +9888,6 @@
     },
     {
       "name": "anm_09e_commands",
-      "address": "0x0818a128",
       "end": "0x0818a164",
       "element": "u8",
       "stride": 2,
@@ -10096,7 +9899,6 @@
     },
     {
       "name": "anm_09e",
-      "address": "0x0818a164",
       "end": "0x0818a17c",
       "element": "le-u32",
       "stride": 4,
@@ -10107,7 +9909,6 @@
     },
     {
       "name": "anm_09c_commands",
-      "address": "0x0818a17c",
       "end": "0x0818a1b8",
       "element": "u8",
       "stride": 2,
@@ -10119,7 +9920,6 @@
     },
     {
       "name": "anm_09c",
-      "address": "0x0818a1b8",
       "end": "0x0818a1cc",
       "element": "le-u32",
       "stride": 4,
@@ -10130,7 +9930,6 @@
     },
     {
       "name": "anm_09f_commands",
-      "address": "0x0818a1cc",
       "end": "0x0818a210",
       "element": "u8",
       "stride": 2,
@@ -10142,7 +9941,6 @@
     },
     {
       "name": "anm_09f",
-      "address": "0x0818a210",
       "end": "0x0818a228",
       "element": "le-u32",
       "stride": 4,
@@ -10153,7 +9951,6 @@
     },
     {
       "name": "anm_0a0_commands",
-      "address": "0x0818a228",
       "end": "0x0818a268",
       "element": "u8",
       "stride": 2,
@@ -10165,7 +9962,6 @@
     },
     {
       "name": "anm_0a0",
-      "address": "0x0818a268",
       "end": "0x0818a27c",
       "element": "le-u32",
       "stride": 4,
@@ -10176,7 +9972,6 @@
     },
     {
       "name": "anm_0a2_commands",
-      "address": "0x0818a27c",
       "end": "0x0818a2b4",
       "element": "u8",
       "stride": 2,
@@ -10188,7 +9983,6 @@
     },
     {
       "name": "anm_0a2",
-      "address": "0x0818a2b4",
       "end": "0x0818a2c8",
       "element": "le-u32",
       "stride": 4,
@@ -10199,7 +9993,6 @@
     },
     {
       "name": "anm_0a3_commands",
-      "address": "0x0818a2c8",
       "end": "0x0818a2f4",
       "element": "u8",
       "stride": 2,
@@ -10210,7 +10003,6 @@
     },
     {
       "name": "anm_0a3",
-      "address": "0x0818a2f4",
       "end": "0x0818a308",
       "element": "le-u32",
       "stride": 4,
@@ -10221,7 +10013,6 @@
     },
     {
       "name": "anm_0a4_commands",
-      "address": "0x0818a308",
       "end": "0x0818a348",
       "element": "u8",
       "stride": 2,
@@ -10233,7 +10024,6 @@
     },
     {
       "name": "anm_0a4",
-      "address": "0x0818a348",
       "end": "0x0818a35c",
       "element": "le-u32",
       "stride": 4,
@@ -10244,7 +10034,6 @@
     },
     {
       "name": "anm_0a5_commands",
-      "address": "0x0818a35c",
       "end": "0x0818a3c4",
       "element": "u8",
       "stride": 2,
@@ -10259,7 +10048,6 @@
     },
     {
       "name": "anm_0a5",
-      "address": "0x0818a3c4",
       "end": "0x0818a3f8",
       "element": "le-u32",
       "stride": 4,
@@ -10272,7 +10060,6 @@
     },
     {
       "name": "anm_0a6_commands",
-      "address": "0x0818a3f8",
       "end": "0x0818a434",
       "element": "u8",
       "stride": 2,
@@ -10284,7 +10071,6 @@
     },
     {
       "name": "anm_0a6",
-      "address": "0x0818a434",
       "end": "0x0818a448",
       "element": "le-u32",
       "stride": 4,
@@ -10295,7 +10081,6 @@
     },
     {
       "name": "anm_0a7_commands",
-      "address": "0x0818a448",
       "end": "0x0818a47c",
       "element": "u8",
       "stride": 2,
@@ -10307,7 +10092,6 @@
     },
     {
       "name": "anm_0a7",
-      "address": "0x0818a47c",
       "end": "0x0818a490",
       "element": "le-u32",
       "stride": 4,
@@ -10318,7 +10102,6 @@
     },
     {
       "name": "anm_0a8_commands",
-      "address": "0x0818a490",
       "end": "0x0818a4d4",
       "element": "u8",
       "stride": 2,
@@ -10330,7 +10113,6 @@
     },
     {
       "name": "anm_0a8",
-      "address": "0x0818a4d4",
       "end": "0x0818a4e8",
       "element": "le-u32",
       "stride": 4,
@@ -10341,7 +10123,6 @@
     },
     {
       "name": "anm_0a9_commands",
-      "address": "0x0818a4e8",
       "end": "0x0818a52c",
       "element": "u8",
       "stride": 2,
@@ -10353,7 +10134,6 @@
     },
     {
       "name": "anm_0a9",
-      "address": "0x0818a52c",
       "end": "0x0818a540",
       "element": "le-u32",
       "stride": 4,
@@ -10364,7 +10144,6 @@
     },
     {
       "name": "anm_0aa_commands",
-      "address": "0x0818a540",
       "end": "0x0818a574",
       "element": "u8",
       "stride": 2,
@@ -10376,7 +10155,6 @@
     },
     {
       "name": "anm_0aa",
-      "address": "0x0818a574",
       "end": "0x0818a588",
       "element": "le-u32",
       "stride": 4,
@@ -10387,7 +10165,6 @@
     },
     {
       "name": "anm_0ab_commands",
-      "address": "0x0818a588",
       "end": "0x0818a5d8",
       "element": "u8",
       "stride": 2,
@@ -10400,7 +10177,6 @@
     },
     {
       "name": "anm_0ab",
-      "address": "0x0818a5d8",
       "end": "0x0818a5f4",
       "element": "le-u32",
       "stride": 4,
@@ -10411,7 +10187,6 @@
     },
     {
       "name": "anm_05d_commands",
-      "address": "0x0818a5f4",
       "end": "0x0818a618",
       "element": "u8",
       "stride": 2,
@@ -10422,7 +10197,6 @@
     },
     {
       "name": "anm_05d",
-      "address": "0x0818a618",
       "end": "0x0818a628",
       "element": "le-u32",
       "stride": 4,
@@ -10430,7 +10204,6 @@
     },
     {
       "name": "anm_05a_commands",
-      "address": "0x0818a628",
       "end": "0x0818a648",
       "element": "u8",
       "stride": 2,
@@ -10441,7 +10214,6 @@
     },
     {
       "name": "anm_05a",
-      "address": "0x0818a648",
       "end": "0x0818a658",
       "element": "le-u32",
       "stride": 4,
@@ -10449,7 +10221,6 @@
     },
     {
       "name": "anm_05c_commands",
-      "address": "0x0818a658",
       "end": "0x0818a680",
       "element": "u8",
       "stride": 2,
@@ -10460,7 +10231,6 @@
     },
     {
       "name": "anm_05c",
-      "address": "0x0818a680",
       "end": "0x0818a690",
       "element": "le-u32",
       "stride": 4,
@@ -10468,7 +10238,6 @@
     },
     {
       "name": "anm_05b_commands",
-      "address": "0x0818a690",
       "end": "0x0818a6b0",
       "element": "u8",
       "stride": 2,
@@ -10479,7 +10248,6 @@
     },
     {
       "name": "anm_05b",
-      "address": "0x0818a6b0",
       "end": "0x0818a6c0",
       "element": "le-u32",
       "stride": 4,
@@ -10487,7 +10255,6 @@
     },
     {
       "name": "anm_0be_commands",
-      "address": "0x0818a6c0",
       "end": "0x0818a6d8",
       "element": "u8",
       "stride": 2,
@@ -10498,7 +10265,6 @@
     },
     {
       "name": "anm_0be",
-      "address": "0x0818a6d8",
       "end": "0x0818a6e8",
       "element": "le-u32",
       "stride": 4,
@@ -10506,7 +10272,6 @@
     },
     {
       "name": "anm_0bf_commands",
-      "address": "0x0818a6e8",
       "end": "0x0818a6fc",
       "element": "u8",
       "stride": 2,
@@ -10516,7 +10281,6 @@
     },
     {
       "name": "anm_0bf",
-      "address": "0x0818a6fc",
       "end": "0x0818a70c",
       "element": "le-u32",
       "stride": 4,
@@ -10524,7 +10288,6 @@
     },
     {
       "name": "anm_0c0_commands",
-      "address": "0x0818a70c",
       "end": "0x0818a730",
       "element": "u8",
       "stride": 2,
@@ -10535,7 +10298,6 @@
     },
     {
       "name": "anm_0c0",
-      "address": "0x0818a730",
       "end": "0x0818a740",
       "element": "le-u32",
       "stride": 4,
@@ -10543,7 +10305,6 @@
     },
     {
       "name": "anm_0c1_commands",
-      "address": "0x0818a740",
       "end": "0x0818a754",
       "element": "u8",
       "stride": 2,
@@ -10553,7 +10314,6 @@
     },
     {
       "name": "anm_0c1",
-      "address": "0x0818a754",
       "end": "0x0818a764",
       "element": "le-u32",
       "stride": 4,
@@ -10561,7 +10321,6 @@
     },
     {
       "name": "anm_0c2_commands",
-      "address": "0x0818a764",
       "end": "0x0818a77c",
       "element": "u8",
       "stride": 2,
@@ -10572,7 +10331,6 @@
     },
     {
       "name": "anm_0c2",
-      "address": "0x0818a77c",
       "end": "0x0818a78c",
       "element": "le-u32",
       "stride": 4,
@@ -10580,7 +10338,6 @@
     },
     {
       "name": "anm_0c3_commands",
-      "address": "0x0818a78c",
       "end": "0x0818a7a8",
       "element": "u8",
       "stride": 2,
@@ -10591,7 +10348,6 @@
     },
     {
       "name": "anm_0c3",
-      "address": "0x0818a7a8",
       "end": "0x0818a7b8",
       "element": "le-u32",
       "stride": 4,
@@ -10599,7 +10355,6 @@
     },
     {
       "name": "anm_0c4_commands",
-      "address": "0x0818a7b8",
       "end": "0x0818a7cc",
       "element": "u8",
       "stride": 2,
@@ -10607,7 +10362,6 @@
     },
     {
       "name": "anm_0c4",
-      "address": "0x0818a7cc",
       "end": "0x0818a7dc",
       "element": "le-u32",
       "stride": 4,
@@ -10615,7 +10369,6 @@
     },
     {
       "name": "anm_0c5_commands",
-      "address": "0x0818a7dc",
       "end": "0x0818a7f0",
       "element": "u8",
       "stride": 2,
@@ -10625,7 +10378,6 @@
     },
     {
       "name": "anm_0c5",
-      "address": "0x0818a7f0",
       "end": "0x0818a800",
       "element": "le-u32",
       "stride": 4,
@@ -10633,7 +10385,6 @@
     },
     {
       "name": "anm_0c6_commands",
-      "address": "0x0818a800",
       "end": "0x0818a818",
       "element": "u8",
       "stride": 2,
@@ -10644,7 +10395,6 @@
     },
     {
       "name": "anm_0c6",
-      "address": "0x0818a818",
       "end": "0x0818a828",
       "element": "le-u32",
       "stride": 4,
@@ -10652,7 +10402,6 @@
     },
     {
       "name": "anm_0c7_commands",
-      "address": "0x0818a828",
       "end": "0x0818a840",
       "element": "u8",
       "stride": 2,
@@ -10663,7 +10412,6 @@
     },
     {
       "name": "anm_0c7",
-      "address": "0x0818a840",
       "end": "0x0818a84c",
       "element": "le-u32",
       "stride": 4,
@@ -10671,7 +10419,6 @@
     },
     {
       "name": "anm_0bd_commands",
-      "address": "0x0818a84c",
       "end": "0x0818a860",
       "element": "u8",
       "stride": 2,
@@ -10681,7 +10428,6 @@
     },
     {
       "name": "anm_0bd",
-      "address": "0x0818a860",
       "end": "0x0818a870",
       "element": "le-u32",
       "stride": 4,
@@ -10689,7 +10435,6 @@
     },
     {
       "name": "anm_0bb_commands",
-      "address": "0x0818a870",
       "end": "0x0818a88c",
       "element": "u8",
       "stride": 2,
@@ -10700,7 +10445,6 @@
     },
     {
       "name": "anm_0bb",
-      "address": "0x0818a88c",
       "end": "0x0818a8a0",
       "element": "le-u32",
       "stride": 4,
@@ -10711,7 +10455,6 @@
     },
     {
       "name": "anm_0c9_commands",
-      "address": "0x0818a8a0",
       "end": "0x0818a8ac",
       "element": "u8",
       "stride": 2,
@@ -10719,7 +10462,6 @@
     },
     {
       "name": "anm_0c9",
-      "address": "0x0818a8ac",
       "end": "0x0818a8b8",
       "element": "le-u32",
       "stride": 4,
@@ -10727,7 +10469,6 @@
     },
     {
       "name": "anm_0ca_commands",
-      "address": "0x0818a8b8",
       "end": "0x0818a8c4",
       "element": "u8",
       "stride": 2,
@@ -10735,7 +10476,6 @@
     },
     {
       "name": "anm_0ca",
-      "address": "0x0818a8c4",
       "end": "0x0818a8d0",
       "element": "le-u32",
       "stride": 4,
@@ -10743,7 +10483,6 @@
     },
     {
       "name": "anm_0cb_commands",
-      "address": "0x0818a8d0",
       "end": "0x0818a8e0",
       "element": "u8",
       "stride": 2,
@@ -10751,7 +10490,6 @@
     },
     {
       "name": "anm_0cb",
-      "address": "0x0818a8e0",
       "end": "0x0818a8f0",
       "element": "le-u32",
       "stride": 4,
@@ -10759,7 +10497,6 @@
     },
     {
       "name": "anm_0c8_commands",
-      "address": "0x0818a8f0",
       "end": "0x0818a918",
       "element": "u8",
       "stride": 2,
@@ -10770,7 +10507,6 @@
     },
     {
       "name": "anm_0c8",
-      "address": "0x0818a918",
       "end": "0x0818a92c",
       "element": "le-u32",
       "stride": 4,
@@ -10781,7 +10517,6 @@
     },
     {
       "name": "anm_0cc_commands",
-      "address": "0x0818a92c",
       "end": "0x0818a938",
       "element": "u8",
       "stride": 2,
@@ -10789,7 +10524,6 @@
     },
     {
       "name": "anm_0cc",
-      "address": "0x0818a938",
       "end": "0x0818a944",
       "element": "le-u32",
       "stride": 4,
@@ -10797,7 +10531,6 @@
     },
     {
       "name": "anm_0ce_commands",
-      "address": "0x0818a944",
       "end": "0x0818a950",
       "element": "u8",
       "stride": 2,
@@ -10805,7 +10538,6 @@
     },
     {
       "name": "anm_0ce",
-      "address": "0x0818a950",
       "end": "0x0818a95c",
       "element": "le-u32",
       "stride": 4,
@@ -10813,7 +10545,6 @@
     },
     {
       "name": "anm_0cf_commands",
-      "address": "0x0818a95c",
       "end": "0x0818a9ac",
       "element": "u8",
       "stride": 2,
@@ -10826,7 +10557,6 @@
     },
     {
       "name": "anm_0cf",
-      "address": "0x0818a9ac",
       "end": "0x0818a9d0",
       "element": "le-u32",
       "stride": 4,
@@ -10838,7 +10568,6 @@
     },
     {
       "name": "anm_0cd_commands",
-      "address": "0x0818a9d0",
       "end": "0x0818aa20",
       "element": "u8",
       "stride": 2,
@@ -10851,7 +10580,6 @@
     },
     {
       "name": "anm_0cd",
-      "address": "0x0818aa20",
       "end": "0x0818aa44",
       "element": "le-u32",
       "stride": 4,
@@ -10863,7 +10591,6 @@
     },
     {
       "name": "anm_0d0_commands",
-      "address": "0x0818aa44",
       "end": "0x0818aa60",
       "element": "u8",
       "stride": 2,
@@ -10874,7 +10601,6 @@
     },
     {
       "name": "anm_0d0",
-      "address": "0x0818aa60",
       "end": "0x0818aa6c",
       "element": "le-u32",
       "stride": 4,
@@ -10882,7 +10608,6 @@
     },
     {
       "name": "anm_0d1_commands",
-      "address": "0x0818aa6c",
       "end": "0x0818aaa8",
       "element": "u8",
       "stride": 2,
@@ -10894,7 +10619,6 @@
     },
     {
       "name": "anm_0d1",
-      "address": "0x0818aaa8",
       "end": "0x0818aab8",
       "element": "le-u32",
       "stride": 4,
@@ -10902,7 +10626,6 @@
     },
     {
       "name": "anm_0d2_commands",
-      "address": "0x0818aab8",
       "end": "0x0818aacc",
       "element": "u8",
       "stride": 2,
@@ -10910,7 +10633,6 @@
     },
     {
       "name": "anm_0d2",
-      "address": "0x0818aacc",
       "end": "0x0818aadc",
       "element": "le-u32",
       "stride": 4,
@@ -10918,7 +10640,6 @@
     },
     {
       "name": "anm_01c_commands",
-      "address": "0x0818aadc",
       "end": "0x0818ab20",
       "element": "u8",
       "stride": 2,
@@ -10930,7 +10651,6 @@
     },
     {
       "name": "anm_01c",
-      "address": "0x0818ab20",
       "end": "0x0818ab2c",
       "element": "le-u32",
       "stride": 4,
@@ -10938,7 +10658,6 @@
     },
     {
       "name": "anm_017_commands",
-      "address": "0x0818ab2c",
       "end": "0x0818ab34",
       "element": "u8",
       "stride": 2,
@@ -10946,7 +10665,6 @@
     },
     {
       "name": "anm_017",
-      "address": "0x0818ab34",
       "end": "0x0818ab3c",
       "element": "le-u32",
       "stride": 4,
@@ -10954,7 +10672,6 @@
     },
     {
       "name": "anm_01b_commands",
-      "address": "0x0818ab3c",
       "end": "0x0818ab44",
       "element": "u8",
       "stride": 2,
@@ -10962,7 +10679,6 @@
     },
     {
       "name": "anm_01b",
-      "address": "0x0818ab44",
       "end": "0x0818ab4c",
       "element": "le-u32",
       "stride": 4,
@@ -10970,7 +10686,6 @@
     },
     {
       "name": "anm_018_commands",
-      "address": "0x0818ab4c",
       "end": "0x0818ab6c",
       "element": "u8",
       "stride": 2,
@@ -10981,7 +10696,6 @@
     },
     {
       "name": "anm_018",
-      "address": "0x0818ab6c",
       "end": "0x0818ab78",
       "element": "le-u32",
       "stride": 4,
@@ -10989,7 +10703,6 @@
     },
     {
       "name": "anm_019_commands",
-      "address": "0x0818ab78",
       "end": "0x0818ab8c",
       "element": "u8",
       "stride": 2,
@@ -10997,7 +10710,6 @@
     },
     {
       "name": "anm_019",
-      "address": "0x0818ab8c",
       "end": "0x0818ab98",
       "element": "le-u32",
       "stride": 4,
@@ -11005,7 +10717,6 @@
     },
     {
       "name": "anm_01a_commands",
-      "address": "0x0818ab98",
       "end": "0x0818abd0",
       "element": "u8",
       "stride": 2,
@@ -11017,7 +10728,6 @@
     },
     {
       "name": "anm_01a",
-      "address": "0x0818abd0",
       "end": "0x0818abf4",
       "element": "le-u32",
       "stride": 4,
@@ -11029,7 +10739,6 @@
     },
     {
       "name": "anm_0d3_commands",
-      "address": "0x0818abf4",
       "end": "0x0818ac00",
       "element": "u8",
       "stride": 2,
@@ -11037,7 +10746,6 @@
     },
     {
       "name": "anm_0d3",
-      "address": "0x0818ac00",
       "end": "0x0818ac0c",
       "element": "le-u32",
       "stride": 4,
@@ -11045,7 +10753,6 @@
     },
     {
       "name": "anm_0d4_commands",
-      "address": "0x0818ac0c",
       "end": "0x0818ac28",
       "element": "u8",
       "stride": 2,
@@ -11056,7 +10763,6 @@
     },
     {
       "name": "anm_0d4",
-      "address": "0x0818ac28",
       "end": "0x0818ac38",
       "element": "le-u32",
       "stride": 4,
@@ -11064,7 +10770,6 @@
     },
     {
       "name": "anm_0d5_commands",
-      "address": "0x0818ac38",
       "end": "0x0818ac58",
       "element": "u8",
       "stride": 2,
@@ -11075,7 +10780,6 @@
     },
     {
       "name": "anm_0d5",
-      "address": "0x0818ac58",
       "end": "0x0818ac70",
       "element": "le-u32",
       "stride": 4,
@@ -11086,7 +10790,6 @@
     },
     {
       "name": "anm_0d6_commands",
-      "address": "0x0818ac70",
       "end": "0x0818acc8",
       "element": "u8",
       "stride": 2,
@@ -11099,7 +10802,6 @@
     },
     {
       "name": "anm_0d6",
-      "address": "0x0818acc8",
       "end": "0x0818acd8",
       "element": "le-u32",
       "stride": 4,
@@ -11107,7 +10809,6 @@
     },
     {
       "name": "anm_0d7_commands",
-      "address": "0x0818acd8",
       "end": "0x0818acfc",
       "element": "u8",
       "stride": 2,
@@ -11118,7 +10819,6 @@
     },
     {
       "name": "anm_0d7",
-      "address": "0x0818acfc",
       "end": "0x0818ad18",
       "element": "le-u32",
       "stride": 4,
@@ -11129,7 +10829,6 @@
     },
     {
       "name": "anm_0d8_commands",
-      "address": "0x0818ad18",
       "end": "0x0818ad3c",
       "element": "u8",
       "stride": 2,
@@ -11140,7 +10839,6 @@
     },
     {
       "name": "anm_0d8",
-      "address": "0x0818ad3c",
       "end": "0x0818ad4c",
       "element": "le-u32",
       "stride": 4,
@@ -11148,7 +10846,6 @@
     },
     {
       "name": "anm_0da_commands",
-      "address": "0x0818ad4c",
       "end": "0x0818ad88",
       "element": "u8",
       "stride": 2,
@@ -11160,7 +10857,6 @@
     },
     {
       "name": "anm_0da",
-      "address": "0x0818ad88",
       "end": "0x0818ad9c",
       "element": "le-u32",
       "stride": 4,
@@ -11171,7 +10867,6 @@
     },
     {
       "name": "anm_0d9_commands",
-      "address": "0x0818ad9c",
       "end": "0x0818adbc",
       "element": "u8",
       "stride": 2,
@@ -11182,7 +10877,6 @@
     },
     {
       "name": "anm_0d9",
-      "address": "0x0818adbc",
       "end": "0x0818add0",
       "element": "le-u32",
       "stride": 4,
@@ -11193,7 +10887,6 @@
     },
     {
       "name": "anm_0db_commands",
-      "address": "0x0818add0",
       "end": "0x0818adfc",
       "element": "u8",
       "stride": 2,
@@ -11204,7 +10897,6 @@
     },
     {
       "name": "anm_0db",
-      "address": "0x0818adfc",
       "end": "0x0818ae10",
       "element": "le-u32",
       "stride": 4,
@@ -11215,7 +10907,6 @@
     },
     {
       "name": "anm_0dc_commands",
-      "address": "0x0818ae10",
       "end": "0x0818ae28",
       "element": "u8",
       "stride": 2,
@@ -11226,7 +10917,6 @@
     },
     {
       "name": "anm_0dc",
-      "address": "0x0818ae28",
       "end": "0x0818ae38",
       "element": "le-u32",
       "stride": 4,
@@ -11234,7 +10924,6 @@
     },
     {
       "name": "anm_0dd_commands",
-      "address": "0x0818ae38",
       "end": "0x0818ae44",
       "element": "u8",
       "stride": 2,
@@ -11242,7 +10931,6 @@
     },
     {
       "name": "anm_0dd",
-      "address": "0x0818ae44",
       "end": "0x0818ae50",
       "element": "le-u32",
       "stride": 4,
@@ -11250,7 +10938,6 @@
     },
     {
       "name": "anm_0de_commands",
-      "address": "0x0818ae50",
       "end": "0x0818aea0",
       "element": "u8",
       "stride": 2,
@@ -11263,7 +10950,6 @@
     },
     {
       "name": "anm_0de",
-      "address": "0x0818aea0",
       "end": "0x0818aeb8",
       "element": "le-u32",
       "stride": 4,
@@ -11274,7 +10960,6 @@
     },
     {
       "name": "anm_0df_commands",
-      "address": "0x0818aeb8",
       "end": "0x0818aec4",
       "element": "u8",
       "stride": 2,
@@ -11282,7 +10967,6 @@
     },
     {
       "name": "anm_0df",
-      "address": "0x0818aec4",
       "end": "0x0818aed0",
       "element": "le-u32",
       "stride": 4,
@@ -11290,7 +10974,6 @@
     },
     {
       "name": "anm_0e0_commands",
-      "address": "0x0818aed0",
       "end": "0x0818aedc",
       "element": "u8",
       "stride": 2,
@@ -11298,7 +10981,6 @@
     },
     {
       "name": "anm_0e0",
-      "address": "0x0818aedc",
       "end": "0x0818aee8",
       "element": "le-u32",
       "stride": 4,
@@ -11306,7 +10988,6 @@
     },
     {
       "name": "anm_0e3_commands",
-      "address": "0x0818aee8",
       "end": "0x0818af18",
       "element": "u8",
       "stride": 2,
@@ -11318,7 +10999,6 @@
     },
     {
       "name": "anm_0e3",
-      "address": "0x0818af18",
       "end": "0x0818af34",
       "element": "le-u32",
       "stride": 4,
@@ -11329,7 +11009,6 @@
     },
     {
       "name": "anm_0e2_commands",
-      "address": "0x0818af34",
       "end": "0x0818af80",
       "element": "u8",
       "stride": 2,
@@ -11343,7 +11022,6 @@
     },
     {
       "name": "anm_0e2",
-      "address": "0x0818af80",
       "end": "0x0818afdc",
       "element": "le-u32",
       "stride": 4,
@@ -11358,7 +11036,6 @@
     },
     {
       "name": "anm_0e4_commands",
-      "address": "0x0818afdc",
       "end": "0x0818aff8",
       "element": "u8",
       "stride": 2,
@@ -11369,7 +11046,6 @@
     },
     {
       "name": "anm_0e4",
-      "address": "0x0818aff8",
       "end": "0x0818b008",
       "element": "le-u32",
       "stride": 4,
@@ -11377,7 +11053,6 @@
     },
     {
       "name": "anm_0e5_commands",
-      "address": "0x0818b008",
       "end": "0x0818b024",
       "element": "u8",
       "stride": 2,
@@ -11388,7 +11063,6 @@
     },
     {
       "name": "anm_0e5",
-      "address": "0x0818b024",
       "end": "0x0818b034",
       "element": "le-u32",
       "stride": 4,
@@ -11396,7 +11070,6 @@
     },
     {
       "name": "anm_0e6_commands",
-      "address": "0x0818b034",
       "end": "0x0818b040",
       "element": "u8",
       "stride": 2,
@@ -11404,7 +11077,6 @@
     },
     {
       "name": "anm_0e6",
-      "address": "0x0818b040",
       "end": "0x0818b04c",
       "element": "le-u32",
       "stride": 4,
@@ -11412,7 +11084,6 @@
     },
     {
       "name": "anm_0e7_commands",
-      "address": "0x0818b04c",
       "end": "0x0818b070",
       "element": "u8",
       "stride": 2,
@@ -11423,7 +11094,6 @@
     },
     {
       "name": "anm_0e7",
-      "address": "0x0818b070",
       "end": "0x0818b08c",
       "element": "le-u32",
       "stride": 4,
@@ -11434,7 +11104,6 @@
     },
     {
       "name": "anm_0e9_commands",
-      "address": "0x0818b08c",
       "end": "0x0818b0c0",
       "element": "u8",
       "stride": 2,
@@ -11446,7 +11115,6 @@
     },
     {
       "name": "anm_0e9",
-      "address": "0x0818b0c0",
       "end": "0x0818b0d4",
       "element": "le-u32",
       "stride": 4,
@@ -11457,7 +11125,6 @@
     },
     {
       "name": "anm_0ea_commands",
-      "address": "0x0818b0d4",
       "end": "0x0818b0e0",
       "element": "u8",
       "stride": 2,
@@ -11465,7 +11132,6 @@
     },
     {
       "name": "anm_0ea",
-      "address": "0x0818b0e0",
       "end": "0x0818b0ec",
       "element": "le-u32",
       "stride": 4,
@@ -11473,7 +11139,6 @@
     },
     {
       "name": "anm_0ec_commands",
-      "address": "0x0818b0ec",
       "end": "0x0818b110",
       "element": "u8",
       "stride": 2,
@@ -11484,7 +11149,6 @@
     },
     {
       "name": "anm_0ec",
-      "address": "0x0818b110",
       "end": "0x0818b124",
       "element": "le-u32",
       "stride": 4,
@@ -11495,7 +11159,6 @@
     },
     {
       "name": "anm_0ed_commands",
-      "address": "0x0818b124",
       "end": "0x0818b148",
       "element": "u8",
       "stride": 2,
@@ -11506,7 +11169,6 @@
     },
     {
       "name": "anm_0ed",
-      "address": "0x0818b148",
       "end": "0x0818b15c",
       "element": "le-u32",
       "stride": 4,
@@ -11517,7 +11179,6 @@
     },
     {
       "name": "anm_0ee_commands",
-      "address": "0x0818b15c",
       "end": "0x0818b188",
       "element": "u8",
       "stride": 2,
@@ -11528,7 +11189,6 @@
     },
     {
       "name": "anm_0ee",
-      "address": "0x0818b188",
       "end": "0x0818b19c",
       "element": "le-u32",
       "stride": 4,
@@ -11539,7 +11199,6 @@
     },
     {
       "name": "anm_0ef_commands",
-      "address": "0x0818b19c",
       "end": "0x0818b1a8",
       "element": "u8",
       "stride": 2,
@@ -11547,7 +11206,6 @@
     },
     {
       "name": "anm_0ef",
-      "address": "0x0818b1a8",
       "end": "0x0818b1b0",
       "element": "le-u32",
       "stride": 4,
@@ -11555,7 +11213,6 @@
     },
     {
       "name": "anm_0f0_commands",
-      "address": "0x0818b1b0",
       "end": "0x0818b1b8",
       "element": "u8",
       "stride": 2,
@@ -11563,7 +11220,6 @@
     },
     {
       "name": "anm_0f0",
-      "address": "0x0818b1b8",
       "end": "0x0818b1c0",
       "element": "le-u32",
       "stride": 4,
@@ -11571,7 +11227,6 @@
     },
     {
       "name": "anm_0f1_commands",
-      "address": "0x0818b1c0",
       "end": "0x0818b1cc",
       "element": "u8",
       "stride": 2,
@@ -11579,7 +11234,6 @@
     },
     {
       "name": "anm_0f1",
-      "address": "0x0818b1cc",
       "end": "0x0818b1d8",
       "element": "le-u32",
       "stride": 4,
@@ -11587,7 +11241,6 @@
     },
     {
       "name": "anm_0f2_commands",
-      "address": "0x0818b1d8",
       "end": "0x0818b1e4",
       "element": "u8",
       "stride": 2,
@@ -11595,7 +11248,6 @@
     },
     {
       "name": "anm_0f2",
-      "address": "0x0818b1e4",
       "end": "0x0818b1f0",
       "element": "le-u32",
       "stride": 4,
@@ -11603,7 +11255,6 @@
     },
     {
       "name": "anm_0f3_commands",
-      "address": "0x0818b1f0",
       "end": "0x0818b1fc",
       "element": "u8",
       "stride": 2,
@@ -11611,7 +11262,6 @@
     },
     {
       "name": "anm_0f3",
-      "address": "0x0818b1fc",
       "end": "0x0818b208",
       "element": "le-u32",
       "stride": 4,
@@ -11619,7 +11269,6 @@
     },
     {
       "name": "anm_0f4_commands",
-      "address": "0x0818b208",
       "end": "0x0818b214",
       "element": "u8",
       "stride": 2,
@@ -11627,7 +11276,6 @@
     },
     {
       "name": "anm_0f4",
-      "address": "0x0818b214",
       "end": "0x0818b21c",
       "element": "le-u32",
       "stride": 4,
@@ -11635,7 +11283,6 @@
     },
     {
       "name": "anm_0f6_commands",
-      "address": "0x0818b21c",
       "end": "0x0818b238",
       "element": "u8",
       "stride": 2,
@@ -11646,7 +11293,6 @@
     },
     {
       "name": "anm_0f6",
-      "address": "0x0818b238",
       "end": "0x0818b248",
       "element": "le-u32",
       "stride": 4,
@@ -11654,7 +11300,6 @@
     },
     {
       "name": "anm_0f7_commands",
-      "address": "0x0818b248",
       "end": "0x0818b264",
       "element": "u8",
       "stride": 2,
@@ -11665,7 +11310,6 @@
     },
     {
       "name": "anm_0f7",
-      "address": "0x0818b264",
       "end": "0x0818b270",
       "element": "le-u32",
       "stride": 4,
@@ -11673,7 +11317,6 @@
     },
     {
       "name": "anm_0f8_commands",
-      "address": "0x0818b270",
       "end": "0x0818b278",
       "element": "u8",
       "stride": 2,
@@ -11681,7 +11324,6 @@
     },
     {
       "name": "anm_0f8",
-      "address": "0x0818b278",
       "end": "0x0818b280",
       "element": "le-u32",
       "stride": 4,
@@ -11689,7 +11331,6 @@
     },
     {
       "name": "anm_0f9_commands",
-      "address": "0x0818b280",
       "end": "0x0818b294",
       "element": "u8",
       "stride": 2,
@@ -11697,7 +11338,6 @@
     },
     {
       "name": "anm_0f9",
-      "address": "0x0818b294",
       "end": "0x0818b29c",
       "element": "le-u32",
       "stride": 4,
@@ -11705,7 +11345,6 @@
     },
     {
       "name": "anm_0fa_commands",
-      "address": "0x0818b29c",
       "end": "0x0818b2b0",
       "element": "u8",
       "stride": 2,
@@ -11713,7 +11352,6 @@
     },
     {
       "name": "anm_0fa",
-      "address": "0x0818b2b0",
       "end": "0x0818b2bc",
       "element": "le-u32",
       "stride": 4,
@@ -11721,7 +11359,6 @@
     },
     {
       "name": "anm_0fb_commands",
-      "address": "0x0818b2bc",
       "end": "0x0818b2c8",
       "element": "u8",
       "stride": 2,
@@ -11729,7 +11366,6 @@
     },
     {
       "name": "anm_0fb",
-      "address": "0x0818b2c8",
       "end": "0x0818b2d4",
       "element": "le-u32",
       "stride": 4,
@@ -11737,7 +11373,6 @@
     },
     {
       "name": "anm_0fc_commands",
-      "address": "0x0818b2d4",
       "end": "0x0818b300",
       "element": "u8",
       "stride": 2,
@@ -11749,7 +11384,6 @@
     },
     {
       "name": "anm_0fc",
-      "address": "0x0818b300",
       "end": "0x0818b310",
       "element": "le-u32",
       "stride": 4,
@@ -11757,7 +11391,6 @@
     },
     {
       "name": "anm_0fd_commands",
-      "address": "0x0818b310",
       "end": "0x0818b31c",
       "element": "u8",
       "stride": 2,
@@ -11765,7 +11398,6 @@
     },
     {
       "name": "anm_0fd",
-      "address": "0x0818b31c",
       "end": "0x0818b328",
       "element": "le-u32",
       "stride": 4,
@@ -11773,7 +11405,6 @@
     },
     {
       "name": "anm_0fe_commands",
-      "address": "0x0818b328",
       "end": "0x0818b334",
       "element": "u8",
       "stride": 2,
@@ -11781,7 +11412,6 @@
     },
     {
       "name": "anm_0fe",
-      "address": "0x0818b334",
       "end": "0x0818b340",
       "element": "le-u32",
       "stride": 4,
@@ -11789,7 +11419,6 @@
     },
     {
       "name": "anm_0ff_commands",
-      "address": "0x0818b340",
       "end": "0x0818b350",
       "element": "u8",
       "stride": 2,
@@ -11797,7 +11426,6 @@
     },
     {
       "name": "anm_0ff",
-      "address": "0x0818b350",
       "end": "0x0818b360",
       "element": "le-u32",
       "stride": 4,
@@ -11805,7 +11433,6 @@
     },
     {
       "name": "anm_100_commands",
-      "address": "0x0818b360",
       "end": "0x0818b384",
       "element": "u8",
       "stride": 2,
@@ -11816,7 +11443,6 @@
     },
     {
       "name": "anm_100",
-      "address": "0x0818b384",
       "end": "0x0818b3a8",
       "element": "le-u32",
       "stride": 4,
@@ -11828,7 +11454,6 @@
     },
     {
       "name": "anm_101_commands",
-      "address": "0x0818b3a8",
       "end": "0x0818b3b4",
       "element": "u8",
       "stride": 2,
@@ -11836,7 +11461,6 @@
     },
     {
       "name": "anm_101",
-      "address": "0x0818b3b4",
       "end": "0x0818b3c0",
       "element": "le-u32",
       "stride": 4,
@@ -11844,7 +11468,6 @@
     },
     {
       "name": "anm_102_commands",
-      "address": "0x0818b3c0",
       "end": "0x0818b3cc",
       "element": "u8",
       "stride": 2,
@@ -11852,7 +11475,6 @@
     },
     {
       "name": "anm_102",
-      "address": "0x0818b3cc",
       "end": "0x0818b3d8",
       "element": "le-u32",
       "stride": 4,
@@ -11860,7 +11482,6 @@
     },
     {
       "name": "anm_122_commands",
-      "address": "0x0818b3d8",
       "end": "0x0818b3ec",
       "element": "u8",
       "stride": 2,
@@ -11870,7 +11491,6 @@
     },
     {
       "name": "anm_122",
-      "address": "0x0818b3ec",
       "end": "0x0818b400",
       "element": "le-u32",
       "stride": 4,
@@ -11881,7 +11501,6 @@
     },
     {
       "name": "anm_123_commands",
-      "address": "0x0818b400",
       "end": "0x0818b450",
       "element": "u8",
       "stride": 2,
@@ -11894,7 +11513,6 @@
     },
     {
       "name": "anm_123",
-      "address": "0x0818b450",
       "end": "0x0818b490",
       "element": "le-u32",
       "stride": 4,
@@ -11907,7 +11525,6 @@
     },
     {
       "name": "anm_124_commands",
-      "address": "0x0818b490",
       "end": "0x0818b4b4",
       "element": "u8",
       "stride": 2,
@@ -11918,7 +11535,6 @@
     },
     {
       "name": "anm_124",
-      "address": "0x0818b4b4",
       "end": "0x0818b4cc",
       "element": "le-u32",
       "stride": 4,
@@ -11929,7 +11545,6 @@
     },
     {
       "name": "anm_125_commands",
-      "address": "0x0818b4cc",
       "end": "0x0818b4e0",
       "element": "u8",
       "stride": 2,
@@ -11939,7 +11554,6 @@
     },
     {
       "name": "anm_125",
-      "address": "0x0818b4e0",
       "end": "0x0818b4f4",
       "element": "le-u32",
       "stride": 4,
@@ -11950,7 +11564,6 @@
     },
     {
       "name": "anm_103_commands",
-      "address": "0x0818b4f4",
       "end": "0x0818b508",
       "element": "u8",
       "stride": 2,
@@ -11960,7 +11573,6 @@
     },
     {
       "name": "anm_103",
-      "address": "0x0818b508",
       "end": "0x0818b51c",
       "element": "le-u32",
       "stride": 4,
@@ -11971,7 +11583,6 @@
     },
     {
       "name": "anm_126_commands",
-      "address": "0x0818b51c",
       "end": "0x0818b52c",
       "element": "u8",
       "stride": 2,
@@ -11979,7 +11590,6 @@
     },
     {
       "name": "anm_126",
-      "address": "0x0818b52c",
       "end": "0x0818b53c",
       "element": "le-u32",
       "stride": 4,
@@ -11987,7 +11597,6 @@
     },
     {
       "name": "anm_127_commands",
-      "address": "0x0818b53c",
       "end": "0x0818b550",
       "element": "u8",
       "stride": 2,
@@ -11997,7 +11606,6 @@
     },
     {
       "name": "anm_127",
-      "address": "0x0818b550",
       "end": "0x0818b564",
       "element": "le-u32",
       "stride": 4,
@@ -12008,7 +11616,6 @@
     },
     {
       "name": "anm_128_commands",
-      "address": "0x0818b564",
       "end": "0x0818b570",
       "element": "u8",
       "stride": 2,
@@ -12016,7 +11623,6 @@
     },
     {
       "name": "anm_128",
-      "address": "0x0818b570",
       "end": "0x0818b57c",
       "element": "le-u32",
       "stride": 4,
@@ -12024,7 +11630,6 @@
     },
     {
       "name": "anm_129_commands",
-      "address": "0x0818b57c",
       "end": "0x0818b598",
       "element": "u8",
       "stride": 2,
@@ -12035,7 +11640,6 @@
     },
     {
       "name": "anm_129",
-      "address": "0x0818b598",
       "end": "0x0818b5a8",
       "element": "le-u32",
       "stride": 4,
@@ -12043,7 +11647,6 @@
     },
     {
       "name": "anm_12a_commands",
-      "address": "0x0818b5a8",
       "end": "0x0818b5c4",
       "element": "u8",
       "stride": 2,
@@ -12054,7 +11657,6 @@
     },
     {
       "name": "anm_12a",
-      "address": "0x0818b5c4",
       "end": "0x0818b5d4",
       "element": "le-u32",
       "stride": 4,
@@ -12062,7 +11664,6 @@
     },
     {
       "name": "anm_12b_commands",
-      "address": "0x0818b5d4",
       "end": "0x0818b5e4",
       "element": "u8",
       "stride": 2,
@@ -12070,7 +11671,6 @@
     },
     {
       "name": "anm_12b",
-      "address": "0x0818b5e4",
       "end": "0x0818b5f0",
       "element": "le-u32",
       "stride": 4,
@@ -12078,7 +11678,6 @@
     },
     {
       "name": "anm_1f4_commands",
-      "address": "0x0818b5f0",
       "end": "0x0818b5fc",
       "element": "u8",
       "stride": 2,
@@ -12086,7 +11685,6 @@
     },
     {
       "name": "anm_1f4",
-      "address": "0x0818b5fc",
       "end": "0x0818b608",
       "element": "le-u32",
       "stride": 4,
@@ -12094,7 +11692,6 @@
     },
     {
       "name": "anm_105_commands",
-      "address": "0x0818b608",
       "end": "0x0818b614",
       "element": "u8",
       "stride": 2,
@@ -12102,7 +11699,6 @@
     },
     {
       "name": "anm_105",
-      "address": "0x0818b614",
       "end": "0x0818b620",
       "element": "le-u32",
       "stride": 4,
@@ -12110,7 +11706,6 @@
     },
     {
       "name": "anm_107_commands",
-      "address": "0x0818b620",
       "end": "0x0818b62c",
       "element": "u8",
       "stride": 2,
@@ -12118,7 +11713,6 @@
     },
     {
       "name": "anm_107",
-      "address": "0x0818b62c",
       "end": "0x0818b638",
       "element": "le-u32",
       "stride": 4,
@@ -12126,7 +11720,6 @@
     },
     {
       "name": "anm_108_commands",
-      "address": "0x0818b638",
       "end": "0x0818b644",
       "element": "u8",
       "stride": 2,
@@ -12134,7 +11727,6 @@
     },
     {
       "name": "anm_108",
-      "address": "0x0818b644",
       "end": "0x0818b650",
       "element": "le-u32",
       "stride": 4,
@@ -12142,7 +11734,6 @@
     },
     {
       "name": "anm_109_commands",
-      "address": "0x0818b650",
       "end": "0x0818b65c",
       "element": "u8",
       "stride": 2,
@@ -12150,7 +11741,6 @@
     },
     {
       "name": "anm_109",
-      "address": "0x0818b65c",
       "end": "0x0818b668",
       "element": "le-u32",
       "stride": 4,
@@ -12158,7 +11748,6 @@
     },
     {
       "name": "anm_10a_commands",
-      "address": "0x0818b668",
       "end": "0x0818b674",
       "element": "u8",
       "stride": 2,
@@ -12166,7 +11755,6 @@
     },
     {
       "name": "anm_10a",
-      "address": "0x0818b674",
       "end": "0x0818b680",
       "element": "le-u32",
       "stride": 4,
@@ -12174,7 +11762,6 @@
     },
     {
       "name": "anm_10b_commands",
-      "address": "0x0818b680",
       "end": "0x0818b68c",
       "element": "u8",
       "stride": 2,
@@ -12182,7 +11769,6 @@
     },
     {
       "name": "anm_10b",
-      "address": "0x0818b68c",
       "end": "0x0818b698",
       "element": "le-u32",
       "stride": 4,
@@ -12190,7 +11776,6 @@
     },
     {
       "name": "anm_10c_commands",
-      "address": "0x0818b698",
       "end": "0x0818b6a4",
       "element": "u8",
       "stride": 2,
@@ -12198,7 +11783,6 @@
     },
     {
       "name": "anm_10c",
-      "address": "0x0818b6a4",
       "end": "0x0818b6b0",
       "element": "le-u32",
       "stride": 4,
@@ -12206,7 +11790,6 @@
     },
     {
       "name": "anm_10d_commands",
-      "address": "0x0818b6b0",
       "end": "0x0818b6bc",
       "element": "u8",
       "stride": 2,
@@ -12214,7 +11797,6 @@
     },
     {
       "name": "anm_10d",
-      "address": "0x0818b6bc",
       "end": "0x0818b6c8",
       "element": "le-u32",
       "stride": 4,
@@ -12222,7 +11804,6 @@
     },
     {
       "name": "anm_10e_commands",
-      "address": "0x0818b6c8",
       "end": "0x0818b6d4",
       "element": "u8",
       "stride": 2,
@@ -12230,7 +11811,6 @@
     },
     {
       "name": "anm_10e",
-      "address": "0x0818b6d4",
       "end": "0x0818b6e0",
       "element": "le-u32",
       "stride": 4,
@@ -12238,7 +11818,6 @@
     },
     {
       "name": "anm_10f_commands",
-      "address": "0x0818b6e0",
       "end": "0x0818b6ec",
       "element": "u8",
       "stride": 2,
@@ -12246,7 +11825,6 @@
     },
     {
       "name": "anm_10f",
-      "address": "0x0818b6ec",
       "end": "0x0818b6f8",
       "element": "le-u32",
       "stride": 4,
@@ -12254,7 +11832,6 @@
     },
     {
       "name": "anm_110_commands",
-      "address": "0x0818b6f8",
       "end": "0x0818b704",
       "element": "u8",
       "stride": 2,
@@ -12262,7 +11839,6 @@
     },
     {
       "name": "anm_110",
-      "address": "0x0818b704",
       "end": "0x0818b710",
       "element": "le-u32",
       "stride": 4,
@@ -12270,7 +11846,6 @@
     },
     {
       "name": "anm_111_commands",
-      "address": "0x0818b710",
       "end": "0x0818b72c",
       "element": "u8",
       "stride": 2,
@@ -12281,7 +11856,6 @@
     },
     {
       "name": "anm_111",
-      "address": "0x0818b72c",
       "end": "0x0818b740",
       "element": "le-u32",
       "stride": 4,
@@ -12292,7 +11866,6 @@
     },
     {
       "name": "anm_112_commands",
-      "address": "0x0818b740",
       "end": "0x0818b74c",
       "element": "u8",
       "stride": 2,
@@ -12300,7 +11873,6 @@
     },
     {
       "name": "anm_112",
-      "address": "0x0818b74c",
       "end": "0x0818b758",
       "element": "le-u32",
       "stride": 4,
@@ -12308,7 +11880,6 @@
     },
     {
       "name": "anm_113_commands",
-      "address": "0x0818b758",
       "end": "0x0818b764",
       "element": "u8",
       "stride": 2,
@@ -12316,7 +11887,6 @@
     },
     {
       "name": "anm_113",
-      "address": "0x0818b764",
       "end": "0x0818b770",
       "element": "le-u32",
       "stride": 4,
@@ -12324,7 +11894,6 @@
     },
     {
       "name": "anm_114_commands",
-      "address": "0x0818b770",
       "end": "0x0818b77c",
       "element": "u8",
       "stride": 2,
@@ -12332,7 +11901,6 @@
     },
     {
       "name": "anm_114",
-      "address": "0x0818b77c",
       "end": "0x0818b788",
       "element": "le-u32",
       "stride": 4,
@@ -12340,7 +11908,6 @@
     },
     {
       "name": "anm_115_commands",
-      "address": "0x0818b788",
       "end": "0x0818b794",
       "element": "u8",
       "stride": 2,
@@ -12348,7 +11915,6 @@
     },
     {
       "name": "anm_115",
-      "address": "0x0818b794",
       "end": "0x0818b7a0",
       "element": "le-u32",
       "stride": 4,
@@ -12356,7 +11922,6 @@
     },
     {
       "name": "anm_116_commands",
-      "address": "0x0818b7a0",
       "end": "0x0818b7ac",
       "element": "u8",
       "stride": 2,
@@ -12364,7 +11929,6 @@
     },
     {
       "name": "anm_116",
-      "address": "0x0818b7ac",
       "end": "0x0818b7b8",
       "element": "le-u32",
       "stride": 4,
@@ -12372,7 +11936,6 @@
     },
     {
       "name": "anm_117_commands",
-      "address": "0x0818b7b8",
       "end": "0x0818b7c4",
       "element": "u8",
       "stride": 2,
@@ -12380,7 +11943,6 @@
     },
     {
       "name": "anm_117",
-      "address": "0x0818b7c4",
       "end": "0x0818b7d0",
       "element": "le-u32",
       "stride": 4,
@@ -12388,7 +11950,6 @@
     },
     {
       "name": "anm_09a_commands",
-      "address": "0x0818b7d0",
       "end": "0x0818b7ec",
       "element": "u8",
       "stride": 2,
@@ -12399,7 +11960,6 @@
     },
     {
       "name": "anm_09a",
-      "address": "0x0818b7ec",
       "end": "0x0818b800",
       "element": "le-u32",
       "stride": 4,
@@ -12410,7 +11970,6 @@
     },
     {
       "name": "anm_09d_commands",
-      "address": "0x0818b800",
       "end": "0x0818b840",
       "element": "u8",
       "stride": 2,
@@ -12422,7 +11981,6 @@
     },
     {
       "name": "anm_09d",
-      "address": "0x0818b840",
       "end": "0x0818b858",
       "element": "le-u32",
       "stride": 4,
@@ -12433,7 +11991,6 @@
     },
     {
       "name": "anm_0a1_commands",
-      "address": "0x0818b858",
       "end": "0x0818b874",
       "element": "u8",
       "stride": 2,
@@ -12444,7 +12001,6 @@
     },
     {
       "name": "anm_0a1",
-      "address": "0x0818b874",
       "end": "0x0818b888",
       "element": "le-u32",
       "stride": 4,
@@ -12455,7 +12011,6 @@
     },
     {
       "name": "anm_1f5_commands",
-      "address": "0x0818b888",
       "end": "0x0818b890",
       "element": "u8",
       "stride": 2,
@@ -12463,7 +12018,6 @@
     },
     {
       "name": "anm_1f5",
-      "address": "0x0818b890",
       "end": "0x0818b898",
       "element": "le-u32",
       "stride": 4,
@@ -12471,7 +12025,6 @@
     },
     {
       "name": "anm_1f6_commands",
-      "address": "0x0818b898",
       "end": "0x0818b8a0",
       "element": "u8",
       "stride": 2,
@@ -12479,7 +12032,6 @@
     },
     {
       "name": "anm_1f6",
-      "address": "0x0818b8a0",
       "end": "0x0818b8a8",
       "element": "le-u32",
       "stride": 4,
@@ -12487,7 +12039,6 @@
     },
     {
       "name": "anm_1f7_commands",
-      "address": "0x0818b8a8",
       "end": "0x0818b8c0",
       "element": "u8",
       "stride": 2,
@@ -12498,7 +12049,6 @@
     },
     {
       "name": "anm_1f7",
-      "address": "0x0818b8c0",
       "end": "0x0818b8c8",
       "element": "le-u32",
       "stride": 4,
@@ -12506,7 +12056,6 @@
     },
     {
       "name": "anm_1f8_commands",
-      "address": "0x0818b8c8",
       "end": "0x0818b8d0",
       "element": "u8",
       "stride": 2,
@@ -12514,7 +12063,6 @@
     },
     {
       "name": "anm_1f8",
-      "address": "0x0818b8d0",
       "end": "0x0818b8d8",
       "element": "le-u32",
       "stride": 4,
@@ -12522,7 +12070,6 @@
     },
     {
       "name": "anm_014_commands",
-      "address": "0x0818b8d8",
       "end": "0x0818b8fc",
       "element": "u8",
       "stride": 2,
@@ -12533,7 +12080,6 @@
     },
     {
       "name": "anm_014",
-      "address": "0x0818b8fc",
       "end": "0x0818b91c",
       "element": "le-u32",
       "stride": 4,
@@ -12544,7 +12090,6 @@
     },
     {
       "name": "anm_015_commands",
-      "address": "0x0818b91c",
       "end": "0x0818b944",
       "element": "u8",
       "stride": 2,
@@ -12555,7 +12100,6 @@
     },
     {
       "name": "anm_015",
-      "address": "0x0818b944",
       "end": "0x0818b96c",
       "element": "le-u32",
       "stride": 4,
@@ -12567,7 +12111,6 @@
     },
     {
       "name": "anm_016_commands",
-      "address": "0x0818b96c",
       "end": "0x0818b974",
       "element": "u8",
       "stride": 2,
@@ -12575,7 +12118,6 @@
     },
     {
       "name": "anm_016",
-      "address": "0x0818b974",
       "end": "0x0818b97c",
       "element": "le-u32",
       "stride": 4,
@@ -12583,7 +12125,6 @@
     },
     {
       "name": "anm_12c_commands",
-      "address": "0x0818b97c",
       "end": "0x0818b9a4",
       "element": "u8",
       "stride": 2,
@@ -12594,7 +12135,6 @@
     },
     {
       "name": "anm_12c",
-      "address": "0x0818b9a4",
       "end": "0x0818b9c0",
       "element": "le-u32",
       "stride": 4,
@@ -12605,7 +12145,6 @@
     },
     {
       "name": "anm_140_commands",
-      "address": "0x0818b9c0",
       "end": "0x0818b9e4",
       "element": "u8",
       "stride": 2,
@@ -12616,7 +12155,6 @@
     },
     {
       "name": "anm_140",
-      "address": "0x0818b9e4",
       "end": "0x0818b9fc",
       "element": "le-u32",
       "stride": 4,
@@ -12627,7 +12165,6 @@
     },
     {
       "name": "anm_14e_commands",
-      "address": "0x0818b9fc",
       "end": "0x0818ba20",
       "element": "u8",
       "stride": 2,
@@ -12638,7 +12175,6 @@
     },
     {
       "name": "anm_14e",
-      "address": "0x0818ba20",
       "end": "0x0818ba38",
       "element": "le-u32",
       "stride": 4,
@@ -12649,7 +12185,6 @@
     },
     {
       "name": "anm_146_commands",
-      "address": "0x0818ba38",
       "end": "0x0818ba5c",
       "element": "u8",
       "stride": 2,
@@ -12660,7 +12195,6 @@
     },
     {
       "name": "anm_146",
-      "address": "0x0818ba5c",
       "end": "0x0818ba74",
       "element": "le-u32",
       "stride": 4,
@@ -12671,7 +12205,6 @@
     },
     {
       "name": "anm_147_commands",
-      "address": "0x0818ba74",
       "end": "0x0818ba98",
       "element": "u8",
       "stride": 2,
@@ -12682,7 +12215,6 @@
     },
     {
       "name": "anm_147",
-      "address": "0x0818ba98",
       "end": "0x0818bab0",
       "element": "le-u32",
       "stride": 4,
@@ -12693,7 +12225,6 @@
     },
     {
       "name": "anm_12d_commands",
-      "address": "0x0818bab0",
       "end": "0x0818bad4",
       "element": "u8",
       "stride": 2,
@@ -12704,7 +12235,6 @@
     },
     {
       "name": "anm_12d",
-      "address": "0x0818bad4",
       "end": "0x0818baec",
       "element": "le-u32",
       "stride": 4,
@@ -12715,7 +12245,6 @@
     },
     {
       "name": "anm_141_commands",
-      "address": "0x0818baec",
       "end": "0x0818bb10",
       "element": "u8",
       "stride": 2,
@@ -12726,7 +12255,6 @@
     },
     {
       "name": "anm_141",
-      "address": "0x0818bb10",
       "end": "0x0818bb28",
       "element": "le-u32",
       "stride": 4,
@@ -12737,7 +12265,6 @@
     },
     {
       "name": "anm_148_commands",
-      "address": "0x0818bb28",
       "end": "0x0818bb4c",
       "element": "u8",
       "stride": 2,
@@ -12748,7 +12275,6 @@
     },
     {
       "name": "anm_148",
-      "address": "0x0818bb4c",
       "end": "0x0818bb64",
       "element": "le-u32",
       "stride": 4,
@@ -12759,7 +12285,6 @@
     },
     {
       "name": "anm_149_commands",
-      "address": "0x0818bb64",
       "end": "0x0818bb88",
       "element": "u8",
       "stride": 2,
@@ -12770,7 +12295,6 @@
     },
     {
       "name": "anm_149",
-      "address": "0x0818bb88",
       "end": "0x0818bba0",
       "element": "le-u32",
       "stride": 4,
@@ -12781,7 +12305,6 @@
     },
     {
       "name": "anm_14f_commands",
-      "address": "0x0818bba0",
       "end": "0x0818bbc4",
       "element": "u8",
       "stride": 2,
@@ -12792,7 +12315,6 @@
     },
     {
       "name": "anm_14f",
-      "address": "0x0818bbc4",
       "end": "0x0818bbdc",
       "element": "le-u32",
       "stride": 4,
@@ -12803,7 +12325,6 @@
     },
     {
       "name": "anm_131_commands",
-      "address": "0x0818bbdc",
       "end": "0x0818bc00",
       "element": "u8",
       "stride": 2,
@@ -12814,7 +12335,6 @@
     },
     {
       "name": "anm_131",
-      "address": "0x0818bc00",
       "end": "0x0818bc18",
       "element": "le-u32",
       "stride": 4,
@@ -12825,7 +12345,6 @@
     },
     {
       "name": "anm_145_commands",
-      "address": "0x0818bc18",
       "end": "0x0818bc3c",
       "element": "u8",
       "stride": 2,
@@ -12836,7 +12355,6 @@
     },
     {
       "name": "anm_145",
-      "address": "0x0818bc3c",
       "end": "0x0818bc54",
       "element": "le-u32",
       "stride": 4,
@@ -12847,7 +12365,6 @@
     },
     {
       "name": "anm_150_commands",
-      "address": "0x0818bc54",
       "end": "0x0818bc78",
       "element": "u8",
       "stride": 2,
@@ -12858,7 +12375,6 @@
     },
     {
       "name": "anm_150",
-      "address": "0x0818bc78",
       "end": "0x0818bc90",
       "element": "le-u32",
       "stride": 4,
@@ -12869,7 +12385,6 @@
     },
     {
       "name": "anm_12e_commands",
-      "address": "0x0818bc90",
       "end": "0x0818bcb4",
       "element": "u8",
       "stride": 2,
@@ -12880,7 +12395,6 @@
     },
     {
       "name": "anm_12e",
-      "address": "0x0818bcb4",
       "end": "0x0818bccc",
       "element": "le-u32",
       "stride": 4,
@@ -12891,7 +12405,6 @@
     },
     {
       "name": "anm_142_commands",
-      "address": "0x0818bccc",
       "end": "0x0818bcf0",
       "element": "u8",
       "stride": 2,
@@ -12902,7 +12415,6 @@
     },
     {
       "name": "anm_142",
-      "address": "0x0818bcf0",
       "end": "0x0818bd08",
       "element": "le-u32",
       "stride": 4,
@@ -12913,7 +12425,6 @@
     },
     {
       "name": "anm_14a_commands",
-      "address": "0x0818bd08",
       "end": "0x0818bd2c",
       "element": "u8",
       "stride": 2,
@@ -12924,7 +12435,6 @@
     },
     {
       "name": "anm_14a",
-      "address": "0x0818bd2c",
       "end": "0x0818bd44",
       "element": "le-u32",
       "stride": 4,
@@ -12935,7 +12445,6 @@
     },
     {
       "name": "anm_14b_commands",
-      "address": "0x0818bd44",
       "end": "0x0818bd68",
       "element": "u8",
       "stride": 2,
@@ -12946,7 +12455,6 @@
     },
     {
       "name": "anm_14b",
-      "address": "0x0818bd68",
       "end": "0x0818bd80",
       "element": "le-u32",
       "stride": 4,
@@ -12957,7 +12465,6 @@
     },
     {
       "name": "anm_12f_commands",
-      "address": "0x0818bd80",
       "end": "0x0818bda4",
       "element": "u8",
       "stride": 2,
@@ -12968,7 +12475,6 @@
     },
     {
       "name": "anm_12f",
-      "address": "0x0818bda4",
       "end": "0x0818bdbc",
       "element": "le-u32",
       "stride": 4,
@@ -12979,7 +12485,6 @@
     },
     {
       "name": "anm_143_commands",
-      "address": "0x0818bdbc",
       "end": "0x0818bde0",
       "element": "u8",
       "stride": 2,
@@ -12990,7 +12495,6 @@
     },
     {
       "name": "anm_143",
-      "address": "0x0818bde0",
       "end": "0x0818bdf8",
       "element": "le-u32",
       "stride": 4,
@@ -13001,7 +12505,6 @@
     },
     {
       "name": "anm_14c_commands",
-      "address": "0x0818bdf8",
       "end": "0x0818be1c",
       "element": "u8",
       "stride": 2,
@@ -13012,7 +12515,6 @@
     },
     {
       "name": "anm_14c",
-      "address": "0x0818be1c",
       "end": "0x0818be34",
       "element": "le-u32",
       "stride": 4,
@@ -13023,7 +12525,6 @@
     },
     {
       "name": "anm_14d_commands",
-      "address": "0x0818be34",
       "end": "0x0818be58",
       "element": "u8",
       "stride": 2,
@@ -13034,7 +12535,6 @@
     },
     {
       "name": "anm_14d",
-      "address": "0x0818be58",
       "end": "0x0818be70",
       "element": "le-u32",
       "stride": 4,
@@ -13045,7 +12545,6 @@
     },
     {
       "name": "anm_190_commands",
-      "address": "0x0818be70",
       "end": "0x0818be98",
       "element": "u8",
       "stride": 2,
@@ -13056,7 +12555,6 @@
     },
     {
       "name": "anm_190",
-      "address": "0x0818be98",
       "end": "0x0818beb0",
       "element": "le-u32",
       "stride": 4,
@@ -13067,7 +12565,6 @@
     },
     {
       "name": "anm_191_commands",
-      "address": "0x0818beb0",
       "end": "0x0818bed4",
       "element": "u8",
       "stride": 2,
@@ -13078,7 +12575,6 @@
     },
     {
       "name": "anm_191",
-      "address": "0x0818bed4",
       "end": "0x0818beec",
       "element": "le-u32",
       "stride": 4,
@@ -13089,7 +12585,6 @@
     },
     {
       "name": "anm_192_commands",
-      "address": "0x0818beec",
       "end": "0x0818bf10",
       "element": "u8",
       "stride": 2,
@@ -13100,7 +12595,6 @@
     },
     {
       "name": "anm_192",
-      "address": "0x0818bf10",
       "end": "0x0818bf28",
       "element": "le-u32",
       "stride": 4,
@@ -13111,7 +12605,6 @@
     },
     {
       "name": "anm_193_commands",
-      "address": "0x0818bf28",
       "end": "0x0818bf4c",
       "element": "u8",
       "stride": 2,
@@ -13122,7 +12615,6 @@
     },
     {
       "name": "anm_193",
-      "address": "0x0818bf4c",
       "end": "0x0818bf64",
       "element": "le-u32",
       "stride": 4,
@@ -13133,7 +12625,6 @@
     },
     {
       "name": "anm_194_commands",
-      "address": "0x0818bf64",
       "end": "0x0818bf84",
       "element": "u8",
       "stride": 2,
@@ -13144,7 +12635,6 @@
     },
     {
       "name": "anm_194",
-      "address": "0x0818bf84",
       "end": "0x0818bf9c",
       "element": "le-u32",
       "stride": 4,
@@ -13155,7 +12645,6 @@
     },
     {
       "name": "anm_198_commands",
-      "address": "0x0818bf9c",
       "end": "0x0818bfc0",
       "element": "u8",
       "stride": 2,
@@ -13166,7 +12655,6 @@
     },
     {
       "name": "anm_198",
-      "address": "0x0818bfc0",
       "end": "0x0818bfd8",
       "element": "le-u32",
       "stride": 4,
@@ -13177,7 +12665,6 @@
     },
     {
       "name": "anm_199_commands",
-      "address": "0x0818bfd8",
       "end": "0x0818bffc",
       "element": "u8",
       "stride": 2,
@@ -13188,7 +12675,6 @@
     },
     {
       "name": "anm_199",
-      "address": "0x0818bffc",
       "end": "0x0818c014",
       "element": "le-u32",
       "stride": 4,
@@ -13199,7 +12685,6 @@
     },
     {
       "name": "anm_19a_commands",
-      "address": "0x0818c014",
       "end": "0x0818c034",
       "element": "u8",
       "stride": 2,
@@ -13210,7 +12695,6 @@
     },
     {
       "name": "anm_19a",
-      "address": "0x0818c034",
       "end": "0x0818c04c",
       "element": "le-u32",
       "stride": 4,
@@ -13221,7 +12705,6 @@
     },
     {
       "name": "anm_19b_commands",
-      "address": "0x0818c04c",
       "end": "0x0818c06c",
       "element": "u8",
       "stride": 2,
@@ -13232,7 +12715,6 @@
     },
     {
       "name": "anm_19b",
-      "address": "0x0818c06c",
       "end": "0x0818c084",
       "element": "le-u32",
       "stride": 4,
@@ -13243,7 +12725,6 @@
     },
     {
       "name": "anm_1a1_commands",
-      "address": "0x0818c084",
       "end": "0x0818c0a8",
       "element": "u8",
       "stride": 2,
@@ -13254,7 +12735,6 @@
     },
     {
       "name": "anm_1a1",
-      "address": "0x0818c0a8",
       "end": "0x0818c0c0",
       "element": "le-u32",
       "stride": 4,
@@ -13265,7 +12745,6 @@
     },
     {
       "name": "anm_1a5_commands",
-      "address": "0x0818c0c0",
       "end": "0x0818c0e4",
       "element": "u8",
       "stride": 2,
@@ -13276,7 +12755,6 @@
     },
     {
       "name": "anm_1a5",
-      "address": "0x0818c0e4",
       "end": "0x0818c0fc",
       "element": "le-u32",
       "stride": 4,
@@ -13287,7 +12765,6 @@
     },
     {
       "name": "anm_1a8_commands",
-      "address": "0x0818c0fc",
       "end": "0x0818c11c",
       "element": "u8",
       "stride": 2,
@@ -13298,7 +12775,6 @@
     },
     {
       "name": "anm_1a8",
-      "address": "0x0818c11c",
       "end": "0x0818c134",
       "element": "le-u32",
       "stride": 4,
@@ -13309,7 +12785,6 @@
     },
     {
       "name": "anm_1ae_commands",
-      "address": "0x0818c134",
       "end": "0x0818c158",
       "element": "u8",
       "stride": 2,
@@ -13320,7 +12795,6 @@
     },
     {
       "name": "anm_1ae",
-      "address": "0x0818c158",
       "end": "0x0818c170",
       "element": "le-u32",
       "stride": 4,
@@ -13331,7 +12805,6 @@
     },
     {
       "name": "anm_1b1_commands",
-      "address": "0x0818c170",
       "end": "0x0818c190",
       "element": "u8",
       "stride": 2,
@@ -13342,7 +12815,6 @@
     },
     {
       "name": "anm_1b1",
-      "address": "0x0818c190",
       "end": "0x0818c1a8",
       "element": "le-u32",
       "stride": 4,
@@ -13353,7 +12825,6 @@
     },
     {
       "name": "anm_1b2_commands",
-      "address": "0x0818c1a8",
       "end": "0x0818c1c8",
       "element": "u8",
       "stride": 2,
@@ -13364,7 +12835,6 @@
     },
     {
       "name": "anm_1b2",
-      "address": "0x0818c1c8",
       "end": "0x0818c1e0",
       "element": "le-u32",
       "stride": 4,
@@ -13375,7 +12845,6 @@
     },
     {
       "name": "anm_1b3_commands",
-      "address": "0x0818c1e0",
       "end": "0x0818c200",
       "element": "u8",
       "stride": 2,
@@ -13386,7 +12855,6 @@
     },
     {
       "name": "anm_1b3",
-      "address": "0x0818c200",
       "end": "0x0818c218",
       "element": "le-u32",
       "stride": 4,
@@ -13397,7 +12865,6 @@
     },
     {
       "name": "anm_1b4_commands",
-      "address": "0x0818c218",
       "end": "0x0818c238",
       "element": "u8",
       "stride": 2,
@@ -13408,7 +12875,6 @@
     },
     {
       "name": "anm_1b4",
-      "address": "0x0818c238",
       "end": "0x0818c250",
       "element": "le-u32",
       "stride": 4,
@@ -13419,7 +12885,6 @@
     },
     {
       "name": "anm_1c0_commands",
-      "address": "0x0818c250",
       "end": "0x0818c274",
       "element": "u8",
       "stride": 2,
@@ -13430,7 +12895,6 @@
     },
     {
       "name": "anm_1c0",
-      "address": "0x0818c274",
       "end": "0x0818c28c",
       "element": "le-u32",
       "stride": 4,
@@ -13441,7 +12905,6 @@
     },
     {
       "name": "anm_1c2_commands",
-      "address": "0x0818c28c",
       "end": "0x0818c2b0",
       "element": "u8",
       "stride": 2,
@@ -13452,7 +12915,6 @@
     },
     {
       "name": "anm_1c2",
-      "address": "0x0818c2b0",
       "end": "0x0818c2c8",
       "element": "le-u32",
       "stride": 4,
@@ -13463,7 +12925,6 @@
     },
     {
       "name": "anm_1c3_commands",
-      "address": "0x0818c2c8",
       "end": "0x0818c30c",
       "element": "u8",
       "stride": 2,
@@ -13476,7 +12937,6 @@
     },
     {
       "name": "anm_1c3",
-      "address": "0x0818c30c",
       "end": "0x0818c324",
       "element": "le-u32",
       "stride": 4,
@@ -13487,7 +12947,6 @@
     },
     {
       "name": "anm_1c5_commands",
-      "address": "0x0818c324",
       "end": "0x0818c348",
       "element": "u8",
       "stride": 2,
@@ -13498,7 +12957,6 @@
     },
     {
       "name": "anm_1c5",
-      "address": "0x0818c348",
       "end": "0x0818c360",
       "element": "le-u32",
       "stride": 4,
@@ -13509,7 +12967,6 @@
     },
     {
       "name": "anm_1c6_commands",
-      "address": "0x0818c360",
       "end": "0x0818c384",
       "element": "u8",
       "stride": 2,
@@ -13520,7 +12977,6 @@
     },
     {
       "name": "anm_1c6",
-      "address": "0x0818c384",
       "end": "0x0818c39c",
       "element": "le-u32",
       "stride": 4,
@@ -13531,7 +12987,6 @@
     },
     {
       "name": "anm_1c7_commands",
-      "address": "0x0818c39c",
       "end": "0x0818c3c4",
       "element": "u8",
       "stride": 2,
@@ -13542,7 +12997,6 @@
     },
     {
       "name": "anm_1c7",
-      "address": "0x0818c3c4",
       "end": "0x0818c3dc",
       "element": "le-u32",
       "stride": 4,
@@ -13553,7 +13007,6 @@
     },
     {
       "name": "anm_1c9_commands",
-      "address": "0x0818c3dc",
       "end": "0x0818c3fc",
       "element": "u8",
       "stride": 2,
@@ -13564,7 +13017,6 @@
     },
     {
       "name": "anm_1c9",
-      "address": "0x0818c3fc",
       "end": "0x0818c414",
       "element": "le-u32",
       "stride": 4,
@@ -13575,7 +13027,6 @@
     },
     {
       "name": "anm_1c8_commands",
-      "address": "0x0818c414",
       "end": "0x0818c438",
       "element": "u8",
       "stride": 2,
@@ -13586,7 +13037,6 @@
     },
     {
       "name": "anm_1c8",
-      "address": "0x0818c438",
       "end": "0x0818c450",
       "element": "le-u32",
       "stride": 4,
@@ -13597,7 +13047,6 @@
     },
     {
       "name": "anm_1ca_commands",
-      "address": "0x0818c450",
       "end": "0x0818c474",
       "element": "u8",
       "stride": 2,
@@ -13608,7 +13057,6 @@
     },
     {
       "name": "anm_1ca",
-      "address": "0x0818c474",
       "end": "0x0818c48c",
       "element": "le-u32",
       "stride": 4,
@@ -13619,7 +13067,6 @@
     },
     {
       "name": "anm_1cb_commands",
-      "address": "0x0818c48c",
       "end": "0x0818c4b0",
       "element": "u8",
       "stride": 2,
@@ -13630,7 +13077,6 @@
     },
     {
       "name": "anm_1cb",
-      "address": "0x0818c4b0",
       "end": "0x0818c4c8",
       "element": "le-u32",
       "stride": 4,
@@ -13641,7 +13087,6 @@
     },
     {
       "name": "anm_1cc_commands",
-      "address": "0x0818c4c8",
       "end": "0x0818c4e8",
       "element": "u8",
       "stride": 2,
@@ -13652,7 +13097,6 @@
     },
     {
       "name": "anm_1cc",
-      "address": "0x0818c4e8",
       "end": "0x0818c500",
       "element": "le-u32",
       "stride": 4,
@@ -13663,7 +13107,6 @@
     },
     {
       "name": "anm_1cd_commands",
-      "address": "0x0818c500",
       "end": "0x0818c524",
       "element": "u8",
       "stride": 2,
@@ -13674,7 +13117,6 @@
     },
     {
       "name": "anm_1cd",
-      "address": "0x0818c524",
       "end": "0x0818c53c",
       "element": "le-u32",
       "stride": 4,
@@ -13685,7 +13127,6 @@
     },
     {
       "name": "anm_1ce_commands",
-      "address": "0x0818c53c",
       "end": "0x0818c560",
       "element": "u8",
       "stride": 2,
@@ -13696,7 +13137,6 @@
     },
     {
       "name": "anm_1ce",
-      "address": "0x0818c560",
       "end": "0x0818c578",
       "element": "le-u32",
       "stride": 4,
@@ -13707,7 +13147,6 @@
     },
     {
       "name": "anm_1cf_commands",
-      "address": "0x0818c578",
       "end": "0x0818c598",
       "element": "u8",
       "stride": 2,
@@ -13718,7 +13157,6 @@
     },
     {
       "name": "anm_1cf",
-      "address": "0x0818c598",
       "end": "0x0818c5b0",
       "element": "le-u32",
       "stride": 4,
@@ -13729,7 +13167,6 @@
     },
     {
       "name": "anm_1d0_commands",
-      "address": "0x0818c5b0",
       "end": "0x0818c5d4",
       "element": "u8",
       "stride": 2,
@@ -13740,7 +13177,6 @@
     },
     {
       "name": "anm_1d0",
-      "address": "0x0818c5d4",
       "end": "0x0818c5ec",
       "element": "le-u32",
       "stride": 4,
@@ -13751,7 +13187,6 @@
     },
     {
       "name": "anm_1d1_commands",
-      "address": "0x0818c5ec",
       "end": "0x0818c614",
       "element": "u8",
       "stride": 2,
@@ -13762,7 +13197,6 @@
     },
     {
       "name": "anm_1d1",
-      "address": "0x0818c614",
       "end": "0x0818c62c",
       "element": "le-u32",
       "stride": 4,
@@ -13773,7 +13207,6 @@
     },
     {
       "name": "anm_1d2_commands",
-      "address": "0x0818c62c",
       "end": "0x0818c650",
       "element": "u8",
       "stride": 2,
@@ -13784,7 +13217,6 @@
     },
     {
       "name": "anm_1d2",
-      "address": "0x0818c650",
       "end": "0x0818c668",
       "element": "le-u32",
       "stride": 4,
@@ -13795,7 +13227,6 @@
     },
     {
       "name": "anm_1d3_commands",
-      "address": "0x0818c668",
       "end": "0x0818c688",
       "element": "u8",
       "stride": 2,
@@ -13806,7 +13237,6 @@
     },
     {
       "name": "anm_1d3",
-      "address": "0x0818c688",
       "end": "0x0818c6a0",
       "element": "le-u32",
       "stride": 4,
@@ -13817,7 +13247,6 @@
     },
     {
       "name": "anm_1d4_commands",
-      "address": "0x0818c6a0",
       "end": "0x0818c6c8",
       "element": "u8",
       "stride": 2,
@@ -13828,7 +13257,6 @@
     },
     {
       "name": "anm_1d4",
-      "address": "0x0818c6c8",
       "end": "0x0818c6e0",
       "element": "le-u32",
       "stride": 4,
@@ -13839,7 +13267,6 @@
     },
     {
       "name": "anm_1d5_commands",
-      "address": "0x0818c6e0",
       "end": "0x0818c708",
       "element": "u8",
       "stride": 2,
@@ -13850,7 +13277,6 @@
     },
     {
       "name": "anm_1d5",
-      "address": "0x0818c708",
       "end": "0x0818c720",
       "element": "le-u32",
       "stride": 4,
@@ -13861,7 +13287,6 @@
     },
     {
       "name": "anm_1d6_commands",
-      "address": "0x0818c720",
       "end": "0x0818c744",
       "element": "u8",
       "stride": 2,
@@ -13872,7 +13297,6 @@
     },
     {
       "name": "anm_1d6",
-      "address": "0x0818c744",
       "end": "0x0818c75c",
       "element": "le-u32",
       "stride": 4,
@@ -13883,7 +13307,6 @@
     },
     {
       "name": "anm_1d7_commands",
-      "address": "0x0818c75c",
       "end": "0x0818c780",
       "element": "u8",
       "stride": 2,
@@ -13894,7 +13317,6 @@
     },
     {
       "name": "anm_1d7",
-      "address": "0x0818c780",
       "end": "0x0818c798",
       "element": "le-u32",
       "stride": 4,
@@ -13905,7 +13327,6 @@
     },
     {
       "name": "anm_1d8_commands",
-      "address": "0x0818c798",
       "end": "0x0818c7bc",
       "element": "u8",
       "stride": 2,
@@ -13916,7 +13337,6 @@
     },
     {
       "name": "anm_1d8",
-      "address": "0x0818c7bc",
       "end": "0x0818c7d4",
       "element": "le-u32",
       "stride": 4,
@@ -13927,7 +13347,6 @@
     },
     {
       "name": "anm_1d9_commands",
-      "address": "0x0818c7d4",
       "end": "0x0818c7f8",
       "element": "u8",
       "stride": 2,
@@ -13938,7 +13357,6 @@
     },
     {
       "name": "anm_1d9",
-      "address": "0x0818c7f8",
       "end": "0x0818c810",
       "element": "le-u32",
       "stride": 4,
@@ -13949,7 +13367,6 @@
     },
     {
       "name": "anm_1da_commands",
-      "address": "0x0818c810",
       "end": "0x0818c834",
       "element": "u8",
       "stride": 2,
@@ -13960,7 +13377,6 @@
     },
     {
       "name": "anm_1da",
-      "address": "0x0818c834",
       "end": "0x0818c84c",
       "element": "le-u32",
       "stride": 4,
@@ -13971,7 +13387,6 @@
     },
     {
       "name": "anm_1db_commands",
-      "address": "0x0818c84c",
       "end": "0x0818c870",
       "element": "u8",
       "stride": 2,
@@ -13982,7 +13397,6 @@
     },
     {
       "name": "anm_1db",
-      "address": "0x0818c870",
       "end": "0x0818c888",
       "element": "le-u32",
       "stride": 4,
@@ -13993,7 +13407,6 @@
     },
     {
       "name": "anm_1ad_commands",
-      "address": "0x0818c888",
       "end": "0x0818c8ac",
       "element": "u8",
       "stride": 2,
@@ -14004,7 +13417,6 @@
     },
     {
       "name": "anm_1ad",
-      "address": "0x0818c8ac",
       "end": "0x0818c8c4",
       "element": "le-u32",
       "stride": 4,
@@ -14015,7 +13427,6 @@
     },
     {
       "name": "anm_1dc_commands",
-      "address": "0x0818c8c4",
       "end": "0x0818c8e8",
       "element": "u8",
       "stride": 2,
@@ -14026,7 +13437,6 @@
     },
     {
       "name": "anm_1dc",
-      "address": "0x0818c8e8",
       "end": "0x0818c900",
       "element": "le-u32",
       "stride": 4,
@@ -14037,7 +13447,6 @@
     },
     {
       "name": "anm_1dd_commands",
-      "address": "0x0818c900",
       "end": "0x0818c924",
       "element": "u8",
       "stride": 2,
@@ -14048,7 +13457,6 @@
     },
     {
       "name": "anm_1dd",
-      "address": "0x0818c924",
       "end": "0x0818c93c",
       "element": "le-u32",
       "stride": 4,
@@ -14059,7 +13467,6 @@
     },
     {
       "name": "anm_1de_commands",
-      "address": "0x0818c93c",
       "end": "0x0818c960",
       "element": "u8",
       "stride": 2,
@@ -14070,7 +13477,6 @@
     },
     {
       "name": "anm_1de",
-      "address": "0x0818c960",
       "end": "0x0818c978",
       "element": "le-u32",
       "stride": 4,
@@ -14081,7 +13487,6 @@
     },
     {
       "name": "anm_1df_commands",
-      "address": "0x0818c978",
       "end": "0x0818c99c",
       "element": "u8",
       "stride": 2,
@@ -14092,7 +13497,6 @@
     },
     {
       "name": "anm_1df",
-      "address": "0x0818c99c",
       "end": "0x0818c9b4",
       "element": "le-u32",
       "stride": 4,
@@ -14103,7 +13507,6 @@
     },
     {
       "name": "anm_1e0_commands",
-      "address": "0x0818c9b4",
       "end": "0x0818c9d8",
       "element": "u8",
       "stride": 2,
@@ -14114,7 +13517,6 @@
     },
     {
       "name": "anm_1e0",
-      "address": "0x0818c9d8",
       "end": "0x0818c9f0",
       "element": "le-u32",
       "stride": 4,
@@ -14125,7 +13527,6 @@
     },
     {
       "name": "anm_1e1_commands",
-      "address": "0x0818c9f0",
       "end": "0x0818ca18",
       "element": "u8",
       "stride": 2,
@@ -14136,7 +13537,6 @@
     },
     {
       "name": "anm_1e1",
-      "address": "0x0818ca18",
       "end": "0x0818ca30",
       "element": "le-u32",
       "stride": 4,
@@ -14147,7 +13547,6 @@
     },
     {
       "name": "anm_1e2_commands",
-      "address": "0x0818ca30",
       "end": "0x0818ca54",
       "element": "u8",
       "stride": 2,
@@ -14158,7 +13557,6 @@
     },
     {
       "name": "anm_1e2",
-      "address": "0x0818ca54",
       "end": "0x0818ca6c",
       "element": "le-u32",
       "stride": 4,
@@ -14169,7 +13567,6 @@
     },
     {
       "name": "anm_1e3_commands",
-      "address": "0x0818ca6c",
       "end": "0x0818ca90",
       "element": "u8",
       "stride": 2,
@@ -14180,7 +13577,6 @@
     },
     {
       "name": "anm_1e3",
-      "address": "0x0818ca90",
       "end": "0x0818caa8",
       "element": "le-u32",
       "stride": 4,
@@ -14191,7 +13587,6 @@
     },
     {
       "name": "anm_1e4_commands",
-      "address": "0x0818caa8",
       "end": "0x0818cacc",
       "element": "u8",
       "stride": 2,
@@ -14202,7 +13597,6 @@
     },
     {
       "name": "anm_1e4",
-      "address": "0x0818cacc",
       "end": "0x0818cae4",
       "element": "le-u32",
       "stride": 4,
@@ -14213,7 +13607,6 @@
     },
     {
       "name": "anm_1e5_commands",
-      "address": "0x0818cae4",
       "end": "0x0818cb08",
       "element": "u8",
       "stride": 2,
@@ -14224,7 +13617,6 @@
     },
     {
       "name": "anm_1e5",
-      "address": "0x0818cb08",
       "end": "0x0818cb20",
       "element": "le-u32",
       "stride": 4,
@@ -14235,7 +13627,6 @@
     },
     {
       "name": "anm_1e6_commands",
-      "address": "0x0818cb20",
       "end": "0x0818cb44",
       "element": "u8",
       "stride": 2,
@@ -14246,7 +13637,6 @@
     },
     {
       "name": "anm_1e6",
-      "address": "0x0818cb44",
       "end": "0x0818cb5c",
       "element": "le-u32",
       "stride": 4,
@@ -14257,7 +13647,6 @@
     },
     {
       "name": "anm_172_commands",
-      "address": "0x0818cb5c",
       "end": "0x0818cb80",
       "element": "u8",
       "stride": 2,
@@ -14268,7 +13657,6 @@
     },
     {
       "name": "anm_172",
-      "address": "0x0818cb80",
       "end": "0x0818cba4",
       "element": "le-u32",
       "stride": 4,
@@ -14280,7 +13668,6 @@
     },
     {
       "name": "anm_173_commands",
-      "address": "0x0818cba4",
       "end": "0x0818cbc8",
       "element": "u8",
       "stride": 2,
@@ -14291,7 +13678,6 @@
     },
     {
       "name": "anm_173",
-      "address": "0x0818cbc8",
       "end": "0x0818cbec",
       "element": "le-u32",
       "stride": 4,
@@ -14303,7 +13689,6 @@
     },
     {
       "name": "anm_174_commands",
-      "address": "0x0818cbec",
       "end": "0x0818cc1c",
       "element": "u8",
       "stride": 2,
@@ -14315,7 +13700,6 @@
     },
     {
       "name": "anm_174",
-      "address": "0x0818cc1c",
       "end": "0x0818cc4c",
       "element": "le-u32",
       "stride": 4,
@@ -14327,7 +13711,6 @@
     },
     {
       "name": "anm_175_commands",
-      "address": "0x0818cc4c",
       "end": "0x0818cc70",
       "element": "u8",
       "stride": 2,
@@ -14338,7 +13721,6 @@
     },
     {
       "name": "anm_175",
-      "address": "0x0818cc70",
       "end": "0x0818cc94",
       "element": "le-u32",
       "stride": 4,
@@ -14350,7 +13732,6 @@
     },
     {
       "name": "anm_177_commands",
-      "address": "0x0818cc94",
       "end": "0x0818ccc4",
       "element": "u8",
       "stride": 2,
@@ -14362,7 +13743,6 @@
     },
     {
       "name": "anm_177",
-      "address": "0x0818ccc4",
       "end": "0x0818ccf4",
       "element": "le-u32",
       "stride": 4,
@@ -14374,7 +13754,6 @@
     },
     {
       "name": "anm_178_commands",
-      "address": "0x0818ccf4",
       "end": "0x0818cd18",
       "element": "u8",
       "stride": 2,
@@ -14385,7 +13764,6 @@
     },
     {
       "name": "anm_178",
-      "address": "0x0818cd18",
       "end": "0x0818cd3c",
       "element": "le-u32",
       "stride": 4,
@@ -14397,7 +13775,6 @@
     },
     {
       "name": "anm_179_commands",
-      "address": "0x0818cd3c",
       "end": "0x0818cd6c",
       "element": "u8",
       "stride": 2,
@@ -14409,7 +13786,6 @@
     },
     {
       "name": "anm_179",
-      "address": "0x0818cd6c",
       "end": "0x0818cd9c",
       "element": "le-u32",
       "stride": 4,
@@ -14421,7 +13797,6 @@
     },
     {
       "name": "anm_17a_commands",
-      "address": "0x0818cd9c",
       "end": "0x0818cdbc",
       "element": "u8",
       "stride": 2,
@@ -14432,7 +13807,6 @@
     },
     {
       "name": "anm_17a",
-      "address": "0x0818cdbc",
       "end": "0x0818cddc",
       "element": "le-u32",
       "stride": 4,
@@ -14443,7 +13817,6 @@
     },
     {
       "name": "anm_17b_commands",
-      "address": "0x0818cddc",
       "end": "0x0818ce00",
       "element": "u8",
       "stride": 2,
@@ -14454,7 +13827,6 @@
     },
     {
       "name": "anm_17b",
-      "address": "0x0818ce00",
       "end": "0x0818ce24",
       "element": "le-u32",
       "stride": 4,
@@ -14466,7 +13838,6 @@
     },
     {
       "name": "anm_17c_commands",
-      "address": "0x0818ce24",
       "end": "0x0818ce54",
       "element": "u8",
       "stride": 2,
@@ -14478,7 +13849,6 @@
     },
     {
       "name": "anm_17c",
-      "address": "0x0818ce54",
       "end": "0x0818ce84",
       "element": "le-u32",
       "stride": 4,
@@ -14488,25 +13858,10 @@
         "anm_17c_commands[16]", "anm_17c_commands[18]", "anm_17c_commands[20]", "anm_17c_commands[22]"
       ]
     },
-    {
-      "name": "anm_17d_commands",
-      "address": "0x0818ce84",
-      "end": "0x0818ce88",
-      "element": "u8",
-      "stride": 2,
-      "values": [[0, 8], ["hold", 0]]
-    },
-    {
-      "name": "anm_17d",
-      "address": "0x0818ce88",
-      "end": "0x0818ce8c",
-      "element": "le-u32",
-      "stride": 4,
-      "values": ["anm_17d_commands[0]"]
-    },
+    {"name": "anm_17d_commands", "end": "0x0818ce88", "element": "u8", "stride": 2, "values": [[0, 8], ["hold", 0]]},
+    {"name": "anm_17d", "end": "0x0818ce8c", "element": "le-u32", "stride": 4, "values": ["anm_17d_commands[0]"]},
     {
       "name": "anm_17e_commands",
-      "address": "0x0818ce8c",
       "end": "0x0818cf4c",
       "element": "u8",
       "stride": 2,
@@ -14525,7 +13880,6 @@
     },
     {
       "name": "anm_17e",
-      "address": "0x0818cf4c",
       "end": "0x0818d00c",
       "element": "le-u32",
       "stride": 4,
@@ -14546,7 +13900,6 @@
     },
     {
       "name": "anm_186_commands",
-      "address": "0x0818d00c",
       "end": "0x0818d018",
       "element": "u8",
       "stride": 2,
@@ -14554,7 +13907,6 @@
     },
     {
       "name": "anm_186",
-      "address": "0x0818d018",
       "end": "0x0818d024",
       "element": "le-u32",
       "stride": 4,
@@ -14562,7 +13914,6 @@
     },
     {
       "name": "anm_18c_commands",
-      "address": "0x0818d024",
       "end": "0x0818d050",
       "element": "u8",
       "stride": 2,
@@ -14573,7 +13924,6 @@
     },
     {
       "name": "anm_18c",
-      "address": "0x0818d050",
       "end": "0x0818d060",
       "element": "le-u32",
       "stride": 4,
@@ -14581,7 +13931,6 @@
     },
     {
       "name": "anm_18d_commands",
-      "address": "0x0818d060",
       "end": "0x0818d078",
       "element": "u8",
       "stride": 2,
@@ -14592,7 +13941,6 @@
     },
     {
       "name": "anm_18d",
-      "address": "0x0818d078",
       "end": "0x0818d088",
       "element": "le-u32",
       "stride": 4,
@@ -14600,7 +13948,6 @@
     },
     {
       "name": "anm_18e_commands",
-      "address": "0x0818d088",
       "end": "0x0818d0b8",
       "element": "u8",
       "stride": 2,
@@ -14612,7 +13959,6 @@
     },
     {
       "name": "anm_18e",
-      "address": "0x0818d0b8",
       "end": "0x0818d0cc",
       "element": "le-u32",
       "stride": 4,
@@ -14623,7 +13969,6 @@
     },
     {
       "name": "anm_18f_commands",
-      "address": "0x0818d0cc",
       "end": "0x0818d0fc",
       "element": "u8",
       "stride": 2,
@@ -14635,7 +13980,6 @@
     },
     {
       "name": "anm_18f",
-      "address": "0x0818d0fc",
       "end": "0x0818d110",
       "element": "le-u32",
       "stride": 4,
@@ -14646,7 +13990,6 @@
     },
     {
       "name": "anm_11b_commands",
-      "address": "0x0818d110",
       "end": "0x0818d158",
       "element": "u8",
       "stride": 2,
@@ -14658,7 +14001,6 @@
     },
     {
       "name": "anm_11b",
-      "address": "0x0818d158",
       "end": "0x0818d164",
       "element": "le-u32",
       "stride": 4,
@@ -14666,7 +14008,6 @@
     },
     {
       "name": "anm_11c_commands",
-      "address": "0x0818d164",
       "end": "0x0818d200",
       "element": "u8",
       "stride": 2,
@@ -14682,7 +14023,6 @@
     },
     {
       "name": "anm_11c",
-      "address": "0x0818d200",
       "end": "0x0818d224",
       "element": "le-u32",
       "stride": 4,
@@ -14694,7 +14034,6 @@
     },
     {
       "name": "anm_11d_commands",
-      "address": "0x0818d224",
       "end": "0x0818d254",
       "element": "u8",
       "stride": 2,
@@ -14705,7 +14044,6 @@
     },
     {
       "name": "anm_11d",
-      "address": "0x0818d254",
       "end": "0x0818d260",
       "element": "le-u32",
       "stride": 4,
@@ -14713,7 +14051,6 @@
     },
     {
       "name": "anm_11e_commands",
-      "address": "0x0818d260",
       "end": "0x0818d280",
       "element": "u8",
       "stride": 2,
@@ -14724,7 +14061,6 @@
     },
     {
       "name": "anm_11e",
-      "address": "0x0818d280",
       "end": "0x0818d288",
       "element": "le-u32",
       "stride": 4,
@@ -14732,7 +14068,6 @@
     },
     {
       "name": "anm_11f_commands",
-      "address": "0x0818d288",
       "end": "0x0818d294",
       "element": "u8",
       "stride": 2,
@@ -14740,7 +14075,6 @@
     },
     {
       "name": "anm_11f",
-      "address": "0x0818d294",
       "end": "0x0818d2a0",
       "element": "le-u32",
       "stride": 4,
@@ -14748,7 +14082,6 @@
     },
     {
       "name": "anm_120_commands",
-      "address": "0x0818d2a0",
       "end": "0x0818d2ac",
       "element": "u8",
       "stride": 2,
@@ -14756,7 +14089,6 @@
     },
     {
       "name": "anm_120",
-      "address": "0x0818d2ac",
       "end": "0x0818d2b8",
       "element": "le-u32",
       "stride": 4,
@@ -14764,7 +14096,6 @@
     },
     {
       "name": "anm_119_commands",
-      "address": "0x0818d2b8",
       "end": "0x0818d2c8",
       "element": "u8",
       "stride": 2,
@@ -14772,7 +14103,6 @@
     },
     {
       "name": "anm_119",
-      "address": "0x0818d2c8",
       "end": "0x0818d2d8",
       "element": "le-u32",
       "stride": 4,
@@ -14780,7 +14110,6 @@
     },
     {
       "name": "anm_118_commands",
-      "address": "0x0818d2d8",
       "end": "0x0818d2e4",
       "element": "u8",
       "stride": 2,
@@ -14788,7 +14117,6 @@
     },
     {
       "name": "anm_118",
-      "address": "0x0818d2e4",
       "end": "0x0818d2f0",
       "element": "le-u32",
       "stride": 4,
@@ -14796,7 +14124,6 @@
     },
     {
       "name": "anm_0e1_commands",
-      "address": "0x0818d2f0",
       "end": "0x0818d304",
       "element": "u8",
       "stride": 2,
@@ -14804,7 +14131,6 @@
     },
     {
       "name": "anm_0e1",
-      "address": "0x0818d304",
       "end": "0x0818d314",
       "element": "le-u32",
       "stride": 4,
@@ -14812,7 +14138,6 @@
     },
     {
       "name": "anm_0bc_commands",
-      "address": "0x0818d314",
       "end": "0x0818d31c",
       "element": "u8",
       "stride": 2,
@@ -14820,7 +14145,6 @@
     },
     {
       "name": "anm_0bc",
-      "address": "0x0818d31c",
       "end": "0x0818d324",
       "element": "le-u32",
       "stride": 4,
@@ -14828,7 +14152,6 @@
     },
     {
       "name": "anm_0e8_commands",
-      "address": "0x0818d324",
       "end": "0x0818d334",
       "element": "u8",
       "stride": 2,
@@ -14836,7 +14159,6 @@
     },
     {
       "name": "anm_0e8",
-      "address": "0x0818d334",
       "end": "0x0818d340",
       "element": "le-u32",
       "stride": 4,
@@ -14844,7 +14166,6 @@
     },
     {
       "name": "anm_0f5_commands",
-      "address": "0x0818d340",
       "end": "0x0818d348",
       "element": "u8",
       "stride": 2,
@@ -14852,7 +14173,6 @@
     },
     {
       "name": "anm_0f5",
-      "address": "0x0818d348",
       "end": "0x0818d350",
       "element": "le-u32",
       "stride": 4,
@@ -14860,7 +14180,6 @@
     },
     {
       "name": "anm_121_commands",
-      "address": "0x0818d350",
       "end": "0x0818d364",
       "element": "u8",
       "stride": 2,
@@ -14868,7 +14187,6 @@
     },
     {
       "name": "anm_121",
-      "address": "0x0818d364",
       "end": "0x0818d370",
       "element": "le-u32",
       "stride": 4,
@@ -14876,7 +14194,6 @@
     },
     {
       "name": "anm_1fe_commands",
-      "address": "0x0818d370",
       "end": "0x0818d378",
       "element": "u8",
       "stride": 2,
@@ -14884,7 +14201,6 @@
     },
     {
       "name": "anm_1fe",
-      "address": "0x0818d378",
       "end": "0x0818d380",
       "element": "le-u32",
       "stride": 4,
@@ -14892,7 +14208,6 @@
     },
     {
       "name": "anm_1ff_commands",
-      "address": "0x0818d380",
       "end": "0x0818d388",
       "element": "u8",
       "stride": 2,
@@ -14900,7 +14215,6 @@
     },
     {
       "name": "anm_1ff",
-      "address": "0x0818d388",
       "end": "0x0818d390",
       "element": "le-u32",
       "stride": 4,
@@ -14908,455 +14222,230 @@
     },
     {
       "name": "anm_163_commands",
-      "address": "0x0818d390",
       "end": "0x0818d39c",
       "element": "u8",
       "stride": 2,
       "values": [[0, 8], [1, 8], [2, 8], [3, 8], ["jump", 0], [0, 0]]
     },
-    {
-      "name": "anm_163",
-      "address": "0x0818d39c",
-      "end": "0x0818d3a0",
-      "element": "le-u32",
-      "stride": 4,
-      "values": ["anm_163_commands[0]"]
-    },
+    {"name": "anm_163", "end": "0x0818d3a0", "element": "le-u32", "stride": 4, "values": ["anm_163_commands[0]"]},
     {
       "name": "anm_164_commands",
-      "address": "0x0818d3a0",
       "end": "0x0818d3ac",
       "element": "u8",
       "stride": 2,
       "values": [[0, 8], [1, 8], [2, 8], [3, 8], ["jump", 0], [0, 0]]
     },
-    {
-      "name": "anm_164",
-      "address": "0x0818d3ac",
-      "end": "0x0818d3b0",
-      "element": "le-u32",
-      "stride": 4,
-      "values": ["anm_164_commands[0]"]
-    },
+    {"name": "anm_164", "end": "0x0818d3b0", "element": "le-u32", "stride": 4, "values": ["anm_164_commands[0]"]},
     {
       "name": "anm_165_commands",
-      "address": "0x0818d3b0",
       "end": "0x0818d3bc",
       "element": "u8",
       "stride": 2,
       "values": [[0, 8], [1, 8], [2, 8], [3, 8], ["jump", 0], [0, 0]]
     },
-    {
-      "name": "anm_165",
-      "address": "0x0818d3bc",
-      "end": "0x0818d3c0",
-      "element": "le-u32",
-      "stride": 4,
-      "values": ["anm_165_commands[0]"]
-    },
+    {"name": "anm_165", "end": "0x0818d3c0", "element": "le-u32", "stride": 4, "values": ["anm_165_commands[0]"]},
     {
       "name": "anm_166_commands",
-      "address": "0x0818d3c0",
       "end": "0x0818d3cc",
       "element": "u8",
       "stride": 2,
       "values": [[0, 8], [1, 8], [2, 8], [3, 8], ["jump", 0], [0, 0]]
     },
-    {
-      "name": "anm_166",
-      "address": "0x0818d3cc",
-      "end": "0x0818d3d0",
-      "element": "le-u32",
-      "stride": 4,
-      "values": ["anm_166_commands[0]"]
-    },
+    {"name": "anm_166", "end": "0x0818d3d0", "element": "le-u32", "stride": 4, "values": ["anm_166_commands[0]"]},
     {
       "name": "anm_167_commands",
-      "address": "0x0818d3d0",
       "end": "0x0818d3dc",
       "element": "u8",
       "stride": 2,
       "values": [[0, 8], [1, 8], [2, 8], [3, 8], ["jump", 0], [0, 0]]
     },
-    {
-      "name": "anm_167",
-      "address": "0x0818d3dc",
-      "end": "0x0818d3e0",
-      "element": "le-u32",
-      "stride": 4,
-      "values": ["anm_167_commands[0]"]
-    },
+    {"name": "anm_167", "end": "0x0818d3e0", "element": "le-u32", "stride": 4, "values": ["anm_167_commands[0]"]},
     {
       "name": "anm_168_commands",
-      "address": "0x0818d3e0",
       "end": "0x0818d3ec",
       "element": "u8",
       "stride": 2,
       "values": [[0, 8], [1, 8], [2, 8], [3, 8], ["jump", 0], [0, 0]]
     },
-    {
-      "name": "anm_168",
-      "address": "0x0818d3ec",
-      "end": "0x0818d3f0",
-      "element": "le-u32",
-      "stride": 4,
-      "values": ["anm_168_commands[0]"]
-    },
+    {"name": "anm_168", "end": "0x0818d3f0", "element": "le-u32", "stride": 4, "values": ["anm_168_commands[0]"]},
     {
       "name": "anm_169_commands",
-      "address": "0x0818d3f0",
       "end": "0x0818d3fc",
       "element": "u8",
       "stride": 2,
       "values": [[0, 8], [1, 8], [2, 8], [3, 8], [4, 8], ["jump", 0]]
     },
-    {
-      "name": "anm_169",
-      "address": "0x0818d3fc",
-      "end": "0x0818d400",
-      "element": "le-u32",
-      "stride": 4,
-      "values": ["anm_169_commands[0]"]
-    },
+    {"name": "anm_169", "end": "0x0818d400", "element": "le-u32", "stride": 4, "values": ["anm_169_commands[0]"]},
     {
       "name": "anm_16a_commands",
-      "address": "0x0818d400",
       "end": "0x0818d408",
       "element": "u8",
       "stride": 2,
       "values": [[0, 8], [1, 8], ["jump", 0], [0, 0]]
     },
-    {
-      "name": "anm_16a",
-      "address": "0x0818d408",
-      "end": "0x0818d40c",
-      "element": "le-u32",
-      "stride": 4,
-      "values": ["anm_16a_commands[0]"]
-    },
+    {"name": "anm_16a", "end": "0x0818d40c", "element": "le-u32", "stride": 4, "values": ["anm_16a_commands[0]"]},
     {
       "name": "anm_16b_commands",
-      "address": "0x0818d40c",
       "end": "0x0818d414",
       "element": "u8",
       "stride": 2,
       "values": [[0, 8], [1, 8], ["jump", 0], [0, 0]]
     },
-    {
-      "name": "anm_16b",
-      "address": "0x0818d414",
-      "end": "0x0818d418",
-      "element": "le-u32",
-      "stride": 4,
-      "values": ["anm_16b_commands[0]"]
-    },
+    {"name": "anm_16b", "end": "0x0818d418", "element": "le-u32", "stride": 4, "values": ["anm_16b_commands[0]"]},
     {
       "name": "anm_16c_commands",
-      "address": "0x0818d418",
       "end": "0x0818d420",
       "element": "u8",
       "stride": 2,
       "values": [[0, 8], [1, 8], ["jump", 0], [0, 0]]
     },
-    {
-      "name": "anm_16c",
-      "address": "0x0818d420",
-      "end": "0x0818d424",
-      "element": "le-u32",
-      "stride": 4,
-      "values": ["anm_16c_commands[0]"]
-    },
+    {"name": "anm_16c", "end": "0x0818d424", "element": "le-u32", "stride": 4, "values": ["anm_16c_commands[0]"]},
     {
       "name": "anm_16d_commands",
-      "address": "0x0818d424",
       "end": "0x0818d42c",
       "element": "u8",
       "stride": 2,
       "values": [[0, 8], [1, 8], ["jump", 0], [0, 0]]
     },
-    {
-      "name": "anm_16d",
-      "address": "0x0818d42c",
-      "end": "0x0818d430",
-      "element": "le-u32",
-      "stride": 4,
-      "values": ["anm_16d_commands[0]"]
-    },
+    {"name": "anm_16d", "end": "0x0818d430", "element": "le-u32", "stride": 4, "values": ["anm_16d_commands[0]"]},
     {
       "name": "anm_16e_commands",
-      "address": "0x0818d430",
       "end": "0x0818d438",
       "element": "u8",
       "stride": 2,
       "values": [[0, 8], [1, 8], ["jump", 0], [0, 0]]
     },
-    {
-      "name": "anm_16e",
-      "address": "0x0818d438",
-      "end": "0x0818d43c",
-      "element": "le-u32",
-      "stride": 4,
-      "values": ["anm_16e_commands[0]"]
-    },
+    {"name": "anm_16e", "end": "0x0818d43c", "element": "le-u32", "stride": 4, "values": ["anm_16e_commands[0]"]},
     {
       "name": "anm_16f_commands",
-      "address": "0x0818d43c",
       "end": "0x0818d444",
       "element": "u8",
       "stride": 2,
       "values": [[0, 8], [1, 8], ["jump", 0], [0, 0]]
     },
-    {
-      "name": "anm_16f",
-      "address": "0x0818d444",
-      "end": "0x0818d448",
-      "element": "le-u32",
-      "stride": 4,
-      "values": ["anm_16f_commands[0]"]
-    },
+    {"name": "anm_16f", "end": "0x0818d448", "element": "le-u32", "stride": 4, "values": ["anm_16f_commands[0]"]},
     {
       "name": "anm_170_commands",
-      "address": "0x0818d448",
       "end": "0x0818d450",
       "element": "u8",
       "stride": 2,
       "values": [[0, 8], [1, 8], ["jump", 0], [0, 0]]
     },
-    {
-      "name": "anm_170",
-      "address": "0x0818d450",
-      "end": "0x0818d454",
-      "element": "le-u32",
-      "stride": 4,
-      "values": ["anm_170_commands[0]"]
-    },
+    {"name": "anm_170", "end": "0x0818d454", "element": "le-u32", "stride": 4, "values": ["anm_170_commands[0]"]},
     {
       "name": "anm_154_commands",
-      "address": "0x0818d454",
       "end": "0x0818d460",
       "element": "u8",
       "stride": 2,
       "values": [[0, 8], [1, 8], [2, 8], [3, 8], ["jump", 0], [0, 0]]
     },
-    {
-      "name": "anm_154",
-      "address": "0x0818d460",
-      "end": "0x0818d464",
-      "element": "le-u32",
-      "stride": 4,
-      "values": ["anm_154_commands[0]"]
-    },
+    {"name": "anm_154", "end": "0x0818d464", "element": "le-u32", "stride": 4, "values": ["anm_154_commands[0]"]},
     {
       "name": "anm_155_commands",
-      "address": "0x0818d464",
       "end": "0x0818d470",
       "element": "u8",
       "stride": 2,
       "values": [[0, 8], [1, 8], [2, 8], [3, 8], ["jump", 0], [0, 0]]
     },
-    {
-      "name": "anm_155",
-      "address": "0x0818d470",
-      "end": "0x0818d474",
-      "element": "le-u32",
-      "stride": 4,
-      "values": ["anm_155_commands[0]"]
-    },
+    {"name": "anm_155", "end": "0x0818d474", "element": "le-u32", "stride": 4, "values": ["anm_155_commands[0]"]},
     {
       "name": "anm_156_commands",
-      "address": "0x0818d474",
       "end": "0x0818d480",
       "element": "u8",
       "stride": 2,
       "values": [[0, 8], [1, 8], [2, 8], [3, 8], ["jump", 0], [0, 0]]
     },
-    {
-      "name": "anm_156",
-      "address": "0x0818d480",
-      "end": "0x0818d484",
-      "element": "le-u32",
-      "stride": 4,
-      "values": ["anm_156_commands[0]"]
-    },
+    {"name": "anm_156", "end": "0x0818d484", "element": "le-u32", "stride": 4, "values": ["anm_156_commands[0]"]},
     {
       "name": "anm_157_commands",
-      "address": "0x0818d484",
       "end": "0x0818d490",
       "element": "u8",
       "stride": 2,
       "values": [[0, 8], [1, 8], [2, 8], [3, 8], ["jump", 0], [0, 0]]
     },
-    {
-      "name": "anm_157",
-      "address": "0x0818d490",
-      "end": "0x0818d494",
-      "element": "le-u32",
-      "stride": 4,
-      "values": ["anm_157_commands[0]"]
-    },
+    {"name": "anm_157", "end": "0x0818d494", "element": "le-u32", "stride": 4, "values": ["anm_157_commands[0]"]},
     {
       "name": "anm_158_commands",
-      "address": "0x0818d494",
       "end": "0x0818d4a0",
       "element": "u8",
       "stride": 2,
       "values": [[0, 8], [1, 8], [2, 8], [3, 8], ["jump", 0], [0, 0]]
     },
-    {
-      "name": "anm_158",
-      "address": "0x0818d4a0",
-      "end": "0x0818d4a4",
-      "element": "le-u32",
-      "stride": 4,
-      "values": ["anm_158_commands[0]"]
-    },
+    {"name": "anm_158", "end": "0x0818d4a4", "element": "le-u32", "stride": 4, "values": ["anm_158_commands[0]"]},
     {
       "name": "anm_159_commands",
-      "address": "0x0818d4a4",
       "end": "0x0818d4b0",
       "element": "u8",
       "stride": 2,
       "values": [[0, 8], [1, 8], [2, 8], [3, 8], ["jump", 0], [0, 0]]
     },
-    {
-      "name": "anm_159",
-      "address": "0x0818d4b0",
-      "end": "0x0818d4b4",
-      "element": "le-u32",
-      "stride": 4,
-      "values": ["anm_159_commands[0]"]
-    },
+    {"name": "anm_159", "end": "0x0818d4b4", "element": "le-u32", "stride": 4, "values": ["anm_159_commands[0]"]},
     {
       "name": "anm_15a_commands",
-      "address": "0x0818d4b4",
       "end": "0x0818d4c0",
       "element": "u8",
       "stride": 2,
       "values": [[0, 8], [1, 8], [2, 8], [3, 8], [4, 8], ["jump", 0]]
     },
-    {
-      "name": "anm_15a",
-      "address": "0x0818d4c0",
-      "end": "0x0818d4c4",
-      "element": "le-u32",
-      "stride": 4,
-      "values": ["anm_15a_commands[0]"]
-    },
+    {"name": "anm_15a", "end": "0x0818d4c4", "element": "le-u32", "stride": 4, "values": ["anm_15a_commands[0]"]},
     {
       "name": "anm_15b_commands",
-      "address": "0x0818d4c4",
       "end": "0x0818d4cc",
       "element": "u8",
       "stride": 2,
       "values": [[0, 8], [1, 8], ["jump", 0], [0, 0]]
     },
-    {
-      "name": "anm_15b",
-      "address": "0x0818d4cc",
-      "end": "0x0818d4d0",
-      "element": "le-u32",
-      "stride": 4,
-      "values": ["anm_15b_commands[0]"]
-    },
+    {"name": "anm_15b", "end": "0x0818d4d0", "element": "le-u32", "stride": 4, "values": ["anm_15b_commands[0]"]},
     {
       "name": "anm_15c_commands",
-      "address": "0x0818d4d0",
       "end": "0x0818d4d8",
       "element": "u8",
       "stride": 2,
       "values": [[0, 8], [1, 8], ["jump", 0], [0, 0]]
     },
-    {
-      "name": "anm_15c",
-      "address": "0x0818d4d8",
-      "end": "0x0818d4dc",
-      "element": "le-u32",
-      "stride": 4,
-      "values": ["anm_15c_commands[0]"]
-    },
+    {"name": "anm_15c", "end": "0x0818d4dc", "element": "le-u32", "stride": 4, "values": ["anm_15c_commands[0]"]},
     {
       "name": "anm_15d_commands",
-      "address": "0x0818d4dc",
       "end": "0x0818d4e4",
       "element": "u8",
       "stride": 2,
       "values": [[0, 8], [1, 8], ["jump", 0], [0, 0]]
     },
-    {
-      "name": "anm_15d",
-      "address": "0x0818d4e4",
-      "end": "0x0818d4e8",
-      "element": "le-u32",
-      "stride": 4,
-      "values": ["anm_15d_commands[0]"]
-    },
+    {"name": "anm_15d", "end": "0x0818d4e8", "element": "le-u32", "stride": 4, "values": ["anm_15d_commands[0]"]},
     {
       "name": "anm_15e_commands",
-      "address": "0x0818d4e8",
       "end": "0x0818d4f0",
       "element": "u8",
       "stride": 2,
       "values": [[0, 8], [1, 8], ["jump", 0], [0, 0]]
     },
-    {
-      "name": "anm_15e",
-      "address": "0x0818d4f0",
-      "end": "0x0818d4f4",
-      "element": "le-u32",
-      "stride": 4,
-      "values": ["anm_15e_commands[0]"]
-    },
+    {"name": "anm_15e", "end": "0x0818d4f4", "element": "le-u32", "stride": 4, "values": ["anm_15e_commands[0]"]},
     {
       "name": "anm_15f_commands",
-      "address": "0x0818d4f4",
       "end": "0x0818d4fc",
       "element": "u8",
       "stride": 2,
       "values": [[0, 8], [1, 8], ["jump", 0], [0, 0]]
     },
-    {
-      "name": "anm_15f",
-      "address": "0x0818d4fc",
-      "end": "0x0818d500",
-      "element": "le-u32",
-      "stride": 4,
-      "values": ["anm_15f_commands[0]"]
-    },
+    {"name": "anm_15f", "end": "0x0818d500", "element": "le-u32", "stride": 4, "values": ["anm_15f_commands[0]"]},
     {
       "name": "anm_160_commands",
-      "address": "0x0818d500",
       "end": "0x0818d508",
       "element": "u8",
       "stride": 2,
       "values": [[0, 8], [1, 8], ["jump", 0], [0, 0]]
     },
-    {
-      "name": "anm_160",
-      "address": "0x0818d508",
-      "end": "0x0818d50c",
-      "element": "le-u32",
-      "stride": 4,
-      "values": ["anm_160_commands[0]"]
-    },
+    {"name": "anm_160", "end": "0x0818d50c", "element": "le-u32", "stride": 4, "values": ["anm_160_commands[0]"]},
     {
       "name": "anm_161_commands",
-      "address": "0x0818d50c",
       "end": "0x0818d514",
       "element": "u8",
       "stride": 2,
       "values": [[0, 8], [1, 8], ["jump", 0], [0, 0]]
     },
-    {
-      "name": "anm_161",
-      "address": "0x0818d514",
-      "end": "0x0818d518",
-      "element": "le-u32",
-      "stride": 4,
-      "values": ["anm_161_commands[0]"]
-    },
+    {"name": "anm_161", "end": "0x0818d518", "element": "le-u32", "stride": 4, "values": ["anm_161_commands[0]"]},
     {
       "name": "anm_19f_commands",
-      "address": "0x0818d518",
       "end": "0x0818d53c",
       "element": "u8",
       "stride": 2,
@@ -15367,7 +14456,6 @@
     },
     {
       "name": "anm_19f",
-      "address": "0x0818d53c",
       "end": "0x0818d554",
       "element": "le-u32",
       "stride": 4,

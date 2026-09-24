@@ -457,8 +457,7 @@ fn candidate_overlay(
         let source = text(unit, "source");
         registered.insert(source.clone());
         let id = text(unit, "overlay");
-        if text(unit, "game") != target.compiler.as_str()
-            || !executable.contains_key(&id)
+        if !executable.contains_key(&id)
             || !source.starts_with(&format!("{directory}/"))
             || !(source.ends_with(".c") || source.ends_with(".C"))
             || !tree.read(&source).is_some_and(|code| canonical(&code))
@@ -575,7 +574,6 @@ fn exact_overlay_for(
             // overlay; an instance adds only the fill it declares there.
             let linked = array(&units, "units")
                 .iter()
-                .filter(|unit| text(unit, "game") == target.compiler.as_str())
                 .filter_map(|unit| match text(unit, "overlay") == *id {
                     true => Some((unit, unit)),
                     false => unit
@@ -1190,25 +1188,26 @@ struct Stream {
     rom: i64,
     source: Option<String>,
 }
-fn atlas_source(game_dir: &str, locations: &str, id: &str) -> Option<String> {
-    let resource_id = format!("resource_{id}");
-    locations.lines().find_map(|line| {
-        let fields: Vec<_> = line.split('\t').collect();
-        (fields.first().copied() == Some(resource_id.as_str()))
-            .then(|| fields.get(6).copied())
-            .flatten()
-            .filter(|path| !path.is_empty())
-            .map(|path| format!("{game_dir}/{path}/"))
-    })
+/// Each field overlay's source directory, as `{game_dir}/SRC/.../`.
+fn atlas_sources(tree: &SourceTree, target: &DecompTarget) -> BTreeMap<i64, String> {
+    super::places::places(tree, target)
+        .unwrap_or_default()
+        .into_iter()
+        .filter_map(|place| {
+            let home = place.home?;
+            Some((
+                place.overlay as i64,
+                format!("{}/{home}/", target.game_dir()),
+            ))
+        })
+        .collect()
 }
 fn streams(tree: &SourceTree, target: &DecompTarget) -> Vec<Stream> {
     let Some(manifest) = json(tree, target.asset_manifest) else {
         return Vec::new();
     };
     let mut out = Vec::new();
-    let locations = tree
-        .read(&format!("{}/locations.tsv", target.recon_dir()))
-        .unwrap_or_default();
+    let sources = atlas_sources(tree, target);
     for series in array(&manifest, "series") {
         if text(series, "kind") != "golden-sun-thumb-overlay-series" {
             continue;
@@ -1224,7 +1223,7 @@ fn streams(tree: &SourceTree, target: &DecompTarget) -> Vec<Stream> {
             let start = items[1].as_str().and_then(hex).unwrap_or(0);
             let rom = items[2].as_str().and_then(hex).unwrap_or(0);
             if rom > 0 {
-                let source = atlas_source(target.game_dir(), &locations, &id);
+                let source = hex(&id).and_then(|id| sources.get(&id)).cloned();
                 out.push(Stream {
                     id: format!("resource_{id}"),
                     start,
@@ -1241,22 +1240,18 @@ fn shared_map_assets(tree: &SourceTree, areas: &[Area]) -> Result<Value, String>
     let scenes = read("games/THE BROKEN SEAL/SRC/FIELD/COMMON/SCENE_TABLE.JSON")?;
     let maps = read("games/THE BROKEN SEAL/SRC/FIELD/COMMON/LOAD_TABLE.JSON")?;
     let directory = read("games/THE BROKEN SEAL/SRC/SYSTEM/RESOURCE/DIRECTORY.JSON")?;
-    let locations = tree
-        .read("recon/tbs/locations.tsv")
-        .ok_or("missing Atlas locations")?;
+    let sources = atlas_sources(
+        tree,
+        &crate::targets::target_for(crate::targets::DecompTargetId::TbsEn),
+    );
     let scenes = array(&scenes, "segments")
-        .iter()
-        .find(|row| text(row, "address") == "0x0809f1a8")
+        .first()
         .ok_or("missing Atlas scene table")?;
     let mut users: BTreeMap<i64, BTreeSet<String>> = BTreeMap::new();
     // The loader indexes 201 scene records into the map loading table.
     for scene in array(scenes, "records").iter().take(201) {
         let resource = integer(scene, "resource_id").ok_or("invalid scene resource")?;
-        let Some(area) = atlas_source(
-            "games/THE BROKEN SEAL",
-            &locations,
-            &format!("{resource:x}"),
-        ) else {
+        let Some(area) = sources.get(&resource).cloned() else {
             continue;
         };
         let map = array(&maps, "records")
@@ -2456,8 +2451,8 @@ mod tests {
             std::fs::write(path, source).unwrap();
         };
         write(
-            "recon/tbs/locations.tsv",
-            "resource_3a0\tXian\t\t\t\t\tSRC/FIELD/XIAN\n".into(),
+            "recon/tbs/overlay-homes.tsv",
+            "resource_3a0\tSRC/FIELD/XIAN\n".into(),
         );
         write(
             "games/THE BROKEN SEAL/SRC/FIELD/COMMON/SCENE_TABLE.JSON",
@@ -3299,17 +3294,6 @@ mod tests {
         let (main, _) = runtime_credit_for(&tree, &tbs_target, &exec, &SpanMap::new()).unwrap();
         assert!(main.is_empty());
     }
-    fn region(start: &str, end: &str, confidence: &str, evidence: Value) -> Value {
-        json!({
-            "overlay": "resource_test",
-            "start": start,
-            "end": end,
-            "kind": "thumb_multi_register_module",
-            "retention": "keep_structured_asm",
-            "confidence": confidence,
-            "evidence": evidence
-        })
-    }
     fn executable() -> BTreeMap<String, Vec<Span>> {
         BTreeMap::from([(
             "resource_test".into(),
@@ -3500,7 +3484,7 @@ mod tests {
         );
         let units = |gap: (&str, &str)| {
             json!({"units": [{
-                "id": "staged-actor", "game": "tbs", "source": source, "overlay": "resource_3bf",
+                "id": "staged-actor", "source": source, "overlay": "resource_3bf",
                 "owners": [
                     {"address": "0x0200034c", "extent": 1394, "state": "exact-c"},
                     {"address": "0x020008c0", "extent": 284, "state": "exact-c"}
@@ -3591,7 +3575,7 @@ mod tests {
             |entry, extent, state| json!({"address": entry, "extent": extent, "state": state});
         let unit = |name, owners| {
             json!({
-                "game": "tbs", "overlay": "resource_test",
+                "overlay": "resource_test",
                 "source": format!("{directory}/{name}.c"), "owners": owners
             })
         };
@@ -3744,10 +3728,30 @@ mod tests {
     }
 
     #[test]
-    fn stream_ids_resolve_locations_resource_keys() {
-        let locations = "resource_36f\tTitle\ttitle\t0\t0x99b\tevidence\tSRC/MENU/TITLE\n";
+    fn stream_ids_resolve_overlay_homes() {
+        let root = tempfile::tempdir().unwrap();
+        let write = |path: &str, text: String| {
+            let path = root.path().join(path);
+            std::fs::create_dir_all(path.parent().unwrap()).unwrap();
+            std::fs::write(path, text).unwrap();
+        };
+        write(
+            "games/THE BROKEN SEAL/SRC/FIELD/COMMON/SCENE_TABLE.JSON",
+            json!({"segments":[{"records":[{"resource_id":879,"map_index":0}]}]}).to_string(),
+        );
+        write(
+            "recon/tbs/overlay-homes.tsv",
+            "resource_36f\tSRC/MENU/TITLE\n".into(),
+        );
+        let tree = SourceTree::Work {
+            id: "fixture".into(),
+            root: root.path().into(),
+        };
+        let target = crate::targets::target_for(crate::targets::DecompTargetId::TbsEn);
         assert_eq!(
-            atlas_source("games/THE BROKEN SEAL", locations, "36f").as_deref(),
+            atlas_sources(&tree, &target)
+                .get(&0x36f)
+                .map(String::as_str),
             Some("games/THE BROKEN SEAL/SRC/MENU/TITLE/")
         );
     }

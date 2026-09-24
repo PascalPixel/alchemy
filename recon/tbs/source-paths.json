@@ -21039,6 +21039,22 @@
     "resource_396:0200162c": {
       "name": "ToretoHeya_Func0200162c",
       "source": "FIELD/TORETO_HEYA/F_0162C.C"
+    },
+    "main:080f9080": {
+      "name": "AudioCommand_Play",
+      "source": "SOUND/COMMAND_PLAY.C"
+    },
+    "main:080a1e38": {
+      "name": "InventoryMenu_SortByListOrder",
+      "source": "MENU/ITEM/SORT_BY_LIST_ORDER.C"
+    },
+    "main:080b5368": {
+      "name": "DebugParty_LoadPreset",
+      "source": "DEBUG/LOAD_PARTY_PRESET.C"
+    },
+    "main:080a9c18": {
+      "name": "ItemMenu_ArrangeCategoryItemIcons",
+      "source": "MENU/ITEM/ARRANGE_CATEGORY_ITEM_ICONS.C"
     }
   },
   "symbols": {
@@ -21260,7 +21276,6 @@
     "main:080164d4": "UiWindow_ClearInteriorTiles",
     "main:080a8604": "CharacterMenu_DrawStatusAilments",
     "main:080a9aec": "ItemMenu_DrawEquippedItemNames",
-    "main:080a9c18": "ItemMenu_ArrangeCategoryItemIcons",
     "main:080a3ef0": "ItemMenu_DrawEquipPreview",
     "main:080a1ac0": "UiMenu_SlideCursor",
     "main:080a35f8": "ItemMenu_RunOwnerSelection",

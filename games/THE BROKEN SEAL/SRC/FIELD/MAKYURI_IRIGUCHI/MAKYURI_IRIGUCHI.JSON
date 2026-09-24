@@ -12,7 +12,6 @@
         "segments": [
           {
             "name": "parameters",
-            "address": "0x08611cb4",
             "end": "0x08611cc0",
             "stride": 12,
             "element": "u8",
@@ -20,7 +19,6 @@
           },
           {
             "name": "records",
-            "address": "0x08611cc0",
             "end": "0x08611cd8",
             "stride": 8,
             "element": "le-u16",
@@ -28,7 +26,6 @@
           },
           {
             "name": "component_offsets",
-            "address": "0x08611cd8",
             "end": "0x08611cf0",
             "stride": 4,
             "element": "le-u32",
@@ -145,20 +142,12 @@
         "segments": [
           {
             "name": "records",
-            "address": "0x086136b8",
             "end": "0x086136be",
             "stride": 3,
             "element": "u8",
             "values": [[57, 19, 100], [47, 54, 101]]
           },
-          {
-            "name": "terminator",
-            "address": "0x086136be",
-            "end": "0x086136c1",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255
-          }
+          {"name": "terminator", "end": "0x086136c1", "stride": 1, "element": "u8", "fill": 255}
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_IRIGUCHI/MAKYURI_IRIGUCHI.BIN",

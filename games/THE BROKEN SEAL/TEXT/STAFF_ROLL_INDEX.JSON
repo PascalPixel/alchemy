@@ -8,7 +8,6 @@
   "segments": [
     {
       "id": "preload_resource_table",
-      "address": "0x080f0a5c",
       "end": "0x080f0ae0",
       "element": "le-u32",
       "stride": 4,
@@ -22,7 +21,6 @@
     },
     {
       "id": "text_pool",
-      "address": "0x080f0ae0",
       "end": "0x080f11bd",
       "element": "ascii-pool",
       "name": "strings",
@@ -52,7 +50,6 @@
     },
     {
       "id": "glyph_widths",
-      "address": "0x080f11bd",
       "end": "0x080f121d",
       "first_code": 32,
       "element": "u8",
@@ -65,17 +62,9 @@
         4, 6, 4, 8, 7, 7, 7, 7, 7, 7, 5, 7, 6, 8, 6, 6, 6, 5, 4, 5, 7, 1
       ]
     },
-    {
-      "id": "glyph_width_alignment",
-      "address": "0x080f121d",
-      "end": "0x080f1220",
-      "element": "u8",
-      "stride": 1,
-      "fill": 0
-    },
+    {"id": "glyph_width_alignment", "end": "0x080f1220", "element": "u8", "stride": 1, "fill": 0},
     {
       "id": "lines",
-      "address": "0x080f1220",
       "end": "0x080f1770",
       "element": "pool-pointer",
       "pool": "strings",

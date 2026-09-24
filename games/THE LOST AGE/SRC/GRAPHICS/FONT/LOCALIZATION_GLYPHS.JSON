@@ -6,7 +6,6 @@
   "first_code": 32,
   "segments": [
     {
-      "address": "0x0805a4e0",
       "end": "0x0805c0e0",
       "stride": 32,
       "element": "record",

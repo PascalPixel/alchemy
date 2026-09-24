@@ -7,7 +7,6 @@
   "segments": [
     {
       "name": "hyou_b_000",
-      "address": "0x081981fc",
       "end": "0x08198202",
       "consumers": ["recon/tla/raw/0814ce30.s"],
       "element": "u8",
@@ -16,7 +15,6 @@
     },
     {
       "name": "hyou_b_001",
-      "address": "0x08198202",
       "end": "0x0819820c",
       "consumers": ["recon/tla/raw/0814ce30.s"],
       "element": "le-u16",
@@ -25,7 +23,6 @@
     },
     {
       "name": "hyou_b_002",
-      "address": "0x0819820c",
       "end": "0x08198211",
       "consumers": ["recon/tla/raw/0814ce30.s"],
       "element": "u8",
@@ -34,7 +31,6 @@
     },
     {
       "name": "hyou_b_003",
-      "address": "0x08198211",
       "end": "0x08198216",
       "consumers": ["recon/tla/raw/0814ce30.s"],
       "element": "u8",
@@ -43,7 +39,6 @@
     },
     {
       "name": "hyou_b_004",
-      "address": "0x08198216",
       "end": "0x0819821c",
       "consumers": ["recon/tla/raw/0814ce30.s"],
       "element": "le-u16",
@@ -52,7 +47,6 @@
     },
     {
       "name": "hyou_b_005",
-      "address": "0x0819821c",
       "end": "0x08198220",
       "consumers": ["recon/tla/raw/0814ce30.s"],
       "element": "u8",
@@ -61,7 +55,6 @@
     },
     {
       "name": "hyou_b_006",
-      "address": "0x08198220",
       "end": "0x0819822a",
       "consumers": ["recon/tla/raw/0814ce30.s"],
       "element": "le-u16",
@@ -70,7 +63,6 @@
     },
     {
       "name": "hyou_b_007",
-      "address": "0x0819822a",
       "end": "0x0819822f",
       "consumers": ["recon/tla/raw/0814ce30.s"],
       "element": "u8",
@@ -79,7 +71,6 @@
     },
     {
       "name": "hyou_b_008",
-      "address": "0x0819822f",
       "end": "0x08198234",
       "consumers": ["recon/tla/raw/0814ce30.s"],
       "element": "u8",
@@ -88,7 +79,6 @@
     },
     {
       "name": "hyou_b_009",
-      "address": "0x08198234",
       "end": "0x0819823e",
       "consumers": ["recon/tla/raw/0814ce30.s"],
       "element": "le-u16",
@@ -97,7 +87,6 @@
     },
     {
       "name": "hyou_b_010",
-      "address": "0x0819823e",
       "end": "0x08198244",
       "consumers": ["recon/tla/raw/0814ce30.s"],
       "element": "u8",
@@ -106,7 +95,6 @@
     },
     {
       "name": "hyou_b_011",
-      "address": "0x08198244",
       "end": "0x08198252",
       "consumers": ["recon/tla/raw/0814ce30.s"],
       "element": "le-u16",
@@ -115,7 +103,6 @@
     },
     {
       "name": "hyou_b_012",
-      "address": "0x08198252",
       "end": "0x08198260",
       "consumers": ["recon/tla/raw/0814ce30.s"],
       "element": "le-u16",
@@ -124,7 +111,6 @@
     },
     {
       "name": "hyou_b_013",
-      "address": "0x08198260",
       "end": "0x08198280",
       "consumers": ["recon/tla/raw/0814ce30.s"],
       "element": "u8",
@@ -136,7 +122,6 @@
     },
     {
       "name": "hyou_b_014",
-      "address": "0x08198280",
       "end": "0x08198284",
       "consumers": ["recon/tla/raw/0814ce30.s"],
       "element": "u8",
@@ -145,7 +130,6 @@
     },
     {
       "name": "hyou_b_015",
-      "address": "0x08198284",
       "end": "0x0819828a",
       "consumers": ["recon/tla/raw/0814ce30.s"],
       "element": "le-u16",
@@ -154,7 +138,6 @@
     },
     {
       "name": "hyou_b_016",
-      "address": "0x0819828a",
       "end": "0x0819828d",
       "consumers": ["recon/tla/raw/0814ce30.s"],
       "element": "u8",
@@ -163,7 +146,6 @@
     },
     {
       "name": "hyou_b_017",
-      "address": "0x0819828d",
       "end": "0x08198290",
       "consumers": ["recon/tla/raw/0814ce30.s"],
       "element": "u8",
@@ -172,7 +154,6 @@
     },
     {
       "name": "hyou_b_018",
-      "address": "0x08198290",
       "end": "0x08198294",
       "consumers": ["recon/tla/raw/0814ce30.s"],
       "element": "u8",
@@ -181,7 +162,6 @@
     },
     {
       "name": "hyou_b_019",
-      "address": "0x08198294",
       "end": "0x0819829f",
       "consumers": ["recon/tla/raw/0814ce30.s"],
       "element": "u8",
@@ -190,7 +170,6 @@
     },
     {
       "name": "hyou_b_020",
-      "address": "0x0819829f",
       "end": "0x081982aa",
       "consumers": ["recon/tla/raw/0814ce30.s"],
       "element": "u8",
@@ -199,7 +178,6 @@
     },
     {
       "name": "hyou_b_021",
-      "address": "0x081982aa",
       "end": "0x081982c0",
       "consumers": ["recon/tla/raw/0814ce30.s"],
       "element": "le-u16",
@@ -208,7 +186,6 @@
     },
     {
       "name": "hyou_b_022",
-      "address": "0x081982c0",
       "end": "0x081982c3",
       "consumers": ["recon/tla/raw/0814ce30.s"],
       "element": "u8",
@@ -217,7 +194,6 @@
     },
     {
       "name": "hyou_b_023",
-      "address": "0x081982c3",
       "end": "0x081982c6",
       "consumers": ["recon/tla/raw/0814ce30.s"],
       "element": "u8",
@@ -226,7 +202,6 @@
     },
     {
       "name": "hyou_b_024",
-      "address": "0x081982c6",
       "end": "0x081982cc",
       "consumers": ["recon/tla/raw/0814ce30.s"],
       "element": "le-u16",
@@ -235,7 +210,6 @@
     },
     {
       "name": "hyou_b_025",
-      "address": "0x081982cc",
       "end": "0x081982d2",
       "consumers": ["recon/tla/raw/0814ce30.s"],
       "element": "le-u16",
@@ -244,7 +218,6 @@
     },
     {
       "name": "hyou_b_026",
-      "address": "0x081982d2",
       "end": "0x081982d5",
       "consumers": ["recon/tla/raw/0814ce30.s"],
       "element": "u8",
@@ -253,7 +226,6 @@
     },
     {
       "name": "hyou_b_027",
-      "address": "0x081982d5",
       "end": "0x081982d8",
       "consumers": ["recon/tla/raw/0814ce30.s"],
       "element": "u8",
@@ -262,7 +234,6 @@
     },
     {
       "name": "hyou_b_028",
-      "address": "0x081982d8",
       "end": "0x081982db",
       "consumers": ["recon/tla/raw/0814ce30.s"],
       "element": "u8",
@@ -271,7 +242,6 @@
     },
     {
       "name": "hyou_b_029",
-      "address": "0x081982db",
       "end": "0x081982de",
       "consumers": ["recon/tla/raw/0814ce30.s"],
       "element": "u8",
@@ -280,7 +250,6 @@
     },
     {
       "name": "hyou_b_030",
-      "address": "0x081982de",
       "end": "0x081982e4",
       "consumers": ["recon/tla/raw/0814ce30.s"],
       "element": "le-u16",
@@ -289,7 +258,6 @@
     },
     {
       "name": "hyou_b_031",
-      "address": "0x081982e4",
       "end": "0x081982f4",
       "consumers": ["recon/tla/raw/0814ce30.s"],
       "element": "le-s32",
@@ -298,7 +266,6 @@
     },
     {
       "name": "hyou_b_032",
-      "address": "0x081982f4",
       "end": "0x081982f7",
       "consumers": ["recon/tla/raw/0814ea58.s"],
       "element": "u8",
@@ -307,7 +274,6 @@
     },
     {
       "name": "hyou_b_033",
-      "address": "0x081982f7",
       "end": "0x08198300",
       "consumers": ["recon/tla/raw/08150c74.s"],
       "element": "u8",
@@ -316,7 +282,6 @@
     },
     {
       "name": "hyou_b_034",
-      "address": "0x08198300",
       "end": "0x08198303",
       "consumers": ["recon/tla/raw/08150c74.s"],
       "element": "u8",
@@ -325,7 +290,6 @@
     },
     {
       "name": "hyou_b_035",
-      "address": "0x08198303",
       "end": "0x08198309",
       "consumers": ["recon/tla/raw/08150c74.s"],
       "element": "u8",
@@ -334,7 +298,6 @@
     },
     {
       "name": "hyou_b_036",
-      "address": "0x08198309",
       "end": "0x0819830f",
       "consumers": ["recon/tla/raw/08150c74.s"],
       "element": "u8",
@@ -343,7 +306,6 @@
     },
     {
       "name": "hyou_b_037",
-      "address": "0x0819830f",
       "end": "0x08198316",
       "consumers": ["recon/tla/raw/08150c74.s"],
       "element": "u8",
@@ -352,7 +314,6 @@
     },
     {
       "name": "hyou_b_038",
-      "address": "0x08198316",
       "end": "0x08198322",
       "consumers": ["recon/tla/raw/08150c74.s"],
       "element": "le-u16",
@@ -361,7 +322,6 @@
     },
     {
       "name": "hyou_b_039",
-      "address": "0x08198322",
       "end": "0x08198348",
       "consumers": ["recon/tla/raw/08150c74.s"],
       "element": "u8",
@@ -373,7 +333,6 @@
     },
     {
       "name": "hyou_b_040",
-      "address": "0x08198348",
       "end": "0x08198351",
       "consumers": ["recon/tla/raw/08150c74.s"],
       "element": "u8",
@@ -382,7 +341,6 @@
     },
     {
       "name": "hyou_b_041",
-      "address": "0x08198351",
       "end": "0x08198359",
       "consumers": ["recon/tla/raw/08150c74.s"],
       "element": "u8",
@@ -391,7 +349,6 @@
     },
     {
       "name": "hyou_b_042",
-      "address": "0x08198359",
       "end": "0x08198362",
       "consumers": ["recon/tla/raw/08150c74.s"],
       "element": "u8",
@@ -400,7 +357,6 @@
     },
     {
       "name": "hyou_b_043",
-      "address": "0x08198362",
       "end": "0x08198372",
       "consumers": ["recon/tla/raw/08150c74.s"],
       "element": "le-u16",
@@ -409,7 +365,6 @@
     },
     {
       "name": "hyou_b_044",
-      "address": "0x08198372",
       "end": "0x08198378",
       "consumers": ["recon/tla/raw/08150c74.s"],
       "element": "le-u16",
@@ -418,7 +373,6 @@
     },
     {
       "name": "hyou_b_045",
-      "address": "0x08198378",
       "end": "0x0819837b",
       "consumers": ["recon/tla/raw/08150c74.s"],
       "element": "u8",
@@ -427,7 +381,6 @@
     },
     {
       "name": "hyou_b_046",
-      "address": "0x0819837b",
       "end": "0x08198383",
       "consumers": ["recon/tla/raw/08150c74.s"],
       "element": "u8",
@@ -436,7 +389,6 @@
     },
     {
       "name": "hyou_b_047",
-      "address": "0x08198383",
       "end": "0x0819838c",
       "consumers": ["recon/tla/raw/08150c74.s"],
       "element": "u8",
@@ -445,7 +397,6 @@
     },
     {
       "name": "hyou_b_048",
-      "address": "0x0819838c",
       "end": "0x0819839c",
       "consumers": ["recon/tla/raw/08150c74.s"],
       "element": "le-u16",
@@ -454,7 +405,6 @@
     },
     {
       "name": "hyou_b_049",
-      "address": "0x0819839c",
       "end": "0x081983a2",
       "consumers": ["recon/tla/raw/08150c74.s"],
       "element": "u8",
@@ -463,7 +413,6 @@
     },
     {
       "name": "hyou_b_050",
-      "address": "0x081983a2",
       "end": "0x081983ac",
       "consumers": ["recon/tla/raw/08151ff0.s"],
       "element": "u8",
@@ -472,7 +421,6 @@
     },
     {
       "name": "hyou_b_051",
-      "address": "0x081983ac",
       "end": "0x081983ba",
       "consumers": ["recon/tla/raw/08151ff0.s"],
       "element": "le-u16",
@@ -481,7 +429,6 @@
     },
     {
       "name": "hyou_b_052",
-      "address": "0x081983ba",
       "end": "0x081983c8",
       "consumers": ["recon/tla/raw/08151ff0.s"],
       "element": "le-u16",
@@ -490,7 +437,6 @@
     },
     {
       "name": "hyou_b_053",
-      "address": "0x081983c8",
       "end": "0x081983cc",
       "consumers": ["recon/tla/raw/0815265c.s"],
       "element": "u8",
@@ -499,7 +445,6 @@
     },
     {
       "name": "hyou_b_054",
-      "address": "0x081983cc",
       "end": "0x081983d4",
       "consumers": ["recon/tla/raw/08153ebc.s"],
       "element": "u8",
@@ -508,7 +453,6 @@
     },
     {
       "name": "hyou_b_055",
-      "address": "0x081983d4",
       "end": "0x081983d7",
       "consumers": ["recon/tla/raw/081548d0.s"],
       "element": "u8",
@@ -517,7 +461,6 @@
     },
     {
       "name": "hyou_b_056",
-      "address": "0x081983d7",
       "end": "0x081983da",
       "consumers": ["recon/tla/raw/081548d0.s"],
       "element": "u8",
@@ -526,7 +469,6 @@
     },
     {
       "name": "hyou_b_057",
-      "address": "0x081983da",
       "end": "0x081983e0",
       "consumers": ["recon/tla/raw/081548d0.s"],
       "element": "le-u16",
@@ -535,7 +477,6 @@
     },
     {
       "name": "hyou_b_058",
-      "address": "0x081983e0",
       "end": "0x081983e4",
       "consumers": ["recon/tla/raw/081548d0.s"],
       "element": "u8",
@@ -544,7 +485,6 @@
     },
     {
       "name": "hyou_b_059",
-      "address": "0x081983e4",
       "end": "0x081983ea",
       "consumers": ["recon/tla/raw/081548d0.s"],
       "element": "le-u16",
@@ -553,7 +493,6 @@
     },
     {
       "name": "hyou_b_060",
-      "address": "0x081983ea",
       "end": "0x081983ed",
       "consumers": ["recon/tla/raw/081548d0.s"],
       "element": "u8",
@@ -562,7 +501,6 @@
     },
     {
       "name": "hyou_b_061",
-      "address": "0x081983ed",
       "end": "0x081983fd",
       "consumers": ["recon/tla/raw/081548d0.s"],
       "element": "u8",
@@ -571,7 +509,6 @@
     },
     {
       "name": "hyou_b_062",
-      "address": "0x081983fd",
       "end": "0x08198405",
       "consumers": ["recon/tla/raw/081548d0.s"],
       "element": "s8",
@@ -580,7 +517,6 @@
     },
     {
       "name": "hyou_b_063",
-      "address": "0x08198405",
       "end": "0x0819840c",
       "consumers": ["recon/tla/raw/081548d0.s"],
       "element": "s8",
@@ -589,7 +525,6 @@
     },
     {
       "name": "hyou_b_064",
-      "address": "0x0819840c",
       "end": "0x08198414",
       "consumers": ["recon/tla/raw/081548d0.s"],
       "element": "u8",
@@ -598,7 +533,6 @@
     },
     {
       "name": "hyou_b_065",
-      "address": "0x08198414",
       "end": "0x08198422",
       "consumers": ["recon/tla/raw/081548d0.s"],
       "element": "le-u16",
@@ -607,7 +541,6 @@
     },
     {
       "name": "hyou_b_066",
-      "address": "0x08198422",
       "end": "0x08198432",
       "consumers": ["recon/tla/raw/081548d0.s"],
       "element": "u8",
@@ -616,7 +549,6 @@
     },
     {
       "name": "hyou_b_067",
-      "address": "0x08198432",
       "end": "0x0819843a",
       "consumers": ["recon/tla/raw/081548d0.s"],
       "element": "u8",
@@ -625,7 +557,6 @@
     },
     {
       "name": "hyou_b_068",
-      "address": "0x0819843a",
       "end": "0x08198442",
       "consumers": ["recon/tla/raw/081548d0.s"],
       "element": "s8",
@@ -634,7 +565,6 @@
     },
     {
       "name": "hyou_b_069",
-      "address": "0x08198442",
       "end": "0x08198445",
       "consumers": ["recon/tla/raw/081548d0.s"],
       "element": "u8",
@@ -643,7 +573,6 @@
     },
     {
       "name": "hyou_b_070",
-      "address": "0x08198445",
       "end": "0x0819844c",
       "consumers": ["recon/tla/raw/081548d0.s"],
       "element": "s8",
@@ -652,7 +581,6 @@
     },
     {
       "name": "hyou_b_071",
-      "address": "0x0819844c",
       "end": "0x08198454",
       "consumers": ["recon/tla/raw/081548d0.s"],
       "element": "u8",
@@ -661,7 +589,6 @@
     },
     {
       "name": "hyou_b_072",
-      "address": "0x08198454",
       "end": "0x08198462",
       "consumers": ["recon/tla/raw/081548d0.s"],
       "element": "le-u16",
@@ -670,7 +597,6 @@
     },
     {
       "name": "hyou_b_073",
-      "address": "0x08198462",
       "end": "0x0819846e",
       "consumers": ["recon/tla/raw/081548d0.s"],
       "element": "u8",
@@ -679,7 +605,6 @@
     },
     {
       "name": "hyou_b_074",
-      "address": "0x0819846e",
       "end": "0x08198472",
       "consumers": ["recon/tla/raw/081548d0.s"],
       "element": "u8",
@@ -688,7 +613,6 @@
     },
     {
       "name": "hyou_b_075",
-      "address": "0x08198472",
       "end": "0x08198475",
       "consumers": ["recon/tla/raw/081548d0.s"],
       "element": "u8",
@@ -697,7 +621,6 @@
     },
     {
       "name": "hyou_b_076",
-      "address": "0x08198475",
       "end": "0x08198478",
       "consumers": ["recon/tla/raw/08156140.s"],
       "element": "u8",
@@ -706,7 +629,6 @@
     },
     {
       "name": "hyou_b_077",
-      "address": "0x08198478",
       "end": "0x081984d7",
       "consumers": ["recon/tla/raw/08156140.s"],
       "element": "u8",
@@ -719,7 +641,6 @@
     },
     {
       "name": "hyou_b_078",
-      "address": "0x081984d7",
       "end": "0x081984de",
       "consumers": ["recon/tla/raw/08156140.s"],
       "element": "u8",
@@ -728,7 +649,6 @@
     },
     {
       "name": "hyou_b_079",
-      "address": "0x081984de",
       "end": "0x081984e5",
       "consumers": ["recon/tla/raw/08156140.s"],
       "element": "u8",
@@ -737,7 +657,6 @@
     },
     {
       "name": "hyou_b_080",
-      "address": "0x081984e5",
       "end": "0x081984ec",
       "consumers": ["recon/tla/raw/08156140.s"],
       "element": "u8",
@@ -746,7 +665,6 @@
     },
     {
       "name": "hyou_b_081",
-      "address": "0x081984ec",
       "end": "0x081984f4",
       "consumers": ["recon/tla/raw/08156140.s"],
       "element": "u8",
@@ -755,7 +673,6 @@
     },
     {
       "name": "hyou_b_082",
-      "address": "0x081984f4",
       "end": "0x08198502",
       "consumers": ["recon/tla/raw/08156140.s"],
       "element": "le-u16",
@@ -764,7 +681,6 @@
     },
     {
       "name": "hyou_b_083",
-      "address": "0x08198502",
       "end": "0x0819850a",
       "consumers": ["recon/tla/raw/08156140.s"],
       "element": "le-u16",
@@ -773,7 +689,6 @@
     },
     {
       "name": "hyou_b_084",
-      "address": "0x0819850a",
       "end": "0x0819850e",
       "consumers": ["recon/tla/raw/08156140.s"],
       "element": "u8",
@@ -782,7 +697,6 @@
     },
     {
       "name": "hyou_b_085",
-      "address": "0x0819850e",
       "end": "0x08198513",
       "consumers": ["recon/tla/raw/08157638.s"],
       "element": "u8",
@@ -791,7 +705,6 @@
     },
     {
       "name": "hyou_b_086",
-      "address": "0x08198513",
       "end": "0x08198517",
       "consumers": ["recon/tla/raw/08157638.s"],
       "element": "u8",
@@ -800,7 +713,6 @@
     },
     {
       "name": "hyou_b_087",
-      "address": "0x08198517",
       "end": "0x0819851c",
       "consumers": ["recon/tla/raw/08157638.s"],
       "element": "u8",
@@ -809,7 +721,6 @@
     },
     {
       "name": "hyou_b_088",
-      "address": "0x0819851c",
       "end": "0x08198524",
       "consumers": ["recon/tla/raw/08157638.s"],
       "element": "le-u16",
@@ -818,7 +729,6 @@
     },
     {
       "name": "hyou_b_089",
-      "address": "0x08198524",
       "end": "0x08198528",
       "consumers": ["recon/tla/raw/08157638.s"],
       "element": "u8",
@@ -827,7 +737,6 @@
     },
     {
       "name": "hyou_b_090",
-      "address": "0x08198528",
       "end": "0x08198531",
       "consumers": ["recon/tla/raw/08157638.s"],
       "element": "u8",
@@ -836,7 +745,6 @@
     },
     {
       "name": "hyou_b_091",
-      "address": "0x08198531",
       "end": "0x0819853a",
       "consumers": ["recon/tla/raw/08157638.s"],
       "element": "u8",
@@ -845,7 +753,6 @@
     },
     {
       "name": "hyou_b_092",
-      "address": "0x0819853a",
       "end": "0x0819854c",
       "consumers": ["recon/tla/raw/08157638.s"],
       "element": "le-u16",
@@ -854,7 +761,6 @@
     },
     {
       "name": "hyou_b_093",
-      "address": "0x0819854c",
       "end": "0x08198555",
       "consumers": ["recon/tla/raw/08157638.s"],
       "element": "u8",
@@ -863,7 +769,6 @@
     },
     {
       "name": "hyou_b_094",
-      "address": "0x08198555",
       "end": "0x0819855e",
       "consumers": ["recon/tla/raw/08157638.s"],
       "element": "u8",
@@ -872,7 +777,6 @@
     },
     {
       "name": "hyou_b_095",
-      "address": "0x0819855e",
       "end": "0x08198562",
       "consumers": ["recon/tla/raw/08157638.s"],
       "element": "u8",
@@ -881,7 +785,6 @@
     },
     {
       "name": "hyou_b_096",
-      "address": "0x08198562",
       "end": "0x08198566",
       "consumers": ["recon/tla/raw/08157638.s"],
       "element": "u8",
@@ -890,7 +793,6 @@
     },
     {
       "name": "hyou_b_097",
-      "address": "0x08198566",
       "end": "0x081985a6",
       "consumers": ["recon/tla/raw/08157638.s"],
       "element": "u8",
@@ -903,7 +805,6 @@
     },
     {
       "name": "hyou_b_098",
-      "address": "0x081985a6",
       "end": "0x081985ab",
       "consumers": ["recon/tla/raw/08157638.s"],
       "element": "s8",
@@ -912,7 +813,6 @@
     },
     {
       "name": "hyou_b_099",
-      "address": "0x081985ab",
       "end": "0x081985b0",
       "consumers": ["recon/tla/raw/08157638.s"],
       "element": "u8",
@@ -921,7 +821,6 @@
     },
     {
       "name": "hyou_b_100",
-      "address": "0x081985b0",
       "end": "0x081985b3",
       "consumers": ["recon/tla/raw/08157638.s"],
       "element": "u8",
@@ -930,7 +829,6 @@
     },
     {
       "name": "hyou_b_101",
-      "address": "0x081985b3",
       "end": "0x0819861b",
       "consumers": ["recon/tla/raw/0815a0ec.s"],
       "element": "u8",
@@ -944,7 +842,6 @@
     },
     {
       "name": "hyou_b_102",
-      "address": "0x0819861b",
       "end": "0x08198620",
       "consumers": ["recon/tla/raw/0815a0ec.s"],
       "element": "u8",
@@ -953,7 +850,6 @@
     },
     {
       "name": "hyou_b_103",
-      "address": "0x08198620",
       "end": "0x08198632",
       "consumers": ["recon/tla/raw/0815a0ec.s"],
       "element": "le-u16",
@@ -962,7 +858,6 @@
     },
     {
       "name": "hyou_b_104",
-      "address": "0x08198632",
       "end": "0x0819863c",
       "consumers": ["recon/tla/raw/0815a0ec.s"],
       "element": "u8",
@@ -971,7 +866,6 @@
     },
     {
       "name": "hyou_b_105",
-      "address": "0x0819863c",
       "end": "0x08198642",
       "consumers": ["recon/tla/raw/0815a0ec.s"],
       "element": "le-u16",
@@ -980,7 +874,6 @@
     },
     {
       "name": "hyou_b_106",
-      "address": "0x08198642",
       "end": "0x08198645",
       "consumers": ["recon/tla/raw/0815a0ec.s"],
       "element": "u8",
@@ -989,7 +882,6 @@
     },
     {
       "name": "hyou_b_107",
-      "address": "0x08198645",
       "end": "0x08198648",
       "consumers": ["recon/tla/raw/0815a0ec.s"],
       "element": "u8",
@@ -998,7 +890,6 @@
     },
     {
       "name": "hyou_b_108",
-      "address": "0x08198648",
       "end": "0x0819864e",
       "consumers": ["recon/tla/raw/0815a0ec.s"],
       "element": "s8",
@@ -1007,7 +898,6 @@
     },
     {
       "name": "hyou_b_109",
-      "address": "0x0819864e",
       "end": "0x08198654",
       "consumers": ["recon/tla/raw/0815a0ec.s"],
       "element": "u8",
@@ -1016,7 +906,6 @@
     },
     {
       "name": "hyou_b_110",
-      "address": "0x08198654",
       "end": "0x0819865b",
       "consumers": ["recon/tla/raw/0815b290.s"],
       "element": "u8",
@@ -1025,7 +914,6 @@
     },
     {
       "name": "hyou_b_111",
-      "address": "0x0819865b",
       "end": "0x08198662",
       "consumers": ["recon/tla/raw/0815b290.s"],
       "element": "u8",
@@ -1034,7 +922,6 @@
     },
     {
       "name": "hyou_b_112",
-      "address": "0x08198662",
       "end": "0x08198674",
       "consumers": ["recon/tla/raw/0815b290.s"],
       "element": "u8",
@@ -1043,7 +930,6 @@
     },
     {
       "name": "hyou_b_113",
-      "address": "0x08198674",
       "end": "0x08198686",
       "consumers": ["recon/tla/raw/0815b290.s"],
       "element": "u8",
@@ -1052,7 +938,6 @@
     },
     {
       "name": "hyou_b_114",
-      "address": "0x08198686",
       "end": "0x081986aa",
       "consumers": ["recon/tla/raw/0815b290.s"],
       "element": "le-u16",
@@ -1061,7 +946,6 @@
     },
     {
       "name": "hyou_b_115",
-      "address": "0x081986aa",
       "end": "0x081986c8",
       "consumers": ["recon/tla/raw/0815b290.s"],
       "element": "s8",
@@ -1073,7 +957,6 @@
     },
     {
       "name": "hyou_b_116",
-      "address": "0x081986c8",
       "end": "0x081986ce",
       "consumers": ["recon/tla/raw/0815c970.s"],
       "element": "u8",
@@ -1082,7 +965,6 @@
     },
     {
       "name": "hyou_b_117",
-      "address": "0x081986ce",
       "end": "0x081986d4",
       "consumers": ["recon/tla/raw/0815c970.s"],
       "element": "u8",
@@ -1091,7 +973,6 @@
     },
     {
       "name": "hyou_b_118",
-      "address": "0x081986d4",
       "end": "0x081986e0",
       "consumers": ["recon/tla/raw/0815c970.s"],
       "element": "le-u16",
@@ -1100,7 +981,6 @@
     },
     {
       "name": "hyou_b_119",
-      "address": "0x081986e0",
       "end": "0x081986ec",
       "consumers": ["recon/tla/raw/0815c970.s"],
       "element": "u8",
@@ -1109,7 +989,6 @@
     },
     {
       "name": "hyou_b_120",
-      "address": "0x081986ec",
       "end": "0x081986f2",
       "consumers": ["recon/tla/raw/0815c970.s"],
       "element": "s8",
@@ -1118,7 +997,6 @@
     },
     {
       "name": "hyou_b_121",
-      "address": "0x081986f2",
       "end": "0x08198828",
       "consumers": ["recon/tla/raw/0815c970.s"],
       "element": "u8",
@@ -1140,7 +1018,6 @@
     },
     {
       "name": "hyou_b_122",
-      "address": "0x08198828",
       "end": "0x08198830",
       "consumers": ["recon/tla/raw/0815c970.s"],
       "element": "u8",
@@ -1149,7 +1026,6 @@
     },
     {
       "name": "hyou_b_123",
-      "address": "0x08198830",
       "end": "0x0819883c",
       "consumers": ["recon/tla/raw/0815c970.s"],
       "element": "u8",
@@ -1158,7 +1034,6 @@
     },
     {
       "name": "hyou_b_124",
-      "address": "0x0819883c",
       "end": "0x08198848",
       "consumers": ["recon/tla/raw/0815c970.s"],
       "element": "u8",
@@ -1167,7 +1042,6 @@
     },
     {
       "name": "hyou_b_125",
-      "address": "0x08198848",
       "end": "0x08198850",
       "consumers": ["recon/tla/raw/0815c970.s"],
       "element": "u8",
@@ -1176,7 +1050,6 @@
     },
     {
       "name": "hyou_b_126",
-      "address": "0x08198850",
       "end": "0x08198858",
       "consumers": ["recon/tla/raw/0815c970.s"],
       "element": "s8",
@@ -1185,7 +1058,6 @@
     },
     {
       "name": "hyou_b_127",
-      "address": "0x08198858",
       "end": "0x08198860",
       "consumers": ["recon/tla/raw/0815c970.s"],
       "element": "s8",
@@ -1194,7 +1066,6 @@
     },
     {
       "name": "hyou_b_128",
-      "address": "0x08198860",
       "end": "0x08198866",
       "consumers": ["recon/tla/raw/0815e3ac.s"],
       "element": "u8",
@@ -1203,7 +1074,6 @@
     },
     {
       "name": "hyou_b_129",
-      "address": "0x08198866",
       "end": "0x0819886c",
       "consumers": ["recon/tla/raw/0815e3ac.s"],
       "element": "u8",
@@ -1212,7 +1082,6 @@
     },
     {
       "name": "hyou_b_130",
-      "address": "0x0819886c",
       "end": "0x08198878",
       "consumers": ["recon/tla/raw/0815e3ac.s"],
       "element": "le-u16",
@@ -1221,7 +1090,6 @@
     },
     {
       "name": "hyou_b_131",
-      "address": "0x08198878",
       "end": "0x0819887e",
       "consumers": ["recon/tla/raw/0815e3ac.s"],
       "element": "u8",
@@ -1230,7 +1098,6 @@
     },
     {
       "name": "hyou_b_132",
-      "address": "0x0819887e",
       "end": "0x08198882",
       "consumers": ["recon/tla/raw/0815f16c.s"],
       "element": "u8",
@@ -1239,7 +1106,6 @@
     },
     {
       "name": "hyou_b_133",
-      "address": "0x08198882",
       "end": "0x08198886",
       "consumers": ["recon/tla/raw/0815f16c.s"],
       "element": "u8",
@@ -1248,7 +1114,6 @@
     },
     {
       "name": "hyou_b_134",
-      "address": "0x08198886",
       "end": "0x0819888a",
       "consumers": ["recon/tla/raw/0815f16c.s"],
       "element": "u8",
@@ -1257,7 +1122,6 @@
     },
     {
       "name": "hyou_b_135",
-      "address": "0x0819888a",
       "end": "0x0819889e",
       "consumers": ["recon/tla/raw/0815f16c.s"],
       "element": "le-u16",
@@ -1266,7 +1130,6 @@
     },
     {
       "name": "hyou_b_136",
-      "address": "0x0819889e",
       "end": "0x081988b2",
       "consumers": ["recon/tla/raw/0815f16c.s"],
       "element": "le-u16",
@@ -1275,7 +1138,6 @@
     },
     {
       "name": "hyou_b_137",
-      "address": "0x081988b2",
       "end": "0x081988c6",
       "consumers": ["recon/tla/raw/0815f16c.s"],
       "element": "le-u16",
@@ -1284,7 +1146,6 @@
     },
     {
       "name": "hyou_b_138",
-      "address": "0x081988c6",
       "end": "0x081988da",
       "consumers": ["recon/tla/raw/0815f16c.s"],
       "element": "le-u16",
@@ -1293,7 +1154,6 @@
     },
     {
       "name": "hyou_b_139",
-      "address": "0x081988da",
       "end": "0x081988ee",
       "consumers": ["recon/tla/raw/0815f16c.s"],
       "element": "le-u16",
@@ -1302,7 +1162,6 @@
     },
     {
       "name": "hyou_b_140",
-      "address": "0x081988ee",
       "end": "0x081988fc",
       "consumers": ["recon/tla/raw/0815f16c.s"],
       "element": "le-u16",
@@ -1311,7 +1170,6 @@
     },
     {
       "name": "hyou_b_141",
-      "address": "0x081988fc",
       "end": "0x0819890a",
       "consumers": ["recon/tla/raw/0815f16c.s"],
       "element": "le-u16",
@@ -1320,7 +1178,6 @@
     },
     {
       "name": "hyou_b_142",
-      "address": "0x0819890a",
       "end": "0x08198918",
       "consumers": ["recon/tla/raw/0815f16c.s"],
       "element": "le-u16",
@@ -1329,7 +1186,6 @@
     },
     {
       "name": "hyou_b_143",
-      "address": "0x08198918",
       "end": "0x08198926",
       "consumers": ["recon/tla/raw/0815f16c.s"],
       "element": "le-u16",
@@ -1338,7 +1194,6 @@
     },
     {
       "name": "hyou_b_144",
-      "address": "0x08198926",
       "end": "0x08198934",
       "consumers": ["recon/tla/raw/0815f16c.s"],
       "element": "le-u16",
@@ -1347,7 +1202,6 @@
     },
     {
       "name": "hyou_b_145",
-      "address": "0x08198934",
       "end": "0x0819893a",
       "consumers": ["recon/tla/raw/0815f16c.s"],
       "element": "le-u16",
@@ -1356,7 +1210,6 @@
     },
     {
       "name": "hyou_b_146",
-      "address": "0x0819893a",
       "end": "0x0819893d",
       "consumers": ["recon/tla/raw/0815f16c.s"],
       "element": "u8",
@@ -1365,7 +1218,6 @@
     },
     {
       "name": "hyou_b_147",
-      "address": "0x0819893d",
       "end": "0x08198940",
       "consumers": ["recon/tla/raw/0815f16c.s"],
       "element": "u8",
@@ -1374,7 +1226,6 @@
     },
     {
       "name": "hyou_b_148",
-      "address": "0x08198940",
       "end": "0x08198946",
       "consumers": ["recon/tla/raw/0815f16c.s"],
       "element": "u8",
@@ -1383,7 +1234,6 @@
     },
     {
       "name": "hyou_b_149",
-      "address": "0x08198946",
       "end": "0x0819894e",
       "consumers": ["recon/tla/raw/0815f16c.s"],
       "element": "le-u16",
@@ -1392,7 +1242,6 @@
     },
     {
       "name": "hyou_b_150",
-      "address": "0x0819894e",
       "end": "0x08198952",
       "consumers": ["recon/tla/raw/0815f16c.s"],
       "element": "u8",
@@ -1401,7 +1250,6 @@
     },
     {
       "name": "hyou_b_151",
-      "address": "0x08198952",
       "end": "0x08198956",
       "consumers": ["recon/tla/raw/0815f16c.s"],
       "element": "u8",
@@ -1410,7 +1258,6 @@
     },
     {
       "name": "hyou_b_152",
-      "address": "0x08198956",
       "end": "0x0819895a",
       "consumers": ["recon/tla/raw/0815f16c.s"],
       "element": "u8",
@@ -1419,7 +1266,6 @@
     },
     {
       "name": "hyou_b_153",
-      "address": "0x0819895a",
       "end": "0x0819895e",
       "consumers": ["recon/tla/raw/0815f16c.s"],
       "element": "s8",
@@ -1428,7 +1274,6 @@
     },
     {
       "name": "hyou_b_154",
-      "address": "0x0819895e",
       "end": "0x08198962",
       "consumers": ["recon/tla/raw/0815f16c.s"],
       "element": "u8",
@@ -1437,7 +1282,6 @@
     },
     {
       "name": "hyou_b_155",
-      "address": "0x08198962",
       "end": "0x08198966",
       "consumers": ["recon/tla/raw/0815f16c.s"],
       "element": "u8",
@@ -1446,7 +1290,6 @@
     },
     {
       "name": "hyou_b_156",
-      "address": "0x08198966",
       "end": "0x0819896a",
       "consumers": ["recon/tla/raw/0815f16c.s"],
       "element": "u8",
@@ -1455,7 +1298,6 @@
     },
     {
       "name": "hyou_b_157",
-      "address": "0x0819896a",
       "end": "0x08198974",
       "consumers": ["recon/tla/raw/08163e14.s"],
       "element": "u8",
@@ -1464,7 +1306,6 @@
     },
     {
       "name": "hyou_b_158",
-      "address": "0x08198974",
       "end": "0x08198984",
       "consumers": ["recon/tla/raw/08163e14.s"],
       "element": "le-s32",
@@ -1473,7 +1314,6 @@
     },
     {
       "name": "hyou_b_159",
-      "address": "0x08198984",
       "end": "0x08198990",
       "consumers": ["recon/tla/raw/08163e14.s"],
       "element": "u8",
@@ -1482,7 +1322,6 @@
     },
     {
       "name": "hyou_b_160",
-      "address": "0x08198990",
       "end": "0x0819899c",
       "consumers": ["recon/tla/raw/08163e14.s"],
       "element": "u8",
@@ -1491,7 +1330,6 @@
     },
     {
       "name": "hyou_b_161",
-      "address": "0x0819899c",
       "end": "0x081989a4",
       "consumers": ["recon/tla/raw/08163e14.s"],
       "element": "u8",
@@ -1500,7 +1338,6 @@
     },
     {
       "name": "hyou_b_162",
-      "address": "0x081989a4",
       "end": "0x081989ac",
       "consumers": ["recon/tla/raw/08163e14.s"],
       "element": "u8",
@@ -1509,7 +1346,6 @@
     },
     {
       "name": "hyou_b_163",
-      "address": "0x081989ac",
       "end": "0x081989b4",
       "consumers": ["recon/tla/raw/08163e14.s"],
       "element": "u8",
@@ -1518,7 +1354,6 @@
     },
     {
       "name": "hyou_b_164",
-      "address": "0x081989b4",
       "end": "0x081989bc",
       "consumers": ["recon/tla/raw/08163e14.s"],
       "element": "u8",
@@ -1527,7 +1362,6 @@
     },
     {
       "name": "hyou_b_165",
-      "address": "0x081989bc",
       "end": "0x081989c4",
       "consumers": ["recon/tla/raw/08163e14.s"],
       "element": "u8",
@@ -1536,7 +1370,6 @@
     },
     {
       "name": "hyou_b_166",
-      "address": "0x081989c4",
       "end": "0x081989cc",
       "consumers": ["recon/tla/raw/08163e14.s"],
       "element": "u8",
@@ -1545,7 +1378,6 @@
     },
     {
       "name": "hyou_b_167",
-      "address": "0x081989cc",
       "end": "0x081989d7",
       "consumers": ["recon/tla/raw/08163e14.s"],
       "element": "s8",
@@ -1554,7 +1386,6 @@
     },
     {
       "name": "hyou_b_168",
-      "address": "0x081989d7",
       "end": "0x081989e2",
       "consumers": ["recon/tla/raw/08163e14.s"],
       "element": "u8",
@@ -1563,7 +1394,6 @@
     },
     {
       "name": "hyou_b_169",
-      "address": "0x081989e2",
       "end": "0x081989ea",
       "consumers": ["recon/tla/raw/08163e14.s"],
       "element": "u8",
@@ -1572,7 +1402,6 @@
     },
     {
       "name": "hyou_b_170",
-      "address": "0x081989ea",
       "end": "0x081989f2",
       "consumers": ["recon/tla/raw/08163e14.s"],
       "element": "u8",
@@ -1581,7 +1410,6 @@
     },
     {
       "name": "hyou_b_171",
-      "address": "0x081989f2",
       "end": "0x08198a02",
       "consumers": ["recon/tla/raw/08163e14.s"],
       "element": "le-u16",
@@ -1590,7 +1418,6 @@
     },
     {
       "name": "hyou_b_172",
-      "address": "0x08198a02",
       "end": "0x08198a2c",
       "consumers": ["recon/tla/raw/08164cc4.s"],
       "element": "le-s16",
@@ -1599,7 +1426,6 @@
     },
     {
       "name": "hyou_b_173",
-      "address": "0x08198a2c",
       "end": "0x08198a48",
       "consumers": ["recon/tla/raw/08164cc4.s"],
       "element": "le-s16",
@@ -1608,7 +1434,6 @@
     },
     {
       "name": "hyou_b_174",
-      "address": "0x08198a48",
       "end": "0x08198a56",
       "consumers": ["recon/tla/raw/08164cc4.s"],
       "element": "le-u16",
@@ -1617,7 +1442,6 @@
     },
     {
       "name": "hyou_b_175",
-      "address": "0x08198a56",
       "end": "0x08198a64",
       "consumers": ["recon/tla/raw/08164cc4.s"],
       "element": "le-u16",
@@ -1626,7 +1450,6 @@
     },
     {
       "name": "hyou_b_176",
-      "address": "0x08198a64",
       "end": "0x08198a6d",
       "consumers": ["recon/tla/raw/08164cc4.s"],
       "element": "u8",
@@ -1635,7 +1458,6 @@
     },
     {
       "name": "hyou_b_177",
-      "address": "0x08198a6d",
       "end": "0x08198a76",
       "consumers": ["recon/tla/raw/08164cc4.s"],
       "element": "u8",
@@ -1644,7 +1466,6 @@
     },
     {
       "name": "hyou_b_178",
-      "address": "0x08198a76",
       "end": "0x08198a84",
       "consumers": ["recon/tla/raw/08164cc4.s"],
       "element": "le-u16",
@@ -1653,7 +1474,6 @@
     },
     {
       "name": "hyou_b_179",
-      "address": "0x08198a84",
       "end": "0x08198a92",
       "consumers": ["recon/tla/raw/08164cc4.s"],
       "element": "le-u16",
@@ -1662,7 +1482,6 @@
     },
     {
       "name": "hyou_b_180",
-      "address": "0x08198a92",
       "end": "0x08198a98",
       "consumers": ["recon/tla/raw/08164cc4.s"],
       "element": "u8",
@@ -1671,7 +1490,6 @@
     },
     {
       "name": "hyou_b_181",
-      "address": "0x08198a98",
       "end": "0x08198a9e",
       "consumers": ["recon/tla/raw/08164cc4.s"],
       "element": "u8",
@@ -1680,7 +1498,6 @@
     },
     {
       "name": "hyou_b_182",
-      "address": "0x08198a9e",
       "end": "0x08198aa4",
       "consumers": ["recon/tla/raw/08166b10.s"],
       "element": "u8",
@@ -1689,7 +1506,6 @@
     },
     {
       "name": "hyou_b_183",
-      "address": "0x08198aa4",
       "end": "0x08198ab4",
       "consumers": ["recon/tla/raw/08166b10.s"],
       "element": "le-s32",
@@ -1698,7 +1514,6 @@
     },
     {
       "name": "hyou_b_184",
-      "address": "0x08198ab4",
       "end": "0x08198ac2",
       "consumers": ["recon/tla/raw/08166b10.s"],
       "element": "u8",
@@ -1707,7 +1522,6 @@
     },
     {
       "name": "hyou_b_185",
-      "address": "0x08198ac2",
       "end": "0x08198ace",
       "consumers": ["recon/tla/raw/08166b10.s"],
       "element": "le-u16",
@@ -1716,7 +1530,6 @@
     },
     {
       "name": "hyou_b_186",
-      "address": "0x08198ace",
       "end": "0x08198ad4",
       "consumers": ["recon/tla/raw/08166b10.s"],
       "element": "u8",
@@ -1725,7 +1538,6 @@
     },
     {
       "name": "hyou_b_187",
-      "address": "0x08198ad4",
       "end": "0x08198ada",
       "consumers": ["recon/tla/raw/08166b10.s"],
       "element": "u8",
@@ -1734,7 +1546,6 @@
     },
     {
       "name": "hyou_b_188",
-      "address": "0x08198ada",
       "end": "0x08198ae3",
       "consumers": ["recon/tla/raw/08166b10.s"],
       "element": "u8",
@@ -1743,7 +1554,6 @@
     },
     {
       "name": "hyou_b_189",
-      "address": "0x08198ae3",
       "end": "0x08198aec",
       "consumers": ["recon/tla/raw/08166b10.s"],
       "element": "u8",
@@ -1752,7 +1562,6 @@
     },
     {
       "name": "hyou_b_190",
-      "address": "0x08198aec",
       "end": "0x08198afc",
       "consumers": ["recon/tla/raw/081693d0.s"],
       "element": "le-s32",
@@ -1761,7 +1570,6 @@
     },
     {
       "name": "hyou_b_191",
-      "address": "0x08198afc",
       "end": "0x08198b0a",
       "consumers": ["recon/tla/raw/0816a2d8.s"],
       "element": "le-u16",
@@ -1770,7 +1578,6 @@
     },
     {
       "name": "hyou_b_192",
-      "address": "0x08198b0a",
       "end": "0x08198b24",
       "consumers": ["recon/tla/raw/0816a2d8.s"],
       "element": "le-u16",
@@ -1779,7 +1586,6 @@
     },
     {
       "name": "hyou_b_193",
-      "address": "0x08198b24",
       "end": "0x08198b26",
       "consumers": ["recon/tla/raw/0816b6ec.s"],
       "element": "u8",
@@ -1788,7 +1594,6 @@
     },
     {
       "name": "hyou_b_194",
-      "address": "0x08198b26",
       "end": "0x08198b2a",
       "consumers": ["recon/tla/raw/0816b6ec.s"],
       "element": "u8",
@@ -1797,7 +1602,6 @@
     },
     {
       "name": "hyou_b_195",
-      "address": "0x08198b2a",
       "end": "0x08198b2e",
       "consumers": ["recon/tla/raw/0816b6ec.s"],
       "element": "u8",
@@ -1806,7 +1610,6 @@
     },
     {
       "name": "hyou_b_196",
-      "address": "0x08198b2e",
       "end": "0x08198b32",
       "consumers": ["recon/tla/raw/0816b6ec.s"],
       "element": "s8",
@@ -1815,7 +1618,6 @@
     },
     {
       "name": "hyou_b_197",
-      "address": "0x08198b32",
       "end": "0x08198b42",
       "consumers": ["recon/tla/raw/0816b6ec.s"],
       "element": "le-s16",
@@ -1824,7 +1626,6 @@
     },
     {
       "name": "hyou_b_198",
-      "address": "0x08198b42",
       "end": "0x08198b52",
       "consumers": ["recon/tla/raw/0816b6ec.s"],
       "element": "le-s16",
@@ -1833,7 +1634,6 @@
     },
     {
       "name": "hyou_b_199",
-      "address": "0x08198b52",
       "end": "0x08198b56",
       "consumers": ["recon/tla/raw/0816b6ec.s"],
       "element": "u8",
@@ -1842,7 +1642,6 @@
     },
     {
       "name": "hyou_b_200",
-      "address": "0x08198b56",
       "end": "0x08198b5a",
       "consumers": ["recon/tla/raw/0816b6ec.s"],
       "element": "u8",
@@ -1851,7 +1650,6 @@
     },
     {
       "name": "hyou_b_201",
-      "address": "0x08198b5a",
       "end": "0x08198b5e",
       "consumers": ["recon/tla/raw/0816b6ec.s"],
       "element": "s8",
@@ -1860,7 +1658,6 @@
     },
     {
       "name": "hyou_b_202",
-      "address": "0x08198b5e",
       "end": "0x08198b6c",
       "consumers": ["recon/tla/raw/0816b6ec.s"],
       "element": "le-u16",
@@ -1869,7 +1666,6 @@
     },
     {
       "name": "hyou_b_203",
-      "address": "0x08198b6c",
       "end": "0x08198b7a",
       "consumers": ["recon/tla/raw/0816b6ec.s"],
       "element": "le-u16",
@@ -1878,7 +1674,6 @@
     },
     {
       "name": "hyou_b_204",
-      "address": "0x08198b7a",
       "end": "0x08198b82",
       "consumers": ["recon/tla/raw/0816b6ec.s"],
       "element": "s8",
@@ -1887,7 +1682,6 @@
     },
     {
       "name": "hyou_b_205",
-      "address": "0x08198b82",
       "end": "0x08198b8a",
       "consumers": ["recon/tla/raw/0816b6ec.s"],
       "element": "s8",
@@ -1896,7 +1690,6 @@
     },
     {
       "name": "hyou_b_206",
-      "address": "0x08198b8a",
       "end": "0x08198b8e",
       "consumers": ["recon/tla/raw/0816b6ec.s"],
       "element": "u8",
@@ -1905,7 +1698,6 @@
     },
     {
       "name": "hyou_b_207",
-      "address": "0x08198b8e",
       "end": "0x08198b92",
       "consumers": ["recon/tla/raw/0816b6ec.s"],
       "element": "u8",
@@ -1914,7 +1706,6 @@
     },
     {
       "name": "hyou_b_208",
-      "address": "0x08198b92",
       "end": "0x08198b96",
       "consumers": ["recon/tla/raw/0816b6ec.s"],
       "element": "s8",
@@ -1923,7 +1714,6 @@
     },
     {
       "name": "hyou_b_209",
-      "address": "0x08198b96",
       "end": "0x08198b98",
       "consumers": ["recon/tla/raw/0816e65c.s"],
       "element": "u8",
@@ -1932,7 +1722,6 @@
     },
     {
       "name": "hyou_b_210",
-      "address": "0x08198b98",
       "end": "0x08198b9a",
       "consumers": ["recon/tla/raw/0816e65c.s"],
       "element": "u8",
@@ -1941,7 +1730,6 @@
     },
     {
       "name": "hyou_b_211",
-      "address": "0x08198b9a",
       "end": "0x08198b9c",
       "consumers": ["recon/tla/raw/0816e65c.s"],
       "element": "u8",
@@ -1950,7 +1738,6 @@
     },
     {
       "name": "hyou_b_212",
-      "address": "0x08198b9c",
       "end": "0x08198bb0",
       "consumers": ["recon/tla/raw/0816e65c.s"],
       "element": "le-s16",
@@ -1959,7 +1746,6 @@
     },
     {
       "name": "hyou_b_213",
-      "address": "0x08198bb0",
       "end": "0x08198bba",
       "consumers": ["recon/tla/raw/0816e65c.s"],
       "element": "u8",
@@ -1968,7 +1754,6 @@
     },
     {
       "name": "hyou_b_214",
-      "address": "0x08198bba",
       "end": "0x08198bc4",
       "consumers": ["recon/tla/raw/0816e65c.s"],
       "element": "u8",
@@ -1977,7 +1762,6 @@
     },
     {
       "name": "hyou_b_215",
-      "address": "0x08198bc4",
       "end": "0x08198bce",
       "consumers": ["recon/tla/raw/0816e65c.s"],
       "element": "u8",
@@ -1986,7 +1770,6 @@
     },
     {
       "name": "hyou_b_216",
-      "address": "0x08198bce",
       "end": "0x08198bdc",
       "consumers": ["recon/tla/raw/0816e65c.s"],
       "element": "le-u16",
@@ -1995,7 +1778,6 @@
     },
     {
       "name": "hyou_b_217",
-      "address": "0x08198bdc",
       "end": "0x08198bea",
       "consumers": ["recon/tla/raw/0816e65c.s"],
       "element": "le-u16",
@@ -2004,7 +1786,6 @@
     },
     {
       "name": "hyou_b_218",
-      "address": "0x08198bea",
       "end": "0x08198bee",
       "consumers": ["recon/tla/raw/0816e65c.s"],
       "element": "s8",
@@ -2013,7 +1794,6 @@
     },
     {
       "name": "hyou_b_219",
-      "address": "0x08198bee",
       "end": "0x08198bf4",
       "consumers": ["recon/tla/raw/0816fca8.s"],
       "element": "u8",
@@ -2022,7 +1802,6 @@
     },
     {
       "name": "hyou_b_220",
-      "address": "0x08198bf4",
       "end": "0x08198bf8",
       "consumers": ["recon/tla/raw/0816fca8.s"],
       "element": "u8",
@@ -2031,7 +1810,6 @@
     },
     {
       "name": "hyou_b_221",
-      "address": "0x08198bf8",
       "end": "0x08198bfc",
       "consumers": ["recon/tla/raw/0816fca8.s"],
       "element": "u8",
@@ -2040,7 +1818,6 @@
     },
     {
       "name": "hyou_b_222",
-      "address": "0x08198bfc",
       "end": "0x08198c0c",
       "consumers": ["recon/tla/raw/08170dac.s"],
       "element": "le-s32",
@@ -2049,7 +1826,6 @@
     },
     {
       "name": "hyou_b_223",
-      "address": "0x08198c0c",
       "end": "0x08198c10",
       "consumers": ["recon/tla/raw/08170dac.s"],
       "element": "s8",
@@ -2058,7 +1834,6 @@
     },
     {
       "name": "hyou_b_224",
-      "address": "0x08198c10",
       "end": "0x08198c14",
       "consumers": ["recon/tla/raw/08170dac.s"],
       "element": "s8",
@@ -2067,7 +1842,6 @@
     },
     {
       "name": "hyou_b_225",
-      "address": "0x08198c14",
       "end": "0x08198c18",
       "consumers": ["recon/tla/raw/08172b00.s"],
       "element": "u8",
@@ -2076,7 +1850,6 @@
     },
     {
       "name": "hyou_b_226",
-      "address": "0x08198c18",
       "end": "0x08198c28",
       "consumers": ["recon/tla/raw/08172b00.s"],
       "element": "le-s32",
@@ -2085,7 +1858,6 @@
     },
     {
       "name": "hyou_b_227",
-      "address": "0x08198c28",
       "end": "0x08198c34",
       "consumers": ["recon/tla/raw/08173aac.s"],
       "element": "s8",
@@ -2094,7 +1866,6 @@
     },
     {
       "name": "hyou_b_228",
-      "address": "0x08198c34",
       "end": "0x08198c64",
       "consumers": ["recon/tla/raw/08173aac.s"],
       "element": "u8",
@@ -2106,7 +1877,6 @@
     },
     {
       "name": "hyou_b_229",
-      "address": "0x08198c64",
       "end": "0x08198c67",
       "consumers": ["recon/tla/raw/08173aac.s"],
       "element": "u8",
@@ -2115,7 +1885,6 @@
     },
     {
       "name": "hyou_b_230",
-      "address": "0x08198c67",
       "end": "0x08198c6c",
       "consumers": ["recon/tla/raw/08173aac.s"],
       "element": "u8",
@@ -2124,7 +1893,6 @@
     },
     {
       "name": "hyou_b_231",
-      "address": "0x08198c6c",
       "end": "0x08198cac",
       "consumers": ["recon/tla/raw/0815f16c.s", "recon/tla/raw/08181ed4.s"],
       "element": "u8",
@@ -2137,7 +1905,6 @@
     },
     {
       "name": "hyou_b_232",
-      "address": "0x08198cac",
       "end": "0x08198d2c",
       "consumers": [
         "recon/tla/raw/0814b9e8.s", "recon/tla/raw/0816b6ec.s", "recon/tla/raw/08173aac.s", "recon/tla/raw/0818bc98.s",
@@ -2155,7 +1922,6 @@
     },
     {
       "name": "hyou_b_233",
-      "address": "0x08198d2c",
       "end": "0x08198df8",
       "consumers": ["recon/tla/raw/0815f16c.s"],
       "element": "u8",
@@ -2172,7 +1938,6 @@
     },
     {
       "name": "hyou_b_234",
-      "address": "0x08198df8",
       "end": "0x08198ec4",
       "consumers": ["recon/tla/raw/08181ed4.s"],
       "element": "u8",
@@ -2189,7 +1954,6 @@
     },
     {
       "name": "hyou_b_235",
-      "address": "0x08198ec4",
       "end": "0x08199050",
       "consumers": [
         "recon/tla/raw/0814b9e8.s", "recon/tla/raw/0816b6ec.s", "recon/tla/raw/08173aac.s", "recon/tla/raw/0818bc98.s",
@@ -2215,7 +1979,6 @@
     },
     {
       "name": "hyou_b_236",
-      "address": "0x08199050",
       "end": "0x08199090",
       "consumers": ["recon/tla/raw/0816b6ec.s"],
       "element": "u8",
@@ -2228,7 +1991,6 @@
     },
     {
       "name": "hyou_b_237",
-      "address": "0x08199090",
       "end": "0x081990d0",
       "consumers": ["recon/tla/raw/08142944.s", "recon/tla/raw/0815f16c.s", "recon/tla/raw/0818d5a8.s"],
       "element": "u8",
@@ -2241,7 +2003,6 @@
     },
     {
       "name": "hyou_b_238",
-      "address": "0x081990d0",
       "end": "0x0819919c",
       "consumers": [
         "recon/tla/raw/08142944.s", "recon/tla/raw/0815f16c.s", "recon/tla/raw/0816b6ec.s", "recon/tla/raw/0818d5a8.s"
@@ -2260,7 +2021,6 @@
     },
     {
       "name": "hyou_b_239",
-      "address": "0x0819919c",
       "end": "0x081991a4",
       "consumers": ["recon/tla/raw/0816b6ec.s", "recon/tla/raw/0818f620.s"],
       "element": "u8",
@@ -2269,7 +2029,6 @@
     },
     {
       "name": "hyou_b_240",
-      "address": "0x081991a4",
       "end": "0x081991b0",
       "consumers": ["recon/tla/raw/0816b6ec.s", "recon/tla/raw/0818f620.s"],
       "element": "u8",
@@ -2278,7 +2037,6 @@
     },
     {
       "name": "hyou_b_241",
-      "address": "0x081991b0",
       "end": "0x081991c0",
       "consumers": [
         "recon/tla/raw/0813fa88.s", "recon/tla/raw/08142944.s", "recon/tla/raw/0815f16c.s", "recon/tla/raw/0816fca8.s",
@@ -2290,7 +2048,6 @@
     },
     {
       "name": "hyou_b_242",
-      "address": "0x081991c0",
       "end": "0x081991d0",
       "consumers": [
         "recon/tla/raw/0813fa88.s", "recon/tla/raw/0816e65c.s", "recon/tla/raw/0816fca8.s", "recon/tla/raw/0818a220.s",
@@ -2302,7 +2059,6 @@
     },
     {
       "name": "hyou_b_243",
-      "address": "0x081991d0",
       "end": "0x081991e0",
       "consumers": ["recon/tla/raw/08173aac.s", "recon/tla/raw/08182898.s"],
       "element": "u8",
@@ -2311,7 +2067,6 @@
     },
     {
       "name": "hyou_b_244",
-      "address": "0x081991e0",
       "end": "0x081991f0",
       "consumers": [
         "recon/tla/raw/0813fa88.s", "recon/tla/raw/0815c970.s", "recon/tla/raw/0816e65c.s", "recon/tla/raw/08170dac.s",
@@ -2325,7 +2080,6 @@
     },
     {
       "name": "hyou_b_245",
-      "address": "0x081991f0",
       "end": "0x08199200",
       "consumers": ["recon/tla/raw/0817e698.s", "recon/tla/raw/08182898.s", "recon/tla/raw/0818f620.s"],
       "element": "u8",
@@ -2334,7 +2088,6 @@
     },
     {
       "name": "hyou_b_246",
-      "address": "0x08199200",
       "end": "0x08199210",
       "consumers": ["recon/tla/raw/08182898.s"],
       "element": "u8",
@@ -2343,7 +2096,6 @@
     },
     {
       "name": "hyou_b_247",
-      "address": "0x08199210",
       "end": "0x08199220",
       "consumers": [
         "recon/tla/raw/0813d098.s", "recon/tla/raw/0813fa88.s", "recon/tla/raw/0814b9e8.s", "recon/tla/raw/0815b290.s",
@@ -2358,7 +2110,6 @@
     },
     {
       "name": "hyou_b_248",
-      "address": "0x08199220",
       "end": "0x08199244",
       "consumers": [
         "recon/tla/raw/0813fa88.s", "recon/tla/raw/08142944.s", "recon/tla/raw/0817e698.s", "recon/tla/raw/0818bc98.s",
@@ -2372,7 +2123,6 @@
     },
     {
       "name": "hyou_b_249",
-      "address": "0x08199244",
       "end": "0x08199268",
       "consumers": [
         "recon/tla/raw/0816e65c.s", "recon/tla/raw/08170dac.s", "recon/tla/raw/08173aac.s", "recon/tla/raw/0817e698.s",
@@ -2386,7 +2136,6 @@
     },
     {
       "name": "hyou_b_250",
-      "address": "0x08199268",
       "end": "0x0819928c",
       "consumers": [
         "recon/tla/raw/0815f16c.s", "recon/tla/raw/0816fca8.s", "recon/tla/raw/08173aac.s", "recon/tla/raw/08182898.s",
@@ -2401,7 +2150,6 @@
     },
     {
       "name": "hyou_b_251",
-      "address": "0x0819928c",
       "end": "0x081992b0",
       "consumers": ["recon/tla/raw/0816e65c.s"],
       "element": "u8",
@@ -2413,7 +2161,6 @@
     },
     {
       "name": "hyou_b_252",
-      "address": "0x081992b0",
       "end": "0x081992f8",
       "consumers": [
         "recon/tla/raw/0817e0c0.s", "recon/tla/raw/08182898.s", "recon/tla/raw/0818a220.s", "recon/tla/raw/0818ad40.s",
@@ -2429,7 +2176,6 @@
     },
     {
       "name": "hyou_b_253",
-      "address": "0x081992f8",
       "end": "0x0819931c",
       "consumers": ["recon/tla/raw/08182898.s"],
       "element": "u8",
@@ -2440,7 +2186,6 @@
     },
     {
       "name": "hyou_b_254",
-      "address": "0x0819931c",
       "end": "0x08199340",
       "consumers": ["recon/tla/raw/08182898.s"],
       "element": "u8",
@@ -2451,7 +2196,6 @@
     },
     {
       "name": "hyou_b_255",
-      "address": "0x08199340",
       "end": "0x08199364",
       "consumers": [
         "recon/tla/raw/0813d098.s", "recon/tla/raw/0813fa88.s", "recon/tla/raw/0814b9e8.s", "recon/tla/raw/0815b290.s",
@@ -2467,7 +2211,6 @@
     },
     {
       "name": "hyou_b_256",
-      "address": "0x08199364",
       "end": "0x08199388",
       "consumers": [
         "recon/tla/raw/0813fa88.s", "recon/tla/raw/0815b290.s", "recon/tla/raw/0815c970.s", "recon/tla/raw/0815f16c.s",
@@ -2484,7 +2227,6 @@
     },
     {
       "name": "hyou_b_257",
-      "address": "0x08199388",
       "end": "0x081993d0",
       "consumers": ["recon/tla/raw/08182898.s"],
       "element": "u8",
@@ -2497,7 +2239,6 @@
     },
     {
       "name": "hyou_b_258",
-      "address": "0x081993d0",
       "end": "0x081993d4",
       "consumers": ["recon/tla/raw/08173aac.s"],
       "element": "u8",
@@ -2506,7 +2247,6 @@
     },
     {
       "name": "hyou_b_259",
-      "address": "0x081993d4",
       "end": "0x081993d8",
       "consumers": ["recon/tla/raw/08173aac.s"],
       "element": "u8",
@@ -2515,7 +2255,6 @@
     },
     {
       "name": "hyou_b_260",
-      "address": "0x081993d8",
       "end": "0x081993e0",
       "consumers": ["recon/tla/raw/08173aac.s"],
       "element": "le-u16",
@@ -2524,7 +2263,6 @@
     },
     {
       "name": "hyou_b_261",
-      "address": "0x081993e0",
       "end": "0x081993e8",
       "consumers": ["recon/tla/raw/08173aac.s"],
       "element": "u8",
@@ -2533,7 +2271,6 @@
     },
     {
       "name": "hyou_b_262",
-      "address": "0x081993e8",
       "end": "0x081993f0",
       "consumers": ["recon/tla/raw/08173aac.s"],
       "element": "u8",
@@ -2542,7 +2279,6 @@
     },
     {
       "name": "hyou_b_263",
-      "address": "0x081993f0",
       "end": "0x08199400",
       "consumers": ["recon/tla/raw/08173aac.s"],
       "element": "le-u16",
@@ -2551,7 +2287,6 @@
     },
     {
       "name": "hyou_b_264",
-      "address": "0x08199400",
       "end": "0x0819940c",
       "consumers": ["recon/tla/raw/08173aac.s"],
       "element": "u8",
@@ -2560,7 +2295,6 @@
     },
     {
       "name": "hyou_b_265",
-      "address": "0x0819940c",
       "end": "0x08199421",
       "consumers": ["recon/tla/raw/08173aac.s"],
       "element": "u8",
@@ -2569,7 +2303,6 @@
     },
     {
       "name": "hyou_b_266",
-      "address": "0x08199421",
       "end": "0x08199426",
       "consumers": ["recon/tla/raw/08179f18.s"],
       "element": "u8",
@@ -2578,7 +2311,6 @@
     },
     {
       "name": "hyou_b_267",
-      "address": "0x08199426",
       "end": "0x0819942e",
       "consumers": ["recon/tla/raw/08179f18.s"],
       "element": "le-u16",
@@ -2587,7 +2319,6 @@
     },
     {
       "name": "hyou_b_268",
-      "address": "0x0819942e",
       "end": "0x08199436",
       "consumers": ["recon/tla/raw/08179f18.s"],
       "element": "le-u16",
@@ -2596,7 +2327,6 @@
     },
     {
       "name": "hyou_b_269",
-      "address": "0x08199436",
       "end": "0x0819943e",
       "consumers": ["recon/tla/raw/08179f18.s"],
       "element": "le-s16",
@@ -2605,7 +2335,6 @@
     },
     {
       "name": "hyou_b_270",
-      "address": "0x0819943e",
       "end": "0x08199446",
       "consumers": ["recon/tla/raw/08179f18.s"],
       "element": "le-s16",
@@ -2614,7 +2343,6 @@
     },
     {
       "name": "hyou_b_271",
-      "address": "0x08199446",
       "end": "0x0819944a",
       "consumers": ["recon/tla/raw/08179f18.s"],
       "element": "s8",
@@ -2623,7 +2351,6 @@
     },
     {
       "name": "hyou_b_272",
-      "address": "0x0819944a",
       "end": "0x08199450",
       "consumers": ["recon/tla/raw/08179f18.s"],
       "element": "s8",
@@ -2632,7 +2359,6 @@
     },
     {
       "name": "hyou_b_273",
-      "address": "0x08199450",
       "end": "0x08199474",
       "consumers": ["recon/tla/raw/0817b66c.s"],
       "element": "u8",
@@ -2643,7 +2369,6 @@
     },
     {
       "name": "hyou_b_274",
-      "address": "0x08199474",
       "end": "0x08199484",
       "consumers": ["recon/tla/raw/0817b66c.s"],
       "element": "u8",
@@ -2652,7 +2377,6 @@
     },
     {
       "name": "hyou_b_275",
-      "address": "0x08199484",
       "end": "0x081994a8",
       "consumers": ["recon/tla/raw/0817b9b8.s"],
       "element": "le-u16",
@@ -2661,7 +2385,6 @@
     },
     {
       "name": "hyou_b_276",
-      "address": "0x081994a8",
       "end": "0x081994b8",
       "consumers": ["recon/tla/raw/0817b9b8.s"],
       "element": "le-s32",
@@ -2670,7 +2393,6 @@
     },
     {
       "name": "hyou_b_277",
-      "address": "0x081994b8",
       "end": "0x081994d0",
       "consumers": ["recon/tla/raw/0817e0c0.s"],
       "element": "le-s32",
@@ -2679,7 +2401,6 @@
     },
     {
       "name": "hyou_b_278",
-      "address": "0x081994d0",
       "end": "0x081994e0",
       "consumers": ["recon/tla/raw/0817e698.s"],
       "element": "le-s32",
@@ -2688,7 +2409,6 @@
     },
     {
       "name": "hyou_b_279",
-      "address": "0x081994e0",
       "end": "0x081994f0",
       "consumers": ["recon/tla/raw/0817e698.s"],
       "element": "le-s32",
@@ -2697,7 +2417,6 @@
     },
     {
       "name": "hyou_b_280",
-      "address": "0x081994f0",
       "end": "0x08199508",
       "consumers": ["recon/tla/raw/0817e698.s"],
       "element": "s8",
@@ -2706,7 +2425,6 @@
     },
     {
       "name": "hyou_b_281",
-      "address": "0x08199508",
       "end": "0x08199514",
       "consumers": ["recon/tla/raw/0817e698.s"],
       "element": "u8",
@@ -2715,7 +2433,6 @@
     },
     {
       "name": "hyou_b_282",
-      "address": "0x08199514",
       "end": "0x08199528",
       "consumers": ["recon/tla/raw/0817e698.s"],
       "element": "u8",
@@ -2724,7 +2441,6 @@
     },
     {
       "name": "hyou_b_283",
-      "address": "0x08199528",
       "end": "0x08199578",
       "consumers": ["recon/tla/raw/0817e698.s"],
       "element": "le-s32",
@@ -2736,7 +2452,6 @@
     },
     {
       "name": "hyou_b_284",
-      "address": "0x08199578",
       "end": "0x08199582",
       "consumers": ["recon/tla/raw/0817e698.s"],
       "element": "u8",
@@ -2745,7 +2460,6 @@
     },
     {
       "name": "hyou_b_285",
-      "address": "0x08199582",
       "end": "0x0819958c",
       "consumers": ["recon/tla/raw/0817e698.s"],
       "element": "le-u16",
@@ -2754,7 +2468,6 @@
     },
     {
       "name": "hyou_b_286",
-      "address": "0x0819958c",
       "end": "0x08199590",
       "consumers": ["recon/tla/raw/0817e698.s"],
       "element": "le-u16",
@@ -2763,7 +2476,6 @@
     },
     {
       "name": "hyou_b_287",
-      "address": "0x08199590",
       "end": "0x08199592",
       "consumers": ["recon/tla/raw/0817e698.s"],
       "element": "s8",
@@ -2772,7 +2484,6 @@
     },
     {
       "name": "hyou_b_288",
-      "address": "0x08199592",
       "end": "0x0819959c",
       "consumers": ["recon/tla/raw/0817e698.s"],
       "element": "u8",
@@ -2781,7 +2492,6 @@
     },
     {
       "name": "hyou_b_289",
-      "address": "0x0819959c",
       "end": "0x081995cc",
       "consumers": ["recon/tla/raw/0817e698.s"],
       "element": "u8",
@@ -2793,7 +2503,6 @@
     },
     {
       "name": "hyou_b_290",
-      "address": "0x081995cc",
       "end": "0x081995ec",
       "consumers": ["recon/tla/raw/0817e698.s"],
       "element": "le-u16",
@@ -2802,7 +2511,6 @@
     },
     {
       "name": "hyou_b_291",
-      "address": "0x081995ec",
       "end": "0x081995f3",
       "consumers": ["recon/tla/raw/0817e698.s"],
       "element": "u8",
@@ -2811,7 +2519,6 @@
     },
     {
       "name": "hyou_b_292",
-      "address": "0x081995f3",
       "end": "0x08199608",
       "consumers": ["recon/tla/raw/0817e698.s"],
       "element": "u8",
@@ -2820,7 +2527,6 @@
     },
     {
       "name": "hyou_b_293",
-      "address": "0x08199608",
       "end": "0x0819962c",
       "consumers": ["recon/tla/raw/0817e698.s"],
       "element": "u8",
@@ -2832,7 +2538,6 @@
     },
     {
       "name": "hyou_b_294",
-      "address": "0x0819962c",
       "end": "0x08199650",
       "consumers": ["recon/tla/raw/0817e698.s"],
       "element": "u8",
@@ -2844,7 +2549,6 @@
     },
     {
       "name": "hyou_b_295",
-      "address": "0x08199650",
       "end": "0x08199660",
       "consumers": ["recon/tla/raw/0817e698.s"],
       "element": "u8",
@@ -2853,7 +2557,6 @@
     },
     {
       "name": "hyou_b_296",
-      "address": "0x08199660",
       "end": "0x0819966c",
       "consumers": ["recon/tla/raw/08181ed4.s"],
       "element": "le-s32",
@@ -2862,7 +2565,6 @@
     },
     {
       "name": "hyou_b_297",
-      "address": "0x0819966c",
       "end": "0x0819966f",
       "consumers": ["recon/tla/raw/08181ed4.s"],
       "element": "s8",
@@ -2871,7 +2573,6 @@
     },
     {
       "name": "hyou_b_298",
-      "address": "0x0819966f",
       "end": "0x0819967e",
       "consumers": ["recon/tla/raw/08182898.s"],
       "element": "u8",
@@ -2880,7 +2581,6 @@
     },
     {
       "name": "hyou_b_299",
-      "address": "0x0819967e",
       "end": "0x0819968e",
       "consumers": ["recon/tla/raw/08182898.s"],
       "element": "u8",
@@ -2889,7 +2589,6 @@
     },
     {
       "name": "hyou_b_300",
-      "address": "0x0819968e",
       "end": "0x081996ac",
       "consumers": ["recon/tla/raw/08182898.s"],
       "element": "le-u16",
@@ -2898,7 +2597,6 @@
     },
     {
       "name": "hyou_b_301",
-      "address": "0x081996ac",
       "end": "0x081996bb",
       "consumers": ["recon/tla/raw/08182898.s"],
       "element": "u8",
@@ -2907,7 +2605,6 @@
     },
     {
       "name": "hyou_b_302",
-      "address": "0x081996bb",
       "end": "0x081996ca",
       "consumers": ["recon/tla/raw/08182898.s"],
       "element": "u8",
@@ -2916,7 +2613,6 @@
     },
     {
       "name": "hyou_b_303",
-      "address": "0x081996ca",
       "end": "0x081996e8",
       "consumers": ["recon/tla/raw/08182898.s"],
       "element": "le-u16",
@@ -2925,7 +2621,6 @@
     },
     {
       "name": "hyou_b_304",
-      "address": "0x081996e8",
       "end": "0x081996fa",
       "consumers": ["recon/tla/raw/08182898.s"],
       "element": "le-u16",
@@ -2934,7 +2629,6 @@
     },
     {
       "name": "hyou_b_305",
-      "address": "0x081996fa",
       "end": "0x08199703",
       "consumers": ["recon/tla/raw/08182898.s"],
       "element": "u8",
@@ -2943,7 +2637,6 @@
     },
     {
       "name": "hyou_b_306",
-      "address": "0x08199703",
       "end": "0x0819970c",
       "consumers": ["recon/tla/raw/08182898.s"],
       "element": "u8",
@@ -2952,7 +2645,6 @@
     },
     {
       "name": "hyou_b_307",
-      "address": "0x0819970c",
       "end": "0x08199715",
       "consumers": ["recon/tla/raw/08182898.s"],
       "element": "u8",
@@ -2961,7 +2653,6 @@
     },
     {
       "name": "hyou_b_308",
-      "address": "0x08199715",
       "end": "0x0819971e",
       "consumers": ["recon/tla/raw/08182898.s"],
       "element": "u8",
@@ -2970,7 +2661,6 @@
     },
     {
       "name": "hyou_b_309",
-      "address": "0x0819971e",
       "end": "0x08199727",
       "consumers": ["recon/tla/raw/08182898.s"],
       "element": "s8",
@@ -2979,7 +2669,6 @@
     },
     {
       "name": "hyou_b_310",
-      "address": "0x08199727",
       "end": "0x08199730",
       "consumers": ["recon/tla/raw/08182898.s"],
       "element": "s8",
@@ -2988,7 +2677,6 @@
     },
     {
       "name": "hyou_b_311",
-      "address": "0x08199730",
       "end": "0x08199739",
       "consumers": ["recon/tla/raw/08182898.s"],
       "element": "s8",
@@ -2997,7 +2685,6 @@
     },
     {
       "name": "hyou_b_312",
-      "address": "0x08199739",
       "end": "0x08199742",
       "consumers": ["recon/tla/raw/08182898.s"],
       "element": "s8",
@@ -3006,7 +2693,6 @@
     },
     {
       "name": "hyou_b_313",
-      "address": "0x08199742",
       "end": "0x08199746",
       "consumers": ["recon/tla/raw/08182898.s"],
       "element": "u8",
@@ -3015,7 +2701,6 @@
     },
     {
       "name": "hyou_b_314",
-      "address": "0x08199746",
       "end": "0x0819974e",
       "consumers": ["recon/tla/raw/08182898.s"],
       "element": "le-u16",
@@ -3024,7 +2709,6 @@
     },
     {
       "name": "hyou_b_315",
-      "address": "0x0819974e",
       "end": "0x08199754",
       "consumers": ["recon/tla/raw/08182898.s"],
       "element": "le-u16",
@@ -3033,7 +2717,6 @@
     },
     {
       "name": "hyou_b_316",
-      "address": "0x08199754",
       "end": "0x08199756",
       "consumers": ["recon/tla/raw/08182898.s"],
       "element": "le-u16",
@@ -3042,7 +2725,6 @@
     },
     {
       "name": "hyou_b_317",
-      "address": "0x08199756",
       "end": "0x08199758",
       "consumers": ["recon/tla/raw/08182898.s"],
       "element": "u8",
@@ -3051,7 +2733,6 @@
     },
     {
       "name": "hyou_b_318",
-      "address": "0x08199758",
       "end": "0x0819975c",
       "consumers": ["recon/tla/raw/08182898.s"],
       "element": "le-u16",
@@ -3060,7 +2741,6 @@
     },
     {
       "name": "hyou_b_319",
-      "address": "0x0819975c",
       "end": "0x08199760",
       "consumers": ["recon/tla/raw/08182898.s"],
       "element": "le-u16",
@@ -3069,7 +2749,6 @@
     },
     {
       "name": "hyou_b_320",
-      "address": "0x08199760",
       "end": "0x08199764",
       "consumers": ["recon/tla/raw/08182898.s"],
       "element": "le-u16",
@@ -3078,7 +2757,6 @@
     },
     {
       "name": "hyou_b_321",
-      "address": "0x08199764",
       "end": "0x08199768",
       "consumers": ["recon/tla/raw/08182898.s"],
       "element": "le-u16",
@@ -3087,7 +2765,6 @@
     },
     {
       "name": "hyou_b_322",
-      "address": "0x08199768",
       "end": "0x0819978c",
       "consumers": ["recon/tla/raw/08182898.s"],
       "element": "le-u16",
@@ -3096,7 +2773,6 @@
     },
     {
       "name": "hyou_b_323",
-      "address": "0x0819978c",
       "end": "0x081997b0",
       "consumers": ["recon/tla/raw/08182898.s"],
       "element": "le-u16",
@@ -3105,7 +2781,6 @@
     },
     {
       "name": "hyou_b_324",
-      "address": "0x081997b0",
       "end": "0x081997cc",
       "consumers": ["recon/tla/raw/08182898.s"],
       "element": "u8",
@@ -3117,7 +2792,6 @@
     },
     {
       "name": "hyou_b_325",
-      "address": "0x081997cc",
       "end": "0x081997e8",
       "consumers": ["recon/tla/raw/08182898.s"],
       "element": "u8",
@@ -3129,7 +2803,6 @@
     },
     {
       "name": "hyou_b_326",
-      "address": "0x081997e8",
       "end": "0x081997f4",
       "consumers": ["recon/tla/raw/08182898.s"],
       "element": "u8",
@@ -3138,7 +2811,6 @@
     },
     {
       "name": "hyou_b_327",
-      "address": "0x081997f4",
       "end": "0x0819980a",
       "consumers": ["recon/tla/raw/08182898.s"],
       "element": "le-u16",
@@ -3147,7 +2819,6 @@
     },
     {
       "name": "hyou_b_328",
-      "address": "0x0819980a",
       "end": "0x08199810",
       "consumers": ["recon/tla/raw/08182898.s"],
       "element": "u8",
@@ -3156,7 +2827,6 @@
     },
     {
       "name": "hyou_b_329",
-      "address": "0x08199810",
       "end": "0x08199816",
       "consumers": ["recon/tla/raw/08182898.s"],
       "element": "u8",
@@ -3165,7 +2835,6 @@
     },
     {
       "name": "hyou_b_330",
-      "address": "0x08199816",
       "end": "0x08199824",
       "consumers": ["recon/tla/raw/08182898.s"],
       "element": "le-u16",
@@ -3174,7 +2843,6 @@
     },
     {
       "name": "hyou_b_331",
-      "address": "0x08199824",
       "end": "0x0819982b",
       "consumers": ["recon/tla/raw/08182898.s"],
       "element": "u8",
@@ -3183,7 +2851,6 @@
     },
     {
       "name": "hyou_b_332",
-      "address": "0x0819982b",
       "end": "0x08199832",
       "consumers": ["recon/tla/raw/08182898.s"],
       "element": "u8",
@@ -3192,7 +2859,6 @@
     },
     {
       "name": "hyou_b_333",
-      "address": "0x08199832",
       "end": "0x0819983a",
       "consumers": ["recon/tla/raw/08182898.s"],
       "element": "u8",
@@ -3201,7 +2867,6 @@
     },
     {
       "name": "hyou_b_334",
-      "address": "0x0819983a",
       "end": "0x0819985c",
       "consumers": ["recon/tla/raw/08182898.s"],
       "element": "le-u16",
@@ -3210,7 +2875,6 @@
     },
     {
       "name": "hyou_b_335",
-      "address": "0x0819985c",
       "end": "0x08199880",
       "consumers": ["recon/tla/raw/08182898.s"],
       "element": "u8",
@@ -3222,7 +2886,6 @@
     },
     {
       "name": "hyou_b_336",
-      "address": "0x08199880",
       "end": "0x081998a4",
       "consumers": ["recon/tla/raw/08182898.s"],
       "element": "u8",
@@ -3234,7 +2897,6 @@
     },
     {
       "name": "hyou_b_337",
-      "address": "0x081998a4",
       "end": "0x081998f2",
       "consumers": ["recon/tla/raw/08182898.s"],
       "element": "le-u16",
@@ -3246,7 +2908,6 @@
     },
     {
       "name": "hyou_b_338",
-      "address": "0x081998f2",
       "end": "0x08199916",
       "consumers": ["recon/tla/raw/08182898.s"],
       "element": "u8",
@@ -3258,7 +2919,6 @@
     },
     {
       "name": "hyou_b_339",
-      "address": "0x08199916",
       "end": "0x0819995e",
       "consumers": ["recon/tla/raw/08182898.s"],
       "element": "le-s16",
@@ -3270,7 +2930,6 @@
     },
     {
       "name": "hyou_b_340",
-      "address": "0x0819995e",
       "end": "0x081999a6",
       "consumers": ["recon/tla/raw/08182898.s"],
       "element": "le-s16",
@@ -3282,7 +2941,6 @@
     },
     {
       "name": "hyou_b_341",
-      "address": "0x081999a6",
       "end": "0x081999ee",
       "consumers": ["recon/tla/raw/08182898.s"],
       "element": "le-s16",
@@ -3294,7 +2952,6 @@
     },
     {
       "name": "hyou_b_342",
-      "address": "0x081999ee",
       "end": "0x081999f2",
       "consumers": ["recon/tla/raw/08182898.s"],
       "element": "u8",
@@ -3303,7 +2960,6 @@
     },
     {
       "name": "hyou_b_343",
-      "address": "0x081999f2",
       "end": "0x08199a12",
       "consumers": ["recon/tla/raw/08182898.s"],
       "element": "le-s16",
@@ -3314,7 +2970,6 @@
     },
     {
       "name": "hyou_b_344",
-      "address": "0x08199a12",
       "end": "0x08199a3e",
       "consumers": ["recon/tla/raw/08182898.s"],
       "element": "le-u16",
@@ -3323,7 +2978,6 @@
     },
     {
       "name": "hyou_b_345",
-      "address": "0x08199a3e",
       "end": "0x08199a44",
       "consumers": ["recon/tla/raw/08182898.s"],
       "element": "u8",
@@ -3332,7 +2986,6 @@
     },
     {
       "name": "hyou_b_346",
-      "address": "0x08199a44",
       "end": "0x08199a4c",
       "consumers": ["recon/tla/raw/08182898.s"],
       "element": "u8",
@@ -3341,7 +2994,6 @@
     },
     {
       "name": "hyou_b_347",
-      "address": "0x08199a4c",
       "end": "0x08199bec",
       "consumers": ["recon/tla/raw/08182898.s"],
       "element": "u8",
@@ -3366,7 +3018,6 @@
     },
     {
       "name": "hyou_b_348",
-      "address": "0x08199bec",
       "end": "0x08199bf9",
       "consumers": ["recon/tla/raw/08182898.s"],
       "element": "u8",
@@ -3375,7 +3026,6 @@
     },
     {
       "name": "hyou_b_349",
-      "address": "0x08199bf9",
       "end": "0x08199d2f",
       "consumers": ["recon/tla/raw/08182898.s"],
       "element": "u8",
@@ -3397,7 +3047,6 @@
     },
     {
       "name": "hyou_b_350",
-      "address": "0x08199d2f",
       "end": "0x08199d31",
       "consumers": ["recon/tla/raw/08182898.s"],
       "element": "u8",
@@ -3406,7 +3055,6 @@
     },
     {
       "name": "hyou_b_351",
-      "address": "0x08199d31",
       "end": "0x08199d38",
       "consumers": ["recon/tla/raw/08182898.s"],
       "element": "u8",
@@ -3415,7 +3063,6 @@
     },
     {
       "name": "hyou_b_352",
-      "address": "0x08199d38",
       "end": "0x08199d40",
       "consumers": ["recon/tla/raw/08182898.s"],
       "element": "u8",
@@ -3424,7 +3071,6 @@
     },
     {
       "name": "hyou_b_353",
-      "address": "0x08199d40",
       "end": "0x08199d4e",
       "consumers": ["recon/tla/raw/08182898.s"],
       "element": "le-u16",
@@ -3433,7 +3079,6 @@
     },
     {
       "name": "hyou_b_354",
-      "address": "0x08199d4e",
       "end": "0x08199d55",
       "consumers": ["recon/tla/raw/08182898.s"],
       "element": "s8",
@@ -3442,7 +3087,6 @@
     },
     {
       "name": "hyou_b_355",
-      "address": "0x08199d55",
       "end": "0x08199d5c",
       "consumers": ["recon/tla/raw/08182898.s"],
       "element": "s8",
@@ -3451,7 +3095,6 @@
     },
     {
       "name": "hyou_b_356",
-      "address": "0x08199d5c",
       "end": "0x08199d60",
       "consumers": ["recon/tla/raw/08182898.s"],
       "element": "u8",
@@ -3460,7 +3103,6 @@
     },
     {
       "name": "hyou_b_357",
-      "address": "0x08199d60",
       "end": "0x08199d64",
       "consumers": ["recon/tla/raw/0818a220.s"],
       "element": "u8",
@@ -3469,7 +3111,6 @@
     },
     {
       "name": "hyou_b_358",
-      "address": "0x08199d64",
       "end": "0x08199d94",
       "consumers": ["recon/tla/raw/0818a220.s"],
       "element": "le-s32",
@@ -3478,7 +3119,6 @@
     },
     {
       "name": "hyou_b_359",
-      "address": "0x08199d94",
       "end": "0x08199d97",
       "consumers": ["recon/tla/raw/0818ad40.s"],
       "element": "u8",
@@ -3487,7 +3127,6 @@
     },
     {
       "name": "hyou_b_360",
-      "address": "0x08199d97",
       "end": "0x08199d9b",
       "consumers": ["recon/tla/raw/0818bc98.s"],
       "element": "u8",
@@ -3496,7 +3135,6 @@
     },
     {
       "name": "hyou_b_361",
-      "address": "0x08199d9b",
       "end": "0x08199d9f",
       "consumers": ["recon/tla/raw/0818bc98.s"],
       "element": "u8",
@@ -3505,7 +3143,6 @@
     },
     {
       "name": "hyou_b_362",
-      "address": "0x08199d9f",
       "end": "0x08199da3",
       "consumers": ["recon/tla/raw/0818bc98.s"],
       "element": "u8",
@@ -3514,7 +3151,6 @@
     },
     {
       "name": "hyou_b_363",
-      "address": "0x08199da3",
       "end": "0x08199daf",
       "consumers": ["recon/tla/raw/0818bc98.s"],
       "element": "u8",
@@ -3523,7 +3159,6 @@
     },
     {
       "name": "hyou_b_364",
-      "address": "0x08199daf",
       "end": "0x08199dbb",
       "consumers": ["recon/tla/raw/0818bc98.s"],
       "element": "u8",
@@ -3532,7 +3167,6 @@
     },
     {
       "name": "hyou_b_365",
-      "address": "0x08199dbb",
       "end": "0x08199dc7",
       "consumers": ["recon/tla/raw/0818bc98.s"],
       "element": "s8",
@@ -3541,7 +3175,6 @@
     },
     {
       "name": "hyou_b_366",
-      "address": "0x08199dc7",
       "end": "0x08199dcb",
       "consumers": ["recon/tla/raw/0818bc98.s"],
       "element": "u8",
@@ -3550,7 +3183,6 @@
     },
     {
       "name": "hyou_b_367",
-      "address": "0x08199dcb",
       "end": "0x08199dd3",
       "consumers": ["recon/tla/raw/0818c7b8.s"],
       "element": "u8",
@@ -3559,7 +3191,6 @@
     },
     {
       "name": "hyou_b_368",
-      "address": "0x08199dd3",
       "end": "0x08199ddb",
       "consumers": ["recon/tla/raw/0818c7b8.s"],
       "element": "u8",
@@ -3568,7 +3199,6 @@
     },
     {
       "name": "hyou_b_369",
-      "address": "0x08199ddb",
       "end": "0x08199de4",
       "consumers": ["recon/tla/raw/0818c7b8.s"],
       "element": "s8",
@@ -3577,7 +3207,6 @@
     },
     {
       "name": "hyou_b_370",
-      "address": "0x08199de4",
       "end": "0x08199e24",
       "consumers": ["recon/tla/raw/0818c7b8.s"],
       "element": "le-s32",
@@ -3586,7 +3215,6 @@
     },
     {
       "name": "hyou_b_371",
-      "address": "0x08199e24",
       "end": "0x08199e54",
       "consumers": ["recon/tla/raw/0818c7b8.s"],
       "element": "u8",
@@ -3598,7 +3226,6 @@
     },
     {
       "name": "hyou_b_372",
-      "address": "0x08199e54",
       "end": "0x08199e58",
       "consumers": ["recon/tla/raw/0818c7b8.s"],
       "element": "u8",
@@ -3607,7 +3234,6 @@
     },
     {
       "name": "hyou_b_373",
-      "address": "0x08199e58",
       "end": "0x08199e5c",
       "consumers": ["recon/tla/raw/0818d5a8.s"],
       "element": "u8",
@@ -3616,7 +3242,6 @@
     },
     {
       "name": "hyou_b_374",
-      "address": "0x08199e5c",
       "end": "0x08199e60",
       "consumers": ["recon/tla/raw/0818d5a8.s"],
       "element": "u8",
@@ -3625,7 +3250,6 @@
     },
     {
       "name": "hyou_b_375",
-      "address": "0x08199e60",
       "end": "0x08199e64",
       "consumers": ["recon/tla/raw/0818d5a8.s"],
       "element": "s8",
@@ -3634,7 +3258,6 @@
     },
     {
       "name": "hyou_b_376",
-      "address": "0x08199e64",
       "end": "0x08199e68",
       "consumers": ["recon/tla/raw/0818d5a8.s"],
       "element": "u8",
@@ -3643,7 +3266,6 @@
     },
     {
       "name": "hyou_b_377",
-      "address": "0x08199e68",
       "end": "0x08199e6c",
       "consumers": ["recon/tla/raw/0818d5a8.s"],
       "element": "u8",
@@ -3652,7 +3274,6 @@
     },
     {
       "name": "hyou_b_378",
-      "address": "0x08199e6c",
       "end": "0x08199e70",
       "consumers": ["recon/tla/raw/0818d5a8.s"],
       "element": "s8",
@@ -3661,7 +3282,6 @@
     },
     {
       "name": "hyou_b_379",
-      "address": "0x08199e70",
       "end": "0x08199e77",
       "consumers": ["recon/tla/raw/0818d5a8.s"],
       "element": "u8",
@@ -3670,7 +3290,6 @@
     },
     {
       "name": "hyou_b_380",
-      "address": "0x08199e77",
       "end": "0x08199e7e",
       "consumers": ["recon/tla/raw/0818d5a8.s"],
       "element": "u8",
@@ -3679,7 +3298,6 @@
     },
     {
       "name": "hyou_b_381",
-      "address": "0x08199e7e",
       "end": "0x08199e8c",
       "consumers": ["recon/tla/raw/0818d5a8.s"],
       "element": "le-u16",
@@ -3688,7 +3306,6 @@
     },
     {
       "name": "hyou_b_382",
-      "address": "0x08199e8c",
       "end": "0x08199e90",
       "consumers": ["recon/tla/raw/0818d5a8.s"],
       "element": "u8",
@@ -3697,7 +3314,6 @@
     },
     {
       "name": "hyou_b_383",
-      "address": "0x08199e90",
       "end": "0x08199e94",
       "consumers": ["recon/tla/raw/0818d5a8.s"],
       "element": "u8",
@@ -3706,7 +3322,6 @@
     },
     {
       "name": "hyou_b_384",
-      "address": "0x08199e94",
       "end": "0x08199e98",
       "consumers": ["recon/tla/raw/0818d5a8.s"],
       "element": "u8",
@@ -3715,7 +3330,6 @@
     },
     {
       "name": "hyou_b_385",
-      "address": "0x08199e98",
       "end": "0x08199e9c",
       "consumers": ["recon/tla/raw/0818d5a8.s"],
       "element": "u8",
@@ -3724,7 +3338,6 @@
     },
     {
       "name": "hyou_b_386",
-      "address": "0x08199e9c",
       "end": "0x08199ea0",
       "consumers": ["recon/tla/raw/0818d5a8.s"],
       "element": "u8",
@@ -3733,7 +3346,6 @@
     },
     {
       "name": "hyou_b_387",
-      "address": "0x08199ea0",
       "end": "0x08199ea4",
       "consumers": ["recon/tla/raw/0818d5a8.s"],
       "element": "s8",
@@ -3742,7 +3354,6 @@
     },
     {
       "name": "hyou_b_388",
-      "address": "0x08199ea4",
       "end": "0x08199eb4",
       "consumers": ["recon/tla/raw/0818d5a8.s"],
       "element": "u8",
@@ -3751,7 +3362,6 @@
     },
     {
       "name": "hyou_b_389",
-      "address": "0x08199eb4",
       "end": "0x08199ebc",
       "consumers": ["recon/tla/raw/0818d5a8.s"],
       "element": "u8",
@@ -3760,7 +3370,6 @@
     },
     {
       "name": "hyou_b_390",
-      "address": "0x08199ebc",
       "end": "0x08199ec5",
       "consumers": ["recon/tla/raw/0818d5a8.s"],
       "element": "u8",
@@ -3769,7 +3378,6 @@
     },
     {
       "name": "hyou_b_391",
-      "address": "0x08199ec5",
       "end": "0x08199ecc",
       "consumers": ["recon/tla/raw/0818f620.s"],
       "element": "u8",
@@ -3778,7 +3386,6 @@
     },
     {
       "name": "hyou_b_392",
-      "address": "0x08199ecc",
       "end": "0x08199ed6",
       "consumers": ["recon/tla/raw/0818f620.s"],
       "element": "le-s16",
@@ -3787,7 +3394,6 @@
     },
     {
       "name": "hyou_b_393",
-      "address": "0x08199ed6",
       "end": "0x08199ee0",
       "consumers": ["recon/tla/raw/0818f620.s"],
       "element": "le-s16",
@@ -3796,7 +3402,6 @@
     },
     {
       "name": "hyou_b_394",
-      "address": "0x08199ee0",
       "end": "0x08199eea",
       "consumers": ["recon/tla/raw/0818f620.s"],
       "element": "le-u16",
@@ -3805,7 +3410,6 @@
     },
     {
       "name": "hyou_b_395",
-      "address": "0x08199eea",
       "end": "0x08199efa",
       "consumers": ["recon/tla/raw/0818f620.s"],
       "element": "le-s16",
@@ -3814,7 +3418,6 @@
     },
     {
       "name": "hyou_b_396",
-      "address": "0x08199efa",
       "end": "0x08199f0a",
       "consumers": ["recon/tla/raw/0818f620.s"],
       "element": "le-s16",
@@ -3823,7 +3426,6 @@
     },
     {
       "name": "hyou_b_397",
-      "address": "0x08199f0a",
       "end": "0x08199f1a",
       "consumers": ["recon/tla/raw/0818f620.s"],
       "element": "le-s16",
@@ -3832,7 +3434,6 @@
     },
     {
       "name": "hyou_b_398",
-      "address": "0x08199f1a",
       "end": "0x08199f22",
       "consumers": ["recon/tla/raw/0818f620.s"],
       "element": "s8",
@@ -3841,7 +3442,6 @@
     },
     {
       "name": "hyou_b_399",
-      "address": "0x08199f22",
       "end": "0x08199f2a",
       "consumers": ["recon/tla/raw/0818f620.s"],
       "element": "s8",
@@ -3850,7 +3450,6 @@
     },
     {
       "name": "hyou_b_400",
-      "address": "0x08199f2a",
       "end": "0x08199f2e",
       "consumers": ["recon/tla/raw/0818f620.s"],
       "element": "le-s16",
@@ -3859,7 +3458,6 @@
     },
     {
       "name": "hyou_b_401",
-      "address": "0x08199f2e",
       "end": "0x08199f34",
       "consumers": ["recon/tla/raw/0818f620.s"],
       "element": "le-s16",
@@ -3868,7 +3466,6 @@
     },
     {
       "name": "hyou_b_402",
-      "address": "0x08199f34",
       "end": "0x08199f38",
       "consumers": ["recon/tla/raw/08191c20.s"],
       "element": "u8",
@@ -3877,7 +3474,6 @@
     },
     {
       "name": "hyou_b_403",
-      "address": "0x08199f38",
       "end": "0x08199f3c",
       "consumers": ["recon/tla/raw/08191c20.s"],
       "element": "u8",
@@ -3886,7 +3482,6 @@
     },
     {
       "name": "hyou_b_404",
-      "address": "0x08199f3c",
       "end": "0x08199f40",
       "consumers": ["recon/tla/raw/08191c20.s"],
       "element": "s8",
@@ -3895,7 +3490,6 @@
     },
     {
       "name": "hyou_b_405",
-      "address": "0x08199f40",
       "end": "0x08199f48",
       "consumers": ["recon/tla/raw/081929fc.s"],
       "element": "le-s32",
@@ -3904,7 +3498,6 @@
     },
     {
       "name": "hyou_b_406",
-      "address": "0x08199f48",
       "end": "0x08199f4c",
       "consumers": ["recon/tla/raw/081929fc.s"],
       "element": "u8",
@@ -3913,7 +3506,6 @@
     },
     {
       "name": "hyou_b_407",
-      "address": "0x08199f4c",
       "end": "0x08199f88",
       "consumers": ["recon/tla/raw/08191c20.s"],
       "element": "u8",
@@ -3925,7 +3517,6 @@
     },
     {
       "name": "hyou_b_408",
-      "address": "0x08199f88",
       "end": "0x08199f98",
       "consumers": ["recon/tla/raw/081929fc.s"],
       "element": "u8",
@@ -3934,7 +3525,6 @@
     },
     {
       "name": "hyou_b_409",
-      "address": "0x08199f98",
       "end": "0x08199fbc",
       "consumers": ["recon/tla/raw/081929fc.s"],
       "element": "u8",
@@ -3945,7 +3535,6 @@
     },
     {
       "name": "hyou_b_410",
-      "address": "0x08199fbc",
       "end": "0x08199fc8",
       "consumers": ["recon/tla/raw/081929fc.s"],
       "element": "u8",
@@ -3954,7 +3543,6 @@
     },
     {
       "name": "hyou_b_411",
-      "address": "0x08199fc8",
       "end": "0x08199fd2",
       "consumers": ["recon/tla/raw/081929fc.s"],
       "element": "le-u16",
@@ -3963,7 +3551,6 @@
     },
     {
       "name": "hyou_b_412",
-      "address": "0x08199fd2",
       "end": "0x08199fde",
       "consumers": ["recon/tla/raw/081929fc.s"],
       "element": "le-u16",
@@ -3972,7 +3559,6 @@
     },
     {
       "name": "hyou_b_413",
-      "address": "0x08199fde",
       "end": "0x08199fed",
       "consumers": ["recon/tla/raw/081929fc.s"],
       "element": "s8",
@@ -3981,7 +3567,6 @@
     },
     {
       "name": "hyou_b_414",
-      "address": "0x08199fed",
       "end": "0x08199ffc",
       "consumers": ["recon/tla/raw/081929fc.s"],
       "element": "u8",
@@ -3990,7 +3575,6 @@
     },
     {
       "name": "hyou_b_415",
-      "address": "0x08199ffc",
       "end": "0x0819a01a",
       "consumers": ["recon/tla/raw/081929fc.s"],
       "element": "le-u16",
@@ -3999,7 +3583,6 @@
     },
     {
       "name": "hyou_b_416",
-      "address": "0x0819a01a",
       "end": "0x0819a038",
       "consumers": ["recon/tla/raw/081929fc.s"],
       "element": "le-s16",
@@ -4008,7 +3591,6 @@
     },
     {
       "name": "hyou_b_417",
-      "address": "0x0819a038",
       "end": "0x0819a040",
       "consumers": ["recon/tla/raw/081929fc.s"],
       "element": "u8",
@@ -4017,7 +3599,6 @@
     },
     {
       "name": "hyou_b_418",
-      "address": "0x0819a040",
       "end": "0x0819a048",
       "consumers": ["recon/tla/raw/081929fc.s"],
       "element": "le-s32",
@@ -4026,7 +3607,6 @@
     },
     {
       "name": "hyou_b_419",
-      "address": "0x0819a048",
       "end": "0x0819a054",
       "consumers": ["recon/tla/raw/081929fc.s"],
       "element": "le-u16",
@@ -4035,7 +3615,6 @@
     },
     {
       "name": "hyou_b_420",
-      "address": "0x0819a054",
       "end": "0x0819a060",
       "consumers": ["recon/tla/raw/081929fc.s"],
       "element": "le-u16",
@@ -4044,7 +3623,6 @@
     },
     {
       "name": "hyou_b_421",
-      "address": "0x0819a060",
       "end": "0x0819a066",
       "consumers": ["recon/tla/raw/081929fc.s"],
       "element": "u8",
@@ -4053,7 +3631,6 @@
     },
     {
       "name": "hyou_b_422",
-      "address": "0x0819a066",
       "end": "0x0819a06c",
       "consumers": ["recon/tla/raw/081929fc.s"],
       "element": "u8",
@@ -4062,7 +3639,6 @@
     },
     {
       "name": "hyou_b_423",
-      "address": "0x0819a06c",
       "end": "0x0819a072",
       "consumers": ["recon/tla/raw/081929fc.s"],
       "element": "u8",
@@ -4071,7 +3647,6 @@
     },
     {
       "name": "hyou_b_424",
-      "address": "0x0819a072",
       "end": "0x0819a078",
       "consumers": ["recon/tla/raw/081929fc.s"],
       "element": "u8",
@@ -4080,7 +3655,6 @@
     },
     {
       "name": "hyou_b_425",
-      "address": "0x0819a078",
       "end": "0x0819a07e",
       "consumers": ["recon/tla/raw/081929fc.s"],
       "element": "u8",
@@ -4089,7 +3663,6 @@
     },
     {
       "name": "hyou_b_426",
-      "address": "0x0819a07e",
       "end": "0x0819a084",
       "consumers": ["recon/tla/raw/081929fc.s"],
       "element": "u8",
@@ -4098,7 +3671,6 @@
     },
     {
       "name": "hyou_b_427",
-      "address": "0x0819a084",
       "end": "0x0819a0ac",
       "consumers": ["recon/tla/raw/081929fc.s"],
       "element": "u8",
@@ -4110,7 +3682,6 @@
     },
     {
       "name": "hyou_b_428",
-      "address": "0x0819a0ac",
       "end": "0x0819a0d4",
       "consumers": ["recon/tla/raw/081929fc.s"],
       "element": "u8",
@@ -4122,7 +3693,6 @@
     },
     {
       "name": "hyou_b_429",
-      "address": "0x0819a0d4",
       "end": "0x0819a140",
       "consumers": ["recon/tla/raw/081929fc.s"],
       "element": "u8",
@@ -4136,7 +3706,6 @@
     },
     {
       "name": "hyou_b_430",
-      "address": "0x0819a140",
       "end": "0x0819a160",
       "consumers": ["recon/tla/raw/081929fc.s"],
       "element": "u8",
@@ -4147,7 +3716,6 @@
     },
     {
       "name": "hyou_b_431",
-      "address": "0x0819a160",
       "end": "0x0819a1a8",
       "consumers": ["recon/tla/raw/081929fc.s"],
       "element": "u8",

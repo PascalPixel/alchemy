@@ -375,11 +375,11 @@
       "address": "0x08033e24",
       "size": 28,
       "segments": [
-        {"address": "0x08033e24", "end": "0x08033e28", "stride": 1, "element": "ascii-fixed", "text": ""},
-        {"address": "0x08033e28", "end": "0x08033e2c", "stride": 1, "element": "ascii-fixed", "text": "a "},
-        {"address": "0x08033e2c", "end": "0x08033e30", "stride": 1, "element": "ascii-fixed", "text": "an "},
-        {"address": "0x08033e30", "end": "0x08033e38", "stride": 1, "element": "ascii-fixed", "text": "some "},
-        {"address": "0x08033e38", "end": "0x08033e40", "stride": 1, "element": "ascii-fixed", "text": "the "}
+        {"end": "0x08033e28", "stride": 1, "element": "ascii-fixed", "text": ""},
+        {"end": "0x08033e2c", "stride": 1, "element": "ascii-fixed", "text": "a "},
+        {"end": "0x08033e30", "stride": 1, "element": "ascii-fixed", "text": "an "},
+        {"end": "0x08033e38", "stride": 1, "element": "ascii-fixed", "text": "some "},
+        {"end": "0x08033e40", "stride": 1, "element": "ascii-fixed", "text": "the "}
       ]
     },
     "table": {

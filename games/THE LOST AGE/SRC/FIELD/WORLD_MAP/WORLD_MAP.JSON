@@ -9,7 +9,6 @@
     "segments": [
       {
         "name": "chunk_offsets",
-        "address": "0x088f1748",
         "end": "0x088f3748",
         "stride": 4,
         "element": "le-u32",

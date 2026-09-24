@@ -12,7 +12,6 @@
         "segments": [
           {
             "name": "parameters",
-            "address": "0x08517e64",
             "end": "0x08517e70",
             "stride": 12,
             "element": "u8",
@@ -20,7 +19,6 @@
           },
           {
             "name": "records",
-            "address": "0x08517e70",
             "end": "0x08517e88",
             "stride": 8,
             "element": "le-u16",
@@ -28,7 +26,6 @@
           },
           {
             "name": "component_offsets",
-            "address": "0x08517e88",
             "end": "0x08517ea0",
             "stride": 4,
             "element": "le-u32",
@@ -92,22 +89,8 @@
         "size": "0x6",
         "record_size": 3,
         "segments": [
-          {
-            "name": "records",
-            "address": "0x08518cd4",
-            "end": "0x08518cd7",
-            "stride": 3,
-            "element": "u8",
-            "values": [[4, 5, 100]]
-          },
-          {
-            "name": "terminator",
-            "address": "0x08518cd7",
-            "end": "0x08518cda",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255
-          }
+          {"name": "records", "end": "0x08518cd7", "stride": 3, "element": "u8", "values": [[4, 5, 100]]},
+          {"name": "terminator", "end": "0x08518cda", "stride": 1, "element": "u8", "fill": 255}
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/SORU_DOU/SORU_DOU.BIN",

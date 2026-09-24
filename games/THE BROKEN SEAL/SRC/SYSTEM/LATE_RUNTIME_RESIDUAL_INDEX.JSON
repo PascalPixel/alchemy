@@ -12,7 +12,6 @@
       "segments": [
         {
           "name": "haichi_hyou",
-          "address": "0x080f39ab",
           "end": "0x080f39b1",
           "role": "placement_table",
           "values": [96, 136, 140, 160, 168, 184],
@@ -23,7 +22,6 @@
         },
         {
           "name": "henka_hyou",
-          "address": "0x080f39b1",
           "end": "0x080f39ed",
           "role": "envelope_table",
           "values": [
@@ -38,7 +36,6 @@
         },
         {
           "name": "soroe_080f39ed",
-          "address": "0x080f39ed",
           "end": "0x080f39ee",
           "role": "alignment_candidate",
           "source_kind": "unresolved_fill",
@@ -48,7 +45,6 @@
         },
         {
           "name": "iro_henka_00",
-          "address": "0x080f39ee",
           "end": "0x080f3a2e",
           "role": "color_curve",
           "values": [
@@ -62,7 +58,6 @@
         },
         {
           "name": "iro_henka_01",
-          "address": "0x080f3a2e",
           "end": "0x080f3a6e",
           "role": "color_curve",
           "values": [
@@ -76,7 +71,6 @@
         },
         {
           "name": "iro_henka_02",
-          "address": "0x080f3a6e",
           "end": "0x080f3aae",
           "role": "color_curve",
           "values": [
@@ -90,7 +84,6 @@
         },
         {
           "name": "aki_080f3aae",
-          "address": "0x080f3aae",
           "end": "0x080f4000",
           "role": "tail_fill_candidate",
           "source_kind": "unresolved_fill",
@@ -110,7 +103,6 @@
       "segments": [
         {
           "name": "hantei_dankai",
-          "address": "0x080f541a",
           "end": "0x080f5426",
           "role": "comparison_thresholds",
           "values": [147, 80, 15, -42, -95, -32767],
@@ -121,7 +113,6 @@
         },
         {
           "name": "aki_080f5426",
-          "address": "0x080f5426",
           "end": "0x080f6000",
           "role": "tail_fill_candidate",
           "source_kind": "unresolved_fill",
@@ -141,7 +132,6 @@
       "segments": [
         {
           "name": "zahyoubisei_hyou",
-          "address": "0x080f86f8",
           "end": "0x080f870c",
           "role": "coordinate_adjustments",
           "values": [0, 4, 20, 56, 120, 220, 364, 560, 816, 1140],
@@ -152,7 +142,6 @@
         },
         {
           "name": "hyouji_shoki_hyou",
-          "address": "0x080f870c",
           "end": "0x080f8712",
           "role": "display_setup",
           "values": [0, 3, 1, 4, 2, 5],
@@ -163,7 +152,6 @@
         },
         {
           "name": "haba_hyou_00",
-          "address": "0x080f8712",
           "end": "0x080f871a",
           "role": "display_widths",
           "values": [0, 1, 2, 3, 4, 5, 6, 7],
@@ -174,7 +162,6 @@
         },
         {
           "name": "haichi_hyou_00",
-          "address": "0x080f871a",
           "end": "0x080f8728",
           "role": "display_positions",
           "values": [2, 0, 232, 232, 32, 32, 200, 200, 28, 28, 208, 208, 219, 219],
@@ -185,7 +172,6 @@
         },
         {
           "name": "haichi_hyou_01",
-          "address": "0x080f8728",
           "end": "0x080f8736",
           "role": "display_positions",
           "values": [2, 152, 0, 152, 8, 104, 8, 104, 118, 140, 118, 140, 6, 108],
@@ -196,7 +182,6 @@
         },
         {
           "name": "haba_hyou_01",
-          "address": "0x080f8736",
           "end": "0x080f873e",
           "role": "display_widths",
           "values": [28, 28, 26, 26, 28, 28, 20, 24],
@@ -207,7 +192,6 @@
         },
         {
           "name": "aki_080f873e",
-          "address": "0x080f873e",
           "end": "0x080f9000",
           "role": "tail_fill_candidate",
           "source_kind": "unresolved_fill",

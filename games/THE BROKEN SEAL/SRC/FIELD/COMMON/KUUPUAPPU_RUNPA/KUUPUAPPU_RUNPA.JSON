@@ -12,7 +12,6 @@
         "segments": [
           {
             "name": "parameters",
-            "address": "0x08541c64",
             "end": "0x08541c70",
             "stride": 12,
             "element": "u8",
@@ -20,7 +19,6 @@
           },
           {
             "name": "records",
-            "address": "0x08541c70",
             "end": "0x08541c88",
             "stride": 8,
             "element": "le-u16",
@@ -28,7 +26,6 @@
           },
           {
             "name": "component_offsets",
-            "address": "0x08541c88",
             "end": "0x08541ca0",
             "stride": 4,
             "element": "le-u32",
@@ -107,20 +104,12 @@
         "segments": [
           {
             "name": "records",
-            "address": "0x085426b8",
             "end": "0x085426ca",
             "stride": 3,
             "element": "u8",
             "values": [[32, 7, 100], [33, 7, 101], [35, 7, 102], [36, 7, 103], [33, 8, 104], [35, 8, 105]]
           },
-          {
-            "name": "terminator",
-            "address": "0x085426ca",
-            "end": "0x085426cd",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255
-          }
+          {"name": "terminator", "end": "0x085426cd", "stride": 1, "element": "u8", "fill": 255}
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/KUUPUAPPU_RUNPA/KUUPUAPPU_RUNPA.BIN",

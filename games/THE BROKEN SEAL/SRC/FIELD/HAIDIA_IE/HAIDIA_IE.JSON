@@ -12,7 +12,6 @@
         "segments": [
           {
             "name": "parameters",
-            "address": "0x084d8790",
             "end": "0x084d879c",
             "stride": 12,
             "element": "u8",
@@ -20,7 +19,6 @@
           },
           {
             "name": "records",
-            "address": "0x084d879c",
             "end": "0x084d87b4",
             "stride": 8,
             "element": "le-u16",
@@ -28,7 +26,6 @@
           },
           {
             "name": "component_offsets",
-            "address": "0x084d87b4",
             "end": "0x084d87cc",
             "stride": 4,
             "element": "le-u32",
@@ -99,22 +96,8 @@
         "size": "0x6",
         "record_size": 3,
         "segments": [
-          {
-            "name": "records",
-            "address": "0x084db8c4",
-            "end": "0x084db8c7",
-            "stride": 3,
-            "element": "u8",
-            "values": [[13, 44, 100]]
-          },
-          {
-            "name": "terminator",
-            "address": "0x084db8c7",
-            "end": "0x084db8ca",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255
-          }
+          {"name": "records", "end": "0x084db8c7", "stride": 3, "element": "u8", "values": [[13, 44, 100]]},
+          {"name": "terminator", "end": "0x084db8ca", "stride": 1, "element": "u8", "fill": 255}
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_IE/HAIDIA_IE.BIN",

@@ -12,7 +12,6 @@
         "segments": [
           {
             "name": "parameters",
-            "address": "0x085ee828",
             "end": "0x085ee834",
             "stride": 12,
             "element": "u8",
@@ -20,7 +19,6 @@
           },
           {
             "name": "records",
-            "address": "0x085ee834",
             "end": "0x085ee84c",
             "stride": 8,
             "element": "le-u16",
@@ -28,7 +26,6 @@
           },
           {
             "name": "component_offsets",
-            "address": "0x085ee84c",
             "end": "0x085ee864",
             "stride": 4,
             "element": "le-u32",
@@ -88,16 +85,7 @@
         "address": "0x085efd94",
         "size": "0x3",
         "record_size": 3,
-        "segments": [
-          {
-            "name": "terminator",
-            "address": "0x085efd94",
-            "end": "0x085efd97",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255
-          }
-        ]
+        "segments": [{"name": "terminator", "end": "0x085efd97", "stride": 1, "element": "u8", "fill": 255}]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/TORETO_EDA/TORETO_EDA.BIN",
       "grid_offset": 0,

@@ -11,7 +11,6 @@
       "segments": [
         {
           "name": "table_0809e680",
-          "address": "0x0809e680",
           "end": "0x0809e686",
           "element": "record",
           "stride": 1,
@@ -20,7 +19,6 @@
         },
         {
           "name": "sentinel_lookup",
-          "address": "0x0809e686",
           "end": "0x0809e6b6",
           "element": "record",
           "stride": 4,
@@ -40,17 +38,9 @@
             {"key": 13, "value": 48}
           ]
         },
-        {
-          "name": "sentinel_lookup_terminator",
-          "address": "0x0809e6b6",
-          "end": "0x0809e6b8",
-          "element": "le-u16",
-          "stride": 2,
-          "values": [65535]
-        },
+        {"name": "sentinel_lookup_terminator", "end": "0x0809e6b8", "element": "le-u16", "stride": 2, "values": [65535]},
         {
           "name": "table_0809e6b8",
-          "address": "0x0809e6b8",
           "end": "0x0809e6c0",
           "element": "record",
           "stride": 1,
@@ -68,7 +58,6 @@
         },
         {
           "name": "script_0809e6c0",
-          "address": "0x0809e6c0",
           "end": "0x0809e75c",
           "element": "le-u32",
           "stride": 4,
@@ -80,7 +69,6 @@
         },
         {
           "name": "script_0809e75c",
-          "address": "0x0809e75c",
           "end": "0x0809e87c",
           "element": "le-u32",
           "stride": 4,
@@ -94,7 +82,6 @@
         },
         {
           "name": "script_0809e87c",
-          "address": "0x0809e87c",
           "end": "0x0809e8a0",
           "element": "le-s32",
           "stride": 4,
@@ -103,7 +90,6 @@
         },
         {
           "name": "script_0809e8a0",
-          "address": "0x0809e8a0",
           "end": "0x0809e8a4",
           "element": "le-u32",
           "stride": 4,
@@ -112,23 +98,14 @@
         },
         {
           "name": "script_0809e8a4_callback",
-          "address": "0x0809e8a4",
           "end": "0x0809e8a8",
           "element": "thumb-pointer",
           "stride": 4,
           "values": [134804228]
         },
-        {
-          "name": "script_0809e8a8",
-          "address": "0x0809e8a8",
-          "end": "0x0809e8ac",
-          "element": "le-u32",
-          "stride": 4,
-          "values": [[27]]
-        },
+        {"name": "script_0809e8a8", "end": "0x0809e8ac", "element": "le-u32", "stride": 4, "values": [[27]]},
         {
           "name": "table_0809e8ac",
-          "address": "0x0809e8ac",
           "end": "0x0809e8ce",
           "element": "record",
           "stride": 1,
@@ -172,7 +149,6 @@
         },
         {
           "name": "table_0809e8ce",
-          "address": "0x0809e8ce",
           "end": "0x0809e8ee",
           "element": "record",
           "stride": 1,
@@ -214,7 +190,6 @@
         },
         {
           "name": "table_0809e8ee",
-          "address": "0x0809e8ee",
           "end": "0x0809e92e",
           "element": "record",
           "stride": 1,
@@ -288,7 +263,6 @@
         },
         {
           "name": "table_0809e92e",
-          "address": "0x0809e92e",
           "end": "0x0809e96e",
           "element": "record",
           "stride": 2,
@@ -330,7 +304,6 @@
         },
         {
           "name": "table_0809e96e",
-          "address": "0x0809e96e",
           "end": "0x0809e9ae",
           "element": "record",
           "stride": 2,
@@ -372,7 +345,6 @@
         },
         {
           "name": "table_0809e9ae",
-          "address": "0x0809e9ae",
           "end": "0x0809e9ee",
           "element": "record",
           "stride": 2,
@@ -412,17 +384,9 @@
             {"color": 31744}
           ]
         },
-        {
-          "name": "alignment_0809e9ee",
-          "address": "0x0809e9ee",
-          "end": "0x0809e9f0",
-          "element": "u8",
-          "stride": 1,
-          "fill": 0
-        },
+        {"name": "alignment_0809e9ee", "end": "0x0809e9f0", "element": "u8", "stride": 1, "fill": 0},
         {
           "name": "table_0809e9f0",
-          "address": "0x0809e9f0",
           "end": "0x0809ebfc",
           "element": "record",
           "stride": 4,
@@ -563,7 +527,6 @@
         },
         {
           "name": "script_0809ebfc",
-          "address": "0x0809ebfc",
           "end": "0x0809ed80",
           "element": "le-s32",
           "stride": 4,
@@ -578,7 +541,6 @@
         },
         {
           "name": "table_0809ed80",
-          "address": "0x0809ed80",
           "end": "0x0809ed84",
           "element": "record",
           "stride": 2,
@@ -587,7 +549,6 @@
         },
         {
           "name": "sine_q12",
-          "address": "0x0809ed84",
           "end": "0x0809ef84",
           "element": "le-s16",
           "stride": 2,
@@ -612,7 +573,6 @@
         },
         {
           "name": "table_0809ef84",
-          "address": "0x0809ef84",
           "end": "0x0809f024",
           "element": "record",
           "stride": 10,
@@ -644,7 +604,6 @@
         },
         {
           "name": "table_0809f024",
-          "address": "0x0809f024",
           "end": "0x0809f0b0",
           "element": "record",
           "stride": 4,
@@ -689,7 +648,6 @@
         },
         {
           "name": "script_0809f0b0",
-          "address": "0x0809f0b0",
           "end": "0x0809f0b4",
           "element": "le-u32",
           "stride": 4,
@@ -698,7 +656,6 @@
         },
         {
           "name": "script_0809f0b4",
-          "address": "0x0809f0b4",
           "end": "0x0809f0bc",
           "element": "le-u32",
           "stride": 4,
@@ -707,7 +664,6 @@
         },
         {
           "name": "script_0809f0bc",
-          "address": "0x0809f0bc",
           "end": "0x0809f0f8",
           "element": "le-u32",
           "stride": 4,
@@ -716,7 +672,6 @@
         },
         {
           "name": "table_0809f0f8",
-          "address": "0x0809f0f8",
           "end": "0x0809f118",
           "element": "record",
           "stride": 2,
@@ -742,7 +697,6 @@
         },
         {
           "name": "table_0809f118",
-          "address": "0x0809f118",
           "end": "0x0809f11c",
           "element": "record",
           "stride": 1,
@@ -751,7 +705,6 @@
         },
         {
           "name": "script_0809f11c",
-          "address": "0x0809f11c",
           "end": "0x0809f128",
           "element": "le-u32",
           "stride": 4,
@@ -760,7 +713,6 @@
         },
         {
           "name": "table_0809f128",
-          "address": "0x0809f128",
           "end": "0x0809f12c",
           "element": "record",
           "stride": 1,
@@ -769,7 +721,6 @@
         },
         {
           "name": "script_0809f12c",
-          "address": "0x0809f12c",
           "end": "0x0809f134",
           "element": "le-u32",
           "stride": 4,
@@ -778,23 +729,14 @@
         },
         {
           "name": "script_0809f134_callback",
-          "address": "0x0809f134",
           "end": "0x0809f138",
           "element": "thumb-pointer",
           "stride": 4,
           "values": [134843400]
         },
-        {
-          "name": "script_0809f138",
-          "address": "0x0809f138",
-          "end": "0x0809f13c",
-          "element": "le-u32",
-          "stride": 4,
-          "values": [[27]]
-        },
+        {"name": "script_0809f138", "end": "0x0809f13c", "element": "le-u32", "stride": 4, "values": [[27]]},
         {
           "name": "script_0809f13c",
-          "address": "0x0809f13c",
           "end": "0x0809f148",
           "element": "le-u32",
           "stride": 4,
@@ -803,7 +745,6 @@
         },
         {
           "name": "script_0809f148",
-          "address": "0x0809f148",
           "end": "0x0809f154",
           "element": "le-u32",
           "stride": 4,
@@ -812,7 +753,6 @@
         },
         {
           "name": "script_0809f154",
-          "address": "0x0809f154",
           "end": "0x0809f160",
           "element": "le-u32",
           "stride": 4,
@@ -821,7 +761,6 @@
         },
         {
           "name": "table_0809f160",
-          "address": "0x0809f160",
           "end": "0x0809f168",
           "element": "record",
           "stride": 1,
@@ -839,7 +778,6 @@
         },
         {
           "name": "table_0809f168",
-          "address": "0x0809f168",
           "end": "0x0809f188",
           "element": "record",
           "stride": 1,
@@ -881,7 +819,6 @@
         },
         {
           "name": "table_0809f188",
-          "address": "0x0809f188",
           "end": "0x0809f1a8",
           "element": "record",
           "stride": 2,
@@ -916,7 +853,6 @@
       "segments": [
         {
           "name": "table_0809f810",
-          "address": "0x0809f810",
           "end": "0x0809f840",
           "element": "record",
           "stride": 24,
@@ -942,7 +878,6 @@
         },
         {
           "name": "gradients",
-          "address": "0x0809f840",
           "end": "0x0809fbc0",
           "element": "record",
           "stride": 28,
@@ -1380,7 +1315,6 @@
         },
         {
           "name": "table_0809fbc0",
-          "address": "0x0809fbc0",
           "end": "0x0809fbd0",
           "element": "record",
           "stride": 4,
@@ -1395,7 +1329,6 @@
         },
         {
           "name": "script_0809fbd0",
-          "address": "0x0809fbd0",
           "end": "0x0809fbe4",
           "element": "le-u32",
           "stride": 4,
@@ -1404,23 +1337,14 @@
         },
         {
           "name": "script_0809fbe4_callback",
-          "address": "0x0809fbe4",
           "end": "0x0809fbe8",
           "element": "thumb-pointer",
           "stride": 4,
           "values": [134818420]
         },
-        {
-          "name": "script_0809fbe8",
-          "address": "0x0809fbe8",
-          "end": "0x0809fbec",
-          "element": "le-u32",
-          "stride": 4,
-          "values": [[16]]
-        },
+        {"name": "script_0809fbe8", "end": "0x0809fbec", "element": "le-u32", "stride": 4, "values": [[16]]},
         {
           "name": "script_0809fbec",
-          "address": "0x0809fbec",
           "end": "0x0809fc04",
           "element": "le-u32",
           "stride": 4,
@@ -1429,7 +1353,6 @@
         },
         {
           "name": "script_0809fc04",
-          "address": "0x0809fc04",
           "end": "0x0809fc1c",
           "element": "le-u32",
           "stride": 4,
@@ -1438,7 +1361,6 @@
         },
         {
           "name": "script_0809fc1c",
-          "address": "0x0809fc1c",
           "end": "0x0809fc20",
           "element": "le-u32",
           "stride": 4,
@@ -1447,23 +1369,14 @@
         },
         {
           "name": "script_0809fc20_callback",
-          "address": "0x0809fc20",
           "end": "0x0809fc24",
           "element": "thumb-pointer",
           "stride": 4,
           "values": [134818420]
         },
-        {
-          "name": "script_0809fc24",
-          "address": "0x0809fc24",
-          "end": "0x0809fc28",
-          "element": "le-u32",
-          "stride": 4,
-          "values": [[16]]
-        },
+        {"name": "script_0809fc24", "end": "0x0809fc28", "element": "le-u32", "stride": 4, "values": [[16]]},
         {
           "name": "table_0809fc28",
-          "address": "0x0809fc28",
           "end": "0x0809fc2c",
           "element": "record",
           "stride": 1,
@@ -1472,7 +1385,6 @@
         },
         {
           "name": "script_0809fc2c",
-          "address": "0x0809fc2c",
           "end": "0x0809fd38",
           "element": "le-s32",
           "stride": 4,
@@ -1486,7 +1398,6 @@
         },
         {
           "name": "script_0809fd38",
-          "address": "0x0809fd38",
           "end": "0x0809fd44",
           "element": "le-u32",
           "stride": 4,
@@ -1495,7 +1406,6 @@
         },
         {
           "name": "script_0809fd44",
-          "address": "0x0809fd44",
           "end": "0x0809fe00",
           "element": "le-s32",
           "stride": 4,
@@ -1508,7 +1418,6 @@
         },
         {
           "name": "script_0809fe00",
-          "address": "0x0809fe00",
           "end": "0x0809fe04",
           "element": "le-u32",
           "stride": 4,
@@ -1517,7 +1426,6 @@
         },
         {
           "name": "script_0809fe04",
-          "address": "0x0809fe04",
           "end": "0x0809fe08",
           "element": "le-u32",
           "stride": 4,
@@ -1526,23 +1434,14 @@
         },
         {
           "name": "script_0809fe08_callback",
-          "address": "0x0809fe08",
           "end": "0x0809fe0c",
           "element": "thumb-pointer",
           "stride": 4,
           "values": ["Object_ResetAndClearField59"]
         },
-        {
-          "name": "script_0809fe0c",
-          "address": "0x0809fe0c",
-          "end": "0x0809fe10",
-          "element": "le-u32",
-          "stride": 4,
-          "values": [[16]]
-        },
+        {"name": "script_0809fe0c", "end": "0x0809fe10", "element": "le-u32", "stride": 4, "values": [[16]]},
         {
           "name": "script_0809fe10",
-          "address": "0x0809fe10",
           "end": "0x0809fecc",
           "element": "le-s32",
           "stride": 4,
@@ -1555,7 +1454,6 @@
         },
         {
           "name": "script_0809fecc",
-          "address": "0x0809fecc",
           "end": "0x0809ff18",
           "element": "le-s32",
           "stride": 4,
@@ -1567,7 +1465,6 @@
         },
         {
           "name": "script_0809ff18",
-          "address": "0x0809ff18",
           "end": "0x0809ff1c",
           "element": "le-u32",
           "stride": 4,
@@ -1576,23 +1473,14 @@
         },
         {
           "name": "script_0809ff1c_callback",
-          "address": "0x0809ff1c",
           "end": "0x0809ff20",
           "element": "thumb-pointer",
           "stride": 4,
           "values": [134822268]
         },
-        {
-          "name": "script_0809ff20",
-          "address": "0x0809ff20",
-          "end": "0x0809ff2c",
-          "element": "le-u32",
-          "stride": 4,
-          "values": [[12, 65535, 0]]
-        },
+        {"name": "script_0809ff20", "end": "0x0809ff2c", "element": "le-u32", "stride": 4, "values": [[12, 65535, 0]]},
         {
           "name": "script_0809ff2c",
-          "address": "0x0809ff2c",
           "end": "0x0809ff30",
           "element": "le-u32",
           "stride": 4,
@@ -1601,23 +1489,14 @@
         },
         {
           "name": "script_0809ff30_callback",
-          "address": "0x0809ff30",
           "end": "0x0809ff34",
           "element": "thumb-pointer",
           "stride": 4,
           "values": [134822420]
         },
-        {
-          "name": "script_0809ff34",
-          "address": "0x0809ff34",
-          "end": "0x0809ff40",
-          "element": "le-u32",
-          "stride": 4,
-          "values": [[12, 65535, 0]]
-        },
+        {"name": "script_0809ff34", "end": "0x0809ff40", "element": "le-u32", "stride": 4, "values": [[12, 65535, 0]]},
         {
           "name": "script_0809ff40",
-          "address": "0x0809ff40",
           "end": "0x0809ff58",
           "element": "le-u32",
           "stride": 4,

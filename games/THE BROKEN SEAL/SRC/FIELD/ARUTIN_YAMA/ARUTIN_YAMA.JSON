@@ -1,434 +1,6 @@
 {
   "format": 1,
   "maps": {
-    "25c": {
-      "format": 1,
-      "kind": "golden-sun-map-container",
-      "header": {
-        "format": 1,
-        "kind": "typed-table",
-        "address": "0x08666130",
-        "size": "0x3c",
-        "segments": [
-          {
-            "name": "parameters",
-            "address": "0x08666130",
-            "end": "0x0866613c",
-            "stride": 12,
-            "element": "u8",
-            "values": [0, 0, 64, 68, 3, 1, 2, 1, 1, 2, 0, 0]
-          },
-          {
-            "name": "records",
-            "address": "0x0866613c",
-            "end": "0x08666154",
-            "stride": 8,
-            "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [128, 4112, 0, 65535], [32768, 4112, 0, 65535]]
-          },
-          {
-            "name": "component_offsets",
-            "address": "0x08666154",
-            "end": "0x0866616c",
-            "stride": 4,
-            "element": "le-u32",
-            "values": ["0x3c", "0x87c", "0x8ac", "0x167c", "0x17c8", "0x17d8"]
-          }
-        ]
-      },
-      "metatiles": {
-        "format": 1,
-        "codec": "golden-sun-tagged-palette-lz",
-        "tag": 1,
-        "decoded_size": 12977,
-        "encoded_size": 2112,
-        "tilemap_length": 12976,
-        "component": "map-metatiles-2x2",
-        "transform_mode": 1,
-        "metatiles": 1622,
-        "tilemap_source": "games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/ARUTIN_YAMA.BIN",
-        "tilemap_offset": 835176
-      },
-      "descriptors": {
-        "format": 1,
-        "codec": "golden-sun-general-lz",
-        "decoded_size": 76,
-        "encoded_size": 48,
-        "records": [
-          [0, 4, 0, 0], [7, 0, 8, 0], [7, 4, 8, 0], [0, 8, 0, 0], [0, 0, 0, 0], [0, 12, 0, 0], [3, 12, 8, 0],
-          [7, 8, 10, 0], [4, 12, 8, 0], [3, 8, 4, 0], [7, 4, 6, 0], [4, 8, 4, 0], [7, 0, 2, 0], [3, 4, 0, 0],
-          [4, 4, 0, 0], [4, 0, 8, 0], [3, 4, 8, 0], [3, 0, 4, 0], [4, 4, 8, 0]
-        ],
-        "component": "map-descriptors-4byte",
-        "record_size": 4
-      },
-      "animation_queues": {
-        "format": 1,
-        "codec": "golden-sun-general-lz",
-        "decoded_size": 774,
-        "encoded_size": 332,
-        "words": [
-          ["0xfd00", [1600, 16], [972, 2], [1616, 16], [972, 2], [1632, 16], [972, 2], [1616, 16], [972, 2], "0xfe00"],
-          ["0xfd01", [1648, 4], [988, 2], [1652, 4], [988, 2], [1656, 4], [988, 2], [1652, 4], [988, 2], "0xfe00"],
-          [
-            "0xfd02", [1536, 8], [992, 2], [1544, 8], [992, 2], [1552, 8], [992, 2], [1560, 8], [992, 2], [1568, 8],
-            [992, 2], [1576, 8], [992, 2], [1584, 8], [992, 2], [1592, 8], [992, 2], "0xfe00"
-          ],
-          [
-            "0xfd03", [1664, 24], [1000, 2], [1696, 24], [1000, 2], [1728, 24], [1000, 2], [1760, 24], [1000, 2],
-            [1792, 24], [1000, 2], [1824, 24], [1000, 2], [1856, 24], [1000, 2], [1888, 24], [1000, 2], "0xfe00"
-          ],
-          [
-            "0xfd04", [1820, 4], [1036, 0], [1852, 4], [1068, 0], [1884, 4], [1100, 0], [1916, 4], [1132, 24],
-            [1928, 4], [1036, 0], [1960, 4], [1068, 0], [1992, 4], [1100, 0], [2024, 4], [1132, 18], [1940, 4],
-            [1036, 0], [1972, 4], [1068, 0], [2004, 4], [1100, 0], [2036, 4], [1132, 64], [1928, 4], [1036, 0],
-            [1960, 4], [1068, 0], [1992, 4], [1100, 0], [2024, 4], [1132, 18], "0xfe00"
-          ],
-          [
-            "0xfd05", [1920, 4], [1052, 0], [1952, 4], [1084, 0], [1984, 4], [1116, 0], [2016, 4], [1148, 24],
-            [1932, 4], [1052, 0], [1964, 4], [1084, 0], [1996, 4], [1116, 0], [2028, 4], [1148, 18], [1944, 4],
-            [1052, 0], [1976, 4], [1084, 0], [2008, 4], [1116, 0], [2040, 4], [1148, 64], [1932, 4], [1052, 0],
-            [1964, 4], [1084, 0], [1996, 4], [1116, 0], [2028, 4], [1148, 18], "0xfe00"
-          ],
-          [
-            "0xfd06", [1924, 4], [1152, 0], [1956, 4], [1184, 0], [1988, 4], [1216, 0], [2020, 4], [1248, 24],
-            [1936, 4], [1152, 0], [1968, 4], [1184, 0], [2000, 4], [1216, 0], [2032, 4], [1248, 18], [1948, 4],
-            [1152, 0], [1980, 4], [1184, 0], [2012, 4], [1216, 0], [2044, 4], [1248, 64], [1936, 4], [1152, 0],
-            [1968, 4], [1184, 0], [2000, 4], [1216, 0], [2032, 4], [1248, 18], "0xfe00"
-          ],
-          [
-            "0xfd07", [1688, 4], [1156, 0], [1720, 4], [1188, 0], [1752, 4], [1220, 0], [1784, 4], [1252, 24],
-            [1692, 4], [1156, 0], [1724, 4], [1188, 0], [1756, 4], [1220, 0], [1788, 4], [1252, 18], [1816, 4],
-            [1156, 0], [1848, 4], [1188, 0], [1880, 4], [1220, 0], [1912, 4], [1252, 64], [1692, 4], [1156, 0],
-            [1724, 4], [1188, 0], [1756, 4], [1220, 0], [1788, 4], [1252, 14], "0xfe00"
-          ],
-          ["0xfd08", [1160, 4], [1088, 0], [1192, 4], [1120, 2], [1164, 4], [1088, 0], [1196, 4], [1120, 2], "0xfe00"],
-          "0xffff"
-        ],
-        "component": "map-animation-queues",
-        "word_size": 2,
-        "terminators": ["0xfe00", "0xffff"]
-      },
-      "blend_animation": {
-        "format": 1,
-        "codec": "golden-sun-tagged-palette-lz",
-        "tag": 1,
-        "decoded_size": 10,
-        "encoded_size": 16,
-        "words": [["0x3f42"], ["0x0a09", 45678], ["0xfe00"], ["0xffff"]],
-        "component": "map-blend-animation",
-        "word_size": 2
-      },
-      "sparse_cells": {
-        "format": 1,
-        "kind": "typed-table",
-        "address": "0x08667908",
-        "size": "0x3",
-        "record_size": 3,
-        "segments": [
-          {
-            "name": "terminator",
-            "address": "0x08667908",
-            "end": "0x0866790b",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255
-          }
-        ]
-      },
-      "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/ARUTIN_YAMA.BIN",
-      "grid_offset": 769640,
-      "grid_compression": {
-        "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
-        "section": "d723e9127a15edd94c9712afb112f2f840c6a41eddd75f5881068785b68cef6f"
-      }
-    },
-    "25e": {
-      "format": 1,
-      "kind": "golden-sun-map-container",
-      "header": {
-        "format": 1,
-        "kind": "typed-table",
-        "address": "0x08667ac0",
-        "size": "0x3c",
-        "segments": [
-          {
-            "name": "parameters",
-            "address": "0x08667ac0",
-            "end": "0x08667acc",
-            "stride": 12,
-            "element": "u8",
-            "values": [0, 0, 64, 64, 3, 1, 2, 1, 1, 2, 0, 0]
-          },
-          {
-            "name": "records",
-            "address": "0x08667acc",
-            "end": "0x08667ae4",
-            "stride": 8,
-            "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [128, 4112, 0, 65535], [32768, 4112, 0, 65535]]
-          },
-          {
-            "name": "component_offsets",
-            "address": "0x08667ae4",
-            "end": "0x08667afc",
-            "stride": 4,
-            "element": "le-u32",
-            "values": ["0x3c", "0x7f8", "0x80c", "0x1428", "0x1560", "0x1570"]
-          }
-        ]
-      },
-      "metatiles": {
-        "format": 1,
-        "codec": "golden-sun-tagged-palette-lz",
-        "tag": 1,
-        "decoded_size": 14593,
-        "encoded_size": 1980,
-        "tilemap_length": 14592,
-        "component": "map-metatiles-2x2",
-        "transform_mode": 1,
-        "metatiles": 1824,
-        "tilemap_source": "games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/ARUTIN_YAMA.BIN",
-        "tilemap_offset": 517904
-      },
-      "descriptors": {
-        "format": 1,
-        "codec": "golden-sun-general-lz",
-        "decoded_size": 28,
-        "encoded_size": 20,
-        "records": [[0, 0, 0, 0], [0, 4, 0, 0], [3, 4, 0, 0], [4, 4, 0, 0], [7, 0, 2, 0], [4, 0, 4, 0], [3, 0, 4, 0]],
-        "component": "map-descriptors-4byte",
-        "record_size": 4
-      },
-      "animation_queues": {
-        "format": 1,
-        "codec": "golden-sun-general-lz",
-        "decoded_size": 738,
-        "encoded_size": 312,
-        "words": [
-          ["0xfd00", [1600, 16], [972, 2], [1616, 16], [972, 2], [1632, 16], [972, 2], [1616, 16], [972, 2], "0xfe00"],
-          ["0xfd01", [1648, 4], [988, 2], [1652, 4], [988, 2], [1656, 4], [988, 2], [1652, 4], [988, 2], "0xfe00"],
-          [
-            "0xfd02", [1536, 8], [992, 2], [1544, 8], [992, 2], [1552, 8], [992, 2], [1560, 8], [992, 2], [1568, 8],
-            [992, 2], [1576, 8], [992, 2], [1584, 8], [992, 2], [1592, 8], [992, 2], "0xfe00"
-          ],
-          [
-            "0xfd03", [1664, 24], [1000, 2], [1696, 24], [1000, 2], [1728, 24], [1000, 2], [1760, 24], [1000, 2],
-            [1792, 24], [1000, 2], [1824, 24], [1000, 2], [1856, 24], [1000, 2], [1888, 24], [1000, 2], "0xfe00"
-          ],
-          [
-            "0xfd04", [1820, 4], [1036, 0], [1852, 4], [1068, 0], [1884, 4], [1100, 0], [1916, 4], [1132, 24],
-            [1928, 4], [1036, 0], [1960, 4], [1068, 0], [1992, 4], [1100, 0], [2024, 4], [1132, 18], [1940, 4],
-            [1036, 0], [1972, 4], [1068, 0], [2004, 4], [1100, 0], [2036, 4], [1132, 64], [1928, 4], [1036, 0],
-            [1960, 4], [1068, 0], [1992, 4], [1100, 0], [2024, 4], [1132, 18], "0xfe00"
-          ],
-          [
-            "0xfd05", [1920, 4], [1052, 0], [1952, 4], [1084, 0], [1984, 4], [1116, 0], [2016, 4], [1148, 24],
-            [1932, 4], [1052, 0], [1964, 4], [1084, 0], [1996, 4], [1116, 0], [2028, 4], [1148, 18], [1944, 4],
-            [1052, 0], [1976, 4], [1084, 0], [2008, 4], [1116, 0], [2040, 4], [1148, 64], [1932, 4], [1052, 0],
-            [1964, 4], [1084, 0], [1996, 4], [1116, 0], [2028, 4], [1148, 18], "0xfe00"
-          ],
-          [
-            "0xfd06", [1924, 4], [1152, 0], [1956, 4], [1184, 0], [1988, 4], [1216, 0], [2020, 4], [1248, 24],
-            [1936, 4], [1152, 0], [1968, 4], [1184, 0], [2000, 4], [1216, 0], [2032, 4], [1248, 18], [1948, 4],
-            [1152, 0], [1980, 4], [1184, 0], [2012, 4], [1216, 0], [2044, 4], [1248, 64], [1936, 4], [1152, 0],
-            [1968, 4], [1184, 0], [2000, 4], [1216, 0], [2032, 4], [1248, 18], "0xfe00"
-          ],
-          [
-            "0xfd07", [1688, 4], [1156, 0], [1720, 4], [1188, 0], [1752, 4], [1220, 0], [1784, 4], [1252, 24],
-            [1692, 4], [1156, 0], [1724, 4], [1188, 0], [1756, 4], [1220, 0], [1788, 4], [1252, 18], [1816, 4],
-            [1156, 0], [1848, 4], [1188, 0], [1880, 4], [1220, 0], [1912, 4], [1252, 64], [1692, 4], [1156, 0],
-            [1724, 4], [1188, 0], [1756, 4], [1220, 0], [1788, 4], [1252, 18], "0xfe00"
-          ],
-          "0xffff"
-        ],
-        "component": "map-animation-queues",
-        "word_size": 2,
-        "terminators": ["0xfe00", "0xffff"]
-      },
-      "blend_animation": {
-        "format": 1,
-        "codec": "golden-sun-tagged-palette-lz",
-        "tag": 1,
-        "decoded_size": 10,
-        "encoded_size": 16,
-        "words": [["0x3f42"], ["0x0a09", 45678], ["0xfe00"], ["0xffff"]],
-        "component": "map-blend-animation",
-        "word_size": 2
-      },
-      "sparse_cells": {
-        "format": 1,
-        "kind": "typed-table",
-        "address": "0x08669030",
-        "size": "0x3",
-        "record_size": 3,
-        "segments": [
-          {
-            "name": "terminator",
-            "address": "0x08669030",
-            "end": "0x08669033",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255
-          }
-        ]
-      },
-      "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/ARUTIN_YAMA.BIN",
-      "grid_offset": 452368,
-      "grid_compression": {
-        "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
-        "section": "abb3debfc25d65c5fc6224681358664a92d37dd99975a990cdbab3ad38a74dde"
-      }
-    },
-    "25f": {
-      "format": 1,
-      "kind": "golden-sun-map-container",
-      "header": {
-        "format": 1,
-        "kind": "typed-table",
-        "address": "0x08669034",
-        "size": "0x3c",
-        "segments": [
-          {
-            "name": "parameters",
-            "address": "0x08669034",
-            "end": "0x08669040",
-            "stride": 12,
-            "element": "u8",
-            "values": [0, 0, 128, 128, 3, 1, 2, 1, 1, 2, 0, 0]
-          },
-          {
-            "name": "records",
-            "address": "0x08669040",
-            "end": "0x08669058",
-            "stride": 8,
-            "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [128, 4112, 0, 65535], [32768, 4112, 0, 65535]]
-          },
-          {
-            "name": "component_offsets",
-            "address": "0x08669058",
-            "end": "0x08669070",
-            "stride": 4,
-            "element": "le-u32",
-            "values": ["0x3c", "0xbb0", "0xbf4", "0x2880", "0x29b8", "0x29c8"]
-          }
-        ]
-      },
-      "metatiles": {
-        "format": 1,
-        "codec": "golden-sun-general-lz",
-        "decoded_size": 7833,
-        "encoded_size": 2932,
-        "tilemap_length": 7832,
-        "component": "map-metatiles-2x2",
-        "transform_mode": 1,
-        "metatiles": 979,
-        "tilemap_source": "games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/ARUTIN_YAMA.BIN",
-        "tilemap_offset": 293384
-      },
-      "descriptors": {
-        "format": 1,
-        "codec": "golden-sun-general-lz",
-        "decoded_size": 108,
-        "encoded_size": 68,
-        "records": [
-          [0, 4, 0, 0], [0, 0, 0, 0], [7, 4, 6, 0], [0, 8, 0, 0], [3, 4, 0, 0], [4, 4, 0, 0], [3, 8, 4, 0],
-          [4, 8, 4, 0], [7, 0, 2, 0], [0, 12, 0, 0], [4, 0, 4, 0], [3, 0, 4, 0], [1, 4, 6, 0], [0, 6, 0, 0],
-          [1, 6, 4, 0], [4, 4, 8, 0], [3, 4, 8, 0], [6, 6, 4, 4], [2, 6, 4, 0], [5, 6, 4, 4], [3, 0, 2, 0],
-          [0, 2, 0, 0], [4, 0, 2, 0], [1, 4, 5, 0], [1, 5, 6, 0], [1, 6, 5, 0], [1, 5, 4, 0]
-        ],
-        "component": "map-descriptors-4byte",
-        "record_size": 4
-      },
-      "animation_queues": {
-        "format": 1,
-        "codec": "golden-sun-general-lz",
-        "decoded_size": 738,
-        "encoded_size": 312,
-        "words": [
-          ["0xfd00", [1600, 16], [972, 2], [1616, 16], [972, 2], [1632, 16], [972, 2], [1616, 16], [972, 2], "0xfe00"],
-          ["0xfd01", [1648, 4], [988, 2], [1652, 4], [988, 2], [1656, 4], [988, 2], [1652, 4], [988, 2], "0xfe00"],
-          [
-            "0xfd02", [1536, 8], [992, 2], [1544, 8], [992, 2], [1552, 8], [992, 2], [1560, 8], [992, 2], [1568, 8],
-            [992, 2], [1576, 8], [992, 2], [1584, 8], [992, 2], [1592, 8], [992, 2], "0xfe00"
-          ],
-          [
-            "0xfd03", [1664, 24], [1000, 2], [1696, 24], [1000, 2], [1728, 24], [1000, 2], [1760, 24], [1000, 2],
-            [1792, 24], [1000, 2], [1824, 24], [1000, 2], [1856, 24], [1000, 2], [1888, 24], [1000, 2], "0xfe00"
-          ],
-          [
-            "0xfd04", [1820, 4], [1036, 0], [1852, 4], [1068, 0], [1884, 4], [1100, 0], [1916, 4], [1132, 24],
-            [1928, 4], [1036, 0], [1960, 4], [1068, 0], [1992, 4], [1100, 0], [2024, 4], [1132, 18], [1940, 4],
-            [1036, 0], [1972, 4], [1068, 0], [2004, 4], [1100, 0], [2036, 4], [1132, 64], [1928, 4], [1036, 0],
-            [1960, 4], [1068, 0], [1992, 4], [1100, 0], [2024, 4], [1132, 18], "0xfe00"
-          ],
-          [
-            "0xfd05", [1920, 4], [1052, 0], [1952, 4], [1084, 0], [1984, 4], [1116, 0], [2016, 4], [1148, 24],
-            [1932, 4], [1052, 0], [1964, 4], [1084, 0], [1996, 4], [1116, 0], [2028, 4], [1148, 18], [1944, 4],
-            [1052, 0], [1976, 4], [1084, 0], [2008, 4], [1116, 0], [2040, 4], [1148, 64], [1932, 4], [1052, 0],
-            [1964, 4], [1084, 0], [1996, 4], [1116, 0], [2028, 4], [1148, 18], "0xfe00"
-          ],
-          [
-            "0xfd06", [1924, 4], [1152, 0], [1956, 4], [1184, 0], [1988, 4], [1216, 0], [2020, 4], [1248, 24],
-            [1936, 4], [1152, 0], [1968, 4], [1184, 0], [2000, 4], [1216, 0], [2032, 4], [1248, 18], [1948, 4],
-            [1152, 0], [1980, 4], [1184, 0], [2012, 4], [1216, 0], [2044, 4], [1248, 64], [1936, 4], [1152, 0],
-            [1968, 4], [1184, 0], [2000, 4], [1216, 0], [2032, 4], [1248, 18], "0xfe00"
-          ],
-          [
-            "0xfd07", [1688, 4], [1156, 0], [1720, 4], [1188, 0], [1752, 4], [1220, 0], [1784, 4], [1252, 24],
-            [1692, 4], [1156, 0], [1724, 4], [1188, 0], [1756, 4], [1220, 0], [1788, 4], [1252, 18], [1816, 4],
-            [1156, 0], [1848, 4], [1188, 0], [1880, 4], [1220, 0], [1912, 4], [1252, 64], [1692, 4], [1156, 0],
-            [1724, 4], [1188, 0], [1756, 4], [1220, 0], [1788, 4], [1252, 18], "0xfe00"
-          ],
-          "0xffff"
-        ],
-        "component": "map-animation-queues",
-        "word_size": 2,
-        "terminators": ["0xfe00", "0xffff"]
-      },
-      "blend_animation": {
-        "format": 1,
-        "codec": "golden-sun-tagged-palette-lz",
-        "tag": 1,
-        "decoded_size": 10,
-        "encoded_size": 16,
-        "words": [["0x3f42"], ["0x0a09", 45678], ["0xfe00"], ["0xffff"]],
-        "component": "map-blend-animation",
-        "word_size": 2
-      },
-      "sparse_cells": {
-        "format": 1,
-        "kind": "typed-table",
-        "address": "0x0866b9fc",
-        "size": "0x6",
-        "record_size": 3,
-        "segments": [
-          {
-            "name": "records",
-            "address": "0x0866b9fc",
-            "end": "0x0866b9ff",
-            "stride": 3,
-            "element": "u8",
-            "values": [[56, 8, 100]]
-          },
-          {
-            "name": "terminator",
-            "address": "0x0866b9ff",
-            "end": "0x0866ba02",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255
-          }
-        ]
-      },
-      "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/ARUTIN_YAMA.BIN",
-      "grid_offset": 227848,
-      "grid_compression": {
-        "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
-        "section": "347ccd8c59dd862fdbe317f662a634f90a43774b6d446b6a5597c2b8f7156343"
-      }
-    },
     "260": {
       "format": 1,
       "kind": "golden-sun-map-container",
@@ -440,7 +12,6 @@
         "segments": [
           {
             "name": "parameters",
-            "address": "0x0866ba04",
             "end": "0x0866ba10",
             "stride": 12,
             "element": "u8",
@@ -448,7 +19,6 @@
           },
           {
             "name": "records",
-            "address": "0x0866ba10",
             "end": "0x0866ba28",
             "stride": 8,
             "element": "le-u16",
@@ -456,7 +26,6 @@
           },
           {
             "name": "component_offsets",
-            "address": "0x0866ba28",
             "end": "0x0866ba40",
             "stride": 4,
             "element": "le-u32",
@@ -551,16 +120,7 @@
         "address": "0x0866dcc8",
         "size": "0x3",
         "record_size": 3,
-        "segments": [
-          {
-            "name": "terminator",
-            "address": "0x0866dcc8",
-            "end": "0x0866dccb",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255
-          }
-        ]
+        "segments": [{"name": "terminator", "end": "0x0866dccb", "stride": 1, "element": "u8", "fill": 255}]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/ARUTIN_YAMA.BIN",
       "grid_offset": 370784,
@@ -580,7 +140,6 @@
         "segments": [
           {
             "name": "parameters",
-            "address": "0x0866dccc",
             "end": "0x0866dcd8",
             "stride": 12,
             "element": "u8",
@@ -588,7 +147,6 @@
           },
           {
             "name": "records",
-            "address": "0x0866dcd8",
             "end": "0x0866dcf0",
             "stride": 8,
             "element": "le-u16",
@@ -596,7 +154,6 @@
           },
           {
             "name": "component_offsets",
-            "address": "0x0866dcf0",
             "end": "0x0866dd08",
             "stride": 4,
             "element": "le-u32",
@@ -698,20 +255,12 @@
         "segments": [
           {
             "name": "records",
-            "address": "0x0866f298",
             "end": "0x0866f29e",
             "stride": 3,
             "element": "u8",
             "values": [[16, 7, 101], [29, 25, 100]]
           },
-          {
-            "name": "terminator",
-            "address": "0x0866f29e",
-            "end": "0x0866f2a1",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255
-          }
+          {"name": "terminator", "end": "0x0866f2a1", "stride": 1, "element": "u8", "fill": 255}
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/ARUTIN_YAMA.BIN",
@@ -732,7 +281,6 @@
         "segments": [
           {
             "name": "parameters",
-            "address": "0x0866f2a4",
             "end": "0x0866f2b0",
             "stride": 12,
             "element": "u8",
@@ -740,7 +288,6 @@
           },
           {
             "name": "records",
-            "address": "0x0866f2b0",
             "end": "0x0866f2c8",
             "stride": 8,
             "element": "le-u16",
@@ -748,7 +295,6 @@
           },
           {
             "name": "component_offsets",
-            "address": "0x0866f2c8",
             "end": "0x0866f2e0",
             "stride": 4,
             "element": "le-u32",
@@ -846,22 +392,8 @@
         "size": "0x6",
         "record_size": 3,
         "segments": [
-          {
-            "name": "records",
-            "address": "0x0867135c",
-            "end": "0x0867135f",
-            "stride": 3,
-            "element": "u8",
-            "values": [[3, 37, 100]]
-          },
-          {
-            "name": "terminator",
-            "address": "0x0867135f",
-            "end": "0x08671362",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255
-          }
+          {"name": "records", "end": "0x0867135f", "stride": 3, "element": "u8", "values": [[3, 37, 100]]},
+          {"name": "terminator", "end": "0x08671362", "stride": 1, "element": "u8", "fill": 255}
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/ARUTIN_YAMA.BIN",
@@ -882,7 +414,6 @@
         "segments": [
           {
             "name": "parameters",
-            "address": "0x08671364",
             "end": "0x08671370",
             "stride": 12,
             "element": "u8",
@@ -890,7 +421,6 @@
           },
           {
             "name": "records",
-            "address": "0x08671370",
             "end": "0x08671388",
             "stride": 8,
             "element": "le-u16",
@@ -898,7 +428,6 @@
           },
           {
             "name": "component_offsets",
-            "address": "0x08671388",
             "end": "0x086713a0",
             "stride": 4,
             "element": "le-u32",
@@ -999,20 +528,12 @@
         "segments": [
           {
             "name": "records",
-            "address": "0x08673684",
             "end": "0x0867368a",
             "stride": 3,
             "element": "u8",
             "values": [[3, 24, 100], [16, 49, 101]]
           },
-          {
-            "name": "terminator",
-            "address": "0x0867368a",
-            "end": "0x0867368d",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255
-          }
+          {"name": "terminator", "end": "0x0867368d", "stride": 1, "element": "u8", "fill": 255}
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/ARUTIN_YAMA.BIN",
@@ -1033,7 +554,6 @@
         "segments": [
           {
             "name": "parameters",
-            "address": "0x08673690",
             "end": "0x0867369c",
             "stride": 12,
             "element": "u8",
@@ -1041,7 +561,6 @@
           },
           {
             "name": "records",
-            "address": "0x0867369c",
             "end": "0x086736b4",
             "stride": 8,
             "element": "le-u16",
@@ -1049,7 +568,6 @@
           },
           {
             "name": "component_offsets",
-            "address": "0x086736b4",
             "end": "0x086736cc",
             "stride": 4,
             "element": "le-u32",
@@ -1145,22 +663,8 @@
         "size": "0x6",
         "record_size": 3,
         "segments": [
-          {
-            "name": "records",
-            "address": "0x086762ac",
-            "end": "0x086762af",
-            "stride": 3,
-            "element": "u8",
-            "values": [[6, 27, 100]]
-          },
-          {
-            "name": "terminator",
-            "address": "0x086762af",
-            "end": "0x086762b2",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255
-          }
+          {"name": "records", "end": "0x086762af", "stride": 3, "element": "u8", "values": [[6, 27, 100]]},
+          {"name": "terminator", "end": "0x086762b2", "stride": 1, "element": "u8", "fill": 255}
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/ARUTIN_YAMA.BIN",
@@ -1181,7 +685,6 @@
         "segments": [
           {
             "name": "parameters",
-            "address": "0x086762b4",
             "end": "0x086762c0",
             "stride": 12,
             "element": "u8",
@@ -1189,7 +692,6 @@
           },
           {
             "name": "records",
-            "address": "0x086762c0",
             "end": "0x086762d8",
             "stride": 8,
             "element": "le-u16",
@@ -1197,7 +699,6 @@
           },
           {
             "name": "component_offsets",
-            "address": "0x086762d8",
             "end": "0x086762f0",
             "stride": 4,
             "element": "le-u32",
@@ -1294,16 +795,7 @@
         "address": "0x08677738",
         "size": "0x3",
         "record_size": 3,
-        "segments": [
-          {
-            "name": "terminator",
-            "address": "0x08677738",
-            "end": "0x0867773b",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255
-          }
-        ]
+        "segments": [{"name": "terminator", "end": "0x0867773b", "stride": 1, "element": "u8", "fill": 255}]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/ARUTIN_YAMA.BIN",
       "grid_offset": 301216,
@@ -1323,7 +815,6 @@
         "segments": [
           {
             "name": "parameters",
-            "address": "0x0867773c",
             "end": "0x08677748",
             "stride": 12,
             "element": "u8",
@@ -1331,7 +822,6 @@
           },
           {
             "name": "records",
-            "address": "0x08677748",
             "end": "0x08677760",
             "stride": 8,
             "element": "le-u16",
@@ -1339,7 +829,6 @@
           },
           {
             "name": "component_offsets",
-            "address": "0x08677760",
             "end": "0x08677778",
             "stride": 4,
             "element": "le-u32",
@@ -1474,22 +963,8 @@
         "size": "0x6",
         "record_size": 3,
         "segments": [
-          {
-            "name": "records",
-            "address": "0x08678458",
-            "end": "0x0867845b",
-            "stride": 3,
-            "element": "u8",
-            "values": [[20, 4, 100]]
-          },
-          {
-            "name": "terminator",
-            "address": "0x0867845b",
-            "end": "0x0867845e",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255
-          }
+          {"name": "records", "end": "0x0867845b", "stride": 3, "element": "u8", "values": [[20, 4, 100]]},
+          {"name": "terminator", "end": "0x0867845e", "stride": 1, "element": "u8", "fill": 255}
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/ARUTIN_YAMA.BIN",
@@ -1510,7 +985,6 @@
         "segments": [
           {
             "name": "parameters",
-            "address": "0x086785c0",
             "end": "0x086785cc",
             "stride": 12,
             "element": "u8",
@@ -1518,7 +992,6 @@
           },
           {
             "name": "records",
-            "address": "0x086785cc",
             "end": "0x086785e4",
             "stride": 8,
             "element": "le-u16",
@@ -1526,7 +999,6 @@
           },
           {
             "name": "component_offsets",
-            "address": "0x086785e4",
             "end": "0x086785fc",
             "stride": 4,
             "element": "le-u32",
@@ -1619,22 +1091,8 @@
         "size": "0x6",
         "record_size": 3,
         "segments": [
-          {
-            "name": "records",
-            "address": "0x08679ef4",
-            "end": "0x08679ef7",
-            "stride": 3,
-            "element": "u8",
-            "values": [[35, 5, 100]]
-          },
-          {
-            "name": "terminator",
-            "address": "0x08679ef7",
-            "end": "0x08679efa",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255
-          }
+          {"name": "records", "end": "0x08679ef7", "stride": 3, "element": "u8", "values": [[35, 5, 100]]},
+          {"name": "terminator", "end": "0x08679efa", "stride": 1, "element": "u8", "fill": 255}
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/ARUTIN_YAMA.BIN",
@@ -1642,6 +1100,393 @@
       "grid_compression": {
         "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
         "section": "fa07ad7e71f652420f23103f544b371c4395992c15894a75b48084ca47edd8fb"
+      }
+    },
+    "25c": {
+      "format": 1,
+      "kind": "golden-sun-map-container",
+      "header": {
+        "format": 1,
+        "kind": "typed-table",
+        "address": "0x08666130",
+        "size": "0x3c",
+        "segments": [
+          {
+            "name": "parameters",
+            "end": "0x0866613c",
+            "stride": 12,
+            "element": "u8",
+            "values": [0, 0, 64, 68, 3, 1, 2, 1, 1, 2, 0, 0]
+          },
+          {
+            "name": "records",
+            "end": "0x08666154",
+            "stride": 8,
+            "element": "le-u16",
+            "values": [[0, 4112, 0, 65535], [128, 4112, 0, 65535], [32768, 4112, 0, 65535]]
+          },
+          {
+            "name": "component_offsets",
+            "end": "0x0866616c",
+            "stride": 4,
+            "element": "le-u32",
+            "values": ["0x3c", "0x87c", "0x8ac", "0x167c", "0x17c8", "0x17d8"]
+          }
+        ]
+      },
+      "metatiles": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "tag": 1,
+        "decoded_size": 12977,
+        "encoded_size": 2112,
+        "tilemap_length": 12976,
+        "component": "map-metatiles-2x2",
+        "transform_mode": 1,
+        "metatiles": 1622,
+        "tilemap_source": "games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/ARUTIN_YAMA.BIN",
+        "tilemap_offset": 835176
+      },
+      "descriptors": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 76,
+        "encoded_size": 48,
+        "records": [
+          [0, 4, 0, 0], [7, 0, 8, 0], [7, 4, 8, 0], [0, 8, 0, 0], [0, 0, 0, 0], [0, 12, 0, 0], [3, 12, 8, 0],
+          [7, 8, 10, 0], [4, 12, 8, 0], [3, 8, 4, 0], [7, 4, 6, 0], [4, 8, 4, 0], [7, 0, 2, 0], [3, 4, 0, 0],
+          [4, 4, 0, 0], [4, 0, 8, 0], [3, 4, 8, 0], [3, 0, 4, 0], [4, 4, 8, 0]
+        ],
+        "component": "map-descriptors-4byte",
+        "record_size": 4
+      },
+      "animation_queues": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 774,
+        "encoded_size": 332,
+        "words": [
+          ["0xfd00", [1600, 16], [972, 2], [1616, 16], [972, 2], [1632, 16], [972, 2], [1616, 16], [972, 2], "0xfe00"],
+          ["0xfd01", [1648, 4], [988, 2], [1652, 4], [988, 2], [1656, 4], [988, 2], [1652, 4], [988, 2], "0xfe00"],
+          [
+            "0xfd02", [1536, 8], [992, 2], [1544, 8], [992, 2], [1552, 8], [992, 2], [1560, 8], [992, 2], [1568, 8],
+            [992, 2], [1576, 8], [992, 2], [1584, 8], [992, 2], [1592, 8], [992, 2], "0xfe00"
+          ],
+          [
+            "0xfd03", [1664, 24], [1000, 2], [1696, 24], [1000, 2], [1728, 24], [1000, 2], [1760, 24], [1000, 2],
+            [1792, 24], [1000, 2], [1824, 24], [1000, 2], [1856, 24], [1000, 2], [1888, 24], [1000, 2], "0xfe00"
+          ],
+          [
+            "0xfd04", [1820, 4], [1036, 0], [1852, 4], [1068, 0], [1884, 4], [1100, 0], [1916, 4], [1132, 24],
+            [1928, 4], [1036, 0], [1960, 4], [1068, 0], [1992, 4], [1100, 0], [2024, 4], [1132, 18], [1940, 4],
+            [1036, 0], [1972, 4], [1068, 0], [2004, 4], [1100, 0], [2036, 4], [1132, 64], [1928, 4], [1036, 0],
+            [1960, 4], [1068, 0], [1992, 4], [1100, 0], [2024, 4], [1132, 18], "0xfe00"
+          ],
+          [
+            "0xfd05", [1920, 4], [1052, 0], [1952, 4], [1084, 0], [1984, 4], [1116, 0], [2016, 4], [1148, 24],
+            [1932, 4], [1052, 0], [1964, 4], [1084, 0], [1996, 4], [1116, 0], [2028, 4], [1148, 18], [1944, 4],
+            [1052, 0], [1976, 4], [1084, 0], [2008, 4], [1116, 0], [2040, 4], [1148, 64], [1932, 4], [1052, 0],
+            [1964, 4], [1084, 0], [1996, 4], [1116, 0], [2028, 4], [1148, 18], "0xfe00"
+          ],
+          [
+            "0xfd06", [1924, 4], [1152, 0], [1956, 4], [1184, 0], [1988, 4], [1216, 0], [2020, 4], [1248, 24],
+            [1936, 4], [1152, 0], [1968, 4], [1184, 0], [2000, 4], [1216, 0], [2032, 4], [1248, 18], [1948, 4],
+            [1152, 0], [1980, 4], [1184, 0], [2012, 4], [1216, 0], [2044, 4], [1248, 64], [1936, 4], [1152, 0],
+            [1968, 4], [1184, 0], [2000, 4], [1216, 0], [2032, 4], [1248, 18], "0xfe00"
+          ],
+          [
+            "0xfd07", [1688, 4], [1156, 0], [1720, 4], [1188, 0], [1752, 4], [1220, 0], [1784, 4], [1252, 24],
+            [1692, 4], [1156, 0], [1724, 4], [1188, 0], [1756, 4], [1220, 0], [1788, 4], [1252, 18], [1816, 4],
+            [1156, 0], [1848, 4], [1188, 0], [1880, 4], [1220, 0], [1912, 4], [1252, 64], [1692, 4], [1156, 0],
+            [1724, 4], [1188, 0], [1756, 4], [1220, 0], [1788, 4], [1252, 14], "0xfe00"
+          ],
+          ["0xfd08", [1160, 4], [1088, 0], [1192, 4], [1120, 2], [1164, 4], [1088, 0], [1196, 4], [1120, 2], "0xfe00"],
+          "0xffff"
+        ],
+        "component": "map-animation-queues",
+        "word_size": 2,
+        "terminators": ["0xfe00", "0xffff"]
+      },
+      "blend_animation": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "tag": 1,
+        "decoded_size": 10,
+        "encoded_size": 16,
+        "words": [["0x3f42"], ["0x0a09", 45678], ["0xfe00"], ["0xffff"]],
+        "component": "map-blend-animation",
+        "word_size": 2
+      },
+      "sparse_cells": {
+        "format": 1,
+        "kind": "typed-table",
+        "address": "0x08667908",
+        "size": "0x3",
+        "record_size": 3,
+        "segments": [{"name": "terminator", "end": "0x0866790b", "stride": 1, "element": "u8", "fill": 255}]
+      },
+      "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/ARUTIN_YAMA.BIN",
+      "grid_offset": 769640,
+      "grid_compression": {
+        "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+        "section": "d723e9127a15edd94c9712afb112f2f840c6a41eddd75f5881068785b68cef6f"
+      }
+    },
+    "25e": {
+      "format": 1,
+      "kind": "golden-sun-map-container",
+      "header": {
+        "format": 1,
+        "kind": "typed-table",
+        "address": "0x08667ac0",
+        "size": "0x3c",
+        "segments": [
+          {
+            "name": "parameters",
+            "end": "0x08667acc",
+            "stride": 12,
+            "element": "u8",
+            "values": [0, 0, 64, 64, 3, 1, 2, 1, 1, 2, 0, 0]
+          },
+          {
+            "name": "records",
+            "end": "0x08667ae4",
+            "stride": 8,
+            "element": "le-u16",
+            "values": [[0, 4112, 0, 65535], [128, 4112, 0, 65535], [32768, 4112, 0, 65535]]
+          },
+          {
+            "name": "component_offsets",
+            "end": "0x08667afc",
+            "stride": 4,
+            "element": "le-u32",
+            "values": ["0x3c", "0x7f8", "0x80c", "0x1428", "0x1560", "0x1570"]
+          }
+        ]
+      },
+      "metatiles": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "tag": 1,
+        "decoded_size": 14593,
+        "encoded_size": 1980,
+        "tilemap_length": 14592,
+        "component": "map-metatiles-2x2",
+        "transform_mode": 1,
+        "metatiles": 1824,
+        "tilemap_source": "games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/ARUTIN_YAMA.BIN",
+        "tilemap_offset": 517904
+      },
+      "descriptors": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 28,
+        "encoded_size": 20,
+        "records": [[0, 0, 0, 0], [0, 4, 0, 0], [3, 4, 0, 0], [4, 4, 0, 0], [7, 0, 2, 0], [4, 0, 4, 0], [3, 0, 4, 0]],
+        "component": "map-descriptors-4byte",
+        "record_size": 4
+      },
+      "animation_queues": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 738,
+        "encoded_size": 312,
+        "words": [
+          ["0xfd00", [1600, 16], [972, 2], [1616, 16], [972, 2], [1632, 16], [972, 2], [1616, 16], [972, 2], "0xfe00"],
+          ["0xfd01", [1648, 4], [988, 2], [1652, 4], [988, 2], [1656, 4], [988, 2], [1652, 4], [988, 2], "0xfe00"],
+          [
+            "0xfd02", [1536, 8], [992, 2], [1544, 8], [992, 2], [1552, 8], [992, 2], [1560, 8], [992, 2], [1568, 8],
+            [992, 2], [1576, 8], [992, 2], [1584, 8], [992, 2], [1592, 8], [992, 2], "0xfe00"
+          ],
+          [
+            "0xfd03", [1664, 24], [1000, 2], [1696, 24], [1000, 2], [1728, 24], [1000, 2], [1760, 24], [1000, 2],
+            [1792, 24], [1000, 2], [1824, 24], [1000, 2], [1856, 24], [1000, 2], [1888, 24], [1000, 2], "0xfe00"
+          ],
+          [
+            "0xfd04", [1820, 4], [1036, 0], [1852, 4], [1068, 0], [1884, 4], [1100, 0], [1916, 4], [1132, 24],
+            [1928, 4], [1036, 0], [1960, 4], [1068, 0], [1992, 4], [1100, 0], [2024, 4], [1132, 18], [1940, 4],
+            [1036, 0], [1972, 4], [1068, 0], [2004, 4], [1100, 0], [2036, 4], [1132, 64], [1928, 4], [1036, 0],
+            [1960, 4], [1068, 0], [1992, 4], [1100, 0], [2024, 4], [1132, 18], "0xfe00"
+          ],
+          [
+            "0xfd05", [1920, 4], [1052, 0], [1952, 4], [1084, 0], [1984, 4], [1116, 0], [2016, 4], [1148, 24],
+            [1932, 4], [1052, 0], [1964, 4], [1084, 0], [1996, 4], [1116, 0], [2028, 4], [1148, 18], [1944, 4],
+            [1052, 0], [1976, 4], [1084, 0], [2008, 4], [1116, 0], [2040, 4], [1148, 64], [1932, 4], [1052, 0],
+            [1964, 4], [1084, 0], [1996, 4], [1116, 0], [2028, 4], [1148, 18], "0xfe00"
+          ],
+          [
+            "0xfd06", [1924, 4], [1152, 0], [1956, 4], [1184, 0], [1988, 4], [1216, 0], [2020, 4], [1248, 24],
+            [1936, 4], [1152, 0], [1968, 4], [1184, 0], [2000, 4], [1216, 0], [2032, 4], [1248, 18], [1948, 4],
+            [1152, 0], [1980, 4], [1184, 0], [2012, 4], [1216, 0], [2044, 4], [1248, 64], [1936, 4], [1152, 0],
+            [1968, 4], [1184, 0], [2000, 4], [1216, 0], [2032, 4], [1248, 18], "0xfe00"
+          ],
+          [
+            "0xfd07", [1688, 4], [1156, 0], [1720, 4], [1188, 0], [1752, 4], [1220, 0], [1784, 4], [1252, 24],
+            [1692, 4], [1156, 0], [1724, 4], [1188, 0], [1756, 4], [1220, 0], [1788, 4], [1252, 18], [1816, 4],
+            [1156, 0], [1848, 4], [1188, 0], [1880, 4], [1220, 0], [1912, 4], [1252, 64], [1692, 4], [1156, 0],
+            [1724, 4], [1188, 0], [1756, 4], [1220, 0], [1788, 4], [1252, 18], "0xfe00"
+          ],
+          "0xffff"
+        ],
+        "component": "map-animation-queues",
+        "word_size": 2,
+        "terminators": ["0xfe00", "0xffff"]
+      },
+      "blend_animation": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "tag": 1,
+        "decoded_size": 10,
+        "encoded_size": 16,
+        "words": [["0x3f42"], ["0x0a09", 45678], ["0xfe00"], ["0xffff"]],
+        "component": "map-blend-animation",
+        "word_size": 2
+      },
+      "sparse_cells": {
+        "format": 1,
+        "kind": "typed-table",
+        "address": "0x08669030",
+        "size": "0x3",
+        "record_size": 3,
+        "segments": [{"name": "terminator", "end": "0x08669033", "stride": 1, "element": "u8", "fill": 255}]
+      },
+      "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/ARUTIN_YAMA.BIN",
+      "grid_offset": 452368,
+      "grid_compression": {
+        "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+        "section": "abb3debfc25d65c5fc6224681358664a92d37dd99975a990cdbab3ad38a74dde"
+      }
+    },
+    "25f": {
+      "format": 1,
+      "kind": "golden-sun-map-container",
+      "header": {
+        "format": 1,
+        "kind": "typed-table",
+        "address": "0x08669034",
+        "size": "0x3c",
+        "segments": [
+          {
+            "name": "parameters",
+            "end": "0x08669040",
+            "stride": 12,
+            "element": "u8",
+            "values": [0, 0, 128, 128, 3, 1, 2, 1, 1, 2, 0, 0]
+          },
+          {
+            "name": "records",
+            "end": "0x08669058",
+            "stride": 8,
+            "element": "le-u16",
+            "values": [[0, 4112, 0, 65535], [128, 4112, 0, 65535], [32768, 4112, 0, 65535]]
+          },
+          {
+            "name": "component_offsets",
+            "end": "0x08669070",
+            "stride": 4,
+            "element": "le-u32",
+            "values": ["0x3c", "0xbb0", "0xbf4", "0x2880", "0x29b8", "0x29c8"]
+          }
+        ]
+      },
+      "metatiles": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 7833,
+        "encoded_size": 2932,
+        "tilemap_length": 7832,
+        "component": "map-metatiles-2x2",
+        "transform_mode": 1,
+        "metatiles": 979,
+        "tilemap_source": "games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/ARUTIN_YAMA.BIN",
+        "tilemap_offset": 293384
+      },
+      "descriptors": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 108,
+        "encoded_size": 68,
+        "records": [
+          [0, 4, 0, 0], [0, 0, 0, 0], [7, 4, 6, 0], [0, 8, 0, 0], [3, 4, 0, 0], [4, 4, 0, 0], [3, 8, 4, 0],
+          [4, 8, 4, 0], [7, 0, 2, 0], [0, 12, 0, 0], [4, 0, 4, 0], [3, 0, 4, 0], [1, 4, 6, 0], [0, 6, 0, 0],
+          [1, 6, 4, 0], [4, 4, 8, 0], [3, 4, 8, 0], [6, 6, 4, 4], [2, 6, 4, 0], [5, 6, 4, 4], [3, 0, 2, 0],
+          [0, 2, 0, 0], [4, 0, 2, 0], [1, 4, 5, 0], [1, 5, 6, 0], [1, 6, 5, 0], [1, 5, 4, 0]
+        ],
+        "component": "map-descriptors-4byte",
+        "record_size": 4
+      },
+      "animation_queues": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 738,
+        "encoded_size": 312,
+        "words": [
+          ["0xfd00", [1600, 16], [972, 2], [1616, 16], [972, 2], [1632, 16], [972, 2], [1616, 16], [972, 2], "0xfe00"],
+          ["0xfd01", [1648, 4], [988, 2], [1652, 4], [988, 2], [1656, 4], [988, 2], [1652, 4], [988, 2], "0xfe00"],
+          [
+            "0xfd02", [1536, 8], [992, 2], [1544, 8], [992, 2], [1552, 8], [992, 2], [1560, 8], [992, 2], [1568, 8],
+            [992, 2], [1576, 8], [992, 2], [1584, 8], [992, 2], [1592, 8], [992, 2], "0xfe00"
+          ],
+          [
+            "0xfd03", [1664, 24], [1000, 2], [1696, 24], [1000, 2], [1728, 24], [1000, 2], [1760, 24], [1000, 2],
+            [1792, 24], [1000, 2], [1824, 24], [1000, 2], [1856, 24], [1000, 2], [1888, 24], [1000, 2], "0xfe00"
+          ],
+          [
+            "0xfd04", [1820, 4], [1036, 0], [1852, 4], [1068, 0], [1884, 4], [1100, 0], [1916, 4], [1132, 24],
+            [1928, 4], [1036, 0], [1960, 4], [1068, 0], [1992, 4], [1100, 0], [2024, 4], [1132, 18], [1940, 4],
+            [1036, 0], [1972, 4], [1068, 0], [2004, 4], [1100, 0], [2036, 4], [1132, 64], [1928, 4], [1036, 0],
+            [1960, 4], [1068, 0], [1992, 4], [1100, 0], [2024, 4], [1132, 18], "0xfe00"
+          ],
+          [
+            "0xfd05", [1920, 4], [1052, 0], [1952, 4], [1084, 0], [1984, 4], [1116, 0], [2016, 4], [1148, 24],
+            [1932, 4], [1052, 0], [1964, 4], [1084, 0], [1996, 4], [1116, 0], [2028, 4], [1148, 18], [1944, 4],
+            [1052, 0], [1976, 4], [1084, 0], [2008, 4], [1116, 0], [2040, 4], [1148, 64], [1932, 4], [1052, 0],
+            [1964, 4], [1084, 0], [1996, 4], [1116, 0], [2028, 4], [1148, 18], "0xfe00"
+          ],
+          [
+            "0xfd06", [1924, 4], [1152, 0], [1956, 4], [1184, 0], [1988, 4], [1216, 0], [2020, 4], [1248, 24],
+            [1936, 4], [1152, 0], [1968, 4], [1184, 0], [2000, 4], [1216, 0], [2032, 4], [1248, 18], [1948, 4],
+            [1152, 0], [1980, 4], [1184, 0], [2012, 4], [1216, 0], [2044, 4], [1248, 64], [1936, 4], [1152, 0],
+            [1968, 4], [1184, 0], [2000, 4], [1216, 0], [2032, 4], [1248, 18], "0xfe00"
+          ],
+          [
+            "0xfd07", [1688, 4], [1156, 0], [1720, 4], [1188, 0], [1752, 4], [1220, 0], [1784, 4], [1252, 24],
+            [1692, 4], [1156, 0], [1724, 4], [1188, 0], [1756, 4], [1220, 0], [1788, 4], [1252, 18], [1816, 4],
+            [1156, 0], [1848, 4], [1188, 0], [1880, 4], [1220, 0], [1912, 4], [1252, 64], [1692, 4], [1156, 0],
+            [1724, 4], [1188, 0], [1756, 4], [1220, 0], [1788, 4], [1252, 18], "0xfe00"
+          ],
+          "0xffff"
+        ],
+        "component": "map-animation-queues",
+        "word_size": 2,
+        "terminators": ["0xfe00", "0xffff"]
+      },
+      "blend_animation": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "tag": 1,
+        "decoded_size": 10,
+        "encoded_size": 16,
+        "words": [["0x3f42"], ["0x0a09", 45678], ["0xfe00"], ["0xffff"]],
+        "component": "map-blend-animation",
+        "word_size": 2
+      },
+      "sparse_cells": {
+        "format": 1,
+        "kind": "typed-table",
+        "address": "0x0866b9fc",
+        "size": "0x6",
+        "record_size": 3,
+        "segments": [
+          {"name": "records", "end": "0x0866b9ff", "stride": 3, "element": "u8", "values": [[56, 8, 100]]},
+          {"name": "terminator", "end": "0x0866ba02", "stride": 1, "element": "u8", "fill": 255}
+        ]
+      },
+      "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/ARUTIN_YAMA.BIN",
+      "grid_offset": 227848,
+      "grid_compression": {
+        "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+        "section": "347ccd8c59dd862fdbe317f662a634f90a43774b6d446b6a5597c2b8f7156343"
       }
     }
   }

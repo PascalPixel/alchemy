@@ -12,7 +12,6 @@
         "segments": [
           {
             "name": "parameters",
-            "address": "0x085a6aa0",
             "end": "0x085a6aac",
             "stride": 12,
             "element": "u8",
@@ -20,7 +19,6 @@
           },
           {
             "name": "records",
-            "address": "0x085a6aac",
             "end": "0x085a6ac4",
             "stride": 8,
             "element": "le-u16",
@@ -28,7 +26,6 @@
           },
           {
             "name": "component_offsets",
-            "address": "0x085a6ac4",
             "end": "0x085a6adc",
             "stride": 4,
             "element": "le-u32",
@@ -117,7 +114,6 @@
         "segments": [
           {
             "name": "records",
-            "address": "0x085a891c",
             "end": "0x085a8964",
             "stride": 3,
             "element": "u8",
@@ -128,14 +124,7 @@
               [39, 55, 101], [40, 55, 102], [41, 55, 103]
             ]
           },
-          {
-            "name": "terminator",
-            "address": "0x085a8964",
-            "end": "0x085a8967",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255
-          }
+          {"name": "terminator", "end": "0x085a8967", "stride": 1, "element": "u8", "fill": 255}
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_KYUDEN/BIRIBINO_KYUDEN.BIN",

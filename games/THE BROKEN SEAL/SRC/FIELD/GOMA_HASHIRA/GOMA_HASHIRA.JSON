@@ -12,7 +12,6 @@
         "segments": [
           {
             "name": "parameters",
-            "address": "0x08556c8c",
             "end": "0x08556c98",
             "stride": 12,
             "element": "u8",
@@ -20,7 +19,6 @@
           },
           {
             "name": "records",
-            "address": "0x08556c98",
             "end": "0x08556cb0",
             "stride": 8,
             "element": "le-u16",
@@ -28,7 +26,6 @@
           },
           {
             "name": "component_offsets",
-            "address": "0x08556cb0",
             "end": "0x08556cc8",
             "stride": 4,
             "element": "le-u32",
@@ -125,20 +122,12 @@
         "segments": [
           {
             "name": "records",
-            "address": "0x085580b0",
             "end": "0x085580b6",
             "stride": 3,
             "element": "u8",
             "values": [[27, 8, 101], [41, 13, 100]]
           },
-          {
-            "name": "terminator",
-            "address": "0x085580b6",
-            "end": "0x085580b9",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255
-          }
+          {"name": "terminator", "end": "0x085580b9", "stride": 1, "element": "u8", "fill": 255}
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/GOMA_HASHIRA/GOMA_HASHIRA.BIN",

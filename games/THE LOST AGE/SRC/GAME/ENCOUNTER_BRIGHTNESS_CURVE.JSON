@@ -6,7 +6,6 @@
   "segments": [
     {
       "name": "blend_phases",
-      "address": "0x0812ce54",
       "end": "0x0812ce74",
       "consumers": ["recon/tla/raw/08126b64.s"],
       "element": "s8",

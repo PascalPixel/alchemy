@@ -12,7 +12,6 @@
         "segments": [
           {
             "name": "parameters",
-            "address": "0x08623a10",
             "end": "0x08623a1c",
             "stride": 12,
             "element": "u8",
@@ -20,7 +19,6 @@
           },
           {
             "name": "records",
-            "address": "0x08623a1c",
             "end": "0x08623a34",
             "stride": 8,
             "element": "le-u16",
@@ -28,7 +26,6 @@
           },
           {
             "name": "component_offsets",
-            "address": "0x08623a34",
             "end": "0x08623a4c",
             "stride": 4,
             "element": "le-u32",
@@ -122,22 +119,8 @@
         "size": "0x6",
         "record_size": 3,
         "segments": [
-          {
-            "name": "records",
-            "address": "0x08626988",
-            "end": "0x0862698b",
-            "stride": 3,
-            "element": "u8",
-            "values": [[24, 17, 110]]
-          },
-          {
-            "name": "terminator",
-            "address": "0x0862698b",
-            "end": "0x0862698e",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255
-          }
+          {"name": "records", "end": "0x0862698b", "stride": 3, "element": "u8", "values": [[24, 17, 110]]},
+          {"name": "terminator", "end": "0x0862698e", "stride": 1, "element": "u8", "fill": 255}
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHIAN_JIIN/SHIAN_JIIN.BIN",
@@ -158,7 +141,6 @@
         "segments": [
           {
             "name": "parameters",
-            "address": "0x08628d08",
             "end": "0x08628d14",
             "stride": 12,
             "element": "u8",
@@ -166,7 +148,6 @@
           },
           {
             "name": "records",
-            "address": "0x08628d14",
             "end": "0x08628d2c",
             "stride": 8,
             "element": "le-u16",
@@ -174,7 +155,6 @@
           },
           {
             "name": "component_offsets",
-            "address": "0x08628d2c",
             "end": "0x08628d44",
             "stride": 4,
             "element": "le-u32",
@@ -253,20 +233,12 @@
         "segments": [
           {
             "name": "records",
-            "address": "0x08629cd0",
             "end": "0x08629cd9",
             "stride": 3,
             "element": "u8",
             "values": [[6, 14, 100], [12, 27, 101], [27, 27, 102]]
           },
-          {
-            "name": "terminator",
-            "address": "0x08629cd9",
-            "end": "0x08629cdc",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255
-          }
+          {"name": "terminator", "end": "0x08629cdc", "stride": 1, "element": "u8", "fill": 255}
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHIAN_JIIN/SHIAN_JIIN.BIN",

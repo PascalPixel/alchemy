@@ -303,7 +303,7 @@ pub fn audit(root: &Path, arguments: &[String]) -> Result<(), String> {
             .as_array()
             .ok_or("descriptor table missing")?;
         if records.len() != english_descriptors.len()
-            || address(&recovered["segments"][0]["address"])? != english_catalog.table
+            || address(&recovered["address"])? != english_catalog.table
         {
             return Err("recovered descriptor catalog differs from the registered table".into());
         }

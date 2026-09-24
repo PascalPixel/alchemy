@@ -12,7 +12,6 @@
         "segments": [
           {
             "name": "parameters",
-            "address": "0x0873f32c",
             "end": "0x0873f338",
             "stride": 12,
             "element": "u8",
@@ -20,7 +19,6 @@
           },
           {
             "name": "records",
-            "address": "0x0873f338",
             "end": "0x0873f350",
             "stride": 8,
             "element": "le-u16",
@@ -28,7 +26,6 @@
           },
           {
             "name": "component_offsets",
-            "address": "0x0873f350",
             "end": "0x0873f368",
             "stride": 4,
             "element": "le-u32",
@@ -132,20 +129,12 @@
         "segments": [
           {
             "name": "records",
-            "address": "0x087419c8",
             "end": "0x087419d4",
             "stride": 3,
             "element": "u8",
             "values": [[9, 3, 100], [10, 3, 100], [20, 3, 101], [21, 3, 101]]
           },
-          {
-            "name": "terminator",
-            "address": "0x087419d4",
-            "end": "0x087419d7",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255
-          }
+          {"name": "terminator", "end": "0x087419d7", "stride": 1, "element": "u8", "fill": 255}
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/SUHARA_HEYA/SUHARA_HEYA.BIN",

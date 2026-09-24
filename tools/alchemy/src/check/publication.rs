@@ -59,8 +59,9 @@ const PNG_SCANLINES_MAX: usize = 1 << 26;
 const ENCODED_RUN_MIN: usize = 16;
 /// Encoded characters one text may hold; the tracked tree peaks near 32.
 const ENCODED_CHARACTERS_MAX: usize = 128;
-/// Digest-sized hex runs one text may hold; private-inputs.json carries about 3,400.
-const DIGEST_RUNS_MAX: usize = 16_384;
+/// Digest-sized hex runs one text may hold; The Broken Seal COMPRESSION.JSON
+/// keys about 1,000 sections by digest.
+const DIGEST_RUNS_MAX: usize = 2_048;
 /// Consecutive integer literals that form an array rather than an expression.
 const NUMERIC_RUN_MIN: usize = 16;
 /// Array elements a text outside the game data tables may hold; the tree peaks
@@ -2671,7 +2672,7 @@ fn text_fixtures() -> Vec<Fixture> {
         ("tools/Cargo.lock", text(checksums), true, None),
         (
             "tools/alchemy/src/hashes.rs",
-            text(digests(4_096)),
+            text(digests(2_048)),
             true,
             None,
         ),

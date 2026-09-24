@@ -9,7 +9,6 @@
       "size": "0x00000098",
       "segments": [
         {
-          "address": "0x08033e60",
           "end": "0x08033eb0",
           "stride": 1,
           "consumers": ["Func_080191cc"],
@@ -21,7 +20,6 @@
           ]
         },
         {
-          "address": "0x08033eb0",
           "end": "0x08033ed8",
           "stride": 2,
           "consumers": ["Func_080191cc"],
@@ -32,7 +30,6 @@
           ]
         },
         {
-          "address": "0x08033ed8",
           "end": "0x08033ee8",
           "stride": 1,
           "consumers": [],
@@ -40,7 +37,6 @@
           "values": [4, 3, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         },
         {
-          "address": "0x08033ee8",
           "end": "0x08033ef8",
           "stride": 1,
           "consumers": ["Func_080191cc"],
@@ -56,7 +52,6 @@
       "size": "0x000001dc",
       "segments": [
         {
-          "address": "0x080366f8",
           "end": "0x08036738",
           "stride": 2,
           "consumers": ["Func_0801908c", "Func_08021e6c", "Func_08028194"],
@@ -67,7 +62,6 @@
           ]
         },
         {
-          "address": "0x08036738",
           "end": "0x08036740",
           "stride": 1,
           "consumers": ["Func_0801908c"],
@@ -75,7 +69,6 @@
           "values": [-15, -28, -36, -40, -36, -28, -15, 0]
         },
         {
-          "address": "0x08036740",
           "end": "0x08036750",
           "stride": 1,
           "consumers": ["Func_0801a98c"],
@@ -83,7 +76,6 @@
           "values": [0, 1, 2, 3, 2, 1, 0, 0, 0, -1, -2, -3, -2, -1, 0, 0]
         },
         {
-          "address": "0x08036750",
           "end": "0x080367b0",
           "stride": 1,
           "consumers": ["Func_0801ca1c", "Func_0801ccc0"],
@@ -96,7 +88,6 @@
           ]
         },
         {
-          "address": "0x080367b0",
           "end": "0x080367c9",
           "stride": 1,
           "consumers": [],
@@ -104,7 +95,6 @@
           "values": [0, 3, 5, 8, 10, 13, 16, 18, 21, 23, 26, 28, 31, 34, 36, 39, 41, 44, 47, 49, 52, 54, 57, 60, 62]
         },
         {
-          "address": "0x080367c9",
           "end": "0x080367cc",
           "stride": 1,
           "consumers": ["Func_0801d108", "Func_0801d4cc"],
@@ -112,7 +102,6 @@
           "values": [34, 35, 36]
         },
         {
-          "address": "0x080367cc",
           "end": "0x080367ce",
           "stride": 1,
           "consumers": ["Func_0801d108", "Func_0801d4cc"],
@@ -120,7 +109,6 @@
           "values": [37, 38]
         },
         {
-          "address": "0x080367ce",
           "end": "0x080367d0",
           "stride": 1,
           "consumers": ["Func_0801d108", "Func_0801d4cc"],
@@ -128,7 +116,6 @@
           "values": [39, 40]
         },
         {
-          "address": "0x080367d0",
           "end": "0x080367d6",
           "stride": 1,
           "consumers": ["Func_0801d9d4"],
@@ -136,7 +123,6 @@
           "values": [4, 16, 8, 21, 1, 13]
         },
         {
-          "address": "0x080367d6",
           "end": "0x080367dc",
           "stride": 1,
           "consumers": ["Func_0801d9d4"],
@@ -144,7 +130,6 @@
           "values": [0, 11, 13, 7, 14, 14]
         },
         {
-          "address": "0x080367dc",
           "end": "0x080367e4",
           "stride": 1,
           "consumers": ["Func_0801d9d4"],
@@ -152,7 +137,6 @@
           "values": [41, 42, 43, 11, 11, 11, 0, 0]
         },
         {
-          "address": "0x080367e4",
           "end": "0x0803680c",
           "stride": 2,
           "consumers": ["Func_08019d2c", "Func_0802977c"],
@@ -160,7 +144,6 @@
           "values": [0, 0, 18, 56, 1, 1, 19, 57, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 65535, 65535]
         },
         {
-          "address": "0x0803680c",
           "end": "0x080368d4",
           "stride": 4,
           "consumers": ["Func_08019d2c", "Func_0802977c"],
@@ -181,7 +164,6 @@
       "size": "0x00000390",
       "segments": [
         {
-          "address": "0x080370d4",
           "end": "0x080371b4",
           "stride": 1,
           "consumers": ["Func_0801de5c"],
@@ -197,7 +179,6 @@
           ]
         },
         {
-          "address": "0x080371b4",
           "end": "0x080371c4",
           "stride": 1,
           "consumers": ["Func_0801de5c"],
@@ -205,7 +186,6 @@
           "values": [0, 3, 13, 13, 14, 4, 4, 15, 15, 1, 1, 13, 13, 2, 2, 1]
         },
         {
-          "address": "0x080371c4",
           "end": "0x080371e0",
           "stride": 1,
           "consumers": ["Func_0801ef68"],
@@ -213,7 +193,6 @@
           "values": [0, 6, 12, 18, 24, 255, 1, 7, 13, 19, 255, 29, 30, 0, 31, 30, 0, 0, 0, 0, 0, 0, 1, 2, 3, 3, 2, 1]
         },
         {
-          "address": "0x080371e0",
           "end": "0x080371f6",
           "stride": 1,
           "consumers": ["Func_08020198"],
@@ -223,7 +202,6 @@
           ]
         },
         {
-          "address": "0x080371f6",
           "end": "0x080371fe",
           "stride": 1,
           "consumers": ["Func_08020bd8"],
@@ -231,7 +209,6 @@
           "values": [0, 1, 2, 3, 3, 2, 1, 0]
         },
         {
-          "address": "0x080371fe",
           "end": "0x08037206",
           "stride": 2,
           "consumers": ["Func_08021228"],
@@ -239,7 +216,6 @@
           "values": [90, 91, 92, 93]
         },
         {
-          "address": "0x08037206",
           "end": "0x08037216",
           "stride": 2,
           "consumers": ["Func_08021360"],
@@ -247,7 +223,6 @@
           "values": [0, 1, 2, 3, 35, 5, 6, 7]
         },
         {
-          "address": "0x08037216",
           "end": "0x08037226",
           "stride": 2,
           "consumers": ["Func_08021360"],
@@ -255,7 +230,6 @@
           "values": [18, 19, 2, 3, 36, 48, 6, 7]
         },
         {
-          "address": "0x08037226",
           "end": "0x08037230",
           "stride": 1,
           "consumers": ["Func_080216b4"],
@@ -263,7 +237,6 @@
           "values": [0, 0, 1, 2, 3, 3, 2, 1, 0, 0]
         },
         {
-          "address": "0x08037230",
           "end": "0x08037250",
           "stride": 4,
           "consumers": ["Func_080217a4"],
@@ -271,7 +244,6 @@
           "values": [72089, 74055, 76021, 77987, 79953, 77987, 76021, 74055]
         },
         {
-          "address": "0x08037250",
           "end": "0x08037280",
           "stride": 8,
           "consumers": ["Func_08021848"],
@@ -282,7 +254,6 @@
           ]
         },
         {
-          "address": "0x08037280",
           "end": "0x080372c0",
           "stride": 4,
           "consumers": ["Func_080219c8"],
@@ -293,7 +264,6 @@
           ]
         },
         {
-          "address": "0x080372c0",
           "end": "0x08037300",
           "stride": 2,
           "consumers": ["Func_08021a18"],
@@ -302,16 +272,8 @@
             0, 10, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
           ]
         },
+        {"end": "0x08037308", "stride": 1, "consumers": ["Func_08021c34"], "element": "ascii-fixed", "text": "TIME"},
         {
-          "address": "0x08037300",
-          "end": "0x08037308",
-          "stride": 1,
-          "consumers": ["Func_08021c34"],
-          "element": "ascii-fixed",
-          "text": "TIME"
-        },
-        {
-          "address": "0x08037308",
           "end": "0x08037328",
           "stride": 1,
           "consumers": ["Func_08023e70"],
@@ -322,7 +284,6 @@
           ]
         },
         {
-          "address": "0x08037328",
           "end": "0x080373a8",
           "stride": 8,
           "consumers": ["Func_08023178"],
@@ -335,7 +296,6 @@
           ]
         },
         {
-          "address": "0x080373a8",
           "end": "0x080373b8",
           "stride": 4,
           "consumers": ["Func_08023178"],
@@ -343,7 +303,6 @@
           "values": [10, 19, 1, 0, 11, 19, 2, 0, 12, 19, 3, 0, 13, 19, 4, 0]
         },
         {
-          "address": "0x080373b8",
           "end": "0x080373d8",
           "stride": 4,
           "consumers": ["Func_08023178"],
@@ -353,56 +312,13 @@
             0
           ]
         },
+        {"end": "0x080373dc", "stride": 1, "consumers": ["Func_08023178"], "element": "ascii-fixed", "text": "Lv"},
+        {"end": "0x080373e0", "stride": 1, "consumers": ["Func_08023178"], "element": "ascii-fixed", "text": "HP"},
+        {"end": "0x080373e4", "stride": 1, "consumers": ["Func_08023178"], "element": "ascii-fixed", "text": "/"},
+        {"end": "0x080373e7", "stride": 1, "consumers": ["Func_08023178"], "element": "ascii-fixed", "text": "PP"},
+        {"end": "0x080373eb", "stride": 2, "consumers": ["Func_08023e70"], "element": "u8", "values": [0, 2, 0, 2]},
+        {"end": "0x080373ef", "stride": 2, "consumers": ["Func_08023e70"], "element": "u8", "values": [0, 0, 1, 1]},
         {
-          "address": "0x080373d8",
-          "end": "0x080373dc",
-          "stride": 1,
-          "consumers": ["Func_08023178"],
-          "element": "ascii-fixed",
-          "text": "Lv"
-        },
-        {
-          "address": "0x080373dc",
-          "end": "0x080373e0",
-          "stride": 1,
-          "consumers": ["Func_08023178"],
-          "element": "ascii-fixed",
-          "text": "HP"
-        },
-        {
-          "address": "0x080373e0",
-          "end": "0x080373e4",
-          "stride": 1,
-          "consumers": ["Func_08023178"],
-          "element": "ascii-fixed",
-          "text": "/"
-        },
-        {
-          "address": "0x080373e4",
-          "end": "0x080373e7",
-          "stride": 1,
-          "consumers": ["Func_08023178"],
-          "element": "ascii-fixed",
-          "text": "PP"
-        },
-        {
-          "address": "0x080373e7",
-          "end": "0x080373eb",
-          "stride": 2,
-          "consumers": ["Func_08023e70"],
-          "element": "u8",
-          "values": [0, 2, 0, 2]
-        },
-        {
-          "address": "0x080373eb",
-          "end": "0x080373ef",
-          "stride": 2,
-          "consumers": ["Func_08023e70"],
-          "element": "u8",
-          "values": [0, 0, 1, 1]
-        },
-        {
-          "address": "0x080373ef",
           "end": "0x080373f7",
           "stride": 1,
           "consumers": ["Func_080286a0"],
@@ -410,7 +326,6 @@
           "values": [46, 20, 28, 24, 30, 44, 29, 32]
         },
         {
-          "address": "0x080373f7",
           "end": "0x08037403",
           "stride": 1,
           "consumers": ["Func_08028920"],
@@ -418,7 +333,6 @@
           "values": [0, 1, 2, 3, 4, 5, 0, 1, 3, 4, 5, 0]
         },
         {
-          "address": "0x08037403",
           "end": "0x0803740f",
           "stride": 1,
           "consumers": ["Func_08028920"],
@@ -426,7 +340,6 @@
           "values": [0, 1, 2, 3, 4, 5, 0, 1, 0, 2, 3, 0]
         },
         {
-          "address": "0x0803740f",
           "end": "0x08037428",
           "stride": 1,
           "consumers": ["Func_080289e8"],
@@ -434,7 +347,6 @@
           "values": [0, 1, 2, 3, 4, 5, 1, 3, 4, 5, 1, 1, 3, 4, 5, 1, 1, 1, 0, 2, 3, 4, 5, 1, 0]
         },
         {
-          "address": "0x08037428",
           "end": "0x0803742c",
           "stride": 1,
           "consumers": ["Func_08028ef0", "Func_080292c4"],
@@ -442,53 +354,17 @@
           "text": ":"
         },
         {
-          "address": "0x0803742c",
           "end": "0x08037440",
           "stride": 1,
           "consumers": ["Func_080292c4"],
           "element": "ascii-fixed",
           "text": "0123456789ABCDEF"
         },
-        {
-          "address": "0x08037440",
-          "end": "0x08037448",
-          "stride": 1,
-          "consumers": ["Func_08029554"],
-          "element": "ascii-fixed",
-          "text": "ITEM"
-        },
-        {
-          "address": "0x08037448",
-          "end": "0x08037450",
-          "stride": 1,
-          "consumers": ["Func_08029554"],
-          "element": "ascii-fixed",
-          "text": "ENERGY"
-        },
-        {
-          "address": "0x08037450",
-          "end": "0x08037458",
-          "stride": 1,
-          "consumers": ["Func_08029554"],
-          "element": "ascii-fixed",
-          "text": "STATUS"
-        },
-        {
-          "address": "0x08037458",
-          "end": "0x08037460",
-          "stride": 1,
-          "consumers": ["Func_08029554"],
-          "element": "ascii-fixed",
-          "text": "PAGE:"
-        },
-        {
-          "address": "0x08037460",
-          "end": "0x08037464",
-          "stride": 1,
-          "consumers": ["Func_08029554"],
-          "element": "ascii-fixed",
-          "text": "-"
-        }
+        {"end": "0x08037448", "stride": 1, "consumers": ["Func_08029554"], "element": "ascii-fixed", "text": "ITEM"},
+        {"end": "0x08037450", "stride": 1, "consumers": ["Func_08029554"], "element": "ascii-fixed", "text": "ENERGY"},
+        {"end": "0x08037458", "stride": 1, "consumers": ["Func_08029554"], "element": "ascii-fixed", "text": "STATUS"},
+        {"end": "0x08037460", "stride": 1, "consumers": ["Func_08029554"], "element": "ascii-fixed", "text": "PAGE:"},
+        {"end": "0x08037464", "stride": 1, "consumers": ["Func_08029554"], "element": "ascii-fixed", "text": "-"}
       ]
     }
   }

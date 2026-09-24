@@ -12,7 +12,6 @@
       "segments": [
         {
           "id": "signed_mode_table",
-          "address": "0x0802ec5c",
           "end": "0x0802ec7c",
           "source_state": "typed_values_pending",
           "consumers": ["recon/tla/raw/0802632c.s", "recon/tla/raw/080279b0.s", "recon/tla/raw/08027e20.s"],
@@ -32,7 +31,6 @@
       "segments": [
         {
           "id": "resource_slot_descriptors",
-          "address": "0x0802ed34",
           "end": "0x0802edc4",
           "source_state": "typed_values_pending",
           "consumers": ["recon/tla/raw/0802be4c.s"],
@@ -45,7 +43,6 @@
         },
         {
           "id": "grid_lookup_a",
-          "address": "0x0802edc4",
           "end": "0x0802eec4",
           "source_state": "typed_values_pending",
           "consumers": ["recon/tla/raw/0802d370.s"],
@@ -64,7 +61,6 @@
         },
         {
           "id": "grid_lookup_b",
-          "address": "0x0802eec4",
           "end": "0x0802efc4",
           "source_state": "typed_values_pending",
           "consumers": [
@@ -85,7 +81,6 @@
         },
         {
           "id": "interpolation_coefficients",
-          "address": "0x0802efc4",
           "end": "0x0802f004",
           "source_state": "typed_values_pending",
           "consumers": ["recon/tla/raw/0802d400.s", "recon/tla/raw/0802d600.s"],
@@ -99,7 +94,6 @@
         },
         {
           "id": "surface_lookup",
-          "address": "0x0802f004",
           "end": "0x0802f054",
           "source_state": "typed_values_pending",
           "consumers": ["recon/tla/raw/0802dc48.s"],
@@ -113,7 +107,6 @@
         },
         {
           "id": "surface_colors",
-          "address": "0x0802f054",
           "end": "0x0802f064",
           "source_state": "typed_values_pending",
           "consumers": ["recon/tla/raw/0802dd08.s"],
@@ -123,7 +116,6 @@
         },
         {
           "id": "surface_thresholds",
-          "address": "0x0802f064",
           "end": "0x0802f078",
           "source_state": "typed_values_pending",
           "consumers": ["recon/tla/raw/0802dd08.s"],
@@ -143,7 +135,6 @@
       "segments": [
         {
           "id": "render_limits",
-          "address": "0x0802f090",
           "end": "0x0802f098",
           "source_state": "typed_values_pending",
           "consumers": ["recon/tla/raw/0802e7a8.s"],
@@ -153,7 +144,6 @@
         },
         {
           "id": "program_00",
-          "address": "0x0802f098",
           "end": "0x0802f0b0",
           "source_state": "typed_values_pending",
           "consumers": ["recon/tla/raw/08023510.s"],
@@ -163,7 +153,6 @@
         },
         {
           "id": "program_01",
-          "address": "0x0802f0b0",
           "end": "0x0802f0c8",
           "source_state": "typed_values_pending",
           "consumers": ["recon/tla/raw/08023510.s"],
@@ -173,7 +162,6 @@
         },
         {
           "id": "program_02",
-          "address": "0x0802f0c8",
           "end": "0x0802f0e0",
           "source_state": "typed_values_pending",
           "consumers": ["recon/tla/raw/08023510.s"],
@@ -183,7 +171,6 @@
         },
         {
           "id": "program_03",
-          "address": "0x0802f0e0",
           "end": "0x0802f0f8",
           "source_state": "typed_values_pending",
           "consumers": ["recon/tla/raw/08023510.s"],
@@ -193,7 +180,6 @@
         },
         {
           "id": "program_04",
-          "address": "0x0802f0f8",
           "end": "0x0802f110",
           "source_state": "typed_values_pending",
           "consumers": ["recon/tla/raw/08023510.s"],
@@ -203,7 +189,6 @@
         },
         {
           "id": "program_05",
-          "address": "0x0802f110",
           "end": "0x0802f128",
           "source_state": "typed_values_pending",
           "consumers": ["recon/tla/raw/08023510.s"],
@@ -213,7 +198,6 @@
         },
         {
           "id": "program_06",
-          "address": "0x0802f128",
           "end": "0x0802f140",
           "source_state": "typed_values_pending",
           "consumers": ["recon/tla/raw/08023510.s"],
@@ -223,7 +207,6 @@
         },
         {
           "id": "program_07",
-          "address": "0x0802f140",
           "end": "0x0802f158",
           "source_state": "typed_values_pending",
           "consumers": ["recon/tla/raw/08023510.s"],
@@ -233,7 +216,6 @@
         },
         {
           "id": "program_08",
-          "address": "0x0802f158",
           "end": "0x0802f170",
           "source_state": "typed_values_pending",
           "consumers": ["recon/tla/raw/08023510.s"],
@@ -243,7 +225,6 @@
         },
         {
           "id": "program_09",
-          "address": "0x0802f170",
           "end": "0x0802f188",
           "source_state": "typed_values_pending",
           "consumers": ["recon/tla/raw/08023510.s"],
@@ -253,7 +234,6 @@
         },
         {
           "id": "program_10",
-          "address": "0x0802f188",
           "end": "0x0802f1a0",
           "source_state": "typed_values_pending",
           "consumers": ["recon/tla/raw/08023510.s"],
@@ -263,7 +243,6 @@
         },
         {
           "id": "program_11",
-          "address": "0x0802f1a0",
           "end": "0x0802f1b8",
           "source_state": "typed_values_pending",
           "consumers": ["recon/tla/raw/08023510.s"],
@@ -273,7 +252,6 @@
         },
         {
           "id": "program_12",
-          "address": "0x0802f1b8",
           "end": "0x0802f1d0",
           "source_state": "typed_values_pending",
           "consumers": ["recon/tla/raw/08023510.s"],
@@ -283,7 +261,6 @@
         },
         {
           "id": "program_13",
-          "address": "0x0802f1d0",
           "end": "0x0802f1e8",
           "source_state": "typed_values_pending",
           "consumers": ["games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/CHILD_STATE.C"],
@@ -293,7 +270,6 @@
         },
         {
           "id": "program_14",
-          "address": "0x0802f1e8",
           "end": "0x0802f200",
           "source_state": "typed_values_pending",
           "consumers": ["recon/tla/raw/08023510.s"],
@@ -303,7 +279,6 @@
         },
         {
           "id": "program_15",
-          "address": "0x0802f200",
           "end": "0x0802f204",
           "source_state": "typed_values_pending",
           "consumers": [
@@ -316,7 +291,6 @@
         },
         {
           "id": "object_handlers",
-          "address": "0x0802f204",
           "end": "0x0802f2dc",
           "source_state": "typed_values_pending",
           "consumers": ["recon/tla/raw/08023f64.s"],
@@ -336,7 +310,6 @@
         },
         {
           "id": "object_operand_handlers",
-          "address": "0x0802f2dc",
           "end": "0x0802f380",
           "source_state": "typed_values_pending",
           "consumers": ["games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/OPERANDS.C"],

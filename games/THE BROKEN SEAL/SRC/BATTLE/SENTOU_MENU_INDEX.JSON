@@ -7,7 +7,6 @@
   "segments": [
     {
       "name": "cell_offsets",
-      "address": "0x080b4100",
       "end": "0x080b413c",
       "element": "le-u16",
       "stride": 2,
@@ -20,7 +19,6 @@
     },
     {
       "name": "row_offsets",
-      "address": "0x080b413c",
       "end": "0x080b4146",
       "element": "le-u16",
       "stride": 2,
@@ -30,7 +28,6 @@
     },
     {
       "name": "thresholds",
-      "address": "0x080b4146",
       "end": "0x080b4182",
       "element": "le-s16",
       "stride": 2,
@@ -41,7 +38,6 @@
     },
     {
       "name": "selector_ids",
-      "address": "0x080b4182",
       "end": "0x080b41ac",
       "element": "le-u16",
       "stride": 2,
@@ -53,7 +49,6 @@
     },
     {
       "name": "loadouts",
-      "address": "0x080b41ac",
       "end": "0x080b4ab2",
       "element": "record",
       "stride": 66,
@@ -102,7 +97,6 @@
     },
     {
       "name": "sound_ids",
-      "address": "0x080b4ab2",
       "end": "0x080b4ab6",
       "element": "u8",
       "stride": 1,
@@ -112,12 +106,11 @@
     },
     {
       "name": "multipliers",
-      "address": "0x080b4ab6",
       "end": "0x080b4ac3",
       "element": "s8",
       "stride": 1,
       "values": [2, 4, 7, 8, 8, 10, 12, 15, 20, 0, 18, 25, 0]
     },
-    {"name": "alignment", "address": "0x080b4ac3", "end": "0x080b5000", "element": "u8", "stride": 1, "fill": 0}
+    {"name": "alignment", "end": "0x080b5000", "element": "u8", "stride": 1, "fill": 0}
   ]
 }

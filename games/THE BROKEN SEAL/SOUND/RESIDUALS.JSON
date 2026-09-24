@@ -14,7 +14,6 @@
       "segments": [
         {
           "id": "sound_empty",
-          "address": "0x080fd044",
           "end": "0x080fd048",
           "element": "record",
           "stride": 4,
@@ -39,7 +38,6 @@
       "segments": [
         {
           "id": "sound_019",
-          "address": "0x081652d8",
           "end": "0x081652e0",
           "element": "record",
           "stride": 8,
@@ -65,7 +63,6 @@
       "segments": [
         {
           "id": "sound_095",
-          "address": "0x081810b8",
           "end": "0x081810c0",
           "element": "record",
           "stride": 8,
@@ -110,7 +107,6 @@
       "segments": [
         {
           "id": "sound_288",
-          "address": "0x081841f8",
           "end": "0x08184200",
           "element": "record",
           "stride": 8,
@@ -136,7 +132,6 @@
       "segments": [
         {
           "id": "sound_298",
-          "address": "0x08184358",
           "end": "0x08184360",
           "element": "record",
           "stride": 8,
@@ -159,9 +154,7 @@
       "end": "0x08185000",
       "size": 2408,
       "note": "Zero fill from the last sequence to the 0x1000-aligned character catalog.",
-      "segments": [
-        {"id": "tail_alignment", "address": "0x08184698", "end": "0x08185000", "element": "u8", "stride": 1, "fill": 0}
-      ]
+      "segments": [{"id": "tail_alignment", "end": "0x08185000", "element": "u8", "stride": 1, "fill": 0}]
     }
   ]
 }

@@ -12,7 +12,6 @@
         "segments": [
           {
             "name": "parameters",
-            "address": "0x086a1f24",
             "end": "0x086a1f30",
             "stride": 12,
             "element": "u8",
@@ -20,7 +19,6 @@
           },
           {
             "name": "records",
-            "address": "0x086a1f30",
             "end": "0x086a1f48",
             "stride": 8,
             "element": "le-u16",
@@ -28,7 +26,6 @@
           },
           {
             "name": "component_offsets",
-            "address": "0x086a1f48",
             "end": "0x086a1f60",
             "stride": 4,
             "element": "le-u32",
@@ -127,7 +124,6 @@
         "segments": [
           {
             "name": "records",
-            "address": "0x086a3ccc",
             "end": "0x086a3ce4",
             "stride": 3,
             "element": "u8",
@@ -136,14 +132,7 @@
               [42, 16, 101]
             ]
           },
-          {
-            "name": "terminator",
-            "address": "0x086a3ce4",
-            "end": "0x086a3ce7",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255
-          }
+          {"name": "terminator", "end": "0x086a3ce7", "stride": 1, "element": "u8", "fill": 255}
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/KAREI_KYUDEN/KAREI_KYUDEN.BIN",

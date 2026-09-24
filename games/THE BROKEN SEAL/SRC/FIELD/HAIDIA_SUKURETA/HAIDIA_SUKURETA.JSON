@@ -12,7 +12,6 @@
         "segments": [
           {
             "name": "parameters",
-            "address": "0x084e3fa8",
             "end": "0x084e3fb4",
             "stride": 12,
             "element": "u8",
@@ -20,7 +19,6 @@
           },
           {
             "name": "records",
-            "address": "0x084e3fb4",
             "end": "0x084e3fcc",
             "stride": 8,
             "element": "le-u16",
@@ -28,7 +26,6 @@
           },
           {
             "name": "component_offsets",
-            "address": "0x084e3fcc",
             "end": "0x084e3fe4",
             "stride": 4,
             "element": "le-u32",
@@ -69,22 +66,8 @@
         "size": "0x6",
         "record_size": 3,
         "segments": [
-          {
-            "name": "records",
-            "address": "0x084e60f4",
-            "end": "0x084e60f7",
-            "stride": 3,
-            "element": "u8",
-            "values": [[8, 12, 100]]
-          },
-          {
-            "name": "terminator",
-            "address": "0x084e60f7",
-            "end": "0x084e60fa",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255
-          }
+          {"name": "records", "end": "0x084e60f7", "stride": 3, "element": "u8", "values": [[8, 12, 100]]},
+          {"name": "terminator", "end": "0x084e60fa", "stride": 1, "element": "u8", "fill": 255}
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_SUKURETA/HAIDIA_SUKURETA.BIN",

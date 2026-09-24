@@ -1,7 +1,12 @@
 use super::*;
 
-pub(super) fn extract(root: &Path, inputs: &Value, rom: &[u8]) -> Result<(), String> {
+pub(super) fn extract(
+    root: &Path,
+    inputs: &Value,
+    rom: &[u8],
+) -> Result<BTreeMap<String, String>, String> {
     let ctx = Context::new(root);
+    let mut digests = BTreeMap::new();
     let mut sheets: BTreeMap<String, (usize, usize, Vec<u8>, Vec<bool>)> = BTreeMap::new();
     for input in inputs.as_array().ok_or("private input list missing")? {
         if !matches!(
@@ -31,6 +36,7 @@ pub(super) fn extract(root: &Path, inputs: &Value, rom: &[u8]) -> Result<(), Str
         } else {
             pixels(&ctx, input, rom)?
         };
+        digests.insert(super::super::input_key(input), sha256::hex(&decoded));
         let source = json_string(&input["source"], "sprite source")?;
         let w = address(&input["width"])?;
         let h = address(&input["height"])?;
@@ -79,5 +85,5 @@ pub(super) fn extract(root: &Path, inputs: &Value, rom: &[u8]) -> Result<(), Str
         }
         write(root, &source, &image(&pixels, width as u32, height as u32)?)?;
     }
-    Ok(())
+    Ok(digests)
 }

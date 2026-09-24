@@ -12,7 +12,6 @@
         "segments": [
           {
             "name": "parameters",
-            "address": "0x08654a20",
             "end": "0x08654a2c",
             "stride": 12,
             "element": "u8",
@@ -20,7 +19,6 @@
           },
           {
             "name": "records",
-            "address": "0x08654a2c",
             "end": "0x08654a44",
             "stride": 8,
             "element": "le-u16",
@@ -28,7 +26,6 @@
           },
           {
             "name": "component_offsets",
-            "address": "0x08654a44",
             "end": "0x08654a5c",
             "stride": 4,
             "element": "le-u32",
@@ -118,22 +115,8 @@
         "size": "0x6",
         "record_size": 3,
         "segments": [
-          {
-            "name": "records",
-            "address": "0x08656734",
-            "end": "0x08656737",
-            "stride": 3,
-            "element": "u8",
-            "values": [[27, 24, 100]]
-          },
-          {
-            "name": "terminator",
-            "address": "0x08656737",
-            "end": "0x0865673a",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255
-          }
+          {"name": "records", "end": "0x08656737", "stride": 3, "element": "u8", "values": [[27, 24, 100]]},
+          {"name": "terminator", "end": "0x0865673a", "stride": 1, "element": "u8", "fill": 255}
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/YAMA_RAMA/YAMA_RAMA.BIN",
@@ -154,7 +137,6 @@
         "segments": [
           {
             "name": "parameters",
-            "address": "0x0867be7c",
             "end": "0x0867be88",
             "stride": 12,
             "element": "u8",
@@ -162,7 +144,6 @@
           },
           {
             "name": "records",
-            "address": "0x0867be88",
             "end": "0x0867bea0",
             "stride": 8,
             "element": "le-u16",
@@ -170,7 +151,6 @@
           },
           {
             "name": "component_offsets",
-            "address": "0x0867bea0",
             "end": "0x0867beb8",
             "stride": 4,
             "element": "le-u32",
@@ -264,22 +244,8 @@
         "size": "0x9",
         "record_size": 3,
         "segments": [
-          {
-            "name": "records",
-            "address": "0x0867f334",
-            "end": "0x0867f33a",
-            "stride": 3,
-            "element": "u8",
-            "values": [[21, 9, 100], [4, 15, 110]]
-          },
-          {
-            "name": "terminator",
-            "address": "0x0867f33a",
-            "end": "0x0867f33d",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255
-          }
+          {"name": "records", "end": "0x0867f33a", "stride": 3, "element": "u8", "values": [[21, 9, 100], [4, 15, 110]]},
+          {"name": "terminator", "end": "0x0867f33d", "stride": 1, "element": "u8", "fill": 255}
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/YAMA_RAMA/YAMA_RAMA.BIN",

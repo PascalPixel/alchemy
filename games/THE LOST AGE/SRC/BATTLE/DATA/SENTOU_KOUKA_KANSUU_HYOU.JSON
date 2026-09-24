@@ -7,7 +7,6 @@
   "segments": [
     {
       "name": "callbacks",
-      "address": "0x08197aa0",
       "end": "0x081981fc",
       "consumers": ["recon/tla/raw/0814c994.s"],
       "element": "thumb-pointer",

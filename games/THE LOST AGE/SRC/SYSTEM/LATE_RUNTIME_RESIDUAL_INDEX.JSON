@@ -12,7 +12,6 @@
       "segments": [
         {
           "name": "ugoki_hyou",
-          "address": "0x081a8378",
           "end": "0x081a84e0",
           "role": "sprite_steps",
           "consumers": ["recon/tla/raw/081a6030.s"],
@@ -33,7 +32,6 @@
         },
         {
           "name": "ugoki_hyou_owari",
-          "address": "0x081a84e0",
           "end": "0x081a84e6",
           "role": "sprite_steps_end",
           "consumers": ["recon/tla/raw/081a6030.s"],
@@ -45,7 +43,6 @@
         },
         {
           "name": "kiseki_hyou",
-          "address": "0x081a84e6",
           "end": "0x081a8738",
           "role": "sprite_path",
           "consumers": ["recon/tla/raw/081a6030.s"],
@@ -73,7 +70,6 @@
         },
         {
           "name": "kiseki_hyou_owari",
-          "address": "0x081a8738",
           "end": "0x081a873e",
           "role": "sprite_path_end",
           "consumers": ["recon/tla/raw/081a6030.s"],
@@ -85,7 +81,6 @@
         },
         {
           "name": "henka_hyou",
-          "address": "0x081a873e",
           "end": "0x081a877a",
           "role": "envelope_table",
           "consumers": ["recon/tla/raw/081a729c.s"],
@@ -101,7 +96,6 @@
         },
         {
           "name": "iro_henka_00",
-          "address": "0x081a877a",
           "end": "0x081a87ba",
           "role": "color_curve",
           "consumers": ["recon/tla/raw/081a7870.s"],
@@ -116,7 +110,6 @@
         },
         {
           "name": "iro_henka_01",
-          "address": "0x081a87ba",
           "end": "0x081a87fa",
           "role": "color_curve",
           "consumers": ["recon/tla/raw/081a7870.s"],
@@ -131,7 +124,6 @@
         },
         {
           "name": "iro_henka_02",
-          "address": "0x081a87fa",
           "end": "0x081a883a",
           "role": "color_curve",
           "consumers": ["recon/tla/raw/081a7870.s"],
@@ -146,7 +138,6 @@
         },
         {
           "name": "aki_081a883a",
-          "address": "0x081a883a",
           "end": "0x081ac000",
           "role": "tail_fill_candidate",
           "source_kind": "unresolved_fill",
@@ -166,7 +157,6 @@
       "segments": [
         {
           "name": "hantei_dankai",
-          "address": "0x081ad386",
           "end": "0x081ad392",
           "role": "comparison_thresholds",
           "consumers": ["recon/tla/raw/081ac0f8.s"],
@@ -178,7 +168,6 @@
         },
         {
           "name": "aki_081ad392",
-          "address": "0x081ad392",
           "end": "0x081b2000",
           "role": "tail_fill_candidate",
           "source_kind": "unresolved_fill",
@@ -198,7 +187,6 @@
       "segments": [
         {
           "name": "zahyoubisei_hyou",
-          "address": "0x081b4888",
           "end": "0x081b489c",
           "role": "coordinate_adjustments",
           "consumers": ["recon/tla/raw/081b22b8.s"],
@@ -210,7 +198,6 @@
         },
         {
           "name": "hyouji_shoki_hyou",
-          "address": "0x081b489c",
           "end": "0x081b48a2",
           "role": "display_setup",
           "consumers": ["recon/tla/raw/081b22b8.s"],
@@ -222,7 +209,6 @@
         },
         {
           "name": "haba_hyou_00",
-          "address": "0x081b48a2",
           "end": "0x081b48aa",
           "role": "display_widths",
           "consumers": ["recon/tla/raw/081b22b8.s"],
@@ -234,7 +220,6 @@
         },
         {
           "name": "haichi_hyou_00",
-          "address": "0x081b48aa",
           "end": "0x081b48b8",
           "role": "display_positions",
           "consumers": ["recon/tla/raw/081b22b8.s"],
@@ -246,7 +231,6 @@
         },
         {
           "name": "haichi_hyou_01",
-          "address": "0x081b48b8",
           "end": "0x081b48c6",
           "role": "display_positions",
           "consumers": ["recon/tla/raw/081b22b8.s"],
@@ -258,7 +242,6 @@
         },
         {
           "name": "haba_hyou_01",
-          "address": "0x081b48c6",
           "end": "0x081b48ce",
           "role": "display_widths",
           "consumers": ["recon/tla/raw/081b22b8.s"],
@@ -270,7 +253,6 @@
         },
         {
           "name": "aki_081b48ce",
-          "address": "0x081b48ce",
           "end": "0x081b8000",
           "role": "tail_fill_candidate",
           "source_kind": "unresolved_fill",

@@ -1,9 +1,19 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "FIELD_SCENE.H"
 
 /* Set once the Boulder has come down. */
 enum {
     FLAG_BOULDER_FELL = 0x838
+};
+
+/*
+ * Robin's parents, in the scene where the Boulder starts to slip: Dora asks
+ * Kyle whether it can be stopped, and he answers her by name.
+ */
+enum StormNightActor {
+    ACTOR_DORA = ACTOR_FIRST_PLACED + 1,
+    ACTOR_KYLE
 };
 
 enum StormNightMessage {
@@ -126,7 +136,7 @@ extern u8 Data_0200c9f4[];
 extern u8 Data_0200cec8[];
 extern u8 Data_0200c5b9[];
 extern u8 Data_02000240[];
-extern u8 Data_00000e5c[];
+extern u8 LinkedMessage_CanTheyStopTheBoulder[];
 extern u8 Data_00000e67[];
 extern u8 Data_00000ed0[];
 extern u32 Data_03001e40;
@@ -798,7 +808,7 @@ s32 FieldScene_RunFlagGatedActorSetup(void)
     if (GameFlag_IsSet((s32)&Value_0000087b) == 0) {
         s16 *table = (s16 *)Data_02000240;
         if (table[225] == 15) {
-            FieldScene_RunScene372_02000a10();
+            Scene_DoraSendsRobinToThePlaza();
             return 0;
         }
     }
@@ -831,7 +841,7 @@ s32 FieldScene_RunFlagGatedActorSetup(void)
     return 0;
 }
 
-void FieldScene_RunScene372_02000a10(void)
+void Scene_DoraSendsRobinToThePlaza(void)
 {
     u32 i;
     s32 record;
@@ -844,8 +854,8 @@ void FieldScene_RunScene372_02000a10(void)
     Task_Wait(60);
     Camera_SetSpeed(0x4000, 0x800);
     Camera_MoveTo(0x13c0000, 0xa00000, 0x3700000, 1);
-    Actor_SetPosition(10, 0x1260000, 0x3640000);
-    Actor_SetPosition(0, 0, 0);
+    Actor_SetPosition(ACTOR_KYLE, 0x1260000, 0x3640000);
+    Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     gEventWork->transition_frames = 16;
     Event_OpenScreen();
@@ -854,69 +864,69 @@ void FieldScene_RunScene372_02000a10(void)
     Audio_PlayCue(158);
     Map_AnimateCells(0x200d78a, 50, 44);
     Actor_SetAttachedEffect(22, 0x101);
-    Actor_SetSpeed(9, 0xcccc, 0x6666);
-    Actor_SetSpeed(0, 0xcccc, 0x6666);
-    Actor_SetSpeed(10, 0xcccc, 0x6666);
-    Actor_SetPosition(9, 0x1560000, 0x37a0000);
-    Actor_WalkToAndWait(9, 0x156, 0x389);
+    Actor_SetSpeed(ACTOR_DORA, 0xcccc, 0x6666);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
+    Actor_SetSpeed(ACTOR_KYLE, 0xcccc, 0x6666);
+    Actor_SetPosition(ACTOR_DORA, 0x1560000, 0x37a0000);
+    Actor_WalkToAndWait(ACTOR_DORA, 0x156, 0x389);
     Func_0200537c();
-    Actor_WalkTo(9, 0x128, 0x389);
-    Actor_SetPosition(0, 0x1560000, 0x37a0000);
-    Actor_WalkTo(0, 0x156, 0x37a);
-    Actor_WalkToAndWait(0, 0x156, 0x389);
-    Actor_WalkToAndWait(0, 0x13e, 0x389);
-    Actor_SetAnimation(9, 1);
-    Actor_RunRepeatedMotion(9, 1);
-    Actor_FaceDirection(9, 0xc000, 60);
-    base5_e5c = (s32)Data_00000e5c;
+    Actor_WalkTo(ACTOR_DORA, 0x128, 0x389);
+    Actor_SetPosition(ACTOR_PARTY_LEADER, 0x1560000, 0x37a0000);
+    Actor_WalkTo(ACTOR_PARTY_LEADER, 0x156, 0x37a);
+    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x156, 0x389);
+    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x13e, 0x389);
+    Actor_SetAnimation(ACTOR_DORA, 1);
+    Actor_RunRepeatedMotion(ACTOR_DORA, 1);
+    Actor_FaceDirection(ACTOR_DORA, 0xc000, 60);
+    base5_e5c = (s32)LinkedMessage_CanTheyStopTheBoulder;
     Event_SetMessage(base5_e5c);
-    Event_ShowMessage(9, 0);
-    Actor_WalkToAndWait(10, 0x126, 0x346);
+    Event_ShowMessage(ACTOR_DORA, 0);
+    Actor_WalkToAndWait(ACTOR_KYLE, 0x126, 0x346);
     Event_Wait(40);
-    Actor_SetAnimationAndWait(10, 4);
-    Event_ShowMessage(10, 0);
-    Actor_FaceEachOther(0, 9, 0);
+    Actor_SetAnimationAndWait(ACTOR_KYLE, 4);
+    Event_ShowMessage(ACTOR_KYLE, 0);
+    Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_DORA, 0);
     Event_Wait(40);
-    Actor_FaceDirection(10, 0x4000, 0);
-    Event_ShowMessageAndWait(10, 0, 20);
-    Actor_ShowEmote(9, 0x101, 20);
-    Actor_FaceDirection(9, 0xc000, 10);
-    Event_ShowMessageAndWait(9, 0, 10);
-    Actor_SetAnimationAndWait(10, 4);
-    Event_ShowMessage(10, 0);
-    Actor_SetAttachedEffect(9, 0x102);
+    Actor_FaceDirection(ACTOR_KYLE, 0x4000, 0);
+    Event_ShowMessageAndWait(ACTOR_KYLE, 0, 20);
+    Actor_ShowEmote(ACTOR_DORA, 0x101, 20);
+    Actor_FaceDirection(ACTOR_DORA, 0xc000, 10);
+    Event_ShowMessageAndWait(ACTOR_DORA, 0, 10);
+    Actor_SetAnimationAndWait(ACTOR_KYLE, 4);
+    Event_ShowMessage(ACTOR_KYLE, 0);
+    Actor_SetAttachedEffect(ACTOR_DORA, 0x102);
     Event_Wait(30);
-    Actor_FaceDirection(9, 0, 50);
-    Actor_FaceDirection(9, 0xc000, 10);
-    Actor_SetSpeed(9, 0x18000, 0xc000);
-    Actor_WalkToAndWait(9, 0x121, 0x373);
-    Actor_FaceDirection(9, 0xe000, 0);
-    Event_ShowMessage(9, 0);
-    Actor_RunRepeatedMotion(10, 2);
-    Event_ShowMessage(10, 0);
-    Actor_SetAnimationAndWait(9, 4);
-    Event_ShowMessageAndWait(9, 0, 10);
-    Actor_FaceDirection(9, 0x2000, 10);
+    Actor_FaceDirection(ACTOR_DORA, 0, 50);
+    Actor_FaceDirection(ACTOR_DORA, 0xc000, 10);
+    Actor_SetSpeed(ACTOR_DORA, 0x18000, 0xc000);
+    Actor_WalkToAndWait(ACTOR_DORA, 0x121, 0x373);
+    Actor_FaceDirection(ACTOR_DORA, 0xe000, 0);
+    Event_ShowMessage(ACTOR_DORA, 0);
+    Actor_RunRepeatedMotion(ACTOR_KYLE, 2);
+    Event_ShowMessage(ACTOR_KYLE, 0);
+    Actor_SetAnimationAndWait(ACTOR_DORA, 4);
+    Event_ShowMessageAndWait(ACTOR_DORA, 0, 10);
+    Actor_FaceDirection(ACTOR_DORA, 0x2000, 10);
     Event_SetMessage((base5_e5c + 8));
-    Event_OpenMessage(9, 0);
-    Actor_WalkToAndWait(0, 0x12e, 0x389);
-    Actor_FaceDirection(0, 0xc000, 0);
+    Event_OpenMessage(ACTOR_DORA, 0);
+    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x12e, 0x389);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
     while (Event_ChooseYesNo(0, 0) == 1) {
-        Actor_RunRepeatedMotion(9, 1);
+        Actor_RunRepeatedMotion(ACTOR_DORA, 1);
         Event_SetMessage(MSG_GO_ON_YOUR_OWN);
-        Event_OpenMessage(9, 0);
+        Event_OpenMessage(ACTOR_DORA, 0);
     }
-    Actor_SetAnimationAndWait(9, 3);
+    Actor_SetAnimationAndWait(ACTOR_DORA, 3);
     Event_SetMessage(MSG_GO_SOUTH_TO_THE_PLAZA);
-    Event_ShowMessageAndWait(9, 0, 10);
-    Actor_SetAnimationAndWait(0, 3);
-    Actor_SetSpeed(10, 0x18000, 0xc000);
-    Actor_WalkTo(10, 0x129, 0x2ee);
+    Event_ShowMessageAndWait(ACTOR_DORA, 0, 10);
+    Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
+    Actor_SetSpeed(ACTOR_KYLE, 0x18000, 0xc000);
+    Actor_WalkTo(ACTOR_KYLE, 0x129, 0x2ee);
     Event_Wait(10);
-    Actor_WalkToAndWait(9, 0x129, 0x2ee);
-    Actor_SetPosition(9, 0, 0);
-    Actor_SetPosition(10, 0, 0);
-    Actor_SetAnimation(10, 1);
+    Actor_WalkToAndWait(ACTOR_DORA, 0x129, 0x2ee);
+    Actor_SetPosition(ACTOR_DORA, 0, 0);
+    Actor_SetPosition(ACTOR_KYLE, 0, 0);
+    Actor_SetAnimation(ACTOR_KYLE, 1);
     Actor_SetAnimation(21, 2);
     Actor_SetAnimation(22, 5);
     GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);

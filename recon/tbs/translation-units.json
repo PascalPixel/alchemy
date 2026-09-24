@@ -18615,12 +18615,16 @@
           "address": "0x0200c89c",
           "kind": "thumb"
         },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
         "LinkedFlag_BoulderFell": {
           "address": "0x00000838",
           "kind": "data"
         },
-        "gEventWork": {
-          "address": "0x03001ebc",
+        "LinkedMessage_CanTheyStopTheBoulder": {
+          "address": "0x00000e5c",
           "kind": "data"
         }
       },

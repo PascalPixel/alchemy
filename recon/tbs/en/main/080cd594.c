@@ -1,15 +1,16 @@
-/* Draft, not exact (2026-09-24): 716 of 728 bytes, 158 differing halfwords
+/* Draft, not exact (2026-09-24): 728 of 728 bytes, 55 differing halfwords
    (was 360 at 756). BattleFx_BeginCanvasLayer: the four queued display-control
-   writes are QueueIoWriteDelay2 written out inline with the function-level
-   queue and IME pointers the reference keeps in r6 and r5, the saved IME word
-   copied inside a one-pass loop (FAKEMATCH, as in SYSTEM/IO_WRITE_QUEUE.C);
-   the work pointers come from gWorkSlot (the battle pointer is derived from
-   the cache address), the scroll pair from gBgScroll, and the window
-   registers are written 0x40, 0x44, 0x42, 0x46 as BattlePres_Configure-
-   EffectDisplay does. Everything up to 0x160 matches. Residual: the order of
-   the display-register pool loads, a literal pool the reference places
-   before the tile-map loop (12 bytes), and that loop's registers. */
-#include "TYPES.H"
+   writes are QueueIoWriteDelay2 written out inline with function-level queue
+   and IME pointers (the reference keeps them in r6 and r5) and the saved IME
+   word read inside a one-pass loop (FAKEMATCH, as in SYSTEM/IO_WRITE_QUEUE.C);
+   the work pointers come from gWorkSlot (the battle pointer derives from the
+   cache address), the scroll pair from gBgScroll, BG2PD is its own link
+   symbol (loaded from the pool rather than derived), the window registers
+   are written 0x40, 0x44, 0x42, 0x46, and the tile map is filled through a
+   volatile s16 store of an s16 value with a running index. Residual: the
+   pool order of BG2PD and its 0x100, and the tile-map loop reduces the
+   store address in the inner loop where the reference adds the running
+   offset to the base each time (keeping the value in fp). */include "TYPES.H"
 
 #define FIELD(p, type, off) (*(type *)((u8 *)(p) + (off)))
 #include "IO_WRITE_QUEUE.H"
@@ -36,6 +37,7 @@ extern volatile u16 Data_04000208;
 extern u8 gWorkSlot[];
 struct Cells03001ad0 { u16 unk00; u16 unk02; u16 unk04; u16 unk06; };
 extern struct Cells03001ad0 gBgScroll;
+extern volatile u16 Data_04000026;
 void Func_080cd508(void);
 void Func_080030f8(s32);
 void Func_080b5038(s32,u16,s32);
@@ -56,6 +58,7 @@ void Func_080cd594(s32 bg_control)
     s32 row,col;
     s32 tile_base;
     s32 palette_base;
+    s32 n;
 
     Func_080cd508();
     FIELD(display,s32,12)=1;
@@ -85,7 +88,7 @@ void Func_080cd594(s32 bg_control)
     *(volatile u16 *)0x04000020=0x80;
     *(volatile u16 *)0x04000022=0;
     *(volatile u16 *)0x04000024=0;
-    *(volatile u16 *)0x04000026=0x100;
+    Data_04000026=0x100;
     *(volatile u16 *)0x04000040=0xf0;
     *(volatile u16 *)0x04000044=0x1088;
     *(volatile u16 *)0x04000042=0xf0;
@@ -95,9 +98,12 @@ void Func_080cd594(s32 bg_control)
     QUEUE_DMA(0x7741);
 
     vram = (u16 *)0x06003800;
+    n = 0;
     for (row = 0; row != 16; row++) {
         for (col = 0; col != 8; col++) {
-            vram[row * 8 + col] = (s16)((row * 0x1000 + col * 0x200 + 0x100) | (row * 16 + col * 2));
+            s16 value = (row * 0x1000 + col * 0x200 + 0x100) | (row * 16 + col * 2);
+            ((volatile s16 *)vram)[n] = value;
+            n++;
         }
     }
 

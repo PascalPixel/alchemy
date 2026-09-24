@@ -1613,19 +1613,6 @@
       ]
     },
     {
-      "overlay": "resource_3b8",
-      "start": "0x020040b4",
-      "end": "0x02004340",
-      "kind": "structured_scene_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences do not prove ordinary C impossible.",
-        "2026-09-11: the last code owner of the overlay, never registered before; 652-byte reviewed extent, decompiled through the approved route and scored as a measured draft.",
-        "recon/tbs/en/dossiers.json#resource_3b8:020040b4"
-      ]
-    },
-    {
       "overlay": "resource_36f",
       "start": "0x02000000",
       "end": "0x02000030",

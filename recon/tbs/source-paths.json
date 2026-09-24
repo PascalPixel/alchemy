@@ -14888,7 +14888,8 @@
       "source": "FIELD/TOREBI_KYUDEN/CHOICE.C"
     },
     "resource_3b8:020040b4": {
-      "name": "FieldScene_RunScene3b8SequenceC"
+      "name": "TorebiKyuden_ApplyEntryState",
+      "source": "FIELD/TOREBI_KYUDEN/ENTRY_STATE.C"
     },
     "resource_3b8:02000af8": {
       "name": "FieldScene_RunScene3b8SequenceA",

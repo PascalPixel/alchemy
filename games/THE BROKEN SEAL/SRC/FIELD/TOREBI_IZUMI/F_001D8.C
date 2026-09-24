@@ -1,6 +1,3 @@
-/* NONMATCHING: 740 of 740 bytes, 2 halfword edits (2026-09-24). Hand-written from the
- * resolved jump-table disassembly as a single-overlay unit binding Engine_* at
- * their import veneers. Remaining: 2 halfwords: inside the list branch the reference copies the hoisted -1 (r5) into r8 before setting p = list (r6); this draft sets p first. The blend writes now match: each is wrapped in a do/while (FAKEMATCH when closed) so the value loads before the register address. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
@@ -30,16 +27,17 @@ static __inline__ void Io_SetBlendAlpha(s32 value)
     *(volatile u16 *)0x04000052 = value;
 }
 
-s32 Local_020001d8(void)
+/* Opens the Torebi spring scene: stages the blend and actors, reports the coin difference after a game, and hands out each prize item won. */
+s32 TorebiIzumi_Func020001d8(void)
 {
     s32 diff;
     s8 *list;
-    s8 *p;
+    s32 i;
     s32 item;
 
     if (Data_02000240_t.halves[224][0] == (s32)Data_000000bd) {
         gEventWork->start_transition = 0x100;
-        do { Io_SetBlendControl(0x3f42); } while (0);
+        do { Io_SetBlendControl(0x3f42); } while (0); /* FAKEMATCH: each do/while loads the value before the register address */
         do { Io_SetBlendAlpha(0x80c); } while (0);
         Engine_ActorSetAnimation(24, 2);
         Engine_ActorSetAnimation(25, 2);
@@ -107,13 +105,13 @@ s32 Local_020001d8(void)
                 Engine_EventSetMessage(0xe2e);
                 Engine_EventShowMessage(8, 0);
                 if (*list != -1) {
-                    for (p = list; *p != -1; p++) {
-                        if (p == list) {
+                    for (i = 0; list[i] != -1; i++) {
+                        if (i == 0) {
                             Engine_EventSetMessage(0xe2f);
                         } else {
                             Engine_EventSetMessage((s32)&TorebiIzumi_AndYouWonMessage);
                         }
-                        item = SceneDialogue_PickTopicVariantId(*p);
+                        item = SceneDialogue_PickTopicVariantId(list[i]);
                         Main_08015120(item, 2);
                         Engine_EventShowMessage(8, 0);
                         Engine_ItemShowFound(item, 3);

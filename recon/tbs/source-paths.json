@@ -6648,7 +6648,7 @@
       "source": "FIELD/SORU_FUNKA/EXTENDED_EFFECT.C"
     },
     "resource_3b0:020000a4": {
-      "name": "OvObj_Add160ToFields18And1c",
+      "name": "OverlayObject_Add160ToFields18And1c",
       "source": "FIELD/FUNE_HOBASHIRA/OBJECT_SCALE.C"
     },
     "resource_3c9:020008a8": {
@@ -6904,7 +6904,7 @@
       "source": "FIELD/FUNE_HEYA/EXTENDED_CHOREOGRAPHY.C"
     },
     "resource_3b0:02000a84": {
-      "name": "OvObj_InitWithRandomFields",
+      "name": "OverlayObject_InitWithRandomFields",
       "source": "FIELD/FUNE_HOBASHIRA/OBJECT_SCALE.C"
     },
     "resource_374:02000444": {
@@ -7384,7 +7384,7 @@
       "source": "FIELD/BIRIBINO_NIWA/ORBITING.C"
     },
     "resource_3b0:0200007c": {
-      "name": "Actor_SetFacingFromSample",
+      "name": "SceneActor_SetFacingFromSample",
       "source": "FIELD/FUNE_HOBASHIRA/OBJECT_SCALE.C"
     },
     "resource_371:02000560": {
@@ -7528,7 +7528,7 @@
       "source": "FIELD/BIRIBINO_DOU/REGION.C"
     },
     "resource_3b0:02000180": {
-      "name": "OvObj_ShrinkScaleThenStop",
+      "name": "OverlayObject_ShrinkScaleThenStop",
       "source": "FIELD/FUNE_HOBASHIRA/OBJECT_SCALE.C"
     },
     "resource_383:02004698": {
@@ -8232,7 +8232,7 @@
       "source": "FIELD/BIRIBINO_HEYA/MESSAGE_BRANCH.C"
     },
     "resource_3b0:020001fc": {
-      "name": "Scene_RunActor232SceneWhenFlag923Or922",
+      "name": "FieldScene_RunActor232SceneWhenFlag923Or922",
       "source": "FIELD/FUNE_HOBASHIRA/OBJECT_SCALE.C"
     },
     "resource_3b9:02000070": {
@@ -8920,7 +8920,7 @@
       "source": "FIELD/HAIDIA_HEYA/TIMED_EVENTS.C"
     },
     "resource_3b0:020001f0": {
-      "name": "Scene_CallHelper14d0",
+      "name": "FieldScene_CallHelper14d0",
       "source": "FIELD/FUNE_HOBASHIRA/OBJECT_SCALE.C"
     },
     "resource_374:020000b8": {
@@ -9957,7 +9957,7 @@
       "source": "FIELD/FUNE_HOBASHIRA/OBJECT_SCALE.C"
     },
     "resource_3b0:020007b0": {
-      "name": "Scene_RunActorNinePresentationCycles",
+      "name": "FieldScene_RunActorNinePresentationCycles",
       "source": "FIELD/FUNE_HOBASHIRA/OBJECT_SCALE.C"
     },
     "resource_3b0:02000564": {
@@ -10076,7 +10076,7 @@
       "name": "Scene_RunActorPresentation"
     },
     "resource_3b0:02000af8": {
-      "name": "Scene_RunPrimarySequence",
+      "name": "FieldScene_RunPrimarySequence",
       "source": "FIELD/FUNE_HOBASHIRA/OBJECT_SCALE.C"
     },
     "resource_372:02001154": {
@@ -10370,15 +10370,15 @@
       "source": "FIELD/KAREI_KYUDEN/PARTY_EVENTS.C"
     },
     "resource_3b0:0200040c": {
-      "name": "Scene_RunScene3b0",
+      "name": "FieldScene_RunScene3b0_0200040c",
       "source": "FIELD/FUNE_HOBASHIRA/OBJECT_SCALE.C"
     },
     "resource_3b0:02000468": {
-      "name": "Scene_RunScene3b0",
+      "name": "FieldScene_RunScene3b0_02000468",
       "source": "FIELD/FUNE_HOBASHIRA/OBJECT_SCALE.C"
     },
     "resource_3b0:020004b0": {
-      "name": "Scene_RunScene3b0",
+      "name": "FieldScene_RunScene3b0_020004b0",
       "source": "FIELD/FUNE_HOBASHIRA/OBJECT_SCALE.C"
     },
     "resource_3b1:02000670": {

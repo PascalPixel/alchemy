@@ -21,6 +21,8 @@ pub static AGBCC_SOURCES: &[&str] = &[
     "main:080fb75c",
     "main:080fb750",
     "main:08006878",
+    // The flash read loop sits inside the agbcc flash library.
+    "main:08006b84",
     "main:080069a4",
     "main:08006a00",
     "main:08006a78",

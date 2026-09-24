@@ -1,6 +1,14 @@
 {
   "format": 3,
   "owners": {
+    "resource_37b:020016a4": {
+      "name": "SoruSekizo_CheckTileTrigger016A4",
+      "source": "FIELD/SORU_SEKIZO/TILE_TRIGGER_016A4.C"
+    },
+    "resource_37b:0200166c": {
+      "name": "SoruSekizo_CheckTileTrigger0166C",
+      "source": "FIELD/SORU_SEKIZO/TILE_TRIGGER_0166C.C"
+    },
     "resource_378:020025c4": {
       "name": "ShindenHeya_CopyActorPose",
       "source": "FIELD/COMMON/SHINDEN_HEYA/COPY_ACTOR_POSE.C"

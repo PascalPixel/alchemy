@@ -108,10 +108,7 @@ void Func_02001af2();
 void Func_02001b10();
 void Func_02001b44();
 void Func_02001bc6();
-void Func_02001164();
 void Func_020011fc();
-void Func_02001384();
-void Func_02001490();
 s32 Func_0200215c();
 void Func_02002230();
 void Func_02002278();
@@ -226,8 +223,6 @@ void Func_02001af4_scene_state_interaction(s32, s32);
 
 s32 *Func_020020a4(s32);
 s32 *Func_020020b4(s32);
-void Func_020016bc(s32);
-void Func_020016c2(s32);
 
 #include "TYPES.H"
 
@@ -611,13 +606,13 @@ s32 FieldScene_RunScene3ae_0200086c(void)
         GameFlag_Set(0x950);
     }
     if (Data_02000240_t[224][0] == (s32)Data_0000006b) {
-        Func_02001164();
+        FieldScene_RunScene3ae_020008cc();
     } else {
         if (Data_02000240_t[224][0] == (s32)Data_00000070) {
             Func_020011fc();
         } else {
             if (Data_02000240_t[224][0] == (s32)Data_0000006c) {
-                Func_02001384();
+                SceneState_SetRuntimeWord448To521AndSend303();
             }
         }
     }
@@ -632,7 +627,7 @@ void FieldScene_RunScene3ae_020008cc(void)
     if (Data_02000240_t[225][0] == 1) {
         if (GameFlag_IsSet(0x8ac) == 0) {
             GameFlag_Set(0x8ac);
-            Func_02001490();
+            FieldScene_RunScene3aeSequenceA();
         }
     }
     if (Data_02000240_t[225][0] == 2) {
@@ -669,8 +664,8 @@ void FieldScene_PlaceSlots14And15(void)
     Map_CopyCellAttributes(1, 0, 1, 1, pos15, 11);
     Map_CopyCellAttributes(1, 0, 1, 1, pos14, 11);
 
-    Func_020016bc(14);
-    Func_020016c2(15);
+    SceneActor_SetMode3AndFlagBit1(14);
+    SceneActor_SetMode3AndFlagBit1(15);
 }
 
 void SceneActor_SetMode3AndFlagBit1(s32 no)

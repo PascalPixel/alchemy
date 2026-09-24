@@ -3,10 +3,7 @@
 
 #define Scene_GetRecord_1(args...) Func_020010e0(args)
 #define RuntimeBlock_GetOffset1e0Pointer_1(args...) Func_020011a6(args)
-#define ObjectMotion_SetSpeedLimitAndAcceleration_1(a0, a1) Call2(Func_0200119e, a0, a1)
-#define ObjectMotion_SetAngleToward_1(a0, a1, a2) Call3(Func_0200115e, a0, a1, a2)
 #define Scene_GetRecord_2(args...) Func_0200112a(args)
-#define ObjectMotion_CallThenWaitForAnimationChange_1(args...) Func_02001184(args)
 
 struct Slot02000338 {
     u8 head[6];
@@ -68,9 +65,6 @@ u8 *Func_020010e0();
 u8 *Func_0200112a();
 s32 Func_020011a6();
 struct Slot02000338 *Func_02001206(s32);
-s32 Func_020006be(void);
-s32 Func_02000732(void);
-s32 Func_020007a8(void);
 s32 Func_0200140a();
 s32 Func_020014e8();
 s32 Func_0200157a();
@@ -78,7 +72,6 @@ u32 Func_02001a82(void);
 u32 Func_02001ae4(void);
 u32 Func_02001b0a(void);
 struct SceneMotion *Func_02001b6c(s32, s32, s32, s32);
-void Func_02001948(struct SceneMotion *);
 s32 Func_02001686();
 struct Actor *Func_0200171a(s32);
 s32 Func_020017d4();
@@ -89,7 +82,6 @@ s32 Func_0200194e();
 u8 *Func_0200195c();
 s32 Func_0200196a();
 s32 Func_0200197a();
-u8 *Func_02001988_a();
 u8 *Func_02001988_b();
 void Func_02001998();
 u8 *Func_02001a12();
@@ -98,7 +90,6 @@ u8 *Func_02001a6c();
 s32 Func_02001a7a();
 s32 Func_02001a8c();
 s32 Func_02001aa2();
-void Func_020015a4();
 void Func_02001bc6();
 void Func_02001d38();
 
@@ -113,36 +104,24 @@ void Func_02001d38();
  * same block. A value-returning call also sets r0 last of its arguments. */
 static __inline__ void Call1(void (*f)(), s32 a0)
 {
-    void Func_0200115e();
-    void Func_02001184();
-    void Func_0200119e();
 
     f(a0);
 }
 
 static __inline__ s32 Value1(s32 (*f)(), s32 a0)
 {
-    void Func_0200115e();
-    void Func_02001184();
-    void Func_0200119e();
 
     return f(a0);
 }
 
 static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
 {
-    void Func_0200115e();
-    void Func_02001184();
-    void Func_0200119e();
 
     f(a0, a1);
 }
 
 static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
 {
-    void Func_0200115e();
-    void Func_02001184();
-    void Func_0200119e();
 
     f(a0, a1, a2);
 }
@@ -179,10 +158,6 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 }
 
 u8 *Func_0200138a();        /* scene/actor record accessor */
-
-void Func_020011d4(void);      /* scene continuation */
-
-void Func_02001408(void);      /* scene continuation */
 
 s32 SceneData_SelectTableByWord224(void)
 {
@@ -283,9 +258,6 @@ void SceneDialogue_ShowLine1918(void)
  */
 void FieldScene_RunOpeningAuxiliarySequence(void)
 {
-    void Func_0200115e();
-    void Func_02001184();
-    void Func_0200119e();
 
     u8 *rec18;
     u8 *ready_flag;
@@ -304,9 +276,9 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
             rec18 = Scene_GetRecord_1(18);
             /* Clear the byte at +85 of the lookup result. */
             *(u8 *)(RuntimeBlock_GetOffset1e0Pointer_1() + 85) = ready_flag;
-            ObjectMotion_SetSpeedLimitAndAcceleration_1(0x10000, 0x2000);
+            Camera_SetSpeed(0x10000, 0x2000);
             Camera_MoveTo(*(s32 *)(rec18 + 8), *(s32 *)(rec18 + 12), *(s32 *)(rec18 + 16), 1); /* use_setter 1 */
-            ObjectMotion_SetAngleToward_1(0, 0x4000, 0);
+            Actor_FaceActor(0, 0x4000, 0);
             Actor_FaceDirection(14, 0x3000, 0);
             Camera_WaitForMove();
             Event_Wait(120); /* should_wait 120 */
@@ -314,7 +286,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
             Camera_MoveTo(*(s32 *)(record + 8), *(s32 *)(record + 12), *(s32 *)(record + 16), 1); /* use_setter 1 */
             Camera_WaitForMove();
         }
-        ObjectMotion_CallThenWaitForAnimationChange_1(14, 4);
+        Actor_SetAnimationAndWait(14, 4);
     }
     Event_End();
 }
@@ -322,8 +294,6 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
 void SceneDialogue_RunActor17Message1924(void)
 {
     void Event_End(void);
-    void Func_02001184(void);
-    void Func_0200119e(void);
 
     Event_Begin();
     Event_SetMessage(0x1924);
@@ -333,9 +303,6 @@ void SceneDialogue_RunActor17Message1924(void)
 
 void SceneDialogue_RunActor9Message1932(void)
 {
-    void Func_0200115e(void);
-    void Func_02001184(void);
-    void Func_0200119e(void);
 
     Event_Begin();
     Event_SetMessage(0x1932);
@@ -345,7 +312,6 @@ void SceneDialogue_RunActor9Message1932(void)
 
 void SceneDialogue_RunActor10Message18d9(void)
 {
-    void Func_0200115e(void);
     void Event_Begin(void);
     void Event_End(void);
 
@@ -357,9 +323,6 @@ void SceneDialogue_RunActor10Message18d9(void)
 
 void SceneDialogue_RunActor14Message18e1(void)
 {
-    void Func_0200115e(void);
-    void Func_02001184(void);
-    void Func_0200119e(void);
 
     Event_Begin();
     Event_SetMessage(0x18E1);
@@ -369,9 +332,6 @@ void SceneDialogue_RunActor14Message18e1(void)
 
 void SceneDialogue_RunActor21Message194a(void)
 {
-    void Func_0200115e(void);
-    void Func_02001184(void);
-    void Func_0200119e(void);
 
     Event_Begin();
     Event_SetMessage(0x194A);
@@ -403,7 +363,7 @@ void FieldScene_RunActorFifteenFlagBranch(void)
         return;
     }
 
-    if (Func_020006be() != 0) {
+    if (SceneActor_IsSlotZeroAngleInRange() != 0) {
         Shop_Open(19, 15);
         return;
     }
@@ -431,7 +391,7 @@ void FieldScene_RunActorTwentyFlagBranch(void)
         return;
     }
 
-    if (Func_02000732() != 0) {
+    if (SceneActor_IsSlotZeroAngleInRange() != 0) {
         Shop_Open(20, 17);
         return;
     }
@@ -455,7 +415,7 @@ void FieldScene_RunActorTwentyOneFlagBranch(void)
         return;
     }
 
-    if (Func_020007a8() != 0) {
+    if (SceneActor_IsSlotZeroAngleInRange() != 0) {
         Shop_Open(21, 16);
         return;
     }
@@ -661,9 +621,9 @@ s32 SceneState_SyncProgressFlagsAndDispatch(void)
 
     scene = gGameState.scene;
     if (scene == (s32)&Value_0000004b) {
-        Func_020011d4();
+        FieldScene_RunMiddleSequence();
     } else if (scene == (s32)&Value_0000004c) {
-        Func_02001408();
+        FieldScene_RunScene3a3SequenceD();
     }
 
     return 0;
@@ -727,7 +687,7 @@ L_020009da:
     }
     Actor_SetSpriteFlags((s32)Func_0200191a(19), 0);
     Actor_SetChildValue(22, 15);
-    Call2((void (*)())Func_02001988_a, 23, 15);
+    Call2((void (*)())Engine_ActorSetChildValue, 23, 15);
     Actor_SetChildValue(24, 15);
     {
         u8 bits = 8;
@@ -874,7 +834,7 @@ void SceneEffect_SpawnDriftingParticle(void)
             work->timer = 20;
             work->delay = 0;
             work->active = 20;
-            Func_02001948(work);
+            SceneActor_ResetStateAndSpan(work);
             work->callback = (void (*)(struct SceneMotion *))0x02008c45;
             Object_SetAnimation(work, 1);
         }
@@ -903,7 +863,7 @@ void FieldScene_RunScene3a3_02000d58(void)
     Actor_RunRepeatedMotion(18, 2);
     Event_Wait(20);
     Actor_FaceDirection(18, 0xb000, 40);
-    Func_020015a4();
+    FieldScene_RunScene3a3SequenceC();
     Camera_FollowActor(0, 1);
     Camera_WaitForMove();
     Actor_SetAnimationAndWait(14, 4);

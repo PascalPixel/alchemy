@@ -41,10 +41,8 @@
 #define BattleEffect_ComputeWeightedResultAndDispatch_1_02001e94(args...) Func_02007782(args)
 #define Scene_GetRecord_1_02003054(args...) Func_020086d6(args)
 #define Scene_GetRecord_2_02003054(args...) Func_02009a00(args)
-#define ObjectMotion_CommitCurrentPositionAndActivate_22(args...) Func_02009a60_a(args)
 #define Scene_GetRecord_3(args...) Func_02009a30(args)
 #define Scene_GetRecord_4(args...) Func_02009a60_b(args)
-#define BattleRuntime_WaitIfModeZero_92(args...) Func_02009a60_c(args)
 #define SCENE_PHASE_02003054 (*(s32 *)(*(u8 **)0x03001ebc + 0x1c0))
 #define PRIMARY_ID 24
 #define DERIVED_ID 25
@@ -154,26 +152,7 @@ extern u8 Data_00002455[];
 extern u8 Data_02009151[], Data_0200938d[], Data_02009a45[];
 extern u8 Data_02009719[], Data_0200975d[], Data_020097bd[];
 extern u8 Data_02009529[], Data_020099e9[], Data_0200969d[];
-void Func_0200386a(s32);
-void Func_020038ca(s32);
-void Func_0200391e(s32);
-void Func_02003996(s32);
-void Func_020038e2(s32);
-void Func_020017d6();
 s32 Func_020065a2(s32);
-s32 Func_02002008(s32, s32);
-s32 Func_02002024(s32, s32);
-s32 Func_02002040(s32, s32);
-s32 Func_0200205c(s32, s32);
-void Func_02002fe6(s32);
-void Func_0200317a(s32);
-void Func_02009936(void);
-void Func_020061c2(s32);
-void Func_020061d2(s32);
-void Func_020061e2(s32);
-void Func_020061f2(s32);
-void Func_02006204(s32);
-void Func_02002e3c(s32);
 void Func_0200a30a(s32, s32, s32);
 s32 Func_0200a36e(s32);
 s32 Func_020067d2(s32, s32, s32);
@@ -186,7 +165,6 @@ SceneActor *Func_02006e70(void);
 SceneActor *Func_02006e78(s32);
 SceneActor *Func_02006ed4(void);
 SceneActor *Func_02006edc(s32);
-s32 Func_0200326a(void);
 s32 Func_02003114(s32);
 s32 Func_02003186(s32);
 SceneActor *Func_02006f6c(void);
@@ -194,60 +172,33 @@ SceneActor *Func_02006f74(s32);
 SceneActor *Func_02006fd4(void);
 SceneActor *Func_020070da(void);
 SceneActor *Func_0200703e(s32);
-void Func_02002960(void);
 SceneActor *Func_0200709a(s32);
-void Func_02002920(void);
 u8 *Func_020061ca(s32);
 void Func_02000c68(void);
-void Func_02001728();
 s32 Func_02006244();
 s32 Func_0200629c();
-void Func_020019a4();
 s32 Func_020062f2();
 void Func_02001b44();
 s32 Func_020063de();
-void Func_02001e34();
 s32 Func_02006542();
 s32 Func_02006492();
-void Func_02001cd4();
 struct ObjectRuntime *Func_020067ac();
 struct ObjectRuntime *Func_020067b4();
 double Func_02006ce6(s32);
 double Func_02006c7a(double, double);
 s32 Func_02006d72(double);
-s32 Func_02002314();
 s32 Func_02002b3e();
-s32 Func_02002b72();
 struct ObjectRuntime *Func_020069e6();
 void Func_02006afa();
-s32 Func_02002756();
-s32 Func_02002dbc();
 s32 Func_02002d5a();
-s32 Func_02002d58();
 struct ObjectRuntime *Func_02006b82();
-s32 Func_02002a96();
 s32 Func_02002eec();
-s32 Func_02002eea();
-s32 Func_02002d10();
-s32 Func_02002fae();
-void Func_02003232(s32);
-s32 Func_02003006(s32);
 void Func_02006cd4(s32);
 s32 Func_02003054_scene_scripts();
 void Func_02006d28();
 void Func_02006d2e();
-s32 Func_020030b4();
 void Func_02006d88();
 void Func_02006d8e();
-void Func_02004690();
-void Func_02004d2a();
-void Func_02004f02();
-void Func_02004f66();
-void Func_02004ff4();
-void Func_02005054();
-void Func_02005596();
-void Func_02005690();
-void Func_02005708();
 void Func_020057ec();
 s32 Func_02007e76();
 s32 Func_0200804e();
@@ -256,31 +207,18 @@ void Func_020080e6_b();
 void Func_02008788_a();
 void Func_02008788_b();
 void Func_0200a2ac();
-void Func_020039c8(s32);
 void Func_02007564(s32, s32);
-void Func_02003a30(s32);
 void Func_020075cc(s32, s32);
-void Func_02003cd0(s32);
 void Func_0200786c_a(s32, s32);
-void Func_020045d8();
-void Func_020047c2(void);
 void Func_02007778();
 void Func_02007782();
 s32 Func_02007b82();
 s32 Func_02007b96();
 s32 Func_02007baa();
-void Func_02003d0c();
 u8 *Func_020086d6();
 u8 *Func_02009a00();
 u8 *Func_02009a30();
-u8 *Func_02009a60_a();
 u8 *Func_02009a60_b();
-u8 *Func_02009a60_c();
-void Func_0200a812();
-void Func_02005fbc();
-void Func_02007658();
-void Func_0200761a();
-void Func_0200765c();
 struct ObjectRuntime *Func_0200aa16();
 struct ObjectRuntime *Func_0200aa2a();
 struct ObjectRuntime *Village_GetActor();
@@ -288,27 +226,18 @@ struct ObjectRuntime *Func_0200aa52();
 struct ObjectRuntime *Func_0200aa6c();
 struct ObjectRuntime *Func_0200aa84();
 void Village_FinishActorRestore();
-void Func_02006360(s32);
-void Func_02006370(s32);
-void Func_02006382(s32);
-void Func_020062f2_a(s32);
-void Func_02006302(s32);
 void Func_02006240_a(s32);
 void Func_02006250(s32);
 void Func_02006260(s32);
-void Func_0200a598();
 void Func_0200a7f8();
 void Func_0200a816();
 struct ObjectRuntime *Func_0200a874();
 void Func_0200a854();
 void Func_0200a7f6();
-void Func_02007300();
-void Func_02007314();
 void Func_0200a844();
 void Func_0200a8c4();
 struct ObjectRuntime *Func_0200a922();
 struct ObjectRuntime *Func_0200a92a();
-void Func_0200a3d6();
 s32 Func_0200a572();
 s32 Func_0200a57c();
 s32 Func_0200a586();
@@ -352,6 +281,10 @@ void Func_0200a682();
  * first argument throughout the main sequence, and 25 is introduced only
  * after ObjectMotion_SetAngleToward_2_020049a0(25, 24, 0), whose second argument is 24 -- so 25 is
  * derived from 24 partway through the sequence. */
+
+s32 TryStartActorInteraction(s32 actor_id, s32 interaction_id);
+
+s32 IsActorInteractionAvailable(s32 actor_id);
 
 static __inline__ void PlaceActor(s32 actor, s32 x, s32 y)
 {
@@ -842,7 +775,7 @@ void FieldScene_StartActorTwelveTransition(void)
     Actor_WaitForMove(12);
     Audio_PlayCue(215);
     Event_Wait(60);
-    Func_02001728();
+    ConfigureSceneActor12();
     GameFlag_Set(0x943);
 }
 
@@ -869,7 +802,7 @@ void FieldScene_UpdateActorTwelveTransition(void)
 void PlaceActorTwelveAndFinishScene(void)
 {
     PlaceActor(12, 0x00f80000, 0x01780000);
-    Func_020017d6();
+    ConfigureSceneActor12();
 }
 
 void PlaceSceneObjectPairFromTableA(s32 table_index)
@@ -898,7 +831,7 @@ void FieldScene_UpdateObjectPairA(void)
         trigger = work->touched_trigger;
         index = trigger - 40;
         if (GameFlag_IsSet(0x941) == 0 || index != 4) {
-            Func_020019a4(index);
+            PlaceSceneObjectPairFromTableA(index);
             Audio_PlayCue(157);
             Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
             Work_SetValuesIfNonNegative(-1, -1, 0xe666);
@@ -948,7 +881,7 @@ void FieldScene_UpdateTableBObjectPair(void)
     work = Data_03001ebc;
     if (Func_02006492(234) != -1) {
         trigger = work->touched_trigger;
-        Func_02001cd4(trigger - 40);
+        PlaceSceneObjectPairFromTableB(trigger - 40);
         Audio_PlayCue(157);
         Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
         Work_SetValuesIfNonNegative(-1, -1, 0xe666);
@@ -979,7 +912,7 @@ void FieldScene_UpdateObjectPairC(void)
     work = Data_03001ebc;
     if (Func_02006542(234) != -1) {
         trigger = work->touched_trigger;
-        Func_02001e34(trigger - 40);
+        PlaceSceneObjectPairFromTableC(trigger - 40);
         Audio_PlayCue(157);
         Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
         Work_SetValuesIfNonNegative(-1, -1, 0xe666);
@@ -1001,28 +934,28 @@ void LockedDoor_Touch(void)
 
 void Actor8_Interact(void)
 {
-    if (Func_02002008(8, 8) != 0) {
+    if (TryStartActorInteraction(8, 8) != 0) {
         GameFlag_Set((s32)&Value_00000f2a);
     }
 }
 
 void Actor9_Interact(void)
 {
-    if (Func_02002024(9, 7) != 0) {
+    if (TryStartActorInteraction(9, 7) != 0) {
         GameFlag_Set((s32)&Value_00000f2b);
     }
 }
 
 void Actor10_Interact(void)
 {
-    if (Func_02002040(10, 6) != 0) {
+    if (TryStartActorInteraction(10, 6) != 0) {
         GameFlag_Set((s32)&Value_00000f2c);
     }
 }
 
 void Actor11_Interact(void)
 {
-    if (Func_0200205c(11, 5) != 0) {
+    if (TryStartActorInteraction(11, 5) != 0) {
         GameFlag_Set((s32)&Value_00000f2d);
     }
 }
@@ -1129,7 +1062,7 @@ void FieldScene_UpdateActorPairInteraction(void)
         if (!GameFlag_IsSet(0x214) && actor->movement_state == 0) {
             work[8] = Func_02006d72(Func_02006c7a(8912896.0, Func_02006ce6(actor->x)));
         }
-        if (!Func_02002314()) {
+        if (!IsPlayerInAccidentTriggerArea()) {
             if (gGameState.cloaked != 0) {
                 if (Func_02002b3e(9) && gGameState.cloaked != 0) {
                     SetSceneValue(&scene[191], (s32)&Value_00002092);
@@ -1141,11 +1074,11 @@ void FieldScene_UpdateActorPairInteraction(void)
                 }
             }
             if (gGameState.cloaked == 0) {
-                if (Func_02002b72(9)) {
+                if (IsActorInteractionAvailable(9)) {
                     GameFlag_Set(0x215);
                     GameFlag_Set(0x214);
                 }
-                if (Func_02002b72(10)) {
+                if (IsActorInteractionAvailable(10)) {
                     GameFlag_Set(0x215);
                     GameFlag_Set(0x214);
                 }
@@ -1165,7 +1098,7 @@ void ConfigureSceneActor9(void)
     Actor_SetAnimation(9, 0);
     Actor_FaceActor(9, 0, 0);
     Actor_ShowEmote(9, 256, 0);
-    Func_02002e3c(10);
+    RunActorScriptedSequenceA(10);
     Event_End();
 }
 
@@ -1226,14 +1159,14 @@ void FieldScene_UpdateActorSeventeenInteraction(void)
             work[8] = 0x3400000 - actor->x;
             work[9] = 0x2400000 - actor->z;
         }
-        if (!Func_02002756()) {
-            Func_02002dbc(17);
+        if (!AreSceneActorsInPassingLane()) {
+            IsSceneActorWithinTriggerBox(17);
             if (Func_02002d5a(17) && gGameState.cloaked != 0) {
                 SetSceneValue(&scene[191], (s32)&Value_00002092);
                 return;
             }
             if (gGameState.cloaked == 0) {
-                if (Func_02002d58(17)) {
+                if (IsActorInteractionAvailable(17)) {
                     GameFlag_Set(0x215);
                     GameFlag_Set(0x214);
                 }
@@ -1247,7 +1180,7 @@ void FieldScene_UpdateActorSeventeenInteraction(void)
 
 void ActivateSceneActor17(void)
 {
-    Func_02002fe6(17);
+    RunActorScriptedSequenceA(17);
     Event_End();
 }
 
@@ -1293,13 +1226,13 @@ void FieldScene_UpdateActorEighteenInteraction(void)
             work[8] = 0x2f00000 - actor->x;
             work[9] = 0x1f00000 - actor->z;
         }
-        if (!Func_02002a96()) {
+        if (!IsPlayerInSecondaryTriggerArea()) {
             if (Func_02002eec(18) && gGameState.cloaked != 0) {
                 SetSceneValue(&scene[191], (s32)&Value_00002092);
                 return;
             }
             if (gGameState.cloaked == 0) {
-                if (Func_02002eea(18)) {
+                if (IsActorInteractionAvailable(18)) {
                     GameFlag_Set(0x215);
                     GameFlag_Set(0x214);
                 }
@@ -1313,7 +1246,7 @@ void FieldScene_UpdateActorEighteenInteraction(void)
 
 void ActivateSceneActor18(void)
 {
-    Func_0200317a(18);
+    RunActorScriptedSequenceA(18);
     Event_End();
 }
 
@@ -1337,9 +1270,9 @@ void FieldScene_RunScene3bfSequenceA(void)
 
     work = Data_03001ebc;
     if (GameFlag_IsSet(0x214) == 0) {
-        if (Value0(Func_02002d10) == 0) {
+        if (Value0(IsPlayerOutsideSceneRectangle) == 0) {
             if (gGameState.cloaked == 0) {
-                if (Value1_0200169c(Func_02002fae, 17) != 0) {
+                if (Value1_0200169c(IsActorInteractionAvailable, 17) != 0) {
                     GameFlag_Set(0x215);
                     GameFlag_Set(0x214);
                 }
@@ -1353,7 +1286,7 @@ void FieldScene_RunScene3bfSequenceA(void)
 
 void RunActor17SceneStep(void)
 {
-    Func_02003232(17);
+    RunActorScriptedSequenceA(17);
     Event_End();
 }
 
@@ -1363,7 +1296,7 @@ void TriggerSceneStage95FromActor12(void)
 
     u8 *scene_state = Data_03001ebc;
 
-    if (Func_02003006(12) != 0 && gGameState.cloaked == 0) {
+    if (IsActorInteractionAvailable(12) != 0 && gGameState.cloaked == 0) {
         s16 *scene_stage;
         s32 next_stage;
 
@@ -1401,7 +1334,7 @@ void FieldScene_RunScene3bfSequenceC(void)
 
     work = Data_03001ebc;
     if (GameFlag_IsSet(0x225) == 0) {
-        if (Value1_0200169c(Func_020030b4, 21) != 0) {
+        if (Value1_0200169c(IsActorInteractionAvailable, 21) != 0) {
             if (gGameState.cloaked == 0) {
                 GameFlag_Set(0x225);
                 Call1_0200169c(Func_02006d88, 0x20097bd);
@@ -1449,7 +1382,7 @@ s32 IsSceneActorHorizontallyNearPlayer(void)
 
 s32 IsActorInteractionAvailable(s32 actor_id)
 {
-    if (Func_0200326a() == 0) {
+    if (IsSceneActorWithinTriggerBox() == 0) {
         return 0;
     }
     if (Func_02003114(actor_id)!= 0) {
@@ -1527,7 +1460,7 @@ void TriggerScene41AtVillagePath(void)
             s32 v = 41;
 
             *q = v;
-            Func_02002960();
+            FieldScene_UpdateObjectPairC();
         }
     }
 }
@@ -1548,7 +1481,7 @@ void TriggerScene40AtVillagePath(void)
             s32 v = 40;
 
             *q = v;
-            Func_02002920();
+            FieldScene_UpdateTableBObjectPair();
         }
     }
 }
@@ -1614,19 +1547,19 @@ void TurnActorToSceneDirection(s32 actor_id)
     Actor_FaceActor(0, actor_id, 0);
     switch (Data_0200dfa4 & 3) {
     case 0:
-        Func_0200386a(actor_id);
+        RunActorScriptedSequenceB(actor_id);
         break;
     case 1:
-        Func_020038ca(actor_id);
+        RunActorScriptedSequenceC(actor_id);
         break;
     case 2:
-        Func_0200391e(actor_id);
+        FieldScene_RunScene3bf_02001cf0(actor_id);
         break;
     case 3:
-        Func_02003996(actor_id);
+        RunActorScriptedSequenceD(actor_id);
         break;
     default:
-        Func_020038e2(actor_id);
+        RunActorScriptedSequenceC(actor_id);
         break;
     }
 }
@@ -1712,7 +1645,7 @@ void InspectOrdinaryObject(void)
     Actor_SetAnimation(0, 1);
     Audio_PlayCue(113);
     Actor_ShowEmote(15, 256, 60);
-    Func_020039c8(15);
+    TurnActorToSceneDirection(15);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
     Data_02000240[0x22b] = 3;
     Func_02007564(98, 2);
@@ -1728,7 +1661,7 @@ void InspectEmptyChest(void)
     Actor_SetAnimation(0, 1);
     Audio_PlayCue(113);
     Actor_ShowEmote(11, 256, 60);
-    Func_02003a30(11);
+    TurnActorToSceneDirection(11);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
     Data_02000240[0x22b] = 3;
     Func_020075cc(98, 2);
@@ -1826,7 +1759,7 @@ void InspectEmptySceneObject(void)
     Actor_SetAnimation(0, 1);
     Audio_PlayCue(113);
     Actor_ShowEmote(16, 256, 60);
-    Func_02003cd0(16);
+    TurnActorToSceneDirection(16);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
     Data_02000240[0x22b] = 3;
     Func_0200786c_a(98, 2);
@@ -1919,7 +1852,7 @@ void InspectVillageWell(void)
             Event_Wait(5);
             Map_CopyCells(7, 77, 1, 2, 17, 82);
             Event_Wait(1);
-            Func_020045d8();
+            ConfigureInteractionRegionA();
             GameFlag_Set(0x947);
         }
     }
@@ -1938,7 +1871,7 @@ void RunSecondaryMapInteraction(void)
             Event_Wait(5);
             Map_CopyCells(7, 77, 1, 2, 3, 55);
             Event_Wait(1);
-            Func_02004690();
+            ConfigureInteractionRegionB();
             GameFlag_Set(0x948);
         }
     }
@@ -1970,7 +1903,7 @@ void InspectWardrobe(void)
 void InspectFirewood(void)
 {
     GameFlag_Set(2373);
-    Func_020047c2();
+    ConfigureInteractionRegionC();
     Actor_SetPosition(9, 0, 0);
 }
 
@@ -2096,7 +2029,7 @@ void PlayStoryScene(void)
         Actor_SetSpeed(0, 32768, 16384);
         Actor_WalkToAndWait(0, 456, 216);
         Actor_FaceActor(0, 12, 0);
-        Func_02004d2a();
+        FieldScene_RunScene3bf_0200252c();
         Actor_ShowEmote(12, 256, 60);
         Actor_FaceDirection(12, 32768, 0);
         Actor_Jump(12, 4, 0);
@@ -2125,7 +2058,7 @@ void PlayStoryScene(void)
         Audio_PlayCue(155);
         Message_ShowCentered(text_line + 1, 1);
         ObjectMotion_OffsetPositionAndResetMotion_2(13, 8, -8);
-        Func_02004f02();
+        FieldScene_RunScene3bf_020025f8();
         Event_Wait(120);
         Actor_StartRepeatedMotion(0, 2);
         Actor_StartRepeatedMotion(2, 2);
@@ -2133,11 +2066,11 @@ void PlayStoryScene(void)
         Actor_StartRepeatedMotion(3, 2);
         Event_Wait(20);
         text_line += 2;
-        Func_02005054();
+        FieldScene_RunScene3bf_02002718();
         Actor_FaceActor(13, 0, 0);
         Event_SetMessage(text_line);
         Event_ShowMessage(13, 0);
-        Func_02004ff4();
+        FieldScene_RunScene3bf_0200269c();
         SHARED_RECORD_FIELD_448 = 512;
         Event_Wait(1);
         do {
@@ -2162,7 +2095,7 @@ void PlayStoryScene(void)
         Actor_SetSpeed(0, 32768, 16384);
         Actor_WalkToAndWait(0, 456, 216);
         Actor_FaceActor(0, 12, 0);
-        Func_02004f66();
+        FieldScene_RunScene3bf_0200252c();
         Actor_SetSpeed(2, 45875, 22937);
         ObjectMotion_ResetAndSetPositionInMode2_3(2, 464, 192);
         Actor_WaitForMove(2);
@@ -2324,7 +2257,7 @@ void PlayStoryScene(void)
         Message_ShowCentered((s32)&Value_0000247e, 1);
         Actor_SetDestinationOffset(13, 8, -8);
         Actor_FaceActor(13, 11, 0);
-        Func_02005596();
+        FieldScene_RunScene3bf_020025f8();
         Audio_PlayCue(52);
         Event_SetMessage(text_line + 23);
         Event_ShowMessage(13, 0);
@@ -2334,8 +2267,8 @@ void PlayStoryScene(void)
         Actor_FaceActor(2, 11, 0);
         Actor_FaceActor(3, 11, 0);
         Actor_FaceActor(12, 11, 0);
-        Func_02005708();
-        Func_02005690();
+        FieldScene_RunScene3bf_02002718();
+        FieldScene_RunScene3bf_0200269c();
         GameFlag_Set(2370);
         SHARED_RECORD_FIELD_448 = 512;
         Event_Wait(1);
@@ -2363,7 +2296,7 @@ void FieldScene_RunMainScriptSequence(void)
     GameFlag_Set(0x301);
     GameFlag_Set(0x941);
     Map_CopyCells(16, 75, 7, 4, 26, 55);
-    Func_02003d0c(4);
+    PlaceSceneObjectPairFromTableA(4);
     Event_Begin();
     record = Scene_GetRecord_1_02003054(12);
     Actor_SetSpriteFlags(record, 1);
@@ -2940,7 +2873,7 @@ void FieldScene_RunMainScriptSequence(void)
     if (record != 0) {
         Actor_SetDestination(1, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
-    ObjectMotion_CommitCurrentPositionAndActivate_22(1);
+    Actor_WaitForMove(1);
     Actor_SetPosition(1, 0, 0);
     Actor_SetAnimation(2, 2);
     record = Scene_GetRecord_3(0);
@@ -2956,7 +2889,7 @@ void FieldScene_RunMainScriptSequence(void)
     }
     Actor_WaitForMove(3);
     Actor_SetPosition(3, 0, 0);
-    BattleRuntime_WaitIfModeZero_92(30);
+    Event_Wait(30);
     Actor_SetSpeed(12, 0x6666, 0x3333);
     Actor_WalkTo(12, 0x1d8, 184);
     Actor_WaitForMove(12);
@@ -3328,7 +3261,7 @@ void FinishActor20SceneSequence(void)
 
         *q = 0;
         Psynergy_Cancel();
-        Func_02009936();
+        RunActor20SceneSequence();
     }
 }
 
@@ -3458,7 +3391,7 @@ s32 FieldScene_DispatchActorUpdate(void)
 
 void FieldScene_InstallSceneTasks(void)
 {
-    Func_0200a3d6();
+    FieldScene_ActivateThreeActorGroup();
     switch (gGameState.entrance) {
     case 2:
     case 3:
@@ -3512,7 +3445,7 @@ void FieldScene_SetupActorsForScene(void)
 {
     struct ObjectRuntime *actor;
 
-    Func_0200a598();
+    FieldScene_ActivateTwoActorGroup();
     Actor_SetChildValue(9, 1);
     Actor_SetChildValue(10, 1);
     Actor_SetChildValue(17, 1);
@@ -3564,12 +3497,12 @@ void FieldScene_SetupActorsForScene(void)
     case 12:
         gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
         if (GameFlag_IsSet(0x94a)) {
-            Func_02007300();
+            FieldScene_RunSequenceTail();
         }
         break;
     case 31:
         gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
-        Func_02007314();
+        FieldScene_RunSequenceTail();
         break;
     case 14:
     case 15:
@@ -3593,9 +3526,9 @@ void FieldScene_RestoreActorsFromFlags(void)
     struct ObjectRuntime *actor;
 
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
-    Func_0200a812();
+    FieldScene_ActivateAlternateActorGroup();
     if (GameFlag_IsSet(0x943)) {
-        Func_02005fbc();
+        PlaceActorTwelveAndFinishScene();
     }
     GameFlag_Set(0x217);
     GameFlag_Set(0x218);
@@ -3605,17 +3538,17 @@ void FieldScene_RestoreActorsFromFlags(void)
     }
     if (GameFlag_IsSet(0x945)) {
         Actor_SetPosition(9, 0, 0);
-        Func_02007658();
+        ConfigureInteractionRegionC();
     }
     if (GameFlag_IsSet(0x946)) {
         Actor_SetPosition(10, 0, 0);
         GameFlag_Clear(0x218);
     }
     if (GameFlag_IsSet(0x947)) {
-        Func_0200761a();
+        ConfigureInteractionRegionA();
     }
     if (GameFlag_IsSet(0x948)) {
-        Func_0200765c();
+        ConfigureInteractionRegionB();
     }
     Event_Begin();
     actor = Func_0200aa16(8);
@@ -3647,23 +3580,23 @@ void FieldScene_RestoreActorsFromFlags(void)
 void FieldScene_ActivateThreeActorGroup(void)
 {
     if (GameFlag_IsSet(0x35a)) {
-        Func_02006360(0);
+        PlaceSceneObjectPairFromTableC(0);
     }
     if (GameFlag_IsSet(0x35b)) {
-        Func_02006370(1);
+        PlaceSceneObjectPairFromTableC(1);
     }
     if (GameFlag_IsSet(0x35c)) {
-        Func_02006382(2);
+        PlaceSceneObjectPairFromTableC(2);
     }
 }
 
 void FieldScene_ActivateTwoActorGroup(void)
 {
     if (GameFlag_IsSet(0x358)) {
-        Func_020062f2_a(0);
+        PlaceSceneObjectPairFromTableB(0);
     }
     if (GameFlag_IsSet(0x359)) {
-        Func_02006302(1);
+        PlaceSceneObjectPairFromTableB(1);
     }
 }
 
@@ -3683,18 +3616,18 @@ void FieldScene_ActivateAlternateActorGroup(void)
 void ActivateFiveActorGroupFromFlags(void)
 {
     if (GameFlag_IsSet(0x350)) {
-        Func_020061c2(0);
+        PlaceSceneObjectPairFromTableA(0);
     }
     if (GameFlag_IsSet(0x351)) {
-        Func_020061d2(1);
+        PlaceSceneObjectPairFromTableA(1);
     }
     if (GameFlag_IsSet(0x352)) {
-        Func_020061e2(2);
+        PlaceSceneObjectPairFromTableA(2);
     }
     if (GameFlag_IsSet(0x353)) {
-        Func_020061f2(3);
+        PlaceSceneObjectPairFromTableA(3);
     }
     if (GameFlag_IsSet(0x354)) {
-        Func_02006204(4);
+        PlaceSceneObjectPairFromTableA(4);
     }
 }

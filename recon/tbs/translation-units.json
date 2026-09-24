@@ -68793,6 +68793,174 @@
           "state": "retained-assembly"
         }
       ]
+    },
+    {
+      "id": "retained-overlay-372-0200173c",
+      "game": "tbs",
+      "source": "recon/tbs/en/overlays/resource_372_c_0200173c.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_372",
+      "absolute_symbols": {
+        "Func_02005f9a_a": {
+          "address": "0x0200c814",
+          "kind": "thumb"
+        },
+        "Func_02005f9a_b": {
+          "address": "0x0200c7d4",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x0200173c",
+          "extent": 236,
+          "state": "retained-assembly"
+        }
+      ]
+    },
+    {
+      "id": "retained-overlay-373-020032b0",
+      "game": "tbs",
+      "source": "recon/tbs/en/overlays/resource_373_c_020032b0.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_373",
+      "absolute_symbols": {
+        "Func_02009306_a": {
+          "address": "0x0200e024",
+          "kind": "thumb"
+        },
+        "Func_02009306_b": {
+          "address": "0x0200dfb4",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x020032b0",
+          "extent": 208,
+          "state": "retained-assembly"
+        }
+      ]
+    },
+    {
+      "id": "retained-overlay-3b1-02001978",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/FUNE_HEYA/FLAG_BRANCH_SEQUENCE.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3b1",
+      "absolute_symbols": {
+        "Func_02007fcc_a": {
+          "address": "0x0200e628",
+          "kind": "thumb"
+        },
+        "Func_02007fcc_b": {
+          "address": "0x0200e620",
+          "kind": "thumb"
+        },
+        "Func_02007fe8_a": {
+          "address": "0x0200e628",
+          "kind": "thumb"
+        },
+        "Func_02007fe8_b": {
+          "address": "0x0200e620",
+          "kind": "thumb"
+        },
+        "Func_02008004_a": {
+          "address": "0x0200e628",
+          "kind": "thumb"
+        },
+        "Func_02008004_b": {
+          "address": "0x0200e620",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02001978",
+          "extent": 144,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "retained-overlay-3ba-02000840",
+      "game": "tbs",
+      "source": "recon/tbs/en/overlays/resource_3ba_c_02000840.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3ba",
+      "absolute_symbols": {
+        "Func_0200455e_a": {
+          "address": "0x0200bce0",
+          "kind": "thumb"
+        },
+        "Func_0200455e_b": {
+          "address": "0x0200bc98",
+          "kind": "thumb"
+        },
+        "Func_020045a0_a": {
+          "address": "0x0200bd00",
+          "kind": "thumb"
+        },
+        "Func_020045a0_b": {
+          "address": "0x0200bc60",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02000840",
+          "extent": 276,
+          "state": "retained-assembly"
+        }
+      ]
+    },
+    {
+      "id": "retained-overlay-3bc-02000c5c",
+      "game": "tbs",
+      "source": "recon/tbs/en/overlays/resource_3bc_c_02000c5c.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3bc",
+      "absolute_symbols": {
+        "Func_02005766_a": {
+          "address": "0x0200caa0",
+          "kind": "thumb"
+        },
+        "Func_02005766_b": {
+          "address": "0x0200ca50",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02000c5c",
+          "extent": 276,
+          "state": "retained-assembly"
+        }
+      ]
+    },
+    {
+      "id": "retained-overlay-372-02001348",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_ARASHI/SECOND_EVENT_SEQUENCE.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_372",
+      "absolute_symbols": {
+        "Func_02005a94_a": {
+          "address": "0x0200c72c",
+          "kind": "thumb"
+        },
+        "Func_02005a94_b": {
+          "address": "0x0200c6bc",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02001348",
+          "extent": 336,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

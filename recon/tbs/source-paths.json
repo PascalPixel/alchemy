@@ -1,6 +1,26 @@
 {
   "format": 3,
   "owners": {
+    "resource_372:02001348": {
+      "name": "HaidiaArashi_RunSecondEventSequence",
+      "source": "FIELD/HAIDIA_ARASHI/SECOND_EVENT_SEQUENCE.C"
+    },
+    "resource_3bc:02000c5c": {
+      "name": "Scene_RunOverlay3bcSequence0C5C"
+    },
+    "resource_3ba:02000840": {
+      "name": "Scene_RunOverlay3baSequence0840"
+    },
+    "resource_3b1:02001978": {
+      "name": "FuneHeya_RunFlagBranchSequence",
+      "source": "FIELD/FUNE_HEYA/FLAG_BRANCH_SEQUENCE.C"
+    },
+    "resource_373:020032b0": {
+      "name": "Scene_RunOverlay373Sequence32B0"
+    },
+    "resource_372:0200173c": {
+      "name": "Scene_RunOverlay372Sequence173C"
+    },
     "resource_3bb:02000160": {
       "name": "KorosseoKabe_SpinActorAway",
       "source": "FIELD/KOROSSEO_KABE/SPIN_ACTOR.C"

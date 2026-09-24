@@ -3,6 +3,45 @@
   "comment": "Retained assembly ranges. Handwritten/library credit requires original-source evidence. Pascal-authorized reconstructed_veneer credit applies only to byte-exact fixed overlay linkage inside audited veneer ranges; it makes no original-authorship claim. Other strong entries remain unverified. Complete owner bounds live in semantic/regions.json.",
   "regions": [
     {
+      "overlay": "resource_3ba",
+      "start": "0x02000840",
+      "end": "0x02000954",
+      "kind": "structured_scene_module",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "Complete reviewed 276-byte scene owner remains retained assembly; the ordinary C candidate is 16 halfwords from exact under canonical GCC 2.96.",
+        "Call sites that share a legacy call word but reach different veneers are declared as separate _a/_b runtime symbols in its translation unit.",
+        "This is unresolved reconstruction, not evidence of compiler impossibility or Proven ASM."
+      ]
+    },
+    {
+      "overlay": "resource_372",
+      "start": "0x0200173c",
+      "end": "0x02001828",
+      "kind": "structured_scene_module",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "Complete reviewed 236-byte scene owner remains retained assembly; the ordinary C candidate is 6 halfwords from exact under canonical GCC 2.96.",
+        "Call sites that share a legacy call word but reach different veneers are declared as separate _a/_b runtime symbols in its translation unit.",
+        "This is unresolved reconstruction, not evidence of compiler impossibility or Proven ASM."
+      ]
+    },
+    {
+      "overlay": "resource_373",
+      "start": "0x020032b0",
+      "end": "0x02003380",
+      "kind": "structured_scene_module",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "Complete reviewed 208-byte scene owner remains retained assembly; the ordinary C candidate is 2 halfwords from exact under canonical GCC 2.96.",
+        "Call sites that share a legacy call word but reach different veneers are declared as separate _a/_b runtime symbols in its translation unit.",
+        "This is unresolved reconstruction, not evidence of compiler impossibility or Proven ASM."
+      ]
+    },
+    {
       "overlay": "resource_3c8",
       "start": "0x02003068",
       "end": "0x02003fe4",

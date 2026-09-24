@@ -1,15 +1,9 @@
 #include "TYPES.H"
 
-#define SceneData_FindActiveSlotAtCell Func_02000134
 extern u8 *Data_03001ebc;
 
 #include "TYPES.H"
 
-#define SceneState_ApplyFlag300 Func_020002bc
-#define SceneState_SetFlag953 Func_020002cc
-#define SceneState_ApplyRectAndMarkActor16 Func_0200050c
-#define SceneState_ApplyRectAndSetupActor19 Func_020005ec
-#define SceneActor_MarkSlot21AndSetFlag205 Func_02000690
 void Func_020013cc(s32);
 void Func_020013cc_a(s32, s32);
 u8 *Func_02001644(s32);
@@ -30,9 +24,6 @@ void Func_020017dc(s32);
 #include "TYPES.H"
 
 #define GetActorPosition Func_0200146a
-#define IsActor9AtTile15x54 Func_02000334
-#define SceneActor_IsActor10AtTile16x12 Func_02000458
-#define SceneActor_TransformAndApplyRecordPosition Func_02000b54
 
 s32 *Func_0200146a(s32 actor);
 s32 *Func_0200158e(s32);
@@ -41,7 +32,6 @@ void Func_02001c38(s32 *, s32, s32, s32);
 
 #include "TYPES.H"
 
-#define FieldScene_RunFlag9a9GuardedScene Func_02000368
 
 void Func_020004e6();
 s32 Func_020006ae();
@@ -82,11 +72,6 @@ static __inline__ void bump_step(s32 amount)
 
 #include "TYPES.H"
 
-#define SceneState_ApplyThreeRects Func_02000398
-#define SceneState_ConfigureRegion26_30AndClearActor18Mode Func_020005a0
-#define SceneActor_SetupSlotTwenty Func_02000640
-#define SceneActor_InitSlots10To15AndStartTask Func_02000c08
-#define SceneActor_SetupActors11To14AndInstallTask Func_02000c50
 void Func_02001476(s32, s32, s32, s32, s32, s32);
 void Func_0200148a(s32, s32, s32, s32, s32, s32);
 void Func_020014a4(s32, s32, s32, s32, s32, s32);
@@ -109,12 +94,6 @@ void Func_02001d08();
 
 #include "TYPES.H"
 
-#define FieldScene_RunScene3a7SequenceA Func_020003e0
-#define FieldScene_RunGuardedStep9AAAfterSetup Func_0200048c
-#define FieldScene_RunGuardedStep9AA Func_020004d0
-#define FieldScene_RunSupplementalSequenceOne Func_02000754
-#define FieldScene_RunScene3a7SequenceB Func_020008a8
-#define FieldScene_RunOpeningAuxiliarySequence Func_020009c0
 extern s32 Data_0200a214[];
 extern s32 Data_0200a224;
 extern s32 Data_0200a228;
@@ -287,9 +266,7 @@ static __inline__ void Call1_02000aa0(void (*f)(), s32 a0)
 
 #include "TYPES.H"
 
-#define Resource3a7_NoOpCallback Func_020004cc
 
-#define SceneData_SelectOverlayDataBySelector Func_020000e0
 
 extern s16 Data_02000240[];
 extern u8 Value_00000060;
@@ -300,13 +277,11 @@ extern u8 Data_02009d4c[];
 extern u8 Data_02009ecc[];
 extern u8 Data_02009d1c[];
 
-#define SceneState_SetEntries16To21Byte35 Func_02000734
 
 #include "TYPES.H"
 
 extern u8 *Func_02001870(s32);
 
-#define SceneData_SelectDataByRuntimeSelector Func_020002e0
 
 extern s16 Data_02000240[];
 extern u8 Value_00000060;
@@ -317,7 +292,6 @@ extern u8 Data_0200a064[];
 extern u8 Data_0200a190[];
 extern u8 Data_02009f8c[];
 
-#define SceneState_DispatchByActorZeroDepth Func_020006e4
 
 #include "TYPES.H"
 
@@ -332,7 +306,6 @@ extern struct Actor *Func_0200181a(s32);
 extern void Func_02000dfc(void);
 extern void Func_02000e32(void);
 
-#define SceneData_SelectSecondaryByRuntimeSelector Func_0200008c
 
 extern s16 Data_02000240[];
 extern u8 Value_00000060;
@@ -343,7 +316,6 @@ extern u8 Data_02009cc0[];
 extern u8 Data_02009cfc[];
 extern u8 Data_02009c7c[];
 
-#define SceneData_SelectByRuntimeSelector Func_02000030
 
 extern s16 Data_02000240[];
 extern u8 Value_00000060;
@@ -354,15 +326,12 @@ extern u8 Data_02009a34[];
 extern u8 Data_02009b9c[];
 extern u8 Data_0200989c[];
 
-#define SceneData_GetTable9C5C Func_02000084
 
 #include "TYPES.H"
 
-#define FieldScene_NoOp Func_0200040c
 
 /* Deliberate no-op callback. */
 
-#define SceneState_ApplyThreeRectsRows9And10 Func_02000410
 
 #include "TYPES.H"
 
@@ -370,7 +339,6 @@ extern void Func_020014ee(s32, s32, s32, s32, s32, s32);
 extern void Func_02001502(s32, s32, s32, s32, s32, s32);
 extern void Func_0200151c(s32, s32, s32, s32, s32, s32);
 
-#define SceneState_ConfigureRegion26_30AndMarkActor17 Func_02000554
 
 #include "TYPES.H"
 

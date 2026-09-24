@@ -1,3 +1,5 @@
+/* 2026-09-24: 21 differing halfwords (from 34) after a do-while wrap and
+   statement-swap sweep; the do-while wraps are search artefacts. */
 /*
  * Draft, 508 of 508 bytes, 34 halfword edits: each five-argument number
  * draw builds its stack argument in r2 where the reference uses r3, and the
@@ -48,9 +50,9 @@ void ItemMenu_DrawOwnerStatus(s32 window, s32 owner, s32 flags)
     Func_08015080(unit->class_index + 0x741, window, 0, 32);
     Func_08015090(Data_080af22c, window, 104, 0);
     Func_080150b8(15);
-    Func_080150b0(unit->level, 2, window, 128, 0);
+    do { Func_080150b0(unit->level, 2, window, 128, 0); } while (0);
     Func_08015090(Data_080af234, window, 40, 16);
-    Func_080150b0(unit->hp, 4, window, 72, 16);
+    do { Func_080150b0(unit->hp, 4, window, 72, 16); } while (0);
     Func_080150b0(unit->max_hp, 4, window, 112, 16);
     Func_08015098(Data_080af230, window, 104, 16);
     Func_08015090(Data_080af238, window, 40, 24);

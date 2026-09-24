@@ -23,8 +23,6 @@ void *Func_0200a59c();
 void *Func_0200a5a8();
 void *Func_0200a5a8_a();
 void Func_0200a5aa();
-void Func_0200a5b6();
-void Func_0200a5b6_a();
 s32 Func_0200a5be();
 void Func_0200a5c0();
 void Func_0200a5ce();
@@ -35,8 +33,6 @@ void Func_0200a60c();
 void Func_0200a610();
 s32 Func_0200a616();
 s32 Func_0200a638();
-void Func_0200a648();
-void Func_0200a648_a();
 s32 Func_0200a650();
 void Func_0200a65c();
 void Func_0200a660();
@@ -62,10 +58,7 @@ void Func_0200a6fa();
 void Func_0200a704();
 void Func_0200a708();
 void Func_0200a724();
-void Func_0200a732();
-void Func_0200a732_a();
 void Func_0200a744();
-void Func_0200a754_a();
 
 void Func_02004a08(void)
 {
@@ -92,13 +85,13 @@ void Func_02004a08(void)
     Func_0200a520(60);
     Func_0200a5a8(3, 16);
     Func_0200a52e(50);
-    Func_0200a5b6(3, 1);
+    Engine_ActorSetAnimation(3, 1);
     Func_0200a616(3, 0);
     if (Func_0200a566(0, 0) == 1) {
         Func_0200a550(20);
         Func_0200a5f8(3, 2);
         Func_0200a55e(20);
-        Func_0200a648(3, 0, 20);
+        Engine_EventShowMessageAndWait(3, 0, 20);
         Func_0200a5f8_a(3, 4);
         Func_0200a576(20);
         Func_0200a660(3, 0, 20);
@@ -108,7 +101,7 @@ void Func_02004a08(void)
         if (Func_0200a5be(0, 0) == 1) {
             Func_0200a5a8_a(20);
             Func_0200a638(3, 4);
-            Func_0200a5b6_a(20);
+            Engine_EventWait(20);
             event = base + 5;
             for (;;) {
                 Func_0200a6a4(event);
@@ -133,12 +126,12 @@ void Func_02004a08(void)
     Func_0200a6b0(3, 1);
     Func_0200a6ea(3, 0, 20);
     Func_0200a6ca(3, 4);
-    Func_0200a648_a(20);
-    Func_0200a732(3, 0, 20);
+    Engine_EventWait(20);
+    Engine_EventShowMessageAndWait(3, 0, 20);
     Actor_ShowEmote(3, 261, 90);
     Func_0200a6ec(3, 3);
     Func_0200a66a(20);
-    Func_0200a754_a(3, 0, 20);
+    Engine_EventShowMessageAndWait(3, 0, 20);
     Func_0200a694(3, 1);
     Func_0200a662(68);
     Func_0200a67c(3, 1, 0);
@@ -149,7 +142,7 @@ void Func_02004a08(void)
     if (actor != 0) {
         Func_0200a704(3, *(s16 *)(actor + 10), *(s16 *)(actor + 18));
     }
-    Func_0200a732_a(3);
+    Engine_ActorWaitForMove(3);
     Func_0200a744(3, 0, 0);
     Map_CopyCellAttributes(110, 39, 5, 1, 46, 39);
     Func_0200a6c6(2163);

@@ -1,4 +1,16 @@
+/* Draft, not exact (2026-09-24): candidate=956 reference=956 differing_halfwords=437. Constants the reference loads from
+   the literal pool are spelled as link-time Value_ symbols, which restores
+   the reference size; wraps marked FAKEMATCH only move scheduling. */
 #include "TYPES.H"
+extern u8 Value_00008000;
+extern u8 Value_00002000;
+extern u8 Value_00005000;
+extern u8 Value_00003f40;
+extern u8 Value_00001000;
+extern u8 Value_00000856;
+extern u8 Value_00000855;
+extern u8 Value_00000c80;
+extern u8 Value_00004000;
 
 #define BattlePres_RunUnitTransition Func_080b9ec0
 
@@ -42,11 +54,11 @@ void BattlePres_RunUnitTransition(
 
     if (selection->flags & 0x8000) {
         u32 *transition = *(u32 **)0x03001f00;
-        transition[0] = primary_unit <= 7 ? 0x2000 : 0x5000;
+        transition[0] = primary_unit <= 7 ? 0x2000 : (s32)&Value_00005000;
         transition[1] = 60;
     } else {
         u32 *transition = *(u32 **)0x03001f00;
-        u32 target = primary_unit <= 7 ? 0x2000 : 0xffffe000;
+        u32 target = primary_unit <= 7 ? (s32)&Value_00002000 : 0xffffe000;
         if (transition[0] != target) {
             transition[0] = target;
         }
@@ -144,7 +156,7 @@ void BattlePres_RunUnitTransition(
 
     Func_080b6c90();
     refreshed_count = Func_080b6c08(3, visible_units);
-    *(u16 *)0x04000050 = 0x3f40;
+    *(u16 *)0x04000050 = (s32)&Value_00003f40;
     for (index = 0; index < refreshed_count; index++) {
         u16 unit = visible_units[index];
         if (unit != 0xfe && unit != primary_unit &&

@@ -470,21 +470,6 @@
       ]
     },
     {
-      "overlay": "resource_3c9",
-      "start": "0x020012c8",
-      "end": "0x020020dc",
-      "kind": "structured_scene_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "2026-09-09 audit revoked the former intra-function-call compiler-impossibility claim: it confused pre-loader disassembly labels with runtime call destinations.",
-        "The resource loader subtracts each call suffix offset from the stored Thumb displacement. Runtime target = 0x02008000 + signed stored displacement + 2, not the unrelocated PC-relative display label.",
-        "Original call 0x0200131a resolves to resource 0x020008a8, not displayed 0x02001bc4; 0x020024e2 likewise resolves to 0x020008a8, not 0x02002d8c; 0x02004d54 resolves to 0x02000894, not 0x020055ea.",
-        "All 363, 433 and 266 reviewed original call sites in complete owners 0x020012c8, 0x02002360 and 0x02004bec respectively resolve outside their containing owner. No intra-function-call impossibility evidence remains.",
-        "Retained assembly pending ordinary C recovery and complete-owner verification; no claim that C is impossible."
-      ]
-    },
-    {
       "overlay": "resource_39c",
       "start": "0x02003d20",
       "end": "0x02004a08",

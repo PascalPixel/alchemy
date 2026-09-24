@@ -1,3 +1,6 @@
+/* Draft, not exact (2026-09-24): 92 differing halfwords at equal size (was 4 bytes short); register choice around the linked-member loop.
+   FAKEMATCH marks below are empty do-while wraps that only move scheduling
+   or register choice; they stay tagged until a real spelling replaces them. */
 #include "TYPES.H"
 #include "BATTLE_EFX.H"
 
@@ -107,7 +110,7 @@ s32 Func_080d59b0(void *object)
                 Func_080051d8(facing, facing + 12);
                 record[0] = M2C_FIELD(member, s32 *, 8);
                 record[1] = (s32) (160 << 14);
-                record[2] = M2C_FIELD(member, s32 *, 16);
+                do { record[2] = M2C_FIELD(member, s32 *, 16); } while (0); /* FAKEMATCH */
                 Func_08004cb4(record);
 
                 if (frame == j * 16 + 64) {

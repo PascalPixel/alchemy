@@ -1,4 +1,15 @@
+/* Draft, not exact (2026-09-24): candidate=524 reference=524 differing_halfwords=127. Constants the reference loads from
+   the literal pool are spelled as link-time Value_ symbols, which restores
+   the reference size; wraps marked FAKEMATCH only move scheduling. */
 #include "TYPES.H"
+extern u8 Value_00000100;
+extern u8 Value_00007000;
+extern u8 Value_00007780;
+extern u8 Value_00007784;
+extern u8 Value_00000480;
+extern u8 Value_00007080;
+extern u8 Value_000006c0;
+extern u8 Value_00007824;
 #include "EFFECT_STEP.H"
 #include "BATTLE_EFX.H"
 #include "BATTLE_EFFECT_WORK.H"
@@ -93,7 +104,7 @@ void Func_080d5c48(struct BattleEffectArgument *efx)
     *(s32 *)(work + 0x7784) = 0;
     draw = (DrawRectangle)entry[6];
     Func_080041d8(0x080CD261, 0x480);
-    puff = (Puff *)(work + 0x7080);
+    puff = (Puff *)(work + (s32)&Value_00007080);
     for (i = 0; i != WORK_EFX->count; i++) {
         puff->tick = Func_08004458() & 63;
         puff++;
@@ -103,7 +114,7 @@ void Func_080d5c48(struct BattleEffectArgument *efx)
         if (frame == 32) {
             Func_080b50e8(0);
         }
-        cur = (Puff *)(work + 0x7080);
+        cur = (Puff *)(work + (s32)&Value_00007080);
         for (i = 0; i != WORK_EFX->count; i++) {
             base = i << 4;
             if (frame == base) {
@@ -134,7 +145,7 @@ void Func_080d5c48(struct BattleEffectArgument *efx)
             cur++;
         }
         *(s32 *)(work + 0x7824) = 1;
-        Func_080030f8(1);
+        do { Func_080030f8(1); } while (0); /* FAKEMATCH */
         frame += 1;
     }
     Func_08004278(0x080CD261);

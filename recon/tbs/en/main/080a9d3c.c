@@ -1,3 +1,5 @@
+/* 2026-09-24: 3 differing halfwords (from 12) after a do-while wrap and
+   statement-swap sweep; the do-while wraps are search artefacts. */
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
 
@@ -25,8 +27,8 @@ void ItemMenu_ApplyFlags(const u8 *flags)
             *(u16 *)((u8 *)entry + 6) = kind;
             *(u16 *)((u8 *)entry + 8) = value;
             *(u8 *)((u8 *)entry + 15) = 240;
-            Func_080a17c4(entry);
             value += 16;
+            Func_080a17c4(entry);
         }
         index++;
     } while (index <= 4);

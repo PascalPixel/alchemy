@@ -29,7 +29,7 @@ struct Target {
 extern s32 gGameState[];
 #define PARTY_STATE gGameState
 
-void Math_AdvanceVectorByAngle(s32, s32, struct Vec *);
+void Vector_AddPolarOffset(s32, s32, struct Vec *);
 struct Target *Object_GetById(s32);
 void Camera_WorldToScreen(struct Vec *);
 void BattleFx_ClearOwnedSlot(struct Actor *);
@@ -77,7 +77,7 @@ void BattleFx_RunAngledApproachPhases(struct Actor *actor)
     }
     pos.x = actor->x;
     pos.z = actor->z;
-    Math_AdvanceVectorByAngle(actor->yaw << 16, actor->pitch << 11, &pos);
+    Vector_AddPolarOffset(actor->yaw << 16, actor->pitch << 11, &pos);
     actor->screenX = pos.x;
     actor->screenZ = pos.z;
 }

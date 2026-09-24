@@ -492,7 +492,6 @@ void Func_02003e48_b();
 
 #define NULL ((void *)0)
 #define CalculateFacingAngle Func_02002462
-#define OverlayObject_UpdateFacingTowardTarget Func_02000030
 
 #include "FACING_OBJECT.H"
 
@@ -500,9 +499,6 @@ s32 Func_02002462(s32, s32);
 
 #include "TYPES.H"
 
-#define SceneData_GetTableA638 Func_02000088
-#define SceneData_GetTableA920 Func_02000094
-#define SceneData_SelectRecordByScene21 Func_0200009c
 struct SceneRecord {
     u8 unk_000[166];
     u8 field_166;
@@ -551,9 +547,6 @@ s32 Func_0200250c();            /* Story-flag test. */
 
 #include "TYPES.H"
 
-#define SceneData_SelectTableac9cByState Func_02000100
-#define SceneDialogue_RunActor10Message1420 Func_02000130
-#define FieldScene_RunSlotSubjectBranch Func_020004ec
 extern s16 Data_02000240[];
 extern u8 Value_00000021;
 extern u8 Data_0200aca8[];
@@ -581,7 +574,6 @@ void Func_020029c8(void);
 
 #include "TYPES.H"
 
-#define FieldScene_RunActorSeventeenFlagDialogue Func_020002cc
 s32 Func_02002738();
 void Func_0200282a();
 void Func_02002832();
@@ -600,13 +592,6 @@ void Func_0200278e();           /* scripted-scene bracket: close */
 
 #include "TYPES.H"
 
-#define FieldScene_RunStepWithValue174d Func_020003ec
-#define FieldScene_RunStepWithValue174e Func_02000408
-#define FieldScene_RunBranchedStep Func_02000424
-#define FieldScene_RunStep210ByFlag84e Func_0200043c
-#define FieldScene_RunStep211ByFlag84e Func_02000468
-#define FieldScene_RunStep212ByFlag84e Func_02000494
-#define FieldScene_RunStep213ByFlag84e Func_020004c0
 void Func_02002860(void);
 void Func_02002840(s32, s32);
 void Func_02002874(void);
@@ -631,8 +616,6 @@ s32 Func_020009c8(s32, s32, s32);
 
 #include "TYPES.H"
 
-#define ConfigurePrimarySceneChannels Func_02001958
-#define ConfigureSecondarySceneChannels Func_02001984
 void Func_02003ec4(s32, s32, s32);
 void Func_02003ed0(s32, s32, s32);
 void Func_02003edc(s32, s32, s32);
@@ -672,10 +655,6 @@ static __inline__ void ConfigureThird_02003f08(s32 channel, s32 value, s32 zero)
 
 #include "TYPES.H"
 
-#define FieldScene_RunScene38d_02000150 Func_02000150
-#define FieldScene_RunScene38dSequenceA Func_020001b4
-#define FieldScene_RunActorSeventeenFlaggedDialogue Func_02000214
-#define FieldScene_RunScene38d_02000568 Func_02000568
 
 extern u8 Data_03001ebc[];
 
@@ -743,7 +722,6 @@ void Func_020026e0();           /* scripted-scene bracket: close */
 
 #include "TYPES.H"
 
-#define SceneDialogue_RunActor16Message1769 Func_020001f4
 
 #include "TYPES.H"
 
@@ -754,7 +732,6 @@ extern void Func_02002682(void);
 
 #include "TYPES.H"
 
-#define RunEventScript02 Func_020019b0
 
 /* Second event script of resource_38d: a linear field-scene choreography that
  * drives channels 0-3 and 18-20 through fades, motions, positions and message
@@ -991,7 +968,6 @@ typedef struct ActorPos {
     s16 y;
 } ActorPos;
 
-#define FieldScene_RunScene38d_020005f4 Func_020005f4
 
 #include "TYPES.H"
 
@@ -1032,7 +1008,6 @@ void Func_02002bbc();
 
 /* The scene step counter at 0x1d8 of the shared scene work record. */
 
-#define SceneDialogue_RunActor15Flag303Scene Func_0200028c
 
 #include "TYPES.H"
 

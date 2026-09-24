@@ -412,7 +412,7 @@ void Shop_DrawUnitGrid(s32 window, s32 unit_id)
 
 s32 Shop_GetSelectionState(s32, s32);
 void UiMessage_ShowAndWait(s32);
-s32 Shop_RunQuantitySelector(s32, s32, s32);
+s32 Shop_SelectQuantity(s32, s32, s32);
 void UiIcon_PrepareObjectFar(void *);
 extern char Value_00000cad;
 
@@ -444,7 +444,7 @@ s32 Shop_SelSellNum(s32 unit_id, s32 slot)
         shop->cursor.anchor->kind = 4;
         shop->mode = 0xc;
         Shop_PlaceCursor(NULL, EFFECT_X, 0x30);
-        result = Shop_RunQuantitySelector(0, selection, effect);
+        result = Shop_SelectQuantity(0, selection, effect);
         WaitFrames(1);
         UiIcon_PrepareObjectFar(shop->cursor.anchor);
         Shop_PlaceCursor(NULL, saved_x, saved_y);

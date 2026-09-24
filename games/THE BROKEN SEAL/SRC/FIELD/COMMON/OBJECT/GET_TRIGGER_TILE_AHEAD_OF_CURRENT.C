@@ -16,7 +16,7 @@ struct Object {
 
 extern s32 gGameState[];
 
-void Math_AdvanceVectorByAngle(s32, s32, struct Vec *);
+void Vector_AddPolarOffset(s32, s32, struct Vec *);
 s32 Map_GetTerrainHeightFar(s32, s32, s32);
 struct Object *ObjectTable_Get(s32);
 s32 BattleFx_FindDescriptor(s32, s32);
@@ -41,7 +41,7 @@ s32 Object_GetTriggerTileAheadOfCurrent(void)
         pos.x = obj->pos.x;
         pos.y = obj->pos.y;
         pos.z = obj->pos.z;
-        Math_AdvanceVectorByAngle(0x100000, obj->angle, &pos);
+        Vector_AddPolarOffset(0x100000, obj->angle, &pos);
         if (*(s16 *)(state + 0x19e) == 3) {
             cell = (u8 *)0x02020000 + ((((pos.x / 0x200000) & 31) + (((pos.z / 0x200000) & 31) << 5)) << 2);
         } else {

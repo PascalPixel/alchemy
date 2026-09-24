@@ -163,7 +163,7 @@ enum {
 enum GateActor {
     ACTOR_LEFT_GUARD = ACTOR_FIRST_PLACED,
     ACTOR_RIGHT_GUARD,
-    ACTOR_GATE_GARET
+    ACTOR_GATE_GERALD
 };
 
 enum LunpaSprite {
@@ -233,7 +233,7 @@ enum LunpaMessage {
     MSG_LEFT_GUARD_THOUGHTS = 0x1bbf,
     MSG_EAST_GUARD_DEMANDS_AUTHORIZATION = 0x1be1,
     MSG_EAST_GUARD_FEARS_BLAME = 0x1be2,
-    MSG_GARET_REFUSES_TO_RETURN = 0x24cf,
+    MSG_GERALD_REFUSES_TO_RETURN = 0x24cf,
     MSG_VILLAGER_A_REOPENED = 0x24d0,
     MSG_VILLAGER_B_SHIVERS = 0x24d1,
     MSG_VILLAGER_C_REOPENED = 0x24d2,
@@ -708,7 +708,7 @@ void RightGuard_MindRead(void)
     Event_ShowMessage(ACTOR_RIGHT_GUARD, 0);
 }
 
-/* After the escape, walking up to the fortress raises Garet's objection. */
+/* After the escape, walking up to the fortress raises Gerald's objection. */
 void Party_WatchForFortress(void)
 {
     s32 cell_z = Actor_Get(ACTOR_PARTY_LEADER)->z.fixed / CELL_SIZE;
@@ -719,12 +719,12 @@ void Party_WatchForFortress(void)
     }
 }
 
-void Garet_RefusesToReturn(void)
+void Gerald_RefusesToReturn(void)
 {
     Event_Begin();
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
-    Event_SetMessage(MSG_GARET_REFUSES_TO_RETURN);
-    Event_ShowMessage(ACTOR_GARET, 0);
+    Event_SetMessage(MSG_GERALD_REFUSES_TO_RETURN);
+    Event_ShowMessage(ACTOR_GERALD, 0);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 100);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
     Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, 12);
@@ -1311,7 +1311,7 @@ const struct ScenePlacement gGatePlacements[] = {
       PIXELS(144), 0, PIXELS(200), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
     { SPRITE_GUARD, CONDITION_ALWAYS, ACTOR_STAND,
       PIXELS(176), 0, PIXELS(200), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
-    { ACTOR_GARET, CONDITION_ALWAYS, ACTOR_STAND, 0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
+    { ACTOR_GERALD, CONDITION_ALWAYS, ACTOR_STAND, 0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SCENE_TABLE_END },
 };
 
@@ -1417,7 +1417,7 @@ const struct SceneEvent gGateEvents[] = {
     { EVENT_TOUCH, TRIGGER_GUARDED_GROUND, FLAG_GATE_GUARDS_BLOCKING,
       EVENT_SCRIPT(Guards_BlockGate) },
     { EVENT_TOUCH, TRIGGER_FORTRESS_APPROACH, CONDITION_ALWAYS,
-      EVENT_SCRIPT(Garet_RefusesToReturn) },
+      EVENT_SCRIPT(Gerald_RefusesToReturn) },
     { EVENT_RAISED, TRIGGER_PARTY_SPOTTED, CONDITION_ALWAYS, EVENT_SCRIPT(Guards_CatchParty) },
     TALK(ACTOR_LEFT_GUARD, EVENT_SCRIPT(LeftGuard_Talk)),
     TALK(ACTOR_RIGHT_GUARD, EVENT_SCRIPT(RightGuard_Talk)),

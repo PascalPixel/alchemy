@@ -55,7 +55,6 @@ struct FieldEffect *Effect_Create(s32 x, s32 y, s32 z, s32 type)
     return NULL;
 }
 
-
 /*
  * The motion scripts a spawn chooses from. Each holds the effect for its
  * lifetime, then hides and deletes it.

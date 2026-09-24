@@ -9,7 +9,6 @@
  */
 
 enum StatueHallActor {
-    ACTOR_JASMINE = 5,
     ACTOR_SUKURETA = ACTOR_FIRST_PLACED
 };
 
@@ -26,11 +25,6 @@ enum StatueHallMessage {
     MSG_SUKURETA_THE_STATUE_DISARMED_IT,
     MSG_SUKURETA_WE_SHOULD_BE_ALL_RIGHT,
     MSG_SUKURETA_I_WILL_WATCH_FROM_LUNA
-};
-
-/* Cleared once the hall is safe. */
-enum {
-    FLAG_STATUE_HALL_TRAP_ARMED = 0x12f
 };
 
 void Event_SayThenWait(s32 speaker, s32 frames);
@@ -135,8 +129,8 @@ void FieldScene_SetupStagedActors(void)
     Camera_MoveTo(0x23e0000, -1, 0x9d0000, 1);
     Camera_WaitForMove();
     Event_Wait(20);
-    Actor_RunRepeatedMotion(ACTOR_GARET, 2);
-    Event_SayThenWait(ACTOR_GARET, 20);
+    Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
+    Event_SayThenWait(ACTOR_GERALD, 20);
     Actor_SetAnimationAndWait(ACTOR_JASMINE, ANIM_NOD);
     Event_SayThenWait(ACTOR_JASMINE, 6);
     Actor_RunRepeatedMotion(ACTOR_SUKURETA, 2);
@@ -149,24 +143,24 @@ void FieldScene_SetupStagedActors(void)
     Event_Wait(30);
     Event_SayThenWait(ACTOR_SUKURETA, 20);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1, 0);
-    Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | 1, 0);
+    Actor_ShowEmote(ACTOR_GERALD, EMOTE_IN_FRONT | 1, 0);
     Actor_ShowEmote(ACTOR_JASMINE, EMOTE_IN_FRONT | 1, 0);
     Event_Wait(60);
     Actor_FaceDirection(ACTOR_SUKURETA, FACING_NORTH, 0);
     Event_Wait(30);
     Actor_SetAnimationAndWait(ACTOR_SUKURETA, ANIM_SHAKE_HEAD);
     Event_SayThenWait(ACTOR_SUKURETA, 6);
-    Actor_FaceEachOther(ACTOR_PARTY_LEADER, 1, 0);
+    Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GERALD, 0);
     Event_Wait(40);
-    Actor_FaceEachOther(ACTOR_PARTY_LEADER, 5, 0);
+    Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_JASMINE, 0);
     Event_Wait(40);
     Actor_SetAnimationAndWait(ACTOR_SUKURETA, ANIM_NOD);
     Event_SayThenWait(ACTOR_SUKURETA, 6);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
     Actor_FaceDirection(ACTOR_JASMINE, FACING_SOUTH, 0);
-    Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH, 0);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_SOUTH, 0);
     Event_Wait(40);
-    Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
+    Actor_SetAnimation(ACTOR_GERALD, ANIM_NOD);
     Actor_SetAnimation(ACTOR_JASMINE, ANIM_NOD);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
     Event_Wait(20);
@@ -185,15 +179,15 @@ void FieldScene_SetupStagedActors(void)
     Camera_MoveTo(0x2400000, -1, 0x880000, 1);
     Camera_WaitForMove();
     Event_Wait(20);
-    Actor_SetSpeed(ACTOR_GARET, 0x10000, 0x8000);
+    Actor_SetSpeed(ACTOR_GERALD, 0x10000, 0x8000);
     Actor_SetSpeed(ACTOR_JASMINE, 0x10000, 0x8000);
-    Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
+    Actor_SetAnimation(ACTOR_GERALD, ANIM_WALK);
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (leader != NULL) {
-        Actor_SetDestination(ACTOR_GARET, leader->x.part.pixel, leader->z.part.pixel);
+        Actor_SetDestination(ACTOR_GERALD, leader->x.part.pixel, leader->z.part.pixel);
     }
-    Actor_WaitForMove(ACTOR_GARET);
-    Actor_SetPosition(ACTOR_GARET, 0, 0);
+    Actor_WaitForMove(ACTOR_GERALD);
+    Actor_SetPosition(ACTOR_GERALD, 0, 0);
     Actor_SetAnimation(ACTOR_JASMINE, ANIM_WALK);
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (leader != NULL) {
@@ -201,7 +195,7 @@ void FieldScene_SetupStagedActors(void)
     }
     Actor_WaitForMove(ACTOR_JASMINE);
     Actor_SetPosition(ACTOR_JASMINE, 0, 0);
-    GameFlag_Clear(FLAG_STATUE_HALL_TRAP_ARMED);
+    GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
     gEventWork->transition_frames = 16;
     Event_End();

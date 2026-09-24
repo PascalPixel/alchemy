@@ -1,134 +1,39 @@
 #include "TYPES.H"
+#include "FIELD_EVENT.H"
+#include "FIELD_SCENE.H"
 
-#define NULL ((void *)0)
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 #define WORKSPACE (*(u8 **) 0x03001EBC)
-#define SceneData_GetPrimaryTable Func_02000030
-#define SceneData_ReturnZero Func_02000038
-#define SceneData_GetSecondaryTable Func_0200003c
-#define SceneData_PrepareTable86b0 Func_02000044
-#define FieldScene_RunActor16MessageBranch Func_0200005c
-#define FieldScene_RunActor18MessageBranch Func_020000bc
-#define SceneData_GetTertiaryTable Func_0200011c
-#define FieldScene_RunActor17MessageBranch Func_02000124
-#define FieldScene_ConfigureActor21Scene Func_020001a8
-#define FieldScene_RunActor24Sequence Func_020001e0
-#define FieldScene_RunActor27Sequence Func_02000250
-#define FieldScene_RunActor8Message Func_020002b4
-#define FieldScene_RunActor13Message Func_020002d4
-#define FieldScene_RunActor19MessageBranch Func_020002f4
-#define FieldScene_RunActor21SequenceOnFlag300 Func_0200035c
-#define FieldScene_ConfigureActor22Scene Func_020003f4
-#define FieldScene_ConfigureActor23Scene Func_02000430
-#define FieldScene_RunActor27Message Func_02000470
-#define FieldScene_RunActor10MessageBranch Func_02000490
-#define FieldScene_SetupActor27OnEntry Func_020004c8
 
 #include "RESOURCE_38C.H"
 
-extern u8 Data_03001ebc[];
+enum MessageBranchMessage {
+    MSG_WHEN_SPRING_COMES_WANT_GO = 0x13d9,
+    MSG_THERE_WAS_ABLE_HEALER_IN = 0x13e3,
+    MSG_HAVE_EVER_HEARD_OCEAN = 0x13e5,
+    MSG_MUST_USED_TYPES_DANGER_BEING = 0x13e9,
+    MSG_CURSE_ON_KOLIMA_SCARY_DEVELOPMENT = 0x13eb,
+    MSG_IM_REALLY_WORRIED_ABOUT_KOLIMA = 0x13ed,
+    MSG_GRRR = 0x13f0,
+    MSG_DO_BELIEVE_TREE_SPIRIT_CAN = 0x13f6,
+    MSG_EVEN_FROZEN_IMIL_MUST_FEEL = 0x146f,
+    MSG_DO_KNOW_IF_HOLY_TREE = 0x16e1,
+    MSG_DO_KNOW_SILK = 0x16ec,
+    MSG_OUR_WEAPONS_BEST_CAN_FIND = 0x16f5,
+    MSG_FOR_SOME_REASON_OCEAN_FILLS = 0x16f7,
+    MSG_TURNED_OUT_WARRIORS_HIRED_BY = 0x16f9,
+    MSG_WASNT_CURSE_IN_KOLIMA_HORRIFYING = 0x16fb,
+    MSG_TWO_SPECIALS_ONE_DINNER_ONE = 0x16ff,
+    MSG_IF_WANT_MEAL_SPEAK_WAITRESS = 0x1702,
+    MSG_REALLY_THINK_HEAD_CHEF_HAS = 0x1703,
+    MSG_LETS_SEE_SERVE_THEM_WATER = 0x1705,
+    MSG_WAS_SOME_MEAL_DONT_JUST = 0x170a
+};
+
 
 void Func_02000574(s32);
 u8 *Func_0200059a(s32);
-void Func_02000580(void);
-void Func_02000602(s32, s32);
-s32 Func_02000582(s32);
-void Func_020005dc(s32);
-void Func_020005e4(s32);
-void Func_020005fc(s32, s32);
-void Func_020005c0(void);
 u8 *Func_020005fa(s32);
-void Func_020005e0(void);
-s32 Func_020005e2(s32);
-void Func_0200063c(s32);
-void Func_02000644(s32);
-void Func_0200065c(s32, s32);
-void Func_02000620(void);
-void Func_02000648();
-s32 Func_0200064a();
-void Func_02000674();
-void Func_020006a4();
-void Func_020006a6();
-void Func_020006ac();
-void Func_020006ca();
-void Func_020006d0();
-s32 Func_020006dc();
-void Func_020006e8();
-void Func_020006f0();
-void Func_020006c4(void);
-void Func_02000702(s32);
-void Func_02000704(s32, s32, s32);
-void Func_02000724(s32, s32);
-void Func_02000748(s32, s32, s32);
-void Func_020006f4(void);
-void Func_020006fc();
-void Func_02000714();
-void Func_0200073a();
-s32 Func_02000744();
-void Func_02000746();
-void Func_0200075c();
-void Func_02000760();
-s32 Func_02000764();
-void Func_02000790();
-void Func_020007b4();
-void Func_0200076c();
-void Func_0200077a();
-s32 Func_020007aa();
-void Func_020007aa_a();
-void Func_020007ac();
-void Func_020007c6();
-s32 Func_020007ca();
-void Func_020007f6();
-void Func_020007d0(void);
-void Func_0200080e(s32);
-s32 Func_02000836(s32, s32);
-void Func_020007ea(void);
-void Func_020007f0(void);
-void Func_0200082e(s32);
-s32 Func_02000856(s32, s32);
-void Func_0200080a(void);
 u8 *Func_02000832(s32);
-void Func_02000818(void);
-void Func_020008a2(s32, s32);
-void Func_02000874(s32);
-void Func_02000884(s32);
-void Func_0200089c(s32, s32);
-void Func_0200089c_a(s32, s32);
-void Func_02000860(void);
-s32 Func_02000868();
-void Func_02000878();
-void Func_020008b6();
-void Func_020008c2();
-void Func_020008c4();
-void Func_020008c4_a();
-void Func_020008d6();
-void Func_020008da();
-void Func_020008ee();
-void Func_020008fe();
-void Func_02000904();
-void Func_0200090e();
-void Func_0200090e_a();
-void Func_0200091c();
-void Func_02000920();
-void Func_02000934();
-void Func_02000910(void);
-void Func_0200094e(s32);
-void Func_02000966(s32, s32);
-void Func_02000978(s32, s32);
-void Func_02000946(void);
-void Func_0200094c(void);
-void Func_0200098a(s32);
-void Func_020009a2(s32, s32);
-void Func_02000994(s32, s32, s32);
-void Func_020009b4(s32, s32);
-void Func_02000984(void);
-void Func_0200098c(void);
-void Func_020009ca(s32);
-s32 Func_020009f2(s32, s32);
-void Func_020009a6(void);
-void Func_020009ac(void);
-void Func_020009f4(s32);
-void Func_020009fc(s32);
 
 /*
  * The eight-byte owner at 0x02000030 includes its one pool word, which holds
@@ -162,58 +67,50 @@ void Func_020009fc(s32);
 /* The workspace pointer this overlay reaches through. */
 static __inline__ void Call1(void (*f)(), s32 a0)
 {
-    s32 Func_02000662();
 
     f(a0);
 }
 
 static __inline__ s32 Value1(s32 (*f)(), s32 a0)
 {
-    s32 Func_02000662();
 
     return f(a0);
 }
 
 static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
 {
-    s32 Func_02000662();
 
     return f(a0, a1);
 }
 
 static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
 {
-    s32 Func_02000662();
 
     f(a0, a1, a2);
 }
 
 static __inline__ void bump_step(s32 amount)
 {
-    s32 Func_02000662();
 
-    u8 *work = *(u8 **)Data_03001ebc;
-
-    *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
+    gEventWork->message += amount;
 }
 
 static __inline__ void SetScale(s32 actor, s32 scale, s32 duration)
 {
-    Func_02000748(actor, scale, duration);
+    Actor_FaceDirection(actor, scale, duration);
 }
 
 static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
 {
-    void Func_02000958();
+    void Actor_FaceDirection();
 
     f(a0, a1);
 }
 
 static __inline__ void SetScale_020009d8(s32 actor, s32 scale, s32 duration)
 {
-    void Func_020009d8(s32, s32, s32);
 
-    Func_020009d8(actor, scale, duration);
+    Actor_FaceDirection(actor, scale, duration);
 }
 
 u8 *SceneData_GetPrimaryTable(void)
@@ -239,48 +136,46 @@ s32 SceneData_PrepareTable86b0(void)
 
 void FieldScene_RunActor16MessageBranch(void)
 {
-    void Func_02000662(s32, s32);
 
     u32 dir;
 
     dir = *(u16 *)(Func_0200059a(0) + 6);
-    Func_02000580();
+    Event_Begin();
 
     if (dir + 0xFFFF5FFF <= 0x3FFE) {
-        Func_02000602(7, 16);
+        Shop_Open(7, 16);
     } else {
-        if (Func_02000582(0x845) == 0) {
-            Func_020005dc(0x13E3);
+        if (GameFlag_IsSet(0x845) == 0) {
+            Event_SetMessage(MSG_THERE_WAS_ABLE_HEALER_IN);
         } else {
-            Func_020005e4(0x16F5);
+            Event_SetMessage(MSG_OUR_WEAPONS_BEST_CAN_FIND);
         }
-        Func_020005fc(16, 0);
+        Event_ShowMessage(16, 0);
     }
 
-    Func_020005c0();
+    Event_End();
 }
 
 void FieldScene_RunActor18MessageBranch(void)
 {
-    void Func_02000662(s32, s32);
 
     u32 dir;
 
     dir = *(u16 *)(Func_020005fa(0) + 6);
-    Func_020005e0();
+    Event_Begin();
 
     if (dir + 0xFFFF5FFF <= 0x3FFE) {
-        Func_02000662(9, 18);
+        Shop_Open(9, 18);
     } else {
-        if (Func_020005e2(0x845) == 0) {
-            Func_0200063c(0x13E9);
+        if (GameFlag_IsSet(0x845) == 0) {
+            Event_SetMessage(MSG_MUST_USED_TYPES_DANGER_BEING);
         } else {
-            Func_02000644(0x16F9);
+            Event_SetMessage(MSG_TURNED_OUT_WARRIORS_HIRED_BY);
         }
-        Func_0200065c(18, 0);
+        Event_ShowMessage(18, 0);
     }
 
-    Func_02000620();
+    Event_End();
 }
 
 u8 *SceneData_GetTertiaryTable(void)
@@ -295,32 +190,32 @@ void FieldScene_RunActor17MessageBranch(void)
     u32 dir;
 
     dir = *(u16 *)(Value1(Func_02000662_a, 0) + 6);
-    Func_02000648();
+    Event_Begin();
     if (dir + 0xFFFF5FFF <= 0x3FFE) {
-        Func_020006ca(8, 17);
+        Shop_Open(8, 17);
     } else {
-        if (Value1(Func_0200064a, 0x845) == 0) {
-            Call1(Func_020006a4, 0x13e5);
-            Func_020006a6(17, 0, 0);
-            Func_02000674(10);
-            Value2(Func_020006dc, 17, 0);
-            Call3(Func_020006f0, 17, 0x3000, 10);
+        if (GameFlag_IsSet(0x845) == 0) {
+            Event_SetMessage(MSG_HAVE_EVER_HEARD_OCEAN);
+            Actor_FaceActor(17, ACTOR_PARTY_LEADER, 0);
+            Event_Wait(10);
+            Event_AskYesNo(17, 0);
+            Actor_FaceDirection(17, 0x3000, 10);
         } else {
-            Call1(Func_020006d0, 0x16f7);
-            Func_020006e8(17, 0);
+            Event_SetMessage(MSG_FOR_SOME_REASON_OCEAN_FILLS);
+            Event_ShowMessage(17, 0);
         }
     }
-    Func_020006ac();
+    Event_End();
 }
 
 void FieldScene_ConfigureActor21Scene(void)
 {
-    Func_020006c4();
-    Func_02000702(0x13ed);
-    Func_02000704(21, 0, 0);
-    Func_02000724(21, 0);
+    Event_Begin();
+    Event_SetMessage(MSG_IM_REALLY_WORRIED_ABOUT_KOLIMA);
+    Actor_FaceActor(21, ACTOR_PARTY_LEADER, 0);
+    Event_ShowMessage(21, 0);
     SetScale(21, 0xc000, 10);
-    Func_020006f4();
+    Event_End();
 }
 
 void FieldScene_RunActor24Sequence(void)
@@ -328,158 +223,154 @@ void FieldScene_RunActor24Sequence(void)
     u32 i;
     s32 record;
 
-    Func_020006fc();
-    Call1(Func_0200073a, 0x13f0);
-    Func_0200075c(24, 0, 20);
-    Func_02000746(24, 0, 0);
-    Func_02000714(10);
-    Value2(Func_02000764, 24, 0);
-    if (Value2(Func_02000744, 0, 0) != 0) {
+    Event_Begin();
+    Event_SetMessage(MSG_GRRR);
+    Event_ShowMessageAndWait(24, 0, 20);
+    Actor_FaceActor(24, ACTOR_PARTY_LEADER, 0);
+    Event_Wait(10);
+    Event_OpenMessage(24, 0);
+    if (Event_ChooseYesNo(0, 0) != 0) {
         bump_step(1);
     }
-    Func_02000790(24, 0);
-    Call3(Func_020007b4, 24, 0x4000, 10);
-    Func_02000760();
+    Event_ShowMessage(24, 0);
+    Actor_FaceDirection(24, 0x4000, 10);
+    Event_End();
 }
 
 void FieldScene_RunActor27Sequence(void)
 {
-    void Func_0200081a();
+    void Actor_FaceDirection();
 
     u32 i;
     s32 record;
 
-    Func_0200076c();
-    Call1(Func_020007aa_a, 0x13f6);
-    Func_020007ac(27, 0, 0);
-    Func_0200077a(10);
-    Value2(Func_020007ca, 27, 0);
-    if (Value2(Func_020007aa, 0, 0) != 0) {
+    Event_Begin();
+    Event_SetMessage(MSG_DO_BELIEVE_TREE_SPIRIT_CAN);
+    Actor_FaceActor(27, ACTOR_PARTY_LEADER, 0);
+    Event_Wait(10);
+    Event_OpenMessage(27, 0);
+    if (Event_ChooseYesNo(0, 0) != 0) {
         bump_step(1);
     }
-    Func_020007f6(27, 0);
-    Call3(Func_0200081a, 27, 0x4000, 10);
-    Func_020007c6();
+    Event_ShowMessage(27, 0);
+    Actor_FaceDirection(27, 0x4000, 10);
+    Event_End();
 }
 
 void FieldScene_RunActor8Message(void)
 {
-    Func_020007d0();
-    Func_0200080e(0x16E1);
-    Func_02000836(8, 0);
-    Func_020007ea();
+    Event_Begin();
+    Event_SetMessage(MSG_DO_KNOW_IF_HOLY_TREE);
+    Event_AskYesNo(8, 0);
+    Event_End();
 }
 
 void FieldScene_RunActor13Message(void)
 {
-    Func_020007f0();
-    Func_0200082e(0x16EC);
-    Func_02000856(13, 0);
-    Func_0200080a();
+    Event_Begin();
+    Event_SetMessage(MSG_DO_KNOW_SILK);
+    Event_AskYesNo(13, 0);
+    Event_End();
 }
 
 void FieldScene_RunActor19MessageBranch(void)
 {
-    s32 Func_0200081a_a(s32);
+    s32 GameFlag_IsSet(s32);
 
     u32 dir;
 
     dir = *(u16 *)(Func_02000832(0) + 6);
-    Func_02000818();
+    Event_Begin();
 
     if (dir + 0xFFFF5FFF <= 0x3FFE) {
-        Func_020008a2(2, 19);
-    } else if (Func_0200081a_a(0x845) != 0) {
-        Func_02000874(0x16FB);
-        Func_0200089c(19, 0);
+        Inn_Open(2, 19);
+    } else if (GameFlag_IsSet(0x845) != 0) {
+        Event_SetMessage(MSG_WASNT_CURSE_IN_KOLIMA_HORRIFYING);
+        Event_AskYesNo(19, 0);
     } else {
-        Func_02000884(0x13EB);
-        Func_0200089c_a(19, 0);
+        Event_SetMessage(MSG_CURSE_ON_KOLIMA_SCARY_DEVELOPMENT);
+        Event_ShowMessage(19, 0);
     }
 
-    Func_02000860();
+    Event_End();
 }
 
 void FieldScene_RunActor21SequenceOnFlag300(void)
 {
-    void Func_02000958();
+    void Actor_FaceDirection();
 
     u32 i;
     s32 record;
 
-    Func_02000878();
-    if (Value1(Func_02000868, 0x300) == 0) {
-        Call1(Func_020008c2, 0x16ff);
-        Func_020008da(21, 0);
-        Call3(Func_020008fe, 21, 0x8000, 20);
-        Func_020008ee(21, 0);
-        Func_020008d6(22, 2);
-        Call2(Func_02000920, 22, 0x102);
-        Func_020008b6(60);
-        Func_0200090e(22, 0);
-        Func_020008c4(10);
-        Call1(Func_020008c4_a, 0x300);
+    Event_Begin();
+    if (GameFlag_IsSet(0x300) == 0) {
+        Event_SetMessage(MSG_TWO_SPECIALS_ONE_DINNER_ONE);
+        Event_ShowMessage(21, 0);
+        Actor_FaceDirection(21, 0x8000, 20);
+        Event_ShowMessage(21, 0);
+        Actor_StartRepeatedMotion(22, 2);
+        Actor_SetAttachedEffect(22, 0x102);
+        Event_Wait(60);
+        Event_ShowMessage(22, 0);
+        Event_Wait(10);
+        GameFlag_Set(0x300);
     }
-    Func_0200090e_a(21, 0, 0);
-    Call1(Func_0200091c, 0x1702);
-    Func_02000934(21, 0);
-    Call3(Func_02000958, 21, 0xc000, 10);
-    Func_02000904();
+    Actor_FaceActor(21, ACTOR_PARTY_LEADER, 0);
+    Event_SetMessage(MSG_IF_WANT_MEAL_SPEAK_WAITRESS);
+    Event_ShowMessage(21, 0);
+    Actor_FaceDirection(21, 0xc000, 10);
+    Event_End();
 }
 
 void FieldScene_ConfigureActor22Scene(void)
 {
-    void Func_02000958_a(s32, s32, s32);
-    void Func_0200099a(s32, s32, s32);
+    void Actor_FaceActor(s32, s32, s32);
 
-    Func_02000910();
-    Func_0200094e(0x1703);
-    Func_02000966(0x16, 0);
-    Func_02000958_a(0x16, 0, 0);
-    Func_02000978(0x16, 0);
-    Func_0200099a(0x16, 0, 0xA);
-    Func_02000946();
+    Event_Begin();
+    Event_SetMessage(MSG_REALLY_THINK_HEAD_CHEF_HAS);
+    Event_ShowMessage(0x16, 0);
+    Actor_FaceActor(0x16, ACTOR_PARTY_LEADER, 0);
+    Event_ShowMessage(0x16, 0);
+    Actor_FaceDirection(0x16, 0, 0xA);
+    Event_End();
 }
 
 void FieldScene_ConfigureActor23Scene(void)
 {
-    void Func_020009d8(s32, s32, s32);
 
-    Func_0200094c();
-    Func_0200098a(0x1705);
-    Func_020009a2(23, 0);
-    Func_02000994(23, 0, 0);
-    Func_020009b4(23, 0);
+    Event_Begin();
+    Event_SetMessage(MSG_LETS_SEE_SERVE_THEM_WATER);
+    Event_ShowMessage(23, 0);
+    Actor_FaceActor(23, ACTOR_PARTY_LEADER, 0);
+    Event_ShowMessage(23, 0);
     SetScale_020009d8(23, 0xc000, 10);
-    Func_02000984();
+    Event_End();
 }
 
 void FieldScene_RunActor27Message(void)
 {
-    s32 Func_0200099a(s32);
-    void Func_020009d8(void);
-    void Func_02000a14(s32, s32);
+    void Event_ShowMessage(s32, s32);
 
-    Func_0200098c();
-    Func_020009ca(0x170A);
-    Func_020009f2(27, 0);
-    Func_020009a6();
+    Event_Begin();
+    Event_SetMessage(MSG_WAS_SOME_MEAL_DONT_JUST);
+    Event_AskYesNo(27, 0);
+    Event_End();
 }
 
 void FieldScene_RunActor10MessageBranch(void)
 {
-    s32 Func_0200099a_a(s32);
-    void Func_020009d8_a(void);
-    void Func_02000a14(s32, s32);
+    s32 GameFlag_IsSet(s32);
+    void Event_End(void);
+    void Event_ShowMessage(s32, s32);
 
-    Func_020009ac();
-    if (Func_0200099a_a(3) != 0) {
-        Func_020009f4(0x146F);
+    Event_Begin();
+    if (GameFlag_IsSet(3) != 0) {
+        Event_SetMessage(MSG_EVEN_FROZEN_IMIL_MUST_FEEL);
     } else {
-        Func_020009fc(0x13D9);
+        Event_SetMessage(MSG_WHEN_SPRING_COMES_WANT_GO);
     }
-    Func_02000a14(10, 0);
-    Func_020009d8_a();
+    Event_ShowMessage(10, 0);
+    Event_End();
 }
 
 s32 FieldScene_SetupActor27OnEntry(void)

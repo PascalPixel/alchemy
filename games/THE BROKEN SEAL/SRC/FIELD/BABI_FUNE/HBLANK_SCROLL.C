@@ -13,8 +13,6 @@ struct DisplayScrollState {
 
 extern struct DisplayScrollState *Data_03001ed8;
 
-#define BabiFune_ArmBg3HBlankDma Func_02000f30
-
 void BabiFune_ArmBg3HBlankDma(void)
 {
     volatile u32 *dma;

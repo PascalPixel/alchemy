@@ -1,6 +1,5 @@
 #include "MAKYURI_HEYA.H"
 
-
 void Func_020029b8();
 void Func_020029c4();
 s32 Func_02002d14();
@@ -30,40 +29,30 @@ void Func_020084d2();
 void Func_020084d6();
 void Func_020084da();
 void Func_020084e8();
-void Func_020084ec();
-void Func_020084ec_a();
 void Func_02008504();
 void Func_0200850e();
 void Func_02008520();
 void Func_02008534();
-void Func_02008552();
-void Func_02008552_a();
 void Func_02008564();
 void Func_02008576();
 void Func_0200857c();
 void Func_02008580();
 void Func_02008586();
-void Func_02008592();
 void Func_0200859e();
 void Func_020085a2();
 void Func_020085a4();
 void Func_020085aa();
 void Func_020085b4();
-void Func_020085b6();
-void Func_020085b6_a();
 void Func_020085c4();
 void Func_020085ca();
 void Func_020085d0();
 void Func_020085d6();
-s32 Func_020085e6();
 void Func_020085f2();
 void Func_020085f8();
 void Func_02008604();
 void Func_02008606();
 void Func_0200861e();
 void Func_02008624();
-void Func_02008644();
-void Func_02008644_a();
 void Func_02008646();
 void Func_02008652();
 void Func_02008658();
@@ -75,8 +64,6 @@ void Func_0200867a();
 void Func_0200867c();
 void Func_02008694();
 s32 Func_02008696();
-void Func_0200869e();
-void Func_0200869e_a();
 void Func_020086b4();
 void Func_020086be();
 void Func_020086c2();
@@ -103,8 +90,6 @@ void Func_020087f0();
 void Func_020087fc();
 void Func_02008808();
 void Func_02008812();
-s32 Func_0200881e();
-s32 Func_0200881e_a();
 void Func_0200882e();
 s32 Func_0200883e();
 void Func_02008850();
@@ -190,7 +175,7 @@ void FieldScene_RunColumnChoreography(void)
         } else {
             Func_020083fa(20);
             Func_0200848a(3, 4);
-            Func_020084ec(3, 0, 20);
+            Event_ShowMessageAndWait(3, 0, 20);
             *(u16 *)(MAKYURI_EVENT_WORK + 0x1d8) += 1;
         }
         Call3(Func_02008520, 0, 0x100, 60);
@@ -203,15 +188,15 @@ void FieldScene_RunColumnChoreography(void)
         Call3(Func_020084da, 1, 0x3680000, 0x2580000);
         Call3(Func_020084e8, 2, 0x3680000, 0x2580000);
         Call3(Func_020084d6, 2, 0x378, 0x278);
-        Call3(Func_020084ec_a, 1, 0x370, 0x268);
+        Actor_WalkToAndWait(1, 0x370, 0x268);
         Call3(Func_02008580, 1, 0x5000, 0);
         Func_0200850e(2);
-        Call3(Func_02008592, 2, 0x8000, 0);
-        Func_02008552(1, 1);
+        Actor_FaceDirection(2, 0x8000, 0);
+        Actor_RunRepeatedMotion(1, 1);
         Func_020084b8(20);
         Func_020085a2(1, 0, 20);
         Call3(Func_020085c4, 3, 0x101, 60);
-        Func_020085b6(3, 0, 20);
+        Event_ShowMessageAndWait(3, 0, 20);
         Call3(Func_020085ca, 1, 0x3000, 0);
         Call3(Func_020085d6, 2, 0xb000, 20);
         Func_02008576(1, 3);
@@ -220,24 +205,24 @@ void FieldScene_RunColumnChoreography(void)
         Call3(Func_020085f8, 1, 0x5000, 0);
         Call3(Func_02008604, 2, 0x8000, 20);
         Func_02008606(2, 0, 20);
-        Func_020085b6_a(3, 3);
+        Actor_SetAnimationAndWait(3, 3);
         Func_02008534(20);
         Func_0200861e(3, 0, 20);
         Call3(Func_020085a4, 3, 0x348, 0x290);
-        Func_02008552_a(5);
+        Event_Wait(5);
         Call3(Func_02008646, 2, 0x5000, 0);
         Func_02008564(10);
         Call3(Func_02008658, 0, 0x4000, 0);
-        ((void (*)())Func_020085e6)(3);
+        ((void (*)())Engine_ActorWaitForMove)(3);
         Func_0200857c(10);
         Func_02008666(3, 0, 20);
         Call3(Func_0200867a, 3, 0xd000, 20);
         Func_0200867c(3, 0, 20);
-        Func_02008644(1, 1);
+        Actor_RunRepeatedMotion(1, 1);
         Func_020085aa(20);
-        Call3(Func_0200869e, 1, 0xc000, 20);
+        Actor_FaceDirection(1, 0xc000, 20);
         Value2(Func_02008696, 1, 0);
-        if (Value2(Engine_EventChooseYesNo, 0, 0) == 0) {
+        if (Event_ChooseYesNo(0, 0) == 0) {
             Func_020085d0(20);
             Func_02008660(1, 3);
             Func_020086c2(1, 0, 20);
@@ -249,7 +234,7 @@ void FieldScene_RunColumnChoreography(void)
             Func_02008716(1, 0, 20);
         }
         Func_020086be(3, 16);
-        Func_02008644_a(30);
+        Event_Wait(30);
         Func_020086ec(3, 1);
         Func_02008652(20);
         Func_0200873c(3, 0, 20);
@@ -259,16 +244,16 @@ void FieldScene_RunColumnChoreography(void)
         Call3(Func_02008776, 2, 0x8000, 0);
         Func_02008694(30);
         Func_02007b30();
-        Func_0200869e_a(50);
+        Event_Wait(50);
         Func_0200885c(131);
-        Call2(Engine_ColorBufferApplySource, 0x10000, 0);
-        Call2(Engine_ColorBufferApplyTarget, 0x207e9f, 0);
+        ColorBuffer_ApplySource(0x10000, 0);
+        ColorBuffer_ApplyTarget(0x207e9f, 0);
         Func_020087fc(10);
-        Engine_TaskWait(1);
+        Task_Wait(1);
         Func_02008880(220);
         Func_0200859e(40);
         Call2(Func_02008808, 0x10000, 0);
-        ((void (*)())Func_0200881e)(60);
+        ((void (*)())Engine_ColorBufferInterpolate)(60);
         Func_020085b4(60);
         Func_020088a2(209);
         Func_02005486();
@@ -296,15 +281,15 @@ void FieldScene_RunColumnChoreography(void)
         Func_0200885a(1, 3);
         Func_0200886a(2, 3);
         Func_020087e8(20);
-        Engine_ActorSetAnimation(1, 2);
-        record = Value1(Func_0200881e_a, 0);
+        Actor_SetAnimation(1, 2);
+        record = Value1(Engine_ActorGet, 0);
         if (record != 0) {
             Func_02008850(1, *(s16 *)(record + 10), *(s16 *)(record + 18));
         }
         Func_02008890(2, 2);
         record = Value1(Func_0200883e, 0);
         if (record != 0) {
-            Engine_ActorSetDestination(2, *(s16 *)(record + 10), *(s16 *)(record + 18));
+            Actor_SetDestination(2, *(s16 *)(record + 10), *(s16 *)(record + 18));
         }
         Func_0200889e(1);
         Func_020088b0(1, 0, 0);

@@ -106,8 +106,6 @@
  * tried and both made it worse, so it is left as a scheduling residual.
  */
 
-#define StageSetup_BuildAndDispatch Func_02000da4
-
 /* Cell holding the shared scene-work pointer; +448 is the scene phase word. */
 extern u8 Data_03001ebc[];
 

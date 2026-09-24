@@ -10,8 +10,6 @@
  * kept as-is.
  */
 
-#define Actor_UpdatePresentationFlag Func_02000324
-
 struct SceneState { u8 unk_00[14]; s16 field_0e; };
 struct Actor { u8 unk_00[35]; u8 presentation_flags; };
 struct SceneState *Func_020016fa(s32);

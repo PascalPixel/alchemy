@@ -1,7 +1,5 @@
 #include "TYPES.H"
 
-#define Scene_RunPrimarySequence Func_02000e94
-
 union SceneWord {
     s32 word;
     u16 half[2];

@@ -8,13 +8,11 @@
  * Several aliases below resolve to the same relocation.  The spellings are
  * call-site evidence and are deliberately kept distinct.
  */
-#define SetStagedActorMode Func_02000fe4
 #define GetStagedActorEffect Func_0200193e
 #define CanStartStagedActorEffect Func_02001916
 #define BeginStagedActorEffect Func_02001948
 #define SetStagedActorEffectMode Func_02001908
 #define SelectStagedActorEffectSlot Func_02001906
-#define StartStagedActorEffectSound Func_020019b4
 #define SetStagedActorMotionMode Func_0200191c
 #define PrepareStagedActorEffect Func_02001966
 #define TestStagedActorEffectCell Func_020019b4_a
@@ -39,7 +37,7 @@
 #define RunSceneBeat8 Func_0200151e
 #define RunSceneBeat9 Func_02001524
 #define IsSceneFlag0845Set Func_02001ac6
-#define RunPhase516Followup Func_02001900_a
+#define RunPhase516Followup SceneEffect_AdjustPaletteColors
 
 #include "STAGED_ACTOR.H"
 #include "STAGED_ACTOR_EFFECT.H"
@@ -63,9 +61,6 @@ struct SceneBeatSubject {
     u8 marker;
 };
 
-
-void Func_02000fe4();
-void Func_0808a018(void); void Func_0808a020(void);
 void Func_02001872(void);
 s32 Func_02000e7a(struct PlacementResult *result);
 void Func_02001026(struct PlacementResult result);
@@ -110,10 +105,12 @@ void Func_02001b98(s32, s32);
  * r2-before-r3 stacked-literal order at the call site.
  */
 
+void SceneEffect_AdjustPaletteColors(s32 a);
+
 static __inline__ void DrawPlacement(s32 left, s32 top, s32 width, s32 height,
                                      s32 tile, s32 palette)
 {
-    void Engine_ActorSetAnimation(s32, s32); u8 *Func_020018de(s32);
+    void Actor_SetAnimation(s32, s32); u8 *Func_020018de(s32);
 
     Func_020018b8(left, top, width, height, tile, palette);
 }
@@ -137,7 +134,6 @@ s32 Func_02001b32();
 s32 Func_02001b40();
 
 s32 Func_02001b4e();
-
 
 u8 *MapStagedScene_SelectPrimaryData(void) { return (u8 *)0x02008fc8; }
 
@@ -171,7 +167,7 @@ void FieldScene_RunActorTenPlacementScene(void)
             Func_020018e0(10, 3);
             Func_020018dc(10, -18, 6);
             Func_020018b2(30);
-            Engine_AudioPlayCue(240);
+            Audio_PlayCue(240);
             Engine_ActorSetAnimation(10, 8);
             Func_020018de(10)[35] = 2;
             zero = 0;
@@ -187,7 +183,6 @@ void FieldScene_RunActorTenPlacementScene(void)
 
 s32 StagedActor_RunStepEffect(struct StagedActorEffectRequest *request)
 {
-    s32 Func_020019b4();
     s32 Func_020019b4_a();
 
     struct StagedActorEffect *actor = GetStagedActorEffect(0);
@@ -199,7 +194,7 @@ s32 StagedActor_RunStepEffect(struct StagedActorEffectRequest *request)
         BeginStagedActorEffect();
         SetStagedActorEffectMode(actor, 6);
         SelectStagedActorEffectSlot(6);
-        StartStagedActorEffectSound(152);
+        Audio_PlayCue(152);
         SetStagedActorMotionMode(actor, 7);
         actor->move_rate_x = 0x30000;
         actor->move_rate_z = 0x20000;
@@ -247,7 +242,6 @@ u8 *SceneData_GetTable9098(void) { return (u8 *)0x02009098; }
 /* Set workspace word 448 to 516, then run the scene's beat sequence. */
 s32 SceneState_SetRuntimeWord448To516(void)
 {
-    void Func_02001900_a();
 
     u8 *work = SCENE_WORKSPACE;
 
@@ -274,7 +268,6 @@ s32 SceneState_SetRuntimeWord448To516(void)
 
 void SceneEffect_AdjustPaletteColors(s32 a)
 {
-    s32 Func_020019b4_b(s32, s32);
 
     u32 x;
 
@@ -284,7 +277,7 @@ void SceneEffect_AdjustPaletteColors(s32 a)
         u32 idx = x >> 16;
         if (x + 0xffef0000 > 0x60000 && (idx + 0xff3f) << 16 > 0x70000) {
             u16 *pal = (u16 *)(0x5000000 + idx * 2);
-            *pal = Func_020019b4_b(*pal, a);
+            *pal = SceneEffect_AdjustColorChannels(*pal, a);
         }
         {
             u32 nx = x + 0x10000;
@@ -306,7 +299,6 @@ void SceneEffect_AdjustPaletteColors(s32 a)
  */
 u16 SceneEffect_AdjustColorChannels(u16 color, s32 adj)
 {
-    s32 Func_020019b4(s32, s32);
 
     s16 green = (s16)((color >> 5) & 31);
     s16 red = (s16)(color & 31);

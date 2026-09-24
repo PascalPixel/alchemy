@@ -3,8 +3,8 @@
 #include "FIELD_SCENE.H"
 
 /*
- * The Elemental Star chamber collapses around the party leader and Garet.
- * The Wise One appears, has the Elemental Star put back in its bag, and
+ * The Elemental Star chamber collapses around the party leader and Gerald.
+ * The Wise One appears, has the Mars Star put back in its bag, and
  * helps them out as the volcano erupts.
  */
 
@@ -17,7 +17,14 @@ enum {
 
 enum {
     OBJECT_ELEMENTAL_STAR = 22,
-    ITEM_ELEMENTAL_STAR = 222
+    /* Message 0x182 + 222. */
+    ITEM_MARS_STAR = 222
+};
+
+enum {
+    /* Set as the party leaves the collapsing chamber. */
+    FLAG_SOL_SANCTUM_ERUPTED = 0x814,
+    FLAG_STAR_ROOM_COLLAPSED = 0x83f
 };
 
 enum {
@@ -65,9 +72,9 @@ void Scene_RunExtendedEffectPresentation(void)
     struct FieldActor *center;
     struct FieldActor *leader;
     struct FieldActor *actor;
-    struct FieldActor *garet;
+    struct FieldActor *gerald;
     struct FieldSprite *leader_sprite;
-    struct FieldSprite *garet_sprite;
+    struct FieldSprite *gerald_sprite;
     struct FieldActor *star;
     struct FieldSprite *sprite;
     u8 *buf;
@@ -91,7 +98,7 @@ void Scene_RunExtendedEffectPresentation(void)
     Task_Wait(1);
     Actor_SetPosition(ACTOR_WISE_ONE, 0, 0);
     Actor_MoveTo232_125AndFace4000(ACTOR_PARTY_LEADER);
-    Actor_MoveTo232_125AndFace4000(ACTOR_GARET);
+    Actor_MoveTo232_125AndFace4000(ACTOR_GERALD);
     quake->unknown_40c = 0;
     Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
     Event_Wait(80);
@@ -110,125 +117,125 @@ void Scene_RunExtendedEffectPresentation(void)
     Map_Redraw();
     Task_Wait(4);
     Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 3);
-    Actor_SetSpritePriority(ACTOR_GARET, 3);
+    Actor_SetSpritePriority(ACTOR_GERALD, 3);
     ColorBuffer_ApplyTarget(0x10000, 0);
     ColorBuffer_Interpolate(40);
     Event_Wait(40);
 
     /* The two spin apart. */
     leader = Actor_Get(ACTOR_PARTY_LEADER);
-    garet = Actor_Get(ACTOR_GARET);
+    gerald = Actor_Get(ACTOR_GERALD);
     leader_sprite = leader->sprite;
-    garet_sprite = garet->sprite;
+    gerald_sprite = gerald->sprite;
     for (cnt = 0; cnt < 20; cnt++) {
         leader_sprite->rotation += 0x100;
-        garet_sprite->rotation -= 0x100;
+        gerald_sprite->rotation -= 0x100;
         leader->x.fixed += 0x6000;
-        garet->x.fixed -= 0x6000;
+        gerald->x.fixed -= 0x6000;
         Task_Wait(1);
     }
     Event_Wait(40);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x20000, 0x10000);
-    Actor_SetSpeed(ACTOR_GARET, 0x20000, 0x10000);
+    Actor_SetSpeed(ACTOR_GERALD, 0x20000, 0x10000);
     Actor_Get(ACTOR_PARTY_LEADER)->sprite->rotation = 0;
-    Actor_Get(ACTOR_GARET)->sprite->rotation = 0;
+    Actor_Get(ACTOR_GERALD)->sprite->rotation = 0;
     Engine_ObjectMotionLaunch(ACTOR_PARTY_LEADER, 6, 0);
-    Engine_ObjectMotionLaunch(ACTOR_GARET, 6, 0);
+    Engine_ObjectMotionLaunch(ACTOR_GERALD, 6, 0);
     Actor_SetDestination(ACTOR_PARTY_LEADER, 246, 150);
-    Engine_ObjectMotionSetPositionAndCommit(ACTOR_GARET, 220, 150);
+    Engine_ObjectMotionSetPositionAndCommit(ACTOR_GERALD, 220, 150);
     Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 2);
-    Actor_SetSpritePriority(ACTOR_GARET, 2);
+    Actor_SetSpritePriority(ACTOR_GERALD, 2);
     Actor_Get(ACTOR_PARTY_LEADER)->priority_flags |= ACTOR_PRIORITY_AUTOMATIC;
-    Actor_Get(ACTOR_GARET)->priority_flags |= ACTOR_PRIORITY_AUTOMATIC;
+    Actor_Get(ACTOR_GERALD)->priority_flags |= ACTOR_PRIORITY_AUTOMATIC;
     Actor_Stop(ACTOR_PARTY_LEADER);
-    Actor_Stop(ACTOR_GARET);
+    Actor_Stop(ACTOR_GERALD);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
     Event_Wait(20);
-    Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_NORTHEAST, 0);
     Event_Wait(40);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST + FACING_STEP, 0);
     Event_Wait(40);
-    Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH + FACING_STEP, 0);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_SOUTH + FACING_STEP, 0);
     Event_Wait(80);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
     Event_Wait(10);
-    Actor_FaceDirection(ACTOR_GARET, FACING_EAST + FACING_STEP, 0);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_EAST + FACING_STEP, 0);
     Event_Wait(60);
 
-    Actor_RunRepeatedMotion(ACTOR_GARET, 2);
+    Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
     Event_SetMessage((s32)&SceneMessage_ActorOneChoiceBase);
-    Event_OpenMessage(ACTOR_GARET, 0);
+    Event_OpenMessage(ACTOR_GERALD, 0);
     if (Event_ChooseYesNo(0, 0) == 0) {
-        Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
+        Actor_SetAnimationAndWait(ACTOR_GERALD, ANIM_NOD);
         Event_SetMessage((s32)&SceneMessage_ActorOneChoiceBase + 1);
     } else {
-        Actor_RunRepeatedMotion(ACTOR_GARET, 1);
+        Actor_RunRepeatedMotion(ACTOR_GERALD, 1);
         Event_SetMessage((s32)&SceneMessage_ActorOneChoiceBase + 2);
     }
-    Event_ShowMessageAndWait(ACTOR_GARET, 0, 60);
-    Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHEAST + FACING_STEP, 0);
+    Event_ShowMessageAndWait(ACTOR_GERALD, 0, 60);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_SOUTHEAST + FACING_STEP, 0);
     Event_Wait(40);
-    Engine_ObjectMotionLaunch(ACTOR_GARET, 2, 0);
-    Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | 2, 0);
+    Engine_ObjectMotionLaunch(ACTOR_GERALD, 2, 0);
+    Actor_ShowEmote(ACTOR_GERALD, EMOTE_IN_FRONT | 2, 0);
     Event_Wait(40);
     Event_SetMessage(MSG_FRIENDS_GONE);
-    Event_ShowMessageAndWait(ACTOR_GARET, 0, 10);
+    Event_ShowMessageAndWait(ACTOR_GERALD, 0, 10);
     Engine_ObjectMotionLaunch(ACTOR_PARTY_LEADER, 2, 0);
     Event_Wait(10);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
     Event_Wait(60);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 0);
     Event_Wait(80);
-    Actor_FaceDirection(ACTOR_GARET, FACING_EAST + FACING_STEP, 0);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_EAST + FACING_STEP, 0);
     Event_Wait(10);
-    Actor_RunRepeatedMotion(ACTOR_GARET, 2);
-    Event_OpenMessage(ACTOR_GARET, 0);
+    Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
+    Event_OpenMessage(ACTOR_GERALD, 0);
     if (Event_ChooseYesNo(0, 0) == 0) {
         Event_Wait(10);
-        Actor_RunRepeatedMotion(ACTOR_GARET, 2);
+        Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
         Event_Wait(10);
-        Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHEAST + FACING_STEP, 0);
+        Actor_FaceDirection(ACTOR_GERALD, FACING_SOUTHEAST + FACING_STEP, 0);
         Event_Wait(60);
-        Actor_FaceDirection(ACTOR_GARET, FACING_EAST + FACING_STEP, 0);
+        Actor_FaceDirection(ACTOR_GERALD, FACING_EAST + FACING_STEP, 0);
         Event_Wait(10);
-        Actor_SetAnimation(ACTOR_GARET, ANIM_SHAKE_HEAD);
+        Actor_SetAnimation(ACTOR_GERALD, ANIM_SHAKE_HEAD);
         Event_SetMessage(MSG_THANKS_A_LOT);
     } else {
         Event_Wait(10);
-        Actor_RunRepeatedMotion(ACTOR_GARET, 2);
+        Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
         Event_Wait(10);
-        Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHEAST + FACING_STEP, 0);
+        Actor_FaceDirection(ACTOR_GERALD, FACING_SOUTHEAST + FACING_STEP, 0);
         Event_Wait(60);
-        Actor_FaceDirection(ACTOR_GARET, FACING_EAST + FACING_STEP, 0);
+        Actor_FaceDirection(ACTOR_GERALD, FACING_EAST + FACING_STEP, 0);
         Event_Wait(10);
-        Actor_SetAnimation(ACTOR_GARET, ANIM_SHAKE_HEAD);
+        Actor_SetAnimation(ACTOR_GERALD, ANIM_SHAKE_HEAD);
         Event_SetMessage(MSG_THEYLL_BE_SAFE);
     }
-    Event_ShowMessageAndWait(ACTOR_GARET, 0, 40);
+    Event_ShowMessageAndWait(ACTOR_GERALD, 0, 40);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-    Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
+    Actor_SetAnimationAndWait(ACTOR_GERALD, ANIM_NOD);
     Event_Wait(40);
 
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
-    Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHWEST + FACING_STEP, 0);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_SOUTHWEST + FACING_STEP, 0);
     Camera_SetSpeed(0x20000, 0x4000);
     Camera_MoveTo(PIXELS(284), -1, PIXELS(92), 1);
     Camera_WaitForMove();
     Event_Wait(20);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
-    Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH + FACING_STEP, 0);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_SOUTH + FACING_STEP, 0);
     Camera_SetSpeed(0x18000, 0x3000);
     Camera_MoveTo(PIXELS(127), -1, PIXELS(162), 1);
     Camera_WaitForMove();
     Event_Wait(40);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
-    Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHEAST + FACING_STEP, 0);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_SOUTHEAST + FACING_STEP, 0);
     Camera_SetSpeed(0x40000, 0x8000);
     Camera_MoveTo(PIXELS(304), -1, PIXELS(294), 1);
     Camera_WaitForMove();
     Event_Wait(20);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
-    Actor_FaceDirection(ACTOR_GARET, FACING_EAST + FACING_STEP, 0);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_EAST + FACING_STEP, 0);
     Camera_SetSpeed(0x10000, 0x2000);
     Camera_MoveTo(PIXELS(400), -1, PIXELS(215), 1);
     Camera_WaitForMove();
@@ -237,20 +244,20 @@ void Scene_RunExtendedEffectPresentation(void)
     Camera_MoveTo(PIXELS(273), -1, PIXELS(145), 1);
     Camera_WaitForMove();
     Event_Wait(20);
-    Actor_RunRepeatedMotion(ACTOR_GARET, 2);
+    Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
     Event_SetMessage(MSG_THIS_IS_TERRIBLE);
-    Event_ShowMessageAndWait(ACTOR_GARET, 0, 20);
-    Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHEAST + FACING_STEP, 0);
+    Event_ShowMessageAndWait(ACTOR_GERALD, 0, 20);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_SOUTHEAST + FACING_STEP, 0);
     Event_Wait(40);
-    Actor_FaceDirection(ACTOR_GARET, FACING_NORTH + FACING_STEP, 0);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_NORTH + FACING_STEP, 0);
     Event_Wait(20);
-    Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST + FACING_STEP, 0);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_NORTHEAST + FACING_STEP, 0);
     Event_Wait(60);
-    Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHEAST + FACING_STEP, 0);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_SOUTHEAST + FACING_STEP, 0);
     Event_Wait(40);
-    Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST + FACING_STEP, 0);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_NORTHEAST + FACING_STEP, 0);
     Event_Wait(10);
-    Event_ShowMessageAndWait(ACTOR_GARET, 0, 10);
+    Event_ShowMessageAndWait(ACTOR_GERALD, 0, 10);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
     Event_Wait(10);
 
@@ -261,44 +268,44 @@ void Scene_RunExtendedEffectPresentation(void)
     Event_Wait(10);
     Scene_RunVariantStep(0, 40, 0);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x20000, 0x10000);
-    Actor_SetSpeed(ACTOR_GARET, 0x20000, 0x10000);
+    Actor_SetSpeed(ACTOR_GERALD, 0x20000, 0x10000);
     Engine_ObjectMotionLaunch(ACTOR_PARTY_LEADER, 6, 0);
-    Engine_ObjectMotionLaunch(ACTOR_GARET, 6, 0);
+    Engine_ObjectMotionLaunch(ACTOR_GERALD, 6, 0);
     Actor_SetDestination(ACTOR_PARTY_LEADER, 243, 144);
-    Actor_SetDestination(ACTOR_GARET, 202, 144);
+    Actor_SetDestination(ACTOR_GERALD, 202, 144);
     Actor_WaitForMove(ACTOR_PARTY_LEADER);
     Event_Wait(20);
     quake->unknown_40c = 1;
     Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
     Event_Wait(60);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 0);
-    Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | 2, 0);
+    Actor_ShowEmote(ACTOR_GERALD, EMOTE_IN_FRONT | 2, 0);
     Event_Wait(80);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x6666, 0x3333);
-    Actor_SetSpeed(ACTOR_GARET, 0x6666, 0x3333);
-    Actor_WalkTo(ACTOR_GARET, 220, 150);
+    Actor_SetSpeed(ACTOR_GERALD, 0x6666, 0x3333);
+    Actor_WalkTo(ACTOR_GERALD, 220, 150);
     Engine_ObjectMotionSetPositionAndReset(ACTOR_PARTY_LEADER, 246, 150);
-    Actor_SetAnimation(ACTOR_GARET, ANIM_STAND);
+    Actor_SetAnimation(ACTOR_GERALD, ANIM_STAND);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
-    Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHWEST + FACING_STEP, 0);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_SOUTHWEST + FACING_STEP, 0);
     Event_Wait(60);
-    Actor_RunRepeatedMotion(ACTOR_GARET, 2);
+    Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
     Event_Wait(10);
-    Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHEAST + FACING_STEP, 0);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_SOUTHEAST + FACING_STEP, 0);
     Event_Wait(40);
-    Event_OpenMessage(ACTOR_GARET, 0);
+    Event_OpenMessage(ACTOR_GERALD, 0);
     if (Event_ChooseYesNo(0, 0) == 0) {
-        Actor_FaceDirection(ACTOR_GARET, FACING_EAST + FACING_STEP, 0);
+        Actor_FaceDirection(ACTOR_GERALD, FACING_EAST + FACING_STEP, 0);
         Event_Wait(10);
-        Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
+        Actor_SetAnimationAndWait(ACTOR_GERALD, ANIM_NOD);
     } else {
-        Actor_FaceDirection(ACTOR_GARET, FACING_EAST + FACING_STEP, 0);
+        Actor_FaceDirection(ACTOR_GERALD, FACING_EAST + FACING_STEP, 0);
         Event_Wait(10);
-        Actor_SetAnimation(ACTOR_GARET, ANIM_SHAKE_HEAD);
+        Actor_SetAnimation(ACTOR_GERALD, ANIM_SHAKE_HEAD);
         Event_SetMessage(MSG_QUIT_ACTING_TOUGH);
     }
     Event_Wait(20);
-    Event_ShowMessage(ACTOR_GARET, 0);
+    Event_ShowMessage(ACTOR_GERALD, 0);
 
     /* The Wise One arrives. */
     Actor_SetPosition(ACTOR_WISE_ONE, PIXELS(110), PIXELS(152));
@@ -307,8 +314,8 @@ void Scene_RunExtendedEffectPresentation(void)
     Actor_SetDestination(ACTOR_WISE_ONE, 171, 152);
     Actor_FaceDirection(ACTOR_WISE_ONE, FACING_EAST, 0);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_WISE_ONE), 1);
-    Actor_SetSpeed(ACTOR_GARET, 0x10000, 0x8000);
-    Actor_WalkTo(ACTOR_GARET, 217, 182);
+    Actor_SetSpeed(ACTOR_GERALD, 0x10000, 0x8000);
+    Actor_WalkTo(ACTOR_GERALD, 217, 182);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST + FACING_STEP, 0);
     Event_Wait(10);
     Camera_SetSpeed(0x20000, 0x4000);
@@ -321,22 +328,22 @@ void Scene_RunExtendedEffectPresentation(void)
     Event_Wait(10);
     Engine_ObjectMotionLaunch(ACTOR_PARTY_LEADER, 4, 0);
     Event_Wait(30);
-    Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT, 0);
-    Actor_SetAnimation(ACTOR_GARET, ANIM_STAND);
+    Actor_ShowEmote(ACTOR_GERALD, EMOTE_IN_FRONT, 0);
+    Actor_SetAnimation(ACTOR_GERALD, ANIM_STAND);
     Event_Wait(40);
-    Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHEAST, 0);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_SOUTHEAST, 0);
     Event_Wait(4);
-    Engine_ObjectMotionSetPositionAndReset(ACTOR_GARET, 231, 175);
-    Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
+    Engine_ObjectMotionSetPositionAndReset(ACTOR_GERALD, 231, 175);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_NORTHEAST, 0);
     Event_SetMessage(MSG_OVER_HERE);
-    Event_ShowMessage(ACTOR_GARET, 0);
+    Event_ShowMessage(ACTOR_GERALD, 0);
     Event_Wait(40);
-    Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | 1, 0);
+    Actor_ShowEmote(ACTOR_GERALD, EMOTE_IN_FRONT | 1, 0);
     Event_Wait(40);
-    Actor_FaceDirection(ACTOR_GARET, FACING_NORTHWEST, 0);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_NORTHWEST, 0);
     Event_Wait(60);
-    Actor_StartRepeatedMotion(ACTOR_GARET, 1);
-    Actor_SetAttachedEffect(ACTOR_GARET, EMOTE_IN_FRONT | 2);
+    Actor_StartRepeatedMotion(ACTOR_GERALD, 1);
+    Actor_SetAttachedEffect(ACTOR_GERALD, EMOTE_IN_FRONT | 2);
     Event_Wait(40);
 
     Scene_RunVariantStep(1, 20, 0);
@@ -344,7 +351,7 @@ void Scene_RunExtendedEffectPresentation(void)
     Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
     Event_Wait(40);
     Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-    Actor_StartRepeatedMotion(ACTOR_GARET, 2);
+    Actor_StartRepeatedMotion(ACTOR_GERALD, 2);
     Audio_PlayCue(0x121);
     ColorBuffer_ApplyTarget(0x10000, 1);
     ColorBuffer_Interpolate(40);
@@ -354,7 +361,7 @@ void Scene_RunExtendedEffectPresentation(void)
     Event_ShowMessage(ACTOR_WISE_ONE, 0);
     Event_Wait(20);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 0);
-    Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | 2, 0);
+    Actor_ShowEmote(ACTOR_GERALD, EMOTE_IN_FRONT | 2, 0);
     Event_Wait(100);
     Event_ShowMessage(ACTOR_WISE_ONE, 0);
     Event_Wait(20);
@@ -363,32 +370,32 @@ void Scene_RunExtendedEffectPresentation(void)
     Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
     Event_Wait(20);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x20000, 0x10000);
-    Actor_SetSpeed(ACTOR_GARET, 0x20000, 0x10000);
+    Actor_SetSpeed(ACTOR_GERALD, 0x20000, 0x10000);
     Actor_Get(ACTOR_PARTY_LEADER)->unknown_5a &= ~1;
-    Actor_Get(ACTOR_GARET)->unknown_5a &= ~1;
+    Actor_Get(ACTOR_GERALD)->unknown_5a &= ~1;
     Engine_ObjectMotionLaunch(ACTOR_PARTY_LEADER, 4, 0);
-    Engine_ObjectMotionLaunch(ACTOR_GARET, 4, 0);
+    Engine_ObjectMotionLaunch(ACTOR_GERALD, 4, 0);
     Actor_SetDestination(ACTOR_PARTY_LEADER, 256, 150);
-    Actor_SetDestination(ACTOR_GARET, 231, 180);
-    Actor_WaitForMove(ACTOR_GARET);
+    Actor_SetDestination(ACTOR_GERALD, 231, 180);
+    Actor_WaitForMove(ACTOR_GERALD);
     Scene_RunVariantStep(0, 40, 0);
     Event_Wait(20);
     Actor_Get(ACTOR_PARTY_LEADER)->unknown_5a |= 1;
-    Actor_Get(ACTOR_GARET)->unknown_5a |= 1;
+    Actor_Get(ACTOR_GERALD)->unknown_5a |= 1;
     Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-    Actor_RunRepeatedMotion(ACTOR_GARET, 2);
+    Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
     Event_Wait(40);
-    Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | 3, 0);
+    Actor_ShowEmote(ACTOR_GERALD, EMOTE_IN_FRONT | 3, 0);
     Event_Wait(40);
-    Event_ShowMessage(ACTOR_GARET, 0);
+    Event_ShowMessage(ACTOR_GERALD, 0);
     Event_Wait(20);
     Actor_ShowEmote(ACTOR_WISE_ONE, EMOTE_IN_FRONT | 1, 0);
     Event_Wait(60);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH + FACING_STEP, 0);
-    Actor_FaceDirection(ACTOR_GARET, FACING_NORTH + FACING_STEP, 0);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_NORTH + FACING_STEP, 0);
     Event_Wait(20);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
-    Actor_FaceDirection(ACTOR_GARET, FACING_NORTHWEST + FACING_STEP, 0);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_NORTHWEST + FACING_STEP, 0);
     Event_Wait(10);
 
     Audio_PlayCue(107);
@@ -439,7 +446,7 @@ void Scene_RunExtendedEffectPresentation(void)
     Event_ShowMessage(ACTOR_WISE_ONE, 0);
     Event_Wait(40);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 0);
-    Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | 2, 0);
+    Actor_ShowEmote(ACTOR_GERALD, EMOTE_IN_FRONT | 2, 0);
     Event_Wait(60);
     Camera_SetSpeed(0x10000, 0x2000);
     Camera_MoveTo(PIXELS(218), -1, PIXELS(181), 1);
@@ -452,12 +459,12 @@ void Scene_RunExtendedEffectPresentation(void)
     Event_ShowMessage(ACTOR_WISE_ONE, 0);
     Event_Wait(20);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH + FACING_STEP, 0);
-    Actor_FaceDirection(ACTOR_GARET, FACING_NORTH + FACING_STEP, 0);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_NORTH + FACING_STEP, 0);
     Event_Wait(40);
     Actor_FaceDirection(ACTOR_WISE_ONE, FACING_NORTHEAST + FACING_STEP, 0);
     Event_Wait(10);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST + FACING_STEP, 0);
-    Actor_FaceDirection(ACTOR_GARET, FACING_NORTHWEST + FACING_STEP, 0);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_NORTHWEST + FACING_STEP, 0);
     Camera_MoveTo(PIXELS(224), -1, PIXELS(158), 1);
     Camera_WaitForMove();
     Scene_RunFourWayEffectSequence(0);
@@ -485,7 +492,7 @@ void Scene_RunExtendedEffectPresentation(void)
         sprite->full_color = 0;
         sprite->palette = 0;
         sprite->priority = 1;
-        Item_LoadIcon(ITEM_ELEMENTAL_STAR);
+        Item_LoadIcon(ITEM_MARS_STAR);
         Vram_Load(sprite->vram_block, 128, buf + 0x400);
         Heap_Release(17);
         Actor_SetAnimation(ACTOR_PARTY_LEADER, 28);
@@ -517,7 +524,7 @@ void Scene_RunExtendedEffectPresentation(void)
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
     Event_Wait(20);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
-    Actor_FaceDirection(ACTOR_GARET, FACING_NORTHWEST, 60);
+    Actor_FaceDirection(ACTOR_GERALD, FACING_NORTHWEST, 60);
     Event_ShowMessage(ACTOR_WISE_ONE, 0);
     Event_Wait(40);
 
@@ -533,17 +540,17 @@ void Scene_RunExtendedEffectPresentation(void)
     Scene_RunFourWayEffectSequence(3);
     Event_ShowMessage(ACTOR_WISE_ONE, 0);
     Actor_FaceDirection(ACTOR_WISE_ONE, FACING_EAST + FACING_STEP, 0);
-    Actor_SetPosition(ACTOR_GARET, PIXELS(582), PIXELS(345));
+    Actor_SetPosition(ACTOR_GERALD, PIXELS(582), PIXELS(345));
     Event_Wait(20);
-    Event_ShowMessage(ACTOR_GARET, 0);
-    Actor_SetPosition(ACTOR_GARET, PIXELS(231), PIXELS(180));
-    Actor_FaceDirection(ACTOR_GARET, FACING_NORTHWEST + FACING_STEP, 0);
+    Event_ShowMessage(ACTOR_GERALD, 0);
+    Actor_SetPosition(ACTOR_GERALD, PIXELS(231), PIXELS(180));
+    Actor_FaceDirection(ACTOR_GERALD, FACING_NORTHWEST + FACING_STEP, 0);
     Task_Wait(20);
     Actor_PlaceAtTileAndRunSteps(219, 171);
     Event_ShowMessage(ACTOR_WISE_ONE, 0);
     Event_Wait(10);
     Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-    Actor_RunRepeatedMotion(ACTOR_GARET, 2);
+    Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
     Event_ShowMessage(ACTOR_WISE_ONE, 0);
     Event_Wait(20);
     Event_ShowMessage(ACTOR_WISE_ONE, 0);
@@ -560,15 +567,15 @@ void Scene_RunExtendedEffectPresentation(void)
     Camera_SetSpeed(0x10000, 0x2000);
     Camera_MoveTo(PIXELS(184), -1, PIXELS(132), 1);
     Engine_ObjectMotionLaunch(ACTOR_PARTY_LEADER, 6, 0);
-    Engine_ObjectMotionLaunch(ACTOR_GARET, 6, 0);
+    Engine_ObjectMotionLaunch(ACTOR_GERALD, 6, 0);
     Actor_Get(ACTOR_PARTY_LEADER)->unknown_5a &= ~1;
-    Actor_Get(ACTOR_GARET)->unknown_5a &= ~1;
+    Actor_Get(ACTOR_GERALD)->unknown_5a &= ~1;
     Actor_SetDestination(ACTOR_PARTY_LEADER, 245, 145);
-    Actor_SetDestination(ACTOR_GARET, 215, 168);
-    Actor_WaitForMove(ACTOR_GARET);
+    Actor_SetDestination(ACTOR_GERALD, 215, 168);
+    Actor_WaitForMove(ACTOR_GERALD);
     Event_Wait(80);
     Actor_Get(ACTOR_PARTY_LEADER)->unknown_5a |= 1;
-    Actor_Get(ACTOR_GARET)->unknown_5a |= 1;
+    Actor_Get(ACTOR_GERALD)->unknown_5a |= 1;
     Actor_SetDestination(ACTOR_WISE_ONE, 184, 87);
     Actor_WaitForMove(ACTOR_WISE_ONE);
     Actor_FaceDirection(ACTOR_WISE_ONE, FACING_SOUTH, 0);
@@ -654,11 +661,11 @@ void Scene_RunExtendedEffectPresentation(void)
     Audio_PlayCue(141);
     Event_Wait(100);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 0);
-    Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | 2, 0);
+    Actor_ShowEmote(ACTOR_GERALD, EMOTE_IN_FRONT | 2, 0);
     Event_Wait(60);
     Event_ShowMessage(ACTOR_WISE_ONE, 0);
-    Actor_RunRepeatedMotion(ACTOR_GARET, 3);
-    Event_ShowMessage(ACTOR_GARET, 0);
+    Actor_RunRepeatedMotion(ACTOR_GERALD, 3);
+    Event_ShowMessage(ACTOR_GERALD, 0);
     Event_Wait(20);
     Audio_PlayCue(0x121);
     Actor_FaceDirection(ACTOR_WISE_ONE, FACING_SOUTHEAST + FACING_STEP, 0);
@@ -682,8 +689,8 @@ void Scene_RunExtendedEffectPresentation(void)
     Work_SetValuesIfNonNegative(-1, -1, 0xe666);
     Engine_MapWaitWorkValuesBelow256();
     Scene_CallHelper6620();
-    GameFlag_Set(0x814);
-    GameFlag_Set(0x83f);
+    GameFlag_Set(FLAG_SOL_SANCTUM_ERUPTED);
+    GameFlag_Set(FLAG_STAR_ROOM_COLLAPSED);
     Event_RequestExit(5);
     GameFlag_Set(0x100);
 }

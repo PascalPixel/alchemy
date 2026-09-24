@@ -1,18 +1,17 @@
 #include "TYPES.H"
+#include "FIELD_EVENT.H"
+#include "FIELD_SCENE.H"
 
-#define SceneData_SelectTableBySceneId Func_02000030
-#define SceneData_ReturnZero Func_02000070
-#define SceneData_GetTable8728 Func_02000074
-#define SceneData_SelectAndPrepareTable Func_0200007c
-#define SceneData_SelectSubStateTable Func_020000e4
-#define SceneDialogue_RunActor12DialogueAndSetFlag910 Func_02000144
-#define SceneDialogue_RunActor16Dialogue Func_0200016c
-#define SceneDialogue_RunActor8FlaggedDialogue Func_0200018c
-#define SceneDialogue_RunActor8FacingDialogue Func_020001fc
-#define FieldScene_RunArrivalPlacement Func_02000240
-#define SceneState_SetRuntimeWord448To521 Func_02000308
-#define SceneState_ClearSlotsBySubState Func_0200033c
 #include "RESOURCE_3A9.H"
+
+enum ArrivalMessage {
+    MSG_CAN_LIVE_IN_PEACE_IN = 0x1a8f,
+    MSG_GOING_TOLBI_ALSO = 0x1ad7,
+    MSG_PLEASE_FINISH_EATING_IF_TAKING = 0x1add,
+    MSG_DO_KNOW_ABOUT_CONTINENT_SOUTH = 0x1ae3,
+    MSG_OUR_INN_FEELS_EMPTY_NOW = 0x1afb
+};
+
 
 /* Table selection, dialogue and arrival scripts for resource_3a9. */
 typedef struct Placement {
@@ -28,7 +27,6 @@ extern u8 Data_020084d0[];
 extern u8 Data_020086c8[];
 extern u8 Data_020084a0[];
 extern Placement Data_02008ef8[];   /* In-image placement table, four entries. */
-extern u8 *Data_03001ebc;
 extern s16 Data_02000240[];
 extern u8 Data_020088d4[];
 extern u8 Data_0200879c[];
@@ -39,58 +37,9 @@ extern u8 Data_02008a48[];
 extern u8 Data_02008eb0[];
 extern u8 Data_02008a3c[];
 
-void Func_02000558(void);
-void Func_020005a6(s32);
-s32 Func_020005b6(s32, s32);
-void Func_0200055e(s32);
-void Func_0200057a(void);
-void Func_02000580(void);
-void Func_020005ce(s32);
-s32 Func_020005e6(s32, s32);
-void Func_0200059a(void);
 u8 *Func_020005ba(s32);
-void Func_02000638(s32, s32);
-void Func_020005be(void);
-s32 Func_020005ac(s32);
-void Func_02000616(s32);
-void Func_02000626(s32, s32);
-void Func_02000626_b(s32);
-void Func_0200063e(s32, s32);
-void Func_020005de(s32);
-void Func_020005fa(void);
 u8 *Func_0200062a(int);
-void Func_0200069e(int);
-void Func_0200062c(void);
-void Func_0200068a(int, int);
-void Func_02000646(void);
-void Func_02000658();
-void Func_02000710();
 u8 *Func_020006e6();
-void Func_020006e6_a(s32);
-void Func_020006f0();
-void Func_02000718();
-void Func_02000714();
-void Func_0200075c();
-void Func_02000768();
-void Func_02000774();
-void Func_02000692(u32, u32, u32);
-void Func_02000730();
-void Func_0200065e(void);
-void Func_020007b4();
-void Func_020007ba();
-void Func_020007c0();
-void Func_020007c6();
-void Func_020007cc();
-void Func_020007d2();
-void Func_020007d8();
-void Func_020007de();
-void Func_020007e4();
-void Func_02000800();
-void Func_02000806();
-void Func_0200080e();
-void Func_02000762(s32, s32, s32, s32, s32, s32);
-s32 Func_02000772();
-s32 Func_020007be();
 void Func_020004d0(void *);
 
 /* Old-style declarations where an overlay import varies in arity between its
@@ -99,7 +48,7 @@ void Func_020004d0(void *);
 /* Picks one of three scene tables by scene id. */
 s32 SceneData_SelectTableBySceneId(void)
 {
-    s16 v = Data_02000240[224];
+    s16 v = gGameState.scene;
 
     if (v == (s32)&Value_00000064) {
         return (s32)Data_020084d0;
@@ -129,9 +78,9 @@ u8 *SceneData_GetTable8728(void)
  * Func_020004d0 before returning it. */
 u8 *SceneData_SelectAndPrepareTable(void)
 {
-    s32 id = Data_02000240[224];
+    s32 id = gGameState.scene;
     if (id == (s32)&Value_00000064) {
-        s32 state = Data_02000240[225];
+        s32 state = gGameState.entrance;
         u8 *tbl;
         switch (state) {
         case 9:
@@ -161,9 +110,9 @@ u8 *SceneData_SelectAndPrepareTable(void)
  * arm even though it lies inside 9..17; that hole is deliberate. */
 u8 *SceneData_SelectSubStateTable(void)
 {
-    s32 id = Data_02000240[224];
+    s32 id = gGameState.scene;
     if (id == (s32)&Value_00000064) {
-        s32 state = Data_02000240[225];
+        s32 state = gGameState.entrance;
         switch (state) {
         case 9:
         case 10:
@@ -186,23 +135,23 @@ u8 *SceneData_SelectSubStateTable(void)
 
 void SceneDialogue_RunActor12DialogueAndSetFlag910(void)
 {
-    Func_02000558();
-    Func_020005a6(0x1ADD);
-    Func_020005b6(0xC, 0);
-    Func_0200055e(0x910);
-    Func_0200057a();
+    Event_Begin();
+    Event_SetMessage(MSG_PLEASE_FINISH_EATING_IF_TAKING);
+    Event_ShowMessage(0xC, 0);
+    GameFlag_Set(0x910);
+    Event_End();
 }
 
 void SceneDialogue_RunActor16Dialogue(void)
 {
-    Func_02000580();
-    Func_020005ce(0x1AE3);
-    Func_020005e6(16, 0);
-    Func_0200059a();
+    Event_Begin();
+    Event_SetMessage(MSG_DO_KNOW_ABOUT_CONTINENT_SOUTH);
+    Event_AskYesNo(16, 0);
+    Event_End();
 }
 
-/* Actor 8's dialogue, branched on flag 0x911. Func_02000626 and
- * Func_02000626_b are two imports sharing one call word: the two-argument
+/* Actor 8's dialogue, branched on flag 0x911. Engine_EventShowMessage and
+ * Engine_EventSetMessage are two imports sharing one call word: the two-argument
  * gesture in the first arm, the one-argument message in the second. */
 void SceneDialogue_RunActor8FlaggedDialogue(void)
 {
@@ -211,38 +160,38 @@ void SceneDialogue_RunActor8FlaggedDialogue(void)
     /* Band guard: facing in 0x6001..0x9fff. The test is spelled as the short
      * arm's condition, which is what reproduces the branch. */
     if ((u16)(*(u16 *)(p + 6) - 0x6001) <= 0x3FFE) {
-        Func_02000638(7, 8);
+        Inn_Open(7, 8);
     } else {
-        Func_020005be();
+        Event_Begin();
 
-        if (Func_020005ac(0x911) != 0) {
-            Func_02000616(0x1AFB);
-            Func_02000626(8, 0);
+        if (GameFlag_IsSet(0x911) != 0) {
+            Event_SetMessage(MSG_OUR_INN_FEELS_EMPTY_NOW);
+            Event_ShowMessage(8, 0);
         } else {
-            Func_02000626_b(0x1AD7);
-            Func_0200063e(8, 0);
-            Func_020005de(0x910);           /* 145 << 4 */
+            Event_SetMessage(MSG_GOING_TOLBI_ALSO);
+            Event_AskYesNo(8, 0);
+            GameFlag_Set(0x910);           /* 145 << 4 */
         }
 
-        Func_020005fa();
+        Event_End();
     }
 }
 
 void SceneDialogue_RunActor8FacingDialogue(void)
 {
-    void Func_0200067a(int);
+    void Event_SetMessage(int);
 
     u8 *p = Func_0200062a(0);
 
     /* Band guard: facing in 0xa001..0xdfff. The test is spelled as the short
      * arm's condition, which is what reproduces the branch. */
     if ((u16)(*(u16 *)(p + 6) + 0x5FFF) <= 0x3FFE) {
-        Func_0200069e(8);
+        Sanctum_Open(8);
     } else {
-        Func_0200062c();
-        Func_0200067a(0x1A8F);
-        Func_0200068a(8, 0);
-        Func_02000646();
+        Event_Begin();
+        Event_SetMessage(MSG_CAN_LIVE_IN_PEACE_IN);
+        Event_ShowMessage(8, 0);
+        Event_End();
     }
 }
 
@@ -263,7 +212,7 @@ void FieldScene_RunArrivalPlacement(void)
     s32 idx;
     u8 *p;
 
-    Func_02000658();
+    Event_Begin();
 
     for (slot = 8; slot <= 65; slot++) {
         u8 *rec = Func_0200067a_a(slot);
@@ -273,7 +222,7 @@ void FieldScene_RunArrivalPlacement(void)
         }
     }
 
-    /* The sub-state slot is read twice, here and for Func_0200075c below, and
+    /* The sub-state slot is read twice, here and for Engine_EventRequestExit below, and
      * both reads are kept. */
     switch (*(s16 *)(work + 364)) {         /* 182 << 1 */
     case 12: idx = 0; break;
@@ -283,37 +232,37 @@ void FieldScene_RunArrivalPlacement(void)
     default: return;
     }
 
-    Func_02000730(158);
+    Audio_PlayCue(158);
 
     {
         u32 x = Data_02008ef8[idx].x;
         u32 y = Data_02008ef8[idx].y;
 
-        Func_02000692(Data_02008ef8[idx].destination, x, y);
+        Map_AnimateCells(Data_02008ef8[idx].destination, x, y);
     }
 
-    Func_020006f0(0, 0x00008000, 0x00004000);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x00008000, 0x00004000);
 
     p = Func_020006e6(0);
     p[85] = 0;
 
-    Func_02000714(0, 2);
-    Func_02000718(0, 3, -8);
-    Func_020006e6_a(10);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, 2);
+    Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 3, -8);
+    Event_Wait(10);
 
-    Func_0200075c(*(s16 *)(work + 364));
-    Func_02000768();
-    Func_02000774();
-    Func_02000710();
+    Event_RequestExit(*(s16 *)(work + 364));
+    Event_CloseScreen();
+    Event_WaitForScreen();
+    Event_End();
 }
 
-/* Publishes 0x209 at +448 of the runtime record, and calls Func_0200065e for
+/* Publishes 0x209 at +448 of the runtime record, and calls SceneState_ClearSlotsBySubState for
  * scene 0x64. */
 s32 SceneState_SetRuntimeWord448To521(void)
 {
-    *(s32 *)(Data_03001ebc + 448) = 0x209;
-    if (Data_02000240[224] == (s32)(u32)&Value_00000064) {
-        Func_0200065e();
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+    if (gGameState.scene == (s32)(u32)&Value_00000064) {
+        SceneState_ClearSlotsBySubState();
     }
     return 0;
 }
@@ -327,7 +276,7 @@ s32 SceneState_SetRuntimeWord448To521(void)
  */
 void SceneState_ClearSlotsBySubState(void)
 {
-    s16 sub = Data_02000240[225];
+    s16 sub = gGameState.entrance;
 
     switch (sub) {
     case 3:
@@ -335,7 +284,7 @@ void SceneState_ClearSlotsBySubState(void)
         /* The last two arguments travel on the stack. */
         s32 fifth = 4;
         s32 sixth = 2;
-        Func_02000762(30, 14, 30, 16, fifth, sixth);
+        Map_CopyCellsTo(30, 14, 30, 16, fifth, sixth);
         return;
     }
     case 9:
@@ -352,26 +301,26 @@ void SceneState_ClearSlotsBySubState(void)
     }
 
     /* sub is 9..15 or 17. */
-    if (Func_02000772(0x911) != 0) {
+    if (GameFlag_IsSet(0x911) != 0) {
         /* Nine distinct call sites, not a loop; the trailing 15 is out of
          * order and is kept that way. */
-        Func_020007b4(10);
-        Func_020007ba(11);
-        Func_020007c0(12);
-        Func_020007c6(13);
-        Func_020007cc(14);
-        Func_020007d2(17);
-        Func_020007d8(18);
-        Func_020007de(19);
-        Func_020007e4(15);
+        Actor_Destroy(10);
+        Actor_Destroy(11);
+        Actor_Destroy(12);
+        Actor_Destroy(13);
+        Actor_Destroy(14);
+        Actor_Destroy(17);
+        Actor_Destroy(18);
+        Actor_Destroy(19);
+        Actor_Destroy(15);
     } else {
-        Func_0200080e(13, 2);
+        Actor_SetChildValue(13, 2);
     }
     return;
 
 other:
-    if (Func_020007be(0x911) != 0) {
-        Func_02000800(16);
-        Func_02000806(17);
+    if (GameFlag_IsSet(0x911) != 0) {
+        Actor_Destroy(16);
+        Actor_Destroy(17);
     }
 }

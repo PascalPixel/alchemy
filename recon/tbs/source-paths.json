@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "main:08006c68": {
+      "name": "Flash_VerifySector",
+      "source": "SYSTEM/SAVE/VERIFY_FLASH_SECTOR.C"
+    },
     "main:08006ba8": {
       "name": "ReadFlash",
       "source": "SYSTEM/SAVE/READ_FLASH.C"
@@ -20024,7 +20028,6 @@
     "main:080c9ca8": "BattleFx_RunFiveMode",
     "main:080ccc38": "BattleFx_RunTwoResource",
     "main:0801a98c": "MenuSelection_DrawFrame",
-    "main:08006c68": "Flash_VerifySector",
     "main:08009288": "Runtime_RemapBytesByTableFar",
     "main:080196c4": "UiWindow_AdjustValue",
     "main:080153b0": "Menu_RunConfirmSelectionAtFar",

@@ -2034,7 +2034,6 @@
       "identity_status": "runtime name association not established"
     },
     "08209b80": {
-      "presentation_review": "GRAPHICS/REVIEW.JSON#FIELD_SPRITE_0x08209b80_SHEET.PNG",
       "format": 1,
       "kind": "components",
       "address": "0x082054cc",
@@ -2211,7 +2210,6 @@
       "identity_status": "runtime name association not established"
     },
     "08212f0c": {
-      "presentation_review": "GRAPHICS/REVIEW.JSON#FIELD_SPRITE_0x08212f0c_SHEET.PNG",
       "format": 1,
       "kind": "components",
       "address": "0x0821069c",
@@ -2324,7 +2322,6 @@
       "identity_status": "runtime name association not established"
     },
     "08217b34": {
-      "presentation_review": "GRAPHICS/REVIEW.JSON#FIELD_SPRITE_0x08217b34_SHEET.PNG",
       "format": 1,
       "kind": "components",
       "address": "0x08215578",
@@ -3450,7 +3447,6 @@
       "identity_status": "runtime name association not established"
     },
     "08240e8c": {
-      "presentation_review": "GRAPHICS/REVIEW.JSON#FIELD_SPRITE_0x08240e8c_SHEET.PNG",
       "format": 1,
       "kind": "components",
       "address": "0x0823e034",
@@ -3507,7 +3503,6 @@
       "identity_status": "runtime name association not established"
     },
     "08242a4c": {
-      "presentation_review": "GRAPHICS/REVIEW.JSON#FIELD_SPRITE_0x08242a4c_SHEET.PNG",
       "format": 1,
       "kind": "components",
       "address": "0x08240f18",
@@ -3564,7 +3559,6 @@
       "identity_status": "runtime name association not established"
     },
     "08244f38": {
-      "presentation_review": "GRAPHICS/REVIEW.JSON#FIELD_SPRITE_0x08244f38_SHEET.PNG",
       "format": 1,
       "kind": "components",
       "address": "0x08242ad4",
@@ -3845,7 +3839,6 @@
       "identity_status": "runtime name association not established"
     },
     "08251b28": {
-      "presentation_review": "GRAPHICS/REVIEW.JSON#FIELD_SPRITE_0x08251b28_SHEET.PNG",
       "format": 1,
       "kind": "components",
       "address": "0x0824e748",
@@ -4018,7 +4011,6 @@
       "identity_status": "runtime name association not established"
     },
     "08258a10": {
-      "presentation_review": "GRAPHICS/REVIEW.JSON#FIELD_SPRITE_0x08258a10_SHEET.PNG",
       "format": 1,
       "kind": "components",
       "address": "0x0825642c",
@@ -4466,7 +4458,6 @@
       "identity_status": "runtime name association not established"
     },
     "08266c4c": {
-      "presentation_review": "GRAPHICS/REVIEW.JSON#FIELD_SPRITE_0x08266c4c_SHEET.PNG",
       "format": 1,
       "kind": "components",
       "address": "0x08266764",
@@ -4517,7 +4508,6 @@
       "identity_status": "runtime name association not established"
     },
     "08266f58": {
-      "presentation_review": "GRAPHICS/REVIEW.JSON#FIELD_SPRITE_0x08266f58_SHEET.PNG",
       "format": 1,
       "kind": "components",
       "address": "0x08266c5c",
@@ -4792,7 +4782,6 @@
       "identity_status": "runtime name association not established"
     },
     "08271db4": {
-      "presentation_review": "GRAPHICS/REVIEW.JSON#FIELD_SPRITE_0x08271db4_SHEET.PNG",
       "format": 1,
       "kind": "components",
       "address": "0x0826fd68",
@@ -4905,7 +4894,6 @@
       "identity_status": "runtime name association not established"
     },
     "08275bb0": {
-      "presentation_review": "GRAPHICS/REVIEW.JSON#FIELD_SPRITE_0x08275bb0_SHEET.PNG",
       "format": 1,
       "kind": "components",
       "address": "0x0827371c",
@@ -4961,7 +4949,6 @@
       "identity_status": "runtime name association not established"
     },
     "08277f14": {
-      "presentation_review": "GRAPHICS/REVIEW.JSON#FIELD_SPRITE_0x08277f14_SHEET.PNG",
       "format": 1,
       "kind": "components",
       "address": "0x08275c3c",
@@ -5238,7 +5225,6 @@
       "identity_status": "runtime name association not established"
     },
     "08280cf8": {
-      "presentation_review": "GRAPHICS/REVIEW.JSON#FIELD_SPRITE_0x08280cf8_SHEET.PNG",
       "format": 1,
       "kind": "components",
       "address": "0x0827eddc",
@@ -5690,7 +5676,6 @@
       "identity_status": "runtime name association not established"
     },
     "08292e78": {
-      "presentation_review": "GRAPHICS/REVIEW.JSON#FIELD_SPRITE_0x08292e78_SHEET.PNG",
       "format": 1,
       "kind": "components",
       "address": "0x08291268",
@@ -15244,7 +15229,6 @@
       ]
     },
     "082ddc74": {
-      "presentation_review": "GRAPHICS/REVIEW.JSON#BATTLE_SPRITE_0x082ddc74_SHEET.PNG",
       "kind": "components",
       "address": "0x082d8c80",
       "size": "0x00005048",
@@ -15278,7 +15262,6 @@
       ]
     },
     "082e7a1c": {
-      "presentation_review": "GRAPHICS/REVIEW.JSON#BATTLE_SPRITE_0x082e7a1c_SHEET.PNG",
       "kind": "components",
       "address": "0x082e1e54",
       "size": "0x00005c1c",
@@ -15312,7 +15295,6 @@
       ]
     },
     "082f1c3c": {
-      "presentation_review": "GRAPHICS/REVIEW.JSON#BATTLE_SPRITE_0x082f1c3c_SHEET.PNG",
       "kind": "components",
       "address": "0x082eca2c",
       "size": "0x00005264",
@@ -15346,7 +15328,6 @@
       ]
     },
     "082f813c": {
-      "presentation_review": "GRAPHICS/REVIEW.JSON#BATTLE_SPRITE_0x082f813c_SHEET.PNG",
       "kind": "components",
       "address": "0x082f32dc",
       "size": "0x00004eb4",
@@ -15380,7 +15361,6 @@
       ]
     },
     "083000bc": {
-      "presentation_review": "GRAPHICS/REVIEW.JSON#BATTLE_SPRITE_0x083000bc_SHEET.PNG",
       "kind": "components",
       "address": "0x082faacc",
       "size": "0x00005644",

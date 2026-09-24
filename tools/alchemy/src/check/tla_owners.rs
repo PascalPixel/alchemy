@@ -478,22 +478,17 @@ mod tests {
             std::fs::write(root.path().join(path), bytes).unwrap();
         }
         assert!(ranges(target).unwrap().is_some());
+        let mut ledger = genuine.clone();
         genuine["total_union_bytes"] = serde_json::json!(8);
         std::fs::write(&path, genuine.to_string()).unwrap();
         assert!(ranges(target).unwrap_err().contains("stale"));
 
-        // The committed ledger beside the real verification record and a
-        // byte-identical full build is still not the verified count.
-        let checkout = crate::compiler::routing::root();
-        for (from, to) in [
-            (
-                "recon/tla/metrics/audit-verification.json",
-                "recon/tla/metrics/audit-verification.json",
-            ),
-            ("recon/tla/metrics/executable.json", INVENTORY),
-        ] {
-            std::fs::copy(checkout.join(from), root.path().join(to)).unwrap();
-        }
+        // A hand-kept ledger of the genuine count, beside its real
+        // verification record and a byte-identical full build, is still not
+        // the verified count.
+        ledger["state"] = serde_json::json!("verified");
+        ledger.as_object_mut().unwrap().remove("verification");
+        std::fs::write(&path, ledger.to_string()).unwrap();
         assert_eq!(ranges(target).unwrap(), None);
     }
 

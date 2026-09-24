@@ -36,7 +36,7 @@ HISTORICAL_TARGETS := tbs-ja tbs-en tbs-de tbs-es tbs-fr tbs-it \
 	full-rom-check tla-assets-check tla-owners-check overlay-check declared-tu-check owner-inventory-check strict-tu-check siblings-check \
 	source-tracking-check index-sync-check publication-tree-check check-owners progress progress-report progress-check progress-subject \
 	correspondence correspondence-check edition-builds edition-builds-check \
-	coverage coverage-check native-format-check review-images-check clean clean-preview
+	coverage coverage-check native-format-check clean clean-preview
 .PHONY: targets $(HISTORICAL_TARGETS)
 
 help:
@@ -255,8 +255,6 @@ check-owners: source-tracking-check
 	$(CHECK) owners
 
 corpus-check:
-	@test -f "recon/tbs/project.json"
-	@test -f "recon/tla/project.json"
 	@if test -d draft; then \
 		printf 'legacy draft/ directory found; use recon/tbs/<edition>/\n'; \
 		exit 1; \
@@ -360,10 +358,7 @@ test: toolchain-check
 native-format-check:
 	$(CARGO_RUN) $(TOOLS)/alchemy/Cargo.toml -- format --check
 
-review-images-check: source-tracking-check
-	$(ASSETS) --review-images out/tbs-en/graphics-review
-
-verify: toolchain-check native-format-check index-sync-check publication-tree-check source-tracking-check review-images-check corpus-check language-check lint-production tooling-index-check \
+verify: toolchain-check native-format-check index-sync-check publication-tree-check source-tracking-check corpus-check language-check lint-production tooling-index-check \
 	strict-tu-check check-owners full-rom-check compare-tla coverage-check siblings-check
 
 audit: verify test test-integration targets \

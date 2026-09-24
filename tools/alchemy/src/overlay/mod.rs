@@ -212,7 +212,8 @@ pub fn placeholder_lines(stem: &str, span: i64, aliases: &[InternalAlias]) -> Ve
     result
 }
 fn audit_intervals(root: &Path, overlay: &str) -> Result<Option<Vec<AuditInterval>>, String> {
-    let path = root.join("recon/tbs/metrics").join("executable.json");
+    let target = crate::targets::target_for(crate::targets::DEFAULT_TARGET);
+    let path = root.join(target.output_dir).join("reports/executable.json");
     if !path.exists() {
         return Ok(None);
     }

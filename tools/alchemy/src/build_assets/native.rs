@@ -5,11 +5,6 @@ mod frame;
 mod graphics;
 mod identity;
 mod portrait;
-mod review;
-mod review_defaults;
-pub(super) use review::{
-    export as export_review, export_field as export_field_review, plan_inputs as review_plan_inputs,
-};
 mod still;
 mod tile;
 mod tracking;
@@ -36,8 +31,8 @@ impl NativePaths {
         }
     }
 }
-/// The indexed UI banks the graphics review identifies as icon sheets, and the
-/// palette bank that review colours all three with.
+/// The indexed UI banks that hold icon sheets, and the palette bank that
+/// colours all three.
 pub(crate) const ICON_BANKS: [u8; 3] = [4, 5, 6];
 pub(crate) const ICON_PALETTE_BANK: usize = 877;
 pub(crate) fn icon_bank_source(bank: u8) -> String {
@@ -97,7 +92,7 @@ pub(crate) fn raw_palette_bank(
     }
     Ok(colors)
 }
-/// The review sheets, atlases and UI frames are still Broken Seal documents.
+/// The Broken Seal's native source paths.
 pub(in crate::build_assets) fn broken_seal() -> NativePaths {
     NativePaths::of(&target_for(DecompTargetId::TbsEn))
 }

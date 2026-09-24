@@ -73,7 +73,6 @@ pub fn identity(root: &Path, target: &str) -> Result<String, String> {
     for suffix in [
         "source-paths.json",
         "source-bindings.json",
-        "project.json",
         "translation-units.json",
         "compiler-runtime.json",
         "semantic/overlay-assembly.json",

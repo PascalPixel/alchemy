@@ -842,24 +842,6 @@ fn main_assembly_classification_for(
             }
         }
     }
-    if let Some(value) = json(
-        tree,
-        &format!("{}/semantic/main-regions.json", target.recon_dir()),
-    ) {
-        for region in array(&value, "non_c_ranges") {
-            if matches!(
-                text(region, "kind").as_str(),
-                "literal_pool" | "alignment_padding" | "lookup_table"
-            ) && !text(region, "evidence").trim().is_empty()
-            {
-                if let (Some(address), Some(size)) =
-                    (address(region, "address"), integer(region, "size"))
-                {
-                    proven.push(Span::new(address, address + size));
-                }
-            }
-        }
-    }
     (normalize(&proven), normalize(&draft), normalize(&credited))
 }
 fn overlay_assembly_classification_for(
@@ -924,10 +906,7 @@ fn overlay_assembly_classification_document_for(
                         .iter()
                         .filter(|region| {
                             !region.evidence.trim().is_empty()
-                                && matches!(
-                                    region.kind.as_str(),
-                                    "veneer" | "executable_alignment" | "hand_written_thumb"
-                                )
+                                && matches!(region.kind.as_str(), "veneer" | "executable_alignment")
                         })
                         .map(|region| region.span)
                         .collect::<Vec<_>>(),
@@ -3148,33 +3127,39 @@ mod tests {
         withheld_for(root, &genuine, "no independent verification");
     }
 
-    /// The exploit an adversarial verification found: each game's committed
-    /// ledger copied into its inventory path, beside that game's real
+    /// The exploit an adversarial verification found: a hand-kept ledger
+    /// copied into a game's inventory path, beside that game's real
     /// verification record and a byte-identical full build, earns no score.
+    /// The ledger here is the genuine count as a person would have edited it:
+    /// promoted to `verified`, stripped of its provenance and reclassified.
     #[test]
     fn a_copied_ledger_is_never_scored() {
-        let checkout = crate::compiler::routing::root();
-        for (target, game) in [("tbs-en", "tbs"), ("tla-en", "tla")] {
-            let game_target = crate::targets::decomp_target(Some(target)).unwrap();
+        use crate::targets::DecompTargetId::{TbsEn, TlaEn};
+        for id in [TbsEn, TlaEn] {
+            let game_target = crate::targets::target_for(id);
+            let target = id.as_str();
             let directory = tempfile::tempdir().unwrap();
             let root = directory.path();
-            let copy = |from: String, to: String| {
-                std::fs::create_dir_all(root.join(&to).parent().unwrap()).unwrap();
-                std::fs::copy(checkout.join(from), root.join(to)).unwrap();
-            };
-            let record = format!("recon/{game}/metrics/audit-verification.json");
-            copy(record.clone(), record);
-            copy(
-                format!("recon/{game}/metrics/executable.json"),
-                format!("out/{target}/reports/executable.json"),
+            let (_, genuine) = crate::coverage::audit::authoritative_fixture(
+                root,
+                game_target,
+                &[(0x0800_0100, 0x0800_0104)],
+                json!([{"id": "resource_test", "decoded_bytes": 8, "intervals": [
+                    {"start": 0x0200_0000, "end": 0x0200_0004, "kind": "thumb"}
+                ]}]),
             );
-            let report = root.join(format!("out/{target}/full/rebuilt.json"));
-            std::fs::create_dir_all(report.parent().unwrap()).unwrap();
-            std::fs::write(
-                &report,
-                r#"{"byte_identical":true,"unowned_bytes":0,"rom_fallback_bytes":0}"#,
-            )
-            .unwrap();
+            assert!(
+                authoritative_inventory(root, game_target)
+                    .unwrap()
+                    .is_some(),
+                "{target}"
+            );
+            let mut ledger = genuine;
+            ledger["state"] = json!("verified");
+            ledger.as_object_mut().unwrap().remove("verification");
+            ledger["overlays"][0]["intervals"][0]["kind"] = json!("hand_written_thumb");
+            let path = root.join(format!("out/{target}/reports/executable.json"));
+            std::fs::write(&path, ledger.to_string()).unwrap();
             assert!(
                 authoritative_inventory(root, game_target)
                     .unwrap()

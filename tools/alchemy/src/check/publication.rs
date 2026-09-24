@@ -64,7 +64,7 @@ const DIGEST_RUNS_MAX: usize = 16_384;
 /// Consecutive integer literals that form an array rather than an expression.
 const NUMERIC_RUN_MIN: usize = 16;
 /// Array elements a text outside the game data tables may hold; the tree peaks
-/// near 720 in the executable-gap package.
+/// near 580 in the dashboard map filter.
 const NUMERIC_ELEMENTS_MAX: usize = 2_048;
 /// Byte values one flat JSON array may hold before only a named typed table
 /// explains it; the tracked tree peaks at 518 in `action_modes`.
@@ -3305,12 +3305,8 @@ mod tests {
         assert_eq!(asset_game("recon/tla/semantic/regions.json"), None);
         assert_eq!(asset_game("recon/tla/translation-units.json"), None);
         let manifests = manifest_games(["recon/tla/assets.json"]);
-        assert!(
-            manifestless_reason("recon/tla/raw/executable_gaps/index.json", &manifests).is_none()
-        );
-        assert!(
-            manifestless_reason("recon/tbs/raw/executable_gaps/index.json", &manifests).is_some()
-        );
+        assert!(manifestless_reason("recon/tla/raw/08007320.json", &manifests).is_none());
+        assert!(manifestless_reason("recon/tbs/raw/08007320.json", &manifests).is_some());
         assert!(manifestless_reason("recon/tbs/translation-units.json", &[]).is_none());
     }
     #[test]

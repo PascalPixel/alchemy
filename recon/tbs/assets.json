@@ -114,22 +114,22 @@
       "address": "0x08007320",
       "size": "0x38",
       "kind": "le-u32-array",
-      "source": "recon/tbs/raw/executable_gaps/index.json",
-      "pointer": "/gaps/2/sections/0/values"
+      "source": "recon/tbs/raw/08007320.json",
+      "pointer": "/gaps/0/sections/0/values"
     },
     {
       "address": "0x08007358",
       "size": "0x31e",
       "kind": "le-u16-array",
-      "source": "recon/tbs/raw/executable_gaps/index.json",
-      "pointer": "/gaps/2/sections/1/tables/0/values"
+      "source": "recon/tbs/raw/08007320.json",
+      "pointer": "/gaps/0/sections/1/tables/0/values"
     },
     {
       "address": "0x08007676",
       "size": "0x106",
       "kind": "le-u16-array",
-      "source": "recon/tbs/raw/executable_gaps/index.json",
-      "pointer": "/gaps/2/sections/1/tables/1/values"
+      "source": "recon/tbs/raw/08007320.json",
+      "pointer": "/gaps/0/sections/1/tables/1/values"
     },
     {
       "address": "0x080b5204",

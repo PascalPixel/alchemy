@@ -22,7 +22,7 @@
  * local-alloc only while its use sits right after entry is formed (r7 is
  * the frame pointer to local-alloc, r4 is call-used); stored after the
  * attribute word it takes r8 or r9. Written in ROM order with
- * `register u32 zero asm("r5"); ... zero = 0; entry->tile.value = zero;`
+ * a zero pinned to r5 (zero = 0; entry->tile.value = zero), the
  * allocation and store order match and 3 halfwords remain: sched2 issues the
  * reload copy `adds r7, r6, #0` after the x/y halfword stores. In sched2 the
  * copy and both stores have priority 20; the stores win the tie on

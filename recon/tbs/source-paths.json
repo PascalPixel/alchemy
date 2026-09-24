@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "main:08094154": {
+      "name": "Object_GetScreenPosition",
+      "source": "FIELD/COMMON/OBJECT/GET_SCREEN_POSITION.C"
+    },
     "main:0800300c": {
       "name": "Runtime_InstallIwramAndIrqs",
       "source": "SYSTEM/INSTALL_IWRAM_AND_IRQS.C"

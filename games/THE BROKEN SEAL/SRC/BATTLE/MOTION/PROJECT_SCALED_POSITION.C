@@ -17,14 +17,14 @@ s32 BattleMotion_ProjectScaledPosition(s32 id, s32 *projected)
 {
     struct MotionObject *object = GetBattleObjectSlot(id)->object;
     struct BattleMotionRecord *record = GetMotionRecord(object, 0);
-    /* GCC 2.96 retains this sibling-style position frame even when unused. */
-    s32 position[3];
+    s32 position[3]; /* FAKEMATCH: unused; it only reserves the 12-byte frame the reference allocates. */
     s32 scaled;
+    s32 factor;
 
     Func_080b7ed8();
     scaled = Func_08005268(&object->x, projected);
-    scaled = Iwram_MulQ16(scaled, record->scale_18);
-    scaled = Iwram_MulQ16(scaled, (s32)Func_080b8530(id) >> 16);
+    factor = Iwram_MulQ16(scaled, record->scale_18);
+    scaled = Iwram_MulQ16(factor, (s32)Func_080b8530(id) >> 16);
     projected[1] -= scaled;
     return 0;
 }

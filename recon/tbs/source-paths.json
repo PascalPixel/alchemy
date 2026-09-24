@@ -1,6 +1,22 @@
 {
   "format": 3,
   "owners": {
+    "resource_38f:02000304": {
+      "name": "KorimaMura_Func02000304",
+      "source": "FIELD/KORIMA_MURA/F_00304.C"
+    },
+    "resource_3b1:020047cc": {
+      "name": "FuneHeya_Func020047cc",
+      "source": "FIELD/FUNE_HEYA/F_047CC.C"
+    },
+    "resource_383:02002758": {
+      "name": "KuupuappuHeya_Func02002758",
+      "source": "FIELD/KUUPUAPPU_HEYA/F_02758.C"
+    },
+    "resource_3a5:02001c1c": {
+      "name": "RamakanSabaku_Func02001c1c",
+      "source": "FIELD/RAMAKAN_SABAKU/F_01C1C.C"
+    },
     "resource_39f:020022c0": {
       "name": "MogoruMori_Func020022c0",
       "source": "FIELD/MOGORU_MORI/F_022C0.C"

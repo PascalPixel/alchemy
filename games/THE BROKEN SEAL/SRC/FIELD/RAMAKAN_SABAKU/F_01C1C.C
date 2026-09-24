@@ -11,13 +11,9 @@ struct Half {
     u16 v;
 };
 
-/* NONMATCHING: 90 of 92 bytes, every instruction exact (2026-09-24). The
- * reference span ends in the two-byte zero pad after the out-of-line
- * epilogue; alchemy overlay adopt finds it exact in only 1 of 30 compiles,
- * so the owner stays in assembly until that split is explained. */
 /* Claim a VRAM slot for the sand effect, load its tiles, clear two
  * counters and start the effect task. */
-void Local_02001c1c(void)
+void RamakanSabaku_Func02001c1c(void)
 {
     s32 slot;
     u16 *slotp;

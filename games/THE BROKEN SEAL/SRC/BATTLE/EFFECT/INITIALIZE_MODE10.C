@@ -1,10 +1,7 @@
-/* Draft, not exact (2026-09-24): candidate=3160 reference=3156 differing_halfwords=630,
-   binary similarity 89%. The stack frame (332 bytes, every spill slot), the
-   two frame loops, the skip test with its count reset, the noise loop end
-   pointer, the 3x3 placement loop and most particle loops (indexed, so each
-   gets its own induction pointer) match. Remaining: the rock and fall loops
-   keep the Math_Mod result in r0 in the reference, the flag clear uses -13
-   rather than 0xf3, and the phase-two spark loops pick r5/r6 the other way. */
+/* Battle effect mode 10: rocks burst from the ground around the targets
+   while nine sprite objects rise in a 3x3 block, then boulders rain down.
+   Phase one runs 288 frames (A or B skips it after frame 16); phase two
+   runs 146. */
 #include "TYPES.H"
 #include "BATTLE_EFFECT_WORK.H"
 #include "BATTLE_EFX.H"
@@ -118,14 +115,9 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *efx)
     s32 count;
     s32 i;
     s32 j;
-    s32 k;
-    s32 skip;
     s32 ox;
     s32 oy;
-    s32 h;
-    s32 x;
     s32 y;
-    s32 obj;
     s32 t;
     struct EffectStep *p;
     struct EffectStep *q;
@@ -177,6 +169,8 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *efx)
 
     Audio_PlayCue(141);
 
+    /* FAKEMATCH: the rock count resets inside the loop test, after the
+       frame limit and before the skip keys are tested. */
     for (frame = 0; frame != 288 && (count = 16, !(gKeysRepeat & 3) || frame <= 16); frame++) {
         if (frame >= 0 && frame < 16) {
             u16 *phase = (u16 *)0x02010000;
@@ -254,16 +248,15 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *efx)
         t = frame - 160;
         if (t >= 0 && t < 158) {
             s32 u = frame - 208;
-            s32 sy;
-            x = 80;
-            sy = 8;
+            s32 sx = 80;
+            s32 sy = 8;
             if (frame <= 175) {
-                x = 96 - t;
+                sx = 96 - t;
                 sy = t * 4 - 56;
             } else if (frame > 208) {
                 sy = u / 4 + 8;
             }
-            blit47(dst, work->sheet + 0xc46, x, sy, 24, 48);
+            blit47(dst, work->sheet + 0xc46, sx, sy, 24, 48);
         }
 
         if (frame == 32) {

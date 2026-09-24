@@ -73091,6 +73091,34 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "common-imiru-fuchin-f-01d78",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/IMIRU_FUCHIN/F_01D78.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_39a",
+      "absolute_symbols": {
+        "Engine_AudioPlayCue": {
+          "address": "0x0200a410",
+          "kind": "thumb"
+        },
+        "Engine_RandomNext": {
+          "address": "0x0200a278",
+          "kind": "thumb"
+        },
+        "Local_02001c18": {
+          "address": "0x02009c18",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02001d78",
+          "extent": 144,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

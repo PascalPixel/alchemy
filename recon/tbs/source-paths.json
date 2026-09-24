@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_3a4:020020d0": {
+      "name": "ArutinYama_ApplyEntryState",
+      "source": "FIELD/ARUTIN_YAMA/ENTRY_STATE.C"
+    },
     "resource_380:02003f24": {
       "name": "SoruStar_ApplyEntryState",
       "source": "FIELD/SORU_STAR/ENTRY_STATE.C"

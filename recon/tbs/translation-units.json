@@ -70028,6 +70028,74 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "arutin-yama-entry-state",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/ENTRY_STATE.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3a4",
+      "absolute_symbols": {
+        "Engine_GameFlagIsSet": {
+          "address": "0x0200bb50",
+          "kind": "thumb"
+        },
+        "FieldScene_RunOpeningAuxiliarySequence": {
+          "address": "0x0200ad58",
+          "kind": "thumb"
+        },
+        "Local_02003a44": {
+          "address": "0x0200ba44",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetPosition": {
+          "address": "0x0200bbe8",
+          "kind": "thumb"
+        },
+        "Engine_ActorGet": {
+          "address": "0x0200bb98",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpriteFlags": {
+          "address": "0x0200bb30",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetChildValue": {
+          "address": "0x0200bc18",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetAnimation": {
+          "address": "0x0200bbf0",
+          "kind": "thumb"
+        },
+        "Engine_MapCopyCellAttributes": {
+          "address": "0x0200bb28",
+          "kind": "thumb"
+        },
+        "SceneState_StoreParamsAndInstallTask": {
+          "address": "0x0200abb0",
+          "kind": "thumb"
+        },
+        "Engine_ObjectSetTargetAndCallback": {
+          "address": "0x0200bc28",
+          "kind": "thumb"
+        },
+        "SceneActor_ClearCollisionFlagAndPlaceMarker": {
+          "address": "0x0200b460",
+          "kind": "thumb"
+        },
+        "ArutinYama_ActorScript": {
+          "address": "0x0200bd34",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x020020d0",
+          "extent": 576,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

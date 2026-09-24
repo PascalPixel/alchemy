@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_3b4:02001fd8": {
+      "name": "TakaraAshiba_UpdateItemIcons",
+      "source": "FIELD/TAKARA_ASHIBA/ITEM_ICONS.C"
+    },
     "resource_378:020005cc": {
       "name": "ShindenHeya_ApplyEntryState",
       "source": "FIELD/COMMON/SHINDEN_HEYA/ENTRY_STATE.C"

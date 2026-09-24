@@ -241,8 +241,6 @@ s32 SceneData_SelectTableByStoryFlagsB(void)
 
 void FieldScene_RunScene377_020001e0(void)
 {
-    extern u8 Data_03001ebc[];
-
     u32 i;
     s32 record;
 
@@ -300,96 +298,72 @@ void SceneState_SetWork448To521AndRun(s32 object)
 
 void SceneState_SetValue123Mode1(void)
 {
-    extern u8 *Data_03001ebc;
-
     Audio_PlayCue(0x7B);
     Func_02000608(1);
 }
 
 void FieldScene_RunStep7BThen2(void)
 {
-    extern u8 Data_03001ebc[];
-
     Audio_PlayCue(0x7B);
     Func_0200061c(2);
 }
 
 void SceneState_SetValue123Mode3(void)
 {
-    extern u8 *Data_03001ebc;
-
     Audio_PlayCue(0x7B);
     Func_02000630(3);
 }
 
 void FieldScene_RunStep7BThen4(void)
 {
-    extern u8 Data_03001ebc[];
-
     Audio_PlayCue(0x7B);
     Func_02000644(4);
 }
 
 void FieldScene_RunStep80Then5(void)
 {
-    extern u8 Data_03001ebc[];
-
     Audio_PlayCue(0x80);
     Func_02000658(5);
 }
 
 void FieldScene_RunStep7BThen6(void)
 {
-    extern u8 Data_03001ebc[];
-
     Audio_PlayCue(0x7B);
     Func_0200066c(6);
 }
 
 void FieldScene_RunStep80Then7(void)
 {
-    extern u8 Data_03001ebc[];
-
     Audio_PlayCue(0x80);
     Func_02000680(7);
 }
 
 void SceneState_SetValue129Mode8(void)
 {
-    extern u8 *Data_03001ebc;
-
     Audio_PlayCue(0x81);
     Func_02000694(8);
 }
 
 void SceneState_SetValue129Mode9(void)
 {
-    extern u8 *Data_03001ebc;
-
     Audio_PlayCue(0x81);
     Func_020006a8(9);
 }
 
 void FieldScene_RunStep7BThen10(void)
 {
-    extern u8 Data_03001ebc[];
-
     Audio_PlayCue(0x7B);
     Func_020006bc(10);
 }
 
 void SceneState_ApplyValues123And11(void)
 {
-    extern u8 *Data_03001ebc;
-
     Audio_PlayCue(0x7B);
     Func_020006d0(11);
 }
 
 void FieldScene_RunScene377_02000e34(void)
 {
-    extern u8 Data_03001ebc[];
-
     u32 i;
     s32 record;
 
@@ -594,8 +568,6 @@ void OverlayObject_UpdateArcFromAnchor(struct Actor_02004004 *obj)
 
 void SceneState_SetValue140Mode0(void)
 {
-    extern u8 *Data_03001ebc;
-
     Psynergy_Begin(0x8C, 0);
 }
 
@@ -612,8 +584,6 @@ void FieldScene_RunActor8TwoStep(void)
 
 void FieldScene_RunStep17(void)
 {
-    extern u8 Data_03001ebc[];
-
     Func_02003106(17);
     Func_02002d9a();
 }

@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_3a7:02000ca0": {
+      "name": "KuupuappuDou_ApplyEntryState",
+      "source": "FIELD/KUUPUAPPU_DOU/ENTRY_STATE.C"
+    },
     "resource_39e:02003e58": {
       "name": "ShianJiin_ApplyEntryState",
       "source": "FIELD/COMMON/SHIAN_JIIN/ENTRY_STATE.C"

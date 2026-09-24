@@ -76909,6 +76909,114 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "scene-3a7-02000ca0",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_DOU/ENTRY_STATE.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3a7",
+      "absolute_symbols": {
+        "Engine_GameFlagIsSet": {
+          "address": "0x02009100",
+          "kind": "thumb"
+        },
+        "Engine_MapCopyCellAttributes": {
+          "address": "0x020090d0",
+          "kind": "thumb"
+        },
+        "Main_080091b8": {
+          "address": "0x020090c8",
+          "kind": "thumb"
+        },
+        "Engine_TaskWait": {
+          "address": "0x02009070",
+          "kind": "thumb"
+        },
+        "Engine_MapRedraw": {
+          "address": "0x020090b0",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagClear": {
+          "address": "0x02009110",
+          "kind": "thumb"
+        },
+        "Engine_ActorGet": {
+          "address": "0x02009130",
+          "kind": "thumb"
+        },
+        "SceneActor_InitSlots10To15AndStartTask": {
+          "address": "0x02008c08",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetAnimation": {
+          "address": "0x02009140",
+          "kind": "thumb"
+        },
+        "SceneState_ApplyRectAndMarkActor16": {
+          "address": "0x0200850c",
+          "kind": "thumb"
+        },
+        "SceneState_ConfigureRegion26_30AndMarkActor17": {
+          "address": "0x02008554",
+          "kind": "thumb"
+        },
+        "SceneState_ConfigureRegion26_30AndClearActor18Mode": {
+          "address": "0x020085a0",
+          "kind": "thumb"
+        },
+        "SceneState_ApplyRectAndSetupActor19": {
+          "address": "0x020085ec",
+          "kind": "thumb"
+        },
+        "SceneActor_SetupSlotTwenty": {
+          "address": "0x02008640",
+          "kind": "thumb"
+        },
+        "SceneActor_MarkSlot21AndSetFlag205": {
+          "address": "0x02008690",
+          "kind": "thumb"
+        },
+        "Engine_TaskAddCallback": {
+          "address": "0x02009078",
+          "kind": "thumb"
+        },
+        "SceneState_ApplyThreeRects": {
+          "address": "0x02008398",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetPosition": {
+          "address": "0x02009138",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpriteFlags": {
+          "address": "0x020090e0",
+          "kind": "thumb"
+        },
+        "SceneActor_SetupActors11To14AndInstallTask": {
+          "address": "0x02008c50",
+          "kind": "thumb"
+        },
+        "SceneState_ApplyThreeRectsRows9And10": {
+          "address": "0x02008410",
+          "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02000ca0",
+          "extent": 960,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

@@ -24,20 +24,13 @@ extern u8 Data_0200a12c[];
 extern u8 Data_03001ebc[];
 extern u8 Data_0000005b[];
 
-void *Func_02001d56(s32, s32, s32, s32);
 void Func_02002152();
 void Func_02002a54();
 void Func_02002a5e();
 typedef s32(*IwramSqrt)(s32);
 void Func_02002512();
-void Func_02003160();
 void Func_02003216_a();
-s32 Func_02003270();
-s32 Func_02003278();
-s32 Func_02003280();
-s32 Func_0200328c();
 s32 Func_020032c4();
-s32 Func_020032dc();
 s32 Func_0200332c();
 
 /*
@@ -93,7 +86,7 @@ static __inline__ void Call3_02001874(void (*f)(), s32 a0, s32 a1, s32 a2)
 
 void *OverlayObject_PrepareObject(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 {
-    u8 *obj = Func_02001d56(arg3, arg0, arg1, arg2);
+    u8 *obj = Object_Create(arg3, arg0, arg1, arg2);
 
     if (obj != NULL) {
         u8 *rec = *(u8 **)(obj + 0x50);
@@ -270,17 +263,17 @@ void FieldScene_RunScene3a5_020014b0(void)
         rec8 = GameFlag_IsSet(0x200);
         if (rec8 == 0) {
             GameFlag_Set(0x200);
-            Func_02003160(1);
+            SceneState_SetHalfwordB030(1);
             shown_addr = (u16 *)(p5 + 0xcba);
             shown = 0x258;
             *shown_addr = shown;
-            record = Value1(Func_02003270, 0);
+            record = Value1(Engine_ActorGet, 0);
             *(s32 *)(record + 36) = rec8;
-            record = Value1(Func_02003278, 0);
+            record = Value1(Engine_ActorGet, 0);
             *(s32 *)(record + 44) = rec8;
-            record = Func_02003280(0);
+            record = Actor_Get(0);
             *(s32 *)(record + 56) = -0x80000000;
-            record = Func_0200328c(0);
+            record = Actor_Get(0);
             *(s32 *)(record + 64) = -0x80000000;
             Actor_SetAnimation(0, 1);
             Actor_FaceActor(0, 8, 0);
@@ -292,7 +285,7 @@ void FieldScene_RunScene3a5_020014b0(void)
             rect[0] = rec8;
             rect[1] = rec8;
             rect[2] = rec8;
-            record = Func_020032dc(0);
+            record = Actor_Get(0);
             Call3(Func_02003216_a, -0x100000, *(u16 *)(record + 6), (s32)rect);
             Actor_SetSpeed(0, 0x20000, 0x10000);
             Actor_SetAnimation(0, 2);
@@ -309,7 +302,7 @@ void FieldScene_RunScene3a5_020014b0(void)
             Actor_SetSpeed(8, 0x8000, 0x4000);
             Actor_WalkToAndWait(8, 168, 92);
             *shown_addr = shown;
-            Func_0200328e_a(0);
+            SceneState_SetHalfwordB030(0);
         }
     }
 }

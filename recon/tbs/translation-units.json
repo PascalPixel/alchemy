@@ -39826,10 +39826,6 @@
           "address": "0x02009c8c",
           "kind": "thumb"
         },
-        "Func_02001d56": {
-          "address": "0x02009cfc",
-          "kind": "thumb"
-        },
         "Func_02001dae": {
           "address": "0x02009cfc",
           "kind": "thumb"
@@ -39858,39 +39854,11 @@
           "address": "0x02009e04",
           "kind": "thumb"
         },
-        "Func_02003160": {
-          "address": "0x02009c78",
-          "kind": "thumb"
-        },
         "Func_02003216_a": {
           "address": "0x02009ca4",
           "kind": "thumb"
         },
-        "Func_02003270": {
-          "address": "0x02009d74",
-          "kind": "thumb"
-        },
-        "Func_02003278": {
-          "address": "0x02009d74",
-          "kind": "thumb"
-        },
-        "Func_02003280": {
-          "address": "0x02009d74",
-          "kind": "thumb"
-        },
-        "Func_0200328c": {
-          "address": "0x02009d74",
-          "kind": "thumb"
-        },
-        "Func_0200328e_a": {
-          "address": "0x02009c78",
-          "kind": "thumb"
-        },
         "Func_020032c4": {
-          "address": "0x02009d74",
-          "kind": "thumb"
-        },
-        "Func_020032dc": {
           "address": "0x02009d74",
           "kind": "thumb"
         },

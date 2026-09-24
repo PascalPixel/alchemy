@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "FIELD_SCENE.H"
 #include "FIELD_EFFECT.H"
 #define OverlayObject_IntegrateVelocities Effect_Move
 
@@ -582,7 +583,7 @@ void RunStagedActorTransition(void)
     s32 move_rate;
     s32 transition_busy;
 
-    leader = Actor_Get(0);
+    leader = Actor_Get(ACTOR_PARTY_LEADER);
     direction_index = leader->direction_and_kind >> 12;
     packed_step = StagedActorDirectionSteps[direction_index];
     target_position[0] = leader->x.value + (packed_step & 0xffff0000);
@@ -782,16 +783,16 @@ void SceneEffect_RunObjectZeroColorSequence(void)
     u8 *state;
 
     state = *(u8 **)0x03001ebc;
-    obj = Actor_Get(0);
+    obj = Actor_Get(ACTOR_PARTY_LEADER);
     Event_Begin();
     Audio_PlayCue(228);
     obj->callback = 0x020086a1;
     obj->color = 0x3333;
-    Actor_SetAnimation(0, 2);
-    Actor_SetDestinationOffset(0, 0, -6);
-    Actor_WaitForMove(0);
-    Actor_SetChildValue(0, 15);
-    Actor_SetSpriteFlags(Actor_Get(0), 0);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, 2);
+    Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, -6);
+    Actor_WaitForMove(ACTOR_PARTY_LEADER);
+    Actor_SetChildValue(ACTOR_PARTY_LEADER, 15);
+    Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
     obj->callback = 0;
     Event_Wait(30);
     Event_CloseScreen();
@@ -811,7 +812,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
     u8 *guard;
     u8 *sub;
 
-    entry = Actor_Get(0);
+    entry = Actor_Get(ACTOR_PARTY_LEADER);
     guard = GameFlag_IsSet(0x109);
     if (guard == 0) {
         Event_Begin();
@@ -820,9 +821,9 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
         entry[85] = guard;
         /* Position, from the entry's own s16 coordinates at +10/+18
          * (converted to 16.16 fixed point; the y term is offset by -16.0). */
-        Actor_SetPosition(0, (*(s16 *)(entry + 10) << 16), ((*(s16 *)(entry + 18) << 16) + -0x100000));
-        Actor_SetChildValue(0, 15);
-        sub = Actor_Get(0);
+        Actor_SetPosition(ACTOR_PARTY_LEADER, (*(s16 *)(entry + 10) << 16), ((*(s16 *)(entry + 18) << 16) + -0x100000));
+        Actor_SetChildValue(ACTOR_PARTY_LEADER, 15);
+        sub = Actor_Get(ACTOR_PARTY_LEADER);
         Actor_SetSpriteFlags(sub, 0);
         Event_OpenScreen();
         Event_WaitForScreen();
@@ -830,12 +831,12 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
         /* Override field at +108 of the entry record; holds an EWRAM
          * address while the effect sequence below runs. */
         *(s32 *)(entry + 108) = 0x20086a1;
-        Actor_SetSpeed(0, 0x6666, 0x3333);
-        Actor_WalkByAndWait(0, 0, 8);
-        Actor_SetChildValue(0, 0);
-        sub = Actor_Get(0);
+        Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x6666, 0x3333);
+        Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 0, 8);
+        Actor_SetChildValue(ACTOR_PARTY_LEADER, 0);
+        sub = Actor_Get(ACTOR_PARTY_LEADER);
         Actor_SetSpriteFlags(sub, 1);
-        Actor_WalkByAndWait(0, 0, 8);
+        Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 0, 8);
         entry[85] = 3;
         /* Restore the +108 override field to the original (unset) value. */
         *(s32 *)(entry + 108) = guard;
@@ -846,7 +847,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
 
 void SceneState_StoreLookupZeroToWord24(void)
 {
-    *(s32 *)(*(u8 **)0x03001ee0 + 24) = Actor_Get(0);
+    *(s32 *)(*(u8 **)0x03001ee0 + 24) = Actor_Get(ACTOR_PARTY_LEADER);
 }
 
 void SceneState_ClearWorkspaceWord24(void)
@@ -859,7 +860,7 @@ s32 SceneActor_SetFlagBitByRelativeDepth(struct Actor_020008c8 *actor)
     struct Actor_020008c8 *ref;
     u8 *fp;
     u8 flags;
-    ref = Actor_Get(0);
+    ref = Actor_Get(ACTOR_PARTY_LEADER);
     fp = &actor->flatla3;
     flags = *fp | 2;
     *fp = flags;
@@ -958,7 +959,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
     u32 i;
     struct EffectOptions options;
 
-    actor = Actor_Get(0);
+    actor = Actor_Get(ACTOR_PARTY_LEADER);
     Event_Begin();
     Camera_MoveTo(-1, -1, -1, 0);
     Map_Redraw();
@@ -990,12 +991,12 @@ void FieldScene_RunSupplementalSequenceOne(void)
                       velocity[2], 0x1090001, &options);
     }
     Audio_PlayCue(188);
-    Actor_SetAttachedEffect(0, 0x101);
-    Actor_SetAnimation(0, 22);
+    Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x101);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, 22);
     Work_SetValuesIfNonNegative(0x50000, 0x50000, 0x10000);
     Work_SetValuesIfNonNegative(-1, -1, 0xe666);
     MapRender_WaitForValues();
-    Actor_SetAttachedEffect(0, 0x100);
+    Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x100);
     Func_02005ac6();
     *(s32 *)((u8 *)actor + 72) = 0x10000;
     *(s32 *)((u8 *)actor + 68) = 0x4000;
@@ -1093,7 +1094,7 @@ s32 SceneActor_TryMoveActorZeroTwoTilesAhead(void)
     u8 old;
     s32 m;
 
-    obj = Actor_Get(0);
+    obj = Actor_Get(ACTOR_PARTY_LEADER);
     state = &obj->state;
     old = *state;
     vec.x = (obj->x & 0xfff00000) + 0x80000;
@@ -1117,7 +1118,7 @@ s32 SceneActor_TryMoveActorZeroTwoTilesAhead(void)
             obj->accel = 0x40000;
             *state &= 0x7e;
             Actor_SetSpriteFlags(obj, 0);
-            Actor_MoveToAndWait(0, ((union VecView *)&vec)->h[1], ((union VecView *)&vec)->h[5]);
+            Actor_MoveToAndWait(ACTOR_PARTY_LEADER, ((union VecView *)&vec)->h[1], ((union VecView *)&vec)->h[5]);
             Object_SetAnimation(obj, 6);
             Actor_SetSpriteFlags(obj, 1);
             *state = old;
@@ -1257,7 +1258,7 @@ void FieldScene_SetFlag987AtActorTwelveTile(void)
 void SceneDialogue_RunLine2682(void)
 {
     Event_Begin();
-    Actor_SetAnimation(0, 1);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
     Message_ShowCentered(MSG_THERE_WORDS_CARVED_INTO_RELIEF, 1);
     Event_End();
 }
@@ -1316,29 +1317,29 @@ void FieldScene_RunScene3c8SequenceC(void)
     struct FieldActor *actor;
     s32 z;
 
-    actor = Actor_Get(0);
+    actor = Actor_Get(ACTOR_PARTY_LEADER);
     Event_Begin();
-    Actor_EnableActionCallback(0, 0x200d21c);
+    Actor_EnableActionCallback(ACTOR_PARTY_LEADER, 0x200d21c);
     Func_0200602e(0);
-    Actor_SetChildValue(0, 6);
+    Actor_SetChildValue(ACTOR_PARTY_LEADER, 6);
     actor->velocity_y = 0x40000;
-    Actor_SetSpeed(0, 0x40000, 0x20000);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x40000, 0x20000);
     if (actor->z.fixed >> 20 <= 54) {
-        Actor_Get(0)->unknown_5a &= 254;
+        Actor_Get(ACTOR_PARTY_LEADER)->unknown_5a &= 254;
         z = 210;
     } else {
-        Actor_Get(0)->unknown_5a &= 254;
+        Actor_Get(ACTOR_PARTY_LEADER)->unknown_5a &= 254;
         z = 238;
     }
-    Actor_WalkToAndWait(0, actor->x.part.pixel, z << 2);
+    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, actor->x.part.pixel, z << 2);
     Event_Wait(1);
-    SetFlagBits(&Actor_Get(0)->unknown_5a, 1);
+    SetFlagBits(&Actor_Get(ACTOR_PARTY_LEADER)->unknown_5a, 1);
     Event_Wait(20);
     actor->update = (void (*)(union FieldObject *))0x20085e5;
-    Actor_ShowEmote(0, 0x102, 60);
-    Actor_SetAnimationAndWait(0, 4);
-    Actor_SetChildValue(0, 0);
-    Actor_SetAnimationAndWait(0, 4);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 60);
+    Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 4);
+    Actor_SetChildValue(ACTOR_PARTY_LEADER, 0);
+    Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 4);
     actor->update = 0;
     Event_End();
 }
@@ -1359,7 +1360,7 @@ void FieldScene_RunScene3c8SequenceD(void)
     work->field_cba = 0;
     work->field_cb6 = 1;
     Event_Begin();
-    Actor_SetAnimation(0, 1);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
     Message_ShowCentered(MSG_STATUE_SPEAKS_ROBIN_SOUL_YE, 1);
     ColorBuffer_ApplySource(0x10000, 0);
     ColorBuffer_ApplyTarget(0x10005, 0);
@@ -1443,37 +1444,37 @@ void FieldScene_RunFlag986ActorOneScene(void)
     if (o->unk8 >> 20 == 53) {
         if (GameFlag_IsSet(g) == 0) {
             GameFlag_Set(g);
-            o = Actor_Get(0);
+            o = Actor_Get(ACTOR_PARTY_LEADER);
             if (o != 0) {
-                Actor_SetPosition(1, o->unk8, o->unk10);
+                Actor_SetPosition(ACTOR_GERALD, o->unk8, o->unk10);
             }
-            Actor_SetSpeed(1, m1, m2);
-            Actor_WalkToAndWait(1, k, 88);
-            Actor_WalkToAndWait(1, k, 104);
-            Actor_FaceEachOther(1, 0, 0);
+            Actor_SetSpeed(ACTOR_GERALD, m1, m2);
+            Actor_WalkToAndWait(ACTOR_GERALD, k, 88);
+            Actor_WalkToAndWait(ACTOR_GERALD, k, 104);
+            Actor_FaceEachOther(ACTOR_GERALD, ACTOR_PARTY_LEADER, 0);
             Event_Wait(20);
-            Actor_SetAnimationAndWait(1, 4);
+            Actor_SetAnimationAndWait(ACTOR_GERALD, 4);
             Event_Wait(20);
             Event_SetMessage(MSG_HMMM_WE_CANT_PUSH_BLOCK);
-            Event_ShowMessageAndWait(1, 0, 20);
-            Actor_FaceDirection(1, 0, 10);
-            Actor_ShowEmote(1, h, 60);
-            Actor_FaceActor(1, 0, 0);
+            Event_ShowMessageAndWait(ACTOR_GERALD, 0, 20);
+            Actor_FaceDirection(ACTOR_GERALD, 0, 10);
+            Actor_ShowEmote(ACTOR_GERALD, h, 60);
+            Actor_FaceActor(ACTOR_GERALD, ACTOR_PARTY_LEADER, 0);
             Event_Wait(20);
-            Actor_RunRepeatedMotion(1, 2);
+            Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
             Event_Wait(20);
-            Event_ShowMessageAndWait(1, 0, 20);
-            Actor_SetAnimation(0, 3);
-            Actor_SetAnimationAndWait(1, 3);
+            Event_ShowMessageAndWait(ACTOR_GERALD, 0, 20);
+            Actor_SetAnimation(ACTOR_PARTY_LEADER, 3);
+            Actor_SetAnimationAndWait(ACTOR_GERALD, 3);
             Event_Wait(30);
-            Actor_WalkToAndWait(1, k, 88);
-            Actor_SetAnimation(1, 2);
-            u = Actor_Get(0);
+            Actor_WalkToAndWait(ACTOR_GERALD, k, 88);
+            Actor_SetAnimation(ACTOR_GERALD, 2);
+            u = Actor_Get(ACTOR_PARTY_LEADER);
             if (u != 0) {
-                Actor_SetDestination(1, u->unkA, u->unk12);
+                Actor_SetDestination(ACTOR_GERALD, u->unkA, u->unk12);
             }
-            Actor_WaitForMove(1);
-            Actor_SetPosition(1, 0, 0);
+            Actor_WaitForMove(ACTOR_GERALD);
+            Actor_SetPosition(ACTOR_GERALD, 0, 0);
             Event_End();
         }
     }
@@ -1530,7 +1531,7 @@ void Func_02001780(void)
     }
     Event_Begin();
     Event_SetMessage(MSG_THOUGHT_ID_EXPLORE_AFTER_DOOR);
-    Actor_FaceActor(10, 0, 0);
+    Actor_FaceActor(10, ACTOR_PARTY_LEADER, 0);
     Event_Wait(10);
     Event_ShowMessageAndWait(10, 0, 20);
     SetActorDirection(10, 57344, 0);
@@ -1809,9 +1810,9 @@ void FieldScene_DrawTilesWhenCheckClear(void)
 void FieldScene_RunScene3c8SequenceB(void)
 {
     Event_Begin();
-    Actor_SetSpeed(0, 0x8000, 0x4000);
-    Actor_WalkToAndWait(0, 0x208, 0x2c8);
-    Actor_FaceDirection(0, 0x4000, 10);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
+    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x208, 0x2c8);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 10);
     (void)OverlayObject_SpawnWithMode14(0x2080000, 0, 0x3100000, 223);
     BattleEffect_RunRisingObjectSequence_1(0, 6, 0);
     Event_Wait(60);
@@ -1942,7 +1943,7 @@ void FieldScene_RunScene3c8_02004a2c(void)
     s32 v2;
     s32 slot0;
 
-    rec = Value1_02004a2c(Engine_ActorGet, 0);
+    rec = Value1_02004a2c(Engine_ActorGet, ACTOR_PARTY_LEADER);
     rec8 = Value1_02004a2c(Engine_ActorGet, 20);
     Event_Begin();
     Camera_MoveTo(-1, -1, -1, 0);
@@ -1960,8 +1961,8 @@ void FieldScene_RunScene3c8_02004a2c(void)
     Event_Wait(30);
     *p8 = 3;
     Event_Wait(24);
-    Actor_SetAttachedEffect(0, 0x101);
-    Actor_SetAnimation(0, 22);
+    Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x101);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, 22);
     *p8 &= 254;
     *(s32 *)((s32)rec8 + 12) += -0x30000;
     *(s32 *)(rec + 12) += -0x30000;
@@ -1984,12 +1985,12 @@ void FieldScene_RunScene3c8_02004a2c(void)
     *(s32 *)(rec + 20) += 0x10000;
     *p8 = none;
     rec8[85] = none;
-    Actor_SetAttachedEffect(0, 0x100);
-    Actor_SetAnimation(0, 1);
+    Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x100);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
     Event_Wait(40);
     *(s32 *)(rec + 108) = 0x200c969;
     Event_Wait(60);
-    Actor_SetSpritePriority(0, 1);
+    Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 1);
     Actor_SetSpritePriority(20, 1);
     Audio_PlayCue(17);
     Audio_PlayCue(0x134);

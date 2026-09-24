@@ -6,6 +6,7 @@
 
 #include "FACING_OBJECT.H"
 #include "FIELD_EVENT.H"
+#include "FIELD_SCENE.H"
 
 enum ValeMessage {
     MSG_THE_THREE_TRAVELERS_SEEM_ODD = 0xf58,
@@ -236,7 +237,7 @@ void FieldScene_RunScene377_020001e0(void)
     Actor_StartRepeatedMotion(16, 2);
     Event_Wait(30);
     Event_SetMessage(MSG_HEY_BOY);
-    Actor_FaceEachOther(0, 16, 10);
+    Actor_FaceEachOther(ACTOR_PARTY_LEADER, 16, 10);
     Event_ShowMessageAndWait(16, 0, 6);
     Actor_ShowEmote(16, 0x102, 0);
     Actor_StartRepeatedMotion(16, 1);
@@ -258,7 +259,7 @@ void SceneDialogue_RunActorFourteenDialogue11AA(void)
     void *work;
 
     Event_Begin();
-    Actor_FaceActor(0xE, 0, 0xA);
+    Actor_FaceActor(0xE, ACTOR_PARTY_LEADER, 0xA);
     Event_SetMessage(MSG_THE_MASKED_MAN_WAS_GARCIA);
     Event_OpenMessage(0xE, 0);
     if (Event_ChooseYesNo(0, 0) == 0) {
@@ -360,7 +361,7 @@ void FieldScene_RunScene377_02000e34(void)
         Event_Begin();
         if (GameFlag_IsSet(0x87a) != 0) {
             Actor_RunRepeatedMotion(13, 2);
-            Actor_FaceActor(13, 0, 10);
+            Actor_FaceActor(13, ACTOR_PARTY_LEADER, 10);
             if (GameFlag_IsSet(0x300) == 0) {
                 Event_SetMessage(MSG_YOU_CAME_BACK);
                 Event_ShowMessage(13, 0);
@@ -384,7 +385,7 @@ void FieldScene_RunScene377_02000e34(void)
 void SceneDialogue_ShowLine1C13WithActor16Steps(void)
 {
     Event_Begin();
-    Actor_FaceActor(0x10, 0, 0xA);
+    Actor_FaceActor(0x10, ACTOR_PARTY_LEADER, 0xA);
     Event_SetMessage(MSG_YOUVE_GROWN_SO_MUCH);
     Event_ShowMessage(0x10, 0);
     Actor_FaceDirection(0x10, 0xB000, 0xA);
@@ -433,7 +434,7 @@ void FieldScene_RunSupplementalSequenceOne(s32 a0)
     Func_02002cf8(a0);
     Camera_MoveTo(-1, -1, -1, 0);
     Task_Wait(1);
-    Actor_SetPosition(0, 0, 0);
+    Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
     Actor_SetPosition(18, 0x1e00000, 0xca0000);
     Task_Wait(1);
     Camera_FollowActor(18, 1);

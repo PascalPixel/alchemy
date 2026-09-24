@@ -5,6 +5,7 @@
 
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "FIELD_SCENE.H"
 
 #define WORKSPACE (*(u8 **)0x03001ebc)
 
@@ -145,21 +146,21 @@ void SceneActor_RunActorStep(s32 arg0)
 void SceneDialogue_RunActor9Line(void)
 {
     Event_SetMessage(MSG_THOUGHT_SAW_CAT_GET_UP);
-    Actor_FaceEachOther(9, 0, 2);
+    Actor_FaceEachOther(9, ACTOR_PARTY_LEADER, 2);
     SceneActor_RunActorStep(9);
 }
 
 void SceneDialogue_RunActor11Line(void)
 {
     Event_SetMessage(MSG_DODONPAS_HENCHMEN_NEVER_ATTACKED_US);
-    Actor_FaceEachOther(11, 0, 2);
+    Actor_FaceEachOther(11, ACTOR_PARTY_LEADER, 2);
     SceneActor_RunActorStep(11);
 }
 
 void SceneDialogue_RunActor12Line(void)
 {
     Event_SetMessage(MSG_ITS_NEAR_TIME_FOR_COLOSSO);
-    Actor_FaceEachOther(12, 0, 2);
+    Actor_FaceEachOther(12, ACTOR_PARTY_LEADER, 2);
     SceneActor_RunActorStep(12);
 }
 
@@ -170,7 +171,7 @@ void FieldScene_RunActor16Sequence(void)
 
     Event_Begin();
     Event_SetMessage(MSG_ROBIN_YOUVE_COME_BACK_VAULT);
-    Actor_FaceEachOther(16, 0, 2);
+    Actor_FaceEachOther(16, ACTOR_PARTY_LEADER, 2);
     Actor_SetAnimation(16, 1);
     Event_ShowMessageAndWait(16, 0, 20);
     Actor_SetAnimationAndWait(16, 4);
@@ -193,7 +194,7 @@ void SceneDialogue_RunActor16Line(void)
     void Actor_FaceEachOther(s32, s32, s32);
 
     Event_SetMessage(MSG_THOSE_GUYS_REALLY_WANTED_REVENGE);
-    Actor_FaceEachOther(16, 0, 2);
+    Actor_FaceEachOther(16, ACTOR_PARTY_LEADER, 2);
     SceneActor_RunActorStep(16);
 }
 
@@ -202,7 +203,7 @@ void SceneDialogue_RunActor23Line(void)
     void Actor_FaceEachOther(s32, s32, s32);
 
     Event_SetMessage(MSG_DID_SOME_COOKING_NOW_IVE);
-    Actor_FaceEachOther(23, 0, 2);
+    Actor_FaceEachOther(23, ACTOR_PARTY_LEADER, 2);
     SceneActor_RunActorStep(23);
 }
 
@@ -216,7 +217,7 @@ void FieldScene_RunActor18FlaggedSequence(void)
     s32 record;
 
     Event_Begin();
-    Actor_FaceEachOther(18, 0, 0);
+    Actor_FaceEachOther(18, ACTOR_PARTY_LEADER, 0);
     if (GameFlag_IsSet(0x85b) == 0) {
         Event_SetMessage(MSG_HAVE_LOT_LEFTOVER_BONES_FROM);
         Event_OpenMessage(18, 0);

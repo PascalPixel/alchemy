@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "FIELD_SCENE.H"
 
 #define NULL ((void *)0)
 #define CreateOverlayObject Func_02001cf6
@@ -233,7 +234,7 @@ void SceneActor_WaitActorDescent(u8 *obj)
 /* Point an object toward actor zero using their fixed-point X/Z delta. */
 s32 SceneActor_FaceActorZero(u8 *obj)
 {
-    u8 *target = Actor_Get(0);
+    u8 *target = Actor_Get(ACTOR_PARTY_LEADER);
     s32 dz = *(s32 *)(target + 16) - *(s32 *)(obj + 16);
     s32 dx = *(s32 *)(target + 8) - *(s32 *)(obj + 8);
 
@@ -319,7 +320,7 @@ s32 Func_020010e0(s32 a0)
     u8 *slot;
     s32 saved;
 
-    rec = (u8 *)Value1(Engine_ActorGet, 0);
+    rec = (u8 *)Value1(Engine_ActorGet, ACTOR_PARTY_LEADER);
     flag = rec + 85;
     saved = *flag;
     slot = (u8 *)box;
@@ -421,10 +422,10 @@ void FieldScene_RunScene3a6SequenceC(void)
         if (*(s16 *)((s32)Data_02000240 + off24a) != 8) {
             idx = p5->touched_trigger;
             rec8 = Value1(Engine_ActorGet, 8);
-            record = Value1(Engine_ActorGet, 0);
+            record = Value1(Engine_ActorGet, ACTOR_PARTY_LEADER);
             *(s32 *)(rec8 + 48) = *(s32 *)(record + 48);
             rec8 = Value1(Engine_ActorGet, 8);
-            record = Value1(Engine_ActorGet, 0);
+            record = Value1(Engine_ActorGet, ACTOR_PARTY_LEADER);
             *(s32 *)(rec8 + 52) = *(s32 *)(record + 52);
             idx -= 45;
             tbl = 0x02009f00;
@@ -452,10 +453,10 @@ void FieldScene_RunScene3a6_020014ac(void)
 
     Event_Begin();
     Event_Wait(10);
-    Actor_SetSpeed(0, 0x8000, 0x1999);
-    Actor_SetAnimation(0, 8);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x1999);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, 8);
     Event_Wait(15);
-    Actor_SetDestinationOffset(0, 8, 0);
+    Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 8, 0);
     Event_Wait(4);
     Audio_PlayCue(0x120);
     Audio_PlayCue(239);
@@ -466,8 +467,8 @@ void FieldScene_RunScene3a6_020014ac(void)
     record = Actor_Get(9);
     *(s32 *)(record + 68) = zero;
     Actor_SetDestinationOffset(9, 12, 0);
-    Actor_WaitForMove(0);
-    Actor_SetAnimation(0, 1);
+    Actor_WaitForMove(ACTOR_PARTY_LEADER);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
     Actor_WaitForMove(9);
     Audio_PlayCue(0x120);
     Audio_PlayCue(213);

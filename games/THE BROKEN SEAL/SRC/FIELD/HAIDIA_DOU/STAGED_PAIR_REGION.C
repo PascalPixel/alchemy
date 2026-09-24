@@ -77,11 +77,8 @@ void Func_020034c2(Obj *, s32, s32, s32);
 void Func_020034ee(Obj *);
 void Func_02002a16(s32, s32, s32);
 s32 Func_0200293e(s32 dz, s32 dx);
-void Func_02001478();
 void Func_02002050();
 s32 Func_02002d90();
-s32 Func_02001ac2();
-void Func_02001ad2();
 void Func_0200223c();
 s32 Func_020031c6();
 s32 Func_0200320e();
@@ -108,6 +105,8 @@ void Func_020030ee(s32 width, s32 top, s32 bottom);
  * into the argument registers; a direct call precomputes a costly constant
  * into a pseudo that the compiler then shares with later uses in the block.
  * A value-returning call also sets r0 last of its arguments. */
+s32 StagedActor_FillGridAttributeRectangle(u32 layer, s32 x, s32 z, u32 width, u32 height, s32 value);
+
 static __inline__ s32 Value1(s32 (*f)(), s32 a0)
 {
 
@@ -317,7 +316,7 @@ void FieldScene_ConfigureRegionAtRow17(void)
 void FieldScene_RunInitBracketThenSequence(void)
 {
     Event_Begin();
-    Func_02001478();
+    StagedActor_AdvancePair();
     Event_End();
     Func_02002050();
 }
@@ -493,8 +492,8 @@ void FieldScene_RunScene3a6_020014ac(void)
     Actor_SetAnimation(9, 8);
     Actor_SetSpritePriority(9, 3);
     *(u8 *)(Func_0200323e(9) + 35) = 2;
-    Value6(Func_02001ac2, 0, 12, 16, 1, 4, 0);
-    Call6(Func_02001ad2, 0, 13, 16, 1, 4, 0);
+    Value6(StagedActor_FillGridAttributeRectangle, 0, 12, 16, 1, 4, 0);
+    Call6(StagedActor_FillGridAttributeRectangle, 0, 13, 16, 1, 4, 0);
     GameFlag_Set(0x202);
     Audio_PlayCue(240);
     Event_End();

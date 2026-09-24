@@ -57334,18 +57334,6 @@
           "address": "0x02009c1c",
           "kind": "thumb"
         },
-        "Func_02001478": {
-          "address": "0x020083a8",
-          "kind": "thumb"
-        },
-        "Func_02001ac2": {
-          "address": "0x02008528",
-          "kind": "thumb"
-        },
-        "Func_02001ad2": {
-          "address": "0x02008528",
-          "kind": "thumb"
-        },
         "Func_02001cf6": {
           "address": "0x02009c44",
           "kind": "thumb"
@@ -57437,6 +57425,14 @@
         "SceneStateWords": {
           "address": "0x02000240",
           "kind": "data"
+        },
+        "StagedActor_AdvancePair": {
+          "address": "0x020083a8",
+          "kind": "thumb"
+        },
+        "StagedActor_FillGridAttributeRectangle": {
+          "address": "0x02008528",
+          "kind": "thumb"
         }
       },
       "owners": [

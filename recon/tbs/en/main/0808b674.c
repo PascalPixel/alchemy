@@ -1,13 +1,13 @@
-/* Draft, not exact (2026-09-24): 432 of 432 bytes, 63 halfwords differ.
- * The whole owner is hand-written; the residual is register allocation:
- * the reference keeps work in r8 and leader in r7 and compares the header
- * clearing loop against a copy of work in ip (a biv-eliminated counter
- * loop), while every counter, pointer and do/while spelling here either
- * keeps the counter or compares against work itself, which promotes work
- * to r7. Declaring the row above as its own extern (Data_0200fe00) takes
- * it to 55; the height add (y + (h - 0x200000)) and the Object_CreateFar
- * argument load order follow from the same allocation. */
-
+/* Draft, not exact (2026-09-24): 432 of 432 bytes, 36 halfwords differ.
+ * The whole owner is hand-written. Comparing the header-clearing loop
+ * against a fresh read of Data_03001ebc (not the work local) is what puts
+ * work in r8 and leader in r7 as the ROM has them (63 -> 42); the ROM then
+ * compares against a copy of work in ip where this reloads the pointer.
+ * The row above the player's cell is addressed as its own extern
+ * (Data_0200fe00, the map row one step north) to get the ROM's pool order
+ * (42 -> 36); spelled cell - 128 it is 42. Remaining: temporaries in r0/r4
+ * versus r2/r1 around the cell tests, and the height add y + (h - 0x200000)
+ * is reassociated as (y + h) - 0x200000 in every spelling tried. */
 #include "TYPES.H"
 
 /* One row of a scene's object table; a row whose id is -1 ends it. */
@@ -79,6 +79,7 @@ extern struct ObjectWork *Data_03001ebc;
 extern struct PlayerState Data_02000240;
 extern const struct EventObjectEntry Data_0809f810[2];
 extern struct MapCell Data_02010000[];
+extern struct MapCell Data_0200fe00[];
 extern void **Data_03001e70;
 
 void ObjectTable_ClearBattleSlots(void);
@@ -111,7 +112,7 @@ void ObjectTable_ResetForObject(struct EventObjectEntry *table)
     do {
         *header = 0;
         header--;
-    } while ((s32)header >= (s32)work->header);
+    } while ((s32)header >= (s32)Data_03001ebc->header);
     ObjectTable_ClearBattleSlots();
     entry->condition = -1;
     entry->id = leader;
@@ -126,7 +127,7 @@ void ObjectTable_ResetForObject(struct EventObjectEntry *table)
     object->terrain_id = Data_02000240.terrain_id;
     pos = (object->x / 0x100000) + (object->z / 0x100000) * 128;
     cell = &Data_02010000[pos];
-    above = cell - 128;
+    above = &Data_0200fe00[pos];
     if (Data_02000240.y != 0 && cell->kind == 0xfd && above->kind == 0xfd) {
         Data_02000240.on_ladder = 1;
         object->y += Map_GetTerrainHeightFar(0, object->x, object->z - 0x100000) - 0x200000;

@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_3a8:02001ed8": {
+      "name": "KareiMachi_SpeedUpActors",
+      "source": "FIELD/KAREI_MACHI/SPEED_UP_ACTORS.C"
+    },
     "resource_3a4:020020d0": {
       "name": "ArutinYama_ApplyEntryState",
       "source": "FIELD/ARUTIN_YAMA/ENTRY_STATE.C"

@@ -70096,6 +70096,30 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "karei-machi-speed-up-actors",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/KAREI_MACHI/SPEED_UP_ACTORS.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3a8",
+      "absolute_symbols": {
+        "Engine_ActorSetSpeed": {
+          "address": "0x0200bc2c",
+          "kind": "thumb"
+        },
+        "Engine_TaskAddCallback": {
+          "address": "0x0200bb1c",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02001ed8",
+          "extent": 60,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

@@ -2469,8 +2469,13 @@
       "name": "BattleEffect_RunTargetedItemBreak",
       "source": "BATTLE/EFFECT/RUN_TARGETED_ITEM_BREAK.C"
     },
+    "main:080c9048": {
+      "name": "BattlePres_ConfigureEffectDisplay",
+      "source": "BATTLE/PRESENTATION/CONFIGURE_EFFECT_DISPLAY.C"
+    },
     "main:080cd260": {
-      "name": "BattlePresentation_ProcessPendingGraphicsTransfer"
+      "name": "BattlePresentation_ProcessPendingGraphicsTransfer",
+      "source": "BATTLE/PRESENTATION/PROCESS_PENDING_GRAPHICS_TRANSFER.C"
     },
     "main:08096048": {
       "name": "BattleFx_UpdateRadialSpread"
@@ -20711,7 +20716,6 @@
     "main:080ceb54": "BattleFx_RunMemberBurst",
     "main:080dea70": "BattleFx_RunProjectileVolley",
     "main:0808ae74": "Encounter_SelectEnemyGroup",
-    "main:080c9048": "BattlePres_ConfigureEffectDisplay",
     "main:08004c6c": "SceneTransform_ApplyRoll",
     "main:08015358": "Djinn_ShowJoinedMessageFar",
     "main:080e3aa0": "BattlePres_RunBeamSequence",

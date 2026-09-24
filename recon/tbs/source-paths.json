@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_3bb:02000bd4": {
+      "name": "KorosseoKabe_ApplyEntryState",
+      "source": "FIELD/KOROSSEO_KABE/ENTRY_STATE.C"
+    },
     "resource_38f:02000304": {
       "name": "KorimaMura_Func02000304",
       "source": "FIELD/KORIMA_MURA/F_00304.C"

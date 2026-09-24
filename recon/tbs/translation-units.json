@@ -75411,6 +75411,146 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "scene-3bb-02000bd4",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_KABE/ENTRY_STATE.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3bb",
+      "absolute_symbols": {
+        "Engine_GameFlagSet": {
+          "address": "0x0200bef0",
+          "kind": "thumb"
+        },
+        "Engine_MapCopyCellAttributes": {
+          "address": "0x0200be88",
+          "kind": "thumb"
+        },
+        "Engine_ActorGet": {
+          "address": "0x0200bf50",
+          "kind": "thumb"
+        },
+        "Engine_ObjectSetAnimation": {
+          "address": "0x0200be48",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagIsSet": {
+          "address": "0x0200bee8",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetAnimation": {
+          "address": "0x0200bf98",
+          "kind": "thumb"
+        },
+        "Main_080770e0": {
+          "address": "0x0200bf00",
+          "kind": "thumb"
+        },
+        "SceneState_ApplyRectsForActors15To17": {
+          "address": "0x0200862c",
+          "kind": "thumb"
+        },
+        "Main_0808a590": {
+          "address": "0x0200c0a0",
+          "kind": "thumb"
+        },
+        "Engine_TaskAddCallback": {
+          "address": "0x0200bda8",
+          "kind": "thumb"
+        },
+        "Main_080003b8": {
+          "address": "0x0200be38",
+          "kind": "thumb"
+        },
+        "Korosseo_ShowItemIcon": {
+          "address": "0x0200b138",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetChildValue": {
+          "address": "0x0200bfc8",
+          "kind": "thumb"
+        },
+        "FieldScene_BuildDescriptorAndInstallTask": {
+          "address": "0x0200b9fc",
+          "kind": "thumb"
+        },
+        "Main_080091c8": {
+          "address": "0x0200be90",
+          "kind": "thumb"
+        },
+        "Engine_ActorDestroy": {
+          "address": "0x0200bf58",
+          "kind": "thumb"
+        },
+        "Engine_AudioPlayCue": {
+          "address": "0x0200c0b0",
+          "kind": "thumb"
+        },
+        "Korosseo_SelectSoloCompetitor": {
+          "address": "0x02009ba8",
+          "kind": "thumb"
+        },
+        "initialize_scene_actor_positions": {
+          "address": "0x02009b30",
+          "kind": "thumb"
+        },
+        "Local_020029d0": {
+          "address": "0x0200a9d0",
+          "kind": "thumb"
+        },
+        "Engine_ActorFollow": {
+          "address": "0x0200c098",
+          "kind": "thumb"
+        },
+        "SceneState_InitControlRecordAndStartTask": {
+          "address": "0x0200bae4",
+          "kind": "thumb"
+        },
+        "Korosseo_RunGreetScene": {
+          "address": "0x020090dc",
+          "kind": "thumb"
+        },
+        "FieldScene_RunSixSteps896To936": {
+          "address": "0x02009fb8",
+          "kind": "thumb"
+        },
+        "FieldScene_RunScene3bb_02000b38": {
+          "address": "0x02008b38",
+          "kind": "thumb"
+        },
+        "Engine_EventRequestExit": {
+          "address": "0x0200c030",
+          "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
+        },
+        "FieldScene_RunSupplementalSequenceOne": {
+          "address": "0x02008714",
+          "kind": "thumb"
+        },
+        "mark_scene_progress": {
+          "address": "0x02009c78",
+          "kind": "thumb"
+        },
+        "Value_000000e5": {
+          "address": "0x000000e5",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02000bd4",
+          "extent": 1288,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

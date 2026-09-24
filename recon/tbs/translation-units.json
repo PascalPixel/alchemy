@@ -124816,6 +124816,30 @@
         }
       ],
       "overlay": null
+    },
+    {
+      "id": "psynergy-menu-range-page",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/MENU/ABILITY/RANGE_PAGE.C",
+      "compiler_route": "canonical-gcc296",
+      "owners": [
+        {
+          "address": "0x080a8cc0",
+          "extent": 116,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080a8d34",
+          "extent": 524,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080a8f40",
+          "extent": 380,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
     }
   ]
 }

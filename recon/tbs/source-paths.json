@@ -5034,11 +5034,10 @@
     },
     "main:080a8cc0": {
       "name": "PsynergyMenu_DrawRange",
-      "source": "MENU/ABILITY/DRAW_RANGE.C"
+      "source": "MENU/ABILITY/RANGE_PAGE.C"
     },
     "main:080a8f40": {
-      "name": "PsynergyMenu_DrawListPage",
-      "source": "MENU/ABILITY/DRAW_LIST_PAGE.C"
+      "name": "PsynergyMenu_DrawListPage"
     },
     "main:080a99b0": {
       "name": "Menu_MoveGridCursor",
@@ -19339,8 +19338,7 @@
       "source": "MENU/ITEM/RUN_LIST.C"
     },
     "main:080a8d34": {
-      "name": "PsynergyMenu_DrawRangePage",
-      "source": "MENU/ABILITY/DRAW_RANGE_PAGE.C"
+      "name": "PsynergyMenu_DrawRangePage"
     },
     "main:080a93a4": {
       "name": "ItemMenu_DrawEquipPage",

@@ -73522,6 +73522,30 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "ramakan-sabaku-sand-effect",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/RAMAKAN_SABAKU/SAND_EFFECT.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3a5",
+      "absolute_symbols": {
+        "Engine_AudioPlayCue": {
+          "address": "0x02009e44",
+          "kind": "thumb"
+        },
+        "Engine_RandomNext": {
+          "address": "0x02009c9c",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02000344",
+          "extent": 104,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

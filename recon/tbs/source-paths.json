@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_3a5:02000344": {
+      "name": "RamakanSabaku_EmitSandEffect",
+      "source": "FIELD/RAMAKAN_SABAKU/SAND_EFFECT.C"
+    },
     "resource_3b1:02004fa8": {
       "name": "FuneHeya_FindFirstSetFlag",
       "source": "FIELD/FUNE_HEYA/FIRST_SET_FLAG.C"

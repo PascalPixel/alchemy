@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_39b:020012e0": {
+      "name": "MakyuriIriguchi_ApplyEntryState",
+      "source": "FIELD/MAKYURI_IRIGUCHI/ENTRY_STATE.C"
+    },
     "resource_3bb:02000bd4": {
       "name": "KorosseoKabe_ApplyEntryState",
       "source": "FIELD/KOROSSEO_KABE/ENTRY_STATE.C"

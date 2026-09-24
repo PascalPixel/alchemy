@@ -1,6 +1,6 @@
 #include "TYPES.H"
 
-#define Scene_RunScene394SequenceA Func_020003f0
+#define Scene_RunKorimaMagariSequence Func_020003f0
 
 extern u8 Data_00000001[];
 void Func_020006de();
@@ -107,7 +107,7 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
     f(a0, a1, a2, a3, a4, a5);
 }
 
-void Scene_RunScene394SequenceA(void)
+void Scene_RunKorimaMagariSequence(void)
 {
     u32 i;
     s32 record;
@@ -178,17 +178,23 @@ void Scene_RunScene394SequenceA(void)
         Func_02000734(9, 83, 16, 5, 1, 9, 30);
         Func_02000748(41, 83, 16, 5, 2, 9, 30);
     }
-    base5_200a0dc = 0x200a0dc;
-    *(s32 *)base5_200a0dc = 0;
+
+    *(s32 *)0x0200a0dc = 0;
     Call2(Func_020016c4, 0x20083c1, 0xc80);
     Func_020016c2(1);
-    Func_020016f4(1, 0, 0x200836d);
-    Func_020017ea(231);
-    *(s32 *)base5_200a0dc = 0;
+    /* FAKEMATCH: the two do/while (0) wraps keep the flag and the counter
+     * address in r6 and r5. */
+    do {
+        Func_020016f4(1, 0, 0x200836d);
+    } while (0);
+    do {
+        Func_020017ea(231);
+    } while (0);
+    *(s32 *)0x0200a0dc = 0;
     do {
         Func_020016da(1);
-        v3 = (*(s32 *)base5_200a0dc + 1);
-        *(s32 *)base5_200a0dc += 1;
+        v3 = (*(s32 *)0x0200a0dc + 1);
+        *(s32 *)0x0200a0dc += 1;
     } while (v3 <= 100);
     Call1(Func_02001802, 0x121);
     if (*(s16 *)(*(s32 *)0x020092c8) == 0) {
@@ -204,7 +210,15 @@ void Scene_RunScene394SequenceA(void)
     Func_020017c6(1, 0, 0);
     Func_020017a4(1);
     Call1(Func_020017ba, 0x20083c1);
-    *(u16 *)(*(s32 *)0x020092c8) = (*(u16 *)(*(s32 *)0x020092c8) ^ (s32)Data_00000001);
+    {
+        u16 *p = *(u16 **)0x020092c8;
+        /* FAKEMATCH: the toggle mask 1 is a HImode pool constant (short pool
+         * range), which splits the literal pool at the if/else branch. */
+        u16 m = (u16)(u32)Data_00000001;
+        u16 v = *p;
+
+        *p = v ^ m;
+    }
     Func_02000952();
     Func_0200180e();
     Func_0200186a();

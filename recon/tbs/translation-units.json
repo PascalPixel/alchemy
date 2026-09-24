@@ -13250,7 +13250,7 @@
     {
       "id": "retained-overlay-394-020003f0",
       "game": "tbs",
-      "source": "recon/tbs/en/overlays/resource_394_c_020003f0.c",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/KORIMA_MAGARI/SCENE_SEQUENCE.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_394",
       "absolute_symbols": {
@@ -13267,7 +13267,7 @@
         {
           "address": "0x020003f0",
           "extent": 1006,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ]
     },

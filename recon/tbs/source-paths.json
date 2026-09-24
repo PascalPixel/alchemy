@@ -10914,7 +10914,8 @@
       "name": "Scene_RunScene370SequenceA"
     },
     "resource_394:020003f0": {
-      "name": "Scene_RunScene394SequenceA"
+      "name": "Scene_RunKorimaMagariSequence",
+      "source": "FIELD/KORIMA_MAGARI/SCENE_SEQUENCE.C"
     },
     "resource_3c8:02002b14": {
       "name": "Scene_RunScene3c8SequenceA"

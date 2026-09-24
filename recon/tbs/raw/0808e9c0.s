@@ -8,8 +8,10 @@
 	.set sub_080091e0, 0x080091e0
 	.set sub_080770c0, 0x080770c0
 	.set sub_0808e9a8, 0x0808e9a8
+	.global Battle_PlaceMapMarkers
 	.global Func_0808e9c0
 	.thumb_func
+Battle_PlaceMapMarkers:
 Func_0808e9c0:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

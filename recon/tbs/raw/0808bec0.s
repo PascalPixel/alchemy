@@ -13,8 +13,10 @@
 	.set sub_08093874, 0x08093874
 	.set sub_080b50f8, 0x080b50f8
 	.set sub_080f9010, 0x080f9010
+	.global Field_ProcessStep
 	.global Func_0808bec0
 	.thumb_func
+Field_ProcessStep:
 Func_0808bec0:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

@@ -2,43 +2,7 @@
 
 #define NULL ((void *)0)
 #define CalculateFacingAngle Func_0200186e
-#define SceneActor_UpdateFacingTowardTarget Func_02000030
-#define FacingTargetScene_GetScriptData Func_02000088
-#define SceneData_SelectTableA1DCOrA198 Func_02000094
-#define SceneData_SelectTableByStoryFlags Func_020000b8
-#define SceneData_SelectTableByStoryFlagsB Func_02000160
-#define FieldScene_RunActorCueBranch Func_02000118
-#define FieldScene_RunActor8TwoStep Func_020017c4
-#define FieldScene_RunSixStepSequence17e4 Func_020017e4
-#define FieldScene_RunScene377_020001e0 Func_020001e0
-#define FieldScene_RunStep7BThen2 Func_02000330
-#define FieldScene_RunStep7BThen4 Func_02000358
-#define FieldScene_RunStep80Then5 Func_0200036c
-#define FieldScene_RunStep7BThen6 Func_02000380
-#define FieldScene_RunStep80Then7 Func_02000394
-#define FieldScene_RunStep7BThen10 Func_020003d0
-#define FieldScene_RunScene377_02000e34 Func_02000e34
-#define FieldScene_RunSupplementalSequenceOne Func_020013e4
-#define FieldScene_RunStep17 Func_020017d4
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
-#define SceneDialogue_RunActorFourteenDialogue11AA Func_02000284
-#define ActorPresentation_SetTwoSceneCells Func_020013b4
-#define SceneState_SetWork448To521AndRun Func_020002e0
-#define SceneState_SetValue123Mode1 Func_0200031c
-#define SceneState_SetValue123Mode3 Func_02000344
-#define SceneState_SetValue129Mode8 Func_020003a8
-#define SceneState_SetValue129Mode9 Func_020003bc
-#define SceneState_ApplyValues123And11 Func_020003e4
-#define SceneState_SetValue140Mode0 Func_020017a8
-#define SceneDialogue_ShowLine1C13WithActor16Steps Func_02000ef8
-#define SceneDialogue_RunActorThirteenDialogue Func_02000f38
-#define SceneDialogue_RunActor16LineAndFlag81c Func_02000f64
-#define SceneEffect_UpdateObjectByFrameParity Func_02001544
-#define SceneEffect_UpdateAnchoredRiseFrame Func_020015e8
-#define OverlayObject_UpdateOnFrameParity Func_02001580
-#define OverlayObject_ApplyRandomSlotOnOddFrames Func_020015bc
-#define OverlayObject_UpdateArcFromAnchor Func_02001638
-#define FieldScene_RunSingleStep Func_020017b8
 
 #include "FACING_OBJECT.H"
 #include "FIELD_EVENT.H"
@@ -254,22 +218,16 @@ void Func_02003250(void);
  * A value-returning call also sets r0 last of its arguments. */
 static __inline__ void Call1(void (*f)(), s32 a0)
 {
-    extern u8 Data_03001ebc[];
-
     f(a0);
 }
 
 static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
 {
-    extern u8 Data_03001ebc[];
-
     return f(a0, a1);
 }
 
 static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
 {
-    extern u8 Data_03001ebc[];
-
     f(a0, a1, a2);
 }
 
@@ -285,8 +243,6 @@ static __inline__ void bump_step(s32 amount)
 
 static __inline__ s32 Value1(s32 (*f)(), s32 a0)
 {
-    extern u8 Data_03001ebc[];
-
     return f(a0);
 }
 
@@ -296,22 +252,16 @@ static __inline__ s32 Value1(s32 (*f)(), s32 a0)
  * A value-returning call also sets r0 last of its arguments. */
 static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
 {
-    extern u8 Data_03001ebc[];
-
     f(a0, a1);
 }
 
 static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 {
-    extern u8 Data_03001ebc[];
-
     f(a0, a1, a2, a3);
 }
 
 static __inline__ s32 Value4(s32 (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 {
-    extern u8 Data_03001ebc[];
-
     return f(a0, a1, a2, a3);
 }
 

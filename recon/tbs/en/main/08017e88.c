@@ -9,16 +9,18 @@
  * the name is wrapped in a space, two newlines and a closing sequence.
  *
  * Draft, not exact (2026-09-24): candidate=432 reference=432
- * differing_halfwords=50, 79% similar.  Every block, the vowel chain, both
- * loops and all three literal pools line up.  The ring codes are HImode pool
- * constants (zero-extended u16 of a Value_ symbol, 60-byte reach); the inline
- * helper reproduces that but loads each code before its index is computed,
- * so every code store swaps r2/r3 against the reference, and the first pool
- * lands after the mode block instead of after the article test.  The
- * reference computes the ring index first, as a direct store would, but a
- * direct store folds the constant to SImode (1020-byte reach).  The else
- * path of the article test reloads *name twice in the reference (a HImode
- * copy and a zero-extended compare); this draft loads it once.
+ * differing_halfwords=38, 85% similar.  Every block, register and store
+ * lines up; the ring codes are HImode pool constants (a Value_ symbol
+ * zero-extended from u16, 60-byte reach) stored through the ring slot
+ * address computed first, as the helper does.  Remaining: (1) the first
+ * literal pool lands after the mode block, where the reference places it
+ * after the article test, and the third pool two instructions early; GCC's
+ * pool placement estimate is four bytes longer here than in the reference.
+ * (2) The else path of the article test loads *name once and compares a
+ * copy; the reference loads it twice (a HImode copy for the loop and a
+ * zero-extended load for the == 29 test).  Loop spellings (while/for,
+ * post-increment placement) and the helper argument order did not move
+ * either.
  */
 #include "TYPES.H"
 
@@ -33,10 +35,11 @@ extern u8 Value_00000008;
 extern u8 Value_00000065;
 extern u8 Value_00000073;
 
-static __inline__ u32 UiText_PutEntry(u16 *entry, u32 pos, s32 ch)
+static __inline__ void UiText_PutEntry(u16 *dst, u8 *code)
 {
-    entry[pos] = ch;
-    return (pos + 1) & 0x1ff;
+    s32 c = (u16)(s32)code;
+
+    *dst = c;
 }
 
 u32 UiText_AppendArticleName(s32 mode, u16 *name, u32 pos, u16 *entry,
@@ -51,9 +54,12 @@ u32 UiText_AppendArticleName(s32 mode, u16 *name, u32 pos, u16 *entry,
     s32 cnt;
 
     if (mode != 0) {
-        pos = UiText_PutEntry(entry, pos, (u16)(s32)&Value_00000020);
-        pos = UiText_PutEntry(entry, pos, (u16)(s32)&Value_0000000a);
-        pos = UiText_PutEntry(entry, pos, (u16)(s32)&Value_0000000a);
+        UiText_PutEntry(&entry[pos], &Value_00000020);
+        pos = (pos + 1) & 0x1ff;
+        UiText_PutEntry(&entry[pos], &Value_0000000a);
+        pos = (pos + 1) & 0x1ff;
+        UiText_PutEntry(&entry[pos], &Value_0000000a);
+        pos = (pos + 1) & 0x1ff;
     }
     if (no == 1 || (no == 3 && plural == 0)) {
         kind = 0;
@@ -90,14 +96,19 @@ u32 UiText_AppendArticleName(s32 mode, u16 *name, u32 pos, u16 *entry,
     }
     if (no == 2 || (no == 3 && plural != 0)) {
         if (*suffix != 0) {
-            pos = UiText_PutEntry(entry, pos, (u16)(s32)&Value_00000065);
+            UiText_PutEntry(&entry[pos], &Value_00000065);
+        pos = (pos + 1) & 0x1ff;
         }
-        pos = UiText_PutEntry(entry, pos, (u16)(s32)&Value_00000073);
+        UiText_PutEntry(&entry[pos], &Value_00000073);
+        pos = (pos + 1) & 0x1ff;
     }
     if (mode != 0) {
-        pos = UiText_PutEntry(entry, pos, (u16)(s32)&Value_0000000a);
-        pos = UiText_PutEntry(entry, pos, (u16)(s32)&Value_00000008);
-        pos = UiText_PutEntry(entry, pos, (u16)(s32)&Value_00000020);
+        UiText_PutEntry(&entry[pos], &Value_0000000a);
+        pos = (pos + 1) & 0x1ff;
+        UiText_PutEntry(&entry[pos], &Value_00000008);
+        pos = (pos + 1) & 0x1ff;
+        UiText_PutEntry(&entry[pos], &Value_00000020);
+        pos = (pos + 1) & 0x1ff;
     }
     return pos;
 }

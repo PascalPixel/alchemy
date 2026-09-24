@@ -171,6 +171,7 @@ s32 Func_08026080(s32 preferred, s32 mode, u32 spread, u32 kind)
     struct BattleUnit *unit;
     struct CursorSlot *slot;
     struct DisplayEntry *entry;
+    struct DisplayEntry *head;
     s16 *src;
     s32 sel;
     s32 slotId;
@@ -318,13 +319,14 @@ step_back:
     }
 
     window = UiWindow_Create(0, 12, 30, 4, 74);
+    head = entries;
 
     for (;;) {
         pending = 0;
         Func_080b50b8(ids[cursor], &pos);
-        M2C_FIELD(&entries[0], s32 *, 4) = 0x40002000;
-        M2C_FIELD(&entries[0], s32 *, 8) = pending;
-        entries[0].tile = Resource_GetBuffer(
+        M2C_FIELD(head, s32 *, 4) = 0x40002000;
+        M2C_FIELD(head, s32 *, 8) = pending;
+        head->tile = Resource_GetBuffer(
             slotId, (((Data_03001e40 >> 2) & 31) << 8) + 0x080346F8);
         i = Func_08002322(Data_03001e40 << 12);
         if (i < 0)
@@ -334,12 +336,8 @@ step_back:
         if (tbl[0].flags & 1) {
             nx = (pos.x + tbl[0].x) / 2;
             ny = (y + tbl[0].y) / 2;
-            if (pos.x - nx < 0) {
-                if (nx - pos.x <= 7)
-                    pending = 1;
-            } else if (pos.x - nx <= 7) {
+            if (((pos.x - nx) < 0 ? -(pos.x - nx) : (pos.x - nx)) <= 7)
                 pending = 1;
-            }
             pos.x = nx;
             pos.y = ny;
             tbl[0].x = (u8)nx;
@@ -357,9 +355,9 @@ step_back:
             if ((u8)tbl[0].flags <= 3)
                 tbl[0].flags = 1;
         }
-        entries[0].x = pos.x - 8;
-        entries[0].y = (u8)(pos.y - 16);
-        Runtime_PushSlotEntry(&entries[0], 240);
+        head->x = pos.x - 8;
+        head->y = (u8)(pos.y - 16);
+        Runtime_PushSlotEntry(head, 240);
 
         if (spread == 0xFF) {
             efx.x = 256;
@@ -619,12 +617,12 @@ frame_tail:
         redraw &= ~1;
 frame_end:
         if (pending != 0) {
-            entry = entries + 1;
+            entry = head + 1;
             for (i = 1; i < cnt; i++, entry++) {
                 slot = &tbl[selSlot[i]];
                 Func_080b50b8(selIds[i], &targetPos);
                 targetPos.y += Func_08002322(Data_03001e40 << 12) / 32768;
-                *entry = entries[0];
+                *entry = *head;
                 if (slot->flags & 1) {
                     targetPos.x = (targetPos.x + slot->x) / 2;
                     targetPos.y = (targetPos.y + slot->y) / 2;

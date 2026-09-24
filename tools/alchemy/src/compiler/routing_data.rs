@@ -10,6 +10,7 @@
 
 // Library code built with agbcc.
 pub static AGBCC_SOURCES: &[&str] = &[
+    "main:08006910",
     "main:08006f48",
     "main:08006a78",
     "main:080fb73c",
@@ -124,10 +125,10 @@ pub static TLA_AGBCC_SOURCES: &[&str] = &[
 // The flash library, built with agbcc at -O rather than -O2: under -O2 its
 // drafts differ in allocation and scheduling throughout, under -O the twelve
 // drafted flash routines (erase, program, read, verify, the Atmel variants)
-// reproduce their bytes exactly.
+// reproduce their bytes exactly. IdentifyFlash stays at -O2, where its draft
+// is four halfwords from exact and under -O twenty-one.
 pub static AGBCC_FLASH_SOURCES: &[&str] = &[
     "main:08006878",
-    "main:08006910",
     "main:080069a4",
     "main:08006a00",
     "main:08006af8",

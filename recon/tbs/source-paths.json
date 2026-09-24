@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_383:02002758": {
+      "name": "KuupuappuHeya_Func02002758",
+      "source": "FIELD/KUUPUAPPU_HEYA/F_02758.C"
+    },
     "resource_3a5:02001c1c": {
       "name": "RamakanSabaku_Func02001c1c",
       "source": "FIELD/RAMAKAN_SABAKU/F_01C1C.C"

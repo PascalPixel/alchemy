@@ -75204,6 +75204,118 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "scene-383-02002758",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_HEYA/F_02758.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_383",
+      "absolute_symbols": {
+        "Engine_ActorGet": {
+          "address": "0x0200cd7c",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagIsSet": {
+          "address": "0x0200cd14",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetPosition": {
+          "address": "0x0200cdcc",
+          "kind": "thumb"
+        },
+        "Engine_ActorFaceDirection": {
+          "address": "0x0200ce2c",
+          "kind": "thumb"
+        },
+        "Engine_ActorEnableActionCallback": {
+          "address": "0x0200cd8c",
+          "kind": "thumb"
+        },
+        "OverlayObject_ConfigureObject22WithResource17": {
+          "address": "0x0200c698",
+          "kind": "thumb"
+        },
+        "Engine_MapCopyCellAttributes": {
+          "address": "0x0200cce4",
+          "kind": "thumb"
+        },
+        "Engine_TaskAddCallback": {
+          "address": "0x0200cc74",
+          "kind": "thumb"
+        },
+        "Engine_EventWait": {
+          "address": "0x0200cd3c",
+          "kind": "thumb"
+        },
+        "Engine_MapCopyCellsTo": {
+          "address": "0x0200ccd4",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpriteFlags": {
+          "address": "0x0200ccec",
+          "kind": "thumb"
+        },
+        "Engine_EventBegin": {
+          "address": "0x0200cd44",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetAnimation": {
+          "address": "0x0200cdd4",
+          "kind": "thumb"
+        },
+        "KuupuappuHeya_RunVaultEvent": {
+          "address": "0x0200adb4",
+          "kind": "thumb"
+        },
+        "Engine_EventEnd": {
+          "address": "0x0200cd4c",
+          "kind": "thumb"
+        },
+        "SceneState_SetWord1c0To209AndRun": {
+          "address": "0x0200c5cc",
+          "kind": "thumb"
+        },
+        "Engine_AudioPlayCue": {
+          "address": "0x0200cf24",
+          "kind": "thumb"
+        },
+        "Engine_EventSetMessage": {
+          "address": "0x0200ce14",
+          "kind": "thumb"
+        },
+        "SceneActor_SetModeZeroAndValue": {
+          "address": "0x0200c5f4",
+          "kind": "thumb"
+        },
+        "Main_080091b8": {
+          "address": "0x0200ccdc",
+          "kind": "thumb"
+        },
+        "FieldScene_RunLateSequence": {
+          "address": "0x0200abf0",
+          "kind": "thumb"
+        },
+        "Engine_EventRequestExit": {
+          "address": "0x0200ce6c",
+          "kind": "thumb"
+        },
+        "RunEventScript01": {
+          "address": "0x0200afd4",
+          "kind": "thumb"
+        },
+        "RunDialoguePromptScene": {
+          "address": "0x0200b6f8",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02002758",
+          "extent": 1096,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

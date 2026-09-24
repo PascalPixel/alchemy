@@ -69,23 +69,17 @@ extern u8 Data_03001ebc[];
 void Func_02001d58(void);
 void Func_020015a0(void);
 void Func_020019c8();
-void Func_020018b8();
 s32 Func_02001910();
 s32 Func_02001918();
 void Func_020012f4();
 void Func_020019d0();
 struct PaletteEffect *Func_02002b84(s32, s32, s32, s32);
 void Func_02002be4(struct PaletteEffect *, s32, s32, s32);
-void Func_02002b7a(s32);
-void Func_02002b8c(s32);
 void Func_02002e82();
 void Func_02002eb4();
 s32 Func_020030b0();
 s32 Func_020030b8();
 struct PaletteSceneRecord *Func_020030bc();
-void Func_02002fa6();
-void Func_0200302a();
-void Func_0200300e();
 void Func_02001462();
 void Func_02001478();
 void Func_0200148c();
@@ -405,7 +399,7 @@ void PaletteScene_RunActorTransitionSequence(void)
     }
     Func_020019c8(2);
     Event_Wait(40);
-    Func_020018b8(0);
+    KorimaPalette_Restore(0);
     ColorBuffer_Interpolate(32);
     Task_Wait(40);
     transitionState = &Data_02009dd4;
@@ -437,15 +431,15 @@ void PaletteScene_RunActorTransitionSequence(void)
     Task_Wait(10);
     cycle = 0;
     do {
-        Func_020018b8(0);
+        KorimaPalette_Restore(0);
         ColorBuffer_Interpolate(6);
         Task_Wait(6);
-        Func_020018b8(1);
+        KorimaPalette_Restore(1);
         ColorBuffer_Interpolate(6);
         cycle = (cycle + 1);
         Task_Wait(6);
     } while ((u32)cycle <= 3);
-    Func_020018b8(0);
+    KorimaPalette_Restore(0);
     ColorBuffer_Interpolate(40);
     Task_Wait(80);
     Camera_MoveTo(0x1480000, 0x80000, 0xd40000, 1);
@@ -536,7 +530,7 @@ void PaletteScene_RunActorTransitionSequence(void)
     Event_Wait(20);
     Func_020012f4(10, 0);
     Event_Wait(20);
-    Func_020018b8(0);
+    KorimaPalette_Restore(0);
     ColorBuffer_Interpolate(1);
     Task_Wait(1);
     ColorBuffer_ApplyTarget(0x406218, 1);
@@ -553,7 +547,7 @@ void PaletteScene_RunActorTransitionSequence(void)
     ColorBuffer_ApplyTarget(0x7fff, 0);
     ColorBuffer_Interpolate(60);
     Event_Wait(100);
-    Func_020018b8(0);
+    KorimaPalette_Restore(0);
     ColorBuffer_Interpolate(20);
     Event_Wait(40);
     Func_020012f4(10, 1);
@@ -637,7 +631,7 @@ void PaletteScene_RunActorTransitionSequence(void)
     Event_Wait(40);
     Func_020012f4(11, 0);
     Event_Wait(20);
-    Func_020018b8(0);
+    KorimaPalette_Restore(0);
     ColorBuffer_Interpolate(1);
     Task_Wait(1);
     ColorBuffer_ApplyTarget(0x406218, 1);
@@ -681,7 +675,7 @@ void PaletteScene_RunActorTransitionSequence(void)
     Actor_FaceDirection(2, 0x6000, 120);
     Func_02001918(effectCallback);
     Event_Wait(60);
-    Func_020018b8(0);
+    KorimaPalette_Restore(0);
     ColorBuffer_Interpolate(40);
     Func_020012f4(10, 2);
     Event_Wait(20);
@@ -801,10 +795,10 @@ void PaletteScene_AdvanceTransition(void)
     s32 step = Data_02009dd4;
 
     if (step == 0) {
-        Func_02002b7a(0);
+        KorimaPalette_Restore(0);
         ColorBuffer_Interpolate(20);
     } else if (step == 20) {
-        Func_02002b8c(1);
+        KorimaPalette_Restore(1);
         ColorBuffer_Interpolate(8);
     }
     step = Data_02009dd4 + 1;
@@ -859,7 +853,7 @@ void PaletteScene_AdjustPaletteWindow(s32 adjustment)
     volatile u16 *palette = (volatile u16 *)0x05000000;
     u32 phase;
     u32 next_phase;
-    Func_02002fa6();
+    KorimaPalette_SaveFirst();
     phase = 0;
     do {
         u32 index = phase >> 16;
@@ -873,7 +867,7 @@ void PaletteScene_AdjustPaletteWindow(s32 adjustment)
         next_phase = phase + 0x10000;
         phase = next_phase;
     } while (next_phase <= 0x00df0000);
-    Func_0200302a(); Func_0200300e(); ColorBuffer_ApplyTarget(0x10000, 0);
+    KorimaPalette_Capture(); KorimaPalette_SaveSecond(); ColorBuffer_ApplyTarget(0x10000, 0);
 }
 
 /*

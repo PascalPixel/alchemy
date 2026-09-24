@@ -22315,10 +22315,6 @@
           "address": "0x020095a0",
           "kind": "thumb"
         },
-        "Func_020018b8": {
-          "address": "0x020098b8",
-          "kind": "thumb"
-        },
         "Func_02001910": {
           "address": "0x02009910",
           "kind": "thumb"
@@ -22359,16 +22355,8 @@
           "address": "0x02009aa0",
           "kind": "thumb"
         },
-        "Func_02002b7a": {
-          "address": "0x020098b8",
-          "kind": "thumb"
-        },
         "Func_02002b84": {
           "address": "0x02009940",
-          "kind": "thumb"
-        },
-        "Func_02002b8c": {
-          "address": "0x020098b8",
           "kind": "thumb"
         },
         "Func_02002be4": {
@@ -22383,18 +22371,6 @@
           "address": "0x02009928",
           "kind": "thumb"
         },
-        "Func_02002fa6": {
-          "address": "0x02009838",
-          "kind": "thumb"
-        },
-        "Func_0200300e": {
-          "address": "0x02009858",
-          "kind": "thumb"
-        },
-        "Func_0200302a": {
-          "address": "0x02009878",
-          "kind": "thumb"
-        },
         "Func_020030b0": {
           "address": "0x02009978",
           "kind": "thumb"
@@ -22405,6 +22381,22 @@
         },
         "Func_020030bc": {
           "address": "0x02009968",
+          "kind": "thumb"
+        },
+        "KorimaPalette_Capture": {
+          "address": "0x02009878",
+          "kind": "thumb"
+        },
+        "KorimaPalette_Restore": {
+          "address": "0x020098b8",
+          "kind": "thumb"
+        },
+        "KorimaPalette_SaveFirst": {
+          "address": "0x02009838",
+          "kind": "thumb"
+        },
+        "KorimaPalette_SaveSecond": {
+          "address": "0x02009858",
           "kind": "thumb"
         },
         "SceneAction_ActorOneEntry": {

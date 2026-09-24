@@ -1,24 +1,18 @@
-/* Draft, not exact (2026-09-24): candidate=3452 reference=3452
-   differing_halfwords=10, binary similarity 99.7%. Three scheduling swaps
-   remain, all loads moved by one slot: the 192 block loads 0x4e20 before
-   the size stores, and the strip loop and the second phase-two spark draw
-   load dst after the draw pointer. No local source change moves them
-   (argument order, temporaries, block-local sizes and helper inlines all
-   compile identically), so the cause is upstream of those blocks.
-   What closed the rest: loop-top locals that loop.c hoists (the cells
-   pointer and radius in the >221 loop, the constant 3 in the particle
-   loop), centre temporaries for the flare draw, one pointer per spark loop
-   (in-body pointers for the 222 and phase-two loops), `r = 0x3ff;
-   r &= Random16()` in the burst so the mask loads into the result
-   register, and a function-level `ground = 112` so the spawn height is
-   rematerialised as 112 << 16. */
+/* Battle effect mode 6: eight sprite objects swoop in over a cloud of
+   rising particles while sparks converge on a flare; A or B skips the
+   244-frame first phase after frame 16. In the 144-frame second phase five
+   columns fall one after another and burst into bouncing particles on
+   landing. */
 #include "TYPES.H"
 #include "BATTLE_EFFECT_WORK.H"
 #include "BATTLE_EFX.H"
-typedef s32 (*DrawRectangleR)(void *, const void *, s32, s32, s32, s32);
 #include "CALLBACK_SCHEDULER.H"
 #include "EFFECT_STEP.H"
 #include "FIXED_MATH.H"
+
+/* Mode 6 declares its blitters with a return value it ignores: a call that
+   sets r0 changes how the scheduler orders the argument loads. */
+typedef s32 (*DrawRectangleResult)(void *, const void *, s32, s32, s32, s32);
 
 void WaitFrames(s32);
 u32 Random16(void);
@@ -78,7 +72,7 @@ extern const Scale BattleFx6_UnitScale;
 extern const u8 BattleFx6_ObjectX[];
 extern const u8 BattleFx6_ObjectY[];
 extern const s32 BattleFx6_Gravity[];
-extern const u16 BattleFx6_FlareCells[];
+extern u16 BattleFx6_FlareCells[];
 extern u16 ParticleStreams_CellOffsets[];
 
 /* The effect's work block (heap slot 39). */
@@ -129,7 +123,7 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
     struct EffectStep *q2;
     struct EffectStep *q3;
     struct EffectStep *q4;
-    DrawRectangleR blit[2];
+    DrawRectangleResult blit[2];
     Scale scale;
     s32 ground = 112;
 
@@ -172,9 +166,9 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
     work->transfer_value = 75;
     spot[4] = 1;
     BattleEffect_LoadWork(46, 7, 7, 3, 3);
-    blit[0] = (DrawRectangleR)cache[46 - 40];
+    blit[0] = (DrawRectangleResult)cache[46 - 40];
     BattleEffect_LoadWork(47, 7, 7, 3, 2);
-    blit[1] = (DrawRectangleR)cache[47 - 40];
+    blit[1] = (DrawRectangleResult)cache[47 - 40];
     *(u16 *)0x0400000c = 0x784;
 
     for (i = 0; i != 1024; i++) {
@@ -422,7 +416,7 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
         }
 
         if (frame > 27) {
-            DrawRectangleR draw = blit[1];
+            DrawRectangleResult draw = blit[1];
             for (i = 0; i != 1024; i++) {
                 s32 m = 3;
                 if (PARTICLES[i].variant >= 0) {

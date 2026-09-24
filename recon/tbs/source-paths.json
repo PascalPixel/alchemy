@@ -1,6 +1,14 @@
 {
   "format": 3,
   "owners": {
+    "resource_37b:02001b44": {
+      "name": "SoruSekizo_RunEventSequence",
+      "source": "FIELD/SORU_SEKIZO/EVENT_SEQUENCE.C"
+    },
+    "resource_372:02000f38": {
+      "name": "HaidiaArashi_RunEventSequence",
+      "source": "FIELD/HAIDIA_ARASHI/EVENT_SEQUENCE.C"
+    },
     "resource_394:020007e0": {
       "name": "KorimaMagari_RunReturnSequence",
       "source": "FIELD/KORIMA_MAGARI/RETURN_SEQUENCE.C"

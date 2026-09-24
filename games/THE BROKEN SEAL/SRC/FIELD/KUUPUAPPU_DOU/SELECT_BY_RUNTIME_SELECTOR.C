@@ -25,6 +25,8 @@ void Func_020004e6();
  * into the argument registers; a direct call precomputes a costly constant
  * into a pseudo that the compiler then shares with later uses in the block.
  * A value-returning call also sets r0 last of its arguments. */
+s32 SceneActor_LiftLowActorOnSubjectTile(s32 subject_actor);
+
 static __inline__ s32 Value0(s32 (*f)())
 {
     return f();
@@ -63,8 +65,6 @@ void Func_02001bde();
 double Func_02001c1c();
 double Func_02001c2a();
 s32 Func_02001cd6();
-s32 Func_0200138a();
-s32 Func_020013ba();
 void Func_020015b0();
 s32 Func_02001af6();
 s32 Func_02001b36();
@@ -727,7 +727,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
                 }
             }
         }
-        if (Value1(Func_0200138a, 10) != 0) {
+        if (Value1(SceneActor_LiftLowActorOnSubjectTile, 10) != 0) {
             Actor_SetAnimation(10, 1);
             if (GameFlag_IsSet(0x207) == 0) {
                 GameFlag_Set(0x207);
@@ -736,7 +736,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
                 Audio_PlayCue(106);
             }
         }
-        if (Value1(Func_020013ba, 9) != 0) {
+        if (Value1(SceneActor_LiftLowActorOnSubjectTile, 9) != 0) {
             Audio_PlayCue(106);
         }
     }

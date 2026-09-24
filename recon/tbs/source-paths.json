@@ -760,7 +760,8 @@
       "source": "SYSTEM/INITIALIZE.C"
     },
     "main:0800307c": {
-      "name": "Runtime_SetIrqHandler"
+      "name": "Runtime_SetIrqHandler",
+      "source": "SYSTEM/SET_IRQ_HANDLER.C"
     },
     "main:08003650": {
       "name": "System_VBlankHandler",

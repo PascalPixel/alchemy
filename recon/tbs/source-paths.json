@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_383:02004754": {
+      "name": "KuupuappuHeya_SnapToNearestStop",
+      "source": "FIELD/KUUPUAPPU_HEYA/NEAREST_STOP.C"
+    },
     "resource_378:02000848": {
       "name": "ShindenHeya_MatchLeaderPriority",
       "source": "FIELD/COMMON/SHINDEN_HEYA/LEADER_PRIORITY.C"

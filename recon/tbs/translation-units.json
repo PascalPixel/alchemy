@@ -124748,6 +124748,30 @@
         }
       ],
       "overlay": null
+    },
+    {
+      "id": "palette-tint",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/PALETTE/TINT.C",
+      "compiler_route": "canonical-gcc296",
+      "owners": [
+        {
+          "address": "0x0801ca1c",
+          "extent": 196,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0801cae0",
+          "extent": 244,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0801cbd4",
+          "extent": 124,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
     }
   ]
 }

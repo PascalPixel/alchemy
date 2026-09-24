@@ -4221,11 +4221,10 @@
     },
     "main:0801ca1c": {
       "name": "GraphicsPalette_SetTintChannelsFromCounters",
-      "source": "GRAPHICS/PALETTE/SET_TINT_CHANNELS_FROM_COUNTERS.C"
+      "source": "GRAPHICS/PALETTE/TINT.C"
     },
     "main:0801cae0": {
-      "name": "Palette_WriteBlendedBank15Entries",
-      "source": "GRAPHICS/PALETTE/WRITE_BLENDED_BANK15_ENTRIES.C"
+      "name": "Palette_WriteBlendedBank15Entries"
     },
     "main:0801ce48": {
       "name": "GraphicsPalette_DecrementSelectionWrap",
@@ -19408,8 +19407,7 @@
       "source": "BATTLE/EFFECT/HUE_CHANNEL_RAMP.C"
     },
     "main:0801cbd4": {
-      "name": "Palette_ScaleTintChannels",
-      "source": "GRAPHICS/PALETTE/SCALE_TINT_CHANNELS.C"
+      "name": "Palette_ScaleTintChannels"
     },
     "main:0800447c": {
       "name": "Vector_AddPolarOffset",

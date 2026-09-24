@@ -19914,7 +19914,8 @@
       "name": "BattleFx_BuildBuffer"
     },
     "main:08095290": {
-      "name": "BattleFx_StartBufferBlend"
+      "name": "BattleFx_StartBufferBlend",
+      "source": "BATTLE/EFFECT/START_BUFFER_BLEND.C"
     },
     "main:080167e0": {
       "name": "UiWork_ShiftPanelRowsLeft"

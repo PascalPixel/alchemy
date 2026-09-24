@@ -2,7 +2,7 @@
 #include "DMA.H"
 #include "IWRAM_CALL.H"
 
-/* main:0800c62c ObjectSystem_UpdateCamera - hand-written draft, 148 of 296
+/* main:0800c62c ObjectSystem_UpdateCamera - hand-written draft, 144 of 296
    halfwords differ (588 of 592 bytes).
 
    Each frame the field camera places every live object on screen: objects
@@ -13,8 +13,7 @@
    GCC picks that long form from its length estimate, which counts each
    inline asm line as four bytes; the ROM needs one more estimated line per
    Iwram_MulQ16 call than IWRAM_CALL.H has (with one extra line the branch
-   flips and 90 halfwords differ). Left beside that: prologue scheduling of
-   the heap-size load, the loop-constant registers (63 and the MulQ16
+   flips and 90 halfwords differ). Left beside that: the loop-constant registers (63 and the MulQ16
    routine swap r3/r4), and the tail's flag test (ROM keeps kind in a copy:
    "adds r3, r6, #0; ands r3, r2"). */
 
@@ -95,7 +94,7 @@ struct CameraSync {
 extern u8 Data_03001e64_a[];
 #define FIELD_RUNTIME ((u32)Data_03001e64_a)
 extern u8 Data_08009bb8[];
-extern u8 Data_000002c4[];
+extern u8 Value_000002c4[];
 
 u8 *Runtime_AllocateHeapBlock(s32 slot, u32 size);
 void Runtime_ReleaseHeapBlock(s32 slot);
@@ -112,6 +111,7 @@ void ObjectSystem_UpdateCamera(void)
     struct CameraObject *obj;
     struct CameraSprite *sprite;
     s32 *cam;
+    u32 size;
     u32 kind;
     s32 dx;
     s32 dz;
@@ -130,8 +130,10 @@ void ObjectSystem_UpdateCamera(void)
     cam_x = cam[0] & 0xffff0000;
     cam_z = cam[1] & 0xffff0000;
     sync = *(struct CameraSync **)(FIELD_RUNTIME + 4);
-    Dma_Set(Data_08009bb8, Runtime_AllocateHeapBlock(52, (u32)Data_000002c4),
-        0x84000000 | ((u32)Data_000002c4 >> 2), (volatile u32 *)0x040000d4);
+    /* FAKEMATCH: the do-while keeps the size load after the runtime loads. */
+    do { size = (u32)Value_000002c4; } while (0);
+    Dma_Set(Data_08009bb8, Runtime_AllocateHeapBlock(52, size), 0x84000000 | (size >> 2),
+        (volatile u32 *)0x040000d4);
     obj = *(struct CameraObject **)FIELD_RUNTIME;
     sync->count = 0;
     for (cnt = 63; cnt >= 0; cnt--, obj++) {

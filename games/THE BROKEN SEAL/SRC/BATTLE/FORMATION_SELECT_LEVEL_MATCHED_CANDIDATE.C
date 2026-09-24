@@ -25,7 +25,7 @@ s32 Party_ComputeEligibleMemberAverage(s32 record_id);
 struct BattleActorDefinition *FunctionHead_08077198(s32 actor_id);
 
 extern u16 RomBytes_080c73f8[];
-s32 Func_080770e0(s32 id);
+s32 GameFlag_GetByteFar(s32 id);
 
 s32 BattleFormation_SelectLevelMatchedCandidate(s32 *out_margin)
 {
@@ -54,7 +54,7 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *out_margin)
     }
 
     chance = FixedPoint_Ratio(level_total, unit_count);
-    chance += (s8)Func_080770e0(1016);
+    chance += (s8)GameFlag_GetByteFar(1016);
     if (chance <= 0)
         chance = 1;
     if (chance > 99)

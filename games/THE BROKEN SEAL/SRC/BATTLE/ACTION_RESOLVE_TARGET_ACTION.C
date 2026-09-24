@@ -772,7 +772,7 @@ after_power:
                         dmg = dmg * 5 / 4;
                     else
                         dmg = dmg * 3 / 2;
-                    dmg += (u8)Math_Mod(((u8 *)target)[15], 5) + 6;
+                    dmg += (u8)Math_DivU(((u8 *)target)[15], 5) + 6;
                     if (pass == 0) {
                         BattleEvent_Push(BATTLE_EVENT_MARK, 0);
                         {

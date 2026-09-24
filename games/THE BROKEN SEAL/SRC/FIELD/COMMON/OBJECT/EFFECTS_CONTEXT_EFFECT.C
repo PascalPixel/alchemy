@@ -37,7 +37,7 @@ struct EffectKindObject {
 extern u32 Data_02000240[];
 
 /* Object table: 192 pointers at Data_03001ebc + 0x14 (see ObjectTable_Get). */
-void *Func_08009048(void *, s32);
+void *ResourceMetadata_RegisterFar(void *, s32);
 void Object_SetMode(void *, s32);
 void WaitFrames(s32);
 
@@ -51,7 +51,7 @@ void ObjectEffect_PrepareContextEffect(s32 value)
 
     object = ObjectTable_Get(Data_02000240[125]);
     context = object->context;
-    effect = Func_08009048(context, 27);
+    effect = ResourceMetadata_RegisterFar(context, 27);
     zero = 0;
     kind = 15;
 
@@ -103,7 +103,7 @@ typedef struct {
     EffectCleanupContext *ctx;
 } EffectCleanupObject;
 
-void Func_08009060(void *);
+void ResourceMetadata_ClearRecordFar(void *);
 void Object_SetPosition(EffectCleanupObject *, s32, s32, s32);
 void Object_CommitPosition(EffectCleanupObject *);
 
@@ -114,7 +114,7 @@ void ObjectEffect_EndContextEffect(s32 arg0)
     s32 mask;
     EffectCleanupObject *obj = ObjectTable_Get(Data_02000240[125]);
     EffectCleanupContext *ctx = obj->ctx;
-    struct EffectKindObject *eff = Func_08009048(ctx, 27);
+    struct EffectKindObject *eff = ResourceMetadata_RegisterFar(ctx, 27);
 
     zero = 0;
     mask = 0xfff00000;
@@ -125,7 +125,7 @@ void ObjectEffect_EndContextEffect(s32 arg0)
     Object_SetMode(obj, arg0);
     WaitFrames(30);
     ctx->second_flag = 1;
-    Func_08009060(ctx->eff);
+    ResourceMetadata_ClearRecordFar(ctx->eff);
     ctx->eff = (void *)zero;
     *(u8 *)((u8 *)ctx + 38) = 1;
     obj->speed34 = 0x10000;
@@ -137,14 +137,11 @@ void ObjectEffect_EndContextEffect(s32 arg0)
 
 s32 GameFlag_IsSet(s32);
 void GameFlag_Clear(s32);
-void Func_08094380(s32 arg0);
-void Func_080933f8(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
-#define place_within_camera_bounds Func_080933f8
+void ObjectEffect_EndContextEffect(s32 arg0);
+void place_within_camera_bounds(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 void Audio_PlayCue(s32);
-void Func_0809163c(s32 arg0);
-#define Battle_WaitMode0 Func_0809163c
-void Func_0809335c(s32 arg0, s32 arg1);
-#define Object_AttachWorkTargetToObject Func_0809335c
+void Battle_WaitMode0(s32 arg0);
+void Object_AttachWorkTargetToObject(s32 arg0, s32 arg1);
 
 s32 ObjectEffect_RunPendingFlagEvent(void)
 {
@@ -152,13 +149,13 @@ s32 ObjectEffect_RunPendingFlagEvent(void)
     s32 flag = 0x120;
 
     if (GameFlag_IsSet(flag)!= 0) {
-        Func_08094380(24);
+        ObjectEffect_EndContextEffect(24);
         GameFlag_Clear(flag);
         result = 1;
     } else {
         flag = 0x121;
         if (GameFlag_IsSet(flag)!= 0) {
-            Func_08094380(23);
+            ObjectEffect_EndContextEffect(23);
             GameFlag_Clear(flag);
             result = 2;
         } else {

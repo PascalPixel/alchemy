@@ -3,7 +3,6 @@
 #include "BATTLE_EFX.H"
 #include "CALLBACK_SCHEDULER.H"
 
-#define BattleEffect_RunRisingColumns Func_080dd77c
 
 /* Sixteen columns grow and retract in staggered windows. Five image cells
  * cycle with frame and column, using the alternating cached blitters.
@@ -19,21 +18,14 @@ extern s8 Data_080eeb96[];
 extern u8 Value_000000a6;
 void Func_080cd594(s32);
 void Func_080de2f8(void *, s32, s32, s32, s32 *, s32 *);
-void Func_080e396c(s32, s32 *);
-#define EffectPosition_ApplyStepAndYOffset Func_080e396c
-void Func_080f9010(s32);
-#define Audio_PlayCue Func_080f9010
-void Func_080d6888(s32, s32, s32, s32, s32);
-#define ObjectGroup_UpdateMembers Func_080d6888
-s32 Func_080022fc(s32, s32);
-void Func_080e155c(s32, s32);
-#define Camera_ApplyShake Func_080e155c
-void Func_080cd52c(void);
-#define ObjectGroup_TickMemberTimers Func_080cd52c
-void Func_080030f8(s32);
-#define WaitFrames Func_080030f8
-void Func_08002dd8(s32);
-#define Runtime_ReleaseHeapBlock Func_08002dd8
+void EffectPosition_ApplyStepAndYOffset(s32, s32 *);
+void Audio_PlayCue(s32);
+void ObjectGroup_UpdateMembers(s32, s32, s32, s32, s32);
+s32 Math_Mod(s32, s32);
+void Camera_ApplyShake(s32, s32);
+void ObjectGroup_TickMemberTimers(void);
+void WaitFrames(s32);
+void Runtime_ReleaseHeapBlock(s32);
 s32 Func_080cdbc0(void);
 #define WORK_EFFECT ((struct BattleEffectArgument *)work->effect)
 
@@ -91,7 +83,7 @@ void BattleEffect_RunRisingColumns(struct BattleEffectArgument *effect)
                 *(s32 *)((u8 *)work + 0x77a8) = 2;
             offset = i * 2;
             if (frame > offset + 4) {
-                cell = Func_080022fc(frame / 4 + i, 5);
+                cell = Math_Mod(frame / 4 + i, 5);
                 if (frame < offset + 32) {
                     height = (frame - offset) * 4 - 16;
                     if (height > 32) height = 32;

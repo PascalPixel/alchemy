@@ -47,30 +47,27 @@ struct ItemListWork {
 
 extern struct ItemListWork *Data_03001f2c;
 
-void Func_080030f8(s32 frames);
-s32 Func_080022fc(s32 value, s32 divisor);
-void Func_08009020(s32 object, s32 mode);
+void WaitFrames(s32 frames);
+s32 Math_Mod(s32 value, s32 divisor);
+void AnimationObjects_SelectAnimationFar(s32 object, s32 mode);
 void Func_08015068(s32 window, s32 x, s32 y, s32 width, s32 height);
-void Func_08015080(s32 message, s32 window, s32 x, s32 y);
-struct BattleUnit *Func_08077008(s32 owner);
-struct BattleAction *Func_08077080(s32 action);
-s32 Func_080770c0(s32 message);
-void Func_080a10d0(s32 *window, s32 x, s32 y, s32 width, s32 height, s32 style);
+void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
+struct BattleUnit *Owner_GetStateFar(s32 owner);
+struct BattleAction *BattleAction_Get(s32 action);
+s32 GameFlag_TestFar(s32 message);
+void UiWindow_UpdateOrCreate(s32 *window, s32 x, s32 y, s32 width, s32 height, s32 style);
 void Func_080a112c(s32 window, s32 owner, s32 unused0, s32 unused1);
-void Func_080a17c4(struct MenuEntryIcon *icon);
-void Func_080a1804(void *work, s32 value);
-void Func_080a1a40(s32 x, s32 y);
-s32 Func_080a1fd4(s32 mode, s32 count, s32 page_size, s32 *row, s32 *page);
-void Func_080f9010(s32 cue);
+void UiIcon_PrepareObject(struct MenuEntryIcon *icon);
+void PsynergyMenu_CallIconRoutineWithValue(void *work, s32 value);
+void UiMenu_PositionCursor(s32 x, s32 y);
+s32 Unnamed_080a1fd4(s32 mode, s32 count, s32 page_size, s32 *row, s32 *page);
+void Audio_PlayCue(s32 cue);
 
 /*
  * types.h already supplies WaitFrames, Modulo, Audio_PlayCue, GameFlag_IsSet,
  * Ability_GetData, UiText_DrawAt, UiIcon_PrepareObject and
  * Object_InitializeMode; only the names it does not carry are declared here.
  */
-#define BattleUnit_Get Func_08077008
-#define UiWindow_UpdateOrCreate Func_080a10d0
-#define BattleFx_PositionSprite Func_080a1a40
 
 #define INPUT_NEW_KEYS (*(volatile u32 *)ADDR_03001C94)
 #define INPUT_HELD_KEYS (*(volatile u32 *)ADDR_03001AE8)
@@ -85,20 +82,15 @@ void Func_080f9010(s32 cue);
 extern u32 Data_03001e40;
 extern u8 Value_00000b89;
 
-u8 Func_080a3ddc(struct BattleUnit *owner, u16 *items, s32 mode);
-void Func_080a3e28(u16 *items, s32 style);
+u8 ItemMenu_Collect(struct BattleUnit *owner, u16 *items, s32 mode);
+void ItemMenu_DrawIcons(u16 *items, s32 style);
 /* Takes a fourth argument; this caller passes the owner there as well. */
 s32 Func_080a3ef0(s32 owner, s32 slot, s32 mode, s32 arg3);
-s32 Func_080a5578(struct MenuResult *result, s32 pane);
-s32 Func_080a5614(s32 window, s32 *work, struct MenuResult *result);
-s32 Func_080a56c8(s32 window, s32 unused, struct MenuResult *result);
-s32 Func_08077218(s32 owner, s32 item);
+s32 ItemMenu_PageResult(struct MenuResult *result, s32 pane);
+s32 ItemMenu_DrawItemDetailPage(s32 window, s32 *work, struct MenuResult *result);
+s32 ItemMenu_DrawNamePage(s32 window, s32 unused, struct MenuResult *result);
+s32 Item_CanOwnerEquip(s32 owner, s32 item);
 
-#define ItemMenu_Collect Func_080a3ddc
-#define ItemMenu_DrawIcons Func_080a3e28
-#define ItemMenu_PageResult Func_080a5578
-#define ItemMenu_DrawItemDetailPage Func_080a5614
-#define ItemMenu_DrawNamePage Func_080a56c8
 
 #define ITEM_ID_MASK 0x1ff
 #define LIST_PAGE_SIZE 5
@@ -132,17 +124,17 @@ s32 ItemMenu_RunList(s32 pane)
     done = 0;
 
     while (done == 0 && GameFlag_IsSet(0x150) == 0) {
-        owner = BattleUnit_Get(menu->owner_ids[pane]);
+        owner = Owner_GetStateFar(menu->owner_ids[pane]);
         menu->item_count = ItemMenu_Collect(owner, menu->items, 0);
         ItemMenu_DrawIcons(menu->items, 0);
         menu->cursor_icon->state = 13;
         ItemMenu_PageResult(&state, pane);
-        BattleFx_PositionSprite(98, state.selected_index * 16 + 36);
+        UiMenu_PositionCursor(98, state.selected_index * 16 + 36);
         changed = 1;
         redraw = 1;
 
         while (GameFlag_IsSet(0x150) == 0) {
-            BattleFx_PositionSprite(98, state.row * 16 + 36);
+            UiMenu_PositionCursor(98, state.row * 16 + 36);
 
             if (changed != 0) {
                 changed = 0;
@@ -174,7 +166,7 @@ s32 ItemMenu_RunList(s32 pane)
 
             if ((Data_03001e40 & 31) == 0) {
                 for (i = 0; i < menu->owner_count; i++) {
-                    if (Func_08077218(menu->owner_table[i],
+                    if (Item_CanOwnerEquip(menu->owner_table[i],
                             ITEM_ID_MASK & menu->items[state.selected_index]) != 0) {
                         Object_InitializeMode(menu->tab_objects[i], 3);
                     }
@@ -183,7 +175,7 @@ s32 ItemMenu_RunList(s32 pane)
 
             WaitFrames(1);
             prev = state.selected_index;
-            nav = Func_080a1fd4(0, state.entry_count, LIST_PAGE_SIZE,
+            nav = Unnamed_080a1fd4(0, state.entry_count, LIST_PAGE_SIZE,
                 &state.row, &state.page);
             if (nav == 1) {
                 redraw = 1;
@@ -230,7 +222,7 @@ s32 ItemMenu_RunList(s32 pane)
                         menu->owner_ids[pane] = menu->owner_table[tab];
                         menu->tab_index[pane] = tab;
                         menu->item_count = ItemMenu_Collect(
-                            BattleUnit_Get(menu->owner_ids[pane]), menu->items, 0);
+                            Owner_GetStateFar(menu->owner_ids[pane]), menu->items, 0);
                     } while (menu->item_count == 0);
                     for (i = 0; i <= 3; i++) {
                         menu->tab_colors[i] = 30;

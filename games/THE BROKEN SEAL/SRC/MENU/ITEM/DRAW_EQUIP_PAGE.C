@@ -51,13 +51,12 @@ extern struct ItemListWork *Data_03001f2c;
 
 extern u8 Value_00000075;
 
-void Func_080030f8(s32 frames);
-void Func_08015080(s32 message, s32 window, s32 x, s32 y);
-void Func_08015270(s32 window);
-void Func_08015280(s32 window, s32 icon, s32 x, s32 y, s32 palette);
+void WaitFrames(s32 frames);
+void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
+void RenderOutput_RedrawSavedRectFar(s32 window);
+void UiWindow_SetTilemapEntryFar(s32 window, s32 icon, s32 x, s32 y, s32 palette);
 void Func_080a2268(s32, s32, s32, s32, s32, s32);
 
-#define WaitFrames Func_080030f8
 #define ITEM_ID_MASK 0x1ff
 
 /* The item page for equipment: names the selected item, draws each row's
@@ -73,10 +72,10 @@ s32 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct MenuResult *state)
     menu = Data_03001f2c;
     base = state->page * 5;
     state->selected_index = base + state->row;
-    Func_08015270((s32)menu->info_window);
+    RenderOutput_RedrawSavedRectFar((s32)menu->info_window);
     WaitFrames(1);
     if (menu->items[state->selected_index] != 0) {
-        Func_08015080((menu->items[state->selected_index] & ITEM_ID_MASK)
+        UiText_DrawCharacterAtOffsetFar((menu->items[state->selected_index] & ITEM_ID_MASK)
                 + (s32)&Value_00000075,
             (s32)menu->info_window, 0, 0);
     }
@@ -85,7 +84,7 @@ s32 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct MenuResult *state)
         if (row == state->row) {
             item = Item_Get(menu->items[state->selected_index] & ITEM_ID_MASK);
             if (item->element != 4) {
-                Func_08015280(window, item->element + 1, 27, row * 2 + 1, 0);
+                UiWindow_SetTilemapEntryFar(window, item->element + 1, 27, row * 2 + 1, 0);
                 Func_080a2268(window, 14, row * 2 + 1, 13, 1, 14);
             } else {
                 Func_080a2268(window, 14, row * 2 + 1, 14, 1, 14);
@@ -93,7 +92,7 @@ s32 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct MenuResult *state)
         } else {
             item = Item_Get(menu->items[base + row] & ITEM_ID_MASK);
             if (item->element != 4) {
-                Func_08015280(window, item->element + 1, 27, row * 2 + 1, 4);
+                UiWindow_SetTilemapEntryFar(window, item->element + 1, 27, row * 2 + 1, 4);
                 Func_080a2268(window, 14, row * 2 + 1, 13, 1, 15);
             } else {
                 Func_080a2268(window, 14, row * 2 + 1, 14, 1, 15);

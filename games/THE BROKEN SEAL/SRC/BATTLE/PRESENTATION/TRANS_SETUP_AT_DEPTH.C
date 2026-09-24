@@ -1,22 +1,15 @@
 #include "TYPES.H"
 #include "SCENE.H"
 
-void Func_08005258(s32, u32, s32);
-#define Camera_StoreSceneParameters Func_08005258
-void Func_080049ac(void);
-#define Render_ResetTransformState Func_080049ac
-void Func_08004cb4(s32 *);
-#define SceneTransform_ApplyPosition Func_08004cb4
-void Func_08004c1c(s32);
-#define SceneTransform_ApplyYaw Func_08004c1c
-void Func_08004bd4(s32);
-#define SceneTransform_ApplyPitch Func_08004bd4
-void Func_080051d8();
-#define Graphics_PrepareTransferInIwramWork Func_080051d8
+void Camera_StoreSceneParameters(s32, u32, s32);
+void Render_ResetTransformState(void);
+void SceneTransform_ApplyPosition(s32 *);
+void SceneTransform_ApplyYaw(s32);
+void SceneTransform_ApplyPitch(s32);
+void Graphics_PrepareTransferInIwramWork();
 s32 Func_08005268(); /* returns a value its callers here ignore */
 #define Battle_unk8_2 Func_08005268
-void Func_080c0a24();
-#define Battle_unk9_2 Func_080c0a24
+void Unnamed_080c0a24();
 
 /* BattlePres_SetupTransitionScene with the depth bound taken from the scene
    (+0x20) instead of the fixed span. It reads its scale percentage from an
@@ -63,7 +56,7 @@ void BattlePres_SetupTransitionSceneAtDepth(s32 x, s32 depth, s32 y)
     Graphics_PrepareTransferInIwramWork(scene, position);
     Battle_unk8_2(source_bounds, measured_bounds);
 
-    Battle_unk9_2(
+    Unnamed_080c0a24(
         0x780000,
         0x780000,
         (120 - measured_bounds[0]) << 8,

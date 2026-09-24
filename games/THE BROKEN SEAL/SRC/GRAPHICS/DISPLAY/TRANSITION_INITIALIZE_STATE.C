@@ -6,17 +6,12 @@ struct DisplayTransitionState {
     s16 timer;
 };
 
-void *Func_080048f4(s32, s32);
-#define Runtime_AllocateBlock Func_080048f4
-void Func_080907b0(s32);
-#define DisplayTransition_FillTilemapAndSolidTile Func_080907b0
-void Func_080041d8(void (*)(void), s32);
-#define Scheduler_AddOrUpdateCallback Func_080041d8
-void Func_080030f8(u32);
-#define WaitFrames Func_080030f8
+void *Runtime_AllocateBlock(s32, s32);
+void DisplayTransition_FillTilemapAndSolidTile(s32);
+void Scheduler_AddOrUpdateCallback(void (*)(void), s32);
+void WaitFrames(u32);
 void Func_08090658(void);
 
-#define DisplayTransition_InitializeState Func_08090824
 
 void DisplayTransition_InitializeState(s32 value)
 {

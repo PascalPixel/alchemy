@@ -22,7 +22,7 @@ struct OwnerRecordState {
     u8 class_id; /* 0x128, guarded OwnerInventoryState_ClassId */
 };
 
-/* Per-class starting-equipment template returned by Func_08078ed8. */
+/* Per-class starting-equipment template returned by Owner_GetRecordStride180. */
 struct OwnerEquipTemplate {
     u8 unknown_000[0x96];
     u8 unknown_096; /* 0x96 (150) */
@@ -32,11 +32,9 @@ struct OwnerEquipTemplate {
 extern s32 Data_0807b690[];
 extern u8 Value_00000066;
 
-void Func_08015020(s32, u16 *);
-void Func_080792fc(s32, u8);
-#define Party_AdvanceOwnerCountToTarget Func_080792fc
-void Func_08077428(s32);
-#define Owner_RecalculateStats Func_08077428
+void Ui_AdjustValueWithoutLimitFar(s32, u16 *);
+void Party_AdvanceOwnerCountToTarget(s32, u8);
+void Owner_RecalculateStats(s32);
 void Owner_RefreshDerivedData(s32);
 
 void Owner_InitRecords(void)
@@ -52,7 +50,7 @@ void Owner_InitRecords(void)
 
     for (owner = 0; owner <= 7; owner++) {
         state = (struct OwnerRecordState *)OwnerState_Get(owner);
-        Func_08015020(owner + (s32)&Value_00000066, name_buf);
+        Ui_AdjustValueWithoutLimitFar(owner + (s32)&Value_00000066, name_buf);
         name = state->name;
         name[0] = name_buf[0];
         i = 0;

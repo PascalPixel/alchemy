@@ -18,13 +18,10 @@ extern s32 Data_02000240[];
 
 void Func_0800447c(s32, s32, struct Vec *);
 s32 Func_080091a8(s32, s32, s32);
-struct Object *Func_0808ba1c(s32);
-#define ObjectTable_Get Func_0808ba1c
-s32 Func_0808d48c(s32, s32);
-#define BattleFx_FindDescriptor Func_0808d48c
+struct Object *ObjectTable_Get(s32);
+s32 BattleFx_FindDescriptor(s32, s32);
 
-s32 Func_0808ce74(void)
-#define Object_GetTriggerTileAheadOfCurrent Func_0808ce74
+s32 Object_GetTriggerTileAheadOfCurrent(void)
 {
     u8 *state;
     u8 *map;

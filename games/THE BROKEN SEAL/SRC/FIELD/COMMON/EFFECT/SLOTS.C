@@ -3,7 +3,7 @@
 
 void WaitFrames(s32);
 void Object_SetMode(struct ObjectRuntime *, s32);
-void Func_080091e0(struct ObjectRuntime *, s32);
+void ObjectDispatch_SetSingleChildField26Far(struct ObjectRuntime *, s32);
 void Audio_PlayCue(s32);
 s32 Func_080091a8(s32, s32, s32);
 
@@ -69,7 +69,7 @@ void EffectRuntime_SetMode7AndLaunch(s32 id)
         Audio_PlayCue(0x92);
         if (object != NULL) {
             object->velocity_y = 0x80000;
-            Func_080091e0(object, 1);
+            ObjectDispatch_SetSingleChildField26Far(object, 1);
         }
     }
 }

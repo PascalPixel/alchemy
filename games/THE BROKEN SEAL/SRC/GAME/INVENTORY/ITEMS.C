@@ -177,8 +177,7 @@ s32 PartyInventory_FindOwner(s32 item_id)
 }
 
 void Func_08078bf0(s32 owner);
-void Func_08077428(s32 owner);
-#define Owner_RecalculateStats Func_08077428
+void Owner_RecalculateStats(s32 owner);
 
 s32 Inventory_Equip(s32 owner, s32 slot)
 {

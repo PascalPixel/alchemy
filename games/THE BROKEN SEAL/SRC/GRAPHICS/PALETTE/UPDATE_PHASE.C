@@ -8,8 +8,7 @@ static __inline__ void CopyPalette(WordCopy copy, void *destination,
     copy(destination, source, size);
 }
 
-s32 Func_08002322(s32 angle);
-#define Engine_MathSin Func_08002322
+s32 Trig_Sin(s32 angle);
 
 void Graphics_UpdatePhasePalette(s32 frame, s32 red_phase, s32 green_phase, s32 blue_phase)
 {
@@ -23,9 +22,9 @@ void Graphics_UpdatePhasePalette(s32 frame, s32 red_phase, s32 green_phase, s32 
     WordCopy copy;
 
     phase = frame * 0x400;
-    red_offset = (Engine_MathSin(phase + red_phase) * 16) >> 15;
-    green_offset = (Engine_MathSin(phase + green_phase) * 16) >> 15;
-    blue_offset = (Engine_MathSin(phase + blue_phase) * 16) >> 15;
+    red_offset = (Trig_Sin(phase + red_phase) * 16) >> 15;
+    green_offset = (Trig_Sin(phase + green_phase) * 16) >> 15;
+    blue_offset = (Trig_Sin(phase + blue_phase) * 16) >> 15;
 
     palette[0] = 0;
     index = 1;

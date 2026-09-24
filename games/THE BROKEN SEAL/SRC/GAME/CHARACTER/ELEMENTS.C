@@ -8,8 +8,7 @@ struct OwnerBonusValues {
     u8 values[148];
 };
 
-struct OwnerBonusValues *Func_08078ed8(s32);
-#define Owner_GetRecordStride180 Func_08078ed8
+struct OwnerBonusValues *Owner_GetRecordStride180(s32);
 
 s32 Owner_GetDigitValues(s32 record, const u8 *source, s32 output[4])
 {

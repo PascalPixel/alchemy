@@ -3,7 +3,6 @@
 #include "BATTLE_EFX.H"
 #include "CALLBACK_SCHEDULER.H"
 
-#define BattleFx_RunPuffArc Func_080d9fc8
 
 /* Six drawn arguments: destination, source cell, x, y, width, height.
    The reference calls it through the r4 bx bank, so it is an indirect
@@ -18,21 +17,14 @@ extern u8 Data_03001e50[];
 extern u8 Value_000000b4;
 
 void Func_080cd594(s32);
-s32 Func_08002322(s32);
-#define Engine_MathSin Func_08002322
-s32 Func_0800231c(s32);
-#define Engine_MathCos Func_0800231c
-void Func_080f9010(s32);
-#define Audio_PlayCue Func_080f9010
-void Func_080b50e8(s32);
-void Func_080d6888(s32, s32, s32, s32, s32);
-#define ObjectGroup_UpdateMembers Func_080d6888
-void Func_080cd52c(void);
-#define ObjectGroup_TickMemberTimers Func_080cd52c
-void Func_080030f8(s32);
-#define WaitFrames Func_080030f8
-void Func_08002dd8(s32);
-#define Runtime_ReleaseHeapBlock Func_08002dd8
+s32 Trig_Sin(s32);
+s32 Trig_Cos(s32);
+void Audio_PlayCue(s32);
+void BattleEventRuntime_BeginPhaseFar(s32);
+void ObjectGroup_UpdateMembers(s32, s32, s32, s32, s32);
+void ObjectGroup_TickMemberTimers(void);
+void WaitFrames(s32);
+void Runtime_ReleaseHeapBlock(s32);
 s32 Func_080cdbc0(void);
 
 /* Six animation cells, one entry each: width, height, vertical bias, and the
@@ -116,8 +108,8 @@ void BattleFx_RunPuffArc(struct BattleEffectArgument *efx)
     tick = 0;
     puff = (Puff *)((u8 *)work + 0x7080);
     do {
-        puff->x = ((sign *((Engine_MathSin(ang) << 5) >> 16)) + org) + 20;
-        puff->y = ((Engine_MathCos(ang) << 4) >> 16) + 40;
+        puff->x = ((sign *((Trig_Sin(ang) << 5) >> 16)) + org) + 20;
+        puff->y = ((Trig_Cos(ang) << 4) >> 16) + 40;
         puff->tick = tick;
         ang += 0x1000;
         tick -= 4;
@@ -135,7 +127,7 @@ void BattleFx_RunPuffArc(struct BattleEffectArgument *efx)
     frame = 0;
     do {
         if (frame == 24) {
-            Func_080b50e8(0x85);
+            BattleEventRuntime_BeginPhaseFar(0x85);
         }
         i = 0;
         cur = (Puff *)((u8 *)work + 0x7080);

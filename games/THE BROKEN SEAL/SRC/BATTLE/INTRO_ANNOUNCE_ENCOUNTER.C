@@ -5,12 +5,11 @@
 
 extern u8 *Data_03001e74;
 
-void Func_08015118(void);
+void UiWork_ClearValueNameTablesFar(void);
 void UiText_DrawQuantity(s32, s32);
 void UiText_ShowMessageAndWait(s32);
-void Func_08015218(void);
-void Func_080bb65c(void);
-#define BattlePresentation_WaitForAdvance Func_080bb65c
+void UiWork_FinalizeSharedSlotFar(void);
+void BattlePresentation_WaitForAdvance(void);
 
 void BattleIntro_AnnounceEncounter(s32 enemy_count)
 {
@@ -20,7 +19,7 @@ void BattleIntro_AnnounceEncounter(s32 enemy_count)
     s32 announced;
 
     battle_state = Data_03001e74;
-    Func_08015118();
+    UiWork_ClearValueNameTablesFar();
     BattleParty_ListPresentEnemies(enemies);
 
     announced = 0;
@@ -37,14 +36,14 @@ void BattleIntro_AnnounceEncounter(s32 enemy_count)
         } while (announced != enemy_count);
     }
 
-    Func_08015218();
+    UiWork_FinalizeSharedSlotFar();
     if (battle_state[69] == BATTLE_ENCOUNTER_PARTY_FIRST) {
-        Func_08015118();
+        UiWork_ClearValueNameTablesFar();
         UiText_DrawQuantity(0, 1);
         UiText_ShowMessageAndWait((s32)&Value_00000812);
         BattlePresentation_WaitForAdvance();
     } else if (battle_state[69] == BATTLE_ENCOUNTER_ENEMIES_FIRST) {
-        Func_08015118();
+        UiWork_ClearValueNameTablesFar();
         UiText_DrawQuantity(0, 1);
         UiText_ShowMessageAndWait((s32)&Value_00000813);
         BattlePresentation_WaitForAdvance();

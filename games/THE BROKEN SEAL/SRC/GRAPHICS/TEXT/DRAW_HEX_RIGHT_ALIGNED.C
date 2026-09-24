@@ -1,8 +1,7 @@
 #include "LOW_RUNTIME.H"
 #include "GLOBAL_CELLS.H"
 
-void Func_080045f0(u32);
-#define Text_FormatHexToWork Func_080045f0
+void Text_FormatHexToWork(u32);
 
 void Text_DrawHexRightAligned(u32 value, s32 width)
 {

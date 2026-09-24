@@ -3,8 +3,7 @@
 
 typedef void (*InterruptHandler)(void);
 
-u32 Func_08002dd8(s32);
-#define Runtime_ReleaseHeapBlock Func_08002dd8
+u32 Runtime_ReleaseHeapBlock(s32);
 void Func_0800307c(s32, s32, InterruptHandler);
 u32 SaveState_ReleaseWorkspace(void)
 {
@@ -17,5 +16,5 @@ u32 SaveState_ReleaseWorkspace(void)
   id = (tmp = (no = 0x33));
   arg = 0;
   Func_0800307c(5, arg, (InterruptHandler)fn);
- return Func_08002dd8(id);
+ return Runtime_ReleaseHeapBlock(id);
 }

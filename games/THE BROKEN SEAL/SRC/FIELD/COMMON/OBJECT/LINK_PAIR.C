@@ -10,8 +10,7 @@ struct ObjectPairPosition {
     s32 z;
 };
 
-s32 Func_080044d0(s32, s32);
-#define ArcTan2 Func_080044d0
+s32 ArcTan2(s32, s32);
 void Battle_WaitMode0(s32);
 s32 WaitFrames(s32 frames);
 void FacingObject_TurnPairToFaceEachOther(struct FacingObject *first, struct FacingObject *second);

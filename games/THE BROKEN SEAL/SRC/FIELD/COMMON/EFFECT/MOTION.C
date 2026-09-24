@@ -2,8 +2,8 @@
 
 s32 Func_08005268(s32, struct EffectPosition *);
 void Func_080e3994(s32, struct EffectPosition *);
-void Func_080b50b0(s32, struct EffectPosition *);
-void Func_080b50a8(s32, struct EffectPosition *);
+void BattleMotion_ProjectScaledPositionFar(s32, struct EffectPosition *);
+void BattleMotion_ProjectPositionFar(s32, struct EffectPosition *);
 
 void EffectStep_AdvanceWithGravity3D(struct EffectStep *step, s32 damping, s32 gravity)
 {
@@ -40,12 +40,12 @@ void EffectPosition_ApplyAnimationAndYOffset(s32 id, struct EffectPosition *posi
 
 void EffectPosition_ApplyStepAndYOffset(s32 id, struct EffectPosition *position)
 {
-    Func_080b50b0(id, position);
+    BattleMotion_ProjectScaledPositionFar(id, position);
     position->y = (s32)((u32)position->y - 0x10);
 }
 
 void EffectPosition_ApplyAlternateStepAndYOffset(s32 id, struct EffectPosition *position)
 {
-    Func_080b50a8(id, position);
+    BattleMotion_ProjectPositionFar(id, position);
     position->y = (s32)((u32)position->y - 0x10);
 }

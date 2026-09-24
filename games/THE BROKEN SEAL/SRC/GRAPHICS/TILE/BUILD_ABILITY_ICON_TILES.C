@@ -19,8 +19,7 @@ typedef struct {
 extern FontTransfer *Runtime_AllocateHeapBlock(s32 arg0, s32 arg1);
 extern void Ui_Apply(FontTransfer *work, s32 slot);
 
-extern s32 Func_08004080(void);
-#define find_free_slot Func_08004080
+extern s32 find_free_slot(void);
 extern s32 Resource_CopyData(s32 index, s32 size, u8 *destination);
 
 extern s32 RomBytes_08029a10[];

@@ -54,6 +54,6 @@ restart:
             Dma_Set((const void *)0x02010000, (void *)0x06001000, 0x840000a0, (volatile u32 *)0x040000d4);
             goto restart;
         }
-        Func_080030f8(1);
+        WaitFrames(1);
     }
 }

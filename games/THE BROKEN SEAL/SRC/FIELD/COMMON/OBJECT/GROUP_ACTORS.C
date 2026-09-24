@@ -1,10 +1,9 @@
 #include "OBJECT_RUNTIME.H"
 #include "GLOBAL_CELLS.H"
 
-struct ObjectRuntime *Func_080090c8(s32, s32, s32, s32);
-#define Object_CreateFar Func_080090c8
+struct ObjectRuntime *Object_CreateFar(s32, s32, s32, s32);
 void Object_Destroy(struct ObjectRuntime *);
-void Func_080091e0(struct ObjectRuntime *, s32);
+void ObjectDispatch_SetSingleChildField26Far(struct ObjectRuntime *, s32);
 void Object_SetMode(struct ObjectRuntime *, s32);
 void Object_SetAction(struct ObjectRuntime *, s32);
 extern u8 Data_0200048a[];
@@ -28,7 +27,7 @@ struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z)
         object->unknown_23 = flag;
         child = object->animation;
         child[9] &= ~(flag + 8);
-        Func_080091e0(object, 0);
+        ObjectDispatch_SetSingleChildField26Far(object, 0);
         Object_SetMode(object, 1);
     }
     return object;

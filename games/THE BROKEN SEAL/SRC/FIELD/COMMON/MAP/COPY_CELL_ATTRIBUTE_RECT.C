@@ -4,7 +4,6 @@
 #define MAP_CELL_TILE_MASK 0x00000fff
 #define MAP_CELL_ATTRIBUTE_MASK 0xfffff000
 
-#define Map_CopyCellAttributeRect Func_08010704
 
 /* Copies a width by height block of map cells from (src_x, src_y) to
  * (dst_x, dst_y) in the 128-cell-wide map grid, replacing everything above

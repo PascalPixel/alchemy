@@ -1,7 +1,9 @@
 .syntax unified
 	.thumb
+	.global Object_SetPositionAndResetMotionFar
 	.global Func_080090f0
 	.thumb_func
+Object_SetPositionAndResetMotionFar:
 Func_080090f0:
 	ldr	r4, [pc, #0]
 	bx	r4

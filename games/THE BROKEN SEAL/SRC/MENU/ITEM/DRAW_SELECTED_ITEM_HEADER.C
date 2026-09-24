@@ -3,11 +3,9 @@
 extern u8 Value_00000182;
 #define InventoryMenu_ItemNameMessages Value_00000182
 
-extern void Func_080a17c4(void *icon);
-#define UiIcon_PrepareObject Func_080a17c4
+extern void UiIcon_PrepareObject(void *icon);
 extern s32 Runtime_GetObject(s32);
-extern void Func_08015090(s32, void *, s32, s32);
-#define UiText_DrawStringAtOffsetFar Func_08015090
+extern void UiText_DrawStringAtOffsetFar(s32, void *, s32, s32);
 extern void UiText_DrawAt(s32, void *, s32, s32);
 
 void ItemMenu_DrawItemHead(void)

@@ -2,13 +2,13 @@
 #include "GLOBAL_CELLS.H"
 #include "TBS_EDITION.H"
 
-s32 Func_080f9048();
+s32 AudioCommand_GetStateByteFar();
 s32 UiWork_CheckCancelByInput(void *obj)
 {
   int zero;
   s32 flag;
   flag = 0;
-  if (((*((u8 *)(((u8 *)(*((void **)ADDR_03001E8C))) + RENDER_BUSY_OFS))) != 0) && (Func_080f9048() == 0))
+  if (((*((u8 *)(((u8 *)(*((void **)ADDR_03001E8C))) + RENDER_BUSY_OFS))) != 0) && (AudioCommand_GetStateByteFar() == 0))
   {
     flag = 1;
   }
@@ -36,7 +36,7 @@ s32 UiWork_CheckCancelByModeInput(void *obj)
   p = *((void **)ADDR_03001E8C);
   work = p;
   flag = 0;
-  if (((*((u8 *)(((u8 *)work) + RENDER_BUSY_OFS))) != 0) && (Func_080f9048() == 0))
+  if (((*((u8 *)(((u8 *)work) + RENDER_BUSY_OFS))) != 0) && (AudioCommand_GetStateByteFar() == 0))
   {
     flag = 1;
   }

@@ -23,7 +23,6 @@ typedef s32 (*SignedDivide)(s32, s32);
 s32 Scheduler_RemoveCallback(void (*callback)(void));
 void Func_0800307c(s32 irq, s32 flags, s32 handler);
 
-#define DisplayTransition_UpdateFromCentre Func_08090488
 
 /* Steps the transition value from start to end over duration frames; once
  * done it removes itself as a callback and clears the HBlank handler. Then

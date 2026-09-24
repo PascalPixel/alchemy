@@ -32,13 +32,10 @@ struct ListNode {
     struct Object_0801c0dc obj;
 };
 
-void Func_08019ee4(s32 arg0, s32 arg1, s32 *arg2, s32 *arg3, s32 arg4);
-#define Ui_BuildPairedPatternsToSlot Func_08019ee4
-void Func_08019fcc(u32 glyph, s32 includeBase, s32 *sourceIndex,
-#define UiIcon_BuildItemIconTiles Func_08019fcc
+void Ui_BuildPairedPatternsToSlot(s32 arg0, s32 arg1, s32 *arg2, s32 *arg3, s32 arg4);
+void UiIcon_BuildItemIconTiles(u32 glyph, s32 includeBase, s32 *sourceIndex,
                    s32 *result, s32 reuseSource);
-void Func_0801a3d0(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4);
-#define Ability_LoadGlyph Func_0801a3d0
+void Ability_LoadGlyph(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4);
 
 extern u8 Value_0000001f;
 extern u8 Value_00000182;
@@ -52,8 +49,7 @@ extern u8 Value_00000333;
  * register.  The per-kind tile counts are link-time constants; an integer
  * literal cannot produce 0x1f here.
  */
-void Func_0801bd98(u32 kind, s32 base, struct ListNode *node, s32 reuse)
-#define MenuSelection_SetupEntry Func_0801bd98
+void MenuSelection_SetupEntry(u32 kind, s32 base, struct ListNode *node, s32 reuse)
 {
     s32 src;
     s32 tile;

@@ -1,7 +1,9 @@
 .syntax unified
 	.thumb
+	.global Animation_SetWorkEntryFar
 	.global Func_08009070
 	.thumb_func
+Animation_SetWorkEntryFar:
 Func_08009070:
 	ldr	r4, [pc, #0]
 	bx	r4

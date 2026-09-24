@@ -4,8 +4,7 @@ s32 GameFlag_IsSet(s32);
 s32 GameFlag_Set(s32);
 void GameFlag_Clear(s32);
 void ObjectDispatch_ApplyArgumentToChildren(void *, s32);
-void Func_0800c0f4(void);
-#define ObjectDispatch_Release Func_0800c0f4
+void ObjectDispatch_Release(void);
 s32 Audio_PlayCue(s32);
 
 s32 Script_StoreLookupResult(struct ScriptInterpreter *interpreter)
@@ -17,8 +16,7 @@ s32 Script_StoreLookupResult(struct ScriptInterpreter *interpreter)
     return 0;
 }
 
-s32 Func_0800ca98(void *);
-#define Object_IsTargetUnset Func_0800ca98
+s32 Object_IsTargetUnset(void *);
 
 s32 Script_WaitForEvent(struct ScriptInterpreter *interpreter)
 {

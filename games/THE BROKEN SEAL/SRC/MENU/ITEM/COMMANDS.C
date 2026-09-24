@@ -5,9 +5,8 @@
 #define COMMAND_DISABLED (-1)
 #define COMMAND_AVAILABLE 1
 
-s32 Func_080a46b4(s32 owner, s32 item);
-#define Item_ClassifyUseMode Func_080a46b4
-s32 Func_0808a490(s32 item);
+s32 Item_ClassifyUseMode(s32 owner, s32 item);
+s32 BattleFx_HasTriggerFar(s32 item);
 
 void ItemMenu_BuildCmd(s8 *command_states)
 {
@@ -58,7 +57,7 @@ void ItemMenu_BuildCmd(s8 *command_states)
         }
     }
 
-    if (Func_0808a490(menu->selected_item & 0x1ff) != 0)
+    if (BattleFx_HasTriggerFar(menu->selected_item & 0x1ff) != 0)
         command_states[0] = COMMAND_AVAILABLE;
 
     if (menu->party_count <= 1)

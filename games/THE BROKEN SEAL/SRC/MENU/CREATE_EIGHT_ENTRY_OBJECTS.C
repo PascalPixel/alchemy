@@ -17,7 +17,7 @@ s32 Menu_CreateEightEntryObjects(s32 resource)
     param = 0xA8;
     slot = (void **)(state + 0xC8);
     do {
-        obj = Func_080150d0(2, i, resource, 0xF8, param);
+        obj = RenderOutput_CreateFromResourceFar(2, i, resource, 0xF8, param);
         i += 1;
         *slot = obj;
         slot += 1;

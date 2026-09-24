@@ -1,8 +1,7 @@
 #include "TYPES.H"
 
 s32 FixedPoint_Ratio(s32 value, s32 divisor);
-void Func_080150a8(s32 value, s32 digits, s32 layer, s32 x, s32 y);
-#define UiText_DrawNumberAtOffsetFar Func_080150a8
+void UiText_DrawNumberAtOffsetFar(s32 value, s32 digits, s32 layer, s32 x, s32 y);
 
 void UiText_DrawNumberRightAlignedFar(s32 number, s32 layer, s32 x, s32 y)
 {

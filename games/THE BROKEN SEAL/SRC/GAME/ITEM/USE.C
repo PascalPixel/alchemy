@@ -24,10 +24,8 @@ extern struct ItemUseWork *Data_03001f2c;
 struct ItemOwner *Runtime_GetObject(s32);
 struct ItemData *Item_GetData(s32);
 u8 Func_08077058(s32, s32);
-u32 Func_080a3ddc(struct ItemOwner *, u16 *, s32);
-#define ItemMenu_Collect Func_080a3ddc
-s32 Func_080a9f10(s32, s32, s32, s32);
-#define BattleEffect_ApplyToTargets Func_080a9f10
+u32 ItemMenu_Collect(struct ItemOwner *, u16 *, s32);
+s32 BattleEffect_ApplyToTargets(s32, s32, s32, s32);
 
 s32 Item_Use(s32 slot, s32 owner_id, s32 target_id)
 {

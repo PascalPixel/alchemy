@@ -44,7 +44,7 @@ void BattleEffect_RunMode5WithAction(void *effect)
     s32 object;
 
     object =
-        (s32)Func_080b5098(FIELD_AT_OFFSET(effect, s32 *, 8))->object;
+        (s32)GetBattleObjectSlotFar(FIELD_AT_OFFSET(effect, s32 *, 8))->object;
     Object_SetMode(object, 2);
     Object_SetAction(object, 0x30);
     Func_080dea70(effect, 5);
@@ -56,7 +56,7 @@ void BattleFx_RunMode6WithAction(void *effect)
     s32 object;
 
     object =
-        (s32)Func_080b5098(FIELD_AT_OFFSET(effect, s32 *, 8))->object;
+        (s32)GetBattleObjectSlotFar(FIELD_AT_OFFSET(effect, s32 *, 8))->object;
     Object_SetMode(object, 2);
     Object_SetAction(object, 0x30);
     Func_080dea70(effect, 6);
@@ -78,7 +78,7 @@ void BattleFx_RunMode9WithAction(void *effect)
     s32 object;
 
     object =
-        (s32)Func_080b5098(FIELD_AT_OFFSET(effect, s32 *, 8))->object;
+        (s32)GetBattleObjectSlotFar(FIELD_AT_OFFSET(effect, s32 *, 8))->object;
     Object_SetMode(object, 2);
     Object_SetAction(object, 0x30);
     Func_080dea70(effect, 9);

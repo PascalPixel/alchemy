@@ -1,6 +1,5 @@
 #include "SERIAL_RUNTIME.H"
 
-#define SerialRuntime_PollStatus Func_08005fcc
 
 s32 SerialRuntime_PollStatus(void)
 {

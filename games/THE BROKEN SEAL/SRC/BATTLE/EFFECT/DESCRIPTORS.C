@@ -43,10 +43,9 @@ struct EffectObject {
     u16 reference;
 };
 
-extern u32 Func_0808d458(s32 descriptor, s32 value);
-extern s32 Func_0808d428(s32 condition);
-#define GameFlag_IsConditionActive Func_0808d428
-extern struct EffectObject *Func_0808ba1c(s32 object);
+extern u32 BattleFx_CheckDescriptorKind3Result(s32 descriptor, s32 value);
+extern s32 GameFlag_IsConditionActive(s32 condition);
+extern struct EffectObject *ObjectTable_Get(s32 object);
 extern u8 Data_02000240;
 #define PARTY_STATE Data_02000240
 extern void *Data_03001ebc;
@@ -59,12 +58,12 @@ struct EffectDescriptor *BattleFx_FindDescriptor(s32 kind, s32 value)
     s32 state_index = 250;
     s32 flags;
     u32 reference =
-        Func_0808ba1c(*(u32 *)((s16 *)&PARTY_STATE + state_index))->reference;
+        ObjectTable_Get(*(u32 *)((s16 *)&PARTY_STATE + state_index))->reference;
 
     flags = descriptor->flags;
     while (flags != -1) {
         if ((flags & 0xf) == kind && descriptor->value == value &&
-            (Func_0808d458(flags, descriptor->result) != 0 ||
+            (BattleFx_CheckDescriptorKind3Result(flags, descriptor->result) != 0 ||
              (GameFlag_IsConditionActive(descriptor->condition) != 0 &&
               (flags = descriptor->flags, 1)))) {
             s32 accepted = 0;
@@ -125,8 +124,7 @@ struct EffectSelectionWork {
 
 extern u8 Data_02000240;
 /* The shared runtime descriptor lookup; distinct from the local BattleFx_FindDescriptor. */
-struct EffectDescriptor *Func_0808d48c(s32, s32);
-#define BattleFx_LookupDescriptorByKind Func_0808d48c
+struct EffectDescriptor *BattleFx_FindDescriptor(s32, s32);
 
 s32 BattleFx_FindDescriptorWithOverride(s32 arg0)
 {
@@ -134,7 +132,7 @@ s32 BattleFx_FindDescriptorWithOverride(s32 arg0)
     s32 value = ((struct EffectSelectionWork *)&PARTY_STATE)->value;
 
     if (value == arg0) {
-        struct EffectDescriptor *next = BattleFx_LookupDescriptorByKind(7, value);
+        struct EffectDescriptor *next = BattleFx_FindDescriptor(7, value);
 
         if (next != 0) {
             return (s32)next;
@@ -165,34 +163,21 @@ struct BattleActionObject {
     void *linked_object;
 };
 
-extern struct ActionDescriptor *Func_0808d394(s32);
-#define BattleAction_FindDescriptor Func_0808d394
-extern struct BattleActionObject *Func_08092054(s32);
-#define Object_GetById Func_08092054
-extern s32 Func_080915dc(s32);
-#define BattleFx_GetFlags Func_080915dc
-extern u32 Func_08004458(void);
-#define Random16 Func_08004458
-extern void Func_080916b0(void);
-#define Battle_Reset Func_080916b0
-extern void Func_08092b94(s32);
-#define Event_SetValue1d8 Func_08092b94
-extern void Func_08092f84(s32, s32);
-#define BattleEv_RunWait Func_08092f84
-extern void Func_08091750(void);
-#define BattleFx_FinishAction Func_08091750
-extern void Func_08009088(struct BattleActionObject *, s32);
-extern void Func_08092848(s32, s32, s32);
-#define Object_LinkPair Func_08092848
-extern void Func_08015058(s32);
-extern void Func_08091660(void);
-#define Battle_InitializeRenderObject Func_08091660
-extern void Func_08093a6c(struct BattleActionObject *, void *);
-#define ObjectMotion_SetActionCallback Func_08093a6c
-extern void Func_08009098(struct BattleActionObject *, void *);
-#define ObjectDispatch_InitializeFar Func_08009098
-extern void Func_0809ade8(s32);
-#define BattleFx_ResumeObject Func_0809ade8
+extern struct ActionDescriptor *BattleAction_FindDescriptor(s32);
+extern struct BattleActionObject *Object_GetById(s32);
+extern s32 BattleFx_GetFlags(s32);
+extern u32 Random16(void);
+extern void Battle_Reset(void);
+extern void Event_SetValue1d8(s32);
+extern void BattleEv_RunWait(s32, s32);
+extern void BattleFx_FinishAction(void);
+extern void ObjectDispatch_ApplyValueToChildrenFar(struct BattleActionObject *, s32);
+extern void Object_LinkPair(s32, s32, s32);
+extern void UiWork_SetBusyFlagsFar(s32);
+extern void Battle_InitializeRenderObject(void);
+extern void ObjectMotion_SetActionCallback(struct BattleActionObject *, void *);
+extern void ObjectDispatch_InitializeFar(struct BattleActionObject *, void *);
+extern void BattleFx_ResumeObject(s32);
 extern u8 Data_02000240;
 
 s32 BattleFx_RunDescriptorAction(s32 id)
@@ -243,7 +228,7 @@ run_descriptor:
     if (!special) {
         u8 *busy = &object->busy_5b;
         *busy = 1;
-        Func_08009088(object, 0);
+        ObjectDispatch_ApplyValueToChildrenFar(object, 0);
         saved_value = object->value;
         shifted_mode = (u8)action->mode << 24;
         if (shifted_mode <= (1 << 24) || shifted_mode == (3 << 24)) {
@@ -261,7 +246,7 @@ run_descriptor:
         }
     }
     if (descriptor->result < 0x10000) {
-        Func_08015058(used_fallback);
+        UiWork_SetBusyFlagsFar(used_fallback);
         Battle_Reset();
         Event_SetValue1d8(descriptor->result);
         BattleEv_RunWait(id, 0);
@@ -286,7 +271,7 @@ run_descriptor:
             }
         }
         object->busy_5b = 0;
-        Func_08009088(object, 16);
+        ObjectDispatch_ApplyValueToChildrenFar(object, 16);
     }
     result = 0;
 finish:
@@ -309,7 +294,7 @@ s32 BattleFx_RunKind6DescriptorAction(s32 arg0)
     s32 ret;
     void *p;
 
-    p = BattleFx_LookupDescriptorByKind(6, arg0);
+    p = BattleFx_FindDescriptor(6, arg0);
     ret = -1;
     if (p != NULL) {
         val = *(s32 **)((u8 *)p + 8);
@@ -341,10 +326,8 @@ typedef struct {
 } EffectDescriptorWorkView;
 
 void Audio_PlayCue(s32);
-void Func_08094354(void);
-#define ObjectEffect_BeginContextEffect26 Func_08094354
-void Func_08094368(void);
-#define ObjectEffect_BeginContextEffect25 Func_08094368
+void ObjectEffect_BeginContextEffect26(void);
+void ObjectEffect_BeginContextEffect25(void);
 
 s32 BattleAction_RunDescriptor(s32 arg0)
 {
@@ -354,7 +337,7 @@ s32 BattleAction_RunDescriptor(s32 arg0)
     s32 ret;
     EffectDescriptorWorkView *work;
 
-    desc = (EffectDescriptorWorkView *)BattleFx_LookupDescriptorByKind(2, arg0);
+    desc = (EffectDescriptorWorkView *)BattleFx_FindDescriptor(2, arg0);
     ret = -1;
     work = *(EffectDescriptorWorkView **)0x03001ebc;
     if ((desc != 0) && (desc->result != 0)) {
@@ -372,7 +355,7 @@ s32 BattleAction_RunDescriptor(s32 arg0)
             goto block_17;
         }
     } else {
-        desc2 = (EffectDescriptorWorkView *)BattleFx_LookupDescriptorByKind(1, arg0);
+        desc2 = (EffectDescriptorWorkView *)BattleFx_FindDescriptor(1, arg0);
         if (desc2 != 0) {
             kind = desc2->flags & 0x30;
             switch (kind) {

@@ -5,10 +5,8 @@ extern u8 Data_02000240;
 #define PARTY_STATE Data_02000240
 
 s32 Func_08092c40(s32);
-s32 Func_08091c7c(void *, s32);
-#define Inventory_PromptAndSetObjectMode Func_08091c7c
-void Func_08092f84(s32, s32);
-#define BattleEv_RunWait Func_08092f84
+s32 Inventory_PromptAndSetObjectMode(void *, s32);
+void BattleEv_RunWait(s32, s32);
 
 s32 BattleEventRuntime_ProcessAction(s32 object_id, s32 action_id)
 {

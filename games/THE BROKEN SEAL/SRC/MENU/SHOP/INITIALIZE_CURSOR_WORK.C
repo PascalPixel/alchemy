@@ -1,14 +1,11 @@
 #include "DMA.H"
 #include "CALLBACK_SCHEDULER.H"
 
-void *Func_080048b0(s32 kind, s32 size);
-#define Runtime_AllocateHeapBlock Func_080048b0
-void Func_0808a460(void);
-u8 Func_08077158(void *);
-s32 Func_08004080(void);
-#define find_free_slot Func_08004080
-s32 Func_08003fa4(u32 slot, u32 size, const void *src);
-#define VramBlock_LoadCached Func_08003fa4
+void *Runtime_AllocateHeapBlock(s32 kind, s32 size);
+void Battle_ResetEffectCounterFar(void);
+u8 Party_ListActiveOwnersFar(void *);
+s32 find_free_slot(void);
+s32 VramBlock_LoadCached(u32 slot, u32 size, const void *src);
 
 /* Shop work block (heap kind 55): clear it, set up the cursor state at
    +0x380 and cache the six cursor sprite frames before the cursor task
@@ -20,11 +17,11 @@ void Shop_InitializeCursorWork(void)
     s32 slot;
 
     work = Runtime_AllocateHeapBlock(55, 0xa70);
-    Func_0808a460();
+    Battle_ResetEffectCounterFar();
     zero = 0;
     Dma_Set((const void *)&zero, work, 0x8500029c, (volatile u32 *)0x040000d4);
     work[0x3a8] = 12;
-    work[0x3a7] = Func_08077158(work + 0x36e);
+    work[0x3a7] = Party_ListActiveOwnersFar(work + 0x36e);
     slot = find_free_slot();
     *(u16 *)(work + 0x390) = slot;
     VramBlock_LoadCached(slot, 128, (const void *)0x080b3940);

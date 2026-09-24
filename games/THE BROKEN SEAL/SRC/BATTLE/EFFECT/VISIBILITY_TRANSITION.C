@@ -9,15 +9,11 @@ extern s32 Data_02000240[];
 extern u8 Data_03001ebc[];
 
 s32 WaitFrames(s32);
-s32 Func_0800430c(void);
-#define Scheduler_EnableUnmaskedOverlayCallbacks Func_0800430c
-s32 Func_080043e0(void);
-#define Scheduler_DisableOverlayCallbacks Func_080043e0
+s32 Scheduler_EnableUnmaskedOverlayCallbacks(void);
+s32 Scheduler_DisableOverlayCallbacks(void);
 void *Runtime_AllocateBlock(s32 arg0, s32 arg1);
-void Func_08091660(void);
-#define Battle_InitializeRenderObject Func_08091660
-void Func_080936a0(s32, s32);
-#define BattleFx_ScheduleRatioTransition Func_080936a0
+void Battle_InitializeRenderObject(void);
+void BattleFx_ScheduleRatioTransition(s32, s32);
 
 void BattleFx_UpdateObjectVisibilityBounds(void)
 {

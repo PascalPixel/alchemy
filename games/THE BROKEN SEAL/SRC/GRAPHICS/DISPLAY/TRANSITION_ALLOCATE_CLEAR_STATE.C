@@ -1,9 +1,7 @@
 #include "DMA.H"
 
-void *Func_080048f4(s32 kind, s32 size);
-#define Runtime_AllocateBlock Func_080048f4
+void *Runtime_AllocateBlock(s32 kind, s32 size);
 
-#define DisplayTransition_AllocateAndClearState Func_0808fecc
 
 void *DisplayTransition_AllocateAndClearState(void)
 {

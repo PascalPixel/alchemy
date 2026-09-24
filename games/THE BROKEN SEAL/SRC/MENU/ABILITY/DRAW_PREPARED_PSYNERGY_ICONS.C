@@ -1,8 +1,7 @@
 #include "OWNER_STATE.H"
 #include "PSYNERGY_MENU.H"
 
-void Func_080a345c(void);
-#define ItemMenu_HideAllIcons Func_080a345c
+void ItemMenu_HideAllIcons(void);
 
 void PsynergyMenu_DrawPreparedPsynergyIcons(s32 unused, s32 owner_id)
 {

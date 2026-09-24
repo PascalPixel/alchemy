@@ -36,7 +36,6 @@ extern u8 Data_00000000[];
 struct AnimationMetadata *Func_08185000(s32 id);
 s32 Animation_LookupValueByKey(s32 key);
 
-#define AnimationObject_Allocate Func_0800bbc0
 
 /* Takes the first free object of the 64 animation objects, one whose draw
  * kind is zero, and sets it up from the metadata of id: its frames, looked up

@@ -2,7 +2,6 @@
 #include "BATTLE_EFX.H"
 #include "CALLBACK_SCHEDULER.H"
 
-#define BattleFx_RunMemberOrbit Func_080ce85c
 
 /*
  * Battle-presentation sub-effect: entry 34 of the effect callback table at
@@ -19,26 +18,17 @@ typedef s32 (*WordCopyFn)(void *dest, const void *src, s32 words);
 extern u8 Value_000000af;
 
 void Func_080cd594(s32 mode);
-void *Func_08002f40(s32 id);
-#define Resource_GetTableEntry Func_08002f40
-u32 Func_08005340(const void *source, void *destination);
-void Func_080049ac(void);
-#define Render_ResetTransformState Func_080049ac
-void Func_080051d8(s32 a, s32 b);
-#define Graphics_PrepareTransferInIwramWork Func_080051d8
-void **Func_080b5098(s32 member_id);
-void Func_080e3944(void *source, void *screen);
-#define EffectPosition_ApplyBaseAndYOffset Func_080e3944
-s32 Func_08002322(s32 angle);
-#define Engine_MathSin Func_08002322
-s32 Func_0800231c(s32 angle);
-#define Engine_MathCos Func_0800231c
-void Func_080d6888(s32 member_id, s32 b, s32 c, s32 d, s32 e);
-#define ObjectGroup_UpdateMembers Func_080d6888
-void Func_080030f8(s32 frames);
-#define WaitFrames Func_080030f8
-void Func_08002dd8(s32 id);
-#define Runtime_ReleaseHeapBlock Func_08002dd8
+void *Resource_GetTableEntry(s32 id);
+u32 Resource_DecodeType01(const void *source, void *destination);
+void Render_ResetTransformState(void);
+void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
+void **GetBattleObjectSlotFar(s32 member_id);
+void EffectPosition_ApplyBaseAndYOffset(void *source, void *screen);
+s32 Trig_Sin(s32 angle);
+s32 Trig_Cos(s32 angle);
+void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
+void WaitFrames(s32 frames);
+void Runtime_ReleaseHeapBlock(s32 id);
 s32 Func_080cdbc0(void);
 
 /*
@@ -76,7 +66,7 @@ void BattleFx_RunMemberOrbit(void *object)
     FIELD_AT_OFFSET((void *)0x04000020, s16 *, 0) = 0x100;
     palette = Resource_GetTableEntry((s32)&Value_000000af);
     status = ((WordCopyFn)0x03001388)((void *)0x05000000, palette, 128);
-    status = Func_08005340((u8 *)palette + 128, work);
+    status = Resource_DecodeType01((u8 *)palette + 128, work);
     status = BattleEffect_LoadWork(46, 7, 7, 3, 2);
     rectangle[0] = heap_cache[7];
     status = BattleEffect_LoadWork(47, 7, 7, 15, 2);
@@ -110,14 +100,14 @@ void BattleFx_RunMemberOrbit(void *object)
 
             for (i = 0, ceiling = 0x80000, angle = frame << 10;
                     i != 160; i++) {
-                *scanline++ = (ceiling - (Engine_MathSin(angle) << 3)) >> 10;
+                *scanline++ = (ceiling - (Trig_Sin(angle) << 3)) >> 10;
                 angle += 1024;
             }
         } else {
             s32 angle;
 
             for (i = 0, angle = frame << 10; i != 160; i++) {
-                *scanline++ = ((Engine_MathSin(angle) << 3) >> 10) - 0x7000;
+                *scanline++ = ((Trig_Sin(angle) << 3) >> 10) - 0x7000;
                 angle += 1024;
             }
         }
@@ -131,7 +121,7 @@ void BattleFx_RunMemberOrbit(void *object)
                 != FIELD_AT_OFFSET(FIELD_AT_OFFSET(work, void **, 0x7828), s32 *, 20)) {
                 void *member_object;
 
-                member_object = *Func_080b5098(
+                member_object = *GetBattleObjectSlotFar(
                     FIELD_AT_OFFSET(FIELD_AT_OFFSET(work, void **, 0x7828), s16 *,
                         id_ofs));
                 if (frame > member * 16 && frame < (member * 16) + 60) {
@@ -153,9 +143,9 @@ void BattleFx_RunMemberOrbit(void *object)
                         s32 slot;
 
                         spin = (frame << 9) + (i << 14);
-                        x = (screen[0] + ((Engine_MathSin(spin) << 4) >> 16))
+                        x = (screen[0] + ((Trig_Sin(spin) << 4) >> 16))
                             + y_offset;
-                        y = screen[1] + ((Engine_MathCos(spin) << 4) >> 16);
+                        y = screen[1] + ((Trig_Cos(spin) << 4) >> 16);
                         slot = frame / 16;
                         ((DrawRectangleFn)rectangle_slot[slot & 1])(
                             canvas,

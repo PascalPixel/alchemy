@@ -1,12 +1,9 @@
 #include "TYPES.H"
 
-void Func_08016478(void);
-#define RenderOutput_PrepareForRedraw Func_08016478
-void Func_0801e940(s32 text, s32 window, s32 x, s32 y);
-#define UiText_DrawStringInWindow Func_0801e940
-void Func_08029274(s32 value, s32 width, s32 buf);
-s32 Func_080770c0(s32 flag);
-#define BattleFlag_Test Func_080770c0
+void RenderOutput_PrepareForRedraw(void);
+void UiText_DrawStringInWindow(s32 text, s32 window, s32 x, s32 y);
+void Text_FormatHex(s32 value, s32 width, s32 buf);
+s32 GameFlag_TestFar(s32 flag);
 
 void Menu_DrawFlagBitTable(s32 window, s32 start_flag)
 {
@@ -28,12 +25,12 @@ void Menu_DrawFlagBitTable(s32 window, s32 start_flag)
         for (i = 0; i != 5; i++) {
             label[i] = 0;
         }
-        Func_08029274(flag, 3, (s32)label);
+        Text_FormatHex(flag, 3, (s32)label);
         UiText_DrawStringInWindow((s32)label, window, 0, y);
         UiText_DrawStringInWindow(0x08037428, window, 32, y);
 
         for (i = 0; i < 16; i++) {
-            s32 val = BattleFlag_Test(flag);
+            s32 val = GameFlag_TestFar(flag);
             bits[i] = (val != 0) + 48;
             flag++;
         }

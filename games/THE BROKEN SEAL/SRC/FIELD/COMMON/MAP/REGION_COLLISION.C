@@ -107,8 +107,7 @@ extern struct MapRegionServices Data_02008000;
 
 s32 GameFlag_IsConditionActive(s32 condition);
 void Audio_PlayCue(s32 sound_id);
-void Func_08091660(void);
-#define Battle_InitializeRenderObject Func_08091660
+void Battle_InitializeRenderObject(void);
 
 #define REGION_FIXED(value) ((s32)((u32)(s32)(value) << 16))
 

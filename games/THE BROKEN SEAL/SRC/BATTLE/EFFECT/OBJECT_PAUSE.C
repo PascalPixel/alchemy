@@ -7,7 +7,7 @@ extern s8 Data_0809f160[];
 u32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 #define Rand Random16
-void Func_08009240(void *, s32);
+void Animation_ApplyChildValuesFar(void *, s32);
 void Object_SetAction(void *, s32);
 
 struct GlobalState {
@@ -24,7 +24,7 @@ void BattleEffect_SetRandomTableValueOnObject(s32 arg0)
 {
     s8 *table = Data_0809f160;
     s32 index = Rand();
-    Func_08009240((void *)arg0, table[(u32)(index * 8) >> 16]);
+    Animation_ApplyChildValuesFar((void *)arg0, table[(u32)(index * 8) >> 16]);
 }
 
 void BattleEffect_PauseObject(s32 arg0)
@@ -56,7 +56,7 @@ void BattleFx_ResumeObject(void)
             u8 *state = (u8 *)&PARTY_STATE;
             *(s32 *)(object + 0x6C) = *(s32 *)(state + 0x250);
             *(s32 *)(state + 0x250) = 0;
-            Func_08009240(object, *(s8 *)(state + 0x249));
+            Animation_ApplyChildValuesFar(object, *(s8 *)(state + 0x249));
         }
         object[0x5B] = 0;
         Object_SetAction(object, 16);

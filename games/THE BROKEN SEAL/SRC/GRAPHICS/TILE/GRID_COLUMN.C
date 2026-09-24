@@ -81,8 +81,7 @@ void Ui_FillGridColumnFromMetadata(s32 slot, s32 value)
     } while (count <= 9);
 }
 
-void Func_0800b868(void *);
-#define Animation_InitWorkFromMetadata Func_0800b868
+void Animation_InitWorkFromMetadata(void *);
 
 void Ui_SetGridColumnNumber(s32 slot, s32 no)
 {

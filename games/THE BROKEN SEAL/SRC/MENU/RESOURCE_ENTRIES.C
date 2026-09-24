@@ -19,8 +19,7 @@ extern u8 Data_080373ef[];
 extern u8 Data_0000001f;
 
 void RenderOutput_PrepareForRedraw(void *work);
-void Func_0801e7c0(s32 resource_id, void *work, s32 x, s32 y);
-#define UiText_DrawCharacterAtOffset Func_0801e7c0
+void UiText_DrawCharacterAtOffset(s32 resource_id, void *work, s32 x, s32 y);
 void WaitFrames(s32 frames);
 void Audio_PlayCue(s32 sound_id);
 
@@ -86,7 +85,7 @@ s32 Menu_SelectResource(s32 start, s32 goal)
 extern u8 Data_000000f1[];
 
 u32 Runtime_BumpAllocate(s32 size);
-u32 Func_080053e8(const void *, void *);
+u32 Resource_DecodeByteLz(const void *, void *);
 void Resource_CopyData(s32, s32, void *);
 void Func_08002df0(void *);
 
@@ -97,14 +96,13 @@ void Menu_LoadResourceSlot(s32 slot, s32 index)
     u16 *base = GetResource((s32)Data_000000f1);
 
     /* 表内の相対位置から転送元を求める。 */
-    Func_080053e8((void *)((u32)base + base[index]), buffer);
+    Resource_DecodeByteLz((void *)((u32)base + base[index]), buffer);
     Resource_CopyData(slot, size, buffer);
     Func_08002df0(buffer);
 }
 
 
-extern s32 Func_08004080(void);
-#define find_free_slot Func_08004080
+extern s32 find_free_slot(void);
 
 void Menu_AppendResourceEntry(s32 no)
 {

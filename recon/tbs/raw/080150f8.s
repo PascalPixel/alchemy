@@ -1,7 +1,9 @@
 .syntax unified
 	.thumb
+	.global UiWindow_CreateWithSideObjectFar
 	.global Func_080150f8
 	.thumb_func
+UiWindow_CreateWithSideObjectFar:
 Func_080150f8:
 	ldr	r4, [pc, #0]
 	bx	r4

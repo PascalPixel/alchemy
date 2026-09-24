@@ -6,10 +6,8 @@
 #include "PARTY_STATE.H"
 
 extern struct PartyState gCell;
-void Func_08079374(s32 flag);
-#define GameFlag_ClearBit Func_08079374
-s32 Func_08079358(s32 flag);
-#define GameFlag_SetBit Func_08079358
+void GameFlag_ClearBit(s32 flag);
+s32 GameFlag_SetBit(s32 flag);
 
 /* game_flags/refresh_lure_cap.c */
 void GameFlag_RefreshLureCap(void)

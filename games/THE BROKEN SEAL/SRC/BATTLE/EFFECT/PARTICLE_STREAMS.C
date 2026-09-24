@@ -36,54 +36,36 @@ extern u16 Data_080ede48[];
 
 
 void *Func_08009030(s32);
-void **Func_080b5098(s32);
+void **GetBattleObjectSlotFar(s32);
 void Func_080cd594(s32);
-void Func_080d6888(s32, s32, s32, s32, s32);
-#define ObjectGroup_UpdateMembers Func_080d6888
-void Func_080f9010(s32);
-#define Audio_PlayCue Func_080f9010
+void ObjectGroup_UpdateMembers(s32, s32, s32, s32, s32);
+void Audio_PlayCue(s32);
 void Func_080c9048(void);
-void Func_080cd104(s32, s32);
-void Func_08009020(void *, s32);
-void Func_080dbb24(s32, s32, s32);
-#define BattleFx_SpawnObjects Func_080dbb24
-void *Func_08002f40(s32);
-#define Resource_GetTableEntry Func_08002f40
-void Func_080030f8(s32);
-#define WaitFrames Func_080030f8
-s32 Func_08004458(void);
-#define Random16 Func_08004458
-void Func_080d6750(s32);
-#define BattleFx_SelectLivingTargets Func_080d6750
+void Unnamed_080cd104(s32, s32);
+void AnimationObjects_SelectAnimationFar(void *, s32);
+void BattleFx_SpawnObjects(s32, s32, s32);
+void *Resource_GetTableEntry(s32);
+void WaitFrames(s32);
+s32 Random16(void);
+void BattleFx_SelectLivingTargets(s32);
 void Func_08009008(s32, void *, void *, s32);
-s32 Func_08002322(s32);
-#define Engine_MathSin Func_08002322
-s32 Func_0800231c(s32);
-#define Engine_MathCos Func_0800231c
-void Func_080049ac(void);
-#define Render_ResetTransformState Func_080049ac
-void Func_08004cb4(void *);
-#define SceneTransform_ApplyPosition Func_08004cb4
+s32 Trig_Sin(s32);
+s32 Trig_Cos(s32);
+void Render_ResetTransformState(void);
+void SceneTransform_ApplyPosition(void *);
 void Func_08004c6c(s32);
-void Func_08004c1c(s32);
-#define SceneTransform_ApplyYaw Func_08004c1c
-void Func_080e3944(const void *, void *);
-#define EffectPosition_ApplyBaseAndYOffset Func_080e3944
-void Func_08002dd8(s32);
-#define Runtime_ReleaseHeapBlock Func_08002dd8
+void SceneTransform_ApplyYaw(s32);
+void EffectPosition_ApplyBaseAndYOffset(const void *, void *);
+void Runtime_ReleaseHeapBlock(s32);
 void Func_080d67dc(void);
 void Func_080e727c(s32, s32, s32);
-void Func_08009038(s32);
-void Func_080b5118(void);
-void Func_080b50e8(s32);
-void Func_080051d8(s32, s32);
-#define Graphics_PrepareTransferInIwramWork Func_080051d8
-void Func_080e38b8(void *, s32, s32);
-#define EffectStep_AdvanceWithGravity3D Func_080e38b8
-s32 Func_080022ec(s32, s32);
-#define Math_Div Func_080022ec
-void Func_080e155c(s32, s32);
-#define Camera_ApplyShake Func_080e155c
+void ResourceObject_ReleaseFar(s32);
+void BattleActor_CommitPlacementFar(void);
+void BattleEventRuntime_BeginPhaseFar(s32);
+void Graphics_PrepareTransferInIwramWork(s32, s32);
+void EffectStep_AdvanceWithGravity3D(void *, s32, s32);
+s32 Math_Div(s32, s32);
+void Camera_ApplyShake(s32, s32);
 s32 Func_080cdbc0(void);
 
 s32 BattleEffect_RunParticleStreams(s32 arg0, s32 arg1)
@@ -267,7 +249,7 @@ s32 BattleEffect_RunParticleStreams(s32 arg0, s32 arg1)
     Func_080cd594(0x2000);
     (*(s16 *)((u8 *)((void *)0x04000020) + (0))) = 0x100;
     if (sp4C == 1) {
-        temp_r2_46 = *Func_080b5098((*(s32 *)((u8 *)((*(void **)((u8 *)(*sp3C) + (0x7828)))) + (8))));
+        temp_r2_46 = *GetBattleObjectSlotFar((*(s32 *)((u8 *)((*(void **)((u8 *)(*sp3C) + (0x7828)))) + (8))));
         (*(s32 *)((u8 *)(temp_r2_46) + (0x28))) = 0xA0000;
         (*(s32 *)((u8 *)(temp_r2_46) + (0x48))) = 0x91EB;
         ObjectGroup_UpdateMembers((*(s32 *)((u8 *)((*(void **)((u8 *)(*sp3C) + (0x7828)))) + (8))), -1, 2, -1, 0);
@@ -284,7 +266,7 @@ s32 BattleEffect_RunParticleStreams(s32 arg0, s32 arg1)
     (*(s16 *)((u8 *)((void *)0x05000000) + (2))) = 0;
     (*(s32 *)((u8 *)(*sp3C) + (0x7780))) = 0;
     Scheduler_AddOrUpdateCallback(0x080CD261, 0x480);
-    Func_080cd104(0, 0);
+    Unnamed_080cd104(0, 0);
     Scheduler_RemoveCallback(0x080CD261);
     if (sp4C == 1) {
         var_r5_135 = 0x77D8;
@@ -295,7 +277,7 @@ s32 BattleEffect_RunParticleStreams(s32 arg0, s32 arg1)
             *(void **)((u8 *)*sp3C + var_r5_135) = temp_r0_140;
             if (temp_r0_140 != NULL) {
                 (*(s8 *)((u8 *)(temp_r0_140) + (0x26))) = 0;
-                Func_08009020(temp_r0_140, 2);
+                AnimationObjects_SelectAnimationFar(temp_r0_140, 2);
                 temp_r1_154 = *(void **)((u8 *)*sp3C + var_r5_135);
                 (*(u8 *)((u8 *)(temp_r1_154) + (9))) = (u8) ((*(u8 *)((u8 *)(temp_r1_154) + (9))) | 0xC);
             }
@@ -531,12 +513,12 @@ loop_84:
             temp_r1_848 = (0x7FFF & Random16()) + 0x4000;
             (*(s32 *)((u8 *)(temp_r5_837) + (0x18))) = 0;
             spC = temp_r1_848;
-            var_r3_859 = Engine_MathSin(temp_r1_848) * 0x1E;
+            var_r3_859 = Trig_Sin(temp_r1_848) * 0x1E;
             if (var_r3_859 < 0) {
                 var_r3_859 += 0xFFFF;
             }
             (*(s32 *)((u8 *)(temp_r3_835) + (0x7080))) = (s32) (((var_r7_718 + 0x60) << 0x10) + ((var_r3_859 >> 0x10) * var_r6_763));
-            var_r3_875 = Engine_MathCos(temp_r1_848) * 0x1E;
+            var_r3_875 = Trig_Cos(temp_r1_848) * 0x1E;
             if (var_r3_875 < 0) {
                 var_r3_875 += 0xFFFF;
             }
@@ -715,11 +697,11 @@ loop_121:
     }
     if (var_fp_1329 == 0x30) {
         if (sp4C == 1) {
-            Func_08009038((*(s32 *)((u8 *)(*sp20) + (0x77D8))));
-            Func_08009038((*(s32 *)((u8 *)(*sp20) + (0x77DC))));
-            Func_080b5118();
+            ResourceObject_ReleaseFar((*(s32 *)((u8 *)(*sp20) + (0x77D8))));
+            ResourceObject_ReleaseFar((*(s32 *)((u8 *)(*sp20) + (0x77DC))));
+            BattleActor_CommitPlacementFar();
         }
-        Func_080b50e8(0x86);
+        BattleEventRuntime_BeginPhaseFar(0x86);
     }
     Render_ResetTransformState();
     Graphics_PrepareTransferInIwramWork(temp_r5_1334, temp_r5_1334 + 0xC);
@@ -858,7 +840,7 @@ loop_121:
     Scheduler_RemoveCallback(0x080CD261);
     Runtime_ReleaseHeapBlock(0x2E);
     if (sp4C == 0) {
-        Func_08009038((*(s32 *)((u8 *)(*sp3C) + (0x77D8))));
+        ResourceObject_ReleaseFar((*(s32 *)((u8 *)(*sp3C) + (0x77D8))));
     }
     return Func_080cdbc0();
 }

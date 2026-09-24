@@ -22,11 +22,9 @@ struct MetadataRecord {
     u8 fourth;
 };
 
-s32 Func_0800bbc0(s32);
-#define AnimationObject_Allocate Func_0800bbc0
+s32 AnimationObject_Allocate(s32);
 struct MetadataRecord *Func_08185000(s32);
-void Func_0800bc48(void *);
-#define ResourceMetadata_ClearRecord Func_0800bc48
+void ResourceMetadata_ClearRecord(void *);
 
 s32 ResourceMetadata_Register(struct MetadataSlotState *state, s32 id)
 {

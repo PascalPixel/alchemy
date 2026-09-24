@@ -1,7 +1,9 @@
 .syntax unified
 	.thumb
+	.global BattleParty_PrepareActiveOwnersFar
 	.global Func_080b50c8
 	.thumb_func
+BattleParty_PrepareActiveOwnersFar:
 Func_080b50c8:
 	ldr	r4, [pc, #0]
 	bx	r4

@@ -1,8 +1,7 @@
 #include "TYPES.H"
 extern volatile u16 Data_03001f64;
 extern volatile u16 Data_02002238;
-u32 Func_080022f4(u32, u32);
-#define Math_Mod Func_080022f4
+u32 Math_DivU(u32, u32);
 s32 SerialRuntime_BeginTransferA(void *, s32);
 s32 SerialRuntime_BeginTransferB(void *);
 s32 SerialRuntime_GetActiveTransfers(void);
@@ -31,7 +30,7 @@ s32 BattlePresentation_AppendLinkedActions(
 {
     u8 *battle = *(u8 **)0x03001e74;
     s32 result = 0;
-    s32 allocation_size = Math_Mod(count * 16 + 19, 20) * 20;
+    s32 allocation_size = Math_DivU(count * 16 + 19, 20) * 20;
     struct BattleLinkedActionState *state = Runtime_BumpAllocateAlternatePool(40);
     s32 index;
 
@@ -86,14 +85,14 @@ s32 BattlePresentation_AppendLinkedActions(
             status = SerialRuntime_BeginTransferB(actions + count);
             if (status == -1) return status;
             while (SerialRuntime_GetActiveTransfers()) {
-                if (Data_02002238 > Math_Mod(result * 16 + 19, 20) * 20) return -1;
+                if (Data_02002238 > Math_DivU(result * 16 + 19, 20) * 20) return -1;
             WaitFrames(1);
             if (--timeout < 0) return -1;
             if ((Data_03001f64 & 3) != 3) {
                 if (++disconnected > 24) return -1;
             } else disconnected = 0;
             }
-            if (Data_02002238 != Math_Mod(result * 16 + 19, 20) * 20) return -1;
+            if (Data_02002238 != Math_DivU(result * 16 + 19, 20) * 20) return -1;
         }
         return 0;
     }
@@ -116,7 +115,7 @@ s32 BattlePresentation_AppendLinkedActions(
             u16 interrupt_enable;
 
             state->count = count;
-            state->marker = Func_080771a0();
+            state->marker = BattleRandom16Far();
             interrupt_enable = *(u16 *)0x04000208;
             *(u16 *)0x04000208 = 0x0208;
             state->display_table = *(s32 *)0x03001cb4;
@@ -135,7 +134,7 @@ s32 BattlePresentation_AppendLinkedActions(
             if (BattleLink_SendActions() < 0) {
                 goto fail;
             }
-            if (Func_080771a0() != state->marker) {
+            if (BattleRandom16Far() != state->marker) {
                 goto fail;
             }
             *(s32 *)0x020023a8 = state->display_table;

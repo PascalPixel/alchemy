@@ -53,15 +53,14 @@ extern u8 Value_00000b13;
 extern u8 Value_00000b14;
 extern u8 Value_00000b15;
 
-void Func_080030f8(s32 frames);
+void WaitFrames(s32 frames);
 void Func_08015068(s32 window, s32 x, s32 y, s32 width, s32 height);
-void Func_08015080(s32 message, s32 window, s32 x, s32 y);
-void Func_08015270(s32 window);
-void Func_08015280(s32 window, s32 icon, s32 x, s32 y, s32 palette);
-struct BattleAction *Func_08077080(s32 action);
+void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
+void RenderOutput_RedrawSavedRectFar(s32 window);
+void UiWindow_SetTilemapEntryFar(s32 window, s32 icon, s32 x, s32 y, s32 palette);
+struct BattleAction *BattleAction_Get(s32 action);
 void Func_080a2268(s32, s32, s32, s32, s32, s32);
 
-#define WaitFrames Func_080030f8
 #define ACTION_ID_MASK 0x3fff
 
 
@@ -79,13 +78,13 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused, struct MenuResult *state)
 
     menu = Data_03001f2c;
     state->selected_index = state->page * 5 + state->row;
-    Func_08015270((s32)menu->info_window);
+    RenderOutput_RedrawSavedRectFar((s32)menu->info_window);
     WaitFrames(1);
     if (menu->psynergies[state->selected_index] != 0) {
-        Func_08015080((menu->psynergies[state->selected_index] & ACTION_ID_MASK)
+        UiText_DrawCharacterAtOffsetFar((menu->psynergies[state->selected_index] & ACTION_ID_MASK)
                 + (s32)&Value_0000053a,
             (s32)menu->info_window, 0, 0);
-        ability = Func_08077080(menu->psynergies[state->selected_index] & ACTION_ID_MASK);
+        ability = BattleAction_Get(menu->psynergies[state->selected_index] & ACTION_ID_MASK);
         Func_08015068(window, 0, 96, 224, 104);
         row = 0;
         if (ability->type_0c != 0 || (ability->target_flags & 0x40) != 0) {
@@ -95,29 +94,29 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused, struct MenuResult *state)
             row |= 1;
         }
         if (row == 3) {
-            Func_08015080((s32)&Value_00000b15, window, 0, 96);
+            UiText_DrawCharacterAtOffsetFar((s32)&Value_00000b15, window, 0, 96);
         } else if (row == 2) {
-            Func_08015080((s32)&Value_00000b14, window, 0, 96);
+            UiText_DrawCharacterAtOffsetFar((s32)&Value_00000b14, window, 0, 96);
         } else if (row == 1) {
-            Func_08015080((s32)&Value_00000b13, window, 0, 96);
+            UiText_DrawCharacterAtOffsetFar((s32)&Value_00000b13, window, 0, 96);
         }
     }
 
     base = state->page * 5;
     for (row = 0; row <= 4; row++) {
         if (row == state->row) {
-            ability = Func_08077080(menu->psynergies[base + row] & ACTION_ID_MASK);
+            ability = BattleAction_Get(menu->psynergies[base + row] & ACTION_ID_MASK);
             if (ability->damage_class != 4) {
-                Func_08015280(window, ability->damage_class + 1, 24, row * 2 + 2, 0);
+                UiWindow_SetTilemapEntryFar(window, ability->damage_class + 1, 24, row * 2 + 2, 0);
                 Func_080a2268(window, 9, row * 2 + 2, 15, 1, 14);
                 Func_080a2268(window, 25, row * 2 + 2, 3, 1, 14);
             } else {
                 Func_080a2268(window, 9, row * 2 + 2, 19, 1, 14);
             }
         } else {
-            ability = Func_08077080(menu->psynergies[base + row] & ACTION_ID_MASK);
+            ability = BattleAction_Get(menu->psynergies[base + row] & ACTION_ID_MASK);
             if (ability->damage_class != 4) {
-                Func_08015280(window, ability->damage_class + 1, 24, row * 2 + 2, 4);
+                UiWindow_SetTilemapEntryFar(window, ability->damage_class + 1, 24, row * 2 + 2, 4);
                 Func_080a2268(window, 9, row * 2 + 2, 15, 1, 15);
                 Func_080a2268(window, 25, row * 2 + 2, 3, 1, 15);
             } else {

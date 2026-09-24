@@ -1,8 +1,7 @@
 #include "FIXED_MATH.H"
 #include "TYPES.H"
 
-void Func_08003b70(s32 arg0);
-#define Blend_SetDarkenTarget16 Func_08003b70
+void Blend_SetDarkenTarget16(s32 arg0);
 u32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 #define Rand Random16

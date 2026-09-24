@@ -1,7 +1,6 @@
 #include "SAVE_STATE.H"
 
-s32 Func_08005c68(void)
-#define SaveState_LoadSummaryRecords Func_08005c68
+s32 SaveState_LoadSummaryRecords(void)
 {
     struct SaveWorkspace *work;
     u8 *summary;

@@ -1,7 +1,9 @@
 .syntax unified
 	.thumb
+	.global PartyInventory_RemoveFar
 	.global Func_08077048
 	.thumb_func
+PartyInventory_RemoveFar:
 Func_08077048:
 	ldr	r4, [pc, #0]
 	bx	r4

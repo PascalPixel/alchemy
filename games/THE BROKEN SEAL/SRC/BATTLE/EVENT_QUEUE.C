@@ -22,7 +22,7 @@ struct BattleEventObjectSlot {
 
 s32 Object_Destroy(s32);
 struct BattleEventActor *Runtime_GetObject();
-s32 Func_08077130(void *, s32);
+s32 Owner_UpdateRatioPairFar(void *, s32);
 struct BattleEventObjectSlot *GetBattleObjectSlot(s32 arg0);
 s32 ActivateBattleObjectSlot(s32 arg0);
 s32 Func_080bac6c(s32);
@@ -35,7 +35,7 @@ s32 BattleActor_DestroyTemporaryObject(s32 arg0)
 
     creature = Runtime_GetObject();
     if (creature->field_12a == 1) {
-        Func_08077130(creature, 0);
+        Owner_UpdateRatioPairFar(creature, 0);
         Func_080bac6c(arg0);
         ActivateBattleObjectSlot(arg0);
         runtime = GetBattleObjectSlot(arg0);
@@ -71,27 +71,19 @@ extern u8 *Data_03001ee4;
 
 
 
-void Func_08015120(u32, u32);
-void Func_080151c8(u32);
-void Func_080bb65c(void);
-#define BattlePresentation_WaitForAdvance Func_080bb65c
-void Func_08015118(void);
-void Func_080f9010(u32);
-#define Audio_PlayCue Func_080f9010
-void Func_080babdc(u32, u32, u32);
-#define BattleMotion_RunValueSequence Func_080babdc
+void UiWork_PushValueSlotFar(u32, u32);
+void UiText_ShowMessageAndWaitCoreFar(u32);
+void BattlePresentation_WaitForAdvance(void);
+void UiWork_ClearValueNameTablesFar(void);
+void Audio_PlayCue(u32);
+void BattleMotion_RunValueSequence(u32, u32, u32);
 void Func_080c24f0(u32, u32);
-void Func_080bb588(u32);
-#define BattleActor_ResetRuntimeFields Func_080bb588
-void Func_080bace8(u32);
-#define BattleMotion_InitializeActorRecords Func_080bace8
+void BattleActor_ResetRuntimeFields(u32);
+void BattleMotion_InitializeActorRecords(u32);
 void Func_08015130(u32);
-void Func_080b78e4(u32, u32);
-#define BattleUnit_BuildStatusFlags Func_080b78e4
-void Func_080b7aac(u32);
-#define BattlePres_SetActorModeAndAction Func_080b7aac
-u32 Func_080bdfec(void);
-#define BattleEventRuntime_Reset Func_080bdfec
+void BattleUnit_BuildStatusFlags(u32, u32);
+void BattlePres_SetActorModeAndAction(u32);
+u32 BattleEventRuntime_Reset(void);
 
 u32 BattleEv_DispatchQueued(void)
 {
@@ -104,20 +96,20 @@ u32 BattleEv_DispatchQueued(void)
         if (opcode <= 13) switch (opcode) {
         case 13: Battle_SetRuntimeFlagBit0((struct BattleEventFlagWork *)queue, queue->operands[i]); break;
         case 12: BattleActor_DestroyTemporaryObject(queue->operands[i]); break;
-        case 0: Func_08015120(queue->operands[i], 1); break;
-        case 1: Func_08015120(queue->operands[i], 5); break;
-        case 2: Func_08015120(queue->operands[i] & 0x1ff, 2); break;
-        case 3: Func_08015120(queue->operands[i] & 0x3fff, 4); break;
+        case 0: UiWork_PushValueSlotFar(queue->operands[i], 1); break;
+        case 1: UiWork_PushValueSlotFar(queue->operands[i], 5); break;
+        case 2: UiWork_PushValueSlotFar(queue->operands[i] & 0x1ff, 2); break;
+        case 3: UiWork_PushValueSlotFar(queue->operands[i] & 0x3fff, 4); break;
         case 6: FIELD(Data_03001ee4, s32, 8) = 1; break;
-        case 7: Func_08015118(); break;
+        case 7: UiWork_ClearValueNameTablesFar(); break;
         case 4:
-            if ((s32)queue->operands[i] >= 0) Func_080151c8(queue->operands[i]);
+            if ((s32)queue->operands[i] >= 0) UiText_ShowMessageAndWaitCoreFar(queue->operands[i]);
             BattlePresentation_WaitForAdvance();
-            Func_08015118();
+            UiWork_ClearValueNameTablesFar();
             break;
         case 5:
-            if ((s32)queue->operands[i] >= 0) Func_080151c8(queue->operands[i]);
-            Func_08015118();
+            if ((s32)queue->operands[i] >= 0) UiText_ShowMessageAndWaitCoreFar(queue->operands[i]);
+            UiWork_ClearValueNameTablesFar();
             break;
         case 8:
             if (runtime->pending_sound_id > 0) Audio_PlayCue(runtime->pending_sound_id);
@@ -139,10 +131,9 @@ u32 BattleEv_DispatchQueued(void)
             break;
         }
     }
-    return Func_080bdfec();
+    return BattleEventRuntime_Reset();
 }
 
-#define BattleEv_Push Func_080bbabc
 
 u32 BattleEv_Push(u32 opcode, u32 operand)
 {

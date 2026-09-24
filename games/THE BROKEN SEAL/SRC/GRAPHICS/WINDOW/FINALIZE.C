@@ -25,8 +25,7 @@ void RenderOutput_ClearList(void *work);
 void RenderOutput_Release(void *node);
 s32 WaitFrames(s32 frames);
 void Func_080170f8(s32 x, s32 y, s32 width, s32 height);
-void Func_08016178(u16 x, u16 y, u16 width, u16 height);
-#define UiWindow_EraseBorderRect Func_08016178
+void UiWindow_EraseBorderRect(u16 x, u16 y, u16 width, u16 height);
 
 void UiWork_WaitUntilField1aClear(void *work)
 {

@@ -15,10 +15,8 @@ extern u8 Value_00000182;
 void Func_08015070(s32 window, s32 x, s32 width, s32 height, s32 style);
 void UiText_DrawAt(s32 message, s32 window, s32 x, s32 y);
 void UiWindow_Commit(s32 window);
-void Func_080a21b0(s32 window, s32 count, s32 page_size, s32 page, s32 style);
-#define Menu_DrawPageIndicator Func_080a21b0
-void Func_080a2324(s32 page_size, s32 first_entry, s32 window, s32 x, s32 y);
-#define Menu_SetPageIcons Func_080a2324
+void Menu_DrawPageIndicator(s32 window, s32 count, s32 page_size, s32 page, s32 style);
+void Menu_SetPageIcons(s32 page_size, s32 first_entry, s32 window, s32 x, s32 y);
 
 s32 ItemMenu_DrawNamePage(
     s32 window,

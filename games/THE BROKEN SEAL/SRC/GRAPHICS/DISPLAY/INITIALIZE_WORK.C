@@ -1,8 +1,6 @@
 #include "DMA.H"
-void *Func_080048f4(s32, s32);
-#define Runtime_AllocateBlock Func_080048f4
-s32 Func_080041d8(void (*)(void), s32);
-#define Scheduler_AddOrUpdateCallback Func_080041d8
+void *Runtime_AllocateBlock(s32, s32);
+s32 Scheduler_AddOrUpdateCallback(void (*)(void), s32);
 void Func_08028194(void);
 void *AffineEffect_InitializeWork(void)
 {

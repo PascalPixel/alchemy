@@ -12,9 +12,9 @@
 extern u8 *gWork;
 
 void WaitFrames(s32);
-s32 Func_0808a280(void);
-s32 Func_080a1008(void);
-s32 Func_080a1000(void);
+s32 Object_GetTriggerTileAheadOfCurrentFar(void);
+s32 Menu_OpenConfirmPromptFar(void);
+s32 RunAssetSelectionScreenFar(void);
 
 s32 Menu_RunTopSelection(void)
 {
@@ -39,13 +39,13 @@ loop:
 
     switch (sel) {
     case 0:
-        ret = Func_0808a280();
+        ret = Object_GetTriggerTileAheadOfCurrentFar();
         if (ret == 0)
             ret = 0xff;
         *(u16 *)(state + 0x17a) = ret;
         break;
     case 1:
-        ret = Func_080a1008();
+        ret = Menu_OpenConfirmPromptFar();
         if (ret == -1)
             goto loop;
         break;
@@ -55,7 +55,7 @@ loop:
             goto loop;
         break;
     case 3:
-        ret = Func_080a1000();
+        ret = RunAssetSelectionScreenFar();
         if (ret == -1)
             goto loop;
         break;

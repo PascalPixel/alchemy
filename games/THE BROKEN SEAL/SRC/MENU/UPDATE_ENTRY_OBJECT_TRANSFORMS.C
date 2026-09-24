@@ -2,7 +2,7 @@
 
 extern u8 *Data_03001f2c;
 
-s32 Func_08077148(void);
+s32 Party_CountActiveOwnersFar(void);
 void Func_08009008(void *, s32 *, s32 *, s32);
 
 void Menu_UpdateEntryObjectTransforms(void)
@@ -17,7 +17,7 @@ void Menu_UpdateEntryObjectTransforms(void)
     s32 cnt;
 
     p = Data_03001f2c;
-    cnt = (u16)Func_08077148();
+    cnt = (u16)Party_CountActiveOwnersFar();
     i = 0;
     if (i < cnt) {
         pp = pos;

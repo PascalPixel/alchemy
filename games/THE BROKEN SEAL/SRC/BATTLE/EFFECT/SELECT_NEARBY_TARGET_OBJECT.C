@@ -11,12 +11,11 @@ struct BattleTargetObject {
     u8 flags;
 };
 
-s32 Func_0808ddb8(s32 battleMode);
-s32 Func_080022ec(s32 numerator, s32 denominator);
-s32 Func_080044d0(s32 deltaZ, s32 deltaX);
+s32 BattleFx_MapKeyThroughTable(s32 battleMode);
+s32 Math_Div(s32 numerator, s32 denominator);
+s32 ArcTan2(s32 deltaZ, s32 deltaX);
 
-#define BattleFx_SelectNearbyTargetObject Func_0808df1c
-s32 BattleFx_SelectNearbyTargetObject(s32 sourceId, s32 battleMode)
+s32 BattleEffect_SelectNearbyTargetObject(s32 sourceId, s32 battleMode)
 {
     struct BattleTargetObject *source;
     struct BattleTargetObject *candidate;
@@ -33,7 +32,7 @@ s32 BattleFx_SelectNearbyTargetObject(s32 sourceId, s32 battleMode)
     s32 angleTolerance;
 
     bestId = -1;
-    bestDistance = Func_0808ddb8(battleMode);
+    bestDistance = BattleFx_MapKeyThroughTable(battleMode);
     source = (struct BattleTargetObject *)ObjectTable_Get(sourceId);
     if (source == 0)
         return bestId;
@@ -77,11 +76,11 @@ s32 BattleFx_SelectNearbyTargetObject(s32 sourceId, s32 battleMode)
 
         distance = ((s32 (*)(s32))0x030001d8)(deltaX * deltaX + cellZ * cellZ);
         if ((candidate->flags & 0x10) != 0)
-            distance = Func_080022ec(distance * 2, 3);
+            distance = Math_Div(distance * 2, 3);
         if (distance >= bestDistance)
             continue;
 
-        angle = (u16)Func_080044d0(candidate->z - source->z,
+        angle = (u16)ArcTan2(candidate->z - source->z,
                                    candidate->x - source->x);
         angleTolerance = 0x1800;
         if (distance > 19)

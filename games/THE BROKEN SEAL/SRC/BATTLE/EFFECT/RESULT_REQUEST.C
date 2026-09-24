@@ -13,14 +13,11 @@ struct ResultWork {
 extern struct ResultWork Data_02000240;
 #define PARTY_STATE Data_02000240
 extern u8 Value_00000021;
-u16 Func_0808b05c(s32 arg0, s32 arg1);
-#define BattleFx_GetWeightedResult Func_0808b05c
-s16 Func_0808b074(s32 value);
-#define BattleFx_GetPhaseResult Func_0808b074
-s32 Func_0808adf0(void *arg0);
-#define BattleFx_LookupResult Func_0808adf0
+u16 BattleFx_GetWeightedResult(s32 arg0, s32 arg1);
+s16 BattleFx_GetPhaseResult(s32 value);
+s32 BattleFx_LookupResult(void *arg0);
 void Func_0809537c(s32 flags);
-s32 Func_0808b320(s32, s32);
+s32 BattleFx_SelectBattleCue(s32, s32);
 
 void BattleFx_SetWeightedResult(s32 arg0, s32 arg1)
 {
@@ -33,7 +30,7 @@ void BattleFx_SetWeightedResult(s32 arg0, s32 arg1)
         PARTY_STATE.special = (u16)(s32)&Value_00000021;
     if (runtime->mode_19e == 3)
         BattleFx_LookupResult((u8 *)ObjectTable_Get(PARTY_STATE.object_id) + 8);
-    Func_0808b320(first, second);
+    BattleFx_SelectBattleCue(first, second);
 }
 
 void BattleFx_SetPhaseRequest(s32 flags, s32 value)
@@ -57,5 +54,5 @@ void BattleFx_SetPhaseRequest(s32 flags, s32 value)
 
         BattleFx_LookupResult((u8 *)object + 8);
     }
-    Func_0808b320(0, 0);
+    BattleFx_SelectBattleCue(0, 0);
 }

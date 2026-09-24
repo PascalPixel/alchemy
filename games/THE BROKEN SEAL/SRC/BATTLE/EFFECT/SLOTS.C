@@ -4,12 +4,9 @@
 #include "GLOBAL_CELLS.H"
 #include "EFFECT_0809B11C.H"
 
-void *Func_080048b0(s32, s32);
-#define Runtime_AllocateHeapBlock Func_080048b0
-void Func_0809bb34(struct EffectSlot *);
-#define BattleFx_ClearOwnedSlot Func_0809bb34
-void Func_08002dd8(s32);
-#define Runtime_ReleaseHeapBlock Func_08002dd8
+void *Runtime_AllocateHeapBlock(s32, s32);
+void BattleFx_ClearOwnedSlot(struct EffectSlot *);
+void Runtime_ReleaseHeapBlock(s32);
 void WaitFrames(s32);
 
 struct EffectScene {

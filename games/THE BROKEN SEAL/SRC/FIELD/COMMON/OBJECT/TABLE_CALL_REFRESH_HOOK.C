@@ -1,7 +1,6 @@
 #include "TYPES.H"
 
-s32 Func_08093168();
-#define Event_ShowValue1d8AtPosition Func_08093168
+s32 Event_ShowValue1d8AtPosition();
 
 void ObjectTable_CallRefreshHook(void)
 {

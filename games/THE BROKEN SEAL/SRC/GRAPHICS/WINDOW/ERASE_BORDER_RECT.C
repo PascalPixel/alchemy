@@ -5,7 +5,6 @@ extern u8 *Data_03001e8c;
 
 void UiWindow_ClearTileAttributesInRect(s32 x, s32 y, u32 width, u32 height);
 
-#define UiWindow_EraseBorderRect Func_08016178
 
 void UiWindow_EraseBorderRect(s32 x, s32 y, u32 width, u32 height)
 {

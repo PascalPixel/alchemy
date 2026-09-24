@@ -6,8 +6,7 @@ s32 Func_08018a50(s32 start, s32 *width, s32 *count, s32 mode);
 
 extern u8 *Data_03001e8c;
 
-void Func_0801868c(s32 no, s32 *px, s32 *py, u32 *pw, u32 *ph, s32 mode, u32 flags)
-#define UiWindow_FitOnScreen Func_0801868c
+void UiWindow_FitOnScreen(s32 no, s32 *px, s32 *py, u32 *pw, u32 *ph, s32 mode, u32 flags)
 {
     u8 *base;
     s32 x;

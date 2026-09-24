@@ -45,8 +45,7 @@ struct TextResourceSetup {
     u16 field_8c : 4;
 };
 
-s32 Func_08004080(void);
-#define find_free_slot Func_08004080
+s32 find_free_slot(void);
 s32 Resource_CopyData(s32, s32, const void *);
 extern const u8 Data_080342f8[];
 

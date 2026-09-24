@@ -1,14 +1,11 @@
 #include "TYPES.H"
-void *Func_080284dc(void);
-#define AffineEffect_InitializeWork Func_080284dc
-void Func_0802851c(void);
-#define Menu_EndResourceSelection Func_0802851c
+void *AffineEffect_InitializeWork(void);
+void Menu_EndResourceSelection(void);
 s32 Func_08028574(s32);
 void Menu_AppendResourceEntry(s32 arg0);
 s32 Func_08028808(s32, s32, s32);
 extern u8 Data_00000024[];
-void Func_080288a8(s32 a0, s32 a1, s32 a2, s32 a3);
-#define Menu_LayoutResourceEntries Func_080288a8
+void Menu_LayoutResourceEntries(s32 a0, s32 a1, s32 a2, s32 a3);
 
 s32 Menu_SelectEntry11To14(s32 arg0)
 {

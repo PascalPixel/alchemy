@@ -16,8 +16,7 @@ struct MenuResourceList {
 };
 
 extern u8 Data_0000001f;
-void Func_08019ee4(s32 arg0, s32 arg1, s32 *arg2, s32 *arg3, s32 arg4);
-#define Ui_BuildPairedPatternsToSlot Func_08019ee4
+void Ui_BuildPairedPatternsToSlot(s32 arg0, s32 arg1, s32 *arg2, s32 *arg3, s32 arg4);
 
 void Menu_ReloadNodeResource(struct MenuResourceList *state, u32 index)
 {
@@ -62,7 +61,7 @@ void Menu_LoadSelectionNodeResource(struct MenuResourceList *state, u32 index)
     }
 }
 
-void Func_080b50e0(u16 *, s32);
+void BattlePres_SetActorModesFar(u16 *, s32);
 
 void Menu_SendNodeCountList(u8 *arg0)
 {
@@ -75,5 +74,5 @@ void Menu_SendNodeCountList(u8 *arg0)
         count++;
     }
     data[count] = 0xff;
-    Func_080b50e0(data, 0);
+    BattlePres_SetActorModesFar(data, 0);
 }

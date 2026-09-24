@@ -1,12 +1,9 @@
 #include "TYPES.H"
 #include "RUNTIME_INTERFACES.H"
 
-s32 Func_080056cc(void);
-#define SaveState_InitializeWorkspace Func_080056cc
-s32 Func_08005920(s32, void *);
-#define SaveState_WriteRecord Func_08005920
-void Func_0801776c(s32, s32);
-#define UiText_ShowPositionedMessageAndWait Func_0801776c
+s32 SaveState_InitializeWorkspace(void);
+s32 SaveState_WriteRecord(s32, void *);
+void UiText_ShowPositionedMessageAndWait(s32, s32);
 void Func_0801f818(void);
 extern char Data_02000000;
 extern char Value_0000000a;

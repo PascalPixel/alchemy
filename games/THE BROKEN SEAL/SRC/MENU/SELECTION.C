@@ -31,14 +31,12 @@ void Menu_LayoutResourceEntries(s32 x, s32 y, s32 w, s32 h)
 extern s8 Data_08037403[];
 extern s8 Data_080373f7[];
 
-s32 Func_08077290(s32);
-void *Func_080284dc(void);
-#define AffineEffect_InitializeWork Func_080284dc
+s32 Party_SumDjinnCountsFar(s32);
+void *AffineEffect_InitializeWork(void);
 void Menu_AppendResourceEntry(s32 arg0);
 void Func_08028808(s32, s32, s32);
 s32 Func_08028574(s32);
-void Func_0802851c(void);
-#define Menu_EndResourceSelection Func_0802851c
+void Menu_EndResourceSelection(void);
 
 static __inline__ s32 TblGet(s8 *tbl, s32 index)
 {
@@ -53,7 +51,7 @@ s32 Menu_SelectTopEntry(s32 sel)
     s32 ret;
     s8 *tbl;
 
-    if (Func_08077290(-1) == 0) {
+    if (Party_SumDjinnCountsFar(-1) == 0) {
         group = 1;
     }
 
@@ -83,11 +81,9 @@ s32 Menu_SelectTopEntry(s32 sel)
     return ret;
 }
 
-void Func_0801c2d0(void);
-#define UiWindow_OpenMode1AndWaitFrame Func_0801c2d0
+void UiWindow_OpenMode1AndWaitFrame(void);
 s32 Menu_SelectResource(s32, s32);
-void Func_0801c2e4(void);
-#define UiWork_CloseAndRelease Func_0801c2e4
+void UiWork_CloseAndRelease(void);
 
 s32 Menu_AnimateSelectionToEntry(s32 arg0, s32 arg1)
 {
@@ -104,8 +100,7 @@ s32 Menu_AnimateSelectionToEntry(s32 arg0, s32 arg1)
     return arg1;
 }
 
-extern s32 Func_0801f77c(void);
-#define SaveState_ScanRecordFlags Func_0801f77c
+extern s32 SaveState_ScanRecordFlags(void);
 extern s8 Data_0803740f[];
 
 s32 Menu_SelectSaveSlotAction(void)
@@ -169,8 +164,7 @@ struct MenuModeLabelState {
 };
 
 extern void Func_080164d4(void *, s32, s32, s32, s32);
-extern void Func_0801e7c0(s32, void *, s32, s32);
-#define UiText_DrawCharacterAtOffset Func_0801e7c0
+extern void UiText_DrawCharacterAtOffset(s32, void *, s32, s32);
 
 void Menu_DrawModeLabel(void)
 {

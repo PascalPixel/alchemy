@@ -3,13 +3,12 @@
 extern struct FourObjectMotionState *Data_03001f2c;
 extern s32 Data_080af304[];
 
-void Func_08009038(void *);
+void ResourceObject_ReleaseFar(void *);
 void *Func_08009030(s32);
 void Object_InitializeMode(void *, s32);
 void Func_080ad40c(void);
 s32 ScheduleCallbackAfterFrames(void (*)(void), s32);
-void Func_08004278(void (*)(void));
-#define Scheduler_RemoveCallback Func_08004278
+void Scheduler_RemoveCallback(void (*)(void));
 
 void FourObjectMotion_InitializeBottomRow(void)
 {
@@ -20,7 +19,7 @@ void FourObjectMotion_InitializeBottomRow(void)
         void *object = state->objects[index];
 
         if (object != NULL) {
-            Func_08009038(object);
+            ResourceObject_ReleaseFar(object);
             state->objects[index] = NULL;
         }
     }
@@ -59,7 +58,7 @@ s32 FourObjectMotion_ReplaceSlot(s32 index, s32 kind, s32 value)
     struct FourObjectMotionState *state = Data_03001f2c;
 
     if (state->objects[index] != NULL) {
-        Func_08009038(state->objects[index]);
+        ResourceObject_ReleaseFar(state->objects[index]);
         state->objects[index] = NULL;
     }
     {
@@ -81,7 +80,7 @@ void FourObjectMotion_ClearSlotsAndScheduleAlt(void)
         void *object = state->objects[index];
 
         if (object != NULL) {
-            Func_08009038(object);
+            ResourceObject_ReleaseFar(object);
             state->objects[index] = NULL;
         }
         index++;

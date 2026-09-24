@@ -1,7 +1,6 @@
 #include "SAVE_STATE.H"
 
-s32 Func_08005920(s32 record_id, void *source)
-#define SaveState_WriteRecord Func_08005920
+s32 SaveState_WriteRecord(s32 record_id, void *source)
 {
     struct SaveWorkspace *work;
     struct SaveSlotHeader header;

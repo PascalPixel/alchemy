@@ -1,6 +1,5 @@
 #include "SERIAL_RUNTIME.H"
 
-#define SerialRuntime_BeginTransferA Func_080063bc
 
 s32 SerialRuntime_BeginTransferA(s32 value, s32 transfer_value)
 {

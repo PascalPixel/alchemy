@@ -9,11 +9,9 @@
 #endif
 
 extern u8 Value_00000ca0;
-extern void Func_080b04dc(s32);
-#define UiMessage_ShowAndWait Func_080b04dc
+extern void UiMessage_ShowAndWait(s32);
 extern s32 Item_FindSlot(s32, s32);
-extern s32 Func_080022f4(s32, s32);
-#define Math_Mod Func_080022f4
+extern s32 Math_DivU(s32, s32);
 extern s32 Ability_GetMaximum(s32, s32);
 extern s32 Func_080b1614(s32, s32, s32);
 
@@ -43,7 +41,7 @@ s32 Shop_SelBuyNum(s32 unit_id, s32 item_id)
 
         chance = 30;
         if (item->price != 0)
-            chance = Math_Mod(SHOP_PARTY_STATE.money, item->price);
+            chance = Math_DivU(SHOP_PARTY_STATE.money, item->price);
 
         if (shop->party_action == 2) {
             maximum = Ability_GetMaximum(item_id, 0);

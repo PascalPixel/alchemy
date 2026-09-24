@@ -125,29 +125,20 @@ struct EffectObject {
 
 extern u8 Data_02000240[];
 
-void Func_080916b0(void);
-#define Battle_Reset Func_080916b0
-void Func_080933f8(s32, s32, s32, s32);
-#define place_within_camera_bounds Func_080933f8
-void Func_08097384(void);
-#define BattleEffect_InitializeSharedScene Func_08097384
-void Func_080030f8(s32);
-#define WaitFrames Func_080030f8
-void Func_08092adc(s32, s32, s32);
-#define ObjectMotion_ArmCallback Func_08092adc
-void Func_080f9010(s32);
-#define Audio_PlayCue Func_080f9010
-void Func_08009080(void *, s32);
-#define Object_SetMode Func_08009080
-void Func_08009240(void *, s32);
-void Func_080091e0(void *, s32);
-void Func_0809ba90(void *, s32, s32, s32);
-u32 Func_08004458(void);
-void Func_08009248(void *, s32);
-void Func_0809748c(void);
-#define BattleFx_PrepareBufferInterpolation Func_0809748c
-void Func_08096b88(void);
-#define apply_random_child_values Func_08096b88
+void Battle_Reset(void);
+void place_within_camera_bounds(s32, s32, s32, s32);
+void BattleEffect_InitializeSharedScene(void);
+void WaitFrames(s32);
+void ObjectMotion_ArmCallback(s32, s32, s32);
+void Audio_PlayCue(s32);
+void Object_SetMode(void *, s32);
+void Animation_ApplyChildValuesFar(void *, s32);
+void ObjectDispatch_SetSingleChildField26Far(void *, s32);
+void EffectSlot_Initialize(void *, s32, s32, s32);
+u32 Random16(void);
+void ObjectGroup_SetChildValueUnlessFifteenFar(void *, s32);
+void BattleFx_PrepareBufferInterpolation(void);
+void apply_random_child_values(void);
 
 
 
@@ -169,17 +160,17 @@ void BattleFx_RunEffect15(void)
     WaitFrames(10);
     ObjectMotion_ArmCallback(*(s16 *)(scene + 24), 0x4000, 0);
     WaitFrames(30);
-    *(void (**)(void))(main_object + 108) = Func_08096b88;
+    *(void (**)(void))(main_object + 108) = apply_random_child_values;
     Audio_PlayCue(0x83);
     Object_SetMode(main_object, 28);
     WaitFrames(40);
     Audio_PlayCue(0xdc);
-    Func_08009240(main_object, 0);
+    Animation_ApplyChildValuesFar(main_object, 0);
     Object_SetMode(main_object, 3);
     *(void (**)(void))(main_object + 108) = (void (*)(void))BattleFx_UpdateSpinAngle;
     effect->timer = 0;
     WaitFrames(70);
-    Func_080091e0(main_object, 0);
+    ObjectDispatch_SetSingleChildField26Far(main_object, 0);
     *(u8 *)(main_object + 85) = 0;
     *(void (**)(void))(main_object + 108) = (void (*)(void))BattleFx_UpdateDescendingObject;
     *(u32 *)(main_object + 56) = 0x80000000;
@@ -192,11 +183,11 @@ void BattleFx_RunEffect15(void)
     particle += 88;
     do {
         s32 speed;
-        Func_0809ba90(particle, 0x11c, position.x, position.z);
+        EffectSlot_Initialize(particle, 0x11c, position.x, position.z);
         EffectSlot_SetCallback((struct EffectSlot *)particle, BattleFx_UpdateRadialLaunch);
         EffectSlot_SetObjectMode((struct EffectSlot *)particle, 7);
-        Func_08009248(*(void **)particle, (Func_08004458() * 7) >> 16);
-        speed = (Func_08004458() >> 1) + 0x13333;
+        ObjectGroup_SetChildValueUnlessFifteenFar(*(void **)particle, (Random16() * 7) >> 16);
+        speed = (Random16() >> 1) + 0x13333;
         *(s32 *)(particle + 44) = speed;
         *(s32 *)(particle + 40) = speed;
         index++;

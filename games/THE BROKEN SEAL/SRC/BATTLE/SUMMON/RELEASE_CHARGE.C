@@ -19,7 +19,7 @@ struct BattleActorDefinition {
 
 extern struct SummonChargeState *Data_03001e74;
 
-struct BattleActorDefinition *Func_08077008(s32 actor_id);
+struct BattleActorDefinition *Owner_GetStateFar(s32 actor_id);
 
 s32 Summon_ReleaseCharge(s32 actor_id)
 {
@@ -31,7 +31,7 @@ s32 Summon_ReleaseCharge(s32 actor_id)
     s32 bit;
     s32 class_id;
 
-    actor = Func_08077008(actor_id);
+    actor = Owner_GetStateFar(actor_id);
     if (actor->unavailable != 0)
         return;
 

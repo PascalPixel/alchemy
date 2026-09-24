@@ -1,8 +1,7 @@
 #include "EFFECT_RUNTIME.H"
 #include "GLOBAL_CELLS.H"
 
-s32 Func_0808e5d8(s32);
-#define BattleFx_ExecutePackedAbilityEffect Func_0808e5d8
+s32 BattleFx_ExecutePackedAbilityEffect(s32);
 void Battle_ResetEffectCounter(void)
 {
   void *runtime;

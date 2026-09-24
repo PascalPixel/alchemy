@@ -1,7 +1,9 @@
 .syntax unified
 	.thumb
+	.global Battle_ResetEffectCounterFar
 	.global Func_0808a460
 	.thumb_func
+Battle_ResetEffectCounterFar:
 Func_0808a460:
 	ldr	r4, [pc, #0]
 	bx	r4

@@ -3,10 +3,8 @@
 extern u8 *Data_03001e74;
 extern s8 Data_080c2a10[];
 
-s32 Func_080b6a60(u16 *out);
-#define BattleParty_PrepareActiveOwners Func_080b6a60
-s32 Func_080b6ae0(u16 *out);
-#define BattleParty_ListPresentEnemies Func_080b6ae0
+s32 BattleParty_PrepareActiveOwners(u16 *out);
+s32 BattleParty_ListPresentEnemies(u16 *out);
 
 void BattleParty_CollectUnitList(void)
 {

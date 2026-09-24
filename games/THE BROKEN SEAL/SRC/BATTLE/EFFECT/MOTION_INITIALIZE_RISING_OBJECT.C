@@ -22,7 +22,7 @@ struct RisingObjectState {
 
 void BattleFx_InitializeRisingObject(s32 arg0)
 {
-    struct B5Context *context = Func_080b5098(arg0);
+    struct B5Context *context = GetBattleObjectSlotFar(arg0);
     struct RisingObjectState *object = context->object;
 
     object->field_34 = 0x20000;

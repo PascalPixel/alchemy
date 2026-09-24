@@ -1,8 +1,7 @@
 #include "FAR_RUNTIME.H"
 #include "INVENTORY_MENU.H"
 
-void Func_080a9cbc(void);
-#define ItemMenu_PosCategory Func_080a9cbc
+void ItemMenu_PosCategory(void);
 
 void ItemMenu_OpenCategory(s32 owner_id)
 {

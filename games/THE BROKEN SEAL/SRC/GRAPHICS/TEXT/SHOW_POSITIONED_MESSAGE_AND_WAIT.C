@@ -15,7 +15,6 @@ void WaitFrames(s32 frames);
 extern s32 Data_02000240[];
 #define PARTY_STATE Data_02000240
 
-#define UiText_ShowPositionedMessageAndWait Func_0801776c
 
 /* Shows message no in a window centred across the screen and waits until it
  * has printed. Flag 8 places the window high and flag 0x40 lower; otherwise it

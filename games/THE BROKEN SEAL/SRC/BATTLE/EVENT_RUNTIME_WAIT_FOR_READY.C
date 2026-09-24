@@ -6,8 +6,7 @@
 void WaitFrames(u32);
 void ScheduleCallback(void *);
 s32 BattleEventRuntime_Reset(void);
-void Func_080bd898(void);
-#define BattleEvent_Playback Func_080bd898
+void BattleEvent_Playback(void);
 
 s32 BattleEventRuntime_WaitForReady(void)
 {

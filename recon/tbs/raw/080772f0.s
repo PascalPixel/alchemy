@@ -1,7 +1,9 @@
 .syntax unified
 	.thumb
+	.global GameFlag_RefreshLureCapFar
 	.global Func_080772f0
 	.thumb_func
+GameFlag_RefreshLureCapFar:
 Func_080772f0:
 	ldr	r4, [pc, #0]
 	bx	r4

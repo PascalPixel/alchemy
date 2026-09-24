@@ -14,10 +14,8 @@ union AffineMatrix {
     u32 rows[2];
 };
 
-s32 Func_0800231c(s32 angle);
-#define Engine_MathCos Func_0800231c
-s32 Func_08002322(s32 angle);
-#define Engine_MathSin Func_08002322
+s32 Trig_Cos(s32 angle);
+s32 Trig_Sin(s32 angle);
 s32 FixedPoint_Ratio(s32 numerator, s32 denominator);
 
 extern u8 Data_03001d00;
@@ -58,8 +56,8 @@ s32 AffineMatrix_BuildForEffect(struct Effect *source)
         s32 sine;
         s32 cosine;
 
-        sine = Engine_MathSin(angle);
-        cosine = Engine_MathCos(angle);
+        sine = Trig_Sin(angle);
+        cosine = Trig_Cos(angle);
         *coefficient = FixedPoint_Ratio(cosine, x_scale);
         coefficient++;
         *coefficient = FixedPoint_Ratio(sine, x_scale);

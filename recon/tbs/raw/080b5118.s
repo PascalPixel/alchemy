@@ -1,7 +1,9 @@
 .syntax unified
 	.thumb
+	.global BattleActor_CommitPlacementFar
 	.global Func_080b5118
 	.thumb_func
+BattleActor_CommitPlacementFar:
 Func_080b5118:
 	ldr	r4, [pc, #0]
 	bx	r4

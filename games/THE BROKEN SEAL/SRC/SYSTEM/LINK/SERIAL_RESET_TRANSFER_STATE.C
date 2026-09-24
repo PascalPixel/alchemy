@@ -1,6 +1,5 @@
 #include "SERIAL_RUNTIME.H"
 
-#define BattleLink_ResetTransferState Func_0800651c
 
 void BattleLink_ResetTransferState(void)
 {

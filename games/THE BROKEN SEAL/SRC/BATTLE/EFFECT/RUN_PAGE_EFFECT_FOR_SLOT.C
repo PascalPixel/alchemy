@@ -10,25 +10,18 @@ struct MenuState {
 
 s32 GameFlag_IsSet(s32);
 void GameFlag_Set(void *);
-s32 Func_08077288(s32, void *);
-void Func_080916b0(void);
-#define Battle_Reset Func_080916b0
-void Func_0808c44c(void);
-#define Battle_SetObjectFlag5bWhenMode3 Func_0808c44c
-void Func_0808b8e8(void);
-#define BattleEffect_ClearOutOfBoundsObjects Func_0808b8e8
+s32 Djinn_AddToLeastLoadedOwnerFar(s32, void *);
+void Battle_Reset(void);
+void Battle_SetObjectFlag5bWhenMode3(void);
+void BattleEffect_ClearOutOfBoundsObjects(void);
 void Func_08096140(s32);
 void Func_080965a8(s32);
-void Func_08095dd0(s32);
-#define BattleEffect_RunPhasedRadialParticleSequence Func_08095dd0
-void Func_08095a44(s32);
-#define BattleFx_FinishHeavyImpact Func_08095a44
+void BattleEffect_RunPhasedRadialParticleSequence(s32);
+void BattleFx_FinishHeavyImpact(s32);
 void Func_0808b98c(void);
 void Func_08015358(s32, s32, void *);
-void Func_0808c4c0(void);
-#define Battle_ClearObjectFlag5bWhenMode3 Func_0808c4c0
-void Func_08091750(void);
-#define BattleFx_FinishAction Func_08091750
+void Battle_ClearObjectFlag5bWhenMode3(void);
+void BattleFx_FinishAction(void);
 
 void BattleFx_RunPageEffectForSlot(s32 slot, s32 page, void *entries)
 {
@@ -40,7 +33,7 @@ void BattleFx_RunPageEffectForSlot(s32 slot, s32 page, void *entries)
         selection = 0;
         GameFlag_Set((u8 *)entries + page * 20 + 48);
     } else {
-        selection = Func_08077288(page, entries);
+        selection = Djinn_AddToLeastLoadedOwnerFar(page, entries);
     }
 
     if (selection >= 0) {

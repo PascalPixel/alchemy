@@ -3,7 +3,6 @@
 #include "BATTLE_EFX.H"
 #include "CALLBACK_SCHEDULER.H"
 
-#define BattleEffect_RunBurstShower Func_080dbc30
 
 /* Six drawn arguments: destination, source cell, x, y, width, height.
    Called through the r4 bx bank, so it is an indirect call through a
@@ -31,31 +30,20 @@ extern u8 Value_000000ce;
 
 void Func_080cd594(s32);
 void BattleFx_FetchRectangleBlitters(s32, u32 *);
-void *Func_08002f40(s32);
-#define Resource_GetTableEntry Func_08002f40
-void Func_080e3958(s32, s32 *);
-#define EffectPosition_ApplyAnimationAndYOffset Func_080e3958
-void Func_080e396c(s32, s32 *);
-#define EffectPosition_ApplyStepAndYOffset Func_080e396c
-s32 Func_080022ec(s32, s32);
-#define Math_Div Func_080022ec
-s32 Func_080022fc(s32, s32);
-s32 Func_08004458(void);
-#define Random16 Func_08004458
-void Func_080f9010(s32);
-#define Audio_PlayCue Func_080f9010
-void Func_080b5088(s32, s32);
-void Func_080b50e8(s32);
-void Func_080d6888(s32, s32, s32, s32, s32);
-#define ObjectGroup_UpdateMembers Func_080d6888
-void Func_080e155c(s32, s32);
-#define Camera_ApplyShake Func_080e155c
-void Func_080cd52c(void);
-#define ObjectGroup_TickMemberTimers Func_080cd52c
-void Func_080030f8(s32);
-#define WaitFrames Func_080030f8
-void Func_08002dd8(s32);
-#define Runtime_ReleaseHeapBlock Func_08002dd8
+void *Resource_GetTableEntry(s32);
+void EffectPosition_ApplyAnimationAndYOffset(s32, s32 *);
+void EffectPosition_ApplyStepAndYOffset(s32, s32 *);
+s32 Math_Div(s32, s32);
+s32 Math_Mod(s32, s32);
+s32 Random16(void);
+void Audio_PlayCue(s32);
+void BattleMotion_ApplyVariantMotionFar(s32, s32);
+void BattleEventRuntime_BeginPhaseFar(s32);
+void ObjectGroup_UpdateMembers(s32, s32, s32, s32, s32);
+void Camera_ApplyShake(s32, s32);
+void ObjectGroup_TickMemberTimers(void);
+void WaitFrames(s32);
+void Runtime_ReleaseHeapBlock(s32);
 s32 Func_080cdbc0(void);
 
 typedef struct BattleEffectArgument Efx;
@@ -236,17 +224,17 @@ void BattleEffect_RunBurstShower(Efx *efx, s32 mode)
 
     frame = 0;
     do {
-        pick = Func_080022fc(frame, WORK_EFX->count);
+        pick = Math_Mod(frame, WORK_EFX->count);
         if (frame == 4) {
             Audio_PlayCue(0x88);
         }
         if (mode != 6) {
             if (frame == 24) {
-                Func_080b50e8(0x86);
+                BattleEventRuntime_BeginPhaseFar(0x86);
             }
         } else {
             if (frame == 60) {
-                Func_080b50e8(0x86);
+                BattleEventRuntime_BeginPhaseFar(0x86);
             }
         }
 
@@ -256,13 +244,13 @@ void BattleEffect_RunBurstShower(Efx *efx, s32 mode)
             if (WORK_EFX->side == 1) {
                 ((DrawRectangle)blit[0])(dst,
                     SHEET
-                        + ((Func_080022fc(Math_Div(frame, 3), 3) * 9)
+                        + ((Math_Mod(Math_Div(frame, 3), 3) * 9)
                             << 9),
                     pos[0] - 2, pos[1] - 32, 72, 62);
             } else {
                 ((DrawRectangle)blit[0])(dst,
                     SHEET
-                        + ((Func_080022fc(Math_Div(frame, 3), 3) * 9)
+                        + ((Math_Mod(Math_Div(frame, 3), 3) * 9)
                             << 9),
                     pos[0] - 70, pos[1] - 32, 72, 62);
             }
@@ -335,7 +323,7 @@ void BattleEffect_RunBurstShower(Efx *efx, s32 mode)
                     } else {
                         ObjectGroup_UpdateMembers(WORK_EFX->actors[i], 7, 5, i, 4);
                     }
-                    Func_080b5088(WORK_EFX->actors[i], 4);
+                    BattleMotion_ApplyVariantMotionFar(WORK_EFX->actors[i], 4);
                 }
                 i += 1;
             }

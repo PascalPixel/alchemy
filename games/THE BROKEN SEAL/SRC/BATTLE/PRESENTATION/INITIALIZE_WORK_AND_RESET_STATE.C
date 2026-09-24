@@ -1,6 +1,5 @@
 #include "DMA.H"
-void *Func_080048f4(s32, s32);
-#define Runtime_AllocateBlock Func_080048f4
+void *Runtime_AllocateBlock(s32, s32);
 extern u32 *Data_03001f00;
 void BattlePresentation_InitializeWorkAndResetState(void)
 {

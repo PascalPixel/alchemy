@@ -1,9 +1,7 @@
 #include "TYPES.H"
 
-#define BattleActor_CommitPlacement Func_080b6c90
 
-s32 Func_080b6c08(s32, void *);
-#define BattleParty_ListActorIds Func_080b6c08
+s32 BattleParty_ListActorIds(s32, void *);
 s32 Func_080b7b6c(void *, s32);
 
 void BattleActor_CommitPlacement(void)

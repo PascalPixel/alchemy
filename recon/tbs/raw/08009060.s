@@ -1,7 +1,9 @@
 .syntax unified
 	.thumb
+	.global ResourceMetadata_ClearRecordFar
 	.global Func_08009060
 	.thumb_func
+ResourceMetadata_ClearRecordFar:
 Func_08009060:
 	ldr	r4, [pc, #0]
 	bx	r4

@@ -1,9 +1,8 @@
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
 
-s32 Func_080f3078(s32, void *, void *, s32);
-void Func_080f2ebc(s16 *, s16 *, s16 *, s32);
-#define Graphics_InterpolatePaletteBuffers Func_080f2ebc
+s32 Unnamed_080f3078(s32, void *, void *, s32);
+void Graphics_InterpolatePaletteBuffers(s16 *, s16 *, s16 *, s32);
 
 struct PaletteInterpolationState {
     u8 unknown_0000[0x400];
@@ -20,7 +19,7 @@ void Graphics_TransformLargePalette(s32 index, s32 transform)
     void *target = *(void **)ADDR_03001ED0;
 
     if (target != NULL)
-        Func_080f3078(index, target, (u8 *)target + 0x1000, transform);
+        Unnamed_080f3078(index, target, (u8 *)target + 0x1000, transform);
 }
 
 void Graphics_TransformSmallPalette(s32 index, s32 transform)
@@ -28,7 +27,7 @@ void Graphics_TransformSmallPalette(s32 index, s32 transform)
     void *target = *(void **)ADDR_03001ED0;
 
     if (target != NULL)
-        Func_080f3078(index, target, (u8 *)target + 0x400, transform);
+        Unnamed_080f3078(index, target, (u8 *)target + 0x400, transform);
 }
 
 void Graphics_SetPaletteTransformValue(s32 value)

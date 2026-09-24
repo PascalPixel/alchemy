@@ -1,7 +1,9 @@
 .syntax unified
 	.thumb
+	.global ShopCursor_AdvanceFar
 	.global Func_080b0020
 	.thumb_func
+ShopCursor_AdvanceFar:
 Func_080b0020:
 	ldr	r4, [pc, #0]
 	bx	r4

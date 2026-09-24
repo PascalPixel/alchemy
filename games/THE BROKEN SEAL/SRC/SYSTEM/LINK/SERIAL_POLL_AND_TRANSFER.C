@@ -1,6 +1,5 @@
 #include "SERIAL_RUNTIME.H"
 
-#define SerialRuntime_PollAndTransfer Func_08005ee0
 
 s32 SerialRuntime_PollAndTransfer(void *send, void *receive)
 {
@@ -48,8 +47,8 @@ s32 SerialRuntime_PollAndTransfer(void *send, void *receive)
         Data_02002240.phase = 1;
     }
     case 1:
-        Func_0800615c(receive);
-        Func_080060e8(send);
+        SerialRuntime_CollectReceivedPayloads(receive);
+        SerialRuntime_PrepareSendPacket(send);
         break;
     }
 

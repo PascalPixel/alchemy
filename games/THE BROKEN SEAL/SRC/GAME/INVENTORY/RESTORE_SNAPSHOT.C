@@ -9,7 +9,6 @@ extern u16 Data_02001078[];
 
 void GameFlag_ClearBit(s32 flag);
 
-#define InventorySnapshot_Restore Func_0807a7a0
 
 /* Restores a saved inventory snapshot when it starts with its sentinel: the
  * fifteen inventory words of each of the four owners, refreshing their

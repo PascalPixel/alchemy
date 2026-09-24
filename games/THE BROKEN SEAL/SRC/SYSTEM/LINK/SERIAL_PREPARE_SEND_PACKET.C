@@ -1,7 +1,6 @@
 #include "SERIAL_RUNTIME.H"
 #include "DMA.H"
 
-#define SerialRuntime_PrepareSendPacket Func_080060e8
 
 void SerialRuntime_PrepareSendPacket(void *payload)
 {

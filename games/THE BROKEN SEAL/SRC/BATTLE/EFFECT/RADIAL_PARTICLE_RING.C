@@ -8,10 +8,8 @@ struct RingOrigin {
     s32 z;
 };
 
-s32 Func_0800231c(s32);
-#define Engine_MathCos Func_0800231c
-s32 Func_08002322(s32);
-#define Engine_MathSin Func_08002322
+s32 Trig_Cos(s32);
+s32 Trig_Sin(s32);
 
 void ParticleEffect_UpdateMotionAndScale(union FieldObject *object)
 {
@@ -42,9 +40,9 @@ void BattleFx_SpawnRadialParticleRing(struct RingOrigin *origin)
     i = 0;
     do {
         angle = i << 12;
-        velocity[0] = Engine_MathCos(angle) * 3 / 2;
+        velocity[0] = Trig_Cos(angle) * 3 / 2;
         velocity[1] = 0;
-        sine = Engine_MathSin(angle);
+        sine = Trig_Sin(angle);
         velocity[2] = sine;
         Effect_Spawn(origin->x, origin->y, origin->z, velocity[0], velocity[1], sine, 0x01090001, &options);
         i++;

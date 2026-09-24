@@ -1,7 +1,9 @@
 .syntax unified
 	.thumb
+	.global Object_GetByIdFar
 	.global Func_0808a080
 	.thumb_func
+Object_GetByIdFar:
 Func_0808a080:
 	ldr	r4, [pc, #0]
 	bx	r4

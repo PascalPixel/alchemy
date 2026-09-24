@@ -9,28 +9,19 @@ extern s16 Data_02002004;
 extern u8 Data_02000000[];
 extern u8 *Data_03001f1c;
 
-s32 Func_080056cc(void);
-#define SaveState_InitializeWorkspace Func_080056cc
-void Func_08005c68(void);
-#define SaveState_LoadSummaryRecords Func_08005c68
+s32 SaveState_InitializeWorkspace(void);
+void SaveState_LoadSummaryRecords(void);
 s32 Func_08020244(s16 a, s32 b);
-void Func_0801776c(s32 msg, s32 mode);
-#define UiText_ShowPositionedMessageAndWait Func_0801776c
-s32 Func_08017364(void);
-#define UiWork_IsComplete Func_08017364
+void UiText_ShowPositionedMessageAndWait(s32 msg, s32 mode);
+s32 UiWork_IsComplete(void);
 void WaitFrames(s32 frames);
-s32 Func_08028df4(s32 a, s32 b, s32 c, s32 d);
-#define Menu_RunConfirmSelection Func_08028df4
-void Func_08019a54(void);
-#define UiWork_FinalizePendingCore Func_08019a54
-void Func_080f9010(u8 mode);
-#define Audio_PlayCue Func_080f9010
+s32 Menu_RunConfirmSelection(s32 a, s32 b, s32 c, s32 d);
+void UiWork_FinalizePendingCore(void);
+void Audio_PlayCue(u8 mode);
 void Func_0801f818(void);
 void Func_0808a5b0(void);
-s32 Func_08005920(s32 a, void *b);
-#define SaveState_WriteRecord Func_08005920
-void Func_08005cf8(void);
-#define SaveState_ReleaseWorkspace Func_08005cf8
+s32 SaveState_WriteRecord(s32 a, void *b);
+void SaveState_ReleaseWorkspace(void);
 
 s32 Save_WriteSelectedSlot(void)
 {

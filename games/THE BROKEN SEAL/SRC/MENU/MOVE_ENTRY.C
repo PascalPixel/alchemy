@@ -15,9 +15,9 @@ struct CharacterSelectorState {
     u16 flags;
 };
 
-s32 Func_08077150(s32 character_id);
-s32 Func_08077158(const u16 *character_ids);
-s32 Func_08077168(s32 character_id);
+s32 Party_AddActiveOwnerFar(s32 character_id);
+s32 Party_ListActiveOwnersFar(const u16 *character_ids);
+s32 Party_RemoveActiveOwnerFar(s32 character_id);
 
 s32 CharacterSelector_MoveEntry(s32 selected_index, s32 direction)
 {
@@ -63,11 +63,11 @@ s32 CharacterSelector_MoveEntry(s32 selected_index, s32 direction)
     }
 
     for (index = 0; index < state->character_count; index++) {
-        Func_08077168(state->character_ids[index]);
+        Party_RemoveActiveOwnerFar(state->character_ids[index]);
     }
     for (index = 0; index < state->character_count; index++) {
-        Func_08077150(reordered[index]);
+        Party_AddActiveOwnerFar(reordered[index]);
     }
-    state->character_count = Func_08077158(state->character_ids);
+    state->character_count = Party_ListActiveOwnersFar(state->character_ids);
     return 1;
 }

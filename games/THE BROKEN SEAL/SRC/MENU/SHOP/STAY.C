@@ -20,16 +20,16 @@ struct FieldObject {
 
 extern struct FieldEffectState *Data_03001ebc;
 
-s32 Func_08077158(s16 *);
-void Func_08077230(s32);
+s32 Party_ListActiveOwnersFar(s16 *);
+void Party_AdjustSixDigitCounterAFar(s32);
 struct FieldObject *Runtime_GetObject(s32);
-void Func_08077128(s32);
+void Owner_RecalculateRatiosFar(s32);
 void WaitFrames(s32);
-void Func_0808a368(void);
-void Func_0808a370(void);
+void Event_ClearStatus1c6Far(void);
+void Event_WaitValue1c8FramesFar(void);
 void Audio_PlayCue(s32);
 void AudioCommand_WaitForStateByteClear(void);
-void Func_0808a360(void);
+void Event_SetStatus1c6Far(void);
 
 extern s8 Data_080b4ab6[];
 
@@ -66,18 +66,15 @@ extern struct InnGlobalState Data_02000240;
 #define PARTY_STATE Data_02000240
 extern char Value_00000d1c;
 
-void Func_080b010c(void);
-void Func_080b0204(void);
-#define Inn_Cleanup Func_080b0204
-void Func_080b04dc(s32 message_id);
-#define UiMessage_ShowAndWait Func_080b04dc
-s32 Func_080b0634(s32);
-#define UiMessage_ShowChoice Func_080b0634
-s32 Func_080b3210(s32);
-void Func_080b3398(s32);
+void Shop_InitializeCursorWork(void);
+void Inn_Cleanup(void);
+void UiMessage_ShowAndWait(s32 message_id);
+s32 UiMessage_ShowChoice(s32);
+s32 Inn_RoomPrice(s32);
+void Inn_PlaySleep(s32);
 s32 UiWindow_CreateFar(s32, s32, s32, s32, s32);
 void UiWindow_Close(s32, s32);
-s32 Func_080150f8(u16, s32, s32, s32);
+s32 UiWindow_CreateWithSideObjectFar(u16, s32, s32, s32);
 void UiText_DrawQuantity(s32, s32);
 struct InnObject *Scene_GetRecord(s32);
 
@@ -113,7 +110,7 @@ s32 Inn_CheckIn(s32 mode, s32 object_id)
     s32 amount;
     s32 message_base;
 
-    Func_080b010c();
+    Shop_InitializeCursorWork();
     state = Data_03001f2c;
     state->active = 1;
     if (mode == 5)
@@ -121,9 +118,9 @@ s32 Inn_CheckIn(s32 mode, s32 object_id)
 
     object = Scene_GetRecord(object_id);
     state->resource_id = *object->component->resource_id;
-    win = Func_080150f8(state->resource_id, 0, 0, 0);
+    win = UiWindow_CreateWithSideObjectFar(state->resource_id, 0, 0, 0);
 
-    amount = Func_080b3210(mode);
+    amount = Inn_RoomPrice(mode);
     UiText_DrawQuantity(amount, 5);
     message_base = (s32)&Value_00000d1c;
     UiMessage_ShowAndWait(message_base);
@@ -143,11 +140,11 @@ s32 Inn_CheckIn(s32 mode, s32 object_id)
         UiMessage_ShowAndWait(message_base
             + (INN_MESSAGE_STAY_COMPLETE - INN_MESSAGE_WELCOME));
         UiWindow_Close(win, 2);
-        Func_080b3398(amount);
+        Inn_PlaySleep(amount);
 
         object = Scene_GetRecord(object_id);
         state->resource_id = *object->component->resource_id;
-        win = Func_080150f8(state->resource_id, 0, 0, 0);
+        win = UiWindow_CreateWithSideObjectFar(state->resource_id, 0, 0, 0);
         UiMessage_ShowAndWait(message_base
             + (INN_MESSAGE_REST_COMPLETE - INN_MESSAGE_WELCOME));
     }
@@ -165,15 +162,15 @@ void Inn_PlaySleep(s32 room_price)
     struct FieldObject *object;
     struct FieldEffectState *state;
 
-    count = Func_08077158(objects);
-    Func_08077230(-room_price);
+    count = Party_ListActiveOwnersFar(objects);
+    Party_AdjustSixDigitCounterAFar(-room_price);
 
     for (index = 0; index < count; index++) {
         object = Runtime_GetObject(objects[index]);
         if (object->x != 0) {
             object->x = object->saved_x;
             object->y = object->saved_y;
-            Func_08077128(objects[index]);
+            Owner_RecalculateRatiosFar(objects[index]);
         }
     }
 
@@ -181,13 +178,13 @@ void Inn_PlaySleep(s32 room_price)
     state->effect = 0x209;
     state->delay = 60;
     WaitFrames(20);
-    Func_0808a368();
-    Func_0808a370();
+    Event_ClearStatus1c6Far();
+    Event_WaitValue1c8FramesFar();
     Audio_PlayCue(86);
     AudioCommand_WaitForStateByteClear();
     WaitFrames(10);
-    Func_0808a360();
-    Func_0808a370();
+    Event_SetStatus1c6Far();
+    Event_WaitValue1c8FramesFar();
     WaitFrames(30);
     Data_03001ebc->delay = 16;
 }

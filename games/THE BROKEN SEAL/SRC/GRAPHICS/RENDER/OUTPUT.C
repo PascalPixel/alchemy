@@ -52,8 +52,7 @@ struct RenderOutput *RenderOutput_Create(
     return output;
 }
 
-s32 Func_0801bc34(s32 mode, s32 value);
-#define Resource_LoadByMode Func_0801bc34
+s32 Resource_LoadByMode(s32 mode, s32 value);
 void *RenderOutput_CreateFromResource(
     s32 arg0,
     s32 arg1,
@@ -70,10 +69,8 @@ void *RenderOutput_CreateFromResource(
     return RenderOutput_Create(no, 0x40000000, arg2, arg3, arg4);
 }
 
-s32 Func_08004080(void);
-#define find_free_slot Func_08004080
-s32 Func_0801a2a4(s32 arg0, s32 arg1, s32 arg2);
-#define UiIcon_CopyResourceToSlot Func_0801a2a4
+s32 find_free_slot(void);
+s32 UiIcon_CopyResourceToSlot(s32 arg0, s32 arg1, s32 arg2);
 void *RenderOutput_CreateLoaded(
     s32 arg0,
     s32 arg1,
@@ -93,8 +90,7 @@ void *RenderOutput_CreateLoaded(
     return result;
 }
 
-void Func_08019ee4(s32 arg0, s32 arg1, s32 *arg2, s32 *arg3, s32 arg4);
-#define Ui_BuildPairedPatternsToSlot Func_08019ee4
+void Ui_BuildPairedPatternsToSlot(s32 arg0, s32 arg1, s32 *arg2, s32 *arg3, s32 arg4);
 void *RenderOutput_CreateWithTransform(
     s32 arg0,
     struct RenderInput *arg1,

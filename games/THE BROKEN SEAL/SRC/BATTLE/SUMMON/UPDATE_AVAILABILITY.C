@@ -6,7 +6,7 @@ struct PartyDjinnTotals {
     u8 by_element[4];
 };
 
-struct BattleSummonState *Func_08077000(s32 side);
+struct BattleSummonState *Trade_GetOfferStateFar(s32 side);
 
 struct BattleSummonState *BattleSummon_UpdateAvailability(void)
 {
@@ -64,7 +64,7 @@ struct BattleSummonState *BattleSummon_UpdateAvailability(void)
     } while (element <= 31);
 
     {
-        struct BattleSummonState *state = Func_08077000(0);
+        struct BattleSummonState *state = Trade_GetOfferStateFar(0);
         state->available_mask = available_mask;
         return state;
     }

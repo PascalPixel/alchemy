@@ -5,8 +5,7 @@
 void ScheduleCallback(void *);
 void UiWork_Finalize(struct Work *work, s32 release);
 s32 Resource_ResetEntry(u32 index);
-void Func_08002dd8(s32);
-#define Runtime_ReleaseHeapBlock Func_08002dd8
+void Runtime_ReleaseHeapBlock(s32);
 void WaitFrames(u32);
 extern u8 Data_08028195;
 

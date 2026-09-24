@@ -7,21 +7,19 @@ s32 Modulo(s32 value, s32 divisor);
 void WaitFrames(s32 frames);
 s32 UiWindow_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 style);
 void UiWindow_Close(s32 window, s32 style);
-struct ShopCursorAnchor *Func_080150c8(
+struct ShopCursorAnchor *RenderOutput_CreateFar(
     u32 resource,
     u32 flags,
     s32 window,
     s32 x,
     s32 y);
-void Func_080a1028(s32 window, s32 column, s32 row, s32 height, s32 flags);
-void Func_080a1030(void);
-void Func_080b010c(void);
-void Func_080b0204(void);
-#define Inn_Cleanup Func_080b0204
-void Func_080b0a20(struct ShopCursor *cursor, s32 target_x, s32 target_y);
-#define ShopCursor_SetPositionImmediate Func_080b0a20
-s32 Func_080b362c(s32 unit_id);
-s32 Func_08077248(s32 unit_id);
+void PsynergyMenu_InitializeEntryObjectsFar(s32 window, s32 column, s32 row, s32 height, s32 flags);
+void Menu_ReleaseEntryObjectsFar(void);
+void Shop_InitializeCursorWork(void);
+void Inn_Cleanup(void);
+void ShopCursor_SetPositionImmediate(struct ShopCursor *cursor, s32 target_x, s32 target_y);
+s32 Shop_SelUse(s32 unit_id);
+s32 Inventory_CountFar(s32 unit_id);
 void Audio_PlayCue(s32 cue);
 
 /* Select a party member and then an item owned by that member. */
@@ -36,11 +34,11 @@ s32 Shop_PickUnitItem(s32 *selected_unit, s32 *selected_item)
     s32 item_slot;
     s32 result = 0;
 
-    Func_080b010c();
+    Shop_InitializeCursorWork();
     shop = SHOP_RUNTIME;
     shop->item_window = UiWindow_CreateFar(16, 12, 14, 8, 2);
     list_window = UiWindow_CreateFar(0, 14, 13, 3, 2);
-    cursor_anchor = Func_080150c8(
+    cursor_anchor = RenderOutput_CreateFar(
         *(u16 *)((u8 *)shop + 0x390),
         0x40000000,
         list_window,
@@ -51,7 +49,7 @@ s32 Shop_PickUnitItem(s32 *selected_unit, s32 *selected_item)
     ShopCursor_SetPositionImmediate(&shop->cursor, -32, 112);
     shop->cursor.anchor = cursor_anchor;
     shop->mode = 12;
-    Func_080a1028(list_window, 2, 0, 8, result);
+    PsynergyMenu_InitializeEntryObjectsFar(list_window, 2, 0, 8, result);
 
     for (;;) {
         if (redraw != 0) {
@@ -68,13 +66,13 @@ s32 Shop_PickUnitItem(s32 *selected_unit, s32 *selected_item)
 
         WaitFrames(1);
         if ((INPUT_NEW_KEYS & 1) != 0) {
-            if (Func_08077248(unit_id) == 0) {
+            if (Inventory_CountFar(unit_id) == 0) {
                 Audio_PlayCue(0x71);
                 continue;
             }
 
             Audio_PlayCue(0x70);
-            item_slot = Func_080b362c(unit_id);
+            item_slot = Shop_SelUse(unit_id);
             if (item_slot == -1) {
                 shop->cursor.anchor->kind = 4;
                 shop->mode = 12;
@@ -108,7 +106,7 @@ s32 Shop_PickUnitItem(s32 *selected_unit, s32 *selected_item)
     }
 
 done:
-    Func_080a1030();
+    Menu_ReleaseEntryObjectsFar();
     UiWindow_Close(list_window, 2);
     UiWindow_Close(shop->item_window, 2);
     WaitFrames(1);
@@ -120,10 +118,9 @@ done:
 #include "GLOBAL_CELLS.H"
 #include "BATTLE_CALC.H"
 
-#define Shop_SelUse Func_080b362c
 
 s32 Ability_GetAvailability(s32);
-s32 Func_080772a8(s32, s32);
+s32 Inventory_CheckDiscardFar(s32, s32);
 s32 UiWork_Create(s32, s32, s32, s32);
 s32 UiWork_IsCompleteFar(void);
 void UiWork_FinalizePending(void);
@@ -194,7 +191,7 @@ s32 Shop_SelUse(s32 actor)
         WaitFrames(1);
 
         if ((*(volatile u32 *)ADDR_03001C94 & 1) != 0) {
-            status = Func_080772a8(actor, selection);
+            status = Inventory_CheckDiscardFar(actor, selection);
             if (status == 0) {
                 Audio_PlayCue(112);
                 result = selection;
@@ -268,16 +265,15 @@ extern u8 Value_00000c94;
 extern u8 Value_00000c95;
 extern u8 Value_00000c8d;
 
-void *Func_08077008(s32);
-void Func_08015270(s32);
-void Func_08015080(s32, s32, s32, s32);
-s32 Func_080b19cc(s32);
-#define Shop_SalePrice Func_080b19cc
-void Func_080150b0(s32, s32, s32, s32, s32);
+void *Owner_GetStateFar(s32);
+void RenderOutput_RedrawSavedRectFar(s32);
+void UiText_DrawCharacterAtOffsetFar(s32, s32, s32, s32);
+s32 Shop_SalePrice(s32);
+void UiText_DrawNumberInWindowFar(s32, s32, s32, s32, s32);
 
 void Shop_DrawUseItem(s32 window, s32 unit_id, s32 item_id)
 {
-    u8 *unit = Func_08077008(unit_id);
+    u8 *unit = Owner_GetStateFar(unit_id);
     s32 slot_offset = item_id * 2 + 216;
     s32 masked = *(u16 *)(unit + slot_offset) & 0x1ff;
     u32 entry = *(u16 *)(unit + slot_offset);
@@ -289,7 +285,7 @@ void Shop_DrawUseItem(s32 window, s32 unit_id, s32 item_id)
         UiWindow_Commit(window);
         UiText_DrawAt(masked + (s32)&Value_00000182, window, 0, 0);
 
-        result = Func_080772a8(unit_id, item_id);
+        result = Inventory_CheckDiscardFar(unit_id, item_id);
         if (result == -4) {
             UiText_DrawAt((s32)&Value_00000c94, window, 0, 8);
         } else if (result == -3) {

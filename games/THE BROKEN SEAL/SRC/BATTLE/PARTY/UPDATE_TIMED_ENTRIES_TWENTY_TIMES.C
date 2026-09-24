@@ -1,6 +1,6 @@
 #include "TYPES.H"
 
-s32 Func_080bf5a8();
+s32 BattlePlacement_UpdateTimedEntries();
 
 s32 BattlePlacement_UpdateTimedEntriesTwentyTimes(void)
 {
@@ -9,7 +9,7 @@ s32 BattlePlacement_UpdateTimedEntriesTwentyTimes(void)
     cnt = 0x13;
     do {
         cnt -= 1;
-        Func_080bf5a8();
+        BattlePlacement_UpdateTimedEntries();
     } while (cnt >= 0);
     return 0;
 }

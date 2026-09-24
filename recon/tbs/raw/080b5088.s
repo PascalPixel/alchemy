@@ -1,7 +1,9 @@
 .syntax unified
 	.thumb
+	.global BattleMotion_ApplyVariantMotionFar
 	.global Func_080b5088
 	.thumb_func
+BattleMotion_ApplyVariantMotionFar:
 Func_080b5088:
 	ldr	r4, [pc, #0]
 	bx	r4

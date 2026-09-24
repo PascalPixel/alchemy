@@ -3,9 +3,8 @@
 #include "TBS_EDITION.H"
 
 extern void ScheduleCallback(s32);
-extern void Func_08097868(void);
-#define BattleFx_ArmBg0HBlankDma Func_08097868
-extern s32 Func_08015360(s32, s32);
+extern void BattleFx_ArmBg0HBlankDma(void);
+extern s32 PaletteGlow_UpdateFar(s32, s32);
 extern u8 Data_02000240[];
 #define PARTY_STATE Data_02000240
 
@@ -14,11 +13,11 @@ void Ui_SetBank15PaletteAndClearRenderMode(void)
     void *work;
 
     work = *(void **)ADDR_03001E8C;
-    ScheduleCallback((s32)Func_08097868);
+    ScheduleCallback((s32)BattleFx_ArmBg0HBlankDma);
     *(volatile s16 *)0x050001E2 = 0x7FFF;
     *(s16 *)0x050001E6 = 0;
     *(volatile s16 *)0x050001F6 = 0x294A;
     *(volatile s16 *)0x050001F8 = 0x5294;
-    Func_08015360(PARTY_STATE[0x205], PARTY_STATE[0x206]);
+    PaletteGlow_UpdateFar(PARTY_STATE[0x205], PARTY_STATE[0x206]);
     *((u8 *)work + RENDER_MODE_OFS) = 0;
 }

@@ -2,12 +2,10 @@
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
-s32 Func_08002dd8(s32);
-#define Runtime_ReleaseHeapBlock Func_08002dd8
+s32 Runtime_ReleaseHeapBlock(s32);
 s32 Resource_CopyData(s32, s32, s32);
 s32 Runtime_AllocateHeapBlock(s32 no, s32 arg1);
-void Func_0801a4c0(u32 index);
-#define Ui_PrepareTransferFromTableEntry Func_0801a4c0
+void Ui_PrepareTransferFromTableEntry(u32 index);
 
 s32 Ui_BuildPatternToSlot(s32 no, s32 arg1, s32 slot)
 {

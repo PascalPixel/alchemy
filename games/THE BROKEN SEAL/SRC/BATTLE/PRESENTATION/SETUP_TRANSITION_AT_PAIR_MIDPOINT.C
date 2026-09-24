@@ -8,8 +8,7 @@ struct Point {
 };
 
 struct Point **GetBattleObjectSlot(s32);
-void Func_080c0cec(s32, s32, s32, s32);
-#define BattlePres_SetupTransitionScene Func_080c0cec
+void BattlePres_SetupTransitionScene(s32, s32, s32, s32);
 
 void BattlePres_SetupTransitionAtPairMidpoint(s32 first, s32 second, s32 mode)
 {

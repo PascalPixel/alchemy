@@ -30,10 +30,8 @@ extern s32 Data_080c2b68[];
 
 /* Shared arithmetic; callers must avoid divide-by-zero. */
 
-s32 Func_080022ec(s32 numerator, s32 denominator);
-s32 Func_080022f4(s32 numerator, s32 denominator);
-#define Math_Div Func_080022ec
-#define Math_Mod Func_080022f4
+s32 Math_Div(s32 numerator, s32 denominator);
+s32 Math_DivU(s32 numerator, s32 denominator);
 #define Battle_HitCheck Func_08077178
 #define Battle_CalcAttack Func_08077180
 #define Battle_CalcPower Func_08077188

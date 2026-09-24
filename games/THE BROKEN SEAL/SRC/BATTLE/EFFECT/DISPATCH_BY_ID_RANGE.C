@@ -1,13 +1,11 @@
 #include "TYPES.H"
 
-void *Func_08002dd8(s32);
-#define Runtime_ReleaseHeapBlock Func_08002dd8
+void *Runtime_ReleaseHeapBlock(s32);
 s32 Runtime_AllocateHeapBlock(s32 arg0, s32 arg1);
 void *Runtime_AllocateBlock(s32 arg0, s32 arg1);
 void *Func_080e3aa0(s32 *);
-void *Func_080e40a4(s32 *);
-void *Func_080e47b8(s32 *);
-#define FunctionHead_080e47b8 Func_080e47b8
+void *Unnamed_080e40a4(s32 *);
+void *FunctionHead_080e47b8(s32 *);
 void BattleFx_DispatchByIdRange(s32 *arg0)
 {
   s32 no;
@@ -25,7 +23,7 @@ void BattleFx_DispatchByIdRange(s32 *arg0)
   } else
     if (no > 0xC7)
   {
-    Func_080e40a4(arg0);
+    Unnamed_080e40a4(arg0);
   } else
   {
     Func_080e3aa0(arg0);

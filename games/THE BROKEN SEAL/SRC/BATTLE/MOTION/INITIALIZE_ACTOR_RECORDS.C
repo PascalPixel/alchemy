@@ -6,7 +6,7 @@ u8 *GetMotionRecord(s32, s32);
 void Object_InitializeMode(void *, s32);
 void WaitFrames(s32);
 void Func_080bac6c(s32);
-void Func_08009108(void **, s32);
+void Map_RenderAllAnimatedTileFramesFar(void **, s32);
 void ActivateBattleObjectSlot(s32);
 
 void BattleMotion_InitializeActorRecords(s32 id)
@@ -38,7 +38,7 @@ void BattleMotion_InitializeActorRecords(s32 id)
         }
         WaitFrames(4);
         Func_080bac6c(id);
-        Func_08009108(items, index);
+        Map_RenderAllAnimatedTileFramesFar(items, index);
         ActivateBattleObjectSlot(id);
     }
 }

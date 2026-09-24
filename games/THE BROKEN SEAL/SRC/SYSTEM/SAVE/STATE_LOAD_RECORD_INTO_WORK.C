@@ -6,15 +6,11 @@ struct State_080208e4 {
     s32 value;
 };
 
-s32 Func_080056cc(void);
-#define SaveState_InitializeWorkspace Func_080056cc
-void Func_08005c68(void);
-#define SaveState_LoadSummaryRecords Func_08005c68
-void Func_0801776c(s32, s32);
-#define UiText_ShowPositionedMessageAndWait Func_0801776c
+s32 SaveState_InitializeWorkspace(void);
+void SaveState_LoadSummaryRecords(void);
+void UiText_ShowPositionedMessageAndWait(s32, s32);
 s32 Func_08020244(s16, s32);
-s32 Func_08005a78(s32, void *);
-#define SaveState_ReadRecordPayload Func_08005a78
+s32 SaveState_ReadRecordPayload(s32, void *);
 
 extern char Value_0000000a;
 extern char Value_0000000c;

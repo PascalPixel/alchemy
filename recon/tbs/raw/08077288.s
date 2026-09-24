@@ -1,7 +1,9 @@
 .syntax unified
 	.thumb
+	.global Djinn_AddToLeastLoadedOwnerFar
 	.global Func_08077288
 	.thumb_func
+Djinn_AddToLeastLoadedOwnerFar:
 Func_08077288:
 	ldr	r4, [pc, #0]
 	bx	r4

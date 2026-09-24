@@ -129,6 +129,7 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
     struct EffectStep *q;
     DrawRectangle blit[2];
     Scale scale;
+    s32 ground = 112;
 
     cache = (u32 *)(gWorkSlot + 40 * 4);
     dst = (void *)cache[40 - 40];
@@ -498,7 +499,7 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
                             r &= Random16();
                             a = (Random16() & 0x7fff) - 0x4000;
                             PARTICLES[j].x = bx << 16;
-                            PARTICLES[j].y = 112 << 16;
+                            PARTICLES[j].y = ground << 16;
                             r += 32;
                             PARTICLES[j].velocity_x = (Trig_Sin(a) * r) >> 7;
                             PARTICLES[j].velocity_y = -(Trig_Cos(a) * r * 2) >> 7;

@@ -72455,6 +72455,114 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "makyuri-iriguchi-f-01ec8",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_IRIGUCHI/F_01EC8.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_39b",
+      "absolute_symbols": {
+        "Engine_EventBegin": {
+          "address": "0x0200a4dc",
+          "kind": "thumb"
+        },
+        "Engine_ObjectCreate": {
+          "address": "0x0200a44c",
+          "kind": "thumb"
+        },
+        "Engine_ObjectSetScript": {
+          "address": "0x0200a444",
+          "kind": "thumb"
+        },
+        "Engine_TaskWait": {
+          "address": "0x0200a3ec",
+          "kind": "thumb"
+        },
+        "Engine_ObjectSetAnimation": {
+          "address": "0x0200a43c",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagSet": {
+          "address": "0x0200a4c4",
+          "kind": "thumb"
+        },
+        "Engine_EventEnd": {
+          "address": "0x0200a4e4",
+          "kind": "thumb"
+        },
+        "Data_02000240_t": {
+          "address": "0x02000240",
+          "kind": "data"
+        },
+        "Pillar_Rumble": {
+          "address": "0x02009df8",
+          "kind": "thumb"
+        },
+        "Pillar_Script": {
+          "address": "0x0200a7e8",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02001ec8",
+          "extent": 288,
+          "state": "exact-c"
+        }
+      ],
+      "instances": {
+        "resource_39c": {
+          "owners": {
+            "MakyuriIriguchi_Func02001ec8": {
+              "address": "0x02005458",
+              "extent": 288
+            }
+          },
+          "absolute_symbols": {
+            "Engine_EventBegin": {
+              "address": "0x0200dab4",
+              "kind": "thumb"
+            },
+            "Engine_ObjectCreate": {
+              "address": "0x0200d9d4",
+              "kind": "thumb"
+            },
+            "Engine_ObjectSetScript": {
+              "address": "0x0200d9cc",
+              "kind": "thumb"
+            },
+            "Pillar_Rumble": {
+              "address": "0x0200d388",
+              "kind": "thumb"
+            },
+            "Engine_TaskWait": {
+              "address": "0x0200d97c",
+              "kind": "thumb"
+            },
+            "Engine_ObjectSetAnimation": {
+              "address": "0x0200d9c4",
+              "kind": "thumb"
+            },
+            "Engine_GameFlagSet": {
+              "address": "0x0200da8c",
+              "kind": "thumb"
+            },
+            "Engine_EventEnd": {
+              "address": "0x0200dabc",
+              "kind": "thumb"
+            },
+            "Data_02000240_t": {
+              "address": "0x02000240",
+              "kind": "data"
+            },
+            "Pillar_Script": {
+              "address": "0x0200de38",
+              "kind": "data"
+            }
+          }
+        }
+      }
     }
   ]
 }

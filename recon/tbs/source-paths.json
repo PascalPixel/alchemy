@@ -1,6 +1,14 @@
 {
   "format": 3,
   "owners": {
+    "resource_39c:02005458": {
+      "name": "MakyuriIriguchi_Func02001ec8",
+      "source": "FIELD/MAKYURI_IRIGUCHI/F_01EC8.C"
+    },
+    "resource_39b:02001ec8": {
+      "name": "MakyuriIriguchi_Func02001ec8",
+      "source": "FIELD/MAKYURI_IRIGUCHI/F_01EC8.C"
+    },
     "resource_383:02002564": {
       "name": "KuupuappuHeya_Func02002564",
       "source": "FIELD/KUUPUAPPU_HEYA/F_02564.C"

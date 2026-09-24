@@ -1,21 +1,17 @@
-/* NONMATCHING: 288 of 288 bytes, 6 differing halfwords (2026-09-24); twin of
- * 39c:02005458. Unit source for 39b with absolute symbols Data_02000240_t
- * (0x02000240, data) plus the evconv Engine_* veneers. Remaining: the
- * reference keeps the obj+104 owner store ahead of the obj[85] store and the
- * obj+12 load (sched2 sees them as conflicting there); here the store sinks
- * below the y update. The globals - 8 spelling reproduces the reference's
- * derived 0x03001ebc (FAKEMATCH candidate). */
+/* Instanced unit: 39b:02001ec8 and its twin 39c:02005458; the pillar script
+ * and the rumble routine are per-overlay absolute symbols. */
 #include "TYPES.H"
 
 void Engine_EventBegin(void);
 u8 *Engine_ObjectCreate(s32 kind, s32 x, s32 y, s32 z);
 void Engine_ObjectSetScript(u8 *obj, s32 script);
-void Local_02001df8(void);
+void Pillar_Rumble(void);
 void Engine_TaskWait(s32 frames);
 void Engine_ObjectSetAnimation(u8 *obj, s32 anim);
 void Engine_GameFlagSet(s32 flag);
 void Engine_EventEnd(void);
 
+extern u8 Pillar_Script[];
 extern s32 Data_02000240_t[];
 
 struct Sprite39b {
@@ -33,6 +29,15 @@ struct Work {
 struct Flags85 {
     u8 pad[85];
     u8 flags;
+};
+
+struct Obj {
+    u8 pad00[12];
+    s32 y;
+    u8 pad10[69];
+    u8 f85;
+    u8 pad56[18];
+    u8 *owner;
 };
 
 struct PillarState {
@@ -54,6 +59,8 @@ void MakyuriIriguchi_Func02001ec8(void)
     struct Sprite39b *spr;
     s32 step;
 
+    /* FAKEMATCH: the work pointer is read as globals - 8 so the reference
+     * derives 0x03001ebc from the loaded 0x03001edc. */
     {
         u8 **globals = (u8 **)0x03001edc;
 
@@ -69,10 +76,10 @@ void MakyuriIriguchi_Func02001ec8(void)
         if (obj != 0) {
             spr = *(struct Sprite39b **)(obj + 80);
             *(s32 *)(obj + 20) = *(s32 *)(leader + 20);
-            Engine_ObjectSetScript(obj, 0x200a7e8);
-            *(u8 **)(obj + 104) = leader;
-            ((struct Flags85 *)obj)->flags = 4;
-            *(s32 *)(obj + 12) += -0x8000;
+            Engine_ObjectSetScript(obj, (s32)Pillar_Script);
+            ((struct Obj *)obj)->owner = leader;
+            ((struct Obj *)obj)->f85 = 4;
+            ((struct Obj *)obj)->y += -0x8000;
             if (spr != 0) {
                 ((u8 *)spr)[38] = 0;
                 spr->layer = 1;
@@ -85,7 +92,7 @@ void MakyuriIriguchi_Func02001ec8(void)
         }
     }
     for (step = state->step; step <= 2; step++) {
-        Local_02001df8();
+        Pillar_Rumble();
         Engine_TaskWait(30);
         pillar[84] = 1;
         Engine_ObjectSetAnimation(pillar, 5 - step);

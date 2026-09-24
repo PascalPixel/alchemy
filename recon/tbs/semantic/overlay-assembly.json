@@ -1296,7 +1296,7 @@
     {
       "overlay": "resource_38e",
       "start": "0x0200050c",
-      "end": "0x020008b6",
+      "end": "0x020005dc",
       "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
       "confidence": "strong",

@@ -69508,6 +69508,230 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "scene-38e-020005dc",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_NIWA/GARDEN_SCENE.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_38e",
+      "absolute_symbols": {
+        "Engine_EventBegin": {
+          "address": "0x02008ad4",
+          "kind": "thumb"
+        },
+        "Engine_CameraMoveTo": {
+          "address": "0x02008b9c",
+          "kind": "thumb"
+        },
+        "Engine_MapRedraw": {
+          "address": "0x02008a8c",
+          "kind": "thumb"
+        },
+        "Engine_TaskWait": {
+          "address": "0x02008a4c",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetPosition": {
+          "address": "0x02008b24",
+          "kind": "thumb"
+        },
+        "Engine_EventOpenScreen": {
+          "address": "0x02008bac",
+          "kind": "thumb"
+        },
+        "Engine_CameraSetSpeed": {
+          "address": "0x02008b94",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpeed": {
+          "address": "0x02008afc",
+          "kind": "thumb"
+        },
+        "Engine_ActorWalkToAndWait": {
+          "address": "0x02008b0c",
+          "kind": "thumb"
+        },
+        "Engine_ActorFaceDirection": {
+          "address": "0x02008b7c",
+          "kind": "thumb"
+        },
+        "Engine_ActorStartRepeatedMotion": {
+          "address": "0x02008b3c",
+          "kind": "thumb"
+        },
+        "Engine_ActorShowEmote": {
+          "address": "0x02008b84",
+          "kind": "thumb"
+        },
+        "Engine_EventSetMessage": {
+          "address": "0x02008b54",
+          "kind": "thumb"
+        },
+        "Engine_EventShowMessageAndWait": {
+          "address": "0x02008b6c",
+          "kind": "thumb"
+        },
+        "Engine_ActorRunRepeatedMotion": {
+          "address": "0x02008b44",
+          "kind": "thumb"
+        },
+        "Engine_EventOpenMessage": {
+          "address": "0x02008b5c",
+          "kind": "thumb"
+        },
+        "Engine_UiWorkWaitThenFinalizeCapacity": {
+          "address": "0x02008aec",
+          "kind": "thumb"
+        },
+        "Engine_EventWait": {
+          "address": "0x02008acc",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetAnimation": {
+          "address": "0x02008b2c",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetAnimationAndWait": {
+          "address": "0x02008b34",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetAttachedEffect": {
+          "address": "0x02008b8c",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagIsSet": {
+          "address": "0x02008ab4",
+          "kind": "thumb"
+        },
+        "Engine_ActorGet": {
+          "address": "0x02008af4",
+          "kind": "thumb"
+        },
+        "Engine_ActorWalkTo": {
+          "address": "0x02008b04",
+          "kind": "thumb"
+        },
+        "FieldScene_SetupWithDescriptor8BD4": {
+          "address": "0x020088e8",
+          "kind": "thumb"
+        },
+        "Engine_ActorWaitForMove": {
+          "address": "0x02008b1c",
+          "kind": "thumb"
+        },
+        "Engine_EventCloseScreen": {
+          "address": "0x02008bb4",
+          "kind": "thumb"
+        },
+        "Engine_EventWaitForScreen": {
+          "address": "0x02008bbc",
+          "kind": "thumb"
+        },
+        "Engine_EventRequestExit": {
+          "address": "0x02008ba4",
+          "kind": "thumb"
+        },
+        "Engine_EventEnd": {
+          "address": "0x02008adc",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x020005dc",
+          "extent": 780,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "scene-3b3-02002384",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/TAKARA_HASHIRA/MAP_SHIFT_SCENE.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3b3",
+      "absolute_symbols": {
+        "Engine_GameFlagIsSet": {
+          "address": "0x0200aaec",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagSet": {
+          "address": "0x0200aaf4",
+          "kind": "thumb"
+        },
+        "Engine_EventBegin": {
+          "address": "0x0200ab0c",
+          "kind": "thumb"
+        },
+        "Engine_CameraSetSpeed": {
+          "address": "0x0200ab7c",
+          "kind": "thumb"
+        },
+        "Engine_CameraMoveTo": {
+          "address": "0x0200ab84",
+          "kind": "thumb"
+        },
+        "Engine_CameraWaitForMove": {
+          "address": "0x0200ab8c",
+          "kind": "thumb"
+        },
+        "Engine_EventWait": {
+          "address": "0x0200ab04",
+          "kind": "thumb"
+        },
+        "Engine_MapCopyCellsTo": {
+          "address": "0x0200aaa4",
+          "kind": "thumb"
+        },
+        "Engine_TaskAddCallback": {
+          "address": "0x0200aa3c",
+          "kind": "thumb"
+        },
+        "Engine_ActorGet": {
+          "address": "0x0200ab1c",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetAnimation": {
+          "address": "0x0200ab54",
+          "kind": "thumb"
+        },
+        "Main_0808a118": {
+          "address": "0x0200ab5c",
+          "kind": "thumb"
+        },
+        "Engine_MapCopyCellAttributes": {
+          "address": "0x0200aac4",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagClear": {
+          "address": "0x0200aafc",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetChildValue": {
+          "address": "0x0200ab64",
+          "kind": "thumb"
+        },
+        "Engine_ActorEnableActionCallback": {
+          "address": "0x0200ab2c",
+          "kind": "thumb"
+        },
+        "Engine_TaskRemoveCallback": {
+          "address": "0x0200aa44",
+          "kind": "thumb"
+        },
+        "Engine_EventEnd": {
+          "address": "0x0200ab14",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02002384",
+          "extent": 276,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

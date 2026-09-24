@@ -1,6 +1,14 @@
 {
   "format": 3,
   "owners": {
+    "resource_3b3:02002384": {
+      "name": "TakaraHashira_RunMapShiftScene",
+      "source": "FIELD/TAKARA_HASHIRA/MAP_SHIFT_SCENE.C"
+    },
+    "resource_38e:020005dc": {
+      "name": "BiribinoNiwa_RunGardenScene",
+      "source": "FIELD/BIRIBINO_NIWA/GARDEN_SCENE.C"
+    },
     "resource_39f:020015d0": {
       "name": "MogoruMori_RunBranchHopScene",
       "source": "FIELD/MOGORU_MORI/BRANCH_HOP_SCENE.C"

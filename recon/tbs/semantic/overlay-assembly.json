@@ -17,19 +17,6 @@
     },
     {
       "overlay": "resource_3c8",
-      "start": "0x02001808",
-      "end": "0x020018f8",
-      "kind": "not_yet_decompiled",
-      "retention": "not_yet_c",
-      "confidence": "strong",
-      "evidence": [
-        "Complete reviewed 240-byte actor leap sequence remains retained assembly; the ordinary C candidate is 5 halfwords from exact under canonical GCC 2.96.",
-        "The two sites spelled Func_0200672a reach different veneers, so the translation unit declares Func_0200672a_a.",
-        "This is unresolved reconstruction, not evidence of compiler impossibility or Proven ASM."
-      ]
-    },
-    {
-      "overlay": "resource_3c8",
       "start": "0x02004610",
       "end": "0x020047c0",
       "kind": "not_yet_decompiled",
@@ -272,22 +259,6 @@
         "Prior displayed call targets are unrelocated labels; actual runtime destinations must be re-audited with the resource loader transformation before relying on the internal-call premise.",
         "audited 820-byte whole owner in recon/tbs/semantic/regions.json",
         "five direct bl targets inside the owner are independently reachable from the entry; bl at 0x020008dc targets fallthrough-reachable 0x02000a06",
-        "the approved Thumb backend cannot emit a direct call to an intra-function label and has no outlining pass",
-        "byte-exact decoded-overlay assembly round trip"
-      ]
-    },
-    {
-      "overlay": "resource_3a0",
-      "start": "0x020009dc",
-      "end": "0x02000cec",
-      "kind": "not_yet_decompiled",
-      "retention": "not_yet_c",
-      "confidence": "strong",
-      "evidence": [
-        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
-        "Prior displayed call targets are unrelocated labels; actual runtime destinations must be re-audited with the resource loader transformation before relying on the internal-call premise.",
-        "audited 784-byte whole owner in recon/tbs/semantic/regions.json",
-        "two direct bl targets inside the owner are independently reachable from the entry; bl at 0x02000ad8 targets fallthrough-reachable 0x02000c16",
         "the approved Thumb backend cannot emit a direct call to an intra-function label and has no outlining pass",
         "byte-exact decoded-overlay assembly round trip"
       ]
@@ -813,19 +784,6 @@
         "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
         "2026-09-06 review of the linked reconstruction record found no compiler-impossibility proof; its dated source and score observations remain research evidence, not DONE.",
         "recon/tbs/en/dossiers.json#resource_3b1:02004254"
-      ]
-    },
-    {
-      "overlay": "resource_39b",
-      "start": "0x02001730",
-      "end": "0x0200196c",
-      "kind": "not_yet_decompiled",
-      "retention": "not_yet_c",
-      "confidence": "strong",
-      "evidence": [
-        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
-        "2026-09-06 review of the linked reconstruction record found no compiler-impossibility proof; its dated source and score observations remain research evidence, not DONE.",
-        "recon/tbs/en/dossiers.json#resource_39b:02001730"
       ]
     },
     {

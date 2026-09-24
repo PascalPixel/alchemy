@@ -654,7 +654,8 @@
       "source": "FIELD/KORIMA_MAGARI/RETURN_SEQUENCE.C"
     },
     "resource_3c8:02001808": {
-      "name": "Scene_RunActorLeapSequence"
+      "name": "VinasuHeya_Func02001808",
+      "source": "FIELD/VINASU_HEYA/F_01808.C"
     },
     "resource_39c:02000d58": {
       "name": "Makyuri_CyclePalette",
@@ -10630,7 +10631,8 @@
       "name": "RunAssetSelectionScreen"
     },
     "main:080a2680": {
-      "name": "AssetSelection_RunLoop"
+      "name": "ItemMenu_RunCommands",
+      "source": "MENU/ITEM/RUN_COMMANDS.C"
     },
     "main:080b3444": {
       "name": "Shop_PickUnitItem",
@@ -16143,7 +16145,8 @@
       "source": "FIELD/MAKYURI_IRIGUCHI/STAGED_EFFECT.C"
     },
     "resource_39b:02001730": {
-      "name": "FieldScene_RunActorExchangeChoreography"
+      "name": "MakyuriIriguchi_Func02001730",
+      "source": "FIELD/MAKYURI_IRIGUCHI/F_01730.C"
     },
     "resource_39b:02000fd8": {
       "name": "FieldScene_RunSupplementalSequenceTwo",
@@ -20756,7 +20759,8 @@
       "name": "SaveState_BuildSummaryHeader"
     },
     "main:080f2f10": {
-      "name": "TitlePalette_UpdateFade"
+      "name": "TitlePalette_UpdateFade",
+      "source": "GRAPHICS/PALETTE/TITLE_UPDATE_FADE.C"
     },
     "main:080f2b70": {
       "name": "Title_ShowSplashScreen"
@@ -20876,6 +20880,14 @@
     "main:080cdd58": {
       "name": "BattleFx_SetupCanvasTileMap",
       "source": "BATTLE/EFFECT/SETUP_CANVAS_TILE_MAP.C"
+    },
+    "main:08093c00": {
+      "name": "Field_TryJumpForward",
+      "source": "FIELD/COMMON/TRY_JUMP_FORWARD.C"
+    },
+    "resource_3a0:020009dc": {
+      "name": "ShianMura_Func020009dc",
+      "source": "FIELD/SHIAN_MURA/F_009DC.C"
     }
   },
   "symbols": {
@@ -21087,7 +21099,6 @@
     "main:080b5010": "BattleActor_SpawnObjectsForListFar",
     "main:0808e14c": "Event_FindFacingTrigger",
     "main:080ceff8": "BattleFx_RunFortyEightFrameEffect",
-    "main:08093c00": "Field_TryJumpForward",
     "main:080b5e10": "BattleSummon_ReservedNoOp",
     "main:080bd424": "BattleCommand_SelectAutomatic",
     "main:08009230": "Map_ResumeAnimationFar",

@@ -232,7 +232,7 @@ mod tests {
     use crate::coverage::progress::GameDone;
     use serde_json::json;
     #[test]
-    fn figures_are_redrawn_once_a_day_and_checked_against_their_own_day() {
+    fn figures_are_redrawn_with_each_count_and_match_the_readme() {
         use super::{check_figures, figure, figure_date_current, history, letters, write_figures};
         let root = tempfile::tempdir().unwrap();
         let root = root.path();
@@ -284,10 +284,10 @@ mod tests {
         let chart = std::fs::read(root.join(figure::CHART)).unwrap();
         let map = std::fs::read(root.join(figure::MAP)).unwrap();
         check_figures(root).unwrap();
-        // A later count the same day moves the history, not the figures.
+        // A later count the same day redraws the chart with it.
         write_figures(root, Some(done(610)), None).unwrap();
-        assert_eq!(std::fs::read(root.join(figure::CHART)).unwrap(), chart);
-        assert_eq!(std::fs::read(root.join(figure::MAP)).unwrap(), map);
+        assert_ne!(std::fs::read(root.join(figure::CHART)).unwrap(), chart);
+        let _ = map;
         let recorded = history::load(root).unwrap();
         let today = history::today();
         let row = recorded["days"].as_array().unwrap().last().unwrap().clone();
@@ -295,7 +295,12 @@ mod tests {
             (row["date"].as_str(), history::percent(&row["tbs"])),
             (Some(today.as_str()), Some(61.0))
         );
-        assert_eq!(history::percent(&recorded["figures"]["tbs"]), Some(60.0));
+        assert_eq!(history::percent(&recorded["figures"]["tbs"]), Some(61.0));
+        check_figures(root).unwrap();
+        // A README stating another number fails.
+        std::fs::write(root.join("README.md"), "**☀️ 60.00% · ⚓️ pending**\n").unwrap();
+        assert!(check_figures(root).is_err());
+        std::fs::write(root.join("README.md"), "**☀️ 61.00% · ⚓️ pending**\n").unwrap();
         check_figures(root).unwrap();
         // A tampered chart fails; yesterday's figures pass only until today has a row.
         std::fs::write(root.join(figure::CHART), &map).unwrap();
@@ -369,8 +374,8 @@ fn render_figures(
     let chart = figure::chart(&letters, &history::as_drawn(history));
     Ok((chart, figure::map(&letters, root)))
 }
-/// Record today's verified counts, and redraw the figures when the stored
-/// ones carry an earlier date: the tracked PNGs change at most once a day.
+/// Record today's verified counts and redraw both figures, so the chart
+/// always shows the numbers the README states.
 fn write_figures(
     root: &Path,
     sun: Option<GameDone>,
@@ -380,12 +385,6 @@ fn write_figures(
     let mut history = history::load(root)?;
     history::record(&mut history, &today, sun, anchor);
     history::record_models(&mut history, &today, &history::models_on(root, &today)?);
-    let drawn = std::fs::read(root.join(figure::CHART))
-        .ok()
-        .and_then(|png| raster::png_date(&png));
-    if drawn.as_deref() == Some(today.as_str()) && root.join(figure::MAP).exists() {
-        return write(&history::path(root), &history::text(&history));
-    }
     // The history is itself a tracked file the map draws: write it with a
     // placeholder of the digest's length, then record the digest of the
     // tree as it now stands, which leaves the history's size unchanged.
@@ -401,7 +400,8 @@ fn write_figures(
     std::fs::write(root.join(figure::MAP), map).map_err(|e| format!("{}: {e}", figure::MAP))
 }
 /// The committed figures are current when they carry the history's figure
-/// date, that date is today (or yesterday while today has no row), the chart
+/// date, that date is today (or yesterday while today has no row), they show
+/// the latest recorded row and the README's progress line, the chart
 /// is exactly what that day's rows draw, and the map is exactly what the
 /// tracked files draw unless they changed since it was drawn that day.
 fn check_figures(root: &Path) -> Result<(), String> {
@@ -421,6 +421,23 @@ fn check_figures(root: &Path) -> Result<(), String> {
         .is_some_and(|days| days.iter().any(|row| row["date"] == today.as_str()));
     if !figure_date_current(&date, &today, has_today) {
         return stale(&format!("drawn on {date:?}"));
+    }
+    let latest = history["days"].as_array().and_then(|days| days.last());
+    for game in ["tbs", "tla"] {
+        let shown = history::percent(&history["figures"][game]);
+        if latest.map(|row| history::percent(&row[game])) != Some(shown) {
+            return stale(&format!("{game} is not the latest recorded row"));
+        }
+    }
+    let readme = std::fs::read_to_string(root.join("README.md")).unwrap_or_default();
+    for (icon, game) in [("☀️", "tbs"), ("⚓️", "tla")] {
+        if let Some(shown) = history::percent(&history["figures"][game]) {
+            // The README floors to hundredths, as the chart labels do.
+            let shown = (shown * 100.0 + 1e-9).floor() / 100.0;
+            if readme.contains("**☀️ ") && !readme.contains(&format!("{icon} {shown:.2}%")) {
+                return stale(&format!("{game} {shown:.2}% is not the README's progress"));
+            }
+        }
     }
     let chart =
         std::fs::read(root.join(figure::CHART)).map_err(|e| format!("{}: {e}", figure::CHART))?;

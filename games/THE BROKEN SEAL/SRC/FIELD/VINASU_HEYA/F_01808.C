@@ -1,8 +1,6 @@
 #include "TYPES.H"
 
-#define Scene_RunActorLeapSequence Func_02001808
-
-void Func_02001910();
+s32 Func_02001910();
 void Func_0200221c();
 void Func_02006678();
 void Func_020066aa();
@@ -13,7 +11,6 @@ void Func_020066f6();
 void Func_020066fc();
 void Func_020066fe();
 void Func_0200670e();
-void Func_0200672a();
 void Func_0200672a_a();
 void Func_02006760();
 void Func_02006786();
@@ -57,11 +54,7 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
     f(a0, a1, a2, a3, a4, a5);
 }
 
-/* NONMATCHING: 240 of 240 bytes, 2 halfword edits (2026-09-24). The zero
- * stored at +68 lives in r6 in the reference (push {r5, r6, lr}); here it
- * reuses r3 after the 0x480000 add. Argument precomputation and zero
- * variables do not move it. */
-void Scene_RunActorLeapSequence(void)
+void VinasuHeya_Func02001808(void)
 {
     u32 i;
     s32 rec7;

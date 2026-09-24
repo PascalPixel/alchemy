@@ -1,4 +1,5 @@
-/* Draft, not exact (2026-09-24): 15 differing halfwords, 312 of 312 bytes.
+/* Draft, not exact (2026-09-24): 13 differing halfwords, 312 of 312 bytes.
+   The scale stores precede the link store and the sprite load comes last.
    Storing literal zeros to sprite->frame and child->phase lets GCC keep
    the byte zero in r8, loaded from the mid-loop pool, as the reference
    does (a zero local cost 121 halfwords). Residual: the reference derives
@@ -98,9 +99,9 @@ void BattleFx_SpawnScaledArcObjects(struct ArcObject *link)
         object->w = link->w;
         object->state = 0;
         object->step = 0;
-        sprite = object->sprite;
-        object->link = link;
         object->scale_y = object->scale_x = 0x1999;
+        object->link = link;
+        sprite = object->sprite;
         if (sprite == 0)
             continue;
         AnimationObjects_SelectAnimationFar(sprite, 0);

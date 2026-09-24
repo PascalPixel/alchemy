@@ -1,11 +1,3 @@
-/* NONMATCHING: 572 bytes, candidate 564, 262 differing halfwords
- * (2026-09-24). Single-overlay unit binding Engine_* at their import veneers.
- * Remaining: the body matches instruction for instruction (0x200a820 and the
- * 254 mask hoisted to r7/r8, counter r5 from 1 down); the reference also sets
- * sl to 0 before the loop and never reads it, which costs the sl save and
- * restore (8 bytes) and shifts everything after. Not the dbra reversal
- * (has_call forbids it), not a bitfield (that gives a -2 mask); some dead
- * zero pseudo survives to global-alloc there. */
 #include "TYPES.H"
 
 void Engine_EventBegin();
@@ -61,9 +53,14 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
     f(a0, a1, a2, a3, a4, a5);
 }
 
-void Local_02001730(void)
+/* Makyuri entrance event: Ivan crosses the doorway twice while the guard's action callbacks alternate, then shows an emote and the cells are copied. */
+/* Makyuri entrance event: an actor crosses the doorway twice while actor 8's action callbacks alternate, then shows an emote and the cells are copied. */
+void MakyuriIriguchi_Func02001730(void)
 {
     s32 i;
+    s32 zero;
+    s32 mask;
+    u8 *p;
     s32 record;
 
     Engine_EventBegin();
@@ -86,14 +83,19 @@ void Local_02001730(void)
     Engine_ActorRunRepeatedMotion(3, 1);
     *(u8 *)(Engine_ActorGet(8) + 90) &= 254;
     Engine_EventWait(20);
-    for (i = 1; i >= 0; i--) {
+    mask = 254;
+    zero = 0;
+    for (i = 0; i < 2; i++) {
         Engine_ActorWalkTo(3, 152, 168);
         Engine_EventWait(10);
         Call2(Engine_ActorEnableActionCallback, 8, 0x200a8c8);
         Engine_ActorWaitForMove(3);
         Call3(Engine_ActorFaceDirection, 3, 0xc000, 30);
         Engine_ActorRunRepeatedMotion(3, 1);
-        *(u8 *)(Engine_ActorGet(3) + 90) &= 254;
+        p = (u8 *)Engine_ActorGet(3);
+        /* FAKEMATCH: or-ing a zero kept from before the loop leaves the
+         * reference's unread zero in sl. */
+        p[90] = (p[90] & mask) | zero;
         Engine_ActorWalkTo(3, 136, 184);
         Engine_EventWait(10);
         Engine_ActorEnableActionCallback(8, 0x200a820);
@@ -107,7 +109,7 @@ void Local_02001730(void)
         Call3(Engine_ActorFaceDirection, 3, 0xc000, 30);
         Engine_ActorRunRepeatedMotion(3, 1);
         Engine_EventWait(15);
-        *(u8 *)(Engine_ActorGet(3) + 90) &= 254;
+        *(u8 *)(Engine_ActorGet(3) + 90) &= mask;
         Engine_ActorWalkTo(3, 136, 184);
         Engine_EventWait(15);
         Engine_ActorEnableActionCallback(8, 0x200a820);

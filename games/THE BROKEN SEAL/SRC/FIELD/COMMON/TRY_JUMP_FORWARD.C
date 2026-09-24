@@ -1,17 +1,9 @@
-#include "TYPES.H"
-#include "IWRAM_CALL.H"
-#define gGameState Data_02000240
-#define gEventWork Data_03001ebc
-
-/* main:08093c00 Field_TryJumpForward - hand-written draft, 57 of 276
-   halfwords differ, all one register swap: the ROM keeps the leader in r6
-   and the tile mask and rise step in r5, where this C allocates them the
-   other way round. The code is otherwise the ROM's.
-
-   Jumps the leader two tiles forward when the tile ahead is blocked but
+/* Field: jump the leader two tiles forward when the tile ahead is blocked but
    the one beyond is free: the leader hops over, lands, and a ledge target
    in front shakes as it goes; landing on a hole tile repeats the jump.
    Returns 0 after a jump, -1 when the way is blocked. */
+#include "TYPES.H"
+#include "IWRAM_CALL.H"
 
 struct JumpSprite {
     u8 unknown_00[38];
@@ -78,20 +70,23 @@ s32 Field_TryJumpForward(void)
     struct JumpPosition position;
     struct JumpPosition *pos;
     struct JumpActor *target;
-    s32 rise;
+    /* FAKEMATCH: one local holds the tile mask and then the descent step,
+       a second the lift; that split gives the reference its registers. */
+    s32 step;
+    s32 lift;
 
     pos = &position;
 again:
-    rise = 0xfff00000;
-    pos->x = (leader->x & rise) + 0x80000;
+    step = 0xfff00000;
+    pos->x = (leader->x & step) + 0x80000;
     pos->y = leader->y;
-    pos->z = (leader->z & rise) + 0x80000;
+    pos->z = (leader->z & step) + 0x80000;
     Vector_AddPolarOffset(0x100000, angle, pos);
     if (Object_CheckMovementCollision(leader, pos) == 1)
         return -1;
-    pos->x = (leader->x & rise) + 0x80000;
+    pos->x = (leader->x & step) + 0x80000;
     pos->y = leader->y;
-    pos->z = (leader->z & rise) + 0x80000;
+    pos->z = (leader->z & step) + 0x80000;
     Vector_AddPolarOffset(0x200000, angle, pos);
     if (Object_CheckMovementCollision(leader, pos) != 0)
         goto done;
@@ -113,19 +108,19 @@ again:
     if ((target = Object_FindNearestFacingTarget(leader, 207)) != NULL
         || (target = Object_FindNearestFacingTarget(leader, 205)) != NULL) {
         Object_SetMode(target, 7);
-        rise = 0xffff0000;
-        leader->y += rise;
-        leader->shadow_y += rise;
+        lift = 0xffff0000;
+        leader->y += lift;
+        leader->shadow_y += lift;
         WaitFrames(2);
-        leader->y += rise;
-        leader->shadow_y += rise;
+        leader->y += lift;
+        leader->shadow_y += lift;
         WaitFrames(10);
-        rise = 0x10000;
-        leader->y += rise;
-        leader->shadow_y += rise;
+        step = 0x10000;
+        leader->y += step;
+        leader->shadow_y += step;
         WaitFrames(4);
-        leader->y += rise;
-        leader->shadow_y += rise;
+        leader->y += step;
+        leader->shadow_y += step;
     } else {
         WaitFrames(6);
     }

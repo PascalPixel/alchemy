@@ -1,11 +1,11 @@
-/* Draft, not exact (2026-09-24): 34 differing halfwords, same length.
-   Hand-written from the assembly beside TitlePalette_InitializeBuffers. The
-   queued palette transfers are QueueIoWriteDelay-style inline writes of DMA
-   triples. Residual: register choice between the queue, IME pointer and the
-   saved IME values across the two queued writes, and the order of the
-   bank-address constants. */
 /* Title palette fade: step the 8.8 colour channels toward the target, pack
-   them into the back palette buffer and queue both banks for the next frame. */
+   them into the back palette buffer and queue both banks for the next frame.
+
+   FAKEMATCH: each queued write is QueueIoWriteDelay-style inline code with
+   function-level queue and IME pointers and the one-pass loop around the
+   IME read (as in SYSTEM/IO_WRITE_QUEUE.C); the front bank address passes
+   through a block local, and the packing loop counts down from an explicit
+   512 set before the source pointer. */
 #include "TYPES.H"
 #include "DMA.H"
 #include "IO_WRITE_QUEUE.H"
@@ -15,14 +15,13 @@ extern volatile u16 Data_04000208;
 #define REG_IME Data_04000208
 
 #define QUEUE_PALETTE(source, destination) {                                \
-        volatile u16 *ime;                                                  \
-        struct IoWriteQueue *q;                                             \
         u32 saved;                                                          \
-        s32 count;                                                          \
                                                                             \
         q = &gIoWriteQueue;                                                 \
-        ime = &REG_IME;                                                     \
-        saved = *ime;                                                       \
+        do {                                                                \
+            ime = &REG_IME;                                                 \
+            saved = *ime;                                                   \
+        } while (0);                                                        \
         *ime = (u16)ime;                                                    \
         count = q->count;                                                   \
         if (count <= 31) {                                                  \
@@ -44,6 +43,9 @@ void TitlePalette_UpdateFade(void)
     s32 i;
     u8 *bank;
     s32 blue;
+    volatile u16 *ime;
+    struct IoWriteQueue *q;
+    s32 count;
 
     if (*(s8 *)(buffer + 0x3001) == 0)
         return;
@@ -57,14 +59,18 @@ void TitlePalette_UpdateFade(void)
     }
     packed = (u16 *)(buffer + ((*(u8 *)(buffer + 0x3000) ^ 1) << 10) + 0x2800);
     blue = 0x7c00;
+    i = 512;
     current = (u16 *)(buffer + 0x400);
-    for (i = 0; i < 512; i++) {
+    for (; i != 0; i--) {
         *packed++ = (current[0] & blue) | (((s16)current[1] >> 5) & 0x3e0) | (((s16)current[2] >> 10) & 0x1f);
         current += 3;
     }
     *(u8 *)(buffer + 0x3000) ^= 1;
     bank = buffer + (*(u8 *)(buffer + 0x3000) << 10);
-    packed = (u16 *)(bank + 0x2800);
-    QUEUE_PALETTE(packed, 0x05000000);
+    {
+        u8 *front = bank + 0x2800;
+
+        QUEUE_PALETTE(front, 0x05000000);
+    }
     QUEUE_PALETTE(bank + 0x2a00, 0x05000200);
 }

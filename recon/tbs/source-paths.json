@@ -1851,6 +1851,16 @@
     "main:08018038": {
       "name": "UiText_BuildRenderEntries"
     },
+    "main:08021e6c": {
+      "name": "Ui_RunSelectionScreen"
+    },
+    "main:08022768": {
+      "name": "Ui_SetRectHighlight",
+      "source": "GRAPHICS/WINDOW/SET_RECT_HIGHLIGHT.C"
+    },
+    "main:0802281c": {
+      "name": "BattleLayout_HighlightPartyPanels"
+    },
     "main:0801e858": {
       "name": "UiText_DrawString"
     },
@@ -20801,7 +20811,6 @@
     "main:080b5010": "BattleActor_SpawnObjectsForListFar",
     "main:0808e14c": "Event_FindFacingTrigger",
     "main:080ceff8": "BattleFx_RunFortyEightFrameEffect",
-    "main:0802281c": "BattleLayout_HighlightPartyPanels",
     "main:08093c00": "Field_TryJumpForward",
     "main:080b5e10": "BattleSummon_ReservedNoOp",
     "main:080bd424": "BattleCommand_SelectAutomatic",

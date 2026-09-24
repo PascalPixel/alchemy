@@ -5,9 +5,9 @@ extern u8 *Data_03001e74;
 s32 Func_080b5090(s32 side, s32 group);
 void Func_08022768(s32 x, s32 y, s32 width, s32 height, s32 style);
 
-#define BattleLayout_DrawPartyPanels Func_0802281c
+#define BattleLayout_HighlightPartyPanels Func_0802281c
 
-s32 BattleLayout_DrawPartyPanels(u16 *argument)
+s32 BattleLayout_HighlightPartyPanels(u16 *argument)
 {
     s16 placed_unit;
     s32 party_size;

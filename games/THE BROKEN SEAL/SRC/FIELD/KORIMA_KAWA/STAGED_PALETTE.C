@@ -8,7 +8,6 @@
  * Several aliases below resolve to the same relocation.  The spellings are
  * call-site evidence and are deliberately kept distinct.
  */
-#define SetStagedActorMode Func_02000fe4
 #define GetStagedActorEffect Func_0200193e
 #define CanStartStagedActorEffect Func_02001916
 #define BeginStagedActorEffect Func_02001948
@@ -63,9 +62,6 @@ struct SceneBeatSubject {
     u8 marker;
 };
 
-
-void Func_02000fe4();
-void Func_0808a018(void); void Func_0808a020(void);
 void Func_02001872(void);
 s32 Func_02000e7a(struct PlacementResult *result);
 void Func_02001026(struct PlacementResult result);
@@ -113,7 +109,7 @@ void Func_02001b98(s32, s32);
 static __inline__ void DrawPlacement(s32 left, s32 top, s32 width, s32 height,
                                      s32 tile, s32 palette)
 {
-    void Engine_ActorSetAnimation(s32, s32); u8 *Func_020018de(s32);
+    void Actor_SetAnimation(s32, s32); u8 *Func_020018de(s32);
 
     Func_020018b8(left, top, width, height, tile, palette);
 }
@@ -137,7 +133,6 @@ s32 Func_02001b32();
 s32 Func_02001b40();
 
 s32 Func_02001b4e();
-
 
 u8 *MapStagedScene_SelectPrimaryData(void) { return (u8 *)0x02008fc8; }
 
@@ -171,7 +166,7 @@ void FieldScene_RunActorTenPlacementScene(void)
             Func_020018e0(10, 3);
             Func_020018dc(10, -18, 6);
             Func_020018b2(30);
-            Engine_AudioPlayCue(240);
+            Audio_PlayCue(240);
             Engine_ActorSetAnimation(10, 8);
             Func_020018de(10)[35] = 2;
             zero = 0;

@@ -6972,7 +6972,7 @@
       "source": "FIELD/COMMON/KUUPUAPPU_RUNPA/JAIL.C"
     },
     "resource_3aa:02000264": {
-      "name": "Scene_DispatchSceneByIndex",
+      "name": "FieldScene_DispatchSceneByIndex",
       "source": "FIELD/KAREI_KYUDEN/PARTY_EVENTS.C"
     },
     "resource_3b6:020006ec": {
@@ -7420,7 +7420,7 @@
       "source": "FIELD/FUNE_HEYA/EXTENDED_CHOREOGRAPHY.C"
     },
     "resource_3aa:02000230": {
-      "name": "State_SetWord448To209AndRun",
+      "name": "SceneState_SetWord448To209AndRun",
       "source": "FIELD/KAREI_KYUDEN/PARTY_EVENTS.C"
     },
     "resource_385:02000ac8": {
@@ -7584,7 +7584,7 @@
       "source": "FIELD/FUNE_HEYA/EXTENDED_CHOREOGRAPHY.C"
     },
     "resource_3aa:020000d4": {
-      "name": "Dialogue_RunActor13Message1b83",
+      "name": "SceneDialogue_RunActor13Message1b83",
       "source": "FIELD/KAREI_KYUDEN/PARTY_EVENTS.C"
     },
     "resource_3c8:020019c0": {
@@ -8276,7 +8276,7 @@
       "source": "FIELD/BIRIBINO_NIWA/ORBITING.C"
     },
     "resource_3aa:020000f4": {
-      "name": "Dialogue_RunActor16Message1b88",
+      "name": "SceneDialogue_RunActor16Message1b88",
       "source": "FIELD/KAREI_KYUDEN/PARTY_EVENTS.C"
     },
     "resource_383:020002e8": {
@@ -8284,7 +8284,7 @@
       "source": "FIELD/KUUPUAPPU_HEYA/PROMPT.C"
     },
     "resource_3aa:02000114": {
-      "name": "Scene_RunActorEightTurnDialogue",
+      "name": "FieldScene_RunActorEightTurnDialogue",
       "source": "FIELD/KAREI_KYUDEN/PARTY_EVENTS.C"
     },
     "resource_3ba:02002f64": {
@@ -10366,7 +10366,7 @@
       "source": "FIELD/SHIAN_MURA/SPAWN_SEQUENCE.C"
     },
     "resource_3aa:02000184": {
-      "name": "Scene_RunScene3aa",
+      "name": "FieldScene_RunScene3aa_02000184",
       "source": "FIELD/KAREI_KYUDEN/PARTY_EVENTS.C"
     },
     "resource_3b0:0200040c": {

@@ -29,7 +29,7 @@ u32 SaveState_SelectWriteSlot(s32 mode)
     if (count != 0) {
         if (count == 1) {
             index = empty[0];
-            if (State_Do(mode) == 0x10) {
+            if (SaveState_FindLatestSlot(mode) == 0x10) {
                 index = 0x10;
             }
         } else {

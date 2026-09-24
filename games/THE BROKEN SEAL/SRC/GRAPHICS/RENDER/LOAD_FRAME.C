@@ -17,11 +17,11 @@ void RenderResource_LoadFrame(s32 index, s32 value, s32 flag)
     u16 *base = GetResource((s32)gVal);
 
     if (value <= 95) {
-        Sys_Apply((void *)((u32)base + base[index]), buffer);
+        Resource_DecodeByteLz((void *)((u32)base + base[index]), buffer);
         if (flag != 0)
             Sys_Apply2(buffer, 768);
         Resource_CopyData(value, size, buffer);
-        Sys_Do(14);
+        Runtime_ReleaseHeapBlock(14);
     }
 }
 

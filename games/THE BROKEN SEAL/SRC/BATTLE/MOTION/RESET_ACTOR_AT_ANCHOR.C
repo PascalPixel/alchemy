@@ -54,7 +54,7 @@ void BattleMotion_SetupEscapeObject(s32 object_id)
 }
 
 /* battle/motion/interpolate_position.c */
-extern s8 gIw;
+extern s8 gBlendBrighten;
 
 void BattleMotion_InterpolatePosition(void **start_slot, void **end_slot, s32 progress)
 {

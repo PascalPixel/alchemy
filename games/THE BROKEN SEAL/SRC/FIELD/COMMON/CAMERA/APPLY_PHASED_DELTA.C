@@ -14,12 +14,12 @@ struct SceneCameraState {
     s16 field36;
 };
 
-extern u32 gIw;
+extern u32 gBattleFxWork;
 
 void Camera_ApplyPhasedDelta(void)
 {
-    u8 *state = (u8 *)gIw;
-    struct SceneCameraState *camera = *(struct SceneCameraState **)((u8 *)&gIw - 108);
+    u8 *state = (u8 *)gBattleFxWork;
+    struct SceneCameraState *camera = *(struct SceneCameraState **)((u8 *)&gBattleFxWork - 108);
     u32 *phase = (u32 *)(state + 0x77B0);
 
     if (*phase == 1) {

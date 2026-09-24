@@ -38,7 +38,7 @@ struct BattlePresentationTransition {
     s32 flag;
 };
 
-extern struct BattlePresentationTransition *gIw;
+extern struct BattlePresentationTransition *gTransitionWork;
 
 void *Runtime_GetObject(s32);
 
@@ -58,14 +58,14 @@ s32 BattlePres_RunAction(s16 *action)
         return -1;
 
     action[5] = BattleTarget_ReplaceDefeated((u8 *)action);
-    transition = gIw;
+    transition = gTransitionWork;
     if (action[0] > 4)
         battle_mode = -0x2000;
     else
         battle_mode = 0x2000;
     transition->battle_value = battle_mode;
     transition->timer = 60;
-    Battle_Run();
+    UiWork_ClearValueNameTablesFar();
 
     switch (action[3]) {
     case 99:
@@ -75,7 +75,7 @@ s32 BattlePres_RunAction(s16 *action)
         break;
     case 3:
         WaitFrames(45);
-        FunctionHead_080b8888(action);
+        BattlePres_ShowMessageWhenField38Positive(action);
         break;
     case 2:
         WaitFrames(45);
@@ -83,7 +83,7 @@ s32 BattlePres_RunAction(s16 *action)
         break;
     case 0:
     default: {
-        struct BattlePresentationTransition *tr = gIw;
+        struct BattlePresentationTransition *tr = gTransitionWork;
         tr->flag = 0;
         BattlePres_RunUnitAction(action);
         tr->flag = 0;
@@ -130,7 +130,7 @@ s32 BattleEscape_PlayRun(s16 *action)
         if (party_size != 0) {
             member_slot = 0;
             do {
-                Battle_Do(party_members[member_slot]);
+                BattleMotion_SetupEscapeObject(party_members[member_slot]);
                 animated++;
                 WaitFrames(8);
                 member_slot++;
@@ -156,14 +156,14 @@ s32 BattlePres_ShowMessageWhenField38Positive(s16 *script)
 
     object_id = *script;
     object = Runtime_GetObject(object_id);
-    if (FunctionHead_080b8808(object_id) < 0) {
+    if (BattleObject_IsValidId(object_id) < 0) {
         return -1;
     }
     result = 0;
     if (FIELD(object, s16 *, 0x38) <= 0) {
         return result;
     }
-    Battle_Run();
+    UiWork_ClearValueNameTablesFar();
     UiText_DrawQuantity(object_id, 1);
     UiText_ShowMessageAndWait((s32)&Value_00000816);
     return 0;

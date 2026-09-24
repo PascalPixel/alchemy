@@ -7,5 +7,5 @@ extern u8 gRom;
 void Runtime_ScheduleCallbackAndReleaseBlock20A(void)
 {
     ScheduleCallback((s32)&gRom);
-    Sys_Check(0x14);
+    Runtime_ReleaseHeapBlock(0x14);
 }

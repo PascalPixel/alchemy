@@ -127,7 +127,7 @@ signature_done:
 
 timer_ready:
         if (state->displayHandle == 0 && state->secondaryHandle == 0) {
-            state->displayHandle = Sys_Check();
+            state->displayHandle = Link_CreateCountdownLabelWindow();
             timer = state->timer;
         }
 

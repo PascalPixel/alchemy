@@ -15,7 +15,7 @@ s32 AbilityMenu_BuildAvailableList(void)
     s32 offset;
     s8 mode;
 
-    state = (u8 *)gIw;
+    state = (u8 *)gMenuWork;
     count = 0;
     index = 0;
     output = (s16 *)(state + 0x26c);

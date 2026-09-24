@@ -3,7 +3,7 @@
 
 /* shop/effect/reset.c */
 void Effect_Do(s32);
-void Effect_Apply(s32, u32);
+void ObjectGroup_SetChildValueUnlessFifteenFar(s32, u32);
 
 void Shop_ResetEffects(void)
 {
@@ -23,6 +23,6 @@ void Shop_ResetEffects(void)
     } while (cnt >= 0);
     no = *(s8 *)(work + 0x3AB);
     if (no != -1) {
-        Effect_Apply(*(s32 *)(work + (offset = (no * 4) + 0x114)), (Random16() * 7) >> 16);
+        ObjectGroup_SetChildValueUnlessFifteenFar(*(s32 *)(work + (offset = (no * 4) + 0x114)), (Random16() * 7) >> 16);
     }
 }

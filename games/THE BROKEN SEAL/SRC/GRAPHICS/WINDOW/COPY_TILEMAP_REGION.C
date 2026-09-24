@@ -7,20 +7,20 @@
 
 /* ui/window/window_copy_tilemap_region.c */
 /* ui/window/copy_tilemap_region.c */
-extern u8 *gIw;
+extern u8 *gWindowWork;
 
 s16 *Runtime_BumpAllocateAlternatePool(s32 size);
 
 void UiWindow_CopyTilemapRegion(const struct RenderInput *window, const void *source)
 {
-    s16 *mirror = (s16 *)gIw;
+    s16 *mirror = (s16 *)gWindowWork;
     s16 *buffer = Runtime_BumpAllocateAlternatePool(0x300);
     s16 *input = buffer;
     u32 cell;
     s16 *vram;
     s32 row;
 
-    Ui_Apply(source, buffer);
+    Resource_DecodeType01(source, buffer);
     cell = window->y * 32 + window->x;
     vram = (s16 *)0x06002000 + cell;
     mirror += cell;
@@ -37,7 +37,7 @@ void UiWindow_CopyTilemapRegion(const struct RenderInput *window, const void *so
         vram += 32 - window->width;
         mirror += 32 - window->width;
     }
-    Ui_Do(buffer);
+    Runtime_BumpFree(buffer);
 }
 
 /* ui/window/set_tile_attribute_rect.c */
@@ -125,7 +125,7 @@ s32 UiText_SetRenderString(const u8 *str)
     }
     offset = 0xEB0 + count * 2;
     *(u16 *)(base + offset) = 0;
-    Ui_Run(0, &count_out, &width_out, 0);
+    UiText_MeasureEntryDimensions(0, &count_out, &width_out, 0);
     return count_out;
 }
 

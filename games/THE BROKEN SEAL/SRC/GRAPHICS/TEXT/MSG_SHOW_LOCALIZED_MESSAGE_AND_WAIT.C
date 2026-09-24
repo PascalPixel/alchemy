@@ -20,7 +20,7 @@ s32 Ui_Place(s32, s16 *, s32);
 
 extern u8 gCell[];
 extern void *gBattleWork;
-extern volatile s32 gIw;
+extern volatile s32 gKeyState;
 extern void *gIw2;
 extern char Value_00000845;
 
@@ -47,12 +47,12 @@ s32 UiText_ShowLocalizedMessageAndWait(void)
     } else {
 active:
         work = UiWindow_Create(0, 7, 30, 4, 42);
-        Ui_Run();
+        Ui_FillVramBlockPattern();
         Ui_Place((s32)&Value_00000845, buffer, TEXT_COUNT);
-        Ui_SetMode(buffer, work, 0, 4);
+        UiText_RenderWideStringAtOffset(buffer, work, 0, 4);
         do {
             WaitFrames(1);
-        } while ((gIw & 3) == 0 &&
+        } while ((gKeyState & 3) == 0 &&
                  *(s32 *)((u8 *)gIw2 + 0x4C) != 0);
         UiWork_Finalize(work, 1);
     }

@@ -3,7 +3,7 @@
 
 /* battle/effects/runtime/update_slot.c */
 void Battle_Run(struct EffectSlot *effect);
-void Battle_unk2_4(struct EffectSlot *effect);
+void BattleFx_DrawScaledObject(struct EffectSlot *effect);
 
 void EffectSlot_Update(struct EffectSlot *effect)
 {
@@ -17,7 +17,7 @@ void EffectSlot_Update(struct EffectSlot *effect)
             if (effect->update_motion != 0)
                 Battle_Run(effect);
             if (effect->render != 0)
-                Battle_unk2_4(effect);
+                BattleFx_DrawScaledObject(effect);
         }
     }
 }

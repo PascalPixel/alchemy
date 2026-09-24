@@ -8,7 +8,7 @@
  * layout; the public alias gives the reconstructed entry its address name.
  */
 s32 Ui_Place(s32, s16 *, s32);
-s32 Ui_SetMode(s16 *, s32, s32, s32);
+s32 UiText_RenderWideStringAtOffset(s16 *, s32, s32, s32);
 
 extern s32 UiText_DrawLocalizedResource80d(void)
     __attribute__((alias("Nested_080270d8.0")));
@@ -24,7 +24,7 @@ static __inline__ s32 Scope_080270d8(void)
 
         (void)&padding;
         Ui_Place(0x80D, data, 0x34);
-        return Ui_SetMode(data, *(s32 *)(context + 0x44), 0, 4);
+        return UiText_RenderWideStringAtOffset(data, *(s32 *)(context + 0x44), 0, 4);
     }
 
     return 0;

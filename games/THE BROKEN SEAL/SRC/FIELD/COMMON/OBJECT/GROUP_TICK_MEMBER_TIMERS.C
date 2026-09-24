@@ -1,7 +1,7 @@
 #include "B5_CONTEXT.H"
 
 /* object/group/tick_member_timers.c */
-extern u8 *gIw;
+extern u8 *gBattleFxWork;
 
 void ObjectGroup_TickMemberTimers(void)
 {
@@ -9,7 +9,7 @@ void ObjectGroup_TickMemberTimers(void)
     s32 i;
     s32 index;
 
-    base = gIw;
+    base = gBattleFxWork;
     i = 0;
     do {
         if (base[0x7818 + i] != 0) {

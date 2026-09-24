@@ -23,7 +23,7 @@ s32 Menu_ComputeEntryValues(void *tbl)
         src = (u16 *)((u8 *)state + 0x208);
         p = tbl;
         do {
-            v = Menu_Place(p, *src, -1);
+            v = Unnamed_080ac8fc(p, *src, -1);
             cnt = FIELD_AT_OFFSET(state, u8, 0x219);
             i += 1;
             *dst = v;

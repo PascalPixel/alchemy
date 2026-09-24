@@ -22,11 +22,11 @@ struct State_0801b1ec {
     u16 second;
 };
 
-extern struct State_0801b1ec *gIw;
+extern struct State_0801b1ec *gResQueueWork;
 
 void Menu_SetNodeCoordinates(u32 first, u32 second)
 {
-    struct State_0801b1ec *state = gIw;
+    struct State_0801b1ec *state = gResQueueWork;
     struct Node_0801b1ec *node;
 
     state->first = first;

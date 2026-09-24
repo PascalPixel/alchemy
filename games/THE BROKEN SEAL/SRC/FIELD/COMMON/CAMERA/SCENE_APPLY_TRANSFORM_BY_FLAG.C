@@ -16,11 +16,11 @@ extern u8 gRom[];
 s32 Camera_ApplyTransformByFlag(void)
 {
     u8 *state = *(u8 **)ADDR_03001E80;
-    Sys_Run();
+    Render_ResetTransformState();
     if (GameFlag_IsSet(0x16B) != 0) {
         ((void (*)(void *))0x030002C0)(gRom);
-        return Sys_Apply(state, state + 0xC);
+        return Graphics_PrepareTransferAndRun(state, state + 0xC);
     } else {
-        return Sys_Apply2(state, state + 0xC);
+        return Graphics_PrepareTransferInIwramWork(state, state + 0xC);
     }
 }

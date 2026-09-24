@@ -3,5 +3,5 @@
 
 void Runtime_ReleaseHeapBlock10(void)
 {
-    Sys_Check(0xA);
+    Runtime_ReleaseHeapBlock(0xA);
 }

@@ -2,8 +2,8 @@
 
 /* battle/unit/lookup_weapon_value_by_class.c */
 void *Runtime_GetObject(s32 actor_id);
-s32 Battle_Apply(s32, s32);
-u32 Battle_Do(s32);
+s32 Inventory_FindEquippedFar(s32, s32);
+u32 Resource_FindFreeSlot(s32);
 
 extern u16 RomBytes_080c2a1c[];
 extern u16 gRom2[];
@@ -18,14 +18,14 @@ s32 BattleUnit_LookupWeaponValueByClass(s32 id)
     s32 result;
 
     state = Runtime_GetObject(id);
-    entry = Battle_Apply(id, 1);
+    entry = Inventory_FindEquippedFar(id, 1);
     result = 0;
     if (entry >= 0) {
         s32 ofs;
         s32 sel;
 
         ofs = entry * 2 + 216;
-        sel = Battle_Do(*(u16 *)(state + ofs) & 0x1FF);
+        sel = Resource_FindFreeSlot(*(u16 *)(state + ofs) & 0x1FF);
         switch (state[296]) {
         case 0:
             result = RomBytes_080c2a1c[sel];

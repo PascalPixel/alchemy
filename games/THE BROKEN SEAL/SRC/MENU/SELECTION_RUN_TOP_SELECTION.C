@@ -26,8 +26,8 @@ s32 Menu_RunTopSelection(void)
     sel = 0;
 
 loop:
-    Menu_Run();
-    sel = Menu_Check(sel);
+    UiWindow_OpenMode1AndWaitFrame();
+    sel = Menu_SelectTopEntry(sel);
 #if defined(HAS_LOCALIZED_MENU_GUARD)
     state[0xcca] = 1;
     if (*(s16 *)(state + 0xcb8) != 0) {
@@ -75,10 +75,10 @@ loop:
 }
 
 /* ui/window/open_mode1_and_wait_frame.c */
-void Ui_Do(s32);
+void UiWindow_CreateWithLayoutBounds(s32);
 
 void UiWindow_OpenMode1AndWaitFrame(void)
 {
-    Ui_Do(1);
+    UiWindow_CreateWithLayoutBounds(1);
     WaitFrames(1);
 }

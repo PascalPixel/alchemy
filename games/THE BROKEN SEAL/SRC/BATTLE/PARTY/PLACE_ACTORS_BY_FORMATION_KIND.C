@@ -15,12 +15,12 @@ struct Vec2 {
     s32 y;
 };
 
-extern struct BattleCells gIw;
+extern struct BattleCells gSpriteObjects;
 extern struct Vec2 gRom;
 
 void Battle_PlaceActorsByFormationKind(void)
 {
-    u8 *actor = gIw.actors;
+    u8 *actor = gSpriteObjects.actors;
     u32 kind = (*(u8 **)(actor + 40))[4];
     struct Vec2 scale;
     u8 *tbl;
@@ -31,7 +31,7 @@ void Battle_PlaceActorsByFormationKind(void)
     u32 i;
 
     scale = gRom;
-    tbl = gIw.work;
+    tbl = gSpriteObjects.work;
 
     switch (kind) {
     case 3:

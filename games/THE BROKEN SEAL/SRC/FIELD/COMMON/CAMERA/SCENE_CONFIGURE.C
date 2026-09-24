@@ -42,14 +42,14 @@ struct SceneCameraObject {
     s32 anchor;
 };
 
-extern struct SceneCameraRuntime gIw;
-extern struct SceneCameraObject gIw2;
+extern struct SceneCameraRuntime gCameraWork;
+extern struct SceneCameraObject gProjection;
 
 /* Keep the address symbol for the build map while exposing its role to C. */
 void Camera_ConfigureScene(s32 pos)
 {
-    struct SceneCameraState *state = gIw.state;
-    struct SceneCameraAuxiliary *secondary = gIw.secondary;
+    struct SceneCameraState *state = gCameraWork.state;
+    struct SceneCameraAuxiliary *secondary = gCameraWork.secondary;
     struct SceneCameraTransfer local;
     u32 result;
 
@@ -63,8 +63,8 @@ void Camera_ConfigureScene(s32 pos)
     state->field20 = 0x02ee0000;
     state->field18 = 0;
 
-    Sys_Run();
-    Sys_Do(&state->field0c);
+    Render_ResetTransformState();
+    SceneTransform_ApplyPosition(&state->field0c);
     SceneTransform_ApplyYaw(state->field36);
     SceneTransform_ApplyPitch(state->field34);
 
@@ -74,9 +74,9 @@ void Camera_ConfigureScene(s32 pos)
     ((void (*)(struct SceneCameraTransfer *, struct SceneCameraState *))0x03000250)(&local, state);
 
     result = ((u32 (*)(u32, u32))0x0300013c)(0x03c90000, 192 << 8);
-    Sys_Place(0, result, 0x07920000);
+    Camera_StoreSceneParameters(0, result, 0x07920000);
 
-    gIw2.anchor = pos + 120;
+    gProjection.anchor = pos + 120;
     secondary->field10 = 1;
     Sys_SetRange(240 << 15, (0x76 - pos) << 16, 0, 128 << 4, 128 << 10);
     secondary->field14 = 1;

@@ -11,7 +11,7 @@ typedef struct {
     u8 enabled;
 } BattleEffectObject;
 
-extern u32 gIw;
+extern u32 gBattleFxWork;
 extern u8 Value_000077d8;
 
 #define InitBattleEffectObject Object_InitializeMode
@@ -21,7 +21,7 @@ void InitBattleEffectObject(BattleEffectObject *, s32);
 
 void BattleFx_SpawnObjects(s32 entry_count, s32 kind, u32 variant)
 {
-    u32 base = gIw;
+    u32 base = gBattleFxWork;
     s32 entry_index = 0;
     u32 offset;
 

@@ -73,8 +73,8 @@ struct AnimationSetupState {
     struct AnimationObject *objects[4];
 };
 
-struct AnimationMetadata *Sys_Run(s32);
-s32 Sys_Check(s32);
+struct AnimationMetadata *Resource_GetMetadataRecordFar(s32);
+s32 Animation_LookupValueByKey(s32);
 
 s32 Animation_InitializeObjects(struct AnimationSetupState *state)
 {
@@ -82,7 +82,7 @@ s32 Animation_InitializeObjects(struct AnimationSetupState *state)
 
     for (index = 0; index < state->count; index++) {
         struct AnimationObject *object = state->objects[index];
-        struct AnimationMetadata *metadata = Sys_Run(object->id);
+        struct AnimationMetadata *metadata = Resource_GetMetadataRecordFar(object->id);
         s32 frames;
         s32 animation;
 
@@ -99,7 +99,7 @@ s32 Animation_InitializeObjects(struct AnimationSetupState *state)
 
         frames = metadata->frames;
         if (frames == 0)
-            frames = Sys_Check(object->id);
+            frames = Animation_LookupValueByKey(object->id);
 
         object->draw_kind = metadata->draw_kind;
         animation = metadata->animation;
@@ -122,11 +122,11 @@ void Animation_InitWorkFromMetadata(void *work)
     void *info;
 
     if (work != NULL) {
-        info = Sys_Run(FIELD_AT_OFFSET(work, s16, 0));
+        info = Resource_GetMetadataRecordFar(FIELD_AT_OFFSET(work, s16, 0));
         if (FIELD_AT_OFFSET(info, u8, 0) != 0) {
             value = FIELD_AT_OFFSET(info, s32, 0x0c);
             if (value == 0) {
-                value = Sys_Check(FIELD_AT_OFFSET(work, s16, 0));
+                value = Animation_LookupValueByKey(FIELD_AT_OFFSET(work, s16, 0));
             }
             FIELD_AT_OFFSET(work, u8, 4) = FIELD_AT_OFFSET(info, u8, 4);
             FIELD_AT_OFFSET(work, s32, 0x0c) = FIELD_AT_OFFSET(info, s32, 0x10);

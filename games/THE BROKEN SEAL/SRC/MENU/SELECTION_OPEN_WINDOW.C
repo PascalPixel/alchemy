@@ -22,7 +22,7 @@ struct Screen {
     u16 f3b8;
 };
 
-extern struct Screen *gIw;
+extern struct Screen *gResQueueWork;
 extern u8 gVal[];
 extern u8 gVal2[];
 
@@ -40,7 +40,7 @@ void Menu_OpenSelectionWindow(s32 mode, u32 count)
     struct UiWork **slot;
     struct UiWork *window;
 
-    screen = gIw;
+    screen = gResQueueWork;
     node = NodeChain_GetNodeAtCount(screen, count);
     slot = &screen->window;
     window = *slot;

@@ -20,9 +20,9 @@ struct Runtime_08091c7c {
 };
 
 extern struct Runtime_08091c7c *gWork;
-extern volatile s32 gIw;
+extern volatile s32 gKeyState;
 
-s16 *Sys_Run(s32);
+s16 *BattleAction_FindDescriptor(s32);
 s32 UiWork_IsCompleteFar(void);
 s32 Inventory_RequestMode(s32, s32, s32, s32);
 
@@ -31,13 +31,13 @@ void UiWork_FinalizePending(void);
 s32 Inventory_PromptAndSetObjectMode(s32 id, s32 force)
 {
     struct Runtime_08091c7c *rt = gWork;
-    s32 v = *Sys_Run(rt->first_1f4);
+    s32 v = *BattleAction_FindDescriptor(rt->first_1f4);
     struct Entry_08091c7c *ent0 = rt->second_1f8;
     struct Entry_08091c7c *ent1 = rt->third_1fc;
     s32 flag = 1;
     s32 ret;
 
-    while (gIw != 0)
+    while (gKeyState != 0)
         WaitFrames(1);
 
     while (UiWork_IsCompleteFar() == 0)
@@ -61,14 +61,14 @@ s32 Inventory_PromptAndSetObjectMode(s32 id, s32 force)
     ret = Inventory_RequestMode(flag, rt->value_cc2, rt->value_cc4, 0);
     if (ret != 0) {
         Object_SetModeById(id, 4);
-        Sys_Do(v);
+        UiWork_FinalizeEntityMatchingLocalizedIdFar(v);
         UiWork_FinalizePending();
-        Sys_Apply2(id, 4);
+        Object_WaitUntilChildValueDiffers(id, 4);
     } else {
         Object_SetModeById(id, 3);
-        Sys_Do(v);
+        UiWork_FinalizeEntityMatchingLocalizedIdFar(v);
         UiWork_FinalizePending();
-        Sys_Apply2(id, 3);
+        Object_WaitUntilChildValueDiffers(id, 3);
     }
 
     return ret;

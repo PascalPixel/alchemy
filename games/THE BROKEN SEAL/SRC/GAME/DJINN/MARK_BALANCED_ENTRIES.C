@@ -20,7 +20,7 @@ s32 Djinn_MarkBalancedEntries(s8 *tbl, s32 self)
             *p = 0;
             if (i != self) {
                 sp0 = cnt;
-                if (Sys_Apply(self, i) == 0) {
+                if (Djinn_CheckTurnBalance(self, i) == 0) {
                     *p = 1;
                     cnt += 1;
                 }
@@ -33,7 +33,7 @@ s32 Djinn_MarkBalancedEntries(s8 *tbl, s32 self)
 }
 
 /* djinn/check_turn_balance.c */
-extern u8 *gIw;
+extern u8 *gMenuWork;
 
 s32 Djinn_CheckTurnBalance(s32 from, s32 to)
 {
@@ -44,7 +44,7 @@ s32 Djinn_CheckTurnBalance(s32 from, s32 to)
     s32 difference;
     s32 balanced;
 
-    work = gIw;
+    work = gMenuWork;
     Djinn_CountTurns((u8 *)counts);
     counts[from] -= 1;
     counts[to] += 1;
@@ -85,7 +85,7 @@ void Djinn_CountTurns(u8 *counts)
     u32 mask;
     u32 one;
 
-    work = gIw;
+    work = gMenuWork;
     owner_index = 0;
     if (owner_index < work[0x219]) {
         one = 1;

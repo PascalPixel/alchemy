@@ -16,7 +16,7 @@ s32 Party_CheckMemberValueTotal(s32 id)
     s32 sum = offset;
     u8 *p;
 
-    count = Party_Check(id);
+    count = Party_CountActiveOwnersFar(id);
     if (sum < count) {
         offset = 252;
         offset <<= 1;

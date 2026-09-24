@@ -35,7 +35,7 @@ typedef char State_08099d18_source_offset[
     STATE_08099D18_OFFSET(struct State_08099d18, source) == 0x14 ? 1 : -1
 ];
 
-extern struct State_08099d18 *gIw;
+extern struct State_08099d18 *gEffectWork;
 
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 #define Rand Random16
@@ -52,7 +52,7 @@ void BattleFx_SpawnFallingParticles(void)
     u16 *timer;
     s32 timer_value;
 
-    source = gIw->source;
+    source = gEffectWork->source;
     position.x = source->x;
     position.y = (s32)((u32)source->y -
         Rand() * 16 + 0x180000);
@@ -73,6 +73,6 @@ void BattleFx_SpawnFallingParticles(void)
         timer = (u16 *)(object + 94);
         timer_value = 12;
         *timer = timer_value;
-        Object_SetCallback(object, gRom);
+        Object_SetCallback(object, BattleFx_CommonParticleScript);
     }
 }

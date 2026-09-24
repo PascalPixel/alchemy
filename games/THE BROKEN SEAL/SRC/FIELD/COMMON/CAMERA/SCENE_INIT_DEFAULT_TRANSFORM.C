@@ -20,7 +20,7 @@ struct Local_080b7f9c {
     s32 third;
 };
 
-extern struct State_080b7f9c *gIw;
+extern struct State_080b7f9c *gCameraWork;
 
 /*
  * The tail call below is a typed indirect call to the relocated routine at
@@ -30,7 +30,7 @@ extern struct State_080b7f9c *gIw;
 
 void Camera_InitDefaultTransform(void)
 {
-    struct State_080b7f9c *state = gIw;
+    struct State_080b7f9c *state = gCameraWork;
     struct Local_080b7f9c transfer;
 
     state->field36 = 192 << 6;
@@ -42,8 +42,8 @@ void Camera_InitDefaultTransform(void)
     state->field1c = 0;
     state->field18 = 0;
 
-    Sys_Run();
-    Sys_Do(&state->field0c);
+    Render_ResetTransformState();
+    SceneTransform_ApplyPosition(&state->field0c);
     SceneTransform_ApplyYaw(state->field36);
     SceneTransform_ApplyPitch(state->field34);
 

@@ -15,7 +15,7 @@ s32 Menu_RunWorkspaceResultLoop(void)
     s32 result;
 
 retry:
-    result = Menu_Check();
+    result = Menu_RunWorkspaceSelectionLoop();
     if (result == -1) {
         return -1;
     }
@@ -24,7 +24,7 @@ retry:
             goto retry;
         }
     } else if (result == 1) {
-        Menu_Apply((s32)&Value_00000c2a, 1);
+        UiText_ShowPositionedMessageAndWait((s32)&Value_00000c2a, 1);
         *(u8 *)RESULT_CELL_ADDR = result;
     } else if (result == 2) {
         if (Menu_RunWorkspaceOptions() == -1) {

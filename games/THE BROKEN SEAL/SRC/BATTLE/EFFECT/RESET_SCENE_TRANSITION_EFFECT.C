@@ -25,20 +25,20 @@ typedef struct {
 } SceneTransitionScene;
 
 void ScheduleCallback(void (*callback)(void));
-void *FunctionHead_0808e4b4(u32 kind, u32 entry_index, s32 *size);
+void *BattleFx_FindMatchingEvent(u32 kind, u32 entry_index, s32 *size);
 void BattleFx_ApplyColorToTargetBuffer(u32 battle_value, s32 enabled);
 void BattleFx_ApplyColorToSourceBuffer(u32 battle_value, s32 enabled);
 void BattleFx_StartBufferInterpolation(s32 battle_value);
 
 void Audio_PlayCue(s32 no);
-void Battle_unk2_4(void);
+void FieldEffect_WatchLeaderDistance(void);
 
-extern SceneTransitionContext *gIw;
+extern SceneTransitionContext *gEffectWork;
 extern s32 gCell[];
 
 void ResetSceneTransitionEffect(void)
 {
-    SceneTransitionContext **cell = &gIw;
+    SceneTransitionContext **cell = &gEffectWork;
     SceneTransitionContext *ctx = *cell;
     SceneTransitionScene *scene = *(SceneTransitionScene **)((u8 *)cell - 0x64);
     SceneTransitionState *state = *(SceneTransitionState **)((u8 *)cell - 0x74);
@@ -48,12 +48,12 @@ void ResetSceneTransitionEffect(void)
 
     if (state->active != 0) {
         Audio_PlayCue(SOUND_SCENE_TRANSITION);
-        ScheduleCallback(Battle_unk2_4);
+        ScheduleCallback(FieldEffect_WatchLeaderDistance);
 
         zero = 0;
         state->active = zero;
         state->transition_timer = zero;
-        Battle_Do(0);
+        ObjectDispatch_ApplyValueToKind200Children(0);
 
         BattleFx_ApplyColorToTargetBuffer(0x10000, 1);
         BattleFx_StartBufferInterpolation(1);
@@ -62,9 +62,9 @@ void ResetSceneTransitionEffect(void)
         BattleFx_StartBufferInterpolation(30);
         WaitFrames(1);
 
-        resource = FunctionHead_0808e4b4(0x40000005, 8, &size);
+        resource = BattleFx_FindMatchingEvent(0x40000005, 8, &size);
         if (resource != NULL)
-            Battle_Place(resource, gCell[125], size);
+            BattleFx_RunEventAction(resource, gCell[125], size);
 
         if (ctx->field34 == 0) {
             scene->transition_phase = 0;
@@ -88,10 +88,10 @@ void BattleFx_RunBurstParticleMainObject(void)
 
     object = FIELD_AT_OFFSET(*(void **)ADDR_03001F30, u8 **, 0x14);
     if (object != 0) {
-        FunctionHead_08098698();
+        BattleEffect_SpawnBurstParticleField();
         Object_SetMode((s32)object, 2);
         object[0x59] = 0;
-        Battle_Apply(object, 0);
+        ObjectDispatch_SetSingleChildField26Far(object, 0);
         flags = object + 0x23;
         battle_value = 2;
         battle_value |= *flags;
@@ -117,12 +117,12 @@ extern const u8 gRom[];
 
 void BattleFx_RunBurstParticles(void)
 {
-    u8 *state = (u8 *)gIw;
+    u8 *state = (u8 *)gEffectWork;
     struct BurstParticleVector position;
     struct BurstParticleVector *p;
     s32 entry_count;
 
-    FunctionHead_08098698();
+    BattleEffect_SpawnBurstParticleField();
     Audio_PlayCue(SOUND_HEAVY_IMPACT);
     p = &position;
     entry_count = 4;

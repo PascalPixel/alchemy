@@ -9,7 +9,7 @@ u32 Battle_GetObjectTableValue(s32 id)
     u8 no;
 
     no = FIELD_AT_OFFSET(Runtime_GetObject(id), u8 *, 0x128);
-    value = (u32)(Battle_Check((s32)no) << 0x18) >> 8;
+    value = (u32)(Summon_GetEntryByte4((s32)no) << 0x18) >> 8;
     if (value == 0) {
         no = FIELD_AT_OFFSET(Runtime_GetObject(id), u8 *, 0x128);
         if (Summon_IsEntryFlagged((s32)no) != 0) {

@@ -22,7 +22,7 @@ void BattleFx_SpawnRandomAngleTriplet(void *object)
 
     if ((s32)FIELD_AT_OFFSET(object, s32 *, 0xC) <= (s32)FIELD_AT_OFFSET(object, s32 *, 0x14)) {
         FIELD_AT_OFFSET(object, s16 *, 0x5E) = phase;
-        Object_SetCallback(object, gRom);
+        Object_SetCallback(object, BattleFx_CommonParticleScript);
         p = NULL;
         FIELD_AT_OFFSET(object, void **, 0x6C) = p;
         for (i = 0; i <= 2; i++) {
@@ -40,7 +40,7 @@ void BattleFx_SpawnRandomAngleTriplet(void *object)
             pp = &FIELD_AT_OFFSET(p, s16 *, 0x5E);
             phase2 = 6;
             *pp = phase2;
-            Object_SetCallback(p, gRom);
+            Object_SetCallback(p, BattleFx_CommonParticleScript);
         }
     }
 }
@@ -57,6 +57,6 @@ void BattleFx_UpdateDriftingFallObject(void *obj)
     r = Rand();
     FIELD_AT_OFFSET(obj, s32 *, 8) = (s32)(FIELD_AT_OFFSET(obj, s32 *, 8) + (r - Rand()));
     if ((s32)FIELD_AT_OFFSET(obj, s32 *, 0xC) <= (s32)FIELD_AT_OFFSET(obj, s32 *, 0x14)) {
-        Object_SetCallback(obj, gRom);
+        Object_SetCallback(obj, BattleFx_CommonParticleScript);
     }
 }

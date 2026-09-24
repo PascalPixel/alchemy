@@ -8,16 +8,16 @@ s32 BattlePres_RunActorEntries(void *tbl)
     s32 i;
     s8 n;
 
-    Battle_Apply(0, 0);
+    BattlePres_SetActorModes(0, 0);
     n = FIELD_AT_OFFSET(tbl, s8 *, 1);
     if (n == 0) {
-        Battle_Run();
+        BattlePresentation_WaitForAdvance();
     } else {
         i = 0;
         if (i < (s32)n) {
             do {
-                Battle_Apply2(tbl, i);
-                Battle_Check();
+                Battle_ResolveTargetAction(tbl, i);
+                BattleEv_DispatchQueued();
                 i += 1;
             } while (i < (s32)FIELD_AT_OFFSET(tbl, s8 *, 1));
         }

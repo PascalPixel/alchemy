@@ -2,7 +2,7 @@
 #include "SCENE.H"
 
 /*
- * This owner's view of gIw. 62 owners reach that global and declare
+ * This owner's view of gMenuWork. 62 owners reach that global and declare
  * it eight different ways; this one needs an item table and a count, and claims
  * nothing about the rest.
  */
@@ -13,13 +13,13 @@ struct Work_080ad69c {
     u8 count;
 };
 
-extern struct Work_080ad69c *gIw;
+extern struct Work_080ad69c *gMenuWork;
 
 void Object_InitializeMode(void *item, s32 enabled);
 
 void Menu_EnableAllItemObjects(void)
 {
-    struct Work_080ad69c *state = gIw;
+    struct Work_080ad69c *state = gMenuWork;
     s32 index;
 
     for (index = 0; index < state->count; ++index) {

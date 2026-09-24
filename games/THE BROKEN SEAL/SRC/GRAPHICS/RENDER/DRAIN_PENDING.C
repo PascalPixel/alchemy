@@ -13,7 +13,7 @@ extern u8 RomBytes_0802e108[];
 /* ui/render/drain_pending.c */
 extern void UiWork_Finalize(struct Work *work, s32 release);
 
-extern u8 *gIw;
+extern u8 *gWindowWork;
 
 struct PendingWork {
     u8 padding00[0x16];
@@ -44,7 +44,7 @@ void UiWork_DrainPending(void)
     s32 index;
     u16 flag;
 
-    state = gIw;
+    state = gWindowWork;
     slot = (struct WorkSlot *)(state + 0x620);
     direct = (struct DirectWork *)(state + 0x500);
     index = 0;

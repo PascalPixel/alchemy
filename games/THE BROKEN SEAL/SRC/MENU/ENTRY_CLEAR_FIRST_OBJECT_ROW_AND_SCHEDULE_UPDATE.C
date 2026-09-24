@@ -4,17 +4,17 @@
 
 /* menu/entry/clear_first_object_row_and_schedule_update.c */
 void ScheduleCallback(s32);
-void FunctionHead_0801ff58(void);
-void Menu_Do(void *);
+void Menu_UpdateFirstObjectRowPositions(void);
+void ResourceObject_ReleaseFar(void *);
 
 void Menu_ClearFirstObjectRowAndScheduleUpdate(void)
 {
-    u8 *base = (u8 *)gIw;
+    u8 *base = (u8 *)gMenuWork;
     s32 offset = 138;
     s32 zero;
     s32 count;
 
-    ScheduleCallback((s32)FunctionHead_0801ff58);
+    ScheduleCallback((s32)Menu_UpdateFirstObjectRowPositions);
     zero = 0;
     offset *= 2;
     count = 3;
@@ -22,7 +22,7 @@ void Menu_ClearFirstObjectRowAndScheduleUpdate(void)
         void *entry = *(void **)(offset + (unsigned int)base);
 
         if (entry != 0) {
-            Menu_Do(entry);
+            ResourceObject_ReleaseFar(entry);
             *(s32 *)(offset + (unsigned int)base) = zero;
         }
         count--;
@@ -31,11 +31,11 @@ void Menu_ClearFirstObjectRowAndScheduleUpdate(void)
 }
 
 /* menu/update_first_object_row_positions.c */
-s32 FunctionHead_08009008(s32, void *, void *, s32);
+s32 Object_ApplyProjectedPlacementFar(s32, void *, void *, s32);
 
 void Menu_UpdateFirstObjectRowPositions(void)
 {
-    u8 *base = (u8 *)gIw;
+    u8 *base = (u8 *)gMenuWork;
     s16 *offsets = (s16 *)(base + 0x134);
     s32 *entries = (s32 *)(base + 0x114);
     s32 source[2];
@@ -52,7 +52,7 @@ void Menu_UpdateFirstObjectRowPositions(void)
             request[1] = 0x01F40000;
             request[2] = (offsets[index + 8] << 16) + 0x01F40000;
             request[3] = 0;
-            FunctionHead_08009008(handle, request, source, 0x4000);
+            Object_ApplyProjectedPlacementFar(handle, request, source, 0x4000);
         }
         index += 1;
         if (index > 3) {

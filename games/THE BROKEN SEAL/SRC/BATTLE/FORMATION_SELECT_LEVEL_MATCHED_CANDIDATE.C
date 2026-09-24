@@ -34,7 +34,7 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *out_margin)
         (struct FormationCandidate *)Runtime_BumpAllocateAlternatePool(128);
     u16 party[8];
     s32 level_total = 0;
-    s32 unit_count = Battle_Check(party);
+    s32 unit_count = BattleParty_PrepareActiveOwners(party);
     s32 i;
     s32 j;
     s32 chance;
@@ -104,6 +104,6 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *out_margin)
         result = 1;
     }
 
-    Battle_Do(pool);
+    Runtime_BumpFree(pool);
     return result;
 }

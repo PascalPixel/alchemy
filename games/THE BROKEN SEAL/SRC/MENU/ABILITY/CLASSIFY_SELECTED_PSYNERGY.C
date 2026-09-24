@@ -34,15 +34,15 @@ s32 PsynergyMenu_ClassifySelectedPsynergy(void)
 struct Rec5 { u8 pad[5]; unsigned int flag : 8; };
 struct Cur { unsigned short mark : 8; };
 
-extern struct PsynergyMenuState *gIw;
+extern struct PsynergyMenuState *gMenuWork;
 void *Runtime_GetObject(s32);
-s32 FunctionHead_080a1ac0(s32, s32);
+s32 UiMenu_SlideCursor(s32, s32);
 s32 FunctionHead_080a60d4(void *, void *);
 void UiIcon_PrepareObject(void *cursor);
 
 s32 PsynergyMenu_SelectPartySlot(s32 party_slot)
 {
-    void *menu = gIw;
+    void *menu = gMenuWork;
     s32 offset = party_slot + 28;
     s32 cursor_offset = party_slot * 4 + 20;
     void *icon;
@@ -73,7 +73,7 @@ s32 PsynergyMenu_SelectPartySlot(s32 party_slot)
         combined_offset = 0;
     } else {
         combined_offset = owner_index * 2;
-        FunctionHead_080a1ac0(owner_index * 24 - 10, 16);
+        UiMenu_SlideCursor(owner_index * 24 - 10, 16);
     }
 
     obj_off = combined_offset + 520;

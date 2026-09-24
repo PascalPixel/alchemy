@@ -4,41 +4,41 @@
 #include "SYSTEM.H"
 
 /* menu/selection/loop.c */
-extern u8 *gIw;
-extern u32 gIw2;
-extern volatile u32 gIw3;
+extern u8 *gResQueueWork;
+extern u32 gKeyState;
+extern volatile u32 gKeysRepeat;
 void Audio_PlayCue(u32);
-void FunctionHead_0801b9ec(void *state, u32 index);
+void Menu_LoadSelectionNodeResource(void *state, u32 index);
 void Menu_StepRight(void *state);
 void Menu_StepLeft(void *state);
 s32 Menu_ConfirmSelection(void *state);
 void Menu_Do(void *state);
 void Menu_Do2(void *state);
-void Menu_Apply(void *state, u32 index);
+void Menu_ReloadNodeResource(void *state, u32 index);
 void Menu_Apply2(void *state, u32 mode);
-void Menu_Apply3(void *state, u32 index);
-void Menu_Apply4(u16 type, u32 value);
+void Menu_LoadSelectionNodeResource(void *state, u32 index);
+void Menu_OpenSelectionWindow(u16 type, u32 value);
 
 s32 Menu_SelectionLoop(s32 mode)
 {
-    u8 *state = gIw;
+    u8 *state = gResQueueWork;
 
-    FunctionHead_0801b9ec(state, 0);
+    Menu_LoadSelectionNodeResource(state, 0);
     for (;;) {
         WaitFrames(1);
         if (*(u16 *)(state + 0x3a0) != 0) {
             continue;
         }
         if (mode != 0x3e7) {
-            if (gIw3 & 0x10) {
+            if (gKeysRepeat & 0x10) {
                 Menu_StepRight(state);
-            } else if (gIw3 & 0x20) {
+            } else if (gKeysRepeat & 0x20) {
                 Menu_StepLeft(state);
-            } else if (gIw2 & 1) {
+            } else if (gKeyState & 1) {
                 return Menu_ConfirmSelection(state);
             }
         }
-        if (mode != 0 && (gIw2 & 2)) {
+        if (mode != 0 && (gKeyState & 2)) {
             return -1;
         }
     }
@@ -98,7 +98,7 @@ void Menu_MoveSelectionForward(u8 *state)
 
     count = (u16 *)(state + 0x394);
     if (end != *count) {
-        Menu_Apply(state, *index);
+        Menu_ReloadNodeResource(state, *index);
         {
             u16 *status = (u16 *)(state + 0x3a2);
             u32 value = 33;
@@ -132,10 +132,10 @@ void Menu_MoveSelectionForward(u8 *state)
             u32 value = 1;
 
             *status = value;
-            Menu_Apply3(state, *(u16 *)(state + 0x39e));
+            Menu_LoadSelectionNodeResource(state, *(u16 *)(state + 0x39e));
         }
         WaitFrames(1);
-        Menu_Apply4(*(u16 *)(*(u8 **)(state + 0x348) + 10), 0);
+        Menu_OpenSelectionWindow(*(u16 *)(*(u8 **)(state + 0x348) + 10), 0);
         WaitFrames(1);
     }
 }
@@ -148,7 +148,7 @@ void Menu_MoveSelectionBackward(u8 *state)
     if (*selection != 0) {
         u32 no;
 
-        Menu_Apply(state, *(u16 *)(state + 0x39e));
+        Menu_ReloadNodeResource(state, *(u16 *)(state + 0x39e));
         {
             u16 *status = (u16 *)(state + 0x3a2);
             u32 value = 33;
@@ -177,10 +177,10 @@ void Menu_MoveSelectionBackward(u8 *state)
             u32 value = 1;
 
             *status = value;
-            Menu_Apply3(state, *(u16 *)(state + 0x39e));
+            Menu_LoadSelectionNodeResource(state, *(u16 *)(state + 0x39e));
         }
         WaitFrames(1);
-        Menu_Apply4(*(u16 *)(*(u8 **)(state + 0x348) + 10), 0);
+        Menu_OpenSelectionWindow(*(u16 *)(*(u8 **)(state + 0x348) + 10), 0);
         WaitFrames(1);
     }
 }

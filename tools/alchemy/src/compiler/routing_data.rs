@@ -11,6 +11,11 @@
 // Library code built with agbcc.
 pub static AGBCC_SOURCES: &[&str] = &[
     "main:080fb73c",
+    // Voice-field setters beside the decay, sustain and release setters.
+    "main:080fb6ec",
+    "main:080fb700",
+    "main:080fb768",
+    "main:080fb77c",
     "main:080fb728",
     "main:080fb714",
     "main:080fb75c",

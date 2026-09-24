@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "main:080fb6ec": {
+      "name": "MusicTrack_SetVoiceKind",
+      "source": "SOUND/MUSIC_TRACK_SET_VOICE_KIND.C"
+    },
     "main:080fa280": {
       "name": "MusicPlayer_BeginFadeOut",
       "source": "SOUND/MUSIC_PLAYER_BEGIN_FADE_OUT.C"

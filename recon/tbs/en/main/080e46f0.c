@@ -1,15 +1,19 @@
-/* Draft, not exact (2026-09-24): 200 of 200 bytes, 32 differing halfwords
-   (30 edits; was 37). Step every palette colour one unit towards the colours
-   of resource_id. The IWRAM word copy returns a value (ignored) and the green
-   and blue masks are a u16 held from the 0x1f link symbol: that halfword pool
-   constant has a 60-byte reach, which puts the literal pool before the loop
-   as in the reference. Residual: the reference recomputes the buffer address
-   from sp after the copy call; here it is kept in r7 across the call, which
-   renames the loop registers. */
+/* Draft, not exact (2026-09-24): 200 of 200 bytes, 24 differing halfwords
+   (21 edits; was 32). Step every palette colour one unit towards the colours
+   of resource_id. The IWRAM word copy is a static inline wrapper, so the
+   buffer address is rematerialised from sp for each call as in the
+   reference instead of living in a saved register. The green and blue masks
+   are a u16 held from the 0x1f link symbol (a halfword pool constant that
+   puts the literal pool before the loop). Residual: global allocation order
+   in the loop; the reference gives the offset induction r6 and the mask r7
+   (here r7 and r6), the index ip and the buffer base lr (here lr and ip). */
 #include "TYPES.H"
 
 typedef s32 (*CopyWordsFn)(void *destination, const void *source, s32 size);
-#define CopyWords(d, s, n) ((CopyWordsFn)0x03001388)((d), (s), (n))
+static __inline__ void CopyWords(void *destination, const void *source, s32 size)
+{
+    ((CopyWordsFn)0x03001388)(destination, source, size);
+}
 
 #include "RESOURCE.H"
 extern u8 Value_0000001f;

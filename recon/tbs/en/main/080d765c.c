@@ -449,17 +449,16 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *efx)
             if (frame != 72) {
                 count = 64;
             }
-            for (i = 0, p = work->sparks; i != count; i++, p++) {
-                y = HI(p->y);
+            for (i = 0, q = work->sparks; i != count; i++, q++) {
+                y = HI(q->y);
                 if (y <= 135) {
                     k = Math_Mod(i, 3);
-                    h = BattleFx10_FallHeights[k];
-                    blit46(dst, work->sheet + BattleFx10_FallCells[k], HI(p->x), y - h,
-                        BattleFx10_FallWidths[k], h);
-                    EffectStep_AdvanceWithGravity2D(p, 64, 0x10000);
-                    if (HI(p->y) > 120 && p->velocity_y > 0x80000) {
-                        p->velocity_y = -p->velocity_y / 4;
-                        p->y = 0x780000;
+                    blit46(dst, work->sheet + BattleFx10_FallCells[k], HI(q->x), y - BattleFx10_FallHeights[k],
+                        BattleFx10_FallWidths[k], BattleFx10_FallHeights[k]);
+                    EffectStep_AdvanceWithGravity2D(q, 64, 0x10000);
+                    if (HI(q->y) > 120 && q->velocity_y > 0x80000) {
+                        q->velocity_y = -q->velocity_y / 4;
+                        q->y = 0x780000;
                         work->shake = 1;
                     }
                 }

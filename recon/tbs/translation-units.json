@@ -69086,6 +69086,66 @@
           "absolute_symbols": {}
         }
       }
+    },
+    {
+      "id": "makyuri-light-objects",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAKYURI/LIGHT_OBJECTS.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_39b",
+      "absolute_symbols": {
+        "Makyuri_ZeroWord": {
+          "address": "0x00000000",
+          "kind": "data"
+        },
+        "Makyuri_LowerLightScript": {
+          "address": "0x0200a7e8",
+          "kind": "data"
+        },
+        "Makyuri_UpperLightScript": {
+          "address": "0x0200a7d0",
+          "kind": "data"
+        },
+        "Makyuri_ObjectSetScript": {
+          "address": "0x0200a444",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02001a3c",
+          "extent": 394,
+          "state": "exact-c"
+        }
+      ],
+      "instances": {
+        "resource_39c": {
+          "owners": {
+            "Makyuri_SpawnLightObjects": {
+              "address": "0x02004fcc",
+              "extent": 394
+            }
+          },
+          "absolute_symbols": {
+            "Makyuri_ZeroWord": {
+              "address": "0x00000000",
+              "kind": "data"
+            },
+            "Makyuri_LowerLightScript": {
+              "address": "0x0200de38",
+              "kind": "data"
+            },
+            "Makyuri_UpperLightScript": {
+              "address": "0x0200de20",
+              "kind": "data"
+            },
+            "Makyuri_ObjectSetScript": {
+              "address": "0x0200d9cc",
+              "kind": "thumb"
+            }
+          }
+        }
+      }
     }
   ]
 }

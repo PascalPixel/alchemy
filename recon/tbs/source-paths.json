@@ -1,6 +1,14 @@
 {
   "format": 3,
   "owners": {
+    "resource_39c:02004fcc": {
+      "name": "Makyuri_SpawnLightObjects",
+      "source": "FIELD/COMMON/MAKYURI/LIGHT_OBJECTS.C"
+    },
+    "resource_39b:02001a3c": {
+      "name": "Makyuri_SpawnLightObjects",
+      "source": "FIELD/COMMON/MAKYURI/LIGHT_OBJECTS.C"
+    },
     "resource_3b4:020020c4": {
       "name": "Korosseo_ShowItemIcon",
       "source": "FIELD/COMMON/KOROSSEO/ITEM_ICON.C"
@@ -19603,6 +19611,8 @@
     }
   },
   "symbols": {
+    "main:08000148": "Runtime_AllocateBlockFar",
+    "main:0808a400": "ObjectTable_GetFar",
     "main:08000140": "Runtime_AllocateHeapBlockFar",
     "main:08009098": "ObjectDispatch_InitializeFar",
     "main:080090c8": "Object_CreateFar",

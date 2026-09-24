@@ -124,12 +124,10 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
     s32 i;
     s32 n;
     s32 s;
-    struct EffectStep *p;
     struct EffectStep *q1;
     struct EffectStep *q2;
     struct EffectStep *q3;
     struct EffectStep *q4;
-    struct EffectStep *q;
     DrawRectangle blit[2];
     Scale scale;
     s32 ground = 112;

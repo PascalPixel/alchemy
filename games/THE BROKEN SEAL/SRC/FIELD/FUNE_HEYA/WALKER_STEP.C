@@ -1,10 +1,6 @@
-/* NONMATCHING: 344 of 342 bytes, 29 halfword edits (2026-09-24). Hand-written from the
- * resolved jump-table disassembly as a single-overlay unit binding Engine_* at
- * their import veneers. Remaining: instructions are identical; only the literal pool moves. The reference dumps its pool (the zero link symbol, then the jump-table address) after the barrier that ends the shared 'step++; rise_counter = 0' tail (0x020020e), 200 bytes after the jump-table load; this draft places it at the end of the function in the opposite order. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
-void Engine_ObjectSetPosition(struct FieldActor *object, s32 fixed_x, s32 fixed_y, s32 fixed_z);
 s32 StagedActor_CountdownUntilPositionUnset(u8 *object);
 void StagedActor_AdvanceCounter98(u8 *object);
 
@@ -22,7 +18,8 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
     f(a0, a1, a2, a3);
 }
 
-void Local_0200012c(struct FieldActor *obj)
+/* Ship cabin walker: advance the actor's scripted walk one step, turning, walking and waiting on the leader between steps. */
+void FuneHeya_RunWalkerStep(struct FieldActor *obj)
 {
     struct FieldActor *leader;
     struct Walker *walker;
@@ -59,7 +56,11 @@ void Local_0200012c(struct FieldActor *obj)
         }
     advance:
         walker->step++;
-        obj->rise_counter = (s32)Data_00000000;
+        {
+            u8 zero = (u32)Data_00000000;
+
+            obj->rise_counter = zero;
+        }
         break;
     case 9:
         Engine_ObjectSetAnimation(obj, 2);

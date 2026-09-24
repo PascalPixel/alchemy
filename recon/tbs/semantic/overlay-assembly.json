@@ -195,32 +195,6 @@
       ]
     },
     {
-      "overlay": "resource_3bd",
-      "start": "0x02003644",
-      "end": "0x020038c8",
-      "kind": "not_yet_decompiled",
-      "retention": "not_yet_c",
-      "confidence": "strong",
-      "evidence": [
-        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
-        "Thumb multiple-transfer instructions alone are not proof of handwritten code: stock GCC also has Thumb block-move patterns. The precise sequence and provenance remain to be established.",
-        "first executable island of a complete audited owner; it contains a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"
-      ]
-    },
-    {
-      "overlay": "resource_3bd",
-      "start": "0x020038cc",
-      "end": "0x02003a30",
-      "kind": "not_yet_decompiled",
-      "retention": "not_yet_c",
-      "confidence": "strong",
-      "evidence": [
-        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
-        "Thumb multiple-transfer instructions alone are not proof of handwritten code: stock GCC also has Thumb block-move patterns. The precise sequence and provenance remain to be established.",
-        "second executable island of a complete audited owner whose reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"
-      ]
-    },
-    {
       "overlay": "resource_3cd",
       "start": "0x02000214",
       "end": "0x020004b0",
@@ -478,22 +452,6 @@
       ]
     },
     {
-      "overlay": "resource_3a2",
-      "start": "0x020011b0",
-      "end": "0x02001498",
-      "kind": "not_yet_decompiled",
-      "retention": "not_yet_c",
-      "confidence": "strong",
-      "evidence": [
-        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
-        "Prior displayed call targets are unrelocated labels; actual runtime destinations must be re-audited with the resource loader transformation before relying on the internal-call premise.",
-        "audited 744-byte whole owner in recon/tbs/semantic/regions.json",
-        "direct bl at 0x0200124c targets intra-owner 0x0200143a immediately after fallthrough call at 0x02001436",
-        "the approved Thumb backend accepts SYMBOL_REF but not an intra-function LABEL_REF and has no outlining pass",
-        "byte-exact decoded-overlay assembly round trip"
-      ]
-    },
-    {
       "overlay": "resource_3b3",
       "start": "0x0200274c",
       "end": "0x02002a04",
@@ -538,22 +496,6 @@
         "second executable span of the audited 616-byte owner at 0x0200247c",
         "the owner contains two dual-entry intra-function call targets that the approved Thumb backend cannot outline",
         "ordinary C cannot call a local label",
-        "byte-exact decoded-overlay assembly round trip"
-      ]
-    },
-    {
-      "overlay": "resource_37b",
-      "start": "0x02001ff4",
-      "end": "0x02002244",
-      "kind": "not_yet_decompiled",
-      "retention": "not_yet_c",
-      "confidence": "strong",
-      "evidence": [
-        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
-        "Prior displayed call targets are unrelocated labels; actual runtime destinations must be re-audited with the resource loader transformation before relying on the internal-call premise.",
-        "audited 592-byte whole owner in recon/tbs/semantic/regions.json",
-        "direct bl at 0x020020b4 targets intra-owner 0x0200210a immediately after fallthrough call at 0x02002106",
-        "the approved Thumb backend accepts SYMBOL_REF but not an intra-function LABEL_REF and has no outlining pass",
         "byte-exact decoded-overlay assembly round trip"
       ]
     },
@@ -1626,19 +1568,6 @@
         "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
         "2026-09-10: a measured C draft was generated for this owner through the approved route (extract, decompile, per-target call binding, score) and recorded; no compiler-impossibility claim is made, and the bytes remain retained assembly until a candidate is byte-exact.",
         "recon/tbs/en/dossiers.json#resource_380:02000390"
-      ]
-    },
-    {
-      "overlay": "resource_3b8",
-      "start": "0x020040b4",
-      "end": "0x02004340",
-      "kind": "not_yet_decompiled",
-      "retention": "not_yet_c",
-      "confidence": "strong",
-      "evidence": [
-        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences do not prove ordinary C impossible.",
-        "2026-09-11: the last code owner of the overlay, never registered before; 652-byte reviewed extent, decompiled through the approved route and scored as a measured draft.",
-        "recon/tbs/en/dossiers.json#resource_3b8:020040b4"
       ]
     },
     {
@@ -5097,18 +5026,6 @@
         "proof": "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC",
         "source": "games/THE BROKEN SEAL/SRC/DEBUG/MENU_TEST/IMPORT.INC"
       }
-    },
-    {
-      "overlay": "resource_371",
-      "start": "0x020024a8",
-      "end": "0x02002768",
-      "kind": "not_yet_decompiled",
-      "retention": "not_yet_c",
-      "confidence": "strong",
-      "evidence": [
-        "Actor sequence with one nullable leader lookup, a wait loop on the leader field at0x64, actor-field0x5a updates, dialogue and motion calls, flags0x234/0x9bf, and saved scene2/entrance78. Automatic draft duplicated one actor lookup and inserted volatile ordinary RAM access; repaired from the original call sites. All64 compiled call targets retain reference order.",
-        "Complete reviewed owner remains assembled while the ordinary C draft is nonexact. No handwritten, library or compiler-impossibility credit."
-      ]
     },
     {
       "overlay": "resource_371",

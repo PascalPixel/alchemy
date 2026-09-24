@@ -1,6 +1,46 @@
 {
   "format": 3,
   "owners": {
+    "resource_3b2:02002984": {
+      "name": "TakaraShima_SettlePushedBlockWest",
+      "source": "FIELD/TAKARA_SHIMA/SETTLE_BLOCK_WEST.C"
+    },
+    "resource_3b2:02002a98": {
+      "name": "TakaraShima_SettlePushedBlock",
+      "source": "FIELD/TAKARA_SHIMA/SETTLE_BLOCK.C"
+    },
+    "resource_399:020006c0": {
+      "name": "ImiruMura_RunExitDoor",
+      "source": "FIELD/IMIRU_MURA/EXIT_DOOR.C"
+    },
+    "resource_39e:0200102c": {
+      "name": "ShianJiin_RunMasterScene",
+      "source": "FIELD/COMMON/SHIAN_JIIN/MASTER_SCENE.C"
+    },
+    "resource_39b:02002370": {
+      "name": "Makyuri_TickSpawnTimer",
+      "source": "FIELD/COMMON/MAKYURI/SPAWN_TIMER.C"
+    },
+    "resource_39c:02005900": {
+      "name": "Makyuri_TickSpawnTimer",
+      "source": "FIELD/COMMON/MAKYURI/SPAWN_TIMER.C"
+    },
+    "resource_37b:02001ff4": {
+      "name": "SoruSekizo_OpenSeal",
+      "source": "FIELD/SORU_SEKIZO/OPEN_SEAL.C"
+    },
+    "resource_373:02002a54": {
+      "name": "HaidiaMura_ApplyEntryState",
+      "source": "FIELD/HAIDIA_MURA/ENTRY_STATE.C"
+    },
+    "resource_3b1:0200012c": {
+      "name": "FuneHeya_RunWalkerStep",
+      "source": "FIELD/FUNE_HEYA/WALKER_STEP.C"
+    },
+    "resource_39d:0200035c": {
+      "name": "MakyuriChojo_ApplyEntryState",
+      "source": "FIELD/MAKYURI_CHOJO/ENTRY_STATE.C"
+    },
     "resource_39e:02000388": {
       "name": "ShianJiin_SelectAreaEvents",
       "source": "FIELD/COMMON/SHIAN_JIIN/AREA_EVENTS.C"
@@ -12188,7 +12228,8 @@
       "source": "FIELD/GOMA_SUIRO/BURST.C"
     },
     "resource_3a2:020011b0": {
-      "name": "FieldScene_RunActorEventSetup"
+      "name": "YamaRama_ApplyEntryState",
+      "source": "FIELD/COMMON/YAMA_RAMA/ENTRY_STATE.C"
     },
     "resource_3a2:02000ff0": {
       "name": "FieldScene_RunPairedLayoutStepsThenSetOne",
@@ -14039,7 +14080,8 @@
       "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_3bd:02003644": {
-      "name": "FieldScene_RunScene3bdSequenceA"
+      "name": "ArutamiraDou_ApplyEntryState",
+      "source": "FIELD/ARUTAMIRA_DOU/ENTRY_STATE.C"
     },
     "resource_3be:02000d18": {
       "name": "StagedActorPairScene_GetMessageData",
@@ -14887,7 +14929,8 @@
       "source": "FIELD/TOREBI_KYUDEN/CHOICE.C"
     },
     "resource_3b8:020040b4": {
-      "name": "FieldScene_RunScene3b8SequenceC"
+      "name": "TorebiKyuden_ApplyEntryState",
+      "source": "FIELD/TOREBI_KYUDEN/ENTRY_STATE.C"
     },
     "resource_3b8:02000af8": {
       "name": "FieldScene_RunScene3b8SequenceA",
@@ -19333,7 +19376,8 @@
       "source": "FIELD/WORLD_MAP/ENTER_SCENE.C"
     },
     "resource_371:020024a8": {
-      "name": "WorldMap_RunActorSequence"
+      "name": "WorldMap_RunBlackOrbScene",
+      "source": "FIELD/WORLD_MAP/BLACK_ORB_SCENE.C"
     },
     "resource_371:02002768": {
       "name": "WorldMap_PrepareTriggerActor"

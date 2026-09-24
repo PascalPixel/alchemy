@@ -40,8 +40,9 @@ struct StepMenu {
     u16 status;
 };
 
-/* The row targets are read as plain halfwords, not struct members: GCC then
-   reloads them after every node store, as the reference does. */
+/* FAKEMATCH: the row targets are read as plain halfwords, not struct
+   members, so GCC reloads them after every node store as the reference
+   does. */
 #define MENU_BASE_Y(state) (*(u16 *)((u8 *)(state) + 0x396))
 #define MENU_BASE_Z(state) (*(u16 *)((u8 *)(state) + 0x398))
 

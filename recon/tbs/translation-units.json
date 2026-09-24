@@ -68731,6 +68731,11 @@
           "address": "0x02000d98",
           "extent": 164,
           "state": "exact-c"
+        },
+        {
+          "address": "0x02000e3c",
+          "extent": 34,
+          "state": "exact-c"
         }
       ],
       "instances": {
@@ -68739,6 +68744,10 @@
             "Makyuri_CyclePalette": {
               "address": "0x02000d58",
               "extent": 164
+            },
+            "Makyuri_ClearPalette": {
+              "address": "0x02000dfc",
+              "extent": 34
             }
           },
           "absolute_symbols": {

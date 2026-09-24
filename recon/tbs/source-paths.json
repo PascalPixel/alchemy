@@ -1,6 +1,14 @@
 {
   "format": 3,
   "owners": {
+    "resource_39c:02000dfc": {
+      "name": "Makyuri_ClearPalette",
+      "source": "FIELD/COMMON/MAKYURI/PALETTE_CYCLE.C"
+    },
+    "resource_39b:02000e3c": {
+      "name": "Makyuri_ClearPalette",
+      "source": "FIELD/COMMON/MAKYURI/PALETTE_CYCLE.C"
+    },
     "resource_3af:02000c28": {
       "name": "FuneKanpan_RunDeckStateEvent",
       "source": "FIELD/FUNE_KANPAN/DECK_STATE_EVENT.C"

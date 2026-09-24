@@ -150,7 +150,10 @@ hand-written: a maintained `.S` module says so in its header
 (`@ credit: library|handwritten — <object>`), and the build compares its bytes.
 Unmatched compiler output is not handwritten, however stubborn. Overlay entry
 trampolines built with `SRC/SYSTEM/OVERLAY.INC` are credited as reconstructed
-veneers. Only Pascal changes credit standards.
+veneers. Main-image far-call stub tables built from the same veneer macro
+(`@ credit: reconstructed_veneer`, whole aligned 8-byte entries only) count
+as reconstructed veneers (Pascal, 2026-09-24). Only Pascal changes credit
+standards.
 
 ## Working with agents
 

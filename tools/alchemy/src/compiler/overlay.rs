@@ -284,7 +284,7 @@ pub fn main_image(target: CompilerTarget) -> Result<&'static [u8], String> {
 
 /// Each main-image import veneer of an overlay, by runtime address, with the
 /// main addresses a call through it passes: its target, then each far-call
-/// veneer (`raw/0808a080.s`) up to the final function. The loader never
+/// veneer (`SYSTEM/FAR_CALL/OBJECT.S`) up to the final function. The loader never
 /// rewrites a veneer, so either image form serves.
 pub fn import_veneers(reference: &[u8], main: &[u8]) -> Vec<(u64, Vec<u32>)> {
     (0..reference.len().saturating_sub(7))

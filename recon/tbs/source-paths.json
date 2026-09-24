@@ -10579,7 +10579,8 @@
       "source": "BATTLE/EFFECT/CLEANUP_SCENE_OBJECTS.C"
     },
     "main:080a1d08": {
-      "name": "InventoryMenu_ShowModalMessage"
+      "name": "InventoryMenu_ShowModalMessage",
+      "source": "MENU/ITEM/SHOW_MODAL_MESSAGE.C"
     },
     "main:080a24d0": {
       "name": "RunAssetSelectionScreen"

@@ -1867,47 +1867,8 @@ AlchemyC_02001188:
 	.4byte 0x02009af8
 	.2byte 0x4000
 	.2byte 0x8000
-	push	{r5, r6, lr}
-	movs	r0, #128
-	lsls	r0, r0, #1
-	sub	sp, #4
-	bl	sub_02002602
-	ldr	r5, [pc, #64]
-	adds	r6, r0, #0
-	bl	sub_0200261a
-	ldr	r3, [pc, #60]
-	strh	r0, [r5, #0]
-	mov	r0, sp
-	str	r3, [r0, #0]
-	adds	r1, r6, #0
-	ldr	r3, [pc, #56]
-	ldr	r2, [pc, #56]
-	stmia	r3!, {r0, r1, r2}
-	subs	r3, #12
-	movs	r1, #128
-	movs	r3, #0
-	ldrsh	r0, [r5, r3]
-	adds	r2, r6, #0
-	lsls	r1, r1, #1
-	bl	sub_02002632
-	ldr	r2, [pc, #40]
-	ldr	r3, [pc, #20]
-	movs	r1, #200
-	strh	r3, [r2, #0]
-	lsls	r1, r1, #4
-	ldr	r0, [pc, #36]
-	bl	sub_02002612
-	add	sp, #4
-	pop	{r5, r6}
-	pop	{r0}
-	bx	r0
-	.4byte 0x00000030
-	.4byte 0x02009c1a
-	.4byte 0x11111111
-	.4byte 0x040000d4
-	.4byte 0x85000040
-	.4byte 0x02009c18
-	.4byte 0x020091c5
+AlchemyC_020012ac:
+	.space 0x68
 	.include "games/THE BROKEN SEAL/SRC/FIELD/BABI_FUNE/IMPORT.INC"
 	.4byte 0x69c05860
 	.4byte 0x69c07f20

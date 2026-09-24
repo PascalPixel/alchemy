@@ -17983,7 +17983,8 @@
       "source": "FIELD/RAMAKAN_SABAKU/SELECTED_ACTOR_SCENE_ID_SELECTED_ACTOR_SCENE.C"
     },
     "resource_3a5:020004e4": {
-      "name": "FieldScene_ConfigureActorLayout"
+      "name": "RamakanSabaku_ApplyEntryState",
+      "source": "FIELD/RAMAKAN_SABAKU/ENTRY_STATE.C"
     },
     "resource_3a5:0200088c": {
       "name": "FieldScene_ConfigureAlternateActorLayout"

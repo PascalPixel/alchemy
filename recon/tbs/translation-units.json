@@ -69876,6 +69876,50 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "ramakan-sabaku-entry-state",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/RAMAKAN_SABAKU/ENTRY_STATE.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3a5",
+      "absolute_symbols": {
+        "Engine_GameFlagClear": {
+          "address": "0x02009d54",
+          "kind": "thumb"
+        },
+        "Engine_MapCopyCells": {
+          "address": "0x02009d14",
+          "kind": "thumb"
+        },
+        "Engine_MapCopyCellAttributes": {
+          "address": "0x02009d1c",
+          "kind": "thumb"
+        },
+        "Engine_MapCopyCellsLayered": {
+          "address": "0x02009d24",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetPosition": {
+          "address": "0x02009da4",
+          "kind": "thumb"
+        },
+        "Engine_MapObjectSetPosition": {
+          "address": "0x02009e24",
+          "kind": "thumb"
+        },
+        "Engine_DisplayScrollStartHBlankDma": {
+          "address": "0x02009e14",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x020004e4",
+          "extent": 936,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

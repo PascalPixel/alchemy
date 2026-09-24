@@ -4,20 +4,10 @@
  */
 
 #include "TYPES.H"
+#include "FIELD_EVENT.H"
 
 /* The workspace pointer is a cell holding the scene work: one dereference. */
 #define MAP390_WORKSPACE (*(u8 **)0x03001ebc)
-#define SceneData_InitRecordTable Func_02000030
-#define SceneData_GetPrimaryTable Func_0200005c
-#define SceneData_ReturnZero Func_02000064
-#define SceneData_GetSecondaryTable Func_02000068
-#define SceneData_PrepareTable84d8 Func_02000070
-#define FieldScene_RunActor16MessageBranch Func_0200009c
-#define FieldScene_RunActor17MessageBranch Func_020000e4
-#define FieldScene_RunActor18MessageBranch Func_0200012c
-#define FieldScene_RunActor19MessageBranch Func_02000174
-#define SceneData_GetTable8658 Func_020001bc
-#define FieldScene_SetupEntryLayoutsBySelector Func_020001c4
 
 #include "RESOURCE_390.H"
 #include "RESOURCE_390_TABLE.H"
@@ -30,42 +20,13 @@ struct Approach390Subject {
 /* The cross-overlay map selector block, in RAM rather than in the image. */
 extern u8 Data_02000240[];
 
-s32 Func_0200033e(s32);
 void Func_020000b0(u8 *);
 void Func_02000368(u8 *);
 struct Approach390Subject *Func_0200038a(s32);
-void Func_02000378(void);
-void Func_020003c2(s32, s32);
-void Func_020003ba(s32);
-void Func_020003ca(s32, s32);
-void Func_020003a6(void);
 struct Approach390Subject *Func_020003d2(s32);
-void Func_020003c0(void);
-void Func_0200040a(s32, s32);
-void Func_02000402(s32);
-void Func_02000412(s32, s32);
-void Func_020003ee(void);
 struct Approach390Subject *Func_0200041a(s32);
-void Func_02000408(void);
-void Func_02000452(s32, s32);
-void Func_0200044a(s32);
-void Func_0200045a(s32, s32);
-void Func_02000436(void);
 struct Approach390Subject *Func_02000462(s32);
-void Func_02000450(void);
-void Func_02000492(s32);
-void Func_0200047e(void);
 void *Func_020004ce();
-void Func_020004ae();
-void Func_020004d0();
-void Func_020004e0();
-void Func_020004f0();
-void Func_02000514();
-void Func_02000524();
-void Func_02000534();
-void Func_02000576();
-void Func_02000580();
-void Func_0200058a();
 
 /* Fill the fifteen record-table entries with their default field values. */
 void SceneData_InitRecordTable(struct Resource390TableEntry *entry)
@@ -118,7 +79,7 @@ u8 *SceneData_PrepareTable84d8(void)
 {
     u8 *buf;
 
-    if (Func_0200033e(0x845) == 0) {
+    if (GameFlag_IsSet(0x845) == 0) {
         Func_020000b0((u8 *)0x020084D8);
     }
     buf = (u8 *)0x020084D8;
@@ -134,16 +95,16 @@ void FieldScene_RunActor16MessageBranch(void)
      */
     u32 dir = Func_0200038a(0)->dir;
 
-    Func_02000378();
+    Event_Begin();
 
     if (dir + 0xFFFF5FFF <= 0x3FFE) {
-        Func_020003c2(13, 16);
+        Shop_Open(13, 16);
     } else {
-        Func_020003ba(0x16AD);
-        Func_020003ca(16, 0);
+        Event_SetMessage(0x16AD);
+        Event_ShowMessage(16, 0);
     }
 
-    Func_020003a6();
+    Event_End();
 }
 
 void FieldScene_RunActor17MessageBranch(void)
@@ -154,16 +115,16 @@ void FieldScene_RunActor17MessageBranch(void)
      */
     u32 dir = Func_020003d2(0)->dir;
 
-    Func_020003c0();
+    Event_Begin();
 
     if (dir + 0xFFFF5FFF <= 0x3FFE) {
-        Func_0200040a(14, 17);
+        Shop_Open(14, 17);
     } else {
-        Func_02000402(0x16AF);
-        Func_02000412(17, 0);
+        Event_SetMessage(0x16AF);
+        Event_ShowMessage(17, 0);
     }
 
-    Func_020003ee();
+    Event_End();
 }
 
 void FieldScene_RunActor18MessageBranch(void)
@@ -174,22 +135,22 @@ void FieldScene_RunActor18MessageBranch(void)
      */
     u32 dir = Func_0200041a(0)->dir;
 
-    Func_02000408();
+    Event_Begin();
 
     if (dir + 0xFFFF5FFF <= 0x3FFE) {
-        Func_02000452(15, 18);
+        Shop_Open(15, 18);
     } else {
-        Func_0200044a(0x16B1);
-        Func_0200045a(18, 0);
+        Event_SetMessage(0x16B1);
+        Event_ShowMessage(18, 0);
     }
 
-    Func_02000436();
+    Event_End();
 }
 
 void FieldScene_RunActor19MessageBranch(void)
 {
-    void Func_020004a2(s32, s32);
-    void Func_020004a2_a(s32, s32);
+    void Inn_Open(s32, s32);
+    void Event_ShowMessage(s32, s32);
 
     /*
      * The local must stay wider than the halfword field; as a u16 it is
@@ -197,16 +158,16 @@ void FieldScene_RunActor19MessageBranch(void)
      */
     u32 dir = Func_02000462(0)->dir;
 
-    Func_02000450();
+    Event_Begin();
 
     if (dir + 0xFFFF5FFF <= 0x3FFE) {
-        Func_020004a2(3, 19);
+        Inn_Open(3, 19);
     } else {
-        Func_02000492(0x16B7);
-        Func_020004a2_a(19, 0);
+        Event_SetMessage(0x16B7);
+        Event_ShowMessage(19, 0);
     }
 
-    Func_0200047e();
+    Event_End();
 }
 
 /* The eight-byte owner includes the pool word holding this address. */
@@ -230,7 +191,7 @@ u8 *SceneData_GetTable8658(void)
  */
 s32 FieldScene_SetupEntryLayoutsBySelector(void)
 {
-    s32 Func_020004a2_b();
+    s32 GameFlag_IsSet();
 
     u8 *work = MAP390_WORKSPACE;
     s32 id;
@@ -239,13 +200,13 @@ s32 FieldScene_SetupEntryLayoutsBySelector(void)
 
     *(s32 *)(work + 448) = 0x209;
 
-    if (Func_020004a2_b(0x845) == 0) {
+    if (GameFlag_IsSet(0x845) == 0) {
         id = 8;
         do {
             void *record = Func_020004ce(id);
 
             id++;
-            Func_020004ae(record, 0);
+            Actor_SetSpriteFlags(record, 0);
         } while ((u32)id <= 22);
     }
 
@@ -260,21 +221,21 @@ s32 FieldScene_SetupEntryLayoutsBySelector(void)
         s32 arg4;
         arg4 = 13;
         arg5 = 8;
-        Func_020004d0(34, 34, 18, 16, arg4, arg5);
-        Func_020004e0(34, 94, 18, 76, arg4, arg5);
-        Func_020004f0(94, 34, 78, 16, arg4, arg5);
+        Map_CopyCellsTo(34, 34, 18, 16, arg4, arg5);
+        Map_CopyCellsTo(34, 94, 18, 76, arg4, arg5);
+        Map_CopyCellsTo(94, 34, 78, 16, arg4, arg5);
     } else if ((u32)((sel - 8) << 16) <= (128 << 9)) {
         /* Shifted window test: the selector set is {8, 9}. */
         s32 arg5;
         s32 arg4;
         arg4 = 11;
         arg5 = 8;
-        Func_02000514(34, 43, 19, 23, arg4, arg5);
-        Func_02000524(34, 94, 19, 83, arg4, arg5);
-        Func_02000534(94, 34, 79, 23, arg4, arg5);
-        Func_02000576(10, 0, 0);
-        Func_02000580(11, 0, 0);
-        Func_0200058a(12, 0, 0);
+        Map_CopyCellsTo(34, 43, 19, 23, arg4, arg5);
+        Map_CopyCellsTo(34, 94, 19, 83, arg4, arg5);
+        Map_CopyCellsTo(94, 34, 79, 23, arg4, arg5);
+        Actor_SetPosition(10, 0, 0);
+        Actor_SetPosition(11, 0, 0);
+        Actor_SetPosition(12, 0, 0);
     }
     return 0;
 }

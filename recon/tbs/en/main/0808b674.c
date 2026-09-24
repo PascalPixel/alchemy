@@ -1,13 +1,13 @@
-/* Draft, not exact (2026-09-24): 432 of 432 bytes, 9 halfwords differ.
- * The whole owner is hand-written. Data_03001ebc is a const pointer, so
- * the loop's fresh read of it after the template copies becomes the ROM's
- * mov ip, r8 (63 -> 9 together with the two notes below). The row above
- * the player's cell is its own extern (Data_0200fe00, the map row one step
- * north) for the ROM's pool order (cell - 128: +6), and the height goes
- * through its own local so it is added as y + (h - 0x200000). Remaining:
- * movs r2, #0 is scheduled after adds r3, #12 before the loop, and the
- * cell and row-above pointers land in r1/r2 where the ROM has r2/r1 (with
- * its constants in r0/r4). */
+/* Draft, not exact (2026-09-24): 432 of 432 bytes, 7 halfwords differ.
+ * The whole owner is hand-written. The header words are cleared by an
+ * ascending index loop; GCC reverses it into the ROM's descending pointer
+ * walk ending at a copy of work in ip, with movs r2, #0 hoisted first
+ * (9 -> 7). The row above the player's cell is its own extern
+ * (Data_0200fe00, the map row one step north) for the ROM's pool order
+ * (cell - 128: +6), and the height goes through its own local so it is
+ * added as y + (h - 0x200000). Remaining: the cell and row-above pointers
+ * land in r1/r2 where the ROM has r2/r1, with their constants in r0/r4
+ * (register asm("r2") on cell gives the registers but reschedules: 11). */
 #include "TYPES.H"
 
 /* One row of a scene's object table; a row whose id is -1 ends it. */
@@ -75,7 +75,7 @@ struct ResourceMetadata {
     u8 height;
 };
 
-extern struct ObjectWork *const Data_03001ebc;
+extern struct ObjectWork *Data_03001ebc;
 extern struct PlayerState Data_02000240;
 extern const struct EventObjectEntry Data_0809f810[2];
 extern struct MapCell Data_02010000[];
@@ -100,7 +100,6 @@ void ObjectTable_ResetForObject(struct EventObjectEntry *table)
     struct MapCell *cell;
     struct MapCell *above;
     s32 leader;
-    s32 *header;
     s32 pos;
     s32 hgt;
 
@@ -109,11 +108,8 @@ void ObjectTable_ResetForObject(struct EventObjectEntry *table)
     entry = &work->player[0];
     work->player[0] = Data_0809f810[0];
     work->player[1] = Data_0809f810[1];
-    header = &work->header[3];
-    do {
-        *header = 0;
-        header--;
-    } while ((s32)header >= (s32)Data_03001ebc->header);
+    for (pos = 0; pos < 4; pos++)
+        work->header[pos] = 0;
     ObjectTable_ClearBattleSlots();
     entry->condition = -1;
     entry->id = leader;

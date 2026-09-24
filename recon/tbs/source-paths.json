@@ -485,6 +485,10 @@
     "main:080b1bd0": {
       "name": "Shop_SelSell"
     },
+    "main:080b2328": {
+      "name": "Shop_RepairItem",
+      "source": "MENU/SHOP/REPAIR_ITEM.C"
+    },
     "main:080b211c": {
       "name": "Shop_SelRepair",
       "source": "MENU/SHOP/SELECT_REPAIR_ITEM.C"
@@ -20190,7 +20194,6 @@
     "main:080acab8": "DjinnMenu_DrawStatPreview",
     "main:080b0744": "Shop_CreatePriceSprite",
     "main:080b3050": "Shop_RunPartyMemberIconBurst",
-    "main:080b2328": "Shop_RepairItem",
     "main:08015038": "UiText_OpenMessageWindowFar",
     "main:080b1f4c": "Shop_SellItem",
     "main:080164d4": "UiWindow_ClearInteriorTiles",

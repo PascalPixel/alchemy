@@ -950,6 +950,10 @@
       "name": "StatusMenu_DrawCharacterSummary",
       "source": "MENU/DRAW_CHARACTER_SUMMARY.C"
     },
+    "main:080f60a0": {
+      "name": "BattlePres_ProcessPendingTileTransfer",
+      "source": "BATTLE/PRESENTATION/PROCESS_PENDING_TILE_TRANSFER.C"
+    },
     "main:080f92fc": {
       "name": "AudioTest_RunParameterController"
     },

@@ -19,8 +19,6 @@ void Func_02000b16(void);
 s32 Func_02000ac6();
 s32 Func_02000b0e();
 s32 Func_02000afe();
-void Func_020005d4();
-void Func_020007ea();
 u8 *Func_02000e0e();
 u8 *Func_02000e32();
 u8 *Func_02000f00(s32 no);
@@ -300,14 +298,14 @@ s32 Scene_InitFacingActors(void)
             if (SceneInit_Value1(Engine_GameFlagIsSet, 0x8bc) == 0) {
                 SceneInit_Call1(Engine_GameFlagSet, 0x8bc);
                 Event_OpenScreen();
-                Func_020005d4();
+                FieldScene_RunScene3b6SequenceA();
             }
         }
         if (Data_02000240_t[225][0] == 16) {
             if (SceneInit_Value1(Engine_GameFlagIsSet, 0x300) == 0) {
                 SceneInit_Call1(Engine_GameFlagSet, 0x300);
                 Event_OpenScreen();
-                Func_020007ea();
+                FieldScene_RunActorsThirtyOneToThirtyThreeChoreography();
             }
         }
         if (SceneInit_Value1(Engine_GameFlagIsSet, 0x8ab) != 0) {

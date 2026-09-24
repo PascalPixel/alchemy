@@ -14647,12 +14647,12 @@
           "address": "0x0200c90c",
           "kind": "thumb"
         },
-        "Func_02001504": {
-          "address": "0x02008a98",
+        "FieldScene_RunElementalStarDemand": {
+          "address": "0x02008f8c",
           "kind": "thumb"
         },
-        "Func_02001a00": {
-          "address": "0x02008f8c",
+        "Func_02001504": {
+          "address": "0x02008a98",
           "kind": "thumb"
         },
         "Func_02002208": {
@@ -22315,10 +22315,6 @@
           "address": "0x020095a0",
           "kind": "thumb"
         },
-        "Func_020018b8": {
-          "address": "0x020098b8",
-          "kind": "thumb"
-        },
         "Func_02001910": {
           "address": "0x02009910",
           "kind": "thumb"
@@ -22359,16 +22355,8 @@
           "address": "0x02009aa0",
           "kind": "thumb"
         },
-        "Func_02002b7a": {
-          "address": "0x020098b8",
-          "kind": "thumb"
-        },
         "Func_02002b84": {
           "address": "0x02009940",
-          "kind": "thumb"
-        },
-        "Func_02002b8c": {
-          "address": "0x020098b8",
           "kind": "thumb"
         },
         "Func_02002be4": {
@@ -22383,18 +22371,6 @@
           "address": "0x02009928",
           "kind": "thumb"
         },
-        "Func_02002fa6": {
-          "address": "0x02009838",
-          "kind": "thumb"
-        },
-        "Func_0200300e": {
-          "address": "0x02009858",
-          "kind": "thumb"
-        },
-        "Func_0200302a": {
-          "address": "0x02009878",
-          "kind": "thumb"
-        },
         "Func_020030b0": {
           "address": "0x02009978",
           "kind": "thumb"
@@ -22405,6 +22381,22 @@
         },
         "Func_020030bc": {
           "address": "0x02009968",
+          "kind": "thumb"
+        },
+        "KorimaPalette_Capture": {
+          "address": "0x02009878",
+          "kind": "thumb"
+        },
+        "KorimaPalette_Restore": {
+          "address": "0x020098b8",
+          "kind": "thumb"
+        },
+        "KorimaPalette_SaveFirst": {
+          "address": "0x02009838",
+          "kind": "thumb"
+        },
+        "KorimaPalette_SaveSecond": {
+          "address": "0x02009858",
           "kind": "thumb"
         },
         "SceneAction_ActorOneEntry": {
@@ -26012,10 +26004,6 @@
           "address": "0x0200cb28",
           "kind": "thumb"
         },
-        "Func_02008784": {
-          "address": "0x0200cbec",
-          "kind": "thumb"
-        },
         "Func_020090a2": {
           "address": "0x0200d688",
           "kind": "thumb"
@@ -26070,6 +26058,10 @@
         },
         "OverlayObject_SetValue1": {
           "address": "0x0200dcb4",
+          "kind": "thumb"
+        },
+        "Scene_RunExtendedActorTransition": {
+          "address": "0x0200cbec",
           "kind": "thumb"
         },
         "SceneEffect_SpawnParticlesAboveActor": {
@@ -37634,18 +37626,6 @@
           "address": "0x02009910",
           "kind": "thumb"
         },
-        "Func_020019c6": {
-          "address": "0x02009674",
-          "kind": "thumb"
-        },
-        "Func_02001a06": {
-          "address": "0x02009674",
-          "kind": "thumb"
-        },
-        "Func_02001a72": {
-          "address": "0x02009674",
-          "kind": "thumb"
-        },
         "Func_02001d64": {
           "address": "0x0200973c",
           "kind": "thumb"
@@ -37769,6 +37749,10 @@
         "gEventWork": {
           "address": "0x03001ebc",
           "kind": "data"
+        },
+        "SceneActor_CheckFacingAndRange": {
+          "address": "0x02009674",
+          "kind": "thumb"
         }
       },
       "owners": [
@@ -39159,32 +39143,16 @@
           "address": "0x0200ab84",
           "kind": "thumb"
         },
+        "FieldScene_RedrawActorFootprint": {
+          "address": "0x020088c0",
+          "kind": "thumb"
+        },
         "Func_02000d3c_grid": {
-          "address": "0x02008244",
-          "kind": "thumb"
-        },
-        "Func_02000eea": {
-          "address": "0x02008474",
-          "kind": "thumb"
-        },
-        "Func_02000ef4": {
           "address": "0x02008244",
           "kind": "thumb"
         },
         "Func_02001096": {
           "address": "0x02008608",
-          "kind": "thumb"
-        },
-        "Func_02001530": {
-          "address": "0x020088c0",
-          "kind": "thumb"
-        },
-        "Func_02001582": {
-          "address": "0x020088c0",
-          "kind": "thumb"
-        },
-        "Func_02001588": {
-          "address": "0x020088c0",
           "kind": "thumb"
         },
         "Func_02002780": {
@@ -39277,6 +39245,14 @@
         },
         "Func_0200577a": {
           "address": "0x0200ac24",
+          "kind": "thumb"
+        },
+        "StagedActor_FillGridAttributeRectangle": {
+          "address": "0x02008244",
+          "kind": "thumb"
+        },
+        "StagedActor_FindClearPosition": {
+          "address": "0x02008474",
           "kind": "thumb"
         }
       },
@@ -39517,10 +39493,6 @@
         },
         "Engine_WorkSetValuesIfNonNegative": {
           "address": "0x02009410",
-          "kind": "thumb"
-        },
-        "Func_02001168": {
-          "address": "0x020080c4",
           "kind": "thumb"
         },
         "Func_020016ba": {
@@ -39781,6 +39753,10 @@
         },
         "Func_0200279a": {
           "address": "0x02009450",
+          "kind": "thumb"
+        },
+        "StagedActor_AdvancePair": {
+          "address": "0x020080c4",
           "kind": "thumb"
         }
       },
@@ -44122,10 +44098,6 @@
           "address": "0x0200813c",
           "kind": "thumb"
         },
-        "Func_020017b8": {
-          "address": "0x020083a8",
-          "kind": "thumb"
-        },
         "Func_02001998_run_scene_supplemental_sequence_one": {
           "address": "0x0200813c",
           "kind": "thumb"
@@ -44168,10 +44140,6 @@
         },
         "Func_0200248c_event": {
           "address": "0x020088ec",
-          "kind": "thumb"
-        },
-        "Func_020028b4": {
-          "address": "0x020083a8",
           "kind": "thumb"
         },
         "Func_02002e8e_run_scene_supplemental_sequence_one": {
@@ -44521,6 +44489,10 @@
         "SceneWorkCell": {
           "address": "0x03001ebc",
           "kind": "data"
+        },
+        "StagedActor_AdvancePair": {
+          "address": "0x020083a8",
+          "kind": "thumb"
         }
       },
       "owners": [
@@ -54149,26 +54121,6 @@
           "address": "0x0200813c",
           "kind": "thumb"
         },
-        "Func_020014d4": {
-          "address": "0x02008528",
-          "kind": "thumb"
-        },
-        "Func_02001630": {
-          "address": "0x02008350",
-          "kind": "thumb"
-        },
-        "Func_02001662": {
-          "address": "0x02008350",
-          "kind": "thumb"
-        },
-        "Func_020018e0": {
-          "address": "0x020083a8",
-          "kind": "thumb"
-        },
-        "Func_02001caa": {
-          "address": "0x02008758",
-          "kind": "thumb"
-        },
         "Func_02001cc4": {
           "address": "0x02008ddc",
           "kind": "thumb"
@@ -54205,10 +54157,6 @@
           "address": "0x02008cc0",
           "kind": "thumb"
         },
-        "Func_020023ac": {
-          "address": "0x020083a8",
-          "kind": "thumb"
-        },
         "Func_020023f6": {
           "address": "0x0200813c",
           "kind": "thumb"
@@ -54219,10 +54167,6 @@
         },
         "Func_02002798": {
           "address": "0x02009268",
-          "kind": "thumb"
-        },
-        "Func_020029e6": {
-          "address": "0x02008528",
           "kind": "thumb"
         },
         "Func_02002b26": {
@@ -54312,6 +54256,22 @@
         "gGameState": {
           "address": "0x02000240",
           "kind": "data"
+        },
+        "StagedActor_AdvancePair": {
+          "address": "0x020083a8",
+          "kind": "thumb"
+        },
+        "StagedActor_FillGridAttributeRectangle": {
+          "address": "0x02008528",
+          "kind": "thumb"
+        },
+        "StagedActor_FindAtTile": {
+          "address": "0x02008350",
+          "kind": "thumb"
+        },
+        "StagedActor_FindClearPosition": {
+          "address": "0x02008758",
+          "kind": "thumb"
         }
       },
       "owners": [
@@ -57730,14 +57690,6 @@
           "address": "0x0200bc00",
           "kind": "thumb"
         },
-        "Func_02000e10": {
-          "address": "0x020080c4",
-          "kind": "thumb"
-        },
-        "Func_0200132e": {
-          "address": "0x02008474",
-          "kind": "thumb"
-        },
         "Func_020014da": {
           "address": "0x02008608",
           "kind": "thumb"
@@ -57832,6 +57784,14 @@
         },
         "Func_020078da": {
           "address": "0x0200be18",
+          "kind": "thumb"
+        },
+        "StagedActor_AdvancePair": {
+          "address": "0x020080c4",
+          "kind": "thumb"
+        },
+        "StagedActor_FindClearPosition": {
+          "address": "0x02008474",
           "kind": "thumb"
         }
       },
@@ -61053,7 +61013,7 @@
           "address": "0x02009b7c",
           "kind": "thumb"
         },
-        "Func_0200133a": {
+        "FieldScene_RunSceneEntryHook": {
           "address": "0x02008a24",
           "kind": "thumb"
         },
@@ -64321,14 +64281,6 @@
           "address": "0x02008cd4",
           "kind": "thumb"
         },
-        "Func_020021f6": {
-          "address": "0x02008e94",
-          "kind": "thumb"
-        },
-        "Func_0200226c": {
-          "address": "0x02008e94",
-          "kind": "thumb"
-        },
         "Func_02002350": {
           "address": "0x0200902c",
           "kind": "thumb"
@@ -64468,6 +64420,10 @@
         "gGameState": {
           "address": "0x02000240",
           "kind": "data"
+        },
+        "Scene_RunPrimarySequence": {
+          "address": "0x02008e94",
+          "kind": "thumb"
         }
       },
       "owners": [

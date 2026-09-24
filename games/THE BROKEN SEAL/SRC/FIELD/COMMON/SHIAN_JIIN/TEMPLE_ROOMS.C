@@ -19,7 +19,7 @@
 #define ClearSceneExitField40 Func_02004f40
 #define SetSceneExitGate Func_02004f48
 #define ClearSceneExitGateBeforeDescriptor Func_02004fae
-#define RunFacingVariantA       Func_020021f6
+#define RunFacingVariantA       Scene_RunPrimarySequence
 #define RunFacingVariantB       FieldScene_RunForwardArcBurst
 #define RunFacingVariantC       FieldScene_RunDescentBurst
 #define RunFacingVariantD       Func_02002062
@@ -109,9 +109,7 @@ void Func_02001fe2(void);
 void Func_0200247c(void);
 void Func_02002350(s32 arg0);
 void Func_02002062(void);
-void Func_020021f6(void);
 void Func_020023c8(s32 variant);
-void Func_0200226c(void);
 void Func_020020d8(void);
 void Func_0200246a();
 void Func_020025a4(void);
@@ -857,7 +855,7 @@ void FieldScene_DispatchByFacingAndFlags(void)
 
     facing = *(u16 *)(record + 6);
     if ((u16)(facing - 0x2000) <= 0x3fff) {
-        Func_0200226c();
+        Scene_RunPrimarySequence();
     } else if ((u16)(facing - 0x6000) <= 0x3fff) {
         FieldScene_RunForwardArcBurst();
     } else if ((u16)(facing + 0x6000) <= 0x3fff) {

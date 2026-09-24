@@ -115,7 +115,6 @@ s32 *Func_0200224e(s32);
 s32 *Func_02002296(s32);
 s32 *Func_020022de(s32);
 s32 *Func_02002326(s32);
-void Func_0200133a(void);
 void Func_0200248a();
 s32 Func_0200293e_a();
 s32 Func_02002952();
@@ -767,7 +766,7 @@ s32 FieldScene_DispatchByScenarioId(void)
     if (scenario == (s32)&Value_00000013) {
         FieldScene_RunScene37f_0200092c();
     } else if (scenario == (s32)&Value_00000010) {
-        Func_0200133a();
+        FieldScene_RunSceneEntryHook();
     }
     return 0;
 }

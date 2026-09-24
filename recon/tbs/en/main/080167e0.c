@@ -1,32 +1,31 @@
-/* Draft, not exact: 48 differing halfwords, 136-byte candidate for the
-   136-byte owner (2026-09-23). Residual: register allocation of the loop
-   invariants: the reference keeps the countdown in r7, the byte size in r8,
-   the word count in r9, the DMA control in r11 and the tail offset in r10
-   with the row pointer spilled to sp; the countdown lands in r8 here. */
+/* Draft, not exact (2026-09-24): 38 differing halfwords, 136 of 136 bytes.
+   The shift is now one step * 6 word count, as the ROM computes it
+   (3 * step, then << 1 and << 3), and the row pointer stays in its stack
+   slot. Residual: loop.c hoists the IWRAM fill routine's address out of
+   the loop and rebuilds 0x84000000 inside it; the reference does the
+   opposite (0x84000000 in fp, the routine reloaded into r3 per row). */
 
 #include "DMA.H"
 
 typedef s32 (*FillWordsFn)(void *dst, s32 size, s32 value);
 
-/* Shifts the 24-word panel of each of 30 map rows left by three entries per
-   step and clears the uncovered tail of each row. */
 void UiWork_ShiftPanelRowsLeft(s32 step)
 {
-    u8 *row;
-    u8 *destination;
-    u8 *source;
+    u32 *row;
+    u32 *destination;
+    u32 *source;
     s32 n;
+    s32 shift;
 
-    destination = (u8 *)0x06002520;
-    source = destination + step * 24;
-    row = (u8 *)0x06002500;
-    n = 29;
-    do {
-        Dma_Set(source, destination, 0x84000000 | (24 - step * 6), (volatile u32 *)0x040000d4);
-        ((FillWordsFn)0x03000168)(row + (32 - step * 6) * 4, step * 24, 0);
-        row += 128;
-        destination += 128;
-        source += 128;
-        n--;
-    } while (n >= 0);
+    shift = step * 6;
+    destination = (u32 *)0x06002520;
+    source = destination + shift;
+    row = (u32 *)0x06002500;
+    for (n = 29; n >= 0; n--) {
+        Dma_Set(source, destination, 0x84000000 | (24 - shift), (volatile u32 *)0x040000d4);
+        ((FillWordsFn)0x03000168)(row + (32 - shift), shift * 4, 0);
+        row += 32;
+        destination += 32;
+        source += 32;
+    }
 }

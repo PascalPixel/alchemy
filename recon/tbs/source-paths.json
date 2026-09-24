@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_3b7:020009f8": {
+      "name": "TorebiIzumi_PayToPlay",
+      "source": "FIELD/TOREBI_IZUMI/PAY_TO_PLAY.C"
+    },
     "resource_3b1:020037d8": {
       "name": "FuneHeya_PlaceFoundActors",
       "source": "FIELD/FUNE_HEYA/PLACE_FOUND_ACTORS.C"

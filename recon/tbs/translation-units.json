@@ -78076,6 +78076,90 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "scene-3b7-020009f8",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/TOREBI_IZUMI/PAY_TO_PLAY.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3b7",
+      "absolute_symbols": {
+        "Main_080772c8": {
+          "address": "0x020098fc",
+          "kind": "thumb"
+        },
+        "Engine_EventBegin": {
+          "address": "0x0200991c",
+          "kind": "thumb"
+        },
+        "Engine_EventSetMessage": {
+          "address": "0x02009964",
+          "kind": "thumb"
+        },
+        "Engine_EventOpenMessage": {
+          "address": "0x0200996c",
+          "kind": "thumb"
+        },
+        "Main_0808a5b0": {
+          "address": "0x020099b4",
+          "kind": "thumb"
+        },
+        "Main_08015120": {
+          "address": "0x020098c4",
+          "kind": "thumb"
+        },
+        "Engine_UiWorkWaitThenFinalizeCapacity": {
+          "address": "0x02009934",
+          "kind": "thumb"
+        },
+        "Engine_EventShowMessage": {
+          "address": "0x02009974",
+          "kind": "thumb"
+        },
+        "Engine_ActorWalkToAndWait": {
+          "address": "0x02009944",
+          "kind": "thumb"
+        },
+        "Engine_ActorFaceDirection": {
+          "address": "0x0200997c",
+          "kind": "thumb"
+        },
+        "Engine_EventWait": {
+          "address": "0x02009914",
+          "kind": "thumb"
+        },
+        "Main_0808a270": {
+          "address": "0x0200998c",
+          "kind": "thumb"
+        },
+        "Engine_GameStateSetReturn": {
+          "address": "0x02009984",
+          "kind": "thumb"
+        },
+        "Engine_EventEnd": {
+          "address": "0x02009924",
+          "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
+        },
+        "Data_00000089": {
+          "address": "0x00000089",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x020009f8",
+          "extent": 208,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

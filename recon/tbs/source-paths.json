@@ -10179,7 +10179,8 @@
       "source": "FIELD/SORU_STAR/PARTY_INTRO.C"
     },
     "resource_3ba:02001214": {
-      "name": "Scene_RunMapEntranceCoordinator"
+      "name": "KorosseoKawa_RunStageIntro",
+      "source": "FIELD/KOROSSEO_KAWA/STAGE_INTRO.C"
     },
     "resource_3ba:020016ec": {
       "name": "Scene_RunSceneFourCoordinator",

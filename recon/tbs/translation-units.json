@@ -70758,6 +70758,118 @@
           }
         }
       }
+    },
+    {
+      "id": "korosseo-kawa-stage-intro",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_KAWA/STAGE_INTRO.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3ba",
+      "absolute_symbols": {
+        "Local_02001b5c": {
+          "address": "0x02009b5c",
+          "kind": "thumb"
+        },
+        "Engine_EventBegin": {
+          "address": "0x0200bca0",
+          "kind": "thumb"
+        },
+        "SceneDialogue_RunFlagGatedPromptInteraction": {
+          "address": "0x02009d64",
+          "kind": "thumb"
+        },
+        "Engine_EventSetMessage": {
+          "address": "0x0200bd30",
+          "kind": "thumb"
+        },
+        "Engine_CameraSetSpeed": {
+          "address": "0x0200bd70",
+          "kind": "thumb"
+        },
+        "Engine_CameraMoveTo": {
+          "address": "0x0200bd78",
+          "kind": "thumb"
+        },
+        "Engine_CameraWaitForMove": {
+          "address": "0x0200bd80",
+          "kind": "thumb"
+        },
+        "Engine_EventShowMessage": {
+          "address": "0x0200bd40",
+          "kind": "thumb"
+        },
+        "Local_02002910": {
+          "address": "0x0200a910",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpeed": {
+          "address": "0x0200bcc8",
+          "kind": "thumb"
+        },
+        "Engine_ActorWalkToAndWait": {
+          "address": "0x0200bce8",
+          "kind": "thumb"
+        },
+        "Engine_EventWait": {
+          "address": "0x0200bc98",
+          "kind": "thumb"
+        },
+        "Engine_ActorShowEmote": {
+          "address": "0x0200bd60",
+          "kind": "thumb"
+        },
+        "Engine_ActorFaceDirection": {
+          "address": "0x0200bd50",
+          "kind": "thumb"
+        },
+        "OverlayObject_PlaceWithScale14000": {
+          "address": "0x0200ae50",
+          "kind": "thumb"
+        },
+        "StagedActor_PushActorAhead": {
+          "address": "0x0200b8f8",
+          "kind": "thumb"
+        },
+        "OverlayObject_ResetMotionFields": {
+          "address": "0x0200abac",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetAnimation": {
+          "address": "0x0200bd00",
+          "kind": "thumb"
+        },
+        "Korosseo_RestoreCompetitor": {
+          "address": "0x0200aaec",
+          "kind": "thumb"
+        },
+        "Engine_CameraFollowActor": {
+          "address": "0x0200bd68",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetPosition": {
+          "address": "0x0200bcf8",
+          "kind": "thumb"
+        },
+        "SceneState_SendIdBySceneId": {
+          "address": "0x02009e20",
+          "kind": "thumb"
+        },
+        "FieldScene_RunMiddleSequence": {
+          "address": "0x02009e7c",
+          "kind": "thumb"
+        },
+        "Engine_EventEnd": {
+          "address": "0x0200bca8",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02001214",
+          "extent": 464,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

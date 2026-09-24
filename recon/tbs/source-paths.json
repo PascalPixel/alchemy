@@ -10299,6 +10299,10 @@
       "name": "Owner_RecalculateStats",
       "source": "GAME/CHARACTER/RECALCULATE_STATS.C"
     },
+    "main:0807905c": {
+      "name": "Owner_LevelUp",
+      "source": "GAME/CHARACTER/LEVEL_UP.C"
+    },
     "main:080a2324": {
       "name": "Menu_SetPageIcons"
     },
@@ -20370,7 +20374,6 @@
     "main:08017248": "UiWindow_MapTextCanvasTiles",
     "main:08017658": "UiText_OpenMessageWindow",
     "main:0801de5c": "UiText_RenderStringTiles",
-    "main:0807905c": "Owner_LevelUp",
     "main:080b7b6c": "BattleActor_SpawnObjectsForList",
     "main:08092c40": "UiText_OpenMessageAtObject",
     "main:080c24f0": "BattleEnemy_RecordDefeat",

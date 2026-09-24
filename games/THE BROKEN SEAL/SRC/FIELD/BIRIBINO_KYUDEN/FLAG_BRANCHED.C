@@ -605,6 +605,32 @@ extern u8 Data_03001ebc[];
 
 #include "TYPES.H"
 
+enum FlagBranchedMessage {
+    MSG_DO_THINK_THESE_BILIBINS_GREAT = 0x1432,
+    MSG_WE_REALLY_GIVING_OUR_TREASURE = 0x1434,
+    MSG_GOOD_TREASURE_IF_GET_TURNED = 0x1436,
+    MSG_YEHVE_HAD_CHANGE_HEART_YEH = 0x1442,
+    MSG_WEVE_BROUGHT_WARRIORS_MILORD = 0x1728,
+    MSG_HUMBLY_THANK = 0x1737,
+    MSG_NAE_YEH_DINNAE_NEED_TAE = 0x1738,
+    MSG_WAS_BUT_WORRIED_YEH_MIGHT = 0x1739,
+    MSG_PLEASE_TAKE_YOUR_REWARD_BEFORE = 0x1748,
+    MSG_ALWAYS_WELCOME_IN_PALACE_LORD = 0x1749,
+    MSG_MAY_CHOOSE_ONLY_ONE_ITEM = 0x174b,
+    MSG_NONETHELESS_IF_YOUR_LUCK_SOUR = 0x174c,
+    MSG_ROBIN_CHECKED_CHEST_BUT_WAS = 0x174d,
+    MSG_TREASURE_CHEST_LOCKED = 0x174e,
+    MSG_FINE_WARRIOR = 0x1750,
+    MSG_SOMETIMES_WE_NEED_CHILDREN_REMIND = 0x1756,
+    MSG_AAAAH = 0x1764,
+    MSG_ITS_VERY_RECKLESS_FOR_SUCH = 0x1768,
+    MSG_WAS_WATCHING_FROM_HERE_AFTER = 0x1769,
+    MSG_LOOKED_VERY_COURAGEOUS_WALKING_TOWARD = 0x176c,
+    MSG_REWARD_RECEIVED_WAS_INDEED_GREATEST = 0x176e,
+    MSG_GOT_PRETTY_NICE_REWARD_BUT = 0x176f
+};
+
+
 /* Loader-relocated overlay calls: each symbol names the pre-relocation call
  * word the image holds. */
 extern u8 Data_03001ebc[];
@@ -701,7 +727,7 @@ void FieldScene_RunScene38d_02000150(void)
     Actor_ShowEmote(14, 0x102, 0);
     Actor_RunRepeatedMotion(14, 2);
     Event_Wait(40);
-    Event_SetMessage(0x1764);
+    Event_SetMessage(MSG_AAAAH);
     Event_ShowMessageAndWait(14, 0, 20);
     Actor_FaceActor(14, 0, 0);
     Event_Wait(20);
@@ -716,9 +742,9 @@ void FieldScene_RunScene38dSequenceA(void)
     s32 record;
 
     Event_Begin();
-    Event_SetMessage(0x1750);
+    Event_SetMessage(MSG_FINE_WARRIOR);
     if (GameFlag_IsSet(0x302) != 0) {
-        Event_SetMessage(0x1768);
+        Event_SetMessage(MSG_ITS_VERY_RECKLESS_FOR_SUCH);
     }
     Event_ShowMessage(15, 0);
     GameFlag_Set(0x302);
@@ -728,7 +754,7 @@ void FieldScene_RunScene38dSequenceA(void)
 void SceneDialogue_RunActor16Message1769(void)
 {
     Event_Begin();
-    Event_SetMessage(0x1769);
+    Event_SetMessage(MSG_WAS_WATCHING_FROM_HERE_AFTER);
     Event_AskYesNo(16, 0);
     Event_End();
 }
@@ -740,11 +766,11 @@ void FieldScene_RunActorSeventeenFlaggedDialogue(void)
     Event_Begin();
 
     if (GameFlag_IsSet(0x202) != 0) {
-        Event_SetMessage(0x174b);
+        Event_SetMessage(MSG_MAY_CHOOSE_ONLY_ONE_ITEM);
     } else if (GameFlag_IsSet(0x84e) != 0) {
-        Event_SetMessage(0x176e);
+        Event_SetMessage(MSG_REWARD_RECEIVED_WAS_INDEED_GREATEST);
     } else {
-        Event_SetMessage(0x1432);
+        Event_SetMessage(MSG_DO_THINK_THESE_BILIBINS_GREAT);
         if (GameFlag_IsSet(0x84d) != 0) {
             work = *(u8 **)0x03001ebc;
             *(u16 *)(work + 472) = (u16)(*(u16 *)(work + 472) + 1);
@@ -761,9 +787,9 @@ void SceneDialogue_RunActor15Flag303Scene(void)
     s32 record;
 
     Event_Begin();
-    Event_SetMessage(0x1756);
+    Event_SetMessage(MSG_SOMETIMES_WE_NEED_CHILDREN_REMIND);
     if (GameFlag_IsSet(0x303) != 0) {
-        Event_SetMessage(0x176c);
+        Event_SetMessage(MSG_LOOKED_VERY_COURAGEOUS_WALKING_TOWARD);
     }
     Event_ShowMessage(15, 0);
     GameFlag_Set(0x303);
@@ -775,13 +801,13 @@ void FieldScene_RunActorSeventeenFlagDialogue(void)
     Event_Begin();
 
     if (GameFlag_IsSet(0x202) != 0) {
-        Event_SetMessage(0x174c);
+        Event_SetMessage(MSG_NONETHELESS_IF_YOUR_LUCK_SOUR);
     } else if (GameFlag_IsSet(0x845) == 0) {
-        Event_SetMessage(0x1436);
+        Event_SetMessage(MSG_GOOD_TREASURE_IF_GET_TURNED);
     } else {
-        Event_SetMessage(0x1434);
+        Event_SetMessage(MSG_WE_REALLY_GIVING_OUR_TREASURE);
         if (GameFlag_IsSet(0x84e) != 0) {
-            Event_SetMessage(0x176f);
+            Event_SetMessage(MSG_GOT_PRETTY_NICE_REWARD_BUT);
         }
     }
 
@@ -792,14 +818,14 @@ void FieldScene_RunActorSeventeenFlagDialogue(void)
 void FieldScene_RunStepWithValue174d(void)
 {
     Event_Begin();
-    Message_ShowCentered(0x174D, 1);
+    Message_ShowCentered(MSG_ROBIN_CHECKED_CHEST_BUT_WAS, 1);
     Event_End();
 }
 
 void FieldScene_RunStepWithValue174e(void)
 {
     Event_Begin();
-    Message_ShowCentered(0x174E, 1);
+    Message_ShowCentered(MSG_TREASURE_CHEST_LOCKED, 1);
     Event_End();
 }
 
@@ -883,7 +909,7 @@ void FieldScene_RunScene38d_02000568(void)
             Actor_FaceDirection(19, 0x7000, 10);
             Actor_RunRepeatedMotion(19, 2);
             Event_Wait(20);
-            Event_SetMessage(0x1748);
+            Event_SetMessage(MSG_PLEASE_TAKE_YOUR_REWARD_BEFORE);
             Event_ShowMessage(19, 0);
             Actor_SetSpeed(0, 0x10000, 0x8000);
             Actor_WalkToAndWait(0, 0x268, 0x2fa);
@@ -910,7 +936,7 @@ void FieldScene_RunScene38d_020005f4(void)
         Actor_FaceActor(19, 0, 0);
         Event_Wait(20);
         Actor_SetAnimationAndWait(19, 3);
-        Event_SetMessage(0x1749);
+        Event_SetMessage(MSG_ALWAYS_WELCOME_IN_PALACE_LORD);
         Event_ShowMessageAndWait(19, 0, 10);
         Actor_SetSpeed(19, 0xcccc, 0x6666);
         Actor_WalkToAndWait(19, 0x23a, 0x2f6);
@@ -1121,7 +1147,7 @@ void FieldScene_RunLongBranchingChoreography(void)
     Actor_FaceDirection(1, 0xc000, 0);
     Call3(Func_020034be, 2, 0xc000, 20);
     Call3(Func_020034d0, 18, 0x101, 60);
-    Event_SetMessage(0x1442);
+    Event_SetMessage(MSG_YEHVE_HAD_CHANGE_HEART_YEH);
     Value2(Func_020034b6, 0x2012, 0);
     if (Value2(Func_0200340e, 0, 0) == 1) {
         goto L_02000cb6;
@@ -1455,7 +1481,7 @@ void RunEventScript02(void)
     Event_Wait(20);
     /* legacy word Func_02003fd2, veneer 0x0200a520 */
     Actor_RunRepeatedMotion(19, 2);
-    Event_SetMessage(0x1728);
+    Event_SetMessage(MSG_WEVE_BROUGHT_WARRIORS_MILORD);
 
     flag = 1;
     if (GameFlag_IsSet(0x84f) == 0) {
@@ -1579,15 +1605,15 @@ void RunEventScript02(void)
     ConfigurePrimarySceneChannels(); /* ConfigurePrimarySceneChannels, 0x02001958 */
     if (Event_ChooseYesNo(0, 0) == 0) {
         /* legacy word Func_0200435c, veneer 0x0200a538 */
-        Event_SetMessage(0x1737);
+        Event_SetMessage(MSG_HUMBLY_THANK);
     } else {
-        Event_SetMessage(0x1738);
+        Event_SetMessage(MSG_NAE_YEH_DINNAE_NEED_TAE);
     }
 
     ConfigureSecondarySceneChannels(); /* ConfigureSecondarySceneChannels, 0x02001984 */
     Event_ShowMessageAndWait(0x2012, 0, 20);
     Actor_RunRepeatedMotion(19, 1);
-    Event_SetMessage(0x1739);
+    Event_SetMessage(MSG_WAS_BUT_WORRIED_YEH_MIGHT);
     Event_ShowMessageAndWait(19, 0, 10);
     Actor_FaceDirection(0, 0x6000, 0);
     Actor_FaceDirection(1, 0xe000, 0);

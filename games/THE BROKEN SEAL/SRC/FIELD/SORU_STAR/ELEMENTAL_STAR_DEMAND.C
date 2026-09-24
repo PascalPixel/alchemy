@@ -1,6 +1,11 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
+enum ElementalStarDemandMessage {
+    MSG_LOOKS_LIKE_THEYVE_SPOTTED_US = 0x107d
+};
+
+
 void Func_020051f8();
 void Func_02005208();
 void Func_02005230();
@@ -153,7 +158,7 @@ void FieldScene_RunElementalStarDemand(void)
 
     Func_02005aae(61);
     Func_020059ae(10, 4);
-    Event_SetMessage(0x107d);
+    Event_SetMessage(MSG_LOOKS_LIKE_THEYVE_SPOTTED_US);
     Func_020051f8(10, 10);
     Func_020059c4(11, 4);
     Func_02005208(11, 30);

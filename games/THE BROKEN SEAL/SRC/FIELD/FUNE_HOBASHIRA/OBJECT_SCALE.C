@@ -1,6 +1,13 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
+enum ObjectScaleMessage {
+    MSG_SHIPS_COURSE_CLEAR = 0x1e3a,
+    MSG_MONSTERS = 0x1e49,
+    MSG_LAND_HO = 0x1ee4
+};
+
+
 #define Scene_GetRecord_1(args...) Func_020019fc(args)
 #define Object_NotifyLastActiveOfEvent_1(a0) Call1(Func_020019fe, a0)
 #define Scene_GetRecord_2(args...) Func_02001a6c(args)
@@ -303,7 +310,7 @@ void FieldScene_RunScene3b0_020004b0(void)
     Actor_WalkToAndWait(8, 164, 0x14e);
     Actor_Jump(8, 4, 40);
     Actor_StartRepeatedMotion(8, 2);
-    Event_SetMessage(0x1e3a);
+    Event_SetMessage(MSG_SHIPS_COURSE_CLEAR);
     Event_ShowMessageAndWait(8, 0, 20);
     Event_CloseScreen();
     Event_WaitForScreen();
@@ -403,7 +410,7 @@ void FieldScene_RunActorNinePresentationCycles(void)
     Actor_Jump(8, 6, 40);
     Audio_PlayCue(29);
     GameFlag_Set(0x8f0);
-    Event_SetMessage(0x1e49);
+    Event_SetMessage(MSG_MONSTERS);
     Event_ShowMessageAndWait(16, 0, 20);
     Actor_ShowEmote(8, 0x100, 0);
     Actor_WalkToAndWait(8, 164, 0x158);
@@ -625,7 +632,7 @@ void Func_02000e78(void)
     Actor_WalkToAndWait(8, 164, 344);
     Actor_Jump(8, 4, 10);
     Actor_Jump(8, 6, 20);
-    Event_SetMessage(7908);
+    Event_SetMessage(MSG_LAND_HO);
     Event_ShowMessageAndWait(8, 0, 20);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
     Event_CloseScreen();

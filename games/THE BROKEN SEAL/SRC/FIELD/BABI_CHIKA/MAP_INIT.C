@@ -8,6 +8,14 @@
 #include "STAGED_ACTOR.H"
 #include "SPAWN_CONFIGURED_EFFECT.H"
 
+enum MapInitMessage {
+    MSG_DOOR_TIGHTLY_LOCKED = 0x953,
+    MSG_STATUE_SPEAKS_ROBIN_SOUL_YE = 0x2689,
+    MSG_STATUE_SPEAKS_ROBIN_SOUL_YE_2 = 0x268a,
+    MSG_STATUE_SEEMS_SPEAK_YOUR_SOUL = 0x268b
+};
+
+
 struct Owner {
     u8 unk0[9];
     u8 unk9_0 : 2;
@@ -1058,9 +1066,9 @@ void SceneDialogue_RunFlag982Or983Dialogue(void)
     Event_Begin();
     Actor_SetAnimation(0, 1);
     if (GameFlag_IsSet(0x982) != 0 || GameFlag_IsSet(0x983) != 0) {
-        Message_ShowCentered(0x268A, 1);
+        Message_ShowCentered(MSG_STATUE_SPEAKS_ROBIN_SOUL_YE_2, 1);
     } else {
-        Message_ShowCentered(0x2689, 1);
+        Message_ShowCentered(MSG_STATUE_SPEAKS_ROBIN_SOUL_YE, 1);
     }
     Event_End();
 }
@@ -1460,14 +1468,14 @@ void SceneState_SetValue268bInScene(void)
 {
     Event_Begin();
     Actor_SetAnimation(0, 1);
-    Message_ShowCentered(0x268B, 1);
+    Message_ShowCentered(MSG_STATUE_SEEMS_SPEAK_YOUR_SOUL, 1);
     Event_End();
 }
 
 void FieldScene_RunScriptedStep953(void)
 {
     Event_Begin();
-    Message_ShowCentered(0x953, 1);
+    Message_ShowCentered(MSG_DOOR_TIGHTLY_LOCKED, 1);
     Event_End();
 }
 

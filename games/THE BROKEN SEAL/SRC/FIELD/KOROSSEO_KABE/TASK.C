@@ -1,6 +1,22 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
+enum TaskMessage {
+    MSG_WOULD_LIKE_FRIEND_CHEER_FOR = 0x207d,
+    MSG_IF_KNOW_WHO_WANT_CHEER = 0x207e,
+    MSG_ROBIN_WILL_CHEER_FOR_WAY = 0x207f,
+    MSG_DO_YOUR_BEST = 0x2083,
+    MSG_UNFORTUNATELY_WE_HAVE_FULL_HOUSE = 0x2084,
+    MSG_MATCH_ABOUT_BEGIN_PLEASE_TAKE = 0x2085,
+    MSG_OPERATOR_LIFTS_WILL_CHEER_FOR = 0x20a1,
+    MSG_SHIFTING_FLOOR_STAGE = 0x20a2,
+    MSG_HERE_YOUR_OBJECTIVE_RIDE_LOGS = 0x20a5,
+    MSG_LOG_ROLLING_STAGE = 0x20a6,
+    MSG_ROBIN_DID_GET_GOOD_LOOK = 0x20e5,
+    MSG_WAIT_SHOULDNT_DECIDE_WHERE_BEST = 0x20e8
+};
+
+
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 #define HexDigits Data_0200c250
 #define GetPartyInteractionRecord Func_02005e6a
@@ -1065,7 +1081,7 @@ void FieldScene_RunSecondActorInteraction(s32 a0)
         Event_Begin();
         rec = Value2(Func_02003444, a0, 2);
         if (rec == 0) {
-            Event_SetMessage(0x20a2);
+            Event_SetMessage(MSG_SHIFTING_FLOOR_STAGE);
             FieldScene_RunScene3bbSequenceA();
             Camera_SetSpeed(0x30000, 0x6000);
             Camera_MoveTo(0x3d80000, -1, 0xe80000, 1);
@@ -1087,7 +1103,7 @@ void FieldScene_RunSecondActorInteraction(s32 a0)
             Func_020035b8(a0, 2);
         } else {
             if (rec == 1) {
-                Event_SetMessage(0x20a1);
+                Event_SetMessage(MSG_OPERATOR_LIFTS_WILL_CHEER_FOR);
                 Event_ShowMessage(a0, 0);
             }
         }
@@ -1111,7 +1127,7 @@ void FieldScene_RunSceneThreeCoordinator(s32 a0)
         rec2 = Value2_02001538(Func_0200355c, a0, 3);
         if (rec2 != 0) {
         } else {
-            Event_SetMessage(0x20a6);
+            Event_SetMessage(MSG_LOG_ROLLING_STAGE);
             Camera_SetSpeed(0x30000, 0x6000);
             Camera_MoveTo(0x2f00000, -1, 0xc00000, 1);
             Camera_WaitForMove();
@@ -1144,7 +1160,7 @@ void FieldScene_RunSceneThreeCoordinator(s32 a0)
             goto L_020016b0;
         }
         if (rec2 == 1) {
-            Event_SetMessage(0x20a5);
+            Event_SetMessage(MSG_HERE_YOUR_OBJECTIVE_RIDE_LOGS);
             Event_ShowMessage(a0, 0);
         }
         L_020016b0:;
@@ -1238,7 +1254,7 @@ void Func_02001cc0(void)
             }
         }
     }
-    Event_SetMessage(0x2085);
+    Event_SetMessage(MSG_MATCH_ABOUT_BEGIN_PLEASE_TAKE);
     Event_ShowMessage(best, 0);
     q = (s32 *)(state + 448);
     *q = 512;
@@ -1278,7 +1294,7 @@ void RunPartyCountInteractionCopyA(s32 actorId)
     Event_Begin();
 
     if (GetPartyMemberCount() <= 1) {
-        Event_SetMessage(0x20e5);
+        Event_SetMessage(MSG_ROBIN_DID_GET_GOOD_LOOK);
         if (Event_AskYesNo(actorId, 0) == 0) {
             InitializeActorZero();
             InitializeSelectedActor(actorId);
@@ -1291,7 +1307,7 @@ void RunPartyCountInteractionCopyA(s32 actorId)
             Event_RequestExit(11);
         }
     } else {
-        Event_SetMessage(0x20e8);
+        Event_SetMessage(MSG_WAIT_SHOULDNT_DECIDE_WHERE_BEST);
         Event_ShowMessage(actorId, 0);
     }
 
@@ -1398,12 +1414,12 @@ void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base)
             buf[i] = SceneStateBytes[504 + i];
         }
         if (count <= 1) {
-            Event_SetMessage(0x2083);
+            Event_SetMessage(MSG_DO_YOUR_BEST);
             Event_ShowMessage(owner, 0);
             return;
         }
         if (GameFlag_IsSet(base + 512) != 0) {
-            Event_SetMessage(0x2084);
+            Event_SetMessage(MSG_UNFORTUNATELY_WE_HAVE_FULL_HOUSE);
             Event_ShowMessage(owner, 0);
             return;
         }
@@ -1411,7 +1427,7 @@ void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base)
             state = 0;
             Task_Wait(6);
         } else {
-            Event_SetMessage(0x207d);
+            Event_SetMessage(MSG_WOULD_LIKE_FRIEND_CHEER_FOR);
             Event_OpenMessage(owner, 0);
             state = Event_ChooseYesNo(0, 0);
         }
@@ -1438,12 +1454,12 @@ void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base)
             }
         }
     }
-    Event_SetMessage(0x207e);
+    Event_SetMessage(MSG_IF_KNOW_WHO_WANT_CHEER);
     Event_ShowMessage(owner, 0);
     return;
 L_main:
     ((void (*)())Func_020060ec_a)(obj, 1);
-    Event_SetMessage(0x207f);
+    Event_SetMessage(MSG_ROBIN_WILL_CHEER_FOR_WAY);
     Event_ShowMessage(owner, 0);
     Actor_SetSpeed(0, 0x10000, 0x8000);
     Actor_SetSpeed(obj, 0x10000, 0x8000);

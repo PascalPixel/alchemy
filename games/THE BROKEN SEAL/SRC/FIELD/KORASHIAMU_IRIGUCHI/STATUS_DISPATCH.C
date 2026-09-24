@@ -1,6 +1,31 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
+enum StatusDispatchMessage {
+    MSG_HOPING_GET_IN_SEE_COLOSSO = 0x2057,
+    MSG_COLOSSOS_LUCKY_GUESS_MAKES_BATTLES = 0x205c,
+    MSG_WANT_WIN_BIG_PUT_ON = 0x205d,
+    MSG_DO_KNOW_LUCKY_GUESS = 0x205e,
+    MSG_SILENCE = 0x206d,
+    MSG_HAVE_MAKE_THROUGH_COUNTLESS_MATCHES = 0x206e,
+    MSG_HAVE_PERFECT_TECHNIQUES_LIKE_THOSE = 0x206f,
+    MSG_ROBIN_ONLY_ONE_ENTERING_FINALS = 0x20f8,
+    MSG_PREPARE_YOURSELVES_CONTESTANTS_FINALS_WILL = 0x2112,
+    MSG_IM_RATED_AS_SECOND_BEST = 0x2114,
+    MSG_WAAH_DONT_FRIGHTEN_ME = 0x2116,
+    MSG_WHO_HAVE_COME_QUESTION_ME = 0x2118,
+    MSG_DEKKA_MUST_WIN_FINALS_DEKKA = 0x211b,
+    MSG_AM_NAVAMPA_GONDOWAN_SIXTH_RANKED = 0x211f,
+    MSG_IM_BUFORD_SEVENTH_SEED = 0x2122,
+    MSG_SEE_YOUVE_MADE_THROUGH_YOUR = 0x2134,
+    MSG_COLOSSEUM_ALREADY_FULL_IF_REALLY = 0x2251,
+    MSG_WANT_WATCH_FINALS_FROM_GOOD = 0x2254,
+    MSG_HOLD_ON_SECOND = 0x2256,
+    MSG_WANT_TRY_OUT_LUCKY_GUESS = 0x225a,
+    MSG_LOOK_IM_SORRY_BUT_WE = 0x225e
+};
+
+
 #define RuntimeBlock_GetOffset1e0Pointer_1(args...) Func_02003f06(args)
 #define RuntimeBlock_GetOffset1e0Pointer_2(args...) Func_02003f06(args)
 #define SCENE_PHASE (*(s32 *)(*(u8 **)0x03001ebc + 0x1c0))
@@ -387,10 +412,10 @@ void SceneDialogue_RunActor10MessageByFlag962(void)
 {
     Event_Begin();
     if (GameFlag_IsSet(0x962)) {
-        Event_SetMessage(0x2251);
+        Event_SetMessage(MSG_COLOSSEUM_ALREADY_FULL_IF_REALLY);
         Event_ShowMessage(10, 0);
     } else {
-        Event_SetMessage(0x2057);
+        Event_SetMessage(MSG_HOPING_GET_IN_SEE_COLOSSO);
         Event_AskYesNo(10, 0);
     }
     Event_End();
@@ -401,10 +426,10 @@ void SceneDialogue_RunActor13MessageByFlag962(void)
     Event_Begin();
     if (GameFlag_IsSet(0x962)) {
         Actor_ShowEmote(13, 258, 40);
-        Event_SetMessage(0x2254);
+        Event_SetMessage(MSG_WANT_WATCH_FINALS_FROM_GOOD);
         Event_ShowMessage(13, 0);
     } else {
-        Event_SetMessage(0x205c);
+        Event_SetMessage(MSG_COLOSSOS_LUCKY_GUESS_MAKES_BATTLES);
         Event_ShowMessage(13, 0);
     }
     Event_End();
@@ -418,14 +443,14 @@ void FieldScene_RunScene3b9_02000334(void)
     Event_Begin();
     if (GameFlag_IsSet(0x962) != 0) {
         Actor_RunRepeatedMotion(14, 2);
-        Event_SetMessage(0x2256);
+        Event_SetMessage(MSG_HOLD_ON_SECOND);
         FieldScene_CallPairWith10(14);
         Actor_FaceEachOther(14, 0, 0);
         Event_Wait(20);
         Event_AskYesNo(14, 0);
         SceneState_ForwardMaskedHalfwordWith10(14, 0);
     } else {
-        Event_SetMessage(0x205d);
+        Event_SetMessage(MSG_WANT_WIN_BIG_PUT_ON);
         Event_ShowMessage(14, 0);
     }
     Event_End();
@@ -439,9 +464,9 @@ void FieldScene_RunScene3b9_0200039c(void)
     Event_Begin();
     if (GameFlag_IsSet(0x962) != 0) {
         if (GameFlag_IsSet(0x3c0) != 0) {
-            Event_SetMessage(0x225e);
+            Event_SetMessage(MSG_LOOK_IM_SORRY_BUT_WE);
         } else {
-            Event_SetMessage(0x225a);
+            Event_SetMessage(MSG_WANT_TRY_OUT_LUCKY_GUESS);
             Event_OpenMessage(16, 0);
             if (Event_ChooseYesNo(0, 0) == 0) {
                 bump_step(1);
@@ -458,7 +483,7 @@ void FieldScene_RunScene3b9_0200039c(void)
         }
         Event_ShowMessage(16, 0);
     } else {
-        Event_SetMessage(0x205e);
+        Event_SetMessage(MSG_DO_KNOW_LUCKY_GUESS);
         Event_AskYesNo(16, 0);
     }
     L_02000448:;
@@ -475,7 +500,7 @@ void FieldScene_RunScene3b9_02000468(void)
     Event_Begin();
     Actor_Stop(13);
     Actor_FaceEachOther(13, 0, 20);
-    Event_SetMessage(0x2114);
+    Event_SetMessage(MSG_IM_RATED_AS_SECOND_BEST);
     FieldScene_CallPairWith10(13);
     Actor_RunRepeatedMotion(13, 1);
     Event_ShowMessage(13, 0);
@@ -503,7 +528,7 @@ void FieldScene_RunScene3b9_020004c8(void)
     Event_Begin();
     Actor_SetAttachedEffect(14, 0x102);
     Actor_RunRepeatedMotion(14, 2);
-    Event_SetMessage(0x2116);
+    Event_SetMessage(MSG_WAAH_DONT_FRIGHTEN_ME);
     FieldScene_CallPairWith10(14);
     Actor_ShowEmote(14, 0x102, 40);
     Event_ShowMessage(14, 0);
@@ -513,7 +538,7 @@ void FieldScene_RunScene3b9_020004c8(void)
 void SceneDialogue_ShowLine2118WithActor15Steps(void)
 {
     Event_Begin();
-    Event_SetMessage(0x2118);
+    Event_SetMessage(MSG_WHO_HAVE_COME_QUESTION_ME);
     FieldScene_CallPairWith10(15);
     Actor_FaceEachOther(15, 0, 20);
     FieldScene_CallPairWith10(15);
@@ -531,7 +556,7 @@ void FieldScene_RunScene3b9_0200055c(void)
 
     Event_Begin();
     Actor_RunRepeatedMotion(16, 2);
-    Event_SetMessage(0x211b);
+    Event_SetMessage(MSG_DEKKA_MUST_WIN_FINALS_DEKKA);
     Event_ShowMessageAndWait(16, 0, 20);
     if (GameFlag_IsSet(0x3c1) != 0) {
         Event_Wait(20);
@@ -554,7 +579,7 @@ void FieldScene_RunActorSeventeenDialogueSteps(void)
 {
     Event_Begin();
     Actor_FaceEachOther(17, 0, 20);
-    Event_SetMessage(0x211f);
+    Event_SetMessage(MSG_AM_NAVAMPA_GONDOWAN_SIXTH_RANKED);
     FieldScene_CallPairWith10(17);
     Actor_SetAnimationAndWait(0, 3);
     Actor_SetAnimationAndWait(17, 3);
@@ -572,7 +597,7 @@ void FieldScene_RunScene3b9_02000648(void)
 
     Event_Begin();
     Actor_FaceEachOther(18, 0, 20);
-    Event_SetMessage(0x2122);
+    Event_SetMessage(MSG_IM_BUFORD_SEVENTH_SEED);
     FieldScene_CallPairWith10(18);
     Actor_FaceDirection(18, 0xd000, 20);
     Actor_FaceDirection(18, 0xb000, 20);
@@ -639,12 +664,12 @@ void FieldScene_RunConditionalSceneSetup(void)
     flag_8a4 = GameFlag_IsSet(0x8a4);
     if (flag_8a4 != 0) {
         Actor_FaceEachOther(RECORD_17, 0, 40);
-        Event_SetMessage(0x206f);
+        Event_SetMessage(MSG_HAVE_PERFECT_TECHNIQUES_LIKE_THOSE);
         FieldScene_CallPairWith10(RECORD_17);
         Actor_FaceDirection(RECORD_17, 0x3000, 20);
     } else {
         Actor_StartRepeatedMotion(RECORD_17, 2);
-        Event_SetMessage(0x206d);
+        Event_SetMessage(MSG_SILENCE);
         Event_ShowMessage(RECORD_17, 0);
         /* Byte at +85 of the record returned by RuntimeBlock_GetOffset1e0Pointer_1(); written
          * with the (already known zero) flag value here. */
@@ -798,7 +823,7 @@ void SceneState_SetRuntimeWord448To513(void)
 
     Event_Wait(20);
     SceneState_ForwardMaskedHalfwordWith10(17, 160 << 7);
-    Event_SetMessage(0x206e);
+    Event_SetMessage(MSG_HAVE_MAKE_THROUGH_COUNTLESS_MATCHES);
 
     if (GameFlag_IsSet(0x8a4) != 0) {
         *(u16 *)((u8 *)Data_03001ebc + 472) =
@@ -1117,7 +1142,7 @@ void FieldScene_BuildActorPresentationSequence(void)
     Actor_ShowEmote(2, 0x100, 0);
     Actor_RunRepeatedMotion(2, 1);
     Event_Wait(20);
-    Event_SetMessage(0x20f8);
+    Event_SetMessage(MSG_ROBIN_ONLY_ONE_ENTERING_FINALS);
     FieldScene_CallPairWith10(2);
     Actor_SetAnimationAndWait(8, 3);
     FieldScene_CallPairWith10(8);
@@ -1339,7 +1364,7 @@ void FieldScene_RunScene3b9_020024d8(void)
     Actor_FaceDirection(16, 0x8000, 0);
     Actor_FaceDirection(17, 0xb000, 0);
     Actor_FaceDirection(18, 0xb000, 0);
-    Event_SetMessage(0x2112);
+    Event_SetMessage(MSG_PREPARE_YOURSELVES_CONTESTANTS_FINALS_WILL);
     FieldScene_CallPairWith10(8);
     Actor_SetAnimationAndWait(0, 3);
     {
@@ -1400,7 +1425,7 @@ void FieldScene_RunScene3b9_02002668(void)
     Event_Wait(40);
     Actor_RunRepeatedMotion(8, 1);
     Actor_SetAnimation(8, 3);
-    Event_SetMessage(0x2134);
+    Event_SetMessage(MSG_SEE_YOUVE_MADE_THROUGH_YOUR);
     FieldScene_CallPairWith10(8);
     Actor_RunRepeatedMotion(9, 1);
     FieldScene_CallPairWith10(9);

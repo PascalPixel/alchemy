@@ -1,5 +1,17 @@
 #include "MAKYURI_HEYA.H"
 
+enum FieldProbeSceneMessage {
+    MSG_DOOR_TIGHTLY_LOCKED = 0x953,
+    MSG_FOUNTAIN_HEALING_WATER_HERMES_BRINGS = 0x1576,
+    MSG_SOMEBODY_HERE = 0x1577,
+    MSG_STATUE_BLOCKING_ENTRANCE = 0x157d,
+    MSG_FOUNTAIN_FLOWING_WITH_WATER = 0x1635,
+    MSG_FOUNTAIN_SEEMS_DRY = 0x1636,
+    MSG_STRANGE_FORCES_AT_WORK_SEEMS = 0x1637,
+    MSG_ROBIN_GOT = 0x1638
+};
+
+
 void Func_020067e8_wrapper();
 
 /* Complete one-call wrapper through interworking return and alignment. */
@@ -561,7 +573,7 @@ void FieldScene_CallHelper6364(void)
 void SceneDialogue_RunLine1637(void)
 {
     Event_Begin();
-    Message_ShowCentered(0x1637, 1);
+    Message_ShowCentered(MSG_STRANGE_FORCES_AT_WORK_SEEMS, 1);
     Event_End();
 }
 
@@ -1155,7 +1167,7 @@ void FieldScene_RunActorThreeBranchSequence(void)
     Event_Begin();
     Actor_SetSpeed(3, FX16_0_8, FX16_0_4);
     Actor_SetSpeed(0, FX16_0_8, FX16_0_4);
-    Event_SetMessage(0x1577);
+    Event_SetMessage(MSG_SOMEBODY_HERE);
     Event_ShowMessageAndWait(3, 0, 20);
     Actor_WalkToAndWait(3, 0x348, 0x288);
     Actor_ShowEmote(3, 0x100, 60);
@@ -1205,7 +1217,7 @@ void SceneDialogue_RunActor3TimedLine(void)
     Event_Begin();
     Actor_SetAnimationAndWait(3, 4);
     Event_Wait(20);
-    Event_SetMessage(0x157d);
+    Event_SetMessage(MSG_STATUE_BLOCKING_ENTRANCE);
     Event_ShowMessageAndWait(3, 0, 20);
     Event_End();
 }
@@ -1237,7 +1249,7 @@ void FieldScene_RunScriptedSteps0And1576(void)
 {
     Event_Begin();
     Actor_SetAnimation(0, 1);
-    Message_ShowCentered(0x1576, 1);
+    Message_ShowCentered(MSG_FOUNTAIN_HEALING_WATER_HERMES_BRINGS, 1);
     Event_End();
 }
 
@@ -1245,7 +1257,7 @@ void FieldScene_RunScriptedSteps0And953(void)
 {
     Event_Begin();
     Actor_SetAnimation(0, 1);
-    Message_ShowCentered(0x953, 1);
+    Message_ShowCentered(MSG_DOOR_TIGHTLY_LOCKED, 1);
     Event_End();
 }
 
@@ -1255,9 +1267,9 @@ void FieldScene_RunFlag881Dialogue(void)
     Event_Begin();
     Actor_SetAnimation(0, 1);
     if (GameFlag_IsSet(0x881) == 0)
-        Message_ShowCentered(0x1636, 1);
+        Message_ShowCentered(MSG_FOUNTAIN_SEEMS_DRY, 1);
     else
-        Message_ShowCentered(0x1635, 1);
+        Message_ShowCentered(MSG_FOUNTAIN_FLOWING_WITH_WATER, 1);
     if (Func_020090aa_tail(0xb9) != -1) {
         s16 *slot = (s16 *)Data_03001ebc + 185;
         s32 one = 1;
@@ -1275,7 +1287,7 @@ void FieldScene_RunActor184Sequence(void)
     Func_0200860a_tail(0xb9, 0xb8);
     Func_020090da_tail(Func_020090fc_tail(0xb8), 1);
     Func_020090e2_a_tail(0xb8, 2);
-    Message_ShowCentered(0x1638, 1);
+    Message_ShowCentered(MSG_ROBIN_GOT, 1);
     GameFlag_Set(512);
     Event_End();
 }

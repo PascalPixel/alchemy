@@ -29,7 +29,6 @@ pub struct BuildOptions<'a> {
 }
 pub struct CoverageMap {
     pub document: Value,
-    pub rom_areas: Vec<Area>,
     pub executable_areas: Vec<Area>,
 }
 pub fn rom_size(target: &str) -> Result<i64, String> {
@@ -2405,7 +2404,6 @@ pub fn build_coverage_map(options: &BuildOptions) -> Result<CoverageMap, String>
     });
     Ok(CoverageMap {
         document,
-        rom_areas,
         executable_areas,
     })
 }

@@ -4,3 +4,7 @@
 
 # Typed compression controls must retain their exact bytes on checkout.
 *.TOKENS binary
+
+# The README figures are redrawn by `make coverage`; keep either side of a merge.
+/PROGRESS.png merge=generated binary
+/PROGRESS_CHART.png merge=generated binary

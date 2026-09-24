@@ -61,7 +61,7 @@ void EffectRuntime_PrepareRisingObject(struct Object_0808f0d8 *object)
     entity->angle = 0x4000;
 }
 
-/* effect_runtime/run_rising_object_sequence.c */
+/* effect_runtime/Effect_RunRisingObjectSequence.c */
 void Sys_Apply(void *, s32);
 extern const u8 gRom[];
 extern u8 gRom2;

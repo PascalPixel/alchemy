@@ -2,7 +2,7 @@
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
 
-/* graphics/registers/apply_window_blend.c */
+/* graphics/registers/Display_ApplyWindowBlend.c */
 void Graphics_ApplyWindowBlendRegisters(void)
 {
     u8 *src = *(u8 **)ADDR_03001EEC;
@@ -18,8 +18,8 @@ void Graphics_ApplyWindowBlendRegisters(void)
     *(u16 *)0x04000052 = *(u16 *)(src + 0x77cc); /* BLDALPHA */
 }
 
-/* graphics/registers/apply_bg2_reference.c */
-void apply_bg2_reference(void)
+/* graphics/registers/Display_ApplyBg2Reference.c */
+void Display_ApplyBg2Reference(void)
 {
     u8 *base = *(u8 **)ADDR_03001EEC;
     *(u32 *)0x04000028 = *(u32 *)(base + 0x77D0);

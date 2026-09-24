@@ -201,7 +201,7 @@
       "name": "Shop_DrawUseItem"
     },
     "main:08003008": {
-      "name": "reserved_no_op_f",
+      "name": "Scheduler_ReservedNoOp",
       "source": "SYSTEM/SCHEDULER/RESERVED_NO_OP_F.C"
     },
     "main:0800c0c4": "SYSTEM/RESOURCE/TABLE_RESERVED_NO_OP.C",
@@ -253,7 +253,7 @@
       "source": "GAME/CHARACTER/LEVEL.C"
     },
     "main:080941dc": {
-      "name": "reserved_no_op",
+      "name": "ObjectEffect_ReservedNoOp",
       "source": "FIELD/COMMON/OBJECT/EFFECTS_RESERVED_NO_OP.C"
     },
     "main:08093e28": {
@@ -454,7 +454,7 @@
       "source": "GAME/FLAGS/REFRESH_LURE_CAP.C"
     },
     "main:08077cb8": {
-      "name": "get_build_stamp_time"
+      "name": "System_GetBuildStampTime"
     },
     "main:08079008": {
       "name": "Owner_GetLevelThreshold"
@@ -502,7 +502,7 @@
     },
     "main:0801c21c": "SYSTEM/RESOURCE/TRANSFER_RESET_PENDING.C",
     "main:0800be70": {
-      "name": "render_animated_tile_frame",
+      "name": "Map_RenderAnimatedTileFrame",
       "source": "FIELD/COMMON/MAP/RENDER_ANIMATED_TILE_FRAME.C"
     },
     "main:080110e0": {
@@ -1014,7 +1014,7 @@
       "name": "SetFlashTimerIntr"
     },
     "main:080069a4": {
-      "name": "flash_timer_interrupt",
+      "name": "Flash_TimerInterrupt",
       "source": "SYSTEM/SAVE/FLASH_TIMER_INTERRUPT.C"
     },
     "main:08006a78": {
@@ -1084,7 +1084,7 @@
       "source": "BATTLE/EFFECT/SETUP_OBJECT_PAIR.C"
     },
     "main:08096b88": {
-      "name": "apply_random_child_values"
+      "name": "Animation_ApplyRandomChildValues"
     },
     "main:08096cdc": {
       "name": "ObjectGroup_SetActionForOthers"
@@ -1277,7 +1277,7 @@
       "source": "LIB/FIXED_8.C"
     },
     "main:080f40d0": {
-      "name": "scale_by_ratio_fixed"
+      "name": "Math_ScaleByRatio"
     },
     "main:080f40e8": {
       "name": "FixedPoint_Reciprocal"
@@ -1334,10 +1334,10 @@
       "name": "RenderOutput_ReleaseFree"
     },
     "main:0801a97c": {
-      "name": "schedule_owner_reset"
+      "name": "Resource_ScheduleOwnerReset"
     },
     "main:0801a968": {
-      "name": "schedule_owner_reset_delayed"
+      "name": "Resource_ScheduleOwnerResetDelayed"
     },
     "main:080a5534": "SYSTEM/RESOURCE/LOAD_PAIRED_BLOCKS.C",
     "main:080ae88c": "SYSTEM/RESOURCE/LOAD_PAIRED_BLOCKS_IF_AVAILABLE.C",
@@ -1419,18 +1419,18 @@
       "name": "RenderOutput_CreateFromTable"
     },
     "main:080215e0": {
-      "name": "load_pair",
+      "name": "RenderOutput_LoadPair",
       "source": "GRAPHICS/RENDER/LOAD_PAIR.C"
     },
     "main:08021620": {
-      "name": "create_pair"
+      "name": "RenderOutput_CreatePair"
     },
     "main:080216e8": {
-      "name": "load_frame",
+      "name": "RenderOutput_LoadFrame",
       "source": "GRAPHICS/RENDER/LOAD_FRAME.C"
     },
     "main:08021750": {
-      "name": "create_frame"
+      "name": "RenderOutput_CreateFrame"
     },
     "main:0801c3e8": {
       "name": "UiTimedNotice_Tick",
@@ -1637,7 +1637,7 @@
       "name": "FourObjectMotion_ReplaceSlot"
     },
     "main:080ad318": {
-      "name": "clear_slots_and_schedule"
+      "name": "FourObjectMotion_ClearSlotsAndSchedule"
     },
     "main:080ad5b4": {
       "name": "FourObjectMotion_SetSlotPosition"
@@ -1646,7 +1646,7 @@
       "name": "FourObjectMotion_SetSlotPhase"
     },
     "main:080ad274": {
-      "name": "initialize_top_row",
+      "name": "FourObjectMotion_InitializeTopRow",
       "source": "FIELD/COMMON/OBJECT/MOTION_FOUR_OBJECT_INITIALIZE_TOP_ROW.C"
     },
     "main:080ad508": {
@@ -1654,7 +1654,7 @@
       "source": "FIELD/COMMON/OBJECT/MOTION_FOUR_OBJECT_BOTTOM_ROW.C"
     },
     "main:080ad35c": {
-      "name": "update_all_positions"
+      "name": "FourObjectMotion_UpdateAllPositions"
     },
     "main:080ad658": {
       "name": "FourObjectMotion_ClearSlotsAndScheduleAlt"
@@ -1750,11 +1750,11 @@
     },
     "main:0809728c": { "name": "EventObject_Initialize", "source": "FIELD/COMMON/EVENT_OBJECT_INITIALIZE.C" },
     "main:08099678": {
-      "name": "check_object_tile",
+      "name": "MapEvent_CheckObjectTile",
       "source": "FIELD/COMMON/MAP/EVENTS_CHECK_OBJECT_TILE.C"
     },
     "main:08099738": {
-      "name": "run_tile_trigger_sequence"
+      "name": "MapEvent_RunTileTriggerSequence"
     },
     "main:0800b7c0": {
       "name": "Animation_InitializeObjects"
@@ -1772,7 +1772,7 @@
       "name": "ObjectMotion_MoveTowardTarget"
     },
     "main:080933f8": {
-      "name": "place_within_camera_bounds"
+      "name": "Object_PlaceWithinCameraBounds"
     },
     "main:080942e0": {
       "name": "ObjectEffect_PrepareContextEffect",
@@ -1804,7 +1804,7 @@
     },
     "main:080c1084": "GRAPHICS/PALETTE/ADVANCE_CYCLE.C",
     "main:080c1438": {
-      "name": "upload_block",
+      "name": "Display_UploadBlock",
       "source": "GRAPHICS/DISPLAY/UPLOAD_BLOCK.C"
     },
     "main:080c1724": {
@@ -1865,14 +1865,14 @@
       "source": "FIELD/COMMON/OBJECT/TABLE_DESTROY_AT_INDEX.C"
     },
     "main:0808b824": {
-      "name": "find_last_active_id",
+      "name": "ObjectTable_FindLastActiveId",
       "source": "FIELD/COMMON/OBJECT/TABLE_FIND_LAST_ACTIVE_ID.C"
     },
     "main:0808b854": {
-      "name": "get_slot_address"
+      "name": "ObjectTable_GetSlotAddress"
     },
     "main:0808b9f8": {
-      "name": "clear_battle_slots",
+      "name": "ObjectTable_ClearBattleSlots",
       "source": "FIELD/COMMON/OBJECT/TABLE_CLEAR_BATTLE_SLOTS.C"
     },
     "main:0809280c": {
@@ -1953,7 +1953,7 @@
       "name": "ObjectMotion_StepAngle"
     },
     "main:080f6038": {
-      "name": "scale_rgb555"
+      "name": "Palette_ScaleRgb555"
     },
     "main:080f9438": {
       "name": "Audio_InitializeRuntimeDefaults",
@@ -2236,11 +2236,11 @@
       "name": "UiMessage_ShowChoice"
     },
     "main:080cd418": {
-      "name": "apply_window_blend",
+      "name": "Display_ApplyWindowBlend",
       "source": "GRAPHICS/DISPLAY/APPLY_WINDOW_BLEND.C"
     },
     "main:080cd488": {
-      "name": "apply_bg2_reference"
+      "name": "Display_ApplyBg2Reference"
     },
     "main:080d655c": {
       "name": "BattleFx_RunNoEffectFrames",
@@ -2443,7 +2443,7 @@
       "name": "EffectRuntime_PrepareRisingObject"
     },
     "main:0808f140": {
-      "name": "run_rising_object_sequence"
+      "name": "Effect_RunRisingObjectSequence"
     },
     "main:080aac84": "GRAPHICS/PALETTE/ADJUST_BANK.C",
     "main:080a7380": {

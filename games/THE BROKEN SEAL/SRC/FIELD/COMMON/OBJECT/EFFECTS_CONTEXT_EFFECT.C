@@ -136,7 +136,7 @@ void ObjectEffect_EndContextEffect(s32 arg0)
 s32 GameFlag_IsSet(s32);
 void GameFlag_Clear(s32);
 void ObjectEffect_EndContextEffect(s32 arg0);
-void place_within_camera_bounds(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
+void Object_PlaceWithinCameraBounds(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 void Audio_PlayCue(s32);
 void Battle_WaitMode0(s32 arg0);
 void Object_AttachWorkTargetToObject(s32 arg0, s32 arg1);
@@ -166,7 +166,7 @@ s32 ObjectEffect_RunPendingFlagEvent(void)
                 id = gGameState[125];
                 obj = ObjectTable_Get(id);
                 *(s32 *)((u8 *)obj + 12) += 0x00a00000;
-                place_within_camera_bounds(-1, -1, -1, 0);
+                Object_PlaceWithinCameraBounds(-1, -1, -1, 0);
                 while (*(s32 *)((u8 *)obj + 12) + *(s32 *)((u8 *)obj + 40) >
                        *(s32 *)((u8 *)obj + 20)) {
                     WaitFrames(1);

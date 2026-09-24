@@ -1,7 +1,7 @@
 #include "SCENE.H"
 #include "FLASH.H"
 
-/* save/flash_timer_interrupt.c */
+/* save/Flash_TimerInterrupt.c */
 /* The flash driver's timer tick handler and the installer that arms it. */
 
 extern volatile u16 gOv;

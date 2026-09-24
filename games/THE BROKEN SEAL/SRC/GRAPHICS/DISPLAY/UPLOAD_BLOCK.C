@@ -1,7 +1,7 @@
 #include "TYPES.H"
 #include "SCENE.H"
 
-/* graphics/vram/upload_block.c */
+/* graphics/vram/Display_UploadBlock.c */
 struct State {
     u8 unknown[156];
     u32 context;

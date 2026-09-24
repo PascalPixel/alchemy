@@ -2,7 +2,7 @@
 #include "SCENE.H"
 #include "OBJECT_LOOKUP.H"
 
-/* object/effects/reserved_no_op.c */
+/* object/effects/ObjectEffect_ReservedNoOp.c */
 void ObjectEffect_ReservedNoOp941DC(void)
 {
 }

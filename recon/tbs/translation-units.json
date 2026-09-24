@@ -7117,6 +7117,10 @@
         "gEventWork": {
           "address": "0x03001ebc",
           "kind": "data"
+        },
+        "LinkedMessage_ThisIsMyFarewellGift": {
+          "address": "0x000011a4",
+          "kind": "data"
         }
       },
       "owners": [

@@ -6391,7 +6391,7 @@
       "source": "FIELD/BIRIBINO_NIWA/ORBITING.C"
     },
     "resource_376:02000258": {
-      "name": "SceneDialogue_RunActor16Message11be",
+      "name": "Villager_AskAboutStrangePowers",
       "source": "FIELD/HAIDIA_HEYA/TIMED_EVENTS.C"
     },
     "resource_380:02002674": {
@@ -6591,7 +6591,7 @@
       "source": "MENU/TITLE/MINIMAL.C"
     },
     "resource_376:02000190": {
-      "name": "SceneDialogue_RunActor15Message0f6d",
+      "name": "Villager_AskWhySukuretaCame",
       "source": "FIELD/HAIDIA_HEYA/TIMED_EVENTS.C"
     },
     "resource_3ba:02002d28": {
@@ -8680,7 +8680,7 @@
       "source": "FIELD/KOROSSEO_KAWA/COORDINATOR.C"
     },
     "resource_376:020001bc": {
-      "name": "SceneDialogue_RunActor19Message0f73",
+      "name": "Villager_PlanToScareVisitors",
       "source": "FIELD/HAIDIA_HEYA/TIMED_EVENTS.C"
     },
     "resource_3b6:02000044": {
@@ -9280,7 +9280,7 @@
       "source": "FIELD/FUNE_HEYA/EXTENDED_CHOREOGRAPHY.C"
     },
     "resource_376:02000278": {
-      "name": "SceneDialogue_RunActor10Message1c3d",
+      "name": "Villager_AskAboutDora",
       "source": "FIELD/HAIDIA_HEYA/TIMED_EVENTS.C"
     },
     "resource_3a3:02000074": {
@@ -10606,7 +10606,7 @@
       "source": "FIELD/WORLD_MAP/ACTOR_TRANSFER.C"
     },
     "resource_376:020001e8": {
-      "name": "FieldScene_RunScene376_020001e8",
+      "name": "Scene_GiveFarewellHerb",
       "source": "FIELD/HAIDIA_HEYA/TIMED_EVENTS.C"
     },
     "resource_3ad:02001394": {

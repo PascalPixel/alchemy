@@ -28,7 +28,14 @@
    sp+24, beside frame * 2 at sp+20, the column height at sp+28 and the
    scale at sp+16), where we compute count * 2 from the spilled count; no
    spelling of the beam length (frame * 4, (count - 128) * 2, count +
-   count) changed that. */
+   count) changed that. The -dL loop dump gives the reason: in the first
+   loop pass the beam's count * 2 (the inner loop's induction seed, combined
+   with the column's frame * 4 step) scores lifetime 6 x threshold 17 x
+   benefit 4 = 408 against 489 insns in the frame loop, so loop.c leaves it
+   alone; the reference must reach at least 489. A named reach = count * 2
+   (or frame * 4) is reduced but, being a user variable, costs a copy each
+   frame and grows the function by 16 bytes; placed before the key test it
+   also costs count its own induction. */
 #include "TYPES.H"
 #include "BATTLE_EFFECT_WORK.H"
 #include "BATTLE_EFX.H"

@@ -65,10 +65,12 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
     f(a0, a1, a2);
 }
 
-/* NONMATCHING: 956 of 956 bytes, 44 halfword edits (2026-09-24). Same wall
- * as resource_3c9:0200423c: the zero loaded through Data_00000000 has pool
- * range 60 here, the reference behaves like 64, so the mid-function pool
- * lands 4 bytes early and every later literal offset shifts. */
+/* NONMATCHING: 956 of 956 bytes, 4 halfword edits (2026-09-24). The zero
+ * is a one-halfword struct (movhi pool reach 64, set before the call so it
+ * takes r5). Left: sched1 puts the 555 = 452 + 103 address add before the
+ * +454 store; the reference computes it after. */
+struct Half { u16 v; };
+
 void Func_02002618(void)
 {
     u32 i;
@@ -110,10 +112,12 @@ void Func_02002618(void)
     Engine_EventWait(10);
     Call3(Engine_ActorFaceDirection, 0, 0xc000, 20);
     {
-        u8 *p = (u8 *)Engine_ActorGet(25);
-        s32 z = (u16)(u32)Data_00000000;
+        struct Half z;
+        u8 *p;
 
-        p[85] = z;
+        z.v = 0;
+        p = (u8 *)Engine_ActorGet(25);
+        p[85] = z.v;
     }
     Call3(Engine_ActorSetSpeed, 25, 0x20000, 0x10000);
     Call3(Engine_ActorSetDestination, 25, 216, 0x264);
@@ -180,13 +184,9 @@ void Func_02002618(void)
     Call3(Engine_ActorWalkTo, 2, 248, 0x234);
     Call3(Engine_ActorWalkTo, 3, 248, 0x234);
     Engine_EventWait(20);
-    Data_02000240_t[226][0] = (s32)Data_0000006f;
-    {
-        s32 shown = 30;
-    
-        Data_02000240_t[227][0] = shown;
-    }
-    *(u8 *)0x0200046b = 3;
+    { u8 *gs = (u8 *)Data_02000240_t; Data_02000240_t[226][0] = (s32)Data_0000006f;
+    Data_02000240_t[227][0] = 30;
+    gs[555] = 3; }
     Engine_GameStateSetReturn((s32)Data_0000006d, 16);
     Engine_Import0808a250(62, 3);
     Engine_EventEnd();

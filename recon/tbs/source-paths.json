@@ -20180,7 +20180,8 @@
       "name": "Unnamed_080f0614"
     },
     "main:080f0678": {
-      "name": "Unnamed_080f0678"
+      "name": "DisplayScroll_InitObjectTable",
+      "source": "GRAPHICS/DISPLAY/SCROLL_INIT_OBJECT_TABLE.C"
     },
     "main:080f07f0": {
       "name": "Unnamed_080f07f0"

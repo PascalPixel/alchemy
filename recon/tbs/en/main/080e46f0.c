@@ -1,12 +1,14 @@
-/* Draft, not exact (2026-09-24): 200 of 200 bytes, 24 differing halfwords
-   (21 edits; was 32). Step every palette colour one unit towards the colours
+/* Draft, not exact (2026-09-24): 200 of 200 bytes, 15 differing halfwords
+   (14 edits; was 32). Step every palette colour one unit towards the colours
    of resource_id. The IWRAM word copy is a static inline wrapper, so the
-   buffer address is rematerialised from sp for each call as in the
-   reference instead of living in a saved register. The green and blue masks
+   buffer address is rematerialised from sp for each call, and the target
+   colours are read as buf[i] (dst only aliases the buffer), which gives the
+   reference its index in ip and buffer base in lr. The green and blue masks
    are a u16 held from the 0x1f link symbol (a halfword pool constant that
-   puts the literal pool before the loop). Residual: global allocation order
-   in the loop; the reference gives the offset induction r6 and the mask r7
-   (here r7 and r6), the index ip and the buffer base lr (here lr and ip). */
+   puts the literal pool before the loop). Residual: global allocation
+   order; the reference gives the offset induction r6 and the mask r7 (here
+   r7 and r6). The mask priority (9 refs over 43 insns) outranks the
+   induction (9 refs over 84); the reference must allocate it later. */
 #include "TYPES.H"
 
 typedef s32 (*CopyWordsFn)(void *destination, const void *source, s32 size);
@@ -41,9 +43,9 @@ void Func_080e46f0(s32 resource_id)
         r = *pal & 0x1f;
         g = (*pal >> 5) & MASK;
         b = (*pal >> 10) & MASK;
-        tr = dst[i] & 0x1f;
-        tg = (dst[i] >> 5) & MASK;
-        tb = (dst[i] >> 10) & MASK;
+        tr = buf[i] & 0x1f;
+        tg = (buf[i] >> 5) & MASK;
+        tb = (buf[i] >> 10) & MASK;
         if (r < tr) {
             r++;
         } else if (r > tr) {
@@ -59,7 +61,7 @@ void Func_080e46f0(s32 resource_id)
         } else if (b > tb) {
             b--;
         }
-        dst[i] = (b << 10) | (g << 5) | r;
+        buf[i] = (b << 10) | (g << 5) | r;
         pal++;
     }
     CopyWords((u16 *)0x05000000, buf, 128);

@@ -12188,7 +12188,8 @@
       "source": "FIELD/GOMA_SUIRO/BURST.C"
     },
     "resource_3a2:020011b0": {
-      "name": "FieldScene_RunActorEventSetup"
+      "name": "YamaRama_ApplyEntryState",
+      "source": "FIELD/COMMON/YAMA_RAMA/ENTRY_STATE.C"
     },
     "resource_3a2:02000ff0": {
       "name": "FieldScene_RunPairedLayoutStepsThenSetOne",

@@ -4,7 +4,7 @@
 
 /*
  * The Elemental Star chamber collapses around the party leader and Gerald.
- * The Wise One appears, has the Elemental Star put back in its bag, and
+ * The Wise One appears, has the Mars Star put back in its bag, and
  * helps them out as the volcano erupts.
  */
 
@@ -17,7 +17,14 @@ enum {
 
 enum {
     OBJECT_ELEMENTAL_STAR = 22,
-    ITEM_ELEMENTAL_STAR = 222
+    /* Message 0x182 + 222. */
+    ITEM_MARS_STAR = 222
+};
+
+enum {
+    /* Set as the party leaves the collapsing chamber. */
+    FLAG_SOL_SANCTUM_ERUPTED = 0x814,
+    FLAG_STAR_ROOM_COLLAPSED = 0x83f
 };
 
 enum {
@@ -65,9 +72,9 @@ void Scene_RunExtendedEffectPresentation(void)
     struct FieldActor *center;
     struct FieldActor *leader;
     struct FieldActor *actor;
-    struct FieldActor *garet;
+    struct FieldActor *gerald;
     struct FieldSprite *leader_sprite;
-    struct FieldSprite *garet_sprite;
+    struct FieldSprite *gerald_sprite;
     struct FieldActor *star;
     struct FieldSprite *sprite;
     u8 *buf;
@@ -117,14 +124,14 @@ void Scene_RunExtendedEffectPresentation(void)
 
     /* The two spin apart. */
     leader = Actor_Get(ACTOR_PARTY_LEADER);
-    garet = Actor_Get(ACTOR_GERALD);
+    gerald = Actor_Get(ACTOR_GERALD);
     leader_sprite = leader->sprite;
-    garet_sprite = garet->sprite;
+    gerald_sprite = gerald->sprite;
     for (cnt = 0; cnt < 20; cnt++) {
         leader_sprite->rotation += 0x100;
-        garet_sprite->rotation -= 0x100;
+        gerald_sprite->rotation -= 0x100;
         leader->x.fixed += 0x6000;
-        garet->x.fixed -= 0x6000;
+        gerald->x.fixed -= 0x6000;
         Task_Wait(1);
     }
     Event_Wait(40);
@@ -485,7 +492,7 @@ void Scene_RunExtendedEffectPresentation(void)
         sprite->full_color = 0;
         sprite->palette = 0;
         sprite->priority = 1;
-        Item_LoadIcon(ITEM_ELEMENTAL_STAR);
+        Item_LoadIcon(ITEM_MARS_STAR);
         Vram_Load(sprite->vram_block, 128, buf + 0x400);
         Heap_Release(17);
         Actor_SetAnimation(ACTOR_PARTY_LEADER, 28);
@@ -682,8 +689,8 @@ void Scene_RunExtendedEffectPresentation(void)
     Work_SetValuesIfNonNegative(-1, -1, 0xe666);
     Engine_MapWaitWorkValuesBelow256();
     Scene_CallHelper6620();
-    GameFlag_Set(0x814);
-    GameFlag_Set(0x83f);
+    GameFlag_Set(FLAG_SOL_SANCTUM_ERUPTED);
+    GameFlag_Set(FLAG_STAR_ROOM_COLLAPSED);
     Event_RequestExit(5);
     GameFlag_Set(0x100);
 }

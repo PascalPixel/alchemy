@@ -15050,6 +15050,18 @@
         "LinkedMessage_AlexAsksForStars": {
           "address": "0x000010b6",
           "kind": "data"
+        },
+        "LinkedMessage_MercuryStarBagged": {
+          "address": "0x00001076",
+          "kind": "data"
+        },
+        "LinkedMessage_TakeTheStarsToThem": {
+          "address": "0x000010b0",
+          "kind": "data"
+        },
+        "LinkedMessage_TheyWontLetJasmineGo": {
+          "address": "0x000010b2",
+          "kind": "data"
         }
       },
       "owners": [
@@ -40662,6 +40674,14 @@
         "Func_0200458e": {
           "address": "0x0200a9ec",
           "kind": "thumb"
+        },
+        "LinkedMessage_LookFartherUpThePassage": {
+          "address": "0x00000ffc",
+          "kind": "data"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
         }
       },
       "owners": [

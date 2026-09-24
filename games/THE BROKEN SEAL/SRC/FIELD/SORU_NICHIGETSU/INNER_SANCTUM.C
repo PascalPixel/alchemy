@@ -1,5 +1,42 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "FIELD_SCENE.H"
+
+/*
+ * The Luna and Sol rooms deep in Sol Sanctum. Sukureta wonders what the two
+ * rooms mean and asks Robin to look farther up the passage. Lighting the four
+ * statue lights turns the picture of Luna to Sol, and the trap that follows
+ * shakes the statue hall.
+ */
+
+enum InnerSanctumActor {
+    ACTOR_SUKURETA = ACTOR_FIRST_PLACED + 8
+};
+
+enum InnerSanctumMessage {
+    MSG_WHAT_IS_THIS_ROOM = 0xff6,
+    MSG_SUKURETA_THESE_ROOMS_HIDE_A_SECRET = 0xffa,
+    MSG_SUKURETA_A_ROOM_FOR_LUNA_AND_SOL = 0xffb,
+    MSG_SUKURETA_LET_ME_KNOW_WHAT_YOU_FIND = 0xffd,
+    MSG_SUKURETA_JUST_WAIT_OVER_THERE = 0xfff,
+    MSG_WHATS_HAPPENING = 0x1001,
+    MSG_WHATS_HAPPENING_AT_THE_TRAP = 0x1018,
+    MSG_YOU_FOUND_IT = 0x1025,
+    MSG_THE_PICTURE_OF_LUNA_CHANGED_TO_SOL = 0x1027
+};
+
+enum InnerSanctumFlag {
+    FLAG_INNER_SANCTUM_ENTERED = 0x80a,
+    /* The four statue lights. */
+    FLAG_STATUE_LIGHT_1 = 0x80b,
+    FLAG_STATUE_LIGHT_2,
+    FLAG_STATUE_LIGHT_3,
+    FLAG_STATUE_LIGHT_4,
+    FLAG_LUNA_PICTURE_CHANGED_TO_SOL = 0x810,
+    FLAG_STATUE_TRAP_SPRUNG = 0x813,
+    /* Robin agreed to look farther up the passage for Sukureta. */
+    FLAG_ROBIN_SEARCHING_FOR_SUKURETA = 0x896
+};
 
 #if defined(TBS_EDITION_JA)
 #define SCENE_STEP_VALUE Value_000011b4
@@ -244,7 +281,7 @@ void Func_020033b4();  /* Func_0808a020 */
 extern u8 Data_03001ebc[];
 /* Loader-relocated overlay calls: each symbol names the pre-relocation call
  * word the image holds. */
-extern u8 Data_00000ffc[];
+extern u8 LinkedMessage_LookFartherUpThePassage[];
 extern u8 Data_00004010[];
 
 void Func_0200306c();
@@ -454,8 +491,8 @@ void FieldScene_RunScene37aSequenceA(void)
         GameFlag_Set(0x201);
         GameFlag_Clear(0x200);
         GameFlag_Clear(0x202);
-        if (GameFlag_IsSet(0x80a) == 0) {
-            FieldScene_RunScene37a_020009f4();
+        if (GameFlag_IsSet(FLAG_INNER_SANCTUM_ENTERED) == 0) {
+            Scene_EnterInnerSanctum();
         }
         if (Value0(CheckAllStatueLights)!= 0) {
             if (GameFlag_IsSet(0x811) == 0) {
@@ -518,8 +555,8 @@ void FieldScene_RunScene37aSequenceC(void)
             GameFlag_Set(0x201);
             GameFlag_Clear(0x200);
             GameFlag_Clear(0x202);
-            if (GameFlag_IsSet(0x80a) == 0) {
-                FieldScene_RunScene37a_020009f4();
+            if (GameFlag_IsSet(FLAG_INNER_SANCTUM_ENTERED) == 0) {
+                Scene_EnterInnerSanctum();
             }
             Event_End();
         }
@@ -550,22 +587,22 @@ void ClearSolShindenBackdrop(void)
 
 void SetStatueLightGroup1(void)
 {
-    if (Func_02002bf4_scene_state(0x80b) != 0) {
+    if (Func_02002bf4_scene_state(FLAG_STATUE_LIGHT_1) != 0) {
         s32 a = 2;
         s32 b = 1;
         Map_CopyCellsTo(0x2d, 28, 0x22, 10, a, b);
     }
-    if (GameFlag_IsSet(0x80c) != 0) {
+    if (GameFlag_IsSet(FLAG_STATUE_LIGHT_2) != 0) {
         s32 a = 2;
         s32 b = 1;
         Map_CopyCellsTo(0x2f, 28, 0x24, 10, a, b);
     }
-    if (GameFlag_IsSet(0x80d) != 0) {
+    if (GameFlag_IsSet(FLAG_STATUE_LIGHT_3) != 0) {
         s32 a = 2;
         s32 b = 1;
         Map_CopyCellsTo(0x2d, 29, 0x22, 11, a, b);
     }
-    if (GameFlag_IsSet(0x80e) != 0) {
+    if (GameFlag_IsSet(FLAG_STATUE_LIGHT_4) != 0) {
         s32 a = 2;
         s32 b = 1;
         Map_CopyCellsTo(0x2f, 29, 0x24, 11, a, b);
@@ -598,22 +635,22 @@ void SetStatueLightGroup2(void)
 
 void SetStatueLightGroup3(void)
 {
-    if (GameFlag_IsSet(0x80b) != 0) {
+    if (GameFlag_IsSet(FLAG_STATUE_LIGHT_1) != 0) {
         s32 a = 2;
         s32 b = 1;
         Map_CopyCellsTo(0x2d, 30, 0x22, 10, a, b);
     }
-    if (GameFlag_IsSet(0x80c) != 0) {
+    if (GameFlag_IsSet(FLAG_STATUE_LIGHT_2) != 0) {
         s32 a = 2;
         s32 b = 1;
         Map_CopyCellsTo(0x2f, 30, 0x24, 10, a, b);
     }
-    if (GameFlag_IsSet(0x80d) != 0) {
+    if (GameFlag_IsSet(FLAG_STATUE_LIGHT_3) != 0) {
         s32 a = 2;
         s32 b = 1;
         Map_CopyCellsTo(0x2d, 31, 0x22, 11, a, b);
     }
-    if (GameFlag_IsSet(0x80e) != 0) {
+    if (GameFlag_IsSet(FLAG_STATUE_LIGHT_4) != 0) {
         s32 a = 2;
         s32 b = 1;
         Map_CopyCellsTo(0x2f, 31, 0x24, 11, a, b);
@@ -782,7 +819,7 @@ void FieldScene_RunScene37aSequenceF(void)
         Func_02002ef8(16, 2);
         rec = (u8 *)Value1(Func_02002ede, 0);
         if (rec != 0) {
-            Actor_SetDestination(16, FIELD(rec, s16 *, 10), FIELD(rec, s16 *, 18));
+            Actor_SetDestination(ACTOR_SUKURETA, FIELD(rec, s16 *, 10), FIELD(rec, s16 *, 18));
         }
         Func_02003370(16);
         Func_02002f1c(16, 0, 0);
@@ -806,7 +843,7 @@ void FieldScene_RunScene37aSequenceF(void)
     }
 }
 
-void FieldScene_RunScene37a_020009f4(void)
+void Scene_EnterInnerSanctum(void)
 {
     u32 i;
     s32 record;
@@ -814,19 +851,19 @@ void FieldScene_RunScene37a_020009f4(void)
     s32 base5_4010;
     s32 base5_4010_2;
 
-    Event_SetMessage(0xff6);
-    Actor_SetSpeed(0, 0x10000, 0x8000);
-    Actor_WalkToAndWait(0, 0x1e8, 176);
-    Actor_SetAnimation(0, 0);
+    Event_SetMessage(MSG_WHAT_IS_THIS_ROOM);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
+    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x1e8, 176);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, 0);
     record = Value1(Func_0200340e, 0);
     if (record != 0) {
-        Actor_SetPosition(16, *(s32 *)(record + 8), *(s32 *)(record + 16));
+        Actor_SetPosition(ACTOR_SUKURETA, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
-    Actor_FaceDirection(0, 0, 1);
-    Actor_SetSpeed(16, 0x10000, 0x8000);
-    Actor_WalkToAndWait(16, 0x1d8, 168);
-    Actor_FaceDirection(16, 0, 60);
-    Actor_Jump(16, 4, 40);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0, 1);
+    Actor_SetSpeed(ACTOR_SUKURETA, 0x10000, 0x8000);
+    Actor_WalkToAndWait(ACTOR_SUKURETA, 0x1d8, 168);
+    Actor_FaceDirection(ACTOR_SUKURETA, 0, 60);
+    Actor_Jump(ACTOR_SUKURETA, 4, 40);
     Func_0200306c(16, 6);
     Camera_SetSpeed(0x26666, 0x4ccc);
     Camera_MoveTo(0x23f0000, -1, 0xb50000, 1);
@@ -837,41 +874,41 @@ void FieldScene_RunScene37a_020009f4(void)
     Camera_WaitForMove();
     Event_Wait(20);
     base5_4010 = (s32)Data_00004010;
-    Actor_FaceDirection(16, 0x3000, 20);
+    Actor_FaceDirection(ACTOR_SUKURETA, 0x3000, 20);
     Func_020030c8(base5_4010, 6);
-    Actor_FaceDirection(16, 0, 60);
-    Actor_RunRepeatedMotion(16, 2);
-    Actor_FaceDirection(16, 0x3000, 10);
+    Actor_FaceDirection(ACTOR_SUKURETA, 0, 60);
+    Actor_RunRepeatedMotion(ACTOR_SUKURETA, 2);
+    Actor_FaceDirection(ACTOR_SUKURETA, 0x3000, 10);
     Event_OpenMessage(base5_4010, 0);
     if (Event_ChooseYesNo(0, 0) == 0) {
-        Event_SetMessage(0xffa);
+        Event_SetMessage(MSG_SUKURETA_THESE_ROOMS_HIDE_A_SECRET);
     } else {
-        Event_SetMessage(0xffb);
+        Event_SetMessage(MSG_SUKURETA_A_ROOM_FOR_LUNA_AND_SOL);
     }
     base5_4010_2 = (s32)Data_00004010;
-    Actor_FaceDirection(0, 0xa000, 10);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xa000, 10);
     Func_0200311e(base5_4010_2, 10);
-    base6_ffc = (s32)Data_00000ffc;
+    base6_ffc = (s32)LinkedMessage_LookFartherUpThePassage;
     Event_SetMessage(base6_ffc);
-    Actor_FaceDirection(16, 0, 40);
-    Actor_ShowEmote(16, 0x105, 40);
-    Actor_SetAnimationAndWait(16, 4);
-    Actor_FaceDirection(16, 0x3000, 10);
-    Actor_SetAnimation(16, 4);
+    Actor_FaceDirection(ACTOR_SUKURETA, 0, 40);
+    Actor_ShowEmote(ACTOR_SUKURETA, 0x105, 40);
+    Actor_SetAnimationAndWait(ACTOR_SUKURETA, 4);
+    Actor_FaceDirection(ACTOR_SUKURETA, 0x3000, 10);
+    Actor_SetAnimation(ACTOR_SUKURETA, 4);
     Event_OpenMessage(base5_4010_2, 0);
     if (Event_ChooseYesNo(0, 0) == 0) {
         Event_SetMessage((base6_ffc + 1));
-        GameFlag_Set(0x896);
+        GameFlag_Set(FLAG_ROBIN_SEARCHING_FOR_SUKURETA);
     } else {
         Event_SetMessage((base6_ffc + 2));
     }
     Call2(SetSolShindenActorStep, (s32)Data_00004010, 4);
-    Camera_FollowActor(16, 1);
-    Actor_WalkToAndWait(16, 0x1e6, 131);
-    Actor_WalkToAndWait(16, 0x240, 120);
-    Actor_FaceDirection(16, 0xc000, 2);
+    Camera_FollowActor(ACTOR_SUKURETA, 1);
+    Actor_WalkToAndWait(ACTOR_SUKURETA, 0x1e6, 131);
+    Actor_WalkToAndWait(ACTOR_SUKURETA, 0x240, 120);
+    Actor_FaceDirection(ACTOR_SUKURETA, 0xc000, 2);
     Camera_SetSpeed(0x40000, 0x8000);
-    GameFlag_Set(0x80a);
+    GameFlag_Set(FLAG_INNER_SANCTUM_ENTERED);
 }
 
 void UpdateStatueTrapActor(void)
@@ -908,49 +945,49 @@ void UpdateStatueTrapActor(void)
         return;
     }
     Event_Begin();
-    Actor_SetAnimation(0, 0);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, 0);
     Event_SetMessage((s32)&Value_00001000);
-    if (GameFlag_IsSet(g1)!= 0 || GameFlag_IsSet(0x80a) == 0) {
+    if (GameFlag_IsSet(g1)!= 0 || GameFlag_IsSet(FLAG_INNER_SANCTUM_ENTERED) == 0) {
         target_actor = Func_0200364a(0);
         if (target_actor != 0) {
-            Actor_SetPosition(16, target_actor->unk8, target_actor->unk10);
+            Actor_SetPosition(ACTOR_SUKURETA, target_actor->unk8, target_actor->unk10);
         }
         Event_Wait(4);
-        Actor_SetSpeed(16, s1, s2);
+        Actor_SetSpeed(ACTOR_SUKURETA, s1, s2);
     } else {
         if (GameFlag_IsSet(g2)!= 0) goto do1;
         h1 = 0x1540000;
         if (scene_actor->unk8 > h1) {
 do1:
-            Actor_SetPosition(16, 0x1880000, 0xa80000);
+            Actor_SetPosition(ACTOR_SUKURETA, 0x1880000, 0xa80000);
             Event_Wait(4);
-            Actor_SetSpeed(16, s3, s4);
+            Actor_SetSpeed(ACTOR_SUKURETA, s3, s4);
         }
     }
     if (GameFlag_IsSet(g3)!= 0) goto do2;
     h2 = 0x1540000;
     if (scene_actor->unk8 > h2) {
 do2:
-        Actor_WalkToAndWait(16, d1, 0xe8);
+        Actor_WalkToAndWait(ACTOR_SUKURETA, d1, 0xe8);
     } else {
-        GameFlag_IsSet(0x80a);
+        GameFlag_IsSet(FLAG_INNER_SANCTUM_ENTERED);
     }
-    Actor_WalkToAndWait(16, d2, 0xe8);
-    Actor_FaceDirection(0, d5, 0);
-    Actor_FaceDirection(16, s5, 10);
-    Event_ShowMessageAndWait(16, 0, 10);
-    Actor_SetAnimationAndWait(0, 3);
-    if (GameFlag_IsSet(g4)!= 0 || GameFlag_IsSet(0x80a) == 0) {
-        Actor_SetAnimation(16, 2);
+    Actor_WalkToAndWait(ACTOR_SUKURETA, d2, 0xe8);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, d5, 0);
+    Actor_FaceDirection(ACTOR_SUKURETA, s5, 10);
+    Event_ShowMessageAndWait(ACTOR_SUKURETA, 0, 10);
+    Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
+    if (GameFlag_IsSet(g4)!= 0 || GameFlag_IsSet(FLAG_INNER_SANCTUM_ENTERED) == 0) {
+        Actor_SetAnimation(ACTOR_SUKURETA, 2);
         target_position = Func_0200372a(0);
         if (target_position != 0) {
-            Actor_SetDestination(16, target_position->unkA, target_position->unk12);
+            Actor_SetDestination(ACTOR_SUKURETA, target_position->unkA, target_position->unk12);
         }
-        Actor_WaitForMove(16);
-        Actor_SetPosition(16, 0, 0);
-        Actor_WalkToAndWait(0, d3, 0xe8);
+        Actor_WaitForMove(ACTOR_SUKURETA);
+        Actor_SetPosition(ACTOR_SUKURETA, 0, 0);
+        Actor_WalkToAndWait(ACTOR_PARTY_LEADER, d3, 0xe8);
     } else {
-        Actor_WalkToAndWait(0, d4, 0xf8);
+        Actor_WalkToAndWait(ACTOR_PARTY_LEADER, d4, 0xf8);
     }
     Event_End();
 }
@@ -1120,8 +1157,8 @@ void FieldScene_PrepareStatueTransition(void)
     Map_CopyCellsTo(14, 41, 32, 41, 8, 4);
     Camera_MoveTo(0x23e0000, -1, 0x9e0000, 0);
     Map_Redraw();
-    Actor_SetPosition(16, 0x23e0000, 0x780000);
-    Actor_SetPosition(0, 0, 0);
+    Actor_SetPosition(ACTOR_SUKURETA, 0x23e0000, 0x780000);
+    Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
     Task_Wait(1);
     ColorBuffer_ApplyTarget(0x2051cc, 1);
     ColorBuffer_Interpolate(20);
@@ -1142,9 +1179,8 @@ void FieldScene_PrepareStatueTransition(void)
     ColorBuffer_Interpolate(24);
 }
 
-void StartSolShindenTrapEvent(void)
+void Scene_SpringStatueTrap(void)
 {
-    u32 scene_state;
     s32 outer_pair;
     s32 second_pair;
     s32 middle_pair;
@@ -1153,10 +1189,10 @@ void StartSolShindenTrapEvent(void)
 
     Event_Begin();
     FieldScene_PrepareStatueTransition();
-    Event_SetMessage(4120);
-    SetInitialScale(16, 0x4000, 20);
-    SetInitialDirection(16, 256, 0);
-    Actor_Jump(16, 6, 30);
+    Event_SetMessage(MSG_WHATS_HAPPENING_AT_THE_TRAP);
+    SetInitialScale(ACTOR_SUKURETA, 0x4000, 20);
+    SetInitialDirection(ACTOR_SUKURETA, 256, 0);
+    Actor_Jump(ACTOR_SUKURETA, 6, 30);
     Camera_MoveTo(37617664, -1, 11403264, 1);
     Camera_WaitForMove();
     Event_Wait(30);
@@ -1204,14 +1240,13 @@ void StartSolShindenTrapEvent(void)
     SetStatueLightGroup1();
     Event_Wait(6);
     Func_02003aa8(32784, 6);
-    SetFinalScale(16, 0x20000, 0x10000);
-    Actor_WalkToAndWait(16, 576, 280);
-    scene_state = *(u32 *)Data_03001ebc;
-    *(s32 *)(scene_state + 448) = 256;
-    *(s32 *)(scene_state + 456) = 32;
+    SetFinalScale(ACTOR_SUKURETA, 0x20000, 0x10000);
+    Actor_WalkToAndWait(ACTOR_SUKURETA, 576, 280);
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+    gEventWork->transition_frames = 32;
     Event_CloseScreen();
     Event_WaitForScreen();
-    GameFlag_Set(2067);
+    GameFlag_Set(FLAG_STATUE_TRAP_SPRUNG);
     Event_RequestExit(3);
 }
 
@@ -1225,10 +1260,10 @@ void FieldScene_RunClosingSequence(void)
     Data_0200addc = 0;
     Data_0200ade0 = 0;
     Data_0200adec = 0;
-    Event_SetMessage(4097);
-    Actor_FaceDirection(16, 16384, 20);
-    Actor_ShowEmote(16, 256, 0);
-    Actor_Jump(16, 6, 30);
+    Event_SetMessage(MSG_WHATS_HAPPENING);
+    Actor_FaceDirection(ACTOR_SUKURETA, 16384, 20);
+    Actor_ShowEmote(ACTOR_SUKURETA, 256, 0);
+    Actor_Jump(ACTOR_SUKURETA, 6, 30);
     Camera_MoveTo(37617664, -1, 11403264, 1);
     Camera_WaitForMove();
     Event_Wait(30);
@@ -1284,10 +1319,10 @@ void FieldScene_RunClosingSequence(void)
         Event_Wait(2);
     }
     Map_CopyCellsTo(45, 30, 34, 10, 4, 2);
-    Actor_Jump(16, 6, 40);
+    Actor_Jump(ACTOR_SUKURETA, 6, 40);
     Func_02003cfa(32784, 6);
-    Actor_SetSpeed(16, 131072, 65536);
-    Actor_WalkToAndWait(16, 576, 280);
+    Actor_SetSpeed(ACTOR_SUKURETA, 131072, 65536);
+    Actor_WalkToAndWait(ACTOR_SUKURETA, 576, 280);
     Func_0200409c((s32)UpdateStatueLight1);
     Func_020040a2((s32)UpdateStatueLight2);
     Func_020040a8((s32)UpdateStatueLight3);
@@ -1336,8 +1371,8 @@ void FieldScene_RunFlaggedSequence(void)
         GameFlag_Set(2089);
     }
     FieldScene_PrepareStatueTransition();
-    Actor_FaceDirection(16, 16384, 20);
-    Actor_Jump(16, 6, 30);
+    Actor_FaceDirection(ACTOR_SUKURETA, 16384, 20);
+    Actor_Jump(ACTOR_SUKURETA, 6, 30);
     Camera_MoveTo(37617664, -1, 11403264, 1);
     Camera_WaitForMove();
     Event_Wait(30);
@@ -1386,9 +1421,9 @@ void FieldScene_RunFlaggedSequence(void)
     Event_Wait(6);
     if (GameFlag_IsSet(2082) == 0) {
         base = 32784;
-        Event_SetMessage(4133);
+        Event_SetMessage(MSG_YOU_FOUND_IT);
         Func_02003fe0(base, 6);
-        Actor_SetAnimationAndWait(16, 3);
+        Actor_SetAnimationAndWait(ACTOR_SUKURETA, 3);
         Func_02003ff0(base, 6);
     }
     work = *(u8 **)Data_03001ebc;
@@ -1399,57 +1434,57 @@ void FieldScene_RunFlaggedSequence(void)
     Event_RequestExit(5);
 }
 
-void FieldScene_RunScene37aSequenceE(void)
+void Scene_ChangeLunaPictureToSol(void)
 {
     u32 i;
     s32 record;
 
-    if (GameFlag_IsSet(0x810) != 0) {
+    if (GameFlag_IsSet(FLAG_LUNA_PICTURE_CHANGED_TO_SOL) != 0) {
     } else {
         if (Value0(CheckAllStatueLights) == 0) {
         } else {
             Event_Begin();
-            Actor_SetPosition(16, 0x2410000, 0x930000);
-            Actor_FaceDirection(16, 0x4000, 1);
+            Actor_SetPosition(ACTOR_SUKURETA, 0x2410000, 0x930000);
+            Actor_FaceDirection(ACTOR_SUKURETA, 0x4000, 1);
             Camera_MoveTo(0x23e0000, -1, 0xb80000, 1);
-            Event_SetMessage(0x1027);
-            Actor_WalkToAndWait(0, 0x240, 232);
-            Actor_SetAnimation(0, 0);
+            Event_SetMessage(MSG_THE_PICTURE_OF_LUNA_CHANGED_TO_SOL);
+            Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x240, 232);
+            Actor_SetAnimation(ACTOR_PARTY_LEADER, 0);
             Camera_WaitForMove();
             Event_Wait(10);
-            Actor_SetSpeed(16, 0x10000, 0x8000);
-            Actor_WalkToAndWait(16, 0x240, 152);
+            Actor_SetSpeed(ACTOR_SUKURETA, 0x10000, 0x8000);
+            Actor_WalkToAndWait(ACTOR_SUKURETA, 0x240, 152);
             Event_Wait(6);
-            Actor_Jump(16, 6, 30);
+            Actor_Jump(ACTOR_SUKURETA, 6, 30);
             Func_020040ee(16, 6);
-            Actor_SetAnimationAndWait(0, 3);
+            Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
             Event_Wait(2);
-            Actor_SetAnimationAndWait(16, 4);
+            Actor_SetAnimationAndWait(ACTOR_SUKURETA, 4);
             Func_0200410c(16, 6);
-            Actor_SetAttachedEffect(0, 0x102);
+            Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
             Event_Wait(40);
-            Actor_RunRepeatedMotion(16, 2);
+            Actor_RunRepeatedMotion(ACTOR_SUKURETA, 2);
             Event_Wait(30);
             Func_02004132(16, 6);
-            Actor_SetAnimationAndWait(0, 3);
-            Actor_WalkToAndWait(16, 0x240, 184);
+            Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
+            Actor_WalkToAndWait(ACTOR_SUKURETA, 0x240, 184);
             Event_Wait(6);
-            Actor_RunRepeatedMotion(16, 2);
+            Actor_RunRepeatedMotion(ACTOR_SUKURETA, 2);
             Event_Wait(40);
             Call2(SetSolShindenActorStep, 0x4010, 6);
-            Actor_WalkToAndWait(16, 0x240, 208);
+            Actor_WalkToAndWait(ACTOR_SUKURETA, 0x240, 208);
             Event_Wait(40);
-            Actor_SetAnimationAndWait(0, 3);
+            Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
             Event_Wait(6);
-            Actor_SetSpeed(16, 0x8000, 0x4000);
-            Actor_SetAnimation(16, 2);
+            Actor_SetSpeed(ACTOR_SUKURETA, 0x8000, 0x4000);
+            Actor_SetAnimation(ACTOR_SUKURETA, 2);
             record = Value1(Func_0200458e, 0);
             if (record != 0) {
-                Actor_SetDestination(16, *(s16 *)(record + 10), *(s16 *)(record + 18));
+                Actor_SetDestination(ACTOR_SUKURETA, *(s16 *)(record + 10), *(s16 *)(record + 18));
             }
-            Actor_WaitForMove(16);
-            Actor_SetPosition(16, 0, 0);
-            GameFlag_Set(0x810);
+            Actor_WaitForMove(ACTOR_SUKURETA);
+            Actor_SetPosition(ACTOR_SUKURETA, 0, 0);
+            GameFlag_Set(FLAG_LUNA_PICTURE_CHANGED_TO_SOL);
             Event_End();
         }
     }
@@ -1473,7 +1508,7 @@ void FieldScene_RunActorPositionTransition(void)
     Func_02004252_actor_step(16, 6);
     Func_0200469a(0, 2);
     Func_02004630(6);
-    Actor_SetAnimationAndWait(16, 3);
+    Actor_SetAnimationAndWait(ACTOR_SUKURETA, 3);
     Func_02004270(16, 6);
     Call3(Func_0200468c, 16, 0x178, 184);
     Call3(Func_020046a8, 16, 0x6480000, 0x6480000);
@@ -1485,13 +1520,13 @@ s32 CheckAllStatueLights(void)
 {
     s32 all_set = 1;
 
-    if (GameFlag_IsSet(0x80b) == 0)
+    if (GameFlag_IsSet(FLAG_STATUE_LIGHT_1) == 0)
         all_set = 0;
-    if (GameFlag_IsSet(0x80c) == 0)
+    if (GameFlag_IsSet(FLAG_STATUE_LIGHT_2) == 0)
         all_set = 0;
-    if (GameFlag_IsSet(0x80d) == 0)
+    if (GameFlag_IsSet(FLAG_STATUE_LIGHT_3) == 0)
         all_set = 0;
-    if (GameFlag_IsSet(0x80e) == 0)
+    if (GameFlag_IsSet(FLAG_STATUE_LIGHT_4) == 0)
         all_set = 0;
 
     return all_set;
@@ -1503,18 +1538,18 @@ void SetSolShindenActorStep(s32 actor_step, s32 wait_frames)
     Event_Wait(wait_frames);
 }
 
-void FieldScene_RunScene37a_02002924(void)
+void Sukureta_Talk(void)
 {
     u32 i;
     s32 record;
 
     Event_Begin();
-    if (GameFlag_IsSet(0x896) != 0) {
-        Event_SetMessage(0xffd);
+    if (GameFlag_IsSet(FLAG_ROBIN_SEARCHING_FOR_SUKURETA) != 0) {
+        Event_SetMessage(MSG_SUKURETA_LET_ME_KNOW_WHAT_YOU_FIND);
     } else {
-        Event_SetMessage(0xfff);
+        Event_SetMessage(MSG_SUKURETA_JUST_WAIT_OVER_THERE);
     }
-    Event_ShowMessageAndWait(16, 0, 10);
-    Actor_FaceDirection(16, 0xc000, 10);
+    Event_ShowMessageAndWait(ACTOR_SUKURETA, 0, 10);
+    Actor_FaceDirection(ACTOR_SUKURETA, 0xc000, 10);
     Event_End();
 }

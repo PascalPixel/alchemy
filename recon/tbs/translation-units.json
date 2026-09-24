@@ -77588,6 +77588,66 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "scene-39c-02005900",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAKYURI/SPAWN_TIMER.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_39c",
+      "absolute_symbols": {
+        "OverlayObject_SpawnKind24AtObject": {
+          "address": "0x0200d158",
+          "kind": "thumb"
+        },
+        "Engine_RandomNext": {
+          "address": "0x0200d994",
+          "kind": "thumb"
+        },
+        "gGameStateRows": {
+          "address": "0x02000240",
+          "kind": "data"
+        },
+        "gEventGlobals": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02005900",
+          "extent": 72,
+          "state": "exact-c"
+        }
+      ],
+      "instances": {
+        "resource_39b": {
+          "owners": {
+            "Makyuri_TickSpawnTimer": {
+              "address": "0x02002370",
+              "extent": 72
+            }
+          },
+          "absolute_symbols": {
+            "Engine_RandomNext": {
+              "address": "0x0200a3fc",
+              "kind": "thumb"
+            },
+            "OverlayObject_SpawnKind24AtObject": {
+              "address": "0x02009bc8",
+              "kind": "thumb"
+            },
+            "gGameStateRows": {
+              "address": "0x02000240",
+              "kind": "data"
+            },
+            "gEventGlobals": {
+              "address": "0x03001ebc",
+              "kind": "data"
+            }
+          }
+        }
+      }
     }
   ]
 }

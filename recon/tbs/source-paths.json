@@ -1,6 +1,14 @@
 {
   "format": 3,
   "owners": {
+    "resource_39b:02002370": {
+      "name": "Makyuri_TickSpawnTimer",
+      "source": "FIELD/COMMON/MAKYURI/SPAWN_TIMER.C"
+    },
+    "resource_39c:02005900": {
+      "name": "Makyuri_TickSpawnTimer",
+      "source": "FIELD/COMMON/MAKYURI/SPAWN_TIMER.C"
+    },
     "resource_37b:02001ff4": {
       "name": "SoruSekizo_OpenSeal",
       "source": "FIELD/SORU_SEKIZO/OPEN_SEAL.C"

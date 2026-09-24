@@ -3740,41 +3740,8 @@ AlchemyC_02005578:
 	.4byte 0x03001c94
 	.2byte 0x0118
 	.2byte 0x0300
-	push	{r5, lr}
-	ldr	r3, [pc, #60]
-	ldr	r2, [r3, #0]
-	subs	r3, #32
-	ldr	r5, [r2, #0]
-	movs	r1, #250
-	ldr	r2, [r3, #0]
-	ldr	r3, [pc, #52]
-	lsls	r1, r1, #1
-	adds	r3, r3, r1
-	ldr	r3, [r3, #0]
-	lsls	r3, r3, #2
-	adds	r3, #20
-	ldr	r0, [r2, r3]
-	ldr	r3, [r5, #8]
-	cmp	r3, #0
-	beq.n	.L_02005926
-	subs	r3, #1
-	b.n	.L_02005938
-.L_02005926:
-	bl	sub_0200aa80
-	bl	sub_0200b2c0
-	lsls	r3, r0, #4
-	subs	r3, r3, r0
-	lsls	r3, r3, #1
-	lsrs	r3, r3, #16
-	adds	r3, #10
-.L_02005938:
-	str	r3, [r5, #8]
-	pop	{r5}
-	pop	{r0}
-	bx	r0
-	.4byte 0x03001edc
-	.2byte 0x0240
-	.2byte 0x0200
+AlchemyC_02005900:
+	.space 0x48
 AlchemyC_02005948:
 	.space 0x24
 	.include "games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_HEYA/IMPORT.INC"

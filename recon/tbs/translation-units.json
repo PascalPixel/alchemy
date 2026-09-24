@@ -80744,6 +80744,142 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "scene-39a-02001fac",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/IMIRU_FUCHIN/FADE_IN.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_39a",
+      "absolute_symbols": {
+        "Engine_ColorBufferApplySource": {
+          "address": "0x0200a3b8",
+          "kind": "thumb"
+        },
+        "Engine_ColorBufferApplyTarget": {
+          "address": "0x0200a3b0",
+          "kind": "thumb"
+        },
+        "Engine_ColorBufferInterpolate": {
+          "address": "0x0200a3c0",
+          "kind": "thumb"
+        },
+        "Engine_TaskWait": {
+          "address": "0x0200a260",
+          "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02001fac",
+          "extent": 104,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "scene-39e-02000f80",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHIAN_JIIN/WALK_BY_FACING.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_39e",
+      "absolute_symbols": {
+        "Engine_ActorGet": {
+          "address": "0x0200c404",
+          "kind": "thumb"
+        },
+        "Engine_ActorWalkToAndWait": {
+          "address": "0x0200c434",
+          "kind": "thumb"
+        },
+        "Engine_ActorFaceDirection": {
+          "address": "0x0200c4c4",
+          "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02000f80",
+          "extent": 172,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "scene-395-02001070",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/KORIMA_KI/PREPARE_ACTORS.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_395",
+      "absolute_symbols": {
+        "Engine_ActorGet": {
+          "address": "0x020099b0",
+          "kind": "thumb"
+        },
+        "Engine_TaskWait": {
+          "address": "0x02009908",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetChildValue": {
+          "address": "0x02009a18",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagIsSet": {
+          "address": "0x02009980",
+          "kind": "thumb"
+        },
+        "PaletteScene_AdjustPaletteWindow": {
+          "address": "0x02009768",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpriteFlags": {
+          "address": "0x02009958",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpritePriority": {
+          "address": "0x02009a48",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetAnimation": {
+          "address": "0x020099f0",
+          "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
+        },
+        "Data_02000240_t": {
+          "address": "0x02000240",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02001070",
+          "extent": 376,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

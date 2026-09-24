@@ -1,6 +1,3 @@
-/* NONMATCHING: 104 bytes, candidate 108, 17 differing halfwords (2026-09-24).
- * Remaining: the reference stores the fade flag before the work offsets and
- * derives 0x53c from the loaded 0x53e (one fewer literal). */
 #include "TYPES.H"
 
 void Engine_ColorBufferApplySource();
@@ -22,15 +19,22 @@ static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
     f(a0, a1);
 }
 
-void ImiruFuchin_Func02001fac(void)
+struct FadeWork {
+    u8 unknown_00[52];
+    u8 active;
+};
+
+/* While the stage is early enough, start the fade-in: raise the fade flag,
+ * set the three light flags and interpolate the palette over 16 frames. */
+void ImiruFuchin_StartFadeIn(void)
 {
-    u8 *fade;
+    struct FadeWork *fade;
     u8 *work;
 
     if (Data_02000240_t[225][0] <= 6) {
-        fade = *(u8 **)0x03001f30;
+        fade = *(struct FadeWork **)0x03001f30;
         work = *(u8 **)0x03001ecc;
-        fade[52] = 1;
+        fade->active = 1;
         work[0x53e] = 0;
         work[0x53c] = 1;
         work[0x53d] = 1;

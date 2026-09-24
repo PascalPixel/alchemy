@@ -997,6 +997,10 @@
       "name": "Owner_RatioNoOp",
       "source": "GAME/CHARACTER/RATIOS.C"
     },
+    "main:08078320": {
+      "name": "Owner_UpdateSecondInputAndRatios",
+      "source": "GAME/CHARACTER/RATIOS_SECOND_INPUT.C"
+    },
     "main:08079004": {
       "name": "Owner_LevelNoOp"
     },

@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_3b1:02002ff0": {
+      "name": "FuneHeya_ApplyEntryState",
+      "source": "FIELD/FUNE_HEYA/ENTRY_STATE.C"
+    },
     "resource_39b:020012e0": {
       "name": "MakyuriIriguchi_ApplyEntryState",
       "source": "FIELD/MAKYURI_IRIGUCHI/ENTRY_STATE.C"

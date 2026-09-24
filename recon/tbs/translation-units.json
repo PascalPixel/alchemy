@@ -75719,6 +75719,166 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "scene-3b1-02002ff0",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/FUNE_HEYA/ENTRY_STATE.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3b1",
+      "absolute_symbols": {
+        "Engine_TaskWait": {
+          "address": "0x0200e420",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagSet": {
+          "address": "0x0200e4a8",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagIsSet": {
+          "address": "0x0200e4a0",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetChildValue": {
+          "address": "0x0200e598",
+          "kind": "thumb"
+        },
+        "SceneState_RunFlagGatedSetupCascade": {
+          "address": "0x0200b51c",
+          "kind": "thumb"
+        },
+        "RunSceneSelectionChain": {
+          "address": "0x0200b66c",
+          "kind": "thumb"
+        },
+        "Local_02003364": {
+          "address": "0x0200b364",
+          "kind": "thumb"
+        },
+        "FieldScene_RunScene3b1_02003dec": {
+          "address": "0x0200bdec",
+          "kind": "thumb"
+        },
+        "FieldScene_RunScene3b1_02003d10": {
+          "address": "0x0200bd10",
+          "kind": "thumb"
+        },
+        "FieldScene_RunScene3b1_02003eec": {
+          "address": "0x0200beec",
+          "kind": "thumb"
+        },
+        "FieldScene_RunScene3b1_02003e34": {
+          "address": "0x0200be34",
+          "kind": "thumb"
+        },
+        "FieldScene_RunFlagBranchedSetupCascade": {
+          "address": "0x0200bf94",
+          "kind": "thumb"
+        },
+        "FieldScene_RunScene3b1_020040e8": {
+          "address": "0x0200c0e8",
+          "kind": "thumb"
+        },
+        "FieldScene_RunScene3b1_0200413c": {
+          "address": "0x0200c13c",
+          "kind": "thumb"
+        },
+        "Engine_EventBegin": {
+          "address": "0x0200e4c8",
+          "kind": "thumb"
+        },
+        "FieldScene_RunSceneStep": {
+          "address": "0x0200c8e8",
+          "kind": "thumb"
+        },
+        "Engine_ActorEnableActionCallback": {
+          "address": "0x0200e500",
+          "kind": "thumb"
+        },
+        "FieldScene_RunScene3b1_02004198": {
+          "address": "0x0200c198",
+          "kind": "thumb"
+        },
+        "FieldScene_RunActors24And25Setup": {
+          "address": "0x0200c218",
+          "kind": "thumb"
+        },
+        "Engine_EventEnd": {
+          "address": "0x0200e4d0",
+          "kind": "thumb"
+        },
+        "FieldScene_RunScene3b1_02005068": {
+          "address": "0x0200d068",
+          "kind": "thumb"
+        },
+        "FieldScene_RunActors24And25SetupWithValue929": {
+          "address": "0x0200d684",
+          "kind": "thumb"
+        },
+        "FieldScene_RunScene3b1_020056dc": {
+          "address": "0x0200d6dc",
+          "kind": "thumb"
+        },
+        "FieldScene_RunActors24And25SetupWithValue92a": {
+          "address": "0x0200d780",
+          "kind": "thumb"
+        },
+        "Engine_TaskAddCallback": {
+          "address": "0x0200e428",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetAnimation": {
+          "address": "0x0200e550",
+          "kind": "thumb"
+        },
+        "FieldScene_RunExtendedFormationPresentation": {
+          "address": "0x0200d7ec",
+          "kind": "thumb"
+        },
+        "RunActorsEightAndNineMapEvent": {
+          "address": "0x0200dca4",
+          "kind": "thumb"
+        },
+        "Scene_RunFourActorProgressPresentation": {
+          "address": "0x0200dd10",
+          "kind": "thumb"
+        },
+        "FieldScene_RunScene3b1_02006110": {
+          "address": "0x0200e110",
+          "kind": "thumb"
+        },
+        "Engine_EventRequestExit": {
+          "address": "0x0200e618",
+          "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
+        },
+        "Scene_UpdateCueTimer": {
+          "address": "0x0200dc48",
+          "kind": "thumb"
+        },
+        "Data_0200e8e4": {
+          "address": "0x0200e8e4",
+          "kind": "data"
+        },
+        "Data_0200ff84": {
+          "address": "0x0200ff84",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02002ff0",
+          "extent": 884,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

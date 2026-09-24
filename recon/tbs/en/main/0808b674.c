@@ -1,14 +1,13 @@
-/* Draft, not exact (2026-09-24): 432 of 432 bytes, 32 halfwords differ.
- * The whole owner is hand-written. Comparing the header-clearing loop
- * against a fresh read of Data_03001ebc (not the work local) puts work in
- * r8 and leader in r7 as the ROM has them (63 -> 42); the ROM then compares
- * against a copy of work in ip where this reloads the pointer, which also
- * shifts the template copy's scratch registers. The row above the player's
- * cell is its own extern (Data_0200fe00, the map row one step north) for
- * the ROM's pool order (42 -> 36; cell - 128 stays at 42), and the height
- * goes through its own local so it is added as y + (h - 0x200000) (-> 32).
- * Remaining: the cell and row-above pointers land in r1/r2 swapped, and
- * two constant temporaries take r6/r0 where the ROM uses r0/r1. */
+/* Draft, not exact (2026-09-24): 432 of 432 bytes, 9 halfwords differ.
+ * The whole owner is hand-written. Data_03001ebc is a const pointer, so
+ * the loop's fresh read of it after the template copies becomes the ROM's
+ * mov ip, r8 (63 -> 9 together with the two notes below). The row above
+ * the player's cell is its own extern (Data_0200fe00, the map row one step
+ * north) for the ROM's pool order (cell - 128: +6), and the height goes
+ * through its own local so it is added as y + (h - 0x200000). Remaining:
+ * movs r2, #0 is scheduled after adds r3, #12 before the loop, and the
+ * cell and row-above pointers land in r1/r2 where the ROM has r2/r1 (with
+ * its constants in r0/r4). */
 #include "TYPES.H"
 
 /* One row of a scene's object table; a row whose id is -1 ends it. */
@@ -76,7 +75,7 @@ struct ResourceMetadata {
     u8 height;
 };
 
-extern struct ObjectWork *Data_03001ebc;
+extern struct ObjectWork *const Data_03001ebc;
 extern struct PlayerState Data_02000240;
 extern const struct EventObjectEntry Data_0809f810[2];
 extern struct MapCell Data_02010000[];

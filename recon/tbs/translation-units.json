@@ -36664,48 +36664,8 @@
           "address": "0x200d994",
           "kind": "thumb"
         },
-        "Func_0200da04": {
-          "address": "0x200da04",
-          "kind": "thumb"
-        },
-        "Func_0200da84": {
-          "address": "0x200da84",
-          "kind": "thumb"
-        },
-        "Func_0200daac": {
-          "address": "0x200daac",
-          "kind": "thumb"
-        },
-        "Func_0200dab4": {
-          "address": "0x200dab4",
-          "kind": "thumb"
-        },
-        "Func_0200dabc": {
-          "address": "0x200dabc",
-          "kind": "thumb"
-        },
-        "Func_0200dadc": {
-          "address": "0x200dadc",
-          "kind": "thumb"
-        },
-        "Func_0200db1c": {
-          "address": "0x200db1c",
-          "kind": "thumb"
-        },
-        "Func_0200db24": {
-          "address": "0x200db24",
-          "kind": "thumb"
-        },
-        "Func_0200dba4": {
-          "address": "0x200dba4",
-          "kind": "thumb"
-        },
         "Func_0200dc5c": {
           "address": "0x200dc5c",
-          "kind": "thumb"
-        },
-        "Func_0200dc64": {
-          "address": "0x200dc64",
           "kind": "thumb"
         }
       },

@@ -1,6 +1,11 @@
 {
   "format": 3,
   "owners": {
+    "resource_39b:02001cb4": {
+      "name": "Makyuri_FollowLeader",
+      "call_via": "0200261c",
+      "source": "FIELD/COMMON/MAKYURI/FOLLOW_LEADER.C"
+    },
     "resource_370:020001fc": {
       "name": "Clear_CheckButtonCodes",
       "source": "MENU/CLEAR/BUTTON_CODES.C"

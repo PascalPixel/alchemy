@@ -553,21 +553,6 @@
     },
     {
       "overlay": "resource_39b",
-      "start": "0x02001cb4",
-      "end": "0x02001d44",
-      "kind": "not_yet_decompiled",
-      "retention": "not_yet_c",
-      "confidence": "strong",
-      "evidence": [
-        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
-        "audited 324-byte whole owner in recon/tbs/semantic/regions.json",
-        "two inline calls at 0x02001d40 and 0x02001d94 use mov ip,pc followed by bx r3",
-        "the approved Thumb indirect-call patterns emit bl to a call-via-register thunk and cannot select an IP-linked return ABI",
-        "byte-exact decoded-overlay assembly round trip"
-      ]
-    },
-    {
-      "overlay": "resource_39b",
       "start": "0x02002030",
       "end": "0x020021f2",
       "kind": "not_yet_decompiled",
@@ -667,34 +652,6 @@
         "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
         "second audited executable island of the 0x020010c4 owner",
         "the owner uses an IP-linked inline call that the approved Thumb call patterns cannot emit",
-        "byte-exact decoded-overlay assembly round trip"
-      ]
-    },
-    {
-      "overlay": "resource_39b",
-      "start": "0x02001d5a",
-      "end": "0x02001d98",
-      "kind": "not_yet_decompiled",
-      "retention": "not_yet_c",
-      "confidence": "strong",
-      "evidence": [
-        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
-        "second audited executable island of the 0x02001cb4 owner",
-        "the owner uses IP-linked inline calls that the approved Thumb call patterns cannot emit",
-        "byte-exact decoded-overlay assembly round trip"
-      ]
-    },
-    {
-      "overlay": "resource_39b",
-      "start": "0x02001dae",
-      "end": "0x02001de4",
-      "kind": "not_yet_decompiled",
-      "retention": "not_yet_c",
-      "confidence": "strong",
-      "evidence": [
-        "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
-        "third audited executable island of the 0x02001cb4 owner",
-        "the owner uses IP-linked inline calls that the approved Thumb call patterns cannot emit",
         "byte-exact decoded-overlay assembly round trip"
       ]
     },

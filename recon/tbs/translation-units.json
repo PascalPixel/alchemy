@@ -80072,6 +80072,34 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "scene-39b-02001cb4",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAKYURI/FOLLOW_LEADER.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_39b",
+      "absolute_symbols": {
+        "Main_08000110": {
+          "address": "0x0200a40c",
+          "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02001cb4",
+          "extent": 324,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

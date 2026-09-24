@@ -1,3 +1,12 @@
+/* Draft, not exact (2026-09-24): 332 of 340 bytes, halfword_edits=22 (was 60
+   at 328). BattleFx_EndCanvasLayer: the queued display-control writes use
+   the QueueIoWriteDelay2 idiom of SYSTEM/IO_WRITE_QUEUE.C (one-pass loop
+   around the IME read, u16 count store; FAKEMATCH there), which is exact in
+   BattlePres_ConfigureEffectDisplay, and the scroll pointer is taken after
+   the cue call. Residual: the reference loads the queue pointer ahead of the
+   scroll store before the first queued write, and computes battle + 0x648
+   for the first read separately from the later battle += 0x648 (building the
+   second 0x648 with movs/lsls); here CSE shares them, 8 bytes shorter. */
 #include "TYPES.H"
 
 struct DisplayQueueEntry {
@@ -45,33 +54,37 @@ void Func_080b5048(u16, s32);
    still-unadopted draft QueueObjectUpdate in
    recon/tbs/en/main/080c1798.c (a different queue at
    Data_03001e50, not Data_02002090) -- useful as a lead, not proof. */
-static inline void QueueDisplayRequest(u32 control)
-{
-    struct DisplayQueue *queue = &Data_02002090;
-    volatile u16 *ime = &Data_04000208;
-    u32 saved = *ime;
-    s32 count;
-    *ime = (u16)(u32)ime;
-    count = queue->count;
-    if (count <= 31) {
-        struct DisplayQueueEntry *entry = &queue->entries[count];
-        u32 *destination = &entry->control;
-
-        queue->count = count + 1;
-        *destination++ = control;
-        *destination++ = 0x04000000;
-        *destination = 0x00020000;
-    }
-    *ime = saved;
-}
+#define QueueDisplayRequest(control) do {                                  \
+        u32 saved;                                                          \
+        s32 count;                                                          \
+        volatile u16 *ime;                                                  \
+        struct DisplayQueue *queue;                                         \
+                                                                            \
+        queue = &Data_02002090;                                             \
+        do {                                                                \
+            ime = &Data_04000208;                                           \
+            saved = *ime;                                                   \
+        } while (0);                                                        \
+        *ime = (u16)ime;                                                    \
+        count = queue->count;                                               \
+        if (count <= 31) {                                                  \
+            u32 *destination = (u32 *)((u8 *)queue + count * 12 + 4);       \
+            *(u16 *)&queue->count = count + 1;                              \
+            *destination++ = (control);                                     \
+            *destination++ = 0x04000000;                                    \
+            *destination = 0x00020000;                                      \
+        }                                                                   \
+        *ime = saved;                                                       \
+    } while (0)
 
 void Func_080cdbc0(void)
 {
-    struct Position *pos = &Data_03001ad0;
+    struct Position *pos;
     u8 *actor = Data_03001eec;
     u8 *battle = *(u8 **)((u8 *)&Data_03001eec - 120);
 
     Audio_PlayCue(0x121);
+    pos = &Data_03001ad0;
 
     pos->x = *(s32 *)(actor + 0x77a0);
     pos->y = *(s32 *)(actor + 0x77a4);

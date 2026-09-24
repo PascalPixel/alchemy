@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_3af:02000598": {
+      "name": "FuneKanpan_UpdateFlyByForActor21",
+      "source": "FIELD/FUNE_KANPAN/FLY_BY_21.C"
+    },
     "resource_395:020015a0": {
       "name": "KorimaKi_SpawnOrbitSparks",
       "source": "FIELD/KORIMA_KI/ORBIT_SPARKS.C"

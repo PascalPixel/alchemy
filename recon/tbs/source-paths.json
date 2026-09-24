@@ -767,6 +767,12 @@
       "name": "Ui_LoadWindowGraphics",
       "source": "GRAPHICS/WINDOW/LOAD_GRAPHICS.C"
     },
+    "main:08004a94": {
+      "name": "SceneTransform_ResetMatrix"
+    },
+    "main:08004ab0": {
+      "name": "SceneTransform_ApplyRotation"
+    },
     "main:0800f9f4": {
       "name": "Tilemap_DecodeStagedBuffer",
       "source": "GRAPHICS/TILE/DECODE_STAGED_BUFFER.C"

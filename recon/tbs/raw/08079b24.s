@@ -1,8 +1,10 @@
 .syntax unified
 	.thumb
 	.set sub_080022ec, 0x080022ec
+	.global Curve_LookupScaledValue
 	.global Func_08079b24
 	.thumb_func
+Curve_LookupScaledValue:
 Func_08079b24:
 	push	{r5, r6, r7, lr}
 	mov	r7, r8

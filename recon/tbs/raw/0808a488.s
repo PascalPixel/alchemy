@@ -1,7 +1,9 @@
 .syntax unified
 	.thumb
+	.global BattleFx_HasMatchingEvent5Far
 	.global Func_0808a488
 	.thumb_func
+BattleFx_HasMatchingEvent5Far:
 Func_0808a488:
 	ldr	r4, [pc, #0]
 	bx	r4

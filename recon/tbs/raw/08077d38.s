@@ -3,8 +3,10 @@
 	.set sub_08077cb8, 0x08077cb8
 	.set sub_08078ee8, 0x08078ee8
 	.set sub_0807961c, 0x0807961c
+	.global GameState_InitDefaults
 	.global Func_08077d38
 	.thumb_func
+GameState_InitDefaults:
 Func_08077d38:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl

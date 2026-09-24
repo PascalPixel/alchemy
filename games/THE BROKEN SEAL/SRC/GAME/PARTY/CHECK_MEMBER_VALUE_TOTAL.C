@@ -23,7 +23,7 @@ s32 Party_CheckMemberValueTotal(s32 id)
         p = gGameState + offset;
         cnt = count;
         do {
-            value = Party_Apply(*p, id);
+            value = Inventory_CountItemFar(*p, id);
             cnt--;
             p++;
             sum += value;

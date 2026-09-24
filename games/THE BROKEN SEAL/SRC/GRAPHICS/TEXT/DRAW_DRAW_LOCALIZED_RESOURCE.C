@@ -7,7 +7,7 @@
  * function. The two captured pointers preserve the evidenced outer-frame
  * layout; the public alias gives the reconstructed entry its address name.
  */
-s32 Ui_Place(s32, s16 *, s32);
+s32 UiText_CopyMessageString(s32, s16 *, s32);
 s32 UiText_RenderWideStringAtOffset(s16 *, s32, s32, s32);
 
 extern s32 UiText_DrawLocalizedResource80d(void)
@@ -23,7 +23,7 @@ static __inline__ s32 Scope_080270d8(void)
         s16 data[64];
 
         (void)&padding;
-        Ui_Place(0x80D, data, 0x34);
+        UiText_CopyMessageString(0x80D, data, 0x34);
         return UiText_RenderWideStringAtOffset(data, *(s32 *)(context + 0x44), 0, 4);
     }
 

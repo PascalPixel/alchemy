@@ -44,7 +44,7 @@ s32 BattlePlacement_UpdateEntries(void)
         owner = owners[i];
         for (x = 0; x <= 3; x++) {
             for (y = 0; y <= 19; y++) {
-                if (Battle_Place(owner, x, y) != 0) {
+                if (Trade_CanOfferDjinnFar(owner, x, y) != 0) {
                     struct PlacementList *list = &Trade_GetOfferStateFar((u32)owner > 7 ? 1 : 0)->list;
                     s32 j;
 
@@ -53,7 +53,7 @@ s32 BattlePlacement_UpdateEntries(void)
                             break;
                     }
                     if (j == list->count)
-                        Battle_unk2_3(owner, x, y);
+                        Trade_AddOfferFar(owner, x, y);
                 }
             }
         }

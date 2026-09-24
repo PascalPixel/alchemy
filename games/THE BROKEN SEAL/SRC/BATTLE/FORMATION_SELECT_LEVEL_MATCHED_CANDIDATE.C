@@ -22,7 +22,7 @@ struct BattleUnitLevel *Owner_GetStateFar(s32 unit_id);
 s16 *Runtime_BumpAllocateAlternatePool(s32 size);
 
 s32 Party_ComputeEligibleMemberAverage(s32 record_id);
-struct BattleActorDefinition *FunctionHead_08077198(s32 actor_id);
+struct BattleActorDefinition *Owner_GetRecordFar(s32 actor_id);
 
 extern u16 RomBytes_080c73f8[];
 s32 GameFlag_GetByteFar(s32 id);
@@ -64,7 +64,7 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *out_margin)
         pool[i].score = -1;
 
     for (i = 0; (u32)i <= 19; i++) {
-        FunctionHead_08077198(RomBytes_080c73f8[i]);
+        Owner_GetRecordFar(RomBytes_080c73f8[i]);
         GameFlag_ClearBitFar(RomBytes_080c73f8[i] + 1536);
     }
 

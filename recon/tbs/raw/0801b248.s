@@ -2,8 +2,10 @@
 	.thumb
 	.set sub_08003fa4, 0x08003fa4
 	.set sub_08004080, 0x08004080
+	.global Menu_SetupSelectionSide
 	.global Func_0801b248
 	.thumb_func
+Menu_SetupSelectionSide:
 Func_0801b248:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

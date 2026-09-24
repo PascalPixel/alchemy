@@ -1,7 +1,9 @@
 .syntax unified
 	.thumb
+	.global Event_SetPairWork1c0Far
 	.global Func_0808a238
 	.thumb_func
+Event_SetPairWork1c0Far:
 Func_0808a238:
 	ldr	r4, [pc, #0]
 	bx	r4

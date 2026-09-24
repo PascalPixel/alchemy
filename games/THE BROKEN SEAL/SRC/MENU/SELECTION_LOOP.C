@@ -12,10 +12,10 @@ void Menu_LoadSelectionNodeResource(void *state, u32 index);
 void Menu_StepRight(void *state);
 void Menu_StepLeft(void *state);
 s32 Menu_ConfirmSelection(void *state);
-void Menu_Do(void *state);
-void Menu_Do2(void *state);
+void Menu_StepRight(void *state);
+void Menu_StepLeft(void *state);
 void Menu_ReloadNodeResource(void *state, u32 index);
-void Menu_Apply2(void *state, u32 mode);
+void Menu_ScrollSelectionList(void *state, u32 mode);
 void Menu_LoadSelectionNodeResource(void *state, u32 index);
 void Menu_OpenSelectionWindow(u16 type, u32 value);
 
@@ -60,10 +60,10 @@ again:
         input = (u32 *)ADDR_03001B04;
         if (*input & 0x10) {
             Audio_PlayCue(SOUND_MENU_CURSOR_MOVE);
-            Menu_Do(state);
+            Menu_StepRight(state);
         } else if (*input & 0x20) {
             Audio_PlayCue(SOUND_MENU_CURSOR_MOVE);
-            Menu_Do2(state);
+            Menu_StepLeft(state);
         }
 
         if (*(u32 *)ADDR_03001C94 & 1) {
@@ -115,7 +115,7 @@ void Menu_MoveSelectionForward(u8 *state)
                 *(u16 *)(state + 60) = value;
             }
             *selection += 1;
-            Menu_Apply2(state, 1);
+            Menu_ScrollSelectionList(state, 1);
             if (*selection + *index + 2 == *count) {
                 u32 value = 0;
 
@@ -164,7 +164,7 @@ void Menu_MoveSelectionBackward(u8 *state)
                 *(u16 *)(state + 8) = value;
             }
             *(u16 *)selection += 0xffff;
-            Menu_Apply2(state, 0);
+            Menu_ScrollSelectionList(state, 0);
             if (*(u16 *)selection == 0) {
                 *(u16 *)(state + 10) = 0;
             }

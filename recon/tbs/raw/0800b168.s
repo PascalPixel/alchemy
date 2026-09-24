@@ -3,8 +3,10 @@
 	.set sub_08003d28, 0x08003d28
 	.set sub_08003dec, 0x08003dec
 	.set sub_0800aa0c, 0x0800aa0c
+	.global Render_ApplyProjectedPlacement
 	.global Func_0800b168
 	.thumb_func
+Render_ApplyProjectedPlacement:
 Func_0800b168:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

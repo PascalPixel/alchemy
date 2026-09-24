@@ -1,7 +1,9 @@
 .syntax unified
 	.thumb
+	.global Inventory_CountItemFar
 	.global Func_080772d8
 	.thumb_func
+Inventory_CountItemFar:
 Func_080772d8:
 	ldr	r4, [pc, #0]
 	bx	r4

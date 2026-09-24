@@ -6,8 +6,10 @@
 	.set sub_0801b9ec, 0x0801b9ec
 	.set sub_0801ba68, 0x0801ba68
 	.set sub_0801bd98, 0x0801bd98
+	.global Menu_StepRight
 	.global Func_0801b664
 	.thumb_func
+Menu_StepRight:
 Func_0801b664:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl

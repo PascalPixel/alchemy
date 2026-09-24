@@ -2,7 +2,7 @@
 #include "EFFECT_0809B11C.H"
 
 /* battle/effects/runtime/update_slot.c */
-void Battle_Run(struct EffectSlot *effect);
+void EffectSlot_UpdateMotion(struct EffectSlot *effect);
 void BattleFx_DrawScaledObject(struct EffectSlot *effect);
 
 void EffectSlot_Update(struct EffectSlot *effect)
@@ -15,7 +15,7 @@ void EffectSlot_Update(struct EffectSlot *effect)
             effect->callback(effect);
         if (effect->active != 0) {
             if (effect->update_motion != 0)
-                Battle_Run(effect);
+                EffectSlot_UpdateMotion(effect);
             if (effect->render != 0)
                 BattleFx_DrawScaledObject(effect);
         }

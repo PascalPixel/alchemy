@@ -11,8 +11,10 @@
 	.set sub_08091220, 0x08091220
 	.set sub_08091240, 0x08091240
 	.set sub_08091254, 0x08091254
+	.global Event_ApplyPairEffect
 	.global Func_0808fefc
 	.thumb_func
+Event_ApplyPairEffect:
 Func_0808fefc:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl

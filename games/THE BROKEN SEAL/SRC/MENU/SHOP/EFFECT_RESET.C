@@ -2,7 +2,7 @@
 #include "SYSTEM.H"
 
 /* shop/effect/reset.c */
-void Effect_Do(s32);
+void EffectSlot_UpdateFar(s32);
 void ObjectGroup_SetChildValueUnlessFifteenFar(s32, u32);
 
 void Shop_ResetEffects(void)
@@ -18,7 +18,7 @@ void Shop_ResetEffects(void)
     cnt = 0x17;
     do {
         cnt -= 1;
-        Effect_Do(p);
+        EffectSlot_UpdateFar(p);
         p += 0x48;
     } while (cnt >= 0);
     no = *(s8 *)(work + 0x3AB);

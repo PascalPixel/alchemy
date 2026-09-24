@@ -4,8 +4,10 @@
 	.set sub_08003f3c, 0x08003f3c
 	.set sub_0801a910, 0x0801a910
 	.set sub_0801bd98, 0x0801bd98
+	.global Menu_ScrollSelectionList
 	.global Func_0801ba68
 	.thumb_func
+Menu_ScrollSelectionList:
 Func_0801ba68:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl

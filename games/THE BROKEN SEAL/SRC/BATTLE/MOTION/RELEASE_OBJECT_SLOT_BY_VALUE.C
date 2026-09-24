@@ -15,7 +15,7 @@ s32 BattleMotion_ReleaseObjectSlotByValue(s32 value)
         offset = index * 2 + 4;
         item = *(s16 *)(offset + (u32)base);
         if (item == value) {
-            Battle_SetMode(index, 0, 0, 0);
+            ResourceSlot_LoadFar(index, 0, 0, 0);
             *(s16 *)(offset + (u32)base) = 0;
         }
         index++;

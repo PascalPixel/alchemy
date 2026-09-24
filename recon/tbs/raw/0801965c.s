@@ -5,8 +5,10 @@
 	.set sub_08007304, 0x08007304
 	.set sub_08018038, 0x08018038
 	.set sub_08019bac, 0x08019bac
+	.global UiText_CopyMessageString
 	.global Func_0801965c
 	.thumb_func
+UiText_CopyMessageString:
 Func_0801965c:
 	push	{r5, r6, r7, lr}
 	ldr	r3, [pc, #92]

@@ -1,8 +1,10 @@
 .syntax unified
 	.thumb
 	.set sub_08028ef0, 0x08028ef0
+	.global Menu_HandleSelectionRowInput
 	.global Func_08029094
 	.thumb_func
+Menu_HandleSelectionRowInput:
 Func_08029094:
 	push	{r5, r6, r7, lr}
 	ldr	r6, [pc, #100]

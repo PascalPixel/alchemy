@@ -104,7 +104,7 @@ s32 BattlePres_RunSimple(struct SimplePresentationInput *input, s32 flags)
     scripted = flags & 2;
     record = GetMotionRecord(
         GetBattleObjectSlot(saved_input->primary_id)->object, 0);
-    divisor = Battle_Place(record->child->battle_value, 2, 1);
+    divisor = ResourceMetadata_SumCommandLengthsFar(record->child->battle_value, 2, 1);
     BattleMotion_ApproachTarget(
         work.primary_id,
         saved_input->secondary_id,

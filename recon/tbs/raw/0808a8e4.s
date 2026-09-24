@@ -22,8 +22,10 @@
 	.set sub_080f4000, 0x080f4000
 	.set sub_080f6000, 0x080f6000
 	.set sub_080f9010, 0x080f9010
+	.global Game_ResetForNewGame
 	.global Func_0808a8e4
 	.thumb_func
+Game_ResetForNewGame:
 Func_0808a8e4:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

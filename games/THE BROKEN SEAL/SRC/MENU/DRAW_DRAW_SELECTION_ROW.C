@@ -16,7 +16,7 @@ extern u8 Menu_ColonString[];
 void Menu_DrawSelectionRow(struct Work *work, s16 first, const s16 *second)
 {
     s16 selected = first;
-    s32 label = FunctionHead_0808a5d0(selected, *second) + (s32)Value_0000099b;
+    s32 label = BattleFx_FindConditionResourceFar(selected, *second) + (s32)Value_0000099b;
     RenderOutput_PrepareForRedraw(work);
     UiText_DrawNumber(selected, 3, (s32)work, 0, 14);
     UiText_DrawNumber(*second, 3, (s32)work, MENU_LABEL_X, 14);
@@ -39,7 +39,7 @@ struct TextObject {
 
 void UiTextResource_Initialize(struct TextObject *object, s32 *resource);
 void UiTextResource_SetPosition(struct TextObject *object, s32 x, s32 y);
-s16 FunctionHead_08029094(
+s16 Menu_HandleSelectionRowInput(
     struct Work *work, s16 primary, s16 *secondary, s16 *mode);
 
 extern struct MenuDefaults gGameState;
@@ -73,11 +73,11 @@ s16 Menu_RunSelection(void)
         WaitFrames(1);
 
     for (;;) {
-        result = FunctionHead_08029094(work, primary, &secondary, &mode);
+        result = Menu_HandleSelectionRowInput(work, primary, &secondary, &mode);
         if (result == -1) {
             UiTextResource_Release(resource);
             UiWork_Finalize(work, 2);
-            FunctionHead_0808a238(primary, secondary);
+            Event_SetPairWork1c0Far(primary, secondary);
             return result;
         }
         if (result == -2) {

@@ -79,7 +79,7 @@ void UpdateLinkSessionCountdown(void)
             }
             newOffset = current + step;
             state->currentOffset = newOffset;
-            Sys_Do(newOffset);
+            Camera_ConfigureSceneFar(newOffset);
         }
 
         entry = state->entries;

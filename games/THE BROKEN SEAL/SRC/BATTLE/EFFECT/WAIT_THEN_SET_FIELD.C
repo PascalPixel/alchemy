@@ -11,5 +11,5 @@ void BattleFx_WaitThenSetField18To4(void *arg0)
   WaitFrames(0x1D);
   ofs = 0x18;
   *((s32 *)(((u8 *)arg0) + ofs)) = 4;
-  Battle_Apply(arg0, 2);
+  BattleFx_RunSparkGroups(arg0, 2);
 }

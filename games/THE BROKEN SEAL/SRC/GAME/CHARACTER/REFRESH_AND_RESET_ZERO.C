@@ -6,8 +6,8 @@
 /* owner/refresh_and_reset_zero.c */
 void Owner_RefreshAndResetZero(void)
 {
-    Sys_Check();
-    Sys_unk2(0);
+    GameState_InitDefaults();
+    Game_ResetForNewGameFar(0);
 }
 
 /* trade/get_offer_state.c */

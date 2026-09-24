@@ -21,7 +21,7 @@ s32 AbilityMenu_BuildAvailableList(void)
     output = (s16 *)(state + 0x26c);
     do {
         mode = *(s8 *)(state + 0x3a9);
-        if (mode == Ui_Check(index)&&
+        if (mode == Item_GetEquipmentGroupFar(index)&&
             Ability_GetMaximum(index, 0) != 0) {
             *output = index;
             count++;

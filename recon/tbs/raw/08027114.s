@@ -50,8 +50,10 @@
 	.set sub_080b50e0, 0x080b50e0
 	.set sub_080b5130, 0x080b5130
 	.set sub_080f9010, 0x080f9010
+	.global Battle_CollectPartyCommands
 	.global Func_08027114
 	.thumb_func
+Battle_CollectPartyCommands:
 Func_08027114:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

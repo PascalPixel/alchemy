@@ -3,8 +3,10 @@
 	.set sub_08002f40, 0x08002f40
 	.set sub_08005340, 0x08005340
 	.set sub_08185000, 0x08185000
+	.global ResourceSlot_Load
 	.global Func_0800b6b8
 	.thumb_func
+ResourceSlot_Load:
 Func_0800b6b8:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl

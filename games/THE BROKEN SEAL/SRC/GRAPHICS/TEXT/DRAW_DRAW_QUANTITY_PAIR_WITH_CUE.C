@@ -8,7 +8,7 @@ extern u8 Value_0000001e;
 
 void UiText_DrawQuantityPairWithCue(s32 first, s32 second)
 {
-    Ui_Run();
+    OwnerAction_AddFar();
     Audio_PlayCue(0x53);
     UiWork_PushValueSlotFar(first, 1);
     UiWork_PushValueSlotFar(second, 4);

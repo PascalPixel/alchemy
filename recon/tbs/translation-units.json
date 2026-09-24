@@ -73352,6 +73352,66 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "link-lobby-choice-prompt",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/MENU/LINK_LOBBY/CHOICE_PROMPT.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3cb",
+      "absolute_symbols": {
+        "Engine_EventBegin": {
+          "address": "0x02009844",
+          "kind": "thumb"
+        },
+        "Engine_ActorFaceActor": {
+          "address": "0x0200987c",
+          "kind": "thumb"
+        },
+        "Engine_EventSetMessage": {
+          "address": "0x02009884",
+          "kind": "thumb"
+        },
+        "Engine_EventShowMessage": {
+          "address": "0x02009894",
+          "kind": "thumb"
+        },
+        "Engine_DebugCreateWindow": {
+          "address": "0x020097ac",
+          "kind": "thumb"
+        },
+        "Main_08015060": {
+          "address": "0x020097d4",
+          "kind": "thumb"
+        },
+        "Main_080150a0": {
+          "address": "0x020097dc",
+          "kind": "thumb"
+        },
+        "Engine_TaskWait": {
+          "address": "0x02009714",
+          "kind": "thumb"
+        },
+        "Engine_DebugFinalizeWindow": {
+          "address": "0x020097b4",
+          "kind": "thumb"
+        },
+        "Main_080b5110": {
+          "address": "0x020098dc",
+          "kind": "thumb"
+        },
+        "Engine_EventEnd": {
+          "address": "0x0200984c",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02000e10",
+          "extent": 264,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

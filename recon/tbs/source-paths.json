@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_3cb:02000e10": {
+      "name": "LinkLobby_RunChoicePrompt",
+      "source": "MENU/LINK_LOBBY/CHOICE_PROMPT.C"
+    },
     "resource_3c0:02000e8c": {
       "name": "SuharaSabaku_RunSceneScript",
       "source": "FIELD/SUHARA_SABAKU/SCENE_SCRIPT.C"

@@ -64,15 +64,7 @@ void Func_0200355a(s32, s32, s32, s32, s32);
 void Func_0200372e_a(void);
 void Func_0200359a(s32, s32, s32, s32, s32);
 void Func_02003966(void);
-void Func_02002372();
-void Func_02002424();
-s32 Func_02003166(s32, s32, s32);
-void Func_0200319a(void);
 void Func_02003a08(s32, s32, s32, s32);
-s32 Func_020031d6();
-void Func_0200383a();
-s32 Func_020031fe();
-void Func_02003912();
 void Func_02003a30();
 void Func_0200357a_a(s32, s32, s32, s32, s32);
 void Func_0200384a(void);
@@ -80,12 +72,6 @@ void Func_020035ba_a(s32, s32, s32, s32, s32);
 void Func_02003cbe(void);
 void Func_0200362a(s32, s32, s32, s32, s32);
 void Func_02003dde(void);
-s32 Func_0200317e(s32, s32, s32);
-void Func_020032b2(void);
-s32 Func_02003196(s32, s32, s32);
-void Func_020033c6(void);
-s32 Func_020031ae(s32, s32, s32);
-void Func_020034da_a(void);
 u8 *Func_02003ef8(s32 index);
 void Func_020035e6();
 s32 *Func_02003f68(s32);
@@ -122,6 +108,8 @@ void Func_02003fcc(void);
 
 /* Loader-relocated overlay calls: each symbol names the pre-relocation call
  * word the image holds. */
+s32 SceneActor_IsActorAtTile(s32 no, s32 x, s32 z);
+
 static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
 {
     return f(a0, a1);
@@ -529,45 +517,45 @@ void Func_020014b8(void)
 
 void FieldScene_CallWhenCheck9_31_9(void)
 {
-    if (Func_02003166(9, 31, 9) != 0) {
-        Func_0200319a();
+    if (SceneActor_IsActorAtTile(9, 31, 9) != 0) {
+        SceneData_InitTableA980();
     }
 }
 
 void FieldScene_RunGuardedStep11(void)
 {
-    if (Func_0200317e(11, 40, 9) != 0) {
-        Func_020032b2();
+    if (SceneActor_IsActorAtTile(11, 40, 9) != 0) {
+        SceneData_FillTableA980();
     }
 }
 
 void FieldScene_RunGuardedStep13(void)
 {
-    if (Func_02003196(13, 31, 12) != 0) {
-        Func_020033c6();
+    if (SceneActor_IsActorAtTile(13, 31, 12) != 0) {
+        SceneData_InitTableA980AndRunB();
     }
 }
 
 void FieldScene_RunGuardedStep15(void)
 {
-    if (Func_020031ae(15, 40, 12) != 0) {
-        Func_020034da_a();
+    if (SceneActor_IsActorAtTile(15, 40, 12) != 0) {
+        SceneData_BuildTableA980();
     }
 }
 
 void ConfigureSceneAndCheckActors(void)
 {
     ConfigureScene(2, 0x00d00000, 0x00700000, 0);
-    if (Func_020031d6(10, 14, 7) != 0) {
-        Func_0200383a();
+    if (SceneActor_IsActorAtTile(10, 14, 7) != 0) {
+        FieldScene_RunScene37b_02002244();
     }
 }
 
 void Func_020015fc(void)
 {
     ConfigureScene_02003a30(2, 23068672, 7340032, 0);
-    if (Func_020031fe(12, 21, 7) != 0) {
-        Func_02003912();
+    if (SceneActor_IsActorAtTile(12, 21, 7) != 0) {
+        FieldScene_RunScene37b_020022f4();
     }
 }
 
@@ -947,7 +935,7 @@ void FieldScene_RunScene37b_02002244(void)
             Event_Wait(30);
             GameFlag_Set(0x816);
             if (GameFlag_IsSet(0x817) != 0) {
-                Func_02002372();
+                FieldScene_RunLoopedLayoutSequence();
             }
         }
     }
@@ -974,7 +962,7 @@ void FieldScene_RunScene37b_020022f4(void)
             Event_Wait(30);
             GameFlag_Set(0x817);
             if (GameFlag_IsSet(0x816) != 0) {
-                Func_02002424();
+                FieldScene_RunLoopedLayoutSequence();
             }
         }
     }

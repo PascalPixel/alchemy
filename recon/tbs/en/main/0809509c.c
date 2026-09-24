@@ -1,70 +1,88 @@
-/* Draft, not exact (2026-09-24): 13 differing halfwords, 194 of 196
-   bytes. Residual: register allocation only; the reference keeps the DMA
-   fill zero in r1, and in the loop the camera pointer in r2 and the OAM
-   cursor in r1. Sibling of main:08094da0. */
-
+/* Draft, not exact (2026-09-24): candidate=190 reference=196 differing_halfwords=51.
+   Initialise the 32 dust particles drawn by main:08094820 and schedule
+   main:08094e7c. The goto loop keeps the pool-loaded mask 15 in the loop and
+   so reproduces the pool before the epilogue. Residuals: the reference ands
+   a copy of the counter with the mask (adds r3, r5, #0; ands r3, r2) where
+   this ands into the mask register (one instruction short), and the zero for
+   the DMA fill and the stmia pointer take r1 where these take r3 and r2. */
+#include "TYPES.H"
 #include "DMA.H"
 
-struct FallingParticle {
-    u32 oam[3];
-    s32 x;
-    s32 y;
-    s32 z;
-    s32 unknown_18;
-    u16 delay;
-    u16 unknown_1e;
+struct DustParticle {
+    u32 unknown00;
+    u32 attr01;
+    u32 attr2;
+    s32 pos_x;
+    s32 pos_y;
+    s32 pos_z;
+    u8 pad18[4];
+    u16 timer;
+    u8 pad1e[2];
 };
 
-struct ParticleWork {
-    s32 slot;
-    s32 tile;
-    struct FallingParticle particles[32];
+struct DustWork {
+    s32 vram_entry;
+    s32 tile_base;
+    struct DustParticle particles[32];
+    u8 pad408[8];
 };
 
-extern s32 **Data_03001e70;
+struct FieldView {
+    s32 *leader;
+};
 
-void *Func_080048f4(s32 kind, s32 size);
-s32 Func_080053e8(const void *source, void *destination);
-s32 Func_08004080(void);
-s32 Func_08003fa4(u32 slot, u32 size, const void *source);
-void Func_08002dd8(s32 kind);
-s32 Func_080091a8(s32 layer, s32 x, s32 z);
-void Func_080041d8(void (*callback)(void), s32 flags);
+extern struct FieldView *Data_03001e70;
+extern u8 Value_0000000f;
+extern const u8 Data_080a00b8[];
+void *Runtime_AllocateBlock(s32 slot, s32 size);
+void Resource_DecodeByteLz(const void *source, void *destination);
+s32 Resource_FindFreeEntry(void);
+s32 VramBlock_LoadCached(s32 slot, s32 size, const void *source);
+void Runtime_ReleaseHeapBlock(s32 slot);
+s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
+s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
 void Func_08094e7c(void);
 
 void Func_0809509c(void)
 {
-    struct ParticleWork *work;
-    struct FallingParticle *particle;
-    void *buffer;
-    s32 *camera;
-    u32 *oam;
-    u32 i;
-    s32 x;
-    s32 z;
+    struct DustWork *work = Runtime_AllocateBlock(29, 0x410);
+    struct DustParticle *p = work->particles;
     volatile u32 zero;
+    u8 *buf;
+    u32 i;
+    u16 mask;
+    s32 clear;
 
-    work = Func_080048f4(29, 0x410);
-    particle = work->particles;
     zero = 0;
-    Dma_Set((const void *)&zero, work, 0x85000104, (volatile u32 *)0x040000d4);
-    buffer = Func_080048f4(14, 0x400);
-    Func_080053e8((const void *)0x080a00b8, buffer);
-    work->slot = Func_08004080();
-    work->tile = Func_08003fa4(work->slot, 0x200, buffer);
-    Func_08002dd8(14);
-    for (i = 0; i <= 31; i++, particle++) {
-        camera = *Data_03001e70;
-        oam = particle->oam;
-        *oam++ = 0;
-        *oam++ = 0x40000400;
-        *oam = 0xd400;
-        x = camera[0];
-        z = camera[2];
-        particle->x = 0;
-        particle->z = 0;
-        particle->y = Func_080091a8(0, x >> 16, z >> 16) << 16;
-        particle->delay = (i & 15) + 1;
+    Dma_Set(&zero, work, 0x85000104, (volatile u32 *)0x040000d4);
+    buf = Runtime_AllocateBlock(14, 0x400);
+    Resource_DecodeByteLz(Data_080a00b8, buf);
+    work->vram_entry = Resource_FindFreeEntry();
+    work->tile_base = VramBlock_LoadCached(work->vram_entry, 0x200, buf);
+    Runtime_ReleaseHeapBlock(14);
+    i = 0;
+    clear = 0;
+loop:
+    {
+        s32 *leader = Data_03001e70->leader;
+        u32 *attr = &p->unknown00;
+        s32 x;
+        s32 z;
+
+        *attr++ = clear;
+        *attr++ = 0x40000400;
+        *attr = 0xd400;
+        x = leader[0];
+        z = leader[2];
+        p->pos_x = clear;
+        p->pos_z = clear;
+        p->pos_y = Map_GetTerrainHeightFar(0, x >> 16, z >> 16) << 16;
+        mask = (u16)(u32)&Value_0000000f;
+        p->timer = (i & mask) + 1;
     }
-    Func_080041d8(Func_08094e7c, 0xc80);
+    i++;
+    p++;
+    if (i < 32)
+        goto loop;
+    Scheduler_AddOrUpdateCallback(Func_08094e7c, 0xc80);
 }

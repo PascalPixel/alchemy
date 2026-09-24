@@ -1,65 +1,104 @@
+/* Draft, not exact (2026-09-24): candidate=356 reference=356 differing_halfwords=52.
+   Structure, loop layout (goto loop, no entry jump), volatile key reads, the
+   s32 return (pop {r1}) and the BLDALPHA store through a two-halfword struct
+   (movs, not a pool halfword) all match. Residuals are scheduling only: the
+   16 is loaded before the 0x04000052 address, the tile/x bitfield inserts
+   load both masks first and interleave the origin loads, the Resource_GetBuffer
+   arguments are set r1 then r0, and the literal pool order differs. */
 #include "TYPES.H"
 
-#define BattlePres_WaitForAdvance Func_080bb65c
+struct SpriteAttr {
+    u16 y : 8;
+    u16 affine : 2;
+    u16 blend_mode : 2;
+    u16 mosaic : 1;
+    u16 full_color : 1;
+    u16 shape : 2;
+    u16 x : 9;
+    u16 affine_index : 5;
+    u16 size : 2;
+    u16 tile : 10;
+    u16 priority : 2;
+    u16 palette : 4;
+    u16 pad;
+};
 
+struct AdvanceSprite {
+    u8 pad0[4];
+    union {
+        struct SpriteAttr attr;
+        u32 raw[2];
+    } oam;
+};
+
+struct UiCursorOrigin {
+    u8 pad0[0xc];
+    u16 col;
+    u16 row;
+};
+
+struct UiCursorOffset {
+    u8 pad0[4];
+    u16 x;
+    u16 y;
+};
+
+struct Io { u16 a; u16 b; };
+typedef volatile u16 *vu16p;
+struct UiDisplay {
+    struct UiCursorOrigin *origin;
+    struct UiCursorOffset *offset;
+};
+
+extern u32 Data_03001e40;
+extern struct UiDisplay *Data_03001ee4;
 extern volatile u32 Data_03001ae8;
 extern volatile u32 Data_03001c94;
+s32 UiWork_IsCompleteFar(void);
+s32 Resource_LoadIntoFreeSlot(s32 kind);
+void QueueIoWriteDelay10(s32 reg, s32 value);
+void QueueIoWriteDelay6(s32 reg, s32 value);
+s32 Resource_GetBuffer(s32 index, s32 table);
+s32 Trig_Sin(s32 angle);
+void Audio_PlayCue(u32 cue);
+void Resource_ResetEntry(s32 id);
+void WaitFrames(s32 frames);
+void Runtime_PushSlotEntry(void *entry, s32 value);
 
-void BattlePres_WaitForAdvance(void)
+s32 BattlePresentation_WaitForAdvance(void)
 {
-    u8 prompt_buf[12];
-    u8 *prompt = prompt_buf;
-    s32 frames;
-    s32 sprite;
+    struct AdvanceSprite sprite;
+    struct AdvanceSprite *spr;
+    s32 frame;
+    s32 slot;
+    s32 src;
+    struct UiCursorOrigin *origin;
+    struct UiCursorOffset *offset;
 
-    while (Func_08015048() == 0) {
-        Func_080030f8(1);
+    while (!UiWork_IsCompleteFar())
+        WaitFrames(1);
+    spr = &sprite;
+    slot = Resource_LoadIntoFreeSlot(128);
+    frame = 0;
+loop:
+    src = ((Data_03001e40 >> 2) & 7) * 128 + 0x080c3734;
+    origin = Data_03001ee4->origin;
+    offset = Data_03001ee4->offset;
+    QueueIoWriteDelay10(0x0400004a, 4);
+    QueueIoWriteDelay6(0x0400004a, 16);
+    ((struct Io *)0x04000052)->a = 16;
+    spr->oam.raw[0] = 0xa400;
+    spr->oam.raw[1] = 0;
+    spr->oam.attr.tile = Resource_GetBuffer(slot, src);
+    spr->oam.attr.x = origin->col * 8 + (offset->x >> 8) + 4;
+    spr->oam.attr.y = Trig_Sin(Data_03001e40 << 12) / 32768 + origin->row * 8 + (offset->y >> 8) + 6;
+    Runtime_PushSlotEntry(spr, 240);
+    if (!(Data_03001ae8 & 2) && !(Data_03001c94 & 0x303) && (frame <= 15 || !(Data_03001ae8 & 0x303))) {
+        WaitFrames(1);
+        frame++;
+        goto loop;
     }
-
-    sprite = Func_080040b4(0x80);
-    frames = 0;
-    while (1) {
-        u32 phase = (*(u32 *)0x03001e40 >> 2) & 7;
-        const void *tiles = (const void *)(0x080c3734 + phase * 128);
-        u8 **render = *(u8 ***)0x03001ee4;
-        u8 *left = render[0];
-        u8 *right = render[1];
-        s32 wave;
-
-        Func_080039fc((void *)0x0400004a, 4);
-        Func_0800393c((void *)0x0400004a, 16);
-        *(u16 *)0x04000052 = 16;
-        *(u32 *)(prompt + 4) = 0xa400;
-        *(u32 *)(prompt + 8) = 0;
-        *(u16 *)(prompt + 8) =
-            (*(u16 *)(prompt + 8) & 0xfc00) |
-            (Func_080040d0(sprite, tiles) & 0x03ff);
-        *(u16 *)(prompt + 6) =
-            (*(u16 *)(prompt + 6) & 0xfe00) |
-            (((*(u16 *)(left + 12) * 8) +
-              (*(u16 *)(right + 4) >> 8) + 4) & 0x01ff);
-        wave = Func_08002322(*(u32 *)0x03001e40 << 12);
-        if (wave < 0) {
-            wave += 0x7fff;
-        }
-        prompt[4] = (*(u16 *)(right + 6) >> 8) +
-            (wave >> 15) + (*(u16 *)(left + 14) * 8) + 6;
-        Func_08003dec(prompt, 240);
-
-        if (Data_03001ae8 & 2) {
-            break;
-        }
-        if (Data_03001c94 & 0x303) {
-            break;
-        }
-        if (frames > 15 && (Data_03001ae8 & 0x303)) {
-            break;
-        }
-        Func_080030f8(1);
-        frames++;
-    }
-
-    Func_080f9010(0x6f);
-    Func_08003f3c(sprite);
-    Func_080030f8(1);
+    Audio_PlayCue(111);
+    Resource_ResetEntry(slot);
+    WaitFrames(1);
 }

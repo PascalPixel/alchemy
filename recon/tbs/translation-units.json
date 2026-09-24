@@ -72291,6 +72291,86 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "toreto-heya-f-018b8",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/TORETO_HEYA/F_018B8.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_396",
+      "absolute_symbols": {
+        "Engine_EventBegin": {
+          "address": "0x02009ae0",
+          "kind": "thumb"
+        },
+        "Engine_CameraMoveTo": {
+          "address": "0x02009b98",
+          "kind": "thumb"
+        },
+        "Engine_MapRedraw": {
+          "address": "0x02009a80",
+          "kind": "thumb"
+        },
+        "Engine_TaskWait": {
+          "address": "0x02009a20",
+          "kind": "thumb"
+        },
+        "Engine_ActorGet": {
+          "address": "0x02009af8",
+          "kind": "thumb"
+        },
+        "Engine_EventOpenScreen": {
+          "address": "0x02009be0",
+          "kind": "thumb"
+        },
+        "Engine_EventWaitForScreen": {
+          "address": "0x02009be8",
+          "kind": "thumb"
+        },
+        "Engine_AudioPlayCue": {
+          "address": "0x02009bf8",
+          "kind": "thumb"
+        },
+        "Engine_EventWait": {
+          "address": "0x02009ad8",
+          "kind": "thumb"
+        },
+        "Engine_MathCos": {
+          "address": "0x02009a48",
+          "kind": "thumb"
+        },
+        "Engine_MathSin": {
+          "address": "0x02009a40",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetAttachedEffect": {
+          "address": "0x02009b88",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetAnimation": {
+          "address": "0x02009b20",
+          "kind": "thumb"
+        },
+        "Engine_WorkSetValuesIfNonNegative": {
+          "address": "0x02009ab0",
+          "kind": "thumb"
+        },
+        "Engine_MapWaitWorkValuesBelow256": {
+          "address": "0x02009ab8",
+          "kind": "thumb"
+        },
+        "Engine_EventEnd": {
+          "address": "0x02009ae8",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x020018b8",
+          "extent": 344,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

@@ -73027,6 +73027,26 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "common-shinden-heya-f-03144",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHINDEN_HEYA/F_03144.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_378",
+      "absolute_symbols": {
+        "Engine_ObjectSetScript": {
+          "address": "0x0200b568",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02003144",
+          "extent": 116,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

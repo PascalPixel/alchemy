@@ -1,15 +1,23 @@
 /*
- * BattleTarget_SelectForAction draft: 79.6% (1908/1864 bytes).
- * Remaining difference:
- *  - Normal-order scan: the ROM hoists the 0x100 halfword pool constant into
- *    r5 before the loop (pool placed mid-loop) and does the pre-check as
- *    normal[0] = [turn_order, #88] before walking turn_order + 88 in place.
- *    Ours keeps a 2*index giv alive across the loop test (GCSE copy of the
- *    test's address), so loop 1 has 33 real insns in the second loop pass and
- *    the constant is "not desirable" to move (loop 2 has 28 and moves).
- *  - Sort/selection: the ROM keeps `selected` in r1 with caller-saves around
- *    the calls and spills the unit_ids base to [sp, #16]; ours spills
- *    `selected` to [sp, #16].
+ * BattleTarget_SelectForAction draft: 1864 of 1864 bytes, 81.0% aligned
+ * similarity. The normal-order scan tests turn_order->normal[target_index]
+ * and reads the unit through slot = &turn_order->normal[target_index],
+ * which gives the ROM pre-check ([turn_order, #88]), the in-place walk of
+ * turn_order + 88 and both ldrsh loads. The 0x100 mark goes through a
+ * one-halfword struct set beside its use, so loop.c hoists it as a HImode
+ * pool load into r5 and both pools land where the ROM has them (the loop is
+ * over the move threshold for a bare constant). Case 2 rolls before
+ * selected = 0, so selected crosses only the four sort calls and is
+ * caller-saved at [sp, #0] as in the ROM.
+ * Remaining (all register choice, same instructions):
+ *  - Both scans: the ROM uses r0/r2/r4 for the pointer setup and r6 for the
+ *    zero, ours r6/r0/r2 and r3; setting the mark before the loop instead
+ *    gives the ROM registers but schedules its load into the pre-check.
+ *  - Sort: the ROM spills the unit_ids base (mov r4, sp; adds r4, #56) to
+ *    [sp, #16] and keeps selected in r1; ours holds the base in fp and
+ *    selected in r4, so the spill slots shift by one. Declaration order moves
+ *    nothing (380 permutations).
+ *  - CHECK_EFFECT hp compare picks r0/r1 where the ROM picks r1/r3.
  */
 #include "TYPES.H"
 #include "BATTLE_COMMAND.H"
@@ -231,6 +239,7 @@ s32 BattleTarget_SelectForAction(
     s32 damage_class;
     u32 roll;
     s16 *slot;
+    struct { u16 v; } mark;
 
     turn_order = BATTLE_TURN_ORDER;
     target_count = 0;
@@ -249,14 +258,15 @@ s32 BattleTarget_SelectForAction(
         }
 
         target_index = 0;
-        slot = turn_order->normal;
-        while (slot[target_index] != 255) {
-            unit_id = slot[target_index];
+        while (turn_order->normal[target_index] != 255) {
+            slot = &turn_order->normal[target_index];
+            unit_id = *slot;
             if (unit_id != 254) {
                 if (action->target_mode != 4 || unit_id == actor_id) {
                     unit_ids[candidate_count] = unit_id;
+                    mark.v = 0x100;
                     order_positions[candidate_count] =
-                        target_index | 0x100;
+                        target_index | mark.v;
                     candidate_count++;
                 }
             }
@@ -339,8 +349,8 @@ scan_complete:
             selected = 0;
             break;
         case 2:
-            selected = 0;
             roll = (u32)(11 * Random16()) >> 16;
+            selected = 0;
             if (roll > 5)
                 selected = 1;
             break;

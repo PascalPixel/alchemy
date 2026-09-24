@@ -37626,18 +37626,6 @@
           "address": "0x02009910",
           "kind": "thumb"
         },
-        "Func_020019c6": {
-          "address": "0x02009674",
-          "kind": "thumb"
-        },
-        "Func_02001a06": {
-          "address": "0x02009674",
-          "kind": "thumb"
-        },
-        "Func_02001a72": {
-          "address": "0x02009674",
-          "kind": "thumb"
-        },
         "Func_02001d64": {
           "address": "0x0200973c",
           "kind": "thumb"
@@ -37761,6 +37749,10 @@
         "gEventWork": {
           "address": "0x03001ebc",
           "kind": "data"
+        },
+        "SceneActor_CheckFacingAndRange": {
+          "address": "0x02009674",
+          "kind": "thumb"
         }
       },
       "owners": [

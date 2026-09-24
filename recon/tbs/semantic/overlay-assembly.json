@@ -1915,19 +1915,6 @@
       "end": "0x02002602"
     },
     {
-      "overlay": "resource_37a",
-      "start": "0x02002108",
-      "end": "0x020025b0",
-      "kind": "structured_scene_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
-        "2026-09-10: a measured C draft was generated for this owner through the approved route (extract, decompile, per-target call binding, score) and recorded; no compiler-impossibility claim is made, and the bytes remain retained assembly until a candidate is byte-exact.",
-        "recon/tbs/en/dossiers.json#resource_37a:02002108"
-      ]
-    },
-    {
       "overlay": "resource_370",
       "start": "0x02000de4",
       "end": "0x020011e4",

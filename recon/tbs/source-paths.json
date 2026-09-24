@@ -12189,7 +12189,8 @@
       "source": "FIELD/SORU_NICHIGETSU/INNER_SANCTUM.C"
     },
     "resource_37a:02002108": {
-      "name": "FieldScene_RunScene37aSequenceG"
+      "name": "SoruNichigetsu_RestoreEntryState",
+      "source": "FIELD/SORU_NICHIGETSU/ENTRY_STATE.C"
     },
     "resource_37a:02001ca8": {
       "name": "FieldScene_RunSanctumRiseAndShrink",

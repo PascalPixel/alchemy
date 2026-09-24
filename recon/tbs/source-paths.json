@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_3c4:02000e20": {
+      "name": "BabiChika_UpdateTrackedActor",
+      "source": "FIELD/BABI_CHIKA/TRACKED_ACTOR.C"
+    },
     "resource_3b2:020013ac": {
       "name": "TakaraShima_RunAreaEntry",
       "source": "FIELD/TAKARA_SHIMA/AREA_ENTRY.C"

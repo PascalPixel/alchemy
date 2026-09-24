@@ -407,21 +407,19 @@ void FieldScene_RunScene3a6SequenceB(void)
 void FieldScene_RunScene3a6SequenceC(void)
 {
 
-    extern u8 Data_03001ebc[];
-
     s32 rec8;
     s32 record;
     s32 idx;
     s32 tbl;
     s32 idx4;
     s32 off24a;
-    u8 *p5;
+    struct EventWork *p5;
 
-    p5 = *(u8 **)Data_03001ebc;
+    p5 = gEventWork;
     if (GameFlag_IsSet(0x302) != 0) {
         off24a = 0x24a;
         if (*(s16 *)((s32)Data_02000240 + off24a) != 8) {
-            idx = *(s16 *)(p5 + 0x16c);
+            idx = p5->touched_trigger;
             rec8 = Value1(Engine_ActorGet, 8);
             record = Value1(Engine_ActorGet, 0);
             *(s32 *)(rec8 + 48) = *(s32 *)(record + 48);

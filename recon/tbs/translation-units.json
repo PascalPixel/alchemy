@@ -70840,6 +70840,42 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "common-imiru-fuchin-room-layout",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/IMIRU_FUCHIN/ROOM_LAYOUT.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_39a",
+      "absolute_symbols": {
+        "Engine_MapCopyCellAttributes": {
+          "address": "0x0200a2f0",
+          "kind": "thumb"
+        },
+        "DialogueLayout_ConfigureGroupOne": {
+          "address": "0x02009050",
+          "kind": "thumb"
+        },
+        "DialogueLayout_ConfigureGroupTwo": {
+          "address": "0x02009154",
+          "kind": "thumb"
+        },
+        "DialogueLayout_ConfigureGroupThree": {
+          "address": "0x020092cc",
+          "kind": "thumb"
+        },
+        "FieldScene_RunFlagBranchedLayoutSteps": {
+          "address": "0x020095dc",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02001948",
+          "extent": 236,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

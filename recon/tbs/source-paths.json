@@ -1,6 +1,22 @@
 {
   "format": 3,
   "owners": {
+    "resource_3b4:020020c4": {
+      "name": "Korosseo_ShowItemIcon",
+      "source": "FIELD/COMMON/KOROSSEO/ITEM_ICON.C"
+    },
+    "resource_3bc:02003bd0": {
+      "name": "Korosseo_ShowItemIcon",
+      "source": "FIELD/COMMON/KOROSSEO/ITEM_ICON.C"
+    },
+    "resource_3bb:02003138": {
+      "name": "Korosseo_ShowItemIcon",
+      "source": "FIELD/COMMON/KOROSSEO/ITEM_ICON.C"
+    },
+    "resource_3ba:02002ea0": {
+      "name": "Korosseo_ShowItemIcon",
+      "source": "FIELD/COMMON/KOROSSEO/ITEM_ICON.C"
+    },
     "resource_39c:02000dfc": {
       "name": "Makyuri_ClearPalette",
       "source": "FIELD/COMMON/MAKYURI/PALETTE_CYCLE.C"
@@ -19587,6 +19603,7 @@
     }
   },
   "symbols": {
+    "main:08000140": "Runtime_AllocateHeapBlockFar",
     "main:08009098": "ObjectDispatch_InitializeFar",
     "main:080090c8": "Object_CreateFar",
     "main:08015090": "UiText_DrawStringAtOffsetFar",

@@ -69042,6 +69042,50 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "korosseo-item-icon",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/KOROSSEO/ITEM_ICON.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3ba",
+      "absolute_symbols": {},
+      "owners": [
+        {
+          "address": "0x02002ea0",
+          "extent": 196,
+          "state": "exact-c"
+        }
+      ],
+      "instances": {
+        "resource_3bb": {
+          "owners": {
+            "Korosseo_ShowItemIcon": {
+              "address": "0x02003138",
+              "extent": 196
+            }
+          },
+          "absolute_symbols": {}
+        },
+        "resource_3bc": {
+          "owners": {
+            "Korosseo_ShowItemIcon": {
+              "address": "0x02003bd0",
+              "extent": 196
+            }
+          },
+          "absolute_symbols": {}
+        },
+        "resource_3b4": {
+          "owners": {
+            "Korosseo_ShowItemIcon": {
+              "address": "0x020020c4",
+              "extent": 196
+            }
+          },
+          "absolute_symbols": {}
+        }
+      }
     }
   ]
 }

@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_3a8:02000464": {
+      "name": "KareiMachi_RunExitDoor",
+      "source": "FIELD/KAREI_MACHI/EXIT_DOOR.C"
+    },
     "resource_3b7:020009f8": {
       "name": "TorebiIzumi_PayToPlay",
       "source": "FIELD/TOREBI_IZUMI/PAY_TO_PLAY.C"

@@ -78160,6 +78160,82 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "scene-3a8-02000464",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/KAREI_MACHI/EXIT_DOOR.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3a8",
+      "absolute_symbols": {
+        "Engine_EventBegin": {
+          "address": "0x0200bbf4",
+          "kind": "thumb"
+        },
+        "Engine_ActorGet": {
+          "address": "0x0200bc1c",
+          "kind": "thumb"
+        },
+        "Engine_AudioPlayCue": {
+          "address": "0x0200bd7c",
+          "kind": "thumb"
+        },
+        "Engine_MapAnimateCells": {
+          "address": "0x0200bb94",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpeed": {
+          "address": "0x0200bc2c",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetAnimation": {
+          "address": "0x0200bc7c",
+          "kind": "thumb"
+        },
+        "Engine_ActorCenterAndWalk": {
+          "address": "0x0200bc64",
+          "kind": "thumb"
+        },
+        "Engine_EventWait": {
+          "address": "0x0200bbec",
+          "kind": "thumb"
+        },
+        "Engine_EventRequestExit": {
+          "address": "0x0200bd24",
+          "kind": "thumb"
+        },
+        "Engine_EventCloseScreen": {
+          "address": "0x0200bd34",
+          "kind": "thumb"
+        },
+        "Engine_EventWaitForScreen": {
+          "address": "0x0200bd3c",
+          "kind": "thumb"
+        },
+        "Engine_EventEnd": {
+          "address": "0x0200bbfc",
+          "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
+        },
+        "KareiMachi_DoorCells": {
+          "address": "0x0200d0e0",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02000464",
+          "extent": 160,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

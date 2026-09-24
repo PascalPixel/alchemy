@@ -16,7 +16,7 @@ extern u8 Data_080367d6[];
 
 void Func_0801d014(void);
 void *UiWindow_Create(s32, s32, s32, s32, s32);
-struct RenderInput *Func_0801d108(void);
+struct RenderInput *Menu_OpenWorkspaceOptions(void);
 void *RenderResource_CreatePair(s32, struct RenderInput *, s32, s32);
 s32 Modulo(s32, s32);
 void Func_080a1038(void *);
@@ -32,7 +32,7 @@ void RenderOutput_ClearList(void *);
 void UiText_DrawResource(s32, void *, s32, s32);
 void Func_0801d0f0(void);
 
-s32 Func_0801d4cc(void)
+s32 Menu_RunWorkspaceOptions(void)
 {
     u8 *base;
     struct RenderInput *icon;
@@ -54,7 +54,7 @@ s32 Func_0801d4cc(void)
     Func_0801d014();
     base = (u8 *)Data_03001ea0;
     win = UiWindow_Create(1, 2, 0x1C, 3, 2);
-    icon = Func_0801d108();
+    icon = Menu_OpenWorkspaceOptions();
     pair = RenderResource_CreatePair(7, icon, 0x40, -0x30);
     WaitFrames(1);
     pA = (s8 *)(base + 0x594);

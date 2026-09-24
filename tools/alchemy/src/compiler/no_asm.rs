@@ -24,7 +24,7 @@ const IWRAM_CALL_SOURCE: &str = include_str!(concat!(
     "/../../games/THE BROKEN SEAL/INCLUDE/IWRAM_CALL.H"
 ));
 const IWRAM_CALL_BODY_SHA256: &str =
-    "544a46d88ba873e8ac15716830367e44d5e1e75fcb5eefebfe5d44b1ee640b93";
+    "110abd5ad8313dcfe0dce7ed49bb246d04883fe6b9ad61f29bd290c7abc80882";
 
 fn source_tokens(text: &str) -> Vec<regex::Match<'_>> {
     static TOKENS: OnceLock<Regex> = OnceLock::new();

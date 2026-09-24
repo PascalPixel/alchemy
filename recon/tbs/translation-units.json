@@ -139145,20 +139145,20 @@
           "address": "0x02009bfc",
           "kind": "thumb"
         },
-        "Func_02002824": {
-          "address": "0x02009bcc",
-          "kind": "thumb"
-        },
-        "Func_02002824_a": {
-          "address": "0x02009b8c",
-          "kind": "thumb"
-        },
         "Func_0200281c": {
           "address": "0x02009b5c",
           "kind": "thumb"
         },
         "Func_0200281c_a": {
           "address": "0x02009b44",
+          "kind": "thumb"
+        },
+        "Func_02002824": {
+          "address": "0x02009bcc",
+          "kind": "thumb"
+        },
+        "Func_02002824_a": {
+          "address": "0x02009b8c",
           "kind": "thumb"
         }
       },

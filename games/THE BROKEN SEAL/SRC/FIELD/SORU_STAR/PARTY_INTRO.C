@@ -16,7 +16,6 @@
  */
 
 enum StarRoomActor {
-    ACTOR_JASMINE = 5,
     ACTOR_SUKURETA = ACTOR_FIRST_PLACED + 1,
     ACTOR_SATUROS,
     ACTOR_MENARDI,

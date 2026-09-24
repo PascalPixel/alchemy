@@ -9,7 +9,6 @@
  */
 
 enum StatueHallActor {
-    ACTOR_JASMINE = 5,
     ACTOR_SUKURETA = ACTOR_FIRST_PLACED
 };
 

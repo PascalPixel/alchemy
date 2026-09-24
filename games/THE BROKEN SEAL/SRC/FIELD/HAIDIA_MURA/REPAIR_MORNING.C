@@ -17,7 +17,6 @@ enum HouseMessage {
 };
 
 enum HouseActor {
-    ACTOR_JASMINE = 5,
     /* Robin's mother; the villagers call her Dora. */
     ACTOR_DORA = 21,
     ACTOR_BOARD = 23,

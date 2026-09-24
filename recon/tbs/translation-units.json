@@ -13330,12 +13330,12 @@
           "address": "0x200a694",
           "kind": "thumb"
         },
-        "Func_0200379e": {
-          "address": "0x200a2e0",
+        "Event_SayThenWait": {
+          "address": "0x200a2c8",
           "kind": "thumb"
         },
-        "Func_0200379e_a": {
-          "address": "0x200a2c8",
+        "SceneActor_SetPairZeroAndValue": {
+          "address": "0x200a2e0",
           "kind": "thumb"
         }
       },

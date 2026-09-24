@@ -64401,14 +64401,6 @@
           "address": "0x02008cd4",
           "kind": "thumb"
         },
-        "Func_020021f6": {
-          "address": "0x02008e94",
-          "kind": "thumb"
-        },
-        "Func_0200226c": {
-          "address": "0x02008e94",
-          "kind": "thumb"
-        },
         "Func_02002350": {
           "address": "0x0200902c",
           "kind": "thumb"
@@ -64548,6 +64540,10 @@
         "gGameState": {
           "address": "0x02000240",
           "kind": "data"
+        },
+        "Scene_RunPrimarySequence": {
+          "address": "0x02008e94",
+          "kind": "thumb"
         }
       },
       "owners": [

@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_39c:02005388": {
+      "name": "MakyuriHeya_SpawnSparkPair",
+      "source": "FIELD/COMMON/MAKYURI/SPARK_PAIR.C"
+    },
     "resource_3a4:02002804": {
       "name": "ArutinYama_PlaceFlaggedActors",
       "source": "FIELD/ARUTIN_YAMA/FLAGGED_ACTORS.C"
@@ -20415,6 +20419,10 @@
     "resource_3a8:02001f14": {
       "name": "KareiMachi_AlternateDance",
       "source": "FIELD/KAREI_MACHI/DANCE_ALTERNATION.C"
+    },
+    "resource_39b:02001df8": {
+      "name": "MakyuriHeya_SpawnSparkPair",
+      "source": "FIELD/COMMON/MAKYURI/SPARK_PAIR.C"
     }
   },
   "symbols": {

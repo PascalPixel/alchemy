@@ -79202,6 +79202,98 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "scene-39c-02005388",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAKYURI/SPARK_PAIR.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_39c",
+      "absolute_symbols": {
+        "Engine_ObjectCreate": {
+          "address": "0x0200d9d4",
+          "kind": "thumb"
+        },
+        "Engine_ObjectSetScript": {
+          "address": "0x0200d9cc",
+          "kind": "thumb"
+        },
+        "Main_08009020": {
+          "address": "0x0200d9bc",
+          "kind": "thumb"
+        },
+        "Engine_AudioPlayCue": {
+          "address": "0x0200dc64",
+          "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
+        },
+        "Data_02000240_t": {
+          "address": "0x02000240",
+          "kind": "data"
+        },
+        "MakyuriHeya_SparkScript": {
+          "address": "0x200de14",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02005388",
+          "extent": 208,
+          "state": "exact-c"
+        }
+      ],
+      "instances": {
+        "resource_39b": {
+          "owners": {
+            "MakyuriHeya_SpawnSparkPair": {
+              "address": "0x02001df8",
+              "extent": 208
+            }
+          },
+          "absolute_symbols": {
+            "Engine_ObjectCreate": {
+              "address": "0x0200a44c",
+              "kind": "thumb"
+            },
+            "Engine_ObjectSetScript": {
+              "address": "0x0200a444",
+              "kind": "thumb"
+            },
+            "Main_08009020": {
+              "address": "0x0200a434",
+              "kind": "thumb"
+            },
+            "Engine_AudioPlayCue": {
+              "address": "0x0200a614",
+              "kind": "thumb"
+            },
+            "gEventWork": {
+              "address": "0x03001ebc",
+              "kind": "data"
+            },
+            "gGameState": {
+              "address": "0x02000240",
+              "kind": "data"
+            },
+            "Data_02000240_t": {
+              "address": "0x02000240",
+              "kind": "data"
+            },
+            "MakyuriHeya_SparkScript": {
+              "address": "0x0200a7c4",
+              "kind": "data"
+            }
+          }
+        }
+      }
     }
   ]
 }

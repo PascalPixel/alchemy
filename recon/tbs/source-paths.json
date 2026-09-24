@@ -19306,7 +19306,8 @@
       "source": "GRAPHICS/TEXT/FORMAT_HEX.C"
     },
     "main:080037d4": {
-      "name": "Sound_LoadPresetParameters"
+      "name": "Sound_LoadPresetParameters",
+      "source": "SOUND/LOAD_PRESET_PARAMETERS.C"
     },
     "main:08004760": {
       "name": "Bg0_ClearTilemap"

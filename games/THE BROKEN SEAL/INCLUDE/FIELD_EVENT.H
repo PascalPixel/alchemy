@@ -181,7 +181,8 @@ struct FieldActor {
     u8 rise_counter;
     u8 rise_enabled;
     u16 unknown_64;
-    u8 unknown_66[6];
+    u16 unknown_66;
+    u8 unknown_68[4];
     /* Called each frame while set. */
     void (*update)(union FieldObject *object);
 };
@@ -323,6 +324,7 @@ void Engine_ObjectSetScript(struct FieldActor *object, const s32 *script);
 void Engine_ObjectSetBlendMode(struct FieldActor *object, s32 mode);
 void Engine_ObjectSetPalette(struct FieldActor *object, s32 palette);
 void Engine_ObjectSetPartPalettes(struct FieldActor *object, s32 palette);
+void Engine_ObjectSetPosition(struct FieldActor *object, s32 fixed_x, s32 fixed_y, s32 fixed_z);
 void Engine_MapAnimateCells(const u16 *steps, s32 dest_x, s32 dest_y);
 void Engine_MapObjectSetPosition(s32 object, s32 fixed_x, s32 fixed_z);
 void Engine_ItemLoadIcon(s32 item);

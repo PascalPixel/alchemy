@@ -1,6 +1,30 @@
 {
   "format": 3,
   "owners": {
+    "resource_39e:02000388": {
+      "name": "ShianJiin_SelectAreaEvents",
+      "source": "FIELD/COMMON/SHIAN_JIIN/AREA_EVENTS.C"
+    },
+    "resource_3a7:02000ca0": {
+      "name": "KuupuappuDou_ApplyEntryState",
+      "source": "FIELD/KUUPUAPPU_DOU/ENTRY_STATE.C"
+    },
+    "resource_39e:02003e58": {
+      "name": "ShianJiin_ApplyEntryState",
+      "source": "FIELD/COMMON/SHIAN_JIIN/ENTRY_STATE.C"
+    },
+    "resource_3bc:02003ef0": {
+      "name": "Korosseo_UpdatePathRival",
+      "source": "FIELD/COMMON/KOROSSEO/PATH_RIVAL.C"
+    },
+    "resource_3bb:02003458": {
+      "name": "Korosseo_UpdatePathRival",
+      "source": "FIELD/COMMON/KOROSSEO/PATH_RIVAL.C"
+    },
+    "resource_3ba:020031c0": {
+      "name": "Korosseo_UpdatePathRival",
+      "source": "FIELD/COMMON/KOROSSEO/PATH_RIVAL.C"
+    },
     "resource_3b4:02001fd8": {
       "name": "TakaraAshiba_UpdateItemIcons",
       "source": "FIELD/TAKARA_ASHIBA/ITEM_ICONS.C"

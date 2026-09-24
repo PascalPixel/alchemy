@@ -1,10 +1,3 @@
-/* NONMATCHING: 960 of 960 bytes, 3 halfword edits (2026-09-24). Hand-written
- * from the jump-table disassembly; a single-overlay unit source binding the
- * Engine_* names at their import veneers (listing offset + 0x8000). Remaining:
- * the do-while around the first store keeps the 0x02000240 base load after
- * it (without it the base load is hoisted above the store, 4 edits), but
- * moves the prologue sub sp, #8 before the store; the reference places it
- * after the first ldrsh. */
 #include "TYPES.H"
 
 s32 Engine_GameFlagIsSet();
@@ -29,7 +22,13 @@ void Engine_ActorSetSpriteFlags();
 void SceneActor_SetupActors11To14AndInstallTask();
 void SceneState_ApplyThreeRectsRows9And10();
 
-extern s16 Data_02000240_t[][1];
+union GameStateRows {
+    u8 bytes[512][2];
+    s16 halves[512][1];
+    s32 words[256];
+};
+
+extern union GameStateRows Data_02000240_t;
 extern u8 Data_00000060[];
 extern u8 Data_00000061[];
 extern u8 Data_00000062[];
@@ -39,7 +38,6 @@ struct ActorFlags {
     u8 flags;
 };
 
-/* Set up the actors and map cells of the current area for its story state. */
 static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
 {
     f(a0, a1, a2, a3, a4, a5);
@@ -55,11 +53,12 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
     f(a0, a1, a2);
 }
 
-s32 Local_02000ca0(void)
+/* Kuupuappu Cave entry: set the entrance selector, then for each of the three areas set the actors and map cells of its story state. */
+s32 KuupuappuDou_ApplyEntryState(void)
 {
     *(s32 *)((*(s32 *)0x03001ebc + 0x1c0)) = 0x204;
-    if (Data_02000240_t[224][0] == (s32)Data_00000060 + 0) {
-        switch (Data_02000240_t[225][0]) {
+    if (Data_02000240_t.halves[224][0] == (s32)Data_00000060) {
+        switch (Data_02000240_t.halves[225][0]) {
         case 5:
         case 6:
         case 7:
@@ -82,11 +81,11 @@ s32 Local_02000ca0(void)
             break;
         }
     }
-    if (Data_02000240_t[224][0] == (s32)Data_00000061) {
+    if (Data_02000240_t.halves[224][0] == (s32)Data_00000061) {
         if (Engine_GameFlagIsSet(0x300) == 0) {
             *(s32 *)(Engine_ActorGet(22) + 28) = 0x18000;
         }
-        switch (Data_02000240_t[225][0]) {
+        switch (Data_02000240_t.halves[225][0]) {
         case 1:
         case 2:
         case 3:
@@ -143,7 +142,7 @@ s32 Local_02000ca0(void)
         Engine_ActorSetSpriteFlags(Engine_ActorGet(9), 0);
         Engine_ActorGet(9)[89] = 1;
     }
-    if (Data_02000240_t[224][0] == (s32)Data_00000062) {
+    if (Data_02000240_t.halves[224][0] == (s32)Data_00000062) {
         Call2((void (*)())Engine_ActorSetAnimation, 8, 2);
         if (Engine_GameFlagIsSet(0x207) == 0) {
             Call2((void (*)())Engine_ActorSetAnimation, 10, 2);
@@ -153,7 +152,7 @@ s32 Local_02000ca0(void)
         Engine_ActorSetSpriteFlags(Engine_ActorGet(9), 0);
         Engine_ActorGet(10)[89] |= 0x80;
         ((struct ActorFlags *)Engine_ActorGet(9))->flags |= 0x80;
-        switch (Data_02000240_t[225][0]) {
+        switch (Data_02000240_t.halves[225][0]) {
         case 5:
         case 6:
             SceneActor_SetupActors11To14AndInstallTask();
@@ -171,7 +170,7 @@ s32 Local_02000ca0(void)
             break;
         }
     }
-    Data_02000240_t[289][0] = 10;
-    Data_02000240_t[288][0] = (s32)Data_00000060;
+    Data_02000240_t.halves[289][0] = 10;
+    Data_02000240_t.halves[288][0] = (s32)Data_00000060;
     return 0;
 }

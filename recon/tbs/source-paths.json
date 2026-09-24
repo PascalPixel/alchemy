@@ -20619,6 +20619,9 @@
     },
     "main:080f2f10": {
       "name": "TitlePalette_UpdateFade"
+    },
+    "main:080f2b70": {
+      "name": "Title_ShowSplashScreen"
     }
   },
   "symbols": {

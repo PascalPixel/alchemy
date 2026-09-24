@@ -1,163 +1,149 @@
 #include "TYPES.H"
-#include "ITEM_MENU.H"
-#include "GLOBAL_CELLS.H"
 
-#define M2C_FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
+/* main:080a8604 CharacterMenu_DrawStatusAilments - hand-written draft, 184
+   of 384 halfwords differ (784 of 768 bytes). Residual: register roles
+   (state and the element-stat cursor share r8 in the ROM, the ailment count
+   and loop index share sl), the power column x lives in fp rather than on
+   the stack, and the level column x - 8 is recomputed at each use in the
+   ROM where GCSE shares it here. The Djinn test is spelled as the ROM's
+   neg/orr/lsr store-flag (FAKEMATCH below).
 
-extern u8 *Runtime_GetObject(s32 owner);
-extern s32 Func_08077290(s32);
-extern s32 CharacterMenu_BuildAvailability(u8 *output, s32 requested, s32 id);
-extern s32 CharacterMenu_UpdateSelectionIcons(const u8 *enabled);
-extern void ItemMenu_ApplyFlags(u8 *entries);
-extern void Func_080a8914(s32 window, s32 owner, s32 mode);
-extern void Func_08015068(s32 window, s32 a, s32 b, s32 c, s32 d);
-extern void Func_08015090(s32 image, s32 window, s32 x, s32 y);
-extern void Func_08015098(u8 *glyph, s32 window, s32 x, s32 y);
-extern void Func_08015280(s32 window, s32 tile, s32 x, s32 y, s32 style);
-extern s32 Func_080771f8(s32 owner, s32 index);
+   Draws a member's status page: the ailments they suffer, then, for each
+   element, their Djinn counts and elemental level, power and resistance. */
 
-extern u8 Value_00000bd4;
-extern u8 Value_00000bd5;
-extern u8 Value_00000bd6;
-extern u8 Value_00000bd7;
-extern u8 Value_00000bd8;
-extern u8 Value_00000bd9;
-extern u8 Value_00000afd;
-extern u8 Value_00000afe;
-extern u8 Data_080af22c;
-extern u8 Data_080af230;
+extern u8 Value_00000afe[];
 
-void Func_080a8604(s32 window, s32 owner, s32 mode)
+struct MenuState {
+    u8 unknown_000[380];
+    u8 *cursor;
+    u8 unknown_180[164];
+    u16 mode;
+};
+
+struct StatusUnit {
+    u8 unknown_000[72];
+    s16 element_stats[4][2];
+    u8 unknown_058[192];
+    u8 djinn_set[4];
+    u8 djinn_total[4];
+};
+
+s32 Party_SumDjinnCountsFar(s32 side);
+struct StatusUnit *Owner_GetStateFar(s32 unit);
+void ItemMenu_DrawOwnerStatus(void *window, s32 unit, s32 mode);
+void CharacterMenu_BuildAvailability(u8 *ailments, s32 flags, s32 unit);
+void CharacterMenu_UpdateSelectionIcons(u8 *ailments);
+void Func_080a9d3c(u8 *ailments);
+void UiWindow_ClearInteriorTilesFar(void *window, s32 x, s32 y, s32 width, s32 height);
+void UiText_DrawCharacterAtOffsetFar(s32 text, void *window, s32 x, s32 y);
+void UiText_DrawStringAtOffsetFar(const void *text, void *window, s32 x, s32 y);
+void UiText_DrawStringInWindowFar(const void *text, void *window, s32 x, s32 y);
+void UiText_DrawNumberInWindowFar(s32 value, s32 digits, void *window, s32 x, s32 y);
+void UiWindow_SetTilemapEntryFar(void *window, s32 index, s32 x, s32 y, s32 tile);
+void UiWork_SetParamNibbleFar(s32 color);
+void WaitFrames(s32 frames);
+s32 Func_080771f8(s32 unit, s32 element);
+
+void CharacterMenu_DrawStatusAilments(void *window, s32 unit, s32 mode)
 {
-    struct ItemMenuState *menu = *(struct ItemMenuState **)ADDR_03001F2C;
-    u8 *object;
-    s32 compare_mode;
-    s32 row_y;
-    u8 entries[8];
-    s32 skip_border;
-    s32 label_count;
-    s32 party_i;
-    s32 category;
-    s32 base72;
-    s32 base104;
-    s32 base120;
-    u8 *base160;
-    s32 row8;
-    s32 row16;
-    s32 avail;
+    struct MenuState *state;
+    s32 has_djinn;
+    s32 total;
+    struct StatusUnit *status;
+    s32 row;
+    s32 keep;
+    s32 count;
+    s32 y;
+    s32 text;
+    s16 *stats;
+    s32 power_x;
+    s32 level_x;
+    u8 *djinn;
+    u8 ailments[8];
 
-    avail = Func_08077290(-1);
-    compare_mode = (u32)(-avail | avail) >> 31;
-    object = Runtime_GetObject(owner);
-
-    row_y = 7;
-    if ((mode & 0xFF) != 1)
-        row_y = 10;
-
-    menu->cursor->state = 1;
-
-    Func_080a8914(window, owner, mode);
-
-    CharacterMenu_BuildAvailability(entries, 1, owner);
-    CharacterMenu_UpdateSelectionIcons(entries);
-
-    skip_border = mode & 0x100;
-    if (skip_border == 0)
-        Func_08015068(window, 0, 40, 96, 96);
-
-    label_count = 0;
-    if (entries[0] != 0) {
-        UiText_DrawAt((s32)&Value_00000bd5, window, 16, 40);
-        label_count = 1;
+    state = *(struct MenuState **)0x03001f2c;
+    total = Party_SumDjinnCountsFar(-1);
+    /* FAKEMATCH: the ROM tests the Djinn total with a neg/orr/lsr flag. */
+    has_djinn = (u32)(-total | total) >> 31;
+    status = Owner_GetStateFar(unit);
+    row = 7;
+    if ((mode & 0xff) != 1)
+        row = 10;
+    state->cursor[5] = 1;
+    ItemMenu_DrawOwnerStatus(window, unit, mode);
+    CharacterMenu_BuildAvailability(ailments, 1, unit);
+    CharacterMenu_UpdateSelectionIcons(ailments);
+    keep = mode & 0x100;
+    if (keep == 0)
+        UiWindow_ClearInteriorTilesFar(window, 0, 40, 96, 96);
+    count = 0;
+    if (ailments[0] != 0) {
+        UiText_DrawCharacterAtOffsetFar(0xbd5, window, 16, 40);
+        count = 1;
     }
-    if (entries[1] != 0) {
-        UiText_DrawAt(
-            (s32)&Value_00000bd6, window, 16, label_count * 16 + 40);
-        label_count++;
+    if (ailments[1] != 0) {
+        UiText_DrawCharacterAtOffsetFar(0xbd6, window, 16, count * 16 + 40);
+        count++;
     }
-    if (entries[2] != 0) {
-        UiText_DrawAt(
-            (s32)&Value_00000bd7, window, 16, label_count * 16 + 40);
-        label_count++;
+    if (ailments[2] != 0) {
+        UiText_DrawCharacterAtOffsetFar(0xbd7, window, 16, count * 16 + 40);
+        count++;
     }
-    if (entries[3] != 0) {
-        UiText_DrawAt(
-            (s32)&Value_00000bd8, window, 16, label_count * 16 + 40);
-        label_count++;
+    if (ailments[3] != 0) {
+        UiText_DrawCharacterAtOffsetFar(0xbd8, window, 16, count * 16 + 40);
+        count++;
     }
-    if (entries[4] != 0) {
-        UiText_DrawAt(
-            (s32)&Value_00000bd9, window, 16, label_count * 16 + 40);
-        label_count++;
+    if (ailments[4] != 0) {
+        UiText_DrawCharacterAtOffsetFar(0xbd9, window, 16, count * 16 + 40);
+        count++;
     }
-    if (label_count == 0)
-        UiText_DrawAt((s32)&Value_00000bd4, window, 0, 40);
-
-    CharacterMenu_UpdateSelectionIcons(entries);
-    ItemMenu_ApplyFlags(entries);
-
-    category = M2C_FIELD(menu, u16 *, 0x220);
-    if (category == 3)
+    if (count == 0)
+        UiText_DrawCharacterAtOffsetFar(0xbd4, window, 0, 40);
+    CharacterMenu_UpdateSelectionIcons(ailments);
+    Func_080a9d3c(ailments);
+    if (state->mode == 3)
         return;
-
-    if (skip_border == 0) {
+    if (keep == 0) {
         WaitFrames(1);
-        Func_08015068(window, 64, 56, 224, 96);
+        UiWindow_ClearInteriorTilesFar(window, 64, 56, 224, 96);
     }
-
-    UiPalette_SetColor(15);
-
-    if (mode == 1 || compare_mode == 1) {
-        Func_08015280(window, 1, 15, row_y, 4);
-        Func_08015280(window, 2, 19, row_y, 4);
-        Func_08015280(window, 3, 23, row_y, 4);
-        Func_08015280(window, 4, 27, row_y, 4);
+    UiWork_SetParamNibbleFar(15);
+    if (mode == 1 || has_djinn == 1) {
+        UiWindow_SetTilemapEntryFar(window, 1, 15, row, 4);
+        UiWindow_SetTilemapEntryFar(window, 2, 19, row, 4);
+        UiWindow_SetTilemapEntryFar(window, 3, 23, row, 4);
+        UiWindow_SetTilemapEntryFar(window, 4, 27, row, 4);
     }
-
-    if (compare_mode != 0)
-        UiText_DrawAt((s32)&Value_00000afd, window, 64, row_y * 8 + 8);
-
+    if (has_djinn)
+        UiText_DrawCharacterAtOffsetFar(0xafd, window, 64, row * 8 + 8);
     if (mode == 1) {
-        if (compare_mode == 0)
-            row_y--;
-
-        Func_08015090((s32)&Data_080af22c, window, 64, row_y * 8 + 16);
-        UiText_DrawAt((s32)&Value_00000afe, window, 64, row_y * 8 + 24);
-        UiText_DrawAt((s32)(&Value_00000afe + 1), window, 64, row_y * 8 + 32);
+        if (!has_djinn)
+            row--;
+        y = row * 8;
+        UiText_DrawStringAtOffsetFar((const void *)0x080af22c, window, 64, y + 16);
+        text = (s32)Value_00000afe;
+        UiText_DrawCharacterAtOffsetFar(text, window, 64, y + 24);
+        UiText_DrawCharacterAtOffsetFar(text + 1, window, 64, y + 32);
     }
-
-    row8 = row_y * 8;
-    row16 = row8 + 8;
-    base104 = 104;
-    base120 = 120;
-    base72 = (s32)(object + 72);
-    base160 = object + 280;
-
-    for (party_i = 0; party_i <= 3; party_i++) {
-        if (compare_mode != 0)
-            UiNumber_DrawAt(base160[0], 1, window, base120, row16);
-
-        if ((mode & 0xFF) == 1) {
-            if (compare_mode != 0) {
-                UiNumber_DrawAt(base160[4], 1, window, base104, row16);
-                Func_08015098(&Data_080af230, window, base120 - 8, row16);
-            } else {
-                row8 = row_y * 8;
+    stats = status->element_stats[0];
+    power_x = 104;
+    level_x = 120;
+    djinn = status->djinn_set;
+    for (count = 0; count <= 3; count++) {
+        if (has_djinn)
+            UiText_DrawNumberInWindowFar(djinn[0], 1, window, level_x, row * 8 + 8);
+        if ((mode & 0xff) == 1) {
+            if (has_djinn) {
+                UiText_DrawNumberInWindowFar(djinn[4], 1, window, power_x, row * 8 + 8);
+                UiText_DrawStringInWindowFar((const void *)0x080af230, window, level_x - 8, row * 8 + 8);
             }
-
-            UiNumber_DrawAt(
-                Func_080771f8(owner, party_i), 2, window, base120 - 8,
-                row8 + 16);
-
-            UiNumber_DrawAt(
-                *(s16 *)(base72 + 0), 3, window, base104, row8 + 24);
-            UiNumber_DrawAt(
-                *(s16 *)(base72 + 2), 3, window, base104, row8 + 32);
+            UiText_DrawNumberInWindowFar(Func_080771f8(unit, count), 2, window, level_x - 8, row * 8 + 16);
+            UiText_DrawNumberInWindowFar(stats[0], 3, window, power_x, row * 8 + 24);
+            UiText_DrawNumberInWindowFar(stats[1], 3, window, power_x, row * 8 + 32);
         }
-
-        base72 += 4;
-        base104 += 32;
-        base120 += 32;
-        base160 += 1;
+        stats += 2;
+        power_x += 32;
+        level_x += 32;
+        djinn++;
     }
 }

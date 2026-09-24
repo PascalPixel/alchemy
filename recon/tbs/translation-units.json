@@ -7898,30 +7898,6 @@
           "address": "0x020085f4",
           "kind": "thumb"
         },
-        "Func_0200016a": {
-          "address": "0x02008098",
-          "kind": "thumb"
-        },
-        "Func_0200018a": {
-          "address": "0x02008098",
-          "kind": "thumb"
-        },
-        "Func_020001aa": {
-          "address": "0x02008098",
-          "kind": "thumb"
-        },
-        "Func_02000272": {
-          "address": "0x02008098",
-          "kind": "thumb"
-        },
-        "Func_02000292": {
-          "address": "0x02008098",
-          "kind": "thumb"
-        },
-        "Func_02000438": {
-          "address": "0x0200811c",
-          "kind": "thumb"
-        },
         "Func_02000676": {
           "address": "0x0200861c",
           "kind": "thumb"

@@ -1,8 +1,3 @@
-/* Draft, not exact (2026-09-24): candidate=56 reference=56 differing_halfwords=4.
-   The tail, registers and pool match. Residual: the scheduler hoists the
-   0x174 offset (movs/lsls) above the load of the work pointer and the zero;
-   the reference keeps source order (ldr r5; movs r2, #0; movs r1, #186).
-   The owner was bundled with main:080a7478 until 2026-09-24. */
 #include "TYPES.H"
 
 struct CharacterSelectorWork {
@@ -21,7 +16,10 @@ s32 CharacterSelector_Run(void)
     struct CharacterSelectorWork *work = *(struct CharacterSelectorWork **)0x03001f2c;
     s32 result = 0;
 
-    work->cursor = result;
+    /* FAKEMATCH: the do-while keeps the cursor store in source order */
+    do {
+        work->cursor = result;
+    } while (0);
     if (Func_080a77a4(0) == -1)
         result = -1;
     else

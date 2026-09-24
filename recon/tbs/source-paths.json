@@ -775,9 +775,25 @@
       "name": "Ui_LoadWindowGraphics",
       "source": "GRAPHICS/WINDOW/LOAD_GRAPHICS.C"
     },
+    "main:0800f9f4": {
+      "name": "Tilemap_DecodeStagedBuffer",
+      "source": "GRAPHICS/TILE/DECODE_STAGED_BUFFER.C"
+    },
+    "main:0801edec": {
+      "name": "UiWindow_FillFromScene",
+      "source": "GRAPHICS/WINDOW/FILL_FROM_SCENE.C"
+    },
+    "main:0802938c": {
+      "name": "Menu_HandleFlagGridInput",
+      "source": "MENU/FLAG_GRID_INPUT.C"
+    },
     "main:0808ab74": {
       "name": "Scene_ResetFlagsOnEnter",
       "source": "FIELD/COMMON/SCENE_RESET_FLAGS_ON_ENTER.C"
+    },
+    "main:08091890": {
+      "name": "Party_RemoveOwnerRestored",
+      "source": "GAME/PARTY/REMOVE_OWNER_RESTORED.C"
     },
     "main:080aad10": {
       "name": "Menu_OpenBackdropScreen",
@@ -1042,7 +1058,8 @@
       "source": "MENU/ITEM/OWNER_ITEMS.C"
     },
     "main:080a7440": {
-      "name": "CharacterSelector_Run"
+      "name": "CharacterSelector_Run",
+      "source": "MENU/CHARACTER_SELECTOR_RUN.C"
     },
     "main:080a7478": {
       "name": "Unnamed_080a7478"
@@ -10328,7 +10345,8 @@
       "name": "Unnamed_080e698c"
     },
     "main:080e6d3c": {
-      "name": "Unnamed_080e6d3c"
+      "name": "BattleFx_PlaceFormationObjects",
+      "source": "BATTLE/EFFECT/PLACE_FORMATION_OBJECTS.C"
     },
     "main:080e6eac": {
       "name": "Unnamed_080e6eac"
@@ -20668,7 +20686,6 @@
     "main:080a1ac0": "UiMenu_SlideCursor",
     "main:080a35f8": "ItemMenu_RunOwnerSelection",
     "main:080a939c": "PsynergyMenu_ReservedNoOp939C",
-    "main:0802938c": "Menu_HandleFlagGridInput",
     "main:0801a7f4": "MenuSelection_BuildEntries",
     "main:080e2974": "BattlePres_RunBurstScene",
     "main:080118c0": "Map_SetLayerEntryFlag",

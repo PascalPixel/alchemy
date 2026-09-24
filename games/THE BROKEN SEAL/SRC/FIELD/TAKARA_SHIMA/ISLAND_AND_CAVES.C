@@ -328,23 +328,9 @@ extern u8 Data_0000007e[];
 extern u8 Data_00000086[];
 extern s16 Data_02000240_t[][1];
 extern u8 Value_0200ae71;
-Obj *Func_0200481e(s32);
-Obj *Func_02004826(s32);
 void Func_020047ee(Obj *, s32, s32, s32);
 void Func_0200481a(Obj *, s32, s32, s32);
 void Func_0200484c(Obj *);
-void Func_020032be(int arg0);
-void Func_020032ca(int arg0);
-void Func_020032d6(int arg0);
-void Func_020032e2(int arg0);
-void Func_020032ee(int arg0);
-void Func_020032fa(int arg0);
-void Func_02003306(int arg0);
-void Func_02003312(int arg0);
-void Func_0200331e(int arg0);
-void Func_0200332a(int arg0);
-void Func_02003336(int arg0);
-void Func_02003342(int arg0);
 void Func_02001440(void);
 void Func_02002638(void);
 s32 Func_02001bc2(struct V6 *arg0);
@@ -367,198 +353,107 @@ void Func_020031e4(s32, s32, s32, s32);
 void Func_02003244(s32, s32, s32, s32);
 void Func_02003250(s32, s32, s32, s32);
 void Func_0200325c(s32, s32, s32, s32);
-u8 *Func_02003a0e(s32 kind, s32 x, s32 y, s32 z);
-u8 *Func_02003a66(s32 kind, s32 x, s32 y, s32 z);
 struct SceneObject *Func_02003e96(void);
 void Func_0200194a(s32, s32, s32, s32, s32, s32, s32, struct EffectParams *);
 void Func_02003fb0_a(s32 arg0);
 void Func_02001914();
 void Func_0200191a();
-void Func_020023cc();
-void Func_0200265e();
-void Func_020026be();
-void Func_020028b4();
-void Func_02004044_b();
-s32 Func_020040d0();
 void Func_020040e0();
-s32 Func_020040f4();
 void Func_0200411c();
-s32 Func_02004130();
 void Func_02004158();
-s32 Func_0200416c();
 void Func_02004194();
 void Func_020041a4();
-s32 Func_020041a8();
-u8 *Func_020042a4();
-s32 Func_020042da();
 s32 Func_02004318();
-s32 Func_0200473a();
-s32 Func_0200475e();
-s32 Func_02004782();
-s32 Func_020047a6();
-u8 *Func_02004598(s32 arg0);
-s32 Func_020045aa(s32 arg0);
 void Func_02004580(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
-u8 *Func_020045d8(s32 arg0);
-s32 Func_020045ea(s32 arg0);
 void Func_020045c0(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
-u8 *Func_0200461c(s32 arg0);
-s32 Func_0200462e(s32 arg0);
 void Func_02004604(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
-u8 *Func_02004660(s32 arg0);
-s32 Func_02004672(s32 arg0);
 void Func_02004648(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 void Func_02004658(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
-struct S_02001b14 *Func_02004ba4(s32 arg0);
 s32 Func_02003576(struct S_02001b14 *arg0, struct V *arg1);
-struct S_02001b14 *Func_02004bd0(s32 arg0);
 s32 Func_020035a4(struct S_02001b14 *arg0, struct V *arg1);
-struct S_02001b14 *Func_02004bf8(s32 arg0);
 s32 Func_020035ca(struct S_02001b14 *arg0, struct V *arg1);
-struct S_02001b14 *Func_02004c24(s32 arg0);
 s32 Func_020035f8(struct S_02001b14 *arg0, struct V *arg1);
 struct S_02001b14 *Func_02004c4c(s32 arg0);
 struct S_02001b14 *Func_02004c56(s32 arg0);
 struct S_02001b14 *Func_02004c60(s32 arg0);
 struct S_02001b14 *Func_02004c6a(s32 arg0);
 struct S_02001b14 *Func_02004cda(s32 arg0);
-void Func_02003376(s32 arg0, s32 arg1, s32 arg2);
-void Func_02003386(s32 arg0, s32 arg1, s32 arg2);
-void Func_020033b2(s32 arg0, s32 arg1, s32 arg2);
-void Func_02003758_a(void);
 struct S_02001b14 *Func_02004d14(s32 arg0);
 struct S_02001b14 *Func_02004d1e(s32 arg0);
 struct S_02001b14 *Func_02004d28(s32 arg0);
 struct S_02001b14 *Func_02004d84(s32 arg0);
-void Func_0200342a(s32 arg0, s32 arg1, s32 arg2);
-void Func_02003436(s32 arg0, s32 arg1, s32 arg2);
-void Func_02003440(s32 arg0, s32 arg1, s32 arg2);
-void Func_02003454(s32 arg0, s32 arg1, s32 arg2);
-void Func_02003464(s32 arg0, s32 arg1, s32 arg2);
 struct S_02001b14 *Func_02004dbc(s32 arg0);
 struct S_02001b14 *Func_02004dc6(s32 arg0);
 struct S_02001b14 *Func_02004dd0(s32 arg0);
 struct S_02001b14 *Func_02004dda(s32 arg0);
 struct S_02001b14 *Func_02004e38(s32 arg0);
-void Func_020034f0(s32 arg0, s32 arg1, s32 arg2);
-void Func_02003512(s32 arg0, s32 arg1, s32 arg2);
 struct S_02001b14 *Func_02004e70(s32 arg0);
 struct S_02001b14 *Func_02004e7a(s32 arg0);
 struct S_02001b14 *Func_02004eb2(s32 arg0);
-void Func_0200357c(s32 arg0, s32 arg1, s32 arg2);
-void Func_02003588(s32 arg0, s32 arg1, s32 arg2);
-void Func_02003592(s32 arg0, s32 arg1, s32 arg2);
 struct S_02001b14 *Func_02004eec(s32 arg0);
 struct S_02001b14 *Func_02004ef6(s32 arg0);
 struct S_02001b14 *Func_02004f08(s32 arg0);
 struct S_02001b14 *Func_02004f1e(s32 arg0);
 struct S_02001b14 *Func_02004f4c(s32 arg0);
-void Func_0200361e(s32 arg0, s32 arg1, s32 arg2);
-void Func_0200362c(s32 arg0, s32 arg1, s32 arg2);
 struct S_02001b14 *Func_02004f84_a(s32 arg0);
 struct S_02001b14 *Func_02004f8e(s32 arg0);
 struct S_02001b14 *Func_02004fa0(s32 arg0);
 struct S_02001b14 *Func_02004fce(s32 arg0);
-void Func_0200369e(s32 arg0, s32 arg1, s32 arg2);
-void Func_020036ae(s32 arg0, s32 arg1, s32 arg2);
 struct S_02001b14 *Func_02005008(s32 arg0);
 struct S_02001b14 *Func_02005012_a(s32 arg0);
 struct S_02001b14 *Func_0200505c(s32 arg0);
-void Func_02003714(s32 arg0, s32 arg1, s32 arg2);
-void Func_0200372a(s32 arg0, s32 arg1, s32 arg2);
-void Func_02003736(s32 arg0, s32 arg1, s32 arg2);
 struct S_02001b14 *Func_02005094(s32 arg0);
 struct S_02001b14 *Func_0200509e(s32 arg0);
 struct S_02001b14 *Func_020050d6(s32 arg0);
-void Func_0200379c(s32 arg0, s32 arg1, s32 arg2);
-void Func_020037b0(s32 arg0, s32 arg1, s32 arg2);
 struct S_02001b14 *Func_02005110(s32 arg0);
 struct S_02001b14 *Func_0200511a(s32 arg0);
 struct S_02001b14 *Func_02005124(s32 arg0);
 struct S_02001b14 *Func_0200512e(s32 arg0);
 struct S_02001b14 *Func_020051c4(s32 arg0);
-void Func_02003846(s32 arg0, s32 arg1, s32 arg2);
-void Func_02003870(s32 arg0, s32 arg1, s32 arg2);
-void Func_0200389e(s32 arg0, s32 arg1, s32 arg2);
 struct S_02001b14 *Func_020051fc(s32 arg0);
 struct S_02001b14 *Func_02005206(s32 arg0);
-void Func_02005210(s32 arg0);
 struct S_02001b14 *Func_02005258(s32 arg0);
-void Func_0200390a(s32 arg0, s32 arg1, s32 arg2);
-void Func_02003932(s32 arg0, s32 arg1, s32 arg2);
 struct S_02001b14 *Func_02005290(s32 arg0);
 struct S_02001b14 *Func_0200529a(s32 arg0);
 struct S_02001b14 *Func_020052a4(s32 arg0);
 struct S_02001b14 *Func_020052ae(s32 arg0);
 struct S_02001b14 *Func_02005320(s32 arg0);
-void Func_020039be(s32 arg0, s32 arg1, s32 arg2);
-void Func_020039d6(s32 arg0, s32 arg1, s32 arg2);
-void Func_020039fa(s32 arg0, s32 arg1, s32 arg2);
 struct S_02001b14 *Func_02005358(s32 arg0);
 struct S_02001b14 *Func_02005362(s32 arg0);
 struct S_02001b14 *Func_0200536c(s32 arg0);
 struct S_02001b14 *Func_02005376(s32 arg0);
 struct S_02001b14 *Func_0200541c(s32 arg0);
-void Func_02003a86(s32 arg0, s32 arg1, s32 arg2);
-void Func_02003a9a(s32 arg0, s32 arg1, s32 arg2);
-void Func_02003aaa(s32 arg0, s32 arg1, s32 arg2);
-void Func_02003af6(s32 arg0, s32 arg1, s32 arg2);
 struct S_02001b14 *Func_02005454(s32 arg0);
 struct S_02001b14 *Func_0200545e(s32 arg0);
 struct S_02001b14 *Func_02005468(s32 arg0);
 struct S_02001b14 *Func_020054a6(s32 arg0);
-void Func_02003b80(s32 arg0, s32 arg1, s32 arg2);
 struct S_02001b14 *Func_020054e0(s32 arg0);
 struct S_02001b14 *Func_020054ea(s32 arg0);
 struct S_02001b14 *Func_0200551e(s32 arg0);
-void Func_02003be8(s32 arg0, s32 arg1, s32 arg2);
-void Func_02003bf8(s32 arg0, s32 arg1, s32 arg2);
 u8 *Func_0200568a();
 u8 *Func_02005694();
 u8 *Func_0200569e();
 u8 *Func_02005758();
-void Func_02003da8();
-void Func_02003db2();
-void Func_02003dce();
-void Func_02003dda();
-void Func_02003df0();
-void Func_02003dfc_a();
-void Func_02003e12();
-void Func_02003e22();
-void Func_02003e32();
 u8 *Func_020058e8();
 u8 *Func_020058f2();
 u8 *Func_020058fc();
 u8 *Func_02005906();
 u8 *Func_020059d4();
-void Func_0200401a();
-void Func_02004024();
-void Func_02004044();
-void Func_02004050();
-void Func_02004070();
-void Func_0200407c();
-void Func_02004094();
-void Func_020040a4();
-void Func_020040b4_a();
 u8 *Func_02005c1a();
 u8 *Func_02005c24();
 u8 *Func_02005c2e();
 u8 *Func_02005ca4();
-void Func_0200437e();
 u8 *Func_02005ce6();
 u8 *Func_02005cf0();
 u8 *Func_02005cfa();
 u8 *Func_02005d62();
-void Func_0200443c();
 u8 *Func_02005da6();
 u8 *Func_02005db0();
 u8 *Func_02005dba();
 u8 *Func_02005e28();
-void Func_02004502();
 u8 *Func_02005e6a();
 u8 *Func_02005e74();
 u8 *Func_02005ec8();
-void Func_020045a2_a();
 OrbitingSceneObject *Func_02005f6c(void);
 u8 *Func_02005f3c(s32, s32);
 
@@ -679,7 +574,7 @@ void SetEffectOwnerMode(u8 *object, s32 mode)
 /* Returns the party record; only its presentation block at +80 is read. */
 u8 *SpawnMode14Effect(s32 x, s32 y, s32 z, s32 kind)
 {
-    u8 *object = Func_02003a0e(kind, x, y, z);
+    u8 *object = Object_Create(kind, x, y, z);
 
     if (object != 0) {
         u8 *owner = *(u8 **)(object + 80);
@@ -698,7 +593,7 @@ u8 *SpawnMode14Effect(s32 x, s32 y, s32 z, s32 kind)
 
 u8 *SpawnMode15Effect(s32 x, s32 y, s32 z, s32 kind)
 {
-    u8 *object = Func_02003a66(kind, x, y, z);
+    u8 *object = Object_Create(kind, x, y, z);
 
     if (object != 0) {
         u8 *owner = *(u8 **)(object + 80);
@@ -883,7 +778,7 @@ s32 Func_02000f70(void)
     ((RecWord *)(*(u8 *volatile *)Data_03001ebc + 0x1c0))->w = 0x204;
     scene = Data_02000240_t[224][0];
     if (scene == (s32)Data_0000007b) {
-        Func_020028b4();
+        InitializeEscapeSceneActors();
         return 0;
     }
     if (scene == (s32)Data_0000007d) {
@@ -908,13 +803,13 @@ s32 Func_02000f70(void)
     if (cur == (s32)Data_00000071) {
         s32 rec;
 
-        Func_020026be();
-        rec = Func_020040d0(8);
+        FieldScene_RunScene3b2_0200167c();
+        rec = Actor_Get(8);
         *(volatile s32 *)(rec + 56) = 0x810000;
         Func_02001914(9);
         Func_0200191a(10);
         if (GameFlag_IsSet(0x240) != 0) {
-            rec7 = Value1(Func_020040f4, 11);
+            rec7 = Value1(Engine_ActorGet, 11);
             if ((s32)rec7 != 0) {
                 rec7[89] = 0;
                 Object_SetAnimation((s32)rec7, 4);
@@ -923,7 +818,7 @@ s32 Func_02000f70(void)
             Call4(Func_020040e0, 0, 0x1300000, 0x1700000, 253);
         }
         if (GameFlag_IsSet(0x241) != 0) {
-            rec7 = Value1(Func_02004130, 12);
+            rec7 = Value1(Engine_ActorGet, 12);
             if ((s32)rec7 != 0) {
                 rec7[89] = 0;
                 Object_SetAnimation((s32)rec7, 4);
@@ -932,7 +827,7 @@ s32 Func_02000f70(void)
             Call4(Func_0200411c, 0, 0x500000, 0x1700000, 253);
         }
         if (GameFlag_IsSet(0x242) != 0) {
-            rec7 = Value1(Func_0200416c, 13);
+            rec7 = Value1(Engine_ActorGet, 13);
             if ((s32)rec7 != 0) {
                 rec7[89] = 0;
                 Object_SetAnimation((s32)rec7, 4);
@@ -941,7 +836,7 @@ s32 Func_02000f70(void)
             Call4(Func_02004158, 0, 0x600000, 0x1500000, 253);
         }
         if (GameFlag_IsSet(0x243) != 0) {
-            rec7 = Value1(Func_020041a8, 14);
+            rec7 = Value1(Engine_ActorGet, 14);
             if ((s32)rec7 != 0) {
                 rec7[89] = 0;
                 Object_SetAnimation((s32)rec7, 4);
@@ -953,7 +848,7 @@ s32 Func_02000f70(void)
         if (GameFlag_IsSet(0xfd7) != 0) {
             return 0;
         }
-        Func_02004044_b(8);
+        InitializeSwayingSceneObject(8);
         return 0;
     }
     lo = (s32)Data_0000007e;
@@ -966,9 +861,9 @@ s32 Func_02000f70(void)
     cur = Data_02000240_t[224][0];
     if (cur >= lo) {
         if (cur <= (s32)Data_00000086) {
-            Func_020023cc();
+            FieldScene_RunScene3b2SequenceA();
             if (Data_02000240_t[225][0] == 5) {
-                Func_0200265e();
+                FieldScene_RunScene3b2_02001494();
             }
         }
     }
@@ -982,12 +877,12 @@ void FieldScene_RunScene3b2SequenceA(void)
     u8 *rec8;
     s32 record;
 
-    rec8 = Func_020042a4(8);
+    rec8 = Actor_Get(8);
     rec7 = GameFlag_IsSet((Data_02000240_t[224][0] + (0x8d2 - (s32)Data_0000007e)));
     if (rec7 != 0) {
         Actor_SetPosition(8, 0x28a0000, 0xa80000);
         *(volatile s32 *)((s32)rec8 + 12) = -0x200000;
-        record = Func_020042da(8);
+        record = Actor_Get(8);
         Actor_SetSpriteFlags(record, 0);
         Actor_SetSpritePriority(8, 3);
         rec8[85] = 0;
@@ -1038,12 +933,12 @@ void ConfigureSceneActor11(s32 actor_id)
 {
     s32 a = 0x1300000;
     s32 b = 0x1700000;
-    u8 *p = Func_02004598(11);
+    u8 *p = Actor_Get(11);
 
     if (p != 0) {
         p[89] = 0;
     }
-    Actor_SetSpriteFlags(Func_020045aa(actor_id), 0);
+    Actor_SetSpriteFlags(Actor_Get(actor_id), 0);
     Func_02004580(0, a, b, 253);
     GameFlag_Set(576);
 }
@@ -1052,12 +947,12 @@ void ConfigureSceneActor12(s32 actor_id)
 {
     s32 a = 0x500000;
     s32 b = 0x1700000;
-    u8 *p = Func_020045d8(12);
+    u8 *p = Actor_Get(12);
 
     if (p != 0) {
         p[89] = 0;
     }
-    Actor_SetSpriteFlags(Func_020045ea(actor_id), 0);
+    Actor_SetSpriteFlags(Actor_Get(actor_id), 0);
     Func_020045c0(0, a, b, 253);
     GameFlag_Set(577);
 }
@@ -1066,12 +961,12 @@ void ConfigureSceneActor13(s32 actor_id)
 {
     s32 a = 0x600000;
     s32 b = 0x1500000;
-    u8 *p = Func_0200461c(13);
+    u8 *p = Actor_Get(13);
 
     if (p != 0) {
         p[89] = 0;
     }
-    Actor_SetSpriteFlags(Func_0200462e(actor_id), 0);
+    Actor_SetSpriteFlags(Actor_Get(actor_id), 0);
     Func_02004604(0, a, b, 253);
     GameFlag_Set(578);
 }
@@ -1082,12 +977,12 @@ void ConfigureSceneActor14(s32 actor_id)
     s32 b = 0x1400000;
     s32 c = 0x2f00000;
     s32 d = 0x1400000;
-    u8 *p = Func_02004660(14);
+    u8 *p = Actor_Get(14);
 
     if (p != 0) {
         p[89] = 0;
     }
-    Actor_SetSpriteFlags(Func_02004672(actor_id), 0);
+    Actor_SetSpriteFlags(Actor_Get(actor_id), 0);
     Func_02004648(0, a, b, 253);
     Func_02004658(0, c, d, 253);
     GameFlag_Set(579);
@@ -1126,25 +1021,25 @@ void FieldScene_RunScene3b2_0200167c(void)
         Map_CopyCellAttributes(0, 0, 1, 1, 8, 21);
         Actor_SetPosition(15, 0x3c80000, 0x3c80000);
     } else {
-        record = Func_0200473a(15);
+        record = Actor_Get(15);
         *(s32 *)(record + 28) = 0x19999;
     }
     if (GameFlag_IsSet(0x8c5) != 0) {
         Actor_SetPosition(16, 0x3c80000, 0x3c80000);
     } else {
-        record = Func_0200475e(16);
+        record = Actor_Get(16);
         *(s32 *)(record + 28) = 0x19999;
     }
     if (GameFlag_IsSet(0x8c6) != 0) {
         Actor_SetPosition(17, 0x3c80000, 0x3c80000);
     } else {
-        record = Func_02004782(17);
+        record = Actor_Get(17);
         *(s32 *)(record + 28) = 0x19999;
     }
     if (GameFlag_IsSet(0x8c7) != 0) {
         Actor_SetPosition(18, 0x3c80000, 0x3c80000);
     } else {
-        record = Func_020047a6(18);
+        record = Actor_Get(18);
         *(s32 *)(record + 28) = 0x19999;
     }
 }
@@ -1167,8 +1062,8 @@ void PositionSceneActorPair(s32 actor_id, s32 x_offset, s32 z_offset)
     s32 x;
     s32 y;
 
-    p = Func_0200481e(gGameState.selected_actor);
-    q = Func_02004826(actor_id);
+    p = Actor_Get(gGameState.selected_actor);
+    q = Actor_Get(actor_id);
     Event_Begin();
     {
         x = ((p->f08 + (x_offset << 16)) & 0xFFF00000) + 0x80000;
@@ -1262,62 +1157,62 @@ void InitializeEscapeSceneActors(void)
 
 void ActivateSceneActor8(void)
 {
-    Func_020032be(8);
+    SetSceneActorModes(8);
 }
 
 void ActivateSceneActor10(void)
 {
-    Func_020032ca(10);
+    SetSceneActorModes(10);
 }
 
 void ActivateSceneActor11(void)
 {
-    Func_020032d6(11);
+    SetSceneActorModes(11);
 }
 
 void ActivateSceneActor12(void)
 {
-    Func_020032e2(12);
+    SetSceneActorModes(12);
 }
 
 void ActivateSceneActor13(void)
 {
-    Func_020032ee(13);
+    SetSceneActorModes(13);
 }
 
 void ActivateSceneActor15(void)
 {
-    Func_020032fa(15);
+    SetSceneActorModes(15);
 }
 
 void ActivateSceneActor17(void)
 {
-    Func_02003306(17);
+    SetSceneActorModes(17);
 }
 
 void ActivateSceneActor18(void)
 {
-    Func_02003312(18);
+    SetSceneActorModes(18);
 }
 
 void ActivateSceneActor9(void)
 {
-    Func_0200331e(9);
+    SetSceneActorModes(9);
 }
 
 void ActivateSceneActor19(void)
 {
-    Func_0200332a(19);
+    SetSceneActorModes(19);
 }
 
 void ActivateSceneActor14(void)
 {
-    Func_02003336(14);
+    SetSceneActorModes(14);
 }
 
 void ActivateSceneActor16(void)
 {
-    Func_02003342(16);
+    SetSceneActorModes(16);
 }
 
 s32 TryPushBlockingSceneActor(struct S_02000474 *actor)
@@ -1365,7 +1260,7 @@ s32 TryPushBlockingSceneActor(struct S_02000474 *actor)
 
 s32 CheckActorPathSouth(void)
 {
-    struct S_02001b14 *actor = Func_02004ba4(0);
+    struct S_02001b14 *actor = Actor_Get(0);
     struct V destination;
 
     destination.a = actor->f08;
@@ -1376,7 +1271,7 @@ s32 CheckActorPathSouth(void)
 
 s32 CheckActorPathNorth(void)
 {
-    struct S_02001b14 *actor = Func_02004bd0(0);
+    struct S_02001b14 *actor = Actor_Get(0);
     struct V destination;
 
     destination.a = actor->f08;
@@ -1387,7 +1282,7 @@ s32 CheckActorPathNorth(void)
 
 s32 CheckActorPathWest(void)
 {
-    struct S_02001b14 *actor = Func_02004bf8(0);
+    struct S_02001b14 *actor = Actor_Get(0);
     struct V destination;
 
     destination.a = actor->f08 + -0x200000;
@@ -1398,7 +1293,7 @@ s32 CheckActorPathWest(void)
 
 s32 CheckActorPathEast(void)
 {
-    struct S_02001b14 *actor = Func_02004c24(0);
+    struct S_02001b14 *actor = Actor_Get(0);
     struct V destination;
 
     destination.a = actor->f08 + 0x200000;
@@ -1416,30 +1311,30 @@ void UpdateEscapeRouteForActorPositions(void)
 
     if (actor_z == 19) {
         if (actor_12_x == 24) {
-            Func_020033b2(8, 0, -80);
+            PositionSceneActorPair(8, 0, -80);
         } else if (actor_15_x == 24) {
-            Func_02003376(8, 0, -112);
-            Func_020033b2(8, 0, -32);
+            PositionSceneActorPair(8, 0, -112);
+            PositionSceneActorPair(8, 0, -32);
         } else {
-            Func_02003386(8, 0, -80);
-            Func_020033b2(8, 0, -112);
+            PositionSceneActorPair(8, 0, -80);
+            PositionSceneActorPair(8, 0, -112);
         }
     } else if (actor_z == 14) {
         if (actor_12_x == 24) {
             return;
         }
         if (actor_15_x == 24) {
-            Func_020033b2(8, 0, -64);
+            PositionSceneActorPair(8, 0, -64);
         } else {
-            Func_020033b2(8, 0, -112);
+            PositionSceneActorPair(8, 0, -112);
         }
     } else if (actor_z == 10) {
         if (actor_15_x == 24) {
             return;
         }
-        Func_020033b2(8, 0, -48);
+        PositionSceneActorPair(8, 0, -48);
     } else {
-        Func_02003758_a();
+        CheckActorPathSouth();
         return;
     }
     Task_Wait(2);
@@ -1460,18 +1355,18 @@ void UpdateActor8ReturnRoute(void)
 
     if (y == 7) {
         if (z == 24) {
-            Func_0200342a(8, 0, 48);
+            PositionSceneActorPair(8, 0, 48);
         } else {
-            Func_02003436(8, 0, 80);
-            Func_02003440(8, 0, 112);
+            PositionSceneActorPair(8, 0, 80);
+            PositionSceneActorPair(8, 0, 112);
         }
     } else if (y == 10) {
         if (z == 24) {
             return;
         }
-        Func_02003454(8, 0, 144);
+        PositionSceneActorPair(8, 0, 144);
     } else if (y == 14) {
-        Func_02003464(8, 0, 80);
+        PositionSceneActorPair(8, 0, 80);
     } else {
         return;
     }
@@ -1494,12 +1389,12 @@ void UpdateActor10RetreatRoute(void)
 
     if (y == 18) {
         if (w >= 31 && w <= 33) {
-            Func_02003512(10, 0, -128);
+            PositionSceneActorPair(10, 0, -128);
         } else if (z >= 31 && z <= 33) {
-            Func_02003512(10, 0, -128);
+            PositionSceneActorPair(10, 0, -128);
         } else {
-            Func_020034f0(10, 0, -112);
-            Func_02003512(10, 0, -64);
+            PositionSceneActorPair(10, 0, -112);
+            PositionSceneActorPair(10, 0, -64);
         }
     } else if (y == 10) {
         if (w >= 31 && w <= 33) {
@@ -1508,7 +1403,7 @@ void UpdateActor10RetreatRoute(void)
         if (z >= 31 && z <= 33) {
             return;
         }
-        Func_02003512(10, 0, -48);
+        PositionSceneActorPair(10, 0, -48);
     } else if (y == 7) {
         return;
     }
@@ -1529,10 +1424,10 @@ void UpdateActor10AdvanceRoute(void)
 
     if (y != 18) {
         if (y == 10) {
-            Func_0200357c(10, 0, 128);
+            PositionSceneActorPair(10, 0, 128);
         } else {
-            Func_02003588(10, 0, 112);
-            Func_02003592(10, 0, 64);
+            PositionSceneActorPair(10, 0, 112);
+            PositionSceneActorPair(10, 0, 64);
         }
         Task_Wait(2);
         {
@@ -1555,12 +1450,12 @@ void UpdateActor11WestRoute(void)
             if ((Func_02004f08(10)->f10 >> 20) == 18) {
                 return;
             }
-            Func_0200361e(11, -64, 0);
+            PositionSceneActorPair(11, -64, 0);
         } else if (x == 36) {
             if ((Func_02004f1e(10)->f10 >> 20) == 18) {
-                Func_0200361e(11, -32, 0);
+                PositionSceneActorPair(11, -32, 0);
             } else {
-                Func_0200362c(11, -96, 0);
+                PositionSceneActorPair(11, -96, 0);
             }
         }
         Task_Wait(2);
@@ -1584,9 +1479,9 @@ void UpdateActor11EastRoute(void)
             if ((Func_02004fa0(10)->f10 >> 20) == 18) {
                 return;
             }
-            Func_0200369e(11, 96, 0);
+            PositionSceneActorPair(11, 96, 0);
         } else if (x == 34) {
-            Func_020036ae(11, 32, 0);
+            PositionSceneActorPair(11, 32, 0);
         }
         Task_Wait(2);
         {
@@ -1605,11 +1500,11 @@ void UpdateActor12WestRoute(void)
     s32 y = Func_02005012_a(12)->f10 >> 20;
 
     if (x == 36) {
-        Func_02003714(12, -96, 0);
-        Func_02003736(12, -96, 0);
+        PositionSceneActorPair(12, -96, 0);
+        PositionSceneActorPair(12, -96, 0);
     } else if (x == 34) {
-        Func_0200372a(12, -96, 0);
-        Func_02003736(12, -64, 0);
+        PositionSceneActorPair(12, -96, 0);
+        PositionSceneActorPair(12, -64, 0);
     } else if (x == 24) {
         return;
     }
@@ -1629,10 +1524,10 @@ void UpdateActor12EastRoute(void)
     s32 y = Func_0200509e(12)->f10 >> 20;
 
     if (x == 24) {
-        Func_0200379c(12, 96, 0);
-        Func_020037b0(12, 96, 0);
+        PositionSceneActorPair(12, 96, 0);
+        PositionSceneActorPair(12, 96, 0);
     } else if (x == 34) {
-        Func_020037b0(12, 32, 0);
+        PositionSceneActorPair(12, 32, 0);
     } else if (x == 36) {
         return;
     }
@@ -1655,40 +1550,40 @@ void UpdateActor13WestRoute(void)
 
     if (x == 36) {
         if (w == 34) {
-            Func_0200389e(13, -16, 0);
+            PositionSceneActorPair(13, -16, 0);
         } else if (z == 7) {
-            Func_0200389e(13, -32, 0);
+            PositionSceneActorPair(13, -32, 0);
         } else if (w == 30) {
-            Func_0200389e(13, -80, 0);
+            PositionSceneActorPair(13, -80, 0);
         } else {
-            Func_02003846(13, -96, 0);
-            Func_0200389e(13, -80, 0);
+            PositionSceneActorPair(13, -96, 0);
+            PositionSceneActorPair(13, -80, 0);
         }
     } else if (x == 35) {
         if (w == 34) {
             return;
         } else if (z == 7) {
-            Func_0200389e(13, -16, 0);
+            PositionSceneActorPair(13, -16, 0);
         } else if (w == 30) {
-            Func_0200389e(13, -64, 0);
+            PositionSceneActorPair(13, -64, 0);
         } else {
-            Func_02003870(13, -80, 0);
-            Func_0200389e(13, -80, 0);
+            PositionSceneActorPair(13, -80, 0);
+            PositionSceneActorPair(13, -80, 0);
         }
     } else if (x == 34) {
         if (z == 7) {
             return;
         }
         if (w == 30) {
-            Func_0200389e(13, -48, 0);
+            PositionSceneActorPair(13, -48, 0);
         } else {
-            Func_0200389e(13, -144, 0);
+            PositionSceneActorPair(13, -144, 0);
         }
     } else if (x == 31) {
         if (w == 30) {
             return;
         }
-        Func_0200389e(13, -96, 0);
+        PositionSceneActorPair(13, -96, 0);
     } else if (x == 25) {
         return;
     }
@@ -1707,16 +1602,16 @@ void UpdateActor13EastRoute(void)
     s32 x = Func_020051fc(13)->f08 >> 20;
     s32 y = Func_02005206(13)->f10 >> 20;
 
-    Func_02005210(15);
+    Actor_Get(15);
     if (x == 25) {
-        Func_0200390a(13, 96, 0);
-        Func_02003932(13, 80, 0);
+        PositionSceneActorPair(13, 96, 0);
+        PositionSceneActorPair(13, 80, 0);
     } else if (x == 31) {
-        Func_02003932(13, 80, 0);
+        PositionSceneActorPair(13, 80, 0);
     } else if (x == 34) {
-        Func_02003932(13, 32, 0);
+        PositionSceneActorPair(13, 32, 0);
     } else if (x == 35) {
-        Func_02003932(13, 16, 0);
+        PositionSceneActorPair(13, 16, 0);
     } else if (x == 36) {
         return;
     }
@@ -1739,25 +1634,25 @@ void UpdateActor15WestRoute(void)
 
     if (x == 35) {
         if (w == 7) {
-            Func_020039fa(15, -16, 0);
+            PositionSceneActorPair(15, -16, 0);
         } else if (z == 7) {
-            Func_020039fa(15, -112, 0);
+            PositionSceneActorPair(15, -112, 0);
         } else {
-            Func_020039be(15, -96, 0);
-            Func_020039fa(15, -80, 0);
+            PositionSceneActorPair(15, -96, 0);
+            PositionSceneActorPair(15, -80, 0);
         }
     } else if (x == 34) {
         if (w == 7) {
             return;
         }
-        Func_020039d6(15, -96, 0);
-        Func_020039fa(15, -64, 0);
+        PositionSceneActorPair(15, -96, 0);
+        PositionSceneActorPair(15, -64, 0);
     } else if (x == 33) {
-        Func_020039fa(15, -144, 0);
+        PositionSceneActorPair(15, -144, 0);
     } else if (x == 31) {
-        Func_020039fa(15, -80, 0);
+        PositionSceneActorPair(15, -80, 0);
     } else if (x == 30) {
-        Func_020039fa(15, -96, 0);
+        PositionSceneActorPair(15, -96, 0);
     } else if (x == 24) {
         return;
     }
@@ -1780,39 +1675,39 @@ void UpdateActor15EastRoute(void)
 
     if (x == 24) {
         if (z == 7 || w == 31) {
-            Func_02003af6(15, 96, 0);
+            PositionSceneActorPair(15, 96, 0);
         } else if (w == 34) {
-            Func_02003a86(15, 64, 0);
-            Func_02003af6(15, 80, 0);
+            PositionSceneActorPair(15, 64, 0);
+            PositionSceneActorPair(15, 80, 0);
         } else if (w == 35) {
-            Func_02003a9a(15, 80, 0);
-            Func_02003af6(15, 80, 0);
+            PositionSceneActorPair(15, 80, 0);
+            PositionSceneActorPair(15, 80, 0);
         } else {
-            Func_02003aaa(15, 80, 0);
-            Func_02003af6(15, 96, 0);
+            PositionSceneActorPair(15, 80, 0);
+            PositionSceneActorPair(15, 96, 0);
         }
     } else if (x == 30 || w == 31) {
         if (z == 7) {
             return;
         }
         if (w == 34) {
-            Func_02003af6(15, 48, 0);
+            PositionSceneActorPair(15, 48, 0);
         } else if (w == 35) {
-            Func_02003af6(15, 64, 0);
+            PositionSceneActorPair(15, 64, 0);
         } else {
-            Func_02003af6(15, 80, 0);
+            PositionSceneActorPair(15, 80, 0);
         }
     } else if (x == 33) {
         if (w == 34) {
             return;
         }
         if (w == 35) {
-            Func_02003af6(15, 16, 0);
+            PositionSceneActorPair(15, 16, 0);
         } else {
-            Func_02003af6(15, 32, 0);
+            PositionSceneActorPair(15, 32, 0);
         }
     } else if (x == 34) {
-        Func_02003af6(15, 16, 0);
+        PositionSceneActorPair(15, 16, 0);
     } else if (x == 35) {
         return;
     }
@@ -1834,15 +1729,15 @@ void UpdateActor17SouthRoute(void)
 
     if (y == 19) {
         if (z >= 3 && z <= 5) {
-            Func_02003b80(17, 0, -16);
+            PositionSceneActorPair(17, 0, -16);
         } else {
-            Func_02003b80(17, 0, -64);
+            PositionSceneActorPair(17, 0, -64);
         }
     } else if (y == 18) {
         if (z >= 3 && z <= 5) {
             return;
         }
-        Func_02003b80(17, 0, -48);
+        PositionSceneActorPair(17, 0, -48);
     } else if (y == 15) {
         return;
     }
@@ -1862,9 +1757,9 @@ void UpdateActor17NorthRoute(void)
     s32 y = Func_020054ea(17)->f10 >> 20;
 
     if (y == 15) {
-        Func_02003be8(17, 0, 64);
+        PositionSceneActorPair(17, 0, 64);
     } else if (y == 18) {
-        Func_02003bf8(17, 0, 16);
+        PositionSceneActorPair(17, 0, 16);
     } else if (y == 19) {
         return;
     }
@@ -1901,34 +1796,34 @@ void AdvanceActor18AlongEscapeRoute(void)
             goto transition80;
         }
         /* This arm runs two transitions back to back. */
-        Func_02003da8(18, 0, 64);
-        Func_02003db2(18, 0, 96);
+        PositionSceneActorPair(18, 0, 64);
+        PositionSceneActorPair(18, 0, 96);
     } else if (row == 11) {
         if ((u32)(companion14Column - 6) <= 2) {
             return;
         }
         if ((u32)(companion19Column - 6) <= 2) {
-            Func_02003dce(18, 0, 48);
+            PositionSceneActorPair(18, 0, 48);
         } else {
-            Func_02003dda(18, 0, 128);
+            PositionSceneActorPair(18, 0, 128);
         }
     } else if (row == 12) {
         if ((u32)(companion19Column - 6) <= 2) {
 transition32:
-            Func_02003df0(18, 0, 32);
+            PositionSceneActorPair(18, 0, 32);
         } else {
-            Func_02003dfc_a(18, 0, 112);
+            PositionSceneActorPair(18, 0, 112);
         }
     } else if (row == 14) {
         if ((u32)(companion19Column - 6) <= 2) {
             return;
         }
 transition80:
-        Func_02003e12(18, 0, 80);
+        PositionSceneActorPair(18, 0, 80);
     } else if (row == 15) {
-        Func_02003e22(18, 0, 64);
+        PositionSceneActorPair(18, 0, 64);
     } else if (row == 18) {
-        Func_02003e32(18, 0, 16);
+        PositionSceneActorPair(18, 0, 16);
     } else if (row == 19) {
         return;
     }
@@ -1965,38 +1860,38 @@ void AdvanceActor9AlongEscapeRoute(void)
             goto transition48;
         }
         if ((u32)(companion19Column - 9) > 2) {
-            Func_0200401a(9, 0, 80);
+            PositionSceneActorPair(9, 0, 80);
         }
         /* Falls through into the id-96 site from both paths. */
-        Func_02004024(9, 0, 96);
+        PositionSceneActorPair(9, 0, 96);
     } else if (row == 11) {
         if ((u32)(companion14Column - 9) <= 2) {
             return;
         }
         if ((u32)(companion19Column - 9) <= 2) {
 transition48:
-            Func_02004044(9, 0, 48);
+            PositionSceneActorPair(9, 0, 48);
         } else {
-            Func_02004050(9, 0, 128);
+            PositionSceneActorPair(9, 0, 128);
         }
     } else if (row == 12) {
         if ((u32)(companion14Column - 9) <= 2) {
             return;
         }
         if ((u32)(companion19Column - 9) <= 2) {
-            Func_02004070(9, 0, 32);
+            PositionSceneActorPair(9, 0, 32);
         } else {
-            Func_0200407c(9, 0, 112);
+            PositionSceneActorPair(9, 0, 112);
         }
     } else if (row == 14) {
         if ((u32)(companion19Column - 9) <= 2) {
             return;
         }
-        Func_02004094(9, 0, 80);
+        PositionSceneActorPair(9, 0, 80);
     } else if (row == 15) {
-        Func_020040a4(9, 0, 64);
+        PositionSceneActorPair(9, 0, 64);
     } else if (row == 18) {
-        Func_020040b4_a(9, 0, 16);
+        PositionSceneActorPair(9, 0, 16);
     }
 
     Task_Wait(2);
@@ -2024,31 +1919,31 @@ void RetreatActor14AlongEscapeRoute(void)
 
     if (column == 13) {
         if ((u32)(companion9Row - 12) <= 2) {
-            Func_0200437e(14, -16, 0);
+            PositionSceneActorPair(14, -16, 0);
         } else if ((u32)(companion18Row - 12) <= 2) {
-            Func_0200437e(14, -64, 0);
+            PositionSceneActorPair(14, -64, 0);
         } else {
-            Func_0200437e(14, -112, 0);
+            PositionSceneActorPair(14, -112, 0);
         }
     } else if (column == 12) {
         if ((u32)(companion9Row - 12) <= 2) {
             return;
         }
         if ((u32)(companion18Row - 12) <= 2) {
-            Func_0200437e(14, -48, 0);
+            PositionSceneActorPair(14, -48, 0);
         } else {
-            Func_0200437e(14, -96, 0);
+            PositionSceneActorPair(14, -96, 0);
         }
     } else if (column == 9) {
         if ((u32)(companion18Row - 12) <= 2) {
             return;
         }
-        Func_0200437e(14, -48, 0);
+        PositionSceneActorPair(14, -48, 0);
     } else if (column == 8) {
         if ((u32)(companion18Row - 12) <= 2) {
             return;
         }
-        Func_0200437e(14, -32, 0);
+        PositionSceneActorPair(14, -32, 0);
     } else if (column == 6) {
         return;
     }
@@ -2078,24 +1973,24 @@ void AdvanceActor14AlongEscapeRoute(void)
 
     if (column == 6) {
         if ((u32)(companion9Row - 12) <= 2) {
-            Func_0200443c(14, 32, 0);
+            PositionSceneActorPair(14, 32, 0);
         } else if ((u32)(companion18Row - 12) <= 2) {
-            Func_0200443c(14, 64, 0);
+            PositionSceneActorPair(14, 64, 0);
         } else {
-            Func_0200443c(14, 112, 0);
+            PositionSceneActorPair(14, 112, 0);
         }
     } else if (column == 8) {
         if ((u32)(companion9Row - 12) <= 2) {
             return;
         }
-        Func_0200443c(14, 80, 0);
+        PositionSceneActorPair(14, 80, 0);
     } else if (column == 9) {
         if ((u32)(companion9Row - 12) <= 2) {
             return;
         }
-        Func_0200443c(14, 64, 0);
+        PositionSceneActorPair(14, 64, 0);
     } else if (column == 12) {
-        Func_0200443c(14, 16, 0);
+        PositionSceneActorPair(14, 16, 0);
     } else if (column == 13) {
         return;
     }
@@ -2125,28 +2020,28 @@ void RetreatActor16AlongEscapeRoute(void)
 
     if (column == 13) {
         if ((u32)(companion9Row - 9) <= 2) {
-            Func_02004502(16, -16, 0);
+            PositionSceneActorPair(16, -16, 0);
         } else if ((u32)(companion18Row - 9) <= 2) {
-            Func_02004502(16, -64, 0);
+            PositionSceneActorPair(16, -64, 0);
         } else {
-            Func_02004502(16, -112, 0);
+            PositionSceneActorPair(16, -112, 0);
         }
     } else if (column == 12) {
         if ((u32)(companion9Row - 9) <= 2) {
             return;
         }
         if ((u32)(companion18Row - 9) <= 2) {
-            Func_02004502(16, -48, 0);
+            PositionSceneActorPair(16, -48, 0);
         } else {
-            Func_02004502(16, -96, 0);
+            PositionSceneActorPair(16, -96, 0);
         }
     } else if (column == 9) {
         if ((u32)(companion18Row - 9) <= 2) {
             return;
         }
-        Func_02004502(16, -48, 0);
+        PositionSceneActorPair(16, -48, 0);
     } else if (column == 8) {
-        Func_02004502(16, -32, 0);
+        PositionSceneActorPair(16, -32, 0);
     } else if (column == 6) {
         return;
     }
@@ -2173,19 +2068,19 @@ void AdvanceActor16AlongEscapeRoute(void)
 
     if (column == 6) {
         if ((u32)(companionRow - 9) <= 2) {
-            Func_020045a2_a(16, 32, 0);
+            PositionSceneActorPair(16, 32, 0);
         } else {
-            Func_020045a2_a(16, 112, 0);
+            PositionSceneActorPair(16, 112, 0);
         }
     } else if (column == 8) {
         if ((u32)(companionRow - 9) <= 2) {
             return;
         }
-        Func_020045a2_a(16, 80, 0);
+        PositionSceneActorPair(16, 80, 0);
     } else if (column == 9) {
-        Func_020045a2_a(16, 64, 0);
+        PositionSceneActorPair(16, 64, 0);
     } else if (column == 12) {
-        Func_020045a2_a(16, 16, 0);
+        PositionSceneActorPair(16, 16, 0);
     } else if (column == 13) {
         return;
     }

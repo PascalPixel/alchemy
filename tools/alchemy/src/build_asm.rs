@@ -381,7 +381,11 @@ fn build_region(
     let object = output_dir.join(format!("{name}.o"));
     let elf = output_dir.join(format!("{name}.elf"));
     let binary = output_dir.join(format!("{name}.bin"));
-    let cache_key = region_cache_key_with_signatures(source_bytes, linked_address, binutils)?;
+    let cache_key = region_cache_key_with_signatures(
+        &with_includes(root, source_bytes)?,
+        linked_address,
+        binutils,
+    )?;
     if let Some(entries) = cache.get(&cache_key).ok().flatten() {
         let entry = |name: &str| {
             entries
@@ -491,6 +495,23 @@ fn build_region(
         data,
         uncredited,
     })
+}
+/// The source followed by every file it `.include`s, so an edited macro
+/// invalidates each region built from it. Includes resolve from the
+/// repository root, where the assembler runs.
+fn with_includes(root: &Path, source: &[u8]) -> Result<Vec<u8>, String> {
+    let mut key = source.to_vec();
+    for line in String::from_utf8_lossy(source).lines() {
+        let Some(rest) = line.trim().strip_prefix(".include") else {
+            continue;
+        };
+        let path = rest.trim().trim_matches('"');
+        let included =
+            std::fs::read(root.join(path)).map_err(|error| format!("{path}: {error}"))?;
+        key.extend_from_slice(format!("\0{path}\0{}\0", included.len()).as_bytes());
+        key.extend_from_slice(&included);
+    }
+    Ok(key)
 }
 const UNCREDITED_START: &str = "AlchemyUncredited_";
 const UNCREDITED_END: &str = "AlchemyUncreditedEnd_";
@@ -643,8 +664,8 @@ fn declared_provenance(
     let (credit, object) = declared
         .split_once('—')
         .map(|(credit, object)| (credit.trim(), object.trim()))
-        .ok_or("credit line needs `<library|handwritten> — <object>`")?;
-    if !matches!(credit, "library" | "handwritten") {
+        .ok_or("credit line needs `<library|handwritten|reconstructed_veneer> — <object>`")?;
+    if !matches!(credit, "library" | "handwritten" | "reconstructed_veneer") {
         return Err(format!("unknown credit {credit:?}"));
     }
     if object.is_empty() {
@@ -701,6 +722,94 @@ mod credit_tests {
         }
         let none = declared_provenance("@ plain\n.thumb\n", true, true).unwrap();
         assert!(none.credit.is_empty());
+    }
+}
+/// A reconstructed-veneer module is a far-call stub table built from the
+/// game's shared veneer macro: every credited byte belongs to a complete
+/// word-aligned 8-byte entry `ldr r4, [pc, #0]; bx r4; .word target`, the
+/// same shape overlay entry tables have. Padding stays inside marked
+/// uncredited spans.
+fn veneer_table(
+    source: &str,
+    veneer_macro: &str,
+    address: u64,
+    data: &[u8],
+    uncredited: &[(u64, u64)],
+) -> Result<(), String> {
+    if !source
+        .lines()
+        .any(|line| line.trim() == format!(".include \"{veneer_macro}\""))
+    {
+        return Err(format!(
+            "a reconstructed veneer table must include {veneer_macro}"
+        ));
+    }
+    let end = address + data.len() as u64;
+    let mut start = address;
+    let mut spans = Vec::new();
+    for &(from, to) in uncredited {
+        spans.push((start, from));
+        start = to;
+    }
+    spans.push((start, end));
+    for (from, to) in spans.into_iter().filter(|(from, to)| to > from) {
+        if from % 4 != 0 || (to - from) % 8 != 0 {
+            return Err(format!(
+                "credited span 0x{from:08x}-0x{to:08x} is not whole aligned 8-byte veneers"
+            ));
+        }
+        for entry in (from..to).step_by(8) {
+            let offset = (entry - address) as usize;
+            if data[offset..offset + 4] != [0x00, 0x4c, 0x20, 0x47] {
+                return Err(format!(
+                    "0x{entry:08x} is not an `ldr r4, [pc, #0]; bx r4` veneer"
+                ));
+            }
+        }
+    }
+    Ok(())
+}
+#[cfg(test)]
+mod veneer_tests {
+    use super::{declared_provenance, veneer_table};
+    const MACRO: &str = "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC";
+    fn entry(target: u32) -> Vec<u8> {
+        let mut bytes = vec![0x00, 0x4c, 0x20, 0x47];
+        bytes.extend(target.to_le_bytes());
+        bytes
+    }
+    /// Main-image far-call stub tables earn reconstructed-veneer credit only
+    /// as whole aligned veneers built from the shared macro; padding must be
+    /// marked uncredited, and anything else in the credited extent refuses.
+    #[test]
+    fn far_call_tables_credit_only_whole_macro_built_veneers() {
+        let source = format!(
+            "@ Far-call stub table.\n@ credit: reconstructed_veneer — far-call table\n.syntax unified\n\t.include \"{MACRO}\"\n"
+        );
+        let credit = declared_provenance(&source, true, true).unwrap();
+        assert_eq!(credit.credit, "reconstructed_veneer");
+        let table = [entry(0x0800_b9f5), entry(0x0800_c005)].concat();
+        assert!(veneer_table(&source, MACRO, 0x0800_9000, &table, &[]).is_ok());
+        // Trailing padding counts only when it is marked uncredited.
+        let padded = [table.clone(), vec![0; 4]].concat();
+        assert!(veneer_table(&source, MACRO, 0x0800_9000, &padded, &[]).is_err());
+        assert!(veneer_table(
+            &source,
+            MACRO,
+            0x0800_9000,
+            &padded,
+            &[(0x0800_9010, 0x0800_9014)]
+        )
+        .is_ok());
+        // A partial entry, a misaligned table and a different instruction refuse.
+        assert!(veneer_table(&source, MACRO, 0x0800_9000, &table[..12], &[]).is_err());
+        assert!(veneer_table(&source, MACRO, 0x0800_9002, &table, &[]).is_err());
+        let mut other = table.clone();
+        other[8] = 0x01; // ldr r4, [pc, #4]
+        assert!(veneer_table(&source, MACRO, 0x0800_9000, &other, &[]).is_err());
+        // The table must be built from the shared veneer macro.
+        let hand = source.replace(MACRO, "games/THE BROKEN SEAL/SRC/SYSTEM/OTHER.INC");
+        assert!(veneer_table(&hand, MACRO, 0x0800_9000, &table, &[]).is_err());
     }
 }
 fn region_value(
@@ -860,6 +969,16 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<BuildReport, 
             provenance: declared_provenance(&source_text, module.is_some(), rom.is_some())
                 .map_err(|error| format!("{source_name}: {error}"))?,
         };
+        if category.provenance.credit == "reconstructed_veneer" {
+            veneer_table(
+                &source_text,
+                &target.overlay_macro(),
+                built.address,
+                &built.data,
+                &built.uncredited,
+            )
+            .map_err(|error| format!("{source_name}: {error}"))?;
+        }
         if !built.uncredited.is_empty() && category.provenance.credit.is_empty() {
             return Err(format!(
                 "{source_name}: uncredited spans belong only in a credited maintained module"

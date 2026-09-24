@@ -1,6 +1,14 @@
 {
   "format": 3,
   "owners": {
+    "resource_39f:020022c0": {
+      "name": "MogoruMori_Func020022c0",
+      "source": "FIELD/MOGORU_MORI/F_022C0.C"
+    },
+    "resource_3bd:02000a54": {
+      "name": "ArutamiraDou_Func02000a54",
+      "source": "FIELD/ARUTAMIRA_DOU/F_00A54.C"
+    },
     "resource_389:020010c8": {
       "name": "GomaHashira_Func020010c8",
       "source": "FIELD/GOMA_HASHIRA/F_010C8.C"

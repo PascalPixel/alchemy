@@ -75053,6 +75053,21 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "scene-3bd-02000a54",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/ARUTAMIRA_DOU/F_00A54.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3bd",
+      "absolute_symbols": {},
+      "owners": [
+        {
+          "address": "0x02000a54",
+          "extent": 104,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

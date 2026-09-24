@@ -19512,7 +19512,8 @@
       "source": "MENU/SHOP/RESTORE_SCENE_TILES.C"
     },
     "main:080b24e4": {
-      "name": "Unnamed_080b24e4"
+      "name": "Shop_BuySpecialItem",
+      "source": "MENU/SHOP/BUY_SPECIAL_ITEM.C"
     },
     "main:080b5534": {
       "name": "Unnamed_080b5534"

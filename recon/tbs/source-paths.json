@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_3cb:020010e8": {
+      "name": "LinkLobby_TalkAlternating",
+      "source": "MENU/LINK_LOBBY/ALTERNATE_TALK.C"
+    },
     "resource_3c0:02000c00": {
       "name": "SuharaSabaku_DropAndLeave",
       "source": "FIELD/SUHARA_SABAKU/DROP_AND_LEAVE.C"

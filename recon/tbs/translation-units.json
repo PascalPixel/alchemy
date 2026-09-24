@@ -78580,6 +78580,82 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "scene-3cb-020010e8",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/MENU/LINK_LOBBY/ALTERNATE_TALK.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3cb",
+      "absolute_symbols": {
+        "Engine_EventBegin": {
+          "address": "0x02009844",
+          "kind": "thumb"
+        },
+        "Engine_ActorFaceActor": {
+          "address": "0x0200987c",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagIsSet": {
+          "address": "0x0200980c",
+          "kind": "thumb"
+        },
+        "Main_08077148": {
+          "address": "0x02009834",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagSet": {
+          "address": "0x02009814",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagClear": {
+          "address": "0x0200981c",
+          "kind": "thumb"
+        },
+        "Engine_EventSetMessage": {
+          "address": "0x02009884",
+          "kind": "thumb"
+        },
+        "Engine_EventOpenMessage": {
+          "address": "0x0200988c",
+          "kind": "thumb"
+        },
+        "Engine_EventEnd": {
+          "address": "0x0200984c",
+          "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
+        },
+        "gGameStateRows": {
+          "address": "0x2000240",
+          "kind": "data"
+        },
+        "Data_0000298c": {
+          "address": "0x298c",
+          "kind": "data"
+        },
+        "Data_0000298d": {
+          "address": "0x298d",
+          "kind": "data"
+        },
+        "Data_0000298e": {
+          "address": "0x298e",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x020010e8",
+          "extent": 112,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

@@ -767,6 +767,26 @@
       "name": "System_Initialize",
       "source": "SYSTEM/INITIALIZE.C"
     },
+    "main:08003650": {
+      "name": "System_VBlankHandler",
+      "source": "SYSTEM/VBLANK_HANDLER.C"
+    },
+    "main:0800479c": {
+      "name": "Ui_LoadWindowGraphics",
+      "source": "GRAPHICS/WINDOW/LOAD_GRAPHICS.C"
+    },
+    "main:0808ab74": {
+      "name": "Scene_ResetFlagsOnEnter",
+      "source": "FIELD/COMMON/SCENE_RESET_FLAGS_ON_ENTER.C"
+    },
+    "main:080aad10": {
+      "name": "Menu_OpenBackdropScreen",
+      "source": "MENU/OPEN_BACKDROP_SCREEN.C"
+    },
+    "main:080b0744": {
+      "name": "Shop_CreatePriceSprite",
+      "source": "MENU/SHOP/CREATE_PRICE_SPRITE.C"
+    },
     "main:080d67dc": {
       "name": "BattleEffect_SetupBlendedDisplay",
       "source": "BATTLE/EFFECT/SETUP_BLENDED_DISPLAY.C"
@@ -1011,7 +1031,8 @@
       "name": "ResourceTable_AllocateBlocks"
     },
     "main:08003ed4": {
-      "name": "ResourceTable_GetLongestFreeBlockRun"
+      "name": "ResourceTable_GetLongestFreeBlockRun",
+      "source": "SYSTEM/RESOURCE/TABLE_LONGEST_FREE_RUN.C"
     },
     "main:08002f40": {
       "name": "Resource_GetTableEntry"
@@ -10270,7 +10291,8 @@
       "name": "Unnamed_08094820"
     },
     "main:080949a8": {
-      "name": "Unnamed_080949a8"
+      "name": "BattleFx_UpdateStormFlash",
+      "source": "BATTLE/EFFECT/STORM_FLASH.C"
     },
     "main:08094ac8": {
       "name": "Unnamed_08094ac8"
@@ -10292,7 +10314,8 @@
       "source": "FIELD/COMMON/OBJECT/PLACE_SCENE_ACTORS.C"
     },
     "main:08095778": {
-      "name": "Unnamed_08095778"
+      "name": "Djinn_ResolvePendingEvent",
+      "source": "GAME/DJINN/RESOLVE_PENDING_EVENT.C"
     },
     "main:0809bcf8": {
       "name": "Unnamed_0809bcf8"
@@ -20632,7 +20655,6 @@
     "main:0801e41c": "UiWindow_DrawDividerLine",
     "main:080153c8": "UiWindow_SetPaletteBitRectFar",
     "main:080acab8": "DjinnMenu_DrawStatPreview",
-    "main:080b0744": "Shop_CreatePriceSprite",
     "main:080b3050": "Shop_RunPartyMemberIconBurst",
     "main:08015038": "UiText_OpenMessageWindowFar",
     "main:080164d4": "UiWindow_ClearInteriorTiles",

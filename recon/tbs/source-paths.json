@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_3cb:0200008c": {
+      "name": "LinkLobby_PeerSlotMatches",
+      "source": "MENU/LINK_LOBBY/PEER_SLOT.C"
+    },
     "resource_3a7:02000b8c": {
       "name": "KuupuappuDou_SpawnPuffs",
       "source": "FIELD/KUUPUAPPU_DOU/SPAWN_PUFFS.C"

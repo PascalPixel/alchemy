@@ -78344,6 +78344,54 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "scene-3cb-0200008c",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/MENU/LINK_LOBBY/PEER_SLOT.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3cb",
+      "absolute_symbols": {
+        "Engine_GameFlagSet": {
+          "address": "0x02009814",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagClear": {
+          "address": "0x0200981c",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagIsSet": {
+          "address": "0x0200980c",
+          "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
+        },
+        "LinkLobby_SlotValues": {
+          "address": "0x2009928",
+          "kind": "data"
+        },
+        "LinkLobby_SlotColumns": {
+          "address": "0x2009940",
+          "kind": "data"
+        },
+        "LinkLobby_PeerValues": {
+          "address": "0x2002024",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x0200008c",
+          "extent": 156,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

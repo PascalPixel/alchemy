@@ -32603,246 +32603,6 @@
       ]
     },
     {
-      "id": "retained-selector-scene-entry-39c",
-      "game": "tbs",
-      "source": "recon/tbs/en/overlays/selector_scene_entry.c",
-      "compiler_route": "canonical-gcc296",
-      "overlay": "resource_39c",
-      "absolute_symbols": {
-        "Func_02005a8c": {
-          "address": "0x0200da8c",
-          "kind": "thumb"
-        },
-        "Func_02004fcc": {
-          "address": "0x0200cfcc",
-          "kind": "thumb"
-        },
-        "Func_02005c1c": {
-          "address": "0x0200dc1c",
-          "kind": "thumb"
-        },
-        "Func_02005a84": {
-          "address": "0x0200da84",
-          "kind": "thumb"
-        },
-        "Func_02005984": {
-          "address": "0x0200d984",
-          "kind": "thumb"
-        },
-        "Func_02000dfc": {
-          "address": "0x02008dfc",
-          "kind": "thumb"
-        },
-        "Func_02005a1c": {
-          "address": "0x0200da1c",
-          "kind": "thumb"
-        },
-        "Func_02005c54": {
-          "address": "0x0200dc54",
-          "kind": "thumb"
-        },
-        "Func_02005ad4": {
-          "address": "0x0200dad4",
-          "kind": "thumb"
-        },
-        "Func_02000030": {
-          "address": "0x02008030",
-          "kind": "thumb"
-        },
-        "Func_0200597c": {
-          "address": "0x0200d97c",
-          "kind": "thumb"
-        },
-        "Func_02005b24": {
-          "address": "0x0200db24",
-          "kind": "thumb"
-        },
-        "Func_02005a94": {
-          "address": "0x0200da94",
-          "kind": "thumb"
-        },
-        "Func_02000ba4": {
-          "address": "0x02008ba4",
-          "kind": "thumb"
-        },
-        "Func_02005a04": {
-          "address": "0x0200da04",
-          "kind": "thumb"
-        },
-        "Func_020059e4": {
-          "address": "0x0200d9e4",
-          "kind": "thumb"
-        },
-        "Func_02005b94": {
-          "address": "0x0200db94",
-          "kind": "thumb"
-        },
-        "Func_02005c64": {
-          "address": "0x0200dc64",
-          "kind": "thumb"
-        },
-        "Func_020017a8": {
-          "address": "0x020097a8",
-          "kind": "thumb"
-        },
-        "Func_02003788": {
-          "address": "0x0200b788",
-          "kind": "thumb"
-        },
-        "Func_02002030": {
-          "address": "0x0200a030",
-          "kind": "thumb"
-        },
-        "Func_02001db4": {
-          "address": "0x02009db4",
-          "kind": "thumb"
-        },
-        "Func_02005b9c": {
-          "address": "0x0200db9c",
-          "kind": "thumb"
-        },
-        "Func_02005ab4": {
-          "address": "0x0200dab4",
-          "kind": "thumb"
-        },
-        "Func_02005b6c": {
-          "address": "0x0200db6c",
-          "kind": "thumb"
-        },
-        "Func_02005a2c": {
-          "address": "0x0200da2c",
-          "kind": "thumb"
-        },
-        "Func_02005bf4": {
-          "address": "0x0200dbf4",
-          "kind": "thumb"
-        },
-        "Func_02005c04": {
-          "address": "0x0200dc04",
-          "kind": "thumb"
-        },
-        "Func_02005aac": {
-          "address": "0x0200daac",
-          "kind": "thumb"
-        },
-        "Func_02005a3c": {
-          "address": "0x0200da3c",
-          "kind": "thumb"
-        },
-        "Func_02005a44": {
-          "address": "0x0200da44",
-          "kind": "thumb"
-        },
-        "Func_02005bcc": {
-          "address": "0x0200dbcc",
-          "kind": "thumb"
-        },
-        "Func_02005abc": {
-          "address": "0x0200dabc",
-          "kind": "thumb"
-        },
-        "Func_02005be4": {
-          "address": "0x0200dbe4",
-          "kind": "thumb"
-        },
-        "Func_02005bdc": {
-          "address": "0x0200dbdc",
-          "kind": "thumb"
-        },
-        "Func_02005bec": {
-          "address": "0x0200dbec",
-          "kind": "thumb"
-        },
-        "Func_02005b2c": {
-          "address": "0x0200db2c",
-          "kind": "thumb"
-        },
-        "Func_02005a5c": {
-          "address": "0x0200da5c",
-          "kind": "thumb"
-        },
-        "Func_02005a14": {
-          "address": "0x0200da14",
-          "kind": "thumb"
-        },
-        "Func_02005bb4": {
-          "address": "0x0200dbb4",
-          "kind": "thumb"
-        },
-        "Func_02005bc4": {
-          "address": "0x0200dbc4",
-          "kind": "thumb"
-        },
-        "Func_02004c68": {
-          "address": "0x0200cc68",
-          "kind": "thumb"
-        },
-        "Func_02005a0c": {
-          "address": "0x0200da0c",
-          "kind": "thumb"
-        },
-        "Data_02000240": {
-          "address": "0x02000240",
-          "kind": "data"
-        },
-        "RuntimeSelectorTable": {
-          "address": "0x02000240",
-          "kind": "data"
-        },
-        "gEventWork": {
-          "address": "0x03001ebc",
-          "kind": "data"
-        },
-        "Engine_EventBegin": {
-          "address": "0x0200dab4",
-          "kind": "thumb"
-        },
-        "Engine_EventEnd": {
-          "address": "0x0200dabc",
-          "kind": "thumb"
-        },
-        "Engine_EventWait": {
-          "address": "0x0200daac",
-          "kind": "thumb"
-        },
-        "Engine_ActorGet": {
-          "address": "0x0200dad4",
-          "kind": "thumb"
-        },
-        "Engine_ActorSetPosition": {
-          "address": "0x0200db24",
-          "kind": "thumb"
-        },
-        "Engine_ActorTurnToAngle": {
-          "address": "0x0200db94",
-          "kind": "thumb"
-        },
-        "Engine_MapCopyCellsTo": {
-          "address": "0x0200da04",
-          "kind": "thumb"
-        },
-        "Engine_MapCopyCellAttributes": {
-          "address": "0x0200da1c",
-          "kind": "thumb"
-        },
-        "Engine_GameFlagIsSet": {
-          "address": "0x0200da84",
-          "kind": "thumb"
-        },
-        "Engine_AudioPlayCue": {
-          "address": "0x0200dc64",
-          "kind": "thumb"
-        }
-      },
-      "owners": [
-        {
-          "address": "0x02003d20",
-          "extent": 3304,
-          "state": "not-yet-c"
-        }
-      ]
-    },
-    {
       "id": "candidate-resource-39c-02002f68",
       "game": "tbs",
       "source": "games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_HEYA/RANDOM_EFFECT_SEQUENCE.C",
@@ -79019,6 +78779,222 @@
         {
           "address": "0x0200259c",
           "extent": 2680,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "scene-39c-02003d20",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_HEYA/ENTRY_STATE.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_39c",
+      "absolute_symbols": {
+        "Engine_GameFlagSet": {
+          "address": "0x0200da8c",
+          "kind": "thumb"
+        },
+        "Makyuri_SpawnLightObjects": {
+          "address": "0x0200cfcc",
+          "kind": "thumb"
+        },
+        "Main_0808a408": {
+          "address": "0x0200dc1c",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagIsSet": {
+          "address": "0x0200da84",
+          "kind": "thumb"
+        },
+        "Engine_TaskAddCallback": {
+          "address": "0x0200d984",
+          "kind": "thumb"
+        },
+        "Makyuri_ClearPalette": {
+          "address": "0x02008dfc",
+          "kind": "thumb"
+        },
+        "Engine_MapCopyCellAttributes": {
+          "address": "0x0200da1c",
+          "kind": "thumb"
+        },
+        "Main_0808a5e0": {
+          "address": "0x0200dc54",
+          "kind": "thumb"
+        },
+        "Engine_ActorGet": {
+          "address": "0x0200dad4",
+          "kind": "thumb"
+        },
+        "SetEffectRecordMode": {
+          "address": "0x02008030",
+          "kind": "thumb"
+        },
+        "Engine_TaskWait": {
+          "address": "0x0200d97c",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetPosition": {
+          "address": "0x0200db24",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagClear": {
+          "address": "0x0200da94",
+          "kind": "thumb"
+        },
+        "FieldScene_RedrawActorFootprint": {
+          "address": "0x02008ba4",
+          "kind": "thumb"
+        },
+        "Engine_MapCopyCellsTo": {
+          "address": "0x0200da04",
+          "kind": "thumb"
+        },
+        "Engine_MapRedraw": {
+          "address": "0x0200d9e4",
+          "kind": "thumb"
+        },
+        "Engine_ActorFaceDirection": {
+          "address": "0x0200db94",
+          "kind": "thumb"
+        },
+        "Engine_AudioPlayCue": {
+          "address": "0x0200dc64",
+          "kind": "thumb"
+        },
+        "FieldScene_RunSupplementalSequenceOne": {
+          "address": "0x020097a8",
+          "kind": "thumb"
+        },
+        "FieldScene_RunScene39b_02001208": {
+          "address": "0x0200b788",
+          "kind": "thumb"
+        },
+        "SceneEffect_SpawnParticleRowsByMode": {
+          "address": "0x0200a030",
+          "kind": "thumb"
+        },
+        "FieldScene_RunPrimarySequence": {
+          "address": "0x02009db4",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpritePriority": {
+          "address": "0x0200db9c",
+          "kind": "thumb"
+        },
+        "Engine_EventBegin": {
+          "address": "0x0200dab4",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetChildValue": {
+          "address": "0x0200db6c",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpriteFlags": {
+          "address": "0x0200da2c",
+          "kind": "thumb"
+        },
+        "Engine_EventOpenScreen": {
+          "address": "0x0200dbf4",
+          "kind": "thumb"
+        },
+        "Engine_EventWaitForScreen": {
+          "address": "0x0200dc04",
+          "kind": "thumb"
+        },
+        "Engine_EventWait": {
+          "address": "0x0200daac",
+          "kind": "thumb"
+        },
+        "Engine_WorkSetValuesIfNonNegative": {
+          "address": "0x0200da3c",
+          "kind": "thumb"
+        },
+        "Engine_MapWaitWorkValuesBelow256": {
+          "address": "0x0200da44",
+          "kind": "thumb"
+        },
+        "Engine_EventRequestExit": {
+          "address": "0x0200dbcc",
+          "kind": "thumb"
+        },
+        "Engine_EventEnd": {
+          "address": "0x0200dabc",
+          "kind": "thumb"
+        },
+        "Engine_ColorBufferApplySource": {
+          "address": "0x0200dbe4",
+          "kind": "thumb"
+        },
+        "Engine_ColorBufferApplyTarget": {
+          "address": "0x0200dbdc",
+          "kind": "thumb"
+        },
+        "Engine_ColorBufferInterpolate": {
+          "address": "0x0200dbec",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetAnimation": {
+          "address": "0x0200db2c",
+          "kind": "thumb"
+        },
+        "Main_08015210": {
+          "address": "0x0200da5c",
+          "kind": "thumb"
+        },
+        "Main_080091a0": {
+          "address": "0x0200da14",
+          "kind": "thumb"
+        },
+        "Engine_CameraMoveTo": {
+          "address": "0x0200dbb4",
+          "kind": "thumb"
+        },
+        "Engine_EventGetViewCenter": {
+          "address": "0x0200dbc4",
+          "kind": "thumb"
+        },
+        "Local_02004c68": {
+          "address": "0x0200cc68",
+          "kind": "thumb"
+        },
+        "Main_08009198": {
+          "address": "0x0200da0c",
+          "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
+        },
+        "Data_02000240_t": {
+          "address": "0x02000240",
+          "kind": "data"
+        },
+        "Data_00000036": {
+          "address": "0x36",
+          "kind": "data"
+        },
+        "Data_00000037": {
+          "address": "0x37",
+          "kind": "data"
+        },
+        "Data_00000038": {
+          "address": "0x38",
+          "kind": "data"
+        },
+        "Data_00000039": {
+          "address": "0x39",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02003d20",
+          "extent": 3304,
           "state": "exact-c"
         }
       ]

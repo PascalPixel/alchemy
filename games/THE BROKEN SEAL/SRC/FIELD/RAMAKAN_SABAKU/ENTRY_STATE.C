@@ -9,6 +9,8 @@ s32 Engine_MapObjectSetPosition();
 s32 Engine_DisplayScrollStartHBlankDma();
 
 
+/* FAKEMATCH: ids the reference loads from the literal pool rather than
+ * building inline are spelled as link symbols at those values. */
 extern u8 Data_00000059[];
 extern u8 Data_0000005a[];
 extern u8 Data_0000005b[];

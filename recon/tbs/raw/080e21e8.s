@@ -17,10 +17,8 @@
 	.set sub_080e6d3c, 0x080e6d3c
 	.set sub_080e6eac, 0x080e6eac
 	.set sub_080ed408, 0x080ed408
-	.global Region_080e21e8
 	.global Func_080e21e8
 	.thumb_func
-Region_080e21e8:
 Func_080e21e8:
 	bl	sub_080072f4
 	movs	r0, #47

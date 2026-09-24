@@ -13,10 +13,8 @@
 	.set sub_080e155c, 0x080e155c
 	.set sub_080e3908, 0x080e3908
 	.set sub_080f9010, 0x080f9010
-	.global Region_080d7ea0
 	.global Func_080d7ea0
 	.thumb_func
-Region_080d7ea0:
 Func_080d7ea0:
 	ands	r0, r6
 	negs	r0, r0

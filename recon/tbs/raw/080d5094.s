@@ -13,10 +13,8 @@
 	.set sub_080d4fe0, 0x080d4fe0
 	.set sub_080d6888, 0x080d6888
 	.set sub_080e155c, 0x080e155c
-	.global Fragment_080d5094
 	.global Func_080d5094
 	.thumb_func
-Fragment_080d5094:
 Func_080d5094:
 	bl	sub_08004458
 	movs	r3, #7

@@ -10,10 +10,8 @@
 	.set sub_080d7bba, 0x080d7bba
 	.set sub_080d7ea0, 0x080d7ea0
 	.set sub_080f9010, 0x080f9010
-	.global Region_080d7c08
 	.global Func_080d7c08
 	.thumb_func
-Region_080d7c08:
 Func_080d7c08:
 	movs	r4, #3
 	mov	r0, r8

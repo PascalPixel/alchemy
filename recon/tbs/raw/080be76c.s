@@ -13,10 +13,8 @@
 	.set sub_080bee00, 0x080bee00
 	.set sub_080bee08, 0x080bee08
 	.set sub_080bf1d6, 0x080bf1d6
-	.global Region_080be76c
 	.global Func_080be76c
 	.thumb_func
-Region_080be76c:
 Func_080be76c:
 	ldr	r4, [sp, #12]
 	ldr	r0, [r4, #0]

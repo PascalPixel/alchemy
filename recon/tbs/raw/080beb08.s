@@ -36,10 +36,8 @@
 	.set sub_080c1798, 0x080c1798
 	.set sub_080c23e8, 0x080c23e8
 	.set sub_080f9010, 0x080f9010
-	.global Region_080beb08
 	.global Func_080beb08
 	.thumb_func
-Region_080beb08:
 Func_080beb08:
 	mov	r2, sl
 	ldr	r3, [r2, #0]

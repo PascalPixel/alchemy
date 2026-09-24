@@ -269,8 +269,7 @@
       "source": "GAME/CHARACTER/RATIOS.C"
     },
     "main:08079004": {
-      "name": "Owner_LevelNoOp",
-      "source": "GAME/CHARACTER/LEVEL.C"
+      "name": "Owner_LevelNoOp"
     },
     "main:080941dc": {
       "name": "ObjectEffect_ReservedNoOp",
@@ -481,7 +480,7 @@
     },
     "main:08078e28": {
       "name": "OwnerAction_Add",
-      "source": "GAME/CHARACTER/ACTION_LIST.C"
+      "source": "GAME/CHARACTER/RECORD.C"
     },
     "main:080797fc": {
       "name": "Owner_GetDigitValues",
@@ -2748,8 +2747,7 @@
       "name": "PartyInventory_Add"
     },
     "main:08078ee8": {
-      "name": "Owner_InitRecords",
-      "source": "GAME/CHARACTER/INIT_RECORDS.C"
+      "name": "Owner_InitRecords"
     },
     "main:08078664": {
       "name": "Inventory_Find"
@@ -4535,8 +4533,7 @@
       "name": "OwnerAction_CheckLevelThreshold"
     },
     "main:08078ed8": {
-      "name": "Owner_GetRecordStride180",
-      "source": "GAME/CHARACTER/GET_RECORD_STRIDE180.C"
+      "name": "Owner_GetRecordStride180"
     },
     "main:080792c4": {
       "name": "Owner_GetValueIfLevelThresholdReached",

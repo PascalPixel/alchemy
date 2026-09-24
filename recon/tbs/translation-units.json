@@ -53740,20 +53740,6 @@
       "overlay": null
     },
     {
-      "id": "owner-init-records",
-      "game": "tbs",
-      "source": "games/THE BROKEN SEAL/SRC/GAME/CHARACTER/INIT_RECORDS.C",
-      "compiler_route": "canonical-gcc296",
-      "owners": [
-        {
-          "address": "0x08078ee8",
-          "extent": 284,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
       "id": "inventory-has-equipment-value-retained",
       "game": "tbs",
       "source": "recon/tbs/en/units/inventory-has-equipment-value-retained.c",
@@ -78675,25 +78661,6 @@
       "overlay": null
     },
     {
-      "id": "owner-level",
-      "game": "tbs",
-      "source": "games/THE BROKEN SEAL/SRC/GAME/CHARACTER/LEVEL.C",
-      "compiler_route": "canonical-gcc296",
-      "owners": [
-        {
-          "address": "0x08079004",
-          "extent": 2,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08079008",
-          "extent": 84,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
       "id": "owner-elements",
       "game": "tbs",
       "source": "games/THE BROKEN SEAL/SRC/GAME/CHARACTER/ELEMENTS.C",
@@ -79338,25 +79305,6 @@
         {
           "address": "0x0808bde0",
           "extent": 224,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
-      "id": "owner-action-list",
-      "game": "tbs",
-      "source": "games/THE BROKEN SEAL/SRC/GAME/CHARACTER/ACTION_LIST.C",
-      "compiler_route": "canonical-gcc296",
-      "owners": [
-        {
-          "address": "0x08078e28",
-          "extent": 164,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08078ecc",
-          "extent": 10,
           "state": "exact-c"
         }
       ],
@@ -124836,6 +124784,45 @@
         {
           "address": "0x080a8f40",
           "extent": 380,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "character-records",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/GAME/CHARACTER/RECORD.C",
+      "compiler_route": "canonical-gcc296",
+      "owners": [
+        {
+          "address": "0x08078e28",
+          "extent": 164,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08078ecc",
+          "extent": 10,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08078ed8",
+          "extent": 16,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08078ee8",
+          "extent": 284,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08079004",
+          "extent": 2,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08079008",
+          "extent": 84,
           "state": "exact-c"
         }
       ],

@@ -93,26 +93,16 @@ void Func_0200b4dc();
 u8 *Func_0200b4ec(s32);
 void *Func_020010bc();
 void Func_02001570();
-void Func_02001ba8();
-void Func_02001bb6();
-void Func_02001bc4();
-void Func_02001c0c();
-void Func_02001c12();
-void Func_02001c46();
 void Func_0200222a();
 void Func_02002f1e();
-void Func_02002f28();
 void Func_02002f4a();
 void Func_02002f5e();
 void Func_02002fba();
-void Func_02002fda();
-void Func_02003188();
 void Func_020031d2();
 void Func_020031f2();
 void Func_020031fc();
 void Func_0200321c();
 void Func_02003226();
-void *Func_0200368e();
 u8 *Func_0200379c(s32);
 s32 Func_020038e2(void (*)(), s32);
 s32 Func_020038ec(void (*)(), s32);
@@ -121,15 +111,10 @@ s32 Func_0200432a();
 s32 Func_02004364();
 s32 Func_0200436c();
 void Func_02004528(void);
-void Func_02000f9c(void);
 void Func_020064fe(s32);
 void Func_02005de6(void);
 u32 Func_02005d2e(s32, s32);
-void Func_020051a8(s32);
-void Func_020051b0(s32);
 u32 Func_02005d62(s32, s32);
-void Func_0200526c(s32);
-void Func_02005274(s32);
 void Func_02005c74(s32);
 s32 Func_020061c4(u32, s32);
 void Func_02005cb0(s32);
@@ -137,7 +122,6 @@ Ent *Func_02005d12(s32);
 u8 *Func_0200b454(s32, s32, s32, s32);
 s32 Func_0200b3ec(void (*)(), s32);
 void Func_0200b3f4(void (*)());
-void Func_02002ba0(void);
 Ent *Func_020061fc(s32);
 void Func_02006620(void);
 
@@ -152,6 +136,8 @@ void Func_02006620(void);
 
 /* Loader-relocated overlay calls: each symbol names the pre-relocation call
  * word the image holds. */
+
+void SceneEffect_AdvanceTenEntryTimers(void);
 
 static __inline__ void Call1(void (*f)(), s32 a0)
 {
@@ -299,7 +285,7 @@ void FieldScene_RunTwoPhaseActorSequence(void)
     p7 = *(u8 **)base5_3001ec4;
     Event_Begin();
     *(s32 *)(((s32)p7 + 0x40c)) = 0;
-    Func_0200368e(141);
+    Audio_PlayCue(141);
     Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
     Actor_SetPosition(0, 0xe80000, 0x9c0000);
     Actor_SetPosition(1, 0xda0000, 0xac0000);
@@ -342,7 +328,7 @@ void FieldScene_RunTwoPhaseActorSequence(void)
     Actor_Jump(0, 6, 0);
     Actor_Jump(1, 6, 20);
     Func_02002f1e(1, 20, 20);
-    Func_02002f28(0, 20, 40);
+    FieldScene_RunVariantStep(0, 20, 40);
     Event_SetMessage(0x10cd);
     Call3((void (*)())Engine_EventShowMessageAndWait, 11, 0, 20);
     Call2((void (*)())Engine_EventShowMessage, 10, 0);
@@ -362,7 +348,7 @@ void FieldScene_RunTwoPhaseActorSequence(void)
     Actor_StartRepeatedMotion(0, 2);
     Actor_RunRepeatedMotion(1, 2);
     Event_Wait(20);
-    Func_02002fda(0, 20, 20);
+    FieldScene_RunVariantStep(0, 20, 20);
     record = Func_0200b4ec(15);
     Actor_SetSpriteFlags(record, 0);
     Actor_SetPosition(15, 0x1450000, 0x12e0000);
@@ -404,7 +390,7 @@ void FieldScene_RunTwoPhaseActorSequence(void)
     Event_ShowMessageAndWait(0x1001, 0, 80);
     Event_SetMessage(0x10d8);
     Event_ShowMessageAndWait(9, 0, 20);
-    Func_02003188(1, 20, 0);
+    FieldScene_RunVariantStep(1, 20, 0);
     *(s32 *)(((s32)p7 + 0x40c)) = 0;
     Audio_PlayCue(141);
     Work_SetValuesIfNonNegative(0x10000, 0x20000, 0x10000);
@@ -624,25 +610,25 @@ void FieldScene_RunTwoPhaseActorSequence(void)
     Actor_SetSpeed(11, 0x8000, 0x4000);
     Actor_SetSpeed(14, 0x8000, 0x4000);
     Actor_SetAnimationAndWait(10, 3);
-    Func_02001ba8(10);
+    FieldScene_RunScene381_02000e30(10);
     Actor_RunRepeatedMotion(9, 2);
-    Func_02001bb6(9);
+    FieldScene_RunScene381_02000e30(9);
     Actor_SetAnimationAndWait(11, 3);
-    Func_02001bc4(11);
+    FieldScene_RunScene381_02000e30(11);
     Actor_FaceDirection(5, 0x9000, 40);
     Actor_StartRepeatedMotion(5, 2);
     Event_ShowMessageAndWait(0x2005, 0, 40);
     Actor_FaceDirection(13, 0x3000, 0);
     Actor_FaceDirection(5, 0xb000, 30);
     Actor_FaceDirection(13, 0xe000, 0);
-    Func_02001c0c(5);
-    Func_02001c12(13);
+    FieldScene_RunScene381_02000e30(5);
+    FieldScene_RunScene381_02000e30(13);
     Actor_FaceDirection(14, 0x7000, 40);
     Event_ShowMessageAndWait(14, 0, 30);
     Actor_SetAnimationAndWait(14, 4);
     Event_Wait(20);
     Event_ShowMessageAndWait(14, 0, 30);
-    Func_02001c46(14);
+    FieldScene_RunScene381_02000e30(14);
     Func_0200222a();
     Func_0200b4dc(5);
 }
@@ -700,7 +686,7 @@ s32 FieldScene_RunWhenWord225Is10(void)
 {
     if (gGameState.entrance == 10) {
         Func_02004528();
-        Func_02000f9c();
+        FieldScene_RunTwoPhaseActorSequence();
     }
     return 0;
 }
@@ -811,9 +797,9 @@ void FieldScene_RunRandomHalfBranch(void)
 {
     if ((Data_03001e40 & 1) == 0) {
         if (Func_02005d2e(Random_Next(), 100) > 50) {
-            Func_020051a8(1);
+            SceneState_ApplyRectsByCondition(1);
         } else {
-            Func_020051b0(0);
+            SceneState_ApplyRectsByCondition(0);
         }
     }
 }
@@ -822,9 +808,9 @@ void FieldScene_RunLateRandomHalfBranch(void)
 {
     if ((Data_03001e40 & 1) == 0) {
         if (Func_02005d62(Random_Next(), 100) > 50) {
-            Func_0200526c(1);
+            SceneState_ApplyRectPairByFlag(1);
         } else {
-            Func_02005274(0);
+            SceneState_ApplyRectPairByFlag(0);
         }
     }
 }
@@ -879,7 +865,7 @@ void FieldScene_RunFourWayEffectSequence(u32 mode)
         Actor_ShowEmote(1, 256, 0);
     }
     Task_Wait(20);
-    Func_0200b3ec(Func_02002ba0, 3200);
+    Func_0200b3ec(SceneEffect_AdvanceTenEntryTimers, 3200);
     Audio_PlayCue(246);
     Data_0200bb40[0] = 1; Task_Wait(6);
     Data_0200bb40[1] = 1; Task_Wait(6);
@@ -903,7 +889,7 @@ void FieldScene_RunFourWayEffectSequence(u32 mode)
         Task_Wait(1);
     }
     Task_Wait(40);
-    Func_0200b3f4(Func_02002ba0);
+    Func_0200b3f4(SceneEffect_AdvanceTenEntryTimers);
     ColorBuffer_ApplyTarget(65536, 1);
     ColorBuffer_Interpolate(40);
 }

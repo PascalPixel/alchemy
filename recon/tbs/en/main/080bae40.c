@@ -1,3 +1,16 @@
+/*
+ * BattleTarget_SelectForAction draft: 79.6% (1908/1864 bytes).
+ * Remaining difference:
+ *  - Normal-order scan: the ROM hoists the 0x100 halfword pool constant into
+ *    r5 before the loop (pool placed mid-loop) and does the pre-check as
+ *    normal[0] = [turn_order, #88] before walking turn_order + 88 in place.
+ *    Ours keeps a 2*index giv alive across the loop test (GCSE copy of the
+ *    test's address), so loop 1 has 33 real insns in the second loop pass and
+ *    the constant is "not desirable" to move (loop 2 has 28 and moves).
+ *  - Sort/selection: the ROM keeps `selected` in r1 with caller-saves around
+ *    the calls and spills the unit_ids base to [sp, #16]; ours spills
+ *    `selected` to [sp, #16].
+ */
 #include "TYPES.H"
 #include "BATTLE_COMMAND.H"
 #include "BATTLE_EFX.H"
@@ -207,7 +220,6 @@ s32 BattleTarget_SelectForAction(
     s32 candidate_count;
     s32 target_index;
     s32 target_count;
-    s32 end_index;
     s32 inner_index;
     s32 selected;
     s32 unit_id;
@@ -294,12 +306,11 @@ scan_complete:
                 ->target_strategy != 2
         && (u32)((action->target_flags & 0x0f) - 3) <= 2) {
         selected = -1;
-        end_index = target_count - 1;
         for (target_index = 0;
              target_index < target_count;
              target_index++) {
             for (inner_index = target_index;
-                 inner_index < end_index;
+                 inner_index < target_count - 1;
                  inner_index++) {
                 unit = BattleUnit_Get(unit_ids[inner_index]);
                 next_unit = BattleUnit_Get(unit_ids[inner_index + 1]);
@@ -334,21 +345,21 @@ scan_complete:
                 selected = 1;
             break;
         case 3:
-            roll = (u32)(15 * Random16()) >> 16;
-            if (roll <= 5)
+            selected = (u32)(15 * Random16()) >> 16;
+            if (selected <= 5)
                 selected = 0;
-            else if (roll <= 10)
+            else if (selected <= 10)
                 selected = 1;
             else
                 selected = 2;
             break;
         case 4:
-            roll = (u32)(18 * Random16()) >> 16;
-            if (roll <= 5)
+            selected = (u32)(18 * Random16()) >> 16;
+            if (selected <= 5)
                 selected = 0;
-            else if (roll <= 10)
+            else if (selected <= 10)
                 selected = 1;
-            else if (roll <= 14)
+            else if (selected <= 14)
                 selected = 2;
             else
                 selected = 3;

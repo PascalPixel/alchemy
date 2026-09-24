@@ -71700,6 +71700,34 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "common-shinden-heya-copy-actor-pose",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHINDEN_HEYA/COPY_ACTOR_POSE.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_378",
+      "absolute_symbols": {
+        "Engine_ActorGet": {
+          "address": "0x0200b610",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetPosition": {
+          "address": "0x0200b658",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetAnimation": {
+          "address": "0x0200b660",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x020025c4",
+          "extent": 156,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

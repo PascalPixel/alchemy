@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_378:020025c4": {
+      "name": "ShindenHeya_CopyActorPose",
+      "source": "FIELD/COMMON/SHINDEN_HEYA/COPY_ACTOR_POSE.C"
+    },
     "resource_375:020012a0": {
       "name": "HaidiaSukureta_RunArrivalScene",
       "source": "FIELD/HAIDIA_SUKURETA/ARRIVAL_SCENE.C"

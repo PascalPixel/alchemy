@@ -6069,11 +6069,11 @@
       "source": "FIELD/SORU_STAR/PARTY_INTRO.C"
     },
     "resource_380:020027f8": {
-      "name": "Lifted_020027f8",
+      "name": "Scene_EnterStarRoom",
       "source": "FIELD/SORU_STAR/PARTY_INTRO.C"
     },
     "resource_380:02000a98": {
-      "name": "Scene_RunPartyIntroduction",
+      "name": "Scene_BagJupiterStar",
       "source": "FIELD/SORU_STAR/PARTY_INTRO.C"
     },
     "resource_380:02000d5c": {
@@ -6179,7 +6179,7 @@
       "source": "FIELD/VINASU_HEYA/ENTRY_SETUP.C"
     },
     "resource_380:020026e0": {
-      "name": "SceneDialogue_RunActorFiveTalk",
+      "name": "Jasmine_Talk",
       "source": "FIELD/SORU_STAR/PARTY_INTRO.C"
     },
     "resource_3c6:020001f0": {
@@ -6395,7 +6395,7 @@
       "source": "FIELD/HAIDIA_HEYA/TIMED_EVENTS.C"
     },
     "resource_380:02002674": {
-      "name": "FieldScene_RunActorNineDialogueByFlags",
+      "name": "Sukureta_Talk",
       "source": "FIELD/SORU_STAR/PARTY_INTRO.C"
     },
     "resource_3c9:02005688": {
@@ -6431,7 +6431,7 @@
       "source": "FIELD/RARIBERO_MACHI/FLAGGED_CUE.C"
     },
     "resource_380:0200278c": {
-      "name": "SceneDialogue_ShowLine10C8",
+      "name": "Garcia_Talk",
       "source": "FIELD/SORU_STAR/PARTY_INTRO.C"
     },
     "resource_3c8:0200032c": {
@@ -7432,7 +7432,7 @@
       "source": "FIELD/WORLD_MAP/ACTOR_TRANSFER.C"
     },
     "resource_380:020027ac": {
-      "name": "SceneDialogue_RunActor14TalkLine",
+      "name": "Alex_Talk",
       "source": "FIELD/SORU_STAR/PARTY_INTRO.C"
     },
     "resource_3c9:020035c4": {
@@ -7576,7 +7576,7 @@
       "source": "FIELD/KUUPUAPPU_HEYA_SAI/PLACEMENT.C"
     },
     "resource_380:0200276c": {
-      "name": "SceneDialogue_RunActor11TalkLine",
+      "name": "Menardi_Talk",
       "source": "FIELD/SORU_STAR/PARTY_INTRO.C"
     },
     "resource_3b1:02005004": {
@@ -8264,7 +8264,7 @@
       "source": "FIELD/HAIDIA_ARASHI/GROUP_DEPARTURE.C"
     },
     "resource_380:0200274c": {
-      "name": "SceneDialogue_RunActorTenDialogue",
+      "name": "Saturos_Talk",
       "source": "FIELD/SORU_STAR/PARTY_INTRO.C"
     },
     "resource_3ac:02000124": {
@@ -8900,7 +8900,7 @@
       "source": "FIELD/RARIBERO_HEYA/POSE.C"
     },
     "resource_380:02000a64": {
-      "name": "FieldScene_RunSevenSceneChain",
+      "name": "Scene_HandOverStars",
       "source": "FIELD/SORU_STAR/PARTY_INTRO.C"
     },
     "resource_384:02000110": {
@@ -9320,7 +9320,7 @@
       "source": "FIELD/VINASU_HEYA/ENTRY_SETUP.C"
     },
     "resource_380:02004328": {
-      "name": "SceneState_PumpUntilSlotsFree",
+      "name": "Scene_GiveMythrilBags",
       "source": "FIELD/SORU_STAR/PARTY_INTRO.C"
     },
     "resource_398:020002ac": {
@@ -9938,11 +9938,11 @@
       "source": "FIELD/FUNE_HEYA/EXTENDED_CHOREOGRAPHY.C"
     },
     "resource_380:020006f4": {
-      "name": "Scene_RunMultiStageEffectPresentation",
+      "name": "Scene_BagMercuryStar",
       "source": "FIELD/SORU_STAR/PARTY_INTRO.C"
     },
     "resource_380:02002400": {
-      "name": "FieldScene_RunSixPassEffectSequence",
+      "name": "Scene_BagMarsStar",
       "source": "FIELD/SORU_STAR/PARTY_INTRO.C"
     },
     "resource_3ba:02001214": {
@@ -9987,7 +9987,7 @@
       "source": "FIELD/RUNPA_DOU/CAVE.C"
     },
     "resource_380:02001d04": {
-      "name": "FieldScene_RunActorFourteenGuestScene",
+      "name": "Scene_AlexTakesStars",
       "source": "FIELD/SORU_STAR/PARTY_INTRO.C"
     },
     "resource_3c7:02000508": {
@@ -10658,7 +10658,7 @@
       "source": "FIELD/WORLD_MAP/ACTOR_TRANSFER.C"
     },
     "resource_380:0200178c": {
-      "name": "Scene_RunCountedActorSequence",
+      "name": "Scene_UnmaskGarcia",
       "source": "FIELD/SORU_STAR/PARTY_INTRO.C"
     },
     "resource_371:02000a8c": {
@@ -10666,7 +10666,7 @@
       "source": "FIELD/WORLD_MAP/ACTOR_TRANSFER.C"
     },
     "resource_380:02001450": {
-      "name": "RunEventScript01",
+      "name": "Scene_OfferGuarantee",
       "source": "FIELD/SORU_STAR/PARTY_INTRO.C"
     },
     "resource_395:02000488": {

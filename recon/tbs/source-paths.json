@@ -5860,7 +5860,7 @@
       "source": "FIELD/COMMON/RUNPA_SUHARA/INTERIORS.C"
     },
     "resource_3a1:02000524": {
-      "name": "Dialogue_RunActor9MotionDialogue",
+      "name": "SceneDialogue_RunActor9MotionDialogue",
       "source": "FIELD/SHIAN_HEYA/FLAGGED_OBJECT.C"
     },
     "resource_3cd:020007c8": {
@@ -5968,7 +5968,7 @@
       "source": "FIELD/WORLD_MAP/ACTOR_TRANSFER.C"
     },
     "resource_3a1:020004e4": {
-      "name": "Dialogue_RunActor10Dialogue",
+      "name": "SceneDialogue_RunActor10Dialogue",
       "source": "FIELD/SHIAN_HEYA/FLAGGED_OBJECT.C"
     },
     "resource_374:02002580": {
@@ -6025,7 +6025,7 @@
       "source": "FIELD/SORU_ROKA/SCENE_37E.C"
     },
     "resource_3a1:02000030": {
-      "name": "OvObj_SetEntryField",
+      "name": "OverlayObject_SetEntryField",
       "source": "FIELD/SHIAN_HEYA/FLAGGED_OBJECT.C"
     },
     "resource_387:02000314": {
@@ -6724,7 +6724,7 @@
       "source": "FIELD/VINASU_HEYA/ENTRY_SETUP.C"
     },
     "resource_3a1:020000a0": {
-      "name": "OvObj_CreateConfigured",
+      "name": "OverlayObject_CreateConfigured",
       "source": "FIELD/SHIAN_HEYA/FLAGGED_OBJECT.C"
     },
     "resource_37d:02000054": {
@@ -6804,7 +6804,7 @@
       "source": "FIELD/SORU_STAR/PARTY_INTRO.C"
     },
     "resource_3a1:02000484": {
-      "name": "Dialogue_RunActor17FlaggedDialogue",
+      "name": "SceneDialogue_RunActor17FlaggedDialogue",
       "source": "FIELD/SHIAN_HEYA/FLAGGED_OBJECT.C"
     },
     "resource_397:02000108": {
@@ -7372,7 +7372,7 @@
       "source": "DEBUG/ITEM_LEVEL/RECORD_COUNT.C"
     },
     "resource_3a1:02000048": {
-      "name": "OvObj_SpawnWithMode14",
+      "name": "OverlayObject_SpawnWithMode14",
       "source": "FIELD/SHIAN_HEYA/FLAGGED_OBJECT.C"
     },
     "resource_383:020045f4": {
@@ -7772,7 +7772,7 @@
       "source": "FIELD/RARIBERO_HEYA/POSE.C"
     },
     "resource_3a1:0200041c": {
-      "name": "Dialogue_RunActor16FlaggedDialogue",
+      "name": "SceneDialogue_RunActor16FlaggedDialogue",
       "source": "FIELD/SHIAN_HEYA/FLAGGED_OBJECT.C"
     },
     "resource_3c9:02000314": {
@@ -8384,7 +8384,7 @@
       "source": "FIELD/KORASHIAMU_IRIGUCHI/STATUS_DISPATCH.C"
     },
     "resource_3a1:0200035c": {
-      "name": "Dialogue_RunActor14FlaggedDialogue",
+      "name": "SceneDialogue_RunActor14FlaggedDialogue",
       "source": "FIELD/SHIAN_HEYA/FLAGGED_OBJECT.C"
     },
     "resource_3a3:02000448": {
@@ -8544,7 +8544,7 @@
       "source": "FIELD/KORIMA_MAGARI/PRESET_LAYOUT.C"
     },
     "resource_3a1:020003bc": {
-      "name": "Dialogue_RunActor15FlaggedDialogue",
+      "name": "SceneDialogue_RunActor15FlaggedDialogue",
       "source": "FIELD/SHIAN_HEYA/FLAGGED_OBJECT.C"
     },
     "resource_399:02000160": {
@@ -8872,7 +8872,7 @@
       "source": "FIELD/VINASU_CHOJO/SCRIPTED_PRESENTATION.C"
     },
     "resource_3a1:02000504": {
-      "name": "Dialogue_RunActor12Dialogue",
+      "name": "SceneDialogue_RunActor12Dialogue",
       "source": "FIELD/SHIAN_HEYA/FLAGGED_OBJECT.C"
     },
     "resource_397:02000200": {
@@ -9092,7 +9092,7 @@
       "source": "FIELD/KORASHIAMU_IRIGUCHI/STATUS_DISPATCH.C"
     },
     "resource_3a1:02000598": {
-      "name": "State_SetRuntimeWord448To521",
+      "name": "SceneState_SetRuntimeWord448To521",
       "source": "FIELD/SHIAN_HEYA/FLAGGED_OBJECT.C"
     },
     "resource_384:02000044": {

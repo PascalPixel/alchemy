@@ -4,10 +4,10 @@
 /* save/Flash_TimerInterrupt.c */
 /* The flash driver's timer tick handler and the installer that arms it. */
 
-extern volatile u16 gOv;
-extern volatile u8 gOv2;
-extern volatile u8 gOv3;
-extern volatile u16 *gOv4;
+extern volatile u16 gFlashTimerCount;
+extern volatile u8 gFlashTimeoutFlag;
+extern volatile u8 gFlashTimerNum;
+extern volatile u16 *gFlashTimerReg;
 
 /*
  * Count one tick down and raise the expiry flag on the way through zero.
@@ -19,13 +19,13 @@ extern volatile u16 *gOv4;
  */
 void FlashTimerIntr(void)
 {
-    if (gOv != 0) {
-        s32 v = gOv;
+    if (gFlashTimerCount != 0) {
+        s32 v = gFlashTimerCount;
 
         v -= 1;
-        gOv = v;
+        gFlashTimerCount = v;
         if ((v << 16) == 0) {
-            gOv2 = 1;
+            gFlashTimeoutFlag = 1;
         }
     }
 }
@@ -34,8 +34,8 @@ s32 SetFlashTimerIntr(u8 timer_index, void (**callback)(void))
 {
     if (timer_index > 3)
         return 1;
-    gOv3 = timer_index;
-    gOv4 = (volatile u16 *)(0x04000100 + gOv3 * 4);
+    gFlashTimerNum = timer_index;
+    gFlashTimerReg = (volatile u16 *)(0x04000100 + gFlashTimerNum * 4);
     *callback = FlashTimerIntr;
     return 0;
 }

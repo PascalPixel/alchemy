@@ -27,7 +27,7 @@ void Text_FormatHexToWork(u32 value)
 
 /* ui/text/format_signed_decimal_to_work.c */
 extern s32 Math_DivU(u32, s32);
-extern u8 gRom[];
+extern u8 Text_PowersOfTen[];
 extern u8 gNumberTextBuffer[];
 
 void Text_FormatSignedDecimalToWork(s32 arg0) {
@@ -41,7 +41,7 @@ void Text_FormatSignedDecimalToWork(s32 arg0) {
 
     result = arg0;
     val = result;
-    tbl = (u32 *)gRom;
+    tbl = (u32 *)Text_PowersOfTen;
     sign = 0x20;
     out = (s8 *)gNumberTextBuffer;
     if (val < 0) {
@@ -74,14 +74,14 @@ void Text_FormatSignedDecimalToWork(s32 arg0) {
 }
 
 /* graphics/fill_word_stream_with_f000.c */
-extern u16 *gIw;
+extern u16 *gDebugTextCursor;
 
 void Graphics_FillWordStreamWithF000(u32 count)
 {
-    u16 *dst = gIw;
+    u16 *dst = gDebugTextCursor;
     u32 index;
 
     for (index = 0; index < count; index++)
         *dst++ = 0xf000;
-    gIw = dst;
+    gDebugTextCursor = dst;
 }

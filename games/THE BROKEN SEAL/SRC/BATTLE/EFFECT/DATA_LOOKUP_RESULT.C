@@ -9,7 +9,7 @@ typedef struct Entry {
     s16 result;
 } Entry;
 
-extern Entry gRom[];
+extern Entry BattleFx_ResultRules[];
 
 s32 GameFlag_TestFar(s32 flag);
 void BattleFx_SelectResultPointer(s32 arg0);
@@ -17,7 +17,7 @@ void BattleFx_SelectResultPointer(s32 arg0);
 s32 BattleFx_LookupResult(void *arg0)
 {
     s32 value;
-    Entry *entry = gRom;
+    Entry *entry = BattleFx_ResultRules;
     s32 key = SceneData_Apply(arg0, &value);
     s32 result = 0;
 

@@ -39,9 +39,9 @@ struct LinkRuntimeState {
     u8 paused;
 };
 
-extern struct LinkCountdownState *gIw;
+extern struct LinkCountdownState *gLinkCountdownWork;
 extern struct LinkRuntimeState *gBattleWork;
-extern struct LinkSignature gOv[];
+extern struct LinkSignature gLinkPeerSignatures[];
 
 void Runtime_PushSlotEntry(struct CountdownDisplayEntry *entry, s32 value);
 
@@ -51,7 +51,7 @@ void Audio_PlayCue(s32 soundId);
 
 void UpdateLinkSessionCountdown(void)
 {
-    struct LinkCountdownState *state = gIw;
+    struct LinkCountdownState *state = gLinkCountdownWork;
     struct LinkRuntimeState *runtime;
     struct CountdownDisplayEntry *entry;
     u8 *active;
@@ -115,7 +115,7 @@ load_timer:
         timer = state->timer;
         if (timer >= 0)
             goto timer_ready;
-        signature = &gOv[runtime->side ^ 1];
+        signature = &gLinkPeerSignatures[runtime->side ^ 1];
         if (signature->e != 'E')
             goto signature_done;
         if (signature->d == 'D')

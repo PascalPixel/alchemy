@@ -4,11 +4,11 @@
 #include "OBJECT_COMMANDS.H"
 
 /* object/dispatch/find_free_object.c */
-extern u8 *gIw;
+extern u8 *gObjectSlots;
 
 void *ObjectDispatch_FindFreeObject(void)
 {
-    u8 *entry = gIw;
+    u8 *entry = gObjectSlots;
     void *ret = 0;
     s32 index = 0;
 

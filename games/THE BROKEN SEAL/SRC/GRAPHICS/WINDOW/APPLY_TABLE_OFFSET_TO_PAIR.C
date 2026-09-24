@@ -11,15 +11,15 @@ struct Object_080216b4 {
 
 /* Frame counter advanced by the vertical-blank interrupt. */
 extern volatile u32 gFrameTick;
-extern const u8 gRom[];
+extern const u8 Ui_PairBobOffsets[];
 
 void Ui_ApplyTableOffsetToPair(struct Object_080216b4 *obj)
 {
     s32 value;
 
-    value = obj->source + gRom[(gFrameTick >> 2) & 7];
+    value = obj->source + Ui_PairBobOffsets[(gFrameTick >> 2) & 7];
     obj->destination = value;
     obj = obj->next;
-    value = obj->source + gRom[(gFrameTick >> 2) & 7];
+    value = obj->source + Ui_PairBobOffsets[(gFrameTick >> 2) & 7];
     obj->destination = value;
 }

@@ -10,10 +10,10 @@ void Object_ResetMotion(struct MotionObject *);
 void Object_SetPosition(struct MotionObject *, s32, s32, s32);
 void Object_SetMode(struct MotionObject *, s32);
 
-extern s32 gRom[];
-extern s32 gRom2[];
-extern s32 gRom3[];
-extern s32 gRom4[];
+extern s32 BattleMotion_VariantAcceleration[];
+extern s32 BattleMotion_VariantSpeedLimit[];
+extern s32 BattleMotion_VariantVelocityY[];
+extern s32 BattleMotion_VariantDistancePercent[];
 
 void BattleMotion_ApplyVariantMotion(s32 id, s32 variant)
 {
@@ -27,13 +27,13 @@ void BattleMotion_ApplyVariantMotion(s32 id, s32 variant)
     slot = GetBattleObjectSlot(id);
     object = slot->object;
     if (Owner_GetStateFar(id)[0x128] != 0x94) {
-        table = gRom;
+        table = BattleMotion_VariantAcceleration;
         index = variant * 4;
         object->acceleration = *(s32 *)((u8 *)table + index);
-        table = gRom2;
+        table = BattleMotion_VariantSpeedLimit;
         object->speed_limit = *(s32 *)((u8 *)table + index);
         if (object->y == 0 || variant > 4) {
-            table = gRom3;
+            table = BattleMotion_VariantVelocityY;
             object->velocity_y = *(s32 *)((u8 *)table + index);
         }
         object->vertical_motion_strength = 0x9999;
@@ -41,7 +41,7 @@ void BattleMotion_ApplyVariantMotion(s32 id, s32 variant)
         object->auto_face_motion = 0;
         Object_ResetMotion(object);
         scale = slot->anchor_x;
-        table = gRom4;
+        table = BattleMotion_VariantDistancePercent;
         x = Math_Div(scale * *(s32 *)((u8 *)table + index), 100);
         Object_SetPosition(object, x, 0, slot->anchor_z);
     }

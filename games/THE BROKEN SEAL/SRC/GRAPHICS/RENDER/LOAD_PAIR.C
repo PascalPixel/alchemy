@@ -4,7 +4,7 @@
 #include "RESOURCE.H"
 
 /* graphics/resource/RenderOutput_LoadPair.c */
-extern s32 gRom[];
+extern s32 RenderResource_PairSourceTable[];
 
 void RenderResource_LoadPair(s32 group_index, s32 resource_index)
 {
@@ -12,7 +12,7 @@ void RenderResource_LoadPair(s32 group_index, s32 resource_index)
     void *staging_buffer;
 
     staging_buffer = (void *)Runtime_AllocateBlock(14, 0x400);
-    if ((resource_address = gRom[group_index], resource_index <= 0x5F)) {
+    if ((resource_address = RenderResource_PairSourceTable[group_index], resource_index <= 0x5F)) {
         Resource_DecodeByteLz((const void *)resource_address, staging_buffer);
         VramBlock_LoadCached(resource_index, 0x200, staging_buffer);
         Runtime_ReleaseHeapBlock(14);

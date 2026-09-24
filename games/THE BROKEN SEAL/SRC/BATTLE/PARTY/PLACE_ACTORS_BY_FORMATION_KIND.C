@@ -16,7 +16,7 @@ struct Vec2 {
 };
 
 extern struct BattleCells gSpriteObjects;
-extern struct Vec2 gRom;
+extern struct Vec2 Battle_FormationPlacementScale;
 
 void Battle_PlaceActorsByFormationKind(void)
 {
@@ -30,7 +30,7 @@ void Battle_PlaceActorsByFormationKind(void)
     u32 cnt;
     u32 i;
 
-    scale = gRom;
+    scale = Battle_FormationPlacementScale;
     tbl = gSpriteObjects.work;
 
     switch (kind) {

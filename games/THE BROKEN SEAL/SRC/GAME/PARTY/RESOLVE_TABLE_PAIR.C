@@ -2,13 +2,13 @@
 #include "SCENE.H"
 
 extern s16 gGameState[];
-extern const s16 gRom[];
+extern const s16 Party_PairResolveRules[];
 
 void Party_ResolveTablePair(void)
 {
     s16 first = gGameState[224];
     s16 second = gGameState[225];
-    const s16 *entry = gRom;
+    const s16 *entry = Party_PairResolveRules;
 
     /* -1で終端する4半語の表を検索する。 */
     while (entry[0] != -1) {

@@ -69,7 +69,7 @@ void Link_DrawShiftedTilePair(s32 offset)
 
 /* graphics/tile/expand_vram_tiles_by_color_table.c */
 extern u16 gUnk[];
-extern u16 gRom[];
+extern u16 Graphics_ExpandNibbleTable[];
 
 void Graphics_ExpandVramTilesByColorTable(u16 *dst)
 {
@@ -92,7 +92,7 @@ void Graphics_ExpandVramTilesByColorTable(u16 *dst)
                 s32 nibble = 0;
 
                 do {
-                    u32 color = gRom[
+                    u32 color = Graphics_ExpandNibbleTable[
                         (packed & 15) + pal_ofs
                     ] << (nibble * 4);
                     nibble++;

@@ -13,7 +13,7 @@ struct State08093304 {
 s32 ObjectTable_ReadActiveValue(s32 key);
 
 extern u8 gGameState[];
-extern u8 gRom[];
+extern u8 Ui_RenderResultValues[];
 extern struct State08093304 *gWindowWork;
 
 void Ui_SetRenderResultFromObject(s32 arg0)
@@ -27,7 +27,7 @@ void Ui_SetRenderResultFromObject(s32 arg0)
         FIELD(state, s16, RENDER_RESULT_OFS + 2) = value;
     } else {
         ret = BattleFx_GetResourceId(ObjectTable_ReadActiveValue(arg0));
-        value = gRom[gGameState[0x20C]];
+        value = Ui_RenderResultValues[gGameState[0x20C]];
         FIELD(state, s16, RENDER_RESULT_OFS) = ret;
         FIELD(state, s16, RENDER_RESULT_OFS + 2) = value;
     }

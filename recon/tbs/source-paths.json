@@ -145,7 +145,8 @@
       "source": "SYSTEM/INITIALIZE.C"
     },
     "main:080d67dc": {
-      "name": "BattleEffect_SetupBlendedDisplay"
+      "name": "BattleEffect_SetupBlendedDisplay",
+      "source": "BATTLE/EFFECT/SETUP_BLENDED_DISPLAY.C"
     },
     "main:08011590": {
       "name": "MapAnimation_Start",

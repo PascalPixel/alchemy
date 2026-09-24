@@ -80108,6 +80108,50 @@
           }
         }
       }
+    },
+    {
+      "id": "scene-39e-02000cd4",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHIAN_JIIN/SPIN_AWAY.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_39e",
+      "absolute_symbols": {
+        "Engine_ActorGet": {
+          "address": "0x0200c404",
+          "kind": "thumb"
+        },
+        "Engine_TaskWait": {
+          "address": "0x0200c344",
+          "kind": "thumb"
+        },
+        "Engine_MathCos": {
+          "address": "0x0200c374",
+          "kind": "thumb"
+        },
+        "Engine_MathSin": {
+          "address": "0x0200c36c",
+          "kind": "thumb"
+        },
+        "Engine_AudioPlayCue": {
+          "address": "0x0200c57c",
+          "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02000cd4",
+          "extent": 224,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

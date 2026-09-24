@@ -1913,7 +1913,7 @@ fn tile_json(tile: &Tile) -> Value {
 fn entry(bytes: i64, total: i64) -> Value {
     json!({
         "bytes": bytes,
-        "percent_of_executable": crate::coverage::jsnum::round_half_up(bytes, total)
+        "percent_of_executable": crate::coverage::jsnum::floor_percent(bytes, total)
     })
 }
 /// Every image's audited executable spans, classified exactly as the coverage

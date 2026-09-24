@@ -1,10 +1,15 @@
-/* Draft, not exact (2026-09-24): 37 differing halfwords, equal size (was 16 bytes long). The word copies are ordinary calls through the IWRAM CopyWords pointer, not calls to the call_via_r3 veneer; the residual is register choice in the fade loop.
-   FAKEMATCH marks below are empty do-while wraps that only move scheduling
-   or register choice; they stay tagged until a real spelling replaces them. */
+/* Draft, not exact (2026-09-24): 11 differing halfwords, 200 of 200 bytes.
+   The word copies go through an inline wrapper, which brought it from 37.
+   Residual: the reference holds the 0x1f mask in sl and the buffer base
+   in lr (here the other way round), and builds 128 before 0x05000000 for
+   the final copy. The do-while around buf[0] = 0 is a FAKEMATCH. */
 #include "TYPES.H"
 #include "RESOURCE.H"
 typedef void (*CopyWordsFn)(void *destination, const void *source, s32 size);
-#define CopyWords(d, s, n) ((CopyWordsFn)0x03001388)((d), (s), (n))
+static __inline__ void CopyWords(void *d, const void *s, s32 n)
+{
+    ((CopyWordsFn)0x03001388)(d, s, n);
+}
 
 extern u8 Data_03001388[];
 
@@ -20,11 +25,13 @@ void Func_080e46f0(s32 resource_id)
     s32 tr;
     s32 tg;
     s32 tb;
+    s32 mask;
 
     CopyWords(buf, GetResource(resource_id), 128);
-    do { buf[0] = 0; } while (0); /* FAKEMATCH */
-    dst = buf;
+    do { buf[0] = 0; } while (0);
     i = 0;
+    dst = buf;
+    mask = 0x1f;
     do {
         r = *pal & 0x1f;
         g = (*pal >> 5) & 0x1f;
@@ -47,9 +54,9 @@ void Func_080e46f0(s32 resource_id)
         } else if (b > tb) {
             b--;
         }
-        do { dst[i] = (b << 10) | (g << 5) | r; } while (0); /* FAKEMATCH */
-        pal++;
+        dst[i] = (b << 10) | (g << 5) | r;
         i++;
+        pal++;
     } while (i != 64);
-    CopyWords((u16 *)0x05000000, buf, 128);
+    CopyWords((void *)0x05000000, buf, 128);
 }

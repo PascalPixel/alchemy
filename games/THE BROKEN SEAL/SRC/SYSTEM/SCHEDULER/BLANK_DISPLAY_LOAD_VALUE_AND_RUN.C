@@ -20,7 +20,7 @@ s32 Runtime_BlankDisplayLoadValueAndRun(void)
   return 0;
 }
 
-/* graphics/color/scale_rgb555.c */
+/* graphics/color/Palette_ScaleRgb555.c */
 s32 Graphics_ScaleRgb555(
     u16 *source,
     u16 *destination,

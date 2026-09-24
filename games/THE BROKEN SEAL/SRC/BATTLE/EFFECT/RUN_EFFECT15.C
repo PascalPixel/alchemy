@@ -125,7 +125,7 @@ struct EffectObject {
 extern u8 gGameState[];
 
 void Battle_Reset(void);
-void place_within_camera_bounds(s32, s32, s32, s32);
+void Object_PlaceWithinCameraBounds(s32, s32, s32, s32);
 void BattleEffect_InitializeSharedScene(void);
 void ObjectMotion_ArmCallback(s32, s32, s32);
 void Audio_PlayCue(s32);
@@ -135,7 +135,7 @@ void ObjectDispatch_SetSingleChildField26Far(void *, s32);
 void EffectSlot_Initialize(void *, s32, s32, s32);
 void ObjectGroup_SetChildValueUnlessFifteenFar(void *, s32);
 void BattleFx_PrepareBufferInterpolation(void);
-void apply_random_child_values(void);
+void Animation_ApplyRandomChildValues(void);
 
 void BattleFx_RunEffect15(void)
 {
@@ -149,12 +149,12 @@ void BattleFx_RunEffect15(void)
     u32 index;
 
     Battle_Reset();
-    place_within_camera_bounds(-1, -1, -1, 0);
+    Object_PlaceWithinCameraBounds(-1, -1, -1, 0);
     BattleEffect_InitializeSharedScene();
     WaitFrames(10);
     ObjectMotion_ArmCallback(*(s16 *)(scene + 24), 0x4000, 0);
     WaitFrames(30);
-    *(void (**)(void))(main_object + 108) = apply_random_child_values;
+    *(void (**)(void))(main_object + 108) = Animation_ApplyRandomChildValues;
     Audio_PlayCue(0x83);
     Object_SetMode(main_object, 28);
     WaitFrames(40);

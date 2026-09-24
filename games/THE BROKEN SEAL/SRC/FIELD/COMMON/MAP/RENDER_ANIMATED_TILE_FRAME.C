@@ -3,7 +3,7 @@
 #include "GLOBAL_CELLS.H"
 #include "SYSTEM.H"
 
-/* map/shared/render_animated_tile_frame.c */
+/* map/shared/Map_RenderAnimatedTileFrame.c */
 struct MapBase {
     u16 unused;
     u16 offset;

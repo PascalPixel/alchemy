@@ -4,7 +4,7 @@
 #include "MAP.H"
 #include "SYSTEM.H"
 
-/* map/shared/events/check_object_tile.c */
+/* map/shared/events/MapEvent_CheckObjectTile.c */
 struct MapObject {
     u8 padding00[8];
     s32 x;
@@ -88,7 +88,7 @@ void CheckObjectMapTile(void)
         runtime->event_code = 0x2092;
 }
 
-/* map/shared/events/run_tile_trigger_sequence.c */
+/* map/shared/events/MapEvent_RunTileTriggerSequence.c */
 struct Controller_08099738 {
     u8 pad_00[5];
     u8 field_05;

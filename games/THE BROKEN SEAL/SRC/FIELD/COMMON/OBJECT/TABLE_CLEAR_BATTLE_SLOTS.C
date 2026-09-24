@@ -1,7 +1,7 @@
 #include "TYPES.H"
 #include "EVENT_RUNTIME.H"
 
-/* object/table/clear_battle_slots.c */
+/* object/table/ObjectTable_ClearBattleSlots.c */
 void ObjectTable_ClearBattleSlots(void)
 {
     s32 *current;

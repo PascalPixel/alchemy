@@ -5,7 +5,7 @@
 extern u8 RomBytes_080ad35d[];
 extern u8 RomBytes_080ad40d[];
 
-/* object/motion/four_object/initialize_top_row.c */
+/* object/motion/four_object/FourObjectMotion_InitializeTopRow.c */
 extern s32 RomBytes_080af304[];
 
 void *Obj_Run(s32);
@@ -42,7 +42,7 @@ void FourObjectMotion_InitializeTopRow(void)
     ScheduleCallbackAfterFrames(FunctionHead_080ad35c, 0xc80);
 }
 
-/* object/motion/four_object/clear_slots_and_schedule.c */
+/* object/motion/four_object/FourObjectMotion_ClearSlotsAndSchedule.c */
 void ScheduleCallback(s32);
 
 void FourObjectMotion_ClearSlotsAndSchedule(void)
@@ -62,7 +62,7 @@ void FourObjectMotion_ClearSlotsAndSchedule(void)
     ScheduleCallback((s32)&RomBytes_080ad35d);
 }
 
-/* object/motion/four_object/update_all_positions.c */
+/* object/motion/four_object/FourObjectMotion_UpdateAllPositions.c */
 #define FIXED_ONE 0x10000u
 #define VERTICAL_ORIGIN 0x01e20000u
 

@@ -8,8 +8,8 @@ extern s16 gGameState[];
 void *ObjectTable_Get(u32);
 void Audio_PlayCue(s32);
 void Object_SetMode(void *, s32);
-void run_tile_trigger_sequence(void);
-void check_object_tile(void);
+void MapEvent_RunTileTriggerSequence(void);
+void MapEvent_CheckObjectTile(void);
 
 typedef struct {
     u8 unknown_00[37];
@@ -45,13 +45,13 @@ void BattleFx_RunFlashingCallbackSequence(void)
     entry[5] = cycle;
     record->flag_b = 2;
     record->flag_a = 1;
-    callback = check_object_tile;
+    callback = MapEvent_CheckObjectTile;
     Scheduler_AddOrUpdateCallback((s32)callback, 0xc80);
     index = 147;
     *(s16 *)&((s32 *)PARTY_STATE)[index] = 1;
     callback();
     if (*(s16 *)(state + 382) == 0x2092) {
-        run_tile_trigger_sequence();
+        MapEvent_RunTileTriggerSequence();
         *(s16 *)(state + 382) = cycle;
     }
 }

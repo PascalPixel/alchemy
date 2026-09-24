@@ -3,7 +3,7 @@
 #include "RENDER_INPUT.H"
 #include "RESOURCE.H"
 
-/* graphics/resource/load_pair.c */
+/* graphics/resource/RenderOutput_LoadPair.c */
 extern s32 gRom[];
 
 void RenderResource_LoadPair(s32 group_index, s32 resource_index)
@@ -19,7 +19,7 @@ void RenderResource_LoadPair(s32 group_index, s32 resource_index)
     }
 }
 
-/* graphics/resource/create_pair.c */
+/* graphics/resource/RenderOutput_CreatePair.c */
 void RenderResource_LoadPair(s32 arg0, s32 arg1);
 void *RenderResource_CreatePair(
     s32 arg0,

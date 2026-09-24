@@ -101,7 +101,7 @@ void BattleMotion_ResetSlotObjectMode2(s32 id)
     Object_SetMode(object, 2);
 }
 
-/* battle/motion/reserved_no_op.c */
+/* battle/motion/ObjectEffect_ReservedNoOp.c */
 void BattleMotion_ReservedNoOp83B0()
 {
 }

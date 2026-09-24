@@ -51,7 +51,7 @@ void ObjectTable_AllocateAndSetObjectSpeed(s32 first, s32 second)
     owner->object->acceleration = second;
 }
 
-/* object/motion/pos/place_within_camera_bounds.c */
+/* object/motion/pos/Object_PlaceWithinCameraBounds.c */
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
 void Object_ResetMotion(void *);

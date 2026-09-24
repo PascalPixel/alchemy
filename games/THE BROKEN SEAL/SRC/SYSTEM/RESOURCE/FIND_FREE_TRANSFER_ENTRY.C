@@ -52,7 +52,7 @@ block_10:
     goto loop_7;
 }
 
-/* resource/schedule_owner_reset_delayed.c */
+/* resource/Resource_ScheduleOwnerResetDelayed.c */
 s32 ScheduleCallbackAfterFrames(s32, s32);
 void Sys_Run(void);
 
@@ -61,7 +61,7 @@ void Resource_ScheduleOwnerResetDelayed(void)
     ScheduleCallbackAfterFrames((s32)Sys_Run, 0xC80);
 }
 
-/* resource/schedule_owner_reset.c */
+/* resource/Resource_ScheduleOwnerReset.c */
 s32 ScheduleCallback(s32);
 
 void Resource_ScheduleOwnerReset(void)

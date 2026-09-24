@@ -3,7 +3,7 @@
 #include "RESOURCE.H"
 #include "RENDER_INPUT.H"
 
-/* graphics/resource/load_frame.c */
+/* graphics/resource/RenderOutput_LoadFrame.c */
 void *Runtime_AllocateBlock(s32 arg0, s32 arg1);
 
 void Resource_CopyData(s32, s32, void *);
@@ -25,7 +25,7 @@ void RenderResource_LoadFrame(s32 index, s32 value, s32 flag)
     }
 }
 
-/* graphics/resource/create_frame.c */
+/* graphics/resource/RenderOutput_CreateFrame.c */
 void RenderResource_LoadFrame(s32 index, s32 value, s32 flag);
 void *RenderResource_CreateFrame(
     s32 arg0,

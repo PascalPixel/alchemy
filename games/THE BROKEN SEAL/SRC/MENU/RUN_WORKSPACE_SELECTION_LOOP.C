@@ -17,7 +17,7 @@ extern s8 gRom[];
 void *Menu_Run(void);
 void UiIcon_PrepareObjectFar(void *);
 
-void *create_pair(s32, void *, s32, s32);
+void *RenderOutput_CreatePair(s32, void *, s32, s32);
 
 s32 Menu_RunWorkspaceSelectionLoop(void)
 {
@@ -51,7 +51,7 @@ s32 Menu_RunWorkspaceSelectionLoop(void)
     if (gIw2 != 0) {
         var_r4_35 = -0x10;
     }
-    sp8 = (s32)create_pair(6, sp10, 0x28, var_r4_35);
+    sp8 = (s32)RenderOutput_CreatePair(6, sp10, 0x28, var_r4_35);
     WaitFrames(1);
     var_r8_51 = FIELD_AT_OFFSET(temp_sl_29, u16 *, 0x574);
     if (temp_r0_22 != 0) {

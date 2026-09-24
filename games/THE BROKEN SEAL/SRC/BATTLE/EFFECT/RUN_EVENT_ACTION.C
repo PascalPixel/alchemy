@@ -39,8 +39,8 @@ s32 BattleFx_RunEventAction(void *arg0, s32 arg1, s32 arg2)
     return 0;
 }
 
-/* object/apply_random_child_values.c */
-/* object/group/apply_random_child_values.c */
+/* object/Animation_ApplyRandomChildValues.c */
+/* object/group/Animation_ApplyRandomChildValues.c */
 extern volatile s32 gIw;
 
 void ObjectGroup_ApplyRandomChildValues(void *owner)

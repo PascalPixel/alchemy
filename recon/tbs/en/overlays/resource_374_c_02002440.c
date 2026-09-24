@@ -5,7 +5,17 @@
  * motion-flags address in r3 after the +20 word copy and reaches +100 by
  * adding 15 (reload's move2add), but here local-alloc gives the +85 address
  * r1 because the zero stores expand as a load, an AND with a dead QImode zero
- * (pseudo 52) that holds r3. The tail stores also swap. */
+ * (pseudo 52) that holds r3. The tail stores also swap. Why (local-alloc
+ * QTY_CMP_PRI, 2026-09-24): every constant byte/halfword store through a
+ * struct field goes through store_bit_field here, so the dead mask QImode 52
+ * (2 refs over 1 half-insn, priority 2.0) and the +100 address (2.0) are
+ * allocated before the +85 address (4 refs over 6, 1.33); 52 takes r3 inside
+ * its life and the address falls to r1. It would need 52 absent or the +85
+ * address born next to its store. A byte-pointer store of motion_flags drops
+ * 52 and gets the move2add, but then the zero is QImode and the halfword zero
+ * separate (21); a u16 zero variable set before the loop, spilled and
+ * rematerialized, also gets the move2add with the registers swapped (17).
+ * Zero variables inside the loop are hoisted (+8 bytes). */
 #include "TYPES.H"
 #include "FIELD_EFFECT.H"
 

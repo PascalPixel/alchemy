@@ -1,6 +1,14 @@
 {
   "format": 3,
   "owners": {
+    "resource_383:020047bc": {
+      "name": "KuupuappuHeya_IsRecordNearPoint",
+      "source": "FIELD/KUUPUAPPU_HEYA/F_047BC.C"
+    },
+    "resource_39c:02001c9c": {
+      "name": "MakyuriHeya_TriggerFloorSwitch",
+      "source": "FIELD/MAKYURI_HEYA/F_01C9C.C"
+    },
     "resource_3cb:02000d68": {
       "name": "LinkLobby_TalkLinkedWins",
       "source": "MENU/LINK_LOBBY/WINS_TALK.C"
@@ -15186,7 +15194,8 @@
       "source": "FIELD/TOREBI_KYUDEN/CHOICE.C"
     },
     "resource_38b:02000db4": {
-      "name": "SceneActor_PushPuzzleActor"
+      "name": "BiribinoMura_PushFacedBlock",
+      "source": "FIELD/BIRIBINO_MURA/F_00DB4.C"
     },
     "resource_38b:020001ec": {
       "name": "FieldScene_RunScriptedStep1472",

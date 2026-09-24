@@ -5037,6 +5037,18 @@
       "name": "Ui_CreateOutputFromResourceSlot",
       "source": "GRAPHICS/RENDER/CREATE_OUTPUT_FROM_RESOURCE_SLOT.C"
     },
+    "main:08022b44": {
+      "name": "Func_08022b44"
+    },
+    "main:08023178": {
+      "name": "Func_08023178"
+    },
+    "main:08023e70": {
+      "name": "Func_08023e70"
+    },
+    "main:08024934": {
+      "name": "Func_08024934"
+    },
     "main:08025180": {
       "name": "Item_ClassifyUseAbility",
       "source": "GAME/ITEM/CLASSIFY_USE_ABILITY.C"
@@ -9940,7 +9952,8 @@
       "name": "BattleTarget_RunSelection"
     },
     "main:0808b674": {
-      "name": "ObjectTable_ResetForObject"
+      "name": "ObjectTable_ResetForObject",
+      "source": "FIELD/COMMON/OBJECT/TABLE_RESET_FOR_OBJECT.C"
     },
     "main:08097540": {
       "name": "RunSceneTransitionEffect",
@@ -10102,7 +10115,8 @@
       "name": "Region_080d4ce8"
     },
     "main:080d765c": {
-      "name": "BattleFx_InitializeMode10"
+      "name": "BattleFx_InitializeMode10",
+      "source": "BATTLE/EFFECT/INITIALIZE_MODE10.C"
     },
     "main:080d82b0": {
       "name": "Unnamed_080d82b0"

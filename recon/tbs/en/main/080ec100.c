@@ -1,5 +1,5 @@
 /* Draft, not exact (2026-09-24): candidate=3456 reference=3452, binary
-   similarity 82%. Frame, spill slots and the high registers (i r8, frame sl,
+   similarity 83%. Frame, spill slots and the high registers (i r8, frame sl,
    t r9, work fp) match, and each spark loop has its own pointer. Remaining:
    the flare loop keeps its size in r0 (a separate variable there breaks the
    prologue's low registers), the draw blocks keep size in r4, and a few
@@ -367,15 +367,16 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
             blit[1](dst, work->sheet + BattleFx6_FlareCells[s - 1] + 0x4e20, 108 - s, 60 - s, s * 2, s * 2);
         }
         if (frame >= 192 && frame < 200) {
-            s = (frame - 192) / 2 + 3;
-            if (s > 6) {
-                s = 6;
+            s32 z;
+            z = (frame - 192) / 2 + 3;
+            if (z > 6) {
+                z = 6;
             }
-            blit[1](dst, work->sheet + BattleFx6_FlareCells[s - 1] + 0x4e20, 108 - s, 60 - s, s * 2, s * 2);
+            blit[1](dst, work->sheet + BattleFx6_FlareCells[z - 1] + 0x4e20, 108 - z, 60 - z, z * 2, z * 2);
         }
         if (frame > 199) {
-            s32 u = (frame - 200) / 4;
-            s = u + 5;
+            s32 u = frame - 200;
+            s = u / 4 + 5;
             if (s > 8) {
                 s = 8;
             }
@@ -389,11 +390,12 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
             }
         }
         if (frame >= 214 && frame < 222) {
-            s = (frame - 214) / 4;
-            if (s > 2) {
-                s = 2;
+            s32 z;
+            z = (frame - 214) / 4;
+            if (z > 2) {
+                z = 2;
             }
-            blit[1](dst, work->sheet + s * 9 * 256 + 0x400, 63, 18, 48, 48);
+            blit[1](dst, work->sheet + z * 9 * 256 + 0x400, 63, 18, 48, 48);
         }
         if (frame > 221) {
             s = (frame - 222) / 2 % 4 + 3;

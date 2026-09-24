@@ -3478,6 +3478,10 @@
       "name": "CgbNote_UpdatePanEnvelope",
       "source": "../../COMMON/SRC/SOUND/CGB_NOTE_UPDATE_PAN_ENVELOPE.C"
     },
+    "main:080fae58": {
+      "name": "Cgb_UpdateChannels",
+      "source": "SOUND/CGB_UPDATE_CHANNELS.C"
+    },
     "main:080fb2cc": {
       "name": "MusicPlayer_SetVolume",
       "source": "../../COMMON/SRC/SOUND/MUSIC_PLAYER_SET_VOLUME.C"

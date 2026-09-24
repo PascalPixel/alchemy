@@ -276,6 +276,7 @@
     "FIELD/COMMON/EVENT/PACKED_ID.C": "#define gGameState @D02000240\n",
     "GRAPHICS/PALETTE/TINT.C": "#define gGameState @D02000240\n",
     "BATTLE/PARTY/DAMAGE.C": "#define FunctionHead_08077120 @F08077120\n#define FunctionHead_08077148 @F08077148\n#define gCell @D02000240\n#define gGameState @D02000240\n",
-    "FIELD/COMMON/OBJECT/ACTION.C": "#define gGameState @D02000240\n"
+    "FIELD/COMMON/OBJECT/ACTION.C": "#define gGameState @D02000240\n",
+    "SOUND/CGB_UPDATE_CHANNELS.C": "#define Sound_Cgb3LevelCodes @D080fba04\n"
   }
 }

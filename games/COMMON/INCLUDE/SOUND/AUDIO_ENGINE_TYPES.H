@@ -121,7 +121,8 @@ struct SoundWork {
     u8 pcm_note_count;              /* 0x006 */
     u8 volume;                      /* 0x007 */
     u8 rate;                        /* 0x008 */
-    u8 unk09[2];
+    u8 unk09;
+    u8 cgb_tick;                    /* 0x00a */
     u8 transfer_period;             /* 0x00b */
     u8 unk0c;
     u8 unk0d[3];

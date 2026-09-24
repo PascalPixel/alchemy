@@ -6,7 +6,6 @@
  * the palette RAM and waits on the DMA status register.
  */
 
-#define ToretoPalette_CaptureBank Func_02001224
 
 void ToretoPalette_CaptureBank(void)
 {

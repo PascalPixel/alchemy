@@ -375,9 +375,6 @@ u8 *SceneData_GetTable9F14(void)
 
 s32 Func_0200007c(void)
 {
-    extern u8 Data_02000240[];
-    extern u8 Data_03001ebc[];
-
     s32 base5_2009fd8;
     s32 lo = 11;
 
@@ -435,8 +432,6 @@ s32 SceneData_SelectFormationTable(void)
 
 void FieldScene_RunScene37fSequenceA(void)
 {
-    extern u8 Data_03001ebc[];
-
     u32 i;
     s32 record;
     s32 v5;
@@ -486,8 +481,6 @@ void SceneDialogue_RunFlag81aMessageBranch(void)
 
 void FieldScene_RunOpeningAuxiliarySequence(void)
 {
-    extern u8 Data_03001ebc[];
-
     s32 id;
     s32 v5;
     s32 v6;

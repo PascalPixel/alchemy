@@ -5037,8 +5037,12 @@
       "name": "Ui_CreateOutputFromResourceSlot",
       "source": "GRAPHICS/RENDER/CREATE_OUTPUT_FROM_RESOURCE_SLOT.C"
     },
+    "main:08022a7c": {
+      "name": "DjinnMenu_DrawStatArrow"
+    },
     "main:08022b44": {
-      "name": "Func_08022b44"
+      "name": "DjinnMenu_ShowChangePreview",
+      "source": "MENU/DJINN_CHANGE_PREVIEW.C"
     },
     "main:08023178": {
       "name": "Func_08023178"
@@ -19747,9 +19751,6 @@
     },
     "main:080aa768": {
       "name": "Unnamed_080aa768"
-    },
-    "main:080ab834": {
-      "name": "Unnamed_080ab834"
     },
     "main:080ac8fc": {
       "name": "Unnamed_080ac8fc"

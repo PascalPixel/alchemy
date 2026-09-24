@@ -17,7 +17,6 @@ extern u8 Data_020084d0[];
 extern u8 Data_020086c8[];
 extern u8 Data_020084a0[];
 extern Placement Data_02008ef8[];   /* In-image placement table, four entries. */
-extern u8 *Data_03001ebc;
 extern s16 Data_02000240[];
 extern u8 Data_020088d4[];
 extern u8 Data_0200879c[];
@@ -40,7 +39,7 @@ void Func_020004d0(void *);
 /* Picks one of three scene tables by scene id. */
 s32 SceneData_SelectTableBySceneId(void)
 {
-    s16 v = Data_02000240[224];
+    s16 v = gGameState.scene;
 
     if (v == (s32)&Value_00000064) {
         return (s32)Data_020084d0;
@@ -70,9 +69,9 @@ u8 *SceneData_GetTable8728(void)
  * Func_020004d0 before returning it. */
 u8 *SceneData_SelectAndPrepareTable(void)
 {
-    s32 id = Data_02000240[224];
+    s32 id = gGameState.scene;
     if (id == (s32)&Value_00000064) {
-        s32 state = Data_02000240[225];
+        s32 state = gGameState.entrance;
         u8 *tbl;
         switch (state) {
         case 9:
@@ -102,9 +101,9 @@ u8 *SceneData_SelectAndPrepareTable(void)
  * arm even though it lies inside 9..17; that hole is deliberate. */
 u8 *SceneData_SelectSubStateTable(void)
 {
-    s32 id = Data_02000240[224];
+    s32 id = gGameState.scene;
     if (id == (s32)&Value_00000064) {
-        s32 state = Data_02000240[225];
+        s32 state = gGameState.entrance;
         switch (state) {
         case 9:
         case 10:
@@ -252,8 +251,8 @@ void FieldScene_RunArrivalPlacement(void)
  * scene 0x64. */
 s32 SceneState_SetRuntimeWord448To521(void)
 {
-    *(s32 *)(Data_03001ebc + 448) = 0x209;
-    if (Data_02000240[224] == (s32)(u32)&Value_00000064) {
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+    if (gGameState.scene == (s32)(u32)&Value_00000064) {
         Func_0200065e();
     }
     return 0;
@@ -268,7 +267,7 @@ s32 SceneState_SetRuntimeWord448To521(void)
  */
 void SceneState_ClearSlotsBySubState(void)
 {
-    s16 sub = Data_02000240[225];
+    s16 sub = gGameState.entrance;
 
     switch (sub) {
     case 3:

@@ -186,9 +186,7 @@ void Func_02001408(void);      /* scene continuation */
 
 s32 SceneData_SelectTableByWord224(void)
 {
-    extern s16 Data_02000240[];
-
-    s16 v = Data_02000240[224];
+    s16 v = gGameState.scene;
 
     if (v == (s32)&Value_0000004b) {
         return (s32)Data_02009120;
@@ -217,9 +215,7 @@ u8 *SceneData_GetTable9390(void)
 
 u8 *SceneData_SelectFlaggedTable(void)
 {
-    extern s16 Data_02000240[];
-
-    s32 id = Data_02000240[224];
+    s32 id = gGameState.scene;
     if (id == (s32)&Value_0000004b) {
         if (GameFlag_IsSet(0x909)) {
             Data_0200940c[142] = 0;
@@ -240,9 +236,7 @@ u8 *SceneData_SelectFlaggedTable(void)
 
 s32 SceneData_GetPrimaryTable(void)
 {
-    extern s16 Data_02000240[];
-
-    s16 v = Data_02000240[224];
+    s16 v = gGameState.scene;
 
     if (v == (s32)&Value_0000004b) {
         return (s32)Data_02009730;
@@ -651,8 +645,6 @@ void SceneState_SetFlag906ByActorNineteenX(void)
  */
 s32 SceneState_SyncProgressFlagsAndDispatch(void)
 {
-    extern s16 Data_02000240[];
-
     s16 scene;
 
     if (GameFlag_IsSet(0x8fd) != 0) {
@@ -667,7 +659,7 @@ s32 SceneState_SyncProgressFlagsAndDispatch(void)
         GameFlag_Set(0x242);
     }
 
-    scene = Data_02000240[224];
+    scene = gGameState.scene;
     if (scene == (s32)&Value_0000004b) {
         Func_020011d4();
     } else if (scene == (s32)&Value_0000004c) {

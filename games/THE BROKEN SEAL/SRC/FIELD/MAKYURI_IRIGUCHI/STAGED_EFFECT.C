@@ -478,8 +478,6 @@ void FieldScene_RunScene39b_02001208(void)
 
 void FieldScene_RunScene39b_0200196c(void)
 {
-    extern u8 *Data_03001ebc;
-
     s32 record;
 
     if (GameFlag_IsSet(0x250) == 0) {
@@ -493,7 +491,7 @@ void FieldScene_RunScene39b_0200196c(void)
         *(s32 *)(record + 24) = -0x10000;
         Actor_SetPosition(3, 0x880000, 0x900000);
         Actor_FaceDirection(3, 0x4000, 10);
-        *(s32 *)(Data_03001ebc + 0x1c0) = 0x201;
+        gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
         Event_OpenScreen();
         Event_WaitForScreen();
         Event_Wait(60);
@@ -506,7 +504,7 @@ void FieldScene_RunScene39b_0200196c(void)
         Actor_WaitForMove(3);
         Actor_SetPosition(3, 0, 0);
         GameFlag_Set(0x872);
-        *(s32 *)(Data_03001ebc + 0x1c0) = 0x204;
+        gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
         Event_End();
     }
 }

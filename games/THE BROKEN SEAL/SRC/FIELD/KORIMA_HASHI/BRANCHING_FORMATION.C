@@ -8,9 +8,7 @@
 #include "STAGED_ACTOR.H"
 #include "STAGED_ACTOR_EFFECT.H"
 
-
 typedef struct { u8 filler0[0x28]; s16 *unk28; } Sub;
-
 
 struct PlacementResult_02000a68 {
     s32 words[6];
@@ -134,21 +132,16 @@ static __inline__ void DrawPlacement_02000a68(
 
 static __inline__ s32 Value1(s32 (*f)(), s32 a0)
 {
-    extern s16 Data_02000240[];
-
     return f(a0);
 }
 
 static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
 {
-    extern s16 Data_02000240[];
-
     f(a0, a1, a2, a3, a4, a5);
 }
 
 s32 Func_0200371e(struct StagedActorEffect *actor,
                          struct StagedActorEffectRequest *request);
-
 
 s32 OverlayObject_ClearPendingAndRestoreMode(u8 *object)
 {
@@ -301,7 +294,6 @@ s32 FieldScene_RunScene391_02000c68(void)
 
 #include "TYPES.H"
 
-
 u8 * Func_02002c24();
 void Func_02002c3c();
 void Func_02002780();
@@ -335,8 +327,6 @@ static __inline__ u8 * Record1(u8 * (*f)(), s32 a0)
 {
     return f(a0);
 }
-
-
 
 static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
 {

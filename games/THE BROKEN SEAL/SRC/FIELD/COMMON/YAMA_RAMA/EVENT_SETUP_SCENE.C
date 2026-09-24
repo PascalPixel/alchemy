@@ -30,7 +30,6 @@ struct Actor {
     s32 f10;
 };
 
-extern s16 Data_02000240[];
 extern u8 Value_0000004a;
 extern u8 Data_02009844[];
 extern u8 Data_020097b4[];
@@ -98,11 +97,7 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
 
 static __inline__ void bump_step(s32 amount)
 {
-    extern u8 Data_03001ebc[];
-
-    u8 *work = *(u8 **)Data_03001ebc;
-
-    *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
+    gEventWork->message += amount;
 }
 
 static __inline__ void Call1(void (*f)(), s32 a0)
@@ -150,11 +145,7 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 
 static __inline__ void Scene_AdvanceStep(s32 amount)
 {
-    extern u8 Data_03001ebc[];
-
-    u8 *work = *(u8 **)Data_03001ebc;
-
-    *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
+    gEventWork->message += amount;
 }
 
 s32 EventScript_PrepareActorRenderFlags(struct EventActor *actor)
@@ -176,7 +167,7 @@ s32 OverlayObject_SetFacingTowardObject10(void *self)
 
 s32 SceneData_SelectTable97b4ByState(void)
 {
-    if (Data_02000240[224] == (s32)&Value_0000004a) {
+    if (gGameState.scene == (s32)&Value_0000004a) {
         return (s32)Data_02009844;
     }
     return (s32)Data_020097b4;
@@ -194,7 +185,7 @@ u8 *SceneData_GetTable98ec(void)
 
 s32 SceneData_SelectTable9918ByState(void)
 {
-    if (Data_02000240[224] == (s32)&Value_0000004a) {
+    if (gGameState.scene == (s32)&Value_0000004a) {
         return (s32)Data_02009a38;
     }
     return (s32)Data_02009918;
@@ -240,13 +231,11 @@ void SceneDialogue_RunActor13Message1961(void)
 
 void FieldScene_RunPrimaryScript(void)
 {
-    extern struct EventWork *Data_03001ebc;
-
     Audio_PlayCue(188);
     Map_AnimateCells(0x2009788, 67, 6);
     *(u8 *)(Func_0200169e(0) + 85) = 0;
     Actor_SetSpeed(0, 0xcccc, 0x6666);
-    Data_03001ebc->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Actor_SetAnimation(0, 2);
     Actor_SetDestinationOffset(0, 0, -16);
     Event_Wait(16);
@@ -255,7 +244,6 @@ void FieldScene_RunPrimaryScript(void)
 
 void FieldScene_RunScene3a2SequenceA(void)
 {
-    extern struct EventWork *Data_03001ebc;
     void Event_ShowMessageAndWait();
 
     Event_Begin();
@@ -269,7 +257,7 @@ void FieldScene_RunScene3a2SequenceA(void)
     Actor_FaceDirection(1, 0xa000, 0);
     Actor_FaceDirection(2, 0xc000, 0);
     Actor_FaceDirection(3, 0xe000, 0);
-    Data_03001ebc->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
     Event_OpenScreen();
     Event_WaitForScreen();
     Event_Wait(60);
@@ -599,7 +587,6 @@ void Scene_RunActorExchange(void)
 
 void Scene_RunActorSequence(void)
 {
-    extern u8 Data_03001ebc[];
     void Event_Begin();
 
     s32 mask;
@@ -714,7 +701,7 @@ void Scene_RunActorSequence(void)
     Event_Wait(20);
     Event_End();
     GameFlag_Set(0x8b2);
-    *(s32 *)((*(u8 **)Data_03001ebc + 0x1c0)) = 0x201;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
     Event_RequestExit(6);
 }
 
@@ -819,7 +806,7 @@ void FieldScene_SetSlot15Byte89AndRunStep(void)
 
 s32 SceneData_SelectTableByWord224(void)
 {
-    if (Data_02000240[224] == (s32)&Value_0000004a) {
+    if (gGameState.scene == (s32)&Value_0000004a) {
         return (s32)Data_02009c9c;
     }
     return (s32)Data_02009b10;

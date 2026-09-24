@@ -424,9 +424,7 @@ void SceneState_ApplyValues11And62(void)
 
 s32 SceneData_SelectTableBySceneId(void)
 {
-    extern s16 Data_02000240[];
-
-    s16 v = Data_02000240[224];
+    s16 v = gGameState.scene;
 
     if (v == (s32)&Value_00000034) {
         return (s32)Data_0200a4bc;
@@ -464,9 +462,7 @@ void *SceneData_GetTableA8f4(void)
 
 s32 SceneData_SelectDataByRuntimeSelector(void)
 {
-    extern s16 Data_02000240[];
-
-    s16 v = Data_02000240[224];
+    s16 v = gGameState.scene;
 
     if (v == (s32)&Value_00000034) {
         return (s32)Data_0200a9bc;
@@ -491,14 +487,12 @@ s32 SceneData_SelectDataByRuntimeSelector(void)
 
 void SceneActor_PlacePairAtOffset(s32 a0, s32 a1, s32 a2)
 {
-    extern s32 Data_02000240[];
-
     Obj *p;
     Obj *q;
     s32 x;
     s32 y;
 
-    p = Func_020024f2(Data_02000240[125]);
+    p = Func_020024f2(gGameState.selected_actor);
     q = Func_020024fa(a0);
     Event_Begin();
     {
@@ -1182,9 +1176,7 @@ struct Actor_39a *OverlayObject_CreateAndInitialize(s32 a, s32 b, s32 c, s32 d)
 
 s32 SceneData_SelectDataByRuntimeSelectorB(void)
 {
-    extern s16 Data_02000240[];
-
-    s16 v = Data_02000240[224];
+    s16 v = gGameState.scene;
 
     if (v == (s32)&Value_00000034) {
         return (s32)Data_0200abd8;
@@ -1475,9 +1467,7 @@ void SceneState_ClearWorkWord24(void)
 
 s32 Func_02001750(void)
 {
-    extern u8 Data_03001ebc[];
-
-    *(s32 *)(*(u8 **)Data_03001ebc + 0x1c0) = 0x204;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
     if (GameFlag_IsSet(0x109) == 0 && Data_02000240_t[224][0] == (s32)Data_00000034) {
         GameFlag_Set(0x144);
         Func_02002f30();

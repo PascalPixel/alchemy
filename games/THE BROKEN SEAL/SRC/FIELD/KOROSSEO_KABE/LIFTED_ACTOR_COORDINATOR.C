@@ -1,7 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
-
 void Func_020034de();
 s32 Func_020036f4();
 void Func_02003918();

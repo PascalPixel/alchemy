@@ -528,7 +528,7 @@ u8 *SceneData_SelectTableBySceneIdAndFlags(void)
     if (GameFlag_IsSet(0x87a) != 0) {
         return Data_0200bfd8;
     }
-    if (GameFlag_IsSet(0x815) != 0) {
+    if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE) != 0) {
         return Data_0200bf78;
     }
     return Data_0200be34;
@@ -1918,7 +1918,7 @@ void FieldScene_RunActorEightFacingDialogue(void)
     Event_Begin();
     if (GameFlag_IsSet(0x87a) != 0)
         Event_SetMessage(MSG_PATH_SOL_SANCTUM_STILL_CLOSED);
-    else if (GameFlag_IsSet(0x815) != 0)
+    else if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE) != 0)
         Event_SetMessage(MSG_MY_CONTROL_OVER_PSYNERGY_HAS);
     else
         Event_SetMessage(MSG_WIELDERS_PSYNERGY_CALLED_ADEPTS_ADEPTS);

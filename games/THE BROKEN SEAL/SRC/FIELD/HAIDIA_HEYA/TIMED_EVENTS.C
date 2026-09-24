@@ -19,8 +19,6 @@
 #include "FIELD_SCENE.H"
 
 enum ValeHouseFlag {
-    /* The villagers speak of the party having left Vale. */
-    FLAG_PARTY_LEFT_VALE = 0x815,
     FLAG_GOT_FAREWELL_HERB = 0x81b
 };
 

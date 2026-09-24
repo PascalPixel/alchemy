@@ -780,7 +780,7 @@ void FieldScene_RunScene37f_0200092c(void)
         Map_CopyCellAttributes(5, 6, 1, 1, 8, 6);
         Map_CopyCellAttributes(0, 1, 3, 1, 6, 5);
     }
-    if (GameFlag_IsSet(0x815) != 0) {
+    if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE) != 0) {
         Actor_SetPosition(8, 0x780000, 0xe80000);
         Map_CopyCellAttributes(2, 10, 1, 1, 6, 14);
         Map_CopyCellAttributes(2, 10, 1, 1, 7, 14);

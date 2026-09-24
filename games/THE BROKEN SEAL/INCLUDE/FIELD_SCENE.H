@@ -57,6 +57,15 @@ enum {
 
 #define IF_FLAG_SET(flag) ((flag) | CONDITION_FLAG_SET)
 
+/*
+ * Story flags that scenes in more than one area choose their tables and
+ * lines by. After the eruption of Mt. Aleph the villagers of Vale speak of
+ * the party as gone ("since you two left").
+ */
+enum {
+    FLAG_PARTY_LEFT_VALE = 0x815
+};
+
 /* Where the party appears when it arrives by one entrance. */
 struct SceneEntrance {
     s16 entrance;

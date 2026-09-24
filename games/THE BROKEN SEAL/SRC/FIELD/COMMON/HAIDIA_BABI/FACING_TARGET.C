@@ -189,7 +189,7 @@ s32 SceneData_SelectTableByStoryFlags(void)
         return (s32)Data_0200a518;
     if (GameFlag_IsSet(0x87a) != 0)
         tbl = Data_0200a410;
-    else if (GameFlag_IsSet(0x815) != 0)
+    else if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE) != 0)
         tbl = Data_0200a338;
     else
         tbl = Data_0200a218;
@@ -227,7 +227,7 @@ s32 SceneData_SelectTableByStoryFlagsB(void)
     if (GameFlag_IsSet(0x87A) != 0) {
         return 0x0200A980;
     }
-    if (GameFlag_IsSet(0x815) != 0) {
+    if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE) != 0) {
         return 0x0200A800;
     }
     return 0x0200A6B0;
@@ -376,7 +376,7 @@ void FieldScene_RunScene377_02000e34(void)
             Event_AskYesNo(13, 0);
             Actor_FaceDirection(13, 0x9000, 10);
         } else {
-            if (GameFlag_IsSet(0x815) != 0) {
+            if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE) != 0) {
                 Event_SetMessage(MSG_THE_VISITORS_CAUSED_THE_ERUPTION);
             } else {
                 Event_SetMessage(MSG_THE_THREE_TRAVELERS_SEEM_ODD);

@@ -34,46 +34,20 @@ extern u8 Data_02009d7c[];
 
 s32 Func_0200107a(s32, s32);
 void Func_020012c6(s32, s32, s32);
-s32 Func_0200140a();
 s32 Func_02001460();
-s32 Func_020014da();
-s32 Func_020014e2();
 void Func_020016ca();
-s32 Func_0200165a();
-u8 *Func_0200169a();
 s32 Func_02001804();
 s32 Func_02001828();
 s32 Func_020018a2();
-u8 *Func_020018c2();
 void Func_02001960();
 void Func_0200196c();
 void Func_02001978();
-void Func_0200135e();
-s32 Func_020019f4();
-s32 Func_02001a0a();
-void Func_02001948();
-s32 Func_02001bb8();
-s32 Func_02001bc0();
-s32 Func_02001bc8();
-s32 Func_02001c7e();
-s32 Func_02001c8a();
-s32 Func_02001c96();
 s32 Func_02001cb2();
 s32 Func_02001cc2();
 s32 Func_02001cd0();
-s32 Func_02001cec();
-void Func_02001cc2_a();
-s32 Func_02001e18();
-void Func_0200119c();
-void Func_02001398();
-void Func_020015de();
 void Func_020018e2();
-s32 Func_02001aac();
-s32 Func_02001ab4();
-u8 *Func_02001d90();
 u8 *Func_02001f90();
 void Func_02001fa8();
-u8 *Func_02002078();
 
 /* Loader-relocated overlay calls: each symbol names the pre-relocation call
  * word the image holds. */
@@ -430,7 +404,7 @@ void FieldScene_RunEarlySequence(void)
     p7 = *(u8 **)Data_03001ebc;
     Event_Begin();
     for (i = 8; i < 66; i++) {
-        record = (u8 *)Value1(Func_0200140a, i);
+        record = (u8 *)Value1(Engine_ActorGet, i);
         if (record != 0) {
             record[85] = 0;
         }
@@ -472,8 +446,8 @@ void FieldScene_RunScene38bSequenceC(void)
     struct FieldActor *rec;
     struct FieldActor *rec7;
 
-    rec = (struct FieldActor *)Value1(Func_020014da, 0);
-    rec7 = (struct FieldActor *)Value1(Func_020014e2, 11);
+    rec = (struct FieldActor *)Value1(Engine_ActorGet, 0);
+    rec7 = (struct FieldActor *)Value1(Engine_ActorGet, 11);
     if ((rec7->x.fixed >> 20) == 6) {
         Event_Begin();
         Actor_SetSpritePriority(11, 1);
@@ -530,7 +504,7 @@ void FieldScene_RunScene38b_02000584(void)
     struct FieldActor *record;
     s32 base5_20091c0;
 
-    rec7 = Value1(Func_0200165a, 0);
+    rec7 = Value1(Engine_ActorGet, 0);
     if (GameFlag_IsSet(0x845) == 0) {
     } else {
         if (GameFlag_IsSet(0x848) == 0) {
@@ -539,7 +513,7 @@ void FieldScene_RunScene38b_02000584(void)
             Camera_SetSpeed(0x26666, 0x4ccc);
             Camera_MoveTo(0x1070000, -1, 0xad0000, 1);
             Camera_WaitForMove();
-            record = Func_0200169a(12);
+            record = Actor_Get(12);
             if (record->x.fixed > rec7->x.fixed) {
                 Actor_FaceDirection(13, 0x5000, 20);
                 Actor_ShowEmote(13, 0x100, 20);
@@ -596,7 +570,7 @@ void FieldScene_RunScene38b_02000584(void)
             Actor_WalkToAndWait(14, 0x106, 156);
             Event_Wait(1);
             {
-                u8 *record = Func_020018c2(14);
+                u8 *record = Actor_Get(14);
                 u8 value = record[90] | 1;
 
                 record[90] = value;
@@ -621,14 +595,14 @@ s32 Scene_DispatchPuzzleEvent(void)
 {
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     if (gGameState.scene == (s32)&Value_0000001e) {
-        Func_0200119c();
+        FieldScene_RunScene38b_020008f0();
     } else {
         if (gGameState.scene == (s32)&Value_00000023) {
-            Func_02001398();
+            FieldScene_RunScene38bSequenceA();
             Call2_02000890(Func_020018e2, 0x2008ed9, 0xc80);
         } else {
             if (gGameState.scene == (s32)&Value_00000020) {
-                Func_020015de();
+                FieldScene_RunScene38b_02000d10();
             }
         }
     }
@@ -646,11 +620,11 @@ void FieldScene_RunScene38b_020008f0(void)
         Actor_FaceDirection(14, 0x3000, 0);
         Actor_FaceDirection(15, 0x5000, 0);
     } else {
-        record = Func_020019f4(9);
+        record = Actor_Get(9);
         Actor_SetSpriteFlags(record, 0);
         Actor_SetPosition(21, 0, 0);
     }
-    record = Func_02001a0a(8);
+    record = Actor_Get(8);
     record->scale_y = 0x18000;
     {
         s32 off = 450;
@@ -672,7 +646,7 @@ void FieldScene_RunScene38b_020008f0(void)
             Actor_SetPosition(20, 0xf80000, 0xd80000);
         }
     }
-    Func_0200135e();
+    Scene_UpdatePuzzleActors();
     if (GameFlag_IsSet(0x84a) != 0) {
         if (GameFlag_IsSet(0x84b) == 0) {
             GameFlag_Set(0x304);
@@ -689,8 +663,8 @@ void Scene_UpdatePuzzleActors(void)
     s32 p6;
     s32 row;
 
-    rec7 = Value1_02000890(Func_02001aac, 0);
-    record = Value1_02000890(Func_02001ab4, 20);
+    rec7 = Value1_02000890(Engine_ActorGet, 0);
+    record = Value1_02000890(Engine_ActorGet, 20);
     row = *(s32 *)(record + 16) >> 20;
     p9 = (*(s32 *)(rec7 + 8) >> 20);
     p10 = (*(s32 *)(rec7 + 16) >> 20);
@@ -732,9 +706,9 @@ void FieldScene_RunScene38bSequenceA(void)
     struct FieldActor *rec8;
     s32 record;
 
-    rec8 = Value1_02000ae0(Func_02001bb8, 10);
-    rec = Value1_02000ae0(Func_02001bc0, 11);
-    record = Func_02001bc8(8);
+    rec8 = Value1_02000ae0(Engine_ActorGet, 10);
+    rec = Value1_02000ae0(Engine_ActorGet, 11);
+    record = Actor_Get(8);
     Actor_SetSpriteFlags(record, 0);
     rec7 = GameFlag_IsSet(0x845);
     if (rec7 != 0) {
@@ -755,11 +729,11 @@ void FieldScene_RunScene38bSequenceA(void)
         Actor_SetPosition(12, 0, 0);
         Actor_SetPosition(13, 0, 0);
         Actor_SetPosition(14, 0, 0);
-        record = Func_02001c7e(9);
+        record = Actor_Get(9);
         Actor_SetSpriteFlags(record, 0);
-        record = Func_02001c8a(10);
+        record = Actor_Get(10);
         Actor_SetSpriteFlags(record, 0);
-        record = Func_02001c96(11);
+        record = Actor_Get(11);
         Actor_SetSpriteFlags(record, 0);
         rec8->motion_flags = rec7;
         record = GameFlag_IsSet(0x881);
@@ -768,7 +742,7 @@ void FieldScene_RunScene38bSequenceA(void)
             *(u8 *)(Func_02001cc2(16) + 89) |= 16;
             *(u8 *)(Func_02001cd0(11) + 89) |= 16;
             Actor_SetPosition(16, 0x8e0000, 0x9c0000);
-            record = Func_02001cec(16);
+            record = Actor_Get(16);
             Actor_SetSpriteFlags(record, 0);
             Actor_SetPosition(10, 0x8e0000, 0x9c0000);
             rec8->sprite->rotation = 0x4000;
@@ -787,7 +761,7 @@ void FieldScene_RunScene38bSequenceA(void)
         }
     }
     L_02000c92:;
-    Func_02001948();
+    ActorPresentation_RepaintTenCellsAndActorEightCell();
 }
 
 /*
@@ -796,7 +770,7 @@ void FieldScene_RunScene38bSequenceA(void)
  */
 
 /*
- * Slot accessor: Func_02001d90(slot) returns the actor record, or NULL.
+ * Slot accessor: Engine_ActorGet(slot) returns the actor record, or NULL.
  * Typed as a byte pointer so the +0x08 and +0x10 field reads are explicit.
  */
 
@@ -827,7 +801,7 @@ void ActorPresentation_RepaintTenCellsAndActorEightCell(void)
      * 16 takes the fixed-point coordinate to pixels, the further 4 take it
      * to the 16-pixel tile grid.
      */
-    actor = Func_02001d90(8);
+    actor = Actor_Get(8);
     tx = *(s32 *)(actor + 0x08) >> 20;
     tz = *(s32 *)(actor + 0x10) >> 20;
 
@@ -856,11 +830,11 @@ void FieldScene_RunScene38b_02000d10(void)
     s32 record;
 
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
-    Func_02001cc2_a();
+    FieldScene_DrawTilesByActor8Row();
     record = ReadU16Elem((u16 *)Data_02000240, 225);
     if ((u32)((record - 3) << 16) <= 0x10000) {
         if (GameFlag_IsSet(0x109) == 0) {
-            rec7 = Value1_02000d10(Func_02001e18, 0);
+            rec7 = Value1_02000d10(Engine_ActorGet, 0);
             Event_Begin();
             arg0 = *(s32 *)(rec7 + 8);
             *(s32 *)(rec7 + 12) = 0x100000;
@@ -921,7 +895,7 @@ void OverlayObject_SpawnKind24AtActor(u8 *actor)
 void FieldScene_DrawTilesByActor8Row(void)
 {
     u8 *actor;
-    actor = Func_02002078(8);
+    actor = Actor_Get(8);
     if (actor == 0)
         return;
 

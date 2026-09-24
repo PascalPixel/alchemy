@@ -7,9 +7,7 @@
 #define SetOverlayObjectMode Func_02002bb0
 #define SetOverlayObjectSlot Func_02002c50
 #define Scene_GetRecord_1(args...) Func_020042de(args)
-#define Scene_GetRecord_2(args...) Func_020042e8(args)
 #define Scene_GetRecord_3(args...) Func_02004398(args)
-#define Scene_GetRecord_4(args...) Func_020043a4(args)
 #define REC_ID 16
 #define QUERY_FLAG 0x200
 
@@ -67,20 +65,15 @@ extern u8 Data_0200b39c[];
 extern u8 *Data_03001ee0;
 extern volatile s32 Data_03001e40;
 
-void *Func_02002ace(s32, s32, s32, s32);
 u8 *Func_020051b4(void);
-u8 *Func_020039ec();
 s32 Func_02001cc4();
-u8 *Func_02003a7c();
 s32 Func_02001d54();
 void Func_020014d4();
 void Func_02001386();
 s32 Func_02001630();
 s32 Func_02001662();
-s32 Func_02003cee();
 void Func_02003d20();
 void Func_02003d5e();
-u8 *Func_02003d94();
 s32 Func_02003da0();
 s32 Func_02003dea();
 void Func_020022e0();
@@ -93,51 +86,20 @@ s32 Func_020040d6();
 void Func_02004106();
 void Func_0200417a();
 void Func_02004186();
-void Func_020026e0();
-void Func_020026e6();
-void Func_020026ec();
-void Func_020026f2();
-void Func_020026f8();
-void Func_020026fe();
-void Func_02002704();
-void Func_02002822();
-void Func_02002828();
-void Func_0200282e();
-void Func_02002834();
-void Func_0200283a();
-void Func_02002840();
-void Func_02002846();
-void Func_02002e0e();
-void Func_02002ec0();
 s32 Func_020042de();
-u8 *Func_020042e8();
 s32 Func_02004398();
-u8 *Func_020043a4();
 void Func_020023ac();
 s32 Func_02003244();
 void Func_02003d8c();
 s32 Func_02004b02();
 s32 Func_02004b14();
-s32 Func_02004b2a();
-u8 *Func_02004b3a();
-s32 Func_02004c14();
-s32 Func_02004c7e();
-s32 Func_02004c86();
 s32 Func_02005160();
 int Func_02002798(void);
 void Func_020018e0(void);
 s32 Func_02001caa(PlacementResult *out);
 void Func_02001e56(PlacementResult out);
-u8 *Func_02004bbe();
 void Func_02004bd4();
-u8 *Func_02004ba2();
-u8 *Func_02004bdc(s32 slot);
-u8 *Func_02004fbc();
 s32 Func_020029e6();
-void Func_0200423a(s32 actor);
-void Func_02004246(s32 actor);
-u8 *Func_020051da();
-u8 *Func_020051e4();
 u8 *Func_02005240();
 
 /*
@@ -250,8 +212,6 @@ static __inline__ s32 Value1_0200263c(s32 (*f)(), s32 a0)
     return f(a0);
 }
 
-u8 *Func_02003c94();           /* Record fetch, returns the record. */
-
 void Func_020023f6(s32 x, s32 y, s32 z, s32 kind,
                           s32 arg4, s32 arg5, u32 flags, void *descriptor);
 
@@ -270,7 +230,7 @@ void SetEffectRecordMode(struct EffectWork *work, s32 mode)
 /* Declared without a prototype; the call site passes one argument. */
 void *OverlayObject_PrepareObject(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 {
-    u8 *obj = Func_02002ace(arg3, arg0, arg1, arg2);
+    u8 *obj = Object_Create(arg3, arg0, arg1, arg2);
 
     if (obj != NULL) {
         u8 *rec = *(u8 **)(obj + 0x50);
@@ -377,7 +337,7 @@ void SceneActor_WaitHeightBelowLimit(u8 *obj, s32 limit)
 
 s32 SceneActor_ApplyPlacementQueryAndTag(u8 *no)
 {
-    u8 *obj = Func_020039ec(no);
+    u8 *obj = Actor_Get(no);
     u32 out20, out16;
     s32 out12, out8;
     s32 rec[6];
@@ -407,7 +367,7 @@ s32 SceneActor_ApplyPlacementQueryAndTag(u8 *no)
 
 s32 SceneActor_ApplyPlacementQuery(u8 *no)
 {
-    u8 *obj = Func_02003a7c(no);
+    u8 *obj = Actor_Get(no);
     s32 out20, out16, out12, out8;
     s32 rec[6];
 
@@ -438,7 +398,7 @@ s32 SceneActor_ApplyPlacementQuery(u8 *no)
  */
 void StagedActor_StepDownUntilClamp(s32 index)
 {
-    u8 *obj = Func_02003c94(index);
+    u8 *obj = Actor_Get(index);
     u32 cnt;
 
     obj[0x55] = 0;
@@ -472,7 +432,7 @@ void FieldScene_RunPrimarySequence(void)
     u8 *base;
     u8 slot16[40];
 
-    rec = Func_02003cee(0);
+    rec = Actor_Get(0);
     flag = Data_03001e40 & 3;
     if (flag == 0) {
         base = slot16;
@@ -500,7 +460,7 @@ s32 Func_02001268(void)
     s32 *p;
     s32 buf[3];
 
-    rec = Func_02003d94(0);
+    rec = Actor_Get(0);
     pflag = rec + 85;
     saved = *pflag;
     mode = (*(u16 *)(rec + 6) + 0x2000) & 0xc000;
@@ -729,21 +689,21 @@ void FieldScene_RunFlaggedDisplayScene(void)
         Actor_SetSpritePriority(REC_ID, 1);
         /* Flag byte at +85: cleared, since queried is zero here. */
         *(u8 *)(Scene_GetRecord_1(REC_ID) + 85) = queried;
-        record = Scene_GetRecord_2(REC_ID);
+        record = Actor_Get(REC_ID);
         *(s32 *)(record + 12) = -0x200000;
         Actor_SetPosition(REC_ID, 0x1100000, 0x1a00000);
         Actor_SetAnimation(REC_ID, 1);
         Map_AnimateCells(0x200adfc, 80, 24);
         Map_AnimateCells(0x200ae50, 80, 28);
         Map_CopyCellsTo(65, 40, 16, 27, 2, 4);
-        Func_02002e0e();
-        Func_020026e0(9);
-        Func_020026e6(10);
-        Func_020026ec(11);
-        Func_020026f2(12);
-        Func_020026f8(13);
-        Func_020026fe(14);
-        Func_02002704(15);
+        FieldScene_RunScene3b3SequenceA();
+        SceneActor_ApplyPlacementQueryAndTag(9);
+        SceneActor_ApplyPlacementQueryAndTag(10);
+        SceneActor_ApplyPlacementQueryAndTag(11);
+        SceneActor_ApplyPlacementQueryAndTag(12);
+        SceneActor_ApplyPlacementQueryAndTag(13);
+        SceneActor_ApplyPlacementQueryAndTag(14);
+        SceneActor_ApplyPlacementQueryAndTag(15);
         Map_CopyCellAttributes(24, 3, 1, 1, 24, 8);
         GameFlag_Set(QUERY_FLAG);
     } else {
@@ -753,20 +713,20 @@ void FieldScene_RunFlaggedDisplayScene(void)
         Audio_PlayCue(230);
         /* Flag byte at +85: cleared unconditionally in this branch. */
         *(u8 *)(Scene_GetRecord_3(REC_ID) + 85) = 0;
-        record = Scene_GetRecord_4(REC_ID);
+        record = Actor_Get(REC_ID);
         *(s32 *)(record + 12) = -0x200000;
         Actor_SetPosition(REC_ID, 0x1100000, 0x1b40000);
         Actor_SetAnimation(REC_ID, 2);
         Map_CopyCellsTo(65, 45, 16, 27, 2, 4);
         Map_AnimateCells(0x200ae26, 80, 24);
-        Func_02002ec0();
-        Func_02002822(9);
-        Func_02002828(10);
-        Func_0200282e(11);
-        Func_02002834(12);
-        Func_0200283a(13);
-        Func_02002840(14);
-        Func_02002846(15);
+        FieldScene_RunScene3b3SequenceA();
+        SceneActor_ApplyPlacementQuery(9);
+        SceneActor_ApplyPlacementQuery(10);
+        SceneActor_ApplyPlacementQuery(11);
+        SceneActor_ApplyPlacementQuery(12);
+        SceneActor_ApplyPlacementQuery(13);
+        SceneActor_ApplyPlacementQuery(14);
+        SceneActor_ApplyPlacementQuery(15);
         Map_CopyCellAttributes(24, 4, 1, 1, 24, 8);
         GameFlag_Clear(QUERY_FLAG);
     }
@@ -783,12 +743,12 @@ void FieldScene_RunScene3b3_02001fd4(void)
         Func_02003d8c();
         {
             u8 bits = 1;
-            u8 *flags = (u8 *)Func_02004b2a(0) + 85;
+            u8 *flags = (u8 *)Actor_Get(0) + 85;
             u8 value = *flags;
 
             value |= bits;
             *flags = value;
-            flags = (u8 *)Func_02004b3a(0) + 35;
+            flags = (u8 *)Actor_Get(0) + 35;
             bits |= *flags;
             *flags = bits;
         }
@@ -805,19 +765,19 @@ void FieldScene_RunSingleStep(void)
 /* Complete scene/entity linker through return and its sole pool word. */
 void SceneState_LinkActorZeroToWork24(void)
 {
-    u8 *obj = Func_02004ba2(0);
+    u8 *obj = Actor_Get(0);
     *(u8 **)(Data_03001ee0 + 24) = obj;
     obj[98] = 1;
 }
 
 /*
  * Clears Data_03001ee0[+24] and one flag byte on the object returned by
- * Func_02004bbe. The 28-byte owner at 0x0200209c includes its one pool
+ * Engine_ActorGet. The 28-byte owner at 0x0200209c includes its one pool
  * word, the Data_03001ee0 pointer.
  */
 void SceneState_ClearWord24AndObjectByte62(void)
 {
-    u8 *obj = Func_02004bbe(0);
+    u8 *obj = Actor_Get(0);
 
     *(s32 *)(Data_03001ee0 + 24) = 0;
     obj[0x62] = 0;
@@ -841,7 +801,7 @@ void SceneState_ClearWord24AndObjectByte62(void)
  */
 s32 SceneActor_UpdateBit1ByPositionToSlotZero(u8 *actor)
 {
-    u8 *ref = Func_02004bdc(0);
+    u8 *ref = Actor_Get(0);
 
     if (*(s32 *)(actor + 16) > *(s32 *)(ref + 16)) {
         actor[35] = (u8)(actor[35] & 0xfd);
@@ -858,7 +818,7 @@ void FieldScene_RunScene3b3_020020f0(s32 a0)
     s32 rec7;
     s32 record;
 
-    rec7 = Value0(Func_02004c14);
+    rec7 = Value0(Engine_ActorGet);
     Event_Begin();
     *(s32 *)(rec7 + 108) = 0x200a0b9;
     Map_CopyCellAttributes(20, 14, 1, 1, (*(s32 *)(rec7 + 8) >> 20), (*(s32 *)(rec7 + 16) >> 20));
@@ -872,13 +832,13 @@ void FieldScene_RunScene3b3_020020f0(s32 a0)
 /* Complete 12-byte actor-11 wrapper before 0x02002150. */
 void FieldScene_RunActor11Step(void)
 {
-    Func_0200423a(11);
+    FieldScene_RunScene3b3_020020f0(11);
 }
 
 /* Complete 12-byte actor-12 wrapper before 0x0200215c. */
 void FieldScene_RunActor12Step(void)
 {
-    Func_02004246(12);
+    FieldScene_RunScene3b3_020020f0(12);
 }
 
 void FieldScene_RunScene3b3_0200215c(void)
@@ -888,8 +848,8 @@ void FieldScene_RunScene3b3_0200215c(void)
     s32 record;
     u8 *p6;
 
-    rec7 = Value1(Func_02004c7e, 0);
-    record = Func_02004c86(13);
+    rec7 = Value1(Engine_ActorGet, 0);
+    record = Actor_Get(13);
     p6 = *(s32 *)0x03001f30;
     if ((*(s32 *)(record + 8) >> 20) == (*(s32 *)(rec7 + 8) >> 20)) {
         if ((*(s32 *)(record + 16) >> 20) != (*(s32 *)(rec7 + 16) >> 20)) {
@@ -973,7 +933,7 @@ s32 SceneEffect_SpawnRandomEffectEveryEightFrames(u8 *actor)
  */
 void StagedActor_PlaceAtObjectTenCell(void)
 {
-    u8 *obj = Func_02004fbc(10);
+    u8 *obj = Actor_Get(10);
     s32 x;
     s32 z;
 
@@ -1037,12 +997,12 @@ void OverlayObject_SetCallbackAndMode2(void)
 
 void SceneActor_CheckActors8To11NearSlotZero(void)
 {
-    u8 *hero = Func_020051da(0);
+    u8 *hero = Actor_Get(0);
     u32 selector = 8;
     u8 *actor;
 
 loop:
-    actor = Func_020051e4(selector);
+    actor = Actor_Get(selector);
 
     if (*(s32 *)(hero + 12) / 0x10000 != *(s32 *)(actor + 12) / 0x10000)
         goto mark_and_continue;

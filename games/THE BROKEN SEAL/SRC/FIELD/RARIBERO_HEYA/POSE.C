@@ -34,9 +34,6 @@ void Func_020016fe();
 void Func_0200186c();
 s32 Func_0200187a();
 void Func_02001888();
-u8 *Func_02002064(s32);
-u8 *Func_02002094(s32);
-u8 *Func_020020c4(s32);
 
 /*
  * The import's main-image target is Func_0808a1f0; its second argument is a
@@ -189,7 +186,6 @@ u8 *SceneData_SelectTableBySceneIdAndFlag9a7(void)
 
 void FieldScene_RunSequenceA(void)
 {
-    s32 Func_020016a4(s32, s32);
 
     GameFlag_Set(0x9BC);
     Event_Begin();
@@ -203,7 +199,7 @@ void FieldScene_RunSequenceA(void)
     Event_Wait(0xA);
     Actor_FaceActor(0, 0xC, 0);
     Event_Wait(0x1E);
-    Func_020016a4(0, 3);
+    Actor_SetAnimationAndWait(0, 3);
     Event_Wait(0x1E);
     Event_End();
 }
@@ -543,7 +539,7 @@ void FieldScene_RunPrimaryScript(void)
     Actor_SetSpeed(2, 78643, 39321);
     Value2(Engine_ActorSetAnimation, 1, 2);
     {
-        u8 *rec = Value1(Func_02002064, 0);
+        u8 *rec = Value1(Engine_ActorGet, 0);
         if (rec != 0) {
             s16 y = *(s16 *)(rec + 10);
             s16 x = *(s16 *)(rec + 18);
@@ -554,7 +550,7 @@ void FieldScene_RunPrimaryScript(void)
     Actor_SetPosition(1, 0, 0);
     Value2(Engine_ActorSetAnimation, 3, 2);
     {
-        u8 *rec = Value1(Func_02002094, 0);
+        u8 *rec = Value1(Engine_ActorGet, 0);
         if (rec != 0) {
             s16 y = *(s16 *)(rec + 10);
             s16 x = *(s16 *)(rec + 18);
@@ -565,7 +561,7 @@ void FieldScene_RunPrimaryScript(void)
     Actor_SetPosition(3, 0, 0);
     Value2(Engine_ActorSetAnimation, 2, 2);
     {
-        u8 *rec = Value1(Func_020020c4, 0);
+        u8 *rec = Value1(Engine_ActorGet, 0);
         if (rec != 0) {
             s16 y = *(s16 *)(rec + 10);
             s16 x = *(s16 *)(rec + 18);

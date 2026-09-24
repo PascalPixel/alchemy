@@ -30,7 +30,6 @@ extern u8 Data_02008a3c[];
 u8 *Func_020005ba(s32);
 u8 *Func_0200062a(int);
 u8 *Func_020006e6();
-void Func_0200065e(void);
 void Func_020004d0(void *);
 
 /* Old-style declarations where an overlay import varies in arity between its
@@ -247,13 +246,13 @@ void FieldScene_RunArrivalPlacement(void)
     Event_End();
 }
 
-/* Publishes 0x209 at +448 of the runtime record, and calls Func_0200065e for
+/* Publishes 0x209 at +448 of the runtime record, and calls SceneState_ClearSlotsBySubState for
  * scene 0x64. */
 s32 SceneState_SetRuntimeWord448To521(void)
 {
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
     if (gGameState.scene == (s32)(u32)&Value_00000064) {
-        Func_0200065e();
+        SceneState_ClearSlotsBySubState();
     }
     return 0;
 }

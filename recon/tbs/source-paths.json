@@ -1138,7 +1138,8 @@
       "source": "MENU/CHARACTER_SELECTOR_RUN.C"
     },
     "main:080a7478": {
-      "name": "Unnamed_080a7478"
+      "name": "ActionMenu_Open",
+      "source": "MENU/OPEN_ACTION_MENU.C"
     },
     "main:08002f4c": {
       "name": "PackedTable_AdjustMarkedOffsets"

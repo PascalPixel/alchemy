@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_3b3:02000fcc": {
+      "name": "TakaraHashira_ReadMapCell",
+      "source": "FIELD/TAKARA_HASHIRA/READ_MAP_CELL.C"
+    },
     "resource_3b3:0200101c": {
       "name": "TakaraHashira_SetCellAttributes",
       "source": "FIELD/TAKARA_HASHIRA/CELL_ATTRIBUTES.C"

@@ -716,10 +716,12 @@
       "source": "BATTLE/MOTION/INITIALIZE_OBJECT.C"
     },
     "main:080b845c": {
-      "name": "BattleMotion_ProjectScaledPosition"
+      "name": "BattleMotion_ProjectScaledPosition",
+      "source": "BATTLE/MOTION/PROJECT_SCALED_POSITION.C"
     },
     "main:080b84c0": {
-      "name": "BattleMotion_ProjectConditionalPosition"
+      "name": "BattleMotion_ProjectConditionalPosition",
+      "source": "BATTLE/MOTION/PROJECT_CONDITIONAL_POSITION.C"
     },
     "main:080c0184": {
       "name": "BattlePresentation_UploadTileVariant",

@@ -23,11 +23,11 @@ s32 BattleMotion_ProjectConditionalPosition(s32 id, s32 *projected)
 
     Func_080b7ed8();
     scaled = Func_08005268(&object->x, projected);
-    scaled = Iwram_MulQ16(scaled, record->scale_18);
+    factor = Iwram_MulQ16(scaled, record->scale_18);
     if (Func_080c23c0(Func_08077008(id)[0x128]) != 0)
-        factor = 24;
+        scaled = Iwram_MulQ16(factor, 24);
     else
-        factor = 48;
-    projected[1] -= Iwram_MulQ16(scaled, factor);
+        scaled = Iwram_MulQ16(factor, 48);
+    projected[1] -= scaled;
     return 0;
 }

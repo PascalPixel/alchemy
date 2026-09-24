@@ -3,7 +3,9 @@
    scored 37.5%). Three projectiles leave the caster twelve frames apart
    and fly to the first target over 60 frames; each draws a ten-point
    spinning ring joined by dotted segments and knocks the target back on
-   arrival. Residual: the reference frame is 116 bytes (this one 120); its
+   arrival. `DrawRectangle blit[2]` with only blit[0] used reproduces the
+   unreferenced slot above blit46 (one DImode pseudo spilled as 8 bytes).
+   Residual: the reference frame is 116 bytes (this one 124); its
    slots run work 76, dst 72, frame 68, an unreferenced slot at 64 (the
    same gap mode 12 keeps between frame and blit46), blit46 60, k 56,
    aux 52, transfer work 48, peak 44. The ring and segment loops still
@@ -91,7 +93,7 @@ void Func_080d0ee0(struct BattleEffectArgument *efx)
     struct BoltWork *work;
     void *dst;
     s32 frame;
-    DrawRectangle blit46;
+    DrawRectangle blit[2];
     s32 k;
     u8 *aux;
     struct BoltTransfer *tw;
@@ -117,7 +119,7 @@ void Func_080d0ee0(struct BattleEffectArgument *efx)
     BattleEffect_LoadWork(46, 7, 7, 3, 2);
     work->transfer_mode = 2;
     work->transfer_value = 75;
-    blit46 = *(DrawRectangle *)(gWorkSlot + 46 * 4);
+    blit[0] = *(DrawRectangle *)(gWorkSlot + 46 * 4);
     Scheduler_AddOrUpdateCallback(0x080CD261, 0x480);
     src = *GetBattleObjectSlotFar(work->effect->actor);
     target = *GetBattleObjectSlotFar(work->effect->actors[0]);
@@ -203,7 +205,7 @@ void Func_080d0ee0(struct BattleEffectArgument *efx)
                     for (s = 0; s != 16; s++) {
                         s32 x = a->velocity_x + (b->velocity_x - a->velocity_x) * s / 16;
                         s32 y = a->velocity_y + (b->velocity_y - a->velocity_y) * s / 16;
-                        blit46(dst, aux + BattleFx12_DotCells[size - 1], x - size / 2, y - size, size, size * 2);
+                        blit[0](dst, aux + BattleFx12_DotCells[size - 1], x - size / 2, y - size, size, size * 2);
                     }
                 }
             }

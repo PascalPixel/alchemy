@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "FIELD_SCENE.H"
 
 #define NULL ((void *)0)
 #define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
@@ -220,14 +221,14 @@ s32 SceneAudio_PlayCue118AndReturnZero(void)
 /* Keep this object facing actor 0 while the actor remains near ground level. */
 s32 SceneActor_FaceLeaderWhileGrounded(u8 *object)
 {
-    u8 *leader = Actor_Get(0);
+    u8 *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
     if ((*(s32 *)(leader + 16) >> 19) <= 22) {
         *(u16 *)(object + 6) = Func_0200317c_a(
             *(s32 *)(leader + 16) - *(s32 *)(object + 16),
             *(s32 *)(leader + 8) - *(s32 *)(object + 8));
     } else if (*(u16 *)(object + 6) != 0xc000) {
-        Actor_FaceDirection(3, 0xc000, 0);
+        Actor_FaceDirection(ACTOR_MIA, 0xc000, 0);
     }
     return 0;
 }
@@ -265,23 +266,23 @@ void *SceneData_GetTableac58(void) { return (void *)0x0200ac58; }
 void FieldScene_RunStepWithValue1632(void)
 {
     Event_Begin();
-    Actor_SetAnimation(0, 1);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
     Message_ShowCentered(0x1632, 1);
     Event_End();
 }
 
 void Func_02000ed0(s32 a)
 {
-    u8 *v = Actor_Get(0);
+    u8 *v = Actor_Get(ACTOR_PARTY_LEADER);
     Event_Begin();
     Audio_PlayCue(0xe4);
     F(v, s32, 0x6c) = (s32)&Value_02008cc1;
     F(v, s32, 0x30) = 0x3333;
-    Actor_SetAnimation(0, 2);
-    Actor_SetDestinationOffset(0, 0, -6);
-    Actor_WaitForMove(0);
-    Actor_SetChildValue(0, 15);
-    Actor_SetSpriteFlags(Actor_Get(0), 0);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, 2);
+    Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, -6);
+    Actor_WaitForMove(ACTOR_PARTY_LEADER);
+    Actor_SetChildValue(ACTOR_PARTY_LEADER, 15);
+    Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
     F(v, s32, 0x6c) = 0;
     Event_Wait(30);
     Event_CloseScreen();
@@ -297,13 +298,13 @@ void FieldScene_RunScene39b_02000f48(s32 a0)
 
     Event_Begin();
     Audio_PlayCue(228);
-    Actor_SetSpeed(0, 0x6666, 0x3333);
-    Actor_SetSpritePriority(0, 2);
-    Actor_SetDestinationOffset(0, 0, -8);
-    record = Actor_Get(0);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x6666, 0x3333);
+    Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 2);
+    Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, -8);
+    record = Actor_Get(ACTOR_PARTY_LEADER);
     Actor_SetSpriteFlags(record, 0);
     Event_Wait(8);
-    Actor_SetPosition(0, ((a0 << 19) + 0x80000), 0);
+    Actor_SetPosition(ACTOR_PARTY_LEADER, ((a0 << 19) + 0x80000), 0);
     Event_Wait(30);
 }
 
@@ -340,8 +341,8 @@ void FieldScene_RunSupplementalSequenceTwo(void)
     u8 *slot;
     u8 slot16[40];
 
-    a = *(s32 *)(Value1(Engine_ActorGet, 0) + 8) / 0x100000;
-    b = *(s32 *)(Value1(Engine_ActorGet, 0) + 16) / 0x100000;
+    a = *(s32 *)(Value1(Engine_ActorGet, ACTOR_PARTY_LEADER) + 8) / 0x100000;
+    b = *(s32 *)(Value1(Engine_ActorGet, ACTOR_PARTY_LEADER) + 16) / 0x100000;
     if (a == 12 && b == 32) {
         Event_Begin();
         ColorBuffer_ApplyTarget(0x10000, 0);
@@ -400,7 +401,7 @@ void FieldScene_RunScene39b_0200116c(void)
     s32 field8;
     s32 quotient;
 
-    record = Value1_0200116c(Engine_ActorGet, 0);
+    record = Value1_0200116c(Engine_ActorGet, ACTOR_PARTY_LEADER);
     field8 = *(s32 *)(record + 8);
     quotient = field8 / 0x100000;
     GameFlag_Set(0x205);
@@ -417,27 +418,27 @@ void FieldScene_RunScene39b_02001208(void)
     s32 flag;
     s32 record;
 
-    actor = (struct FieldActor *)Value1_02001208(Engine_ActorGet, 0);
+    actor = (struct FieldActor *)Value1_02001208(Engine_ActorGet, ACTOR_PARTY_LEADER);
     flag = GameFlag_IsSet(0x109);
     if (flag == 0) {
         Event_Begin();
         Camera_MoveTo(-1, -1, -1, 0);
         actor->motion_flags = 0;
         Value3(Engine_ActorSetPosition, 0, actor->x.part.pixel << 16, (actor->z.part.pixel << 16) + -0x100000);
-        Actor_SetChildValue(0, 15);
-        record = Actor_Get(0);
+        Actor_SetChildValue(ACTOR_PARTY_LEADER, 15);
+        record = Actor_Get(ACTOR_PARTY_LEADER);
         Actor_SetSpriteFlags(record, 0);
         Event_OpenScreen();
         Event_WaitForScreen();
         Audio_PlayCue(228);
         actor->update = (void (*)(union FieldObject *))FieldScene_RunScene39b_02000cc0;
-        Actor_SetSpeed(0, 0x6666, 0x3333);
-        Actor_WalkByAndWait(0, 0, 8);
-        Actor_SetChildValue(0, 0);
-        record = Actor_Get(0);
+        Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x6666, 0x3333);
+        Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 0, 8);
+        Actor_SetChildValue(ACTOR_PARTY_LEADER, 0);
+        record = Actor_Get(ACTOR_PARTY_LEADER);
         Actor_SetSpriteFlags(record, 1);
         actor->sprite->priority = 1;
-        Actor_WalkByAndWait(0, 0, 10);
+        Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 0, 10);
         actor->motion_flags = 3;
         actor->update = NULL;
         Func_020038cc();
@@ -458,20 +459,20 @@ void FieldScene_RunScene39b_0200196c(void)
         *(s32 *)(record + 24) = -0x10000;
         record = Actor_Get(14);
         *(s32 *)(record + 24) = -0x10000;
-        Actor_SetPosition(3, 0x880000, 0x900000);
-        Actor_FaceDirection(3, 0x4000, 10);
+        Actor_SetPosition(ACTOR_MIA, 0x880000, 0x900000);
+        Actor_FaceDirection(ACTOR_MIA, 0x4000, 10);
         gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
         Event_OpenScreen();
         Event_WaitForScreen();
         Event_Wait(60);
-        Actor_FaceActor(3, 0, 0);
-        Actor_SetAnimationAndWait(3, 3);
+        Actor_FaceActor(ACTOR_MIA, ACTOR_PARTY_LEADER, 0);
+        Actor_SetAnimationAndWait(ACTOR_MIA, 3);
         Event_Wait(30);
-        Actor_WalkTo(3, 136, 72);
+        Actor_WalkTo(ACTOR_MIA, 136, 72);
         Event_Wait(40);
-        Actor_RunRepeatedMotion(0, 1);
-        Actor_WaitForMove(3);
-        Actor_SetPosition(3, 0, 0);
+        Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 1);
+        Actor_WaitForMove(ACTOR_MIA);
+        Actor_SetPosition(ACTOR_MIA, 0, 0);
         GameFlag_Set(0x872);
         gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
         Event_End();

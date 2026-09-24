@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "FIELD_SCENE.H"
 
 #define NULL ((void *)0)
 
@@ -230,7 +231,7 @@ void FieldScene_RunScene3beSequenceB(void)
     if (GameFlag_IsSet(0x98a) == 0 && GameFlag_IsSet(0x9a0) != 0) {
         Event_Begin();
         Actor_SetSpeed(11, 0x10000, 0x8000);
-        record = Value1(Engine_ActorGet, 0);
+        record = Value1(Engine_ActorGet, ACTOR_PARTY_LEADER);
         if (record != 0) {
             Actor_SetPosition(11, *(s32 *)(record + 8), *(s32 *)(record + 16));
         }
@@ -238,7 +239,7 @@ void FieldScene_RunScene3beSequenceB(void)
         Actor_WaitForMove(11);
         Actor_FaceDirection(11, 0xd000, 0);
         Event_Wait(10);
-        Actor_FaceActor(0, 11, 0);
+        Actor_FaceActor(ACTOR_PARTY_LEADER, 11, 0);
         Event_SetMessage(MSG_WHY_GOING_BACK_ROBIN_DO);
         Event_OpenMessage(11, 0);
         if (Event_ChooseYesNo(0, 0) == 0) {
@@ -253,17 +254,17 @@ void FieldScene_RunScene3beSequenceB(void)
             bump_step(1);
             Event_ShowMessage(11, 0);
             Actor_SetAnimation(11, 2);
-            record = Value1(Engine_ActorGet, 0);
+            record = Value1(Engine_ActorGet, ACTOR_PARTY_LEADER);
             if (record != 0) {
                 Actor_SetDestination(11, *(s16 *)(record + 10), *(s16 *)(record + 18));
             }
             Actor_WaitForMove(11);
             Actor_SetPosition(11, 0, 0);
             Event_Wait(30);
-            Actor_SetAnimation(0, 2);
-            Actor_SetDestinationOffset(0, 0, 16);
-            Actor_WaitForMove(0);
-            Actor_SetAnimation(0, 1);
+            Actor_SetAnimation(ACTOR_PARTY_LEADER, 2);
+            Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, 16);
+            Actor_WaitForMove(ACTOR_PARTY_LEADER);
+            Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
         }
         Event_End();
     }
@@ -272,16 +273,16 @@ void FieldScene_RunScene3beSequenceB(void)
 void ActorPresentation_RunActorElevenRecoveryScene(void)
 {
     Event_Begin();
-    Actor_FaceActor(11, 0, 0);
-    Actor_FaceActor(0, 11, 0);
-    Actor_SetAnimation(0, 1);
+    Actor_FaceActor(11, ACTOR_PARTY_LEADER, 0);
+    Actor_FaceActor(ACTOR_PARTY_LEADER, 11, 0);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
     Event_Wait(10);
-    Actor_FaceEachOther(0, 11, 0);
+    Actor_FaceEachOther(ACTOR_PARTY_LEADER, 11, 0);
     Event_SetMessage(MSG_IVE_BEEN_WAITING_FOR_ROBIN);
     Event_ShowMessage(11, 0);
     Actor_SetAnimation(11, 2);
     {
-        s16 *position = Actor_Get(0);
+        s16 *position = Actor_Get(ACTOR_PARTY_LEADER);
 
         if (position != 0)
             Actor_SetDestination(11, position[5], position[9]);

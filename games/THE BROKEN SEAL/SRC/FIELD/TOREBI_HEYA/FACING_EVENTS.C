@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "FIELD_SCENE.H"
 
 enum FacingEventsMessage {
     MSG_IF_CAN_MAKE_NAME_FOR = 0x1fd9,
@@ -182,9 +183,9 @@ void FieldScene_RunPrimarySequence(void)
            Data_02009dcc[n].a,
            Data_02009dcc[n].b,
            Data_02009dcc[n].c);
-    Actor_SetSpeed(0, 0x8000, 0x4000);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
     *(u8 *)(Func_02000b0e(0) + 85) = 0;
-    Actor_SetAnimation(0, 2);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, 2);
     Event_RequestExit(*(s16 *)p6);
 }
 
@@ -218,7 +219,7 @@ void FieldScene_RunScene3b6SequenceA(void)
     Event_Wait(30);
     Actor_ShowEmote(25, 0x108, 50);
     Event_Wait(20);
-    Actor_WalkByAndWait(0, 0, -16);
+    Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 0, -16);
     Event_Wait(20);
     Actor_FaceDirection(25, 0x3000, 0);
     Event_Wait(30);
@@ -226,7 +227,7 @@ void FieldScene_RunScene3b6SequenceA(void)
     Event_Wait(20);
     Event_ShowMessage(25, 0);
     Event_Wait(20);
-    Actor_ShowEmote(0, 0x101, 50);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 50);
     Event_Wait(20);
     Actor_SetAnimationAndWait(25, 4);
     Event_Wait(20);
@@ -241,8 +242,8 @@ void FieldScene_RunScene3b6SequenceA(void)
     Actor_SetAnimationAndWait(25, 3);
     Event_Wait(20);
     Event_ShowMessage(25, 0);
-    Actor_WalkByAndWait(0, 16, 0);
-    Actor_FaceDirection(0, 0x8000, 0);
+    Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 16, 0);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x8000, 0);
     Event_Wait(20);
     Actor_SetSpeed(25, 0x1cccc, 0xe666);
     Actor_WalkByAndWait(25, 0, 48);

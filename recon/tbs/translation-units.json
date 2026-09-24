@@ -14,12 +14,12 @@
           "address": "0x0200f73c",
           "kind": "data"
         },
-        "Func_0200d5d0": {
-          "address": "0x0200d5d0",
+        "Engine_MapCopyCellAttributes": {
+          "address": "0x0200d5d8",
           "kind": "thumb"
         },
-        "Func_0200d5d8": {
-          "address": "0x0200d5d8",
+        "Engine_MapCopyCells": {
+          "address": "0x0200d5d0",
           "kind": "thumb"
         }
       },

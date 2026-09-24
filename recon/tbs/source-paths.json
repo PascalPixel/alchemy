@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_395:020012f4": {
+      "name": "KorimaKi_PlayGesture",
+      "source": "FIELD/KORIMA_KI/GESTURE.C"
+    },
     "resource_3a6:02001984": {
       "name": "HaidiaDou_ApplyEntryState",
       "source": "FIELD/HAIDIA_DOU/ENTRY_STATE.C"

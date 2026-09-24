@@ -96,11 +96,11 @@ void BattleFx_ScheduleCallbacksAndReleaseBlocks(void)
 /* battle/effects/two_resource/run_mode0.c */
 void BattleFx_RunTwoResourceMode0(s32 arg0)
 {
-    FunctionHead_080ccc38(arg0, 0);
+    BattleFx_RunTwoResource(arg0, 0);
 }
 
 /* battle/effects/two_resource/run_mode1.c */
 void BattleFx_RunTwoResourceMode1(s32 arg0)
 {
-    FunctionHead_080ccc38(arg0, 1);
+    BattleFx_RunTwoResource(arg0, 1);
 }

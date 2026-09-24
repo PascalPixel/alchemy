@@ -25,8 +25,10 @@
 	.set sub_080e3944, 0x080e3944
 	.set sub_080ed408, 0x080ed408
 	.set sub_080f9010, 0x080f9010
+	.global BattleFx_RunFiveMode
 	.global Func_080c9ca8
 	.thumb_func
+BattleFx_RunFiveMode:
 Func_080c9ca8:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

@@ -1,15 +1,18 @@
 /* Draft, not exact (2026-09-24): candidate=1056 reference=1056
-   differing_halfwords=29, halfword_edits=28.
-   The pillar loop now has the reference's inductions (read from the -dL
-   loop dump): the start frame st = 8i + 8 as its own variable (spilled at
-   sp+12, with st + 1 and st + 3 derived from it), a = frame - (8i + 8)
-   computed before the test so that it is reduced itself (r8), the cue
-   frame st + 4 as a separate induction (sp+20), and the X-table pointer
-   (sp+16). A u8 kind makes the loop large enough (loop.c's threshold) that
-   a * 3 is no longer strength-reduced. The kind test kind >> 1 == 0 has the
-   reference's length; the reference instead copies kind and compares
-   (adds r3, r2, #0; cmp r3, #1; bhi). Residual: that test, total - 64 and total - 16 swap stack slots; the
-   work->transfer_value store is scheduled before the blit47 load. */
+   differing_halfwords=3. The pillar loop has the reference's inductions
+   (read from the -dL loop dump): the start frame st = 8i + 8 as its own
+   variable (spilled at sp+12, with st + 1 and st + 3 derived from it),
+   a = frame - (8i + 8) computed after st but before the test so that it is
+   reduced itself (r8), the cue frame st + 4 as a separate induction
+   (sp+20), and the X-table pointer (sp+16). A u8 kind makes the loop large
+   enough (loop.c's threshold) that a * 3 is no longer strength-reduced.
+   Reading blit47 through a DrawRectangle pointer lets the scheduler lift
+   it over the transfer_value store, and reading the puff heights table
+   directly (no local) gives the reference's allocation and slots.
+   Residual: the kind test. The reference copies kind and compares the
+   copy (adds r3, r2, #0; cmp r3, #1; bhi); kind >> 1 == 0 has that
+   length (lsrs r3, r2, #1; cmp r3, #0; bne), and kind < 2 compares r2
+   directly, 2 bytes shorter. */
 #include "TYPES.H"
 #include "BATTLE_EFFECT_WORK.H"
 #include "BATTLE_EFX.H"
@@ -82,11 +85,11 @@ void FunctionHead_080dd9c0(struct BattleEffectArgument *efx)
         *(u32 *)0x04000028 = 0xffff9000;
     }
     BattleEffect_LoadWork(46, 7, 7, 3, 1);
-    blit46 = (DrawRectangle)cache[46 - 39];
+    blit46 = ((DrawRectangle *)cache)[46 - 39];
     BattleEffect_LoadWork(47, 7, 7, 7, 1);
     work->transfer_mode = 1;
     work->transfer_value = 0;
-    blit47 = (DrawRectangle)cache[47 - 39];
+    blit47 = ((DrawRectangle *)cache)[47 - 39];
     Scheduler_AddOrUpdateCallback(0x080CD261, 0x480);
     total = BattleFxPillar_Counts[work->effect->variant] * 8 + 56;
 
@@ -104,8 +107,8 @@ void FunctionHead_080dd9c0(struct BattleEffectArgument *efx)
         }
 
         for (i = 0; i != BattleFxPillar_Counts[work->effect->variant]; i++) {
-            a = frame - (i * 8 + 8);
             st = i * 8 + 8;
+            a = frame - (i * 8 + 8);
             if (frame > st) {
                 u8 kind = BattleFxPillar_Kinds[i];
                 s32 h;
@@ -171,13 +174,12 @@ void FunctionHead_080dd9c0(struct BattleEffectArgument *efx)
         }
 
         for (i = 0; i != 64; i++) {
-            u8 *hts = BattleFxPillar_PuffHeights;
             if (PARTICLES[i].variant >= 0) {
                 s32 n = PARTICLES[i].variant / 2;
                 blit46(dst, work->sheet + BattleFxPillar_PuffCells[n], PARTICLES[i].x - BattleFxPillar_PuffWidths[n],
-                    PARTICLES[i].y - (s8)hts[n] / 2, BattleFxPillar_PuffWidths[n], (s8)hts[n]);
+                    PARTICLES[i].y - (s8)BattleFxPillar_PuffHeights[n] / 2, BattleFxPillar_PuffWidths[n], (s8)BattleFxPillar_PuffHeights[n]);
                 blit47(dst, work->sheet + BattleFxPillar_PuffCells[n], PARTICLES[i].x,
-                    PARTICLES[i].y - (s8)hts[n] / 2, BattleFxPillar_PuffWidths[n], (s8)hts[n]);
+                    PARTICLES[i].y - (s8)BattleFxPillar_PuffHeights[n] / 2, BattleFxPillar_PuffWidths[n], (s8)BattleFxPillar_PuffHeights[n]);
                 if (++PARTICLES[i].variant == 14) {
                     PARTICLES[i].variant = -1;
                 }

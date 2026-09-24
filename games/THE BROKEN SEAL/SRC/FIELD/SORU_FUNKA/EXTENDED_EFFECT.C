@@ -226,7 +226,6 @@ static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
 
 static __inline__ void Call3_020029a4(void (*f)(s32, s32, s32), s32 a, s32 b, s32 c)
 {
-    extern u8 *Data_0200bb10[];
     void Actor_ShowEmote(s32, s32, s32);
     void ColorBuffer_ApplyTarget(s32, s32);
     void ColorBuffer_Interpolate(s32);

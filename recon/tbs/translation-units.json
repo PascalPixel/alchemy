@@ -58241,15 +58241,11 @@
           "address": "0x0200aff0",
           "kind": "thumb"
         },
-        "Func_02001440": {
-          "address": "0x020080c4",
+        "FieldScene_HandleEscapeColumn": {
+          "address": "0x020092b4",
           "kind": "thumb"
         },
-        "Func_02001914": {
-          "address": "0x020088c0",
-          "kind": "thumb"
-        },
-        "Func_0200191a": {
+        "FieldScene_RedrawActorFootprint": {
           "address": "0x020088c0",
           "kind": "thumb"
         },
@@ -58257,16 +58253,8 @@
           "address": "0x02008ae8",
           "kind": "thumb"
         },
-        "Func_02001bc2": {
-          "address": "0x02008474",
-          "kind": "thumb"
-        },
         "Func_02001d6e": {
           "address": "0x02008608",
-          "kind": "thumb"
-        },
-        "Func_02002638": {
-          "address": "0x020092b4",
           "kind": "thumb"
         },
         "Func_02003184": {
@@ -58780,6 +58768,14 @@
         "gGameState": {
           "address": "0x02000240",
           "kind": "data"
+        },
+        "StagedActor_AdvancePair": {
+          "address": "0x020080c4",
+          "kind": "thumb"
+        },
+        "StagedActor_FindClearPosition": {
+          "address": "0x02008474",
+          "kind": "thumb"
         }
       },
       "owners": [

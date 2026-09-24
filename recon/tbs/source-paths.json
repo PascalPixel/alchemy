@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_3b0:02000240": {
+      "name": "FuneHobashira_ApplyEntryState",
+      "source": "FIELD/FUNE_HOBASHIRA/ENTRY_STATE.C"
+    },
     "resource_3af:02001444": {
       "name": "FuneKanpan_ApplyEntryState",
       "source": "FIELD/FUNE_KANPAN/ENTRY_STATE.C"

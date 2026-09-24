@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "FIELD_SCENE.H"
 
 #define OverlayObject_IntegrateVelocities Func_02000ab0
 #define GetOrbitingSceneObject Func_02005f6c
@@ -900,13 +901,13 @@ void FieldScene_RunScene3b2_02001494(void)
     s32 record;
 
     Event_Begin();
-    Actor_SetSpeed(0, 0x6666, 0x3333);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x6666, 0x3333);
     Event_OpenScreen();
     Event_WaitForScreen();
     GameFlag_Set((Data_02000240_t[224][0] + (0x8c8 - (s32)Data_0000007e)));
     Event_Wait(30);
     Map_AnimateCells(0x200b2bc, 44, 7);
-    Actor_CenterAndWalk(0, 3, -16);
+    Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 3, -16);
     Event_RequestExit(3);
     Event_End();
 }
@@ -1229,7 +1230,7 @@ s32 TryPushBlockingSceneActor(struct S_02000474 *actor)
         {
             s16 *coordinates = (s16 *)&destination;
 
-            Actor_MoveToAndWait(0, coordinates[1], coordinates[5]);
+            Actor_MoveToAndWait(ACTOR_PARTY_LEADER, coordinates[1], coordinates[5]);
         }
         Object_SetAnimation(actor, 6);
         Actor_SetSpriteFlags(actor, 1);
@@ -1242,7 +1243,7 @@ s32 TryPushBlockingSceneActor(struct S_02000474 *actor)
 
 s32 CheckActorPathSouth(void)
 {
-    struct S_02001b14 *actor = Actor_Get(0);
+    struct S_02001b14 *actor = Actor_Get(ACTOR_PARTY_LEADER);
     struct V destination;
 
     destination.a = actor->f08;
@@ -1253,7 +1254,7 @@ s32 CheckActorPathSouth(void)
 
 s32 CheckActorPathNorth(void)
 {
-    struct S_02001b14 *actor = Actor_Get(0);
+    struct S_02001b14 *actor = Actor_Get(ACTOR_PARTY_LEADER);
     struct V destination;
 
     destination.a = actor->f08;
@@ -1264,7 +1265,7 @@ s32 CheckActorPathNorth(void)
 
 s32 CheckActorPathWest(void)
 {
-    struct S_02001b14 *actor = Actor_Get(0);
+    struct S_02001b14 *actor = Actor_Get(ACTOR_PARTY_LEADER);
     struct V destination;
 
     destination.a = actor->f08 + -0x200000;
@@ -1275,7 +1276,7 @@ s32 CheckActorPathWest(void)
 
 s32 CheckActorPathEast(void)
 {
-    struct S_02001b14 *actor = Actor_Get(0);
+    struct S_02001b14 *actor = Actor_Get(ACTOR_PARTY_LEADER);
     struct V destination;
 
     destination.a = actor->f08 + 0x200000;

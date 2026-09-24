@@ -9709,7 +9709,7 @@
       "source": "FIELD/KUUPUAPPU_MURA_SAI/MOTION_EVENT.C"
     },
     "resource_3a0:02000324": {
-      "name": "UpdateActorTwentyPresentationBit",
+      "name": "Actor_UpdatePresentationFlag",
       "source": "FIELD/SHIAN_MURA/PRESENTATION_FLAG.C"
     },
     "resource_3aa:02000360": {

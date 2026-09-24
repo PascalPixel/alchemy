@@ -1,3 +1,15 @@
+/*
+ * DjinnMenu_SelectDjinn (main:080ab5e4, 4888 bytes)
+ *
+ * Draft, not exact (2026-09-24): candidate=4868 reference=4888
+ * differing_halfwords=2346.  Now compiles for scoring: the message ids are
+ * Value_ link symbols (base 0xb98 for the menu block, 0xc40 for the
+ * tutorial block) and the cursor split calls Math_ModU / Math_DivU, which is
+ * what the reference calls.  Next: the reference reads the cursor once,
+ * keeps x and y as u16 (both results are truncated with lsls/lsrs #16), and
+ * clears the status bytes from sp+107 down to the buffer start; most of its
+ * locals live in stack slots.
+ */
 #include "TYPES.H"
 #include "TBS_EDITION.H"
 
@@ -57,8 +69,8 @@ struct DjinnMenuOwner {
  * The menu and tutorial texts are linked message identities: every edition
  * numbers them differently, while their order inside each block is fixed.
  */
-extern u8 LinkedMessage_DjinnSetAll;
-extern u8 LinkedMessage_DjinnTutorialGive;
+extern u8 Value_00000b98;
+extern u8 Value_00000c40;
 
 enum DjinnMenuMessage {
     DJINN_MSG_SET_ALL = 0x00,
@@ -89,8 +101,8 @@ enum DjinnTutorialMessage {
     TUTORIAL_MSG_SET_AGAIN = 0xd
 };
 
-#define DJINN_MESSAGE(n) ((s32)&LinkedMessage_DjinnSetAll + (n))
-#define TUTORIAL_MESSAGE(n) ((s32)&LinkedMessage_DjinnTutorialGive + (n))
+#define DJINN_MESSAGE(n) ((s32)&Value_00000b98 + (n))
+#define TUTORIAL_MESSAGE(n) ((s32)&Value_00000c40 + (n))
 
 #define gDjinnMenu (*(struct DjinnMenuState **)ADDR_03001F2C)
 #define gUiWork (*(u8 **)ADDR_03001E8C)
@@ -136,6 +148,9 @@ void FourObjectMotion_SetSlotPhase(s32 slot, s32 phase);
 void FourObjectMotion_ReplaceSlot(s32 slot, s32 element, s32 kind);
 void Func_080b50f8(void);
 
+u32 Math_ModU(u32, u32);
+u32 Math_DivU(u32, u32);
+
 s32 DjinnMenu_SelectDjinn(s32 mode)
 {
     s8 buf[8];
@@ -168,8 +183,8 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
     state = gDjinnMenu;
     lists = state->lists;
     redraw = 1;
-    x = state->cursor[mode] % 10;
-    y = state->cursor[mode] / 10;
+    x = Math_ModU(state->cursor[mode], 10);
+    y = Math_DivU(state->cursor[mode], 10);
     status = buf;
     savedY = 0;
     djinn = 0;
@@ -211,8 +226,8 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
         s32 fromX;
         s32 fromY;
 
-        fromX = state->cursor[0] % 10;
-        fromY = state->cursor[0] / 10;
+        fromX = Math_ModU(state->cursor[0], 10);
+        fromY = Math_DivU(state->cursor[0], 10);
         Menu_DrawAtWindowOffset(state->djinn_window, fromX * 7 + 1, fromY + 2, 6, 1, 14);
         UiWindow_ApplyRectAtObjectOrigin(state->djinn_window, fromX * 7 + 1, 2, 6, 7, 6);
         for (i = 0; i < state->party_count; i++) {

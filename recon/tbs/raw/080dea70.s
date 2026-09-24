@@ -24,13 +24,14 @@
 	.set sub_080cd594, 0x080cd594
 	.set sub_080d6888, 0x080d6888
 	.set sub_080de2f8, 0x080de2f8
-	.set sub_080df864, 0x080df864
 	.set sub_080e0524, 0x080e0524
 	.set sub_080e155c, 0x080e155c
 	.set sub_080e3908, 0x080e3908
 	.set sub_080e3944, 0x080e3944
 	.set sub_080ed408, 0x080ed408
 	.set sub_080f9010, 0x080f9010
+	.set sub_08004278, 0x08004278
+	.set sub_080cdbc0, 0x080cdbc0
 	.global BattleFx_RunProjectileVolley
 	.global Func_080dea70
 	.thumb_func
@@ -725,7 +726,7 @@ Func_080dea70:
 	str	r7, [sp, #120]
 	cmp	r0, #0
 	bne.n	.L_080defe4
-	bl	sub_080df864
+	bl	.L_080df864
 .L_080defe4:
 	ldr	r1, [sp, #108]
 	adds	r1, #12
@@ -1806,5 +1807,44 @@ Func_080dea70:
 	adds	r1, #1
 	str	r1, [sp, #120]
 	cmp	r1, r2
-	beq.n	sub_080df864
+	beq.n	.L_080df864
 	bl	.L_080defea
+.L_080df864:
+	ldr	r0, [pc, #76]
+	bl	sub_08004278
+	movs	r0, #46
+	bl	sub_08002dd8
+	bl	sub_080cdbc0
+	add	sp, #156
+	pop	{r3, r5, r6, r7}
+	mov	r8, r3
+	mov	r9, r5
+	mov	sl, r6
+	mov	fp, r7
+	pop	{r5, r6, r7}
+	pop	{r0}
+	bx	r0
+	movs	r0, r0
+	.2byte 0xec3d
+	.2byte 0x080e
+	asrs	r2, r1, #10
+	movs	r0, r0
+	.2byte 0xec2f
+	.2byte 0x080e
+	subs	r4, r1, #4
+	lsls	r0, r0, #12
+	.2byte 0xec36
+	.2byte 0x080e
+	ldrb	r0, [r5, #0]
+	movs	r0, r0
+	lsrs	r0, r6, #11
+	lsls	r1, r0, #8
+	udf	#72
+	lsrs	r6, r1, #32
+	subs	r0, #0
+	lsls	r1, r0, #8
+	.2byte 0xc000
+	.2byte 0xffff
+	.2byte 0x7824
+	movs	r0, r0
+	.4byte 0x080cd261

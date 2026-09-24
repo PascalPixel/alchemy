@@ -6290,52 +6290,28 @@
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_383",
       "absolute_symbols": {
-        "Func_020060da": {
-          "address": "0x0200cd84",
+        "Engine_ActorFaceActor": {
+          "address": "0x0200ce04",
           "kind": "thumb"
         },
-        "Func_020060da_a": {
-          "address": "0x0200cd3c",
+        "Engine_ActorRunRepeatedMotion": {
+          "address": "0x0200cdfc",
           "kind": "thumb"
         },
-        "Func_02006370": {
+        "Engine_ActorSetPosition": {
           "address": "0x0200cdcc",
           "kind": "thumb"
         },
-        "Func_02006370_a": {
-          "address": "0x0200cd3c",
+        "Engine_ActorSetSpeed": {
+          "address": "0x0200cd84",
           "kind": "thumb"
         },
-        "Func_020063ea": {
-          "address": "0x0200ce04",
-          "kind": "thumb"
-        },
-        "Func_020063ea_a": {
-          "address": "0x0200cd3c",
-          "kind": "thumb"
-        },
-        "Func_020064e4": {
+        "Engine_ActorShowEmote": {
           "address": "0x0200ce3c",
           "kind": "thumb"
         },
-        "Func_020064e4_a": {
-          "address": "0x0200ce04",
-          "kind": "thumb"
-        },
-        "Func_02006594": {
-          "address": "0x0200ce04",
-          "kind": "thumb"
-        },
-        "Func_02006594_a": {
+        "Engine_EventWait": {
           "address": "0x0200cd3c",
-          "kind": "thumb"
-        },
-        "Func_0200663e": {
-          "address": "0x0200ce04",
-          "kind": "thumb"
-        },
-        "Func_0200663e_a": {
-          "address": "0x0200cdfc",
           "kind": "thumb"
         },
         "LinkedMessage_VaultCutFree": {

@@ -1,5 +1,8 @@
-/* 2026-09-24: 71 differing halfwords (from 73) after a do-while wrap and
-   statement-swap sweep; the do-while wraps are search artefacts. */
+/* 2026-09-24: 37 differing halfwords (was 66). The puff blits now read
+   the width and height tables inline at each use, as the rising pillars
+   (RISING_PILLARS.C) do, which gives the reference's load order and pool
+   order there; the blitters are value-returning (BATTLE_EFX.H). The do-while
+   wraps around the member-blit width loads are search artefacts. */
 #include "TYPES.H"
 #include "BATTLE_EFX.H"
 
@@ -355,24 +358,18 @@ void Func_080dd2c4(void *object, s32 arg1)
                     if (mode != 0) {
                         var_sl_273 = (u8 *)0xAFF;
                     }
-                    temp_r5_490 = Data_080eeb79[temp_r7_481];
-                    temp_r2_474 = M2C_FIELD(var_r8_471, s32 *, 0);
-                    temp_r4_498 = (s8)Data_080eeb80[temp_r7_481];
                     ((DrawRectangleFn)rectangle[0])(
                         draw_destination,
-                        (u8 *)work + (Data_080eeb88[temp_r7_481]
-                            + (s32)var_sl_273),
-                        temp_r2_474 - temp_r5_490,
-                        M2C_FIELD(var_r8_471, s32 *, 4) - temp_r4_498 / 2,
-                        temp_r5_490, temp_r4_498);
-                    temp_r4_518 = (s8)Data_080eeb80[temp_r7_481];
+                        (u8 *)work + (Data_080eeb88[temp_r7_481] + (s32)var_sl_273),
+                        M2C_FIELD(var_r8_471, s32 *, 0) - Data_080eeb79[temp_r7_481],
+                        M2C_FIELD(var_r8_471, s32 *, 4) - (s8)Data_080eeb80[temp_r7_481] / 2,
+                        Data_080eeb79[temp_r7_481], (s8)Data_080eeb80[temp_r7_481]);
                     ((DrawRectangleFn)rectangle[1])(
                         draw_destination,
-                        (u8 *)work + (Data_080eeb88[temp_r7_481]
-                            + (s32)var_sl_273),
+                        (u8 *)work + (Data_080eeb88[temp_r7_481] + (s32)var_sl_273),
                         M2C_FIELD(var_r8_471, s32 *, 0),
-                        M2C_FIELD(var_r8_471, s32 *, 4) - temp_r4_518 / 2,
-                        Data_080eeb79[temp_r7_481], temp_r4_518);
+                        M2C_FIELD(var_r8_471, s32 *, 4) - (s8)Data_080eeb80[temp_r7_481] / 2,
+                        Data_080eeb79[temp_r7_481], (s8)Data_080eeb80[temp_r7_481]);
                     temp_r3_538 = M2C_FIELD(var_r8_471, s32 *, 0x18) + 1;
                     M2C_FIELD(var_r8_471, s32 *, 0x18) = temp_r3_538;
                     if (temp_r3_538 == 0xE) {

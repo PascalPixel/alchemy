@@ -5125,7 +5125,8 @@
       "source": "EVENT/WAIT_FOR_DISPLAY_FIELD358_CLEAR.C"
     },
     "main:0809376c": {
-      "name": "BattleFx_CopyLinkedObjectPosition"
+      "name": "BattleFx_CopyLinkedObjectPosition",
+      "source": "BATTLE/EFFECT/COPY_LINKED_OBJECT_POSITION.C"
     },
     "main:08093964": {
       "name": "Object_ResetAndClearField59",

@@ -3197,7 +3197,7 @@ void FieldScene_RunPositionTransferPresentation(void)
     Event_Wait(40);
     GameFlag_Set(0x301);
     FieldScene_RunSceneStep(23, 0, 0);
-    GameFlag_Clear(0x12f);
+    GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);
 }
 
 void FieldScene_RunFormationAndEffectPresentation(void)
@@ -3478,7 +3478,7 @@ void FieldScene_RunExtendedFormationPresentation(void)
     Value2(Func_0200c01e, (s32)Scene_UpdateCueTimer, 0xc80);
     FieldScene_RunSceneStep(23, 0, 0);
     Actor_Destroy(27);
-    GameFlag_Clear(0x12f);
+    GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);
     GameFlag_Clear(0x927);
     Event_End();
 }

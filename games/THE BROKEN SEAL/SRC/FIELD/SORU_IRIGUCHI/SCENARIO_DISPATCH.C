@@ -3,8 +3,7 @@
 
 enum SanctumEntranceFlag {
     /* Set after the party is asked whether this is its first visit. */
-    FLAG_SOL_SANCTUM_ENTERED = 0x802,
-    FLAG_ARRIVAL_EVENT_PENDING = 0x12f
+    FLAG_SOL_SANCTUM_ENTERED = 0x802
 };
 
 enum SanctumEntranceMessage {

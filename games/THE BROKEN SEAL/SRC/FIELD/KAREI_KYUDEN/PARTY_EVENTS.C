@@ -780,7 +780,7 @@ void RunEventScript01(void)
     work = *(u8 **)Data_03001ebc;
     *(s32 *)(work + 0x1c8) = 16;
     *(s32 *)(work + 0x1c0) = 0x209;
-    GameFlag_Clear(0x12f);
+    GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);
     GameFlag_Set(0x912);
     Event_End();
 }
@@ -969,7 +969,7 @@ void Scene_RunPartySequence(void)
     work = *(u8 **)Data_03001ebc;
     *(s32 *)(((s32)work + 0x1c8)) = 16;
     *(s32 *)(((s32)work + 0x1c0)) = 0x209;
-    GameFlag_Clear(0x12f);
+    GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);
     GameFlag_Set(0x914);
     Event_End();
 }

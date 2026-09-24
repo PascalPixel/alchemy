@@ -366,7 +366,7 @@ void FieldScene_RunStagedActorScene(void)
     }
     Func_020030c8(1);
     Func_020030da(1, 0, 0);
-    GameFlag_Clear(0x12f);
+    GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);
     work = *(u8 **)Data_03001ebc;
     *(s32 *)(work + 0x1c0) = 0x204;
     *(s32 *)(work + 0x1c8) = 16;

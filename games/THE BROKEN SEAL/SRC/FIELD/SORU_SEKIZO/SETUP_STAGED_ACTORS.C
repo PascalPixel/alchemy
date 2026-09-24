@@ -28,15 +28,6 @@ enum StatueHallMessage {
     MSG_SUKURETA_I_WILL_WATCH_FROM_LUNA
 };
 
-/*
- * Story scenes all over the world clear this as they finish, and an entry
- * script sets it for one entrance, so it marks an arrival event still to
- * play rather than anything about the statue hall.
- */
-enum {
-    FLAG_ARRIVAL_EVENT_PENDING = 0x12f
-};
-
 void Event_SayThenWait(s32 speaker, s32 frames);
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant

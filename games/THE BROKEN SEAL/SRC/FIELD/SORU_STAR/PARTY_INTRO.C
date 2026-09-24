@@ -57,7 +57,6 @@ enum StarRoomMessage {
 };
 
 enum StarRoomFlag {
-    FLAG_ARRIVAL_EVENT_PENDING = 0x12f,
     FLAG_STAR_ROOM_EXPLAINED = 0x83b,
     FLAG_FIRST_STAR_BAGGED = 0x83c,
     FLAG_MERCURY_STAR_BAGGED = 0x83d,

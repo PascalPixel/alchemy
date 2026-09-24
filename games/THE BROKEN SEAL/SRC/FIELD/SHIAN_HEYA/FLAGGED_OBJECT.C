@@ -243,7 +243,7 @@ s32 SceneState_SetRuntimeWord448To521(void)
         OverlayObject_CreateConfigured(0x01cc0000, 0, 0x02380000, 20);
         OverlayObject_CreateConfigured(0x01e40000, 0, 0x02380000, 20);
     } else if (scene == 8) {
-        GameFlag_Clear(0x12f);
+        GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);
         Actor_SetAnimation(10, 6);
     }
     return 0;

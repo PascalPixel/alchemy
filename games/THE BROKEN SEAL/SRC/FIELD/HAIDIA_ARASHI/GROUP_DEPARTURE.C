@@ -922,7 +922,7 @@ void FieldScene_RunScene372_02000a10(void)
     Actor_SetAnimation(10, 1);
     Actor_SetAnimation(21, 2);
     Actor_SetAnimation(22, 5);
-    GameFlag_Clear(0x12f);
+    GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);
     GameFlag_Set(0x87b);
     GameFlag_Set(0x205);
     Event_End();

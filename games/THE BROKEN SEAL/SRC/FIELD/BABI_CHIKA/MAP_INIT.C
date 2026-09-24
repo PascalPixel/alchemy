@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "FIELD_SCENE.H"
 #include "FIELD_EFFECT.H"
 #define OverlayObject_IntegrateVelocities Effect_Move
 
@@ -477,7 +478,7 @@ s32 SceneState_ApplyArgMode0AndReturnZero(s32 no)
  */
 s32 SceneActor_MoveActorZeroToTarget(const Target_02000cd0 *target)
 {
-    Actor_02000cd0 *actor = Actor_Get(0);
+    Actor_02000cd0 *actor = Actor_Get(ACTOR_PARTY_LEADER);
     u8 saved = actor->flags;
     s32 probe[3];
 
@@ -508,7 +509,7 @@ s32 SceneActor_MoveActorZeroToTarget(const Target_02000cd0 *target)
     actor->flags &= (u8)0x7e;   /* masks the byte re-read here, not `saved` */
 
     Actor_SetSpriteFlags(actor, 0);
-    Actor_MoveToAndWait(0, ((target->x >> 20) << 4) + 8, ((target->z >> 20) << 4) + 8);
+    Actor_MoveToAndWait(ACTOR_PARTY_LEADER, ((target->x >> 20) << 4) + 8, ((target->z >> 20) << 4) + 8);
     Object_SetAnimation(actor, 6);
     Actor_SetSpriteFlags(actor, 1);
     Task_Wait(6);
@@ -529,7 +530,7 @@ refuse:
 void SceneActor_PassRaisedPointOfActorZero(void)
 {
     s32 pos[3];
-    struct Actor_02000dc8 *p = Actor_Get(0);
+    struct Actor_02000dc8 *p = Actor_Get(ACTOR_PARTY_LEADER);
 
     pos[0] = p->f08;
     pos[1] = p->f0c;
@@ -540,7 +541,7 @@ void SceneActor_PassRaisedPointOfActorZero(void)
 void SceneActor_PassActorZeroOffsetPoint(void)
 {
     s32 pos[3];
-    struct Actor_02000dc8 *actor = Actor_Get(0);
+    struct Actor_02000dc8 *actor = Actor_Get(ACTOR_PARTY_LEADER);
 
     pos[0] = actor->f08;
     pos[1] = actor->f0c;
@@ -553,7 +554,7 @@ s32 SceneActor_SetFlagBitByRelativeDepth(struct Actor_02000ec8 *actor)
     struct Actor_02000ec8 *ref;
     u8 *fp;
     u8 flag;
-    ref = Actor_Get(0);
+    ref = Actor_Get(ACTOR_PARTY_LEADER);
     fp = &actor->flatla3;
     flag = *fp | 2;
     *fp = flag;
@@ -588,7 +589,7 @@ void SceneState_SwapSlotPairByRank(s32 first, s32 second)
 
 s32 SceneActor_CopyActor8PositionWhenAtRow10(Record *record)
 {
-    Record *ref = Actor_Get(0);
+    Record *ref = Actor_Get(ACTOR_PARTY_LEADER);
 
     if (ref->w12 > (s32)0xffd00000
         && (Func_0200410a(8)->w16 >> 20) == 10) {
@@ -745,7 +746,7 @@ void SceneState_RunRect73x38Step(void)
 void SceneActor_ApplyPointLeftOfActorZero(void)
 {
     s32 point[3];
-    struct Actor_02000dc8 *actor = Actor_Get(0);
+    struct Actor_02000dc8 *actor = Actor_Get(ACTOR_PARTY_LEADER);
 
     point[0] = actor->f08 + 0xFFE00000;
     point[1] = actor->f0c;
@@ -783,7 +784,7 @@ void FieldScene_RunStepWith6(void)
 void SceneActor_PassPointTwoRightOfActorZero(void)
 {
     s32 pos[3];
-    struct Actor_02000dc8 *actor = Actor_Get(0);
+    struct Actor_02000dc8 *actor = Actor_Get(ACTOR_PARTY_LEADER);
 
     pos[0] = actor->f08 + 0x200000;
     pos[1] = actor->f0c;
@@ -805,7 +806,7 @@ void SceneState_ApplyTwoRectsAndRunThree(void)
 
 void SceneActor_CheckTwoUnitsAboveActorZero(void)
 {
-    struct Actor02001424 *actor = Actor_Get(0);
+    struct Actor02001424 *actor = Actor_Get(ACTOR_PARTY_LEADER);
     s32 target[3];
 
     target[0] = actor->x;
@@ -873,7 +874,7 @@ void SceneState_ApplyFlag970(void)
 
 void SceneState_RunUnlessActorZeroAtTile32x50(void)
 {
-    struct Actor_02001510 *actor = Actor_Get(0);
+    struct Actor_02001510 *actor = Actor_Get(ACTOR_PARTY_LEADER);
 
     if ((actor->f08 >> 20) != 32 || (actor->f10 >> 20) != 50) {
         SceneActor_ApplyPointLeftOfActorZero();
@@ -882,7 +883,7 @@ void SceneState_RunUnlessActorZeroAtTile32x50(void)
 
 void SceneState_RunUnlessActorZeroAt30_52(void)
 {
-    struct Actor_02000cc0 *actor = Actor_Get(0);
+    struct Actor_02000cc0 *actor = Actor_Get(ACTOR_PARTY_LEADER);
 
     if ((actor->f08 >> 20) != 30 || (actor->f10 >> 20) != 52) {
         SceneActor_PassActorZeroOffsetPoint();
@@ -1064,7 +1065,7 @@ void SceneActor_ConfigureSlot21AndSetFlag201(void)
 void SceneDialogue_RunFlag982Or983Dialogue(void)
 {
     Event_Begin();
-    Actor_SetAnimation(0, 1);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
     if (GameFlag_IsSet(0x982) != 0 || GameFlag_IsSet(0x983) != 0) {
         Message_ShowCentered(MSG_STATUE_SPEAKS_ROBIN_SOUL_YE_2, 1);
     } else {
@@ -1467,7 +1468,7 @@ void FieldScene_RunLayoutAt83By45(void)
 void SceneState_SetValue268bInScene(void)
 {
     Event_Begin();
-    Actor_SetAnimation(0, 1);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
     Message_ShowCentered(MSG_STATUE_SEEMS_SPEAK_YOUR_SOUL, 1);
     Event_End();
 }

@@ -793,14 +793,14 @@ void FieldScene_RunScene37aSequenceF(void)
         Func_02002ef8(1, 2);
         rec = (u8 *)Value1(Func_02002ede, 0);
         if (rec != 0) {
-            Actor_SetDestination(1, FIELD(rec, s16 *, 10), FIELD(rec, s16 *, 18));
+            Actor_SetDestination(ACTOR_GERALD, FIELD(rec, s16 *, 10), FIELD(rec, s16 *, 18));
         }
         Func_02003370(1);
         Func_02002f1c(1, 0, 0);
         Func_02002ef8(5, 2);
         rec = (u8 *)Value1(Func_02002ede, 0);
         if (rec != 0) {
-            Actor_SetDestination(5, FIELD(rec, s16 *, 10), FIELD(rec, s16 *, 18));
+            Actor_SetDestination(ACTOR_JASMINE, FIELD(rec, s16 *, 10), FIELD(rec, s16 *, 18));
         }
         Func_02003370(5);
         Func_02002f1c(5, 0, 0);

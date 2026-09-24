@@ -5,6 +5,7 @@
 
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "FIELD_SCENE.H"
 #include "FIELD_EFFECT.H"
 
 #define NULL ((void *)0)
@@ -970,7 +971,7 @@ void FieldScene_RunScene3b5SequenceA(void)
 
     Func_020015f4();
     Call3(Func_02001642, 0, 0x130, 0x138);
-    Actor_FaceDirection(0, 0xc000, 0);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
     Call3(Func_020016da, 28, 0x4000, 0);
     Func_02001618(20);
     Call1(Func_020016be, 0xe3d);
@@ -1032,7 +1033,7 @@ void FieldScene_RunPrimarySequence(void)
     ObjectMotion_ResetAndSetPositionInMode2_1(29, 72, 248);
     ObjectMotion_ResetAndSetPositionInMode2_2(30, 56, 248);
     ObjectMotion_SetPositionAndReset_1(0, 64, 0x108);
-    Actor_FaceDirection(0, 0xc000, 0);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
     ObjectMotion_CommitCurrentPositionAndActivate_1(29);
     Object_SetModeById_1(29, 1);
     Object_SetModeById_2(30, 1);

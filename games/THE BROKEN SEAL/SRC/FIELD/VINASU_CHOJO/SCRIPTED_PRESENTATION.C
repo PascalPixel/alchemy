@@ -482,7 +482,7 @@ s32 SceneActor_FindNearestSlotOfKindF2(void)
     u32 i;
 
     limit = 640;
-    ref = Actor_Get(0);
+    ref = Actor_Get(ACTOR_PARTY_LEADER);
     i = 8;
     p = (Spr_020004bc **)(work + 0x34);
     do {
@@ -508,7 +508,7 @@ void InitializeActorZeroMotion(void)
     s32 angle;
     u8 flags;
 
-    actor = Actor_Get(0);
+    actor = Actor_Get(ACTOR_PARTY_LEADER);
     angle = (actor->angle + 0x1000) & 0xe000;
     flags = actor->flags55;
     position[0] = (actor->x & 0xfff00000) + 0x80000;
@@ -527,7 +527,7 @@ void InitializeActorZeroMotion(void)
         actor->motion28 = 0x40000;
         actor->flags55 &= 0x7e;
         Actor_SetSpriteFlags(actor, 0);
-        Actor_MoveToAndWait(0, (s16)(position[0] >> 16),
+        Actor_MoveToAndWait(ACTOR_PARTY_LEADER, (s16)(position[0] >> 16),
                          (s16)(position[2] >> 16));
         Object_SetAnimation(actor, 6);
         Actor_SetSpriteFlags(actor, 1);
@@ -537,7 +537,7 @@ void InitializeActorZeroMotion(void)
 
 void SceneEffect_SpawnAndBobWithActorZero(void)
 {
-    Spr_020005ec *a = Actor_Get(0);
+    Spr_020005ec *a = Actor_Get(ACTOR_PARTY_LEADER);
     Spr_020005ec *b;
     Spr_020005ec *r;
     s32 k;
@@ -906,7 +906,7 @@ void FieldScene_RunScene3c9_02003924(void)
     s32 rec4;
     s32 record;
 
-    rec4 = Value1(Engine_ActorGet, 0);
+    rec4 = Value1(Engine_ActorGet, ACTOR_PARTY_LEADER);
     Event_Begin();
     *(u8 *)(Func_02009788() + 85) = 0;
     Map_CopyCellsTo(102, 4, 74, 4, 18, 23);
@@ -922,8 +922,8 @@ void FieldScene_RunScene3c9_02003924(void)
     Task_Wait(1);
     Actor_Destroy(20);
     Actor_Destroy(19);
-    Actor_SetAnimation(0, 19);
-    record = Actor_Get(0);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, 19);
+    record = Actor_Get(ACTOR_PARTY_LEADER);
     Actor_SetSpriteFlags(record, 0);
     *(s32 *)(rec4 + 8) = 0x15a0000;
     *(s32 *)(rec4 + 16) = 0xcd0000;
@@ -934,10 +934,10 @@ void FieldScene_RunScene3c9_02003924(void)
         *(u16 *)(rec4 + 6) = shown;
     }
     Func_020090a2(rec4);
-    Actor_SetAnimation(1, 18);
-    record = Actor_Get(1);
+    Actor_SetAnimation(ACTOR_GERALD, 18);
+    record = Actor_Get(ACTOR_GERALD);
     Actor_SetSpriteFlags(record, 0);
-    record = Actor_Get(1);
+    record = Actor_Get(ACTOR_GERALD);
     *(s32 *)(record + 8) = 0x1640000;
     *(s32 *)(record + 16) = 0xc00000;
     {
@@ -947,10 +947,10 @@ void FieldScene_RunScene3c9_02003924(void)
     }
     *(s32 *)(record + 12) = 0x200000;
     Func_020090d4();
-    Actor_SetAnimation(2, 18);
-    record = Actor_Get(2);
+    Actor_SetAnimation(ACTOR_IVAN, 18);
+    record = Actor_Get(ACTOR_IVAN);
     Actor_SetSpriteFlags(record, 0);
-    record = Actor_Get(2);
+    record = Actor_Get(ACTOR_IVAN);
     *(s32 *)(record + 8) = 0x1680000;
     {
         s32 shown = 0x2000;
@@ -960,10 +960,10 @@ void FieldScene_RunScene3c9_02003924(void)
     *(s32 *)(record + 12) = 0x200000;
     *(s32 *)(record + 16) = 0xde0000;
     Func_02009106();
-    Actor_SetAnimation(3, 18);
-    record = Actor_Get(3);
+    Actor_SetAnimation(ACTOR_MIA, 18);
+    record = Actor_Get(ACTOR_MIA);
     Actor_SetSpriteFlags(record, 0);
-    record = Actor_Get(3);
+    record = Actor_Get(ACTOR_MIA);
     *(s32 *)(record + 8) = 0x14e0000;
     {
         s32 shown = 0x8000;
@@ -1030,13 +1030,13 @@ void FieldScene_RunPairDefeat(void)
 
     Audio_PlayCue(141);
     Map_CopyCellAttributes(17, 10, 4, 2, 17, 8);
-    Actor_Get(0)->facing = FACING_NORTHWEST;
-    Actor_Get(1)->facing = FACING_NORTHWEST;
-    Actor_SetPosition(1, PIXELS(328), PIXELS(168));
-    Actor_Get(2)->facing = FACING_NORTHWEST;
-    Actor_SetPosition(2, PIXELS(340), PIXELS(196));
-    Actor_Get(3)->facing = FACING_NORTHWEST;
-    Actor_SetPosition(3, PIXELS(326), PIXELS(204));
+    Actor_Get(ACTOR_PARTY_LEADER)->facing = FACING_NORTHWEST;
+    Actor_Get(ACTOR_GERALD)->facing = FACING_NORTHWEST;
+    Actor_SetPosition(ACTOR_GERALD, PIXELS(328), PIXELS(168));
+    Actor_Get(ACTOR_IVAN)->facing = FACING_NORTHWEST;
+    Actor_SetPosition(ACTOR_IVAN, PIXELS(340), PIXELS(196));
+    Actor_Get(ACTOR_MIA)->facing = FACING_NORTHWEST;
+    Actor_SetPosition(ACTOR_MIA, PIXELS(326), PIXELS(204));
     Actor_Get(21)->facing = FACING_NORTH + FACING_STEP;
     Actor_SetPosition(21, PIXELS(200), PIXELS(216));
     Actor_Get(6)->facing = FACING_NORTH + FACING_STEP;
@@ -1131,63 +1131,63 @@ void FieldScene_RunMultiActorPresentation(void)
     s32 request_a;
     s32 request_b;
 
-    Actor_RunRepeatedMotion(1, 1);
+    Actor_RunRepeatedMotion(ACTOR_GERALD, 1);
     Event_Wait(20);
-    Event_ShowMessageAndWait(1, 0, 20);
-    Actor_RunRepeatedMotion(2, 1);
+    Event_ShowMessageAndWait(ACTOR_GERALD, 0, 20);
+    Actor_RunRepeatedMotion(ACTOR_IVAN, 1);
     Event_Wait(20);
-    Event_OpenMessage(2, 0);
-    Actor_FaceDirection(2, 0xc000, 0);
+    Event_OpenMessage(ACTOR_IVAN, 0);
+    Actor_FaceDirection(ACTOR_IVAN, 0xc000, 0);
     Func_0200478e(0, 0x4000);
     count_flag = 0;
     if (Event_ChooseYesNo(0, 0) == 0) {
         Event_Wait(20);
-        Actor_SetAnimationAndWait(2, 4);
+        Actor_SetAnimationAndWait(ACTOR_IVAN, 4);
         count_flag = 1;
     } else {
         Event_Wait(20);
-        Actor_RunRepeatedMotion(2, 1);
+        Actor_RunRepeatedMotion(ACTOR_IVAN, 1);
         *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
     }
     Func_020047be(2);
     if (count_flag != 0) {
         *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
     }
-    Actor_SetSpeed(1, 0x19999, 0xcccc);
+    Actor_SetSpeed(ACTOR_GERALD, 0x19999, 0xcccc);
     request_a = 0x1001;
-    Actor_WalkToAndWait(1, 0x141, 174);
+    Actor_WalkToAndWait(ACTOR_GERALD, 0x141, 174);
     Func_02004808(1, 0x2000);
     Func_020047fa(request_a);
-    Actor_FaceDirection(0, 0xa000, 0);
-    Actor_FaceDirection(2, 0xa000, 0);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xa000, 0);
+    Actor_FaceDirection(ACTOR_IVAN, 0xa000, 0);
     Func_02004834(3, 0xc000);
     Func_02004842(1, 0x4000);
     Func_02004834_a(request_a);
-    Actor_ShowEmote(1, 0x105, 40);
-    Actor_FaceDirection(1, 0x2000, 20);
+    Actor_ShowEmote(ACTOR_GERALD, 0x105, 40);
+    Actor_FaceDirection(ACTOR_GERALD, 0x2000, 20);
     Func_0200484e(request_a);
-    Actor_FaceDirection(1, 0xa000, 40);
+    Actor_FaceDirection(ACTOR_GERALD, 0xa000, 40);
     Event_ShowMessageAndWait(0x8001, 0, 40);
-    Actor_FaceDirection(1, 0x2000, 20);
+    Actor_FaceDirection(ACTOR_GERALD, 0x2000, 20);
     Func_02004874(request_a);
     Audio_PlayCue(17);
-    Actor_SetAnimation(3, 4);
+    Actor_SetAnimation(ACTOR_MIA, 4);
     Func_02004888(3);
-    Actor_FaceDirection(1, 0x4000, 80);
-    Actor_FaceDirection(3, 0x6000, 80);
-    Actor_ShowEmote(3, 0x100, 40);
-    Actor_FaceDirection(0, 0x6000, 60);
-    Actor_RunRepeatedMotion(0, 2);
+    Actor_FaceDirection(ACTOR_GERALD, 0x4000, 80);
+    Actor_FaceDirection(ACTOR_MIA, 0x6000, 80);
+    Actor_ShowEmote(ACTOR_MIA, 0x100, 40);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x6000, 60);
+    Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
     Func_020048da(2, 0xc000);
-    Actor_ShowEmote(2, 0x101, 60);
-    Actor_FaceDirection(2, 0x6000, 40);
-    Actor_Jump(2, 4, 60);
+    Actor_ShowEmote(ACTOR_IVAN, 0x101, 60);
+    Actor_FaceDirection(ACTOR_IVAN, 0x6000, 40);
+    Actor_Jump(ACTOR_IVAN, 4, 60);
     Func_02004902(1, 0x2000);
-    Actor_ShowEmote(1, 0x101, 40);
+    Actor_ShowEmote(ACTOR_GERALD, 0x101, 40);
     Func_020048fe(request_a);
-    Actor_FaceDirection(1, 0x6000, 40);
-    Actor_ShowEmote(1, 0x100, 0);
-    Actor_Jump(1, 4, 40);
+    Actor_FaceDirection(ACTOR_GERALD, 0x6000, 40);
+    Actor_ShowEmote(ACTOR_GERALD, 0x100, 0);
+    Actor_Jump(ACTOR_GERALD, 4, 40);
     Func_02004926(1);
     Actor_SetSpeed(21, 0xcccc, 0x6666);
     Actor_SetDestination(21, 200, 188);
@@ -1209,30 +1209,30 @@ void FieldScene_RunMultiActorPresentation(void)
     Actor_SetAttachedEffect(6, 0x102);
     request_b = 0x2003;
     Event_Wait(20);
-    Actor_StartRepeatedMotion(3, 2);
+    Actor_StartRepeatedMotion(ACTOR_MIA, 2);
     Func_020049d0(request_b);
     Actor_RunRepeatedMotion(21, 2);
     Event_Wait(20);
     Func_020049e6(0x2002);
     Func_02004a04(21, 0xe000);
-    Actor_RunRepeatedMotion(1, 1);
+    Actor_RunRepeatedMotion(ACTOR_GERALD, 1);
     Func_020049fe(1);
     Actor_RunRepeatedMotion(21, 1);
     Event_ShowMessageAndWait(21, 0, 20);
     Func_02004a16(request_b);
     Actor_SetAnimationAndWait(21, 4);
     Func_02004a24(21);
-    Actor_SetAttachedEffect(2, 0x102);
+    Actor_SetAttachedEffect(ACTOR_IVAN, 0x102);
     Func_02004a34(0x2002);
     Actor_SetAnimation(21, 3);
     Func_02004a42(21);
-    Actor_ShowEmote(1, 0x103, 40);
-    Actor_StartRepeatedMotion(1, 2);
+    Actor_ShowEmote(ACTOR_GERALD, 0x103, 40);
+    Actor_StartRepeatedMotion(ACTOR_GERALD, 2);
     Func_02004a5a(1);
     Actor_SetAnimation(21, 4);
     Func_02004a68(21);
     Actor_FaceDirection(21, 0x5000, 20);
-    Actor_Jump(3, 4, 20);
+    Actor_Jump(ACTOR_MIA, 4, 20);
     Event_ShowMessageAndWait(request_b, 0, 20);
     Actor_ShowEmote(21, 0x103, 40);
 }
@@ -1270,16 +1270,16 @@ void FieldScene_RestageParty(void)
     Map_Redraw();
     Task_Wait(1);
     Audio_PlayCue(SOUND_ITEM_BREAK);
-    Actor_SetAnimation(0, 19);
-    Actor_SetAnimation(1, 18);
-    Actor_SetAnimation(2, 18);
-    Actor_SetAnimation(3, 18);
-    Actor_SetSpriteFlags(Actor_Get(0), 0);
-    Actor_SetSpriteFlags(Actor_Get(1), 0);
-    Actor_SetSpriteFlags(Actor_Get(2), 0);
-    Actor_SetSpriteFlags(Actor_Get(3), 0);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, 19);
+    Actor_SetAnimation(ACTOR_GERALD, 18);
+    Actor_SetAnimation(ACTOR_IVAN, 18);
+    Actor_SetAnimation(ACTOR_MIA, 18);
+    Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
+    Actor_SetSpriteFlags(Actor_Get(ACTOR_GERALD), 0);
+    Actor_SetSpriteFlags(Actor_Get(ACTOR_IVAN), 0);
+    Actor_SetSpriteFlags(Actor_Get(ACTOR_MIA), 0);
 
-    actor = Actor_Get(0);
+    actor = Actor_Get(ACTOR_PARTY_LEADER);
     actor->x.fixed = PIXELS(346);
     actor->y.fixed = PIXELS(32);
     actor->z.fixed = PIXELS(205);
@@ -1287,7 +1287,7 @@ void FieldScene_RestageParty(void)
     actor->rise_enabled = 0;
     actor->velocity_y = 0x20000;
 
-    actor = Actor_Get(1);
+    actor = Actor_Get(ACTOR_GERALD);
     actor->x.fixed = PIXELS(356);
     actor->y.fixed = PIXELS(32);
     actor->z.fixed = PIXELS(192);
@@ -1295,7 +1295,7 @@ void FieldScene_RestageParty(void)
     actor->rise_enabled = 0;
     actor->velocity_y = 0x20000;
 
-    actor = Actor_Get(2);
+    actor = Actor_Get(ACTOR_IVAN);
     actor->x.fixed = PIXELS(360);
     actor->y.fixed = PIXELS(32);
     actor->z.fixed = PIXELS(222);
@@ -1303,7 +1303,7 @@ void FieldScene_RestageParty(void)
     actor->rise_enabled = 0;
     actor->velocity_y = 0x20000;
 
-    actor = Actor_Get(3);
+    actor = Actor_Get(ACTOR_MIA);
     actor->x.fixed = PIXELS(334);
     actor->y.fixed = PIXELS(32);
     actor->z.fixed = PIXELS(222);

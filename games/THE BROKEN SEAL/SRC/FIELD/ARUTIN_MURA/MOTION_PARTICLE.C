@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "FIELD_SCENE.H"
 
 enum MotionParticleMessage {
     MSG_YOUR_FIRST_TIME_VISIT_ALTIN = 0x18bd,
@@ -302,7 +303,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
             *(u8 *)(RuntimeBlock_GetOffset1e0Pointer_1() + 85) = ready_flag;
             Camera_SetSpeed(0x10000, 0x2000);
             Camera_MoveTo(*(s32 *)(rec18 + 8), *(s32 *)(rec18 + 12), *(s32 *)(rec18 + 16), 1); /* use_setter 1 */
-            Actor_FaceActor(0, 0x4000, 0);
+            Actor_FaceActor(ACTOR_PARTY_LEADER, 0x4000, 0);
             Actor_FaceDirection(14, 0x3000, 0);
             Camera_WaitForMove();
             Event_Wait(120); /* should_wait 120 */
@@ -520,18 +521,18 @@ void FieldScene_RunEarlySequence(void)
         }
         Map_AnimateCells(*(s32 *)(tbl + off), a, b);
     }
-    Actor_SetSpeed(0, 0x8000, 0x4000);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
     *(s32 *)(Data_03001ebc + 0x1c0) = 0x100;
     *(u8 *)(Func_020014e8(0) + 85) = 0;
-    Actor_SetAnimation(0, 2);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, 2);
     if (idx == 6) {
-        Actor_CenterAndWalk(0, 2, 0);
+        Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 2, 0);
     } else {
         if (idx != 1) {
-            Actor_CenterAndWalk(0, 2, -4);
+            Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 2, -4);
         } else {
-            Actor_SetSpritePriority(0, 2);
-            Actor_SetDestinationOffset(0, 0, -4);
+            Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 2);
+            Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, -4);
         }
     }
     Event_Wait(10);
@@ -549,7 +550,7 @@ void FieldScene_RunScene3a3SequenceB(void)
     Event_Begin();
     *(u8 *)(Func_0200157a(0) + 85) = 0;
     Audio_PlayCue(123);
-    Actor_CenterAndWalk(0, 2, -16);
+    Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 2, -16);
     Event_RequestExit(*(s16 *)(work + 0x16c));
     Event_CloseScreen();
     Event_WaitForScreen();
@@ -879,8 +880,8 @@ void FieldScene_RunScene3a3_02000d58(void)
     Call1(Func_02001d38, -1);
     Call1(Func_02001bc6, 0x2008d09);
     Event_Wait(20);
-    Actor_FaceActor(0, 18, 0);
-    Actor_FaceDirection(0, 0x4000, 0);
+    Actor_FaceActor(ACTOR_PARTY_LEADER, 18, 0);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 0);
     Actor_FaceDirection(18, 0, 20);
     Actor_FaceDirection(18, 0xd000, 40);
     Audio_PlayCue(147);
@@ -888,7 +889,7 @@ void FieldScene_RunScene3a3_02000d58(void)
     Event_Wait(20);
     Actor_FaceDirection(18, 0xb000, 40);
     FieldScene_RunScene3a3SequenceC();
-    Camera_FollowActor(0, 1);
+    Camera_FollowActor(ACTOR_PARTY_LEADER, 1);
     Camera_WaitForMove();
     Actor_SetAnimationAndWait(14, 4);
     GameFlag_Set(0x8ff);

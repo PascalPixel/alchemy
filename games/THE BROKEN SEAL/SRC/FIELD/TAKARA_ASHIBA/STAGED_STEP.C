@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "FIELD_SCENE.H"
 
 #define RuntimeSelectorTable Data_02000240
 #define PrimaryRuntimeSelector Value_00000075
@@ -591,7 +592,7 @@ void ConfigureAndPlaceActorTwelve(void)
 void FieldScene_RunStep8ValueEe7(void)
 {
     Item_ShowFound(0xF4, 3);
-    Actor_SetAnimation(0, 1);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
     Party_GiveItem(0xF4, 0);
     Actor_SetPosition(8, 0, 0);
     GameFlag_Set(0xEE7);
@@ -600,7 +601,7 @@ void FieldScene_RunStep8ValueEe7(void)
 void FieldScene_RunStep9ValueEe8(void)
 {
     Item_ShowFound(0xF4, 3);
-    Actor_SetAnimation(0, 1);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
     Party_GiveItem(0xF4, 0);
     Actor_SetPosition(9, 0, 0);
     GameFlag_Set(0xEE8);
@@ -609,7 +610,7 @@ void FieldScene_RunStep9ValueEe8(void)
 void FieldScene_RunStep10ValueEe9(void)
 {
     Item_ShowFound(0xF4, 3);
-    Actor_SetAnimation(0, 1);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
     Party_GiveItem(0xF4, 0);
     Actor_SetPosition(0xA, 0, 0);
     GameFlag_Set(0xEE9);
@@ -618,7 +619,7 @@ void FieldScene_RunStep10ValueEe9(void)
 void FieldScene_RunStep11ValueEea(void)
 {
     Item_ShowFound(0xF4, 3);
-    Actor_SetAnimation(0, 1);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
     Party_GiveItem(0xF4, 0);
     Actor_SetPosition(0xB, 0, 0);
     GameFlag_Set(0xEEA);
@@ -627,7 +628,7 @@ void FieldScene_RunStep11ValueEea(void)
 void FieldScene_RunStep12ValueEeb(void)
 {
     Item_ShowFound(0xF3, 3);
-    Actor_SetAnimation(0, 1);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
     Party_GiveItem(0xF3, 0);
     Actor_SetPosition(0xC, 0, 0);
     GameFlag_Set(0xEEB);
@@ -648,7 +649,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
     s32 record;
 
     Event_Begin();
-    Actor_SetSpeed(0, 0x1e666, 0xf333);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x1e666, 0xf333);
     Actor_SetSpeed(8, 0x1e666, 0xf333);
     Audio_PlayCue(188);
     record = Value1(Engine_GetTriggerActor, 0);
@@ -656,11 +657,11 @@ void FieldScene_RunSupplementalSequenceOne(void)
         Actor_SetDestination(8, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
     Actor_WaitForMove(8);
-    Actor_SetDestinationOffset(0, 0, 24);
+    Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, 24);
     Event_Wait(4);
     Audio_PlayCue(188);
     Actor_SetDestinationOffset(8, 0, 16);
-    Actor_WaitForMove(0);
+    Actor_WaitForMove(ACTOR_PARTY_LEADER);
     Actor_SetDestination(8, 0x168, 152);
     Actor_WaitForMove(8);
     Event_End();
@@ -690,7 +691,7 @@ void FieldScene_RunScene3b4SequenceA(void)
     s32 record;
 
     Event_Begin();
-    Actor_SetSpeed(0, 0x1b333, 0xd999);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x1b333, 0xd999);
     Actor_SetSpeed(9, 0x1b333, 0xd999);
     Audio_PlayCue(188);
     record = Value1(Engine_GetTriggerActor, 0);
@@ -698,11 +699,11 @@ void FieldScene_RunScene3b4SequenceA(void)
         Actor_SetDestination(9, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
     Actor_WaitForMove(9);
-    Actor_SetDestinationOffset(0, 0, 24);
+    Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, 24);
     Audio_PlayCue(188);
     Event_Wait(4);
     Actor_SetDestinationOffset(9, 0, 16);
-    Actor_WaitForMove(0);
+    Actor_WaitForMove(ACTOR_PARTY_LEADER);
     Actor_SetDestination(9, 168, 0x108);
     Actor_WaitForMove(9);
     Event_End();
@@ -728,9 +729,9 @@ void SceneActor_TrackOriginColumnForSlot(s32 no)
     Data_0200af74[no] = col;
 
     if (row <= 22) {
-        Actor_SetDestinationOffset(0, 0, 8);
+        Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, 8);
     }
-    Actor_WaitForMove(0);
+    Actor_WaitForMove(ACTOR_PARTY_LEADER);
 }
 
 void FieldScene_RunLateIndexedStep0(void)
@@ -757,7 +758,7 @@ void FieldScene_RunPrimarySequence(void)
     base3_2000240 = (s32)Data_02000240;
     if (*(s16 *)((base3_2000240 + 0x24a)) != 10) {
         Event_Begin();
-        Actor_SetSpeed(0, 0x1b333, 0xd999);
+        Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x1b333, 0xd999);
         Actor_SetSpeed(10, 0x1b333, 0xd999);
         Audio_PlayCue(188);
         record = Value1_020015f0(Engine_GetTriggerActor, 0);
@@ -765,11 +766,11 @@ void FieldScene_RunPrimarySequence(void)
             Actor_SetDestination(10, *(s16 *)(record + 10), *(s16 *)(record + 18));
         }
         Actor_WaitForMove(10);
-        Actor_SetDestinationOffset(0, 0, 24);
+        Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, 24);
         Event_Wait(4);
         Audio_PlayCue(188);
         Actor_SetDestinationOffset(10, 0, 16);
-        Actor_WaitForMove(0);
+        Actor_WaitForMove(ACTOR_PARTY_LEADER);
         Actor_SetDestination(10, 0x108, 0x168);
         Actor_WaitForMove(10);
         Event_Wait(10);
@@ -800,7 +801,7 @@ void FieldScene_RunScene3b4SequenceB(void)
     s32 record;
 
     Event_Begin();
-    Actor_SetSpeed(0, 0x1b333, 0xd999);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x1b333, 0xd999);
     Actor_SetSpeed(12, 0x1b333, 0xd999);
     Audio_PlayCue(188);
     record = Value1(Engine_GetTriggerActor, 0);
@@ -808,10 +809,10 @@ void FieldScene_RunScene3b4SequenceB(void)
         Actor_SetDestination(12, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
     Actor_WaitForMove(12);
-    Actor_SetDestinationOffset(0, 0, 24);
+    Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, 24);
     Audio_PlayCue(188);
     Actor_SetDestinationOffset(12, 0, 16);
-    Actor_WaitForMove(0);
+    Actor_WaitForMove(ACTOR_PARTY_LEADER);
     Actor_SetDestination(12, 0x138, 232);
     Actor_WaitForMove(12);
     Event_End();

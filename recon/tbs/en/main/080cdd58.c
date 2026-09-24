@@ -1,13 +1,15 @@
-/* 2026-09-24: hand-written, 22 differing halfwords, same size apart from the
-   trailing alignment. Mid-function pools and the tile-map loop match; the
-   IWRAM clear/fill calls load their destination before the routine, and the
-   map base, row counter and row base take r4/r5/r6 instead of r5/r6/r4. */
+/* 2026-09-24: hand-written, 11 differing halfwords (was 22), same size apart
+   from the trailing alignment. Mid-function pools and the tile-map loop
+   match, and the IWRAM clear/fill routines are declared value-returning,
+   which loads each destination before the routine as the ROM does.
+   Residual: global allocation in the tile-map loop; the map base, row
+   counter and row base take r4/r5/r6 where the reference has r5/r6/r4. */
 
 #include "TYPES.H"
 #include "SYSTEM.H"
 
-typedef void (*ClearFn)(void *dst, s32 size);
-typedef void (*FillFn)(void *dst, s32 size, s32 value);
+typedef s32 (*ClearFn)(void *dst, s32 size);
+typedef s32 (*FillFn)(void *dst, s32 size, s32 value);
 
 static __inline__ void ClearWords(ClearFn clear, void *dst, s32 size)
 {

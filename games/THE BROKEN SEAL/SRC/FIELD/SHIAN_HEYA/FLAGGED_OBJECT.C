@@ -2,7 +2,6 @@
 #include "FIELD_EVENT.H"
 
 #define NULL ((void *)0)
-#define CreateOverlayObject Func_020006de
 void Effect_Move(void *object);
 
 typedef struct {
@@ -26,13 +25,7 @@ extern u8 Value_00001a40;
 extern u8 Data_02008d4c[];
 extern u8 Data_02008a28[];
 
-void *Func_020006de(s32, s32, s32, s32);
 void Func_020009b0(void *);
-u16 *Func_020009d6(s32);
-u16 *Func_02000a36(s32);
-u16 *Func_02000a96(s32);
-u16 *Func_02000afe(s32);
-s32 Func_02000678(s32, s32, s32, s32);
 
 void OverlayObject_SetEntryField(void *arg0, s32 arg1)
 {
@@ -43,9 +36,8 @@ void OverlayObject_SetEntryField(void *arg0, s32 arg1)
 
 void *OverlayObject_SpawnWithMode14(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 {
-    void *Func_02000686(s32, s32, s32, s32);
 
-    u8 *ret = Func_02000686(arg3, arg0, arg1, arg2);
+    u8 *ret = Object_Create(arg3, arg0, arg1, arg2);
 
     if (ret != NULL) {
         u8 *obj = *(u8 **)(ret + 0x50);
@@ -68,7 +60,7 @@ void *OverlayObject_SpawnWithMode14(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 
 void *OverlayObject_CreateConfigured(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 {
-    u8 *ret = CreateOverlayObject(arg3, arg0, arg1, arg2);
+    u8 *ret = Object_Create(arg3, arg0, arg1, arg2);
 
     if (ret != NULL) {
         u8 *obj = *(u8 **)(ret + 0x50);
@@ -116,7 +108,7 @@ s32 SceneData_SelectTable89c8Or8890(void)
 
 void SceneDialogue_RunActor14FlaggedDialogue(void)
 {
-    u16 *state = Func_020009d6(0);
+    u16 *state = Actor_Get(0);
     u32 value = state[3];
 
     Event_Begin();
@@ -135,7 +127,7 @@ void SceneDialogue_RunActor14FlaggedDialogue(void)
 
 void SceneDialogue_RunActor15FlaggedDialogue(void)
 {
-    u16 *state = Func_02000a36(0);
+    u16 *state = Actor_Get(0);
     u32 value = state[3];
 
     Event_Begin();
@@ -157,7 +149,7 @@ void SceneDialogue_RunActor16FlaggedDialogue(void)
     void Event_ShowMessage();
     void Event_SetMessage(s32);
 
-    u16 *state = Func_02000a96(0);
+    u16 *state = Actor_Get(0);
     u32 value = state[3];
 
     Event_Begin();
@@ -177,7 +169,7 @@ void SceneDialogue_RunActor17FlaggedDialogue(void)
 {
     s32 GameFlag_IsSet(s32);
 
-    u16 *state = Func_02000afe(0);
+    u16 *state = Actor_Get(0);
     u32 value = state[3];
 
     Event_Begin();
@@ -240,17 +232,16 @@ s32 SceneData_SelectTable8d4cOr8a28(void)
 
 s32 SceneState_SetRuntimeWord448To521(void)
 {
-    void Func_02000686_a(s32, s32, s32, s32);
 
     s16 scene;
 
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
     scene = gGameState.entrance;
     if (scene == 4 || scene == 7) {
-        Func_02000686_a(0x00f80000, 0, 0x01a10000, 20);
+        OverlayObject_CreateConfigured(0x00f80000, 0, 0x01a10000, 20);
     } else if (scene == 6) {
-        Func_02000678(0x01cc0000, 0, 0x02380000, 20);
-        Func_02000686_a(0x01e40000, 0, 0x02380000, 20);
+        OverlayObject_CreateConfigured(0x01cc0000, 0, 0x02380000, 20);
+        OverlayObject_CreateConfigured(0x01e40000, 0, 0x02380000, 20);
     } else if (scene == 8) {
         GameFlag_Clear(0x12f);
         Actor_SetAnimation(10, 6);

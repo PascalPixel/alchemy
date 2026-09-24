@@ -29277,20 +29277,6 @@
       "overlay": null
     },
     {
-      "id": "battle-unit-roll-counter-early-end-retained",
-      "game": "tbs",
-      "source": "recon/tbs/en/units/battle-unit-roll-counter-early-end-retained.c",
-      "compiler_route": "canonical-gcc296",
-      "owners": [
-        {
-          "address": "0x080c00d8",
-          "extent": 88,
-          "state": "not-yet-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
       "id": "battle-unit-lookup-weapon-value-by-class-retained",
       "game": "tbs",
       "source": "recon/tbs/en/units/battle-unit-lookup-weapon-value-by-class-retained.c",

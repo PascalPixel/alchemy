@@ -1,18 +1,16 @@
-/* Draft, not exact (2026-09-24): 1588 of 1588 bytes, 295 halfwords differ.
-   The six stat labels load one linked message base (Data_000008ae) and add
-   1..5, which brings the candidate to the owner's exact size. The locals are
-   declared in the reference's spill-slot order (unit 56, snap 52, buf 48,
-   the five old stats 44..28, list 24, total 20, n 16, marks 12, rows 8), so
-   every stack slot now agrees. What remains is reload's register choice: in
-   the ability-list loop and the page-0 tail the reference picks r2/r3/r4
-   where this build picks r3/r4/r1, and it loads unit before snap for the
-   first Func_080072f0. */
-
 #include "RENDER_INPUT.H"
 
-/* Preview a pending ability change, then restore the original unit record.
- * The nested arrow renderer captures this panel's window.
- */
+/* Preview setting or resting one Djinn: toggle it on the live owner record,
+ * recalculate, show the old and new class and stats with an arrow beside
+ * each change (page 0) or the Psynergy gained and lost (later pages), then
+ * restore the record from the snapshot. The arrow renderer is a GNU C nested
+ * function (main:08022a7c) that reaches the window through the static chain.
+ *
+ * The six stat labels load one linked message base (Data_000008ae) and the
+ * ability names another (Value_00000333); Func_080072f0,
+ * UiText_RenderWideStringInWindow and UiWindow_DrawThreeTileColumn are
+ * declared returning a value so r0 is set last at each call. The locals are
+ * declared in the reference's spill-slot order. */
 
 /* The IWRAM block-copy routine Func_080072f0 is asked to drive. */
 #define VRAM_COPY_PROC 0x03001388
@@ -91,9 +89,7 @@ void UiText_DrawCharacterAtOffset(s32 message, struct RenderInput *win, s32 x, s
 void UiText_DrawNumberInWindow(
     s32 value, s32 digits, struct RenderInput *win, s32 x, s32 y);
 
-#define Ui_ShowAbilityChangePreview Func_08022b44
-
-struct RenderInput *Ui_ShowAbilityChangePreview(
+struct RenderInput *DjinnMenu_ShowChangePreview(
     struct RenderInput *win, s32 owner, s32 code, s32 page, s32 *pageCount)
 {
     struct BattleUnitRecord *unit;
@@ -116,7 +112,7 @@ struct RenderInput *Ui_ShowAbilityChangePreview(
     s32 gained;
     s32 lost;
     s32 tile;
-    s32 dir;
+    s32 val;
     s32 i;
 
 
@@ -269,55 +265,55 @@ struct RenderInput *Ui_ShowAbilityChangePreview(
         UiText_FormatNumberToHalfwords(buf, unit->hp);
         Func_08017c8c(buf + 7, win, 11, 1);
         if (unit->hp != oldHp) {
-            dir = 0;
+            val = 0;
             if (unit->hp > oldHp)
-                dir = 1;
-            Func_08022a7c(80, 14, dir);
+                val = 1;
+            Func_08022a7c(80, 14, val);
         }
 
         UiText_FormatNumberToHalfwords(buf, unit->pp);
         Func_08017c8c(buf + 7, win, 11, 2);
         if (unit->pp != oldPp) {
-            dir = 0;
+            val = 0;
             if (unit->pp > oldPp)
-                dir = 1;
-            Func_08022a7c(80, 22, dir);
+                val = 1;
+            Func_08022a7c(80, 22, val);
         }
 
         UiText_FormatNumberToHalfwords(buf, unit->atk);
         Func_08017c8c(buf + 7, win, 11, 3);
         if (unit->atk != oldAtk) {
-            dir = 0;
+            val = 0;
             if (unit->atk > oldAtk)
-                dir = 1;
-            Func_08022a7c(80, 30, dir);
+                val = 1;
+            Func_08022a7c(80, 30, val);
         }
 
         UiText_FormatNumberToHalfwords(buf, unit->def);
         Func_08017c8c(buf + 7, win, 11, 4);
         if (unit->def != oldDef) {
-            dir = 0;
+            val = 0;
             if (unit->def > oldDef)
-                dir = 1;
-            Func_08022a7c(80, 38, dir);
+                val = 1;
+            Func_08022a7c(80, 38, val);
         }
 
         UiText_FormatNumberToHalfwords(buf, unit->agi);
         Func_08017c8c(buf + 7, win, 11, 5);
         if (unit->agi != oldAgi) {
-            dir = 0;
+            val = 0;
             if (unit->agi > oldAgi)
-                dir = 1;
-            Func_08022a7c(80, 46, dir);
+                val = 1;
+            Func_08022a7c(80, 46, val);
         }
 
         UiText_FormatNumberToHalfwords(buf, unit->luk);
         Func_08017c8c(buf + 8, win, 12, 6);
         if (unit->luk != snap->luk) {
-            dir = 0;
+            val = 0;
             if (unit->luk > snap->luk)
-                dir = 1;
-            Func_08022a7c(80, 54, dir);
+                val = 1;
+            Func_08022a7c(80, 54, val);
         }
     }
 

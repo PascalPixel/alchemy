@@ -20536,6 +20536,26 @@
     "resource_39b:02001df8": {
       "name": "MakyuriHeya_SpawnSparkPair",
       "source": "FIELD/COMMON/MAKYURI/SPARK_PAIR.C"
+    },
+    "main:0800300c": {
+      "name": "Runtime_InstallIwramAndIrqs",
+      "source": "SYSTEM/INSTALL_IWRAM_AND_IRQS.C"
+    },
+    "main:080a1f74": {
+      "name": "Menu_CopyListOrder",
+      "source": "MENU/COPY_LIST_ORDER.C"
+    },
+    "main:080c0130": {
+      "name": "BattlePres_UpdateHBlankScroll",
+      "source": "BATTLE/PRESENTATION/UPDATE_HBLANK_SCROLL.C"
+    },
+    "main:08011568": {
+      "name": "MapAnimation_PresentFrame",
+      "source": "FIELD/COMMON/MAP/ANIMATION_PRESENT_FRAME.C"
+    },
+    "main:0801c9c8": {
+      "name": "Menu_ResetWorkspaceSelection",
+      "source": "MENU/RESET_WORKSPACE_SELECTION.C"
     }
   },
   "symbols": {

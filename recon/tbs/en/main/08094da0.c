@@ -1,6 +1,6 @@
-/* 2026-09-24: hand-written, 20 differing halfwords, same code: the fill
-   zero goes to r3 (reference r1), the position pointer to r0 (reference r2)
-   and the scheduler order constant is hoisted above the last BLDY store. */
+/* 2026-09-24: hand-written, 16 differing halfwords, same code: the fill
+   zero goes to r3 (reference r1) and the position pointer to r0 (reference
+   r2). The BLDCNT block is a tagged do-while wrap of volatile int stores. */
 
 #include "TYPES.H"
 #include "DMA.H"
@@ -68,7 +68,7 @@ void Func_08094da0(void)
         mote->phase = (i & 15) + 1;
         mote++;
     }
-    { struct Two { u16 a; u16 b; } *r = (struct Two *)0x04000050; r->a = 0x3f00; r = (struct Two *)((u16 *)r + 1); r->a = 0x1008; r = (struct Two *)((u16 *)r + 1); r->a = 0; }
+    do { s32 v; v = 0x3f00; reg = (volatile u16 *)0x04000050; *reg = v; v = 0x1008; reg++; *reg = v; reg++; *reg = 0; } while (0);
     Scheduler_AddOrUpdateCallback(Func_08094bbc, 0xc80);
 }
 

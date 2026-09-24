@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_3b4:02001cf8": {
+      "name": "TakaraAshiba_Func02001cf8",
+      "source": "FIELD/TAKARA_ASHIBA/F_01CF8.C"
+    },
     "resource_3b4:02001308": {
       "name": "TakaraAshiba_Func02001308",
       "source": "FIELD/TAKARA_ASHIBA/F_01308.C"

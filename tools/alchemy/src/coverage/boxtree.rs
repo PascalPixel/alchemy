@@ -131,7 +131,8 @@ fn file_style(extension: &str, source: &str) -> (&'static str, &'static str) {
         "c" if recon => ("Drafted C", DRAFT_ROSE),
         "c" => ("C", SOURCE_ROSE),
         "h" | "inc" => ("Headers", HEADER_ROSE),
-        "s" => ("Assembly", ASSEMBLY),
+        "s-credited" => ("Assembly", CREDITED_ASSEMBLY),
+        "s" => (NOT_YET_C, ASSEMBLY),
         "wav" => ("WAV audio", PCM_ORANGE),
         "mid" => ("MIDI music", MIDI_GREEN),
         "po" | "md" | "txt" => ("Translations", TRANSLATION_GREY),
@@ -150,6 +151,10 @@ fn file_style(extension: &str, source: &str) -> (&'static str, &'static str) {
 /// as one box per game under its TEXT heading, and the frozen compression
 /// answers, which wait to be replaced by encoder options.
 const COMPRESSION_ANSWERS: &str = "Compression answers";
+/// Uncredited assembly: C that is not written yet (AGENTS.md rule 5).
+pub(crate) const NOT_YET_C: &str = "Not yet C";
+/// Library or handwritten assembly its header credits, a deeper teal.
+const CREDITED_ASSEMBLY: &str = "#4f94a0";
 pub(crate) fn quiet(tile: &Tile) -> bool {
     matches!(content_style(tile).0, "Translations" | COMPRESSION_ANSWERS)
 }
@@ -354,6 +359,19 @@ fn published_view_leaves_out_untracked_private_inputs() {
 }
 
 /// reconstruction scaffolding kept beside them under `recon/`.
+/// Whether an assembly module's header credits it (`@ credit: library|
+/// handwritten — <object>`).
+fn credited(path: &std::path::Path) -> bool {
+    use std::io::Read;
+    let mut head = [0u8; 512];
+    let read = std::fs::File::open(path)
+        .and_then(|mut file| file.read(&mut head))
+        .unwrap_or(0);
+    String::from_utf8_lossy(&head[..read]).lines().any(|line| {
+        line.trim_start().starts_with("@ credit: library")
+            || line.trim_start().starts_with("@ credit: handwritten")
+    })
+}
 pub(crate) fn disk_tiles(repository: &std::path::Path) -> Vec<Tile> {
     ["games", "recon"]
         .into_iter()
@@ -371,12 +389,17 @@ pub(crate) fn disk_tiles(repository: &std::path::Path) -> Vec<Tile> {
                 .ok()?
                 .to_str()?
                 .to_string();
-            let extension = entry
+            let mut extension = entry
                 .path()
                 .extension()
                 .and_then(|e| e.to_str())
                 .unwrap_or("")
                 .to_ascii_lowercase();
+            // Assembly counts as assembly only when its header credits it as
+            // library or handwritten code; the rest is C not yet written.
+            if extension == "s" && credited(entry.path()) {
+                extension = "s-credited".into();
+            }
             Some(Tile {
                 label: entry.file_name().to_string_lossy().into(),
                 bytes,
@@ -462,7 +485,11 @@ mod tests {
             group: Some(format!("file:{extension}")),
             ..Tile::default()
         };
-        assert_eq!(content_style(&tile("s")), ("Assembly", super::ASSEMBLY));
+        assert_eq!(content_style(&tile("s")), ("Not yet C", super::ASSEMBLY));
+        assert_eq!(
+            content_style(&tile("s-credited")),
+            ("Assembly", super::CREDITED_ASSEMBLY)
+        );
         assert_eq!(content_style(&tile("c")), ("C", super::SOURCE_ROSE));
         let draft = Tile {
             source: Some("recon/tbs/en/main/08006878.c".into()),

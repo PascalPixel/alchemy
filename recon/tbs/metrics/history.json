@@ -97,14 +97,14 @@
       "date": "2026-09-24",
       "tbs": {"done": 892484, "executable": 1375934},
       "tla": {"done": 42186, "executable": 1975640},
-      "models": {"Opus 5.5": 900, "Untagged": 30}
+      "models": {"Opus 5.5": 908, "Untagged": 30}
     }
   ],
   "figures": {
     "date": "2026-09-24",
     "tbs": {"done": 892484, "executable": 1375934},
     "tla": {"done": 42186, "executable": 1975640},
-    "models": {"Opus 5.5": 900, "Untagged": 30},
+    "models": {"Opus 5.5": 908, "Untagged": 30},
     "files": "fca902db8a180d48"
   }
 }

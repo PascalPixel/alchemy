@@ -95,9 +95,9 @@
     },
     {
       "date": "2026-09-24",
-      "tbs": {"done": 922104, "executable": 1375934},
+      "tbs": {"done": 923500, "executable": 1375934},
       "tla": {"done": 42186, "executable": 1975640},
-      "models": {"Opus 5.5": 977, "Untagged": 43}
+      "models": {"Opus 5.5": 1019, "Untagged": 49}
     }
   ],
   "figures": {

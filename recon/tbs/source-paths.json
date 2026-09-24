@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_3af:020019c0": {
+      "name": "FuneKanpan_PlaceDeckActors",
+      "source": "FIELD/FUNE_KANPAN/DECK_ACTORS.C"
+    },
     "resource_3a5:02001638": {
       "name": "RamakanSabaku_EnterArea",
       "source": "FIELD/RAMAKAN_SABAKU/ENTER_AREA.C"

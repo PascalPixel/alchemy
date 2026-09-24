@@ -783,6 +783,10 @@
       "name": "Scene_ResetFlagsOnEnter",
       "source": "FIELD/COMMON/SCENE_RESET_FLAGS_ON_ENTER.C"
     },
+    "main:08091890": {
+      "name": "Party_RemoveOwnerRestored",
+      "source": "GAME/PARTY/REMOVE_OWNER_RESTORED.C"
+    },
     "main:080aad10": {
       "name": "Menu_OpenBackdropScreen",
       "source": "MENU/OPEN_BACKDROP_SCREEN.C"

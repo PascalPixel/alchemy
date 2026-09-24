@@ -5888,7 +5888,7 @@
       "source": "FIELD/SORU_SEKIZO/GUARDED_STEP.C"
     },
     "resource_386:020001c4": {
-      "name": "Dialogue_RunActor16Line",
+      "name": "SceneDialogue_RunActor16Line",
       "source": "FIELD/KUUPUAPPU_HEYA_SAI/PLACEMENT.C"
     },
     "resource_372:0200015c": {
@@ -5928,7 +5928,7 @@
       "source": "DEBUG/TEST_ROOMS/EMPTY.C"
     },
     "resource_386:02000410": {
-      "name": "Scene_RunActor21StepByPlace",
+      "name": "FieldScene_RunActor21StepByPlace",
       "source": "FIELD/KUUPUAPPU_HEYA_SAI/PLACEMENT.C"
     },
     "resource_3b1:02000ee0": {
@@ -6447,7 +6447,7 @@
       "source": "FIELD/VINASU_CHOJO/SCRIPTED_PRESENTATION.C"
     },
     "resource_386:02000098": {
-      "name": "Actor_RunActorStep",
+      "name": "SceneActor_RunActorStep",
       "source": "FIELD/KUUPUAPPU_HEYA_SAI/PLACEMENT.C"
     },
     "resource_399:0200021c": {
@@ -6844,7 +6844,7 @@
       "source": "FIELD/FUNE_HEYA/EXTENDED_CHOREOGRAPHY.C"
     },
     "resource_386:020000fc": {
-      "name": "Dialogue_RunActor12Line",
+      "name": "SceneDialogue_RunActor12Line",
       "source": "FIELD/KUUPUAPPU_HEYA_SAI/PLACEMENT.C"
     },
     "resource_385:020004ac": {
@@ -7048,7 +7048,7 @@
       "source": "FIELD/GOMA_IKE/GATE_PLACEMENT.C"
     },
     "resource_386:020002fc": {
-      "name": "Actor_RunActor16StepWithFlag91",
+      "name": "SceneActor_RunActor16StepWithFlag91",
       "source": "FIELD/KUUPUAPPU_HEYA_SAI/PLACEMENT.C"
     },
     "resource_3cd:02000030": {
@@ -7092,7 +7092,7 @@
       "source": "FIELD/KAREI_KYUDEN/PARTY_EVENTS.C"
     },
     "resource_386:020000bc": {
-      "name": "Dialogue_RunActor9Line",
+      "name": "SceneDialogue_RunActor9Line",
       "source": "FIELD/KUUPUAPPU_HEYA_SAI/PLACEMENT.C"
     },
     "resource_374:02000930": {
@@ -7544,7 +7544,7 @@
       "source": "FIELD/GOMA_IRIGUCHI/DEPTH.C"
     },
     "resource_386:02000338": {
-      "name": "Scene_RunActor18ConditionalCue",
+      "name": "FieldScene_RunActor18ConditionalCue",
       "source": "FIELD/KUUPUAPPU_HEYA_SAI/PLACEMENT.C"
     },
     "resource_3c9:02000470": {
@@ -7708,7 +7708,7 @@
       "source": "FIELD/IMIRU_MURA/FLAGGED_CHOREOGRAPHY.C"
     },
     "resource_386:020003c8": {
-      "name": "Scene_RunActor20StepByPlace",
+      "name": "FieldScene_RunActor20StepByPlace",
       "source": "FIELD/KUUPUAPPU_HEYA_SAI/PLACEMENT.C"
     },
     "resource_3cc:020000b4": {
@@ -7744,7 +7744,7 @@
       "source": "FIELD/RUNPA_DOU/CAVE.C"
     },
     "resource_386:02000380": {
-      "name": "Scene_RunActor19StepByPlace",
+      "name": "FieldScene_RunActor19StepByPlace",
       "source": "FIELD/KUUPUAPPU_HEYA_SAI/PLACEMENT.C"
     },
     "resource_3ac:02000030": {
@@ -7980,7 +7980,7 @@
       "source": "FIELD/KUUPUAPPU_HEYA/PROMPT.C"
     },
     "resource_386:02000458": {
-      "name": "Scene_RunActor22StepByPlace",
+      "name": "FieldScene_RunActor22StepByPlace",
       "source": "FIELD/KUUPUAPPU_HEYA_SAI/PLACEMENT.C"
     },
     "resource_397:020000e8": {
@@ -8044,7 +8044,7 @@
       "source": "FIELD/VINASU_HEYA/ENTRY_SETUP.C"
     },
     "resource_386:020000dc": {
-      "name": "Dialogue_RunActor11Line",
+      "name": "SceneDialogue_RunActor11Line",
       "source": "FIELD/KUUPUAPPU_HEYA_SAI/PLACEMENT.C"
     },
     "resource_397:0200015c": {
@@ -8572,7 +8572,7 @@
       "source": "FIELD/ARUTIN_MURA/MOTION_PARTICLE.C"
     },
     "resource_386:02000570": {
-      "name": "OvObj_InitObject22",
+      "name": "OverlayObject_InitObject22",
       "source": "FIELD/KUUPUAPPU_HEYA_SAI/PLACEMENT.C"
     },
     "resource_3ca:0200003c": {
@@ -8656,7 +8656,7 @@
       "source": "FIELD/KOROSSEO_KAWA/COORDINATOR.C"
     },
     "resource_386:020001e4": {
-      "name": "Dialogue_RunActor23Line",
+      "name": "SceneDialogue_RunActor23Line",
       "source": "FIELD/KUUPUAPPU_HEYA_SAI/PLACEMENT.C"
     },
     "resource_3c1:02000030": {
@@ -9024,7 +9024,7 @@
       "source": "FIELD/COMMON/RUNPA_SUHARA/INTERIORS.C"
     },
     "resource_386:02000030": {
-      "name": "State_CheckPositionWindow",
+      "name": "SceneState_CheckPositionWindow",
       "source": "FIELD/KUUPUAPPU_HEYA_SAI/PLACEMENT.C"
     },
     "resource_37c:02000030": {
@@ -9248,11 +9248,11 @@
       "source": "FIELD/ARUTIN_MURA/MOTION_PARTICLE.C"
     },
     "resource_386:020004a0": {
-      "name": "Dialogue_RunActor18FlaggedLine",
+      "name": "SceneDialogue_RunActor18FlaggedLine",
       "source": "FIELD/KUUPUAPPU_HEYA_SAI/PLACEMENT.C"
     },
     "resource_386:020004e4": {
-      "name": "Scene_InitSceneStateByStep",
+      "name": "FieldScene_InitSceneStateByStep",
       "source": "FIELD/KUUPUAPPU_HEYA_SAI/PLACEMENT.C"
     },
     "resource_397:02000054": {
@@ -10314,11 +10314,11 @@
       "source": "FIELD/KUUPUAPPU_MURA_SAI/MOTION_EVENT.C"
     },
     "resource_386:0200011c": {
-      "name": "Scene_RunActor16Sequence",
+      "name": "FieldScene_RunActor16Sequence",
       "source": "FIELD/KUUPUAPPU_HEYA_SAI/PLACEMENT.C"
     },
     "resource_386:02000204": {
-      "name": "Scene_RunActor18FlaggedSequence",
+      "name": "FieldScene_RunActor18FlaggedSequence",
       "source": "FIELD/KUUPUAPPU_HEYA_SAI/PLACEMENT.C"
     },
     "resource_38c:02000124": {

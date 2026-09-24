@@ -1,33 +1,32 @@
-/* Draft, not exact (2026-09-24): 128-byte candidate for the 116-byte owner, 62 halfwords differ.
-   The literal pool lands after the level == 0 branch instead of at the end, and the IME write
-   loads 0x0208 from the pool where the reference stores the low half of the IME address
-   register itself (strh r3, [r3]). Plain stores instead of Dma_Set, inverted branches and
-   u16/u32/volatile locals all keep the mid-function pool. */
+/* 2026-09-24: rewritten, 57 differing halfwords (112 of 116 bytes). The IME
+   save stores the register address as its own value (strh r3,[r3]); the
+   reference keeps the battle screen in r0, the palette pointer in r5, the
+   level in r4 and the saved IME slot address in r6. */
 #include "TYPES.H"
 #include "DMA.H"
 
-extern u8 *Data_03001e74;
+struct BattleScreen {
+    u8 unknown_000[0x544];
+    u16 palette[128];
+    s32 brightness;
+};
 
-void Graphics_ScaleRgb555Clamped(const u16 *source, volatile u16 *destination, s32 scale, s32 count);
+s32 Graphics_ScaleRgb555Clamped(u16 *source, u16 *destination, s32 scale, s32 count);
 
-/* Upload the battle palette's colours 0x60..0xdf to palette RAM, dimmed by
-   level (0 copies them unchanged). Interrupts are held off meanwhile. */
-void Unnamed_080c0700(s32 unused, s32 level)
+void Func_080c0700(s32 unused, s32 level)
 {
-    u8 *work;
-    u16 *palette;
-    s32 scale;
-    volatile u32 interrupt_enable;
+    struct BattleScreen *screen = *(struct BattleScreen **)0x03001e74;
+    u16 *palette = screen->palette;
+    volatile u32 ime;
 
-    work = Data_03001e74;
-    palette = (u16 *)(work + 0x544);
-    interrupt_enable = *(u16 *)0x04000208;
-    *(u16 *)0x04000208 = 0x0208;
+    { volatile u16 *reg = (volatile u16 *)0x04000208; ime = *reg; *reg = (u32)reg; }
     if (level == 0) {
         Dma_Set(palette, (void *)0x050000c0, 0x80000080, (volatile u32 *)0x040000d4);
     } else {
-        *(s32 *)(work + 0x644) = scale = 0x10000 - level * 1092;
-        Graphics_ScaleRgb555Clamped(palette, (volatile u16 *)0x050000c0, scale, 0x80);
+        s32 scale = 0x10000 - level * 1092;
+        screen->brightness = scale;
+        Graphics_ScaleRgb555Clamped(palette, (u16 *)0x050000c0, scale, 128);
     }
-    *(u16 *)0x04000208 = interrupt_enable;
+    *(volatile u16 *)0x04000208 = ime;
 }
+

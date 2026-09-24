@@ -76119,6 +76119,154 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "scene-3af-02001444",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/ENTRY_STATE.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3af",
+      "absolute_symbols": {
+        "Engine_GameFlagSet": {
+          "address": "0x0200c2d4",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagIsSet": {
+          "address": "0x0200c2cc",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagClear": {
+          "address": "0x0200c2dc",
+          "kind": "thumb"
+        },
+        "SceneState_ApplyFiveRectsAtColumn78": {
+          "address": "0x0200b950",
+          "kind": "thumb"
+        },
+        "DialogueLayout_ConfigureTwoRegions": {
+          "address": "0x0200b9b8",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetChildValue": {
+          "address": "0x0200c3a4",
+          "kind": "thumb"
+        },
+        "SceneEffect_InitSlotsEightToNineteen": {
+          "address": "0x0200b284",
+          "kind": "thumb"
+        },
+        "Engine_TaskAddCallback": {
+          "address": "0x0200c264",
+          "kind": "thumb"
+        },
+        "SceneState_InitActorSlots8To19": {
+          "address": "0x0200b710",
+          "kind": "thumb"
+        },
+        "Engine_ActorGet": {
+          "address": "0x0200c30c",
+          "kind": "thumb"
+        },
+        "FieldScene_RunScene3af_02001b58": {
+          "address": "0x02009b58",
+          "kind": "thumb"
+        },
+        "FieldScene_RunScene3af_02001a98": {
+          "address": "0x02009a98",
+          "kind": "thumb"
+        },
+        "FieldScene_RunActorTwentyDialogueSequence": {
+          "address": "0x02009d0c",
+          "kind": "thumb"
+        },
+        "FieldScene_RunShipDeckEventScript": {
+          "address": "0x02009db0",
+          "kind": "thumb"
+        },
+        "FuneKanpan_RunDeckCrewScene": {
+          "address": "0x02009f90",
+          "kind": "thumb"
+        },
+        "FieldScene_RunActorSequence": {
+          "address": "0x0200a2c0",
+          "kind": "thumb"
+        },
+        "FieldScene_ConfigureActorGroup": {
+          "address": "0x0200a618",
+          "kind": "thumb"
+        },
+        "FieldScene_ConfigureLeadActors": {
+          "address": "0x0200a9d4",
+          "kind": "thumb"
+        },
+        "FieldScene_ConfigureThreeActors": {
+          "address": "0x0200ab7c",
+          "kind": "thumb"
+        },
+        "FieldScene_RunPartyRosterScene": {
+          "address": "0x0200ac84",
+          "kind": "thumb"
+        },
+        "FieldScene_ConfigureFourActorPresentation": {
+          "address": "0x0200ba0c",
+          "kind": "thumb"
+        },
+        "FuneKanpan_PlaceDeckActors": {
+          "address": "0x020099c0",
+          "kind": "thumb"
+        },
+        "FieldScene_RunScene3af_02001920": {
+          "address": "0x02009920",
+          "kind": "thumb"
+        },
+        "FieldScene_RunScene3af_0200185c": {
+          "address": "0x0200985c",
+          "kind": "thumb"
+        },
+        "SceneActor_PlaceActors20To27": {
+          "address": "0x020097a0",
+          "kind": "thumb"
+        },
+        "FuneKanpan_PlaceRandomDeckActors": {
+          "address": "0x02009684",
+          "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
+        },
+        "SceneState_ConfigureEntries8Through19": {
+          "address": "0x0200b4bc",
+          "kind": "thumb"
+        },
+        "Local_020031a8": {
+          "address": "0x0200b1a8",
+          "kind": "thumb"
+        },
+        "Data_0200db50": {
+          "address": "0x0200db50",
+          "kind": "data"
+        },
+        "Data_0200db60": {
+          "address": "0x0200db60",
+          "kind": "data"
+        },
+        "Data_03001e70": {
+          "address": "0x03001e70",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02001444",
+          "extent": 576,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

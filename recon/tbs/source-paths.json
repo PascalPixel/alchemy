@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_3af:02001444": {
+      "name": "FuneKanpan_ApplyEntryState",
+      "source": "FIELD/FUNE_KANPAN/ENTRY_STATE.C"
+    },
     "resource_395:020012f4": {
       "name": "KorimaKi_PlayGesture",
       "source": "FIELD/KORIMA_KI/GESTURE.C"

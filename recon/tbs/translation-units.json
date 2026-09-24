@@ -79980,6 +79980,46 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "scene-3c0-02000f50",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/SUHARA_SABAKU/F_00F50.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3c0",
+      "absolute_symbols": {
+        "Engine_GameFlagIsSet": {
+          "address": "0x0200924c",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagSet": {
+          "address": "0x02009254",
+          "kind": "thumb"
+        },
+        "Engine_ActorGet": {
+          "address": "0x0200928c",
+          "kind": "thumb"
+        },
+        "Main_0808a5e0": {
+          "address": "0x0200936c",
+          "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02000f50",
+          "extent": 324,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

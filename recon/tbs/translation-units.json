@@ -61647,14 +61647,6 @@
           "address": "0x0200948c",
           "kind": "thumb"
         },
-        "Func_020014f4": {
-          "address": "0x020083a8",
-          "kind": "thumb"
-        },
-        "Func_02002314": {
-          "address": "0x020091f8",
-          "kind": "thumb"
-        },
         "Func_02002698": {
           "address": "0x02009534",
           "kind": "thumb"
@@ -61666,6 +61658,14 @@
         "gGameState": {
           "address": "0x02000240",
           "kind": "data"
+        },
+        "StagedActor_AdvancePair": {
+          "address": "0x020083a8",
+          "kind": "thumb"
+        },
+        "StagedActorPairScene_RunSpinningLeap": {
+          "address": "0x020091f8",
+          "kind": "thumb"
         }
       },
       "owners": [

@@ -20,7 +20,7 @@ union GameStateRows {
 
 extern union GameStateRows Data_02000240_t;
 
-void RamakanSabaku_Func02001054(void)
+void RamakanSabaku_UpdateTravelDust(void)
 {
     struct FieldActor *actor;
     struct EventWork *event;

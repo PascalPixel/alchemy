@@ -64604,7 +64604,7 @@
     },
     {
       "id": "scene-3a5-02001c1c",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/RAMAKAN_SABAKU/F_01C1C.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/RAMAKAN_SABAKU/SAND_SETUP.C",
       "overlay": "resource_3a5",
       "absolute_symbols": {
         "Main_080001a8": {
@@ -73183,7 +73183,7 @@
     },
     {
       "id": "scene-3a5-02001054",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/RAMAKAN_SABAKU/F_01054.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/RAMAKAN_SABAKU/TRAVEL_DUST.C",
       "overlay": "resource_3a5",
       "absolute_symbols": {
         "Engine_ActorGet": {
@@ -73867,7 +73867,7 @@
     },
     {
       "id": "scene-3a5-020012fc",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/RAMAKAN_SABAKU/F_012FC.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/RAMAKAN_SABAKU/DUST_PROBE.C",
       "overlay": "resource_3a5",
       "absolute_symbols": {
         "RamakanSabaku_Func02001054": {

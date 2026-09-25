@@ -10900,7 +10900,7 @@
     },
     "resource_3b0:02000564": {
       "name": "Scene_RunFourActorStagingSequence",
-      "source": "FIELD/FUNE_HOBASHIRA/F_00564.C"
+      "source": "FIELD/FUNE_HOBASHIRA/FOUR_ACTOR_STAGING.C"
     },
     "resource_3ba:020021b8": {
       "name": "CommandInterpolationRenderer_Update"
@@ -20896,8 +20896,8 @@
       "source": "FIELD/FUNE_KANPAN/ROCK.C"
     },
     "resource_3b0:020000c0": {
-      "name": "FuneHobashira_Func020000c0",
-      "source": "FIELD/FUNE_HOBASHIRA/F_000C0.C"
+      "name": "FuneHobashira_SwayActor",
+      "source": "FIELD/FUNE_HOBASHIRA/ACTOR_SWAY.C"
     },
     "resource_3bb:02000400": {
       "name": "KorosseoKabe_PushAlignedWall",

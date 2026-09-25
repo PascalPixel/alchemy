@@ -16,7 +16,7 @@ struct SwayActor {
 
 /* Sways the object back and forth by a random drift within its range and
  * bobs it up and down between heights 0 and one cell. */
-s32 FuneHobashira_Func020000c0(struct SwayActor *actor)
+s32 FuneHobashira_SwayActor(struct SwayActor *actor)
 {
     s16 *state = &actor->x_state;
     s32 next;

@@ -15,8 +15,10 @@
 	.set sub_08011164, 0x08011164
 	.set sub_080114a0, 0x080114a0
 	.set sub_080123f4, 0x080123f4
+	.global WorldMap_UpdateView
 	.global Func_080111b4
 	.thumb_func
+WorldMap_UpdateView:
 Func_080111b4:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

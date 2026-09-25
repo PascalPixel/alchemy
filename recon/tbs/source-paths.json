@@ -912,7 +912,7 @@
       "source": "GRAPHICS/TILE/DECODE_STAGED_BUFFER.C"
     },
     "main:0800fb38": {
-      "name": "Func_0800fb38"
+      "name": "Map_LoadLayeredScene"
     },
     "main:0801edec": {
       "name": "UiWindow_FillFromScene",
@@ -6355,6 +6355,9 @@
     "main:080c1f50": {
       "name": "Summon_ResetCharge"
     },
+    "main:080c1ffc": {
+      "name": "BattleFormation_BuildEnemyList"
+    },
     "main:080c2368": {
       "name": "Summon_GetEntryByte3Kind",
       "source": "BATTLE/SUMMON/DEFINITION.C"
@@ -10542,7 +10545,7 @@
       "source": "GAME/DJINN/RESOLVE_PENDING_EVENT.C"
     },
     "main:0809bcf8": {
-      "name": "Unnamed_0809bcf8"
+      "name": "Map_UpdateWorldMapMarkers"
     },
     "main:0809c138": {
       "name": "Map_ShowWorldMap",
@@ -20171,9 +20174,6 @@
       "name": "Battle_AwardSpoils",
       "source": "BATTLE/AWARD_SPOILS.C"
     },
-    "main:080ca978": {
-      "name": "Unnamed_080ca978"
-    },
     "main:080cb1a4": {
       "name": "Unnamed_080cb1a4"
     },
@@ -20209,9 +20209,6 @@
     },
     "main:080d1714": {
       "name": "Unnamed_080d1714"
-    },
-    "main:080d18a8": {
-      "name": "Unnamed_080d18a8"
     },
     "main:080d33c0": {
       "name": "Unnamed_080d33c0"
@@ -21194,6 +21191,18 @@
     },
     "main:0800dd70": {
       "name": "Object_Wander"
+    },
+    "main:0800df04": {
+      "name": "ScriptObject_WanderNearHome"
+    },
+    "main:0801be80": {
+      "name": "Menu_PushSelectedNode"
+    },
+    "main:0800655c": {
+      "name": "SerialRuntime_StepBlockTransfer"
+    },
+    "main:080111b4": {
+      "name": "WorldMap_UpdateView"
     }
   },
   "symbols": {

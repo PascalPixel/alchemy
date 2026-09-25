@@ -8,10 +8,10 @@
 	.set sub_080770c0, 0x080770c0
 	.set sub_0808b158, 0x0808b158
 	.set sub_0808ba1c, 0x0808ba1c
-	.global Unnamed_0809bcf8
+	.global Map_UpdateWorldMapMarkers
 	.global Func_0809bcf8
 	.thumb_func
-Unnamed_0809bcf8:
+Map_UpdateWorldMapMarkers:
 Func_0809bcf8:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

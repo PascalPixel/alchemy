@@ -11,8 +11,10 @@
 	.set sub_080c1df4, 0x080c1df4
 	.set sub_080c1f50, 0x080c1f50
 	.set sub_080c23c0, 0x080c23c0
+	.global BattleFormation_BuildEnemyList
 	.global Func_080c1ffc
 	.thumb_func
+BattleFormation_BuildEnemyList:
 Func_080c1ffc:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

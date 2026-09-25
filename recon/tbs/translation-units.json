@@ -72575,7 +72575,7 @@
     },
     {
       "id": "scene-377-0200168c",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/HAIDIA_BABI/F_0168C.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/HAIDIA_BABI/SPAWN_PAIR.C",
       "overlay": "resource_377",
       "absolute_symbols": {
         "Engine_ObjectCreate": {

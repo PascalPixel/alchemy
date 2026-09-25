@@ -44,8 +44,8 @@
       "source": "FIELD/HAIDIA_ARASHI/F_0441C.C"
     },
     "resource_377:0200168c": {
-      "name": "HaidiaBabi_Func0200168c",
-      "source": "FIELD/COMMON/HAIDIA_BABI/F_0168C.C"
+      "name": "HaidiaBabi_SpawnEffectPair",
+      "source": "FIELD/COMMON/HAIDIA_BABI/SPAWN_PAIR.C"
     },
     "resource_381:02002eb0": {
       "name": "SoruFunka_SpawnEffectPair",

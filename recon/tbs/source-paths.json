@@ -17508,11 +17508,11 @@
       "source": "FIELD/KOROSSEO_KABE/TASK.C"
     },
     "resource_3bb:020008ec": {
-      "name": "FieldScene_RunScene3bbSequenceA",
+      "name": "FieldScene_PlaceSpectatorRow",
       "source": "FIELD/KOROSSEO_KABE/TASK.C"
     },
     "resource_3bb:02003638": {
-      "name": "FieldScene_RunScene3bbSequenceC"
+      "name": "FieldScene_RunExtendedActorSequence"
     },
     "resource_3bc:02000030": "FIELD/KOROSSEO_MARUTA/LOG_ROLLING.C",
     "resource_3bc:02000038": "FIELD/KOROSSEO_MARUTA/LOG_ROLLING.C",

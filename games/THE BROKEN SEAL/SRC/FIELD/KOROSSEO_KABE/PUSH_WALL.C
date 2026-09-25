@@ -9,7 +9,7 @@ extern u32 Data_03001ae8;
 /* When the leader stands in line with wall block 32 (or 33 on the far rows)
  * and pushes it along the row (left past column 51, right before it), moves
  * the block pair and redraws the cells under both blocks. */
-void KorosseoKabe_Func02000400(void)
+void KorosseoKabe_PushAlignedWall(void)
 {
     struct FieldActor *leader = Engine_ActorGet(gGameState.selected_actor);
     s32 x = leader->x.fixed >> 20;

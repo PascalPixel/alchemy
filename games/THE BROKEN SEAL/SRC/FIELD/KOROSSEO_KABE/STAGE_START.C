@@ -1,7 +1,5 @@
 #include "TYPES.H"
 
-#define KorosseoKabe_RunStageStart Func_02000a1c
-
 extern u8 Data_00000090[];
 extern u8 Data_02000240[];
 void Func_02003c48();

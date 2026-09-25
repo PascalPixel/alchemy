@@ -6,7 +6,7 @@ s32 Main_080091d8(struct FieldActor *actor, union FieldCoordinate *pos);
 
 /* Hops the selected actor one step (two cells) the way it faces, snapping to
  * the facing's sixteenth, unless something blocks the landing cell. */
-void ArutamiraDou_Func02000de8(void)
+void ArutamiraDou_HopSelectedActor(void)
 {
     struct FieldActor *actor = Engine_ActorGet(gGameState.selected_actor);
     s32 flags = actor->motion_flags;

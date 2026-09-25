@@ -18,7 +18,7 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
 }
 
 /* Animate the map cells for the chosen switch, or leave the area. */
-void KorimaMura_Func02000304(void)
+void KorimaMura_AnimateSwitchOrExit(void)
 {
     u8 *work = *(u8 **)0x03001ebc;
     s32 x = 0;

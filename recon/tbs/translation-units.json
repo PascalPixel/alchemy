@@ -61806,7 +61806,7 @@
     },
     {
       "id": "soru-star-f-0478c",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/SORU_STAR/F_0478C.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/SORU_STAR/RING_SETUP.C",
       "overlay": "resource_380",
       "absolute_symbols": {
         "Engine_AllocateBlock": {
@@ -61846,7 +61846,7 @@
       "instances": {
         "resource_381": {
           "owners": {
-            "SoruStar_Func0200478c": {
+            "SoruStar_SetupElementalRings": {
               "address": "0x0200330c"
             }
           },
@@ -62208,7 +62208,7 @@
     },
     {
       "id": "soru-star-f-043bc",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/SORU_STAR/F_043BC.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/SORU_STAR/RISE_SPARKS.C",
       "overlay": "resource_380",
       "absolute_symbols": {
         "Engine_ActorGet": {

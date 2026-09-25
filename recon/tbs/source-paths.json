@@ -416,8 +416,8 @@
       "source": "FIELD/MOGORU_MORI/F_00E18.C"
     },
     "resource_380:020043bc": {
-      "name": "SoruStar_Func020043bc",
-      "source": "FIELD/SORU_STAR/F_043BC.C"
+      "name": "SoruStar_RiseActorFourteenSparks",
+      "source": "FIELD/SORU_STAR/RISE_SPARKS.C"
     },
     "resource_39c:02003948": {
       "name": "MakyuriHeya_OpenThreeStepStair",
@@ -452,12 +452,12 @@
       "source": "FIELD/HAIDIA_IE/F_01084.C"
     },
     "resource_381:0200330c": {
-      "name": "SoruStar_Func0200478c",
-      "source": "FIELD/SORU_STAR/F_0478C.C"
+      "name": "SoruStar_SetupElementalRings",
+      "source": "FIELD/SORU_STAR/RING_SETUP.C"
     },
     "resource_380:0200478c": {
-      "name": "SoruStar_Func0200478c",
-      "source": "FIELD/SORU_STAR/F_0478C.C"
+      "name": "SoruStar_SetupElementalRings",
+      "source": "FIELD/SORU_STAR/RING_SETUP.C"
     },
     "resource_37b:020016a4": {
       "name": "SoruSekizo_CheckTileTrigger016A4",

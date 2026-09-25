@@ -75394,7 +75394,7 @@
     },
     {
       "id": "scene-3c9-02002200",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/VINASU_CHOJO/F_02200.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/VINASU_CHOJO/PAIR_EFFECT.C",
       "overlay": "resource_3c9",
       "absolute_symbols": {
         "Engine_AudioPlayCue": {

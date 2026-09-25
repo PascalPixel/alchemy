@@ -21274,8 +21274,8 @@
       "source": "FIELD/VINASU_HEYA/DUST_STEP.C"
     },
     "resource_3c9:02002200": {
-      "name": "VinasuChojo_Func02002200",
-      "source": "FIELD/VINASU_CHOJO/F_02200.C"
+      "name": "VinasuChojo_SpawnLinkedPairEffects",
+      "source": "FIELD/VINASU_CHOJO/PAIR_EFFECT.C"
     },
     "resource_3b3:0200274c": {
       "name": "TakaraHashira_SetupArea",

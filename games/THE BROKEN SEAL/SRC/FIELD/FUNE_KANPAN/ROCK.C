@@ -24,7 +24,7 @@ extern s32 Data_0200db60[2];
 /* Rocks the ship's deck: sways the camera by the cosine and sine of two
  * slowly, randomly advancing angles and scrolls map layer 5 by its speed,
  * wrapping the scroll within two cells. */
-void FuneKanpan_Func020031a8(void)
+void FuneKanpan_RockDeck(void)
 {
     struct MapWork *map = Data_03001e70;
     s32 *camera = map->camera;

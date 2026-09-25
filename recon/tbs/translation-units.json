@@ -65559,7 +65559,7 @@
           "address": "0x0200a2c0",
           "kind": "thumb"
         },
-        "FieldScene_ConfigureActorGroup": {
+        "FuneKanpan_RunJumpScene": {
           "address": "0x0200a618",
           "kind": "thumb"
         },
@@ -65611,7 +65611,7 @@
           "address": "0x0200b4bc",
           "kind": "thumb"
         },
-        "Local_020031a8": {
+        "FuneKanpan_RockDeck": {
           "address": "0x0200b1a8",
           "kind": "thumb"
         },
@@ -69644,7 +69644,7 @@
     },
     {
       "id": "scene-3af-02002618",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/F_02618.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/JUMP_SCENE.C",
       "overlay": "resource_3af",
       "absolute_symbols": {
         "Engine_EventBegin": {
@@ -70463,7 +70463,7 @@
     },
     {
       "id": "scene-3af-020008e0",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/F_008E0.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/IDLE_TURN.C",
       "overlay": "resource_3af",
       "absolute_symbols": {
         "Engine_RandomNext": {
@@ -71203,7 +71203,7 @@
     },
     {
       "id": "scene-3af-020031a8",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/F_031A8.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/ROCK.C",
       "overlay": "resource_3af",
       "absolute_symbols": {
         "Engine_MathCos": {

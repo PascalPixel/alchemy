@@ -11,7 +11,7 @@
 pub(crate) const CORNER: i32 = 5;
 /// The opacity in percent of every light bevel line (`LIGHT`, and `BAND` as
 /// the inner highlight); dark bevels stay opaque.
-pub(crate) const LIGHT_OPACITY: u32 = 75;
+pub(crate) const LIGHT_OPACITY: u32 = 50;
 
 /// The raised face of every panel, chart and folder.
 pub(crate) const FACE: &str = "#1f7f93";

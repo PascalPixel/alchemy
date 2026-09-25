@@ -90,34 +90,11 @@ enum PromptMessage {
 #define Scene_GetRecord_4(args...) Func_02007da4(args)
 #define Scene_GetRecord_5(args...) Func_02007dc8_a(args)
 
-struct Object {
-    u8 filler00[8];
-    s32 x;
-};
-
-struct SceneRecord {
-    u8 pad[100];
-    u16 value100;
-};
-
-typedef struct {
-    u8 filler0[6];
-    u16 unk6;
-} T;
-
 /*
  * resource_383 owner at 0x02002ba0, 80 bytes.
  * Points two records at a third: each gets the angle from its own offset to the
  * reference record, stored as a halfword at +6.
  */
-struct Rec_383 {
-    u8 pad00[6];
-    u16 f6;                     /* +6  */
-    s32 f8;                     /* +8  */
-    u8 pad0c[4];
-    s32 f16;                    /* +16 */
-};
-
 extern s16 Data_02000240[];
 extern u8 Data_0200dcc8[];
 extern u8 Data_0200dab8[];
@@ -145,7 +122,7 @@ u8 *Func_02004e04(s32);
 u8 *Func_02004e14(s32);
 u8 *Func_02004e3e(s32);
 u8 *Func_02004e4e(s32);
-struct Object *Func_02004e84(s32);
+struct FieldActor *Func_02004e84(s32);
 u8 *Func_02004ebe(s32);
 u8 *Func_02004f1e(s32);
 u8 *Func_02004f7e(s32);
@@ -180,11 +157,11 @@ void Func_020067dc();
 void Func_020068d0();
 void *Func_020067d0();
 u8 *Func_020051d6(s32);
-T *Func_0200533e(s32);
+struct FieldActor *Func_0200533e(s32);
 void Func_02005418(s32);
-struct Rec_383 *Func_02007926();
-struct Rec_383 *Func_0200792e();
-struct Rec_383 *Func_02007936();
+struct FieldActor *Func_02007926();
+struct FieldActor *Func_0200792e();
+struct FieldActor *Func_02007936();
 s32 Func_02007858();
 s32 Func_0200786c();
 void Func_02006290();
@@ -617,13 +594,13 @@ void ActorPresentation_SetSceneCellByAngle(void)
 
 void FieldScene_RunObjectTwentySixPositionCheck(void)
 {
-    struct Object *obj;
+    struct FieldActor *obj;
     s32 x;
     s32 z;
 
     Event_Begin();
     obj = Func_02004e84(26);
-    if ((obj->x >> 20) == 42) {
+    if ((obj->x.fixed >> 20) == 42) {
         x = 41;
         z = 24;
         Map_CopyCellAttributes(101, 24, 3, 4, x, z);
@@ -866,7 +843,7 @@ void SceneDialogue_ShowLine128E(void)
 
 void SceneActor_StepActor24AnimationByFacing(void)
 {
-    T *p;
+    struct FieldActor *p;
     s16 *q;
     s32 v;
     s32 n;
@@ -877,7 +854,7 @@ void SceneActor_StepActor24AnimationByFacing(void)
     Event_SetMessage(MSG_OW_STOP);
     Event_ShowMessage(24, 0);
     Actor_SetSpeed(24, 0x40000, 0x20000);
-    if ((u32)((p->unk6 & 0xf000) - 0x5000) <= 0x6000) {
+    if ((u32)((p->facing & 0xf000) - 0x5000) <= 0x6000) {
         q = (s16 *)((u8 *)p + 100);
         v = *q;
         if (v <= 2) {
@@ -1254,9 +1231,9 @@ void FieldScene_RunOpeningSequenceThird(void)
     GameFlag_Set(2130);
     GameFlag_Set(768);
     Call2(Func_020067dc, 33598369, 3200); /* main:080000d0 */
-    /* Byte flag at +100 of each record: 1 for actor 24's, 3 for actor 25's. */
-    ((struct SceneRecord *)actor24)->value100 = 1;
-    ((struct SceneRecord *)actor25)->value100 = 3;
+    /* Starting movement steps for the two thieves. */
+    ((struct FieldActor *)actor24)->unknown_64 = 1;
+    ((struct FieldActor *)actor25)->unknown_64 = 3;
     BattleRuntime_ScheduleShoulderButtonModeUpdate_1_02001a4c();
 }
 
@@ -1423,12 +1400,12 @@ void SceneState_SetFlagByActorPosition(void)
 
 void SceneActor_FaceActors24And25TowardActorZero(void)
 {
-    struct Rec_383 *origin = Func_02007926(0);
-    struct Rec_383 *first = Func_0200792e(24);
-    struct Rec_383 *second = Func_02007936(25);
+    struct FieldActor *origin = Func_02007926(0);
+    struct FieldActor *first = Func_0200792e(24);
+    struct FieldActor *second = Func_02007936(25);
 
-    first->f6 = Func_02007858(origin->f16 - first->f16, origin->f8 - first->f8);
-    second->f6 = Func_0200786c(origin->f16 - second->f16, origin->f8 - second->f8);
+    first->facing = Func_02007858(origin->z.fixed - first->z.fixed, origin->x.fixed - first->x.fixed);
+    second->facing = Func_0200786c(origin->z.fixed - second->z.fixed, origin->x.fixed - second->x.fixed);
 }
 
 void FieldScene_RunLateSequence(void)

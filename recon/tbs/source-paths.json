@@ -15460,7 +15460,7 @@
       "source": "FIELD/FUNE_KANPAN/MULTI_ENCOUNTER.C"
     },
     "resource_3af:02000030": {
-      "name": "SceneEffect_UpdateCountdownMotion",
+      "name": "SceneActor_UpdateScalePulse",
       "source": "FIELD/FUNE_KANPAN/MULTI_ENCOUNTER.C"
     },
     "resource_3af:02000950": {

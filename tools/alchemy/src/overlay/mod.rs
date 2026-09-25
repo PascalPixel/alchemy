@@ -3,7 +3,6 @@ pub mod assembly;
 pub mod compile;
 pub mod export;
 pub mod flow;
-pub mod listing;
 pub mod owners;
 pub mod park;
 pub mod rom;
@@ -11,7 +10,6 @@ pub mod score;
 pub mod source;
 use crate::compiler::source_paths::SourceOwner;
 use crate::overlay::assembly::OVERLAY_BASE;
-use std::collections::BTreeMap;
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::process::Command;
@@ -195,12 +193,6 @@ pub fn placeholder_lines(stem: &str, span: i64, aliases: &[InternalAlias]) -> Ve
         result.push(format!("\t.space 0x{:x}", span - cursor));
     }
     result
-}
-pub(crate) fn owner_spans(root: &Path) -> Result<BTreeMap<SourceOwner, usize>, String> {
-    owners::owner_spans(
-        root,
-        crate::targets::target_for(crate::targets::DEFAULT_TARGET),
-    )
 }
 use crate::compiler::routing::root;
 use std::process::ExitCode;

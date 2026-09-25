@@ -3303,6 +3303,7 @@ mod tests {
             asset_game("recon/tla/raw/overlays/resource_64a_overlay.s"),
             Some("THE LOST AGE")
         );
+        assert_eq!(asset_game("recon/tla/semantic/regions.json"), None);
         assert_eq!(asset_game("recon/tla/translation-units.json"), None);
         let manifests = manifest_games(["recon/tla/assets.json"]);
         assert!(manifestless_reason("recon/tla/raw/08007320.json", &manifests).is_none());

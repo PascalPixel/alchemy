@@ -315,7 +315,6 @@ AlchemyC_02000d80:
 	.space 0x34
 AlchemyC_02000db4:
 	.space 0x124
-Func_02000ed8:
 	push	{r5, lr}
 	ldr	r3, [pc, #88]
 	movs	r1, #250

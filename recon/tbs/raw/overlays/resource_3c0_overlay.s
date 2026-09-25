@@ -240,7 +240,6 @@ AlchemyC_0200057c:
 	.space 0xc
 AlchemyC_02000588:
 	.space 0xc
-Func_02000594:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -525,7 +524,6 @@ AlchemyC_02000adc:
 	.space 0x38
 AlchemyC_02000b14:
 	.space 0x10
-Func_02000b24:
 	push	{r5, r6, lr}
 	ldr	r3, [pc, #184]
 	adds	r6, r1, #0

@@ -507,7 +507,6 @@ AlchemyC_02000b10:
 	.space 0xa8
 AlchemyC_02000bb8:
 	.space 0x13c
-DebugMenu_SelectItem:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r8

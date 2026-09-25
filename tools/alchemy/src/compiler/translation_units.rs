@@ -10,6 +10,50 @@ use std::path::{Component, Path, PathBuf};
 pub const FORMAT: u32 = 6;
 const EDITIONS: [&str; 6] = ["ja", "en", "de", "es", "fr", "it"];
 
+#[derive(Deserialize)]
+struct ReviewedRegions {
+    manual_regions: Vec<ReviewedRegion>,
+}
+#[derive(Deserialize)]
+struct ReviewedRegion {
+    overlay: String,
+    entry: String,
+    span_bytes: usize,
+}
+pub fn reviewed_overlay_spans(root: &Path) -> Result<BTreeMap<SourceOwner, usize>, String> {
+    reviewed_overlay_spans_for_game(root, CompilerTarget::Tbs.recon())
+}
+
+/// The reviewed owner register under one game's `recon/<game>` directory.
+pub fn reviewed_overlay_spans_for_game(
+    root: &Path,
+    recon_dir: &str,
+) -> Result<BTreeMap<SourceOwner, usize>, String> {
+    let path = root.join(recon_dir).join("semantic/regions.json");
+    let document: ReviewedRegions = crate::compiler::build_io::read_json(path)?;
+    let mut spans = BTreeMap::new();
+    for region in document.manual_regions {
+        let owner = SourceOwner::parse(&format!(
+            "{}:{}",
+            region.overlay,
+            region.entry.trim_start_matches("0x")
+        ))?;
+        if region.span_bytes == 0 {
+            return Err(format!(
+                "{} has no positive reviewed span_bytes",
+                owner.id()
+            ));
+        }
+        if spans.insert(owner, region.span_bytes).is_some() {
+            return Err(format!(
+                "{} has duplicate reviewed owner entries",
+                owner.id()
+            ));
+        }
+    }
+    Ok(spans)
+}
+
 /// A requested span is a constraint, never evidence of a function boundary.
 /// `installed_span` must come from a source-backed production C placeholder.
 pub fn resolve_overlay_span(
@@ -97,6 +141,9 @@ pub struct TranslationOwner {
     pub extent: usize,
     #[serde(skip)]
     pub state: OwnerState,
+    /// Older lane tooling still writes a state; placement decides it.
+    #[serde(default, rename = "state")]
+    pub _declared_state: Option<serde_json::Value>,
 }
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq)]
 #[serde(deny_unknown_fields)]
@@ -184,6 +231,12 @@ pub struct TranslationUnit {
     /// The game whose manifest declares the unit.
     #[serde(skip)]
     pub game: String,
+    /// Older lane tooling still writes these; the manifest file and the
+    /// routing tables decide them.
+    #[serde(default, rename = "game")]
+    pub _declared_game: Option<serde_json::Value>,
+    #[serde(default, rename = "compiler_route")]
+    pub _declared_route: Option<serde_json::Value>,
     /// The C file the unit compiles. A main-image unit of drafts alone
     /// declares none: its source is the composite `draft_composite` writes.
     #[serde(default)]
@@ -718,12 +771,8 @@ impl TranslationUnits {
                     };
                     continue;
                 };
-                if owner.extent != 0 {
-                    return Err(format!(
-                        "{}: {overlay} owner 0x{:08x} declares the extent its listing bounds",
-                        unit.id, owner.address
-                    ));
-                }
+                // A declared extent (older lane tooling still writes one) is
+                // ignored: the listing bounds every overlay owner.
                 (owner.state, owner.extent) = match placement.placeholder(overlay, owner.address) {
                     Some(extent) => (OwnerState::ExactC, extent),
                     None => (OwnerState::NotYetC, placement.label(overlay, owner.address)),
@@ -734,12 +783,6 @@ impl TranslationUnits {
                     continue;
                 }
                 for owner in instance.owners.values_mut() {
-                    if owner.extent != 0 {
-                        return Err(format!(
-                            "{}: {image} instance owner 0x{:08x} declares the extent its listing bounds",
-                            unit.id, owner.address
-                        ));
-                    }
                     owner.extent = placement.placeholder(image, owner.address).unwrap_or(0);
                 }
             }
@@ -1128,9 +1171,9 @@ fn validate_production_state(
         })
         .transpose()?;
     let reviewed = if retained_overlay_candidate {
-        crate::overlay::owners::owner_spans(
+        reviewed_overlay_spans_for_game(
             root,
-            crate::overlay::owners::production_target(unit.target()?),
+            &crate::compiler::routing::recon_directory(&unit.game),
         )?
     } else {
         BTreeMap::new()
@@ -1253,7 +1296,7 @@ struct Placement<'a> {
     root: &'a Path,
     game: CompilerTarget,
     placeholders: BTreeMap<String, BTreeMap<u32, usize>>,
-    labels: BTreeMap<String, BTreeMap<u32, usize>>,
+    reviewed: Option<BTreeMap<SourceOwner, usize>>,
 }
 impl<'a> Placement<'a> {
     fn new(root: &'a Path, game: CompilerTarget) -> Self {
@@ -1261,7 +1304,7 @@ impl<'a> Placement<'a> {
             root,
             game,
             placeholders: BTreeMap::new(),
-            labels: BTreeMap::new(),
+            reviewed: None,
         }
     }
     /// The extent of the `AlchemyC_` placeholder at `address`.
@@ -1277,24 +1320,18 @@ impl<'a> Placement<'a> {
             .get(&address)
             .copied()
     }
-    /// The extent of the not-yet-C owner whose listing label is at `address`.
+    /// The reviewed extent of the not-yet-C owner at `address`, from the
+    /// game's `semantic/regions.json`.
     fn label(&mut self, overlay: &str, address: u32) -> usize {
         let (root, game) = (self.root, self.game);
-        self.labels
-            .entry(overlay.to_owned())
-            .or_insert_with(|| {
-                let target = crate::overlay::owners::production_target(game);
-                let path = root.join(target.overlay_assembly(overlay));
-                crate::overlay::listing::read(root, &path, &target.overlay_macro())
-                    .map(|listing| {
-                        listing
-                            .owners()
-                            .map(|(_, entry, extent)| (entry, extent))
-                            .collect()
-                    })
-                    .unwrap_or_default()
+        let Ok(owner) = SourceOwner::parse(&format!("{overlay}:{address:08x}")) else {
+            return 0;
+        };
+        self.reviewed
+            .get_or_insert_with(|| {
+                reviewed_overlay_spans_for_game(root, game.recon()).unwrap_or_default()
             })
-            .get(&address)
+            .get(&owner)
             .copied()
             .unwrap_or(0)
     }
@@ -2004,6 +2041,27 @@ mod tests {
             .unwrap()
             .kind = AbsoluteSymbolKind::Thumb;
         assert!(invalid.validate_editions().is_err());
+    }
+    #[test]
+    fn reviewed_owner_duplicates_never_select_the_last_extent() {
+        let root = tempfile::tempdir().unwrap();
+        let path = root.path().join("recon/tbs/semantic/regions.json");
+        std::fs::create_dir_all(path.parent().unwrap()).unwrap();
+        for sizes in [[4, 4], [4, 8]] {
+            let rows = sizes.map(|span| {
+                serde_json::json!({
+                    "overlay": "resource_371", "entry": "0x02000100", "span_bytes": span
+                })
+            });
+            std::fs::write(
+                &path,
+                serde_json::json!({"manual_regions": rows}).to_string(),
+            )
+            .unwrap();
+            assert!(reviewed_overlay_spans(root.path())
+                .unwrap_err()
+                .contains("duplicate"));
+        }
     }
     #[test]
     fn supplied_overlay_spans_cannot_establish_or_resize_owners() {

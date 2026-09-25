@@ -10937,6 +10937,12 @@
       "name": "Scene_BoulderFalls",
       "source": "FIELD/HAIDIA_ARASHI/GROUP_DEPARTURE.C"
     },
+    "resource_383:020019a2": {
+      "name": "Scene_RunMiddleSequence"
+    },
+    "resource_37b:0200101a": {
+      "name": "Scene_RunMiddleSequence"
+    },
     "resource_371:0200395c": {
       "name": "FieldScene_RunLateSequence",
       "source": "FIELD/WORLD_MAP/ACTOR_TRANSFER.C"
@@ -16979,6 +16985,9 @@
     "resource_3c4:02001924": {
       "name": "SceneState_SetValue202ThenCall",
       "source": "FIELD/BABI_CHIKA/MAP_INIT.C"
+    },
+    "resource_3c4:02001fda": {
+      "name": "FieldScene_RunLateSequence"
     },
     "resource_3c4:02001d04": {
       "name": "FieldScene_RunMiddleSequence",

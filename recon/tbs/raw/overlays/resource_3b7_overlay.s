@@ -361,7 +361,6 @@ AlchemyC_020001a8:
 	.space 0x30
 AlchemyC_020001d8:
 	.space 0x2e4
-Func_020004bc:
 	push	{r5, r6, lr}
 	mov	r6, r8
 	push	{r6}
@@ -753,7 +752,6 @@ AlchemyC_020008f8:
 	.space 0x100
 AlchemyC_020009f8:
 	.space 0xd0
-Func_02000ac8:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -1071,7 +1069,6 @@ AlchemyC_02000dd0:
 	.space 0x74
 AlchemyC_02000e44:
 	.space 0x18
-FieldScene_RunSecondaryScript:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r9

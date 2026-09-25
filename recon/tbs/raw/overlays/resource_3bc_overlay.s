@@ -992,7 +992,6 @@ AlchemyC_0200003c:
 	.space 0x8
 AlchemyC_02000044:
 	.space 0x8
-Func_0200004c:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r9
@@ -1276,7 +1275,6 @@ AlchemyC_02002e18:
 	.space 0x3c
 AlchemyC_02002e54:
 	.space 0x94
-CommandInterpolationRenderer_Update:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -1902,7 +1900,6 @@ AlchemyC_02003468:
 	.space 0x10c
 AlchemyC_02003574:
 	.space 0xcc
-Func_02003640:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -2132,7 +2129,6 @@ AlchemyC_020038dc:
 	.space 0x20
 AlchemyC_020038fc:
 	.space 0x20
-Func_0200391c:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -2310,7 +2306,6 @@ AlchemyC_02003ddc:
 	.space 0x114
 AlchemyC_02003ef0:
 	.space 0x1e0
-FieldScene_RunScene3bcSequenceB:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl

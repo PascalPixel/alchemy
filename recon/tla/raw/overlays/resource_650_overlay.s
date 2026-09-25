@@ -2337,7 +2337,6 @@ AlchemyC_02000054:
 	.4byte 0x02000240
 	.2byte 0xb790
 	.2byte 0x0200
-Scene_RunActorConversation:
 	push	{r5, lr}
 	bl	sub_02003ed0
 	movs	r0, #0

@@ -11,7 +11,7 @@ extern s32 Data_0200d1b4[];
 /* Rolls the object a step along its heading, sized by how far it sits
  * below its target height; counts down its rolling timer (cues at 20 and
  * 0) and then picks the animation from the slope ahead of it. */
-void ArutinYama_Func02003738(struct FieldActor *object)
+void ArutinYama_AdvanceRollingObject(struct FieldActor *object)
 {
     s32 angle = 0xc000;
     s32 radius;

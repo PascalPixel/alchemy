@@ -14,7 +14,7 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
 }
 
 /* Opens the lane beside whichever villager stands in it: the cells copied depend on the villager's column, and the matching flag is set. */
-void HaidiaMura_Func02005950(void)
+void HaidiaMura_OpenVillagerLane(void)
 {
     struct FieldActor *actor;
     s32 column;

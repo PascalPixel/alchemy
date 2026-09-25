@@ -10721,7 +10721,8 @@
       "name": "Owner_GetState"
     },
     "main:080aae14": {
-      "name": "OwnerAction_DiffSlots"
+      "name": "OwnerAction_DiffSlots",
+      "source": "MENU/ACT_DIFF.C"
     },
     "main:080ae9f0": {
       "name": "UiIcon_DrawVariantWithTileOffset"

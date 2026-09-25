@@ -1,7 +1,9 @@
-/* Draft, not exact (2026-09-24): hoisting effect->range into a local before the target loop
-   reproduces the reference control flow and pool; the only residual is four missing register
-   copies (adds r3,r2,#0 before both range compares and adds r2,r3,#0 after the tail load).
-   The earlier do-while form scored 11 differing halfwords at equal length. */
+/* NONMATCHING: 1336 of 1336 bytes, 11 differing halfwords (2026-09-25).
+ * Restored the closer do-while form; the later range-hoisting rewrite
+ * emitted 1328 bytes and differed in 555 halfwords. Remaining: the first
+ * range load and unsigned target-count precheck. Wider range locals and
+ * an inline getter did not restore the reference register copies.
+ */
 #include "TYPES.H"
 #include "BATTLE_EFX.H"
 #include "BATTLE_TYPES.H"
@@ -52,7 +54,6 @@ s32 BattleFx_ApplyToTargets(
     s32 target_id,
     s32 fixed_scale)
 {
-    u8 range;
     struct BattleAction *effect;
     struct Runtime_080a9f10 *runtime;
     struct Object_080a9f10 *target;
@@ -77,10 +78,10 @@ s32 BattleFx_ApplyToTargets(
     else
         target = Func_08077008(0);
 
-    range = effect->range;
-    for (index = 0; index < runtime->target_count; index = (u8)(index + 1)) {
-        {
-            if (range == 0xff) {
+    index = 0;
+    if (runtime->target_count != 0) {
+        do {
+            if (effect->range == 0xff) {
                 target_id = runtime->targets[index];
                 target = Func_08077008(target_id);
             }
@@ -292,10 +293,10 @@ s32 BattleFx_ApplyToTargets(
                 break;
             }
 
-            range = effect->range;
-            if (range != 0xff)
+            if (effect->range != 0xff)
                 break;
-        }
+            index = (u8)(index + 1);
+        } while (index < runtime->target_count);
     }
 
     if (changed == 0) {

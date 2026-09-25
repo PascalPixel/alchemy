@@ -48,7 +48,7 @@ struct WorldMapOam {
 };
 
 /* Spawns the linked pair of effect objects above the parent actor and gives the two their update routines and priorities. */
-void HaidiaBabi_Func0200168c(union PairObject *parent)
+void HaidiaBabi_SpawnEffectPair(union PairObject *parent)
 {
     union PairObject *pair[2];
     union PairObject *child;

@@ -168,6 +168,10 @@ Each of these closed real owners. Try them before inventing anything new.
   reduction) dumps before sweeping spellings.
 - **Last resort, tagged:** a `do { } while (0);` around one or two statements,
   a statement swap, or a temporary that fixes one evaluation order.
+- **Scoped temporaries.** A local declared in a block after parameter setup
+  can change spill allocation where declaration order alone cannot. This
+  closed Vinasu's 628-byte dust routine: form the parameter address before
+  declaring its temporary velocity. Tag a scope kept only for matching.
 
 ## Making the C read like Camelot's
 

@@ -20345,9 +20345,6 @@
     "main:080f7460": {
       "name": "Unnamed_080f7460"
     },
-    "main:080f7610": {
-      "name": "Unnamed_080f7610"
-    },
     "main:080a6a98": {
       "name": "PsynergyMenu_DrawDetailPage",
       "source": "MENU/ABILITY/DRAW_DETAIL_PAGE.C"
@@ -21246,6 +21243,10 @@
     "resource_39c:020055c0": {
       "name": "Makyuri_RunActorMove",
       "source": "FIELD/COMMON/MAKYURI/ACTOR_MOVE.C"
+    },
+    "resource_3c8:02004048": {
+      "name": "VinasuHeya_Func02004048",
+      "source": "FIELD/VINASU_HEYA/F_04048.C"
     }
   },
   "symbols": {

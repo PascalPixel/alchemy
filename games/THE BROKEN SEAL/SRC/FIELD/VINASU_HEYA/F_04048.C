@@ -1,10 +1,3 @@
-/* NONMATCHING: 628 bytes, candidate 628, 10 differing halfwords, 10 halfword
- * edits (2026-09-25). VinasuHeya_Func02004048, meant for
- * FIELD/VINASU_HEYA/F_04048.C as a single-overlay unit binding its names at
- * their runtime addresses (an import veneer's listing offset plus 0x8000).
- * Remaining: WALL: allocation-uncovered 10 HW — id↔center and
- * &params↔vx stack slots swapped, plus dir->x*scale mul operand order;
- * size-exact; RamakanSabaku_Func020012fc sibling shape */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
@@ -38,15 +31,14 @@ static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
 
 void VinasuHeya_Func02004048(struct DirXZ *dir)
 {
-    struct FieldActor *center;
     s32 id;
+    struct FieldActor *center;
     struct FieldActor *actor;
     s32 pos[3];
     struct DustParams params;
     s32 hit;
     s32 phase;
     s32 x;
-    s32 vx;
     s32 vz;
 
     {
@@ -64,9 +56,14 @@ void VinasuHeya_Func02004048(struct DirXZ *dir)
     if (phase == 0) {
         params.angle = ((u32)(Engine_RandomNext() << 12) >> 16) + 0xf800;
         x = actor->x.fixed + (((u32)(Engine_RandomNext() * 12) >> 16) << 16) - 0x60000;
-        vx = dir->x * (((u32)(Engine_RandomNext() * 5) >> 16) * 0x1999 + 0x7ffd);
-        vz = dir->z * (((u32)(Engine_RandomNext() * 5) >> 16) * 0x1999 + 0x7ffd);
-        Effect_Spawn(x, actor->y.fixed, actor->z.fixed, vx, phase, vz, 0x800000, &params);
+        /* FAKEMATCH: this scope preserves the velocity and parameter spill order. */
+        {
+            s32 vx;
+
+            vx = (((u32)(Engine_RandomNext() * 5) >> 16) * 0x1999 + 0x7ffd) * dir->x;
+            vz = dir->z * (((u32)(Engine_RandomNext() * 5) >> 16) * 0x1999 + 0x7ffd);
+            Effect_Spawn(x, actor->y.fixed, actor->z.fixed, vx, phase, vz, 0x800000, &params);
+        }
     }
     if (hit < 0) {
         Call2((void (*)())Engine_ActorSetAttachedEffect, id, 0x102);

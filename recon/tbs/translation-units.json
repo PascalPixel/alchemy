@@ -75209,6 +75209,58 @@
           "address": "0x02000430"
         }
       ]
+    },
+    {
+      "id": "scene-3c8-02004048",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/VINASU_HEYA/F_04048.C",
+      "overlay": "resource_3c8",
+      "absolute_symbols": {
+        "Engine_ActorGet": {
+          "address": "0x0200ceac",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetAttachedEffect": {
+          "address": "0x0200cf74",
+          "kind": "thumb"
+        },
+        "Engine_ObjectCommitPosition": {
+          "address": "0x0200ce0c",
+          "kind": "thumb"
+        },
+        "Engine_ObjectSetAnimation": {
+          "address": "0x0200cdd4",
+          "kind": "thumb"
+        },
+        "Engine_ObjectSetPosition": {
+          "address": "0x0200ce04",
+          "kind": "thumb"
+        },
+        "Engine_RandomNext": {
+          "address": "0x0200cdb4",
+          "kind": "thumb"
+        },
+        "Engine_TaskWait": {
+          "address": "0x0200cda4",
+          "kind": "thumb"
+        },
+        "Main_080091d8": {
+          "address": "0x0200ce3c",
+          "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gFrameCount": {
+          "address": "0x03001e40",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02004048"
+        }
+      ]
     }
   ]
 }

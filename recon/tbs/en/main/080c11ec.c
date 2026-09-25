@@ -1,11 +1,7 @@
-/* DRAFT: 588 of 588 bytes, 5 differing halfwords, same control flow and
- * pool. Remaining: before the spark loop the ROM sets the counter 15 in r2
- * and loads the IWRAM multiply routine through r3 (which waits on the draw
- * callback just moved out of r3); this compile gives the routine r2 and the
- * counter r3, so sched2 issues the routine load first. The -da dumps show
- * the loop pass keeps the source order; the swap comes from reload. The
- * sprite tables are not const: the ROM stores the ring age before loading
- * the ring table entry. */
+/* NONMATCHING: 588 bytes, candidate 588, 2 differing halfwords.
+ * A count-up source loop is reversed by the compiler and matches the ROMs countdown and register choices.
+ * WALL: One scheduling swap remains: moving the multiply routine into r9 precedes adding the spark base in the ROM.
+ */
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 
@@ -90,7 +86,7 @@ s32 Func_080c11ec(void)
     work = Data_03001e50.work;
     work->ready = 0;
     draw = Data_03001e50.draw_spark;
-    for (i = 15, spark = work->sparks; i >= 0; spark++, i--) {
+    for (i = 0, spark = work->sparks; i < 16; spark++, i++) {
         life = spark->life;
         if (life != 0) {
             dist = FixedSqrt((spark->pos[0] >> 8) * (spark->pos[0] >> 8)

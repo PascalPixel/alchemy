@@ -10403,6 +10403,10 @@
       "name": "BattlePres_WaitSync",
       "source": "BATTLE/PRESENTATION/WAIT_SYNC.C"
     },
+    "main:080b6148": {
+      "name": "BattlePres_SyncTurn",
+      "source": "BATTLE/PRESENTATION/SYNC_TURN.C"
+    },
     "main:080b8574": {
       "name": "BattlePresentation_BuildSortedUnitEntries"
     },

@@ -20,7 +20,7 @@ struct Sprite389 {
 /* Spawn a pillar effect object: flags pick the script (low nibble) and the
  * palette (bits 16-19); the high half of layer picks the sprite layer, 0 to
  * copy the leader's, and its low half is stored at +102. */
-void GomaHashira_Func02000a68(s32 x, s32 y, s32 z, s32 a3, s32 a4, s32 flags, s32 layer)
+void GomaHashira_SpawnPillarEffect(s32 x, s32 y, s32 z, s32 a3, s32 a4, s32 flags, s32 layer)
 {
     struct ScriptTable table;
     u8 *leader;

@@ -34,7 +34,7 @@ struct Flags9 {
 };
 
 /* Spawns the effect object above actor a0 with its script, zeroes its state and copies the owner's sprite mode. */
-void ShindenHeya_Func02002750(s32 a0, s32 a1)
+void ShindenHeya_SpawnOwnerEffect(s32 a0, s32 a1)
 {
     u32 i;
     s32 p8;

@@ -14,7 +14,7 @@ static __inline__ s32 Value1(s32 (*f)(), s32 a0)
     return f(a0);
 }
 
-void ShindenHeya_Func0200267c(u8 *obj)
+void ShindenHeya_FollowLeaderOffset(u8 *obj)
 {
     u8 *leader;
 

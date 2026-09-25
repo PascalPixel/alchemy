@@ -11,7 +11,7 @@ extern u8 *Data_03001ebc;
 #define SKIP_BEATS (*(u16 *)(Data_03001ebc + 0x1d8))
 
 void Func_020025c4();
-void Func_02002750();
+void ShindenHeya_SpawnOwnerEffect();
 void Func_0200290c();
 u8 *Func_0808a080();
 void Func_0808a118();
@@ -902,18 +902,18 @@ void FieldScene_RunScriptedSceneSequence(void)
     Actor_SetChildValue(8, 0x100);
     Func_020025c4();
     Audio_PlayCue(0xc4);
-    Func_02002750(8, 0x1200);
+    ShindenHeya_SpawnOwnerEffect(8, 0x1200);
     Event_Wait(0x20);
-    Func_02002750(8, 0x1200);
+    ShindenHeya_SpawnOwnerEffect(8, 0x1200);
     Event_Wait(0x10);
     for (i = 0; i < 6; i++) {
-        Func_02002750(8, 0x1200);
+        ShindenHeya_SpawnOwnerEffect(8, 0x1200);
         Event_Wait(8);
     }
     Event_Wait(8);
-    Func_02002750(8, 0x1200);
+    ShindenHeya_SpawnOwnerEffect(8, 0x1200);
     Event_Wait(0x20);
-    Func_02002750(8, 0x1200);
+    ShindenHeya_SpawnOwnerEffect(8, 0x1200);
     Event_Wait(0x60);
     Event_Wait(0x20);
     Actor_SetChildValue(8, 0);
@@ -968,9 +968,9 @@ void FieldScene_RunScriptedSceneSequence(void)
     Actor_SetChildValue(8, 0x100);
     Func_020025c4();
     Audio_PlayCue(0xc4);
-    Func_02002750(8, 0x1200);
+    ShindenHeya_SpawnOwnerEffect(8, 0x1200);
     Event_Wait(0x20);
-    Func_02002750(8, 0x1200);
+    ShindenHeya_SpawnOwnerEffect(8, 0x1200);
     Actor_FaceActor(ACTOR_PARTY_LEADER, 8, 0);
     Actor_FaceActor(ACTOR_GERALD, 8, 0);
     Actor_FaceActor(0xb, 8, 0);
@@ -985,13 +985,13 @@ void FieldScene_RunScriptedSceneSequence(void)
     Actor_StartRepeatedMotion(9, 1);
     Actor_StartRepeatedMotion(0xa, 1);
     for (i = 0; i < 6; i++) {
-        Func_02002750(8, 0x1200);
+        ShindenHeya_SpawnOwnerEffect(8, 0x1200);
         Event_Wait(8);
     }
     Event_Wait(8);
-    Func_02002750(8, 0x1200);
+    ShindenHeya_SpawnOwnerEffect(8, 0x1200);
     Event_Wait(0x20);
-    Func_02002750(8, 0x1200);
+    ShindenHeya_SpawnOwnerEffect(8, 0x1200);
     Event_Wait(0x80);
     Actor_SetChildValue(8, 0);
     Event_Wait(0x1e);

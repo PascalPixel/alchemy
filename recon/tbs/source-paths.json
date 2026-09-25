@@ -7058,7 +7058,8 @@
       "source": "FIELD/KUUPUAPPU_HEYA/PROMPT.C"
     },
     "resource_383:02000de4": {
-      "name": "Scene_RunMainSequence"
+      "name": "Scene_JoinRodSearch",
+      "source": "FIELD/KUUPUAPPU_HEYA/ROD_HELP.C"
     },
     "resource_383:02001348": {
       "name": "FieldScene_RunVaultClosingSequence",
@@ -21254,6 +21255,10 @@
     "resource_3c9:02002200": {
       "name": "VinasuChojo_Func02002200",
       "source": "FIELD/VINASU_CHOJO/F_02200.C"
+    },
+    "resource_3b3:0200274c": {
+      "name": "TakaraHashira_SetupArea",
+      "source": "FIELD/TAKARA_HASHIRA/SETUP.C"
     }
   },
   "symbols": {

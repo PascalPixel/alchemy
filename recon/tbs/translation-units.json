@@ -3538,82 +3538,6 @@
       ]
     },
     {
-      "id": "retained-overlay-383-main-sequence",
-      "source": "recon/tbs/en/overlays/resource_383_c_02000de4.c",
-      "overlay": "resource_383",
-      "absolute_symbols": {
-        "Func_02005bfc": {
-          "address": "0x0200cdb4",
-          "kind": "thumb"
-        },
-        "Func_02005bfc_a": {
-          "address": "0x0200cd3c",
-          "kind": "thumb"
-        },
-        "Func_02005ce6": {
-          "address": "0x0200cdfc",
-          "kind": "thumb"
-        },
-        "Func_02005ce6_a": {
-          "address": "0x0200cd3c",
-          "kind": "thumb"
-        },
-        "Func_02005d1e": {
-          "address": "0x0200cdfc",
-          "kind": "thumb"
-        },
-        "Func_02005d1e_a": {
-          "address": "0x0200cd3c",
-          "kind": "thumb"
-        },
-        "Func_02005d86": {
-          "address": "0x0200ce3c",
-          "kind": "thumb"
-        },
-        "Func_02005d86_a": {
-          "address": "0x0200ce1c",
-          "kind": "thumb"
-        },
-        "Func_02005f3e": {
-          "address": "0x0200ce3c",
-          "kind": "thumb"
-        },
-        "Func_02005f3e_a": {
-          "address": "0x0200ce24",
-          "kind": "thumb"
-        },
-        "Func_02005f60": {
-          "address": "0x0200ce3c",
-          "kind": "thumb"
-        },
-        "Func_02005f60_a": {
-          "address": "0x0200ce24",
-          "kind": "thumb"
-        },
-        "Func_02005e66": {
-          "address": "0x0200cd3c",
-          "kind": "thumb"
-        },
-        "Func_02005e66_a": {
-          "address": "0x0200ccf4",
-          "kind": "thumb"
-        },
-        "Func_0200583c": {
-          "address": "0x0200c684",
-          "kind": "thumb"
-        },
-        "Func_0200583c_a": {
-          "address": "0x0200c63c",
-          "kind": "thumb"
-        }
-      },
-      "owners": [
-        {
-          "address": "0x02000de4"
-        }
-      ]
-    },
-    {
       "id": "elemental-star-demand",
       "source": "games/THE BROKEN SEAL/SRC/FIELD/SORU_STAR/ELEMENTAL_STAR_DEMAND.C",
       "overlay": "resource_380",
@@ -10495,7 +10419,21 @@
         {
           "address": "0x02000de4"
         }
-      ]
+      ],
+      "absolute_symbols": {
+        "Engine_DebugGetItem": {
+          "address": "0x02009444",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagIsSet": {
+          "address": "0x02009454",
+          "kind": "thumb"
+        },
+        "Engine_OwnerGetState": {
+          "address": "0x0200943c",
+          "kind": "thumb"
+        }
+      }
     },
     {
       "id": "menu-clear-fill-tile-block",
@@ -28730,34 +28668,6 @@
       ]
     },
     {
-      "id": "retained-scene-event-sequence-3af",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/DECK_EVENT_SCRIPT.C",
-      "overlay": "resource_3af",
-      "absolute_symbols": {
-        "Func_02006186_a": {
-          "address": "0x0200c3a4",
-          "kind": "thumb"
-        },
-        "Func_02006186_b": {
-          "address": "0x0200c35c",
-          "kind": "thumb"
-        },
-        "Func_0200620a_a": {
-          "address": "0x0200c30c",
-          "kind": "thumb"
-        },
-        "Func_0200620a_b": {
-          "address": "0x0200c2c4",
-          "kind": "thumb"
-        }
-      },
-      "owners": [
-        {
-          "address": "0x02001db0"
-        }
-      ]
-    },
-    {
       "id": "retained-overlay-3af-020022c0",
       "source": "recon/tbs/en/overlays/resource_3af_c_020022c0.c",
       "overlay": "resource_3af",
@@ -28792,6 +28702,10 @@
         },
         "Engine_ActorStop": {
           "address": "0x0200c334",
+          "kind": "thumb"
+        },
+        "Engine_ActorWalkToAndWait": {
+          "address": "0x0200c35c",
           "kind": "thumb"
         },
         "Engine_AudioPlayCue": {
@@ -28858,6 +28772,34 @@
       "owners": [
         {
           "address": "0x020022c0"
+        }
+      ]
+    },
+    {
+      "id": "retained-scene-event-sequence-3af",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/DECK_EVENT_SCRIPT.C",
+      "overlay": "resource_3af",
+      "absolute_symbols": {
+        "Func_02006186_a": {
+          "address": "0x0200c3a4",
+          "kind": "thumb"
+        },
+        "Func_02006186_b": {
+          "address": "0x0200c35c",
+          "kind": "thumb"
+        },
+        "Func_0200620a_a": {
+          "address": "0x0200c30c",
+          "kind": "thumb"
+        },
+        "Func_0200620a_b": {
+          "address": "0x0200c2c4",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02001db0"
         }
       ]
     },
@@ -31033,16 +30975,6 @@
       ]
     },
     {
-      "id": "retained-overlay-3a5-020018a4",
-      "source": "recon/tbs/en/overlays/resource_3a5_c_020018a4.c",
-      "overlay": "resource_3a5",
-      "owners": [
-        {
-          "address": "0x020018a4"
-        }
-      ]
-    },
-    {
       "id": "ramakan-sabaku-selected-actor-set-effect-record-mode",
       "source": "games/THE BROKEN SEAL/SRC/FIELD/RAMAKAN_SABAKU/SELECTED_ACTOR_SET_EFFECT_RECORD_MODE.C",
       "overlay": "resource_3a5",
@@ -31208,6 +31140,50 @@
           "address": "0x0200033c"
         }
       ]
+    },
+    {
+      "id": "retained-overlay-3a5-020018a4",
+      "source": "recon/tbs/en/overlays/resource_3a5_c_020018a4.c",
+      "overlay": "resource_3a5",
+      "owners": [
+        {
+          "address": "0x020018a4"
+        }
+      ],
+      "absolute_symbols": {
+        "Engine_GameFlagIsSet": {
+          "address": "0x02009d44",
+          "kind": "thumb"
+        },
+        "Engine_MathDivide": {
+          "address": "0x02009c84",
+          "kind": "thumb"
+        },
+        "Engine_VramLoad": {
+          "address": "0x02009ccc",
+          "kind": "thumb"
+        },
+        "Main_08000168": {
+          "address": "0x02009cac",
+          "kind": "thumb"
+        },
+        "Main_080001c0": {
+          "address": "0x02009cc4",
+          "kind": "thumb"
+        },
+        "Main_080001e8": {
+          "address": "0x02009cdc",
+          "kind": "thumb"
+        },
+        "Main_08000320": {
+          "address": "0x02009ce4",
+          "kind": "thumb"
+        },
+        "gFrameCount": {
+          "address": "0x03001e40",
+          "kind": "data"
+        }
+      }
     },
     {
       "id": "battle-action-resolution",
@@ -75553,6 +75529,150 @@
       "owners": [
         {
           "address": "0x02000390"
+        }
+      ]
+    },
+    {
+      "id": "scene-383-02000de4",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_HEYA/ROD_HELP.C",
+      "overlay": "resource_383",
+      "absolute_symbols": {
+        "Engine_ActorFaceActor": {
+          "address": "0x0200ce04",
+          "kind": "thumb"
+        },
+        "Engine_ActorFaceEachOther": {
+          "address": "0x0200ce0c",
+          "kind": "thumb"
+        },
+        "Engine_ActorGet": {
+          "address": "0x0200cd7c",
+          "kind": "thumb"
+        },
+        "Engine_ActorJump": {
+          "address": "0x0200cdec",
+          "kind": "thumb"
+        },
+        "Engine_ActorRunRepeatedMotion": {
+          "address": "0x0200cdfc",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetAnimation": {
+          "address": "0x0200cdd4",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetAttachedEffect": {
+          "address": "0x0200ce44",
+          "kind": "thumb"
+        },
+        "Engine_ActorShowEmote": {
+          "address": "0x0200ce3c",
+          "kind": "thumb"
+        },
+        "Engine_ActorWaitForMove": {
+          "address": "0x0200cdc4",
+          "kind": "thumb"
+        },
+        "Engine_ActorWalkTo": {
+          "address": "0x0200cdac",
+          "kind": "thumb"
+        },
+        "Engine_ActorWalkToAndWait": {
+          "address": "0x0200cdb4",
+          "kind": "thumb"
+        },
+        "Engine_EventChooseYesNo": {
+          "address": "0x0200cd74",
+          "kind": "thumb"
+        },
+        "Engine_EventOpenMessage": {
+          "address": "0x0200ce1c",
+          "kind": "thumb"
+        },
+        "Engine_EventSetMessage": {
+          "address": "0x0200ce14",
+          "kind": "thumb"
+        },
+        "Engine_EventShowMessage": {
+          "address": "0x0200ce24",
+          "kind": "thumb"
+        },
+        "Engine_EventWait": {
+          "address": "0x0200cd3c",
+          "kind": "thumb"
+        },
+        "Engine_MessageShowCentered": {
+          "address": "0x0200ccf4",
+          "kind": "thumb"
+        },
+        "Main_0808a048": {
+          "address": "0x0200cd5c",
+          "kind": "thumb"
+        },
+        "Main_0808a480": {
+          "address": "0x0200cefc",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02000de4"
+        }
+      ]
+    },
+    {
+      "id": "scene-3b3-0200274c",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/TAKARA_HASHIRA/SETUP.C",
+      "overlay": "resource_3b3",
+      "absolute_symbols": {
+        "Engine_ActorGet": {
+          "address": "0x0200ab1c",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetAnimation": {
+          "address": "0x0200ab54",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetChildValue": {
+          "address": "0x0200ab64",
+          "kind": "thumb"
+        },
+        "Engine_EventWait": {
+          "address": "0x0200ab04",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagIsSet": {
+          "address": "0x0200aaec",
+          "kind": "thumb"
+        },
+        "Engine_MapCopyCellAttributes": {
+          "address": "0x0200aac4",
+          "kind": "thumb"
+        },
+        "Engine_MapCopyCells": {
+          "address": "0x0200aabc",
+          "kind": "thumb"
+        },
+        "Engine_MapCopyCellsTo": {
+          "address": "0x0200aaa4",
+          "kind": "thumb"
+        },
+        "Engine_TaskAddCallback": {
+          "address": "0x0200aa3c",
+          "kind": "thumb"
+        },
+        "Local_02001d84": {
+          "address": "0x02009d84",
+          "kind": "thumb"
+        },
+        "Main_0808a408": {
+          "address": "0x0200aba4",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x0200274c"
         }
       ]
     }

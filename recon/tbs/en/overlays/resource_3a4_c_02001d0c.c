@@ -1,13 +1,12 @@
-/* NONMATCHING: 788 of 788 bytes, 29 differing halfwords (2026-09-24). The
- * owner starts at 0x02001d0c: the four prologue instructions before the old
- * region entry 0x02001d14 belong to it (region, source-paths key and
- * overlay-assembly start moved). Written on the 3a4:02001838 pattern: the
- * motion callbacks are Value_ link symbols, the zero is a one-halfword struct
- * (its short pool reach forces the mid-function pool as in the ROM), and the
- * step addresses are kept in p8/p11. Binds Data_03001c94. Remaining: sched2
- * order in the two motion setups; the reference stores phase (+104) first,
- * then the steps, then +72 and the callback; here the +104 store has no
- * memory dependence on the step stores and sinks. */
+/* NONMATCHING: 788 bytes, candidate 788, 26 differing halfwords, 24 halfword
+ * edits (2026-09-25). FieldScene_RunMultiPhasePresentation, meant for
+ * FIELD/ARUTIN_YAMA/F_01D0C.C as a single-overlay unit binding its names at
+ * their runtime addresses (an import veneer's listing offset plus 0x8000).
+ * Remaining: Phase and step stores now keep their relative order. Pointer
+ * and literal scheduling at the first setup, callback store timing, final
+ * call argument order and wait counter scheduling remain.
+ * WALL: Initial motion setup scheduling and constant placement; typed
+ * aggregate and grouped-store alternatives did not help. */
 #include "TYPES.H"
 
 s32 Engine_ActorGet();
@@ -32,7 +31,7 @@ void Engine_EventEnd();
 
 extern u8 Data_00000000[];
 
-/* Call sites spelled through these wrappers pass their constants straight
+/* FAKEMATCH: Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
  * into a pseudo that the compiler then shares with later uses in the block.
  * A value-returning call also sets r0 last of its arguments. */
@@ -96,13 +95,14 @@ void Func_02001d0c(void)
     Call3(Engine_ActorFaceDirection, 10, 0x8000, 40);
     Call2(Engine_CameraSetSpeed, 0xcccc, 0x1999);
     Call4(Engine_CameraMoveTo, 0x800000, 0x400000, 0xca0000, 1);
+    /* FAKEMATCH: volatile stores keep phase before the two motion steps. */
     zero.v = 0;
     p11 = rec3 + 102;
-    *(s32 *)(rec3 + 104) = 0;
+    *(volatile s32 *)(rec3 + 104) = 0;
     p8 = rec3 + 100;
     *(s32 *)(rec3 + 72) = 0x6666;
-    *(u16 *)p11 = 0;
-    *(u16 *)p8 = 0;
+    *(volatile u16 *)p11 = 0;
+    *(volatile u16 *)p8 = 0;
     *(s32 *)(rec3 + 108) = (s32)&Value_02009771;
     Call3(Engine_ActorSetSpeed, 10, 0x13333, 0x9999);
     Call3(Engine_ObjectMotionSetPositionAndCommit, 10, 212, 200);
@@ -137,15 +137,16 @@ void Func_02001d0c(void)
     Engine_EventWait(40);
     {
         u8 *record = Engine_ActorGet(10);
+        /* FAKEMATCH: preserve the flag-read ordering. */
         u8 value = *(volatile u8 *)&record[90];
     
         record[90] = (u8)(value | 1);
     }
     Call3(Engine_ActorFaceDirection, 10, 0x3000, 20);
     Engine_ActorFaceDirection(10, 0, 40);
-    *(s32 *)(rec3 + 104) = 0;
-    *(u16 *)p8 = 0;
-    *(u16 *)p11 = 0;
+    *(volatile s32 *)(rec3 + 104) = 0;
+    *(volatile u16 *)p8 = 0;
+    *(volatile u16 *)p11 = 0;
     *(s32 *)(rec3 + 108) = (s32)&Value_02009771;
     Call3(Engine_ActorSetSpeed, 10, 0x13333, 0x9999);
     Call3(Engine_ObjectMotionSetPositionAndCommit, 10, 120, 215);

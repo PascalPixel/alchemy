@@ -1,6 +1,12 @@
+/* NONMATCHING: 1264 bytes, candidate 1300, 626 differing halfwords, 592
+ * halfword edits (2026-09-25). CommandInterpolationRenderer_Update, meant
+ * for FIELD/KOROSSEO_KAWA/F_021B8.C as a single-overlay unit binding its
+ * names at their runtime addresses (an import veneer's listing offset plus
+ * 0x8000). Remaining: Named import calls against the verified runtime veneer
+ * bindings; state layout and control flow still need reconstruction.
+ * WALL: structural-topology: pointer-local decompiler draft needs a coherent
+ * state and record layout */
 #include "TYPES.H"
-
-#define CommandInterpolationRenderer_Update Func_020021b8
 
 /*
  * resource_3ba command/interpolation renderer at 0x020021b8, complete
@@ -17,17 +23,12 @@
 /* This import is used with the four historical arities below. */
 
 
-extern void Func_02005dc0(void *callback);
-extern void Func_02005e1a(s32 slot);
-extern s32 Func_02005df2(s32 delta, s32 duration);
-extern s32 Func_02005e8e(s32 delta, s32 duration);
-extern s32 Func_02005eee(s32 delta, s32 duration);
-extern s32 Func_02005fa6(s32 packed);
-extern void Func_0200606a();
-extern void Func_020060e6();
-extern void Func_02006144();
-extern void Func_02006198();
-void Func_020021b8(void)
+extern void Main_080000d8(void *callback);
+extern void Main_080001b8(s32 slot);
+extern s32 Main_03000380(s32 delta, s32 duration);
+extern s32 Main_080001e0(s32 packed);
+extern void Main_080001e8();
+void CommandInterpolationRenderer_Update(void)
 {
     volatile s16 *paletteSlot = (volatile s16 *)0x0200c57c;
     volatile s16 *stateCell = (volatile s16 *)0x0200c79c;
@@ -71,8 +72,8 @@ void Func_020021b8(void)
             *queueCell = (u32)queue;
 
             if (command == -1) {
-                Func_02005dc0((void *)0x0200a1b9);
-                Func_02005e1a(*paletteSlot);
+                Main_080000d8((void *)0x0200a1b9);
+                Main_080001b8(*paletteSlot);
                 return;
             }
 
@@ -131,7 +132,7 @@ void Func_020021b8(void)
         s32 target = (s16)*commandC;
         s32 start = (s16)*(volatile u16 *)0x0200c768;
 
-        first = start + Func_02005df2(progress * (target - start),
+        first = start + Main_03000380(progress * (target - start),
                                       (s16)*durationA);
         if (progress >= (s16)*durationA)
             *durationA = 0;
@@ -144,7 +145,7 @@ void Func_020021b8(void)
         s32 target = (s16)*commandD;
         s32 start = (s16)*commandE;
 
-        second = start + Func_02005e8e(progress * (target - start),
+        second = start + Main_03000380(progress * (target - start),
                                        (s16)*durationB);
         if (progress >= (s16)*durationB)
             *durationB = 0;
@@ -157,14 +158,14 @@ void Func_020021b8(void)
         s32 target = (s16)*commandG;
         s32 start = (s16)*commandF;
 
-        third = start + Func_02005eee(progress * (target - start),
+        third = start + Main_03000380(progress * (target - start),
                                       (s16)*durationC);
         if (progress >= (s16)*durationC)
             *durationC = 0;
     }
 
     packed = (first & 0xffff) | ((second & 0xffff) << 16);
-    packed = Func_02005fa6(packed);
+    packed = Main_080001e0(packed);
     *(volatile s32 *)0x0200c770 += third;
 
     /* Mode 1 emits four records. */
@@ -177,7 +178,7 @@ void Func_020021b8(void)
             write[1] |= 0x80004038u | ((u32)packed << 25);
             write[2] = 0x00f40000u | (u32)(tile + i * 8);
             if (y + 0x98 <= 0x12f)
-                Func_0200606a((void *)write, 0xec, write + 3, 0x80004000);
+                Main_080001e8((void *)write, 0xec, write + 3, 0x80004000);
             write += 3;
         }
     /* Mode 3 emits two narrower records. */
@@ -190,7 +191,7 @@ void Func_020021b8(void)
             write[1] |= 0x80004030u | ((u32)packed << 25);
             write[2] = 0x00f40000u | (u32)(tile + i * 8);
             if (y + 0x98 <= 0x12f)
-                Func_020060e6((void *)write, 0xec, write + 3, 0x80004000);
+                Main_080001e8((void *)write, 0xec, write + 3, 0x80004000);
             write += 3;
         }
     /* Mode 4 emits a single record if its 0x98/0x12f bounds permit it. */
@@ -202,7 +203,7 @@ void Func_020021b8(void)
             write[1] = ((u32)(y + 0x38) & 0x1ff) << 16;
             write[1] |= 0x80004030u | ((u32)packed << 25);
             write[2] = 0x00f40000u | (u32)tile;
-            Func_02006144((void *)write, 0xec, write + 3);
+            Main_080001e8((void *)write, 0xec, write + 3);
             write += 3;
         }
     /* All other modes use the single centered record arm. */
@@ -211,7 +212,7 @@ void Func_020021b8(void)
         write[1] = ((u32)(third + 0x98) & 0x1ff) << 16;
         write[1] |= 0x80000030u | ((u32)packed << 25);
         write[2] = 0x00f40000u | (u32)tile;
-        Func_02006198((void *)write, 0xec);
+        Main_080001e8((void *)write, 0xec);
         write += 3;
     }
 

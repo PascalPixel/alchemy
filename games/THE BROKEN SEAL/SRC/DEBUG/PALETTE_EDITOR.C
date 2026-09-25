@@ -1,12 +1,3 @@
-/* Draft, not exact (2026-09-25): 716 of 716 bytes, 16 differing halfwords.
-   Written from the listing after splitting it from BattleMap_ApplyEntranceView.
-   What made it line up: the header and swatch columns written through a
-   pointer stepped by 32 halfwords, the tile and colour cursors set before
-   the header, and the Start blink counting in the red level local.
-   Remaining: in the swatch loop the tile, colour cursor, 0xf0e0 digit base
-   and 31 mask take r4/r0/r5/r7 where the ROM has r0/r7/r4/r5 (global
-   allocation order; declaration order, cursor placement and loop spellings
-   moved nothing). */
 #include "TYPES.H"
 
 /*
@@ -36,7 +27,6 @@ void Debug_RunPaletteEditor(void)
     s32 channel = 1;
     s32 color = 1;
     u16 *map;
-    u16 *entry;
     u16 *p;
     u16 *colors;
     u32 tile;
@@ -107,8 +97,8 @@ redraw:
             goto redraw;
         }
         if (Data_03001b04 & 1) {
-            entry = &PALETTE[palette * 16 + color];
-            value = *entry;
+            colors = &PALETTE[palette * 16 + color];
+            value = *colors;
             red = value & 31;
             green = (value >> 5) & 31;
             blue = (value >> 10) & 31;
@@ -118,12 +108,12 @@ redraw:
                 green++;
             if (channel == 3 && blue < 31)
                 blue++;
-            *entry = (blue << 10) | (green << 5) | red;
+            *colors = (blue << 10) | (green << 5) | red;
             goto redraw;
         }
         if (Data_03001b04 & 2) {
-            entry = &PALETTE[palette * 16 + color];
-            value = *entry;
+            colors = &PALETTE[palette * 16 + color];
+            value = *colors;
             red = value & 31;
             green = (value >> 5) & 31;
             blue = (value >> 10) & 31;
@@ -133,29 +123,29 @@ redraw:
                 green--;
             if (channel == 3 && blue != 0)
                 blue--;
-            *entry = (blue << 10) | (green << 5) | red;
+            *colors = (blue << 10) | (green << 5) | red;
             goto redraw;
         }
         if (Data_03001b04 & 8) {
-            entry = &PALETTE[palette * 16 + color];
-            value = *entry;
+            colors = &PALETTE[palette * 16 + color];
+            value = *colors;
             red = 0;
             for (;;) {
                 WaitFrames(1);
                 if (!(Data_03001ae8 & 8))
                     break;
                 if (red == 0)
-                    *entry = 0x7fff;
+                    *colors = 0x7fff;
                 if (red == 10)
-                    *entry = value;
+                    *colors = value;
                 if (red == 20)
-                    *entry = 0;
+                    *colors = 0;
                 if (red == 30)
-                    *entry = value;
+                    *colors = value;
                 if (++red >= 40)
                     red = 0;
             }
-            *entry = value;
+            *colors = value;
         }
         if (Data_03001b04 & 4)
             break;

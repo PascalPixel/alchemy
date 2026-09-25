@@ -1,6 +1,6 @@
 #include "TYPES.H"
 
-void Local_020031c0();
+void MakyuriChojo_CollectBandSlots();
 u8 * Engine_ActorGet();
 void Engine_AudioPlayCue();
 void Engine_TaskWait();
@@ -14,7 +14,7 @@ struct Flags85 {
 
 /* Slide the work position up while lowering the collected actors, easing
  * the speed off over the last ten frames, then redraw the map. */
-void MakyuriChojo_Func02003324(void)
+void MakyuriChojo_RaiseCollectedActors(void)
 {
     s32 ids[5];
     u8 *work;
@@ -29,7 +29,7 @@ void MakyuriChojo_Func02003324(void)
     n = 0;
     for (i = 0; i <= 4; i++)
         ids[i] = 66;
-    Local_020031c0(ids, *(s32 *)(work + 12));
+    MakyuriChojo_CollectBandSlots(ids, *(s32 *)(work + 12));
     for (i = 0; i <= 4; i++) {
         if (ids[i] == 66)
             break;

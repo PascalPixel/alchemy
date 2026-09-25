@@ -27,7 +27,7 @@ struct EffectParams {
 };
 
 /* A ring of seventeen puffs bursts out around the actor. */
-void MogoruMori_Func02000e18(s32 id)
+void MogoruMori_SpawnPuffRing(s32 id)
 {
     struct Vec dir;
     struct EffectParams params;

@@ -90,7 +90,10 @@ misses; adopt with `alchemy overlay adopt`. Area and script lookup functions
 and exact neighbours, and write the C a Camelot programmer would have written,
 reusing existing headers, structs and registered names. Fix one hypothesis at
 a time. After about 30 minutes, or three attempts without a new idea, commit
-the draft and take the next owner. An owner registered as pieces
+the draft and take the next owner. Its header records the remaining
+difference (`N differing halfwords`) and, when the lane stopped on a
+structural obstacle, one `WALL: <reason>` line; `alchemy targets` lists every
+not-yet-C owner by size with both. An owner registered as pieces
 (`Region_`, `Fragment_`, `Continuation_`) or bundled with a neighbour must be
 made whole first: one complete function, one listing, one owner. A not-yet-C
 overlay owner is its label in `recon/<game>/raw/overlays`, running to the
@@ -176,7 +179,7 @@ work than by working alone.
 - **Spend tokens on bytes.** A residual that is only register choice gets one
   attempt guided by the allocator dump, then its draft header records it and
   the lane moves on. Send `make verify` and hook output to a log and read the
-  errors. Brief from one ranked target list rebuilt at each landing, and keep
+  errors. Brief from one ranked target list (`alchemy targets`) rebuilt at each landing, and keep
   one shared set of lane scripts rather than a copy per lane.
 - **Land every 30 minutes** from one landing worktree: merge each finished
   branch, merge registries with a structural three-way JSON merge (keep both
@@ -239,8 +242,8 @@ tooling must fix a demonstrated recurring blocker and carry a test.
 
 | Tool | Responsibility |
 | --- | --- |
-| [alchemy](tools/alchemy/) | Golden Sun commands: `inspect` (owners, `--asm`, `--siblings`), `extract`, `score` (owner or `--unit`, `--all-instances`), `adopt` and `overlay adopt`, `check integrate` (main-image adoption), `unit`, `raw rebuild`, `build` (`full`, `assets`, `allocator`), `coverage`, `check` (publication, owners, siblings, progress), `cross-edition`, `dashboard`, `format`, `bootstrap`. |
-| [psynergy](tools/psynergy/) | Portable commands over explicit files: `decompile`, `disassemble`, plus the Thumb decoder, code discovery, C recovery, comparison, twin search and the image, sound, text and LZ codecs. |
+| [alchemy](tools/alchemy/) | Golden Sun commands: `inspect` (owners, `--asm`, `--siblings`), `extract`, `score` (owner or `--unit`, `--all-instances`; `--variants DIR`, `--diff`, `--dump FLAGS`), `targets` (every not-yet-C owner by size), `adopt` and `overlay adopt`, `check integrate` (main-image adoption), `unit`, `raw rebuild`, `build` (`full`, `assets`, `allocator`), `coverage`, `check` (publication, owners, siblings, progress), `cross-edition`, `dashboard`, `format`, `bootstrap`. |
+| [psynergy](tools/psynergy/) | Portable commands over explicit files: `decompile`, `disassemble`, `discover`, `reconstruct-asm`, `diff`, `repair`, `inspect allocator`, `convert`, plus the Thumb decoder, C recovery, comparison, twin search and the image, sound, text and LZ codecs. |
 
 ## Open work
 

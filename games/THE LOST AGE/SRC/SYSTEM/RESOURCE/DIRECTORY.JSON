@@ -2,7 +2,6 @@
   "format": 1,
   "kind": "pointer-table",
   "base_address": "0x08000000",
-  "address": "0x08680000",
   "slot_count": 2048,
   "slots": [
     "base", "self", "0x08682000", "0x08020000", "0x08038000", "0x080ad000", "0x080c8000", "0x080f8000", "0x08108000",

@@ -108,6 +108,70 @@ pub fn compile_source(
     compiler: CompilerTarget,
     cwd: &Path,
 ) -> Result<(), String> {
+    for command in source_plan(source, routing_source, assembly, extra_flags, compiler, cwd)? {
+        run(&command, cwd)?;
+    }
+    Ok(())
+}
+/// The canonical compile of `source` again with extra cc1 diagnostic flags,
+/// run inside `directory` so every dump cc1 writes lands there beside the
+/// assembly; what cc1 prints (a `-fsched-verbose` trace) is kept as
+/// `cc1.stderr`. The directory is emptied first. Returns the files written.
+pub fn compile_with_dumps(
+    source: &str,
+    routing_source: &str,
+    directory: &Path,
+    flags: &[String],
+    compiler: CompilerTarget,
+) -> Result<Vec<PathBuf>, String> {
+    let _ = std::fs::remove_dir_all(directory);
+    std::fs::create_dir_all(directory)
+        .map_err(|error| format!("{}: {error}", directory.display()))?;
+    let source = root().join(source).to_string_lossy().into_owned();
+    let assembly = directory
+        .join(format!("{}.s", source_stem(&source)))
+        .to_string_lossy()
+        .into_owned();
+    let mut trace = Vec::new();
+    for command in source_plan(
+        &source,
+        routing_source,
+        &assembly,
+        flags,
+        compiler,
+        directory,
+    )? {
+        let output = std::process::Command::new(&command[0])
+            .args(&command[1..])
+            .current_dir(directory)
+            .output()
+            .map_err(|error| format!("{}: {error}", command[0]))?;
+        trace.extend_from_slice(&output.stderr);
+        if !output.status.success() {
+            return Err(format!(
+                "dump compile failed: {}",
+                String::from_utf8_lossy(&output.stderr).trim()
+            ));
+        }
+    }
+    if !trace.is_empty() {
+        write(&directory.join("cc1.stderr").to_string_lossy(), &trace)?;
+    }
+    let mut files = std::fs::read_dir(directory)
+        .map_err(|error| format!("{}: {error}", directory.display()))?
+        .filter_map(|entry| entry.ok().map(|entry| entry.path()))
+        .collect::<Vec<_>>();
+    files.sort();
+    Ok(files)
+}
+fn source_plan(
+    source: &str,
+    routing_source: &str,
+    assembly: &str,
+    extra_flags: &[String],
+    compiler: CompilerTarget,
+    cwd: &Path,
+) -> Result<Vec<Vec<String>>, String> {
     let mut options = SourceToAssemblyPlanOptions::new(compiler, routing_source, source, assembly);
     let bindings = resolve_against_cwd(assembly, cwd).with_extension("bindings.h");
     write(
@@ -122,10 +186,7 @@ pub fn compile_source(
             .to_string_lossy()
             .into_owned(),
     );
-    for command in source_to_assembly_plan(&options)? {
-        run(&command, cwd)?;
-    }
-    Ok(())
+    source_to_assembly_plan(&options)
 }
 /// Match production's register-derived compiler names, including overlay scope.
 pub fn source_symbol_bindings(
@@ -732,6 +793,57 @@ void FieldScene_RunActorPositionTransition(void)
 }
 ";
 
+    #[test]
+    fn dump_compiles_leave_every_dump_in_their_own_directory() {
+        if !crate::compiler::routing::bundle().join("cc1").exists() {
+            return;
+        }
+        let work = tempfile::tempdir().unwrap();
+        let source = work.path().join("sum.c");
+        std::fs::write(
+            &source,
+            "int Func_08000000(int *a, int n) { int s = 0, i; for (i = 0; i < n; i++) s += a[i]; return s; }\n",
+        )
+        .unwrap();
+        let dumps = work.path().join("dumps");
+        std::fs::create_dir_all(&dumps).unwrap();
+        std::fs::write(dumps.join("stale.loop"), "").unwrap();
+        let flags = ["-dL", "-fsched-verbose=5"].map(str::to_owned);
+        let files = compile_with_dumps(
+            &source.to_string_lossy(),
+            "games/THE BROKEN SEAL/SRC/08000000.c",
+            &dumps,
+            &flags,
+            CompilerTarget::Tbs,
+        )
+        .unwrap();
+        let names = files
+            .iter()
+            .map(|path| path.file_name().unwrap().to_string_lossy().into_owned())
+            .collect::<Vec<_>>();
+        assert!(names.contains(&"sum.s".to_string()), "{names:?}");
+        assert!(
+            names
+                .iter()
+                .any(|name| name.starts_with("sum.c.") && name.ends_with(".loop")),
+            "{names:?}"
+        );
+        assert!(names.contains(&"cc1.stderr".to_string()), "{names:?}");
+        assert!(!names.contains(&"stale.loop".to_string()), "{names:?}");
+        assert!(!work.path().join("sum.c.08.loop").exists());
+        let error = compile_with_dumps(
+            &source.to_string_lossy(),
+            "games/THE BROKEN SEAL/SRC/08000000.c",
+            &dumps,
+            &["-O0".to_string()],
+            CompilerTarget::Tbs,
+        )
+        .unwrap_err();
+        assert!(
+            error.contains("not an include path or diagnostic"),
+            "{error}"
+        );
+    }
     #[test]
     fn repeated_compiler_runs_produce_one_byte_string() {
         let cc1 = crate::compiler::routing::bundle().join("cc1");

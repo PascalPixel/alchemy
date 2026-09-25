@@ -16,7 +16,7 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
 /* When the pillar (actor 9) stands in column 23, steps the leader aside and
  * lowers the pillar into the floor amid a spray of dust between two
  * markers, opens the cell it blocked and sets flag 0x200. */
-void HaidiaDou_Func02000e04(void)
+void HaidiaDou_SinkPillarColumn23(void)
 {
     struct EffectOptions options;
     struct EffectOptions *o;

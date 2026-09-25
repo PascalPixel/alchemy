@@ -1,303 +1,163 @@
+/* NONMATCHING: 976 bytes, candidate 960, 415 differing halfwords, 190
+ * halfword edits (2026-09-25). Scene_RunScene3c8SequenceA, meant for
+ * FIELD/VINASU_HEYA/F_02B14.C as a single-overlay unit binding its names at
+ * their runtime addresses (an import veneer's listing offset plus 0x8000).
+ * Remaining: Rebuilt the complete pillar-trigger sequence from the
+ * disassembly, correcting the table search and actor loops; remaining
+ * differences are register lifetimes and scheduling.
+ * WALL: allocation: actor versus loop-counter registers and pointer
+ * lifetimes */
 #include "TYPES.H"
 #include "FIELD_EFFECT.H"
 
-#define Scene_RunScene3c8SequenceA Func_02002b14
+extern s32 Data_0200d164[8][2];
+extern s32 Data_0200d77c[];
+extern s32 Data_0200d7c8[];
+extern s32 Data_0200dac8[];
+extern s32 Data_0200dd3c[];
 
-u8 *Func_02002cfa();
-void Func_02003632();
-s32 Func_02003a58();
-s32 Func_02003a94();
-void Func_0200797a();
-void Func_0200798e();
-void Func_020079be();
-void Func_020079c6();
-struct FieldActor *Func_020079d8();
-void Func_020079da();
-struct FieldActor *Func_02007a10();
-struct FieldActor *Func_02007ab8();
-void Func_02007af2();
-void Func_02007b14();
-struct FieldActor *Func_02007b20();
-struct FieldActor *Func_0808a080();
-void Func_080091c0();
-void Func_02007b72();
-void Func_02007bd0();
-s32 Func_02007bda();
-struct FieldActor *Func_02007bec();
-void Func_02007c00();
-s32 Func_02007c02();
-void Func_02007c08();
-s32 Func_02007c1c();
-void Func_02007c20();
-void Func_02007c2e();
-void Func_02007c32();
-struct FieldActor *Func_02007c4a();
-struct FieldActor *Func_02007c52();
-struct FieldActor *Func_02007c5a();
-struct FieldActor *Func_02007c62();
-void Func_02007c68();
-void Func_02007c7a();
-void Func_02007c8c();
-void Func_02007c90();
-void Func_02007cae();
-void Func_02007cce();
-void Func_080f9010();
-void Func_0808a010();
-void Func_02007cfe();
-void Func_02007d42();
-void Func_02007d60();
-void Func_02007d7c();
-void Func_02007d80();
-void Func_02007d88();
-void Func_02007da2();
+struct FieldActor *Local_02000098(s32 x, s32 y, s32 z, s32 type);
+void Local_0200094c(struct FieldActor *actor);
+struct FieldActor *Local_02000c5c(s32 x, s32 z, s32 *script);
+void Main_080090d0(struct FieldActor *actor);
+void Main_08009148(struct FieldActor *actor);
+void Main_08009098(struct FieldActor *actor, s32 *script);
+void Main_08009178(s32 *script, s32 x, s32 z);
+void Main_0808a1e0(s32 actor, s32 priority);
+void Main_080091c0(s32 sx, s32 sy, s32 w, s32 h, s32 x, s32 z);
+void Engine_CameraMoveTo(s32 x, s32 y, s32 z, s32 pan);
+void Engine_CameraSetSpeed(s32 speed, s32 acceleration);
+s32 Engine_GameFlagIsSet(s32 flag);
+s32 Engine_GameFlagSet(s32 flag);
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-
-static __inline__ void Call1(void (*f)(), s32 a0)
+static __inline__ void CopyCells(s32 sx, s32 sy, s32 w, s32 h, s32 x, s32 z)
 {
-    f(a0);
-}
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ struct FieldActor *ActorValue1(struct FieldActor *(*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    return f(a0, a1, a2);
-}
-
-static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    f(a0, a1, a2, a3);
-}
-
-static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
-{
-    f(a0, a1, a2, a3, a4, a5);
+    Main_080091c0(sx, sy, w, h, x, z);
 }
 
 void Scene_RunScene3c8SequenceA(void)
 {
+    struct FieldActor *effect;
+    struct FieldActor *actor;
+    struct FieldActor *other;
+    struct FieldActor *leader;
+    struct FieldActor *b;
+    struct FieldActor *c;
+    struct FieldActor *d;
+    u8 *flags;
+    u8 *motion;
+    u32 id;
     u32 i;
-    u8 *p11;
-    u8 *p8;
-    s32 p9;
-    struct FieldActor *rec2;
-    struct FieldActor *rec7;
-    s32 rec8;
-    struct FieldActor *record;
-    struct FieldActor *slot8;
-    s32 base10_f;
-    s32 base4_200d164;
-    s32 base6_0;
-    u8 *v6;
-    s32 v4;
-    s32 v1;
-    s32 v5;
-    s32 v0;
-    s32 v7;
-    s32 slot12;
+    u32 slot;
+    u32 priority;
 
-    base6_0 = 0;
-    slot12 = 0;
-    slot8 = ActorValue1(Func_020079d8, 0);
-    record = slot8;
-    Func_020079c6();
-    Call6(Func_0200797a, 69, 48, 4, 2, 5, 48);
-    Call6(Func_0200798e, 73, 37, 9, 13, 9, 37);
-    base10_f = 15;
-    L_02002b60:;
-    rec2 = Func_02007a10(base10_f);
-    p11 = (u8 *)rec2 + 35;
-    if (*p11 != 2) {
-        Call6(Func_020079be, 72, 48, 1, 1, (*(s32 *)((s32)rec2 + 8) >> 20), (*(s32 *)((s32)rec2 + 16) >> 20));
-    } else {
-        Call6(Func_020079da, 73, 48, 1, 1, (*(s32 *)((s32)rec2 + 8) >> 20), (*(s32 *)((s32)rec2 + 16) >> 20));
-    }
-        v4 = 0x200d164;
-        base4_200d164 = 0x200d164;
-    base6_0 = 0;
-    if ((*(s32 *)((s32)rec2 + 8) >> 20) == *(s32 *)(0x0200d164 + base6_0)) {
-        if ((*(s32 *)((s32)rec2 + 16) >> 20) != *(s32 *)(base4_200d164 + 4)) {
-            v4 = base4_200d164;
-            v6 = base6_0;
-            goto L_02002bd0;
-        }
-        v5 = 0;
-        v6 = base6_0;
-        if (*(s32 *)((s32)rec2 + 12) < 0) {
-            v4 = base4_200d164;
-            v6 = base6_0;
-            goto L_02002bd0;
-        }
-    } else {
-        v6 = base6_0;
-        L_02002bd0:;
-        do {
-            if ((u32)((s32)v6 + 1) > 7) {
-                v5 = 8;
-                v6 = ((s32)v6 + 1);
-                goto L_02002bf8;
+    effect = 0;
+    leader = Actor_Get(0);
+    Engine_EventBegin();
+    CopyCells(69, 48, 4, 2, 5, 48);
+    CopyCells(73, 37, 9, 13, 9, 37);
+    for (id = 15; id <= 18; id++) {
+        actor = Engine_ActorGet(id);
+        flags = &actor->priority_flags;
+        if (*flags != 2)
+            CopyCells(72, 48, 1, 1, actor->x.fixed >> 20, actor->z.fixed >> 20);
+        else
+            CopyCells(73, 48, 1, 1, actor->x.fixed >> 20, actor->z.fixed >> 20);
+
+        slot = 8;
+        for (i = 0; i < 8; i++) {
+            if ((actor->x.fixed >> 20) == Data_0200d164[i][0]
+                && (actor->z.fixed >> 20) == Data_0200d164[i][1]
+                && actor->y.fixed >= 0) {
+                slot = i;
+                break;
             }
-            v1 = (((s32)v6 + 1) << 3);
-            v6 = ((s32)v6 + 1);
-        } while ((*(s32 *)((s32)rec2 + 8) >> 20) != *(s32 *)(v4 + (((s32)v6 + 1) << 3)));
-        if ((*(s32 *)((s32)rec2 + 16) >> 20) != *(s32 *)(v4 + (v1 + 4))) {
-            goto L_02002bd0;
         }
-        if (*(s32 *)((s32)rec2 + 12) < 0) {
-            goto L_02002bd0;
-        }
-        v5 = (s32)v6;
-    }
-    L_02002bf8:;
-    if (v5 == 8) {
-    } else {
-        v6 = 15;
-        for (;;) {
-            if ((u32)(s32)v6 > 18) {
-                goto L_02002c30;
+        if (slot == 8)
+            continue;
+        for (i = 15; i <= 18; i++) {
+            other = Engine_ActorGet(i);
+            if (id != i
+                && (actor->x.fixed >> 20) == (other->x.fixed >> 20)
+                && (actor->z.fixed >> 20) == (other->z.fixed >> 20)) {
+                slot = 8;
+                break;
             }
-            record = Func_02007ab8((s32)v6);
-            if (!(base10_f == (s32)v6)) break;
-            L_02002c02:;
-            v0 = (s32)record;
-            v6 = ((s32)v6 + 1);
         }
-        if ((*(s32 *)((s32)rec2 + 8) >> 20) != (*(s32 *)(v0 + 8) >> 20)) {
-            goto L_02002c02;
+        if (slot == 8)
+            continue;
+
+        priority = leader->sprite->priority;
+        if ((u32)(leader->z.fixed >> 20) <= (u32)Data_0200d164[slot][1]) {
+            effect = Local_02000098(actor->x.fixed, actor->y.fixed,
+                                   actor->z.fixed - 0x40000, 20);
+            Main_0808a1e0(0, 3);
         }
-        if ((*(s32 *)((s32)rec2 + 16) >> 20) != (*(s32 *)(v0 + 16) >> 20)) {
-            goto L_02002c02;
+        for (i = 15; i <= 18; i++) {
+            other = Engine_ActorGet(i);
+            if (id != i
+                && (actor->x.fixed >> 20) == (other->x.fixed >> 20)
+                && (actor->z.fixed >> 20) - 1 == (other->z.fixed >> 20))
+                Main_0808a1e0(i, 3);
         }
-        v5 = 8;
-        L_02002c30:;
-        if (v5 == 8) {
-        } else {
-            p9 = ((u32)(*(u8 *)(*(s32 *)((u8 *)slot8 + 80) + 9) << 28) >> 30);
-            if ((u32)(*(s32 *)((u8 *)slot8 + 16) >> 20) <= *(s32 *)(0x0200d164 + ((v5 << 3) + 4))) {
-                record = Func_02002cfa(*(s32 *)((s32)rec2 + 8), *(s32 *)((s32)rec2 + 12), (*(s32 *)((s32)rec2 + 16) + -0x40000), 20);
-                slot12 = (s32)record;
-                Func_02007bd0(0, 3);
+        Engine_ActorSetSpriteFlags(Engine_ActorGet(id), 0);
+        actor->unknown_22 = 0;
+        motion = &actor->motion_flags;
+        *motion = 3;
+        ((union FieldObject *)actor)->effect.velocity_y = 0x1999;
+        ((union FieldObject *)actor)->effect.velocity_x = 0;
+        CopyCells(6, 44, 1, 1, Data_0200d164[slot][0], Data_0200d164[slot][1]);
+        Local_0200094c(actor);
+        Engine_AudioPlayCue(188);
+        actor->collision_flags = 0;
+        *motion = 0;
+        actor->y.fixed = -0x100000;
+        Main_0808a1e0(id, 3);
+        *flags = 2;
+        CopyCells(73, 48, 1, 1, Data_0200d164[slot][0], Data_0200d164[slot][1]);
+        Main_0808a1e0(0, priority);
+        Engine_ActorGet(0)->priority_flags |= 1;
+        for (i = 15; i <= 18; i++) {
+            other = Engine_ActorGet(i);
+            if (id != i
+                && (actor->x.fixed >> 20) == (other->x.fixed >> 20)
+                && (actor->z.fixed >> 20) - 1 == (other->z.fixed >> 20)) {
+                Main_0808a1e0(i, 1);
+                Engine_ActorGet(i)->priority_flags |= 1;
             }
-            v6 = 15;
-            for (i = 0; i < 19; i++) {
-                record = Func_02007b20(i);
-                if (base10_f != i) {
-                    if ((*(s32 *)((s32)rec2 + 8) >> 20) == (*(s32 *)((s32)record + 8) >> 20)) {
-                        if (((*(s32 *)((s32)rec2 + 16) >> 20) - 1) == (*(s32 *)((s32)record + 16) >> 20)) {
-                            Func_02007c00(i, 3);
-                        }
-                    }
+        }
+        Main_080090d0(effect);
+        if (GameFlag_IsSet(0x308)) {
+            Engine_EventEnd();
+            return;
+        }
+        actor = Actor_Get(15);
+        b = Actor_Get(16);
+        c = Actor_Get(17);
+        d = Engine_ActorGet(18);
+        if ((actor->priority_flags & b->priority_flags & c->priority_flags & d->priority_flags) & 2) {
+            Camera_SetSpeed(0x10000, 0x2000);
+            Engine_CameraMoveToActor(14, 1);
+            Engine_CameraWaitForMove();
+            c = Local_02000c5c(136, 0x308, Data_0200d77c);
+            Engine_EventWait(30);
+            Camera_SetSpeed(0x6666, 0xccc);
+            Camera_MoveTo(0xd80000, -1, 0x2780000, 1);
+            Main_08009148(c);
+            Main_08009098(c, Data_0200d7c8);
+            b = Local_02000c5c(216, 0x2f8, Data_0200dac8);
+            flags = &c->rise_enabled;
+            while (*(s32 *)c != 0 || *(s32 *)b != 0) {
+                if (*flags != 0 || b->rise_enabled != 0) {
+                    Engine_EventWait(30);
+                    Main_08009178(Data_0200dd3c, 77, 35);
+                    CopyCells(13, 35, 1, 1, 13, 36);
+                    GameFlag_Set(0x308);
+                    break;
                 }
-                v6 = i;
+                Engine_TaskWait(1);
             }
-            record = Func_0808a080(base10_f);
-            Func_02007af2((s32)record, 0);
-            v6 = (s32)rec2;
-            ((u8 *)rec2)[34] = 0;
-            v6 = ((s32)v6 + 85);
-            v6[0] = 3;
-            *(s32 *)((s32)rec2 + 72) = 0x1999;
-            *(s32 *)((s32)rec2 + 68) = 0;
-            Call6(Func_02007b14, 6, 44, 1, 1, *(s32 *)(0x0200d164 + (v5 << 3)), *(s32 *)(0x0200d164 + ((v5 << 3) + 4)));
-            Func_02003632((s32)rec2);
-            Func_080f9010(188);
-            ((u8 *)rec2)[89] = 0;
-            v6[0] = 0;
-            *(s32 *)((s32)rec2 + 12) = -0x100000;
-            Func_02007c68(base10_f, 3);
-            *p11 = 2;
-            Call6(Func_080091c0, 73, 48, 1, 1, *(s32 *)(0x0200d164 + (v5 << 3)), *(s32 *)(0x0200d164 + ((v5 << 3) + 4)));
-            Func_02007c8c(0, p9);
-            v6 = 15;
-            *(u8 *)(Func_02007bda(0) + 35) |= 1;
-            for (i = 0; i < 19; i++) {
-                record = Func_02007bec(i);
-                if (base10_f != i) {
-                    if ((*(s32 *)((s32)rec2 + 8) >> 20) == (*(s32 *)((s32)record + 8) >> 20)) {
-                        if (((*(s32 *)((s32)rec2 + 16) >> 20) - 1) == (*(s32 *)((s32)record + 16) >> 20)) {
-                            Func_02007cce(i, 1);
-                            *(u8 *)(Func_02007c1c(i) + 35) |= 1;
-                        }
-                    }
-                }
-                v6 = i;
-            }
-            Func_02007b72(slot12);
-            if (Value1(Func_02007c02, 0x308) != 0) {
-                Func_02007c32();
-                v7 = (v5 << 3);
-                goto L_02002ea8;
-            }
-            rec2 = ActorValue1(Func_02007c4a, 15);
-            rec7 = ActorValue1(Func_02007c52, 16);
-            rec8 = (s32)ActorValue1(Func_02007c5a, 17);
-            v6 = (u8 *)rec8;
-            record = Func_02007c62(18);
-            v6 = ((s32)v6 + 35);
-            if (((((((u8 *)rec7)[35] & ((u8 *)rec2)[35]) & v6[0]) & ((u8 *)record)[35]) & 2) != 0) {
-                Call2(Func_02007d60, 0x10000, 0x2000);
-                Func_02007d80(14, 1);
-                Func_02007d7c();
-                rec8 = Value3(Func_02003a58, 136, 0x308, 0x200d77c);
-                v6 = rec8;
-                Func_02007c90(30);
-                Call2(Func_02007d88, 0x6666, 0xccc);
-                Call4(Func_02007da2, 0xd80000, -1, 0x2780000, 1);
-                Func_02007c20((s32)v6);
-                Call2(Func_02007c08, (s32)v6, 0x200d7c8);
-                rec7 = (struct FieldActor *)Value3(Func_02003a94, 216, 0x2f8, 0x200dac8);
-                p8 = (s32)v6 + 99;
-                for (;;) {
-                    if (!(*(s32 *)((s32)v6) != 0)) break;
-                    L_02002e46:;
-                    if (*p8 == 0) {
-                        if (((u8 *)rec7)[99] == 0) {
-                            goto L_02002e86;
-                        }
-                    }
-                    Func_0808a010(30);
-                    Call3(Func_02007c7a, 0x200dd3c, 77, 35);
-                    Call6(Func_02007cae, 13, 35, 1, 1, 13, 36);
-                    Call1(Func_02007cfe, 0x308);
-                    v7 = (v5 << 3);
-                    goto L_02002e98;
-                    L_02002e86:;
-                    Func_02007c2e(1);
-                }
-                if (*(s32 *)((s32)rec7) != 0) {
-                    goto L_02002e46;
-                }
-            }
-            v7 = (v5 << 3);
         }
     }
-    L_02002e98:;
-    base10_f = (base10_f + 1);
-    if ((u32)base10_f <= 18) {
-        goto L_02002b60;
-    }
-    Func_02007d42();
-    L_02002ea8:;
+    Engine_EventEnd();
 }

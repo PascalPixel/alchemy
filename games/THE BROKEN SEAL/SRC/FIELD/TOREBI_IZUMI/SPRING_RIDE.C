@@ -31,7 +31,7 @@ extern s32 Data_0200a138;
 /* Launches the spring ride from side 0 or 1: plays the spring cue at frame
  * 50, starts the leader and the ride at frame 16, and waits for the ride to
  * report that it has ended; returns its result. */
-s32 TorebiIzumi_Func0200173c(s32 side)
+s32 TorebiIzumi_RunSpringRide(s32 side)
 {
     struct SpringRide *ride;
 

@@ -69528,7 +69528,7 @@
     },
     {
       "id": "scene-3b7-020001d8",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/TOREBI_IZUMI/F_001D8.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/TOREBI_IZUMI/OPEN_SCENE.C",
       "overlay": "resource_3b7",
       "absolute_symbols": {
         "Engine_ActorSetAnimation": {
@@ -69599,10 +69599,6 @@
           "address": "0x02009924",
           "kind": "thumb"
         },
-        "Local_020008f8": {
-          "address": "0x020088f8",
-          "kind": "thumb"
-        },
         "SceneDialogue_PickTopicVariantId": {
           "address": "0x02008d70",
           "kind": "thumb"
@@ -69634,6 +69630,10 @@
         "Data_000000bd": {
           "address": "0x000000bd",
           "kind": "data"
+        },
+        "TorebiIzumi_OfferLuckyWheels": {
+          "address": "0x020088f8",
+          "kind": "thumb"
         }
       },
       "owners": [
@@ -71423,7 +71423,7 @@
     },
     {
       "id": "scene-3b7-020008f8",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/TOREBI_IZUMI/F_008F8.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/TOREBI_IZUMI/OFFER_WHEELS.C",
       "overlay": "resource_3b7",
       "absolute_symbols": {
         "Main_080772e0": {
@@ -72107,7 +72107,7 @@
     },
     {
       "id": "scene-3b7-0200173c",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/TOREBI_IZUMI/F_0173C.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/TOREBI_IZUMI/SPRING_RIDE.C",
       "overlay": "resource_3b7",
       "absolute_symbols": {
         "Engine_AudioPlayCue": {
@@ -72983,7 +72983,7 @@
     },
     {
       "id": "scene-3b7-02000dd0",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/TOREBI_IZUMI/F_00DD0.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/TOREBI_IZUMI/PLACE_ACTOR.C",
       "overlay": "resource_3b7",
       "absolute_symbols": {
         "Engine_ActorGet": {

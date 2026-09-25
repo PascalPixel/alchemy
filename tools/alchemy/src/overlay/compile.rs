@@ -1756,6 +1756,74 @@ pub fn assemble_overlay_raw(source: &OverlaySource, base: i64) -> Result<Vec<u8>
     )?;
     fs::read(&binary).map_err(|error| error.to_string())
 }
+
+// Report each invalid span and keep the partially assembled image from escaping.
+fn apply_compiled_overlay_spans(
+    result: &mut [u8],
+    compiled_spans: impl IntoIterator<Item = Compiled>,
+    base: i64,
+    display: &str,
+) -> Result<(), String> {
+    let mut occupied = BTreeSet::new();
+    let mut failures = Vec::new();
+
+    for compiled in compiled_spans {
+        let range = compiled
+            .address
+            .checked_sub(base)
+            .and_then(|offset| usize::try_from(offset).ok())
+            .and_then(|offset| {
+                offset
+                    .checked_add(compiled.data.len())
+                    .map(|end| (offset, end))
+            })
+            .filter(|(_, end)| *end <= result.len());
+        let Some((offset, end)) = range else {
+            let failure = format!(
+                "overlay C span is outside {display}: {}",
+                hex(compiled.address, 8)
+            );
+            eprintln!("diagnostic {failure}");
+            failures.push(failure);
+            continue;
+        };
+
+        let overlaps = (offset..end).any(|byte| occupied.contains(&byte));
+        if overlaps {
+            let failure = format!("overlapping overlay C span: {}", hex(compiled.address, 8));
+            eprintln!("diagnostic {failure}");
+            failures.push(failure);
+        }
+
+        for (index, existing) in result[offset..end].iter().enumerate() {
+            let byte = offset + index;
+            if *existing != 0 && !occupied.contains(&byte) {
+                let failure = format!(
+                    "overlay C placeholder is not zero at 0x{}",
+                    hex(base + byte as i64, 8)
+                );
+                eprintln!("diagnostic {failure}");
+                failures.push(failure);
+            }
+            occupied.insert(byte);
+        }
+
+        if !overlaps {
+            result[offset..end].copy_from_slice(&compiled.data);
+        }
+    }
+
+    if failures.is_empty() {
+        Ok(())
+    } else {
+        Err(format!(
+            "{display}: {} overlay C placeholder/span failure(s):\n  {}",
+            failures.len(),
+            failures.join("\n  ")
+        ))
+    }
+}
+
 #[test]
 fn shared_src_veneer_macro_resolves_from_temporary_assembly() {
     let source = OverlaySource::text(concat!(
@@ -1777,8 +1845,6 @@ pub fn assemble_overlay(source: &OverlaySource, base: i64) -> Result<Vec<u8>, St
     let mut result = assemble_overlay_raw(source, base)?;
     let display = source.to_display_string();
     let overlay = source.overlay_id().unwrap_or_default();
-    let mut occupied: std::collections::BTreeSet<usize> = std::collections::BTreeSet::new();
-    let mut placeholder_failures = Vec::new();
     // Compiler runtime windows take bytes built from the licensed container.
     let listing = source.read_text().map_err(|error| error.to_string())?;
     let game = match source {
@@ -1791,48 +1857,14 @@ pub fn assemble_overlay(source: &OverlaySource, base: i64) -> Result<Vec<u8>, St
             address: i64::from(address),
             data,
         });
-    for compiled in compile_production_overlay(source, work.path(), &overlay)?
-        .into_iter()
-        .chain(runtime)
-    {
-        let offset = compiled.address - base;
-        if offset < 0 || offset + compiled.data.len() as i64 > result.len() as i64 {
-            return Err(format!(
-                "overlay C span is outside {display}: {}",
-                hex(compiled.address, 8)
-            ));
-        }
-        let offset = offset as usize;
-        for (index, existing) in result[offset..offset + compiled.data.len()]
-            .iter()
-            .enumerate()
-        {
-            let byte = offset + index;
-            if occupied.contains(&byte) {
-                return Err(format!(
-                    "overlapping overlay C span: {}",
-                    hex(compiled.address, 8)
-                ));
-            }
-            occupied.insert(byte);
-            if *existing != 0 {
-                let failure = format!(
-                    "overlay C placeholder is not zero at 0x{}",
-                    hex(base + byte as i64, 8)
-                );
-                eprintln!("diagnostic {failure}");
-                placeholder_failures.push(failure);
-            }
-        }
-        result[offset..offset + compiled.data.len()].copy_from_slice(&compiled.data);
-    }
-    if !placeholder_failures.is_empty() {
-        return Err(format!(
-            "{display}: {} overlay C placeholder failure(s):\n  {}",
-            placeholder_failures.len(),
-            placeholder_failures.join("\n  ")
-        ));
-    }
+    apply_compiled_overlay_spans(
+        &mut result,
+        compile_production_overlay(source, work.path(), &overlay)?
+            .into_iter()
+            .chain(runtime),
+        base,
+        &display,
+    )?;
     Ok(result)
 }
 pub(crate) fn strings(parts: &[&str]) -> Vec<String> {
@@ -1843,6 +1875,65 @@ pub(crate) fn split_lines(text: &str) -> Vec<String> {
 }
 #[cfg(test)]
 mod source_activation_tests {
+    #[test]
+    fn overlay_span_application_reports_independent_failures_and_continues() {
+        let mut image = [0, 7, 0, 0, 8, 0];
+        let failure = super::apply_compiled_overlay_spans(
+            &mut image,
+            [
+                super::Compiled {
+                    address: 0x1000,
+                    data: vec![1, 2],
+                },
+                super::Compiled {
+                    address: 0x1001,
+                    data: vec![3, 4],
+                },
+                super::Compiled {
+                    address: 0x1005,
+                    data: vec![5, 6],
+                },
+                super::Compiled {
+                    address: 0x1004,
+                    data: vec![9],
+                },
+            ],
+            0x1000,
+            "resource_382_overlay.s",
+        )
+        .unwrap_err();
+
+        assert!(failure.contains("4 overlay C placeholder/span failure(s)"));
+        assert!(failure.contains("placeholder is not zero at 0x00001001"));
+        assert!(failure.contains("overlapping overlay C span: 00001001"));
+        assert!(failure.contains("span is outside resource_382_overlay.s: 00001005"));
+        assert!(failure.contains("placeholder is not zero at 0x00001004"));
+        assert_eq!(image, [1, 2, 0, 0, 9, 0]);
+    }
+
+    #[test]
+    fn overlay_span_application_preserves_successful_output() {
+        let mut image = [0; 6];
+        super::apply_compiled_overlay_spans(
+            &mut image,
+            [
+                super::Compiled {
+                    address: 0x2000,
+                    data: vec![1, 2],
+                },
+                super::Compiled {
+                    address: 0x2004,
+                    data: vec![5, 6],
+                },
+            ],
+            0x2000,
+            "resource_382_overlay.s",
+        )
+        .unwrap();
+
+        assert_eq!(image, [1, 2, 0, 0, 5, 6]);
+    }
+
     #[test]
     fn compiler_gap_rejects_modern_nop_fill_and_missing_bytes() {
         let reference = [0x70, 0x47, 0, 0];

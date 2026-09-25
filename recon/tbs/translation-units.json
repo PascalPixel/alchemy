@@ -62899,7 +62899,7 @@
     },
     {
       "id": "biribino-kyuden-f-00338",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_KYUDEN/F_00338.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_KYUDEN/DOOR_EXIT.C",
       "overlay": "resource_38d",
       "absolute_symbols": {
         "Engine_GameFlagIsSet": {
@@ -71519,7 +71519,7 @@
     },
     {
       "id": "scene-38b-02000db4",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_MURA/F_00DB4.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_MURA/PUSH_FACED_BLOCK.C",
       "overlay": "resource_38b",
       "absolute_symbols": {
         "Engine_ActorGet": {

@@ -356,8 +356,8 @@
       "source": "FIELD/COMMON/SHINDEN_HEYA/RISE_ICON.C"
     },
     "resource_38d:02000338": {
-      "name": "BiribinoKyuden_Func02000338",
-      "source": "FIELD/BIRIBINO_KYUDEN/F_00338.C"
+      "name": "BiribinoKyuden_RunDoorExitScene",
+      "source": "FIELD/BIRIBINO_KYUDEN/DOOR_EXIT.C"
     },
     "resource_395:02000088": {
       "name": "KorimaKi_RunMessageScene",
@@ -15273,7 +15273,7 @@
     },
     "resource_38b:02000db4": {
       "name": "BiribinoMura_PushFacedBlock",
-      "source": "FIELD/BIRIBINO_MURA/F_00DB4.C"
+      "source": "FIELD/BIRIBINO_MURA/PUSH_FACED_BLOCK.C"
     },
     "resource_38b:020001ec": {
       "name": "FieldScene_RunScriptedStep1472",

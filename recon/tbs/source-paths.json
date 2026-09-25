@@ -16253,7 +16253,8 @@
       "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_39b:02002030": {
-      "name": "FieldScene_RunScene39bSequenceA"
+      "name": "Makyuri_RunActorMove",
+      "source": "FIELD/COMMON/MAKYURI/ACTOR_MOVE.C"
     },
     "resource_3b2:02000030": {
       "name": "FixedPoint_Distance",
@@ -21240,6 +21241,10 @@
     },
     "main:08028194": {
       "name": "AffineEffect_UpdateFrame"
+    },
+    "resource_39c:020055c0": {
+      "name": "Makyuri_RunActorMove",
+      "source": "FIELD/COMMON/MAKYURI/ACTOR_MOVE.C"
     }
   },
   "symbols": {

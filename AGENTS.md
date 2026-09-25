@@ -161,7 +161,9 @@ Each of these closed real owners. Try them before inventing anything new.
   where the ROM has it; a `(u16)(s32)&Value_XXXX` constant does the same for a
   mask. Clamp helpers and IWRAM copy/fill calls as `static __inline__`
   wrappers make constants reload per call instead of living in saved
-  registers. Read `-fsched-verbose=5` (scheduling ties) and `-dL` (strength
+  registers. An inline call wrapper can also rematerialize a stack address
+  instead of copying a saved pointer (both Makyuri actor-move routines).
+  Read `-fsched-verbose=5` (scheduling ties) and `-dL` (strength
   reduction) dumps before sweeping spellings.
 - **Last resort, tagged:** a `do { } while (0);` around one or two statements,
   a statement swap, or a temporary that fixes one evaluation order.

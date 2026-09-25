@@ -17,7 +17,7 @@ static __inline__ void Call1(s32 (*f)(s32), s32 a0)
 /* Places the Anchor Charm (item 232) as object 22, drawing its item icon
  * into the object's VRAM block, the first time only (flag 0x200); returns
  * the object. */
-struct FieldActor *FuneHeya_Func020045d0(void)
+struct FieldActor *FuneHeya_PlaceAnchorCharm(void)
 {
     s32 set = Value1(Engine_GameFlagIsSet, 0x200);
     struct FieldActor *object;

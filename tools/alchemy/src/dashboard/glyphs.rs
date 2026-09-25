@@ -2,11 +2,11 @@
 //! tracked glyph sheets (see `coverage::letters`), cut as CSS mask sprites at
 //! one pixel scale: labels in the upright menu font, quoted game text in the
 //! dialogue fonts. The icons come from the tracked icon banks and the ROM
-//! palette. The images are built into the dashboard cache and served from
+//! palette; Weyard UI's logo marks from their masks in `coverage::letters`. The images are built into the dashboard cache and served from
 //! there; none is a font file and none may ever be committed.
 use super::cache::{self, Store};
 use crate::build_assets::{icon_bank_source, raw_palette_bank, ICON_BANKS, ICON_PALETTE_BANK};
-use crate::coverage::letters::{Letters, PIXEL};
+use crate::coverage::letters::{Letters, LINE, MARKS, PIXEL};
 use psynergy::assets::image::{indexed_png, IndexedImage};
 use std::{collections::BTreeMap, path::Path, sync::Mutex};
 
@@ -81,8 +81,8 @@ pub(super) fn refresh(root: &Path) -> Result<String, String> {
         Err(failures.join("; "))
     }
 }
-/// A cached file's bytes by its published name, `letters<class>-<stamp>.png`
-/// or `icons-<stamp>.png`; only current stamps are served.
+/// A cached file's bytes by its published name, `letters<class>-<stamp>.png`,
+/// `icons-<stamp>.png` or `marks-<stamp>.png`; only current stamps are served.
 pub(super) fn file(root: &Path, name: &str) -> Option<(&'static str, Vec<u8>)> {
     let assets = current();
     let (stem, extension) = name.rsplit_once('.')?;
@@ -96,6 +96,10 @@ pub(super) fn file(root: &Path, name: &str) -> Option<(&'static str, Vec<u8>)> {
             .iter()
             .any(|face| kind == format!("letters{}", face.class) && face.stamp == stamp),
         "icons" => assets.icons.as_deref() == Some(stamp),
+        "marks" => {
+            let (current, sheet) = marks();
+            return (stamp == current).then(|| ("image/png", sheet));
+        }
         _ => false,
     };
     known
@@ -413,6 +417,54 @@ fn icon_file(root: &Path, store: &Store) -> Result<String, String> {
     Ok(stamp)
 }
 
+/// The logo marks as one strip of `LINE`-square one-colour masks in
+/// `MARKS` order, at `SHEET_SCALE`, with its stamp. They need no inputs, so
+/// they are drawn from the code alone and served without the cache.
+pub(super) fn marks() -> (String, Vec<u8>) {
+    static SHEET: std::sync::OnceLock<(String, Vec<u8>)> = std::sync::OnceLock::new();
+    SHEET
+        .get_or_init(|| {
+            let (scale, line) = (SHEET_SCALE as usize, LINE as usize);
+            let width = line * MARKS.len() * scale;
+            let mut alpha = vec![0u8; width * line * scale];
+            for (slot, (_, rows)) in MARKS.iter().enumerate() {
+                for (y, row) in rows.iter().enumerate() {
+                    for (x, pixel) in row.chars().enumerate() {
+                        if pixel != '#' {
+                            continue;
+                        }
+                        for dy in 0..scale {
+                            for dx in 0..scale {
+                                alpha[(y * scale + dy) * width + (slot * line + x) * scale + dx] =
+                                    255;
+                            }
+                        }
+                    }
+                }
+            }
+            let sheet = grey_alpha_png(width as u32, (line * scale) as u32, &alpha)
+                .expect("an in-memory PNG");
+            (cache::stamp(&[&sheet]), sheet)
+        })
+        .clone()
+}
+/// A mark's slot in the strip, for its mask position.
+pub(super) fn mark_slot(name: &str) -> u32 {
+    MARKS.iter().position(|(key, _)| *key == name).unwrap_or(0) as u32
+}
+fn grey_alpha_png(width: u32, height: u32, alpha: &[u8]) -> Result<Vec<u8>, String> {
+    let mut out = Vec::new();
+    let mut encoder = png::Encoder::new(&mut out, width, height);
+    encoder.set_color(png::ColorType::GrayscaleAlpha);
+    encoder.set_depth(png::BitDepth::Eight);
+    let pixels = alpha.iter().flat_map(|a| [255, *a]).collect::<Vec<_>>();
+    encoder
+        .write_header()
+        .and_then(|mut writer| writer.write_image_data(&pixels))
+        .map_err(|e| e.to_string())?;
+    Ok(out)
+}
+
 /// One 16x16 frame per tab, in `TAB_ICONS` order, as a one-colour mask at
 /// `SHEET_SCALE` device pixels per game pixel: each icon keeps its lighter
 /// half of colours as ink and drops its dark outline, which the page redraws
@@ -458,16 +510,7 @@ fn icon_strip(banks: &BTreeMap<u8, IndexedImage>, colors: &[u16; 16]) -> Result<
             }
         }
     }
-    let mut out = Vec::new();
-    let mut encoder = png::Encoder::new(&mut out, width as u32, (16 * scale) as u32);
-    encoder.set_color(png::ColorType::GrayscaleAlpha);
-    encoder.set_depth(png::BitDepth::Eight);
-    let pixels = alpha.iter().flat_map(|a| [255, *a]).collect::<Vec<_>>();
-    encoder
-        .write_header()
-        .and_then(|mut writer| writer.write_image_data(&pixels))
-        .map_err(|e| e.to_string())?;
-    Ok(out)
+    grey_alpha_png(width as u32, (16 * scale) as u32, &alpha)
 }
 
 #[cfg(test)]

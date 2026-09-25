@@ -1,7 +1,9 @@
 //! The README's two figures, drawn in whole game pixels from the tracked
 //! glyph sheet and written at `FIGURE_SCALE`: PROGRESS_CHART.png, each
 //! game's DONE by calendar day, and PROGRESS.png, the map of tracked files.
-//! Both are opaque, so they read the same on light and dark pages.
+//! Both are drawn in Weyard UI (`palette`) and are opaque but for the four
+//! cut corner pixels of their frames, so they read the same on light and
+//! dark pages.
 use super::boxtree::{
     color, content_mix, content_style, directories, disk_tiles, display_bytes, legend_items, quiet,
     source_name, tracked_only, DISPLAY_CATEGORIES,
@@ -10,8 +12,8 @@ use super::history::{day_number, percent, UNTAGGED};
 use super::jsnum::commas;
 use super::letters::{Letters, LINE};
 use super::model::{treemap, Category, Rect, Tile};
-use super::palette::{BAND, BLUE, DARK, FACE, GOLD, GRID, INK, LIGHT, MUTED, SHADOW, WELL};
-use super::raster::Canvas;
+use super::palette::{BAND, BLUE, DARK, FACE, GOLD, GRID, INK, MUTED, SHADOW, WELL};
+use super::raster::{Canvas, Relief};
 use super::sessions::{family, Family};
 use serde_json::Value;
 use std::path::Path;
@@ -21,6 +23,16 @@ use std::path::Path;
 pub(crate) const WIDTH: i32 = 838;
 pub(crate) const CHART: &str = "PROGRESS_CHART.png";
 pub(crate) const MAP: &str = "PROGRESS.png";
+/// Where both figures send a reader; the README links each image there too.
+pub(crate) const LINK: &str = "github.com/PascalPixel/alchemy";
+
+/// Alchemy's mark and name at the top left of a figure, a heading after it
+/// and the repository's address after that, muted; returns where it ends.
+fn masthead(canvas: &mut Canvas, letters: &Letters, y: i32, heading: &str) -> i32 {
+    let mut x = 8 + canvas.mark(8, y, "alchemy", INK, SHADOW) + 4;
+    x += canvas.text(letters, x, y, heading, INK, Some(SHADOW)) + 12;
+    x + canvas.text(letters, x, y, LINK, MUTED, Some(SHADOW))
+}
 // ------------------------------------------------------------------ chart
 
 /// The daily chart of `history`: x is calendar days since the project
@@ -33,7 +45,8 @@ pub(crate) fn chart(letters: &Letters, history: &Value) -> Canvas {
     let height = WIDTH * 9 / 16;
     let footer = 72 + (legend_rows(letters, &models) - 1) * KEY_ROW;
     let mut canvas = Canvas::new(WIDTH, height, FACE);
-    canvas.bevel(0, 0, WIDTH, height, LIGHT, DARK);
+    canvas.bevel(0, 0, WIDTH, height, Relief::Raised);
+    canvas.clear_corners(0, 0, WIDTH, height);
     let began = history["began"]
         .as_str()
         .and_then(day_number)
@@ -55,21 +68,25 @@ pub(crate) fn chart(letters: &Letters, history: &Value) -> Canvas {
             // Floored to two places, as the README's status line reads.
             .map(|value| format!("{:.2}%", ((value * 100.0) + 1e-6).floor() / 100.0))
     });
-    // Title and key along the top line.
-    canvas.text(letters, 8, 6, "DONE by day", INK, Some(SHADOW));
+    // Title and key along the top line; each game's mark, in its line's
+    // colour, is its swatch.
+    let masthead_end = masthead(&mut canvas, letters, 6, "Alchemy: DONE by day");
     let mut key_x = WIDTH - 8;
-    for (_, name, ink) in series.iter().rev() {
+    for (key, name, ink) in series.iter().rev() {
         key_x -= letters.width(name) as i32;
         canvas.text(letters, key_x, 6, name, INK, Some(SHADOW));
-        key_x -= 14;
-        canvas.fill(key_x, 10, 10, 10, SHADOW);
-        canvas.fill(key_x - 1, 9, 10, 10, ink);
+        key_x -= super::letters::mark_width(key) as i32 + 4;
+        canvas.mark(key_x, 6, key, ink, SHADOW);
         key_x -= 12;
     }
     let stricter = "Stricter rules";
     key_x -= letters.width(stricter) as i32;
     canvas.text(letters, key_x, 6, stricter, INK, Some(SHADOW));
     canvas.fill(key_x - 14, 9, 10, 10, BAND);
+    debug_assert!(
+        masthead_end + 12 <= key_x - 14,
+        "the chart's top line overflows"
+    );
     // The plot well.
     let label_room = latest
         .iter()
@@ -112,7 +129,7 @@ pub(crate) fn chart(letters: &Letters, history: &Value) -> Canvas {
             Some(SHADOW),
         );
     }
-    canvas.bevel(left - 1, top - 1, plot_w + 2, plot_h + 2, DARK, LIGHT);
+    canvas.bevel(left - 1, top - 1, plot_w + 2, plot_h + 2, Relief::Sunken);
     // Month starts, and the first day, along the bottom.
     let mut labelled_until = i32::MIN;
     for day in began..=last {
@@ -291,7 +308,7 @@ fn models_strip(
     (left, right, top): (i32, i32, i32),
     x_of: &dyn Fn(i64) -> i32,
 ) {
-    canvas.fill(left - 1, top - 1, right - left + 2, STRIP + 2, DARK);
+    canvas.rounded_fill(left - 1, top - 1, right - left + 2, STRIP + 2, DARK);
     // Only days with commits draw; each column reaches halfway to the next
     // such day on either side, so a day without commits leaves no hole.
     let present: Vec<(i64, &serde_json::Map<String, Value>)> = days
@@ -362,7 +379,7 @@ pub(crate) fn map_of(letters: &Letters, tiles: Vec<Tile>) -> Canvas {
         }
         row_x += entry(label);
     }
-    canvas.text(letters, 8, 8, "Alchemy files", INK, Some(SHADOW));
+    masthead(&mut canvas, letters, 8, "Alchemy files");
     let corner = commas(total);
     let corner_width = letters.width(&corner) as i32;
     canvas.text(
@@ -374,7 +391,7 @@ pub(crate) fn map_of(letters: &Letters, tiles: Vec<Tile>) -> Canvas {
         Some(SHADOW),
     );
     let frame = (4, 32, WIDTH - 8, height - 44 - rows * 24);
-    canvas.fill(frame.0, frame.1, frame.2, frame.3, INK);
+    canvas.rounded_fill(frame.0, frame.1, frame.2, frame.3, INK);
     let nested = directories(tiles, "");
     draw(
         &mut canvas,
@@ -395,7 +412,8 @@ pub(crate) fn map_of(letters: &Letters, tiles: Vec<Tile>) -> Canvas {
         canvas.text(letters, x + 20, y, &label, INK, Some(SHADOW));
         x += entry(&label);
     }
-    canvas.bevel(0, 0, WIDTH, height, LIGHT, DARK);
+    canvas.bevel(0, 0, WIDTH, height, Relief::Raised);
+    canvas.clear_corners(0, 0, WIDTH, height);
     canvas
 }
 
@@ -455,10 +473,10 @@ fn draw(
         };
         let expanded = container && body.2 >= 44 && body.3 >= 34;
         if expanded {
-            canvas.fill(cell.0, cell.1, cell.2, cell.3, FACE);
-            canvas.bevel(cell.0, cell.1, cell.2, cell.3, LIGHT, DARK);
+            canvas.rounded_fill(cell.0, cell.1, cell.2, cell.3, FACE);
+            canvas.bevel(cell.0, cell.1, cell.2, cell.3, Relief::Raised);
         } else {
-            stack(canvas, tile, body);
+            canvas.rounded(body, |canvas| stack(canvas, tile, body));
         }
         let name = match tile.source.as_deref() {
             Some(source) if !source.ends_with('/') || container => source_name(source),
@@ -629,14 +647,24 @@ mod tests {
             vec![tile("games/X/SRC/A.C", 600), tile("games/X/SRC/B.S", 400)],
         );
         assert_eq!((canvas.width, canvas.height), (838, 1490));
-        // The outer frame's bevel, and the games folder's own at its corner.
-        assert_eq!(canvas.get(0, 0), Some(super::super::raster::rgb(LIGHT)));
-        assert_eq!(canvas.get(4, 32), Some(super::super::raster::rgb(LIGHT)));
+        // The outer frame's cut corner is clear and its light bevel three
+        // quarters over the face; the games folder's corner is cut to the
+        // face behind the file frame, and its bevel starts beside it.
+        use super::super::raster::{blend, rgb};
+        let light = blend(
+            rgb(crate::coverage::palette::LIGHT),
+            rgb(FACE),
+            crate::coverage::palette::LIGHT_OPACITY,
+        );
+        assert_eq!(canvas.get(0, 0), None);
+        assert_eq!(canvas.get(1, 0), Some(light));
+        assert_eq!(canvas.get(4, 32), Some(rgb(FACE)));
+        assert_eq!(canvas.get(5, 32), Some(light));
         let again = map_of(
             &letters,
             vec![tile("games/X/SRC/A.C", 600), tile("games/X/SRC/B.S", 400)],
         );
-        assert_eq!(canvas.rgb(2), again.rgb(2));
+        assert_eq!(canvas.rgba(2), again.rgba(2));
     }
     #[test]
     fn the_model_key_groups_each_company_weakest_to_strongest() {

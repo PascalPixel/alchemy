@@ -77,14 +77,14 @@ s32 ObjectMotion_TurnTowardLinkedTarget(struct ObjectRuntime *object)
     if (target != NULL) {
         object->action_flags &= 0xfe;
         target_angle = (u16)ArcTan2(target->z - object->z, target->x - object->x);
-        current_angle = *(u16 *)((u8 *)object + 6);
+        current_angle = object->angle;
         turn_step = target_angle - current_angle;
         if (turn_step != 0) {
             if (turn_step > 0x1000)
                 turn_step = 0x1000;
             if (turn_step < -0x1000)
                 turn_step = -0x1000;
-            *(u16 *)((u8 *)object + 6) = (u16)(current_angle + turn_step);
+            object->angle = (u16)(current_angle + turn_step);
         }
     }
     return 1;

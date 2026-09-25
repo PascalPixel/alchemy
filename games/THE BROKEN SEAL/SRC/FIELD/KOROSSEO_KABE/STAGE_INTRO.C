@@ -1,8 +1,8 @@
 #include "TYPES.H"
 
-void Local_02001df4();
+void Korosseo_FinishSoloRound();
 void Engine_EventBegin();
-s32 run_state_interaction();
+s32 KorosseoKabe_RunStateInteraction();
 void Engine_EventSetMessage();
 void Engine_CameraSetSpeed();
 void Engine_CameraMoveTo();
@@ -17,7 +17,7 @@ void Engine_ActorSetAnimation();
 void Engine_ActorSetAttachedEffect();
 void Korosseo_RestoreCompetitor();
 void Engine_CameraFollowActor();
-void Local_020020b8();
+void KorosseoKabe_ShowFollowUpPrompt();
 s32 FieldScene_RunMiddleSequence();
 void Engine_EventEnd();
 
@@ -68,10 +68,10 @@ void KorosseoKabe_RunStageIntro(s32 a0)
     s32 record;
 
     if (Data_02000240_t[225][0] == 2) {
-        Local_02001df4();
+        Korosseo_FinishSoloRound();
     } else {
         Engine_EventBegin();
-        rec = Value2(run_state_interaction, a0, 1);
+        rec = Value2(KorosseoKabe_RunStateInteraction, a0, 1);
         if (rec == 0) {
             Call1(Engine_EventSetMessage, 0x209e);
             Call2(Engine_CameraSetSpeed, 0x30000, 0x6000);
@@ -95,7 +95,7 @@ void KorosseoKabe_RunStageIntro(s32 a0)
             Engine_EventShowMessage(a0, 0);
             Korosseo_RestoreCompetitor(0);
             Engine_CameraFollowActor(0, 0);
-            Local_020020b8(a0, 1);
+            KorosseoKabe_ShowFollowUpPrompt(a0, 1);
         } else {
             if (rec == 1) {
                 Call1(Engine_EventSetMessage, 0x209d);

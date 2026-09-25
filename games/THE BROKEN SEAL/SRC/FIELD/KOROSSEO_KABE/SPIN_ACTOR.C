@@ -1,7 +1,5 @@
 #include "TYPES.H"
 
-#define KorosseoKabe_SpinActorAway Func_02000160
-
 void Func_02003f4c();
 void Func_02003f76();
 void Func_02004012();

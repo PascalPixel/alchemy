@@ -5,7 +5,7 @@ void Engine_ObjectCommitPosition(struct FieldActor *object);
 
 /* The leader pushes wall block id to cell (column / 2, row): the block slides
  * there and the leader follows half the distance behind it. */
-void KorosseoKabe_Func02001898(s32 id, s32 column, s32 row)
+void KorosseoKabe_PushBlockToCell(s32 id, s32 column, s32 row)
 {
     s32 pusher = gGameState.selected_actor;
     struct FieldActor *leader = Engine_ActorGet(pusher);

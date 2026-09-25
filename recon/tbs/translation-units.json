@@ -61509,7 +61509,7 @@
       "source": "games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_KABE/STAGE_INTRO.C",
       "overlay": "resource_3bb",
       "absolute_symbols": {
-        "Local_02001df4": {
+        "Korosseo_FinishSoloRound": {
           "address": "0x02009df4",
           "kind": "thumb"
         },
@@ -61517,7 +61517,7 @@
           "address": "0x0200bf38",
           "kind": "thumb"
         },
-        "run_state_interaction": {
+        "KorosseoKabe_RunStateInteraction": {
           "address": "0x02009ffc",
           "kind": "thumb"
         },
@@ -61577,7 +61577,7 @@
           "address": "0x0200c010",
           "kind": "thumb"
         },
-        "Local_020020b8": {
+        "KorosseoKabe_ShowFollowUpPrompt": {
           "address": "0x0200a0b8",
           "kind": "thumb"
         },
@@ -64883,11 +64883,11 @@
           "address": "0x02009ba8",
           "kind": "thumb"
         },
-        "initialize_scene_actor_positions": {
+        "SceneActor_PlacePartyAtSavedTiles": {
           "address": "0x02009b30",
           "kind": "thumb"
         },
-        "Local_020029d0": {
+        "KorosseoKabe_RunScriptedTransition": {
           "address": "0x0200a9d0",
           "kind": "thumb"
         },
@@ -64907,7 +64907,7 @@
           "address": "0x02009fb8",
           "kind": "thumb"
         },
-        "FieldScene_RunScene3bb_02000b38": {
+        "FieldScene_RunPairedEntranceWalk": {
           "address": "0x02008b38",
           "kind": "thumb"
         },
@@ -64927,7 +64927,7 @@
           "address": "0x02008714",
           "kind": "thumb"
         },
-        "mark_scene_progress": {
+        "KorosseoKabe_MarkSceneProgress": {
           "address": "0x02009c78",
           "kind": "thumb"
         },
@@ -71147,7 +71147,7 @@
     },
     {
       "id": "scene-3bb-02000400",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_KABE/F_00400.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_KABE/PUSH_WALL.C",
       "overlay": "resource_3bb",
       "absolute_symbols": {
         "Engine_ActorGet": {
@@ -71283,7 +71283,7 @@
     },
     {
       "id": "scene-3bb-02001898",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_KABE/F_01898.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_KABE/PUSH_BLOCK.C",
       "overlay": "resource_3bb",
       "absolute_symbols": {
         "Engine_ActorGet": {
@@ -71663,7 +71663,7 @@
     },
     {
       "id": "scene-3bb-020019bc",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_KABE/F_019BC.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_KABE/GUIDE_TALK.C",
       "overlay": "resource_3bb",
       "absolute_symbols": {
         "Korosseo_FinishSoloRound": {
@@ -71674,7 +71674,7 @@
           "address": "0x0200bf38",
           "kind": "thumb"
         },
-        "run_state_interaction": {
+        "KorosseoKabe_RunStateInteraction": {
           "address": "0x02009ffc",
           "kind": "thumb"
         },
@@ -71718,7 +71718,7 @@
           "address": "0x0200bff0",
           "kind": "thumb"
         },
-        "KorosseoKabe_Func02001898": {
+        "KorosseoKabe_PushBlockToCell": {
           "address": "0x02009898",
           "kind": "thumb"
         },
@@ -71738,7 +71738,7 @@
           "address": "0x0200bf90",
           "kind": "thumb"
         },
-        "Local_020020b8": {
+        "KorosseoKabe_ShowFollowUpPrompt": {
           "address": "0x0200a0b8",
           "kind": "thumb"
         },
@@ -71767,7 +71767,7 @@
     },
     {
       "id": "scene-3bb-020004c0",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_KABE/F_004C0.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_KABE/ROLL_LOG.C",
       "overlay": "resource_3bb",
       "absolute_symbols": {
         "Engine_ActorGet": {

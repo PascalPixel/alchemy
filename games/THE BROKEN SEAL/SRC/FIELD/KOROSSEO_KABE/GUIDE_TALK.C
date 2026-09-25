@@ -2,12 +2,12 @@
 #include "FIELD_EVENT.H"
 
 void Korosseo_FinishSoloRound(void);
-s32 run_state_interaction(s32 speaker, s32 base);
+s32 KorosseoKabe_RunStateInteraction(s32 speaker, s32 base);
 s32 Local_02002ba8(s32 actor, s32 x, s32 z);
 s32 SceneActor_PlaceWithScale14000(s32 no, s32 x, s32 z);
-void KorosseoKabe_Func02001898(s32 id, s32 column, s32 row);
+void KorosseoKabe_PushBlockToCell(s32 id, s32 column, s32 row);
 void Korosseo_RestoreCompetitor(s32 actor);
-void Local_020020b8(s32 speaker, s32 base);
+void KorosseoKabe_ShowFollowUpPrompt(s32 speaker, s32 base);
 s32 FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base);
 
 static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
@@ -28,7 +28,7 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 /* The Colosso guide at the Board Walk: on the first visit pans the camera
  * over the course and walks the competitor through pushing a block while
  * explaining it; afterwards reminds that the logs are rolled into a path. */
-void KorosseoKabe_Func020019bc(s32 speaker)
+void KorosseoKabe_RunGuideTalk(s32 speaker)
 {
     s32 result;
 
@@ -37,7 +37,7 @@ void KorosseoKabe_Func020019bc(s32 speaker)
         return;
     }
     Engine_EventBegin();
-    result = run_state_interaction(speaker, 5);
+    result = KorosseoKabe_RunStateInteraction(speaker, 5);
     if (result == 0) {
         s32 x;
         s32 z;
@@ -58,7 +58,7 @@ void KorosseoKabe_Func020019bc(s32 speaker)
         SceneActor_PlaceWithScale14000(0, x, 216);
         Call3((void (*)())Engine_ActorFaceDirection, 0, 0x8000, 10);
         Engine_EventShowMessage(speaker, 0);
-        KorosseoKabe_Func02001898(16, 360, 208);
+        KorosseoKabe_PushBlockToCell(16, 360, 208);
         Engine_ActorShowEmote(0, z, 45);
         Call3((void (*)())Engine_ActorSetSpeed, 0, 0x18000, 0xc000);
         x -= 32;
@@ -69,7 +69,7 @@ void KorosseoKabe_Func020019bc(s32 speaker)
         Korosseo_RestoreCompetitor(0);
         Engine_CameraFollowActor(0, 0);
         Call3((void (*)())Engine_ActorSetPosition, 16, 0x1880000, 0xd00000);
-        Local_020020b8(speaker, 5);
+        KorosseoKabe_ShowFollowUpPrompt(speaker, 5);
     } else if (result == 1) {
         Engine_EventSetMessage(8365);
         Engine_EventShowMessage(speaker, 0);

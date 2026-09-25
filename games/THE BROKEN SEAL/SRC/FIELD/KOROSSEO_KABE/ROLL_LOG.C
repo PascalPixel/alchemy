@@ -11,7 +11,7 @@ extern u8 Data_0200c0c0[];
 /* The leader rolls log id to cell (column / 2, row) on the Board Walk: the
  * log rolls there with the animation for the push direction while the
  * leader follows half the distance behind it. */
-void KorosseoKabe_Func020004c0(s32 id, s32 column, s32 row)
+void KorosseoKabe_RollLogToCell(s32 id, s32 column, s32 row)
 {
     s32 pusher = gGameState.selected_actor;
     struct FieldActor *leader = Engine_ActorGet(pusher);

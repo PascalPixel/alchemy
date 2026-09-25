@@ -19743,7 +19743,8 @@
       "source": "FIELD/KARAGORU_DOU/SPINNING_LEAP.C"
     },
     "resource_3ce:02000cf4": {
-      "name": "DebugMenu_SelectItem"
+      "name": "DebugMenu_SelectItem",
+      "source": "DEBUG/MENU_TEST/SELECT_ITEM.C"
     },
     "resource_3c7:02000308": {
       "name": "RariberoScene_PlayPoseSequence",

@@ -56221,78 +56221,6 @@
       ]
     },
     {
-      "id": "debug-item-menu",
-      "source": "recon/tbs/en/overlays/debug_item_menu.c",
-      "overlay": "resource_3ce",
-      "absolute_symbols": {
-        "Engine_AudioPlayCue": {
-          "address": "0x020092a8",
-          "kind": "thumb"
-        },
-        "Engine_DebugCreateWindow": {
-          "address": "0x02009198",
-          "kind": "thumb"
-        },
-        "Engine_TaskWait": {
-          "address": "0x02009190",
-          "kind": "thumb"
-        },
-        "Engine_DebugRemainder": {
-          "address": "0x02009188",
-          "kind": "thumb"
-        },
-        "Engine_DebugDrawItemDetails": {
-          "address": "0x02009288",
-          "kind": "thumb"
-        },
-        "gDebugItemPrompt": {
-          "address": "0x02009390",
-          "kind": "data"
-        },
-        "gDebugItemCapacityLabel": {
-          "address": "0x0200939c",
-          "kind": "data"
-        },
-        "gDebugItemFullLabel": {
-          "address": "0x020093b4",
-          "kind": "data"
-        },
-        "gDebugKeysPressed": {
-          "address": "0x03001c94",
-          "kind": "data"
-        },
-        "gDebugKeysRepeated": {
-          "address": "0x03001b04",
-          "kind": "data"
-        },
-        "Engine_DebugFinalizeWindow": {
-          "address": "0x020091a0",
-          "kind": "thumb"
-        },
-        "Engine_DebugRedrawWindow": {
-          "address": "0x020091f8",
-          "kind": "thumb"
-        },
-        "Engine_DebugClearWindow": {
-          "address": "0x02009200",
-          "kind": "thumb"
-        },
-        "Engine_DebugDrawTextResource": {
-          "address": "0x020091c0",
-          "kind": "thumb"
-        },
-        "Engine_DebugGetItem": {
-          "address": "0x02009228",
-          "kind": "thumb"
-        }
-      },
-      "owners": [
-        {
-          "address": "0x02000cf4"
-        }
-      ]
-    },
-    {
       "id": "raribero-pose-sequence",
       "source": "games/THE BROKEN SEAL/SRC/FIELD/RARIBERO_HEYA/POSE_SEQUENCE.C",
       "overlay": "resource_3c7",
@@ -74748,6 +74676,78 @@
           "address": "0x02000398",
           "extent": 420,
           "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "scene-3ce-02000cf4",
+      "source": "games/THE BROKEN SEAL/SRC/DEBUG/MENU_TEST/SELECT_ITEM.C",
+      "overlay": "resource_3ce",
+      "absolute_symbols": {
+        "Engine_AudioPlayCue": {
+          "address": "0x020092a8",
+          "kind": "thumb"
+        },
+        "Engine_DebugClearWindow": {
+          "address": "0x02009200",
+          "kind": "thumb"
+        },
+        "Engine_DebugCreateWindow": {
+          "address": "0x02009198",
+          "kind": "thumb"
+        },
+        "Engine_DebugDrawItemDetails": {
+          "address": "0x02009288",
+          "kind": "thumb"
+        },
+        "Engine_DebugFinalizeWindow": {
+          "address": "0x020091a0",
+          "kind": "thumb"
+        },
+        "Engine_DebugGetItem": {
+          "address": "0x02009228",
+          "kind": "thumb"
+        },
+        "Engine_DebugRedrawWindow": {
+          "address": "0x020091f8",
+          "kind": "thumb"
+        },
+        "Engine_DebugRemainder": {
+          "address": "0x02009188",
+          "kind": "thumb"
+        },
+        "Engine_TaskWait": {
+          "address": "0x02009190",
+          "kind": "thumb"
+        },
+        "Main_08015078": {
+          "address": "0x020091c0",
+          "kind": "thumb"
+        },
+        "gDebugItemCapacityLabel": {
+          "address": "0x0200939c",
+          "kind": "data"
+        },
+        "gDebugItemFullLabel": {
+          "address": "0x020093b4",
+          "kind": "data"
+        },
+        "gDebugItemPrompt": {
+          "address": "0x02009390",
+          "kind": "data"
+        },
+        "gDebugKeysPressed": {
+          "address": "0x03001c94",
+          "kind": "data"
+        },
+        "gDebugKeysRepeated": {
+          "address": "0x03001b04",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02000cf4"
         }
       ]
     }

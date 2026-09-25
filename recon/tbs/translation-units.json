@@ -62032,7 +62032,7 @@
     },
     {
       "id": "world-map-f-034a0",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/WORLD_MAP/F_034A0.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/WORLD_MAP/ACTOR8_PUFF.C",
       "overlay": "resource_371",
       "absolute_symbols": {
         "Engine_ActorGet": {

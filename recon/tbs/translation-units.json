@@ -64740,7 +64740,7 @@
     },
     {
       "id": "scene-3b1-020047cc",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/FUNE_HEYA/F_047CC.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/FUNE_HEYA/POSE_ACTOR.C",
       "overlay": "resource_3b1",
       "absolute_symbols": {
         "Engine_ActorSetAnimation": {
@@ -70967,7 +70967,7 @@
     },
     {
       "id": "scene-3b1-020045d0",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/FUNE_HEYA/F_045D0.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/FUNE_HEYA/PLACE_ANCHOR.C",
       "overlay": "resource_3b1",
       "absolute_symbols": {
         "Engine_GameFlagIsSet": {
@@ -73931,14 +73931,14 @@
     },
     {
       "id": "scene-3b1-02003364",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/FUNE_HEYA/F_03364.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/FUNE_HEYA/FLAG_LAYOUT.C",
       "overlay": "resource_3b1",
       "absolute_symbols": {
         "Engine_GameFlagIsSet": {
           "address": "0x0200e4a0",
           "kind": "thumb"
         },
-        "FuneHeya_Func020045d0": {
+        "FuneHeya_PlaceAnchorCharm": {
           "address": "0x0200c5d0",
           "kind": "thumb"
         },
@@ -74387,7 +74387,7 @@
     },
     {
       "id": "scene-3b1-02005d10",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/FUNE_HEYA/F_05D10.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/FUNE_HEYA/PROGRESS_SHOW.C",
       "overlay": "resource_3b1",
       "absolute_symbols": {
         "FuneHeya_FindFirstSetFlag": {

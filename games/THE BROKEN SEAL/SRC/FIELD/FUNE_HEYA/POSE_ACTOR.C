@@ -4,7 +4,7 @@ void Engine_ActorSetAnimation();
 void Main_0808a108();
 
 /* Pose one of the actors 18 to 26 for its scene role. */
-void FuneHeya_Func020047cc(s32 id)
+void FuneHeya_PoseSceneActor(s32 id)
 {
     switch (id) {
     case 19:

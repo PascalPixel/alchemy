@@ -5,7 +5,7 @@ s32 Main_08077148(void);
 
 extern u8 Data_02000240[];
 
-s32 LinkLobby_Func02000f30(s32 id)
+s32 LinkLobby_PartyContains(s32 id)
 {
     s32 count;
     s32 max;

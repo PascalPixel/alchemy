@@ -20805,8 +20805,8 @@
       "source": "FIELD/RARIBERO_HEYA/ITEM_SHOP.C"
     },
     "resource_3cb:020002d8": {
-      "name": "LinkLobby_Func020002d8",
-      "source": "MENU/LINK_LOBBY/F_002D8.C"
+      "name": "LinkLobby_CallIntoCircle",
+      "source": "MENU/LINK_LOBBY/CIRCLE_CALL.C"
     },
     "resource_3c0:02000f50": {
       "name": "SuharaSabaku_ApplyVisitFlagBlend",
@@ -21016,16 +21016,16 @@
       "source": "FIELD/ARUTIN_YAMA/ROLL_OBJECT.C"
     },
     "resource_3cb:02000148": {
-      "name": "LinkLobby_Func02000148",
-      "source": "MENU/LINK_LOBBY/F_00148.C"
+      "name": "LinkLobby_PollPeerReady",
+      "source": "MENU/LINK_LOBBY/POLL_READY.C"
     },
     "resource_3c0:020009cc": {
       "name": "SuharaSabaku_FollowLeaderWithSparks",
       "source": "FIELD/SUHARA_SABAKU/FOLLOW_SPARK.C"
     },
     "resource_3cb:02000f30": {
-      "name": "LinkLobby_Func02000f30",
-      "source": "MENU/LINK_LOBBY/F_00F30.C"
+      "name": "LinkLobby_PartyContains",
+      "source": "MENU/LINK_LOBBY/PARTY_HAS.C"
     },
     "resource_3bd:02003610": {
       "name": "ArutamiraDou_MatchLeaderPriority",
@@ -21036,8 +21036,8 @@
       "source": "FIELD/ARUTAMIRA_DOU/SCALE_PULSE.C"
     },
     "resource_3cb:02000128": {
-      "name": "LinkLobby_Func02000128",
-      "source": "MENU/LINK_LOBBY/F_00128.C"
+      "name": "LinkLobby_WriteSlotValue",
+      "source": "MENU/LINK_LOBBY/WRITE_SLOT.C"
     },
     "resource_387:02000fc8": {
       "name": "GomaIriguchi_GiveShamansRod",

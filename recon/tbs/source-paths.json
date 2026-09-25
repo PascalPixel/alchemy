@@ -20796,8 +20796,8 @@
       "source": "FIELD/VINASU_HEYA/LOWER_BLOCKS.C"
     },
     "resource_3b3:02002040": {
-      "name": "TakaraHashira_Func02002040",
-      "source": "FIELD/TAKARA_HASHIRA/F_02040.C"
+      "name": "TakaraHashira_RunStagedCellScene",
+      "source": "FIELD/TAKARA_HASHIRA/STAGED_TRIGGER.C"
     },
     "resource_3bd:02000cf8": {
       "name": "ArutamiraDou_Func02000cf8",
@@ -20891,12 +20891,12 @@
       "source": "FIELD/ARUTAMIRA_DOU/F_00DE8.C"
     },
     "resource_3b3:02001938": {
-      "name": "TakaraHashira_Func02001938",
-      "source": "FIELD/TAKARA_HASHIRA/F_01938.C"
+      "name": "TakaraHashira_SyncPriorityIfBehind",
+      "source": "FIELD/TAKARA_HASHIRA/FRONT_BEHIND.C"
     },
     "resource_3b3:020019f0": {
-      "name": "TakaraHashira_Func020019f0",
-      "source": "FIELD/TAKARA_HASHIRA/F_019F0.C"
+      "name": "TakaraHashira_SyncPriorityIfAhead",
+      "source": "FIELD/TAKARA_HASHIRA/FRONT_AHEAD.C"
     },
     "resource_3b1:020045d0": {
       "name": "FuneHeya_Func020045d0",
@@ -20963,20 +20963,20 @@
       "source": "FIELD/SHIAN_MURA/F_009DC.C"
     },
     "resource_3b3:02001be8": {
-      "name": "TakaraHashira_Func02001be8",
-      "source": "FIELD/TAKARA_HASHIRA/F_01BE8.C"
+      "name": "TakaraHashira_SortPillarActors",
+      "source": "FIELD/TAKARA_HASHIRA/SORT_PILLARS.C"
     },
     "resource_3b3:02001aa8": {
-      "name": "TakaraHashira_Func02001aa8",
-      "source": "FIELD/TAKARA_HASHIRA/F_01AA8.C"
+      "name": "TakaraHashira_UpdateActorPriority",
+      "source": "FIELD/TAKARA_HASHIRA/PRIORITY_UPDATE.C"
     },
     "resource_3a5:02001054": {
       "name": "RamakanSabaku_Func02001054",
       "source": "FIELD/RAMAKAN_SABAKU/F_01054.C"
     },
     "resource_3b3:020025f8": {
-      "name": "TakaraHashira_Func020025f8",
-      "source": "FIELD/TAKARA_HASHIRA/F_025F8.C"
+      "name": "TakaraHashira_PrepLoweredActor",
+      "source": "FIELD/TAKARA_HASHIRA/PREP_ACTOR.C"
     },
     "resource_3a7:02000704": {
       "name": "KuupuappuDou_Func02000704",

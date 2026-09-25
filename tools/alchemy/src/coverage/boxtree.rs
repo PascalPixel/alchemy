@@ -128,11 +128,11 @@ fn file_style(extension: &str, source: &str) -> (&'static str, &'static str) {
     let data = matches!(extension, "json" | "tsv" | "bin" | "png");
     let name = source_name(source);
     match extension {
-        "c" if recon => ("Drafted C", DRAFT_ROSE),
+        "c" if recon => ("Drafted C", TRANSLATION_GREY),
         "c" => ("C", SOURCE_ROSE),
         "h" | "inc" => ("Headers", HEADER_ROSE),
         "s-credited" => ("Assembly", CREDITED_ASSEMBLY),
-        "s" => (NOT_YET_C, TRANSLATION_GREY),
+        "s" => (NOT_YET_C, DRAFT_ROSE),
         "wav" => ("WAV audio", PCM_ORANGE),
         "mid" => ("MIDI music", MIDI_GREEN),
         "po" | "md" | "txt" => ("Translations", ASSEMBLY),
@@ -485,10 +485,7 @@ mod tests {
             group: Some(format!("file:{extension}")),
             ..Tile::default()
         };
-        assert_eq!(
-            content_style(&tile("s")),
-            ("Not yet C", super::TRANSLATION_GREY)
-        );
+        assert_eq!(content_style(&tile("s")), ("Not yet C", super::DRAFT_ROSE));
         assert_eq!(
             content_style(&tile("s-credited")),
             ("Assembly", super::CREDITED_ASSEMBLY)
@@ -498,7 +495,10 @@ mod tests {
             source: Some("recon/tbs/en/main/08006878.c".into()),
             ..tile("c")
         };
-        assert_eq!(content_style(&draft), ("Drafted C", super::DRAFT_ROSE));
+        assert_eq!(
+            content_style(&draft),
+            ("Drafted C", super::TRANSLATION_GREY)
+        );
         assert_eq!(
             content_style(&tile("po")),
             ("Translations", super::ASSEMBLY)

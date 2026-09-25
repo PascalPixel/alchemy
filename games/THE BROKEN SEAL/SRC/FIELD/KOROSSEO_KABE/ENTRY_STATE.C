@@ -9,11 +9,11 @@ void SceneState_ApplyRectsForActors15To17(void);
 s32 Korosseo_ShowItemIcon(s32 slot, s32 item);
 s32 FieldScene_BuildDescriptorAndInstallTask(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6);
 void Korosseo_SelectSoloCompetitor(s32 index);
-void initialize_scene_actor_positions(void);
-void Local_020029d0(s32 value);
+void SceneActor_PlacePartyAtSavedTiles(void);
+void KorosseoKabe_RunScriptedTransition(s32 value);
 void Korosseo_RunGreetScene(s32 actor);
 void FieldScene_RunSixSteps896To936(void);
-void FieldScene_RunScene3bb_02000b38(s32 direction);
+void FieldScene_RunPairedEntranceWalk(s32 direction);
 void SceneState_InitControlRecordAndStartTask(s32 value);
 void Engine_ActorFollow(s32 actor, s32 leader);
 
@@ -27,7 +27,7 @@ union GameStateRows {
 extern union GameStateRows Data_02000240_t;
 extern u8 Value_000000e5;
 void FieldScene_RunSupplementalSequenceOne(void);
-void mark_scene_progress(void);
+void KorosseoKabe_MarkSceneProgress(void);
 
 static __inline__ void Call1(void (*f)(), s32 a0)
 {
@@ -175,8 +175,8 @@ s32 KorosseoKabe_ApplyEntryState(void)
         if (!Engine_GameFlagIsSet(0x109)) {
             Engine_AudioPlayCue(17);
             Korosseo_SelectSoloCompetitor(0);
-            initialize_scene_actor_positions();
-            Local_020029d0(2);
+            SceneActor_PlacePartyAtSavedTiles();
+            KorosseoKabe_RunScriptedTransition(2);
         }
         Engine_ActorFollow(1, 0);
         Engine_ActorFollow(2, 0);
@@ -184,13 +184,13 @@ s32 KorosseoKabe_ApplyEntryState(void)
         SceneState_InitControlRecordAndStartTask((s32)&Value_000000e5);
         break;
     case 2:
-        Engine_TaskAddCallback(mark_scene_progress, 0xc80);
+        Engine_TaskAddCallback(KorosseoKabe_MarkSceneProgress, 0xc80);
         Engine_ActorDestroy(40);
         Engine_ActorDestroy(41);
         if (!Engine_GameFlagIsSet(0x109)) {
-            initialize_scene_actor_positions();
+            SceneActor_PlacePartyAtSavedTiles();
             Korosseo_SelectSoloCompetitor(1);
-            Local_020029d0(0);
+            KorosseoKabe_RunScriptedTransition(0);
         }
         break;
     case 3:
@@ -200,11 +200,11 @@ s32 KorosseoKabe_ApplyEntryState(void)
         }
         break;
     case 4:
-        FieldScene_RunScene3bb_02000b38(2);
+        FieldScene_RunPairedEntranceWalk(2);
         Engine_EventRequestExit(4);
         break;
     case 5:
-        FieldScene_RunScene3bb_02000b38(-2);
+        FieldScene_RunPairedEntranceWalk(-2);
         Engine_EventRequestExit(5);
         break;
     }

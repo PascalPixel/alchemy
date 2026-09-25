@@ -74618,6 +74618,82 @@
           "address": "0x02000da4"
         }
       ]
+    },
+    {
+      "id": "scene-3c8-02001f60",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/VINASU_HEYA/SETTLE_BLOCKS.C",
+      "overlay": "resource_3c8",
+      "absolute_symbols": {
+        "OverlayObject_PrepareObjectWithCommand15": {
+          "address": "0x02008098",
+          "kind": "thumb"
+        },
+        "OverlayObject_WaitUntilIdle": {
+          "address": "0x0200894c",
+          "kind": "thumb"
+        },
+        "SceneEffect_SpawnEffect284AtCell": {
+          "address": "0x02008c5c",
+          "kind": "thumb"
+        },
+        "Engine_ActorGet": {
+          "address": "0x0200ceac",
+          "kind": "thumb"
+        },
+        "Engine_EventBegin": {
+          "address": "0x0200ce94",
+          "kind": "thumb"
+        },
+        "Engine_MapCopyCellAttributes": {
+          "address": "0x0200ce34",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpritePriority": {
+          "address": "0x0200cf64",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpriteFlags": {
+          "address": "0x0200ce44",
+          "kind": "thumb"
+        },
+        "Engine_AudioPlayCue": {
+          "address": "0x0200cffc",
+          "kind": "thumb"
+        },
+        "Engine_ObjectDispatchRelease": {
+          "address": "0x0200cdec",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagIsSet": {
+          "address": "0x0200ce74",
+          "kind": "thumb"
+        },
+        "Engine_EventEnd": {
+          "address": "0x0200ce9c",
+          "kind": "thumb"
+        },
+        "Engine_EventWait": {
+          "address": "0x0200ce8c",
+          "kind": "thumb"
+        },
+        "Engine_MapAnimateCells": {
+          "address": "0x0200ce14",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagSet": {
+          "address": "0x0200ce7c",
+          "kind": "thumb"
+        },
+        "Engine_TaskWait": {
+          "address": "0x0200cda4",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02001f60"
+        }
+      ]
     }
   ]
 }

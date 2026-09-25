@@ -31,13 +31,14 @@ struct ScriptObjectRuntime {
     void *animation;
     u8 animation_kind;
     u8 flags;
-    u8 unknown_56[0x04];
+    u8 unknown_56[0x03];
+    u8 flags_59;
     u8 action_flags;
     u8 movement_state;
     u8 unknown_5c[0x04];
     void *callback;
-    s16 action;
-    u8 unknown_66[0x02];
+    s16 home_x;
+    s16 home_z;
     struct ScriptObjectRuntime *linked_object;
     u8 unknown_6c[0x04];
 };

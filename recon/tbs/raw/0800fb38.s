@@ -16,8 +16,10 @@
 	.set sub_08011a84, 0x08011a84
 	.set sub_080770c0, 0x080770c0
 	.set sub_080770d0, 0x080770d0
+	.global Map_LoadLayeredScene
 	.global Func_0800fb38
 	.thumb_func
+Map_LoadLayeredScene:
 Func_0800fb38:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

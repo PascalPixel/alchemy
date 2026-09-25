@@ -6,8 +6,10 @@
 	.set sub_0800d14c, 0x0800d14c
 	.set sub_0800d924, 0x0800d924
 	.set sub_080120dc, 0x080120dc
+	.global ScriptObject_WanderNearHome
 	.global Func_0800df04
 	.thumb_func
+ScriptObject_WanderNearHome:
 Func_0800df04:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

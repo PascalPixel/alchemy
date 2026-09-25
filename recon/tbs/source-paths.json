@@ -324,8 +324,8 @@
       "source": "FIELD/ARUTAMIRA_DOU/FADE_BLEND.C"
     },
     "resource_389:020010c8": {
-      "name": "GomaHashira_Func020010c8",
-      "source": "FIELD/GOMA_HASHIRA/F_010C8.C"
+      "name": "GomaHashira_DriveActor13Idle",
+      "source": "FIELD/GOMA_HASHIRA/ACTOR13_IDLE.C"
     },
     "resource_39c:02002844": {
       "name": "MakyuriHeya_FadePaletteToWhite",
@@ -372,8 +372,8 @@
       "source": "FIELD/MAKYURI_HEYA/BLOCK_FLAGS.C"
     },
     "resource_389:02000a68": {
-      "name": "GomaHashira_Func02000a68",
-      "source": "FIELD/GOMA_HASHIRA/F_00A68.C"
+      "name": "GomaHashira_SpawnPillarEffect",
+      "source": "FIELD/GOMA_HASHIRA/SPAWN_PILLAR_EFFECT.C"
     },
     "resource_36f:020001c0": {
       "name": "Title_Func020001c0",

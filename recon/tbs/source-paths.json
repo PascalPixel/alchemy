@@ -10573,7 +10573,7 @@
       "source": "BATTLE/EFFECT/INITIALIZE_MODE6.C"
     },
     "main:080f4168": {
-      "name": "FunctionHead_080f4168"
+      "name": "LuckyDice_Run"
     },
     "main:080fa264": {
       "name": "Audio_ResumePlayer",

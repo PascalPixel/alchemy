@@ -12,7 +12,7 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
 /* Moves steps 10 and 11 to the floor heights their step indices name, then
  * marks the cell under each of actors 10 to 14 that has sunk below the
  * floor. */
-void BabiChika_Func02001abc(s32 wait)
+void BabiChika_SettleSteps(s32 wait)
 {
     u32 i;
 

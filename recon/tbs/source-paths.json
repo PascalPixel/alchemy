@@ -10767,7 +10767,7 @@
     },
     "resource_3ca:02000430": {
       "name": "Scene_RunExtendedPresentationSequence",
-      "source": "FIELD/BABI_FUNE/F_00430.C"
+      "source": "FIELD/BABI_FUNE/EXTENDED_PRESENTATION.C"
     },
     "resource_371:02002cb4": {
       "name": "FieldScene_RunActorPresentationSequence",

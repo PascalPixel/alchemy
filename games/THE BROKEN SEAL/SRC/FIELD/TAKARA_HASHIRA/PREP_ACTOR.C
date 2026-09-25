@@ -1,7 +1,7 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
-void TakaraHashira_Func020025f8(s32 id)
+void TakaraHashira_PrepLoweredActor(s32 id)
 {
     struct FieldActor *actor = Engine_ActorGet(id);
 

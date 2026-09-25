@@ -8,7 +8,7 @@ void Main_0808a2a8(void);
 
 /* Runs the scene when a staged actor stands in the cell a step further along z,
  * otherwise falls back to sequence D. */
-void TakaraHashira_Func02002040(void)
+void TakaraHashira_RunStagedCellScene(void)
 {
     struct FieldActor *leader = Engine_ActorGet(0);
     s32 pos[3];

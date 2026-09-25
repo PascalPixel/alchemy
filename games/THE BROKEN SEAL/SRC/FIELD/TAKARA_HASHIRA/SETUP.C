@@ -17,7 +17,7 @@ void Engine_MapCopyCellAttributes();
 void Engine_ActorSetAnimation();
 void Engine_ActorSetChildValue();
 void TakaraHashira_DropActorTen();
-void TakaraHashira_Func020025f8();
+void TakaraHashira_PrepLoweredActor();
 void FieldScene_RunScene3b3_0200263c();
 
 
@@ -150,15 +150,15 @@ s32 TakaraHashira_SetupArea(void)
             *(u8 *)(Engine_ActorGet(8) + 85) = v5;
             *(u8 *)(Engine_ActorGet(9) + 85) = v5;
             TakaraHashira_DropActorTen();
-            TakaraHashira_Func020025f8(11);
-            TakaraHashira_Func020025f8(12);
-            TakaraHashira_Func020025f8(13);
+            TakaraHashira_PrepLoweredActor(11);
+            TakaraHashira_PrepLoweredActor(12);
+            TakaraHashira_PrepLoweredActor(13);
             FieldScene_RunScene3b3_0200263c(11);
             FieldScene_RunScene3b3_0200263c(12);
             FieldScene_RunScene3b3_0200263c(13);
             record = Value1(Engine_ActorGet, 13);
             *(s32 *)((s32)record + 108) = v5;
-            TakaraHashira_Func020025f8(14);
+            TakaraHashira_PrepLoweredActor(14);
             {
                 u8 *record = Engine_ActorGet(14);
                 /* FAKEMATCH: retain the flag read before its merge. */

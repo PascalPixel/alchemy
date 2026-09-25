@@ -11,7 +11,7 @@ extern u8 Data_0000001f[];
  * A value-returning call also sets r0 last of its arguments. */
 
 /* Fade palette entries 97 to 103 to black one step every five frames. */
-void MakyuriHeya_Func02002e08(void)
+void MakyuriHeya_FadePaletteToBlack(void)
 {
     volatile u16 *pal;
     u32 i;

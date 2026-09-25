@@ -11,7 +11,7 @@ extern u8 Data_0000001f[];
  * A value-returning call also sets r0 last of its arguments. */
 
 /* Fade palette entries 40 to 47 to white one step every two frames. */
-void MakyuriHeya_Func02002844(void)
+void MakyuriHeya_FadePaletteToWhite(void)
 {
     volatile u16 *pal;
     u32 i;

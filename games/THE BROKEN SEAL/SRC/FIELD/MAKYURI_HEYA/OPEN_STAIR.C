@@ -14,7 +14,7 @@ struct EffectParams {
 };
 
 /* Open the three-step stair: each step throws dust along both of its edges. */
-void MakyuriHeya_Func02003948(void)
+void MakyuriHeya_OpenThreeStepStair(void)
 {
     struct EffectParams params;
     struct EffectParams *p;

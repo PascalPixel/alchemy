@@ -30,7 +30,7 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
 /* Releases 24 objects (type 284) one per frame from a point by the cave
  * wall, each with a random frame and speed, opens the wall's cells, then
  * marks every object still active once the screen has faded. */
-void ArutamiraDou_Func02003ad4(void)
+void ArutamiraDou_ReleaseWallBurst(void)
 {
     u8 *work;
     s32 pos[3];

@@ -1,7 +1,7 @@
 #include "TYPES.H"
 
 /* Set the blend mode, then the blend weights for the current fade level. */
-void ArutamiraDou_Func02000a54(void)
+void ArutamiraDou_ApplyFadeBlend(void)
 {
     s8 level = *(s8 *)0x02001004;
 

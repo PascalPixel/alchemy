@@ -60,7 +60,7 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
 }
 
 /* Place the room's actors and map cells for the current story state. */
-s32 KuupuappuHeya_Func02002758(void)
+s32 KuupuappuHeya_ApplyEntryState(void)
 {
     *(s32 *)((*(s32 *)0x03001ebc + 0x1c0)) = 0x209;
     switch (Data_02000240_t[225][0]) {

@@ -30,7 +30,7 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
     f(a0, a1, a2);
 }
 
-void BiribinoKyuden_Func02000338(void)
+void BiribinoKyuden_RunDoorExitScene(void)
 {
     u8 *work;
     s32 lock;

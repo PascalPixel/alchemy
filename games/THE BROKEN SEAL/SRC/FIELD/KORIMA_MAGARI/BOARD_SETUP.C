@@ -17,7 +17,7 @@ extern u16 Data_02001000[];
 /* Set up the board: point the three state cells into the buffer at 0x02001000,
  * copy the map cells, reset the board records unless flag 0x109 is set, place
  * the objects and actors, and fade the palette unless flag 0x845 is set. */
-s32 KorimaMagari_Func02000980(void)
+s32 KorimaMagari_SetupBoard(void)
 {
     struct FieldActor *actor;
 

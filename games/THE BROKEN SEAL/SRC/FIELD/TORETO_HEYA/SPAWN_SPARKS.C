@@ -2,7 +2,7 @@
 #include "FIELD_EVENT.H"
 
 s32 Main_0808a498(struct FieldSprite *sprite, s32 previous);
-void ToretoHeya_Func020015ac(union FieldObject *object);
+void ToretoHeya_UpdateSwirlObject(union FieldObject *object);
 
 struct Spark {
     u8 unknown_00[0x64];
@@ -19,7 +19,7 @@ struct Vec3 {
 extern struct Vec3 Data_0200adc0;
 extern s32 Data_0200adcc;
 
-void ToretoHeya_Func0200162c(void)
+void ToretoHeya_SpawnSwirlSparks(void)
 {
     struct FieldActor *spark;
     u32 frame;
@@ -53,7 +53,7 @@ void ToretoHeya_Func0200162c(void)
                 spark->target_y = Data_0200adc0.y;
                 spark->target_z = Data_0200adc0.z;
                 spark->speed = 0x19999;
-                spark->update = ToretoHeya_Func020015ac;
+                spark->update = ToretoHeya_UpdateSwirlObject;
             }
         }
     case 44:

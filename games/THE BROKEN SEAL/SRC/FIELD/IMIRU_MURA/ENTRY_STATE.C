@@ -44,7 +44,7 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
 }
 
 /* Imil: entry setup for the two Imil areas, by entrance and story flags. */
-s32 ImiruMura_Func02000b70(void)
+s32 ImiruMura_ApplyEntryState(void)
 {
     struct FieldActor *leader;
     s32 entrance;

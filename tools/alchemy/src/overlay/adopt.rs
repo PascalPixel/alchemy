@@ -11,7 +11,7 @@ use crate::compiler::source_paths::{SourceOwner, SourcePaths};
 use crate::overlay::assembly::OVERLAY_BASE;
 use crate::overlay::compile::assemble_overlay;
 use crate::overlay::source::OverlaySource;
-use crate::overlay::{internal_aliases, listing_offsets, placeholder_lines, region_lines, rom};
+use crate::overlay::{rom, splice_placeholder};
 use crate::targets::{decomp_target, DecompTarget};
 use std::fs;
 use std::path::{Path, PathBuf};
@@ -26,7 +26,12 @@ pub struct Options {
     pub where_: bool,
 }
 
-const USAGE: &str = "usage: alchemy overlay adopt <overlay:offsetHex> --source FILE [--span BYTES] [--target tbs-en|tla-en] [--apply] [--where]";
+const USAGE: &str = "usage: alchemy overlay adopt <overlay:offsetHex> [--source FILE] [--span BYTES] [--target tbs-en|tla-en] [--apply] [--where]\n\
+--source defaults to the owner's registered source and --span to its reviewed span in\n\
+semantic/regions.json. An open `alchemy overlay trial` is adopted from its own source: its\n\
+placeholder gives way to the retained lines, which the adoption replaces again. --apply also drops\n\
+the owner's not_yet_c rows from semantic/overlay-assembly.json, splitting a row that straddles it,\n\
+removes its recon draft and closes the trial.";
 
 fn options_of(argv: &[String]) -> Result<Option<Options>, String> {
     let (mut span, mut id, mut source, mut target) = (None, String::new(), String::new(), None);
@@ -51,8 +56,8 @@ fn options_of(argv: &[String]) -> Result<Option<Options>, String> {
             _ => return Err(format!("unrecognized argument: {argument}")),
         }
     }
-    if id.is_empty() || source.is_empty() {
-        return Err("both an overlay function id and --source are required".to_string());
+    if id.is_empty() {
+        return Err("an overlay function id is required".to_string());
     }
     let target = decomp_target(target.map(String::as_str))?;
     let production = crate::overlay::owners::production_target(target.compiler);
@@ -312,13 +317,6 @@ pub fn run(root: &Path, args: &[String]) -> Result<i32, String> {
         return Ok(0);
     };
     let target = options.target;
-    let source_text = fs::read_to_string(&options.source)
-        .map_err(|error| format!("{}: {error}", options.source))?;
-    let mut forbidden = find_forbidden(&options.source, &source_text)
-        .into_iter()
-        .map(|finding| format!("{}:{}", finding.token, finding.line))
-        .collect::<Vec<_>>()
-        .join(",");
     let (overlay, address) = options
         .id
         .split_once(':')
@@ -331,10 +329,14 @@ pub fn run(root: &Path, args: &[String]) -> Result<i32, String> {
         entry
     };
     let entry = OVERLAY_BASE + offset;
-    let span = options
-        .span
-        .ok_or("--span BYTES is required for overlay adoption")?;
     let owner = SourceOwner::parse(&format!("{overlay}:{entry:08x}"))?;
+    let span = match options.span {
+        Some(span) => span,
+        None => crate::overlay::owners::reviewed_spans(root, target)?
+            .get(&owner)
+            .map(|span| *span as i64)
+            .ok_or_else(|| format!("{}: no reviewed span; pass --span BYTES", owner.id()))?,
+    };
     audited_span(root, target, owner, span)?;
     // Every overlay adoption, direct or through `alchemy adopt`, passes here:
     // an equivalent twin left behind or copied refuses before anything moves.
@@ -347,37 +349,50 @@ pub fn run(root: &Path, args: &[String]) -> Result<i32, String> {
     }
     let source_paths = SourcePaths::load_for_game(root, target.compiler.as_str())?;
     let installed = source_paths.registered_source_path(owner)?;
-    let stem = owner.address_stem();
+    let source = if options.source.is_empty() {
+        installed.to_string_lossy().into_owned()
+    } else {
+        options.source.clone()
+    };
+    let source_text = fs::read_to_string(&source).map_err(|error| format!("{source}: {error}"))?;
+    let mut forbidden = find_forbidden(&source, &source_text)
+        .into_iter()
+        .map(|finding| format!("{}:{}", finding.token, finding.line))
+        .collect::<Vec<_>>()
+        .join(",");
     let assembly = root.join(target.overlay_assembly(overlay));
     let _lock = OverlayLock::acquire(&assembly, target)?;
     // New TU declarations precede their C placeholders during adoption.
     // Compare the completed overlay with the ROM, not that transitional tree.
     let baseline = rom::canonical_overlay_for(root, target, overlay)?;
+    // What a failed adoption puts back: the listing as found, an open
+    // trial's placeholder included.
     let original_text = fs::read_to_string(&assembly).map_err(|error| error.to_string())?;
-    let lines: Vec<String> = original_text
-        .split('\n')
-        .map(|line| line.to_string())
-        .collect();
-    let offsets = listing_offsets(&assembly)?;
-    let (first, last) = region_lines(&offsets, offset, span)?;
-    let marker = format!("AlchemyC_{stem}:");
-    if lines.iter().any(|line| line == &marker) {
-        return Err(format!("{} is already adopted as C", options.id));
-    }
-    let aliases = internal_aliases(&lines, first, last, offset, span)?;
-    let mut replaced_lines: Vec<String> = Vec::with_capacity(lines.len());
-    replaced_lines.extend(lines[..(first - 1) as usize].iter().cloned());
-    replaced_lines.extend(placeholder_lines(&stem, span, &aliases));
-    replaced_lines.extend(lines[last as usize..].iter().cloned());
-    let replaced = replaced_lines.join("\n");
+    let trial = crate::overlay::trial::Trial::open(root, owner)?;
+    let retained = match &trial {
+        Some(trial) => {
+            let restored = trial.restored_listing(&original_text)?;
+            fs::write(&assembly, &restored).map_err(|error| error.to_string())?;
+            restored
+        }
+        None => original_text.clone(),
+    };
+    let splice = match splice_placeholder(&assembly, &retained, owner, span) {
+        Ok(splice) => splice,
+        Err(error) => {
+            fs::write(&assembly, &original_text).map_err(|error| error.to_string())?;
+            return Err(error);
+        }
+    };
+    let (first, last, aliases, replaced) = (splice.first, splice.last, splice.aliases, splice.text);
     let preexisting = if installed.exists() {
         Some(fs::read(&installed).map_err(|error| error.to_string())?)
     } else {
         None
     };
-    let candidate = fs::read(&options.source).map_err(|error| error.to_string())?;
+    let candidate = fs::read(&source).map_err(|error| error.to_string())?;
     shared_source_guard(root, &source_paths, owner, &installed, &candidate)?;
-    let source_is_installed = fs::canonicalize(&options.source)
+    let source_is_installed = fs::canonicalize(&source)
         .ok()
         .zip(fs::canonicalize(&installed).ok())
         .is_some_and(|(source, destination)| source == destination);
@@ -386,7 +401,7 @@ pub fn run(root: &Path, args: &[String]) -> Result<i32, String> {
             fs::create_dir_all(parent).map_err(|error| error.to_string())?;
         }
         if !source_is_installed {
-            fs::copy(&options.source, &installed).map_err(|error| error.to_string())?;
+            fs::copy(&source, &installed).map_err(|error| error.to_string())?;
         }
         fs::write(&assembly, &replaced).map_err(|error| error.to_string())?;
         assemble_overlay(&OverlaySource::path(&assembly), OVERLAY_BASE)
@@ -452,15 +467,10 @@ pub fn run(root: &Path, args: &[String]) -> Result<i32, String> {
     }
     if !options.apply {
         revert(&installed, &assembly, &preexisting, &original_text)?;
-        let source_base = crate::compiler::plan::basename(&options.source);
+        let source_base = crate::compiler::plan::basename(&source);
         println!(
             "adopt=ready {} span={} aliases={} lines={}-{} source={} (pass --apply to install)",
-            options.id,
-            span,
-            aliases.len(),
-            first,
-            last,
-            source_base
+            options.id, span, aliases, first, last, source_base
         );
         return Ok(0);
     }
@@ -468,10 +478,120 @@ pub fn run(root: &Path, args: &[String]) -> Result<i32, String> {
         "adopt=applied {} span={} aliases={} c={}",
         options.id,
         span,
-        aliases.len(),
+        aliases,
         source_paths.repository_relative_path(owner).display()
     );
+    for line in retire(root, target, owner, span, trial)? {
+        println!("{line}");
+    }
     Ok(0)
+}
+
+/// What an applied adoption leaves behind: the owner's not_yet_c evidence
+/// rows (the full build refuses retained assembly overlapping exact C), a
+/// recon draft no unit compiles, and an open trial's record.
+fn retire(
+    root: &Path,
+    target: DecompTarget,
+    owner: SourceOwner,
+    span: i64,
+    trial: Option<crate::overlay::trial::Trial>,
+) -> Result<Vec<String>, String> {
+    let mut lines = Vec::new();
+    let evidence = root
+        .join(target.recon_dir())
+        .join("semantic/overlay-assembly.json");
+    if evidence.is_file() {
+        let start = i64::from(owner.address());
+        let (dropped, trimmed, split) = retire_rows(
+            &evidence,
+            &owner.overlay_id().unwrap_or_default(),
+            start,
+            start + span,
+        )?;
+        lines.push(format!(
+            "overlay_assembly dropped={dropped} trimmed={trimmed} split={split}"
+        ));
+    }
+    let draft = root
+        .join(target.recon_dir())
+        .join("en/overlays")
+        .join(format!("{}.c", owner.legacy_stem()));
+    let relative = crate::compiler::build_io::relative(root, &draft);
+    let compiled = fs::read_to_string(root.join(target.recon_dir()).join("translation-units.json"))
+        .is_ok_and(|units| units.contains(&format!("\"source\": \"{relative}\"")));
+    if draft.is_file() && !compiled {
+        fs::remove_file(&draft).map_err(|error| format!("{}: {error}", draft.display()))?;
+        lines.push(format!("draft_removed={relative}"));
+    }
+    if let Some(trial) = trial {
+        trial.close(root)?;
+        lines.push("trial=closed".into());
+    }
+    Ok(lines)
+}
+
+/// Removes `[start, end)` from one overlay's evidence rows: rows inside go,
+/// rows overlapping one side are trimmed and a row around it is split.
+/// Returns the dropped, trimmed and split counts.
+fn retire_rows(
+    path: &Path,
+    overlay: &str,
+    start: i64,
+    end: i64,
+) -> Result<(usize, usize, usize), String> {
+    let text = fs::read_to_string(path).map_err(|error| format!("{}: {error}", path.display()))?;
+    let mut document: serde_json::Value =
+        serde_json::from_str(&text).map_err(|error| format!("{}: {error}", path.display()))?;
+    let rows = document["regions"]
+        .as_array_mut()
+        .ok_or_else(|| format!("{}: regions must be an array", path.display()))?;
+    let hex = |value: i64| serde_json::Value::String(format!("0x{value:08x}"));
+    let bound = |row: &serde_json::Value, key: &str| {
+        row[key]
+            .as_str()
+            .and_then(|text| i64::from_str_radix(text.trim_start_matches("0x"), 16).ok())
+    };
+    let (mut dropped, mut trimmed, mut split) = (0, 0, 0);
+    let mut kept = Vec::with_capacity(rows.len());
+    for mut row in rows.drain(..) {
+        let (Some(low), Some(high)) = (bound(&row, "start"), bound(&row, "end")) else {
+            kept.push(row);
+            continue;
+        };
+        if row["overlay"].as_str() != Some(overlay) || high <= start || low >= end {
+            kept.push(row);
+            continue;
+        }
+        match (low < start, high > end) {
+            (false, false) => dropped += 1,
+            (true, true) => {
+                let mut tail = row.clone();
+                tail["start"] = hex(end);
+                row["end"] = hex(start);
+                kept.push(row);
+                kept.push(tail);
+                split += 1;
+            }
+            (true, false) => {
+                row["end"] = hex(start);
+                kept.push(row);
+                trimmed += 1;
+            }
+            (false, true) => {
+                row["start"] = hex(end);
+                kept.push(row);
+                trimmed += 1;
+            }
+        }
+    }
+    *rows = kept;
+    if dropped + trimmed + split > 0 {
+        let rendered = serde_json::to_string_pretty(&document).map_err(|e| e.to_string())?;
+        fs::write(path, format!("{rendered}\n"))
+            .map_err(|error| format!("{}: {error}", path.display()))?;
+    }
+    Ok((dropped, trimmed, split))
 }
 
 #[cfg(test)]
@@ -502,6 +622,71 @@ mod tests {
         .unwrap();
         assert_eq!(lost_age.target.id, DecompTargetId::TlaEn);
         assert_eq!(lost_age.target.game_dir(), "games/THE LOST AGE");
+        // Source and span default to the registered source and reviewed span.
+        let bare = options_of(&arguments(&["resource_3cb:02000398", "--apply"]))
+            .unwrap()
+            .unwrap();
+        assert!(bare.source.is_empty() && bare.span.is_none() && bare.apply);
+        assert!(options_of(&arguments(&["--apply"])).is_err());
+    }
+
+    #[test]
+    fn adoption_retires_the_owners_evidence_rows() {
+        let directory = tempfile::tempdir().unwrap();
+        let path = directory.path().join("overlay-assembly.json");
+        let row = |overlay: &str, start: &str, end: &str| json!({"overlay": overlay, "start": start, "end": end, "kind": "not_yet_decompiled"});
+        let document = json!({"format": 1, "regions": [
+            row("resource_3ca", "0x02000100", "0x02000194"),
+            row("resource_3ca", "0x02000194", "0x020001c4"),
+            row("resource_3ca", "0x020001c4", "0x020003d0"),
+            row("resource_3cb", "0x02000194", "0x020001c4"),
+            row("resource_3ca", "0x02000400", "0x02000500"),
+        ]});
+        fs::write(&path, serde_json::to_string_pretty(&document).unwrap()).unwrap();
+        // The owner 0x02000194..0x020003be: one row inside, one trimmed.
+        assert_eq!(
+            retire_rows(&path, "resource_3ca", 0x0200_0194, 0x0200_03be).unwrap(),
+            (1, 1, 0)
+        );
+        let text = fs::read_to_string(&path).unwrap();
+        let after: serde_json::Value = serde_json::from_str(&text).unwrap();
+        let spans = after["regions"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|row| {
+                format!(
+                    "{} {}-{}",
+                    row["overlay"].as_str().unwrap(),
+                    row["start"].as_str().unwrap(),
+                    row["end"].as_str().unwrap()
+                )
+            })
+            .collect::<Vec<_>>();
+        assert_eq!(
+            spans,
+            [
+                "resource_3ca 0x02000100-0x02000194",
+                "resource_3ca 0x020003be-0x020003d0",
+                "resource_3cb 0x02000194-0x020001c4",
+                "resource_3ca 0x02000400-0x02000500"
+            ]
+        );
+        assert!(text.ends_with("}\n"));
+        // A row around the owner splits in two; nothing left is untouched.
+        assert_eq!(
+            retire_rows(&path, "resource_3ca", 0x0200_0420, 0x0200_0440).unwrap(),
+            (0, 0, 1)
+        );
+        assert_eq!(
+            retire_rows(&path, "resource_3ca", 0x0200_0600, 0x0200_0700).unwrap(),
+            (0, 0, 0)
+        );
+        let after: serde_json::Value =
+            serde_json::from_str(&fs::read_to_string(&path).unwrap()).unwrap();
+        assert_eq!(after["regions"][3]["end"], "0x02000420");
+        assert_eq!(after["regions"][4]["start"], "0x02000440");
+        assert_eq!(after["regions"][4]["kind"], "not_yet_decompiled");
     }
 
     #[test]

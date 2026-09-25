@@ -100,7 +100,20 @@ pub fn run(root: &Path, arguments: &[String]) -> Result<(), String> {
     if sources.is_empty() {
         return Err(format!("{}: no .c variants", directory.display()));
     }
-    let work = work_root(root, &directory);
+    let results = rank(root, &sources, &passthrough, &work_root(root, &directory))?;
+    print!("{}", table(&directory, &results));
+    Ok(())
+}
+
+/// Scores each source in parallel, each in `work/<stem>` with `passthrough`
+/// options, best first: fewest differing halfwords, then size delta, then
+/// halfword edits, failures last.
+pub fn rank(
+    root: &Path,
+    sources: &[PathBuf],
+    passthrough: &[String],
+    work: &Path,
+) -> Result<Vec<(PathBuf, Scored)>, String> {
     let executable = std::env::current_exe().map_err(|error| error.to_string())?;
     let results = Mutex::new(Vec::new());
     let next = AtomicUsize::new(0);
@@ -116,15 +129,14 @@ pub fn run(root: &Path, arguments: &[String]) -> Result<(), String> {
                     .file_stem()
                     .map(|stem| stem.to_string_lossy().into_owned())
                     .unwrap_or_default();
-                let scored = score_one(&executable, root, source, &work.join(&stem), &passthrough);
+                let scored = score_one(&executable, root, source, &work.join(&stem), passthrough);
                 results.lock().unwrap().push((source.clone(), scored));
             });
         }
     });
     let mut results = results.into_inner().unwrap();
     results.sort_by(|(a, left), (b, right)| left.rank().cmp(&right.rank()).then(a.cmp(b)));
-    print!("{}", table(&directory, &results));
-    Ok(())
+    Ok(results)
 }
 
 /// DIR and everything else, which each score receives unchanged.
@@ -212,7 +224,7 @@ fn score_one(
     }
 }
 
-fn table(directory: &Path, results: &[(PathBuf, Scored)]) -> String {
+pub fn table(directory: &Path, results: &[(PathBuf, Scored)]) -> String {
     let mut out = format!(
         "variants={} directory={}\n{:>4}  {:>9}  {:>6}  {:>5}  {}\n",
         results.len(),

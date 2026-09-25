@@ -69494,7 +69494,7 @@
     },
     {
       "id": "scene-3a0-02000500",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/SHIAN_MURA/F_00500.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/SHIAN_MURA/GATE_WATCH.C",
       "overlay": "resource_3a0",
       "absolute_symbols": {
         "Engine_ActorGet": {
@@ -70399,7 +70399,7 @@
     },
     {
       "id": "scene-3a0-02000d0c",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/SHIAN_MURA/F_00D0C.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/SHIAN_MURA/LEADER_HOP.C",
       "overlay": "resource_3a0",
       "absolute_symbols": {
         "Engine_ActorGet": {
@@ -72383,7 +72383,7 @@
     },
     {
       "id": "scene-3a0-020009dc",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/SHIAN_MURA/F_009DC.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/SHIAN_MURA/NPC_MEET.C",
       "overlay": "resource_3a0",
       "absolute_symbols": {
         "Engine_EventBegin": {
@@ -73011,7 +73011,7 @@
     },
     {
       "id": "scene-3a0-02000f30",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/SHIAN_MURA/F_00F30.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/SHIAN_MURA/ACTOR19_SCRIPT.C",
       "overlay": "resource_3a0",
       "absolute_symbols": {
         "Engine_EventBegin": {

@@ -1,14 +1,11 @@
-/* NONMATCHING: 560 bytes, candidate 548, 262 differing halfwords
- * (2026-09-25). LinkLobby_SendPartyRecords, the sender twin of
- * LinkLobby_ReceivePartyRecords (MENU/LINK_LOBBY/RECEIVE_PARTY.C), meant for
- * MENU/LINK_LOBBY/SEND_PARTY.C as a single-overlay unit binding Engine_* and
- * Main_* at their import veneers; the IWRAM word copy at 0x03001388 is an
- * ordinary call through a function pointer (_call_via_r3 links). Remaining:
- * the reference keeps three separate 'str r0, [sp, #4]; b done' failure
- * blocks after each Main_08000380 test, where this spelling lets them merge
- * into one, and the heap lives in r8 (here r7) with the index in r7; the
- * second phase counts retries in sl, the relink list is walked through heap +
- * 8 with its count at +0x100. */
+/* NONMATCHING: 560 bytes, candidate 548, 262 differing halfwords, 131
+ * halfword edits (2026-09-25). LinkLobby_Func02000580, meant for
+ * MENU/LINK_LOBBY/SEND_PARTY.C as a single-overlay unit binding its names at
+ * their runtime addresses (an import veneer's listing offset plus 0x8000).
+ * Remaining: 262 differing halfwords. WALL: copy_versus_rematerialise —
+ * whole-function constant sharing after CSE/allocation; three separate
+ * Main_08000380 failure stores and r8 heap vs r7 index not closable by
+ * spelling. Twin of RECEIVE_PARTY. */
 #include "TYPES.H"
 
 u8 *Main_08000170(u32 size);
@@ -36,7 +33,7 @@ struct LinkList {
     s32 count;
 };
 
-s32 Local_02000580(void)
+s32 LinkLobby_Func02000580(void)
 {
     s32 result;
     u8 *table;

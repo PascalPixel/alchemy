@@ -1,9 +1,22 @@
+/* NONMATCHING: 7808 bytes, candidate 8080, 3768 differing halfwords,
+ * 2500 halfword edits (2026-09-25). Stack locals follow the reference frame;
+ * resource ids use the same pool-loaded symbols as the resource loader.
+ * The complete owner has one prologue and return, including its trailing pool.
+ * WALL: Excess code and local lifetimes throughout the effect. */
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "EFFECT_STEP.H"
 #include "MOTION_OBJECT.H"
 #include "BATTLE_EFX.H"
-typedef void (*RectangleBlit)(s32, s32, s32, s32, s32, s32);
+#include "B5_CONTEXT.H"
+typedef BattleEffectDrawRectangle RectangleBlit;
+extern u8 Value_0000008d;
+extern u8 Value_000000a3;
+extern u8 Value_000000a4;
+extern u8 Value_000000a0;
+extern u8 Value_000000bb;
+extern u8 Value_000000b9;
+extern u8 Value_000000c0;
 
 extern u8 Value_00000053;
 extern u8 Value_0000006f;
@@ -28,10 +41,10 @@ extern u8 Value_000000c3;
 extern u8 Value_000000c4;
 extern u8 Value_000000ce;
 
-s32 Func_080022ec();
-s32 Func_080022fc();
-s32 Func_0800231c();
-s32 Func_08002322();
+s32 Func_080022ec(s32 numerator, s32 denominator);
+s32 Func_080022fc(s32 numerator, s32 denominator);
+s32 Func_0800231c(s32 angle);
+s32 Func_08002322(s32 angle);
 void Func_08002dd8();
 void Func_080030f8();
 u32 Func_08004458(void);
@@ -44,7 +57,7 @@ void Func_08009080();
 void Func_08009088();
 s32 Func_080b5070();
 void Func_080b5088();
-struct BattleObjectSlot *Func_080b5098(s32 actor_id);
+struct B5Context *Func_080b5098(s32 actor_id);
 void Func_080b50e8();
 void Func_080cd52c();
 void Func_080cd594();
@@ -57,7 +70,7 @@ void Func_080d6888(s32 set_id, s32 object_value, s32 group_value, s32 state_slot
 void Func_080d9ac4();
 void Func_080dea70();
 void Func_080df9d0();
-s32 Func_080e155c();
+void Func_080e155c(s32 x, s32 y);
 void Func_080e46f0();
 
 void Func_080f9010();
@@ -82,9 +95,9 @@ void Func_080e47b8(s32 a0, s32 a1)
     s32 rec8;
     s32 record;
     s32 value;
-    s32 source_pos[3];
     s32 target_pos[3];
-    s32 velocity[3];
+    s32 source_pos[3];
+    s32 moving_pos[3];
     s32 r2;
     s32 v0;
     s32 v3;
@@ -105,6 +118,7 @@ void Func_080e47b8(s32 a0, s32 a1)
     s32 command;
     s32 work;
     s32 canvas;
+    s32 frame;
     s32 matrix;
     s32 sprites;
     s32 source_screen;
@@ -116,7 +130,6 @@ void Func_080e47b8(s32 a0, s32 a1)
     s32 saved_velocity_z;
     s32 saved_acceleration;
     s32 saved_vertical_strength;
-    s32 frame;
     s32 scroll_pos;
     s32 scroll_speed;
     struct MotionObject *source_actor;
@@ -129,8 +142,8 @@ void Func_080e47b8(s32 a0, s32 a1)
     u8 *p5;
     u8 *p4;
     u8 *p6;
+    s32 velocity[3];
     s32 spark_screen[3];
-    s32 moving_pos[3];
     u32 blitters[2];
     u8 projected[12];
 
@@ -304,7 +317,7 @@ void Func_080e47b8(s32 a0, s32 a1)
                 Func_08004bd4(*(s32 *)(v6 + 12));
                 Func_08004c1c(*(s32 *)(v6 + 16));
                 v5 = spark_screen;
-                EffectPosition_ApplyBaseAndYOffset(v6, (struct EffectPosition *)v5);
+                EffectPosition_ApplyBaseAndYOffset((s32 *)v6, (struct EffectPosition *)v5);
                 *(s32 *)(v5) = ((((s32)(*(s32 *)(v5)) / 2)) + *(s32 *)(target_screen));
                 if (kind <= 7) {
                     v3 = ((*(s32 *)(v5 + 4) + *(s32 *)(target_screen + 4)) - 8);
@@ -340,7 +353,7 @@ void Func_080e47b8(s32 a0, s32 a1)
         if (p5b <= 63) {
             Func_080049ac();
             Func_080051d8(matrix, (matrix + 12));
-            EffectPosition_ApplyBaseAndYOffset((s32)moving_pos, (struct EffectPosition *)p8b);
+            EffectPosition_ApplyBaseAndYOffset((s32 *)moving_pos, (struct EffectPosition *)p8b);
             v2 = (((s32)(*(s32 *)p8b) / 2));
             *(s32 *)p8b = (((s32)(*(s32 *)p8b) / 2));
             p4 = (u8 *)blitters[0];
@@ -685,50 +698,50 @@ void Func_080e47b8(s32 a0, s32 a1)
     switch (kind) {
     case 0:
     case 10:
-        Func_080e46f0(0x8d);
+        Func_080e46f0((s32)&Value_0000008d);
         break;
     case 1:
     case 28:
-        Func_080e46f0(0xa3);
+        Func_080e46f0((s32)&Value_000000a3);
         break;
     case 2:
     case 29:
-        Func_080e46f0(0xa4);
+        Func_080e46f0((s32)&Value_000000a4);
         break;
     case 3:
     case 20:
     case 22:
-        Func_080e46f0(0xb4);
+        Func_080e46f0((s32)&Value_000000b4);
         break;
     case 5:
     case 23:
-        Func_080e46f0(0x7d);
+        Func_080e46f0((s32)&Value_0000007d);
         break;
     case 8:
-        Func_080e46f0(0xc3);
+        Func_080e46f0((s32)&Value_000000c3);
         break;
     case 9:
-        Func_080e46f0(0xa0);
+        Func_080e46f0((s32)&Value_000000a0);
         break;
     case 12:
     case 13:
     case 25:
-        Func_080e46f0(0xbb);
+        Func_080e46f0((s32)&Value_000000bb);
         break;
     case 14:
-        Func_080e46f0(0x6f);
+        Func_080e46f0((s32)&Value_0000006f);
         break;
     case 18:
-        Func_080e46f0(0xb9);
+        Func_080e46f0((s32)&Value_000000b9);
         break;
     case 19:
-        Func_080e46f0(0xc0);
+        Func_080e46f0((s32)&Value_000000c0);
         break;
     case 31:
-        Func_080e46f0(0x79);
+        Func_080e46f0((s32)&Value_00000079);
         break;
     case 33:
-        Func_080e46f0(0x53);
+        Func_080e46f0((s32)&Value_00000053);
         break;
     }
     if (kind != 11) {
@@ -753,7 +766,7 @@ void Func_080e47b8(s32 a0, s32 a1)
                         if (life > 0) {
                             s32 size;
 
-                            EffectPosition_ApplyBaseAndYOffset((s32)step, (struct EffectPosition *)screen);
+                            EffectPosition_ApplyBaseAndYOffset((s32 *)step, (struct EffectPosition *)screen);
                             size = (life >> 4) + 1;
                             screen[0] /= 2;
                             ((RectangleBlit)blitters[index & 1])(canvas,
@@ -815,7 +828,7 @@ void Func_080e47b8(s32 a0, s32 a1)
                 if (step->variant >= 0) {
                     s32 size = (n & 1) + 6;
 
-                    EffectPosition_ApplyBaseAndYOffset((s32)step, (struct EffectPosition *)screen);
+                    EffectPosition_ApplyBaseAndYOffset((s32 *)step, (struct EffectPosition *)screen);
                     screen[0] >>= 1;
                     ((RectangleBlit)blitters[0])(canvas,
                         sprites + ((u16 *)0x080ede48)[size - 1],
@@ -996,7 +1009,7 @@ void Func_080e47b8(s32 a0, s32 a1)
                 if (age <= 11) {
                     s32 image = age / 2;
 
-                    EffectPosition_ApplyBaseAndYOffset((s32)step, (struct EffectPosition *)screen);
+                    EffectPosition_ApplyBaseAndYOffset((s32 *)step, (struct EffectPosition *)screen);
                     screen[0] /= 2;
                     ((RectangleBlit)blitters[0])(canvas,
                         0x02010000 + (image << 11),
@@ -1158,7 +1171,7 @@ void Func_080e47b8(s32 a0, s32 a1)
                             Func_080049ac();
                             Func_08004bd4(step->velocity_x);
                             Func_08004c1c(step->velocity_y);
-                            EffectPosition_ApplyBaseAndYOffset((s32)step, (struct EffectPosition *)screen);
+                            EffectPosition_ApplyBaseAndYOffset((s32 *)step, (struct EffectPosition *)screen);
                             screen[0] = screen[0] / 2 + origin[0] / 2;
                             screen[1] += origin[1] + 32;
                             ((RectangleBlit)blitters[1])(canvas,
@@ -1213,7 +1226,7 @@ void Func_080e47b8(s32 a0, s32 a1)
                             for (n = 0; n != 16; n++, step++) {
                                 s32 image = Func_080022fc(n, 3);
 
-                                EffectPosition_ApplyBaseAndYOffset((s32)step, (struct EffectPosition *)screen);
+                                EffectPosition_ApplyBaseAndYOffset((s32 *)step, (struct EffectPosition *)screen);
                                 screen[0] /= 2;
                                 ((RectangleBlit)blitters[n & 1])(canvas,
                                     0x02010000 + image * 576,
@@ -1235,7 +1248,7 @@ void Func_080e47b8(s32 a0, s32 a1)
                                     if (age <= 23) {
                                         s32 image = age / 4;
 
-                                        EffectPosition_ApplyBaseAndYOffset((s32)step, (struct EffectPosition *)screen);
+                                        EffectPosition_ApplyBaseAndYOffset((s32 *)step, (struct EffectPosition *)screen);
                                         screen[0] /= 2;
                                         ((RectangleBlit)blitters[n & 1])(canvas,
                                             0x02010000 + image * 1152,
@@ -1257,7 +1270,7 @@ void Func_080e47b8(s32 a0, s32 a1)
     L_080e640e:;
     if (kind <= 7) {
         if (frame <= 5) {
-            EffectPosition_ApplyBaseAndYOffset(position, (struct EffectPosition *)projected);
+            EffectPosition_ApplyBaseAndYOffset((s32 *)position, (struct EffectPosition *)projected);
             v2 = (((s32)(*(s32 *)(projected)) / 2));
             *(s32 *)(projected) = (((s32)(*(s32 *)(projected)) / 2));
             p4 = *(s32 *)(draw_pair + 4);

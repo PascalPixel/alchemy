@@ -14,14 +14,15 @@ struct EffectStep {
     s32 variant;
 };
 
-/* 描画補助へ渡す二次元座標。 */
+/* Projected screen coordinates and depth, written by Render_ProjectPoint. */
 struct EffectPosition {
     s32 x;
     s32 y;
+    s32 depth;
 };
 
 void EffectStep_AdvanceWithGravity3D(struct EffectStep *step, s32 damping, s32 gravity);
-s32 EffectPosition_ApplyBaseAndYOffset(s32 id, struct EffectPosition *position);
+s32 EffectPosition_ApplyBaseAndYOffset(s32 *point, struct EffectPosition *position);
 void EffectPosition_ApplyStepAndYOffset(s32 id, struct EffectPosition *position);
 
 #define EFFECT_STEP_OFFSET(field) \
@@ -52,7 +53,7 @@ typedef char EffectStep_size[
     sizeof(struct EffectStep) == 0x1c ? 1 : -1
 ];
 typedef char EffectPosition_size[
-    sizeof(struct EffectPosition) == 0x08 ? 1 : -1
+    sizeof(struct EffectPosition) == 0x0c ? 1 : -1
 ];
 
 #undef EFFECT_STEP_OFFSET

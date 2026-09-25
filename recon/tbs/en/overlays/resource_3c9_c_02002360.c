@@ -1,68 +1,19 @@
-/* NONMATCHING: 4708 bytes, candidate 4688, 2191 differing halfwords, 999
+/* NONMATCHING: 4708 bytes, candidate 4688, 2190 differing halfwords, 1006
  * halfword edits (2026-09-25). Scene_RunPairedActorEffectSequence, meant for
  * FIELD/VINASU_CHOJO/F_02360.C as a single-overlay unit binding its names at
  * their runtime addresses (an import veneer's listing offset plus 0x8000).
- * Remaining: Corrected the eight-argument particle spawns, destination
- * arguments and callback bindings; complete scene still differs
- * structurally.
- * WALL: Scene and particle-loop lifetimes need reconstruction. */
-#include "TYPES.H"
+ * Remaining: Shared field/effect declarations and typed actor coordinates
+ * and effect-option records replace private guessed declarations. This
+ * improves source ownership, not exactness.
+ * WALL: Scene and particle-loop stack/register lifetimes remain structural. */
+#include "FIELD_EFFECT.H"
 
-void Engine_EventBegin();
-void Engine_MapCopyCellAttributes();
-u8 * Engine_ActorGet();
-void Engine_ActorSetPosition();
-u8 * Engine_ActorSetAnimation();
-s32 Engine_ActorEnableActionCallback();
-void Engine_ActorSetSpriteFlags();
-s32 Engine_EventGetViewCenter();
-void Engine_CameraMoveTo();
-void Engine_TaskWait();
-void Engine_MapRedraw();
-void Engine_EventOpenScreen();
-void Engine_EventWaitForScreen();
-void Engine_EventWait();
-void Engine_ActorJump();
 s32 Scene_CallPairWith10();
-void Engine_EventSetMessage();
 void State_ApplyArgMode0AndSet10();
-s32 Engine_ObjectMotionArmCallback();
-s32 Engine_ActorRunRepeatedMotion();
-s32 Engine_ActorSetSpeed();
-void Engine_ActorWalkToAndWait();
-s32 Engine_ActorShowEmote();
-void Engine_ActorSetAnimationAndWait();
-void Engine_ActorStartRepeatedMotion();
-s32 Engine_EventOpenMessage();
-s32 Engine_UiWorkWaitThenFinalizeCapacity();
-void Engine_EventShowMessage();
-void Engine_AudioPlayCue();
-void Engine_ActorStop();
-void Engine_EventShowMessageAndWait();
-s32 Engine_ObjectCreate();
-s32 Engine_HeapAllocate();
-void Engine_ItemLoadIcon();
-void Engine_VramLoad();
-void Engine_HeapRelease();
-s32 Engine_ActorSetSpritePriority();
-void Engine_ObjectSetPosition();
-void Engine_CameraMoveTo();
 void SceneTask_020036d0();
 void Engine_ObjectCommitPosition();
 void Actor_ParkRecord();
-s32 Engine_ActorSetChildValue();
-void Engine_WorkSetValuesIfNonNegative();
-void Engine_ColorBufferApplyTarget();
-void Engine_ColorBufferInterpolate();
-s32 Engine_TaskAddCallback();
 void Scene_RunSetupSequence35c4();
-s32 Engine_MathCos(s32 angle);
-s32 Engine_MathSin();
-struct EffectOptions;
-void Effect_Spawn(s32 x, s32 y, s32 z, s32 velocity_x, s32 velocity_y, s32 velocity_z,
-                  u32 flags, const struct EffectOptions *options);
-void Engine_ActorSetDestination();
-void Engine_GameFlagSet();
 s32 Engine_GameStateSetReturn();
 void Engine_Import0808a268();
 s32 Engine_Import0808a250();
@@ -173,8 +124,8 @@ void Scene_RunPairedActorEffectSequence(void)
     s32 slot20;
     u8 *p6;
     u8 *p4;
-    u8 slot96[40];
-    u8 slot44[52];
+    struct EffectOptions slot96;
+    struct EffectOptions slot44;
 
     Engine_EventBegin();
     Call6(Engine_MapCopyCellAttributes, 17, 10, 4, 2, 17, 8);
@@ -186,13 +137,13 @@ void Scene_RunPairedActorEffectSequence(void)
         *(u16 *)(a + 6) = south;
     }
     Call3(Engine_ActorSetPosition, 1, 0x1480000, 0xa80000);
-    *(u16 *)(Engine_ActorGet(2) + 6) = south;
+    *(u16 *)((u8 *)Engine_ActorGet(2) + 6) = south;
     Call3(Engine_ActorSetPosition, 2, 0x1540000, 0xc40000);
-    *(u16 *)(Engine_ActorGet(3) + 6) = south;
+    *(u16 *)((u8 *)Engine_ActorGet(3) + 6) = south;
     Call3(Engine_ActorSetPosition, 3, 0x1460000, 0xcc0000);
-    *(u16 *)(Engine_ActorGet(6) + 6) = (west = 0x3000);
+    *(u16 *)((u8 *)Engine_ActorGet(6) + 6) = (west = 0x3000);
     Call3(Engine_ActorSetPosition, 6, 0x10c0000, 0x9a0000);
-    *(u16 *)(Engine_ActorGet(21) + 6) = west;
+    *(u16 *)((u8 *)Engine_ActorGet(21) + 6) = west;
     Call3(Engine_ActorSetPosition, 21, 0x10c0000, 0xa40000);
     rec = Value1(Engine_ActorGet, 20);
     {
@@ -226,7 +177,7 @@ void Scene_RunPairedActorEffectSequence(void)
     Call2((void (*)())Engine_ActorEnableActionCallback, 19, 0x200e074);
     record = Engine_ActorGet(19);
     Call2((void (*)())Engine_ActorSetSpriteFlags, (s32)record, 0);
-    *(u8 *)(Engine_EventGetViewCenter() + 85) = zero.v;
+    *(u8 *)((u8 *)Engine_EventGetViewCenter() + 85) = zero.v;
     Call4(Engine_CameraMoveTo, 0x1300000, 0x200000, 0xb40000, 0);
     Engine_TaskWait(1);
     Engine_MapRedraw();
@@ -244,7 +195,7 @@ void Scene_RunPairedActorEffectSequence(void)
     Value2(Scene_CallPairWith10, 2, 0xa000);
     Call2((void (*)())Engine_ActorRunRepeatedMotion, 21, 2);
     Call3(Engine_ActorSetSpeed, 21, 0xcccc, 0x6666);
-    *(u8 *)(Engine_ActorGet(21) + 90) &= 254;
+    *(u8 *)((u8 *)Engine_ActorGet(21) + 90) &= 254;
     Call3(Engine_ActorWalkToAndWait, 21, 0x118, 164);
     Engine_EventWait(1);
     {
@@ -331,11 +282,11 @@ void Scene_RunPairedActorEffectSequence(void)
     Call2((void (*)())Engine_ActorSetSpriteFlags, (s32)record, 1);
     Call3((void (*)())Engine_ActorJump, 19, 4, 40);
     Call3(Engine_ActorSetSpeed, 19, 0x3333, 0x1999);
-    *(u8 *)(Engine_ActorGet(19) + 90) &= 254;
+    *(u8 *)((u8 *)Engine_ActorGet(19) + 90) &= 254;
     Call3(Engine_ActorWalkToAndWait, 19, 0x128, 186);
     Call3(Engine_ActorSetSpeed, 19, 0x1999, 0xccc);
     Call3(Engine_ActorWalkToAndWait, 19, 0x124, 186);
-    *(u8 *)(Engine_ActorGet(19) + 90) |= 1;
+    *(u8 *)((u8 *)Engine_ActorGet(19) + 90) |= 1;
     record = Value1(Engine_ActorGet, 19);
     *(s32 *)((s32)record + 24) = -0x10000;
     Engine_AudioPlayCue(161);
@@ -447,7 +398,7 @@ void Scene_RunPairedActorEffectSequence(void)
     Call3(Engine_ActorShowEmote, 2, 0x100, 0);
     Call3(Engine_ActorShowEmote, 3, 0x100, 30);
     Call2((void (*)())Engine_ActorSetSpritePriority, 21, 1);
-    *(u8 *)(Engine_ActorGet(21) + 35) |= 1;
+    *(u8 *)((u8 *)Engine_ActorGet(21) + 35) |= 1;
     Call2((void (*)())Engine_ActorStartRepeatedMotion, 2, 2);
     State_ApplyArgMode0AndSet10(2);
     Call2((void (*)())Engine_ActorRunRepeatedMotion, 3, 1);
@@ -688,11 +639,11 @@ void Scene_RunPairedActorEffectSequence(void)
     State_ApplyArgMode0AndSet10(19);
     Scene_RunSetupSequence35c4();
     rec4 = Engine_ActorGet(19);
-    *(s32 *)(slot96 + 4) = 7;
-    *(s32 *)(slot96 + 36) = 0x20083a1;
-    *(s32 *)(slot96 + 8) = 0x10000;
-    *(s32 *)(slot96 + 12) = 0x10000;
-    p8 = slot96;
+    slot96.palette = 7;
+    slot96.update = (void (*)(union FieldObject *))0x20083a1;
+    slot96.start_scale_x = 0x10000;
+    slot96.start_scale_y = 0x10000;
+    p8 = (s32)&slot96;
     base7_0 = 0;
         base6_54 = 84;
     do {
@@ -713,11 +664,11 @@ void Scene_RunPairedActorEffectSequence(void)
     Engine_TaskWait(6);
     Scene_RunSetupSequence35c4();
     rec4 = Value1(Engine_ActorGet, 20);
-    *(s32 *)(slot44 + 4) = 7;
-    *(s32 *)(slot44 + 36) = 0x20083a1;
-    *(s32 *)(slot44 + 8) = 0x10000;
-    *(s32 *)(slot44 + 12) = 0x10000;
-    p8b = slot44;
+    slot44.palette = 7;
+    slot44.update = (void (*)(union FieldObject *))0x20083a1;
+    slot44.start_scale_x = 0x10000;
+    slot44.start_scale_y = 0x10000;
+    p8b = (s32)&slot44;
     base7_0 = 0;
     p6b = v9;
     do {
@@ -743,8 +694,8 @@ void Scene_RunPairedActorEffectSequence(void)
     Scene_RunSetupSequence35c4();
     Call3(Engine_ActorSetSpeed, 20, 0x3333, 0x1999);
     Call3(Engine_ActorSetSpeed, 19, 0x3333, 0x1999);
-    *(u8 *)(Engine_ActorGet(20) + 90) &= 254;
-    *(u8 *)(Engine_ActorGet(19) + 90) &= 254;
+    *(u8 *)((u8 *)Engine_ActorGet(20) + 90) &= 254;
+    *(u8 *)((u8 *)Engine_ActorGet(19) + 90) &= 254;
     Call3(Engine_ActorSetDestination, 20, 0x126, 196);
     Call3(Engine_ActorSetDestination, 19, 0x126, 196);
     Value2(Engine_TaskAddCallback, 0x200b7c5, 0xc80);

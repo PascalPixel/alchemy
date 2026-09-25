@@ -19,7 +19,11 @@
    OAM word): a local struct { render, sprites, work, obj_palette } placed
    after matches removes the hoisting but, as tried, turns the OAM stores
    into adds chains and scores lower (1787 opcodes) - the next idea to
-   pursue, together with the per-statement Value_ spelling of 0x02010000. */
+   pursue, together with the per-statement Value_ spelling of 0x02010000.
+   Fresh pass: 1550 halfword edits. Explicit narrow IO casts leave the
+   binary unchanged; scoped byte-offset tile loops improve only three
+   edits while shortening the owner further, and volatile heap handles
+   regress. WALL: Heap-handle lifetimes and loop/frame source structure. */
 #include "TYPES.H"
 #include "DMA.H"
 #include "FIXED_MATH.H"

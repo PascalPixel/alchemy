@@ -10,8 +10,8 @@ void Engine_ObjectCommitPosition(struct FieldActor *object);
 void SceneState_SetRecordWord102AndPlayCue288();
 void Local_020035ac(struct FieldActor *object);
 void Local_02003668(struct FieldActor *object);
-void ArutinYama_Func02003484(struct FieldActor *object);
-void ArutinYama_Func02003738(struct FieldActor *object);
+void ArutinYama_SettleAndMountLeader(struct FieldActor *object);
+void ArutinYama_AdvanceRollingObject(struct FieldActor *object);
 
 static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
 {
@@ -25,7 +25,7 @@ struct Byte {
 /* The rolling-object driver: finds a heading whose step keeps the object
  * level, starts the roll, then dispatches on the tile under it each frame
  * until tile 99. */
-void ArutinYama_Func02003850(s32 id, s32 heading)
+void ArutinYama_RunRollingObject(s32 id, s32 heading)
 {
     struct FieldActor *object = Engine_ActorGet(id);
     struct FieldActor *leader = Main_0808a400(gGameState.selected_actor);
@@ -86,10 +86,10 @@ void ArutinYama_Func02003850(s32 id, s32 heading)
         case 99:
             goto arrived;
         }
-        ArutinYama_Func02003738(object);
+        ArutinYama_AdvanceRollingObject(object);
         Engine_TaskWait(1);
     }
 arrived:
-    ArutinYama_Func02003484(object);
+    ArutinYama_SettleAndMountLeader(object);
     Engine_EventEnd();
 }

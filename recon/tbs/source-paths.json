@@ -48,8 +48,8 @@
       "source": "FIELD/COMMON/HAIDIA_BABI/F_0168C.C"
     },
     "resource_381:02002eb0": {
-      "name": "SoruFunka_Func02002eb0",
-      "source": "FIELD/SORU_FUNKA/F_02EB0.C"
+      "name": "SoruFunka_SpawnEffectPair",
+      "source": "FIELD/SORU_FUNKA/EFFECT_PAIR.C"
     },
     "resource_373:02005d68": {
       "name": "WorldMap_CreateLinkedEffects",
@@ -21094,8 +21094,8 @@
       "source": "FIELD/VINASU_HEYA/BRIDGE_EXTEND.C"
     },
     "resource_381:020010c4": {
-      "name": "SoruFunka_Func020010c4",
-      "source": "FIELD/SORU_FUNKA/F_010C4.C"
+      "name": "SoruFunka_StepEmbers",
+      "source": "FIELD/SORU_FUNKA/STEP_EMBERS.C"
     },
     "resource_396:0200162c": {
       "name": "ToretoHeya_SpawnSwirlSparks",

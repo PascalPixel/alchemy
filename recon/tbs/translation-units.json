@@ -62244,7 +62244,7 @@
     },
     {
       "id": "mogoru-mori-f-00e18",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/MOGORU_MORI/F_00E18.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/MOGORU_MORI/PUFF_RING.C",
       "overlay": "resource_39f",
       "absolute_symbols": {
         "Engine_ActorGet": {
@@ -64504,7 +64504,7 @@
     },
     {
       "id": "scene-39f-020022c0",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/MOGORU_MORI/F_022C0.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/MOGORU_MORI/CLOSE_SCENE.C",
       "overlay": "resource_39f",
       "absolute_symbols": {
         "Engine_ActorGet": {

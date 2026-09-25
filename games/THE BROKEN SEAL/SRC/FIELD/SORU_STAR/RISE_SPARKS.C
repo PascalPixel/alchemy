@@ -34,7 +34,7 @@ struct EffectParams {
 };
 
 /* Actor 14 rises back into view, throwing sparks every other frame. */
-void SoruStar_Func020043bc(void)
+void SoruStar_RiseActorFourteenSparks(void)
 {
     struct EffectParams params;
     struct EffectParams *p;

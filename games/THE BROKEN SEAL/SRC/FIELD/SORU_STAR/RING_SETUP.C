@@ -31,7 +31,7 @@ s32 Engine_TaskAddCallback(void *callback, s32 priority);
  * ring entries, one per actor from first, each blended, placed at its fixed
  * offset, and schedule the ring's update. The same function sits in both
  * overlays. */
-void SoruStar_Func0200478c(s32 first, u32 count)
+void SoruStar_SetupElementalRings(s32 first, u32 count)
 {
     struct SoruRingEntry *list;
     struct SoruRingEntry *entry;

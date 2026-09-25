@@ -1142,7 +1142,7 @@ s32 SceneData_ReturnZero(void)
     return 0;
 }
 
-u8 *SceneData_GetTablee740(void)
+u8 *SceneData_GetPrimaryTable(void)
 {
     return Data_0200e740;
 }
@@ -1297,7 +1297,7 @@ static __inline__ void SetFlagBits(u8 *flags, u8 bits)
     *flags |= bits;
 }
 
-void FieldScene_RunScene3c8SequenceC(void)
+void FieldScene_RunLeaderSurpriseApproach(void)
 {
     struct FieldActor *actor;
     s32 z;
@@ -1336,7 +1336,7 @@ struct EventWorkState {
     u16 field_cba;
 };
 
-void FieldScene_RunScene3c8SequenceD(void)
+void FieldScene_RunStatueDialogueSequence(void)
 {
     extern struct EventWorkState *Data_03001ebc;
     struct EventWorkState *work;
@@ -1792,7 +1792,7 @@ void FieldScene_DrawTilesWhenCheckClear(void)
 
 /* Runs a fixed sequence of setup calls with literal parameters; most share
  * a leading 0 argument. */
-void FieldScene_RunScene3c8SequenceB(void)
+void FieldScene_RunApproachAndSpawnEffect(void)
 {
     Event_Begin();
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
@@ -1907,12 +1907,12 @@ void SceneState_CallHandlerWithFlagPair(void)
  * built from a shifted immediate and passed straight to the callee as a
  * value, not used as a displacement.
  */
-void SceneState_Call4520With432And32(void)
+void SceneState_CallWith432And32(void)
 {
     Func_02008b1a(432, 32);
 }
 
-void FieldScene_RunStep230With44(void)
+void FieldScene_CallWith560And44(void)
 {
     Func_02008b2a(0x230, 44);
 }

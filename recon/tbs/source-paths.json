@@ -20948,12 +20948,12 @@
       "source": "FIELD/BABI_CHIKA/F_01ABC.C"
     },
     "resource_3a6:02000e04": {
-      "name": "HaidiaDou_Func02000e04",
-      "source": "FIELD/HAIDIA_DOU/F_00E04.C"
+      "name": "HaidiaDou_SinkPillarColumn23",
+      "source": "FIELD/HAIDIA_DOU/SINK_PILLAR_23.C"
     },
     "resource_3a6:02000f78": {
-      "name": "HaidiaDou_Func02000f78",
-      "source": "FIELD/HAIDIA_DOU/F_00F78.C"
+      "name": "HaidiaDou_SinkPillarColumn27",
+      "source": "FIELD/HAIDIA_DOU/SINK_PILLAR_27.C"
     },
     "resource_3bb:020004c0": {
       "name": "KorosseoKabe_RollLogToCell",

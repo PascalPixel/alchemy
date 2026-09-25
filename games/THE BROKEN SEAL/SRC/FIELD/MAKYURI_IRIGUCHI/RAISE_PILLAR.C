@@ -50,7 +50,7 @@ struct PillarState {
 
 /* Raise the pillar under the party leader in the remaining steps, then record
  * the cell it now stands on. */
-void MakyuriIriguchi_Func02001ec8(void)
+void MakyuriIriguchi_RaisePillar(void)
 {
     struct PillarState *state;
     u8 *leader;

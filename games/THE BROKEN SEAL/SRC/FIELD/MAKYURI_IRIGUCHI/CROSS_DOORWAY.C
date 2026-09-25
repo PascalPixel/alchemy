@@ -55,7 +55,7 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
 
 /* Makyuri entrance event: Ivan crosses the doorway twice while the guard's action callbacks alternate, then shows an emote and the cells are copied. */
 /* Makyuri entrance event: an actor crosses the doorway twice while actor 8's action callbacks alternate, then shows an emote and the cells are copied. */
-void MakyuriIriguchi_Func02001730(void)
+void MakyuriIriguchi_CrossDoorway(void)
 {
     s32 i;
     s32 zero;

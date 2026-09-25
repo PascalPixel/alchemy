@@ -1,7 +1,7 @@
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
+#include "BATTLE_PRESENTATION.H"
 
-/* battle/presentation/camera_set_range.c */
 typedef s32 (*ArmRatio)(s32 numerator, s32 denominator);
 
 /* BG2 affine parameters as the HDMA work block keeps them. */
@@ -27,11 +27,6 @@ struct BattleView {
     s32 mode;
     s32 mode2;
     s32 busy;
-};
-
-struct BattleCamera {
-    u8 padding00[0x36];
-    s16 pitch;
 };
 
 extern u16 gBgScroll[];
@@ -70,7 +65,7 @@ void BattleCamera_SetRange(s32 cx, s32 cy, s32 ox, s32 oy, s32 scale)
     wrap = 0;
     if (scale >= 0x10000) {
         wrap = 0x2000;
-        horizon = 0x6800 + -camera->pitch * 3;
+        horizon = 0x6800 + -(s16)camera->yaw * 3;
     }
     if (work == NULL)
         return;

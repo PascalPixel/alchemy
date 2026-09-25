@@ -1,30 +1,11 @@
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
-
-struct SceneCameraState {
-    u8 filler0[12];
-    s32 field0c;
-    s32 field10;
-    s32 field14;
-    s32 field18;
-    s32 *field1c;
-    s32 field20;
-    u8 filler24[16];
-    u16 field34;
-    u16 field36;
-};
+#include "BATTLE_PRESENTATION.H"
 
 struct SceneCameraTransfer {
-    s32 first;
-    s32 second;
-    s32 third;
-};
-
-struct BattlePresentationTransition {
-    s32 battle_value;
-    s32 timer;
-    u8 reserved08[12];
-    s32 flag;
+    s32 x;
+    s32 y;
+    s32 z;
 };
 
 struct LinkWork {
@@ -43,12 +24,11 @@ void Render_ResetTransformState(void);
 void SceneTransform_ApplyPosition(void *);
 void SceneTransform_ApplyYaw(s32);
 void SceneTransform_ApplyPitch(s32);
-void BattleCamera_SetRange(u32, u32, s32, s32, u32);
 
 void BattlePresentation_UpdateCamera(void)
 {
     void **slot = (void **)ADDR_03001E80;
-    struct SceneCameraState *state = slot[0];
+    struct BattleCamera *state = slot[0];
     struct BattlePresentationTransition *transition = slot[32];
     struct LinkWork *work = slot[-3];
     struct SceneCameraTransfer local;
@@ -71,27 +51,27 @@ void BattlePresentation_UpdateCamera(void)
         }
     }
 
-    if (transition->timer != 0) {
-        delta = transition->battle_value - state->field36;
+    if (transition->frames != 0) {
+        delta = transition->target_yaw - state->yaw;
         delta /= 16;
-        state->field36 += delta;
-        transition->timer--;
+        state->yaw += delta;
+        transition->frames--;
     }
 
-    pos = &state->field0c;
-    if (state->field1c != 0) {
-        pos = state->field1c;
+    pos = state->pos;
+    if (state->follow_pos != 0) {
+        pos = state->follow_pos;
     }
 
     Render_ResetTransformState();
     SceneTransform_ApplyPosition(pos);
-    SceneTransform_ApplyYaw((s16)state->field36);
-    SceneTransform_ApplyPitch((s16)state->field34);
+    SceneTransform_ApplyYaw((s16)state->yaw);
+    SceneTransform_ApplyPitch((s16)state->pitch);
 
-    local.first = 0;
-    local.second = 0;
-    local.third = state->field20;
-    ((void (*)(struct SceneCameraTransfer *, struct SceneCameraState *))0x03000250)(&local, state);
+    local.x = 0;
+    local.y = 0;
+    local.z = state->distance;
+    ((void (*)(struct SceneCameraTransfer *, struct BattleCamera *))0x03000250)(&local, state);
 
     if (transition->flag == 0) {
         BattleCamera_SetRange(0x780000, 0x780000, 0, 0, 0x10000);

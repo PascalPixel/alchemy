@@ -1,3 +1,11 @@
+/* NONMATCHING: 4708 bytes, candidate 4720, 2131 differing halfwords, 962
+ * halfword edits (2026-09-25). Scene_RunPairedActorEffectSequence, meant for
+ * FIELD/VINASU_CHOJO/F_02360.C as a single-overlay unit binding its names at
+ * their runtime addresses (an import veneer's listing offset plus 0x8000).
+ * Remaining: Corrected the local effect callback pointer and import binding;
+ * remaining differences span instruction order, allocation and source
+ * structure.
+ * WALL: structural-topology: reconstruct the scene and effect loop lifetimes */
 #include "TYPES.H"
 
 void Engine_EventBegin();
@@ -38,7 +46,8 @@ void Engine_VramLoad();
 void Engine_HeapRelease();
 s32 Engine_ActorSetSpritePriority();
 void Engine_ObjectSetPosition();
-void Engine_ObjectMotionSetPositionAndCommit();
+void Main_0808a210();
+void Local_020036d0();
 void Engine_ObjectCommitPosition();
 void Actor_ParkRecord();
 s32 Engine_ActorSetChildValue();
@@ -121,12 +130,11 @@ struct Half {
     u16 v;
 };
 
-/* NONMATCHING: 4720 of 4708 bytes, 962 halfword edits (2026-09-24). First
- * pass: the zero shared for +85 is a one-halfword struct (movhi pool reach)
- * and 0x8000 is one variable, which places the first pool as the reference
- * has it. The shared constants (0x3000, 10) and the stack size (136) still
- * differ, so the callee-saved assignment cascades through the function. */
-void Func_02002360(void)
+/* The callback stored into the spawned
+ * actor is Local_020036d0 (runtime 0x0200b6d0 plus the Thumb tag), verified
+ * from the decoded ROM pool; it is not null. Remaining mismatch is broad
+ * source shape and register allocation across the scene sequence. */
+void Scene_RunPairedActorEffectSequence(void)
 {
     u32 i;
     s32 p10;
@@ -352,7 +360,7 @@ void Func_02002360(void)
         *(u16 *)((s32)rec + 6) = shown;
     }
     *(s32 *)((s32)rec + 24) = 0x10000;
-    p9b = (s32)Data_00000000;
+    p9b = (s32)Local_020036d0;
     Call2((void (*)())Engine_ActorSetAnimation, 20, 1);
     Engine_EventWait(10);
     Call2((void (*)())Scene_CallPairWith10, 20, 0xd000);
@@ -403,7 +411,7 @@ void Func_02002360(void)
         *(s32 *)((s32)rec7 + 40) = 0x80000;
         Call4(Engine_ObjectSetPosition, (s32)rec7, 0x1340000, (v6 << 14), 0xa40000);
     }
-    Call3(Engine_ObjectMotionSetPositionAndCommit, 22, 0x134, 164);
+    Call3(Main_0808a210, 22, 0x134, 164);
     Call3((void (*)())Engine_ActorSetPosition, 22, 0, 0);
     Call2((void (*)())Engine_ActorSetSpritePriority, 21, 0);
     if ((s32)rec7 != 0) {

@@ -1,52 +1,54 @@
+/* NONMATCHING: 624 bytes, candidate 620, 253 differing halfwords, 153
+ * halfword edits (2026-09-25). Scene_ClosePresentationSequence, meant for
+ * FIELD/BABI_FUNE/F_00B34.C as a single-overlay unit binding its names at
+ * their runtime addresses (an import veneer's listing offset plus 0x8000).
+ * Remaining: Resolved each synthetic call to its real service and used
+ * inline wrappers for repeated constants; palette ramp structure and final
+ * stores remain nonmatching.
+ * WALL: structural-topology: palette ramp and scene handoff */
 #include "TYPES.H"
 
 /* AUDITED GENERATED PRESENTATION FINALE for Scene_ClosePresentationSequence:
  * 35 calls, palette ramps, blend-register setup, and runtime handoff. */
 
-#define Scene_ClosePresentationSequence Func_02000b34
+void Main_0808a018(void);
+void Main_0808a460(void);
+void Main_0808a0d0(void);
+void Main_0808a1b8(void);
+void Main_0808a010(void);
+void Main_080f9010(void);
+void Main_080000d0(void);
+void Main_080091f0(void);
+void Main_080000c0(void);
+void Main_080000d8(void);
+void Main_080b0060(void);
+void Main_0808a020(void);
+void Scene_RunExtendedPresentationSequence(void);
 
-void Func_02000c44();
-void Func_020011a8();
-void Func_02001ef8();
-void Func_02001f02();
-void Func_02001f1c();
-void Func_02001f38();
-void Func_02001f4a();
-void Func_02001f60();
-void Func_02001f62();
-void Func_02001f6c();
-void Func_02001f74();
-void Func_02001f90();
-void *Func_02001f92();
-void *Func_02001f92_a();
-void Func_02001f96();
-void Func_02001fa8();
-void Func_02001fae();
-void Func_02001fbe();
-void *Func_02001fc6();
-void *Func_02001fc6_a();
-void Func_0200200a();
-void Func_02002010();
-void Func_02002040();
-void Func_02002080();
-void Func_02002084();
-void Func_020020c2();
-void Func_020020c2_a();
-void Func_020020cc();
-void Func_02002106();
-void Func_02002124();
-void Func_02002138();
-void Func_0200218a();
-void Func_02002196();
-void Func_020021fe();
-void Func_02002202();
+static __inline__ void Call1(void (*f)(), s32 a0)
+{
+    f(a0);
+}
 
-void Func_02000b34(void)
+static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
+{
+    f(a0, a1);
+}
+
+static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
+{
+    f(a0, a1, a2);
+}
+
+static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
+{
+    f(a0, a1, a2, a3);
+}
+
+void Scene_ClosePresentationSequence(void)
 {
     u8 *runtime;
     s32 base;
-    void *p2;
-    void *p22;
     s32 i1;
     s32 i2;
     s32 i3;
@@ -55,71 +57,71 @@ void Func_02000b34(void)
 
     runtime = *(u8 **)0x03001e70;
 
-    Func_02001f02();
-    p2 = Func_02001fc6();
-    Func_02001f4a(0, 312, 232);
-    Func_02001f96(0, 49152, 0);
-    Func_02001f1c(40);
-    Func_0200200a(140);
+    Main_0808a018();
+    Main_0808a460();
+    Call3((void (*)())Main_0808a0d0, 0, 312, 232);
+    Call3((void (*)())Main_0808a1b8, 0, 49152, 0);
+    Call1((void (*)())Main_0808a010, 40);
+    Call1((void (*)())Main_080f9010, 140);
     for (i1 = 0; i1 <= 15; i1++) {
         *(volatile u16 *)0x05000000 = (i1 << 11) | (i1 << 5);
-        Func_02001f38(10);
+        Call1((void (*)())Main_0808a010, 10);
     }
     *(volatile u16 *)0x05000000 = 0x7e00;
     for (i2 = 2; i2 >= 0; i2--) {
-        Func_02002040(212);
+        Call1((void (*)())Main_080f9010, 212);
         *(volatile u16 *)0x04000050 = 3;
-        Func_02001f62(3);
+        Call1((void (*)())Main_0808a010, 3);
         *(volatile u16 *)0x04000050 = 0x810;
-        Func_02001f6c(65);
+        Call1((void (*)())Main_0808a010, 65);
     }
     *(u32 *)0x020097e8 = 1;
     *(u32 *)0x020097ec = 0;
-    Func_02001ef8(33587605, 3200, 0, 33593324);
+    Call4((void (*)())Main_080000d0, 33587605, 3200, 0, 33593324);
     *(u32 *)0x02009804 = 1;
-    Func_02001f92(20);
-    Func_02002080(163);
-    Func_02001f90(65536, 65536, 65536);
-    Func_02001fae(60);
-    Func_02001fa8(131072, 131072, 65536);
-    Func_02001fc6_a(60);
-    Func_02001fbe(196608, 196608, 65536);
+    Call1((void (*)())Main_0808a010, 20);
+    Call1((void (*)())Main_080f9010, 163);
+    Call3((void (*)())Main_080091f0, 65536, 65536, 65536);
+    Call1((void (*)())Main_0808a010, 60);
+    Call3((void (*)())Main_080091f0, 131072, 131072, 65536);
+    Call1((void (*)())Main_0808a010, 60);
+    Call3((void (*)())Main_080091f0, 196608, 196608, 65536);
     *(u32 *)0x02009808 = 0;
-    Func_02001f60(33587561, 3200, 0, 33593332);
+    Call4((void (*)())Main_080000d0, 33587561, 3200, 0, 33593332);
     phase = 0;
     do {
         *(s32 *)(runtime + 320) += 0x3333;
         *(s32 *)(runtime + 368) += 0x3333;
         phase += 0x3333;
-        Func_02001f74(1);
+        Call1((void (*)())Main_080000c0, 1);
     } while (phase <= 0xe666);
-    p22 = Func_02001f92_a(33587561);
+    Call1((void (*)())Main_080000d8, 33587561);
     *(u32 *)0x020097f8 = 0;
     *(volatile u16 *)0x04000052 = (*(volatile u16 *)0x04000052 & 0xfffc) | 0x0a;
     *(volatile u16 *)0x04000050 = (*(volatile u16 *)0x04000050 & 0xfffc) | 0x0a;
     *(volatile u16 *)0x0400000e = (*(volatile u16 *)0x0400000e & 0xfffc) | 0x0400;
     *(u32 *)0x020097f4 = 0;
-    Func_0200218a(288);
-    Func_02002010(1);
-    Func_02002196(145);
+    Call1((void (*)())Main_080f9010, 288);
+    Call1((void (*)())Main_080000c0, 1);
+    Call1((void (*)())Main_080f9010, 145);
     *(volatile u16 *)0x04000054 = 191;
     for (i3 = 0; i3 <= 16; i3++) {
         *(volatile u16 *)0x05000000 = i3;
-        Func_020020c2(1);
+        Call1((void (*)())Main_0808a010, 1);
     }
-    Func_020020cc(40);
-    Func_020020c2_a(-1, -1, 58982);
+    Call1((void (*)())Main_0808a010, 40);
+    Call3((void (*)())Main_080091f0, -1, -1, 58982);
     *(u32 *)0x02009804 = *(u32 *)(runtime + 320);
     *(u32 *)0x02009808 = *(u32 *)(runtime + 368);
     *(u32 *)0x020097fc = 1;
     for (i4 = 16; i4 >= 0; i4--) {
         *(volatile u16 *)0x05000000 = i4;
-        Func_02002106(8);
+        Call1((void (*)())Main_0808a010, 8);
     }
-    Func_02002084(33587377, 3200);
-    Func_02002202(80);
-    Func_020021fe();
-    Func_02002124(20);
-    Func_02002138();
-    Func_020011a8();
+    Call2((void (*)())Main_080000d0, 33587377, 3200);
+    Call1((void (*)())Main_080f9010, 80);
+    Main_080b0060();
+    Call1((void (*)())Main_0808a010, 20);
+    Main_0808a020();
+    Scene_RunExtendedPresentationSequence();
 }

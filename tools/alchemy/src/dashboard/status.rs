@@ -7,9 +7,10 @@ use crate::coverage::progress::{measured, GameDone};
 use serde_json::{json, Value};
 use std::{path::Path, sync::Mutex};
 
-pub(super) const GAMES: [(&str, &str, &str); 2] = [
-    ("tbs-en", "☀️", "The Broken Seal"),
-    ("tla-en", "⚓️", "The Lost Age"),
+/// Each game's edition, Weyard UI mark and its colour, and title.
+pub(super) const GAMES: [(&str, (&str, &str), &str); 2] = [
+    ("tbs-en", ("tbs", "gold"), "The Broken Seal"),
+    ("tla-en", ("tla", "blue"), "The Lost Age"),
 ];
 
 #[derive(Clone, Debug, PartialEq)]
@@ -47,14 +48,14 @@ fn reason(root: &Path, target: &str, error: Option<String>) -> String {
 /// hashes every build input.
 pub(super) fn refresh(root: &Path) -> Result<String, String> {
     let mut notes = Vec::new();
-    for (index, (target, mark, _)) in GAMES.iter().enumerate() {
+    for (index, (target, _, title)) in GAMES.iter().enumerate() {
         cache::advance("progress", index, format!("Checking {target}"));
         let done = match measured(root, target) {
             Ok(Some(done)) => Done::Measured(done),
             Ok(None) => Done::Unknown(reason(root, target, None)),
             Err(error) => Done::Unknown(reason(root, target, Some(error))),
         };
-        notes.push(format!("{mark} {}", label(&done)));
+        notes.push(format!("{title} {}", label(&done)));
         DONE.lock().unwrap_or_else(|e| e.into_inner())[index] = Some(done);
     }
     Ok(notes.join(" "))
@@ -88,10 +89,11 @@ pub(super) fn fields() -> String {
     current()
         .iter()
         .zip(GAMES)
-        .map(|(done, (_, mark, title))| {
+        .map(|(done, (_, (mark, color), title))| {
             format!(
-                "<span class=\"field done\" title=\"{}\"><span class=\"mark\">{mark}</span>{}</span>",
+                "<span class=\"field done\" title=\"{}\">{}<span class=\"sr\">{title}</span>{}</span>",
                 esc(&detail(title, done)),
+                super::chrome::logo(mark, color),
                 label(done)
             )
         })

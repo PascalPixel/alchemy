@@ -442,8 +442,14 @@ mod tests {
         assert!(!styles.contains("url("));
         assert!(!styles.contains("http"));
         assert!(styles.contains(".tab {"));
-        // The figures' chrome: flat faces, one-pixel bevels, no rounding.
+        // Weyard UI: flat faces, one-pixel bevels whose light lines are
+        // translucent, and corners stepped by a pixel clip, never a curve.
         assert!(!styles.contains("border-radius"));
+        assert!(!styles.contains("var(--light)"));
+        assert!(
+            styles.contains("clip-path:var(--corner)")
+                && styles.contains("clip-path:var(--corner-tile)")
+        );
         assert!(
             styles.contains("box-shadow:var(--raised)")
                 && styles.contains("box-shadow:var(--sunken)")

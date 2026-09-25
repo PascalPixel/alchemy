@@ -238,7 +238,9 @@ Prefer existing commands and read `--help` before scripting around one.
 **Alchemy builds, Psynergy reads:** Alchemy owns game policy, compilation,
 encoding, linking and verification; Psynergy owns portable reading, decoding,
 analysis and comparison over explicit input, with no Golden Sun defaults. New
-tooling must fix a demonstrated recurring blocker and carry a test.
+tooling must fix a demonstrated recurring blocker and carry a test. The
+dashboard and both README figures share one design, Weyard UI, whose palette,
+corner step and bevel opacity live in `tools/alchemy/src/coverage/palette.rs`.
 
 | Tool | Responsibility |
 | --- | --- |

@@ -304,6 +304,92 @@ impl Letters {
     }
 }
 
+/// Weyard UI's three logo marks: Alchemy's mountain, The Broken Seal's sun
+/// and The Lost Age's anchor. No tracked item, Psynergy or status icon draws
+/// them cleanly, so they are drawn here as one-colour masks on a `LINE` box,
+/// `#` ink, and take the labels' one-pixel shadow wherever they are shown.
+pub(crate) const MARKS: [(&str, [&str; LINE as usize]); 3] = [
+    (
+        "alchemy",
+        [
+            "................",
+            "................",
+            "......#.........",
+            "......#.........",
+            ".....###........",
+            ".....###........",
+            "....#.#.#.......",
+            "....#####.......",
+            "...#######.#....",
+            "...##########...",
+            "..############..",
+            "..#############.",
+            ".##############.",
+            ".##############.",
+            "###############.",
+            "................",
+        ],
+    ),
+    (
+        "tbs",
+        [
+            "................",
+            "................",
+            "......#.........",
+            ".#....#....#....",
+            "..#.......#.....",
+            ".....###........",
+            "....#####.......",
+            "...#######......",
+            "##.#######.##...",
+            "...#######......",
+            "....#####.......",
+            ".....###........",
+            "..#.......#.....",
+            ".#....#....#....",
+            "......#.........",
+            "................",
+        ],
+    ),
+    (
+        "tla",
+        [
+            "................",
+            ".....###........",
+            "....#...#.......",
+            ".....###........",
+            "......#.........",
+            "..#########.....",
+            "......#.........",
+            "......#.........",
+            "......#.........",
+            "......#.........",
+            "#.....#.....#...",
+            "##....#....##...",
+            ".##...#...##....",
+            "..###.#.###.....",
+            "....#####.......",
+            "................",
+        ],
+    ),
+];
+/// A mark's rows, by name.
+pub(crate) fn mark(name: &str) -> &'static [&'static str; LINE as usize] {
+    &MARKS
+        .iter()
+        .find(|(key, _)| *key == name)
+        .expect("a Weyard UI mark")
+        .1
+}
+/// A mark's width: its rightmost ink column and one more.
+pub(crate) fn mark_width(name: &str) -> u32 {
+    mark(name)
+        .iter()
+        .filter_map(|row| row.rfind('#'))
+        .max()
+        .map_or(0, |column| column as u32 + 1)
+}
+
 #[cfg(test)]
 pub(crate) fn fixture() -> Letters {
     // A three-pixel square for every Latin-1 code, advancing four.
@@ -346,5 +432,22 @@ mod tests {
         // Kanji advance twelve pixels; The Lost Age adds its own.
         assert_eq!(japanese.advance[japanese.frame('神').unwrap()], 12);
         assert!(japanese.frame('黄').is_some());
+    }
+    #[test]
+    fn the_marks_are_one_colour_masks_on_a_line_box() {
+        for (name, rows) in MARKS {
+            assert!(
+                rows.iter()
+                    .all(|row| row.len() == LINE as usize
+                        && row.chars().all(|c| c == '.' || c == '#')),
+                "{name}"
+            );
+            // Each keeps its last column clear for the shadow.
+            assert!(mark_width(name) < LINE, "{name}");
+        }
+        assert_eq!(
+            (mark_width("alchemy"), mark_width("tbs"), mark_width("tla")),
+            (15, 13, 13)
+        );
     }
 }

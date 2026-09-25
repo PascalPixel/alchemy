@@ -36,9 +36,9 @@ the technical details in [AGENTS.md](AGENTS.md).
 
 **☀️ 71.15% · ⚓️ 2.14%**
 
-<img src="PROGRESS_CHART.png" width="838" alt="DONE by day for The Broken Seal and The Lost Age since 16 July 2026">
+<a href="https://github.com/PascalPixel/alchemy"><img src="PROGRESS_CHART.png" width="838" alt="DONE by day for The Broken Seal and The Lost Age since 16 July 2026"></a>
 
-<img src="PROGRESS.png" width="838" alt="A map of the project's files by size on disk">
+<a href="https://github.com/PascalPixel/alchemy"><img src="PROGRESS.png" width="838" alt="A map of the project's files by size on disk"></a>
 
 The chart shows how far each game has come, day by day: The Broken Seal in
 gold, The Lost Age in blue. The two dips mark days the rules for what counts

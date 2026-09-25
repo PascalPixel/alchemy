@@ -30,15 +30,27 @@ pub(super) fn active(path: &str) -> &'static str {
         "Files"
     }
 }
-/// Palette tokens from the figure, the lettering rules and the icons when built.
+/// Weyard UI's tokens from the figure, the lettering rules and the icons when built.
 fn theme() -> String {
     let assets = glyphs::current();
     let mut css = String::from(":root{");
     for (name, color) in palette::CSS {
         css.push_str(&format!("--{name}:{color};"));
     }
+    // Weyard UI's two shapes: translucent light bevels and stepped corners.
+    css.push_str(&format!(
+        "--bevel-light:{};--bevel-band:{};--corner:{};--corner-tile:{};",
+        palette::bevel_light("light"),
+        palette::bevel_light("band"),
+        palette::clip_path(PIXEL, None),
+        palette::clip_path(PIXEL, Some(25))
+    ));
     css.push('}');
     css.push_str(&glyphs::lettering_css());
+    let (marks, _) = glyphs::marks();
+    css.push_str(&format!(
+        ".logo{{-webkit-mask-image:url(/cache/marks-{marks}.png);mask-image:url(/cache/marks-{marks}.png)}}"
+    ));
     if let Some(stamp) = &assets.icons {
         css.push_str(&format!(
             ".icon{{-webkit-mask-image:url(/cache/icons-{stamp}.png);mask-image:url(/cache/icons-{stamp}.png)}}"
@@ -72,6 +84,14 @@ fn tabs(current: &str) -> String {
             )
         })
         .collect()
+}
+/// A Weyard UI logo mark (`coverage::letters::MARKS`), tinted by `color`;
+/// its wrapper casts the labels' shadow, which a mask would cut away.
+pub(super) fn logo(name: &str, color: &str) -> String {
+    format!(
+        "<span class=\"mark\" style=\"color:var(--{color})\" aria-hidden=\"true\"><i class=\"logo\" style=\"-webkit-mask-position:-{0}px 0;mask-position:-{0}px 0\"></i></span>",
+        glyphs::mark_slot(name) * LINE * PIXEL
+    )
 }
 /// A gold gauge like the game's HP and PP bars; `None` draws an indeterminate sweep.
 pub(super) fn progress(fraction: Option<f64>, label: &str) -> String {
@@ -127,10 +147,11 @@ fn statusbar(note: &str) -> String {
 pub(super) fn page(path: &str, content: &str, note: &str) -> Response {
     let current = active(path);
     let body = format!(
-        "<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>Alchemy · {current}</title>{}<style>{}</style><style>{}</style></head><body><div class=\"window\"><header class=\"titlebar\"><span>Alchemy</span></header><nav class=\"tabs\" aria-label=\"Views\">{}</nav><div class=\"sheet\">{content}</div>{}</div></body></html>",
+        "<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>Alchemy · {current}</title>{}<style>{}</style><style>{}</style></head><body><div class=\"window\"><header class=\"titlebar\">{}<span>Alchemy</span></header><nav class=\"tabs\" aria-label=\"Views\">{}</nav><div class=\"sheet\">{content}</div>{}</div></body></html>",
         letters_meta(),
         theme(),
         styles(),
+        logo("alchemy", "gold"),
         tabs(current),
         statusbar(note)
     );

@@ -455,7 +455,7 @@ fn check_figures(root: &Path) -> Result<(), String> {
         Some((
             canvas.width as u32 * scale,
             canvas.height as u32 * scale,
-            canvas.rgb(scale),
+            canvas.rgba(scale),
         ))
     };
     if raster::decode(&chart) != drawn(&expected_chart) {

@@ -444,8 +444,8 @@
       "source": "FIELD/COMMON/IMIRU_FUCHIN/ENTRY_SETUP.C"
     },
     "resource_39e:02000518": {
-      "name": "ShianJiin_Func02000518",
-      "source": "FIELD/COMMON/SHIAN_JIIN/F_00518.C"
+      "name": "ShianJiin_RunTempleWalkScene",
+      "source": "FIELD/COMMON/SHIAN_JIIN/TEMPLE_WALK.C"
     },
     "resource_374:02001084": {
       "name": "HaidiaIe_RunScriptScene",

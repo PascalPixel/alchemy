@@ -411,8 +411,8 @@ mod tests {
         assert_eq!(canvas.png(2, "2026-09-24").unwrap(), png);
     }
     #[test]
-    fn boxes_step_their_corners_and_lay_light_bevels_at_three_quarters() {
-        use crate::coverage::palette::{FACE, WELL};
+    fn boxes_step_their_corners_and_lay_translucent_light_bevels() {
+        use crate::coverage::palette::{FACE, LIGHT_OPACITY, WELL};
         let mut canvas = Canvas::new(12, 10, FACE);
         canvas.rounded_fill(2, 2, 8, 6, WELL);
         canvas.bevel(2, 2, 8, 6, Relief::Raised);
@@ -421,15 +421,16 @@ mod tests {
         for (x, y) in [(2, 2), (9, 2), (2, 7), (9, 7)] {
             assert_eq!(canvas.get(x, y), Some(face), "{x},{y}");
         }
-        // The light edge is three quarters light over the well it covers;
+        // The light edge is LIGHT_OPACITY light over the well it covers;
         // the dark edge owns the mixed corners and stays opaque.
-        let over_well = blend(light, rgb(WELL), 75);
+        let (o, rest) = (LIGHT_OPACITY, 100 - LIGHT_OPACITY);
+        let over_well = blend(light, rgb(WELL), o);
         assert_eq!(
             over_well,
             [
-                (201 * 75 + 0x17 * 25 + 50) / 100,
-                (225 * 75 + 0x60 * 25 + 50) / 100,
-                (220 * 75 + 0x6f * 25 + 50) / 100,
+                (201 * o + 0x17 * rest + 50) / 100,
+                (225 * o + 0x60 * rest + 50) / 100,
+                (220 * o + 0x6f * rest + 50) / 100,
             ]
             .map(|c: u32| c as u8)
         );
@@ -442,7 +443,7 @@ mod tests {
         assert_eq!(canvas.get(3, 3), Some(rgb(WELL)));
         // A sunken frame puts its light, still translucent, on the other sides.
         canvas.bevel(2, 2, 8, 6, Relief::Sunken);
-        assert_eq!(canvas.get(9, 3), Some(blend(light, dark, 75)));
+        assert_eq!(canvas.get(9, 3), Some(blend(light, dark, o)));
         assert_eq!(canvas.get(3, 2), Some(dark));
         // Cleared corners are transparent in the PNG and in its decoding.
         canvas.clear_corners(0, 0, 12, 10);

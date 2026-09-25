@@ -35,7 +35,7 @@ a { color:inherit; text-decoration:none; }
 a:focus-visible,button:focus-visible,select:focus-visible,[tabindex]:focus-visible { outline:1px dotted var(--ink); outline-offset:-4px; }
 /* Every raised or sunken box steps its corners; treemap tiles may take the smallest step. */
 .window,.titlebar,.tab,.button,button,select,input[type="checkbox"],.well,.field,.progress,.dialog,.close,.properties,.chart,.table thead th,.group,.map-stage { clip-path:var(--corner); }
-.tile { clip-path:var(--corner-tile); }
+.tile.container { clip-path:var(--corner-tile); }
 h2 { margin:0; font:var(--text); color:var(--gold); }
 p { margin:0; }
 button,select,input { font:var(--text); }

@@ -476,7 +476,8 @@ fn draw(
             canvas.rounded_fill(cell.0, cell.1, cell.2, cell.3, FACE);
             canvas.bevel(cell.0, cell.1, cell.2, cell.3, Relief::Raised);
         } else {
-            canvas.rounded(body, |canvas| stack(canvas, tile, body));
+            // Only a titled folder rounds its corners; files stay square.
+            stack(canvas, tile, body);
         }
         let name = match tile.source.as_deref() {
             Some(source) if !source.ends_with('/') || container => source_name(source),

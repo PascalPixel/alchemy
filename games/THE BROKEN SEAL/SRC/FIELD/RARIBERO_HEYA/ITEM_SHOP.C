@@ -8,7 +8,7 @@ extern u8 Value_000026e3[];
 /* The Lalivero shopkeeper: spoken to across the counter she opens shop 32;
  * otherwise she talks about the kidnapping, or about the rough sea once flag
  * 0x9a7 is set. */
-void RariberoHeya_Func020000c8(s32 keeper)
+void RariberoHeya_RunItemShop(s32 keeper)
 {
     struct FieldActor *leader = Engine_ActorGet(0);
 

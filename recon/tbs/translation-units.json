@@ -70695,7 +70695,7 @@
     },
     {
       "id": "scene-3c7-020000c8",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/RARIBERO_HEYA/F_000C8.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/RARIBERO_HEYA/ITEM_SHOP.C",
       "overlay": "resource_3c7",
       "absolute_symbols": {
         "Engine_ActorGet": {

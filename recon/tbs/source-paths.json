@@ -15396,8 +15396,8 @@
       "source": "FIELD/BIRIBINO_MURA/PUSH_PUZZLE.C"
     },
     "resource_3af:02002618": {
-      "name": "FuneKanpan_Func02002618",
-      "source": "FIELD/FUNE_KANPAN/F_02618.C"
+      "name": "FuneKanpan_RunJumpScene",
+      "source": "FIELD/FUNE_KANPAN/JUMP_SCENE.C"
     },
     "resource_3af:020029d4": {
       "name": "FieldScene_ConfigureLeadActors",
@@ -20825,8 +20825,8 @@
       "source": "FIELD/ARUTAMIRA_DOU/SETTLE_ACTOR.C"
     },
     "resource_3af:020008e0": {
-      "name": "FuneKanpan_Func020008e0",
-      "source": "FIELD/FUNE_KANPAN/F_008E0.C"
+      "name": "FuneKanpan_IdleTurn",
+      "source": "FIELD/FUNE_KANPAN/IDLE_TURN.C"
     },
     "resource_3a0:02000d0c": {
       "name": "ShianMura_HopLeaderAhead",
@@ -20892,8 +20892,8 @@
       "source": "FIELD/ARUTIN_YAMA/SETTLE_MOUNT.C"
     },
     "resource_3af:020031a8": {
-      "name": "FuneKanpan_Func020031a8",
-      "source": "FIELD/FUNE_KANPAN/F_031A8.C"
+      "name": "FuneKanpan_RockDeck",
+      "source": "FIELD/FUNE_KANPAN/ROCK.C"
     },
     "resource_3b0:020000c0": {
       "name": "FuneHobashira_Func020000c0",

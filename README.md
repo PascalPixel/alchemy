@@ -34,7 +34,7 @@ the technical details in [AGENTS.md](AGENTS.md).
 
 ## Progress
 
-**☀️ 71.52% · ⚓️ 2.14%**
+**☀️ 71.57% · ⚓️ 2.14%**
 
 <a href="https://github.com/PascalPixel/alchemy"><img src="PROGRESS_CHART.png" width="838" alt="DONE by day for The Broken Seal and The Lost Age since 16 July 2026"></a>
 

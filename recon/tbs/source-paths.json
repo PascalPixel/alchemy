@@ -781,7 +781,8 @@
       "source": "FIELD/VINASU_CHOJO/EXTENDED_ACTOR_TRANSITION.C"
     },
     "resource_3c8:02004610": {
-      "name": "Scene_RunParticleWaveSequence"
+      "name": "Scene_RunParticleWaveSequence",
+      "source": "FIELD/VINASU_HEYA/F_04610.C"
     },
     "resource_370:020003cc": {
       "name": "SaveMenu_Run"
@@ -21247,6 +21248,10 @@
     "resource_3c8:02004048": {
       "name": "VinasuHeya_Func02004048",
       "source": "FIELD/VINASU_HEYA/F_04048.C"
+    },
+    "resource_3c9:02002200": {
+      "name": "VinasuChojo_Func02002200",
+      "source": "FIELD/VINASU_CHOJO/F_02200.C"
     }
   },
   "symbols": {

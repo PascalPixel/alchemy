@@ -107,6 +107,11 @@ with its residual in the header and undoes the trial; `--undo` drops a
 trial. Area and script lookup functions (a switch on game state
 +0x1c0/+0x1c2) take about five minutes each by hand.
 
+**Reuse first.** `alchemy check siblings --report out/siblings.json` also
+finds near matches to existing exact C. Adapt the proven source after checking
+its changed constants and callbacks: a 308-byte Vinasu owner closed first try
+this way despite its old draft differing in 113 halfwords.
+
 **Hand-writing.** Read `alchemy inspect <owner> --asm`, its callers, callees
 and exact neighbours, and write the C a Camelot programmer would have written,
 reusing existing headers, structs and registered names. Fix one hypothesis at

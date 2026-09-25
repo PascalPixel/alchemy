@@ -3518,22 +3518,6 @@
       ]
     },
     {
-      "id": "scene-particle-wave-sequence",
-      "source": "recon/tbs/en/overlays/resource_3c8_c_02004610.c",
-      "overlay": "resource_3c8",
-      "absolute_symbols": {
-        "Func_02009612_setup": {
-          "address": "0x0200cfc4",
-          "kind": "thumb"
-        }
-      },
-      "owners": [
-        {
-          "address": "0x02004610"
-        }
-      ]
-    },
-    {
       "id": "scene-item-presentation",
       "source": "recon/tbs/en/overlays/resource_380_c_02004260.c",
       "overlay": "resource_380",
@@ -75259,6 +75243,126 @@
       "owners": [
         {
           "address": "0x02004048"
+        }
+      ]
+    },
+    {
+      "id": "scene-3c8-02004610",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/VINASU_HEYA/F_04610.C",
+      "overlay": "resource_3c8",
+      "absolute_symbols": {
+        "Engine_ActorGet": {
+          "address": "0x0200ceac",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetChildValue": {
+          "address": "0x0200cf34",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpriteFlags": {
+          "address": "0x0200ce44",
+          "kind": "thumb"
+        },
+        "Engine_AudioPlayCue": {
+          "address": "0x0200cffc",
+          "kind": "thumb"
+        },
+        "Engine_CameraMoveTo": {
+          "address": "0x0200cf84",
+          "kind": "thumb"
+        },
+        "Engine_CameraSetSpeed": {
+          "address": "0x0200cf7c",
+          "kind": "thumb"
+        },
+        "Engine_CameraWaitForMove": {
+          "address": "0x0200cf8c",
+          "kind": "thumb"
+        },
+        "Engine_EventBegin": {
+          "address": "0x0200ce94",
+          "kind": "thumb"
+        },
+        "Engine_EventEnd": {
+          "address": "0x0200ce9c",
+          "kind": "thumb"
+        },
+        "Engine_EventOpenScreen": {
+          "address": "0x0200cfc4",
+          "kind": "thumb"
+        },
+        "Engine_EventRequestExit": {
+          "address": "0x0200cfa4",
+          "kind": "thumb"
+        },
+        "Engine_EventWait": {
+          "address": "0x0200ce8c",
+          "kind": "thumb"
+        },
+        "Engine_EventWaitForScreen": {
+          "address": "0x0200cfd4",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagSet": {
+          "address": "0x0200ce7c",
+          "kind": "thumb"
+        },
+        "Engine_MapCopyCellsTo": {
+          "address": "0x0200ce1c",
+          "kind": "thumb"
+        },
+        "Engine_RandomNext": {
+          "address": "0x0200cdb4",
+          "kind": "thumb"
+        },
+        "Engine_TaskAddCallback": {
+          "address": "0x0200cdac",
+          "kind": "thumb"
+        },
+        "Engine_TaskWait": {
+          "address": "0x0200cda4",
+          "kind": "thumb"
+        },
+        "Main_0808a5e0": {
+          "address": "0x0200cfec",
+          "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02004610"
+        }
+      ]
+    },
+    {
+      "id": "scene-3c9-02002200",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/VINASU_CHOJO/F_02200.C",
+      "overlay": "resource_3c9",
+      "absolute_symbols": {
+        "Engine_AudioPlayCue": {
+          "address": "0x0200decc",
+          "kind": "thumb"
+        },
+        "Engine_ObjectCreate": {
+          "address": "0x0200dc6c",
+          "kind": "thumb"
+        },
+        "Main_080001b8": {
+          "address": "0x0200dc44",
+          "kind": "thumb"
+        },
+        "Main_08009020": {
+          "address": "0x0200dc54",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02002200"
         }
       ]
     }

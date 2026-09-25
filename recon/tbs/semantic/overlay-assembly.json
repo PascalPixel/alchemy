@@ -16,19 +16,6 @@
       ]
     },
     {
-      "overlay": "resource_3c8",
-      "start": "0x02004610",
-      "end": "0x020047c0",
-      "kind": "not_yet_decompiled",
-      "retention": "not_yet_c",
-      "confidence": "strong",
-      "evidence": [
-        "Complete reviewed 432-byte particle-wave sequence remains retained assembly; the ordinary C candidate is nonexact under canonical GCC 2.96.",
-        "Reference stack stores and the eight-argument spawner establish the shared ConfiguredEffectOptions record. The loop's six-argument call and both distinct legacy call identities are restored in the candidate.",
-        "This is unresolved reconstruction, not evidence of compiler impossibility or Proven ASM."
-      ]
-    },
-    {
       "overlay": "resource_36f",
       "start": "0x02000454",
       "end": "0x02000538",

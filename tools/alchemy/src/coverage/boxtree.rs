@@ -132,10 +132,10 @@ fn file_style(extension: &str, source: &str) -> (&'static str, &'static str) {
         "c" => ("C", SOURCE_ROSE),
         "h" | "inc" => ("Headers", HEADER_ROSE),
         "s-credited" => ("Assembly", CREDITED_ASSEMBLY),
-        "s" => (NOT_YET_C, ASSEMBLY),
+        "s" => (NOT_YET_C, TRANSLATION_GREY),
         "wav" => ("WAV audio", PCM_ORANGE),
         "mid" => ("MIDI music", MIDI_GREEN),
-        "po" | "md" | "txt" => ("Translations", TRANSLATION_GREY),
+        "po" | "md" | "txt" => ("Translations", ASSEMBLY),
         "tokens" => (COMPRESSION_ANSWERS, ANSWER_TAUPE),
         _ if data && name.starts_with("COMPRESSION.") => (COMPRESSION_ANSWERS, ANSWER_TAUPE),
         _ if data && recon => ("Registries", REGISTRY_LAVENDER),
@@ -485,7 +485,10 @@ mod tests {
             group: Some(format!("file:{extension}")),
             ..Tile::default()
         };
-        assert_eq!(content_style(&tile("s")), ("Not yet C", super::ASSEMBLY));
+        assert_eq!(
+            content_style(&tile("s")),
+            ("Not yet C", super::TRANSLATION_GREY)
+        );
         assert_eq!(
             content_style(&tile("s-credited")),
             ("Assembly", super::CREDITED_ASSEMBLY)
@@ -498,7 +501,7 @@ mod tests {
         assert_eq!(content_style(&draft), ("Drafted C", super::DRAFT_ROSE));
         assert_eq!(
             content_style(&tile("po")),
-            ("Translations", super::TRANSLATION_GREY)
+            ("Translations", super::ASSEMBLY)
         );
         let placed = |source: &str, extension: &str| Tile {
             source: Some(source.into()),

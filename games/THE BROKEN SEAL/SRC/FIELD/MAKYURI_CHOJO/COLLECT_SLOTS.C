@@ -16,7 +16,7 @@ struct RecList_39d {
 
 /* Append to out the slot of every record inside the band below the caller's
  * y: x cells 4 to 8, and rows 8 to 10 below 64 - y. */
-void MakyuriChojo_Func020031c0(s32 *out, s32 y)
+void MakyuriChojo_CollectBandSlots(s32 *out, s32 y)
 {
     struct RecList_39d *list;
     u32 slot;

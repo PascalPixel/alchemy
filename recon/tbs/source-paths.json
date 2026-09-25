@@ -364,8 +364,8 @@
       "source": "FIELD/KORIMA_KI/F_00088.C"
     },
     "resource_39d:02003208": {
-      "name": "MakyuriChojo_Func02003208",
-      "source": "FIELD/MAKYURI_CHOJO/F_03208.C"
+      "name": "MakyuriChojo_LowerCollectedActors",
+      "source": "FIELD/MAKYURI_CHOJO/LOWER_BAND.C"
     },
     "resource_39c:0200251c": {
       "name": "MakyuriHeya_SyncBlockFlags",
@@ -424,12 +424,12 @@
       "source": "FIELD/MAKYURI_HEYA/OPEN_STAIR.C"
     },
     "resource_39d:02003060": {
-      "name": "MakyuriChojo_Func02003060",
-      "source": "FIELD/MAKYURI_CHOJO/F_03060.C"
+      "name": "MakyuriChojo_RiseActorPair",
+      "source": "FIELD/MAKYURI_CHOJO/RISE_PAIR.C"
     },
     "resource_39d:02002f18": {
-      "name": "MakyuriChojo_Func02002f18",
-      "source": "FIELD/MAKYURI_CHOJO/F_02F18.C"
+      "name": "MakyuriChojo_SinkActorPair",
+      "source": "FIELD/MAKYURI_CHOJO/SINK_PAIR.C"
     },
     "resource_39c:02002e6c": {
       "name": "MakyuriHeya_SinkActorWithSparks",
@@ -21052,12 +21052,12 @@
       "source": "FIELD/KORIMA_MAGARI/F_00980.C"
     },
     "resource_39d:020031c0": {
-      "name": "MakyuriChojo_Func020031c0",
-      "source": "FIELD/MAKYURI_CHOJO/F_031C0.C"
+      "name": "MakyuriChojo_CollectBandSlots",
+      "source": "FIELD/MAKYURI_CHOJO/COLLECT_SLOTS.C"
     },
     "resource_39d:02003324": {
-      "name": "MakyuriChojo_Func02003324",
-      "source": "FIELD/MAKYURI_CHOJO/F_03324.C"
+      "name": "MakyuriChojo_RaiseCollectedActors",
+      "source": "FIELD/MAKYURI_CHOJO/RAISE_BAND.C"
     },
     "main:080c1c54": {
       "name": "Owner_ApplyLevelGains",

@@ -62108,7 +62108,7 @@
     },
     {
       "id": "makyuri-chojo-f-02f18",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_CHOJO/F_02F18.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_CHOJO/SINK_PAIR.C",
       "overlay": "resource_39d",
       "absolute_symbols": {
         "Engine_ActorGet": {
@@ -62148,7 +62148,7 @@
     },
     {
       "id": "makyuri-chojo-f-03060",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_CHOJO/F_03060.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_CHOJO/RISE_PAIR.C",
       "overlay": "resource_39d",
       "absolute_symbols": {
         "Engine_ActorGet": {
@@ -62819,7 +62819,7 @@
     },
     {
       "id": "makyuri-chojo-f-03208",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_CHOJO/F_03208.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_CHOJO/LOWER_BAND.C",
       "overlay": "resource_39d",
       "absolute_symbols": {
         "Local_020031c0": {
@@ -73471,7 +73471,7 @@
     },
     {
       "id": "scene-39d-02003324",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_CHOJO/F_03324.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_CHOJO/RAISE_BAND.C",
       "overlay": "resource_39d",
       "absolute_symbols": {
         "Local_020031c0": {
@@ -73511,7 +73511,7 @@
     },
     {
       "id": "scene-39d-020031c0",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_CHOJO/F_031C0.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_CHOJO/COLLECT_SLOTS.C",
       "overlay": "resource_39d",
       "absolute_symbols": {
         "gEventWork": {

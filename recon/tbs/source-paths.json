@@ -76,8 +76,8 @@
       "source": "FIELD/IMIRU_MURA/ENTRY_STATE.C"
     },
     "resource_3c4:0200252c": {
-      "name": "BabiChika_Func0200252c",
-      "source": "FIELD/BABI_CHIKA/F_0252C.C"
+      "name": "BabiChika_MarkActorCells",
+      "source": "FIELD/BABI_CHIKA/MARK_ACTOR_CELLS.C"
     },
     "resource_378:02002750": {
       "name": "ShindenHeya_SpawnOwnerEffect",
@@ -20944,8 +20944,8 @@
       "source": "FIELD/SUHARA_SABAKU/ALTAR_BLEND.C"
     },
     "resource_3c4:02001abc": {
-      "name": "BabiChika_Func02001abc",
-      "source": "FIELD/BABI_CHIKA/F_01ABC.C"
+      "name": "BabiChika_SettleSteps",
+      "source": "FIELD/BABI_CHIKA/SETTLE_STEPS.C"
     },
     "resource_3a6:02000e04": {
       "name": "HaidiaDou_SinkPillarColumn23",

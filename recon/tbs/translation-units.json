@@ -69804,7 +69804,7 @@
     },
     {
       "id": "scene-3c4-0200252c",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/BABI_CHIKA/F_0252C.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/BABI_CHIKA/MARK_ACTOR_CELLS.C",
       "overlay": "resource_3c4",
       "absolute_symbols": {
         "Engine_MapCopyCellAttributes": {
@@ -71971,7 +71971,7 @@
     },
     {
       "id": "scene-3c4-02001abc",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/BABI_CHIKA/F_01ABC.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/BABI_CHIKA/SETTLE_STEPS.C",
       "overlay": "resource_3c4",
       "absolute_symbols": {
         "Engine_ActorSetSpeed": {

@@ -69,7 +69,7 @@ struct EffectParams {
 
 /* The actor spins up out of the ground, lands with a ring of dust and a
  * final burst. */
-void GomaIriguchi_Func02000dd8(s32 id)
+void GomaIriguchi_RunSpinningLeap(s32 id)
 {
     struct Vec dir;
     struct EffectParams params;

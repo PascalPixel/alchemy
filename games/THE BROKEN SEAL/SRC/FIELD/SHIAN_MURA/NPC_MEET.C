@@ -75,7 +75,7 @@ struct SpawnParams {
 
 extern u8 Value_02008371;
 
-void ShianMura_Func020009dc(void)
+void ShianMura_RunNpcMeetScene(void)
 {
     s32 flag;
     s32 record;

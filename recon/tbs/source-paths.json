@@ -32,8 +32,8 @@
       "source": "FIELD/COMMON/SHINDEN_HEYA/ALTAR_SCENE.C"
     },
     "resource_373:02005950": {
-      "name": "HaidiaMura_Func02005950",
-      "source": "FIELD/HAIDIA_MURA/F_05950.C"
+      "name": "HaidiaMura_OpenVillagerLane",
+      "source": "FIELD/HAIDIA_MURA/OPEN_LANE.C"
     },
     "resource_378:02003098": {
       "name": "ShindenHeya_RaiseItemIcon",

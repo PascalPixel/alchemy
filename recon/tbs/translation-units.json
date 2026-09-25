@@ -72691,7 +72691,7 @@
     },
     {
       "id": "scene-373-02005950",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_MURA/F_05950.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_MURA/OPEN_LANE.C",
       "overlay": "resource_373",
       "absolute_symbols": {
         "Engine_MapCopyCellAttributes": {

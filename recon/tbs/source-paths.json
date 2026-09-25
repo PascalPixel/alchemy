@@ -392,12 +392,12 @@
       "source": "FIELD/IMIRU_MURA/WEAPON_SHOP.C"
     },
     "resource_39c:02005458": {
-      "name": "MakyuriIriguchi_Func02001ec8",
-      "source": "FIELD/MAKYURI_IRIGUCHI/F_01EC8.C"
+      "name": "MakyuriIriguchi_RaisePillar",
+      "source": "FIELD/MAKYURI_IRIGUCHI/RAISE_PILLAR.C"
     },
     "resource_39b:02001ec8": {
-      "name": "MakyuriIriguchi_Func02001ec8",
-      "source": "FIELD/MAKYURI_IRIGUCHI/F_01EC8.C"
+      "name": "MakyuriIriguchi_RaisePillar",
+      "source": "FIELD/MAKYURI_IRIGUCHI/RAISE_PILLAR.C"
     },
     "resource_383:02002564": {
       "name": "KuupuappuHeya_PoseDialogueActors",
@@ -16221,8 +16221,8 @@
       "source": "FIELD/MAKYURI_IRIGUCHI/STAGED_EFFECT.C"
     },
     "resource_39b:02001730": {
-      "name": "MakyuriIriguchi_Func02001730",
-      "source": "FIELD/MAKYURI_IRIGUCHI/F_01730.C"
+      "name": "MakyuriIriguchi_CrossDoorway",
+      "source": "FIELD/MAKYURI_IRIGUCHI/CROSS_DOORWAY.C"
     },
     "resource_39b:02000fd8": {
       "name": "FieldScene_RunSupplementalSequenceTwo",

@@ -62428,7 +62428,7 @@
     },
     {
       "id": "makyuri-iriguchi-f-01ec8",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_IRIGUCHI/F_01EC8.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_IRIGUCHI/RAISE_PILLAR.C",
       "overlay": "resource_39b",
       "absolute_symbols": {
         "Engine_EventBegin": {
@@ -62480,7 +62480,7 @@
       "instances": {
         "resource_39c": {
           "owners": {
-            "MakyuriIriguchi_Func02001ec8": {
+            "MakyuriIriguchi_RaisePillar": {
               "address": "0x02005458"
             }
           },
@@ -72183,7 +72183,7 @@
     },
     {
       "id": "scene-39b-02001730",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_IRIGUCHI/F_01730.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_IRIGUCHI/CROSS_DOORWAY.C",
       "overlay": "resource_39b",
       "absolute_symbols": {
         "Engine_EventBegin": {

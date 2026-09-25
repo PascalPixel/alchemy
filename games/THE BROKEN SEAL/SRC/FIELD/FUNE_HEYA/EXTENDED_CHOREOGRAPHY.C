@@ -10,15 +10,6 @@
 
 #include "STAGED_ACTOR.H"
 
-/*
- * resource_3b1 owner at 0x020002f4, 76 bytes.
- * Puts an actor into its ready state: stage byte at +89, two mode fields on the
- * linked record, and the flag byte at +35 rewritten. Returns 1.
- *
- * The two mode writes are bitfields (the -13 mask stays 32-bit and is shared
- * between them); the +35 write is ordinary byte arithmetic, and its 0xfe mask
- * is narrowed to a byte, which is why the two are spelled differently.
- */
 
 enum ExtendedChoreographyMessage {
     MSG_WONDER_COULD_HAVE_HAPPENED = 0x1d26,
@@ -64,26 +55,6 @@ enum ExtendedChoreographyMessage {
     MSG_GOOD_SHIP_HAS_ARRIVED_SAFELY = 0x1f81
 };
 
-struct Rec_3b1 {
-    u8 pad00[9];
-    u8 lo9 : 2;
-    u8 mode9 : 2;               /* +9,  bits 2..3 */
-    u8 hi9 : 4;
-    u8 pad0a[11];
-    u8 lo15 : 2;
-    u8 mode15 : 2;              /* +21, bits 2..3 */
-    u8 hi15 : 4;
-};
-
-struct Work_3b1 {
-    u8 pad00[35];
-    u8 f35;                     /* +35 */
-    u8 pad24[44];
-    struct Rec_3b1 *f80;        /* +80 */
-    u8 pad51[5];
-    u8 f89;                     /* +89 */
-};
-
 struct SceneActor {
     u8 pad00[99];
     u8 mode;
@@ -96,18 +67,6 @@ struct EffectRecord {
     u8 state;
     u8 pad5c[6];
     u8 active;
-};
-
-struct SceneActor_02001144 {
-    u8 pad00[10];
-    s16 x;
-    u8 pad0c[6];
-    s16 y;
-};
-
-struct SceneWork {
-    u8 pad00[52];
-    struct SceneActor_02001144 *actors[58];
 };
 
 extern s16 Data_02000240[];
@@ -661,15 +620,16 @@ void UpdateActorNineEffectMode(struct EffectRecord *record)
     }
 }
 
-s32 StagedActor_SetReadyState(struct Work_3b1 *work)
+/* Places both sprite parts behind the foreground and clears automatic priority. */
+s32 StagedActor_SetReadyState(struct FieldActor *work)
 {
-    struct Rec_3b1 *rec = work->f80;
+    struct FieldSprite *rec = work->sprite;
 
-    work->f89 = 8;
+    work->collision_flags = 8;
     Actor_SetSpriteFlags(work, 0);
-    rec->mode9 = 1;
-    rec->mode15 = 1;
-    work->f35 = (work->f35 & ~1) | 2;
+    rec->priority = 1;
+    rec->second_priority = 1;
+    work->priority_flags = (work->priority_flags & ~1) | 2;
     Object_SetPalette(work, 15);
     return 1;
 }
@@ -1219,11 +1179,11 @@ void FieldScene_RunActor16FlagDialogue(void)
     }
 }
 
-struct SceneActor_02001144 *FindActorNearPosition(s32 x, s32 y)
+struct FieldActor *FindActorNearPosition(s32 x, s32 y)
 {
-    struct SceneWork *work;
-    struct SceneActor_02001144 **actor;
-    struct SceneActor_02001144 *current;
+    struct EventWork *work;
+    struct FieldActor **actor;
+    struct FieldActor *current;
     u32 i;
     s32 actor_x;
     s32 actor_y;
@@ -1232,17 +1192,17 @@ struct SceneActor_02001144 *FindActorNearPosition(s32 x, s32 y)
     s32 right;
     s32 bottom;
 
-    work = *(struct SceneWork **)0x03001ebc;
+    work = gEventWork;
     i = 8;
     left = x - 12;
     right = x + 12;
     top = y - 12;
     bottom = y + 12;
-    actor = work->actors;
+    actor = work->placed_actors;
     while (i <= 65) {
         current = *actor++;
-        actor_x = current->x;
-        actor_y = current->y;
+        actor_x = current->x.part.pixel;
+        actor_y = current->z.part.pixel;
         if (left < actor_x && right > actor_x &&
             top < actor_y && bottom > actor_y)
             return current;

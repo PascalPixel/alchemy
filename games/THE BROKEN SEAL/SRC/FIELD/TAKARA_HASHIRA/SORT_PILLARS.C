@@ -17,7 +17,7 @@ static __inline__ void Dma_Wait(volatile u32 *dma)
         ;
 }
 
-void TakaraHashira_Func02001be8(void)
+void TakaraHashira_SortPillarActors(void)
 {
     u32 i;
     u32 j;

@@ -48,7 +48,7 @@ struct WorldMapOam {
 };
 
 /* Spawns the linked pair of effect objects above the parent actor, with a cue, and gives both the parent's sprite priority. */
-void VinasuChojo_Func02002200(union PairObject *parent)
+void VinasuChojo_SpawnLinkedPairEffects(union PairObject *parent)
 {
     union PairObject *pair[2];
     union PairObject *child;

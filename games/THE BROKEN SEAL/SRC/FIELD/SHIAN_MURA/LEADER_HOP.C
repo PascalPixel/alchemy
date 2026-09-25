@@ -21,7 +21,7 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
 
 /* Steps the leader half a cell ahead of the snapped cell it faces and
  * hops it there when nothing blocks the way. */
-void ShianMura_Func02000d0c(void)
+void ShianMura_HopLeaderAhead(void)
 {
     s32 flags;
     struct FieldActor *leader;

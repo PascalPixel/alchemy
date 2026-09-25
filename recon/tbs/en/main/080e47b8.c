@@ -1,14 +1,15 @@
-/* NONMATCHING: 7808 bytes, candidate 8080, 3768 differing halfwords,
- * 2500 halfword edits (2026-09-25). Stack locals follow the reference frame;
- * resource ids use the same pool-loaded symbols as the resource loader.
- * The complete owner has one prologue and return, including its trailing pool.
- * WALL: Excess code and local lifetimes throughout the effect. */
+/* NONMATCHING: 7808 bytes, candidate 7936, 3388 differing halfwords,
+ * 2122 halfword edits (2026-09-25). Resource case bodies, duration tests,
+ * early exits and the separate frame-six update follow the ROM's control
+ * flow. ClearWords reloads its count at each call; particle lookup uses
+ * the actual table base, and repeated-particle addresses form inside the loop.
+ * WALL: Remaining local lifetimes, callback loads and drawing-loop structure.
+ * Pascal requested staying on this complete owner until byte exact. */
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "EFFECT_STEP.H"
 #include "MOTION_OBJECT.H"
 #include "BATTLE_EFX.H"
-#include "B5_CONTEXT.H"
 typedef BattleEffectDrawRectangle RectangleBlit;
 extern u8 Value_0000008d;
 extern u8 Value_000000a3;
@@ -55,9 +56,9 @@ void Func_08004c6c();
 void Func_080051d8();
 void Func_08009080();
 void Func_08009088();
-s32 Func_080b5070();
+u32 Func_080b5070(s32 actor_id);
 void Func_080b5088();
-struct B5Context *Func_080b5098(s32 actor_id);
+struct BattleObjectSlot *Func_080b5098(s32 actor_id);
 void Func_080b50e8();
 void Func_080cd52c();
 void Func_080cd594();
@@ -74,6 +75,26 @@ void Func_080e155c(s32 x, s32 y);
 void Func_080e46f0();
 
 void Func_080f9010();
+
+/* FAKEMATCH: Inline scope keeps each resource call's arguments local. */
+static __inline__ void LoadResource(s32 id, void *dest, s32 skip, s32 copy)
+{
+    Resource_LoadAndDecompress(id, dest, skip, copy);
+}
+
+/* FAKEMATCH: Keep packing arguments within their own inline scope. */
+static __inline__ void PackRows(void *src, void *dest, s32 width, s32 height)
+{
+    Func_080df9d0(src, dest, width, height);
+}
+
+/* FAKEMATCH: Inline scope makes each clearing call reload its byte count. */
+static __inline__ void ClearWords(s32 dest, u32 size)
+{
+    ((s32 (*)(s32, u32))0x03000164)(dest, size);
+}
+
+extern u16 Data_080ede48[];
 
 void Func_080e47b8(s32 a0, s32 a1)
 {
@@ -121,22 +142,22 @@ void Func_080e47b8(s32 a0, s32 a1)
     s32 frame;
     s32 matrix;
     s32 sprites;
+    s32 scroll_pos;
+    s32 scroll_speed;
+    s32 duration;
     s32 source_screen;
     s32 target_screen;
     s32 draw_pair;
-    s32 position;
     s32 saved_velocity_x;
     s32 saved_velocity_y;
     s32 saved_velocity_z;
     s32 saved_acceleration;
     s32 saved_vertical_strength;
-    s32 scroll_pos;
-    s32 scroll_speed;
     struct MotionObject *source_actor;
     s32 motion;
     s32 kind_from_two;
     s32 kind_from_four;
-    s32 duration;
+    s32 position;
     s32 slot12;
     struct MotionObject *target_actor;
     u8 *p5;
@@ -162,40 +183,35 @@ void Func_080e47b8(s32 a0, s32 a1)
         Func_080cd594(0);
     }
     *(volatile u16 *)0x04000052 = 0x1010;
-    Resource_LoadAndDecompress((s32)&Value_00000073, sprites, 0, 0);
-    Resource_LoadAndDecompress((s32)&Value_00000096, work, 1, 0);
-    Resource_LoadAndDecompress((s32)&Value_00000099, (void *)0x02010000, 1, 0);
-    Func_080df9d0(0x02010000, (work + 0x5100), 40, 0x120);
+    LoadResource((s32)&Value_00000073, sprites, 0, 0);
+    LoadResource((s32)&Value_00000096, work, 1, 0);
+    LoadResource((s32)&Value_00000099, (void *)0x02010000, 1, 0);
+    PackRows((void *)0x02010000, (void *)(work + 0x5100), 40, 0x120);
     if (kind == 5 || kind == 23) {
-        resource = (s32)&Value_0000007d;
+        LoadResource((s32)&Value_0000007d, (void *)0x02010000, 1, 0);
     } else if (kind == 12) {
-        resource = (s32)&Value_000000a9;
+        LoadResource((s32)&Value_000000a9, (void *)0x02010000, 1, 0);
     } else if (kind == 6 || kind == 27) {
-        Resource_LoadAndDecompress((s32)&Value_000000ce, (void *)0x02010000, 1, 0);
-        Resource_LoadAndDecompress((s32)&Value_000000c4, (void *)0x02010c56, 1, 0);
-        goto L_080e4912;
-    } else if (kind == 31 || kind == 8) {
-        if (kind == 31) resource = (s32)&Value_00000079;
-        else resource = (s32)&Value_000000c3;
-        Resource_LoadAndDecompress(resource, (void *)0x02010000, 1, 1);
-        goto L_080e4912;
+        LoadResource((s32)&Value_000000ce, (void *)0x02010000, 1, 0);
+        LoadResource((s32)&Value_000000c4, (void *)0x02010c56, 1, 0);
+    } else if (kind == 31) {
+        LoadResource((s32)&Value_00000079, (void *)0x02010000, 1, 1);
+    } else if (kind == 8) {
+        LoadResource((s32)&Value_000000c3, (void *)0x02010000, 1, 1);
     } else if (kind == 14) {
-        resource = (s32)&Value_0000006f;
+        LoadResource((s32)&Value_0000006f, (void *)0x02010000, 1, 0);
     } else if (kind == 30) {
-        resource = (s32)&Value_000000ce;
+        LoadResource((s32)&Value_000000ce, (void *)0x02010000, 1, 0);
     } else if (kind == 16) {
-        resource = (s32)&Value_000000b8;
+        LoadResource((s32)&Value_000000b8, (void *)0x02010000, 1, 0);
     } else if (kind == 20) {
-        resource = (s32)&Value_000000b4;
+        LoadResource((s32)&Value_000000b4, (void *)0x02010000, 1, 0);
     } else if ((u32)(kind - 33) <= 1) {
-        resource = (s32)&Value_00000053;
-    } else {
-        if (kind != 11 && kind != 32)
-            Resource_LoadAndDecompress((s32)&Value_0000009e, (void *)0x02010000, 1, 0);
-        goto L_080e4912;
+        LoadResource((s32)&Value_00000053, (void *)0x02010000, 1, 0);
+    } else if (kind != 11 && kind != 32) {
+        LoadResource((s32)&Value_0000009e, (void *)0x02010000, 1, 0);
     }
-    Resource_LoadAndDecompress(resource, (void *)0x02010000, 1, 0);
-    L_080e4912:;
+
     switch (kind) {
     case 0:
     case 4:
@@ -207,18 +223,7 @@ void Func_080e47b8(s32 a0, s32 a1)
     case 12:
     case 13:
     case 33:
-        Resource_LoadAndDecompress((s32)&Value_00000094, (void *)0x02013c56, 1, 1);
-        break;
-    case 1:
-    case 6:
-    case 26:
-    case 27:
-    case 28:
-    case 29:
-    case 30:
-    case 31:
-    case 32:
-        Resource_LoadAndDecompress((s32)&Value_00000090, (void *)0x02013c56, 1, 1);
+        LoadResource((s32)&Value_00000094, (void *)0x02013c56, 1, 1);
         break;
     case 2:
     case 14:
@@ -227,7 +232,7 @@ void Func_080e47b8(s32 a0, s32 a1)
     case 17:
     case 18:
     case 19:
-        Resource_LoadAndDecompress((s32)&Value_00000092, (void *)0x02013c56, 1, 1);
+        LoadResource((s32)&Value_00000092, (void *)0x02013c56, 1, 1);
         break;
     case 3:
     case 5:
@@ -239,19 +244,29 @@ void Func_080e47b8(s32 a0, s32 a1)
     case 25:
     case 34:
     case 35:
-        Resource_LoadAndDecompress((s32)&Value_0000008e, (void *)0x02013c56, 1, 1);
+        LoadResource((s32)&Value_0000008e, (void *)0x02013c56, 1, 1);
+        break;
+    case 1:
+    case 6:
+    case 26:
+    case 27:
+    case 28:
+    case 29:
+    case 30:
+    case 31:
+    case 32:
+        LoadResource((s32)&Value_00000090, (void *)0x02013c56, 1, 1);
         break;
     case 100:
-        Resource_LoadAndDecompress((s32)&Value_00000092, (void *)0x02013c56, 1, 1);
+        LoadResource((s32)&Value_00000092, (void *)0x02013c56, 1, 1);
         break;
     }
     *(s32 *)((work + 0x7780)) = 2;
     if (kind == 12) {
-        v3 = 75;
+        *(s32 *)(work + 0x7784) = 75;
     } else {
-        v3 = 50;
+        *(s32 *)(work + 0x7784) = 50;
     }
-    *(s32 *)((work + 0x7784)) = v3;
     Scheduler_AddOrUpdateCallback(0x80cd261, 0x480);
     source_screen = (s32)source_pos;
     EffectPosition_ApplyStepAndYOffset(*(s16 *)(*(s32 *)((work + 0x7828)) + 36), (struct EffectPosition *)source_pos);
@@ -287,8 +302,7 @@ void Func_080e47b8(s32 a0, s32 a1)
     *(s32 *)(position + 4) = (target_actor->y + 0x500000);
     *(s32 *)(position + 8) = target_actor->z;
     saved_velocity_x = target_actor->velocity_x;
-    p5 = target_actor->velocity_y;
-    saved_velocity_y = (s32)p5;
+    saved_velocity_y = target_actor->velocity_y;
     saved_velocity_z = target_actor->velocity_z;
     saved_acceleration = target_actor->acceleration;
     saved_vertical_strength = target_actor->vertical_motion_strength;
@@ -340,7 +354,7 @@ void Func_080e47b8(s32 a0, s32 a1)
                 }
                 *(s32 *)(v5 + 8) = (v3 + 60);
                 p4 = (u8 *)blitters[1];
-                ((RectangleBlit)p4)(canvas, sprites + *(u16 *)(0x080ede48 + 8), spark_screen[0] - 2, spark_screen[1] - 5, 5, 10);
+                ((RectangleBlit)p4)(canvas, sprites + Data_080ede48[4], spark_screen[0] - 2, spark_screen[1] - 5, 5, 10);
                 *(s32 *)(v6) = (*(s32 *)(v6) - 4);
             }
             v9 = (v9 + 1);
@@ -394,8 +408,8 @@ void Func_080e47b8(s32 a0, s32 a1)
         *(s32 *)((work + 0x7780)) = 1;
         v6 = 0;
         *(s32 *)((work + 0x7784)) = 0;
-        ((void (*)(s32, u32))0x03000164)(0x6004000, 0x4000);
-        ((void (*)(s32, u32))0x03000164)(canvas, 0x4000);
+        ClearWords(0x6004000, 0x4000);
+        ClearWords(canvas, 0x4000);
         {
             s32 shown = 0;
 
@@ -411,13 +425,9 @@ void Func_080e47b8(s32 a0, s32 a1)
         }
         *(volatile s32 *)0x04000028 = ((v3 - *(s32 *)(source_screen)) << 8);
     }
-    switch (kind) {
-    case 15:
-    case 17:
-    case 24:
-    case 26:
-        ((void (*)(s32, u32))0x03000164)(0x6004000, 0x4000);
-        ((void (*)(s32, u32))0x03000164)(canvas, 0x4000);
+    if (kind == 15 || kind == 17 || kind == 24 || kind == 26) {
+        ClearWords(0x6004000, 0x4000);
+        ClearWords(canvas, 0x4000);
         *(s32 *)(*(s32 *)((work + 0x7828)) + 28) = 0;
         Scheduler_RemoveCallback(0x80cd4b5);
         Scheduler_RemoveCallback(0x80cd261);
@@ -435,7 +445,6 @@ void Func_080e47b8(s32 a0, s32 a1)
         }
         Func_080dea70(command, 8);
         return;
-        break;
     }
     Func_08009088((s32)target_actor, 16);
     target_actor->velocity_x = saved_velocity_x;
@@ -444,8 +453,8 @@ void Func_080e47b8(s32 a0, s32 a1)
     target_actor->acceleration = saved_acceleration;
     target_actor->vertical_motion_strength = saved_vertical_strength;
     if (kind == 35) {
-        ((void (*)(s32, u32))0x03000164)(0x6004000, 0x4000);
-        ((void (*)(s32, u32))0x03000164)(canvas, 0x4000);
+        ClearWords(0x6004000, 0x4000);
+        ClearWords(canvas, 0x4000);
         *(s32 *)(*(s32 *)((work + 0x7828)) + 28) = 0;
         Scheduler_RemoveCallback(0x80cd4b5);
         Scheduler_RemoveCallback(0x80cd261);
@@ -505,13 +514,13 @@ void Func_080e47b8(s32 a0, s32 a1)
         } while (v10 != 32);
     }
     if (kind == 11) {
-        Resource_LoadAndDecompress((s32)&Value_000000ab, work, 1, 1);
-        Resource_LoadAndDecompress((s32)&Value_000000ac, (void *)0x02010000, 1, 0);
+        LoadResource((s32)&Value_000000ab, work, 1, 1);
+        LoadResource((s32)&Value_000000ac, (void *)0x02010000, 1, 0);
         *(volatile u16 *)0x04000052 = 0xe10;
     }
     if (kind == 32) {
-        Resource_LoadAndDecompress((s32)&Value_000000ad, work, 1, 1);
-        Resource_LoadAndDecompress((s32)&Value_000000ae, (void *)0x02010000, 1, 0);
+        LoadResource((s32)&Value_000000ad, work, 1, 1);
+        LoadResource((s32)&Value_000000ae, (void *)0x02010000, 1, 0);
         *(volatile u16 *)0x04000052 = 0xe10;
     }
     if (kind != 7) {
@@ -587,67 +596,23 @@ void Func_080e47b8(s32 a0, s32 a1)
     }
     Scheduler_AddOrUpdateCallback(0x80dbb9d, 0x480);
     L_080e5264:;
-    kind_from_four = (kind - 4);
-    if ((u32)kind_from_four > 2) {
-        v5 = kind;
-        if (kind != 23) {
-            if (kind != 30) {
-                if (kind != 27) {
-                    if (kind != 33) {
-                        if (kind != 34) {
-                            if (kind != 100) {
-                                goto L_080e528e;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        v5 = kind;
-    }
-    duration = 32;
-    goto L_080e52ea;
-    L_080e528e:;
-    switch ((u32)kind) {
-    case 0:
-    case 1:
-    case 2:
-    case 3:
-    case 8:
-    case 9:
-    case 10:
-    case 14:
-    case 22:
-    case 25:
-    case 29:
-    case 31:
+    kind_from_four = kind - 4;
+    if ((u32)kind_from_four <= 2 || kind == 23 || kind == 30 ||
+        kind == 27 || kind == 33 || kind == 34 || kind == 100) {
+        duration = 32;
+    } else if ((u32)kind <= 3 || kind == 8 || kind == 9 || kind == 10 ||
+               kind == 22 || kind == 25 || kind == 29 || kind == 31 || kind == 14) {
         duration = 48;
-        goto L_080e52ea;
-        break;
-    }
-    v5 = kind;
-    duration = 20;
-    if (kind != 21) {
-        switch (kind) {
-        case 11:
-        case 20:
-        case 32:
-            duration = 40;
-            v5 = kind;
-            goto L_080e52ea;
-            break;
-        }
-        if (kind != 28) {
-            duration = 80;
-            if (kind != 12) {
-                v5 = kind;
-                goto L_080e52ea;
-            }
-        }
+    } else if (kind == 21) {
+        duration = 20;
+    } else if (kind == 11 || kind == 32 || kind == 20) {
+        duration = 40;
+    } else if (kind == 28 || kind == 12) {
         duration = 64;
-        v5 = duration;
+    } else {
+        duration = 80;
     }
-    L_080e52ea:;
+
     frame = 0;
     if (duration == 0) {
         goto L_080e657c;
@@ -696,40 +661,26 @@ void Func_080e47b8(s32 a0, s32 a1)
     }
     L_080e53ea:;
     switch (kind) {
-    case 0:
-    case 10:
-        Func_080e46f0((s32)&Value_0000008d);
+    case 33:
+        Func_080e46f0((s32)&Value_00000053);
         break;
-    case 1:
-    case 28:
-        Func_080e46f0((s32)&Value_000000a3);
+    case 14:
+        Func_080e46f0((s32)&Value_0000006f);
         break;
-    case 2:
-    case 29:
-        Func_080e46f0((s32)&Value_000000a4);
-        break;
-    case 3:
-    case 20:
-    case 22:
-        Func_080e46f0((s32)&Value_000000b4);
-        break;
-    case 5:
-    case 23:
-        Func_080e46f0((s32)&Value_0000007d);
+    case 31:
+        Func_080e46f0((s32)&Value_00000079);
         break;
     case 8:
         Func_080e46f0((s32)&Value_000000c3);
         break;
-    case 9:
-        Func_080e46f0((s32)&Value_000000a0);
+    case 0:
+    case 10:
+        Func_080e46f0((s32)&Value_0000008d);
         break;
     case 12:
     case 13:
     case 25:
         Func_080e46f0((s32)&Value_000000bb);
-        break;
-    case 14:
-        Func_080e46f0((s32)&Value_0000006f);
         break;
     case 18:
         Func_080e46f0((s32)&Value_000000b9);
@@ -737,11 +688,25 @@ void Func_080e47b8(s32 a0, s32 a1)
     case 19:
         Func_080e46f0((s32)&Value_000000c0);
         break;
-    case 31:
-        Func_080e46f0((s32)&Value_00000079);
+    case 2:
+    case 29:
+        Func_080e46f0((s32)&Value_000000a4);
         break;
-    case 33:
-        Func_080e46f0((s32)&Value_00000053);
+    case 1:
+    case 28:
+        Func_080e46f0((s32)&Value_000000a3);
+        break;
+    case 3:
+    case 20:
+    case 22:
+        Func_080e46f0((s32)&Value_000000b4);
+        break;
+    case 9:
+        Func_080e46f0((s32)&Value_000000a0);
+        break;
+    case 5:
+    case 23:
+        Func_080e46f0((s32)&Value_0000007d);
         break;
     }
     if (kind != 11) {
@@ -754,13 +719,12 @@ void Func_080e47b8(s32 a0, s32 a1)
                 Func_080049ac();
                 Func_080051d8(matrix, (matrix + 12));
                 if (frame > 3) {
-                    struct EffectStep *particles = (struct EffectStep *)(work + 0x7080);
                     s32 *screen = (s32 *)projected;
                     s32 n;
 
                     for (n = 0; n != 128; n++) {
                         s32 index = n / 2;
-                        struct EffectStep *step = &particles[index];
+                        struct EffectStep *step = (struct EffectStep *)(work + index * 28 + 0x7080);
                         s32 life = step->variant;
 
                         if (life > 0) {
@@ -770,7 +734,7 @@ void Func_080e47b8(s32 a0, s32 a1)
                             size = (life >> 4) + 1;
                             screen[0] /= 2;
                             ((RectangleBlit)blitters[index & 1])(canvas,
-                                sprites + ((u16 *)0x080ede48)[size - 1],
+                                sprites + Data_080ede48[size - 1],
                                 screen[0] - size / 2, screen[1] - size,
                                 size, size * 2);
                             EffectStep_AdvanceWithGravity3D(step, 60, -0x1000);
@@ -781,11 +745,7 @@ void Func_080e47b8(s32 a0, s32 a1)
             }
         }
     }
-    switch (kind) {
-    case 7:
-    case 13:
-    case 18:
-    case 19:
+    if (kind == 7 || kind == 13 || kind == 18 || kind == 19) {
         if (frame == 50) {
             Func_080d6888(*(s32 *)(*(s32 *)((work + 0x7828)) + 8), 7, -1, -1, 0);
         }
@@ -823,7 +783,7 @@ void Func_080e47b8(s32 a0, s32 a1)
             s32 n;
 
             target = Func_080b5098(*(s32 *)(*(s32 *)(work + 0x7828) + 8))->object;
-            height = Func_080b5070(*(s32 *)(*(s32 *)(work + 0x7828) + 8)) / 2;
+            height = (s32)Func_080b5070(*(s32 *)(*(s32 *)(work + 0x7828) + 8)) / 2;
             for (n = 0; n != 32; n++, step++) {
                 if (step->variant >= 0) {
                     s32 size = (n & 1) + 6;
@@ -831,7 +791,7 @@ void Func_080e47b8(s32 a0, s32 a1)
                     EffectPosition_ApplyBaseAndYOffset((s32 *)step, (struct EffectPosition *)screen);
                     screen[0] >>= 1;
                     ((RectangleBlit)blitters[0])(canvas,
-                        sprites + ((u16 *)0x080ede48)[size - 1],
+                        sprites + Data_080ede48[size - 1],
                         screen[0] - (u32)size / 2, screen[1] - size,
                         size, size * 2);
                     EffectStep_AdvanceWithGravity3D(step, 62, 0);
@@ -851,7 +811,6 @@ void Func_080e47b8(s32 a0, s32 a1)
             }
         }
         goto L_080e640e;
-        break;
     }
     if (kind == 21) {
         goto L_080e640e;
@@ -1039,7 +998,7 @@ void Func_080e47b8(s32 a0, s32 a1)
             v6 = (work + 0x7828);
             ((RectangleBlit)blitters[0])(canvas, (work + 0x15d2), *(u8 *)(0x080eedd4 + (((*(s32 *)(*(s32 *)((work + 0x7828)) + 4) << 3) - *(s32 *)(*(s32 *)((work + 0x7828)) + 4)) + 1)), (((*(s16 *)(source_screen + 6) + ((value << 2) >> 16)) + 16) + *(u8 *)(base7_80eede2 + 1)), 99, 69);
             if ((u32)(frame - 4) <= 1) {
-                ((void (*)(s32, u32, u32))0x03000168)(canvas, 0x4000, 0x3f3f3f3f);
+                ((s32 (*)(s32, u32, u32))0x03000168)(canvas, 0x4000, 0x3f3f3f3f);
             }
             if ((u32)(frame - 6) <= 1) {
                 ((RectangleBlit)blitters[0])(canvas, (work + 0x3081), *(u8 *)(0x080eedd4 + (((*(s32 *)(*(s32 *)((work + 0x7828)) + 4) << 3) - *(s32 *)(*(s32 *)((work + 0x7828)) + 4)) + 2)), (((*(s16 *)(source_screen + 6) + ((value << 2) >> 16)) + 16) + *(u8 *)(base7_80eede2 + 2)), 128, 91);
@@ -1070,7 +1029,7 @@ void Func_080e47b8(s32 a0, s32 a1)
                 *(volatile u16 *)0x04000052 = ((0x10 - (frame - 16)) | 0x1000);
             }
             if ((u32)(frame - 4) <= 1) {
-                ((void (*)(s32, u32, u32))0x03000168)(canvas, 0x4000, 0x3f3f3f3f);
+                ((s32 (*)(s32, u32, u32))0x03000168)(canvas, 0x4000, 0x3f3f3f3f);
             }
             if (frame <= 3) {
                 if (*(s32 *)(*(s32 *)((work + 0x7828)) + 4) == 1) {
@@ -1307,14 +1266,10 @@ void Func_080e47b8(s32 a0, s32 a1)
         Func_080b5088(*(s16 *)(*(s32 *)((work + 0x7828)) + 36), 4);
         goto L_080e650c;
         L_080e64c2:;
-        switch (kind) {
-        case 14:
-        case 20:
-        case 33:
+        if (kind == 20 || kind == 14 || kind == 33) {
             Func_080b5088(*(s16 *)(*(s32 *)((work + 0x7828)) + 36), 1);
             v3 = 2;
             goto L_080e650e;
-            break;
         }
         if (kind != 30) {
             if (kind != 8) {
@@ -1327,9 +1282,9 @@ void Func_080e47b8(s32 a0, s32 a1)
         L_080e650e:;
         *(s32 *)((work + 0x77a8)) = v3;
         L_080e6510:;
-        if (frame == 6) {
-            Func_080d6888(*(s16 *)(*(s32 *)((work + 0x7828)) + 36), 7, 5, 0, 4);
-        }
+    }
+    if (frame == 6) {
+        Func_080d6888(*(s16 *)(*(s32 *)((work + 0x7828)) + 36), 7, 5, 0, 4);
     }
     if (frame == 14) {
         Func_080d6888(*(s16 *)(*(s32 *)((work + 0x7828)) + 36), 7, 5, 0, 4);
@@ -1344,8 +1299,8 @@ void Func_080e47b8(s32 a0, s32 a1)
     }
     L_080e657c:;
     if (kind == 21) {
-        ((void (*)(s32, u32))0x03000164)(0x6004000, 0x4000);
-        ((void (*)(s32, u32))0x03000164)(canvas, 0x4000);
+        ClearWords(0x6004000, 0x4000);
+        ClearWords(canvas, 0x4000);
         *(s32 *)(*(s32 *)((work + 0x7828)) + 28) = 0;
         Scheduler_RemoveCallback(0x80cd4b5);
         Scheduler_RemoveCallback(0x80cd261);

@@ -65,7 +65,7 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
 }
 
 /* Runs the deck scene: the leader jumps and walks, actors 22 and 25 move into place, and the scene sets its return map. */
-void FuneKanpan_Func02002618(void)
+void FuneKanpan_RunJumpScene(void)
 {
     u32 i;
     s32 record;

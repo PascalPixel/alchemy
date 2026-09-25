@@ -1,8 +1,10 @@
 .syntax unified
 	.thumb
 	.set sub_0800447c, 0x0800447c
+	.global Map_BuildProbeRing
 	.global Func_08012b2c
 	.thumb_func
+Map_BuildProbeRing:
 Func_08012b2c:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

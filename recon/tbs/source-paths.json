@@ -21133,6 +21133,47 @@
     },
     "main:08092c40": {
       "name": "UiText_OpenMessageAtObject"
+    },
+    "main:08017c8c": {
+      "name": "UiText_RenderWideStringInWindow",
+      "source": "GRAPHICS/TEXT/RENDER_WIDE_STRING_IN_WINDOW.C"
+    },
+    "main:0800daf0": {
+      "name": "Camera_FollowLeaderInBounds"
+    },
+    "main:08012b2c": {
+      "name": "Map_BuildProbeRing"
+    },
+    "main:08017248": {
+      "name": "UiWindow_MapTextCanvasTiles",
+      "source": "GRAPHICS/WINDOW/MAP_TEXT_CANVAS_TILES.C"
+    },
+    "main:080170f8": {
+      "name": "UiWindow_DrawFrame",
+      "source": "GRAPHICS/WINDOW/DRAW_FRAME.C"
+    },
+    "main:08010ff0": {
+      "name": "MapAnimation_ApplyAffineFrame"
+    },
+    "main:08010e14": {
+      "name": "WorldMap_LoadGraphics",
+      "source": "FIELD/WORLD_MAP/LOAD_GRAPHICS.C"
+    },
+    "main:08018850": {
+      "name": "UiText_MeasureEntryDimensions"
+    },
+    "main:08018a50": {
+      "name": "UiText_MeasureStringVariant"
+    },
+    "main:08018cac": {
+      "name": "UiText_DrawGlyph"
+    },
+    "main:0801c49c": {
+      "name": "Debug_SelectAbilityPair"
+    },
+    "main:0801e41c": {
+      "name": "UiWindow_DrawDividerLine",
+      "source": "GRAPHICS/WINDOW/DRAW_DIVIDER_LINE.C"
     }
   },
   "symbols": {
@@ -21280,7 +21321,6 @@
     "main:080f9048": "AudioCommand_GetStateByteFar",
     "main:080cd594": "BattleFx_BeginCanvasLayer",
     "main:08185000": "Resource_GetMetadataRecordFar",
-    "main:080170f8": "UiWindow_DrawFrame",
     "main:08015130": "UiWindow_DrawPartyStatusContentsFar",
     "main:08009030": "ResourceObject_CreateFar",
     "main:080091a8": "Map_GetTerrainHeightFar",
@@ -21292,8 +21332,6 @@
     "main:080150d8": "SideObject_CreateFar",
     "main:08015408": "UiWindow_DrawFrameFar",
     "main:08020244": "SaveMenu_SelectSlot",
-    "main:08018850": "UiText_MeasureEntryDimensions",
-    "main:08017248": "UiWindow_MapTextCanvasTiles",
     "main:08017658": "UiText_OpenMessageWindow",
     "main:0801de5c": "UiText_RenderStringTiles",
     "main:080c24f0": "BattleEnemy_RecordDefeat",
@@ -21308,14 +21346,12 @@
     "main:0801a66c": "UiGlyph_ResetWorkState",
     "main:0801f200": "UiWindow_DrawPartyStatusContents",
     "main:080a2420": "UiWork_ClearMenuBusy",
-    "main:08018a50": "UiText_MeasureStringVariant",
     "main:080191cc": "UiWork_AnimateSpriteSlots",
     "main:080168f4": "UiWork_StepChannelScript",
     "main:08090658": "DisplayTransition_UpdateFrame",
     "main:08028194": "AffineEffect_UpdateFrame",
     "main:0808a278": "Object_GetScreenPositionFar",
     "main:080ae99c": "UiIcon_CreateStatChangeArrow",
-    "main:08017c8c": "UiText_RenderWideStringInWindow",
     "main:080f9c44": "Sound_TickDmaRestartTimer",
     "main:08077058": "Inventory_RemoveFar",
     "main:080a9f0c": "Item_ReturnOne",
@@ -21343,7 +21379,6 @@
     "main:080b5e10": "BattleSummon_ReservedNoOp",
     "main:080bd424": "BattleCommand_SelectAutomatic",
     "main:08009230": "Map_ResumeAnimationFar",
-    "main:0801e41c": "UiWindow_DrawDividerLine",
     "main:080153c8": "UiWindow_SetPaletteBitRectFar",
     "main:080acab8": "DjinnMenu_DrawStatPreview",
     "main:08015038": "UiText_OpenMessageWindowFar",

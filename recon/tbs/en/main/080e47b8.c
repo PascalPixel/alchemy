@@ -1,7 +1,7 @@
-/* NONMATCHING: 7808 bytes, candidate 7788, 3237 differing halfwords,
- * 1412 halfword edits (2026-09-25). All 217 calls follow the reference
- * sequence. Removed dead temporary assignments and typed all particle seeds;
- * the first particle loop now has the reference's saved-register lifetimes.
+/* NONMATCHING: 7808 bytes, candidate 7780, 3233 differing halfwords,
+ * 1382 halfword edits (2026-09-25). All 217 calls follow the reference
+ * sequence. Typed projected coordinates, recovered the early particle image
+ * index and kept the final phase destinations separate until their join.
  * WALL: Remaining temporary allocation, scheduling and literal-pool choices.
  * Pascal requested staying on this complete owner until byte exact. */
 #include "TYPES.H"
@@ -96,6 +96,7 @@ static __inline__ void ClearWords(s32 dest, u32 size)
 }
 
 extern u16 Data_080ede48[];
+extern u16 Data_080eedea[];
 extern u8 Data_080ede9f[];
 extern u8 Data_080edea5[];
 extern u8 Data_080edeab[];
@@ -123,6 +124,8 @@ void Func_080e47b8(s32 command, s32 kind)
     s32 p5b;
     s32 p9;
     s32 p9b;
+    /* FAKEMATCH: Keep each phase destination live into the shared store. */
+    s32 *state_addr;
     s32 record;
     s32 value;
     s32 target_pos[3];
@@ -168,7 +171,7 @@ void Func_080e47b8(s32 command, s32 kind)
     s32 velocity[3];
     s32 spark_screen[3];
     RectangleBlit blitters[2];
-    u8 projected[12];
+    struct EffectPosition projected;
 
     heap_cache = (void **)(gWorkSlot + 39 * 4);
     heap_cursor = heap_cache;
@@ -651,12 +654,12 @@ void Func_080e47b8(s32 command, s32 kind)
                         if (life > 0) {
                             s32 size;
 
-                            EffectPosition_ApplyBaseAndYOffset((s32 *)step, (struct EffectPosition *)((s32 *)projected));
+                            EffectPosition_ApplyBaseAndYOffset((s32 *)step, &projected);
                             size = (life >> 4) + 1;
-                            ((s32 *)projected)[0] /= 2;
+                            projected.x /= 2;
                             blitters[index & 1](canvas,
                                 sprites + Data_080ede48[size - 1],
-                                ((s32 *)projected)[0] - size / 2, ((s32 *)projected)[1] - size,
+                                projected.x - size / 2, projected.y - size,
                                 size, size * 2);
                             EffectStep_AdvanceWithGravity3D(step, 60, -0x1000);
                             step->variant--;
@@ -700,11 +703,11 @@ void Func_080e47b8(s32 command, s32 kind)
                 if (step->variant >= 0) {
                     s32 size = (v10 & 1) + 6;
 
-                    EffectPosition_ApplyBaseAndYOffset((s32 *)step, (struct EffectPosition *)((s32 *)projected));
-                    ((s32 *)projected)[0] >>= 1;
+                    EffectPosition_ApplyBaseAndYOffset((s32 *)step, &projected);
+                    projected.x >>= 1;
                     blitters[0](canvas,
                         sprites + Data_080ede48[size - 1],
-                        ((s32 *)projected)[0] - (u32)size / 2, ((s32 *)projected)[1] - size,
+                        projected.x - (u32)size / 2, projected.y - size,
                         size, size * 2);
                     EffectStep_AdvanceWithGravity3D(step, 62, 0);
                     if (frame > v10 + 22) {
@@ -872,11 +875,11 @@ void Func_080e47b8(s32 command, s32 kind)
                 if (age <= 11) {
                     s32 image = age / 2;
 
-                    EffectPosition_ApplyBaseAndYOffset((s32 *)step, (struct EffectPosition *)((s32 *)projected));
-                    ((s32 *)projected)[0] /= 2;
+                    EffectPosition_ApplyBaseAndYOffset((s32 *)step, &projected);
+                    projected.x /= 2;
                     blitters[0](canvas,
                         0x02010000 + (image << 11),
-                        ((s32 *)projected)[0] - 16, ((s32 *)projected)[1] - 32, 32, 64);
+                        projected.x - 16, projected.y - 32, 32, 64);
                     EffectStep_AdvanceWithGravity3D(step, 60, 0x1000);
                     step->variant++;
                 }
@@ -979,12 +982,13 @@ void Func_080e47b8(s32 command, s32 kind)
                 if (frame >= v10 + 6 && frame < v10 + 18) {
                     s32 image = (frame - v10 - 6) / 2;
                     s32 image_x = *(s32 *)source_screen / 2 - Data_080ede9f[image] / 2;
-                    s32 mirrored = 1;
+                    s32 mirrored;
 
                     if (v10 & 1)
                         image_x += ((v10 + 1) / 2) * 3;
                     else
                         image_x -= ((v10 + 1) / 2) * 3;
+                    mirrored = 1;
                     if (v10 != 0) {
                         mirrored = 0;
                         if (((v10 - 1) & 3) > 1)
@@ -1008,7 +1012,7 @@ void Func_080e47b8(s32 command, s32 kind)
                         seed->velocity_y = Func_08004458() & 0xffff;
                         seed->velocity_z = Func_08004458() & 0xffff;
                     }
-                    *(s32 *)0x020146e8 = 159;
+                    ((struct EffectStep *)0x02014000)[63].y = 159;
                 }
                 {
                     struct EffectStep *step = (struct EffectStep *)0x02014000;
@@ -1017,15 +1021,17 @@ void Func_080e47b8(s32 command, s32 kind)
 
                     for (v10 = 0; v10 != 64; v10++, step++) {
                         if (step->x >= 0 && frame >= v10 / 2) {
+                            s32 image = v10 & 3;
+
                             Func_080049ac();
                             Func_08004bd4(step->velocity_x);
                             Func_08004c1c(step->velocity_y);
-                            EffectPosition_ApplyBaseAndYOffset((s32 *)step, (struct EffectPosition *)((s32 *)projected));
-                            ((s32 *)projected)[0] = ((s32 *)projected)[0] / 2 + origin[0] / 2;
-                            ((s32 *)projected)[1] += origin[1] + 32;
+                            EffectPosition_ApplyBaseAndYOffset((s32 *)step, &projected);
+                            projected.x = projected.x / 2 + origin[0] / 2;
+                            projected.y += origin[1] + 32;
                             blitters[1](canvas,
-                                0x02010000 + ((u16 *)0x080eedea)[v10 & 3],
-                                ((s32 *)projected)[0] - 4, ((s32 *)projected)[1] - 4, 8, 8);
+                                0x02010000 + Data_080eedea[image],
+                                projected.x - 4, projected.y - 4, 8, 8);
                             step->x -= 6;
                             if (step->x < 0 && ((v10 & 7) == 0 || v10 == 63)) {
                                 Func_080f9010(133);
@@ -1078,11 +1084,11 @@ void Func_080e47b8(s32 command, s32 kind)
                             for (v10 = 0; v10 != 16; v10++, step++) {
                                 s32 image = Func_080022fc(v10, 3);
 
-                                EffectPosition_ApplyBaseAndYOffset((s32 *)step, (struct EffectPosition *)((s32 *)projected));
-                                ((s32 *)projected)[0] /= 2;
+                                EffectPosition_ApplyBaseAndYOffset((s32 *)step, &projected);
+                                projected.x /= 2;
                                 blitters[v10 & 1](canvas,
                                     0x02010000 + image * 576,
-                                    ((s32 *)projected)[0] - 12, ((s32 *)projected)[1] - 12, 24, 24);
+                                    projected.x - 12, projected.y - 12, 24, 24);
                                 EffectStep_AdvanceWithGravity3D(step, 60, 1 << ((v10 & 3) + 11));
                                 step->variant++;
                             }
@@ -1099,11 +1105,11 @@ void Func_080e47b8(s32 command, s32 kind)
                                     if (age <= 23) {
                                         s32 image = age / 4;
 
-                                        EffectPosition_ApplyBaseAndYOffset((s32 *)step, (struct EffectPosition *)((s32 *)projected));
-                                        ((s32 *)projected)[0] /= 2;
+                                        EffectPosition_ApplyBaseAndYOffset((s32 *)step, &projected);
+                                        projected.x /= 2;
                                         blitters[v10 & 1](canvas,
                                             0x02010000 + image * 1152,
-                                            ((s32 *)projected)[0] - 12, ((s32 *)projected)[1] - 24, 24, 48);
+                                            projected.x - 12, projected.y - 24, 24, 48);
                                         if (kind == 25)
                                             EffectStep_AdvanceWithGravity3D(step, 60, 0x400);
                                         else
@@ -1121,10 +1127,10 @@ void Func_080e47b8(s32 command, s32 kind)
     L_080e640e:;
     if (kind <= 7) {
         if (frame <= 5) {
-            EffectPosition_ApplyBaseAndYOffset((s32 *)position, (struct EffectPosition *)projected);
-            v2 = (((s32)(*(s32 *)(projected)) / 2));
-            *(s32 *)(projected) = (((s32)(*(s32 *)(projected)) / 2));
-            ((RectangleBlit)(*(s32 *)(draw_pair + 4)))(canvas, 0x2013c56, (v2 - 10), (*(s32 *)(projected + 4) - 4), 20, 40);
+            EffectPosition_ApplyBaseAndYOffset((s32 *)position, &projected);
+            v2 = (((s32)(projected.x) / 2));
+            projected.x = (((s32)(projected.x) / 2));
+            ((RectangleBlit)(*(s32 *)(draw_pair + 4)))(canvas, 0x2013c56, (v2 - 10), (projected.y - 4), 20, 40);
             *(s32 *)(position) += *(s32 *)(motion);
             *(s32 *)(position + 4) += *(s32 *)(motion + 4);
             *(s32 *)(position + 8) += *(s32 *)(motion + 8);
@@ -1155,10 +1161,12 @@ void Func_080e47b8(s32 command, s32 kind)
             }
         }
         Func_080b5088(((struct BattleEffectArgument *)work->effect)->actors[0], 4);
+        state_addr = (s32 *)((u8 *)work + 0x77a8);
         goto L_080e650c;
         L_080e64c2:;
         if (kind == 20 || kind == 14 || kind == 33) {
             Func_080b5088(((struct BattleEffectArgument *)work->effect)->actors[0], 1);
+            state_addr = (s32 *)((u8 *)work + 0x77a8);
             v3 = 2;
             goto L_080e650e;
         }
@@ -1168,10 +1176,11 @@ void Func_080e47b8(s32 command, s32 kind)
             }
         }
         Func_080b5088(((struct BattleEffectArgument *)work->effect)->actors[0], 3);
+        state_addr = (s32 *)((u8 *)work + 0x77a8);
         L_080e650c:;
         v3 = 8;
         L_080e650e:;
-        *(s32 *)(((s32)work + 0x77a8)) = v3;
+        *state_addr = v3;
         L_080e6510:;
     }
     if (frame == 6) {

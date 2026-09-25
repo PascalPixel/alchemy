@@ -62847,7 +62847,7 @@
     },
     {
       "id": "korima-ki-f-00088",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/KORIMA_KI/F_00088.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/KORIMA_KI/MESSAGE_SCENE.C",
       "overlay": "resource_395",
       "absolute_symbols": {
         "Engine_EventBegin": {
@@ -73531,7 +73531,7 @@
     },
     {
       "id": "scene-394-02000980",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/KORIMA_MAGARI/F_00980.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/KORIMA_MAGARI/BOARD_SETUP.C",
       "overlay": "resource_394",
       "absolute_symbols": {
         "Main_080091b8": {

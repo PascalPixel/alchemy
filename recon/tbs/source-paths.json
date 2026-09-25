@@ -360,8 +360,8 @@
       "source": "FIELD/BIRIBINO_KYUDEN/F_00338.C"
     },
     "resource_395:02000088": {
-      "name": "KorimaKi_Func02000088",
-      "source": "FIELD/KORIMA_KI/F_00088.C"
+      "name": "KorimaKi_RunMessageScene",
+      "source": "FIELD/KORIMA_KI/MESSAGE_SCENE.C"
     },
     "resource_39d:02003208": {
       "name": "MakyuriChojo_LowerCollectedActors",
@@ -21048,8 +21048,8 @@
       "source": "FIELD/TORETO_HEYA/FLOOR_SWITCH.C"
     },
     "resource_394:02000980": {
-      "name": "KorimaMagari_Func02000980",
-      "source": "FIELD/KORIMA_MAGARI/F_00980.C"
+      "name": "KorimaMagari_SetupBoard",
+      "source": "FIELD/KORIMA_MAGARI/BOARD_SETUP.C"
     },
     "resource_39d:020031c0": {
       "name": "MakyuriChojo_CollectBandSlots",

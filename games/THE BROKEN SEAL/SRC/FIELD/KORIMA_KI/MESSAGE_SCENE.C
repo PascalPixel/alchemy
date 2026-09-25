@@ -29,7 +29,7 @@ static __inline__ s32 Value1(s32 (*f)(), s32 a0)
     return f(a0);
 }
 
-void KorimaKi_Func02000088(void)
+void KorimaKi_RunMessageScene(void)
 {
     Engine_EventBegin();
     Local_020012f4(11, 1);

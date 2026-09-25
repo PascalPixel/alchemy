@@ -336,8 +336,8 @@
       "source": "FIELD/MAKYURI_HEYA/FADE_TO_BLACK.C"
     },
     "resource_396:020015ac": {
-      "name": "ToretoHeya_Func020015ac",
-      "source": "FIELD/TORETO_HEYA/F_015AC.C"
+      "name": "ToretoHeya_UpdateSwirlObject",
+      "source": "FIELD/TORETO_HEYA/SWIRL_SHRINK.C"
     },
     "resource_39a:02001d78": {
       "name": "ImiruFuchin_Func02001d78",
@@ -408,8 +408,8 @@
       "source": "FIELD/GOMA_IRIGUCHI/F_00DD8.C"
     },
     "resource_396:020018b8": {
-      "name": "ToretoHeya_Func020018b8",
-      "source": "FIELD/TORETO_HEYA/F_018B8.C"
+      "name": "ToretoHeya_RunLandingDustScene",
+      "source": "FIELD/TORETO_HEYA/LANDING_DUST.C"
     },
     "resource_39f:02000e18": {
       "name": "MogoruMori_Func02000e18",
@@ -21044,8 +21044,8 @@
       "source": "FIELD/GOMA_IRIGUCHI/F_00FC8.C"
     },
     "resource_396:02000334": {
-      "name": "ToretoHeya_Func02000334",
-      "source": "FIELD/TORETO_HEYA/F_00334.C"
+      "name": "ToretoHeya_HandleFloorSwitch",
+      "source": "FIELD/TORETO_HEYA/FLOOR_SWITCH.C"
     },
     "resource_394:02000980": {
       "name": "KorimaMagari_Func02000980",
@@ -21067,8 +21067,8 @@
       "name": "Map_InitializePerspectiveScene"
     },
     "resource_396:02001004": {
-      "name": "ToretoHeya_Func02001004",
-      "source": "FIELD/TORETO_HEYA/F_01004.C"
+      "name": "ToretoHeya_EnterRoom",
+      "source": "FIELD/TORETO_HEYA/ENTER_ROOM.C"
     },
     "resource_3b1:02003364": {
       "name": "FuneHeya_Func02003364",
@@ -21098,8 +21098,8 @@
       "source": "FIELD/SORU_FUNKA/F_010C4.C"
     },
     "resource_396:0200162c": {
-      "name": "ToretoHeya_Func0200162c",
-      "source": "FIELD/TORETO_HEYA/F_0162C.C"
+      "name": "ToretoHeya_SpawnSwirlSparks",
+      "source": "FIELD/TORETO_HEYA/SPAWN_SPARKS.C"
     },
     "main:080f9080": {
       "name": "AudioCommand_Play",

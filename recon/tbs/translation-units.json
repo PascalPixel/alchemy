@@ -62276,7 +62276,7 @@
     },
     {
       "id": "toreto-heya-f-018b8",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/TORETO_HEYA/F_018B8.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/TORETO_HEYA/LANDING_DUST.C",
       "overlay": "resource_396",
       "absolute_symbols": {
         "Engine_EventBegin": {
@@ -63035,7 +63035,7 @@
     },
     {
       "id": "toreto-heya-f-015ac",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/TORETO_HEYA/F_015AC.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/TORETO_HEYA/SWIRL_SHRINK.C",
       "overlay": "resource_396",
       "absolute_symbols": {
         "Main_08000128": {
@@ -73607,7 +73607,7 @@
     },
     {
       "id": "scene-396-02000334",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/TORETO_HEYA/F_00334.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/TORETO_HEYA/FLOOR_SWITCH.C",
       "overlay": "resource_396",
       "absolute_symbols": {
         "Engine_ActorGet": {
@@ -73743,7 +73743,7 @@
     },
     {
       "id": "scene-396-02001004",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/TORETO_HEYA/F_01004.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/TORETO_HEYA/ENTER_ROOM.C",
       "overlay": "resource_396",
       "absolute_symbols": {
         "Engine_ActorGet": {
@@ -73826,7 +73826,7 @@
           "address": "0x02009b78",
           "kind": "thumb"
         },
-        "ToretoHeya_Func020018b8": {
+        "ToretoHeya_RunLandingDustScene": {
           "address": "0x020098b8",
           "kind": "thumb"
         },
@@ -74611,7 +74611,7 @@
     },
     {
       "id": "scene-396-0200162c",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/TORETO_HEYA/F_0162C.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/TORETO_HEYA/SPAWN_SPARKS.C",
       "overlay": "resource_396",
       "absolute_symbols": {
         "Engine_MathDivide": {

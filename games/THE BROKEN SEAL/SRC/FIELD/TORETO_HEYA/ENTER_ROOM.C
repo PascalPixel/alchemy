@@ -6,7 +6,7 @@ void ToretoPalette_CaptureBank(void);
 void ToretoHeya_PlayGesture(s32 gesture);
 void Local_020017ec(void);
 void SceneState_ApplyRectsByFlag844(s32 flag);
-void ToretoHeya_Func020018b8(void);
+void ToretoHeya_RunLandingDustScene(void);
 void Main_0808a238(s32 map, s32 entrance);
 
 /* The game state as halfwords: [225] is the entrance, [250] the leader. */
@@ -35,7 +35,7 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 /* Enter the room: hide the lamps, drift the camera, set the room flags, and
  * finish the fall from the floor above when entered through entrance 20 to
  * 50 (the leader lands on the entrance ten below it). */
-s32 ToretoHeya_Func02001004(void)
+s32 ToretoHeya_EnterRoom(void)
 {
     struct FieldActor *lamp;
     struct FieldActor *actor;
@@ -103,7 +103,7 @@ s32 ToretoHeya_Func02001004(void)
         Engine_EventWait(8);
     } else if (entrance == 10) {
         if (!Value1(Engine_GameFlagIsSet, 0x109))
-            ToretoHeya_Func020018b8();
+            ToretoHeya_RunLandingDustScene();
     } else if (entrance == 19) {
         SceneState_ApplyRectsByFlag844(1);
     }

@@ -51,7 +51,7 @@ struct EffectParams {
 };
 
 /* The leader lands in the room in a ring of dust, then the camera settles. */
-void ToretoHeya_Func020018b8(void)
+void ToretoHeya_RunLandingDustScene(void)
 {
     struct EffectParams params;
     struct Vec dir;

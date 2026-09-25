@@ -366,8 +366,6 @@ impl Context {
     /// literal pool listed; returns the source and the named call count.
     pub fn decompile(&self, root: &Path, span: u32, name: &str) -> Result<(String, usize), String> {
         let entry = self.owner.address();
-        let mut ins =
-            psynergy::decode::decode_window_at(&self.image, OVERLAY_BASE as u32, entry, span);
         let imports =
             crate::recovery::imports_for(root, self.target, &self.owner.id(), Some(span))?;
         let calls = imports
@@ -390,23 +388,34 @@ impl Context {
                 }
             })
             .collect::<Vec<_>>();
-        let calls = resolve_calls(&mut ins, &calls);
-        let (body, tables) = psynergy::unit::bodies(&ins, &|_, _| None);
-        let decompiled = psynergy::unit::compose(entry, "Function", &body, &tables);
-        let decompiled = decompiled.replacen("#include \"types.h\"", "#include \"TYPES.H\"", 1);
-        let mut text = names::convert(&decompiled, &calls, name);
-        let pool = names::pool_comment(
-            &names::pool_words(&self.image, entry, span),
-            &self.dictionary,
-        );
-        let include = "#include \"TYPES.H\"\n";
-        if let Some(at) = text.find(include) {
-            text.insert_str(at + include.len(), &format!("\n{pool}"));
-        } else {
-            text.insert_str(0, &pool);
-        }
-        Ok((text, calls.len()))
+        decompile_source(&self.image, entry, span, &calls, &self.dictionary, name)
     }
+}
+
+/// Lift the image the game executes, including loader-transformed pool words.
+fn decompile_source(
+    stored: &[u8],
+    entry: u32,
+    span: u32,
+    imports: &[ResolvedCall],
+    dictionary: &Dictionary,
+    name: &str,
+) -> Result<(String, usize), String> {
+    let image = crate::compiler::overlay::load(stored, 0)?;
+    let mut ins = psynergy::decode::decode_window_at(&image, OVERLAY_BASE as u32, entry, span);
+    let calls = resolve_calls(&mut ins, imports);
+    let (body, tables) = psynergy::unit::bodies(&ins, &|_, _| None);
+    let decompiled = psynergy::unit::compose(entry, "Function", &body, &tables);
+    let decompiled = decompiled.replacen("#include \"types.h\"", "#include \"TYPES.H\"", 1);
+    let mut text = names::convert(&decompiled, &calls, name);
+    let pool = names::pool_comment(&names::pool_words(&image, entry, span), dictionary);
+    let include = "#include \"TYPES.H\"\n";
+    if let Some(at) = text.find(include) {
+        text.insert_str(at + include.len(), &format!("\n{pool}"));
+    } else {
+        text.insert_str(0, &pool);
+    }
+    Ok((text, calls.len()))
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -807,6 +816,36 @@ mod tests {
         assert!(parse(&args(&["a", "--force"])).is_err());
         assert!(overlay_owner("main:08001000").is_err());
         assert!(overlay_owner("resource_3ca:02000194").is_ok());
+    }
+
+    #[test]
+    fn decompile_uses_loaded_literal_values() {
+        // A negative constant has the bit pattern of a Thumb BL pair; the
+        // overlay encoder transforms it even though code only loads it.
+        let mut runtime = vec![0; 0x10c];
+        for (at, half) in [
+            (0x100, 0xb500u16),
+            (0x102, 0x4801),
+            (0x104, 0xbc02),
+            (0x106, 0x4708),
+        ] {
+            runtime[at..at + 2].copy_from_slice(&half.to_le_bytes());
+        }
+        runtime[0x108..].copy_from_slice(&(-0xc00i32).to_le_bytes());
+        let stored = crate::compiler::overlay::encode(&runtime, 0).unwrap();
+        assert_ne!(&stored[0x108..], &runtime[0x108..]);
+        let (source, calls) = decompile_source(
+            &stored,
+            0x02000100,
+            12,
+            &[],
+            &Dictionary::default(),
+            "Scene_ReadStep",
+        )
+        .unwrap();
+        assert_eq!(calls, 0);
+        assert!(source.contains("0xfffff400"), "{source}");
+        assert!(source.contains("-0xc00"), "{source}");
     }
 
     #[test]

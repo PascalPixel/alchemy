@@ -1,6 +1,7 @@
 /* NONMATCHING: 224 bytes, candidate 232 (2026-09-24). Readable facing test;
  * remaining: register allocation of force/pos/target (reference: r6, r8, r7)
- * and the early-return layout. The pool constant -0x46b0ffa is the ROM value. */
+ * and the early-return layout. The -0x46b0ffa pool value is stored encoding, not the loaded constant;
+ * recover its loaded value before the next source pass. */
 #include "TYPES.H"
 
 void Engine_ObjectSetAnimation();

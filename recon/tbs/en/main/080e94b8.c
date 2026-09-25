@@ -1,3 +1,6 @@
+/* NONMATCHING: 1392 of 1288 bytes, 672 differing halfwords, 454 halfword edits.
+ * Setter and random-number signatures agree with exact callees.
+ * WALL: particle-loop structure and allocation still differ. */
 #include "types.h"
 #include "BATTLE_EFX.H"
 
@@ -14,10 +17,10 @@ void Func_08002dd8();
 void Func_080030f8();
 void Func_080041d8();
 void Func_08004278();
-s32 Func_08004458();
+u32 Func_08004458(void);
 void Func_080072f4();
-s32 Func_08009080();
-s32 Func_08009088();
+void Func_08009080(s32 object, s32 mode);
+void Func_08009088(s32 object, s32 value);
 void Func_080b5088();
 s32 Func_080b5098();
 void Func_080b50e8();
@@ -111,8 +114,8 @@ void Func_080e94b8(s32 a0)
     *(u16 *)0x04000052 = 0x1010;
     slot24 = (r13 + 44);
     Func_080cef64(*(s32 *)(*(s32 *)((0x7828 + p11)) + 4));
-    Value2(Func_08009080, slot28, 2);
-    Value2(Func_08009088, slot28, 48);
+    Func_08009080(slot28, 2);
+    Func_08009088(slot28, 48);
     Resource_LoadAndDecompress((s32)Data_00000055, p11, 1, 1);
     Resource_LoadAndDecompress((s32)Data_0000007d, (0x2000 + p11), 1, 0);
     Resource_LoadAndDecompress((s32)Data_00000073, slot32, 0, 0);
@@ -306,7 +309,7 @@ void Func_080e94b8(s32 a0)
     if (v9 != 80) {
         goto L_080e965c;
     }
-    ((void (*)())Func_08009088)(slot28, 16);
+    Func_08009088(slot28, 16);
     Call1(Func_08004278, 0x80cd261);
     Func_08002dd8(47);
     Func_08002dd8(46);

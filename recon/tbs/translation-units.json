@@ -72055,7 +72055,7 @@
     },
     {
       "id": "scene-3a7-02000170",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_DOU/F_00170.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_DOU/PUSH_BLOCK.C",
       "overlay": "resource_3a7",
       "absolute_symbols": {
         "Engine_ActorGet": {
@@ -73131,7 +73131,7 @@
     },
     {
       "id": "scene-3a7-02000704",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_DOU/F_00704.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_DOU/RAISE_PRIORITY.C",
       "overlay": "resource_3a7",
       "absolute_symbols": {
         "Engine_ActorGet": {

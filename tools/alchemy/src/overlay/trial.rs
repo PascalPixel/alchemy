@@ -366,24 +366,33 @@ impl Context {
     /// literal pool listed; returns the source and the named call count.
     pub fn decompile(&self, root: &Path, span: u32, name: &str) -> Result<(String, usize), String> {
         let entry = self.owner.address();
-        let ins = psynergy::decode::decode_window_at(&self.image, OVERLAY_BASE as u32, entry, span);
+        let mut ins =
+            psynergy::decode::decode_window_at(&self.image, OVERLAY_BASE as u32, entry, span);
+        let imports =
+            crate::recovery::imports_for(root, self.target, &self.owner.id(), Some(span))?;
+        let calls = imports
+            .into_iter()
+            .map(|import| {
+                let named = match (import.kind, import.main) {
+                    ("veneer", Some(main)) => self.dictionary.veneer_name(
+                        u64::from(import.target + names::RUNTIME_DISPLACEMENT),
+                        main,
+                        names::registered_main(&self.paths, main).as_deref(),
+                    ),
+                    _ => self
+                        .dictionary
+                        .local_name(import.target, import.name.as_deref()),
+                };
+                ResolvedCall {
+                    site: import.site,
+                    target: import.target,
+                    name: named,
+                }
+            })
+            .collect::<Vec<_>>();
+        let calls = resolve_calls(&mut ins, &calls);
         let (body, tables) = psynergy::unit::bodies(&ins, &|_, _| None);
         let decompiled = psynergy::unit::compose(entry, "Function", &body, &tables);
-        let mut calls = BTreeMap::new();
-        for import in crate::recovery::imports_for(root, self.target, &self.owner.id(), Some(span))?
-        {
-            let named = match (import.kind, import.main) {
-                ("veneer", Some(main)) => self.dictionary.veneer_name(
-                    u64::from(import.target + names::RUNTIME_DISPLACEMENT),
-                    main,
-                    names::registered_main(&self.paths, main).as_deref(),
-                ),
-                _ => self
-                    .dictionary
-                    .local_name(import.target, import.name.as_deref()),
-            };
-            calls.insert(import.symbol, named);
-        }
         let decompiled = decompiled.replacen("#include \"types.h\"", "#include \"TYPES.H\"", 1);
         let mut text = names::convert(&decompiled, &calls, name);
         let pool = names::pool_comment(
@@ -398,6 +407,35 @@ impl Context {
         }
         Ok((text, calls.len()))
     }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+struct ResolvedCall {
+    site: u32,
+    target: u32,
+    name: String,
+}
+
+/// Restore each overlay call's true target before lifting, then key its name
+/// by that target so site-specific pseudo-target collisions stay distinct.
+fn resolve_calls(
+    ins: &mut [psynergy::decode::Ins],
+    imports: &[ResolvedCall],
+) -> BTreeMap<String, String> {
+    let mut targets = BTreeMap::new();
+    let mut names = BTreeMap::new();
+    for import in imports {
+        targets.insert(import.site, import.target);
+        names.insert(format!("Func_{:08x}", import.target), import.name.clone());
+    }
+    for instruction in ins {
+        if let psynergy::decode::Kind::Bl { target } = &mut instruction.kind {
+            if let Some(resolved) = targets.get(&instruction.addr) {
+                *target = *resolved;
+            }
+        }
+    }
+    names
 }
 
 /// The directory most of the overlay's registered sources share, else a
@@ -769,6 +807,89 @@ mod tests {
         assert!(parse(&args(&["a", "--force"])).is_err());
         assert!(overlay_owner("main:08001000").is_err());
         assert!(overlay_owner("resource_3ca:02000194").is_ok());
+    }
+
+    #[test]
+    fn decompile_imports_resolve_per_site_before_lifting() {
+        use psynergy::decode::{Ins, Kind};
+
+        let pseudo = 0x02000380;
+        let mut ins = vec![
+            Ins {
+                addr: 0x02000100,
+                size: 2,
+                kind: Kind::Push { lr: true, list: 0 },
+                text: "push {lr}".into(),
+            },
+            Ins {
+                addr: 0x02000102,
+                size: 4,
+                kind: Kind::Bl { target: pseudo },
+                text: format!("bl 0x{pseudo:08x}"),
+            },
+            Ins {
+                addr: 0x02000106,
+                size: 4,
+                kind: Kind::Bl { target: pseudo },
+                text: format!("bl 0x{pseudo:08x}"),
+            },
+            Ins {
+                addr: 0x0200010a,
+                size: 4,
+                kind: Kind::Bl { target: pseudo },
+                text: format!("bl 0x{pseudo:08x}"),
+            },
+            Ins {
+                addr: 0x0200010e,
+                size: 4,
+                kind: Kind::Bl { target: pseudo },
+                text: format!("bl 0x{pseudo:08x}"),
+            },
+            Ins {
+                addr: 0x02000112,
+                size: 2,
+                kind: Kind::Pop { pc: true, list: 0 },
+                text: "pop {pc}".into(),
+            },
+        ];
+        let calls = [
+            ResolvedCall {
+                site: 0x02000102,
+                target: 0x02005000,
+                name: "Engine_EventWait".into(),
+            },
+            ResolvedCall {
+                site: 0x02000106,
+                target: 0x02005020,
+                name: "Engine_ActorGet".into(),
+            },
+            ResolvedCall {
+                site: 0x0200010a,
+                target: 0x02005000,
+                name: "Engine_EventWait".into(),
+            },
+        ];
+
+        let names = resolve_calls(&mut ins, &calls);
+
+        assert_eq!(ins[1].kind, Kind::Bl { target: 0x02005000 });
+        assert_eq!(ins[2].kind, Kind::Bl { target: 0x02005020 });
+        assert_eq!(ins[3].kind, Kind::Bl { target: 0x02005000 });
+        assert_eq!(ins[4].kind, Kind::Bl { target: pseudo });
+        assert_eq!(names.len(), 2);
+        assert_eq!(names["Func_02005000"], "Engine_EventWait");
+        assert_eq!(names["Func_02005020"], "Engine_ActorGet");
+
+        let (body, tables) = psynergy::unit::bodies(&ins, &|_, _| None);
+        let source = psynergy::unit::compose(0x02000100, "Function", &body, &tables);
+        let source = names::convert(&source, &names, "Scene_TestImports");
+        let function = source.split("void Scene_TestImports(void)").nth(1).unwrap();
+        assert_eq!(function.matches("Engine_EventWait();").count(), 2);
+        assert_eq!(function.matches("Engine_ActorGet();").count(), 1);
+        assert_eq!(
+            function.matches(&format!("Func_{pseudo:08x}();")).count(),
+            1
+        );
     }
 
     #[test]

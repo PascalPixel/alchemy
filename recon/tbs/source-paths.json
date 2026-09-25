@@ -11872,7 +11872,8 @@
       "source": "FIELD/COMMON/SHIAN_JIIN/TEMPLE_ROOMS.C"
     },
     "resource_380:02000390": {
-      "name": "Scene_RunScene380SequenceA"
+      "name": "Scene_BagVenusStar",
+      "source": "FIELD/SORU_STAR/VENUS.C"
     },
     "resource_374:02001274": {
       "name": "FieldScene_RunGroupChoreography",

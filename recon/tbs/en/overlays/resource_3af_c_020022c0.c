@@ -1,93 +1,68 @@
+/* NONMATCHING: 828 of 856 bytes, 313 differing halfwords, 191 halfword
+ * edits (2026-09-25). Call destinations audited against their resolved
+ * addresses, including actor lookup before the mode-byte store. The
+ * previous draft scored 205 edits. Engine_EventOpenScreen already calls
+ * Event_SetStatus1c6Far through the overlay import; it needs no extra call.
+ * Remaining: short-range zero pools and actor/loop lifetimes.
+ * WALL: Short-range zero literal pools and actor/loop allocation.
+ */
 #include "TYPES.H"
 
-#define FieldScene_RunActorSequence Func_020022c0
+/* Literal pool, read from the ROM:
+ *   0x020023b8: 0x00000000  constant; Value_00000000 if the pool must hold it
+ *   0x020023bc: 0x0200d160  overlay data at 0x02005160
+ *   0x020023c0: 0x0200d340  overlay data at 0x02005340
+ *   0x020023c4: 0x02960000
+ *   0x020023c8: 0x02860000
+ *   0x020023cc: 0x02ae0000
+ *   0x020023d0: 0x026e0000
+ *   0x020023d4: 0x0200c8c4  overlay data at 0x020048c4
+ *   0x0200252c: 0x00000000  constant; Value_00000000 if the pool must hold it
+ *   0x02002530: 0x0200c8b0  overlay data at 0x020048b0
+ *   0x02002534: 0x0200c8d8  overlay data at 0x020048d8
+ *   0x02002538: 0x03001ebc  SceneWorkCell
+ *   0x0200253c: 0x00001999  constant; Value_00001999 if the pool must hold it
+ *   0x02002540: 0x02820000
+ *   0x02002544: 0x00000f5c  constant; Value_00000f5c if the pool must hold it
+ *   0x02002548: 0x00011999
+ *   0x0200254c: 0x00006666  constant; Value_00006666 if the pool must hold it
+ *   0x02002550: 0x00019999
+ *   0x02002554: 0x0000cccc  constant; Value_0000cccc if the pool must hold it
+ *   0x02002608: 0x0000cccc  constant; Value_0000cccc if the pool must hold it
+ *   0x0200260c: 0x00019999
+ *   0x02002610: 0x0200c888  overlay data at 0x02004888
+ *   0x02002614: 0x00001e45  constant; Value_00001e45 if the pool must hold it
+ */
 
-/* Audited retained field-scene body at 0x020022c0.
- * The complete owner preserves 80 decoded calls, 1 loop(s), and 23 explicit memory operation(s)
- * through its interworking return and literal tail. Approved GCC changes
- * scheduling, allocation, control-flow lowering, and literal placement. */
-
-void Func_02003136();
-void Func_02005f7a();
-void Func_02006540();
-void Func_0200654c();
-void *Func_0200657c();
-void *Func_020065b0();
-void Func_020065da();
-void *Func_020065de();
-void Func_020065e6();
-void *Func_02006610();
-void *Func_02006628();
-void Func_0200666a();
-void *Func_02006670();
-void *Func_02006682();
-void *Func_02006682_a();
-void *Func_0200668e();
-void *Func_0200669a();
-void Func_0200669c();
-void *Func_020066a4();
-void Func_020066aa();
-void Func_020066b6();
-void Func_020066c2();
-void Func_020066d0();
-void Func_020066d6();
-void Func_020066dc();
-void Func_020066e0();
-void Func_02006702();
-void Func_0200670c();
-void Func_02006714();
-void Func_02006714_a();
-void Func_0200671e();
-void Func_02006726();
-void Func_02006732();
-void *Func_02006766();
-void Func_0200677c();
-void *Func_0200679a();
-void Func_020067a0();
-void Func_020067ae();
-void Func_020067b6();
-void Func_020067b8();
-void Func_020067be();
-void Func_020067c6();
-void Func_020067ce();
-void Func_020067d6();
-void *Func_020067de();
-void *Func_020067f4();
-void *Func_020067f4_a();
-void Func_020067fe();
-void Func_02006824();
-void Func_02006838();
-void Func_02006842();
-void Func_0200685a();
-void Func_02006860();
-void Func_02006868();
-void Func_0200686c();
-void Func_02006880();
-void Func_02006882();
-void Func_02006894();
-void Func_02006894_a();
-void Func_02006894_b();
-void Func_0200689a();
-void Func_020068b0();
-void Func_020068b0_a();
-void Func_020068b6();
-void Func_020068ba();
-void Func_020068be();
-void Func_020068c6();
-void Func_020068c6_a();
-void Func_020068e6();
-void Func_020068f2();
-void Func_020068f8();
-void Func_020068fe();
-void Func_02006904();
-void Func_0200690a();
-void Func_02006910();
-void Func_0200691e();
-void Func_020069c8();
-void Func_020069f8();
-void Func_02006a04();
-void Func_02006a24();
-
+extern u8 Data_00000000[];
+void FieldScene_RunScene3af_02000bb8();
+void FieldScene_CallPairWith10();
+s32 Engine_TaskWait();
+void Engine_ActorSetSpriteFlags();
+void ObjectDispatch_SetSingleChildField26Far(s32 object, s32 value);
+void Engine_EventBegin();
+void Main_0808a030();
+s32 Engine_ActorGet();
+void Engine_ActorSetPosition();
+void Engine_ActorSetChildValue();
+s32 Engine_ActorEnableActionCallback();
+void Engine_EventWait();
+void Engine_ActorSetSpeed();
+void Engine_ActorSetDestination();
+void Engine_ActorStop();
+void Engine_ObjectMotionSetPositionAndCommit();
+void Engine_EventOpenScreen();
+void Main_08009208();
+void Main_08009210();
+void Main_08015210();
+void Main_0808a0b0();
+void Engine_AudioPlayCue();
+void Main_0808a1d8();
+void Engine_EventCloseScreen();
+void Engine_EventWaitForScreen();
+void Engine_EventRequestExit();
+void Event_ClearStatus1c6Far();
+void Event_WaitValue1c8FramesFar();
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
@@ -99,9 +74,19 @@ static __inline__ void Call1(void (*f)(), s32 a0)
     f(a0);
 }
 
+static __inline__ s32 Value1(s32 (*f)(), s32 a0)
+{
+    return f(a0);
+}
+
 static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
 {
     f(a0, a1);
+}
+
+static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
+{
+    return f(a0, a1);
 }
 
 static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
@@ -109,149 +94,133 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
     f(a0, a1, a2);
 }
 
-static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
+void FieldScene_RunActorSequence(void)
 {
-    f(a0, a1, a2, a3);
-}
+    u32 i;
+    u8 *rec8;
+    s32 record;
+    s32 base5_200c8c4;
+    s32 base5_200c8b0;
+    s32 base5_200c8d8;
+    s32 base5_0;
+    s32 base5_200c888;
 
-extern u8 Data_00000000[];
-extern u8 Value_00000f5c;
-extern u8 Data_0200c7c4[];
-extern u8 Data_0200c7b0[];
-extern u8 Data_0200c7d8[];
-extern u8 Data_0200c788[];
+    Engine_EventBegin();
+    Engine_ActorSetChildValue(0, 15);
+    record = Engine_ActorGet(0);
+    ObjectDispatch_SetSingleChildField26Far(record, 0);
+    Call1(Main_0808a030, 0x200d160);
+    Engine_TaskWait(1);
+    Call1(Main_0808a030, 0x200d340);
+    Engine_TaskWait(1);
+    Call3(Engine_ActorSetPosition, 22, 0xb00000, 0x2b80000);
+    record = Engine_ActorGet(22);
+    {
+        s32 shown = 0xd000;
 
-void Func_020022c0(void)
-{
-    s32 base;
-    void *p1;
-    void *p10;
-    void *p12;
-    void *p19;
-    void *p2;
-    void *p20;
-    void *p21;
-    void *p22;
-    u32 i1;
-    void *handle;
-    void *rec;
-    s32 mode;
-    s32 v;
+        *(u16 *)(record + 6) = shown;
+    }
+    Call3(Engine_ActorSetPosition, 21, 0x1080000, 0x2960000);
+    record = Engine_ActorGet(21);
+    {
+        s32 shown = 0xb000;
 
-    p1 = Func_020065b0();
-    p2 = Func_02006670(0, 15);
-    handle = Func_020065de(0);
-    Func_0200657c(handle, 0);
-    Call1(Func_020065da, 33608032);
-    Func_02006540(1);
-    Call1(Func_020065e6, 33608512);
-    Func_0200654c(1);
-    Call3(Func_0200666a, 22, 11534336, 45613056);
-    p10 = Func_02006610(22);
-    mode = 53248;
-    *(u16 *)(p10 + 6) = mode;
-    Func_02006682(21, 17301504, 43384832, mode);
-    p12 = Func_02006628(21);
-    mode = 45056;
-    *(u16 *)(p12 + 6) = mode;
-    Func_0200669c(24, 12058624, 44040192, mode);
-    Call3(Func_020066aa, 25, 13238272, 45350912);
-    Call3(Func_020066b6, 26, 16515072, 42336256);
-    Call3(Func_020066c2, 27, 16777216, 44957696);
-    Call3(Func_020066d0, 28, 11272192, 41418752);
-    Call3(Func_020066dc, 29, 16777216, 40763392);
-    v = (s32)Data_00000000;
-    p19 = Func_02006682_a(24);
-    *(u8 *)((u8 *)(p19) + 99) = v;
-    p20 = Func_0200668e(25);
-    *(u8 *)((u8 *)(p20) + 99) = 1;
-    p21 = Func_0200669a(26);
-    *(u8 *)((u8 *)(p21) + 99) = v;
-    p22 = Func_020066a4(27);
-    *(u8 *)((u8 *)(p22) + 99) = 2;
-    Func_02006714(20, 0, 0);
-    v = (s32)Data_0200c7c4;
-    Func_020066d6(24, v);
-    Func_02006702(25, v);
-    v = (s32)Data_0200c7b0;
-    Func_0200670c(26, v);
-    Func_02006714_a(27, v);
-    v = (s32)Data_0200c7d8;
-    Func_0200671e(28, v);
-    Func_02006726(29, v);
-    Func_020067ae(24, 3);
-    Func_020067b6(25, 3);
-    Func_020067be(26, 3);
-    Func_020067c6(27, 3);
-    Func_020067ce(28, 3);
-    Func_020067d6(29, 3);
-    *(s32 *)(*(u8 **)0x03001ebc + 448) = 514;
-    Func_02006880();
-    Func_02006894();
-    Func_02006732(80);
-    Func_020068b0(147);
-    rec = Func_02006766(31);
-    *(s32 *)(rec + 24) = 6553;
-    *(s32 *)(rec + 28) = 6553;
-    *(s32 *)(rec + 8) = 12713984;
-    base = (s32)&Value_00000f5c;
-    *(s32 *)(rec + 16) = 42074112;
-    i1 = 0;
+        *(u16 *)(record + 6) = shown;
+    }
+    Call3(Engine_ActorSetPosition, 24, 0xb80000, 0x2a00000);
+    Call3(Engine_ActorSetPosition, 25, 0xca0000, 0x2b40000);
+    Call3(Engine_ActorSetPosition, 26, 0xfc0000, 0x2860000);
+    Call3(Engine_ActorSetPosition, 27, 0x1000000, 0x2ae0000);
+    Call3(Engine_ActorSetPosition, 28, 0xac0000, 0x2780000);
+    Call3(Engine_ActorSetPosition, 29, 0x1000000, 0x26e0000);
+    *(u8 *)(Engine_ActorGet(24) + 99) = (s32)Data_00000000;
+    *(u8 *)(Engine_ActorGet(25) + 99) = 1;
+    *(u8 *)(Engine_ActorGet(26) + 99) = (s32)Data_00000000;
+    *(u8 *)(Engine_ActorGet(27) + 99) = 2;
+    Call3(Engine_ActorSetPosition, 20, 0, 0);
+    base5_200c8c4 = 0x200c8c4;
+    Engine_ActorEnableActionCallback(24, base5_200c8c4);
+    Value2(Engine_ActorEnableActionCallback, 25, base5_200c8c4);
+    base5_200c8b0 = 0x200c8b0;
+    Engine_ActorEnableActionCallback(26, base5_200c8b0);
+    Value2(Engine_ActorEnableActionCallback, 27, base5_200c8b0);
+    base5_200c8d8 = 0x200c8d8;
+    Engine_ActorEnableActionCallback(28, base5_200c8d8);
+    Value2(Engine_ActorEnableActionCallback, 29, base5_200c8d8);
+    Engine_ActorSetChildValue(24, 3);
+    Engine_ActorSetChildValue(25, 3);
+    Engine_ActorSetChildValue(26, 3);
+    Engine_ActorSetChildValue(27, 3);
+    Engine_ActorSetChildValue(28, 3);
+    Engine_ActorSetChildValue(29, 3);
+    *(s32 *)((*(s32 *)0x03001ebc + 0x1c0)) = 0x202;
+    Engine_EventOpenScreen();
+    Engine_EventWaitForScreen();
+    Engine_EventWait(80);
+    Engine_AudioPlayCue(147);
+    rec8 = Engine_ActorGet(31);
+    *(s32 *)((s32)rec8 + 24) = 0x1999;
+    *(s32 *)((s32)rec8 + 28) = 0x1999;
+    *(s32 *)((s32)rec8 + 8) = 0xc20000;
+    *(s32 *)((s32)rec8 + 16) = 0x2820000;
+    base5_0 = 0;
     do {
-        *(s32 *)(rec + 24) += base;
-        *(s32 *)(rec + 28) += base;
-        i1++;
-        Func_020066e0(1);
-    } while (i1 <= 15);
-    rec = Func_0200679a(30);
-    *(s32 *)(rec + 24) = 72089;
-    *(s32 *)(rec + 28) = 72089;
-    *(s32 *)(rec + 8) = 12713984;
-    *(s32 *)(rec + 12) = 5242880;
-    *(s32 *)(rec + 16) = 42074112;
-    mode = 20480;
-    *(u16 *)(rec + 6) = mode;
-    *(s32 *)(rec + 68) = 26214;
-    *(s32 *)(rec + 72) = 131072;
-    Func_020067a0(80);
-    Func_0200691e(147);
-    Func_02006838(31, 0, 0);
-    handle = Func_020067de(30);
-    Func_0200677c(handle, 1);
-    Call3(Func_020067fe, 0, 104857, 52428);
-    rec = Func_020067f4(0);
-    v = (s32)Data_00000000;
-    *(u8 *)((u8 *)(rec) + 85) = v;
-    Call3(Func_02006842, 0, 216, 612);
-    Call3(Func_02006824, 30, 104857, 52428);
-    Call3(Func_02006860, 30, 196, 600);
-    Call3(Func_0200686c, 30, 216, 600);
-    Func_0200685a(28);
-    Func_020067b8(1);
-    Call3(Func_02006882, 28, 104857, 52428);
-    v = (s32)Data_0200c788;
-    Func_02006894_a(28, v);
-    Call2(Func_02005f7a, 30, 53248);
-    Func_02003136();
-    Func_02006868(10);
-    Func_020068b0_a(30, v);
-    Func_020068c6(29);
-    Func_020067f4_a(1);
-    Call3(Func_020068be, 29, 104857, 52428);
-    Func_020068e6(29, v);
-    Func_02006894_b(20);
-    Func_020069f8();
-    Func_02006a04();
-    Func_020068f2(24);
-    Func_020068f8(25);
-    Func_020068fe(26);
-    Func_02006904(27);
-    Func_0200690a(28);
-    Func_02006910(29);
-    Func_020068c6_a(10);
-    Func_0200689a();
-    Func_020069c8(21);
-    Func_020068ba();
-    Func_020068b6();
-    Func_02006a24(14);
+        *(s32 *)((s32)rec8 + 24) += 0xf5c;
+        *(s32 *)((s32)rec8 + 28) += 0xf5c;
+        base5_0 = (base5_0 + 1);
+        Engine_TaskWait(1);
+    } while ((u32)base5_0 <= 15);
+    rec8 = Engine_ActorGet(30);
+    *(s32 *)((s32)rec8 + 24) = 0x11999;
+    *(s32 *)((s32)rec8 + 28) = 0x11999;
+    *(s32 *)((s32)rec8 + 8) = 0xc20000;
+    *(s32 *)((s32)rec8 + 12) = 0x500000;
+    *(s32 *)((s32)rec8 + 16) = 0x2820000;
+    {
+        s32 shown = 0x5000;
+
+        *(u16 *)((s32)rec8 + 6) = shown;
+    }
+    *(s32 *)((s32)rec8 + 68) = 0x6666;
+    *(s32 *)((s32)rec8 + 72) = 0x20000;
+    Engine_EventWait(80);
+    Engine_AudioPlayCue(147);
+    Engine_ActorSetPosition(31, 0, 0);
+    record = Engine_ActorGet(30);
+    Engine_ActorSetSpriteFlags(record, 1);
+    Call3(Engine_ActorSetSpeed, 0, 0x19999, 0xcccc);
+    rec8 = (u8 *)Engine_ActorGet(0);
+    rec8[85] = (s32)Data_00000000;
+    Call3(Engine_ObjectMotionSetPositionAndCommit, 0, 216, 0x264);
+    Call3(Engine_ActorSetSpeed, 30, 0x19999, 0xcccc);
+    Call3(Engine_ActorSetDestination, 30, 196, 0x258);
+    Call3(Engine_ActorSetDestination, 30, 216, 0x258);
+    Engine_ActorStop(28);
+    Engine_TaskWait(1);
+    Call3(Engine_ActorSetSpeed, 28, 0x19999, 0xcccc);
+    base5_200c888 = 0x200c888;
+    Engine_ActorEnableActionCallback(28, base5_200c888);
+    Call2(FieldScene_CallPairWith10, 30, 0xd000);
+    FieldScene_RunScene3af_02000bb8();
+    Engine_EventWait(10);
+    Engine_ActorEnableActionCallback(30, base5_200c888);
+    Engine_ActorStop(29);
+    Engine_TaskWait(1);
+    Call3(Engine_ActorSetSpeed, 29, 0x19999, 0xcccc);
+    Main_0808a0b0(29, base5_200c888);
+    Engine_EventWait(20);
+    Event_ClearStatus1c6Far();
+    Event_WaitValue1c8FramesFar();
+    Engine_ActorStop(24);
+    Engine_ActorStop(25);
+    Engine_ActorStop(26);
+    Engine_ActorStop(27);
+    Engine_ActorStop(28);
+    Engine_ActorStop(29);
+    Engine_EventWait(10);
+    Main_08009208();
+    Main_0808a1d8(21);
+    Call3(Main_08015210, 0x1e45, 1, 0);
+    Main_08009210();
+    Engine_EventRequestExit(14);
 }

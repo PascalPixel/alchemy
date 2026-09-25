@@ -67,8 +67,9 @@ most plausibly had on disk in 2001.
 
 ## Where the bytes come from
 
-Measured on 2026-09-24, one day, about 100 KB landed. Choose the method by its
-yield, not by the size of the target alone.
+Measured 2026-09-24 and 25: about 200 KB landed before 21:00 on the 24th, then
+the rate fell tenfold once overlay adoption stalled and lanes were paused.
+Choose the method by its yield, not by the size of the target alone.
 
 | Method | Yield | Use it on |
 | --- | --- | --- |
@@ -78,6 +79,17 @@ yield, not by the size of the target alone.
 | Credit decisions from Pascal | 5.6 KB at once | whole classes of proven assembly |
 | Batch lifting in the main image | about 30% similarity, almost no matches | nothing; don't |
 | Re-sweeping the same 1–3 halfword residual with the same spellings | zero | only with a new structural idea; the owner stays a normal target |
+| Writing an owner fresh from its disassembly | 0.3–2 KB per lane pass | owners with no draft; beats nudging an old draft that is far off |
+| Splitting a listing that bundles several functions | the pieces often match first time | any listing with an inner prologue, or reached only by `bl` from its parent |
+| Permuting a near-miss draft | about 1.4 KB per pass, then falling | drafts within ~10 halfwords; read every candidate for identical behaviour |
+
+Where the rest is (2026-09-25): about 25 overlay drafts far from exact and a
+handful of overlay owners with no draft; about 190 main drafts that differ in
+structure or miss code; about 55 drafts within a few halfwords that differ
+only in register choice or instruction order. An investigation built nine
+patched compilers and found agscc's allocation, reload and scheduling
+tie-breaks confirmed by the exact owners (each flip broke 68–419 of them), so
+those residuals are the C's shape, not the compiler.
 
 **The overlay recipe.** `psynergy decompile` the owner; rename every call to
 its `Engine_*` service in `FIELD_EVENT.H` or to the overlay's own function;
@@ -165,6 +177,12 @@ and `SRC/FIELD/SORU_SEKIZO/SETUP_STAGED_ACTORS.C` are the finished examples.
 The lead gets more bytes by keeping three agents productive and landing their
 work than by working alone.
 
+- **Never `cd` into a lane worktree.** Worktrees live outside the session's
+  directory, and `cd … && …` asks Pascal for permission every time. Use
+  `git -C`, `make -C`, absolute paths and the built binaries by path.
+- **Keep lanes running.** Four or five lanes on the best-yielding slices;
+  don't pause them for tooling or cleanup work, and change a registry format
+  only when every writer lanes use accepts the new one in the same commit.
 - **Brief with specifics.** Give each agent a slice (an address range or
   overlay range no other agent touches), its concrete targets with sizes and
   known residuals, the methods and cookbook above, and the scripts earlier
@@ -244,8 +262,8 @@ corner step and bevel opacity live in `tools/alchemy/src/coverage/palette.rs`.
 
 | Tool | Responsibility |
 | --- | --- |
-| [alchemy](tools/alchemy/) | Golden Sun commands: `inspect` (owners, `--asm`, `--siblings`), `extract`, `score` (owner or `--unit`, `--all-instances`; `--variants DIR`, `--diff`, `--dump FLAGS`), `targets` (every not-yet-C owner by size), `adopt` and `overlay adopt`, `check integrate` (main-image adoption), `unit`, `raw rebuild`, `build` (`full`, `assets`, `allocator`), `coverage`, `check` (publication, owners, siblings, progress), `cross-edition`, `dashboard`, `format`, `bootstrap`. |
-| [psynergy](tools/psynergy/) | Portable commands over explicit files: `decompile`, `disassemble`, `discover`, `reconstruct-asm`, `diff`, `repair`, `inspect allocator`, `convert`, plus the Thumb decoder, C recovery, comparison, twin search and the image, sound, text and LZ codecs. |
+| [alchemy](tools/alchemy/) | Golden Sun commands: `inspect` (owners, `--asm`, `--siblings`), `extract`, `score` (owner or `--unit`, `--all-instances`; `--variants DIR`, `--diff`, `--dump FLAGS`), `targets` (every not-yet-C owner by size), `adopt` and `overlay adopt`, `check integrate` (main-image adoption), `unit`, `raw rebuild`, `build` (`full`, `assets`, `allocator`), `coverage`, `check` (publication, owners, siblings, progress), `verify` (the landing gate, one line per gate), `cross-edition`, `dashboard`, `format`, `bootstrap`. |
+| [psynergy](tools/psynergy/) | Portable commands over explicit files: `decompile`, `disassemble`, `decode-lz`, plus the Thumb decoder, C recovery, comparison, twin search and the image, sound, text and LZ codecs. |
 
 ## Open work
 

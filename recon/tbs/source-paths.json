@@ -320,8 +320,8 @@
       "source": "FIELD/MOGORU_MORI/F_022C0.C"
     },
     "resource_3bd:02000a54": {
-      "name": "ArutamiraDou_Func02000a54",
-      "source": "FIELD/ARUTAMIRA_DOU/F_00A54.C"
+      "name": "ArutamiraDou_ApplyFadeBlend",
+      "source": "FIELD/ARUTAMIRA_DOU/FADE_BLEND.C"
     },
     "resource_389:020010c8": {
       "name": "GomaHashira_Func020010c8",
@@ -20800,8 +20800,8 @@
       "source": "FIELD/TAKARA_HASHIRA/STAGED_TRIGGER.C"
     },
     "resource_3bd:02000cf8": {
-      "name": "ArutamiraDou_Func02000cf8",
-      "source": "FIELD/ARUTAMIRA_DOU/F_00CF8.C"
+      "name": "ArutamiraDou_SettleActorOnCell",
+      "source": "FIELD/ARUTAMIRA_DOU/SETTLE_ACTOR.C"
     },
     "resource_3af:020008e0": {
       "name": "FuneKanpan_Func020008e0",
@@ -20859,8 +20859,8 @@
       "source": "FIELD/TOREBI_IZUMI/F_008F8.C"
     },
     "resource_3bd:02003ad4": {
-      "name": "ArutamiraDou_Func02003ad4",
-      "source": "FIELD/ARUTAMIRA_DOU/F_03AD4.C"
+      "name": "ArutamiraDou_ReleaseWallBurst",
+      "source": "FIELD/ARUTAMIRA_DOU/OPEN_WALL.C"
     },
     "resource_3bb:02001898": {
       "name": "KorosseoKabe_Func02001898",
@@ -20887,8 +20887,8 @@
       "source": "FIELD/VINASU_HEYA/RISING_SPRAY.C"
     },
     "resource_3bd:02000de8": {
-      "name": "ArutamiraDou_Func02000de8",
-      "source": "FIELD/ARUTAMIRA_DOU/F_00DE8.C"
+      "name": "ArutamiraDou_HopSelectedActor",
+      "source": "FIELD/ARUTAMIRA_DOU/ACTOR_HOP.C"
     },
     "resource_3b3:02001938": {
       "name": "TakaraHashira_SyncPriorityIfBehind",
@@ -21007,12 +21007,12 @@
       "source": "MENU/LINK_LOBBY/F_00F30.C"
     },
     "resource_3bd:02003610": {
-      "name": "ArutamiraDou_Func02003610",
-      "source": "FIELD/ARUTAMIRA_DOU/F_03610.C"
+      "name": "ArutamiraDou_MatchLeaderPriority",
+      "source": "FIELD/ARUTAMIRA_DOU/MATCH_PRIORITY.C"
     },
     "resource_3bd:02000ee0": {
-      "name": "ArutamiraDou_Func02000ee0",
-      "source": "FIELD/ARUTAMIRA_DOU/F_00EE0.C"
+      "name": "ArutamiraDou_UpdateScalePulse",
+      "source": "FIELD/ARUTAMIRA_DOU/SCALE_PULSE.C"
     },
     "resource_3cb:02000128": {
       "name": "LinkLobby_Func02000128",

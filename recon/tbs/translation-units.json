@@ -64493,7 +64493,7 @@
     },
     {
       "id": "scene-3bd-02000a54",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/ARUTAMIRA_DOU/F_00A54.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/ARUTAMIRA_DOU/FADE_BLEND.C",
       "overlay": "resource_3bd",
       "absolute_symbols": {},
       "owners": [
@@ -70487,7 +70487,7 @@
     },
     {
       "id": "scene-3bd-02000cf8",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/ARUTAMIRA_DOU/F_00CF8.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/ARUTAMIRA_DOU/SETTLE_ACTOR.C",
       "overlay": "resource_3bd",
       "absolute_symbols": {
         "Engine_ActorGet": {
@@ -71055,7 +71055,7 @@
     },
     {
       "id": "scene-3bd-02000de8",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/ARUTAMIRA_DOU/F_00DE8.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/ARUTAMIRA_DOU/ACTOR_HOP.C",
       "overlay": "resource_3bd",
       "absolute_symbols": {
         "Engine_ActorGet": {
@@ -71335,7 +71335,7 @@
     },
     {
       "id": "scene-3bd-02003ad4",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/ARUTAMIRA_DOU/F_03AD4.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/ARUTAMIRA_DOU/OPEN_WALL.C",
       "overlay": "resource_3bd",
       "absolute_symbols": {
         "Main_0808a550": {
@@ -73311,7 +73311,7 @@
     },
     {
       "id": "scene-3bd-02000ee0",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/ARUTAMIRA_DOU/F_00EE0.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/ARUTAMIRA_DOU/SCALE_PULSE.C",
       "overlay": "resource_3bd",
       "absolute_symbols": {
         "gEventWork": {
@@ -73331,7 +73331,7 @@
     },
     {
       "id": "scene-3bd-02003610",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/ARUTAMIRA_DOU/F_03610.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/ARUTAMIRA_DOU/MATCH_PRIORITY.C",
       "overlay": "resource_3bd",
       "absolute_symbols": {
         "Engine_ActorGet": {

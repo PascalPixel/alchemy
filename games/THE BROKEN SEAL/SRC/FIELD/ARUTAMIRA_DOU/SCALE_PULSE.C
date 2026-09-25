@@ -10,7 +10,7 @@ struct Obj {
 
 extern s32 Data_0200c468[];
 
-void ArutamiraDou_Func02000ee0(struct Obj *obj)
+void ArutamiraDou_UpdateScalePulse(struct Obj *obj)
 {
     s32 v = Data_0200c468[(u16)(obj->frame >> 2) & 3];
 

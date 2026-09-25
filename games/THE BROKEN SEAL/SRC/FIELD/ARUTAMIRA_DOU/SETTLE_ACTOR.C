@@ -3,7 +3,7 @@
 
 /* When actor 12 stands on cell (30, 20), settles it there, copies the cell's
  * attributes to (32, 20) and sets flag 0x212. */
-void ArutamiraDou_Func02000cf8(void)
+void ArutamiraDou_SettleActorOnCell(void)
 {
     struct FieldActor *actor = Engine_ActorGet(12);
 

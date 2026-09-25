@@ -1,7 +1,7 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
-void KuupuappuDou_Func02000704(void)
+void KuupuappuDou_RaiseActorPriorities(void)
 {
     s32 i;
     s32 id;

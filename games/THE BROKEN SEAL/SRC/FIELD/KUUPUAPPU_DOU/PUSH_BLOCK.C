@@ -13,7 +13,7 @@ extern s32 Data_02009844[];
 /* The leader pushes the block in the cell ahead one cell further, unless it
  * is one of actors 11 to 14, something solid lies beyond it or the landing
  * cell is higher; leader and block then move together. */
-void KuupuappuDou_Func02000170(void)
+void KuupuappuDou_PushBlockAhead(void)
 {
     struct FieldActor *leader = Engine_ActorGet(0);
     s32 direction = leader->facing >> 12;

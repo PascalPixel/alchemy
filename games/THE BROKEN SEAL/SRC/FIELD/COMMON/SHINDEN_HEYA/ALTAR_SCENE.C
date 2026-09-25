@@ -12,7 +12,7 @@ void Main_08015210(s32 message, s32 a1, s32 a2);
 s32 Local_020027d4(void);
 
 /* Shrine room: the party faces the altar, the room fades to blue, three of the four lamps light, and the scene exits by the altar's answer. */
-void ShindenHeya_Func0200074c(void)
+void ShindenHeya_RunAltarScene(void)
 {
     struct ShrineWork *work;
     u8 zero;

@@ -28,7 +28,7 @@ struct Rise {
     u16 timer;
 };
 
-void ShindenHeya_Func02003144(struct Rise *obj)
+void ShindenHeya_UpdateRisingIcon(struct Rise *obj)
 {
     s32 y;
     s32 scale;

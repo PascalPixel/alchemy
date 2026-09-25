@@ -37,7 +37,7 @@ struct Half {
 };
 
 /* Shrine room: spawns a spark effect at a random offset above an actor, with random delay and lifetime, on the actor's sprite layer. */
-void ShindenHeya_Func020031b8(s32 id)
+void ShindenHeya_SpawnActorSpark(s32 id)
 {
     u8 *actor;
     u8 *obj;

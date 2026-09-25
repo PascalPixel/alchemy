@@ -48,7 +48,7 @@ struct WorldMapOam {
 };
 
 /* Haidia house: spawns the linked pair of effect objects above the parent actor, with a cue, and gives the two their update routines and priorities. */
-void HaidiaIe_Func02002440(union PairObject *parent)
+void HaidiaIe_SpawnEffectPair(union PairObject *parent)
 {
     union PairObject *pair[2];
     union PairObject *child;

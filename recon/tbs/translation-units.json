@@ -60150,10 +60150,6 @@
           "address": "0x020095b4",
           "kind": "thumb"
         },
-        "Local_02001084": {
-          "address": "0x02009084",
-          "kind": "thumb"
-        },
         "Engine_EventOpenScreen": {
           "address": "0x0200a814",
           "kind": "thumb"
@@ -60164,6 +60160,10 @@
         },
         "Main_0808a2e0": {
           "address": "0x0200a80c",
+          "kind": "thumb"
+        },
+        "HaidiaIe_RunScriptScene": {
+          "address": "0x02009084",
           "kind": "thumb"
         }
       },
@@ -61885,7 +61885,7 @@
     },
     {
       "id": "haidia-ie-f-01084",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_IE/F_01084.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_IE/SCRIPT_SCENE.C",
       "overlay": "resource_374",
       "absolute_symbols": {},
       "owners": [
@@ -72499,7 +72499,7 @@
     },
     {
       "id": "scene-374-02002440",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_IE/F_02440.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_IE/SPAWN_PAIR.C",
       "overlay": "resource_374",
       "absolute_symbols": {
         "Engine_AudioPlayCue": {

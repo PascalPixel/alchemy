@@ -56,8 +56,8 @@
       "source": "FIELD/WORLD_MAP/LINKED_EFFECTS.C"
     },
     "resource_374:02002440": {
-      "name": "HaidiaIe_Func02002440",
-      "source": "FIELD/HAIDIA_IE/F_02440.C"
+      "name": "HaidiaIe_SpawnEffectPair",
+      "source": "FIELD/HAIDIA_IE/SPAWN_PAIR.C"
     },
     "resource_383:020047bc": {
       "name": "KuupuappuHeya_IsRecordNearPoint",
@@ -448,8 +448,8 @@
       "source": "FIELD/COMMON/SHIAN_JIIN/F_00518.C"
     },
     "resource_374:02001084": {
-      "name": "HaidiaIe_Func02001084",
-      "source": "FIELD/HAIDIA_IE/F_01084.C"
+      "name": "HaidiaIe_RunScriptScene",
+      "source": "FIELD/HAIDIA_IE/SCRIPT_SCENE.C"
     },
     "resource_381:0200330c": {
       "name": "SoruStar_SetupElementalRings",

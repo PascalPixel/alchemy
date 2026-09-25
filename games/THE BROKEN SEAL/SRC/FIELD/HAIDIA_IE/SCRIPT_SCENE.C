@@ -90,7 +90,7 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 /* NONMATCHING: 496 of 496 bytes, 11 halfword edits (2026-09-24). Script call run;
  * 0x8017 and 0x2018 are shared constants whose registers (r6/r8) and pool
  * order still differ from the reference. */
-void HaidiaIe_Func02001084(void)
+void HaidiaIe_RunScriptScene(void)
 {
     u8 *rec7;
 

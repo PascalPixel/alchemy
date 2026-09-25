@@ -1,15 +1,9 @@
-/*
- * DjinnMenu_SelectDjinn (main:080ab5e4, 4888 bytes)
- *
- * Draft, not exact (2026-09-24): candidate=4868 reference=4888
- * differing_halfwords=2346.  Now compiles for scoring: the message ids are
- * Value_ link symbols (base 0xb98 for the menu block, 0xc40 for the
- * tutorial block) and the cursor split calls Math_ModU / Math_DivU, which is
- * what the reference calls.  Next: the reference reads the cursor once,
- * keeps x and y as u16 (both results are truncated with lsls/lsrs #16), and
- * clears the status bytes from sp+107 down to the buffer start; most of its
- * locals live in stack slots.
- */
+/* NONMATCHING: 4888 bytes, candidate 4872, 2287 differing halfwords,
+ * 1175 halfword edits (2026-09-25). Djinn selection now splits each cached
+ * cursor with the observed halfword conversions. State/redraw declaration
+ * order follows their stack slots; the descending status clear was already
+ * correct.
+ * WALL: Remaining menu-loop control flow and local stack ownership. */
 #include "TYPES.H"
 #include "TBS_EDITION.H"
 
@@ -155,7 +149,6 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
 {
     s8 buf[8];
     u8 balanced[16];
-    s8 *status;
     struct DjinnMenuState *state;
     struct DjinnMenuLists *lists;
     struct DjinnMenuOwner *owner;
@@ -165,6 +158,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
     s32 x;
     s32 y;
     s32 savedY;
+    u16 cursor;
     s32 sel;
     u32 djinn;
     s32 groupMode;
@@ -179,12 +173,14 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
     u32 repeat;
     s32 work;
     s32 step;
+    s8 *status;
 
     state = gDjinnMenu;
     lists = state->lists;
     redraw = 1;
-    x = Math_ModU(state->cursor[mode], 10);
-    y = Math_DivU(state->cursor[mode], 10);
+    cursor = state->cursor[mode];
+    x = (u16)Math_ModU(cursor, 10);
+    y = (u16)Math_DivU(cursor, 10);
     status = buf;
     savedY = 0;
     djinn = 0;
@@ -225,9 +221,11 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
     if (mode == 1) {
         s32 fromX;
         s32 fromY;
+        u16 source_cursor;
 
-        fromX = Math_ModU(state->cursor[0], 10);
-        fromY = Math_DivU(state->cursor[0], 10);
+        source_cursor = state->cursor[0];
+        fromX = (u16)Math_ModU(source_cursor, 10);
+        fromY = Math_DivU(source_cursor, 10);
         Menu_DrawAtWindowOffset(state->djinn_window, fromX * 7 + 1, fromY + 2, 6, 1, 14);
         UiWindow_ApplyRectAtObjectOrigin(state->djinn_window, fromX * 7 + 1, 2, 6, 7, 6);
         for (i = 0; i < state->party_count; i++) {

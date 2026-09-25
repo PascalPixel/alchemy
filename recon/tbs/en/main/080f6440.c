@@ -1,3 +1,8 @@
+/* NONMATCHING: 1816 differing halfwords; 1169 halfword edits.
+ * Compiles to 3648 bytes against the complete 3804-byte owner.
+ * WALL: branch structure and local lifetimes differ; narrowing pad and sharing
+ * the initial zero did not improve the full-owner score.
+ */
 #include "TYPES.H"
 #include "DMA.H"
 
@@ -33,7 +38,7 @@ s32 Func_08015010(s32 x, s32 y, s32 w, s32 h, s32 flags);
 void Func_08015018(s32 window, s32 flags);
 void Func_08015080(s32 message, s32 window, s32 x, s32 y);
 void Func_080150b0(s32 value, s32 digits, s32 window, s32 x, s32 y);
-void Func_08077048(s32 item);
+s32 Func_08077048(s32 item);
 s32 Func_080772e0(s32 item);
 void Func_080f9010(s32 cue);
 

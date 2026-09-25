@@ -271,6 +271,8 @@ option recorded beside the file, or remain stored until it does.
 - 2026-09-24: the main-image far-call stub tables, built from the overlay
   veneer macro with whole aligned 8-byte entries, count as reconstructed
   veneers, as the overlay entry veneers already do.
+- 2026-09-25: Jev at `api.typesafe.ai` may receive repository C excerpts and
+  scoring results to rank recovery candidates; authenticate with `TYPESAFE_API_KEY`.
 
 ## Tooling index
 

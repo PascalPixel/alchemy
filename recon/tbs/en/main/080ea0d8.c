@@ -1,21 +1,8 @@
-/* Battle effect mode 9 (BattleFx_InitializeMode dispatches kind 9 here):
-   sixteen sprite objects recede over a spark field while a burst opens
-   (160 frames, A or B skips after frame 4), then a second 320-frame pass
-   draws concentric ellipses, falling objects and palette ramps.
-
-   DRAFT, not yet C: 47.0% aligned similarity, 2552 differing halfwords
-   (candidate 5752 bytes, reference 5756). Every call lines up with the
-   reference; what remains is register allocation and spill-slot order.
-   Known: the reference spills draw2 at sp+92 in the second pass (this
-   draft keeps it in a register, shifting frame and later slots by 4);
-   the dead frame<0 spark block keeps &scene in two high registers; the
-   IO write queue inline stores 0x208 through a reloaded IME address; the
-   petal blocks call draw through a callee-saved copy. Evidence used:
-   (x * sx) / 8 with sx = 8 in a variable (the reference divides after a
-   shift), the ring radius derived from the frame (a strength-reduced
-   giv at sp+12), the gWorkSlot base spilled at sp+56 for slot 47, and
-   the palette colour held as u16. Next: the palette loop masks with a
-   pooled 0x1f and reads the red field from the unshifted colour. */
+/* NONMATCHING: 5756 bytes, candidate 5728, 2604 differing halfwords,
+ * 1472 halfword edits (2026-09-25). Battle effect mode 9: receding sprites,
+ * sparks, concentric ellipses and palette ramps. The verified canvas-layer
+ * queue shape reduces the baseline by 53 edits.
+ * WALL: Second-phase callback spills and palette-loop source structure. */
 #include "TYPES.H"
 #include "DMA.H"
 #include "BATTLE_EFFECT_WORK.H"
@@ -50,7 +37,7 @@ void BattleEffect_SetupBlendedDisplay(void);
 void BattleEventRuntime_BeginPhaseFar(s32);
 void ObjectGroup_UpdateMembers(s32, s32, s32, s32, s32);
 void Runtime_ReleaseHeapBlock(s32);
-s32 BattleFx_EndCanvasLayer(void);
+void BattleFx_EndCanvasLayer(void);
 
 extern u8 gWorkSlot[];
 extern volatile u32 gKeysRepeat;
@@ -134,21 +121,30 @@ extern struct IoWriteQueue gIoWriteQueue;
 
 #define REG_IME (*(volatile u16 *)0x04000208)
 
+/* FAKEMATCH: Preserve the verified queue helper's one-pass IME scopes. */
 #define QUEUE_IO_WRITE(address, value, delay)                               \
     {                                                                       \
-        struct IoWriteQueue *q = &gIoWriteQueue;                            \
-        u16 saved = REG_IME;                                                \
+        volatile u16 *ime;                                                  \
+        struct IoWriteQueue *q;                                             \
+        u32 saved;                                                          \
         s32 count;                                                          \
-        REG_IME = 0x208;                                                    \
-        count = q->count;                                                   \
+        q = &gIoWriteQueue;                                                 \
+        do {                                                                \
+            do {                                                            \
+                ime = &REG_IME;                                             \
+                saved = *ime;                                               \
+            } while (0);                                                    \
+            *ime = (u16)ime;                                                \
+            count = q->count;                                               \
         if (count <= 31) {                                                  \
             u32 *destination = (u32 *)((u8 *)q + count * 12 + 4);           \
-            q->count = count + 1;                                           \
+            *(u16 *)&q->count = count + 1;                                  \
             *destination++ = (value);                                       \
             *destination++ = (address);                                     \
             *destination = (delay);                                         \
         }                                                                   \
-        REG_IME = saved;                                                    \
+            *ime = saved;                                                   \
+        } while (0);                                                        \
     }
 
 void Unnamed_080ea0d8(struct BattleEffectArgument *efx)

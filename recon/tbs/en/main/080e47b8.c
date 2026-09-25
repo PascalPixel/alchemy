@@ -1,8 +1,8 @@
-/* NONMATCHING: 7808 bytes, candidate 7768, 3271 differing halfwords,
- * 1536 halfword edits (2026-09-25). All 217 calls follow the reference
- * sequence. Typed particle seeds and direct projection arrays reduce false
- * shared lifetimes; inline drawing scopes reload each image at its call.
- * WALL: Remaining local lifetimes, callback loads and drawing-loop structure.
+/* NONMATCHING: 7808 bytes, candidate 7788, 3237 differing halfwords,
+ * 1412 halfword edits (2026-09-25). All 217 calls follow the reference
+ * sequence. Removed dead temporary assignments and typed all particle seeds;
+ * the first particle loop now has the reference's saved-register lifetimes.
+ * WALL: Remaining temporary allocation, scheduling and literal-pool choices.
  * Pascal requested staying on this complete owner until byte exact. */
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
@@ -11,6 +11,7 @@
 #include "BATTLE_EFX.H"
 #include "BATTLE_EFFECT_WORK.H"
 typedef BattleEffectDrawRectangle RectangleBlit;
+extern u8 gWorkSlot[];
 extern u8 Value_0000008d;
 extern u8 Value_000000a3;
 extern u8 Value_000000a4;
@@ -113,73 +114,29 @@ static __inline__ void DrawImage(s32 canvas, s32 pixels, s32 x, s32 y,
     (*draw)((void *)canvas, (void *)pixels, x, y, width, height);
 }
 
-/* FAKEMATCH: The inline helper retains size across the transform calls. */
-static __inline__ void DrawInitialSpark(s32 particle, s32 canvas, s32 sprites,
-    s32 *target, s32 *screen, s32 kind, RectangleBlit *blitters, s32 size)
-{
-    Func_080049ac();
-    Func_08004c6c(*(s32 *)(particle + 20));
-    Func_08004bd4(*(s32 *)(particle + 12));
-    Func_08004c1c(*(s32 *)(particle + 16));
-    EffectPosition_ApplyBaseAndYOffset((s32 *)particle, (struct EffectPosition *)screen);
-    screen[0] = screen[0] / 2 + target[0];
-    if (kind <= 7)
-        screen[1] = screen[1] + target[1] - 8;
-    else if (kind == 35)
-        screen[1] = screen[1] + target[1] + 44;
-    else
-        screen[1] = screen[1] + target[1] + 12;
-    if (screen[2] < -60)
-        screen[2] = -60;
-    if (screen[2] > 60)
-        screen[2] = 60;
-    screen[2] += 60;
-    ((RectangleBlit)blitters[1])((void *)canvas,
-        (void *)(sprites + Data_080ede48[size - 1]),
-        screen[0] - size / 2, screen[1] - size, size, size * 2);
-}
 
-void Func_080e47b8(s32 a0, s32 a1)
+void Func_080e47b8(s32 command, s32 kind)
 {
     void **heap_cache;
     void **heap_cursor;
-    s32 resource;
-    s32 p10;
     s32 p10b;
-    s32 p10c;
-    s32 p11b;
     s32 p5b;
-    s32 p5c;
-    s32 p8;
-    s32 p8b;
-    s32 p8e;
     s32 p9;
     s32 p9b;
-    s32 rec7;
-    s32 rec8;
     s32 record;
     s32 value;
     s32 target_pos[3];
     s32 source_pos[3];
     s32 moving_pos[3];
-    s32 r2;
-    s32 v0;
     s32 v3;
-    s32 none;
     s32 v5;
     s32 v10;
     s32 v6;
+    /* FAKEMATCH: Reuse the count scratch for the later drawing height. */
     s32 v9;
     s32 v2;
-    s32 v7;
-    s32 base5_2014000;
-    s32 v11;
-    s32 base5_3001f0c;
     s32 base6_3001e50;
-    s32 base7_80eede2;
     s32 v1;
-    s32 kind;
-    s32 command;
     struct BattleEffectWork *work;
     s32 canvas;
     s32 frame;
@@ -206,17 +163,14 @@ void Func_080e47b8(s32 a0, s32 a1)
     struct MotionObject *target_actor;
     struct EffectStep *seed;
 
-    u8 *p5;
-    RectangleBlit p4;
-    u8 *p6;
+    s32 pair_x;
+    s32 strip_x;
     s32 velocity[3];
     s32 spark_screen[3];
     RectangleBlit blitters[2];
     u8 projected[12];
 
-    kind = a1;
-    command = a0;
-    heap_cache = (void **)0x03001eec;
+    heap_cache = (void **)(gWorkSlot + 39 * 4);
     heap_cursor = heap_cache;
     work = (struct BattleEffectWork *)*heap_cursor++;
     canvas = (s32)*heap_cursor;
@@ -354,19 +308,38 @@ void Func_080e47b8(s32 a0, s32 a1)
     *(s32 *)(target_screen) = (((s32)(*(s32 *)(target_screen)) / 2));
     Func_080f9010(212);
     frame = 0;
-    p8b = spark_screen;
     do {
-    none = 0;
-    p10 = none;
-    v5 = p10;
-    v6 = ((s32)work + 0x7080);
-    v9 = none;
-    v10 = p10;
+    v6 = (s32)work + 0x7080;
+    v9 = 0;
+    v10 = 0;
     do {
         if (*(s32 *)(v6) >= 0) {
             if (frame >= (v10 / 4)) {
-                DrawInitialSpark(v6, canvas, sprites,
-                    (s32 *)target_screen, spark_screen, kind, blitters, 5);
+                {
+                    s32 size = 5;
+
+                    Func_080049ac();
+                    Func_08004c6c(*(s32 *)(v6 + 20));
+                    Func_08004bd4(*(s32 *)(v6 + 12));
+                    Func_08004c1c(*(s32 *)(v6 + 16));
+                    EffectPosition_ApplyBaseAndYOffset((s32 *)v6, (struct EffectPosition *)spark_screen);
+                    spark_screen[0] = spark_screen[0] / 2 + ((s32 *)target_screen)[0];
+                    if (kind <= 7)
+                        spark_screen[1] = spark_screen[1] + ((s32 *)target_screen)[1] - 8;
+                    else if (kind == 35)
+                        spark_screen[1] = spark_screen[1] + ((s32 *)target_screen)[1] + 44;
+                    else
+                        spark_screen[1] = spark_screen[1] + ((s32 *)target_screen)[1] + 12;
+                    if (spark_screen[2] < -60)
+                        spark_screen[2] = -60;
+                    if (spark_screen[2] > 60)
+                        spark_screen[2] = 60;
+                    spark_screen[2] += 60;
+                    ((RectangleBlit)blitters[1])((void *)canvas,
+                        (void *)(sprites + Data_080ede48[size - 1]),
+                        spark_screen[0] - size / 2, spark_screen[1] - size, size, size * 2);
+
+                }
                 *(s32 *)(v6) = (*(s32 *)(v6) - 4);
             }
             v9 = (v9 + 1);
@@ -379,11 +352,11 @@ void Func_080e47b8(s32 a0, s32 a1)
         if (p5b <= 63) {
             Func_080049ac();
             Func_080051d8(matrix, (matrix + 12));
-            EffectPosition_ApplyBaseAndYOffset((s32 *)moving_pos, (struct EffectPosition *)p8b);
-            v2 = (((s32)(*(s32 *)p8b) / 2));
-            *(s32 *)p8b = (((s32)(*(s32 *)p8b) / 2));
+            EffectPosition_ApplyBaseAndYOffset((s32 *)moving_pos, (struct EffectPosition *)((s32)spark_screen));
+            v2 = (((s32)(*(s32 *)((s32)spark_screen)) / 2));
+            *(s32 *)((s32)spark_screen) = (((s32)(*(s32 *)((s32)spark_screen)) / 2));
 
-            blitters[0](canvas, 0x2013c56, (v2 - 10), (*(s32 *)(p8b + 4) - 4), 20, 40);
+            blitters[0](canvas, 0x2013c56, (v2 - 10), (*(s32 *)(((s32)spark_screen) + 4) - 4), 20, 40);
         }
     }
     work->transfer_pending = 1;
@@ -416,7 +389,6 @@ void Func_080e47b8(s32 a0, s32 a1)
         *(volatile u16 *)0x04000020 = 0x100;
         *(volatile s32 *)0x04000028 = ((64 - *(s32 *)(source_screen)) << 8);
         work->transfer_mode = 1;
-        v6 = 0;
         work->transfer_value = 0;
         ClearWords(0x6004000, 0x4000);
         ClearWords(canvas, 0x4000);
@@ -482,17 +454,10 @@ void Func_080e47b8(s32 a0, s32 a1)
     *(s32 *)(motion + 4) = record;
     record = Func_080022ec((source_actor->z - *(s32 *)(position + 8)), 6);
     *(s32 *)(motion + 8) = record;
-    none = 0;
-    v3 = ((s32)work + 0x7098);
-    v10 = none;
-    do {
-        v10 = (v10 + 1);
-        p5c = v10;
-        v5 = p5c;
-        *(s32 *)(v3) = none;
-        v3 = (v3 + 28);
-        v10 = p5c;
-    } while (v5 != 64);
+    seed = (struct EffectStep *)((u8 *)work + 0x7080);
+    for (v10 = 0; v10 != 64; v10++, seed++) {
+        seed->variant = 0;
+    }
     if (kind != 14) {
         s32 height = (s32)Func_080b5070(((struct BattleEffectArgument *)work->effect)->actors[0]) / 2;
 
@@ -582,17 +547,14 @@ void Func_080e47b8(s32 a0, s32 a1)
     while (frame != duration) {
     if (kind != 11) {
         if (kind != 32) {
-            none = 0;
-            v7 = 0x40000;
             v5 = (frame << 12);
-            v10 = none;
+            v10 = 0;
             v6 = (s32)work + 0x6980;
             do {
-                value = Func_08002322(v5);
-                v10 = (v10 + 1);
-                *(s32 *)v6 = ((0x40000 - (value << 2)) >> 10);
+                *(s32 *)v6 = (0x40000 - (Func_08002322(v5) << 2)) >> 10;
+                v10++;
                 v6 += 4;
-                v5 = (v5 + 0x800);
+                v5 += 0x800;
             } while (v10 != 160);
         }
     }
@@ -600,7 +562,6 @@ void Func_080e47b8(s32 a0, s32 a1)
         EffectPosition_ApplyStepAndYOffset(((struct BattleEffectArgument *)work->effect)->actor, (struct EffectPosition *)target_screen);
         *(s32 *)(target_screen) = (((s32)(*(s32 *)(target_screen)) / 2));
         *(s32 *)(target_screen + 4) += 16;
-        v5 = 0x7828;
     }
     if (kind != 11) {
         if (kind != 8) {
@@ -713,24 +674,16 @@ void Func_080e47b8(s32 a0, s32 a1)
             Func_080d6888(((struct BattleEffectArgument *)work->effect)->actor, 0, -1, -1, 0);
         }
         if (frame == 12) {
-            base5_2014000 = 0x2014000;
-            none = 0;
-            v6 = 255;
-            v10 = none;
-            do {
-                *(s32 *)(base5_2014000) = source_actor->x;
-                *(s32 *)(base5_2014000 + 4) = 0x140000;
-                *(s32 *)(base5_2014000 + 8) = source_actor->z;
-                record = Func_08004458();
-                *(s32 *)(base5_2014000 + 12) = (((record & 255) - 128) << 10);
-                record = Func_08004458();
-                *(s32 *)(base5_2014000 + 16) = (((record & 255) - 128) << 10);
-                record = Func_08004458();
-                v10 = (v10 + 1);
-                *(s32 *)(base5_2014000 + 20) = (((record & 255) - 128) << 10);
-                *(s32 *)(base5_2014000 + 24) = 0;
-                base5_2014000 = (base5_2014000 + 28);
-            } while (v10 != 64);
+            seed = (struct EffectStep *)0x02014000;
+            for (v10 = 0; v10 != 64; v10++, seed++) {
+                seed->x = source_actor->x;
+                seed->y = 0x140000;
+                seed->z = source_actor->z;
+                seed->velocity_x = ((Func_08004458() & 255) - 128) << 10;
+                seed->velocity_y = ((Func_08004458() & 255) - 128) << 10;
+                seed->velocity_z = ((Func_08004458() & 255) - 128) << 10;
+                seed->variant = 0;
+            }
         }
         if (frame <= 11) {
             goto L_080e640e;
@@ -781,9 +734,8 @@ void Func_080e47b8(s32 a0, s32 a1)
     } else {
         L_080e57c8:;
         if ((u32)(frame - 6) <= 13) {
-            none = 0;
             v5 = frame;
-            v10 = none;
+            v10 = 0;
             do {
                 blitters[0](canvas, ((((v5 / 2) & 3) * 2880) + 0x02010c56), ((((s32)(*(s32 *)(source_screen)) / 2)) - 8), 0, 24, 104);
                 v10 = (v10 + 1);
@@ -875,19 +827,19 @@ void Func_080e47b8(s32 a0, s32 a1)
         Func_08002dd8(47);
         Func_08002dd8(46);
         if ((u32)(frame - 4) <= 19) {
-            p5 = *(s32 *)(source_screen);
+            pair_x = *(s32 *)source_screen / 2;
+            v9 = 48;
             BattleEffect_LoadWork(47, 7, 7, 3, 2);
-            base6_3001e50 = 0x3001e50;
-            DrawImage(canvas, 0x02010000, ((s32)p5 / 2) - 24, 48, 24, 48, (RectangleBlit *)(base6_3001e50 + 188));
+            base6_3001e50 = (s32)gWorkSlot;
+            DrawImage(canvas, 0x02010000, pair_x - 24, 48, 24, v9, (RectangleBlit *)(base6_3001e50 + 188));
             Func_08002dd8(47);
             BattleEffect_LoadWork(47, 7, 7, 7, 2);
-            DrawImage(canvas, 0x02010000, ((s32)p5 / 2), 48, 24, 48, (RectangleBlit *)(base6_3001e50 + 188));
+            DrawImage(canvas, 0x02010000, pair_x, 48, 24, v9, (RectangleBlit *)(base6_3001e50 + 188));
             Func_08002dd8(47);
         }
         L_080e5ab6:;
         Func_080cef64(((struct BattleEffectArgument *)work->effect)->side, blitters);
         goto L_080e640e;
-        v6 = ((u32)r2 >> 17);
     }
     if (kind == 30) {
         if (frame > 15) {
@@ -896,13 +848,12 @@ void Func_080e47b8(s32 a0, s32 a1)
         if (frame <= 5) {
             goto L_080e640e;
         }
-        p6 = *(s32 *)(source_screen);
+        strip_x = *(s32 *)source_screen / 2;
         value = Func_080022fc((((s32)(frame) / 2)), 3);
-        v6 = ((((s32)(p6) / 2)) - 20);
         p9b = (value * 2560);
-        blitters[0](canvas, (0x2010c56 + p9b), ((((s32)(p6) / 2)) - 20), 16, 40, 32);
-        blitters[0](canvas, ((value * 1280) + 0x2012a56), ((((s32)(p6) / 2)) - 20), 48, 40, 32);
-        blitters[0](canvas, (p9b + 0x2011156), ((((s32)(p6) / 2)) - 20), 80, 40, 32);
+        blitters[0](canvas, (0x2010c56 + p9b), (strip_x - 20), 16, 40, 32);
+        blitters[0](canvas, ((value * 1280) + 0x2012a56), (strip_x - 20), 48, 40, 32);
+        blitters[0](canvas, (p9b + 0x2011156), (strip_x - 20), 80, 40, 32);
         goto L_080e640e;
     }
     if (kind != 5) {
@@ -950,7 +901,6 @@ void Func_080e47b8(s32 a0, s32 a1)
             if (frame <= 7) {
                 blitters[0](canvas, work, Data_080eedd4[((((struct BattleEffectArgument *)work->effect)->side << 3) - ((struct BattleEffectArgument *)work->effect)->side)], (image_y + Data_080eede2[0]), 57, 98);
             }
-            v6 = ((s32)work + 0x7828);
             blitters[0](canvas, ((s32)work + 0x15d2), Data_080eedd4[(((((struct BattleEffectArgument *)work->effect)->side << 3) - ((struct BattleEffectArgument *)work->effect)->side) + 1)], (image_y + Data_080eede2[1]), 99, 69);
             if ((u32)(frame - 4) <= 1) {
                 ((s32 (*)(s32, u32, u32))0x03000168)(canvas, 0x4000, 0x3f3f3f3f);
@@ -1049,23 +999,15 @@ void Func_080e47b8(s32 a0, s32 a1)
             if (kind != 16) {
             } else {
                 if (frame == 0) {
-                    base5_2014000 = 0x2014000;
-                    none = 0;
-                    v10 = none;
-                    do {
-                        record = Func_08004458();
-                        *(s32 *)(base5_2014000) = ((127 & record) + 32);
-                        *(s32 *)(base5_2014000 + 4) = 0;
-                        *(s32 *)(base5_2014000 + 8) = 0;
-                        record = Func_08004458();
-                        *(s32 *)(base5_2014000 + 12) = (record & 0xffff);
-                        record = Func_08004458();
-                        *(s32 *)(base5_2014000 + 16) = (record & 0xffff);
-                        record = Func_08004458();
-                        v10 = (v10 + 1);
-                        *(s32 *)(base5_2014000 + 20) = (record & 0xffff);
-                        base5_2014000 = (base5_2014000 + 28);
-                    } while (v10 != 64);
+                    seed = (struct EffectStep *)0x02014000;
+                    for (v10 = 0; v10 != 64; v10++, seed++) {
+                        seed->x = (Func_08004458() & 127) + 32;
+                        seed->y = 0;
+                        seed->z = 0;
+                        seed->velocity_x = Func_08004458() & 0xffff;
+                        seed->velocity_y = Func_08004458() & 0xffff;
+                        seed->velocity_z = Func_08004458() & 0xffff;
+                    }
                     *(s32 *)0x020146e8 = 159;
                 }
                 {

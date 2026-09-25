@@ -62531,7 +62531,7 @@
     },
     {
       "id": "imiru-mura-f-007a4",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/IMIRU_MURA/F_007A4.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/IMIRU_MURA/WEAPON_SHOP.C",
       "overlay": "resource_399",
       "absolute_symbols": {
         "Engine_ActorGet": {
@@ -62599,7 +62599,7 @@
     },
     {
       "id": "imiru-mura-f-0088c",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/IMIRU_MURA/F_0088C.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/IMIRU_MURA/ARMOR_SHOP.C",
       "overlay": "resource_399",
       "absolute_symbols": {
         "Engine_ActorGet": {
@@ -62667,7 +62667,7 @@
     },
     {
       "id": "imiru-mura-f-00974",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/IMIRU_MURA/F_00974.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/IMIRU_MURA/ITEM_SHOP.C",
       "overlay": "resource_399",
       "absolute_symbols": {
         "Engine_ActorGet": {
@@ -69836,7 +69836,7 @@
     },
     {
       "id": "scene-399-02000b70",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/IMIRU_MURA/F_00B70.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/IMIRU_MURA/ENTRY_STATE.C",
       "overlay": "resource_399",
       "absolute_symbols": {
         "Engine_ActorGet": {

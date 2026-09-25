@@ -72,8 +72,8 @@
       "source": "MENU/LINK_LOBBY/WINS_TALK.C"
     },
     "resource_399:02000b70": {
-      "name": "ImiruMura_Func02000b70",
-      "source": "FIELD/IMIRU_MURA/F_00B70.C"
+      "name": "ImiruMura_ApplyEntryState",
+      "source": "FIELD/IMIRU_MURA/ENTRY_STATE.C"
     },
     "resource_3c4:0200252c": {
       "name": "BabiChika_Func0200252c",
@@ -380,16 +380,16 @@
       "source": "MENU/TITLE/F_001C0.C"
     },
     "resource_399:02000974": {
-      "name": "ImiruMura_Func02000974",
-      "source": "FIELD/IMIRU_MURA/F_00974.C"
+      "name": "ImiruMura_RunItemShop",
+      "source": "FIELD/IMIRU_MURA/ITEM_SHOP.C"
     },
     "resource_399:0200088c": {
-      "name": "ImiruMura_Func0200088c",
-      "source": "FIELD/IMIRU_MURA/F_0088C.C"
+      "name": "ImiruMura_RunArmorShop",
+      "source": "FIELD/IMIRU_MURA/ARMOR_SHOP.C"
     },
     "resource_399:020007a4": {
-      "name": "ImiruMura_Func020007a4",
-      "source": "FIELD/IMIRU_MURA/F_007A4.C"
+      "name": "ImiruMura_RunWeaponShop",
+      "source": "FIELD/IMIRU_MURA/WEAPON_SHOP.C"
     },
     "resource_39c:02005458": {
       "name": "MakyuriIriguchi_Func02001ec8",

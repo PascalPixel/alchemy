@@ -22,7 +22,7 @@ void Main_08077050(s32 member, s32 slot);
 /* Give member 2 item 65, dropping an item to make room while the inventory
  * is full (the last slot is cleared after a thousand tries), then equip every
  * slot holding it. */
-void GomaIriguchi_Func02000fc8(void)
+void GomaIriguchi_GiveShamansRod(void)
 {
     struct Member_387 *member;
     struct Item_387 *item;

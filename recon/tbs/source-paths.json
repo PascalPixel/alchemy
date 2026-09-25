@@ -404,8 +404,8 @@
       "source": "FIELD/KUUPUAPPU_HEYA/DIALOGUE_POSE.C"
     },
     "resource_387:02000dd8": {
-      "name": "GomaIriguchi_Func02000dd8",
-      "source": "FIELD/GOMA_IRIGUCHI/F_00DD8.C"
+      "name": "GomaIriguchi_RunSpinningLeap",
+      "source": "FIELD/GOMA_IRIGUCHI/SPINNING_LEAP.C"
     },
     "resource_396:020018b8": {
       "name": "ToretoHeya_RunLandingDustScene",
@@ -21040,8 +21040,8 @@
       "source": "MENU/LINK_LOBBY/F_00128.C"
     },
     "resource_387:02000fc8": {
-      "name": "GomaIriguchi_Func02000fc8",
-      "source": "FIELD/GOMA_IRIGUCHI/F_00FC8.C"
+      "name": "GomaIriguchi_GiveShamansRod",
+      "source": "FIELD/GOMA_IRIGUCHI/GIVE_SHAMANS_ROD.C"
     },
     "resource_396:02000334": {
       "name": "ToretoHeya_HandleFloorSwitch",

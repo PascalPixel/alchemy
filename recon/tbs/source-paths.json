@@ -65,7 +65,7 @@
     },
     "resource_39c:02001c9c": {
       "name": "MakyuriHeya_TriggerFloorSwitch",
-      "source": "FIELD/MAKYURI_HEYA/F_01C9C.C"
+      "source": "FIELD/MAKYURI_HEYA/FLOOR_SWITCH.C"
     },
     "resource_3cb:02000d68": {
       "name": "LinkLobby_TalkLinkedWins",
@@ -328,12 +328,12 @@
       "source": "FIELD/GOMA_HASHIRA/F_010C8.C"
     },
     "resource_39c:02002844": {
-      "name": "MakyuriHeya_Func02002844",
-      "source": "FIELD/MAKYURI_HEYA/F_02844.C"
+      "name": "MakyuriHeya_FadePaletteToWhite",
+      "source": "FIELD/MAKYURI_HEYA/FADE_TO_WHITE.C"
     },
     "resource_39c:02002e08": {
-      "name": "MakyuriHeya_Func02002e08",
-      "source": "FIELD/MAKYURI_HEYA/F_02E08.C"
+      "name": "MakyuriHeya_FadePaletteToBlack",
+      "source": "FIELD/MAKYURI_HEYA/FADE_TO_BLACK.C"
     },
     "resource_396:020015ac": {
       "name": "ToretoHeya_Func020015ac",
@@ -368,8 +368,8 @@
       "source": "FIELD/MAKYURI_CHOJO/F_03208.C"
     },
     "resource_39c:0200251c": {
-      "name": "MakyuriHeya_Func0200251c",
-      "source": "FIELD/MAKYURI_HEYA/F_0251C.C"
+      "name": "MakyuriHeya_SyncBlockFlags",
+      "source": "FIELD/MAKYURI_HEYA/BLOCK_FLAGS.C"
     },
     "resource_389:02000a68": {
       "name": "GomaHashira_Func02000a68",
@@ -420,8 +420,8 @@
       "source": "FIELD/SORU_STAR/F_043BC.C"
     },
     "resource_39c:02003948": {
-      "name": "MakyuriHeya_Func02003948",
-      "source": "FIELD/MAKYURI_HEYA/F_03948.C"
+      "name": "MakyuriHeya_OpenThreeStepStair",
+      "source": "FIELD/MAKYURI_HEYA/OPEN_STAIR.C"
     },
     "resource_39d:02003060": {
       "name": "MakyuriChojo_Func02003060",
@@ -432,8 +432,8 @@
       "source": "FIELD/MAKYURI_CHOJO/F_02F18.C"
     },
     "resource_39c:02002e6c": {
-      "name": "MakyuriHeya_Func02002e6c",
-      "source": "FIELD/MAKYURI_HEYA/F_02E6C.C"
+      "name": "MakyuriHeya_SinkActorWithSparks",
+      "source": "FIELD/MAKYURI_HEYA/ACTOR_SINK.C"
     },
     "resource_371:020034a0": {
       "name": "WorldMap_Func020034a0",

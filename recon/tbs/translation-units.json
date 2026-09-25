@@ -62068,7 +62068,7 @@
     },
     {
       "id": "makyuri-heya-f-02e6c",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_HEYA/F_02E6C.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_HEYA/ACTOR_SINK.C",
       "overlay": "resource_39c",
       "absolute_symbols": {
         "Engine_ActorGet": {
@@ -62184,7 +62184,7 @@
     },
     {
       "id": "makyuri-heya-f-03948",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_HEYA/F_03948.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_HEYA/OPEN_STAIR.C",
       "overlay": "resource_39c",
       "absolute_symbols": {
         "Engine_MapCopyCellsTo": {
@@ -62783,7 +62783,7 @@
     },
     {
       "id": "makyuri-heya-f-0251c",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_HEYA/F_0251C.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_HEYA/BLOCK_FLAGS.C",
       "overlay": "resource_39c",
       "absolute_symbols": {
         "Engine_EventBegin": {
@@ -63059,7 +63059,7 @@
     },
     {
       "id": "makyuri-heya-f-02e08",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_HEYA/F_02E08.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_HEYA/FADE_TO_BLACK.C",
       "overlay": "resource_39c",
       "absolute_symbols": {
         "Engine_TaskWait": {
@@ -63075,7 +63075,7 @@
     },
     {
       "id": "makyuri-heya-f-02844",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_HEYA/F_02844.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_HEYA/FADE_TO_WHITE.C",
       "overlay": "resource_39c",
       "absolute_symbols": {
         "Engine_TaskWait": {
@@ -71583,7 +71583,7 @@
     },
     {
       "id": "scene-39c-02001c9c",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_HEYA/F_01C9C.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_HEYA/FLOOR_SWITCH.C",
       "overlay": "resource_39c",
       "absolute_symbols": {
         "Engine_GameFlagIsSet": {

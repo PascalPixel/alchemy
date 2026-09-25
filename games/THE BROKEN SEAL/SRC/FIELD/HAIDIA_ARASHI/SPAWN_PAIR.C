@@ -48,7 +48,7 @@ struct WorldMapOam {
 };
 
 /* Stormy Haidia: spawns the linked pair of effect objects above the parent actor, with a cue, and gives both the parent's sprite priority. */
-void HaidiaArashi_Func0200441c(union PairObject *parent)
+void HaidiaArashi_SpawnEffectPair(union PairObject *parent)
 {
     union PairObject *pair[2];
     union PairObject *child;

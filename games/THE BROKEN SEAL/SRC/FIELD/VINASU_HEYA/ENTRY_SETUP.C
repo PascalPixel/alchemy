@@ -2,8 +2,6 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "FIELD_EFFECT.H"
-#define OverlayObject_IntegrateVelocities Effect_Move
-
 #define NULL ((void *)0)
 #define StagedActorDirectionSteps Data_0200d0e8
 #define FindActorAtPosition Func_020006e6
@@ -16,7 +14,6 @@
 #define FinalizeStagedActorUpdate Func_02005494
 #define BattleEffect_PlayQueuedSound_1(args...) Func_02005874(args)
 #define BattleEffect_RunRisingObjectSequence_1(args...) Func_02007e92(args)
-#define OverlayObject_IntegrateVelocities Func_020000e0
 
 #include "OVERLAY_OBJECT.H"
 #include "STAGED_ACTOR.H"

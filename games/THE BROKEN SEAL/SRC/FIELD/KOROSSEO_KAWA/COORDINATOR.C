@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
+#include "STAGED_ACTOR.H"
 
 enum CoordinatorMessage {
     MSG_ROBIN_GOT = 0x96a,
@@ -23,38 +24,9 @@ enum CoordinatorMessage {
 };
 
 #define FieldScene_RunSceneFourCoordinator Func_020016ec
-#define SceneTransition_Phase Data_02000240[225]
 #define GetPartyInteractionRecord Func_0200593a
 #define GetPartyMemberCount Func_0200590a
 #define HexDigits Data_0200bfd0
-
-typedef struct Sub {
-    u8 pad00[0x28];
-    s16 *f28;
-} Sub;
-
-typedef struct Obj {
-    s32 f00;
-    s32 f04;
-    s32 f08;
-    s32 f0c;
-    s32 f10;
-    u8 pad14[0x3c];
-    Sub *f50;
-    u8 f54;
-} Obj;
-
-typedef struct Obj_020001a8 {
-    s32 f00;
-    s32 f04;
-    s32 f08;
-    s32 f0c;
-    s32 f10;
-    u8 f14[15];
-    u8 f23;
-    u8 f24[49];
-    u8 f55;
-} Obj_020001a8;
 
 typedef struct Ctl {
     s16 f0;
@@ -63,47 +35,6 @@ typedef struct Ctl {
     s16 f6;
     s16 f8;
 } Ctl;
-
-typedef struct Obj_0200033c {
-    s32 f00;
-    s32 f04;
-    s32 f08;
-    s32 f0c;
-    s32 f10;
-    u8 f14[28];
-    s32 f30;
-    s32 f34;
-} Obj_0200033c;
-
-typedef struct Obj_0200042c {
-    s32 f00;
-    s32 f04;
-    s32 f08;
-    s32 f0c;
-    s32 f10;
-} Obj_0200042c;
-
-typedef struct Obj_02000a10 {
-    s32 f00;
-    s32 f04;
-    s32 f08;
-    s32 f0c;
-    s32 f10;
-    u8 f14[14];
-    u8 f22;
-} Obj_02000a10;
-
-typedef struct Obj_02003058 {
-    s32 f00;
-    s32 f04;
-    s32 f08;
-    s32 f0c;
-    s32 f10;
-    u8 f14[65];
-    u8 f55;
-    u8 f56[14];
-    s16 f64;
-} Obj_02003058;
 
 typedef struct PartyInteractionRecord {
     u8 padding_00[10];
@@ -123,72 +54,6 @@ struct ModeRecord {
     u8 pad[26];
     u16 span;
 };
-
-typedef struct Obj_02002bac {
-    u32 f00[9];
-    s32 f24;
-    s32 f28;
-    s32 f2c;
-    s32 f30;
-    s32 f34;
-    u32 f38;
-    s32 f3c;
-    u32 f40;
-} Obj_02002bac;
-
-typedef struct Obj_02002e50 {
-    s32 f00;
-    s32 f04;
-    s32 f08;
-    s32 f0c;
-    u8 f10[32];
-    s32 f30;
-    s32 f34;
-    u8 f38[35];
-    u8 f5b;
-} Obj_02002e50;
-
-typedef struct Obj_02002e10 {
-    s32 f00;
-    s32 f04;
-    s32 f08;
-    s32 f0c;
-    u8 f10[32];
-    s32 f30;
-    s32 f34;
-    u8 f38[35];
-    u8 f5b;
-} Obj_02002e10;
-
-typedef struct Obj_02002fc4 {
-    s32 f00;
-    s32 f04;
-    s32 f08;
-    s32 f0c;
-    s32 f10;
-    u8 f14[20];
-    s32 f28;
-    u8 f2c[41];
-    u8 f55;
-} Obj_02002fc4;
-
-typedef struct SceneRecord {
-    u8 pad_00[6];
-    u16 facing;
-    s32 x;
-    s32 y;
-    s32 z;
-    u8 pad_14[14];
-    u8 state;
-    u8 pad_23;
-    s32 motion_24;
-    u8 pad_28[4];
-    s32 motion_2c;
-    s32 rate_x;
-    s32 rate_z;
-    u8 pad_38[33];
-    u8 flags;
-} SceneRecord;
 
 typedef struct Position3 {
     s32 x;
@@ -269,13 +134,13 @@ s32 Func_02004e2c();
 void Func_02003152();
 s32 Func_02003f6c();
 void Func_0200418e();
-Obj *Func_02005708(s32);
-Obj *Func_02005716(s32);
+struct FieldActor *Func_02005708(s32);
+struct FieldActor *Func_02005716(s32);
 void Func_02005780_a();
 void Func_02005770(s32, s32);
 void Func_0200343a(s32);
-typedef void(*Task02000134)(void);
-void Func_02003c5a(Task02000134);
+typedef void(*SceneTask)(void);
+void Func_02003c5a(SceneTask);
 s32 Func_02003c78(s32, s32);
 void Func_02005a4a(s32, s32);
 s16 Func_02006816(void);
@@ -286,33 +151,33 @@ void Func_02006960(s16);
 void Func_02005b3c(void);
 void Func_02005994(s32, s32);
 s32 Func_020059f6(s32);
-Obj *Func_02003e7c(s32);
+struct FieldActor *Func_02003e7c(s32);
 s32 Func_02003db8(s32, s32, s32);
-Obj *Func_02003ebe(s32);
+struct FieldActor *Func_02003ebe(s32);
 void Func_02003e84(s32, s32);
 void Func_0200b3a0(void);
 s32 Func_020073ee(void);
 void Func_020073be(s32, s32);
 void Func_02007392(s32, s32);
-Obj *Func_02004016(s32);
-Obj *Func_0200401e(s32);
-void Func_02003f7e(Obj *, s32, s32, s32);
-void Func_02003faa(Obj *, s32, s32, s32);
-void Func_02003fdc(Obj *);
-Obj *Func_020040f4(s32);
-Obj *Func_02004124(s32);
-Obj *Func_02004158(s32);
-Obj *Func_0200417e(s32);
-Obj *Func_020041d0(s32);
-Obj *Func_020046cc_a(void);
+struct FieldActor *Func_02004016(s32);
+struct FieldActor *Func_0200401e(s32);
+void Func_02003f7e(struct FieldActor *, s32, s32, s32);
+void Func_02003faa(struct FieldActor *, s32, s32, s32);
+void Func_02003fdc(struct FieldActor *);
+struct FieldActor *Func_020040f4(s32);
+struct FieldActor *Func_02004124(s32);
+struct FieldActor *Func_02004158(s32);
+struct FieldActor *Func_0200417e(s32);
+struct FieldActor *Func_020041d0(s32);
+struct FieldActor *Func_020046cc_a(void);
 s32 Func_02005508(s32);
 s32 Func_02005512(s32);
 s32 Func_02005530(s32);
 s32 Func_0200553a(s32);
 s32 Func_02005554(s32);
 s32 Func_0200555e(s32);
-Obj *Func_02006d24(s16);
-void Func_02006c56(Obj *, s32, s32, s32);
+struct FieldActor *Func_02006d24(s16);
+void Func_02006c56(struct FieldActor *, s32, s32, s32);
 void Func_0200325e();
 s32 Func_02003474();
 void Func_02004080();
@@ -371,20 +236,20 @@ void Func_02006d00();
 void Func_02006d36();
 void Func_02006d42();
 void Func_02006db2();
-Obj *Func_02006868(void);
-void Func_0200677e(Obj *);
-Obj *Func_02006c20(s32);
-void Func_02006a3c(Obj *);
-void Func_02006a60(Obj *, s32, s32, s32);
-void Func_02006a6e(Obj *);
-Obj *Func_02006be0(s32);
-void Func_020069fc(Obj *);
-void Func_02006a20(Obj *, s32, s32, s32);
+struct FieldActor *Func_02006868(void);
+void Func_0200677e(struct FieldActor *);
+struct FieldActor *Func_02006c20(s32);
+void Func_02006a3c(struct FieldActor *);
+void Func_02006a60(struct FieldActor *, s32, s32, s32);
+void Func_02006a6e(struct FieldActor *);
+struct FieldActor *Func_02006be0(s32);
+void Func_020069fc(struct FieldActor *);
+void Func_02006a20(struct FieldActor *, s32, s32, s32);
 void Func_02006b3e(s32, s32, s32 *);
-Obj *Func_02006bd2(s32, s32, s32, s32);
-SceneRecord *Func_020071f6(Position3 *, SceneRecord *);
-SceneRecord *Func_02007220(Position3 *, SceneRecord *);
-SceneRecord *Func_0200724c(Position3 *, SceneRecord *);
+struct FieldActor *Func_02006bd2(s32, s32, s32, s32);
+struct FieldActor *Func_020071f6(Position3 *, struct FieldActor *);
+struct FieldActor *Func_02007220(Position3 *, struct FieldActor *);
+struct FieldActor *Func_0200724c(Position3 *, struct FieldActor *);
 u8 *Func_0200772c();
 void Func_020075de();
 s32 *Func_02007366();
@@ -420,7 +285,7 @@ s32 *Func_02007398();
  * it by one, and specific values select which sub-sequence runs this call.
  * Reaching 0 restarts the countdown at 120 after running its own branch. */
 
-/* Call sites spelled through these wrappers pass their constants straight
+/* FAKEMATCH: Calls through these inline helpers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
  * into a pseudo that the compiler then shares with later uses in the block.
  * A value-returning call also sets r0 last of its arguments. */
@@ -434,100 +299,42 @@ void SceneState_StoreParamsAndInitTable(s32 a, s32 b, s32 c);
 
 static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
 {
-    extern s16 Data_02000240_t[][1];
-    extern u8 Data_0200c41c[];
-
     f(a0, a1, a2, a3, a4, a5);
-}
-
-/* The scene step counter at 0x1d8 of the shared scene work record. */
-static __inline__ void bump_step(s32 amount)
-{
-    extern s16 Data_02000240_t[][1];
-    extern u8 Data_0200c41c[];
-
-    gEventWork->message += amount;
 }
 
 static __inline__ void Call1(void (*f)(), s32 a0)
 {
-    extern s16 Data_02000240_t[][1];
-    extern u8 Data_0200c41c[];
-
     f(a0);
 }
 
 static __inline__ s32 Value1(s32 (*f)(), s32 a0)
 {
-    extern s16 Data_02000240_t[][1];
-    extern u8 Data_0200c41c[];
-
     return f(a0);
 }
 
 static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
 {
-    extern s16 Data_02000240_t[][1];
-    extern u8 Data_0200c41c[];
-
     f(a0, a1);
 }
 
 static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 {
-    extern s16 Data_02000240_t[][1];
-    extern u8 Data_0200c41c[];
-
     f(a0, a1, a2, a3);
 }
 
 static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
 {
-    extern s16 Data_02000240_t[][1];
-    extern u8 Data_0200c41c[];
-
     f(a0, a1, a2);
 }
 
 static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
 {
-    extern s16 Data_02000240_t[][1];
-    extern u8 Data_0200c41c[];
-
     return f(a0, a1);
 }
 
 static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
 {
-    extern s16 Data_02000240_t[][1];
-    extern u8 Data_0200c41c[];
-
     return f(a0, a1, a2);
-}
-
-static __inline__ void Call1_020016ec(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ void Call2_020016ec(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
-static __inline__ void Call3_020016ec(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-static __inline__ s32 Value3_020016ec(s32 (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    return f(a0, a1, a2);
-}
-
-static __inline__ void Call4_020016ec(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    f(a0, a1, a2, a3);
 }
 
 static inline void InitializeActorZero(void)
@@ -545,81 +352,9 @@ static __inline__ s32 Value0(s32 (*f)())
     return f();
 }
 
-static __inline__ void Call1_02001e7c(void (*f)(), s32 a0)
+/* Selects a later line in the current dialogue. */
+static __inline__ void AdvanceMessage(s32 amount)
 {
-    f(a0);
-}
-
-static __inline__ s32 Value1_02001e7c(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ s32 Value2_02001e7c(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
-static __inline__ void Call3_02001e7c(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-static __inline__ s32 Value3_02001e7c(s32 (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    return f(a0, a1, a2);
-}
-
-static __inline__ void Call1_02002844(void (*f)(), s32 a0)
-{
-    extern u8 Data_02000240_t[][2];
-    extern struct ModeRecord Data_0200be76;
-    extern struct ModeRecord Data_0200c628;
-    void Func_02002ba8();
-    void Func_02002d84();
-    void Task_Wait();
-    void Func_02006d62();
-
-    f(a0);
-}
-
-static __inline__ s32 Value2_02002844(s32 (*f)(), s32 a0, s32 a1)
-{
-    extern u8 Data_02000240_t[][2];
-    extern struct ModeRecord Data_0200be76;
-    extern struct ModeRecord Data_0200c628;
-    void Func_02002ba8();
-    void Func_02002d84();
-    void Task_Wait();
-    void Func_02006d62();
-
-    return f(a0, a1);
-}
-
-static __inline__ void Call3_02002844(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    extern u8 Data_02000240_t[][2];
-    extern struct ModeRecord Data_0200be76;
-    extern struct ModeRecord Data_0200c628;
-    void Func_02002ba8();
-    void Func_02002d84();
-    void Task_Wait();
-    void Func_02006d62();
-
-    f(a0, a1, a2);
-}
-
-/* The scene step counter at 0x1d8 of the shared scene work record. */
-static __inline__ void bump_step_02002844(s32 amount)
-{
-    extern u8 Data_02000240_t[][2];
-    extern struct ModeRecord Data_0200be76;
-    extern struct ModeRecord Data_0200c628;
-    void Func_02002ba8();
-    void Func_02002d84();
-    void Task_Wait();
-    void Func_02006d62();
-
     gEventWork->message += amount;
 }
 
@@ -655,15 +390,15 @@ void Func_02006da4();          /* shared veneer, selector refresh + 0x96a */
 
 void Func_02006d62();          /* veneer to Func_08009148 */
 
-SceneRecord *Func_020075cc();   /* scene record for a subject handle */
+struct FieldActor *Func_020075cc();   /* scene record for a subject handle */
 
-s32 Func_020075e6(SceneRecord *, Position3 *);  /* terrain probe */
+s32 Func_020075e6(struct FieldActor *, Position3 *);  /* terrain probe */
 
-void Func_020075da(SceneRecord *, s32, s32, s32);   /* place at (x, y, z) */
+void Func_020075da(struct FieldActor *, s32, s32, s32);   /* place at (x, y, z) */
 
-void Func_020075ea(SceneRecord *, s32, s32, s32);   /* place at (x, y, z) */
+void Func_020075ea(struct FieldActor *, s32, s32, s32);   /* place at (x, y, z) */
 
-void Func_020075fe(SceneRecord *);              /* re-attach the camera */
+void Func_020075fe(struct FieldActor *);              /* re-attach the camera */
 
 /* Contiguous unnamed leaf-owner run for resource_3ba. */
 u8 *SceneData_GetTableC194(void)
@@ -737,10 +472,10 @@ void SceneState_ResetCounterAndStartTask(void)
     extern s16 Data_02001000;
     extern s32 Data_0200c41c;
 
-    Task02000134 task;
+    SceneTask task;
 
     Data_0200c41c = 0;
-    task = (Task02000134) 0x0200804D;
+    task = (SceneTask) 0x0200804D;
     Func_02003c5a(task);
     task();
 }
@@ -781,8 +516,8 @@ void SceneState_ApplyRectsForActorsNineAndTen(void)
 {
     extern Ctl Data_02001000;
 
-    Obj_020001a8 *o;
-    s32 r;
+    struct FieldActor *actor;
+    s32 blocked;
 
     {
         s32 x = 23;
@@ -790,27 +525,27 @@ void SceneState_ApplyRectsForActorsNineAndTen(void)
 
         Map_CopyCellAttributes(27, 13, 3, 1, x, y);
     }
-    o = Func_02003e7c(9);
-    r = Func_02003db8(0, o->f08, o->f10);
-    if (o->f0c == 0 && r == 0) {
-        o->f23 = 2;
-        o->f55 = 0;
+    actor = Func_02003e7c(9);
+    blocked = Func_02003db8(0, actor->x.fixed, actor->z.fixed);
+    if (actor->y.fixed == 0 && blocked == 0) {
+        actor->priority_flags = ACTOR_PRIORITY_UNDERFOOT;
+        actor->motion_flags = 0;
         {
-            s32 x = o->f08 >> 20;
-            s32 y = o->f10 >> 20;
+            s32 x = actor->x.fixed >> 20;
+            s32 y = actor->z.fixed >> 20;
 
             Map_CopyCellAttributes(14, 13, 1, 1, x, y);
         }
     }
-    o = Func_02003ebe(10);
+    actor = Func_02003ebe(10);
     {
-        s32 x = o->f08 >> 20;
+        s32 x = actor->x.fixed >> 20;
 
         Func_02003e84(784, x);
     }
     {
-            s32 x = o->f08 >> 20;
-            s32 y = o->f10 >> 20;
+        s32 x = actor->x.fixed >> 20;
+        s32 y = actor->z.fixed >> 20;
 
         Map_CopyCellAttributes(14, 13, 1, 1, x, y);
     }
@@ -871,104 +606,104 @@ void FieldScene_RunScene3ba_02000270(void)
     Event_End();
 }
 
-void StagedActor_PlacePairAtOffsetAndRun(s32 a0, s32 a1, s32 a2)
+void StagedActor_PlacePairAtOffsetAndRun(s32 actor_id, s32 dx, s32 dz)
 {
-    Obj_0200033c *p;
-    Obj_0200033c *q;
+    struct FieldActor *leader;
+    struct FieldActor *actor;
     s32 x;
-    s32 y;
+    s32 z;
 
-    p = Func_02004016(gGameState.selected_actor);
-    q = Func_0200401e(a0);
+    leader = Func_02004016(gGameState.selected_actor);
+    actor = Func_0200401e(actor_id);
     Event_Begin();
     {
-        x = ((p->f08 + (a1 << 16)) & 0xFFF00000) + 0x80000;
-        y = ((p->f10 + (a2 << 16)) & 0xFFF00000) + 0x80000;
+        x = ((leader->x.fixed + (dx << 16)) & 0xFFF00000) + 0x80000;
+        z = ((leader->z.fixed + (dz << 16)) & 0xFFF00000) + 0x80000;
 
-        p->f30 = 0x10000;
-        p->f34 = 0x8000;
-        Func_02003f7e(p, x, p->f0c, y);
+        leader->speed = 0x10000;
+        leader->acceleration = 0x8000;
+        Func_02003f7e(leader, x, leader->y.fixed, z);
     }
-    Object_SetAnimation(p, 27);
+    Object_SetAnimation(leader, 27);
     {
-        x = ((q->f08 + (a1 << 16)) & 0xFFF00000) + 0x80000;
-        y = ((q->f10 + (a2 << 16)) & 0xFFF00000) + 0x80000;
+        x = ((actor->x.fixed + (dx << 16)) & 0xFFF00000) + 0x80000;
+        z = ((actor->z.fixed + (dz << 16)) & 0xFFF00000) + 0x80000;
 
-        q->f30 = 0x10000;
-        q->f34 = 0x8000;
-        Func_02003faa(q, x, q->f0c, y);
+        actor->speed = 0x10000;
+        actor->acceleration = 0x8000;
+        Func_02003faa(actor, x, actor->y.fixed, z);
     }
-    if (a1 < 0 || a2 < 0) {
-        Object_SetAnimation(q, 4);
+    if (dx < 0 || dz < 0) {
+        Object_SetAnimation(actor, 4);
     } else {
-        Object_SetAnimation(q, 3);
+        Object_SetAnimation(actor, 3);
     }
     Audio_PlayCue(226);
-    Func_02003fdc(p);
-    Object_SetAnimation(q, 2);
+    Func_02003fdc(leader);
+    Object_SetAnimation(actor, 2);
     Audio_PlayCue(288);
     Event_End();
 }
 
 void SceneActor_ShiftActorSeventeenByLeaderRow(void)
 {
-    Obj_0200042c *o;
-    s32 v;
-    s32 t;
+    struct FieldActor *actor;
+    s32 row;
+    s32 offset;
 
-    o = Func_020040f4(gGameState.selected_actor);
-    v = o->f10 >> 20;
-    t = -48;
-    if (v <= 8) {
-        t = 48;
+    actor = Func_020040f4(gGameState.selected_actor);
+    row = actor->z.fixed >> 20;
+    offset = -48;
+    if (row <= 8) {
+        offset = 48;
     }
-    Map_CopyCellAttributes(67, 8, 3, 1, 64, v);
-    StagedActor_PlacePairAtOffsetAndRun(17, 0, t);
-    o = Func_02004124(17);
-    v = o->f10 >> 20;
-    Map_CopyCellAttributes(64, 24, 3, 1, 64, v);
+    Map_CopyCellAttributes(67, 8, 3, 1, 64, row);
+    StagedActor_PlacePairAtOffsetAndRun(17, 0, offset);
+    actor = Func_02004124(17);
+    row = actor->z.fixed >> 20;
+    Map_CopyCellAttributes(64, 24, 3, 1, 64, row);
 }
 
 void SceneActor_ShiftActorEighteenByInputAndLeaderColumn(void)
 {
-    Obj_0200042c *o;
-    s32 a;
-    s32 b;
-    s32 s;
+    struct FieldActor *actor;
+    s32 column;
+    s32 offset;
+    s32 direction;
 
-    o = Func_02004158(gGameState.selected_actor);
-    a = o->f08 >> 20;
+    actor = Func_02004158(gGameState.selected_actor);
+    column = actor->x.fixed >> 20;
     if ((Data_03001ae8 & 32) != 0) {
-        s = -1;
+        direction = -1;
     }
     if ((Data_03001ae8 & 16) != 0) {
-        s = 1;
+        direction = 1;
     }
-    o = Func_0200417e(17);
-    b = o->f10 >> 20;
-    if (a == 63) {
-        if (b == 11) {
+    actor = Func_0200417e(17);
+    offset = actor->z.fixed >> 20;
+    if (column == 63) {
+        if (offset == 11) {
             return;
         }
-        b = 160;
-    } else if (a == 67) {
-        if (b == 11 && s == -1) {
+        offset = 160;
+    } else if (column == 67) {
+        if (offset == 11 && direction == -1) {
             return;
         }
-        b = 96;
+        offset = 96;
     } else {
-        if (b == 11) {
-            b = 96;
+        if (offset == 11) {
+            offset = 96;
         } else {
-            b = 160;
+            offset = 160;
         }
-        b = -b;
+        offset = -offset;
     }
-    Map_CopyCellAttributes(72, 9, 1, 3, a, 9);
-    StagedActor_PlacePairAtOffsetAndRun(18, b, 0);
-    o = Func_020041d0(18);
-    a = o->f08 >> 20;
-    Map_CopyCellAttributes(63, 25, 1, 3, a, 9);
+    Map_CopyCellAttributes(72, 9, 1, 3, column, 9);
+    StagedActor_PlacePairAtOffsetAndRun(18, offset, 0);
+    actor = Func_020041d0(18);
+    column = actor->x.fixed >> 20;
+    Map_CopyCellAttributes(63, 25, 1, 3, column, 9);
 }
 
 void SceneState_ApplyValue768(void)
@@ -1028,16 +763,16 @@ void FieldScene_RunScene3ba_02000974(s32 a0)
 
 void SceneActor_MarkObjectAtTiles94To95(void)
 {
-    Obj_02000a10 *o;
+    struct FieldActor *o;
     s32 x;
     s32 y;
 
     o = Func_020046cc_a();
     if (o != 0) {
-        x = o->f08 >> 19;
-        y = o->f10 >> 19;
+        x = o->x.fixed >> 19;
+        y = o->z.fixed >> 19;
         if (x >= 94 && x <= 95 && y > 23 && y <= 26) {
-            o->f22 = 1;
+            o->unknown_22 = 1;
         }
     }
 }
@@ -1223,7 +958,7 @@ void Func_020016ec(s32 scene)
 
     s32 path;
 
-    if (SceneTransition_Phase == 2) {
+    if (gGameState.entrance == 2) {
         Func_0200325e();
         return;
     }
@@ -1235,11 +970,11 @@ void Func_020016ec(s32 scene)
         Camera_MoveTo(71303168, -1, 11010048, 1);
         Camera_WaitForMove();
         Event_ShowMessage(scene, 0);
-        Value3_020016ec(SceneState_StoreParamsAndInitTable, 120, 72, 0);
+        Value3(SceneState_StoreParamsAndInitTable, 120, 72, 0);
         Event_ShowMessage(scene, 0);
         SceneState_ReleaseTableAndResetC6a6();
         Event_Wait(15);
-        Value3_020016ec(Func_02004080, 0, 984, 200);
+        Value3(Func_02004080, 0, 984, 200);
         Actor_FaceDirection(ACTOR_PARTY_LEADER, 0, 10);
         Event_ShowMessage(scene, 0);
         Actor_FaceDirection(ACTOR_PARTY_LEADER, 16384, 30);
@@ -1247,9 +982,9 @@ void Func_020016ec(s32 scene)
         Actor_SetSpeed(ACTOR_PARTY_LEADER, 98304, 49152);
         OverlayObject_PlaceWithScale14000(0, 1000, 192);
         OverlayObject_PlaceWithScale14000(0, 1000, 176);
-        Call3_020016ec(OverlayObject_PlaceWithScale14000, 0, 1016, 168);
+        Call3(OverlayObject_PlaceWithScale14000, 0, 1016, 168);
         Event_Wait(15);
-        Value3_020016ec(StagedActor_PlacePairAtOffsetAndRun, 18, 160, 0);
+        Value3(StagedActor_PlacePairAtOffsetAndRun, 18, 160, 0);
         Camera_MoveTo(71303168, -1, 11010048, 1);
         Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
         Event_Wait(10);
@@ -1267,7 +1002,7 @@ void Func_020016ec(s32 scene)
         Event_SetMessage(MSG_LOGS_KEY_CLEARING_STAGE);
         Event_ShowMessage(scene, 0);
     }
-    Value3_020016ec(FieldScene_RunMiddleSequence, path, scene, 4);
+    Value3(FieldScene_RunMiddleSequence, path, scene, 4);
     Event_End();
 }
 
@@ -1333,18 +1068,18 @@ void FieldScene_RunNearestActor165Scene(void)
     s32 best = 8;
     s32 bestd = 0x100000;
     s32 n = gGameState.selected_actor;
-    Obj *p = Func_02005708(n);
+    struct FieldActor *p = Func_02005708(n);
     s32 i;
     s32 *q;
     s32 base;
 
     Event_Begin();
     for (i = 8; i <= 66; i++) {
-        Obj *o = Func_02005716(i);
+        struct FieldActor *o = Func_02005716(i);
 
-        if (o != 0 && o->f54 == 1 && *o->f50->f28 == 165) {
-            s32 dx = (p->f08 - o->f08) / 65536;
-            s32 dy = (p->f10 - o->f10) / 65536;
+        if (o != 0 && o->active == 1 && *STAGED_ACTOR_PROBE_DETAILS(o)->unknown_28 == 165) {
+            s32 dx = (p->x.fixed - o->x.fixed) / 65536;
+            s32 dy = (p->z.fixed - o->z.fixed) / 65536;
 
             if (dy <= 0) {
                 s32 a = dx;
@@ -1369,9 +1104,9 @@ void FieldScene_RunNearestActor165Scene(void)
     Event_CloseScreen();
     Event_WaitForScreen();
     base = n << 4;
-    Func_02005770(base + 880, p->f08 >> 20);
+    Func_02005770(base + 880, p->x.fixed >> 20);
     {
-        s32 v = p->f10 >> 20;
+        s32 v = p->z.fixed >> 20;
 
         Func_02005780_a(base + 888, v);
     }
@@ -1510,7 +1245,7 @@ void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base)
     s32 i;
     u8 buf[8];
 
-    rec = Value1_02001e7c(Func_02005b4e, owner);
+    rec = Value1(Func_02005b4e, owner);
     p9 = rec->x.part.pixel;
     p11 = rec->z.part.pixel;
     if (mode != 3) {
@@ -1569,20 +1304,20 @@ L_main:
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
     Actor_SetSpeed(obj, 0x10000, 0x8000);
     Actor_SetSpeed(owner, 0x10000, 0x8000);
-    record = Value1_02001e7c(Func_02005c9a, 0);
+    record = Value1(Func_02005c9a, 0);
     if (record != 0) {
         Actor_SetPosition(obj, record->x.fixed, record->z.fixed);
     }
     hi = p11 + 16;
     Actor_WalkToAndWait(obj, p9, hi);
     lo = p9 + 16;
-    Value3_02001e7c(Engine_ActorWalkToAndWait, 0, lo, hi);
+    Value3(Engine_ActorWalkToAndWait, 0, lo, hi);
     ((void (*)())Engine_ActorFaceEachOther)(obj, 0, 30);
     Actor_SetAnimation(obj, 3);
     tail = hi - 32;
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
     Actor_WalkToAndWait(owner, p9, tail);
-    Value3_02001e7c(Engine_ActorWalkTo, owner, lo, tail);
+    Value3(Engine_ActorWalkTo, owner, lo, tail);
     Func_02005e2c(0, obj);
     Actor_WalkToAndWait(obj, p9, tail);
     Actor_SetAnimation(owner, 1);
@@ -1592,7 +1327,7 @@ L_main:
     Actor_WalkToAndWait(owner, p9, p11);
     Func_02005d10(obj);
     ((void (*)())Engine_GameFlagSet)(base + 512);
-    rec = Value1_02001e7c(Func_02005d52, obj);
+    rec = Value1(Func_02005d52, obj);
     sx = rec->x.fixed >> 20;
     Func_02005d1e_a((obj << 4) + 880, sx);
     sy = rec->z.fixed >> 20;
@@ -1714,14 +1449,14 @@ void FieldScene_RunLateSequence(s32 a0)
         Event_Wait(30);
         Audio_PlayCue(86);
         Func_020049aa(8);
-        Value2_02002844(SceneData_SelectBlockAndResetCounters, 3, 1);
+        Value2(SceneData_SelectBlockAndResetCounters, 3, 1);
         Event_Wait(-a0 * 60 + 60);
         kind = 0;
     } else {
         Event_Wait(30);
         Audio_PlayCue(a0 + 90);
         Func_020049d6(4);
-        Value2_02002844(SceneData_SelectBlockAndResetCounters, 3, 0);
+        Value2(SceneData_SelectBlockAndResetCounters, 3, 0);
         Event_Wait(a0 * 60 + 60);
         kind = 8;
     }
@@ -1738,13 +1473,13 @@ void FieldScene_RunLateSequence(s32 a0)
 
 void OverlayObject_ResetMotionFields(void)
 {
-    Obj_02002bac *o = Func_02006868();
+    struct FieldActor *o = Func_02006868();
 
     Func_0200677e(o);
-    o->f24 = 0;
-    o->f2c = 0;
-    o->f38 = 0x80000000;
-    o->f40 = 0x80000000;
+    o->velocity_x = 0;
+    o->velocity_z = 0;
+    o->target_x = ACTOR_NO_TARGET;
+    o->target_z = ACTOR_NO_TARGET;
 }
 
 void SceneState_InitHalfwordC6a6Once(void)
@@ -1805,35 +1540,35 @@ void SceneState_ReleaseTableAndResetC6a6(void)
 
 void SceneActor_StartMode5MoveToTile(s32 a, s32 b, s32 c)
 {
-    Obj_02002e10 *o = Func_02006be0(a);
+    struct FieldActor *o = Func_02006be0(a);
 
     if (o != 0) {
         s32 v = 0x20000;
         s32 z = 0;
 
-        o->f30 = v;
-        o->f34 = v >> 1;
-        o->f5b = z;
+        o->speed = v;
+        o->acceleration = v >> 1;
+        o->unknown_5b = z;
         Func_020069fc(o);
         Object_SetAnimation(o, 5);
-        Func_02006a20(o, b << 16, o->f0c, c << 16);
+        Func_02006a20(o, b << 16, o->y.fixed, c << 16);
     }
 }
 
 void OverlayObject_PlaceWithScale14000(s32 a, s32 b, s32 c)
 {
-    Obj_02002e50 *o = Func_02006c20(a);
+    struct FieldActor *o = Func_02006c20(a);
 
     if (o != 0) {
         s32 v = 0x14000;
         s32 z = 0;
 
-        o->f30 = v;
-        o->f34 = v >> 1;
-        o->f5b = z;
+        o->speed = v;
+        o->acceleration = v >> 1;
+        o->unknown_5b = z;
         Func_02006a3c(o);
         Object_SetAnimation(o, 5);
-        Func_02006a60(o, b << 16, o->f0c, c << 16);
+        Func_02006a60(o, b << 16, o->y.fixed, c << 16);
         Func_02006a6e(o);
         Object_SetAnimation(o, 1);
     }
@@ -1880,23 +1615,23 @@ void SceneState_WaitUntilWord1000IsNine(void)
     }
 }
 
-void SceneEffect_SpawnKind285AtRandomChance(Obj_02002fc4 *a)
+void SceneEffect_SpawnKind285AtRandomChance(struct FieldActor *a)
 {
     s32 t[3];
     u32 n;
 
-    if (a->f28 >= -255 && a->f28 <= 255) {
-        a->f55 = 0;
+    if (a->velocity_y >= -255 && a->velocity_y <= 255) {
+        a->motion_flags = 0;
     }
     n = Random_Next();
     if (n * 100 >> 16 <= 9) {
-        Obj_02002fc4 *o;
+        struct FieldActor *o;
         s32 u;
         s32 w;
 
-        t[0] = a->f08;
-        t[1] = a->f0c;
-        t[2] = a->f10;
+        t[0] = a->x.fixed;
+        t[1] = a->y.fixed;
+        t[2] = a->z.fixed;
         u = Random_Next();
         w = Random_Next();
         Func_02006b3e(u << 4, w, t);
@@ -1908,7 +1643,7 @@ void SceneEffect_SpawnKind285AtRandomChance(Obj_02002fc4 *a)
             o = Func_02006bd2(285, x, y, z);
         }
         if (o != 0) {
-            o->f55 = 0;
+            o->motion_flags = 0;
             Actor_SetSpriteFlags(o, 0);
             Object_SetScript(o, (s32)Data_0200bfe4);
             Object_SetAnimation(o, 1);
@@ -1917,15 +1652,15 @@ void SceneEffect_SpawnKind285AtRandomChance(Obj_02002fc4 *a)
     }
 }
 
-s32 SceneActor_PlaceLinkedActorAbove(Obj_02003058 *a)
+s32 SceneActor_PlaceLinkedActorAbove(struct FieldActor *a)
 {
-    Obj_02003058 *o = Func_02006d24(a->f64);
+    struct FieldActor *o = Func_02006d24((s16)a->unknown_64);
 
-    Func_02006c56(o, a->f08, a->f0c + 0x240000, a->f10);
-    o->f55 = 0;
+    Func_02006c56(o, a->x.fixed, a->y.fixed + 0x240000, a->z.fixed);
+    o->motion_flags = 0;
     Object_SetScript(o, (s32)Data_0200c008);
     Audio_PlayCue(83);
-    a->f64 = 0;
+    a->unknown_64 = 0;
     return 0;
 }
 
@@ -2106,9 +1841,9 @@ void StagedActor_PushActorAhead(void)
 {
     extern s16 Data_02000240[];
 
-    SceneRecord *subject;
-    SceneRecord *target;
-    SceneRecord *blocker;
+    struct FieldActor *subject;
+    struct FieldActor *target;
+    struct FieldActor *blocker;
     u32 step;
     u32 dir;
     Position3 pos;
@@ -2122,10 +1857,10 @@ void StagedActor_PushActorAhead(void)
     dir = subject->facing >> 12;
 
     step = Data_0200c154[dir];
-    pos.x = subject->x + (s32)(step & 0xffff0000);
-    pos.y = subject->y;
+    pos.x = subject->x.fixed + (s32)(step & 0xffff0000);
+    pos.y = subject->y.fixed;
     step <<= 16;
-    pos.z = subject->z + (s32)step;
+    pos.z = subject->z.fixed + (s32)step;
 
     target = Func_020071f6(&pos, subject);
     if (target == 0) {
@@ -2134,34 +1869,34 @@ void StagedActor_PushActorAhead(void)
 
     /* Is the cell one step beyond the target already taken? */
     step = Data_0200c154[dir];
-    pos.x = target->x + (s32)(step & 0xffff0000);
-    pos.y = target->y;
+    pos.x = target->x.fixed + (s32)(step & 0xffff0000);
+    pos.y = target->y.fixed;
     step <<= 16;
-    pos.z = target->z + (s32)step;
+    pos.z = target->z.fixed + (s32)step;
 
     blocker = Func_02007220(&pos, target);
-    if (blocker != 0 && (blocker->flags & 1) != 0) {
+    if (blocker != 0 && (blocker->collision_flags & 1) != 0) {
         return;
     }
 
     /* ...and the cell directly above the target? */
-    pos.x = target->x;
-    pos.y = target->y + 0x100000;      /* 128 << 13 */
-    pos.z = target->z;
+    pos.x = target->x.fixed;
+    pos.y = target->y.fixed + 0x100000;      /* 128 << 13 */
+    pos.z = target->z.fixed;
 
     blocker = Func_0200724c(&pos, target);
-    if (blocker != 0 && (blocker->flags & 1) != 0) {
+    if (blocker != 0 && (blocker->collision_flags & 1) != 0) {
         return;
     }
 
-    target->state = 2;
+    target->unknown_22 = 2;
     zero = 0;
 
     step = Data_0200c154[dir];
-    pos.x = target->x + (s32)(step & 0xffff0000);
-    pos.y = target->y;
+    pos.x = target->x.fixed + (s32)(step & 0xffff0000);
+    pos.y = target->y.fixed;
     step <<= 16;
-    pos.z = target->z + (s32)step;
+    pos.z = target->z.fixed + (s32)step;
 
     if (Func_020075e6(target, &pos) > 0) {
         return;
@@ -2170,23 +1905,23 @@ void StagedActor_PushActorAhead(void)
     Object_SetAnimation(subject, 8);
     Task_Wait(15);
 
-    target->rate_x = 0x3333;
-    target->rate_z = 0x3333;
+    target->speed = 0x3333;
+    target->acceleration = 0x3333;
     Func_020075da(target, pos.x, pos.y, pos.z);
 
     /* The same destination block, moved onto the subject this time. */
-    subject->rate_x = 0x3333;
-    subject->rate_z = 0x3333;
+    subject->speed = 0x3333;
+    subject->acceleration = 0x3333;
     Func_020075ea(subject, pos.x, pos.y, pos.z);
 
     Audio_PlayCue(0xee);
     Func_020075fe(target);
     Audio_PlayCue(0x120);                                /* 144 << 1 */
 
-    target->x = pos.x;
-    target->z = pos.z;
-    target->motion_24 = zero;
-    target->motion_2c = zero;
+    target->x.fixed = pos.x;
+    target->z.fixed = pos.z;
+    target->velocity_x = zero;
+    target->velocity_z = zero;
 
     Object_SetAnimation(subject, 1);
 }

@@ -150,7 +150,6 @@ void Func_0200026a();
 void Func_02000f66();
 void Func_02000f7e();
 u8 *Func_02000fb8();
-s32 Func_0200132a();
 void Func_0200138a();
 void Func_02001396();
 void Func_020013ea();
@@ -158,8 +157,6 @@ void Func_02001402();
 void Func_02001412();
 void Func_02001432();
 void Func_02001452();
-void Func_020015f4();
-void Func_02001618();
 void Func_02001642();
 s32 Func_0200164e();
 void Func_0200167e();
@@ -168,10 +165,8 @@ void Func_020016a4();
 void Func_020016ae();
 void Func_020016bc();
 void Func_020016be();
-void Func_020016da();
 void Func_020016fa();
 void Func_02001740();
-void Func_02001748();
 void Func_02000f92();
 void Func_020010d8(s32, s32, s32);
 void Func_02000fbe();
@@ -180,24 +175,15 @@ void Func_020010b2(s32);
 void Func_020010cc(s32, s32);
 void Func_020010ce(s32);
 void Func_020010e8(s32, s32);
-void Func_0200106a();
-s32 Func_02001070();
 struct SceneActor *Func_0200107a();
-s32 Func_0200108c();
 void Func_0200109a();
-s32 Func_020010a0();
-s32 Func_020010ae();
 void Func_0200110e();
 void Func_0200113c();
-void Func_0200114a();
-s32 Func_02001150();
 struct SceneActor *Func_0200115a();
 s32 SceneDialogue_ShowMessage();
 s32 SceneFlag_Test();
 void Func_0200116e();
 void Func_0200117a();
-s32 Func_02001180();
-s32 Func_0200118e();
 void Func_020011a0();
 void Func_020011ee();
 void Func_0200121c();
@@ -214,19 +200,14 @@ void Func_02001268(void);
 void Func_02001306(s32);
 s32 Func_0200132e(s32, s32);
 void Func_02001282(void);
-void Func_02001288();
 void Func_020012c2();
 void Func_02001326();
 void Func_0200134a();
-void Func_0200135a();
 void Func_0200135e();
-void Func_0200136e();
-void Func_020012c8();
 void Func_020012f6();
 void Func_0200134c();
 void Func_0200137a();
 void Func_02001392();
-void Func_02001394();
 void Func_020012fc(void);
 void Func_0200139a(s32);
 void Func_020013b2(s32, s32);
@@ -246,18 +227,14 @@ void Func_020014fe(s32);
 void Func_0200150a(void);
 void Func_02001516(void);
 void Func_0200143a(void);
-struct FieldActor *Func_02001470();
 void Func_020009e8();
 void Func_0200145c();
 s32 Func_020014ce();
-s32 Func_020014f0();
 s32 Func_020014f6();
 void Func_020014f8();
 s32 Func_02001506();
-s32 Func_02001518();
 s32 Func_02001520();
 void Func_0200155a();
-s32 Func_02001586();
 void Func_02001588();
 void Func_0200159a();
 void Func_020015a8();
@@ -268,7 +245,6 @@ void Func_020015e0();
 void Func_020015ee();
 void Func_02001608();
 void Func_02001624();
-void Func_0200167c();
 void Func_0200178e(s32);
 void Func_020016c2(void);
 void Func_020017aa(s32);
@@ -698,20 +674,20 @@ void FieldScene_RunSupplementalSequenceTwo(void)
     work = Data_03001ebc;
     actor = Func_0200107a(16);
     facing = actor->facing;
-    Func_0200106a();
+    Engine_EventBegin();
     actor->proximity_flags |= 2;
     if (work->psynergy_request == 0) {
-        if (Func_02001070(0x950) != 0) {
+        if (Engine_GameFlagIsSet(0x950) != 0) {
             msg = (s32)Data_00002365;
-        } else if (Func_0200108c(0x962) != 0) {
+        } else if (Engine_GameFlagIsSet(0x962) != 0) {
             msg = (s32)Data_000021e2;
         } else {
             msg = (s32)Data_00001f95;
         }
     } else {
-        if (Func_020010a0(0x950) != 0) {
+        if (Engine_GameFlagIsSet(0x950) != 0) {
             msg = (s32)Data_00002371;
-        } else if (Func_020010ae(0x962) != 0) {
+        } else if (Engine_GameFlagIsSet(0x962) != 0) {
             msg = (s32)Data_000021f5;
         } else {
             msg = (s32)Data_00001faa;
@@ -739,10 +715,10 @@ void Func_020003d0(void)
     work = Data_03001ebc;
     actor = Func_0200115a(17);
     facing = actor->facing;
-    Func_0200114a();
+    Engine_EventBegin();
     actor->proximity_flags |= 2;
     if (work->psynergy_request == 0) {
-        if (Func_02001150(0x950) != 0) {
+        if (Engine_GameFlagIsSet(0x950) != 0) {
             msg = (s32)Data_00002366;
         } else if (SceneFlag_Test(0x962) != 0) {
             msg = (s32)Data_000021e3;
@@ -750,9 +726,9 @@ void Func_020003d0(void)
             msg = (s32)Data_00001f96;
         }
     } else {
-        if (Func_02001180(0x950) != 0) {
+        if (Engine_GameFlagIsSet(0x950) != 0) {
             msg = (s32)Data_00002372;
-        } else if (Func_0200118e(0x962) != 0) {
+        } else if (Engine_GameFlagIsSet(0x962) != 0) {
             msg = (s32)Data_000021f6;
         } else {
             msg = (s32)Data_00001fab;
@@ -800,11 +776,11 @@ void FieldScene_RunScene3b5_02000528(void)
     u32 i;
     s32 record;
 
-    Func_02001288();
+    Engine_EventBegin();
     Func_02001326((s32)Data_00001fa0);
-    Call3(Func_0200135a, 25, 0xc000, 0);
+    Call3(Engine_ActorFaceDirection, 25, 0xc000, 0);
     Func_0200134a(25, 0);
-    Call3(Func_0200136e, 25, 0x8000, 0);
+    Call3(Engine_ActorFaceDirection, 25, 0x8000, 0);
     Func_0200135e(25, 0);
     Func_020012c2();
 }
@@ -814,8 +790,8 @@ void FieldScene_RunScene3b5_02000568(void)
     u32 i;
     s32 record;
 
-    Func_020012c8();
-    Call3(Func_02001394, 26, 0x4000, 0);
+    Engine_EventBegin();
+    Call3(Engine_ActorFaceDirection, 26, 0x4000, 0);
     Func_0200134c(26, 2);
     Call1(Func_0200137a, 0x1fa2);
     Func_02001392(26, 0);
@@ -847,7 +823,7 @@ void FieldScene_RunScene3b5_020005dc(void)
     s32 record;
 
     Event_Begin();
-    if (Value1(Func_0200132a, 0x8bf) == 0) {
+    if (Value1(Engine_GameFlagIsSet, 0x8bf) == 0) {
         GameFlag_Set(0x8bf);
         Call1(Func_020013ea, 0x2368);
         Func_02001402(19, 0);
@@ -904,7 +880,7 @@ void SceneActor_CopyPlayerModeToActor(union FieldObject *object)
     s32 priority;
 
     if (object != NULL) {
-        priority = Func_02001470(0)->sprite->priority;
+        priority = Engine_ActorGet(0)->sprite->priority;
         object->actor.priority_flags = 0;
         object->actor.sprite->priority = priority;
         ((struct SceneSprite *)object->actor.sprite)->priority_15 = priority;
@@ -936,14 +912,14 @@ s32 Func_02000728(s32 a0)
     if (GameFlag_IsSet(0x8c1) != 0) {
         Call3(Func_0200155a, 28, 0x13c0000, 0x1480000);
     }
-    if (Value1(Func_020014f0, 0x201) != 0) {
+    if (Value1(Engine_GameFlagIsSet, 0x201) != 0) {
         Func_0200145c();
     }
     if (GameFlag_IsSet(0x200) != 0) {
         Func_020009e8();
         Func_02001588(8, 4);
     }
-    if (Value1(Func_02001518, 0x950) != 0) {
+    if (Value1(Engine_GameFlagIsSet, 0x950) != 0) {
         Call3(Func_0200159a, 20, 0x2080000, 0x2300000);
         Call3(Func_020015a8, 21, 0x2080000, 0x2300000);
         Call3(Func_020015b6, 22, 0x2080000, 0x2300000);
@@ -952,9 +928,9 @@ s32 Func_02000728(s32 a0)
         Call3(Func_020015e0, 26, 0x2080000, 0x2300000);
         Call3(Func_020015ee, 27, 0x2080000, 0x2300000);
     } else {
-        if (Value1(Func_02001586, 0x962) != 0) {
+        if (Value1(Engine_GameFlagIsSet, 0x962) != 0) {
             Call3(Func_02001608, 27, 0x1180000, 0x500000);
-            Call3(Func_0200167c, 27, 0x2000, 0);
+            Call3(Engine_ActorFaceDirection, 27, 0x2000, 0);
             Func_02001624(27, 1);
         }
     }
@@ -969,11 +945,11 @@ void FieldScene_RunScene3b5SequenceA(void)
     u32 i;
     s32 record;
 
-    Func_020015f4();
+    Engine_EventBegin();
     Call3(Func_02001642, 0, 0x130, 0x138);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
-    Call3(Func_020016da, 28, 0x4000, 0);
-    Func_02001618(20);
+    Call3(Engine_ActorFaceDirection, 28, 0x4000, 0);
+    Engine_EventWait(20);
     Call1(Func_020016be, 0xe3d);
     Event_OpenMessage(28, 0);
     if (Value2(Func_0200164e, 0, 0) == 0) {
@@ -982,7 +958,7 @@ void FieldScene_RunScene3b5SequenceA(void)
         Call3(Func_02001688, 28, 0x10000, 0x8000);
         Call3(Func_020016ae, 28, 0x140, 0x130);
         Call3(Func_020016bc, 28, 0x13c, 0x148);
-        Call3(Func_02001748, 28, 0xa000, 0);
+        Call3(Engine_ActorFaceDirection, 28, 0xa000, 0);
         Call1(Func_0200167e, 0x8c1);
     } else {
         Func_02001740(28, 0);

@@ -61896,7 +61896,7 @@
     },
     {
       "id": "common-shian-jiin-f-00518",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHIAN_JIIN/F_00518.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHIAN_JIIN/TEMPLE_WALK.C",
       "overlay": "resource_39e",
       "absolute_symbols": {
         "Engine_ActorGet": {

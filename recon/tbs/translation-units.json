@@ -62352,7 +62352,7 @@
     },
     {
       "id": "goma-iriguchi-f-00dd8",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/GOMA_IRIGUCHI/F_00DD8.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/GOMA_IRIGUCHI/SPINNING_LEAP.C",
       "overlay": "resource_387",
       "absolute_symbols": {
         "Engine_ActorGet": {
@@ -73699,7 +73699,7 @@
     },
     {
       "id": "scene-387-02000fc8",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/GOMA_IRIGUCHI/F_00FC8.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/GOMA_IRIGUCHI/GIVE_SHAMANS_ROD.C",
       "overlay": "resource_387",
       "absolute_symbols": {
         "Engine_OwnerGetState": {

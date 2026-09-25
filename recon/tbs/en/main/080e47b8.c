@@ -1,8 +1,7 @@
-/* NONMATCHING: 7808 bytes, candidate 7936, 3388 differing halfwords,
- * 2122 halfword edits (2026-09-25). Resource case bodies, duration tests,
- * early exits and the separate frame-six update follow the ROM's control
- * flow. ClearWords reloads its count at each call; particle lookup uses
- * the actual table base, and repeated-particle addresses form inside the loop.
+/* NONMATCHING: 7808 bytes, candidate 7860, 3371 differing halfwords,
+ * 1945 halfword edits (2026-09-25). Particle seeds use typed records and
+ * the common loop counter. Drawing origins are calculated before calls,
+ * following the ROM; the work block uses the existing shared declarations.
  * WALL: Remaining local lifetimes, callback loads and drawing-loop structure.
  * Pascal requested staying on this complete owner until byte exact. */
 #include "TYPES.H"
@@ -10,6 +9,7 @@
 #include "EFFECT_STEP.H"
 #include "MOTION_OBJECT.H"
 #include "BATTLE_EFX.H"
+#include "BATTLE_EFFECT_WORK.H"
 typedef BattleEffectDrawRectangle RectangleBlit;
 extern u8 Value_0000008d;
 extern u8 Value_000000a3;
@@ -64,7 +64,7 @@ void Func_080cd52c();
 void Func_080cd594();
 void Func_080cdb24();
 void Func_080cdbc0();
-void Func_080cef64(s32 alternate, u32 *output);
+void Func_080cef64(s32 alternate, RectangleBlit *output);
 void Func_080d4604();
 void Func_080d52a4();
 void Func_080d6888(s32 set_id, s32 object_value, s32 group_value, s32 state_slot, s32 state_value);
@@ -95,6 +95,10 @@ static __inline__ void ClearWords(s32 dest, u32 size)
 }
 
 extern u16 Data_080ede48[];
+extern u16 Data_080edebe[];
+extern u8 Data_080edeca[];
+extern u8 Data_080eded0[];
+extern u8 Data_080eedd0[];
 
 void Func_080e47b8(s32 a0, s32 a1)
 {
@@ -137,7 +141,7 @@ void Func_080e47b8(s32 a0, s32 a1)
     s32 v1;
     s32 kind;
     s32 command;
-    s32 work;
+    struct BattleEffectWork *work;
     s32 canvas;
     s32 frame;
     s32 matrix;
@@ -161,22 +165,22 @@ void Func_080e47b8(s32 a0, s32 a1)
     s32 slot12;
     struct MotionObject *target_actor;
     u8 *p5;
-    u8 *p4;
+    RectangleBlit p4;
     u8 *p6;
     s32 velocity[3];
     s32 spark_screen[3];
-    u32 blitters[2];
+    RectangleBlit blitters[2];
     u8 projected[12];
 
     kind = a1;
     command = a0;
     heap_cache = (void **)0x03001eec;
     heap_cursor = heap_cache;
-    work = (s32)*heap_cursor++;
+    work = (struct BattleEffectWork *)*heap_cursor++;
     canvas = (s32)*heap_cursor;
     matrix = (s32)*(void **)((u8 *)heap_cache - 0x6c);
     sprites = (s32)heap_cache[2];
-    *(s32 *)((work + 0x7828)) = command;
+    work->effect = (void *)command;
     if (kind == 11 || kind == 8 || kind == 32) {
         Func_080cdb24(0);
     } else {
@@ -186,7 +190,7 @@ void Func_080e47b8(s32 a0, s32 a1)
     LoadResource((s32)&Value_00000073, sprites, 0, 0);
     LoadResource((s32)&Value_00000096, work, 1, 0);
     LoadResource((s32)&Value_00000099, (void *)0x02010000, 1, 0);
-    PackRows((void *)0x02010000, (void *)(work + 0x5100), 40, 0x120);
+    PackRows((void *)0x02010000, (void *)((s32)work + 0x5100), 40, 0x120);
     if (kind == 5 || kind == 23) {
         LoadResource((s32)&Value_0000007d, (void *)0x02010000, 1, 0);
     } else if (kind == 12) {
@@ -261,26 +265,26 @@ void Func_080e47b8(s32 a0, s32 a1)
         LoadResource((s32)&Value_00000092, (void *)0x02013c56, 1, 1);
         break;
     }
-    *(s32 *)((work + 0x7780)) = 2;
+    work->transfer_mode = 2;
     if (kind == 12) {
-        *(s32 *)(work + 0x7784) = 75;
+        work->transfer_value = 75;
     } else {
-        *(s32 *)(work + 0x7784) = 50;
+        work->transfer_value = 50;
     }
     Scheduler_AddOrUpdateCallback(0x80cd261, 0x480);
     source_screen = (s32)source_pos;
-    EffectPosition_ApplyStepAndYOffset(*(s16 *)(*(s32 *)((work + 0x7828)) + 36), (struct EffectPosition *)source_pos);
+    EffectPosition_ApplyStepAndYOffset(((struct BattleEffectArgument *)work->effect)->actors[0], (struct EffectPosition *)source_pos);
     target_screen = (s32)target_pos;
-    EffectPosition_ApplyStepAndYOffset(*(s32 *)(*(s32 *)((work + 0x7828)) + 8), (struct EffectPosition *)target_pos);
+    EffectPosition_ApplyStepAndYOffset(((struct BattleEffectArgument *)work->effect)->actor, (struct EffectPosition *)target_pos);
     draw_pair = (s32)blitters;
-    Func_080cef64(*(s32 *)(*(s32 *)((work + 0x7828)) + 4), blitters);
-    *(s32 *)((work + 0x77b4)) = 24;
-    *(s32 *)((work + 0x77b8)) = 0;
-    target_actor = Func_080b5098(*(s32 *)(*(s32 *)((work + 0x7828)) + 8))->object;
+    Func_080cef64(((struct BattleEffectArgument *)work->effect)->side, blitters);
+    *(s32 *)(((s32)work + 0x77b4)) = 24;
+    *(s32 *)(((s32)work + 0x77b8)) = 0;
+    target_actor = Func_080b5098(((struct BattleEffectArgument *)work->effect)->actor)->object;
     v7 = (s32)target_actor;
     none = 0;
     p8 = none;
-    v5 = (work + 0x7080);
+    v5 = ((s32)work + 0x7080);
     v10 = none;
     do {
         record = Func_08004458();
@@ -311,16 +315,16 @@ void Func_080e47b8(s32 a0, s32 a1)
     target_actor->velocity_z = 0;
     target_actor->acceleration = 0;
     target_actor->vertical_motion_strength = 0;
-    EffectPosition_ApplyStepAndYOffset(*(s32 *)(*(s32 *)((work + 0x7828)) + 8), (struct EffectPosition *)target_screen);
+    EffectPosition_ApplyStepAndYOffset(((struct BattleEffectArgument *)work->effect)->actor, (struct EffectPosition *)target_screen);
     *(s32 *)(target_screen) = (((s32)(*(s32 *)(target_screen)) / 2));
     Func_080f9010(212);
     frame = 0;
     p8b = spark_screen;
-    L_080e4c64:;
+    do {
     none = 0;
     p10 = none;
     v5 = p10;
-    v6 = (work + 0x7080);
+    v6 = ((s32)work + 0x7080);
     v9 = none;
     v10 = p10;
     do {
@@ -353,8 +357,8 @@ void Func_080e47b8(s32 a0, s32 a1)
                     v3 = 60;
                 }
                 *(s32 *)(v5 + 8) = (v3 + 60);
-                p4 = (u8 *)blitters[1];
-                ((RectangleBlit)p4)(canvas, sprites + Data_080ede48[4], spark_screen[0] - 2, spark_screen[1] - 5, 5, 10);
+                p4 = blitters[1];
+                p4(canvas, sprites + Data_080ede48[4], spark_screen[0] - 2, spark_screen[1] - 5, 5, 10);
                 *(s32 *)(v6) = (*(s32 *)(v6) - 4);
             }
             v9 = (v9 + 1);
@@ -370,19 +374,17 @@ void Func_080e47b8(s32 a0, s32 a1)
             EffectPosition_ApplyBaseAndYOffset((s32 *)moving_pos, (struct EffectPosition *)p8b);
             v2 = (((s32)(*(s32 *)p8b) / 2));
             *(s32 *)p8b = (((s32)(*(s32 *)p8b) / 2));
-            p4 = (u8 *)blitters[0];
-            ((RectangleBlit)blitters[0])(canvas, 0x2013c56, (v2 - 10), (*(s32 *)(p8b + 4) - 4), 20, 40);
+            p4 = blitters[0];
+            blitters[0](canvas, 0x2013c56, (v2 - 10), (*(s32 *)(p8b + 4) - 4), 20, 40);
         }
     }
-    *(s32 *)((work + 0x7824)) = 1;
+    work->transfer_pending = 1;
     Func_080030f8(1);
     frame = (frame + 1);
-    if (frame != 32) {
-        goto L_080e4c64;
-    }
+    } while (frame != 32);
     if (kind == 11) {
         *(volatile u16 *)0x04000020 = 0x100;
-        if (*(s32 *)(*(s32 *)((work + 0x7828)) + 4) == 0) {
+        if (((struct BattleEffectArgument *)work->effect)->side == 0) {
             v3 = (frame - *(s32 *)(source_screen));
             goto L_080e4e54;
         }
@@ -390,7 +392,7 @@ void Func_080e47b8(s32 a0, s32 a1)
     } else {
         if (kind == 32) {
             *(volatile u16 *)0x04000020 = 0x100;
-            if (*(s32 *)(*(s32 *)((work + 0x7828)) + 4) == 0) {
+            if (((struct BattleEffectArgument *)work->effect)->side == 0) {
                 scroll_pos = -0x800000;
                 scroll_speed = 0xc0000;
             } else {
@@ -405,9 +407,9 @@ void Func_080e47b8(s32 a0, s32 a1)
     if (kind == 8) {
         *(volatile u16 *)0x04000020 = 0x100;
         *(volatile s32 *)0x04000028 = ((64 - *(s32 *)(source_screen)) << 8);
-        *(s32 *)((work + 0x7780)) = 1;
+        work->transfer_mode = 1;
         v6 = 0;
-        *(s32 *)((work + 0x7784)) = 0;
+        work->transfer_value = 0;
         ClearWords(0x6004000, 0x4000);
         ClearWords(canvas, 0x4000);
         {
@@ -418,7 +420,7 @@ void Func_080e47b8(s32 a0, s32 a1)
     }
     if (kind == 31) {
         *(volatile u16 *)0x04000020 = 0x100;
-        if (*(s32 *)(*(s32 *)((work + 0x7828)) + 4) == 0) {
+        if (((struct BattleEffectArgument *)work->effect)->side == 0) {
             v3 = 32;
         } else {
             v3 = 96;
@@ -428,7 +430,7 @@ void Func_080e47b8(s32 a0, s32 a1)
     if (kind == 15 || kind == 17 || kind == 24 || kind == 26) {
         ClearWords(0x6004000, 0x4000);
         ClearWords(canvas, 0x4000);
-        *(s32 *)(*(s32 *)((work + 0x7828)) + 28) = 0;
+        ((struct BattleEffectArgument *)work->effect)->unknown_001c = 0;
         Scheduler_RemoveCallback(0x80cd4b5);
         Scheduler_RemoveCallback(0x80cd261);
         Func_08002dd8(47);
@@ -455,7 +457,7 @@ void Func_080e47b8(s32 a0, s32 a1)
     if (kind == 35) {
         ClearWords(0x6004000, 0x4000);
         ClearWords(canvas, 0x4000);
-        *(s32 *)(*(s32 *)((work + 0x7828)) + 28) = 0;
+        ((struct BattleEffectArgument *)work->effect)->unknown_001c = 0;
         Scheduler_RemoveCallback(0x80cd4b5);
         Scheduler_RemoveCallback(0x80cd261);
         Func_08002dd8(47);
@@ -464,7 +466,7 @@ void Func_080e47b8(s32 a0, s32 a1)
         Func_080d4604(command, 2);
         return;
     }
-    source_actor = Func_080b5098(*(s16 *)(*(s32 *)((work + 0x7828)) + 36))->object;
+    source_actor = Func_080b5098(((struct BattleEffectArgument *)work->effect)->actors[0])->object;
     motion = (s32)velocity;
     record = Func_080022ec((source_actor->x - *(s32 *)(position)), 6);
     *(s32 *)(motion) = record;
@@ -473,7 +475,7 @@ void Func_080e47b8(s32 a0, s32 a1)
     record = Func_080022ec((source_actor->z - *(s32 *)(position + 8)), 6);
     *(s32 *)(motion + 8) = record;
     none = 0;
-    v3 = (work + 0x7098);
+    v3 = ((s32)work + 0x7098);
     v10 = none;
     do {
         v10 = (v10 + 1);
@@ -484,34 +486,23 @@ void Func_080e47b8(s32 a0, s32 a1)
         v10 = p5c;
     } while (v5 != 64);
     if (kind != 14) {
-        value = Func_080b5070(*(s16 *)(*(s32 *)((work + 0x7828)) + 36));
-        v7 = (((s32)(value) / 2));
-        none = 0;
-        v6 = 255;
-        v5 = (work + 0x7080);
-        v10 = none;
-        do {
-            *(s32 *)(v5 + 4) = (((s32)(value) / 2));
-            *(s32 *)(v5) = source_actor->x;
-            *(s32 *)(v5 + 8) = source_actor->z;
+        struct EffectStep *step = (struct EffectStep *)((s32)work + 0x7080);
+        s32 height = (s32)Func_080b5070(((struct BattleEffectArgument *)work->effect)->actors[0]) / 2;
+
+        for (v10 = 0; v10 != 32; v10++, step++) {
+            step->y = height;
+            step->x = source_actor->x;
+            step->z = source_actor->z;
             if (kind == 31) {
-                record = Func_08004458();
-                *(s32 *)(v5 + 12) = (((record & 255) - 127) << 12);
-                record = Func_08004458();
-                v0 = (((record & 255) - 64) << 10);
+                step->velocity_x = ((s32)(Func_08004458() & 255) - 127) << 12;
+                step->velocity_y = ((s32)(Func_08004458() & 255) - 64) << 10;
             } else {
-                record = Func_08004458();
-                *(s32 *)(v5 + 12) = (((record & 255) - 127) << 12);
-                record = Func_08004458();
-                v0 = (((record & 255) - 64) << 12);
+                step->velocity_x = ((s32)(Func_08004458() & 255) - 127) << 12;
+                step->velocity_y = ((s32)(Func_08004458() & 255) - 64) << 12;
             }
-            *(s32 *)(v5 + 16) = v0;
-            record = Func_08004458();
-            *(s32 *)(v5 + 20) = (((record & 255) - 127) << 12);
-            *(s32 *)(v5 + 24) = ((((s32)(v10) / 2)) + 32);
-            v10 = (v10 + 1);
-            v5 = (v5 + 28);
-        } while (v10 != 32);
+            step->velocity_z = ((s32)(Func_08004458() & 255) - 127) << 12;
+            step->variant = v10 / 2 + 32;
+        }
     }
     if (kind == 11) {
         LoadResource((s32)&Value_000000ab, work, 1, 1);
@@ -614,17 +605,14 @@ void Func_080e47b8(s32 a0, s32 a1)
     }
 
     frame = 0;
-    if (duration == 0) {
-        goto L_080e657c;
-    }
-    L_080e52f8:;
+    while (frame != duration) {
     if (kind != 11) {
         if (kind != 32) {
             none = 0;
             v7 = 0x40000;
             v5 = (frame << 12);
             v10 = none;
-            v6 = work + 0x6980;
+            v6 = (s32)work + 0x6980;
             do {
                 value = Func_08002322(v5);
                 v10 = (v10 + 1);
@@ -635,7 +623,7 @@ void Func_080e47b8(s32 a0, s32 a1)
         }
     }
     if (frame <= 2) {
-        EffectPosition_ApplyStepAndYOffset(*(s32 *)(*(s32 *)((work + 0x7828)) + 8), (struct EffectPosition *)target_screen);
+        EffectPosition_ApplyStepAndYOffset(((struct BattleEffectArgument *)work->effect)->actor, (struct EffectPosition *)target_screen);
         *(s32 *)(target_screen) = (((s32)(*(s32 *)(target_screen)) / 2));
         *(s32 *)(target_screen + 4) += 16;
         v5 = 0x7828;
@@ -648,12 +636,12 @@ void Func_080e47b8(s32 a0, s32 a1)
                 }
                 if (kind != 34) {
                     if (frame <= 11) {
-                        if (*(s32 *)(*(s32 *)((work + 0x7828)) + 4) == 0) {
-                            ((RectangleBlit)blitters[0])(canvas, (work + ((((((((s32)(frame) / 2)) << 3) - (((s32)(frame) / 2))) << 2) - (((s32)(frame) / 2))) << 7)), (*(s32 *)(target_screen) - 32), (*(s32 *)(target_screen + 4) - 40), 48, 72);
+                        if (((struct BattleEffectArgument *)work->effect)->side == 0) {
+                            blitters[0](canvas, ((s32)work + ((((((((s32)(frame) / 2)) << 3) - (((s32)(frame) / 2))) << 2) - (((s32)(frame) / 2))) << 7)), (*(s32 *)(target_screen) - 32), (*(s32 *)(target_screen + 4) - 40), 48, 72);
                         } else {
-                            ((RectangleBlit)blitters[0])(canvas, (work + ((((((((s32)(frame) / 2)) << 3) - (((s32)(frame) / 2))) << 2) - (((s32)(frame) / 2))) << 7)), *(s32 *)(target_screen), (*(s32 *)(target_screen + 4) - 40), 48, 72);
+                            blitters[0](canvas, ((s32)work + ((((((((s32)(frame) / 2)) << 3) - (((s32)(frame) / 2))) << 2) - (((s32)(frame) / 2))) << 7)), *(s32 *)(target_screen), (*(s32 *)(target_screen + 4) - 40), 48, 72);
                         }
-                        p4 = (u8 *)blitters[0];
+                        p4 = blitters[0];
                     }
                 }
             }
@@ -713,18 +701,17 @@ void Func_080e47b8(s32 a0, s32 a1)
         if (kind != 8) {
             if (kind != 32) {
                 if ((u32)(frame - 4) <= 11) {
-                    p4 = *(s32 *)(draw_pair + 4);
-                    ((RectangleBlit)p4)(canvas, ((work + ((((((s32)(frame - 4) / 2)) << 4) - (((s32)(frame - 4) / 2))) << 6)) + 0x5100), ((((s32)(*(s32 *)(source_screen)) / 2)) - 8), (*(s32 *)(target_screen + 4) - 24), 20, 48);
+                    p4 = (RectangleBlit)(*(s32 *)(draw_pair + 4));
+                    p4(canvas, (((s32)work + ((((((s32)(frame - 4) / 2)) << 4) - (((s32)(frame - 4) / 2))) << 6)) + 0x5100), ((((s32)(*(s32 *)(source_screen)) / 2)) - 8), (*(s32 *)(target_screen + 4) - 24), 20, 48);
                 }
                 Func_080049ac();
                 Func_080051d8(matrix, (matrix + 12));
                 if (frame > 3) {
                     s32 *screen = (s32 *)projected;
-                    s32 n;
 
-                    for (n = 0; n != 128; n++) {
-                        s32 index = n / 2;
-                        struct EffectStep *step = (struct EffectStep *)(work + index * 28 + 0x7080);
+                    for (v10 = 0; v10 != 128; v10++) {
+                        s32 index = v10 / 2;
+                        struct EffectStep *step = (struct EffectStep *)((s32)work + index * 28 + 0x7080);
                         s32 life = step->variant;
 
                         if (life > 0) {
@@ -733,7 +720,7 @@ void Func_080e47b8(s32 a0, s32 a1)
                             EffectPosition_ApplyBaseAndYOffset((s32 *)step, (struct EffectPosition *)screen);
                             size = (life >> 4) + 1;
                             screen[0] /= 2;
-                            ((RectangleBlit)blitters[index & 1])(canvas,
+                            blitters[index & 1](canvas,
                                 sprites + Data_080ede48[size - 1],
                                 screen[0] - size / 2, screen[1] - size,
                                 size, size * 2);
@@ -747,10 +734,10 @@ void Func_080e47b8(s32 a0, s32 a1)
     }
     if (kind == 7 || kind == 13 || kind == 18 || kind == 19) {
         if (frame == 50) {
-            Func_080d6888(*(s32 *)(*(s32 *)((work + 0x7828)) + 8), 7, -1, -1, 0);
+            Func_080d6888(((struct BattleEffectArgument *)work->effect)->actor, 7, -1, -1, 0);
         }
         if (frame == 79) {
-            Func_080d6888(*(s32 *)(*(s32 *)((work + 0x7828)) + 8), 0, -1, -1, 0);
+            Func_080d6888(((struct BattleEffectArgument *)work->effect)->actor, 0, -1, -1, 0);
         }
         if (frame == 12) {
             base5_2014000 = 0x2014000;
@@ -780,22 +767,21 @@ void Func_080e47b8(s32 a0, s32 a1)
             s32 *screen = (s32 *)projected;
             struct MotionObject *target;
             s32 height;
-            s32 n;
 
-            target = Func_080b5098(*(s32 *)(*(s32 *)(work + 0x7828) + 8))->object;
-            height = (s32)Func_080b5070(*(s32 *)(*(s32 *)(work + 0x7828) + 8)) / 2;
-            for (n = 0; n != 32; n++, step++) {
+            target = Func_080b5098(((struct BattleEffectArgument *)work->effect)->actor)->object;
+            height = (s32)Func_080b5070(((struct BattleEffectArgument *)work->effect)->actor) / 2;
+            for (v10 = 0; v10 != 32; v10++, step++) {
                 if (step->variant >= 0) {
-                    s32 size = (n & 1) + 6;
+                    s32 size = (v10 & 1) + 6;
 
                     EffectPosition_ApplyBaseAndYOffset((s32 *)step, (struct EffectPosition *)screen);
                     screen[0] >>= 1;
-                    ((RectangleBlit)blitters[0])(canvas,
+                    blitters[0](canvas,
                         sprites + Data_080ede48[size - 1],
                         screen[0] - (u32)size / 2, screen[1] - size,
                         size, size * 2);
                     EffectStep_AdvanceWithGravity3D(step, 62, 0);
-                    if (frame > n + 22) {
+                    if (frame > v10 + 22) {
                         s32 dx = (target->x - step->x) >> 8;
                         s32 dy = (target->y + height - step->y) >> 8;
                         s32 dz = (target->z - step->z) >> 8;
@@ -826,7 +812,7 @@ void Func_080e47b8(s32 a0, s32 a1)
             v5 = frame;
             v10 = none;
             do {
-                ((RectangleBlit)blitters[0])(canvas, ((((((((((s32)(v5) / 2)) & 3) << 1) + ((((s32)(v5) / 2)) & 3)) << 4) - ((((((s32)(v5) / 2)) & 3) << 1) + ((((s32)(v5) / 2)) & 3))) << 6) + 0x2010c56), ((((s32)(*(s32 *)(source_screen)) / 2)) - 8), 0, 24, 104);
+                blitters[0](canvas, ((((((((((s32)(v5) / 2)) & 3) << 1) + ((((s32)(v5) / 2)) & 3)) << 4) - ((((((s32)(v5) / 2)) & 3) << 1) + ((((s32)(v5) / 2)) & 3))) << 6) + 0x2010c56), ((((s32)(*(s32 *)(source_screen)) / 2)) - 8), 0, 24, 104);
                 v10 = (v10 + 1);
                 v5 = (v5 + 3);
             } while (v10 != 2);
@@ -834,25 +820,28 @@ void Func_080e47b8(s32 a0, s32 a1)
         if ((u32)(frame - 8) > 15) {
             goto L_080e640e;
         }
-        none = 0;
-        v10 = none;
-        do {
-            p8e = v10;
-            p8 = ((s32)p8e & 3);
-            rec7 = Func_08004458();
-            rec8 = Func_08002322((rec7 & 0xffff));
-            v6 = ((((rec8 << 3) >> 16) + (((s32)(*(s32 *)(source_screen)) / 2))) - (s32)((u32)*(u8 *)(0x080edeca + (s32)p8) >> 1));
-            rec7 = Func_0800231c((rec7 & 0xffff));
+        for (v10 = 0; v10 != 3; v10++) {
+            s32 image = v10 & 3;
+            s32 angle = Func_08004458() & 0xffff;
+            s32 image_x;
+            s32 image_y;
+            s32 value;
+
+            value = Func_08002322(angle);
+            image_x = ((value << 3) >> 16) + *(s32 *)source_screen / 2 -
+                Data_080edeca[image] / 2;
+            value = Func_0800231c(angle);
+            image_y = ((value << 5) >> 16) - Data_080eded0[image] / 2;
             Func_08002dd8(47);
             Func_08002dd8(46);
-            record = Func_08004458();
-            BattleEffect_LoadWork(47, 7, 7, (3 | *(u8 *)(0x080eedd0 + (record & 3))), 2);
-            p4 = *(s32 *)0x03001f0c;
-            ((RectangleBlit)p4)(canvas, (*(u16 *)(0x080edebe + (s32)((s32)p8 << 1)) + 0x2010000), ((((rec8 << 3) >> 16) + (((s32)(*(s32 *)(source_screen)) / 2))) - (s32)((u32)*(u8 *)(0x080edeca + (s32)p8) >> 1)), ((((rec7 << 5) >> 16) - (s32)((u32)*(u8 *)(0x080eded0 + (s32)p8) >> 1)) + 56), *(u8 *)(0x080edeca + (s32)p8), *(u8 *)(0x080eded0 + (s32)p8));
+            value = Func_08004458();
+            BattleEffect_LoadWork(47, 7, 7, Data_080eedd0[value & 3] | 3, 2);
+            ((RectangleBlit)*(s32 *)0x03001f0c)(canvas,
+                0x02010000 + Data_080edebe[image], image_x, image_y + 56,
+                Data_080edeca[image], Data_080eded0[image]);
             Func_08002dd8(47);
-            Func_080cef64(*(s32 *)(*(s32 *)((work + 0x7828)) + 4), blitters);
-            v10 = (p8e + 1);
-        } while (v10 != 3);
+            Func_080cef64(((struct BattleEffectArgument *)work->effect)->side, blitters);
+        }
         goto L_080e640e;
     }
     if (kind != 14) {
@@ -879,26 +868,25 @@ void Func_080e47b8(s32 a0, s32 a1)
         BattleEffect_LoadWork(47, 7, 7, 3, 2);
         p9 = (v11 + v7);
         p10b = (slot12 - 8);
-        p4 = *(s32 *)0x03001f0c;
-        ((RectangleBlit)p4)(canvas, 0x2010000, p10b, (p9 - 104), 17, 104);
-        p4 = *(s32 *)0x03001f0c;
-        ((RectangleBlit)p4)(canvas, 0x2010000, p10b, p9, 17, (104 - v7));
+        p4 = (RectangleBlit)(*(s32 *)0x03001f0c);
+        p4(canvas, 0x2010000, p10b, (p9 - 104), 17, 104);
+        p4 = (RectangleBlit)(*(s32 *)0x03001f0c);
+        p4(canvas, 0x2010000, p10b, p9, 17, (104 - v7));
         base5_3001f0c = 0x3001f0c;
-        p4 = *(s32 *)base5_3001f0c;
-        ((RectangleBlit)p4)(canvas, 0x20106e8, (slot12 - 17), (v11 + 47), 34, 65);
+        p4 = (RectangleBlit)(*(s32 *)base5_3001f0c);
+        p4(canvas, 0x20106e8, (slot12 - 17), (v11 + 47), 34, 65);
         Func_08002dd8(47);
         if (frame == 8) {
-            *(s32 *)((work + 0x77a8)) = frame;
+            *(s32 *)(((s32)work + 0x77a8)) = frame;
         }
         if (frame <= 1) {
             goto L_080e5ab6;
         }
         {
-            struct EffectStep *step = (struct EffectStep *)(work + 0x7080);
+            struct EffectStep *step = (struct EffectStep *)((s32)work + 0x7080);
             s32 emitted = 0;
-            s32 n;
 
-            for (n = 0; n != 64; n++, step++) {
+            for (v10 = 0; v10 != 64; v10++, step++) {
                 if (step->variant == 0) {
                     step->x = source_actor->x;
                     step->y = 0x140000;
@@ -907,7 +895,7 @@ void Func_080e47b8(s32 a0, s32 a1)
                     step->velocity_y = ((Func_08004458() & 255) - 64) << 10;
                     step->velocity_z = ((Func_08004458() & 255) - 127) << 12;
                     emitted++;
-                    step->variant = n / 2 + 32;
+                    step->variant = v10 / 2 + 32;
                     if (emitted == 4)
                         break;
                 }
@@ -922,16 +910,16 @@ void Func_080e47b8(s32 a0, s32 a1)
             p5 = *(s32 *)(source_screen);
             BattleEffect_LoadWork(47, 7, 7, 3, 2);
             base6_3001e50 = 0x3001e50;
-            p4 = *(s32 *)(base6_3001e50 + 188);
-            ((RectangleBlit)p4)(canvas, 0x02010000, (((s32)(p5) / 2)) - 24, 48, 24, 48);
+            p4 = (RectangleBlit)(*(s32 *)(base6_3001e50 + 188));
+            p4(canvas, 0x02010000, (((s32)(p5) / 2)) - 24, 48, 24, 48);
             Func_08002dd8(47);
             BattleEffect_LoadWork(47, 7, 7, 7, 2);
-            p4 = *(s32 *)(base6_3001e50 + 188);
-            ((RectangleBlit)p4)(canvas, 0x2010000, (((s32)(p5) / 2)), 48, 24, 48);
+            p4 = (RectangleBlit)(*(s32 *)(base6_3001e50 + 188));
+            p4(canvas, 0x2010000, (((s32)(p5) / 2)), 48, 24, 48);
             Func_08002dd8(47);
         }
         L_080e5ab6:;
-        Func_080cef64(*(s32 *)(*(s32 *)((work + 0x7828)) + 4), blitters);
+        Func_080cef64(((struct BattleEffectArgument *)work->effect)->side, blitters);
         goto L_080e640e;
         v6 = ((u32)r2 >> 17);
     }
@@ -946,9 +934,9 @@ void Func_080e47b8(s32 a0, s32 a1)
         value = Func_080022fc((((s32)(frame) / 2)), 3);
         v6 = ((((s32)(p6) / 2)) - 20);
         p9b = (((value << 2) + value) << 9);
-        ((RectangleBlit)blitters[0])(canvas, (0x2010c56 + p9b), ((((s32)(p6) / 2)) - 20), 16, 40, 32);
-        ((RectangleBlit)blitters[0])(canvas, ((((value << 2) + value) << 8) + 0x2012a56), ((((s32)(p6) / 2)) - 20), 48, 40, 32);
-        ((RectangleBlit)blitters[0])(canvas, (p9b + 0x2011156), ((((s32)(p6) / 2)) - 20), 80, 40, 32);
+        blitters[0](canvas, (0x2010c56 + p9b), ((((s32)(p6) / 2)) - 20), 16, 40, 32);
+        blitters[0](canvas, ((((value << 2) + value) << 8) + 0x2012a56), ((((s32)(p6) / 2)) - 20), 48, 40, 32);
+        blitters[0](canvas, (p9b + 0x2011156), ((((s32)(p6) / 2)) - 20), 80, 40, 32);
         goto L_080e640e;
     }
     if (kind != 5) {
@@ -959,10 +947,9 @@ void Func_080e47b8(s32 a0, s32 a1)
     {
         struct EffectStep *step = (struct EffectStep *)0x02014000;
         s32 *screen = (s32 *)projected;
-        s32 n;
 
-        for (n = 0; n != 16; n++, step++) {
-            if (frame >= n / 2 + 4) {
+        for (v10 = 0; v10 != 16; v10++, step++) {
+            if (frame >= v10 / 2 + 4) {
                 s32 age = step->variant;
 
                 if (age <= 11) {
@@ -970,7 +957,7 @@ void Func_080e47b8(s32 a0, s32 a1)
 
                     EffectPosition_ApplyBaseAndYOffset((s32 *)step, (struct EffectPosition *)screen);
                     screen[0] /= 2;
-                    ((RectangleBlit)blitters[0])(canvas,
+                    blitters[0](canvas,
                         0x02010000 + (image << 11),
                         screen[0] - 16, screen[1] - 32, 32, 64);
                     EffectStep_AdvanceWithGravity3D(step, 60, 0x1000);
@@ -985,37 +972,40 @@ void Func_080e47b8(s32 a0, s32 a1)
     } else {
         if (kind != 11) {
         } else {
+            s32 image_y;
+
             Func_08002322((frame << 9));
             value = Func_0800231c((frame << 9));
+            image_y = *(s16 *)(source_screen + 6) + ((value << 2) >> 16) + 16;
             if (frame <= 3) {
-                ((RectangleBlit)blitters[0])(canvas, work, *(u8 *)(0x080eedd4 + ((*(s32 *)(*(s32 *)((work + 0x7828)) + 4) << 3) - *(s32 *)(*(s32 *)((work + 0x7828)) + 4))), (((*(s16 *)(source_screen + 6) + ((value << 2) >> 16)) + 16) + *(u8 *)0x080eede2), 57, 98);
+                blitters[0](canvas, work, *(u8 *)(0x080eedd4 + ((((struct BattleEffectArgument *)work->effect)->side << 3) - ((struct BattleEffectArgument *)work->effect)->side)), (image_y + *(u8 *)0x080eede2), 57, 98);
                 goto L_080e640e;
             }
             if (frame <= 7) {
-                ((RectangleBlit)blitters[0])(canvas, work, *(u8 *)(0x080eedd4 + ((*(s32 *)(*(s32 *)((work + 0x7828)) + 4) << 3) - *(s32 *)(*(s32 *)((work + 0x7828)) + 4))), (((*(s16 *)(source_screen + 6) + ((value << 2) >> 16)) + 16) + *(u8 *)0x080eede2), 57, 98);
+                blitters[0](canvas, work, *(u8 *)(0x080eedd4 + ((((struct BattleEffectArgument *)work->effect)->side << 3) - ((struct BattleEffectArgument *)work->effect)->side)), (image_y + *(u8 *)0x080eede2), 57, 98);
             }
             base7_80eede2 = 0x80eede2;
-            v6 = (work + 0x7828);
-            ((RectangleBlit)blitters[0])(canvas, (work + 0x15d2), *(u8 *)(0x080eedd4 + (((*(s32 *)(*(s32 *)((work + 0x7828)) + 4) << 3) - *(s32 *)(*(s32 *)((work + 0x7828)) + 4)) + 1)), (((*(s16 *)(source_screen + 6) + ((value << 2) >> 16)) + 16) + *(u8 *)(base7_80eede2 + 1)), 99, 69);
+            v6 = ((s32)work + 0x7828);
+            blitters[0](canvas, ((s32)work + 0x15d2), *(u8 *)(0x080eedd4 + (((((struct BattleEffectArgument *)work->effect)->side << 3) - ((struct BattleEffectArgument *)work->effect)->side) + 1)), (image_y + *(u8 *)(base7_80eede2 + 1)), 99, 69);
             if ((u32)(frame - 4) <= 1) {
                 ((s32 (*)(s32, u32, u32))0x03000168)(canvas, 0x4000, 0x3f3f3f3f);
             }
             if ((u32)(frame - 6) <= 1) {
-                ((RectangleBlit)blitters[0])(canvas, (work + 0x3081), *(u8 *)(0x080eedd4 + (((*(s32 *)(*(s32 *)((work + 0x7828)) + 4) << 3) - *(s32 *)(*(s32 *)((work + 0x7828)) + 4)) + 2)), (((*(s16 *)(source_screen + 6) + ((value << 2) >> 16)) + 16) + *(u8 *)(base7_80eede2 + 2)), 128, 91);
+                blitters[0](canvas, ((s32)work + 0x3081), *(u8 *)(0x080eedd4 + (((((struct BattleEffectArgument *)work->effect)->side << 3) - ((struct BattleEffectArgument *)work->effect)->side) + 2)), (image_y + *(u8 *)(base7_80eede2 + 2)), 128, 91);
             }
             if ((u32)(frame - 8) <= 1) {
-                ((RectangleBlit)blitters[0])(canvas, 0x2010000, *(u8 *)(0x080eedd4 + (((*(s32 *)(*(s32 *)((work + 0x7828)) + 4) << 3) - *(s32 *)(*(s32 *)((work + 0x7828)) + 4)) + 3)), (((*(s16 *)(source_screen + 6) + ((value << 2) >> 16)) + 16) + *(u8 *)(base7_80eede2 + 3)), 128, 91);
+                blitters[0](canvas, 0x2010000, *(u8 *)(0x080eedd4 + (((((struct BattleEffectArgument *)work->effect)->side << 3) - ((struct BattleEffectArgument *)work->effect)->side) + 3)), (image_y + *(u8 *)(base7_80eede2 + 3)), 128, 91);
             }
             if ((u32)(frame - 10) <= 1) {
-                ((RectangleBlit)blitters[0])(canvas, 0x2012d80, *(u8 *)(0x080eedd4 + (((*(s32 *)(*(s32 *)((work + 0x7828)) + 4) << 3) - *(s32 *)(*(s32 *)((work + 0x7828)) + 4)) + 4)), (((*(s16 *)(source_screen + 6) + ((value << 2) >> 16)) + 16) + *(u8 *)(base7_80eede2 + 4)), 128, 59);
+                blitters[0](canvas, 0x2012d80, *(u8 *)(0x080eedd4 + (((((struct BattleEffectArgument *)work->effect)->side << 3) - ((struct BattleEffectArgument *)work->effect)->side) + 4)), (image_y + *(u8 *)(base7_80eede2 + 4)), 128, 59);
             }
             if ((u32)(frame - 12) <= 1) {
-                ((RectangleBlit)blitters[0])(canvas, 0x2014b00, *(u8 *)(0x080eedd4 + (((*(s32 *)(*(s32 *)((work + 0x7828)) + 4) << 3) - *(s32 *)(*(s32 *)((work + 0x7828)) + 4)) + 5)), (((*(s16 *)(source_screen + 6) + ((value << 2) >> 16)) + 16) + *(u8 *)(base7_80eede2 + 5)), 122, 29);
+                blitters[0](canvas, 0x2014b00, *(u8 *)(0x080eedd4 + (((((struct BattleEffectArgument *)work->effect)->side << 3) - ((struct BattleEffectArgument *)work->effect)->side) + 5)), (image_y + *(u8 *)(base7_80eede2 + 5)), 122, 29);
             }
             if ((u32)(frame - 14) > 1) {
                 goto L_080e640e;
             }
-            ((RectangleBlit)blitters[0])(canvas, 0x20158d2, *(u8 *)(0x080eedd4 + (((*(s32 *)(*(s32 *)((work + 0x7828)) + 4) << 3) - *(s32 *)(*(s32 *)((work + 0x7828)) + 4)) + 6)), (((*(s16 *)(source_screen + 6) + ((value << 2) >> 16)) + 16) + *(u8 *)(base7_80eede2 + 6)), 76, 25);
+            blitters[0](canvas, 0x20158d2, *(u8 *)(0x080eedd4 + (((((struct BattleEffectArgument *)work->effect)->side << 3) - ((struct BattleEffectArgument *)work->effect)->side) + 6)), (image_y + *(u8 *)(base7_80eede2 + 6)), 76, 25);
             goto L_080e640e;
         }
         if (kind != 32) {
@@ -1032,41 +1022,41 @@ void Func_080e47b8(s32 a0, s32 a1)
                 ((s32 (*)(s32, u32, u32))0x03000168)(canvas, 0x4000, 0x3f3f3f3f);
             }
             if (frame <= 3) {
-                if (*(s32 *)(*(s32 *)((work + 0x7828)) + 4) == 1) {
-                    ((RectangleBlit)blitters[0])(canvas, work, 0, 24, 80, 104);
+                if (((struct BattleEffectArgument *)work->effect)->side == 1) {
+                    blitters[0](canvas, work, 0, 24, 80, 104);
                 } else {
-                    ((RectangleBlit)blitters[0])(canvas, work, 48, 24, 80, 104);
+                    blitters[0](canvas, work, 48, 24, 80, 104);
                 }
                 goto L_080e640e;
             }
             if (frame <= 7) {
-                if (*(s32 *)(*(s32 *)((work + 0x7828)) + 4) == 1) {
-                    ((RectangleBlit)blitters[0])(canvas, work, 0, 24, 80, 104);
+                if (((struct BattleEffectArgument *)work->effect)->side == 1) {
+                    blitters[0](canvas, work, 0, 24, 80, 104);
                 } else {
-                    ((RectangleBlit)blitters[0])(canvas, work, 48, 24, 80, 104);
+                    blitters[0](canvas, work, 48, 24, 80, 104);
                 }
             }
-            if (*(s32 *)(*(s32 *)((work + 0x7828)) + 4) == 1) {
-                ((RectangleBlit)blitters[0])(canvas, (work + 0x1e00), 16, 16, 80, 104);
+            if (((struct BattleEffectArgument *)work->effect)->side == 1) {
+                blitters[0](canvas, ((s32)work + 0x1e00), 16, 16, 80, 104);
             } else {
-                ((RectangleBlit)blitters[0])(canvas, (work + 0x1e00), 32, 16, 80, 104);
+                blitters[0](canvas, ((s32)work + 0x1e00), 32, 16, 80, 104);
             }
             if ((u32)(frame - 6) <= 1) {
-                ((RectangleBlit)blitters[0])(canvas, (work + 0x3e80), 0, 16, 128, 91);
+                blitters[0](canvas, ((s32)work + 0x3e80), 0, 16, 128, 91);
             }
             if ((u32)(frame - 8) <= 1) {
-                ((RectangleBlit)blitters[0])(canvas, 0x2010000, 0, 16, 128, 91);
+                blitters[0](canvas, 0x2010000, 0, 16, 128, 91);
             }
             if ((u32)(frame - 10) <= 1) {
-                ((RectangleBlit)blitters[0])(canvas, 0x2012d80, 0, 16, 128, 59);
+                blitters[0](canvas, 0x2012d80, 0, 16, 128, 59);
             }
             if ((u32)(frame - 12) <= 1) {
-                ((RectangleBlit)blitters[0])(canvas, 0x2014b00, 0, 16, 128, 29);
+                blitters[0](canvas, 0x2014b00, 0, 16, 128, 29);
             }
             if ((u32)(frame - 14) > 1) {
                 goto L_080e640e;
             }
-            ((RectangleBlit)blitters[0])(canvas, 0x2015980, 0, 16, 128, 26);
+            blitters[0](canvas, 0x2015980, 0, 16, 128, 26);
             goto L_080e640e;
         }
         if (kind == 20) {
@@ -1088,8 +1078,8 @@ void Func_080e47b8(s32 a0, s32 a1)
                                 v0 = 1;
                             }
                         }
-                        p4 = *(s32 *)((v0 << 2) + draw_pair);
-                        ((RectangleBlit)p4)(canvas, (*(u16 *)(0x080edeb2 + (s32)((s32)(((s32)((frame - (s32)p5) - 6) / 2)) << 1)) + 0x2010000), v6, (*(u8 *)(0x080edeab + (s32)(((s32)((frame - (s32)p5) - 6) / 2))) + 48), *(u8 *)(0x080ede9f + (s32)(((s32)((frame - (s32)p5) - 6) / 2))), *(u8 *)(0x080edea5 + (s32)(((s32)((frame - (s32)p5) - 6) / 2))));
+                        p4 = (RectangleBlit)(*(s32 *)((v0 << 2) + draw_pair));
+                        p4(canvas, (*(u16 *)(0x080edeb2 + (s32)((s32)(((s32)((frame - (s32)p5) - 6) / 2)) << 1)) + 0x2010000), v6, (*(u8 *)(0x080edeab + (s32)(((s32)((frame - (s32)p5) - 6) / 2))) + 48), *(u8 *)(0x080ede9f + (s32)(((s32)((frame - (s32)p5) - 6) / 2))), *(u8 *)(0x080edea5 + (s32)(((s32)((frame - (s32)p5) - 6) / 2))));
                     } else {
                     }
                 }
@@ -1123,23 +1113,22 @@ void Func_080e47b8(s32 a0, s32 a1)
                     struct EffectStep *step = (struct EffectStep *)0x02014000;
                     s32 *screen = (s32 *)projected;
                     s32 *origin = (s32 *)source_screen;
-                    s32 n;
 
-                    for (n = 0; n != 64; n++, step++) {
-                        if (step->x >= 0 && frame >= n / 2) {
+                    for (v10 = 0; v10 != 64; v10++, step++) {
+                        if (step->x >= 0 && frame >= v10 / 2) {
                             Func_080049ac();
                             Func_08004bd4(step->velocity_x);
                             Func_08004c1c(step->velocity_y);
                             EffectPosition_ApplyBaseAndYOffset((s32 *)step, (struct EffectPosition *)screen);
                             screen[0] = screen[0] / 2 + origin[0] / 2;
                             screen[1] += origin[1] + 32;
-                            ((RectangleBlit)blitters[1])(canvas,
-                                0x02010000 + ((u16 *)0x080eedea)[n & 3],
+                            blitters[1](canvas,
+                                0x02010000 + ((u16 *)0x080eedea)[v10 & 3],
                                 screen[0] - 4, screen[1] - 4, 8, 8);
                             step->x -= 6;
-                            if (step->x < 0 && ((n & 7) == 0 || n == 63)) {
+                            if (step->x < 0 && ((v10 & 7) == 0 || v10 == 63)) {
                                 Func_080f9010(133);
-                                Func_080d6888(*(s16 *)(*(s32 *)(work + 0x7828) + 36),
+                                Func_080d6888(((struct BattleEffectArgument *)work->effect)->actors[0],
                                     7, 5, 0, 4);
                             }
                         }
@@ -1159,19 +1148,19 @@ void Func_080e47b8(s32 a0, s32 a1)
                 if (v1 > 96) {
                     v1 = 96;
                 }
-                ((RectangleBlit)blitters[0])(canvas, 0x2010000, 48, (104 - v1), 32, v1);
+                blitters[0](canvas, 0x2010000, 48, (104 - v1), 32, v1);
             } else {
                 if ((u32)(kind - 33) <= 1) {
                     if (frame > 5) {
                         goto L_080e640e;
                     }
-                    if (*(s32 *)(*(s32 *)((work + 0x7828)) + 4) == 0) {
+                    if (((struct BattleEffectArgument *)work->effect)->side == 0) {
                         v1 = ((((s32)(*(s32 *)(source_screen)) / 2)) + ((((6 - frame) << 1) + (6 - frame)) << 1));
                     } else {
                         v1 = ((((s32)(*(s32 *)(source_screen)) / 2)) - ((((6 - frame) << 1) + (6 - frame)) << 1));
                     }
-                    p4 = *(s32 *)(draw_pair + 4);
-                    ((RectangleBlit)p4)(canvas, 0x2010000, (v1 - 16), (((*(s32 *)(source_screen + 4) - ((((6 - frame) << 1) + (6 - frame)) << 2)) + 24) - 32), 32, 64);
+                    p4 = (RectangleBlit)(*(s32 *)(draw_pair + 4));
+                    p4(canvas, 0x2010000, (v1 - 16), (((*(s32 *)(source_screen + 4) - ((((6 - frame) << 1) + (6 - frame)) << 2)) + 24) - 32), 32, 64);
                 } else {
                     if (kind == 12) {
                         if (frame > 47) {
@@ -1180,17 +1169,16 @@ void Func_080e47b8(s32 a0, s32 a1)
                         {
                             struct EffectStep *step = (struct EffectStep *)0x02014000;
                             s32 *screen = (s32 *)projected;
-                            s32 n;
 
-                            for (n = 0; n != 16; n++, step++) {
-                                s32 image = Func_080022fc(n, 3);
+                            for (v10 = 0; v10 != 16; v10++, step++) {
+                                s32 image = Func_080022fc(v10, 3);
 
                                 EffectPosition_ApplyBaseAndYOffset((s32 *)step, (struct EffectPosition *)screen);
                                 screen[0] /= 2;
-                                ((RectangleBlit)blitters[n & 1])(canvas,
+                                blitters[v10 & 1](canvas,
                                     0x02010000 + image * 576,
                                     screen[0] - 12, screen[1] - 12, 24, 24);
-                                EffectStep_AdvanceWithGravity3D(step, 60, 1 << ((n & 3) + 11));
+                                EffectStep_AdvanceWithGravity3D(step, 60, 1 << ((v10 & 3) + 11));
                                 step->variant++;
                             }
                         }
@@ -1198,10 +1186,9 @@ void Func_080e47b8(s32 a0, s32 a1)
                         if (kind != 100) {
                             struct EffectStep *step = (struct EffectStep *)0x02014000;
                             s32 *screen = (s32 *)projected;
-                            s32 n;
 
-                            for (n = 0; n != 16; n++, step++) {
-                                if (frame >= n + 4) {
+                            for (v10 = 0; v10 != 16; v10++, step++) {
+                                if (frame >= v10 + 4) {
                                     s32 age = step->variant;
 
                                     if (age <= 23) {
@@ -1209,7 +1196,7 @@ void Func_080e47b8(s32 a0, s32 a1)
 
                                         EffectPosition_ApplyBaseAndYOffset((s32 *)step, (struct EffectPosition *)screen);
                                         screen[0] /= 2;
-                                        ((RectangleBlit)blitters[n & 1])(canvas,
+                                        blitters[v10 & 1](canvas,
                                             0x02010000 + image * 1152,
                                             screen[0] - 12, screen[1] - 24, 24, 48);
                                         if (kind == 25)
@@ -1232,8 +1219,8 @@ void Func_080e47b8(s32 a0, s32 a1)
             EffectPosition_ApplyBaseAndYOffset((s32 *)position, (struct EffectPosition *)projected);
             v2 = (((s32)(*(s32 *)(projected)) / 2));
             *(s32 *)(projected) = (((s32)(*(s32 *)(projected)) / 2));
-            p4 = *(s32 *)(draw_pair + 4);
-            ((RectangleBlit)p4)(canvas, 0x2013c56, (v2 - 10), (*(s32 *)(projected + 4) - 4), 20, 40);
+            p4 = (RectangleBlit)(*(s32 *)(draw_pair + 4));
+            p4(canvas, 0x2013c56, (v2 - 10), (*(s32 *)(projected + 4) - 4), 20, 40);
             *(s32 *)(position) += *(s32 *)(motion);
             *(s32 *)(position + 4) += *(s32 *)(motion + 4);
             *(s32 *)(position + 8) += *(s32 *)(motion + 8);
@@ -1263,11 +1250,11 @@ void Func_080e47b8(s32 a0, s32 a1)
                 }
             }
         }
-        Func_080b5088(*(s16 *)(*(s32 *)((work + 0x7828)) + 36), 4);
+        Func_080b5088(((struct BattleEffectArgument *)work->effect)->actors[0], 4);
         goto L_080e650c;
         L_080e64c2:;
         if (kind == 20 || kind == 14 || kind == 33) {
-            Func_080b5088(*(s16 *)(*(s32 *)((work + 0x7828)) + 36), 1);
+            Func_080b5088(((struct BattleEffectArgument *)work->effect)->actors[0], 1);
             v3 = 2;
             goto L_080e650e;
         }
@@ -1276,32 +1263,29 @@ void Func_080e47b8(s32 a0, s32 a1)
                 goto L_080e6510;
             }
         }
-        Func_080b5088(*(s16 *)(*(s32 *)((work + 0x7828)) + 36), 3);
+        Func_080b5088(((struct BattleEffectArgument *)work->effect)->actors[0], 3);
         L_080e650c:;
         v3 = 8;
         L_080e650e:;
-        *(s32 *)((work + 0x77a8)) = v3;
+        *(s32 *)(((s32)work + 0x77a8)) = v3;
         L_080e6510:;
     }
     if (frame == 6) {
-        Func_080d6888(*(s16 *)(*(s32 *)((work + 0x7828)) + 36), 7, 5, 0, 4);
+        Func_080d6888(((struct BattleEffectArgument *)work->effect)->actors[0], 7, 5, 0, 4);
     }
     if (frame == 14) {
-        Func_080d6888(*(s16 *)(*(s32 *)((work + 0x7828)) + 36), 7, 5, 0, 4);
+        Func_080d6888(((struct BattleEffectArgument *)work->effect)->actors[0], 7, 5, 0, 4);
     }
     Func_080e155c(8, 8);
     Func_080cd52c();
-    *(s32 *)((work + 0x7824)) = 1;
+    work->transfer_pending = 1;
     Func_080030f8(1);
     frame = (frame + 1);
-    if (frame != duration) {
-        goto L_080e52f8;
     }
-    L_080e657c:;
     if (kind == 21) {
         ClearWords(0x6004000, 0x4000);
         ClearWords(canvas, 0x4000);
-        *(s32 *)(*(s32 *)((work + 0x7828)) + 28) = 0;
+        ((struct BattleEffectArgument *)work->effect)->unknown_001c = 0;
         Scheduler_RemoveCallback(0x80cd4b5);
         Scheduler_RemoveCallback(0x80cd261);
         Func_08002dd8(47);

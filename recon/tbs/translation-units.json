@@ -70643,7 +70643,7 @@
     },
     {
       "id": "scene-3cb-020002d8",
-      "source": "games/THE BROKEN SEAL/SRC/MENU/LINK_LOBBY/F_002D8.C",
+      "source": "games/THE BROKEN SEAL/SRC/MENU/LINK_LOBBY/CIRCLE_CALL.C",
       "overlay": "resource_3cb",
       "absolute_symbols": {
         "Engine_GameFlagIsSet": {
@@ -73291,7 +73291,7 @@
     },
     {
       "id": "scene-3cb-02000128",
-      "source": "games/THE BROKEN SEAL/SRC/MENU/LINK_LOBBY/F_00128.C",
+      "source": "games/THE BROKEN SEAL/SRC/MENU/LINK_LOBBY/WRITE_SLOT.C",
       "overlay": "resource_3cb",
       "absolute_symbols": {
         "gEventWork": {
@@ -73355,7 +73355,7 @@
     },
     {
       "id": "scene-3cb-02000f30",
-      "source": "games/THE BROKEN SEAL/SRC/MENU/LINK_LOBBY/F_00F30.C",
+      "source": "games/THE BROKEN SEAL/SRC/MENU/LINK_LOBBY/PARTY_HAS.C",
       "overlay": "resource_3cb",
       "absolute_symbols": {
         "Main_08077148": {
@@ -73423,7 +73423,7 @@
     },
     {
       "id": "scene-3cb-02000148",
-      "source": "games/THE BROKEN SEAL/SRC/MENU/LINK_LOBBY/F_00148.C",
+      "source": "games/THE BROKEN SEAL/SRC/MENU/LINK_LOBBY/POLL_READY.C",
       "overlay": "resource_3cb",
       "absolute_symbols": {
         "Engine_ActorGet": {
@@ -73446,10 +73446,6 @@
           "address": "0x02009908",
           "kind": "thumb"
         },
-        "LinkLobby_Func02000128": {
-          "address": "0x02008128",
-          "kind": "thumb"
-        },
         "Engine_GameFlagSet": {
           "address": "0x02009814",
           "kind": "thumb"
@@ -73461,6 +73457,10 @@
         "gGameState": {
           "address": "0x02000240",
           "kind": "data"
+        },
+        "LinkLobby_WriteSlotValue": {
+          "address": "0x02008128",
+          "kind": "thumb"
         }
       },
       "owners": [

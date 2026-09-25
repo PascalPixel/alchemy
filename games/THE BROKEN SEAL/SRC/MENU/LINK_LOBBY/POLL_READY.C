@@ -9,12 +9,12 @@ s32 LinkLobby_PeerSlotMatches(s32 slot);
 /* The IWRAM panel routine, called through a function pointer. */
 typedef void (*PanelFn)(struct LobbyPanel *panel, s32 value);
 #define LobbyPanel_Update ((PanelFn)0x03000164)
-void LinkLobby_Func02000128(s32 slot);
+void LinkLobby_WriteSlotValue(s32 slot);
 
 extern s32 Data_02009f4c;
 extern struct LobbyPanel Data_02002024[];
 
-s32 LinkLobby_Func02000148(void)
+s32 LinkLobby_PollPeerReady(void)
 {
     struct EventWork *work;
     s32 result;
@@ -33,7 +33,7 @@ s32 LinkLobby_Func02000148(void)
                     LobbyPanel_Update(&Data_02002024[i], 20);
                 }
                 Data_02009f4c = 0;
-                LinkLobby_Func02000128(4);
+                LinkLobby_WriteSlotValue(4);
             }
         } else {
             Data_02009f4c = 0;
@@ -61,7 +61,7 @@ s32 LinkLobby_Func02000148(void)
         GameFlag_Set(0x205);
         GameFlag_Clear(0x201);
         GameFlag_Clear(0x202);
-        LinkLobby_Func02000128(4);
+        LinkLobby_WriteSlotValue(4);
     }
     if (GameFlag_IsSet(0x205)) {
         work->raised_trigger = 2;

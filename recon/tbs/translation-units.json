@@ -74694,6 +74694,62 @@
           "address": "0x02001f60"
         }
       ]
+    },
+    {
+      "id": "scene-3cb-02000398",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/MENU/LINK_LOBBY/RECEIVE_PARTY.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3cb",
+      "absolute_symbols": {
+        "Main_08000170": {
+          "address": "0x0200973c",
+          "kind": "thumb"
+        },
+        "Engine_TaskWait": {
+          "address": "0x02009714",
+          "kind": "thumb"
+        },
+        "Main_080003a8": {
+          "address": "0x02009774",
+          "kind": "thumb"
+        },
+        "Main_08015020": {
+          "address": "0x020097bc",
+          "kind": "thumb"
+        },
+        "Engine_OwnerGetState": {
+          "address": "0x02009804",
+          "kind": "thumb"
+        },
+        "Main_08000388": {
+          "address": "0x0200976c",
+          "kind": "thumb"
+        },
+        "Main_08000178": {
+          "address": "0x02009744",
+          "kind": "thumb"
+        },
+        "Main_08077000": {
+          "address": "0x020097fc",
+          "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02000398",
+          "extent": 420,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_3cb:02000398": {
+      "name": "LinkLobby_ReceivePartyRecords",
+      "source": "MENU/LINK_LOBBY/RECEIVE_PARTY.C"
+    },
     "main:080974d8": {
       "name": "Camera_WorldToScreen",
       "source": "GRAPHICS/RENDER/WORLD_TO_SCREEN.C"

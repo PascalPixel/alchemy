@@ -21207,6 +21207,25 @@
     "resource_3c8:02001f60": {
       "name": "VinasuHeya_SettlePushedBlocks",
       "source": "FIELD/VINASU_HEYA/SETTLE_BLOCKS.C"
+    },
+    "main:0800b388": {
+      "name": "Render_PlaceProjectedSprite"
+    },
+    "main:080123f4": {
+      "name": "WorldMap_BuildScanlineTable"
+    },
+    "main:08012518": {
+      "name": "Ui_RunIconMonitor"
+    },
+    "main:080901c0": {
+      "name": "DisplayTransition_Finish",
+      "source": "GRAPHICS/DISPLAY/TRANSITION_FINISH.C"
+    },
+    "main:0808fefc": {
+      "name": "DisplayTransition_Start"
+    },
+    "main:08028194": {
+      "name": "AffineEffect_UpdateFrame"
     }
   },
   "symbols": {
@@ -21381,7 +21400,6 @@
     "main:080191cc": "UiWork_AnimateSpriteSlots",
     "main:080168f4": "UiWork_StepChannelScript",
     "main:08090658": "DisplayTransition_UpdateFrame",
-    "main:08028194": "AffineEffect_UpdateFrame",
     "main:0808a278": "Object_GetScreenPositionFar",
     "main:080ae99c": "UiIcon_CreateStatChangeArrow",
     "main:080f9c44": "Sound_TickDmaRestartTimer",
@@ -21480,8 +21498,6 @@
     "main:08015390": "Menu_RunConfirmSelectionFar",
     "main:080090e0": "ObjectDispatch_InitFromTable4WithArgumentFar",
     "main:08009128": "Map_ApplyWorkOriginAndSpanFar",
-    "main:0808fefc": "Event_ApplyPairEffect",
-    "main:080901c0": "Event_RevertPairEffect",
     "main:080b50d0": "Camera_ConfigureSceneFar",
     "main:08015030": "UiText_CopyMessageStringFar",
     "main:080150b8": "UiWork_SetParamNibbleFar",

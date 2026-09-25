@@ -59,7 +59,6 @@
 #include "METADATA_LOOKUP.H"
 #include "DMA.H"
 
-#define Ui_RunIconMonitor Func_08012518
 
 /* One editable column of the icon grid.  Eight bytes: the reference indexes
  * the array with slot << 3 and reads offsets 0, 2, 4, 5 and 6 only. */

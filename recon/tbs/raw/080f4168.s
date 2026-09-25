@@ -28,10 +28,10 @@
 	.set sub_080f4028, 0x080f4028
 	.set sub_080f4100, 0x080f4100
 	.set sub_080f9010, 0x080f9010
-	.global FunctionHead_080f4168
+	.global LuckyDice_Run
 	.global Func_080f4168
 	.thumb_func
-FunctionHead_080f4168:
+LuckyDice_Run:
 Func_080f4168:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

@@ -21180,6 +21180,16 @@
     "main:0801e41c": {
       "name": "UiWindow_DrawDividerLine",
       "source": "GRAPHICS/WINDOW/DRAW_DIVIDER_LINE.C"
+    },
+    "main:0800d14c": {
+      "name": "Object_SetMoveTarget",
+      "source": "FIELD/COMMON/OBJECT/MOTION_SET_MOVE_TARGET.C"
+    },
+    "main:0800f7f4": {
+      "name": "Object_MoveByKeys"
+    },
+    "main:0800dd70": {
+      "name": "Object_Wander"
     }
   },
   "symbols": {
@@ -21346,7 +21356,6 @@
     "main:08028574": "Menu_RunResourceSelectionLoop",
     "main:08028808": "Menu_CenterResourceEntries",
     "main:08015070": "UiWindow_DrawDividerLineFar",
-    "main:0800d14c": "Object_SetMoveTarget",
     "main:0801a4fc": "UiGlyph_LoadEntryWithPalette",
     "main:0808a5b0": "SaveState_CaptureObjectTableFar",
     "main:0801a66c": "UiGlyph_ResetWorkState",

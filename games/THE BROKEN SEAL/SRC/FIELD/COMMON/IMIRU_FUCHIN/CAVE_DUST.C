@@ -31,7 +31,7 @@ struct DustParams {
 };
 
 /* Every fourth frame, blow a puff of dust across the cave mouth. */
-void ImiruFuchin_Func02001d78(void)
+void ImiruFuchin_BlowCaveMouthDust(void)
 {
     struct DustParams params;
     struct DustParams *p;

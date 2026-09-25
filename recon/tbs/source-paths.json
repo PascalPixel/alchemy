@@ -340,12 +340,12 @@
       "source": "FIELD/TORETO_HEYA/SWIRL_SHRINK.C"
     },
     "resource_39a:02001d78": {
-      "name": "ImiruFuchin_Func02001d78",
-      "source": "FIELD/COMMON/IMIRU_FUCHIN/F_01D78.C"
+      "name": "ImiruFuchin_BlowCaveMouthDust",
+      "source": "FIELD/COMMON/IMIRU_FUCHIN/CAVE_DUST.C"
     },
     "resource_39a:02001a34": {
-      "name": "ImiruFuchin_Func02001a34",
-      "source": "FIELD/COMMON/IMIRU_FUCHIN/F_01A34.C"
+      "name": "ImiruFuchin_NudgeCameraByStep",
+      "source": "FIELD/COMMON/IMIRU_FUCHIN/CAMERA_STEP.C"
     },
     "resource_378:0200267c": {
       "name": "ShindenHeya_FollowLeaderOffset",
@@ -440,8 +440,8 @@
       "source": "FIELD/WORLD_MAP/F_034A0.C"
     },
     "resource_39a:020017e4": {
-      "name": "ImiruFuchin_Func020017e4",
-      "source": "FIELD/COMMON/IMIRU_FUCHIN/F_017E4.C"
+      "name": "ImiruFuchin_ApplyEntrySetup",
+      "source": "FIELD/COMMON/IMIRU_FUCHIN/ENTRY_SETUP.C"
     },
     "resource_39e:02000518": {
       "name": "ShianJiin_Func02000518",

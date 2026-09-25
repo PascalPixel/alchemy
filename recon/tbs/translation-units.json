@@ -62412,7 +62412,7 @@
     },
     {
       "id": "kuupuappu-heya-f-02564",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_HEYA/F_02564.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_HEYA/DIALOGUE_POSE.C",
       "overlay": "resource_383",
       "absolute_symbols": {
         "SceneActor_UpdateAnimationOnStateMatch": {
@@ -64632,7 +64632,7 @@
     },
     {
       "id": "scene-383-02002758",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_HEYA/F_02758.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_HEYA/ENTRY_STATE.C",
       "overlay": "resource_383",
       "absolute_symbols": {
         "Engine_ActorGet": {
@@ -71639,7 +71639,7 @@
     },
     {
       "id": "scene-383-020047bc",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_HEYA/F_047BC.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_HEYA/RECORD_NEAR_POINT.C",
       "overlay": "resource_383",
       "absolute_symbols": {
         "Main_0808a400": {

@@ -61,7 +61,7 @@
     },
     "resource_383:020047bc": {
       "name": "KuupuappuHeya_IsRecordNearPoint",
-      "source": "FIELD/KUUPUAPPU_HEYA/F_047BC.C"
+      "source": "FIELD/KUUPUAPPU_HEYA/RECORD_NEAR_POINT.C"
     },
     "resource_39c:02001c9c": {
       "name": "MakyuriHeya_TriggerFloorSwitch",
@@ -308,8 +308,8 @@
       "source": "FIELD/FUNE_HEYA/POSE_ACTOR.C"
     },
     "resource_383:02002758": {
-      "name": "KuupuappuHeya_Func02002758",
-      "source": "FIELD/KUUPUAPPU_HEYA/F_02758.C"
+      "name": "KuupuappuHeya_ApplyEntryState",
+      "source": "FIELD/KUUPUAPPU_HEYA/ENTRY_STATE.C"
     },
     "resource_3a5:02001c1c": {
       "name": "RamakanSabaku_Func02001c1c",
@@ -400,8 +400,8 @@
       "source": "FIELD/MAKYURI_IRIGUCHI/F_01EC8.C"
     },
     "resource_383:02002564": {
-      "name": "KuupuappuHeya_Func02002564",
-      "source": "FIELD/KUUPUAPPU_HEYA/F_02564.C"
+      "name": "KuupuappuHeya_PoseDialogueActors",
+      "source": "FIELD/KUUPUAPPU_HEYA/DIALOGUE_POSE.C"
     },
     "resource_387:02000dd8": {
       "name": "GomaIriguchi_Func02000dd8",

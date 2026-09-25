@@ -17,6 +17,7 @@ mod flatten;
 mod format;
 mod generated_files;
 mod http;
+mod land;
 mod overlay;
 mod parallel;
 mod raw;
@@ -43,9 +44,10 @@ const USAGE: &str = "usage: alchemy <command> [args]\n\
   raw                   inspect or rebuild ROM-derived unresolved assembly\n\
   dashboard             serve live coverage on localhost:4650\n\
   targets               every not-yet-C owner by size, with its draft, difference and wall\n\
+  land BRANCH...        merge lane branches in a landing worktree, prove and squash-commit them\n\
   check                 run repository contract checks\n\
   format                format native game data and check uppercase filenames\n\
-  overlay               legacy overlay operations during migration";
+  overlay               trial, try, draft and adopt overlay owners; park, audit, export";
 
 fn main() -> ExitCode {
     compiler::routing::prefer_installed_binutils();
@@ -81,6 +83,7 @@ fn main() -> ExitCode {
         "raw" => result(raw::run(rest)),
         "check" => check::entry(rest),
         "targets" => result(worklist::entry(rest)),
+        "land" => result(land::entry(rest)),
         "format" => result(format::run(rest)),
         "overlay" => overlay::entry(rest),
         "extract" | "adopt" | "inspect" => recovery_command(command, rest),

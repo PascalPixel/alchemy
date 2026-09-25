@@ -91,12 +91,21 @@ patched compilers and found agscc's allocation, reload and scheduling
 tie-breaks confirmed by the exact owners (each flip broke 68–419 of them), so
 those residuals are the C's shape, not the compiler.
 
-**The overlay recipe.** `psynergy decompile` the owner; rename every call to
-its `Engine_*` service in `FIELD_EVENT.H` or to the overlay's own function;
-bind the names in a single-overlay translation unit (an import veneer's
-runtime address is its listing offset plus 0x8000); score; sweep the near
-misses; adopt with `alchemy overlay adopt`. Area and script lookup functions
-(a switch on game state +0x1c0/+0x1c2) take about five minutes each by hand.
+**The overlay recipe.** `alchemy overlay trial OWNER` opens the owner: it
+registers a source path and a single-overlay translation unit, puts the
+scoring placeholder in, and writes a first draft from `psynergy decompile`
+with every call renamed to its `Engine_*` service in `FIELD_EVENT.H`, a
+registered name or the overlay's own function, and the literal pool listed
+from the ROM; the unit binds each name at its runtime address (an import
+veneer's listing offset plus 0x8000). Score and sweep the near misses with
+`alchemy overlay try OWNER [FILE...]`, which rebinds the unit for every name
+the files use and ranks them (`--install` keeps the best); adopt with
+`alchemy overlay adopt OWNER --apply`, which takes the trial in place and
+drops the owner's not_yet_c rows and recon draft, or park a near miss with
+`alchemy overlay draft OWNER --note TEXT`, which commits the recon draft
+with its residual in the header and undoes the trial; `--undo` drops a
+trial. Area and script lookup functions (a switch on game state
++0x1c0/+0x1c2) take about five minutes each by hand.
 
 **Hand-writing.** Read `alchemy inspect <owner> --asm`, its callers, callees
 and exact neighbours, and write the C a Camelot programmer would have written,
@@ -199,11 +208,12 @@ work than by working alone.
   the lane moves on. Send `make verify` and hook output to a log and read the
   errors. Brief from one ranked target list (`alchemy targets`) rebuilt at each landing, and keep
   one shared set of lane scripts rather than a copy per lane.
-- **Land every 30 minutes** from one landing worktree: merge each finished
-  branch, merge registries with a structural three-way JSON merge (keep both
-  sides' additions), run `make compare-all`, `make test`, `make coverage` and
-  `make verify`, commit with the progress prefix, push `main`, remove the
-  landed worktree and branch. `main` is the only long-lived branch.
+- **Land every 30 minutes** from one landing worktree with `alchemy land
+  BRANCH... --message TEXT`: it merges each finished branch (registries by a
+  structural three-way JSON merge that keeps both sides' additions), runs
+  `make test`, `make compare-all`, `make coverage` and `make verify`, and
+  squash-commits with the progress prefix; `--push` pushes `main`. Then
+  remove the landed worktree and branch. `main` is the only long-lived branch.
 - **Workflows** (many agents at once) need Pascal's approval.
 - Scripts are TypeScript on Bun or Rust, never Python or shell. The only prose
   files are `AGENTS.md` and `README.md`; no notes, plans or reports anywhere.
@@ -262,7 +272,7 @@ corner step and bevel opacity live in `tools/alchemy/src/coverage/palette.rs`.
 
 | Tool | Responsibility |
 | --- | --- |
-| [alchemy](tools/alchemy/) | Golden Sun commands: `inspect` (owners, `--asm`, `--siblings`), `extract`, `score` (owner or `--unit`, `--all-instances`; `--variants DIR`, `--diff`, `--dump FLAGS`), `targets` (every not-yet-C owner by size), `adopt` and `overlay adopt`, `check integrate` (main-image adoption), `unit`, `raw rebuild`, `build` (`full`, `assets`, `allocator`), `coverage`, `check` (publication, owners, siblings, progress), `verify` (the landing gate, one line per gate), `cross-edition`, `dashboard`, `format`, `bootstrap`. |
+| [alchemy](tools/alchemy/) | Golden Sun commands: `inspect` (owners, `--asm`, `--siblings`), `extract`, `score` (owner or `--unit`, `--all-instances`; `--variants DIR`, `--diff`, `--dump FLAGS`), `targets` (every not-yet-C owner by size), `overlay trial` (open an overlay owner: unit, placeholder, first draft; `--undo`), `overlay try` (score and rank candidates for a trial; `--install`), `overlay draft` (commit a trial as a recon draft with its residual), `adopt` and `overlay adopt` (adopts an open trial in place and retires its evidence rows and draft), `check integrate` (main-image adoption), `land` (merge, prove and squash-commit lane branches), `unit`, `raw rebuild`, `build` (`full`, `assets`, `allocator`), `coverage`, `check` (publication, owners, siblings, progress), `verify` (the landing gate, one line per gate), `cross-edition`, `dashboard`, `format`, `bootstrap`. |
 | [psynergy](tools/psynergy/) | Portable commands over explicit files: `decompile`, `disassemble`, `decode-lz`, plus the Thumb decoder, C recovery, comparison, twin search and the image, sound, text and LZ codecs. |
 
 ## Open work

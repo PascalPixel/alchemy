@@ -4,7 +4,7 @@
 void SceneActor_UpdateTracking(struct FieldActor *actor, struct FieldActor *leader, s32 range, s32 near);
 
 /* Counts the frames the leader stands at the gate beside this actor and raises trigger 200 after two seconds. */
-s32 ShianMura_Func02000500(struct FieldActor *self)
+s32 ShianMura_WatchGateTrigger(struct FieldActor *self)
 {
     struct FieldActor *leader;
     s32 near = 0;

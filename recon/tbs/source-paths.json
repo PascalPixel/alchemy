@@ -84,8 +84,8 @@
       "source": "FIELD/COMMON/SHINDEN_HEYA/F_02750.C"
     },
     "resource_3a0:02000500": {
-      "name": "ShianMura_Func02000500",
-      "source": "FIELD/SHIAN_MURA/F_00500.C"
+      "name": "ShianMura_WatchGateTrigger",
+      "source": "FIELD/SHIAN_MURA/GATE_WATCH.C"
     },
     "resource_3b7:02000880": {
       "name": "TorebiIzumi_RiseAndFadeIn",
@@ -10864,7 +10864,7 @@
     },
     "resource_3a0:02000f30": {
       "name": "Scene_RunActorNineteenScript",
-      "source": "FIELD/SHIAN_MURA/F_00F30.C"
+      "source": "FIELD/SHIAN_MURA/ACTOR19_SCRIPT.C"
     },
     "resource_3b1:020027d8": {
       "name": "FieldScene_RunBranchingActorPresentation",
@@ -20829,8 +20829,8 @@
       "source": "FIELD/FUNE_KANPAN/F_008E0.C"
     },
     "resource_3a0:02000d0c": {
-      "name": "ShianMura_Func02000d0c",
-      "source": "FIELD/SHIAN_MURA/F_00D0C.C"
+      "name": "ShianMura_HopLeaderAhead",
+      "source": "FIELD/SHIAN_MURA/LEADER_HOP.C"
     },
     "main:0809bb64": {
       "name": "BattleFx_SetupResourcesAndWindow",
@@ -20980,8 +20980,8 @@
       "source": "FIELD/COMMON/TRY_JUMP_FORWARD.C"
     },
     "resource_3a0:020009dc": {
-      "name": "ShianMura_Func020009dc",
-      "source": "FIELD/SHIAN_MURA/F_009DC.C"
+      "name": "ShianMura_RunNpcMeetScene",
+      "source": "FIELD/SHIAN_MURA/NPC_MEET.C"
     },
     "resource_3b3:02001be8": {
       "name": "TakaraHashira_SortPillarActors",

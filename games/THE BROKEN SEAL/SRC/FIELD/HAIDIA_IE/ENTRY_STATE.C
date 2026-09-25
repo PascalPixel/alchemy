@@ -19,7 +19,7 @@ void Scene_RunExtendedActorSequence();
 void Engine_ActorSetSpriteFlags();
 void Engine_ActorSetAnimation();
 void HaidiaIe_RunScene015B4();
-void Local_02001084();
+void HaidiaIe_RunScriptScene();
 void Engine_EventOpenScreen();
 void Engine_EventWaitForScreen();
 void Main_0808a2e0();
@@ -141,7 +141,7 @@ s32 HaidiaIe_RestoreEntryState(void)
                     if (record == 0) {
                         goto L_02000b6a;
                     }
-                    Local_02001084();
+                    HaidiaIe_RunScriptScene();
                 } else {
                     L_02000b6a:;
                     if (Value1(Engine_GameFlagIsSet, 0x834) != 0) {

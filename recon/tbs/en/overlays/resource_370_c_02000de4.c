@@ -1,319 +1,213 @@
+/* NONMATCHING: 1024 bytes, candidate 1000, 503 differing halfwords, 447
+ * halfword edits (2026-09-25). Scene_RunScene370SequenceA, meant for
+ * MENU/CLEAR/F_00DE4.C as a single-overlay unit binding its names at their
+ * runtime addresses (an import veneer's listing offset plus 0x8000).
+ * Remaining: Fresh typed password serializer covers the three output
+ * lengths, six flags, four party records, packed fields, items and
+ * properties. One complete owner; allocation and packed-field control flow
+ * still differ.
+ * WALL: Packed-field control flow and local lifetimes need reconstruction. */
 #include "TYPES.H"
 
-#define Scene_RunScene370SequenceA Func_02000de4
+struct PasswordOwnerState {
+    u8 unknown_00[0x0f];
+    u8 rank;
+    s16 value_10;
+    s16 value_12;
+    u8 unknown_14[4];
+    u16 value_18;
+    u16 value_1a;
+    u16 value_1c;
+    u8 level_1e;
+    u8 unknown_1f[0xb9];
+    u16 item_codes[15];
+    u8 unknown_f6[2];
+    u32 values_f8[4];
+};
 
-s32 Func_020022c2();
-s32 Func_020022da();
-s32 Func_02002410();
-void Func_0200242e();
-s32 Func_020024a6();
+s32 Engine_GameFlagIsSet(s32 flag);
+s32 Engine_OwnerGetState(s32 owner);
+void Engine_DebugGetItem(s32 item);
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
+s32 Func_02000de4(s32 unused, s32 mode, u8 *out)
 {
-    return f(a0);
-}
+    s32 length = 11;
+    s32 i;
+    s32 p;
+    s32 bit;
+    u32 rank_bits = 0;
+    u32 value_bits = 0;
+    u32 flag_bits = 0;
+    u32 item_bits = 0;
+    u32 rows[8];
+    u16 *flags = (u16 *)0x020096d0;
+    s32 *owners = (s32 *)0x020096c0;
+    u16 *item_keys = (u16 *)0x020096dc;
+    u16 *property_keys = (u16 *)0x020096ec;
 
-static __inline__ s32 Value4(s32 (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    return f(a0, a1, a2, a3);
-}
-
-s32 Func_02000de4(s32 a0, s32 a1, s32 a2)
-{
-    u32 i;
-    u8 *p11;
-    s32 p4;
-    s32 p4b;
-    s32 p5;
-    s32 p6;
-    s32 rec2;
-    s32 rec6;
-    u8 *record;
-    s32 r13;
-    s32 none;
-    u8 *v3;
-    s32 v9;
-    s32 a1;
-    s32 base5_20096d0;
-    s32 v7;
-    s32 v2;
-    s32 v1;
-    s32 base5_0;
-    u8 *v0;
-    s32 v4;
-    s32 v6;
-    s32 base10_27;
-    u8 *v5;
-    s32 base7_0;
-    s32 base8_d8;
-    s32 v10;
-    s32 base6_ffffffff;
-    s32 base10_6b;
-    s32 v12;
-    s32 slot28;
-    s32 slot24;
-    u8 slot20[44];
-    s32 slot16;
-    u8 slot12[8];
-    u8 slot8[4];
-    s32 slot4;
-    s32 slot0;
-    u8 *p4c;
-
-    (*(s32 *)((*(s32 *)slot20) + 8)) = a1;
-    p11 = a2;
-    (*(s32 *)((*(s32 *)slot20) + 4)) = 11;
-    switch (a1) {
+    switch (mode) {
     case 0:
-        (*(s32 *)((*(s32 *)slot20) + 4)) = 173;
+        length = 173;
         break;
     case 1:
-        (*(s32 *)((*(s32 *)slot20) + 4)) = 39;
+        length = 39;
+        break;
+    case 2:
+        length = 9;
         break;
     }
-    none = 0;
-    if ((*(s32 *)((*(s32 *)slot20) + 4)) != 0) {
-        v3 = (s32)p11;
-        v9 = none;
-        do {
-            v3[0] = 0;
-            a1 = 1;
-            v9 = (v9 + 1);
-            v3 = ((s32)v3 + 1);
-        } while (v9 != (*(s32 *)((*(s32 *)slot20) + 4)));
+    for (i = 0; i < length; i++)
+        out[i] = 0;
+
+    for (i = 0; i < 8; i++)
+        rows[i] = 0;
+
+    for (i = 0; i < 6; i++) {
+        if (Engine_GameFlagIsSet(flags[i]))
+            flag_bits |= 1u << i;
     }
-    (*(s32 *)slot20) = 0;
-    (*(s32 *)((*(s32 *)slot12) + 4)) = 0;
-    (*(s32 *)slot12) = 0;
-    (*(s32 *)slot8) = 0;
-    slot4 = (r13 + 32);
-    none = 0;
-    v9 = none;
-    do {
-        v9 = (v9 + 1);
-        p4 = v9;
-        *(s32 *)((r13 + 32)) = 0;
-        v9 = p4;
-    } while (p4 != 8);
-    base5_20096d0 = 0x20096d0;
-    none = 0;
-    v9 = none;
-    for (i = 0; (i >> 16) != 6; i += 0x10000) {
-        base5_20096d0 = (base5_20096d0 + 2);
-        if (Value4(Func_020022c2, *(u16 *)(base5_20096d0), 1, 0, i) != 0) {
-            (*(s32 *)slot8) = ((u32)(((*(s32 *)slot8) | (1 << v9)) << 24) >> 24);
-        }
-        v9 = (v9 + 1);
-    }
-    none = 0;
-    v7 = slot4;
-    v9 = none;
-    L_02000e94:;
-    p6 = v9;
-    record = Value1(Func_020022da, *(s32 *)(0x020096c0 + (s32)((s32)p6 << 2)));
-    v2 = *(u16 *)((s32)record + 16);
-    if (*(s16 *)((s32)record + 16) > 0x7cf) {
-        *(u16 *)((s32)record + 16) = 0x7cf;
-        v2 = 0x7cf;
-    }
-    if ((v2 << 16) < 0) {
-        {
-            s32 shown = 0;
-        
-            *(u16 *)((s32)record + 16) = shown;
-        }
-    }
-    v2 = *(u16 *)((s32)record + 18);
-    if (*(s16 *)((s32)record + 18) > 0x7cf) {
-        *(u16 *)((s32)record + 18) = 0x7cf;
-        v2 = 0x7cf;
-    }
-    if ((v2 << 16) < 0) {
-        {
-            s32 shown = 0;
-        
-            *(u16 *)((s32)record + 18) = shown;
-        }
-    }
-    if ((u32)*(u16 *)((s32)record + 24) > 0x3e7) {
-        *(u16 *)((s32)record + 24) = 0x3e7;
-    }
-    if ((u32)*(u16 *)((s32)record + 26) > 0x3e7) {
-        *(u16 *)((s32)record + 26) = 0x3e7;
-    }
-    if ((u32)*(u16 *)((s32)record + 28) > 0x3e7) {
-        *(u16 *)((s32)record + 28) = 0x3e7;
-    }
-    if ((u32)record[30] > 99) {
-        record[30] = 99;
-    }
-    *(s32 *)(v7) = (((*(s16 *)((s32)record + 16) << 21) | (*(s16 *)((s32)record + 18) << 10)) | *(u16 *)((s32)record + 24));
-    *(s32 *)(v7 + 4) = (((*(u16 *)((s32)record + 26) << 22) | (*(u16 *)((s32)record + 28) << 12)) | (record[30] << 4));
-    v2 = record[15];
-    if ((u32)record[15] > 99) {
-        record[15] = 99;
-        v2 = 99;
-    }
-    if (v2 == 0) {
-        record[15] = 1;
-    }
-    (*(s32 *)slot20) = ((*(s32 *)slot20) | (s32)(record[15] << (s32)((s32)((s32)p6 << 3) - (s32)p6)));
-    base5_0 = 0;
-    v1 = 0;
-    do {
-        v3 = *(s32 *)(((s32)record + 248));
-        base5_0 = (base5_0 + 1);
-        (*(s32 *)((*(s32 *)slot12) + 4)) = ((*(s32 *)((*(s32 *)slot12) + 4)) + ((s32)v3 << v1));
-        v1 = (v1 + 7);
-    } while (base5_0 != 4);
-    base5_0 = 0;
-    v0 = ((s32)record + 216);
-    do {
-        v2 = 0x20096dc;
-        for (i = 0; i != 8; i++) {
-            v2 = (v2 + 2);
-            if ((0x1ff & *(u16 *)((s32)v0)) == *(u16 *)(v2)) {
-                (*(s32 *)slot12) = ((u32)(((*(s32 *)slot12) | (1 << i)) << 24) >> 24);
+
+    for (p = 0; p < 4; p++) {
+        struct PasswordOwnerState *state =
+            (struct PasswordOwnerState *)Engine_OwnerGetState(owners[p]);
+        s32 hp = state->value_10;
+        s32 max_hp = state->value_12;
+        u32 level;
+        s32 j;
+
+        if (hp > 0x7cf)
+            hp = state->value_10 = 0x7cf;
+        if (hp < 0)
+            hp = state->value_10 = 0;
+        if (max_hp > 0x7cf)
+            max_hp = state->value_12 = 0x7cf;
+        if (max_hp < 0)
+            max_hp = state->value_12 = 0;
+        if (state->value_18 > 0x3e7)
+            state->value_18 = 0x3e7;
+        if (state->value_1a > 0x3e7)
+            state->value_1a = 0x3e7;
+        if (state->value_1c > 0x3e7)
+            state->value_1c = 0x3e7;
+        if (state->level_1e > 99)
+            state->level_1e = 99;
+
+        level = state->rank;
+        if (level > 99)
+            state->rank = level = 99;
+        if (level == 0)
+            state->rank = level = 1;
+        rank_bits |= level << (p * 7);
+
+        rows[p * 2] = ((u32)hp << 21) |
+                      ((u32)max_hp << 10) |
+                      state->value_18;
+        rows[p * 2 + 1] = ((u32)state->value_1a << 22) |
+                          ((u32)state->value_1c << 12) |
+                          (state->level_1e << 4);
+
+        for (j = 0; j < 4; j++)
+            value_bits += state->values_f8[j] << (j * 7);
+
+        for (j = 0; j < 15; j++) {
+            s32 k;
+            u16 item = state->item_codes[j] & 0x1ff;
+            for (k = 0; k < 8; k++) {
+                if (item == item_keys[k])
+                    item_bits |= 1u << k;
             }
-            v4 = i;
-        }
-        base5_0 = (base5_0 + 1);
-        v0 = ((s32)v0 + 2);
-    } while (base5_0 != 15);
-    v9 = (p6 + 1);
-    v7 = (v7 + 8);
-    if (v9 != 4) {
-        goto L_02000e94;
-    }
-    if ((*(s32 *)((*(s32 *)slot20) + 8)) != 0) {
-        v4 = p6;
-        v5 = base5_0;
-    } else {
-        base10_27 = 39;
-        none = 0;
-        v9 = none;
-        v6 = none;
-        do {
-            p4b = v9;
-            rec6 = Func_02002410(*(s32 *)(0x020096c0 + (s32)((s32)p4b << 2)));
-            p5 = base10_27;
-            base7_0 = 0;
-            base8_d8 = 216;
-            v4 = rec6;
-            v5 = (p5 + (s32)p11);
-            v10 = p5;
-            do {
-                slot0 = v4;
-                Func_0200242e(*(u16 *)(base8_d8 + v4));
-                v4 = slot0;
-                v6 = (v6 + 1);
-                v5[0] += ((*(u16 *)(base8_d8 + v4) & 0x1ff) >> (v6 + 1));
-                v5[1] += ((*(u16 *)(base8_d8 + v4) & 0x1ff) << (7 - v6));
-                v5 = ((s32)v5 + 1);
-                v10 = (v10 + 1);
-                if ((v6 + 1) == 7) {
-                    v5 = ((s32)v5 + 1);
-                    v10 = (v10 + 1);
-                    v6 = 0;
-                }
-                base7_0 = (base7_0 + 1);
-                base8_d8 = (base8_d8 + 2);
-            } while (base7_0 != 15);
-            v7 = base7_0;
-            v9 = (p4b + 1);
-        } while ((p4b + 1) != 4);
-        base6_ffffffff = -1;
-        base10_6b = 107;
-        none = 0;
-        v9 = none;
-        do {
-            rec2 = Func_020024a6(*(s32 *)(0x020096c0 + (v9 << 2)));
-            v0 = (base10_6b + (s32)p11);
-            v6 = base6_ffffffff;
-            v10 = base10_6b;
-            v12 = 0x20096ec;
-            do {
-                p4c = *(u16 *)(v12);
-                base7_0 = 0;
-                v1 = (rec2 + 216);
-                do {
-                    v3 = (0x1ff & *(u16 *)(v1));
-                    v1 = (v1 + 2);
-                    v5 = 0;
-                    if ((0x1ff & *(u16 *)(v1)) == (s32)p4c) {
-                        v3 = (0xf800 & *(u16 *)(v1));
-                        v5 = ((u32)(0xf800 & *(u16 *)(v1)) >> 11);
-                    }
-                    base7_0 = (base7_0 + 1);
-                v7 = base7_0;
-                } while (base7_0 != 15);
-                if (v6 < 0) {
-                    v0[0] += (((u32)((s32)v5 << 16) >> 16) >> -v6);
-                    v10 = (v10 + 1);
-                    v0 = ((s32)v0 + 1);
-                    v6 = (v6 + 8);
-                } else {
-                }
-                v6 = (v6 - 5);
-                v0[0] += (((u32)((s32)v5 << 16) >> 16) << v6);
-                if (v6 == -5) {
-                    v0 = ((s32)v0 + 1);
-                    v10 = (v10 + 1);
-                    v6 = 3;
-                }
-                v4 = 1;
-                v12 = (v12 + 2);
-            } while (1 != 23);
-            v9 = (v9 + v4);
-        } while ((v9 + v4) != 4);
-        p11[165] = *(u16 *)0x02000252;
-        *(u8 *)(((s32)p11 + 165) + 1) = ((u32)*(s32 *)0x02000250 >> 8);
-        *(u8 *)((((s32)p11 + 165) + 1) + 1) = *(s32 *)0x02000250;
-    }
-    if ((*(s32 *)((*(s32 *)slot20) + 8)) != 2) {
-        none = 0;
-        v9 = none;
-        v0 = ((((u32)(-(*(s32 *)((*(s32 *)slot20) + 8)) | (*(s32 *)((*(s32 *)slot20) + 8))) >> 31) + 8) + (s32)p11);
-        v4 = slot4;
-        for (i = 0; (i >> 16) != 2; i += 0x10000) {
-            v0[0] = ((u32)*(s32 *)(v4) >> 24);
-            v0[1] = ((u32)*(s32 *)(v4) >> 16);
-            v0[2] = ((u32)*(s32 *)(v4) >> 8);
-            v0[3] = *(s32 *)(v4);
-            v0[4] = ((u32)*(s32 *)(v4 + 4) >> 24);
-            v0[5] = ((u32)*(s32 *)(v4 + 4) >> 16);
-            v0[7] = *(s32 *)(v4 + 4);
-            v0[6] = ((u32)*(s32 *)(v4 + 4) >> 8);
-            v0[8] = ((u32)*(s32 *)(v4 + 8) >> 20);
-            v0[9] = ((u32)*(s32 *)(v4 + 8) >> 12);
-            v0[11] = (*(s32 *)(v4 + 8) << 4);
-            v0[10] = ((u32)*(s32 *)(v4 + 8) >> 4);
-            v0[7] = (*(s32 *)(v4 + 4) | ((u32)*(s32 *)(v4 + 8) >> 28));
-            v0[11] = ((*(s32 *)(v4 + 8) << 4) | ((u32)*(s32 *)(v4 + 12) >> 28));
-            v0[12] = ((u32)*(s32 *)(v4 + 12) >> 20);
-            v9 = (v9 + 1);
-            v0[13] = ((u32)*(s32 *)(v4 + 12) >> 12);
-            v0[14] = ((u32)*(s32 *)(v4 + 12) >> 4);
-            v4 = (v4 + 16);
-            v0 = ((s32)v0 + 15);
         }
     }
-    *p11 = (*(s32 *)slot20);
-    p11[1] = ((u32)(*(s32 *)slot20) >> 8);
-    p11[2] = ((u32)(*(s32 *)slot20) >> 16);
-    p11[3] = ((((u32)(*(s32 *)slot20) >> 20) & 240) | ((*(s32 *)((*(s32 *)slot12) + 4)) & 15));
-    p11[4] = ((u32)(*(s32 *)((*(s32 *)slot12) + 4)) >> 4);
-    p11[5] = ((u32)(*(s32 *)((*(s32 *)slot12) + 4)) >> 12);
-    p11[6] = ((u32)(*(s32 *)((*(s32 *)slot12) + 4)) >> 20);
-    p11[7] = (*(s32 *)slot8);
-    if ((*(s32 *)((*(s32 *)slot20) + 8)) != 0) {
-        p11[8] = (*(s32 *)slot12);
+
+    if (mode == 0) {
+        p = 39;
+        bit = 0;
+        for (i = 0; i < 4; i++) {
+            struct PasswordOwnerState *state =
+                (struct PasswordOwnerState *)Engine_OwnerGetState(owners[i]);
+            s32 j;
+            for (j = 0; j < 15; j++) {
+                u32 item = state->item_codes[j] & 0x1ff;
+                Engine_DebugGetItem(item);
+                out[p] += item >> (bit + 1);
+                out[p + 1] += item << (7 - bit);
+                p++;
+                bit++;
+                if (bit == 7) {
+                    p++;
+                    bit = 0;
+                }
+            }
+        }
+
+        p = 107;
+        bit = -1;
+        for (i = 0; i < 4; i++) {
+            struct PasswordOwnerState *state =
+                (struct PasswordOwnerState *)Engine_OwnerGetState(owners[i]);
+            s32 j;
+            for (j = 0; j < 23; j++) {
+                u32 property = 0;
+                s32 k;
+                for (k = 0; k < 15; k++) {
+                    u16 item = state->item_codes[k];
+                    if ((item & 0x1ff) == property_keys[j])
+                        property = (item & 0xf800) >> 11;
+                }
+                if (bit < 0) {
+                    out[p] += property >> -bit;
+                    p++;
+                    bit += 8;
+                }
+                bit -= 5;
+                out[p] += property << bit;
+                if (bit == -5) {
+                    p++;
+                    bit = 3;
+                }
+            }
+        }
+        out[165] = *(u8 *)0x02000252;
+        out[166] = ((u8 *)0x02000250)[1];
+        out[167] = ((u8 *)0x02000250)[0];
     }
-    return (*(s32 *)((*(s32 *)slot20) + 4));
-    /* unlifted: 0x02000e1e..0x02000e22 (2) */
+
+    if (mode != 2) {
+        u8 *dst = out + (mode == 0 ? 8 : 9);
+        for (i = 0; i < 2; i++) {
+            u32 a = rows[i * 2];
+            u32 b = rows[i * 2 + 1];
+            u32 c = rows[i * 2 + 2];
+            u32 d = rows[i * 2 + 3];
+            dst[0] = a >> 24;
+            dst[1] = a >> 16;
+            dst[2] = a >> 8;
+            dst[3] = a;
+            dst[4] = b >> 24;
+            dst[5] = b >> 16;
+            dst[6] = b >> 8;
+            dst[7] = b | (c >> 28);
+            dst[8] = c >> 20;
+            dst[9] = c >> 12;
+            dst[10] = c >> 4;
+            dst[11] = (c << 4) | (d >> 28);
+            dst[12] = d >> 20;
+            dst[13] = d >> 12;
+            dst[14] = d >> 4;
+            dst += 15;
+        }
+    }
+
+    out[0] = rank_bits;
+    out[1] = rank_bits >> 8;
+    out[2] = rank_bits >> 16;
+    out[3] = ((rank_bits >> 20) & 0xf0) | (value_bits & 0x0f);
+    out[4] = value_bits >> 4;
+    out[5] = value_bits >> 12;
+    out[6] = value_bits >> 20;
+    out[7] = flag_bits;
+    if (mode != 0)
+        out[8] = item_bits;
+
+    return length;
 }

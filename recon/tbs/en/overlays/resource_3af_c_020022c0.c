@@ -1,40 +1,17 @@
-/* NONMATCHING: 828 of 856 bytes, 313 differing halfwords, 191 halfword
- * edits (2026-09-25). Call destinations audited against their resolved
- * addresses, including actor lookup before the mode-byte store. The
- * previous draft scored 205 edits. Engine_EventOpenScreen already calls
- * Event_SetStatus1c6Far through the overlay import; it needs no extra call.
- * Remaining: short-range zero pools and actor/loop lifetimes.
- * WALL: Short-range zero literal pools and actor/loop allocation.
- */
+/* NONMATCHING: 856 bytes, candidate 856, 84 differing halfwords, 56 halfword
+ * edits (2026-09-25). FieldScene_RunActorSequence, meant for
+ * FIELD/FUNE_KANPAN/F_022C0.C as a single-overlay unit binding its names at
+ * their runtime addresses (an import veneer's listing offset plus 0x8000).
+ * Remaining: Corrected movement callees and callback symbols; halfword zero
+ * fields restore the mid-function pools. The second zero pool is still four
+ * bytes early, with actor/loop register lifetimes differing.
+ * WALL: Late zero pool reach and actor/loop allocation. */
 #include "TYPES.H"
 
-/* Literal pool, read from the ROM:
- *   0x020023b8: 0x00000000  constant; Value_00000000 if the pool must hold it
- *   0x020023bc: 0x0200d160  overlay data at 0x02005160
- *   0x020023c0: 0x0200d340  overlay data at 0x02005340
- *   0x020023c4: 0x02960000
- *   0x020023c8: 0x02860000
- *   0x020023cc: 0x02ae0000
- *   0x020023d0: 0x026e0000
- *   0x020023d4: 0x0200c8c4  overlay data at 0x020048c4
- *   0x0200252c: 0x00000000  constant; Value_00000000 if the pool must hold it
- *   0x02002530: 0x0200c8b0  overlay data at 0x020048b0
- *   0x02002534: 0x0200c8d8  overlay data at 0x020048d8
- *   0x02002538: 0x03001ebc  SceneWorkCell
- *   0x0200253c: 0x00001999  constant; Value_00001999 if the pool must hold it
- *   0x02002540: 0x02820000
- *   0x02002544: 0x00000f5c  constant; Value_00000f5c if the pool must hold it
- *   0x02002548: 0x00011999
- *   0x0200254c: 0x00006666  constant; Value_00006666 if the pool must hold it
- *   0x02002550: 0x00019999
- *   0x02002554: 0x0000cccc  constant; Value_0000cccc if the pool must hold it
- *   0x02002608: 0x0000cccc  constant; Value_0000cccc if the pool must hold it
- *   0x0200260c: 0x00019999
- *   0x02002610: 0x0200c888  overlay data at 0x02004888
- *   0x02002614: 0x00001e45  constant; Value_00001e45 if the pool must hold it
- */
-
 extern u8 Data_00000000[];
+extern u8 Data_0200c8c4[];
+extern u8 Data_0200c8b0[];
+extern u8 Data_0200c8d8[];
 void FieldScene_RunScene3af_02000bb8();
 void FieldScene_CallPairWith10();
 s32 Engine_TaskWait();
@@ -44,6 +21,7 @@ void Engine_EventBegin();
 void Main_0808a030();
 s32 Engine_ActorGet();
 void Engine_ActorSetPosition();
+void Engine_ActorWalkToAndWait();
 void Engine_ActorSetChildValue();
 s32 Engine_ActorEnableActionCallback();
 void Engine_EventWait();
@@ -64,7 +42,7 @@ void Engine_EventRequestExit();
 void Event_ClearStatus1c6Far();
 void Event_WaitValue1c8FramesFar();
 
-/* Call sites spelled through these wrappers pass their constants straight
+/* FAKEMATCH: Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
  * into a pseudo that the compiler then shares with later uses in the block.
  * A value-returning call also sets r0 last of its arguments. */
@@ -133,20 +111,23 @@ void FieldScene_RunActorSequence(void)
     Call3(Engine_ActorSetPosition, 27, 0x1000000, 0x2ae0000);
     Call3(Engine_ActorSetPosition, 28, 0xac0000, 0x2780000);
     Call3(Engine_ActorSetPosition, 29, 0x1000000, 0x26e0000);
-    *(u8 *)(Engine_ActorGet(24) + 99) = (s32)Data_00000000;
-    *(u8 *)(Engine_ActorGet(25) + 99) = 1;
-    *(u8 *)(Engine_ActorGet(26) + 99) = (s32)Data_00000000;
-    *(u8 *)(Engine_ActorGet(27) + 99) = 2;
+    {
+        /* FAKEMATCH: halfword zero retains the short literal-pool reach. */
+        struct { u16 v; } zero;
+
+        zero.v = 0;
+        *(u8 *)(Engine_ActorGet(24) + 99) = zero.v;
+        *(u8 *)(Engine_ActorGet(25) + 99) = 1;
+        *(u8 *)(Engine_ActorGet(26) + 99) = zero.v;
+        *(u8 *)(Engine_ActorGet(27) + 99) = 2;
+    }
     Call3(Engine_ActorSetPosition, 20, 0, 0);
-    base5_200c8c4 = 0x200c8c4;
-    Engine_ActorEnableActionCallback(24, base5_200c8c4);
-    Value2(Engine_ActorEnableActionCallback, 25, base5_200c8c4);
-    base5_200c8b0 = 0x200c8b0;
-    Engine_ActorEnableActionCallback(26, base5_200c8b0);
-    Value2(Engine_ActorEnableActionCallback, 27, base5_200c8b0);
-    base5_200c8d8 = 0x200c8d8;
-    Engine_ActorEnableActionCallback(28, base5_200c8d8);
-    Value2(Engine_ActorEnableActionCallback, 29, base5_200c8d8);
+    Engine_ActorEnableActionCallback(24, (s32)Data_0200c8c4);
+    Value2(Engine_ActorEnableActionCallback, 25, (s32)Data_0200c8c4);
+    Engine_ActorEnableActionCallback(26, (s32)Data_0200c8b0);
+    Value2(Engine_ActorEnableActionCallback, 27, (s32)Data_0200c8b0);
+    Engine_ActorEnableActionCallback(28, (s32)Data_0200c8d8);
+    Value2(Engine_ActorEnableActionCallback, 29, (s32)Data_0200c8d8);
     Engine_ActorSetChildValue(24, 3);
     Engine_ActorSetChildValue(25, 3);
     Engine_ActorSetChildValue(26, 3);
@@ -190,11 +171,17 @@ void FieldScene_RunActorSequence(void)
     Engine_ActorSetSpriteFlags(record, 1);
     Call3(Engine_ActorSetSpeed, 0, 0x19999, 0xcccc);
     rec8 = (u8 *)Engine_ActorGet(0);
-    rec8[85] = (s32)Data_00000000;
-    Call3(Engine_ObjectMotionSetPositionAndCommit, 0, 216, 0x264);
+    {
+        /* FAKEMATCH: halfword zero retains the short literal-pool reach. */
+        struct { u16 v; } zero;
+
+        zero.v = 0;
+        rec8[85] = zero.v;
+    }
+    Call3(Engine_ActorWalkToAndWait, 0, 216, 0x264);
     Call3(Engine_ActorSetSpeed, 30, 0x19999, 0xcccc);
-    Call3(Engine_ActorSetDestination, 30, 196, 0x258);
-    Call3(Engine_ActorSetDestination, 30, 216, 0x258);
+    Call3(Engine_ObjectMotionSetPositionAndCommit, 30, 196, 0x258);
+    Call3(Engine_ObjectMotionSetPositionAndCommit, 30, 216, 0x258);
     Engine_ActorStop(28);
     Engine_TaskWait(1);
     Call3(Engine_ActorSetSpeed, 28, 0x19999, 0xcccc);

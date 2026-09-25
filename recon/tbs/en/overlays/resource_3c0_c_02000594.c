@@ -1,87 +1,37 @@
+/* NONMATCHING: 616 bytes, candidate 616, 288 differing halfwords, 92
+ * halfword edits (2026-09-25). SuharaSabaku_Func02000594, meant for
+ * FIELD/SUHARA_SABAKU/F_00594.C as a single-overlay unit binding its names
+ * at their runtime addresses (an import veneer's listing offset plus
+ * 0x8000). Remaining: Separated the frame counter from queue-entry
+ * addressing; alpha remains based on the frame. Memory lifetimes, IME window
+ * and constant scheduling still differ.
+ * WALL: Queue and frame state allocation around the IME update window. */
 #include "TYPES.H"
 
-/* Unit bindings for scoring (declare as absolute_symbols of a unit on
- * resource_3c0:02000594):
- *   Engine_ActorGet = 0x0200928c (thumb)
- *   Engine_GameFlagIsSet = 0x0200924c (thumb)
- *   Engine_EventBegin = 0x0200927c (thumb)
- *   Engine_AudioPlayCue = 0x02009374 (thumb)
- *   Engine_TaskWait = 0x020091f4 (thumb)
- *   Engine_GameFlagSet = 0x02009254 (thumb)
- *   Engine_ActorSetSpeed = 0x02009294 (thumb)
- *   Engine_ActorSetPosition = 0x020092cc (thumb)
- *   Engine_ActorFaceActor = 0x020092ec (thumb)
- *   Engine_ActorWalkTo = 0x020092b4 (thumb)
- *   Engine_ActorWalkToAndWait = 0x020092bc (thumb)
- *   Engine_EventWait = 0x02009274 (thumb)
- *   Engine_ActorSetAnimation = 0x020092d4 (thumb)
- *   Engine_ActorFaceDirection = 0x02009314 (thumb)
- *   Engine_EventSetMessage = 0x020092fc (thumb)
- *   Engine_ActorShowEmote = 0x0200931c (thumb)
- *   Engine_EventShowMessage = 0x02009304 (thumb)
- *   Engine_ActorRunRepeatedMotion = 0x020092e4 (thumb)
- *   Engine_ActorSetAnimationAndWait = 0x020092dc (thumb)
- *   Engine_ActorSetDestination = 0x020092ac (thumb)
- *   Engine_ActorWaitForMove = 0x020092c4 (thumb)
- *   Engine_EventEnd = 0x02009284 (thumb)
- */
-#include "IO_WRITE_QUEUE.H"
-
-extern volatile u16 Data_04000208;
-extern u8 Data_02000240[];
-extern s16 Data_02000240_t[][1];
-
-/* Queue a register write for the next frame with interrupts masked, as
- * SYSTEM/IO_WRITE_QUEUE.C does; expanded in place, so the value is only
- * computed once there is room. */
-#define QUEUE_IO_WRITE(address, value, delay)                                \
-    do {                                                                     \
-        volatile u16 *ime;                                                   \
-        struct IoWriteQueue *q;                                              \
-        u32 saved;                                                           \
-        s32 count;                                                           \
-                                                                             \
-        q = &gIoWriteQueue;                                                  \
-        ime = &Data_04000208;                                                \
-        saved = *ime;                                                        \
-        *ime = (u16)(u32)ime;                                                \
-        count = q->count;                                                    \
-        if (count <= 31) {                                                   \
-            u32 *destination = (u32 *)((u8 *)q + count * 12 + 4);            \
-            q->count = count + 1;                                            \
-            *destination++ = (value);                                        \
-            *destination++ = (address);                                      \
-            *destination = (delay);                                          \
-        }                                                                    \
-        *ime = saved;                                                        \
-    } while (0)
-
-s32 Engine_ActorGet();
-s32 Engine_GameFlagIsSet();
-void Engine_EventBegin();
-void Engine_AudioPlayCue();
 void Engine_TaskWait();
-s32 Engine_GameFlagSet();
-void Engine_ActorSetSpeed();
-void Engine_ActorSetPosition();
-void Engine_ActorFaceActor();
-u8 * Engine_ActorWalkTo();
-void Engine_ActorWalkToAndWait();
+s32 Engine_GameFlagIsSet();
+void Engine_GameFlagSet();
 void Engine_EventWait();
-void Engine_ActorSetAnimation();
-void Engine_ActorFaceDirection();
-void Engine_EventSetMessage();
-void Engine_ActorShowEmote();
-void Engine_EventShowMessage();
-void Engine_ActorRunRepeatedMotion();
-void Engine_ActorSetAnimationAndWait();
-void Engine_ActorSetDestination();
-void Engine_ActorWaitForMove();
+void Engine_EventBegin();
 void Engine_EventEnd();
+u8 * Engine_ActorGet();
+void Engine_ActorSetSpeed();
+void Engine_ActorSetDestination();
+void Engine_ActorWalkTo();
+void Engine_ActorWalkToAndWait();
+void Engine_ActorWaitForMove();
+void Engine_ActorSetPosition();
+void Engine_ActorSetAnimation();
+void Engine_ActorSetAnimationAndWait();
+void Engine_ActorRunRepeatedMotion();
+void Engine_ActorFaceActor();
+void Engine_EventSetMessage();
+void Engine_EventShowMessage();
+void Engine_ActorFaceDirection();
+void Engine_ActorShowEmote();
+void Engine_AudioPlayCue();
 
-
-
-/* Call sites spelled through these wrappers pass their constants straight
+/* FAKEMATCH: Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
  * into a pseudo that the compiler then shares with later uses in the block.
  * A value-returning call also sets r0 last of its arguments. */
@@ -101,13 +51,9 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
     f(a0, a1, a2);
 }
 
-/* NONMATCHING: 616 of 616 bytes, 90 halfword edits (2026-09-24). The
- * BLDALPHA fade queues its write through QUEUE_IO_WRITE expanded in place;
- * the IME pointer is not hoisted out of the loop as in the reference and the
- * actor, flag and a0 registers are permuted. */
-void Func_02000594(s32 a0)
+void SuharaSabaku_Func02000594(s32 a0)
 {
-    s32 i;
+    u32 i;
     s32 p10;
     s32 p10b;
     s32 p11;
@@ -118,26 +64,48 @@ void Func_02000594(s32 a0)
     s32 rec7;
     u8 *record;
     s32 v2;
+    s32 queue_pos;
     s32 base6_4000208;
     s32 v0;
     s32 v6;
 
     p10 = a0;
-    rec7 = Value1(Engine_ActorGet, *(s32 *)&Data_02000240_t[250][0]);
+    rec7 = Value1(Engine_ActorGet, *(s32 *)0x02000434);
     rec = Value1(Engine_ActorGet, p10);
     rec2 = Value1(Engine_GameFlagIsSet, 0x340);
     p9 = *(s16 *)(rec7 + 10);
     p11 = *(s16 *)(rec7 + 18);
+            base6_4000208 = 0x4000208;
     Engine_EventBegin();
     Engine_AudioPlayCue(244);
-    for (i = 0; i <= 15; i++) {
-        *(s32 *)(rec + 24) = (i << 11) + 0x800;
-        *(s32 *)(rec + 28) = (i << 12) + 0x1000;
+    i = 0;
+    do {
+        *(s32 *)(rec + 24) = ((i << 11) + 0x800);
+        *(s32 *)(rec + 28) = ((i << 12) + 0x1000);
         if (rec2 == 0) {
-            QUEUE_IO_WRITE(0x4000052, ((16 - (i + 1)) << 8) | (i + 1), 0x20000);
+            v0 = *(u16 *)base6_4000208;
+            *(u16 *)base6_4000208 = base6_4000208;
+            if (*(u16 *)0x02002090 <= 31) {
+                queue_pos = (*(u16 *)0x02002090 << 1);
+                queue_pos = (queue_pos + *(u16 *)0x02002090);
+                *(u16 *)0x02002090 += 1;
+                queue_pos = (queue_pos << 2);
+                queue_pos = (queue_pos + 0x2002090);
+                queue_pos = (queue_pos + 4);
+                *(s32 *)(queue_pos) = (((16 - (i + 1)) << 8) | (i + 1));
+                queue_pos = (queue_pos + 4);
+                *(s32 *)(queue_pos) = 0x4000052;
+                queue_pos = (queue_pos + 4);
+                *(s32 *)(queue_pos) = 0x20000;
+            }
+            *(u16 *)base6_4000208 = v0;
+            v6 = base6_4000208;
+        } else {
+            v6 = 0x4000208;
         }
         Engine_TaskWait(1);
-    }
+        i = (i + 1);
+    } while (i <= 15);
     Engine_GameFlagSet((0x1fe + p10));
     Call1(Engine_GameFlagSet, 0x340);
     if (Value1(Engine_GameFlagIsSet, 0x9a0) == 0) {
@@ -153,7 +121,7 @@ void Func_02000594(s32 a0)
             }
             Call3(Engine_ActorFaceActor, 13, 0x4000, 0);
             *(u8 *)(Engine_ActorGet(13) + 90) &= 254;
-            Call3((void (*)())Engine_ActorWalkTo, 13, p9, (p11 - 16));
+            Engine_ActorWalkTo(13, p9, (p11 - 16));
             *(u8 *)(Engine_ActorGet(0) + 90) &= 254;
             Engine_ActorWalkToAndWait(0, (p9 + 8), (p11 - 40));
             Engine_EventWait(1);
@@ -190,4 +158,6 @@ void Func_02000594(s32 a0)
         }
     }
     Engine_EventEnd();
+    p9b = i;
+    p10b = v6;
 }

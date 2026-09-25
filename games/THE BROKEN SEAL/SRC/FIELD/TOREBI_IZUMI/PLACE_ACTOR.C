@@ -8,7 +8,7 @@ struct Half {
 };
 
 /* The zero is a one-halfword struct; the child-byte OR goes through a word temporary with 255 held in a variable, so it stays ldrb/orrs. */
-void TorebiIzumi_Func02000dd0(s32 id, s32 *pos, s32 dir, s32 palette, s32 value)
+void TorebiIzumi_PlaceActor(s32 id, s32 *pos, s32 dir, s32 palette, s32 value)
 {
     u8 *actor = Engine_ActorGet(id);
     u8 *sprite;

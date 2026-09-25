@@ -17,7 +17,7 @@ extern u8 Value_00000089[];
 /* The lucky wheels barker: counts the game tickets (item 228), offers a
  * game, warns when the bag is nearly full (six or fewer free slots) and
  * starts the lucky wheels when the player agrees. */
-void TorebiIzumi_Func020008f8(s32 spoken)
+void TorebiIzumi_OfferLuckyWheels(s32 spoken)
 {
     s32 tickets = Main_080772e0(228);
     s32 room;

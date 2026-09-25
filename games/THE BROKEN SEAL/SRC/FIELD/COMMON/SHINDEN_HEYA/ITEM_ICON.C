@@ -37,7 +37,7 @@ static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
 struct Spr5 { u8 pad[5]; u8 lo:5; u8 bit5:1; u8 hi:2; };
 
 /* Shrine room: raises an item icon object, loads the item's icon into its sprite and clears its motion flags while it rises for sixty frames. */
-void ShindenHeya_Func02003098(s32 item)
+void ShindenHeya_RaiseItemIcon(s32 item)
 {
     u8 *obj;
     u8 *spr;

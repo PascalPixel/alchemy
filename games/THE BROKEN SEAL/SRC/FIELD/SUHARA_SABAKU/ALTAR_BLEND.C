@@ -33,12 +33,12 @@ void Main_0808a5e0(s32 cue);
 /* Raises flags 0x206-0x208 for each of flags 0x311-0x313 already set and
  * 0x9b7 for 0x315, resets the scale of actors 8 to 10 unless flag 0x109 is
  * set, shows actor 11's second part, then queues the blend setup as
- * SuharaSabaku_Func02000f50 does.
+ * SuharaSabaku_ApplyVisitFlagBlend does.
  *
  * FAKEMATCH: the queue bound is a variable, so the comparison stays signed
  * on the u16 count as the ROM's bgt has it, and the queue writes keep the
  * one-pass loops of QueueIoWriteDelay2. */
-void SuharaSabaku_Func02001094(void)
+void SuharaSabaku_ApplyAltarFlagBlend(void)
 {
     volatile u16 *ime;
     struct IoWriteQueue *q;

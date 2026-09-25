@@ -2,7 +2,7 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_EFFECT.H"
 
-s32 SuharaSabaku_Func020009cc(struct FieldActor *actor)
+s32 SuharaSabaku_FollowLeaderWithSparks(struct FieldActor *actor)
 {
     struct EffectOptions options;
     struct FieldActor *leader;

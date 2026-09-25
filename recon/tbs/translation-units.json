@@ -71179,7 +71179,7 @@
     },
     {
       "id": "scene-3b0-020000c0",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/FUNE_HOBASHIRA/F_000C0.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/FUNE_HOBASHIRA/ACTOR_SWAY.C",
       "overlay": "resource_3b0",
       "absolute_symbols": {
         "Engine_RandomNext": {
@@ -73975,7 +73975,7 @@
     },
     {
       "id": "scene-3b0-02000564",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/FUNE_HOBASHIRA/F_00564.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/FUNE_HOBASHIRA/FOUR_ACTOR_STAGING.C",
       "overlay": "resource_3b0",
       "absolute_symbols": {
         "Engine_EventBegin": {

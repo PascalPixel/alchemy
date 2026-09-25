@@ -37,7 +37,7 @@ void Main_0808a5e0(s32 cue);
  * FAKEMATCH: the queue bound is a variable, so the comparison stays signed
  * on the u16 count as the ROM's bgt has it, and the queue writes keep the
  * one-pass loops of QueueIoWriteDelay2. */
-void SuharaSabaku_Func02000f50(void)
+void SuharaSabaku_ApplyVisitFlagBlend(void)
 {
     volatile u16 *ime;
     struct IoWriteQueue *q;

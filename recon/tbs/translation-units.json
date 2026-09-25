@@ -59126,7 +59126,7 @@
           "address": "0x0200ad58",
           "kind": "thumb"
         },
-        "Local_02003a44": {
+        "ArutinYama_StartPaletteAnim": {
           "address": "0x0200ba44",
           "kind": "thumb"
         },
@@ -70947,7 +70947,7 @@
     },
     {
       "id": "scene-3a4-020039c8",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/F_039C8.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/PALETTE_STEP.C",
       "overlay": "resource_3a4",
       "absolute_symbols": {
         "gEventWork": {
@@ -71235,7 +71235,7 @@
     },
     {
       "id": "scene-3a4-02003484",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/F_03484.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/SETTLE_MOUNT.C",
       "overlay": "resource_3a4",
       "absolute_symbols": {
         "Engine_AudioPlayCue": {
@@ -71483,7 +71483,7 @@
     },
     {
       "id": "scene-3a4-02003738",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/F_03738.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/ROLL_STEP.C",
       "overlay": "resource_3a4",
       "absolute_symbols": {
         "Engine_AudioPlayCue": {
@@ -72151,7 +72151,7 @@
     },
     {
       "id": "scene-3a4-02002a48",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/F_02A48.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/DRIFTING_LEAF.C",
       "overlay": "resource_3a4",
       "absolute_symbols": {
         "Engine_RandomNext": {
@@ -72787,7 +72787,7 @@
     },
     {
       "id": "scene-3a4-02001838",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/F_01838.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/MULTI_PHASE.C",
       "overlay": "resource_3a4",
       "absolute_symbols": {
         "Engine_ActorGet": {
@@ -72883,7 +72883,7 @@
     },
     {
       "id": "scene-3a4-02003850",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/F_03850.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/ROLL_OBJECT.C",
       "overlay": "resource_3a4",
       "absolute_symbols": {
         "Engine_ActorGet": {
@@ -72950,7 +72950,7 @@
           "address": "0x0200b724",
           "kind": "thumb"
         },
-        "ArutinYama_Func02003738": {
+        "ArutinYama_AdvanceRollingObject": {
           "address": "0x0200b738",
           "kind": "thumb"
         },
@@ -72958,7 +72958,7 @@
           "address": "0x0200ba78",
           "kind": "thumb"
         },
-        "ArutinYama_Func02003484": {
+        "ArutinYama_SettleAndMountLeader": {
           "address": "0x0200b484",
           "kind": "thumb"
         },
@@ -73099,7 +73099,7 @@
     },
     {
       "id": "scene-3a4-02003a44",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/F_03A44.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/PALETTE_START.C",
       "overlay": "resource_3a4",
       "absolute_symbols": {
         "Engine_TaskAddCallback": {

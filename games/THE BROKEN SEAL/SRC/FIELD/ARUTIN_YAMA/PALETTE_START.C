@@ -15,7 +15,7 @@ static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
     return f(a0, a1);
 }
 
-void ArutinYama_Func02003a44(void)
+void ArutinYama_StartPaletteAnim(void)
 {
     struct Half zero;
 

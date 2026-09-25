@@ -13649,7 +13649,7 @@
     },
     "resource_3a4:02001838": {
       "name": "FieldScene_BuildMultiPhasePresentation",
-      "source": "FIELD/ARUTIN_YAMA/F_01838.C"
+      "source": "FIELD/ARUTIN_YAMA/MULTI_PHASE.C"
     },
     "resource_3a4:02000ec0": {
       "name": "FieldScene_RunSharedSetPiece",
@@ -20851,8 +20851,8 @@
       "source": "FIELD/COMMON/IMIRU_FUCHIN/FADE_IN.C"
     },
     "resource_3a4:02003738": {
-      "name": "ArutinYama_Func02003738",
-      "source": "FIELD/ARUTIN_YAMA/F_03738.C"
+      "name": "ArutinYama_AdvanceRollingObject",
+      "source": "FIELD/ARUTIN_YAMA/ROLL_STEP.C"
     },
     "resource_3b7:020008f8": {
       "name": "TorebiIzumi_Func020008f8",
@@ -20867,8 +20867,8 @@
       "source": "FIELD/KOROSSEO_KABE/F_01898.C"
     },
     "resource_3a4:02003484": {
-      "name": "ArutinYama_Func02003484",
-      "source": "FIELD/ARUTIN_YAMA/F_03484.C"
+      "name": "ArutinYama_SettleAndMountLeader",
+      "source": "FIELD/ARUTIN_YAMA/SETTLE_MOUNT.C"
     },
     "resource_3af:020031a8": {
       "name": "FuneKanpan_Func020031a8",
@@ -20903,12 +20903,12 @@
       "source": "FIELD/FUNE_HEYA/F_045D0.C"
     },
     "resource_3a4:020039c8": {
-      "name": "ArutinYama_Func020039c8",
-      "source": "FIELD/ARUTIN_YAMA/F_039C8.C"
+      "name": "ArutinYama_StepPaletteAnim",
+      "source": "FIELD/ARUTIN_YAMA/PALETTE_STEP.C"
     },
     "resource_3a4:02002a48": {
-      "name": "ArutinYama_Func02002a48",
-      "source": "FIELD/ARUTIN_YAMA/F_02A48.C"
+      "name": "ArutinYama_UpdateDriftingLeaf",
+      "source": "FIELD/ARUTIN_YAMA/DRIFTING_LEAF.C"
     },
     "resource_3b7:0200173c": {
       "name": "TorebiIzumi_Func0200173c",
@@ -20983,16 +20983,16 @@
       "source": "FIELD/KUUPUAPPU_DOU/F_00704.C"
     },
     "resource_3a4:02003a44": {
-      "name": "ArutinYama_Func02003a44",
-      "source": "FIELD/ARUTIN_YAMA/F_03A44.C"
+      "name": "ArutinYama_StartPaletteAnim",
+      "source": "FIELD/ARUTIN_YAMA/PALETTE_START.C"
     },
     "resource_3b7:02000dd0": {
       "name": "TorebiIzumi_Func02000dd0",
       "source": "FIELD/TOREBI_IZUMI/F_00DD0.C"
     },
     "resource_3a4:02003850": {
-      "name": "ArutinYama_Func02003850",
-      "source": "FIELD/ARUTIN_YAMA/F_03850.C"
+      "name": "ArutinYama_RunRollingObject",
+      "source": "FIELD/ARUTIN_YAMA/ROLL_OBJECT.C"
     },
     "resource_3cb:02000148": {
       "name": "LinkLobby_Func02000148",

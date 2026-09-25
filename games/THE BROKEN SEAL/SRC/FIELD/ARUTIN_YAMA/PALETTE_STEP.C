@@ -17,7 +17,7 @@ extern s8 Data_0200bd28[];
 /* Steps a palette animation: when the hold runs out, reads the next pair of
  * the script (restarting it at -1) and copies nine colours from that point of
  * the palette buffer to background palette colours 3-11. */
-void ArutinYama_Func020039c8(void)
+void ArutinYama_StepPaletteAnim(void)
 {
     u16 *palette = Data_03001ed0;
 

@@ -1,8 +1,15 @@
-/* NONMATCHING: 1064 of 1060 bytes, 289 halfword edits (2026-09-24). Hand-written from the
- * resolved jump-table disassembly as a single-overlay unit binding Engine_* at
- * their import veneers. Remaining: structure written in full; the four name halfwords (link symbols 0x54 0x41 0x4c 0x4b) are short-range pool constants in the reference, which dumps a pool inside the flag loop; the candidate loads them as words with the pool at the end, and the game-state base and wins/message counters sit in different registers (289 edits). */
+/* NONMATCHING: 1060 bytes, candidate 1064, 496 differing halfwords, 289
+ * halfword edits (2026-09-25). Scene_RunScene3cbSequenceA, meant for
+ * MENU/LINK_LOBBY/F_012E0.C as a single-overlay unit binding its names at
+ * their runtime addresses (an import veneer's listing offset plus 0x8000).
+ * Remaining: Bound the inventory prompt to its verified main-ROM service at
+ * 0808a070; the previous Engine_UiWorkWaitThenFinalizeCapacity name was
+ * unsupported and identified a different service. Name halfword pool
+ * placement and state/counter allocation remain nonmatching.
+ * WALL: Name halfword pool placement and state/counter allocation. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+s32 Main_0808a070(s32, s32);
 
 void Main_08000378(s32 value);
 void Scene_DrawThreeDigitValue(s32 value);
@@ -34,7 +41,7 @@ extern u8 Data_0000004b;
 
 #define ROW(n) (*(u16 *)Data_02000240_t.halves[n])
 
-s32 Local_020012e0(void)
+s32 Scene_RunScene3cbSequenceA(void)
 {
     s32 i;
     s32 wins;
@@ -91,7 +98,7 @@ s32 Local_020012e0(void)
         Engine_ActorFaceActor(8, Data_02000240_t.words[125], 0);
         Engine_EventSetMessage(0x293e + msg);
         Engine_EventOpenMessage(8, 0);
-        if (Engine_UiWorkWaitThenFinalizeCapacity(0, 0) == 0) {
+        if (Main_0808a070(0, 0) == 0) {
             if (wins > 90) {
                 wins = 90;
             }

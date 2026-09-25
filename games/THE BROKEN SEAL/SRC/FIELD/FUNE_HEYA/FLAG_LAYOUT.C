@@ -1,7 +1,7 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
-void FuneHeya_Func020045d0(void);
+void FuneHeya_PlaceAnchorCharm(void);
 void FieldScene_RunSceneStep(s32 step, s32 a, s32 b);
 void OverlayObject_SetPositionAndHeading(s32 object, s32 x, s32 z, s32 heading);
 
@@ -23,7 +23,7 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
 }
 
 /* The zero is a one-halfword struct, so its pool load has a short reach and the pool lands mid-function as in the ROM. */
-void FuneHeya_Func02003364(void)
+void FuneHeya_ApplyFlaggedLayout(void)
 {
     struct FieldActor *actor;
     struct FieldActor *other;
@@ -33,11 +33,11 @@ void FuneHeya_Func02003364(void)
     struct Half zero;
 
     if (!Value1((s32 (*)())Engine_GameFlagIsSet, 0x911)) {
-        FuneHeya_Func020045d0();
+        FuneHeya_PlaceAnchorCharm();
         return;
     }
     if (Value1((s32 (*)())Engine_GameFlagIsSet, 0x928)) {
-        FuneHeya_Func020045d0();
+        FuneHeya_PlaceAnchorCharm();
     }
     done = Value1((s32 (*)())Engine_GameFlagIsSet, 0x93e);
     if (done != 0) {

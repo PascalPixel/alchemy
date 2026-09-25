@@ -304,8 +304,8 @@
       "source": "FIELD/KORIMA_MURA/F_00304.C"
     },
     "resource_3b1:020047cc": {
-      "name": "FuneHeya_Func020047cc",
-      "source": "FIELD/FUNE_HEYA/F_047CC.C"
+      "name": "FuneHeya_PoseSceneActor",
+      "source": "FIELD/FUNE_HEYA/POSE_ACTOR.C"
     },
     "resource_383:02002758": {
       "name": "KuupuappuHeya_Func02002758",
@@ -10833,7 +10833,7 @@
     },
     "resource_3b1:02005d10": {
       "name": "Scene_RunFourActorProgressPresentation",
-      "source": "FIELD/FUNE_HEYA/F_05D10.C"
+      "source": "FIELD/FUNE_HEYA/PROGRESS_SHOW.C"
     },
     "resource_3b1:02004254": {
       "name": "Scene_RunConditionalActorPresentation"
@@ -20920,8 +20920,8 @@
       "source": "FIELD/TAKARA_HASHIRA/FRONT_AHEAD.C"
     },
     "resource_3b1:020045d0": {
-      "name": "FuneHeya_Func020045d0",
-      "source": "FIELD/FUNE_HEYA/F_045D0.C"
+      "name": "FuneHeya_PlaceAnchorCharm",
+      "source": "FIELD/FUNE_HEYA/PLACE_ANCHOR.C"
     },
     "resource_3a4:020039c8": {
       "name": "ArutinYama_StepPaletteAnim",
@@ -21071,8 +21071,8 @@
       "source": "FIELD/TORETO_HEYA/ENTER_ROOM.C"
     },
     "resource_3b1:02003364": {
-      "name": "FuneHeya_Func02003364",
-      "source": "FIELD/FUNE_HEYA/F_03364.C"
+      "name": "FuneHeya_ApplyFlaggedLayout",
+      "source": "FIELD/FUNE_HEYA/FLAG_LAYOUT.C"
     },
     "resource_3a5:020012fc": {
       "name": "RamakanSabaku_Func020012fc",

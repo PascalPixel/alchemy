@@ -3,7 +3,7 @@
 void SceneActor_UpdateAnimationOnStateMatch(s32 actor, s32 state, s32 anim, s32 script);
 
 /* Pose actors 24 and 25 for dialogue steps 11 to 18. */
-void KuupuappuHeya_Func02002564(void)
+void KuupuappuHeya_PoseDialogueActors(void)
 {
     switch (*(s16 *)(*(u8 **)0x03001ebc + 0x16c)) {
     case 11:

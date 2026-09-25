@@ -16,7 +16,7 @@ extern struct MapWork *Data_03001e70;
 
 /* The far end of the bridge: the first time the leader steps on it, the
  * bridge rolls back the other way in a spray of dust. */
-void VinasuHeya_Func020026f8(void)
+void VinasuHeya_RetractBridge(void)
 {
     struct EffectOptions options;
     struct ScrollLayer *layer;

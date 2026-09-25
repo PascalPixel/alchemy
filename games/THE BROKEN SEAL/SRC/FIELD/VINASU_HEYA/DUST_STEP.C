@@ -29,7 +29,7 @@ static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
     f(a0, a1);
 }
 
-void VinasuHeya_Func02004048(struct DirXZ *dir)
+void VinasuHeya_StepActorWithDust(struct DirXZ *dir)
 {
     s32 id;
     struct FieldActor *center;

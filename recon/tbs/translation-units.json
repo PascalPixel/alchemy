@@ -70559,7 +70559,7 @@
     },
     {
       "id": "scene-3c8-020022c8",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/VINASU_HEYA/F_022C8.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/VINASU_HEYA/LOWER_BLOCKS.C",
       "overlay": "resource_3c8",
       "absolute_symbols": {
         "Engine_ActorGet": {
@@ -71115,7 +71115,7 @@
     },
     {
       "id": "scene-3c8-02004968",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/VINASU_HEYA/F_04968.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/VINASU_HEYA/RISING_SPRAY.C",
       "overlay": "resource_3c8",
       "absolute_symbols": {
         "Engine_AudioPlayCue": {
@@ -72283,7 +72283,7 @@
     },
     {
       "id": "scene-3c8-02001808",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/VINASU_HEYA/F_01808.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/VINASU_HEYA/ACTOR_LEAP.C",
       "overlay": "resource_3c8",
       "absolute_symbols": {
         "Engine_ActorGet": {
@@ -74119,7 +74119,7 @@
     },
     {
       "id": "scene-3c8-020047c0",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/VINASU_HEYA/F_047C0.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/VINASU_HEYA/EAST_PARTICLE_WAVE.C",
       "overlay": "resource_3c8",
       "absolute_symbols": {
         "Engine_EventBegin": {
@@ -74243,7 +74243,7 @@
     },
     {
       "id": "scene-3c8-0200290c",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/VINASU_HEYA/F_0290C.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/VINASU_HEYA/BRIDGE_EXTEND.C",
       "overlay": "resource_3c8",
       "absolute_symbols": {
         "Engine_ActorGet": {
@@ -74315,7 +74315,7 @@
     },
     {
       "id": "scene-3c8-020026f8",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/VINASU_HEYA/F_026F8.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/VINASU_HEYA/BRIDGE_RETRACT.C",
       "overlay": "resource_3c8",
       "absolute_symbols": {
         "Engine_ActorGet": {
@@ -75250,7 +75250,7 @@
     },
     {
       "id": "scene-3c8-02004048",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/VINASU_HEYA/F_04048.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/VINASU_HEYA/DUST_STEP.C",
       "overlay": "resource_3c8",
       "absolute_symbols": {
         "Engine_ActorGet": {
@@ -75302,7 +75302,7 @@
     },
     {
       "id": "scene-3c8-02004610",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/VINASU_HEYA/F_04610.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/VINASU_HEYA/PARTICLE_WAVE.C",
       "overlay": "resource_3c8",
       "absolute_symbols": {
         "Engine_ActorGet": {

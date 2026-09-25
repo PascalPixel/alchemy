@@ -20,7 +20,7 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 
 /* Moves actors 8 and 9 to the heights their table rows name, then marks the
  * cell under each of actors 8 to 12 that has sunk below the floor. */
-void VinasuHeya_Func020022c8(s32 wait)
+void VinasuHeya_LowerFloatingBlocks(s32 wait)
 {
     struct FieldActor *a = Engine_ActorGet(8);
     struct FieldActor *b = Engine_ActorGet(9);

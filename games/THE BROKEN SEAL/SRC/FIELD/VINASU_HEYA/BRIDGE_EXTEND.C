@@ -16,7 +16,7 @@ extern struct MapWork *Data_03001e70;
 
 /* Stepping onto the bridge end drops the leader a little; the first time,
  * the bridge rolls out across the chasm in a spray of dust. */
-void VinasuHeya_Func0200290c(void)
+void VinasuHeya_ExtendBridge(void)
 {
     struct EffectOptions options;
     struct ScrollLayer *layer;

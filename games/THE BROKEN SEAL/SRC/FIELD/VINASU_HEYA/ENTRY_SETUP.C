@@ -913,7 +913,7 @@ void OverlayObject_WaitUntilIdle(struct BusyObject *obj)
  * decay must stay written as a signed divide by 16 -- the negative bias and
  * arithmetic shift are what that division compiles to.
  */
-void Func_0200096c(struct Effect_0200096c *effect)
+void Effect_AdvanceMotion(struct Effect_0200096c *effect)
 {
     s32 velocity_z;
     struct Sprite_0200096c *sprite;
@@ -1917,7 +1917,7 @@ void FieldScene_RunStep230With44(void)
     Func_02008b2a(0x230, 44);
 }
 
-void FieldScene_RunScene3c8_02004a2c(void)
+void FieldScene_RunLeaderDropSequence(void)
 {
     u32 i;
     u8 *p8;

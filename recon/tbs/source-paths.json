@@ -713,7 +713,7 @@
     },
     "resource_3c8:02001808": {
       "name": "Scene_RunActorLeapSequence",
-      "source": "FIELD/VINASU_HEYA/F_01808.C"
+      "source": "FIELD/VINASU_HEYA/ACTOR_LEAP.C"
     },
     "resource_39c:02000d58": {
       "name": "Makyuri_CyclePalette",
@@ -782,7 +782,7 @@
     },
     "resource_3c8:02004610": {
       "name": "Scene_RunParticleWaveSequence",
-      "source": "FIELD/VINASU_HEYA/F_04610.C"
+      "source": "FIELD/VINASU_HEYA/PARTICLE_WAVE.C"
     },
     "resource_370:020003cc": {
       "name": "SaveMenu_Run"
@@ -4436,7 +4436,7 @@
       "source": "FIELD/SHIAN_MURA/SPAWN_SEQUENCE.C"
     },
     "resource_3c8:0200096c": {
-      "name": "advance_effect_motion",
+      "name": "Effect_AdvanceMotion",
       "source": "FIELD/VINASU_HEYA/ENTRY_SETUP.C"
     },
     "resource_3c9:02000480": {
@@ -11444,7 +11444,7 @@
       "source": "FIELD/FUNE_HEYA/EXTENDED_CHOREOGRAPHY.C"
     },
     "resource_3c8:02004a2c": {
-      "name": "FieldScene_RunScene3c8_02004a2c",
+      "name": "FieldScene_RunLeaderDropSequence",
       "source": "FIELD/VINASU_HEYA/ENTRY_SETUP.C"
     },
     "resource_3c9:02003924": {
@@ -20792,8 +20792,8 @@
       "source": "FIELD/SUHARA_SABAKU/F_00F50.C"
     },
     "resource_3c8:020022c8": {
-      "name": "VinasuHeya_Func020022c8",
-      "source": "FIELD/VINASU_HEYA/F_022C8.C"
+      "name": "VinasuHeya_LowerFloatingBlocks",
+      "source": "FIELD/VINASU_HEYA/LOWER_BLOCKS.C"
     },
     "resource_3b3:02002040": {
       "name": "TakaraHashira_Func02002040",
@@ -20883,8 +20883,8 @@
       "source": "FIELD/KOROSSEO_KABE/F_00400.C"
     },
     "resource_3c8:02004968": {
-      "name": "VinasuHeya_Func02004968",
-      "source": "FIELD/VINASU_HEYA/F_04968.C"
+      "name": "VinasuHeya_UpdateRisingSpray",
+      "source": "FIELD/VINASU_HEYA/RISING_SPRAY.C"
     },
     "resource_3bd:02000de8": {
       "name": "ArutamiraDou_Func02000de8",
@@ -21058,19 +21058,19 @@
       "source": "FIELD/RAMAKAN_SABAKU/F_012FC.C"
     },
     "resource_3c8:020047c0": {
-      "name": "VinasuHeya_Func020047c0",
-      "source": "FIELD/VINASU_HEYA/F_047C0.C"
+      "name": "Scene_RunEastParticleWaveSequence",
+      "source": "FIELD/VINASU_HEYA/EAST_PARTICLE_WAVE.C"
     },
     "resource_3a4:02001d0c": {
       "name": "FieldScene_RunMultiPhasePresentation"
     },
     "resource_3c8:020026f8": {
-      "name": "VinasuHeya_Func020026f8",
-      "source": "FIELD/VINASU_HEYA/F_026F8.C"
+      "name": "VinasuHeya_RetractBridge",
+      "source": "FIELD/VINASU_HEYA/BRIDGE_RETRACT.C"
     },
     "resource_3c8:0200290c": {
-      "name": "VinasuHeya_Func0200290c",
-      "source": "FIELD/VINASU_HEYA/F_0290C.C"
+      "name": "VinasuHeya_ExtendBridge",
+      "source": "FIELD/VINASU_HEYA/BRIDGE_EXTEND.C"
     },
     "resource_381:020010c4": {
       "name": "SoruFunka_Func020010c4",
@@ -21249,8 +21249,8 @@
       "source": "FIELD/COMMON/MAKYURI/ACTOR_MOVE.C"
     },
     "resource_3c8:02004048": {
-      "name": "VinasuHeya_Func02004048",
-      "source": "FIELD/VINASU_HEYA/F_04048.C"
+      "name": "VinasuHeya_StepActorWithDust",
+      "source": "FIELD/VINASU_HEYA/DUST_STEP.C"
     },
     "resource_3c9:02002200": {
       "name": "VinasuChojo_Func02002200",

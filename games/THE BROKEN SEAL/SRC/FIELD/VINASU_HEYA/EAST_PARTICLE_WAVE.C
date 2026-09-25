@@ -8,7 +8,7 @@ void Main_0808a5e0(s32 cue);
 
 /* The ceiling gives way: rubble rains down in thirteen rows, the fourth row
  * four times, while the map fills in behind it. */
-void VinasuHeya_Func020047c0(void)
+void Scene_RunEastParticleWaveSequence(void)
 {
     struct EffectOptions options;
     u32 repeat;

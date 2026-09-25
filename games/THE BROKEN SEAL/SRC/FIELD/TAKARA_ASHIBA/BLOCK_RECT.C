@@ -18,7 +18,7 @@ static __inline__ void Call1(s32 (*f)(s32), s32 a0)
 /* Tracks block 10: once it has sunk to cell height 2 or below, applies its
  * rectangle and sets flag 0x300; on row 55 applies the rectangle for columns
  * 42 and 38, and anywhere else the two rectangles at row 56. */
-void TakaraAshiba_Func02001cf8(void)
+void TakaraAshiba_UpdateBlockRects(void)
 {
     struct FieldActor *block = Engine_ActorGet(10);
     s32 y = block->y.fixed / 0x100000;

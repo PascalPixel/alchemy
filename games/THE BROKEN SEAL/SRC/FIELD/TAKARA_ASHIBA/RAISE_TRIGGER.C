@@ -14,7 +14,7 @@ static __inline__ void Call1(s32 (*f)(s32), s32 a0)
 /* Once the leader stands in cells x 21-23, z 10-11 while not cloaked (and the
  * game-state halfword at +0x24a is not 8), sets flag 0x220 and raises
  * trigger 91; flag 0x220 keeps it from firing again. */
-void TakaraAshiba_Func02001308(void)
+void TakaraAshiba_RaiseTriggerOnStand(void)
 {
     struct FieldActor *leader = Engine_ActorGet(0);
     s32 x = leader->x.fixed / 0x100000;

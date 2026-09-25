@@ -72535,7 +72535,7 @@
     },
     {
       "id": "scene-381-02002eb0",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/SORU_FUNKA/F_02EB0.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/SORU_FUNKA/EFFECT_PAIR.C",
       "overlay": "resource_381",
       "absolute_symbols": {
         "Engine_AudioPlayCue": {
@@ -74523,7 +74523,7 @@
     },
     {
       "id": "scene-381-020010c4",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/SORU_FUNKA/F_010C4.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/SORU_FUNKA/STEP_EMBERS.C",
       "overlay": "resource_381",
       "absolute_symbols": {
         "Main_030003f0": {

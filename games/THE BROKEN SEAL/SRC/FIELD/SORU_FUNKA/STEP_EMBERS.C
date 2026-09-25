@@ -61,7 +61,7 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
  * effect timer, ages the actors that have come to rest, and when the frame
  * mask allows, launches the first idle one on a random bearing. */
 /* FAKEMATCH: both WorkSetValues calls go through the Call3 inline wrapper. */
-void SoruFunka_Func020010c4(void)
+void SoruFunka_StepEmbers(void)
 {
     u8 *work;
     s32 level;

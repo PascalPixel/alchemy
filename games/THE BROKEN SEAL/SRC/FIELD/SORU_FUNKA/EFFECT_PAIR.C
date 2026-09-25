@@ -48,7 +48,7 @@ struct WorldMapOam {
 };
 
 /* Soru volcano: spawns the linked pair of effect objects above the parent actor, with a cue, and gives them actor 15's sprite priority. */
-void SoruFunka_Func02002eb0(union PairObject *parent)
+void SoruFunka_SpawnEffectPair(union PairObject *parent)
 {
     union PairObject *pair[2];
     union PairObject *child;

@@ -952,7 +952,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
     }
 }
 
-void FieldScene_RunScene3bbSequenceA(void)
+void FieldScene_PlaceSpectatorRow(void)
 {
     extern s32 Data_0200c834;
     extern u32 Data_0200c838;
@@ -1070,7 +1070,7 @@ void FieldScene_RunSecondActorInteraction(s32 a0)
         rec = Value2(Func_02003444, a0, 2);
         if (rec == 0) {
             Event_SetMessage(MSG_SHIFTING_FLOOR_STAGE);
-            FieldScene_RunScene3bbSequenceA();
+            FieldScene_PlaceSpectatorRow();
             Camera_SetSpeed(0x30000, 0x6000);
             Camera_MoveTo(0x3d80000, -1, 0xe80000, 1);
             Camera_WaitForMove();

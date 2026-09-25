@@ -30,7 +30,7 @@ struct Flags85 {
 };
 
 /* Every sixteenth frame, drop a puff beside actor 8 at a random offset. */
-void WorldMap_Func020034a0(void)
+void WorldMap_SpawnActorEightPuff(void)
 {
     u8 *leader;
     u8 *obj;

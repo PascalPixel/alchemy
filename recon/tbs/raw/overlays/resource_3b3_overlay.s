@@ -393,7 +393,6 @@ AlchemyC_020008ec:
 	.space 0x29a
 AlchemyC_02000ba4:
 	.space 0x11c
-Func_02000cc0:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -491,7 +490,6 @@ AlchemyC_02000d78:
 	.space 0x2
 AlchemyC_02000da8:
 	.space 0x34
-Func_02000ddc:
 	push	{r5, r6, r7, lr}
 	mov	r7, r8
 	push	{r7}
@@ -676,7 +674,6 @@ AlchemyC_02001aa8:
 	.space 0x140
 AlchemyC_02001be8:
 	.space 0x19c
-Func_02001d84:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -1039,7 +1036,6 @@ AlchemyC_020026b8:
 	.space 0x6
 .L_02002704:
 	.space 0x48
-Func_0200274c:
 	.2byte 0xb520
 	ldr	r3, [pc, #692]
 	movs	r2, #224

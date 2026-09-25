@@ -55,6 +55,7 @@ pub fn identity(root: &Path, target: &str) -> Result<String, String> {
         format!("{}/GRAPHICS", game.game_dir()),
         format!("{}/SOUND", game.game_dir()),
         format!("{}/TEXT", game.game_dir()),
+        format!("{}/semantic", game.recon_dir()),
         "games/COMMON/SRC".into(),
         "games/COMMON/INCLUDE".into(),
     ] {
@@ -74,6 +75,7 @@ pub fn identity(root: &Path, target: &str) -> Result<String, String> {
         "source-bindings.json",
         "translation-units.json",
         "compiler-runtime.json",
+        "semantic/overlay-assembly.json",
         "machine.json",
         "assets.json",
         "private-inputs.json",

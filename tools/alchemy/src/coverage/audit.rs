@@ -294,10 +294,10 @@ fn asset_complement(rom_bytes: i64, cuts: &[(i64, i64)]) -> Vec<(i64, i64)> {
 
 type OwnerEntries = std::collections::BTreeMap<String, std::collections::BTreeSet<i64>>;
 
-/// Owner entry points by image: every owner the production translation units
-/// link (canonical and instance placements) and every owner a retained
-/// overlay listing bounds, by C placeholder or owner label. An owner entry is
-/// code whatever its listing spells there, so the decoder walks from it.
+/// Owner entry points by image from the game's two owner registers: every
+/// owner its production translation units link (canonical and instance
+/// placements) and every reviewed complete owner boundary. A register entry
+/// is code whatever its listing spells there, so the decoder walks from it.
 fn owner_entries(root: &Path, target: DecompTarget) -> Result<OwnerEntries, String> {
     use crate::compiler::source_paths::SourceOwner;
     use crate::compiler::translation_units::TranslationUnits;
@@ -317,12 +317,15 @@ fn owner_entries(root: &Path, target: DecompTarget) -> Result<OwnerEntries, Stri
                 .extend(placed.map(i64::from));
         }
     }
-    for owner in crate::overlay::owners::owner_spans(root, target)?.into_keys() {
-        if let SourceOwner::Overlay { resource, address } = owner {
-            entries
-                .entry(format!("resource_{resource:03x}"))
-                .or_default()
-                .insert(i64::from(address));
+    let register = crate::overlay::owners::register_path(root, target);
+    if register.is_file() {
+        for owner in crate::overlay::owners::reviewed_spans(root, target)?.into_keys() {
+            if let SourceOwner::Overlay { resource, address } = owner {
+                entries
+                    .entry(format!("resource_{resource:03x}"))
+                    .or_default()
+                    .insert(i64::from(address));
+            }
         }
     }
     Ok(entries)

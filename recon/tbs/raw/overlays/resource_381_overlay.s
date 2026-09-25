@@ -1010,7 +1010,6 @@ AlchemyC_02003000:
 	.2byte 0x0000
 AlchemyC_0200300c:
 	.space 0x10
-Func_0200301c:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl

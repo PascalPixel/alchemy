@@ -1289,7 +1289,6 @@ AlchemyC_02000308:
 	.2byte 0x0000
 	.2byte 0xb040
 	.2byte 0x0200
-Scene_PlayApproachEvent:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -3453,7 +3452,6 @@ Scene_PlayApproachEvent:
 	pop	{r5, r6, r7, pc}
 	.2byte 0x3333
 	.2byte 0x0001
-	.size Scene_PlayApproachEvent, .-Scene_PlayApproachEvent
 	push	{r5, lr}
 	bl	sub_020042e4
 	movs	r0, #0
@@ -4787,7 +4785,6 @@ Scene_PlayApproachEvent:
 	mov	fp, r7
 	pop	{r5, r6, r7, pc}
 	.2byte 0x0000
-Scene_CreateSpriteField:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r8
@@ -4875,7 +4872,6 @@ Scene_CreateSpriteField:
 	.4byte 0x000001e1
 	.2byte 0xa58d
 	.2byte 0x0200
-	.size Scene_CreateSpriteField, .-Scene_CreateSpriteField
 	push	{r5, lr}
 	movs	r3, #192
 	lsls	r3, r3, #18

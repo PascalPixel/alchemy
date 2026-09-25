@@ -1158,7 +1158,6 @@ AlchemyC_02000b24:
 	.space 0xc
 AlchemyC_02000b30:
 	.space 0x98
-Func_02000bc8:
 	push	{lr}
 	ldr	r3, [pc, #80]
 	movs	r0, #224
@@ -1232,7 +1231,6 @@ AlchemyC_02000f6c:
 	.space 0x28
 AlchemyC_02000f94:
 	.space 0x108
-FieldScene_RunStatefulSequence:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl

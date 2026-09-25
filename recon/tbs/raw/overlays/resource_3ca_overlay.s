@@ -272,7 +272,6 @@ AlchemyC_02000100:
 	.space 0x68
 AlchemyC_02000168:
 	.space 0x2c
-Func_02000194:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -483,7 +482,6 @@ AlchemyC_020003f8:
 	.space 0x1c
 AlchemyC_02000414:
 	.space 0x1c
-Scene_RunExtendedPresentationSequence:
 	push	{r5, r6, lr}
 	sub	sp, #8
 	bl	sub_020017f2
@@ -1186,7 +1184,6 @@ Scene_RunExtendedPresentationSequence:
 	.4byte 0x0000028f
 	.2byte 0x0000
 	.2byte 0x0000
-Scene_ClosePresentationSequence:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r8
@@ -1454,7 +1451,6 @@ AlchemyC_02000da4:
 	.space 0x18c
 AlchemyC_02000f30:
 	.space 0x50
-Func_02000f80:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -1578,7 +1574,6 @@ AlchemyC_02001188:
 	.space 0x20
 .L_020011a8:
 	.space 0x1c
-Func_020011c4:
 	push	{r5, r6, r7, lr}
 	ldr	r3, [pc, #208]
 	movs	r1, #0

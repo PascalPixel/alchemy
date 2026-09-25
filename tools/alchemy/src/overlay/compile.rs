@@ -2110,10 +2110,13 @@ mod source_activation_tests {
             canonical_name: format!("Owner_{address:08x}"),
             extent: 4,
             state: OwnerState::ExactC,
+            _declared_state: None,
         };
         let mut unit = TranslationUnit {
             id: "shared".into(),
             game: "tbs".into(),
+            _declared_game: None,
+            _declared_route: None,
             source: "games/THE BROKEN SEAL/SRC/overlays/shared.c".into(),
             overlay: Some("resource_382".into()),
             absolute_symbols: BTreeMap::new(),

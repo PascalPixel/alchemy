@@ -70519,7 +70519,7 @@
     },
     {
       "id": "scene-3b3-02002040",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/TAKARA_HASHIRA/F_02040.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/TAKARA_HASHIRA/STAGED_TRIGGER.C",
       "overlay": "resource_3b3",
       "absolute_symbols": {
         "Engine_ActorGet": {
@@ -71015,7 +71015,7 @@
     },
     {
       "id": "scene-3b3-020019f0",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/TAKARA_HASHIRA/F_019F0.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/TAKARA_HASHIRA/FRONT_AHEAD.C",
       "overlay": "resource_3b3",
       "absolute_symbols": {
         "gEventWork": {
@@ -71035,7 +71035,7 @@
     },
     {
       "id": "scene-3b3-02001938",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/TAKARA_HASHIRA/F_01938.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/TAKARA_HASHIRA/FRONT_BEHIND.C",
       "overlay": "resource_3b3",
       "absolute_symbols": {
         "gEventWork": {
@@ -73155,7 +73155,7 @@
     },
     {
       "id": "scene-3b3-020025f8",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/TAKARA_HASHIRA/F_025F8.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/TAKARA_HASHIRA/PREP_ACTOR.C",
       "overlay": "resource_3b3",
       "absolute_symbols": {
         "Engine_ActorGet": {
@@ -73219,18 +73219,18 @@
     },
     {
       "id": "scene-3b3-02001aa8",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/TAKARA_HASHIRA/F_01AA8.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/TAKARA_HASHIRA/PRIORITY_UPDATE.C",
       "overlay": "resource_3b3",
       "absolute_symbols": {
         "Engine_ActorGet": {
           "address": "0x0200ab1c",
           "kind": "thumb"
         },
-        "TakaraHashira_Func02001938": {
+        "TakaraHashira_SyncPriorityIfBehind": {
           "address": "0x02009938",
           "kind": "thumb"
         },
-        "TakaraHashira_Func020019f0": {
+        "TakaraHashira_SyncPriorityIfAhead": {
           "address": "0x020099f0",
           "kind": "thumb"
         },
@@ -73251,7 +73251,7 @@
     },
     {
       "id": "scene-3b3-02001be8",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/TAKARA_HASHIRA/F_01BE8.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/TAKARA_HASHIRA/SORT_PILLARS.C",
       "overlay": "resource_3b3",
       "absolute_symbols": {
         "Engine_ActorGet": {

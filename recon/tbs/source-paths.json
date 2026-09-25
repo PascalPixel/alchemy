@@ -10519,7 +10519,8 @@
       "name": "Unnamed_08094da0"
     },
     "main:08094e7c": {
-      "name": "Unnamed_08094e7c"
+      "name": "FieldEffect_UpdateSparkles",
+      "source": "FIELD/COMMON/EFFECT/SPARKLES.C"
     },
     "main:0809509c": {
       "name": "Unnamed_0809509c"

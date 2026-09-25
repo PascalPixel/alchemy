@@ -20809,8 +20809,8 @@
       "source": "MENU/LINK_LOBBY/F_002D8.C"
     },
     "resource_3c0:02000f50": {
-      "name": "SuharaSabaku_Func02000f50",
-      "source": "FIELD/SUHARA_SABAKU/F_00F50.C"
+      "name": "SuharaSabaku_ApplyVisitFlagBlend",
+      "source": "FIELD/SUHARA_SABAKU/VISIT_BLEND.C"
     },
     "resource_3c8:020022c8": {
       "name": "VinasuHeya_LowerFloatingBlocks",
@@ -20940,8 +20940,8 @@
       "source": "FIELD/KUUPUAPPU_DOU/F_00170.C"
     },
     "resource_3c0:02001094": {
-      "name": "SuharaSabaku_Func02001094",
-      "source": "FIELD/SUHARA_SABAKU/F_01094.C"
+      "name": "SuharaSabaku_ApplyAltarFlagBlend",
+      "source": "FIELD/SUHARA_SABAKU/ALTAR_BLEND.C"
     },
     "resource_3c4:02001abc": {
       "name": "BabiChika_Func02001abc",
@@ -21020,8 +21020,8 @@
       "source": "MENU/LINK_LOBBY/F_00148.C"
     },
     "resource_3c0:020009cc": {
-      "name": "SuharaSabaku_Func020009cc",
-      "source": "FIELD/SUHARA_SABAKU/F_009CC.C"
+      "name": "SuharaSabaku_FollowLeaderWithSparks",
+      "source": "FIELD/SUHARA_SABAKU/FOLLOW_SPARK.C"
     },
     "resource_3cb:02000f30": {
       "name": "LinkLobby_Func02000f30",

@@ -70607,7 +70607,7 @@
     },
     {
       "id": "scene-3c0-02000f50",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/SUHARA_SABAKU/F_00F50.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/SUHARA_SABAKU/VISIT_BLEND.C",
       "overlay": "resource_3c0",
       "absolute_symbols": {
         "Engine_GameFlagIsSet": {
@@ -72019,7 +72019,7 @@
     },
     {
       "id": "scene-3c0-02001094",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/SUHARA_SABAKU/F_01094.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/SUHARA_SABAKU/ALTAR_BLEND.C",
       "overlay": "resource_3c0",
       "absolute_symbols": {
         "Engine_GameFlagIsSet": {
@@ -73383,7 +73383,7 @@
     },
     {
       "id": "scene-3c0-020009cc",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/SUHARA_SABAKU/F_009CC.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/SUHARA_SABAKU/FOLLOW_SPARK.C",
       "overlay": "resource_3c0",
       "absolute_symbols": {
         "Engine_ActorGet": {

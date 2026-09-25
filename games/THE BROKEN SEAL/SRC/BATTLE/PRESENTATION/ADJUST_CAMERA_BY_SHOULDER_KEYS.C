@@ -9,35 +9,27 @@
 #include "BATTLE_PARTY.H"
 #include "SYSTEM.H"
 
-/* battle/presentation/cam/shoulder.c */
 extern u16 Value_fffffe00;
 
 void BattlePres_AdjustCameraByShoulderKeys(void)
 {
     void **slot = (void **)ADDR_03001E80;
-    u8 *cam = slot[0];
-    u8 *trans = slot[32];
+    struct BattleCamera *cam = slot[0];
+    struct BattlePresentationTransition *trans = slot[32];
     volatile u32 *keys = (volatile u32 *)ADDR_03001AE8;
 
     if ((*keys & 512) != 0) {
-        *(u16 *)(cam + 54) += 512;
+        cam->yaw += 512;
     }
     if ((*keys & 256) != 0) {
-        *(u16 *)(cam + 54) += (u16)(u32)&Value_fffffe00;
+        cam->yaw += (u16)(u32)&Value_fffffe00;
     }
-    if (*(u32 *)(trans + 20) == 0) {
-        Battle_SetRange(0x780000, 0x780000, 0, 0, 0x10000);
+    if (trans->flag == 0) {
+        BattleCamera_SetRange(0x780000, 0x780000, 0, 0, 0x10000);
     }
 }
 
 /* battle/presentation/act/run.c */
-struct BattlePresentationTransition {
-    s32 battle_value;
-    s32 timer;
-    u8 reserved08[12];
-    s32 flag;
-};
-
 extern struct BattlePresentationTransition *gTransitionWork;
 
 void *Owner_GetStateFar(s32);
@@ -63,8 +55,8 @@ s32 BattlePres_RunAction(s16 *action)
         battle_mode = -0x2000;
     else
         battle_mode = 0x2000;
-    transition->battle_value = battle_mode;
-    transition->timer = 60;
+    transition->target_yaw = battle_mode;
+    transition->frames = 60;
     UiWork_ClearValueNameTablesFar();
 
     switch (action[3]) {

@@ -1,12 +1,11 @@
 #include "TYPES.H"
 #include "SCENE.H"
+#include "BATTLE_PRESENTATION.H"
 
-/* battle/presentation/trans/pres_setup_transition_scene.c */
-/* battle/presentation/trans/setup.c */
 void BattlePres_SetupTransitionScene(s32 x, s32 depth, s32 y, s32 mode)
 {
-    u8 *scene = *(u8 **)0x03001e80;
-    s32 *position = (s32 *)(scene + 12);
+    struct BattleCamera *scene = *(struct BattleCamera **)0x03001e80;
+    s32 *pos = scene->pos;
     s32 *hud = (s32 *)0x03001ce0;
     s32 scale = Math_Div(mode << 16, 100);
     s32 render_bounds[3];
@@ -19,9 +18,9 @@ void BattlePres_SetupTransitionScene(s32 x, s32 depth, s32 y, s32 mode)
     s32 width;
     u32 result;
 
-    position[0] = x;
-    position[1] = depth;
-    position[2] = y;
+    pos[0] = x;
+    pos[1] = depth;
+    pos[2] = y;
     source_bounds[0] = 0;
     alpha = 0xc000;
     source_bounds[1] = 0;
@@ -31,9 +30,9 @@ void BattlePres_SetupTransitionScene(s32 x, s32 depth, s32 y, s32 mode)
     result = blend(span, alpha);
     Camera_StoreSceneParameters(span, result, span * 2);
     Render_ResetTransformState();
-    SceneTransform_ApplyPosition(position);
-    SceneTransform_ApplyYaw(*(s16 *)(scene + 0x36));
-    SceneTransform_ApplyPitch(*(s16 *)(scene + 0x34));
+    SceneTransform_ApplyPosition(pos);
+    SceneTransform_ApplyYaw((s16)scene->yaw);
+    SceneTransform_ApplyPitch((s16)scene->pitch);
     render_bounds[0] = 0;
     render_bounds[1] = 0;
     render_bounds[2] = span;
@@ -41,7 +40,7 @@ void BattlePres_SetupTransitionScene(s32 x, s32 depth, s32 y, s32 mode)
     hud[3] = 120;
     hud[4] = 120;
     Render_ResetTransformState();
-    Graphics_PrepareTransferInIwramWork(scene, position);
+    Graphics_PrepareTransferInIwramWork(scene, pos);
     Render_ProjectPoint(source_bounds, measured_bounds);
 
     BattleCamera_SetRange(

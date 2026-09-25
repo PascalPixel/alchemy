@@ -38,7 +38,7 @@ struct Swirl {
     s16 angle;
 };
 
-void ToretoHeya_Func020015ac(struct Swirl *obj)
+void ToretoHeya_UpdateSwirlObject(struct Swirl *obj)
 {
     struct Vec pos;
     s32 t;

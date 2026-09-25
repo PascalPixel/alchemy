@@ -24,7 +24,7 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 /* A floor switch: when the leader steps onto a new entrance tile, copy its
  * cell; the first time, just set its flag, otherwise drop the leader through
  * the floor to map 0x2d at the entrance, spinning as it falls. */
-void ToretoHeya_Func02000334(s32 flag, s32 src_x, s32 src_y, s32 entrance)
+void ToretoHeya_HandleFloorSwitch(s32 flag, s32 src_x, s32 src_y, s32 entrance)
 {
     s32 dest_x;
     s32 dest_y;

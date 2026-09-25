@@ -24,7 +24,7 @@ static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
     f(a0, a1);
 }
 
-void ImiruFuchin_Func02001a34(void)
+void ImiruFuchin_NudgeCameraByStep(void)
 {
     s32 step;
 

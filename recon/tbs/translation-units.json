@@ -61968,7 +61968,7 @@
     },
     {
       "id": "common-imiru-fuchin-f-017e4",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/IMIRU_FUCHIN/F_017E4.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/IMIRU_FUCHIN/ENTRY_SETUP.C",
       "overlay": "resource_39a",
       "absolute_symbols": {
         "ImiruFuchin_ApplyRoomLayout": {
@@ -62991,7 +62991,7 @@
     },
     {
       "id": "common-imiru-fuchin-f-01a34",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/IMIRU_FUCHIN/F_01A34.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/IMIRU_FUCHIN/CAMERA_STEP.C",
       "overlay": "resource_39a",
       "absolute_symbols": {
         "FieldScene_RunScene39a_02001ad0": {
@@ -63011,7 +63011,7 @@
     },
     {
       "id": "common-imiru-fuchin-f-01d78",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/IMIRU_FUCHIN/F_01D78.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/IMIRU_FUCHIN/CAVE_DUST.C",
       "overlay": "resource_39a",
       "absolute_symbols": {
         "Engine_AudioPlayCue": {

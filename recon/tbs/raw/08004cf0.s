@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 	.set sub_080072f0, 0x080072f0
-	.global SceneTransform_ApplyTranslation
+	.global SceneTransform_ApplyScale
 	.thumb_func
-SceneTransform_ApplyTranslation:
+SceneTransform_ApplyScale:
 	push	{r5, r6, lr}
 	sub	sp, #48
 	adds	r6, r0, #0

@@ -155,7 +155,8 @@ Each of these closed real owners. Try them before inventing anything new.
   routine last so its address loads first; alternate two locals across chained
   `Iwram_MulQ16` calls. `Dma_Set` in `INCLUDE/DMA.H` produces the
   `stmia r3!; subs r3, #12` idiom; call it from C. Write `_call_via` calls as
-  ordinary calls through a function pointer.
+  ordinary calls through a function pointer; derive its prototype from the
+  callee, not leftover values in argument registers.
 - **Zeros and pools.** A plain `0` held in a `u8` or `u16` local is loaded as a
   halfword pool constant, whose short reach puts the literal pool mid-function
   where the ROM has it; a `(u16)(s32)&Value_XXXX` constant does the same for a

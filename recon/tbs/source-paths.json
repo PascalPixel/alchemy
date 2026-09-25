@@ -898,7 +898,7 @@
       "source": "GRAPHICS/RENDER/TRANSFORM_APPLY_ROTATION.C"
     },
     "main:08004cf0": {
-      "name": "SceneTransform_ApplyTranslation"
+      "name": "SceneTransform_ApplyScale"
     },
     "main:08004d2c": {
       "name": "SceneTransform_ApplyRotationTranslation",

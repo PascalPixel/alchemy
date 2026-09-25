@@ -7,7 +7,6 @@ void Engine_ActorSetSpriteFlags(struct Actor *actor, s32 flags);
 void Engine_EventWait(s32 frames);
 u32 Engine_RandomNext(void);
 void Effect_Spawn(s32 x, s32 y, s32 z, s32 dx, s32 dy, s32 dz, s32 lift, void *params);
-void Engine_ActorSetPosition(s32 actor, s32 x, s32 y);
 
 /* Passing the constant through a wrapper loads it straight into the argument
  * register. */
@@ -34,8 +33,8 @@ struct EffectParams {
     u8 pad1c[12];
 };
 
-/* Actors 22 and 24 sink away, throwing sparks in turn for 32 frames. */
-void MakyuriChojo_Func02002f18(void)
+/* Actors 22 and 24 rise back, throwing sparks in turn for 32 frames. */
+void MakyuriChojo_RiseActorPair(void)
 {
     struct EffectParams params;
     struct EffectParams *p;
@@ -49,8 +48,6 @@ void MakyuriChojo_Func02002f18(void)
     left = Engine_ActorGet(22);
     right = Engine_ActorGet(24);
     Engine_AudioPlayCue(190);
-    Call2(Engine_ActorSetChildValue, 22, 0x100);
-    Call2(Engine_ActorSetChildValue, 24, 0x100);
     Engine_ActorSetSpriteFlags(Engine_ActorGet(22), 0);
     Engine_ActorSetSpriteFlags(Engine_ActorGet(24), 0);
     p = &params;
@@ -66,15 +63,21 @@ void MakyuriChojo_Func02002f18(void)
             x = left->x;
             x += r;
             x += -0xc0000;
-            Effect_Spawn(x, left->y + (((Engine_RandomNext() << 5) >> 16) << 16) + -0x100000, left->z, 0, 0x40000, 0, 0x1b0000, p);
+            Effect_Spawn(x, left->y + (((Engine_RandomNext() << 5) >> 16) << 16) + 0x200000, left->z, 0, -0x40000, 0, 0x1b0000, p);
         } else {
             r = (((Engine_RandomNext() * 24) >> 16) << 16);
             x = right->x;
             x += r;
             x += -0xc0000;
-            Effect_Spawn(x, right->y + (((Engine_RandomNext() << 5) >> 16) << 16) + -0x100000, right->z, 0, 0x40000, 0, 0x1b0000, p);
+            Effect_Spawn(x, right->y + (((Engine_RandomNext() << 5) >> 16) << 16) + 0x200000, right->z, 0, -0x40000, 0, 0x1b0000, p);
+        }
+        if (i == 20) {
+            Call2(Engine_ActorSetChildValue, 22, 0x100);
+            Call2(Engine_ActorSetChildValue, 24, 0x100);
         }
     }
-    Engine_ActorSetPosition(22, 0, 0);
-    Engine_ActorSetPosition(24, 0, 0);
+    Engine_ActorSetChildValue(22, 0);
+    Engine_ActorSetChildValue(24, 0);
+    Engine_ActorSetSpriteFlags(Engine_ActorGet(22), 1);
+    Engine_ActorSetSpriteFlags(Engine_ActorGet(24), 1);
 }

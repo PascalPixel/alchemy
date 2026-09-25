@@ -27,7 +27,7 @@ static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
 }
 
 /* The actor sinks away in a burst of sparks over 48 frames. */
-void MakyuriHeya_Func02002e6c(s32 actor)
+void MakyuriHeya_SinkActorWithSparks(s32 actor)
 {
     struct EffectParams params;
     struct EffectParams *p;

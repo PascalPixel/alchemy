@@ -3,7 +3,7 @@
 s32 Engine_RandomNext();
 
 /* Counts down the wait timer; when it runs out, turns to a random heading and waits again. */
-s32 FuneKanpan_Func020008e0(u8 *actor)
+s32 FuneKanpan_IdleTurn(u8 *actor)
 {
     if (actor[98] != 0) {
         actor[98]--;

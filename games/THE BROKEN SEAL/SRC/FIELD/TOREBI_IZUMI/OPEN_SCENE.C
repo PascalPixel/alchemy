@@ -4,7 +4,7 @@
 void SceneState_InitFourActorRecordsAndInstallTask(void);
 void Main_08015120(s32 value, s32 digits);
 void Main_080b0060(void);
-void Local_020008f8(s32 mode);
+void TorebiIzumi_OfferLuckyWheels(s32 mode);
 s32 SceneDialogue_PickTopicVariantId(s32 topic);
 
 union GameStateRows {
@@ -28,7 +28,7 @@ static __inline__ void Io_SetBlendAlpha(s32 value)
 }
 
 /* Opens the Torebi spring scene: stages the blend and actors, reports the coin difference after a game, and hands out each prize item won. */
-s32 TorebiIzumi_Func020001d8(void)
+s32 TorebiIzumi_OpenScene(void)
 {
     s32 diff;
     s8 *list;
@@ -100,7 +100,7 @@ s32 TorebiIzumi_Func020001d8(void)
             Engine_EventWaitForScreen();
             Engine_EventWait(10);
             if (list[0] == -1) {
-                Local_020008f8(1);
+                TorebiIzumi_OfferLuckyWheels(1);
             } else if (list[0] != -2) {
                 Engine_EventSetMessage(0xe2e);
                 Engine_EventShowMessage(8, 0);

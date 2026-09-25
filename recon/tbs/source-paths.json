@@ -40,8 +40,8 @@
       "source": "FIELD/COMMON/SHINDEN_HEYA/ITEM_ICON.C"
     },
     "resource_372:0200441c": {
-      "name": "HaidiaArashi_Func0200441c",
-      "source": "FIELD/HAIDIA_ARASHI/F_0441C.C"
+      "name": "HaidiaArashi_SpawnEffectPair",
+      "source": "FIELD/HAIDIA_ARASHI/SPAWN_PAIR.C"
     },
     "resource_377:0200168c": {
       "name": "HaidiaBabi_SpawnEffectPair",

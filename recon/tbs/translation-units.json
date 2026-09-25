@@ -72607,7 +72607,7 @@
     },
     {
       "id": "scene-372-0200441c",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_ARASHI/F_0441C.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_ARASHI/SPAWN_PAIR.C",
       "overlay": "resource_372",
       "absolute_symbols": {
         "Engine_AudioPlayCue": {

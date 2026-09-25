@@ -75114,7 +75114,7 @@
     },
     {
       "id": "scene-3ca-02000430",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/BABI_FUNE/F_00430.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/BABI_FUNE/EXTENDED_PRESENTATION.C",
       "overlay": "resource_3ca",
       "absolute_symbols": {
         "Data_03001e70": {

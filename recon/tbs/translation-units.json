@@ -71835,7 +71835,7 @@
     },
     {
       "id": "scene-3a6-02000f78",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_DOU/F_00F78.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_DOU/SINK_PILLAR_27.C",
       "overlay": "resource_3a6",
       "absolute_symbols": {
         "Engine_EventBegin": {
@@ -71899,7 +71899,7 @@
     },
     {
       "id": "scene-3a6-02000e04",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_DOU/F_00E04.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_DOU/SINK_PILLAR_23.C",
       "overlay": "resource_3a6",
       "absolute_symbols": {
         "Engine_EventBegin": {

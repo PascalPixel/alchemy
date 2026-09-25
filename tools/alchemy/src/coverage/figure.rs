@@ -70,7 +70,7 @@ pub(crate) fn chart(letters: &Letters, history: &Value) -> Canvas {
     });
     // Title and key along the top line; each game's mark, in its line's
     // colour, is its swatch.
-    let masthead_end = masthead(&mut canvas, letters, 6, "Alchemy: DONE by day");
+    let masthead_end = masthead(&mut canvas, letters, 6, "Alchemy: Golden Sun Decompilation");
     let mut key_x = WIDTH - 8;
     for (key, name, ink) in series.iter().rev() {
         key_x -= letters.width(name) as i32;
@@ -379,7 +379,7 @@ pub(crate) fn map_of(letters: &Letters, tiles: Vec<Tile>) -> Canvas {
         }
         row_x += entry(label);
     }
-    masthead(&mut canvas, letters, 8, "Alchemy files");
+    masthead(&mut canvas, letters, 8, "Alchemy: Golden Sun Decompilation");
     let corner = commas(total);
     let corner_width = letters.width(&corner) as i32;
     canvas.text(
@@ -656,10 +656,12 @@ mod tests {
             rgb(FACE),
             crate::coverage::palette::LIGHT_OPACITY,
         );
+        let step = crate::coverage::palette::CORNER - 1;
         assert_eq!(canvas.get(0, 0), None);
-        assert_eq!(canvas.get(1, 0), Some(light));
+        assert_eq!(canvas.get(step - 1, 0), None);
+        assert_eq!(canvas.get(step, 0), Some(light));
         assert_eq!(canvas.get(4, 32), Some(rgb(FACE)));
-        assert_eq!(canvas.get(5, 32), Some(light));
+        assert_eq!(canvas.get(4 + step, 32), Some(light));
         let again = map_of(
             &letters,
             vec![tile("games/X/SRC/A.C", 600), tile("games/X/SRC/B.S", 400)],

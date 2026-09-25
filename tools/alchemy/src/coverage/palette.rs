@@ -8,7 +8,7 @@
 /// Every raised or sunken box's corner, in game pixels: the pixels nearer the
 /// corner than this step along the diagonal are cut away, so the bevel steps
 /// diagonally past them. 2 is the smallest step, the corner pixel alone.
-pub(crate) const CORNER: i32 = 2;
+pub(crate) const CORNER: i32 = 5;
 /// The opacity in percent of every light bevel line (`LIGHT`, and `BAND` as
 /// the inner highlight); dark bevels stay opaque.
 pub(crate) const LIGHT_OPACITY: u32 = 75;
@@ -109,7 +109,7 @@ mod tests {
     use super::*;
     #[test]
     fn corners_step_on_whole_pixels() {
-        assert_eq!(CORNER, 2);
+        assert_eq!(CORNER, 5);
         // A two-pixel step cuts the corner pixel alone.
         assert!(cut(0, 0, 2) && !cut(1, 0, 2) && !cut(0, 1, 2));
         assert!(!cut(0, 0, 0));
@@ -117,12 +117,15 @@ mod tests {
             (corner_for(40, 5), corner_for(3, 9), corner_for(2, 9)),
             (2, 2, 0)
         );
+        // Each corner is a stair of CORNER - 1 steps: 2 * (CORNER - 1) + 1 points.
+        let one = clip_path(1, None);
         assert_eq!(
-            clip_path(1, None),
-            "polygon(0 1px,1px 1px,1px 0,calc(100% - 1px) 0,calc(100% - 1px) 1px,100% 1px,100% calc(100% - 1px),calc(100% - 1px) calc(100% - 1px),calc(100% - 1px) 100%,1px 100%,1px calc(100% - 1px),0 calc(100% - 1px))"
+            one.matches(',').count() + 1,
+            4 * (2 * (CORNER as usize - 1) + 1)
         );
+        assert!(one.starts_with("polygon(0 4px,1px 4px,1px 3px"));
         assert!(
-            clip_path(2, Some(30)).starts_with("polygon(0 min(2px,30%),min(2px,30%) min(2px,30%)")
+            clip_path(2, Some(30)).starts_with("polygon(0 min(8px,30%),min(2px,30%) min(8px,30%)")
         );
     }
 }

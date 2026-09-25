@@ -25,7 +25,7 @@ static __inline__ void Call1(void (*f)(s32), s32 a0)
 /* Unless flag 0x203 is set, has the attendant call "please step into the
  * circle!" (message 10542) once every 300 frames: flag 0x200 marks a call
  * already made in the current period. */
-s32 LinkLobby_Func020002d8(void)
+s32 LinkLobby_CallIntoCircle(void)
 {
     s32 set;
 

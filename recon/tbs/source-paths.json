@@ -316,8 +316,8 @@
       "source": "FIELD/RAMAKAN_SABAKU/SAND_SETUP.C"
     },
     "resource_39f:020022c0": {
-      "name": "MogoruMori_Func020022c0",
-      "source": "FIELD/MOGORU_MORI/F_022C0.C"
+      "name": "MogoruMori_RunClosingChoreography",
+      "source": "FIELD/MOGORU_MORI/CLOSE_SCENE.C"
     },
     "resource_3bd:02000a54": {
       "name": "ArutamiraDou_ApplyFadeBlend",
@@ -412,8 +412,8 @@
       "source": "FIELD/TORETO_HEYA/LANDING_DUST.C"
     },
     "resource_39f:02000e18": {
-      "name": "MogoruMori_Func02000e18",
-      "source": "FIELD/MOGORU_MORI/F_00E18.C"
+      "name": "MogoruMori_SpawnPuffRing",
+      "source": "FIELD/MOGORU_MORI/PUFF_RING.C"
     },
     "resource_380:020043bc": {
       "name": "SoruStar_RiseActorFourteenSparks",

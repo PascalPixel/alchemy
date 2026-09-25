@@ -10,7 +10,7 @@ void Engine_CameraMoveTo();
 void Engine_CameraWaitForMove();
 void Engine_EventWait();
 void Engine_WorkSetValuesIfNonNegative();
-void MogoruMori_Func02000e18();
+void MogoruMori_SpawnPuffRing();
 void Engine_ActorStartRepeatedMotion();
 void Engine_MapWaitWorkValuesBelow256();
 void Engine_ActorFaceDirection();
@@ -65,7 +65,7 @@ struct Vec {
 };
 
 /* Run the closing choreography of the room's scene. */
-void MogoruMori_Func020022c0(void)
+void MogoruMori_RunClosingChoreography(void)
 {
     struct Vec dir;
     struct Vec *v;
@@ -86,18 +86,18 @@ void MogoruMori_Func020022c0(void)
     Engine_CameraWaitForMove();
     Engine_EventWait(60);
     Call3(Engine_WorkSetValuesIfNonNegative, 0x50000, 0x50000, 0x10000);
-    MogoruMori_Func02000e18(18);
+    MogoruMori_SpawnPuffRing(18);
     Engine_ActorStartRepeatedMotion(0, 2);
     Call3(Engine_WorkSetValuesIfNonNegative, -1, -1, 0xe666);
     Engine_MapWaitWorkValuesBelow256();
     Call3(Engine_ActorFaceDirection, 0, 0xc000, 20);
     Engine_EventWait(40);
     Call3(Engine_WorkSetValuesIfNonNegative, 0x50000, 0x50000, 0x10000);
-    MogoruMori_Func02000e18(18);
+    MogoruMori_SpawnPuffRing(18);
     Call3(Engine_WorkSetValuesIfNonNegative, -1, -1, 0xe666);
     Engine_MapWaitWorkValuesBelow256();
     Engine_EventWait(40);
-    MogoruMori_Func02000e18(18);
+    MogoruMori_SpawnPuffRing(18);
     *(s32 *)(actor + 24) = 0x13333;
     *(s32 *)(actor + 28) = 0x13333;
     Engine_ActorSetChildValue(18, 5);

@@ -300,8 +300,8 @@
       "source": "FIELD/KOROSSEO_KABE/ENTRY_STATE.C"
     },
     "resource_38f:02000304": {
-      "name": "KorimaMura_Func02000304",
-      "source": "FIELD/KORIMA_MURA/F_00304.C"
+      "name": "KorimaMura_AnimateSwitchOrExit",
+      "source": "FIELD/KORIMA_MURA/SWITCH_ANIMATE.C"
     },
     "resource_3b1:020047cc": {
       "name": "FuneHeya_PoseSceneActor",

@@ -64760,7 +64760,7 @@
     },
     {
       "id": "scene-38f-02000304",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/KORIMA_MURA/F_00304.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/KORIMA_MURA/SWITCH_ANIMATE.C",
       "overlay": "resource_38f",
       "absolute_symbols": {
         "Engine_EventBegin": {

@@ -17237,33 +17237,51 @@
       "source": "FIELD/KUUPUAPPU_DOU/SELECT_BY_RUNTIME_SELECTOR.C"
     },
     "resource_3bb:02001b30": {
-      "name": "initialize_scene_actor_positions",
+      "name": "SceneActor_PlacePartyAtSavedTiles",
       "source": "FIELD/KOROSSEO_KABE/TASK.C"
     },
     "resource_3bb:02001c78": {
-      "name": "mark_scene_progress",
+      "name": "KorosseoKabe_MarkSceneProgress",
       "source": "FIELD/KOROSSEO_KABE/TASK.C"
     },
     "resource_3bb:02001cc0": {
-      "name": "select_nearest_scene_actor",
+      "name": "KorosseoKabe_SelectNearestActor",
       "source": "FIELD/KOROSSEO_KABE/TASK.C"
     },
     "resource_3bb:02001ffc": {
-      "name": "run_state_interaction",
+      "name": "KorosseoKabe_RunStateInteraction",
       "source": "FIELD/KOROSSEO_KABE/TASK.C"
     },
-    "resource_3bb:020020b8": "FIELD/KOROSSEO_KABE/TASK.C",
-    "resource_3bb:02002940": "FIELD/KOROSSEO_KABE/TASK.C",
-    "resource_3bb:020029d0": "FIELD/KOROSSEO_KABE/TASK.C",
-    "resource_3bb:0200325c": "FIELD/KOROSSEO_KABE/TASK.C",
-    "resource_3bb:020032f0": "FIELD/KOROSSEO_KABE/TASK.C",
-    "resource_3bb:02003344": "FIELD/KOROSSEO_KABE/TASK.C",
+    "resource_3bb:020020b8": {
+      "name": "KorosseoKabe_ShowFollowUpPrompt",
+      "source": "FIELD/KOROSSEO_KABE/TASK.C"
+    },
+    "resource_3bb:02002940": {
+      "name": "KorosseoKabe_InitializeModeTask",
+      "source": "FIELD/KOROSSEO_KABE/TASK.C"
+    },
+    "resource_3bb:020029d0": {
+      "name": "KorosseoKabe_RunScriptedTransition",
+      "source": "FIELD/KOROSSEO_KABE/TASK.C"
+    },
+    "resource_3bb:0200325c": {
+      "name": "KorosseoKabe_SpawnRandomSceneEffect",
+      "source": "FIELD/KOROSSEO_KABE/TASK.C"
+    },
+    "resource_3bb:020032f0": {
+      "name": "KorosseoKabe_RaiseLinkedSceneEffect",
+      "source": "FIELD/KOROSSEO_KABE/TASK.C"
+    },
+    "resource_3bb:02003344": {
+      "name": "FieldScene_RunFlag211ApproachScene",
+      "source": "FIELD/KOROSSEO_KABE/TASK.C"
+    },
     "resource_3bb:0200004c": {
-      "name": "Resource3bb_NoOpHandler",
+      "name": "SceneData_NoOpHandler",
       "source": "FIELD/KOROSSEO_KABE/TASK.C"
     },
     "resource_3bb:02003228": {
-      "name": "Resource3bb_EmptyHook",
+      "name": "SceneState_EmptyHook",
       "source": "FIELD/KOROSSEO_KABE/TASK.C"
     },
     "resource_3bb:02003cf8": {
@@ -17282,7 +17300,10 @@
       "name": "StagedActor_PushActorAhead",
       "source": "FIELD/KOROSSEO_KABE/TASK.C"
     },
-    "resource_3bb:02000038": "FIELD/KOROSSEO_KABE/TASK.C",
+    "resource_3bb:02000038": {
+      "name": "SceneData_ReturnZero",
+      "source": "FIELD/KOROSSEO_KABE/TASK.C"
+    },
     "resource_3bb:0200005c": {
       "name": "SceneState_ConfigureRegionByActorElevenColumn",
       "source": "FIELD/KOROSSEO_KABE/TASK.C"
@@ -17483,15 +17504,15 @@
       "source": "FIELD/KOROSSEO_KABE/TASK.C"
     },
     "resource_3bb:02000b38": {
-      "name": "FieldScene_RunScene3bb_02000b38",
+      "name": "FieldScene_RunPairedEntranceWalk",
       "source": "FIELD/KOROSSEO_KABE/TASK.C"
     },
     "resource_3bb:020008ec": {
-      "name": "FieldScene_RunScene3bbSequenceA",
+      "name": "FieldScene_PlaceSpectatorRow",
       "source": "FIELD/KOROSSEO_KABE/TASK.C"
     },
     "resource_3bb:02003638": {
-      "name": "FieldScene_RunScene3bbSequenceC"
+      "name": "FieldScene_RunExtendedActorSequence"
     },
     "resource_3bc:02000030": "FIELD/KOROSSEO_MARUTA/LOG_ROLLING.C",
     "resource_3bc:02000038": "FIELD/KOROSSEO_MARUTA/LOG_ROLLING.C",
@@ -20863,8 +20884,8 @@
       "source": "FIELD/ARUTAMIRA_DOU/OPEN_WALL.C"
     },
     "resource_3bb:02001898": {
-      "name": "KorosseoKabe_Func02001898",
-      "source": "FIELD/KOROSSEO_KABE/F_01898.C"
+      "name": "KorosseoKabe_PushBlockToCell",
+      "source": "FIELD/KOROSSEO_KABE/PUSH_BLOCK.C"
     },
     "resource_3a4:02003484": {
       "name": "ArutinYama_SettleAndMountLeader",
@@ -20879,8 +20900,8 @@
       "source": "FIELD/FUNE_HOBASHIRA/F_000C0.C"
     },
     "resource_3bb:02000400": {
-      "name": "KorosseoKabe_Func02000400",
-      "source": "FIELD/KOROSSEO_KABE/F_00400.C"
+      "name": "KorosseoKabe_PushAlignedWall",
+      "source": "FIELD/KOROSSEO_KABE/PUSH_WALL.C"
     },
     "resource_3c8:02004968": {
       "name": "VinasuHeya_UpdateRisingSpray",
@@ -20935,12 +20956,12 @@
       "source": "FIELD/HAIDIA_DOU/F_00F78.C"
     },
     "resource_3bb:020004c0": {
-      "name": "KorosseoKabe_Func020004c0",
-      "source": "FIELD/KOROSSEO_KABE/F_004C0.C"
+      "name": "KorosseoKabe_RollLogToCell",
+      "source": "FIELD/KOROSSEO_KABE/ROLL_LOG.C"
     },
     "resource_3bb:020019bc": {
-      "name": "KorosseoKabe_Func020019bc",
-      "source": "FIELD/KOROSSEO_KABE/F_019BC.C"
+      "name": "KorosseoKabe_RunGuideTalk",
+      "source": "FIELD/KOROSSEO_KABE/GUIDE_TALK.C"
     },
     "main:080b3050": {
       "name": "Shop_RunPartyMemberIconBurst",

@@ -562,7 +562,7 @@ u8 *SceneData_GetTableC414(void)
     return (u8 *)0x0200c414;
 }
 
-s32 Func_02000038(void)
+s32 SceneData_ReturnZero(void)
 {
     return 0;
 }
@@ -602,7 +602,7 @@ u8 *SceneData_GetTableC48c(void)
  * handler or an identity is not settled here -- `bx lr' leaves r0 untouched,
  * so a caller reading a result gets back whatever it passed in.
  */
-void Resource3bb_NoOpHandler(void)
+void SceneData_NoOpHandler(void)
 {
 }
 
@@ -952,7 +952,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
     }
 }
 
-void FieldScene_RunScene3bbSequenceA(void)
+void FieldScene_PlaceSpectatorRow(void)
 {
     extern s32 Data_0200c834;
     extern u32 Data_0200c838;
@@ -1027,7 +1027,7 @@ void SceneState_InstallTask8714AndApplyTwoRects(void)
 
 u8 *SceneData_GetTableC83c(void) { return (u8 *)0x0200c83c; }
 
-void FieldScene_RunScene3bb_02000b38(s32 a0)
+void FieldScene_RunPairedEntranceWalk(s32 a0)
 {
 
     u32 i;
@@ -1070,7 +1070,7 @@ void FieldScene_RunSecondActorInteraction(s32 a0)
         rec = Value2(Func_02003444, a0, 2);
         if (rec == 0) {
             Event_SetMessage(MSG_SHIFTING_FLOOR_STAGE);
-            FieldScene_RunScene3bbSequenceA();
+            FieldScene_PlaceSpectatorRow();
             Camera_SetSpeed(0x30000, 0x6000);
             Camera_MoveTo(0x3d80000, -1, 0xe80000, 1);
             Camera_WaitForMove();
@@ -1157,7 +1157,7 @@ void FieldScene_RunSceneThreeCoordinator(s32 a0)
     }
 }
 
-void Func_02001b30(void)
+void SceneActor_PlacePartyAtSavedTiles(void)
 {
     {
         s32 x = Func_02005a38(896);
@@ -1191,7 +1191,7 @@ void Func_02001b30(void)
     }
 }
 
-void Func_02001c78(void)
+void KorosseoKabe_MarkSceneProgress(void)
 {
     extern u8 *Data_03001ebc;
 
@@ -1207,7 +1207,7 @@ void Func_02001c78(void)
     }
 }
 
-void Func_02001cc0(void)
+void KorosseoKabe_SelectNearestActor(void)
 {
     extern u8 *Data_03001ebc;
 
@@ -1319,7 +1319,7 @@ void FieldScene_RunSixSteps896To936(void)
     Func_02005efc(936, 0);
 }
 
-s32 Func_02001ffc(s32 a, s32 b)
+s32 KorosseoKabe_RunStateInteraction(s32 a, s32 b)
 {
 
     s32 v;
@@ -1357,7 +1357,7 @@ s32 Func_02001ffc(s32 a, s32 b)
     return Event_ChooseYesNo(0, 0);
 }
 
-void Func_020020b8(s32 a, s32 b)
+void KorosseoKabe_ShowFollowUpPrompt(s32 a, s32 b)
 {
 
     s32 v;
@@ -1511,7 +1511,7 @@ void OverlayObject_NotifyMatchingEntries(s32 no, s32 val)
  * are typed as plain addresses.  The four stores that follow reset the rest of
  * the task's state block, three as halfwords and one as a word.
  */
-void Func_02002940(u32 mode, u32 param)
+void KorosseoKabe_InitializeModeTask(u32 mode, u32 param)
 {
     s32 handler;
 
@@ -1546,7 +1546,7 @@ void Func_02002940(u32 mode, u32 param)
     Data_0200cc10 = 0;
 }
 
-void Func_020029d0(s32 mode)
+void KorosseoKabe_RunScriptedTransition(s32 mode)
 {
     if (mode == 0) {
         Event_Begin();
@@ -1779,7 +1779,7 @@ void Text_WriteU32AsHex(u8 *buf, u32 value)
 }
 
 /* Complete two-byte empty hook plus its alignment halfword. */
-void Resource3bb_EmptyHook(void)
+void SceneState_EmptyHook(void)
 {
 }
 
@@ -1798,7 +1798,7 @@ void SceneState_WaitUntilStatusNine(void)
     }
 }
 
-void Func_0200325c(Obj_0200325c *a)
+void KorosseoKabe_SpawnRandomSceneEffect(Obj_0200325c *a)
 {
     s32 t[3];
     u32 n;
@@ -1835,7 +1835,7 @@ void Func_0200325c(Obj_0200325c *a)
     }
 }
 
-s32 Func_020032f0(Obj_020032f0 *a)
+s32 KorosseoKabe_RaiseLinkedSceneEffect(Obj_020032f0 *a)
 {
     Obj_020032f0 *o = Func_02007254(a->f64);
 
@@ -1847,7 +1847,7 @@ s32 Func_020032f0(Obj_020032f0 *a)
     return 0;
 }
 
-s32 Func_02003344(s32 handleA, s32 handleB)
+s32 FieldScene_RunFlag211ApproachScene(s32 handleA, s32 handleB)
 {
     u8 *workspace = *(u8 **)SCENE_WORK_PTR;
     u8 *shared;

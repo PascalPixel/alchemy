@@ -2,7 +2,7 @@
 #include "FIELD_EVENT.H"
 
 void Effect_Spawn();
-void RamakanSabaku_Func02001054(void);
+void RamakanSabaku_UpdateTravelDust(void);
 s32 Main_080091d8(struct FieldActor *object, s32 *pos);
 
 struct DustParams {
@@ -24,7 +24,7 @@ static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
     f(a0, a1);
 }
 
-void RamakanSabaku_Func020012fc(void)
+void RamakanSabaku_UpdateDustAndProbe(void)
 {
     struct FieldActor *center;
     s32 id;
@@ -35,7 +35,7 @@ void RamakanSabaku_Func020012fc(void)
     s32 phase;
     s32 x;
 
-    RamakanSabaku_Func02001054();
+    RamakanSabaku_UpdateTravelDust();
     {
         struct EventWork *event = gEventWork;
 

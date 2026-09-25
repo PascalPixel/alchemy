@@ -20801,8 +20801,8 @@
       "source": "FIELD/TAKARA_ASHIBA/RAISE_TRIGGER.C"
     },
     "resource_3c7:020000c8": {
-      "name": "RariberoHeya_Func020000c8",
-      "source": "FIELD/RARIBERO_HEYA/F_000C8.C"
+      "name": "RariberoHeya_RunItemShop",
+      "source": "FIELD/RARIBERO_HEYA/ITEM_SHOP.C"
     },
     "resource_3cb:020002d8": {
       "name": "LinkLobby_Func020002d8",

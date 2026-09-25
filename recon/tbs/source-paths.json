@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "main:080974d8": {
+      "name": "Camera_WorldToScreen",
+      "source": "GRAPHICS/RENDER/WORLD_TO_SCREEN.C"
+    },
     "main:0808ba38": {
       "name": "ObjectTable_Snapshot",
       "source": "FIELD/COMMON/OBJECT/TABLE_SNAPSHOT.C"
@@ -19980,7 +19984,8 @@
       "name": "FacingObject_TurnPairToFaceEachOther"
     },
     "main:0809ba90": {
-      "name": "EffectSlot_Initialize"
+      "name": "EffectSlot_Initialize",
+      "source": "BATTLE/EFFECT/EFFECT_SLOT_INITIALIZE.C"
     },
     "main:0800c004": {
       "name": "ObjectSystem_Initialize",
@@ -21366,7 +21371,6 @@
     "main:08096ddc": "BattleFx_SpawnScaledArcObjects",
     "main:080cf8e0": "BattleFx_RunSevenMode",
     "main:080cf2b8": "BattleFx_RunMemberBeam",
-    "main:080974d8": "Camera_WorldToScreen",
     "main:080ca1fc": "BattleFx_RunParticlePool",
     "main:080ceb54": "BattleFx_RunMemberBurst",
     "main:0808ae74": "Encounter_SelectEnemyGroup",

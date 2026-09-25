@@ -1,8 +1,5 @@
-/* Draft, not exact: 8 differing halfwords, 164-byte candidate for the
-   164-byte owner (2026-09-23). Residual: the reload of effect->object is
-   scheduled after the three 0x10000 stores instead of before them, which
-   swaps r2 and r3 for that constant; store order and chained assignment did
-   not move it. */
+/* Effect slot: clear the slot, attach a new object of `kind`, place it at
+   x, z with unit scale and acceleration, and start it active in mode 1. */
 
 #include "DMA.H"
 #include "EFFECT_0809B11C.H"
@@ -12,8 +9,9 @@ u32 Random16(void);
 
 void EffectSlot_Initialize(struct EffectSlot *effect, s32 kind, s32 x, s32 z)
 {
-    volatile u32 zero;
+    s32 unit;
     s8 *object;
+    volatile u32 zero;
 
     zero = 0;
     Dma_Set((const void *)&zero, effect, 0x85000012, (volatile u32 *)0x040000d4);
@@ -22,8 +20,11 @@ void EffectSlot_Initialize(struct EffectSlot *effect, s32 kind, s32 x, s32 z)
     if (object != NULL)
         object[9] &= ~0x0c;
     EffectSlot_SetPosition(effect, x, z);
+    /* FAKEMATCH: 1.0 is held in a local, set before max_speed, so the object
+       reload is scheduled ahead of the three unit stores */
+    unit = 0x10000;
     effect->max_speed = 0x20000;
-    effect->acceleration = effect->scale_y = effect->scale_x = 0x10000;
+    effect->acceleration = effect->scale_y = effect->scale_x = unit;
     effect->origin_x = x;
     effect->origin_z = z;
     ((s8 *)effect->object)[38] = 0;

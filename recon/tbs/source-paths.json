@@ -6817,7 +6817,7 @@
       "source": "DEBUG/ITEM_LEVEL/RECORD_COUNT.C"
     },
     "resource_3c8:020045f0": {
-      "name": "SceneState_Call4520With432And32",
+      "name": "SceneState_CallWith432And32",
       "source": "FIELD/VINASU_HEYA/ENTRY_SETUP.C"
     },
     "resource_371:02000590": {
@@ -7118,7 +7118,7 @@
       "source": "FIELD/KORIMA_HEYA/ENTRY_LAYOUT.C"
     },
     "resource_3c8:02000e80": {
-      "name": "SceneData_GetTablee740",
+      "name": "SceneData_GetPrimaryTable",
       "source": "FIELD/VINASU_HEYA/ENTRY_SETUP.C"
     },
     "resource_3c8:02000690": {
@@ -7174,7 +7174,7 @@
       "source": "FIELD/HAIDIA_IE/EXTENDED.C"
     },
     "resource_3c8:02004600": {
-      "name": "FieldScene_RunStep230With44",
+      "name": "FieldScene_CallWith560And44",
       "source": "FIELD/VINASU_HEYA/ENTRY_SETUP.C"
     },
     "resource_3ba:0200042c": {
@@ -10968,7 +10968,7 @@
       "source": "FIELD/SORU_SEKIZO/GUARDED_STEP.C"
     },
     "resource_3c8:02001150": {
-      "name": "FieldScene_RunScene3c8SequenceC",
+      "name": "FieldScene_RunLeaderSurpriseApproach",
       "source": "FIELD/VINASU_HEYA/ENTRY_SETUP.C"
     },
     "resource_372:020016cc": {
@@ -11181,7 +11181,7 @@
       "source": "FIELD/KUUPUAPPU_HEYA/PROMPT.C"
     },
     "resource_3c8:02002f30": {
-      "name": "FieldScene_RunScene3c8SequenceB",
+      "name": "FieldScene_RunApproachAndSpawnEffect",
       "source": "FIELD/VINASU_HEYA/ENTRY_SETUP.C"
     },
     "main:080a15f0": {
@@ -11648,7 +11648,7 @@
       "source": "FIELD/BIRIBINO_DOU/REGION.C"
     },
     "resource_3c8:02001218": {
-      "name": "FieldScene_RunScene3c8SequenceD",
+      "name": "FieldScene_RunStatueDialogueSequence",
       "source": "FIELD/VINASU_HEYA/ENTRY_SETUP.C"
     },
     "resource_372:0200198c": {

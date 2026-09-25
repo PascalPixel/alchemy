@@ -8,7 +8,8 @@
  * Only fields whose roles are established by multiple callers are named.
  */
 struct MotionObject {
-    u8 unknown_00[0x08];
+    u8 unknown_00[0x06];
+    u16 angle;
     s32 x;
     s32 y;
     s32 z;

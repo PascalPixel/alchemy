@@ -1,14 +1,3 @@
-/* Draft, not exact (2026-09-25): 1052 of 1052 bytes, 3 differing halfwords.
-   Written from the listing. What made it line up: the map work read as
-   gEventWork[-19] (FAKEMATCH candidate: the ROM loads 0x03001ebc once and
-   reaches 0x03001e70 by subtracting 76), the step-result stores kept in each
-   branch with the flag set before the call so the stores cross-jump, the
-   stack slots follow fell/count declaration order, and the new step total
-   is its own local. Remaining: the whole-step quotient passed to
-   BattleParty_ApplyDrain lands in r5 (it reuses the speed local); the ROM
-   computes it in r1 and copies it to r0 after the store. A fresh local, a
-   block local, u16/s16/u32 types and every role permutation of the four
-   locals moved it to r0 and re-allocated the step total instead. */
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 
@@ -113,6 +102,8 @@ void BattleParty_ApplyHealthDelta(s32 amount, s32 flags);
 void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z)
 {
     struct StepWork *work = Data_03001ebc;
+    /* FAKEMATCH: the map work cell is reached as gEventWork[-19]; the ROM loads
+       0x03001ebc once and subtracts 76 to reach 0x03001e70. */
     struct StepMapWork *map = ((struct StepMapWork **)&Data_03001ebc)[-19];
     s32 selected = Data_02000240.selected_actor;
     struct StepActor *actor = work->actors[selected];
@@ -125,7 +116,7 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z)
     u32 event;
     s32 speed;
     s32 steps;
-    s32 whole;
+    s32 n;
     s32 sum;
     s32 full;
 
@@ -176,9 +167,9 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z)
         sum = work->encounter_steps + steps;
         work->encounter_steps = sum;
         if (sum > 0xffff) {
-            speed = sum / 0x10000;
+            n = sum / 0x10000;
             work->encounter_steps = sum & 0xffff;
-            BattleParty_ApplyDrain(speed, 0);
+            BattleParty_ApplyDrain(n, 0);
             if (Func_080b50f8())
                 Audio_PlayCue(139);
             Event_ClearInvalidPackedValues();
@@ -208,10 +199,9 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z)
             Func_08093874(selected, 0x100);
     }
     if (Data_02000240.unknown_232 >= Data_02000240.unknown_22c) {
-        s32 delta = Data_02000240.unknown_230;
-
+        n = Data_02000240.unknown_230;
         Data_02000240.unknown_232 = 0;
-        BattleParty_ApplyHealthDelta(-(delta & 255), delta & 0x100);
+        BattleParty_ApplyHealthDelta(-(n & 255), n & 0x100);
         fell++;
     }
 

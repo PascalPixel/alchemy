@@ -21100,14 +21100,16 @@
       "source": "FIELD/BABI_FUNE/SETUP_SCENE.C"
     },
     "main:0808bec0": {
-      "name": "Field_ProcessStep"
+      "name": "Field_ProcessStep",
+      "source": "FIELD/COMMON/PROCESS_STEP.C"
     },
     "main:0808cf78": {
       "name": "BattleMap_ApplyEntranceView",
       "source": "BATTLE/PRESENTATION/APPLY_ENTRANCE_VIEW.C"
     },
     "main:0808d0c8": {
-      "name": "Debug_RunPaletteEditor"
+      "name": "Debug_RunPaletteEditor",
+      "source": "DEBUG/PALETTE_EDITOR.C"
     },
     "main:080fa4cc": {
       "name": "MusicPlayer_FadeOutPause"

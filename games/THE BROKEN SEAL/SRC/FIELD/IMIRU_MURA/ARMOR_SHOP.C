@@ -47,7 +47,9 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
     f(a0, a1, a2, a3);
 }
 
-void ImiruMura_Func0200088c(void)
+/* Imil armor shop: facing the counter with the village cured opens shop 11;
+ * otherwise the keeper talks about the cold that closed the store. */
+void ImiruMura_RunArmorShop(void)
 {
     s32 dir;
 

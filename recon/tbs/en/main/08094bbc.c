@@ -1,15 +1,9 @@
-/* Draft, not exact: 204 differing halfwords, 492-byte candidate for the
-   484-byte owner (2026-09-24). Control flow, the OAM bitfield writes, the
-   spawn block and the visible/hidden split follow the reference. Still
-   open: the reference hoists the 0xfffffc00 tile mask into fp for the
-   whole loop and keeps the camera pointer, the spawn count and the loop
-   index on the stack (sp+12, sp+8, sp+4), deriving the camera cell as
-   0x03001ec4 - 84; this candidate keeps the camera in fp, reloads the mask
-   per use and loads both cells from the pool. The screen x minus one is
-   formed before the bounds tests in the reference.
-
-   Rain or snow particles: 32 sprites that fall toward the ground under
-   the camera, drawn while on screen, respawned around the camera focus. */
+/* NONMATCHING: 488 of 484 bytes, 195 differing halfwords, 105 halfword
+ * edits (2026-09-25). Reusing Sparkles map-cell derivation restores the
+ * reference opening loads (previously492 bytes,204 differing halfwords).
+ * Remaining: tile-mask lifetime, loop/spawn stack slots and screen bounds
+ * ordering. This owner renders timed frames and delayed particle bursts.
+ */
 
 #include "TYPES.H"
 #include "SYSTEM.H"
@@ -47,16 +41,26 @@ struct ParticleWork {
     struct Particle particles[32];
 };
 
-struct CameraWork {
-    s32 *focus;
-    u8 unknown_04[0xe0];
+struct MapPosition {
     s32 x;
     s32 y;
+    s32 z;
 };
 
-#define gParticleWork (*(struct ParticleWork **)0x03001ec4)
-#define gCamera (*(struct CameraWork **)0x03001e70)
-#define gFrameCounter (*(u32 *)0x03001e40)
+struct CameraWork {
+    struct MapPosition *leader;
+    u8 unknown_04[0xe0];
+    s32 camera_x;
+    s32 camera_z;
+};
+
+extern struct ParticleWork *Data_03001ec4;
+#define gParticleWork Data_03001ec4
+/* FAKEMATCH: derive the adjacent map cell from the particle-work cell,
+ * as in the exact Sparkles routine, to preserve the reference loads. */
+#define gCamera (*(struct CameraWork **)((u8 *)&Data_03001ec4 - 84))
+extern unsigned long Data_03001e40;
+#define gFrameCounter Data_03001e40
 
 void Unnamed_08094bbc(void)
 {
@@ -79,8 +83,8 @@ void Unnamed_08094bbc(void)
     p = work->particles;
     for (i = 0; i < 32; i++, p++) {
         if (p->timer-- != 0) {
-            cam_x = camera->x;
-            cam_y = camera->y;
+            cam_x = camera->camera_x;
+            cam_y = camera->camera_z;
             lift = p->timer;
             if (GameFlag_TestFar(0x166)) {
                 p->timer++;
@@ -112,12 +116,12 @@ void Unnamed_08094bbc(void)
             }
         }
         if (spawned < 8 && p->timer == 0) {
-            s32 *focus = camera->focus;
+            struct MapPosition *focus = camera->leader;
             s32 x;
             s32 z;
 
-            x = focus[0] + (Random16() << 8) - 0x800000;
-            z = focus[2] + (Random16() << 8) - 0x800000;
+            x = focus->x + (Random16() << 8) - 0x800000;
+            z = focus->z + (Random16() << 8) - 0x800000;
             p->pos_z = z;
             p->pos_x = x;
             p->pos_y = Map_GetTerrainHeightFar(0, x >> 16, z >> 16) << 16;

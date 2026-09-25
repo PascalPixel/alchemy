@@ -312,8 +312,8 @@
       "source": "FIELD/KUUPUAPPU_HEYA/ENTRY_STATE.C"
     },
     "resource_3a5:02001c1c": {
-      "name": "RamakanSabaku_Func02001c1c",
-      "source": "FIELD/RAMAKAN_SABAKU/F_01C1C.C"
+      "name": "RamakanSabaku_ClaimSandEffectVram",
+      "source": "FIELD/RAMAKAN_SABAKU/SAND_SETUP.C"
     },
     "resource_39f:020022c0": {
       "name": "MogoruMori_Func020022c0",
@@ -20992,8 +20992,8 @@
       "source": "FIELD/TAKARA_HASHIRA/PRIORITY_UPDATE.C"
     },
     "resource_3a5:02001054": {
-      "name": "RamakanSabaku_Func02001054",
-      "source": "FIELD/RAMAKAN_SABAKU/F_01054.C"
+      "name": "RamakanSabaku_UpdateTravelDust",
+      "source": "FIELD/RAMAKAN_SABAKU/TRAVEL_DUST.C"
     },
     "resource_3b3:020025f8": {
       "name": "TakaraHashira_PrepLoweredActor",
@@ -21075,8 +21075,8 @@
       "source": "FIELD/FUNE_HEYA/FLAG_LAYOUT.C"
     },
     "resource_3a5:020012fc": {
-      "name": "RamakanSabaku_Func020012fc",
-      "source": "FIELD/RAMAKAN_SABAKU/F_012FC.C"
+      "name": "RamakanSabaku_UpdateDustAndProbe",
+      "source": "FIELD/RAMAKAN_SABAKU/DUST_PROBE.C"
     },
     "resource_3c8:020047c0": {
       "name": "Scene_RunEastParticleWaveSequence",

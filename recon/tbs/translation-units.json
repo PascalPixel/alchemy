@@ -62959,7 +62959,7 @@
     },
     {
       "id": "common-shinden-heya-f-03144",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHINDEN_HEYA/F_03144.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHINDEN_HEYA/RISE_ICON.C",
       "overlay": "resource_378",
       "absolute_symbols": {
         "Engine_ObjectSetScript": {
@@ -62975,7 +62975,7 @@
     },
     {
       "id": "common-shinden-heya-f-0267c",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHINDEN_HEYA/F_0267C.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHINDEN_HEYA/FOLLOW_LEADER.C",
       "overlay": "resource_378",
       "absolute_symbols": {
         "Engine_ActorGet": {
@@ -69772,7 +69772,7 @@
     },
     {
       "id": "scene-378-02002750",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHINDEN_HEYA/F_02750.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHINDEN_HEYA/SPAWN_EFFECT.C",
       "overlay": "resource_378",
       "absolute_symbols": {
         "Engine_ActorGet": {
@@ -72643,7 +72643,7 @@
     },
     {
       "id": "scene-378-02003098",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHINDEN_HEYA/F_03098.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHINDEN_HEYA/ITEM_ICON.C",
       "overlay": "resource_378",
       "absolute_symbols": {
         "Engine_ObjectCreate": {
@@ -72731,7 +72731,7 @@
     },
     {
       "id": "scene-378-0200074c",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHINDEN_HEYA/F_0074C.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHINDEN_HEYA/ALTAR_SCENE.C",
       "overlay": "resource_378",
       "absolute_symbols": {
         "Engine_EventBegin": {
@@ -74215,7 +74215,7 @@
     },
     {
       "id": "scene-378-020031b8",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHINDEN_HEYA/F_031B8.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHINDEN_HEYA/SPAWN_SPARK.C",
       "overlay": "resource_378",
       "absolute_symbols": {
         "Engine_ActorGet": {

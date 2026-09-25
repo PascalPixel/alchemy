@@ -24,20 +24,20 @@
       "source": "MENU/ITEM/SELECT_ITEM.C"
     },
     "resource_378:020031b8": {
-      "name": "ShindenHeya_Func020031b8",
-      "source": "FIELD/COMMON/SHINDEN_HEYA/F_031B8.C"
+      "name": "ShindenHeya_SpawnActorSpark",
+      "source": "FIELD/COMMON/SHINDEN_HEYA/SPAWN_SPARK.C"
     },
     "resource_378:0200074c": {
-      "name": "ShindenHeya_Func0200074c",
-      "source": "FIELD/COMMON/SHINDEN_HEYA/F_0074C.C"
+      "name": "ShindenHeya_RunAltarScene",
+      "source": "FIELD/COMMON/SHINDEN_HEYA/ALTAR_SCENE.C"
     },
     "resource_373:02005950": {
       "name": "HaidiaMura_Func02005950",
       "source": "FIELD/HAIDIA_MURA/F_05950.C"
     },
     "resource_378:02003098": {
-      "name": "ShindenHeya_Func02003098",
-      "source": "FIELD/COMMON/SHINDEN_HEYA/F_03098.C"
+      "name": "ShindenHeya_RaiseItemIcon",
+      "source": "FIELD/COMMON/SHINDEN_HEYA/ITEM_ICON.C"
     },
     "resource_372:0200441c": {
       "name": "HaidiaArashi_Func0200441c",
@@ -80,8 +80,8 @@
       "source": "FIELD/BABI_CHIKA/F_0252C.C"
     },
     "resource_378:02002750": {
-      "name": "ShindenHeya_Func02002750",
-      "source": "FIELD/COMMON/SHINDEN_HEYA/F_02750.C"
+      "name": "ShindenHeya_SpawnOwnerEffect",
+      "source": "FIELD/COMMON/SHINDEN_HEYA/SPAWN_EFFECT.C"
     },
     "resource_3a0:02000500": {
       "name": "ShianMura_WatchGateTrigger",
@@ -348,12 +348,12 @@
       "source": "FIELD/COMMON/IMIRU_FUCHIN/F_01A34.C"
     },
     "resource_378:0200267c": {
-      "name": "ShindenHeya_Func0200267c",
-      "source": "FIELD/COMMON/SHINDEN_HEYA/F_0267C.C"
+      "name": "ShindenHeya_FollowLeaderOffset",
+      "source": "FIELD/COMMON/SHINDEN_HEYA/FOLLOW_LEADER.C"
     },
     "resource_378:02003144": {
-      "name": "ShindenHeya_Func02003144",
-      "source": "FIELD/COMMON/SHINDEN_HEYA/F_03144.C"
+      "name": "ShindenHeya_UpdateRisingIcon",
+      "source": "FIELD/COMMON/SHINDEN_HEYA/RISE_ICON.C"
     },
     "resource_38d:02000338": {
       "name": "BiribinoKyuden_Func02000338",

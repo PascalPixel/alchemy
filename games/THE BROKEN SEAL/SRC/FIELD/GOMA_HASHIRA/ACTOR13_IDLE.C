@@ -21,7 +21,7 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
 }
 
 /* Drive actor 13's idle routine from a frame counter. */
-void GomaHashira_Func020010c8(void)
+void GomaHashira_DriveActor13Idle(void)
 {
     u8 *work;
     s32 t;

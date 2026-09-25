@@ -204,8 +204,31 @@ pub fn render(root: &Path, options: &Options) -> Result<RenderOutput, String> {
     } else {
         identity
     };
+    let dumps = match &options.dump {
+        Some(flags) => {
+            let directory = dump_directory(root, identity.owner);
+            let patch = read_patch(options.patch.as_deref())?;
+            let source = staged_source(root, options, &work, patch.as_deref())?;
+            let files = crate::candidate::compile_with_dumps(
+                &source,
+                &identity.routing.to_string_lossy(),
+                &directory,
+                flags,
+                options.target,
+            )?;
+            format!(
+                "dumps={} files={} flags={}\n",
+                directory.strip_prefix(root).unwrap_or(&directory).display(),
+                files.len(),
+                flags.join(" ")
+            )
+        }
+        None => String::new(),
+    };
     if options.asm {
-        return render_asm(root, options, &work, &identity);
+        let mut rendered = render_asm(root, options, &work, &identity)?;
+        rendered.stdout.push_str(&dumps);
+        return Ok(rendered);
     }
     let rom_path = options
         .rom
@@ -342,11 +365,18 @@ pub fn render(root: &Path, options: &Options) -> Result<RenderOutput, String> {
         ));
         rendered.allocator = Some(report);
     }
+    rendered.stdout.push_str(&dumps);
     rendered.stdout = rendered
         .stdout
         .replace("{owner}", &identity.owner.id())
         .replace("{source}", &options.source);
     Ok(rendered)
+}
+
+fn dump_directory(root: &Path, owner: SourceOwner) -> PathBuf {
+    root.join("out/score")
+        .join(owner.legacy_stem())
+        .join("dumps")
 }
 
 fn read_candidate_gas(
@@ -487,7 +517,16 @@ fn render_bytes(
             out.push_str(&format!("wall={wall}\n"));
         }
     }
-    if options.align {
+    if options.diff {
+        let pairs = align_streams(&candidate, &reference);
+        let differing = pairs.iter().filter(|(left, right)| left != right).count();
+        out.push_str(&format!(
+            "differing_rows={differing} aligned_rows={}\n",
+            pairs.len()
+        ));
+        out.push_str("      candidate                      reference\n");
+        out.push_str(&differing_rows(&pairs, 2));
+    } else if options.align {
         let pairs = align_streams(&candidate, &reference);
         let matched = pairs
             .iter()
@@ -645,6 +684,30 @@ fn git_diff_stat(old: &Path, new: &Path) -> Result<String, String> {
     } else {
         String::from_utf8_lossy(&output.stdout).into_owned()
     })
+}
+/// Only the aligned rows that differ, each with `context` rows either side;
+/// a `...` row stands for every stretch left out.
+pub fn differing_rows(pairs: &[(Option<String>, Option<String>)], context: usize) -> String {
+    let shown = (0..pairs.len())
+        .filter(|&row| {
+            let start = row.saturating_sub(context);
+            let end = (row + context + 1).min(pairs.len());
+            pairs[start..end].iter().any(|(left, right)| left != right)
+        })
+        .collect::<Vec<_>>();
+    let mut out = String::new();
+    let mut next = 0;
+    for row in shown {
+        if row != next {
+            out.push_str("  ...\n");
+        }
+        out.push_str(&side_by_side(&pairs[row..=row]));
+        next = row + 1;
+    }
+    if next != pairs.len() && !out.is_empty() {
+        out.push_str("  ...\n");
+    }
+    out
 }
 pub fn side_by_side(pairs: &[(Option<String>, Option<String>)]) -> String {
     pairs
@@ -1035,5 +1098,36 @@ mod source_identity_tests {
             overlay,
             signature("games/THE BROKEN SEAL/SRC/resource_380_c_02000100.c")
         );
+    }
+}
+
+#[cfg(test)]
+mod view_tests {
+    use super::*;
+
+    #[test]
+    fn diff_view_keeps_differing_rows_with_two_rows_of_context() {
+        let row = |text: &str| Some(text.to_string());
+        let mut pairs = (0..12)
+            .map(|index| (row(&format!("same {index}")), row(&format!("same {index}"))))
+            .collect::<Vec<_>>();
+        pairs[5] = (row("adds r0, #1"), row("adds r1, #1"));
+        pairs.push((None, row("pop {pc}")));
+        let view = differing_rows(&pairs, 2);
+        let rows = view.lines().collect::<Vec<_>>();
+        assert_eq!(rows[0], "  ...");
+        assert!(
+            rows[1].contains("same 3") && rows[5].contains("same 7"),
+            "{view}"
+        );
+        assert!(rows[3].starts_with("  ! adds r0, #1"), "{view}");
+        assert_eq!(rows[6], "  ...");
+        assert!(rows[7].contains("same 10"), "{view}");
+        assert!(
+            rows[9].starts_with("  - ") && rows[9].ends_with("pop {pc}"),
+            "{view}"
+        );
+        assert_eq!(rows.len(), 10, "{view}");
+        assert_eq!(differing_rows(&pairs[..3], 2), "");
     }
 }

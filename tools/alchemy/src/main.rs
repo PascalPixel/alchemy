@@ -26,6 +26,8 @@ mod score;
 mod siblings;
 mod targets;
 mod text_catalog;
+mod verify;
+mod worklist;
 
 const USAGE: &str = "usage: alchemy <command> [args]\n\
   bootstrap             install or validate the persistent compiler toolchain\n\
@@ -36,10 +38,11 @@ const USAGE: &str = "usage: alchemy <command> [args]\n\
   unit                  scaffold or flatten translation units\n\
   cross-edition         compare historical editions\n\
   build                 build compilers, ROM stages, assets or allocator dumps\n\
-  verify                verify the staged repository using the build contract\n\
+  verify                the landing gate: every make verify gate in waves, one line each\n\
   coverage              rebuild coverage; `coverage audit` inventories executable overlays\n\
   raw                   inspect or rebuild ROM-derived unresolved assembly\n\
   dashboard             serve live coverage on localhost:4650\n\
+  targets               every not-yet-C owner by size, with its draft, difference and wall\n\
   check                 run repository contract checks\n\
   format                format native game data and check uppercase filenames\n\
   overlay               legacy overlay operations during migration";
@@ -68,7 +71,7 @@ fn main() -> ExitCode {
         }
         "dashboard" => result(dashboard::entry(rest)),
         "build" => build::entry(rest),
-        "verify" => make_target(command, rest),
+        "verify" => verify::entry(rest),
         "coverage" if rest.first().map(String::as_str) == Some("audit") => result(
             coverage::audit::run(&compiler::routing::root(), &rest[1..]).map(|line| {
                 println!("{line}");
@@ -77,9 +80,13 @@ fn main() -> ExitCode {
         "coverage" => make_target(command, rest),
         "raw" => result(raw::run(rest)),
         "check" => check::entry(rest),
+        "targets" => result(worklist::entry(rest)),
         "format" => result(format::run(rest)),
         "overlay" => overlay::entry(rest),
         "extract" | "adopt" | "inspect" => recovery_command(command, rest),
+        "score" if rest.iter().any(|arg| arg == "--variants") => {
+            result(score::variants::run(compiler::routing::root(), rest))
+        }
         "score" => match overlay_candidate(rest) {
             Ok(true) => overlay::code(overlay::score::run(crate::compiler::routing::root(), rest)),
             Ok(false) => {

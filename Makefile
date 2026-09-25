@@ -12,12 +12,16 @@ export CARGO_TARGET_DIR := $(CURDIR)/tools/out/cargo-target
 # Bootstrap's native arm-none-eabi binutils come first for every recipe and test.
 export PATH := $(CURDIR)/tools/out/binutils/bin:$(PATH)
 CARGO_RUN := $(CARGO) run --offline --quiet --release --manifest-path
+# `make verify` builds the tool once; `alchemy verify` passes that binary as
+# ALCHEMY to every gate instead of a `cargo run` per call.
+ALCHEMY ?= $(CARGO_RUN) $(TOOLS)/alchemy/Cargo.toml --
+ALCHEMY_BIN := $(CARGO_TARGET_DIR)/release/alchemy
 
-BUILD := $(CARGO_RUN) $(TOOLS)/alchemy/Cargo.toml -- build
-ASSETS := $(CARGO_RUN) $(TOOLS)/alchemy/Cargo.toml -- build assets
-CHECK := $(CARGO_RUN) $(TOOLS)/alchemy/Cargo.toml -- check
-COMPILER := $(CARGO_RUN) $(TOOLS)/alchemy/Cargo.toml --
-OVERLAY := $(CARGO_RUN) $(TOOLS)/alchemy/Cargo.toml -- overlay
+BUILD := $(ALCHEMY) build
+ASSETS := $(ALCHEMY) build assets
+CHECK := $(ALCHEMY) check
+COMPILER := $(ALCHEMY)
+OVERLAY := $(ALCHEMY) overlay
 
 HOSTS := alchemy psynergy
 PORTABLE_TOOLS := alchemy psynergy
@@ -351,10 +355,13 @@ test: toolchain-check
 	$(CHECK) no-asm --self-test
 
 native-format-check:
-	$(CARGO_RUN) $(TOOLS)/alchemy/Cargo.toml -- format --check
+	$(ALCHEMY) format --check
 
-verify: toolchain-check native-format-check index-sync-check publication-tree-check source-tracking-check corpus-check language-check lint-production tooling-index-check \
-	strict-tu-check check-owners full-rom-check compare-tla coverage-check siblings-check
+# The landing gate. Its gates and their dependency waves live in
+# tools/alchemy/src/verify.rs; each gate stays a target here.
+verify:
+	@$(CARGO) build --offline --quiet --release --manifest-path $(TOOLS)/alchemy/Cargo.toml
+	@$(ALCHEMY_BIN) verify
 
 audit: verify test test-integration targets \
 	correspondence-check progress-report coverage-check

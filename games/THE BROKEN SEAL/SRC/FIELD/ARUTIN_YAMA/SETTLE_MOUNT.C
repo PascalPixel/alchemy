@@ -10,7 +10,7 @@ struct FieldActor *Main_0808a400(s32 actor);
 /* Settles the pushed object on the centre of its cell, then lifts the leader
  * onto it: the leader hops up a cell and a half and turns to face along the
  * row, drawn in front of the background while it jumps. */
-void ArutinYama_Func02003484(struct FieldActor *object)
+void ArutinYama_SettleAndMountLeader(struct FieldActor *object)
 {
     s32 x;
     s32 z;

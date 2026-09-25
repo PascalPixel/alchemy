@@ -3,7 +3,7 @@ extern u8 ArutinYama_ActorScript[];
 
 s32 Engine_GameFlagIsSet();
 void FieldScene_RunOpeningAuxiliarySequence();
-void Local_02003a44();
+void ArutinYama_StartPaletteAnim();
 u8 * Engine_ActorSetPosition();
 u8 * Engine_ActorGet();
 void Engine_ActorSetSpriteFlags();
@@ -58,7 +58,7 @@ void ArutinYama_ApplyEntryState(void)
             FieldScene_RunOpeningAuxiliarySequence();
         }
     }
-    Local_02003a44();
+    ArutinYama_StartPaletteAnim();
     if (Value1(Engine_GameFlagIsSet, 0x8fd) == 0) {
         Engine_ActorSetPosition(8, 0, 0);
     } else {

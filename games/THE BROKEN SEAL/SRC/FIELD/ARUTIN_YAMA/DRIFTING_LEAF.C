@@ -9,7 +9,7 @@ extern s32 Data_0200d23c;
 /* A drifting leaf: blown along the wind with a random wobble while its
  * timer runs, shrinking and settling once it is low, flickering to palette
  * 7 at random; released when its lifetime ends. */
-void ArutinYama_Func02002a48(struct FieldActor *object)
+void ArutinYama_UpdateDriftingLeaf(struct FieldActor *object)
 {
     switch (Data_0200d23c) {
     case 0:

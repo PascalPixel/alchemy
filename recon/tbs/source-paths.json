@@ -1,6 +1,9 @@
 {
   "format": 3,
   "owners": {
+    "resource_3ba:02002bec": {
+      "name": "Korosseo_UpdateMarker"
+    },
     "resource_3bb:02002ba8": {
       "name": "Korosseo_FadeInCompetitor",
       "source": "FIELD/COMMON/KOROSSEO/FADE_IN_COMPETITOR.C"

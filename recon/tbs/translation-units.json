@@ -2,6 +2,84 @@
   "format": 6,
   "units": [
     {
+      "id": "korosseo-marker-candidate",
+      "source": "recon/tbs/en/overlays/resource_3ba_c_02002bec.c",
+      "overlay": "resource_3ba",
+      "absolute_symbols": {
+        "gOamTiles": {
+          "address": "0x03001b10",
+          "kind": "data"
+        },
+        "Engine_MathDivide": {
+          "address": "0x0200bb00",
+          "kind": "thumb"
+        },
+        "Engine_OamSubmitRecord": {
+          "address": "0x0200bb90",
+          "kind": "thumb"
+        },
+        "Korosseo_LinkedZero": {
+          "address": "0x00000000",
+          "kind": "data"
+        },
+        "Korosseo_MarkerIndex": {
+          "address": "0x0200c6a6",
+          "kind": "data"
+        },
+        "Korosseo_MarkerSteps": {
+          "address": "0x0200c78c",
+          "kind": "data"
+        },
+        "Korosseo_MarkerStep": {
+          "address": "0x0200c750",
+          "kind": "data"
+        },
+        "Korosseo_MarkerY": {
+          "address": "0x0200c7f4",
+          "kind": "data"
+        },
+        "Korosseo_MarkerStartY": {
+          "address": "0x0200c7a4",
+          "kind": "data"
+        },
+        "Korosseo_MarkerEndY": {
+          "address": "0x0200c760",
+          "kind": "data"
+        },
+        "Korosseo_MarkerX": {
+          "address": "0x0200c780",
+          "kind": "data"
+        },
+        "Korosseo_MarkerStartX": {
+          "address": "0x0200c7bc",
+          "kind": "data"
+        },
+        "Korosseo_MarkerEndX": {
+          "address": "0x0200c800",
+          "kind": "data"
+        },
+        "Korosseo_MarkerBlink": {
+          "address": "0x0200c774",
+          "kind": "data"
+        },
+        "Korosseo_MarkerPriority": {
+          "address": "0x0200c758",
+          "kind": "data"
+        },
+        "Korosseo_MarkerOam": {
+          "address": "0x0200c7b0",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02002bec",
+          "extent": 316,
+          "state": "not-yet-c"
+        }
+      ]
+    },
+    {
       "id": "korosseo-kawa-competitor-intro",
       "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/KOROSSEO/FADE_IN_COMPETITOR.C",
       "overlay": "resource_3ba",

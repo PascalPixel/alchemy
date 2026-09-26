@@ -1,8 +1,14 @@
-/* Draft, not exact (2026-09-25): 324 of 324 bytes, 12 halfwords differ, register-only.
+/* Draft, not exact (2026-09-26): 324 of 324 bytes, 10 halfwords differ, register-only.
    Residuals: the five zero stores reuse the loop counter i (r6) where the reference holds a
    fresh zero in r2 and rematerialises the window call argument as movs r1, #0; a plain 0,
-   or any other local, lets CSE fold the zero into r1 and costs 4 bytes. In the eight-record
-   loop the reference schedules offset += before y += (a sched2 tie). */
+   or any other local, lets CSE fold the zero into r1 and costs 4 bytes.
+   The eight-record loop is now exact: reading a step, incrementing table, then adding
+   the step fixes the scheduler's source-order tie (105 before 104 in sched2).
+   Bounded reset-store trials: five literal zeros and a typed BlendControl.value store
+   gave 320 bytes / 51 differing halfwords / 20 aligned edits; CSE reused the r1 zero
+   as the window y argument, deleting its separate mov. A do/while block around those
+   stores gave 320 / 52 / 21, still sharing r1 and moving its zero too early. Neither
+   candidate is retained. The reset-store axis is closed without new CSE ancestry. */
 #include "TYPES.H"
 
 /* 28-byte animation record, as in the 0x02010000 tables and work + 0x7080. */
@@ -37,6 +43,7 @@ void Unnamed_080f731c(void)
     s32 message;
     u32 pos;
     u8 *table;
+    s32 step;
 
     state = Data_03001f04;
     work = *(&Data_03001f04 - 6);  /* FAKEMATCH: addressed from the neighbouring cell */
@@ -49,7 +56,9 @@ void Unnamed_080f731c(void)
     table = Data_080f8736;
     for (i = 0; i != 8; i++) {
         rec[i].x = (offset + 24) << 16;
-        offset += *table++;
+        step = *table;
+        table++;
+        offset += step;
         rec[i].y = y;
         rec[i].field_10 = 0;
         rec[i].field_18 = 0;

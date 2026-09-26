@@ -10,6 +10,12 @@
    the old all-volatile pointer could not emit. The shared named sentinel
    now occupies r4, displacing count/destination to r0/r1; pool order is
    reversed and the return move is missing. No credit or registration.
+   H2: give the entry and loop sentinel tests separate expression
+   lifetimes instead of one named value.  68/68 bytes, six differing
+   halfwords (six aligned edits): all instructions/register roles now
+   match except the two pool offsets and reversed pool words.  The
+   signed-read invariant remains exact; the final zero is still an
+   SI link-address value rather than the reference's short-reach value.
    Earlier bounded work follows; do not repeat its all-volatile axis.
    Draft: a separate signed sentinel value removes the extra saved register,
    but the loop still uses ldrh and a left shift instead of ldrsh; counter
@@ -26,11 +32,8 @@ s32 EventTable_CopyRowHeader(s32 row_no, s16 *output)
     s16 *src;
     s16 *dst;
     s32 count;
-    s32 value;
-
-    value = EventTable_AbilityLoadouts[row_no][0];
     count = 0;
-    if (value != 0) {
+    if (EventTable_AbilityLoadouts[row_no][0] != 0) {
         dst = output;
         src = EventTable_AbilityLoadouts[row_no];
         do {
@@ -42,8 +45,7 @@ s32 EventTable_CopyRowHeader(s32 row_no, s16 *output)
             dst++;
             if (count > 23)
                 break;
-            value = *src;
-        } while (value != 0);
+        } while (*src != 0);
     }
     output[count] = (s32)&Value_00000000;
     return count;

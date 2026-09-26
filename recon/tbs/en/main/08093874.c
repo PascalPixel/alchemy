@@ -1,6 +1,11 @@
+/* Draft: complete 240-byte owner, 110 differing halfwords (44 aligned
+ * edits). Corrects the stale child reuse and configuration at 0809fd38;
+ * case 1 stores its retained mode, and late zeros use the actual pool.
+ * Remaining: initial zero/mode sharing, pool order and visual allocation.
+ * Separate initial flag tests did not close the gap.
+ */
 #include "TYPES.H"
 
-#define ObjectTable_Get Func_0808ba1c
 /* Object table: 192 pointers at Data_03001ebc + 0x14 (object/table/get.c). */
 void *ObjectTable_Get(u32 object);
 
@@ -27,12 +32,13 @@ struct BattleEffectLinkedObject_08093874 {
     void (*callback)(void);
 };
 
-struct BattleEffectLinkedObject_08093874 *Func_080090c8(s32 kind, s32 x, s32 y, s32 z);
-void Func_08009098(struct BattleEffectLinkedObject_08093874 *object, const void *configuration);
-void Func_08009080(struct BattleEffectLinkedObject_08093874 *object, s32 mode);
+struct BattleEffectLinkedObject_08093874 *Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);
+void ObjectDispatch_InitializeFar(struct BattleEffectLinkedObject_08093874 *object, const void *configuration);
+void Object_SetMode(struct BattleEffectLinkedObject_08093874 *object, s32 mode);
 void Func_080090d0(struct BattleEffectLinkedObject_08093874 *object);
-void Func_0809376c(void);
-extern const u8 Data_0809fc2c[];
+void BattleFx_CopyLinkedObjectPosition(void);
+extern const u8 Data_0809fd38[];
+extern const u8 Value_00000000;
 
 void Func_08093874(s32 id, s32 flags)
 {
@@ -45,12 +51,9 @@ void Func_08093874(s32 id, s32 flags)
     if (object == 0)
         return;
 
-    mode = flags & 3;
-    if (mode != 0) {
-        if (mode == 2 || object->resource == 0) {
-            child = Func_080090c8(209, object->x, object->y, object->z);
-        } else {
-            child = object->resource;
+    if ((flags & 3) != 0) {
+        if ((flags & 3) == 2 || object->resource == 0) {
+            child = Object_CreateFar(209, object->x, object->y, object->z);
         }
     } else {
         child = object->resource;
@@ -67,21 +70,21 @@ void Func_08093874(s32 id, s32 flags)
     mode = flags & 3;
     switch (mode) {
     case 1:
-        Func_08009080(child, 1);
+        Object_SetMode(child, 1);
         object->resource = child;
-        child->counter = 1;
+        child->counter = mode;
         break;
     case 2:
-        Func_08009080(child, 2);
-        Func_08009098(child, Data_0809fc2c);
+        Object_SetMode(child, 2);
+        ObjectDispatch_InitializeFar(child, Data_0809fd38);
         child->counter = 1;
         break;
     }
 
     child->resource_id = id;
-    child->value_55 = 0;
-    child->callback = Func_0809376c;
-    child->visual->value_26 = 0;
+    child->value_55 = (s32)&Value_00000000;
+    child->callback = BattleFx_CopyLinkedObjectPosition;
+    child->visual->value_26 = (s32)&Value_00000000;
     child->resource = object;
 
     if (flags & 0x100) {

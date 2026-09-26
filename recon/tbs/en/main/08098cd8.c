@@ -1,9 +1,10 @@
-/* Draft, not exact (2026-09-26): 832 of 832 bytes, 15 differing halfwords.
+/* Draft, not exact (2026-09-26): 832 of 832 bytes, 14 differing halfwords.
    Scene ownership, slot records and resource lifetime replace raw offsets.
    Explicit stores and the initial/terminal script tests recover all four
    missing bytes. One scale lifetime removes the GCSE carry copy and all
-   scale-loop differences. Remaining: position/counter setup, copy
-   publication and one saved-pointer scheduling tie.
+   scale-loop differences. Publishing the call result before assigning
+   the working copy recovers r0 for its array store. Remaining: two
+   position/counter setup regions and one saved-pointer scheduling tie.
    The original 832-byte model differed in 305 halfwords. */
 #include "TYPES.H"
 #include "EFFECT_0809B11C.H"
@@ -151,8 +152,7 @@ void RunBattleEffect04(void)
     index = 2;
     write = &spawned[2];
     do {
-        copy = Object_Spawn(0xd7, object->pos.x, object->pos.y, object->pos.z);
-        *write-- = copy;
+        copy = *write-- = Object_Spawn(0xd7, object->pos.x, object->pos.y, object->pos.z);
         if (copy != NULL) {
             copy->scale_y = 0xf000;
             copy->scale_x = 0xf000;

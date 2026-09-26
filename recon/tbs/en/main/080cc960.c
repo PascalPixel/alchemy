@@ -1,15 +1,18 @@
-/* Draft, not exact (2026-09-26): candidate=400 reference=396,
-   146 differing halfwords, 49 aligned edits; equal block topology, frame 48.
+/* Draft, not exact (2026-09-26): candidate=396 reference=396,
+   35 differing halfwords, 31 aligned edits; equal block topology, frame 48.
    Fresh baseline with shared projection header: 412/396 bytes, 188 differing
    halfwords, 73 aligned edits. H1 splits the first-frame seed cursor from
    the draw cursor. This recovers seed r5, mask r6, draw cursor r8 and removes
    twelve extra bytes; the work spill and both projection slots already match.
-   Residual: seed/mask literal order, a second zero for the draw index,
-   projection argument scheduling, and the first line's color calculation.
+   H1 witness 5283d5f32: 400 bytes, 146 differing halfwords, 49 aligned edits.
+   H2 initializes point y/z from the draw index's zero. This removes the
+   duplicate zero instruction and restores the full extent and pool position.
+   Residual: seed/mask literal order, draw-cursor initialization before the
+   point fields, projection argument scheduling, first line color scheduling.
    The exact next owner PREPARE_SCENE.C schedules this no-argument callback
    at 0xc80 after resetting work+778c. Extent is [080cc960,080ccaec).
-   No bytes adopted. Next hypothesis: one zero initializes both the local
-   point's y/z fields and the draw index, as in the reference. */
+   No bytes adopted. Next hypothesis: array-indexed seed/draw records let
+   strength reduction introduce cursors after the existing loop invariants. */
 #include "TYPES.H"
 #include "EFFECT_STEP.H"
 
@@ -61,10 +64,11 @@ void Func_080cc960(void)
             seed++;
         }
     }
-    point.y = 0;
-    point.z = 0;
+    i = 0;
+    point.y = i;
+    point.z = i;
     streak = (struct Streak *)0x02010000;
-    for (i = 0; i != 64; i++) {
+    for (; i != 64; i++) {
         if (frame > i / 4 && streak->head > 0) {
             s32 fade;
             s32 color;

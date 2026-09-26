@@ -5,6 +5,9 @@
    moving the y write between delta statements changes the squared-distance
    dataflow (62 differences). A separate byte/bitfield union changes layout
    and mask lowering. Retained the original hardware bitfield layout.
+   Scheduler diagnostics show the blend load ahead of the r8 copy and the
+   y store ahead of the horizontal delta. A y-store inline helper preserves
+   the outer width assignment but canonicalizes to the same four differences.
    A link-symbol message base and separate x/y snapshots recover the message
    accumulation and all window placement. Shared queue/IME pointers leave
    the residual unchanged; a halfword IME snapshot adds sign extension and
@@ -135,6 +138,14 @@ void Func_080153c0(s32 message, s32 *width, s32 *height);
         *ime = saved;                                                       \
     }
 
+/* FAKEMATCH: evaluate the horizontal delta before the byte write, while
+   assigning the stack-backed width only after the inline return. */
+static __inline__ s32 SetMarkerY(struct MapMarker *marker, s32 y, s32 width)
+{
+    marker->y = y;
+    return width;
+}
+
 void Map_UpdateWorldMapMarkers(void)
 {
     s32 leader;
@@ -234,8 +245,7 @@ markers:
         marker->blend_mode = mode;
         marker->tile = tile_base + tile;
         marker->x = x - 1;
-        marker->y = y - 1;
-        width = x - cursor_x;
+        width = SetMarkerY(marker, y - 1, x - cursor_x);
         height = y - cursor_y;
         if (width * width + height * height < best_distance) {
             best_message = message;

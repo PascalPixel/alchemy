@@ -7,6 +7,11 @@
    Candidate 158/172 bytes, 85 differing halfwords, 45 aligned edits;
    equal topology.  The zero/result pseudo is recovered, but CSE retains
    menu+slot*4 rather than the independent slot*4 offset.  No adoption.
+   H2: form complete cursor field offsets in short-lived locals, deriving
+   slot offsets before loading the menu.  158/172 bytes, 85 differing
+   halfwords, 38 aligned edits.  Indexed cursor loads and menu/result
+   register roles are recovered, but CSE retains slot*4+20 in r8 instead
+   of slot*4 in sl; owner offset/index use r7/r6 instead of r8/r7.
    Earlier baseline (2026-09-24): 162/172 bytes, 68 differing halfwords.
    Menu: open the owner selector for one party slot. Open: the reference
    computes slot + 28 and slot * 4 before loading the menu cell, keeps the
@@ -50,11 +55,14 @@ s32 Func_080a77a4(s32 slot)
     s32 cursor_offset;
     struct OwnerCursor *cursor;
 
-    menu = Data_03001f2c;
     owner_offset = slot + 28;
     cursor_offset = slot * 4;
+    menu = Data_03001f2c;
     result = 0;
-    cursor = *(struct OwnerCursor **)((u8 *)menu + cursor_offset + 20);
+    {
+        s32 off = cursor_offset + 20;
+        cursor = *(struct OwnerCursor **)((u8 *)menu + off);
+    }
     cursor->state = 1;
     cursor->frame = result;
     index = *(s8 *)((u8 *)menu + owner_offset);
@@ -69,7 +77,10 @@ s32 Func_080a77a4(s32 slot)
         result = PsynergyMenu_SelectOwner();
     else
         result = Func_080a7a34();
-    UiIcon_PrepareObject(*(struct OwnerCursor **)((u8 *)menu + cursor_offset + 20));
+    {
+        s32 off = cursor_offset + 20;
+        UiIcon_PrepareObject(*(struct OwnerCursor **)((u8 *)menu + off));
+    }
     WaitFrames(1);
     return result;
 }

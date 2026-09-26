@@ -1,5 +1,5 @@
-/* NONMATCHING: 1264 bytes, candidate 1264, 268 differing halfwords, 158
- * halfword edits (2026-09-25). CommandInterpolationRenderer_Update, meant
+/* NONMATCHING: 1264 bytes, candidate 1264, 240 differing halfwords, 122
+ * halfword edits (2026-09-26). CommandInterpolationRenderer_Update, meant
  * for FIELD/KOROSSEO_KAWA/F_021B8.C as a single-overlay unit binding its
  * names at their runtime addresses (an import veneer's listing offset plus
  * 0x8000). Remaining: Rebuilt command loop, three signed interpolation
@@ -8,7 +8,10 @@
  * matches; remaining register lifetimes, zero-load width, and instruction
  * scheduling differ.
  * WALL: Register lifetimes across interpolation and sprite emission;
- * preserve the separate per-case shifted affine index. */
+ * preserve the separate per-case shifted affine index. Separate channel
+ * locals restore duration/start registers. Computing delta before the step
+ * regressed to 1252 bytes and 180 edits. Runtime bindings are registered in
+ * korosseo-command-renderer-candidate. */
 #include "TYPES.H"
 #include "IO_WRITE_QUEUE.H"
 
@@ -36,7 +39,7 @@ void CommandInterpolationRenderer_Update(void)
     u32 *write = Data_0200c7c0;
     struct Sprite *sprite = (struct Sprite *)write;
     s32 tile = Data_03001b10[Data_0200c57c].base >> 5;
-    s32 scale, blend, pos, duration, start, progress;
+    s32 scale, blend, pos;
     s32 matrix, i, x, y, left;
     u32 flags;
     struct SpriteTransform work;
@@ -85,11 +88,12 @@ commands:
     goto commands;
 render:
     Data_0200c79c--;
-    duration = Data_0200c754;
-    if (duration == 0) {
+    if (Data_0200c754 == 0) {
         scale = Data_0200c778;
     } else {
         struct Half zero = { 0 };
+        s32 duration, start, progress;
+        duration = Data_0200c754;
         start = Data_0200c768;
         x = Data_0200c778;
         progress = ++Data_0200c7fc;
@@ -97,11 +101,12 @@ render:
         if (progress >= duration)
             Data_0200c754 = zero.value;
     }
-    duration = Data_0200c7a8;
-    if (duration == 0) {
+    if (Data_0200c7a8 == 0) {
         blend = Data_0200c794;
     } else {
         struct Half zero = { 0 };
+        s32 duration, start, progress;
+        duration = Data_0200c7a8;
         start = Data_0200c798;
         x = Data_0200c794;
         progress = ++Data_0200c784;
@@ -109,11 +114,12 @@ render:
         if (progress >= duration)
             Data_0200c7a8 = zero.value;
     }
-    duration = Data_0200c76c;
-    if (duration == 0) {
+    if (Data_0200c76c == 0) {
         pos = Data_0200c7f8;
     } else {
         struct Half zero = { 0 };
+        s32 duration, start, progress;
+        duration = Data_0200c76c;
         start = Data_0200c7f0;
         x = Data_0200c7f8;
         progress = ++Data_0200c77c;

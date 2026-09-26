@@ -5,8 +5,10 @@ extern s32 Data_0200afd4[];
 s32 Main_080091a8();
 s32 StagedActor_FindAtTile();
 
-/* NONMATCHING: 72 of 72 bytes, 6 halfword edits (2026-09-24). The heading
- * step and the z sum swap r0 and r2 against the reference. */
+/* NONMATCHING: 72 of 72 bytes, 6 halfword edits (2026-09-26). The heading
+ * step and the z sum swap r0 and r2 against the reference. Reversing the
+ * addition did not move the residual; direct coordinate stores regressed to
+ * 11 edits. Runtime call bindings are registered in the translation unit. */
 s32 Func_02002660(u8 *actor)
 {
     s32 pos[3];

@@ -1,10 +1,14 @@
-/* Draft, not exact (2026-09-24): candidate=512 reference=484, 243 differing
-   halfwords. Hand-written from the assembly; the key waits are goto loops as
-   the reference reloads the key state and mask each pass. Residual: the
-   reference keeps mode in r8, the result in r6 and the 0x1ff blank tile in r7
-   from before the palette copy, so the tilemap loop rebuilds its 0x10000 step
-   each pass; here the step is hoisted and mode and result go to high
-   registers. */
+/* Draft, not exact (2026-09-26): candidate=484 reference=484, 27 differing
+   halfwords. The title-background recipe keeps the signed tile wrap explicit
+   and starts blank's lifetime before Scheduler_ResetTaskTable; mode, result
+   and blank now occupy the reference's r8, r6 and r7. Reusing the outer row
+   counter for scroll clearing and frame waits fixes its r5 assignment and
+   extends the exact prefix to 120 halfwords. Residual: key value/mask use
+   r2/r3 instead of r3/r2, and frame increments precede the wait argument.
+   Splitting the three key locals and incrementing inside the call argument
+   changed no bytes; reusing the inner counter left 33 differing halfwords.
+   The key waits remain goto loops because the reference reloads key state
+   and mask each pass. No exact-C credit. */
 /* Title: show the splash picture, fade it in and wait for A or START (or
    time out), then fade it out. Returns -1 when a button cut it short. */
 #include "TYPES.H"
@@ -38,14 +42,15 @@ s32 Title_ShowSplashScreen(s32 mode)
     u16 *map;
     u32 x;
     u32 y;
-    s16 tile;
-    u32 i;
+    s32 tile;
+    s32 blank;
     s32 resource;
     u32 keys;
 
     Audio_PlayCue(110);
     Data_03001d18 = 1;
     resource = (s32)Value_00000018;
+    blank = 0x1ff;
     Scheduler_ResetTaskTable();
     Blend_SetDarkenTarget16(1);
     Bg0_ClearTilemap();
@@ -60,15 +65,28 @@ s32 Title_ShowSplashScreen(s32 mode)
     Dma_Set((void *)0x02010000, (void *)0x06004000, 0x84002580, (volatile u32 *)0x040000d4);
     tile = 256;
     map = (u16 *)0x06003000;
-    for (y = 0; y < 20; y++) {
-        for (x = 0; x < 30; x++)
-            *map++ = tile++;
-        *map++ = 0x1ff;
-        *map++ = 0x1ff;
+    y = 0;
+col:
+    {
+        x = 0;
+row:
+        {
+            s32 old = tile;
+
+            /* FAKEMATCH: keep the signed tile wrap in the high half. */
+            tile = ((old << 16) + 0x10000) >> 16;
+            *map++ = old;
+        }
+        if (++x <= 29)
+            goto row;
+        *map++ = blank;
+        *map++ = blank;
     }
-    for (i = 0; i < 4; i++) {
-        gBgScroll[i].y = 0;
-        gBgScroll[i].x = 0;
+    if (++y <= 19)
+        goto col;
+    for (y = 0; y < 4; y++) {
+        gBgScroll[y].y = 0;
+        gBgScroll[y].x = 0;
     }
     Dma_Set(gBgScroll, (void *)0x04000010, 0x84000004, (volatile u32 *)0x040000d4);
     Ui_LoadWindowGraphics();
@@ -78,12 +96,12 @@ s32 Title_ShowSplashScreen(s32 mode)
         Blend_SetDarkenTarget0(1);
         Blend_WaitForTransition();
         keys = gKeyState & 9;
-        i = 0;
+        y = 0;
         goto check_start;
     wait_start:
-        i++;
+        y++;
         WaitFrames(1);
-        if (i > 119)
+        if (y > 119)
             goto done;
         keys = gKeyState & 9;
     check_start:
@@ -93,12 +111,12 @@ s32 Title_ShowSplashScreen(s32 mode)
         goto done;
     }
     keys = gKeyState & 9;
-    i = 0;
+    y = 0;
     goto check_fade_in;
 wait_fade_in:
-    i++;
+    y++;
     WaitFrames(1);
-    if (i > 59)
+    if (y > 59)
         goto fade_in_done;
     keys = gKeyState & 9;
 check_fade_in:
@@ -113,12 +131,12 @@ fade_in_done:
     Blend_WaitForTransition();
     if (result == 0) {
         keys = gKeyState & 9;
-        i = 0;
+        y = 0;
         goto check_hold;
     wait_hold:
-        i++;
+        y++;
         WaitFrames(1);
-        if (i > 179)
+        if (y > 179)
             goto hold_done;
         keys = gKeyState & 9;
     check_hold:

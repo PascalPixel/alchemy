@@ -6,6 +6,22 @@
  * pointer by subs #160 as in the ROM. */
 #include "TYPES.H"
 
+/* H1 (2026-09-27): whole [080aafb8,080ab1f4), 572 bytes, including the
+ * mid-loop and final pools. Exact CORE_COMPUTE_ENTRY_VALUES.C and the Djinn
+ * menu caller confirm eight rows of ten halfword IDs plus signed counts.
+ * The ROM tests a pooled mask with ands, not a single-bit shift. Transfer
+ * the proven linked-constant recipe before changing any loop lifetimes.
+ * Prediction: pooled 0x8000 test and original pool boundary/spill pressure.
+ * Gate: complete exact extent plus compare/test/coverage/verify. Budget:
+ * one corrected model and two justified variants, checkpoint 00:10 Lisbon.
+ * Read full aligned diffs; preserve all results here and in Git.
+ * H1: 560/572 bytes, 253 differing halfwords, 185 aligned edits. The test
+ * now uses ands, but its SImode linked constant leaves all literals at the
+ * end. Index stays in fp instead of its reference spill, and row addressing
+ * is scaled offset induction rather than a 20-byte row-pointer walk.
+ */
+extern u8 Value_00008000;
+
 /* menu/djinn_draw_element_list.c */
 struct DjinnListTable {
     u16 ids[8][10];
@@ -68,7 +84,7 @@ void DjinnMenu_DrawElementList(struct DjinnListTable *tbl)
                 v = *id;
                 if (element != (v & mask) >> 5)
                     continue;
-                if ((v & 0x8000) == 0) {
+                if ((v & (u32)&Value_00008000) == 0) {
                     UiWork_SetParamNibbleFar(2);
                     v = *id;
                 }

@@ -1,63 +1,62 @@
 #include "TYPES.H"
 
-#define ObjectTable_Get Func_0808ba1c
 /* Object table: 192 pointers at Data_03001ebc + 0x14 (object/table/get.c). */
 void *ObjectTable_Get(u32 object);
 
-struct BattleEffectVisual_08093874 {
+struct LinkedEffectVisual {
     u8 unknown_00[9];
     u8 flags;
     u8 unknown_0a[28];
     u8 value_26;
 };
 
-struct BattleEffectLinkedObject_08093874 {
+struct LinkedEffectObject {
     u8 unknown_00[8];
     s32 x;
     s32 y;
     s32 z;
     u8 unknown_14[60];
-    struct BattleEffectVisual_08093874 *visual;
+    struct LinkedEffectVisual *visual;
     u8 value_54;
     u8 value_55;
     u8 unknown_56[14];
     u16 counter;
     u16 resource_id;
-    struct BattleEffectLinkedObject_08093874 *resource;
+    struct LinkedEffectObject *resource;
     void (*callback)(void);
 };
 
-struct BattleEffectLinkedObject_08093874 *Func_080090c8(s32 kind, s32 x, s32 y, s32 z);
-void Func_08009098(struct BattleEffectLinkedObject_08093874 *object, const void *configuration);
-void Func_08009080(struct BattleEffectLinkedObject_08093874 *object, s32 mode);
-void Func_080090d0(struct BattleEffectLinkedObject_08093874 *object);
+struct LinkedEffectObject *Func_080090c8(s32 kind, s32 x, s32 y, s32 z);
+void Func_08009098(struct LinkedEffectObject *object, const void *configuration);
+void Func_08009080(struct LinkedEffectObject *object, s32 mode);
+void Func_080090d0(struct LinkedEffectObject *object);
 void Func_0809376c(void);
-extern const u8 Data_0809fc2c[];
+extern const u8 Data_0809fd38[];
 
-void Func_08093874(s32 id, s32 flags)
+void BattleFx_ConfigureLinkedObject(s32 id, s32 flags)
 {
-    struct BattleEffectLinkedObject_08093874 *object = ObjectTable_Get(id);
-    struct BattleEffectLinkedObject_08093874 *child;
+    struct LinkedEffectObject *object = ObjectTable_Get(id);
+    struct LinkedEffectObject *child;
+    struct LinkedEffectVisual *visual;
     s32 mode;
 
     child = 0;
+    visual = 0;
 
     if (object == 0)
         return;
 
-    mode = flags & 3;
-    if (mode != 0) {
-        if (mode == 2 || object->resource == 0) {
+    if ((flags & 3) != 0) {
+        if ((flags & 3) == 2 || object->resource == 0) {
             child = Func_080090c8(209, object->x, object->y, object->z);
-        } else {
-            child = object->resource;
         }
     } else {
         child = object->resource;
         if (child == 0)
             return;
         Func_080090d0(child);
-        object->resource = 0;
+        /* FAKEMATCH: reuse the null visual value for the child link. */
+        object->resource = (struct LinkedEffectObject *)visual;
         return;
     }
 
@@ -73,7 +72,7 @@ void Func_08093874(s32 id, s32 flags)
         break;
     case 2:
         Func_08009080(child, 2);
-        Func_08009098(child, Data_0809fc2c);
+        Func_08009098(child, Data_0809fd38);
         child->counter = 1;
         break;
     }
@@ -81,17 +80,18 @@ void Func_08093874(s32 id, s32 flags)
     child->resource_id = id;
     child->value_55 = 0;
     child->callback = Func_0809376c;
-    child->visual->value_26 = 0;
+    visual = child->visual;
+    visual->value_26 = 0;
     child->resource = object;
 
     if (flags & 0x100) {
         s32 mask = 13;
-        u8 visual_flags = child->visual->flags;
+        u8 visual_flags = visual->flags;
 
         mask = -mask;
         mask &= visual_flags;
         mask |= 4;
-        child->visual->flags = mask;
+        visual->flags = mask;
     } else {
         s32 copied_flags = 12;
         u8 source_flags = object->visual->flags;
@@ -99,10 +99,10 @@ void Func_08093874(s32 id, s32 flags)
         s32 clear_mask = 13;
 
         copied_flags &= source_flags;
-        destination_flags = child->visual->flags;
+        destination_flags = visual->flags;
         clear_mask = -clear_mask;
         clear_mask &= destination_flags;
         clear_mask |= copied_flags;
-        child->visual->flags = clear_mask;
+        visual->flags = clear_mask;
     }
 }

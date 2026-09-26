@@ -16,8 +16,10 @@ when it will make the next agent faster.
 **DONE = matching C + proven library, hand-written or veneer assembly**, over
 each game's executable bytes. `make progress` prints it in bytes;
 `make progress-subject` gives the commit prefix. Optimise one thing:
-**☀️ DONE bytes per HOUR**, watched as 12 hourly bins landed on main,
-with credit corrections shown separately. Report bytes, never rounded percentages. Work that cannot move that number (compressor tails, packing,
+**☀️ percentage points gained per HOUR**, watched as a 12-hour timeseries
+of complete hourly bins landed on main. Calculate from exact DONE and executable
+bytes, never the floored README percentage; show credit corrections separately.
+Keep bytes as supporting accounting. Work that cannot move that number (compressor tails, packing,
 provenance archaeology, tooling nobody asked for) is timeboxed and never
 blocks a landing.
 

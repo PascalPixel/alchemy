@@ -1,33 +1,33 @@
-#include "INVENTORY_MENU.H"
+/* main:080a3d9c, complete 64-byte owner through 080a3ddc.
+ * H1: typed owner inventory and a bounded post-increment scan; quantity is
+ * decoded from the first matching nonempty slot, not a sum across slots.
+ * Own-ROM caller 080a4f08 passes an owner and a masked item ID. The exact
+ * Inventory_GetQuantity family establishes the packed count plus one.
+ * H1 result: 60/64 bytes, 22 aligned halfword edits. The for-loop rotates
+ * the scan and strength reduction removes the explicit packed-count mask.
+ * At most two structural variants after this model; no adoption credit.
+ */
+#include "TYPES.H"
 #include "OWNER_STATE.H"
 
-s32 InventoryMenu_GetItemQuantity(s32 owner_id, s32 item_id) {
-    s32 slot_index;
+struct OwnerInventoryState *Owner_GetStateFar(s32 owner);
+
+s32 Func_080a3d9c(s32 owner, s32 item)
+{
+    s32 i;
     s32 quantity;
     u16 *slots;
-    s32 encoded_item;
-    u16 slot;
-    s32 occupied_slot;
-    s32 item_mask;
-    s32 quantity_mask;
+    s32 entry;
 
     quantity = 0;
-    slots = (u16 *)OwnerState_GetFar(owner_id);
-    item_mask = 0x1FF;
-    quantity_mask = 0xF800;
-    slot_index = 0;
-    slots += 0x6C;
-loop_1:
-    encoded_item = *slots;
-    slot = encoded_item;
-    occupied_slot = slot;
-    slots += 1;
-    if ((occupied_slot != 0) && ((item_mask & encoded_item) == item_id)) {
-        quantity = (u32) (quantity_mask & encoded_item) >> 0xB;
-        quantity += 1;
-    } else {
-        slot_index += 1;
-        if (slot_index <= 0xE) { goto loop_1; }
+    slots = Owner_GetStateFar(owner)->inventory;
+    for (i = 0; i < 15; i++) {
+        entry = *slots++;
+        if ((u16)entry != 0 && (entry & 0x1ff) == item) {
+            quantity = (u32)(entry & 0xf800) >> 11;
+            quantity++;
+            break;
+        }
     }
     return quantity;
 }

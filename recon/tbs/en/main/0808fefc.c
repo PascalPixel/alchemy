@@ -17,7 +17,21 @@
    offset and the jump table's case 4 entry differ, and the three queue
    blocks schedule adds r2, r2, r1 one slot early. Plain u8/u16 locals give
    the short reach but let CSE share 80 with the split stores and move
-   display out of r7. */
+   display out of r7.
+   2026-09-27 bounded rebrief: complete [0808fefc,080901c0), pools included.
+   Fresh binary baseline confirms 708/708, 151 differing halfwords and
+   104 aligned edits; the complete normalized diff was read.
+   H1: transfer resource_371:020039fc's final one-pass IME restoration,
+   exact at 69181996f and inspected from 1968849ba. These inline queue
+   publications mask IME, fill one entry, then restore before state/callback
+   work; the boundary is shared. Predict changed queue scheduling without
+   changing the case-4 constants. Gate: all 708 bytes exact and full
+   compare-all/test/coverage/verify. Budget: H1 plus at most two evidence-led
+   follow-ups, stop by 01:05 Lisbon; preserve each result in this header.
+   H1 rejected: binary and complete normalized diff are unchanged, confirmed
+   by cmp against the baseline (708/708, 151 halfwords, 104 aligned edits).
+   The final-restore scope does not repair this owner's queue address order
+   or case-4 constant ownership. No bytes adopted. */
 #include "TYPES.H"
 #include "IO_WRITE_QUEUE.H"
 
@@ -66,7 +80,9 @@ void DisplayTransition_UpdateFromCentre(void);
 void DisplayTransition_UpdateScanline(void);
 
 /* QueueIoWriteDelay2 written out: the display control write for the next
-   frame, the value read only once a queue entry is free. */
+   frame, the value read only once a queue entry is free.
+   FAKEMATCH: one-pass final restore preserves the publication boundary,
+   as in the exact world-map transfer queue. */
 #define QUEUE_DISPLAY_CONTROL(value)                                        \
     do {                                                                    \
         volatile u16 *ime;                                                  \
@@ -88,7 +104,7 @@ void DisplayTransition_UpdateScanline(void);
             *destination++ = 0x04000000;                                    \
             *destination = 0x20000;                                         \
         }                                                                   \
-        *ime = saved;                                                       \
+        do { *ime = saved; } while (0);                                     \
     } while (0)
 
 /* Starts a screen transition; DisplayTransition_Finish ends it. The high

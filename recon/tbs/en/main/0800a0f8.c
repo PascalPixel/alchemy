@@ -14,6 +14,18 @@
  * Emitted frame is 68 bytes versus ROM's 8; two source hypotheses remain
  * unused pending the separate assembler/ABI policy decision. No extra flags,
  * compiler changes or patched output were used.
+ * Read-only trace (2026-09-27): ld receives exactly 0800a0f8.o (0x4)
+ * and 0800a0f8.symbols.o (0x204), with -Ttext=0x0800a0f8 and
+ * --unresolved-symbols=ignore-all. The latter has empty text/data/bss and
+ * only ABS Data_03001cec/03001e40/03001f60/080000c0. candidate.rs emits
+ * .thumb for it and uses assembly_command's -mfpu=fpa -mfloat-abi=soft.
+ * The compiled object's instructions are integer-only; the link failure is
+ * metadata incompatibility, not evidence of FP instruction disagreement.
+ * The normal claimed build also assembles externals.o through that command:
+ * all 1004 audited current inputs were 0x204 Thumb objects. Raw ARM listings
+ * link separately (0x5000000) before binary placement, so the final ROM mixes
+ * instruction states without testing this historical ARM/soft-FP ELF mix.
+ * This trace neither establishes a scorer-only fix nor changes ABI policy.
  */
 #include "FIXED_MATH.H"
 

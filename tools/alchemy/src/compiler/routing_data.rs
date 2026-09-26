@@ -13,6 +13,10 @@
 // Compilation/assembly work; linking still requires a separate ABI decision:
 // historical GAS marks ARM objects 0x4, while the generated symbol object is
 // 0x204 (software FP). Do not add flags or rewrite ELF metadata to mask this.
+// Read-only trace: this is an ELF-input incompatibility, not an observed FP
+// instruction mismatch. The current claimed link uses 0x204 Thumb inputs;
+// raw ARM modules link separately before binary placement. No linked ARM
+// candidate comparison or new DONE is established by enabling these routes.
 pub static ARM_GAME_SOURCES: &[&str] = &[
     // GRAPHICS/TILE/UPDATE_VERTICES.S: [0800a0f8,0800a37c), 0x284 bytes.
     // Loader 080109e8 DMA-copies it to heap slot 46, then calls that slot

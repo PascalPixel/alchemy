@@ -21238,7 +21238,8 @@
       "source": "FIELD/VINASU_HEYA/SETTLE_BLOCKS.C"
     },
     "main:0800b388": {
-      "name": "Render_PlaceProjectedSprite"
+      "name": "Render_PlaceProjectedSprite",
+      "source": "GRAPHICS/RENDER/PLACE_PROJECTED_SPRITE.C"
     },
     "main:080123f4": {
       "name": "WorldMap_BuildScanlineTable"

@@ -1,7 +1,12 @@
-/* NONMATCHING: 132-byte owner and pool; 33 differing halfwords. The loops
- * have the reference's shape but output, table and counter registers differ.
- * Widening the loaded u16 primary adds sign/zero conversions and rotates
- * the loops (152 bytes); preserve the narrow scalar and stop that axis. */
+/* NONMATCHING: complete 132-byte owner and pool; candidate 132 bytes,
+ * 30 differing halfwords / 30 aligned edits (2026-09-26).
+ * Phase-local widening of only the second sampled value left the earlier
+ * 132/33/33 baseline unchanged. Independent scan counters recover the
+ * first loop counter in r1 (retained: 132/30/30). An explicit shared table
+ * cursor grows to 160 bytes / 78 halfwords / 58 edits and changes topology.
+ * Remaining: output/table/mask registers and the second loop's widened
+ * shift/reload. Three bounded hypotheses used; no credit until exact.
+ * Earlier widening of both samples produced 152 bytes and rotated loops. */
 #include "TYPES.H"
 
 struct EncodedIndexEntry {
@@ -21,6 +26,7 @@ void Func_0801c8a0(u32 *first_match, u32 *second_match,
                              const struct EncodedIndexEntry *entries)
 {
     s32 index;
+    s32 second_index;
     u16 primary;
 
     *first_match = 0;
@@ -35,15 +41,17 @@ void Func_0801c8a0(u32 *first_match, u32 *second_match,
         }
     }
 
-    index = 0;
+    second_index = 0;
     do {
-        primary = Data_02000462;
-        if (entries->group == (primary & 0x3ff) &&
-            entries->value == (primary >> 10)) {
-            *second_match = index;
+        u32 secondary;
+
+        secondary = Data_02000462;
+        if (entries->group == (secondary & 0x3ff) &&
+            entries->value == (secondary >> 10)) {
+            *second_match = second_index;
             break;
         }
-        index++;
+        second_index++;
         entries++;
-    } while (index <= 447);
+    } while (second_index <= 447);
 }

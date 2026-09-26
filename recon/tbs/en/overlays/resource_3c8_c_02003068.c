@@ -1,6 +1,14 @@
 /* NONMATCHING: 3964 of 3964 bytes, 2 halfword edits (2026-09-24). Hand-written from the
  * resolved jump-table disassembly as a single-overlay unit binding Engine_* at
  * their import veneers. Remaining: 2 halfwords: in case 7/8 of area 0xb8 the REG_BLDCNT zero store still loads the address (r2) before the zero (r3). Spelling the zero as a u32 local inside the do/while puts the zero first but swaps the registers (3 edits). The area 0xba loop counter is unsigned (bls), and the second BLDCNT zero is a do/while around an s16 store (FAKEMATCH). Every other instruction, pool and jump table matches. The b9 opening-auxiliary call is spelled through a value-returning cast so cross-jumping keeps the two identical blocks apart (tag FAKEMATCH when closed). Why: sched2 keeps RTL order for the two independent insns, and local-alloc hands r3 (first in the thumb allocation order) to the higher-priority pseudo; the reference therefore needs the zero first in RTL and the address as the shorter-lived pseudo or a reload. A function-scope volatile u16 *bldcnt used here still comes out address-first (4). Measured 2026-09-24 in agscc source: sched2 (rank_for_schedule) breaks the tie after the Main_080091a0 call by priority, then class against the call (both anti/output, class 2), then dependent count (equal: strh and the next call), then RTL order; local-alloc (QTY_CMP_PRI = floor_log2(refs) * refs * size / life) gives r3 to the shorter-lived pseudo, so the zero set first in RTL loses r3 to the address. A do/while puts loop notes on its first insn, which becomes a sched2 barrier; a bare block (no do/while) scores 4. Untried: making the address pseudo global (live across a block boundary, allocated after local-alloc) with the zero lacking a REG_EQUIV note, or giving the zero four references before combine. */
+/* Recovered and re-scored 2026-09-26 through retained-scene-entry-setup-3c8:
+ * 3964 / 3964, 2 differing halfwords, 2 aligned edits. This is the retained
+ * baseline; scene_entry_setup.c is preserved but scores 3952 / 1277 / 399.
+ * New structural trial: share the BLDCNT address across both area branches
+ * and initialize the first zero before its store. The pointer became a
+ * function-wide r6 value loaded in the prologue: 3952 / 1529 / 351, with
+ * shifted pools and jump tables. Rejected; original two-halfword body kept.
+ * No further lifetime hypothesis justified here. Still not-yet-c. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
@@ -78,7 +86,7 @@ extern u8 Data_000000ba[];
 #define TASK_051 ((void (*)(void))0x200b051)
 #define REG_BLDCNT (*(volatile u16 *)0x4000050)
 
-s32 Local_02003068(void)
+s32 Scene_RunEntrySetup(void)
 {
     struct FieldActor *actor;
     s32 area;
@@ -332,6 +340,7 @@ s32 Local_02003068(void)
             break;
         case 4:
         case 5:
+            /* FAKEMATCH: value-returning cast prevents cross-jumping these blocks. */
             ((s32 (*)(void))FieldScene_RunOpeningAuxiliarySequence)();
             Main_0808a5e0(170);
             break;

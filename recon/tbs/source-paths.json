@@ -1,6 +1,9 @@
 {
   "format": 3,
   "owners": {
+    "resource_396:02001244": {
+      "name": "ToretoPalette_ApplyTint"
+    },
     "resource_382:020017ac": {
       "name": "KuupuappuMura_SpawnDriftingEffect"
     },

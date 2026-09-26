@@ -2,6 +2,24 @@
   "format": 5,
   "units": [
     {
+      "id": "toreto-palette-tint",
+      "source": "recon/tbs/en/overlays/resource_396_c_02001244.c",
+      "overlay": "resource_396",
+      "absolute_symbols": {
+        "Engine_MathDivide": { "address": "0x02009a10", "kind": "thumb" },
+        "Engine_RandomNext": { "address": "0x02009a38", "kind": "thumb" },
+        "Data_03001ebc": { "address": "0x03001ebc", "kind": "data" },
+        "Data_03001e40": { "address": "0x03001e40", "kind": "data" },
+        "Data_0200adb8": { "address": "0x0200adb8", "kind": "data" },
+        "Data_02009f00": { "address": "0x02009f00", "kind": "data" }
+      },
+      "owners": [
+        { "address": "0x02001244", "extent": 480, "state": "not-yet-c" }
+      ],
+      "game": "tbs",
+      "compiler_route": "canonical-gcc296"
+    },
+    {
       "id": "kuupuappu-drifting-effect",
       "source": "recon/tbs/en/overlays/resource_382_c_020017ac.c",
       "overlay": "resource_382",

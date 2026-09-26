@@ -1,8 +1,7 @@
-/* NONMATCHING: resource_377:02000a0c; 1064 / 1064 bytes, 24 differing
- * halfwords, 30 wrong instructions, 24 halfword edits. Explicit alpha-port
- * ownership removes the first-ramp reload, but allocates r7 instead of r5
- * and reverses its initial pool pair. Separate ramp counters emit the same
- * bytes as the shared counter. Two call-scheduling ties remain. */
+/* NONMATCHING: resource_377:02000a0c; 1064 / 1064 bytes, 135 differing
+ * halfwords, 34 wrong instructions, 51 halfword edits. Sharing the explicit
+ * alpha port across both ramps removes the reference's second-ramp reload
+ * without promoting the pointer from r7 to r5. Topology remains equal. */
 #include "FIELD_EVENT.H"
 
 void Main_080000c0();
@@ -183,7 +182,7 @@ ramp:
         u32 cnt;
 
         for (cnt = 0; cnt <= 15; cnt++) {
-            Data_04000052 = base - cnt;
+            *alpha = base - cnt;
             Call1(Main_080000c0, 1);
         }
     }

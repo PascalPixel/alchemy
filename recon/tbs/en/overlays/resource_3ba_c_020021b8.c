@@ -1,5 +1,5 @@
-/* NONMATCHING: 1264 bytes, candidate 1264, 241 differing halfwords, 127
- * halfword edits (2026-09-26). CommandInterpolationRenderer_Update, meant
+/* NONMATCHING: 1264 bytes, candidate 1264, 201 differing halfwords, 87
+ * halfword edits (2026-09-27). CommandInterpolationRenderer_Update, meant
  * for FIELD/KOROSSEO_KAWA/F_021B8.C as a single-overlay unit binding its
  * names at their runtime addresses (an import veneer's listing offset plus
  * 0x8000). Remaining: Rebuilt command loop, three signed interpolation
@@ -17,7 +17,15 @@
  * 1264/241/127. Both saved copies now precede masking, and the complete
  * trailing pool order matches, but queue/IME become r4/r0 instead of r0/r1;
  * the shared entry cursor still forces extra copies. Interpolation and
- * sprite emission are unchanged. Keep this negative witness in history. */
+ * sprite emission are unchanged. Keep this negative witness in history.
+ * 2026-09-27 H2: request-local saved IME/count/entry cursor, following the
+ * exact world-map QueueTransfer scope, fixes both queue publications. The
+ * complete tail at +0x452 through return and its trailing pool now match;
+ * queue/IME/saved are r0/r1/r4. Whole score is 1264/201/87, equal topology.
+ * Stop this bounded queue axis: remaining interpolation and sprite work is
+ * independent, and no complete owner is adopted or credited. This family
+ * also occurs at resource_3bb:02002450 and resource_3bc:02002ee8; do not
+ * propagate until the complete canonical owner is exact. */
 #include "TYPES.H"
 #include "IO_WRITE_QUEUE.H"
 
@@ -42,6 +50,25 @@ extern s32 Local_02003b00(s32 left, s32 right);
 extern s32 Main_080001e0(struct SpriteTransform *work);
 extern void Main_080001e8(void *sprite, s32 priority);
 
+/* FAKEMATCH: transfer the exact queue read boundary and count-store alias.
+ * Each publication owns its cursor; only the hardware pointers persist. */
+#define QueueRegister(address, value) \
+{ \
+    u32 saved; \
+    s32 cnt; \
+    do { saved = *ime; } while (0); \
+    *ime = (u16)(u32)ime; \
+    cnt = queue->count; \
+    if (cnt < 32) { \
+        u32 *entry = (u32 *)((u8 *)queue + cnt * 12 + 4); \
+        *(u16 *)&queue->count = cnt + 1; \
+        *entry++ = (value); \
+        *entry++ = (address); \
+        *entry = 0x20000; \
+    } \
+    *ime = saved; \
+}
+
 void CommandInterpolationRenderer_Update(void)
 {
     u32 *write = Data_0200c7c0;
@@ -53,8 +80,6 @@ void CommandInterpolationRenderer_Update(void)
     struct SpriteTransform work;
     struct IoWriteQueue *queue;
     volatile u16 *ime;
-    s32 saved, cnt;
-    u32 *entry;
 
 commands:
     if (Data_0200c79c != 0)
@@ -202,32 +227,7 @@ render:
         break;
     }
     queue = &gIoWriteQueue;
-    /* FAKEMATCH: the proven queue read boundary saves IME before masking. */
-    do {
-        ime = &Data_04000208;
-        saved = *ime;
-    } while (0);
-    *ime = (u16)(u32)ime;
-    cnt = queue->count;
-    if (cnt < 32) {
-        entry = (u32 *)((u8 *)queue + cnt * 12 + 4);
-        /* FAKEMATCH: separate the count store alias, as in IO_WRITE_QUEUE.C. */
-        *(u16 *)&queue->count = cnt + 1;
-        *entry++ = 0x3f00;
-        *entry++ = 0x04000050;
-        *entry = 0x20000;
-    }
-    *ime = saved;
-    do { saved = *ime; } while (0);
-    *ime = (u16)(u32)ime;
-    cnt = queue->count;
-    if (cnt < 32) {
-        entry = (u32 *)((u8 *)queue + cnt * 12 + 4);
-        /* FAKEMATCH: separate the count store alias, as in IO_WRITE_QUEUE.C. */
-        *(u16 *)&queue->count = cnt + 1;
-        *entry++ = ((16 - blend) << 8) | blend;
-        *entry++ = 0x04000052;
-        *entry = 0x20000;
-    }
-    *ime = saved;
+    ime = &Data_04000208;
+    QueueRegister(0x04000050, 0x3f00)
+    QueueRegister(0x04000052, ((16 - blend) << 8) | blend)
 }

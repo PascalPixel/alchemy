@@ -15,6 +15,17 @@
  * selection hoists the first address and removes the ROM's branch-to-join;
  * y still moves to r4. Rejected: the full argument/frame invariant did not
  * improve, and the previously correct selection topology regressed.
+ * H2: reuse variant as the selected byte offset, rather than introducing a
+ * pointer live across the arms. H1 local-allocation diagnostics bind variant
+ * to r3 within block zero, forcing the global-cell address into r2 and y
+ * into a saved register. A selector reused across the join should instead
+ * expose the ROM's longer selector lifetime while retaining the shared add.
+ * H2 result: 80/84 bytes, 37 differing halfwords, 13 aligned edits. It does
+ * recover the named-cell base in r3, y in r2 and the exact outgoing-store
+ * position. The selector coalesces with its offset in r1, however, and the
+ * indexed halfword load replaces the ROM's distinct add/load; r6 disappears.
+ * This proves the input selector's lifetime causes the earlier y evacuation,
+ * but offset reuse is not the original source boundary.
  */
 #include "TYPES.H"
 #include "RENDER_INPUT.H"
@@ -40,14 +51,14 @@ struct MarkerObject *RenderOutput_CreateFar(s32 resource, s32 flags,
 s32 Func_080ae99c(struct RenderInput *window, s32 x, s32 y, s32 variant)
 {
     struct MarkerObject *object;
-    u16 *resource;
     struct ArrowResources *data = Data_03001f2c;
 
     if (variant == 0)
-        resource = &data->resource[0];
+        variant = (s32)&((struct ArrowResources *)0)->resource[0];
     else
-        resource = &data->resource[1];
-    object = RenderOutput_CreateFar(*resource, 0x40000000, window, x, y);
+        variant = (s32)&((struct ArrowResources *)0)->resource[1];
+    object = RenderOutput_CreateFar(*(u16 *)((u8 *)data + variant),
+        0x40000000, window, x, y);
     if (object == 0)
         return -1;
     object->state = 0;

@@ -11,7 +11,8 @@
       "end": "0x0807a830",
       "element": "u8",
       "stride": 1,
-      "values": [0, 0, 1, 1, 0, 0, 1, 1]
+      "values": [0, 0, 1, 1, 0, 0, 1, 1],
+      "address": "0x0807a828"
     },
     {
       "name": "level_experience",
@@ -99,7 +100,8 @@
           5905795, 6049166, 6192537, 6335908, 6479279, 6622650, 6766021, 6909392, 7052763, 7196134, 7339505, 7482876,
           7626247, 7769618, 7912989, 8056360
         ]
-      ]
+      ],
+      "address": "0x0807a830"
     },
     {
       "name": "inventory_counter_slots",
@@ -122,9 +124,17 @@
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-      ]
+      ],
+      "address": "0x0807b490"
     },
-    {"name": "party_order", "end": "0x0807b6a8", "element": "le-s32", "stride": 4, "values": [0, 1, 2, 3, 5, -1]},
+    {
+      "name": "party_order",
+      "end": "0x0807b6a8",
+      "element": "le-s32",
+      "stride": 4,
+      "values": [0, 1, 2, 3, 5, -1],
+      "address": "0x0807b690"
+    },
     {
       "name": "items",
       "end": "0x0807ee58",
@@ -2041,7 +2051,8 @@
           "effect_0_kind": 1,
           "effect_0_amount": 10
         }
-      ]
+      ],
+      "address": "0x0807b6a8"
     },
     {
       "name": "abilities",
@@ -2599,7 +2610,8 @@
         {"byte_0": 1, "byte_1": 130, "byte_3": 31, "byte_8": 1, "power": 80},
         {"byte_0": 1, "byte_1": 132, "byte_3": 34, "byte_8": 1, "power": 12},
         {"byte_0": 1, "byte_1": 131, "byte_2": 1, "byte_3": 34, "byte_8": 1, "power": 30}
-      ]
+      ],
+      "address": "0x0807ee58"
     },
     {
       "name": "combatants",
@@ -5379,7 +5391,8 @@
           "halfword_82": 677
         },
         {"name_slot": [255], "turns": 0}
-      ]
+      ],
+      "address": "0x08080ec8"
     },
     {
       "name": "hero_growth",
@@ -5489,14 +5502,16 @@
           "class_id": 0,
           "initial_abilities": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         }
-      ]
+      ],
+      "address": "0x080844ec"
     },
     {
       "name": "summon_order",
       "end": "0x08084a9c",
       "element": "u8",
       "stride": 1,
-      "values": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+      "values": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+      "address": "0x08084a8c"
     },
     {
       "name": "summons",
@@ -5521,7 +5536,8 @@
         {"ability_id": 389, "djinn_cost": [0, 4, 0, 0]},
         {"ability_id": 395, "djinn_cost": [0, 0, 4, 0]},
         {"ability_id": 401, "djinn_cost": [0, 0, 0, 4]}
-      ]
+      ],
+      "address": "0x08084a9c"
     },
     {
       "name": "classes",
@@ -7409,7 +7425,8 @@
           "ability_02": [47, 18],
           "traits": [25, 67]
         }
-      ]
+      ],
+      "address": "0x08084b1c"
     },
     {
       "name": "class_family_matrix",
@@ -7420,7 +7437,8 @@
         [1, 3, 4, 5], [8, 6, 9, 10], [4, 3, 2, 5], [8, 10, 9, 7], [5570635, 5898320, 6226005, 6553690],
         [6881375, 7209060, 7536745, 7864430], [8192115, 8519800, 8847485, 9175170],
         [9502855, 9830540, 10485905, 10813590]
-      ]
+      ],
+      "address": "0x08088db8"
     },
     {
       "name": "elemental_profiles",
@@ -7477,7 +7495,8 @@
         {"element": 2, "levels": [9, 7, 14, 9], "stats": [[100, 127], [95, 72], [110, 175], [100, 127]]},
         {"element": 4, "levels": [4, 8, 6, 5], "stats": [[100, 72], [130, 193], [120, 127], [110, 152]]},
         {"element": 4, "levels": [0, 2, 1, 4], "stats": [[90, 152], [95, 110], [95, 72], [110, 48]]}
-      ]
+      ],
+      "address": "0x08088e38"
     },
     {
       "name": "signed_scale_curve",
@@ -7491,7 +7510,8 @@
         {"input": 0, "output": 0},
         {"input": -100, "output": -128},
         {"input": -200, "output": -256}
-      ]
+      ],
+      "address": "0x08089258"
     },
     {
       "name": "djinn",
@@ -7585,8 +7605,9 @@
         {"name_message": 377, "stat_bonuses": [0, 0, 0, 0, 0, 0]},
         {"name_message": 378, "stat_bonuses": [0, 0, 0, 0, 0, 0]},
         {"name_message": 379, "stat_bonuses": [0, 0, 0, 0, 0, 0]}
-      ]
+      ],
+      "address": "0x0808926c"
     },
-    {"name": "alignment", "end": "0x0808a000", "element": "u8", "stride": 1, "fill": 0}
+    {"name": "alignment", "end": "0x0808a000", "element": "u8", "stride": 1, "fill": 0, "address": "0x0808962c"}
   ]
 }

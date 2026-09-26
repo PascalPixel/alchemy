@@ -15,21 +15,24 @@
             "end": "0x0876f3c8",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 30, 22, 3, 1, 2, 1, 1, 2, 0, 0]
+            "values": [0, 0, 30, 22, 3, 1, 2, 1, 1, 2, 0, 0],
+            "address": "0x0876f3bc"
           },
           {
             "name": "records",
             "end": "0x0876f3e0",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [128, 4112, 0, 65535], [33792, 4112, 0, 65535]]
+            "values": [[0, 4112, 0, 65535], [128, 4112, 0, 65535], [33792, 4112, 0, 65535]],
+            "address": "0x0876f3c8"
           },
           {
             "name": "component_offsets",
             "end": "0x0876f3f8",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0x688", "0x6a4", "0xe78", "0xf88", "0xf90"]
+            "values": ["0x3c", "0x688", "0x6a4", "0xe78", "0xf88", "0xf90"],
+            "address": "0x0876f3e0"
           }
         ]
       },
@@ -138,7 +141,16 @@
         "address": "0x0877034c",
         "size": "0x3",
         "record_size": 3,
-        "segments": [{"name": "terminator", "end": "0x0877034f", "stride": 1, "element": "u8", "fill": 255}]
+        "segments": [
+          {
+            "name": "terminator",
+            "end": "0x0877034f",
+            "stride": 1,
+            "element": "u8",
+            "fill": 255,
+            "address": "0x0877034c"
+          }
+        ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/TOREBI_IZUMI/TOREBI_IZUMI.BIN",
       "grid_offset": 0,
@@ -161,21 +173,24 @@
             "end": "0x086e6360",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 120, 120, 3, 1, 2, 0, 2, 2, 0, 0]
+            "values": [0, 0, 120, 120, 3, 1, 2, 0, 2, 2, 0, 0],
+            "address": "0x086e6354"
           },
           {
             "name": "records",
             "end": "0x086e6378",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [120, 4112, 0, 65535], [30720, 4112, 0, 65535]]
+            "values": [[0, 4112, 0, 65535], [120, 4112, 0, 65535], [30720, 4112, 0, 65535]],
+            "address": "0x086e6360"
           },
           {
             "name": "component_offsets",
             "end": "0x086e6390",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0x6bc", "0x6e0", "0xd9c", "0xef8", "0xf08"]
+            "values": ["0x3c", "0x6bc", "0x6e0", "0xd9c", "0xef8", "0xf08"],
+            "address": "0x086e6378"
           }
         ]
       },
@@ -270,7 +285,16 @@
         "address": "0x086e725c",
         "size": "0x3",
         "record_size": 3,
-        "segments": [{"name": "terminator", "end": "0x086e725f", "stride": 1, "element": "u8", "fill": 255}]
+        "segments": [
+          {
+            "name": "terminator",
+            "end": "0x086e725f",
+            "stride": 1,
+            "element": "u8",
+            "fill": 255,
+            "address": "0x086e725c"
+          }
+        ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/TOREBI_IZUMI/TOREBI_IZUMI.BIN",
       "grid_offset": 74112,

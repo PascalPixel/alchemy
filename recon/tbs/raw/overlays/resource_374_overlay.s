@@ -880,7 +880,6 @@ AlchemyC_02001274:
 	.space 0x340
 AlchemyC_020015b4:
 	.space 0x214
-Scene_RunExtendedActorSequence:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl

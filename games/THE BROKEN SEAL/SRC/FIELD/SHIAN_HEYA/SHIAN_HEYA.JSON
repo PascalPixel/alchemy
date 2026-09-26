@@ -15,21 +15,24 @@
             "end": "0x0864dd34",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 120, 120, 3, 2, 1, 0, 2, 2, 0, 0]
+            "values": [0, 0, 120, 120, 3, 2, 1, 0, 2, 2, 0, 0],
+            "address": "0x0864dd28"
           },
           {
             "name": "records",
             "end": "0x0864dd4c",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [30720, 4112, 0, 65535], [120, 4112, 0, 65535]]
+            "values": [[0, 4112, 0, 65535], [30720, 4112, 0, 65535], [120, 4112, 0, 65535]],
+            "address": "0x0864dd34"
           },
           {
             "name": "component_offsets",
             "end": "0x0864dd64",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0x11ac", "0x11e0", "0x21a8", "0x223c", "0x224c"]
+            "values": ["0x3c", "0x11ac", "0x11e0", "0x21a8", "0x223c", "0x224c"],
+            "address": "0x0864dd4c"
           }
         ]
       },
@@ -113,9 +116,17 @@
               [5, 3, 100], [7, 3, 200], [8, 3, 200], [26, 3, 201], [27, 3, 201], [42, 3, 202], [43, 3, 202],
               [26, 4, 201], [27, 4, 201], [45, 4, 206], [23, 6, 205], [24, 6, 205], [24, 11, 101], [18, 22, 203],
               [18, 23, 203], [18, 24, 204], [18, 25, 204], [27, 27, 207]
-            ]
+            ],
+            "address": "0x0864ff74"
           },
-          {"name": "terminator", "end": "0x0864ffad", "stride": 1, "element": "u8", "fill": 255}
+          {
+            "name": "terminator",
+            "end": "0x0864ffad",
+            "stride": 1,
+            "element": "u8",
+            "fill": 255,
+            "address": "0x0864ffaa"
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/SHIAN_HEYA/SHIAN_HEYA.BIN",

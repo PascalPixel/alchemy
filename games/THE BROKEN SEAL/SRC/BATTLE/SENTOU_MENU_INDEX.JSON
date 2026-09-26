@@ -15,7 +15,8 @@
         194, 195, 224, 225
       ],
       "min": 0,
-      "max": 231
+      "max": 231,
+      "address": "0x080b4100"
     },
     {
       "name": "row_offsets",
@@ -24,7 +25,8 @@
       "stride": 2,
       "values": [192, 144, 128, 80, 64],
       "min": 0,
-      "max": 978
+      "max": 978,
+      "address": "0x080b413c"
     },
     {
       "name": "thresholds",
@@ -34,7 +36,8 @@
       "values": [
         [300, 300, 300, 300, 300], [500, 500, 500, 500, 500], [1000, 1000, 1000, 1000, 1000],
         [2000, 2000, 2000, 2000, 2000], [4000, 4000, 4000, 4000, 4000], [8000, 8000, 8000, 8000, 8000]
-      ]
+      ],
+      "address": "0x080b4146"
     },
     {
       "name": "selector_ids",
@@ -45,7 +48,8 @@
       "min": 1,
       "max": 32767,
       "unique": true,
-      "terminated_capacity": 21
+      "terminated_capacity": 21,
+      "address": "0x080b4182"
     },
     {
       "name": "loadouts",
@@ -93,7 +97,8 @@
         {"main_ids": [4, 19, 33, 46], "extra_ids": [6, 21, 47, 63], "group": 1},
         {"main_ids": [80, 150, 169], "extra_ids": [110, 122, 140, 159], "group": 2},
         {"main_ids": [180, 181, 187, 188, 236], "extra_ids": [182, 183, 189, 186], "group": 0}
-      ]
+      ],
+      "address": "0x080b41ac"
     },
     {
       "name": "sound_ids",
@@ -102,15 +107,17 @@
       "stride": 1,
       "values": [82, 84, 88, 87],
       "min": 1,
-      "max": 127
+      "max": 127,
+      "address": "0x080b4ab2"
     },
     {
       "name": "multipliers",
       "end": "0x080b4ac3",
       "element": "s8",
       "stride": 1,
-      "values": [2, 4, 7, 8, 8, 10, 12, 15, 20, 0, 18, 25, 0]
+      "values": [2, 4, 7, 8, 8, 10, 12, 15, 20, 0, 18, 25, 0],
+      "address": "0x080b4ab6"
     },
-    {"name": "alignment", "end": "0x080b5000", "element": "u8", "stride": 1, "fill": 0}
+    {"name": "alignment", "end": "0x080b5000", "element": "u8", "stride": 1, "fill": 0, "address": "0x080b4ac3"}
   ]
 }

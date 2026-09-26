@@ -16,21 +16,24 @@
             "end": "0x085d0194",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 64, 64, 2, 2, 1, 0, 2, 2, 0, 0]
+            "values": [0, 0, 64, 64, 2, 2, 1, 0, 2, 2, 0, 0],
+            "address": "0x085d0188"
           },
           {
             "name": "records",
             "end": "0x085d01ac",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [64, 4112, 0, 65535], [128, 4112, 0, 65535]]
+            "values": [[0, 4112, 0, 65535], [64, 4112, 0, 65535], [128, 4112, 0, 65535]],
+            "address": "0x085d0194"
           },
           {
             "name": "component_offsets",
             "end": "0x085d01c4",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0x1054", "0x1074", "0x1c4c", "0x1d48", "0x1d58"]
+            "values": ["0x3c", "0x1054", "0x1074", "0x1c4c", "0x1d48", "0x1d58"],
+            "address": "0x085d01ac"
           }
         ]
       },
@@ -110,7 +113,16 @@
         "address": "0x085d1ee0",
         "size": "0x3",
         "record_size": 3,
-        "segments": [{"name": "terminator", "end": "0x085d1ee3", "stride": 1, "element": "u8", "fill": 255}]
+        "segments": [
+          {
+            "name": "terminator",
+            "end": "0x085d1ee3",
+            "stride": 1,
+            "element": "u8",
+            "fill": 255,
+            "address": "0x085d1ee0"
+          }
+        ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/KORIMA_KAWA/KORIMA_KAWA.BIN",
       "grid_offset": 0,

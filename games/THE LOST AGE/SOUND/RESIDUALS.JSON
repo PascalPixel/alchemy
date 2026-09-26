@@ -23,7 +23,8 @@
             {"name": "priority", "element": "u8"},
             {"name": "reverb", "element": "u8"}
           ],
-          "records": [{"track_count": 0, "block_count": 0, "priority": 0, "reverb": 0}]
+          "records": [{"track_count": 0, "block_count": 0, "priority": 0, "reverb": 0}],
+          "address": "0x081c5e30"
         }
       ]
     },
@@ -48,7 +49,8 @@
             {"name": "reverb", "element": "u8"},
             {"name": "tone_bank", "element": "le-u32"}
           ],
-          "records": [{"track_count": 0, "block_count": 0, "priority": 0, "reverb": 178, "tone_bank": "0x081c3714"}]
+          "records": [{"track_count": 0, "block_count": 0, "priority": 0, "reverb": 178, "tone_bank": "0x081c3714"}],
+          "address": "0x082ba798"
         }
       ]
     },
@@ -73,7 +75,8 @@
             {"name": "reverb", "element": "u8"},
             {"name": "tone_bank", "element": "le-u32"}
           ],
-          "records": [{"track_count": 0, "block_count": 0, "priority": 0, "reverb": 178, "tone_bank": "0x081c3714"}]
+          "records": [{"track_count": 0, "block_count": 0, "priority": 0, "reverb": 178, "tone_bank": "0x081c3714"}],
+          "address": "0x082dadb0"
         }
       ]
     },
@@ -98,7 +101,8 @@
             {"name": "reverb", "element": "u8"},
             {"name": "tone_bank", "element": "le-u32"}
           ],
-          "records": [{"track_count": 0, "block_count": 0, "priority": 120, "reverb": 0, "tone_bank": "0x081c3de0"}]
+          "records": [{"track_count": 0, "block_count": 0, "priority": 120, "reverb": 0, "tone_bank": "0x081c3de0"}],
+          "address": "0x082ddf68"
         }
       ]
     },
@@ -123,7 +127,8 @@
             {"name": "reverb", "element": "u8"},
             {"name": "tone_bank", "element": "le-u32"}
           ],
-          "records": [{"track_count": 0, "block_count": 0, "priority": 120, "reverb": 0, "tone_bank": "0x081c3de0"}]
+          "records": [{"track_count": 0, "block_count": 0, "priority": 120, "reverb": 0, "tone_bank": "0x081c3de0"}],
+          "address": "0x082de094"
         }
       ]
     }

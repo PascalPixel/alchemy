@@ -15,21 +15,24 @@
             "end": "0x08583430",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 56, 64, 3, 2, 1, 0, 2, 2, 0, 0]
+            "values": [0, 0, 56, 64, 3, 2, 1, 0, 2, 2, 0, 0],
+            "address": "0x08583424"
           },
           {
             "name": "records",
             "end": "0x08583448",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [64, 4112, 0, 65535], [16384, 4112, 0, 65535]]
+            "values": [[0, 4112, 0, 65535], [64, 4112, 0, 65535], [16384, 4112, 0, 65535]],
+            "address": "0x08583430"
           },
           {
             "name": "component_offsets",
             "end": "0x08583460",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0x10a8", "0x10ec", "0x1d24", "0x1d44", "0x1d4c"]
+            "values": ["0x3c", "0x10a8", "0x10ec", "0x1d24", "0x1d44", "0x1d4c"],
+            "address": "0x08583448"
           }
         ]
       },
@@ -98,9 +101,17 @@
             "end": "0x08585176",
             "stride": 3,
             "element": "u8",
-            "values": [[22, 10, 100], [9, 19, 101]]
+            "values": [[22, 10, 100], [9, 19, 101]],
+            "address": "0x08585170"
           },
-          {"name": "terminator", "end": "0x08585179", "stride": 1, "element": "u8", "fill": 255}
+          {
+            "name": "terminator",
+            "end": "0x08585179",
+            "stride": 1,
+            "element": "u8",
+            "fill": 255,
+            "address": "0x08585176"
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_MURA/BIRIBINO_MURA.BIN",
@@ -124,21 +135,24 @@
             "end": "0x08593ad8",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 72, 94, 3, 2, 1, 0, 2, 2, 0, 0]
+            "values": [0, 0, 72, 94, 3, 2, 1, 0, 2, 2, 0, 0],
+            "address": "0x08593acc"
           },
           {
             "name": "records",
             "end": "0x08593af0",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [24576, 4112, 0, 65535], [80, 4112, 0, 65535]]
+            "values": [[0, 4112, 0, 65535], [24576, 4112, 0, 65535], [80, 4112, 0, 65535]],
+            "address": "0x08593ad8"
           },
           {
             "name": "component_offsets",
             "end": "0x08593b08",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0x43c", "0x450", "0xb54", "0xd58", "0xd74"]
+            "values": ["0x3c", "0x43c", "0x450", "0xb54", "0xd58", "0xd74"],
+            "address": "0x08593af0"
           }
         ]
       },
@@ -256,7 +270,16 @@
         "address": "0x08594840",
         "size": "0x3",
         "record_size": 3,
-        "segments": [{"name": "terminator", "end": "0x08594843", "stride": 1, "element": "u8", "fill": 255}]
+        "segments": [
+          {
+            "name": "terminator",
+            "end": "0x08594843",
+            "stride": 1,
+            "element": "u8",
+            "fill": 255,
+            "address": "0x08594840"
+          }
+        ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_MURA/BIRIBINO_MURA.BIN",
       "grid_offset": 0,
@@ -279,21 +302,24 @@
             "end": "0x08596608",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 128, 128, 3, 2, 1, 0, 2, 2, 0, 0]
+            "values": [0, 0, 128, 128, 3, 2, 1, 0, 2, 2, 0, 0],
+            "address": "0x085965fc"
           },
           {
             "name": "records",
             "end": "0x08596620",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [60, 4112, 0, 65535], [120, 4112, 0, 65535]]
+            "values": [[0, 4112, 0, 65535], [60, 4112, 0, 65535], [120, 4112, 0, 65535]],
+            "address": "0x08596608"
           },
           {
             "name": "component_offsets",
             "end": "0x08596638",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0xe1c", "0xe44", "0x1784", "0x0", "0x1898"]
+            "values": ["0x3c", "0xe1c", "0xe44", "0x1784", "0x0", "0x1898"],
+            "address": "0x08596620"
           }
         ]
       },
@@ -364,7 +390,16 @@
         "address": "0x08597e94",
         "size": "0x3",
         "record_size": 3,
-        "segments": [{"name": "terminator", "end": "0x08597e97", "stride": 1, "element": "u8", "fill": 255}]
+        "segments": [
+          {
+            "name": "terminator",
+            "end": "0x08597e97",
+            "stride": 1,
+            "element": "u8",
+            "fill": 255,
+            "address": "0x08597e94"
+          }
+        ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_MURA/BIRIBINO_MURA.BIN",
       "grid_offset": 67352,

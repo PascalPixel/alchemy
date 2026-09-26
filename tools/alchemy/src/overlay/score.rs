@@ -4,11 +4,38 @@ use crate::compiler::{
     symbols::overlay_call_via_base,
     translation_units::{resolve_overlay_span, TranslationUnits},
 };
+use crate::overlay::compile::compile_overlay_c;
+use crate::overlay::park::{placeholder_span, truth_window};
 use crate::score::{
     cli::{options_of, ParseOutcome, USAGE},
     render::render,
 };
+use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
+use tempfile::tempdir;
+fn nonowner_relationship(
+    kind: &str,
+    entry: SourceOwner,
+    reviewed: &BTreeMap<SourceOwner, usize>,
+) -> Option<(&'static str, Option<SourceOwner>)> {
+    match kind {
+        "literal_pool" => return Some(("literal-pool", None)),
+        "executable_alignment" => {}
+        _ => return None,
+    }
+    let overlay = entry.overlay_id()?;
+    let address = i64::from(entry.address());
+    reviewed.iter().find_map(|(owner, span)| {
+        let start = i64::from(owner.address());
+        match (owner.overlay_id().as_deref() == Some(&overlay), start) {
+            (true, start) if start < address && address < start + *span as i64 => {
+                Some(("alignment-inside", Some(*owner)))
+            }
+            (true, start) if start == address + 2 => Some(("alignment-before", Some(*owner))),
+            _ => None,
+        }
+    })
+}
 pub(crate) fn resolve(root: &Path, target: &str) -> Result<SourceOwner, String> {
     resolve_for(root, target, CompilerTarget::Tbs)
 }
@@ -188,7 +215,7 @@ pub(crate) fn render_options(
         None
     };
     let span = resolve_overlay_span(
-        &crate::overlay::owners::owner_spans(root, game)?,
+        &crate::overlay::owners::reviewed_spans(root, game)?,
         resolved,
         installed,
         options.size,
@@ -262,6 +289,83 @@ pub(crate) fn render_options(
             + "\n";
     }
     Ok(rendered)
+}
+pub fn audit_corpus(root: &Path) -> Result<i32, String> {
+    let directory = root.join("recon/tbs/en/overlays");
+    let mut sources = std::fs::read_dir(&directory)
+        .map_err(|error| format!("{}: {error}", directory.display()))?
+        .filter_map(Result::ok)
+        .map(|entry| entry.path())
+        .filter(|path| {
+            path.extension()
+                .and_then(|value| value.to_str())
+                .is_some_and(|extension| extension.eq_ignore_ascii_case("c"))
+        })
+        .collect::<Vec<_>>();
+    sources.sort();
+    if sources.is_empty() {
+        return Err("overlay reconstruction corpus is empty".into());
+    }
+    let paths = SourcePaths::load(root)?;
+    let reviewed = crate::overlay::reviewed_spans(root)?;
+    // registered, nonowner, installed, nonexact, ordinary, nonordinary, exact-unmapped, placeholders, unregistered
+    let mut count = [0usize; 9];
+    for source in &sources {
+        let target = resolve(root, &source.to_string_lossy())?;
+        let overlay = target.overlay_id().expect("resolved overlay owner");
+        let address = i64::from(target.address());
+        let placeholder = placeholder_span(root, target)?;
+        let span = placeholder.or_else(|| reviewed.get(&target).map(|span| *span as i64));
+        let Some(span) = span else {
+            let kind = crate::overlay::audited_kind(root, &overlay, address)?;
+            let relationship = kind
+                .as_deref()
+                .and_then(|kind| nonowner_relationship(kind, target, &reviewed));
+            let Some((relationship, related)) = relationship else {
+                return Err(format!(
+                    "{} has no mapped owner; audited kind is {} without a reviewed-owner relationship",
+                    source.display(), kind.as_deref().unwrap_or("unknown")
+                ));
+            };
+            count[1] += 1;
+            println!(
+                "not-owner\t{overlay}:{address:08x}\taudited-{relationship}\t{}",
+                related
+                    .map(|owner| owner.id())
+                    .unwrap_or_else(|| "none".into())
+            );
+            continue;
+        };
+        let registered = paths.registered_name(target).is_some();
+        count[0] += usize::from(registered);
+        count[7] += usize::from(placeholder.is_some());
+        count[8] += usize::from(!registered);
+        let destination = paths.registered_source_path(target);
+        if placeholder.is_some() && destination.as_ref().is_ok_and(|path| path.is_file()) {
+            count[2] += 1;
+            println!("installed-owner\t{}", target.id());
+            continue;
+        }
+        let (reference, _) = truth_window(root, target, span)?;
+        let work = tempdir().map_err(|error| error.to_string())?;
+        if compile_overlay_c(source, work.path(), &overlay, span as usize, None, &[])?.data
+            != reference
+        {
+            count[3] += usize::from(registered);
+            continue;
+        }
+        let class = if !registered || destination.is_err() {
+            count[6] += 1;
+            "unmapped"
+        } else {
+            let ordinary = crate::compiler::no_asm::ordinary_source(root, source)?;
+            count[5 - usize::from(ordinary)] += 1;
+            ["nonordinary", "ordinary"][usize::from(ordinary)]
+        };
+        println!("exact-retained\t{}\t{class}", target.id());
+    }
+    println!("overlay-corpus sources={} registered_owners={} placeholder_spans={} audited_nonowners={} installed_owners={} nonexact={} exact_retained_ordinary={} exact_retained_nonordinary={} exact_unmapped={} unregistered_candidates={}", sources.len(), count[0], count[7], count[1], count[2], count[3], count[4], count[5], count[6], count[8]);
+    Ok(i32::from(count[4..7].iter().sum::<usize>() != 0))
 }
 #[cfg(test)]
 mod tests {
@@ -337,5 +441,27 @@ mod tests {
             let args = [target, "--span", span].map(str::to_owned);
             assert!(run(root, &args).unwrap_err().contains(message));
         }
+    }
+    fn owner(value: &str) -> SourceOwner {
+        SourceOwner::parse_argument(value).unwrap()
+    }
+    #[test]
+    fn executable_alignment_requires_same_overlay_owner_relationship() {
+        let reviewed = BTreeMap::from([(owner("resource_371:02000100"), 0x20)]);
+        let relation = |kind, entry| nonowner_relationship(kind, owner(entry), &reviewed);
+        for (entry, expected) in [
+            ("resource_371:02000110", "alignment-inside"),
+            ("resource_371:020000fe", "alignment-before"),
+        ] {
+            assert_eq!(relation("executable_alignment", entry).unwrap().0, expected);
+        }
+        assert!([
+            ("executable_alignment", "resource_372:02000110"),
+            ("executable_alignment", "resource_371:020000fc"),
+            ("thumb", "resource_371:02000110"),
+            ("unknown", "resource_371:02000110"),
+        ]
+        .into_iter()
+        .all(|(kind, entry)| relation(kind, entry).is_none()));
     }
 }

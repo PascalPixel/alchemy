@@ -15,21 +15,24 @@
             "end": "0x086b4d8c",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 120, 120, 3, 1, 2, 0, 2, 2, 0, 0]
+            "values": [0, 0, 120, 120, 3, 1, 2, 0, 2, 2, 0, 0],
+            "address": "0x086b4d80"
           },
           {
             "name": "records",
             "end": "0x086b4da4",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [120, 4112, 0, 65535], [30720, 4112, 0, 65535]]
+            "values": [[0, 4112, 0, 65535], [120, 4112, 0, 65535], [30720, 4112, 0, 65535]],
+            "address": "0x086b4d8c"
           },
           {
             "name": "component_offsets",
             "end": "0x086b4dbc",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0x624", "0x63c", "0xcf4", "0xdf4", "0xe04"]
+            "values": ["0x3c", "0x624", "0x63c", "0xcf4", "0xdf4", "0xe04"],
+            "address": "0x086b4da4"
           }
         ]
       },
@@ -115,7 +118,16 @@
         "address": "0x086b5b84",
         "size": "0x3",
         "record_size": 3,
-        "segments": [{"name": "terminator", "end": "0x086b5b87", "stride": 1, "element": "u8", "fill": 255}]
+        "segments": [
+          {
+            "name": "terminator",
+            "end": "0x086b5b87",
+            "stride": 1,
+            "element": "u8",
+            "fill": 255,
+            "address": "0x086b5b84"
+          }
+        ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/KAREI_TOREBI/KAREI_TOREBI.BIN",
       "grid_offset": 143832,
@@ -139,21 +151,24 @@
             "end": "0x086abccc",
             "stride": 12,
             "element": "u8",
-            "values": [5, 124, 51, 188, 3, 2, 1, 1, 2, 2, 0, 0]
+            "values": [5, 124, 51, 188, 3, 2, 1, 1, 2, 2, 0, 0],
+            "address": "0x086abcc0"
           },
           {
             "name": "records",
             "end": "0x086abce4",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [60, 4112, 0, 65535], [120, 4112, 0, 65535]]
+            "values": [[0, 4112, 0, 65535], [60, 4112, 0, 65535], [120, 4112, 0, 65535]],
+            "address": "0x086abccc"
           },
           {
             "name": "component_offsets",
             "end": "0x086abcfc",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0x124c", "0x126c", "0x1ed8", "0x0", "0x1f60"]
+            "values": ["0x3c", "0x124c", "0x126c", "0x1ed8", "0x0", "0x1f60"],
+            "address": "0x086abce4"
           }
         ]
       },
@@ -216,8 +231,22 @@
         "size": "0x6",
         "record_size": 3,
         "segments": [
-          {"name": "records", "end": "0x086adc23", "stride": 3, "element": "u8", "values": [[53, 56, 101]]},
-          {"name": "terminator", "end": "0x086adc26", "stride": 1, "element": "u8", "fill": 255}
+          {
+            "name": "records",
+            "end": "0x086adc23",
+            "stride": 3,
+            "element": "u8",
+            "values": [[53, 56, 101]],
+            "address": "0x086adc20"
+          },
+          {
+            "name": "terminator",
+            "end": "0x086adc26",
+            "stride": 1,
+            "element": "u8",
+            "fill": 255,
+            "address": "0x086adc23"
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/KAREI_TOREBI/KAREI_TOREBI.BIN",
@@ -241,21 +270,24 @@
             "end": "0x086c56c4",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 60, 188, 3, 2, 1, 1, 2, 2, 0, 0]
+            "values": [0, 0, 60, 188, 3, 2, 1, 1, 2, 2, 0, 0],
+            "address": "0x086c56b8"
           },
           {
             "name": "records",
             "end": "0x086c56dc",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [60, 4112, 0, 65535], [120, 4112, 0, 65535]]
+            "values": [[0, 4112, 0, 65535], [60, 4112, 0, 65535], [120, 4112, 0, 65535]],
+            "address": "0x086c56c4"
           },
           {
             "name": "component_offsets",
             "end": "0x086c56f4",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0xedc", "0xf24", "0x1cec", "0x0", "0x1d74"]
+            "values": ["0x3c", "0xedc", "0xf24", "0x1cec", "0x0", "0x1d74"],
+            "address": "0x086c56dc"
           }
         ]
       },
@@ -326,9 +358,17 @@
             "end": "0x086c7435",
             "stride": 3,
             "element": "u8",
-            "values": [[3, 3, 100], [25, 12, 101], [53, 56, 101]]
+            "values": [[3, 3, 100], [25, 12, 101], [53, 56, 101]],
+            "address": "0x086c742c"
           },
-          {"name": "terminator", "end": "0x086c7438", "stride": 1, "element": "u8", "fill": 255}
+          {
+            "name": "terminator",
+            "end": "0x086c7438",
+            "stride": 1,
+            "element": "u8",
+            "fill": 255,
+            "address": "0x086c7435"
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/KAREI_TOREBI/KAREI_TOREBI.BIN",

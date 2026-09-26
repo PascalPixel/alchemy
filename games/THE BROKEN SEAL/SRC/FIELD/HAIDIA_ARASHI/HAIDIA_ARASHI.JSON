@@ -15,21 +15,24 @@
             "end": "0x084bafcc",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 60, 188, 3, 2, 1, 0, 2, 2, 0, 0]
+            "values": [0, 0, 60, 188, 3, 2, 1, 0, 2, 2, 0, 0],
+            "address": "0x084bafc0"
           },
           {
             "name": "records",
             "end": "0x084bafe4",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [60, 4112, 0, 65535], [120, 4112, 0, 65535]]
+            "values": [[0, 4112, 0, 65535], [60, 4112, 0, 65535], [120, 4112, 0, 65535]],
+            "address": "0x084bafcc"
           },
           {
             "name": "component_offsets",
             "end": "0x084baffc",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0x2df8", "0x2ee4", "0x52a4", "0x0", "0x540c"]
+            "values": ["0x3c", "0x2df8", "0x2ee4", "0x52a4", "0x0", "0x540c"],
+            "address": "0x084bafe4"
           }
         ]
       },
@@ -118,7 +121,16 @@
         "address": "0x084c03cc",
         "size": "0x3",
         "record_size": 3,
-        "segments": [{"name": "terminator", "end": "0x084c03cf", "stride": 1, "element": "u8", "fill": 255}]
+        "segments": [
+          {
+            "name": "terminator",
+            "end": "0x084c03cf",
+            "stride": 1,
+            "element": "u8",
+            "fill": 255,
+            "address": "0x084c03cc"
+          }
+        ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_ARASHI/HAIDIA_ARASHI.BIN",
       "grid_offset": 0,

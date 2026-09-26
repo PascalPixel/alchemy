@@ -15,21 +15,24 @@
             "end": "0x086a3e78",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 56, 64, 3, 2, 1, 0, 2, 2, 0, 0]
+            "values": [0, 0, 56, 64, 3, 2, 1, 0, 2, 2, 0, 0],
+            "address": "0x086a3e6c"
           },
           {
             "name": "records",
             "end": "0x086a3e90",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [64, 4112, 0, 65535], [16384, 4112, 0, 65535]]
+            "values": [[0, 4112, 0, 65535], [64, 4112, 0, 65535], [16384, 4112, 0, 65535]],
+            "address": "0x086a3e78"
           },
           {
             "name": "component_offsets",
             "end": "0x086a3ea8",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0x1158", "0x1194", "0x1fa8", "0x1fb0", "0x1fb8"]
+            "values": ["0x3c", "0x1158", "0x1194", "0x1fa8", "0x1fb0", "0x1fb8"],
+            "address": "0x086a3e90"
           }
         ]
       },
@@ -92,9 +95,17 @@
             "end": "0x086a5e30",
             "stride": 3,
             "element": "u8",
-            "values": [[1, 11, 100], [24, 12, 101], [7, 16, 102], [28, 31, 102]]
+            "values": [[1, 11, 100], [24, 12, 101], [7, 16, 102], [28, 31, 102]],
+            "address": "0x086a5e24"
           },
-          {"name": "terminator", "end": "0x086a5e33", "stride": 1, "element": "u8", "fill": 255}
+          {
+            "name": "terminator",
+            "end": "0x086a5e33",
+            "stride": 1,
+            "element": "u8",
+            "fill": 255,
+            "address": "0x086a5e30"
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/RUNPA_MURA/RUNPA_MURA.BIN",
@@ -118,21 +129,24 @@
             "end": "0x0871c3e0",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 56, 64, 3, 2, 1, 0, 2, 2, 0, 0]
+            "values": [0, 0, 56, 64, 3, 2, 1, 0, 2, 2, 0, 0],
+            "address": "0x0871c3d4"
           },
           {
             "name": "records",
             "end": "0x0871c3f8",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [64, 4112, 0, 65535], [16384, 4112, 0, 65535]]
+            "values": [[0, 4112, 0, 65535], [64, 4112, 0, 65535], [16384, 4112, 0, 65535]],
+            "address": "0x0871c3e0"
           },
           {
             "name": "component_offsets",
             "end": "0x0871c410",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0xab8", "0xad8", "0x131c", "0x133c", "0x1344"]
+            "values": ["0x3c", "0xab8", "0xad8", "0x131c", "0x133c", "0x1344"],
+            "address": "0x0871c3f8"
           }
         ]
       },
@@ -192,7 +206,16 @@
         "address": "0x0871d718",
         "size": "0x3",
         "record_size": 3,
-        "segments": [{"name": "terminator", "end": "0x0871d71b", "stride": 1, "element": "u8", "fill": 255}]
+        "segments": [
+          {
+            "name": "terminator",
+            "end": "0x0871d71b",
+            "stride": 1,
+            "element": "u8",
+            "fill": 255,
+            "address": "0x0871d718"
+          }
+        ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/RUNPA_MURA/RUNPA_MURA.BIN",
       "grid_offset": 72176,

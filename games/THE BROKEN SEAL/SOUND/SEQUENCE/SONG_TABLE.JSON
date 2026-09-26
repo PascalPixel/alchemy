@@ -330,7 +330,8 @@
         {"header": "0x0818456c", "player": 2, "player_mirror": 2},
         {"header": "0x081845c4", "player": 2, "player_mirror": 2},
         {"header": "0x08184680", "player": 3, "player_mirror": 3}
-      ]
+      ],
+      "address": "0x080fc684"
     }
   ]
 }

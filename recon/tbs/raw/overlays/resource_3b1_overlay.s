@@ -1967,7 +1967,6 @@ AlchemyC_02004198:
 	.space 0x80
 AlchemyC_02004218:
 	.space 0x3c
-Scene_RunConditionalActorPresentation:
 	push	{r5, r6, r7, lr}
 	mov	r7, r8
 	push	{r7}

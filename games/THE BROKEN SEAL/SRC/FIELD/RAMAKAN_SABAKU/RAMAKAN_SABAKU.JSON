@@ -15,21 +15,24 @@
             "end": "0x08679f08",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 128, 128, 3, 1, 2, 1, 1, 2, 0, 0]
+            "values": [0, 0, 128, 128, 3, 1, 2, 1, 1, 2, 0, 0],
+            "address": "0x08679efc"
           },
           {
             "name": "records",
             "end": "0x08679f20",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [128, 4112, 0, 65535], [32768, 4112, 0, 65535]]
+            "values": [[0, 4112, 0, 65535], [128, 4112, 0, 65535], [32768, 4112, 0, 65535]],
+            "address": "0x08679f08"
           },
           {
             "name": "component_offsets",
             "end": "0x08679f38",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0xa84", "0xaa4", "0x1cd0", "0x1e08", "0x1e18"]
+            "values": ["0x3c", "0xa84", "0xaa4", "0x1cd0", "0x1e08", "0x1e18"],
+            "address": "0x08679f20"
           }
         ]
       },
@@ -120,7 +123,16 @@
         "address": "0x0867bd14",
         "size": "0x3",
         "record_size": 3,
-        "segments": [{"name": "terminator", "end": "0x0867bd17", "stride": 1, "element": "u8", "fill": 255}]
+        "segments": [
+          {
+            "name": "terminator",
+            "end": "0x0867bd17",
+            "stride": 1,
+            "element": "u8",
+            "fill": 255,
+            "address": "0x0867bd14"
+          }
+        ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/RAMAKAN_SABAKU/RAMAKAN_SABAKU.BIN",
       "grid_offset": 142584,
@@ -143,21 +155,24 @@
             "end": "0x086882b4",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 128, 128, 3, 2, 1, 0, 2, 2, 0, 0]
+            "values": [0, 0, 128, 128, 3, 2, 1, 0, 2, 2, 0, 0],
+            "address": "0x086882a8"
           },
           {
             "name": "records",
             "end": "0x086882cc",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65407], [128, 4112, 0, 65407], [32768, 4112, 0, 65535]]
+            "values": [[0, 4112, 0, 65407], [128, 4112, 0, 65407], [32768, 4112, 0, 65535]],
+            "address": "0x086882b4"
           },
           {
             "name": "component_offsets",
             "end": "0x086882e4",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0xc4c", "0xc64", "0x2334", "0x0", "0x24cc"]
+            "values": ["0x3c", "0xc4c", "0xc64", "0x2334", "0x0", "0x24cc"],
+            "address": "0x086882cc"
           }
         ]
       },
@@ -253,9 +268,17 @@
             "end": "0x0868a783",
             "stride": 3,
             "element": "u8",
-            "values": [[15, 12, 102], [58, 19, 103], [40, 25, 104], [18, 36, 105], [45, 56, 106]]
+            "values": [[15, 12, 102], [58, 19, 103], [40, 25, 104], [18, 36, 105], [45, 56, 106]],
+            "address": "0x0868a774"
           },
-          {"name": "terminator", "end": "0x0868a786", "stride": 1, "element": "u8", "fill": 255}
+          {
+            "name": "terminator",
+            "end": "0x0868a786",
+            "stride": 1,
+            "element": "u8",
+            "fill": 255,
+            "address": "0x0868a783"
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/RAMAKAN_SABAKU/RAMAKAN_SABAKU.BIN",
@@ -279,21 +302,24 @@
             "end": "0x0868a794",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 192, 64, 3, 2, 1, 0, 2, 2, 0, 0]
+            "values": [0, 0, 192, 64, 3, 2, 1, 0, 2, 2, 0, 0],
+            "address": "0x0868a788"
           },
           {
             "name": "records",
             "end": "0x0868a7ac",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65407], [16384, 4112, 0, 65407], [32768, 4112, 0, 65535]]
+            "values": [[0, 4112, 0, 65407], [16384, 4112, 0, 65407], [32768, 4112, 0, 65535]],
+            "address": "0x0868a794"
           },
           {
             "name": "component_offsets",
             "end": "0x0868a7c4",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0xd04", "0xd38", "0x2748", "0x0", "0x28e0"]
+            "values": ["0x3c", "0xd04", "0xd38", "0x2748", "0x0", "0x28e0"],
+            "address": "0x0868a7ac"
           }
         ]
       },
@@ -386,8 +412,22 @@
         "size": "0x6",
         "record_size": 3,
         "segments": [
-          {"name": "records", "end": "0x0868d06b", "stride": 3, "element": "u8", "values": [[10, 15, 107]]},
-          {"name": "terminator", "end": "0x0868d06e", "stride": 1, "element": "u8", "fill": 255}
+          {
+            "name": "records",
+            "end": "0x0868d06b",
+            "stride": 3,
+            "element": "u8",
+            "values": [[10, 15, 107]],
+            "address": "0x0868d068"
+          },
+          {
+            "name": "terminator",
+            "end": "0x0868d06e",
+            "stride": 1,
+            "element": "u8",
+            "fill": 255,
+            "address": "0x0868d06b"
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/RAMAKAN_SABAKU/RAMAKAN_SABAKU.BIN",
@@ -411,21 +451,24 @@
             "end": "0x0867f34c",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 128, 128, 3, 2, 1, 0, 2, 2, 0, 0]
+            "values": [0, 0, 128, 128, 3, 2, 1, 0, 2, 2, 0, 0],
+            "address": "0x0867f340"
           },
           {
             "name": "records",
             "end": "0x0867f364",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65407], [128, 4112, 0, 65407], [32768, 4112, 0, 65535]]
+            "values": [[0, 4112, 0, 65407], [128, 4112, 0, 65407], [32768, 4112, 0, 65535]],
+            "address": "0x0867f34c"
           },
           {
             "name": "component_offsets",
             "end": "0x0867f37c",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0xf50", "0xf64", "0x2680", "0x0", "0x2814"]
+            "values": ["0x3c", "0xf50", "0xf64", "0x2680", "0x0", "0x2814"],
+            "address": "0x0867f364"
           }
         ]
       },
@@ -518,9 +561,17 @@
             "end": "0x08681b5a",
             "stride": 3,
             "element": "u8",
-            "values": [[10, 10, 100], [16, 55, 101]]
+            "values": [[10, 10, 100], [16, 55, 101]],
+            "address": "0x08681b54"
           },
-          {"name": "terminator", "end": "0x08681b5d", "stride": 1, "element": "u8", "fill": 255}
+          {
+            "name": "terminator",
+            "end": "0x08681b5d",
+            "stride": 1,
+            "element": "u8",
+            "fill": 255,
+            "address": "0x08681b5a"
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/RAMAKAN_SABAKU/RAMAKAN_SABAKU.BIN",

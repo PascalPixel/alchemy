@@ -9,7 +9,7 @@ fn component(ctx: &Context, input: &Value) -> Result<Value, String> {
         .cloned()
         .ok_or("archive component missing".into())
 }
-pub(super) fn check(ctx: &mut Context, input: &Value) -> Result<(), String> {
+pub(super) fn check(ctx: &mut Context, index: &Value, input: &Value) -> Result<(), String> {
     let component = component(ctx, input)?;
     if component["source"] != input["source"]
         || component["source_rect"] != input["source_rect"]
@@ -27,6 +27,16 @@ pub(super) fn check(ctx: &mut Context, input: &Value) -> Result<(), String> {
         return Err("archive source pixels differ".into());
     }
     ctx.shared_palette(&sheet, &component, &img)?;
+    let region = index["regions"]
+        .as_array()
+        .ok_or("archive regions missing")?
+        .iter()
+        .find(|r| r["address"] == input["region_address"])
+        .ok_or("archive region missing")?;
+    let (encoded, _, _) = build_entry(ctx, region)?;
+    if sha256::hex(&encoded) != json_string(&input["encoded_sha256"], "archive encoded hash")? {
+        return Err("archive encoded bytes differ".into());
+    }
     Ok(())
 }
 pub(super) fn pixels(ctx: &Context, input: &Value, rom: &[u8]) -> Result<Vec<u8>, String> {
@@ -90,6 +100,9 @@ pub(super) fn pixels(ctx: &Context, input: &Value, rom: &[u8]) -> Result<Vec<u8>
                 .copy_from_slice(&decoded[row * fw..(row + 1) * fw]);
         }
     }
+    if sha256::hex(&pixels) != json_string(&input["decoded_sha256"], "archive pixel digest")? {
+        return Err("decoded archive pixels differ".into());
+    }
     Ok(pixels)
 }
 
@@ -119,7 +132,7 @@ fn archive_offsets_at_the_stream_end_name_unstored_frames() {
     expected[0] = 5;
     let mut input = json!({"metadata":"ARCHIVES.JSON","pointer":"/archive","width":8,"height":4,
         "region_address":ROM_BASE,"decoded_length":decoded.len(),"encoded_length":rom.len(),
-        "offsets":[12, 15, 0]});
+        "offsets":[12, 15, 0],"decoded_sha256":sha256::hex(&expected)});
     let ctx = Context::new(root.path());
     assert_eq!(pixels(&ctx, &input, &rom).unwrap(), expected);
     // An offset past the stream's end is still refused.

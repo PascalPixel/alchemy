@@ -10,37 +10,69 @@
     "packed_decoder_copy": {"symbol": "Func_080f02b0", "source": "0x080f0024", "size": 560}
   },
   "segments": [
-    {"name": "unit_q16", "end": "0x080eda88", "element": "le-s32", "stride": 4, "values": [65536, 65536, 65536, 65536]},
-    {"name": "negative_offsets", "end": "0x080eda98", "element": "le-s32", "stride": 4, "values": [-32, -32, -32, -32]},
+    {
+      "name": "unit_q16",
+      "end": "0x080eda88",
+      "element": "le-s32",
+      "stride": 4,
+      "values": [65536, 65536, 65536, 65536],
+      "address": "0x080eda78"
+    },
+    {
+      "name": "negative_offsets",
+      "end": "0x080eda98",
+      "element": "le-s32",
+      "stride": 4,
+      "values": [-32, -32, -32, -32],
+      "address": "0x080eda88"
+    },
     {
       "name": "coordinate_pairs",
       "end": "0x080edab0",
       "element": "le-s16",
       "stride": 4,
-      "values": [[8, 135], [184, 135], [128, 135], [96, 32], [96, 32], [64, 135]]
+      "values": [[8, 135], [184, 135], [128, 135], [96, 32], [96, 32], [64, 135]],
+      "address": "0x080eda98"
     },
     {
       "name": "scale_base_q16",
       "end": "0x080edac0",
       "element": "le-s32",
       "stride": 4,
-      "values": [65536, 65536, 65536, 65536]
+      "values": [65536, 65536, 65536, 65536],
+      "address": "0x080edab0"
     },
-    {"name": "scale_enhanced_q16", "end": "0x080edac8", "element": "le-s32", "stride": 4, "values": [81920, 81920]},
+    {
+      "name": "scale_enhanced_q16",
+      "end": "0x080edac8",
+      "element": "le-s32",
+      "stride": 4,
+      "values": [81920, 81920],
+      "address": "0x080edac0"
+    },
     {
       "name": "scale_normal_a_q16",
       "end": "0x080edad8",
       "element": "le-s32",
       "stride": 4,
-      "values": [65536, 65536, 65536, 65536]
+      "values": [65536, 65536, 65536, 65536],
+      "address": "0x080edac8"
     },
     {
       "name": "scale_normal_b_q16",
       "end": "0x080edae8",
       "element": "le-s32",
       "stride": 4,
-      "values": [65536, 65536, 65536, 65536]
+      "values": [65536, 65536, 65536, 65536],
+      "address": "0x080edad8"
     },
-    {"name": "scale_high_q16", "end": "0x080edaf0", "element": "le-s32", "stride": 4, "values": [98304, 98304]}
+    {
+      "name": "scale_high_q16",
+      "end": "0x080edaf0",
+      "element": "le-s32",
+      "stride": 4,
+      "values": [98304, 98304],
+      "address": "0x080edae8"
+    }
   ]
 }

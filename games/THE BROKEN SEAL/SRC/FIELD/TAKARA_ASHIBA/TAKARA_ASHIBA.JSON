@@ -15,21 +15,24 @@
             "end": "0x086d02dc",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 128, 128, 3, 2, 1, 0, 2, 2, 0, 0]
+            "values": [0, 0, 128, 128, 3, 2, 1, 0, 2, 2, 0, 0],
+            "address": "0x086d02d0"
           },
           {
             "name": "records",
             "end": "0x086d02f4",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [128, 4112, 0, 65535], [32768, 4112, 0, 65535]]
+            "values": [[0, 4112, 0, 65535], [128, 4112, 0, 65535], [32768, 4112, 0, 65535]],
+            "address": "0x086d02dc"
           },
           {
             "name": "component_offsets",
             "end": "0x086d030c",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0x70c", "0x720", "0x1604", "0x0", "0x189c"]
+            "values": ["0x3c", "0x70c", "0x720", "0x1604", "0x0", "0x189c"],
+            "address": "0x086d02f4"
           }
         ]
       },
@@ -141,9 +144,17 @@
             "values": [
               [58, 36, 107], [13, 38, 100], [17, 38, 101], [21, 38, 102], [25, 38, 103], [40, 47, 104], [49, 47, 106],
               [45, 53, 105]
-            ]
+            ],
+            "address": "0x086d1b6c"
           },
-          {"name": "terminator", "end": "0x086d1b87", "stride": 1, "element": "u8", "fill": 255}
+          {
+            "name": "terminator",
+            "end": "0x086d1b87",
+            "stride": 1,
+            "element": "u8",
+            "fill": 255,
+            "address": "0x086d1b84"
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/TAKARA_ASHIBA/TAKARA_ASHIBA.BIN",
@@ -167,21 +178,24 @@
             "end": "0x086d1d18",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 128, 128, 3, 1, 1, 0, 2, 2, 0, 0]
+            "values": [0, 0, 128, 128, 3, 1, 1, 0, 2, 2, 0, 0],
+            "address": "0x086d1d0c"
           },
           {
             "name": "records",
             "end": "0x086d1d30",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [128, 4112, 0, 65535], [32768, 4112, 0, 65535]]
+            "values": [[0, 4112, 0, 65535], [128, 4112, 0, 65535], [32768, 4112, 0, 65535]],
+            "address": "0x086d1d18"
           },
           {
             "name": "component_offsets",
             "end": "0x086d1d48",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0x850", "0x864", "0x17e0", "0x1a78", "0x1a80"]
+            "values": ["0x3c", "0x850", "0x864", "0x17e0", "0x1a78", "0x1a80"],
+            "address": "0x086d1d30"
           }
         ]
       },
@@ -300,9 +314,17 @@
             "end": "0x086d3798",
             "stride": 3,
             "element": "u8",
-            "values": [[17, 3, 100], [26, 8, 102], [16, 16, 101], [4, 24, 103]]
+            "values": [[17, 3, 100], [26, 8, 102], [16, 16, 101], [4, 24, 103]],
+            "address": "0x086d378c"
           },
-          {"name": "terminator", "end": "0x086d379b", "stride": 1, "element": "u8", "fill": 255}
+          {
+            "name": "terminator",
+            "end": "0x086d379b",
+            "stride": 1,
+            "element": "u8",
+            "fill": 255,
+            "address": "0x086d3798"
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/TAKARA_ASHIBA/TAKARA_ASHIBA.BIN",

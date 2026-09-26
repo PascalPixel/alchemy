@@ -1,9 +1,10 @@
-//! Owner lookup against the repository: the retained overlay listings,
+//! Owner lookup against the repository: the retained module register,
 //! the source register, the canonical ROM, and the overlay scorer.
 
 use crate::compiler::build_io::read as read_file;
 use crate::compiler::source_paths::{SourceOwner, SourcePaths};
 use crate::targets::DecompTarget;
+use serde::Deserialize;
 use std::path::{Path, PathBuf};
 use std::process::Command;
 
@@ -20,7 +21,7 @@ pub struct Module {
     pub overlay: String,
     pub entry: u32,
     pub span: u32,
-    pub name: String,
+    pub kind: String,
     pub registered: bool,
 }
 
@@ -30,21 +31,42 @@ impl Module {
     }
 }
 
-/// Every not-yet-C overlay owner its listing labels, in address order.
+#[derive(Deserialize)]
+struct Assembly {
+    regions: Vec<Region>,
+}
+
+#[derive(Deserialize)]
+struct Region {
+    overlay: String,
+    start: String,
+    end: String,
+    kind: String,
+}
+
+fn parse_hex(text: &str) -> Result<u32, String> {
+    u32::from_str_radix(text.trim_start_matches("0x"), 16).map_err(|_| format!("{text}: not hex"))
+}
+
+/// Every retained overlay module, in register order.
 pub fn modules(root: &Path) -> Result<Vec<Module>, String> {
+    let path = root.join("recon/tbs/semantic/overlay-assembly.json");
+    let assembly: Assembly = crate::compiler::build_io::read_json(&path)?;
     let sources = SourcePaths::load(root)?;
-    Ok(
-        crate::overlay::owners::listed_owners(root, default_target())?
-            .into_iter()
-            .map(|(owner, (name, extent))| Module {
-                registered: sources.mapped_relative_path(owner).is_some(),
-                overlay: owner.overlay_id().unwrap_or_default(),
-                entry: owner.address(),
-                span: extent as u32,
-                name,
-            })
-            .collect(),
-    )
+    let mut modules = Vec::new();
+    for region in assembly.regions {
+        let entry = parse_hex(&region.start)?;
+        let end = parse_hex(&region.end)?;
+        let owner = SourceOwner::parse(&format!("{}:{entry:08x}", region.overlay))?;
+        modules.push(Module {
+            registered: sources.mapped_relative_path(owner).is_some(),
+            overlay: region.overlay,
+            entry,
+            span: end.saturating_sub(entry),
+            kind: region.kind,
+        });
+    }
+    Ok(modules)
 }
 
 /// Parses `<overlay>:<hex>` into its parts.
@@ -56,7 +78,7 @@ pub fn parse_owner(owner: &str) -> Result<(String, u32), String> {
     Ok((overlay, resolved.address()))
 }
 
-/// Resolve an overlay owner from its listing bounds or its installed C placeholder.
+/// Resolve an overlay owner from reviewed bounds or its installed C placeholder.
 /// A caller-supplied span confirms the extent; it cannot establish a new owner.
 pub fn span_for(
     root: &Path,
@@ -72,6 +94,20 @@ pub fn default_target() -> DecompTarget {
     crate::targets::target_for(crate::targets::DEFAULT_TARGET)
 }
 
+/// The reviewed owner register of the target's game. A game with no
+/// `semantic/regions.json` yet has no reviewed owners: an empty register, so a
+/// caller-supplied `--span` still cannot establish one.
+fn reviewed_spans(
+    root: &Path,
+    target: DecompTarget,
+) -> Result<std::collections::BTreeMap<SourceOwner, usize>, String> {
+    let register = root.join(target.recon_dir()).join("semantic/regions.json");
+    if !register.is_file() {
+        return Ok(Default::default());
+    }
+    crate::compiler::translation_units::reviewed_overlay_spans_for_game(root, target.recon_dir())
+}
+
 /// `span_for` against one registered target's reviewed register and retained assembly.
 pub fn span_for_target(
     root: &Path,
@@ -81,7 +117,7 @@ pub fn span_for_target(
     requested: Option<u32>,
 ) -> Result<u32, String> {
     let owner = SourceOwner::parse(&format!("{overlay}:{entry:08x}"))?;
-    let reviewed = crate::overlay::owners::owner_spans(root, target)?;
+    let reviewed = reviewed_spans(root, target)?;
     let paths = SourcePaths::load_for_game(root, target.compiler.as_str())?;
     let installed = if paths
         .mapped_source_path(owner)
@@ -245,15 +281,12 @@ mod owner_tests {
     use super::*;
 
     #[test]
-    fn listing_labels_and_requested_spans_cannot_create_owners() {
+    fn retained_regions_and_requested_spans_cannot_create_owners() {
         let root = tempfile::tempdir().unwrap();
-        let listings = root.path().join("recon/tbs/raw/overlays");
-        std::fs::create_dir_all(&listings).unwrap();
-        std::fs::write(
-            listings.join("resource_374_overlay.s"),
-            "\t.space 0x1000\nScene_Run:\n\t.space 0x200\n",
-        )
-        .unwrap();
+        let semantic = root.path().join("recon/tbs/semantic");
+        std::fs::create_dir_all(&semantic).unwrap();
+        std::fs::write(semantic.join("regions.json"), r#"{"manual_regions":[{"overlay":"resource_374","entry":"0x02001000","span_bytes":512}]}"#).unwrap();
+        std::fs::write(semantic.join("overlay-assembly.json"), r#"{"regions":[{"overlay":"resource_374","start":"0x02001010","end":"0x02001030","kind":"structured_scene_module"}]}"#).unwrap();
         assert_eq!(
             span_for(root.path(), "resource_374", 0x02001000, None).unwrap(),
             512

@@ -15,21 +15,24 @@
             "end": "0x086568e0",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 64, 64, 3, 2, 1, 0, 2, 2, 0, 0]
+            "values": [0, 0, 64, 64, 3, 2, 1, 0, 2, 2, 0, 0],
+            "address": "0x086568d4"
           },
           {
             "name": "records",
             "end": "0x086568f8",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [64, 4112, 0, 65535], [16384, 4112, 0, 65535]]
+            "values": [[0, 4112, 0, 65535], [64, 4112, 0, 65535], [16384, 4112, 0, 65535]],
+            "address": "0x086568e0"
           },
           {
             "name": "component_offsets",
             "end": "0x08656910",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0xda8", "0xe20", "0x1ea4", "0x1f90", "0x1fa0"]
+            "values": ["0x3c", "0xda8", "0xe20", "0x1ea4", "0x1f90", "0x1fa0"],
+            "address": "0x086568f8"
           }
         ]
       },
@@ -120,7 +123,16 @@
         "address": "0x08658874",
         "size": "0x3",
         "record_size": 3,
-        "segments": [{"name": "terminator", "end": "0x08658877", "stride": 1, "element": "u8", "fill": 255}]
+        "segments": [
+          {
+            "name": "terminator",
+            "end": "0x08658877",
+            "stride": 1,
+            "element": "u8",
+            "fill": 255,
+            "address": "0x08658874"
+          }
+        ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_MURA/ARUTIN_MURA.BIN",
       "grid_offset": 75408,
@@ -143,21 +155,24 @@
             "end": "0x086610bc",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 120, 120, 3, 2, 1, 0, 2, 2, 0, 0]
+            "values": [0, 0, 120, 120, 3, 2, 1, 0, 2, 2, 0, 0],
+            "address": "0x086610b0"
           },
           {
             "name": "records",
             "end": "0x086610d4",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [30720, 4112, 0, 65535], [120, 4112, 0, 65535]]
+            "values": [[0, 4112, 0, 65535], [30720, 4112, 0, 65535], [120, 4112, 0, 65535]],
+            "address": "0x086610bc"
           },
           {
             "name": "component_offsets",
             "end": "0x086610ec",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0x1670", "0x16b0", "0x2a6c", "0x2b38", "0x2b48"]
+            "values": ["0x3c", "0x1670", "0x16b0", "0x2a6c", "0x2b38", "0x2b48"],
+            "address": "0x086610d4"
           }
         ]
       },
@@ -248,9 +263,17 @@
             "values": [
               [24, 7, 200], [25, 7, 200], [10, 13, 100], [10, 30, 101], [3, 43, 203], [4, 43, 203], [21, 45, 202],
               [22, 45, 202], [23, 45, 201], [24, 45, 201], [52, 45, 102]
-            ]
+            ],
+            "address": "0x08663bf8"
           },
-          {"name": "terminator", "end": "0x08663c1c", "stride": 1, "element": "u8", "fill": 255}
+          {
+            "name": "terminator",
+            "end": "0x08663c1c",
+            "stride": 1,
+            "element": "u8",
+            "fill": 255,
+            "address": "0x08663c19"
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_MURA/ARUTIN_MURA.BIN",

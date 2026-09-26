@@ -14,14 +14,16 @@
           "end": "0x08007970",
           "element": "ascii-fixed",
           "stride": 1,
-          "text": "0123456789ABCDEF"
+          "text": "0123456789ABCDEF",
+          "address": "0x0800795c"
         },
         {
           "name": "decimal_divisors",
           "end": "0x08007994",
           "element": "le-u32",
           "stride": 4,
-          "values": [1000000000, 100000000, 10000000, 1000000, 100000, 10000, 1000, 100, 10]
+          "values": [1000000000, 100000000, 10000000, 1000000, 100000, 10000, 1000, 100, 10],
+          "address": "0x08007970"
         }
       ]
     },
@@ -32,29 +34,53 @@
       "address": "0x080079b0",
       "size": "0x70",
       "segments": [
-        {"name": "identity", "end": "0x080079b8", "element": "ascii-fixed", "stride": 1, "text": "CAMELOT"},
-        {"name": "record_marker", "end": "0x080079c4", "element": "ascii-fixed", "stride": 1, "text": "CAMELOTT"},
+        {
+          "name": "identity",
+          "end": "0x080079b8",
+          "element": "ascii-fixed",
+          "stride": 1,
+          "text": "CAMELOT",
+          "address": "0x080079b0"
+        },
+        {
+          "name": "record_marker",
+          "end": "0x080079c4",
+          "element": "ascii-fixed",
+          "stride": 1,
+          "text": "CAMELOTT",
+          "address": "0x080079b8"
+        },
         {
           "name": "packet_a",
           "end": "0x080079e4",
           "element": "ascii-fixed",
           "stride": 1,
-          "text": "Trans Data A: This is a pen."
+          "text": "Trans Data A: This is a pen.",
+          "address": "0x080079c4"
         },
         {
           "name": "packet_b",
           "end": "0x08007a00",
           "element": "ascii-fixed",
           "stride": 1,
-          "text": "Trans Data B: Hello world."
+          "text": "Trans Data B: Hello world.",
+          "address": "0x080079e4"
         },
-        {"name": "flash_version", "end": "0x08007a0c", "element": "ascii-fixed", "stride": 1, "text": "FLASH_V123"},
+        {
+          "name": "flash_version",
+          "end": "0x08007a0c",
+          "element": "ascii-fixed",
+          "stride": 1,
+          "text": "FLASH_V123",
+          "address": "0x08007a00"
+        },
         {
           "name": "flash_directory",
           "end": "0x08007a20",
           "element": "le-u32",
           "stride": 4,
-          "values": ["0x08007ae8", "0x08007be4", "0x08007b6c", "0x08007b98", "0x08007abc"]
+          "values": ["0x08007ae8", "0x08007be4", "0x08007b6c", "0x08007b98", "0x08007abc"],
+          "address": "0x08007a0c"
         }
       ]
     },
@@ -70,14 +96,16 @@
           "end": "0x08007abc",
           "element": "le-s16",
           "stride": 6,
-          "values": [[10, -67, 194], [10, -67, 194], [40, -67, 194], [200, -67, 194]]
+          "values": [[10, -67, 194], [10, -67, 194], [40, -67, 194], [200, -67, 194]],
+          "address": "0x08007aa4"
         },
         {
           "name": "generic_callbacks",
           "end": "0x08007acc",
           "element": "thumb-pointer",
           "stride": 4,
-          "values": [134245924, 134245596, 134245712, "WaitForFlashWrite"]
+          "values": [134245924, 134245596, 134245712, "WaitForFlashWrite"],
+          "address": "0x08007abc"
         },
         {
           "name": "generic",
@@ -111,14 +139,16 @@
               "device_id": "0x00",
               "reserved_42": [0, 0]
             }
-          ]
+          ],
+          "address": "0x08007acc"
         },
         {
           "name": "bf_d4_callbacks",
           "end": "0x08007af8",
           "element": "thumb-pointer",
           "stride": 4,
-          "values": [134245924, 134245596, 134245712, "WaitForFlashWrite"]
+          "values": [134245924, 134245596, 134245712, "WaitForFlashWrite"],
+          "address": "0x08007ae8"
         },
         {
           "name": "bf_d4",
@@ -152,7 +182,8 @@
               "device_id": "0xd4",
               "reserved_42": [0, 0]
             }
-          ]
+          ],
+          "address": "0x08007af8"
         }
       ]
     },
@@ -168,21 +199,24 @@
           "end": "0x08007b54",
           "element": "le-s16",
           "stride": 6,
-          "values": [[10, -67, 194], [10, -67, 194], [2000, -67, 194], [2000, -67, 194]]
+          "values": [[10, -67, 194], [10, -67, 194], [2000, -67, 194], [2000, -67, 194]],
+          "address": "0x08007b3c"
         },
         {
           "name": "flash_32_1b",
           "end": "0x08007b6c",
           "element": "le-s16",
           "stride": 6,
-          "values": [[10, -67, 194], [10, -67, 194], [500, -67, 194], [500, -67, 194]]
+          "values": [[10, -67, 194], [10, -67, 194], [500, -67, 194], [500, -67, 194]],
+          "address": "0x08007b54"
         },
         {
           "name": "c2_1c_callbacks",
           "end": "0x08007b7c",
           "element": "thumb-pointer",
           "stride": 4,
-          "values": [134246276, 134245596, 134245712, "WaitForFlashWrite"]
+          "values": [134246276, 134245596, 134245712, "WaitForFlashWrite"],
+          "address": "0x08007b6c"
         },
         {
           "name": "c2_1c",
@@ -216,14 +250,16 @@
               "device_id": "0x1c",
               "reserved_42": [0, 0]
             }
-          ]
+          ],
+          "address": "0x08007b7c"
         },
         {
           "name": "32_1b_callbacks",
           "end": "0x08007ba8",
           "element": "thumb-pointer",
           "stride": 4,
-          "values": [134246276, 134245596, 134245712, "WaitForFlashWrite"]
+          "values": [134246276, 134245596, 134245712, "WaitForFlashWrite"],
+          "address": "0x08007b98"
         },
         {
           "name": "32_1b",
@@ -257,7 +293,8 @@
               "device_id": "0x1b",
               "reserved_42": [0, 0]
             }
-          ]
+          ],
+          "address": "0x08007ba8"
         }
       ]
     },
@@ -273,14 +310,16 @@
           "end": "0x08007be4",
           "element": "le-s16",
           "stride": 6,
-          "values": [[10, -67, 194], [40, -67, 194], [0, 0, 0], [40, -67, 194]]
+          "values": [[10, -67, 194], [40, -67, 194], [0, 0, 0], [40, -67, 194]],
+          "address": "0x08007bcc"
         },
         {
           "name": "1f_3d_4k_callbacks",
           "end": "0x08007bf4",
           "element": "thumb-pointer",
           "stride": 4,
-          "values": [134246944, 134246440, 134246684, "WaitForFlashWrite"]
+          "values": [134246944, 134246440, 134246684, "WaitForFlashWrite"],
+          "address": "0x08007be4"
         },
         {
           "name": "1f_3d_4k",
@@ -314,14 +353,16 @@
               "device_id": "0x3d",
               "reserved_42": [0, 0]
             }
-          ]
+          ],
+          "address": "0x08007bf4"
         },
         {
           "name": "1f_3d_128_callbacks",
           "end": "0x08007c20",
           "element": "thumb-pointer",
           "stride": 4,
-          "values": [134246824, 134246440, 134246552, "WaitForFlashWrite"]
+          "values": [134246824, 134246440, 134246552, "WaitForFlashWrite"],
+          "address": "0x08007c10"
         },
         {
           "name": "1f_3d_128",
@@ -355,7 +396,8 @@
               "device_id": "0x3d",
               "reserved_42": [0, 0]
             }
-          ]
+          ],
+          "address": "0x08007c20"
         }
       ]
     }

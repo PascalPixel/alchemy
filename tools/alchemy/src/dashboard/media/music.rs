@@ -66,15 +66,10 @@ pub(super) fn render(root: &Path, game: &str, source: &Path) -> Result<Vec<u8>, 
     let segments = engine["segments"]
         .as_array()
         .ok_or("No instrument segments")?;
-    let starts = crate::build_assets::segment_starts(&engine)?
-        .into_iter()
-        .map(|start| start as u64)
-        .collect::<Vec<_>>();
     let bank = segments
         .iter()
-        .zip(&starts)
-        .find(|(_, start)| **start == bank_address)
-        .and_then(|(s, _)| s["records"].as_array())
+        .find(|s| number(&s["address"]).ok() == Some(bank_address))
+        .and_then(|s| s["records"].as_array())
         .ok_or("Sequence voice bank is not recovered")?;
     let mut samples = BTreeMap::new();
     let mut reference: Option<Vec<u8>> = None;
@@ -183,8 +178,8 @@ pub(super) fn render(root: &Path, game: &str, source: &Path) -> Result<Vec<u8>, 
             let offset = number(&voice["target"])? + u64::from(note.key) * 12;
             voice = segments
                 .iter()
-                .zip(&starts)
-                .find_map(|(segment, &start)| {
+                .find_map(|segment| {
+                    let start = number(&segment["address"]).ok()?;
                     let rows = segment["records"].as_array()?;
                     if !segment["id"].as_str()?.starts_with("voice_bank_")
                         || offset < start
@@ -211,13 +206,18 @@ pub(super) fn render(root: &Path, game: &str, source: &Path) -> Result<Vec<u8>, 
         let target = number(&voice["target"])?;
         if kind & 7 == 0 && !samples.contains_key(&target) {
             if reference.is_none() {
-                let id = if game == "THE BROKEN SEAL" {
-                    "tbs-en"
+                let (id, recon) = if game == "THE BROKEN SEAL" {
+                    ("tbs-en", "recon/tbs")
                 } else {
-                    "tla-en"
+                    ("tla-en", "recon/tla")
                 };
                 let bytes = read(&root.join(format!("roms/{id}.gba")))?;
-                crate::text_catalog::verify_reference(root, id, &bytes)?;
+                let source: Value =
+                    serde_json::from_slice(&read(&root.join(recon).join("private-inputs.json"))?)
+                        .map_err(|e| e.to_string())?;
+                if source["reference_sha256"] != crate::compiler::sha256::hex(&bytes) {
+                    return Err("Reference ROM checksum differs".into());
+                }
                 reference = Some(bytes);
             }
             samples.insert(

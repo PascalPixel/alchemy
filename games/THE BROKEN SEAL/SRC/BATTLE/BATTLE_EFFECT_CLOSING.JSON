@@ -5,7 +5,14 @@
   "end": "0x080a1000",
   "size": 3833,
   "segments": [
-    {"name": "alignment_080a0107", "end": "0x080a0108", "element": "u8", "stride": 1, "fill": 0},
+    {
+      "name": "alignment_080a0107",
+      "end": "0x080a0108",
+      "element": "u8",
+      "stride": 1,
+      "fill": 0,
+      "address": "0x080a0107"
+    },
     {
       "name": "table_080a0108",
       "end": "0x080a0128",
@@ -21,7 +28,8 @@
         {"palette_code": 2101776},
         {"palette_code": 2105608},
         {"palette_code": 2114064}
-      ]
+      ],
+      "address": "0x080a0108"
     },
     {
       "name": "script_080a0128",
@@ -29,14 +37,16 @@
       "element": "le-u32",
       "stride": 4,
       "values": [[27]],
-      "entry_points": ["0x080a0128"]
+      "entry_points": ["0x080a0128"],
+      "address": "0x080a0128"
     },
     {
       "name": "script_pointers",
       "end": "0x080a0138",
       "element": "le-u32",
       "stride": 4,
-      "values": [134869308, 134869320, 134869332]
+      "values": [134869308, 134869320, 134869332],
+      "address": "0x080a012c"
     },
     {
       "name": "sparse_table",
@@ -87,8 +97,16 @@
         {"key": 65932, "value": 39},
         {"key": 65964, "value": 152},
         {"key": 4294967295, "value": 0}
-      ]
+      ],
+      "address": "0x080a0138"
     },
-    {"name": "alignment_080a0288", "end": "0x080a1000", "element": "u8", "stride": 1, "fill": 0}
+    {
+      "name": "alignment_080a0288",
+      "end": "0x080a1000",
+      "element": "u8",
+      "stride": 1,
+      "fill": 0,
+      "address": "0x080a0288"
+    }
   ]
 }

@@ -17,7 +17,8 @@
       "values": [
         52, 57, 56, 48, 58, 47, 45, 46, 53, 55, 51, 42, 44, 41, 49, 40, 50, 43, 54, 32, 37, 36, 31, 30, 29, 38, 39, 35,
         34, 33, 61, 59
-      ]
+      ],
+      "address": "0x080f0a5c"
     },
     {
       "id": "text_pool",
@@ -46,7 +47,8 @@
         "Haruki Kodera", "Battle", "Yasuhiro Taguchi", "System", "Programming", "Kentaro Sakou", "Ayumu Shindo",
         "Shuji Shimizu", "Game Design", "Yusuke Sugimoto", "Assistant Director", "Director", "Scenario",
         "Shugo Takahashi", "Hiroyuki Takahashi", "Game Planning", "GOLDEN SUN STAFF CREDITS"
-      ]
+      ],
+      "address": "0x080f0ae0"
     },
     {
       "id": "glyph_widths",
@@ -60,9 +62,17 @@
         7, 4, 7, 7, 8, 8, 8, 4, 5, 5, 5, 6, 4, 6, 4, 6, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 4, 4, 5, 6, 5, 7, 8, 8, 8, 8, 8,
         8, 8, 8, 8, 5, 6, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 7, 8, 5, 6, 5, 7, 7, 6, 7, 7, 7, 7, 7, 5, 7, 7, 4,
         4, 6, 4, 8, 7, 7, 7, 7, 7, 7, 5, 7, 6, 8, 6, 6, 6, 5, 4, 5, 7, 1
-      ]
+      ],
+      "address": "0x080f11bd"
     },
-    {"id": "glyph_width_alignment", "end": "0x080f1220", "element": "u8", "stride": 1, "fill": 0},
+    {
+      "id": "glyph_width_alignment",
+      "end": "0x080f1220",
+      "element": "u8",
+      "stride": 1,
+      "fill": 0,
+      "address": "0x080f121d"
+    },
     {
       "id": "lines",
       "end": "0x080f1770",
@@ -82,7 +92,8 @@
         0, 0, 0, 0, 25, 24, 0, 23, 22, 0, 0, 0, 0, 21, 20, 0, 19, 18, 17, 16, 0, 0, 0, 0, 15, 0, 14, 13, 0, 12, 0, 0,
         11, 0, 0, 0, 0, 0, 0, 0, 0, 10, 0, 9, 107, 106, 0, 0, 0, 0, 0, 0, 8, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 5, 0,
         4, 0, 3, 2, 0, 1, 0, 0, 0
-      ]
+      ],
+      "address": "0x080f1220"
     }
   ],
   "font": {

@@ -224,7 +224,8 @@
         {"resource_id": -1, "group": 0, "variant": 0, "reserved": 0, "map_index": 0},
         {"resource_id": 16, "group": 0, "variant": 0, "reserved": 0, "map_index": 16}
       ],
-      "object_script_entry": "0x0809f80c"
+      "object_script_entry": "0x0809f80c",
+      "address": "0x0809f1a8"
     }
   ]
 }

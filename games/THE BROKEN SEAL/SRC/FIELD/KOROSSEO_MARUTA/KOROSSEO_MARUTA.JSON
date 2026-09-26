@@ -15,21 +15,24 @@
             "end": "0x0870796c",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 206, 52, 3, 2, 1, 0, 2, 2, 0, 0]
+            "values": [0, 0, 206, 52, 3, 2, 1, 0, 2, 2, 0, 0],
+            "address": "0x08707960"
           },
           {
             "name": "records",
             "end": "0x08707984",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [13312, 4112, 0, 65535], [26624, 4112, 0, 65535]]
+            "values": [[0, 4112, 0, 65535], [13312, 4112, 0, 65535], [26624, 4112, 0, 65535]],
+            "address": "0x0870796c"
           },
           {
             "name": "component_offsets",
             "end": "0x0870799c",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0x918", "0x94c", "0x180c", "0x1a80", "0x1a88"]
+            "values": ["0x3c", "0x918", "0x94c", "0x180c", "0x1a80", "0x1a88"],
+            "address": "0x08707984"
           }
         ]
       },
@@ -155,9 +158,17 @@
             "end": "0x087093f1",
             "stride": 3,
             "element": "u8",
-            "values": [[44, 6, 102], [12, 7, 101], [75, 13, 103]]
+            "values": [[44, 6, 102], [12, 7, 101], [75, 13, 103]],
+            "address": "0x087093e8"
           },
-          {"name": "terminator", "end": "0x087093f4", "stride": 1, "element": "u8", "fill": 255}
+          {
+            "name": "terminator",
+            "end": "0x087093f4",
+            "stride": 1,
+            "element": "u8",
+            "fill": 255,
+            "address": "0x087093f1"
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_MARUTA/KOROSSEO_MARUTA.BIN",

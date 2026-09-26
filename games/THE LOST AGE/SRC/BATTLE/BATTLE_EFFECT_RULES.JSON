@@ -682,7 +682,8 @@
               "weighted_results": [495, 496, 497, 498, 501, 502, 503, 504],
               "result_weights": [5, 3, 15, 15, 15, 3, 15, 15]
             }
-          ]
+          ],
+          "address": "0x080edacc"
         },
         {
           "name": "rule_table_0",
@@ -918,7 +919,8 @@
             {"selector_a": 306, "selector_b": -1, "condition": -1, "result": 101},
             {"selector_a": 307, "selector_b": -1, "condition": -1, "result": 101},
             {"selector_a": -1, "selector_b": -1, "condition": 0, "result": 0}
-          ]
+          ],
+          "address": "0x080ee6d4"
         },
         {
           "name": "rule_table_1",
@@ -980,7 +982,8 @@
             {"selector_a": 16, "selector_b": 11, "condition": -1, "result": 78},
             {"selector_a": 16, "selector_b": 12, "condition": -1, "result": 79},
             {"selector_a": -1, "selector_b": 0, "condition": 0, "result": 0}
-          ]
+          ],
+          "address": "0x080eedbc"
         },
         {
           "name": "rule_table_1_mode_7",
@@ -999,7 +1002,8 @@
             {"selector_a": 8, "selector_b": 8, "condition": -1, "result": 77},
             {"selector_a": 9, "selector_b": 8, "condition": -1, "result": 52},
             {"selector_a": -1, "selector_b": 0, "condition": 0, "result": 0}
-          ]
+          ],
+          "address": "0x080eef34"
         },
         {
           "name": "rule_table_2",
@@ -1089,7 +1093,8 @@
             {"value": 8, "phase": 2},
             {"value": 8, "phase": 3},
             {"value": 8, "phase": 4}
-          ]
+          ],
+          "address": "0x080eef54"
         },
         {
           "name": "rule_table_3",
@@ -1234,7 +1239,8 @@
             {"selector_a": 82, "selector_b": 32767, "condition": -1, "result": 0},
             {"selector_a": 84, "selector_b": 32767, "condition": -1, "result": 709},
             {"selector_a": -1, "selector_b": -1, "condition": -1, "result": 0}
-          ]
+          ],
+          "address": "0x080ef094"
         }
       ]
     },
@@ -1482,7 +1488,8 @@
               "position_z": -1,
               "unk_14": -1
             }
-          ]
+          ],
+          "address": "0x080ef824"
         },
         {
           "name": "rule_table_6",
@@ -1722,7 +1729,8 @@
             {"value": 312},
             {"value": 2147483721},
             {"value": 0}
-          ]
+          ],
+          "address": "0x080ef984"
         },
         {
           "name": "rule_table_7",
@@ -1774,7 +1782,8 @@
             {"value": 212},
             {"value": 32768},
             {"value": 0}
-          ]
+          ],
+          "address": "0x080efd1c"
         }
       ]
     }

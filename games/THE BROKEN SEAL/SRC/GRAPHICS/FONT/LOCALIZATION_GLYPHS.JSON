@@ -242,7 +242,8 @@
         {"advance": 0, "glyph": 221},
         {"advance": 0, "glyph": 222},
         {"advance": 7, "glyph": 223}
-      ]
+      ],
+      "address": "0x08032224"
     }
   ]
 }

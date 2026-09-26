@@ -15,21 +15,24 @@
             "end": "0x085f46ec",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 64, 64, 3, 2, 1, 0, 2, 2, 0, 0]
+            "values": [0, 0, 64, 64, 3, 2, 1, 0, 2, 2, 0, 0],
+            "address": "0x085f46e0"
           },
           {
             "name": "records",
             "end": "0x085f4704",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [64, 4112, 0, 65535], [128, 4112, 0, 65535]]
+            "values": [[0, 4112, 0, 65535], [64, 4112, 0, 65535], [128, 4112, 0, 65535]],
+            "address": "0x085f46ec"
           },
           {
             "name": "component_offsets",
             "end": "0x085f471c",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0xd5c", "0xd84", "0x18cc", "0x1a0c", "0x1a14"]
+            "values": ["0x3c", "0xd5c", "0xd84", "0x18cc", "0x1a0c", "0x1a14"],
+            "address": "0x085f4704"
           }
         ]
       },
@@ -114,7 +117,16 @@
         "address": "0x085f60f4",
         "size": "0x3",
         "record_size": 3,
-        "segments": [{"name": "terminator", "end": "0x085f60f7", "stride": 1, "element": "u8", "fill": 255}]
+        "segments": [
+          {
+            "name": "terminator",
+            "end": "0x085f60f7",
+            "stride": 1,
+            "element": "u8",
+            "fill": 255,
+            "address": "0x085f60f4"
+          }
+        ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_DOU/BIRIBINO_DOU.BIN",
       "grid_offset": 67576,
@@ -137,21 +149,24 @@
             "end": "0x085f7680",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 128, 128, 3, 2, 1, 0, 2, 2, 0, 0]
+            "values": [0, 0, 128, 128, 3, 2, 1, 0, 2, 2, 0, 0],
+            "address": "0x085f7674"
           },
           {
             "name": "records",
             "end": "0x085f7698",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [128, 4112, 0, 65535], [32768, 4112, 0, 65535]]
+            "values": [[0, 4112, 0, 65535], [128, 4112, 0, 65535], [32768, 4112, 0, 65535]],
+            "address": "0x085f7680"
           },
           {
             "name": "component_offsets",
             "end": "0x085f76b0",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0x464", "0x490", "0x1330", "0x0", "0x1534"]
+            "values": ["0x3c", "0x464", "0x490", "0x1330", "0x0", "0x1534"],
+            "address": "0x085f7698"
           }
         ]
       },
@@ -262,8 +277,22 @@
         "size": "0x6",
         "record_size": 3,
         "segments": [
-          {"name": "records", "end": "0x085f8bab", "stride": 3, "element": "u8", "values": [[35, 28, 100]]},
-          {"name": "terminator", "end": "0x085f8bae", "stride": 1, "element": "u8", "fill": 255}
+          {
+            "name": "records",
+            "end": "0x085f8bab",
+            "stride": 3,
+            "element": "u8",
+            "values": [[35, 28, 100]],
+            "address": "0x085f8ba8"
+          },
+          {
+            "name": "terminator",
+            "end": "0x085f8bae",
+            "stride": 1,
+            "element": "u8",
+            "fill": 255,
+            "address": "0x085f8bab"
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_DOU/BIRIBINO_DOU.BIN",
@@ -287,21 +316,24 @@
             "end": "0x085fb004",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 128, 128, 3, 2, 1, 0, 2, 2, 0, 0]
+            "values": [0, 0, 128, 128, 3, 2, 1, 0, 2, 2, 0, 0],
+            "address": "0x085faff8"
           },
           {
             "name": "records",
             "end": "0x085fb01c",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [128, 4112, 0, 65535], [32768, 4112, 0, 65535]]
+            "values": [[0, 4112, 0, 65535], [128, 4112, 0, 65535], [32768, 4112, 0, 65535]],
+            "address": "0x085fb004"
           },
           {
             "name": "component_offsets",
             "end": "0x085fb034",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0x454", "0x480", "0x1548", "0x0", "0x174c"]
+            "values": ["0x3c", "0x454", "0x480", "0x1548", "0x0", "0x174c"],
+            "address": "0x085fb01c"
           }
         ]
       },
@@ -417,9 +449,17 @@
             "end": "0x085fc74d",
             "stride": 3,
             "element": "u8",
-            "values": [[32, 16, 100], [53, 36, 101], [52, 37, 102]]
+            "values": [[32, 16, 100], [53, 36, 101], [52, 37, 102]],
+            "address": "0x085fc744"
           },
-          {"name": "terminator", "end": "0x085fc750", "stride": 1, "element": "u8", "fill": 255}
+          {
+            "name": "terminator",
+            "end": "0x085fc750",
+            "stride": 1,
+            "element": "u8",
+            "fill": 255,
+            "address": "0x085fc74d"
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_DOU/BIRIBINO_DOU.BIN",

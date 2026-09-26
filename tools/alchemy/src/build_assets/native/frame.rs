@@ -55,9 +55,12 @@ pub(super) fn pixels(ctx: &Context, input: &Value, rom: &[u8]) -> Result<Vec<u8>
             pixels[start..start + fw].copy_from_slice(&decoded[row * fw..(row + 1) * fw]);
         }
     }
+    if sha256::hex(&pixels) != json_string(&input["decoded_sha256"], "UI frame digest")? {
+        return Err("UI frame pixels differ".into());
+    }
     Ok(pixels)
 }
-pub(super) fn check(ctx: &Context, input: &Value) -> Result<(), String> {
+pub(super) fn check(ctx: &mut Context, index: &Value, input: &Value) -> Result<(), String> {
     let (sheet, meta) = metadata(input)?;
     let doc = ctx.document(&ctx.root.join(meta))?;
     let component = &doc["components"][1]["components"][0];
@@ -71,6 +74,17 @@ pub(super) fn check(ctx: &Context, input: &Value) -> Result<(), String> {
         || sha256::hex(&pixels) != json_string(&input["decoded_sha256"], "UI digest")?
     {
         return Err("UI source pixels differ".into());
+    }
+    let region = index["regions"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|r| r["address"] == input["region_address"])
+        .ok_or("UI region absent")?;
+    if sha256::hex(&build_entry(ctx, region)?.0)
+        != json_string(&input["encoded_sha256"], "UI encoded digest")?
+    {
+        return Err("UI source bytes differ".into());
     }
     Ok(())
 }

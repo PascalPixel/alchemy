@@ -146,7 +146,9 @@ fn run(args: &[String]) -> Result<(), String> {
     fs::write(&out, format!("{}\n", lines.join("\n"))).map_err(|e| format!("{out}: {e}"))?;
     let entry = json!({
         "id": unit_id,
+        "game": game,
         "source": out,
+        "compiler_route": "canonical-gcc296",
         "overlay": null,
         "absolute_symbols": {},
         "local_symbols": [],

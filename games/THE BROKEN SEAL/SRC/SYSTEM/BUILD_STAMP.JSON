@@ -5,6 +5,13 @@
   "address": "0x08320fa0",
   "size": 16,
   "segments": [
-    {"name": "build_stamp", "end": "0x08320fb0", "element": "ascii-fixed", "stride": 1, "text": "010918151347\n"}
+    {
+      "name": "build_stamp",
+      "end": "0x08320fb0",
+      "element": "ascii-fixed",
+      "stride": 1,
+      "text": "010918151347\n",
+      "address": "0x08320fa0"
+    }
   ]
 }

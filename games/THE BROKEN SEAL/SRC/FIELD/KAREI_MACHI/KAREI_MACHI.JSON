@@ -15,21 +15,24 @@
             "end": "0x0868d07c",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 64, 64, 3, 2, 1, 0, 2, 2, 0, 0]
+            "values": [0, 0, 64, 64, 3, 2, 1, 0, 2, 2, 0, 0],
+            "address": "0x0868d070"
           },
           {
             "name": "records",
             "end": "0x0868d094",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [64, 4112, 0, 65535], [16384, 4112, 0, 65535]]
+            "values": [[0, 4112, 0, 65535], [64, 4112, 0, 65535], [16384, 4112, 0, 65535]],
+            "address": "0x0868d07c"
           },
           {
             "name": "component_offsets",
             "end": "0x0868d0ac",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0x12f0", "0x131c", "0x1ecc", "0x1f8c", "0x1f94"]
+            "values": ["0x3c", "0x12f0", "0x131c", "0x1ecc", "0x1f8c", "0x1f94"],
+            "address": "0x0868d094"
           }
         ]
       },
@@ -105,8 +108,22 @@
         "size": "0x9",
         "record_size": 3,
         "segments": [
-          {"name": "records", "end": "0x0868f00a", "stride": 3, "element": "u8", "values": [[6, 8, 100], [5, 25, 101]]},
-          {"name": "terminator", "end": "0x0868f00d", "stride": 1, "element": "u8", "fill": 255}
+          {
+            "name": "records",
+            "end": "0x0868f00a",
+            "stride": 3,
+            "element": "u8",
+            "values": [[6, 8, 100], [5, 25, 101]],
+            "address": "0x0868f004"
+          },
+          {
+            "name": "terminator",
+            "end": "0x0868f00d",
+            "stride": 1,
+            "element": "u8",
+            "fill": 255,
+            "address": "0x0868f00a"
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/KAREI_MACHI/KAREI_MACHI.BIN",
@@ -130,21 +147,24 @@
             "end": "0x086a0db8",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 64, 64, 3, 2, 1, 0, 2, 2, 0, 0]
+            "values": [0, 0, 64, 64, 3, 2, 1, 0, 2, 2, 0, 0],
+            "address": "0x086a0dac"
           },
           {
             "name": "records",
             "end": "0x086a0dd0",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [64, 4112, 0, 65535], [16384, 4112, 0, 65535]]
+            "values": [[0, 4112, 0, 65535], [64, 4112, 0, 65535], [16384, 4112, 0, 65535]],
+            "address": "0x086a0db8"
           },
           {
             "name": "component_offsets",
             "end": "0x086a0de8",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0x900", "0x924", "0x10ac", "0x116c", "0x1174"]
+            "values": ["0x3c", "0x900", "0x924", "0x10ac", "0x116c", "0x1174"],
+            "address": "0x086a0dd0"
           }
         ]
       },
@@ -218,7 +238,16 @@
         "address": "0x086a1f20",
         "size": "0x3",
         "record_size": 3,
-        "segments": [{"name": "terminator", "end": "0x086a1f23", "stride": 1, "element": "u8", "fill": 255}]
+        "segments": [
+          {
+            "name": "terminator",
+            "end": "0x086a1f23",
+            "stride": 1,
+            "element": "u8",
+            "fill": 255,
+            "address": "0x086a1f20"
+          }
+        ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/KAREI_MACHI/KAREI_MACHI.BIN",
       "grid_offset": 285648,
@@ -241,21 +270,24 @@
             "end": "0x0872e3b0",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 128, 128, 3, 3, 2, 0, 2, 2, 0, 0]
+            "values": [0, 0, 128, 128, 3, 3, 2, 0, 2, 2, 0, 0],
+            "address": "0x0872e3a4"
           },
           {
             "name": "records",
             "end": "0x0872e3c8",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [32768, 4112, 0, 65535], [128, 4112, 0, 65535]]
+            "values": [[0, 4112, 0, 65535], [32768, 4112, 0, 65535], [128, 4112, 0, 65535]],
+            "address": "0x0872e3b0"
           },
           {
             "name": "component_offsets",
             "end": "0x0872e3e0",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0x414", "0x424", "0x11bc", "0x12a8", "0x12d4"]
+            "values": ["0x3c", "0x414", "0x424", "0x11bc", "0x12a8", "0x12d4"],
+            "address": "0x0872e3c8"
           }
         ]
       },
@@ -346,9 +378,17 @@
             "element": "u8",
             "values": [
               [39, 14, 101], [7, 44, 100], [39, 44, 101], [25, 51, 102], [26, 51, 103], [25, 53, 104], [26, 53, 105]
-            ]
+            ],
+            "address": "0x0872f678"
           },
-          {"name": "terminator", "end": "0x0872f690", "stride": 1, "element": "u8", "fill": 255}
+          {
+            "name": "terminator",
+            "end": "0x0872f690",
+            "stride": 1,
+            "element": "u8",
+            "fill": 255,
+            "address": "0x0872f68d"
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/KAREI_MACHI/KAREI_MACHI.BIN",
@@ -372,21 +412,24 @@
             "end": "0x08725498",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 72, 72, 3, 1, 2, 0, 2, 2, 0, 0]
+            "values": [0, 0, 72, 72, 3, 1, 2, 0, 2, 2, 0, 0],
+            "address": "0x0872548c"
           },
           {
             "name": "records",
             "end": "0x087254b0",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [30720, 4112, 0, 65535], [120, 4112, 0, 65535]]
+            "values": [[0, 4112, 0, 65535], [30720, 4112, 0, 65535], [120, 4112, 0, 65535]],
+            "address": "0x08725498"
           },
           {
             "name": "component_offsets",
             "end": "0x087254c8",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0x2854", "0x287c", "0x3d48", "0x3eb4", "0x3ebc"]
+            "values": ["0x3c", "0x2854", "0x287c", "0x3d48", "0x3eb4", "0x3ebc"],
+            "address": "0x087254b0"
           }
         ]
       },
@@ -473,7 +516,16 @@
         "address": "0x08729348",
         "size": "0x3",
         "record_size": 3,
-        "segments": [{"name": "terminator", "end": "0x0872934b", "stride": 1, "element": "u8", "fill": 255}]
+        "segments": [
+          {
+            "name": "terminator",
+            "end": "0x0872934b",
+            "stride": 1,
+            "element": "u8",
+            "fill": 255,
+            "address": "0x08729348"
+          }
+        ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/KAREI_MACHI/KAREI_MACHI.BIN",
       "grid_offset": 136192,
@@ -496,21 +548,24 @@
             "end": "0x08729518",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 72, 94, 3, 2, 1, 0, 2, 2, 0, 0]
+            "values": [0, 0, 72, 94, 3, 2, 1, 0, 2, 2, 0, 0],
+            "address": "0x0872950c"
           },
           {
             "name": "records",
             "end": "0x08729530",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [24576, 4112, 0, 65535], [80, 4112, 0, 65535]]
+            "values": [[0, 4112, 0, 65535], [24576, 4112, 0, 65535], [80, 4112, 0, 65535]],
+            "address": "0x08729518"
           },
           {
             "name": "component_offsets",
             "end": "0x08729548",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0x6c4", "0x6d4", "0xfc0", "0x114c", "0x1168"]
+            "values": ["0x3c", "0x6c4", "0x6d4", "0xfc0", "0x114c", "0x1168"],
+            "address": "0x08729530"
           }
         ]
       },
@@ -610,8 +665,22 @@
         "size": "0x6",
         "record_size": 3,
         "segments": [
-          {"name": "records", "end": "0x0872a677", "stride": 3, "element": "u8", "values": [[24, 19, 100]]},
-          {"name": "terminator", "end": "0x0872a67a", "stride": 1, "element": "u8", "fill": 255}
+          {
+            "name": "records",
+            "end": "0x0872a677",
+            "stride": 3,
+            "element": "u8",
+            "values": [[24, 19, 100]],
+            "address": "0x0872a674"
+          },
+          {
+            "name": "terminator",
+            "end": "0x0872a67a",
+            "stride": 1,
+            "element": "u8",
+            "fill": 255,
+            "address": "0x0872a677"
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/KAREI_MACHI/KAREI_MACHI.BIN",
@@ -635,21 +704,24 @@
             "end": "0x0872a7e0",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 100, 100, 3, 1, 2, 0, 2, 2, 0, 0]
+            "values": [0, 0, 100, 100, 3, 1, 2, 0, 2, 2, 0, 0],
+            "address": "0x0872a7d4"
           },
           {
             "name": "records",
             "end": "0x0872a7f8",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [25600, 4112, 0, 65535], [100, 4112, 0, 65535]]
+            "values": [[0, 4112, 0, 65535], [25600, 4112, 0, 65535], [100, 4112, 0, 65535]],
+            "address": "0x0872a7e0"
           },
           {
             "name": "component_offsets",
             "end": "0x0872a810",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0x50c", "0x514", "0xf84", "0x1070", "0x109c"]
+            "values": ["0x3c", "0x50c", "0x514", "0xf84", "0x1070", "0x109c"],
+            "address": "0x0872a7f8"
           }
         ]
       },
@@ -732,7 +804,16 @@
         "address": "0x0872b870",
         "size": "0x3",
         "record_size": 3,
-        "segments": [{"name": "terminator", "end": "0x0872b873", "stride": 1, "element": "u8", "fill": 255}]
+        "segments": [
+          {
+            "name": "terminator",
+            "end": "0x0872b873",
+            "stride": 1,
+            "element": "u8",
+            "fill": 255,
+            "address": "0x0872b870"
+          }
+        ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/KAREI_MACHI/KAREI_MACHI.BIN",
       "grid_offset": 0,

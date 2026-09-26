@@ -396,14 +396,16 @@
         {"layout": 0, "members": [161], "minimums": [1], "maximums": [1]},
         {"layout": 0, "members": [162], "minimums": [1], "maximums": [1]},
         {"layout": 0, "members": [163], "minimums": [1], "maximums": [1]}
-      ]
+      ],
+      "address": "0x080c5c38"
     },
     {
       "name": "preload_ids",
       "end": "0x080c7420",
       "element": "le-u16",
       "stride": 2,
-      "values": [117, 122, 125, 133, 135, 137, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171]
+      "values": [117, 122, 125, 133, 135, 137, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171],
+      "address": "0x080c73f8"
     },
     {
       "name": "metadata",
@@ -590,7 +592,8 @@
         {"value": 434, "flags_0": 168, "flags_1": 0, "attribute_4": 0, "reserved": [0, 0, 0]},
         {"value": 434, "flags_0": 168, "flags_1": 0, "attribute_4": 0, "reserved": [0, 0, 0]},
         {"value": 434, "flags_0": 168, "flags_1": 0, "attribute_4": 0, "reserved": [0, 0, 0]}
-      ]
+      ],
+      "address": "0x080c7420"
     }
   ]
 }

@@ -1,0 +1,210 @@
+{
+  "format": 1,
+  "manual_regions": [
+    {
+      "overlay": "resource_64d",
+      "entry": "0x02000038",
+      "span_bytes": 8
+    },
+    {
+      "overlay": "resource_64d",
+      "entry": "0x02000040",
+      "span_bytes": 4
+    },
+    {
+      "overlay": "resource_64d",
+      "entry": "0x02000044",
+      "span_bytes": 8
+    },
+    {
+      "overlay": "resource_64d",
+      "entry": "0x0200004c",
+      "span_bytes": 8
+    },
+    {
+      "overlay": "resource_64d",
+      "entry": "0x0200009c",
+      "span_bytes": 42
+    },
+    {
+      "overlay": "resource_64d",
+      "entry": "0x02000120",
+      "span_bytes": 8
+    },
+    {
+      "overlay": "resource_64d",
+      "entry": "0x02000308",
+      "span_bytes": 4
+    },
+    {
+      "overlay": "resource_64d",
+      "entry": "0x02000510",
+      "span_bytes": 5404
+    },
+    {
+      "overlay": "resource_64d",
+      "entry": "0x020026f4",
+      "span_bytes": 188
+    },
+    {
+      "overlay": "resource_64e",
+      "entry": "0x02000038",
+      "span_bytes": 70
+    },
+    {
+      "overlay": "resource_64e",
+      "entry": "0x02000314",
+      "span_bytes": 56
+    },
+    {
+      "overlay": "resource_64e",
+      "entry": "0x0200034c",
+      "span_bytes": 64
+    },
+    {
+      "overlay": "resource_64e",
+      "entry": "0x0200038c",
+      "span_bytes": 388
+    },
+    {
+      "overlay": "resource_64e",
+      "entry": "0x02000510",
+      "span_bytes": 92
+    },
+    {
+      "overlay": "resource_64e",
+      "entry": "0x02000650",
+      "span_bytes": 8
+    },
+    {
+      "overlay": "resource_64e",
+      "entry": "0x02000658",
+      "span_bytes": 4
+    },
+    {
+      "overlay": "resource_64e",
+      "entry": "0x0200065c",
+      "span_bytes": 8
+    },
+    {
+      "overlay": "resource_64e",
+      "entry": "0x02000664",
+      "span_bytes": 20
+    },
+    {
+      "overlay": "resource_64e",
+      "entry": "0x02000678",
+      "span_bytes": 12
+    },
+    {
+      "overlay": "resource_64e",
+      "entry": "0x02000684",
+      "span_bytes": 40
+    },
+    {
+      "overlay": "resource_64e",
+      "entry": "0x02000874",
+      "span_bytes": 96
+    },
+    {
+      "overlay": "resource_64e",
+      "entry": "0x020008d4",
+      "span_bytes": 40
+    },
+    {
+      "overlay": "resource_64e",
+      "entry": "0x020008fc",
+      "span_bytes": 40
+    },
+    {
+      "overlay": "resource_64e",
+      "entry": "0x02000924",
+      "span_bytes": 116
+    },
+    {
+      "overlay": "resource_64e",
+      "entry": "0x02000998",
+      "span_bytes": 116
+    },
+    {
+      "overlay": "resource_64e",
+      "entry": "0x02000a0c",
+      "span_bytes": 8
+    },
+    {
+      "overlay": "resource_64e",
+      "entry": "0x02000a14",
+      "span_bytes": 4
+    },
+    {
+      "overlay": "resource_64e",
+      "entry": "0x02000b28",
+      "span_bytes": 4
+    },
+    {
+      "overlay": "resource_650",
+      "entry": "0x02000038",
+      "span_bytes": 8
+    },
+    {
+      "overlay": "resource_650",
+      "entry": "0x02000040",
+      "span_bytes": 4
+    },
+    {
+      "overlay": "resource_650",
+      "entry": "0x02000044",
+      "span_bytes": 8
+    },
+    {
+      "overlay": "resource_650",
+      "entry": "0x0200004c",
+      "span_bytes": 8
+    },
+    {
+      "overlay": "resource_650",
+      "entry": "0x02000054",
+      "span_bytes": 68
+    },
+    {
+      "overlay": "resource_650",
+      "entry": "0x02000d14",
+      "span_bytes": 2088
+    },
+    {
+      "overlay": "resource_650",
+      "entry": "0x0200153c",
+      "span_bytes": 28
+    },
+    {
+      "overlay": "resource_650",
+      "entry": "0x02001650",
+      "span_bytes": 58
+    },
+    {
+      "overlay": "resource_650",
+      "entry": "0x0200168c",
+      "span_bytes": 76
+    },
+    {
+      "overlay": "resource_650",
+      "entry": "0x02002c30",
+      "span_bytes": 2
+    },
+    {
+      "overlay": "resource_650",
+      "entry": "0x02002c34",
+      "span_bytes": 2
+    },
+    {
+      "overlay": "resource_650",
+      "entry": "0x02002c38",
+      "span_bytes": 44
+    },
+    {
+      "overlay": "resource_650",
+      "entry": "0x02002f84",
+      "span_bytes": 4
+    }
+  ]
+}

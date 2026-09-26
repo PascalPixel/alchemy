@@ -58,5 +58,8 @@ pub(super) fn pixels(input: &Value, bank: &Value, rom: &[u8]) -> Result<Vec<u8>,
                 .copy_from_slice(&decoded[row * fw..(row + 1) * fw]);
         }
     }
+    if sha256::hex(&output) != json_string(&input["decoded_sha256"], "raw sprite digest")? {
+        return Err("raw sprite pixels differ".into());
+    }
     Ok(output)
 }

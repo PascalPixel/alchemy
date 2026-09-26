@@ -243,7 +243,8 @@
         {"advance": 10, "glyph": 221},
         {"advance": 10, "glyph": 222},
         {"advance": 10, "glyph": 223}
-      ]
+      ],
+      "address": "0x0805a8cc"
     },
     {
       "end": "0x0805cdcc",
@@ -412,7 +413,8 @@
         {"glyph": 149},
         {"glyph": 150},
         {"glyph": 151}
-      ]
+      ],
+      "address": "0x0805bf8c"
     }
   ]
 }

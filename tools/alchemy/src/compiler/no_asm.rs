@@ -298,6 +298,13 @@ pub fn expanded_forbidden(root: &Path, source: &Path) -> Result<String, String> 
         .join(","))
 }
 
+/// True when the source is ordinary C both raw and preprocessed.
+pub fn ordinary_source(root: &Path, source: &Path) -> Result<bool, String> {
+    let text = fs::read_to_string(source).map_err(|error| error.to_string())?;
+    Ok(find_forbidden(&source.to_string_lossy(), &text).is_empty()
+        && expanded_forbidden(root, source)?.is_empty())
+}
+
 pub fn self_test() -> Result<(), String> {
     let source = "register int r __asm__(\"r4\"); void f(void) { __asm__(\"nop\"); __asm__ volatile(\"\" ::: \"memory\"); }\n";
     let found = find_forbidden("fixture.c", source);
@@ -406,5 +413,13 @@ mod tests {
             find_named_source_tool_leaks("games/THE BROKEN SEAL/SRC/FIELD/EXAMPLE.C", source);
         assert!(!lower.is_empty());
         assert_eq!(lower.len(), upper.len());
+    }
+
+    #[test]
+    fn nonordinary_source_is_detected_raw() {
+        let path = std::env::temp_dir().join("alchemy-nonordinary-raw.c");
+        fs::write(&path, "void f(void) __attribute__((naked));\n").unwrap();
+        assert!(!ordinary_source(&path, &path).unwrap());
+        let _ = fs::remove_file(path);
     }
 }

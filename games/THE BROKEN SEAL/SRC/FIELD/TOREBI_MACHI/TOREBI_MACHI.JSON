@@ -15,21 +15,24 @@
             "end": "0x086e0974",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 76, 64, 3, 2, 1, 0, 2, 2, 0, 0]
+            "values": [0, 0, 76, 64, 3, 2, 1, 0, 2, 2, 0, 0],
+            "address": "0x086e0968"
           },
           {
             "name": "records",
             "end": "0x086e098c",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [76, 4112, 0, 65535], [19456, 4112, 0, 65535]]
+            "values": [[0, 4112, 0, 65535], [76, 4112, 0, 65535], [19456, 4112, 0, 65535]],
+            "address": "0x086e0974"
           },
           {
             "name": "component_offsets",
             "end": "0x086e09a4",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0x1418", "0x1484", "0x22e8", "0x23e0", "0x23e8"]
+            "values": ["0x3c", "0x1418", "0x1484", "0x22e8", "0x23e0", "0x23e8"],
+            "address": "0x086e098c"
           }
         ]
       },
@@ -120,9 +123,17 @@
             "end": "0x086e2d5f",
             "stride": 3,
             "element": "u8",
-            "values": [[8, 9, 100], [18, 18, 239], [19, 18, 239], [30, 18, 101], [3, 32, 102]]
+            "values": [[8, 9, 100], [18, 18, 239], [19, 18, 239], [30, 18, 101], [3, 32, 102]],
+            "address": "0x086e2d50"
           },
-          {"name": "terminator", "end": "0x086e2d62", "stride": 1, "element": "u8", "fill": 255}
+          {
+            "name": "terminator",
+            "end": "0x086e2d62",
+            "stride": 1,
+            "element": "u8",
+            "fill": 255,
+            "address": "0x086e2d5f"
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/TOREBI_MACHI/TOREBI_MACHI.BIN",

@@ -343,7 +343,8 @@
         {"scene": "322", "overlay": "0x6b8", "area": 94, "variant": 1, "map_index": 322, "mode": [0, 0, 0]},
         {"scene": "323", "overlay": "0x6b9", "area": 95, "variant": 1, "map_index": 322, "mode": [0, 0, 0]},
         {"scene": "324", "overlay": "0x6ba", "area": 96, "variant": 1, "map_index": 323, "mode": [0, 0, 0]}
-      ]
+      ],
+      "address": "0x080f17a8"
     }
   ]
 }

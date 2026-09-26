@@ -2758,8 +2758,12 @@ const USAGE: &str =
 /// the interactive stacked-world view.
 pub(crate) fn live_family(root: &Path, target: &str, scene: usize) -> Result<Vec<u8>, String> {
     let target = decomp_target(Some(target))?;
+    let paths = NativePaths::of(&target);
+    let index = json(&root.join(&paths.index))?;
     let rom = fs::read(root.join(target.rom)).map_err(|e| e.to_string())?;
-    crate::text_catalog::verify_reference(root, target.id.as_str(), &rom)?;
+    if index["reference_sha256"] != sha256::hex(&rom) {
+        return Err("ROM differs from private-inputs.json checksum".into());
+    }
     let mut deriver = Deriver::new(&rom, target)?;
     let scope = Some(BTreeSet::from([scene]));
     let mut overview_family =

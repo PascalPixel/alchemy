@@ -1,4 +1,10 @@
-/* Draft, not exact (2026-09-26): 1088 of 1088 bytes, 13 differing halfwords.
+/* Draft, not exact (2026-09-26): 1088 of 1088 bytes, 4 differing halfwords.
+   Separate queue-resolution and saved-IME scheduling regions close all
+   queue differences. Only the blend-byte load and y-byte store remain one
+   scheduling slot apart. A blend-update region merely moves the r8 copy;
+   moving the y write between delta statements changes the squared-distance
+   dataflow (62 differences). A separate byte/bitfield union changes layout
+   and mask lowering. Retained the original hardware bitfield layout.
    A link-symbol message base and separate x/y snapshots recover the message
    accumulation and all window placement. Shared queue/IME pointers leave
    the residual unchanged; a halfword IME snapshot adds sign extension and
@@ -93,7 +99,10 @@ void Func_080153c0(s32 message, s32 *width, s32 *height);
         u32 saved;                                                          \
         s32 count;                                                          \
                                                                             \
-        saved = *ime;                                                       \
+        /* FAKEMATCH: retain the saved interrupt value before disabling IME. */ \
+        do {                                                               \
+            saved = *ime;                                                   \
+        } while (0);                                                       \
         *ime = (u16)ime;                                                    \
         count = q->count;                                                   \
         if (count <= 31) {                                                  \
@@ -272,7 +281,10 @@ markers:
             Func_08015078(best_message, work->window, cursor_x, cursor_y);
         }
     }
-    q = &gIoWriteQueue;
+    /* FAKEMATCH: resolve the shared queue before the interrupt snapshot. */
+    do {
+        q = &gIoWriteQueue;
+    } while (0);
     ime = &REG_IME;
     QUEUE_IO_WRITE_DELAY2(0x04000050, 0x3f00);
     QUEUE_IO_WRITE_DELAY2_BARRIER(0x04000052, ((16 - blend) << 8) | blend);

@@ -14,8 +14,9 @@ u32 Unnamed_080ac8fc(u16 *out, u32 id, s32 row_select)
 
     if (row_select == -1) {
         u32 id_shifted = id << 8;
+        u32 *tbl = work->active;
         for (row = 0; row <= 3; row++) {
-            u32 active = work->active[row];
+            u32 active = *tbl++;
             for (bit = 0; bit <= 19; bit++) {
                 u32 mask = 1u << bit;
                 u32 packed;

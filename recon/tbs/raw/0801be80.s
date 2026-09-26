@@ -6,8 +6,10 @@
 	.set sub_0801b9a8, 0x0801b9a8
 	.set sub_0801ba34, 0x0801ba34
 	.set sub_0801c21c, 0x0801c21c
+	.global Menu_PushSelectedNode
 	.global Func_0801be80
 	.thumb_func
+Menu_PushSelectedNode:
 Func_0801be80:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl

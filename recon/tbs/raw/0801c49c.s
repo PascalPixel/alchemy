@@ -18,8 +18,10 @@
 	.set sub_08077080, 0x08077080
 	.set sub_08077088, 0x08077088
 	.set sub_080f9010, 0x080f9010
+	.global Debug_SelectAbilityPair
 	.global Func_0801c49c
 	.thumb_func
+Debug_SelectAbilityPair:
 Func_0801c49c:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

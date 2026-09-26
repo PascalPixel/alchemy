@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "SCENE.H"
+#include "BATTLE_PRESENTATION.H"
 
 void Camera_StoreSceneParameters(s32, u32, s32);
 void Render_ResetTransformState(void);
@@ -8,17 +9,14 @@ void SceneTransform_ApplyYaw(s32);
 void SceneTransform_ApplyPitch(s32);
 void Graphics_PrepareTransferInIwramWork();
 s32 Render_ProjectPoint(); /* returns a value its callers here ignore */
-void BattleCamera_SetRange();
 
-/* BattlePres_SetupTransitionScene with the depth bound taken from the scene
-   (+0x20) instead of the fixed span. It reads its scale percentage from an
-   uninitialised local, as the original does (the value left in r4). */
+/* FAKEMATCH: mode intentionally remains uninitialized to preserve the match. */
 void BattlePres_SetupTransitionSceneAtDepth(s32 x, s32 depth, s32 y)
 {
     s32 span = 0x01fe0000;
     s32 mode;
-    u8 *scene = *(u8 **)0x03001e80;
-    s32 *position = (s32 *)(scene + 12);
+    struct BattleCamera *scene = *(struct BattleCamera **)0x03001e80;
+    s32 *pos = scene->pos;
     s32 *hud = (s32 *)0x03001ce0;
     s32 scale = Math_Div(mode << 16, 100);
     s32 render_bounds[3];
@@ -30,9 +28,9 @@ void BattlePres_SetupTransitionSceneAtDepth(s32 x, s32 depth, s32 y)
     s32 width;
     u32 result;
 
-    position[0] = x;
-    position[1] = depth;
-    position[2] = y;
+    pos[0] = x;
+    pos[1] = depth;
+    pos[2] = y;
     source_bounds[0] = 0;
     alpha = 0xc000;
     source_bounds[1] = 0;
@@ -42,17 +40,17 @@ void BattlePres_SetupTransitionSceneAtDepth(s32 x, s32 depth, s32 y)
     result = blend(span, alpha);
     Camera_StoreSceneParameters(span, result, span * 2);
     Render_ResetTransformState();
-    SceneTransform_ApplyPosition(position);
-    SceneTransform_ApplyYaw(*(s16 *)(scene + 0x36));
-    SceneTransform_ApplyPitch(*(s16 *)(scene + 0x34));
+    SceneTransform_ApplyPosition(pos);
+    SceneTransform_ApplyYaw((s16)scene->yaw);
+    SceneTransform_ApplyPitch((s16)scene->pitch);
     render_bounds[0] = 0;
     render_bounds[1] = 0;
-    render_bounds[2] = *(s32 *)(scene + 32);
+    render_bounds[2] = scene->distance;
     ((void (*)())0x03000250)(render_bounds, scene);
     hud[3] = 120;
     hud[4] = 120;
     Render_ResetTransformState();
-    Graphics_PrepareTransferInIwramWork(scene, position);
+    Graphics_PrepareTransferInIwramWork(scene, pos);
     Render_ProjectPoint(source_bounds, measured_bounds);
 
     BattleCamera_SetRange(

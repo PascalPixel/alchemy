@@ -1912,7 +1912,7 @@ AlchemyC_02003344:
 	.space 0x112
 AlchemyC_02003458:
 	.space 0x1e0
-FieldScene_RunScene3bbSequenceC:
+FieldScene_RunExtendedActorSequence:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl

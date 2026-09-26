@@ -19,7 +19,7 @@ extern u16 Data_03001ccc;
 extern u16 Data_03001d28;            /* VBlank seen */
 
 u16 SerialRuntime_ExchangePayloads(void *send, void *receive);
-void Func_0800655c(void);
+void SerialRuntime_StepBlockTransfer(void);
 void Func_080f9018(void);
 void BlendTransition_Update(void);
 void IoWriteQueue_FlushPending(void);
@@ -44,7 +44,7 @@ void System_VBlankHandler(void)
     if (Data_03001cb0 != 0) {
         u16 *status = &Data_03001f64;
         *status = SerialRuntime_ExchangePayloads((void *)0x02002220, (void *)0x02002020);
-        Func_0800655c();
+        SerialRuntime_StepBlockTransfer();
     }
     Func_080f9018();
     BlendTransition_Update();

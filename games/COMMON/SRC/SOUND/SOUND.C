@@ -10,6 +10,7 @@ void MusicPlayer_StartSong(struct SoundPlayer *player, const struct SequenceHead
 void MusicPlayer_Stop(struct SoundPlayer *player);
 void MusicPlayer_BeginFadeOut(struct SoundPlayer *player, u16 speed);
 void Audio_ResumePlayer(struct SoundPlayer *player);
+void AudioCommand_InvokeSlot35(void *block);
 
 extern struct SoundWork Sound_Work;
 extern struct SoundNote Sound_CgbNotes[4];
@@ -127,4 +128,48 @@ void Audio_ResumeAllPlayers(void)
 void MusicPlayer_FadeOut(struct SoundPlayer *player, u16 speed)
 {
     MusicPlayer_BeginFadeOut(player, speed);
+}
+
+void MusicPlayer_FadeOutPause(struct SoundPlayer *player, u16 speed)
+{
+    if (player->lock == SOUND_LOCK) {
+        player->lock++;
+        player->fade_counter = speed;
+        player->fade_period = speed;
+        player->fade_volume = 0x101;
+        player->lock = SOUND_LOCK;
+    }
+}
+
+void MusicPlayer_FadeIn(struct SoundPlayer *player, u16 speed)
+{
+    if (player->lock == SOUND_LOCK) {
+        player->lock++;
+        player->fade_counter = speed;
+        player->fade_period = speed;
+        player->fade_volume = 2;
+        player->status &= 0x7FFFFFFF;
+        player->lock = SOUND_LOCK;
+    }
+}
+
+void MusicPlayer_ResetActiveTracks(struct SoundPlayer *player)
+{
+    s32 count = player->track_count;
+    struct SoundTrack *track = player->tracks;
+
+    while (count > 0) {
+        if (track->flags & 0x80) {
+            if (track->flags & 0x40) {
+                AudioCommand_InvokeSlot35(track);
+                track->flags = 0x80;
+                track->bend_range = 2;
+                track->volume_scale = 0x40;
+                track->lfo_speed = 22;
+                track->voice.kind = 1;
+            }
+        }
+        count--;
+        track++;
+    }
 }

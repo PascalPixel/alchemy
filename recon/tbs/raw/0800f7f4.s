@@ -5,8 +5,10 @@
 	.set sub_0800d14c, 0x0800d14c
 	.set sub_08011f54, 0x08011f54
 	.set sub_0801219c, 0x0801219c
+	.global Object_MoveByKeys
 	.global Func_0800f7f4
 	.thumb_func
+Object_MoveByKeys:
 Func_0800f7f4:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl

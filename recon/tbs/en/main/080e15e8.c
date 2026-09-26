@@ -1,41 +1,11 @@
-/* Draft, not exact (2026-09-24): candidate=3920 reference=3920,
-   differing_halfwords=838, binary similarity 77.3%. Phase one (170
-   frames, A or B skips it) draws three dotted beams between six projected
-   points, a ring of dots and a falling column; phase two (192 frames)
-   bursts sparks, flashes and smoke and pans the camera. Residual: the
-   frame now matches at 336 bytes: the unreferenced slot is the unused
-   upper word of `DrawRectangle blit[2]`, an array small enough to live in
-   one DImode pseudo, so reload spills it as one 8-byte slot. The spill slots
-   follow declaration order (ctrl 132, work 128, dst 124, aux 120, frame
-   116, an unreferenced slot at 112, blit[0] 108, size 104, count 100, the
-   scale pointer 96, the beam y offset 24k + 4 at 92, blit47 88, the ring
-   offset lvl * 0x302 at 84, camera 80..68). Here count, the beam offset
-   and the ring offset are expression temporaries spilled after the camera
-   words, so every stack offset from 100 down shifts. What helped: count =
-   frame * 2 with the beam length written from count * 2 (one giv chain;
-   count still gets a hard register in global alloc and is spilled late
-   by reload, where the reference leaves it unallocated),
-   gWorkSlot read through a base pointer for blit[0] (sym + 184), masks
-   loaded into the result register (speed = 0x3ff; speed &= Random16()),
-   Trig_Sin(angle) * speed operand order, gWorkSlot read again after
-   BattleEffect_LoadWork rather than kept in a register from the prologue,
-   and the ramp limit copied before top -= 7 (the reference keeps limit
-   and top in separate registers; it still reloads 0x2710 inside the outer
-   loop where we hoist it). The whole second phase from 0x7c2 on now
-   differs only in scattered register choices. The first-phase residual
-   is one missing induction variable: the reference strength-reduces the
-   beam's count * 2 over frames into its own spilled slot (+4 a frame, at
-   sp+24, beside frame * 2 at sp+20, the column height at sp+28 and the
-   scale at sp+16), where we compute count * 2 from the spilled count; no
-   spelling of the beam length (frame * 4, (count - 128) * 2, count +
-   count) changed that. The -dL loop dump gives the reason: in the first
-   loop pass the beam's count * 2 (the inner loop's induction seed, combined
-   with the column's frame * 4 step) scores lifetime 6 x threshold 17 x
-   benefit 4 = 408 against 489 insns in the frame loop, so loop.c leaves it
-   alone; the reference must reach at least 489. A named reach = count * 2
-   (or frame * 4) is reduced but, being a user variable, costs a copy each
-   frame and grows the function by 16 bytes; placed before the key test it
-   also costs count its own induction. */
+/* NONMATCHING: 3920 bytes, candidate 3920, 838 differing halfwords,
+ * 445 halfword edits (2026-09-25). Mode 12 draws beams and a ring, then
+ * sparks and falling particles. The frame is 336 bytes; callback slots
+ * follow the two-entry blitter array.
+ * WALL: The reference independently increments frame * 4 at sp+24; the
+ * compiler's loop-cost threshold prevents that reduction here. A named
+ * counter adds a copy. Factored expressions and an inline clamp leave
+ * the output unchanged; a conditional clamp regresses. */
 #include "TYPES.H"
 #include "BATTLE_EFFECT_WORK.H"
 #include "BATTLE_EFX.H"
@@ -76,7 +46,7 @@ void BattleFx_PlaceFormationObjects(s32, s32, s32);
 void Unnamed_080e6eac(s32, s32, s32);
 void ResourceObject_ReleaseFar(void *);
 void Runtime_ReleaseHeapBlock(s32);
-s32 BattleFx_EndCanvasLayer(void);
+void BattleFx_EndCanvasLayer(void);
 
 typedef s32 (*WordCopyFn)(void *dest, const void *src, s32 words);
 typedef s32 (*RatioFn)(s32, s32);

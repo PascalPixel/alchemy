@@ -1,48 +1,47 @@
 #include "TYPES.H"
 #include "MOTION_OBJECT.H"
 
-struct BattleObjectSlot *GetBattleObjectSlot(s32);
 void BattleMotion_ReservedNoOp83B0(void *, s32);
 
-void BattleMotion_ApplyPairMidpoint(s32 arg0, s32 arg1)
+void BattleMotion_ApplyPairMidpoint(s32 first_id, s32 second_id)
 {
     struct BattleObjectSlot *second_slot;
-    struct MotionObject *obj1;
-    struct MotionObject *obj2;
-    s32 a1;
-    s32 a2;
-    s32 b1;
-    s32 b2;
+    struct MotionObject *first;
+    struct MotionObject *second;
+    s32 x1;
+    s32 x2;
+    s32 z1;
+    s32 z2;
     struct {
         s32 x;
         s32 y;
         s32 z;
     } pos;
 
-    obj1 = GetBattleObjectSlot(arg0)->object;
-    second_slot = GetBattleObjectSlot(arg1);
-    obj2 = second_slot->object;
+    first = GetBattleObjectSlot(first_id)->object;
+    second_slot = GetBattleObjectSlot(second_id);
+    second = second_slot->object;
 
-    a1 = obj1->target_x;
-    if (a1 == (s32)0x80000000) {
-        a1 = obj1->x;
+    x1 = first->target_x;
+    if (x1 == (s32)0x80000000) {
+        x1 = first->x;
     }
-    b1 = obj1->target_z;
-    if (b1 == (s32)0x80000000) {
-        b1 = obj1->z;
+    z1 = first->target_z;
+    if (z1 == (s32)0x80000000) {
+        z1 = first->z;
     }
-    a2 = obj2->target_x;
-    if (a2 == (s32)0x80000000) {
-        a2 = obj2->x;
+    x2 = second->target_x;
+    if (x2 == (s32)0x80000000) {
+        x2 = second->x;
     }
-    b2 = obj2->target_z;
-    if (b2 == (s32)0x80000000) {
-        b2 = obj2->z;
+    z2 = second->target_z;
+    if (z2 == (s32)0x80000000) {
+        z2 = second->z;
     }
 
-    pos.x = (a1 + a2) / 2;
+    pos.x = (x1 + x2) / 2;
     pos.y = 0;
-    pos.z = (b1 + b2) / 2;
+    pos.z = (z1 + z2) / 2;
 
     BattleMotion_ReservedNoOp83B0(&pos, 0x1000);
 }

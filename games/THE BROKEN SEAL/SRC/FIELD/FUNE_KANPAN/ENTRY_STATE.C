@@ -6,14 +6,14 @@ void DialogueLayout_ConfigureTwoRegions(void);
 void SceneEffect_InitSlotsEightToNineteen(void);
 void SceneState_InitActorSlots8To19(void);
 void SceneState_ConfigureEntries8Through19(void);
-void Local_020031a8(void);
+void FuneKanpan_RockDeck(void);
 void FieldScene_RunScene3af_02001b58(void);
 void FieldScene_RunScene3af_02001a98(void);
 void FieldScene_RunActorTwentyDialogueSequence(void);
 void FieldScene_RunShipDeckEventScript(void);
 void FuneKanpan_RunDeckCrewScene(void);
 void FieldScene_RunActorSequence(void);
-void FieldScene_ConfigureActorGroup(void);
+void FuneKanpan_RunJumpScene(void);
 void FieldScene_ConfigureLeadActors(void);
 void FieldScene_ConfigureThreeActors(void);
 void FieldScene_RunPartyRosterScene(void);
@@ -62,12 +62,12 @@ void FuneKanpan_ApplyEntryState(void)
         Value2(Engine_TaskAddCallback, (s32)SceneState_ConfigureEntries8Through19, 0xc80);
         Data_0200db50[1] = 0x200000;
         Data_0200db60[1] = 0x13333;
-        Value2(Engine_TaskAddCallback, (s32)Local_020031a8, 0xc80);
+        Value2(Engine_TaskAddCallback, (s32)FuneKanpan_RockDeck, 0xc80);
     } else if (Engine_GameFlagIsSet(0x928) != 0) {
         SceneState_ApplyFiveRectsAtColumn78();
         Data_0200db50[1] = flag;
         Data_0200db60[1] = flag;
-        Value2(Engine_TaskAddCallback, (s32)Local_020031a8, 0xc80);
+        Value2(Engine_TaskAddCallback, (s32)FuneKanpan_RockDeck, 0xc80);
     }
     if (Engine_GameFlagIsSet(0x927) == 0) {
         SceneState_InitActorSlots8To19();
@@ -96,7 +96,7 @@ void FuneKanpan_ApplyEntryState(void)
         FieldScene_RunActorSequence();
         return;
     case 15:
-        FieldScene_ConfigureActorGroup();
+        FuneKanpan_RunJumpScene();
         return;
     case 16:
         if (Engine_GameFlagIsSet(0x109) != 0) {

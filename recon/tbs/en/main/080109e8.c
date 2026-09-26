@@ -1,13 +1,7 @@
-/* Draft, not exact (2026-09-24): 864 of 864 bytes, 34 differing halfwords.
-   Written from the listing. What made it line up: IO halfword stores go
-   through an s32 value (no halfword pool constants), resource ids and the
-   0x284 size are Value_ link symbols, the DMA fill word is volatile (its
-   slot is laid out before the vector), the IWRAM routines return s32, the
-   epilogue keeps r0 (declared s32, no return), and the pointer locals are
-   declared in the order that gives the ROM's spill slots. Remaining: seven
-   scheduling ties, each a zero store or argument load one slot later than
-   the ROM (after the 0x10 store, the camera clears, both 0x03000250 calls,
-   the 0x03001f60 clear, the BG2 0x100 and the DISPCNT write). */
+/* NONMATCHING: 864 bytes, candidate 864, 33 differing halfwords, 26 halfword edits.
+ * The IWRAM transform has a void two-pointer interface; routine-last wrappers improve its call setup.
+ * WALL: Scheduling of zero stores, hardware writes and transform setup still differs.
+ */
 #include "TYPES.H"
 #include "DMA.H"
 
@@ -116,9 +110,14 @@ static __inline__ void Io_Put16(u16 *reg, s32 value)
     *reg = value;
 }
 
-typedef s32 (*ProjectFn)(s32 *vector, void *camera);
 typedef s32 (*RatioFn)(s32, s32);
 typedef s32 (*PlaneFn)(void *camera, s32 *position, void *lines, void *out);
+
+static __inline__ void Transform(s32 *vector, void *camera,
+                                void (*routine)(s32 *vector, void *camera))
+{
+    routine(vector, camera);
+}
 
 s32 Map_InitializePerspectiveScene(void)
 {
@@ -201,7 +200,7 @@ s32 Map_InitializePerspectiveScene(void)
     vector[0] = 0;
     vector[1] = 0;
     vector[2] = far_plane;
-    ((ProjectFn)0x03000250)(vector, camera);
+    Transform(vector, camera, (void (*)(s32 *, void *))0x03000250);
     Render_ResetTransformState();
     Graphics_PrepareTransferInIwramWork(camera, position);
     size = (s32)&Value_00000284;
@@ -226,7 +225,7 @@ s32 Map_InitializePerspectiveScene(void)
     vector[0] = 0;
     vector[1] = 0;
     vector[2] = *distance + 0x10000;
-    ((ProjectFn)0x03000250)(vector, camera);
+    Transform(vector, camera, (void (*)(s32 *, void *))0x03000250);
     *(volatile u16 *)0x0400004c = 0;
     Io_Put16((u16 *)0x04000000, 0x42);
     Data_03001ad0[2] = 0;

@@ -1,3 +1,10 @@
+/* NONMATCHING: 192 of 200 bytes, 87 differing halfwords, 66 halfword
+ * edits (2026-09-25). Corrected the layer offset: the reference adds it
+ * to the loaded tile ID, not to the address of the tile. The source tile
+ * map is a shared 16-by-16 grid. Remaining: coordinate spilling, initial
+ * position post-increment load, and loop register allocation. Aggregate
+ * coordinates and goto loops did not improve the match.
+ */
 #include "TYPES.H"
 
 struct MapPosition_080114a0 {
@@ -9,7 +16,7 @@ struct MapPosition_080114a0 {
 struct MapTileWindow_080114a0 {
     struct MapPosition_080114a0 *position;
     u8 unknown_004[0x134];
-    u16 tiles[2][160];
+    u16 tiles[256];
 };
 
 extern struct MapTileWindow_080114a0 *Data_03001e70;
@@ -48,8 +55,8 @@ void Func_080114a0(void)
             do {
                 s32 x = origin_x + column;
                 s32 y = origin_y + row;
-                s32 tile = *(u16 *)((u8 *)window + 0x138 + layer_offset
-                    + ((((y & 15) << 4) + (x & 15)) << 1));
+                s32 tile = *(u16 *)((u8 *)window + 0x138
+                    + ((((y & 15) << 4) + (x & 15)) << 1)) + layer_offset;
 
                 if (Func_080108e4(layer, x, y, tile, 0) != 0)
                     return;

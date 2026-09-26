@@ -1,49 +1,63 @@
+/* Draft, not exact (2026-09-24): candidate=162 reference=172 differing_halfwords=68.
+   Menu: open the owner selector for one party slot. Open: the reference
+   computes slot + 28 and slot * 4 before loading the menu cell, keeps the
+   cursor offset in sl and the owner offset in r8, and zeroes the cursor
+   frame from the register that later holds the result. */
 #include "TYPES.H"
 
-extern void *Data_03001f2c;
+struct OwnerCursor {
+    u8 unknown_00[5];
+    u8 state;
+    u8 unknown_06[6];
+    u16 frame;
+};
 
-void Func_08015270(s32);
-s32 Func_080770c0(s32);
-void Func_08015070(s32 window, s32 arg1, s32 arg2, s32 arg3, s32 arg4);
-s32 Func_080a1ac0(s32, s32);
-s32 Func_080a7d68(void);
+struct OwnerSelectMenu {
+    u8 unknown_000[0x10];
+    s32 window;
+    struct OwnerCursor *cursors[2];
+    s8 owner_index[2];
+    u8 unknown_01e[0x202];
+    u16 mode;
+};
+
+extern struct OwnerSelectMenu *Data_03001f2c;
+
+void RenderOutput_RedrawSavedRectFar(s32 window);
+s32 GameFlag_TestFar(s32 flag);
+void UiWindow_DrawDividerLineFar(s32 window, s32 x, s32 y, s32 width, s32 height);
+void UiMenu_SlideCursor(s32 x, s32 y);
+s32 PsynergyMenu_SelectOwner(void);
 s32 Func_080a7a34(void);
-void Func_080a17c4(void *cursor);
-void WaitFrames(s32);
+void UiIcon_PrepareObject(struct OwnerCursor *cursor);
+void WaitFrames(s32 frames);
 
-s32 Func_080a77a4(s32 party_slot)
+s32 Func_080a77a4(s32 slot)
 {
-    s32 offset = party_slot + 28;
-    s32 cursor_offset = party_slot * 4 + 20;
-    void *menu = Data_03001f2c;
-    void *icon = *(void **)(menu + cursor_offset);
-    s32 owner_index;
+    struct OwnerSelectMenu *menu;
+    s32 index;
     s32 result;
+    s8 *owner;
+    struct OwnerCursor **cursor;
 
-    *(u8 *)(icon + 5) = 1;
-    *(u16 *)(icon + 12) = 0;
-
-    owner_index = *(s8 *)(menu + offset);
-    Func_08015270(*(s32 *)(menu + 16));
-
-    if (Func_080770c0(370) != 0) {
-        Func_08015070(*(s32 *)(menu + 16), 9, 1, 9, 3);
-    }
-
-    if (owner_index == -1) {
-        *(u8 *)(menu + offset) = 0;
-    } else {
-        Func_080a1ac0(owner_index * 24 - 10, 16);
-    }
-
-    if (*(u16 *)(menu + 544) == 3) {
-        result = Func_080a7d68();
-    } else {
+    menu = Data_03001f2c;
+    owner = &menu->owner_index[slot];
+    cursor = &menu->cursors[slot];
+    (*cursor)->state = 1;
+    (*cursor)->frame = 0;
+    index = *owner;
+    RenderOutput_RedrawSavedRectFar(menu->window);
+    if (GameFlag_TestFar(0x172))
+        UiWindow_DrawDividerLineFar(menu->window, 9, 1, 9, 3);
+    if (index == -1)
+        *owner = 0;
+    else
+        UiMenu_SlideCursor(index * 24 - 10, 16);
+    if (menu->mode == 3)
+        result = PsynergyMenu_SelectOwner();
+    else
         result = Func_080a7a34();
-    }
-
-    icon = *(void **)(menu + cursor_offset);
-    Func_080a17c4(icon);
+    UiIcon_PrepareObject(*cursor);
     WaitFrames(1);
     return result;
 }

@@ -1,57 +1,19 @@
-#include "TYPES.H"
+/* NONMATCHING: 4708 bytes, candidate 4688, 2190 differing halfwords, 1006
+ * halfword edits (2026-09-25). Scene_RunPairedActorEffectSequence, meant for
+ * FIELD/VINASU_CHOJO/F_02360.C as a single-overlay unit binding its names at
+ * their runtime addresses (an import veneer's listing offset plus 0x8000).
+ * Remaining: Shared field/effect declarations and typed actor coordinates
+ * and effect-option records replace private guessed declarations. This
+ * improves source ownership, not exactness.
+ * WALL: Scene and particle-loop stack/register lifetimes remain structural. */
+#include "FIELD_EFFECT.H"
 
-void Engine_EventBegin();
-void Engine_MapCopyCellAttributes();
-u8 * Engine_ActorGet();
-void Engine_ActorSetPosition();
-u8 * Engine_ActorSetAnimation();
-s32 Engine_ActorEnableActionCallback();
-void Engine_ActorSetSpriteFlags();
-s32 Engine_EventGetViewCenter();
-void Engine_CameraMoveTo();
-void Engine_TaskWait();
-void Engine_MapRedraw();
-void Engine_EventOpenScreen();
-void Engine_EventWaitForScreen();
-void Engine_EventWait();
-void Engine_ActorJump();
 s32 Scene_CallPairWith10();
-void Engine_EventSetMessage();
 void State_ApplyArgMode0AndSet10();
-s32 Engine_ActorFaceDirection();
-s32 Engine_ActorRunRepeatedMotion();
-s32 Engine_ActorSetSpeed();
-void Engine_ActorWalkToAndWait();
-s32 Engine_ActorShowEmote();
-void Engine_ActorSetAnimationAndWait();
-void Engine_ActorStartRepeatedMotion();
-s32 Engine_EventOpenMessage();
-s32 Engine_UiWorkWaitThenFinalizeCapacity();
-void Engine_EventShowMessage();
-void Engine_AudioPlayCue();
-void Engine_ActorStop();
-void Engine_EventShowMessageAndWait();
-s32 Engine_ObjectCreate();
-s32 Engine_HeapAllocate();
-void Engine_ItemLoadIcon();
-void Engine_VramLoad();
-void Engine_HeapRelease();
-s32 Engine_ActorSetSpritePriority();
-void Engine_ObjectSetPosition();
-void Engine_ObjectMotionSetPositionAndCommit();
+void SceneTask_020036d0();
 void Engine_ObjectCommitPosition();
 void Actor_ParkRecord();
-s32 Engine_ActorSetChildValue();
-void Engine_WorkSetValuesIfNonNegative();
-void Engine_ColorBufferApplyTarget();
-void Engine_ColorBufferInterpolate();
-s32 Engine_TaskAddCallback();
 void Scene_RunSetupSequence35c4();
-u8 * Engine_MathCos();
-s32 Engine_MathSin();
-void Effect_Spawn();
-void Engine_ActorSetDestination();
-void Engine_GameFlagSet();
 s32 Engine_GameStateSetReturn();
 void Engine_Import0808a268();
 s32 Engine_Import0808a250();
@@ -62,7 +24,7 @@ extern u8 Data_00000000[];
 extern u8 Data_000000bb[];
 extern u8 Data_02000240[];
 
-/* Call sites spelled through these wrappers pass their constants straight
+/* FAKEMATCH: Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
  * into a pseudo that the compiler then shares with later uses in the block.
  * A value-returning call also sets r0 last of its arguments. */
@@ -121,12 +83,11 @@ struct Half {
     u16 v;
 };
 
-/* NONMATCHING: 4720 of 4708 bytes, 962 halfword edits (2026-09-24). First
- * pass: the zero shared for +85 is a one-halfword struct (movhi pool reach)
- * and 0x8000 is one variable, which places the first pool as the reference
- * has it. The shared constants (0x3000, 10) and the stack size (136) still
- * differ, so the callee-saved assignment cascades through the function. */
-void Func_02002360(void)
+/* The callback stored into the spawned
+ * actor is Local_020036d0 (runtime 0x0200b6d0 plus the Thumb tag), verified
+ * from the decoded ROM pool; it is not null. Remaining mismatch is broad
+ * source shape and register allocation across the scene sequence. */
+void Scene_RunPairedActorEffectSequence(void)
 {
     u32 i;
     s32 p10;
@@ -143,6 +104,9 @@ void Func_02002360(void)
     u8 *rec7;
     u8 *record;
     s32 value;
+    s32 cosine;
+    s32 sine;
+    s32 velocity[3];
     s32 v7;
     s32 v6;
     s32 none;
@@ -160,8 +124,8 @@ void Func_02002360(void)
     s32 slot20;
     u8 *p6;
     u8 *p4;
-    u8 slot96[40];
-    u8 slot44[52];
+    struct EffectOptions slot96;
+    struct EffectOptions slot44;
 
     Engine_EventBegin();
     Call6(Engine_MapCopyCellAttributes, 17, 10, 4, 2, 17, 8);
@@ -173,13 +137,13 @@ void Func_02002360(void)
         *(u16 *)(a + 6) = south;
     }
     Call3(Engine_ActorSetPosition, 1, 0x1480000, 0xa80000);
-    *(u16 *)(Engine_ActorGet(2) + 6) = south;
+    *(u16 *)((u8 *)Engine_ActorGet(2) + 6) = south;
     Call3(Engine_ActorSetPosition, 2, 0x1540000, 0xc40000);
-    *(u16 *)(Engine_ActorGet(3) + 6) = south;
+    *(u16 *)((u8 *)Engine_ActorGet(3) + 6) = south;
     Call3(Engine_ActorSetPosition, 3, 0x1460000, 0xcc0000);
-    *(u16 *)(Engine_ActorGet(6) + 6) = (west = 0x3000);
+    *(u16 *)((u8 *)Engine_ActorGet(6) + 6) = (west = 0x3000);
     Call3(Engine_ActorSetPosition, 6, 0x10c0000, 0x9a0000);
-    *(u16 *)(Engine_ActorGet(21) + 6) = west;
+    *(u16 *)((u8 *)Engine_ActorGet(21) + 6) = west;
     Call3(Engine_ActorSetPosition, 21, 0x10c0000, 0xa40000);
     rec = Value1(Engine_ActorGet, 20);
     {
@@ -213,7 +177,7 @@ void Func_02002360(void)
     Call2((void (*)())Engine_ActorEnableActionCallback, 19, 0x200e074);
     record = Engine_ActorGet(19);
     Call2((void (*)())Engine_ActorSetSpriteFlags, (s32)record, 0);
-    *(u8 *)(Engine_EventGetViewCenter() + 85) = zero.v;
+    *(u8 *)((u8 *)Engine_EventGetViewCenter() + 85) = zero.v;
     Call4(Engine_CameraMoveTo, 0x1300000, 0x200000, 0xb40000, 0);
     Engine_TaskWait(1);
     Engine_MapRedraw();
@@ -227,11 +191,11 @@ void Func_02002360(void)
     Call1(State_ApplyArgMode0AndSet10, 0x1001);
     Call2((void (*)())Scene_CallPairWith10, 3, 0xa000);
     State_ApplyArgMode0AndSet10(3);
-    Call3((void (*)())Engine_ActorFaceDirection, 1, 0x8000, 0);
+    Call3((void (*)())Engine_ObjectMotionArmCallback, 1, 0x8000, 0);
     Value2(Scene_CallPairWith10, 2, 0xa000);
     Call2((void (*)())Engine_ActorRunRepeatedMotion, 21, 2);
     Call3(Engine_ActorSetSpeed, 21, 0xcccc, 0x6666);
-    *(u8 *)(Engine_ActorGet(21) + 90) &= 254;
+    *(u8 *)((u8 *)Engine_ActorGet(21) + 90) &= 254;
     Call3(Engine_ActorWalkToAndWait, 21, 0x118, 164);
     Engine_EventWait(1);
     {
@@ -265,16 +229,16 @@ void Func_02002360(void)
     Call2((void (*)())Engine_ActorRunRepeatedMotion, 1, 1);
     Call2((void (*)())Scene_CallPairWith10, 1, 0x2000);
     Value2(Engine_EventOpenMessage, 1, 0);
-    Call3(Engine_ActorFaceDirection, 2, 0xe000, 0);
-    Call3(Engine_ActorFaceDirection, 3, 0xe000, 0);
+    Call3(Engine_ObjectMotionArmCallback, 2, 0xe000, 0);
+    Call3(Engine_ObjectMotionArmCallback, 3, 0xe000, 0);
     v7 = 1;
     if (Engine_UiWorkWaitThenFinalizeCapacity(0, 0) != 0) {
         *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
         v7 = 0;
     }
     Engine_TaskWait(20);
-    Call3(Engine_ActorFaceDirection, 1, 0x8000, 0);
-    Call3(Engine_ActorFaceDirection, 2, 0xa000, 0);
+    Call3(Engine_ObjectMotionArmCallback, 1, 0x8000, 0);
+    Call3(Engine_ObjectMotionArmCallback, 2, 0xa000, 0);
     Call2((void (*)())Scene_CallPairWith10, 3, 0xa000);
     Call2((void (*)())Scene_CallPairWith10, 21, 0);
     Call2((void (*)())Engine_EventShowMessage, 21, 0);
@@ -294,11 +258,11 @@ void Func_02002360(void)
     *(s32 *)((s32)rec + 28) = 0x10000;
     Engine_TaskWait(1);
     State_ApplyArgMode0AndSet10(20);
-    Call3(Engine_ActorFaceDirection, 21, 0x3000, 0);
-    Call3(Engine_ActorFaceDirection, 0, 0x6000, 0);
-    Call3(Engine_ActorFaceDirection, 1, 0x6000, 0);
-    Call3(Engine_ActorFaceDirection, 2, 0x8000, 0);
-    Call3(Engine_ActorFaceDirection, 3, 0x8000, 40);
+    Call3(Engine_ObjectMotionArmCallback, 21, 0x3000, 0);
+    Call3(Engine_ObjectMotionArmCallback, 0, 0x6000, 0);
+    Call3(Engine_ObjectMotionArmCallback, 1, 0x6000, 0);
+    Call3(Engine_ObjectMotionArmCallback, 2, 0x8000, 0);
+    Call3(Engine_ObjectMotionArmCallback, 3, 0x8000, 40);
     Call2((void (*)())Engine_ActorSetAnimation, 20, 1);
     record = Engine_ActorGet(20);
     Call2((void (*)())Engine_ActorSetSpriteFlags, (s32)record, 1);
@@ -318,11 +282,11 @@ void Func_02002360(void)
     Call2((void (*)())Engine_ActorSetSpriteFlags, (s32)record, 1);
     Call3((void (*)())Engine_ActorJump, 19, 4, 40);
     Call3(Engine_ActorSetSpeed, 19, 0x3333, 0x1999);
-    *(u8 *)(Engine_ActorGet(19) + 90) &= 254;
+    *(u8 *)((u8 *)Engine_ActorGet(19) + 90) &= 254;
     Call3(Engine_ActorWalkToAndWait, 19, 0x128, 186);
     Call3(Engine_ActorSetSpeed, 19, 0x1999, 0xccc);
     Call3(Engine_ActorWalkToAndWait, 19, 0x124, 186);
-    *(u8 *)(Engine_ActorGet(19) + 90) |= 1;
+    *(u8 *)((u8 *)Engine_ActorGet(19) + 90) |= 1;
     record = Value1(Engine_ActorGet, 19);
     *(s32 *)((s32)record + 24) = -0x10000;
     Engine_AudioPlayCue(161);
@@ -337,14 +301,14 @@ void Func_02002360(void)
     Call2((void (*)())Engine_ActorRunRepeatedMotion, 19, 2);
     Engine_EventWait(40);
     State_ApplyArgMode0AndSet10(19);
-    Call3((void (*)())Engine_ActorFaceDirection, 0, 0xa000, 0);
-    Call3(Engine_ActorFaceDirection, 1, 0x2000, 0);
-    Call3(Engine_ActorFaceDirection, 2, 0x6000, 0);
-    Call3(Engine_ActorFaceDirection, 3, 0xe000, 40);
-    Call3(Engine_ActorFaceDirection, 0, 0x6000, 0);
-    Call3(Engine_ActorFaceDirection, 1, 0x6000, 0);
-    Call3(Engine_ActorFaceDirection, 2, 0x8000, 0);
-    Call3(Engine_ActorFaceDirection, 3, 0x8000, 20);
+    Call3((void (*)())Engine_ObjectMotionArmCallback, 0, 0xa000, 0);
+    Call3(Engine_ObjectMotionArmCallback, 1, 0x2000, 0);
+    Call3(Engine_ObjectMotionArmCallback, 2, 0x6000, 0);
+    Call3(Engine_ObjectMotionArmCallback, 3, 0xe000, 40);
+    Call3(Engine_ObjectMotionArmCallback, 0, 0x6000, 0);
+    Call3(Engine_ObjectMotionArmCallback, 1, 0x6000, 0);
+    Call3(Engine_ObjectMotionArmCallback, 2, 0x8000, 0);
+    Call3(Engine_ObjectMotionArmCallback, 3, 0x8000, 20);
     rec = Engine_ActorGet(20);
     {
         s32 shown = 0x3000;
@@ -352,18 +316,18 @@ void Func_02002360(void)
         *(u16 *)((s32)rec + 6) = shown;
     }
     *(s32 *)((s32)rec + 24) = 0x10000;
-    p9b = (s32)Data_00000000;
+    p9b = (s32)SceneTask_020036d0;
     Call2((void (*)())Engine_ActorSetAnimation, 20, 1);
     Engine_EventWait(10);
     Call2((void (*)())Scene_CallPairWith10, 20, 0xd000);
     Call3((void (*)())Engine_ActorJump, 20, 6, 0);
     Engine_EventWait(10);
-    Call3((void (*)())Engine_ActorFaceDirection, 0, 0xa000, 0);
-    Call3((void (*)())Engine_ActorFaceDirection, 1, 0xa000, 0);
-    Call3((void (*)())Engine_ActorFaceDirection, 2, 0xa000, 0);
-    Call3((void (*)())Engine_ActorFaceDirection, 3, 0xa000, 0);
-    Call3((void (*)())Engine_ActorFaceDirection, 21, 0xd000, 0);
-    Call3((void (*)())Engine_ActorFaceDirection, 6, 0, 0);
+    Call3((void (*)())Engine_ObjectMotionArmCallback, 0, 0xa000, 0);
+    Call3((void (*)())Engine_ObjectMotionArmCallback, 1, 0xa000, 0);
+    Call3((void (*)())Engine_ObjectMotionArmCallback, 2, 0xa000, 0);
+    Call3((void (*)())Engine_ObjectMotionArmCallback, 3, 0xa000, 0);
+    Call3((void (*)())Engine_ObjectMotionArmCallback, 21, 0xd000, 0);
+    Call3((void (*)())Engine_ObjectMotionArmCallback, 6, 0, 0);
     rec7 = Value4(Engine_ObjectCreate, 22, *(s32 *)((s32)rec + 8), (*(s32 *)((s32)rec + 12) + 0x80000), *(s32 *)((s32)rec + 16));
     if ((s32)rec7 != 0) {
         p6 = *(s32 *)((s32)rec7 + 80);
@@ -403,7 +367,7 @@ void Func_02002360(void)
         *(s32 *)((s32)rec7 + 40) = 0x80000;
         Call4(Engine_ObjectSetPosition, (s32)rec7, 0x1340000, (v6 << 14), 0xa40000);
     }
-    Call3(Engine_ObjectMotionSetPositionAndCommit, 22, 0x134, 164);
+    Call3(Engine_CameraMoveTo, 22, 0x134, 164);
     Call3((void (*)())Engine_ActorSetPosition, 22, 0, 0);
     Call2((void (*)())Engine_ActorSetSpritePriority, 21, 0);
     if ((s32)rec7 != 0) {
@@ -434,7 +398,7 @@ void Func_02002360(void)
     Call3(Engine_ActorShowEmote, 2, 0x100, 0);
     Call3(Engine_ActorShowEmote, 3, 0x100, 30);
     Call2((void (*)())Engine_ActorSetSpritePriority, 21, 1);
-    *(u8 *)(Engine_ActorGet(21) + 35) |= 1;
+    *(u8 *)((u8 *)Engine_ActorGet(21) + 35) |= 1;
     Call2((void (*)())Engine_ActorStartRepeatedMotion, 2, 2);
     State_ApplyArgMode0AndSet10(2);
     Call2((void (*)())Engine_ActorRunRepeatedMotion, 3, 1);
@@ -442,11 +406,11 @@ void Func_02002360(void)
     Call2((void (*)())Engine_ActorRunRepeatedMotion, 20, 1);
     Engine_EventWait(20);
     State_ApplyArgMode0AndSet10(20);
-    Call3(Engine_ActorFaceDirection, 0, 0x5000, 0);
-    Call3(Engine_ActorFaceDirection, 1, 0x5000, 0);
-    Call3(Engine_ActorFaceDirection, 2, 0x8000, 0);
-    Call3(Engine_ActorFaceDirection, 3, 0x8000, 0);
-    Call3((void (*)())Engine_ActorFaceDirection, 6, 0x3000, 0);
+    Call3(Engine_ObjectMotionArmCallback, 0, 0x5000, 0);
+    Call3(Engine_ObjectMotionArmCallback, 1, 0x5000, 0);
+    Call3(Engine_ObjectMotionArmCallback, 2, 0x8000, 0);
+    Call3(Engine_ObjectMotionArmCallback, 3, 0x8000, 0);
+    Call3((void (*)())Engine_ObjectMotionArmCallback, 6, 0x3000, 0);
     Call2((void (*)())Scene_CallPairWith10, 21, 0x3000);
     Call3(Engine_ActorShowEmote, 21, 0x101, 0);
     Call3(Engine_ActorShowEmote, 6, 0x101, 0);
@@ -456,8 +420,8 @@ void Func_02002360(void)
     Call3(Engine_ActorShowEmote, 3, 0x101, 60);
     Call3(Engine_ActorShowEmote, 20, 0x108, 40);
     State_ApplyArgMode0AndSet10(20);
-    Call3((void (*)())Engine_ActorFaceDirection, 0, 0xa000, 0);
-    Call3(Engine_ActorFaceDirection, 1, 0x2000, 40);
+    Call3((void (*)())Engine_ObjectMotionArmCallback, 0, 0xa000, 0);
+    Call3(Engine_ObjectMotionArmCallback, 1, 0x2000, 40);
     Value2(Engine_EventOpenMessage, 1, 0);
     if (Value2(Engine_UiWorkWaitThenFinalizeCapacity, 0, 0) == 0) {
         Call2((void (*)())Engine_ActorSetAnimation, 1, 3);
@@ -499,11 +463,11 @@ void Func_02002360(void)
     Call3(Engine_ActorShowEmote, 1, 0x100, 0);
     Call3(Engine_ActorShowEmote, 2, 0x100, 0);
     Call3(Engine_ActorShowEmote, 3, 0x100, 0);
-    Call3(Engine_ActorFaceDirection, 1, 0xa000, 0);
-    Call3(Engine_ActorFaceDirection, 2, 0xa000, 0);
-    Call3(Engine_ActorFaceDirection, 3, 0xa000, 0);
-    Call3(Engine_ActorFaceDirection, 21, 0xd000, 0);
-    Call3((void (*)())Engine_ActorFaceDirection, 6, 0, 0);
+    Call3(Engine_ObjectMotionArmCallback, 1, 0xa000, 0);
+    Call3(Engine_ObjectMotionArmCallback, 2, 0xa000, 0);
+    Call3(Engine_ObjectMotionArmCallback, 3, 0xa000, 0);
+    Call3(Engine_ObjectMotionArmCallback, 21, 0xd000, 0);
+    Call3((void (*)())Engine_ObjectMotionArmCallback, 6, 0, 0);
     base6_200e088 = 0x200e088;
     Call2((void (*)())Engine_ActorEnableActionCallback, 24, base6_200e088);
     Call2((void (*)())Engine_ActorEnableActionCallback, 25, base6_200e088);
@@ -535,18 +499,18 @@ void Func_02002360(void)
     Engine_TaskWait(120);
     Call3(Engine_WorkSetValuesIfNonNegative, 0x10000, 0x10000, 0x10000);
     Call2((void (*)())Engine_ActorSetAnimation, 19, 1);
-    Call3((void (*)())Engine_ActorFaceDirection, 19, 0, 0);
+    Call3((void (*)())Engine_ObjectMotionArmCallback, 19, 0, 0);
     record = Engine_ActorGet(19);
     *(s32 *)((s32)record + 24) = 0x10000;
     Call3((void (*)())Engine_ActorJump, 19, 4, 40);
     Call2((void (*)())Engine_ActorRunRepeatedMotion, 19, 1);
     Call3((void (*)())Engine_EventShowMessageAndWait, 19, 0, 20);
-    Call3(Engine_ActorFaceDirection, 0, 0x6000, 0);
-    Call3(Engine_ActorFaceDirection, 1, 0x6000, 0);
-    Call3(Engine_ActorFaceDirection, 2, 0x8000, 0);
-    Call3(Engine_ActorFaceDirection, 3, 0x8000, 0);
-    Call3(Engine_ActorFaceDirection, 21, 0x3000, 0);
-    Call3(Engine_ActorFaceDirection, 6, 0x3000, 20);
+    Call3(Engine_ObjectMotionArmCallback, 0, 0x6000, 0);
+    Call3(Engine_ObjectMotionArmCallback, 1, 0x6000, 0);
+    Call3(Engine_ObjectMotionArmCallback, 2, 0x8000, 0);
+    Call3(Engine_ObjectMotionArmCallback, 3, 0x8000, 0);
+    Call3(Engine_ObjectMotionArmCallback, 21, 0x3000, 0);
+    Call3(Engine_ObjectMotionArmCallback, 6, 0x3000, 20);
     v6 = 128;
     Call2((void (*)())Engine_ActorRunRepeatedMotion, 20, 1);
     State_ApplyArgMode0AndSet10(20);
@@ -567,52 +531,52 @@ void Func_02002360(void)
     Call3((void (*)())Engine_EventShowMessageAndWait, 20, 0, 20);
     Call2((void (*)())Engine_ActorRunRepeatedMotion, 1, 1);
     State_ApplyArgMode0AndSet10(1);
-    Call3(Engine_ActorFaceDirection, 19, 0xb000, 20);
+    Call3(Engine_ObjectMotionArmCallback, 19, 0xb000, 20);
     Call2((void (*)())Engine_ActorRunRepeatedMotion, 19, 1);
     State_ApplyArgMode0AndSet10();
     Call2((void (*)())Engine_ActorStartRepeatedMotion, 0, 1);
     Call2((void (*)())Engine_ActorStartRepeatedMotion, 1, 1);
     Call2((void (*)())Engine_ActorStartRepeatedMotion, 2, 1);
     Call2((void (*)())Engine_ActorRunRepeatedMotion, 3, 1);
-    Call3((void (*)())Engine_ActorFaceDirection, 0, (v6 << 8), 0);
-    Call3((void (*)())Engine_ActorFaceDirection, 1, (v6 << 8), 0);
-    Call3(Engine_ActorFaceDirection, 2, 0xa000, 0);
+    Call3((void (*)())Engine_ObjectMotionArmCallback, 0, (v6 << 8), 0);
+    Call3((void (*)())Engine_ObjectMotionArmCallback, 1, (v6 << 8), 0);
+    Call3(Engine_ObjectMotionArmCallback, 2, 0xa000, 0);
     Value2(Scene_CallPairWith10, 3, 0xa000);
     Call3(Engine_ActorShowEmote, 21, 0x101, 80);
     State_ApplyArgMode0AndSet10(21);
-    Call3((void (*)())Engine_ActorFaceDirection, 0, 0xa000, 0);
-    Call3(Engine_ActorFaceDirection, 1, 0x2000, 0);
-    Call3((void (*)())Engine_ActorFaceDirection, 2, 0x6000, 0);
-    Call3(Engine_ActorFaceDirection, 3, 0xe000, 40);
+    Call3((void (*)())Engine_ObjectMotionArmCallback, 0, 0xa000, 0);
+    Call3(Engine_ObjectMotionArmCallback, 1, 0x2000, 0);
+    Call3((void (*)())Engine_ObjectMotionArmCallback, 2, 0x6000, 0);
+    Call3(Engine_ObjectMotionArmCallback, 3, 0xe000, 40);
     Call2((void (*)())Engine_ActorRunRepeatedMotion, 20, 1);
     State_ApplyArgMode0AndSet10(20);
-    Call3((void (*)())Engine_ActorFaceDirection, 0, (v6 << 8), 0);
-    Call3((void (*)())Engine_ActorFaceDirection, 1, (v6 << 8), 0);
-    Call3((void (*)())Engine_ActorFaceDirection, 2, (v6 << 8), 0);
-    Value3(Engine_ActorFaceDirection, 3, (v6 << 8), 20);
+    Call3((void (*)())Engine_ObjectMotionArmCallback, 0, (v6 << 8), 0);
+    Call3((void (*)())Engine_ObjectMotionArmCallback, 1, (v6 << 8), 0);
+    Call3((void (*)())Engine_ObjectMotionArmCallback, 2, (v6 << 8), 0);
+    Value3(Engine_ObjectMotionArmCallback, 3, (v6 << 8), 20);
     Call2((void (*)())Scene_CallPairWith10, 20, 0xb000);
     State_ApplyArgMode0AndSet10(0x2014);
     Call2((void (*)())Engine_ActorSetAnimationAndWait, 21, 3);
-    Call3((void (*)())Engine_ActorFaceDirection, 21, 0xb000, 60);
-    Call3(Engine_ActorFaceDirection, 21, 0x3000, 40);
+    Call3((void (*)())Engine_ObjectMotionArmCallback, 21, 0xb000, 60);
+    Call3(Engine_ObjectMotionArmCallback, 21, 0x3000, 40);
     ((void (*)())Engine_ActorRunRepeatedMotion)(19, 1);
     State_ApplyArgMode0AndSet10(0x2013);
-    Call3((void (*)())Engine_ActorFaceDirection, 21, 0, 40);
+    Call3((void (*)())Engine_ObjectMotionArmCallback, 21, 0, 40);
     State_ApplyArgMode0AndSet10(21);
-    Call3(Engine_ActorFaceDirection, 20, 0xd000, 40);
+    Call3(Engine_ObjectMotionArmCallback, 20, 0xd000, 40);
     Call2((void (*)())Scene_CallPairWith10, 20, 0xb000);
     State_ApplyArgMode0AndSet10(0x2014);
-    Call3(Engine_ActorFaceDirection, 21, 0x3000, 40);
-    Call3(Engine_ActorFaceDirection, 21, 0x3000, 20);
+    Call3(Engine_ObjectMotionArmCallback, 21, 0x3000, 40);
+    Call3(Engine_ObjectMotionArmCallback, 21, 0x3000, 20);
     Call2((void (*)())Engine_ActorSetAnimationAndWait, 21, 3);
-    Call3((void (*)())Engine_ActorFaceDirection, 19, 0, 40);
-    Call3((void (*)())Engine_ActorFaceDirection, 19, 0xb000, 20);
+    Call3((void (*)())Engine_ObjectMotionArmCallback, 19, 0, 40);
+    Call3((void (*)())Engine_ObjectMotionArmCallback, 19, 0xb000, 20);
     Call3(Engine_ActorShowEmote, 19, 0x101, 40);
     State_ApplyArgMode0AndSet10(0x2013);
     Call2(Scene_CallPairWith10, 21, 0x3000);
     Call3(Engine_ActorShowEmote, 21, 0x101, 20);
     State_ApplyArgMode0AndSet10(21);
-    Value3(Engine_ActorFaceDirection, 20, 0xb000, 20);
+    Value3(Engine_ObjectMotionArmCallback, 20, 0xb000, 20);
     Call2((void (*)())Engine_ActorSetAnimation, 19, 4);
     State_ApplyArgMode0AndSet10(0x2013);
     Call3(Engine_ActorShowEmote, 21, 0x103, 80);
@@ -637,12 +601,12 @@ void Func_02002360(void)
     Call3(Engine_ActorShowEmote, 1, 0x100, 0);
     Call3(Engine_ActorShowEmote, 2, 0x100, 0);
     Call3(Engine_ActorShowEmote, 3, 0x100, 0);
-    Call3((void (*)())Engine_ActorFaceDirection, 2, 0xa000, 0);
-    Call3((void (*)())Engine_ActorFaceDirection, 3, 0xa000, 20);
-    Call3(Engine_ActorFaceDirection, 19, 0x3000, 20);
+    Call3((void (*)())Engine_ObjectMotionArmCallback, 2, 0xa000, 0);
+    Call3((void (*)())Engine_ObjectMotionArmCallback, 3, 0xa000, 20);
+    Call3(Engine_ObjectMotionArmCallback, 19, 0x3000, 20);
     Call2((void (*)())Engine_ActorSetAnimation, 19, 3);
     Call2((void (*)())Engine_ActorSetAnimationAndWait, 20, 3);
-    Call3((void (*)())Engine_ActorFaceDirection, 21, 0xb000, 20);
+    Call3((void (*)())Engine_ObjectMotionArmCallback, 21, 0xb000, 20);
     Call1(State_ApplyArgMode0AndSet10, 0xa015);
     Call3(Engine_ActorSetSpeed, 6, 0x10000, (v6 << 8));
     Call3(Engine_ActorSetSpeed, 21, 0x10000, (v6 << 8));
@@ -658,9 +622,9 @@ void Func_02002360(void)
     Engine_ColorBufferInterpolate(40);
     Call2(Scene_CallPairWith10, 20, 0xd000);
     State_ApplyArgMode0AndSet10(20);
-    Call3((void (*)())Engine_ActorFaceDirection, 0, 0x6000, 0);
-    Call3((void (*)())Engine_ActorFaceDirection, 2, (v6 << 8), 0);
-    Value3(Engine_ActorFaceDirection, 3, (v6 << 8), 0);
+    Call3((void (*)())Engine_ObjectMotionArmCallback, 0, 0x6000, 0);
+    Call3((void (*)())Engine_ObjectMotionArmCallback, 2, (v6 << 8), 0);
+    Value3(Engine_ObjectMotionArmCallback, 3, (v6 << 8), 0);
     Scene_RunSetupSequence35c4();
     Call2((void (*)())Engine_ActorSetChildValue, 20, 7);
     ((void (*)())Engine_ActorSetChildValue)(19, 7);
@@ -675,52 +639,51 @@ void Func_02002360(void)
     State_ApplyArgMode0AndSet10(19);
     Scene_RunSetupSequence35c4();
     rec4 = Engine_ActorGet(19);
-    *(s32 *)(slot96 + 4) = 7;
-    *(s32 *)(slot96 + 36) = 0x20083a1;
-    *(s32 *)(slot96 + 8) = 0x10000;
-    *(s32 *)(slot96 + 12) = 0x10000;
-    p8 = slot96;
+    slot96.palette = 7;
+    slot96.update = (void (*)(union FieldObject *))0x20083a1;
+    slot96.start_scale_x = 0x10000;
+    slot96.start_scale_y = 0x10000;
+    p8 = (s32)&slot96;
     base7_0 = 0;
         base6_54 = 84;
     do {
         slot32 = (base7_0 << 12);
-        record = Engine_MathCos((base7_0 << 12));
-        *(s32 *)(base6_54 + 4) = 0;
-        *(s32 *)base6_54 = (s32)record;
-        value = Engine_MathSin(slot32);
-        *(s32 *)(base6_54 + 8) = (value << 1);
-        *(s32 *)base6_54 += (*(s32 *)base6_54 << 1);
+        cosine = Engine_MathCos(slot32);
+        sine = Engine_MathSin(slot32);
+        velocity[0] = cosine + (cosine << 1);
+        velocity[1] = 0;
+        velocity[2] = sine << 1;
         p4 = *(s32 *)(rec4 + 8);
         slot28 = (s32)p4;
-        p4 = *(s32 *)(base6_54 + 4);
         base7_0 = (base7_0 + 1);
-        Call7(Effect_Spawn, slot28, *(s32 *)(rec4 + 12), *(s32 *)(rec4 + 16), (s32)p4, (value << 1), 0x1090000, p8);
-        v9 = base6_54;
+        Effect_Spawn(slot28, *(s32 *)(rec4 + 12), *(s32 *)(rec4 + 16), velocity[0],
+                     velocity[1], velocity[2], 0x1090000,
+                     (const struct EffectOptions *)p8);
     } while ((u32)base7_0 <= 16);
     Engine_AudioPlayCue(212);
     Engine_TaskWait(6);
     Scene_RunSetupSequence35c4();
     rec4 = Value1(Engine_ActorGet, 20);
-    *(s32 *)(slot44 + 4) = 7;
-    *(s32 *)(slot44 + 36) = 0x20083a1;
-    *(s32 *)(slot44 + 8) = 0x10000;
-    *(s32 *)(slot44 + 12) = 0x10000;
-    p8b = slot44;
+    slot44.palette = 7;
+    slot44.update = (void (*)(union FieldObject *))0x20083a1;
+    slot44.start_scale_x = 0x10000;
+    slot44.start_scale_y = 0x10000;
+    p8b = (s32)&slot44;
     base7_0 = 0;
     p6b = v9;
     do {
         slot24 = (base7_0 << 12);
-        record = Engine_MathCos((base7_0 << 12));
-        *(s32 *)(p6b + 4) = 0;
-        *(s32 *)p6b = (s32)record;
-        value = Engine_MathSin(slot24);
-        *(s32 *)(p6b + 8) = (value << 1);
-        *(s32 *)p6b += (s32)(*(s32 *)p6b << 1);
+        cosine = Engine_MathCos(slot24);
+        sine = Engine_MathSin(slot24);
+        velocity[0] = cosine + (cosine << 1);
+        velocity[1] = 0;
+        velocity[2] = sine << 1;
         p4 = *(s32 *)(rec4 + 8);
         slot20 = (s32)p4;
-        p4 = *(s32 *)(p6b + 4);
         base7_0 = (base7_0 + 1);
-        Call7(Effect_Spawn, slot20, *(s32 *)(rec4 + 12), *(s32 *)(rec4 + 16), (s32)p4, (value << 1), 0x1090000, p8b);
+        Effect_Spawn(slot20, *(s32 *)(rec4 + 12), *(s32 *)(rec4 + 16), velocity[0],
+                     velocity[1], velocity[2], 0x1090000,
+                     (const struct EffectOptions *)p8b);
     } while ((u32)base7_0 <= 16);
     Engine_AudioPlayCue(212);
     Call3((void (*)())Engine_ActorJump, 2, 6, 20);
@@ -731,9 +694,9 @@ void Func_02002360(void)
     Scene_RunSetupSequence35c4();
     Call3(Engine_ActorSetSpeed, 20, 0x3333, 0x1999);
     Call3(Engine_ActorSetSpeed, 19, 0x3333, 0x1999);
-    *(u8 *)(Engine_ActorGet(20) + 90) &= 254;
-    *(u8 *)(Engine_ActorGet(19) + 90) &= 254;
-    Call4(Engine_ActorSetDestination, 20, 0x126, 196, 254);
+    *(u8 *)((u8 *)Engine_ActorGet(20) + 90) &= 254;
+    *(u8 *)((u8 *)Engine_ActorGet(19) + 90) &= 254;
+    Call3(Engine_ActorSetDestination, 20, 0x126, 196);
     Call3(Engine_ActorSetDestination, 19, 0x126, 196);
     Value2(Engine_TaskAddCallback, 0x200b7c5, 0xc80);
     Call2((void (*)())Engine_ActorStartRepeatedMotion, 1, 2);

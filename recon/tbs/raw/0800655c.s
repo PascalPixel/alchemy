@@ -1,7 +1,9 @@
 .syntax unified
 	.thumb
+	.global SerialRuntime_StepBlockTransfer
 	.global Func_0800655c
 	.thumb_func
+SerialRuntime_StepBlockTransfer:
 Func_0800655c:
 	push	{r5, r6, r7, lr}
 	mov	r7, r8

@@ -1,3 +1,7 @@
+/* NONMATCHING: 2043 differing halfwords; 1619 halfword edits.
+ * Compiles to 4176 bytes against the complete 4224-byte owner.
+ * WALL: reference indirect dispatch and later block topology still differ.
+ */
 #include "TYPES.H"
 
 /*
@@ -474,9 +478,6 @@ mark_visible:
             }
             M2C_FIELD(slot, u8 *, 4) = 136;
             state->entryActive[0] = 1;
-            if (mode > 16) {
-                goto commit;
-            }
             switch (mode) {
             case 0:
                 /* Fight: pick a target directly. */

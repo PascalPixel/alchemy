@@ -1,6 +1,15 @@
 {
   "format": 3,
   "owners": {
+    "main:0801ef68": {
+      "name": "UiWindow_DrawColumnBorders"
+    },
+    "main:0801f088": {
+      "name": "UiWindow_DrawStatusBarTiles"
+    },
+    "main:0801f200": {
+      "name": "UiWindow_DrawPartyStatusContents"
+    },
     "main:08010000": {
       "name": "Map_UpdateLayerScroll",
       "source": "FIELD/COMMON/MAP/UPDATE_SCROLL.C"
@@ -21683,7 +21692,6 @@
     "main:08028808": "Menu_CenterResourceEntries",
     "main:08015070": "UiWindow_DrawDividerLineFar",
     "main:0808a5b0": "SaveState_CaptureObjectTableFar",
-    "main:0801f200": "UiWindow_DrawPartyStatusContents",
     "main:080a2420": "UiWork_ClearMenuBusy",
     "main:080191cc": "UiWork_AnimateSpriteSlots",
     "main:080168f4": "UiWork_StepChannelScript",

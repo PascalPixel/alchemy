@@ -1,10 +1,16 @@
+/* Draft, not-yet-c. Score 2026-09-26: 972 of 972 bytes, 11 differing
+ * halfwords (11 aligned edits). Separate object lifetimes and an inline
+ * destination call recover the reference's return-register reuse. Typed
+ * sprite bitfields recover the full-width masks. Sprite initialization
+ * still copies the actor base to r2, holds zero in r3 instead of r1, and
+ * strength-reduces the mask from that zero. The approved allocator dump
+ * and an inline initialization boundary did not close that residual. */
 #include "TYPES.H"
+#include "FIELD_EVENT.H"
 
 /* Absolute dialogue ID shared by the prompt and its completion flag. */
 extern u8 Data_00002644[];
 
-
-#define Function Func_020028e8
 
 void Func_02005422();
 void Func_02006b5c();
@@ -134,11 +140,29 @@ static __inline__ u8 *Pointer4(u8 *(*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
     return f(a0, a1, a2, a3);
 }
 
-void Function(void)
+static __inline__ u8 *PrepareItemSprite(struct FieldActor *obj, s32 zero)
+{
+    struct FieldSprite *sprite;
+    u8 *attr;
+
+    obj->motion_flags = zero;
+    sprite = obj->sprite;
+    attr = (u8 *)sprite + 38;
+    *attr = zero;
+    attr++;
+    *attr = zero;
+    sprite->full_color = 0;
+    sprite->palette = 0;
+    return (u8 *)sprite;
+}
+
+void Scene_RunActorPresentation(void)
 {
     u8 *rec;
+    struct FieldActor *obj;
     u8 *rec7;
-    u8 *record;
+    u8 *shown_actor;
+    u8 *leader;
     s32 base6_200e79c;
     s32 base10_2644;
     u8 *p6;
@@ -163,6 +187,7 @@ void Function(void)
         Func_02006b8c((s32)rec7);
     } else {
         if (*(s32 *)((s32)rec7 + 8) > 0x177a0000) {
+            /* FAKEMATCH: preserve the reference's load through the zero record. */
             Call4(Func_02006b98, (s32)rec7, 0x177a0000, *(s32 *)(rec + 12), 0xd480000);
             Func_02006ba6((s32)rec7);
         }
@@ -176,37 +201,32 @@ void Function(void)
     Func_02006d2e(0, 2);
     Func_02006c84(20);
     Func_02006d1c(0, 28);
-    rec = Pointer4(Func_02006bd8, 22, (*(s32 *)((s32)rec7 + 8) + 0x20000), 0x260000, *(s32 *)((s32)rec7 + 16));
-    if ((s32)rec != 0) {
-        rec[85] = 0;
-        p6 = *(u8 **)(rec + 80);
-        p6[38] = 0;
-        *(u8 *)(((s32)p6 + 38) + 1) = 0;
-        p6[5] &= -33;
-        p6[9] &= 15;
+    obj = (struct FieldActor *)Pointer4(Func_02006bd8, 22, (*(s32 *)((s32)rec7 + 8) + 0x20000), 0x260000, *(s32 *)((s32)rec7 + 16));
+    if (obj != 0) {
+        p6 = PrepareItemSprite(obj, 0);
         tiles = Pointer2(Func_02006bb4, 17, 0x608);
         Func_02006c7c(242);
         tiles += 0x400;
         Func_02006bfc(p6[28], 128, tiles);
         Func_02006bda(17);
         Func_02006cf8_a(20);
-        *(s32 *)((s32)rec + 108) = 0x200813d;
+        obj->update = (void (*)(union FieldObject *))0x200813d;
         Func_02006d02(80);
     }
     base6_200e79c = 0x200e79c;
-    record = Func_02006d32(*(s32 *)base6_200e79c);
+    shown_actor = Func_02006d32(*(s32 *)base6_200e79c);
     {
         s32 shown = 0x3000;
 
-        *(u16 *)(record + 6) = shown;
+        ((struct FieldActor *)shown_actor)->facing = shown;
     }
     Call3(Func_02006e20, *(s32 *)base6_200e79c, 0x100, 0);
     Func_02006dd8(*(s32 *)base6_200e79c, 2);
     base10_2644 = (s32)Data_00002644;
     Func_02006e02(base10_2644);
     Func_02006e24(*(s32 *)base6_200e79c, 0, 80);
-    if ((s32)rec != 0) {
-        Func_02006c86((s32)rec);
+    if (obj != 0) {
+        Func_02006c86((s32)obj);
     }
     Func_02006dde(0, 1);
     Func_02006d54(40);
@@ -250,9 +270,9 @@ void Function(void)
     Func_02006f62(0, 3);
     Func_02006f6a(*(s32 *)base6_200e79c, 3);
     Func_02006f6a_a(*(s32 *)base6_200e79c, 2);
-    record = Pointer1(Func_02006f08_a, 0);
-    if (record != 0) {
-        Func_02006f4a(*(s32 *)base6_200e79c, *(s16 *)(record + 10), *(s16 *)(record + 18));
+    leader = Pointer1(Func_02006f08_a, 0);
+    if (leader != 0) {
+        Call3(Func_02006f4a, *(s32 *)base6_200e79c, *(s16 *)(leader + 10), *(s16 *)(leader + 18));
     }
     Func_02006f78(*(s32 *)base6_200e79c);
     Func_02006f8a(*(s32 *)base6_200e79c, 0, 0);

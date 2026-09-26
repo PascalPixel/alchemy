@@ -1,8 +1,10 @@
-/* NONMATCHING: 264 bytes, 117 differing halfwords, 74 aligned edits.
- * Typed masks recover the pool word 0xffff8000. Available-row induction
- * spills a second word; active-row addressing and register roles differ. */
+/* NONMATCHING: 272 bytes, 123 differing halfwords, 76 aligned edits.
+ * Three structural hypotheses exhausted. Indexed active rows and the
+ * linked 0xffff8000 mask retain three spills and available-offset induction. */
 #include "TYPES.H"
 #include "OWNER_STATE.H"
+
+extern u8 Value_ffff8000;
 
 u32 Unnamed_080ac8fc(u16 *out, u32 id, s32 row_select)
 {
@@ -16,12 +18,12 @@ u32 Unnamed_080ac8fc(u16 *out, u32 id, s32 row_select)
         u32 id_shifted = id << 8;
         u32 *tbl = work->active;
         for (row = 0; row <= 3; row++) {
-            u32 active = *tbl++;
+            u32 active = tbl[row];
             for (bit = 0; bit <= 19; bit++) {
                 u32 mask = 1u << bit;
                 u32 packed;
                 if (active & mask) {
-                    packed = (row << 5) | bit | (u32)(s16)0x8000 | id_shifted;
+                    packed = (row << 5) | bit | (u32)&Value_ffff8000 | id_shifted;
                     out[cnt] = (u16)packed;
                     cnt++;
                 } else if (work->available[row] & mask) {
@@ -38,7 +40,7 @@ u32 Unnamed_080ac8fc(u16 *out, u32 id, s32 row_select)
             u32 mask = 1u << bit;
             u32 packed;
             if (active & mask) {
-                packed = row_shifted | bit | (u32)(s16)0x8000;
+                packed = row_shifted | bit | (u32)&Value_ffff8000;
                 out[cnt] = (u16)packed;
                 cnt++;
             } else if (work->available[row_select] & mask) {

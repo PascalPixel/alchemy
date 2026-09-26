@@ -1,4 +1,8 @@
 /* Draft, not exact (2026-09-26): 1088 of 1088 bytes, 4 differing halfwords.
+   Explicit blend-byte access replaces the -13 mask with 243, keeps a
+   separate interior pointer, and adds a spill slot. This dump-backed
+   ancestry test gave 1100 bytes / 392 halfwords; preserved in history.
+   Restored the four-halfword hardware bitfield model.
    Separate queue-resolution and saved-IME scheduling regions close all
    queue differences. Only the blend-byte load and y-byte store remain one
    scheduling slot apart. A blend-update region merely moves the r8 copy;

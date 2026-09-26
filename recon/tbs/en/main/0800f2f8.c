@@ -1,5 +1,5 @@
 /*
- * NONMATCHING: 1252 bytes, candidate 1244, 610 differing halfwords.
+ * NONMATCHING: 1252 bytes, candidate 1244, 287 differing halfwords.
  * 2026-09-26: audited complete raw owner [0800f2f8,0800f7dc), including
  * its own pools; next whole owner is 0800f7dc, not 0800f7f4. The preceding
  * ebec movement owner returns before this entry. No direct caller was
@@ -26,6 +26,19 @@
  * full CFG equivalence from the now-correct static probe count. Stop this
  * trial for the checkpoint; semantic correctness remains a draft claim
  * until full exact-owner verification. No new DONE bytes.
+ * H2: give the game-state row and both direction tables independent
+ * extern array ownership, as the audited neighbouring movement family
+ * already does. Predict a 02000240 base plus row offset, and indexed
+ * table loads without the literal-address add. Keep flow, frame and
+ * all non-table globals unchanged. One score before the checkpoint;
+ * preserve outcome even if the full owner remains nonmatching.
+ * H2 result: 1244 bytes, 287 differing halfwords, 163 aligned edits;
+ * topology still different. Full normalized difference inspected. The
+ * game-state base is now 02000240 plus 540, both direction tables use
+ * indexed loads, and probe-branch destinations align. This supports the
+ * named-table ownership, not exactness: frame/slots, loop condition,
+ * chained multiply and tail pool remain. H1 is committed at e2dc4bd31.
+ * Two hypotheses used; preserve the third for genuinely new evidence.
  */
 #include "TYPES.H"
 #include "OBJECT_RUNTIME.H"
@@ -42,6 +55,10 @@ struct GameFlagRow {
     u16 first;
     u16 second;
 };
+
+extern struct GameFlagRow Data_02000240[];
+extern const s16 Data_08013254[16];
+extern const s32 Data_0801328c[16];
 
 void Func_0800447c(s32 distance, s32 angle, struct Vec *position);
 s32 Func_080122ac(s32, struct WorldPosition *position);
@@ -73,7 +90,7 @@ s32 Func_0800f2f8(struct ObjectRuntime *object)
 
     mode = 2;
     collision = 0;
-    if (((struct GameFlagRow *)0x02000240)[135].first
+    if (Data_02000240[135].first
         & *(u32 *)0x03001ae8) {
         object->speed_limit = 0x10000;
         object->acceleration = 0x14000;
@@ -87,7 +104,7 @@ s32 Func_0800f2f8(struct ObjectRuntime *object)
         object->speed_limit = 0x40000;
 
     angle = ((*(u32 *)0x03001ae8 >> 4) & 15);
-    angle = ((s16 *)0x08013254)[angle];
+    angle = Data_08013254[angle];
     direction = angle;
     if (direction == 0xffff) {
         collision |= 4;
@@ -222,7 +239,7 @@ movement_done:
     {
         u8 *work = *(u8 **)0x03001e70;
         u16 *turn = (u16 *)(work + 282);
-        s32 rate = ((s32 *)0x0801328c)[(*(u32 *)0x03001ae8 >> 4) & 15];
+        s32 rate = Data_0801328c[(*(u32 *)0x03001ae8 >> 4) & 15];
         difference = (s16)(rate - *turn);
         if (difference < 0)
             difference += 7;

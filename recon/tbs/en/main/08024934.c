@@ -6,6 +6,9 @@
  * bytes (reference 372). Remaining: cursor-coordinate spills, first sprite
  * loop/pools, the inner affordability test and indexed icon traversal.
  * Explicit full-width OAM masks did not recover the first-loop roles.
+ * A two-word cursor-position aggregate forces both coordinate spills, but
+ * gives a 376-byte frame and shifts every fixed local by four bytes
+ * (2124-byte candidate, 641 aligned edits); rejected as the stack model.
  * The old generated draft omitted fifth call arguments and widened byte
  * sprite writes; the typed record now follows those observed accesses. */
 #include "TYPES.H"

@@ -153,6 +153,7 @@ AlchemyC_02000044:
 	.space 0x8
 AlchemyC_0200004c:
 	.space 0x8
+Func_02000054:
 	push	{r5, r6, lr}
 	movs	r0, #0
 	ldr	r5, [pc, #64]
@@ -265,6 +266,7 @@ AlchemyC_0200004c:
 	.4byte 0x03001e70
 	.2byte 0x0240
 	.2byte 0x0200
+Func_02000154:
 	push	{r5, r6, lr}
 	ldr	r3, [pc, #136]
 	ldrh	r2, [r3, #0]
@@ -353,6 +355,7 @@ AlchemyC_020002f4:
 	.2byte 0x0000
 AlchemyC_02000384:
 	.space 0x48
+SaveMenu_Run:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -1419,6 +1422,7 @@ AlchemyC_02000cfc:
 AlchemyC_02000d74:
 	.space 0x6e
 	.2byte 0x0000
+Scene_RunScene370SequenceA:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl

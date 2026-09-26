@@ -878,6 +878,7 @@ AlchemyC_02000038:
 	.4byte 0x02008119
 	.2byte 0x0000
 	.2byte 0xffff
+FixedPoint_Distance:
 	.2byte 0xb520
 	ldmia	r0!, {r5}
 	ldmia	r1!, {r3}
@@ -906,6 +907,7 @@ AlchemyC_02000038:
 	.2byte 0xbd20
 	.2byte 0x02d4
 	.2byte 0x0300
+StagedActor_FindAtTile:
 	push	{r5, lr}
 	movs	r3, #192
 	lsls	r3, r3, #18
@@ -941,6 +943,7 @@ AlchemyC_02000038:
 	movs	r0, #0
 .L_0200038a:
 	pop	{r5, pc}
+StagedActor_AdvancePair:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r9
@@ -1124,6 +1127,7 @@ AlchemyC_02000038:
 	.4byte 0x02009d8c
 	.2byte 0x0000
 	.2byte 0xffff
+StagedActor_FillGridAttributeRectangle:
 	.2byte 0xb560
 	adds	r5, r3, #0
 	ldr	r3, [sp, #12]
@@ -1175,6 +1179,7 @@ AlchemyC_02000038:
 	pop	{r5, r6, pc}
 	.2byte 0x0000
 	.4byte 0x02010000
+	.size StagedActor_FillGridAttributeRectangle, .-StagedActor_FillGridAttributeRectangle
 	.2byte 0x4770
 	.2byte 0x0000
 	push	{lr}

@@ -188,7 +188,7 @@ pub(crate) fn render_options(
         None
     };
     let span = resolve_overlay_span(
-        &crate::overlay::owners::reviewed_spans(root, game)?,
+        &crate::overlay::owners::owner_spans(root, game)?,
         resolved,
         installed,
         options.size,

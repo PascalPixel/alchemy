@@ -611,6 +611,7 @@ AlchemyC_02001a70:
 AlchemyC_02001a9c:
 	.space 0x2a
 	.2byte 0x0000
+Func_02001ac8:
 	push	{r5, r6, lr}
 	movs	r0, #8
 	sub	sp, #8

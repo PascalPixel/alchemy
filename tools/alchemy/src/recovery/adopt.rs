@@ -1,6 +1,6 @@
 //! Adopt an exact Golden Sun candidate: the owner's source lands under
-//! `games/THE BROKEN SEAL/SRC`, the registers learn its name and path, the retained
-//! records inside the span retire, and the overlay placeholder is applied
+//! `games/THE BROKEN SEAL/SRC`, the registers learn its name and path, the
+//! owner labels inside the span retire, and the overlay placeholder is applied
 //! through `overlay adopt`. Every step refuses before it mutates when the
 //! candidate is not exact or the span overlaps another registered region.
 
@@ -128,7 +128,7 @@ pub fn adopt(root: &Path, request: &Request) -> Result<Vec<String>, String> {
         .filter(|m| m.overlay == overlay && m.entry != entry)
         .filter(|m| m.entry < end && m.entry + m.span > entry)
         .filter(|m| m.registered || m.entry < entry || m.entry + m.span > end)
-        .map(|m| format!("{} ({} bytes, {})", m.key(), m.span, m.kind))
+        .map(|m| format!("{} ({} bytes, {})", m.key(), m.span, m.name))
         .collect();
     if !overlapping.is_empty() {
         return Err(format!(
@@ -213,7 +213,6 @@ pub fn adopt(root: &Path, request: &Request) -> Result<Vec<String>, String> {
     // so an adoption either completes or leaves nothing behind for a re-run
     // to trip over.
     let manifest = root.join("recon/tbs/source-paths.json");
-    let assembly = root.join("recon/tbs/semantic/overlay-assembly.json");
     let units = root.join("recon/tbs/translation-units.json");
     let overlay_source: PathBuf = root.join(format!("recon/tbs/raw/overlays/{overlay}_overlay.s"));
     let stems: Vec<String> = {
@@ -237,12 +236,7 @@ pub fn adopt(root: &Path, request: &Request) -> Result<Vec<String>, String> {
     drafts.extend(registered_drafts(root, &unit_document, &overlay, entry));
     drafts.sort();
     drafts.dedup();
-    let mut watched = vec![
-        manifest.clone(),
-        assembly.clone(),
-        units.clone(),
-        overlay_source.clone(),
-    ];
+    let mut watched = vec![manifest.clone(), units.clone(), overlay_source.clone()];
     watched.extend(drafts.iter().cloned());
     let snapshot = Snapshot::take(&watched)?;
     let staged = std::cell::Cell::new(false);
@@ -260,7 +254,6 @@ pub fn adopt(root: &Path, request: &Request) -> Result<Vec<String>, String> {
             relative: &relative,
             destination: &destination,
             manifest: &manifest,
-            assembly: &assembly,
             units: &units,
             overlay_source: &overlay_source,
             drafts: &drafts,
@@ -302,7 +295,6 @@ struct Registration<'a> {
     relative: &'a str,
     destination: &'a Path,
     manifest: &'a Path,
-    assembly: &'a Path,
     units: &'a Path,
     overlay_source: &'a Path,
     drafts: &'a [PathBuf],
@@ -327,7 +319,6 @@ fn register_adoption(
         relative,
         destination,
         manifest,
-        assembly,
         units,
         overlay_source,
         drafts,
@@ -352,10 +343,9 @@ fn register_adoption(
     );
     write_json(manifest, &register, true, true)?;
 
-    // The owner and every absorbed region lose their records. This reads the
-    // retained regions before the ones inside the span are removed below;
-    // afterwards they are gone and nothing would be reported as absorbed,
-    // leaving their names in the register with no evidence behind them.
+    // Every not-yet-C owner labelled inside the span is absorbed. This reads
+    // the listing labels before `overlay adopt` replaces them with the
+    // placeholder; afterwards nothing would be reported as absorbed.
     let mut retired: Vec<SourceOwner> = vec![owner];
     for m in modules(root)? {
         if m.overlay == overlay && m.entry != entry && m.entry >= entry && m.entry + m.span <= end {
@@ -363,21 +353,6 @@ fn register_adoption(
             report.push(format!("absorbed {}", m.key()));
         }
     }
-
-    // Retained regions inside the span retire.
-    let (mut regions, _) = read_json(assembly)?;
-    if let Some(list) = regions.get_mut("regions").and_then(Value::as_array_mut) {
-        let before = list.len();
-        list.retain(|region| {
-            let same = region["overlay"].as_str() == Some(overlay);
-            let start = region["start"]
-                .as_str()
-                .and_then(|s| u32::from_str_radix(s.trim_start_matches("0x"), 16).ok());
-            !(same && start.is_some_and(|s| s >= entry && s < end))
-        });
-        report.push(format!("assembly regions {before} -> {}", list.len()));
-    }
-    write_json(assembly, &regions, true, true)?;
 
     // An absorbed region's name leaves the source register: its bytes are
     // this function's, and an owner with a name but no source would be
@@ -417,14 +392,13 @@ fn register_adoption(
                     kept.push(unit);
                     continue;
                 }
-                // Owners never overlap, so one that starts inside the
-                // adopted owner is the adopted owner.
                 let outside = unit["owners"].as_array().is_some_and(|owners| {
                     owners.iter().any(|o| {
+                        let extent = o["extent"].as_u64().unwrap_or(0) as u32;
                         o["address"]
                             .as_str()
                             .and_then(|s| u32::from_str_radix(s.trim_start_matches("0x"), 16).ok())
-                            .is_none_or(|a| a < entry || a >= end)
+                            .is_none_or(|a| a < entry || a + extent > end)
                     })
                 });
                 if outside {
@@ -470,7 +444,7 @@ fn register_adoption(
     );
     report.push(last);
 
-    let mut staged: Vec<String> = [destination, manifest, assembly, units, overlay_source]
+    let mut staged: Vec<String> = [destination, manifest, units, overlay_source]
         .iter()
         .map(|path| path.to_string_lossy().into_owned())
         .collect();
@@ -607,6 +581,11 @@ fn adopt_unit_source(unit: &mut Value, root: &Path, destination: &Path) -> Resul
             .to_string_lossy()
             .into_owned(),
     );
+    if let Some(owners) = unit["owners"].as_array_mut() {
+        for owner in owners {
+            owner["state"] = Value::String("exact-c".into());
+        }
+    }
     Ok(())
 }
 
@@ -646,7 +625,7 @@ mod tests {
         let mut unit = serde_json::json!({
             "source": "draft.c",
             "absolute_symbols": {"CallAlias": {"address": "0x02009c84", "kind": "thumb"}},
-            "owners": [{"address": "0x0200161c"}]
+            "owners": [{"address": "0x0200161c", "extent": 420, "state": "not-yet-c"}]
         });
         let bindings = unit["absolute_symbols"].clone();
         adopt_unit_source(
@@ -657,6 +636,8 @@ mod tests {
         .unwrap();
         assert_eq!(unit["source"], "src/scene.c");
         assert_eq!(unit["absolute_symbols"], bindings);
+        assert_eq!(unit["owners"][0]["state"], "exact-c");
+        assert_eq!(unit["owners"][0]["extent"], 420);
     }
 
     #[test]

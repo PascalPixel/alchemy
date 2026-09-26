@@ -17,7 +17,7 @@ mod flatten;
 mod format;
 mod generated_files;
 mod http;
-mod land;
+mod matching;
 mod overlay;
 mod parallel;
 mod raw;
@@ -27,8 +27,6 @@ mod score;
 mod siblings;
 mod targets;
 mod text_catalog;
-mod verify;
-mod worklist;
 
 const USAGE: &str = "usage: alchemy <command> [args]\n\
   bootstrap             install or validate the persistent compiler toolchain\n\
@@ -36,18 +34,17 @@ const USAGE: &str = "usage: alchemy <command> [args]\n\
   inspect OWNER         resolve calls and symbols; --asm shows annotated instructions, --siblings twins\n\
   score SOURCE          compile through the approved route and compare the owner\n\
   adopt OWNER           verify and integrate candidate C\n\
+  match SOURCE          search decoder-named, catalogued source repairs\n\
   unit                  scaffold or flatten translation units\n\
   cross-edition         compare historical editions\n\
   build                 build compilers, ROM stages, assets or allocator dumps\n\
-  verify                the landing gate: every make verify gate in waves, one line each\n\
+  verify                verify the staged repository using the build contract\n\
   coverage              rebuild coverage; `coverage audit` inventories executable overlays\n\
   raw                   inspect or rebuild ROM-derived unresolved assembly\n\
   dashboard             serve live coverage on localhost:4650\n\
-  targets               every not-yet-C owner by size, with its draft, difference and wall\n\
-  land BRANCH...        merge lane branches in a landing worktree, prove and squash-commit them\n\
   check                 run repository contract checks\n\
   format                format native game data and check uppercase filenames\n\
-  overlay               trial, try, draft and adopt overlay owners; park, audit, export";
+  overlay               legacy overlay operations during migration";
 
 fn main() -> ExitCode {
     compiler::routing::prefer_installed_binutils();
@@ -73,7 +70,7 @@ fn main() -> ExitCode {
         }
         "dashboard" => result(dashboard::entry(rest)),
         "build" => build::entry(rest),
-        "verify" => verify::entry(rest),
+        "verify" => make_target(command, rest),
         "coverage" if rest.first().map(String::as_str) == Some("audit") => result(
             coverage::audit::run(&compiler::routing::root(), &rest[1..]).map(|line| {
                 println!("{line}");
@@ -82,14 +79,9 @@ fn main() -> ExitCode {
         "coverage" => make_target(command, rest),
         "raw" => result(raw::run(rest)),
         "check" => check::entry(rest),
-        "targets" => result(worklist::entry(rest)),
-        "land" => result(land::entry(rest)),
         "format" => result(format::run(rest)),
         "overlay" => overlay::entry(rest),
         "extract" | "adopt" | "inspect" => recovery_command(command, rest),
-        "score" if rest.iter().any(|arg| arg == "--variants") => {
-            result(score::variants::run(compiler::routing::root(), rest))
-        }
         "score" => match overlay_candidate(rest) {
             Ok(true) => overlay::code(overlay::score::run(crate::compiler::routing::root(), rest)),
             Ok(false) => {
@@ -99,6 +91,7 @@ fn main() -> ExitCode {
             Err(error) => result(Err(error)),
         },
         "cross-edition" => result(cross_edition::run(rest)),
+        "match" => result(matching::run(rest)),
         "-h" | "--help" => {
             println!("{USAGE}");
             ExitCode::SUCCESS

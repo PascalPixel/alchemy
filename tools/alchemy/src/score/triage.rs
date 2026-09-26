@@ -54,12 +54,12 @@ impl ResidualClass {
         match self {
             Self::Exact => "alchemy adopt {owner} --source {source} (complete-owner and production verification still required)",
             Self::LayoutOnly => "alchemy score {source} --align (layout drift: inspect pools and padding, not code)",
-            Self::AllocationCovered => "apply the repair this report names (edit= or structure_repair=) to {source} by hand, then alchemy score {source}",
+            Self::AllocationCovered => "alchemy match {source} (the decoder names a catalogued repair; do not hand-edit first)",
             Self::AllocationUncovered => {
                 "route to the smart queue; do not probe register roles by respelling source (measured: such probes regress)"
             }
             Self::SchedulingFloor => {
-                "alchemy build allocator {owner}, then read its .sched2 and .lreg dumps (the scheduling decision; no automatic repair is established)"
+                "alchemy build allocator {owner}, then psynergy inspect allocator DUMP_DIR (read the scheduling decision; no automatic repair is established)"
             }
             Self::TypeWidthMismatch => {
                 "alchemy score {source} --align (recover widths and signedness from the access-width evidence)"

@@ -13,8 +13,6 @@ use std::sync::OnceLock;
 
 pub const RESOURCE_BASE: u32 = 0x0200_0000;
 pub const RUNTIME_BASE: u32 = 0x0200_8000;
-/// The GBA's 32 KiB internal work RAM holds the ARM arithmetic imports.
-const IWRAM: std::ops::Range<u32> = 0x0300_0000..0x0300_8000;
 
 use psynergy::thumb::bl_displacement as displacement;
 
@@ -67,44 +65,6 @@ pub fn placeholder_block(lines: &[&str], address: i64) -> Option<Placeholder> {
         end += 1;
     }
     (span > 0).then_some(Placeholder { start, end, span })
-}
-/// Every `AlchemyC_` placeholder's address and extent, as `placeholder_extent`
-/// reads each; a placeholder spelled twice or without space is left out.
-pub fn placeholder_extents(text: &str) -> BTreeMap<u32, usize> {
-    let lines = text.lines().collect::<Vec<_>>();
-    let mut extents = BTreeMap::new();
-    let mut refused = BTreeSet::new();
-    for (index, line) in lines.iter().enumerate() {
-        let Some(address) = line
-            .trim()
-            .strip_prefix("AlchemyC_")
-            .and_then(|rest| rest.strip_suffix(':'))
-            .and_then(|hex| u32::from_str_radix(hex, 16).ok())
-        else {
-            continue;
-        };
-        let mut span = Some(0i64);
-        for line in lines[index + 1..].iter().map(|line| line.trim()) {
-            if line.starts_with(".space ") {
-                span = span
-                    .zip(space_size(line))
-                    .and_then(|(span, size)| span.checked_add(size));
-            } else if !(line.starts_with(".L_") && line.ends_with(':')) {
-                break;
-            }
-        }
-        match span
-            .filter(|span| *span > 0)
-            .and_then(|span| usize::try_from(span).ok())
-        {
-            Some(span) if extents.insert(address, span).is_none() => {}
-            _ => {
-                refused.insert(address);
-            }
-        }
-    }
-    extents.retain(|address, _| !refused.contains(address));
-    extents
 }
 pub fn placeholder_extent(text: &str, address: u32) -> Option<usize> {
     let lines = text.lines().collect::<Vec<_>>();
@@ -322,8 +282,8 @@ pub fn main_image(target: CompilerTarget) -> Result<&'static [u8], String> {
         .map_err(Clone::clone)
 }
 
-/// Each ROM or IWRAM import veneer of an overlay, by runtime address, with the
-/// addresses a call through it passes: its target, then each far-call
+/// Each main-image import veneer of an overlay, by runtime address, with the
+/// main addresses a call through it passes: its target, then each far-call
 /// veneer (`SYSTEM/FAR_CALL/OBJECT.S`) up to the final function. The loader never
 /// rewrites a veneer, so either image form serves.
 pub fn import_veneers(reference: &[u8], main: &[u8]) -> Vec<(u64, Vec<u32>)> {
@@ -340,10 +300,6 @@ fn main_call_chain(main: &[u8], mut target: u32) -> Vec<u32> {
     let mut chain = Vec::new();
     loop {
         let address = target & !1;
-        if IWRAM.contains(&address) {
-            chain.push(address);
-            break;
-        }
         let Some(offset) = address
             .checked_sub(MAIN_BASE)
             .map(|offset| offset as usize)
@@ -623,17 +579,6 @@ mod tests {
     }
 
     #[test]
-    fn import_veneers_preserve_iwram_arithmetic_targets() {
-        let mut reference = veneer(0x0300_03ac);
-        reference.extend(veneer(0x0200_8101));
-        reference.extend(veneer(0x0400_0000));
-        assert_eq!(
-            import_veneers(&reference, &[]),
-            [(u64::from(RUNTIME_BASE), vec![0x0300_03ac])]
-        );
-    }
-
-    #[test]
     fn import_veneer_chain_resolves_through_main_far_call_veneer() {
         let mut main = vec![0; 0x100];
         main[0x40..0x48].copy_from_slice(&veneer(0x0800_0081));
@@ -690,11 +635,12 @@ mod tests {
                 names: &names,
             };
             let list = std::fs::read_to_string(root.join(image.import_list())).unwrap();
-            // Compare every listed import, including the IWRAM arithmetic entries.
+            // Imports of IWRAM routines are veneers too, but reach no main owner.
             let listed = list
                 .split(|c: char| c == ',' || c.is_whitespace())
                 .filter_map(|word| u32::from_str_radix(word.strip_prefix("0x")?, 16).ok())
                 .map(|target| target & !1)
+                .filter(|target| (MAIN_BASE..MAIN_BASE + main.len() as u32).contains(target))
                 .collect::<Vec<_>>();
             let found = import_veneers(&reference, main)
                 .into_iter()

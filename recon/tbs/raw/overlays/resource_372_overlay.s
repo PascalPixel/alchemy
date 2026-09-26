@@ -1555,6 +1555,7 @@ AlchemyC_02002d28:
 	.space 0xc4
 AlchemyC_02002dec:
 	.space 0x3c0
+Scene_RunActorGroupDepartureSequence:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl

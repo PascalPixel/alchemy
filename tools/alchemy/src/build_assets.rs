@@ -2030,7 +2030,7 @@ fn typed_pointer_tables_use_their_own_games_register() {
     }
     fs::write(
         root.join("TABLE.JSON"),
-        r#"{"format":1,"kind":"typed-table","size":4,"segments":[
+        r#"{"format":1,"kind":"typed-table","address":0,"size":4,"segments":[
             {"end":4,"stride":4,"element":"thumb-pointer","values":["Callback_Run"]}]}"#,
     )
     .unwrap();
@@ -2043,20 +2043,6 @@ fn typed_pointer_tables_use_their_own_games_register() {
         let mut ctx = Context::for_game(root, crate::targets::target_for(id));
         assert_eq!(build_entry(&mut ctx, &entry).unwrap().0, expected, "{id}");
     }
-    // The region places the table; a table that records its own address is refused.
-    fs::write(
-        root.join("PLACED.JSON"),
-        r#"{"format":1,"kind":"typed-table","address":0,"size":4,"segments":[
-            {"end":4,"stride":4,"element":"le-u32","values":[0]}]}"#,
-    )
-    .unwrap();
-    let placed =
-        serde_json::json!({"kind":"typed-table","source":"PLACED.JSON","address":0,"size":4});
-    let mut ctx = Context::for_game(
-        root,
-        crate::targets::target_for(crate::targets::DecompTargetId::TbsEn),
-    );
-    assert!(build_entry(&mut ctx, &placed).is_err());
 }
 
 /// Derive a stream directory: one `le-u32` word per index giving where that
@@ -2201,77 +2187,6 @@ fn resolve_table_bitmaps(document: &mut Value, root: &Path) -> Result<Vec<String
         sources.push(name.to_string());
     }
     Ok(sources)
-}
-
-/// Where the registries place each table: `(source, pointer)` to address,
-/// the pointer empty for a whole document. Container parts follow one another
-/// from their container's address, as the builder lays them out; parts inside
-/// a compressed stream have no ROM address. A placed table records no address
-/// of its own.
-pub(crate) fn placements(root: &Path) -> Result<BTreeMap<(String, String), usize>, String> {
-    fn walk(
-        root: &Path,
-        region: &Value,
-        address: Option<usize>,
-        placed: &mut BTreeMap<(String, String), usize>,
-    ) -> Result<(), String> {
-        let source = region["source"].as_str();
-        if let (Some(source), Some(address)) = (source, address) {
-            let pointer = region.get("pointer").and_then(Value::as_str).unwrap_or("");
-            placed.insert((source.to_string(), pointer.to_string()), address);
-        }
-        if region["kind"] != "components" {
-            return Ok(());
-        }
-        let parts = match (&region["components"], source) {
-            (Value::Array(parts), _) => parts.clone(),
-            (_, Some(source)) => {
-                let pointer = region
-                    .get("pointer")
-                    .and_then(Value::as_str)
-                    .unwrap_or("/components");
-                json(&root_path(root, source)?)?
-                    .pointer(pointer)
-                    .and_then(Value::as_array)
-                    .cloned()
-                    .unwrap_or_default()
-            }
-            _ => Vec::new(),
-        };
-        let mut at = address;
-        for part in &parts {
-            walk(root, part, at, placed)?;
-            at = match at {
-                Some(at) => Some(at + number(&part["size"], "component size")?),
-                None => None,
-            };
-        }
-        Ok(())
-    }
-    let mut placed = BTreeMap::new();
-    for target in native::games() {
-        for registry in [
-            format!("{}/assets.json", target.recon_dir()),
-            native::NativePaths::of(&target).index,
-        ] {
-            let document = json(&root.join(&registry))?;
-            for region in ["regions", "edition_regions"]
-                .iter()
-                .flat_map(|key| document[*key].as_array().into_iter().flatten())
-            {
-                let address = number(&region["address"], "region address")?;
-                walk(root, region, Some(address), &mut placed)?;
-            }
-        }
-    }
-    Ok(placed)
-}
-/// Where the registries place the table at `source` and `pointer`.
-pub(crate) fn placed_address(root: &Path, source: &str, pointer: &str) -> Result<usize, String> {
-    placements(root)?
-        .get(&(source.to_string(), pointer.to_string()))
-        .copied()
-        .ok_or_else(|| format!("no region places {source}{pointer}"))
 }
 
 /// Where each segment of a typed table starts. Segments follow one another
@@ -3618,22 +3533,6 @@ fn manifest_fill_is_a_byte_value_not_a_rom_lookup() {
     entry["value"] = Value::from(-1);
     assert!(build_entry(&mut context, &entry).is_err());
 }
-/// The manifest's resource directory with the address its region places it at.
-fn resource_directory(ctx: &Context, manifest: &Value) -> Result<Option<Value>, String> {
-    let Some(name) = manifest.get("resource_directory") else {
-        return Ok(None);
-    };
-    let name = json_string(name, "resource directory")?;
-    let mut directory = json(&ctx.source(name)?)?;
-    let region = manifest["regions"]
-        .as_array()
-        .into_iter()
-        .flatten()
-        .find(|region| region["source"] == name && region.get("pointer").is_none())
-        .ok_or("no region places the resource directory")?;
-    directory["address"] = region["address"].clone();
-    Ok(Some(directory))
-}
 /// A fill the manifest lists by itself is the linker's zero padding before a
 /// fixed placement: it must end at a module base the resource directory
 /// names (a slot below the directory table), at the directory table, or at
@@ -4517,17 +4416,13 @@ fn build_entry(ctx: &mut Context, entry: &Value) -> Result<(Vec<u8>, Vec<String>
             if document["format"] != 1 || document["kind"] != kind {
                 return Err("table identity differs".into());
             }
+            if kind == "pointer-table" && number(&document["address"], "table address")? != address
+            {
+                return Err("table address differs from manifest".into());
+            }
             let built = if kind == "record-table" {
                 record_table(&document)?
             } else {
-                // The region places the table; the table records no address.
-                if document.get("address").is_some() {
-                    return Err(format!(
-                        "the table placed at {address:#x} records its own address; its region places it"
-                    ));
-                }
-                let mut document = document.clone();
-                document["address"] = Value::from(address);
                 pointer_table(&document)?
             };
             Ok((
@@ -6248,14 +6143,10 @@ fn build_entry_native_tail(
             } else {
                 &source
             };
-            // The region places the table; the table itself records no address.
-            if document.get("address").is_some() {
-                return Err(format!(
-                    "the table placed at {address:#x} records its own address; its region places it"
-                ));
+            if number(&document["address"], "table address")? != address {
+                return Err("table address differs from manifest".into());
             }
             let mut document = document.clone();
-            document["address"] = Value::from(address);
             resolve_stream_offsets(&mut document, &source)?;
             let has_symbols = document["segments"]
                 .as_array()
@@ -6972,9 +6863,8 @@ fn align_streams<'a>(
     failures: &mut Vec<String>,
 ) -> Result<Vec<(&'a Value, BuiltRegion)>, String> {
     let mut aligned = match manifest.get("resource_directory") {
-        Some(_) => {
-            let directory =
-                resource_directory(ctx, manifest)?.ok_or("resource directory absent")?;
+        Some(name) => {
+            let directory = json(&ctx.source(json_string(name, "resource directory")?)?)?;
             let machine = json(&ctx.source(json_string(
                 &manifest["machine"],
                 "reference machine definition",
@@ -7087,7 +6977,12 @@ fn native_asset_main(arguments: &[String]) -> Result<(), String> {
         .and_then(Value::as_array)
         .cloned()
         .unwrap_or_default();
-    let directory = resource_directory(&ctx, &manifest)?;
+    let directory = match manifest.get("resource_directory") {
+        Some(name) => Some(json(
+            &ctx.source(json_string(name, "resource directory")?)?,
+        )?),
+        None => None,
+    };
     check_fill_placements(&entries, directory.as_ref(), ROM_BASE + rom_size)?;
     expand_closure_packages(&mut ctx, &manifest, &mut entries)?;
     expand_series(&mut ctx, &manifest, &mut entries)?;

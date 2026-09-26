@@ -475,10 +475,7 @@ pub fn function_source(entry: u32, draft: &Draft) -> String {
     text.push_str(&format!(
         "{returns} Func_{entry:08x}({signature})\n{{\n    u32 i;\n"
     ));
-    for v in vars
-        .iter()
-        .filter(|v| !consts.contains(v) && !params.contains(v))
-    {
+    for v in vars.iter().filter(|v| !consts.contains(v)) {
         if v == "work" || indexed_anywhere(&lines, v) {
             text.push_str(&format!("    u8 *{v};\n"));
         } else {
@@ -489,10 +486,7 @@ pub fn function_source(entry: u32, draft: &Draft) -> String {
         text.push_str(&format!("    s32 {r};\n"));
     }
     let replaced = by_value.clone().unwrap_or_default();
-    for c in consts
-        .iter()
-        .filter(|c| !replaced.contains(c) && !params.contains(c))
-    {
+    for c in consts.iter().filter(|c| !replaced.contains(c)) {
         let frame = c
             .strip_prefix("slot")
             .and_then(|d| d.parse::<u32>().ok())
@@ -775,27 +769,6 @@ mod tests {
         assert!(unit.contains("static __inline__ void Call2("));
         assert!(!unit.contains("Call1("));
         assert!(!unit.contains("DMA.H"));
-    }
-
-    #[test]
-    fn assigned_parameters_are_not_redeclared_as_locals() {
-        let draft = Draft {
-            lines: vec![
-                "    a0 = a0 + 1;".into(),
-                "    value = a0;".into(),
-                "    record = value;".into(),
-            ],
-            params: vec!["a0".into()],
-            param_types: BTreeMap::new(),
-            consts: vec!["a0".into()],
-            frames: Vec::new(),
-        };
-
-        let source = function_source(0x02000100, &draft);
-        assert!(source.contains("void Func_02000100(s32 a0)"));
-        assert!(!source.contains("s32 a0;"));
-        assert!(source.contains("s32 value;"));
-        assert!(source.contains("a0 = a0 + 1;"));
     }
 
     #[test]

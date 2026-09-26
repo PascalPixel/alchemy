@@ -1,7 +1,7 @@
-/* DRAFT: 568/572 bytes, 251 differing halfwords, 185 aligned edits. The
+/* DRAFT: 564/572 bytes, 266 differing halfwords, 207 aligned edits. The
  * linked mask now uses ands, but the short-reach message puts the first
- * pool at +0xa0 instead of the reference +0xe8. The index stays in fp
- * instead of sp+44; the window occupies sp+44 instead of sp+32. The ROM
+ * pool at +0x9c instead of the reference +0xe8. The index stays in fp
+ * instead of sp+44; the window occupies sp+48 instead of sp+32. The ROM
  * keeps the mask in fp and the offer flag in r8. The 0x03001F2C work pointer
  * derives the window pointer by subs #160 as in the ROM. Not adopted. */
 #include "TYPES.H"
@@ -50,6 +50,17 @@
  * but v still lives in r2 and the offer flag spills around both queries.
  * The reference's 52-byte frame remains; first and inner list indices
  * still share fp. This is not an accepted model of the whole frame.
+ * H5: exact DJINN/SHOW_CURRENT_LIST.C gives setup loops their own block
+ * counter; allocator evidence shows our shared i occupies fp in both
+ * fill and render loops. Split only that lifetime. Prediction: independent
+ * counters permit the reference spill/mask ownership without changing
+ * row-pointer induction or call arguments. This is the final follow-up.
+ * H5 result: 564/572, 266 differing halfwords, 207 aligned edits; full
+ * diff read. The separate fill counter spills around its call, but grows
+ * the frame to 56/52 bytes and leaves the render index in fp. Rejected as
+ * a closing model. STOP: resumed one-model/two-follow-up budget exhausted;
+ * zero new DONE. H3 pointer induction and H4 single query load are useful
+ * local facts, not a credible whole-frame match. Preserve and move on.
  */
 extern u8 Value_00008000;
 extern u8 Value_00000bad;
@@ -104,8 +115,12 @@ void DjinnMenu_DrawElementList(struct DjinnListTable *tbl)
     state = *(struct MenuWork **)((u8 *)&gWindowWork + 0xa0);
     window = gWindowWork.window;
     window[0xea6] = 1;
-    for (i = 0; i < state->owner_count; i++)
-        tbl->counts[i] = Unnamed_080ac8fc(tbl->ids[i], state->owners[i], -1);
+    {
+        s32 owner;
+
+        for (owner = 0; owner < state->owner_count; owner++)
+            tbl->counts[owner] = Unnamed_080ac8fc(tbl->ids[owner], state->owners[owner], -1);
+    }
     RenderOutput_RedrawSavedRectFar(state->window);
     UiText_DrawCharacterAtOffsetFar((u16)(u32)&Value_00000bad, state->window, 0, 80);
     for (row = 0, row_ids = tbl->ids[0]; row < state->owner_count; row++, row_ids += 10) {

@@ -5246,7 +5246,7 @@ AlchemyC_020059f0:
 .L_020059f2:
 	.space 0x34
 	.2byte 0x0000
-Func_02005a28:
+VinasuChojo_SpawnRisingSparks:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r9

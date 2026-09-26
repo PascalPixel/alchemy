@@ -124,7 +124,7 @@ AlchemyC_020000ec:
 	.space 0x92
 .L_0200017e:
 	.space 0x96
-Func_02000214:
+DebugMenu_SelectItem:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r9
@@ -430,7 +430,7 @@ Func_02000214:
 	.4byte 0x0000010d
 	.2byte 0x010f
 	.2byte 0x0000
-Func_020004b0:
+DebugMenu_SelectAbility:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r9

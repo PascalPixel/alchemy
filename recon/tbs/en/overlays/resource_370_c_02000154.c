@@ -12,7 +12,7 @@
 extern volatile u16 Data_04000208;
 extern u16 Data_020096b0;
 
-void Local_02000154(void);
+void Func_02000154(void);
 
 /* Queue a register write with interrupts masked; the value is evaluated only
  * when the queue has room. */
@@ -41,7 +41,7 @@ void Local_02000154(void);
     } while (0)
 
 /* Fade the blend in step by step each frame; remove itself once full. */
-void Local_02000154(void)
+void Func_02000154(void)
 {
     s32 level;
 
@@ -49,5 +49,5 @@ void Local_02000154(void)
     QUEUE_WRITE(0x4000050, 0x2e51);
     QUEUE_WRITE(0x4000052, ((16 - (u16)level) << 8) | (u16)level);
     if ((u16)level > 15)
-        Engine_TaskRemoveCallback(Local_02000154);
+        Engine_TaskRemoveCallback(Func_02000154);
 }

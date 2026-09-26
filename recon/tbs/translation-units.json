@@ -79727,6 +79727,1085 @@
           "extent": 316
         }
       ]
+    },
+    {
+      "id": "ovd-3cd-02000214",
+      "source": "recon/tbs/en/overlays/resource_3cd_c_02000214.c",
+      "overlay": "resource_3cd",
+      "absolute_symbols": {
+        "Engine_DebugGetItem": {
+          "address": "0x02008860",
+          "kind": "thumb"
+        },
+        "gDebugKeysPressed": {
+          "address": "0x03001c94",
+          "kind": "data"
+        },
+        "gDebugKeysRepeated": {
+          "address": "0x03001b04",
+          "kind": "data"
+        },
+        "Engine_DebugCreateWindow": {
+          "address": "0x020087f0",
+          "kind": "thumb"
+        },
+        "Engine_DebugFinalizeWindow": {
+          "address": "0x020087f8",
+          "kind": "thumb"
+        },
+        "Engine_DebugRedrawWindow": {
+          "address": "0x02008830",
+          "kind": "thumb"
+        },
+        "Engine_DebugClearWindow": {
+          "address": "0x02008838",
+          "kind": "thumb"
+        },
+        "Engine_DebugDrawItemDetails": {
+          "address": "0x020088c0",
+          "kind": "thumb"
+        },
+        "Engine_AudioPlayCue": {
+          "address": "0x020088c8",
+          "kind": "thumb"
+        },
+        "Engine_TaskWait": {
+          "address": "0x020087e8",
+          "kind": "thumb"
+        },
+        "gDebugItemPrompt": {
+          "address": "0x020088d4",
+          "kind": "data"
+        },
+        "gDebugItemCapacityLabel": {
+          "address": "0x020088e0",
+          "kind": "data"
+        },
+        "gDebugItemFullLabel": {
+          "address": "0x020088f8",
+          "kind": "data"
+        },
+        "Engine_DebugRemainder": {
+          "address": "0x020087e0",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02000214",
+          "extent": 668
+        }
+      ]
+    },
+    {
+      "id": "ovd-3cd-020004b0",
+      "source": "recon/tbs/en/overlays/resource_3cd_c_020004b0.c",
+      "overlay": "resource_3cd",
+      "absolute_symbols": {
+        "gDebugKeysPressed": {
+          "address": "0x03001c94",
+          "kind": "data"
+        },
+        "gDebugKeysRepeated": {
+          "address": "0x03001b04",
+          "kind": "data"
+        },
+        "Engine_DebugCreateWindow": {
+          "address": "0x020087f0",
+          "kind": "thumb"
+        },
+        "Engine_DebugFinalizeWindow": {
+          "address": "0x020087f8",
+          "kind": "thumb"
+        },
+        "Engine_DebugRedrawWindow": {
+          "address": "0x02008830",
+          "kind": "thumb"
+        },
+        "Engine_DebugClearWindow": {
+          "address": "0x02008838",
+          "kind": "thumb"
+        },
+        "Main_08015078": {
+          "address": "0x02008800",
+          "kind": "thumb"
+        },
+        "Engine_AudioPlayCue": {
+          "address": "0x020088c8",
+          "kind": "thumb"
+        },
+        "Engine_TaskWait": {
+          "address": "0x020087e8",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x020004b0",
+          "extent": 584
+        }
+      ]
+    },
+    {
+      "id": "ovd-39c-02001db4",
+      "source": "recon/tbs/en/overlays/resource_39c_c_02001db4.c",
+      "overlay": "resource_39c",
+      "absolute_symbols": {
+        "Engine_AudioPlayCue": {
+          "address": "0x0200dc64",
+          "kind": "thumb"
+        },
+        "Engine_MapCopyCellsTo": {
+          "address": "0x0200da04",
+          "kind": "thumb"
+        },
+        "Engine_RandomNext": {
+          "address": "0x0200d994",
+          "kind": "thumb"
+        },
+        "Engine_EventWait": {
+          "address": "0x0200daac",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02001db4",
+          "extent": 636
+        }
+      ]
+    },
+    {
+      "id": "ovd-3a5-02000e2c",
+      "source": "recon/tbs/en/overlays/resource_3a5_c_02000e2c.c",
+      "overlay": "resource_3a5",
+      "absolute_symbols": {
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "Engine_GameFlagSet": {
+          "address": "0x02009d4c",
+          "kind": "thumb"
+        },
+        "Engine_ActorGet": {
+          "address": "0x02009d74",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpeed": {
+          "address": "0x02009d7c",
+          "kind": "thumb"
+        },
+        "Engine_ObjectSetPosition": {
+          "address": "0x02009d04",
+          "kind": "thumb"
+        },
+        "Engine_AudioPlayCue": {
+          "address": "0x02009e44",
+          "kind": "thumb"
+        },
+        "Engine_ActorShowEmote": {
+          "address": "0x02009dec",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetAnimation": {
+          "address": "0x02009dac",
+          "kind": "thumb"
+        },
+        "Engine_TaskWait": {
+          "address": "0x02009c8c",
+          "kind": "thumb"
+        },
+        "Engine_EventWait": {
+          "address": "0x02009d5c",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02000e2c",
+          "extent": 552
+        }
+      ]
+    },
+    {
+      "id": "ovd-3c0-02000b24",
+      "source": "recon/tbs/en/overlays/resource_3c0_c_02000b24.c",
+      "overlay": "resource_3c0",
+      "absolute_symbols": {
+        "Engine_GameFlagClear": {
+          "address": "0x0200925c",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagSet": {
+          "address": "0x02009254",
+          "kind": "thumb"
+        },
+        "Main_080770e8": {
+          "address": "0x0200926c",
+          "kind": "thumb"
+        },
+        "Engine_Import0808a250": {
+          "address": "0x0200933c",
+          "kind": "thumb"
+        },
+        "Engine_ActorStop": {
+          "address": "0x020092a4",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetPosition": {
+          "address": "0x020092cc",
+          "kind": "thumb"
+        },
+        "Engine_ActorGet": {
+          "address": "0x0200928c",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02000b24",
+          "extent": 220
+        }
+      ]
+    },
+    {
+      "id": "ovd-36f-020002e8",
+      "source": "recon/tbs/en/overlays/resource_36f_c_020002e8.c",
+      "overlay": "resource_36f",
+      "absolute_symbols": {
+        "Local_02000454": {
+          "address": "0x02008454",
+          "kind": "thumb"
+        },
+        "Engine_EventWait": {
+          "address": "0x020085a8",
+          "kind": "thumb"
+        },
+        "Engine_TaskAddCallback": {
+          "address": "0x02008540",
+          "kind": "thumb"
+        },
+        "Engine_TaskWait": {
+          "address": "0x02008538",
+          "kind": "thumb"
+        },
+        "Engine_EventOpenScreen": {
+          "address": "0x020085c0",
+          "kind": "thumb"
+        },
+        "Engine_EventWaitForScreen": {
+          "address": "0x020085c8",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x020002e8",
+          "extent": 364
+        }
+      ]
+    },
+    {
+      "id": "ovd-36f-02000454",
+      "source": "recon/tbs/en/overlays/resource_36f_c_02000454.c",
+      "overlay": "resource_36f",
+      "absolute_symbols": {
+        "Main_080002a8": {
+          "address": "0x02008588",
+          "kind": "thumb"
+        },
+        "Main_08000290": {
+          "address": "0x02008578",
+          "kind": "thumb"
+        },
+        "Main_080001a8": {
+          "address": "0x02008558",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02000454",
+          "extent": 228
+        }
+      ]
+    },
+    {
+      "id": "ovd-370-02000154",
+      "source": "recon/tbs/en/overlays/resource_370_c_02000154.c",
+      "overlay": "resource_370",
+      "absolute_symbols": {
+        "Engine_TaskRemoveCallback": {
+          "address": "0x02009334",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02000154",
+          "extent": 168
+        }
+      ]
+    },
+    {
+      "id": "ovd-370-02000054",
+      "source": "recon/tbs/en/overlays/resource_370_c_02000054.c",
+      "overlay": "resource_370",
+      "absolute_symbols": {
+        "Main_080002a8": {
+          "address": "0x02009364",
+          "kind": "thumb"
+        },
+        "Main_08000290": {
+          "address": "0x0200935c",
+          "kind": "thumb"
+        },
+        "Main_080001a8": {
+          "address": "0x0200934c",
+          "kind": "thumb"
+        },
+        "Engine_ActorGet": {
+          "address": "0x0200949c",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02000054",
+          "extent": 256
+        }
+      ]
+    },
+    {
+      "id": "ovd-3a4-02001d0c",
+      "source": "recon/tbs/en/overlays/resource_3a4_c_02001d0c.c",
+      "overlay": "resource_3a4",
+      "absolute_symbols": {
+        "Engine_ActorGet": {
+          "address": "0x0200bb98",
+          "kind": "thumb"
+        },
+        "Engine_EventBegin": {
+          "address": "0x0200bb70",
+          "kind": "thumb"
+        },
+        "Engine_ActorStop": {
+          "address": "0x0200bbb0",
+          "kind": "thumb"
+        },
+        "Engine_CameraSetSpeed": {
+          "address": "0x0200bc78",
+          "kind": "thumb"
+        },
+        "Engine_CameraMoveTo": {
+          "address": "0x0200bc80",
+          "kind": "thumb"
+        },
+        "Engine_CameraWaitForMove": {
+          "address": "0x0200bc88",
+          "kind": "thumb"
+        },
+        "Engine_AudioPlayCue": {
+          "address": "0x0200bd20",
+          "kind": "thumb"
+        },
+        "Engine_ActorRunRepeatedMotion": {
+          "address": "0x0200bc10",
+          "kind": "thumb"
+        },
+        "Engine_EventWait": {
+          "address": "0x0200bb68",
+          "kind": "thumb"
+        },
+        "Engine_ActorFaceDirection": {
+          "address": "0x0200bc50",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpeed": {
+          "address": "0x0200bba0",
+          "kind": "thumb"
+        },
+        "Engine_ObjectMotionSetPositionAndCommit": {
+          "address": "0x0200bbc8",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetAnimation": {
+          "address": "0x0200bbf0",
+          "kind": "thumb"
+        },
+        "Engine_WorkSetValuesIfNonNegative": {
+          "address": "0x0200bb38",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpriteFlags": {
+          "address": "0x0200bb30",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagSet": {
+          "address": "0x0200bb58",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02001d0c",
+          "extent": 788
+        }
+      ]
+    },
+    {
+      "id": "ovd-39c-02004c68",
+      "source": "recon/tbs/en/overlays/resource_39c_c_02004c68.c",
+      "overlay": "resource_39c",
+      "absolute_symbols": {
+        "Main_080091a0": {
+          "address": "0x0200da14",
+          "kind": "thumb"
+        },
+        "Engine_ActorGet": {
+          "address": "0x0200dad4",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetPosition": {
+          "address": "0x0200db24",
+          "kind": "thumb"
+        },
+        "Engine_MapRedraw": {
+          "address": "0x0200d9e4",
+          "kind": "thumb"
+        },
+        "Engine_TaskWait": {
+          "address": "0x0200d97c",
+          "kind": "thumb"
+        },
+        "Engine_EventOpenScreen": {
+          "address": "0x0200dbf4",
+          "kind": "thumb"
+        },
+        "Engine_EventWaitForScreen": {
+          "address": "0x0200dc04",
+          "kind": "thumb"
+        },
+        "Engine_EventWait": {
+          "address": "0x0200daac",
+          "kind": "thumb"
+        },
+        "Engine_AudioPlayCue": {
+          "address": "0x0200dc64",
+          "kind": "thumb"
+        },
+        "Engine_ActorWalkToAndWait": {
+          "address": "0x0200db0c",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetAnimation": {
+          "address": "0x0200db2c",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpriteFlags": {
+          "address": "0x0200da2c",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetDestination": {
+          "address": "0x0200daf4",
+          "kind": "thumb"
+        },
+        "Engine_ActorWaitForMove": {
+          "address": "0x0200db1c",
+          "kind": "thumb"
+        },
+        "Engine_ActorFaceDirection": {
+          "address": "0x0200db94",
+          "kind": "thumb"
+        },
+        "Engine_MapCopyCellsTo": {
+          "address": "0x0200da04",
+          "kind": "thumb"
+        },
+        "Engine_MapCopyCellAttributes": {
+          "address": "0x0200da1c",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02004c68",
+          "extent": 732
+        }
+      ]
+    },
+    {
+      "id": "ovd-39d-020034bc",
+      "source": "recon/tbs/en/overlays/resource_39d_c_020034bc.c",
+      "overlay": "resource_39d",
+      "absolute_symbols": {
+        "Engine_ActorGet": {
+          "address": "0x0200b6f0",
+          "kind": "thumb"
+        },
+        "Engine_RandomNext": {
+          "address": "0x0200b640",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetPosition": {
+          "address": "0x0200b728",
+          "kind": "thumb"
+        },
+        "Engine_ObjectCreate": {
+          "address": "0x0200b670",
+          "kind": "thumb"
+        },
+        "Engine_MathDivide": {
+          "address": "0x0200b628",
+          "kind": "thumb"
+        },
+        "Engine_ObjectSetScript": {
+          "address": "0x0200b668",
+          "kind": "thumb"
+        },
+        "Engine_ObjectSetPalette": {
+          "address": "0x0200b760",
+          "kind": "thumb"
+        },
+        "Engine_MathSin": {
+          "address": "0x0200b648",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x020034bc",
+          "extent": 364
+        }
+      ]
+    },
+    {
+      "id": "ovd-3c9-02005a28",
+      "source": "recon/tbs/en/overlays/resource_3c9_c_02005a28.c",
+      "overlay": "resource_3c9",
+      "absolute_symbols": {
+        "Engine_ActorGet": {
+          "address": "0x0200dd4c",
+          "kind": "thumb"
+        },
+        "Engine_RandomNext": {
+          "address": "0x0200dc14",
+          "kind": "thumb"
+        },
+        "gFrameCount": {
+          "address": "0x03001e40",
+          "kind": "data"
+        },
+        "Engine_ActorSetPosition": {
+          "address": "0x0200ddac",
+          "kind": "thumb"
+        },
+        "Engine_ObjectCreate": {
+          "address": "0x0200dc6c",
+          "kind": "thumb"
+        },
+        "Engine_MathDivide": {
+          "address": "0x0200dbec",
+          "kind": "thumb"
+        },
+        "Engine_ObjectSetScript": {
+          "address": "0x0200dc64",
+          "kind": "thumb"
+        },
+        "Engine_ObjectSetPalette": {
+          "address": "0x0200ddec",
+          "kind": "thumb"
+        },
+        "Engine_MathSin": {
+          "address": "0x0200dc1c",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02005a28",
+          "extent": 360
+        }
+      ]
+    },
+    {
+      "id": "ovd-3c9-020036d0",
+      "source": "recon/tbs/en/overlays/resource_3c9_c_020036d0.c",
+      "overlay": "resource_3c9",
+      "absolute_symbols": {
+        "Engine_MathModulo": {
+          "address": "0x0200dbf4",
+          "kind": "thumb"
+        },
+        "gFrameCount": {
+          "address": "0x03001e40",
+          "kind": "data"
+        },
+        "Engine_ActorGet": {
+          "address": "0x0200dd4c",
+          "kind": "thumb"
+        },
+        "Engine_RandomNext": {
+          "address": "0x0200dc14",
+          "kind": "thumb"
+        },
+        "Engine_ObjectCreate": {
+          "address": "0x0200dc6c",
+          "kind": "thumb"
+        },
+        "Engine_ObjectSetScript": {
+          "address": "0x0200dc64",
+          "kind": "thumb"
+        },
+        "Engine_ObjectSetPalette": {
+          "address": "0x0200ddec",
+          "kind": "thumb"
+        },
+        "Engine_MathSin": {
+          "address": "0x0200dc1c",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x020036d0",
+          "extent": 244
+        }
+      ]
+    },
+    {
+      "id": "ovd-3cb-020007b0",
+      "source": "recon/tbs/en/overlays/resource_3cb_c_020007b0.c",
+      "overlay": "resource_3cb",
+      "absolute_symbols": {
+        "Local_02000580": {
+          "address": "0x02008580",
+          "kind": "thumb"
+        },
+        "Local_02000398": {
+          "address": "0x02008398",
+          "kind": "thumb"
+        },
+        "Main_080770e8": {
+          "address": "0x0200982c",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagIsSet": {
+          "address": "0x0200980c",
+          "kind": "thumb"
+        },
+        "Engine_TaskWait": {
+          "address": "0x02009714",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x020007b0",
+          "extent": 176
+        }
+      ]
+    },
+    {
+      "id": "ovd-3cb-02000b94",
+      "source": "recon/tbs/en/overlays/resource_3cb_c_02000b94.c",
+      "overlay": "resource_3cb",
+      "absolute_symbols": {
+        "Local_0200008c": {
+          "address": "0x0200808c",
+          "kind": "thumb"
+        },
+        "Local_02000128": {
+          "address": "0x02008128",
+          "kind": "thumb"
+        },
+        "Main_080770e8": {
+          "address": "0x0200982c",
+          "kind": "thumb"
+        },
+        "Engine_EventBegin": {
+          "address": "0x02009844",
+          "kind": "thumb"
+        },
+        "Engine_ActorFaceActor": {
+          "address": "0x0200987c",
+          "kind": "thumb"
+        },
+        "Engine_TaskWait": {
+          "address": "0x02009714",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagIsSet": {
+          "address": "0x0200980c",
+          "kind": "thumb"
+        },
+        "Engine_EventSetMessage": {
+          "address": "0x02009884",
+          "kind": "thumb"
+        },
+        "Engine_EventOpenMessage": {
+          "address": "0x0200988c",
+          "kind": "thumb"
+        },
+        "Engine_UiWorkWaitThenFinalizeCapacity": {
+          "address": "0x02009854",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagSet": {
+          "address": "0x02009814",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagClear": {
+          "address": "0x0200981c",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02000b94",
+          "extent": 468
+        }
+      ]
+    },
+    {
+      "id": "ovd-3c9-020056a0",
+      "source": "recon/tbs/en/overlays/resource_3c9_c_020056a0.c",
+      "overlay": "resource_3c9",
+      "absolute_symbols": {
+        "Engine_ActorGet": {
+          "address": "0x0200dd4c",
+          "kind": "thumb"
+        },
+        "Engine_AudioPlayCue": {
+          "address": "0x0200decc",
+          "kind": "thumb"
+        },
+        "Engine_WorkSetValuesIfNonNegative": {
+          "address": "0x0200dcbc",
+          "kind": "thumb"
+        },
+        "Engine_ColorBufferApplyTarget": {
+          "address": "0x0200de7c",
+          "kind": "thumb"
+        },
+        "Engine_ColorBufferInterpolate": {
+          "address": "0x0200de8c",
+          "kind": "thumb"
+        },
+        "Engine_ActorEnableActionCallback": {
+          "address": "0x0200dd64",
+          "kind": "thumb"
+        },
+        "gFrameCount": {
+          "address": "0x03001e40",
+          "kind": "data"
+        },
+        "Engine_ActorStop": {
+          "address": "0x0200dd74",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagSet": {
+          "address": "0x0200dd14",
+          "kind": "thumb"
+        },
+        "Engine_ObjectCreate": {
+          "address": "0x0200dc6c",
+          "kind": "thumb"
+        },
+        "Engine_RandomNext": {
+          "address": "0x0200dc14",
+          "kind": "thumb"
+        },
+        "Engine_ObjectSetScript": {
+          "address": "0x0200dc64",
+          "kind": "thumb"
+        },
+        "Engine_ObjectSetPalette": {
+          "address": "0x0200ddec",
+          "kind": "thumb"
+        },
+        "Engine_MathSin": {
+          "address": "0x0200dc1c",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x020056a0",
+          "extent": 848
+        }
+      ]
+    },
+    {
+      "id": "ovd-3a0-02001148",
+      "source": "recon/tbs/en/overlays/resource_3a0_c_02001148.c",
+      "overlay": "resource_3a0",
+      "absolute_symbols": {
+        "Main_0808a5e0": {
+          "address": "0x020094a8",
+          "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "Engine_GameFlagClear": {
+          "address": "0x020093b0",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagIsSet": {
+          "address": "0x020093a0",
+          "kind": "thumb"
+        },
+        "Engine_ActorFaceDirection": {
+          "address": "0x02009480",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetPosition": {
+          "address": "0x02009428",
+          "kind": "thumb"
+        },
+        "Engine_ActorGet": {
+          "address": "0x020093d0",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpriteFlags": {
+          "address": "0x02009390",
+          "kind": "thumb"
+        },
+        "Engine_ObjectSetPalette": {
+          "address": "0x02009458",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetAnimation": {
+          "address": "0x02009430",
+          "kind": "thumb"
+        },
+        "Engine_MapCopyCellAttributes": {
+          "address": "0x02009380",
+          "kind": "thumb"
+        },
+        "Engine_TaskAddCallback": {
+          "address": "0x02009340",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetChildValue": {
+          "address": "0x02009450",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02001148",
+          "extent": 488
+        }
+      ]
+    },
+    {
+      "id": "ovd-3af-020000c4",
+      "source": "recon/tbs/en/overlays/resource_3af_c_020000c4.c",
+      "overlay": "resource_3af",
+      "absolute_symbols": {
+        "Engine_ObjectSetPosition": {
+          "address": "0x0200c28c",
+          "kind": "thumb"
+        },
+        "Engine_AudioPlayCue": {
+          "address": "0x0200c45c",
+          "kind": "thumb"
+        },
+        "Engine_ActorFaceDirection": {
+          "address": "0x0200c3d4",
+          "kind": "thumb"
+        },
+        "Engine_RandomNext": {
+          "address": "0x0200c26c",
+          "kind": "thumb"
+        },
+        "Engine_ActorGet": {
+          "address": "0x0200c30c",
+          "kind": "thumb"
+        },
+        "Engine_ActorShowEmote": {
+          "address": "0x0200c3ec",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x020000c4",
+          "extent": 552
+        }
+      ]
+    },
+    {
+      "id": "ovd-3af-020002ec",
+      "source": "recon/tbs/en/overlays/resource_3af_c_020002ec.c",
+      "overlay": "resource_3af",
+      "absolute_symbols": {
+        "Engine_ObjectSetPosition": {
+          "address": "0x0200c28c",
+          "kind": "thumb"
+        },
+        "Engine_AudioPlayCue": {
+          "address": "0x0200c45c",
+          "kind": "thumb"
+        },
+        "Engine_ActorFaceDirection": {
+          "address": "0x0200c3d4",
+          "kind": "thumb"
+        },
+        "Engine_RandomNext": {
+          "address": "0x0200c26c",
+          "kind": "thumb"
+        },
+        "Engine_ActorGet": {
+          "address": "0x0200c30c",
+          "kind": "thumb"
+        },
+        "Engine_ActorShowEmote": {
+          "address": "0x0200c3ec",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x020002ec",
+          "extent": 552
+        }
+      ]
+    },
+    {
+      "id": "ovd-383-02000690",
+      "source": "recon/tbs/en/overlays/resource_383_c_02000690.c",
+      "overlay": "resource_383",
+      "absolute_symbols": {
+        "Engine_ActorGet": {
+          "address": "0x0200cd7c",
+          "kind": "thumb"
+        },
+        "Engine_EventBegin": {
+          "address": "0x0200cd44",
+          "kind": "thumb"
+        },
+        "Engine_ActorRunRepeatedMotion": {
+          "address": "0x0200cdfc",
+          "kind": "thumb"
+        },
+        "Engine_EventSetMessage": {
+          "address": "0x0200ce14",
+          "kind": "thumb"
+        },
+        "Engine_EventShowMessage": {
+          "address": "0x0200ce24",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpeed": {
+          "address": "0x0200cd84",
+          "kind": "thumb"
+        },
+        "Engine_ActorEnableActionCallback": {
+          "address": "0x0200cd8c",
+          "kind": "thumb"
+        },
+        "Engine_ActorStartAction": {
+          "address": "0x0200cd94",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02000690",
+          "extent": 316
+        }
+      ]
+    },
+    {
+      "id": "ovd-394-02000098",
+      "source": "recon/tbs/en/overlays/resource_394_c_02000098.c",
+      "overlay": "resource_394",
+      "absolute_symbols": {},
+      "owners": [
+        {
+          "address": "0x02000098",
+          "extent": 184
+        }
+      ]
+    },
+    {
+      "id": "ovd-37f-020007d0",
+      "source": "recon/tbs/en/overlays/resource_37f_c_020007d0.c",
+      "overlay": "resource_37f",
+      "absolute_symbols": {
+        "Main_080091d8": {
+          "address": "0x02009b6c",
+          "kind": "thumb"
+        },
+        "Engine_ObjectCommitPosition": {
+          "address": "0x02009b54",
+          "kind": "thumb"
+        },
+        "Engine_ActorGet": {
+          "address": "0x02009bcc",
+          "kind": "thumb"
+        },
+        "Engine_ObjectSetAnimation": {
+          "address": "0x02009b3c",
+          "kind": "thumb"
+        },
+        "Engine_TaskWait": {
+          "address": "0x02009b24",
+          "kind": "thumb"
+        },
+        "Engine_AudioPlayCue": {
+          "address": "0x02009ccc",
+          "kind": "thumb"
+        },
+        "Engine_ObjectSetPosition": {
+          "address": "0x02009b4c",
+          "kind": "thumb"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x020007d0",
+          "extent": 292
+        }
+      ]
+    },
+    {
+      "id": "ovd-39a-02001c18",
+      "source": "recon/tbs/en/overlays/resource_39a_c_02001c18.c",
+      "overlay": "resource_39a",
+      "absolute_symbols": {
+        "Engine_ObjectCreate": {
+          "address": "0x0200a2b8",
+          "kind": "thumb"
+        },
+        "Engine_ObjectSetAnimation": {
+          "address": "0x0200a2a0",
+          "kind": "thumb"
+        },
+        "Engine_ObjectSetScript": {
+          "address": "0x0200a2b0",
+          "kind": "thumb"
+        },
+        "Engine_ObjectSetPalette": {
+          "address": "0x0200a390",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02001c18",
+          "extent": 352
+        }
+      ]
     }
   ]
 }

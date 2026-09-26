@@ -11,7 +11,7 @@ extern const s32 VinasuChojo_SparkScript[];
 /* The EWRAM routine at 0x0200b600 (Thumb). */
 #define SPARK_UPDATE ((void (*)(union FieldObject *))0x0200b601)
 
-void Local_020036d0(void)
+void Func_020036d0(void)
 {
     struct FieldActor *source;
     struct FieldActor *spark;

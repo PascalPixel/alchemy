@@ -39,7 +39,7 @@ void Title_RevealSpriteRow(void);
         *ime = saved;                                                       \
     } while (0)
 
-void Local_020002e8(void)
+void Func_020002e8(void)
 {
     s32 i;
     s32 zero;

@@ -21311,6 +21311,72 @@
     },
     "resource_3ba:02002bec": {
       "name": "Korosseo_UpdateMarker"
+    },
+    "resource_3cd:02000214": {
+      "name": "DebugMenu_SelectItem"
+    },
+    "resource_3cd:020004b0": {
+      "name": "DebugMenu_SelectAbility"
+    },
+    "resource_3a5:02000e2c": {
+      "name": "Func_02000e2c"
+    },
+    "resource_3c0:02000b24": {
+      "name": "Func_02000b24"
+    },
+    "resource_36f:020002e8": {
+      "name": "Func_020002e8"
+    },
+    "resource_36f:02000454": {
+      "name": "Func_02000454"
+    },
+    "resource_370:02000154": {
+      "name": "Func_02000154"
+    },
+    "resource_370:02000054": {
+      "name": "Func_02000054"
+    },
+    "resource_39c:02004c68": {
+      "name": "Func_02004c68"
+    },
+    "resource_39d:020034bc": {
+      "name": "Func_020034bc"
+    },
+    "resource_3c9:02005a28": {
+      "name": "VinasuChojo_SpawnRisingSparks"
+    },
+    "resource_3c9:020036d0": {
+      "name": "Func_020036d0"
+    },
+    "resource_3cb:020007b0": {
+      "name": "Func_020007b0"
+    },
+    "resource_3cb:02000b94": {
+      "name": "Func_02000b94"
+    },
+    "resource_3c9:020056a0": {
+      "name": "Func_020056a0"
+    },
+    "resource_3a0:02001148": {
+      "name": "Func_02001148"
+    },
+    "resource_3af:020000c4": {
+      "name": "Func_020000c4"
+    },
+    "resource_3af:020002ec": {
+      "name": "Func_020002ec"
+    },
+    "resource_383:02000690": {
+      "name": "Func_02000690"
+    },
+    "resource_394:02000098": {
+      "name": "Func_02000098"
+    },
+    "resource_37f:020007d0": {
+      "name": "Func_020007d0"
+    },
+    "resource_39a:02001c18": {
+      "name": "Func_02001c18"
     }
   },
   "symbols": {

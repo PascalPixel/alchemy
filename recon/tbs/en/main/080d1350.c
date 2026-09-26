@@ -2,8 +2,37 @@
 #include "BATTLE_TYPES.H"
 #include "TYPES.H"
 #include "BATTLE_EFX.H"
+#include "SYSTEM.H"
+#include "FIXED_MATH.H"
+#include "CALLBACK_SCHEDULER.H"
 
-typedef void (*WordCopy)(void *destination, const void *source, s32 size);
+/* NONMATCHING: main [080d1350,080d1714), 964 bytes including 64-byte pool.
+ * H1: registered resource/copy/decoder/scheduler interfaces preserve the
+ * baseline bytes: candidate 940, 414 differing halfwords, 204 aligned edits.
+ * The 64-byte frame is admitted, but runtime/destination/frame/screen slots
+ * remain sp+44/+40/+36/+48 rather than +48/+44/+40/+52. Setup register roles,
+ * trail indexing, phase reload across trig calls, target loop and pool differ.
+ * Score: alchemy score this file --owner main:080d1350 --size 964 --align.
+ * Default registered symbols suffice; --reference-symbols is inadmissible
+ * while the non-relocation core differs. No scoring TU or aliases required.
+ * Bindings: RuntimeCells=03001eec, palette id=00000079, tiles id=00000073,
+ * cell offsets=080ede48, radii=080ee158, trail work=02010000;
+ * WordCopy=03001388 via _call_via_r3=080072f0; blit via r5=080072f8.
+ * Resource_GetTableEntry=08002f40; Resource_DecodeType01=08005340;
+ * Scheduler_AddOrUpdateCallback=080041d8; Scheduler_RemoveCallback=08004278;
+ * BattlePresentation_ProcessPendingGraphicsTransfer=080cd260 (Thumb +1);
+ * GetBattleObjectSlotFar=080b5098; Math_Div/Mod=080022ec/080022fc;
+ * Trig_Cos/Sin=0800231c/08002322; Random16=08004458;
+ * BattleFx_BeginCanvasLayer=080cd594; BattleFx_EndCanvasLayer=080cdbc0;
+ * Graphics_UpdatePhasePalette=080d40ec; BattleEventRuntime_BeginPhaseFar=080b50e8;
+ * Render_ResetTransformState=080049ac; Graphics_PrepareTransferInIwramWork=080051d8;
+ * EffectPosition_ApplyBaseAndYOffset=080e3944; Audio_PlayCue=080f9010;
+ * ObjectGroup_UpdateMembers=080d6888; ObjectGroup_TickMemberTimers=080cd52c;
+ * Camera_ApplyShake=080e155c; WaitFrames=080030f8; Runtime_ReleaseHeapBlock=08002dd8;
+ * BattleEffect_LoadWork=080ed408 through the existing reviewed BATTLE_EFX.H.
+ */
+
+typedef s32 (*WordCopy)(void *destination, const void *source, s32 size);
 
 struct EffectArgument {
     u8 unknown_00[8];
@@ -72,31 +101,22 @@ extern u8 Data_00000079[];
 extern u16 Data_080ede48[];
 extern u8 Data_080ee158[];
 
-void Func_080cd594(s32 mode);
-void *Func_08002f40(s32 resource_id);
-void Func_08005340(const void *source, void *destination);
-s32 Func_080041d8(void (*callback)(void), s32 interval);
-void Func_080cd260(void);
-s32 Func_08004458(void);
-s32 Func_080022ec(s32 numerator, s32 denominator);
-s32 Func_080022fc(s32 numerator, s32 denominator);
-s32 Func_0800231c(s32 angle);
-s32 Func_08002322(s32 angle);
-void Func_080d40ec(s32 frame, s32 red_phase, s32 green_phase, s32 blue_phase);
-void Func_080b50e8(s32 value);
-void Func_080049ac(void);
-s32 Func_080051d8(void *source, void *destination);
-s32 Func_080e3944(struct MovingPoint *point, struct ScreenPoint *output);
-void Func_080f9010(s32 value);
-void Func_080d6888(s32, s32, s32, s32, s32);
-void Func_080e155c(s32, s32);
-void Func_080cd52c(void);
-void Func_080030f8(s32);
-s32 Func_08004278(void (*callback)(void));
-void Func_08002dd8(s32);
-void Func_080cdbc0(void);
+void BattleFx_BeginCanvasLayer(s32 mode);
+u32 Resource_GetTableEntry(u32 resource_id);
+s32 Resource_DecodeType01(const void *source, void *destination);
+void BattlePresentation_ProcessPendingGraphicsTransfer(void);
+void Graphics_UpdatePhasePalette(s32 frame, s32 red_phase, s32 green_phase, s32 blue_phase);
+void BattleEventRuntime_BeginPhaseFar(s32 value);
+void Render_ResetTransformState(void);
+void Graphics_PrepareTransferInIwramWork(s32 source, s32 destination);
+s32 EffectPosition_ApplyBaseAndYOffset(s32 *point, struct ScreenPoint *output);
+void Audio_PlayCue(s32 value);
+void Camera_ApplyShake(s32 random_mask, u32 shake_range);
+void ObjectGroup_TickMemberTimers(void);
+void BattleFx_EndCanvasLayer(void);
+struct B5Context *GetBattleObjectSlotFar(s32 id);
 
-void Func_080d1350(struct EffectArgument *argument)
+void Unnamed_080d1350(struct EffectArgument *argument)
 {
     struct RuntimeCells *cells;
     struct EffectRuntime *runtime;
@@ -126,22 +146,22 @@ void Func_080d1350(struct EffectArgument *argument)
     argument_cell = &runtime->argument;
     *argument_cell = argument;
 
-    Func_080cd594(1);
+    BattleFx_BeginCanvasLayer(1);
     ((WordCopy)0x03001388)(
         (void *)0x05000000,
-        Func_08002f40((s32)Data_00000079),
+        (const void *)Resource_GetTableEntry((u32)Data_00000079),
         0x80);
-    Func_08005340(Func_08002f40((s32)Data_00000073), graphics);
+    Resource_DecodeType01((const void *)Resource_GetTableEntry((u32)Data_00000073), graphics);
     BattleEffect_LoadWork(46, 7, 7, 3, 2);
 
     runtime->display_mode = 2;
     runtime->display_value = 50;
     draw_rectangle = cells->draw_rectangle;
-    Func_080041d8(Func_080cd260, 0x480);
+    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
-    context = Func_080b5098((*argument_cell)->source_id);
+    context = GetBattleObjectSlotFar((*argument_cell)->source_id);
     source = context->object;
-    context = Func_080b5098((*argument_cell)->target_ids[0]);
+    context = GetBattleObjectSlotFar((*argument_cell)->target_ids[0]);
     target = context->object;
 
     point_index = 0;
@@ -150,24 +170,24 @@ void Func_080d1350(struct EffectArgument *argument)
         point->x = source->x / 2;
         point->y = source->y + 0x780000;
         point->z = source->z;
-        point->step_x = Func_080022ec(
-            target->x + (((Func_08004458() & 0x7f) - 0x40) << 16)
+        point->step_x = Math_Div(
+            target->x + (((Random16() & 0x7f) - 0x40) << 16)
                 - point->x,
             12);
-        point->step_y = Func_080022ec(
+        point->step_y = Math_Div(
             target->y - point->y + 0x140000,
             12);
-        point->step_z = Func_080022ec(target->z - point->z, 12);
-        point->start_frame = (Func_08004458() & 0xf) + point_index * 8;
+        point->step_z = Math_Div(target->z - point->z, 12);
+        point->start_frame = (Random16() & 0xf) + point_index * 8;
         point_index++;
         point++;
     } while (point_index != 8);
 
     frame = 0;
     do {
-        Func_080d40ec(frame, 0xaaab, 0x5555, 0);
+        Graphics_UpdatePhasePalette(frame, 0xaaab, 0x5555, 0);
         if (frame == 96)
-            Func_080b50e8(134);
+            BattleEventRuntime_BeginPhaseFar(134);
 
         point_index = 0;
         trail_base = 0;
@@ -178,9 +198,9 @@ point_loop:
         {
                 struct ScreenPoint screen;
 
-                Func_080049ac();
-                Func_080051d8(view, (u8 *)view + 12);
-                Func_080e3944(point, &screen);
+                Render_ResetTransformState();
+                Graphics_PrepareTransferInIwramWork((s32)view, (s32)view + 12);
+                EffectPosition_ApplyBaseAndYOffset(&point->x, &screen);
                 screen.x >>= 1;
 
                 if ((u32)(screen.x + 8) <= 135) {
@@ -195,10 +215,10 @@ point_loop:
                             - ((frame - point->start_frame) << 11);
                         trail->x = screen.x
                             + ((Data_080ee158[vertex & 1]
-                                * Func_08002322(angle)) / 2 >> 16);
+                                * Trig_Sin(angle)) / 2 >> 16);
                         trail->y = screen.y
                             - (Data_080ee158[vertex & 1]
-                                * Func_0800231c(angle) >> 16);
+                                * Trig_Cos(angle) >> 16);
                         vertex++;
                         trail++;
                     } while (vertex != 10);
@@ -212,17 +232,17 @@ point_loop:
                         current = &((struct TrailPoint *)0x02010000)[
                             trail_base + vertex];
                         next = &((struct TrailPoint *)0x02010000)[
-                            trail_base + Func_080022fc(vertex + 1, 10)];
+                            trail_base + Math_Mod(vertex + 1, 10)];
                         step = 0;
                         do {
                             s32 x;
                             s32 y;
 
                             x = current->x;
-                            x += Func_080022ec(
+                            x += Math_Div(
                                 step * (next->x - x), 12);
                             y = current->y;
-                            y += Func_080022ec(
+                            y += Math_Div(
                                 step * (next->y - y), 12);
                             draw_rectangle(
                                 draw_destination,
@@ -244,12 +264,12 @@ point_loop:
                     point->step_x /= 2;
                     point->step_z /= 2;
                     runtime->impact_mode = 4;
-                    Func_080f9010(134);
+                    Audio_PlayCue(134);
 
                     target_index = 0;
                     if (runtime->argument->target_count != 0) {
                         do {
-                            Func_080d6888(
+                            ObjectGroup_UpdateMembers(
                                 runtime->argument->target_ids[target_index],
                                 7,
                                 5,
@@ -272,15 +292,15 @@ next_point:
         if (point_index != 8)
             goto point_loop;
 
-        Func_080e155c(4, 4);
-        Func_080cd52c();
+        Camera_ApplyShake(4, 4);
+        ObjectGroup_TickMemberTimers();
         runtime->frame_ready = 1;
-        Func_080030f8(1);
+        WaitFrames(1);
         frame++;
     } while (frame != 128);
 
-    Func_08004278(Func_080cd260);
-    Func_08002dd8(47);
-    Func_08002dd8(46);
-    Func_080cdbc0();
+    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Runtime_ReleaseHeapBlock(47);
+    Runtime_ReleaseHeapBlock(46);
+    BattleFx_EndCanvasLayer();
 }

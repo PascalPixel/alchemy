@@ -4,7 +4,7 @@
 #include "IO_WRITE_QUEUE.H"
 
 /*
- * DRAFT main:08021e6c (2300 bytes, including pools), structural hypothesis 2.
+ * DRAFT main:08021e6c (2300 bytes, including pools), structural hypothesis 3.
  * Recover the 480-byte work record and natural screen loop before register
  * tuning. Cursor entries share byte/halfword OAM views, not RenderOutput's
  * unrelated 28-byte layout. Trade availability is a word, the party result
@@ -23,6 +23,13 @@
  * improves alignment but not the frame. The compiler already hoists natural
  * loop exit stubs between mode-zero and trade setup, as in the reference;
  * adding gotos there would not address the remaining layout difference.
+ * Residual H3: 2204/2300 bytes; 1117 differing halfwords; topology differs,
+ * 1076 wrong instructions, aligned distance 777 halfword edits. Frame 48/60.
+ * Runs: 223 (0 register-only, 0 order-only, 8 pool/immediate,
+ * 50 copy/rematerialise, 0 pool-placement, 165 other). Explicit count and
+ * selection cursors, sprite pointer traversal and a signed/halfword scale
+ * union do not close broad lowering; this is worse than H2. Three structural
+ * hypotheses exhausted without adoption; do not tune registers on this form.
  */
 struct UiWindowWork;
 
@@ -44,6 +51,8 @@ struct SelectionEntry {
 struct SelectionAffine {
     u16 scale_x, scale_y, angle, unused;
 };
+
+union SelectionScale { s32 value; u16 halves[2]; };
 
 struct SelectionWork {
     u8 glyphs[256];
@@ -114,7 +123,9 @@ s32 Ui_RunSelectionScreen(s32 mode)
     struct SelectionWork *work;
     struct SelectionRuntime *runtime;
     struct UiWindowWork *message;
-    s32 rebuild, trade_count, scale, result;
+    union SelectionScale scale;
+    s32 rebuild, trade_count, result;
+    s32 *count, *selection;
     s32 cnt;
     s32 keys, repeat;
     s32 slot;
@@ -182,11 +193,13 @@ s32 Ui_RunSelectionScreen(s32 mode)
     }
     Scheduler_AddOrUpdateCallback(Graphics_SetBg1Priority3, 0x480);
     Runtime_SetIrqHandler(2, 136, Graphics_ClearBg1ControlBit2);
+    count = &work->count;
+    selection = &work->selection;
 
     for (;;) {
-        scale = ((s32)Data_080366f8[(Data_03001e40 * 2) & 31] - 256) / 4 + 304;
-        work->affine.scale_x = scale;
-        work->affine.scale_y = scale;
+        scale.value = ((s32)Data_080366f8[(Data_03001e40 * 2) & 31] - 256) / 4 + 304;
+        work->affine.scale_x = scale.halves[0];
+        work->affine.scale_y = scale.halves[0];
         Data_03001ad0.x = 0;
         Data_03001ad0.y = 32;
         if (rebuild != 0) {
@@ -194,7 +207,7 @@ s32 Ui_RunSelectionScreen(s32 mode)
             render->menu_busy = 1;
             if (mode != 0) {
                 s32 panel;
-                for (panel = 0; panel < 6 - work->count; panel++) {
+                for (panel = 0; panel < 6 - *count; panel++) {
                     s32 row;
                     u16 *tile_row = &render->tiles[panel * 3];
                     for (row = 0; row <= 2; row++, tile_row += 32) {
@@ -203,7 +216,7 @@ s32 Ui_RunSelectionScreen(s32 mode)
                             tile_row[0x224 + (col & 3)] = 0xf07f;
                     }
                 }
-                for (panel = 0; panel < work->count; panel++) {
+                for (panel = 0; panel < *count; panel++) {
                     s32 row;
                     s32 count = work->count;
                     s32 tile_index = panel * 3;
@@ -219,7 +232,7 @@ s32 Ui_RunSelectionScreen(s32 mode)
                 }
             } else {
                 s32 panel;
-                for (panel = 0; panel < 6 - work->count; panel++) {
+                for (panel = 0; panel < 6 - *count; panel++) {
                     s32 row;
                     u16 *tile_row = &render->tiles[panel * 3];
                     for (row = 0; row <= 2; row++, tile_row += 32) {
@@ -228,7 +241,7 @@ s32 Ui_RunSelectionScreen(s32 mode)
                             tile_row[0x222 + (col & 3)] = 0xf07f;
                     }
                 }
-                for (panel = 0; panel < work->count; panel++) {
+                for (panel = 0; panel < *count; panel++) {
                     s32 row;
                     s32 count = work->count;
                     s32 tile_index = panel * 3;
@@ -244,27 +257,30 @@ s32 Ui_RunSelectionScreen(s32 mode)
                 }
             }
         }
-        if (work->previous != work->selection) {
+        if (work->previous != *selection) {
             RenderOutput_PrepareForRedraw(work->window);
-            UiText_DrawCharacterAtOffset(work->entries[work->selection].kind + (s32)Value_0000001f,
+            UiText_DrawCharacterAtOffset(work->entries[*selection].kind + (s32)Value_0000001f,
                                          work->window, 0, 0);
-            work->previous = work->selection;
-            UiText_DrawCharacter((u8 *)work, work->selection, work->kinds[work->selection]);
+            work->previous = *selection;
+            UiText_DrawCharacter((u8 *)work, *selection, work->kinds[*selection]);
         }
         work->matrix = AffineMatrix_BuildForEffect(&work->affine);
-        for (cnt = 0; cnt < work->count; cnt++) {
-            struct SelectionEntry *entry = &work->entries[cnt];
-            if (cnt == work->selection) {
+        {
+            struct SelectionEntry *entry;
+            s32 cnt;
+            for (cnt = 0, entry = work->entries; cnt < *count; cnt++, entry++) {
+            if (cnt == *selection) {
                 entry->oam.bytes.high = (entry->oam.bytes.high & ~0x3e) | (((u8)work->matrix & 31) * 2);
                 entry->oam.bytes.flags |= 3;
-                entry->oam.half.x = (entry->oam.half.x & 0xfffffe00) | ((entry->pos_x + scale * 7 / 512 - 14) & 511);
-                entry->oam.bytes.y = entry->pos_y + scale * 3 / 256 - 20;
+                entry->oam.half.x = (entry->oam.half.x & 0xfffffe00) | ((entry->pos_x + scale.value * 7 / 512 - 14) & 511);
+                entry->oam.bytes.y = entry->pos_y + scale.value * 3 / 256 - 20;
                 Runtime_PushSlotEntry((s32 *)entry, 0xf1);
             } else {
                 entry->oam.half.x = (entry->oam.half.x & 0xfffffe00) | (entry->pos_x & 511);
                 entry->oam.bytes.y = entry->pos_y;
                 entry->oam.bytes.high &= ~0x3e;
                 entry->oam.bytes.flags &= ~3;
+            }
             }
         }
         keys = Data_03001c94;
@@ -274,13 +290,13 @@ s32 Ui_RunSelectionScreen(s32 mode)
             repeat = keys = 0;
             if (runtime->auto_delay == 0) {
                 if (runtime->auto_mode == 1) {
-                    if (work->kinds[work->selection] == 3)
+                    if (work->kinds[*selection] == 3)
                         repeat = keys = 1;
                     else
                         repeat = keys = 32;
                     runtime->auto_delay = 30;
                 } else if (runtime->auto_mode == 0) {
-                    s32 kind = work->kinds[work->selection];
+                    s32 kind = work->kinds[*selection];
                     if (kind == 16 || (trade_count == 0 && kind == 15)) {
                         if (runtime->auto_phase == 1) {
                             if (kind == 15)
@@ -312,7 +328,7 @@ s32 Ui_RunSelectionScreen(s32 mode)
             break;
         }
         if (keys & 1) {
-            result = work->kinds[work->selection];
+            result = work->kinds[*selection];
             break;
         }
         if (mode != 0 && (keys & 2)) {
@@ -322,10 +338,10 @@ s32 Ui_RunSelectionScreen(s32 mode)
         }
         if (repeat & 0x90) {
             Audio_PlayCue(0x6f);
-            work->selection = Math_Mod(work->selection + 1, work->count);
+            *selection = Math_Mod(*selection + 1, *count);
         } else if (repeat & 0x60) {
             Audio_PlayCue(0x6f);
-            work->selection = Math_Mod(work->selection + work->count - 1, work->count);
+            *selection = Math_Mod(*selection + *count - 1, *count);
         } else if (Data_03001f34->enabled == 0) {
             result = work->kinds[0];
             break;

@@ -87178,6 +87178,22 @@
           "address": "0x0200cd44",
           "kind": "thumb"
         },
+        "Engine_EventEnd": {
+          "address": "0x0200cd4c",
+          "kind": "thumb"
+        },
+        "Data_0200d8bc": {
+          "address": "0x0200d8bc",
+          "kind": "data"
+        },
+        "Data_0200d858": {
+          "address": "0x0200d858",
+          "kind": "data"
+        },
+        "Data_0200e4d8": {
+          "address": "0x0200e4d8",
+          "kind": "data"
+        },
         "Engine_ActorRunRepeatedMotion": {
           "address": "0x0200cdfc",
           "kind": "thumb"

@@ -12,6 +12,10 @@
    halfwords, 38 aligned edits.  Indexed cursor loads and menu/result
    register roles are recovered, but CSE retains slot*4+20 in r8 instead
    of slot*4 in sl; owner offset/index use r7/r6 instead of r8/r7.
+   H3: the exact sibling's ordinary register declarations generate
+   identical bytes to H2 (158/172, 85 halfwords, 38 aligned edits).
+   Three bounded hypotheses used; preserve this result and stop.  No
+   source-path registration or DONE credit has been added for this owner.
    Earlier baseline (2026-09-24): 162/172 bytes, 68 differing halfwords.
    Menu: open the owner selector for one party slot. Open: the reference
    computes slot + 28 and slot * 4 before loading the menu cell, keeps the
@@ -48,11 +52,11 @@ void WaitFrames(s32 frames);
 
 s32 Func_080a77a4(s32 slot)
 {
-    struct OwnerSelectMenu *menu;
-    s32 index;
+    register struct OwnerSelectMenu *menu;
+    register s32 index;
     s32 result;
-    s32 owner_offset;
-    s32 cursor_offset;
+    register s32 owner_offset;
+    register s32 cursor_offset;
     struct OwnerCursor *cursor;
 
     owner_offset = slot + 28;

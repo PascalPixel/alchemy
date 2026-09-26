@@ -87122,6 +87122,36 @@
       ],
       "game": "tbs",
       "compiler_route": "canonical-gcc296"
+    },
+    {
+      "id": "retained-overlay-3bd-0200109c",
+      "source": "recon/tbs/en/overlays/resource_3bd_c_0200109c.c",
+      "overlay": "resource_3bd",
+      "absolute_symbols": {
+        "Engine_EventBegin": { "address": "0x0200bcb0", "kind": "thumb" },
+        "Engine_EventResetEffectCounter": { "address": "0x0200bde8", "kind": "thumb" },
+        "Engine_EventSetMessage": { "address": "0x0200bd60", "kind": "thumb" },
+        "Engine_EventShowMessage": { "address": "0x0200bd70", "kind": "thumb" },
+        "Engine_EventEnd": { "address": "0x0200bcb8", "kind": "thumb" },
+        "Engine_ActorGet": { "address": "0x0200bcc8", "kind": "thumb" },
+        "Engine_ActorSetPosition": { "address": "0x0200bd18", "kind": "thumb" },
+        "Engine_MathDivide": { "address": "0x0200bbe8", "kind": "thumb" },
+        "Engine_AudioPlayCue": { "address": "0x0200be70", "kind": "thumb" },
+        "Engine_TaskWait": { "address": "0x0200bc00", "kind": "thumb" },
+        "Engine_TaskAddCallback": { "address": "0x0200bc08", "kind": "thumb" },
+        "Engine_TaskRemoveCallback": { "address": "0x0200bc10", "kind": "thumb" },
+        "Engine_RandomNext": { "address": "0x0200bc18", "kind": "thumb" },
+        "Engine_WorkSetValuesIfNonNegative": { "address": "0x0200bc68", "kind": "thumb" },
+        "Engine_EventWait": { "address": "0x0200bca8", "kind": "thumb" },
+        "Main_030003ac": { "address": "0x0200bbf0", "kind": "thumb" },
+        "SceneActor_SetPositionFromTransformedBase": { "address": "0x02008f10", "kind": "thumb" },
+        "ArutamiraDou_ReleaseWallBurst": { "address": "0x0200bad4", "kind": "thumb" }
+      },
+      "owners": [
+        { "address": "0x0200109c", "extent": 860, "state": "not-yet-c" }
+      ],
+      "game": "tbs",
+      "compiler_route": "canonical-gcc296"
     }
   ],
   "kind": "reconstruction-composition-contracts",

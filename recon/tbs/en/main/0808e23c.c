@@ -1,60 +1,14 @@
-/* Draft, not exact (2026-09-24): candidate=632 reference=632 differing_halfwords=255. Constants the reference loads from
-   the literal pool are spelled as link-time Value_ symbols, which restores
-   the reference size; wraps marked FAKEMATCH only move scheduling. */
+/* Draft, not exact (2026-09-26): 628 of 632 bytes, 283 differing halfwords.
+   Normalized edit distance: 81 halfwords. The callback is ordinary C; typed
+   views and indexed halfwords recover the confirmation offsets and pool.
+   Count/runtime share r9, not r8; best/index exchange r6/r7. Extending the
+   word through zero regresses to 106 edits. Reusing best as the no-effect
+   flag changes 82 to 81 edits but does not recover the predicted roles.
+   Remaining: phase-value allocation and runtime flag-pointer scheduling. */
 #include "TYPES.H"
-extern u8 Value_000003ff;
-extern u8 Value_000001f8;
-extern u8 Value_000001ff;
-extern u8 Value_00000927;
-extern u8 Value_00000143;
-extern u8 Value_00000142;
-extern u8 Value_00000400;
-extern u8 Value_0000091c;
-extern u8 Value_00000145;
-extern u8 Value_00000144;
-extern u8 Value_00000924;
-extern u8 Value_00000480;
-extern u8 Value_00000402;
-extern u8 Value_00000482;
-extern u8 Value_00000170;
 extern u8 Value_000003e7;
-extern u8 Value_00000cc6;
 #include "ITEM.H"
 #include "BATTLE_EFFECT_RUNTIME.H"
-
-/*
- * Evidence summary (see recon/tbs/en/dossiers.json#main:0808e23c for the full
- * account):
- *
- * - The packed-argument decode (item_id = arg & 0x3ff, actor = (arg>>10)&0xf)
- *   is byte-identical to main:0808e680 (BattleCommand_ExecuteSelectedAction),
- *   which decodes the same way for an ability id. This owner calls
- *   Item_GetData (item.h), not Ability_GetData, so the low field is an item
- *   id, not an ability id; this is the item-use sibling of that dispatcher.
- * - Func_0808e14c (called here with item_id) walks the same
- *   runtime->events[] table as the exact-adjacent BattleFx_FindMatchingEvent
- *   (main:0808e4b4), filtering kind==4 (item) where 0808e4b4 filters kind==5
- *   (ability). Its 12-byte record shape (s32 flags, u16 metadata, s16 unk,
- *   u32 effect) is taken from that sibling.
- * - The action_id==149 confirm-prompt block reproduces 0808e680's
- *   actionId==0x95(=149) block instruction-for-instruction: same
- *   Data_02000240+0x400/0x402 <- +0x480/0x482 u16 copy, same
- *   runtime->+0x170 = 999 sentinel, same Func_08091d84(1) prompt call.
- * - Data_02000240 is BattleWork (battle_effect_runtime.h); its object_id
- *   field (0x1f4) and target-id byte array (0x1f8) are already named in
- *   apply_drain.c/apply_health_delta.c/apply_status_damage.c
- *   (games/THE BROKEN SEAL/src/battle/party/). This owner primes the same table via an
- *   unconditional Func_08077148(actor) call before branching on actor==15,
- *   matching that priming idiom.
- * - Data_03001ebc is BattleRuntime (battle_effect_runtime.h), documented up
- *   to offset 0xcc4. This owner is the first known reader of 0x170 and
- *   0xcc6, both past what the shared header currently names, so they are
- *   read/written through raw offsets here rather than growing the header
- *   for one caller.
- * - Func_0808ddec, Func_08092b94, Func_08092f84, Func_08091750 have no
- *   evidence-backed names yet; kept as Func_ADDR with argument types taken
- *   from register roles only.
- */
 
 extern struct BattleWork Data_02000240;
 extern struct BattleRuntime *Data_03001ebc;
@@ -65,61 +19,58 @@ struct BattleUnitObject {
                            shop/sel/use.c's Ability_GetAvailability scan. */
 };
 
+struct ItemPartyView {
+    u8 unknown_000[0x1f4];
+    s32 object_id;
+    u8 active_owners[8];
+};
+
+struct ItemCommandRuntime {
+    u8 unknown_000[0x170];
+    s16 result_code;
+    u8 unknown_172[0xb54];
+    u8 resolving_action;
+};
+
+union ItemCommandWork {
+    s32 count;
+    struct ItemCommandRuntime *runtime;
+};
+
+typedef s32 (*BattleItemCallback)(s32 item, s32 actor, s32 slot);
+
+union BattleItemEffect {
+    s32 id;
+    BattleItemCallback callback;
+};
+
 struct BattleItemEventRecord {
     s32 flags;
     u16 metadata;
     s16 unknown_06;
-    s32 effect; /* raw effect id when < 0x10000, else a callback pointer
-                   dispatched through the __call_via_r3 veneer below (the
-                   reference compares this signed: bge, not bcs). */
+    union BattleItemEffect effect; /* The ID/pointer threshold is signed. */
 };
 
-/* Declared void *-returning: main:0808e680 (BattleCommand_ExecuteSelectedAction)
- * shares this symbol through a different local view (struct BattleUnitRecord,
- * for the pp field); both callers cast the shared pointer to their own
- * struct locally. */
-void *Runtime_GetObject(s32 actor);
-s32 Func_08077148(s32 actor);
-/* Declared s32-returning with a u16 parameter to match the prototype in the
- * exact owner runtime_owner_135.c, which calls this symbol without defining
- * it; the result is cast back to struct BattleItemEventRecord * here. */
-s32 Func_0808e14c(u16 item_id);
-void GameFlag_Clear(s32 flag);
-void GameFlag_Set(s32 flag);
-s32 GameFlag_IsSet(s32 flag);
-void UiText_DrawQuantity(s32 value, s32 mode);
-void UiText_DrawMessage(s32 message, s32 mode);
-s32 Func_08091d84(s32 mode);
-void UiWork_FinalizePending(void);
+void *Owner_GetStateFar(s32 actor);
+s32 Party_CountActiveOwnersFar(void);
+s32 Event_FindFacingTrigger(u16 item_id);
+void GameFlag_ClearBitFar(s32 flag);
+void GameFlag_SetBitFar(s32 flag);
+s32 GameFlag_TestFar(s32 flag);
+void UiWork_PushValueSlotFar(s32 value, s32 mode);
+void UiText_ShowPositionedMessageAndWaitFar(s32 message, s32 mode);
+s32 Object_CallSpawnRoutineAtOrigin(s32 mode);
+void UiWork_FinalizePendingCoreFar(void);
 s32 Func_0808ddec(s32 object_id);
 void Battle_Reset(void);
-void Func_08092b94(s32 effect_id);
+void Event_SetValue1d8(s32 effect_id);
+/* FAKEMATCH: retain the ROM caller's r1=0; the registered callee has one argument. */
 void Func_08092f84(s32 value, s32 flag);
-void Func_08091750(void);
-void Func_08096fb0(s32 action_id, s32 mode);
-void Func_08096810(void); /* RunBattleEffect (battle/effects/run/run_effect.c) */
-void Func_08097194(void); /* named BattleFx_CleanupSceneObjects in source-paths.json */
-#define BattleFx_CleanupSceneObjects Func_08097194
-u8 Func_08077058(s32 actor, s32 slot);
-struct ItemDefinition *Item_GetData(s32 item);
-
-/*
- * __call_via_r3 veneer at 0x080072e4+4*3: an indirect call through whatever
- * pointer is in r3 at the call site (here, event->effect once proven
- * >= 0x10000), modeled per project convention as a direct call with the
- * target as a trailing argument. Keep the first-view s32 signature from
- * 0808df1c.c when both retained parents share a TU.
- */
-s32 Func_080072f0(s32 value, s32 unused1, s32 unused2, s32 iwramRoutine);
-
-/*
- * Evidence-backed but unproven name (see the evidence summary above),
- * registered in source-paths.json. The retained recon/tbs/raw/0808e23c.s
- * only exposes the Func_0808e23c label (no dual canonical-name label, unlike
- * its exact-adjacent siblings), so `compiler workbench` needs
- * `--owner 0x0808e23c --size 632` rather than resolving this name.
- */
-#define BattleCommand_ExecuteSelectedItem Func_0808e23c
+void BattleFx_FinishAction(void);
+void BattleFx_LoadActionEffectResources(s32 action_id, s32 mode);
+void BattleFx_Run(void);
+void BattleEffect_CleanupSceneObjects(void);
+u8 Inventory_RemoveFar(s32 actor, s32 slot);
 
 s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
 {
@@ -131,25 +82,28 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
     u16 *p;
     s32 j;
     s32 matches;
+    /* FAKEMATCH: reuse a scalar for the inventory count and no-effect flag. */
+    s32 best;
+    /* FAKEMATCH: reuse one word across the count and runtime phases. */
+    union ItemCommandWork work;
 
     result = -1;
     item_id = arg & 0x3ff;
     actor = (arg >> 10) & 0xf;
     {
-        s32 count;
-        s32 best = 0;
-
-        count = Func_08077148(actor);
+        work.count = Party_CountActiveOwnersFar();
+        best = 0;
 
         if (actor == 15) {
             s32 i;
 
             actor = 0;
             i = 0;
-            if (actor < count) {
-                u8 *ids = (u8 *)&Data_02000240 + 0x1f8;
+            if (actor < work.count) {
+                struct ItemPartyView *party =
+                    (struct ItemPartyView *)&Data_02000240;
                 do {
-                    obj = (struct BattleUnitObject *)Runtime_GetObject(ids[i]);
+                    obj = (struct BattleUnitObject *)Owner_GetStateFar(party->active_owners[i]);
                     matches = 0;
                     p = obj->abilities;
                     j = 14;
@@ -161,13 +115,13 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
 
                     if (best < matches) {
                         best = matches;
-                        do { actor = ids[i]; } while (0); /* FAKEMATCH */
+                        actor = party->active_owners[i];
                     }
                     i++;
-                } while (i < count);
+                } while (i < work.count);
             }
         } else {
-            obj = (struct BattleUnitObject *)Runtime_GetObject(actor);
+            obj = (struct BattleUnitObject *)Owner_GetStateFar(actor);
             p = obj->abilities;
             j = 14;
             do {
@@ -178,78 +132,81 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
         }
 
         if (best == 0) {
-            UiText_DrawMessage(0x927, 1);
+            UiText_ShowPositionedMessageAndWaitFar(0x927, 1);
             return -1;
         }
     }
 
-    event = (struct BattleItemEventRecord *)Func_0808e14c(item_id);
-    if (event != 0 && event->effect != 0) {
-        GameFlag_Clear(0x143);
-        GameFlag_Clear(0x142);
-        if (!(event->metadata & (s32)&Value_00000400)) {
-            UiText_DrawQuantity(actor, 1);
-            UiText_DrawQuantity(item_id, 2);
-            UiText_DrawMessage((s32)&Value_0000091c, 1);
+    event = (struct BattleItemEventRecord *)Event_FindFacingTrigger(item_id);
+    if (event != 0 && event->effect.id != 0) {
+        GameFlag_ClearBitFar(0x143);
+        GameFlag_ClearBitFar(0x142);
+        if (!(event->metadata & 0x400)) {
+            UiWork_PushValueSlotFar(actor, 1);
+            UiWork_PushValueSlotFar(item_id, 2);
+            UiText_ShowPositionedMessageAndWaitFar(0x91c, 1);
         }
-        if (event->effect < 0x10000) {
+        if (event->effect.id < 0x10000) {
             s32 objref = Func_0808ddec(Data_02000240.object_id);
             Battle_Reset();
-            Func_08092b94(event->effect);
+            Event_SetValue1d8(event->effect.id);
             Func_08092f84(objref, 0);
-            Func_08091750();
+            BattleFx_FinishAction();
         } else {
-            Func_080072f0(item_id, actor, slot, event->effect);
+            event->effect.callback(item_id, actor, slot);
         }
         result = 0;
     } else {
         s32 action_id;
-        u8 *rt;
 
-        GameFlag_Clear((s32)&Value_00000143);
-        GameFlag_Set(0x142);
-        action_id = Item_GetData(item_id)->action_id;
-        rt = (u8 *)Data_03001ebc;
+        best = 0x142;
+        GameFlag_ClearBitFar(0x143);
+        GameFlag_SetBitFar(best);
+        action_id = Item_Get(item_id)->action_id;
+        work.runtime = (struct ItemCommandRuntime *)Data_03001ebc;
 
         if (action_id != 0) {
-            GameFlag_Set(0x145);
-            GameFlag_Clear(0x142);
+            GameFlag_SetBitFar(0x145);
+            GameFlag_ClearBitFar(best);
 
-            if (action_id == 149 && !GameFlag_IsSet(0x144)) {
+            if (action_id == 149 && !GameFlag_TestFar(0x144)) {
                 s32 declined;
 
-                UiText_DrawQuantity(item_id, 2);
-                UiText_DrawMessage(0x924, 13);
-                declined = Func_08091d84(1);
-                UiWork_FinalizePending();
+                UiWork_PushValueSlotFar(item_id, 2);
+                UiText_ShowPositionedMessageAndWaitFar(0x924, 13);
+                declined = Object_CallSpawnRoutineAtOrigin(1);
+                UiWork_FinalizePendingCoreFar();
                 if (declined != 0)
                     return 0;
 
-                *(u16 *)((u8 *)&Data_02000240 + 0x400) =
-                    *(u16 *)((u8 *)&Data_02000240 + 0x480);
-                *(u16 *)((u8 *)&Data_02000240 + 0x402) =
-                    *(u16 *)((u8 *)&Data_02000240 + 0x482);
-                *(s16 *)(rt + (s32)&Value_00000170) = (s32)&Value_000003e7;
+                {
+                    u16 *work = (u16 *)&Data_02000240;
+                    s32 a, b;
+                    a = work[288];
+                    work[224] = a;
+                    b = work[289];
+                    work[225] = b;
+                }
+                work.runtime->result_code = (s32)&Value_000003e7;
             }
 
-            UiText_DrawQuantity(actor, 1);
-            UiText_DrawQuantity(item_id, 2);
-            UiText_DrawMessage(0x91c, 1);
-            Func_08096fb0(action_id, 0);
-            rt = rt + 0xcc6;
-            *rt = 1;
-            Func_08096810();
-            *rt = 0;
-            BattleFx_CleanupSceneObjects();
+            UiWork_PushValueSlotFar(actor, 1);
+            UiWork_PushValueSlotFar(item_id, 2);
+            UiText_ShowPositionedMessageAndWaitFar(0x91c, 1);
+            BattleFx_LoadActionEffectResources(action_id, 0);
+            work.runtime->resolving_action = 1;
+            BattleFx_Run();
+            work.runtime->resolving_action = 0;
+            BattleEffect_CleanupSceneObjects();
 
-            if (Item_GetData(item_id)->use_type & 1)
-                GameFlag_Set(0x143);
+            if (Item_Get(item_id)->use_type & 1)
+                GameFlag_SetBitFar(0x143);
         }
     }
 
-    if (GameFlag_IsSet(0x142))
-        UiText_DrawMessage(0x927, 1);
-    if (GameFlag_IsSet(0x143))
-        Func_08077058(actor, slot);
+    if (GameFlag_TestFar(0x142))
+        UiText_ShowPositionedMessageAndWaitFar(0x927, 1);
+    if (GameFlag_TestFar(0x143))
+        Inventory_RemoveFar(actor, slot);
     return result;
 }

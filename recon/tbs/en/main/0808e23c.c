@@ -1,13 +1,9 @@
-/* Draft, not exact (2026-09-26): 628 of 632 bytes, 208 differing halfwords.
-   Normalized edit distance: 106 halfwords. Extending the phase union through
-   the post-call zero regresses from the two-phase model's 82 edits and puts
-   count/runtime values back in low registers. The better two-phase model
-   remains in the preceding commit.
-   Typed party/runtime views recover
-   base-plus-offset accesses and shared zero/one lifetimes. Confirmation
-   copies use +0x240/+0x242 and +0x1c0/+0x1c2. The complete literal pool
-   now agrees. Initializing best after the owner-count call and correcting
-   the canonical no-argument count prototype are both score-neutral.
+/* Draft, not exact (2026-09-26): 628 of 632 bytes, 283 differing halfwords.
+   Normalized edit distance: 81 halfwords. The callback is ordinary C; typed
+   views and indexed halfwords recover the confirmation offsets and pool.
+   Count/runtime share r9, not r8; best/index exchange r6/r7. Extending the
+   word through zero regresses to 106 edits. Reusing best as the no-effect
+   flag changes 82 to 81 edits but does not recover the predicted roles.
    Remaining: phase-value allocation and runtime flag-pointer scheduling. */
 #include "TYPES.H"
 extern u8 Value_000003e7;
@@ -127,15 +123,15 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
     u16 *p;
     s32 j;
     s32 matches;
-    /* FAKEMATCH: reuse one word across the count, runtime and zero phases. */
+    /* FAKEMATCH: reuse a scalar for the inventory count and no-effect flag. */
+    s32 best;
+    /* FAKEMATCH: reuse one word across the count and runtime phases. */
     union ItemCommandWork work;
 
     result = -1;
     item_id = arg & 0x3ff;
     actor = (arg >> 10) & 0xf;
     {
-        s32 best;
-
         work.count = Party_CountActiveOwnersFar();
         best = 0;
 
@@ -204,15 +200,15 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
     } else {
         s32 action_id;
 
+        best = 0x142;
         GameFlag_Clear(0x143);
-        GameFlag_Set(0x142);
+        GameFlag_Set(best);
         action_id = Item_GetData(item_id)->action_id;
         work.runtime = (struct ItemCommandRuntime *)Data_03001ebc;
 
         if (action_id != 0) {
-            u8 *flag;
             GameFlag_Set(0x145);
-            GameFlag_Clear(0x142);
+            GameFlag_Clear(best);
 
             if (action_id == 149 && !GameFlag_IsSet(0x144)) {
                 s32 declined;
@@ -239,11 +235,9 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
             UiText_DrawQuantity(item_id, 2);
             UiText_DrawMessage(0x91c, 1);
             Func_08096fb0(action_id, 0);
-            flag = &work.runtime->resolving_action;
-            work.count = 0;
-            *flag = 1;
+            work.runtime->resolving_action = 1;
             Func_08096810();
-            *flag = work.count;
+            work.runtime->resolving_action = 0;
             Func_08097194();
 
             if (Item_GetData(item_id)->use_type & 1)

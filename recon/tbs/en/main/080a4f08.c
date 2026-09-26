@@ -1,37 +1,48 @@
-/* Draft, not exact (2026-09-24): candidate=696 reference=712, 317 differing
-   halfwords. Hand-written from the assembly on the pattern of
-   Menu_SelectQuantity. Residual: the reference keeps the window in r7 and the
-   quantity in r8 (this candidate swaps them), spills range, count, other count
-   and the resource slot to different stack slots, and reloads range twice for
-   Math_Mod. */
+/* Draft witness, not exact (2026-09-26): candidate=724 reference=712,
+   346 differing halfwords, 203 aligned edits. Three structural hypotheses:
+   (1) RedrawSavedRectFar veneers to the actual void RenderOutput callee;
+       correcting its return type leaves the 696-byte baseline unchanged
+       (317 differing halfwords, 144 aligned edits).
+   (2) Shared inventory/render types and MsgItemName follow the exact adjacent
+       item-header owner. A narrowed external mask still emits an SI load:
+       700 bytes, 311 differing halfwords, 148 aligned edits. The middle pool
+       remains absent and the independent scalar stack slots remain wrong.
+   (3) This witness groups count/other_count/changed/slot in reference order
+       and narrows the redraw item. It disproves that aggregate model: a
+       persistent struct base grows the frame from 28 to 32 bytes, spills all
+       arguments, and the item mask still folds into a word AND. No mid-pool.
+   Stop after three hypotheses; restore independent scalars from (2) next.
+   Caller audit: RUN_COMMANDS passes (0, quantity, single); -1 cancels and
+   the result is otherwise zero-based. Func_080b0040 is a void tile writer
+   through the veneer to 080b06c0. No bytes are adopted by this draft. */
 /* Item menu: choose how many of the selected item to hand from one party
    member to another. Left and right step the amount, A
    confirms and B cancels with -1. */
 #include "TYPES.H"
 #include "DMA.H"
-
-#define MENU_FIELD(menu, type, offset) (*(type *)((u8 *)(menu) + (offset)))
-
-struct RenderObject {
-    u8 padding00[0x18];
-    u16 tile : 10;
-    u16 attributes : 6;
-};
-
-extern u8 *gMenuWork;
+#include "INVENTORY_MENU.H"
+#include "RENDER_INPUT.H"
 extern volatile s32 gKeysRepeat;
 extern volatile u32 gKeyState;
 extern const u8 Data_080af08c[];
+extern u8 MsgItemName;
+
+struct ItemQuantitySelection {
+    s32 count;
+    s32 other_count;
+    s32 changed;
+    s32 slot;
+};
 
 void *Runtime_AllocateBlock(s32 slot, s32 size);
 void Runtime_ReleaseHeapBlock(s32 slot);
 void ItemMenu_SetMsgWin7(void);
-s32 RenderOutput_RedrawSavedRectFar(s32 window);
+void RenderOutput_RedrawSavedRectFar(s32 window);
 void RenderOutput_ClearListFar(s32 window);
 s32 Func_080a3d9c(s32 owner, s32 item);
 s32 Resource_FindFreeEntry(void);
 s32 VramBlock_LoadCached(s32 slot, s32 size, const void *source);
-struct RenderObject *RenderOutput_CreateFar(s32 slot, s32 attributes, s32 window, s32 x, s32 y);
+struct RenderOutput *RenderOutput_CreateFar(s32 slot, s32 attributes, s32 window, s32 x, s32 y);
 void UiMenu_SlideCursor(s32 x, s32 y);
 void UiMenu_PositionCursor(s32 x, s32 y);
 s32 Math_Mod(s32 value, s32 modulus);
@@ -46,36 +57,37 @@ s32 GameFlag_TestFar(s32 flag);
 
 s32 ItemMenu_SelectGiveQuantity(s32 base, s32 range, s32 single)
 {
-    u8 *menu = gMenuWork;
+    struct InventoryMenuState *menu = gMenuWork;
     u8 *tiles = Runtime_AllocateBlock(14, 0x400);
-    s32 other_count = 0;
-    s32 changed = 1;
-    s32 window = MENU_FIELD(menu, s32, 268);
-    s32 count;
-    s32 slot;
+    struct ItemQuantitySelection selection;
+    s32 window = menu->message_window;
     s32 quantity;
-    struct RenderObject *object;
+    struct RenderOutput *object;
 
+    selection.other_count = 0;
+    selection.changed = 1;
     ItemMenu_SetMsgWin7();
     RenderOutput_RedrawSavedRectFar(window);
     quantity = base;
     if (single == 0)
-        other_count = Func_080a3d9c(MENU_FIELD(menu, u8, 0x21b), MENU_FIELD(menu, u16, 376) & 0x1ff);
-    count = Func_080a3d9c(MENU_FIELD(menu, u8, 0x21a), MENU_FIELD(menu, u16, 376) & 0x1ff);
-    slot = Resource_FindFreeEntry();
-    if (slot == 96)
+        selection.other_count = InventoryMenu_GetItemQuantity(menu->target_owner,
+            menu->selected_item & 0x1ff);
+    selection.count = InventoryMenu_GetItemQuantity(menu->item_owner,
+        menu->selected_item & 0x1ff);
+    selection.slot = Resource_FindFreeEntry();
+    if (selection.slot == 96)
         goto done;
-    VramBlock_LoadCached(slot, 256, 0);
-    RenderOutput_CreateFar(slot, 0x40004000, window, 48, 32);
-    object = RenderOutput_CreateFar(slot, 0x40004000, window, 80, 32);
-    object->tile += 4;
+    VramBlock_LoadCached(selection.slot, 256, 0);
+    RenderOutput_CreateFar(selection.slot, 0x40004000, window, 48, 32);
+    object = RenderOutput_CreateFar(selection.slot, 0x40004000, window, 80, 32);
+    object->table.bits.index += 4;
     UiMenu_SlideCursor(128, 40);
     goto check_exit;
 
 update:
-    if (changed == 0)
+    if (selection.changed == 0)
         goto input;
-    changed = 0;
+    selection.changed = 0;
     quantity = Math_Mod(range + quantity, range);
     RenderOutput_RedrawSavedRectFar(window);
     UiText_DrawCharacterAtOffsetFar(0xade, window, 32, 0);
@@ -84,15 +96,18 @@ update:
     Func_080b0040(range + base, 0, tiles);
     Func_080b0040(base + quantity + 1, 10, tiles);
     Func_080b0040(base, 2, tiles);
-    VramBlock_LoadCached(slot, 256, tiles);
+    VramBlock_LoadCached(selection.slot, 256, tiles);
     UiText_DrawNumberInWindowFar(quantity + 1, 2, window, 32, 32);
-    UiText_DrawCharacterAtOffsetFar((MENU_FIELD(menu, u16, 376) & 0x1ff) + 0x182, window, 16, 8);
-    UiText_DrawNumberInWindowFar(count - quantity - 1, 2, window, 16, 24);
+    {
+        u16 item = menu->selected_item & 0x1ff;
+        UiText_DrawCharacterAtOffsetFar(item + (s32)&MsgItemName, window, 16, 8);
+    }
+    UiText_DrawNumberInWindowFar(selection.count - quantity - 1, 2, window, 16, 24);
     if (single == 0)
-        UiText_DrawNumberInWindowFar(other_count + quantity + 1, 2, window, 80, 24);
-    UiText_DrawStringAtOffsetFar(Owner_GetStateFar(MENU_FIELD(menu, u8, 0x21a)), window, 16, 16);
+        UiText_DrawNumberInWindowFar(selection.other_count + quantity + 1, 2, window, 80, 24);
+    UiText_DrawStringAtOffsetFar(Owner_GetStateFar(menu->item_owner), window, 16, 16);
     if (single == 0)
-        UiText_DrawStringAtOffsetFar(Owner_GetStateFar(MENU_FIELD(menu, u8, 0x21b)), window, 80, 16);
+        UiText_DrawStringAtOffsetFar(Owner_GetStateFar(menu->target_owner), window, 80, 16);
 
 input:
     {
@@ -114,12 +129,12 @@ input:
 
         if (*keys & 32) {
             quantity -= 1;
-            changed = 1;
+            selection.changed = 1;
             Audio_PlayCue(111);
         }
         if (*keys & 16) {
             quantity += 1;
-            changed = 1;
+            selection.changed = 1;
             Audio_PlayCue(111);
         }
     }
@@ -133,7 +148,7 @@ done:
     RenderOutput_RedrawSavedRectFar(window);
     RenderOutput_ClearListFar(window);
     Runtime_ReleaseHeapBlock(14);
-    MENU_FIELD(menu, u8 *, 540)[5] = 13;
+    menu->selected_item_icon->state = 13;
     if (GameFlag_TestFar(336))
         quantity = -1;
     return quantity;

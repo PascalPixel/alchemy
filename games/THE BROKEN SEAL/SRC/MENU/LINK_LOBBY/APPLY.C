@@ -1,12 +1,11 @@
-/* DRAFT: exact 468-byte complete own-ROM extent, zero differing halfwords
- * and zero aligned edits (2026-09-26). Shared message tails, answer store,
- * flag rematerialization, all branches and literal words agree.
- * Production registration and integration verification remain. */
+/* Handle battle applications and reopen the lobby attendant's dialogue.
+ * Reconstructed from the complete own-ROM owner and registered draft;
+ * exact 468-byte extent, including literal pool (2026-09-26). */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
-s32 Local_0200008c(s32 mode);
-void Local_02000128(s32 mode);
+s32 LinkLobby_PeerSlotMatches(s32 slot);
+void LinkLobby_WriteSlotValue(s32 slot);
 u32 State_RunQueryWithInterruptMasterSaved(void);
 void Main_080770e8(s32 counter, s32 value);
 
@@ -19,7 +18,7 @@ union GameStateRows {
 extern union GameStateRows Data_02000240_t;
 extern u8 Data_00002930;
 
-/* FAKEMATCH: Inline typed calls keep flag constants local to each call. */
+/* FAKEMATCH: Typed inline calls preserve call-local constants and argument order. */
 static __inline__ s32 Value1(s32 (*f)(s32), s32 a0)
 {
     return f(a0);
@@ -36,7 +35,7 @@ static __inline__ void Call1(void (*f)(s32), s32 a0)
 }
 
 /* FAKEMATCH: The unused callback result keeps the last callee's r0 at return. */
-s32 Func_02000b94(void)
+s32 LinkLobby_RunBattleApplication(void)
 {
     s32 answer;
     s32 msg;
@@ -45,11 +44,11 @@ s32 Func_02000b94(void)
     msg = (s32)&Data_00002930;
     Engine_EventBegin();
     Engine_ActorFaceActor(8, Data_02000240_t.words[125], 0);
-    if (Local_0200008c(0) == 0) {
+    if (LinkLobby_PeerSlotMatches(0) == 0) {
         Engine_TaskWait(1);
     }
-    if (Local_0200008c(0) == 0) {
-        Local_02000128(5);
+    if (LinkLobby_PeerSlotMatches(0) == 0) {
+        LinkLobby_WriteSlotValue(5);
         State_RunQueryWithInterruptMasterSaved();
         if (!Value1(Engine_GameFlagIsSet, 0x173)) {
             Engine_EventSetMessage(msg + 5);
@@ -68,7 +67,7 @@ s32 Func_02000b94(void)
             } else {
                 Call1(Engine_GameFlagClear, 0x173);
                 Engine_GameFlagSet(0x16c);
-                Local_02000128(0);
+                LinkLobby_WriteSlotValue(0);
                 line = msg + 6;
                 goto message;
             }
@@ -78,7 +77,7 @@ s32 Func_02000b94(void)
         }
     } else {
         if (Value1(Engine_GameFlagIsSet, 0x173)) {
-            Local_02000128(0);
+            LinkLobby_WriteSlotValue(0);
             Engine_EventSetMessage(0x293d);
             Engine_EventOpenMessage(8, 0);
             Engine_GameFlagClear(0x202);
@@ -104,7 +103,7 @@ open_message:
             }
             Engine_EventOpenMessage(8, 0);
             if (Engine_UiWorkWaitThenFinalizeCapacity(0, 0) == 0) {
-                if (Local_0200008c(0)) {
+                if (LinkLobby_PeerSlotMatches(0)) {
                     Engine_GameFlagSet(0x16c);
                     Engine_GameFlagSet(0x172);
                     if (Engine_GameFlagIsSet(0x201)) {
@@ -112,7 +111,7 @@ open_message:
                     } else {
                         Engine_EventSetMessage(msg + 4);
                     }
-                    Local_02000128(1);
+                    LinkLobby_WriteSlotValue(1);
                     Engine_GameFlagSet(0x202);
                     goto open_message;
                 } else {

@@ -36,6 +36,20 @@
  * -dL: row symbol starts SI then narrows to HI. -dA minipool dump reports an
  * HImode symbol fixup with range 1020, not short reach: no width/reach claim.
  * H2 does not satisfy the reference frame/pool admission constraint.
+ * H3: the contiguous frame/pending/phase/counts/pages/cursor stack area is a
+ * typed screen-control aggregate. Predict original stack ordering and reduced
+ * live-pointer pressure without register tuning. Final structural hypothesis.
+ * H3 result: 1056 B / 1056, 514 differing halfwords, aligned distance 380;
+ * 309 wrong instructions, 91 runs (10 pool/immediate, 17 copy/rematerialise,
+ * 64 other, no register-only runs). Frame 84 and menu r9 now agree; count and
+ * pair slots are 60/64/68/76 as in the reference. Control base stays in r8,
+ * however, replacing direct frame loads/stores. Result spills at sp+44;
+ * reference retains it in r7. Pool words are at +0x324 (21 words) and +0x414
+ * (3), not reference +0x40 (2) and +0x3d4 (19). Dead subtract still absent.
+ * Call argument scheduling and loop/exit topology still differ broadly.
+ * STOP: three independent structural hypotheses exhausted; no adoption.
+ * H2 has the lowest aligned distance, 314; H3 preserves the aggregate-layout
+ * observation but does not qualify as a register-only near miss.
  */
 
 struct MenuCursor {
@@ -61,6 +75,16 @@ struct MenuActionWork {
     u8 owner;
     u8 unknown21b[0x3d];
     u8 preview_owner;
+};
+
+struct MenuActionControl {
+    s32 frame;
+    s32 pending;
+    s32 phase;
+    s32 second_count;
+    s32 first_count;
+    s32 pages[2];
+    s32 cursor[2];
 };
 
 struct MenuRenderWork {
@@ -129,25 +153,19 @@ s32 Unnamed_080ae2f4(void)
     struct MenuRenderWork *render;
     u32 keys;
     u32 repeat;
-    s32 frame;
-    s32 pending;
-    s32 phase;
-    s32 second_count;
-    s32 first_count;
-    s32 pages[2];
-    s32 cursor[2];
+    struct MenuActionControl control;
     u16 *pos;
     s32 *page;
     s32 *selection;
     s32 none;
     u16 row_y;
 
-    pending = 1;
-    phase = 0;
-    frame = 0;
+    control.pending = 1;
+    control.phase = 0;
+    control.frame = 0;
     work = gMenuWork;
     work->cursor->state = 13;
-    selection = cursor;
+    selection = control.cursor;
     Menu_SetPair(selection, 0);
     cnt = 3;
     pos = &work->row_y[3];
@@ -159,13 +177,13 @@ s32 Unnamed_080ae2f4(void)
     } while (cnt >= 0);
     RenderOutput_ClearListFar(work->list_window);
     WaitFrames(1);
-    page = pages;
+    page = control.pages;
     Menu_SetPair(page, 1);
     buf = (u16 *)Runtime_BumpAllocateAlternatePool(96);
     owner_buf = Runtime_BumpAllocateAlternatePool(0x14c);
     owner = (struct OwnerActionState *)Owner_GetStateFar(work->owner);
     Menu_SetPair(page, OwnerAction_DiffSlots(owner->action_slots,
-        owner->action_slots, buf, &first_count, &second_count));
+        owner->action_slots, buf, &control.first_count, &control.second_count));
     Runtime_BumpFree(owner_buf);
     Runtime_BumpFree(buf);
     Menu_PutPair(page, 0, Math_Div(Menu_GetPair(page, 0) - 1, 6) + 1);
@@ -186,7 +204,7 @@ s32 Unnamed_080ae2f4(void)
         render = Data_03001e8c;
         keys = Data_03001c94;
         repeat = Data_03001b04;
-        if (pending) {
+        if (control.pending) {
             render->menu_busy = 1;
             Func_08015060(work->left_window);
             Func_08015060(work->right_window);
@@ -212,15 +230,15 @@ s32 Unnamed_080ae2f4(void)
             UiWindow_SetTilemapEntryFar(window, 0xf129, window->width - 2, -1, none);
             render->dirty_rows |= 2 << (window->y >> 2);
         }
-        frame++;
-        Math_Mod(frame, 60) - 5;
+        control.frame++;
+        Math_Mod(control.frame, 60) - 5;
         FourObjectMotion_SetSlotPosition(0, 32, 200, 0);
-        if (pending) {
-            pending = 0;
-            phase = Menu_GetModuloOfSum(phase, 2);
+        if (control.pending) {
+            control.pending = 0;
+            control.phase = Menu_GetModuloOfSum(control.phase, 2);
         }
-        if ((frame & 3) == 0) {
-            if (frame & 4)
+        if ((control.frame & 3) == 0) {
+            if (control.frame & 4)
                 ((void (*)(void *, const void *, s32))0x03001388)(
                     (void *)0x060052c0, (const void *)0x080af26c, 32);
             else
@@ -238,12 +256,12 @@ s32 Unnamed_080ae2f4(void)
                     Menu_GetPair(selection, 0), Menu_GetPair(page, none)));
                 Audio_PlayCue(111);
                 Runtime_SetMainState19();
-                pending = 1;
+                control.pending = 1;
             } else if (repeat & 16) {
                 Menu_PutPair(selection, 0, Menu_GetPair(selection, 0) + 1);
                 Audio_PlayCue(111);
                 Runtime_SetMainState19();
-                pending = 1;
+                control.pending = 1;
                 Menu_PutPair(selection, 0, Menu_GetModuloOfSum(
                     Menu_GetPair(selection, 0), Menu_GetPair(page, none)));
             }

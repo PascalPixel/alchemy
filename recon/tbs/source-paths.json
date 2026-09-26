@@ -20128,7 +20128,8 @@
       "name": "UiGlyph_ResetWorkState"
     },
     "main:0801a5a4": {
-      "name": "UiGlyph_DecodeWithHeapRoutines"
+      "name": "UiGlyph_DecodeWithHeapRoutines",
+      "source": "GRAPHICS/GLYPH/DECODE.C"
     },
     "main:08019bac": {
       "name": "UiText_LookupMessage",

@@ -2,6 +2,21 @@
   "format": 5,
   "units": [
     {
+      "id": "babi-ship-scanline-waves-candidate",
+      "game": "tbs",
+      "source": "recon/tbs/en/overlays/resource_3ca_c_02000f80.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3ca",
+      "absolute_symbols": {
+        "Data_03001ed8": { "address": "0x03001ed8", "kind": "data" },
+        "Data_03001ad0": { "address": "0x03001ad0", "kind": "data" },
+        "Data_020094c8": { "address": "0x020094c8", "kind": "data" }
+      },
+      "owners": [
+        { "address": "0x02000f80", "extent": 340, "state": "not-yet-c" }
+      ]
+    },
+    {
       "id": "retained-overlay-3ca-02000194",
       "game": "tbs",
       "source": "recon/tbs/en/overlays/resource_3ca_c_02000194.c",

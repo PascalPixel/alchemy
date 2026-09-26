@@ -1,16 +1,12 @@
-/* Draft: whole 268-byte UiGlyph_ResetWorkState, including 12-byte pool.
- * Candidate 268 bytes, three differing halfwords (2026-09-26). A halfword
- * clear local separates the initial zero from the count register, restoring
- * the missing initialization and final alignment. Only the two row-pair
- * stores remain: +374/+426 versus +372/+424 with offset 2. Giving the index
- * a word-aligned union or two 16-bit fields in a u32 changes no instructions.
- * Earlier scoped initialization and cursor helper did not close it.
- */
+/* Complete 268-byte glyph-work initializer, including its literal pool.
+ * The cursor subrecord is shared by the paired row resets. */
 #include "TYPES.H"
+
+struct GlyphCursor { u16 unused; u16 cursor; };
 
 struct GlyphRow {
     u8 unknown_00[8];
-    struct { u16 unused; u16 cursor; } index;
+    struct GlyphCursor index;
     u8 unknown_0c[6];
     u16 state;
     u8 unknown_14[32];
@@ -68,6 +64,12 @@ struct GlyphWork *Runtime_AllocateBlock(s32 kind, s32 size);
 s32 Resource_FindFreeEntry(void);
 s32 VramBlock_LoadCached(u32 slot, u32 size, const void *src);
 
+static __inline__ void ResetCursor(struct GlyphCursor *cursor)
+{
+    /* FAKEMATCH: keep the cursor-subrecord base for the paired row stores. */
+    cursor->cursor = 0;
+}
+
 void UiGlyph_ResetWorkState(void)
 {
     struct GlyphWork *work;
@@ -92,8 +94,8 @@ void UiGlyph_ResetWorkState(void)
         work->rows[i + 9].index.cursor = 0;
         i++;
     } while (i != 5);
-    work->rows[7].index.cursor = 0;
-    work->rows[8].index.cursor = 0;
+    ResetCursor(&work->rows[7].index);
+    ResetCursor(&work->rows[8].index);
     work->rows[0].index.cursor = 0;
     work->rows[1].index.cursor = 0;
     work->rows[0].state = 0;

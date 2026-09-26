@@ -1,225 +1,222 @@
-#include "types.h"
+/* Draft main:08097c3c. Whole extent 836 bytes, including 2-byte alignment
+ * and twelve literal-pool words. Typed hypothesis 1: 852-byte candidate,
+ * 389 differing halfwords / 276 edits, different block topology. Its frame
+ * is 52 bytes, but pos/nearby occupy +28/+40 instead of +40/+28. The input
+ * word load is absent at GetCycledTableWord; direction's narrow lifetime
+ * retains an extra shifted value. Setup and movement semantics are recovered,
+ * including the previously omitted x/z arguments of the terrain query.
+ * The generic 940-byte draft (463 differing halfwords) remains in history.
+ */
+#include "TYPES.H"
+#include "SYSTEM.H"
+#include "OBJECT_RUNTIME.H"
 
-#define Func_08097c3c Func_08097c3c
-
-void Func_080030f8();
-void Func_0800447c();
-void Func_08009080();
-s32 Func_08009098();
-s32 Func_08009150();
-void Func_08009158();
-s32 Func_080091d8();
-s32 Func_08009240();
-s32 Func_080092a0();
-s32 Func_080092a8();
-u8 *Func_08092054();
-void Func_08097174();
-void Func_08097384();
-void Func_0809748c();
-s32 Func_08097b54();
-s32 Func_08098070();
-void Func_08098184();
-void Func_080981b0();
-void Func_080f9010();
-
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-static __inline__ s32 Value4(s32 (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    return f(a0, a1, a2, a3);
-}
+union PreviewObject {
+    struct ObjectRuntime object;
+    struct {
+        u8 unknown_00[108];
+        void (*update)(void *);
+    } effect;
+};
+struct PreviewWork {
+    s32 direction;
+    u8 unknown_04[12];
+    union PreviewObject *parent;
+    union PreviewObject *actor;
+    s16 parent_id;
+    u8 unknown_1a[30];
+    void (*saved_update)(void *);
+    const void *saved_script;
+    u8 unknown_40[4];
+    u8 saved_animation;
+};
+extern struct PreviewWork *Data_03001f30;
+extern u32 Data_03001ae8;
+extern u32 Data_03001e40;
+extern u32 Data_03001c94;
+extern const u8 Data_0809f0bc[];
+extern const u8 Data_0809f118[];
+extern const u8 Value_00006666;
+extern const u8 Value_00003333;
+extern const u8 Value_0000ffff;
+extern const u8 Value_00000303;
+void BattleEffect_InitializeSharedScene(void);
+void ObjectDispatch_InitializeFar(void *, const void *);
+void *BattleFx_StartItemBreak(void *);
+void BattleFx_PrepareBufferInterpolation(void);
+void Vector_AddPolarOffset(s32, s32, s32 *);
+void Object_SetPosition(void *, s32, s32, s32);
+void Object_CommitPosition(void *);
+void Object_SetMode(void *, s32);
+void BattleFx_SnapScaleToFull(void *);
+void Animation_ApplyRandomChildValues(void *);
+u16 BattleFx_GetCycledTableWord(void);
+s32 Object_CheckMovementCollision(void *, s32 *);
+void *Func_080092a0(void *, s32 *);
+s32 Func_080092a8(s32, s32, s32);
+void *Object_GetById(u32);
+void Audio_PlayCue(s32);
+void Animation_ApplyChildValuesFar(void *, s32);
+void EffectRuntime_StopCurrentObject(void);
+void Func_080981b0(void *);
 
 void Func_08097c3c(void)
 {
-    u32 i;
-    s32 p8;
-    s32 p8b;
-    s32 rec4;
-    u8 *record;
-    s32 value;
-    s32 r7;
-    s32 r6;
-    s32 r11;
-    s32 r10;
-    s32 r5;
-    s32 r9;
-    s32 slot24;
-    s32 slot20;
-    s32 slot8;
-    u8 slot4[24];
-    u8 *slot0;
-    s32 slot16;
-    s32 slot12;
-    u8 *p6;
-    u8 *p4;
-    u8 *p5;
-    u8 slot28[24];
+    s32 nearby[3];
+    s32 pos[3];
+    struct PreviewWork *work;
+    union PreviewObject *parent;
+    union PreviewObject *actor;
+    union PreviewObject *preview;
+    union PreviewObject *hit;
+    u8 *flags;
+    s32 moved_parent;
+    s32 angle;
+    u16 direction;
+    s32 keys;
+    s32 saved_x;
+    s32 saved_z;
+    s32 parent_x;
+    s32 parent_z;
+    s32 rate;
+    s32 step;
+    s32 x;
+    s32 z;
 
-    (*(s32 *)((*(s32 *)slot4) + 20)) = *(s32 *)0x03001f30;
-    (*(s32 *)((*(s32 *)slot4) + 16)) = *(s32 *)((*(s32 *)((*(s32 *)slot4) + 20)) + 16);
-    p6 = *(s32 *)((*(s32 *)((*(s32 *)slot4) + 20)) + 20);
-    (*(s32 *)((*(s32 *)slot4) + 4)) = (*(s32 *)((*(s32 *)((*(s32 *)slot4) + 20))) + 0x8000);
-    (*(s32 *)slot4) = 0;
-    if ((s32)p6 == 0) {
-    } else {
-        Func_08097384();
-        *(s32 *)((*(s32 *)((*(s32 *)slot4) + 16)) + 104) = (s32)p6;
-        Call2(Func_08009098, (*(s32 *)((*(s32 *)slot4) + 16)), 0x809f0bc);
-        rec4 = Value1(Func_08098070, (*(s32 *)((*(s32 *)slot4) + 16)));
-        if (rec4 == 0) {
-            Func_0809748c();
-        } else {
-            *(s32 *)(rec4 + 104) = (s32)p6;
-            *(s32 *)0x00000028 = *(s32 *)((s32)p6 + 8);
-            *(s32 *)0x0000002c = (*(s32 *)((s32)p6 + 12) + 0x100000);
-            *(s32 *)0x00000030 = *(s32 *)((s32)p6 + 16);
-            Func_0800447c(0x100000, (*(s32 *)((*(s32 *)slot4) + 4)), 40);
-            ((void (*)())Func_08009150)(rec4, *(s32 *)0x00000028, *(s32 *)0x0000002c, *(s32 *)0x00000030);
-            Func_08098184(rec4);
-            *(s32 *)(rec4 + 48) = 0x40000;
-            *(s32 *)(rec4 + 52) = 0x8000;
-            slot0 = (rec4 + 85);
-            slot0[0] = 4;
-            *(s32 *)((s32)p6 + 108) = 0x8096b89;
-            *(s32 *)((s32)p6 + 48) = 0x6666;
-            *(s32 *)((s32)p6 + 52) = 0x3333;
-            p6[90] = *(u8 *)(slot4);
-            p6[34] = 2;
-            goto L_08097ee4;
-            L_08097d00:;
-            value = Func_08097b54(*(s32 *)0x03001ae8);
-            p8 = ((u32)(value << 16) >> 16);
-            if (p8 == 0xffff) {
-                *(s32 *)(r7) = *(s32 *)(r6 + 8);
-                *(s32 *)(r7 + 4) = (*(s32 *)(r6 + 12) + r11);
-                *(s32 *)(r7 + 8) = *(s32 *)(r6 + 16);
-                Func_0800447c(r11, (*(s32 *)((*(s32 *)slot4) + 4)), r7);
-                Value4(Func_08009150, r10, *(s32 *)(r7), *(s32 *)(r7 + 4), *(s32 *)(r7 + 8));
-                Func_08009080(r10, 1);
-                *(s32 *)(r10 + 36) = r5;
-                *(s32 *)(r10 + 40) = r5;
-                *(s32 *)(r10 + 44) = r5;
-            } else {
-                *(s32 *)(r7) = *(s32 *)(r6 + 8);
-                *(s32 *)(r7 + 4) = (*(s32 *)(r6 + 12) + r11);
-                *(s32 *)(r7 + 8) = *(s32 *)(r6 + 16);
-                Func_0800447c(r11, (*(s32 *)((*(s32 *)slot4) + 4)), r7);
-                Call3(Func_0800447c, 0x20000, p8, r7);
-                ((void (*)())Func_08009150)(r10, *(s32 *)(r7), *(s32 *)(r7 + 4), *(s32 *)(r7 + 8));
-                Func_08009158(r10);
-                *(s32 *)(r7) = *(s32 *)(r6 + 8);
-                *(s32 *)(r7 + 4) = *(s32 *)(r6 + 12);
-                *(s32 *)(r7 + 8) = *(s32 *)(r6 + 16);
-                Func_0800447c(r11, p8, r7);
-                *(s32 *)(slot28) = *(s32 *)(r6 + 8);
-                *(s32 *)(slot28 + 4) = *(s32 *)(r6 + 12);
-                *(s32 *)(slot28 + 8) = *(s32 *)(r6 + 16);
-                Call3(Func_0800447c, 0x200000, p8, slot28);
-                if (Value2(Func_080091d8, r6, r7) <= 0) {
-                    record = Value2(Func_080092a0, r6, r9);
-                    if ((s32)record == 0) {
-                        goto L_08097e36;
-                    }
-                    if ((s32)record == (*(s32 *)((*(s32 *)slot4) + 16))) {
-                        p4 = *(s32 *)((*(s32 *)((*(s32 *)slot4) + 16)) + 16);
-                        if ((*(s32 *)((*(s32 *)((*(s32 *)slot4) + 16)) + 8) & -0x100000) == (*(s32 *)(r9) & -0x100000)) {
-                            if (((s32)p4 & -0x100000) == (*(s32 *)(r9 + 8) & -0x100000)) {
-                                goto L_08097e16;
-                            }
-                        }
-                        if ((*(s32 *)((*(s32 *)((*(s32 *)slot4) + 16)) + 8) & -0x100000) != (*(s32 *)(slot28) & -0x100000)) {
-                            goto L_08097e36;
-                        }
-                        if (((s32)p4 & -0x100000) != (*(s32 *)(slot28 + 8) & -0x100000)) {
-                            goto L_08097e36;
-                        }
-                        record = Value1(Func_080092a8, (*(s32 **)((*(s32 *)slot4) + 16))[34]);
-                        if ((s32)record == 0) {
-                            goto L_08097e32;
-                        }
-                    }
-                }
-                L_08097e16:;
-                Func_08009080(r10, 4);
-                if ((*(s32 *)0x03001e40 & 15) == 0) {
-                    Func_080f9010(114);
-                    goto L_08097ee4;
-                    L_08097e32:;
-                    (*(s32 *)slot4) = 1;
-                    L_08097e36:;
-                    Func_080f9010(175);
-                    (*(s32 *)((*(s32 *)slot4) + 12)) = *(s32 *)(r7);
-                    (*(s32 *)((*(s32 *)slot4) + 8)) = *(s32 *)(r7 + 8);
-                    Func_08009080(r10, *(u8 *)(0x0809f118 + (s32)((u32)(s32)((s32)((*(s32 *)((*(s32 *)slot4) + 4)) - (s32)p8) << 16) >> 30)));
-                    Func_080030f8(15);
-                    *(u8 *)(r6 + 91) = 0;
-                    *(s32 *)(r6 + 48) = 0x3333;
-                    *(s32 *)(r6 + 52) = 0x3333;
-                    ((void (*)())Func_08009150)(r6, *(s32 *)(r7), *(s32 *)(r7 + 4), *(s32 *)(r7 + 8));
-                    slot0[0] = 0;
-                    *(s32 *)(r10 + 48) = 0x3333;
-                    *(s32 *)(r10 + 52) = 0x3333;
-                    Func_0800447c(r11, p8, r7);
-                    ((void (*)())Func_08009150)(r10, *(s32 *)(r7), (*(s32 *)(r7 + 4) + r11), *(s32 *)(r7 + 8));
-                    if ((*(s32 *)slot4) == 1) {
-                        *(u8 *)(Func_08092054(*(s16 *)((*(s32 *)((*(s32 *)slot4) + 20)) + 24)) + 90) &= 254;
-                        *(s32 *)((*(s32 *)((*(s32 *)slot4) + 16)) + 48) = 0x3333;
-                        *(s32 *)((*(s32 *)((*(s32 *)slot4) + 16)) + 52) = 0x3333;
-                        ((void (*)())Func_08009150)((*(s32 *)((*(s32 *)slot4) + 16)), *(s32 *)(slot28), *(s32 *)(slot28 + 4), *(s32 *)(slot28 + 8));
-                    }
-                    Func_08009158(r6);
-                    *(s32 *)(r6 + 8) = (*(s32 *)((*(s32 *)slot4) + 12));
-                    *(s32 *)(r6 + 16) = (*(s32 *)((*(s32 *)slot4) + 8));
-                    *(s32 *)(r6 + 36) = 0;
-                    *(s32 *)(r6 + 44) = 0;
-                    goto L_08097ef8;
-                }
-            }
-            L_08097ee4:;
-            Func_080030f8(1);
-            p5 = *(s32 *)0x03001c94;
-            if (((s32)p5 & 0x303) == 0) {
-                goto L_08097d00;
-            }
-            L_08097ef8:;
-            Value2(Func_08009240, (s32)p6, (*(s32 **)((*(s32 *)slot4) + 20))[68]);
-            Value2(Func_08009098, (s32)p6, *(s32 *)((*(s32 *)((*(s32 *)slot4) + 20)) + 60));
-            *(s32 *)((s32)p6 + 108) = *(s32 *)((*(s32 *)((*(s32 *)slot4) + 20)) + 56);
-            Func_08097174();
-            if ((*(s32 *)slot4) == 1) {
-                {
-                    u8 *record = Func_08092054(*(s16 *)((*(s32 *)((*(s32 *)slot4) + 20)) + 24));
-                    u8 value = *(volatile u8 *)&record[90];
-                
-                    record[90] = (u8)(value | 1);
-                }
-            }
-            Func_0809748c();
-            Func_080981b0(r10);
-        }
+    work = Data_03001f30;
+    parent = work->parent;
+    actor = work->actor;
+    angle = work->direction + 0x8000;
+    moved_parent = 0;
+    if (actor == 0)
+        return;
+    BattleEffect_InitializeSharedScene();
+    parent->object.linked_object = &actor->object;
+    ObjectDispatch_InitializeFar(parent, Data_0809f0bc);
+    preview = BattleFx_StartItemBreak(parent);
+    if (preview == 0) {
+        BattleFx_PrepareBufferInterpolation();
+        return;
     }
-    p8b = (*(s32 *)((*(s32 *)slot4) + 4));
+    preview->object.linked_object = &actor->object;
+    pos[0] = actor->object.x;
+    pos[1] = actor->object.y + 0x100000;
+    pos[2] = actor->object.z;
+    Vector_AddPolarOffset(0x100000, angle, pos);
+    Object_SetPosition(preview, pos[0], pos[1], pos[2]);
+    BattleFx_SnapScaleToFull(preview);
+    preview->object.speed_limit = 0x40000;
+    preview->object.acceleration = 0x8000;
+    flags = &preview->object.flags;
+    *flags = 4;
+    actor->effect.update = Animation_ApplyRandomChildValues;
+    actor->object.speed_limit = (s32)&Value_00006666;
+    actor->object.acceleration = (s32)&Value_00003333;
+    actor->object.action_flags = *(u8 *)&moved_parent;
+    actor->object.terrain_id = 2;
+    goto wait;
+
+select:
+    direction = BattleFx_GetCycledTableWord();
+    if (direction == (s32)&Value_0000ffff) {
+        pos[0] = actor->object.x;
+        pos[1] = actor->object.y + 0x100000;
+        pos[2] = actor->object.z;
+        Vector_AddPolarOffset(0x100000, angle, pos);
+        Object_SetPosition(preview, pos[0], pos[1], pos[2]);
+        Object_SetMode(preview, 1);
+        preview->object.velocity_x = keys;
+        preview->object.velocity_y = keys;
+        preview->object.velocity_z = keys;
+        goto wait;
+    }
+    pos[0] = actor->object.x;
+    pos[1] = actor->object.y + 0x100000;
+    pos[2] = actor->object.z;
+    Vector_AddPolarOffset(0x100000, angle, pos);
+    Vector_AddPolarOffset(0x20000, direction, pos);
+    Object_SetPosition(preview, pos[0], pos[1], pos[2]);
+    Object_CommitPosition(preview);
+    pos[0] = actor->object.x;
+    pos[1] = actor->object.y;
+    pos[2] = actor->object.z;
+    Vector_AddPolarOffset(0x100000, direction, pos);
+    nearby[0] = actor->object.x;
+    nearby[1] = actor->object.y;
+    nearby[2] = actor->object.z;
+    Vector_AddPolarOffset(0x200000, direction, nearby);
+    if (Object_CheckMovementCollision(actor, pos) > 0)
+        goto blocked;
+    hit = Func_080092a0(actor, pos);
+    if (hit == 0)
+        goto move;
+    if (hit != parent)
+        goto blocked;
+    parent_x = parent->object.x & -0x100000;
+    parent_z = parent->object.z & -0x100000;
+    if (parent_x == (pos[0] & -0x100000)
+            && parent_z == (pos[2] & -0x100000))
+        goto blocked;
+    x = nearby[0];
+    z = nearby[2];
+    if (parent_x != (x & -0x100000) || parent_z != (z & -0x100000))
+        goto move;
+    if (Func_080092a8(parent->object.terrain_id, x, z) != 0)
+        goto blocked;
+    moved_parent = 1;
+    goto move;
+
+blocked:
+    Object_SetMode(preview, 4);
+    if ((Data_03001e40 & 15) == 0)
+        Audio_PlayCue(114);
+    goto wait;
+
+move:
+    Audio_PlayCue(175);
+    saved_x = pos[0];
+    saved_z = pos[2];
+    step = (u16)(angle - direction) >> 14;
+    Object_SetMode(preview, Data_0809f118[step]);
+    WaitFrames(15);
+    actor->object.movement_state = 0;
+    rate = (s32)&Value_00003333;
+    actor->object.speed_limit = rate;
+    actor->object.acceleration = rate;
+    Object_SetPosition(actor, pos[0], pos[1], pos[2]);
+    *flags = 0;
+    preview->object.speed_limit = rate;
+    preview->object.acceleration = rate;
+    Vector_AddPolarOffset(0x100000, direction, pos);
+    Object_SetPosition(preview, pos[0], pos[1] + 0x100000, pos[2]);
+    if (moved_parent == 1) {
+        hit = Object_GetById(work->parent_id);
+        hit->object.action_flags &= 254;
+        parent->object.speed_limit = rate;
+        parent->object.acceleration = rate;
+        Object_SetPosition(parent, nearby[0], nearby[1], nearby[2]);
+    }
+    Object_CommitPosition(actor);
+    actor->object.x = saved_x;
+    actor->object.z = saved_z;
+    actor->object.velocity_x = 0;
+    actor->object.velocity_z = 0;
+    goto finish;
+
+wait:
+    WaitFrames(1);
+    keys = Data_03001c94 & (s32)&Value_00000303;
+    if (keys == 0)
+        goto select;
+finish:
+    Animation_ApplyChildValuesFar(actor, work->saved_animation);
+    ObjectDispatch_InitializeFar(actor, work->saved_script);
+    actor->effect.update = work->saved_update;
+    EffectRuntime_StopCurrentObject();
+    if (moved_parent == 1) {
+        hit = Object_GetById(work->parent_id);
+        hit->object.action_flags |= 1;
+    }
+    BattleFx_PrepareBufferInterpolation();
+    Func_080981b0(preview);
 }

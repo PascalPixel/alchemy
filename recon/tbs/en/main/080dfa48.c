@@ -1,148 +1,182 @@
+/* Draft: complete 916-byte owner and literal pool; candidate 916 bytes,
+   39 differing halfwords (35 aligned edits). Three distinct projection
+   buffers, shared rectangle return type, typed work/target records and
+   pre-projection particle lifetime recovered. Remaining differences are
+   spill slots, initial particle/actor registers and scheduling. Allocator
+   inspected; bounded initialization-order hypothesis regressed. */
 #include "TYPES.H"
+#include "SYSTEM.H"
 #include "BATTLE_EFX.H"
+#include "EFFECT_STEP.H"
+#include "B5_CONTEXT.H"
+#include "MOTION_OBJECT.H"
 
-#define FIELD(p, type, off) (*(type *)((u8 *)(p) + (off)))
+struct ParticleTarget {
+    u32 reserved_00;
+    s32 side;
+    s32 object_id;
+    u8 reserved_0c[24];
+    s16 target_id;
+};
 
-typedef struct Particle {
-    s32 x, y, z, vx, vy, vz, life;
-} Particle;
-typedef void (*DrawFn)(void *, const void *, s32, s32, s32, s32);
-typedef s32 (*CopyFn)(void *, const void *, s32);
+struct ParticleWork {
+    u8 reserved_0000[0x7080];
+    struct EffectStep particles[64];
+    s32 phase;
+    s32 timer;
+    u8 reserved_7788[0x20];
+    s32 flash;
+    u8 reserved_77ac[0x78];
+    s32 dirty;
+    struct ParticleTarget *target;
+};
 
-extern u16 Data_080ede48[];
-extern u8 Value_00000073, Value_00000099, Value_000000bd;
-extern u8 Value_000000c2, Value_000000b9, Value_000000bb, Value_000000c0;
-void Func_080cd594(s32);
-void Func_080df9d0(void *,void *,s32,s32);
-void *Func_08002f40(s32);
-s32 Func_080041d8(void *,s32);
-void Func_080df90c(s32,s16,s32);
-void **Func_080b5098(s16);
-s32 Func_08004458(void);
-void Func_080e3980(s32,s32 *);
-void Func_080d6888(s16,s32,s32,s32,s32);
-void Func_080b5088(s16,s32);
-void Func_080b50e8(s32);
-void Func_080049ac(void);
-void Func_080051d8(s32,s32);
-void Func_080e3944(void *,s32 *);
-void Func_080e38b8(void *,s32,s32);
-void Func_080e155c(s32,s32);
-void Func_080cd52c(void);
-void Func_080030f8(s32);
-void Func_08004278(void *);
-void Func_08002dd8(s32);
-void Func_080cdbc0(void);
+struct ParticleRuntime {
+    struct ParticleWork *work;
+    void *canvas;
+    u8 *source;
+};
 
-void Func_080dfa48(void *object, s32 variant)
+typedef s32 (*WordCopyFn)(void *, const void *, s32);
+extern struct ParticleRuntime Data_03001eec;
+extern BattleEffectDrawRectangle Data_03001e50[];
+extern const u16 Data_080ede48[];
+extern char Value_00000073, Value_00000099, Value_000000bd;
+extern char Value_000000c2, Value_000000b9, Value_000000bb, Value_000000c0;
+void BattleFx_BeginCanvasLayer(s32 mode);
+void Func_080df9d0(void *source, void *destination, s32 width, s32 rows);
+void *Resource_GetTableEntry(s32 resource);
+s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
+void Scheduler_RemoveCallback(void (*callback)(void));
+void BattlePresentation_ProcessPendingGraphicsTransfer(void);
+void BattleFx_SetApproachMotion(s32 first, s32 second, s32 divisor);
+void EffectPosition_ApplyAlternateStepAndYOffset(s32 id, struct EffectPosition *position);
+void BattleMotion_ApplyVariantMotionFar(s32 id, s32 mode);
+void BattleEventRuntime_BeginPhaseFar(s32 mode);
+void Render_ResetTransformState(void);
+void Graphics_PrepareTransferInIwramWork(s32 first, s32 last);
+void Camera_ApplyShake(s32 x, s32 y);
+void ObjectGroup_TickMemberTimers(void);
+void BattleFx_EndCanvasLayer(void);
+
+/* Draw the target's two panels, then a 64-particle burst and expanding rings. */
+void Func_080dfa48(struct ParticleTarget *object, s32 variant)
 {
-    void **cache = (void **)0x03001eec;
-    void **cursor = cache;
-    void *work = *cursor++;
-    void *canvas = *cursor;
-    void *source = cache[2];
-    DrawFn rectangle[2];
-    Particle *particle;
-    s32 screen[3], origin[3];
-    void *actor_sprite;
-    s32 frame, i, size, offset;
-    s32 facing = *(s32 *)0x03001e80;
-    s32 palette_id;
+    void **cache;
+    void **cursor;
+    struct ParticleWork *work;
+    void *canvas;
+    u8 *source;
+    BattleEffectDrawRectangle rectangle[2];
+    struct EffectStep *particle;
+    struct EffectPosition origin;
+    struct EffectPosition screen;
+    struct EffectPosition projected;
+    struct MotionObject *actor;
+    s32 frame;
+    s32 cnt;
+    s32 size;
+    s32 offset;
+    s32 facing;
+    s32 palette;
 
-    FIELD(work, void *, 0x7828) = object;
-    Func_080cd594(0);
-    if (FIELD(FIELD(work, void *, 0x7828), s32, 4) == 0) {
-        BattleEffect_LoadWork(46,7,7,3,2);
-        BattleEffect_LoadWork(47,7,7,11,2);
+    cache = (void **)&Data_03001eec;
+    cursor = cache;
+    work = *cursor++;
+    canvas = *cursor;
+    facing = *(s32 *)((u8 *)cache - 108);
+    source = cache[2];
+    work->target = object;
+    BattleFx_BeginCanvasLayer(0);
+    if (work->target->side == 0) {
+        BattleEffect_LoadWork(46, 7, 7, 3, 2);
+        BattleEffect_LoadWork(47, 7, 7, 11, 2);
     } else {
-        BattleEffect_LoadWork(46,7,7,7,2);
-        BattleEffect_LoadWork(47,7,7,15,2);
+        BattleEffect_LoadWork(46, 7, 7, 7, 2);
+        BattleEffect_LoadWork(47, 7, 7, 15, 2);
     }
-    rectangle[0] = (DrawFn)((void **)0x03001e50)[46];
-    rectangle[1] = (DrawFn)((void **)0x03001e50)[47];
+    rectangle[0] = Data_03001e50[46];
+    rectangle[1] = Data_03001e50[47];
     Resource_LoadAndDecompress((s32)&Value_00000073, source, 0, 0);
     Resource_LoadAndDecompress((s32)&Value_00000099, work, 1, 0);
     Func_080df9d0(work, (void *)0x02010000, 40, 288);
     Resource_LoadAndDecompress((s32)&Value_000000bd, work, 1, 1);
     switch (variant) {
-    case 0: palette_id=(s32)&Value_000000c2; break;
-    case 1: palette_id=(s32)&Value_000000b9; break;
-    case 2: palette_id=(s32)&Value_000000bb; break;
-    default: palette_id=(s32)&Value_000000c0; break;
+    case 0: palette = (s32)&Value_000000c2; break;
+    case 1: palette = (s32)&Value_000000b9; break;
+    case 2: palette = (s32)&Value_000000bb; break;
+    default: palette = (s32)&Value_000000c0; break;
     }
-    ((CopyFn)0x03001388)((void *)0x05000000, Func_08002f40(palette_id), 128);
-    FIELD(work,s32,0x7780)=2;
-    FIELD(work,s32,0x7784)=75;
-    Func_080041d8((void *)0x080cd261,0x480);
-    Func_080df90c(FIELD(FIELD(work, void *, 0x7828),s32,8),FIELD(FIELD(work, void *, 0x7828),s16,36),10);
-    actor_sprite=*Func_080b5098(FIELD(FIELD(work, void *, 0x7828),s16,36));
-
-    particle=(Particle *)((u8 *)work+0x7080);
-    i=0;
+    ((WordCopyFn)0x03001388)((void *)0x05000000, Resource_GetTableEntry(palette), 128);
+    work->phase = 2;
+    work->timer = 75;
+    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    BattleFx_SetApproachMotion(work->target->object_id, work->target->target_id, 10);
+    actor = Func_080b5098(work->target->target_id)->object;
+    particle = work->particles;
+    cnt = 0;
     do {
-        particle->x=FIELD(actor_sprite,s32,8);
-        particle->y=FIELD(actor_sprite,s32,12)+0xa0000;
-        particle->z=FIELD(actor_sprite,s32,16);
-        particle->vx=(Func_08004458()&0x1ff)<<11;
-        particle->vy=((Func_08004458()&255)-64)<<11;
-        particle->vz=((Func_08004458()&255)-128)<<11;
-        if(particle->x>0) particle->vx=-particle->vx;
-        particle->life=(i/2)+16;
-        i++; particle++;
-    } while(i!=64);
-
-    Func_080e3980(FIELD(FIELD(work, void *, 0x7828),s16,36),origin);
-    frame=0;
+        particle->x = actor->x;
+        particle->y = actor->y + 0xa0000;
+        particle->z = actor->z;
+        particle->velocity_x = (Random16() & 0x1ff) << 11;
+        particle->velocity_y = ((Random16() & 255) - 64) << 11;
+        particle->velocity_z = ((Random16() & 255) - 128) << 11;
+        if (particle->x > 0)
+            particle->velocity_x = -particle->velocity_x;
+        particle->variant = cnt / 2 + 16;
+        cnt++;
+        particle++;
+    } while (cnt != 64);
+    EffectPosition_ApplyAlternateStepAndYOffset(work->target->target_id, &origin);
+    frame = 0;
     do {
-        if(frame<=14) {
-            Func_080e3980(FIELD(FIELD(work, void *, 0x7828),s32,8),screen);
-            rectangle[0](canvas,work,
-                (screen[0]/2)-16,
-                screen[1]-48,40,32);
-            rectangle[1](canvas,work,
-                (screen[0]/2)-16,
-                screen[1]-16,40,32);
+        if (frame <= 14) {
+            EffectPosition_ApplyAlternateStepAndYOffset(work->target->object_id, &screen);
+            rectangle[0](canvas, work, screen.x / 2 - 16, screen.y - 48, 40, 32);
+            rectangle[1](canvas, work, screen.x / 2 - 16, screen.y - 16, 40, 32);
         }
-        if(frame==10) {
-            Func_080d6888(FIELD(FIELD(work, void *, 0x7828),s16,36),7,5,0,8);
-            Func_080b5088(FIELD(FIELD(work, void *, 0x7828),s16,36),4);
-            Func_080b50e8(134);
-            FIELD(work,s32,0x77a8)=8;
+        if (frame == 10) {
+            ObjectGroup_UpdateMembers(work->target->target_id, 7, 5, 0, 8);
+            BattleMotion_ApplyVariantMotionFar(work->target->target_id, 4);
+            BattleEventRuntime_BeginPhaseFar(134);
+            work->flash = 8;
         }
-        offset=frame-8;
-        if((u32)offset<=11) {
-            size=offset/2;
-            rectangle[0](canvas,(u8 *)0x02010000+size*0x3c0,
-                (origin[0]/2)-16,
-                screen[1]-40,20,48);
+        offset = frame - 8;
+        if ((u32)offset <= 11) {
+            s32 ring = offset / 2;
+            rectangle[0](canvas, (u8 *)0x02010000 + ring * 0x3c0,
+                origin.x / 2 - 16, screen.y - 40, 20, 48);
         }
-        if((u32)offset<=55) {
-            Func_080049ac();
-            Func_080051d8(facing,facing+12);
-            particle=(Particle *)((u8 *)work+0x7080);
-            i=0;
+        if ((u32)offset <= 55) {
+            Render_ResetTransformState();
+            Graphics_PrepareTransferInIwramWork(facing, facing + 12);
+            particle = work->particles;
+            cnt = 0;
             do {
-                if(particle->life>0) {
-                    Func_080e3944(particle,screen);
-                    size=(particle->life>>4)+2;
-                    screen[0]>>=1;
-                    rectangle[0](canvas,(u8 *)source+Data_080ede48[size-1],
-                        screen[0]-(size/2),
-                        screen[1]-size,size,size*2);
-                    Func_080e38b8(particle,60,-0x200);
-                    particle->life--;
+                size = particle->variant;
+                if (size > 0) {
+                    EffectPosition_ApplyBaseAndYOffset(&particle->x, &projected);
+                    size >>= 4;
+                    size += 2;
+                    projected.x >>= 1;
+                    rectangle[0](canvas, source + Data_080ede48[size - 1],
+                        projected.x - size / 2, projected.y - size, size, size * 2);
+                    EffectStep_AdvanceWithGravity3D(particle, 60, -0x200);
+                    particle->variant--;
                 }
-                i++; particle++;
-            } while(i!=64);
+                cnt++;
+                particle++;
+            } while (cnt != 64);
         }
-        Func_080e155c(8,8);
-        Func_080cd52c();
-        FIELD(work,s32,0x7824)=1;
-        Func_080030f8(1);
+        Camera_ApplyShake(8, 8);
+        ObjectGroup_TickMemberTimers();
+        work->dirty = 1;
+        WaitFrames(1);
         frame++;
-    } while(frame!=60);
-    Func_08004278((void *)0x080cd261);
-    Func_08002dd8(47);
-    Func_08002dd8(46);
-    Func_080cdbc0();
+    } while (frame != 60);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+    Runtime_ReleaseHeapBlock(47);
+    Runtime_ReleaseHeapBlock(46);
+    BattleFx_EndCanvasLayer();
 }

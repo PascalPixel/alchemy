@@ -2,6 +2,82 @@
   "format": 5,
   "units": [
     {
+      "id": "takara-pillar-frame-candidate",
+      "game": "tbs",
+      "source": "recon/tbs/en/overlays/resource_3b3_c_02001d84.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3b3",
+      "absolute_symbols": {
+        "Engine_ActorGet": {
+          "address": "0x0200ab1c",
+          "kind": "thumb"
+        },
+        "Engine_CheckMovementCollision": {
+          "address": "0x0200aacc",
+          "kind": "thumb"
+        },
+        "TakaraHashira_SetCellAttributes": {
+          "address": "0x0200901c",
+          "kind": "thumb"
+        },
+        "Engine_MapQueryPosition": {
+          "address": "0x0200aab4",
+          "kind": "thumb"
+        },
+        "Engine_AudioPlayCue": {
+          "address": "0x0200abb4",
+          "kind": "thumb"
+        },
+        "TakaraHashira_LowerActorToLedge": {
+          "address": "0x02009074",
+          "kind": "thumb"
+        },
+        "SceneActor_WaitHeightBelowLimit": {
+          "address": "0x02008da8",
+          "kind": "thumb"
+        },
+        "StagedActor_StepDownUntilClamp": {
+          "address": "0x02009174",
+          "kind": "thumb"
+        },
+        "OverlayObject_WaitUntilSettledAndReset": {
+          "address": "0x02008d78",
+          "kind": "thumb"
+        },
+        "TakaraHashira_ReadMapCell": {
+          "address": "0x02008fcc",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagClear": {
+          "address": "0x0200aafc",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagSet": {
+          "address": "0x0200aaf4",
+          "kind": "thumb"
+        },
+        "TakaraHashira_SortPillarActors": {
+          "address": "0x02009be8",
+          "kind": "thumb"
+        },
+        "Data_0200b6d0": {
+          "address": "0x0200b6d0",
+          "kind": "data"
+        },
+        "Data_0200b720": {
+          "address": "0x0200b720",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02001d84",
+          "extent": 592,
+          "state": "not-yet-c"
+        }
+      ]
+    },
+    {
       "id": "torebi-spring-frame-candidate",
       "game": "tbs",
       "source": "recon/tbs/en/overlays/resource_3b7_c_02000e5c.c",

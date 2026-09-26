@@ -1,8 +1,9 @@
 #include "TYPES.H"
 #include "BATTLE_EFX.H"
+#include "BATTLE_EFFECT_WORK.H"
 
-/* Draft, not exact (2026-09-26): candidate=688 reference=684,
-   214 differing halfwords, 99 aligned edits, equal block topology.
+/* Draft, not exact (2026-09-26): candidate=684 reference=684,
+   74 differing halfwords, 71 aligned edits, equal block topology.
    H1: explicit frame/member backedges remove the hoisted work+7828 pointer
    spill: frame 68 -> 64 and work now occupies sl, as in the reference.
    Audited actual callees: projection 080e3944 returns s32; canvas cleanup
@@ -11,11 +12,16 @@
    H2: independent declarations in recovered stack order fix callback A/B
    at sp+24/+28, frame+32, destination+36, record+40, screen+52 and
    facing/member+16/+20. The frame remains 64; no aggregate is needed.
-   Residual: derived facing/base index slots at +8/+12 remain reversed.
-   The live effect load still adds the large offset instead of indexing,
-   and the member id similarly adds its base before the fixed +36 offset.
-   Next bounded model: use the shared BattleEffectWork/Argument field types
-   for the indexed live effect and actor-array accesses. */
+   H2 witness 9619754a2: 688 bytes, 214 differing halfwords, 99 aligned edits.
+   H3: shared BattleEffectWork/Argument types recover the member-id indexed
+   load and complete extent/pool placement. The live work->effect load still
+   adds its large offset rather than indexing; it is not hoisted or cached.
+   Remaining: derived facing/base-index slots +8/+12 are reversed, record
+   and particle-loop index occupy r9/r8 instead of r8/r9, seed-pointer setup
+   and the first rectangle call differ in scheduling. Three hypotheses used;
+   stop here, with the recovered 64-byte frame and scalar slots preserved.
+   No direct caller or aligned ROM pointer was found in the bounded audit;
+   the entry's sole incoming argument is published as work->effect. */
 
 /*
  * Battle-presentation sub-effect at 0x080dc6bc, transplant-assigned from the
@@ -96,7 +102,7 @@ void Func_080dc6bc(void *object)
 {
     void **heap_cache;
     void **cursor;
-    void *work;
+    struct BattleEffectWork *work;
     void *draw_destination;
     void *palette;
     s32 status;
@@ -112,7 +118,7 @@ void Func_080dc6bc(void *object)
     cursor = heap_cache;
     work = *cursor++;
     draw_destination = *cursor;
-    M2C_FIELD(work, void **, 0x7828) = object;
+    work->effect = object;
     Func_080cd594(0);
     Resource_LoadAndDecompress((s32)&Value_0000009e, work, 1, 1);
     Resource_LoadAndDecompress((s32)&Value_0000006c, (u8 *)work + 0x1B00, 0, 0);
@@ -150,8 +156,8 @@ void Func_080dc6bc(void *object)
         particle++;
     } while (i != 64);
 
-    M2C_FIELD(work, s32 *, 0x7780) = 2;
-    M2C_FIELD(work, s32 *, 0x7784) = 75;
+    work->transfer_mode = 2;
+    work->transfer_value = 75;
     Func_080041d8((void *)0x080CD261, 0x480);
 
     frame = 0;
@@ -162,7 +168,7 @@ frame_loop:
 
         facing = *(s32 *)0x03001E80;
         member = 0;
-        if (M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 20) != 0) {
+        if (((struct BattleEffectArgument *)work->effect)->count != 0) {
             s32 base_idx;
 
             base_idx = 0;
@@ -171,8 +177,7 @@ member_loop:
                 void *member_object;
 
                 member_object = *Func_080b5098(
-                    M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s16 *,
-                        member * 2 + 36));
+                    ((struct BattleEffectArgument *)work->effect)->actors[member]);
                 Func_080049ac();
                 Func_080051d8(facing, facing + 12);
                 record[0] = M2C_FIELD(member_object, s32 *, 8);
@@ -222,11 +227,11 @@ member_loop:
                 member++;
             }
             if (member
-                != M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 20))
+                != ((struct BattleEffectArgument *)work->effect)->count)
                 goto member_loop;
         }
 
-        M2C_FIELD(work, s32 *, 0x7824) = 1;
+        work->transfer_pending = 1;
         Func_080030f8(1);
         frame++;
     }

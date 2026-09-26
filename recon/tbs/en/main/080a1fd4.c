@@ -6,7 +6,20 @@
    tail between the two page branches. */
 #include "TYPES.H"
 
-#define KEYS_REPEAT (*(volatile u32 *)0x03001b04)
+/* H1 (2026-09-26): complete [080a1fd4,080a2144) owner, 368 bytes.
+ * Exact SELECT_ACTION/RUN_LIST callers confirm signed row/page pointers and
+ * the -1/no input, 0/row, 1/page result contract. Transfer the named volatile
+ * key cell from exact FLAG_GRID_INPUT.C; the literal-address model can keep
+ * a different base lifetime. All five callee interfaces are retained.
+ * Prediction: reference key base and fewer saved-register differences.
+ * One corrected model plus at most two evidence-backed variants; full extent
+ * exactness and compare/test/coverage/verify are required for adoption.
+ * H1: 384/368 bytes, 132 differing halfwords, 100 aligned edits; unchanged
+ * from the old literal cell. The extra live previous-key zero survives the
+ * next-key Audio_PlayCue and spends a saved register; literal returns also
+ * share a late -1 block instead of the reference's early result values.
+ */
+extern volatile u32 Data_03001b04;
 
 void Link_DrawShiftedTilePairFar(s32 addr);
 s32 Math_Div(s32 numerator, s32 denominator);
@@ -28,15 +41,15 @@ s32 Func_080a1fd4(s32 horizontal, s32 count, s32 per_page, s32 *cursor, s32 *pag
     if (Math_Mod(count, per_page) != 0)
         pages++;
     if (horizontal) {
-        next = KEYS_REPEAT & 16;
-        previous = KEYS_REPEAT & 32;
-        horizontal = KEYS_REPEAT & 64;
-        page_forward = KEYS_REPEAT & 128;
+        next = Data_03001b04 & 16;
+        previous = Data_03001b04 & 32;
+        horizontal = Data_03001b04 & 64;
+        page_forward = Data_03001b04 & 128;
     } else {
-        next = KEYS_REPEAT & 128;
-        previous = KEYS_REPEAT & 64;
-        horizontal = KEYS_REPEAT & 32;
-        page_forward = KEYS_REPEAT & 16;
+        next = Data_03001b04 & 128;
+        previous = Data_03001b04 & 64;
+        horizontal = Data_03001b04 & 32;
+        page_forward = Data_03001b04 & 16;
     }
     if (horizontal) {
         Audio_PlayCue(111);

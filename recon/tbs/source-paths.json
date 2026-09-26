@@ -2,7 +2,8 @@
   "format": 3,
   "owners": {
     "main:08010000": {
-      "name": "Map_UpdateLayerScroll"
+      "name": "Map_UpdateLayerScroll",
+      "source": "FIELD/COMMON/MAP/UPDATE_SCROLL.C"
     },
     "main:08010230": {
       "name": "Map_SetCameraCenter"

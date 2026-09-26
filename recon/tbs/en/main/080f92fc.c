@@ -3,7 +3,9 @@
  * 35 aligned edits; moving repeat before the triple copy gives 12 differing
  * halfwords; a value-returning reset helper gives 24 edits. Retain the
  * original setup ordering. A volatile status view keeps eight differences
- * and reverses the later buffer/offset operands; the baseline body matches. */
+ * and reverses the later buffer/offset operands. The preset loader receives
+ * the new modulo result already in r0; its complete signature now matches
+ * the exact loader, with no change to the eight setup differences. */
 #include "TYPES.H"
 
 #define AudioTest_RunParameterController Func_080f92fc
@@ -20,7 +22,7 @@ typedef struct {
 extern const Triple Data_080fb794;
 
 s32 Modulo(s32, s32);
-void Func_080037d4(void);
+s32 Func_080037d4(s32 preset);
 void Func_080f9080(s32);
 
 void AudioTest_RunParameterController(void)
@@ -52,7 +54,7 @@ void AudioTest_RunParameterController(void)
 
         if (Data_03001b04 & 4) {
             repeat = Modulo(repeat + 1, 5);
-            Func_080037d4();
+            Func_080037d4(repeat);
         }
         if (Data_03001b04 & 0x100)
             *ptr += 10;

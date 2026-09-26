@@ -18,6 +18,15 @@
  * the initial pool at the exact +0x2c boundary. The goto loop prevents
  * the 0xffff mask from living across WaitFrames, removing the reference
  * four-byte spill frame. Y conversion is still before the first divide.
+ * H3: counted do loop with a conditional wait retains an optimizer-visible
+ * loop without executing a wait on the last frame. Keep y in pixel units
+ * across the x divide, then convert it in place as the ROM does. Predict
+ * reference mask spill/frame, tail wait and coordinate-carrier lifetimes.
+ * H3: 264/264 bytes, 64 differing halfwords, 40 aligned edits with equal
+ * topology. Frame, early pool and tail wait now agree. Cursor/x carriers
+ * remain r5/r7 instead of r7/r5; initial OAM scheduling and a y-carrier copy
+ * before the first divide remain. STOP: three structural models exhausted;
+ * retain this draft until new lifetime evidence, not register permutations.
  */
 
 struct CursorAttributes {
@@ -88,20 +97,20 @@ void UiMenu_SlideCursor(s32 x, s32 y)
         cursor->y -= 8;
     }
     px = cursor->x << 4;
-    py = cursor->y << 4;
+    py = cursor->y;
     dx = Math_Div((x << 4) - px + 1, 2);
+    py <<= 4;
     dy = Math_Div((y << 4) - py + 1, 2);
-next_frame:
-    window = work->window;
-    px += dx;
-    cursor->attributes.x = cursor->x =
-        (px >> 4) + (window->tile_x << 3) - 56;
-    py += dy;
-    cursor->attributes.y = cursor->y =
-        (py >> 4) + (window->tile_y << 3) - 56;
-    cnt--;
-    if (cnt == 0)
-        return;
-    WaitFrames(1);
-    goto next_frame;
+    do {
+        window = work->window;
+        px += dx;
+        cursor->attributes.x = cursor->x =
+            (px >> 4) + (window->tile_x << 3) - 56;
+        py += dy;
+        cursor->attributes.y = cursor->y =
+            (py >> 4) + (window->tile_y << 3) - 56;
+        cnt--;
+        if (cnt != 0)
+            WaitFrames(1);
+    } while (cnt != 0);
 }

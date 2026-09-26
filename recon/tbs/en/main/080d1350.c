@@ -5,13 +5,19 @@
 #include "SYSTEM.H"
 #include "FIXED_MATH.H"
 #include "CALLBACK_SCHEDULER.H"
+#include "EFFECT_STEP.H"
+#include "BATTLE_EFFECT_WORK.H"
 
 /* NONMATCHING: main [080d1350,080d1714), 964 bytes including 64-byte pool.
  * H1: registered resource/copy/decoder/scheduler interfaces preserve the
  * baseline bytes: candidate 940, 414 differing halfwords, 204 aligned edits.
- * The 64-byte frame is admitted, but runtime/destination/frame/screen slots
- * remain sp+44/+40/+36/+48 rather than +48/+44/+40/+52. Setup register roles,
- * trail indexing, phase reload across trig calls, target loop and pool differ.
+ * H1 kept a 64-byte frame but misplaced runtime/destination/frame/screen
+ * at sp+44/+40/+36/+48 rather than +48/+44/+40/+52.
+ * H2: shared EffectStep, EffectPosition and two-entry rectangle cache emit
+ * candidate 944, 412 differing halfwords, 193 aligned edits. Frame size and
+ * all four slots now match. Cached phase still suppresses the reference's
+ * second variant read; setup register roles, trail indexing, target loop
+ * and final pool length/order still differ. No exact bytes or credit.
  * Score: alchemy score this file --owner main:080d1350 --size 964 --align.
  * Default registered symbols suffice; --reference-symbols is inadmissible
  * while the non-relocation core differs. No scoring TU or aliases required.
@@ -34,15 +40,6 @@
 
 typedef s32 (*WordCopy)(void *destination, const void *source, s32 size);
 
-struct EffectArgument {
-    u8 unknown_00[8];
-    s32 source_id;
-    u8 unknown_0c[8];
-    s32 target_count;
-    u8 unknown_18[12];
-    s16 target_ids[BATTLE_TARGET_CAPACITY];
-};
-
 struct Position3d {
     u8 unknown_00[8];
     s32 x;
@@ -50,41 +47,16 @@ struct Position3d {
     s32 z;
 };
 
-struct MovingPoint {
-    s32 x;
-    s32 y;
-    s32 z;
-    s32 step_x;
-    s32 step_y;
-    s32 step_z;
-    s32 start_frame;
-};
-
-struct TrailPoint {
-    u8 unknown_00[12];
-    s32 x;
-    s32 y;
-    u8 unknown_14[8];
-};
-
-struct ScreenPoint {
-    s32 x;
-    s32 y;
-    s32 z;
-    s32 unknown_0c;
-};
-
 struct EffectRuntime {
     u8 unknown_0000[0x7080];
-    struct MovingPoint points[8];
-    u8 unknown_7160[0x620];
+    struct EffectStep points[64];
     s32 display_mode;
     s32 display_value;
     u8 unknown_7788[0x20];
     s32 impact_mode;
     u8 unknown_77ac[0x78];
     s32 frame_ready;
-    struct EffectArgument *argument;
+    struct BattleEffectArgument *argument;
 };
 
 struct RuntimeCells {
@@ -100,6 +72,7 @@ extern u8 Data_00000073[];
 extern u8 Data_00000079[];
 extern u16 Data_080ede48[];
 extern u8 Data_080ee158[];
+extern struct EffectStep Data_02010000[];
 
 void BattleFx_BeginCanvasLayer(s32 mode);
 u32 Resource_GetTableEntry(u32 resource_id);
@@ -109,32 +82,32 @@ void Graphics_UpdatePhasePalette(s32 frame, s32 red_phase, s32 green_phase, s32 
 void BattleEventRuntime_BeginPhaseFar(s32 value);
 void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(s32 source, s32 destination);
-s32 EffectPosition_ApplyBaseAndYOffset(s32 *point, struct ScreenPoint *output);
 void Audio_PlayCue(s32 value);
 void Camera_ApplyShake(s32 random_mask, u32 shake_range);
 void ObjectGroup_TickMemberTimers(void);
 void BattleFx_EndCanvasLayer(void);
 struct B5Context *GetBattleObjectSlotFar(s32 id);
 
-void Unnamed_080d1350(struct EffectArgument *argument)
+void Unnamed_080d1350(struct BattleEffectArgument *argument)
 {
     struct RuntimeCells *cells;
     struct EffectRuntime *runtime;
     struct Position3d *source;
     struct Position3d *target;
     struct B5Context *context;
-    struct MovingPoint *point;
+    struct EffectStep *point;
     void *draw_destination;
     s32 frame;
     s32 vertex;
     s32 target_index;
-    DrawRectangle draw_rectangle;
+    /* FAKEMATCH: entry 1 is unused; the family cache preserves stack slots. */
+    DrawRectangle draw_rectangle[2];
     s32 point_index;
     u8 *graphics;
     void *view;
     s32 trail_base;
-    struct TrailPoint *trail;
-    struct EffectArgument **argument_cell;
+    struct EffectStep *trail;
+    struct BattleEffectArgument **argument_cell;
     void **cell_cursor;
 
     cells = &Data_03001eec;
@@ -156,12 +129,12 @@ void Unnamed_080d1350(struct EffectArgument *argument)
 
     runtime->display_mode = 2;
     runtime->display_value = 50;
-    draw_rectangle = cells->draw_rectangle;
+    draw_rectangle[0] = cells->draw_rectangle;
     Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
-    context = GetBattleObjectSlotFar((*argument_cell)->source_id);
+    context = GetBattleObjectSlotFar((*argument_cell)->actor);
     source = context->object;
-    context = GetBattleObjectSlotFar((*argument_cell)->target_ids[0]);
+    context = GetBattleObjectSlotFar((*argument_cell)->actors[0]);
     target = context->object;
 
     point_index = 0;
@@ -170,15 +143,15 @@ void Unnamed_080d1350(struct EffectArgument *argument)
         point->x = source->x / 2;
         point->y = source->y + 0x780000;
         point->z = source->z;
-        point->step_x = Math_Div(
+        point->velocity_x = Math_Div(
             target->x + (((Random16() & 0x7f) - 0x40) << 16)
                 - point->x,
             12);
-        point->step_y = Math_Div(
+        point->velocity_y = Math_Div(
             target->y - point->y + 0x140000,
             12);
-        point->step_z = Math_Div(target->z - point->z, 12);
-        point->start_frame = (Random16() & 0xf) + point_index * 8;
+        point->velocity_z = Math_Div(target->z - point->z, 12);
+        point->variant = (Random16() & 0xf) + point_index * 8;
         point_index++;
         point++;
     } while (point_index != 8);
@@ -193,10 +166,10 @@ void Unnamed_080d1350(struct EffectArgument *argument)
         trail_base = 0;
         point = runtime->points;
 point_loop:
-        if (frame < point->start_frame)
+        if (frame < point->variant)
             goto next_point;
         {
-                struct ScreenPoint screen;
+                struct EffectPosition screen;
 
                 Render_ResetTransformState();
                 Graphics_PrepareTransferInIwramWork((s32)view, (s32)view + 12);
@@ -207,16 +180,16 @@ point_loop:
                     if (screen.y <= 127) {
                         if (screen.y >= -8) {
                     vertex = 0;
-                    trail = &((struct TrailPoint *)0x02010000)[point_index * 10];
+                    trail = &Data_02010000[point_index * 10];
                     do {
                         s32 angle;
 
                         angle = vertex * 0x199a
-                            - ((frame - point->start_frame) << 11);
-                        trail->x = screen.x
+                            - ((frame - point->variant) << 11);
+                        trail->velocity_x = screen.x
                             + ((Data_080ee158[vertex & 1]
                                 * Trig_Sin(angle)) / 2 >> 16);
-                        trail->y = screen.y
+                        trail->velocity_y = screen.y
                             - (Data_080ee158[vertex & 1]
                                 * Trig_Cos(angle) >> 16);
                         vertex++;
@@ -225,26 +198,26 @@ point_loop:
 
                     vertex = 0;
                     do {
-                        struct TrailPoint *current;
-                        struct TrailPoint *next;
+                        struct EffectStep *current;
+                        struct EffectStep *next;
                         s32 step;
 
-                        current = &((struct TrailPoint *)0x02010000)[
+                        current = &((struct EffectStep *)0x02010000)[
                             trail_base + vertex];
-                        next = &((struct TrailPoint *)0x02010000)[
+                        next = &((struct EffectStep *)0x02010000)[
                             trail_base + Math_Mod(vertex + 1, 10)];
                         step = 0;
                         do {
                             s32 x;
                             s32 y;
 
-                            x = current->x;
+                            x = current->velocity_x;
                             x += Math_Div(
-                                step * (next->x - x), 12);
-                            y = current->y;
+                                step * (next->velocity_x - x), 12);
+                            y = current->velocity_y;
                             y += Math_Div(
-                                step * (next->y - y), 12);
-                            draw_rectangle(
+                                step * (next->velocity_y - y), 12);
+                            draw_rectangle[0](
                                 draw_destination,
                                 graphics + Data_080ede48[1],
                                 x - 1,
@@ -260,29 +233,29 @@ point_loop:
                 }
 
                 if (point->y <= 0x1dffff) {
-                    point->step_y = -point->step_y;
-                    point->step_x /= 2;
-                    point->step_z /= 2;
+                    point->velocity_y = -point->velocity_y;
+                    point->velocity_x /= 2;
+                    point->velocity_z /= 2;
                     runtime->impact_mode = 4;
                     Audio_PlayCue(134);
 
                     target_index = 0;
-                    if (runtime->argument->target_count != 0) {
+                    if (runtime->argument->count != 0) {
                         do {
                             ObjectGroup_UpdateMembers(
-                                runtime->argument->target_ids[target_index],
+                                runtime->argument->actors[target_index],
                                 7,
                                 5,
                                 target_index,
                                 8);
                             target_index++;
-                        } while (target_index != runtime->argument->target_count);
+                        } while (target_index != runtime->argument->count);
                     }
                 }
 
-                point->x += point->step_x;
-                point->y += point->step_y;
-                point->z += point->step_z;
+                point->x += point->velocity_x;
+                point->y += point->velocity_y;
+                point->z += point->velocity_z;
         }
 
 next_point:

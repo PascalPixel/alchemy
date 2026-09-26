@@ -1,4 +1,4 @@
-/* NONMATCHING: 168 bytes, candidate 168, 34 differing halfwords (2026-09-24).
+/* NONMATCHING: 168/168 bytes, 3 differing halfwords, 2 aligned edits.
  * Single-overlay unit binding Engine_* at their import veneers. Remaining:
  * allocation only. The reference keeps level in r5 and the first saved IME in
  * r1, and rematerialises the second IME pointer for its restore (ldr r3);
@@ -9,7 +9,12 @@
  * each final IME restore in one pass. Result 168/168, 34 differing halfwords,
  * 12 aligned edits, binary-identical to the baseline. Queue body and pools
  * already match; the late address reload is still replaced by a saved copy.
- * Hypothesis rejected: restore scheduling alone does not change CSE lifetime. */
+ * Hypothesis rejected: restore scheduling alone does not change CSE lifetime.
+ * H2: inline RestoreInterrupts owns the final hardware address. This recovers
+ * the reference's r5 fade level, r1 first saved IME and late r3 address reload.
+ * Full normalized diff now differs only in the first queue address load:
+ * reference loads q before the level's two shifts; candidate loads it after.
+ * All later instructions, callback removal, and the complete pool match. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "IO_WRITE_QUEUE.H"
@@ -18,6 +23,12 @@ extern volatile u16 Data_04000208;
 extern u16 Data_020096b0;
 
 void Func_02000154(void);
+
+static __inline__ void RestoreInterrupts(u32 saved)
+{
+    /* FAKEMATCH: keep the final hardware address local to restoration. */
+    do { Data_04000208 = saved; } while (0);
+}
 
 /* Queue a register write with interrupts masked; the value is evaluated only
  * when the queue has room.
@@ -44,7 +55,7 @@ void Func_02000154(void);
             *destination++ = (address);                                     \
             *destination = 0x20000;                                         \
         }                                                                   \
-        do { *ime = saved; } while (0);                                     \
+        RestoreInterrupts(saved);                                          \
     } while (0)
 
 /* Fade the blend in step by step each frame; remove itself once full. */

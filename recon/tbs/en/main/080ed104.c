@@ -4,6 +4,18 @@
 /*
  * Draft for the battle-presentation sub-effect at 0x080ed104.
  *
+ * 2026-09-26: callback provenance corrected. The reference writes the
+ * heap callback to rect_fns[0] before the bar draw (str to sp+24 at
+ * 0x080ed2ce); the old direct call omitted that observable array store.
+ * Corrected draft is 772/772 bytes, 278 differing halfwords, 143 aligned
+ * edits (old draft 196/135). A typed EffectWork.object field still gives
+ * 278/143; giving its pointee a distinct EffectState type gives 280/142.
+ * Neither fixes the first heap-cache copy/reload or the callback-array
+ * pointer spill at sp+8 rather than sp+16. Those negative type trials are
+ * not kept. Frame size already matches at 44 bytes. The remaining source
+ * model needs the reference's retained cache pointer, not another unused
+ * stack slot or restoration of the missing callback-array write.
+ *
  * The family matcher assigned games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/MEMBER_ORBIT.C
  * (owner 0x080ce85c, already adopted) as the closest structural template, but
  * this owner's real callee set and constants instead match the already-drafted
@@ -17,7 +29,7 @@
  * instead runs a fixed 54-frame loop that fills a horizontal progress-bar
  * region, using only the fixed first member slot (object+0x24) twice.
  *
- * Two call sites in the retained assembly are `bl` targets that land inside
+ * Two call sites in the reference disassembly are `bl` targets that land inside
  * recon/tbs/raw/080072e4.s, the fourteen-slot `call_via_rN` trampoline bundle
  * (`bx rN; mov r8,r8` at 0x080072e4+4*N for N=r0..sp): 0x08007314 is exactly
  * the ip (r12) slot (N=12) and 0x080072f4 is exactly the r4 slot (N=4). Both
@@ -158,7 +170,8 @@ void Func_080ed104(void *object)
                     } else {
                         BattleEffect_LoadWork(46, 7, 7, 7, bar_style);
                     }
-                    ((DrawRectangleFn) heap_cache[7])(
+                    rect_fns[0] = (DrawRectangleFn)heap_cache[7];
+                    rect_fns[0](
                         draw_destination, work,
                         bar_x, 112 - bar_height, 14, bar_height);
                     Func_08002dd8(46);

@@ -1,9 +1,10 @@
-/* Draft, not exact (2026-09-24): 186 differing halfwords at equal size (was 8 bytes short).
-   FAKEMATCH marks below are empty do-while wraps that only move scheduling
-   or register choice; they stay tagged until a real spelling replaces them. */
+/* Draft, not exact (2026-09-26): 416 of 424 bytes, 207 halfword differences.
+   The explicit spawn loop keeps its scale literal inside the non-null
+   branch, as the ROM does. Remaining: the two object aliases coalesce,
+   the target/counter exchange r6/r7, and the flash mask stays in a low
+   register instead of r8. The original retained draft was 424 / 186.
+ */
 #include "TYPES.H"
-
-#define RunBattleEffect03 Func_080994d0
 
 struct BattleEffect03Object {
     u8 reserved_00[8];
@@ -74,13 +75,14 @@ void RunBattleEffect03(void)
     s32 flash_index;
 
     Func_08097384();
-    do { last = 0; } while (0); /* FAKEMATCH */
+    last = 0;
     spawn_index = 0;
-    do {
+Spawn:
+    {
         object = Func_08096c80(
             0xe9, target->x, target->y + 0x200000, target->z);
         if (object != 0) {
-            do { object->scale_y = 0xb333; } while (0); /* FAKEMATCH */
+            object->scale_y = 0xb333;
             object->scale_x = 0xb333;
             object->callback = &Data_08099341;
             object->angle = 0x78;
@@ -90,7 +92,9 @@ void RunBattleEffect03(void)
         }
         spawn_index++;
         Func_080030f8(1);
-    } while (spawn_index <= 7);
+    }
+    if (spawn_index <= 7)
+        goto Spawn;
 
     link_marker = last->marker;
     Func_080f9010(0x82);
@@ -133,7 +137,7 @@ void RunBattleEffect03(void)
     }
     if (object != 0) {
         object->angle = -1;
-        do { object->velocity_x = 0x50000; } while (0); /* FAKEMATCH */
+        object->velocity_x = 0x50000;
         object->velocity_y = 0x6666;
         object->unknown_5a = 0;
         Func_08096bec(object, 0xc00000, 0xe800);

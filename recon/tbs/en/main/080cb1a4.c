@@ -6,6 +6,20 @@
 /*
  * Draft for the battle-presentation sub-effect at 0x080cb1a4.
  *
+ * 2026-09-26: callback pair gives 840/840 bytes, 101 differing halfwords
+ * (96 aligned edits), down from 108/100 with one callback. The unused
+ * callback slot accounts for four of the reference's twelve extra frame
+ * bytes: ours is 76, reference 84. The reference also spills record_ptr
+ * and screen_ptr, whereas ours rematerialises their stack addresses.
+ * Volatile pointers produce the 84-byte frame but add twelve code bytes
+ * and worsen the alignment to 151 edits; they are not kept. Byte views
+ * of snap_to_target/auto_face_motion leave the frame unchanged and worsen
+ * the original candidate to 836 bytes/131 aligned edits. Unlike the linked
+ * overlay family, these plain assignments do not create a dead QImode
+ * zero. The first register divergence remains heap_cache r6 versus r7;
+ * the effect-state address takes r8 versus sl. These three bounded trials
+ * did not explain that allocation difference; don't repeat them unchanged.
+ *
  * Assigned from the member_orbit/run.c compiler-family cluster
  * (template-main-080ce85c, games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/MEMBER_ORBIT.C),
  * but the real callee set and constants match the 0x03001eec "battle work"
@@ -59,7 +73,8 @@ void Func_080cb1a4(void *object_param)
     void *work;
     void *canvas;
     s32 status;
-    DrawRectangleFn draw;
+    /* FAKEMATCH: callback pair preserves the reference's unused stack slot. */
+    DrawRectangleFn draw[2];
     struct B5Context *first_context;
     struct B5Context *second_context;
     struct MotionObject *object;
@@ -86,7 +101,7 @@ void Func_080cb1a4(void *object_param)
 
     status = BattleEffect_LoadWork(46, 7, 7, 3, 2);
     M2C_FIELD(work, s32 *, 0x7780) = 2;
-    draw = (DrawRectangleFn)heap_cache[7];
+    draw[0] = (DrawRectangleFn)heap_cache[7];
     M2C_FIELD(work, s32 *, 0x7784) = 75;
     Func_080041d8((void *)0x080CD261, 0x480);
 
@@ -165,7 +180,7 @@ void Func_080cb1a4(void *object_param)
         screen_ptr[0] = screen_ptr[0] >> 1;
 
         if (frame == 54 || frame == 55) {
-            draw(canvas, work, screen_ptr[0] - 16, screen_ptr[1] - 16,
+            draw[0](canvas, work, screen_ptr[0] - 16, screen_ptr[1] - 16,
                 32, 64);
         }
 
@@ -183,7 +198,7 @@ void Func_080cb1a4(void *object_param)
                 rx = (screen_ptr[0]
                     + ((radius * Func_08002322(angle)) >> 16)) - 16;
                 ry = (radius * Func_0800231c(angle) >> 16) - frame + 100;
-                draw(canvas, (u8 *)work + offset, rx, ry, 32, 64);
+                draw[0](canvas, (u8 *)work + offset, rx, ry, 32, 64);
             }
         }
 

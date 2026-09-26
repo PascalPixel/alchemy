@@ -23,7 +23,16 @@
    Preserve outcomes here and in commits; no argument-spelling sweep.
    H1 result: byte-identical to baseline, 876 bytes / 205 aligned edits.
    The missing source dependency is repaired without altering the adjacent
-   machine calls; the remaining frame/loop/I/O disagreements are independent. */
+   machine calls; the remaining frame/loop/I/O disagreements are independent.
+   H2: the layer initializer owns its source coordinates and temporary
+   bases, as the matched metatile family's helper owns each cell. Predict
+   earlier base-X storage and separate saved lifetimes for both scale
+   pointers, restoring the 12-byte frame. Keep all declarations/calls
+   outside that layer body unchanged; score once and read the full diff.
+   H2 result: byte-identical to H1, still 876 bytes / 205 aligned edits.
+   The helper does not change the eight-byte frame or the late base-X
+   store. Complete normalized difference inspected; this scope axis is
+   closed without further declaration or spelling variants. */
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 
@@ -91,6 +100,34 @@ struct SceneWork {
 
 extern u8 Value_00000128;
 extern struct SceneEntry Data_08013784[];
+
+/* FAKEMATCH: per-layer helper bounds the coordinate and base lifetimes. */
+static __inline__ void InitializeLayer(struct SceneLayer *layer,
+    struct SceneLayerSource *source, s32 *scale_x, s32 *scale_y)
+{
+    u32 x = source->x;
+    u32 y = source->y;
+    s32 base_x;
+    s32 base_y;
+    s32 scroll_x;
+    s32 scroll_y;
+
+    layer->base_x = base_x = x << 19;
+    layer->base_y = base_y = y << 19;
+    layer->speed_x = source->speed_x << 12;
+    layer->speed_y = source->speed_y << 12;
+    layer->period_x = source->period_x;
+    layer->period_y = source->period_y;
+    layer->phase_x = 0;
+    layer->phase_y = 0;
+    scroll_x = source->scroll_x << 12;
+    scroll_y = source->scroll_y << 12;
+    layer->scroll_x = scroll_x;
+    layer->scroll_y = scroll_y;
+    layer->cells = (u32 *)0x02010000 + (y >> 1) * 128 + (x >> 1);
+    layer->x = Iwram_MulQ16(*scale_x, scroll_x) + base_x;
+    layer->y = Iwram_MulQ16(*scale_y, scroll_y) + base_y;
+}
 
 void Blend_SetDarkenTarget0(s32 value);
 void *Runtime_AllocateBlock(s32 slot, s32 size);
@@ -161,28 +198,7 @@ s32 Map_LoadLayeredScene(s32 index)
     layer = work->layers;
     source = header->layers;
     for (cnt = 2; cnt >= 0; cnt--) {
-        u32 x = source->x;
-        u32 y = source->y;
-        s32 base_x;
-        s32 base_y;
-        s32 scroll_x;
-        s32 scroll_y;
-
-        layer->base_x = base_x = x << 19;
-        layer->base_y = base_y = y << 19;
-        layer->speed_x = source->speed_x << 12;
-        layer->speed_y = source->speed_y << 12;
-        layer->period_x = source->period_x;
-        layer->period_y = source->period_y;
-        layer->phase_x = 0;
-        layer->phase_y = 0;
-        scroll_x = source->scroll_x << 12;
-        scroll_y = source->scroll_y << 12;
-        layer->scroll_x = scroll_x;
-        layer->scroll_y = scroll_y;
-        layer->cells = (u32 *)0x02010000 + (y >> 1) * 128 + (x >> 1);
-        layer->x = Iwram_MulQ16(*scale_x, scroll_x) + base_x;
-        layer->y = Iwram_MulQ16(*scale_y, scroll_y) + base_y;
+        InitializeLayer(layer, source, scale_x, scale_y);
         source++;
         layer++;
     }

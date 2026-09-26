@@ -10,6 +10,15 @@
  * Command loop strength-reduces a row pointer, unlike the indexed reference;
  * its command read uses row+0/field+6 instead of row+4/field+2. The u16 item
  * local also causes an unwanted signed load/extension and removes mask pool.
+ * H2: transfer the proven typed-subrecord boundary to the queued command
+ * halfword (row+4/field+2); give that fixed 20-row scan its unsigned counter,
+ * matching the reference's BLS backedge. No declaration-order sweep.
+ * H2 result: 616/620 bytes, 227 differing halfwords, 123 aligned edits.
+ * The typed command read now uses field+2 and the unsigned backedge matches,
+ * but strength reduction still advances row pointers instead of indexing.
+ * Frame/save set remain correct. Stop at the bounded followup; this is not a
+ * near match. Untried width evidence: ROM keeps the inventory item as a word,
+ * and separately narrows the use-type at the second branch.
  * No matching-C credit claimed.
  */
 #include "TYPES.H"
@@ -32,10 +41,22 @@ struct PresentationWork {
 };
 struct MotionEntry { u8 reserved_00[39]; u8 count; void *children[1]; };
 struct MotionChild { u8 reserved_00[5]; u8 value; };
+struct QueuedCommandKind {
+    s16 unknown_04;
+    s16 kind;
+};
 struct QueuedItemAction {
-    struct BattleCommandRequest command;
+    s16 actor_id;
+    s16 unknown_02;
+    struct QueuedCommandKind dispatch;
+    s16 parameter;
+    s16 unknown_0a;
     u8 reserved_0c[4];
 };
+static __inline__ s32 QueuedCommand_GetKind(struct QueuedCommandKind *command)
+{
+    return command->kind;
+}
 struct PresentationBattleWork {
     u8 reserved_000[0x2ec];
     struct QueuedItemAction actions[20];
@@ -134,9 +155,10 @@ s32 Func_080ba6ac(struct BattlePlan *input, s32 unused,
         s32 index = saved_selection->parameter;
         if (result == 2) {
             struct PresentationBattleWork *battle = Data_03001e74;
-            for (i = 0; i <= 19; i++) {
-                struct BattleCommandRequest *command = &battle->actions[i].command;
-                if (command->command == 2 &&
+            u32 row;
+            for (row = 0; row <= 19; row++) {
+                struct QueuedItemAction *command = &battle->actions[row];
+                if (QueuedCommand_GetKind(&command->dispatch) == 2 &&
                     command->actor_id == saved_selection->actor_id) {
                     s16 current = command->parameter;
                     if (current == index)

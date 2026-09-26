@@ -1,7 +1,8 @@
-/* NONMATCHING: resource_370:02000de4; 1004 / 1024 bytes, 476 differing
- * halfwords, 462 wrong instructions, 300 halfword edits. Typed extern
+/* NONMATCHING: resource_370:02000de4; 1016 / 1024 bytes, 407 differing
+ * halfwords, 428 wrong instructions, 278 halfword edits. Typed extern
  * tables restore indexed owner loads and remove the owner-table cursor
- * spill; frame is now 68 / 64 bytes. Property scan and packing differ. */
+ * spill; frame is 68 / 64 bytes. A halfword property cursor improves scan
+ * topology but hoists the item base and emits a signed-load extension. */
 #include "TYPES.H"
 
 struct PasswordStats {
@@ -157,9 +158,10 @@ s32 Func_02000de4(s32 unused, s32 mode, u8 *out)
             s32 j;
             for (j = 0; j != 23; j++) {
                 u16 property = 0;
+                u16 *code = state->item_codes;
                 s32 k;
                 for (k = 0; k != 15; k++) {
-                    u16 item = state->item_codes[k];
+                    u16 item = *code++;
                     if ((item & 0x1ff) == Data_020096ec[j])
                         property = (item & 0xf800) >> 11;
                 }

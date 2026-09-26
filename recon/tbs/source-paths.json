@@ -2975,6 +2975,10 @@
     "main:080b26cc": {
       "name": "EventTable_ApplyRowAbilities"
     },
+    "main:080b2720": {
+      "name": "EventTable_CopyRowHeader",
+      "source": "FIELD/COMMON/EVENT_TABLE_COPY_ROW_HEADER.C"
+    },
     "main:080b2764": {
       "name": "EventTable_GetRowType",
       "source": "FIELD/COMMON/EVENT_TABLE_GET_ROW_TYPE.C"

@@ -8,7 +8,22 @@
    stack (sub sp, #12), the loop counter in fp and 0x03000118 in r9, stores
    base_x before base_y (here base_x is sunk after the cell pointer), builds
    0x500 with movs/lsls instead of a pool word, and loads the unconditional
-   resource offsets into r3 but the optional ones into r0. */
+   resource offsets into r3 but the optional ones into r0.
+
+   2026-09-26: complete owner [0800fb38,0800fe9c), 868 bytes including
+   both own pools. Fresh baseline: 876 bytes, 332 differing halfwords,
+   205 aligned edits, equal topology. The field far-call table at 09110
+   targets this entry; the input selects a six-resource load-table row.
+   H1 follows the audited f9f4 body: its signed size argument is the result
+   of DecodeType01 at fb92, carried in r0 directly to the next call.
+   Predict unchanged call adjacency with an explicit result dependency;
+   inspect the full normalized difference and frame/pools. Exact 868 bytes
+   plus compare/coverage/verify required. One trial for this correction,
+   at most three distinct structural hypotheses and 25 minutes total.
+   Preserve outcomes here and in commits; no argument-spelling sweep.
+   H1 result: byte-identical to baseline, 876 bytes / 205 aligned edits.
+   The missing source dependency is repaired without altering the adjacent
+   machine calls; the remaining frame/loop/I/O disagreements are independent. */
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 
@@ -82,7 +97,7 @@ void *Runtime_AllocateBlock(s32 slot, s32 size);
 u8 *Resource_GetTableEntry(u32 index);
 s32 Resource_DecodeType01(const void *source, void *destination);
 s32 Resource_DecodeType2(const void *source, void *destination);
-void Tilemap_DecodeStagedBuffer(void);
+void Tilemap_DecodeStagedBuffer(s32 size);
 void Tilemap_ConvertBuffer(void);
 void MapAnimation_StartChannels(void *channels);
 void DisplayBlend_StartScript(void *script);
@@ -118,8 +133,8 @@ s32 Map_LoadLayeredScene(s32 index)
     work = Runtime_AllocateBlock(8, sizeof(struct SceneWork));
     ((FillWordsFn)0x03000164)(work, sizeof(struct SceneWork));
     header = (struct SceneHeader *)Resource_GetTableEntry(entry->resources[0] + (u32)&Value_00000128);
-    Resource_DecodeType01((u8 *)header + header->tiles, (void *)0x02010001);
-    Tilemap_DecodeStagedBuffer();
+    Tilemap_DecodeStagedBuffer(
+        Resource_DecodeType01((u8 *)header + header->tiles, (void *)0x02010001));
     Resource_DecodeType01((u8 *)header + header->palette, (void *)0x0202c000);
     Resource_DecodeType01((u8 *)header + header->tilemap, (void *)0x02010000);
     Tilemap_ConvertBuffer();

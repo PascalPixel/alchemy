@@ -1,6 +1,9 @@
 {
   "format": 3,
   "owners": {
+    "resource_383:020048c8": {
+      "name": "KuupuappuHeya_UpdateActorStops"
+    },
     "resource_38b:02000ed8": {
       "name": "BiribinoMura_UpdateCornerSpawn",
       "source": "FIELD/BIRIBINO_MURA/CORNER.C"

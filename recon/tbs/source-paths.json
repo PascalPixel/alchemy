@@ -1,6 +1,12 @@
 {
   "format": 3,
   "owners": {
+    "resource_380:0200449c": {
+      "name": "Effect_UpdateSparkRing"
+    },
+    "resource_381:0200301c": {
+      "name": "Effect_UpdateSparkRing"
+    },
     "resource_396:02001244": {
       "name": "ToretoPalette_ApplyTint"
     },

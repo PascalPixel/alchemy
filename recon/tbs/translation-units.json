@@ -2,6 +2,50 @@
   "format": 5,
   "units": [
     {
+      "id": "effect-spark-ring",
+      "source": "recon/tbs/en/overlays/resource_380_c_0200449c.c",
+      "overlay": "resource_380",
+      "absolute_symbols": {
+        "Engine_AllocateBlock": { "address": "0x0200c89c", "kind": "thumb" },
+        "Engine_RandomNext": { "address": "0x0200c874", "kind": "thumb" },
+        "Spark_Divide": { "address": "0x0200c85c", "kind": "thumb" },
+        "Engine_MathSin": { "address": "0x0200c884", "kind": "thumb" },
+        "Engine_MathCos": { "address": "0x0200c88c", "kind": "thumb" },
+        "gSparkJitter": { "address": "0x0200d0e4", "kind": "data" },
+        "gSparkFrequency": { "address": "0x0200d102", "kind": "data" },
+        "gSparkDirection": { "address": "0x0200d120", "kind": "data" },
+        "gSparkMaxScale": { "address": "0x0200d140", "kind": "data" },
+        "gSparkScaleStep": { "address": "0x0200d168", "kind": "data" }
+      },
+      "owners": [
+        { "address": "0x0200449c", "extent": 752, "state": "not-yet-c" }
+      ],
+      "game": "tbs",
+      "compiler_route": "canonical-gcc296"
+    },
+    {
+      "id": "effect-spark-ring-twin-draft",
+      "source": "recon/tbs/en/overlays/resource_380_c_0200449c.c",
+      "overlay": "resource_381",
+      "owners": [
+        { "address": "0x0200301c", "extent": 752, "state": "not-yet-c" }
+      ],
+      "absolute_symbols": {
+            "Engine_AllocateBlock": { "address": "0x0200b41c", "kind": "thumb" },
+            "Engine_RandomNext": { "address": "0x0200b3fc", "kind": "thumb" },
+            "Spark_Divide": { "address": "0x0200b3d4", "kind": "thumb" },
+            "Engine_MathSin": { "address": "0x0200b404", "kind": "thumb" },
+            "Engine_MathCos": { "address": "0x0200b40c", "kind": "thumb" },
+            "gSparkJitter": { "address": "0x0200ba0c", "kind": "data" },
+            "gSparkFrequency": { "address": "0x0200ba2a", "kind": "data" },
+            "gSparkDirection": { "address": "0x0200ba48", "kind": "data" },
+            "gSparkMaxScale": { "address": "0x0200ba68", "kind": "data" },
+            "gSparkScaleStep": { "address": "0x0200ba90", "kind": "data" }
+      },
+      "game": "tbs",
+      "compiler_route": "canonical-gcc296"
+    },
+    {
       "id": "toreto-palette-tint",
       "source": "recon/tbs/en/overlays/resource_396_c_02001244.c",
       "overlay": "resource_396",

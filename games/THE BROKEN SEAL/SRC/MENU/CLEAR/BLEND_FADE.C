@@ -1,13 +1,3 @@
-/* Exact 168-byte owner, resource_370:02000154..020001fc, including pool.
- * Own-ROM reconstruction; 2026-09-27 initial model plus two follow-ups:
- * H1: one-pass final restore transferred from exact 371:020039fc. The
- * candidate was binary-identical to baseline: 34 differing halfwords,
- * 12 aligned edits. Scheduling alone did not change CSE lifetime.
- * H2: inline RestoreInterrupts owns its hardware address. This recovered
- * r5 fade level, r1 first saved IME and late r3 reload: 3 halfwords/2 edits.
- * H3: publish the incremented frame, initialize one persistent queue pointer,
- * then narrow the level. The queue load precedes both shifts: 0 differences.
- * All three hypotheses preserved in history; no register spelling sweep. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "IO_WRITE_QUEUE.H"
@@ -23,10 +13,8 @@ static __inline__ void RestoreInterrupts(u32 saved)
     do { Data_04000208 = saved; } while (0);
 }
 
-/* Queue a register write with interrupts masked; the value is evaluated only
- * when the queue has room.
- * FAKEMATCH: one-pass restoration separates queue publication from the
- * following callback-removal decision, as in WORLD_MAP/DISPLAY_TRANSITION.C. */
+/* FAKEMATCH: the one-pass IME read keeps the saved copy before masking;
+ * the count cast preserves the queue's original publication order. */
 #define QUEUE_WRITE(address, value)                                         \
     do {                                                                    \
         volatile u16 *ime;                                                  \

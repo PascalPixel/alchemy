@@ -21461,7 +21461,8 @@
       "source": "MENU/TITLE/BG_SETUP.C"
     },
     "resource_370:02000154": {
-      "name": "Func_02000154"
+      "name": "Clear_UpdateBlend",
+      "source": "MENU/CLEAR/BLEND_FADE.C"
     },
     "resource_370:02000054": {
       "name": "Clear_LoadBackground",

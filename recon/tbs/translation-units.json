@@ -2,6 +2,166 @@
   "format": 5,
   "units": [
     {
+      "id": "party-health-trigger-candidate",
+      "game": "tbs",
+      "source": "recon/tbs/en/overlays/resource_3a5_c_02000cd0.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3a5",
+      "absolute_symbols": {
+        "Engine_MathDivide": {
+          "address": "0x02009c84",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagIsSet": {
+          "address": "0x02009d44",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagSet": {
+          "address": "0x02009d4c",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagClear": {
+          "address": "0x02009d54",
+          "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02000cd0",
+          "extent": 304,
+          "state": "not-yet-c"
+        }
+      ]
+    },
+    {
+      "id": "babi-ship-sprite-row-candidate",
+      "game": "tbs",
+      "source": "recon/tbs/en/overlays/resource_3ca_c_020011c4.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3ca",
+      "absolute_symbols": {
+        "Main_080001e8": {
+          "address": "0x02009364",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x020011c4",
+          "extent": 232,
+          "state": "not-yet-c"
+        }
+      ]
+    },
+    {
+      "id": "takara-ashiba-column-motion-candidate",
+      "game": "tbs",
+      "source": "recon/tbs/en/overlays/resource_3b4_c_02001ac8.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3b4",
+      "absolute_symbols": {
+        "Engine_ActorGet": {
+          "address": "0x0200a540",
+          "kind": "thumb"
+        },
+        "Engine_MapCopyCellAttributes": {
+          "address": "0x0200a4d8",
+          "kind": "thumb"
+        },
+        "SceneState_ApplyFourRectsAndSetActor8Byte85": {
+          "address": "0x020099e8",
+          "kind": "thumb"
+        },
+        "SceneState_ApplyRectAndSetSlotEightByte35": {
+          "address": "0x02009a9c",
+          "kind": "thumb"
+        },
+        "ActorPresentation_SetSceneCell58AndMarkActorEight": {
+          "address": "0x02009a48",
+          "kind": "thumb"
+        },
+        "SceneState_ApplyRectAndSetActor8Byte35": {
+          "address": "0x02009a70",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02001ac8",
+          "extent": 152,
+          "state": "not-yet-c"
+        }
+      ]
+    },
+    {
+      "id": "babi-heading-probe-candidate",
+      "game": "tbs",
+      "source": "recon/tbs/en/overlays/resource_3c5_c_02002660.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3c5",
+      "absolute_symbols": {
+        "Main_080091a8": {
+          "address": "0x0200add0",
+          "kind": "thumb"
+        },
+        "StagedActor_FindAtTile": {
+          "address": "0x0200806c",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02002660",
+          "extent": 72,
+          "state": "not-yet-c"
+        }
+      ]
+    },
+    {
+      "id": "korosseo-command-renderer-candidate",
+      "game": "tbs",
+      "source": "recon/tbs/en/overlays/resource_3ba_c_020021b8.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3ba",
+      "absolute_symbols": {
+        "Main_080000d8": {
+          "address": "0x0200bb18",
+          "kind": "thumb"
+        },
+        "Main_080001b8": {
+          "address": "0x0200bb68",
+          "kind": "thumb"
+        },
+        "Local_02003b00": {
+          "address": "0x0200bb00",
+          "kind": "thumb"
+        },
+        "Main_080001e0": {
+          "address": "0x0200bb88",
+          "kind": "thumb"
+        },
+        "Main_080001e8": {
+          "address": "0x0200bb90",
+          "kind": "thumb"
+        },
+        "gIoWriteQueue": {
+          "address": "0x02002090",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x020021b8",
+          "extent": 1264,
+          "state": "not-yet-c"
+        }
+      ]
+    },
+    {
       "id": "retained-overlay-3cb-02000860",
       "source": "recon/tbs/en/overlays/resource_3cb_c_02000860.c",
       "overlay": "resource_3cb",
@@ -4072,12 +4232,60 @@
       "source": "recon/tbs/en/overlays/resource_380_c_02004260.c",
       "overlay": "resource_380",
       "absolute_symbols": {
-        "Func_0200c95c": {
+        "Engine_ObjectCreate": {
+          "address": "0x0200c8c4",
+          "kind": "thumb"
+        },
+        "Main_08077040": {
           "address": "0x0200c95c",
           "kind": "thumb"
         },
-        "Func_0200c954": {
+        "Main_08077038": {
           "address": "0x0200c954",
+          "kind": "thumb"
+        },
+        "Engine_ObjectSetScript": {
+          "address": "0x0200c8bc",
+          "kind": "thumb"
+        },
+        "Engine_HeapAllocate": {
+          "address": "0x0200c894",
+          "kind": "thumb"
+        },
+        "Engine_ItemLoadIcon": {
+          "address": "0x0200c934",
+          "kind": "thumb"
+        },
+        "Engine_VramLoad": {
+          "address": "0x0200c8ac",
+          "kind": "thumb"
+        },
+        "Engine_HeapRelease": {
+          "address": "0x0200c8a4",
+          "kind": "thumb"
+        },
+        "Engine_AudioPlayCue": {
+          "address": "0x0200cb14",
+          "kind": "thumb"
+        },
+        "Engine_RunRisingObjectSequence": {
+          "address": "0x0200cafc",
+          "kind": "thumb"
+        },
+        "Main_080772b0": {
+          "address": "0x0200c984",
+          "kind": "thumb"
+        },
+        "Main_08077028": {
+          "address": "0x0200c944",
+          "kind": "thumb"
+        },
+        "Engine_ObjectDispatchRelease": {
+          "address": "0x0200c8cc",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetAnimation": {
+          "address": "0x0200ca0c",
           "kind": "thumb"
         }
       },
@@ -11885,7 +12093,7 @@
     },
     {
       "id": "retained-overlay-3cb-020012e0",
-      "source": "recon/tbs/en/overlays/resource_3cb_c_020012e0.c",
+      "source": "games/THE BROKEN SEAL/SRC/MENU/LINK_LOBBY/ROUND.C",
       "overlay": "resource_3cb",
       "absolute_symbols": {
         "Engine_ActorFaceActor": {
@@ -11913,7 +12121,7 @@
           "kind": "thumb"
         },
         "Engine_EventShowMessage": {
-          "address": "0x0200988c",
+          "address": "0x02009894",
           "kind": "thumb"
         },
         "Engine_EventWaitForScreen": {
@@ -12001,7 +12209,7 @@
         {
           "address": "0x020012e0",
           "extent": 1060,
-          "state": "not-yet-c"
+          "state": "exact-c"
         }
       ],
       "game": "tbs",
@@ -12019,6 +12227,26 @@
         }
       ],
       "absolute_symbols": {
+        "Data_02000240": {
+          "address": "0x02000240",
+          "kind": "data"
+        },
+        "Data_020096c0": {
+          "address": "0x020096c0",
+          "kind": "data"
+        },
+        "Data_020096d0": {
+          "address": "0x020096d0",
+          "kind": "data"
+        },
+        "Data_020096dc": {
+          "address": "0x020096dc",
+          "kind": "data"
+        },
+        "Data_020096ec": {
+          "address": "0x020096ec",
+          "kind": "data"
+        },
         "Engine_DebugGetItem": {
           "address": "0x02009444",
           "kind": "thumb"
@@ -29330,6 +29558,10 @@
       "source": "recon/tbs/en/overlays/resource_377_c_02000a0c.c",
       "overlay": "resource_377",
       "absolute_symbols": {
+        "Data_04000052": {
+          "address": "0x04000052",
+          "kind": "data"
+        },
         "Main_080000c0": {
           "address": "0x02009814",
           "kind": "thumb"
@@ -86110,18 +86342,18 @@
     },
     {
       "id": "ovd-36f-02000454",
-      "source": "recon/tbs/en/overlays/resource_36f_c_02000454.c",
+      "source": "games/THE BROKEN SEAL/SRC/MENU/TITLE/BG_SETUP.C",
       "overlay": "resource_36f",
       "absolute_symbols": {
-        "Main_080002a8": {
+        "Engine_BlendSetDarkenTarget16": {
           "address": "0x02008588",
           "kind": "thumb"
         },
-        "Main_08000290": {
+        "Engine_ResourceGetTableEntry": {
           "address": "0x02008578",
           "kind": "thumb"
         },
-        "Main_080001a8": {
+        "Engine_ResourceDecodeType01": {
           "address": "0x02008558",
           "kind": "thumb"
         }
@@ -86130,7 +86362,7 @@
         {
           "address": "0x02000454",
           "extent": 228,
-          "state": "not-yet-c"
+          "state": "exact-c"
         }
       ],
       "game": "tbs",
@@ -86158,18 +86390,22 @@
     },
     {
       "id": "ovd-370-02000054",
-      "source": "recon/tbs/en/overlays/resource_370_c_02000054.c",
+      "source": "games/THE BROKEN SEAL/SRC/MENU/CLEAR/BG_SETUP.C",
       "overlay": "resource_370",
       "absolute_symbols": {
-        "Main_080002a8": {
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
+        },
+        "Engine_BlendSetDarkenTarget16": {
           "address": "0x02009364",
           "kind": "thumb"
         },
-        "Main_08000290": {
+        "Engine_ResourceGetTableEntry": {
           "address": "0x0200935c",
           "kind": "thumb"
         },
-        "Main_080001a8": {
+        "Engine_ResourceDecodeType01": {
           "address": "0x0200934c",
           "kind": "thumb"
         },
@@ -86182,7 +86418,7 @@
         {
           "address": "0x02000054",
           "extent": 256,
-          "state": "not-yet-c"
+          "state": "exact-c"
         }
       ],
       "game": "tbs",
@@ -86959,6 +87195,70 @@
           "extent": 352,
           "state": "not-yet-c"
         }
+      ],
+      "game": "tbs",
+      "compiler_route": "canonical-gcc296"
+    },
+    {
+      "id": "retained-overlay-3bd-0200109c",
+      "source": "recon/tbs/en/overlays/resource_3bd_c_0200109c.c",
+      "overlay": "resource_3bd",
+      "absolute_symbols": {
+        "Engine_EventBegin": { "address": "0x0200bcb0", "kind": "thumb" },
+        "Engine_EventResetEffectCounter": { "address": "0x0200bde8", "kind": "thumb" },
+        "Engine_EventSetMessage": { "address": "0x0200bd60", "kind": "thumb" },
+        "Engine_EventShowMessage": { "address": "0x0200bd70", "kind": "thumb" },
+        "Engine_EventEnd": { "address": "0x0200bcb8", "kind": "thumb" },
+        "Engine_ActorGet": { "address": "0x0200bcc8", "kind": "thumb" },
+        "Engine_ActorSetPosition": { "address": "0x0200bd18", "kind": "thumb" },
+        "Engine_MathDivide": { "address": "0x0200bbe8", "kind": "thumb" },
+        "Engine_AudioPlayCue": { "address": "0x0200be70", "kind": "thumb" },
+        "Engine_TaskWait": { "address": "0x0200bc00", "kind": "thumb" },
+        "Engine_TaskAddCallback": { "address": "0x0200bc08", "kind": "thumb" },
+        "Engine_TaskRemoveCallback": { "address": "0x0200bc10", "kind": "thumb" },
+        "Engine_RandomNext": { "address": "0x0200bc18", "kind": "thumb" },
+        "Engine_WorkSetValuesIfNonNegative": { "address": "0x0200bc68", "kind": "thumb" },
+        "Engine_EventWait": { "address": "0x0200bca8", "kind": "thumb" },
+        "Main_030003ac": { "address": "0x0200bbf0", "kind": "thumb" },
+        "SceneActor_SetPositionFromTransformedBase": { "address": "0x02008f10", "kind": "thumb" },
+        "ArutamiraDou_ReleaseWallBurst": { "address": "0x0200bad4", "kind": "thumb" }
+      },
+      "owners": [
+        { "address": "0x0200109c", "extent": 860, "state": "not-yet-c" }
+      ],
+      "game": "tbs",
+      "compiler_route": "canonical-gcc296"
+    },
+    {
+      "id": "retained-overlay-3c8-02002b14",
+      "source": "recon/tbs/en/overlays/resource_3c8_c_02002b14.c",
+      "overlay": "resource_3c8",
+      "absolute_symbols": {
+        "Local_02000098": { "address": "0x02008098", "kind": "thumb" },
+        "Local_0200094c": { "address": "0x0200894c", "kind": "thumb" },
+        "Local_02000c5c": { "address": "0x02008c5c", "kind": "thumb" },
+        "Main_080090d0": { "address": "0x0200cdec", "kind": "thumb" },
+        "Main_08009148": { "address": "0x0200cdfc", "kind": "thumb" },
+        "Main_08009098": { "address": "0x0200cddc", "kind": "thumb" },
+        "Main_08009178": { "address": "0x0200ce14", "kind": "thumb" },
+        "Main_0808a1e0": { "address": "0x0200cf64", "kind": "thumb" },
+        "Main_080091c0": { "address": "0x0200ce34", "kind": "thumb" },
+        "Engine_CameraMoveTo": { "address": "0x0200cf84", "kind": "thumb" },
+        "Engine_CameraSetSpeed": { "address": "0x0200cf7c", "kind": "thumb" },
+        "Engine_CameraMoveToActor": { "address": "0x0200cf94", "kind": "thumb" },
+        "Engine_CameraWaitForMove": { "address": "0x0200cf8c", "kind": "thumb" },
+        "Engine_GameFlagIsSet": { "address": "0x0200ce74", "kind": "thumb" },
+        "Engine_GameFlagSet": { "address": "0x0200ce7c", "kind": "thumb" },
+        "Engine_ActorGet": { "address": "0x0200ceac", "kind": "thumb" },
+        "Engine_ActorSetSpriteFlags": { "address": "0x0200ce44", "kind": "thumb" },
+        "Engine_EventBegin": { "address": "0x0200ce94", "kind": "thumb" },
+        "Engine_EventEnd": { "address": "0x0200ce9c", "kind": "thumb" },
+        "Engine_EventWait": { "address": "0x0200ce8c", "kind": "thumb" },
+        "Engine_AudioPlayCue": { "address": "0x0200cffc", "kind": "thumb" },
+        "Engine_TaskWait": { "address": "0x0200cda4", "kind": "thumb" }
+      },
+      "owners": [
+        { "address": "0x02002b14", "extent": 976, "state": "not-yet-c" }
       ],
       "game": "tbs",
       "compiler_route": "canonical-gcc296"

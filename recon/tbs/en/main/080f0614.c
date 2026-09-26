@@ -1,7 +1,9 @@
 /* NONMATCHING: complete 100-byte owner and pool; typed-table candidate is
  * 100 bytes, 13 aligned halfword edits. The signed division read absorbs
  * the unsigned position snapshot. Volatile views preserve it but add two
- * sign-extension instructions; stop this axis without a new source model. */
+ * sign-extension instructions. A u32 snapshot with only its unsigned read
+ * volatile keeps both loads without extra shifts, but schedules the second
+ * load after division (16 edits). Retain the 13-edit baseline. */
 #include "TYPES.H"
 
 s32 Func_080f07f0(void *resource, s32 offset, s32 mode);

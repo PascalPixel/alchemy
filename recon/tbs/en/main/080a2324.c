@@ -1,3 +1,8 @@
+/* NONMATCHING: 156 bytes, 7 aligned edits. The bound reaches sl too early
+ * and the icon-table address uses reversed operands. Updating page_size in
+ * place gives 27 edits; a one-pass bound block changes nothing. An idiomatic
+ * for loop delays sl correctly but moves the stacked y load and gives
+ * 25 edits. Retain the closest explicit entry checks. */
 #include "TYPES.H"
 
 struct PsynergyPageIcon {

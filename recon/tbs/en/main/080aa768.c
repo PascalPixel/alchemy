@@ -1,3 +1,6 @@
+/* NONMATCHING: shared callee return types audited on 2026-09-26.
+ * 840 of 1308 bytes, 632 differing halfwords, 581 aligned edits.
+ * Canonical declarations are retained; the remaining source model is not exact. */
 #include "types.h"
 
 extern u8 Data_03001f2c[];
@@ -10,17 +13,17 @@ void Func_080151c8(s32 value);
 void Func_08077010(s32 value);
 s32 Func_080771b0(s32 a0, s32 a1, s32 a2);
 s32 Func_080771b8(s32 a0, s32 a1, s32 a2);
-s32 Func_080771c0(s32 a0, s32 a1, s32 a2);
+void Func_080771c0(s32 a0, s32 a1, s32 a2);
 s32 Func_080771c8(s32 a0, s32 a1, s32 a2);
-void Func_080aa544(s32 value);
+s32 Func_080aa544(s32 value);
 s32 Func_080ab314(void);
 s32 Func_080ab5e4(s32 value);
-void Func_080aad10(void);
-void Func_080ad5b4(s32 a0, s32 a1, s32 a2, s32 a3);
+s32 Func_080aad10(void);
+s32 Func_080ad5b4(s32 a0, s32 a1, s32 a2, s32 a3);
 s32 Func_080ad6d4(s32 value);
 void Func_080ae2f4(void);
 void Func_080aafb8(s32 value);
-void Func_080aaf58(s32 value);
+s32 Func_080aaf58(s32 value);
 void Func_080f9010(s32 value);
 
 static void UpdateShopSelection(s32 *ctx, s32 result, s32 message)

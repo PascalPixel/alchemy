@@ -1,6 +1,8 @@
 /* NONMATCHING: 152 of 152 bytes, 16 halfword edits (2026-09-24). Hand-written from the
  * resolved jump-table disassembly as a single-overlay unit binding Engine_* at
- * their import veneers. Remaining: 37 halfwords: reference keeps the motion-flag zero in r6 from before the column tests, and loads height before width for Engine_MapCopyCellAttributes */
+ * their import veneers. Remaining: 37 halfwords: reference keeps the motion-flag zero in r6 from before the column tests, and loads height before width for Engine_MapCopyCellAttributes.
+ * 2026-09-26: widening still from u8 to s32 did not change either residual;
+ * retain the original width and the verified whole-owner bindings. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 

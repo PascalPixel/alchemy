@@ -1,6 +1,13 @@
-/* Draft, not exact: 22 differing halfwords, 278 of 280 bytes.
-   Initialization now emits the immediate 140; x/y pointer setup and saved
-   register copies still differ before the second loop. */
+/* NONMATCHING: complete function 278B, 21 differing halfwords; the retained
+ * 280B span includes a separate trailing 2B alignment halfword.
+ * List construction, coordinate stores and immediate 140 match; residuals
+ * are the x/y setup
+ * and copies at +009a..+00ca, then the increment register at +00f8.
+ * Returning the initialized x pointer gives 274B/51 differences; exposing
+ * x/y through output pointers gives 274B/55. Both reuse the addresses but
+ * coalesce away the ROM's late r5/r4 copies. One inline initialization and
+ * traversal phase gives 272B/121. The original 278B candidate is retained.
+ */
 #include "TYPES.H"
 
 struct SelectionNode {

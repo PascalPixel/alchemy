@@ -3486,8 +3486,8 @@ mod tests {
             json!({"units": [{
                 "id": "staged-actor", "source": source, "overlay": "resource_3bf",
                 "owners": [
-                    {"address": "0x0200034c", "extent": 1394, "state": "exact-c"},
-                    {"address": "0x020008c0", "extent": 284, "state": "exact-c"}
+                    {"address": "0x0200034c", "extent": 1394},
+                    {"address": "0x020008c0", "extent": 284}
                 ],
                 "instances": {"resource_39b": {
                     "owners": {

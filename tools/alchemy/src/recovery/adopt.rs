@@ -581,11 +581,6 @@ fn adopt_unit_source(unit: &mut Value, root: &Path, destination: &Path) -> Resul
             .to_string_lossy()
             .into_owned(),
     );
-    if let Some(owners) = unit["owners"].as_array_mut() {
-        for owner in owners {
-            owner["state"] = Value::String("exact-c".into());
-        }
-    }
     Ok(())
 }
 
@@ -625,7 +620,7 @@ mod tests {
         let mut unit = serde_json::json!({
             "source": "draft.c",
             "absolute_symbols": {"CallAlias": {"address": "0x02009c84", "kind": "thumb"}},
-            "owners": [{"address": "0x0200161c", "extent": 420, "state": "not-yet-c"}]
+            "owners": [{"address": "0x0200161c", "extent": 420}]
         });
         let bindings = unit["absolute_symbols"].clone();
         adopt_unit_source(
@@ -636,7 +631,7 @@ mod tests {
         .unwrap();
         assert_eq!(unit["source"], "src/scene.c");
         assert_eq!(unit["absolute_symbols"], bindings);
-        assert_eq!(unit["owners"][0]["state"], "exact-c");
+        assert!(unit["owners"][0].get("state").is_none());
         assert_eq!(unit["owners"][0]["extent"], 420);
     }
 

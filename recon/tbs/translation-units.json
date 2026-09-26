@@ -87872,11 +87872,11 @@
           "address": "0x02008580",
           "kind": "thumb"
         },
-        "Local_02000398": {
+        "LinkLobby_ReceivePartyRecords": {
           "address": "0x02008398",
           "kind": "thumb"
         },
-        "Main_080770e8": {
+        "Engine_GameFlagWriteValue": {
           "address": "0x0200982c",
           "kind": "thumb"
         },

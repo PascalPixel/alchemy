@@ -5,6 +5,12 @@
    in r1 and ORs it with the cursor into a scratch r3, then stores 0 from a
    fresh r0; this C ORs into r1 and reuses that known zero, which shifts
    every later instruction by four bytes and swaps r1/r2 in the row loops.
+   Baseline is 404 bytes / 34 aligned halfword edits (2026-09-26).
+   Explicit u32 cursor/top snapshots give 400 bytes / 40 edits, dropping
+   another required input copy. An inline OR-result boundary gives 404
+   bytes / 42 edits, reverses the input loads and moves the cursor pointer
+   to r5. Neither recovers the r1-to-r3 copy or the independent wrap zero;
+   keep the original control flow until their source ancestry is known.
    Writing the test as two != 0 tests merges them into one word load,
    which the ROM does not do. Otherwise the code is the ROM's, including
    the count - 5 loop.
@@ -53,7 +59,7 @@ void Menu_ReloadNodeResource(struct StepMenu *state, u32 index);
 void Menu_LoadSelectionNodeResource(struct StepMenu *state, u32 index);
 void Menu_ScrollSelectionList(struct StepMenu *state, u32 mode);
 void MenuSelection_SetupEntry(u32 id, u32 kind, struct StepNode *node, u32 flag);
-void Menu_OpenSelectionWindow(u16 type, u32 value);
+void Menu_OpenSelectionWindow(s32 type, u32 value);
 
 void Menu_StepLeft(struct StepMenu *state)
 {

@@ -2,6 +2,46 @@
   "format": 5,
   "units": [
     {
+      "id": "korosseo-command-renderer-candidate",
+      "game": "tbs",
+      "source": "recon/tbs/en/overlays/resource_3ba_c_020021b8.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3ba",
+      "absolute_symbols": {
+        "Main_080000d8": {
+          "address": "0x0200bb18",
+          "kind": "thumb"
+        },
+        "Main_080001b8": {
+          "address": "0x0200bb68",
+          "kind": "thumb"
+        },
+        "Local_02003b00": {
+          "address": "0x0200bb00",
+          "kind": "thumb"
+        },
+        "Main_080001e0": {
+          "address": "0x0200bb88",
+          "kind": "thumb"
+        },
+        "Main_080001e8": {
+          "address": "0x0200bb90",
+          "kind": "thumb"
+        },
+        "gIoWriteQueue": {
+          "address": "0x02002090",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x020021b8",
+          "extent": 1264,
+          "state": "not-yet-c"
+        }
+      ]
+    },
+    {
       "id": "retained-overlay-3cb-02000860",
       "source": "recon/tbs/en/overlays/resource_3cb_c_02000860.c",
       "overlay": "resource_3cb",

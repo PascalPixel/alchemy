@@ -2,6 +2,113 @@
   "format": 5,
   "units": [
     {
+    "id": "suhara-actor-scale-blend-candidate",
+      "game": "tbs",
+      "source": "recon/tbs/en/overlays/resource_3c0_c_02000594.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3c0",
+    "absolute_symbols": {
+      "gGameState": {"address": "0x02000240", "kind": "data"},
+      "Data_04000208": {"address": "0x04000208", "kind": "data"},
+      "Data_02002090": {"address": "0x02002090", "kind": "data"},
+        "Engine_GameFlagIsSet": {
+          "address": "0x0200924c",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagSet": {
+          "address": "0x02009254",
+          "kind": "thumb"
+        },
+        "Engine_EventWait": {
+          "address": "0x02009274",
+          "kind": "thumb"
+        },
+        "Engine_EventBegin": {
+          "address": "0x0200927c",
+          "kind": "thumb"
+        },
+        "Engine_EventEnd": {
+          "address": "0x02009284",
+          "kind": "thumb"
+        },
+        "Engine_ActorGet": {
+          "address": "0x0200928c",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpeed": {
+          "address": "0x02009294",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetDestination": {
+          "address": "0x020092ac",
+          "kind": "thumb"
+        },
+        "Engine_ActorWalkToAndWait": {
+          "address": "0x020092bc",
+          "kind": "thumb"
+        },
+        "Engine_ActorWaitForMove": {
+          "address": "0x020092c4",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetPosition": {
+          "address": "0x020092cc",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetAnimation": {
+          "address": "0x020092d4",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetAnimationAndWait": {
+          "address": "0x020092dc",
+          "kind": "thumb"
+        },
+        "Engine_ActorRunRepeatedMotion": {
+          "address": "0x020092e4",
+          "kind": "thumb"
+        },
+        "Engine_ActorFaceActor": {
+          "address": "0x020092ec",
+          "kind": "thumb"
+        },
+        "Engine_EventSetMessage": {
+          "address": "0x020092fc",
+          "kind": "thumb"
+        },
+        "Engine_EventShowMessage": {
+          "address": "0x02009304",
+          "kind": "thumb"
+        },
+        "Engine_ActorFaceDirection": {
+          "address": "0x02009314",
+          "kind": "thumb"
+        },
+        "Engine_ActorShowEmote": {
+          "address": "0x0200931c",
+          "kind": "thumb"
+        },
+        "Engine_AudioPlayCue": {
+          "address": "0x02009374",
+          "kind": "thumb"
+        },
+        "Engine_TaskWait": {
+          "address": "0x020091f4",
+          "kind": "thumb"
+        },
+        "Engine_ActorWalkTo": {
+          "address": "0x020092b4",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02000594",
+          "extent": 616,
+          "state": "not-yet-c"
+        }
+      ]
+    },
+    {
       "id": "korosseo-river-actor-map-candidate",
       "game": "tbs",
       "source": "recon/tbs/en/overlays/resource_3ba_c_02000540.c",

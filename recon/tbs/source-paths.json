@@ -1,6 +1,9 @@
 {
   "format": 3,
   "owners": {
+    "resource_3c0:02000594": {
+      "name": "SuharaSabaku_RestoreActorScaleAndBlend"
+    },
     "resource_3ba:02000540": {
       "name": "KorosseoKawa_MoveActorsAndMap"
     },

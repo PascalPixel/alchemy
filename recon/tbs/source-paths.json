@@ -1,6 +1,12 @@
 {
   "format": 3,
   "owners": {
+    "main:08021390": {
+      "name": "Party_ShowJoinedMessage"
+    },
+    "main:08021488": {
+      "name": "Party_ShowPairJoinedMessage"
+    },
     "resource_3cb:02000398": {
       "name": "LinkLobby_ReceivePartyRecords",
       "source": "MENU/LINK_LOBBY/RECEIVE_PARTY.C"
@@ -10353,7 +10359,8 @@
       "source": "GRAPHICS/DISPLAY/LOAD_CACHED.C"
     },
     "main:08097384": {
-      "name": "BattleEffect_InitializeSharedScene"
+      "name": "BattleEffect_InitializeSharedScene",
+      "source": "BATTLE/EFFECT/INITIALIZE_SHARED_SCENE.C"
     },
     "main:080bb65c": {
       "name": "BattlePresentation_WaitForAdvance"

@@ -20319,7 +20319,8 @@
       "name": "BattleUnit_ProcessTurnEnd"
     },
     "main:080a1fd4": {
-      "name": "Unnamed_080a1fd4"
+      "name": "Menu_HandlePageInput",
+      "source": "MENU/PAGE_INPUT.C"
     },
     "main:080a2144": {
       "name": "Palette_LightenBankHighlight",

@@ -67,7 +67,6 @@ void ItemMenu_DrawIcons(u16 *items, s32 style);
 s32 Shop_DrawItemPage(s32 window, s32 unused, struct MenuResult *state);
 s32 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct MenuResult *state);
 void UiMenu_PositionCursor(s32 x, s32 y);
-s32 Unnamed_080a1fd4(s32 mode, s32 count, s32 page_size, s32 *row, s32 *page);
 void Audio_PlayCue(s32 cue);
 s32 Math_Mod(s32 value, s32 divisor);
 void PsynergyMenu_CallIconRoutineWithValue(void *work, s32 value);
@@ -144,7 +143,7 @@ s32 ItemMenu_SelectItem(void)
             UiMenu_PositionCursor(96, state.row * 16 + 52);
             WaitFrames(1);
 
-            nav = Unnamed_080a1fd4(0, state.entry_count, 5, &state.row, &state.page);
+            nav = Menu_HandlePageInput(0, state.entry_count, 5, &state.row, &state.page);
             if (nav == 1) {
                 first = 1;
                 redraw = 1;

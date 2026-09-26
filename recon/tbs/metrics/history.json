@@ -112,14 +112,14 @@
       "date": "2026-09-26",
       "tbs": {"done": 995144, "executable": 1375934},
       "tla": {"done": 42332, "executable": 1975640},
-      "models": {"Opus 5.5": 226, "Sol 5.6": 53, "Sol 6": 80}
+      "models": {"Opus 5.5": 228, "Sol 5.6": 53, "Sol 6": 80}
     }
   ],
   "figures": {
     "date": "2026-09-26",
     "tbs": {"done": 995144, "executable": 1375934},
     "tla": {"done": 42332, "executable": 1975640},
-    "models": {"Opus 5.5": 226, "Sol 5.6": 53, "Sol 6": 80},
-    "files": "8f90064e745d3174"
+    "models": {"Opus 5.5": 228, "Sol 5.6": 53, "Sol 6": 80},
+    "files": "41055600b48fa462"
   }
 }

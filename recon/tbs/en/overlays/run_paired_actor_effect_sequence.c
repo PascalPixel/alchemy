@@ -1,3 +1,21 @@
+/* NONMATCHING: 4708-byte owner 02002360..020035c4, candidate 4704,
+ * 1704 differing halfwords, 610 aligned halfword edits (2026-09-26).
+ * Complete return 020035a8; final pool 020035ac..020035c4. ROM frame is
+ * 136 bytes: second options at sp+44, shared velocity at sp+84, first
+ * options at sp+96. Candidate keeps the same record ordering but has a
+ * 120-byte frame, fewer buffer/coordinate spills, and different loop roles.
+ * Three bounded structural trials (candidate / differences / edits):
+ * 1. Independent particle-loop counters: 4704 / 1704 / 612; frame remains
+ *    120 and both counters still occupy high registers. Rejected.
+ * 2. One aggregate containing second options, velocity, first options:
+ *    4696 / 1726 / 609; changes field addressing, leaves frame 120 and
+ *    loses eight more bytes. Rejected despite one fewer aligned edit.
+ * 3. Halfword zero shared by early byte-field clears but not facing/later
+ *    phases: 4688 / 2254 / 705; removes the early zero pools. Rejected.
+ * Original body retained. Next structural evidence: reference spills the
+ * icon buffer and buffer+0x400 at sp+40/+36, and each particle origin x at
+ * sp+28/+20; candidate keeps them in registers. Audit those lifetimes and
+ * call prototypes before another experiment. No credit for this draft. */
 #include "TYPES.H"
 #include "FIELD_EFFECT.H"
 #include "FIELD_EVENT.H"

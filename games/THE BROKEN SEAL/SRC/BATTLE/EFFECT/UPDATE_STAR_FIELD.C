@@ -1,26 +1,3 @@
-/* Exact whole owner [080c11ec, 080c1438), 588 bytes including pools.
- * 2026-09-26 audit: 080c1470 allocates 0x13d0 bytes, initializes sixteen
- * 28-byte motion records and three 20-byte rings, then schedules this
- * callback. Exact Display_UploadBlock consumes ready at +0x13c0.
- * H1: own position and velocity as one six-word motion array, and sequence
- * the cursor update after its load/store; no cross-member array traversal.
- * H1 result: candidate 588/588, two differing halfwords, identical to the
- * baseline. The corrected array ownership preserves the complete body;
- * it does not change the loop-preheader scheduling residual.
- * H2: use the resident multiply link symbol, as in the exact projected
- * sprite module. Candidate 588/588, the same two differing halfwords and
- * one shared multiply pool word. Symbol versus numeric constant does not
- * change the preheader order; do not repeat that representation axis.
- * H3: index work->sparks[i] within the loop instead of carrying a pointer
- * initialized before it. Strength reduction now owns the spark-base
- * initialization. Candidate 588/588, zero differing halfwords and zero
- * aligned edits: the multiply address moves before the spark-base add.
- * Adopted as BATTLE/EFFECT/UPDATE_STAR_FIELD.C; preserved attempt history.
- * A count-up source loop is reversed by the compiler and matches the ROMs countdown and register choices.
- * Residual: moving the multiply routine into r9 precedes adding the spark
- * base in the ROM. The loop pass hoists the numeric routine after the base
- * initialization; sched2 emits that same order at clocks 33 and 34.
- */
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 
@@ -64,16 +41,16 @@ extern u8 Value_03000118[];
 
 #define Spark_MulQ16(left, right) Iwram_Call2((left), (right), Value_03000118)
 
-#define Iwram_DivQ16 ((s32 (*)(s32, s32))0x0300013c)
+#define Spark_RatioQ14 ((s32 (*)(s32, s32))0x0300013c)
 
 s32 FixedSqrt(s32 value);
 u32 Random16(void);
 s32 Trig_Cos(s32 angle);
 s32 Trig_Sin(s32 angle);
 
-/* Returns nothing; the ROM pops the return address into r1 as for a
-   value-returning function. */
-s32 Func_080c11ec(void)
+/* FAKEMATCH: the scheduler ignores the result; a non-void signature keeps
+   the reference's return-address pop into r1. */
+s32 BattleFx_UpdateStarField(void)
 {
     s32 j;
     s32 frame;
@@ -115,7 +92,7 @@ s32 Func_080c11ec(void)
             if (dist <= 0xfff) {
                 spark->life = 0;
             } else {
-                scale = Iwram_DivQ16(dist, 0x10000);
+                scale = Spark_RatioQ14(dist, 0x10000);
                 spark->life--;
                 pos = spark->pos;
                 for (k = 2; k >= 0; k--) {

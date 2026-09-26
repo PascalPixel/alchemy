@@ -25,6 +25,9 @@
     "main:0801f200": {
       "name": "UiWindow_DrawPartyStatusContents"
     },
+    "resource_3c8:0200247c": {
+      "name": "VinasuHeya_ResolveFloatingBlock"
+    },
     "resource_3c8:020042bc": {
       "name": "Scene_RunPairedParticleWaveSequence"
     },

@@ -1,3 +1,10 @@
+/* Not-yet-C: complete 116-byte map-copy sequence, split from 08010000.
+ * The original 120-byte candidate differs by 34 aligned halfwords.
+ * Widening source to u32 recovers unsigned entry reads but removes the
+ * sentinel register and argument extensions (96 bytes / 32 edits).
+ * Narrowing all four argument locals gives the same 96-byte output.
+ * Neither width model reproduces the signed loads followed by independent
+ * unsigned conversions. Original model preserved; both axes stopped. */
 #include "TYPES.H"
 
 void Func_08010424(s32 source_x, s32 source_y, s32 destination_x,

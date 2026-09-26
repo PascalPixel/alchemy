@@ -1,10 +1,11 @@
-/* NONMATCHING: 556 bytes, candidate 552, 106 differing halfwords, 77 aligned
+/* NONMATCHING: 556 bytes, candidate 560, 126 differing halfwords, 79 aligned
  * edits (2026-09-26). Reconstructed both Q16 waves and all four actor-height
  * blocks. The complete topology now agrees. Remaining: halfword scroll
  * reload and stack-slot ownership, saved position pointer, and spawn stores.
  * Explicit volatile halfword accesses retain the scroll reload without the
- * aggregate member's extra read. Its slot is +6 instead of +18; the position
- * work still keeps a saved stack-base register. Earlier trials are committed. */
+ * aggregate member's extra read. A volatile scalar position pointer spills
+ * but adds reloads and places scroll at +2 instead of +18. The best 77-edit
+ * halfword-view attempt is preserved in 91b47e1cc. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "IWRAM_CALL.H"
@@ -22,10 +23,6 @@ struct MapWork {
 
 struct Position {
     s32 x, y, z;
-};
-
-struct PositionWork {
-    struct Position *pos;
 };
 
 struct Half {
@@ -53,7 +50,8 @@ void BabiFune_UpdateWaves(void)
 {
     struct Half scroll;
     struct Position buf;
-    struct PositionWork work;
+    /* FAKEMATCH: retain the position-pointer stack slot across the random call. */
+    struct Position *volatile pos;
     struct MapWork *map;
     struct FieldActor *actor;
     s32 bob;
@@ -101,13 +99,13 @@ void BabiFune_UpdateWaves(void)
         x = map->layers[4].unknown_10[0] & -0x10000;
         z = map->layers[4].unknown_10[1] & -0x10000;
         x += Engine_RandomNext() * 240;
-        work.pos = &buf;
-        work.pos->y = 0;
-        work.pos->x = x;
+        pos = &buf;
+        pos->y = 0;
+        pos->x = x;
         z += Engine_RandomNext() * 160;
         z += 0x1e0000;
-        work.pos->z = z;
-        actor = Engine_ObjectCreate(0x1f7, work.pos->x, work.pos->y, z);
+        pos->z = z;
+        actor = Engine_ObjectCreate(0x1f7, pos->x, pos->y, z);
         if (actor != 0) {
             actor->update = (void (*)(union FieldObject *))BabiFune_UpdateDriftingObject;
             actor->unknown_64 = 60;

@@ -1,69 +1,73 @@
-/* NONMATCHING: 340 of 288 bytes, 88 halfword edits (2026-09-24). Hand-written from the
- * resolved jump-table disassembly as a single-overlay unit binding Engine_* at
- * their import veneers. Remaining: through a pointer to the side halfword, the switch value is loaded once as ldrh and shared with the table index (the reference reloads it with ldrsh in each case) and the constant stores go to the pool; through the actor struct the loads match but the actor stays live in r5 instead of the field address. The reference also puts its literal pool at the end (this draft dumps one after case 4). */
+/* NONMATCHING: complete 316-byte owner including switch table and own pool;
+ * candidate 284, 112 differing halfwords, 80 aligned edits (2026-09-26).
+ * Actor-25 event-table entries reference this callback; message 0x12ad is
+ * the refusal response. Restored EventEnd and all three data bindings.
+ * Three bounded hypotheses: volatile aggregate reads gave 332/316 and
+ * 93 edits; a full actor-tail aggregate gave 340/316 and 90 edits; a signed
+ * state pointer and shared update tail move the pool to the end but merge
+ * the two forward arms. Signed loads still expand to ldrh plus shifts;
+ * the reference keeps separate forward arms and a pool-loaded decrement.
+ * The old 288-byte comparison omitted part of this owner's own pool. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
-
-struct Side {
-    s16 value;
-};
-
-struct Turner {
-    u8 unknown_00[0x64];
-    struct Side side;
-};
 
 extern const u8 Data_0200d8bc[];
 extern const u8 Data_0200d858[];
 extern const u8 *Data_0200e4d8[][4];
 
-void Func_02000690(void)
+void KuupuappuHeya_RunActor25Response(void)
 {
     struct FieldActor *actor;
-    struct Side *side;
+    /* FAKEMATCH: explicit reloads model the observed shared-state reads. */
+    volatile s16 *side;
     u32 facing;
     s32 half;
+    s32 next;
 
     actor = Engine_ActorGet(25);
     facing = actor->facing & 0xf000;
-    side = &((struct Turner *)actor)->side;
-    half = side->value >> 1;
+    side = (volatile s16 *)&actor->unknown_64;
+    half = *side >> 1;
     Engine_EventBegin();
     Engine_ActorRunRepeatedMotion(25, 2);
     Engine_EventSetMessage(0x12ad);
     Engine_EventShowMessage(25, 0);
     Engine_ActorSetSpeed(25, 0x38000, 0x1c000);
-    switch (side->value) {
+    switch (*side) {
     case 4:
         if (facing > 0x2000 && facing < 0xa000) {
             Engine_ActorEnableActionCallback(25, Data_0200d8bc);
-            side->value = 2;
+            next = 2;
         } else {
             Engine_ActorEnableActionCallback(25, Data_0200d858);
-            side->value = 3;
+            next = 3;
         }
         break;
     case 0:
     case 2:
         if (facing > 0x2000 && facing < 0xa000) {
-            Engine_ActorEnableActionCallback(25, Data_0200e4d8[half][side->value]);
-            side->value = side->value - half * 2 + 1;
+            Engine_ActorEnableActionCallback(25, Data_0200e4d8[half][*side]);
+            next = *side - half * 2 + 1;
             break;
         }
         goto back;
     case 1:
     case 3:
         if (facing > 0x6000 && facing < 0xe000) {
-            Engine_ActorEnableActionCallback(25, Data_0200e4d8[half][side->value]);
-            side->value = side->value - half * 2 + 1;
+            Engine_ActorEnableActionCallback(25, Data_0200e4d8[half][*side]);
+            next = *side - half * 2 + 1;
             break;
         }
     back:
-        Engine_ActorEnableActionCallback(25, Data_0200e4d8[half ^ 1][side->value]);
-        side->value = side->value - half * 2 - 1;
+        Engine_ActorEnableActionCallback(25, Data_0200e4d8[half ^ 1][*side]);
+        next = *side - half * 2 - 1;
         break;
+    default:
+        goto normalize;
     }
-    side->value &= 3;
+    *side = next;
+normalize:
+    *side &= 3;
     Engine_ActorStartAction(25);
     Engine_EventEnd();
 }

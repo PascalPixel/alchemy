@@ -1,6 +1,19 @@
-/* NONMATCHING: 848 of 848 bytes, 145 halfword edits (2026-09-24). Hand-written from the
- * resolved jump-table disassembly as a single-overlay unit binding Engine_* at
- * their import veneers. Remaining: register allocation only: the reference keeps the beam in r6, the spark in r7, the pool zero (sprite flags) in r8 and the sprite in sl; this draft gives the beam r7 and the spark r8. Offsets, pool and switch layout match (848 bytes). The -dl dump shows sprite and fade local-allocated in the spark block (r6, r5); in the reference they are global (r8, sl) after frame r5, beam r6 and spark r7, so they must span more than one basic block. Rebinding the unit now needs gFrameCount, Data_00000000, Data_0200e2d0 and Data_0200e1cc as data symbols. */
+/* NONMATCHING: 856 of 848 bytes, 367 differing halfwords / 164 aligned edits
+ * (2026-09-26). Whole owner 020056a0..020059f0, including 49 switch entries,
+ * pools 020058b0..020058cc and 02005970..02005984, and final word 020059ec.
+ * Baseline: 848 bytes / 203 differing halfwords / 145 aligned edits; its mask
+ * was narrowed to 0xf000 and its pools and saved-register set were not exact.
+ * Three bounded trials: full-width Value_0ffff000 alone gives 844 bytes / 206
+ * edits, restoring separate angle/phase addresses but moving all constants to
+ * the tail. A halfword aggregate zero gives 856 bytes / 164 edits and restores
+ * the reference's r8 zero, saved-register set and short-range middle pool.
+ * An aggregate sprite pointer produces the same bytes; retain a plain pointer.
+ * Keep the proved mask/zero structure despite the larger aggregate difference.
+ * Remaining: local allocation reserves r6 for sprite, leaving beam r7 and
+ * spark sl instead of beam r6, spark r7, sprite sl; pools shift by eight bytes.
+ * The beam speed halfword load really follows and overwrites the sine result.
+ * Next evidence needed is a source control-flow boundary spanning sprite's
+ * lifetime; no further mask or aggregate spelling trials without new evidence. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
@@ -8,7 +21,7 @@ void Actor_ParkRecord(struct FieldActor *actor);
 void Effect_AdvanceGatedRiseCounter(struct FieldActor *actor);
 void Effect_UpdateCounterDrivenOrbit(void);
 
-extern u8 Data_00000000[];
+extern u8 Value_0ffff000;
 extern const u8 Data_0200e2d0[];
 extern const s32 Data_0200e1cc[];
 
@@ -31,7 +44,10 @@ void Func_020056a0(void)
     struct FieldActor *spark;
     struct FieldSprite *sprite;
     u32 step;
-    s32 fade;
+    /* FAKEMATCH: preserve the short-range halfword zero load. */
+    struct {
+        u16 value;
+    } fade;
     volatile u32 *frame;
 
     beam = Engine_ActorGet(23);
@@ -117,14 +133,14 @@ void Func_020056a0(void)
             Engine_ObjectSetScript(spark, Data_0200e1cc);
             Engine_ObjectSetPalette(spark, 1);
             spark->motion_flags = 0;
-            ((struct Spark *)spark)->angle = (u32)Engine_RandomNext() & 0xffff000;
+            ((struct Spark *)spark)->angle = (u32)Engine_RandomNext() & (u32)&Value_0ffff000;
             ((struct Spark *)spark)->phase = 0;
-            fade = (s32)Data_00000000;
+            fade.value = 0;
             spark->rise_counter = (u32)Engine_RandomNext() >> 13;
             spark->update = (void (*)(union FieldObject *))Effect_UpdateCounterDrivenOrbit;
             spark->speed = Engine_MathSin(((u32)Engine_RandomNext() * 0xffff) >> 20) * 24;
             spark->speed = ((union FieldCoordinate *)&beam->speed)->part.pixel;
-            sprite->flags = fade;
+            sprite->flags = fade.value;
             sprite->priority = 1;
         }
     }

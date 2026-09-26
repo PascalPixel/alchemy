@@ -1,4 +1,10 @@
-/* Draft, not exact (2026-09-24): 109 differing halfwords at equal size (was 4 bytes short).
+/* Draft, not exact (2026-09-26): 276 of 280 bytes, 58 aligned halfword edits.
+   A shared halfword clear value restores the third argument in ip and
+   removes the unwanted r2-to-r0 copy before the slot search. Remaining:
+   initialization-store order, zero copy versus immediate, and the three
+   early literal pools (currently all at the end). Narrowing the flag
+   constants directly or through a one-halfword aggregate emitted identical
+   code; neither repairs the flag-load register order or pool placement.
    FAKEMATCH marks below are empty do-while wraps that only move scheduling
    or register choice; they stay tagged until a real spelling replaces them. */
 #include "TYPES.H"
@@ -50,12 +56,14 @@ struct UiWork *Func_080162d4(s32 kind, s32 id, s32 x, s32 y, s32 attrs)
     found = slot;
 done:
     if (found != 0) {
+        u16 clear = 0;
+
         found->id = id;
         do { found->x = x; } while (0); /* FAKEMATCH */
         found->y = y;
         found->kind = kind;
-        do { found->state = 0; } while (0); /* FAKEMATCH */
-        found->f20 = 0;
+        do { found->state = clear; } while (0); /* FAKEMATCH */
+        found->f20 = clear;
         found->self = slot;
         found->f16 = 1;
         found->flags = 1;
@@ -77,7 +85,7 @@ done:
         }
         if (attrs & 2) {
             found->flags |= (s32)Data_00000002;
-            found->f24 = 0;
+            found->f24 = clear;
             found->timer = 1;
             Func_08016230(found);
         } else {

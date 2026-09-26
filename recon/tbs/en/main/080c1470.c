@@ -1,4 +1,12 @@
-/* Draft, not exact (2026-09-24): candidate=604 reference=608, 228 differing
+/* Whole owner [080c1470, 080c16d0), 608 bytes including its pool.
+   2026-09-26 H1: typed BG2 affine register members replace scalar casts.
+   Candidate 596/608, 226 differing halfwords, 118 aligned edits (baseline
+   604/608, 228 halfwords, 173 edits). The 0x100 value is now constructed
+   and all pools move to the end as required. This compiler emits an extra
+   halfword read before each volatile aggregate-member store; the register
+   cursor uses member offsets rather than the ROM's incremented addresses.
+   The 8/36-byte frame and phase-wide register differences remain. No credit.
+   Earlier draft (2026-09-24): candidate=604 reference=608, 228 differing
    halfwords. Hand-written from the assembly. Residual: the reference frame is
    36 bytes (28 bytes of locals this candidate does not have), the star loop
    swaps r9 and sl between the counter and the MulQ16 routine, the spoke loop
@@ -13,6 +21,15 @@
 #include "FIXED_MATH.H"
 #include "IWRAM_CALL.H"
 #include "CALLBACK_SCHEDULER.H"
+
+struct BgAffineRegisters {
+    u16 pa;
+    u16 pb;
+    u16 pc;
+    u16 pd;
+    s32 x;
+    s32 y;
+};
 
 struct Star {
     s32 x;
@@ -69,6 +86,7 @@ void BattleFx_InitializeStarField(s32 mode)
     s32 speed;
     s32 palette;
     u8 *data;
+    volatile struct BgAffineRegisters *bg;
 
     gTransitionWork[2] = 1;
     work = Runtime_AllocateBlock(39, 0x13d0);
@@ -125,12 +143,13 @@ void BattleFx_InitializeStarField(s32 mode)
     }
     data = Resource_GetTableEntry(palette);
     Dma_Set(data, (void *)0x05000000, 0x84000020, (volatile u32 *)0x040000d4);
-    *(volatile s32 *)0x04000028 = 0;
-    *(volatile s32 *)0x0400002c = 0;
-    *(volatile u16 *)0x04000020 = 0x100;
-    *(volatile u16 *)0x04000022 = 0;
-    *(volatile u16 *)0x04000024 = 0;
-    *(volatile u16 *)0x04000026 = 0x100;
+    bg = (volatile struct BgAffineRegisters *)0x04000020;
+    bg->x = 0;
+    bg->y = 0;
+    bg->pa = 0x100;
+    bg->pb = 0;
+    bg->pc = 0;
+    bg->pd = 0x100;
     Func_080c9000(46, 7, 7, 3, 3);
     Func_080c9000(47, 7, 7, 3, 2);
     Scheduler_AddOrUpdateCallback(0x080c11ed, 0xc80);

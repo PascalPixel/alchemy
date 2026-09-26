@@ -4,16 +4,17 @@
 #include "RENDER_INPUT.H"
 #include "RESOURCE.H"
 
-struct PreviewAttributes {
-    unsigned y : 8;
-    unsigned flags : 8;
-    unsigned x : 9;
-    unsigned high : 7;
-};
-
 struct PreviewSprite {
     u32 unknown;
-    struct PreviewAttributes attributes;
+    union {
+        u32 word;
+        struct {
+            unsigned y : 8;
+            unsigned flags : 8;
+            unsigned x : 9;
+            unsigned high : 7;
+        } bits;
+    } attributes;
     union RenderTableValue tile;
 };
 

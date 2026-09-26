@@ -20149,6 +20149,12 @@
     "main:08020bd8": {
       "name": "NameEntry_EditOwnerName"
     },
+    "main:08029554": {
+      "name": "DebugMenu_BrowseIcons"
+    },
+    "main:0802977c": {
+      "name": "DebugMenu_BrowseEntryGlyphs"
+    },
     "main:08021228": {
       "name": "Djinn_ShowJoinedMessage"
     },

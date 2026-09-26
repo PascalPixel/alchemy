@@ -1,4 +1,19 @@
-/* Draft, not exact (2026-09-25): 1088 of 1088 bytes, 36 differing halfwords.
+/* Draft, not exact (2026-09-26): 1088 of 1088 bytes, 4 differing halfwords.
+   Separate queue-resolution and saved-IME scheduling regions close all
+   queue differences. Only the blend-byte load and y-byte store remain one
+   scheduling slot apart. A blend-update region merely moves the r8 copy;
+   moving the y write between delta statements changes the squared-distance
+   dataflow (62 differences). A separate byte/bitfield union changes layout
+   and mask lowering. Retained the original hardware bitfield layout.
+   Scheduler diagnostics show the blend load ahead of the r8 copy and the
+   y store ahead of the horizontal delta. A y-store inline helper preserves
+   the outer width assignment but canonicalizes to the same four differences.
+   A link-symbol message base and separate x/y snapshots recover the message
+   accumulation and all window placement. Shared queue/IME pointers leave
+   the residual unchanged; a halfword IME snapshot adds sign extension and
+   gives 1092 bytes. Grouping the first snapshot also gives 1092 bytes and
+   reverses the queue/IME roles. The unused text-service return type did
+   not change the output. Retained the complete word-snapshot draft.
    Map_UpdateWorldMapMarkers, the world-map frame callback Map_ShowWorldMap
    schedules (0x0809bcf9). Written from the listing. What lined up: a work
    pointer to the constant 0x02010000 (spilled, so every use reloads the
@@ -8,9 +23,7 @@
    Remaining: scheduling only. The ROM loads the queue literal before the
    IME literal (pool order) and copies the saved IME value right after the
    read in the first write (a barrier there swaps the queue and IME
-   registers); the window placement computes x before y and loads the window
-   pointer before the x argument; best_message + 0x99b lands in r0; two
-   marker byte accesses in the loop sit one slot apart. */
+   registers); two marker byte accesses in the loop sit one slot apart. */
 #include "TYPES.H"
 #include "IO_WRITE_QUEUE.H"
 #include "PARTY_STATE.H"
@@ -72,6 +85,7 @@ extern u32 Data_03001ae8;
 extern const u8 Data_0809f168[];
 extern const u16 Data_0809f188[];
 extern const s32 Data_080a0138[];
+extern const u8 Value_0000099b;
 extern volatile u16 Data_04000208;
 #define REG_IME Data_04000208
 
@@ -85,14 +99,13 @@ void Func_08015078(s32 message, s32 window, s32 x, s32 y);
 void Func_080153c0(s32 message, s32 *width, s32 *height);
 
 #define QUEUE_IO_WRITE_DELAY2(address, value) {                             \
-        volatile u16 *ime;                                                  \
-        struct IoWriteQueue *q;                                             \
         u32 saved;                                                          \
         s32 count;                                                          \
                                                                             \
-        q = &gIoWriteQueue;                                                 \
-        ime = &REG_IME;                                                     \
-        saved = *ime;                                                       \
+        /* FAKEMATCH: retain the saved interrupt value before disabling IME. */ \
+        do {                                                               \
+            saved = *ime;                                                   \
+        } while (0);                                                       \
         *ime = (u16)ime;                                                    \
         count = q->count;                                                   \
         if (count <= 31) {                                                  \
@@ -106,14 +119,11 @@ void Func_080153c0(s32 message, s32 *width, s32 *height);
     }
 
 #define QUEUE_IO_WRITE_DELAY2_BARRIER(address, value) {                             \
-        volatile u16 *ime;                                                  \
-        struct IoWriteQueue *q;                                             \
         u32 saved;                                                          \
         s32 count;                                                          \
                                                                             \
-        q = &gIoWriteQueue;                                                 \
+        /* FAKEMATCH: preserve the second interrupt snapshot's scheduling region. */ \
         do {  \
-        ime = &REG_IME;   \
         saved = *ime;    \
         } while (0); \
         *ime = (u16)ime;                                                    \
@@ -127,6 +137,14 @@ void Func_080153c0(s32 message, s32 *width, s32 *height);
         }                                                                   \
         *ime = saved;                                                       \
     }
+
+/* FAKEMATCH: evaluate the horizontal delta before the byte write, while
+   assigning the stack-backed width only after the inline return. */
+static __inline__ s32 SetMarkerY(struct MapMarker *marker, s32 y, s32 width)
+{
+    marker->y = y;
+    return width;
+}
 
 void Map_UpdateWorldMapMarkers(void)
 {
@@ -155,6 +173,8 @@ void Map_UpdateWorldMapMarkers(void)
     s32 x;
     s32 y;
     s32 angle;
+    struct IoWriteQueue *q;
+    volatile u16 *ime;
 
     work = &Data_02010000;
     leader = PARTY_STATE.current_owner;
@@ -225,8 +245,7 @@ markers:
         marker->blend_mode = mode;
         marker->tile = tile_base + tile;
         marker->x = x - 1;
-        marker->y = y - 1;
-        width = x - cursor_x;
+        width = SetMarkerY(marker, y - 1, x - cursor_x);
         height = y - cursor_y;
         if (width * width + height * height < best_distance) {
             best_message = message;
@@ -257,10 +276,12 @@ markers:
             if (best == 0)
                 best_message = 0x984;
             else
-                best_message = BattleFx_FindConditionResource(best_message, 1) + 0x99b;
+                best_message = BattleFx_FindConditionResource(best_message, 1) + (s32)&Value_0000099b;
             Func_080153c0(best_message, &width, &height);
-            cursor_x = best_x - 1;
-            cursor_y = best_y - 11;
+            cursor_x = best_x;
+            cursor_y = best_y;
+            cursor_x--;
+            cursor_y -= 11;
             if (cursor_x + width > 240) {
                 cursor_x = 232 - width;
                 cursor_y = best_y - 20;
@@ -270,6 +291,11 @@ markers:
             Func_08015078(best_message, work->window, cursor_x, cursor_y);
         }
     }
+    /* FAKEMATCH: resolve the shared queue before the interrupt snapshot. */
+    do {
+        q = &gIoWriteQueue;
+    } while (0);
+    ime = &REG_IME;
     QUEUE_IO_WRITE_DELAY2(0x04000050, 0x3f00);
     QUEUE_IO_WRITE_DELAY2_BARRIER(0x04000052, ((16 - blend) << 8) | blend);
 }

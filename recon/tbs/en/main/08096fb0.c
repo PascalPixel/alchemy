@@ -1,10 +1,9 @@
-/* Draft, not exact (2026-09-24): candidate=312 reference=328, 89 differing
-   halfwords. Hand-written from the assembly. Residual: the reference reads the
-   scene id twice, once as u16 kept in r1 for the second test and once with
-   ldrsh for the first, and so keeps the constant 1 in r0 and the game-state
-   base in ip; here CSE shares one ldrsh. Reading the first test through a
-   volatile s16 pointer, with gGameState bound as a symbol, gets within 21
-   halfwords. */
+/* Draft, not exact: complete 328-byte owner, 21 differing halfwords.
+   Symbol-bound game state and a separate signed read recover the extent.
+   The unsigned snapshot still sinks after that read; the reference retains
+   it in r1 before ldrsh, leaving the flag constant in r0. Making both reads
+   volatile changes selection to two ldrh/sign-extension pairs and shortens
+   the extent to 320 bytes, 85 differing halfwords; not adopted. */
 /* Battle effect: prepare the shared effect work for a battle action. The
    work block is cleared when the battle has not set it up already, the action
    and its animation class are recorded, and on the first run the effect
@@ -59,7 +58,8 @@ struct BattleActionData {
 };
 
 extern u8 gWorkSlot[];
-#define gGameState (*(struct GameStateActors *)0x02000240)
+extern struct GameStateActors Data_02000240;
+#define gGameState Data_02000240
 extern u8 Value_00000035[];
 extern u8 Value_00000037[];
 extern const u8 Data_0809c410[];
@@ -105,7 +105,8 @@ void BattleFx_LoadActionEffectResources(s32 action, s32 mode)
     work->y = origin->y;
     work->z = origin->z;
     value = gGameState.scene;
-    if ((s16)value == (s32)Value_00000035)
+    /* FAKEMATCH: preserve the separate signed scene read. */
+    if (*(volatile s16 *)&gGameState.scene == (s32)Value_00000035)
         work->lit = 1;
     if ((s16)value == (s32)Value_00000037)
         work->lit = 1;

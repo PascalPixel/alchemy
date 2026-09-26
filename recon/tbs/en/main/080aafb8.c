@@ -1,9 +1,9 @@
-/* DRAFT: 552 of 572 bytes. Remaining: the ROM tests the 0x8000 bit with a
- * pooled mask (ands), which puts the first literal pool mid-loop, and keeps
- * the list index and window pointer spilled (sp+44, sp+32) with the mask in
- * fp and the offer flag in r8; this compiles the test as lsrs #15 and gives
- * the index a register. The 0x03001F2C work pointer derives the window
- * pointer by subs #160 as in the ROM. */
+/* DRAFT: 572/572 bytes, 232 differing halfwords, 174 aligned edits. The
+ * linked mask now uses ands, but the short-reach message puts the first
+ * pool at +0xa0 instead of the reference +0xe8. The index stays in fp
+ * instead of sp+44; the window occupies sp+44 instead of sp+32. The ROM
+ * keeps the mask in fp and the offer flag in r8. The 0x03001F2C work pointer
+ * derives the window pointer by subs #160 as in the ROM. Not adopted. */
 #include "TYPES.H"
 
 /* H1 (2026-09-27): whole [080aafb8,080ab1f4), 572 bytes, including the
@@ -19,8 +19,20 @@
  * now uses ands, but its SImode linked constant leaves all literals at the
  * end. Index stays in fp instead of its reference spill, and row addressing
  * is scaled offset induction rather than a 20-byte row-pointer walk.
+ * H2: reference pool spells message 0x0bad as a halfword. Transfer the
+ * short-reach HImode linked-message recipe: predict a mid-loop pool and
+ * matching long-branch layout without changing the proven row semantics.
+ * H2 result: 572/572 bytes, 232 differing halfwords, 174 aligned edits.
+ * The pool moves too early (+0xa0 versus +0xe8), leaving the 0x8000 mask
+ * in the final pool. Full normalized diff read: initial index allocation,
+ * row induction, repeated ID loads and offer-flag lifetime remain wrong.
+ * STOP at the 00:10 checkpoint: two models preserved, zero new DONE.
+ * A third model remains untested: carry an explicit u16 row pointer with
+ * a ten-element advance, as exact CORE_COMPUTE_ENTRY_VALUES.C and the ROM
+ * outer-tail +20 update do. Do not repeat constant spellings or RA sweeps.
  */
 extern u8 Value_00008000;
+extern u8 Value_00000bad;
 
 /* menu/djinn_draw_element_list.c */
 struct DjinnListTable {
@@ -74,7 +86,7 @@ void DjinnMenu_DrawElementList(struct DjinnListTable *tbl)
     for (i = 0; i < state->owner_count; i++)
         tbl->counts[i] = Unnamed_080ac8fc(tbl->ids[i], state->owners[i], -1);
     RenderOutput_RedrawSavedRectFar(state->window);
-    UiText_DrawCharacterAtOffsetFar(0xbad, state->window, 0, 80);
+    UiText_DrawCharacterAtOffsetFar((u16)(u32)&Value_00000bad, state->window, 0, 80);
     for (row = 0; row < state->owner_count; row++) {
         line = 0;
         for (element = 0; element < 4; element++) {

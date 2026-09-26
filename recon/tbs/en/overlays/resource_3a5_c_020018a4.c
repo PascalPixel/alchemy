@@ -1,10 +1,13 @@
-/* NONMATCHING: 888 bytes, candidate 844, 424 differing halfwords, 315
- * halfword edits (2026-09-25). FieldScene_RunScene3a5SequenceA, meant for
+/* NONMATCHING: 888 bytes, candidate 848, 401 differing halfwords, 251
+ * halfword edits (2026-09-26). FieldScene_RunScene3a5SequenceA, meant for
  * FIELD/RAMAKAN_SABAKU/F_018A4.C as a single-overlay unit binding its names
  * at their runtime addresses (an import veneer's listing offset plus
  * 0x8000). Remaining: Fresh reconstruction corrects actor stride,
  * tile-buffer header, sparse-copy extent and signed map-layer indexing.
- * Allocation and DMA setup still differ.
+ * This pass fixes the one-argument allocator, RGB555 extraction, unsigned
+ * loop bounds, frozen fill extent and sequential palette destinations.
+ * Timer-view and word-mode decrement hypotheses improve 269 to 251 edits.
+ * Remaining: timer reloads, channel lifetimes and sprite allocation.
  * WALL: Whole-function allocation and DMA setup ordering. */
 #include "DMA.H"
 #include "TYPES.H"
@@ -18,17 +21,22 @@ struct Sprite {
     u32 words[3];
 };
 
+union HalfWord {
+    u16 value;
+    s16 signed_value;
+};
+
 extern struct VramBlock Data_03001b10[];
 extern u32 Data_02000240[];
 extern s16 Data_02000240_t[][2];
 extern u32 gFrameCount;
 
 s32 Engine_MathDivide(s32 dividend, s32 divisor);
-s32 Main_08000168(s32 size, void *base);
+void *Main_08000168(s32 size);
 void Main_080001c0(s32 layer);
 void Engine_VramLoad(s32 slot, s32 size, void *src);
 void Main_080001e8(struct Sprite *sprite, s32 value);
-s32 Main_08000320(void *dst, u32 value);
+void Main_08000320(void *dst, u32 value);
 s32 Engine_GameFlagIsSet(s32 flag);
 void Runtime_BumpFreeFar(void *allocation);
 
@@ -51,6 +59,12 @@ static __inline__ void Call3(void (*fn)(), s32 a0, s32 a1, s32 a2)
     fn(a0, a1, a2);
 }
 
+/* FAKEMATCH: the word-sized step keeps subtraction out of halfword mode. */
+static __inline__ void Half_Add(union HalfWord *dst, s32 step)
+{
+    dst->value = dst->value + step;
+}
+
 void FieldScene_RunScene3a5SequenceA(void)
 {
     u32 tile_offset;
@@ -63,28 +77,33 @@ void FieldScene_RunScene3a5SequenceA(void)
     s32 angle;
     s32 x;
     s32 y;
-    s32 i;
-    s32 slot;
-    s32 alloc_arg;
-    u16 *timerp;
+    u32 i;
+    u32 slot;
+    union HalfWord *timerp;
     u32 *sprite_words;
     struct Sprite *sprite;
 
     tile_offset = Data_03001b10[(s16)MAP_LAYER].offset >> 5;
-    timerp = (u16 *)0x0200a6be;
     if (MAP_MODE != 0) {
-        *timerp = 2;
+        timerp = (union HalfWord *)0x0200a6be;
+        timerp->value = 2;
     } else if (Engine_GameFlagIsSet(0x104) != 0) {
-        if (*(s16 *)timerp > 0)
-            (*timerp)--;
-    } else if (*(s16 *)timerp <= 1) {
-        (*timerp)++;
-        if (*timerp == 2)
-            Dma_Set((const void *)0x02009f80, (void *)0x050003c0,
-                -0x7ffffff0, (volatile u32 *)0x040000d4);
+        timerp = (union HalfWord *)0x0200a6be;
+        if (timerp->signed_value > 0)
+            Half_Add(timerp, -1);
+    } else {
+        timerp = (union HalfWord *)0x0200a6be;
+        if (timerp->signed_value <= 1) {
+            u16 value = timerp->value + 1;
+
+            timerp->value = value;
+            if (value == 2)
+                Dma_Set((const void *)0x02009f80, (void *)0x050003c0,
+                    -0x7ffffff0, (volatile u32 *)0x040000d4);
+        }
     }
 
-    timer = *(s16 *)timerp;
+    timer = timerp->signed_value;
     if (timer == 0) {
         Main_080001c0(MAP_LAYER);
         return;
@@ -96,31 +115,34 @@ void FieldScene_RunScene3a5SequenceA(void)
 
         actor = work[0x539];
         dst = work + actor * 0x284 + 0x26;
-        for (i = 0; i <= 143; i++) {
-            *(u16 *)dst = (u16)(timer << 3);
+        i = 0;
+        do {
+            i++;
+            *(s16 *)dst = (s16)(timer << 3);
             dst += 4;
-        }
+        } while (i <= 143);
     }
 
-    alloc_arg = (s32)dst;
-    sprite_words = (u32 *)Value2(Main_08000168, 0x900, alloc_arg);
+    sprite_words = Main_08000168(0x900);
     Dma_Set((const void *)0x02009f80, sprite_words, -0x7ffffff0,
         (volatile u32 *)0x040000d4);
 
     tile = (u16 *)((u8 *)sprite_words + 12);
     for (slot = 6; slot <= 11; slot++, tile++) {
         u32 packed;
-        s32 raw_x;
         s32 raw_y;
         s32 scroll;
 
-        packed = (u32)*tile;
-        raw_x = (packed >> 8) & 31;
-        raw_y = (packed >> 5) & 31;
+        packed = (u32)(s16)*tile << 16;
+        x = (packed & 0x1f0000) >> 16;
+        raw_y = (packed >> 21) & 31;
+        y = (packed >> 26) & 31;
         angle = EFFECT_PHASE;
-        x = Engine_MathDivide(angle, 3) + raw_x;
+        x += Engine_MathDivide(angle, 3);
+        y -= 20;
         scroll = Engine_MathDivide(angle, 6);
-        y = (((packed >> 10) & 31) - 20) - scroll + 20;
+        y -= scroll;
+        y += 20;
         if (angle > 60 && (FRAME_COUNT & 1) != 0)
             raw_y = raw_y + Engine_MathDivide(angle << 6, 120) - 32;
         if ((u32)x > 31)
@@ -132,12 +154,14 @@ void FieldScene_RunScene3a5SequenceA(void)
         *tile = (u16)((y << 10) | (raw_y << 5) | x);
     }
 
-    Main_08000320((void *)0x050003cc,
-        *(u32 *)((u8 *)sprite_words + 12));
-    ((s32 (*)(void *, u32))Main_08000320)((void *)0x050003d0,
-        *(u32 *)((u8 *)sprite_words + 16));
-    Value2(Main_08000320, 0x050003d4,
-        *(u32 *)((u8 *)sprite_words + 20));
+    {
+        u32 *palette = (u32 *)0x050003cc;
+        u32 *colors = sprite_words + 3;
+
+        Main_08000320(palette++, *colors++);
+        Main_08000320(palette++, *colors++);
+        Main_08000320(palette, *colors);
+    }
 
     frame = *(s16 *)((u8 *)Data_02000240 + 0x232);
     angle = Engine_MathDivide(((frame << 4) - frame) << 3,
@@ -155,8 +179,10 @@ void FieldScene_RunScene3a5SequenceA(void)
     Dma_Set((const void *)0x0200a730, sprite_words, -0x7bfffdc0,
         (volatile u32 *)0x040000d4);
     if (EFFECT_SCROLL <= 118) {
+        u32 end = 128 - EFFECT_PHASE;
+
         dst = (u8 *)sprite_words + 80;
-        if (12 < 128 - EFFECT_PHASE) {
+        if (12 < end) {
             i = 12;
             do {
                 *(u32 *)(dst + 32) = 0xeeeeeeee;
@@ -165,7 +191,7 @@ void FieldScene_RunScene3a5SequenceA(void)
                 if ((i & 7) == 7)
                     dst += 32;
                 i++;
-            } while (i < 128 - EFFECT_PHASE);
+            } while (i < end);
         }
         *(u32 *)dst = *(u32 *)sprite_words;
         *(u32 *)(dst + 32) = *(u32 *)((u8 *)sprite_words + 32);
@@ -173,21 +199,35 @@ void FieldScene_RunScene3a5SequenceA(void)
 
     src = (u8 *)sprite_words + 0x480;
     dst = (u8 *)sprite_words;
-    for (i = 0; i < 0x480; i++) {
-        if (src[i + 1] != 0)
-            dst[i] = src[i + 1];
-    }
+    i = 0;
+    do {
+        u8 value = *src++;
+
+        if (value != 0)
+            *dst = value;
+        i++;
+        dst++;
+    } while (i <= 0x47f);
     Call3(Engine_VramLoad, MAP_LAYER, 0x480, (s32)sprite_words);
 
-    sprite = (struct Sprite *)0x0200a6e0;
-    for (i = 0; i <= 4; i++) {
-        sprite->words[0] = 0;
-        sprite->words[1] = (((((EFFECT_TIME << 3) - 16) & 0x1ff) << 16)
-            | (8 + i * 32) | (i == 4 ? 0x40000000 : 0x80000000));
-        sprite->words[2] = 0xe400 | tile_offset;
-        Main_080001e8(sprite, 255);
-        sprite++;
-        tile_offset += 8;
+    {
+        u32 flags = 0x80008000;
+        u32 pos = 8;
+
+        sprite = (struct Sprite *)0x0200a6e0;
+        for (i = 0; i <= 4; i++) {
+            s32 y = ((EFFECT_TIME << 3) - 16) & 0x1ff;
+
+            if (i == 4)
+                flags = 0x40000000;
+            sprite->words[0] = 0;
+            sprite->words[1] = (y << 16) | pos | flags;
+            sprite->words[2] = 0xe400 | tile_offset;
+            Main_080001e8(sprite, 255);
+            sprite++;
+            tile_offset += 8;
+            pos += 32;
+        }
     }
     Runtime_BumpFreeFar(sprite_words);
 }

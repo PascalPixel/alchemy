@@ -1,12 +1,13 @@
-/* Draft, not exact (2026-09-26): candidate=356 reference=356 differing_halfwords=46,
-   44 aligned edits. H3 signed halfword packing restores full negative masks
+/* Draft, not exact (2026-09-26): candidate=356 reference=356 differing_halfwords=52,
+   43 aligned edits. Retained the simpler bitfield model after three hypotheses.
+   H3 (356 bytes, 46 differing halfwords, 44 aligned edits; commit 8a4089bda)
+   signed halfword packing restores full negative masks
    and the 356-byte extent, but places those masks after the I/O pool entries
    and keeps Sin before the pool. OAM/origin load scheduling still differs.
    H2 had candidate=352, 129 differing halfwords, 57 aligned edits.
    H2 explicit u16 OAM halfword packing is worse: the clear
    masks narrow to 0xfc00/0xfe00 and become mov/shift pairs instead of the
    reference's full-width negative literal masks. The pool moves after Sin.
-   H1 had candidate=356, 52 differing halfwords, 43 aligned edits.
    H1: unsigned-int rather than u16 bitfield storage is
    byte-identical; it does not alter mask modes or their pool ordering.
    Resource_GetBuffer's s32(s32,s32) contract is confirmed by its exact
@@ -43,7 +44,6 @@ struct AdvanceSprite {
     union {
         struct SpriteAttr attr;
         u32 raw[2];
-        s16 half[4];
     } oam;
 };
 
@@ -88,8 +88,6 @@ s32 BattlePresentation_WaitForAdvance(void)
     s32 frame;
     s32 slot;
     s32 src;
-    s32 tile;
-    s32 x;
     struct UiCursorOrigin *origin;
     struct UiCursorOffset *offset;
 
@@ -107,10 +105,8 @@ loop:
     ((struct Io *)0x04000052)->a = 16;
     spr->oam.raw[0] = 0xa400;
     spr->oam.raw[1] = 0;
-    tile = Resource_GetBuffer(slot, src);
-    spr->oam.half[2] = (spr->oam.half[2] & ~0x3ff) | (tile & 0x3ff);
-    x = origin->col * 8 + (offset->x >> 8) + 4;
-    spr->oam.half[1] = (spr->oam.half[1] & ~0x1ff) | (x & 0x1ff);
+    spr->oam.attr.tile = Resource_GetBuffer(slot, src);
+    spr->oam.attr.x = origin->col * 8 + (offset->x >> 8) + 4;
     spr->oam.attr.y = Trig_Sin(Data_03001e40 << 12) / 32768 + origin->row * 8 + (offset->y >> 8) + 6;
     Runtime_PushSlotEntry(spr, 240);
     if (!(Data_03001ae8 & 2) && !(Data_03001c94 & 0x303) && (frame <= 15 || !(Data_03001ae8 & 0x303))) {

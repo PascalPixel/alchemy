@@ -2,9 +2,8 @@
 #include "FIELD_EVENT.H"
 #include "SYSTEM.H"
 
-/* DRAFT: 808/820 bytes, 118 differing halfwords over the complete owner.
- * First pool at +0x2d4 rather than +0x274; prologue scheduling and packet
- * value load order remain. Two structural corrections exhausted; not adopted. */
+/* Run the link-lobby connection sequence and copy the received party data.
+ * Reconstructed from the complete own-ROM 820-byte owner, including pools. */
 
 s32 LinkLobby_PeerSlotMatches(s32 slot);
 void LinkLobby_WriteSlotValue(s32 slot);
@@ -24,10 +23,14 @@ void Main_0808a250(s32 first, s32 second);
 extern u8 Data_02008149[];
 extern u8 Data_02018000[];
 extern s32 Data_02002224[];
-extern u8 Value_00000043, Value_00000045, Value_00000058;
 extern u8 Value_000000be, Value_000007c7;
 
-s32 Scene_RunScene3cbSequenceB(void)
+/* FAKEMATCH: the aggregate keeps the shared packet value in halfword mode. */
+struct PacketHalf {
+    u16 value;
+};
+
+s32 LinkLobby_RunConnectionSequence(void)
 {
     struct EventWork *work;
     s32 failed;
@@ -38,12 +41,13 @@ s32 Scene_RunScene3cbSequenceB(void)
     u8 *src;
     u8 *dst;
     u16 *tbl;
-    u16 value;
+    struct PacketHalf value;
     u32 i;
 
-    work = gEventWork;
     failed = 0;
     window = 0;
+    /* FAKEMATCH: this initialization order resolves the scheduler's tied moves. */
+    work = gEventWork;
     cnt = 0;
     if (Engine_GameFlagIsSet(0x173)) {
         Engine_EventBegin();
@@ -141,11 +145,11 @@ s32 Scene_RunScene3cbSequenceB(void)
         gGameState.unknown_1f8[0x33] = 4;
         Main_0808a250(1, 1);
         tbl = (u16 *)Data_02002224;
-        value = (u16)(s32)&Value_00000045;
-        tbl[1] = (u32)&Value_00000058;
-        tbl[0] = value;
-        tbl[2] = value;
-        tbl[3] = (u32)&Value_00000043;
+        value.value = 0x45;
+        tbl[1] = 0x58;
+        tbl[0] = value.value;
+        tbl[2] = value.value;
+        tbl[3] = 0x43;
         i = 0;
         src = buf;
         dst = Data_02018000;

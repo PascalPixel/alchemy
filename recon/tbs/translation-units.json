@@ -2,6 +2,24 @@
   "format": 5,
   "units": [
     {
+      "id": "kuupuappu-drifting-effect",
+      "source": "recon/tbs/en/overlays/resource_382_c_020017ac.c",
+      "overlay": "resource_382",
+      "absolute_symbols": {
+        "Engine_ActorGet": { "address": "0x020099e0", "kind": "thumb" },
+        "Engine_RandomNext": { "address": "0x02009918", "kind": "thumb" },
+        "Engine_ObjectCreate": { "address": "0x02009938", "kind": "thumb" },
+        "Engine_ObjectSetAnimation": { "address": "0x02009928", "kind": "thumb" },
+        "Engine_ObjectSetScript": { "address": "0x02009930", "kind": "thumb" },
+        "Engine_MathModulo": { "address": "0x02009908", "kind": "thumb" }
+      },
+      "owners": [
+        { "address": "0x020017ac", "extent": 340, "state": "not-yet-c" }
+      ],
+      "game": "tbs",
+      "compiler_route": "canonical-gcc296"
+    },
+    {
       "id": "kuupuappu-actor-stops",
       "source": "recon/tbs/en/overlays/resource_383_c_020048c8.c",
       "overlay": "resource_383",

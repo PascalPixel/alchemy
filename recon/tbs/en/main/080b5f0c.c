@@ -1,4 +1,12 @@
 /* Whole owner [080b5f0c, 080b606c), 352 bytes including two pool words.
+   2026-09-26 H3 (bounded stop): typed owner-map/Djinn records and a separate
+   final-loop counter. Candidate 344/352, 166 differing halfwords, 59 aligned
+   edits. Owner-map indexed accesses, copy-call argument order and -1 tests
+   improve. The typed Djinn view proves count disjoint from entry writes, so
+   GCC turns the last loop into a countdown and removes the ROM's count
+   reload. A future model must retain that aliasing, not sweep statement
+   order. Remaining also includes initial size residency and r4 reload
+   scratch use. All three hypotheses are preserved; no new DONE bytes.
    2026-09-26 H2: reuse the exact modules' value-returning IWRAM copier
    behind a void inline wrapper. Candidate 344/352, 164 differing halfwords,
    73 aligned edits. The unwanted 340-byte size live range disappears;
@@ -23,6 +31,11 @@
 #include "BATTLE_WORK.H"
 #include "BATTLE_PARTY.H"
 
+struct BattleLinkWork {
+    u8 unknown_00[72];
+    u8 owner_map[8];
+};
+
 typedef s32 (*CopyWordsFn)(void *, const void *, s32);
 
 static __inline__ void CopyWords(void *dst, const void *src, s32 size)
@@ -39,7 +52,7 @@ struct DjinnRecoveryTable *Trade_GetOfferStateFar(s32);
 
 s32 Func_080b5f0c(void)
 {
-    u8 *table;
+    struct BattleLinkWork *table;
     u8 *buffer;
     u16 sp_names[8];
     s32 count;
@@ -50,23 +63,23 @@ s32 Func_080b5f0c(void)
     table = gBattleWork;
 
     for (i = 7; i >= 0; i--) {
-        table[72 + i] = 0xff;
+        table->owner_map[i] = 0xff;
     }
 
     count = BattleParty_ListActiveMembers(sp_names);
     for (i = 0; i < count; i++) {
-            struct BattleUnit *object = Owner_GetStateFar(sp_names[i]);
-            CopyWords(buffer, object, 340);
-            ((struct BattleUnit *)buffer)->status_12a = 2;
+        struct BattleUnit *object = Owner_GetStateFar(sp_names[i]);
+        CopyWords(buffer, object, 340);
+        ((struct BattleUnit *)buffer)->status_12a = 2;
 
-            table[sp_names[i] + 72] = (u8)(i - 128);
+        table->owner_map[sp_names[i]] = (u8)(i - 128);
 
-            result = SerialRuntime_BeginTransferA((s32)buffer, 340);
-            if (result == -1) {
-                break;
-            }
-            SerialRuntime_WaitForTransferA();
-            WaitFrames(2);
+        result = SerialRuntime_BeginTransferA((s32)buffer, 340);
+        if (result == -1) {
+            break;
+        }
+        SerialRuntime_WaitForTransferA();
+        WaitFrames(2);
     }
 
     while (i <= 2) {
@@ -88,12 +101,14 @@ s32 Func_080b5f0c(void)
     }
 
     {
-        s32 count2 = *(s32 *)(buffer + 264);
-        u8 *entry = buffer + 8;
-        for (i = 0; i < count2; i++) {
-            entry[2] = table[entry[2] + 72];
-            count2 = *(s32 *)(buffer + 264);
-            entry += 4;
+        struct DjinnRecoveryList *list =
+            &((struct DjinnRecoveryTable *)buffer)->list;
+        struct DjinnRecoveryEntry *entry = list->entries;
+        s32 i;
+
+        for (i = 0; i < list->count; i++) {
+            entry->unit_id = table->owner_map[entry->unit_id];
+            entry++;
         }
     }
 

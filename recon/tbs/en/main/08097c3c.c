@@ -1,12 +1,14 @@
 /* Draft main:08097c3c, whole 836 bytes including alignment and 12 pool words.
- * Hypothesis 2: aggregate local-work ownership and full-width direction.
- * Candidate 844 bytes versus 836, 387 differing halfwords / 294 edits.
- * Restores twelve pool values and full-width direction conversion, but the
- * escaped aggregate keeps a persistent frame-base register and accesses its
- * fields through that base, unlike the reference's independent stack slots.
- * Collision success also branches across the blocked path rather than
- * falling through from the linked-parent flag into movement. No exact match.
- * Hypothesis 1 and the original generic draft remain in history.
+ * Hypothesis 3: paired coordinate buffers, independent scalar ownership,
+ * shared lift magnitude, and linked-parent-success fallthrough. Candidate
+ * 852 bytes versus 836, 405 differing halfwords / 298 edits; topology equal.
+ * Both coordinate slots are correct, but the compiler keeps their aggregate
+ * base at nearby rather than the reference's pos pointer. Scalar spill slots
+ * still differ, actor is held high with extra moves, and -lift is negated from
+ * an immediate magnitude instead of loading the twelfth pool word fff00000.
+ * The corrected terrain call has explicit x/z arguments. Three structural
+ * hypotheses exhausted; this remains not-yet-C, with no adoption claimed.
+ * Hypotheses 1 and 2 and the original draft remain in branch history.
  */
 #include "TYPES.H"
 #include "SYSTEM.H"
@@ -61,26 +63,27 @@ void Animation_ApplyChildValuesFar(void *, s32);
 void EffectRuntime_StopCurrentObject(void);
 void Func_080981b0(void *);
 
-struct PreviewLocals {
-    u8 *flags;
-    s32 moved_parent;
-    s32 angle;
-    s32 saved_z;
-    s32 saved_x;
-    union PreviewObject *parent;
-    struct PreviewWork *work;
+struct PreviewPositions {
     s32 nearby[3];
     s32 pos[3];
 };
 
 void Func_08097c3c(void)
 {
-    struct PreviewLocals frame;
+    struct PreviewPositions positions;
+    s32 lift;
+    struct PreviewWork *work;
+    union PreviewObject *parent;
     union PreviewObject *actor;
     union PreviewObject *preview;
     union PreviewObject *hit;
+    u8 *flags;
+    s32 moved_parent;
+    s32 angle;
     u32 direction;
     s32 keys;
+    s32 saved_x;
+    s32 saved_z;
     s32 parent_x;
     s32 parent_z;
     s32 rate;
@@ -88,89 +91,88 @@ void Func_08097c3c(void)
     s32 x;
     s32 z;
 
-    frame.work = Data_03001f30;
-    frame.parent = frame.work->parent;
-    actor = frame.work->actor;
-    frame.angle = frame.work->direction + 0x8000;
-    frame.moved_parent = 0;
+    lift = 0x100000;
+    work = Data_03001f30;
+    parent = work->parent;
+    actor = work->actor;
+    angle = work->direction + 0x8000;
+    moved_parent = 0;
     if (actor == 0)
         return;
     BattleEffect_InitializeSharedScene();
-    frame.parent->object.linked_object = &actor->object;
-    ObjectDispatch_InitializeFar(frame.parent, Data_0809f0bc);
-    preview = BattleFx_StartItemBreak(frame.parent);
+    parent->object.linked_object = &actor->object;
+    ObjectDispatch_InitializeFar(parent, Data_0809f0bc);
+    preview = BattleFx_StartItemBreak(parent);
     if (preview == 0) {
         BattleFx_PrepareBufferInterpolation();
         return;
     }
     preview->object.linked_object = &actor->object;
-    frame.pos[0] = actor->object.x;
-    frame.pos[1] = actor->object.y + 0x100000;
-    frame.pos[2] = actor->object.z;
-    Vector_AddPolarOffset(0x100000, frame.angle, frame.pos);
-    Object_SetPosition(preview, frame.pos[0], frame.pos[1], frame.pos[2]);
+    positions.pos[0] = actor->object.x;
+    positions.pos[1] = actor->object.y + lift;
+    positions.pos[2] = actor->object.z;
+    Vector_AddPolarOffset(lift, angle, positions.pos);
+    Object_SetPosition(preview, positions.pos[0], positions.pos[1], positions.pos[2]);
     BattleFx_SnapScaleToFull(preview);
     preview->object.speed_limit = 0x40000;
     preview->object.acceleration = 0x8000;
-    frame.flags = &preview->object.flags;
-    *frame.flags = 4;
+    flags = &preview->object.flags;
+    *flags = 4;
     actor->effect.update = Animation_ApplyRandomChildValues;
     actor->object.speed_limit = (s32)&Value_00006666;
     actor->object.acceleration = (s32)&Value_00003333;
-    actor->object.action_flags = *(u8 *)&frame.moved_parent;
+    actor->object.action_flags = *(u8 *)&moved_parent;
     actor->object.terrain_id = 2;
     goto wait;
 
 select:
-    /* FAKEMATCH: retain the call site input word although the callee ignores it. */
+    /* FAKEMATCH: retain the observed input word ignored by the callee. */
     direction = (u16)BattleFx_GetCycledTableWord(Data_03001ae8);
     if (direction == (s32)&Value_0000ffff) {
-        frame.pos[0] = actor->object.x;
-        frame.pos[1] = actor->object.y + 0x100000;
-        frame.pos[2] = actor->object.z;
-        Vector_AddPolarOffset(0x100000, frame.angle, frame.pos);
-        Object_SetPosition(preview, frame.pos[0], frame.pos[1], frame.pos[2]);
+        positions.pos[0] = actor->object.x;
+        positions.pos[1] = actor->object.y + lift;
+        positions.pos[2] = actor->object.z;
+        Vector_AddPolarOffset(lift, angle, positions.pos);
+        Object_SetPosition(preview, positions.pos[0], positions.pos[1], positions.pos[2]);
         Object_SetMode(preview, 1);
         preview->object.velocity_x = keys;
         preview->object.velocity_y = keys;
         preview->object.velocity_z = keys;
         goto wait;
     }
-    frame.pos[0] = actor->object.x;
-    frame.pos[1] = actor->object.y + 0x100000;
-    frame.pos[2] = actor->object.z;
-    Vector_AddPolarOffset(0x100000, frame.angle, frame.pos);
-    Vector_AddPolarOffset(0x20000, direction, frame.pos);
-    Object_SetPosition(preview, frame.pos[0], frame.pos[1], frame.pos[2]);
+    positions.pos[0] = actor->object.x;
+    positions.pos[1] = actor->object.y + lift;
+    positions.pos[2] = actor->object.z;
+    Vector_AddPolarOffset(lift, angle, positions.pos);
+    Vector_AddPolarOffset(0x20000, direction, positions.pos);
+    Object_SetPosition(preview, positions.pos[0], positions.pos[1], positions.pos[2]);
     Object_CommitPosition(preview);
-    frame.pos[0] = actor->object.x;
-    frame.pos[1] = actor->object.y;
-    frame.pos[2] = actor->object.z;
-    Vector_AddPolarOffset(0x100000, direction, frame.pos);
-    frame.nearby[0] = actor->object.x;
-    frame.nearby[1] = actor->object.y;
-    frame.nearby[2] = actor->object.z;
-    Vector_AddPolarOffset(0x200000, direction, frame.nearby);
-    if (Object_CheckMovementCollision(actor, frame.pos) > 0)
+    positions.pos[0] = actor->object.x;
+    positions.pos[1] = actor->object.y;
+    positions.pos[2] = actor->object.z;
+    Vector_AddPolarOffset(lift, direction, positions.pos);
+    positions.nearby[0] = actor->object.x;
+    positions.nearby[1] = actor->object.y;
+    positions.nearby[2] = actor->object.z;
+    Vector_AddPolarOffset(0x200000, direction, positions.nearby);
+    if (Object_CheckMovementCollision(actor, positions.pos) > 0)
         goto blocked;
-    hit = Func_080092a0(actor, frame.pos);
+    hit = Func_080092a0(actor, positions.pos);
     if (hit == 0)
         goto move;
-    if (hit != frame.parent)
+    if (hit != parent)
         goto blocked;
-    parent_x = frame.parent->object.x & -0x100000;
-    parent_z = frame.parent->object.z & -0x100000;
-    if (parent_x == (frame.pos[0] & -0x100000)
-            && parent_z == (frame.pos[2] & -0x100000))
+    parent_x = parent->object.x & -lift;
+    parent_z = parent->object.z & -lift;
+    if (parent_x == (positions.pos[0] & -lift)
+            && parent_z == (positions.pos[2] & -lift))
         goto blocked;
-    x = frame.nearby[0];
-    z = frame.nearby[2];
-    if (parent_x != (x & -0x100000) || parent_z != (z & -0x100000))
+    x = positions.nearby[0];
+    z = positions.nearby[2];
+    if (parent_x != (x & -lift) || parent_z != (z & -lift))
         goto move;
-    if (Func_080092a8(frame.parent->object.terrain_id, x, z) != 0)
-        goto blocked;
-    frame.moved_parent = 1;
-    goto move;
+    if (Func_080092a8(parent->object.terrain_id, x, z) == 0)
+        goto move_parent;
 
 blocked:
     Object_SetMode(preview, 4);
@@ -178,33 +180,35 @@ blocked:
         Audio_PlayCue(114);
     goto wait;
 
+move_parent:
+    moved_parent = 1;
 move:
     Audio_PlayCue(175);
-    frame.saved_x = frame.pos[0];
-    frame.saved_z = frame.pos[2];
-    step = (u16)(frame.angle - direction) >> 14;
+    saved_x = positions.pos[0];
+    saved_z = positions.pos[2];
+    step = (u16)(angle - direction) >> 14;
     Object_SetMode(preview, Data_0809f118[step]);
     WaitFrames(15);
     actor->object.movement_state = 0;
     rate = (s32)&Value_00003333;
     actor->object.speed_limit = rate;
     actor->object.acceleration = rate;
-    Object_SetPosition(actor, frame.pos[0], frame.pos[1], frame.pos[2]);
-    *frame.flags = 0;
+    Object_SetPosition(actor, positions.pos[0], positions.pos[1], positions.pos[2]);
+    *flags = 0;
     preview->object.speed_limit = rate;
     preview->object.acceleration = rate;
-    Vector_AddPolarOffset(0x100000, direction, frame.pos);
-    Object_SetPosition(preview, frame.pos[0], frame.pos[1] + 0x100000, frame.pos[2]);
-    if (frame.moved_parent == 1) {
-        hit = Object_GetById(frame.work->parent_id);
+    Vector_AddPolarOffset(lift, direction, positions.pos);
+    Object_SetPosition(preview, positions.pos[0], positions.pos[1] + lift, positions.pos[2]);
+    if (moved_parent == 1) {
+        hit = Object_GetById(work->parent_id);
         hit->object.action_flags &= 254;
-        frame.parent->object.speed_limit = rate;
-        frame.parent->object.acceleration = rate;
-        Object_SetPosition(frame.parent, frame.nearby[0], frame.nearby[1], frame.nearby[2]);
+        parent->object.speed_limit = rate;
+        parent->object.acceleration = rate;
+        Object_SetPosition(parent, positions.nearby[0], positions.nearby[1], positions.nearby[2]);
     }
     Object_CommitPosition(actor);
-    actor->object.x = frame.saved_x;
-    actor->object.z = frame.saved_z;
+    actor->object.x = saved_x;
+    actor->object.z = saved_z;
     actor->object.velocity_x = 0;
     actor->object.velocity_z = 0;
     goto finish;
@@ -215,12 +219,12 @@ wait:
     if (keys == 0)
         goto select;
 finish:
-    Animation_ApplyChildValuesFar(actor, frame.work->saved_animation);
-    ObjectDispatch_InitializeFar(actor, frame.work->saved_script);
-    actor->effect.update = frame.work->saved_update;
+    Animation_ApplyChildValuesFar(actor, work->saved_animation);
+    ObjectDispatch_InitializeFar(actor, work->saved_script);
+    actor->effect.update = work->saved_update;
     EffectRuntime_StopCurrentObject();
-    if (frame.moved_parent == 1) {
-        hit = Object_GetById(frame.work->parent_id);
+    if (moved_parent == 1) {
+        hit = Object_GetById(work->parent_id);
         hit->object.action_flags |= 1;
     }
     BattleFx_PrepareBufferInterpolation();

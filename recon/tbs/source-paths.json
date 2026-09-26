@@ -21439,6 +21439,13 @@
     "main:080196c4": {
       "name": "UiText_DecodeMessage",
       "source": "GRAPHICS/TEXT/DECODE_MESSAGE.C"
+    },
+    "main:08019aa0": {
+      "name": "UiText_ShowCenteredMessage",
+      "source": "GRAPHICS/TEXT/SHOW_CENTERED_MESSAGE.C"
+    },
+    "main:080165d8": {
+      "name": "UiText_QueueRenderEntries"
     }
   },
   "symbols": {

@@ -8,7 +8,7 @@
       "absolute_symbols": {
         "Engine_AllocateBlock": { "address": "0x0200c89c", "kind": "thumb" },
         "Engine_RandomNext": { "address": "0x0200c874", "kind": "thumb" },
-        "Spark_Divide": { "address": "0x0200c85c", "kind": "thumb" },
+        "__udivsi3": { "address": "0x0200c85c", "kind": "thumb" },
         "Engine_MathSin": { "address": "0x0200c884", "kind": "thumb" },
         "Engine_MathCos": { "address": "0x0200c88c", "kind": "thumb" },
         "gSparkJitter": { "address": "0x0200d0e4", "kind": "data" },
@@ -33,7 +33,7 @@
       "absolute_symbols": {
             "Engine_AllocateBlock": { "address": "0x0200b41c", "kind": "thumb" },
             "Engine_RandomNext": { "address": "0x0200b3fc", "kind": "thumb" },
-            "Spark_Divide": { "address": "0x0200b3d4", "kind": "thumb" },
+            "__udivsi3": { "address": "0x0200b3d4", "kind": "thumb" },
             "Engine_MathSin": { "address": "0x0200b404", "kind": "thumb" },
             "Engine_MathCos": { "address": "0x0200b40c", "kind": "thumb" },
             "gSparkJitter": { "address": "0x0200ba0c", "kind": "data" },

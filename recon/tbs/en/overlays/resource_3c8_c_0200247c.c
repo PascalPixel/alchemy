@@ -1,5 +1,7 @@
-/* NONMATCHING: 624/616 bytes, 279 differing halfwords, 162 aligned edits.
- * H0 recovers the exact 132-byte frame; loop topology and pools differ.
+/* NONMATCHING: 636/616 bytes, 203 differing halfwords, 121 aligned edits.
+ * H0 typed model: 624/616 bytes, 279 HW, 162 aligned edits.
+ * H1: explicit loop/swap blocks and post-EventBegin scratch initialization
+ * remove the extra flag induction variable and restore the swap position.
  * 2026-09-26 own-ROM audit: 0200247c..020026e4 includes the sole pool word
  * 020026e0 = callback 0200a2a5. The 132-byte frame has a full 112-byte actor
  * scratch record at sp+20, not the old single s32 local with out-of-bounds
@@ -28,7 +30,7 @@ void VinasuHeya_ResolveFloatingBlock(void)
     struct FieldActor work;
     struct FieldActor *first = NULL;
     struct FieldActor *second = NULL;
-    struct FieldActor *temp = &work;
+    struct FieldActor *temp;
     struct FieldActor *block;
     struct FieldActor *other;
     s32 i;
@@ -40,7 +42,11 @@ void VinasuHeya_ResolveFloatingBlock(void)
     s32 none;
 
     Engine_EventBegin();
-    for (i = 0, id = 10; i <= 3; i++, id++) {
+    temp = &work;
+    i = 0;
+    id = 10;
+again:
+    {
         block = Engine_ActorGet(id);
         x = block->x.fixed >> 20;
         if (x == 13) {
@@ -54,7 +60,7 @@ void VinasuHeya_ResolveFloatingBlock(void)
                     block->collision_flags = none;
                     block->motion_flags = none;
                     Call6((void (*)())Engine_MapCopyCellAttributes, 4, 19, 1, 1, x, z);
-                    break;
+                    goto done;
                 }
             }
         }
@@ -70,37 +76,48 @@ void VinasuHeya_ResolveFloatingBlock(void)
             Engine_ObjectDispatchRelease(first);
             Engine_ObjectDispatchRelease(second);
             Engine_GameFlagSet(0x200 + i);
-            break;
+            goto done;
         }
+        goto check_height;
+
+swap_coords:
+        other = Engine_ActorGet(j + 10);
+        temp->x.fixed = block->x.fixed;
+        temp->y.fixed = block->y.fixed;
+        temp->z.fixed = block->z.fixed;
+        block->x.fixed = other->x.fixed;
+        block->y.fixed = other->y.fixed;
+        block->z.fixed = other->z.fixed;
+        other->x.fixed = temp->x.fixed;
+        other->y.fixed = temp->y.fixed;
+        other->z.fixed = temp->z.fixed;
+        slot = j;
+        goto apply_height;
+
+check_height:
         if (block->z.fixed >> 20 != 19) {
-            continue;
+            goto next;
         }
         none = Engine_GameFlagIsSet(0x200 + i);
         if (none != 0) {
-            continue;
+            goto next;
         }
         block->target_y = ACTOR_NO_TARGET;
         *(s32 *)block->unknown_14 = none;
         block->velocity_y = none;
         block->motion_flags = none;
         block->unknown_64 = none;
+        j = 0;
         slot = i;
-        for (j = 0; j < i; j++) {
-            if (!Engine_GameFlagIsSet(0x200 + j)) {
-                other = Engine_ActorGet(j + 10);
-                temp->x.fixed = block->x.fixed;
-                temp->y.fixed = block->y.fixed;
-                temp->z.fixed = block->z.fixed;
-                block->x.fixed = other->x.fixed;
-                block->y.fixed = other->y.fixed;
-                block->z.fixed = other->z.fixed;
-                other->x.fixed = temp->x.fixed;
-                other->y.fixed = temp->y.fixed;
-                other->z.fixed = temp->z.fixed;
-                slot = j;
-                break;
-            }
+        if (j < i) {
+            do {
+                if (!Engine_GameFlagIsSet(0x200 + j)) {
+                    goto swap_coords;
+                }
+                j++;
+            } while (j < i);
         }
+apply_height:
         other = Engine_ActorGet(slot + 10);
         other->target_y = ACTOR_NO_TARGET;
         *(s32 *)other->unknown_14 = 0;
@@ -125,7 +142,14 @@ void VinasuHeya_ResolveFloatingBlock(void)
         VinasuHeya_LowerFloatingBlocks(40);
         Engine_ActorGet(slot + 10)->priority_flags |= 2;
         Engine_GameFlagSet(slot + 0x200);
-        break;
+        goto done;
     }
+next:
+    i++;
+    id++;
+    if (i <= 3) {
+        goto again;
+    }
+done:
     Engine_EventEnd();
 }

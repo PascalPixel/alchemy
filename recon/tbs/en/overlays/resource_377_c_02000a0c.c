@@ -5,7 +5,7 @@
 #include "FIELD_EVENT.H"
 
 void Main_080000c0();
-void Main_08009180();
+void Main_08009180(s32 x0, s32 y0, s32 x1, s32 y1, s32 arg4, s32 arg5);
 void Main_080091a0();
 void Main_080091e0(struct FieldActor *actor, s32 value);
 void Main_0808a010();
@@ -77,7 +77,6 @@ static __inline__ void Call2(void (*f)(),s32 a0,s32 a1){f(a0,a1);}
 static __inline__ void Call3(void (*f)(),s32 a0,s32 a1,s32 a2){f(a0,a1,a2);}
 static __inline__ void Call4(void (*f)(),s32 a0,s32 a1,s32 a2,s32 a3){f(a0,a1,a2,a3);}
 static __inline__ void Call5(void (*f)(),s32 a0,s32 a1,s32 a2,s32 a3,s32 a4){f(a0,a1,a2,a3,a4);}
-static __inline__ void Call6(void (*f)(),s32 a0,s32 a1,s32 a2,s32 a3,s32 a4,s32 a5){f(a0,a1,a2,a3,a4,a5);}
 
 static __inline__ void SetBlendTarget(u32 value)
 {
@@ -117,15 +116,15 @@ void FieldScene_RunPaletteRampSequence(void)
 
         scene->blend_config = 513;
     }
-    Call6(Main_08009180, 83, 15, 83, 19, 5, 4);
-    Call6(Main_08009180, 90, 16, 90, 20, 5, 4);
-    Call6(Main_08009180, 77, 23, 82, 23, 5, 7);
-    Call6(Main_08009180, 83, 33, 85, 33, 2, 2);
-    Call6(Main_08009180, 91, 28, 90, 28, 1, 1);
-    Call6(Main_08009180, 91, 28, 88, 30, 1, 1);
-    Call6(Main_08009180, 94, 27, 94, 23, 6, 4);
-    Call6(Main_08009180, 92, 28, 87, 23, 4, 4);
-    Call6(Main_08009180, 65, 53, 88, 24, 2, 2);
+    Main_08009180(83, 15, 83, 19, 5, 4);
+    Main_08009180(90, 16, 90, 20, 5, 4);
+    Main_08009180(77, 23, 82, 23, 5, 7);
+    Main_08009180(83, 33, 85, 33, 2, 2);
+    Main_08009180(91, 28, 90, 28, 1, 1);
+    Main_08009180(91, 28, 88, 30, 1, 1);
+    Main_08009180(94, 27, 94, 23, 6, 4);
+    Main_08009180(92, 28, 87, 23, 4, 4);
+    Main_08009180(65, 53, 88, 24, 2, 2);
     Main_080091a0();
     SetBlendTarget((s32)Value_00003f42);
     SetBlendAlpha((s32)Value_0000100c);

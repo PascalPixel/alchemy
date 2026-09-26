@@ -1,279 +1,311 @@
-/* NONMATCHING: shared callee return types audited on 2026-09-26.
- * 840 of 1308 bytes, 632 differing halfwords, 581 aligned edits.
- * Canonical declarations are retained; the remaining source model is not exact. */
-#include "types.h"
+/* DRAFT: complete main:080aa768 [080aa768,080aac84), 1308 bytes.
+ * H1 (2026-09-27): replace the old 840-byte model's four-times-scaled
+ * fields, missing transfer/recalculation calls and incorrect state exits.
+ * Whole listing, switch table, pools, caller 080aa56c and menu-family
+ * callees audited. Transfer the Djinn list/owner/cursor record boundaries
+ * from 080ab5e4 and exact CORE_COMPUTE_ENTRY_VALUES.C. The cursor column
+ * is Math_ModU(cursor,10), not division; packed IDs have a low-byte view.
+ * Prediction: all 16 states, shared tails and call arguments are present,
+ * with the reference eight-byte outgoing/local frame. Gate: exact whole
+ * extent plus compare/test/coverage/verify. Read full normalized diff.
+ * One model plus at most two justified follow-ups, stop by 00:30 Lisbon.
+ * Record every score/residual here and preserve each attempt in Git.
+ * H1: 1340/1308 bytes, 596 differing halfwords, 351 aligned edits. Full
+ * diff read. All state/call bodies now exist, but this compiler rounds the
+ * ID union to four bytes: table counts move to +0x140 instead of +0xa0,
+ * and fields after selected IDs shift by four. This disproves the union
+ * record boundary; correct the byte-pair representation before allocation.
+ * Frame is 4/8 bytes and result occupies r8 instead of r4; not adopted.
+ */
+#include "TYPES.H"
 
-extern u8 Data_03001f2c[];
+union DjinnEntry {
+    u16 word;
+    u8 bytes[2];
+};
 
-void Func_080030f8(s32 frames);
-s32 Func_08002304(s32 value, s32 scale);
-void Func_08015278(s32 value);
-void Func_08015120(s32 value, s32 mode);
-void Func_080151c8(s32 value);
-void Func_08077010(s32 value);
-s32 Func_080771b0(s32 a0, s32 a1, s32 a2);
-s32 Func_080771b8(s32 a0, s32 a1, s32 a2);
-void Func_080771c0(s32 a0, s32 a1, s32 a2);
-s32 Func_080771c8(s32 a0, s32 a1, s32 a2);
-s32 Func_080aa544(s32 value);
+struct DjinnListTable {
+    union DjinnEntry ids[8][10];
+    s8 counts[8];
+};
+
+struct DjinnMenuIcon {
+    u8 unknown_00[5];
+    u8 state;
+    u8 unknown_06[6];
+    u16 timer;
+};
+
+struct DjinnCommandMenu {
+    u8 unknown_000[8];
+    s32 owner;
+    u8 unknown_00c[8];
+    struct DjinnMenuIcon *icon;
+    u8 unknown_018[4];
+    s8 column[2];
+    u8 unknown_01e[0x12];
+    s32 window;
+    u8 unknown_034[0x110];
+    u16 row_y[8];
+    u8 unknown_154[0x20];
+    u16 cursor[2];
+    union DjinnEntry selected[2];
+    u8 unknown_17c[8];
+    struct DjinnListTable *lists;
+    u8 unknown_188[0x80];
+    u16 owners[8];
+    u8 count;
+    u8 owner_count;
+    u8 source_owner;
+    u8 target_owner;
+    u8 unknown_21c[4];
+    u16 flags;
+    u8 unknown_222[0x32];
+    u8 number[2];
+    u8 element[2];
+};
+
+extern struct DjinnCommandMenu *gMenuWork;
+void WaitFrames(s32);
+u32 Math_ModU(u32, u32);
+void Audio_PlayCue(s32);
+void RenderOutput_ClearListFar(s32);
+void Owner_RecalculateStatsFar(s32);
+s32 Djinn_ActivateFar(s32, s32, s32);
+u32 Func_080771b8(s32, s32, s32);
+s32 Trade_RemoveOfferFar(s32, s32, s32);
+u32 *Trade_AddOfferFar(u32, u32, u32);
+s32 Func_080771d0(s32, s32, s32, s32);
+void Menu_SetFirstObjectRowCoordinates(s32);
 s32 Func_080ab314(void);
-s32 Func_080ab5e4(s32 value);
-s32 Func_080aad10(void);
-s32 Func_080ad5b4(s32 a0, s32 a1, s32 a2, s32 a3);
-s32 Func_080ad6d4(s32 value);
-void Func_080ae2f4(void);
-void Func_080aafb8(s32 value);
-s32 Func_080aaf58(s32 value);
-void Func_080f9010(s32 value);
+s32 Func_080ab5e4(s32);
+s32 Menu_OpenBackdropScreen(void);
+void FourObjectMotion_SetSlotPosition(s32, s32, s32, s32);
+s32 Func_080ad6d4(s32);
+s32 Unnamed_080ae2f4(void);
+void DjinnMenu_DrawElementList(struct DjinnListTable *);
+s32 Menu_ComputeEntryValues(struct DjinnListTable *);
 
-static void UpdateShopSelection(s32 *ctx, s32 result, s32 message)
+/* Recover the selected Djinn's position after the transfer changed a row.
+ * Low-byte access is intentional: this compares the packed Djinn identity
+ * independently of the owner/set bits in the upper byte. */
+static __inline__ void RestoreDjinnCursor(struct DjinnCommandMenu *menu)
 {
+    u16 row;
+    s32 found;
     s32 i;
-    s32 count;
-    s32 row;
-    u8 *table;
+    u8 selected;
 
-    Func_080f9010(message);
-    Func_08015278(*(s32 *)(ctx + 0x30));
-    Func_080aaf58(*(s32 *)(ctx + 0x188));
-    row = Func_08002304(*(s32 *)(ctx + 0x174), 10);
-    table = *(u8 **)(ctx + 0x188);
-    count = *(s8 *)(ctx + 0x188);
-    for (i = 0; i < count; i++) {
-        if (table[row * 10 + i] == *(u8 *)(ctx + 0x21a)) {
-            *(u16 *)(ctx + 0x174) = (u16)(row * 10 + i);
+    row = Math_ModU(menu->cursor[1], 10);
+    found = 0;
+    selected = menu->selected[0].bytes[0];
+    for (i = 0; i < menu->lists->counts[row]; i++) {
+        if (selected == menu->lists->ids[row][i].bytes[0]) {
+            found = i;
             break;
         }
     }
-    *(u8 *)(*(s32 **)(ctx + 20) + 5) = 1;
+    menu->cursor[0] = row + found * 10;
+    menu->icon->state = 1;
 }
 
-s32 Func_080aa768(void)
+s32 Unnamed_080aa768(void)
 {
-    s32 *ctx;
-    s32 mode;
-    s32 done;
+    struct DjinnCommandMenu *menu;
     s32 result;
-    s32 value;
-    s32 index;
-    s32 count;
+    s32 state;
+    s32 ret;
+    s32 done;
     s32 i;
-    u8 *table;
 
-    ctx = *(s32 **)Data_03001f2c;
-    *(u8 *)(*(s32 **)(ctx + 20) + 5) = 13;
-    *(u16 *)(*(s32 **)(ctx + 20) + 12) = 0;
-    Func_080aad10();
-    Func_080030f8(1);
-
-    mode = 2;
-    done = 0;
+    menu = gMenuWork;
     result = 0;
-    while (!done) {
-        if ((u32)mode > 15) {
-            result = -1;
-            done = 1;
-            continue;
-        }
-        switch (mode) {
+    ret = 0;
+    done = 0;
+    menu->icon->state = 13;
+    menu->icon->timer = 0;
+    Menu_OpenBackdropScreen();
+    WaitFrames(1);
+    state = 2;
+    do {
+        switch (state) {
         case 0:
-            result = -1;
-            done = 1;
+            if (result < 0) {
+                ret = -1;
+                done = 1;
+            }
+            state = 2;
+            break;
+        case 1:
             break;
         case 2:
-            Func_080aa544(0);
+            Menu_SetFirstObjectRowCoordinates(0);
+            FourObjectMotion_SetSlotPosition(1, 0, 200, 0);
             result = Func_080ab5e4(0);
-            mode = 15;
-            if (result == 10) {
-                done = 1;
+            state = 15;
+            if (result == 10)
                 break;
-            }
-            mode = 0;
-            if (result < 0) {
-                done = 1;
+            state = 0;
+            if (result < 0)
                 break;
-            }
-            *(s16 *)(ctx + 0xbb) = *(s8 *)(ctx + 28);
-            if (result == 7) {
-                mode = 10;
-            } else {
-                mode = 3;
-            }
-            break;
-        case 3:
-            index = *(s8 *)(ctx + 28);
-            value = *(u16 *)(ctx + 0x208 + index * 2);
-            *(s32 *)(ctx + 8) = value;
-            *(u8 *)(ctx + 0x21a) = value;
-            Func_080aafb8(*(s32 *)(ctx + 0x188));
-            Func_080aa544(-8);
-            Func_080ad5b4(0, index * 56 + 48, 54, 0);
-            result = Func_080ab5e4(1);
-            mode = 4;
-            if (result == -2 || result < 0) {
-                done = 1;
+            menu->cursor[1] = menu->column[0];
+            state = 10;
+            if (result == 7)
                 break;
-            }
-            count = *(u8 *)(ctx + 0x219);
-            for (i = 0; i < count; i++) {
-                *(u16 *)(ctx + 0x144 + i * 2) += 8;
-            }
-            if (result == 1) {
-                mode = 5;
-            } else if (result == 2) {
-                mode = 6;
-            } else if (result == 3) {
-                *(u16 *)(ctx + 0x220) = 2;
-                mode = 7;
-            } else if (result == 4) {
-                *(u16 *)(ctx + 0x220) = 2;
-                mode = 9;
-            } else if (result == 5) {
-                mode = 11;
-            } else if (result == 6) {
-                mode = 12;
-            } else if (result == 8) {
-                *(u16 *)(ctx + 0x220) = 2;
-                mode = 13;
-            } else if (result == 9) {
-                *(u16 *)(ctx + 0x220) = 2;
-                mode = 14;
-            }
-            break;
-        case 4:
-            if (result == -1) {
-                done = 1;
-                break;
-            }
-            value = *(u16 *)(ctx + 0x220);
-            if (value & 1) {
-                mode = 8;
-            } else if (value & 2) {
-                mode = 7;
-            } else {
-                mode = 3;
-            }
-            break;
-        case 5:
-            result = Func_080ad6d4(3);
-            mode = 3;
-            if (result == -2 || result < 0) {
-                done = 1;
-                break;
-            }
-            Func_080f9010(139);
-            table = *(u8 **)(ctx + 0x188);
-            Func_080771b0(table[0], table[1], table[2]);
-            Func_080771c0(table[0], table[1], table[2]);
-            Func_080151c8(*(s32 *)(ctx + 0x30));
-            *(u8 *)(*(s32 **)(ctx + 20) + 5) = 1;
-            mode = 2;
-            break;
-        case 6:
-            result = Func_080ad6d4(2);
-            mode = 3;
-            if (result == -2 || result < 0) {
-                done = 1;
-                break;
-            }
-            UpdateShopSelection(ctx, result, 126);
-            mode = 0;
-            break;
-        case 7:
-            result = Func_080ad6d4(1);
-            mode = 3;
-            if (result == -2 || result < 0) {
-                done = 1;
-                break;
-            }
-            UpdateShopSelection(ctx, result, 126);
-            mode = 0;
-            break;
-        case 8:
-            if (*(u8 *)(ctx + 0x218) == 0) {
-                mode = 0;
-                break;
-            }
-            result = Func_080ab5e4(1);
-            mode = 4;
-            if (result == -2 || result < 0) {
-                done = 1;
-            } else {
-                mode = 9;
-            }
-            break;
-        case 9:
-            result = Func_080ad6d4(0);
-            mode = 3;
-            if (result == -2 || result < 0) {
-                done = 1;
-                break;
-            }
-            UpdateShopSelection(ctx, result, 126);
-            mode = 0;
+            state = 3;
             break;
         case 10:
-            index = *(s8 *)(ctx + 28);
-            value = *(u16 *)(ctx + 0x208 + index * 2);
-            *(s32 *)(ctx + 8) = value;
-            *(u8 *)(ctx + 0x21a) = value;
-            Func_080ae2f4();
-            result = Func_080ab5e4(1);
-            mode = 4;
-            if (result == -2 || result < 0) {
+            menu->owner = menu->owners[menu->column[0]];
+            menu->source_owner = menu->owners[menu->column[0]];
+            result = Unnamed_080ae2f4();
+            if (result == -2)
                 done = 1;
-            } else {
-                mode = 9;
-            }
-            break;
-        case 11:
-            result = Func_080ad6d4(3);
-            mode = 3;
-            if (result == -2 || result < 0) {
-                done = 1;
-                break;
-            }
-            Func_080f9010(139);
-            Func_080151c8(*(s32 *)(ctx + 0x30));
-            mode = 2;
-            break;
-        case 12:
-            Func_080f9010(175);
-            table = *(u8 **)(ctx + 0x188);
-            Func_080771b8(table[0], table[1], table[2]);
-            Func_080771c8(table[0], table[1], table[2]);
-            Func_080151c8(*(s32 *)(ctx + 0x30));
-            mode = 2;
-            break;
-        case 13:
-            result = Func_080ad6d4(1);
-            mode = 3;
-            if (result == -2 || result < 0) {
-                done = 1;
-                break;
-            }
-            UpdateShopSelection(ctx, result, 126);
-            mode = 0;
-            break;
-        case 14:
-            result = Func_080ad6d4(0);
-            mode = 3;
-            if (result == -2 || result < 0) {
-                done = 1;
-                break;
-            }
-            UpdateShopSelection(ctx, result, 126);
-            mode = 0;
+            state = 2;
             break;
         case 15:
             result = Func_080ab314();
-            done = 1;
+            if (result == -2)
+                done = 1;
+            state = 2;
+            break;
+        case 8:
+            state = 0;
+            if (menu->count == 0)
+                break;
+            result = Func_080ab5e4(1);
+            if (result == -2)
+                done = 1;
+            state = 4;
+            if (result < 0)
+                break;
+            state = 9;
+            break;
+        case 3:
+            DjinnMenu_DrawElementList(menu->lists);
+            Menu_SetFirstObjectRowCoordinates(-8);
+            menu->owner = menu->owners[menu->column[0]];
+            menu->source_owner = menu->owners[menu->column[0]];
+            FourObjectMotion_SetSlotPosition(0, menu->column[0] * 56 + 48, 54, 0);
+            result = Func_080ab5e4(1);
+            for (i = 0; i < menu->owner_count; i++)
+                menu->row_y[i] += 8;
+            if (result == -2)
+                done = 1;
+            if (result < 0) {
+                state = 2;
+                break;
+            }
+            if (result == 3 || result == 4 || result == 8 || result == 9)
+                menu->target_owner = menu->owners[menu->column[1]];
+            if (result < 0)
+                state = 2;
+            else if (result == 1)
+                state = 5;
+            else if (result == 2)
+                state = 6;
+            else if (result == 3) {
+                menu->flags = 2;
+                state = 7;
+            } else if (result == 4) {
+                menu->flags = 2;
+                state = 9;
+            } else if (result == 5)
+                state = 11;
+            else if (result == 6)
+                state = 12;
+            else if (result == 8) {
+                menu->flags = 2;
+                state = 13;
+            } else if (result == 9) {
+                menu->flags = 2;
+                state = 14;
+            }
+            break;
+        case 7:
+            result = Func_080ad6d4(1);
+            if (result == -2)
+                done = 1;
+            state = 3;
+            if (result < 0)
+                break;
+            /* fall through */
+        case 13:
+            Audio_PlayCue(126);
+            result = Func_080771d0(menu->source_owner, menu->element[0],
+                                  menu->number[0], menu->target_owner);
+            Owner_RecalculateStatsFar(menu->source_owner);
+            Owner_RecalculateStatsFar(menu->target_owner);
+            menu->icon->state = 13;
+            RenderOutput_ClearListFar(menu->window);
+            Menu_ComputeEntryValues(menu->lists);
+            RestoreDjinnCursor(menu);
+            state = 0;
+            break;
+        case 6:
+            result = Func_080ad6d4(2);
+            if (result == -2)
+                done = 1;
+            state = 3;
+            if (result < 0)
+                break;
+            /* fall through */
+        case 12:
+            Audio_PlayCue(175);
+            Func_080771b8(menu->source_owner, menu->element[0], menu->number[0]);
+            result = (s32)Trade_AddOfferFar(menu->source_owner, menu->element[0], menu->number[0]);
+            goto refresh_owner;
+        case 9:
+            result = Func_080ad6d4(0);
+            if (result == -2)
+                done = 1;
+            state = 3;
+            if (result < 0)
+                break;
+            /* fall through */
+        case 14:
+            Audio_PlayCue(126);
+            Func_080771d0(menu->source_owner, menu->element[0], menu->number[0], menu->target_owner);
+            result = Func_080771d0(menu->target_owner, menu->element[1], menu->number[1], menu->source_owner);
+            Owner_RecalculateStatsFar(menu->source_owner);
+            Owner_RecalculateStatsFar(menu->target_owner);
+            Menu_ComputeEntryValues(menu->lists);
+            RestoreDjinnCursor(menu);
+            state = 2;
+            break;
+        case 4:
+            if (result == -1) {
+                ret = result;
+                state = 2;
+                break;
+            }
+            if (menu->flags & 1)
+                state = 8;
+            else if (menu->flags & 2)
+                state = 7;
+            break;
+        case 5:
+            result = Func_080ad6d4(3);
+            if (result == -2)
+                done = 1;
+            state = 3;
+            if (result < 0)
+                break;
+            /* fall through */
+        case 11:
+            Audio_PlayCue(139);
+            Djinn_ActivateFar(menu->source_owner, menu->element[0], menu->number[0]);
+            result = Trade_RemoveOfferFar(menu->source_owner, menu->element[0], menu->number[0]);
+refresh_owner:
+            Owner_RecalculateStatsFar(menu->source_owner);
+            menu->icon->state = 13;
+            RenderOutput_ClearListFar(menu->window);
+            menu->icon->state = 1;
+            state = 2;
             break;
         default:
-            result = -1;
             done = 1;
             break;
         }
-    }
-    return result;
+    } while (!done);
+    return ret;
 }

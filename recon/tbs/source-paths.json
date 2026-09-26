@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "main:08028c04": {
+      "name": "Menu_SelectResourceLayout",
+      "source": "MENU/SELECT_RESOURCE_LAYOUT.C"
+    },
     "main:08021390": {
       "name": "Party_ShowJoinedMessage"
     },

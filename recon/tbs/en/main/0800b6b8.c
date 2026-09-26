@@ -1,8 +1,14 @@
+/* Draft, not exact (2026-09-26): 208 of 224 bytes, 105 differing halfwords.
+   Complete loader [0x0800b6b8, 0x0800b798), including its literal pool.
+   The signed table-number field is read then narrowed to u16; separate
+   walking field cursors recover the table scan. Remaining: saved-register
+   allocation, argument spill, slot store order, and conversion-loop setup.
+   Struct-cursor and separate-field-cursor trials retain those differences. */
 #include "TYPES.H"
 
 struct ResourceNoEntry {
     u16 res;
-    u16 no;
+    s16 no;
 };
 
 struct BufferSlot {
@@ -36,6 +42,8 @@ s32 Func_0800b6b8(u32 slot, u32 *buf, s32 no, u32 kind)
     u32 k;
     u16 entry_no;
     s32 res;
+    u16 *respos;
+    s16 *nopos;
 
     if (slot > 7)
         return 0;
@@ -46,9 +54,13 @@ s32 Func_0800b6b8(u32 slot, u32 *buf, s32 no, u32 kind)
     rec->buf = buf;
 
     cnt = 0;
-    entry_no = Data_08012fa0[0].no;
-    res = Data_08012fa0[0].res;
+    respos = &Data_08012fa0[0].res;
+    nopos = &Data_08012fa0[0].no;
+    entry_no = (u16)*nopos;
+    res = *respos;
+    nopos += 2;
     do {
+        respos += 2;
         if (entry_no == 0)
             return 0;
         if (entry_no == no)
@@ -56,16 +68,21 @@ s32 Func_0800b6b8(u32 slot, u32 *buf, s32 no, u32 kind)
         cnt++;
         if (cnt > 255)
             break;
-        entry_no = Data_08012fa0[cnt].no;
-        res = Data_08012fa0[cnt].res;
+        entry_no = (u16)*nopos;
+        res = *respos;
+        nopos += 2;
     } while (1);
 
     size = Func_08005340(Func_08002f40(res), buf);
 
     p = buf;
-    for (cnt = 0; cnt < 256 && *p != 0; cnt++) {
+    cnt = 0;
+    while (*p != 0) {
         *p += (u32)buf;
         p++;
+        cnt++;
+        if (cnt > 255)
+            break;
     }
 
     if (kind != 0) {

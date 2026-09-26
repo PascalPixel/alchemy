@@ -1,4 +1,11 @@
 /* Whole owner [080c1470, 080c16d0), 608 bytes including its pool.
+   2026-09-26 H2: give the first loop its own angle/distance/speed locals.
+   Candidate 596/608, 205 differing halfwords, 97 aligned edits. The complete
+   first-loop body now has the reference r5 angle, r6 radius, r7 star cursor,
+   r8 distance, r9 count and sl multiply target. Its preheader still orders
+   the cursor/target initializers differently. Remaining: 8/36-byte frame,
+   ring-radius rematerialization, work-slot access, resource cursor lifetime,
+   affine accesses and result convention. The shared-angle model was wrong.
    2026-09-26 H1: typed BG2 affine register members replace scalar casts.
    Candidate 596/608, 226 differing halfwords, 118 aligned edits (baseline
    604/608, 228 halfwords, 173 edits). The 0x100 value is now constructed
@@ -82,8 +89,6 @@ void BattleFx_InitializeStarField(s32 mode)
     struct Spoke *spoke;
     s32 i;
     s32 angle;
-    u32 distance;
-    s32 speed;
     s32 palette;
     u8 *data;
     volatile struct BgAffineRegisters *bg;
@@ -93,6 +98,10 @@ void BattleFx_InitializeStarField(s32 mode)
     Runtime_AllocateHeapBlock(40, 0x4000);
     star = work->stars;
     for (i = 15; i >= 0; i--) {
+        s32 angle;
+        u32 distance;
+        s32 speed;
+
         angle = Random16();
         distance = Random16() + 0x10000;
         speed = distance >> 1;

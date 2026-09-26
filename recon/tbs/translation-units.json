@@ -12067,6 +12067,10 @@
         }
       ],
       "absolute_symbols": {
+        "Data_02000240": {
+          "address": "0x02000240",
+          "kind": "data"
+        },
         "Data_020096c0": {
           "address": "0x020096c0",
           "kind": "data"

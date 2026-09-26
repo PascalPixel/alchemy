@@ -1,7 +1,7 @@
-/* Draft, not exact (2026-09-26): 820 of 832 bytes, 379 differing halfwords.
-   Explicit position-pointer lifetime coalesces the saved position into r6
-   and replaces the observed sl/r6 split throughout the body. Preserved
-   before restoring the complete 832-byte / 14-halfword model.
+/* Draft, not exact (2026-09-26): 820 of 832 bytes, 388 differing halfwords.
+   Separate phase counters place the first counter in r7 and shift the
+   scene/position allocation. This fails the listing's shared r8 lifetime;
+   the complete 832-byte / 14-halfword model remains preserved.
    Scene ownership, slot records and resource lifetime replace raw offsets.
    Explicit stores and the initial/terminal script tests recover all four
    missing bytes. One scale lifetime removes the GCSE carry copy and all
@@ -81,8 +81,7 @@ void RunBattleEffect04(void)
     struct BurstObject *child;
     s32 event_context;
     struct BurstObject *spawned[4];
-    struct BurstPosition buf;
-    struct BurstPosition *pos;
+    struct BurstPosition pos;
     struct BurstObject **spawn_start;
     struct BurstObject **write;
     struct BurstObject **read;
@@ -95,6 +94,9 @@ void RunBattleEffect04(void)
     s32 event;
     s32 scale;
     s32 index;
+    s32 slots_left;
+    s32 copies_left;
+    s32 scripts_left;
     u8 resource_id;
     u16 zero;
 
@@ -102,32 +104,31 @@ void RunBattleEffect04(void)
     child = scene->child;
     BattleEffect_InitializeSharedScene();
     Audio_PlayCue(0x82);
-    pos = &buf;
     slot = scene->slots;
-    index = 11;
+    slots_left = 11;
     do {
         target = scene->main_object;
-        pos->x = target->pos.x;
-        pos->y = target->pos.y + 0x100000;
-        pos->z = target->pos.z;
-        Camera_WorldToScreen(pos);
-        EffectSlot_Initialize(slot, 0x11c, pos->x, pos->z);
+        pos.x = target->pos.x;
+        pos.y = target->pos.y + 0x100000;
+        pos.z = target->pos.z;
+        Camera_WorldToScreen(&pos);
+        EffectSlot_Initialize(slot, 0x11c, pos.x, pos.z);
         EffectSlot_SetCallback(slot, BattleFx_UpdateRadialBurst);
         EffectSlot_SetObjectMode(slot, 7);
         ObjectGroup_SetChildValueUnlessFifteenFar((s32)slot->object, 9);
         slot->scale_y = 0xb333;
         slot->scale_x = 0xb333;
         WaitFrames(2);
-        index--;
+        slots_left--;
         slot++;
-    } while (index >= 0);
+    } while (slots_left >= 0);
 
     target = scene->main_object;
-    pos->x = target->pos.x;
-    pos->y = target->pos.y + 0x100000;
-    pos->z = target->pos.z;
-    Vector_AddPolarOffset(0x80000, scene->angle, pos);
-    object = Object_Spawn(0xd7, pos->x, pos->y, pos->z);
+    pos.x = target->pos.x;
+    pos.y = target->pos.y + 0x100000;
+    pos.z = target->pos.z;
+    Vector_AddPolarOffset(0x80000, scene->angle, &pos);
+    object = Object_Spawn(0xd7, pos.x, pos.y, pos.z);
     if (object == NULL) {
         BattleFx_PrepareBufferInterpolation();
         return;
@@ -154,7 +155,7 @@ void RunBattleEffect04(void)
     WaitFrames(3);
     spawn_start = spawned;
     resource = NULL;
-    index = 2;
+    copies_left = 2;
     write = &spawned[2];
     do {
         copy = *write-- = Object_Spawn(0xd7, object->pos.x, object->pos.y, object->pos.z);
@@ -169,33 +170,33 @@ void RunBattleEffect04(void)
             Animation_ApplyChildValuesFar(copy, 2);
             resource = Object_ReplaceResourceEntry(copy->sprite, resource);
         }
-        index--;
-    } while (index >= 0);
+        copies_left--;
+    } while (copies_left >= 0);
     resource_id = resource->id;
     if (scene->use_main_object_origin != 0) {
         target = scene->main_object;
-        pos->x = target->pos.x;
-        pos->y = target->pos.y + 0x100000;
-        pos->z = target->pos.z;
-        Vector_AddPolarOffset(0x380000, scene->angle, pos);
+        pos.x = target->pos.x;
+        pos.y = target->pos.y + 0x100000;
+        pos.z = target->pos.z;
+        Vector_AddPolarOffset(0x380000, scene->angle, &pos);
     } else {
-        pos->x = scene->pos.x;
-        pos->y = scene->pos.y + 0x100000;
-        pos->z = scene->pos.z;
+        pos.x = scene->pos.x;
+        pos.y = scene->pos.y + 0x100000;
+        pos.z = scene->pos.z;
     }
-    Object_SetPosition(object, pos->x, pos->y, pos->z);
+    Object_SetPosition(object, pos.x, pos.y, pos.z);
     ObjectDispatch_InitializeFar(object, 0x0809f12c);
     read = spawn_start;
-    index = 2;
+    scripts_left = 2;
     do {
         copy = *read++;
         if (copy != NULL) {
             WaitFrames(3);
-            Object_SetPosition(copy, pos->x, pos->y, pos->z);
+            Object_SetPosition(copy, pos.x, pos.y, pos.z);
             ObjectDispatch_InitializeFar(copy, 0x0809f0b4);
         }
-        index--;
-    } while (index >= 0);
+        scripts_left--;
+    } while (scripts_left >= 0);
     index = 0;
     if (object->script != NULL) {
 wait_script:
@@ -207,14 +208,14 @@ wait_script:
     if (child != NULL && scene->preserve_child_motion == 0) {
         if (scene->enlarge_child != 0)
             child->velocity_z = 0x80000;
-        pos->x = child->pos.x;
-        pos->y = child->pos.y;
-        pos->z = child->pos.z;
-        Vector_AddPolarOffset(0x100000, scene->angle, pos);
-        if (Object_CheckMovementCollision(child, pos) == 0 && Func_08009250(child, pos) == 0) {
+        pos.x = child->pos.x;
+        pos.y = child->pos.y;
+        pos.z = child->pos.z;
+        Vector_AddPolarOffset(0x100000, scene->angle, &pos);
+        if (Object_CheckMovementCollision(child, &pos) == 0 && Func_08009250(child, &pos) == 0) {
             child->acceleration = 0x10000;
             child->speed_limit = 0x10000;
-            Object_SetPosition(child, pos->x, pos->y, pos->z);
+            Object_SetPosition(child, pos.x, pos.y, pos.z);
         }
     }
     event = BattleFx_FindMatchingEvent(0x50000005, 4, &event_context);

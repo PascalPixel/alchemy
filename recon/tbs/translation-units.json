@@ -86810,6 +86810,22 @@
       "source": "recon/tbs/en/overlays/resource_3cb_c_02000b94.c",
       "overlay": "resource_3cb",
       "absolute_symbols": {
+        "Engine_EventEnd": {
+          "address": "0x0200984c",
+          "kind": "thumb"
+        },
+        "State_RunQueryWithInterruptMasterSaved": {
+          "address": "0x0200803c",
+          "kind": "thumb"
+        },
+        "Data_02000240_t": {
+          "address": "0x02000240",
+          "kind": "data"
+        },
+        "Data_00002930": {
+          "address": "0x00002930",
+          "kind": "data"
+        },
         "Local_0200008c": {
           "address": "0x0200808c",
           "kind": "thumb"

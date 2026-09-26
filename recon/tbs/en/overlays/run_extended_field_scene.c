@@ -1,10 +1,10 @@
 /* Draft, not-yet-c. Fresh registered-unit score 2026-09-26: 2816 of 2816
- * bytes, 831 differing halfwords, 16 wrong instructions (206 aligned edits).
- * ROM callback consumers retain immutable script pointers. Typed ownership
- * fixes the shared 0x1000/fp and 0x5000/r9 lifetimes without facing edits,
- * but direct target-link calls retain 0x1001e in r5 and the table in r6;
- * the reference reloads the target in r1 and retains the table in r5.
- * Remaining differences include zero allocation and pool-boundary motion. */
+ * bytes, 639 differing halfwords, 50 wrong instructions (185 aligned edits).
+ * Typed callback inline scopes reproduce the prior baseline bytes exactly;
+ * they restore target-ID reloads and the r5 table but lose the direct-call
+ * trial's shared-constant lifetimes (16 wrong instructions in 671ed82f4).
+ * The compiler's cross-call target pseudo, not pointer qualifiers alone,
+ * changes the saved-register interference. Inline scopes are ruled out. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
@@ -336,6 +336,12 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
     f(a0, a1, a2);
 }
 
+/* FAKEMATCH: separate inline argument scopes preserve per-call target loads. */
+static __inline__ void Callback3(void (*f)(s32, s32, const u8 *), s32 actor, s32 target, const u8 *table)
+{
+    f(actor, target, table);
+}
+
 static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 {
     f(a0, a1, a2, a3);
@@ -415,8 +421,8 @@ void Scene_RunExtendedActorSequence(void)
     Call2(Func_0200408e, 30, 0x200ac14);
     Func_02004054_a(40);
     base5_200ac00 = Data_0200ac00;
-    Func_02004128(11, 0x1001e, base5_200ac00);
-    Func_02004132(12, 0x1001e, base5_200ac00);
+    Callback3(Func_02004128, 11, 0x1001e, base5_200ac00);
+    Callback3(Func_02004132, 12, 0x1001e, base5_200ac00);
     Func_020040b8_a(30);
     Func_020040c6(11);
     Func_020040cc(12);

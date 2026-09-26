@@ -1,87 +1,103 @@
+/* Complete owner [0802977c, 08029910), 404 bytes including pool.
+ * Corrects the old lift's missing Math_Mod divisor, swapped glyph argument,
+ * cached key reads and missing zero return. Tables are signed entry pairs.
+ * Candidate 404/404 bytes, 141 differing halfwords / 74 aligned edits.
+ * Three bounded hypotheses: typed recovery; explicit frame-loop goto; joined
+ * A/B exit test. Goto preserves the reference block order; natural loops
+ * rotate the key tests. Remaining: 16-byte frame instead of 24, redraw and
+ * portrait kept in registers, no hoisted B mask, and pair-field address adds.
+ * FAKEMATCH: explicit frame-loop labels preserve the reference block layout. */
 #include "TYPES.H"
+#include "RENDER_INPUT.H"
 
-extern u8 *Data_03001e8c;
+struct DebugEntry {
+    s16 type;
+    s16 glyph;
+};
+
+struct GlyphWork {
+    u8 unknown_00[0x12f2];
+    u16 slot;
+};
+
+extern struct GlyphWork *Data_03001e8c;
 extern volatile u32 Data_03001b04;
+extern struct DebugEntry Data_080367e4[], Data_0803680c[];
+extern u8 Value_00000dd2[];
 
-s32 Func_08019da8(s32, s32, s32, s32);
-s32 Func_080162d4(s32, s32, s32, s32, s32);
-s32 Func_080022fc(s32);
-void Func_08016478(s32);
-s32 Func_0801a4fc(s32, s32, s32 *, s32 *, s32, s32);
-void Func_0801ea08(s32, s32, s32, s32, s32);
-void Func_0801e7c0(s32, s32, s32, s32);
-void Func_080030f8(s32);
-void Func_08016418(s32, s32);
+struct RenderInput *UiWindow_CreateWithSideObject(s32, s32, s32, s32);
+struct RenderInput *UiWindow_Create(s32, s32, s32, s32, s32);
+s32 Math_Mod(s32, s32);
+void RenderOutput_PrepareForRedraw(struct RenderInput *);
+void UiGlyph_LoadEntryWithPalette(u32, s32, s32 *, s32 *, s32, s32);
+void UiText_DrawNumberInWindow(s32, s32, struct RenderInput *, s32, s32);
+void UiText_DrawCharacterAtOffset(s32, struct RenderInput *, s32, s32);
+void WaitFrames(s32);
+void UiWork_Finalize(struct RenderInput *, s32);
 
-void Func_0802977c(void)
+s32 DebugMenu_BrowseEntryGlyphs(void)
 {
-    u8 *base = Data_03001e8c;
-    s32 flag = 1;
-    s32 windowHandle;
-    s32 obj;
-    s32 count1 = 0, count2 = 0, total;
-    s32 index = 0;
+    struct GlyphWork *work;
+    s32 redraw;
+    struct RenderInput *portrait;
+    struct RenderInput *window;
+    s32 count;
+    s32 total;
+    s32 index;
     s32 i;
+    s32 glyph;
+    s32 tile;
+    s32 slot;
 
-    windowHandle = Func_08019da8(0, 0, 10, 5);
-    obj = Func_080162d4(10, 10, 14, 3, 2);
+    work = Data_03001e8c;
+    redraw = 1;
+    portrait = UiWindow_CreateWithSideObject(0, 0, 10, 5);
+    window = UiWindow_Create(10, 10, 14, 3, 2);
+    index = 0;
+    for (i = 0; Data_080367e4[i].type != -1; i++) {}
+    count = i;
+    for (i = 0; Data_0803680c[i].type != -1; i++) {}
+    total = count + i;
 
-    for (i = 0; *(s16 *)(0x080367e4 + i * 4) != -1; i++) {
-        count1++;
-    }
-    for (i = 0; *(s16 *)(0x0803680c + i * 4) != -1; i++) {
-        count2++;
-    }
-    total = count1 + count2;
-
-    for (;;) {
-        u32 keys = Data_03001b04;
-
-        if (keys & 0x20) {
-            flag = 1;
+next_frame:
+        if (Data_03001b04 & 0x20) {
+            redraw = 1;
             index--;
         }
-        if (keys & 0x10) {
-            flag = 1;
+        if (Data_03001b04 & 0x10) {
+            redraw = 1;
             index++;
         }
-        if (keys & 0x200) {
-            flag = 1;
+        if (Data_03001b04 & 0x200) {
+            redraw = 1;
             index -= 10;
         }
-        if (keys & 0x100) {
-            flag = 1;
+        if (Data_03001b04 & 0x100) {
+            redraw = 1;
             index += 10;
         }
-
-        if ((keys & 1) == 0 && (keys & 2) == 0) {
-            if (flag) {
-                s32 sp16, sp20;
-                s32 y;
-
-                flag = 0;
-                index = Func_080022fc(index + total);
-
-                Func_08016478(obj);
-
-                if (index < count1) {
-                    y = *(s16 *)(0x080367e4 + index * 4 + 2);
-                } else {
-                    y = *(s16 *)(0x0803680c + (index - count1) * 4 + 2) + 128;
-                }
-
-                sp20 = *(u16 *)(base + 0x12f2);
-                Func_0801a4fc(0, index, &sp20, &sp16, 15, 1);
-                Func_0801ea08(index, 2, obj, 0, 0);
-                Func_0801e7c0(index + 0xdd2, obj, 24, 0);
-            }
-
-            Func_080030f8(1);
-        } else {
-            Func_08016418(obj, 2);
-            Func_08016418(windowHandle, 2);
-            Func_080030f8(1);
-            break;
+        if (Data_03001b04 & 1)
+            goto close;
+        if (Data_03001b04 & 2)
+            goto close;
+        if (redraw) {
+            redraw = 0;
+            index = Math_Mod(index + total, total);
+            RenderOutput_PrepareForRedraw(window);
+            if (index < count)
+                glyph = Data_080367e4[index].glyph;
+            else
+                glyph = Data_0803680c[index - count].glyph + 128;
+            slot = work->slot;
+            UiGlyph_LoadEntryWithPalette(glyph, 0, &slot, &tile, 15, 1);
+            UiText_DrawNumberInWindow(index, 2, window, 0, 0);
+            UiText_DrawCharacterAtOffset(index + (s32)Value_00000dd2, window, 24, 0);
         }
-    }
+        WaitFrames(1);
+        goto next_frame;
+close:
+    UiWork_Finalize(window, 2);
+    UiWork_Finalize(portrait, 2);
+    WaitFrames(1);
+    return 0;
 }

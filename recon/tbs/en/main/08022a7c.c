@@ -2,7 +2,11 @@
  * Six halfwords differ: +0x38/+0x3c exchange the entry copy and y store;
  * +0x44..+0x4a store zero through work+24 before the attribute word and
  * static-chain copy. The seventh is the absent final 2-byte alignment.
- * The static chain, four call targets and both literal pools match. */
+ * The static chain, four call targets and both literal pools match.
+ * Bounded alias tests: storing tile zero through entry after attributes
+ * hoists it into r8 (202 bytes / 18 edits); before attributes keeps size but
+ * moves setup early (13 edits). A union entry view leaves all six code
+ * halfwords unchanged. Original model retained; no match from those axes. */
 #include "DJINN_PREVIEW.H"
 extern void DjinnMenu_DrawStatArrow(s32 x, s32 y, s32 rising)
     __attribute__((alias("Draw_08022a7c.0")));

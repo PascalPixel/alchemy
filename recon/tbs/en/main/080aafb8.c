@@ -1,4 +1,4 @@
-/* DRAFT: 564/572 bytes, 253 differing halfwords, 182 aligned edits. The
+/* DRAFT: 568/572 bytes, 251 differing halfwords, 185 aligned edits. The
  * linked mask now uses ands, but the short-reach message puts the first
  * pool at +0xa0 instead of the reference +0xe8. The index stays in fp
  * instead of sp+44; the window occupies sp+44 instead of sp+32. The ROM
@@ -42,6 +42,14 @@
  * The index remains in fp and the offer flag spills. Read the complete
  * diff: repeated ID argument expressions emit two loads for the second
  * query where the ROM loads one ID; that is a call-input lifetime fact.
+ * H4: make each call's packed-ID snapshot explicit, reloading only after
+ * a call that may mutate the list. Predict one ldrh before each query and
+ * drawing call, with v surviving the palette branch as in the ROM.
+ * H4 result: 568/572, 251 differing halfwords, 185 aligned edits; full
+ * diff read. Explicit snapshots remove the second query's duplicate ldrh,
+ * but v still lives in r2 and the offer flag spills around both queries.
+ * The reference's 52-byte frame remains; first and inner list indices
+ * still share fp. This is not an accepted model of the whole frame.
  */
 extern u8 Value_00008000;
 extern u8 Value_00000bad;
@@ -114,13 +122,19 @@ void DjinnMenu_DrawElementList(struct DjinnListTable *tbl)
                     v = *id;
                 }
                 flag = 0;
-                if (Trade_CanOfferDjinnFar((v & 0xf00) >> 8, (v & mask) >> 5, v & 31)
-                    || Func_08077208((*id & 0xf00) >> 8, (*id & mask) >> 5, *id & 31))
+                if (Trade_CanOfferDjinnFar((v & 0xf00) >> 8, (v & mask) >> 5, v & 31))
                     flag = 1;
+                else {
+                    v = *id;
+                    if (Func_08077208((v & 0xf00) >> 8, (v & mask) >> 5, v & 31))
+                        flag = 1;
+                }
                 if (!flag)
                     UiWork_SetParamNibbleFar(4);
-                UiWindow_SetTilemapEntryFar(state->window, ((*id & mask) >> 5) + 0x5001, row * 7 + 1, line + 2, 0);
-                UiText_DrawCharacterAtOffsetFar(((*id & mask) >> 5) * 20 + (*id & 31) + 0x45f, state->window, row * 56 + 16, line * 8 + 16);
+                v = *id;
+                UiWindow_SetTilemapEntryFar(state->window, ((v & mask) >> 5) + 0x5001, row * 7 + 1, line + 2, 0);
+                v = *id;
+                UiText_DrawCharacterAtOffsetFar(((v & mask) >> 5) * 20 + (v & 31) + 0x45f, state->window, row * 56 + 16, line * 8 + 16);
                 line++;
                 UiWork_SetParamNibbleFar(15);
             }

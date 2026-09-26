@@ -3,19 +3,18 @@
 #include "IO_WRITE_QUEUE.H"
 
 /* NONMATCHING: main [080bb7c0,080bb8d8), 280 bytes including both pools.
- * Fresh score (2026-09-26): 262 bytes, 137 differing halfwords, 107 aligned edits.
- * Typed word/sprite views emit tile and X halfword updates and the Y byte
- * store, but the reference frame is 20 bytes versus this candidate's 12.
- * X/Y remain registers, rather than sp+0/+4 with the prompt at sp+8;
- * the frame counter/mask are rematerialised and the wait block is hoisted
- * ahead of the draw-loop head. Field masks/pools and the return tail differ.
+ * Fresh score (2026-09-26): 260 bytes, 136 differing halfwords, 89 aligned edits.
+ * Coordinates and prompt now have the reference's 20-byte frame; the goto
+ * draw loop and value-return epilogue recover the reference block topology.
+ * Remaining: X is loaded inside the loop, coordinate-base lifetime, frame
+ * pointer/mask rematerialization, bitfield scheduling and literal-pool order.
  * Two structural tests: byte/halfword sprite fields 256/280 (136 halfwords,
  * 101 edits; its named UI call reached the body rather than the veneer);
  * word-sized fields with the existing veneer 264/280 (137/109, retained).
- * The shared coordinate/sprite aggregate now recovers the 20-byte frame,
- * but retains its base in r7: coordinate and sprite access then share that
- * base, preventing the reference's invariant X load before the draw loop.
- * This is hypothesis 1 of the resumed lane; no C credit claimed.
+ * Resumed hypotheses: shared aggregate 262 bytes/107 edits; independent
+ * coordinate array and prompt pointer 280/96, with a union view 266/103;
+ * sibling loop/register model and a halfword X view 260/89 (retained).
+ * All three structural hypotheses stopped; no C credit claimed.
  * Func_080153f0 remains the existing unnamed Ui_GetTableWordZero veneer;
  * other calls use registered names. No new aliases or compiler changes.
  * Reproduce with the scoring unit retained at d51144bd1; it owns the full
@@ -50,7 +49,8 @@ union BattlePromptEntry {
 typedef char BattlePromptEntry_size[sizeof(union BattlePromptEntry) == 12 ? 1 : -1];
 
 struct PromptBlendRegister {
-    volatile u16 value : 16;
+    u16 value;
+    u16 next;
 };
 
 extern volatile u32 Data_03001c94;
@@ -63,34 +63,34 @@ s32 Resource_GetBuffer(s32 index, s32 source);
 s32 Resource_ResetEntry(u32 index);
 void Runtime_PushSlotEntry(s32 *entry, s32 priority);
 
-void Unnamed_080bb7c0(s32 x, s32 y)
+/* FAKEMATCH: the unused result retains the reference's value-return epilogue. */
+s32 Unnamed_080bb7c0(s32 x, s32 y)
 {
-    struct {
-        s32 x;
-        s32 y;
-        union BattlePromptEntry prompt;
-    } work;
+    s32 pos[2];
+    union BattlePromptEntry entry;
+    union BattlePromptEntry *prompt;
     s32 sprite;
     s32 tiles = Func_080153f0(0);
 
-    work.x = x;
-    work.y = y;
+    pos[0] = x;
+    pos[1] = y;
     while (!UiWork_IsCompleteFar())
         WaitFrames(1);
+    prompt = &entry;
     sprite = Resource_LoadIntoFreeSlot(0x80);
-    for (;;) {
-        QueueIoWriteDelay10(0x0400004a, 4);
-        QueueIoWriteDelay6(0x0400004a, 16);
-        ((struct PromptBlendRegister *)0x04000052)->value = 16;
-        work.prompt.words[1] = 0x40000000;
-        work.prompt.words[2] = 0;
-        work.prompt.sprite.tile = Resource_GetBuffer(sprite, tiles);
-        work.prompt.sprite.x = ((Data_03001e40 & 4) >> 1) + (u16)work.x + 0xfffc;
-        work.prompt.sprite.y = work.y - ((Data_03001e40 & 4) >> 2) + 248;
-        Runtime_PushSlotEntry(work.prompt.words, 240);
-        if (Data_03001c94 & 0x303)
-            break;
+loop:
+    QueueIoWriteDelay10(0x0400004a, 4);
+    QueueIoWriteDelay6(0x0400004a, 16);
+    ((struct PromptBlendRegister *)0x04000052)->value = 16;
+    prompt->words[1] = 0x40000000;
+    prompt->words[2] = 0;
+    prompt->sprite.tile = Resource_GetBuffer(sprite, tiles);
+    prompt->sprite.x = ((Data_03001e40 & 4) >> 1) + *(u16 *)pos + 0xfffc;
+    prompt->sprite.y = pos[1] - ((Data_03001e40 & 4) >> 2) + 248;
+    Runtime_PushSlotEntry(prompt->words, 240);
+    if (!(Data_03001c94 & 0x303)) {
         WaitFrames(1);
+        goto loop;
     }
     Resource_ResetEntry(sprite);
     WaitFrames(1);

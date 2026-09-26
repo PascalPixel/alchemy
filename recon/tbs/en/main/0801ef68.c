@@ -1,77 +1,57 @@
+/* Not-yet-C: complete 288-byte owner, separated from the former 1644-byte
+ * bundle. RenderInput fixes the old draft's swapped x/y fields; first column
+ * starts at index 1 unless flags select bias 5, and the bottom cap is 0xf019.
+ * Corrected model: 280/288 bytes, 133 halfwords / 77 aligned edits.
+ * Address grouping reproduces the row/column sums. A one-pass bottom-cap
+ * store still merges the tail (75 edits) and was not retained. Remaining:
+ * reference spills bias to a 4-byte frame, retains the window in r6 and
+ * chooses top+1 for the bottom constant; this candidate keeps bias in fp.
+ * Stop after the model and two structural trials; inspect allocator/CSE. */
 #include "TYPES.H"
+#include "RENDER_INPUT.H"
 
 extern u8 *Data_03001e8c;
 extern const s8 Data_080371c4[];
 
-struct BarWindow {
-    u8 pad[8];
-    u16 count;
-    u16 segments;
-    u16 y;
-    u16 x;
-};
-
-void Func_0801ef68(struct BarWindow *window, u32 flags)
+void UiWindow_DrawColumnBorders(struct RenderInput *window, u32 flags)
 {
     u8 *base = Data_03001e8c;
-    s32 max = window->count - 1;
-    s32 segments = window->segments;
-    s32 startIndex = 0;
-    s32 mode = 0;
-    const s8 *string;
+    u32 max = window->width - 1;
+    u32 rows = window->height;
+    s32 bias = 0;
+    s32 first = 1;
     s32 i;
 
     if ((flags & 1) == 0)
-        flags &= ~3;
+        flags &= ~2;
     if (flags & 2) {
-        mode = 5;
-        startIndex = 0;
+        bias = 5;
+        first = 0;
     }
-
-    string = Data_080371c4;
-    i = startIndex;
-
-    for (;;) {
-        s32 offset;
-        s8 ch = string[i];
-
-        if (ch < 0)
-            break;
-
-        offset = ch + mode;
-        if (offset < max && segments != 0) {
-            s32 j;
-
-            for (j = 0; j < segments; j++) {
-                u16 *dst = (u16 *)(base + (window->y + j) * 64 + window->x * 2 + offset * 2);
-                u16 value;
-
-                if (j == 0)
-                    value = 0xF018;
-                else if (j == segments - 1)
-                    value = 0xF00F;
+    for (i = first; Data_080371c4[i] >= 0; i++) {
+        u32 col = Data_080371c4[i] + bias;
+        if (col < max) {
+            u32 row;
+            for (row = 0; row != rows; row++) {
+                u16 *dest = (u16 *)((((window->y + row) << 5) +
+                    (window->x + col)) * 2 + (u32)base);
+                if (row == 0)
+                    *dest = 0xf018;
+                else if (row == rows - 1)
+                    *dest = 0xf019;
                 else
-                    value = 0xF00F;
-
-                *dst = value;
+                    *dest = 0xf00f;
             }
         }
-        i++;
     }
-
     if (base[0xea5] != 0) {
-        u16 *dst = (u16 *)(base + ((window->y + window->segments) << 6) +
+        u16 *dest = (u16 *)((u32)base + ((window->y + window->height) << 6) +
             (window->x << 1) - 64);
-        s32 n;
-
-        *dst = 0xF080;
-        dst++;
-        for (n = 1; n < max; n++) {
-            *dst = 0xF081;
-            dst++;
-        }
-        *dst = 0xF082;
+        u32 col;
+        *dest++ = 0xf080;
+        for (col = 1; col < max; col++)
+            *dest++ = 0xf081;
+        *dest = 0xf082;
     }
-
     base[0xea3] = 1;
 }

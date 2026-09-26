@@ -14,5 +14,6 @@ struct MenuResult {
 };
 
 s32 Menu_BuildPageResult(struct MenuResult *, s32);
+s32 Menu_HandlePageInput(s32 horizontal, s32 count, s32 per_page, s32 *cursor, s32 *page);
 
 #endif

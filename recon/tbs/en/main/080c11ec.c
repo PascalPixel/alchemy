@@ -1,15 +1,22 @@
-/* NONMATCHING: 588 bytes, candidate 588, 2 differing halfwords.
+/* NONMATCHING: whole owner [080c11ec, 080c1438), 588 bytes including pools.
+ * 2026-09-26 audit: 080c1470 allocates 0x13d0 bytes, initializes sixteen
+ * 28-byte motion records and three 20-byte rings, then schedules this
+ * callback. Exact Display_UploadBlock consumes ready at +0x13c0.
+ * H1: own position and velocity as one six-word motion array, and sequence
+ * the cursor update after its load/store; no cross-member array traversal.
+ * H1 result: candidate 588/588, two differing halfwords, identical to the
+ * baseline. The corrected array ownership preserves the complete body;
+ * it does not change the loop-preheader scheduling residual.
  * A count-up source loop is reversed by the compiler and matches the ROMs countdown and register choices.
- * WALL: One scheduling swap remains: moving the multiply routine into r9 precedes adding the spark base in the ROM.
+ * Residual: moving the multiply routine into r9 precedes adding the spark
+ * base in the ROM. The loop pass hoists the numeric routine after the base
+ * initialization; sched2 emits that same order at clocks 33 and 34.
  */
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 
 struct Spark {
-    s32 pos[3];
-    s32 vel_x;
-    s32 vel_y;
-    s32 unused;
+    s32 pos[6];
     s32 life;
 };
 
@@ -102,7 +109,8 @@ s32 Func_080c11ec(void)
                     value = *pos;
                     step = Iwram_MulQ16(Iwram_MulQ16(-value >> 8, scale), 0x13000);
                     pos[3] = pos[3] - (pos[3] >> 7) + step;
-                    *pos++ = value + pos[3];
+                    *pos = value + pos[3];
+                    pos++;
                 }
             }
             life = spark->life;
@@ -120,9 +128,9 @@ s32 Func_080c11ec(void)
             if (spark->pos[1] & 1)
                 spark->pos[1] = -spark->pos[1];
             spark->pos[2] = (Random16() + 0x8000) >> 2;
-            spark->vel_x = (-spark->pos[0] >> 7) + (spark->pos[1] >> 8);
-            spark->vel_y = (-spark->pos[1] >> 7) + (-spark->pos[0] >> 8);
-            spark->unused = 0;
+            spark->pos[3] = (-spark->pos[0] >> 7) + (spark->pos[1] >> 8);
+            spark->pos[4] = (-spark->pos[1] >> 7) + (-spark->pos[0] >> 8);
+            spark->pos[5] = 0;
             life = spark->life = (radius >> 13) + 1;
         }
         if (life != 0) {

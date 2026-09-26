@@ -1,5 +1,5 @@
-/* NONMATCHING: 1172 bytes, candidate 1176, 537 differing halfwords, 116
- * wrong instructions, 192 halfword edits. FieldScene_RunComplexActorSequence
+/* NONMATCHING: 1172 bytes, candidate 1172, 385 differing halfwords, 74
+ * wrong instructions, 160 halfword edits. FieldScene_RunComplexActorSequence
  * targets FIELD/COMMON/HAIDIA_BABI/F_00578.C as a single-overlay unit binding its
  * names at their runtime addresses (an import veneer's listing offset plus
  * 0x8000). Pointer-taking child-flag and palette calls now consume the actor
@@ -9,7 +9,8 @@
  * pool. A retained nested control pointer gives the reference's +76 anchor,
  * -76 map-work adjustment and +12 auxiliary read. Existing typed inline
  * speed/render/action/dialogue services reproduce their argument reloads.
- * Two plain dialogue calls still share speaker constants. Initial scheduling,
+ * Typed inline open/show dialogue services restore speaker literal reloads.
+ * Initial scheduling,
  * sprite/actor registers and byte-pointer copies differ; topology is equal.
  * Typed unknown_5a flag accesses emit the same bytes as offset casts.
  * WALL: structural-topology: shared workspace lifetimes and actor setup */
@@ -61,8 +62,6 @@ void Main_0808a130();
 void Main_0808a138();
 void Main_0808a158();
 void Main_0808a170();
-void Main_0808a178();
-void Main_0808a180();
 void Main_0808a1d8();
 void Main_0808a1e0();
 void Main_0808a200();
@@ -161,7 +160,7 @@ void FieldScene_RunComplexActorSequence(void)
     Actor_Jump(0, 16384, 40);
     Main_0808a110(8, 4);
     Main_0808a010(20);
-    Main_0808a180(36872, 0);
+    Event_ShowMessage(36872, 0);
     Local_020017e4();
     Main_0808a130(8, 2);
     Event_ShowMessageAndWait(36872, 0, 20);
@@ -201,7 +200,7 @@ void FieldScene_RunComplexActorSequence(void)
     Main_0808a100(8, 1);
     Main_0808a100(0, 1);
     Actor_Jump(8, 16384, 10);
-    Main_0808a178(32776, 0);
+    Event_OpenMessage(32776, 0);
     if (Main_0808a070(0, 0) == 0) {
         control->event_work->message++;
     }

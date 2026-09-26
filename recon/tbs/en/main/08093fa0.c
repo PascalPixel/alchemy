@@ -14,6 +14,14 @@
  * Signed division now exactly recovers the full bias/index sequence; the
  * complete diff isolates the remaining pool-before-failure layout, initial
  * global-load order, and the two tile-plane operand registers. Not adopted.
+ * H2: the activation flag feeds an OR and a byte store across two calls.
+ * Model that local as u16 rather than a full-width link-symbol address;
+ * predict its short constant reach restores the pool before failure cleanup.
+ * H2 result: 428/436 bytes, 163 differing halfwords, 68 aligned edits.
+ * The narrow literal still becomes movs #1, not the required pool load;
+ * cleanup/pool placement and the unrelated load-order differences remain.
+ * Rejected. H1 (432 bytes/66 edits) is preserved in b10033ad5. Stop here;
+ * neither model is adopted and no bytes are credited. No spelling sweep.
  */
 #include "OBJECT_RUNTIME.H"
 #include "BATTLE_EFFECT_RUNTIME.H"
@@ -27,7 +35,6 @@ struct GridTileCell_08093fa0 {
 extern struct GridTileCell_08093fa0 Data_0200fe00[];
 extern struct GridTileCell_08093fa0 Data_02010000[];
 extern struct BattleWork Data_02000240;
-extern u8 Value_00000001;
 
 struct ObjectRuntime *Object_GetById(u32 object_id);
 void Battle_Reset(void);
@@ -106,7 +113,8 @@ s32 Func_08093fa0(void)
         ObjectMotion_CommitCurrentPositionAndActivate(work->object_id);
         object->flags = 3;
         {
-            s32 active = (s32)&Value_00000001;
+            /* FAKEMATCH: retain the narrow activation flag across the calls. */
+            u16 active = 1;
 
             variant |= active;
             object->terrain_height = object->y;

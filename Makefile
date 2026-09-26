@@ -94,7 +94,8 @@ compare-all: compare compare-tla
 
 # The pre-commit gate, split as pret splits a quick local build from CI:
 # compare each game the staged change can reach, with the quick repository
-# checks. `make verify` stays the landing gate on main and before a push.
+# checks, then require current README figures against the new build receipts.
+# `make verify` stays the landing gate on main and before a push.
 precommit: index-sync-check native-format-check language-check lint-staged tooling-index-check
 	$(CHECK) publication --staged
 	@set -e; goals=$$(git diff --cached --name-only | awk ' \
@@ -104,6 +105,7 @@ precommit: index-sync-check native-format-check language-check lint-staged tooli
 		END { if (tbs) print "compare"; if (tla) print "compare-tla" }'); \
 	if [ -n "$$goals" ]; then $(MAKE) --no-print-directory $$goals; \
 	else printf 'no game input staged; nothing to compare\n'; fi
+	$(CHECK) coverage --check
 
 build-claimed:
 	$(BUILD) claimed --target $(TARGET)

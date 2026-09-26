@@ -1,6 +1,9 @@
 {
   "format": 3,
   "owners": {
+    "resource_3ba:020013e4": {
+      "name": "Korosseo_RunPromptMotionSequence"
+    },
     "resource_3ca:02000194": {
       "name": "BabiFune_UpdateWaves"
     },

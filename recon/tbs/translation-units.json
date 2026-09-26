@@ -2,6 +2,110 @@
   "format": 5,
   "units": [
     {
+      "id": "korosseo-prompt-motion-candidate",
+      "game": "tbs",
+      "source": "recon/tbs/en/overlays/resource_3ba_c_020013e4.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3ba",
+      "absolute_symbols": {
+        "Data_02000240": {
+          "address": "0x02000240",
+          "kind": "data"
+        },
+        "Data_02000240_t": {
+          "address": "0x02000240",
+          "kind": "data"
+        },
+        "Local_02001b5c": {
+          "address": "0x02009b5c",
+          "kind": "thumb"
+        },
+        "Engine_EventBegin": {
+          "address": "0x0200bca0",
+          "kind": "thumb"
+        },
+        "SceneDialogue_RunFlagGatedPromptInteraction": {
+          "address": "0x02009d64",
+          "kind": "thumb"
+        },
+        "Engine_EventSetMessage": {
+          "address": "0x0200bd30",
+          "kind": "thumb"
+        },
+        "Engine_CameraSetSpeed": {
+          "address": "0x0200bd70",
+          "kind": "thumb"
+        },
+        "Engine_CameraMoveTo": {
+          "address": "0x0200bd78",
+          "kind": "thumb"
+        },
+        "Engine_CameraWaitForMove": {
+          "address": "0x0200bd80",
+          "kind": "thumb"
+        },
+        "Engine_EventWait": {
+          "address": "0x0200bc98",
+          "kind": "thumb"
+        },
+        "Engine_EventShowMessage": {
+          "address": "0x0200bd40",
+          "kind": "thumb"
+        },
+        "SceneState_StoreParamsAndInitTable": {
+          "address": "0x0200ad28",
+          "kind": "thumb"
+        },
+        "SceneState_InitTableWordsAndLoad3200": {
+          "address": "0x0200ad8c",
+          "kind": "thumb"
+        },
+        "SceneState_ReleaseTableAndResetC6a6": {
+          "address": "0x0200ade8",
+          "kind": "thumb"
+        },
+        "Engine_TaskWait": {
+          "address": "0x0200bb08",
+          "kind": "thumb"
+        },
+        "Engine_ActorGet": {
+          "address": "0x0200bcb8",
+          "kind": "thumb"
+        },
+        "Engine_ObjectSetPosition": {
+          "address": "0x0200bbd8",
+          "kind": "thumb"
+        },
+        "Engine_ObjectCommitPosition": {
+          "address": "0x0200bbe0",
+          "kind": "thumb"
+        },
+        "Engine_CameraFollowActor": {
+          "address": "0x0200bd68",
+          "kind": "thumb"
+        },
+        "SceneState_SendIdBySceneId": {
+          "address": "0x02009e20",
+          "kind": "thumb"
+        },
+        "FieldScene_RunMiddleSequence": {
+          "address": "0x02009e7c",
+          "kind": "thumb"
+        },
+        "Engine_EventEnd": {
+          "address": "0x0200bca8",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x020013e4",
+          "extent": 508,
+          "state": "not-yet-c"
+        }
+      ]
+    },
+    {
       "id": "babi-ship-scanline-waves-candidate",
       "game": "tbs",
       "source": "recon/tbs/en/overlays/resource_3ca_c_02000f80.c",

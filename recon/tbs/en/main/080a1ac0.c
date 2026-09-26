@@ -1,15 +1,36 @@
 #include "TYPES.H"
 
-#define UiMenu_SlideCursor Func_080a1ac0
+/* main:080a1ac0, complete 264-byte body through 080a1bc8.
+ * H1 transfers the exact position-cursor OAM bitfields and chained position
+ * stores, plus named menu/callee interfaces. The two-frame counter starts
+ * before the skip-slide guard in the ROM. Caller 080a63e4 supplies x/y;
+ * Math_Div is signed and WaitFrames returns void. Predict exact bitfield
+ * reads/writes and the original four-byte frame including literal pools.
+ * Gate: whole-owner exact bytes plus compare/test/coverage/verify.
+ * H1: 262/264 bytes, 85 aligned edits. OAM accesses match in shape, but the
+ * loop rotates WaitFrames to its head, initial pools move into the body,
+ * and y's fixed-point conversion precedes rather than follows the x divide.
+ * Budget: one corrected model and two evidence-backed variants.
+ */
+
+struct CursorAttributes {
+    u16 y : 8;
+    u16 affine_mode : 2;
+    u16 object_mode : 2;
+    u16 mosaic : 1;
+    u16 palette_256 : 1;
+    u16 shape : 2;
+    u16 x : 9;
+    u16 matrix : 5;
+    u16 size : 2;
+};
 
 struct CursorIcon {
     u8 unknown_00[6];
     u16 x;                          /* 0x06 */
     u16 y;                          /* 0x08 */
     u8 unknown_0a[10];
-    u8 attr_y;                      /* 0x14 */
-    u8 unknown_15;
-    u16 attr_x;                     /* 0x16 */
+    struct CursorAttributes attributes; /* 0x14 */
 };
 
 struct CursorWindow {
@@ -26,14 +47,14 @@ struct CursorWork {
     u16 skip_slide;                 /* 0x222 */
 };
 
-extern struct CursorWork *Data_03001f2c;
+extern struct CursorWork *gMenuWork;
 
-s32 Func_080022ec(s32 numerator, s32 denominator);
-void Func_080030f8(s32 frames);
+s32 Math_Div(s32 numerator, s32 denominator);
+void WaitFrames(s32 frames);
 
 void UiMenu_SlideCursor(s32 x, s32 y)
 {
-    struct CursorWork *work = Data_03001f2c;
+    struct CursorWork *work = gMenuWork;
     struct CursorIcon *cursor;
     struct CursorWindow *window;
     s32 cnt;
@@ -42,13 +63,14 @@ void UiMenu_SlideCursor(s32 x, s32 y)
     s32 dx;
     s32 dy;
 
+    cnt = 2;
     if (work->skip_slide != 0) {
         work->skip_slide = 0;
         return;
     }
     cursor = work->cursor;
-    cursor->x = (cursor->attr_x & 0x1ff) + 64;
-    cursor->y = cursor->attr_y + 64;
+    cursor->x = cursor->attributes.x + 64;
+    cursor->y = cursor->attributes.y + 64;
     x += 64;
     y += 64;
     if (cursor->x - 8 > 0) {
@@ -59,21 +81,20 @@ void UiMenu_SlideCursor(s32 x, s32 y)
     }
     px = cursor->x << 4;
     py = cursor->y << 4;
-    dx = Func_080022ec((x << 4) - px + 1, 2);
-    dy = Func_080022ec((y << 4) - py + 1, 2);
-    cnt = 2;
+    dx = Math_Div((x << 4) - px + 1, 2);
+    dy = Math_Div((y << 4) - py + 1, 2);
     for (;;) {
         window = work->window;
         px += dx;
-        cursor->x = (px >> 4) + (window->tile_x << 3) - 56;
-        cursor->attr_x = (cursor->attr_x & ~0x1ff) | (cursor->x & 0x1ff);
+        cursor->attributes.x = cursor->x =
+            (px >> 4) + (window->tile_x << 3) - 56;
         py += dy;
-        cursor->y = (py >> 4) + (window->tile_y << 3) - 56;
-        cursor->attr_y = cursor->y;
+        cursor->attributes.y = cursor->y =
+            (py >> 4) + (window->tile_y << 3) - 56;
         cnt--;
         if (cnt == 0) {
             break;
         }
-        Func_080030f8(1);
+        WaitFrames(1);
     }
 }

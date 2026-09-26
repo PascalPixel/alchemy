@@ -2,6 +2,39 @@
   "format": 5,
   "units": [
     {
+      "id": "retained-overlay-3ca-02000194",
+      "game": "tbs",
+      "source": "recon/tbs/en/overlays/resource_3ca_c_02000194.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3ca",
+      "absolute_symbols": {
+        "Engine_MathSin": { "address": "0x0200933c", "kind": "thumb" },
+        "Engine_RandomNext": { "address": "0x02009334", "kind": "thumb" },
+        "Engine_ActorGet": { "address": "0x020093d4", "kind": "thumb" },
+        "Engine_ObjectCreate": { "address": "0x0200937c", "kind": "thumb" },
+        "Engine_ObjectSetAnimation": { "address": "0x0200936c", "kind": "thumb" },
+        "Engine_ObjectSetBlendMode": { "address": "0x02009394", "kind": "thumb" },
+        "BabiFune_UpdateDriftingObject": { "address": "0x02008100", "kind": "thumb" },
+        "Data_03001e70": { "address": "0x03001e70", "kind": "data" },
+        "gFrameCount": { "address": "0x03001e40", "kind": "data" },
+        "Data_020097e8": { "address": "0x020097e8", "kind": "data" },
+        "Data_020097ec": { "address": "0x020097ec", "kind": "data" },
+        "Data_020097f0": { "address": "0x020097f0", "kind": "data" },
+        "Data_020097f8": { "address": "0x020097f8", "kind": "data" },
+        "Data_020097fc": { "address": "0x020097fc", "kind": "data" },
+        "Data_02009800": { "address": "0x02009800", "kind": "data" },
+        "Data_02009804": { "address": "0x02009804", "kind": "data" },
+        "Data_02009808": { "address": "0x02009808", "kind": "data" },
+        "Data_0200980c": { "address": "0x0200980c", "kind": "data" },
+        "Data_02009810": { "address": "0x02009810", "kind": "data" },
+        "Data_02009814": { "address": "0x02009814", "kind": "data" },
+        "Data_02009818": { "address": "0x02009818", "kind": "data" }
+      },
+      "owners": [
+        { "address": "0x02000194", "extent": 556, "state": "not-yet-c" }
+      ]
+    },
+    {
       "id": "party-health-trigger-candidate",
       "game": "tbs",
       "source": "recon/tbs/en/overlays/resource_3a5_c_02000cd0.c",

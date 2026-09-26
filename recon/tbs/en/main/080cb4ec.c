@@ -1,3 +1,14 @@
+/* Draft, not exact (2026-09-26): baseline 792 of 780 bytes, 153 aligned edits.
+   Complete owner and frame (36 bytes); remaining branch stores hoist 3 and 2
+   into saved registers instead of the reference's shared immediate/store tail;
+   rectangle-slot spill formation, particle draw registers and literal offsets differ.
+   Bounded trials: union word/halfword position views emitted the same 792-byte,
+   153-edit result: GCC already selects ldrsh at particle +2/+6 from the shifts.
+   A pooled Value_00000078 call operand alone gave 796 bytes / 155 edits, placing
+   its word in the first rather than the second pool. A scalar drift bucket plus
+   that symbol gave 772 / 177: constants stayed inside branches, but CSE removed
+   the reference store/reload at +12 and merged the branch tails. Neither spelling
+   is retained. Need a new alias/control-flow fact, not high-half respelling. */
 #include "TYPES.H"
 #include "EFFECT_STEP.H"
 #include "BATTLE_EFX.H"

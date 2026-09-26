@@ -1,12 +1,19 @@
-/* Draft, not exact (2026-09-24): candidate=444 reference=444 differing_halfwords=207. Constants the reference loads from
-   the literal pool are spelled as link-time Value_ symbols, which restores
-   the reference size; wraps marked FAKEMATCH only move scheduling. */
+/* Draft, not exact (2026-09-26): 444 bytes, 122 differing halfwords.
+   Typed positions and the canonical EffectSlot replace unrelated arrays
+   and padded records. Value snapshots keep each interpolation origin over
+   its divide call; the typed model alone gave 448 bytes / 174 halfwords.
+   Remaining: step in r8 rather than r7, destination in r7 rather than r8,
+   origin-load order, and strength-reduced scale instead of a multiply.
+ */
 #include "TYPES.H"
-extern u8 Value_0000c000;
-extern u8 Value_00004000;
+#include "EFFECT_0809B11C.H"
 extern u8 Value_0000011d;
 
-#define BattleFx_RunFallbackObjectTransition Func_0809abb4
+struct MotionPosition {
+    s32 x;
+    s32 y;
+    s32 z;
+};
 
 struct BattleEffectMotionObject {
     u8 reserved_00[8];
@@ -18,11 +25,6 @@ struct BattleEffectMotionObject {
     s32 scale_y;
 };
 
-struct BattleEffectMotionRecord {
-    struct BattleEffectMotionObject *object;
-    u8 reserved_04[0x44];
-};
-
 struct BattleEffectMotionState {
     s32 reserved_00;
     s32 x;
@@ -30,7 +32,7 @@ struct BattleEffectMotionState {
     s32 z;
     struct BattleEffectMotionObject *target;
     u8 reserved_14[0x44];
-    struct BattleEffectMotionRecord records[16];
+    struct EffectSlot records[16];
 };
 
 extern struct BattleEffectMotionState *Data_03001f30;
@@ -44,25 +46,33 @@ void Func_080f9010(s32);
 void Func_080974d8(s32 *);
 u32 Func_08004458(void);
 void Func_0800447c(s32, u32, s32 *);
-void Func_0809ba90(struct BattleEffectMotionRecord *, s32, s32, s32);
-void Func_0809ba7c(struct BattleEffectMotionRecord *, void *);
+void EffectSlot_Initialize(struct EffectSlot *, s32, s32, s32);
 void Func_08009248(struct BattleEffectMotionObject *, s32);
 void Func_080090d0(struct BattleEffectMotionObject *);
-extern u8 Data_0809aa99;
+void Func_0809aa98(struct EffectSlot *);
+void Func_0809748c(void);
 
-void BattleFx_RunFallbackObjectTransition(void)
+static __inline__ s32 InterpolateCoordinate(s32 from, s32 to, s32 step)
+{
+    s32 delta;
+
+    delta = to - from;
+    return from + Func_080022ec(step * delta, 10);
+}
+
+void BattleEffect_RunFallbackObjectTransition(void)
 {
     struct BattleEffectMotionState *state = Data_03001f30;
     struct BattleEffectMotionObject *target = state->target;
     struct BattleEffectMotionObject *object;
-    struct BattleEffectMotionRecord *record;
-    s32 position[3];
-    s32 origin[3];
-    s32 destination[3];
+    struct EffectSlot *record;
+    struct MotionPosition position;
+    struct MotionPosition origin;
+    struct MotionPosition destination;
     s32 step;
     s32 index;
 
-    do { state->y = target->y; } while (0); /* FAKEMATCH */
+    state->y = target->y;
     object = Func_08096c80(0xfa, 0, 0, 0);
     step = 0;
     Func_08009080(object, 0);
@@ -70,27 +80,27 @@ void BattleFx_RunFallbackObjectTransition(void)
         return;
 
     Func_08097384();
-    do { origin[0] = target->x; } while (0); /* FAKEMATCH */
-    origin[1] = target->y + 0x100000;
-    origin[2] = target->z;
-    destination[0] = state->x;
-    destination[1] = state->y + 0x80000;
-    destination[2] = state->z;
-    do {
+    origin.x = target->x;
+    origin.y = target->y + 0x100000;
+    origin.z = target->z;
+    destination.x = state->x;
+    destination.y = state->y + 0x80000;
+    destination.z = state->z;
+Interpolate:
+    {
         s32 scale;
 
-        object->x = origin[0] +
-            Func_080022ec(step * (destination[0] - origin[0]), 10);
-        object->y = origin[1] +
-            Func_080022ec(step * (destination[1] - origin[1]), 10);
-        object->z = origin[2] +
-            Func_080022ec(step * (destination[2] - origin[2]), 10);
-        scale = Func_080022ec(step * (s32)&Value_0000c000, 10) + (s32)&Value_00004000;
+        object->x = InterpolateCoordinate(origin.x, destination.x, step);
+        object->y = InterpolateCoordinate(origin.y, destination.y, step);
+        object->z = InterpolateCoordinate(origin.z, destination.z, step);
+        scale = Func_080022ec(step * 0xc000, 10) + 0x4000;
         object->scale_x = scale;
         object->scale_y = scale;
         step++;
         Func_080030f8(1);
-    } while (step < 11);
+    }
+    if (step < 11)
+        goto Interpolate;
 
     Func_080030f8(5);
     Func_08009080(object, 1);
@@ -105,21 +115,21 @@ void BattleFx_RunFallbackObjectTransition(void)
     record = &state->records[0];
     index = 15;
     do {
-        position[0] = object->x;
-        position[1] = object->y + 0x80000;
-        position[2] = object->z;
-        Func_080974d8(position);
-        Func_0800447c(0x40000, Func_08004458(), position);
-        Func_0809ba90(record, 0x11d, position[0], position[2]);
-        Func_0809ba7c(record, &Data_0809aa99);
+        position.x = object->x;
+        position.y = object->y + 0x80000;
+        position.z = object->z;
+        Func_080974d8(&position.x);
+        Func_0800447c(0x40000, Func_08004458(), &position.x);
+        EffectSlot_Initialize(record, (s32)&Value_0000011d, position.x, position.z);
+        EffectSlot_SetCallback(record, Func_0809aa98);
         Func_08009248(record->object, 7);
         record++;
         index--;
     } while (index >= 0);
 
-    position[0] = object->x;
-    position[1] = object->y + 0x80000;
-    position[2] = object->z;
+    position.x = object->x;
+    position.y = object->y + 0x80000;
+    position.z = object->z;
     Func_080030f8(8);
     Func_080090d0(object);
     Func_080030f8(4);

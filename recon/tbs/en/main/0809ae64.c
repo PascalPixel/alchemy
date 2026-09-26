@@ -1,13 +1,46 @@
-/* Draft, not exact (2026-09-24): candidate=588 reference=588 differing_halfwords=282. Constants the reference loads from
-   the literal pool are spelled as link-time Value_ symbols, which restores
-   the reference size; wraps marked FAKEMATCH only move scheduling. */
+/* Draft, not exact (2026-09-26): 588 bytes, 273 differing halfwords.
+   One typed frame establishes the observed 40-byte layout: secondary
+   object at +0, target at +4, origin at +16, scene target at +28.
+   Remaining: direct sp-relative position stores instead of cursor stores,
+   pointer/counter allocation, scale-loop strength reduction, and pools.
+   The original raw-offset draft was 588 bytes / 282 halfwords.
+ */
 #include "TYPES.H"
-extern u8 Value_00004000;
-extern u8 Value_0000c000;
+extern u8 Value_00000000;
+extern u8 Value_ffff4000;
 
 struct EffectVector { s32 x, y, z; };
 
-extern u8 *Data_03001f30;
+struct MotionObject {
+    u8 unknown_00[6];
+    u16 angle;
+    struct EffectVector pos;
+    u8 unknown_14[4];
+    s32 scale_x;
+    s32 scale_y;
+    u8 unknown_20[16];
+    s32 speed;
+    u8 unknown_34[0x21];
+    u8 mode;
+};
+
+struct MotionScene {
+    s32 angle;
+    struct EffectVector pos;
+    struct MotionObject *main_object;
+    struct MotionObject *secondary_object;
+    u8 unknown_18[8];
+    s8 offset_target;
+};
+
+struct MotionFrame {
+    struct MotionObject *secondary_object;
+    struct EffectVector target;
+    struct EffectVector origin;
+    struct EffectVector scene_target;
+};
+
+extern struct MotionScene *Data_03001f30;
 
 s32 Func_080022ec(s32, s32);
 void Func_080030f8(s32);
@@ -21,54 +54,50 @@ void Func_08097384(void);
 void Func_0809748c(void);
 void Func_080f9010(s32);
 
-#define RunBattleEffect13 Func_0809ae64
-
 void RunBattleEffect13(void)
 {
-    u8 *scene = Data_03001f30;
-    u8 *main_object = *(u8 **)(scene + 16);
-    void *secondary_object = *(void **)(scene + 20);
-    struct EffectVector origin;
-    struct EffectVector target;
-    struct EffectVector scene_target;
+    struct MotionScene *scene = Data_03001f30;
+    struct MotionObject *main_object = scene->main_object;
+    struct MotionFrame frame;
     struct EffectVector *origin_cursor;
     struct EffectVector *target_cursor;
-    u8 *object;
+    struct MotionObject *object;
     s32 step;
-    s32 zero;
+    u16 zero;
 
-    origin.x = *(s32 *)(main_object + 8);
-    origin.y = *(s32 *)(main_object + 12) + 0x100000;
-    origin.z = *(s32 *)(main_object + 16);
-    origin_cursor = &origin;
+    frame.secondary_object = scene->secondary_object;
+    frame.origin.x = main_object->pos.x;
+    frame.origin.y = main_object->pos.y + 0x100000;
+    frame.origin.z = main_object->pos.z;
+    origin_cursor = &frame.origin;
 
-    if (*(s8 *)(scene + 32) != 0) {
-        target.x = *(s32 *)(main_object + 8);
-        target.y = *(s32 *)(main_object + 12) + 0x200000;
-        target.z = *(s32 *)(main_object + 16);
-        Func_0800447c(0x200000, *(s32 *)scene, &target);
+    if (scene->offset_target != 0) {
+        frame.target.x = main_object->pos.x;
+        frame.target.y = main_object->pos.y + 0x200000;
+        frame.target.z = main_object->pos.z;
+        Func_0800447c(0x200000, scene->angle, &frame.target);
     } else {
-        target.x = *(s32 *)(scene + 4);
-        target.y = *(s32 *)(scene + 8) + 0x200000;
-        target.z = *(s32 *)(scene + 12);
+        frame.target.x = scene->pos.x;
+        frame.target.y = scene->pos.y + 0x200000;
+        frame.target.z = scene->pos.z;
     }
-    target_cursor = &target;
+    target_cursor = &frame.target;
 
-    scene_target.x = *(s32 *)(scene + 4);
-    scene_target.y = *(s32 *)(scene + 8) + 0x200000;
-    scene_target.z = *(s32 *)(scene + 12);
+    frame.scene_target.x = scene->pos.x;
+    frame.scene_target.y = scene->pos.y + 0x200000;
+    frame.scene_target.z = scene->pos.z;
 
     object = Func_08096c80(
-        0xd7, scene_target.x, scene_target.y, scene_target.z);
+        0xd7, frame.scene_target.x, frame.scene_target.y, frame.scene_target.z);
     if (object == 0)
         return;
 
     Func_08097384();
     Func_080f9010(0x8a);
-    *(u16 *)(object + 6) = *(u16 *)(main_object + 6);
-    *(s32 *)(object + 48) = 0x14ccc;
-    zero = 0;
-    *(u8 *)(object + 85) = zero;
+    object->angle = main_object->angle;
+    object->speed = 0x14ccc;
+    zero = (u16)(s32)&Value_00000000;
+    object->mode = zero;
     Func_08009080(object, 5);
     Func_08009240(object, 1);
 
@@ -77,16 +106,16 @@ void RunBattleEffect13(void)
         s32 value;
         value = origin_cursor->x;
         value += Func_080022ec(step * (target_cursor->x - value), 10);
-        *(s32 *)(object + 8) = value;
+        object->pos.x = value;
         value = origin_cursor->y;
         value += Func_080022ec(step * (target_cursor->y - value), 10);
-        *(s32 *)(object + 12) = value;
+        object->pos.y = value;
         value = origin_cursor->z;
         value += Func_080022ec(step * (target_cursor->z - value), 10);
-        *(s32 *)(object + 16) = value;
-        value = 0x4000 + Func_080022ec(step * (s32)&Value_0000c000, 10);
-        *(s32 *)(object + 24) = value;
-        *(s32 *)(object + 28) = value;
+        object->pos.z = value;
+        value = 0x4000 + Func_080022ec(step * 0xc000, 10);
+        object->scale_x = value;
+        object->scale_y = value;
         step++;
         Func_080030f8(1);
     } while (step < 11);
@@ -96,20 +125,20 @@ void RunBattleEffect13(void)
     Func_080030f8(15);
     step = 9;
     do {
-        *(s32 *)(object + 12) -= 0x20000;
+        object->pos.y -= 0x20000;
         step--;
         Func_080030f8(1);
     } while (step >= 0);
 
     Func_08009080(object, 5);
     Func_080f9010(0x84);
-    if (secondary_object != 0)
-        Func_080090f0(secondary_object, -0x90000, *(s32 *)((u8 *)secondary_object + 12));
+    if (frame.secondary_object != 0)
+        Func_080090f0(frame.secondary_object, -0x90000, frame.secondary_object->pos.y);
     Func_080030f8(20);
 
     step = 12;
     do {
-        *(s32 *)(object + 12) += 0x18000;
+        object->pos.y += 0x18000;
         step--;
         Func_080030f8(1);
     } while (step >= 0);
@@ -121,16 +150,16 @@ void RunBattleEffect13(void)
         s32 value;
         value = target_cursor->x;
         value += Func_080022ec(step * (origin_cursor->x - value), 10);
-        *(s32 *)(object + 8) = value;
+        object->pos.x = value;
         value = target_cursor->y;
         value += Func_080022ec(step * (origin_cursor->y - value), 10);
-        *(s32 *)(object + 12) = value;
+        object->pos.y = value;
         value = target_cursor->z;
         value += Func_080022ec(step * (origin_cursor->z - value), 10);
-        *(s32 *)(object + 16) = value;
-        value = 0x10000 + Func_080022ec(step * -(s32)&Value_0000c000, 10);
-        *(s32 *)(object + 24) = value;
-        *(s32 *)(object + 28) = value;
+        object->pos.z = value;
+        value = 0x10000 + Func_080022ec(step * (s32)&Value_ffff4000, 10);
+        object->scale_x = value;
+        object->scale_y = value;
         step++;
         Func_080030f8(1);
     } while (step < 11);

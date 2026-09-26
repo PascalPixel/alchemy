@@ -29399,6 +29399,10 @@
       "source": "recon/tbs/en/overlays/resource_377_c_02000578.c",
       "overlay": "resource_377",
       "absolute_symbols": {
+        "gScenePointers": {
+          "address": "0x03001e70",
+          "kind": "data"
+        },
         "Local_020017e4": {
           "address": "0x020097e4",
           "kind": "thumb"
@@ -29423,7 +29427,7 @@
           "address": "0x020098a4",
           "kind": "thumb"
         },
-        "Main_080091f0": {
+        "Engine_MapRenderSetValues": {
           "address": "0x020098ac",
           "kind": "thumb"
         },
@@ -29463,7 +29467,7 @@
           "address": "0x0200992c",
           "kind": "thumb"
         },
-        "Main_0808a090": {
+        "Engine_ActorSetSpeed": {
           "address": "0x02009934",
           "kind": "thumb"
         },
@@ -29475,11 +29479,11 @@
           "address": "0x02009944",
           "kind": "thumb"
         },
-        "Main_0808a0c0": {
+        "Engine_ActorMoveToAndWait": {
           "address": "0x0200995c",
           "kind": "thumb"
         },
-        "Main_0808a0d0": {
+        "Engine_ActorWalkToAndWait": {
           "address": "0x0200996c",
           "kind": "thumb"
         },
@@ -29515,19 +29519,19 @@
           "address": "0x020099c4",
           "kind": "thumb"
         },
-        "Main_0808a178": {
+        "Engine_EventOpenMessage": {
           "address": "0x020099cc",
           "kind": "thumb"
         },
-        "Main_0808a180": {
+        "Engine_EventShowMessage": {
           "address": "0x020099d4",
           "kind": "thumb"
         },
-        "Main_0808a188": {
+        "Engine_EventShowMessageAndWait": {
           "address": "0x020099dc",
           "kind": "thumb"
         },
-        "Main_0808a1b8": {
+        "Engine_ActorJump": {
           "address": "0x020099ec",
           "kind": "thumb"
         },

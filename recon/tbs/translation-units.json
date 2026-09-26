@@ -23,12 +23,12 @@
         "Data_020097f8": { "address": "0x020097f8", "kind": "data" },
         "Data_020097fc": { "address": "0x020097fc", "kind": "data" },
         "Data_02009800": { "address": "0x02009800", "kind": "data" },
+        "Data_02009804": { "address": "0x02009804", "kind": "data" },
+        "Data_02009808": { "address": "0x02009808", "kind": "data" },
+        "Data_0200980c": { "address": "0x0200980c", "kind": "data" },
         "Data_02009810": { "address": "0x02009810", "kind": "data" },
-        "Data_02009820": { "address": "0x02009820", "kind": "data" },
-        "Data_02009830": { "address": "0x02009830", "kind": "data" },
-        "Data_02009840": { "address": "0x02009840", "kind": "data" },
-        "Data_02009850": { "address": "0x02009850", "kind": "data" },
-        "Data_02009860": { "address": "0x02009860", "kind": "data" }
+        "Data_02009814": { "address": "0x02009814", "kind": "data" },
+        "Data_02009818": { "address": "0x02009818", "kind": "data" }
       },
       "owners": [
         { "address": "0x02000194", "extent": 556, "state": "not-yet-c" }

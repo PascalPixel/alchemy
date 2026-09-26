@@ -1,6 +1,9 @@
 {
   "format": 3,
   "owners": {
+    "resource_371:02001ca4": {
+      "name": "WorldMap_RunVenusDjinniMeeting"
+    },
     "resource_378:020027d4": {
       "name": "ShindenHeya_ChooseRestartOption"
     },

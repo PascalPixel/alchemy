@@ -1,4 +1,4 @@
-/* DRAFT: 600 of 620 bytes, 242 differing halfwords. Renders a string in the
+/* DRAFT: 596 of 620 bytes, 165 aligned halfword edits. Renders a string in the
  * 8x8 font (0x080F1770, widths at 0x080F11BD) into a 256-wide 8bpp buffer
  * with a drop shadow, aligned left, right (2) or centred (1) in 192 pixels,
  * packs it to 4bpp and copies 24 tiles to OBJ VRAM from slot; flag 0x200
@@ -7,7 +7,9 @@
  * the reference hoists 96 twice (r7 for the pre-check and pointer rewind,
  * r8 as the reversed counter's start), 192 into lr and 256 into r6 for the
  * pack loop, and counts the tile loop down from sl = 24 with the VRAM offset
- * and source as separate pointers; this C compares i against 24 instead. */
+ * and source as separate pointers. A countdown with separate source and VRAM
+ * cursors reproduces those increments, but the count remains in a low register;
+ * the first character is also shared across the width and drawing scans. */
 #include "TYPES.H"
 
 typedef s32 (*FillFn)(void *dst, s32 size, s32 value);
@@ -52,7 +54,8 @@ s32 Func_080f07f0(u8 *text, s32 slot, s32 align)
     u32 bits;
     u32 mask;
     s32 n;
-    u32 i;
+    s32 offset;
+    u32 *words;
 
     if (text == NULL)
         return -1;
@@ -110,16 +113,19 @@ s32 Func_080f07f0(u8 *text, s32 slot, s32 align)
         dst += 256 - half;
         src += 256 - width;
     }
-    src = buf;
-    for (i = 0; i < tiles; i++) {
-        *(u32 *)(0x06010000 + (slot + i) * 32) = ((u32 *)buf)[i + 0x000];
-        *(u32 *)(0x06010004 + (slot + i) * 32) = ((u32 *)buf)[i + 0x040];
-        *(u32 *)(0x06010008 + (slot + i) * 32) = ((u32 *)buf)[i + 0x080];
-        *(u32 *)(0x0601000c + (slot + i) * 32) = ((u32 *)buf)[i + 0x0c0];
-        *(u32 *)(0x06010010 + (slot + i) * 32) = ((u32 *)buf)[i + 0x100];
-        *(u32 *)(0x06010014 + (slot + i) * 32) = ((u32 *)buf)[i + 0x140];
-        *(u32 *)(0x06010018 + (slot + i) * 32) = ((u32 *)buf)[i + 0x180];
-        *(u32 *)(0x0601001c + (slot + i) * 32) = ((u32 *)buf)[i + 0x1c0];
+    words = (u32 *)buf;
+    offset = slot * 32;
+    for (n = tiles; n != 0; n--) {
+        *(u32 *)(0x06010000 + offset) = words[0x000];
+        *(u32 *)(0x06010004 + offset) = words[0x040];
+        *(u32 *)(0x06010008 + offset) = words[0x080];
+        *(u32 *)(0x0601000c + offset) = words[0x0c0];
+        *(u32 *)(0x06010010 + offset) = words[0x100];
+        *(u32 *)(0x06010014 + offset) = words[0x140];
+        *(u32 *)(0x06010018 + offset) = words[0x180];
+        *(u32 *)(0x0601001c + offset) = words[0x1c0];
+        offset += 32;
+        words++;
     }
     Runtime_BumpFree(buf);
     return 0;

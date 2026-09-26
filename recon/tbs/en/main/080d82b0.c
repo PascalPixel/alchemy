@@ -1,8 +1,26 @@
 #include "TYPES.H"
 #include "BATTLE_EFX.H"
+#include "EFFECT_STEP.H"
 
 /*
  * Draft for the battle-presentation sub-effect at 0x080d82b0.
+ * Whole owner: [080d82b0, 080d85d0), 800 bytes including its pool.
+ * The mode dispatcher calls this as a void effect (table entry 42,
+ * effect 43); the reference allocates two separate three-word position
+ * records at stack +32 and +44 in a 56-byte frame.  The projection
+ * callee writes all three words, so the old two-word screen was invalid.
+ * The palette transfer is an ordinary indirect call to the IWRAM word
+ * copier at 03001388, with a byte count, not a four-argument veneer.
+ *
+ * 2026-09-26 bounded reconstruction, hypothesis 1: recover the two
+ * position records, indirect copy and void effect/cleanup contracts,
+ * and the resource-ID link constants.  Candidate 792/800 bytes,
+ * 352 differing halfwords, 202 aligned instruction edits; frame 60/56.
+ * Baseline was 784 bytes, 349 halfwords and 206 aligned edits.  The
+ * correct records expose an extra hoisted effect-slot pointer spill:
+ * reference work/destination/callback are +28/+24/+20, candidate
+ * +32/+28/+20.  Separate clear, seed and draw counters also disagree
+ * with the reference's shared r8 counter.  No new credited bytes.
  *
  * Assigned from the orbiting_particles/run.c compiler-family cluster
  * (template-main-08099160); like its siblings 080d59b0/080dc1ec/080e01e4
@@ -18,19 +36,17 @@ typedef void (*WordCopyFn)(void *dest, void *src, s32 size);
 
 void Func_080cd594(s32 mode);
 void *Func_08002f40(s32 id);
-void Func_080072f0(void *dest, void *src, s32 size, WordCopyFn copier);
 void Func_080049ac(void);
 void Func_080051d8(s32 a, s32 b);
 void **Func_080b5098(s32 member_id);
 s32 Func_080b5070(s32 member_id);
-void Func_080e3944(void *src, void *dest);
 u32 Func_08004458(void);
 s32 Func_08002322(s32 angle);
 s32 Func_0800231c(s32 angle);
 s32 Func_080041d8(void *callback, s32 interval);
-void Func_08004278(void *callback);
+s32 Func_08004278(void *callback);
 void Func_08002dd8(s32 id);
-s32 Func_080cdbc0(void);
+void Func_080cdbc0(void);
 void Func_080b50e8(s32 id);
 void Func_080f9010(s32 id);
 void Func_080d6888(s32 member_id, s32 b, s32 c, s32 d, s32 e);
@@ -41,8 +57,10 @@ void Func_080030f8(s32 frames);
 
 extern const u16 Data_080ede48[];
 extern const s32 Data_080ee9f8[];
+extern u8 Value_00000073;
+extern u8 Value_000000b9;
 
-s32 Func_080d82b0(void *object)
+void Func_080d82b0(void *object)
 {
     void **heap_cache;
     void **cursor;
@@ -69,10 +87,9 @@ s32 Func_080d82b0(void *object)
     facing = *(s32 *)((u8 *)heap_cache - 108);
     M2C_FIELD(work, void **, 0x7828) = object;
     Func_080cd594(1);
-    Resource_LoadAndDecompress(0x73, extra_target, 0, 0);
-    Func_080072f0(
-        (void *)(160 << 19), Func_08002f40(0xB9), 128,
-        (WordCopyFn)0x03001388);
+    Resource_LoadAndDecompress((s32)&Value_00000073, extra_target, 0, 0);
+    ((WordCopyFn)0x03001388)(
+        (void *)0x05000000, Func_08002f40((s32)&Value_000000b9), 128);
     BattleEffect_LoadWork(46, 7, 7, 3, 2);
     draw_rectangle_fn = *(DrawRectangleFn *)((u8 *)heap_cache + 28);
 
@@ -91,12 +108,12 @@ s32 Func_080d82b0(void *object)
     member = 0;
     if (M2C_FIELD(target, s32 *, 20) != 0) {
         s32 sp44[3];
-        s32 sp32[2];
+        struct EffectPosition screen;
         s32 *sp44_ptr;
         s32 *sp32_ptr;
 
         sp44_ptr = sp44;
-        sp32_ptr = sp32;
+        sp32_ptr = &screen.x;
         member_id_offset = 36;
         member_offset = 0;
         do {
@@ -115,7 +132,7 @@ s32 Func_080d82b0(void *object)
             sp44_ptr[0] = M2C_FIELD(member_ptr, s32 *, 8);
             sp44_ptr[1] = result0;
             sp44_ptr[2] = M2C_FIELD(member_ptr, s32 *, 16);
-            Func_080e3944(sp44_ptr, sp32_ptr);
+            EffectPosition_ApplyBaseAndYOffset(sp44_ptr, &screen);
             sp32_ptr[0] = sp32_ptr[0] >> 1;
 
             particle_base = member_offset;
@@ -235,5 +252,5 @@ s32 Func_080d82b0(void *object)
 
     Func_08004278((void *)0x080CD261);
     Func_08002dd8(46);
-    return Func_080cdbc0();
+    Func_080cdbc0();
 }

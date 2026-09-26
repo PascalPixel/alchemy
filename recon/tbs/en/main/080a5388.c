@@ -1,7 +1,8 @@
-/* NONMATCHING: candidate 424 / reference 428 bytes, 186 differing halfwords,
- * 47 aligned edits. The ROM's equip-result bhi skips cue 175 to menu setup;
- * this while model moves confirmation after the input test. Initial
- * owner/item loads also differ. Recovery stopped after baseline inspection. */
+/* NONMATCHING: the preview takes the owner again as its fourth argument,
+ * and the first leave-menu flag exits to done, not cancel. Both are fixed.
+ * Remaining: owner/item setup allocation and the confirmation exit's layout.
+ * Explicit confirm/setup labels and a one-pass cue block did not recover
+ * the reference's bhi, long cancel branch, then cue 175 before menu setup. */
 #include "TYPES.H"
 #include "SYSTEM.H"
 
@@ -24,7 +25,7 @@ struct EquipMenu {
 extern u8 Value_00000b2c;
 
 void *Owner_GetStateFar(s32 owner);
-void ItemMenu_DrawEquipPreview(s32 owner, s32 item, s32 mode);
+void ItemMenu_DrawEquipPreview(s32 owner, s32 item, s32 mode, s32 target);
 void *Runtime_BumpAllocate(s32 size);
 void Runtime_BumpFree(void *block);
 s32 Inventory_EquipFar(s32 owner, s32 item);
@@ -47,7 +48,7 @@ s32 Func_080a5388(void)
     void *backup;
     s32 window;
 
-    ItemMenu_DrawEquipPreview(menu->owner, menu->item, 0);
+    ItemMenu_DrawEquipPreview(menu->owner, menu->item, 0, menu->owner);
     backup = Runtime_BumpAllocate(0x14c);
     CopyWords((WordCopyFn)0x03001388, backup, state, 0x14c);
     window = menu->selector_window;
@@ -87,6 +88,7 @@ s32 Func_080a5388(void)
             }
             WaitFrames(1);
         }
+        goto done;
     }
     selection = 1;
 done:

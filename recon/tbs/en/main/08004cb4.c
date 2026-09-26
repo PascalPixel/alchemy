@@ -1,22 +1,32 @@
+/* NONMATCHING: reference 60 bytes, candidate 88; 44 differing halfwords.
+ * Hypothesis 2: explicit row stores avoid the initializer's unresolved memset;
+ * copies emit ldmia/stmia triples plus fourth-word str, with a 64-byte frame.
+ * _call_via_r3 matches the call target; full extent, frame and pool differ.
+ */
 #include "TYPES.H"
 
-#define SceneTransform_ApplyPosition Func_08004cb4
+struct TransformRow {
+    s32 value[4];
+};
+
+struct TransformMatrix {
+    struct TransformRow row[3];
+};
 
 void SceneTransform_ApplyPosition(const s32 *position)
 {
-    s32 transform[12];
+    struct TransformMatrix work;
+    struct TransformRow row;
 
-    transform[0] = 0x10000;
-    transform[1] = 0;
-    transform[2] = 0;
-    transform[3] = 0;
-    transform[4] = 0x10000;
-    transform[5] = 0;
-    transform[6] = 0;
-    transform[7] = 0;
-    transform[8] = 0x10000;
-    transform[9] = position[0];
-    transform[10] = position[1];
-    transform[11] = position[2];
-    Func_080072f0(transform, 0x10000, 0, 0x030002c0);
+    row.value[0] = 0x10000;
+    row.value[1] = 0;
+    row.value[2] = 0;
+    row.value[3] = 0;
+    work.row[0] = row;
+    work.row[1] = row;
+    work.row[2] = row;
+    work.row[2].value[1] = position[0];
+    work.row[2].value[2] = position[1];
+    work.row[2].value[3] = position[2];
+    ((void (*)(struct TransformMatrix *))0x030002c0)(&work);
 }

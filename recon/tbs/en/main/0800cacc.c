@@ -78,6 +78,21 @@
  * table loads recovered; no improvement in the broad allocation mismatch.
  * Frame remains 36 rather than 48, and the clamp/braking tails still merge.
  * The multiply-symbol change does not resolve those independent lifetimes.
+ * H2 transfers the exact Object_UpdateAllMotion sibling's scalar lifetime
+ * pattern: delta locals become braking velocities and position locals
+ * become facing inputs. The raw owner also keeps Z in r9 across the
+ * delta/velocity phases and saves the ground-probe inputs in sl/r9.
+ * Predict distinct three-axis clamp/braking tails and retained high-register
+ * delta ownership, plus facing reloads from the position stack slots.
+ * Change only those lifetimes, not declaration order or dispatch flow;
+ * one score and full difference, then commit before the 23:30 checkpoint.
+ * H2 result: 1624 bytes, 792 differing halfwords / 570 aligned edits.
+ * Full normalized difference read. The three-axis clamp/braking tails
+ * are now separate, and facing reads the position spill slots as predicted.
+ * Frame remains 36, act is rematerialized, and deltas stay in low registers.
+ * The exact sibling expresses its coarse deltas as signed division by
+ * 65536; this draft still manually expands that operation into branches.
+ * That is a separate lowering hypothesis, not a declaration permutation.
  */
 
 #include "TYPES.H"
@@ -131,7 +146,6 @@ void Object_UpdateAllThumb(void)
     s32 dz;
     s32 vx;
     s32 vy;
-    s32 vz;
     s32 dist;
     s32 len;
     s32 ratio;
@@ -213,33 +227,33 @@ void Object_UpdateAllThumb(void)
                         ratio = IwramRatio(dist << 16, obj->acceleration);
                         vx = obj->velocity_x + dx * ratio;
                         vy = obj->velocity_y + dy * ratio;
-                        vz = obj->velocity_z + dz * ratio;
+                        dz = obj->velocity_z + dz * ratio;
                         obj->velocity_y = vy;
                         obj->velocity_x = vx;
-                        obj->velocity_z = vz;
+                        obj->velocity_z = dz;
                         len = FixedSqrt(MulQ16(vx, vx) + MulQ16(vy, vy) +
-                                        MulQ16(vz, vz));
+                                        MulQ16(dz, dz));
                         if (len > obj->speed_limit) {
                             ratio = IwramRatio(len, obj->speed_limit);
                             obj->velocity_x = MulQ16(vx, ratio);
                             obj->velocity_y = MulQ16(vy, ratio);
-                            obj->velocity_z = MulQ16(vz, ratio);
+                            obj->velocity_z = MulQ16(dz, ratio);
                         }
                     }
                 } else {
-                    vx = obj->velocity_x;
-                    vz = obj->velocity_z;
-                    vy = obj->velocity_y;
-                    len = FixedSqrt(MulQ16(vx, vx) + MulQ16(vy, vy) +
-                                    MulQ16(vz, vz));
+                    dx = obj->velocity_x;
+                    dz = obj->velocity_z;
+                    dy = obj->velocity_y;
+                    len = FixedSqrt(MulQ16(dx, dx) + MulQ16(dy, dy) +
+                                    MulQ16(dz, dz));
                     if (len != 0) {
                         rem = len - obj->acceleration;
                         if (rem < 0)
                             rem = 0;
                         ratio = IwramRatio(len, rem);
-                        obj->velocity_x = MulQ16(vx, ratio);
-                        obj->velocity_y = MulQ16(vy, ratio);
-                        obj->velocity_z = MulQ16(vz, ratio);
+                        obj->velocity_x = MulQ16(dx, ratio);
+                        obj->velocity_y = MulQ16(dy, ratio);
+                        obj->velocity_z = MulQ16(dz, ratio);
                     } else {
                         obj->velocity_x = 0;
                         obj->velocity_y = 0;
@@ -273,26 +287,26 @@ void Object_UpdateAllThumb(void)
                         ratio = IwramRatio(dist, obj->acceleration);
                         vx = obj->velocity_x + MulQ16(dx, ratio);
                         obj->velocity_x = vx;
-                        vz = obj->velocity_z + MulQ16(dz, ratio);
-                        obj->velocity_z = vz;
-                        len = FixedSqrt(MulQ16(vx, vx) + MulQ16(vz, vz));
+                        dz = obj->velocity_z + MulQ16(dz, ratio);
+                        obj->velocity_z = dz;
+                        len = FixedSqrt(MulQ16(vx, vx) + MulQ16(dz, dz));
                         if (len > obj->speed_limit) {
                             ratio = IwramRatio(len, obj->speed_limit);
                             obj->velocity_x = MulQ16(vx, ratio);
-                            obj->velocity_z = MulQ16(vz, ratio);
+                            obj->velocity_z = MulQ16(dz, ratio);
                         }
                     }
                 } else {
-                    vx = obj->velocity_x;
-                    vz = obj->velocity_z;
-                    len = FixedSqrt(MulQ16(vx, vx) + MulQ16(vz, vz));
+                    dx = obj->velocity_x;
+                    dz = obj->velocity_z;
+                    len = FixedSqrt(MulQ16(dx, dx) + MulQ16(dz, dz));
                     if (len != 0) {
                         rem = len - obj->acceleration;
                         if (rem < 0)
                             rem = 0;
                         ratio = IwramRatio(len, rem);
-                        obj->velocity_x = MulQ16(vx, ratio);
-                        obj->velocity_z = MulQ16(vz, ratio);
+                        obj->velocity_x = MulQ16(dx, ratio);
+                        obj->velocity_z = MulQ16(dz, ratio);
                     } else {
                         obj->velocity_x = 0;
                         obj->velocity_z = 0;
@@ -302,9 +316,9 @@ void Object_UpdateAllThumb(void)
                 /* Flag 0x01: follow the ground under the next planar step and
                  * bleed off speed proportional to the slope climbed. */
                 if ((ctl[0] & 1) != 0) {
-                    ground = Func_08011f54((s32)obj->terrain_id,
-                                           px + obj->velocity_x,
-                                           pz + obj->velocity_z);
+                    vx = px + obj->velocity_x;
+                    dz = pz + obj->velocity_z;
+                    ground = Func_08011f54((s32)obj->terrain_id, vx, dz);
                     step = ground - obj->terrain_height;
                     if (ground - py > -0x40000)
                         py += step;
@@ -315,19 +329,19 @@ void Object_UpdateAllThumb(void)
                         step = half;
                     step = step * 3;
                     if (step != 0 && (ctl[0] & 0x10) == 0) {
-                        vx = obj->velocity_x;
-                        vy = obj->velocity_y;
-                        vz = obj->velocity_z;
-                        len = FixedSqrt(MulQ16(vx, vx) + MulQ16(vy, vy) +
-                                        MulQ16(vz, vz));
+                        dx = obj->velocity_x;
+                        dy = obj->velocity_y;
+                        dz = obj->velocity_z;
+                        len = FixedSqrt(MulQ16(dx, dx) + MulQ16(dy, dy) +
+                                        MulQ16(dz, dz));
                         if (len != 0) {
                             rem = len - step;
                             if (rem < 0)
                                 rem = 0;
                             ratio = IwramRatio(len, rem);
-                            obj->velocity_x = MulQ16(vx, ratio);
-                            obj->velocity_y = MulQ16(vy, ratio);
-                            obj->velocity_z = MulQ16(vz, ratio);
+                            obj->velocity_x = MulQ16(dx, ratio);
+                            obj->velocity_y = MulQ16(dy, ratio);
+                            obj->velocity_z = MulQ16(dz, ratio);
                         }
                     }
                     obj->terrain_height = ground;
@@ -439,10 +453,10 @@ void Object_UpdateAllThumb(void)
         /* Flag 0x01 at +0x5a: steer the facing angle toward the direction of
          * travel, at most 0x1000 of a 0x10000 turn per frame. */
         if ((ctl[5] & 1) != 0) {
-            vx = obj->velocity_x;
-            vz = obj->velocity_z;
-            if (vx != 0 || vz != 0) {
-                work = (s16)(ArcTan2(vz, vx) - obj->script_value);
+            px = obj->velocity_x;
+            pz = obj->velocity_z;
+            if (px != 0 || pz != 0) {
+                work = (s16)(ArcTan2(pz, px) - obj->script_value);
                 if (work > 0x1000)
                     work = 0x1000;
                 if (work < -0x1000)

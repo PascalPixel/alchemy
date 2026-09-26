@@ -1,10 +1,21 @@
+/* NONMATCHING: shared callee return types audited on 2026-09-26.
+ * 1044 of 1044 bytes, 434 differing halfwords, 175 aligned edits.
+ * Canonical declarations are retained; the remaining source model is not exact. */
 /*
  * NONMATCHING: complete 1,044-byte owner including pools; prior score
  * 1,044 candidate bytes, 434 halfword edits. Count clearing keeps a counter
  * where the ROM compares the element pointer against the array base.
- * The copy call emits _call_via_r3 instead of the ROM's 080072f0 veneer;
- * the diagnostic frame is 28 bytes instead of 32. List, entry and index
+ * The copy call uses _call_via_r3, which is the ROM's 080072f0 veneer;
+ * that earlier apparent mismatch was a naming error, not a residual.
+ * The diagnostic frame is 28 bytes instead of 32. List, entry and index
  * registers also differ. Audit stopped before rewrite; no adoption.
+ * 2026-09-26 bounded trials: signed address comparison while clearing from
+ * counts+3 down to the array base fixes the opening r6/r7 allocation but
+ * gives 1056 bytes/224 aligned edits rather than 1044/175; frame stays 28.
+ * Declaring the IWRAM copier value-returning changes no bytes. A volatile
+ * count pointer with phase-local base reloads gives the 32-byte frame but
+ * wrong slot order, 1076 bytes and 215 edits. These three trials are not
+ * kept. The missing array-base spill is not explained by array padding.
  */
 #include "TYPES.H"
 #include "BATTLE_EVENT.H"
@@ -43,7 +54,7 @@ void Func_08009080(void *object, s32 animation);
 void Func_08009088(void *object, s32 flags);
 void Func_080f9010(s32 cue);
 struct BattleMotionSlot *Func_080b7dd0(s32 unit_id);
-void Func_080bb938(void);
+u32 Func_080bb938(void);
 void Func_080bd808(s32 phase);
 u32 Func_080bdfec(void);
 void Func_080be02c(void);

@@ -1,4 +1,9 @@
-/* Draft, not exact (2026-09-24): 92 differing halfwords at equal size (was 4 bytes short); register choice around the linked-member loop.
+/* Draft, not exact: 664 bytes, 92 differing halfwords, 81 aligned edits.
+   Typed 28-byte particles (x halfword union, y, step, acceleration, phase)
+   and work/effect/member structs leave the same residual. Two blitters in
+   an array give 83 edits; grouping frame/destination/record with them gives
+   692 bytes and a 52-byte frame, not the reference's 40. The remaining
+   stack order is blitters at +12/+16, frame +20, destination +24, record +28.
    FAKEMATCH marks below are empty do-while wraps that only move scheduling
    or register choice; they stay tagged until a real spelling replaces them. */
 #include "TYPES.H"

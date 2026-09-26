@@ -1,4 +1,9 @@
-/* Draft, not exact (2026-09-25): 708 of 708 bytes, 151 differing halfwords.
+/* Draft, not exact (2026-09-26): 708 of 708 bytes, 151 differing halfwords.
+   Best complete model restored. Preserved experiments: plain halfword
+   aggregate carriers with a queue-value snapshot gave 708 / 281;
+   symbolic aggregate carriers with the original queue gave 704 / 154;
+   explicit callback branches retained both initialization tails and
+   moved the display pointer into r8, giving 780 / 360.
    Written from the listing; the sibling DisplayTransition_Finish (same
    state record and switch shape) matched. What lined up: the display
    control write is QueueIoWriteDelay2 written out as a macro so its value

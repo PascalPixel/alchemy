@@ -1,6 +1,12 @@
 /* NONMATCHING: 304 of 304 bytes, 6 halfword edits (2026-09-24). Hand-written from the
  * resolved jump-table disassembly as a single-overlay unit binding Engine_* at
- * their import veneers. Remaining: every instruction matches except the order of the first three literal loads: the reference loads the row offset 0x232 before the event-work and game-state addresses, which also reorders the pool (6 halfwords). The 0x232 load is a reload insn (luid after the base and event loads); the sched2 ready list ties on priority and dependents, so it is scheduled last. It needs to become an ordinary pseudo emitted before the base load. */
+ * their import veneers. Remaining: every instruction matches except the order
+ * of the first three literal loads and their pool entries: the reference
+ * loads row offset 0x232 before event-work and game-state addresses.
+ * 2026-09-26: a link-symbol offset combined into indexed ldrsh and shrank to
+ * 300 bytes; reading the numerator before event work retained 304 bytes but
+ * left 10 aligned edits. The original six-halfword draft is retained with
+ * verified import bindings. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 

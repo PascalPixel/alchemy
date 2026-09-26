@@ -1,3 +1,6 @@
+/* NONMATCHING: shared callee return types audited on 2026-09-26.
+ * 3052 of 3728 bytes, 1777 differing halfwords, 1484 aligned edits.
+ * Canonical declarations are retained; the remaining source model is not exact. */
 #ifndef ALCHEMY_BATTLE_COMMAND_DRAFT
 #define ALCHEMY_BATTLE_COMMAND_DRAFT
 
@@ -17,7 +20,7 @@ extern void Func_08015120(s16 value, s16 mode);  /* UiText_DrawQuantity */
 extern void Func_080151c8(void *text);           /* UiText_ShowMessageAndWait */
 extern s32 Func_080771a0(void);
 extern s32 Func_080771b0(s16 id, s8 a, u8 b);
-extern s32 Func_080771c0(s16 id, s8 a, u8 b);
+extern void Func_080771c0(s16 id, s8 a, u8 b);
 extern s32 Func_080771c8(s16 id, s8 a, u8 b);
 extern s32 Func_080771e0(s16 id);
 extern s32 Func_080771e8(s8 a, u8 b);
@@ -29,7 +32,7 @@ extern void Func_08009088(void *obj, s32 action);/* Object_SetAction */
 extern void Func_080f9010(s32 cue);              /* Audio_PlayCue */
 extern void Func_080bd808(s32 phase);            /* BattleEventRuntime_SchedulePhase */
 extern void Func_080be02c(void);                 /* BattleEventRuntime_WaitForReady */
-extern void Func_080c1798(s16 id, s8 a, s32 mode, s32 arg3);
+extern s32 Func_080c1798(s16 id, s8 a, s32 mode, s32 arg3);
 extern void Func_080c10e8(s32 a, s32 b);
 extern void Func_080030f8(s32 frames);           /* WaitFrames */
 extern struct BattleTurnOrder *Data_03001e74;
@@ -37,7 +40,7 @@ extern s16 Func_08077160(void *actor);   /* was declared (s16 id)->void; ground
                                            * truth (this pass) shows it takes
                                            * actor and its r0 return value is
                                            * used directly as abilityId */
-extern void Func_08077078(void *actor, s32 flag);
+extern s32 Func_08077078(void *actor, s32 flag);
 extern void Func_080bb8d8(void);
 extern s32 Func_080770c0(s32 flagId);            /* GameFlag_IsSet */
 extern s32 Func_08077170(s16 id);

@@ -1,7 +1,7 @@
-/* NONMATCHING: 7 differing halfwords, 7 halfword edits; 198+2 / 200 bytes.
- * At +0x34..+0x38 the entry copy follows the reversed x/y stores; at
- * +0x44..+0x4a the zero store uses work+24 and precedes the attribute store.
- * The static chain, four calls and both literal pools match. */
+/* NONMATCHING: 70 differing halfwords, 13 halfword edits; 202 / 200 bytes.
+ * The compiler retains both zero stores (+0x44 and +0x4a); the entry copy
+ * still follows the x/y stores, and the extra store shifts both pools.
+ * The static chain and four call targets match. */
 #include "DJINN_PREVIEW.H"
 extern void DjinnMenu_DrawStatArrow(s32 x, s32 y, s32 rising)
     __attribute__((alias("Draw_08022a7c.0")));
@@ -21,9 +21,11 @@ static __inline__ void Scope_08022a7c(struct RenderInput *win)
             entry = (struct PreviewSprite *)((u8 *)work + 16);
             work->table.value = 0;
             work->sentinel = 240;
-            work->y = 120;
             work->x = 120;
+            work->y = 120;
             entry->attributes.word = 0x40000400;
+            /* FAKEMATCH: repeat the table initialization through its sprite view. */
+            entry->tile.value = 0;
             entry->attributes.bits.x = win->x * 8 + x;
             entry->attributes.bits.y = win->y * 8 + y;
             entry->tile.bits.index = Resource_GetBuffer(

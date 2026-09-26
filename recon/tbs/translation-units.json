@@ -29538,6 +29538,10 @@
       "source": "recon/tbs/en/overlays/resource_377_c_02000a0c.c",
       "overlay": "resource_377",
       "absolute_symbols": {
+        "Data_04000052": {
+          "address": "0x04000052",
+          "kind": "data"
+        },
         "Main_080000c0": {
           "address": "0x02009814",
           "kind": "thumb"

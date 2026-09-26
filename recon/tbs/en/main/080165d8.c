@@ -1,3 +1,10 @@
+/* Not-yet-C, complete 150-byte entry allocator; trailing 2-byte pad separate.
+ * The reference retains the chosen record in r0 on return. Pointer return
+ * and 40-byte record recover that contract. Unsigned copy counters and a
+ * walking source reproduce both bls loops. Typed window ownership leaves
+ * 148 bytes, 25 aligned halfword edits: owner/value/y saves differ, as do
+ * field-store order and the two mid-function literal pools. Three structural
+ * hypotheses stopped, no adoption or byte credit. */
 #include "TYPES.H"
 
 struct Slot {
@@ -10,7 +17,7 @@ extern void *Data_03001e8c;
 extern u8 Data_00000000[];
 
 struct Entry {
-    s32 owner;
+    void *owner;
     s16 field04;
     s16 field06;
     s16 field08[4];
@@ -26,18 +33,14 @@ struct Entry {
     s16 field22;
     s16 field24;
     s16 field26;
-    s16 field28;
-    s16 field2a;
-    s16 field2c;
-    s16 field2e;
 };
 
-void Func_080165d8(s32 owner, s32 arg1, s32 x, s32 y, u16 *copy_source, s32 arg5)
+struct Entry *Func_080165d8(void *owner, s32 arg1, s32 x, s32 y, u16 *copy_source, s32 arg5)
 {
     struct Entry *base;
     struct Entry *entry;
     struct Entry *found;
-    s32 i;
+    u32 i;
 
     base = (struct Entry *)((u8 *)Data_03001e8c + 1568);
     entry = base;
@@ -49,7 +52,7 @@ void Func_080165d8(s32 owner, s32 arg1, s32 x, s32 y, u16 *copy_source, s32 arg5
             break;
         }
         i++;
-        entry = (struct Entry *)((u8 *)entry + 40);
+        entry++;
     }
 
     if (found != 0) {
@@ -66,11 +69,12 @@ void Func_080165d8(s32 owner, s32 arg1, s32 x, s32 y, u16 *copy_source, s32 arg5
         found->field24 = (s16)arg5;
         if (copy_source != 0) {
             for (i = 0; i < 4; i++)
-                found->field08[i] = copy_source[i];
+                found->field08[i] = *copy_source++;
         } else {
             for (i = 0; i < 4; i++)
                 found->field08[i] = (u16)(u32)Data_00000000;
         }
         found->field10 = 0;
     }
+    return found;
 }

@@ -1,6 +1,8 @@
+/* NONMATCHING: 132-byte owner and pool; 33 differing halfwords. The loops
+ * have the reference's shape but output, table and counter registers differ.
+ * Widening the loaded u16 primary adds sign/zero conversions and rotates
+ * the loops (152 bytes); preserve the narrow scalar and stop that axis. */
 #include "TYPES.H"
-
-#define FindEncodedIndexEntries Func_0801c8a0
 
 struct EncodedIndexEntry {
     u16 value;
@@ -15,7 +17,7 @@ struct EncodedIndexRuntime {
 extern struct EncodedIndexRuntime Data_02000240;
 extern volatile u16 Data_02000462;
 
-void FindEncodedIndexEntries(u32 *first_match, u32 *second_match,
+void Func_0801c8a0(u32 *first_match, u32 *second_match,
                              const struct EncodedIndexEntry *entries)
 {
     s32 index;

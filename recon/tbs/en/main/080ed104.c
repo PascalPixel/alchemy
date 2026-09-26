@@ -1,6 +1,19 @@
 #include "TYPES.H"
 #include "BATTLE_EFX.H"
 
+/* 2026-09-26 bounded restart, H1: candidate=772 reference=772,
+   275 differing halfwords, 123 aligned edits (baseline 278/143).
+   Separate seed/draw pointer lifetimes and one index shared by all phases
+   recover seed r7, draw r5, bar style r7, bar x r6 and index r8.
+   Frame remains 44: callbacks at +24, projected position at +32, canvas +20.
+   Compiler-created callback pointer spills at +8 instead of +16; progress
+   and object-slot spills remain +12/+16 instead of +8/+12. The entry reloads
+   the heap base rather than retaining it and the bar callback uses base+28.
+   Own-ROM pointer 080ee7b0 is callback-table slot 319 (one-based effect 320).
+   Projection and gravity callees match the three-word position / seven-word
+   EffectStep layouts in FIELD/COMMON/EFFECT/MOTION.C. Corrected cleanup to
+   void and scheduler removal to s32 from their actual definitions/header. */
+
 /*
  * Draft for the battle-presentation sub-effect at 0x080ed104.
  *
@@ -51,7 +64,7 @@
 void Func_080cd594(s32 mode);
 void Func_080cef64(s32 flag, DrawRectangleFn *out_callbacks);
 s32 Func_080041d8(void *callback, s32 interval);
-void Func_08004278(void *callback);
+s32 Func_08004278(void *callback);
 void Func_080e3980(s32 value, s32 *out);
 u32 Func_08004458(void);
 s32 Func_08002322(s32 angle);
@@ -65,7 +78,7 @@ void Func_080e155c(s32 a, s32 b);
 void Func_080cd52c(void);
 void Func_080030f8(s32 frames);
 void Func_08002dd8(s32 id);
-s32 Func_080cdbc0(void);
+void Func_080cdbc0(void);
 
 extern u8 Value_00000073;
 extern u8 Value_00000051;
@@ -113,21 +126,24 @@ void Func_080ed104(void *object)
         screen);
     *(s32 *)0x04000028 = (0x40 - screen[0]) << 8;
 
-    star = (u8 *)work + 0x7080;
-    for (star_index = 0; star_index != 16; star_index++) {
-        s32 seed_a;
-        s32 seed_b;
-        s32 magnitude;
+    {
+        u8 *seed = (u8 *)work + 0x7080;
 
-        seed_a = 0x1FF & Func_08004458();
-        seed_b = 0xFFFF & Func_08004458();
-        M2C_FIELD(star, s32 *, 0) = 0x400000;
-        M2C_FIELD(star, s32 *, 4) = 0x700000;
-        magnitude = seed_a + 0x80;
-        M2C_FIELD(star, s32 *, 0xC) = (magnitude * Func_08002322(seed_b)) >> 8;
-        M2C_FIELD(star, s32 *, 0x10) = (magnitude * Func_0800231c(seed_b)) >> 9;
-        M2C_FIELD(star, s32 *, 0x18) = 7 & Func_08004458();
-        star += 0x1C;
+        for (star_index = 0; star_index != 16; star_index++) {
+            s32 seed_a;
+            s32 seed_b;
+            s32 magnitude;
+
+            seed_a = 0x1FF & Func_08004458();
+            seed_b = 0xFFFF & Func_08004458();
+            M2C_FIELD(seed, s32 *, 0) = 0x400000;
+            M2C_FIELD(seed, s32 *, 4) = 0x700000;
+            magnitude = seed_a + 0x80;
+            M2C_FIELD(seed, s32 *, 0xC) = (magnitude * Func_08002322(seed_b)) >> 8;
+            M2C_FIELD(seed, s32 *, 0x10) = (magnitude * Func_0800231c(seed_b)) >> 9;
+            M2C_FIELD(seed, s32 *, 0x18) = 7 & Func_08004458();
+            seed += 0x1C;
+        }
     }
 
     M2C_FIELD(work, s32 *, 0x77A8) = 8;
@@ -154,7 +170,6 @@ void Func_080ed104(void *object)
             if (bar_height > 0) {
                 s32 bar_style;
                 s32 bar_x;
-                s32 seg;
 
                 if (bar_height > 80) {
                     bar_height = 80;
@@ -164,8 +179,8 @@ void Func_080ed104(void *object)
                 }
 
                 bar_x = 50;
-                for (seg = 0; seg != 2; seg++) {
-                    if (seg == 0) {
+                for (star_index = 0; star_index != 2; star_index++) {
+                    if (star_index == 0) {
                         BattleEffect_LoadWork(46, 7, 7, 3, bar_style);
                     } else {
                         BattleEffect_LoadWork(46, 7, 7, 7, bar_style);

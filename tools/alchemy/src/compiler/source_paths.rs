@@ -763,7 +763,7 @@ fn declared_units(
         "tla" => CompilerTarget::Tla,
         _ => return None,
     };
-    TranslationUnits::declared_game(repository, target).ok()
+    TranslationUnits::read_game(repository, target).ok()
 }
 fn declared_main_sharing(
     declared: &Option<crate::compiler::translation_units::TranslationUnits>,
@@ -784,7 +784,6 @@ fn declared_main_sharing(
             if unit.game != game
                 || unit.source != source_directory.join(path)
                 || unit.overlay.is_none()
-                || !unit.exact()
                 || unit.instance("main").is_none()
                 || !unit.local_symbols.is_empty()
             {
@@ -798,6 +797,9 @@ fn declared_main_sharing(
                 let Some(record) = records.get(&owner).filter(|record| record.named) else {
                     return false;
                 };
+                if record.path.as_deref() != Some(path) {
+                    return false;
+                }
                 placed.insert(owner);
                 for (image, instance) in &unit.instances {
                     let Some(member) = instance.owners.get(&record.name) else {

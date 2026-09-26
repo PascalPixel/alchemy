@@ -387,11 +387,8 @@ pub struct Parked {
     /// Every owner restored: the owner, or each member of its instance.
     pub owners: Vec<SourceOwner>,
 }
-/// Marks a parked owner retained in every unit that owns it. A unit whose
-/// only owner this is points its source at the parked draft with the owner
-/// state flipped and its absolute symbols kept; the id is not touched, since
-/// nothing keys off it and many units never carried a prefix. A unit with
-/// other owners keeps its source and flips only this owner.s state.
+/// A unit containing only the parked owner points to its draft. Multi-owner
+/// units keep their source; ownership follows the restored listing and mapping.
 fn retire_owner_in_units(
     units_path: &Path,
     overlay: &str,
@@ -408,23 +405,19 @@ fn retire_owner_in_units(
         if unit["overlay"].as_str() != Some(overlay) {
             continue;
         }
-        let Some(owners) = unit["owners"].as_array_mut() else {
+        let Some(owners) = unit["owners"].as_array() else {
             continue;
         };
         let count = owners.len();
-        let mut hit = false;
-        for owner in owners.iter_mut() {
-            if owner["address"].as_str() == Some(wanted.as_str()) {
-                owner["state"] = "not-yet-c".into();
-                hit = true;
-            }
-        }
+        let hit = owners
+            .iter()
+            .any(|owner| owner["address"].as_str() == Some(wanted.as_str()));
         if !hit {
             continue;
         }
-        changed = true;
         if count == 1 {
             unit["source"] = parked_relative.into();
+            changed = true;
         }
     }
     if !changed {
@@ -910,9 +903,9 @@ mod tests {
         let root = tempdir().unwrap();
         let units = root.path().join("translation-units.json");
         fs::write(&units, r#"{"units":[
-{"id":"overlay-37a-actor","overlay":"resource_37a","source":"games/THE BROKEN SEAL/SRC/a.c","absolute_symbols":{"Func_02004698_a":{"address":"0x0200aa54","kind":"thumb"}},"owners":[{"address":"0x02001be8","extent":192,"state":"exact-c"}]},
-{"id":"shared-37a","overlay":"resource_37a","source":"games/THE BROKEN SEAL/SRC/b.c","absolute_symbols":{},"owners":[{"address":"0x02001be8","extent":192,"state":"exact-c"},{"address":"0x02002000","extent":8,"state":"exact-c"}]},
-{"id":"other-37b","overlay":"resource_37b","source":"games/THE BROKEN SEAL/SRC/c.c","absolute_symbols":{},"owners":[{"address":"0x02001be8","extent":4,"state":"exact-c"}]}
+{"id":"overlay-37a-actor","overlay":"resource_37a","source":"games/THE BROKEN SEAL/SRC/a.c","absolute_symbols":{"Func_02004698_a":{"address":"0x0200aa54","kind":"thumb"}},"owners":[{"address":"0x02001be8","extent":192}]},
+{"id":"shared-37a","overlay":"resource_37a","source":"games/THE BROKEN SEAL/SRC/b.c","absolute_symbols":{},"owners":[{"address":"0x02001be8","extent":192},{"address":"0x02002000","extent":8}]},
+{"id":"other-37b","overlay":"resource_37b","source":"games/THE BROKEN SEAL/SRC/c.c","absolute_symbols":{},"owners":[{"address":"0x02001be8","extent":4}]}
 ]}"#).unwrap();
         super::retire_owner_in_units(
             &units,
@@ -926,7 +919,7 @@ mod tests {
         let unit = &after["units"][0];
         assert_eq!(unit["id"], "overlay-37a-actor");
         assert_eq!(unit["source"], "recon/tbs/en/overlays/x.c");
-        assert_eq!(unit["owners"][0]["state"], "not-yet-c");
+        assert!(unit["owners"][0].get("state").is_none());
         assert_eq!(
             unit["absolute_symbols"]["Func_02004698_a"]["address"],
             "0x0200aa54"
@@ -934,9 +927,12 @@ mod tests {
         let shared = &after["units"][1];
         assert_eq!(shared["id"], "shared-37a");
         assert_eq!(shared["source"], "games/THE BROKEN SEAL/SRC/b.c");
-        assert_eq!(shared["owners"][0]["state"], "not-yet-c");
-        assert_eq!(shared["owners"][1]["state"], "exact-c");
-        assert_eq!(after["units"][2]["owners"][0]["state"], "exact-c");
+        assert!(shared["owners"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .all(|owner| owner.get("state").is_none()));
+        assert!(after["units"][2]["owners"][0].get("state").is_none());
     }
     use super::audit_with_rom;
     use crate::overlay::adopt::audited_span;

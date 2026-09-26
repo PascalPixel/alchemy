@@ -2,6 +2,86 @@
   "format": 5,
   "units": [
     {
+      "id": "torebi-spring-frame-candidate",
+      "game": "tbs",
+      "source": "recon/tbs/en/overlays/resource_3b7_c_02000e5c.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3b7",
+      "absolute_symbols": {
+        "Engine_ActorGet": {
+          "address": "0x0200993c",
+          "kind": "thumb"
+        },
+        "Engine_ObjectSetAnimation": {
+          "address": "0x0200988c",
+          "kind": "thumb"
+        },
+        "TorebiIzumi_PlaceActor": {
+          "address": "0x02008dd0",
+          "kind": "thumb"
+        },
+        "OverlayObject_SetField54": {
+          "address": "0x02008e44",
+          "kind": "thumb"
+        },
+        "Engine_MathDivide": {
+          "address": "0x02009854",
+          "kind": "thumb"
+        },
+        "Engine_MathModulo": {
+          "address": "0x0200985c",
+          "kind": "thumb"
+        },
+        "Engine_MathCos": {
+          "address": "0x0200987c",
+          "kind": "thumb"
+        },
+        "Engine_MathSin": {
+          "address": "0x02009884",
+          "kind": "thumb"
+        },
+        "Engine_AudioPlayCue": {
+          "address": "0x020099c4",
+          "kind": "thumb"
+        },
+        "Data_0200a054": {
+          "address": "0x0200a054",
+          "kind": "data"
+        },
+        "Data_0200a057": {
+          "address": "0x0200a057",
+          "kind": "data"
+        },
+        "Data_0200a070": {
+          "address": "0x0200a070",
+          "kind": "data"
+        },
+        "Data_0200a0c0": {
+          "address": "0x0200a0c0",
+          "kind": "data"
+        },
+        "Data_0200a0d0": {
+          "address": "0x0200a0d0",
+          "kind": "data"
+        },
+        "Data_0200a134": {
+          "address": "0x0200a134",
+          "kind": "data"
+        },
+        "Data_0200a138": {
+          "address": "0x0200a138",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02000e5c",
+          "extent": 2124,
+          "state": "not-yet-c"
+        }
+      ]
+    },
+    {
     "id": "suhara-actor-scale-blend-candidate",
       "game": "tbs",
       "source": "recon/tbs/en/overlays/resource_3c0_c_02000594.c",

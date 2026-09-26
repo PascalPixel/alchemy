@@ -9,6 +9,13 @@
    immediate, not the required early pool load.  128/124 bytes,
    55 differing halfwords, 29 aligned edits; the party scan remains
    peeled and the enemy branch still has an extra exit jump.
+   H3: nest the explicit enemy scan at the party-sentinel exit, rejecting
+   H2's immediate marker and retaining the original halfword stores.
+   Candidate 116/124 bytes, 56 differing halfwords, 38 aligned edits;
+   topology differs.  The party store stays in its loop but both scans
+   now share a hoisted marker in r4, adding a saved register and merging
+   the two reference pools.  Three hypotheses used; stop here.  All
+   variants are committed; the unsigned target-clear tail still matches.
    No source registration or credited bytes.  Earlier baseline follows.
    Draft (2026-09-24): candidate=120 reference=124 differing_halfwords=37.
    Battle: take an actor out of the party and enemy rosters and clear it
@@ -47,35 +54,31 @@ void Func_080bac6c(s32 actor)
     struct BattleRoster *work;
     s32 i;
     u32 j;
-    u16 vacant;
 
     work = gBattleWork;
     Owner_GetStateFar(actor)->in_battle = 0;
-    vacant = 0xfe;
 
     for (i = 0;; i++) {
         if (work->party[i] == actor) {
-            work->party[i] = vacant;
+            work->party[i] = 0xfe;
             goto removed;
         }
-        if (work->party[i] == 0xff)
-            break;
-    }
-    {
-        s32 enemy;
-        s32 value;
+        if (work->party[i] == 0xff) {
+            s32 enemy;
+            s32 value;
 
-        enemy = 0;
+            enemy = 0;
 scan_enemy:
-        value = work->enemies[enemy];
-        if (value == actor) {
-            work->enemies[enemy] = 0xfe;
-            goto removed;
+            value = work->enemies[enemy];
+            if (value == actor) {
+                work->enemies[enemy] = 0xfe;
+                goto removed;
+            }
+            enemy++;
+            if (value != 0xff)
+                goto scan_enemy;
+            return;
         }
-        enemy++;
-        if (value != 0xff)
-            goto scan_enemy;
-        return;
     }
 
 removed:

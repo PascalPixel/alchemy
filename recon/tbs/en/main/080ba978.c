@@ -1,24 +1,45 @@
+/* Draft, whole main:080ba978, 612 bytes including pool.
+ * Baseline: 612/612 bytes, 261 differing halfwords, 144 aligned edits.
+ * H1: transfer exact RUN_SIMPLE's typed work and unsigned angle input;
+ * narrow after the offset, correct the 0x80000 angle, use signed member IDs,
+ * and snapshot each motion record's child count before copying its values.
+ * The caller passes mode 0/1/2; LIST_TARGETS owns the complete 84-byte output.
+ * H1 result: 592/612 bytes, 275 differing halfwords, 114 aligned edits;
+ * frame 88 and high-register save set now match. The signed target loop and
+ * child-copy body are structurally correct. First divergence is the target
+ * angle branch; the same-team ternary also omits reference materialized
+ * boolean branches. Input/transition and flags/object roles remain swapped.
+ * No matching-C credit claimed.
+ */
 #include "TYPES.H"
-
-#define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
+#include "MOTION_OBJECT.H"
+#include "BATTLE_PRESENTATION.H"
+#include "FIXED_MATH.H"
 
 struct PresentationInput { u8 primary; u8 reserved_01; u8 secondary; u8 reserved_03[0x4d]; s32 coordinate; u8 reserved_54[4]; u32 flags; s32 script; };
-struct PresentationWork { u8 bytes[84]; };
+struct PresentationWork {
+    s32 flags;
+    s32 secondary_is_low_id;
+    s32 primary_id;
+    s32 secondary_id;
+    s32 initial_value;
+    s32 entry_count;
+    s32 battle_mode;
+    s32 scripted;
+    s32 reserved_20;
+    s16 members[8];
+    u8 values[8][4];
+};
 struct MotionEntry { u8 reserved_00[39]; u8 count; void *children[1]; };
 struct MotionChild { u8 reserved_00[5]; u8 value; };
-struct PresentationTransition { s32 angle; s32 frames; };
-
-extern struct PresentationTransition *Data_03001f00;
+extern struct BattlePresentationTransition *Data_03001f00;
 extern u8 *Data_03001e74;
 s32 Func_080041d8(void *, s32);
-u16 Func_080044d0(s32, s32);
 void Func_08009080(void *, s32);
 void Func_08009088(void *, s32);
 void Func_08015130(s32);
-void **Func_080b7dd0(s32);
-struct MotionEntry *Func_080b7f70(void *, s32);
-void Func_080b8000(s16);
-void Func_080b9d34(void *, struct PresentationWork *);
+void Func_080b8000(s32);
+s32 Func_080b9d34(void *, struct PresentationWork *);
 u32 Func_080bb938(void);
 u32 Func_080bbabc(u32, u32);
 void Func_080be02c(void);
@@ -31,56 +52,63 @@ void Func_080f9010(s32);
 
 s32 Func_080ba978(struct PresentationInput *input, s32 flags)
 {
-    s32 saved_loop;
     struct PresentationWork work;
-    struct PresentationTransition *transition = Data_03001f00;
-    void *object;
+    struct BattlePresentationTransition *transition = Data_03001f00;
+    struct MotionObject *object;
     s32 i;
 
     if (input->flags & 0x40000) {
-        transition->angle = input->primary <= 7 ? -0x2000 : 0x5000;
+        transition->target_yaw = input->primary <= 7 ? -0x2000 : 0x5000;
         transition->frames = 60;
     } else {
-        u8 *actor = *Func_080b7dd0(input->primary);
-        s16 angle = Func_080044d0(FIELD(actor, s32, 8), FIELD(actor, s32, 16));
-        s32 current = angle + (input->primary <= 7 ? -0x1800 : 0x1800);
-        s32 target = input->primary <= 7 ? 0x2000 : -0x2000;
-        s32 delta = (target - current) * 3;
-        if (delta < 0)
-            delta += 3;
-        current += delta >> 2;
-        if ((input->secondary <= 7) == (input->primary <= 7))
+        struct MotionObject *actor = GetBattleObjectSlot(input->primary)->object;
+        s32 angle = (u16)ArcTan2(actor->x, actor->z);
+        s32 current = angle - 0x1800;
+        s32 target;
+        if (input->primary > 7)
+            current = angle + 0x1800;
+        current = (s16)current;
+        if (input->primary <= 7)
+            target = 0x2000;
+        else
+            target = -0x2000;
+        current += (target - current) * 3 / 4;
+        if (input->secondary <= 7 ? input->primary <= 7 : input->primary > 7)
             current = input->primary <= 7 ? 0x2400 : -0x2400;
-        if (transition->angle != current)
-            transition->angle = current;
+        if (transition->target_yaw != current)
+            transition->target_yaw = current;
     }
     if (input->flags & 0x80000) {
-        transition->angle = input->primary <= 7 ? -0x2400 : 0x2000;
+        transition->target_yaw = input->primary <= 7 ? -0x2000 : 0x2000;
         transition->frames = 60;
     }
 
     Func_080b9d34(input, &work);
     i = flags & 1;
     if (i)
-        FIELD(&work, s32, 28) = 1;
+        work.scripted = 1;
     Func_080c10e8(0, 0);
     Func_08015130(Data_03001e74[65] & ~1);
-    object = *Func_080b7dd0(FIELD(&work, s32, 8));
+    object = GetBattleObjectSlot(work.primary_id)->object;
     Func_08009080(object, 3);
     Func_08009088(object, 16);
     Func_080f9010(0x9a);
     if (flags & 2)
-        Func_080c1798(FIELD(&work, s32, 8), input->coordinate, 1, 0);
+        Func_080c1798(work.primary_id, input->coordinate, 1, 0);
     else if (!i)
-        Func_080c1798(FIELD(&work, s32, 8), input->coordinate, 0, 0);
-    FIELD(&work, s32, 4) = input->secondary <= 7;
+        Func_080c1798(work.primary_id, input->coordinate, 0, 0);
+    if (input->secondary <= 7)
+        work.secondary_is_low_id = 1;
+    else
+        work.secondary_is_low_id = 0;
 
-    for (i = 0; i < FIELD(&work, s32, 20); i++) {
-        struct MotionEntry *entry = Func_080b7f70(
-            *Func_080b7dd0(FIELD(&work, u8, 36 + i * 2)), 0);
+    for (i = 0; i != work.entry_count; i++) {
+        struct MotionEntry *entry = GetMotionRecord(
+            GetBattleObjectSlot(work.members[i])->object, 0);
+        s32 count = entry->count - 1;
         s32 j;
-        for (j = 0; j != entry->count - 1; j++)
-            FIELD(&work, u8, 52 + i * 4 + j) =
+        for (j = 0; j != count; j++)
+            work.values[i][j] =
                 ((struct MotionChild *)entry->children[j])->value;
     }
     if (input->script != 0) {
@@ -94,7 +122,7 @@ s32 Func_080ba978(struct PresentationInput *input, s32 flags)
         Func_080c1a14();
     } else {
         Func_080041d8((void *)0x080bd899, 0xc80);
-        if (FIELD(&work, s32, 0)) {
+        if (work.flags) {
             if (input->flags & 0x4000)
                 Func_080c9008(&work);
             else
@@ -104,11 +132,8 @@ s32 Func_080ba978(struct PresentationInput *input, s32 flags)
         }
         Func_080be02c();
         Func_08009080(object, 1);
-        for (i = 0; i < FIELD(&work, s32, 20); i++) {
-            saved_loop = i;
-            Func_080b8000(FIELD(&work, s16, 36 + i * 2));
-            i = saved_loop;
-        }
+        for (i = 0; i != work.entry_count; i++)
+            Func_080b8000(work.members[i]);
     }
     return 0;
 }

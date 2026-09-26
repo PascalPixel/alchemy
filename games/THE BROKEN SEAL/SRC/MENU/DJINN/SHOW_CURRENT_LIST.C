@@ -1,13 +1,4 @@
-/* Complete owner [080a7850, 080a7a34), 484 bytes including interior pools.
-   2026-09-26 H1: 482-byte function, all instructions and literals exact;
-   score against 484 reports only the final zero alignment halfword absent
-   from the function-sized extraction. Reference and candidate frame 28.
-   Normal production integration must validate the owner extent before credit.
-   Old template baseline: 200/484, 240 differing halfwords, 210 aligned edits.
-   The caller is CharacterSelector_RunRearrange. Messages 0xb17 and 0xb18
-   are Return and Current Djinn; 0x45f starts the Djinn names. H1 restores
-   the pointer-owned cursors, four element positions, both draws per owned
-   Djinn, the window refresh flag and the selector's original layout. */
+/* Show the acquired Djinn of each element, then restore the party selector. */
 #include "TYPES.H"
 #include "SYSTEM.H"
 #include "UI.H"
@@ -50,7 +41,7 @@ void Func_08015078(s32 message, s32 window, s32 x, s32 y);
 void UiWindow_SetTilemapEntryFar(s32 window, s32 tile, s32 x, s32 y, u32 mode);
 s32 GameFlag_TestFar(s32 flag);
 
-s32 Func_080a7850(void)
+s32 DjinnMenu_ShowCurrentList(void)
 {
     struct DjinnListMenu *menu;
     s32 window;

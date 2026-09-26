@@ -20102,6 +20102,9 @@
     "main:0802106c": {
       "name": "PartyTalkMenu_Choose"
     },
+    "main:08021228": {
+      "name": "Djinn_ShowJoinedMessage"
+    },
     "main:080162d4": {
       "name": "UiWindow_Create"
     },

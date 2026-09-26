@@ -87312,9 +87312,17 @@
     },
     {
       "id": "ovd-39a-02001c18",
-      "source": "recon/tbs/en/overlays/resource_39a_c_02001c18.c",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/IMIRU_FUCHIN/SPAWN.C",
       "overlay": "resource_39a",
       "absolute_symbols": {
+        "OverlayObject_AdvancePositionByDelta": {
+          "address": "0x02009bdc",
+          "kind": "thumb"
+        },
+        "Engine_MathDivide": {
+          "address": "0x0200a258",
+          "kind": "thumb"
+        },
         "Engine_ObjectCreate": {
           "address": "0x0200a2b8",
           "kind": "thumb"
@@ -87336,7 +87344,7 @@
         {
           "address": "0x02001c18",
           "extent": 352,
-          "state": "not-yet-c"
+          "state": "exact-c"
         }
       ],
       "game": "tbs",

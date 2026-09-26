@@ -29326,11 +29326,11 @@
           "address": "0x020099c4",
           "kind": "thumb"
         },
-        "Main_0808a178": {
+        "Engine_EventOpenMessage": {
           "address": "0x020099cc",
           "kind": "thumb"
         },
-        "Main_0808a180": {
+        "Engine_EventShowMessage": {
           "address": "0x020099d4",
           "kind": "thumb"
         },

@@ -1,222 +1,164 @@
-/* NONMATCHING: 616 bytes, candidate 676, 254 differing halfwords, 147
- * halfword edits (2026-09-25). VinasuHeya_Func0200247c, meant for
- * FIELD/VINASU_HEYA/F_0247C.C as a single-overlay unit binding its names at
- * their runtime addresses (an import veneer's listing offset plus 0x8000).
- * Remaining: 254 HW structural; size +60; multi-branch push-puzzle over
- * actors 10-13 with flag 0x200+i, sprite-mask eject, z=19 swap+camera pan;
- * SettleBlocks/FLAG_301 sibling shape needs fresh FieldActor rewrite */
-#include "TYPES.H"
-
-/* Literal pool, read from the ROM:
- *   0x020026e0: 0x0200a2a5  Local_020022a4 (overlay function)
+/* NONMATCHING: 628/616 bytes, 205 differing halfwords, 118 aligned edits.
+ * 2026-09-26 own-ROM audit: 0200247c..020026e4 includes the sole pool word
+ * 020026e0 = callback 0200a2a5. The 132-byte frame has a full 112-byte actor
+ * scratch record at sp+20, not the old single s32 local with out-of-bounds
+ * coordinate stores. Old header: 676 bytes / 254 differing HW / 147 edits.
+ * H0 typed reconstruction: 624 bytes / 279 HW / 162 edits. Correct camera
+ * getter (0808a228), void setters, signed search and duplicate actor lookups.
+ * H1 explicit loop/swap blocks, post-EventBegin scratch lifetime:
+ * 636 bytes / 203 HW / 121 edits; no extra flag induction variable.
+ * H2 signed height-index view from exact LOWER_BLOCKS:
+ * 628 bytes / 205 HW / 118 edits; both decrements now use subs, no 0xffff.
+ * Both permitted variants completed. Remaining: actor/flag-result/selected
+ * slot lifetimes, extra zero pool before height-index branch, and branch
+ * reach. Exact SETTLE_BLOCKS rechecked at 780/780 bytes. No adoption.
  */
+#include "TYPES.H"
+#include "FIELD_EVENT.H"
 
-s32 OverlayObject_SpawnWithMode14();
-void OverlayObject_WaitUntilIdle();
-void VinasuHeya_Func020022c8();
-void SceneActor_PickHighestSlotAtSameTileAndRelease();
-void Engine_EventBegin();
-void Engine_MapCopyCellAttributes();
-s32 Engine_GameFlagIsSet();
-s32 Engine_ActorGet();
-void Engine_GameFlagSet();
-void Engine_ObjectDispatchRelease();
-void Engine_ActorSetPosition();
-void Engine_ActorSetSpritePriority();
-void Engine_EventEnd();
-s32 Engine_CameraSetSpeed();
-s32 Engine_CameraMoveTo();
-void Engine_CameraWaitForMove();
+void *OverlayObject_SpawnWithMode14(s32 x, s32 y, s32 z, s32 kind);
+void OverlayObject_WaitUntilIdle(struct FieldActor *object);
+void SceneActor_PickHighestSlotAtSameTileAndRelease(s32 actor);
+s32 SceneActor_SetHeightAboveLinkedRecord(struct FieldActor *object);
+void VinasuHeya_LowerFloatingBlocks(s32 wait);
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
+/* LOWER_BLOCKS consumes this field as a signed height-table index. */
+struct FloatingBlockHeight {
+    u8 unknown_00[0x64];
+    s16 index;
+};
 
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
-static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    f(a0, a1, a2, a3);
-}
-
-static __inline__ s32 Value4(s32 (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    return f(a0, a1, a2, a3);
-}
-
-static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
+static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2,
+                            s32 a3, s32 a4, s32 a5)
 {
     f(a0, a1, a2, a3, a4, a5);
 }
 
-void VinasuHeya_Func0200247c(void)
+void VinasuHeya_ResolveFloatingBlock(void)
 {
-    u32 i;
-    s32 p10;
-    s32 p11;
-    s32 p7;
-    s32 p9;
-    s32 p9b;
-    s32 rec;
-    u8 *rec8;
-    u8 *record;
-    s32 r3;
+    struct FieldActor work;
+    struct FieldActor *first = NULL;
+    struct FieldActor *second = NULL;
+    struct FieldActor *temp;
+    struct FieldActor *block;
+    struct FieldActor *other;
+    s32 i;
+    s32 id;
+    s32 x;
+    s32 z;
+    s32 j;
+    s32 slot;
     s32 none;
-    s32 v8;
-    s32 base11_a;
-    s32 v5;
-    s32 base5_0;
-    s32 v7;
-    s32 v0;
-    s32 v3;
-    s32 slot16;
-    s32 slot12;
-    s32 slot8;
-    s32 slot20;
 
-    slot16 = 0;
-    slot12 = slot16;
     Engine_EventBegin();
-    none = 0;
-    slot8 = &slot20;
-    base11_a = 10;
-    v8 = none;
-    L_020024a4:;
-    rec8 = Value1(Engine_ActorGet, base11_a);
-    p9 = (*(s32 *)((s32)rec8 + 8) >> 20);
-    if (p9 == 13) {
-        p10 = (*(s32 *)((s32)rec8 + 16) >> 20);
-        if (p10 != 7) {
-            goto L_0200250a;
-        }
-        rec = Value1(Engine_GameFlagIsSet, (0x200 + v8));
-        if (rec != 0) {
-            goto L_0200250a;
-        }
-        OverlayObject_WaitUntilIdle((s32)rec8);
-        Engine_GameFlagSet((0x200 + v8));
-        {
-            u8 value = *(volatile u8 *)&rec8[35];
-        
-            rec8[35] = (u8)(value | 2);
-        }
-        rec8[89] = rec;
-        *(u8 *)((((s32)rec8 + 89) - 4)) = rec;
-        Call6(Engine_MapCopyCellAttributes, 4, 19, 1, 1, p9, p10);
-    } else {
-        L_0200250a:;
-        if ((12 & *(u8 *)(*(s32 *)((s32)rec8 + 80) + 9)) == 12) {
-            record = Value1(Engine_GameFlagIsSet, (0x200 + v8));
-            if ((s32)record != 0) {
-                goto L_020025b0;
-            }
-            v5 = 0;
-            Engine_ActorSetSpritePriority(base11_a, 1);
-            v7 = v5;
-            *(s32 *)((s32)rec8 + 68) = v5;
-            if ((*(s32 *)((s32)rec8 + 16) >> 20) <= 12) {
-                record = Value4(OverlayObject_SpawnWithMode14, *(s32 *)((s32)rec8 + 8), 0, 0xe00000, 253);
-                slot16 = (s32)record;
-                record = Value4(OverlayObject_SpawnWithMode14, *(s32 *)((s32)rec8 + 8), 0, 0xf00000, 253);
-                slot12 = (s32)record;
-            }
-            OverlayObject_WaitUntilIdle((s32)rec8);
-            Engine_ActorSetPosition(base11_a, 0, 0);
-            Engine_ObjectDispatchRelease(slot16);
-            Engine_ObjectDispatchRelease(slot12);
-            Engine_GameFlagSet((0x200 + v8));
-            goto L_020026ca;
-            L_0200257e:;
-            record = Engine_ActorGet((v5 + 10));
-            *(s32 *)(slot8 + 8) = *(s32 *)((s32)rec8 + 8);
-            *(s32 *)(slot8 + 12) = *(s32 *)((s32)rec8 + 12);
-            *(s32 *)(slot8 + 16) = *(s32 *)((s32)rec8 + 16);
-            *(s32 *)((s32)rec8 + 8) = *(s32 *)((s32)record + 8);
-            *(s32 *)((s32)rec8 + 12) = *(s32 *)((s32)record + 12);
-            *(s32 *)((s32)rec8 + 16) = *(s32 *)((s32)record + 16);
-            *(s32 *)((s32)record + 8) = *(s32 *)(slot8 + 8);
-            *(s32 *)((s32)record + 12) = *(s32 *)(slot8 + 12);
-            *(s32 *)((s32)record + 16) = *(s32 *)(slot8 + 16);
-        } else {
-            L_020025b0:;
-            if ((*(s32 *)((s32)rec8 + 16) >> 20) != 19) {
-                goto L_020026bc;
-            }
-            record = Value1(Engine_GameFlagIsSet, (0x200 + v8));
-            if ((s32)record != 0) {
-                goto L_020026bc;
-            }
-            *(s32 *)((s32)rec8 + 60) = -0x80000000;
-            *(s32 *)((s32)rec8 + 20) = (s32)record;
-            *(s32 *)((s32)rec8 + 40) = (s32)record;
-                base5_0 = 0;
-            rec8[85] = (s32)record;
-            *(u16 *)(((s32)rec8 + 85) + 15) = (s32)record;
-            p7 = v8;
-            v7 = p7;
-            if (0 < p7) {
-                do {
-                    record = Value1(Engine_GameFlagIsSet, (base5_0 + 0x200));
-                    if ((s32)record == 0) {
-                        goto L_0200257e;
-                    }
-                    base5_0 = (base5_0 + 1);
-                } while (base5_0 < p7);
+    temp = &work;
+    i = 0;
+    id = 10;
+again:
+    {
+        block = Engine_ActorGet(id);
+        x = block->x.fixed >> 20;
+        if (x == 13) {
+            z = block->z.fixed >> 20;
+            if (z == 7) {
+                none = Engine_GameFlagIsSet(0x200 + i);
+                if (none == 0) {
+                    OverlayObject_WaitUntilIdle(block);
+                    Engine_GameFlagSet(0x200 + i);
+                    block->priority_flags |= 2;
+                    block->collision_flags = none;
+                    block->motion_flags = none;
+                    Call6((void (*)())Engine_MapCopyCellAttributes, 4, 19, 1, 1, x, z);
+                    goto done;
+                }
             }
         }
-        record = Engine_ActorGet((v7 + 10));
-        *(s32 *)((s32)record + 60) = -0x80000000;
-        *(s32 *)((s32)record + 20) = 0;
-        *(s32 *)((s32)record + 40) = 0;
-        record[85] = 0;
-        {
-            s32 shown = 0;
-        
-            *(u16 *)(((s32)record + 85) + 15) = shown;
+        if (block->sprite->priority == 3 && !Engine_GameFlagIsSet(0x200 + i)) {
+            Engine_ActorSetSpritePriority(id, 1);
+            *(s32 *)block->unknown_44 = 0;
+            if (block->z.fixed >> 20 <= 12) {
+                first = OverlayObject_SpawnWithMode14(block->x.fixed, 0, 0xe00000, 253);
+                second = OverlayObject_SpawnWithMode14(block->x.fixed, 0, 0xf00000, 253);
+            }
+            OverlayObject_WaitUntilIdle(block);
+            Engine_ActorSetPosition(id, 0, 0);
+            Engine_ObjectDispatchRelease(first);
+            Engine_ObjectDispatchRelease(second);
+            Engine_GameFlagSet(0x200 + i);
+            goto done;
         }
-        Value2(Engine_CameraSetSpeed, 0x30000, 0x6000);
-        *(u8 *)(Engine_CameraMoveTo() + 85) = 0;
-        Call4(Engine_CameraMoveTo, 0x880000, 0x80000, 0x1580000, 1);
+        goto check_height;
+
+swap_coords:
+        other = Engine_ActorGet(j + 10);
+        temp->x.fixed = block->x.fixed;
+        temp->y.fixed = block->y.fixed;
+        temp->z.fixed = block->z.fixed;
+        block->x.fixed = other->x.fixed;
+        block->y.fixed = other->y.fixed;
+        block->z.fixed = other->z.fixed;
+        other->x.fixed = temp->x.fixed;
+        other->y.fixed = temp->y.fixed;
+        other->z.fixed = temp->z.fixed;
+        slot = j;
+        goto apply_height;
+
+check_height:
+        if (block->z.fixed >> 20 != 19) {
+            goto next;
+        }
+        none = Engine_GameFlagIsSet(0x200 + i);
+        if (none != 0) {
+            goto next;
+        }
+        block->target_y = ACTOR_NO_TARGET;
+        *(s32 *)block->unknown_14 = none;
+        block->velocity_y = none;
+        block->motion_flags = none;
+        ((struct FloatingBlockHeight *)block)->index = none;
+        j = 0;
+        slot = i;
+        if (j < i) {
+            do {
+                if (!Engine_GameFlagIsSet(0x200 + j)) {
+                    goto swap_coords;
+                }
+                j++;
+            } while (j < i);
+        }
+apply_height:
+        other = Engine_ActorGet(slot + 10);
+        other->target_y = ACTOR_NO_TARGET;
+        *(s32 *)other->unknown_14 = 0;
+        other->velocity_y = 0;
+        other->motion_flags = 0;
+        ((struct FloatingBlockHeight *)other)->index = 0;
+        Camera_SetSpeed(0x30000, 0x6000);
+        Engine_EventGetViewCenter()->motion_flags = 0;
+        Camera_MoveTo(0x880000, 0x80000, 0x1580000, 1);
         Engine_CameraWaitForMove();
-        SceneActor_PickHighestSlotAtSameTileAndRelease((v7 + 10));
-        record = Value1(Engine_ActorGet, (v7 + 10));
-        if ((*(s32 *)((s32)record + 8) >> 20) == 6) {
-            *(u16 *)(Engine_ActorGet(8) + 100) += 1;
-            v0 = (Engine_ActorGet(9) + 100);
-            v3 = (*(u16 *)(Engine_ActorGet(9) + 100) - 1);
+        SceneActor_PickHighestSlotAtSameTileAndRelease(slot + 10);
+        other = Engine_ActorGet(slot + 10);
+        if (other->x.fixed >> 20 == 6) {
+            ((struct FloatingBlockHeight *)Engine_ActorGet(8))->index++;
+            ((struct FloatingBlockHeight *)Engine_ActorGet(9))->index--;
         } else {
-            *(u16 *)(Engine_ActorGet(8) + 100) = (*(u16 *)(Engine_ActorGet(8) + 100) - 1);
-            v0 = (Engine_ActorGet(9) + 100);
-            v3 = (*(u16 *)(Engine_ActorGet(9) + 100) + 1);
+            ((struct FloatingBlockHeight *)Engine_ActorGet(8))->index--;
+            ((struct FloatingBlockHeight *)Engine_ActorGet(9))->index++;
         }
-        *(u16 *)(v0) = v3;
-        record = Engine_ActorGet((v7 + 10));
-        *(s32 *)((s32)record + 108) = 0x200a2a5;
-        VinasuHeya_Func020022c8(40);
-        {
-            u8 *record = Engine_ActorGet((v7 + 10));
-            u8 value = *(volatile u8 *)&record[35];
-        
-            record[35] = (u8)(value | 2);
-        }
-        Engine_GameFlagSet((v7 + 0x200));
-        goto L_020026ca;
-        L_020026bc:;
-        v8 = (v8 + 1);
-        base11_a = (base11_a + 1);
-        if (v8 <= 3) {
-            goto L_020024a4;
-        }
+        other = Engine_ActorGet(slot + 10);
+        other->update = (void (*)(union FieldObject *))SceneActor_SetHeightAboveLinkedRecord;
+        VinasuHeya_LowerFloatingBlocks(40);
+        Engine_ActorGet(slot + 10)->priority_flags |= 2;
+        Engine_GameFlagSet(slot + 0x200);
+        goto done;
     }
-    L_020026ca:;
+next:
+    i++;
+    id++;
+    if (i <= 3) {
+        goto again;
+    }
+done:
     Engine_EventEnd();
 }

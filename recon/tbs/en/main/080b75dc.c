@@ -1,98 +1,98 @@
+/* Draft: main:080b75dc, complete 304-byte owner.
+ * Candidate 320 bytes; 106 aligned halfword edits remain.
+ * Typed roster and order arrays recover the behavior. Remaining: an extra
+ * eight stack bytes, index induction forms and register allocation. */
 #include "TYPES.H"
 #include "BATTLE_WORK.H"
 
-#define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
+struct PlacementRoster {
+    u8 reserved_00[100];
+    s16 summoned[6];
+};
+
+struct PlacementWork {
+    u16 reserved_000;
+    struct PlacementRoster roster;
+    u8 reserved_072[0x26a];
+    u8 order[14];
+};
 
 extern const s8 Data_080c2a62[];
-
-s32 Func_080b6a60(s16 *owners);
+s32 BattleParty_PrepareActiveOwners(u16 *ids);
 struct BattleMotionObject;
-struct BattleMotionObject *Func_080b7dd0(s32 unit);
-void Func_080b6f44(void *actor, s32 unit, s32 x, s32 y);
-void Func_080b7424(u16 *actor_ids, s32 count, s32 *x_positions, s32 *z_positions);
+struct BattleMotionObject *GetBattleObjectSlot(s32 owner);
+void BattlePresentation_SpawnActorObject(void *object, s32 owner, s32 x, s32 z);
+void Summon_LayoutPositions(u16 *ids, s32 count, s32 *x, s32 *z);
 
-#define BattleUnit_RefreshPlacement Func_080b75dc
-
+/* Refresh active party and summoned actors in their formation positions. */
 void BattleUnit_RefreshPlacement(void)
 {
     u16 buf[14];
     u16 *ids = buf;
-    u8 *battle = BattleWorkPtr;
+    struct PlacementWork *battle = gBattleWork;
     u16 *cursor;
     s32 i;
     s32 count;
     s32 n;
     u8 *p;
-    s32 val;
+    s32 value;
     s32 pos;
     s32 id;
-    s32 x_positions[6];
-    s32 z_positions[6];
+    s32 x[6];
+    s32 z[6];
+    struct PlacementRoster *roster;
+    s32 j;
+    s32 k;
 
-    count = Func_080b6a60((s16 *)ids);
-
+    i = 0;
+    count = BattleParty_PrepareActiveOwners(ids);
     n = 13;
-    p = (u8 *)battle + 0x2e9;
+    p = &battle->order[13];
     while (n >= 0) {
         n--;
-        *p-- = 0xff;
+        *p-- = 255;
     }
-
-    n = 5;
-    p = (u8 *)battle + 0x2e9;
-    val = 13;
-    while (n >= 0) {
-        n--;
-        *p = val;
-        p--;
-        val--;
+    j = 5;
+    p = &battle->order[13];
+    value = 13;
+    while (j >= 0) {
+        j--;
+        *p-- = value--;
     }
-
     if (count > 0) {
         cursor = ids;
-        i = 0;
-        pos = 0;
+        pos = i * 2;
         n = count;
         do {
-            id = *cursor;
-            cursor++;
-            FIELD(battle, u8, 0x2dc + id) = i;
-            Func_080b6f44((void *)Func_080b7dd0(id), id, Data_080c2a62[pos],
-                          Data_080c2a62[pos + 1]);
+            id = *cursor++;
+            battle->order[id] = i;
+            BattlePresentation_SpawnActorObject(GetBattleObjectSlot(id), id,
+                                                Data_080c2a62[pos], Data_080c2a62[pos + 1]);
             n--;
             pos += 2;
             i++;
         } while (n != 0);
     }
-
     count = 0;
-    if (FIELD(battle, s16, 2 + 0x64) != 0xff) {
-        i = 0;
-        pos = 0x64;
+    roster = &battle->roster;
+    if (roster->summoned[0] != 255) {
+        j = 0;
         do {
+            ids[j] = roster->summoned[j];
             count++;
-            FIELD(ids, u16, i) = FIELD(battle, u16, 2 + pos);
-            pos += 2;
-            i += 2;
-        } while (count <= 5 && FIELD(battle, s16, 2 + pos) != 0xff);
+            j++;
+        } while (count <= 5 && roster->summoned[j] != 255);
     }
-
-    Func_080b7424(ids, count, x_positions, z_positions);
-
+    Summon_LayoutPositions(ids, count, x, z);
     if (count > 0) {
-        pos = 0x64;
-        i = 0;
+        k = 0;
         n = count;
         do {
-            id = FIELD(battle, s16, 2 + pos);
-            if (id != 0xfe) {
-                Func_080b6f44(Func_080b7dd0(id), id,
-                              *(s32 *)((u8 *)x_positions + i),
-                              *(s32 *)((u8 *)z_positions + i));
-            }
+            id = roster->summoned[k];
+            if (id != 254)
+                BattlePresentation_SpawnActorObject(GetBattleObjectSlot(id), id, x[k], z[k]);
             n--;
-            pos += 2;
-            i += 4;
+            k++;
         } while (n != 0);
     }
 }

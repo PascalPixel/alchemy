@@ -1,8 +1,9 @@
-/* Draft, not exact (2026-09-26): 832 of 832 bytes, 65 differing halfwords.
+/* Draft, not exact (2026-09-26): 832 of 832 bytes, 15 differing halfwords.
    Scene ownership, slot records and resource lifetime replace raw offsets.
    Explicit stores and the initial/terminal script tests recover all four
-   missing bytes. Remaining: position/counter setup, scale-loop carry,
-   copy publication/resource lifetime and one saved-pointer scheduling tie.
+   missing bytes. One scale lifetime removes the GCSE carry copy and all
+   scale-loop differences. Remaining: position/counter setup, copy
+   publication and one saved-pointer scheduling tie.
    The original 832-byte model differed in 305 halfwords. */
 #include "TYPES.H"
 #include "EFFECT_0809B11C.H"
@@ -134,13 +135,15 @@ void RunBattleEffect04(void)
     object->mode = zero;
     Object_SetMode(object, 5);
     Animation_ApplyChildValuesFar(object, 3);
-    if (object->scale_x < 0x10000) {
+    scale = object->scale_x;
+    if (scale < 0x10000) {
         do {
-            scale = object->scale_x + 0x500;
+            scale += 0x500;
             object->scale_y = scale;
             object->scale_x = scale;
             WaitFrames(1);
-        } while (object->scale_x <= 0xffff);
+            scale = object->scale_x;
+        } while (scale <= 0xffff);
     }
     WaitFrames(3);
     spawn_start = spawned;

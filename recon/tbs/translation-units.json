@@ -79533,16 +79533,6 @@
           "extent": 736
         }
       ]
-    },
-    {
-      "id": "battle-prompt-candidate",
-      "source": "recon/tbs/en/units/battle-prompt-candidate.c",
-      "owners": [
-        {
-          "address": "0x080bb7c0",
-          "extent": 280
-        }
-      ]
     }
   ]
 }

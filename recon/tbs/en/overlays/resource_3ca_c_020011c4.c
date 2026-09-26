@@ -1,9 +1,12 @@
-/* NONMATCHING: 236 of 232 bytes, 82 halfword edits (2026-09-24). Same loops
+/* NONMATCHING: 236 of 232 bytes, 82 differing halfwords, 51 aligned halfword
+ * edits (2026-09-26). Same loops
  * as MENU/TITLE/SPRITE_ROW.C. Remaining: the reference loads the counter
  * twice before the test (ldrsh for the test, ldrh for an SImode decrement)
  * where ours decrements in HImode through a pooled 0xffff; ours then threads
  * the first loop iteration past its reload (b into the loop), and the
- * tile/255 registers differ. */
+ * tile/255 registers differ. A signed decrement shrank to 228 bytes but did
+ * not recover the unsigned second load. An explicit word cast and goto loop
+ * compiled like the original draft; retain its ordinary for loop. */
 #include "TYPES.H"
 
 struct VramBlock {

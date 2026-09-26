@@ -2,6 +2,107 @@
   "format": 5,
   "units": [
     {
+      "id": "party-health-trigger-candidate",
+      "game": "tbs",
+      "source": "recon/tbs/en/overlays/resource_3a5_c_02000cd0.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3a5",
+      "absolute_symbols": {
+        "Engine_MathDivide": { "address": "0x02009c84", "kind": "thumb" },
+        "Engine_GameFlagIsSet": { "address": "0x02009d44", "kind": "thumb" },
+        "Engine_GameFlagSet": { "address": "0x02009d4c", "kind": "thumb" },
+        "Engine_GameFlagClear": { "address": "0x02009d54", "kind": "thumb" },
+        "gEventWork": { "address": "0x03001ebc", "kind": "data" }
+      },
+      "owners": [
+        { "address": "0x02000cd0", "extent": 304, "state": "not-yet-c" }
+      ]
+    },
+    {
+      "id": "babi-ship-sprite-row-candidate",
+      "game": "tbs",
+      "source": "recon/tbs/en/overlays/resource_3ca_c_020011c4.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3ca",
+      "absolute_symbols": {
+        "Main_080001e8": {
+          "address": "0x02009364",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x020011c4",
+          "extent": 232,
+          "state": "not-yet-c"
+        }
+      ]
+    },
+    {
+      "id": "takara-ashiba-column-motion-candidate",
+      "game": "tbs",
+      "source": "recon/tbs/en/overlays/resource_3b4_c_02001ac8.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3b4",
+      "absolute_symbols": {
+        "Engine_ActorGet": {
+          "address": "0x0200a540",
+          "kind": "thumb"
+        },
+        "Engine_MapCopyCellAttributes": {
+          "address": "0x0200a4d8",
+          "kind": "thumb"
+        },
+        "SceneState_ApplyFourRectsAndSetActor8Byte85": {
+          "address": "0x020099e8",
+          "kind": "thumb"
+        },
+        "SceneState_ApplyRectAndSetSlotEightByte35": {
+          "address": "0x02009a9c",
+          "kind": "thumb"
+        },
+        "ActorPresentation_SetSceneCell58AndMarkActorEight": {
+          "address": "0x02009a48",
+          "kind": "thumb"
+        },
+        "SceneState_ApplyRectAndSetActor8Byte35": {
+          "address": "0x02009a70",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02001ac8",
+          "extent": 152,
+          "state": "not-yet-c"
+        }
+      ]
+    },
+    {
+      "id": "babi-heading-probe-candidate",
+      "game": "tbs",
+      "source": "recon/tbs/en/overlays/resource_3c5_c_02002660.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3c5",
+      "absolute_symbols": {
+        "Main_080091a8": {
+          "address": "0x0200add0",
+          "kind": "thumb"
+        },
+        "StagedActor_FindAtTile": {
+          "address": "0x0200806c",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02002660",
+          "extent": 72,
+          "state": "not-yet-c"
+        }
+      ]
+    },
+    {
       "id": "korosseo-command-renderer-candidate",
       "game": "tbs",
       "source": "recon/tbs/en/overlays/resource_3ba_c_020021b8.c",
@@ -11953,7 +12054,7 @@
           "kind": "thumb"
         },
         "Engine_EventShowMessage": {
-          "address": "0x0200988c",
+          "address": "0x02009894",
           "kind": "thumb"
         },
         "Engine_EventWaitForScreen": {

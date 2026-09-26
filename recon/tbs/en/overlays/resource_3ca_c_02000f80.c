@@ -1,8 +1,11 @@
-/* NONMATCHING: 340 of 340 bytes, 120 halfword edits (2026-09-24). Loop bodies
+/* NONMATCHING: 340 of 340 bytes, 120 differing halfwords, 97 halfword edits
+ * (2026-09-26). Loop bodies
  * match. Remaining: global allocation keeps scroll_y in fp and rematerialises
  * the 0xff mask inside each loop, where the reference keeps 0xff in fp and
  * spills scroll_y (as y << 16) to the stack; every register after that shifts
- * by one. */
+ * by one. A shared mask shortened the owner to 336 bytes; separate loop
+ * locals did not move the baseline. Packed scroll arithmetic shortened it
+ * to 316 bytes and 64 edits, losing the required signed load and spill. */
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 
@@ -45,8 +48,6 @@ void Local_02000f80(void)
     s32 acc;
     s32 step;
     s32 amplitude;
-    s32 i;
-    u16 off;
 
     state = Data_03001ed8;
     scroll_y = Data_03001ad0.y;
@@ -55,22 +56,32 @@ void Local_02000f80(void)
     acc = state->frequency_x * (state->phase_x + scroll_y);
     amplitude = state->amplitude_x;
     base = Data_03001ad0.x;
-    for (i = 0; i != 160; i++) {
-        off = Iwram_MulQ16(Data_020094c8[(acc >> 16) & 0xff], amplitude) / 256;
-        line->x = off + base;
-        acc += step;
-        line++;
+    {
+        s32 i;
+        u16 off;
+
+        for (i = 0; i != 160; i++) {
+            off = Iwram_MulQ16(Data_020094c8[(acc >> 16) & 0xff], amplitude) / 256;
+            line->x = off + base;
+            acc += step;
+            line++;
+        }
     }
     line = state->pages[state->page ^ 1];
     step = state->step_y;
     acc = state->frequency_y * (state->phase_y + scroll_y);
     amplitude = state->amplitude_y;
     base = scroll_y;
-    for (i = 0; i != 160; i++) {
-        off = Iwram_MulQ16(Data_020094c8[(acc >> 16) & 0xff], amplitude) / 256;
-        line->y = off + base;
-        acc += step;
-        line++;
+    {
+        s32 i;
+        u16 off;
+
+        for (i = 0; i != 160; i++) {
+            off = Iwram_MulQ16(Data_020094c8[(acc >> 16) & 0xff], amplitude) / 256;
+            line->y = off + base;
+            acc += step;
+            line++;
+        }
     }
     state->phase_y++;
     state->page ^= 1;

@@ -1,7 +1,9 @@
 /* NONMATCHING: 19 differing halfwords. The ROM keeps the first loop as
  * placement + byte offset (ldrh [base, off]) where GCC here strength-reduces
  * it to a pointer; explicit offsets let CSE merge the pre-check and copy
- * loads instead. The second loop and the int return (pop {r1}) match. */
+ * loads instead. Signed/unsigned union slot views retain exactly the same
+ * 19 differences; they do not prevent pointer strength reduction. The
+ * second loop and the int return (pop {r1}) match. */
 #include "TYPES.H"
 
 struct BattleMotionObject {

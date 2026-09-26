@@ -1,3 +1,6 @@
+/* NONMATCHING: shared callee return types audited on 2026-09-26.
+ * 7780 of 7808 bytes, 3233 differing halfwords, 1382 aligned edits.
+ * Canonical declarations are retained; the remaining source model is not exact. */
 /* NONMATCHING: 7808 bytes, candidate 7780, 3233 differing halfwords,
  * 1382 halfword edits (2026-09-25). All 217 calls follow the reference
  * sequence. Typed projected coordinates, recovered the early particle image
@@ -63,14 +66,14 @@ struct BattleObjectSlot *Func_080b5098(s32 actor_id);
 void Func_080b50e8();
 void Func_080cd52c();
 void Func_080cd594();
-void Func_080cdb24();
+s32 Func_080cdb24();
 void Func_080cdbc0();
 void Func_080cef64(s32 alternate, RectangleBlit *output);
-void Func_080d4604();
+s32 Func_080d4604();
 void Func_080d52a4();
 void Func_080d6888(s32 set_id, s32 object_value, s32 group_value, s32 state_slot, s32 state_value);
 void Func_080d9ac4();
-void Func_080dea70();
+s32 Func_080dea70();
 void Func_080df9d0();
 void Func_080e155c(s32 x, s32 y);
 void Func_080e46f0();

@@ -17,7 +17,16 @@
  * candidate 944, 412 differing halfwords, 193 aligned edits. Frame size and
  * all four slots now match. Cached phase still suppresses the reference's
  * second variant read; setup register roles, trail indexing, target loop
- * and final pool length/order still differ. No exact bytes or credit.
+ * and final pool length/order still differ.
+ * H3: separate trig arguments restore the variant read/subtract/shift across
+ * the sine call. Candidate 952, 411 differing halfwords, 182 aligned edits;
+ * the admitted frame/slots survive. Three-hypothesis bound reached; no
+ * permutations or allocation tuning. Remaining: setup register/induction
+ * roles, trail multiply factoring and cached base, target argument-cell
+ * hoist, blitter offset load, final pool order. Candidate pool is 68 bytes
+ * at +0x374 versus 64 at +0x384: symbolic and cast trail views duplicate
+ * the same 02010000 address, and 5555/aaab and trail/radius order differ.
+ * No exact bytes or credit; the retained owner is still not-yet-C.
  * Score: alchemy score this file --owner main:080d1350 --size 964 --align.
  * Default registered symbols suffice; --reference-symbols is inadmissible
  * while the non-relocation core differs. No scoring TU or aliases required.
@@ -169,93 +178,94 @@ point_loop:
         if (frame < point->variant)
             goto next_point;
         {
-                struct EffectPosition screen;
+            struct EffectPosition screen;
 
-                Render_ResetTransformState();
-                Graphics_PrepareTransferInIwramWork((s32)view, (s32)view + 12);
-                EffectPosition_ApplyBaseAndYOffset(&point->x, &screen);
-                screen.x >>= 1;
+            Render_ResetTransformState();
+            Graphics_PrepareTransferInIwramWork((s32)view, (s32)view + 12);
+            EffectPosition_ApplyBaseAndYOffset(&point->x, &screen);
+            screen.x >>= 1;
 
-                if ((u32)(screen.x + 8) <= 135) {
-                    if (screen.y <= 127) {
-                        if (screen.y >= -8) {
-                    vertex = 0;
-                    trail = &Data_02010000[point_index * 10];
-                    do {
-                        s32 angle;
-
-                        angle = vertex * 0x199a
-                            - ((frame - point->variant) << 11);
-                        trail->velocity_x = screen.x
-                            + ((Data_080ee158[vertex & 1]
-                                * Trig_Sin(angle)) / 2 >> 16);
-                        trail->velocity_y = screen.y
-                            - (Data_080ee158[vertex & 1]
-                                * Trig_Cos(angle) >> 16);
-                        vertex++;
-                        trail++;
-                    } while (vertex != 10);
-
-                    vertex = 0;
-                    do {
-                        struct EffectStep *current;
-                        struct EffectStep *next;
-                        s32 step;
-
-                        current = &((struct EffectStep *)0x02010000)[
-                            trail_base + vertex];
-                        next = &((struct EffectStep *)0x02010000)[
-                            trail_base + Math_Mod(vertex + 1, 10)];
-                        step = 0;
+            if ((u32)(screen.x + 8) <= 135) {
+                if (screen.y <= 127) {
+                    if (screen.y >= -8) {
+                        vertex = 0;
+                        trail = &Data_02010000[point_index * 10];
                         do {
-                            s32 x;
-                            s32 y;
+                            s32 phase;
 
-                            x = current->velocity_x;
-                            x += Math_Div(
-                                step * (next->velocity_x - x), 12);
-                            y = current->velocity_y;
-                            y += Math_Div(
-                                step * (next->velocity_y - y), 12);
-                            draw_rectangle[0](
-                                draw_destination,
-                                graphics + Data_080ede48[1],
-                                x - 1,
-                                y - 2,
-                                2,
-                                4);
-                            step++;
-                        } while (step != 12);
-                        vertex++;
-                    } while (vertex != 10);
-                        }
+                            phase = vertex * 0x199a;
+                            trail->velocity_x = screen.x
+                                + ((Data_080ee158[vertex & 1]
+                                    * Trig_Sin(phase
+                                        - ((frame - point->variant) << 11))) / 2 >> 16);
+                            trail->velocity_y = screen.y
+                                - (Data_080ee158[vertex & 1]
+                                    * Trig_Cos(phase
+                                        - ((frame - point->variant) << 11)) >> 16);
+                            vertex++;
+                            trail++;
+                        } while (vertex != 10);
+
+                        vertex = 0;
+                        do {
+                            struct EffectStep *current;
+                            struct EffectStep *next;
+                            s32 step;
+
+                            current = &((struct EffectStep *)0x02010000)[
+                                trail_base + vertex];
+                            next = &((struct EffectStep *)0x02010000)[
+                                trail_base + Math_Mod(vertex + 1, 10)];
+                            step = 0;
+                            do {
+                                s32 x;
+                                s32 y;
+
+                                x = current->velocity_x;
+                                x += Math_Div(
+                                    step * (next->velocity_x - x), 12);
+                                y = current->velocity_y;
+                                y += Math_Div(
+                                    step * (next->velocity_y - y), 12);
+                                draw_rectangle[0](
+                                    draw_destination,
+                                    graphics + Data_080ede48[1],
+                                    x - 1,
+                                    y - 2,
+                                    2,
+                                    4);
+                                step++;
+                            } while (step != 12);
+                            vertex++;
+                        } while (vertex != 10);
                     }
                 }
+            }
 
-                if (point->y <= 0x1dffff) {
-                    point->velocity_y = -point->velocity_y;
-                    point->velocity_x /= 2;
-                    point->velocity_z /= 2;
-                    runtime->impact_mode = 4;
-                    Audio_PlayCue(134);
+            if (point->y <= 0x1dffff) {
+                point->velocity_y = -point->velocity_y;
+                point->velocity_x /= 2;
+                point->velocity_z /= 2;
+                runtime->impact_mode = 4;
+                Audio_PlayCue(134);
 
-                    target_index = 0;
-                    if (runtime->argument->count != 0) {
-                        do {
-                            ObjectGroup_UpdateMembers(
-                                runtime->argument->actors[target_index],
-                                7,
-                                5,
-                                target_index,
-                                8);
-                            target_index++;
-                        } while (target_index != runtime->argument->count);
-                    }
+                target_index = 0;
+                if (runtime->argument->count != 0) {
+                    do {
+                        ObjectGroup_UpdateMembers(
+                            runtime->argument->actors[target_index],
+                            7,
+                            5,
+                            target_index,
+                            8);
+                        target_index++;
+                    } while (target_index != runtime->argument->count);
                 }
+            }
 
-                point->x += point->velocity_x;
-                point->y += point->velocity_y;
-                point->z += point->velocity_z;
+            point->x += point->velocity_x;
+            point->y += point->velocity_y;
+            point->z += point->velocity_z;
         }
 
 next_point:

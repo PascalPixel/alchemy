@@ -1,10 +1,12 @@
 /* Draft main:0809b698, RunBattleEffect16. Complete extent is 364 bytes:
  * 332 bytes of code plus the 32-byte pool formerly labelled 0809b7e4.
- * Hypothesis 2: 368 bytes versus 364, 169 differing halfwords (75 edits).
- * Signed child bytes do not restore the loop's fp-held mode 7. The unsigned
- * resource member adds a return-value copy; word/byte views do restore the
- * work-array address additions. Saved-angle scheduling and loop-zero sharing
- * remain. Hypothesis 1 (356 / 163 halfwords) is preserved in history.
+ * Hypothesis 3: 368 bytes versus 364, 151 differing halfwords (94 edits).
+ * The goto loop rematerialises mode 7, one and zero each pulse; fp now holds
+ * the child entry instead of mode 7. Resource sign extension still precedes
+ * its store; the angle load still precedes the records load. Calls, branches
+ * and all eight pool values agree. Hypotheses 1 and 2 are committed in this
+ * branch's history; the original 364-byte / 32-halfword draft remains in
+ * origin/main. Three structural hypotheses exhausted; no exact C adoption.
  * Previous 364-byte / 32-halfword byte-view draft remains in origin/main.
  */
 #include "TYPES.H"
@@ -37,7 +39,7 @@ struct EffectScene {
     u8 unknown_000[16];
     union EffectObject *object;
     u8 unknown_014[0x71a - 20];
-    u16 resource;
+    s16 resource;
 };
 extern struct EffectScene *Data_03001f30;
 extern u8 Data_02000240[];
@@ -75,7 +77,7 @@ void RunBattleEffect16(void)
     resource = Resource_FindFreeEntry();
     {
         s32 zero = 0;
-        scene->resource = resource;
+        *(s16 *)&scene->resource = resource;
         VramBlock_LoadCached((s16)resource, 0x100, Data_0809c510);
         index = 145;
         ((s32 *)Data_02000240)[index] = 0x09600000;
@@ -92,16 +94,17 @@ void RunBattleEffect16(void)
     WaitFrames(10);
     mode = 7;
     cnt = 19;
-    do {
-        entry->mode = mode;
-        record->reload = 1;
-        WaitFrames(2);
-        record->reload = 1;
-        entry->mode = 0;
-        record->value = 1;
-        cnt--;
-        WaitFrames(3);
-    } while (cnt >= 0);
+pulse:
+    entry->mode = mode;
+    record->reload = 1;
+    WaitFrames(2);
+    record->reload = 1;
+    entry->mode = 0;
+    record->value = 1;
+    cnt--;
+    WaitFrames(3);
+    if (cnt >= 0)
+        goto pulse;
     obj->effect.callback = 0;
     obj->motion.angle = angle;
     Scheduler_AddOrUpdateCallback((s32)BattleFx_UpdateEffect16State, 0xc80);

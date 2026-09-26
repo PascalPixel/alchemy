@@ -1,15 +1,9 @@
-/* Draft, not exact (2026-09-26): 780 of 708 bytes, 360 differing halfwords.
-   Explicit callback branches retain both initialization tails and move
-   the display pointer into r8. This regresses the symbolic-carrier
-   model (704 bytes / 154 halfwords); preserved before restoring best.
-   Link-symbol halfword carriers move the pool into case 4; restoring the
-   queue expression recovers its original roles. The callback ternary
-   still merges argument setup, and frames/start exchange r9/sl.
-   The earlier plain aggregate test gave 708 / 281.
-   Halfword aggregate carriers put the pool nearer case 4, but combine
-   away a saved register. Capturing the queued value before its address
-   changes the count-store ordering and queue roles. Preserved attempt;
-   the earlier 708-byte / 151-halfword model remains in history.
+/* Draft, not exact (2026-09-26): 708 of 708 bytes, 151 differing halfwords.
+   Best complete model restored. Preserved experiments: plain halfword
+   aggregate carriers with a queue-value snapshot gave 708 / 281;
+   symbolic aggregate carriers with the original queue gave 704 / 154;
+   explicit callback branches retained both initialization tails and
+   moved the display pointer into r8, giving 780 / 360.
    Written from the listing; the sibling DisplayTransition_Finish (same
    state record and switch shape) matched. What lined up: the display
    control write is QueueIoWriteDelay2 written out as a macro so its value
@@ -47,10 +41,6 @@ struct DisplayWork {
     u8 unknown_16[0xea];
     u16 split_top;
     u16 split_bottom;
-};
-
-struct HalfConstant {
-    u16 value;
 };
 
 extern volatile u16 Data_04000208;
@@ -159,33 +149,22 @@ void DisplayTransition_Start(s32 mode, s32 frames)
     }
     case 4: {
         struct DisplayTransitionState *state;
-        struct HalfConstant start;
-        struct HalfConstant zero;
+        u16 start;
+        u16 zero;
 
         display = *work;
         state = DisplayTransition_AllocateAndClearState();
-        /* FAKEMATCH: halfword carriers preserve the pool-reach model
-           independently of the two immediate split-window stores. */
-        zero.value = (u16)(s32)&Value_00000000;
-        start.value = (u16)(s32)&Value_00000050;
+        zero = (u16)(s32)&Value_00000000;
+        start = (u8)(u32)&Value_00000050;
         display->split_top = 80;
         display->split_bottom = 80;
         WaitFrames(1);
-        if (value == 0) {
-            Scheduler_AddOrUpdateCallback(DisplayTransition_Update, 0xc80);
-            Runtime_SetIrqHandler(1, 0, DisplayTransition_UpdateScanline);
-            state->start = start.value;
-            state->end = zero.value;
-            state->frames = frames;
-            state->phase = zero.value;
-        } else {
-            Scheduler_AddOrUpdateCallback(DisplayTransition_UpdateFromCentre, 0xc80);
-            Runtime_SetIrqHandler(1, 0, DisplayTransition_UpdateScanline);
-            state->start = start.value;
-            state->end = zero.value;
-            state->frames = frames;
-            state->phase = zero.value;
-        }
+        Scheduler_AddOrUpdateCallback(value == 0 ? DisplayTransition_Update : DisplayTransition_UpdateFromCentre, 0xc80);
+        Runtime_SetIrqHandler(1, 0, DisplayTransition_UpdateScanline);
+        state->start = start;
+        state->end = zero;
+        state->frames = frames;
+        state->phase = zero;
         break;
     }
     }

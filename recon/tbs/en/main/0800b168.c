@@ -9,7 +9,22 @@
    pointer's costs change and it lands in r7 with ground/y in r6; here CSE
    folds any in-block part pointer into the sprite, the stores go through
    the sprite register and r6/r7 swap. Tried: an in-block part pointer, a
-   part pointer declared at the top, an inline placement helper. */
+   part pointer declared at the top, an inline placement helper.
+   2026-09-26 lower-main pass: whole [0800b168,0800b388), 544 bytes
+   including both own pools and end alignment; baseline 542 bytes,
+   53 differing halfwords, 42 aligned edits, 68-byte frame. Callers c62c
+   and 12e28 pass a four-word position and two-word scale. Callees aa0c,
+   3d28 and 3dec return flip, build matrix, and enqueue a sprite part.
+   H1: a union-backed store view owns the primary part's packed attributes
+   separately from the enclosing sprite. Predict a retained r0 base copy
+   before the primary stores, as in the reference, without changing the
+   shadow path, frame or pools. One trial; exact 544 bytes plus comparison,
+   coverage and verify are the acceptance gate. Read the whole normalized
+   difference and retain the result here before leaving this axis.
+   H1 result: byte-identical to the old 542-byte candidate (cmp confirmed),
+   still 53 differing halfwords / 42 aligned edits. Extracting a typed part
+   pointer from the union does not retain union store-alias ownership;
+   the primary r0 copy is still absent. This spelling is closed. */
 #include "TYPES.H"
 
 struct ProjectedSpritePart {
@@ -36,6 +51,12 @@ struct ProjectedSprite {
     u8 unknown_24;
     u8 hidden;
     u8 shadow_flags;
+};
+
+/* FAKEMATCH: union view expresses the packed first-part store alias. */
+union ProjectedSpriteView {
+    struct ProjectedSprite sprite;
+    struct ProjectedSpritePart part[2];
 };
 
 struct ProjectedEffect {
@@ -117,7 +138,8 @@ void Render_ApplyProjectedPlacement(struct ProjectedSprite *sprite, s32 *pos, s3
     y = ((pz - py) >> 16) - half_height
         - ((scale_y * ((sprite->height >> 1) - sprite->offset_y) + 0xffff) >> 16);
     if (x < 240 && y < 160) {
-        struct ProjectedSpritePart *part = &sprite->part[0];
+        struct ProjectedSpritePart *part =
+            &((union ProjectedSpriteView *)sprite)->part[0];
 
         part->x = x;
         part->y = y;

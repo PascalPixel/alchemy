@@ -2,9 +2,9 @@
 #include "FIELD_EVENT.H"
 #include "SYSTEM.H"
 
-/* DRAFT: complete 820-byte owner and pool; retry/timeout and saved buffer
- * recovered. Score stops at unbound Engine_ActorFaceActor: no TU for this
- * owner. Byte residual unknown; stopped at the 45-minute no-adoption limit. */
+/* DRAFT: 808/820 bytes, 118 differing halfwords over the complete owner.
+ * First pool at +0x2d4 rather than +0x274; prologue scheduling and packet
+ * value load order remain. Two structural corrections exhausted; not adopted. */
 
 s32 LinkLobby_PeerSlotMatches(s32 slot);
 void LinkLobby_WriteSlotValue(s32 slot);
@@ -16,6 +16,7 @@ void Main_080000d0(void *buf, s32 size);
 void Main_080003b8(void *buf, s32 mode);
 void Main_08009188(s32 mode);
 void Main_08009190(s32 mode);
+s32 Main_0808a020(void);
 s32 Main_0808a260(s32 value, s32 index);
 void Main_0808a268(s32 value, s32 index);
 void Main_0808a250(s32 first, s32 second);
@@ -26,7 +27,7 @@ extern s32 Data_02002224[];
 extern u8 Value_00000043, Value_00000045, Value_00000058;
 extern u8 Value_000000be, Value_000007c7;
 
-void Scene_RunScene3cbSequenceB(void)
+s32 Scene_RunScene3cbSequenceB(void)
 {
     struct EventWork *work;
     s32 failed;
@@ -37,6 +38,7 @@ void Scene_RunScene3cbSequenceB(void)
     u8 *src;
     u8 *dst;
     u16 *tbl;
+    u16 value;
     u32 i;
 
     work = gEventWork;
@@ -46,6 +48,7 @@ void Scene_RunScene3cbSequenceB(void)
     if (Engine_GameFlagIsSet(0x173)) {
         Engine_EventBegin();
     } else {
+        /* FAKEMATCH: these event callback exits have no defined result. */
         if (!Engine_GameFlagIsSet(0x200))
             return;
         if (Engine_GameFlagIsSet(0x205))
@@ -84,7 +87,7 @@ void Scene_RunScene3cbSequenceB(void)
         Engine_TaskWait(5);
     }
     if (!failed) {
-        buf = Runtime_AllocateBlock(54, 0x7c8);
+        buf = Engine_HeapAllocate(54, 0x7c8);
         Main_080000d8(Data_02008149);
         Main_08009188(5);
         Engine_TaskWait(8);
@@ -92,21 +95,21 @@ void Scene_RunScene3cbSequenceB(void)
         if (Engine_GameFlagIsSet(0x173)) {
             Engine_ActorFaceActor(8, gGameState.selected_actor, 0);
             Engine_EventSetMessage(0x293b);
-            Engine_EventShowMessage(8, 0);
+            Engine_EventOpenMessage(8, 0);
             Engine_TaskWait(45);
-            Engine_ActorSetSpeed(0, 0x10000, 0x8000);
+            Actor_SetSpeed(0, 0x10000, 0x8000);
             Engine_ActorWalkTo(0, 216, 184);
             Engine_ActorWaitForMove(0);
             Engine_ActorWalkTo(0, 216, 168);
             Engine_ActorWaitForMove(0);
         } else {
-            Engine_ActorSetSpeed(0, 0x10000, 0x8000);
+            Actor_SetSpeed(0, 0x10000, 0x8000);
             Engine_ActorWalkTo(0, 216, 200);
             Engine_ActorWaitForMove(0);
-            Engine_ActorSetSpeed(0, 0x1999, 0xccc);
+            Actor_SetSpeed(0, 0x1999, 0xccc);
             Engine_ActorWalkTo(0, 216, 168);
             if (Local_020007b0() < 0) {
-                Engine_ActorSetSpeed(0, 0x10000, 0x8000);
+                Actor_SetSpeed(0, 0x10000, 0x8000);
                 Engine_ActorWalkTo(0, 216, 200);
                 Main_08009188(5);
                 Engine_TaskWait(8);
@@ -125,7 +128,7 @@ void Scene_RunScene3cbSequenceB(void)
                 work->raised_trigger = 2;
                 goto done;
             }
-            Engine_ActorSetSpeed(0, 0x8000, 0x4000);
+            Actor_SetSpeed(0, 0x8000, 0x4000);
             Engine_ActorWaitForMove(0);
         }
         if (Engine_GameFlagIsSet(0x173)) {
@@ -138,13 +141,14 @@ void Scene_RunScene3cbSequenceB(void)
         gGameState.unknown_1f8[0x33] = 4;
         Main_0808a250(1, 1);
         tbl = (u16 *)Data_02002224;
+        value = (u16)(s32)&Value_00000045;
         tbl[1] = (u32)&Value_00000058;
-        tbl[0] = (u32)&Value_00000045;
-        tbl[2] = (u32)&Value_00000045;
+        tbl[0] = value;
+        tbl[2] = value;
         tbl[3] = (u32)&Value_00000043;
+        i = 0;
         src = buf;
         dst = Data_02018000;
-        i = 0;
         do {
             i++;
             *dst++ = *src++;
@@ -152,5 +156,5 @@ void Scene_RunScene3cbSequenceB(void)
         Runtime_ReleaseHeapBlock(54);
     }
 done:
-    Engine_EventEnd();
+    return Main_0808a020();
 }

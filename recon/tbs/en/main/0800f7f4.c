@@ -4,7 +4,14 @@
    in the prologue, the zeroed position and both height tests, and the ROM
    reloads pos.z at the join after the two facing stores where this spelling
    skips the reload on the z <= 0 path (as if the ROM's facing store could
-   alias the position). Struct, array, u16 and split spellings moved nothing. */
+   alias the position). Struct, array, u16 and split spellings moved nothing.
+   2026-09-26: a coordinate/halfword union also emits identical bytes.
+   An explicit volatile z reload fixes the branch destination but creates
+   a new sp+76 address, adds an instruction and disturbs the following
+   load order (472 bytes / 48 aligned edits, baseline 33). Neither explains
+   the reference's shared r5-relative reload; retain the typed baseline.
+   The event-work pointer is bound directly to its audited pool address
+   below so this draft scores independently without per-file bindings. */
 #include "OBJECT_RUNTIME.H"
 #include "MAP.H"
 
@@ -20,7 +27,7 @@ struct KeyMovePosition {
 };
 
 extern volatile u32 gKeysHeld;
-extern struct KeyMoveEventWork *gEventWork;
+extern struct KeyMoveEventWork *Data_03001ebc;
 extern const s16 Data_08013254[16];
 
 void Vector_AddPolarOffset(s32 radius, s32 angle, struct KeyMovePosition *position);
@@ -88,11 +95,11 @@ s32 Object_MoveByKeys(struct ObjectRuntime *object)
             }
         }
     }
-    if (gEventWork != NULL) {
+    if (Data_03001ebc != NULL) {
         if (blocked & 3)
-            gEventWork->blocked_steps++;
+            Data_03001ebc->blocked_steps++;
         else
-            gEventWork->blocked_steps = 0;
+            Data_03001ebc->blocked_steps = 0;
     }
     ObjectDispatch_ApplyArgumentToChildren(object, motion);
     if (blocked != 0) {

@@ -1,11 +1,17 @@
-/* Draft, not exact: 664 bytes, 92 differing halfwords, 81 aligned edits.
+/* Draft, not exact (2026-09-26): 660 of 664 bytes, 203 differing halfwords,
+   90 aligned edits. Scalar declaration order fixes all five stack slots:
+   callbacks +12/+16, frame +20, destination +24, record +28 (40-byte frame).
+   Baseline: 664/92/81; scalar order: 664/88/77; scoped particle cursors,
+   plain record stores and void epilogue: 660/203/90 (retained). An explicit
+   member-loop back edge produces the same bytes. Three hypotheses stopped.
+   Remaining: target-slot load is shared across the member-loop entry,
+   drawing cursor/accumulator registers differ, and four bytes are absent.
    Typed 28-byte particles (x halfword union, y, step, acceleration, phase)
-   and work/effect/member structs leave the same residual. Two blitters in
+   and work/effect/member structs previously left the same residual. Two blitters in
    an array give 83 edits; grouping frame/destination/record with them gives
    692 bytes and a 52-byte frame, not the reference's 40. The remaining
-   stack order is blitters at +12/+16, frame +20, destination +24, record +28.
-   FAKEMATCH marks below are empty do-while wraps that only move scheduling
-   or register choice; they stay tagged until a real spelling replaces them. */
+   stack order was blitters at +12/+16, frame +20, destination +24, record +28.
+   The former empty do-while record-store wrap is no longer needed. */
 #include "TYPES.H"
 #include "BATTLE_EFX.H"
 
@@ -43,19 +49,18 @@ void Func_080051d8(s32 a, s32 b);
 void Func_08004cb4(void *record);
 void Func_080d6888(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 
-s32 Func_080d59b0(void *object)
+void Func_080d59b0(void *object)
 {
     void *work;
     void *draw_destination;
     void *target;
     void **heap_cache;
     void **cursor;
-    DrawRectangleFn callback_a;
+    s32 frame;
     DrawRectangleFn callback_b;
-    u8 *star;
+    DrawRectangleFn callback_a;
     s32 i;
     s32 j;
-    s32 frame;
     s32 facing;
     s32 record[3];
 
@@ -73,15 +78,17 @@ s32 Func_080d59b0(void *object)
     BattleEffect_LoadWork(47, 7, 7, 15, 1);
     callback_b = (DrawRectangleFn) heap_cache[8];
 
-    star = (u8 *)0x02010000;
-    for (i = 0; i != 32; i++) {
-        M2C_FIELD(star, s32 *, 0) = (s32) (((Func_08004458() & 0x3F) + 32) << 16);
-        M2C_FIELD(star, s32 *, 4) = (s32) 0xFFE00000;
-        Func_08004458();
-        M2C_FIELD(star, s32 *, 16) = 0;
-        M2C_FIELD(star, s32 *, 8) = (s32) (Func_08004458() & 3);
-        M2C_FIELD(star, s32 *, 24) = (s32) (Func_08004458() & 0xFF);
-        star += 28;
+    {
+        u8 *star = (u8 *)0x02010000;
+        for (i = 0; i != 32; i++) {
+            M2C_FIELD(star, s32 *, 0) = (s32) (((Func_08004458() & 0x3F) + 32) << 16);
+            M2C_FIELD(star, s32 *, 4) = (s32) 0xFFE00000;
+            Func_08004458();
+            M2C_FIELD(star, s32 *, 16) = 0;
+            M2C_FIELD(star, s32 *, 8) = (s32) (Func_08004458() & 3);
+            M2C_FIELD(star, s32 *, 24) = (s32) (Func_08004458() & 0xFF);
+            star += 28;
+        }
     }
 
     if (M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 4) == 1) {
@@ -93,6 +100,7 @@ s32 Func_080d59b0(void *object)
     Func_080f9010(142);
 
     for (frame = 0; frame != 148; frame++) {
+        u8 *star;
         facing = *(s32 *)0x03001E80;
         if (frame == 80) {
             Func_080b50e8(0);
@@ -107,28 +115,29 @@ s32 Func_080d59b0(void *object)
 
             target_slot = (void **)((u8 *)work + 0x7828);
             member_id_offset = 36;
-            do {
-                target = *target_slot;
-                member = *Func_080b5098(
-                    M2C_FIELD(target, s16 *, member_id_offset));
-                Func_080049ac();
-                Func_080051d8(facing, facing + 12);
-                record[0] = M2C_FIELD(member, s32 *, 8);
-                record[1] = (s32) (160 << 14);
-                do { record[2] = M2C_FIELD(member, s32 *, 16); } while (0); /* FAKEMATCH */
-                Func_08004cb4(record);
+next_member:
+            target = *target_slot;
+            member = *Func_080b5098(
+                M2C_FIELD(target, s16 *, member_id_offset));
+            Func_080049ac();
+            Func_080051d8(facing, facing + 12);
+            record[0] = M2C_FIELD(member, s32 *, 8);
+            record[1] = (s32) (160 << 14);
+            record[2] = M2C_FIELD(member, s32 *, 16);
+            Func_08004cb4(record);
 
-                if (frame == j * 16 + 64) {
-                    target = *target_slot;
-                    Func_080d6888(
-                        M2C_FIELD(target, s16 *, member_id_offset),
-                        0, 5, -1, 0);
-                }
-
-                member_id_offset += 2;
-                j++;
+            if (frame == j * 16 + 64) {
                 target = *target_slot;
-            } while (j != M2C_FIELD(target, s32 *, 20));
+                Func_080d6888(
+                    M2C_FIELD(target, s16 *, member_id_offset),
+                    0, 5, -1, 0);
+            }
+
+            member_id_offset += 2;
+            j++;
+            target = *target_slot;
+            if (j != M2C_FIELD(target, s32 *, 20))
+                goto next_member;
         }
 
         star = (u8 *)0x02010000;
@@ -194,5 +203,5 @@ s32 Func_080d59b0(void *object)
     Func_08004278((void *)0x080CD261);
     Func_08002dd8(47);
     Func_08002dd8(46);
-    return Func_080cdbc0();
+    Func_080cdbc0();
 }

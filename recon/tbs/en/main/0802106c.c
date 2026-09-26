@@ -1,4 +1,6 @@
-/* Draft, not exact: 156 differing halfwords, 436-byte candidate for the
+/* The following Djinn_ShowJoinedMessage now has its own 312-byte owner at
+   08021228; this owner ends at that entry, including its own final pool.
+   Draft, not exact: 156 differing halfwords, 436-byte candidate for the
    444-byte owner (2026-09-23). Residual: loop structure, B-cancel placement
    and palette pointer match; the key-state address is not hoisted into a
    register for the loop as in the reference (which spills the resource slot

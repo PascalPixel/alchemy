@@ -1735,9 +1735,14 @@ mod tests {
         let alone = json!({
             "id": "alone", "source": "games/THE BROKEN SEAL/SRC/FIELD/ALONE.C",
             "overlay": "resource_394",
-            "owners": [{"address": "0x02000100", "extent": 4, "state": "exact-c"}]
+            "owners": [{"address": "0x02000100", "extent": 4}]
         });
         repository.units(json!([staged_actor(), alone]));
+        repository.record(
+            "resource_394:02000100",
+            json!({"name": "Alone", "source": "FIELD/ALONE.C"}),
+        );
+        repository.listing("resource_394", &[0x0200_0100]);
         let units = TranslationUnits::declared(root).unwrap();
         assert_eq!(
             address_names(root, &units).unwrap(),

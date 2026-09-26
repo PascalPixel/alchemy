@@ -837,7 +837,7 @@ fn run(args: &[String]) -> Result<(), String> {
             })
             .collect::<Map<String, Value>>(),
         "local_symbols": [],
-        "owners": owners.iter().map(|o| json!({"address": format!("0x{:08x}", o.address), "extent": o.extent, "state": "exact-c"})).collect::<Vec<_>>(),
+        "owners": owners.iter().map(|o| json!({"address": format!("0x{:08x}", o.address), "extent": o.extent})).collect::<Vec<_>>(),
     });
     if !apply {
         println!(

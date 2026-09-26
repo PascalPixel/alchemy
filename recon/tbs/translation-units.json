@@ -2,6 +2,30 @@
   "format": 5,
   "units": [
     {
+      "id": "shinden-restart-option",
+      "source": "recon/tbs/en/overlays/resource_378_c_020027d4.c",
+      "overlay": "resource_378",
+      "absolute_symbols": {
+        "Engine_ActorSetPosition": { "address": "0x0200b658", "kind": "thumb" },
+        "Engine_ColorBufferApplyTarget": { "address": "0x0200b708", "kind": "thumb" },
+        "Engine_ColorBufferInterpolate": { "address": "0x0200b710", "kind": "thumb" },
+        "Engine_EventWait": { "address": "0x0200b5e8", "kind": "thumb" },
+        "Engine_DebugCreateWindow": { "address": "0x0200b588", "kind": "thumb" },
+        "Engine_DebugDrawTextResource": { "address": "0x0200b598", "kind": "thumb" },
+        "SaveState_CountRecordsExcludingFlaggedFar": { "address": "0x0200b5c8", "kind": "thumb" },
+        "UiTextResource_InitializeFar": { "address": "0x0200b5a8", "kind": "thumb" },
+        "UiTextResource_SetPositionFar": { "address": "0x0200b5b0", "kind": "thumb" },
+        "UiTextResource_ReleaseFar": { "address": "0x0200b5b8", "kind": "thumb" },
+        "Engine_DebugFinalizeWindow": { "address": "0x0200b590", "kind": "thumb" },
+        "Data_0000116e": { "address": "0x0000116e", "kind": "data" }
+      },
+      "owners": [
+        { "address": "0x020027d4", "extent": 312, "state": "not-yet-c" }
+      ],
+      "game": "tbs",
+      "compiler_route": "canonical-gcc296"
+    },
+    {
       "id": "effect-spark-ring",
       "source": "recon/tbs/en/overlays/resource_380_c_0200449c.c",
       "overlay": "resource_380",

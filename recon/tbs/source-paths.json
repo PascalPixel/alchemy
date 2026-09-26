@@ -1,6 +1,9 @@
 {
   "format": 3,
   "owners": {
+    "resource_378:020027d4": {
+      "name": "ShindenHeya_ChooseRestartOption"
+    },
     "resource_380:0200449c": {
       "name": "Effect_UpdateSparkRing"
     },

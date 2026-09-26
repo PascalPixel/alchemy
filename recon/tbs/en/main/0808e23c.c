@@ -1,9 +1,12 @@
-/* Draft, not exact (2026-09-26): 628 of 632 bytes, 208 differing halfwords.
-   Normalized edit distance: 100 halfwords. Typed party/runtime views recover
+/* Draft, not exact (2026-09-26): 628 of 632 bytes, 283 differing halfwords.
+   Normalized edit distance: 82 halfwords. A shared count/runtime union keeps
+   the count and runtime base high and the inventory index low. They use r9
+   rather than r8; the best count and index still exchange r6/r7.
+   Typed party/runtime views recover
    base-plus-offset accesses and shared zero/one lifetimes. Confirmation
    copies use +0x240/+0x242 and +0x1c0/+0x1c2. The complete literal pool
    now agrees. Initializing best after the owner-count call is score-neutral.
-   Remaining: inventory and runtime base/flag lifetimes. */
+   Remaining: phase-value allocation and runtime flag-pointer scheduling. */
 #include "TYPES.H"
 extern u8 Value_000003e7;
 #include "ITEM.H"
@@ -65,6 +68,11 @@ struct ItemCommandRuntime {
     u8 resolving_action;
 };
 
+union ItemCommandWork {
+    s32 count;
+    struct ItemCommandRuntime *runtime;
+};
+
 typedef s32 (*BattleItemCallback)(s32 item, s32 actor, s32 slot);
 
 union BattleItemEffect {
@@ -117,15 +125,16 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
     u16 *p;
     s32 j;
     s32 matches;
+    /* FAKEMATCH: reuse one word across the count and runtime phases. */
+    union ItemCommandWork work;
 
     result = -1;
     item_id = arg & 0x3ff;
     actor = (arg >> 10) & 0xf;
     {
-        s32 count;
         s32 best;
 
-        count = Func_08077148(actor);
+        work.count = Func_08077148(actor);
         best = 0;
 
         if (actor == 15) {
@@ -133,11 +142,11 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
 
             actor = 0;
             i = 0;
-            if (actor < count) {
-                struct ItemPartyView *work =
+            if (actor < work.count) {
+                struct ItemPartyView *party =
                     (struct ItemPartyView *)&Data_02000240;
                 do {
-                    obj = (struct BattleUnitObject *)Runtime_GetObject(work->active_owners[i]);
+                    obj = (struct BattleUnitObject *)Runtime_GetObject(party->active_owners[i]);
                     matches = 0;
                     p = obj->abilities;
                     j = 14;
@@ -149,10 +158,10 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
 
                     if (best < matches) {
                         best = matches;
-                        actor = work->active_owners[i];
+                        actor = party->active_owners[i];
                     }
                     i++;
-                } while (i < count);
+                } while (i < work.count);
             }
         } else {
             obj = (struct BattleUnitObject *)Runtime_GetObject(actor);
@@ -192,12 +201,11 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
         result = 0;
     } else {
         s32 action_id;
-        struct ItemCommandRuntime *rt;
 
         GameFlag_Clear(0x143);
         GameFlag_Set(0x142);
         action_id = Item_GetData(item_id)->action_id;
-        rt = (struct ItemCommandRuntime *)Data_03001ebc;
+        work.runtime = (struct ItemCommandRuntime *)Data_03001ebc;
 
         if (action_id != 0) {
             GameFlag_Set(0x145);
@@ -221,16 +229,16 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
                     b = work[289];
                     work[225] = b;
                 }
-                rt->result_code = (s32)&Value_000003e7;
+                work.runtime->result_code = (s32)&Value_000003e7;
             }
 
             UiText_DrawQuantity(actor, 1);
             UiText_DrawQuantity(item_id, 2);
             UiText_DrawMessage(0x91c, 1);
             Func_08096fb0(action_id, 0);
-            rt->resolving_action = 1;
+            work.runtime->resolving_action = 1;
             Func_08096810();
-            rt->resolving_action = 0;
+            work.runtime->resolving_action = 0;
             Func_08097194();
 
             if (Item_GetData(item_id)->use_type & 1)

@@ -34,7 +34,8 @@ mod tests {
         let overlay =
             super::SourceOwner::parse_argument("resource_3ba:02002910").expect("overlay owner");
         let path = super::default_source(&repo, overlay).expect("overlay default");
-        assert!(path.ends_with(".c"), "{path}");
+        assert!(path.to_ascii_lowercase().ends_with(".c"), "{path}");
+        assert!(repo.join(&path).is_file(), "{path}");
     }
 }
 
@@ -124,10 +125,14 @@ fn default_source(repo: &Path, owner: SourceOwner) -> Result<String, String> {
         return Ok(format!("recon/tbs/en/main/{stem}.c"));
     };
     let paths = SourcePaths::load_for_game(repo, CompilerTarget::Tbs.as_str())?;
-    Ok(paths.mapped_relative_path(owner).map_or_else(
-        || format!("recon/tbs/en/overlays/{overlay}_c_{stem}.c"),
-        |path| path.to_string_lossy().into_owned(),
-    ))
+    match paths.mapped_source_path(owner) {
+        Some(path) => Ok(path
+            .strip_prefix(repo)
+            .map_err(|error| error.to_string())?
+            .to_string_lossy()
+            .into_owned()),
+        None => Ok(format!("recon/tbs/en/overlays/{overlay}_c_{stem}.c")),
+    }
 }
 /// The compiler runs through the shared tool executor so its dumps come from
 /// the same address-stable invocation production compiles use.

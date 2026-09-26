@@ -1,6 +1,18 @@
 {
   "format": 3,
   "owners": {
+    "resource_3bb:02002ba8": {
+      "name": "Korosseo_FadeInCompetitor",
+      "source": "FIELD/COMMON/KOROSSEO/FADE_IN_COMPETITOR.C"
+    },
+    "resource_3bc:02003640": {
+      "name": "Korosseo_FadeInCompetitor",
+      "source": "FIELD/COMMON/KOROSSEO/FADE_IN_COMPETITOR.C"
+    },
+    "resource_3ba:02002910": {
+      "name": "Korosseo_FadeInCompetitor",
+      "source": "FIELD/COMMON/KOROSSEO/FADE_IN_COMPETITOR.C"
+    },
     "main:08028c04": {
       "name": "Menu_SelectResourceLayout",
       "source": "MENU/SELECT_RESOURCE_LAYOUT.C"
@@ -10333,7 +10345,8 @@
       "source": "BATTLE/EFFECT/RUN_SCENE_TRANSITION.C"
     },
     "main:080983a0": {
-      "name": "RunBattleEffect08"
+      "name": "RunBattleEffect08",
+      "source": "BATTLE/EFFECT/RUN_EFFECT08.C"
     },
     "main:08098954": {
       "name": "RunBattleEffect07"
@@ -20080,6 +20093,9 @@
       "name": "Color_ScaleComponents",
       "source": "GRAPHICS/PALETTE/SCALE_COMPONENTS.C"
     },
+    "main:0801a66c": {
+      "name": "UiGlyph_ResetWorkState"
+    },
     "main:0801a5a4": {
       "name": "UiGlyph_DecodeWithHeapRoutines"
     },
@@ -21459,7 +21475,6 @@
     "main:08015070": "UiWindow_DrawDividerLineFar",
     "main:0801a4fc": "UiGlyph_LoadEntryWithPalette",
     "main:0808a5b0": "SaveState_CaptureObjectTableFar",
-    "main:0801a66c": "UiGlyph_ResetWorkState",
     "main:0801f200": "UiWindow_DrawPartyStatusContents",
     "main:080a2420": "UiWork_ClearMenuBusy",
     "main:080191cc": "UiWork_AnimateSpriteSlots",

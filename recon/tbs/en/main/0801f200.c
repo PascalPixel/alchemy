@@ -3,11 +3,14 @@
  * First model: 992 bytes / 258 aligned halfword edits. Separate text-pixel
  * and bar-tile coordinates: 988 / 257. A halfword aggregate sentinel restores
  * both early literal-pool positions: 992 / 225, 415 differing halfwords.
- * Retained below; branch topology is equal, no missing calls were found.
+ * Full diff then exposed four legacy glyph calls with only four arguments:
+ * omitting their redundant outgoing mode stores gives 976 / 213, 407
+ * differing halfwords. The explicit FAKEMATCH below retains that call shape.
+ * Branch topology is equal; no missing calls were found.
  * Residual: 48-byte frame versus 52, wrong saved-register roles, the owner
  * index is recomputed instead of walking its own spilled offset, and pointer
  * scheduling at entry. Do not sweep declarations without allocation evidence.
- * The three attempts are complete; this draft does not earn DONE credit.
+ * The bounded attempts are complete; this draft does not earn DONE credit.
  */
 #include "TYPES.H"
 #include "BATTLE_TYPES.H"
@@ -47,7 +50,9 @@ void UiText_DrawStringAtOffset(u8 *, struct RenderInput *, s32, s32);
 s32 Math_Div(s32, s32);
 s32 UiWindow_DrawStatusBarTiles(struct RenderInput *, s32, s32, s32);
 void UiWindow_SetTilemapEntry(struct RenderInput *, s32, s32, s32, u32);
-void Func_08018efc(struct RenderInput *, u32, u32, u32, s32);
+/* FAKEMATCH: these four legacy calls reuse the outgoing mode slot left
+ * at zero by UiWindow_SetTilemapEntry; the reference passes four arguments. */
+void Func_08018efc();
 
 void UiWindow_DrawPartyStatusContents(s32 flags)
 {
@@ -161,10 +166,10 @@ void UiWindow_DrawPartyStatusContents(s32 flags)
         UiWindow_SetTilemapEntry(window, (s32)&Value_00005002, 2, row, 0);
         UiWindow_SetTilemapEntry(window, (s32)&Value_00005003, 0, row + 1, 0);
         UiWindow_SetTilemapEntry(window, (s32)&Value_00005004, 2, row + 1, 0);
-        Func_08018efc(window, djinn[0] + 48, 1, row, 0);
-        Func_08018efc(window, djinn[1] + 48, 3, row, 0);
-        Func_08018efc(window, djinn[2] + 48, 1, row + 1, 0);
-        Func_08018efc(window, djinn[3] + 48, 3, row + 1, 0);
+        Func_08018efc(window, djinn[0] + 48, 1, row);
+        Func_08018efc(window, djinn[1] + 48, 3, row);
+        Func_08018efc(window, djinn[2] + 48, 1, row + 1);
+        Func_08018efc(window, djinn[3] + 48, 3, row + 1);
     }
     work->busy = 0;
 }

@@ -2,14 +2,18 @@
 
 /* Draft: a separate signed sentinel value removes the extra saved register,
    but the loop still uses ldrh and a left shift instead of ldrsh; counter
-   and pointer registers differ. Value_00000000 restores the word pool load. */
+   and pointer registers differ. Value_00000000 restores the word pool load.
+   A volatile source suppresses the carried read, but keeps ldrh/lsl, exchanges
+   the counter and destination registers, and reverses the two pool words.
+   Volatile candidate: 68 bytes, 19 differing halfwords; three hypotheses stop. */
 
 extern s16 EventTable_AbilityLoadouts[][33];
 extern u8 Value_00000000;
 
 s32 EventTable_CopyRowHeader(s32 row_no, s16 *output)
 {
-    s16 *src;
+    /* FAKEMATCH: volatile keeps the sentinel and copy as separate reads. */
+    volatile s16 *src;
     s16 *dst;
     s32 count;
     s32 value;

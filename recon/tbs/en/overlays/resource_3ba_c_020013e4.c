@@ -84,11 +84,21 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
     f(a0, a1, a2, a3);
 }
 
-/* NONMATCHING: 508 of 508 bytes, 32 halfword edits (2026-09-24). The prompt
- * result (zero on this path) lives in sl and the 0xcccc speed constant in r6
- * in the reference; here the two allocations are swapped. Literal zeros and a
- * word temporary for the speed moved nothing. */
-void Func_020013e4(s32 a0)
+/* NONMATCHING: 504 of 508 bytes, 73 differing halfwords, 32 aligned edits
+ * (2026-09-26). Whole owner 020013e4..020015e0; the pool starts at 020015cc
+ * and includes the final 0x208f message word. Calls and pool audited against
+ * our own ROM. The prompt result lives in sl and speed 0xcccc in r6 in the
+ * reference; the retained candidate swaps them. Literal zeros and a word
+ * speed temporary had already failed on 2026-09-24.
+ *
+ * Bounded ownership trial: FIELD_EVENT.H, typed FieldActor pointers/fields
+ * and pointer-returning ActorGet produced 504 bytes, 88 differing halfwords,
+ * 58 aligned edits. It moved speaker/actor/acceleration allocations as well,
+ * without correcting result/speed lifetime. Rejected; best baseline retained.
+ * No declaration permutation or register spelling sweep. Reopen only with a
+ * new result/speed lifetime hypothesis, not the same typed-field conversion.
+ */
+void Korosseo_RunPromptMotionSequence(s32 a0)
 {
     u32 i;
     s32 rec4;

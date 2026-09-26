@@ -11,6 +11,13 @@
  * loop rotates WaitFrames to its head, initial pools move into the body,
  * and y's fixed-point conversion precedes rather than follows the x divide.
  * Budget: one corrected model and two evidence-backed variants.
+ * H2: explicit tail-wait loop avoids the diagnosed loop rotation; a u16
+ * zero in the skip path tests the short literal-pool reach recipe used by
+ * other exact halfword stores. Prediction: original loop edges and pools.
+ * H2: 256/264 bytes, 71 aligned edits, equal topology. Halfword zero puts
+ * the initial pool at the exact +0x2c boundary. The goto loop prevents
+ * the 0xffff mask from living across WaitFrames, removing the reference
+ * four-byte spill frame. Y conversion is still before the first divide.
  */
 
 struct CursorAttributes {
@@ -65,7 +72,8 @@ void UiMenu_SlideCursor(s32 x, s32 y)
 
     cnt = 2;
     if (work->skip_slide != 0) {
-        work->skip_slide = 0;
+        u16 zero = 0;
+        work->skip_slide = zero;
         return;
     }
     cursor = work->cursor;
@@ -83,18 +91,17 @@ void UiMenu_SlideCursor(s32 x, s32 y)
     py = cursor->y << 4;
     dx = Math_Div((x << 4) - px + 1, 2);
     dy = Math_Div((y << 4) - py + 1, 2);
-    for (;;) {
-        window = work->window;
-        px += dx;
-        cursor->attributes.x = cursor->x =
-            (px >> 4) + (window->tile_x << 3) - 56;
-        py += dy;
-        cursor->attributes.y = cursor->y =
-            (py >> 4) + (window->tile_y << 3) - 56;
-        cnt--;
-        if (cnt == 0) {
-            break;
-        }
-        WaitFrames(1);
-    }
+next_frame:
+    window = work->window;
+    px += dx;
+    cursor->attributes.x = cursor->x =
+        (px >> 4) + (window->tile_x << 3) - 56;
+    py += dy;
+    cursor->attributes.y = cursor->y =
+        (py >> 4) + (window->tile_y << 3) - 56;
+    cnt--;
+    if (cnt == 0)
+        return;
+    WaitFrames(1);
+    goto next_frame;
 }

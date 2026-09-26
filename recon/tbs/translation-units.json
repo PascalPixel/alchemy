@@ -86730,6 +86730,14 @@
       "source": "recon/tbs/en/overlays/resource_3c9_c_020036d0.c",
       "overlay": "resource_3c9",
       "absolute_symbols": {
+        "Engine_GameFlagIsSet": {
+          "address": "0x0200dd0c",
+          "kind": "thumb"
+        },
+        "VinasuChojo_SparkScript": {
+          "address": "0x0200e16c",
+          "kind": "data"
+        },
         "Engine_MathModulo": {
           "address": "0x0200dbf4",
           "kind": "thumb"

@@ -1,10 +1,16 @@
+/* NONMATCHING: child values and flags are updated for every motion record.
+ * Omitting the unused return removes the redundant zero. Byte mask types
+ * do not alter allocation; volatile flags add duplicate reads and are not
+ * retained. Remaining: value and mask consume an extra high register;
+ * the first flag store moves after the record count load (50 vs 46 insns). */
 #include "TYPES.H"
+#include "MOTION_OBJECT.H"
 
 struct Child_080ba918 {
     u8 filler_00[5];
-    s8 value;
+    s32 value : 8;
     u8 filler_06[16];
-    u8 flags : 8;
+    u32 flags : 8;
 };
 
 struct Record_080ba918 {
@@ -14,15 +20,12 @@ struct Record_080ba918 {
     struct Child_080ba918 *children[1];
 };
 
-struct Fields_080b7f70;
-
-void *GetMotionRecord(struct Fields_080b7f70 *, s32);
-
-struct Record_080ba918 *BattleMotion_SetRecordChildValues(void *object, s32 value)
+struct Record_080ba918 *BattleMotion_SetRecordChildValues(
+    struct MotionObject *object, s32 value)
 {
     s32 object_index;
     struct Record_080ba918 *record;
-    u32 first_mask;
+    u8 first_mask;
 
     object_index = 0;
     first_mask = 0xff;
@@ -31,7 +34,7 @@ struct Record_080ba918 *BattleMotion_SetRecordChildValues(void *object, s32 valu
         struct Child_080ba918 **children;
         s32 child_count;
         s32 zero;
-        u32 inner_mask;
+        u8 inner_mask;
         s32 remaining;
 
         child = record->first_child;
@@ -52,5 +55,5 @@ struct Record_080ba918 *BattleMotion_SetRecordChildValues(void *object, s32 valu
         }
         object_index++;
     }
-    return record;
+    /* FAKEMATCH: the unused result keeps the final lookup's r0 live. */
 }

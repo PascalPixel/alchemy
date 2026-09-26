@@ -24,6 +24,10 @@
  */
 #include "TYPES.H"
 
+/* A one-halfword wrapper changes the literal to a word move and merges
+ * the pools: 408 bytes / 176 differing halfwords instead of 432 / 38.
+ * An explicit u16 cast produces the same regression. */
+
 struct ArticleTable {
     s8 *text[8];
 };

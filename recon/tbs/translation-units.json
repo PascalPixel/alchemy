@@ -12067,6 +12067,22 @@
         }
       ],
       "absolute_symbols": {
+        "Data_020096c0": {
+          "address": "0x020096c0",
+          "kind": "data"
+        },
+        "Data_020096d0": {
+          "address": "0x020096d0",
+          "kind": "data"
+        },
+        "Data_020096dc": {
+          "address": "0x020096dc",
+          "kind": "data"
+        },
+        "Data_020096ec": {
+          "address": "0x020096ec",
+          "kind": "data"
+        },
         "Engine_DebugGetItem": {
           "address": "0x02009444",
           "kind": "thumb"

@@ -13,11 +13,23 @@
  * main register roles, and vertical threshold are now exact. Remaining:
  * counter zero is hoisted across the null test; absolute-angle lowering
  * differs from the two signed bound tests and omits one pool word.
+ * H2: retain separate pool-bound comparisons and an explicit null-guard
+ * boundary, rather than absolute-value lowering or a hoistable early return.
+ * H1 is preserved in 5aeb675f3. This is the single focused follow-up.
+ * H2 result: 304/304 bytes, 15 differing halfwords and 15 aligned edits.
+ * All five pool words and all main-body instructions through the angle
+ * subtraction match. Null-guard wrapper only moves initialization past the
+ * result copy, not past the null branch. Signed bounds now remain distinct,
+ * but their r3 temporaries/order differ from reference r1/r2 and shift the
+ * successful-id store/increment temporaries. Stop; not adopted, zero DONE.
+ * No more local register spelling on this evidence; retain both commits.
  */
 #include "OBJECT_RUNTIME.H"
 #include "FIXED_MATH.H"
 
 u16 ArcTan2(s32 deltaZ, s32 deltaX);
+extern u8 Value_ffffd001;
+extern u8 Value_00002fff;
 
 s32 Func_0808ddec(s32 sourceId)
 {
@@ -39,8 +51,11 @@ s32 Func_0808ddec(s32 sourceId)
     bestId = -1;
     bestDistance = 32;
     source = ObjectTable_Get(sourceId);
-    if (source == 0)
-        return bestId;
+    /* FAKEMATCH: keep loop initialization beyond the null-guard boundary. */
+    do {
+        if (source == 0)
+            return bestId;
+    } while (0);
 
     for (candidateId = 0; candidateId <= 66; candidateId++) {
         if (candidateId == sourceId)
@@ -76,9 +91,11 @@ s32 Func_0808ddec(s32 sourceId)
         angle = ArcTan2(candidate->z - source->z, candidate->x - source->x);
         if (distance > 11) {
             s32 angleDifference = (s16)(angle - source->angle);
-            if (angleDifference < 0)
-                angleDifference = -angleDifference;
-            if (angleDifference >= 0x3000)
+            /* FAKEMATCH: the two signed pool bounds must not fold into
+             * one unsigned range comparison. */
+            if (angleDifference < (s32)&Value_ffffd001)
+                continue;
+            if (angleDifference > (s32)&Value_00002fff)
                 continue;
         }
 

@@ -1,5 +1,5 @@
 /* Draft, not exact (2026-09-26): candidate=396 reference=396,
-   35 differing halfwords, 31 aligned edits; equal block topology, frame 48.
+   9 differing halfwords, 8 aligned edits; equal block topology, frame 48.
    Fresh baseline with shared projection header: 412/396 bytes, 188 differing
    halfwords, 73 aligned edits. H1 splits the first-frame seed cursor from
    the draw cursor. This recovers seed r5, mask r6, draw cursor r8 and removes
@@ -7,12 +7,17 @@
    H1 witness 5283d5f32: 400 bytes, 146 differing halfwords, 49 aligned edits.
    H2 initializes point y/z from the draw index's zero. This removes the
    duplicate zero instruction and restores the full extent and pool position.
-   Residual: seed/mask literal order, draw-cursor initialization before the
-   point fields, projection argument scheduling, first line color scheduling.
+   H2 witness a1b8a7aa8: 396 bytes, 35 differing halfwords, 31 aligned edits.
+   H3 indexes both arrays by i instead of retaining cursors. Strength
+   reduction now initializes seed after mask, gives the exact seed loop,
+   restores all projection argument/register choices, and fixes pool order.
+   Residual is confined to the draw preheader at 080cc9c8..080cc9d6
+   (point address/zero/index/array-base scheduling) and 080cca7a..080cca7e
+   (color+48 before rather than after the two coordinate decrements).
    The exact next owner PREPARE_SCENE.C schedules this no-argument callback
    at 0xc80 after resetting work+778c. Extent is [080cc960,080ccaec).
-   No bytes adopted. Next hypothesis: array-indexed seed/draw records let
-   strength reduction introduce cursors after the existing loop invariants. */
+   No bytes adopted. Three structural hypotheses used; stop before any
+   further setup-order spelling trials. No complete match is claimed. */
 #include "TYPES.H"
 #include "EFFECT_STEP.H"
 
@@ -51,9 +56,8 @@ void Func_080cc960(void)
 
     frame = (*(s32 *)(work + 0x778c))++;
     if (frame == 0) {
-        struct Streak *seed = (struct Streak *)0x02010000;
-
         for (i = 0; i != 256; i++) {
+            struct Streak *seed = &((struct Streak *)0x02010000)[i];
             s32 r = Random16() & 15;
 
             seed->head = r + 48;
@@ -61,14 +65,13 @@ void Func_080cc960(void)
             seed->pitch = Random16() & 0xffff;
             seed->yaw = Random16() & 0xffff;
             seed->roll = Random16() & 0xffff;
-            seed++;
         }
     }
     i = 0;
     point.y = i;
     point.z = i;
-    streak = (struct Streak *)0x02010000;
     for (; i != 64; i++) {
+        streak = &((struct Streak *)0x02010000)[i];
         if (frame > i / 4 && streak->head > 0) {
             s32 fade;
             s32 color;
@@ -95,7 +98,6 @@ void Func_080cc960(void)
             Func_080cde90(tail.x, tail.y - 1, head.x, head.y - 1, color);
             Func_080cde90(tail.x, tail.y, head.x, head.y, fade + 56);
         }
-        streak++;
     }
     *(s32 *)(work + 0x7824) = 1;
 }

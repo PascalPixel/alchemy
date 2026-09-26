@@ -1,3 +1,6 @@
+/* NONMATCHING: resource_372:020031ac; 2712 / 2716 bytes, 529 differing
+ * halfwords, 142 wrong instructions. Halfword-zero lifetime restores both
+ * short-reach pools; visual/zero reload allocation and store scheduling remain. */
 #include "OBJECT_RUNTIME.H"
 
 struct ActorVisualFlags {
@@ -7,7 +10,9 @@ struct ActorVisualFlags {
     u8 unknown_09_high : 4;
 };
 
-#define Scene_RunActorGroupDepartureSequence Func_020031ac
+struct Half {
+    u16 value;
+};
 
 struct ObjectRuntime *Func_0200472c();
 void Func_0200481c();
@@ -106,7 +111,6 @@ void Scene_RunActorGroupDepartureSequence(void)
 {
     u8 *actorVisual;
     u8 *groupVisual;
-    s32 initialStep;
     struct ObjectRuntime *actor;
     struct ObjectRuntime *fieldActor;
     struct ObjectRuntime *groupActor;
@@ -166,9 +170,13 @@ void Scene_RunActorGroupDepartureSequence(void)
     Func_020046f4(20);
     fieldActor = Pointer1(Func_0200472c, 0);
     random = Func_02004654();
-    *(u16 *)(((u8 *)fieldActor + 100)) = (Func_02004634(random, 20) + 20);
+    random = Func_02004634(random, 20) + 20;
+    {
+    /* FAKEMATCH: keep the byte initialization as a short-reach pool load. */
+    struct Half initialStep = { 0 };
+
     zero = 0;
-    initialStep = (s32)0;
+    *(u16 *)(((u8 *)fieldActor + 100)) = random;
     fieldActor = Pointer1(Func_0200472c, 22);
     random = Func_02004654();
     *(u16 *)(((u8 *)fieldActor + 100)) = (Func_02004634(random, 20) + 20);
@@ -235,7 +243,7 @@ void Scene_RunActorGroupDepartureSequence(void)
     actor->z = 0x3820000;
     actor->target_z = 0x3820000;
     step = ((u8 *)actor + 85);
-    ((u8 *)actor)[85] = initialStep;
+    ((u8 *)actor)[85] = initialStep.value;
     ((u8 *)actor)[35] &= 254;
     ((struct ActorVisualFlags *)actorVisual)->state = 0;
     work = Func_02004834();
@@ -496,4 +504,5 @@ void Scene_RunActorGroupDepartureSequence(void)
     Func_020046f4(60);
     Func_0200471c(1);
     Func_0200486c();
+    }
 }

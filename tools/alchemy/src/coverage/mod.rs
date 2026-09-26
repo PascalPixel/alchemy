@@ -183,6 +183,12 @@ fn status_line(sun: Option<GameDone>, anchor: Option<GameDone>) -> String {
     };
     format!("**☀️ {} · ⚓️ {}**", show(sun), show(anchor))
 }
+fn readme_progress(text: &str) -> Option<&str> {
+    text.lines()
+        .skip_while(|line| *line != "## Progress")
+        .skip(1)
+        .find(|line| !line.trim().is_empty())
+}
 fn update_readme(text: &str, _target: &str, map: &CoverageMap, status: &str) -> String {
     let proven_c = field(&map.document, &["categories", "proven_c", "bytes"]);
     let proven_asm = field(&map.document, &["categories", "proven_asm", "bytes"]);
@@ -190,9 +196,26 @@ fn update_readme(text: &str, _target: &str, map: &CoverageMap, status: &str) -> 
     let percent =
         crate::coverage::jsnum::done_percent(proven_c as i64, proven_asm as i64, executable as i64);
     let mut out = text.to_string();
-    if let Some(start) = out.find("**☀️ ").or_else(|| out.find("## Status:")) {
-        if let Some(end) = out[start..].find('\n') {
-            out.replace_range(start..start + end, status);
+    let progress_start = out
+        .find("## Progress\n")
+        .map(|start| start + "## Progress\n".len());
+    let status_start = if let Some(start) = progress_start {
+        let section = &out[start..];
+        let end = section.find("\n## ").unwrap_or(section.len());
+        section[..end].find("**☀️ ").map(|offset| start + offset)
+    } else {
+        out.find("**☀️ ").or_else(|| out.find("## Status:"))
+    };
+    if let Some(start) = status_start {
+        let end = out[start..].find('\n').unwrap_or(out.len() - start);
+        out.replace_range(start..start + end, status);
+    }
+    if readme_progress(&out) != Some(status) {
+        if let Some(start) = out.find("## Progress\n") {
+            out.insert_str(start + "## Progress\n".len(), &format!("\n{status}\n"));
+        } else {
+            let start = out.find("## Acknowledgements").unwrap_or(out.len());
+            out.insert_str(start, &format!("\n## Progress\n\n{status}\n\n"));
         }
     }
     if let Some(end) = out.find("\n\nDONE measures") {
@@ -227,7 +250,7 @@ fn update_readme(text: &str, _target: &str, map: &CoverageMap, status: &str) -> 
 }
 #[cfg(test)]
 mod tests {
-    use super::{readme_metrics, status_line, update_readme};
+    use super::{readme_metrics, readme_progress, status_line, update_readme};
     use crate::coverage::pipeline::CoverageMap;
     use crate::coverage::progress::GameDone;
     use serde_json::json;
@@ -280,12 +303,22 @@ mod tests {
             executable: 1000,
             ..GameDone::default()
         };
+        std::fs::write(
+            root.join("README.md"),
+            "## Progress\n\n**☀️ 60.00% · ⚓️ pending**\n",
+        )
+        .unwrap();
         write_figures(root, Some(done(600)), None).unwrap();
         let chart = std::fs::read(root.join(figure::CHART)).unwrap();
         let map = std::fs::read(root.join(figure::MAP)).unwrap();
         check_figures(root, Some(done(600)), None).unwrap();
         // A later count the same day redraws the chart with it.
         write_figures(root, Some(done(610)), None).unwrap();
+        std::fs::write(
+            root.join("README.md"),
+            "## Progress\n\n**☀️ 61.00% · ⚓️ pending**\n",
+        )
+        .unwrap();
         assert_ne!(std::fs::read(root.join(figure::CHART)).unwrap(), chart);
         let _ = map;
         let recorded = history::load(root).unwrap();
@@ -298,9 +331,27 @@ mod tests {
         assert_eq!(history::percent(&recorded["figures"]["tbs"]), Some(61.0));
         check_figures(root, Some(done(610)), None).unwrap();
         // A README stating another number fails.
-        std::fs::write(root.join("README.md"), "**☀️ 60.00% · ⚓️ pending**\n").unwrap();
+        std::fs::write(
+            root.join("README.md"),
+            "## Progress\n\n**☀️ 60.00% · ⚓️ pending**\n",
+        )
+        .unwrap();
         assert!(check_figures(root, Some(done(610)), None).is_err());
-        std::fs::write(root.join("README.md"), "**☀️ 61.00% · ⚓️ pending**\n").unwrap();
+        // Missing progress cannot bypass the gate; correct numbers elsewhere cannot either.
+        for readme in [
+            "## Progress\n\n<img src=\"PROGRESS_CHART.png\">\n",
+            "**☀️ 61.00% · ⚓️ pending**\n",
+            "**☀️ 61.00% · ⚓️ pending**\n\n## Progress\n\n**☀️ 60.00% · ⚓️ pending**\n",
+            "## Progress\n\n**☀️ 61.00% · ⚓️ 2.00%**\n",
+        ] {
+            std::fs::write(root.join("README.md"), readme).unwrap();
+            assert!(check_figures(root, Some(done(610)), None).is_err());
+        }
+        std::fs::write(
+            root.join("README.md"),
+            "## Progress\n\n**☀️ 61.00% · ⚓️ pending**\n",
+        )
+        .unwrap();
         check_figures(root, Some(done(610)), None).unwrap();
         assert!(check_figures(
             root,
@@ -384,6 +435,15 @@ mod tests {
         );
         assert!(updated.contains("## Progress\n\n**☀️ 59.00% · ⚓️ pending**\n"));
         assert!(!updated.contains("52%"));
+        for missing in [
+            "# Alchemy\n\n## Progress\n\n<img src=\"PROGRESS_CHART.png\">\n",
+            "# Alchemy\n\n## Acknowledgements\n\nThanks\n",
+            "# Alchemy\n\n## Progress\n\n**☀️ 52% · ⚓️ 1%**",
+        ] {
+            let updated = update_readme(missing, "tbs-en", &map, &status);
+            assert_eq!(readme_progress(&updated), Some(status.as_str()));
+            assert_eq!(update_readme(&updated, "tbs-en", &map, &status), updated);
+        }
     }
 }
 /// The digest of what the file map draws: each tracked file and its size.
@@ -470,14 +530,9 @@ fn check_figures(
         }
     }
     let readme = std::fs::read_to_string(root.join("README.md")).unwrap_or_default();
-    for (icon, game) in [("☀️", "tbs"), ("⚓️", "tla")] {
-        if let Some(shown) = history::percent(&history["figures"][game]) {
-            // The README floors to hundredths, as the chart labels do.
-            let shown = (shown * 100.0 + 1e-9).floor() / 100.0;
-            if readme.contains("**☀️ ") && !readme.contains(&format!("{icon} {shown:.2}%")) {
-                return stale(&format!("{game} {shown:.2}% is not the README's progress"));
-            }
-        }
+    let expected = status_line(sun, anchor);
+    if readme_progress(&readme) != Some(expected.as_str()) {
+        return stale(&format!("the line under ## Progress must be {expected}"));
     }
     let chart =
         std::fs::read(root.join(figure::CHART)).map_err(|e| format!("{}: {e}", figure::CHART))?;

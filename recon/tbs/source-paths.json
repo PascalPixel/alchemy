@@ -1,6 +1,9 @@
 {
   "format": 3,
   "owners": {
+    "resource_3ca:02000194": {
+      "name": "BabiFune_UpdateWaves"
+    },
     "resource_3a5:02000cd0": {
       "name": "Local_02000cd0"
     },

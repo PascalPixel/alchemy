@@ -2,6 +2,22 @@
   "format": 5,
   "units": [
     {
+      "id": "biribino-corner-spawn",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_MURA/CORNER.C",
+      "overlay": "resource_38b",
+      "absolute_symbols": {
+        "Engine_ActorGet": { "address": "0x020090d0", "kind": "thumb" },
+        "OverlayObject_SpawnKind24AtActor": { "address": "0x02008f3c", "kind": "thumb" },
+        "gGameState": { "address": "0x02000240", "kind": "data" },
+        "gCornerSpawnCounter": { "address": "0x02009d88", "kind": "data" }
+      },
+      "owners": [
+        { "address": "0x02000ed8", "extent": 100, "state": "exact-c" }
+      ],
+      "game": "tbs",
+      "compiler_route": "canonical-gcc296"
+    },
+    {
       "id": "haidia-facing-test",
       "source": "recon/tbs/en/overlays/resource_373_c_0200564c.c",
       "overlay": "resource_373",

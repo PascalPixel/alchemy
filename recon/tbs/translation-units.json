@@ -211,7 +211,7 @@
     },
     {
       "id": "retained-overlay-3cb-02000860",
-      "source": "recon/tbs/en/overlays/resource_3cb_c_02000860.c",
+      "source": "games/THE BROKEN SEAL/SRC/MENU/LINK_LOBBY/CONNECT.C",
       "overlay": "resource_3cb",
       "absolute_symbols": {
         "Engine_EventBegin": {
@@ -323,7 +323,7 @@
         {
           "address": "0x02000860",
           "extent": 820,
-          "state": "not-yet-c"
+          "state": "exact-c"
         }
       ],
       "game": "tbs",

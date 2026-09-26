@@ -1,11 +1,23 @@
-/* NONMATCHING: 856 bytes, candidate 856, 84 differing halfwords, 56 halfword
- * edits (2026-09-25). FieldScene_RunActorSequence, meant for
+/* NONMATCHING: 856 bytes, candidate 856, 83 differing halfwords, 55 halfword
+ * edits (2026-09-26). FieldScene_RunActorSequence, meant for
  * FIELD/FUNE_KANPAN/F_022C0.C as a single-overlay unit binding its names at
  * their runtime addresses (an import veneer's listing offset plus 0x8000).
- * Remaining: Corrected movement callees and callback symbols; halfword zero
- * fields restore the mid-function pools. The second zero pool is still four
- * bytes early, with actor/loop register lifetimes differing.
- * WALL: Late zero pool reach and actor/loop allocation. */
+ * Complete extent 020022c0..02002618: first zero/pool 23b8..23d4,
+ * second zero/pool 252c..2554, return 2606 and final pool 2608..2614.
+ * The 24fc call is ActorSetDestination (runtime veneer 0200c344), not
+ * ActorWalkToAndWait (0200c35c); retained this independently verified fix.
+ * Three structural trials: sharing the early actor-result scalar with the
+ * loop counter produced 860 bytes / 361 differing halfwords / 135 edits,
+ * adding unwanted saved-register copies to the initial facing stores.
+ * One shared halfword-zero record across both phases gave 856 / 85 / 57:
+ * second zero uses saved r6 and the store order matches, but actor stays r5,
+ * first zero also moves to r6, and the second pool remains four bytes early.
+ * Phase-scoped actor pointers gave 848 / 211 / 94, removing the reference's
+ * saved-pointer copies for actors 30 and 0; the single shared actor survives.
+ * Retained the original lifetimes plus the destination-call correction.
+ * Remaining: actor/counter r5/r6 versus r6/r5, second zero in r2 versus r5,
+ * second pool four bytes early, and callback address hoisted before its
+ * speed call. Stop after three trials; needs a new lifetime/CFG hypothesis. */
 #include "TYPES.H"
 
 extern u8 Data_00000000[];
@@ -148,7 +160,7 @@ void FieldScene_RunActorSequence(void)
     do {
         *(s32 *)((s32)rec8 + 24) += 0xf5c;
         *(s32 *)((s32)rec8 + 28) += 0xf5c;
-        base5_0 = (base5_0 + 1);
+        base5_0 = base5_0 + 1;
         Engine_TaskWait(1);
     } while ((u32)base5_0 <= 15);
     rec8 = Engine_ActorGet(30);
@@ -178,7 +190,7 @@ void FieldScene_RunActorSequence(void)
         zero.v = 0;
         rec8[85] = zero.v;
     }
-    Call3(Engine_ActorWalkToAndWait, 0, 216, 0x264);
+    Call3(Engine_ActorSetDestination, 0, 216, 0x264);
     Call3(Engine_ActorSetSpeed, 30, 0x19999, 0xcccc);
     Call3(Engine_ObjectMotionSetPositionAndCommit, 30, 196, 0x258);
     Call3(Engine_ObjectMotionSetPositionAndCommit, 30, 216, 0x258);

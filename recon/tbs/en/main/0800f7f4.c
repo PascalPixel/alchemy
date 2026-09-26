@@ -1,4 +1,4 @@
-/* NONMATCHING: 472 / 472 bytes, 37 differing halfwords, 37 aligned edits.
+/* NONMATCHING: 472 / 472 bytes, 33 differing halfwords, 32 aligned edits.
  * 2026-09-26 H1: capture the displacement for both sign tests and give the
  * object-facing stores a byte/field union view. This recovers the exact
  * shared r5-relative position reload at 0800f882, including its incoming
@@ -16,6 +16,13 @@
  * lifetimes and reloads move away from the reference. The exact alias join,
  * frame and all pools survive. Full normalized difference read; this action
  * selection family does not close the remaining allocation. No adoption.
+ * H2 is preserved at 5048a0132. H3 restores H1's action lifetime and moves
+ * displacement initialization into a typed inline projection helper. Frame,
+ * pools and the exact alias join remain fixed, but argument setup is still
+ * after the zero stores. Only the order of three argument-setup instructions
+ * changes from H1, with the same residual count. Full normalized diff read.
+ * Stop after three hypotheses; the retained result is the store-side alias
+ * invariant, not an exact owner. No further local-order sweep is justified.
  *
  * Historical draft (2026-09-25): 472 of 472 bytes, 34 differing halfwords.
    Every call, store and branch is in place and the frame matches (the
@@ -64,6 +71,16 @@ void Object_SetMoveTarget(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
 
 #define MAP_CELLS ((struct MapCell *)0x02010000)
 
+/* FAKEMATCH: give displacement initialization the projection-call lifetime
+ * so its argument values can be established before the three zero stores. */
+static __inline__ void MakeKeyStep(u16 angle, struct KeyMovePosition *pos)
+{
+    pos->x = 0;
+    pos->y = 0;
+    pos->z = 0;
+    Vector_AddPolarOffset(0x80000, angle, pos);
+}
+
 /*
  * Walks an object half a tile in the direction the pad is held. The step is
  * refused where the next cell is occupied or changes height; with L or R
@@ -87,18 +104,14 @@ s32 Object_MoveByKeys(struct ObjectRuntime *object)
     motion = 12;
     blocked = 4;
     if (angle != 0xffff) {
-        if ((angle & 0xf000) == 0) {
-            motion = 14;
-        } else if ((angle & 0xf000) == 0x8000) {
+        motion = 14;
+        if ((angle & 0xf000) != 0) {
             motion = 15;
-        } else {
-            motion = 10;
+            if ((angle & 0xf000) != 0x8000)
+                motion = 10;
         }
         blocked = 0;
-        pos.x = 0;
-        pos.y = 0;
-        pos.z = 0;
-        Vector_AddPolarOffset(0x80000, angle, &pos);
+        MakeKeyStep(angle, &pos);
         pos.x += object->x;
         delta_z = pos.z;
         if (delta_z < 0)

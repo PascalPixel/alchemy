@@ -5,9 +5,17 @@
  * NONMATCHING: complete 1,044-byte owner including pools; prior score
  * 1,044 candidate bytes, 434 halfword edits. Count clearing keeps a counter
  * where the ROM compares the element pointer against the array base.
- * The copy call emits _call_via_r3 instead of the ROM's 080072f0 veneer;
- * the diagnostic frame is 28 bytes instead of 32. List, entry and index
+ * The copy call uses _call_via_r3, which is the ROM's 080072f0 veneer;
+ * that earlier apparent mismatch was a naming error, not a residual.
+ * The diagnostic frame is 28 bytes instead of 32. List, entry and index
  * registers also differ. Audit stopped before rewrite; no adoption.
+ * 2026-09-26 bounded trials: signed address comparison while clearing from
+ * counts+3 down to the array base fixes the opening r6/r7 allocation but
+ * gives 1056 bytes/224 aligned edits rather than 1044/175; frame stays 28.
+ * Declaring the IWRAM copier value-returning changes no bytes. A volatile
+ * count pointer with phase-local base reloads gives the 32-byte frame but
+ * wrong slot order, 1076 bytes and 215 edits. These three trials are not
+ * kept. The missing array-base spill is not explained by array padding.
  */
 #include "TYPES.H"
 #include "BATTLE_EVENT.H"

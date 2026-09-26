@@ -1,20 +1,14 @@
-/* NONMATCHING: resource_372:020031ac; 2712 / 2716 bytes, 529 differing
- * halfwords, 142 wrong instructions. Halfword-zero lifetime restores both
- * short-reach pools; visual/zero reload allocation and store scheduling remain. */
-#include "OBJECT_RUNTIME.H"
-
-struct ActorVisualFlags {
-    u8 unknown_00[9];
-    u8 unknown_09_low : 2;
-    u8 state : 2;
-    u8 unknown_09_high : 4;
-};
+/* NONMATCHING: resource_372:020031ac; 2716 / 2716 bytes, 57 differing
+ * halfwords, 36 wrong instructions, 48 halfword edits. Shared FieldSprite
+ * and FieldActor ownership restores both pools and most store scheduling.
+ * Visual reloads, two facing-store blocks and delay-address ordering remain. */
+#include "FIELD_EVENT.H"
 
 struct Half {
     u16 value;
 };
 
-struct ObjectRuntime *Func_0200472c();
+struct FieldActor *Func_0200472c();
 void Func_0200481c();
 void Func_02004824();
 void Func_0200473c();
@@ -38,7 +32,7 @@ void Func_0200487c();
 void Func_0200463c();
 void Func_020047cc();
 void Func_020046b4();
-struct ObjectRuntime *Func_02004834();
+struct FieldActor *Func_02004834();
 void Func_02004684();
 s32 Func_02004644();
 void Func_020046c4();
@@ -97,24 +91,24 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
     f(a0, a1, a2, a3);
 }
 
-static __inline__ struct ObjectRuntime *Pointer0(struct ObjectRuntime *(*f)())
+static __inline__ struct FieldActor *Pointer0(struct FieldActor *(*f)())
 {
     return f();
 }
 
-static __inline__ struct ObjectRuntime *Pointer1(struct ObjectRuntime *(*f)(), s32 id)
+static __inline__ struct FieldActor *Pointer1(struct FieldActor *(*f)(), s32 id)
 {
     return f(id);
 }
 
 void Scene_RunActorGroupDepartureSequence(void)
 {
-    u8 *actorVisual;
-    u8 *groupVisual;
-    struct ObjectRuntime *actor;
-    struct ObjectRuntime *fieldActor;
-    struct ObjectRuntime *groupActor;
-    struct ObjectRuntime *work;
+    struct FieldSprite *actorVisual;
+    struct FieldSprite *groupVisual;
+    struct FieldActor *actor;
+    struct FieldActor *fieldActor;
+    struct FieldActor *groupActor;
+    struct FieldActor *work;
     u32 random;
     const s32 *entryActions;
     s32 zero;
@@ -125,8 +119,8 @@ void Scene_RunActorGroupDepartureSequence(void)
 
     actor = Pointer1(Func_0200472c, 19);
     groupActor = Pointer1(Func_0200472c, 27);
-    groupVisual = (u8 *)groupActor->animation;
-    actorVisual = (u8 *)actor->animation;
+    groupVisual = groupActor->sprite;
+    actorVisual = actor->sprite;
     Call2(Func_0200481c, 0x10000, 0x2000);
     Call4(Func_02004824, 0x6e0000, -1, 0x58b0000, 1);
     Call3(Func_0200473c, 8, 0x13333, 0x9999);
@@ -232,20 +226,20 @@ void Scene_RunActorGroupDepartureSequence(void)
     Func_020046b4(work, 0);
     work = Func_0200472c(27);
     Func_020046b4(work, 0);
-    *(s32 *)(((u8 *)groupActor + 24)) = 0xcccc;
-    *(s32 *)(((u8 *)groupActor + 28)) = 0xcccc;
-    ((u8 *)groupActor)[35] &= 254;
-    ((struct ActorVisualFlags *)groupVisual)->state = 1;
-    actor->x = 0xc80000;
-    actor->y = 0xc80000;
+    groupActor->scale_x = 0xcccc;
+    groupActor->scale_y = 0xcccc;
+    groupActor->priority_flags &= 254;
+    groupVisual->priority = 1;
+    actor->x.fixed = 0xc80000;
+    actor->y.fixed = 0xc80000;
     actor->target_x = 0xc80000;
     actor->target_y = 0xc80000;
-    actor->z = 0x3820000;
+    actor->z.fixed = 0x3820000;
     actor->target_z = 0x3820000;
     step = ((u8 *)actor + 85);
-    ((u8 *)actor)[85] = initialStep.value;
-    ((u8 *)actor)[35] &= 254;
-    ((struct ActorVisualFlags *)actorVisual)->state = 0;
+    actor->motion_flags = initialStep.value;
+    actor->priority_flags &= 254;
+    actorVisual->priority = 0;
     work = Func_02004834();
     work->target_x = 0x80000000;
     work = Pointer0(Func_02004834);
@@ -294,14 +288,14 @@ void Scene_RunActorGroupDepartureSequence(void)
     Func_02004754(19);
     Func_0200463c(1);
     Func_02004794(19, 0);
-    *(s32 *)(((u8 *)groupActor + 24)) = 0x14000;
-    *(s32 *)(((u8 *)groupActor + 28)) = 0x14000;
-    groupVisual[35] = 2;
-    *(s32 *)(groupVisual + 24) = 0x14000;
-    *(s32 *)(((u8 *)actor + 24)) = 0x20000;
-    *(s32 *)(((u8 *)actor + 28)) = 0x20000;
-    actor->x = phase;
-    actor->z = phase;
+    groupActor->scale_x = 0x14000;
+    groupActor->scale_y = 0x14000;
+    groupVisual->unknown_20[3] = 2;
+    groupVisual->scale = 0x14000;
+    actor->scale_x = 0x20000;
+    actor->scale_y = 0x20000;
+    actor->x.fixed = phase;
+    actor->z.fixed = phase;
     actor->target_x = phase;
     actor->target_z = phase;
     Func_0200463c(1);
@@ -331,59 +325,59 @@ void Scene_RunActorGroupDepartureSequence(void)
     Call3(Func_0200478c, 27, 0xda0000, 0x4980000);
     Call4(Func_02004824, 0xd20000, 0, 0x4ac0000, 0);
     Func_02004684();
-    *(s32 *)(((u8 *)groupActor + 24)) = 0x20000;
-    *(s32 *)(((u8 *)groupActor + 28)) = 0x20000;
+    groupActor->scale_x = 0x20000;
+    groupActor->scale_y = 0x20000;
     Value2(Func_02004644, (s32)Func_02003e18, 0xc80);
     Func_02004754(10);
     Func_02004754(24);
     Func_02004754(25);
     Func_0200463c(1);
     groupActor = Pointer1(Func_0200472c, 10);
-    groupVisual = (u8 *)groupActor->animation;
-    ((u8 *)groupActor)[35] &= 254;
-    *(s32 *)(((u8 *)groupActor + 24)) = 0x10000;
-    *(s32 *)(((u8 *)groupActor + 28)) = 0x10000;
+    groupVisual = groupActor->sprite;
+    groupActor->priority_flags &= 254;
+    groupActor->scale_x = 0x10000;
+    groupActor->scale_y = 0x10000;
     {
         s32 shown = 0xd000;
 
-        *(u16 *)(((u8 *)groupActor + 6)) = shown;
+        groupActor->facing = shown;
     }
-    ((struct ActorVisualFlags *)groupVisual)->state = 0;
+    groupVisual->priority = 0;
     Func_02004794(10, 0);
     groupActor = Pointer1(Func_0200472c, 24);
-    groupVisual = (u8 *)groupActor->animation;
-    ((u8 *)groupActor)[35] &= 254;
-    *(s32 *)(((u8 *)groupActor + 24)) = 0x10000;
-    *(s32 *)(((u8 *)groupActor + 28)) = 0x10000;
-    ((struct ActorVisualFlags *)groupVisual)->state = 0;
+    groupVisual = groupActor->sprite;
+    groupActor->priority_flags &= 254;
+    groupActor->scale_x = 0x10000;
+    groupActor->scale_y = 0x10000;
+    groupVisual->priority = 0;
     {
         s32 shown = 0xb000;
 
-        *(u16 *)(((u8 *)groupActor + 6)) = shown;
+        groupActor->facing = shown;
     }
     Func_02004794(24, 5);
     groupActor = Pointer1(Func_0200472c, 25);
-    groupVisual = (u8 *)groupActor->animation;
-    ((u8 *)groupActor)[35] &= 254;
-    *(s32 *)(((u8 *)groupActor + 24)) = 0x10000;
-    *(s32 *)(((u8 *)groupActor + 28)) = 0x10000;
+    groupVisual = groupActor->sprite;
+    groupActor->priority_flags &= 254;
+    groupActor->scale_x = 0x10000;
+    groupActor->scale_y = 0x10000;
     {
         s32 shown = 0xb000;
 
-        *(u16 *)(((u8 *)groupActor + 6)) = shown;
+        groupActor->facing = shown;
     }
-    ((struct ActorVisualFlags *)groupVisual)->state = 0;
+    groupVisual->priority = 0;
     Func_02004794(25, 5);
     groupActor = Pointer1(Func_0200472c, 27);
-    groupVisual = (u8 *)groupActor->animation;
+    groupVisual = groupActor->sprite;
     Func_02003c48();
-    actor->y = 0x300000;
-    actor->x = 0xd60000;
-    actor->z = 0x4c00000;
+    actor->y.fixed = 0x300000;
+    actor->x.fixed = 0xd60000;
+    actor->z.fixed = 0x4c00000;
     actor->target_x = 0x80000000;
     actor->target_y = 0x80000000;
     actor->target_z = 0x80000000;
-    ((struct ActorVisualFlags *)groupVisual)->state = 1;
+    groupVisual->priority = 1;
     Func_0200478c(27, 0xd60000, 0x4c00000);
     Call3(Func_020047fc, 24, 0xc000, 0);
     Call3(Func_020047fc, 25, 0xc000, 20);
@@ -404,7 +398,7 @@ void Scene_RunActorGroupDepartureSequence(void)
     Func_020046f4(80);
     Func_020046f4(100);
     Value1(Func_0200464c, (s32)Func_02003e18);
-    *(s32 *)(groupVisual + 24) = *(s32 *)(((u8 *)groupActor + 24));
+    groupVisual->scale = groupActor->scale_x;
     Call1(Func_020046ec, 0x166);
     Func_0200469c(0);
     Func_0200469c(1);
@@ -419,7 +413,7 @@ void Scene_RunActorGroupDepartureSequence(void)
     {
         s32 shown = 0xe000;
 
-        *(u16 *)(((u8 *)actor + 6)) = shown;
+        actor->facing = shown;
     }
     random = Func_02004654();
     *(u16 *)(((u8 *)actor + 100)) = (Func_02004634(random, 90) + 60);
@@ -436,7 +430,7 @@ void Scene_RunActorGroupDepartureSequence(void)
     {
         s32 shown = 0xe000;
 
-        *(u16 *)(((u8 *)actor + 6)) = shown;
+        actor->facing = shown;
     }
     random = Func_02004654();
     *(u16 *)(((u8 *)actor + 100)) = (Func_02004634(random, 90) + 60);
@@ -448,7 +442,7 @@ void Scene_RunActorGroupDepartureSequence(void)
     {
         s32 shown = 0xe000;
 
-        *(u16 *)(((u8 *)actor + 6)) = shown;
+        actor->facing = shown;
     }
     random = Func_02004654();
     *(u16 *)(((u8 *)actor + 100)) = (Func_02004634(random, 90) + 60);
@@ -463,7 +457,7 @@ void Scene_RunActorGroupDepartureSequence(void)
     {
         s32 shown = 0xe000;
 
-        *(u16 *)(((u8 *)actor + 6)) = shown;
+        actor->facing = shown;
     }
     random = Func_02004654();
     *(u16 *)(((u8 *)actor + 100)) = (Func_02004634(random, 90) + 60);
@@ -474,15 +468,15 @@ void Scene_RunActorGroupDepartureSequence(void)
     }
     Func_02004744(8, departureActions);
     Func_02004794(8, 6);
-    *(u8 *)((u8 *)Func_0200472c(22) + 35) &= 254;
-    *(u8 *)((u8 *)Func_0200472c(8) + 35) &= 254;
+    Func_0200472c(22)->priority_flags &= 254;
+    Func_0200472c(8)->priority_flags &= 254;
     Value2(Func_02004644, (s32)Func_020045b8, 0xc80);
     Call3(Func_0200478c, 0, 0xb50000, 0x4f90000);
     work = Func_0200472c(0);
     {
         s32 shown = 0xe000;
 
-        *(u16 *)(((u8 *)work + 6)) = shown;
+        work->facing = shown;
     }
     Func_02004794(0, 1);
     Call4(Func_02004824, 0xb50000, 0, 0x4f90000, 0);

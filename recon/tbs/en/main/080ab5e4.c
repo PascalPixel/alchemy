@@ -1,3 +1,6 @@
+/* NONMATCHING: shared callee return types audited on 2026-09-26.
+ * 4872 of 4888 bytes, 2287 differing halfwords, 1169 aligned edits.
+ * Canonical declarations are retained; the remaining source model is not exact. */
 /* NONMATCHING: 4888 bytes, candidate 4872, 2287 differing halfwords,
  * 1175 halfword edits (2026-09-25). Djinn selection now splits each cached
  * cursor with the observed halfword conversions. State/redraw declaration
@@ -133,13 +136,13 @@ void Audio_PlayCue(s32 cue);
 void UiMenu_PositionCursor(s32 x, s32 y);
 s32 Func_080a1ac0(s32 x, s32 y);
 s32 Menu_GetModuloOfSum(s32 value, s32 count);
-void Menu_DrawAtWindowOffset(s32 window, s32 x, s32 y, s32 width, s32 kind, s32 tile);
+s32 Menu_DrawAtWindowOffset(s32 window, s32 x, s32 y, s32 width, s32 kind, s32 tile);
 void UiWindow_ApplyRectAtObjectOrigin(s32 window, s32 x, s32 y, s32 width, s32 height, s32 kind);
 void Func_080aafb8(struct DjinnMenuLists *lists);
 s32 Djinn_MarkBalancedEntries(u8 *balanced, s32 self);
-void FourObjectMotion_SetSlotPosition(s32 slot, s32 x, s32 y, s32 hidden);
+s32 FourObjectMotion_SetSlotPosition(s32 slot, s32 x, s32 y, s32 hidden);
 void FourObjectMotion_SetSlotPhase(s32 slot, s32 phase);
-void FourObjectMotion_ReplaceSlot(s32 slot, s32 element, s32 kind);
+s32 FourObjectMotion_ReplaceSlot(s32 slot, s32 element, s32 kind);
 void Func_080b50f8(void);
 
 u32 Math_ModU(u32, u32);

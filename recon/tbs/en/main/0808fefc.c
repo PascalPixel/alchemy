@@ -1,4 +1,8 @@
-/* Draft, not exact (2026-09-25): 708 of 708 bytes, 151 differing halfwords.
+/* Draft, not exact (2026-09-26): 708 of 708 bytes, 281 differing halfwords.
+   Halfword aggregate carriers put the pool nearer case 4, but combine
+   away a saved register. Capturing the queued value before its address
+   changes the count-store ordering and queue roles. Preserved attempt;
+   the earlier 708-byte / 151-halfword model remains in history.
    Written from the listing; the sibling DisplayTransition_Finish (same
    state record and switch shape) matched. What lined up: the display
    control write is QueueIoWriteDelay2 written out as a macro so its value
@@ -36,6 +40,10 @@ struct DisplayWork {
     u8 unknown_16[0xea];
     u16 split_top;
     u16 split_bottom;
+};
+
+struct HalfConstant {
+    u16 value;
 };
 
 extern volatile u16 Data_04000208;
@@ -77,9 +85,10 @@ void DisplayTransition_UpdateScanline(void);
         *ime = (u16)ime;                                                    \
         count = q->count;                                                   \
         if (count <= 31) {                                                  \
+            u32 data = (value);                                             \
             u32 *destination = (u32 *)((u8 *)q + count * 12 + 4);           \
             *(u16 *)&q->count = count + 1;                                  \
-            *destination++ = (value);                                       \
+            *destination++ = data;                                          \
             *destination++ = 0x04000000;                                    \
             *destination = 0x20000;                                         \
         }                                                                   \
@@ -144,22 +153,24 @@ void DisplayTransition_Start(s32 mode, s32 frames)
     }
     case 4: {
         struct DisplayTransitionState *state;
-        u16 start;
-        u16 zero;
+        struct HalfConstant start;
+        struct HalfConstant zero;
 
         display = *work;
         state = DisplayTransition_AllocateAndClearState();
-        zero = (u16)(s32)&Value_00000000;
-        start = (u8)(u32)&Value_00000050;
+        /* FAKEMATCH: halfword carriers preserve the pool-reach model
+           independently of the two immediate split-window stores. */
+        zero.value = 0;
+        start.value = 80;
         display->split_top = 80;
         display->split_bottom = 80;
         WaitFrames(1);
         Scheduler_AddOrUpdateCallback(value == 0 ? DisplayTransition_Update : DisplayTransition_UpdateFromCentre, 0xc80);
         Runtime_SetIrqHandler(1, 0, DisplayTransition_UpdateScanline);
-        state->start = start;
-        state->end = zero;
+        state->start = start.value;
+        state->end = zero.value;
         state->frames = frames;
-        state->phase = zero;
+        state->phase = zero.value;
         break;
     }
     }

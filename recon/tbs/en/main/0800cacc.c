@@ -55,17 +55,35 @@
  * the block order agrees. The remaining differing halfwords are chiefly
  * allocation: the reference keeps the three delta components
  * in r8/fp/r9 and spills both byte cursors for a 48-byte frame, while this
- * draft uses 44 and lets GCC rematerialise `act` from the object pointer,
- * and the object pointer itself lands in r7 here and r6 there. None of that
- * is reachable from ordinary C under the approved route.
+ * previous draft used 44 and let GCC rematerialise `act` from the object
+ * pointer. These are unresolved C lifetime/alias questions, not evidence
+ * of hand-written assembly or a limitation of ordinary C.
+ *
+ * 2026-09-26: complete owner [0800cacc,0800d130), 1636 bytes including
+ * three own pools. ObjectSystem_Initialize schedules it at priority c8a.
+ * Audited all raw blocks, the exact overlap callee, geometry helpers and
+ * movement neighbour Object_SetMoveTarget. Fresh baseline is 1576 bytes,
+ * 800 differing halfwords / 586 aligned edits, different topology; full
+ * normalized difference read. The dispatch loop has a different back edge,
+ * and allocator coalescing merges the three-axis clamp and braking tails.
+ * H1 transfers the neighbour's named multiply symbol and gives dispatch,
+ * cycle and object tables independent typed extern ownership. Predict
+ * indexed table loads and independently materialized multiply/divide
+ * addresses. Keep local lifetimes and control flow unchanged. One score,
+ * full normalized difference, then record and commit; at most three
+ * structural hypotheses / 25 minutes. Exact full bytes and compare-all,
+ * coverage, tests and verify are required for adoption.
+ * H1 result: 1568 bytes, 800 differing halfwords / 586 aligned edits,
+ * topology still different. Full normalized difference read. Indexed
+ * table loads recovered; no improvement in the broad allocation mismatch.
+ * Frame remains 36 rather than 48, and the clamp/braking tails still merge.
+ * The multiply-symbol change does not resolve those independent lifetimes.
  */
 
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
 #include "IWRAM_CALL.H"
 #include "SCRIPT_OBJECT_RUNTIME.H"
-
-#define ScriptObject_UpdateAll Func_0800cacc
 
 #define FIELD_AT(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
@@ -78,18 +96,23 @@
 
 /* The 64-entry script command dispatch table and the cycle table used by the
  * flag-8/flag-4 vertical motion. */
-#define SCRIPT_COMMAND_TABLE ((ScriptCommandFn *)0x08013624)
-#define CYCLE_TABLE ((const s32 *)0x080131c0)
-
 typedef s32 (*ScriptCommandFn)(struct ScriptObjectRuntime *);
 typedef void (*ScriptObjectHook)(struct ScriptObjectRuntime *);
+
+extern ScriptCommandFn Data_08013624[];
+extern const s32 Data_080131c0[];
+extern struct ScriptObjectRuntime *Data_03001e64;
+/* FAKEMATCH: preserve independent multiply/divide address ownership, as
+ * in the exact Object_SetMoveTarget neighbour. */
+extern u8 Value_03000118[];
+#define MulQ16(left, right) Iwram_Call2((left), (right), Value_03000118)
 
 s32 Func_08011f54(s32, s32, s32);
 s32 ScriptObject_CheckOverlap(struct ScriptObjectRuntime *, s32 *);
 s32 FixedSqrt(s32);
 s32 ArcTan2(s32, s32);
 
-void ScriptObject_UpdateAll(void)
+void Object_UpdateAllThumb(void)
 {
     struct ScriptObjectRuntime *obj;
     const s32 *script;
@@ -120,7 +143,7 @@ void ScriptObject_UpdateAll(void)
     u32 cmd;
     u32 phase;
 
-    obj = *(struct ScriptObjectRuntime **)ADDR_03001E64;
+    obj = Data_03001e64;
     ctl = &obj->flags;
     act = &obj->unknown_56[0];
 
@@ -145,7 +168,7 @@ void ScriptObject_UpdateAll(void)
         if (*(s16 *)(act + 8) != 0) {
             (*(u16 *)(act + 8))--;
         } else {
-            tbl = SCRIPT_COMMAND_TABLE;
+            tbl = Data_08013624;
             for (;;) {
                 cmd = (u32)script[(s16)obj->script_cursor];
                 if (cmd > 63) {
@@ -194,29 +217,29 @@ void ScriptObject_UpdateAll(void)
                         obj->velocity_y = vy;
                         obj->velocity_x = vx;
                         obj->velocity_z = vz;
-                        len = FixedSqrt(Iwram_MulQ16(vx, vx) + Iwram_MulQ16(vy, vy) +
-                                        Iwram_MulQ16(vz, vz));
+                        len = FixedSqrt(MulQ16(vx, vx) + MulQ16(vy, vy) +
+                                        MulQ16(vz, vz));
                         if (len > obj->speed_limit) {
                             ratio = IwramRatio(len, obj->speed_limit);
-                            obj->velocity_x = Iwram_MulQ16(vx, ratio);
-                            obj->velocity_y = Iwram_MulQ16(vy, ratio);
-                            obj->velocity_z = Iwram_MulQ16(vz, ratio);
+                            obj->velocity_x = MulQ16(vx, ratio);
+                            obj->velocity_y = MulQ16(vy, ratio);
+                            obj->velocity_z = MulQ16(vz, ratio);
                         }
                     }
                 } else {
                     vx = obj->velocity_x;
                     vz = obj->velocity_z;
                     vy = obj->velocity_y;
-                    len = FixedSqrt(Iwram_MulQ16(vx, vx) + Iwram_MulQ16(vy, vy) +
-                                    Iwram_MulQ16(vz, vz));
+                    len = FixedSqrt(MulQ16(vx, vx) + MulQ16(vy, vy) +
+                                    MulQ16(vz, vz));
                     if (len != 0) {
                         rem = len - obj->acceleration;
                         if (rem < 0)
                             rem = 0;
                         ratio = IwramRatio(len, rem);
-                        obj->velocity_x = Iwram_MulQ16(vx, ratio);
-                        obj->velocity_y = Iwram_MulQ16(vy, ratio);
-                        obj->velocity_z = Iwram_MulQ16(vz, ratio);
+                        obj->velocity_x = MulQ16(vx, ratio);
+                        obj->velocity_y = MulQ16(vy, ratio);
+                        obj->velocity_z = MulQ16(vz, ratio);
                     } else {
                         obj->velocity_x = 0;
                         obj->velocity_y = 0;
@@ -241,35 +264,35 @@ void ScriptObject_UpdateAll(void)
                     if (dist <= 0x00ffffff) {
                         dx = obj->target_x - px;
                         dz = obj->target_z - pz;
-                        dist = FixedSqrt(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz));
+                        dist = FixedSqrt(MulQ16(dx, dx) + MulQ16(dz, dz));
                     }
                     if (dist == 0) {
                         px = obj->target_x;
                         pz = obj->target_z;
                     } else {
                         ratio = IwramRatio(dist, obj->acceleration);
-                        vx = obj->velocity_x + Iwram_MulQ16(dx, ratio);
+                        vx = obj->velocity_x + MulQ16(dx, ratio);
                         obj->velocity_x = vx;
-                        vz = obj->velocity_z + Iwram_MulQ16(dz, ratio);
+                        vz = obj->velocity_z + MulQ16(dz, ratio);
                         obj->velocity_z = vz;
-                        len = FixedSqrt(Iwram_MulQ16(vx, vx) + Iwram_MulQ16(vz, vz));
+                        len = FixedSqrt(MulQ16(vx, vx) + MulQ16(vz, vz));
                         if (len > obj->speed_limit) {
                             ratio = IwramRatio(len, obj->speed_limit);
-                            obj->velocity_x = Iwram_MulQ16(vx, ratio);
-                            obj->velocity_z = Iwram_MulQ16(vz, ratio);
+                            obj->velocity_x = MulQ16(vx, ratio);
+                            obj->velocity_z = MulQ16(vz, ratio);
                         }
                     }
                 } else {
                     vx = obj->velocity_x;
                     vz = obj->velocity_z;
-                    len = FixedSqrt(Iwram_MulQ16(vx, vx) + Iwram_MulQ16(vz, vz));
+                    len = FixedSqrt(MulQ16(vx, vx) + MulQ16(vz, vz));
                     if (len != 0) {
                         rem = len - obj->acceleration;
                         if (rem < 0)
                             rem = 0;
                         ratio = IwramRatio(len, rem);
-                        obj->velocity_x = Iwram_MulQ16(vx, ratio);
-                        obj->velocity_z = Iwram_MulQ16(vz, ratio);
+                        obj->velocity_x = MulQ16(vx, ratio);
+                        obj->velocity_z = MulQ16(vz, ratio);
                     } else {
                         obj->velocity_x = 0;
                         obj->velocity_z = 0;
@@ -295,16 +318,16 @@ void ScriptObject_UpdateAll(void)
                         vx = obj->velocity_x;
                         vy = obj->velocity_y;
                         vz = obj->velocity_z;
-                        len = FixedSqrt(Iwram_MulQ16(vx, vx) + Iwram_MulQ16(vy, vy) +
-                                        Iwram_MulQ16(vz, vz));
+                        len = FixedSqrt(MulQ16(vx, vx) + MulQ16(vy, vy) +
+                                        MulQ16(vz, vz));
                         if (len != 0) {
                             rem = len - step;
                             if (rem < 0)
                                 rem = 0;
                             ratio = IwramRatio(len, rem);
-                            obj->velocity_x = Iwram_MulQ16(vx, ratio);
-                            obj->velocity_y = Iwram_MulQ16(vy, ratio);
-                            obj->velocity_z = Iwram_MulQ16(vz, ratio);
+                            obj->velocity_x = MulQ16(vx, ratio);
+                            obj->velocity_y = MulQ16(vy, ratio);
+                            obj->velocity_z = MulQ16(vz, ratio);
                         }
                     }
                     obj->terrain_height = ground;
@@ -319,7 +342,7 @@ void ScriptObject_UpdateAll(void)
                             obj->velocity_y - FIELD_AT(obj, s32, 0x48);
                     } else if (obj->velocity_y < 0) {
                         py = ground;
-                        work = Iwram_MulQ16(obj->velocity_y,
+                        work = MulQ16(obj->velocity_y,
                                         FIELD_AT(obj, s32, 0x44));
                         rem = -work;
                         obj->velocity_y = rem;
@@ -336,13 +359,13 @@ void ScriptObject_UpdateAll(void)
                     phase = (u32)(FIELD_AT(obj, s32, 0x44) & 0x3f);
                     if ((ctl[0] & 8) != 0) {
                         work = FIELD_AT(obj, s32, 0x48) *
-                               CYCLE_TABLE[phase >> 1];
+                               Data_080131c0[phase >> 1];
                         if (work < 0)
                             work += 15;
                         work >>= 4;
                     } else {
                         work = FIELD_AT(obj, s32, 0x48) *
-                               CYCLE_TABLE[phase >> 1];
+                               Data_080131c0[phase >> 1];
                         if (work < 0)
                             work += 63;
                         work >>= 6;

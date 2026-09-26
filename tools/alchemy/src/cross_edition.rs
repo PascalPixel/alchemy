@@ -778,7 +778,12 @@ fn compile_edition_object(owner: &str, edition: &str, source: &Path) -> Result<P
     )?;
     let object = output.join("owner.o");
     run_compiler(
-        &crate::compiler::routing::compiler_assembly_command(&assembly, &object.to_string_lossy()),
+        &crate::compiler::routing::compiler_assembly_command_for_source(
+            CompilerTarget::Tbs,
+            &routing_text,
+            &assembly,
+            &object.to_string_lossy(),
+        ),
         crate::compiler::routing::root(),
     )?;
     Ok(object)

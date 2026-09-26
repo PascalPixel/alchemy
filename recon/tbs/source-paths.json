@@ -10325,7 +10325,8 @@
       "source": "BATTLE/EFFECT/RUN_SCENE_TRANSITION.C"
     },
     "main:080983a0": {
-      "name": "RunBattleEffect08"
+      "name": "RunBattleEffect08",
+      "source": "BATTLE/EFFECT/RUN_EFFECT08.C"
     },
     "main:08098954": {
       "name": "RunBattleEffect07"

@@ -1,165 +1,185 @@
-#include "SHOP.H"
+/* Draft H1: complete Psynergy status-list model from own-ROM 080a90bc-080a9370.
+ * Restores the 28-byte MenuResult, all setup/input/drawing calls, typed cursor
+ * pointers, four hidden row positions and owner-switch state. The following
+ * 080a9370 return helper is a separate function, not part of this extent.
+ * H1: 692/692 bytes, 8 differing halfwords, exact 44-byte frame and all calls.
+ * Residual: icon traversal pointer/count swap r1/r2 and setup order (7), plus
+ * signed -16 coordinate pool word encoded as 0x0000fff0 (1). No other diff.
+ * The exact ItemMenu_HideAllIcons neighbour initializes its state local before
+ * the icon-table pointer; H2 will test that lifetime with signed row positions. */
+#include "TYPES.H"
+#include "MENU_RESULT.H"
+#include "SYSTEM.H"
+#include "UI.H"
 
-void Func_080a8c2c(void);
-s32 Func_08015270(s32 window);
-void Func_080a10d0(s32 base, s32 a, s32 b, s32 c, s32 d, s32 e);
-void Func_08004278(s32 a);
-void Func_080a33d4(struct ShopRuntime *shop, s32 window);
-void Func_08015080(s32 icon_id, s32 window, s32 x, s32 y);
-void Func_080f9010(s32 message);
-s32 Func_080041d8(s32 a, s32 b);
-s32 Func_080a8f40(s32 a, s32 b, s32 c);
-s32 Func_080a8d34(s32 a, s32 b, s32 c);
-void Func_080030f8(s32 frames);
-s32 Func_080a1fd4(s32 a, s32 b, s32 c, s32 d, s32 e);
-s32 Func_080a1a40(s32 a, s32 b);
-s32 Func_080770c0(s32 message);
-void Func_080a9cbc(void);
-s32 Func_08077008(s32 icon);
-s32 Func_080a68ec(s32 field, s32 anchor, s32 b);
-s32 Func_080a8b8c(s32 dst, s32 a);
-void Func_080a9374(s32 a, s32 b);
-s32 Modulo(s32 value, s32 divisor);
-void Func_080a1804(struct ShopRuntime *shop, s32 val);
-s32 Func_08015278(s32 window);
-void Func_080a345c(void);
+struct MenuEntryIcon {
+    u8 unknown_00[5];
+    u8 state;
+    u8 unknown_06[9];
+    u8 field_0f;
+};
 
-#define INPUT_NEW_KEYS (*(volatile u32 *)ADDR_03001C94)
-#define INPUT_REPEAT_KEYS (*(volatile u32 *)ADDR_03001B04)
+struct PsynergyStatusMenu {
+    u8 unknown_000[8];
+    s32 owner;
+    u8 unknown_00c[8];
+    struct MenuEntryIcon *cursor;
+    u8 unknown_018[4];
+    s8 tab;
+    u8 unknown_01d[7];
+    s32 window;
+    u8 unknown_028[4];
+    s32 info_window;
+    u8 unknown_030[0x18];
+    struct MenuEntryIcon *entry_icons[32];
+    u8 unknown_0c8[0x44];
+    s32 icon_window;
+    u8 unknown_110[0xb8];
+    u16 psynergies[32];
+    u16 owners[8];
+    u8 count;
+    u8 owner_count;
+    u8 owner_id;
+    u8 unknown_21b[0x21];
+    u16 slot_y[4];
+    u8 unknown_244[0x1c];
+    s8 selected_index[8];
+};
 
-/* A larger shop confirmation/setup loop: initializes a work window, an
- * icon list, and a 32-entry pointer table, then runs an input-driven
- * update loop that adjusts an icon selection and confirms or cancels. */
+struct OwnerActionState;
+extern struct PsynergyStatusMenu *gMenuWork;
+extern volatile u32 gKeyState;
+extern volatile u32 gKeysRepeat;
+extern u8 Value_00000b06;
+
+void Menu_BuildPatternTiles(void);
+void RenderOutput_RedrawSavedRectFar(s32 window);
+void RenderOutput_ClearListFar(s32 window);
+s32 UiWindow_UpdateOrCreate(s32 *, s32, s32, s32, s32, s32);
+void Menu_UpdateEntryObjectTransforms(void);
+void Scheduler_RemoveCallback(void (*callback)(void));
+void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
+void Menu_SpawnIconEntries(struct PsynergyStatusMenu *, s32);
+s32 GameFlag_TestFar(s32 flag);
+void ItemMenu_PosCategory(void);
+struct OwnerActionState *Owner_GetStateFar(s32 owner);
+s32 PsynergyMenu_CollectActions(struct OwnerActionState *, u16 *, s32);
+void PsynergyMenu_DrawPreparedPsynergyIcons(s32 window, s32 owner);
+s32 PsynergyMenu_DrawListPage(s32 window, s32 unused, const struct MenuResult *);
+s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused, struct MenuResult *);
+s32 Unnamed_080a1fd4(s32 mode, s32 count, s32 page_size, s32 *row, s32 *page);
+void UiMenu_PositionCursor(s32 x, s32 y);
+void Audio_PlayCue(s32 cue);
+s32 Math_Mod(s32 value, s32 divisor);
+void PsynergyMenu_CallIconRoutineWithValue(void *menu, s32 owner);
+void ItemMenu_HideAllIcons(void);
+
 s32 Func_080a90bc(void)
 {
-    struct ShopRuntime *shop = SHOP_RUNTIME;
-    s32 result = 0;
-    s32 window;
-    s32 selection = 0;
-    s32 field;
-    u8 *flag_ptr;
-    s32 i;
+    struct PsynergyStatusMenu *menu;
+    s32 result;
+    s32 done;
+    s32 redraw;
+    s32 first;
+    s32 nav;
+    s32 tab;
+    struct MenuResult state;
 
-    Func_080a8c2c();
-
-    window = *(s32 *)((u8 *)shop + 0x10c);
-    Func_08015270(window);
-
-    Func_080a10d0((s32)((u8 *)shop + 44), 0, 0, 30, 5, 2);
-
-    for (i = 2; i >= 0; i--) {
-        *(u16 *)((u8 *)shop + 0x1a2 - i * 2) = 0x0242;
-    }
-
+    menu = gMenuWork;
+    result = 0;
+    done = 0;
+    Menu_BuildPatternTiles();
+    RenderOutput_RedrawSavedRectFar(menu->icon_window);
+    UiWindow_UpdateOrCreate(&menu->info_window, 0, 0, 30, 5, 2);
     {
-        s32 *slots = (s32 *)((u8 *)shop + 72);
+        s32 i;
+
+        for (i = 3; i >= 0; i--)
+            menu->slot_y[i] = -16;
+    }
+    {
+        struct MenuEntryIcon **icons = menu->entry_icons;
+        s32 i;
+
         for (i = 31; i >= 0; i--) {
-            s32 entry = *slots++;
-            if (entry != 0) {
-                *(u8 *)(entry + 15) = 245;
+            struct MenuEntryIcon *icon = *icons++;
+
+            if (icon != 0)
+                icon->field_0f = 245;
+        }
+    }
+    Scheduler_RemoveCallback(Menu_UpdateEntryObjectTransforms);
+    Menu_SpawnIconEntries(menu, menu->icon_window);
+    UiText_DrawCharacterAtOffsetFar((s32)&Value_00000b06, menu->window, 80, -24);
+    UiText_DrawCharacterAtOffsetFar((s32)&Value_00000b06 + 2, menu->window, 0, -24);
+
+    while (done == 0 && GameFlag_TestFar(0x150) == 0) {
+        ItemMenu_PosCategory();
+        RenderOutput_RedrawSavedRectFar(menu->window);
+        menu->count = PsynergyMenu_CollectActions(
+            Owner_GetStateFar(menu->owner_id), menu->psynergies, 0);
+        WaitFrames(1);
+        Menu_BuildPageResult(&state, 0);
+        PsynergyMenu_DrawPreparedPsynergyIcons(menu->window, menu->owner_id);
+        redraw = 1;
+        first = 1;
+
+        while (GameFlag_TestFar(0x150) == 0) {
+            if (redraw != 0) {
+                redraw = 0;
+                if (first != 0) {
+                    first = 0;
+                    PsynergyMenu_DrawListPage(menu->window, 0, &state);
+                }
+                PsynergyMenu_DrawRangePage(menu->window, 0, &state);
+                WaitFrames(1);
+            }
+            WaitFrames(1);
+            nav = Unnamed_080a1fd4(0, state.entry_count, 5, &state.row, &state.page);
+            menu->cursor->state = 1;
+            UiMenu_PositionCursor(55, state.row * 16 + 60);
+            if (nav == 1) {
+                first = 1;
+                redraw = 1;
+            }
+            if (nav == 0)
+                redraw = 1;
+            if (nav == -1)
+                redraw = 0;
+            if (gKeyState & 1) {
+                Audio_PlayCue(112);
+                result = 1;
+                done = 1;
+                break;
+            }
+            if (gKeyState & 2) {
+                Audio_PlayCue(113);
+                result = -1;
+                done = 1;
+                Scheduler_AddOrUpdateCallback(Menu_UpdateEntryObjectTransforms, 0xc80);
+                break;
+            }
+            if ((gKeysRepeat & 0x100) || (gKeysRepeat & 0x200)) {
+                Audio_PlayCue(111);
+                tab = menu->tab;
+                menu->selected_index[menu->owners[tab]] = state.selected_index;
+                if (gKeysRepeat & 0x100)
+                    tab++;
+                else
+                    tab--;
+                tab = Math_Mod(tab + menu->owner_count, menu->owner_count);
+                menu->owner = menu->owners[tab];
+                menu->owner_id = menu->owners[tab];
+                menu->tab = tab;
+                PsynergyMenu_CallIconRoutineWithValue(menu, menu->owners[tab]);
+                break;
             }
         }
     }
-
-    Func_08004278(0x080a19a1);
-
-    window = *(s32 *)((u8 *)shop + 0x10c);
-    Func_080a33d4(shop, window);
-
-    {
-        s32 icon_base = *(s32 *)((u8 *)shop + 36);
-        Func_08015080(icon_base, -24, 80, 0);
-        Func_08015080(icon_base + 2, -24, 0, 0);
-    }
-
-    flag_ptr = (u8 *)shop + 0x21a;
-
-    for (;;) {
-        s32 event = 0;
-        s32 blocked = 0;
-
-        if (selection != 0) {
-            selection = 0;
-            if (*(u8 *)flag_ptr != 0) {
-                Func_080a8f40(*(s32 *)((u8 *)shop + 36), 0, (s32)flag_ptr);
-                event = 0;
-            }
-            Func_080a8d34(*(s32 *)((u8 *)shop + 36), 0, (s32)flag_ptr);
-            Func_080030f8(1);
-        }
-
-        Func_080030f8(1);
-        selection = Func_080a1fd4(0, *(s32 *)((u8 *)flag_ptr + 20), 5, 0, 0);
-        field = *(s32 *)((u8 *)flag_ptr + 16);
-        blocked = Func_080a1a40((field << 4) + 60, 55);
-
-        event = 0;
-        if (blocked == 1) {
-            selection = 1;
-            event = 1;
-        }
-        if (blocked == 0)
-            event = 1;
-        if (blocked == -1)
-            event = 0;
-
-        if ((INPUT_NEW_KEYS & 1) != 0) {
-            result = 1;
-            break;
-        }
-        if ((INPUT_NEW_KEYS & 2) != 0) {
-            result = -1;
-            Func_080041d8(0xc80, 0);
-            break;
-        }
-        if ((INPUT_REPEAT_KEYS & 0x100) != 0 ||
-            (INPUT_REPEAT_KEYS & 0x200) != 0) {
-            s32 idx;
-            s32 fld;
-            s32 count;
-            s32 new_idx;
-            s32 new_fld;
-
-            Func_080f9010(111);
-            idx = *(s8 *)((u8 *)shop + 28);
-            fld = *(u16 *)((u8 *)shop + 0x208 + idx * 2);
-            *(u8 *)((u8 *)shop + fld + 0x260) =
-                *(s32 *)((u8 *)flag_ptr + 24);
-
-            if ((INPUT_REPEAT_KEYS & 0x100) != 0)
-                idx = idx + 1;
-            else
-                idx = idx - 1;
-
-            count = *(u8 *)((u8 *)shop + 0xc05);
-            new_idx = Modulo(idx + count, count);
-            new_fld = *(u16 *)((u8 *)shop + 0x208 + new_idx * 2);
-            *(u32 *)((u8 *)shop + 8) = new_fld;
-            *(u8 *)flag_ptr = (u8)new_fld;
-            *(u8 *)((u8 *)shop + 28) = new_idx;
-            Func_080a1804(shop, new_fld);
-            continue;
-        }
-
-        if (Func_080770c0(0x150) != 0)
-            continue;
-
-        Func_080a9cbc();
-        Func_08015270(*(s32 *)((u8 *)shop + 36));
-        Func_08077008(*flag_ptr);
-        *(u8 *)((u8 *)shop + 0x218) = Func_080a68ec(
-            (s32)((u8 *)shop + 0x1c8), (s32)flag_ptr, 0);
-        Func_080030f8(1);
-        Func_080a8b8c(0, 0);
-        Func_080a9374(*(s32 *)((u8 *)shop + 36), *flag_ptr);
-        selection = 1;
-    }
-
-    Func_08015278(*(s32 *)((u8 *)shop + 44));
-    Func_08015270(*(s32 *)((u8 *)shop + 44));
-    Func_080a345c();
-    Func_08015278(*(s32 *)((u8 *)shop + 0x10c));
-    Func_08015270(*(s32 *)((u8 *)shop + 36));
-
+    RenderOutput_ClearListFar(menu->info_window);
+    RenderOutput_RedrawSavedRectFar(menu->info_window);
+    ItemMenu_HideAllIcons();
+    RenderOutput_ClearListFar(menu->icon_window);
+    RenderOutput_RedrawSavedRectFar(menu->window);
     return result;
 }

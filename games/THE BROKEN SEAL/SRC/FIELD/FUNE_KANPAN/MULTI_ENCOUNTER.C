@@ -37,7 +37,6 @@
 #define SCENE_WORK (*(u8 **)0x03001ebc)
 #define SCENE_PHASE_02003f30 (*(s32 *)(SCENE_WORK + 0x1c0))
 
-#include "RESOURCE_3AF_MOTION.H"
 
 enum MultiEncounterMessage {
     MSG_WONDER_COULD_HAVE_HAPPENED = 0x1d26,
@@ -335,30 +334,33 @@ static __inline__ void Call1_02003a0c(void (*f)(), s32 a0)
  * word the image holds. */
 extern u8 Data_00006014[];
 
-s32 SceneEffect_UpdateCountdownMotion(struct Resource3afMotion *motion)
+/* Briefly stretches the sprite, then waits before the next pulse. */
+s32 SceneActor_UpdateScalePulse(struct FieldActor *actor)
 {
-    switch (motion->countdown) {
+    /* FAKEMATCH: In-place signed accesses preserve the countdown's load
+     * and address scheduling. */
+    switch (*(s16 *)&actor->unknown_64) {
     case 6:
-        motion->component_a += (s32) 0xFFFFC000;
-        motion->component_b += 0x2000;
+        actor->scale_x += -0x4000;
+        actor->scale_y += 0x2000;
         break;
     case 4:
-        motion->component_a += 0x2000;
+        actor->scale_x += 0x2000;
         /* The loader relocates the stored pool word to -0x1000. */
-        motion->component_b -= 0x1000;
+        actor->scale_y -= 0x1000;
         break;
     case 2:
-        motion->component_a += 0x1000;
-        motion->component_b += (s32) 0xFFFFF800;
+        actor->scale_x += 0x1000;
+        actor->scale_y += -0x800;
         break;
     case 0:
-        motion->component_a = 0x10000;
-        motion->component_b = 0x10000;
-        motion->countdown =
+        actor->scale_x = 0x10000;
+        actor->scale_y = 0x10000;
+        (*(s16 *)&actor->unknown_64) =
             (s16)(BuildMotionCountdown(Random_Next(), 90) + 60);
         break;
     }
-    motion->countdown--;
+    (*(s16 *)&actor->unknown_64)--;
     return 1;
 }
 
@@ -368,21 +370,21 @@ s32 SceneState_ApplyArgMode1AndReturnZero(s32 a)
     return 0;
 }
 
-s32 SceneActor_OscillateHeightBetweenLimits(u8 *obj)
+s32 SceneActor_OscillateHeightBetweenLimits(struct FieldActor *actor)
 {
-    s16 *flag = (s16 *)(obj + 0x66);
+    s16 *flag = (s16 *)&actor->unknown_66;
     s32 val;
     s32 tmp;
 
     if (*flag != 0) {
-        val = *(s32 *)(obj + 0xc) - (((u32)(Random_Next() << 15)) >> 16) - 0x8000;
-        *(s32 *)(obj + 0xc) = val;
+        val = actor->y.fixed - (((u32)(Random_Next() << 15)) >> 16) - 0x8000;
+        actor->y.fixed = val;
         if (val >= 0x40000)
             goto done;
         tmp = 0;
     } else {
-        val = *(s32 *)(obj + 0xc) + (((u32)(Random_Next() << 15)) >> 16) + 0x8000;
-        *(s32 *)(obj + 0xc) = val;
+        val = actor->y.fixed + (((u32)(Random_Next() << 15)) >> 16) + 0x8000;
+        actor->y.fixed = val;
         if (val <= 0xC0000)
             goto done;
         tmp = 1;
@@ -392,32 +394,32 @@ done:
     return 1;
 }
 
-s32 SceneActor_SetFacingFromSample(u8 *a)
+s32 SceneActor_SetFacingFromSample(struct FieldActor *actor)
 {
     u32 v = ((u32)(Random_Next() << 5)) >> 16;
 
     if (v == 6) {
         s32 t = 0xD0;
-        *(u16 *)(a + 6) = t << 8;
+        actor->facing = t << 8;
     } else if (v == 9) {
         s32 t = 0xB0;
-        *(u16 *)(a + 6) = t << 8;
+        actor->facing = t << 8;
     }
     return 1;
 }
 
-s32 SceneActor_SetWord28RandomlyOneIn40(u8 *obj)
+s32 SceneActor_SetWord28RandomlyOneIn40(struct FieldActor *actor)
 {
     if ((((u32)(Random_Next() * 40)) >> 16) == 0)
-        *(s32 *)(obj + 0x28) = 0x40000;
+        actor->velocity_y = 0x40000;
     return 1;
 }
 
-void OverlayObject_DecayFields24And28(u8 *o)
+void OverlayObject_DecayFields24And28(struct FieldActor *actor)
 {
-    if (*(s32 *)(o + 24) > 0x10000) {
-        *(s32 *)(o + 24) += 0xFFFFF800;
-        *(s32 *)(o + 28) += 0xFFFFF800;
+    if (actor->scale_x > 0x10000) {
+        actor->scale_x += 0xFFFFF800;
+        actor->scale_y += 0xFFFFF800;
     }
 }
 

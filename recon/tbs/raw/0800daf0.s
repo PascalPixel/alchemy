@@ -3,8 +3,10 @@
 	.set sub_080045d4, 0x080045d4
 	.set sub_080072f0, 0x080072f0
 	.set sub_08007310, 0x08007310
+	.global Camera_FollowLeaderInBounds
 	.global Func_0800daf0
 	.thumb_func
+Camera_FollowLeaderInBounds:
 Func_0800daf0:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

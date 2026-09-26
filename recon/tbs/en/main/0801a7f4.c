@@ -1,9 +1,6 @@
-/* Draft, not exact (2026-09-24): 26 differing halfwords, 278 of 280 bytes.
-   Residual: after the first loop the reference loads 140 as an SImode
-   immediate (movs) and copies the x and y pointers into r5 and r4 for the
-   second loop; here 140 is a halfword pool constant and the loop uses the
-   pointers in place. Spelling 140 through a separate local hoists the loop
-   loads instead (56 halfwords). */
+/* Draft, not exact: 22 differing halfwords, 278 of 280 bytes.
+   Initialization now emits the immediate 140; x/y pointer setup and saved
+   register copies still differ before the second loop. */
 #include "TYPES.H"
 
 struct SelectionNode {
@@ -41,6 +38,13 @@ struct SelectionNode *Resource_FindFreeTransferEntry(s32 kind);
 void MenuSelection_SetupEntry(u32 kind, s32 base, struct SelectionNode *node, s32 reuse);
 void Menu_LoadSelectedResource(void);
 
+/* FAKEMATCH: inline initialization keeps 140 an immediate. */
+static __inline__ void SetPosition(struct SelectionScreen *screen, s32 cnt)
+{
+    screen->x = 100 - cnt * 8;
+    screen->y = 140;
+}
+
 void MenuSelection_BuildEntries(void)
 {
     struct SelectionScreen *screen = gResQueueWork;
@@ -75,10 +79,9 @@ void MenuSelection_BuildEntries(void)
         index++;
     }
 
+    SetPosition(screen, cnt);
     px = &screen->x;
     py = &screen->y;
-    *px = 100 - cnt * 8;
-    *py = 140;
     cnt = 0;
     for (prev = screen->head; prev != 0; prev = prev->next) {
         s32 x = *px + cnt;

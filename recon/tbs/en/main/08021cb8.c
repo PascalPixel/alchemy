@@ -1,10 +1,9 @@
-/* Draft, not exact (2026-09-24): 50 differing halfwords, 208 of 208 bytes.
-   The remap loop is a goto loop: the ROM rebuilds 0x400, 0x100 and
-   0x05000000 inside it, which loop.c would have hoisted out of a for loop.
-   Residual: the ROM keeps the output colour (r2) apart from the value it
-   compares and the palette count (r3), so the full-palette path copies the
-   stored count with adds r2, r3 after a b.n; here the count is masked to a
-   byte instead. */
+/* NONMATCHING: 208 of 208 bytes, 3 differing halfwords (2026-09-25).
+ * Snapshotting the full palette count before the byte store and inlining
+ * the remap branch reduced 17 halfword edits to 3. The initial slot load
+ * still uses r3 instead of r2, reverses its copy, and advances src early.
+ * A separate test argument and narrow helper types did not improve it.
+ */
 
 #include "DMA.H"
 
@@ -22,6 +21,24 @@ s32 Resource_DecodeByteLz(const void *source, void *destination);
 u8 *Runtime_BumpAllocate(s32 size);
 void Runtime_BumpFree(void *block);
 void Runtime_ReleaseHeapBlock(s32 slot);
+
+/* FAKEMATCH: this inline boundary preserves a separate input and return
+ * value for the remap branch, as in the reference. */
+static __inline__ u32 RemapColour(struct GlyphPalette *palette, u32 index, u32 colour)
+{
+    if (colour == 255) {
+        s32 count = palette->count;
+        palette->slot[index] = count;
+        if (palette->count <= 63) {
+            ((u16 *)0x05000000)[palette->count] = ((u16 *)0x05000200)[index];
+            palette->count++;
+            colour = palette->slot[index];
+        } else {
+            colour = count;
+        }
+    }
+    return colour;
+}
 
 /* Decodes one glyph of the font resource, remaps its colours through the
    window's glyph palette (assigning and uploading new colours while slots
@@ -49,14 +66,7 @@ loop:
     {
         index = *src++;
         colour = palette->slot[index];
-        if (palette->slot[index] == 255) {
-            colour = palette->slot[index] = palette->count;
-            if (palette->count <= 63) {
-                ((u16 *)0x05000000)[palette->count] = ((u16 *)0x05000200)[index];
-                palette->count++;
-                colour = palette->slot[index];
-            }
-        }
+        colour = RemapColour(palette, index, colour);
         *dst++ = colour;
     }
     if (++i < 0x400)

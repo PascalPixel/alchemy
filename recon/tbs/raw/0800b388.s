@@ -5,8 +5,10 @@
 	.set sub_08003f78, 0x08003f78
 	.set sub_08005268, 0x08005268
 	.set sub_0800aa0c, 0x0800aa0c
+	.global Render_PlaceProjectedSprite
 	.global Func_0800b388
 	.thumb_func
+Render_PlaceProjectedSprite:
 Func_0800b388:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

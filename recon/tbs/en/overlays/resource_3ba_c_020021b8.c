@@ -1,251 +1,214 @@
+/* NONMATCHING: 1264 bytes, candidate 1264, 268 differing halfwords, 158
+ * halfword edits (2026-09-25). CommandInterpolationRenderer_Update, meant
+ * for FIELD/KOROSSEO_KAWA/F_021B8.C as a single-overlay unit binding its
+ * names at their runtime addresses (an import veneer's listing offset plus
+ * 0x8000). Remaining: Rebuilt command loop, three signed interpolation
+ * channels, affine parameter bitfields, sprite records and IO queue from
+ * disassembly. Verified helper prototypes and every literal. Complete size
+ * matches; remaining register lifetimes, zero-load width, and instruction
+ * scheduling differ.
+ * WALL: Register lifetimes across interpolation and sprite emission;
+ * preserve the separate per-case shifted affine index. */
 #include "TYPES.H"
+#include "IO_WRITE_QUEUE.H"
 
-#define CommandInterpolationRenderer_Update Func_020021b8
+struct Sprite { u32 words[3]; };
+struct SpriteTile { u16 pad, base; };
+struct SpriteTransform { unsigned x : 16; unsigned y : 16; unsigned angle : 16; unsigned pad : 16; };
+/* FAKEMATCH: a halfword zero aggregate keeps the interior literal pools. */
+struct Half { u16 value; };
+extern struct SpriteTile Data_03001b10[];
+extern s16 Data_0200c57c, Data_0200c79c, Data_0200c7f8, Data_0200c76c;
+extern s16 Data_0200c7f0, Data_0200c77c, Data_0200c778, Data_0200c768;
+extern s16 Data_0200c754, Data_0200c7fc, Data_0200c794, Data_0200c798;
+extern s16 Data_0200c7a8, Data_0200c784, Data_0200c790, Data_0200c764;
+extern s32 Data_0200c770;
+extern s16 *Data_0200c7a0;
+extern u32 Data_0200c7c0[];
+extern s32 Main_080000d8(void (*fn)(void));
+extern void Main_080001b8(s32 slot);
+extern s32 Local_02003b00(s32 left, s32 right);
+extern s32 Main_080001e0(struct SpriteTransform *work);
+extern void Main_080001e8(void *sprite, s32 priority);
 
-/*
- * resource_3ba command/interpolation renderer at 0x020021b8, complete
- * 1,264-byte owner through its interior literal runs, sole return, alignment
- * and ten-word trailing pool before 0x020026a8. Control flow is the reviewed
- * resource_3bb:2450/resource_3bc:2ee8 family; every state address and all ten
- * calls are independently resolved for this overlay.
- */
-
-
-
-
-
-/* This import is used with the four historical arities below. */
-
-
-extern void Func_02005dc0(void *callback);
-extern void Func_02005e1a(s32 slot);
-extern s32 Func_02005df2(s32 delta, s32 duration);
-extern s32 Func_02005e8e(s32 delta, s32 duration);
-extern s32 Func_02005eee(s32 delta, s32 duration);
-extern s32 Func_02005fa6(s32 packed);
-extern void Func_0200606a();
-extern void Func_020060e6();
-extern void Func_02006144();
-extern void Func_02006198();
-void Func_020021b8(void)
+void CommandInterpolationRenderer_Update(void)
 {
-    volatile s16 *paletteSlot = (volatile s16 *)0x0200c57c;
-    volatile s16 *stateCell = (volatile s16 *)0x0200c79c;
-    volatile u16 *paletteTable = (volatile u16 *)0x03001b10;
-    volatile u32 *queueCell = (volatile u32 *)0x0200c7a0;
-    volatile u16 *commandA = (volatile u16 *)0x0200c76c;
-    volatile u16 *commandB = (volatile u16 *)0x0200c770;
-    volatile u16 *commandC = (volatile u16 *)0x0200c778;
-    volatile u16 *commandD = (volatile u16 *)0x0200c794;
-    volatile u16 *commandE = (volatile u16 *)0x0200c798;
-    volatile u16 *commandF = (volatile u16 *)0x0200c7f0;
-    volatile u16 *commandG = (volatile u16 *)0x0200c7f8;
-    volatile u16 *countA = (volatile u16 *)0x0200c7fc;
-    volatile u16 *countB = (volatile u16 *)0x0200c77c;
-    volatile u16 *durationA = (volatile u16 *)0x0200c754;
-    volatile u16 *durationB = (volatile u16 *)0x0200c7a8;
-    volatile u16 *durationC = (volatile u16 *)0x0200c76c;
-    volatile u32 *outputWords = (volatile u32 *)0x0200c7c0;
-    volatile u16 *spriteCount = (volatile u16 *)0x02002090;
-    volatile u16 *regIme = (volatile u16 *)0x04000208;
-    u16 *queue;
-    u32 *write;
-    s32 tile;
-    s32 phase;
-    s32 first;
-    s32 second;
-    s32 third;
-    s32 packed;
-    s32 i;
+    u32 *write = Data_0200c7c0;
+    struct Sprite *sprite = (struct Sprite *)write;
+    s32 tile = Data_03001b10[Data_0200c57c].base >> 5;
+    s32 scale, blend, pos, duration, start, progress;
+    s32 matrix, i, x, y, left;
+    u32 flags;
+    struct SpriteTransform work;
+    struct IoWriteQueue *queue;
+    volatile u16 *ime;
+    s32 saved, cnt;
+    u32 *entry;
 
-    tile = paletteTable[((s32)*paletteSlot << 2) / 2 + 1] >> 5;
-    phase = *stateCell;
-    write = (u32 *)outputWords;
-
-    /* A zero phase drains commands until one of the state arms takes over. */
-    if (phase == 0) {
-        queue = (u16 *)(*queueCell);
-        for (;;) {
-            s32 command = (s16)*queue++;
-
-            *queueCell = (u32)queue;
-
-            if (command == -1) {
-                Func_02005dc0((void *)0x0200a1b9);
-                Func_02005e1a(*paletteSlot);
-                return;
-            }
-
-            if (command == 0x4000) {
-                *commandB = (u16)((s16)queue[0] << 8);
-                *commandG = queue[1];
-                *commandA = (u16)phase;
-                queue += 2;
-                *queueCell = (u32)queue;
-            } else if (command == 0x3000) {
-                *(volatile u16 *)0x0200c7f0 = *commandG;
-                *commandG = queue[0];
-                *commandA = queue[1];
-                queue += 2;
-                *queueCell = (u32)queue;
-                *(volatile u16 *)0x0200c77c = (u16)phase;
-            } else if (command == 0x1000) {
-                *(volatile u16 *)0x0200c768 = *commandC;
-                *commandC = queue[0];
-                *durationA = queue[1];
-                queue += 2;
-                *queueCell = (u32)queue;
-                *(volatile u16 *)0x0200c7fc = (u16)phase;
-            } else if (command == 0x2000) {
-                *commandE = *commandD;
-                *commandD = queue[0];
-                *durationB = queue[1];
-                queue += 2;
-                *queueCell = (u32)queue;
-                *(volatile u16 *)0x0200c784 = (u16)phase;
-            } else if (command == 0x7fff) {
-                *stateCell = (u16)queue[0];
-                queue++;
-                *queueCell = (u32)queue;
-                break;
-            } else {
-                /* Unknown commands consume one halfword and are retried. */
-                continue;
-            }
-
-            phase = *stateCell;
-            if (phase != 0)
-                break;
-        }
-        phase = *stateCell;
-    }
-
-    /* Interpolate the three state channels, preserving signed 16-bit fields. */
-    phase = (s16)(phase - 1);
-    *stateCell = (u16)phase;
-
-    if (*durationA == 0) {
-        first = (s16)*commandC;
-    } else {
-        s32 progress = (s16)(++*countA);
-        s32 target = (s16)*commandC;
-        s32 start = (s16)*(volatile u16 *)0x0200c768;
-
-        first = start + Func_02005df2(progress * (target - start),
-                                      (s16)*durationA);
-        if (progress >= (s16)*durationA)
-            *durationA = 0;
-    }
-
-    if (*durationB == 0) {
-        second = (s16)*commandD;
-    } else {
-        s32 progress = (s16)(++*countA);
-        s32 target = (s16)*commandD;
-        s32 start = (s16)*commandE;
-
-        second = start + Func_02005e8e(progress * (target - start),
-                                       (s16)*durationB);
-        if (progress >= (s16)*durationB)
-            *durationB = 0;
-    }
-
-    if (*durationC == 0) {
-        third = (s16)*commandG;
-    } else {
-        s32 progress = (s16)(++*countB);
-        s32 target = (s16)*commandG;
-        s32 start = (s16)*commandF;
-
-        third = start + Func_02005eee(progress * (target - start),
-                                      (s16)*durationC);
-        if (progress >= (s16)*durationC)
-            *durationC = 0;
-    }
-
-    packed = (first & 0xffff) | ((second & 0xffff) << 16);
-    packed = Func_02005fa6(packed);
-    *(volatile s32 *)0x0200c770 += third;
-
-    /* Mode 1 emits four records. */
-    if (*(volatile s16 *)0x0200c790 == 1) {
-        for (i = 0; i <= 3; i++) {
-            s32 y = third + ((first * (i * 32 - 48)) >> 8);
-
-            write[0] = 0;
-            write[1] = ((u32)(y + 0x58) & 0x1ff) << 16;
-            write[1] |= 0x80004038u | ((u32)packed << 25);
-            write[2] = 0x00f40000u | (u32)(tile + i * 8);
-            if (y + 0x98 <= 0x12f)
-                Func_0200606a((void *)write, 0xec, write + 3, 0x80004000);
-            write += 3;
-        }
-    /* Mode 3 emits two narrower records. */
-    } else if (*(volatile s16 *)0x0200c790 == 3) {
-        for (i = 0; i <= 1; i++) {
-            s32 y = third + ((first * (i * 32 - 16)) >> 8);
-
-            write[0] = 0;
-            write[1] = ((u32)(y + 0x58) & 0x1ff) << 16;
-            write[1] |= 0x80004030u | ((u32)packed << 25);
-            write[2] = 0x00f40000u | (u32)(tile + i * 8);
-            if (y + 0x98 <= 0x12f)
-                Func_020060e6((void *)write, 0xec, write + 3, 0x80004000);
-            write += 3;
-        }
-    /* Mode 4 emits a single record if its 0x98/0x12f bounds permit it. */
-    } else if (*(volatile s16 *)0x0200c790 == 4) {
-        s32 y = third;
-
-        if (y + 0x78 < 0x130) {
-            write[0] = 0;
-            write[1] = ((u32)(y + 0x38) & 0x1ff) << 16;
-            write[1] |= 0x80004030u | ((u32)packed << 25);
-            write[2] = 0x00f40000u | (u32)tile;
-            Func_02006144((void *)write, 0xec, write + 3);
-            write += 3;
-        }
-    /* All other modes use the single centered record arm. */
-    } else {
-        write[0] = 0;
-        write[1] = ((u32)(third + 0x98) & 0x1ff) << 16;
-        write[1] |= 0x80000030u | ((u32)packed << 25);
-        write[2] = 0x00f40000u | (u32)tile;
-        Func_02006198((void *)write, 0xec);
-        write += 3;
-    }
-
-    /* Two interrupt-masked records are appended to the shared sprite queue. */
+commands:
+    if (Data_0200c79c != 0)
+        goto render;
     {
-        u16 savedIme = *regIme;
-        u16 count = *spriteCount;
-
-        *regIme = (u16)(u32)regIme;
-        if (count <= 31) {
-            u32 *entry = (u32 *)((u8 *)spriteCount + 4 + count * 12);
-
-            *spriteCount = (u16)(count + 1);
-            entry[0] = 0xfc << 6;
-            entry[1] = 0x04000050;
-            entry[2] = 0x80000;
+        switch (*Data_0200c7a0++) {
+        case 0x4000:
+            Data_0200c770 = *Data_0200c7a0++ << 8;
+            Data_0200c7f8 = *Data_0200c7a0++;
+            Data_0200c76c = 0;
+            break;
+        case 0x3000:
+            Data_0200c7f0 = Data_0200c7f8;
+            Data_0200c7f8 = *Data_0200c7a0++;
+            Data_0200c76c = *Data_0200c7a0++;
+            Data_0200c77c = 0;
+            break;
+        case 0x1000:
+            Data_0200c768 = Data_0200c778;
+            Data_0200c778 = *Data_0200c7a0++;
+            Data_0200c754 = *Data_0200c7a0++;
+            Data_0200c7fc = 0;
+            break;
+        case 0x2000:
+            Data_0200c798 = Data_0200c794;
+            Data_0200c794 = *Data_0200c7a0++;
+            Data_0200c7a8 = *Data_0200c7a0++;
+            Data_0200c784 = 0;
+            break;
+        case 0x7fff:
+            Data_0200c79c = *Data_0200c7a0++;
+            break;
+        case -1:
+            Main_080000d8(CommandInterpolationRenderer_Update);
+            Main_080001b8(Data_0200c57c);
+            return;
         }
-        *regIme = savedIme;
     }
-
-    {
-        u16 savedIme = *regIme;
-        u16 count = *spriteCount;
-
-        *regIme = (u16)(u32)regIme;
-        if (count <= 31) {
-            u32 *entry = (u32 *)((u8 *)spriteCount + 4 + count * 12);
-            s32 depth = 16 - second;
-
-            *spriteCount = (u16)(count + 1);
-            entry[0] = ((u32)depth << 8) | (u32)second;
-            entry[1] = 0x04000052;
-            entry[2] = 0x80000;
+    goto commands;
+render:
+    Data_0200c79c--;
+    duration = Data_0200c754;
+    if (duration == 0) {
+        scale = Data_0200c778;
+    } else {
+        struct Half zero = { 0 };
+        start = Data_0200c768;
+        x = Data_0200c778;
+        progress = ++Data_0200c7fc;
+        scale = start + Local_02003b00((x - start) * progress, duration);
+        if (progress >= duration)
+            Data_0200c754 = zero.value;
+    }
+    duration = Data_0200c7a8;
+    if (duration == 0) {
+        blend = Data_0200c794;
+    } else {
+        struct Half zero = { 0 };
+        start = Data_0200c798;
+        x = Data_0200c794;
+        progress = ++Data_0200c784;
+        blend = start + Local_02003b00((x - start) * progress, duration);
+        if (progress >= duration)
+            Data_0200c7a8 = zero.value;
+    }
+    duration = Data_0200c76c;
+    if (duration == 0) {
+        pos = Data_0200c7f8;
+    } else {
+        struct Half zero = { 0 };
+        start = Data_0200c7f0;
+        x = Data_0200c7f8;
+        progress = ++Data_0200c77c;
+        pos = start + Local_02003b00((x - start) * progress, duration);
+        if (progress >= duration)
+            Data_0200c76c = zero.value;
+    }
+    work.angle = 0;
+    work.x = scale;
+    work.y = scale;
+    matrix = (s16)Main_080001e0(&work);
+    Data_0200c770 += pos;
+    pos = Data_0200c770 / 256;
+    switch (Data_0200c790) {
+    case 1: {
+        u32 attr = matrix << 25;
+        y = 56;
+        flags = 0x80004000;
+        for (i = 0; i < 4; i++) {
+            x = pos + scale * (i * 32 - 48) / 256;
+            left = x + 88;
+            if ((u32)(x + 152) < 304) {
+                x = left & 511;
+                *write++ = 0;
+                *write++ = (x << 16) | y | flags | attr | 0x700;
+                *write++ = 0xf400 | tile;
+                Main_080001e8(sprite++, 236);
+            }
+            tile += 8;
         }
-        *regIme = savedIme;
+        break;
     }
+    case 3: {
+        u32 attr = matrix << 25;
+        y = 48;
+        flags = 0x80004000;
+        for (i = 0; i < 2; i++) {
+            x = pos + scale * (i * 32 - 16) / 256;
+            left = x + 88;
+            if ((u32)(x + 152) < 304) {
+                x = left & 511;
+                *write++ = 0;
+                *write++ = (x << 16) | y | flags | attr | 0x700;
+                *write++ = 0xf400 | (tile + Data_0200c764);
+                Main_080001e8(sprite++, 236);
+            }
+            tile += 8;
+        }
+        break;
+    }
+    case 4:
+        y = 48;
+        flags = 0xc0004000;
+        if ((u32)(pos + 120) < 304) {
+            x = (pos + 56) & 511;
+            *write++ = 0;
+            *write++ = (x << 16) | y | flags | (matrix << 25) | 0x700;
+            *write++ = 0xf400 | (tile + Data_0200c764);
+            Main_080001e8(sprite, 236);
+        }
+        break;
+    case 2:
+        y = 48;
+        flags = 0x80000000;
+        if ((u32)(pos + 152) < 304) {
+            x = (pos + 88) & 511;
+            *write++ = 0;
+            *write++ = (x << 16) | y | flags | (matrix << 25) | 0x700;
+            *write++ = 0xf400 | (tile + Data_0200c764);
+            Main_080001e8(sprite, 236);
+        }
+        break;
+    }
+    queue = &gIoWriteQueue;
+    ime = (volatile u16 *)0x04000208;
+    saved = *ime;
+    *ime = (u16)(u32)ime;
+    cnt = queue->count;
+    if (cnt < 32) {
+        queue->count = cnt + 1;
+        entry = queue->entries[cnt];
+        *entry++ = 0x3f00;
+        *entry++ = 0x04000050;
+        *entry = 0x20000;
+    }
+    *ime = saved;
+    saved = *ime;
+    *ime = (u16)(u32)ime;
+    cnt = queue->count;
+    if (cnt < 32) {
+        queue->count = cnt + 1;
+        entry = queue->entries[cnt];
+        *entry++ = ((16 - blend) << 8) | blend;
+        *entry++ = 0x04000052;
+        *entry = 0x20000;
+    }
+    *ime = saved;
 }

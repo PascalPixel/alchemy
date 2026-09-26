@@ -1,18 +1,12 @@
-/* NONMATCHING: 1300 bytes, candidate 1300, 60 differing halfwords
- * (2026-09-24). Single-overlay unit binding Engine_* at their import veneers.
- * Remaining: scheduling only. QueueTransfer is a macro (the source is
- * computed inside the count check), writes IME its own address's low half
- * through the Value_04000208 symbol (so the address loads after the
- * decompress call), reads the count through a u16 lvalue and fills the entry
- * through a post-incremented word pointer. In every call the reference copies
- * the saved IME into its register before the IME write (here sched2 puts that
- * copy, used only after the join, after the count load); the first call loads
- * the queue address before IME; and the callback calls set r0 before r1
- * (wrappers and casts do not change it). Needs the unit symbols
- * gWorldMapTransferQueue=0x02002090, gWorldMapBlend=0x0200e7a0,
- * gWorldMapPalettes=0x0200c4ac, gWorldMapPackedTiles=0x0200c7a6,
- * gWorldMapPackedFrames=0x0200c4ec (data), WorldMap_RestoreBlend=0x0200b8fc,
- * WorldMap_UpdateBlend=0x0200b95c. */
+/* NONMATCHING: 1300 bytes, candidate 1300, 3 differing halfwords, 2 halfword
+ * edits (2026-09-25). Scene_RunScene371SequenceA, meant for
+ * FIELD/WORLD_MAP/F_039FC.C as a single-overlay unit binding its names at
+ * their runtime addresses (an import veneer's listing offset plus 0x8000).
+ * Remaining: Whole-function queue pointers and one-pass IME reads reproduce
+ * every queued transfer; only the first task callback argument order
+ * differs.
+ * WALL: scheduling: first callback address load follows priority instead of
+ * preceding it */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
@@ -43,15 +37,15 @@ void Main_08009238(void);
 void WorldMap_RestoreBlend(void);
 void WorldMap_UpdateBlend(void);
 
-/* Each request preserves IME while publishing one complete DMA transfer.
+/* FAKEMATCH: the one-pass read preserves the saved-IME copy before masking.
+ * Each request preserves IME while publishing one complete DMA transfer.
  * The original writes 0x0208 to IME; its enable bit is clear. */
 #define QueueTransfer(source, destination, control) \
 { \
-    struct DisplayTransferQueue *q = &gWorldMapTransferQueue; \
-    volatile u16 *ime = &Value_04000208; \
-    u32 saved = *ime; \
+    u32 saved; \
     u32 *p; \
     s32 n; \
+    do { saved = *ime; } while (0); \
     *ime = (u16)(u32)ime; \
     n = *(u16 *)&gWorldMapTransferQueue; \
     if (n < 32) { \
@@ -66,8 +60,10 @@ void WorldMap_UpdateBlend(void);
 
 #define QueueFrame(buffer, offset) QueueTransfer((buffer) + (offset), 0x06002000, 0x84000140)
 
-void Local_020039fc(s32 palette)
+void Scene_RunScene371SequenceA(s32 palette)
 {
+    struct DisplayTransferQueue *q;
+    volatile u16 *ime;
     u8 *buffer = Main_08000170(0x4000);
 
     Engine_TaskWait(1);
@@ -75,6 +71,8 @@ void Local_020039fc(s32 palette)
     Main_08009230();
     Main_080001a8(gWorldMapPackedTiles, buffer);
     Main_080001a8(gWorldMapPackedFrames, buffer + 0x1000);
+    q = &gWorldMapTransferQueue;
+    ime = &Value_04000208;
     QueueTransfer(gWorldMapPalettes + palette * 32, (void *)0x050001c0, 0x80000010)
     QueueTransfer(buffer, (void *)0x06001000, 0x84000400)
     Engine_TaskAddCallback(WorldMap_RestoreBlend, 0xc80);

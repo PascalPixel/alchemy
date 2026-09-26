@@ -1,3 +1,11 @@
+/* NONMATCHING: 2124 bytes, candidate 2112, 992 differing halfwords, 504
+ * halfword edits (2026-09-25). FieldScene_RunSecondaryScript, meant for
+ * FIELD/TOREBI_IZUMI/F_00E5C.C as a single-overlay unit binding its names at
+ * their runtime addresses (an import veneer's listing offset plus 0x8000).
+ * Remaining: Pointer-countdown history copies recovered; remaining
+ * differences span the actor state loops and allocation across the complete
+ * owner.
+ * WALL: structural-topology: reconstruct actor state loops and live ranges */
 #include "TYPES.H"
 
 /*
@@ -90,8 +98,6 @@
  * left as an allocation residual rather than chased with further respellings.
  */
 
-#define Scene_RunSecondaryScript Func_02000e5c
-
 /* Loader-relocated overlay calls: each symbol names the pre-relocation call
  * word the image holds. */
 #define SceneActor_GetRecord Func_0200280e     /* main 0x0808a080 */
@@ -134,12 +140,10 @@ extern s32 Data_0200a138;  /* proximity band, 0 (closest) .. 4 */
 #define REC_REACT(rec) (*(s16 *)((rec) + 18))
 #define REC_COOL(rec) (*(s16 *)((rec) + 20))
 
-void Scene_RunSecondaryScript(void)
+void FieldScene_RunSecondaryScript(void)
 {
     u8 *work;
     u8 *rec;
-    s32 *hist;
-    s32 cnt;
     s32 i;
     s32 x;
     s32 z;
@@ -159,18 +163,18 @@ void Scene_RunSecondaryScript(void)
     s32 zlo;
     s32 zhi;
 
-    work = Data_0200a070;
+    work = Data_0200a070 + 28;
 
     /* Age the position history: +0x28 <- +0x1c <- +0x10 <- +0x04. */
-    hist = (s32 *)(work + 28);
-    cnt = 3;
+    i = 3;
     do {
-        hist[3] = hist[0];
-        hist[4] = hist[1];
-        hist[5] = hist[2];
-        cnt--;
-        hist -= 3;
-    } while (cnt != 0);
+        *(s32 *)(work + 12) = *(s32 *)(work + 0);
+        *(s32 *)(work + 16) = *(s32 *)(work + 4);
+        *(s32 *)(work + 20) = *(s32 *)(work + 8);
+        i--;
+        work -= 12;
+    } while (i != 0);
+    work += 8;
 
     if (*(s16 *)(work + 2) > 31) {
         *(s32 *)(work + 4) += *(s32 *)(work + 64);

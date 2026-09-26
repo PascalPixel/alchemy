@@ -24,11 +24,29 @@
  * same offset serves more than one purpose across phases (points[i].field_10
  * is an angle in the frame <= 159 pass and a velocity in the later ones).
  *
- * Residual: the shared cell-window base and callback-load order now match the
- * reference prologue. The candidate still allocates 380 stack bytes where the
- * reference uses 356, so later local lifetimes and block topology remain wrong.
- * Reopen with a concrete array, lifetime or control-flow fact rather than trying
- * to force the reference registers.
+ * The owner is whole (0x080d1714-0x080d244c, 3384 bytes): the frame loop at
+ * 0x080d18a8 used to be registered separately.  Facts established against the
+ * whole listing: the frame <= 159 particle pass and the frame > 255 homing
+ * pass put their short arm (field_18--, alive++) in the else branch; the
+ * spark spawn stores an overwritten -(cos * speed) >> 6 into field_10; the
+ * frame > 159 block first copies the {0x10000, 0x10000} rodata pair at
+ * 0x080eda78 into `scale` and later stores the same values again; the panel
+ * threshold is its own induction variable stepping by 12; the palette table
+ * pointer advances in place (tbl += 0x80).  Spill slots already follow the
+ * reference order (draw_destination, view, runtime, the two rectangle
+ * helpers, frame, graphics, wave_y, wave_x, drift_y, drift_x).
+ *
+ * Residual (44.7% similar, 3404 against 3384 bytes): the candidate allocates
+ * 372 stack bytes where the reference uses 356, four spill slots too many.
+ * Known extra slots: the frame loop's per-target pass hoists
+ * &runtime->argument into a spilled pseudo where the reference reloads
+ * runtime and indexes it with a hoisted 0x7828 constant; the spark slot
+ * offset (slot * 0xe00) is spilled where the reference keeps it in sl; the
+ * ring counter in the panel pass is spilled where the reference uses fp.
+ * The reference also reaches screen and work through base registers plus a
+ * register offset (movs r5, #6; ldrsh r3, [r7, r5]) where the candidate
+ * folds the halfword addresses to sp + constant.  Reopen with a spelling that
+ * stops the &runtime->argument hoist first; the later slots follow from it.
  *
  * The points[] reset loop advances the shared RNG twice per point: the first
  * result is intentionally discarded, but the call itself is observable in the
@@ -126,6 +144,7 @@ extern u8 Value_00000073;
 extern u8 Value_00000082;
 extern u8 Value_00000088;
 extern u16 Data_080ede48[];
+extern const struct ScalePair Data_080eda78;
 extern u8 Data_080ee15a[];
 extern u8 Data_080ee163[];
 extern u16 Data_080ee16c[];
@@ -172,19 +191,23 @@ void Func_080cdbc0(void);
 void Func_080d1714(struct EffectArgument *argument)
 {
     void **cells;
+    void *draw_destination;
+    void *view;
     struct EffectRuntime *runtime;
+    DrawRectangle draw_rectangle_alt;
+    DrawRectangle draw_rectangle;
+    s32 frame;
+    u8 *graphics;
+    s32 wave_y;
+    s32 wave_x;
+    s32 drift_y;
+    s32 drift_x;
     struct EffectObject *object;
     struct B5Context *context;
     struct Particle *point;
     struct Particle *spark;
-    void *draw_destination;
-    void *view;
-    u8 *graphics;
     u8 *tbl;
     u8 *src;
-    DrawRectangle draw_rectangle;
-    DrawRectangle draw_rectangle_alt;
-    s32 frame;
     s32 index;
     s32 slot;
     s32 step;
@@ -195,10 +218,6 @@ void Func_080d1714(struct EffectArgument *argument)
     s32 speed;
     s32 angle;
     s32 threshold;
-    s32 wave_x;
-    s32 wave_y;
-    s32 drift_x;
-    s32 drift_y;
     s32 heading[8];
     s32 radius[8];
     s32 spin[8];
@@ -225,7 +244,8 @@ void Func_080d1714(struct EffectArgument *argument)
 
     tbl = Func_08002f40((s32)&Value_00000082);
     ((WordCopy)0x03001388)((void *)0x05000000, tbl, 0x80);
-    Func_08005340(tbl + 0x80, runtime);
+    tbl += 0x80;
+    Func_08005340(tbl, runtime);
     Func_08005340(Func_08002f40((s32)&Value_00000073), graphics);
 
     runtime->display_mode = 2;
@@ -386,9 +406,7 @@ void Func_080d1714(struct EffectArgument *argument)
             point = runtime->points;
             index = 0;
             do {
-                if (point->field_18 != 0) {
-                    point->field_18--;
-                } else {
+                if (point->field_18 == 0) {
                     work.x = point->field_08 * Func_08002322(point->field_10);
                     work.y = point->field_04;
                     work.z = point->field_08 * Func_0800231c(point->field_10);
@@ -419,6 +437,8 @@ void Func_080d1714(struct EffectArgument *argument)
                         point->field_10 = 0;
                         point->field_0c = 0;
                     }
+                } else {
+                    point->field_18--;
                 }
                 index++;
                 point++;
@@ -433,7 +453,8 @@ void Func_080d1714(struct EffectArgument *argument)
 
             tbl = Func_08002f40((s32)&Value_00000088);
             ((WordCopy)0x03001388)((void *)0x05000000, tbl, 0x80);
-            Func_08005340(tbl + 0x80, (u8 *)runtime + 0x3600);
+            tbl += 0x80;
+            Func_08005340(tbl, (u8 *)runtime + 0x3600);
 
             spark = Data_02010000;
             index = 0;
@@ -481,10 +502,10 @@ void Func_080d1714(struct EffectArgument *argument)
         }
 
         if (frame > 159) {
+            scale = Data_080eda78;
+            size = 16;
             if (frame - 160 <= 64)
                 size = 32;
-            else
-                size = 16;
 
             wave_x -= (Func_08002322((frame - 160) << 7) * 32) >> 6;
             wave_y += (size * Func_08002322((frame - 160) << 9)) >> 6;
@@ -524,9 +545,7 @@ void Func_080d1714(struct EffectArgument *argument)
                                     * (point->field_04 >> 8)
                                 + (point->field_08 >> 8)
                                     * (point->field_08 >> 8)) >> 9;
-                        if (dist == 0) {
-                            alive++;
-                        } else {
+                        if (dist != 0) {
                             Func_080e3944(point, &screen);
                             screen.x =
                                 (screen.x >> 17) + (wave_x >> 17) + 32;
@@ -551,6 +570,8 @@ void Func_080d1714(struct EffectArgument *argument)
                                 Func_080022ec(point->field_04, dist);
                             point->field_08 -=
                                 Func_080022ec(point->field_08, dist);
+                        } else {
+                            alive++;
                         }
                         index++;
                         point++;
@@ -577,7 +598,9 @@ void Func_080d1714(struct EffectArgument *argument)
                             speed = (Func_08004458() & 127) + 16;
                             angle = Func_08004458() & 0xffff;
                             spark->field_0c =
-                                (speed * Func_08002322(angle)) >> 6;
+                                (Func_08002322(angle) * speed) >> 6;
+                            spark->field_10 =
+                                -(Func_0800231c(angle) * speed) >> 6;
                             spark->field_10 =
                                 ((Func_08004458() & 255) - 128) << 10;
                             spark->field_00 = 0;
@@ -624,8 +647,8 @@ void Func_080d1714(struct EffectArgument *argument)
                 } while (slot != 4);
 
                 index = 0;
+                threshold = 330;
                 do {
-                    threshold = index * 12 + 330;
                     if (frame == threshold) {
                         runtime->points[index + 60].field_04 = (wave_y >> 16) - 4;
                         runtime->points[index + 60].field_10 = (wave_y >> 16) - 4;
@@ -699,6 +722,7 @@ void Func_080d1714(struct EffectArgument *argument)
                         }
                     }
                     index++;
+                    threshold += 12;
                 } while (index != 4);
             }
         }

@@ -1,3 +1,8 @@
+/* NONMATCHING: 316 bytes, candidate 316, 4 differing halfwords, 4 halfword
+ * edits (2026-09-25). The changed flag uses r3 where the reference uses r2.
+ * Narrowing the flag leaves the output unchanged; an increment or a scoped
+ * assignment regresses.
+ * WALL: Temporary register choice for the changed flag's assignment and test. */
 #include "TYPES.H"
 
 extern volatile s32 Data_03001b04;

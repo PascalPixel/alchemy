@@ -1,3 +1,7 @@
+/* NONMATCHING: 2388 bytes, candidate 2300, 1148 differing halfwords, 611 halfword edits.
+ * Reconstructed against the complete function. The former 080f7610 owner began inside this functions literal pool.
+ * WALL: Loop structure and setup remain incomplete; the IWRAM base now has the reference lifetime across the no-op hook.
+ */
 #include "TYPES.H"
 #include "DMA.H"
 #include "BATTLE_EFX.H"
@@ -118,14 +122,16 @@ void Scene_RunParticleSequence(void)
     s32 px;
     s32 py;
     s32 scale;
+    u8 *flagBase;
 
     sprites = (u8 *)Func_080048b0(41, 0x60E);
     canvas = (u8 *)Func_080048b0(40, 0x8000);
     work = (u8 *)Func_080048f4(39, 0x782C);
     state = (u8 *)Func_080048f4(45, 0x61C);
     tiles = (u8 *)0x02010000;
+    flagBase = Data_0200024c;
     Func_08002f3c((s32)&Value_0000000c);
-    Data_0200024c[288] = 0xFF;
+    flagBase[288] = 0xFF;
     M2C_FIELD(state, u16 *, 0xA2) = 0;
     M2C_FIELD(state, s32 *, 0x98) = 1;
     Func_080040e8();

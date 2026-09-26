@@ -30,14 +30,14 @@ s32 ObjectMotion_StepAngle(struct ObjectRuntime *object)
 
     if (object != NULL) {
         s32 target_angle = (u16)object->action;
-        s32 current_angle = *(u16 *)((u8 *)object + 6);
+        s32 current_angle = object->angle;
         delta = (s16)(target_angle - current_angle);
         if (delta != 0) {
             if (delta > 4096)
                 delta = 2048;
             if (delta < -4096)
                 delta = -2048;
-            *(u16 *)((u8 *)object + 6) = current_angle + delta;
+            object->angle = current_angle + delta;
         }
     }
     return delta;

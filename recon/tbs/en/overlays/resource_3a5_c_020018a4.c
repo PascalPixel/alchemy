@@ -1,242 +1,193 @@
+/* NONMATCHING: 888 bytes, candidate 844, 424 differing halfwords, 315
+ * halfword edits (2026-09-25). FieldScene_RunScene3a5SequenceA, meant for
+ * FIELD/RAMAKAN_SABAKU/F_018A4.C as a single-overlay unit binding its names
+ * at their runtime addresses (an import veneer's listing offset plus
+ * 0x8000). Remaining: Fresh reconstruction corrects actor stride,
+ * tile-buffer header, sparse-copy extent and signed map-layer indexing.
+ * Allocation and DMA setup still differ.
+ * WALL: Whole-function allocation and DMA setup ordering. */
+#include "DMA.H"
 #include "TYPES.H"
 
-#define FieldScene_RunScene3a5SequenceA Func_020018a4
+struct VramBlock {
+    u16 base;
+    u16 offset;
+};
 
-extern u8 Data_00000000[];
-extern u8 Data_00000002[];
-extern u8 Data_0000001f[];
-extern u8 Data_00000077[];
-extern u8 Data_02000240[];
+struct Sprite {
+    u32 words[3];
+};
+
+extern struct VramBlock Data_03001b10[];
+extern u32 Data_02000240[];
 extern s16 Data_02000240_t[][2];
-void Func_02003606();
-s32 Func_02003624();
-s32 Func_0200363e();
-s32 Func_02003660();
-s32 Func_02003688();
-s32 Func_020036aa();
-s32 Func_02003724();
-s32 Func_02003752();
-void Func_0200375e();
-s32 Func_02003766();
-void Func_0200384a();
-void Func_02003896();
-void Func_020038a4();
+extern u32 gFrameCount;
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
+s32 Engine_MathDivide(s32 dividend, s32 divisor);
+s32 Main_08000168(s32 size, void *base);
+void Main_080001c0(s32 layer);
+void Engine_VramLoad(s32 slot, s32 size, void *src);
+void Main_080001e8(struct Sprite *sprite, s32 value);
+s32 Main_08000320(void *dst, u32 value);
+s32 Engine_GameFlagIsSet(s32 flag);
+void Runtime_BumpFreeFar(void *allocation);
 
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
+#define EFFECT_TIME (*(s16 *)0x0200a6be)
+#define EFFECT_PHASE (*(s16 *)0x0200a6bc)
+#define EFFECT_SCROLL (*(s16 *)0x0200a6c0)
+#define MAP_LAYER (*(s16 *)0x0200a6d0)
+#define MAP_MODE (*(s16 *)0x0200b030)
+#define SCENE_RUNTIME (*(u8 **)0x03001ecc)
+#define FRAME_COUNT (*(u32 *)0x03001e40)
+
+/* FAKEMATCH: wrappers retain the reference argument evaluation order. */
+static __inline__ s32 Value2(s32 (*fn)(), s32 a0, s32 a1)
 {
-    return f(a0);
+    return fn(a0, a1);
 }
 
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
+static __inline__ void Call3(void (*fn)(), s32 a0, s32 a1, s32 a2)
 {
-    return f(a0, a1);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
+    fn(a0, a1, a2);
 }
 
 void FieldScene_RunScene3a5SequenceA(void)
 {
-    u32 i;
-    s32 p10;
-    s32 p10b;
-    s32 p11;
-    s32 p11b;
-    s32 p5;
-    s32 p8;
-    s32 p9;
-    s32 rec3;
-    s32 record;
-    s32 r10;
-    s32 r8;
-    s32 base4_200a6be;
-    s32 v3;
-    s32 v4;
-    u8 *v1;
-    s32 v10;
-    s32 v5;
-    s32 v8;
-    s32 v7;
-    s32 base5_50003cc;
-    s32 base3_2000240;
-    s32 base5_200a6bc;
-    u8 *v2;
-    s32 base5_200a6e0;
-    s32 base6_8;
-    s32 base7_0;
-    s32 v6;
-    s32 slot8;
-    s32 slot4;
-    s32 slot0;
+    u32 tile_offset;
+    s32 timer;
+    u8 *work;
+    u8 *dst;
+    u8 *src;
+    u16 *tile;
+    s32 frame;
+    s32 angle;
+    s32 x;
+    s32 y;
+    s32 i;
+    s32 slot;
+    s32 alloc_arg;
+    u16 *timerp;
+    u32 *sprite_words;
+    struct Sprite *sprite;
 
-    slot8 = ((u32)*(u16 *)(((*(s16 *)(0x200a6d0) << 2) + 0x3001b10) + 2) >> 5);
-    if (*(s16 *)(0x200b030) != 0) {
-        *(u16 *)0x0200a6be = (s32)Data_00000002;
-        v4 = 0x200a6be;
-    } else {
-        if (Value1(Func_02003624, 0x104) != 0) {
-            base4_200a6be = 0x200a6be;
-            if (*(s16 *)(0x200a6be) <= 0) {
-                v4 = base4_200a6be;
-                goto L_02001932;
-            }
-            *(u16 *)base4_200a6be = (*(u16 *)base4_200a6be - 1);
-        } else {
-            base4_200a6be = 0x200a6be;
-            if (*(s16 *)(0x200a6be) <= 1) {
-                v3 = (*(u16 *)base4_200a6be + 1);
-                *(u16 *)base4_200a6be += 1;
-                if ((v3 << 16) == 0x10000) {
-                    *(s32 *)(0x40000d4) = 0x2009f80;
-                    *(s32 *)(0x40000d4 + 4) = 0x50003c0;
-                    *(s32 *)(0x40000d4 + 8) = -0x7ffffff0;
-                }
-            }
-        }
-        v4 = base4_200a6be;
+    tile_offset = Data_03001b10[(s16)MAP_LAYER].offset >> 5;
+    timerp = (u16 *)0x0200a6be;
+    if (MAP_MODE != 0) {
+        *timerp = 2;
+    } else if (Engine_GameFlagIsSet(0x104) != 0) {
+        if (*(s16 *)timerp > 0)
+            (*timerp)--;
+    } else if (*(s16 *)timerp <= 1) {
+        (*timerp)++;
+        if (*timerp == 2)
+            Dma_Set((const void *)0x02009f80, (void *)0x050003c0,
+                -0x7ffffff0, (volatile u32 *)0x040000d4);
     }
-    L_02001932:;
-    if (*(s16 *)(v4) == 0) {
-        Func_02003606(*(s16 *)(0x200a6d0));
-        v5 = 0;
-        v6 = r10;
-        v7 = r8;
-    } else {
-        if (*(s32 *)0x03001ecc != 0) {
-            v1 = ((*(s32 *)0x03001ecc + (((((*(u8 *)((*(s32 *)0x03001ecc + 0x539)) << 2) + *(u8 *)((*(s32 *)0x03001ecc + 0x539))) << 5) + *(u8 *)((*(s32 *)0x03001ecc + 0x539))) << 2)) + 38);
-            v4 = 0;
+
+    timer = *(s16 *)timerp;
+    if (timer == 0) {
+        Main_080001c0(MAP_LAYER);
+        return;
+    }
+
+    work = SCENE_RUNTIME;
+    if (work != 0) {
+        u32 actor;
+
+        actor = work[0x539];
+        dst = work + actor * 0x284 + 0x26;
+        for (i = 0; i <= 143; i++) {
+            *(u16 *)dst = (u16)(timer << 3);
+            dst += 4;
+        }
+    }
+
+    alloc_arg = (s32)dst;
+    sprite_words = (u32 *)Value2(Main_08000168, 0x900, alloc_arg);
+    Dma_Set((const void *)0x02009f80, sprite_words, -0x7ffffff0,
+        (volatile u32 *)0x040000d4);
+
+    tile = (u16 *)((u8 *)sprite_words + 12);
+    for (slot = 6; slot <= 11; slot++, tile++) {
+        u32 packed;
+        s32 raw_x;
+        s32 raw_y;
+        s32 scroll;
+
+        packed = (u32)*tile;
+        raw_x = (packed >> 8) & 31;
+        raw_y = (packed >> 5) & 31;
+        angle = EFFECT_PHASE;
+        x = Engine_MathDivide(angle, 3) + raw_x;
+        scroll = Engine_MathDivide(angle, 6);
+        y = (((packed >> 10) & 31) - 20) - scroll + 20;
+        if (angle > 60 && (FRAME_COUNT & 1) != 0)
+            raw_y = raw_y + Engine_MathDivide(angle << 6, 120) - 32;
+        if ((u32)x > 31)
+            x = 31;
+        if ((u32)raw_y > 31)
+            raw_y = 31;
+        if ((u32)y > 31)
+            y = 31;
+        *tile = (u16)((y << 10) | (raw_y << 5) | x);
+    }
+
+    Main_08000320((void *)0x050003cc,
+        *(u32 *)((u8 *)sprite_words + 12));
+    ((s32 (*)(void *, u32))Main_08000320)((void *)0x050003d0,
+        *(u32 *)((u8 *)sprite_words + 16));
+    Value2(Main_08000320, 0x050003d4,
+        *(u32 *)((u8 *)sprite_words + 20));
+
+    frame = *(s16 *)((u8 *)Data_02000240 + 0x232);
+    angle = Engine_MathDivide(((frame << 4) - frame) << 3,
+        Data_02000240_t[139][0]);
+    EFFECT_PHASE = angle;
+    if (angle > 118)
+        EFFECT_SCROLL = 0x77;
+    if (EFFECT_SCROLL != 0) {
+        EFFECT_PHASE = EFFECT_SCROLL;
+        EFFECT_SCROLL -= 8;
+        if (EFFECT_SCROLL <= 0)
+            EFFECT_SCROLL = 0;
+    }
+
+    Dma_Set((const void *)0x0200a730, sprite_words, -0x7bfffdc0,
+        (volatile u32 *)0x040000d4);
+    if (EFFECT_SCROLL <= 118) {
+        dst = (u8 *)sprite_words + 80;
+        if (12 < 128 - EFFECT_PHASE) {
+            i = 12;
             do {
-                v4 = (v4 + 1);
-                *(u16 *)((s32)v1) = ((*(s16 *)(v4) << 19) >> 16);
-                v1 = ((s32)v1 + 4);
-            } while ((u32)v4 <= 143);
+                *(u32 *)(dst + 32) = 0xeeeeeeee;
+                *(u32 *)dst = 0xeeeeeeee;
+                dst += 4;
+                if ((i & 7) == 7)
+                    dst += 32;
+                i++;
+            } while (i < 128 - EFFECT_PHASE);
         }
-        rec3 = Value2(Func_0200363e, 0x900, (s32)v1);
-        *(s32 *)(0x40000d4) = 0x2009f80;
-        *(s32 *)(0x40000d4 + 4) = rec3;
-        *(s32 *)(0x40000d4 + 8) = -0x7ffffff0;
-        slot4 = (rec3 + 12);
-        p10 = rec3 + 12;
-        p11 = (s32)Data_0000001f;
-        v4 = 6;
-        v10 = p10;
-        do {
-            p8 = ((u32)(0x1f0000 & (*(s16 *)(v10) << 16)) >> 16);
-            v5 = (((u32)(*(s16 *)(v10) << 16) >> 21) & (s32)p11);
-            slot0 = v4;
-            record = Func_02003660(*(s16 *)(0x200a6bc), 3);
-            v8 = (p8 + record);
-            record = Func_02003688(*(s16 *)(0x200a6bc), 6);
-            v7 = (((s32)((((u32)(*(s16 *)(v10) << 16) >> 26) & (s32)p11) - 20) - record) + 20);
-            v4 = slot0;
-            if (*(s16 *)(0x200a6bc) > 60) {
-                v5 = (((u32)(*(s16 *)(v10) << 16) >> 21) & (s32)p11);
-                if ((*(s32 *)0x03001e40 & 1) != 0) {
-                    record = Func_020036aa((*(s16 *)(0x200a6bc) << 6), 120);
-                    v4 = slot0;
-                    v5 = (((s32)v5 + record) - 32);
-                }
-            }
-            if ((u32)(p8 + record) > 31) {
-                v8 = 31;
-            }
-            if ((u32)v5 > 31) {
-                v5 = 31;
-            }
-            if ((u32)(((s32)((((u32)(*(s16 *)(v10) << 16) >> 26) & (s32)p11) - 20) - record) + 20) > 31) {
-                v7 = 31;
-            }
-            p5 = v8;
-            v4 = (v4 + 1);
-            *(u16 *)(v10) = (((v7 << 10) | (v5 << 5)) | (s32)p5);
-            v10 = (v10 + 2);
-        } while ((u32)v4 <= 11);
-        base5_50003cc = 0x50003cc;
-        Value2(Func_02003752, base5_50003cc, *(s32 *)(slot4));
-        Func_0200375e((base5_50003cc + 4), *(s32 *)(rec3 + 16));
-        Value2(Func_02003766, ((base5_50003cc + 4) + 4), *(s32 *)((rec3 + 16) + 4));
-        base3_2000240 = (s32)Data_02000240;
-        record = Func_02003724((((*(s16 *)((base3_2000240 + 0x232)) << 4) - *(s16 *)((base3_2000240 + 0x232))) << 3), Data_02000240_t[139][0]);
-        base5_200a6bc = 0x200a6bc;
-        *(u16 *)base5_200a6bc = record;
-        if ((record << 16) > 0x760000) {
-            *(u16 *)0x0200a6c0 = (s32)Data_00000077;
-        }
-        if (*(s16 *)(0x200a6c0) != 0) {
-            *(u16 *)base5_200a6bc = *(u16 *)0x0200a6c0;
-            v3 = (*(u16 *)0x0200a6c0 - 8);
-            *(u16 *)0x0200a6c0 = (*(u16 *)0x0200a6c0 - 8);
-            if ((v3 << 16) <= 0) {
-                *(u16 *)0x0200a6c0 = (s32)Data_00000000;
-            }
-        }
-        *(s32 *)(0x40000d4) = 0x200a730;
-        *(s32 *)(0x40000d4 + 4) = rec3;
-        *(s32 *)(0x40000d4 + 8) = -0x7bfffdc0;
-        if (*(s16 *)(0x200a6c0) <= 118) {
-            v1 = (rec3 + 80);
-            if ((u32)12 < (128 - *(s16 *)(0x200a6bc))) {
-                v1 = (rec3 + 80);
-                v4 = 12;
-                do {
-                    *(s32 *)((s32)v1 + 32) = -0x11111112;
-                    *(s32 *)((s32)v1) = -0x11111112;
-                    v1 = ((s32)v1 + 4);
-                    if ((v4 & 7) == 7) {
-                        v1 = ((s32)v1 + 32);
-                    }
-                    v4 = (v4 + 1);
-                } while ((u32)v4 < (128 - *(s16 *)(0x200a6bc)));
-            }
-            *(s32 *)((s32)v1) = *(s32 *)(rec3);
-            *(s32 *)((s32)v1 + 32) = *(s32 *)(rec3 + 32);
-        }
-        v1 = rec3;
-        v2 = (0x480 + rec3);
-        v4 = 0;
-        do {
-            v2 = ((s32)v2 + 1);
-            if (v2[0] != 0) {
-                v1[0] = v2[0];
-            }
-            v4 = (v4 + 1);
-            v1 = ((s32)v1 + 1);
-        } while ((u32)v4 <= 0x47f);
-        Call3(Func_0200384a, *(s16 *)(0x200a6d0), 0x480, rec3);
-        base5_200a6e0 = 0x200a6e0;
-        base6_8 = 8;
-        base7_0 = 0;
-        v4 = 0;
-        do {
-            v8 = -0x7fff8000;
-            if (v4 == 4) {
-                v8 = 0x40000000;
-            }
-            *(s32 *)(base5_200a6e0) = 0;
-            *(s32 *)(base5_200a6e0 + 4) = ((((((*(s16 *)(0x200a6be) << 3) - 16) & 0x1ff) << 16) | base6_8) | v8);
-            *(s32 *)(base5_200a6e0 + 8) = (0xe400 | slot8);
-            slot0 = v4;
-            Func_020038a4((base7_0 + 0x200a6e0), 255);
-            v4 = slot0;
-            v4 = (v4 + 1);
-            base5_200a6e0 = (base5_200a6e0 + 12);
-            slot8 = (slot8 + 8);
-            base7_0 = (base7_0 + 12);
-            base6_8 = (base6_8 + 32);
-        v6 = base6_8;
-        } while ((u32)v4 <= 4);
-        Func_02003896(rec3);
-        v5 = base5_200a6e0;
-        v7 = base7_0;
+        *(u32 *)dst = *(u32 *)sprite_words;
+        *(u32 *)(dst + 32) = *(u32 *)((u8 *)sprite_words + 32);
     }
-    p9 = v5;
-    p10b = v6;
-    p11b = v7;
+
+    src = (u8 *)sprite_words + 0x480;
+    dst = (u8 *)sprite_words;
+    for (i = 0; i < 0x480; i++) {
+        if (src[i + 1] != 0)
+            dst[i] = src[i + 1];
+    }
+    Call3(Engine_VramLoad, MAP_LAYER, 0x480, (s32)sprite_words);
+
+    sprite = (struct Sprite *)0x0200a6e0;
+    for (i = 0; i <= 4; i++) {
+        sprite->words[0] = 0;
+        sprite->words[1] = (((((EFFECT_TIME << 3) - 16) & 0x1ff) << 16)
+            | (8 + i * 32) | (i == 4 ? 0x40000000 : 0x80000000));
+        sprite->words[2] = 0xe400 | tile_offset;
+        Main_080001e8(sprite, 255);
+        sprite++;
+        tile_offset += 8;
+    }
+    Runtime_BumpFreeFar(sprite_words);
 }

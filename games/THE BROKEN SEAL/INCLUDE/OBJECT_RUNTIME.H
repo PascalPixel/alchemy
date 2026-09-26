@@ -9,7 +9,9 @@
  * 座標と移動量は特記がなければ16.16固定小数。
  */
 struct ObjectRuntime {
-    u8 unknown_00[0x08];
+    s32 *script;
+    s16 step;
+    u16 angle;
     s32 x;
     s32 y;
     s32 z;
@@ -32,10 +34,11 @@ struct ObjectRuntime {
     u8 unknown_56[0x04];
     u8 action_flags;
     u8 movement_state;
-    u8 unknown_5c[0x04];
+    u8 unknown_5c[0x02];
+    u16 unknown_5e;
     void *callback;
     s16 action;
-    u8 unknown_66[0x02];
+    s16 unknown_66;
     struct ObjectRuntime *linked_object;
     u8 unknown_6c[0x04];
 };

@@ -40,7 +40,10 @@ extern u32 gFrameCount;
 
 /* The engine's event work. */
 struct EventWork {
-    u8 unknown_000[0x16c];
+    u8 unknown_000[0x34];
+    /* Actors placed by the scene, with ids 8 through 65. */
+    struct FieldActor *placed_actors[58];
+    u8 unknown_11c[0x50];
     /* The map trigger the leader has run into, handled on the next frame. */
     s16 touched_trigger;
     u8 unknown_16e[4];
@@ -65,6 +68,7 @@ struct EventWork {
     struct FieldActor *view_center;
 };
 
+LAYOUT_OFFSET_GUARD(EventWork_PlacedActors, struct EventWork, placed_actors, 0x34);
 LAYOUT_OFFSET_GUARD(EventWork_TouchedTrigger, struct EventWork, touched_trigger, 0x16c);
 LAYOUT_OFFSET_GUARD(EventWork_PsynergyRequest, struct EventWork, psynergy_request, 0x17e);
 LAYOUT_OFFSET_GUARD(EventWork_RaisedTrigger, struct EventWork, raised_trigger, 0x182);

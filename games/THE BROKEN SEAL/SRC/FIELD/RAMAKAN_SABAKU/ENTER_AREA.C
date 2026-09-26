@@ -1,6 +1,6 @@
 #include "TYPES.H"
 
-void Local_02001c1c();
+void RamakanSabaku_ClaimSandEffectVram();
 void Engine_TaskAddCallback();
 void Main_080091b8();
 void Main_0808a5e0();
@@ -43,7 +43,7 @@ s32 RamakanSabaku_EnterArea(s32 a0, s32 a1)
     if ((s16)Data_02000240_t[112][0] == (s32)Data_0000005c) {
     } else {
         *(s32 *)((*(s32 *)0x03001ebc + 0x1c0)) = 0x100;
-        Local_02001c1c();
+        RamakanSabaku_ClaimSandEffectVram();
         Call2(Engine_TaskAddCallback, 0x2008cd1, 0xc80);
         if ((s16)Data_02000240_t[112][0] == (s32)Data_00000059) {
             Call6(Main_080091b8, 22, 7, 4, 2, 64, 126);

@@ -1,6 +1,19 @@
 #include "TYPES.H"
 #include "BATTLE_EFX.H"
 
+/* Draft, not exact (2026-09-26): candidate=688 reference=684,
+   216 differing halfwords, 105 aligned edits, equal block topology.
+   H1: explicit frame/member backedges remove the hoisted work+7828 pointer
+   spill: frame 68 -> 64 and work now occupies sl, as in the reference.
+   Audited actual callees: projection 080e3944 returns s32; canvas cleanup
+   080cdbc0 is void. Corrected both stale declarations. No bytes adopted.
+   Residual: callback A/frame are swapped at sp+32/+24; record/screen are
+   swapped at +52/+40; facing/member and their derived slots are reversed.
+   The live effect load still adds the large offset instead of indexing,
+   and the member id similarly adds its base before the fixed +36 offset.
+   Next bounded model: independently declared callbacks/frame/vectors in
+   recovered stack order, not an aggregate or an unconstrained permutation. */
+
 /*
  * Battle-presentation sub-effect at 0x080dc6bc, transplant-assigned from the
  * member_orbit compiler family (template-main-080ce85c, score 8895/10000,
@@ -70,11 +83,11 @@ void Func_080051d8(s32 a, s32 b);
 void **Func_080b5098(s32 member_id);
 void Func_08004cb4(void *record);
 s32 Func_080022ec(s32 a, s32 b);
-void Func_080e3944(void *source, void *screen);
+s32 Func_080e3944(void *source, void *screen);
 void Func_080e38b8(void *particle, s32 a, s32 b);
 void Func_080030f8(s32 frames);
 void Func_08002dd8(s32 id);
-s32 Func_080cdbc0(void);
+void Func_080cdbc0(void);
 
 void Func_080dc6bc(void *object)
 {
@@ -139,17 +152,19 @@ void Func_080dc6bc(void *object)
     Func_080041d8((void *)0x080CD261, 0x480);
 
     frame = 0;
-    do {
+frame_loop:
+    {
         s32 facing;
+        s32 member;
 
         facing = *(s32 *)0x03001E80;
+        member = 0;
         if (M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 20) != 0) {
-            s32 member;
             s32 base_idx;
 
-            member = 0;
             base_idx = 0;
-            do {
+member_loop:
+            {
                 void *member_object;
 
                 member_object = *Func_080b5098(
@@ -202,14 +217,18 @@ void Func_080dc6bc(void *object)
 
                 base_idx += 6;
                 member++;
-            } while (member
-                != M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 20));
+            }
+            if (member
+                != M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 20))
+                goto member_loop;
         }
 
         M2C_FIELD(work, s32 *, 0x7824) = 1;
         Func_080030f8(1);
         frame++;
-    } while (frame != 96);
+    }
+    if (frame != 96)
+        goto frame_loop;
 
     Func_08004278((void *)0x080CD261);
     Func_08002dd8(47);

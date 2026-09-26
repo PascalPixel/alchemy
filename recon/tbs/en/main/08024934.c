@@ -1,13 +1,13 @@
 /* Not-yet-C: complete 2124-byte summon picker, including literal pools.
- * Standby Djinn counts arrive in argument three. Available summons are
- * ordered with affordable entries first, four per page. Returns an id or
- * -1. Candidate 2192 / reference 2124 bytes, 689 aligned halfword edits.
- * The 368-byte frame is four bytes short; drawn_page spills instead of
- * living in r9, and the first sprite loop hoists its 0x1ff mask into a
- * short-range halfword pool. Scoping that counter changed its register
- * but not the frame; explicit full-width OAM masks moved pools without
- * recovering the first-loop register roles (2174 bytes / 776 edits).
- * All call arities and byte/halfword sprite accesses follow the listing. */
+ * Standby counts arrive in argument three; returns a summon id or -1.
+ * Candidate 2112 bytes, 655 aligned halfword edits. Per-phase counters
+ * recover drawn_page in r9. Holding last=count-1 across sorting/navigation
+ * recovers its spill and signed reverse walk, bringing the frame to 368
+ * bytes (reference 372). Remaining: cursor-coordinate spills, first sprite
+ * loop/pools, the inner affordability test and indexed icon traversal.
+ * Explicit full-width OAM masks did not recover the first-loop roles.
+ * The old generated draft omitted fifth call arguments and widened byte
+ * sprite writes; the typed record now follows those observed accesses. */
 #include "TYPES.H"
 #include "BATTLE_SUMMON.H"
 
@@ -101,7 +101,7 @@ s32 Func_08024934(s32 unused0, s32 unused1, const u8 *standby)
     u8 *src, *dst;
     s32 *handle;
     s32 drawn_row, drawn_page, row, page, preferred;
-    s32 cursor_handle, count, used, mask, index, element, col;
+    s32 cursor_handle, count, last, used, mask, element;
     s32 id, tile, affordable, cursor_x, cursor_y;
     s32 pressed, repeated, result;
 
@@ -116,52 +116,69 @@ s32 Func_08024934(s32 unused0, s32 unused1, const u8 *standby)
     row = Data_03001e8c.navigation->row;
     preferred = Data_03001e8c.navigation->preferred_row;
     window = UiWindow_Create(13, 11, 17, 9, 6);
-    sprite = sprites;
-    index = 0;
-    do {
-        sprite->word.attr01 = 0x40000000;
-        sprite->word.attr23 = 0;
-        sprite->attr.x = window->x * 8 + 8;
-        sprite->attr.y = (index * 2 + window->y) * 8 + 4;
-        index++;
-        sprite++;
-    } while (index <= 3);
-    handle = handles;
-    sprite = sprites;
-    index = 3;
-    do {
-        s32 slot = Resource_LoadIntoFreeSlot(128);
-        *handle++ = slot;
-        sprite->attr.tile = Resource_GetBuffer(slot, (void *)-1);
-        sprite++;
-    } while (--index >= 0);
+    {
+        s32 index;
 
+        sprite = sprites;
+        index = 0;
+        do {
+            sprite->word.attr01 = 0x40000000;
+            sprite->word.attr23 = 0;
+            sprite->attr.x = window->x * 8 + 8;
+            sprite->attr.y = (index * 2 + window->y) * 8 + 4;
+            index++;
+            sprite++;
+        } while (index <= 3);
+    }
+    {
+        s32 index;
+
+        handle = handles;
+        sprite = sprites;
+        index = 3;
+        do {
+            s32 slot = Resource_LoadIntoFreeSlot(128);
+            *handle++ = slot;
+            sprite->attr.tile = Resource_GetBuffer(slot, (void *)-1);
+            sprite++;
+        } while (--index >= 0);
+
+    }
     count = Func_080771d8(available);
     used = 0;
-    for (src = available + count - 1; src >= available; src--) {
-        id = *src;
-        required = Func_080771e0(id)->djinn_required;
-        supply = standby;
-        element = 0;
-        while (*required <= *supply) {
-            element++;
-            if (element > 3)
-                break;
-            required++;
-            supply++;
-        }
-        if (element == 4) {
-            ordered[used++] = id;
-            *src = 32;
-        }
+    last = count - 1;
+    if (last >= 0) {
+        src = available + last;
+        do {
+            id = *src;
+            required = Func_080771e0(id)->djinn_required;
+            supply = standby;
+            element = 0;
+            while (*required <= *supply) {
+                element++;
+                if (element > 3)
+                    break;
+                required++;
+                supply++;
+            }
+            if (element == 4) {
+                ordered[used++] = id;
+                *src = 32;
+            }
+            src--;
+        } while ((s32)src >= (s32)available);
     }
-    dst = ordered + used;
-    src = available;
-    for (index = count; index > 0; index--) {
-        id = *src++;
-        if (id != 32) {
-            *dst++ = id;
-            used++;
+    {
+        s32 index;
+
+        dst = ordered + used;
+        src = available;
+        for (index = count; index > 0; index--) {
+            id = *src++;
+            if (id != 32) {
+                *dst++ = id;
+                used++;
+            }
         }
     }
     ordered[used] = 32;
@@ -177,75 +194,95 @@ s32 Func_08024934(s32 unused0, s32 unused1, const u8 *standby)
             UiText_RenderWideStringAtOffset(text, description, 0, 4);
             mask = 0;
             drawn_row = row;
-            required = summon->djinn_required;
-            for (element = 0; element <= 3; element++) {
-                if (*required++ != 0)
-                    mask |= 1 << element;
+            {
+                s32 element;
+
+                required = summon->djinn_required;
+                for (element = 0; element <= 3; element++) {
+                    if (*required++ != 0)
+                        mask |= 1 << element;
+                }
             }
             if (page != drawn_page) {
                 RenderOutput_RedrawSavedRect(window);
-                col = 1;
-                for (element = 0; element <= 3; element++) {
-                    UiWindow_SetTilemapEntry(counts, element + (s32)&Value_00005001, element * 2, 0, 0);
-                    Func_08018efc(counts, standby[element] + 48, col, 0, 0);
-                    col += 2;
-                }
-                index = 0;
-                while (index <= 3 && (id = ordered[page + index]) != 32) {
-                    summon = Func_080771e0(id);
-                    required = summon->djinn_required;
-                    supply = standby;
-                    element = 0;
-                    while (*required <= *supply) {
-                        element++;
-                        if (element > 3)
-                            break;
-                        required++;
-                        supply++;
-                    }
-                    affordable = element == 4;
-                    Ability_LoadGlyph(summon->name_message_id & 0x3fff, 0, &handles[index], &glyph, 1);
-                    sprites[index].attr.tile = glyph;
-                    if (!affordable)
-                        UiWork_SetParamNibble(2);
-                    UiText_DrawCharacterAtOffset(Func_080771e0(id)->name_message_id + (s32)&Value_00000333,
-                        window, 16, index * 16);
-                    required = summon->djinn_required;
-                    col = 13;
+                {
+                    s32 element, col;
+
+                    col = 1;
                     for (element = 0; element <= 3; element++) {
-                        if (*required != 0) {
-                            UiWindow_SetTilemapEntry(window, element + (s32)&Value_00005001, col, index * 2, 0);
-                            Func_08018efc(window, *required + 48, col + 1, index * 2, 0);
-                            col += 2;
-                        }
-                        required++;
+                        UiWindow_SetTilemapEntry(counts, element + (s32)&Value_00005001, element * 2, 0, 0);
+                        Func_08018efc(counts, standby[element] + 48, col, 0, 0);
+                        col += 2;
                     }
-                    UiWork_SetParamNibble(15);
-                    visible[index++] = 1;
                 }
-                while (index <= 3)
-                    visible[index++] = 0;
+                {
+                    s32 index, element, col;
+
+                    index = 0;
+                    while (index <= 3 && (id = ordered[page + index]) != 32) {
+                        summon = Func_080771e0(id);
+                        required = summon->djinn_required;
+                        supply = standby;
+                        element = 0;
+                        while (*required <= *supply) {
+                            element++;
+                            if (element > 3)
+                                break;
+                            required++;
+                            supply++;
+                        }
+                        affordable = element == 4;
+                        Ability_LoadGlyph(summon->name_message_id & 0x3fff, 0, &handles[index], &glyph, 1);
+                        sprites[index].attr.tile = glyph;
+                        if (!affordable)
+                            UiWork_SetParamNibble(2);
+                        UiText_DrawCharacterAtOffset(Func_080771e0(id)->name_message_id + (s32)&Value_00000333,
+                            window, 16, index * 16);
+                        required = summon->djinn_required;
+                        col = 13;
+                        for (element = 0; element <= 3; element++) {
+                            if (*required != 0) {
+                                UiWindow_SetTilemapEntry(window, element + (s32)&Value_00005001, col, index * 2, 0);
+                                Func_08018efc(window, *required + 48, col + 1, index * 2, 0);
+                                col += 2;
+                            }
+                            required++;
+                        }
+                        UiWork_SetParamNibble(15);
+                        visible[index++] = 1;
+                    }
+                    while (index <= 3)
+                        visible[index++] = 0;
+                }
                 drawn_page = page;
             }
             if (count > 4) {
-                for (index = 0; index < (count + 3) / 4; index++) {
-                    tile = index + (s32)&Value_0000f301;
-                    if (index == page / 4)
-                        tile = index + (s32)&Value_0000f30b;
-                    UiWindow_SetTilemapEntry(window, tile,
-                        window->width - (count + 3) / 4 + index - 2, -1, 0);
+                {
+                    s32 index;
+
+                    for (index = 0; index < (count + 3) / 4; index++) {
+                        tile = index + (s32)&Value_0000f301;
+                        if (index == page / 4)
+                            tile = index + (s32)&Value_0000f30b;
+                        UiWindow_SetTilemapEntry(window, tile,
+                            window->width - (count + 3) / 4 + index - 2, -1, 0);
+                    }
                 }
             }
             Ui_SetRectHighlight(window->x + 1, window->y + row * 2 + 1, window->width - 2, 1, 14);
             render->dirty = 1;
             render->busy = 0;
         }
-        sprite = sprites;
-        src = visible;
-        for (index = 0; index <= 3; index++) {
-            if (*src++ != 0)
-                Runtime_PushSlotEntry(sprite, 240);
-            sprite++;
+        {
+            s32 index;
+
+            sprite = sprites;
+            src = visible;
+            for (index = 0; index <= 3; index++) {
+                if (*src++ != 0)
+                    Runtime_PushSlotEntry(sprite, 240);
+                sprite++;
+            }
         }
         cursor_x = window->x * 8 - 2;
         cursor_y = (row * 2 + window->y) * 8 + 20;
@@ -256,18 +293,26 @@ s32 Func_08024934(s32 unused0, s32 unused1, const u8 *standby)
         cursor.attr.y = cursor_y - ((Data_03001e40 & 4) >> 2) + 248;
         Runtime_PushSlotEntry(&cursor, 242);
         affordable = Data_03001e40 & 8;
-        for (element = 0; element <= 3; element++) {
-            tile = 15 - (affordable != 0);
-            if ((mask & (1 << element)) == 0)
-                tile = 15;
-            Ui_SetRectHighlight(counts->x + element * 2 + 1, counts->y + 1, 2, 1, tile);
+        {
+            s32 element;
+
+            for (element = 0; element <= 3; element++) {
+                tile = 15 - (affordable != 0);
+                if ((mask & (1 << element)) == 0)
+                    tile = 15;
+                Ui_SetRectHighlight(counts->x + element * 2 + 1, counts->y + 1, 2, 1, tile);
+            }
         }
         if (count > 4) {
-            for (index = 0; index < (count + 3) / 4; index++) {
-                tile = index + (s32)&Value_0000f301;
-                if ((Data_03001e40 & 15) <= 11 && index == page / 4)
-                    tile = index + (s32)&Value_0000f30b;
-                UiWindow_SetTilemapEntry(window, tile, window->width - (count + 3) / 4 + index - 2, -1, 0);
+            {
+                s32 index;
+
+                for (index = 0; index < (count + 3) / 4; index++) {
+                    tile = index + (s32)&Value_0000f301;
+                    if ((Data_03001e40 & 15) <= 11 && index == page / 4)
+                        tile = index + (s32)&Value_0000f30b;
+                    UiWindow_SetTilemapEntry(window, tile, window->width - (count + 3) / 4 + index - 2, -1, 0);
+                }
             }
             UiWindow_SetTilemapEntry(window, (s32)&Value_0000f334, window->width - (count + 3) / 4 - 3, -1, 0);
             UiWindow_SetTilemapEntry(window, (s32)&Value_0000f335, window->width - 2, -1, 0);
@@ -309,7 +354,7 @@ s32 Func_08024934(s32 unused0, s32 unused1, const u8 *standby)
             Audio_PlayCue(111);
             row--;
             if (row < 0) {
-                if (page == ((count - 1) / 4) * 4)
+                if (page == (last / 4) * 4)
                     row = count - page - 1;
                 else
                     row = 3;
@@ -326,7 +371,7 @@ s32 Func_08024934(s32 unused0, s32 unused1, const u8 *standby)
             } else {
                 page += 4;
                 row = preferred;
-                if (page == ((count - 1) / 4) * 4) {
+                if (page == (last / 4) * 4) {
                     row = count - page - 1;
                     if (row > preferred)
                         row = preferred;
@@ -339,7 +384,7 @@ s32 Func_08024934(s32 unused0, s32 unused1, const u8 *standby)
                 row = preferred;
                 page -= 4;
             } else {
-                page = ((count - 1) / 4) * 4;
+                page = (last / 4) * 4;
                 row = preferred;
                 if (page != 0) {
                     row = count - page - 1;
@@ -351,11 +396,15 @@ s32 Func_08024934(s32 unused0, s32 unused1, const u8 *standby)
         WaitFrames(1);
     }
     WaitFrames(1);
-    handle = handles;
-    index = 3;
-    do {
-        Resource_ResetEntry(*handle++);
-    } while (--index >= 0);
+    {
+        s32 index;
+
+        handle = handles;
+        index = 3;
+        do {
+            Resource_ResetEntry(*handle++);
+        } while (--index >= 0);
+    }
     Resource_ResetEntry((u16)cursor_handle);
     UiWork_Finalize(counts, 1);
     UiWork_Finalize(description, 1);

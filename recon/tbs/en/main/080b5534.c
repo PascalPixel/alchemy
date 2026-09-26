@@ -1,3 +1,14 @@
+/* Draft, not exact (2026-09-26): complete 428-byte owner and literal pool.
+ * Current candidate: 420 bytes, 182 differing halfwords, 103 aligned edits.
+ * Explicit message/input back edges remove the extra saved register; the
+ * word-sized display constant restores one final literal pool. A single-read
+ * character copy restores the counter and removes repeated source reads.
+ * Remaining: signed character loads, input-loop block order, initial mode
+ * address calculation, and cursor/window/range allocation. The baseline was
+ * 428/177/110; outer back edge 424/178/103; both back edges 424/181/121;
+ * typed mode plus display constant 420/183/109; copy model 420/182/103.
+ * Three structural hypotheses stopped; no new byte credit.
+ */
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
 
@@ -14,6 +25,14 @@ u8 *Runtime_GetObject(s32);
 extern u8 Value_000026fa[];
 extern u8 Value_00000ad0[];
 extern u8 Value_00002850[];
+extern u8 Value_00001341;
+
+struct DebugMessageWork {
+    u8 reserved_000[0x20c];
+    u8 mode;
+};
+
+extern struct DebugMessageWork Data_02000240;
 
 void Func_080b5534(void)
 {
@@ -33,25 +52,30 @@ void Func_080b5534(void)
     Func_08015020(0x903, text);
     ch = text[state];
     name[0] = (u8)ch;
+    i = 0;
     if (ch != 0) {
-        i = 0;
+        u16 *src = text;
+        u8 *dst = name;
         do {
             i++;
             if (i > 13)
                 break;
-            name[i] = (u8)text[i];
-        } while (text[i] != 0);
+            src++;
+            ch = *src;
+            dst++;
+            *dst = (u8)ch;
+        } while (ch != 0);
     }
     name[14] = 0;
 
     Func_08015000();
     Audio_PlayCue(71);
     cursor = 0;
-    *(volatile u16 *)0x04000000 = 0x1341;
-    flag_ptr = (u8 *)(0x02000240 + 0x20c);
+    *(volatile u16 *)0x04000000 = (u32)&Value_00001341;
+    flag_ptr = &Data_02000240.mode;
     flag_val = 2;
 
-    for (;;) {
+next_message:
         *flag_ptr = flag_val;
         Func_08015118();
         UiText_DrawQuantity(0x3e7, 5);
@@ -68,7 +92,7 @@ void Func_080b5534(void)
         WaitFrames(10);
         range = (s32)Value_00002850 - (s32)Value_000026fa;
 
-        for (;;) {
+read_keys:
             if (*(volatile u32 *)ADDR_03001B04 & 2) {
                 if (state != 0) {
                     state = 0;
@@ -95,15 +119,16 @@ void Func_080b5534(void)
                 cursor = range + 5;
 
             if (*(volatile u32 *)ADDR_03001B04 & 0x3f2)
-                break;
+                goto close_message;
             if (UiWork_IsCompleteFar() != 0 && (*(volatile u32 *)ADDR_03001B04 & 1))
-                break;
+                goto close_message;
             WaitFrames(1);
-        }
+            goto read_keys;
 
+close_message:
         Func_08015148(1);
         UiWindow_Close(window, 1);
         flag_val = 0;
         flag_ptr = (u8 *)(*(s32 *)ADDR_03001E8C + 0x12f8);
-    }
+        goto next_message;
 }

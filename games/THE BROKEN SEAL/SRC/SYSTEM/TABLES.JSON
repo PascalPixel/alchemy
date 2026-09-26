@@ -5,6 +5,7 @@
     "0x080092b8": {
       "format": 1,
       "kind": "typed-table",
+      "address": "0x080092b8",
       "size": "0x900",
       "segments": [
         {

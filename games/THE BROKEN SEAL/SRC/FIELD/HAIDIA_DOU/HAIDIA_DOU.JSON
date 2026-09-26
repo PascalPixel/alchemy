@@ -7,6 +7,7 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
+        "address": "0x08571540",
         "size": "0x3c",
         "segments": [
           {
@@ -112,6 +113,7 @@
       "sparse_cells": {
         "format": 1,
         "kind": "typed-table",
+        "address": "0x08573220",
         "size": "0x3",
         "record_size": 3,
         "segments": [{"name": "terminator", "end": "0x08573223", "stride": 1, "element": "u8", "fill": 255}]
@@ -129,6 +131,7 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
+        "address": "0x0857bd88",
         "size": "0x3c",
         "segments": [
           {
@@ -244,6 +247,7 @@
       "sparse_cells": {
         "format": 1,
         "kind": "typed-table",
+        "address": "0x0857d528",
         "size": "0x9",
         "record_size": 3,
         "segments": [
@@ -270,6 +274,7 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
+        "address": "0x08582120",
         "size": "0x3c",
         "segments": [
           {
@@ -375,6 +380,7 @@
       "sparse_cells": {
         "format": 1,
         "kind": "typed-table",
+        "address": "0x08583420",
         "size": "0x3",
         "record_size": 3,
         "segments": [{"name": "terminator", "end": "0x08583423", "stride": 1, "element": "u8", "fill": 255}]

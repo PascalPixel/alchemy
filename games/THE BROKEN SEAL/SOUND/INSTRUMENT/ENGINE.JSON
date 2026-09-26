@@ -2,6 +2,7 @@
   "format": 1,
   "kind": "typed-table",
   "id": "audio_engine_data",
+  "address": "0x080fb792",
   "end": "0x080fc684",
   "size": 3826,
   "note": "Ordered byte-exact TBS audio-engine data between the engine code and the sound table: 0x080fb792-0x080fba78 SMSH engine control tables: command dispatch, pitch, frequency and wait lookups, aligned as the engine code placed them; 0x080fba78-0x080fc504 the two SMSH voice banks; 0x080fc504-0x080fc624 the packed CGB waveforms; 0x080fc624-0x080fc684 the music-player storage assignments.",

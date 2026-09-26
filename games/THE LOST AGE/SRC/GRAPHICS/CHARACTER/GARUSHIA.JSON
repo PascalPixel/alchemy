@@ -38,6 +38,7 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x08337d72",
+        "address": "0x08307bbc",
         "slot_count": 204,
         "slots": [
           "0x08337d72", "0x08337efe", "0x08338029", "0x0833814c", "0x08338272", "0x0833839e", "0x083384cd",
@@ -94,6 +95,7 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x085a93f8",
+        "address": "0x08310e24",
         "slot_count": 20,
         "slots": [
           "0x085a93f8", "0x085a97ff", "0x085a9c40", "0x085aa058", "0x085aa4ad", "0x085aa8b2", "0x085aace8",

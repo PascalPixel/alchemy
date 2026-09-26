@@ -1505,6 +1505,7 @@ AlchemyC_02001d04:
 	.space 0x340
 .L_02002208:
 	.space 0x74
+Func_0200227c:
 	push	{r5, r6, lr}
 	mov	r6, sl
 	mov	r5, r9
@@ -1694,6 +1695,7 @@ AlchemyC_02003f24:
 	.space 0x324
 AlchemyC_02004248:
 	.space 0x18
+Scene_PresentItem:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r9
@@ -1785,6 +1787,7 @@ AlchemyC_02004328:
 	.space 0x94
 AlchemyC_020043bc:
 	.space 0xe0
+Func_0200449c:
 	.2byte 0xb5e0
 	mov	r7, fp
 	mov	r6, sl

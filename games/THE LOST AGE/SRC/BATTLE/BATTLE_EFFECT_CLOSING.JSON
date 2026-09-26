@@ -5,6 +5,7 @@
     "0x080f393c": {
       "format": 1,
       "kind": "typed-table",
+      "address": "0x080f393c",
       "end": "0x080f3984",
       "size": 72,
       "segments": [
@@ -70,6 +71,7 @@
     "0x080f39c4": {
       "format": 1,
       "kind": "typed-table",
+      "address": "0x080f39c4",
       "end": "0x080f3c3c",
       "size": 632,
       "segments": [

@@ -172,6 +172,7 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0804e684",
+        "address": "0x0804e684",
         "slot_count": 4,
         "slots": ["0x0804e694", "0x0804e6d0", "0x0804e70c", "0xffffffff"]
       }
@@ -185,6 +186,7 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0804e740",
+        "address": "0x0804e740",
         "slot_count": 3,
         "slots": ["0x0804e74c", "0x0804e777", "0x0804e7ac"]
       }
@@ -198,6 +200,7 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0804e7dc",
+        "address": "0x0804e7dc",
         "slot_count": 14,
         "slots": [
           "0x0804e814", "0x0804e844", "0x0804e871", "0x0804e8a1", "0x0804e8cf", "0x0804e8fe", "0x0804e92c",
@@ -214,6 +217,7 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0804ea74",
+        "address": "0x0804ea74",
         "slot_count": 43,
         "slots": [
           "0x0804eb20", "0x0804eb20", "0x0804eb20", "0x0804eb20", "0x0804eb20", "0x0804eb20", "0x0804eb20",
@@ -234,6 +238,7 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0804eb58",
+        "address": "0x0804eb58",
         "slot_count": 372,
         "slots": [
           "0x0804f128", "0x0804f157", "0x0804f190", "0x0804f1cb", "0x0804f205", "0x0804f23e", "0x0804f277",
@@ -301,6 +306,7 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x08054a14",
+        "address": "0x08054a14",
         "slot_count": 261,
         "slots": [
           "0x08054e28", "0x08054e60", "0x08054e90", "0x08054ec7", "0x08054f09", "0x08054f4a", "0x08054f96",
@@ -353,6 +359,7 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x08058ff4",
+        "address": "0x08058ff4",
         "slot_count": 33,
         "slots": [
           "0x08059078", "0x080590ac", "0x080590e0", "0x08059126", "0x0805915e", "0x08059198", "0x080591cf",
@@ -373,6 +380,7 @@
       "format": 1,
       "kind": "pointer-table",
       "base_address": "0x08059978",
+      "address": "0x08059978",
       "slot_count": 9,
       "slots": [
         "0x0805999c", "0x08059a9e", "0x08059c0a", "0x08059d39", "0x08059e5e", "0x08059f98", "0x0805a0f1", "0x0805a23c",
@@ -394,6 +402,7 @@
   "kana_marks": {
     "format": 1,
     "kind": "typed-table",
+    "address": "0x0805c0e0",
     "size": 16,
     "segments": [
       {"end": "0x0805c0e8", "stride": 2, "consumers": [], "element": "le-u16", "values": [0, 222, 223, 0]},
@@ -404,6 +413,7 @@
     "data": {
       "format": 1,
       "kind": "typed-table",
+      "address": "0x0805c0f0",
       "size": 28,
       "segments": [
         {"end": "0x0805c0f4", "stride": 1, "element": "ascii-fixed", "text": ""},
@@ -417,6 +427,7 @@
       "format": 1,
       "kind": "pointer-table",
       "base_address": "0x0805c0f0",
+      "address": "0x0805c10c",
       "slot_count": 8,
       "slots": [
         "0x0805c0f0", "0x0805c0f4", "0x0805c0f8", "0x0805c0fc", "0x0805c0f0", "0x0805c104", "0x0805c0f0", "0x0805c0f0"

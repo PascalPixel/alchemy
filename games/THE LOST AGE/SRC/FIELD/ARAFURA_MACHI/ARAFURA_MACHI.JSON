@@ -7,6 +7,7 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
+        "address": "0x08bda07c",
         "size": "0x40",
         "segments": [
           {

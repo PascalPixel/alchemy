@@ -174,6 +174,7 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x08029a10",
+        "address": "0x08029a10",
         "slot_count": 4,
         "slots": ["0x08029a20", "0x08029a5c", "0x08029a98", "0xffffffff"]
       }
@@ -187,6 +188,7 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x08029acc",
+        "address": "0x08029acc",
         "slot_count": 3,
         "slots": ["0x08029ad8", "0x08029b03", "0x08029b38"]
       }
@@ -200,6 +202,7 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x08029b68",
+        "address": "0x08029b68",
         "slot_count": 14,
         "slots": [
           "0x08029ba0", "0x08029bd0", "0x08029bfd", "0x08029c2d", "0x08029c5b", "0x08029c8a", "0x08029cb8",
@@ -216,6 +219,7 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x08029e00",
+        "address": "0x08029e00",
         "slot_count": 43,
         "slots": [
           "0x08029eac", "0x08029eac", "0x08029eac", "0x08029eac", "0x08029eac", "0x08029eac", "0x08029eac",
@@ -236,6 +240,7 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x08029ee4",
+        "address": "0x08029ee4",
         "slot_count": 256,
         "slots": [
           "0x0802a2e4", "0x0802a313", "0x0802a34c", "0x0802a387", "0x0802a3c1", "0x0802a3fa", "0x0802a433",
@@ -287,6 +292,7 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0802de88",
+        "address": "0x0802de88",
         "slot_count": 161,
         "slots": [
           "0x0802e10c", "0x0802e144", "0x0802e174", "0x0802e1ab", "0x0802e1ed", "0x0802e22e", "0x0802e27a",
@@ -324,6 +330,7 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x080308a0",
+        "address": "0x080308a0",
         "slot_count": 33,
         "slots": [
           "0x08030924", "0x08030958", "0x0803098c", "0x080309d2", "0x08030a0a", "0x08030a44", "0x08030a7b",
@@ -344,6 +351,7 @@
       "format": 1,
       "kind": "pointer-table",
       "base_address": "0x08031864",
+      "address": "0x08031864",
       "slot_count": 8,
       "slots": [
         "0x08031884", "0x08031986", "0x08031af2", "0x08031c21", "0x08031d46", "0x08031e80", "0x08031f82", "0x080320a0"
@@ -364,6 +372,7 @@
     "data": {
       "format": 1,
       "kind": "typed-table",
+      "address": "0x08033e24",
       "size": 28,
       "segments": [
         {"end": "0x08033e28", "stride": 1, "element": "ascii-fixed", "text": ""},
@@ -377,6 +386,7 @@
       "format": 1,
       "kind": "pointer-table",
       "base_address": "0x08033e24",
+      "address": "0x08033e40",
       "slot_count": 8,
       "slots": [
         "0x08033e24", "0x08033e28", "0x08033e2c", "0x08033e30", "0x08033e24", "0x08033e38", "0x08033e24", "0x08033e24"

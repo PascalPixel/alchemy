@@ -123,6 +123,7 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x08355986",
+        "address": "0x0830821c",
         "slot_count": 73,
         "slots": [
           "0x08355986", "0x08355aef", "0x08355c53", "0x08355dd8", "0x08355f4a", "0x083560d5", "0x083560fe",

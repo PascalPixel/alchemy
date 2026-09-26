@@ -7,6 +7,7 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
+        "address": "0x086e0968",
         "size": "0x3c",
         "segments": [
           {
@@ -110,6 +111,7 @@
       "sparse_cells": {
         "format": 1,
         "kind": "typed-table",
+        "address": "0x086e2d50",
         "size": "0x12",
         "record_size": 3,
         "segments": [

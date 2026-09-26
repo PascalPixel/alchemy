@@ -1,6 +1,7 @@
 {
   "format": 1,
   "kind": "typed-table",
+  "address": "0x0807a828",
   "end": "0x0808a000",
   "size": "0x0000f7d8",
   "item_name_message_base": "0x0182",

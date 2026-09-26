@@ -6,6 +6,7 @@
       "name": "number_format",
       "format": 1,
       "kind": "typed-table",
+      "address": "0x08017cd0",
       "size": "0x14",
       "segments": [
         {
@@ -22,6 +23,7 @@
       "name": "transfer_test",
       "format": 1,
       "kind": "typed-table",
+      "address": "0x08017d08",
       "size": "0x70",
       "segments": [
         {
@@ -69,6 +71,7 @@
       "name": "flash_region_a",
       "format": 1,
       "kind": "typed-table",
+      "address": "0x08017dfc",
       "size": "0x70",
       "segments": [
         {
@@ -167,6 +170,7 @@
       "name": "flash_region_b",
       "format": 1,
       "kind": "typed-table",
+      "address": "0x08017e94",
       "size": "0x88",
       "segments": [
         {
@@ -271,6 +275,7 @@
       "name": "flash_region_c",
       "format": 1,
       "kind": "typed-table",
+      "address": "0x08017f24",
       "size": "0x70",
       "segments": [
         {

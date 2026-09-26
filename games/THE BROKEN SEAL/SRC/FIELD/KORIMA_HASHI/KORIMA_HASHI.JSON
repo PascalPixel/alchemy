@@ -7,6 +7,7 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
+        "address": "0x085c4e08",
         "size": "0x3c",
         "segments": [
           {
@@ -77,6 +78,7 @@
       "sparse_cells": {
         "format": 1,
         "kind": "typed-table",
+        "address": "0x085c73c0",
         "size": "0x3",
         "record_size": 3,
         "segments": [{"name": "terminator", "end": "0x085c73c3", "stride": 1, "element": "u8", "fill": 255}]

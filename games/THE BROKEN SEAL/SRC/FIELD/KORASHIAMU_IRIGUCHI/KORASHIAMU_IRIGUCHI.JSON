@@ -7,6 +7,7 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
+        "address": "0x086eb670",
         "size": "0x3c",
         "segments": [
           {
@@ -107,6 +108,7 @@
       "sparse_cells": {
         "format": 1,
         "kind": "typed-table",
+        "address": "0x086ec1b8",
         "size": "0x3",
         "record_size": 3,
         "segments": [{"name": "terminator", "end": "0x086ec1bb", "stride": 1, "element": "u8", "fill": 255}]
@@ -124,6 +126,7 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
+        "address": "0x086f21ac",
         "size": "0x3c",
         "segments": [
           {
@@ -250,6 +253,7 @@
       "sparse_cells": {
         "format": 1,
         "kind": "typed-table",
+        "address": "0x086f36ec",
         "size": "0x3",
         "record_size": 3,
         "segments": [{"name": "terminator", "end": "0x086f36ef", "stride": 1, "element": "u8", "fill": 255}]
@@ -267,6 +271,7 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
+        "address": "0x086f387c",
         "size": "0x3c",
         "segments": [
           {
@@ -361,6 +366,7 @@
       "sparse_cells": {
         "format": 1,
         "kind": "typed-table",
+        "address": "0x086f4954",
         "size": "0x3",
         "record_size": 3,
         "segments": [{"name": "terminator", "end": "0x086f4957", "stride": 1, "element": "u8", "fill": 255}]

@@ -5,7 +5,6 @@ pub mod patch;
 pub mod render;
 pub mod structure;
 pub mod triage;
-pub mod variants;
 
 use crate::score::{
     cli::{options_of, ParseOutcome, USAGE},
@@ -339,10 +338,6 @@ fn compare_image_owners(
             }
             mismatches.push(format!("0x{address:08x}"));
         }
-        output.push_str(&format!(
-            "halfword_edits={}\n",
-            psynergy::compare::edit_distance(candidate, expected, 2)
-        ));
     }
     Ok((output, mismatches))
 }

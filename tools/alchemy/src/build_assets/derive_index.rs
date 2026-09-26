@@ -1595,7 +1595,7 @@ impl<'a> Deriver<'a> {
         let mut document = serde_json::Map::new();
         document.insert("format".into(), json!(1));
         document.insert("kind".into(), json!("golden-sun-map-container"));
-        document.insert("header".into(), json!({"format":1,"kind":"typed-table","size":small_hex(header),"segments":[
+        document.insert("header".into(), json!({"format":1,"kind":"typed-table","address":at(0),"size":small_hex(header),"segments":[
             {"name":"parameters","end":at(12),"stride":12,"element":"u8","values":params},
             {"name":"records","end":at(0x24),"stride":8,"element":"le-u16","values":records},
             {"name":"component_offsets","end":at(header),"stride":4,"element":"le-u32","values":offsets.iter().map(|o| small_hex(*o)).collect::<Vec<_>>()}]}));
@@ -1621,7 +1621,7 @@ impl<'a> Deriver<'a> {
                 (_, Err(_)) => {
                     // Not a stream: keep the bytes as a typed segment until identified.
                     let values = &rom[base + offset..base + offset + span];
-                    document.insert(section.into(), json!({"format":1,"kind":"typed-table","size":small_hex(span),
+                    document.insert(section.into(), json!({"format":1,"kind":"typed-table","address":at(offset),"size":small_hex(span),
                         "segments":[{"name":"values","end":at(offset + span),"stride":span,"element":"u8","values":values}]}));
                     regions.push(json!({"address":at(offset),"size":small_hex(span),"kind":"typed-table","source":source,"pointer":pointer}));
                     continue;

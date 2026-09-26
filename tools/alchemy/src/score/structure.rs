@@ -405,12 +405,18 @@ pub fn augment(report: Report, work: &Path) -> Report {
     match plan(&findings) {
         Some(plan) => {
             text += &format!("structure_repair={}\n", plan.label());
+            let dimensions = plan.dimensions();
             Report {
                 text,
+                dimensions,
                 repair: Some(plan),
             }
         }
-        None => Report { text, repair: None },
+        None => Report {
+            text,
+            dimensions: Vec::new(),
+            repair: None,
+        },
     }
 }
 

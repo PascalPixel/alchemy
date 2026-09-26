@@ -5,6 +5,7 @@
     "0x08033e60": {
       "format": 1,
       "kind": "typed-table",
+      "address": "0x08033e60",
       "size": "0x00000098",
       "segments": [
         {
@@ -47,6 +48,7 @@
     "0x080366f8": {
       "format": 1,
       "kind": "typed-table",
+      "address": "0x080366f8",
       "size": "0x000001dc",
       "segments": [
         {
@@ -158,6 +160,7 @@
     "0x080370d4": {
       "format": 1,
       "kind": "typed-table",
+      "address": "0x080370d4",
       "size": "0x00000390",
       "segments": [
         {

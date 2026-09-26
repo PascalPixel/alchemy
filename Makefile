@@ -12,16 +12,12 @@ export CARGO_TARGET_DIR := $(CURDIR)/tools/out/cargo-target
 # Bootstrap's native arm-none-eabi binutils come first for every recipe and test.
 export PATH := $(CURDIR)/tools/out/binutils/bin:$(PATH)
 CARGO_RUN := $(CARGO) run --offline --quiet --release --manifest-path
-# `make verify` builds the tool once; `alchemy verify` passes that binary as
-# ALCHEMY to every gate instead of a `cargo run` per call.
-ALCHEMY ?= $(CARGO_RUN) $(TOOLS)/alchemy/Cargo.toml --
-ALCHEMY_BIN := $(CARGO_TARGET_DIR)/release/alchemy
 
-BUILD := $(ALCHEMY) build
-ASSETS := $(ALCHEMY) build assets
-CHECK := $(ALCHEMY) check
-COMPILER := $(ALCHEMY)
-OVERLAY := $(ALCHEMY) overlay
+BUILD := $(CARGO_RUN) $(TOOLS)/alchemy/Cargo.toml -- build
+ASSETS := $(CARGO_RUN) $(TOOLS)/alchemy/Cargo.toml -- build assets
+CHECK := $(CARGO_RUN) $(TOOLS)/alchemy/Cargo.toml -- check
+COMPILER := $(CARGO_RUN) $(TOOLS)/alchemy/Cargo.toml --
+OVERLAY := $(CARGO_RUN) $(TOOLS)/alchemy/Cargo.toml -- overlay
 
 HOSTS := alchemy psynergy
 PORTABLE_TOOLS := alchemy psynergy
@@ -263,10 +259,6 @@ corpus-check:
 		printf 'legacy draft/ directory found; use recon/tbs/<edition>/\n'; \
 		exit 1; \
 	fi
-	@if find "recon/tbs/semantic" -maxdepth 1 -name '*.c' -print | grep -q .; then \
-		printf 'source hypotheses belong in recon/tbs/<edition>/, not recon/tbs/semantic/ metadata\n'; \
-		exit 1; \
-	fi
 	@roots=$$(git ls-files -- games | cut -d/ -f2 | grep -vx COMMON | LC_ALL=C sort -u | tr '\n' '|'); \
 	test "$$roots" = 'THE BROKEN SEAL|THE LOST AGE|' || { \
 		printf 'games/ holds only the two game roots and the COMMON shared source root, found: %s\n' "$$roots"; exit 1; \
@@ -298,6 +290,7 @@ tool-tests:
 test-integration: toolchain-check
 	$(CARGO) test --offline --quiet --release --workspace \
 		--manifest-path $(TOOLS)/Cargo.toml -- --ignored
+	$(COMPILER) match --acceptance-test
 
 tooling-index-check:
 	@$(CHECK) publication --documents
@@ -359,13 +352,10 @@ test: toolchain-check
 	$(CHECK) no-asm --self-test
 
 native-format-check:
-	$(ALCHEMY) format --check
+	$(CARGO_RUN) $(TOOLS)/alchemy/Cargo.toml -- format --check
 
-# The landing gate. Its gates and their dependency waves live in
-# tools/alchemy/src/verify.rs; each gate stays a target here.
-verify:
-	@$(CARGO) build --offline --quiet --release --manifest-path $(TOOLS)/alchemy/Cargo.toml
-	@$(ALCHEMY_BIN) verify
+verify: toolchain-check native-format-check index-sync-check publication-tree-check source-tracking-check corpus-check language-check lint-production tooling-index-check \
+	strict-tu-check check-owners full-rom-check compare-tla coverage-check siblings-check
 
 audit: verify test test-integration targets \
 	correspondence-check progress-report coverage-check

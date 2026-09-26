@@ -7,6 +7,7 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
+        "address": "0x086cf47c",
         "size": "0x3c",
         "segments": [
           {
@@ -135,6 +136,7 @@
       "sparse_cells": {
         "format": 1,
         "kind": "typed-table",
+        "address": "0x086d0140",
         "size": "0xf",
         "record_size": 3,
         "segments": [
@@ -161,6 +163,7 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
+        "address": "0x086d3918",
         "size": "0x3c",
         "segments": [
           {
@@ -287,6 +290,7 @@
       "sparse_cells": {
         "format": 1,
         "kind": "typed-table",
+        "address": "0x086d5644",
         "size": "0xf",
         "record_size": 3,
         "segments": [
@@ -313,6 +317,7 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
+        "address": "0x086d58f8",
         "size": "0x3c",
         "segments": [
           {
@@ -386,6 +391,7 @@
       "sparse_cells": {
         "format": 1,
         "kind": "typed-table",
+        "address": "0x086d778c",
         "size": "0xf",
         "record_size": 3,
         "segments": [
@@ -412,6 +418,7 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
+        "address": "0x086d7924",
         "size": "0x3c",
         "segments": [
           {
@@ -548,6 +555,7 @@
       "sparse_cells": {
         "format": 1,
         "kind": "typed-table",
+        "address": "0x086d8870",
         "size": "0xf",
         "record_size": 3,
         "segments": [

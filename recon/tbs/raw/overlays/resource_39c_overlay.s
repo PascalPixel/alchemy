@@ -1131,6 +1131,7 @@ AlchemyC_02001c9c:
 	.space 0xa0
 AlchemyC_02001d3c:
 	.space 0x78
+FieldScene_RunPrimarySequence:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -1543,6 +1544,7 @@ AlchemyC_02004a08:
 	.space 0x154
 .L_02004b80:
 	.space 0xe8
+Func_02004c68:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r8

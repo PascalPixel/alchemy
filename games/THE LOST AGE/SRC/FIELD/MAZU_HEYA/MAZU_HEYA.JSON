@@ -7,6 +7,7 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
+        "address": "0x08e76990",
         "size": "0x40",
         "segments": [
           {
@@ -194,6 +195,7 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
+        "address": "0x08e69e6c",
         "size": "0x40",
         "segments": [
           {
@@ -382,6 +384,7 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
+        "address": "0x08e77f4c",
         "size": "0x40",
         "segments": [
           {
@@ -531,6 +534,7 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
+        "address": "0x08e79594",
         "size": "0x40",
         "segments": [
           {
@@ -680,6 +684,7 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
+        "address": "0x08e7a434",
         "size": "0x40",
         "segments": [
           {
@@ -841,6 +846,7 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
+        "address": "0x08e7b28c",
         "size": "0x40",
         "segments": [
           {
@@ -990,6 +996,7 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
+        "address": "0x08e59120",
         "size": "0x40",
         "segments": [
           {
@@ -1173,6 +1180,7 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
+        "address": "0x08e60e88",
         "size": "0x40",
         "segments": [
           {
@@ -1354,6 +1362,7 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
+        "address": "0x08e62120",
         "size": "0x40",
         "segments": [
           {
@@ -1558,6 +1567,7 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
+        "address": "0x08e63660",
         "size": "0x40",
         "segments": [
           {
@@ -1745,6 +1755,7 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
+        "address": "0x08e687bc",
         "size": "0x40",
         "segments": [
           {

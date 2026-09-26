@@ -1,6 +1,7 @@
 {
   "format": 1,
   "kind": "typed-table",
+  "address": "0x0809ddd8",
   "end": "0x0809e1d8",
   "size": 1024,
   "segments": [

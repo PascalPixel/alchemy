@@ -6,6 +6,7 @@ use super::model::{
 use crate::compiler::source_paths::SOURCE_PATHS_MANIFEST;
 use crate::compiler::source_paths::{SourceOwner, SourcePaths};
 use crate::coverage::tree::{read_json, SourceTree, ROM_BASE};
+use crate::overlay::listing::{Listing, Piece};
 use crate::targets::DecompTarget;
 use serde_json::{json, Map, Value};
 use std::{
@@ -432,17 +433,16 @@ fn candidate_overlay(
     executable: &SpanMap,
 ) -> (SpanMap, usize) {
     let directory = format!("{}/en/overlays", target.recon_dir());
-    let reviewed = json(
-        tree,
-        &format!("{}/semantic/regions.json", target.recon_dir()),
-    )
-    .unwrap_or(Value::Null);
     let mut extents = BTreeMap::new();
-    for region in array(&reviewed, "manual_regions") {
-        let id = text(region, "overlay");
-        let entry = address(region, "entry");
-        if let (Some(entry), Some(size)) = (entry, integer(region, "span_bytes")) {
-            extents.insert((id, entry), size);
+    for id in executable.keys() {
+        let Ok(Some(listing)) = tree_listing(tree, target, id) else {
+            continue;
+        };
+        let owners = listing
+            .placeholders()
+            .chain(listing.owners().map(|(_, entry, extent)| (entry, extent)));
+        for (entry, extent) in owners {
+            extents.insert((id.clone(), i64::from(entry)), extent as i64);
         }
     }
     let mut spans = SpanMap::new();
@@ -465,10 +465,11 @@ fn candidate_overlay(
             continue;
         }
         for owner in array(unit, "owners") {
-            let Some(entry) = address(owner, "address") else {
+            if text(owner, "state") != "not-yet-c" {
                 continue;
-            };
-            let Some(size) = extents.get(&(id.clone(), entry)).copied() else {
+            }
+            let (Some(entry), Some(size)) = (address(owner, "address"), integer(owner, "extent"))
+            else {
                 continue;
             };
             let Some(end) = entry.checked_add(size).filter(|end| *end > entry) else {
@@ -693,8 +694,6 @@ fn runtime_credit_for(
     }
     Ok((intersect(&normalize(&main), main_exec), overlays))
 }
-#[cfg(test)]
-const OVERLAY_VENEER_MACRO: &str = "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC";
 
 /// A maintained SRC module whose header declares library, handwritten or
 /// reconstructed-veneer provenance, with the byte-comparison evidence the
@@ -841,56 +840,62 @@ fn main_assembly_classification_for(
     }
     (normalize(&proven), normalize(&draft), normalize(&credited))
 }
+/// One overlay's retained listing laid out from `tree`, when the tree has it.
+fn tree_listing(
+    tree: &SourceTree,
+    target: &DecompTarget,
+    overlay: &str,
+) -> Result<Option<Listing>, String> {
+    let path = target.overlay_assembly(overlay);
+    let Some(text) = tree.read(&path) else {
+        return Ok(None);
+    };
+    crate::overlay::listing::parse(&text, &target.overlay_macro(), &mut |include| {
+        tree.read(include)
+            .ok_or_else(|| format!("{include} is missing"))
+    })
+    .map(Some)
+    .map_err(|error| format!("{path}: {error}"))
+}
+/// Every retained overlay listing in `tree`, laid out, by overlay.
+fn tree_listings(
+    tree: &SourceTree,
+    target: &DecompTarget,
+) -> Result<BTreeMap<String, Listing>, String> {
+    let mut listings = BTreeMap::new();
+    for name in tree.list(&target.overlay_dir()) {
+        let Some(overlay) = crate::overlay::owners::listing_overlay(&name) else {
+            continue;
+        };
+        if let Some(listing) = tree_listing(tree, target, overlay)? {
+            listings.insert(overlay.to_string(), listing);
+        }
+    }
+    Ok(listings)
+}
 fn overlay_assembly_classification_for(
     tree: &SourceTree,
     target: &DecompTarget,
     inventory: &BTreeMap<String, Vec<Region>>,
     executable: &SpanMap,
 ) -> Result<(SpanMap, SpanMap, SpanMap), String> {
-    let classification_path = format!("{}/semantic/overlay-assembly.json", target.recon_dir());
-    let veneer_macro = target.overlay_macro();
-    let source = tree
-        .read(&classification_path)
-        .ok_or_else(|| "overlay assembly classification is missing".to_string())?;
-    let document: Value =
-        serde_json::from_str(&source).map_err(|error| format!("{classification_path}: {error}"))?;
-    for row in array(&document, "regions")
-        .iter()
-        .filter(|row| text(&row["provenance"], "credit") == "reconstructed_veneer")
-    {
-        for source in [veneer_macro.clone(), text(&row["provenance"], "source")] {
-            if tree.read(&source).is_none() {
-                return Err(format!("reconstructed veneer source is missing: {source}"));
-            }
-        }
-    }
-    overlay_assembly_classification_document_for(
-        &document,
+    overlay_listing_classification(
+        &tree_listings(tree, target)?,
         inventory,
         executable,
-        &veneer_macro,
         target.source_dir,
     )
 }
-#[cfg(test)]
-fn overlay_assembly_classification_document(
-    document: &Value,
+/// Overlay assembly by what the listings spell. A veneer table a listing
+/// includes from a maintained `ENTRY.INC` or `IMPORT.INC` under the game's
+/// SRC, built only from the shared `overlay_veneer` macro, is credited whole,
+/// eight bytes a veneer (Pascal, 2026-09-24). Every other byte no
+/// placeholder, runtime window or veneer table reserves is not-yet-C draft.
+/// Audited veneers, alignment and hand-written Thumb stay proven, uncredited.
+fn overlay_listing_classification(
+    listings: &BTreeMap<String, Listing>,
     inventory: &BTreeMap<String, Vec<Region>>,
     executable: &SpanMap,
-) -> Result<(SpanMap, SpanMap, SpanMap), String> {
-    overlay_assembly_classification_document_for(
-        document,
-        inventory,
-        executable,
-        OVERLAY_VENEER_MACRO,
-        "games/THE BROKEN SEAL/SRC",
-    )
-}
-fn overlay_assembly_classification_document_for(
-    document: &Value,
-    inventory: &BTreeMap<String, Vec<Region>>,
-    executable: &SpanMap,
-    veneer_macro: &str,
     source_dir: &str,
 ) -> Result<(SpanMap, SpanMap, SpanMap), String> {
     let mut proven: SpanMap = inventory
@@ -913,72 +918,36 @@ fn overlay_assembly_classification_document_for(
         .collect();
     let mut draft = SpanMap::new();
     let mut credited = SpanMap::new();
-    if integer(document, "format") != Some(1) {
-        return Err("overlay assembly classification has unsupported format".into());
-    }
-    for (index, row) in array(document, "regions").iter().enumerate() {
-        let overlay = text(row, "overlay");
-        let start = address(row, "start")
-            .ok_or_else(|| format!("assembly classification {index} has no start"))?;
-        let end = address(row, "end")
-            .ok_or_else(|| format!("assembly classification {index} has no end"))?;
-        let span = Span::new(start, end);
-        let evidence = array(row, "evidence");
-        if !matches!(
-            text(row, "retention").as_str(),
-            "keep_structured_asm" | "not_yet_c"
-        ) || evidence.is_empty()
-            || evidence
-                .iter()
-                .any(|item| !matches!(item.as_str(), Some(text) if !text.trim().is_empty()))
-        {
-            return Err(format!(
-                "assembly classification {index} lacks retention reasoning"
-            ));
-        }
-        let Some(exec) = executable.get(&overlay) else {
-            return Err(format!(
-                "assembly classification {index} names unknown overlay {overlay}"
-            ));
+    for (overlay, listing) in listings {
+        let Some(exec) = executable.get(overlay) else {
+            continue;
         };
-        if span.end <= span.start || bytes(&intersect(&[span], exec)) != span.bytes() {
-            return Err(format!(
-                "assembly classification {index} lies outside audited executable bytes"
-            ));
-        }
-        if text(row, "confidence") == "proven" && text(row, "kind") == "structured_scene_module" {
-            return Err(format!(
-                "assembly classification {index} promotes a scene reconstruction without compiler-impossibility proof"
-            ));
-        }
-        let credit = text(&row["provenance"], "credit");
-        if credit == "reconstructed_veneer" {
-            let veneer_spans = mapped(inventory, &overlay)
-                .iter()
-                .filter(|region| region.kind == "veneer" && !region.evidence.trim().is_empty())
-                .map(|region| region.span)
-                .collect::<Vec<_>>();
-            if text(row, "confidence") != "proven"
-                || text(row, "kind") != "overlay_trampoline"
-                || text(&row["provenance"], "proof") != veneer_macro
-                || !text(&row["provenance"], "source").starts_with(&format!("{source_dir}/"))
-                || span.start % 4 != 0
-                || span.bytes() % 8 != 0
-                || bytes(&intersect(&[span], &veneer_spans)) != span.bytes()
-            {
-                return Err(format!(
-                    "assembly classification {index} has invalid reconstructed overlay-trampoline credit"
-                ));
+        let mut reserved = Vec::new();
+        for item in &listing.items {
+            let span = Span::new(i64::from(item.start), i64::from(item.end));
+            match &item.piece {
+                Piece::Owner { .. } => continue,
+                Piece::Veneers {
+                    include: Some(include),
+                } if include.starts_with(&format!("{source_dir}/")) => {
+                    if bytes(&intersect(&[span], exec)) != span.bytes() {
+                        return Err(format!(
+                            "{overlay} veneers from {include} lie outside audited executable bytes"
+                        ));
+                    }
+                    credited
+                        .entry(overlay.clone())
+                        .or_insert_with(Vec::new)
+                        .push(span);
+                }
+                _ => {}
             }
-            credited.entry(overlay).or_default().push(span);
-        } else if !credit.is_empty() {
-            return Err(format!(
-                "assembly classification {index} requests unsupported generic assembly credit"
-            ));
-        } else if text(row, "confidence") == "proven" {
-            proven.entry(overlay).or_default().push(span);
-        } else {
-            draft.entry(overlay).or_default().push(span);
+            reserved.push(span);
+        }
+        let whole = Span::new(OVERLAY_BASE, i64::from(listing.end));
+        let remaining = intersect(&subtract(&[whole], &reserved), exec);
+        if !remaining.is_empty() {
+            draft.insert(overlay.clone(), remaining);
         }
     }
     for spans in credited.values_mut() {
@@ -986,9 +955,6 @@ fn overlay_assembly_classification_document_for(
     }
     for (overlay, spans) in &mut proven {
         *spans = subtract(spans, mapped(&credited, overlay));
-    }
-    for spans in draft.values_mut() {
-        *spans = normalize(spans);
     }
     Ok((proven, draft, credited))
 }
@@ -1914,24 +1880,24 @@ pub struct Classification {
     draft_sources: usize,
 }
 /// The overlay images that carry credited assembly, found without the
-/// executable inventory: the classification's reconstructed veneers and the
-/// registry's overlay runtime links placed in their listings. Comparing these
+/// executable inventory: listings that include maintained veneer tables and
+/// the registry's overlay runtime links placed in their listings. Comparing these
 /// images with the ROM needs no denominator; crediting their spans does, and
 /// only a full build's receipt credits them ([`verified_credits`]).
 pub(crate) fn overlay_assembly_images(
     tree: &SourceTree,
     target: &DecompTarget,
 ) -> Result<BTreeSet<String>, String> {
-    let classification_path = format!("{}/semantic/overlay-assembly.json", target.recon_dir());
-    let source = tree
-        .read(&classification_path)
-        .ok_or_else(|| "overlay assembly classification is missing".to_string())?;
-    let document: Value =
-        serde_json::from_str(&source).map_err(|error| format!("{classification_path}: {error}"))?;
-    let mut images = array(&document, "regions")
-        .iter()
-        .filter(|row| text(&row["provenance"], "credit") == "reconstructed_veneer")
-        .map(|row| text(row, "overlay"))
+    let source_root = format!("{}/", target.source_dir);
+    let mut images = tree_listings(tree, target)?
+        .into_iter()
+        .filter(|(_, listing)| {
+            listing.items.iter().any(|item| {
+                matches!(&item.piece, Piece::Veneers { include: Some(include) }
+                    if include.starts_with(&source_root))
+            })
+        })
+        .map(|(overlay, _)| overlay)
         .collect::<BTreeSet<_>>();
     let registry_path = crate::compiler::runtime::registry_path(target.compiler);
     let Some(registry) = json(tree, &registry_path) else {
@@ -2368,7 +2334,7 @@ pub fn build_coverage_map(options: &BuildOptions) -> Result<CoverageMap, String>
             "credited_assembly_bytes": bytes(&retained_main) + mapped_bytes(&retained_overlay),
             "withdrawn_assembly_bytes": withdrawn_assembly,
             "main_assembly_classification": format!("{}/full/asm/manifest.json", target.output_dir),
-            "overlay_assembly_classification": format!("{}/semantic/overlay-assembly.json", target.recon_dir()),
+            "overlay_assembly_classification": target.overlay_dir(),
             "draft_superseded_bytes": 0,
             "draft_outside_extent_bytes": 0,
             "draft_unresolved": []
@@ -2535,9 +2501,6 @@ mod tests {
         assert!(shared_map_assets(&tree, &areas).is_err());
     }
 
-    fn classification(regions: Value) -> Value {
-        json!({"format": 1, "regions": regions})
-    }
     /// The Lost Age's receipt credits its reconstructed overlay veneers from
     /// its own full build and inventory, exactly as The Broken Seal's does,
     /// and an earlier receipt has no say in what it credits.
@@ -2549,30 +2512,20 @@ mod tests {
             std::fs::create_dir_all(path.parent().unwrap()).unwrap();
             std::fs::write(path, serde_json::to_vec(&value).unwrap()).unwrap();
         };
+        let write_text = |path: &str, text: &str| {
+            let path = directory.path().join(path);
+            std::fs::create_dir_all(path.parent().unwrap()).unwrap();
+            std::fs::write(path, text).unwrap();
+        };
         let target = crate::targets::decomp_target(Some("tla-en")).unwrap();
-        let mut row = region(
-            "0x02000120",
-            "0x02000140",
-            "proven",
-            json!(["fixture proof"]),
-        );
-        row["kind"] = json!("overlay_trampoline");
-        row["provenance"] = json!({
-            "credit":"reconstructed_veneer",
-            "proof":"games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC",
-            "source":"games/THE LOST AGE/SRC/FIELD/TEST/ENTRY.INC"
-        });
-        write(
-            "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC",
-            json!("fixture"),
-        );
-        write(
+        write_text(
             "games/THE LOST AGE/SRC/FIELD/TEST/ENTRY.INC",
-            json!("fixture"),
+            "\t.irp T, 1, 2, 3, 4\n\toverlay_veneer \\T\n\t.endr\n",
         );
-        write(
-            "recon/tla/semantic/overlay-assembly.json",
-            classification(json!([row])),
+        write_text(
+            "recon/tla/raw/overlays/resource_test_overlay.s",
+            ".include \"games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC\"\n\t.space 0x120\n\
+             \t.include \"games/THE LOST AGE/SRC/FIELD/TEST/ENTRY.INC\"\n",
         );
         write(
             "recon/tla/source-paths.json",
@@ -2874,12 +2827,17 @@ mod tests {
         };
         let target = crate::targets::target_for(crate::targets::DEFAULT_TARGET);
         write(
-            &format!("{}/semantic/overlay-assembly.json", target.recon_dir()),
-            json!({"format": 1, "regions": [
-                {"overlay": "resource_370", "provenance": {"credit": "reconstructed_veneer"}},
-                {"overlay": "resource_371", "provenance": {}}
-            ]})
-            .to_string(),
+            "games/THE BROKEN SEAL/SRC/MENU/TITLE/ENTRY.INC",
+            "\toverlay_veneer 0x02008e05\n".into(),
+        );
+        write(
+            &target.overlay_assembly("resource_370"),
+            "Overlay_02000000:\n\t.include \"games/THE BROKEN SEAL/SRC/MENU/TITLE/ENTRY.INC\"\n"
+                .into(),
+        );
+        write(
+            &target.overlay_assembly("resource_371"),
+            "\t.irp T, 1\n\toverlay_veneer \\T\n\t.endr\n".into(),
         );
         write(
             &crate::compiler::runtime::registry_path(target.compiler),
@@ -2892,7 +2850,7 @@ mod tests {
         );
         write(
             &target.overlay_assembly("resource_3bf"),
-            "AlchemyRuntime_020057b0:\n\t.space 0x728\n".into(),
+            "\t.space 0x57b0\nAlchemyRuntime_020057b0:\n\t.space 0x728\n".into(),
         );
         write(
             &target.overlay_assembly("resource_373"),
@@ -3121,11 +3079,9 @@ mod tests {
         withheld_for(root, &genuine, "no independent verification");
     }
 
-    /// The exploit an adversarial verification found: a hand-kept ledger
-    /// copied into a game's inventory path, beside that game's real
+    /// The exploit an adversarial verification found: each game's committed
+    /// ledger copied into its inventory path, beside that game's real
     /// verification record and a byte-identical full build, earns no score.
-    /// The ledger here is the genuine count as a person would have edited it:
-    /// promoted to `verified`, stripped of its provenance and reclassified.
     #[test]
     fn a_copied_ledger_is_never_scored() {
         use crate::targets::DecompTargetId::{TbsEn, TlaEn};
@@ -3227,10 +3183,6 @@ mod tests {
         write(
             &registry,
             json!({"links": [{"image": "main", "text": "0x08017878", "members": ["_m"]}]}),
-        );
-        write(
-            "recon/tla/semantic/overlay-assembly.json",
-            classification(json!([])),
         );
         write(
             "recon/tla/source-paths.json",
@@ -3341,17 +3293,6 @@ mod tests {
         let tbs_target = crate::targets::target_for(crate::targets::DEFAULT_TARGET);
         let (main, _) = runtime_credit_for(&tree, &tbs_target, &exec, &SpanMap::new()).unwrap();
         assert!(main.is_empty());
-    }
-    fn region(start: &str, end: &str, confidence: &str, evidence: Value) -> Value {
-        json!({
-            "overlay": "resource_test",
-            "start": start,
-            "end": end,
-            "kind": "thumb_multi_register_module",
-            "retention": "keep_structured_asm",
-            "confidence": confidence,
-            "evidence": evidence
-        })
     }
     fn executable() -> BTreeMap<String, Vec<Span>> {
         BTreeMap::from([(
@@ -3545,8 +3486,8 @@ mod tests {
             json!({"units": [{
                 "id": "staged-actor", "source": source, "overlay": "resource_3bf",
                 "owners": [
-                    {"address": "0x0200034c", "extent": 1394},
-                    {"address": "0x020008c0", "extent": 284}
+                    {"address": "0x0200034c", "extent": 1394, "state": "exact-c"},
+                    {"address": "0x020008c0", "extent": 284, "state": "exact-c"}
                 ],
                 "instances": {"resource_39b": {
                     "owners": {
@@ -3618,31 +3559,20 @@ mod tests {
             std::fs::create_dir_all(path.parent().unwrap()).unwrap();
             std::fs::write(path, source).unwrap();
         };
-        for name in ["actor_sequence", "unregistered", "resource_test_c_02000160"] {
+        for name in [
+            "actor_sequence",
+            "unregistered",
+            "resource_test_c_02000160",
+            "resource_test_c_02000180",
+        ] {
             write(
                 &format!("{directory}/{name}.c"),
                 "void Actor_Run(void) {}\n",
             );
         }
         write(&format!("{directory}/uncanonical.c"), "M2C_ERROR\n");
-        // The reviewed register bounds each not-yet-C owner.
-        write(
-            "recon/tbs/raw/overlays/resource_test_overlay.s",
-            "\t.space 0x1b0\n",
-        );
-        let region = |entry: &str, span: usize| json!({"overlay": "resource_test", "entry": entry, "span_bytes": span});
-        write(
-            "recon/tbs/semantic/regions.json",
-            &json!({"format": 1, "manual_regions": [
-                region("0x02000100", 0x20),
-                region("0x02000120", 0x20),
-                region("0x02000160", 0x10),
-                region("0x02000190", 0x10),
-                region("0x020001a0", 0x10)
-            ]})
-            .to_string(),
-        );
-        let owner = |entry| json!({"address": entry});
+        let owner =
+            |entry, extent, state| json!({"address": entry, "extent": extent, "state": state});
         let unit = |name, owners| {
             json!({
                 "overlay": "resource_test",
@@ -3651,15 +3581,20 @@ mod tests {
         };
         let named = unit(
             "actor_sequence",
-            json!([owner("0x02000100"), owner("0x02000120")]),
+            json!([
+                owner("0x02000100", 0x20, "not-yet-c"),
+                owner("0x02000120", 0x20, "not-yet-c"),
+                owner("0x02000140", 0x20, "exact-c")
+            ]),
         );
         write(
             "recon/tbs/translation-units.json",
             &json!({"units": [
                 named.clone(), named,
-                unit("resource_test_c_02000160", json!([owner("0x02000160")])),
-                unit("missing", json!([owner("0x02000190")])),
-                unit("uncanonical", json!([owner("0x020001a0")]))
+                unit("resource_test_c_02000160", json!([owner("0x02000160", 0x10, "not-yet-c")])),
+                unit("resource_test_c_02000180", json!([owner("0x02000180", 0x10, "exact-c")])),
+                unit("missing", json!([owner("0x02000190", 0x10, "not-yet-c")])),
+                unit("uncanonical", json!([owner("0x020001a0", 0x10, "not-yet-c")]))
             ]})
             .to_string(),
         );
@@ -3834,185 +3769,84 @@ mod tests {
         assert_eq!(categories.iter().sum::<i64>(), 10);
         assert!(categories[2] >= 0);
     }
-    #[test]
-    fn evidence_backed_proven_assembly_is_counted() {
-        let (found, draft, credited) = overlay_assembly_classification_document(
-            &classification(json!([region(
-                "0x02000120",
-                "0x02000140",
-                "proven",
-                json!(["approved compiler cannot emit multi-register Thumb transfer"])
-            )])),
-            &no_inventory(),
-            &executable(),
+    fn listed(text: &str) -> BTreeMap<String, Listing> {
+        let listing = crate::overlay::listing::parse(
+            text,
+            "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC",
+            &mut |path| match path {
+                "games/THE BROKEN SEAL/SRC/FIELD/RUNPA_JO/IMPORT.INC" | "recon/tbs/IMPORT.INC" => {
+                    Ok(".irp T, 1, 2\n\toverlay_veneer \\T\n.endr\n".into())
+                }
+                _ => Err(format!("{path} is missing")),
+            },
         )
         .unwrap();
-        assert!(draft.is_empty());
-        assert!(credited.is_empty());
-        assert_eq!(
-            found["resource_test"],
-            vec![Span::new(0x0200_0120, 0x0200_0140)]
-        );
+        BTreeMap::from([("resource_test".to_string(), listing)])
     }
-    #[test]
-    fn strong_assembly_reasoning_remains_draft() {
-        let (proven, draft, credited) = overlay_assembly_classification_document(
-            &classification(json!([region(
-                "0x02000120",
-                "0x02000140",
-                "strong",
-                json!(["instruction shape strongly suggests assembly"])
-            )])),
-            &no_inventory(),
+    fn classified(
+        text: &str,
+        inventory: &BTreeMap<String, Vec<Region>>,
+    ) -> Result<(SpanMap, SpanMap, SpanMap), String> {
+        overlay_listing_classification(
+            &listed(text),
+            inventory,
             &executable(),
+            "games/THE BROKEN SEAL/SRC",
         )
-        .unwrap();
-        assert!(proven.values().all(Vec::is_empty));
-        assert!(credited.is_empty());
-        assert_eq!(
-            draft["resource_test"],
-            vec![Span::new(0x0200_0120, 0x0200_0140)]
-        );
     }
     #[test]
-    fn reconstructed_veneer_credit_is_restricted_to_audited_linkage() {
-        let mut row = region(
-            "0x02000120",
-            "0x02000140",
-            "proven",
-            json!(["verified fixed linkage"]),
-        );
-        row["kind"] = json!("overlay_trampoline");
-        row["provenance"] = json!({"credit":"reconstructed_veneer", "proof":OVERLAY_VENEER_MACRO,
-            "source":"games/THE BROKEN SEAL/SRC/FIELD/RUNPA_JO/IMPORT.INC"});
+    fn maintained_veneer_tables_are_credited_and_other_listing_bytes_are_draft() {
         let inventory = BTreeMap::from([(
             "resource_test".into(),
             vec![Region {
-                span: Span::new(0x0200_0120, 0x0200_0140),
+                span: Span::new(0x0200_0120, 0x0200_0128),
                 kind: "veneer".into(),
                 evidence: "audited".into(),
             }],
         )]);
-        let (_, _, credited) = overlay_assembly_classification_document(
-            &classification(json!([row.clone()])),
+        let (proven, draft, credited) = classified(
+            "\t.space 0x120\n\t.include \"games/THE BROKEN SEAL/SRC/FIELD/RUNPA_JO/IMPORT.INC\"\n\
+             AlchemyC_02000130:\n\t.space 0x10\nScene_Run:\n\tbx\tlr\n\t.2byte 0x0000\n",
             &inventory,
-            &executable(),
         )
         .unwrap();
         assert_eq!(
             credited["resource_test"],
-            vec![Span::new(0x0200_0120, 0x0200_0140)]
+            [Span::new(0x0200_0120, 0x0200_0130)]
         );
-        for (key, value) in [
-            ("kind", json!("structured_scene_module")),
-            ("confidence", json!("strong")),
-            ("end", json!("0x02000148")),
-            ("start", json!("0x02000122")),
-            ("end", json!("0x0200013e")),
+        assert!(proven["resource_test"].is_empty());
+        assert_eq!(
+            draft["resource_test"],
+            [
+                Span::new(0x0200_0100, 0x0200_0120),
+                Span::new(0x0200_0140, 0x0200_0144)
+            ]
+        );
+    }
+    #[test]
+    fn veneer_tables_outside_src_or_spelled_inline_earn_no_credit() {
+        for text in [
+            "\t.space 0x120\n\t.include \"recon/tbs/IMPORT.INC\"\n",
+            "\t.space 0x120\n\t.irp T, 1, 2\n\toverlay_veneer \\T\n\t.endr\n",
         ] {
-            let mut invalid = row.clone();
-            invalid[key] = value;
-            assert!(overlay_assembly_classification_document(
-                &classification(json!([invalid])),
-                &inventory,
-                &executable()
-            )
-            .is_err());
-        }
-        assert!(overlay_assembly_classification_document(
-            &classification(json!([row])),
-            &no_inventory(),
-            &executable()
-        )
-        .is_err());
-    }
-
-    #[test]
-    fn generic_overlay_credit_is_rejected() {
-        let mut library = region(
-            "0x02000120",
-            "0x02000140",
-            "proven",
-            json!(["historical assembly match"]),
-        );
-        library["provenance"] = json!({"credit":"library", "proof":"assembled bytes agree"});
-        let uncredited = region(
-            "0x02000140",
-            "0x02000160",
-            "proven",
-            json!(["retained reasoning"]),
-        );
-        let mut strong = library.clone();
-        strong["start"] = json!("0x02000160");
-        strong["end"] = json!("0x02000180");
-        strong["confidence"] = json!("strong");
-        let mut bare = library.clone();
-        bare["start"] = json!("0x02000180");
-        bare["end"] = json!("0x020001a0");
-        bare["provenance"] = json!({"credit":"library"});
-        let error = overlay_assembly_classification_document(
-            &classification(json!([library])),
-            &no_inventory(),
-            &executable(),
-        )
-        .unwrap_err();
-        assert!(error.contains("unsupported generic assembly credit"));
-
-        for mut row in [uncredited, strong, bare] {
-            row["provenance"] = Value::Null;
-            assert!(overlay_assembly_classification_document(
-                &classification(json!([row])),
-                &no_inventory(),
-                &executable(),
-            )
-            .is_ok());
+            let (_, draft, credited) = classified(text, &no_inventory()).unwrap();
+            assert!(credited.is_empty(), "{text}");
+            assert_eq!(
+                draft["resource_test"],
+                [Span::new(0x0200_0100, 0x0200_0120)]
+            );
         }
     }
     #[test]
-    fn rejects_assembly_classification_outside_inventory() {
-        let error = overlay_assembly_classification_document(
-            &classification(json!([region(
-                "0x020000f0",
-                "0x02000120",
-                "proven",
-                json!(["approved compiler cannot emit instruction form"])
-            )])),
+    fn credited_veneers_must_lie_in_audited_executable_bytes() {
+        let error = classified(
+            "\t.space 0x1f8\n\t.include \"games/THE BROKEN SEAL/SRC/FIELD/RUNPA_JO/IMPORT.INC\"\n",
             &no_inventory(),
-            &executable(),
         )
         .unwrap_err();
-        assert!(error.contains("outside audited executable bytes"));
-    }
-    #[test]
-    fn rejects_proven_assembly_without_reasoning() {
-        let error = overlay_assembly_classification_document(
-            &classification(json!([region(
-                "0x02000120",
-                "0x02000140",
-                "proven",
-                json!([])
-            )])),
-            &no_inventory(),
-            &executable(),
-        )
-        .unwrap_err();
-        assert!(error.contains("lacks retention reasoning"));
-    }
-    #[test]
-    fn scene_reconstruction_cannot_claim_proven_assembly() {
-        let mut row = region(
-            "0x02000120",
-            "0x02000140",
-            "proven",
-            json!(["complete reconstructed scene body"]),
+        assert!(
+            error.contains("outside audited executable bytes"),
+            "{error}"
         );
-        row["kind"] = json!("structured_scene_module");
-        let error = overlay_assembly_classification_document(
-            &classification(json!([row])),
-            &no_inventory(),
-            &executable(),
-        )
-        .unwrap_err();
-        assert!(error.contains("without compiler-impossibility proof"));
     }
 }

@@ -5,6 +5,7 @@
     "before": {
       "format": 1,
       "kind": "typed-table",
+      "address": "0x0809c610",
       "end": "0x0809ddd8",
       "size": 6088,
       "segments": [
@@ -1139,6 +1140,7 @@
     "after": {
       "format": 1,
       "kind": "typed-table",
+      "address": "0x0809e1d8",
       "end": "0x0809e4ce",
       "size": 758,
       "segments": [

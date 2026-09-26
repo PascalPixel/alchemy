@@ -7,6 +7,7 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
+        "address": "0x08d4f480",
         "size": "0x40",
         "segments": [
           {
@@ -225,6 +226,7 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
+        "address": "0x08d50cfc",
         "size": "0x40",
         "segments": [
           {
@@ -426,6 +428,7 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
+        "address": "0x08d5264c",
         "size": "0x40",
         "segments": [
           {
@@ -613,6 +616,7 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
+        "address": "0x08d53d30",
         "size": "0x40",
         "segments": [
           {
@@ -813,6 +817,7 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
+        "address": "0x08d5554c",
         "size": "0x40",
         "segments": [
           {
@@ -991,6 +996,7 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
+        "address": "0x08d5618c",
         "size": "0x40",
         "segments": [
           {

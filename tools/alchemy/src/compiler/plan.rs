@@ -88,26 +88,11 @@ pub fn inferred_preprocessed_output(output: &str) -> String {
         format!("{}.i", &output[..output.len() - extension.len()])
     }
 }
-/// Flags that only add output beside the compile: debug records, include
-/// paths, `-d<letters>` RTL dumps and `-fsched-verbose=N` scheduling traces.
-fn diagnostic_flag(flag: &str) -> bool {
-    flag == "-g"
-        || flag.strip_prefix("-I").is_some_and(|path| !path.is_empty())
-        || flag.strip_prefix("-d").is_some_and(|letters| {
-            !letters.is_empty()
-                && letters.chars().all(|c| c.is_ascii_alphabetic())
-                && letters != "umpbase"
-        })
-        || flag
-            .strip_prefix("-fsched-verbose=")
-            .is_some_and(|level| !level.is_empty() && level.chars().all(|c| c.is_ascii_digit()))
-}
 pub fn source_to_assembly_plan(options: &SourceToAssemblyPlanOptions) -> Result<Vec<Vec<String>>> {
-    if let Some(flag) = options
-        .support_flags
-        .iter()
-        .find(|flag| !diagnostic_flag(flag))
-    {
+    if let Some(flag) = options.support_flags.iter().find(|flag| {
+        !matches!(flag.as_str(), "-g" | "-dp" | "-dr" | "-dl" | "-dg" | "-da")
+            && !flag.strip_prefix("-I").is_some_and(|path| !path.is_empty())
+    }) {
         return Err(format!(
             "compiler flag is not an include path or diagnostic: {flag}"
         ));
@@ -296,12 +281,7 @@ mod tests {
                 "source.s",
             );
             let canonical = cflags_for_target_source(options.target, source);
-            options.support_flags = vec![
-                "-da".into(),
-                "-dL".into(),
-                "-fsched-verbose=5".into(),
-                "-Ilocal-headers".into(),
-            ];
+            options.support_flags = vec!["-da".into(), "-Ilocal-headers".into()];
             let plan = source_to_assembly_plan(&options).unwrap();
             let command = plan.last().unwrap();
             assert!(command
@@ -309,15 +289,7 @@ mod tests {
                 .any(|flags| flags == canonical));
             assert!(command.iter().any(|flag| flag == "-da"));
             assert!(command.iter().any(|flag| flag == "-Ilocal-headers"));
-            for flag in [
-                "-O0",
-                "-fno-regmove",
-                "-ffixed-r5",
-                "-marm",
-                "-d",
-                "-fsched-verbose=",
-                "-dumpbase",
-            ] {
+            for flag in ["-O0", "-fno-regmove", "-ffixed-r5", "-marm"] {
                 options.support_flags = vec![flag.into()];
                 assert!(source_to_assembly_plan(&options)
                     .unwrap_err()

@@ -9,7 +9,8 @@
       "owners": [
         {
           "address": "0x081c2640",
-          "extent": 60
+          "extent": 60,
+          "state": "exact-c"
         }
       ],
       "overlay": null
@@ -22,7 +23,8 @@
       "owners": [
         {
           "address": "0x081c28e0",
-          "extent": 180
+          "extent": 180,
+          "state": "exact-c"
         }
       ],
       "overlay": null
@@ -35,7 +37,8 @@
       "owners": [
         {
           "address": "0x081c2a3c",
-          "extent": 80
+          "extent": 80,
+          "state": "exact-c"
         }
       ],
       "overlay": null
@@ -48,7 +51,8 @@
       "owners": [
         {
           "address": "0x081c2a8c",
-          "extent": 104
+          "extent": 104,
+          "state": "exact-c"
         }
       ],
       "overlay": null
@@ -61,7 +65,8 @@
       "owners": [
         {
           "address": "0x081c2f68",
-          "extent": 104
+          "extent": 104,
+          "state": "exact-c"
         }
       ],
       "overlay": null
@@ -74,7 +79,8 @@
       "owners": [
         {
           "address": "0x081c2fd0",
-          "extent": 116
+          "extent": 116,
+          "state": "exact-c"
         }
       ],
       "overlay": null
@@ -87,7 +93,8 @@
       "owners": [
         {
           "address": "0x081c3044",
-          "extent": 104
+          "extent": 104,
+          "state": "exact-c"
         }
       ],
       "overlay": null
@@ -100,7 +107,8 @@
       "owners": [
         {
           "address": "0x081c3340",
-          "extent": 72
+          "extent": 72,
+          "state": "exact-c"
         }
       ],
       "overlay": null
@@ -113,7 +121,8 @@
       "owners": [
         {
           "address": "0x080132cc",
-          "extent": 4
+          "extent": 4,
+          "state": "exact-c"
         }
       ],
       "overlay": null
@@ -131,7 +140,8 @@
       "owners": [
         {
           "address": "0x08016d5c",
-          "extent": 16
+          "extent": 16,
+          "state": "exact-c"
         }
       ],
       "overlay": null
@@ -149,7 +159,8 @@
       "owners": [
         {
           "address": "0x08016d6c",
-          "extent": 16
+          "extent": 16,
+          "state": "exact-c"
         }
       ],
       "overlay": null
@@ -167,7 +178,8 @@
       "owners": [
         {
           "address": "0x08016db4",
-          "extent": 28
+          "extent": 28,
+          "state": "exact-c"
         }
       ],
       "overlay": null
@@ -180,7 +192,8 @@
       "owners": [
         {
           "address": "0x080caf70",
-          "extent": 84
+          "extent": 84,
+          "state": "exact-c"
         }
       ],
       "overlay": null
@@ -206,11 +219,13 @@
       "owners": [
         {
           "address": "0x081c1e98",
-          "extent": 100
+          "extent": 100,
+          "state": "exact-c"
         },
         {
           "address": "0x081c1efc",
-          "extent": 2
+          "extent": 2,
+          "state": "exact-c"
         }
       ],
       "overlay": null
@@ -232,7 +247,8 @@
       "owners": [
         {
           "address": "0x081c330c",
-          "extent": 32
+          "extent": 32,
+          "state": "exact-c"
         }
       ],
       "overlay": null
@@ -306,7 +322,8 @@
       "owners": [
         {
           "address": "0x081c21f8",
-          "extent": 280
+          "extent": 280,
+          "state": "exact-c"
         }
       ],
       "overlay": null
@@ -388,59 +405,73 @@
       "owners": [
         {
           "address": "0x081c1f3c",
-          "extent": 120
+          "extent": 120,
+          "state": "exact-c"
         },
         {
           "address": "0x081c1fb4",
-          "extent": 10
+          "extent": 10,
+          "state": "exact-c"
         },
         {
           "address": "0x081c1fc0",
-          "extent": 44
+          "extent": 44,
+          "state": "exact-c"
         },
         {
           "address": "0x081c1fec",
-          "extent": 76
+          "extent": 76,
+          "state": "exact-c"
         },
         {
           "address": "0x081c2038",
-          "extent": 84
+          "extent": 84,
+          "state": "exact-c"
         },
         {
           "address": "0x081c208c",
-          "extent": 52
+          "extent": 52,
+          "state": "exact-c"
         },
         {
           "address": "0x081c20c0",
-          "extent": 52
+          "extent": 52,
+          "state": "exact-c"
         },
         {
           "address": "0x081c20f4",
-          "extent": 44
+          "extent": 44,
+          "state": "exact-c"
         },
         {
           "address": "0x081c2120",
-          "extent": 10
+          "extent": 10,
+          "state": "exact-c"
         },
         {
           "address": "0x081c212c",
-          "extent": 44
+          "extent": 44,
+          "state": "exact-c"
         },
         {
           "address": "0x081c2158",
-          "extent": 14
+          "extent": 14,
+          "state": "exact-c"
         },
         {
           "address": "0x081c2168",
-          "extent": 32
+          "extent": 32,
+          "state": "exact-c"
         },
         {
           "address": "0x081c2188",
-          "extent": 40
+          "extent": 40,
+          "state": "exact-c"
         },
         {
           "address": "0x081c21b0",
-          "extent": 72
+          "extent": 72,
+          "state": "exact-c"
         }
       ],
       "overlay": null
@@ -490,23 +521,28 @@
       "owners": [
         {
           "address": "0x081c233c",
-          "extent": 248
+          "extent": 248,
+          "state": "exact-c"
         },
         {
           "address": "0x081c2434",
-          "extent": 164
+          "extent": 164,
+          "state": "exact-c"
         },
         {
           "address": "0x081c24d8",
-          "extent": 152
+          "extent": 152,
+          "state": "exact-c"
         },
         {
           "address": "0x081c2570",
-          "extent": 84
+          "extent": 84,
+          "state": "exact-c"
         },
         {
           "address": "0x081c25c4",
-          "extent": 124
+          "extent": 124,
+          "state": "exact-c"
         }
       ],
       "overlay": null
@@ -536,15 +572,18 @@
       "owners": [
         {
           "address": "0x081c267c",
-          "extent": 120
+          "extent": 120,
+          "state": "exact-c"
         },
         {
           "address": "0x081c26f4",
-          "extent": 228
+          "extent": 228,
+          "state": "exact-c"
         },
         {
           "address": "0x081c27d8",
-          "extent": 64
+          "extent": 64,
+          "state": "exact-c"
         }
       ],
       "overlay": null
@@ -562,7 +601,8 @@
       "owners": [
         {
           "address": "0x081c2818",
-          "extent": 200
+          "extent": 200,
+          "state": "exact-c"
         }
       ],
       "overlay": null
@@ -588,7 +628,8 @@
       "owners": [
         {
           "address": "0x081c2994",
-          "extent": 168
+          "extent": 168,
+          "state": "exact-c"
         }
       ],
       "overlay": null
@@ -606,7 +647,8 @@
       "owners": [
         {
           "address": "0x081c30cc",
-          "extent": 116
+          "extent": 116,
+          "state": "exact-c"
         }
       ],
       "overlay": null
@@ -624,7 +666,8 @@
       "owners": [
         {
           "address": "0x081c3140",
-          "extent": 116
+          "extent": 116,
+          "state": "exact-c"
         }
       ],
       "overlay": null
@@ -637,7 +680,8 @@
       "owners": [
         {
           "address": "0x081c30ac",
-          "extent": 30
+          "extent": 30,
+          "state": "exact-c"
         }
       ],
       "overlay": null
@@ -650,7 +694,8 @@
       "owners": [
         {
           "address": "0x081c33b0",
-          "extent": 18
+          "extent": 18,
+          "state": "exact-c"
         }
       ],
       "overlay": null
@@ -663,7 +708,8 @@
       "owners": [
         {
           "address": "0x081c33c4",
-          "extent": 18
+          "extent": 18,
+          "state": "exact-c"
         }
       ],
       "overlay": null
@@ -676,7 +722,8 @@
       "owners": [
         {
           "address": "0x081c33d8",
-          "extent": 18
+          "extent": 18,
+          "state": "exact-c"
         }
       ],
       "overlay": null
@@ -689,7 +736,8 @@
       "owners": [
         {
           "address": "0x081c33ec",
-          "extent": 12
+          "extent": 12,
+          "state": "exact-c"
         }
       ],
       "overlay": null
@@ -702,7 +750,8 @@
       "owners": [
         {
           "address": "0x081c33f8",
-          "extent": 12
+          "extent": 12,
+          "state": "exact-c"
         }
       ],
       "overlay": null
@@ -724,7 +773,8 @@
       "owners": [
         {
           "address": "0x081c31b4",
-          "extent": 344
+          "extent": 344,
+          "state": "exact-c"
         }
       ],
       "overlay": null
@@ -818,49 +868,79 @@
       "local_symbols": [],
       "owners": [
         {
-          "address": "0x02000038"
+          "address": "0x02000038",
+          "extent": 70,
+          "state": "exact-c"
         },
         {
-          "address": "0x02000650"
+          "address": "0x02000650",
+          "extent": 8,
+          "state": "exact-c"
         },
         {
-          "address": "0x02000658"
+          "address": "0x02000658",
+          "extent": 4,
+          "state": "exact-c"
         },
         {
-          "address": "0x0200065c"
+          "address": "0x0200065c",
+          "extent": 8,
+          "state": "exact-c"
         },
         {
-          "address": "0x02000664"
+          "address": "0x02000664",
+          "extent": 20,
+          "state": "exact-c"
         },
         {
-          "address": "0x02000678"
+          "address": "0x02000678",
+          "extent": 12,
+          "state": "exact-c"
         },
         {
-          "address": "0x02000684"
+          "address": "0x02000684",
+          "extent": 40,
+          "state": "exact-c"
         },
         {
-          "address": "0x02000874"
+          "address": "0x02000874",
+          "extent": 96,
+          "state": "exact-c"
         },
         {
-          "address": "0x020008d4"
+          "address": "0x020008d4",
+          "extent": 40,
+          "state": "exact-c"
         },
         {
-          "address": "0x020008fc"
+          "address": "0x020008fc",
+          "extent": 40,
+          "state": "exact-c"
         },
         {
-          "address": "0x02000924"
+          "address": "0x02000924",
+          "extent": 116,
+          "state": "exact-c"
         },
         {
-          "address": "0x02000998"
+          "address": "0x02000998",
+          "extent": 116,
+          "state": "exact-c"
         },
         {
-          "address": "0x02000a0c"
+          "address": "0x02000a0c",
+          "extent": 8,
+          "state": "exact-c"
         },
         {
-          "address": "0x02000a14"
+          "address": "0x02000a14",
+          "extent": 4,
+          "state": "exact-c"
         },
         {
-          "address": "0x02000b28"
+          "address": "0x02000b28",
+          "extent": 4,
+          "state": "exact-c"
         }
       ]
     },
@@ -945,40 +1025,64 @@
       "local_symbols": [],
       "owners": [
         {
-          "address": "0x02000038"
+          "address": "0x02000038",
+          "extent": 8,
+          "state": "exact-c"
         },
         {
-          "address": "0x02000040"
+          "address": "0x02000040",
+          "extent": 4,
+          "state": "exact-c"
         },
         {
-          "address": "0x02000044"
+          "address": "0x02000044",
+          "extent": 8,
+          "state": "exact-c"
         },
         {
-          "address": "0x0200004c"
+          "address": "0x0200004c",
+          "extent": 8,
+          "state": "exact-c"
         },
         {
-          "address": "0x02000054"
+          "address": "0x02000054",
+          "extent": 68,
+          "state": "exact-c"
         },
         {
-          "address": "0x0200153c"
+          "address": "0x0200153c",
+          "extent": 28,
+          "state": "exact-c"
         },
         {
-          "address": "0x02001650"
+          "address": "0x02001650",
+          "extent": 58,
+          "state": "exact-c"
         },
         {
-          "address": "0x0200168c"
+          "address": "0x0200168c",
+          "extent": 76,
+          "state": "exact-c"
         },
         {
-          "address": "0x02002c30"
+          "address": "0x02002c30",
+          "extent": 2,
+          "state": "exact-c"
         },
         {
-          "address": "0x02002c34"
+          "address": "0x02002c34",
+          "extent": 2,
+          "state": "exact-c"
         },
         {
-          "address": "0x02002c38"
+          "address": "0x02002c38",
+          "extent": 44,
+          "state": "exact-c"
         },
         {
-          "address": "0x02002f84"
+          "address": "0x02002f84",
+          "extent": 4,
+          "state": "exact-c"
         }
       ]
     },
@@ -1019,25 +1123,39 @@
       "local_symbols": [],
       "owners": [
         {
-          "address": "0x02000038"
+          "address": "0x02000038",
+          "extent": 8,
+          "state": "exact-c"
         },
         {
-          "address": "0x02000040"
+          "address": "0x02000040",
+          "extent": 4,
+          "state": "exact-c"
         },
         {
-          "address": "0x02000044"
+          "address": "0x02000044",
+          "extent": 8,
+          "state": "exact-c"
         },
         {
-          "address": "0x0200004c"
+          "address": "0x0200004c",
+          "extent": 8,
+          "state": "exact-c"
         },
         {
-          "address": "0x0200009c"
+          "address": "0x0200009c",
+          "extent": 42,
+          "state": "exact-c"
         },
         {
-          "address": "0x02000120"
+          "address": "0x02000120",
+          "extent": 8,
+          "state": "exact-c"
         },
         {
-          "address": "0x02000308"
+          "address": "0x02000308",
+          "extent": 4,
+          "state": "exact-c"
         }
       ]
     },
@@ -1054,167 +1172,208 @@
       "owners": [
         {
           "address": "0x08025b58",
-          "extent": 42
+          "extent": 42,
+          "state": "exact-c"
         },
         {
           "address": "0x08025b84",
-          "extent": 48
+          "extent": 48,
+          "state": "exact-c"
         },
         {
           "address": "0x08025bb4",
-          "extent": 46
+          "extent": 46,
+          "state": "not-yet-c"
         },
         {
           "address": "0x08025be4",
-          "extent": 40
+          "extent": 40,
+          "state": "exact-c"
         },
         {
           "address": "0x08025c0c",
-          "extent": 40
+          "extent": 40,
+          "state": "exact-c"
         },
         {
           "address": "0x08025c34",
-          "extent": 40
+          "extent": 40,
+          "state": "exact-c"
         },
         {
           "address": "0x08025c5c",
-          "extent": 46
+          "extent": 46,
+          "state": "not-yet-c"
         },
         {
           "address": "0x08025c8c",
-          "extent": 40
+          "extent": 40,
+          "state": "exact-c"
         },
         {
           "address": "0x08025cb4",
-          "extent": 40
+          "extent": 40,
+          "state": "exact-c"
         },
         {
           "address": "0x08025cdc",
-          "extent": 40
+          "extent": 40,
+          "state": "exact-c"
         },
         {
           "address": "0x08025d04",
-          "extent": 40
+          "extent": 40,
+          "state": "exact-c"
         },
         {
           "address": "0x08025d2c",
-          "extent": 40
+          "extent": 40,
+          "state": "exact-c"
         },
         {
           "address": "0x08025d54",
-          "extent": 40
+          "extent": 40,
+          "state": "exact-c"
         },
         {
           "address": "0x08025d7c",
-          "extent": 40
+          "extent": 40,
+          "state": "exact-c"
         },
         {
           "address": "0x08025da4",
-          "extent": 40
+          "extent": 40,
+          "state": "exact-c"
         },
         {
           "address": "0x08025dcc",
-          "extent": 40
+          "extent": 40,
+          "state": "exact-c"
         },
         {
           "address": "0x08025df4",
-          "extent": 40
+          "extent": 40,
+          "state": "exact-c"
         },
         {
           "address": "0x08025e1c",
-          "extent": 40
+          "extent": 40,
+          "state": "exact-c"
         },
         {
           "address": "0x08025e44",
-          "extent": 40
+          "extent": 40,
+          "state": "exact-c"
         },
         {
           "address": "0x08025e6c",
-          "extent": 40
+          "extent": 40,
+          "state": "exact-c"
         },
         {
           "address": "0x08025e94",
-          "extent": 40
+          "extent": 40,
+          "state": "exact-c"
         },
         {
           "address": "0x08025ebc",
-          "extent": 42
+          "extent": 42,
+          "state": "exact-c"
         },
         {
           "address": "0x08025ee8",
-          "extent": 58
+          "extent": 58,
+          "state": "exact-c"
         },
         {
           "address": "0x08025f24",
-          "extent": 58
+          "extent": 58,
+          "state": "exact-c"
         },
         {
           "address": "0x08025f60",
-          "extent": 58
+          "extent": 58,
+          "state": "exact-c"
         },
         {
           "address": "0x08025f9c",
-          "extent": 52
+          "extent": 52,
+          "state": "not-yet-c"
         },
         {
           "address": "0x08025fd0",
-          "extent": 58
+          "extent": 58,
+          "state": "exact-c"
         },
         {
           "address": "0x0802600c",
-          "extent": 58
+          "extent": 58,
+          "state": "exact-c"
         },
         {
           "address": "0x08026048",
-          "extent": 58
+          "extent": 58,
+          "state": "exact-c"
         },
         {
           "address": "0x08026084",
-          "extent": 58
+          "extent": 58,
+          "state": "exact-c"
         },
         {
           "address": "0x080260c0",
-          "extent": 58
+          "extent": 58,
+          "state": "exact-c"
         },
         {
           "address": "0x080260fc",
-          "extent": 60
+          "extent": 60,
+          "state": "exact-c"
         },
         {
           "address": "0x08026138",
-          "extent": 60
+          "extent": 60,
+          "state": "exact-c"
         },
         {
           "address": "0x08026174",
-          "extent": 60
+          "extent": 60,
+          "state": "exact-c"
         },
         {
           "address": "0x080261b0",
-          "extent": 40
+          "extent": 40,
+          "state": "exact-c"
         },
         {
           "address": "0x080261d8",
-          "extent": 40
+          "extent": 40,
+          "state": "exact-c"
         },
         {
           "address": "0x08026200",
-          "extent": 58
+          "extent": 58,
+          "state": "exact-c"
         },
         {
           "address": "0x0802623c",
-          "extent": 58
+          "extent": 58,
+          "state": "exact-c"
         },
         {
           "address": "0x08026278",
-          "extent": 56
+          "extent": 56,
+          "state": "exact-c"
         },
         {
           "address": "0x080262b0",
-          "extent": 56
+          "extent": 56,
+          "state": "exact-c"
         },
         {
           "address": "0x080262e8",
-          "extent": 56
+          "extent": 56,
+          "state": "exact-c"
         }
       ],
       "overlay": null
@@ -1227,7 +1386,8 @@
       "owners": [
         {
           "address": "0x08024c50",
-          "extent": 30
+          "extent": 30,
+          "state": "exact-c"
         }
       ],
       "overlay": null
@@ -1240,19 +1400,23 @@
       "owners": [
         {
           "address": "0x0802d23c",
-          "extent": 10
+          "extent": 10,
+          "state": "exact-c"
         },
         {
           "address": "0x0802d248",
-          "extent": 32
+          "extent": 32,
+          "state": "exact-c"
         },
         {
           "address": "0x0802d268",
-          "extent": 32
+          "extent": 32,
+          "state": "exact-c"
         },
         {
           "address": "0x0802d288",
-          "extent": 40
+          "extent": 40,
+          "state": "exact-c"
         }
       ],
       "overlay": null
@@ -1265,7 +1429,8 @@
       "owners": [
         {
           "address": "0x0802d3ec",
-          "extent": 20
+          "extent": 20,
+          "state": "exact-c"
         }
       ],
       "overlay": null
@@ -1278,7 +1443,8 @@
       "owners": [
         {
           "address": "0x08024ed4",
-          "extent": 10
+          "extent": 10,
+          "state": "exact-c"
         }
       ],
       "overlay": null
@@ -1291,7 +1457,8 @@
       "owners": [
         {
           "address": "0x08023f14",
-          "extent": 18
+          "extent": 18,
+          "state": "exact-c"
         }
       ],
       "overlay": null
@@ -1304,7 +1471,8 @@
       "owners": [
         {
           "address": "0x08023f28",
-          "extent": 18
+          "extent": 18,
+          "state": "exact-c"
         }
       ],
       "overlay": null
@@ -1317,7 +1485,8 @@
       "owners": [
         {
           "address": "0x0802471c",
-          "extent": 26
+          "extent": 26,
+          "state": "exact-c"
         }
       ],
       "overlay": null
@@ -1330,7 +1499,8 @@
       "owners": [
         {
           "address": "0x081201b4",
-          "extent": 16
+          "extent": 16,
+          "state": "exact-c"
         }
       ],
       "overlay": null
@@ -1343,7 +1513,8 @@
       "owners": [
         {
           "address": "0x08015768",
-          "extent": 16
+          "extent": 16,
+          "state": "exact-c"
         }
       ],
       "overlay": null
@@ -1365,7 +1536,8 @@
       "owners": [
         {
           "address": "0x0803d4bc",
-          "extent": 20
+          "extent": 20,
+          "state": "exact-c"
         }
       ],
       "overlay": null
@@ -1387,7 +1559,8 @@
       "owners": [
         {
           "address": "0x0803d4d0",
-          "extent": 20
+          "extent": 20,
+          "state": "exact-c"
         }
       ],
       "overlay": null
@@ -1405,7 +1578,8 @@
       "owners": [
         {
           "address": "0x080b0288",
-          "extent": 16
+          "extent": 16,
+          "state": "exact-c"
         }
       ],
       "overlay": null
@@ -1418,7 +1592,8 @@
       "owners": [
         {
           "address": "0x080d74f0",
-          "extent": 52
+          "extent": 52,
+          "state": "exact-c"
         }
       ],
       "overlay": null
@@ -1431,7 +1606,8 @@
       "owners": [
         {
           "address": "0x080d870c",
-          "extent": 52
+          "extent": 52,
+          "state": "exact-c"
         }
       ],
       "overlay": null
@@ -1444,7 +1620,8 @@
       "owners": [
         {
           "address": "0x0811b16c",
-          "extent": 20
+          "extent": 20,
+          "state": "exact-c"
         }
       ],
       "overlay": null
@@ -1457,7 +1634,8 @@
       "owners": [
         {
           "address": "0x080c9920",
-          "extent": 20
+          "extent": 20,
+          "state": "exact-c"
         }
       ],
       "overlay": null
@@ -1470,7 +1648,8 @@
       "owners": [
         {
           "address": "0x08024ddc",
-          "extent": 16
+          "extent": 16,
+          "state": "exact-c"
         }
       ],
       "overlay": null
@@ -1483,7 +1662,8 @@
       "owners": [
         {
           "address": "0x081a1288",
-          "extent": 12
+          "extent": 12,
+          "state": "exact-c"
         }
       ],
       "overlay": null
@@ -1496,7 +1676,8 @@
       "owners": [
         {
           "address": "0x08013300",
-          "extent": 12
+          "extent": 12,
+          "state": "exact-c"
         }
       ],
       "overlay": null
@@ -1509,7 +1690,8 @@
       "owners": [
         {
           "address": "0x080ebe94",
-          "extent": 18
+          "extent": 18,
+          "state": "exact-c"
         }
       ],
       "overlay": null
@@ -1551,7 +1733,9 @@
       "local_symbols": [],
       "owners": [
         {
-          "address": "0x020026f4"
+          "address": "0x020026f4",
+          "extent": 188,
+          "state": "not-yet-c"
         }
       ]
     },
@@ -1736,7 +1920,9 @@
       "local_symbols": [],
       "owners": [
         {
-          "address": "0x02000510"
+          "address": "0x02000510",
+          "extent": 5404,
+          "state": "not-yet-c"
         }
       ]
     },
@@ -1765,27 +1951,33 @@
       "owners": [
         {
           "address": "0x080233d0",
-          "extent": 62
+          "extent": 62,
+          "state": "exact-c"
         },
         {
           "address": "0x08023410",
-          "extent": 62
+          "extent": 62,
+          "state": "exact-c"
         },
         {
           "address": "0x08023450",
-          "extent": 96
+          "extent": 96,
+          "state": "exact-c"
         },
         {
           "address": "0x080234b0",
-          "extent": 26
+          "extent": 26,
+          "state": "exact-c"
         },
         {
           "address": "0x080234cc",
-          "extent": 36
+          "extent": 36,
+          "state": "exact-c"
         },
         {
           "address": "0x080234f0",
-          "extent": 32
+          "extent": 32,
+          "state": "exact-c"
         }
       ],
       "overlay": null
@@ -1847,67 +2039,83 @@
       "owners": [
         {
           "address": "0x080d2d84",
-          "extent": 14
+          "extent": 14,
+          "state": "exact-c"
         },
         {
           "address": "0x080d2d94",
-          "extent": 20
+          "extent": 20,
+          "state": "exact-c"
         },
         {
           "address": "0x080d2da8",
-          "extent": 32
+          "extent": 32,
+          "state": "exact-c"
         },
         {
           "address": "0x080d2dc8",
-          "extent": 28
+          "extent": 28,
+          "state": "exact-c"
         },
         {
           "address": "0x080d2de4",
-          "extent": 54
+          "extent": 54,
+          "state": "not-yet-c"
         },
         {
           "address": "0x080d2e1c",
-          "extent": 36
+          "extent": 36,
+          "state": "exact-c"
         },
         {
           "address": "0x080d2e40",
-          "extent": 16
+          "extent": 16,
+          "state": "exact-c"
         },
         {
           "address": "0x080d2e50",
-          "extent": 40
+          "extent": 40,
+          "state": "exact-c"
         },
         {
           "address": "0x080d2e78",
-          "extent": 42
+          "extent": 42,
+          "state": "exact-c"
         },
         {
           "address": "0x080d2ea4",
-          "extent": 48
+          "extent": 48,
+          "state": "exact-c"
         },
         {
           "address": "0x080d2ed4",
-          "extent": 50
+          "extent": 50,
+          "state": "exact-c"
         },
         {
           "address": "0x080d2f08",
-          "extent": 64
+          "extent": 64,
+          "state": "exact-c"
         },
         {
           "address": "0x080d2f48",
-          "extent": 128
+          "extent": 128,
+          "state": "not-yet-c"
         },
         {
           "address": "0x080d2fc8",
-          "extent": 50
+          "extent": 50,
+          "state": "exact-c"
         },
         {
           "address": "0x080d2ffc",
-          "extent": 64
+          "extent": 64,
+          "state": "exact-c"
         },
         {
           "address": "0x080d303c",
-          "extent": 52
+          "extent": 52,
+          "state": "exact-c"
         }
       ],
       "overlay": null
@@ -1961,19 +2169,23 @@
       "owners": [
         {
           "address": "0x080d32b8",
-          "extent": 16
+          "extent": 16,
+          "state": "exact-c"
         },
         {
           "address": "0x080d32c8",
-          "extent": 56
+          "extent": 56,
+          "state": "exact-c"
         },
         {
           "address": "0x080d3300",
-          "extent": 44
+          "extent": 44,
+          "state": "not-yet-c"
         },
         {
           "address": "0x080d332c",
-          "extent": 16
+          "extent": 16,
+          "state": "exact-c"
         }
       ],
       "overlay": null
@@ -2007,31 +2219,38 @@
       "owners": [
         {
           "address": "0x080235f8",
-          "extent": 16
+          "extent": 16,
+          "state": "exact-c"
         },
         {
           "address": "0x08023608",
-          "extent": 44
+          "extent": 44,
+          "state": "exact-c"
         },
         {
           "address": "0x08023634",
-          "extent": 48
+          "extent": 48,
+          "state": "not-yet-c"
         },
         {
           "address": "0x08023664",
-          "extent": 26
+          "extent": 26,
+          "state": "exact-c"
         },
         {
           "address": "0x08023680",
-          "extent": 38
+          "extent": 38,
+          "state": "not-yet-c"
         },
         {
           "address": "0x080236a8",
-          "extent": 38
+          "extent": 38,
+          "state": "not-yet-c"
         },
         {
           "address": "0x080236d0",
-          "extent": 24
+          "extent": 24,
+          "state": "exact-c"
         }
       ],
       "overlay": null
@@ -2081,16 +2300,24 @@
       "local_symbols": [],
       "owners": [
         {
-          "address": "0x02000314"
+          "address": "0x02000314",
+          "extent": 56,
+          "state": "not-yet-c"
         },
         {
-          "address": "0x0200034c"
+          "address": "0x0200034c",
+          "extent": 64,
+          "state": "not-yet-c"
         },
         {
-          "address": "0x0200038c"
+          "address": "0x0200038c",
+          "extent": 388,
+          "state": "not-yet-c"
         },
         {
-          "address": "0x02000510"
+          "address": "0x02000510",
+          "extent": 92,
+          "state": "not-yet-c"
         }
       ]
     },
@@ -2135,51 +2362,63 @@
       "owners": [
         {
           "address": "0x080b0a94",
-          "extent": 36
+          "extent": 36,
+          "state": "exact-c"
         },
         {
           "address": "0x080b0ab8",
-          "extent": 192
+          "extent": 192,
+          "state": "not-yet-c"
         },
         {
           "address": "0x080b0b78",
-          "extent": 62
+          "extent": 62,
+          "state": "not-yet-c"
         },
         {
           "address": "0x080b0bb8",
-          "extent": 190
+          "extent": 190,
+          "state": "not-yet-c"
         },
         {
           "address": "0x080b0c78",
-          "extent": 34
+          "extent": 34,
+          "state": "exact-c"
         },
         {
           "address": "0x080b0c9c",
-          "extent": 102
+          "extent": 102,
+          "state": "not-yet-c"
         },
         {
           "address": "0x080b0d04",
-          "extent": 84
+          "extent": 84,
+          "state": "not-yet-c"
         },
         {
           "address": "0x080b0d58",
-          "extent": 172
+          "extent": 172,
+          "state": "not-yet-c"
         },
         {
           "address": "0x080b0e04",
-          "extent": 58
+          "extent": 58,
+          "state": "exact-c"
         },
         {
           "address": "0x080b0e40",
-          "extent": 178
+          "extent": 178,
+          "state": "exact-c"
         },
         {
           "address": "0x080b0ef4",
-          "extent": 90
+          "extent": 90,
+          "state": "exact-c"
         },
         {
           "address": "0x080b0f50",
-          "extent": 10
+          "extent": 10,
+          "state": "exact-c"
         }
       ],
       "overlay": null
@@ -2209,23 +2448,28 @@
       "owners": [
         {
           "address": "0x080aecc8",
-          "extent": 36
+          "extent": 36,
+          "state": "exact-c"
         },
         {
           "address": "0x080aecec",
-          "extent": 76
+          "extent": 76,
+          "state": "exact-c"
         },
         {
           "address": "0x080aed38",
-          "extent": 50
+          "extent": 50,
+          "state": "exact-c"
         },
         {
           "address": "0x080aed6c",
-          "extent": 140
+          "extent": 140,
+          "state": "not-yet-c"
         },
         {
           "address": "0x080aedf8",
-          "extent": 72
+          "extent": 72,
+          "state": "exact-c"
         }
       ],
       "overlay": null
@@ -2255,7 +2499,8 @@
       "owners": [
         {
           "address": "0x080aeec8",
-          "extent": 108
+          "extent": 108,
+          "state": "exact-c"
         }
       ],
       "overlay": null
@@ -2277,15 +2522,18 @@
       "owners": [
         {
           "address": "0x080af008",
-          "extent": 76
+          "extent": 76,
+          "state": "exact-c"
         },
         {
           "address": "0x080af054",
-          "extent": 62
+          "extent": 62,
+          "state": "exact-c"
         },
         {
           "address": "0x080af094",
-          "extent": 80
+          "extent": 80,
+          "state": "not-yet-c"
         }
       ],
       "overlay": null
@@ -2383,12 +2631,15 @@
       "local_symbols": [],
       "owners": [
         {
-          "address": "0x02000d14"
+          "address": "0x02000d14",
+          "extent": 2088,
+          "state": "not-yet-c"
         }
       ]
     },
     {
       "id": "tla-summon-0815f16c",
+      "source": "recon/tla/en/units/tla-summon-0815f16c.c",
       "local_symbols": [],
       "absolute_symbols": {
         "__divsi3": {
@@ -2411,13 +2662,15 @@
       "owners": [
         {
           "address": "0x0815f16c",
-          "extent": 10584
+          "extent": 10584,
+          "state": "not-yet-c"
         }
       ],
       "overlay": null
     },
     {
       "id": "tla-summon-08175f74",
+      "source": "recon/tla/en/units/tla-summon-08175f74.c",
       "local_symbols": [],
       "absolute_symbols": {
         "__divsi3": {
@@ -2440,13 +2693,15 @@
       "owners": [
         {
           "address": "0x08175f74",
-          "extent": 9996
+          "extent": 9996,
+          "state": "not-yet-c"
         }
       ],
       "overlay": null
     },
     {
       "id": "tla-battle-summon-ulysses",
+      "source": "recon/tla/en/units/battle-summon-ulysses-retained.c",
       "local_symbols": [],
       "absolute_symbols": {
         "__divsi3": {
@@ -2537,7 +2792,8 @@
       "owners": [
         {
           "address": "0x0817ea58",
-          "extent": 8764
+          "extent": 8764,
+          "state": "not-yet-c"
         }
       ],
       "overlay": null

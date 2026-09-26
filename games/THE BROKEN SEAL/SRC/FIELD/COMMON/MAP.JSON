@@ -7,6 +7,7 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
+        "address": "0x084ba758",
         "size": "0x3c",
         "segments": [
           {
@@ -56,6 +57,7 @@
       "sparse_cells": {
         "format": 1,
         "kind": "typed-table",
+        "address": "0x084baaa0",
         "size": "0x3",
         "record_size": 3,
         "segments": [{"name": "terminator", "end": "0x084baaa3", "stride": 1, "element": "u8", "fill": 255}]
@@ -73,6 +75,7 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
+        "address": "0x084c9b2c",
         "size": "0x3c",
         "segments": [
           {
@@ -170,6 +173,7 @@
       "sparse_cells": {
         "format": 1,
         "kind": "typed-table",
+        "address": "0x084cece8",
         "size": "0x9",
         "record_size": 3,
         "segments": [
@@ -196,6 +200,7 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
+        "address": "0x0852e044",
         "size": "0x3c",
         "segments": [
           {
@@ -250,6 +255,7 @@
       "sparse_cells": {
         "format": 1,
         "kind": "typed-table",
+        "address": "0x0852ff84",
         "size": "0x6",
         "record_size": 3,
         "segments": [
@@ -270,6 +276,7 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
+        "address": "0x086c992c",
         "size": "0x3c",
         "segments": [
           {
@@ -342,6 +349,7 @@
       "sparse_cells": {
         "format": 1,
         "kind": "typed-table",
+        "address": "0x086cab04",
         "size": "0xf",
         "record_size": 3,
         "segments": [
@@ -368,6 +376,7 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
+        "address": "0x085392d4",
         "size": "0x3c",
         "segments": [
           {
@@ -473,6 +482,7 @@
       "sparse_cells": {
         "format": 1,
         "kind": "typed-table",
+        "address": "0x0853b9b0",
         "size": "0x21",
         "record_size": 3,
         "segments": [

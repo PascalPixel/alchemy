@@ -61,10 +61,8 @@ pub(super) fn render(root: &Path, game: &str, source: &Path) -> Result<Vec<u8>, 
         .ok_or("Sequence has no native voice-bank metadata")?;
     let bank_address = number(&skeleton["externals"]["tone_bank"])?;
     let sound = root.join("games").join(game).join("SOUND");
-    let engine_path = format!("games/{game}/SOUND/INSTRUMENT/ENGINE.JSON");
-    let mut engine: Value =
-        serde_json::from_slice(&read(&root.join(&engine_path))?).map_err(|e| e.to_string())?;
-    engine["address"] = crate::build_assets::placed_address(root, &engine_path, "")?.into();
+    let engine: Value = serde_json::from_slice(&read(&sound.join("INSTRUMENT/ENGINE.JSON"))?)
+        .map_err(|e| e.to_string())?;
     let segments = engine["segments"]
         .as_array()
         .ok_or("No instrument segments")?;

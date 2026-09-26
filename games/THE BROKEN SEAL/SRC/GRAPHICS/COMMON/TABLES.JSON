@@ -14,6 +14,7 @@
           "format": 1,
           "kind": "typed-table",
           "id": "resource_table",
+          "address": "0x08073852",
           "end": "0x08073864",
           "size": 18,
           "segments": [
@@ -25,6 +26,7 @@
           "format": 1,
           "kind": "typed-table",
           "id": "tile_pointer",
+          "address": "0x08073965",
           "end": "0x08077000",
           "size": 13979,
           "segments": [
@@ -45,6 +47,7 @@
     "0x080af20c": {
       "format": 1,
       "kind": "typed-table",
+      "address": "0x080af20c",
       "end": "0x080af26c",
       "size": 96,
       "consumer": {"display_rows": 3, "display_columns": 4, "mask_rows": 6},
@@ -84,6 +87,7 @@
     "0x080af28c": {
       "format": 1,
       "kind": "typed-table",
+      "address": "0x080af28c",
       "end": "0x080b0000",
       "size": 3444,
       "segments": [
@@ -179,6 +183,7 @@
     "0x080c2a0a": {
       "format": 1,
       "kind": "typed-table",
+      "address": "0x080c2a0a",
       "end": "0x080c3734",
       "size": 3370,
       "segments": [
@@ -466,6 +471,7 @@
     "0x080c3f34": {
       "format": 1,
       "kind": "typed-table",
+      "address": "0x080c3f34",
       "end": "0x080c5938",
       "size": 6660,
       "record_size": 20,
@@ -4291,6 +4297,7 @@
     "0x080c5938": {
       "format": 1,
       "kind": "typed-table",
+      "address": "0x080c5938",
       "end": "0x080c5a30",
       "size": 248,
       "segments": [
@@ -4405,6 +4412,7 @@
     "0x08411474": {
       "format": 1,
       "kind": "typed-table",
+      "address": "0x08411474",
       "end": "0x08411e74",
       "size": 2560,
       "segments": [

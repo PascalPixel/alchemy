@@ -402,6 +402,7 @@ AlchemyC_02001004:
 	.space 0x220
 AlchemyC_02001224:
 	.space 0x20
+Func_02001244:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r9
@@ -654,6 +655,7 @@ AlchemyC_020015ac:
 	.space 0x80
 AlchemyC_0200162c:
 	.space 0x1c0
+Func_020017ec:
 	push	{r5, r6, r7, lr}
 	mov	r7, r8
 	push	{r7}

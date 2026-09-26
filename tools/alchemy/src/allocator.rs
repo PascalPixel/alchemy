@@ -112,7 +112,7 @@ fn run(args: &[String]) -> Result<(), String> {
     checked(&bundle.join("cc1"), &cc1, &work)?;
 
     println!("allocator dumps kept in {}", work.display());
-    println!("read the .rtl, .lreg and .greg dumps there for pseudo-to-register decisions");
+    println!("run: psynergy inspect allocator {}", work.display());
     Ok(())
 }
 

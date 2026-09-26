@@ -7,6 +7,7 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
+        "address": "0x0875bdd8",
         "size": "0x3c",
         "segments": [
           {
@@ -59,6 +60,7 @@
       "sparse_cells": {
         "format": 1,
         "kind": "typed-table",
+        "address": "0x087603d8",
         "size": "0x3",
         "record_size": 3,
         "segments": [{"name": "terminator", "end": "0x087603db", "stride": 1, "element": "u8", "fill": 255}]
@@ -76,6 +78,7 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
+        "address": "0x087604e4",
         "size": "0x3c",
         "segments": [
           {
@@ -208,6 +211,7 @@
       "sparse_cells": {
         "format": 1,
         "kind": "typed-table",
+        "address": "0x087620ac",
         "size": "0x9",
         "record_size": 3,
         "segments": [
@@ -234,6 +238,7 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
+        "address": "0x08762228",
         "size": "0x3c",
         "segments": [
           {
@@ -360,6 +365,7 @@
       "sparse_cells": {
         "format": 1,
         "kind": "typed-table",
+        "address": "0x08763b5c",
         "size": "0x9",
         "record_size": 3,
         "segments": [
@@ -386,6 +392,7 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
+        "address": "0x08763cc4",
         "size": "0x3c",
         "segments": [
           {
@@ -509,6 +516,7 @@
       "sparse_cells": {
         "format": 1,
         "kind": "typed-table",
+        "address": "0x0876519c",
         "size": "0x3",
         "record_size": 3,
         "segments": [{"name": "terminator", "end": "0x0876519f", "stride": 1, "element": "u8", "fill": 255}]
@@ -526,6 +534,7 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
+        "address": "0x087651a0",
         "size": "0x3c",
         "segments": [
           {
@@ -649,6 +658,7 @@
       "sparse_cells": {
         "format": 1,
         "kind": "typed-table",
+        "address": "0x087666e8",
         "size": "0x6",
         "record_size": 3,
         "segments": [
@@ -669,6 +679,7 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
+        "address": "0x087666f0",
         "size": "0x3c",
         "segments": [
           {
@@ -795,6 +806,7 @@
       "sparse_cells": {
         "format": 1,
         "kind": "typed-table",
+        "address": "0x087685a8",
         "size": "0x9",
         "record_size": 3,
         "segments": [

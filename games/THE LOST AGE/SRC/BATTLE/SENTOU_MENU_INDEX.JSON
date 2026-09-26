@@ -6,6 +6,7 @@
       "format": 1,
       "kind": "typed-table",
       "id": "range_0810c348",
+      "address": "0x0810c348",
       "end": "0x0810c3ca",
       "size": 130,
       "segments": [
@@ -45,6 +46,7 @@
       "format": 1,
       "kind": "typed-table",
       "id": "range_0810c3f4",
+      "address": "0x0810c3f4",
       "end": "0x08118000",
       "size": 48140,
       "segments": [

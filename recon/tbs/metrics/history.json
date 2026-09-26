@@ -104,22 +104,22 @@
     {"date": "2026-09-23", "tbs": {"percent": 57.37}, "tla": {"percent": 2.14}, "models": {"Opus 5.5": 92}},
     {
       "date": "2026-09-24",
-      "tbs": {"done": 968418, "executable": 1375934},
+      "tbs": {"done": 967498, "executable": 1375934},
       "tla": {"done": 42186, "executable": 1975640},
-      "models": {"Opus 5.5": 1252}
+      "models": {"Opus 5.5": 1253}
     },
     {
-      "date": "2026-09-25",
+      "date": "2026-09-26",
       "tbs": {"done": 988178, "executable": 1375934},
       "tla": {"done": 42332, "executable": 1975640},
-      "models": {"Astra 6": 20, "Luna 6": 1, "Opus 5.5": 36, "Sol 5.6": 3}
+      "models": {"Opus 5.5": 1, "Sol 5.6": 56}
     }
   ],
   "figures": {
-    "date": "2026-09-25",
+    "date": "2026-09-26",
     "tbs": {"done": 988178, "executable": 1375934},
     "tla": {"done": 42332, "executable": 1975640},
-    "models": {"Astra 6": 20, "Luna 6": 1, "Opus 5.5": 36, "Sol 5.6": 3},
-    "files": "a5d9ab2fd5df655b"
+    "models": {"Opus 5.5": 1, "Sol 5.6": 56},
+    "files": "b851f52fc1997bc0"
   }
 }

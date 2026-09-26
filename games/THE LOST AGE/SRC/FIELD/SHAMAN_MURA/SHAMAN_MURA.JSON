@@ -7,6 +7,7 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
+        "address": "0x08dddef8",
         "size": "0x40",
         "segments": [
           {
@@ -182,6 +183,7 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
+        "address": "0x08dec404",
         "size": "0x40",
         "segments": [
           {
@@ -377,6 +379,7 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
+        "address": "0x08dede20",
         "size": "0x40",
         "segments": [
           {
@@ -615,6 +618,7 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
+        "address": "0x08de3ddc",
         "size": "0x40",
         "segments": [
           {

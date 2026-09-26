@@ -1695,6 +1695,7 @@ AlchemyC_02000894:
 	.2byte 0x0000
 AlchemyC_020008a8:
 	.space 0xc
+Scene_RunScriptedActorPresentation:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -2772,6 +2773,7 @@ AlchemyC_02002344:
 	.2byte 0x0000
 AlchemyC_02002350:
 	.space 0x10
+Scene_RunPairedActorEffectSequence:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -4721,6 +4723,7 @@ AlchemyC_02003600:
 	.space 0x60
 AlchemyC_02003660:
 	.space 0x70
+Func_020036d0:
 	push	{r5, r6, r7, lr}
 	mov	r7, r8
 	push	{r7}
@@ -4965,6 +4968,7 @@ AlchemyC_02004bec:
 	.space 0x25c
 AlchemyC_02005688:
 	.space 0x18
+Func_020056a0:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r8
@@ -5242,6 +5246,7 @@ AlchemyC_020059f0:
 .L_020059f2:
 	.space 0x34
 	.2byte 0x0000
+Func_02005a28:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r9

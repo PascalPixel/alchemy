@@ -1,12 +1,19 @@
-/* NONMATCHING: 480 bytes, candidate 464, 222 differing halfwords
- * (2026-09-24). Single-overlay unit binding Engine_* at their import veneers.
+/* NONMATCHING: complete 480-byte owner, candidate 464, 222 differing
+ * halfwords, 175 aligned edits (2026-09-26). Reproducible single-overlay
+ * unit binds the two imports and four data symbols. ENTER_ROOM installs
+ * this palette callback at runtime address 0x02009245.
  * Remaining: hand-written from the disassembly; the goto loop keeps the clamp
  * zero and 31 unhoisted as the reference does. The reference allocates the
  * red tint to r4 with caller-saves around each divide and holds the red
  * half-sum (r5) across the first divide, i.e. evaluates red/2 before the
  * call; here preexpand_calls puts the divide first for all three and the
  * tints take r5-r7, so 16 bytes are missing. A half temporary before the call
- * reaches 480 bytes but takes a fourth high register. */
+ * reaches 480 bytes but takes a fourth high register.
+ * Bounded negative result: sharing the red output local as the attenuation
+ * accumulator gave 488 bytes, 239 differing halfwords and 180 edits. It
+ * kept the partial sums in r5 but introduced fp, moved blue to r8 and kept
+ * the shifts before the divide. The better direct-expression draft stays;
+ * the next hypothesis must explain the unshifted numerator across calls. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
@@ -20,7 +27,7 @@ extern s32 Data_02009f00[];
 
 /* Every 32 frames, tints the background palette from the next random entry
  * of the tint list, weaker for the later colours. */
-void Local_02001244(void)
+void ToretoPalette_ApplyTint(void)
 {
     u16 *src;
     u16 *dst;

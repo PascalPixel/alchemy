@@ -1,4 +1,10 @@
-/* NONMATCHING: H1 404/404 bytes, 125 differing halfwords / 63 aligned edits.
+/* NONMATCHING: H2 408/404 bytes, 152 differing halfwords / 69 aligned edits.
+ * Phase-local loops remove the increment spill: frame 4 now matches, as do
+ * all four pool words. The compiler rotates each loop, keeps actor in r8
+ * instead of sl, and rematerialises the sine half-turn instead of using fp.
+ * Retained for the corrected frame; H1 in 0f0536a63 has 63 aligned edits.
+ * STOP: complete model plus two structural follow-ups exhausted; no adoption.
+ * H1 404/404 bytes, 125 differing halfwords / 63 aligned edits.
  * The unsigned whole-angle halfword view restores both shifts inside the
  * settle loop and x in r9; increment sharing still adds one stack word.
  * H1 does not match: the fourth pool word and several register lifetimes differ.
@@ -16,19 +22,20 @@
 
 void FieldScene_RunSharedSetPiece(s32 delay);
 
+union SwingAngle {
+    u32 fixed;
+    struct {
+        u16 fraction;
+        u16 whole;
+    } part;
+};
+
 void ArutinYama_SwingActorIntoSetPiece(void)
 {
     struct FieldActor *actor;
     struct FieldSprite *sprite;
     s32 x;
     s32 y;
-    union {
-        u32 fixed;
-        struct {
-            u16 fraction;
-            u16 whole;
-        } part;
-    } acc;
     u32 angle;
     u32 limit;
     u32 half;
@@ -46,47 +53,58 @@ void ArutinYama_SwingActorIntoSetPiece(void)
     Audio_PlayCue(0x121);
     Work_SetValuesIfNonNegative(-1, -1, 0xe666);
     Event_Wait(20);
-    acc.fixed = 0;
-    limit = 0x8fff;
-rise:
-    acc.fixed += 0x80000;
-    sprite->rotation += acc.part.whole;
-    c = Math_Cos(sprite->rotation + 0x4000);
-    actor->x.fixed = (c << 4) + x;
-    angle = sprite->rotation;
-    if (angle <= limit) {
-        Task_Wait(1);
-        goto rise;
+    {
+        union SwingAngle acc;
+
+        acc.fixed = 0;
+        limit = 0x8fff;
+        for (;;) {
+            acc.fixed += 0x80000;
+            sprite->rotation += acc.part.whole;
+            c = Math_Cos(sprite->rotation + 0x4000);
+            actor->x.fixed = (c << 4) + x;
+            angle = sprite->rotation;
+            if (angle > limit)
+                break;
+            Task_Wait(1);
+        }
     }
-    acc.fixed = 0;
-    limit = 0x7000;
-fall:
-    acc.fixed += 0x80000;
-    sprite->rotation = angle - (acc.part.whole);
-    c = Math_Cos(sprite->rotation + 0x4000);
-    actor->x.fixed = (c << 4) + x;
-    angle = sprite->rotation;
-    if (angle > limit) {
-        Task_Wait(1);
-        angle = sprite->rotation;
-        goto fall;
+    {
+        union SwingAngle acc;
+
+        acc.fixed = 0;
+        limit = 0x7000;
+        for (;;) {
+            acc.fixed += 0x80000;
+            sprite->rotation = angle - acc.part.whole;
+            c = Math_Cos(sprite->rotation + 0x4000);
+            actor->x.fixed = (c << 4) + x;
+            angle = sprite->rotation;
+            if (angle <= limit)
+                break;
+            Task_Wait(1);
+            angle = sprite->rotation;
+        }
     }
-    half = 0x8000;
-    acc.fixed = 0x80000;
-settle:
-    acc.fixed = ((acc.part.whole) + (acc.fixed >> 19)) << 16;
-    limit = acc.part.whole;
-    sprite->rotation = limit + angle;
-    c = Math_Cos(sprite->rotation + 0x4000);
-    s = Math_Sin(sprite->rotation + half);
-    actor->x.fixed = (c << 4) + x;
-    if (sprite->rotation > half) {
-        actor->y.fixed = y - (s << 3);
-    }
-    if ((s32)(sprite->rotation + limit) <= 0xbfff) {
-        Task_Wait(1);
-        angle = sprite->rotation;
-        goto settle;
+    {
+        union SwingAngle acc;
+
+        half = 0x8000;
+        acc.fixed = 0x80000;
+        for (;;) {
+            acc.fixed = (acc.part.whole + (acc.fixed >> 19)) << 16;
+            limit = acc.part.whole;
+            sprite->rotation = limit + angle;
+            c = Math_Cos(sprite->rotation + 0x4000);
+            s = Math_Sin(sprite->rotation + half);
+            actor->x.fixed = (c << 4) + x;
+            if (sprite->rotation > half)
+                actor->y.fixed = y - (s << 3);
+            if ((s32)(sprite->rotation + limit) > 0xbfff)
+                break;
+            Task_Wait(1);
+            angle = sprite->rotation;
+        }
     }
     Task_Wait(1);
     {

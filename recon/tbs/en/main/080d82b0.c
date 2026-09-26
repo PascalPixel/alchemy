@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "BATTLE_EFX.H"
 #include "EFFECT_STEP.H"
+#include "BATTLE_EFFECT_WORK.H"
 
 /*
  * Draft for the battle-presentation sub-effect at 0x080d82b0.
@@ -28,6 +29,17 @@
  * hoisting 255 into r9 displaces the member counter onto the stack;
  * frame remains 60.  World/screen occupy fp/sl instead of r9/sl.
  * This is an independently preserved intermediate, not an adoption.
+ * Hypothesis 3: explicit particle backedges plus shared work/argument
+ * records.  Candidate 812/800 bytes, 346 differing halfwords, 207
+ * aligned edits, equal topology; frame still 60/56.  The indexed actor
+ * load and per-draw table reload are recovered.  The mask is now formed
+ * inside the seed loop but CSE still carries it across calls in r8,
+ * displacing the shared counter to sl and leaving member at stack +16.
+ * Remaining structural work: eliminate that member spill without a
+ * retained mask, recover the reference's incremented rectangle-size
+ * index/table lookup, and place the tick clear after the fourth random
+ * call.  Also retain the known multiply operand and copy-call schedule
+ * differences.  Three hypotheses used; stop, no new credited bytes.
  *
  * Assigned from the orbiting_particles/run.c compiler-family cluster
  * (template-main-08099160); like its siblings 080d59b0/080dc1ec/080e01e4
@@ -71,12 +83,12 @@ void Func_080d82b0(void *object)
 {
     void **heap_cache;
     void **cursor;
-    void *work;
+    struct BattleEffectWork *work;
     void *draw_destination;
     void *extra_target;
     DrawRectangleFn draw_rectangle_fn;
     s32 facing;
-    void *target;
+    struct BattleEffectArgument *target;
     s32 *pool_cursor;
     s32 pool_index;
     s32 outer;
@@ -92,7 +104,7 @@ void Func_080d82b0(void *object)
     draw_destination = *cursor;
     extra_target = heap_cache[2];
     facing = *(s32 *)((u8 *)heap_cache - 108);
-    M2C_FIELD(work, void **, 0x7828) = object;
+    work->effect = object;
     Func_080cd594(1);
     Resource_LoadAndDecompress((s32)&Value_00000073, extra_target, 0, 0);
     ((WordCopyFn)0x03001388)(
@@ -111,9 +123,9 @@ void Func_080d82b0(void *object)
     Func_080049ac();
     Func_080051d8(facing, facing + 12);
 
-    target = M2C_FIELD(work, void **, 0x7828);
+    target = work->effect;
     member = 0;
-    if (M2C_FIELD(target, s32 *, 20) != 0) {
+    if (target->count != 0) {
         s32 sp44[3];
         struct EffectPosition screen;
         s32 *sp44_ptr;
@@ -129,10 +141,10 @@ seed_member:
             s32 member_id;
             s32 *particle;
 
-            target = M2C_FIELD(work, void **, 0x7828);
+            target = work->effect;
             member_id = M2C_FIELD(target, s16 *, member_id_offset);
             member_ptr = *Func_080b5098(member_id);
-            target = M2C_FIELD(work, void **, 0x7828);
+            target = work->effect;
             member_id = M2C_FIELD(target, s16 *, member_id_offset);
             result0 = Func_080b5070(member_id);
             result0 = result0 / 2;
@@ -144,7 +156,9 @@ seed_member:
 
             particle_base = member_offset;
             particle = (s32 *)((u8 *)0x02010000 + particle_base);
-            for (pool_index = 0; pool_index != 128; pool_index++) {
+            pool_index = 0;
+seed_particle:
+            {
                 u32 kind;
                 u32 angle;
                 s32 sin_val;
@@ -166,23 +180,26 @@ seed_member:
                 *(s32 *)((u8 *)particle + 16) =
                     (s32) ((-(s32) (Func_08004458() & 0xFF) - 128) << 10);
                 particle = (s32 *)((u8 *)particle + 28);
+                pool_index++;
             }
+            if (pool_index != 128)
+                goto seed_particle;
 
             member_id_offset += 2;
             member_offset += 0xE00;
-            target = M2C_FIELD(work, void **, 0x7828);
+            target = work->effect;
             member++;
         }
-        if (member != M2C_FIELD(target, s32 *, 20))
+        if (member != target->count)
             goto seed_member;
     }
 
-    M2C_FIELD(work, s32 *, 0x7780) = 2;
-    M2C_FIELD(work, s32 *, 0x7784) = 50;
+    work->transfer_mode = 2;
+    work->transfer_value = 50;
     Func_080041d8((void *)0x080CD261, 0x480);
 
-    target = M2C_FIELD(work, void **, 0x7828);
-    if (M2C_FIELD(target, s32 *, 20) * 20 != -56) {
+    target = work->effect;
+    if (target->count * 20 != -56) {
         outer = 0;
         do {
             s32 pass_count;
@@ -190,8 +207,8 @@ seed_member:
             if (outer == 32) {
                 Func_080b50e8(0);
             }
-            target = M2C_FIELD(work, void **, 0x7828);
-            pass_count = M2C_FIELD(target, s32 *, 20);
+            target = work->effect;
+            pass_count = target->count;
             member = 0;
             if (pass_count != 0) {
                 s32 stagger;
@@ -204,15 +221,17 @@ seed_member:
                         s32 member_id;
 
                         Func_080f9010(143);
-                        target = M2C_FIELD(work, void **, 0x7828);
-                        member_id = M2C_FIELD(target, s16 *, 36 + member * 2);
+                        target = work->effect;
+                        member_id = target->actors[member];
                         Func_080d6888(member_id, 7, -1, member, 20);
                     }
                     if (outer > stagger) {
                         s32 *particle;
 
                         particle = (s32 *)((u8 *)0x02010000 + offset);
-                        for (pool_index = 0; pool_index != 128; pool_index++) {
+                        pool_index = 0;
+draw_particle:
+                        {
                             if (*(s32 *)((u8 *)particle + 24) >= 0) {
                                 s32 raw;
                                 s32 idx;
@@ -240,22 +259,25 @@ seed_member:
                                 }
                             }
                             particle = (s32 *)((u8 *)particle + 28);
+                            pool_index++;
                         }
+                        if (pool_index != 128)
+                            goto draw_particle;
                     }
                     member++;
                     stagger += 20;
                     offset += 0xE00;
-                    target = M2C_FIELD(work, void **, 0x7828);
-                } while (member != M2C_FIELD(target, s32 *, 20));
+                    target = work->effect;
+                } while (member != target->count);
             }
 
             Func_080cd52c();
-            M2C_FIELD(work, s32 *, 0x7824) = 1;
+            work->transfer_pending = 1;
             Func_080030f8(1);
 
-            target = M2C_FIELD(work, void **, 0x7828);
+            target = work->effect;
             outer++;
-        } while (outer != M2C_FIELD(target, s32 *, 20) * 20 + 56);
+        } while (outer != target->count * 20 + 56);
     }
 
     Func_08004278((void *)0x080CD261);

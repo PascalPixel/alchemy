@@ -1,4 +1,8 @@
-/* Draft, not exact (2026-09-26): 708 of 708 bytes, 281 differing halfwords.
+/* Draft, not exact (2026-09-26): 704 of 708 bytes, 154 differing halfwords.
+   Link-symbol halfword carriers move the pool into case 4; restoring the
+   queue expression recovers its original roles. The callback ternary
+   still merges argument setup, and frames/start exchange r9/sl.
+   The earlier plain aggregate test gave 708 / 281.
    Halfword aggregate carriers put the pool nearer case 4, but combine
    away a saved register. Capturing the queued value before its address
    changes the count-store ordering and queue roles. Preserved attempt;
@@ -85,10 +89,9 @@ void DisplayTransition_UpdateScanline(void);
         *ime = (u16)ime;                                                    \
         count = q->count;                                                   \
         if (count <= 31) {                                                  \
-            u32 data = (value);                                             \
             u32 *destination = (u32 *)((u8 *)q + count * 12 + 4);           \
             *(u16 *)&q->count = count + 1;                                  \
-            *destination++ = data;                                          \
+            *destination++ = (value);                                       \
             *destination++ = 0x04000000;                                    \
             *destination = 0x20000;                                         \
         }                                                                   \
@@ -160,8 +163,8 @@ void DisplayTransition_Start(s32 mode, s32 frames)
         state = DisplayTransition_AllocateAndClearState();
         /* FAKEMATCH: halfword carriers preserve the pool-reach model
            independently of the two immediate split-window stores. */
-        zero.value = 0;
-        start.value = 80;
+        zero.value = (u16)(s32)&Value_00000000;
+        start.value = (u16)(s32)&Value_00000050;
         display->split_top = 80;
         display->split_bottom = 80;
         WaitFrames(1);

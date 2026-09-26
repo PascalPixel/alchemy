@@ -2,6 +2,8 @@
  * Only mov fp,r0 / mov sl,r8 setup order remains; typed bitfields and
  * branch-local positions close the prior 207-halfword structural mismatch.
  * An allocator-guided explicit buffer and scoped counter did not close it.
+ * A pre-decrement 24-count loop canonicalizes to the same 432-byte body
+ * and leaves the two setup moves reversed (2026-09-26).
  */
 #include "TYPES.H"
 
@@ -75,8 +77,8 @@ void BattleEffect_SpawnBurstParticleField(void)
     state = Data_03001f30;
     target = state->target;
     BattleEffect_InitializeSharedScene();
-    remaining = 23;
-    do {
+    remaining = 24;
+    while (--remaining >= 0) {
         struct BurstParticleObject *object;
         struct BurstParticleVisual *visual;
         struct BurstParticleVisual *child;
@@ -130,7 +132,6 @@ void BattleEffect_SpawnBurstParticleField(void)
         }
         Func_080f9010(0x83);
         WaitFrames(2);
-        remaining--;
-    } while (remaining >= 0);
+    }
     WaitFrames(8);
 }

@@ -5,8 +5,10 @@
  * Remaining: Rebuilt the complete pillar-trigger sequence from the
  * disassembly, correcting the table search and actor loops; remaining
  * differences are register lifetimes and scheduling.
- * WALL: allocation: actor versus loop-counter registers and pointer
- * lifetimes */
+ * New bounded trials (2026-09-26): coherent actor/effect union ownership
+ * stayed at 190 edits; independent flag pointers gave 197, and separate
+ * table-search/actor-loop counters 206. Restored the best whole candidate.
+ * Remaining: actor versus loop-counter registers and pointer lifetimes. */
 #include "TYPES.H"
 #include "FIELD_EFFECT.H"
 

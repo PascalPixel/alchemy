@@ -1,6 +1,21 @@
 {
   "format": 3,
   "owners": {
+    "resource_3a5:02000cd0": {
+      "name": "Local_02000cd0"
+    },
+    "resource_3ca:020011c4": {
+      "name": "Local_020011c4"
+    },
+    "resource_3ca:02000f80": {
+      "name": "Local_02000f80"
+    },
+    "resource_3b4:02001ac8": {
+      "name": "Local_02001ac8"
+    },
+    "resource_3c5:02002660": {
+      "name": "Func_02002660"
+    },
     "resource_3bb:02002ba8": {
       "name": "Korosseo_FadeInCompetitor",
       "source": "FIELD/COMMON/KOROSSEO/FADE_IN_COMPETITOR.C"
@@ -11880,7 +11895,8 @@
       "source": "FIELD/HAIDIA_IE/ELDER_AID_EVENT.C"
     },
     "resource_3cb:020012e0": {
-      "name": "Scene_RunScene3cbSequenceA"
+      "name": "LinkLobby_RunRoundResult",
+      "source": "MENU/LINK_LOBBY/ROUND.C"
     },
     "resource_370:02000de4": {
       "name": "Scene_RunScene370SequenceA"
@@ -21267,7 +21283,8 @@
       "name": "SerialRuntime_StepBlockTransfer"
     },
     "main:080111b4": {
-      "name": "WorldMap_UpdateView"
+      "name": "WorldMap_UpdateView",
+      "source": "FIELD/WORLD_MAP/UPDATE_VIEW.C"
     },
     "resource_3c8:02001f60": {
       "name": "VinasuHeya_SettlePushedBlocks",

@@ -1,4 +1,10 @@
-/* Draft, not exact (2026-09-24): 2 differing halfwords, same length.
+/* Draft, not exact (2026-09-26): 412 of 412 bytes, 2 differing halfwords.
+   A separate inline checksum helper, both with a local accumulator and
+   with the initial accumulator passed in, sinks the zero initialization
+   and removes the saved r8 accumulator. The prior in-function loop in Git
+   remains the best 412-byte / two-halfword draft, restored below. The helper
+   hypothesis does not recover the frame-count/bound scheduling and is
+   preserved in commit 11637ce59, not adopted.
    Hand-written from the assembly. Residual: the reference schedules the load
    of the frame count after the first half of the 968 loop bound (movs r1);
    every order of the four loop-setup statements, barriers around each, and a

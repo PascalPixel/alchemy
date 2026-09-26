@@ -1,4 +1,8 @@
-/* Draft, not exact (2026-09-24): 2 differing halfwords. The reference builds -9 as movs 9 / negs and cross-jumps the negs with the -3 path; this candidate derives it as result - 9 from the zero already in r7. */
+/* Draft, not exact: complete 160-byte owner, 11 differing halfwords.
+   Positive error magnitudes and shared negation recover the missing movs 9
+   and shared negs. The full-width result avoids extra sign extension, but
+   allocation swaps the result in r6 with the slot pointer in r7. A narrow
+   result adds two sign-extension instructions and gives 164 bytes. */
 #include "TYPES.H"
 #include "RUNTIME_INTERFACES.H"
 #include "RUNTIME_MEM.H"
@@ -15,11 +19,11 @@ extern char Value_0000000b;
 extern char Value_020004e4;
 extern char Value_03001388;
 
-s16 SaveState_ProcessSelectedSlot(void)
+s32 SaveState_ProcessSelectedSlot(void)
 {
     void *buffer;
-    s16 value;
-    s16 result;
+    s32 value;
+    s32 result;
     s32 found;
 
     buffer = Func_08004970(0x1000);
@@ -28,8 +32,9 @@ s16 SaveState_ProcessSelectedSlot(void)
     if (value != -1) {
         found = Func_080056cc();
         if (found != 0) {
-            result = -9;
+            result = 9;
             Func_0801776c((s32)&Value_0000000a, 1);
+            goto negate;
 
         } else {
             char *dst;
@@ -45,7 +50,9 @@ s16 SaveState_ProcessSelectedSlot(void)
             found = Func_08005920(*(s16 *)0x02002004, buffer);
             if (found != 0) {
                 Func_0801776c((s32)&Value_0000000b, 1);
-                result = -3;
+                result = 3;
+negate:
+                result = -result;
             }
         }
         Func_08005cf8();

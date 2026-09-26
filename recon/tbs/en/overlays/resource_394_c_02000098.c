@@ -10,7 +10,7 @@
  * (69 edits). */
 #include "TYPES.H"
 
-void Local_02000098(s32 x, s32 y, s32 width, s32 height, s32 bank, s32 dest_x, s32 dest_y)
+void Func_02000098(s32 x, s32 y, s32 width, s32 height, s32 bank, s32 dest_x, s32 dest_y)
 {
     u32 *src;
     s32 row, col, end_row, end_col, base, cell;

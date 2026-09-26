@@ -14,7 +14,7 @@ struct DeckBird {
 
 #define BIRD(obj) ((struct DeckBird *)(obj))
 
-s32 Local_020002ec(struct FieldActor *obj)
+s32 Func_020002ec(struct FieldActor *obj)
 {
     u32 step;
 

@@ -17,7 +17,7 @@ extern const u8 Data_0200d8bc[];
 extern const u8 Data_0200d858[];
 extern const u8 *Data_0200e4d8[][4];
 
-void Local_02000690(void)
+void Func_02000690(void)
 {
     struct FieldActor *actor;
     struct Side *side;

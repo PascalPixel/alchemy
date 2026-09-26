@@ -86206,18 +86206,22 @@
     },
     {
       "id": "ovd-370-02000054",
-      "source": "recon/tbs/en/overlays/resource_370_c_02000054.c",
+      "source": "games/THE BROKEN SEAL/SRC/MENU/CLEAR/BG_SETUP.C",
       "overlay": "resource_370",
       "absolute_symbols": {
-        "Main_080002a8": {
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
+        },
+        "Engine_BlendSetDarkenTarget16": {
           "address": "0x02009364",
           "kind": "thumb"
         },
-        "Main_08000290": {
+        "Engine_ResourceGetTableEntry": {
           "address": "0x0200935c",
           "kind": "thumb"
         },
-        "Main_080001a8": {
+        "Engine_ResourceDecodeType01": {
           "address": "0x0200934c",
           "kind": "thumb"
         },
@@ -86230,7 +86234,7 @@
         {
           "address": "0x02000054",
           "extent": 256,
-          "state": "not-yet-c"
+          "state": "exact-c"
         }
       ],
       "game": "tbs",

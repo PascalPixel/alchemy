@@ -1,6 +1,10 @@
-/* NONMATCHING: 864 bytes, candidate 864, 33 differing halfwords, 26 halfword edits.
- * The IWRAM transform has a void two-pointer interface; routine-last wrappers improve its call setup.
- * WALL: Scheduling of zero stores, hardware writes and transform setup still differs.
+/* NONMATCHING: complete 864-byte extent; 33 differing halfwords, 26 edits.
+ * Residual scheduling starts at +006c, +00d4, +00e0, +010c, +014c,
+ * +01a6, +01fe and +027c. In sched2, the frame store and resource load
+ * tie at priority 520; the independent load wins over the store dependency.
+ * Typed vector/camera arguments and the registered allocator/transfer
+ * prototypes preserve the draft bytes. Aggregate affine-register writes
+ * instead grow the extent to 920 bytes (952 with volatile); not adopted.
  */
 #include "TYPES.H"
 #include "DMA.H"
@@ -51,22 +55,10 @@ struct PerspectiveCamera {
     u8 unknown_20[0x2c];
 };
 
-struct AffineBg {
-    u16 pa;
-    u16 pb;
-    u16 pc;
-    u16 pd;
+struct PerspectiveVector {
     s32 x;
     s32 y;
-};
-
-struct AffineRegs {
-    u16 bg1cnt;                     /* 0x0400000a */
-    u16 bg2cnt;                     /* 0x0400000c */
-    u16 bg3cnt;                     /* 0x0400000e */
-    u8 unknown_10[0x10];
-    struct AffineBg bg2;            /* 0x04000020 */
-    struct AffineBg bg3;            /* 0x04000030 */
+    s32 z;
 };
 
 extern u8 Value_000000d4;
@@ -82,17 +74,17 @@ extern void *Data_03001e50[];
 extern u16 Data_03001ad0[];
 
 void Blend_SetDarkenTarget0(s32);
-void *Runtime_AllocateHeapBlock(s32, s32);
+s32 Runtime_AllocateHeapBlock(s32, s32);
 void *Runtime_AllocateBlock(s32, s32);
 void *Resource_GetTableEntry(s32);
 s32 Resource_DecodeType01(const void *source, void *destination);
 void MapAnimation_StartChannels(void *);
-void Camera_StoreSceneParameters(s32, s32, s32);
+void Camera_StoreSceneParameters(u32, u32, u32);
 void Render_ResetTransformState(void);
 void SceneTransform_ApplyPosition(s32 *);
 void SceneTransform_ApplyYaw(s32);
 void SceneTransform_ApplyPitch(s32);
-void Graphics_PrepareTransferInIwramWork(void *, s32 *);
+void Graphics_PrepareTransferInIwramWork(s32, s32);
 s32 Trig_Cos(s32);
 s32 Trig_Sin(s32);
 void Func_080123f4(s32, s32 *, void *);
@@ -113,8 +105,10 @@ static __inline__ void Io_Put16(u16 *reg, s32 value)
 typedef s32 (*RatioFn)(s32, s32);
 typedef s32 (*PlaneFn)(void *camera, s32 *position, void *lines, void *out);
 
-static __inline__ void Transform(s32 *vector, void *camera,
-                                void (*routine)(s32 *vector, void *camera))
+static __inline__ void Transform(struct PerspectiveVector *vector,
+                                struct PerspectiveCamera *camera,
+                                void (*routine)(struct PerspectiveVector *,
+                                                struct PerspectiveCamera *))
 {
     routine(vector, camera);
 }
@@ -130,14 +124,14 @@ s32 Map_InitializePerspectiveScene(void)
     u16 *yaw;
     u16 *pitch;
     volatile u32 fill;
-    s32 vector[3];
+    struct PerspectiveVector vector;
     s32 far_plane;
     u32 size;
     s32 i;
 
     *(volatile u16 *)0x04000000 &= 0xc1ff;
     Blend_SetDarkenTarget0(0);
-    work = Runtime_AllocateHeapBlock(8, sizeof(struct PerspectiveWork));
+    work = (struct PerspectiveWork *)Runtime_AllocateHeapBlock(8, sizeof(struct PerspectiveWork));
     fill = 0;
     Dma_Set(&fill, work, 0x85000000 | (sizeof(struct PerspectiveWork) / 4), (volatile u32 *)0x040000d4);
     work->scroll_x = 0;
@@ -174,7 +168,7 @@ s32 Map_InitializePerspectiveScene(void)
     *(s32 *)0x0400003c = 0;
 
     camera = Runtime_AllocateBlock(12, sizeof(struct PerspectiveCamera));
-    tiles = Runtime_AllocateHeapBlock(7, 0x3484);
+    tiles = (void *)Runtime_AllocateHeapBlock(7, 0x3484);
     position = camera->position;
     lines = (u8 *)tiles + 0xc80;
     far_plane = 0x1fe0000;
@@ -197,14 +191,15 @@ s32 Map_InitializePerspectiveScene(void)
     SceneTransform_ApplyYaw(*yaw);
     pitch = &work->pitch;
     SceneTransform_ApplyPitch(*pitch);
-    vector[0] = 0;
-    vector[1] = 0;
-    vector[2] = far_plane;
-    Transform(vector, camera, (void (*)(s32 *, void *))0x03000250);
+    vector.x = 0;
+    vector.y = 0;
+    vector.z = far_plane;
+    Transform(&vector, camera,
+              (void (*)(struct PerspectiveVector *, struct PerspectiveCamera *))0x03000250);
     Render_ResetTransformState();
-    Graphics_PrepareTransferInIwramWork(camera, position);
+    Graphics_PrepareTransferInIwramWork((s32)camera, (s32)position);
     size = (s32)&Value_00000284;
-    Dma_Set((void *)0x0800a0f8, Runtime_AllocateHeapBlock(46, size),
+    Dma_Set((void *)0x0800a0f8, (void *)Runtime_AllocateHeapBlock(46, size),
             0x84000000 | (size >> 2), (volatile u32 *)0x040000d4);
     Func_080123f4(((RatioFn)0x0300013c)(Trig_Cos(*pitch), Trig_Sin(*pitch)),
                   position, tiles);
@@ -222,10 +217,11 @@ s32 Map_InitializePerspectiveScene(void)
     SceneTransform_ApplyPosition(position);
     SceneTransform_ApplyYaw(*yaw);
     SceneTransform_ApplyPitch(*pitch);
-    vector[0] = 0;
-    vector[1] = 0;
-    vector[2] = *distance + 0x10000;
-    Transform(vector, camera, (void (*)(s32 *, void *))0x03000250);
+    vector.x = 0;
+    vector.y = 0;
+    vector.z = *distance + 0x10000;
+    Transform(&vector, camera,
+              (void (*)(struct PerspectiveVector *, struct PerspectiveCamera *))0x03000250);
     *(volatile u16 *)0x0400004c = 0;
     Io_Put16((u16 *)0x04000000, 0x42);
     Data_03001ad0[2] = 0;

@@ -3609,8 +3609,8 @@ mod tests {
             "id": "complete-symbols-fixture",
             "source": "fixture.c",
             "owners": [
-                {"address": "0x08001000", "extent": 16, "state": "exact-c"},
-                {"address": "0x08001010", "extent": 16, "state": "exact-c"}
+                {"address": "0x08001000", "extent": 16},
+                {"address": "0x08001010", "extent": 16}
             ],
             "local_symbols": [{"address": "0x08001020", "extent": 4}]
         }))

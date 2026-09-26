@@ -157,7 +157,7 @@ pub(super) fn entry(arguments: &[String]) -> ExitCode {
     }
     match validate() {
         Ok((drafts, audited, names, shared)) => {
-            println!("owner registers ok: {drafts} drafts, {audited} audited, {names} named main assembly owners, {shared} shared sources");
+            println!("owner registers ok: {drafts} drafts, {audited} audited, {names} named main not-yet-C owners, {shared} shared sources");
             ExitCode::SUCCESS
         }
         Err(error) => {

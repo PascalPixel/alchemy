@@ -1,6 +1,9 @@
 {
   "format": 3,
   "owners": {
+    "resource_3c5:020028a0": {
+      "name": "BabiIriguchi_SetupScene"
+    },
     "resource_3b3:02001d84": {
       "name": "TakaraHashira_UpdatePillarActors"
     },

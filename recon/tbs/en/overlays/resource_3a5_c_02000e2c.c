@@ -1,12 +1,21 @@
-/* NONMATCHING: 552 of 552 bytes, 45 differing halfwords (2026-09-24).
+/* NONMATCHING: 552 of 552 bytes, 23 differing halfwords / 23 aligned edits
+ * (2026-09-26). Whole owner 02000e2c..02001054, return at 02001026 and all
+ * eleven literal words at 02001028..02001050. Complete layout/pool exact.
+ * Three bounded trials: phase-local actors remove the wait and both burst
+ * pointer copies (45 to 26 differing halfwords); choosing an immutable total
+ * before the countdown regresses to 560 bytes / 80 edits; one LandingSpot
+ * record restores separate coordinate loads instead of ldmia (23 differences).
+ * Retain the phase-local actors and typed coordinate record.
  * Hand-written: picks the landing spot nearest the leader for this scene
  * (Value_00000059/5a select the table), drops the leader onto it with two
  * Effect_Spawn bursts and holds the meter at gGameState+0x232 down by 5 a
  * frame for 60 frames. Binds the scene unit's calls plus gFrameCount-free
  * data: Value_00000059, Value_0000005a, Data_02000240_t. Remaining: global
- * allocation swaps the spot counter and the byte offset (r6/r7), the pick
- * load becomes ldmia, and the first Effect_Spawn keeps the actor in r6 where
- * the reference loads x into r5. */
+ * allocation swaps the spot counter and byte offset (r6/r7); the hold-store
+ * and timer-decrement scratch registers swap r2/r3; the second parameter
+ * block rematerializes 0x8000 after storing scale_y instead of keeping it
+ * separate from the spread literal. Further work needs a new counter or
+ * parameter lifetime hypothesis, not actor/coordinate spelling sweeps. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
@@ -23,6 +32,11 @@ struct SparkleParams {
     s32 spread;
     u16 sprite;
     u8 unknown_1a[14];
+};
+
+struct LandingSpot {
+    s32 x;
+    s32 z;
 };
 
 union GameStateRows {
@@ -96,19 +110,27 @@ void Func_02000e2c(void)
     }
     pick <<= 1;
     Call3((void (*)())Engine_ActorSetSpeed, 0, 0x20000, 0x10000);
-    Engine_ObjectSetPosition(Engine_ActorGet(0), spots[pick], 0, spots[pick + 1]);
+    {
+        struct FieldActor *actor = Engine_ActorGet(0);
+        struct LandingSpot *pos = (struct LandingSpot *)&spots[pick];
+
+        Engine_ObjectSetPosition(actor, pos->x, 0, pos->z);
+    }
     Engine_ActorGet(0)->velocity_y = 0x60000;
     Engine_AudioPlayCue(152);
     actor = Engine_ActorGet(0);
     OverlayObject_WaitUntilField12BelowLimit(actor, Engine_ActorGet(0)->y.fixed);
     Engine_AudioPlayCue(241);
-    actor = Engine_ActorGet(0);
-    first.sprite = 214;
-    first.scale_x = 0x8000;
-    first.scale_y = 0xcccc;
-    first.speed = 0x10000;
-    first.spread = 0x13333;
-    Effect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, 0, 0, 0, 0x1c0000, &first);
+    {
+        struct FieldActor *actor = Engine_ActorGet(0);
+
+        first.sprite = 214;
+        first.scale_x = 0x8000;
+        first.scale_y = 0xcccc;
+        first.speed = 0x10000;
+        first.spread = 0x13333;
+        Effect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, 0, 0, 0, 0x1c0000, &first);
+    }
     Call3((void (*)())Engine_ActorShowEmote, 0, 0x104, 0);
     Engine_ActorSetAnimation(0, 18);
     hold = (u16 *)((u8 *)event + 0xcba);
@@ -127,13 +149,16 @@ void Func_02000e2c(void)
         }
         Engine_TaskWait(1);
     } while (timer != 0);
-    actor = Engine_ActorGet(0);
-    second.sprite = 214;
-    second.scale_y = 0xcccc;
-    second.scale_x = 0x8000;
-    second.speed = 0x8000;
-    second.spread = 0x13333;
-    Effect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, 0, timer, timer, 0x1c0000, &second);
+    {
+        struct FieldActor *actor = Engine_ActorGet(0);
+
+        second.sprite = 214;
+        second.scale_y = 0xcccc;
+        second.scale_x = 0x8000;
+        second.speed = 0x8000;
+        second.spread = 0x13333;
+        Effect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, 0, timer, timer, 0x1c0000, &second);
+    }
     Engine_AudioPlayCue(0x120);
     Engine_AudioPlayCue(152);
     Engine_ActorGet(0)->velocity_y = 0x60000;

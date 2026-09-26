@@ -29206,6 +29206,10 @@
       "source": "recon/tbs/en/overlays/resource_377_c_02000578.c",
       "overlay": "resource_377",
       "absolute_symbols": {
+        "gScenePointers": {
+          "address": "0x03001e70",
+          "kind": "data"
+        },
         "Local_020017e4": {
           "address": "0x020097e4",
           "kind": "thumb"

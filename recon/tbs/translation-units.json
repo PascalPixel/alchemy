@@ -2,6 +2,29 @@
   "format": 5,
   "units": [
     {
+      "id": "kuupuappu-actor-stops",
+      "source": "recon/tbs/en/overlays/resource_383_c_020048c8.c",
+      "overlay": "resource_383",
+      "absolute_symbols": {
+        "Engine_ActorLookup": { "address": "0x0200cec4", "kind": "thumb" },
+        "SceneData_FindEntryAtPosition": { "address": "0x0200c704", "kind": "thumb" },
+        "KuupuappuHeya_SnapToNearestStop": { "address": "0x0200c754", "kind": "thumb" },
+        "SceneActor_CheckTileFreeOfKinds": { "address": "0x0200c840", "kind": "thumb" },
+        "SceneActor_ApplyScaledBytePairPosition": { "address": "0x0200c8a4", "kind": "thumb" },
+        "Math_Atan2": { "address": "0x0200cc8c", "kind": "thumb" },
+        "Engine_RandomNext": { "address": "0x0200cc84", "kind": "thumb" },
+        "Engine_ObjectSetAnimation": { "address": "0x0200ccac", "kind": "thumb" },
+        "Engine_ActorSetAttachedEffect": { "address": "0x0200ce44", "kind": "thumb" },
+        "gStopWork": { "address": "0x03001ebc", "kind": "data" },
+        "gBlockedFrames": { "address": "0x0200e4f8", "kind": "data" }
+      },
+      "owners": [
+        { "address": "0x020048c8", "extent": 612, "state": "not-yet-c" }
+      ],
+      "game": "tbs",
+      "compiler_route": "canonical-gcc296"
+    },
+    {
       "id": "biribino-corner-spawn",
       "source": "games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_MURA/CORNER.C",
       "overlay": "resource_38b",

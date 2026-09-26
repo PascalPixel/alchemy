@@ -2,6 +2,269 @@
   "format": 5,
   "units": [
     {
+      "id": "takara-pillar-frame-candidate",
+      "game": "tbs",
+      "source": "recon/tbs/en/overlays/resource_3b3_c_02001d84.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3b3",
+      "absolute_symbols": {
+        "Engine_ActorGet": {
+          "address": "0x0200ab1c",
+          "kind": "thumb"
+        },
+        "Engine_CheckMovementCollision": {
+          "address": "0x0200aacc",
+          "kind": "thumb"
+        },
+        "TakaraHashira_SetCellAttributes": {
+          "address": "0x0200901c",
+          "kind": "thumb"
+        },
+        "Engine_MapQueryPosition": {
+          "address": "0x0200aab4",
+          "kind": "thumb"
+        },
+        "Engine_AudioPlayCue": {
+          "address": "0x0200abb4",
+          "kind": "thumb"
+        },
+        "TakaraHashira_LowerActorToLedge": {
+          "address": "0x02009074",
+          "kind": "thumb"
+        },
+        "SceneActor_WaitHeightBelowLimit": {
+          "address": "0x02008da8",
+          "kind": "thumb"
+        },
+        "StagedActor_StepDownUntilClamp": {
+          "address": "0x02009174",
+          "kind": "thumb"
+        },
+        "OverlayObject_WaitUntilSettledAndReset": {
+          "address": "0x02008d78",
+          "kind": "thumb"
+        },
+        "TakaraHashira_ReadMapCell": {
+          "address": "0x02008fcc",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagClear": {
+          "address": "0x0200aafc",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagSet": {
+          "address": "0x0200aaf4",
+          "kind": "thumb"
+        },
+        "TakaraHashira_SortPillarActors": {
+          "address": "0x02009be8",
+          "kind": "thumb"
+        },
+        "Data_0200b6d0": {
+          "address": "0x0200b6d0",
+          "kind": "data"
+        },
+        "Data_0200b720": {
+          "address": "0x0200b720",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02001d84",
+          "extent": 592,
+          "state": "not-yet-c"
+        }
+      ]
+    },
+    {
+      "id": "torebi-spring-frame-candidate",
+      "game": "tbs",
+      "source": "recon/tbs/en/overlays/resource_3b7_c_02000e5c.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3b7",
+      "absolute_symbols": {
+        "Engine_ActorGet": {
+          "address": "0x0200993c",
+          "kind": "thumb"
+        },
+        "Engine_ObjectSetAnimation": {
+          "address": "0x0200988c",
+          "kind": "thumb"
+        },
+        "TorebiIzumi_PlaceActor": {
+          "address": "0x02008dd0",
+          "kind": "thumb"
+        },
+        "OverlayObject_SetField54": {
+          "address": "0x02008e44",
+          "kind": "thumb"
+        },
+        "Engine_MathDivide": {
+          "address": "0x02009854",
+          "kind": "thumb"
+        },
+        "Engine_MathModulo": {
+          "address": "0x0200985c",
+          "kind": "thumb"
+        },
+        "Engine_MathCos": {
+          "address": "0x0200987c",
+          "kind": "thumb"
+        },
+        "Engine_MathSin": {
+          "address": "0x02009884",
+          "kind": "thumb"
+        },
+        "Engine_AudioPlayCue": {
+          "address": "0x020099c4",
+          "kind": "thumb"
+        },
+        "Data_0200a054": {
+          "address": "0x0200a054",
+          "kind": "data"
+        },
+        "Data_0200a057": {
+          "address": "0x0200a057",
+          "kind": "data"
+        },
+        "Data_0200a070": {
+          "address": "0x0200a070",
+          "kind": "data"
+        },
+        "Data_0200a0c0": {
+          "address": "0x0200a0c0",
+          "kind": "data"
+        },
+        "Data_0200a0d0": {
+          "address": "0x0200a0d0",
+          "kind": "data"
+        },
+        "Data_0200a134": {
+          "address": "0x0200a134",
+          "kind": "data"
+        },
+        "Data_0200a138": {
+          "address": "0x0200a138",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02000e5c",
+          "extent": 2124,
+          "state": "not-yet-c"
+        }
+      ]
+    },
+    {
+    "id": "suhara-actor-scale-blend-candidate",
+      "game": "tbs",
+      "source": "recon/tbs/en/overlays/resource_3c0_c_02000594.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3c0",
+    "absolute_symbols": {
+      "gGameState": {"address": "0x02000240", "kind": "data"},
+      "Data_04000208": {"address": "0x04000208", "kind": "data"},
+      "Data_02002090": {"address": "0x02002090", "kind": "data"},
+        "Engine_GameFlagIsSet": {
+          "address": "0x0200924c",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagSet": {
+          "address": "0x02009254",
+          "kind": "thumb"
+        },
+        "Engine_EventWait": {
+          "address": "0x02009274",
+          "kind": "thumb"
+        },
+        "Engine_EventBegin": {
+          "address": "0x0200927c",
+          "kind": "thumb"
+        },
+        "Engine_EventEnd": {
+          "address": "0x02009284",
+          "kind": "thumb"
+        },
+        "Engine_ActorGet": {
+          "address": "0x0200928c",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpeed": {
+          "address": "0x02009294",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetDestination": {
+          "address": "0x020092ac",
+          "kind": "thumb"
+        },
+        "Engine_ActorWalkToAndWait": {
+          "address": "0x020092bc",
+          "kind": "thumb"
+        },
+        "Engine_ActorWaitForMove": {
+          "address": "0x020092c4",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetPosition": {
+          "address": "0x020092cc",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetAnimation": {
+          "address": "0x020092d4",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetAnimationAndWait": {
+          "address": "0x020092dc",
+          "kind": "thumb"
+        },
+        "Engine_ActorRunRepeatedMotion": {
+          "address": "0x020092e4",
+          "kind": "thumb"
+        },
+        "Engine_ActorFaceActor": {
+          "address": "0x020092ec",
+          "kind": "thumb"
+        },
+        "Engine_EventSetMessage": {
+          "address": "0x020092fc",
+          "kind": "thumb"
+        },
+        "Engine_EventShowMessage": {
+          "address": "0x02009304",
+          "kind": "thumb"
+        },
+        "Engine_ActorFaceDirection": {
+          "address": "0x02009314",
+          "kind": "thumb"
+        },
+        "Engine_ActorShowEmote": {
+          "address": "0x0200931c",
+          "kind": "thumb"
+        },
+        "Engine_AudioPlayCue": {
+          "address": "0x02009374",
+          "kind": "thumb"
+        },
+        "Engine_TaskWait": {
+          "address": "0x020091f4",
+          "kind": "thumb"
+        },
+        "Engine_ActorWalkTo": {
+          "address": "0x020092b4",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02000594",
+          "extent": 616,
+          "state": "not-yet-c"
+        }
+      ]
+    },
+    {
       "id": "korosseo-river-actor-map-candidate",
       "game": "tbs",
       "source": "recon/tbs/en/overlays/resource_3ba_c_02000540.c",
@@ -13158,6 +13421,42 @@
       "source": "recon/tbs/en/overlays/resource_3ba_c_020033a0.c",
       "overlay": "resource_3ba",
       "absolute_symbols": {
+        "Engine_GameFlagIsSet": {
+          "address": "0x0200bc58",
+          "kind": "thumb"
+        },
+        "Engine_BumpAllocateAlternatePool": {
+          "address": "0x0200bb50",
+          "kind": "thumb"
+        },
+        "Engine_ResourceDecodeType01": {
+          "address": "0x0200bb60",
+          "kind": "thumb"
+        },
+        "Engine_VramLoad": {
+          "address": "0x0200bb78",
+          "kind": "thumb"
+        },
+        "Engine_BumpFree": {
+          "address": "0x0200bb58",
+          "kind": "thumb"
+        },
+        "Engine_VramRelease": {
+          "address": "0x0200bb70",
+          "kind": "thumb"
+        },
+        "Engine_OamSubmitRecord": {
+          "address": "0x0200bb90",
+          "kind": "thumb"
+        },
+        "Engine_ObjectTableGet": {
+          "address": "0x0200bdc8",
+          "kind": "thumb"
+        },
+        "Engine_MathDivide": {
+          "address": "0x0200bb00",
+          "kind": "thumb"
+        },
         "Func_0200714c": {
           "address": "0x200bb90",
           "kind": "thumb"
@@ -87609,11 +87908,11 @@
           "address": "0x02008580",
           "kind": "thumb"
         },
-        "Local_02000398": {
+        "LinkLobby_ReceivePartyRecords": {
           "address": "0x02008398",
           "kind": "thumb"
         },
-        "Main_080770e8": {
+        "Engine_GameFlagWriteValue": {
           "address": "0x0200982c",
           "kind": "thumb"
         },

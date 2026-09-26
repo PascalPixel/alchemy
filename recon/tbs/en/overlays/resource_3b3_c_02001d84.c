@@ -1,11 +1,13 @@
-/* NONMATCHING: 596 of 592 bytes, 263 differing halfwords (2026-09-24).
- * Hand-written from the disassembly: the per-frame driver for the four
- * pillars (actors 8-11) and their slots at 0x0200b6d0 (cell x, y, z, the
- * saved map cell, the flag), then TakaraHashira_Func02001be8 sorts them. The
- * statements and calls are in the reference's order; loop.c's address givs
- * differ: the reference indexes the slot table by a byte offset in sl off a
- * base in r8, keeps a second pointer giv in fp and &cell in r9, and spills
- * only the id, the index and the z offset. */
+/* NONMATCHING: 596 of 592 bytes, 263 differing halfwords, 150 aligned edits.
+ * Own-ROM extent 0x02001d84..0x02001fd4 includes the five-word pool.
+ * SETUP calls this four-pillar frame driver; the final call sorts the actors.
+ * 2026-09-26 bounded triage: indexed pos[3] plus delayed slot ownership restored
+ * the initial indexed X load but grew the frame from 24 to 28 (reference 20):
+ * 600 bytes, 258 halfwords, 142 edits. An inline position-clear helper emitted
+ * identical bytes; zero still lives across StepDownUntilClamp. Both rejected.
+ * The allocator decoder found no unique source repair; no permutation ran.
+ * Retain this baseline. Remaining: slot address induction, spilled local cell,
+ * and zero sharing across the staged-actor call. No exact-byte credit. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "DMA.H"
@@ -29,15 +31,15 @@ struct PillarSlot {
 extern struct PillarSlot Data_0200b6d0[];
 extern s32 Data_0200b720[];
 
-s32 Main_080091d8(struct FieldActor *object, s32 *pos);
-s32 Main_080091b0(s32 layer, s32 x, s32 z);
+s32 Engine_CheckMovementCollision(struct FieldActor *object, s32 *pos);
+s32 Engine_MapQueryPosition(s32 layer, s32 x, s32 z);
 void TakaraHashira_SetCellAttributes(s32 layer, s32 x, s32 y, struct MapCell *src);
 void TakaraHashira_ReadMapCell(s32 layer, s32 x, s32 y, struct MapCell *dst);
-s32 Func_02001074(s32 id, s32 far);
+s32 TakaraHashira_LowerActorToLedge(s32 id, s32 far);
 void SceneActor_WaitHeightBelowLimit(struct FieldActor *actor, s32 limit);
 void StagedActor_StepDownUntilClamp(s32 id);
 void OverlayObject_WaitUntilSettledAndReset(struct FieldActor *actor);
-void TakaraHashira_Func02001be8(void);
+void TakaraHashira_SortPillarActors(void);
 
 static __inline__ void Dma_Wait(volatile u32 *dma)
 {
@@ -45,7 +47,7 @@ static __inline__ void Dma_Wait(volatile u32 *dma)
         ;
 }
 
-void Func_02001d84(void)
+void TakaraHashira_UpdatePillarActors(void)
 {
     u32 id;
     struct FieldActor *actor;
@@ -67,19 +69,19 @@ void Func_02001d84(void)
         }
         Dma_Set(&actor->x, Data_0200b720, 0x84000003, (volatile u32 *)0x040000d4);
         Dma_Wait((volatile u32 *)0x040000d4);
-        if (Main_080091d8(actor, Data_0200b720) == -1) {
+        if (Engine_CheckMovementCollision(actor, Data_0200b720) == -1) {
             actor->motion_flags = 3;
         }
         flags = &actor->motion_flags;
         TakaraHashira_SetCellAttributes(0, Data_0200b6d0[i].x, Data_0200b6d0[i].z, &Data_0200b6d0[i].cell);
         TakaraHashira_SetCellAttributes(2, slot->x, Data_0200b6d0[i].z, &Data_0200b6d0[i].cell);
         if (*flags & 1) {
-            if (Main_080091b0(2, actor->x.fixed, actor->z.fixed) == 50) {
+            if (Engine_MapQueryPosition(2, actor->x.fixed, actor->z.fixed) == 50) {
                 Engine_AudioPlayCue(189);
                 actor->priority_flags &= 254;
-                Func_02001074(id, 1);
+                TakaraHashira_LowerActorToLedge(id, 1);
                 actor->priority_flags |= 1;
-            } else if (Main_080091b0(2, actor->x.fixed, actor->z.fixed) == 51) {
+            } else if (Engine_MapQueryPosition(2, actor->x.fixed, actor->z.fixed) == 51) {
                 SceneActor_WaitHeightBelowLimit(actor, 0);
                 Engine_AudioPlayCue(189);
                 actor->y.fixed = 0;
@@ -116,5 +118,5 @@ void Func_02001d84(void)
             }
         }
     }
-    TakaraHashira_Func02001be8();
+    TakaraHashira_SortPillarActors();
 }

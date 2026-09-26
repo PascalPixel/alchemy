@@ -16,6 +16,12 @@
     "main:080105d4": {
       "name": "Map_CopyMetatileCellsRect"
     },
+    "resource_3b3:02001d84": {
+      "name": "TakaraHashira_UpdatePillarActors"
+    },
+    "resource_3c0:02000594": {
+      "name": "SuharaSabaku_RestoreActorScaleAndBlend"
+    },
     "resource_3ba:02000540": {
       "name": "KorosseoKawa_MoveActorsAndMap"
     },

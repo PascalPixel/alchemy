@@ -25,7 +25,7 @@ struct TitleWork {
 
 /* Load the title background: palette, tiles and a 30 x 20 map counting up from
  * tile 0x1a0, then clear the scroll registers. */
-void Local_02000454(void)
+void Func_02000454(void)
 {
     u8 *res;
     s32 id;

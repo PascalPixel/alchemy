@@ -33,7 +33,7 @@ static __inline__ void Call1(void (*f)(), s32 a0)
     f(a0);
 }
 
-s32 Local_02000b94(void)
+s32 Func_02000b94(void)
 {
     s32 answer;
     s32 msg;

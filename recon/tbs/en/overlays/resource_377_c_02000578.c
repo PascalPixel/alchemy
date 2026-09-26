@@ -11,6 +11,7 @@
  * speed/render/action/dialogue services reproduce their argument reloads.
  * Two plain dialogue calls still share speaker constants. Initial scheduling,
  * sprite/actor registers and byte-pointer copies differ; topology is equal.
+ * Typed unknown_5a flag accesses emit the same bytes as offset casts.
  * WALL: structural-topology: shared workspace lifetimes and actor setup */
 #include "FIELD_EVENT.H"
 
@@ -165,11 +166,11 @@ void FieldScene_RunComplexActorSequence(void)
     Main_0808a130(8, 2);
     Event_ShowMessageAndWait(36872, 0, 20);
     p67 = Main_0808a080(8);
-    *(u8 *)((u8 *)(p67) + 90) &= 0xfe;
+    p67->unknown_5a &= 0xfe;
     Actor_WalkToAndWait(8, 542, 680);
     Main_0808a010(1);
     p67 = Main_0808a080(8);
-    *(u8 *)((u8 *)p67 + 90) |= 0x1;
+    p67->unknown_5a |= 0x1;
     Main_0808a010(10);
     Main_0808a138(8, 2);
     Main_08009228(Main_0808a080(0), 226);
@@ -180,11 +181,11 @@ void FieldScene_RunComplexActorSequence(void)
     Main_0808a158(0, 0);
     Main_0808a010(20);
     p67 = Main_0808a080(8);
-    *(u8 *)((u8 *)p67 + 90) &= 0xfe;
+    p67->unknown_5a &= 0xfe;
     Actor_WalkToAndWait(8, 534, 688);
     Main_0808a010(1);
     p67 = Main_0808a080(8);
-    *(u8 *)((u8 *)p67 + 90) |= 0x1;
+    p67->unknown_5a |= 0x1;
     Main_0808a010(20);
     Actor_SetSpeed(8, 98304, 49152);
     Actor_SetSpeed(0, 98304, 49152);

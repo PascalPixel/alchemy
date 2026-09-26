@@ -1,7 +1,6 @@
 #include "TYPES.H"
 #include "EFFECT_STEP.H"
 #include "BATTLE_EFX.H"
-#include "BATTLE_EFFECT_WORK.H"
 #include "FIXED_MATH.H"
 
 /* Three projected trail points form a closed triangle. Each edge receives
@@ -17,6 +16,13 @@
  * frame 132: 1232 bytes, equal topology, 353 aligned edits (562 offset
  * differences). Coordinate capture now agrees with the reference; grouped
  * stack records still keep a common base instead of the screen pointer.
+ * Distinct typed stack records retain frame 132 and offsets 84/96/108/120:
+ * 1236 bytes, equal topology, 319 aligned edits (543 offset differences).
+ * Screen is still spilled at +20 instead of retained in r9; angle takes r9.
+ * The compiler still replaces the point-base index with address induction
+ * and retains a different spill layout. This is a broad residual, not just
+ * register choice. Stop after three structural hypotheses; no adoption,
+ * declaration/operand permutation sweep, compiler change or byte credit.
  */
 
 typedef void (*WordCopy)(void *, const void *, s32);
@@ -29,13 +35,6 @@ typedef struct TrailPoint {
     struct EffectPosition position;
     s32 unused18;
 } TrailPoint;
-enum {
-    TRIANGLE_SCALE,
-    TRIANGLE_SCREEN,
-    TRIANGLE_VECTOR,
-    TRIANGLE_ANCHOR,
-    TRIANGLE_COORDINATE_COUNT
-};
 struct TriangleWork {
     u8 unknown_0000[0x7080];
     TrailPoint points[32];
@@ -81,7 +80,8 @@ void Func_080d05fc(Effect *effect)
     void *dst;
     DrawRectangle draw[2];
     s32 origin_x, origin_y, shift;
-    struct EffectPosition pos[TRIANGLE_COORDINATE_COUNT];
+    struct EffectPosition anchor;
+    struct EffectPosition vector, screen, scale;
     s32 frame, member, tick, point_base, scale_phase;
     s32 x, y, radius, width, angle, scale_value, rotation;
     s32 point, sample;
@@ -110,8 +110,8 @@ void Func_080d05fc(Effect *effect)
     work->transfer_value = 0x04040404;
     Func_080041d8(0x080cd261, 0x480);
     EffectPosition_ApplyStepAndYOffset(
-        WORK_EFFECT->actors[0], &pos[TRIANGLE_ANCHOR]);
-    shift = 64 - pos[TRIANGLE_ANCHOR].x;
+        WORK_EFFECT->actors[0], &anchor);
+    shift = 64 - anchor.x;
     *(s32 *)0x04000028 = shift << 8;
     Func_080f9010(142);
     frame = 0;
@@ -144,13 +144,13 @@ void Func_080d05fc(Effect *effect)
             if ((u32)tick <= 95) {
                 Func_080049ac();
                 Func_080051d8(camera, camera + 12);
-                pos[TRIANGLE_VECTOR].x = actor[2];
-                pos[TRIANGLE_VECTOR].y = actor[3];
-                pos[TRIANGLE_VECTOR].depth = actor[4];
+                vector.x = actor[2];
+                vector.y = actor[3];
+                vector.depth = actor[4];
                 EffectPosition_ApplyBaseAndYOffset(
-                    (s32 *)&pos[TRIANGLE_VECTOR], &pos[TRIANGLE_SCREEN]);
-                pos[TRIANGLE_SCREEN].x = pos[TRIANGLE_ANCHOR].x + shift;
-                pos[TRIANGLE_SCREEN].y -= 24;
+                    (s32 *)&vector, &screen);
+                screen.x = anchor.x + shift;
+                screen.y -= 24;
                 if (tick <= 67) {
                     angle = 0;
                     scale_value = 0x2a000 - scale_phase;
@@ -159,19 +159,19 @@ void Func_080d05fc(Effect *effect)
                     do {
                         Func_080049ac();
                         if (tick <= 63) {
-                            pos[TRIANGLE_SCALE].x = scale_value;
-                            pos[TRIANGLE_SCALE].y = scale_value;
-                            pos[TRIANGLE_SCALE].depth = scale_value;
-                            Func_08004cf0((s32 *)&pos[TRIANGLE_SCALE]);
+                            scale.x = scale_value;
+                            scale.y = scale_value;
+                            scale.depth = scale_value;
+                            Func_08004cf0((s32 *)&scale);
                             Func_08004c6c(rotation);
                             Func_08004c1c(rotation);
                         }
                         Func_08004c6c(angle);
                         EffectPosition_ApplyBaseAndYOffset(
-                            Data_080ee128, &pos[TRIANGLE_VECTOR]);
+                            Data_080ee128, &vector);
                         trail = &work->points[point_base + point];
-                        trail->position.x = pos[TRIANGLE_VECTOR].x + pos[TRIANGLE_SCREEN].x;
-                        trail->position.y = pos[TRIANGLE_VECTOR].y + pos[TRIANGLE_SCREEN].y + 16;
+                        trail->position.x = vector.x + screen.x;
+                        trail->position.y = vector.y + screen.y + 16;
                         point++; angle += 0x5555;
                     } while (point != 3);
                     point = 0;
@@ -194,8 +194,8 @@ void Func_080d05fc(Effect *effect)
                     } while (point != 3);
                 }
                 if (tick > 63) {
-                    draw[0](dst, work, pos[TRIANGLE_SCREEN].x - 24, pos[TRIANGLE_SCREEN].y - 24, 24, 48);
-                    draw[1](dst, work, pos[TRIANGLE_SCREEN].x, pos[TRIANGLE_SCREEN].y - 24, 24, 48);
+                    draw[0](dst, work, screen.x - 24, screen.y - 24, 24, 48);
+                    draw[1](dst, work, screen.x, screen.y - 24, 24, 48);
                 }
             }
             scale_phase -= 0x3000; point_base += 32; member++; tick -= 8;

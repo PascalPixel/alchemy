@@ -1,4 +1,4 @@
-/* NONMATCHING: 624 bytes, candidate 624, 25 differing halfwords, 23
+/* NONMATCHING: 624 bytes, candidate 624, 24 differing halfwords, 23
  * halfword edits (2026-09-26). Scene_ClosePresentationSequence, meant for
  * FIELD/BABI_FUNE/F_00B34.C as a single-overlay unit binding its names at
  * their runtime addresses (an import veneer's listing offset plus 0x8000).
@@ -13,7 +13,14 @@
  *    independent loads and the retained f8 pointer: 628 / 182 / 88.
  * 3. Separate bright/dim loop constants and initialize priority two only at
  *    its phase: 624 / 25 / 23, with all literal pools matching.
- * Remaining: first palette shifts reversed, blink-loop counter setup and
+ * Reopened bounded structural trials (2026-09-26):
+ * 1. Inline priority-store helper: 620 / 172 / 131; added volatile stack
+ *    reloads, changed priority constants and moved pools. Rejected.
+ * 2. Bright/dim constants outside an explicit countdown loop: 624 / 24 / 23.
+ *    Retained: counter initialization now follows constant setup as in ROM.
+ * 3. One changing priority halfword: 624 / 91 / 40; extended its lifetime,
+ *    displaced the retained zero and removed a later counter reset. Rejected.
+ * Remaining: first palette shifts reversed, blink-loop argument setup and
  * decrement scheduled early, priority-three versus stack-address r5/r4
  * swap, priority-two temporary, and final BLDCNT/BLDY setup scheduling.
  * Stop at three structural hypotheses. No credit until every byte matches. */
@@ -92,15 +99,19 @@ void Scene_ClosePresentationSequence(void)
 
         *(volatile u16 *)0x05000000 = color;
     }
-    for (i2 = 2; i2 >= 0; i2--) {
+    {
         s32 bright = 0x1010;
         s32 dim = 0x810;
 
-        Call1((void (*)())Main_080f9010, 212);
-        *(volatile u16 *)0x04000052 = bright;
-        Call1((void (*)())Main_0808a010, 3);
-        *(volatile u16 *)0x04000052 = dim;
-        Call1((void (*)())Main_0808a010, 65);
+        i2 = 2;
+        do {
+            Call1((void (*)())Main_080f9010, 212);
+            *(volatile u16 *)0x04000052 = bright;
+            Call1((void (*)())Main_0808a010, 3);
+            *(volatile u16 *)0x04000052 = dim;
+            i2--;
+            Call1((void (*)())Main_0808a010, 65);
+        } while (i2 >= 0);
     }
     Data_020097e8 = 1;
     Data_020097ec = 0;

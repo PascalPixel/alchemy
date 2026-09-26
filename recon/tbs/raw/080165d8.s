@@ -1,7 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080165d8
+	.global UiText_QueueRenderEntries
 	.thumb_func
+UiText_QueueRenderEntries:
 Func_080165d8:
 	push	{r5, r6, r7, lr}
 	adds	r7, r3, #0

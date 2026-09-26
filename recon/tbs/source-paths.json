@@ -1,6 +1,15 @@
 {
   "format": 3,
   "owners": {
+    "resource_3ba:02000540": {
+      "name": "KorosseoKawa_MoveActorsAndMap"
+    },
+    "resource_3b7:02000ac8": {
+      "name": "TorebiIzumi_RunSpringGame"
+    },
+    "resource_3ba:020013e4": {
+      "name": "Korosseo_RunPromptMotionSequence"
+    },
     "resource_378:020027d4": {
       "name": "ShindenHeya_ChooseRestartOption"
     },
@@ -20126,7 +20135,8 @@
       "name": "UiText_LoadRemappedGlyph"
     },
     "main:0802106c": {
-      "name": "PartyTalkMenu_Choose"
+      "name": "PartyTalkMenu_Choose",
+      "source": "MENU/PARTY/TALK_CHOICE.C"
     },
     "main:08021228": {
       "name": "Djinn_ShowJoinedMessage"
@@ -21579,6 +21589,7 @@
     "main:080a1038": "UiIcon_PrepareObjectFar",
     "main:080b0020": "ShopCursor_AdvanceFar",
     "main:080b0028": "ShopCursor_MoveTowardTargetFar",
+    "main:080b0038": "ShopCursor_SetPositionImmediateFar",
     "main:080b0048": "Unnamed_080b0840Far",
     "main:080b0050": "Shop_InitEffectFar",
     "main:080b5038": "BattlePresentation_ConfigurePaletteFadeFar",

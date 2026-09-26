@@ -1,4 +1,4 @@
-/* NONMATCHING: whole owner [080c11ec, 080c1438), 588 bytes including pools.
+/* Exact whole owner [080c11ec, 080c1438), 588 bytes including pools.
  * 2026-09-26 audit: 080c1470 allocates 0x13d0 bytes, initializes sixteen
  * 28-byte motion records and three 20-byte rings, then schedules this
  * callback. Exact Display_UploadBlock consumes ready at +0x13c0.
@@ -11,6 +11,11 @@
  * sprite module. Candidate 588/588, the same two differing halfwords and
  * one shared multiply pool word. Symbol versus numeric constant does not
  * change the preheader order; do not repeat that representation axis.
+ * H3: index work->sparks[i] within the loop instead of carrying a pointer
+ * initialized before it. Strength reduction now owns the spark-base
+ * initialization. Candidate 588/588, zero differing halfwords and zero
+ * aligned edits: the multiply address moves before the spark-base add.
+ * Adopted as BATTLE/EFFECT/UPDATE_STAR_FIELD.C; preserved attempt history.
  * A count-up source loop is reversed by the compiler and matches the ROMs countdown and register choices.
  * Residual: moving the multiply routine into r9 precedes adding the spark
  * base in the ROM. The loop pass hoists the numeric routine after the base
@@ -100,7 +105,8 @@ s32 Func_080c11ec(void)
     work = Data_03001e50.work;
     work->ready = 0;
     draw = Data_03001e50.draw_spark;
-    for (i = 0, spark = work->sparks; i < 16; spark++, i++) {
+    for (i = 0; i < 16; i++) {
+        spark = &work->sparks[i];
         life = spark->life;
         if (life != 0) {
             dist = FixedSqrt((spark->pos[0] >> 8) * (spark->pos[0] >> 8)

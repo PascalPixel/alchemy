@@ -1,5 +1,8 @@
 /*
- * DRAFT main:080f61e8, 208 bytes including pools. Hypothesis 1: explicit
+ * DRAFT main:080f61e8, 208 bytes including pools. Hypothesis 2: resource-load
+ * and bank-write DMA regions each retain their own inline C boundary; test
+ * whether that separates the first pool from the final transfer's constants.
+ * Hypothesis 1: explicit
  * widened RGB555 values and inline channel steps preserve the reference's
  * channel ancestry before any allocation tuning. The first mask load is
  * WORD ldr r7,[pc,#12], not a halfword load; reject halfword-mask reach.
@@ -16,6 +19,13 @@
  * 12 other. Admission fails: all constants remain in one final pool; SI
  * fixups still have range 1020. Explicit shifting plus inline channel steps
  * increases high-register saves without fixing the pool. No allocator tuning.
+ * Residual H2: byte-identical to H1, 224/208 bytes and 108 differing halfwords;
+ * topology equal, 134 wrong instructions, aligned distance 76 edits, same
+ * 23 residual runs. DMA wrappers do not create a machine barrier or split
+ * the pool. SI fixups still have range 1020, and the final barrier is within
+ * all ranges, so arm_reorg retains one final pool. Both proposed source
+ * families fail first-pool admission. Close this pool axis before register
+ * tuning; no supported new structural hypothesis remains in this brief.
  * Stop after three hypotheses or 30 minutes.
  */
 
@@ -24,6 +34,17 @@
 
 void *Resource_GetTableEntry(s32 id);
 extern u8 Value_0000001f[];
+
+static __inline__ void Palette_LoadResource(s32 id, u16 *buf)
+{
+    const void *source = Resource_GetTableEntry(id);
+    Dma_Set(source, buf, 0x84000020, (volatile u32 *)0x040000d4);
+}
+
+static __inline__ void Palette_WriteBank(const u16 *buf)
+{
+    Dma_Set(buf + 1, (void *)0x05000002, 0x8000003f, (volatile u32 *)0x040000d4);
+}
 
 static __inline__ s32 Palette_StepChannel(s32 color, s32 goal)
 {
@@ -41,7 +62,7 @@ void Unnamed_080f61e8(s32 id)
     s32 i;
     s32 mask;
 
-    Dma_Set(Resource_GetTableEntry(id), buf, 0x84000020, (volatile u32 *)0x040000d4);
+    Palette_LoadResource(id, buf);
     /* FAKEMATCH: linker mask keeps green/blue distinct from immediate red. */
     mask = (s32)Value_0000001f;
     for (i = 0; i != 64; i++) {
@@ -62,5 +83,5 @@ void Unnamed_080f61e8(s32 id)
         buf[i] = (b << 10) | (g << 5) | r;
         palette++;
     }
-    Dma_Set(buf + 1, (void *)0x05000002, 0x8000003f, (volatile u32 *)0x040000d4);
+    Palette_WriteBank(buf);
 }

@@ -1,11 +1,11 @@
-/* NONMATCHING: 556 bytes, candidate 560, 126 differing halfwords, 79 aligned
+/* NONMATCHING: 556 bytes, candidate 554, 44 differing halfwords, 34 aligned
  * edits (2026-09-26). Reconstructed both Q16 waves and all four actor-height
  * blocks. The complete topology now agrees. Remaining: halfword scroll
  * reload and stack-slot ownership, saved position pointer, and spawn stores.
- * Explicit volatile halfword accesses retain the scroll reload without the
- * aggregate member's extra read. A volatile scalar position pointer spills
- * but adds reloads and places scroll at +2 instead of +18. The best 77-edit
- * halfword-view attempt is preserved in 91b47e1cc. */
+ * A halfword zero restores the reference's mid-function literal pool, making
+ * the Q16 and four-actor blocks exact. Scroll is a promoted halfword spilled
+ * at +6 instead of the reference's addressable slot at +18. The position
+ * work still keeps a saved stack base. Earlier trials are committed. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "IWRAM_CALL.H"
@@ -25,6 +25,10 @@ struct Position {
     s32 x, y, z;
 };
 
+struct PositionWork {
+    struct Position *pos;
+};
+
 struct Half {
     u16 v;
 };
@@ -42,16 +46,15 @@ extern s32 Data_02009830;
 extern s32 Data_02009840;
 extern s32 Data_02009850;
 extern s32 Data_02009860;
-extern u8 Value_00000000;
 
 void BabiFune_UpdateDriftingObject(u8 *obj);
 
 void BabiFune_UpdateWaves(void)
 {
     struct Half scroll;
+    struct Half zero;
     struct Position buf;
-    /* FAKEMATCH: retain the position-pointer stack slot across the random call. */
-    struct Position *volatile pos;
+    struct PositionWork work;
     struct MapWork *map;
     struct FieldActor *actor;
     s32 bob;
@@ -99,19 +102,20 @@ void BabiFune_UpdateWaves(void)
         x = map->layers[4].unknown_10[0] & -0x10000;
         z = map->layers[4].unknown_10[1] & -0x10000;
         x += Engine_RandomNext() * 240;
-        pos = &buf;
-        pos->y = 0;
-        pos->x = x;
+        work.pos = &buf;
+        work.pos->y = 0;
+        work.pos->x = x;
         z += Engine_RandomNext() * 160;
         z += 0x1e0000;
-        pos->z = z;
-        actor = Engine_ObjectCreate(0x1f7, pos->x, pos->y, z);
+        work.pos->z = z;
+        actor = Engine_ObjectCreate(0x1f7, work.pos->x, work.pos->y, z);
         if (actor != 0) {
             actor->update = (void (*)(union FieldObject *))BabiFune_UpdateDriftingObject;
             actor->unknown_64 = 60;
+            /* FAKEMATCH: a halfword zero retains the short literal-pool reach. */
+            zero.v = 0;
             actor->unknown_66 = 1;
-            /* FAKEMATCH: the zero-valued link symbol preserves its pool load. */
-            actor->motion_flags = (s32)&Value_00000000;
+            actor->motion_flags = zero.v;
             actor->priority_flags = 2;
             actor->sprite->priority = 2;
             Engine_ObjectSetBlendMode(actor, 0);

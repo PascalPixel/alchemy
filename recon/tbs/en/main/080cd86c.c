@@ -4,6 +4,14 @@
    and r5 with the argument in r7; the tilemap loop stores its value through a
    sign-extended copy held in r9, which every spelling tried (s16 locals, s16
    array, inline store helper) folds away. */
+/* 2026-09-26 bounded follow-up: 696/696 bytes, 206 differing halfwords
+   (78 aligned edits). A shared u32 zero initialised after the first queued
+   write and reused for work+0x77b8, state[3] and the three zero I/O writes
+   gives 207/79, not a new allocation. Baseline allocator order is queue
+   pseudo 49 before bg_control 32 before IME 48: queue has 13 uses over 292
+   insns, IME 11 over 304, and bg_control 5 over 86. They become r5/r6/r7
+   instead of the reference's r6/r7/r5. This is a concrete priority mismatch,
+   not evidence for missing C or a reason to repeat zero spellings. */
 /* Battle effect: open a canvas layer over the battle scene. */
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"

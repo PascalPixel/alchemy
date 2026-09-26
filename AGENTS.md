@@ -191,7 +191,7 @@ git submodule update --init && git config core.hooksPath .hooks
 make bootstrap       # pinned agscc/agbcc and binutils under tools/out
 make compare         # TBS: rebuild what changed, check rom.sha1 (compare-tla, compare-all)
 make test            # tooling unit tests (test-integration reads local ROMs)
-make coverage        # progress figure and the README progress line
+make coverage        # redraw both README images and the progress line; stage all three
 make verify          # the landing gate: both ROMs, owners, publication, documents
 ```
 

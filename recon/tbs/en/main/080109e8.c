@@ -1,4 +1,6 @@
-/* NONMATCHING: complete 864-byte extent; 33 differing halfwords, 26 edits.
+/* NONMATCHING: complete 864-byte extent; 34 differing halfwords.
+ * Value-returning transform calls recover the first argument pair order,
+ * but swap the second call's pair and retain an early routine literal.
  * Residual scheduling starts at +006c, +00d4, +00e0, +010c, +014c,
  * +01a6, +01fe and +027c. In sched2, the frame store and resource load
  * tie at priority 520; the independent load wins over the store dependency.
@@ -107,7 +109,7 @@ typedef s32 (*PlaneFn)(void *camera, s32 *position, void *lines, void *out);
 
 static __inline__ void Transform(struct PerspectiveVector *vector,
                                 struct PerspectiveCamera *camera,
-                                void (*routine)(struct PerspectiveVector *,
+                                s32 (*routine)(struct PerspectiveVector *,
                                                 struct PerspectiveCamera *))
 {
     routine(vector, camera);
@@ -195,7 +197,7 @@ s32 Map_InitializePerspectiveScene(void)
     vector.y = 0;
     vector.z = far_plane;
     Transform(&vector, camera,
-              (void (*)(struct PerspectiveVector *, struct PerspectiveCamera *))0x03000250);
+              (s32 (*)(struct PerspectiveVector *, struct PerspectiveCamera *))0x03000250);
     Render_ResetTransformState();
     Graphics_PrepareTransferInIwramWork((s32)camera, (s32)position);
     size = (s32)&Value_00000284;
@@ -221,7 +223,7 @@ s32 Map_InitializePerspectiveScene(void)
     vector.y = 0;
     vector.z = *distance + 0x10000;
     Transform(&vector, camera,
-              (void (*)(struct PerspectiveVector *, struct PerspectiveCamera *))0x03000250);
+              (s32 (*)(struct PerspectiveVector *, struct PerspectiveCamera *))0x03000250);
     *(volatile u16 *)0x0400004c = 0;
     Io_Put16((u16 *)0x04000000, 0x42);
     Data_03001ad0[2] = 0;

@@ -283,7 +283,7 @@ mod tests {
         write_figures(root, Some(done(600)), None).unwrap();
         let chart = std::fs::read(root.join(figure::CHART)).unwrap();
         let map = std::fs::read(root.join(figure::MAP)).unwrap();
-        check_figures(root).unwrap();
+        check_figures(root, Some(done(600)), None).unwrap();
         // A later count the same day redraws the chart with it.
         write_figures(root, Some(done(610)), None).unwrap();
         assert_ne!(std::fs::read(root.join(figure::CHART)).unwrap(), chart);
@@ -296,15 +296,44 @@ mod tests {
             (Some(today.as_str()), Some(61.0))
         );
         assert_eq!(history::percent(&recorded["figures"]["tbs"]), Some(61.0));
-        check_figures(root).unwrap();
+        check_figures(root, Some(done(610)), None).unwrap();
         // A README stating another number fails.
         std::fs::write(root.join("README.md"), "**☀️ 60.00% · ⚓️ pending**\n").unwrap();
-        assert!(check_figures(root).is_err());
+        assert!(check_figures(root, Some(done(610)), None).is_err());
         std::fs::write(root.join("README.md"), "**☀️ 61.00% · ⚓️ pending**\n").unwrap();
-        check_figures(root).unwrap();
+        check_figures(root, Some(done(610)), None).unwrap();
+        assert!(check_figures(
+            root,
+            Some(GameDone {
+                game_c: 1220,
+                executable: 2000,
+                ..GameDone::default()
+            }),
+            None
+        )
+        .is_err());
+        // Equal percentages must not conceal different measured byte counts.
+        let mut changed = history::load(root).unwrap();
+        changed["days"].as_array_mut().unwrap().last_mut().unwrap()["tbs"] =
+            json!({"done": 1220, "executable": 2000});
+        std::fs::write(history::path(root), history::text(&changed)).unwrap();
+        assert!(check_figures(root, Some(done(610)), None).is_err());
+        write_figures(root, Some(done(610)), None).unwrap();
+        check_figures(root, Some(done(610)), None).unwrap();
+        // A changed tracked tree requires a fresh map, even with unchanged DONE.
+        std::fs::write(root.join("games/CHECK.C"), "void Check(void) {}\n").unwrap();
+        assert!(std::process::Command::new("git")
+            .args(["add", "games/CHECK.C"])
+            .current_dir(root)
+            .status()
+            .unwrap()
+            .success());
+        assert!(check_figures(root, Some(done(610)), None).is_err());
+        write_figures(root, Some(done(610)), None).unwrap();
+        check_figures(root, Some(done(610)), None).unwrap();
         // A tampered chart fails; yesterday's figures pass only until today has a row.
         std::fs::write(root.join(figure::CHART), &map).unwrap();
-        assert!(check_figures(root).is_err());
+        assert!(check_figures(root, Some(done(610)), None).is_err());
         let yesterday = history::previous(&today).unwrap();
         assert!(figure_date_current(&today, &today, true));
         assert!(figure_date_current(&yesterday, &today, false));
@@ -403,8 +432,12 @@ fn write_figures(
 /// date, that date is today (or yesterday while today has no row), they show
 /// the latest recorded row and the README's progress line, the chart
 /// is exactly what that day's rows draw, and the map is exactly what the
-/// tracked files draw unless they changed since it was drawn that day.
-fn check_figures(root: &Path) -> Result<(), String> {
+/// current tracked files draw.
+fn check_figures(
+    root: &Path,
+    sun: Option<GameDone>,
+    anchor: Option<GameDone>,
+) -> Result<(), String> {
     let stale = |why: &str| {
         Err(format!(
             "README figures are stale ({why}); run: make coverage"
@@ -422,10 +455,17 @@ fn check_figures(root: &Path) -> Result<(), String> {
     if !figure_date_current(&date, &today, has_today) {
         return stale(&format!("drawn on {date:?}"));
     }
+    for (game, done) in [("tbs", sun), ("tla", anchor)] {
+        if let Some(done) = done.filter(|done| done.executable > 0) {
+            let measured = serde_json::json!({"done": done.bytes(), "executable": done.executable});
+            if history["figures"][game] != measured {
+                return stale(&format!("{game} does not match the verified byte counts"));
+            }
+        }
+    }
     let latest = history["days"].as_array().and_then(|days| days.last());
     for game in ["tbs", "tla"] {
-        let shown = history::percent(&history["figures"][game]);
-        if latest.map(|row| history::percent(&row[game])) != Some(shown) {
+        if latest.map(|row| &row[game]) != Some(&history["figures"][game]) {
             return stale(&format!("{game} is not the latest recorded row"));
         }
     }
@@ -460,8 +500,13 @@ fn check_figures(root: &Path) -> Result<(), String> {
     if raster::decode(&chart) != drawn(&expected_chart) {
         return stale(&format!("{} differs from its rows", figure::CHART));
     }
-    let unchanged = history["figures"]["files"].as_str() == Some(map_inputs(root).as_str());
-    if unchanged && raster::decode(&map) != drawn(&expected_map) {
+    if history["figures"]["files"].as_str() != Some(map_inputs(root).as_str()) {
+        return stale(&format!(
+            "{} was drawn from different tracked files",
+            figure::MAP
+        ));
+    }
+    if raster::decode(&map) != drawn(&expected_map) {
         return stale(&format!("{} differs from the tracked files", figure::MAP));
     }
     Ok(())
@@ -494,7 +539,7 @@ fn run(argv: &[String]) -> Result<String, String> {
         }
         let (sun, anchor) = (measured(&root(), "tbs-en")?, measured(&root(), "tla-en")?);
         if o.check {
-            check_figures(&root())?;
+            check_figures(&root(), sun, anchor)?;
         } else if o.write {
             write_figures(&root(), sun, anchor)?;
         } else {
@@ -548,7 +593,7 @@ fn run(argv: &[String]) -> Result<String, String> {
     };
     let status = status_line(sun, anchor);
     if o.check {
-        check_figures(&root())?;
+        check_figures(&root(), sun, anchor)?;
         let readme = read(&root().join("README.md"))?;
         if update_readme(&readme, &o.target, &map, &status) != readme {
             return Err("README coverage values are stale; run: make coverage".into());

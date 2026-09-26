@@ -14,8 +14,10 @@
 	.set sub_08021360, 0x08021360
 	.set sub_080f9010, 0x080f9010
 	.set sub_080f9048, 0x080f9048
+	.global Party_ShowJoinedMessage
 	.global Func_08021390
 	.thumb_func
+Party_ShowJoinedMessage:
 Func_08021390:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl

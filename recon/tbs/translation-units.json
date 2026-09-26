@@ -11166,7 +11166,7 @@
           "kind": "thumb"
         },
         "Engine_EventShowMessage": {
-          "address": "0x02009894",
+          "address": "0x0200988c",
           "kind": "thumb"
         },
         "Engine_EventWaitForScreen": {
@@ -79531,6 +79531,240 @@
         {
           "address": "0x0200274c",
           "extent": 736
+        }
+      ]
+    },
+    {
+      "id": "korosseo-marker-candidate",
+      "source": "recon/tbs/en/overlays/resource_3ba_c_02002bec.c",
+      "overlay": "resource_3ba",
+      "absolute_symbols": {
+        "gOamTiles": {
+          "address": "0x03001b10",
+          "kind": "data"
+        },
+        "Engine_MathDivide": {
+          "address": "0x0200bb00",
+          "kind": "thumb"
+        },
+        "Engine_OamSubmitRecord": {
+          "address": "0x0200bb90",
+          "kind": "thumb"
+        },
+        "Korosseo_LinkedZero": {
+          "address": "0x00000000",
+          "kind": "data"
+        },
+        "Korosseo_MarkerIndex": {
+          "address": "0x0200c6a6",
+          "kind": "data"
+        },
+        "Korosseo_MarkerSteps": {
+          "address": "0x0200c78c",
+          "kind": "data"
+        },
+        "Korosseo_MarkerStep": {
+          "address": "0x0200c750",
+          "kind": "data"
+        },
+        "Korosseo_MarkerY": {
+          "address": "0x0200c7f4",
+          "kind": "data"
+        },
+        "Korosseo_MarkerStartY": {
+          "address": "0x0200c7a4",
+          "kind": "data"
+        },
+        "Korosseo_MarkerEndY": {
+          "address": "0x0200c760",
+          "kind": "data"
+        },
+        "Korosseo_MarkerX": {
+          "address": "0x0200c780",
+          "kind": "data"
+        },
+        "Korosseo_MarkerStartX": {
+          "address": "0x0200c7bc",
+          "kind": "data"
+        },
+        "Korosseo_MarkerEndX": {
+          "address": "0x0200c800",
+          "kind": "data"
+        },
+        "Korosseo_MarkerBlink": {
+          "address": "0x0200c774",
+          "kind": "data"
+        },
+        "Korosseo_MarkerPriority": {
+          "address": "0x0200c758",
+          "kind": "data"
+        },
+        "Korosseo_MarkerOam": {
+          "address": "0x0200c7b0",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02002bec",
+          "extent": 316
+        }
+      ]
+    },
+    {
+      "id": "link-lobby-exchange-candidate",
+      "source": "recon/tbs/en/overlays/resource_3cb_c_02000860.c",
+      "overlay": "resource_3cb",
+      "absolute_symbols": {
+        "Engine_TaskWait": {
+          "address": "0x02009714",
+          "kind": "thumb"
+        },
+        "Engine_TaskAddCallback": {
+          "address": "0x0200971c",
+          "kind": "thumb"
+        },
+        "Engine_TaskRemoveCallback": {
+          "address": "0x02009724",
+          "kind": "thumb"
+        },
+        "Engine_HeapAllocate": {
+          "address": "0x0200972c",
+          "kind": "thumb"
+        },
+        "Engine_HeapRelease": {
+          "address": "0x02009734",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagIsSet": {
+          "address": "0x0200980c",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagSet": {
+          "address": "0x02009814",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagClear": {
+          "address": "0x0200981c",
+          "kind": "thumb"
+        },
+        "Engine_EventBegin": {
+          "address": "0x02009844",
+          "kind": "thumb"
+        },
+        "Engine_EventEnd": {
+          "address": "0x0200984c",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpeed": {
+          "address": "0x02009864",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetDestination": {
+          "address": "0x0200986c",
+          "kind": "thumb"
+        },
+        "Engine_ActorWaitForMove": {
+          "address": "0x02009874",
+          "kind": "thumb"
+        },
+        "Engine_ActorFaceActor": {
+          "address": "0x0200987c",
+          "kind": "thumb"
+        },
+        "Engine_EventSetMessage": {
+          "address": "0x02009884",
+          "kind": "thumb"
+        },
+        "LinkLobby_PeerSlotMatches": {
+          "address": "0x0200808c",
+          "kind": "thumb"
+        },
+        "LinkLobby_WriteSlotValue": {
+          "address": "0x02008128",
+          "kind": "thumb"
+        },
+        "LinkLobby_PollPeerReady": {
+          "address": "0x02008148",
+          "kind": "thumb"
+        },
+        "Local_020007b0": {
+          "address": "0x020087b0",
+          "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gGameStateRows": {
+          "address": "0x02000240",
+          "kind": "data"
+        },
+        "LinkLobby_LocalValues": {
+          "address": "0x02002224",
+          "kind": "data"
+        },
+        "LinkLobby_PartyBuffer": {
+          "address": "0x02018000",
+          "kind": "data"
+        },
+        "Value_00000043": {
+          "address": "0x00000043",
+          "kind": "data"
+        },
+        "Value_00000045": {
+          "address": "0x00000045",
+          "kind": "data"
+        },
+        "Value_00000058": {
+          "address": "0x00000058",
+          "kind": "data"
+        },
+        "Value_000000be": {
+          "address": "0x000000be",
+          "kind": "data"
+        },
+        "Engine_UiTextOpenMessageWindow": {
+          "address": "0x020097c4",
+          "kind": "thumb"
+        },
+        "Engine_DebugFinalizeWindow": {
+          "address": "0x020097b4",
+          "kind": "thumb"
+        },
+        "Engine_MapClearLayerEntryFlag": {
+          "address": "0x02009794",
+          "kind": "thumb"
+        },
+        "Engine_MapSetLayerEntryFlag": {
+          "address": "0x0200979c",
+          "kind": "thumb"
+        },
+        "Engine_TaskSetCallbackMask": {
+          "address": "0x0200977c",
+          "kind": "thumb"
+        },
+        "Engine_EventOpenMessage": {
+          "address": "0x0200988c",
+          "kind": "thumb"
+        },
+        "Engine_BattleFxSetWeightedResult": {
+          "address": "0x020098a4",
+          "kind": "thumb"
+        },
+        "Engine_PartySetFields1ceAnd1d0": {
+          "address": "0x020098ac",
+          "kind": "thumb"
+        },
+        "Engine_EventSetPair1d4": {
+          "address": "0x020098b4",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02000860",
+          "extent": 820
         }
       ]
     }

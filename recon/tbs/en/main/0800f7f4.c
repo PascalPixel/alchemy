@@ -1,4 +1,16 @@
-/* Draft, not exact (2026-09-25): 472 of 472 bytes, 34 differing halfwords.
+/* NONMATCHING: 472 / 472 bytes, 33 differing halfwords, 32 aligned edits.
+ * 2026-09-26 H1: capture the displacement for both sign tests and give the
+ * object-facing stores a byte/field union view. This recovers the exact
+ * shared r5-relative position reload at 0800f882, including its incoming
+ * branch, with no extra address, load or stack space. Full normalized diff
+ * confirms that only that branch halfword differs from the prior baseline.
+ * The recovered join is an admission invariant for subsequent experiments.
+ * Whole owner [0800f7f4,0800f9cc) includes eight owned pool words. Callback
+ * pointers occur at 08013688 and 08114db0; all five callees were audited.
+ * gKeysHeld already binds to the named Data_03001ae8 linker symbol, so the
+ * independently successful literal-key-address correction is inapplicable.
+ *
+ * Historical draft (2026-09-25): 472 of 472 bytes, 34 differing halfwords.
    Every call, store and branch is in place and the frame matches (the
    position sits above 68 unused bytes). Remaining: allocation swaps r0-r3
    in the prologue, the zeroed position and both height tests, and the ROM
@@ -14,6 +26,14 @@
    below so this draft scores independently without per-file bindings. */
 #include "OBJECT_RUNTIME.H"
 #include "MAP.H"
+
+/* FAKEMATCH: a byte/field union view makes facing stores conservatively
+ * alias the stack position, as the reference's shared join reload requires.
+ * The two sign tests consume one captured displacement before either store. */
+union KeyMoveObject {
+    struct ObjectRuntime fields;
+    u8 bytes[sizeof(struct ObjectRuntime)];
+};
 
 struct KeyMoveEventWork {
     u8 unknown_000[0x19c];
@@ -52,6 +72,7 @@ s32 Object_MoveByKeys(struct ObjectRuntime *object)
     u16 angle;
     s32 motion;
     s32 blocked;
+    s32 delta_z;
 
     object->speed_limit = 0x8000;
     object->acceleration = 0x4000;
@@ -71,10 +92,11 @@ s32 Object_MoveByKeys(struct ObjectRuntime *object)
         pos.z = 0;
         Vector_AddPolarOffset(0x80000, angle, &pos);
         pos.x += object->x;
-        if (pos.z < 0)
-            object->angle = 0xc000;
-        if (pos.z > 0)
-            object->angle = 0x4000;
+        delta_z = pos.z;
+        if (delta_z < 0)
+            ((union KeyMoveObject *)object)->fields.angle = 0xc000;
+        if (delta_z > 0)
+            ((union KeyMoveObject *)object)->fields.angle = 0x4000;
         pos.y = object->y - pos.z;
         pos.z = object->z;
         from = &MAP_CELLS[object->x / 0x100000 + (pos.z / 0x100000) * 128];

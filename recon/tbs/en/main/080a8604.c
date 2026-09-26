@@ -14,6 +14,14 @@
  * instead of r8/sl, power_x spills and level_x-8 survives the call chain.
  * Plain !=0 creates an extra branch; retain the prior tagged branchless
  * nonzero encoding in the next model. No new matching credit.
+ * H2: one phase pointer spans menu setup and the element-stat walk, as
+ * the reference's r8 carrier does. Keep the typed views at each access.
+ * Prediction: menu and element cursor share allocation, freeing the power
+ * column from its stack slot. Preserve the branchless has-Djinn encoding.
+ * H2 result: 784/768 bytes, 181 aligned edits, topology equal. Frame is
+ * now 40 and power_x is in fp, but the combined pointer spills at sp+20;
+ * mode/owner slots agree while Djinn/row slots differ. The persistent
+ * level_x-8 remains. Shared pointer allocation is not a matching witness.
  */
 
 extern u8 Value_00000afe[];
@@ -65,7 +73,7 @@ s32 Func_080771f8(s32 unit, s32 element);
 
 void CharacterMenu_DrawStatusAilments(void *window, s32 unit, s32 mode)
 {
-    struct MenuState *state;
+    void *work;
     s32 has_djinn;
     s32 total;
     struct StatusUnit *status;
@@ -74,20 +82,20 @@ void CharacterMenu_DrawStatusAilments(void *window, s32 unit, s32 mode)
     s32 count;
     s32 y;
     s32 text;
-    struct ElementStat *stats;
     s32 power_x;
     s32 level_x;
     u8 *djinn;
     u8 ailments[8];
 
-    state = gMenuWork;
+    work = gMenuWork;
     total = Party_SumDjinnCountsFar(-1);
-    has_djinn = total != 0;
+    /* FAKEMATCH: spell the reference's branchless nonzero encoding. */
+    has_djinn = (u32)(-total | total) >> 31;
     status = Owner_GetStateFar(unit);
     row = 7;
     if ((mode & 0xff) != 1)
         row = 10;
-    state->cursor->state = 1;
+    ((struct MenuState *)work)->cursor->state = 1;
     ItemMenu_DrawOwnerStatus(window, unit, mode);
     CharacterMenu_BuildAvailability(ailments, 1, unit);
     CharacterMenu_UpdateSelectionIcons(ailments);
@@ -119,7 +127,7 @@ void CharacterMenu_DrawStatusAilments(void *window, s32 unit, s32 mode)
         UiText_DrawCharacterAtOffsetFar(0xbd4, window, 0, 40);
     CharacterMenu_UpdateSelectionIcons(ailments);
     ItemMenu_ApplyFlags(ailments);
-    if (state->mode == 3)
+    if (((struct MenuState *)work)->mode == 3)
         return;
     if (keep == 0) {
         WaitFrames(1);
@@ -143,7 +151,8 @@ void CharacterMenu_DrawStatusAilments(void *window, s32 unit, s32 mode)
         UiText_DrawCharacterAtOffsetFar(text, window, 64, y + 24);
         UiText_DrawCharacterAtOffsetFar(text + 1, window, 64, y + 32);
     }
-    stats = status->element_stats;
+    /* FAKEMATCH: reuse the menu-phase pointer for the element-stat phase. */
+    work = status->element_stats;
     power_x = 104;
     level_x = 120;
     djinn = status->djinn_set;
@@ -156,10 +165,10 @@ void CharacterMenu_DrawStatusAilments(void *window, s32 unit, s32 mode)
                 UiText_DrawStringInWindowFar(Data_080af230, window, level_x - 8, row * 8 + 8);
             }
             UiText_DrawNumberInWindowFar(Func_080771f8(unit, count), 2, window, level_x - 8, row * 8 + 16);
-            UiText_DrawNumberInWindowFar(stats->power, 3, window, power_x, row * 8 + 24);
-            UiText_DrawNumberInWindowFar(stats->resistance, 3, window, power_x, row * 8 + 32);
+            UiText_DrawNumberInWindowFar(((struct ElementStat *)work)->power, 3, window, power_x, row * 8 + 24);
+            UiText_DrawNumberInWindowFar(((struct ElementStat *)work)->resistance, 3, window, power_x, row * 8 + 32);
         }
-        stats++;
+        work = (struct ElementStat *)work + 1;
         power_x += 32;
         level_x += 32;
         djinn++;

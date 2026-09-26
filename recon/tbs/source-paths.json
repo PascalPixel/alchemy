@@ -1,6 +1,18 @@
 {
   "format": 3,
   "owners": {
+    "main:0801908c": {
+      "name": "RenderOutput_UpdateScaleAnimation"
+    },
+    "main:080191cc": {
+      "name": "UiWork_AnimateSpriteSlots"
+    },
+    "main:0801a98c": {
+      "name": "MenuSelection_DrawFrame"
+    },
+    "main:0801aeec": {
+      "name": "MenuSelection_DrawSideMarker"
+    },
     "main:080108e4": {
       "name": "Map_WriteLayerCellTile"
     },
@@ -21709,7 +21721,6 @@
     "main:08015070": "UiWindow_DrawDividerLineFar",
     "main:0808a5b0": "SaveState_CaptureObjectTableFar",
     "main:080a2420": "UiWork_ClearMenuBusy",
-    "main:080191cc": "UiWork_AnimateSpriteSlots",
     "main:080168f4": "UiWork_StepChannelScript",
     "main:08090658": "DisplayTransition_UpdateFrame",
     "main:0808a278": "Object_GetScreenPositionFar",
@@ -21763,7 +21774,6 @@
     "main:080b5078": "BattleMotion_ApproachTargetFar",
     "main:080c9ca8": "BattleFx_RunFiveMode",
     "main:080ccc38": "BattleFx_RunTwoResource",
-    "main:0801a98c": "MenuSelection_DrawFrame",
     "main:08009288": "Runtime_RemapBytesByTableFar",
     "main:080153b0": "Menu_RunConfirmSelectionAtFar",
     "main:08077088": "OwnerAction_AddFar",

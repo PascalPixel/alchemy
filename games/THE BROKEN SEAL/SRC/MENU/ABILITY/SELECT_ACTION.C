@@ -1,15 +1,6 @@
-/* Draft H1: complete Psynergy status-list model from own-ROM 080a90bc-080a9370.
- * Restores the 28-byte MenuResult, all setup/input/drawing calls, typed cursor
- * pointers, four hidden row positions and owner-switch state. The following
- * 080a9370 return helper is a separate function, not part of this extent.
- * H1: 692/692 bytes, 8 differing halfwords, exact 44-byte frame and all calls.
- * Residual: icon traversal pointer/count swap r1/r2 and setup order (7), plus
- * signed -16 coordinate pool word encoded as 0x0000fff0 (1). No other diff.
- * H2: 692/692 bytes, 6 differing halfwords. Signed row positions restore the
- * negative pool word; the exact ItemMenu_HideAllIcons neighbour's early state
- * local restores priority setup order. Only the icon pointer/count r1/r2 swap
- * remains. H3 will share the setup loops' counter, matching the ROM's reuse of
- * r2 for both consecutive induction variables; no other source changes. */
+/* Browse the current owner's Psynergy from the status menu. L/R changes owners;
+ * A advances to Item and B returns to character selection. The row coordinates
+ * are signed because this view hides the four owner slots above the screen. */
 #include "TYPES.H"
 #include "MENU_RESULT.H"
 #include "SYSTEM.H"
@@ -77,7 +68,7 @@ s32 Math_Mod(s32 value, s32 divisor);
 void PsynergyMenu_CallIconRoutineWithValue(void *menu, s32 owner);
 void ItemMenu_HideAllIcons(void);
 
-s32 Func_080a90bc(void)
+s32 PsynergyMenu_SelectAction(void)
 {
     struct PsynergyStatusMenu *menu;
     s32 result;
@@ -86,6 +77,7 @@ s32 Func_080a90bc(void)
     s32 first;
     s32 nav;
     s32 tab;
+    s32 i;
     struct MenuResult state;
 
     menu = gMenuWork;
@@ -94,16 +86,11 @@ s32 Func_080a90bc(void)
     Menu_BuildPatternTiles();
     RenderOutput_RedrawSavedRectFar(menu->icon_window);
     UiWindow_UpdateOrCreate(&menu->info_window, 0, 0, 30, 5, 2);
-    {
-        s32 i;
-
-        for (i = 3; i >= 0; i--)
-            menu->slot_y[i] = -16;
-    }
+    for (i = 3; i >= 0; i--)
+        menu->slot_y[i] = -16;
     {
         s32 priority = 245;
         struct MenuEntryIcon **icons = menu->entry_icons;
-        s32 i;
 
         for (i = 31; i >= 0; i--) {
             struct MenuEntryIcon *icon = *icons++;

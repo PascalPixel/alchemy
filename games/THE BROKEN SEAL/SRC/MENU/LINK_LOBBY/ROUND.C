@@ -1,16 +1,6 @@
-/* NONMATCHING: 1060 bytes, candidate 1052, 421 differing halfwords, 165
- * aligned halfword edits (2026-09-26). Scene_RunScene3cbSequenceA, meant for
- * MENU/LINK_LOBBY/F_012E0.C as a single-overlay unit binding its names at
- * their runtime addresses (an import veneer's listing offset plus 0x8000).
- * Remaining: Bound the inventory prompt to its verified main-ROM service at
- * 0808a070; the previous Engine_UiWorkWaitThenFinalizeCapacity name was
- * unsupported and identified a different service. Name halfword pool
- * placement is recovered by word-sized halfword constants and indexed rows;
- * separate globals recover the two initial address loads. The own-ROM call
- * list also proves ShowMessage uses 02009894, not OpenMessage's 0200988c.
- * Remaining: name pointer/value registers, state/counter allocation, constant
- * reuse and the final pool differ. Inline wrappers reduce constant lifetimes;
- * a Half aggregate did not recover the early pool. */
+/* Apply the link round's result, update records, and reopen lobby dialogue.
+ * Reconstructed from this owner's complete own-ROM listing and registered
+ * draft; exact 1060-byte extent, including literal pools (2026-09-26). */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 s32 Main_0808a070(s32, s32);
@@ -39,6 +29,13 @@ extern u8 Data_0000004c;
 extern u8 Data_0000004b;
 extern s32 Data_02009f50;
 extern s32 Data_02009f4c;
+extern u8 Value_0000293e;
+
+union GameStateRows {
+    u8 bytes[512][2];
+    u16 halves[512][1];
+    s32 words[256];
+};
 
 #define ROW(n) Data_02000240_t[n][0]
 
@@ -47,19 +44,25 @@ static __inline__ s32 Value1(s32 (*fn)(), s32 value)
     return fn(value);
 }
 
+static __inline__ void Call1(void (*fn)(), s32 value)
+{
+    fn(value);
+}
+
 static __inline__ void Call2(void (*fn)(), s32 left, s32 right)
 {
     fn(left, right);
 }
 
-s32 Scene_RunScene3cbSequenceA(void)
+static __inline__ void Name_StoreLetter(s32 letter, u16 *dst, s32 index)
+{
+    dst[index] = letter;
+}
+
+s32 LinkLobby_RunRoundResult(void)
 {
     s32 i;
-    s32 wins;
-    s32 msg;
-    s32 v;
-    u16 *row;
-    s32 letter;
+    u32 score;
     struct EventWork *ew;
     void (*callback)(void);
 
@@ -77,14 +80,10 @@ s32 Scene_RunScene3cbSequenceA(void)
     Main_08009190(5);
     /* FAKEMATCH: word-sized locals retain halfword-mode link constants,
      * giving the short literal-pool reach used by the original name stores. */
-    letter = (u16)(s32)&Data_00000054;
-    Data_02002224[4] = letter;
-    letter = (u16)(s32)&Data_00000041;
-    Data_02002224[5] = letter;
-    letter = (u16)(s32)&Data_0000004c;
-    Data_02002224[6] = letter;
-    letter = (u16)(s32)&Data_0000004b;
-    Data_02002224[7] = letter;
+    Name_StoreLetter((u16)(s32)&Data_00000054, Data_02002224, 4);
+    Name_StoreLetter((u16)(s32)&Data_00000041, Data_02002224, 5);
+    Name_StoreLetter((u16)(s32)&Data_0000004c, Data_02002224, 6);
+    Name_StoreLetter((u16)(s32)&Data_0000004b, Data_02002224, 7);
     for (i = 0; i < 8; i++) {
         Engine_GameFlagClear(0x2f0 + i);
         if (Local_02000f30(i)) {
@@ -92,12 +91,20 @@ s32 Scene_RunScene3cbSequenceA(void)
         }
     }
     if ((s16)ROW(225) == 8) {
+        s32 wins;
+        s32 msg;
+        s32 v;
+
         Engine_EventBegin();
         Engine_EventOpenScreen();
         Engine_EventWaitForScreen();
         Local_02000128(5);
-        ROW(338)++;
-        ROW(341)++;
+        {
+            union GameStateRows *state = (union GameStateRows *)Data_02000240_t;
+
+            state->halves[338][0]++;
+            state->halves[341][0]++;
+        }
         wins = (s8)Value1(Main_080770e0, 0x3f8);
         msg = wins * 2 + 2;
         if (msg > 14) {
@@ -111,8 +118,11 @@ s32 Scene_RunScene3cbSequenceA(void)
         } else {
             Call2(Main_080770e8, 1000, v + 1);
         }
-        Engine_ActorFaceActor(8, *(s32 *)Data_02000240_t[250], 0);
-        Engine_EventSetMessage(0x293e + msg);
+        {
+        union GameStateRows *state = (union GameStateRows *)Data_02000240_t;
+
+        Engine_ActorFaceActor(8, state->words[125], 0);
+        Call1(Engine_EventSetMessage, (s32)&Value_0000293e + msg);
         Engine_EventOpenMessage(8, 0);
         if (Main_0808a070(0, 0) == 0) {
             if (wins > 90) {
@@ -120,12 +130,15 @@ s32 Scene_RunScene3cbSequenceA(void)
             }
             Call2(Main_080770e8, 0x3f8, wins);
         } else {
+
             Engine_GameFlagClear(0x173);
             Call2(Main_080770e8, 0x3f8, -1);
-            row = &ROW(341);
-            Call2(Main_08015120, *row, 5);
-            if (ROW(340) < *row) {
-                ROW(340) = *row;
+            /* FAKEMATCH: one scalar holds the row address, then its score. */
+            score = (u32)state->halves[341];
+            Call2(Main_08015120, *(u16 *)score, 5);
+            score = *(u16 *)score;
+            if (state->halves[340][0] < score) {
+                state->halves[340][0] = score;
                 Engine_EventSetMessage(0x293c);
                 Engine_EventOpenMessage(8, 0);
                 Scene_ShowDialoguePair292c();
@@ -135,18 +148,22 @@ s32 Scene_RunScene3cbSequenceA(void)
             }
             Local_02000128(0);
         }
+        }
         Engine_EventEnd();
     } else if ((s16)ROW(225) == 9) {
+
         ROW(339)++;
         Engine_EventBegin();
         Engine_EventOpenScreen();
         Engine_EventWaitForScreen();
         Local_02000128(5);
         Engine_ActorFaceActor(8, *(s32 *)Data_02000240_t[250], 0);
-        row = &ROW(341);
-        Call2(Main_08015120, *row, 5);
-        if (ROW(340) < *row) {
-            ROW(340) = *row;
+        /* FAKEMATCH: one scalar holds the row address, then its score. */
+        score = (u32)&ROW(341);
+        Call2(Main_08015120, *(u16 *)score, 5);
+        score = *(u16 *)score;
+        if (ROW(340) < score) {
+            ROW(340) = score;
             Engine_EventSetMessage(0x293c);
             Engine_EventOpenMessage(8, 0);
             Scene_ShowDialoguePair292c();
@@ -160,14 +177,16 @@ s32 Scene_RunScene3cbSequenceA(void)
         Local_02000128(0);
         Engine_EventEnd();
     } else if ((s16)ROW(225) == 10) {
+        s32 v;
+
         Engine_EventBegin();
         Engine_EventOpenScreen();
         Engine_EventWaitForScreen();
         Local_02000128(0);
         Local_02000128(4);
-        if (Engine_GameFlagIsSet(1000)) {
+        if (Value1(Engine_GameFlagIsSet, 1000)) {
             ew = gEventWork;
-            Engine_GameFlagClear(1000);
+            Call1(Engine_GameFlagClear, 1000);
             ew->raised_trigger = 2;
             Engine_GameFlagClear(0x304);
             Engine_TaskWait(20);
@@ -176,17 +195,22 @@ s32 Scene_RunScene3cbSequenceA(void)
             Local_02000128(4);
         } else {
             ROW(342)++;
-            v = ++ROW(345);
-            if (ROW(344) < (u16)v) {
-                ROW(344) = v;
+            v = ROW(345) + 1;
+            ROW(345) = v;
+            /* FAKEMATCH: reuse the other score branches' address slot. */
+            score = (u32)&ROW(344);
+            if (*(u16 *)score < (u16)v) {
+                *(u16 *)score = v;
             }
-            Scene_DrawThreeDigitValue(ROW(344));
+            Scene_DrawThreeDigitValue(*(u16 *)score);
             Scene_ShowDialoguePair292a();
             Engine_GameFlagSet(0x304);
             Engine_GameFlagSet(0x305);
         }
         Engine_EventEnd();
     } else if ((s16)ROW(225) == 11) {
+        s32 v;
+
         Engine_EventBegin();
         Engine_EventOpenScreen();
         Engine_EventWaitForScreen();

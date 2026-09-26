@@ -11895,7 +11895,8 @@
       "source": "FIELD/HAIDIA_IE/ELDER_AID_EVENT.C"
     },
     "resource_3cb:020012e0": {
-      "name": "Scene_RunScene3cbSequenceA"
+      "name": "LinkLobby_RunRoundResult",
+      "source": "MENU/LINK_LOBBY/ROUND.C"
     },
     "resource_370:02000de4": {
       "name": "Scene_RunScene370SequenceA"

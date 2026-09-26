@@ -1,213 +1,203 @@
+/* Draft H1: CharacterMenu_SelectCommand, complete 080a8114-080a847a body.
+ * Transfer the typed cursor/window/owner family from SELECT_ACTION.C, preserve
+ * the signed-byte availability count, and restore repeated typed owner loads.
+ * The final two bytes before 080a847c are inter-function alignment.
+ * H1: 870/870 bytes, 30 differing halfwords; exact 40-byte frame, branches,
+ * cursor interfaces, signed-byte normalization and repeated owner loads.
+ * Residual: spilled has_djinn/done/has_ailments/count slots are reversed,
+ * count is sign-extended after the pane branch instead of before its modulo,
+ * and scheduler r0 loads early. The actual scheduler returns s32, not void.
+ * H2: declare spills in reference slot order and use the actual return type.
+ * Budget: corrected model plus two variants; adoption requires all gates. */
 #include "TYPES.H"
-#include "GLOBAL_CELLS.H"
+#include "SYSTEM.H"
+#include "UI.H"
 
-extern void *Data_03001f2c;
+struct CharacterMenuCursor {
+    u8 unknown_00[5];
+    u8 state;
+};
 
-s32 Func_08077290(s32);
-void Func_080a10d0(s32 *, s32, s32, s32, s32, s32);
-void Func_08004278(void (*)(void));
-void Func_080a19a0(void);
-void Func_080a1ac0(s32, s32);
-void *Func_08077008(s32);
-void Func_080a8604(s32, s32, s32);
-s8 Func_080a8b10(u8 *, s32, s32);
-s32 Modulo(s32, s32);
-s32 Func_080770c0(s32);
-void Func_08015270(s32);
-void Func_08015278(s32);
-void Func_08015080(s32, s32, s32, s32);
-void Func_08015068(s32, s32, s32, s32, s32);
-s32 Func_080041d8(const void *, s32);
-void Func_080a1804(void *, s32);
-void Func_080a9d84(void);
-void Func_080a847c(s32, s32, u8 *, s32);
-void Func_080a8508(s32, s32, u8 *);
-void Func_080a8578(s32, s32, s32);
-void Func_080a1a40(s32, s32);
-void Func_080030f8(s32);
-void Func_080f9010(s32);
+struct CharacterCommandMenu {
+    u8 unknown_000[8];
+    s32 owner;
+    u8 unknown_00c[8];
+    struct CharacterMenuCursor *cursor;
+    u8 unknown_018[4];
+    s8 tab;
+    u8 unknown_01d[7];
+    s32 window;
+    u8 unknown_028[4];
+    s32 help_window;
+    u8 unknown_030[0x1d8];
+    u16 owners[8];
+    u8 unknown_218;
+    u8 owner_count;
+    u8 owner_id;
+    u8 unknown_21b[0x21];
+    s16 slot_y[4];
+};
+
+extern struct CharacterCommandMenu *gMenuWork;
+extern volatile u32 gKeyState;
+extern volatile u32 gKeysRepeat;
+extern u8 Value_00000b06;
+
+s32 Party_SumDjinnCountsFar(s32 side);
+s32 UiWindow_UpdateOrCreate(s32 *, s32, s32, s32, s32, s32);
+void Scheduler_RemoveCallback(void (*callback)(void));
+void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
+void Menu_UpdateEntryObjectTransforms(void);
+void UiMenu_SlideCursor(s32 x, s32 y);
+void UiMenu_PositionCursor(s32 x, s32 y);
+void *Owner_GetStateFar(s32 owner);
+void CharacterMenu_DrawStatusAilments(s32 window, s32 owner, s32 mode);
+s32 CharacterMenu_BuildAvailability(u8 *entries, s32 flags, s32 owner);
+s32 Math_Mod(s32 value, s32 divisor);
+s32 GameFlag_TestFar(s32 flag);
+void RenderOutput_RedrawSavedRectFar(s32 window);
+void RenderOutput_ClearListFar(s32 window);
+void UiWindow_ClearInteriorTilesFar(s32 window, s32 x, s32 y, s32 width, s32 height);
+void PsynergyMenu_CallIconRoutineWithValue(void *menu, s32 owner);
+void ItemMenu_ResetCategory(void);
+void CharacterMenu_DrawSelectionCursor(s32 mode, s32 selected, u8 *entries, s32 invert);
+void CharacterMenu_DrawSelectionLabels(s32 window, s32 selected, const u8 *entries);
+void StatusMenu_ShowOwnerProgressMessage(s32 window, s32 selected, s32 has_djinn);
+void Audio_PlayCue(s32 cue);
 
 s32 Func_080a8114(void)
 {
-    void *menu;
+    struct CharacterCommandMenu *menu;
+    s32 pane;
     s32 result;
-    s32 step;
-    s32 hasAlt;
+    s32 selected;
+    s32 has_djinn;
     s32 done;
-    s32 roundMode;
-    u8 *ownerIdPtr;
-    u8 entriesBuf[8];
-    s32 sl;
-    s32 quantity;
-    s32 changed;
-    s8 flagByte;
-    s32 rawFlag;
+    s32 has_ailments;
+    s8 count;
+    s32 redraw;
+    s32 tab;
+    s32 total;
+    s32 i;
+    u8 entries[8];
 
-    menu = Data_03001f2c;
-    sl = 0;
+    menu = gMenuWork;
+    pane = 0;
     result = 0;
-    quantity = 0;
-    rawFlag = Func_08077290(-1);
-    roundMode = (u32)(-rawFlag | rawFlag) >> 31;
-
-    Func_080a10d0((s32 *)((u8 *)menu + 44), 0, 0, 30, 5, 2);
-    Func_08004278(Func_080a19a0);
-
-    {
-        s16 *reset = (s16 *)((u8 *)menu + 0x242);
-        s32 i = 3;
-        do {
-            i -= 1;
-            *reset = 0x68;
-            reset -= 1;
-        } while (i >= 0);
-    }
-
+    selected = 0;
+    total = Party_SumDjinnCountsFar(-1);
+    /* FAKEMATCH: retain the family's neg/orr/lsr boolean conversion. */
+    has_djinn = (u32)(-total | total) >> 31;
+    UiWindow_UpdateOrCreate(&menu->help_window, 0, 0, 30, 5, 2);
+    Scheduler_RemoveCallback(Menu_UpdateEntryObjectTransforms);
+    for (i = 3; i >= 0; i--)
+        menu->slot_y[i] = 104;
     done = 0;
-    Func_080a1ac0(-10, 88);
-    ownerIdPtr = (u8 *)menu + 0x21a;
+    UiMenu_SlideCursor(-10, 88);
 
-    for (;;) {
-        if (done != 0)
-            break;
-        if (Func_080770c0(336) != 0)
-            break;
+    while (done == 0 && GameFlag_TestFar(0x150) == 0) {
+        Owner_GetStateFar(menu->owner_id);
+        CharacterMenu_DrawStatusAilments(menu->window, menu->owner_id, 1);
+        count = CharacterMenu_BuildAvailability(entries, 1, menu->owner_id);
+        has_ailments = 0;
+        if (count == 0)
+            count = 1;
+        else
+            has_ailments = 1;
+        redraw = 1;
 
-        Func_08077008(*ownerIdPtr);
-        Func_080a8604(*(s32 *)((u8 *)menu + 36), *ownerIdPtr, 1);
-        flagByte = Func_080a8b10(entriesBuf, 1, *ownerIdPtr);
-        hasAlt = 0;
-        step = flagByte;
-        if (flagByte != 0) {
-            hasAlt = 1;
-        } else {
-            step = 1;
-        }
-        changed = 1;
-
-        for (;;) {
-            if (Func_080770c0(336) != 0)
-                break;
-
-            if (changed != 0) {
-                changed = 0;
-                sl = (sl + 2) % 2;
-                if (sl != 0) {
-                    Func_08015270(*(s32 *)((u8 *)menu + 44));
-                    if (roundMode != 0) {
-                        quantity = (quantity + 8) % 8;
-                    } else {
-                        quantity = Modulo(quantity + 7, 7);
+        while (GameFlag_TestFar(0x150) == 0) {
+            if (redraw != 0) {
+                redraw = 0;
+                pane = (pane + 2) % 2;
+                if (pane == 0) {
+                    selected = Math_Mod(selected + count, count);
+                    RenderOutput_RedrawSavedRectFar(menu->help_window);
+                    if (has_ailments == 0) {
+                        UiText_DrawCharacterAtOffsetFar((s32)&Value_00000b06,
+                            menu->window, 80, -24);
+                        UiText_DrawCharacterAtOffsetFar((s32)&Value_00000b06 + 1,
+                            menu->window, 0, -24);
                     }
                 } else {
-                    quantity = Modulo(quantity + step, step);
-                    Func_08015270(*(s32 *)((u8 *)menu + 44));
-                    if (hasAlt == 0) {
-                        Func_08015080(0xb06, *(s32 *)((u8 *)menu + 36), 0x50,
-                            -0x18);
-                        Func_08015080(0xb07, *(s32 *)((u8 *)menu + 36), 0,
-                            -0x18);
-                    }
+                    RenderOutput_RedrawSavedRectFar(menu->help_window);
+                    if (has_djinn != 0)
+                        selected = (selected + 8) % 8;
+                    else
+                        selected = Math_Mod(selected + 7, 7);
                 }
-                Func_080a847c(sl, quantity, entriesBuf, 0);
-                Func_08015278(*(s32 *)((u8 *)menu + 44));
-                Func_080030f8(1);
-                if (sl == 0) {
-                    Func_080a8508(
-                        *(s32 *)((u8 *)menu + 44), quantity, entriesBuf);
-                } else {
-                    Func_080a8578(
-                        *(s32 *)((u8 *)menu + 44), quantity, roundMode);
-                }
+                CharacterMenu_DrawSelectionCursor(pane, selected, entries, 0);
+                RenderOutput_ClearListFar(menu->help_window);
+                WaitFrames(1);
+                if (pane == 0)
+                    CharacterMenu_DrawSelectionLabels(menu->help_window, selected, entries);
+                else
+                    StatusMenu_ShowOwnerProgressMessage(menu->help_window, selected, has_djinn);
             }
-
-            *((u8 *)(*(void **)((u8 *)menu + 20)) + 5) = 1;
-            if (sl == 0) {
-                Func_080a1a40(-10, quantity * 16 + 88);
-            } else if (quantity <= 3) {
-                Func_080a1a40(24, quantity * 8 + 48);
-            } else {
-                Func_080a1a40(48, quantity * 8 + 80);
-            }
-            Func_080030f8(1);
-            if (*(volatile u32 *)ADDR_03001B04 & 0xf0) {
-                Func_080a847c(sl, quantity, entriesBuf, 1);
-            }
-
-            if (*(volatile u32 *)ADDR_03001C94 & 1) {
-                Func_080f9010(112);
+            menu->cursor->state = 1;
+            if (pane == 0)
+                UiMenu_PositionCursor(-10, selected * 16 + 88);
+            else if (selected <= 3)
+                UiMenu_PositionCursor(24, selected * 8 + 48);
+            else
+                UiMenu_PositionCursor(48, selected * 8 + 80);
+            WaitFrames(1);
+            if (gKeysRepeat & 0xf0)
+                CharacterMenu_DrawSelectionCursor(pane, selected, entries, 1);
+            if (gKeyState & 1) {
+                Audio_PlayCue(112);
                 done = 1;
                 result = 1;
-            } else if (*(volatile u32 *)ADDR_03001C94 & 2) {
-                Func_080f9010(113);
+                break;
+            }
+            if (gKeyState & 2) {
+                Audio_PlayCue(113);
                 done = 1;
                 result = -1;
-            } else {
-                if (*(volatile u32 *)ADDR_03001B04 & 0x40) {
-                    Func_080f9010(111);
-                    changed = 1;
-                    quantity -= 1;
-                }
-                if (*(volatile u32 *)ADDR_03001B04 & 0x80) {
-                    Func_080f9010(111);
-                    changed = 1;
-                    quantity += 1;
-                }
-                if (*(volatile u32 *)ADDR_03001B04 & 0x10) {
-                    Func_080f9010(111);
-                    changed = 1;
-                    sl += 1;
-                }
-                if (*(volatile u32 *)ADDR_03001B04 & 0x20) {
-                    Func_080f9010(111);
-                    changed = 1;
-                    sl -= 1;
-                }
-                if (*(volatile u32 *)ADDR_03001B04 & 0x100 ||
-                    *(volatile u32 *)ADDR_03001B04 & 0x200) {
-                    s32 page;
-                    s32 newPage;
-                    u8 count;
-                    u16 tableVal;
-
-                    Func_080f9010(111);
-                    page = *((s8 *)menu + 28);
-                    if (*(volatile u32 *)ADDR_03001B04 & 0x100) {
-                        newPage = page + 1;
-                    } else {
-                        newPage = page - 1;
-                    }
-                    count = *((u8 *)menu + 0x219);
-                    newPage = Modulo(newPage + count, count);
-                    tableVal =
-                        *(u16 *)((u8 *)menu + newPage * 2 + 0x208);
-                    *(s32 *)((u8 *)menu + 8) = tableVal;
-                    *ownerIdPtr = (u8)tableVal;
-                    *((s8 *)menu + 28) = (s8)newPage;
-                    Func_080a1804(menu, tableVal);
-                } else {
-                    continue;
-                }
+                break;
             }
-            break;
+            if (gKeysRepeat & 0x40) {
+                Audio_PlayCue(111);
+                redraw = 1;
+                selected--;
+            }
+            if (gKeysRepeat & 0x80) {
+                Audio_PlayCue(111);
+                redraw = 1;
+                selected++;
+            }
+            if (gKeysRepeat & 0x10) {
+                Audio_PlayCue(111);
+                redraw = 1;
+                pane++;
+            }
+            if (gKeysRepeat & 0x20) {
+                Audio_PlayCue(111);
+                redraw = 1;
+                pane--;
+            }
+            if ((gKeysRepeat & 0x100) || (gKeysRepeat & 0x200)) {
+                Audio_PlayCue(111);
+                tab = menu->tab;
+                if (gKeysRepeat & 0x100)
+                    tab++;
+                else
+                    tab--;
+                tab = Math_Mod(tab + menu->owner_count, menu->owner_count);
+                menu->owner = menu->owners[tab];
+                menu->owner_id = menu->owners[tab];
+                menu->tab = tab;
+                PsynergyMenu_CallIconRoutineWithValue(menu, menu->owners[tab]);
+                break;
+            }
         }
     }
-
-    Func_08015278(*(s32 *)((u8 *)menu + 44));
-    Func_08015270(*(s32 *)((u8 *)menu + 44));
-    Func_08015068(*(s32 *)((u8 *)menu + 36), 0x40, 0x38, 0xe0, 0x60);
-    Func_080041d8((const void *)Func_080a19a0, 0xc80);
-
-    {
-        s16 *reset = (s16 *)((u8 *)menu + 0x242);
-        s32 i = 3;
-        do {
-            i -= 1;
-            *reset = 0x80;
-            reset -= 1;
-        } while (i >= 0);
-    }
-
-    Func_080a9d84();
+    RenderOutput_ClearListFar(menu->help_window);
+    RenderOutput_RedrawSavedRectFar(menu->help_window);
+    UiWindow_ClearInteriorTilesFar(menu->window, 64, 56, 224, 96);
+    Scheduler_AddOrUpdateCallback(Menu_UpdateEntryObjectTransforms, 0xc80);
+    for (i = 3; i >= 0; i--)
+        menu->slot_y[i] = 128;
+    ItemMenu_ResetCategory();
     return result;
 }

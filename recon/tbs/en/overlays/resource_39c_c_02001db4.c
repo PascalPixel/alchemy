@@ -26,7 +26,7 @@ struct EffectParams {
 #define STEP() ((s32)((Engine_RandomNext() << 3) >> 16) * 0x3333)
 
 /* Slide one of three stone doors two cells open, with dust along its edge. */
-void Local_02001db4(s32 side)
+void Func_02001db4(s32 side)
 {
     struct EffectParams params;
     u32 j;

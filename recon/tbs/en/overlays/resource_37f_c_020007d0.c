@@ -23,7 +23,7 @@ void Scene_UpdateFormationActor12Flags(void);
 void Scene_UpdateFormationActor13Flags(void);
 void Scene_UpdateFormationActor14Flags(void);
 
-void Local_020007d0(void)
+void Func_020007d0(void)
 {
     struct FieldActor *leader;
     struct FieldActor *block;

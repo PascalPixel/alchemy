@@ -1,3 +1,8 @@
+/* NONMATCHING: 316 bytes, 8 differing halfwords. The setup store and
+ * constant loads remain scheduled differently. A one-pass reset block gives
+ * 35 aligned edits; moving repeat before the triple copy gives 12 differing
+ * halfwords; a value-returning reset helper gives 24 edits. Retain the
+ * original setup ordering; the controller body already matches. */
 #include "TYPES.H"
 
 #define AudioTest_RunParameterController Func_080f92fc

@@ -4072,12 +4072,60 @@
       "source": "recon/tbs/en/overlays/resource_380_c_02004260.c",
       "overlay": "resource_380",
       "absolute_symbols": {
-        "Func_0200c95c": {
+        "Engine_ObjectCreate": {
+          "address": "0x0200c8c4",
+          "kind": "thumb"
+        },
+        "Main_08077040": {
           "address": "0x0200c95c",
           "kind": "thumb"
         },
-        "Func_0200c954": {
+        "Main_08077038": {
           "address": "0x0200c954",
+          "kind": "thumb"
+        },
+        "Engine_ObjectSetScript": {
+          "address": "0x0200c8bc",
+          "kind": "thumb"
+        },
+        "Engine_HeapAllocate": {
+          "address": "0x0200c894",
+          "kind": "thumb"
+        },
+        "Engine_ItemLoadIcon": {
+          "address": "0x0200c934",
+          "kind": "thumb"
+        },
+        "Engine_VramLoad": {
+          "address": "0x0200c8ac",
+          "kind": "thumb"
+        },
+        "Engine_HeapRelease": {
+          "address": "0x0200c8a4",
+          "kind": "thumb"
+        },
+        "Engine_AudioPlayCue": {
+          "address": "0x0200cb14",
+          "kind": "thumb"
+        },
+        "Engine_RunRisingObjectSequence": {
+          "address": "0x0200cafc",
+          "kind": "thumb"
+        },
+        "Main_080772b0": {
+          "address": "0x0200c984",
+          "kind": "thumb"
+        },
+        "Main_08077028": {
+          "address": "0x0200c944",
+          "kind": "thumb"
+        },
+        "Engine_ObjectDispatchRelease": {
+          "address": "0x0200c8cc",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetAnimation": {
+          "address": "0x0200ca0c",
           "kind": "thumb"
         }
       },

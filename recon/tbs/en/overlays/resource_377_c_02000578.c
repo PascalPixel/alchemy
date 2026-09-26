@@ -1,5 +1,5 @@
-/* NONMATCHING: 1172 bytes, candidate 1176, 551 differing halfwords, 142
- * wrong instructions, 216 halfword edits. FieldScene_RunComplexActorSequence
+/* NONMATCHING: 1172 bytes, candidate 1172, 458 differing halfwords, 92
+ * wrong instructions, 186 halfword edits. FieldScene_RunComplexActorSequence
  * targets FIELD/COMMON/HAIDIA_BABI/F_00578.C as a single-overlay unit binding its
  * names at their runtime addresses (an import veneer's listing offset plus
  * 0x8000). Pointer-taking child-flag and palette calls now consume the actor
@@ -7,8 +7,9 @@
  * captured before calls, matching the reference's read lifetime. A typed
  * pointer bank shares map/event/auxiliary reads and removes the extra middle
  * pool; its retained anchor is +0 rather than +76. Existing typed inline
- * speed/render services reproduce all their argument constant reloads.
- * Other call constants and sprite/actor registers differ; topology is equal.
+ * speed/render/action/dialogue services reproduce their argument reloads.
+ * Two plain dialogue calls still share speaker constants. The pointer anchor,
+ * sprite/actor registers and byte-pointer copies differ; topology is equal.
  * WALL: structural-topology: shared workspace lifetimes and actor setup */
 #include "FIELD_EVENT.H"
 
@@ -46,8 +47,6 @@ s32 Main_0808a070();
 struct FieldActor *Main_0808a080(s32 id);
 void Main_0808a098();
 void Main_0808a0a0();
-void Main_0808a0c0();
-void Main_0808a0d0();
 void Main_0808a0f0();
 void Main_0808a100();
 void Main_0808a110();
@@ -58,8 +57,6 @@ void Main_0808a158();
 void Main_0808a170();
 void Main_0808a178();
 void Main_0808a180();
-void Main_0808a188();
-void Main_0808a1b8();
 void Main_0808a1d8();
 void Main_0808a1e0();
 void Main_0808a200();
@@ -131,38 +128,38 @@ void FieldScene_RunComplexActorSequence(void)
     Main_0808a2e0();
     Main_0808a110(8, 4);
     Main_0808a170(base + 2);
-    Main_0808a188(36872, 0, 60);
+    Event_ShowMessageAndWait(36872, 0, 60);
     Main_0808a138(0, 2);
     Main_0808a010(40);
     Main_0808a138(8, 1);
     Main_0808a010(40);
-    Main_0808a188(36872, 0, 20);
+    Event_ShowMessageAndWait(36872, 0, 20);
     Main_0808a138(0, 2);
     Main_08009190(7);
     Main_0808a010(20);
     Main_08009188(8);
     Actor_SetSpeed(0, 65536, 32768);
     Main_0808a100(0, 19);
-    Main_0808a0c0(0, 557, 679);
+    Actor_MoveToAndWait(0, 557, 679);
     Main_08009190(8);
     Main_08009188(9);
-    Main_0808a0c0(0, 555, 680);
+    Actor_MoveToAndWait(0, 555, 680);
     Main_0808a010(30);
-    Main_0808a1b8(8, 53248, 0);
+    Actor_Jump(8, 53248, 0);
     Main_080091e0(Main_0808a080(0), 1);
     Main_0808a128(0, 4, 0);
-    Main_0808a0d0(0, 543, 674);
+    Actor_WalkToAndWait(0, 543, 674);
     Main_0808a1e0(0, 3);
-    Main_0808a1b8(0, 16384, 40);
+    Actor_Jump(0, 16384, 40);
     Main_0808a110(8, 4);
     Main_0808a010(20);
     Main_0808a180(36872, 0);
     Local_020017e4();
     Main_0808a130(8, 2);
-    Main_0808a188(36872, 0, 20);
+    Event_ShowMessageAndWait(36872, 0, 20);
     p67 = Main_0808a080(8);
     *(u8 *)((u8 *)(p67) + 90) &= 0xfe;
-    Main_0808a0d0(8, 542, 680);
+    Actor_WalkToAndWait(8, 542, 680);
     Main_0808a010(1);
     p67 = Main_0808a080(8);
     *(u8 *)((u8 *)p67 + 90) |= 0x1;
@@ -177,7 +174,7 @@ void FieldScene_RunComplexActorSequence(void)
     Main_0808a010(20);
     p67 = Main_0808a080(8);
     *(u8 *)((u8 *)p67 + 90) &= 0xfe;
-    Main_0808a0d0(8, 534, 688);
+    Actor_WalkToAndWait(8, 534, 688);
     Main_0808a010(1);
     p67 = Main_0808a080(8);
     *(u8 *)((u8 *)p67 + 90) |= 0x1;
@@ -191,17 +188,17 @@ void FieldScene_RunComplexActorSequence(void)
     Main_0808a010(20);
     Main_0808a098(0, 33594036);
     Main_0808a0a0(8);
-    Main_0808a0d0(8, 419, 661);
-    Main_0808a0d0(8, 408, 661);
+    Actor_WalkToAndWait(8, 419, 661);
+    Actor_WalkToAndWait(8, 408, 661);
     Main_0808a100(8, 1);
     Main_0808a100(0, 1);
-    Main_0808a1b8(8, 16384, 10);
+    Actor_Jump(8, 16384, 10);
     Main_0808a178(32776, 0);
     if (Main_0808a070(0, 0) == 0) {
         gScenePointers.event_work->message++;
     }
     Main_0808a010(20);
-    Main_0808a188(32776, 0, 20);
+    Event_ShowMessageAndWait(32776, 0, 20);
     Main_0808a100(0, 3);
     Main_0808a110(8, 3);
     Main_0808a010(20);

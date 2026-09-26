@@ -2,6 +2,82 @@
   "format": 5,
   "units": [
     {
+      "id": "vinasu-paired-rubble-candidate",
+      "source": "recon/tbs/en/overlays/resource_3c8_c_020042bc.c",
+      "overlay": "resource_3c8",
+      "absolute_symbols": {
+        "Engine_EventBegin": {
+          "address": "0x0200ce94",
+          "kind": "thumb"
+        },
+        "Engine_ActorGet": {
+          "address": "0x0200ceac",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpriteFlags": {
+          "address": "0x0200ce44",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetChildValue": {
+          "address": "0x0200cf34",
+          "kind": "thumb"
+        },
+        "Main_0808a5e0": {
+          "address": "0x0200cfec",
+          "kind": "thumb"
+        },
+        "Engine_EventOpenScreen": {
+          "address": "0x0200cfc4",
+          "kind": "thumb"
+        },
+        "Engine_EventWaitForScreen": {
+          "address": "0x0200cfd4",
+          "kind": "thumb"
+        },
+        "Engine_EventWait": {
+          "address": "0x0200ce8c",
+          "kind": "thumb"
+        },
+        "Engine_AudioPlayCue": {
+          "address": "0x0200cffc",
+          "kind": "thumb"
+        },
+        "Engine_RandomNext": {
+          "address": "0x0200cdb4",
+          "kind": "thumb"
+        },
+        "Engine_TaskWait": {
+          "address": "0x0200cda4",
+          "kind": "thumb"
+        },
+        "Engine_MapCopyCellsTo": {
+          "address": "0x0200ce1c",
+          "kind": "thumb"
+        },
+        "Engine_EventRequestExit": {
+          "address": "0x0200cfa4",
+          "kind": "thumb"
+        },
+        "Engine_EventEnd": {
+          "address": "0x0200ce9c",
+          "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x020042bc",
+          "extent": 612,
+          "state": "not-yet-c"
+        }
+      ],
+      "game": "tbs",
+      "compiler_route": "canonical-gcc296"
+    },
+    {
       "id": "vinasu-first-bridge-candidate",
       "source": "recon/tbs/en/overlays/resource_3c8_c_02001af0.c",
       "overlay": "resource_3c8",

@@ -1,6 +1,9 @@
 {
   "format": 3,
   "owners": {
+    "resource_3c8:020042bc": {
+      "name": "Scene_RunPairedParticleWaveSequence"
+    },
     "resource_3c8:02001af0": {
       "name": "VinasuHeya_ShiftBridge"
     },

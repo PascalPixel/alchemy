@@ -1,17 +1,13 @@
-/* NONMATCHING: 1064 bytes, candidate 1088, 486 differing halfwords, 261
- * halfword edits (2026-09-25). FieldScene_RunPaletteRampSequence, meant for
- * FIELD/COMMON/HAIDIA_BABI/F_00A0C.C as a single-overlay unit binding its
- * names at their runtime addresses (an import veneer's listing offset plus
- * 0x8000). Remaining: Resolved service calls, verified script-pointer pool
- * words, and restored typed sprite/workspace accesses; palette ramp and
- * workspace lifetime remain nonmatching.
- * WALL: structural-topology: palette loops and workspace lifetime */
+/* NONMATCHING: resource_377:02000a0c; 1064 / 1064 bytes, 30 differing
+ * halfwords, 30 wrong instructions, 25 halfword edits. Complete topology
+ * and pool extents match. Four runs remain: two call-scheduling ties and
+ * the alpha-port/counter reload lifetimes across the palette ramps. */
 #include "FIELD_EVENT.H"
 
 void Main_080000c0();
-void Main_08009180();
+void Main_08009180(s32 x0, s32 y0, s32 x1, s32 y1, s32 arg4, s32 arg5);
 void Main_080091a0();
-void Main_080091e0();
+void Main_080091e0(struct FieldActor *actor, s32 value);
 void Main_0808a010();
 void Main_0808a018();
 struct FieldActor *Main_0808a080(s32 id);
@@ -45,8 +41,25 @@ void Main_0808a370();
 void Main_080f9010();
 
 extern u8 Data_03001e70[];
-extern u8 Data_03001ebc[];
-extern u8 Data_03001ec8[];
+struct RampWork {
+    u8 unknown_00[0x1c0];
+    s32 blend_config;
+    u8 unknown_1c4[4];
+    s32 blend_frames;
+};
+
+struct RampRoots {
+    struct RampWork *scene;
+    u8 unknown_04[8];
+    struct RampStatus *work;
+};
+
+struct RampStatus {
+    u8 unknown_00[0x1f84];
+    u16 enabled;
+};
+
+extern struct RampRoots Data_03001ebc;
 extern u8 Data_02009cec[];
 extern u8 Data_02009bb4[];
 extern u8 Data_02009b78[];
@@ -54,22 +67,33 @@ extern u8 Data_02009c04[];
 extern u8 Data_02009c54[];
 extern u8 Data_02009d38[];
 extern u8 Data_02009ca4[];
+extern u8 Value_00003f42[];
+extern u8 Value_0000100c[];
+extern u8 Value_0000100e[];
+extern volatile u16 Data_04000052;
 
 static __inline__ void Call1(void (*f)(),s32 a0){f(a0);}
 static __inline__ void Call2(void (*f)(),s32 a0,s32 a1){f(a0,a1);}
 static __inline__ void Call3(void (*f)(),s32 a0,s32 a1,s32 a2){f(a0,a1,a2);}
 static __inline__ void Call4(void (*f)(),s32 a0,s32 a1,s32 a2,s32 a3){f(a0,a1,a2,a3);}
 static __inline__ void Call5(void (*f)(),s32 a0,s32 a1,s32 a2,s32 a3,s32 a4){f(a0,a1,a2,a3,a4);}
-static __inline__ void Call6(void (*f)(),s32 a0,s32 a1,s32 a2,s32 a3,s32 a4,s32 a5){f(a0,a1,a2,a3,a4,a5);}
+
+static __inline__ void SetBlendTarget(u32 value)
+{
+    *(volatile u16 *)0x04000050 = value;
+}
+
+static __inline__ void SetBlendAlpha(u32 value)
+{
+    Data_04000052 = value;
+}
 
 void FieldScene_RunPaletteRampSequence(void)
 {
     s32 base;
     struct FieldActor *p1;
     struct FieldSprite *sprite;
-    u32 *scene;
-    s32 i1;
-    s32 i2;
+    u32 i1;
 
     p1 = Main_0808a080(10);
     sprite = p1->sprite;
@@ -82,29 +106,30 @@ void FieldScene_RunPaletteRampSequence(void)
     Call3(Main_0808a0f0, 16, 0, 0);
     Call3(Main_0808a0f0, 8, 28246016, 25624576);
     Call3(Main_0808a0f0, 10, 30343168, 26476544);
-    Call1((void (*)())Main_0808a080, 10);
-    Main_080091e0();
+    Main_080091e0(Main_0808a080(10), 0);
     p1->priority_flags &= 0xfe;
     p1->motion_flags = 0;
-    ((u8 *)sprite)[9] = (((u8 *)sprite)[9] & 0xf3) | 4;
-    Call3(Main_0808a098, 10, (s32)Data_02009cec, 4);
-    scene = *(u32 **)Data_03001ebc;
-    scene[112] = 513;
-    scene[114] = 4;
-    Call6(Main_08009180, 83, 15, 83, 19, 5, 4);
-    Call6(Main_08009180, 90, 16, 90, 20, 5, 4);
-    Call6(Main_08009180, 77, 23, 82, 23, 5, 7);
-    Call6(Main_08009180, 83, 33, 85, 33, 2, 2);
-    Call6(Main_08009180, 91, 28, 90, 28, 1, 1);
-    Call6(Main_08009180, 91, 28, 88, 30, 1, 1);
-    Call6(Main_08009180, 94, 27, 94, 23, 6, 4);
-    Call6(Main_08009180, 92, 28, 87, 23, 4, 4);
-    Call6(Main_08009180, 65, 53, 88, 24, 2, 2);
+    sprite->priority = 1;
+    Call2(Main_0808a098, 10, (s32)Data_02009cec);
+    {
+        struct RampWork *scene = Data_03001ebc.scene;
+
+        scene->blend_config = 513;
+    }
+    Main_08009180(83, 15, 83, 19, 5, 4);
+    Main_08009180(90, 16, 90, 20, 5, 4);
+    Main_08009180(77, 23, 82, 23, 5, 7);
+    Main_08009180(83, 33, 85, 33, 2, 2);
+    Main_08009180(91, 28, 90, 28, 1, 1);
+    Main_08009180(91, 28, 88, 30, 1, 1);
+    Main_08009180(94, 27, 94, 23, 6, 4);
+    Main_08009180(92, 28, 87, 23, 4, 4);
+    Main_08009180(65, 53, 88, 24, 2, 2);
     Main_080091a0();
-    *(u16 *)0x04000050 = 0x3f42;
-    *(u16 *)0x04000052 = 0x100c;
+    SetBlendTarget((s32)Value_00003f42);
+    SetBlendAlpha((s32)Value_0000100c);
     Main_0808a2c8();
-    *(u16 *)(*(u8 **)Data_03001ec8 + 0x1f84) = 1;
+    Data_03001ebc.work->enabled = 1;
     Main_0808a2d8();
     Call1(Main_080000c0, 30);
     Call2(Main_0808a200, 8, 1);
@@ -141,15 +166,18 @@ void FieldScene_RunPaletteRampSequence(void)
     Call1(Main_080f9010, 234);
     Call1(Main_0808a010, 20);
     Call2(Main_0808a098, 10, (s32)Data_02009d38);
-    for (i1 = 0; i1 <= 3; i1++) {
-        *(u16 *)0x04000052 = 0x100e + i1;
-        Call1(Main_080000c0, 1);
-    }
+    i1 = 0;
+ramp:
+    /* FAKEMATCH: a word link constant keeps the pool after both ramps. */
+    Data_04000052 = (s32)Value_0000100e + i1;
+    Call1(Main_080000c0, 1);
+    if (++i1 <= 3)
+        goto ramp;
     Call1(Main_080f9010, 202);
     Call1(Main_080000c0, 10);
     base = 0x100f;
-    for (i2 = 0; i2 <= 15; i2++) {
-        *(u16 *)0x04000052 = base - i2;
+    for (i1 = 0; i1 <= 15; i1++) {
+        Data_04000052 = base - i1;
         Call1(Main_080000c0, 1);
     }
     Call1(Main_0808a0a0, 0);
@@ -171,8 +199,12 @@ void FieldScene_RunPaletteRampSequence(void)
     Call2(Main_0808a200, 8, 1);
     Call2(Main_0808a098, 8, (s32)Data_02009ca4);
     Call2(Main_0808a0b0, 0, (s32)Data_02009ca4);
-    scene[112] = 256;
-    scene[114] = 32;
+    {
+        struct RampWork *scene = Data_03001ebc.scene;
+
+        scene->blend_config = 256;
+        scene->blend_frames = 32;
+    }
     Main_0808a368();
     Main_0808a370();
     Call1(Main_0808a248, 21);

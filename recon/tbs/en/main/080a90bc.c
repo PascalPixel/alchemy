@@ -5,8 +5,11 @@
  * H1: 692/692 bytes, 8 differing halfwords, exact 44-byte frame and all calls.
  * Residual: icon traversal pointer/count swap r1/r2 and setup order (7), plus
  * signed -16 coordinate pool word encoded as 0x0000fff0 (1). No other diff.
- * The exact ItemMenu_HideAllIcons neighbour initializes its state local before
- * the icon-table pointer; H2 will test that lifetime with signed row positions. */
+ * H2: 692/692 bytes, 6 differing halfwords. Signed row positions restore the
+ * negative pool word; the exact ItemMenu_HideAllIcons neighbour's early state
+ * local restores priority setup order. Only the icon pointer/count r1/r2 swap
+ * remains. H3 will share the setup loops' counter, matching the ROM's reuse of
+ * r2 for both consecutive induction variables; no other source changes. */
 #include "TYPES.H"
 #include "MENU_RESULT.H"
 #include "SYSTEM.H"
@@ -41,7 +44,7 @@ struct PsynergyStatusMenu {
     u8 owner_count;
     u8 owner_id;
     u8 unknown_21b[0x21];
-    u16 slot_y[4];
+    s16 slot_y[4];
     u8 unknown_244[0x1c];
     s8 selected_index[8];
 };
@@ -98,6 +101,7 @@ s32 Func_080a90bc(void)
             menu->slot_y[i] = -16;
     }
     {
+        s32 priority = 245;
         struct MenuEntryIcon **icons = menu->entry_icons;
         s32 i;
 
@@ -105,7 +109,7 @@ s32 Func_080a90bc(void)
             struct MenuEntryIcon *icon = *icons++;
 
             if (icon != 0)
-                icon->field_0f = 245;
+                icon->field_0f = priority;
         }
     }
     Scheduler_RemoveCallback(Menu_UpdateEntryObjectTransforms);

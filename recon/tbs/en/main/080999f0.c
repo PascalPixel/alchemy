@@ -1,8 +1,19 @@
-/* Draft, not exact (2026-09-24): candidate=808 reference=808 differing_halfwords=325. Constants the reference loads from
-   the literal pool are spelled as link-time Value_ symbols, which restores
-   the reference size; wraps marked FAKEMATCH only move scheduling. */
+/* Not-yet-C: complete 808-byte effect including its final pool.
+ * Reused RunBattleEffect04's explicit default/override position stores;
+ * this recovers the observed second Y store: 816 bytes / 161 aligned edits.
+ * The ROM forms +0xc000 immediately but pool-loads -0xc000. Correcting those
+ * two sources recovers the latter multiply but strength-reduces the former
+ * loop into a second induction value: 824 bytes / 165 edits.
+ * Initializing the first step before Object_Spawn and using it as the zero
+ * X argument restores its early r8 lifetime and target in sl: 820 bytes,
+ * 365 differing halfwords / 161 aligned edits, with the correct 44-byte
+ * frame. Neither result is an exact match. Three bounded models stopped.
+ * Remaining: start/end pointer spills, initial Y snapshot, first scale-loop
+ * strength reduction, child-byte mask representation, and loop end tests.
+ * The prior 808-byte baseline remains in Git. No new DONE credit. */
 #include "TYPES.H"
 extern u8 Value_0000c000;
+extern u8 Value_ffff4000;
 extern u8 Value_00004000;
 extern u8 Value_0000011c;
 
@@ -65,7 +76,9 @@ void Func_080999f0(void)
     s32 i;
     s32 count;
 
-    main = Func_08096c80(0xef, 0, 0, 0);
+    /* FAKEMATCH: the first step also supplies the spawn's zero X. */
+    i = 0;
+    main = Func_08096c80(0xef, i, 0, 0);
     if (main == 0)
         return;
     Func_08097384();
@@ -80,15 +93,17 @@ void Func_080999f0(void)
     start.y = target->position.y + 0x100000;
     start.z = target->position.z;
     end.x = state->x;
-    end.y = state->y + (state->variant == 0 ? 0x200000 : 0x500000);
+    end.y = state->y + 0x200000;
     end.z = state->z;
+    if (state->variant != 0)
+        end.y = state->y + 0x500000;
 
-    for (i = 0; i < 11; i++) {
+    for (; i < 11; i++) {
         s32 scale;
         main->x = Interpolate(start.x, end.x, i);
         main->y = Interpolate(start.y, end.y, i);
         main->z = Interpolate(start.z, end.z, i);
-        scale = Math_Div(i * (s32)&Value_0000c000, 10) + 0x4000;
+        scale = Math_Div(i * 0xc000, 10) + 0x4000;
         main->scale_x = scale;
         main->scale_y = scale;
         WaitFrames(1);
@@ -145,7 +160,7 @@ void Func_080999f0(void)
         main->x = Interpolate(end.x, start.x, i);
         main->y = Interpolate(end.y, start.y, i);
         main->z = Interpolate(end.z, start.z, i);
-        scale = Math_Div(i * -0xc000, 10) + 0x10000;
+        scale = Math_Div(i * (s32)&Value_ffff4000, 10) + 0x10000;
         main->scale_x = scale;
         main->scale_y = scale;
         WaitFrames(1);

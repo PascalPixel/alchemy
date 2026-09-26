@@ -2,6 +2,94 @@
   "format": 5,
   "units": [
     {
+      "id": "candidate-resource-3b3-02000cc0",
+      "source": "recon/tbs/en/overlays/resource_3b3_c_02000cc0.c",
+      "overlay": "resource_3b3",
+      "absolute_symbols": {
+        "gPillarMapCells": {
+          "address": "0x02010000",
+          "kind": "data"
+        },
+        "gPillarUpperTiles": {
+          "address": "0x02020000",
+          "kind": "data"
+        },
+        "gPillarLowerTiles": {
+          "address": "0x02020004",
+          "kind": "data"
+        },
+        "gPillarUpperScreen": {
+          "address": "0x06002800",
+          "kind": "data"
+        },
+        "gPillarLowerScreen": {
+          "address": "0x06002840",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02000cc0",
+          "extent": 184,
+          "state": "not-yet-c"
+        }
+      ],
+      "game": "tbs",
+      "compiler_route": "canonical-gcc296"
+    },
+    {
+      "id": "candidate-resource-3a4-02000d2c",
+      "source": "recon/tbs/en/overlays/resource_3a4_c_02000d2c.c",
+      "overlay": "resource_3a4",
+      "absolute_symbols": {
+        "Engine_ActorGet": {
+          "address": "0x0200bb98",
+          "kind": "thumb"
+        },
+        "Engine_EventBegin": {
+          "address": "0x0200bb70",
+          "kind": "thumb"
+        },
+        "Engine_EventEnd": {
+          "address": "0x0200bb78",
+          "kind": "thumb"
+        },
+        "Engine_EventWait": {
+          "address": "0x0200bb68",
+          "kind": "thumb"
+        },
+        "Engine_TaskWait": {
+          "address": "0x0200ba78",
+          "kind": "thumb"
+        },
+        "Engine_AudioPlayCue": {
+          "address": "0x0200bd20",
+          "kind": "thumb"
+        },
+        "Engine_WorkSetValuesIfNonNegative": {
+          "address": "0x0200bb38",
+          "kind": "thumb"
+        },
+        "Engine_MathSin": {
+          "address": "0x0200baa0",
+          "kind": "thumb"
+        },
+        "Engine_MathCos": {
+          "address": "0x0200baa8",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02000d2c",
+          "extent": 404,
+          "state": "not-yet-c"
+        }
+      ],
+      "game": "tbs",
+      "compiler_route": "canonical-gcc296"
+    },
+    {
       "id": "candidate-resource-3c8-0200247c",
       "source": "recon/tbs/en/overlays/resource_3c8_c_0200247c.c",
       "overlay": "resource_3c8",

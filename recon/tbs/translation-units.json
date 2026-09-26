@@ -2,6 +2,74 @@
   "format": 5,
   "units": [
     {
+      "id": "shinden-restart-option",
+      "source": "recon/tbs/en/overlays/resource_378_c_020027d4.c",
+      "overlay": "resource_378",
+      "absolute_symbols": {
+        "Engine_ActorSetPosition": { "address": "0x0200b658", "kind": "thumb" },
+        "Engine_ColorBufferApplyTarget": { "address": "0x0200b708", "kind": "thumb" },
+        "Engine_ColorBufferInterpolate": { "address": "0x0200b710", "kind": "thumb" },
+        "Engine_EventWait": { "address": "0x0200b5e8", "kind": "thumb" },
+        "Engine_DebugCreateWindow": { "address": "0x0200b588", "kind": "thumb" },
+        "Engine_DebugDrawTextResource": { "address": "0x0200b598", "kind": "thumb" },
+        "SaveState_CountRecordsExcludingFlaggedFar": { "address": "0x0200b5c8", "kind": "thumb" },
+        "UiTextResource_InitializeFar": { "address": "0x0200b5a8", "kind": "thumb" },
+        "UiTextResource_SetPositionFar": { "address": "0x0200b5b0", "kind": "thumb" },
+        "UiTextResource_ReleaseFar": { "address": "0x0200b5b8", "kind": "thumb" },
+        "Engine_DebugFinalizeWindow": { "address": "0x0200b590", "kind": "thumb" },
+        "Data_0000116e": { "address": "0x0000116e", "kind": "data" }
+      },
+      "owners": [
+        { "address": "0x020027d4", "extent": 312, "state": "not-yet-c" }
+      ],
+      "game": "tbs",
+      "compiler_route": "canonical-gcc296"
+    },
+    {
+      "id": "effect-spark-ring",
+      "source": "recon/tbs/en/overlays/resource_380_c_0200449c.c",
+      "overlay": "resource_380",
+      "absolute_symbols": {
+        "Engine_AllocateBlock": { "address": "0x0200c89c", "kind": "thumb" },
+        "Engine_RandomNext": { "address": "0x0200c874", "kind": "thumb" },
+        "__udivsi3": { "address": "0x0200c85c", "kind": "thumb" },
+        "Engine_MathSin": { "address": "0x0200c884", "kind": "thumb" },
+        "Engine_MathCos": { "address": "0x0200c88c", "kind": "thumb" },
+        "gSparkJitter": { "address": "0x0200d0e4", "kind": "data" },
+        "gSparkFrequency": { "address": "0x0200d102", "kind": "data" },
+        "gSparkDirection": { "address": "0x0200d120", "kind": "data" },
+        "gSparkMaxScale": { "address": "0x0200d140", "kind": "data" },
+        "gSparkScaleStep": { "address": "0x0200d168", "kind": "data" }
+      },
+      "owners": [
+        { "address": "0x0200449c", "extent": 752, "state": "not-yet-c" }
+      ],
+      "game": "tbs",
+      "compiler_route": "canonical-gcc296"
+    },
+    {
+      "id": "effect-spark-ring-twin-draft",
+      "source": "recon/tbs/en/overlays/resource_380_c_0200449c.c",
+      "overlay": "resource_381",
+      "owners": [
+        { "address": "0x0200301c", "extent": 752, "state": "not-yet-c" }
+      ],
+      "absolute_symbols": {
+            "Engine_AllocateBlock": { "address": "0x0200b41c", "kind": "thumb" },
+            "Engine_RandomNext": { "address": "0x0200b3fc", "kind": "thumb" },
+            "__udivsi3": { "address": "0x0200b3d4", "kind": "thumb" },
+            "Engine_MathSin": { "address": "0x0200b404", "kind": "thumb" },
+            "Engine_MathCos": { "address": "0x0200b40c", "kind": "thumb" },
+            "gSparkJitter": { "address": "0x0200ba0c", "kind": "data" },
+            "gSparkFrequency": { "address": "0x0200ba2a", "kind": "data" },
+            "gSparkDirection": { "address": "0x0200ba48", "kind": "data" },
+            "gSparkMaxScale": { "address": "0x0200ba68", "kind": "data" },
+            "gSparkScaleStep": { "address": "0x0200ba90", "kind": "data" }
+      },
+      "game": "tbs",
+      "compiler_route": "canonical-gcc296"
+    },
+    {
       "id": "toreto-palette-tint",
       "source": "recon/tbs/en/overlays/resource_396_c_02001244.c",
       "overlay": "resource_396",

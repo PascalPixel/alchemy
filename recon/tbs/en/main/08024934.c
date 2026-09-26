@@ -1,555 +1,365 @@
-#include "shared-aggregates.h"
+/* Not-yet-C: complete 2124-byte summon picker, including literal pools.
+ * Standby Djinn counts arrive in argument three. Available summons are
+ * ordered with affordable entries first, four per page. Returns an id or
+ * -1. Candidate 2192 / reference 2124 bytes, 689 aligned halfword edits.
+ * The 368-byte frame is four bytes short; drawn_page spills instead of
+ * living in r9, and the first sprite loop hoists its 0x1ff mask into a
+ * short-range halfword pool. Scoping that counter changed its register
+ * but not the frame; explicit full-width OAM masks moved pools without
+ * recovering the first-loop register roles (2174 bytes / 776 edits).
+ * All call arities and byte/halfword sprite accesses follow the listing. */
+#include "TYPES.H"
+#include "BATTLE_SUMMON.H"
 
-/* Only the m2c spellings this draft actually uses. */
-typedef s32 M2C_UNK;
-#define M2C_FIELD(expr, type_ptr, offset) (*(type_ptr)((s8 *)(expr) + (offset)))
+struct SummonWindow {
+    u8 unknown_00[8];
+    u16 width, height, x, y;
+};
 
-u8 Func_08024934(u8 *arg2) {
-    s32 sp0;
-    s32 sp4;
-    s32 *sp8;
-    u32 spC;
-    s32 sp10;
-    s32 sp14;
-    M2C_UNK *sp18;
-    M2C_UNK *sp1C;
-    s32 *sp20;
-    u16 *sp24;
-    s32 sp28;
-    s32 sp2C;
-    u32 sp30;
-    s32 sp34;
-    void *sp38;
-    void *sp3C;
-    s32 sp40;
-    u32 sp44;
-    struct M2cAggregate_deref_absolute_03001e8c_0 *sp48;
-    void *sp4C;
-    s32 sp50;
-    u8 *sp54;
-    u32 sp58;
-    u8 sp5C;
-    u32 sp60[4];
-    M2C_UNK sp70;
-    u8 sp114;
-    M2C_UNK sp138;
-    M2C_UNK sp168;
-    M2C_UNK *var_r5_70;
-    M2C_UNK *var_r6_578;
-    s32 temp_r0_142;
-    s32 temp_r0_550;
-    s32 temp_r0_704;
-    s32 temp_r1_315;
-    s32 temp_r1_387;
-    s32 temp_r2_314;
-    s32 temp_r2_766;
-    s32 temp_r3_146;
-    s32 temp_r3_361;
-    s32 temp_r3_599;
-    s32 temp_r3_821;
-    s32 temp_r3_935;
-    s32 temp_r5_509;
-    s32 temp_r5_717;
-    s32 temp_r6_681;
-    s32 temp_r8_383;
-    s32 var_r0_814;
-    s32 var_r1_518;
-    s32 var_r1_722;
-    s32 var_r1_812;
-    s32 var_r2_199;
-    s32 var_r2_279;
-    s32 var_r2_689;
-    s32 var_r2_740;
-    s32 var_r3_544;
-    s32 var_r3_760;
-    s32 var_r3_884;
-    s32 var_r3_900;
-    s32 var_r3_952;
-    s32 var_r3_994;
-    s32 var_r4_103;
-    s32 var_r4_1044;
-    s32 var_r4_163;
-    s32 var_r4_327;
-    s32 var_r4_379;
-    s32 var_r4_435;
-    s32 var_r4_494;
-    s32 var_r4_507;
-    s32 var_r4_579;
-    s32 var_r4_68;
-    s32 var_r4_715;
-    s32 var_r5_100;
-    s32 var_r5_301;
-    s32 var_r5_439;
-    s32 var_r5_682;
-    s32 var_r6_303;
-    s32 var_r7_144;
-    s32 var_r7_345;
-    s32 var_r7_436;
-    s8 *var_r2_491;
-    s8 temp_r0_92;
-    u16 *temp_r0_158;
-    u16 *temp_r0_260;
-    u16 *temp_r0_338;
-    u16 *var_r1_342;
-    u16 *var_r6_280;
-    u16 *var_r6_438;
-    u32 *var_r5_1045;
-    u32 *var_r6_101;
-    u32 temp_r0_1047;
-    u32 temp_r0_116;
-    u32 var_fp_52;
-    u32 var_r3_517;
-    u32 var_r3_728;
-    u32 var_r9_24;
-    u32 var_sl_53;
-    u8 *var_r0_160;
-    u8 *var_r0_200;
-    u8 *var_r0_341;
-    u8 *var_r1_159;
-    u8 *var_r1_198;
-    u8 *var_r5_154;
-    u8 *var_r5_580;
-    u8 temp_r3_202;
-    u8 temp_r3_282;
-    u8 temp_r3_582;
-    u8 temp_r6_156;
-    u8 var_r6_326;
-    u8 var_r6_843;
-    void *temp_r2_804;
+struct SummonNavigation {
+    u8 unknown_00[0x30];
+    s32 row, page, preferred_row;
+    u8 unknown_3c[0x10];
+    s32 active;
+    u8 unknown_50[0x88];
+    s32 automatic, delay;
+};
 
-    sp54 = arg2;
-    sp48 = absolute_03001e8c.field_0000;
-    sp44 = -1U;
-    var_r9_24 = -1U;
-    sp40 = (s32) Func_080040b4(0x80);
-    sp0 = 0x2A;
-    sp3C = Func_080162d4(0, 4, 0x1E, 4);
-    sp0 = 6;
-    sp38 = Func_080162d4(0x14, 8, 0xA, 3);
-    sp34 = 0;
-    var_fp_52 = absolute_03001e8c.field_00a8->field_0034;
-    var_sl_53 = absolute_03001e8c.field_00a8->field_0030;
-    sp30 = absolute_03001e8c.field_00a8->field_0038;
-    sp0 = 6;
-    sp4C = Func_080162d4(0xD, 0xB, 0x11, 9);
-    sp1C = &sp138;
-    var_r4_68 = 0;
-    var_r5_70 = &sp138;
+struct SummonRender {
+    u8 unknown_000[0xea3];
+    u8 dirty;
+    u8 unknown_ea4[2];
+    u8 busy;
+};
+
+struct SummonGlobals {
+    struct SummonRender *render;
+    u8 unknown_04[0xa4];
+    struct SummonNavigation *navigation;
+};
+
+union SummonSprite {
+    struct { void *next; u32 attr01, attr23; } word;
+    struct {
+        void *next;
+        u8 y, flags;
+        u16 x : 9;
+        u16 flags06 : 5;
+        u16 size : 2;
+        u16 tile : 10;
+        u16 flags08 : 2;
+        u16 palette : 4;
+        u16 affine;
+    } attr;
+};
+
+extern struct SummonGlobals Data_03001e8c;
+extern struct SummonNavigation *Data_03001f34;
+extern volatile u32 Data_03001c94, Data_03001b04, Data_03001e40;
+extern u8 Data_080310a4[];
+extern u8 Value_0000053a, Value_00000333, Value_00005001;
+extern u8 Value_0000f301, Value_0000f30b, Value_0000f334, Value_0000f335;
+extern u8 Value_0000fffc;
+
+void WaitFrames(s32 frames);
+void Runtime_SetMainState19(void);
+void Runtime_PushSlotEntry(union SummonSprite *sprite, s32 priority);
+void Resource_ResetEntry(s32 handle);
+s32 Resource_LoadIntoFreeSlot(s32 kind);
+s32 Resource_GetBuffer(s32 handle, const void *source);
+struct SummonWindow *UiWindow_Create(s32, s32, s32, s32, s32);
+void UiWork_Finalize(struct SummonWindow *, s32);
+void RenderOutput_RedrawSavedRect(struct SummonWindow *);
+void Ui_FillVramBlockPattern(void);
+s32 UiText_CopyMessageString(s32 message, s16 *text, s32 size);
+void UiText_RenderWideStringAtOffset(s16 *, struct SummonWindow *, s32, s32);
+void UiWindow_SetTilemapEntry(struct SummonWindow *, s32, s32, s32, s32);
+void Func_08018efc(struct SummonWindow *, s32, s32, s32, s32);
+void Ability_LoadGlyph(s32, s32, s32 *, s32 *, s32);
+void UiWork_SetParamNibble(s32 colour);
+void UiText_DrawCharacterAtOffset(s32, struct SummonWindow *, s32, s32);
+void Ui_SetRectHighlight(s32, s32, s32, s32, s32);
+s32 Func_080771d8(u8 *ids);
+void Audio_PlayCue(s32 cue);
+
+s32 Func_08024934(s32 unused0, s32 unused1, const u8 *standby)
+{
+    union SummonSprite cursor;
+    union SummonSprite sprites[4];
+    u8 available[33];
+    u8 ordered[33];
+    s16 text[64];
+    s32 handles[4];
+    u8 visible[4];
+    s32 glyph;
+    struct SummonRender *render;
+    struct SummonWindow *description, *counts, *window;
+    struct SummonNavigation *nav;
+    const struct SummonDefinition *summon;
+    union SummonSprite *sprite;
+    const u8 *required, *supply;
+    u8 *src, *dst;
+    s32 *handle;
+    s32 drawn_row, drawn_page, row, page, preferred;
+    s32 cursor_handle, count, used, mask, index, element, col;
+    s32 id, tile, affordable, cursor_x, cursor_y;
+    s32 pressed, repeated, result;
+
+    render = Data_03001e8c.render;
+    drawn_row = -1;
+    drawn_page = -1;
+    cursor_handle = (s16)Resource_LoadIntoFreeSlot(128);
+    description = UiWindow_Create(0, 4, 30, 4, 42);
+    counts = UiWindow_Create(20, 8, 10, 3, 6);
+    mask = 0;
+    page = Data_03001e8c.navigation->page;
+    row = Data_03001e8c.navigation->row;
+    preferred = Data_03001e8c.navigation->preferred_row;
+    window = UiWindow_Create(13, 11, 17, 9, 6);
+    sprite = sprites;
+    index = 0;
     do {
-        M2C_FIELD(var_r5_70, s32 *, 4) = 0x40000000;
-        M2C_FIELD(var_r5_70, s32 *, 8) = 0;
-        M2C_FIELD(var_r5_70, u16 *, 6) = (u16) ((0xFFFFFE00 & M2C_FIELD(var_r5_70, u16 *, 6)) | (((M2C_FIELD(sp4C, u16 *, 0xC) * 8) + 8) & 0x1FF));
-        temp_r0_92 = (((var_r4_68 * 2) + M2C_FIELD(sp4C, u16 *, 0xE)) * 8) + 4;
-        var_r4_68 += 1;
-        M2C_FIELD(var_r5_70, s32 *, 4) = temp_r0_92;
-        var_r5_70 += 0xC;
-    } while (var_r4_68 <= 3);
-    var_r5_100 = 8;
-    var_r6_101 = &sp60[0];
-    var_r4_103 = 3;
+        sprite->word.attr01 = 0x40000000;
+        sprite->word.attr23 = 0;
+        sprite->attr.x = window->x * 8 + 8;
+        sprite->attr.y = (index * 2 + window->y) * 8 + 4;
+        index++;
+        sprite++;
+    } while (index <= 3);
+    handle = handles;
+    sprite = sprites;
+    index = 3;
     do {
-        sp4 = var_r4_103;
-        temp_r0_116 = (u32) Func_080040b4(0x80);
-        *var_r6_101 = temp_r0_116;
-        var_r6_101 += 4;
-        var_r4_103 -= 1;
-        *(var_r5_100 + sp1C) = (*(var_r5_100 + sp1C) & 0xFFFFFC00) | (Func_080040d0(temp_r0_116, -1) & 0x3FF);
-        var_r5_100 += 0xC;
-    } while (var_r4_103 >= 0);
-    temp_r0_142 = Func_080771d8(&sp114);
-    sp50 = temp_r0_142;
-    var_r7_144 = 0;
-    temp_r3_146 = temp_r0_142 - 1;
-    sp14 = temp_r3_146;
-    if (temp_r3_146 >= 0) {
-        sp20 = &sp0 + 0xF0;
-        var_r5_154 = &(&sp114)[temp_r3_146];
-        do {
-            temp_r6_156 = *var_r5_154;
-            temp_r0_158 = Func_080771e0(temp_r6_156);
-            var_r1_159 = sp54;
-            var_r0_160 = temp_r0_158 + 4;
-            var_r4_163 = 0;
-            if ((u32) M2C_FIELD(temp_r0_158, u8 *, 4) <= (u32) *var_r1_159) {
-loop_8:
-                var_r4_163 += 1;
-                if (var_r4_163 <= 3) {
-                    var_r0_160 += 1;
-                    var_r1_159 += 1;
-                    if ((u32) *var_r0_160 <= (u32) *var_r1_159) {
-                        goto loop_8;
+        s32 slot = Resource_LoadIntoFreeSlot(128);
+        *handle++ = slot;
+        sprite->attr.tile = Resource_GetBuffer(slot, (void *)-1);
+        sprite++;
+    } while (--index >= 0);
+
+    count = Func_080771d8(available);
+    used = 0;
+    for (src = available + count - 1; src >= available; src--) {
+        id = *src;
+        required = Func_080771e0(id)->djinn_required;
+        supply = standby;
+        element = 0;
+        while (*required <= *supply) {
+            element++;
+            if (element > 3)
+                break;
+            required++;
+            supply++;
+        }
+        if (element == 4) {
+            ordered[used++] = id;
+            *src = 32;
+        }
+    }
+    dst = ordered + used;
+    src = available;
+    for (index = count; index > 0; index--) {
+        id = *src++;
+        if (id != 32) {
+            *dst++ = id;
+            used++;
+        }
+    }
+    ordered[used] = 32;
+
+    for (;;) {
+        if (page != drawn_page || row != drawn_row) {
+            render->busy = 1;
+            Ui_SetRectHighlight(window->x + 1, window->y + drawn_row * 2 + 1,
+                window->width - 2, 1, 15);
+            Ui_FillVramBlockPattern();
+            summon = Func_080771e0(ordered[page + row]);
+            UiText_CopyMessageString(summon->name_message_id + (s32)&Value_0000053a, text, 52);
+            UiText_RenderWideStringAtOffset(text, description, 0, 4);
+            mask = 0;
+            drawn_row = row;
+            required = summon->djinn_required;
+            for (element = 0; element <= 3; element++) {
+                if (*required++ != 0)
+                    mask |= 1 << element;
+            }
+            if (page != drawn_page) {
+                RenderOutput_RedrawSavedRect(window);
+                col = 1;
+                for (element = 0; element <= 3; element++) {
+                    UiWindow_SetTilemapEntry(counts, element + (s32)&Value_00005001, element * 2, 0, 0);
+                    Func_08018efc(counts, standby[element] + 48, col, 0, 0);
+                    col += 2;
+                }
+                index = 0;
+                while (index <= 3 && (id = ordered[page + index]) != 32) {
+                    summon = Func_080771e0(id);
+                    required = summon->djinn_required;
+                    supply = standby;
+                    element = 0;
+                    while (*required <= *supply) {
+                        element++;
+                        if (element > 3)
+                            break;
+                        required++;
+                        supply++;
                     }
-                }
-            }
-            if (var_r4_163 == 4) {
-                *(sp20 + var_r7_144) = temp_r6_156;
-                *var_r5_154 = 0x20;
-                var_r7_144 += 1;
-            }
-            var_r5_154 -= 1;
-        } while ((s32) var_r5_154 >= (s32) &sp114);
-    } else {
-        sp20 = &sp0 + 0xF0;
-    }
-    if (sp50 > 0) {
-        var_r1_198 = var_r7_144 + sp20;
-        var_r2_199 = sp50;
-        var_r0_200 = &sp114;
-        do {
-            temp_r3_202 = *var_r0_200;
-            var_r0_200 += 1;
-            if (temp_r3_202 != 0x20) {
-                *var_r1_198 = temp_r3_202;
-                var_r7_144 += 1;
-                var_r1_198 += 1;
-            }
-            var_r2_199 -= 1;
-        } while (var_r2_199 != 0);
-    }
-    *(sp20 + var_r7_144) = 0x20;
-    sp18 = &sp168;
-    sp10 = var_sl_53 * 2;
-    spC = sp40 << 0x10;
-loop_21:
-    if ((var_fp_52 == var_r9_24) && (var_sl_53 == sp44)) {
-
-    } else {
-        M2C_FIELD(sp48, s8 *, 0xEA6) = 1;
-        sp0 = 0xF;
-        Func_08022768(M2C_FIELD(sp4C, u16 *, 0xC) + 1, M2C_FIELD(sp4C, u16 *, 0xE) + (sp44 * 2) + 1, M2C_FIELD(sp4C, u16 *, 8) - 2, 1);
-        Func_08016738();
-        temp_r0_260 = Func_080771e0(*(sp20 + (var_fp_52 + var_sl_53)));
-        Func_0801965c(*temp_r0_260 + 0x53A, &sp70, 0x34);
-        Func_08017aa4(&sp70, sp3C, 0, 4);
-        sp34 = 0;
-        sp44 = var_sl_53;
-        var_r2_279 = 0;
-        var_r6_280 = temp_r0_260 + 4;
-        do {
-            temp_r3_282 = *var_r6_280;
-            var_r6_280 += 1;
-            if (temp_r3_282 != 0) {
-                sp34 |= 1 << var_r2_279;
-            }
-            var_r2_279 += 1;
-        } while (var_r2_279 <= 3);
-        if (var_fp_52 == var_r9_24) {
-
-        } else {
-            Func_08016498(sp4C);
-            var_r5_301 = 0;
-            var_r6_303 = 1;
-            do {
-                sp0 = 0;
-                Func_08019000(sp38, var_r5_301 + 0x5001, var_r5_301 * 2, 0);
-                temp_r2_314 = var_r6_303;
-                temp_r1_315 = sp54[var_r5_301] + 0x30;
-                var_r5_301 += 1;
-                sp0 = 0;
-                var_r6_303 += 2;
-                Func_08018efc(sp38, temp_r1_315, temp_r2_314, 0);
-            } while (var_r5_301 <= 3);
-            var_r6_326 = *(sp20 + var_fp_52);
-            var_r4_327 = 0;
-            if (var_r6_326 == 0x20) {
-                goto block_50;
-            }
-            sp8 = &sp0 + 0x58;
-loop_35:
-            sp4 = var_r4_327;
-            temp_r0_338 = Func_080771e0(var_r6_326);
-            sp24 = temp_r0_338;
-            var_r0_341 = sp54;
-            var_r1_342 = temp_r0_338 + 4;
-            var_r7_345 = 0;
-            if ((u32) M2C_FIELD(temp_r0_338, u8 *, 4) <= (u32) *var_r0_341) {
-loop_36:
-                var_r7_345 += 1;
-                if (var_r7_345 <= 3) {
-                    var_r1_342 += 1;
-                    var_r0_341 += 1;
-                    if ((u32) *var_r1_342 <= (u32) *var_r0_341) {
-                        goto loop_36;
+                    affordable = element == 4;
+                    Ability_LoadGlyph(summon->name_message_id & 0x3fff, 0, &handles[index], &glyph, 1);
+                    sprites[index].attr.tile = glyph;
+                    if (!affordable)
+                        UiWork_SetParamNibble(2);
+                    UiText_DrawCharacterAtOffset(Func_080771e0(id)->name_message_id + (s32)&Value_00000333,
+                        window, 16, index * 16);
+                    required = summon->djinn_required;
+                    col = 13;
+                    for (element = 0; element <= 3; element++) {
+                        if (*required != 0) {
+                            UiWindow_SetTilemapEntry(window, element + (s32)&Value_00005001, col, index * 2, 0);
+                            Func_08018efc(window, *required + 48, col + 1, index * 2, 0);
+                            col += 2;
+                        }
+                        required++;
                     }
+                    UiWork_SetParamNibble(15);
+                    visible[index++] = 1;
+                }
+                while (index <= 3)
+                    visible[index++] = 0;
+                drawn_page = page;
+            }
+            if (count > 4) {
+                for (index = 0; index < (count + 3) / 4; index++) {
+                    tile = index + (s32)&Value_0000f301;
+                    if (index == page / 4)
+                        tile = index + (s32)&Value_0000f30b;
+                    UiWindow_SetTilemapEntry(window, tile,
+                        window->width - (count + 3) / 4 + index - 2, -1, 0);
                 }
             }
-            temp_r3_361 = 4 ^ var_r7_345;
-            sp0 = 1;
-            sp4 = var_r4_327;
-            Func_0801a3d0(0x3FFF & *sp24, 0, &(&sp60[0])[var_r4_327], sp8);
-            var_r4_379 = var_r4_327;
-            temp_r8_383 = var_r4_379 * 2;
-            temp_r1_387 = (var_r4_379 * 0xC) + 8;
-            *(sp1C + temp_r1_387) = (*(sp1C + temp_r1_387) & 0xFFFFFC00) | (sp58 & 0x3FF);
-            if ((1 - ((u32) ((0 - temp_r3_361) | temp_r3_361) >> 0x1F)) == 0) {
-                Func_0801e71c(2);
-                var_r4_379 = sp4;
-            }
-            sp4 = var_r4_379;
-            Func_0801e7c0(*(u16 *)Func_080771e0(var_r6_326) + 0x333, sp4C, 0x10, var_r4_379 * 0x10);
-            var_r4_435 = sp4;
-            var_r7_436 = 0;
-            var_r6_438 = sp24 + 4;
-            var_r5_439 = 0xD;
-            do {
-                if (*var_r6_438 != 0) {
-                    sp0 = 0;
-                    sp4 = var_r4_435;
-                    Func_08019000(sp4C, var_r7_436 + 0x5001, var_r5_439, temp_r8_383);
-                    sp0 = 0;
-                    Func_08018efc(sp4C, *var_r6_438 + 0x30, var_r5_439 + 1, temp_r8_383);
-                    var_r5_439 += 2;
-                }
-                var_r7_436 += 1;
-                var_r6_438 += 1;
-            } while (var_r7_436 <= 3);
-            sp4 = var_r4_435;
-            Func_0801e71c(0xF);
-            (&sp5C)[var_r4_435] = 1;
-            var_r4_327 = var_r4_435 + 1;
-            if (var_r4_327 <= 3) {
-                var_r6_326 = *(sp20 + (var_fp_52 + var_r4_327));
-                if (var_r6_326 != 0x20) {
-                    goto loop_35;
-                }
-block_50:
-                if (var_r4_327 <= 3) {
-                    var_r2_491 = (s8 *)&sp5C + var_r4_327;
-                    var_r4_494 = 4 - var_r4_327;
-                    do {
-                        var_r4_494 -= 1;
-                        *var_r2_491 = 0;
-                        var_r2_491 += 1;
-                    } while (var_r4_494 != 0);
-                }
-            }
-            var_r9_24 = var_fp_52;
+            Ui_SetRectHighlight(window->x + 1, window->y + row * 2 + 1, window->width - 2, 1, 14);
+            render->dirty = 1;
+            render->busy = 0;
         }
-        if (sp50 > 4) {
-            var_r4_507 = 0;
-            temp_r5_509 = sp50 + 3;
-loop_61:
-            var_r3_544 = temp_r5_509;
-            if (temp_r5_509 < 0) {
-                var_r3_544 = sp50 + 6;
+        sprite = sprites;
+        src = visible;
+        for (index = 0; index <= 3; index++) {
+            if (*src++ != 0)
+                Runtime_PushSlotEntry(sprite, 240);
+            sprite++;
+        }
+        cursor_x = window->x * 8 - 2;
+        cursor_y = (row * 2 + window->y) * 8 + 20;
+        cursor.word.attr01 = 0x40000000;
+        cursor.word.attr23 = 0;
+        cursor.attr.tile = Resource_GetBuffer((u16)cursor_handle, Data_080310a4);
+        cursor.attr.x = cursor_x + ((Data_03001e40 & 4) >> 1) + (s32)&Value_0000fffc;
+        cursor.attr.y = cursor_y - ((Data_03001e40 & 4) >> 2) + 248;
+        Runtime_PushSlotEntry(&cursor, 242);
+        affordable = Data_03001e40 & 8;
+        for (element = 0; element <= 3; element++) {
+            tile = 15 - (affordable != 0);
+            if ((mask & (1 << element)) == 0)
+                tile = 15;
+            Ui_SetRectHighlight(counts->x + element * 2 + 1, counts->y + 1, 2, 1, tile);
+        }
+        if (count > 4) {
+            for (index = 0; index < (count + 3) / 4; index++) {
+                tile = index + (s32)&Value_0000f301;
+                if ((Data_03001e40 & 15) <= 11 && index == page / 4)
+                    tile = index + (s32)&Value_0000f30b;
+                UiWindow_SetTilemapEntry(window, tile, window->width - (count + 3) / 4 + index - 2, -1, 0);
             }
-            temp_r0_550 = var_r3_544 >> 2;
-            if (var_r4_507 < temp_r0_550) {
-                var_r3_517 = var_fp_52;
-                var_r1_518 = var_r4_507 + 0xF301;
-                if ((s32) var_r3_517 < 0) {
-                    var_r3_517 += 3;
-                }
-                if (var_r4_507 == ((s32) var_r3_517 >> 2)) {
-                    var_r1_518 = var_r4_507 + 0xF30B;
-                }
-                sp0 = 0;
-                sp4 = var_r4_507;
-                Func_08019000(sp4C, var_r1_518, ((M2C_FIELD(sp4C, u16 *, 8) - temp_r0_550) + var_r4_507) - 2, -1);
-                var_r4_507 += 1;
-                goto loop_61;
+            UiWindow_SetTilemapEntry(window, (s32)&Value_0000f334, window->width - (count + 3) / 4 - 3, -1, 0);
+            UiWindow_SetTilemapEntry(window, (s32)&Value_0000f335, window->width - 2, -1, 0);
+            render->dirty |= 2 << ((u32)(window->y - 1) >> 2);
+        }
+        nav = Data_03001f34;
+        nav->page = page;
+        nav->row = row;
+        nav->preferred_row = preferred;
+        pressed = Data_03001c94;
+        repeated = Data_03001b04;
+        if (nav->automatic != 0) {
+            repeated = 0;
+            pressed = 0;
+            if (nav->delay == 0) {
+                nav->delay = 120;
+                repeated = 1;
+                pressed = 1;
+            } else {
+                nav->delay--;
             }
         }
-        sp0 = 0xE;
-        Func_08022768(M2C_FIELD(sp4C, u16 *, 0xC) + 1, M2C_FIELD(sp4C, u16 *, 0xE) + sp10 + 1, M2C_FIELD(sp4C, u16 *, 8) - 2, 1);
-        M2C_FIELD(sp48, u8 *, 0xEA3) = 1U;
-        M2C_FIELD(sp48, s8 *, 0xEA6) = 0;
-    }
-    var_r6_578 = sp1C;
-    var_r4_579 = 0;
-    var_r5_580 = &sp5C;
-    do {
-        temp_r3_582 = *var_r5_580;
-        var_r5_580 += 1;
-        if (temp_r3_582 != 0) {
-            sp4 = var_r4_579;
-            Func_08003dec(var_r6_578, 0xF0);
+        if (pressed & 1) {
+            result = ordered[page + row];
+            break;
         }
-        var_r4_579 += 1;
-        var_r6_578 += 0xC;
-    } while (var_r4_579 <= 3);
-    temp_r3_599 = (M2C_FIELD(sp4C, u16 *, 0xC) * 8) - 2;
-    sp28 = temp_r3_599;
-    sp2C = ((sp10 + M2C_FIELD(sp4C, u16 *, 0xE)) * 8) + 0x14;
-    M2C_FIELD(sp18, s32 *, 4) = 0x40000000;
-    M2C_FIELD(sp18, s32 *, 8) = 0;
-    M2C_FIELD(sp18, s32 *, 8) = (s16) (((u16) M2C_FIELD(sp18, s32 *, 8) & 0xFFFFFC00) | (Func_080040d0(spC >> 0x10, 0x080310A4) & 0x3FF));
-    M2C_FIELD(sp18, u16 *, 6) = (u16) ((M2C_FIELD(sp18, u16 *, 6) & 0xFFFFFE00) | ((temp_r3_599 + ((u32) (*(s32 *)0x03001E40 & 4) >> 1) + 0xFFFC) & 0x1FF));
-    M2C_FIELD(sp18, s32 *, 4) = (s8) ((sp2C - ((u32) (*(u32 *)0x03001E40 & 4) >> 2)) + 0xF8);
-    Func_08003dec(sp18, 0xF2);
-    temp_r6_681 = *(u32 *)0x03001E40 & 8;
-    var_r5_682 = 0;
-    do {
-        var_r2_689 = 0xF - ((u32) ((0 - temp_r6_681) | temp_r6_681) >> 0x1F);
-        if (!((1 << var_r5_682) & sp34)) {
-            var_r2_689 = 0xF;
+        if (Data_03001f34->active == 0 || (pressed & 2)) {
+            Audio_PlayCue(113);
+            result = -1;
+            break;
         }
-        sp0 = var_r2_689;
-        temp_r0_704 = M2C_FIELD(sp38, u16 *, 0xC) + (var_r5_682 * 2) + 1;
-        var_r5_682 += 1;
-        Func_08022768(temp_r0_704, M2C_FIELD(sp38, u16 *, 0xE) + 1, 2, 1);
-    } while (var_r5_682 <= 3);
-    if (sp50 > 4) {
-        var_r4_715 = 0;
-        temp_r5_717 = sp50 + 3;
-loop_84:
-        var_r3_760 = temp_r5_717;
-        if (temp_r5_717 < 0) {
-            var_r3_760 = sp50 + 6;
-        }
-        temp_r2_766 = var_r3_760 >> 2;
-        if (var_r4_715 < temp_r2_766) {
-            var_r1_722 = var_r4_715 + 0xF301;
-            if ((u32) (*(u32 *)0x03001E40 & 0xF) <= 0xBU) {
-                var_r3_728 = var_fp_52;
-                if ((s32) var_r3_728 < 0) {
-                    var_r3_728 += 3;
-                }
-                if (var_r4_715 == ((s32) var_r3_728 >> 2)) {
-                    var_r1_722 = var_r4_715 + 0xF30B;
-                }
+        if (repeated & 128) {
+            Audio_PlayCue(111);
+            row++;
+            if (row == 4 || page + row == count)
+                row = 0;
+            preferred = row;
+        } else if (repeated & 64) {
+            Audio_PlayCue(111);
+            row--;
+            if (row < 0) {
+                if (page == ((count - 1) / 4) * 4)
+                    row = count - page - 1;
+                else
+                    row = 3;
             }
-            var_r2_740 = temp_r5_717;
-            if (temp_r5_717 < 0) {
-                var_r2_740 = sp50 + 6;
-            }
-            sp0 = 0;
-            sp4 = var_r4_715;
-            Func_08019000(sp4C, var_r1_722, ((M2C_FIELD(sp4C, u16 *, 8) - (var_r2_740 >> 2)) + var_r4_715) - 2, -1);
-            var_r4_715 += 1;
-            goto loop_84;
-        }
-        sp0 = 0;
-        Func_08019000(sp4C, 0xF334, (M2C_FIELD(sp4C, u16 *, 8) - temp_r2_766) - 3, -1);
-        sp0 = 0;
-        Func_08019000(sp4C, 0xF335, M2C_FIELD(sp4C, u16 *, 8) - 2, -1);
-        M2C_FIELD(sp48, u8 *, 0xEA3) = (u8) ((2 << ((u32) (M2C_FIELD(sp4C, u16 *, 0xE) - 1) >> 2)) | M2C_FIELD(sp48, u8 *, 0xEA3));
-    }
-    temp_r2_804 = *(void **)0x03001F34;
-    M2C_FIELD(temp_r2_804, u32 *, 0x34) = var_fp_52;
-    M2C_FIELD(temp_r2_804, u32 *, 0x30) = var_sl_53;
-    M2C_FIELD(temp_r2_804, u32 *, 0x38) = sp30;
-    var_r1_812 = *(s32 *)0x03001C94;
-    var_r0_814 = *(s32 *)0x03001B04;
-    if (M2C_FIELD(temp_r2_804, s32 *, 0xD8) != 0) {
-        temp_r3_821 = M2C_FIELD(temp_r2_804, s32 *, 0xDC);
-        var_r0_814 = 0;
-        var_r1_812 = 0;
-        if (temp_r3_821 == 0) {
-            M2C_FIELD(temp_r2_804, s32 *, 0xDC) = 0x78;
-            var_r0_814 = 1;
-            var_r1_812 = 1;
-        } else {
-            M2C_FIELD(temp_r2_804, s32 *, 0xDC) = (s32) (temp_r3_821 - 1);
-        }
-    }
-    if (var_r1_812 & 1) {
-        var_r6_843 = *(sp20 + (var_fp_52 + var_sl_53));
-    } else if ((M2C_FIELD(*(void **)0x03001F34, s32 *, 0x4C) == 0) || (2 & var_r1_812)) {
-        Func_080f9010(0x71);
-        var_r6_843 = -1U;
-    } else {
-        if (0x80 & var_r0_814) {
-            Func_080f9010(0x6F);
-            var_sl_53 += 1;
-            if ((var_sl_53 == 4) || ((var_fp_52 + var_sl_53) == sp50)) {
-                var_sl_53 = 0;
-            }
-            var_r3_884 = var_sl_53 * 2;
-            sp30 = var_sl_53;
-            goto block_131;
-        }
-        if (0x40 & var_r0_814) {
-            Func_080f9010(0x6F);
-            var_sl_53 -= 1;
-            if ((s32) var_sl_53 < 0) {
-                var_r3_900 = sp14;
-                if (var_r3_900 < 0) {
-                    var_r3_900 = sp50 + 2;
-                }
-                if (var_fp_52 == ((var_r3_900 >> 2) * 4)) {
-                    var_sl_53 = (sp50 - var_fp_52) - 1;
-                } else {
-                    var_sl_53 = 3;
-                }
-            }
-            var_r3_884 = var_sl_53 * 2;
-            sp30 = var_sl_53;
-            goto block_131;
-        }
-        if (0x10 & var_r0_814) {
-            Func_080f9010(0x6F);
-            Func_0800352c();
-            temp_r3_935 = var_fp_52 + 4;
-            if (temp_r3_935 >= sp50) {
-                if (var_fp_52 != 0) {
-                    var_sl_53 = sp30;
-                    var_fp_52 = 0;
-                    sp10 = var_sl_53 * 2;
+            preferred = row;
+        } else if (repeated & 16) {
+            Audio_PlayCue(111);
+            Runtime_SetMainState19();
+            if (page + 4 >= count) {
+                if (page != 0) {
+                    row = preferred;
+                    page = 0;
                 }
             } else {
-                var_fp_52 = (u32) temp_r3_935;
-                var_r3_952 = sp14;
-                var_sl_53 = sp30;
-                if (var_r3_952 < 0) {
-                    var_r3_952 = sp50 + 2;
-                }
-                if (var_fp_52 == ((var_r3_952 >> 2) * 4)) {
-                    var_sl_53 = (sp50 - var_fp_52) - 1;
-                    if ((s32) var_sl_53 > (s32) sp30) {
-                        var_sl_53 = sp30;
-                        goto block_129;
-                    }
-                    sp10 = var_sl_53 * 2;
-                } else {
-                    sp10 = var_sl_53 * 2;
+                page += 4;
+                row = preferred;
+                if (page == ((count - 1) / 4) * 4) {
+                    row = count - page - 1;
+                    if (row > preferred)
+                        row = preferred;
                 }
             }
-        } else if (0x20 & var_r0_814) {
-            Func_080f9010(0x6F);
-            Func_0800352c();
-            if (var_fp_52 != 0) {
-                var_sl_53 = sp30;
-                var_fp_52 -= 4;
-                sp10 = var_sl_53 * 2;
+        } else if (repeated & 32) {
+            Audio_PlayCue(111);
+            Runtime_SetMainState19();
+            if (page != 0) {
+                row = preferred;
+                page -= 4;
             } else {
-                var_r3_994 = sp14;
-                if (var_r3_994 < 0) {
-                    var_r3_994 = sp50 + 2;
-                }
-                var_fp_52 = (var_r3_994 >> 2) * 4;
-                var_sl_53 = sp30;
-                if (var_fp_52 != 0) {
-                    var_sl_53 = (sp50 - var_fp_52) - 1;
-                    if ((s32) var_sl_53 > (s32) sp30) {
-                        var_sl_53 = sp30;
-                    }
-                    var_r3_884 = var_sl_53 * 2;
-block_131:
-                    sp10 = var_r3_884;
-                } else {
-block_129:
-                    sp10 = var_sl_53 * 2;
+                page = ((count - 1) / 4) * 4;
+                row = preferred;
+                if (page != 0) {
+                    row = count - page - 1;
+                    if (row > preferred)
+                        row = preferred;
                 }
             }
         }
-        Func_080030f8(1);
-        goto loop_21;
+        WaitFrames(1);
     }
-    Func_080030f8(1);
-    var_r4_1044 = 3;
-    var_r5_1045 = &sp60[0];
+    WaitFrames(1);
+    handle = handles;
+    index = 3;
     do {
-        temp_r0_1047 = *var_r5_1045;
-        var_r5_1045 += 4;
-        sp4 = var_r4_1044;
-        Func_08003f3c(temp_r0_1047);
-        var_r4_1044 -= 1;
-    } while (var_r4_1044 >= 0);
-    Func_08003f3c(spC >> 0x10);
-    Func_08016418(sp38, 1);
-    Func_08016418(sp3C, 1);
-    Func_08016418(sp4C, 1);
-    Func_080030f8(1);
-    return var_r6_843;
+        Resource_ResetEntry(*handle++);
+    } while (--index >= 0);
+    Resource_ResetEntry((u16)cursor_handle);
+    UiWork_Finalize(counts, 1);
+    UiWork_Finalize(description, 1);
+    UiWork_Finalize(window, 1);
+    WaitFrames(1);
+    return result;
 }

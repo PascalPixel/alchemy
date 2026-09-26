@@ -33,6 +33,21 @@
       "compiler_route": "canonical-gcc296"
     },
     {
+      "id": "babi-ship-scanline-waves-candidate",
+      "game": "tbs",
+      "source": "recon/tbs/en/overlays/resource_3ca_c_02000f80.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3ca",
+      "absolute_symbols": {
+        "Data_03001ed8": { "address": "0x03001ed8", "kind": "data" },
+        "Data_03001ad0": { "address": "0x03001ad0", "kind": "data" },
+        "Data_020094c8": { "address": "0x020094c8", "kind": "data" }
+      },
+      "owners": [
+        { "address": "0x02000f80", "extent": 340, "state": "not-yet-c" }
+      ]
+    },
+    {
       "id": "retained-overlay-3ca-02000194",
       "game": "tbs",
       "source": "recon/tbs/en/overlays/resource_3ca_c_02000194.c",
@@ -227,7 +242,7 @@
     },
     {
       "id": "retained-overlay-3cb-02000860",
-      "source": "recon/tbs/en/overlays/resource_3cb_c_02000860.c",
+      "source": "games/THE BROKEN SEAL/SRC/MENU/LINK_LOBBY/CONNECT.C",
       "overlay": "resource_3cb",
       "absolute_symbols": {
         "Engine_EventBegin": {
@@ -339,7 +354,7 @@
         {
           "address": "0x02000860",
           "extent": 820,
-          "state": "not-yet-c"
+          "state": "exact-c"
         }
       ],
       "game": "tbs",
@@ -86761,6 +86776,14 @@
       "source": "recon/tbs/en/overlays/resource_3c9_c_020036d0.c",
       "overlay": "resource_3c9",
       "absolute_symbols": {
+        "Engine_GameFlagIsSet": {
+          "address": "0x0200dd0c",
+          "kind": "thumb"
+        },
+        "VinasuChojo_SparkScript": {
+          "address": "0x0200e16c",
+          "kind": "data"
+        },
         "Engine_MathModulo": {
           "address": "0x0200dbf4",
           "kind": "thumb"

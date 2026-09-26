@@ -7,7 +7,11 @@
  * Residual: spilled has_djinn/done/has_ailments/count slots are reversed,
  * count is sign-extended after the pane branch instead of before its modulo,
  * and scheduler r0 loads early. The actual scheduler returns s32, not void.
- * H2: declare spills in reference slot order and use the actual return type.
+ * H2: 870/870 bytes, 16 differing halfwords. Reference spill declaration order
+ * and actual scheduler return types fix every difference outside 080a8202-222.
+ * The remaining block delays count's s8-to-s32 conversion until after the pane
+ * branch; the ROM keeps that promoted limit live across its modulo/branch.
+ * H3 will give this promoted selection limit an explicit redraw-local lifetime.
  * Budget: corrected model plus two variants; adoption requires all gates. */
 #include "TYPES.H"
 #include "SYSTEM.H"
@@ -45,8 +49,8 @@ extern u8 Value_00000b06;
 
 s32 Party_SumDjinnCountsFar(s32 side);
 s32 UiWindow_UpdateOrCreate(s32 *, s32, s32, s32, s32, s32);
-void Scheduler_RemoveCallback(void (*callback)(void));
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
+s32 Scheduler_RemoveCallback(void (*callback)(void));
+s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 void Menu_UpdateEntryObjectTransforms(void);
 void UiMenu_SlideCursor(s32 x, s32 y);
 void UiMenu_PositionCursor(s32 x, s32 y);
@@ -71,10 +75,10 @@ s32 Func_080a8114(void)
     s32 pane;
     s32 result;
     s32 selected;
-    s32 has_djinn;
-    s32 done;
-    s32 has_ailments;
     s8 count;
+    s32 has_ailments;
+    s32 done;
+    s32 has_djinn;
     s32 redraw;
     s32 tab;
     s32 total;

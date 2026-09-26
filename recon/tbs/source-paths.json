@@ -12010,7 +12010,8 @@
       "source": "MENU/SELECTION_OPEN_WINDOW.C"
     },
     "resource_371:020039fc": {
-      "name": "Scene_RunScene371SequenceA"
+      "name": "Scene_RunScene371SequenceA",
+      "source": "FIELD/WORLD_MAP/DISPLAY_TRANSITION.C"
     },
     "resource_374:02000bbc": {
       "name": "FieldScene_RunElderAidEvent",

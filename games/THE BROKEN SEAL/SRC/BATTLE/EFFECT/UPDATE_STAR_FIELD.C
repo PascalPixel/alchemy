@@ -1,15 +1,8 @@
-/* NONMATCHING: 588 bytes, candidate 588, 2 differing halfwords.
- * A count-up source loop is reversed by the compiler and matches the ROMs countdown and register choices.
- * WALL: One scheduling swap remains: moving the multiply routine into r9 precedes adding the spark base in the ROM.
- */
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 
 struct Spark {
-    s32 pos[3];
-    s32 vel_x;
-    s32 vel_y;
-    s32 unused;
+    s32 pos[6];
     s32 life;
 };
 
@@ -44,17 +37,20 @@ extern struct WorkSlots Data_03001e50;
 extern s32 Data_080c3604[];
 extern u8 Data_080c3620[];
 extern s32 Data_080c3628[];
+extern u8 Value_03000118[];
 
-#define Iwram_DivQ16 ((s32 (*)(s32, s32))0x0300013c)
+#define Spark_MulQ16(left, right) Iwram_Call2((left), (right), Value_03000118)
+
+#define Spark_RatioQ14 ((s32 (*)(s32, s32))0x0300013c)
 
 s32 FixedSqrt(s32 value);
 u32 Random16(void);
 s32 Trig_Cos(s32 angle);
 s32 Trig_Sin(s32 angle);
 
-/* Returns nothing; the ROM pops the return address into r1 as for a
-   value-returning function. */
-s32 Func_080c11ec(void)
+/* FAKEMATCH: the scheduler ignores the result; a non-void signature keeps
+   the reference's return-address pop into r1. */
+s32 BattleFx_UpdateStarField(void)
 {
     s32 j;
     s32 frame;
@@ -86,7 +82,8 @@ s32 Func_080c11ec(void)
     work = Data_03001e50.work;
     work->ready = 0;
     draw = Data_03001e50.draw_spark;
-    for (i = 0, spark = work->sparks; i < 16; spark++, i++) {
+    for (i = 0; i < 16; i++) {
+        spark = &work->sparks[i];
         life = spark->life;
         if (life != 0) {
             dist = FixedSqrt((spark->pos[0] >> 8) * (spark->pos[0] >> 8)
@@ -95,14 +92,15 @@ s32 Func_080c11ec(void)
             if (dist <= 0xfff) {
                 spark->life = 0;
             } else {
-                scale = Iwram_DivQ16(dist, 0x10000);
+                scale = Spark_RatioQ14(dist, 0x10000);
                 spark->life--;
                 pos = spark->pos;
                 for (k = 2; k >= 0; k--) {
                     value = *pos;
-                    step = Iwram_MulQ16(Iwram_MulQ16(-value >> 8, scale), 0x13000);
+                    step = Spark_MulQ16(Spark_MulQ16(-value >> 8, scale), 0x13000);
                     pos[3] = pos[3] - (pos[3] >> 7) + step;
-                    *pos++ = value + pos[3];
+                    *pos = value + pos[3];
+                    pos++;
                 }
             }
             life = spark->life;
@@ -113,16 +111,16 @@ s32 Func_080c11ec(void)
             angle = Random16();
             radius = Random16() + 0x10000;
             half = radius >> 1;
-            spark->pos[0] = Iwram_MulQ16(Trig_Cos(angle), half);
-            spark->pos[1] = Iwram_MulQ16(Trig_Sin(angle), half);
+            spark->pos[0] = Spark_MulQ16(Trig_Cos(angle), half);
+            spark->pos[1] = Spark_MulQ16(Trig_Sin(angle), half);
             if (spark->pos[0] & 1)
                 spark->pos[0] = -spark->pos[0];
             if (spark->pos[1] & 1)
                 spark->pos[1] = -spark->pos[1];
             spark->pos[2] = (Random16() + 0x8000) >> 2;
-            spark->vel_x = (-spark->pos[0] >> 7) + (spark->pos[1] >> 8);
-            spark->vel_y = (-spark->pos[1] >> 7) + (-spark->pos[0] >> 8);
-            spark->unused = 0;
+            spark->pos[3] = (-spark->pos[0] >> 7) + (spark->pos[1] >> 8);
+            spark->pos[4] = (-spark->pos[1] >> 7) + (-spark->pos[0] >> 8);
+            spark->pos[5] = 0;
             life = spark->life = (radius >> 13) + 1;
         }
         if (life != 0) {

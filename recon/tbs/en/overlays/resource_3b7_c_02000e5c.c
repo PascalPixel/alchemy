@@ -1,11 +1,22 @@
-/* NONMATCHING: 2124 bytes, candidate 2112, 992 differing halfwords, 504
- * halfword edits (2026-09-25). FieldScene_RunSecondaryScript, meant for
- * FIELD/TOREBI_IZUMI/F_00E5C.C as a single-overlay unit binding its names at
- * their runtime addresses (an import veneer's listing offset plus 0x8000).
- * Remaining: Pointer-countdown history copies recovered; remaining
- * differences span the actor state loops and allocation across the complete
- * owner.
- * WALL: structural-topology: reconstruct actor state loops and live ranges */
+/* NONMATCHING: reference 2124 bytes, candidate 2112, 964 differing
+ * halfwords / 445 aligned edits (2026-09-26). Whole owner 02000e5c..020016a8;
+ * its 22 pool words lie at 1074..1094, 136c..1384, 13a0..13a4 and
+ * 168c..16a8 within resource_3b7. Initializer, placement helper, import
+ * bindings and interworking sqrt calls audited against this repository/ROM.
+ * Three structural hypotheses, closed:
+ * 1. Retain updated dx/dz through both divide calls: 2104/1018/524;
+ *    removed the reload but regressed whole-owner allocation. Rejected.
+ * 2. Typed frame/actor records with indexed history: 2112/949/489;
+ *    restored the stable state base plus a separate history cursor.
+ * 3. Ground-first and move-first branch bodies: retained 2112/964/445,
+ *    versus the original 2112/992/504. Airborne and hold tails now follow
+ *    the reference topology. The countdown zero was already reused by
+ *    the baseline compiler; no redundant zero-spelling trial was run.
+ * Remaining: state/index/actor live ranges use sl/r9/r5 versus r9/r8/r6,
+ * stack frame 8 versus 24 bytes; chase velocity is reloaded, collision
+ * length stays in a saved register, reaction is stored before modulo,
+ * and circular hold updates share a tail. Not a register-spelling target.
+ */
 #include "TYPES.H"
 
 /*
@@ -89,61 +100,63 @@
  *    register across both the comparison and the multiply, so it is one value
  *    in the source rather than four repeated literals.
  *
- * Residual.  What still differs is register assignment, not shape: the
- * reference keeps the work block in r9 and this candidate keeps it in a
- * different callee-saved register, and it additionally hoists `work + 28` -
- * shared between the history cursor and one placement argument - into r11,
- * which costs one extra saved register.  Scoping the cursor, retyping it, and
- * merging short-lived locals were each tried and changed nothing, so this is
- * left as an allocation residual rather than chased with further respellings.
+ * Current residuals and completed trials are recorded in the header above.
  */
 
-/* Loader-relocated overlay calls: each symbol names the pre-relocation call
- * word the image holds. */
-#define SceneActor_GetRecord Func_0200280e     /* main 0x0808a080 */
-#define Actor_SetMode Func_02002764       /* main 0x08009080 */
-#define SceneActor_SetPlacement Func_020022e2  /* overlay 0x02000dd0 */
-#define SceneActor_SetField54 Func_02001e20    /* overlay 0x02000e44 */
-#define FixedMath_Divide Func_02002778         /* iwram 0x03000380 */
-#define FixedMath_Modulo Func_02002d1e         /* iwram 0x030003ac */
-#define FixedMath_Cos Func_02002bb4            /* main 0x08000118 */
-#define FixedMath_Sin Func_02002bd2            /* main 0x08000120 */
-#define SceneAudio_PlayCue Func_02002e7a       /* main 0x080f9010 */
-
-u8 *SceneActor_GetRecord(s32 id);
-void Actor_SetMode(u8 *rec, s32 mode);
-void SceneActor_SetPlacement(s32 id, void *pos, s32 angle, s32 frame, s32 unk);
-void SceneActor_SetField54(s32 id, s32 value);
-s32 FixedMath_Divide(s32 num, s32 den);
-s32 FixedMath_Modulo(s32 num, s32 den);
-s32 FixedMath_Cos(s32 angle);
-s32 FixedMath_Sin(s32 angle);
-void SceneAudio_PlayCue(s32 cue);
+/* Runtime names are bound by the single-overlay translation unit. */
+u8 *Engine_ActorGet(s32 id);
+void Engine_ObjectSetAnimation(u8 *rec, s32 mode);
+void TorebiIzumi_PlaceActor(s32 id, void *pos, s32 angle, s32 frame, s32 unk);
+void OverlayObject_SetField54(s32 id, s32 value);
+s32 Engine_MathDivide(s32 num, s32 den);
+s32 Engine_MathModulo(s32 num, s32 den);
+s32 Engine_MathCos(s32 angle);
+s32 Engine_MathSin(s32 angle);
+void Engine_AudioPlayCue(s32 cue);
 
 /* Indirect call through the retained `bx r3` interworking slot. */
 typedef s32 (*FixedMath_SqrtProc)(s32);
 #define FixedMath_Sqrt ((FixedMath_SqrtProc)0x030001d8)
 
+struct SpringFrameState {
+    s16 mode;
+    s16 frame;
+    s32 pos[4][3];
+    s32 flat[3];
+    s32 velocity[3];
+    s32 budget;
+};
+
+struct SpringActorState {
+    s32 pos[3];
+    s16 heading;
+    s16 hold;
+    s16 mode;
+    s16 react;
+    s16 cool;
+    s16 pad;
+};
+
 extern u8 Data_0200a054[]; /* three frame indices, first object bank */
 extern u8 Data_0200a057[]; /* three frame indices, second object bank */
-extern u8 Data_0200a070[]; /* scene work block */
+extern struct SpringFrameState Data_0200a070; /* scene work block */
 extern s32 Data_0200a0c0;  /* 1 selects the first object bank */
-extern u8 Data_0200a0d0[]; /* four 24-byte actor records */
+extern struct SpringActorState Data_0200a0d0[]; /* four 24-byte actor records */
 extern s32 Data_0200a134;  /* set whenever the proximity band is published */
 extern s32 Data_0200a138;  /* proximity band, 0 (closest) .. 4 */
 
-#define REC_X(rec) (*(s32 *)((rec) + 0))
-#define REC_Z(rec) (*(s32 *)((rec) + 8))
-#define REC_HEADING(rec) (*(s16 *)((rec) + 12))
-#define REC_HOLD(rec) (*(s16 *)((rec) + 14))
-#define REC_MODE(rec) (*(s16 *)((rec) + 16))
-#define REC_REACT(rec) (*(s16 *)((rec) + 18))
-#define REC_COOL(rec) (*(s16 *)((rec) + 20))
+#define REC_X(rec) ((rec)->pos[0])
+#define REC_Z(rec) ((rec)->pos[2])
+#define REC_HEADING(rec) ((rec)->heading)
+#define REC_HOLD(rec) ((rec)->hold)
+#define REC_MODE(rec) ((rec)->mode)
+#define REC_REACT(rec) ((rec)->react)
+#define REC_COOL(rec) ((rec)->cool)
 
 void FieldScene_RunSecondaryScript(void)
 {
-    u8 *work;
-    u8 *rec;
+    struct SpringFrameState *work;
+    struct SpringActorState *rec;
     s32 i;
     s32 x;
     s32 z;
@@ -163,74 +176,67 @@ void FieldScene_RunSecondaryScript(void)
     s32 zlo;
     s32 zhi;
 
-    work = Data_0200a070 + 28;
-
-    /* Age the position history: +0x28 <- +0x1c <- +0x10 <- +0x04. */
+    work = &Data_0200a070;
     i = 3;
     do {
-        *(s32 *)(work + 12) = *(s32 *)(work + 0);
-        *(s32 *)(work + 16) = *(s32 *)(work + 4);
-        *(s32 *)(work + 20) = *(s32 *)(work + 8);
+        work->pos[i][0] = work->pos[i - 1][0];
+        work->pos[i][1] = work->pos[i - 1][1];
+        work->pos[i][2] = work->pos[i - 1][2];
         i--;
-        work -= 12;
     } while (i != 0);
-    work += 8;
 
-    if (*(s16 *)(work + 2) > 31) {
-        *(s32 *)(work + 4) += *(s32 *)(work + 64);
-        y = *(s32 *)(work + 8) + *(s32 *)(work + 68);
-        *(s32 *)(work + 8) = y;
-        *(s32 *)(work + 12) += *(s32 *)(work + 72);
+    if (work->frame > 31) {
+        work->pos[0][0] += work->velocity[0];
+        y = work->pos[0][1] + work->velocity[1];
+        work->pos[0][1] = y;
+        work->pos[0][2] += work->velocity[2];
 
-        if (y > 0) {
-            /* Still airborne: keep falling. */
-            *(s32 *)(work + 68) -= 0x4000;
-        } else {
-            *(s32 *)(work + 8) = 0;
-            if (*(s32 *)(work + 68) != 0) {
+        if (y <= 0) {
+            work->pos[0][1] = 0;
+            if (work->velocity[1] != 0) {
                 /* Landing frame. */
-                *(s32 *)(work + 68) = 0;
+                work->velocity[1] = 0;
                 if (Data_0200a0c0 == 1) {
-                    Actor_SetMode(SceneActor_GetRecord(17), 1);
+                    Engine_ObjectSetAnimation(Engine_ActorGet(17), 1);
                 } else {
-                    Actor_SetMode(SceneActor_GetRecord(12), 1);
+                    Engine_ObjectSetAnimation(Engine_ActorGet(12), 1);
                 }
             }
 
-            if (*(s32 *)(work + 76) > 0) {
+            if (work->budget > 0) {
                 /* Chase the fixed target at (0x780000, 0x470000). */
-                dx = (0x780000 - *(s32 *)(work + 4)) >> 8;
-                dz = (0x470000 - *(s32 *)(work + 12)) >> 8;
+                dx = (0x780000 - work->pos[0][0]) >> 8;
+                dz = (0x470000 - work->pos[0][2]) >> 8;
                 len = FixedMath_Sqrt(dx * dx + dz * dz);
-                *(s32 *)(work + 64) += FixedMath_Divide(6553 * dx, len);
-                *(s32 *)(work + 72) += FixedMath_Divide(6553 * dz, len);
-                *(s32 *)(work + 64) = *(s32 *)(work + 64) * 253 / 256;
-                *(s32 *)(work + 72) = *(s32 *)(work + 72) * 253 / 256;
-                *(s32 *)(work + 76) = *(s32 *)(work + 76) - 1;
+                work->velocity[0] += Engine_MathDivide(6553 * dx, len);
+                work->velocity[2] += Engine_MathDivide(6553 * dz, len);
+                work->velocity[0] = work->velocity[0] * 253 / 256;
+                work->velocity[2] = work->velocity[2] * 253 / 256;
+                work->budget = work->budget - 1;
             } else {
                 /* Budget spent: coast to a stop. */
-                *(s32 *)(work + 64) = *(s32 *)(work + 64) * 220 / 256;
-                *(s32 *)(work + 72) = *(s32 *)(work + 72) * 220 / 256;
-                if (*(s32 *)(work + 64) > -1024 && *(s32 *)(work + 64) < 1024) {
-                    *(s32 *)(work + 64) = 0;
+                work->velocity[0] = work->velocity[0] * 220 / 256;
+                work->velocity[2] = work->velocity[2] * 220 / 256;
+                if (work->velocity[0] > -1024 && work->velocity[0] < 1024) {
+                    work->velocity[0] = 0;
                 }
-                if (*(s32 *)(work + 72) > -1024 && *(s32 *)(work + 72) < 1024) {
-                    *(s32 *)(work + 72) = 0;
+                if (work->velocity[2] > -1024 && work->velocity[2] < 1024) {
+                    work->velocity[2] = 0;
                 }
-                if (*(s32 *)(work + 64) == 0 && *(s32 *)(work + 72) == 0) {
+                if (work->velocity[0] == 0 && work->velocity[2] == 0) {
                     if (Data_0200a0c0 == 1) {
-                        Actor_SetMode(SceneActor_GetRecord(17), 2);
-                        SceneActor_SetField54(15, 0);
-                        SceneActor_SetField54(14, 0);
-                        SceneActor_SetField54(13, 0);
+                        Engine_ObjectSetAnimation(Engine_ActorGet(17), 2);
+                        OverlayObject_SetField54(15, 0);
+                        OverlayObject_SetField54(14, 0);
+                        OverlayObject_SetField54(13, 0);
                     } else {
-                        Actor_SetMode(SceneActor_GetRecord(12), 2);
-                        SceneActor_SetField54(10, 0);
-                        SceneActor_SetField54(9, 0);
-                        SceneActor_SetField54(8, 0);
+                        Engine_ObjectSetAnimation(Engine_ActorGet(12), 2);
+                        OverlayObject_SetField54(10, 0);
+                        OverlayObject_SetField54(9, 0);
+                        OverlayObject_SetField54(8, 0);
                     }
-                    dx = (0x780000 - *(s32 *)(work + 4)) >> 16;
-                    dz = (0x470000 - *(s32 *)(work + 12)) >> 16;
+                    dx = (0x780000 - work->pos[0][0]) >> 16;
+                    dz = (0x470000 - work->pos[0][2]) >> 16;
                     dist = dx * dx + dz * dz;
                     Data_0200a134 = 1;
                     if (dist <= 224) {
@@ -254,9 +260,9 @@ void FieldScene_RunSecondaryScript(void)
             xlo = 0x300000;
             zlo = 0x180000;
 
-            z = *(s32 *)(work + 12);
+            z = work->pos[0][2];
             if (z < 0x2a0000) {
-                tmp = FixedMath_Divide((0x2a0000 - z) * 42, 18);
+                tmp = Engine_MathDivide((0x2a0000 - z) * 42, 18);
                 xlo = 0x300000 + tmp;
                 if (xlo > 0x5a0000) {
                     xlo = 0x5a0000;
@@ -267,7 +273,7 @@ void FieldScene_RunSecondaryScript(void)
                 }
             }
             if (z > 0x660000) {
-                tmp = FixedMath_Divide(z * 42 - 0x10bc0000, 18);
+                tmp = Engine_MathDivide(z * 42 - 0x10bc0000, 18);
                 xlo = 0x300000 + tmp;
                 if (xlo > 0x5a0000) {
                     xlo = 0x5a0000;
@@ -278,9 +284,9 @@ void FieldScene_RunSecondaryScript(void)
                 }
             }
 
-            x = *(s32 *)(work + 4);
+            x = work->pos[0][0];
             if (x < 0x5a0000) {
-                tmp = FixedMath_Divide((0x5a0000 - x) * 18, 42);
+                tmp = Engine_MathDivide((0x5a0000 - x) * 18, 42);
                 zlo = 0x180000 + tmp;
                 if (zlo > 0x2a0000) {
                     zlo = 0x2a0000;
@@ -291,7 +297,7 @@ void FieldScene_RunSecondaryScript(void)
                 }
             }
             if (x > 0x960000) {
-                tmp = FixedMath_Divide(x * 18 - 0xa8c0000, 42);
+                tmp = Engine_MathDivide(x * 18 - 0xa8c0000, 42);
                 zlo = 0x180000 + tmp;
                 if (zlo > 0x2a0000) {
                     zlo = 0x2a0000;
@@ -304,38 +310,41 @@ void FieldScene_RunSecondaryScript(void)
 
             /* Bounce off each edge with half the incoming speed. */
             if (x < xlo) {
-                *(s32 *)(work + 4) = xlo;
-                if (*(s32 *)(work + 64) < 0) {
-                    *(s32 *)(work + 64) = -*(s32 *)(work + 64) / 2;
+                work->pos[0][0] = xlo;
+                if (work->velocity[0] < 0) {
+                    work->velocity[0] = -work->velocity[0] / 2;
                 }
                 x = xlo;
             }
             if (x > xhi) {
-                *(s32 *)(work + 4) = xhi;
-                if (*(s32 *)(work + 64) > 0) {
-                    *(s32 *)(work + 64) = -*(s32 *)(work + 64) / 2;
+                work->pos[0][0] = xhi;
+                if (work->velocity[0] > 0) {
+                    work->velocity[0] = -work->velocity[0] / 2;
                 }
             }
-            z = *(s32 *)(work + 12);
+            z = work->pos[0][2];
             if (z < zlo) {
-                *(s32 *)(work + 12) = zlo;
-                if (*(s32 *)(work + 72) < 0) {
-                    *(s32 *)(work + 72) = -*(s32 *)(work + 72) / 2;
+                work->pos[0][2] = zlo;
+                if (work->velocity[2] < 0) {
+                    work->velocity[2] = -work->velocity[2] / 2;
                 }
                 z = zlo;
             }
             if (z > zhi) {
-                *(s32 *)(work + 12) = zhi;
-                if (*(s32 *)(work + 72) > 0) {
-                    *(s32 *)(work + 72) = -*(s32 *)(work + 72) / 2;
+                work->pos[0][2] = zhi;
+                if (work->velocity[2] > 0) {
+                    work->velocity[2] = -work->velocity[2] / 2;
                 }
             }
+        } else {
+            /* Still airborne: keep falling. */
+            work->velocity[1] -= 0x4000;
         }
     }
 
     i = 0;
     do {
-        rec = Data_0200a0d0 + i * 24;
+        rec = &Data_0200a0d0[i];
 
         if (REC_REACT(rec) > 0) {
             REC_REACT(rec) = REC_REACT(rec) - 1;
@@ -356,19 +365,17 @@ void FieldScene_RunSecondaryScript(void)
             }
             if (REC_REACT(rec) > 0) {
                 if (i == 0) {
-                    Actor_SetMode(SceneActor_GetRecord(18), 3);
+                    Engine_ObjectSetAnimation(Engine_ActorGet(18), 3);
                 } else {
-                    Actor_SetMode(SceneActor_GetRecord(19), 3);
+                    Engine_ObjectSetAnimation(Engine_ActorGet(19), 3);
                 }
             } else {
                 if (i == 0) {
-                    Actor_SetMode(SceneActor_GetRecord(18), 1);
+                    Engine_ObjectSetAnimation(Engine_ActorGet(18), 1);
                 } else {
-                    Actor_SetMode(SceneActor_GetRecord(19), 1);
+                    Engine_ObjectSetAnimation(Engine_ActorGet(19), 1);
                 }
-                if (REC_HOLD(rec) != 0) {
-                    REC_HOLD(rec) = REC_HOLD(rec) - 1;
-                } else {
+                if (REC_HOLD(rec) == 0) {
                     if (REC_HEADING(rec) == 0) {
                         REC_X(rec) = REC_X(rec) + step;
                     } else {
@@ -390,6 +397,8 @@ void FieldScene_RunSecondaryScript(void)
                             REC_HOLD(rec) = val;
                         }
                     }
+                } else {
+                    REC_HOLD(rec) = REC_HOLD(rec) - 1;
                 }
             }
         } else if (i == 2) {
@@ -403,11 +412,11 @@ void FieldScene_RunSecondaryScript(void)
                 step = step * 3;
             }
             if (REC_REACT(rec) > 0) {
-                Actor_SetMode(SceneActor_GetRecord(20), 3);
+                Engine_ObjectSetAnimation(Engine_ActorGet(20), 3);
             } else {
-                Actor_SetMode(SceneActor_GetRecord(20), 2);
-                REC_X(rec) = FixedMath_Cos(REC_HEADING(rec)) * 48 + 0x700000;
-                REC_Z(rec) = FixedMath_Sin(REC_HEADING(rec)) * 40 + 0x480000;
+                Engine_ObjectSetAnimation(Engine_ActorGet(20), 2);
+                REC_X(rec) = Engine_MathCos(REC_HEADING(rec)) * 48 + 0x700000;
+                REC_Z(rec) = Engine_MathSin(REC_HEADING(rec)) * 40 + 0x480000;
                 REC_HEADING(rec) = REC_HEADING(rec) + step;
                 REC_HOLD(rec) = REC_HOLD(rec) + 1;
             }
@@ -424,47 +433,47 @@ void FieldScene_RunSecondaryScript(void)
                 step = step * 3;
             }
             if (REC_REACT(rec) > 0) {
-                Actor_SetMode(SceneActor_GetRecord(21), 3);
+                Engine_ObjectSetAnimation(Engine_ActorGet(21), 3);
             } else if (phase <= 383) {
-                REC_X(rec) = FixedMath_Cos(REC_HEADING(rec)) * 52 + 0x700000;
-                REC_Z(rec) = FixedMath_Sin(REC_HEADING(rec)) * 24 + 0x480000;
+                REC_X(rec) = Engine_MathCos(REC_HEADING(rec)) * 52 + 0x700000;
+                REC_Z(rec) = Engine_MathSin(REC_HEADING(rec)) * 24 + 0x480000;
                 REC_HEADING(rec) = REC_HEADING(rec) + step;
-                Actor_SetMode(SceneActor_GetRecord(21), 2);
+                Engine_ObjectSetAnimation(Engine_ActorGet(21), 2);
             } else {
-                Actor_SetMode(SceneActor_GetRecord(21), 3);
+                Engine_ObjectSetAnimation(Engine_ActorGet(21), 3);
             }
             REC_HOLD(rec) = REC_HOLD(rec) + 1;
         }
 
         /* Contact test against the chased body. */
-        if (REC_COOL(rec) == 0 && *(s32 *)(work + 8) == 0) {
-            dx = (REC_X(rec) - *(s32 *)(work + 4)) >> 16;
-            dz = (REC_Z(rec) - *(s32 *)(work + 12)) >> 16;
+        if (REC_COOL(rec) == 0 && work->pos[0][1] == 0) {
+            dx = (REC_X(rec) - work->pos[0][0]) >> 16;
+            dz = (REC_Z(rec) - work->pos[0][2]) >> 16;
             dist = dx * dx + dz * dz;
-            if (dist <= 119 && *(s32 *)(work + 76) > 30) {
+            if (dist <= 119 && work->budget > 30) {
                 speed = 0x30000;
                 if (i <= 1) {
                     if (REC_HEADING(rec) == 0) {
-                        if (*(s32 *)(work + 64) < speed) {
-                            *(s32 *)(work + 64) = speed;
-                            *(s32 *)(work + 76) = *(s32 *)(work + 76) - 100;
+                        if (work->velocity[0] < speed) {
+                            work->velocity[0] = speed;
+                            work->budget = work->budget - 100;
                         }
                     } else {
-                        if (*(s32 *)(work + 64) > -speed) {
-                            *(s32 *)(work + 64) = -speed;
-                            *(s32 *)(work + 76) = *(s32 *)(work + 76) - 100;
+                        if (work->velocity[0] > -speed) {
+                            work->velocity[0] = -speed;
+                            work->budget = work->budget - 100;
                         }
                     }
                 } else {
                     len = FixedMath_Sqrt(dist);
-                    *(s32 *)(work + 64) = FixedMath_Divide(-dx * speed, len);
-                    *(s32 *)(work + 72) = FixedMath_Divide(-dz * speed, len);
-                    *(s32 *)(work + 76) = *(s32 *)(work + 76) - 100;
+                    work->velocity[0] = Engine_MathDivide(-dx * speed, len);
+                    work->velocity[2] = Engine_MathDivide(-dz * speed, len);
+                    work->budget = work->budget - 100;
                 }
-                SceneAudio_PlayCue(301);
+                Engine_AudioPlayCue(301);
                 val = 36;
                 REC_REACT(rec) = val;
-                REC_MODE(rec) = FixedMath_Modulo(REC_MODE(rec) + 1, 3);
+                REC_MODE(rec) = Engine_MathModulo(REC_MODE(rec) + 1, 3);
                 val = 30;
                 REC_COOL(rec) = val;
             }
@@ -472,20 +481,20 @@ void FieldScene_RunSecondaryScript(void)
 
         switch (i) {
         case 0:
-            SceneActor_SetPlacement(18, rec, 0, Data_0200a054[REC_MODE(rec)],
+            TorebiIzumi_PlaceActor(18, rec, 0, Data_0200a054[REC_MODE(rec)],
                                     (REC_MODE(rec) << 4) + 16);
             break;
         case 1:
-            SceneActor_SetPlacement(19, rec, 0, Data_0200a054[REC_MODE(rec)],
+            TorebiIzumi_PlaceActor(19, rec, 0, Data_0200a054[REC_MODE(rec)],
                                     (REC_MODE(rec) << 4) + 16);
             break;
         case 2:
-            SceneActor_SetPlacement(20, rec, 0x8000 - REC_HEADING(rec),
+            TorebiIzumi_PlaceActor(20, rec, 0x8000 - REC_HEADING(rec),
                                     Data_0200a057[REC_MODE(rec)],
                                     (REC_MODE(rec) << 4) + 16);
             break;
         case 3:
-            SceneActor_SetPlacement(21, rec, 0xffff - REC_HEADING(rec),
+            TorebiIzumi_PlaceActor(21, rec, 0xffff - REC_HEADING(rec),
                                     Data_0200a057[REC_MODE(rec)],
                                     (REC_MODE(rec) << 4) + 16);
             break;
@@ -496,31 +505,31 @@ void FieldScene_RunSecondaryScript(void)
 
     /* Flattened copy of the current position, then publish the body and its
      * three trailing samples. */
-    *(s32 *)(work + 52) = *(s32 *)(work + 4);
-    *(s32 *)(work + 56) = 0;
-    *(s32 *)(work + 60) = *(s32 *)(work + 12);
+    work->flat[0] = work->pos[0][0];
+    work->flat[1] = 0;
+    work->flat[2] = work->pos[0][2];
 
     if (Data_0200a0c0 == 1) {
-        SceneActor_SetPlacement(17, work + 4, 0, 0, 16);
-        SceneActor_SetPlacement(16, work + 52, 0, 0, 16);
-        SceneActor_SetPlacement(15, work + 16, 0, 0, 16);
-        SceneActor_SetPlacement(14, work + 28, 0, 0, 16);
-        SceneActor_SetPlacement(13, work + 40, 0, 0, 16);
-        Actor_SetMode(SceneActor_GetRecord(15), 4);
-        Actor_SetMode(SceneActor_GetRecord(14), 4);
-        Actor_SetMode(SceneActor_GetRecord(13), 4);
+        TorebiIzumi_PlaceActor(17, work->pos[0], 0, 0, 16);
+        TorebiIzumi_PlaceActor(16, work->flat, 0, 0, 16);
+        TorebiIzumi_PlaceActor(15, work->pos[1], 0, 0, 16);
+        TorebiIzumi_PlaceActor(14, work->pos[2], 0, 0, 16);
+        TorebiIzumi_PlaceActor(13, work->pos[3], 0, 0, 16);
+        Engine_ObjectSetAnimation(Engine_ActorGet(15), 4);
+        Engine_ObjectSetAnimation(Engine_ActorGet(14), 4);
+        Engine_ObjectSetAnimation(Engine_ActorGet(13), 4);
     } else {
-        SceneActor_SetPlacement(12, work + 4, 0, 0, 16);
-        SceneActor_SetPlacement(11, work + 52, 0, 0, 16);
-        SceneActor_SetPlacement(10, work + 16, 0, 0, 16);
-        SceneActor_SetPlacement(9, work + 28, 0, 0, 16);
-        SceneActor_SetPlacement(8, work + 40, 0, 0, 16);
-        Actor_SetMode(SceneActor_GetRecord(10), 4);
-        Actor_SetMode(SceneActor_GetRecord(9), 4);
-        Actor_SetMode(SceneActor_GetRecord(8), 4);
+        TorebiIzumi_PlaceActor(12, work->pos[0], 0, 0, 16);
+        TorebiIzumi_PlaceActor(11, work->flat, 0, 0, 16);
+        TorebiIzumi_PlaceActor(10, work->pos[1], 0, 0, 16);
+        TorebiIzumi_PlaceActor(9, work->pos[2], 0, 0, 16);
+        TorebiIzumi_PlaceActor(8, work->pos[3], 0, 0, 16);
+        Engine_ObjectSetAnimation(Engine_ActorGet(10), 4);
+        Engine_ObjectSetAnimation(Engine_ActorGet(9), 4);
+        Engine_ObjectSetAnimation(Engine_ActorGet(8), 4);
     }
 
-    if (*(s16 *)(work + 2) != -1) {
-        *(s16 *)(work + 2) = *(s16 *)(work + 2) + 1;
+    if (work->frame != -1) {
+        work->frame = work->frame + 1;
     }
 }

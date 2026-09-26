@@ -1,111 +1,121 @@
+/* Complete debug icon browser [08029554, 0802977c), 552 bytes with pool.
+ * The adjacent entry-glyph browser now has its own listing at 0802977c.
+ * ROM labels distinguish ITEM, ENERGY and STATUS pages.
+ * Typed reconstruction restores slot=-1 each iteration and the third slot
+ * argument to Ui_BuildPatternToSlot, both omitted by the old lifted draft.
+ * Candidate 540/552 bytes, 258 differing halfwords / 98 aligned edits
+ * (old draft 524 bytes / 119 edits). Three bounded hypotheses stopped.
+ * Separate label calls recover the two reference call tails. Named versus
+ * literal key-state address produced identical code here. Remaining:
+ * the key base is shared across blocks instead of reloaded, zero-copy and
+ * argument scheduling differ, and 8 lives across number-rendering calls.
+ * The complete 16-byte frame, row loop and both icon-loader tails match. */
 #include "TYPES.H"
+#include "RENDER_INPUT.H"
 
-#define M2C_FIELD(expr, type_ptr, offset) (*(type_ptr)((s8 *)(expr) + (offset)))
+struct DebugMenuState {
+    u8 unknown_00[4];
+    u16 active;
+};
 
-extern void *Data_03001e68;
+extern struct DebugMenuState *Data_03001e68;
+#define KEYS_PRESSED (*(volatile u32 *)0x03001b04)
+extern u8 Data_08037440[], Data_08037448[], Data_08037450[];
+extern u8 Data_08037458[], Data_08037460[];
 
-void Func_080030f8(s32);
-s32 Func_080022fc(s32, s32);
-void Func_08016418(s32, s32);
-s32 Func_080162d4(s32, s32, s32, s32, s32);
-void Func_0801e940(s32, s32, s32, s32);
-void Func_0801ea08(s32, s32, s32, s32, s32);
-void Func_08019fcc(u32, s32, s32 *, s32 *, s32);
-void Func_0801a404(u32, s32, s32 *, s32 *, s32);
-s32 Func_08004080(void);
-s32 Func_0801a2ec(s32, s32);
-void Func_0801eadc(s32, s32, s32, s32, s32);
+void WaitFrames(s32);
+s32 Math_Mod(s32, s32);
+void UiWork_Finalize(struct RenderInput *, s32);
+struct RenderInput *UiWindow_Create(s32, s32, s32, s32, s32);
+void UiText_DrawStringInWindow(const u8 *, struct RenderInput *, s32, s32);
+void UiText_DrawNumberInWindow(s32, s32, struct RenderInput *, s32, s32);
+void UiIcon_BuildItemIconTiles(u32, s32, s32 *, s32 *, s32);
+void UiIcon_BuildAbilityIconTiles(u32, s32, s32 *, s32 *, s32);
+s32 Resource_FindFreeEntry(void);
+s32 Ui_BuildPatternToSlot(s32, s32, s32);
 
-s32 Func_08029554(void)
+s32 DebugMenu_BrowseIcons(void)
 {
     s32 redraw;
-    s32 src_index;
-    s32 rows;
+    s32 tile;
+    s32 page;
     s32 mode;
-    s32 window;
-    s32 tmp;
-    s32 msg;
-    s32 y;
-    s32 x_base;
+    struct RenderInput *window;
+    s32 slot;
+    s32 base;
     s32 i;
-    s32 col_x;
-    s32 row_off;
-    s32 row_y;
+    s32 row;
+    s32 x;
+    s32 y;
 
     redraw = 1;
-    window = 0;
-    rows = 0;
+    window = NULL;
+    page = 0;
     mode = 0;
-    M2C_FIELD(Data_03001e68, u16 *, 4) = (u16)redraw;
-    Func_080030f8(1);
+    Data_03001e68->active = redraw;
+    WaitFrames(1);
 
-loop_1:
-    if (*(volatile u32 *)0x03001B04 & 0x20) {
+next_frame:
+    if (KEYS_PRESSED & 0x20) {
         redraw = 1;
-        rows -= 1;
+        page--;
     }
-    if (*(volatile u32 *)0x03001B04 & 0x10) {
+    if (KEYS_PRESSED & 0x10) {
         redraw = 1;
-        rows += 1;
+        page++;
     }
-    if (*(volatile u32 *)0x03001B04 & 0x200) {
+    if (KEYS_PRESSED & 0x200) {
         redraw = 1;
-        mode -= 1;
+        mode--;
     }
-    if (*(volatile u32 *)0x03001B04 & 0x100) {
+    if (KEYS_PRESSED & 0x100) {
         redraw = 1;
-        mode += 1;
+        mode++;
     }
-    if (*(volatile u32 *)0x03001B04 & 1) {
-        goto exit;
-    } else if (*(volatile u32 *)0x03001B04 & 2) {
-        goto exit;
-    } else {
-        {
-            if (redraw != 0) {
-                redraw = 0;
-                rows = (rows + 8) % 8;
-                mode = Func_080022fc(mode + 3, 3);
-                Func_08016418(window, 2);
-                window = Func_080162d4(0xA, 0, 0x12, 0xC, 2);
-                if (mode == 0) {
-                    msg = 0x08037440;
-                } else if (mode == 1) {
-                    msg = 0x08037448;
-                } else {
-                    msg = 0x08037450;
-                }
-                Func_0801e940(msg, window, 0, 0);
-                Func_0801e940(0x08037458, window, 0, 8);
-                Func_0801ea08(rows, 0, window, 0x28, 8);
-                x_base = rows << 5;
-                Func_0801ea08(x_base, 3, window, 0x40, 8);
-                Func_0801e940(0x08037460, window, 0x58, 8);
-                Func_0801ea08(x_base + 0x1F, 3, window, 0x60, 8);
-                for (i = 0; i <= 0x1F; i++) {
-                    col_x = i / 8;
-                    row_off = (i - (col_x * 8)) * 0x10;
-                    row_y = (col_x * 0x10) + 0x10;
-                    if (mode == 0) {
-                        Func_08019fcc(x_base + i, 1, &tmp, &src_index, mode);
-                        Func_0801eadc(tmp, 0x40000000, window, row_off, row_y);
-                    } else if (mode == 1) {
-                        Func_0801a404(x_base + i, 1, &tmp, &src_index, 0);
-                        Func_0801eadc(tmp, 0x40000000, window, row_off, row_y);
-                    } else {
-                        tmp = Func_08004080();
-                        Func_0801a2ec(i, 0);
-                        Func_0801eadc(tmp, 0x40000000, window, row_off, row_y);
-                    }
-                }
+    if (KEYS_PRESSED & 1)
+        goto close;
+    if (KEYS_PRESSED & 2)
+        goto close;
+    if (redraw != 0) {
+        redraw = 0;
+        page = (page + 8) % 8;
+        mode = Math_Mod(mode + 3, 3);
+        UiWork_Finalize(window, 2);
+        window = UiWindow_Create(10, 0, 18, 12, 2);
+        if (mode == 0)
+            UiText_DrawStringInWindow(Data_08037440, window, 0, 0);
+        else if (mode == 1)
+            UiText_DrawStringInWindow(Data_08037448, window, 0, 0);
+        else
+            UiText_DrawStringInWindow(Data_08037450, window, 0, 0);
+        UiText_DrawStringInWindow(Data_08037458, window, 0, 8);
+        UiText_DrawNumberInWindow(page, 0, window, 40, 8);
+        base = page << 5;
+        UiText_DrawNumberInWindow(base, 3, window, 64, 8);
+        UiText_DrawStringInWindow(Data_08037460, window, 88, 8);
+        UiText_DrawNumberInWindow(base + 31, 3, window, 96, 8);
+        for (i = 0; i <= 31; i++) {
+            slot = -1;
+            row = i / 8;
+            x = (i - row * 8) * 16;
+            y = row * 16 + 16;
+            if (mode == 0) {
+                UiIcon_BuildItemIconTiles(base + i, 1, &slot, &tile, mode);
+                RenderOutput_Create(slot, 0x40000000, window, x, y);
+            } else if (mode == 1) {
+                UiIcon_BuildAbilityIconTiles(base + i, 1, &slot, &tile, 0);
+                RenderOutput_Create(slot, 0x40000000, window, x, y);
+            } else {
+                slot = Resource_FindFreeEntry();
+                Ui_BuildPatternToSlot(i, 0, slot);
+                RenderOutput_Create(slot, 0x40000000, window, x, y);
             }
         }
-        Func_080030f8(1);
-        goto loop_1;
     }
-
-exit:
-    Func_08016418(window, 2);
-    M2C_FIELD(Data_03001e68, u16 *, 4) = 0;
+    WaitFrames(1);
+    goto next_frame;
+close:
+    UiWork_Finalize(window, 2);
+    Data_03001e68->active = 0;
     return 0;
 }

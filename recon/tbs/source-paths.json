@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_3ba:02002910": {
+      "name": "Korosseo_FadeInCompetitor",
+      "source": "FIELD/COMMON/KOROSSEO/FADE_IN_COMPETITOR.C"
+    },
     "resource_3cb:02000398": {
       "name": "LinkLobby_ReceivePartyRecords",
       "source": "MENU/LINK_LOBBY/RECEIVE_PARTY.C"

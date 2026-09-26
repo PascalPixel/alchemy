@@ -1,6 +1,9 @@
 {
   "format": 3,
   "owners": {
+    "resource_3c8:0200247c": {
+      "name": "VinasuHeya_ResolveFloatingBlock"
+    },
     "resource_3c8:020042bc": {
       "name": "Scene_RunPairedParticleWaveSequence"
     },

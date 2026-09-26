@@ -1,3 +1,6 @@
+/* NONMATCHING: shared callee return types audited on 2026-09-26.
+ * 432 of 432 bytes, 122 differing halfwords, 87 aligned edits.
+ * Canonical declarations are retained; the remaining source model is not exact. */
 /*
  * RunAssetSelectionScreen (main:080a24d0, 432 bytes)
  *
@@ -52,7 +55,7 @@ void Func_080a5534(void);
 void Palette_LightenBankHighlight(s32);
 void Link_DrawShiftedTilePairFar(void *address);
 s32 UiWindow_CreateFar(s32, s32, s32, s32, s32);
-void Scheduler_EnableOverlayCallbacksWithFlags(void);
+s32 Scheduler_EnableOverlayCallbacksWithFlags(void);
 void Func_080153e0(s32);
 void Menu_CancelSoundReset(void);
 s32 ItemMenu_RunCommands(s32 *category, s32 *value, s32 *index);
@@ -63,7 +66,7 @@ void Menu_ResetTwoResourceEntries(void);
 void Runtime_ReleaseHeapBlock(s32);
 void Func_080152a8(void);
 void Runtime_BumpFree(void *);
-void Scheduler_DisableOverlayCallbacksWithFlags(void);
+s32 Scheduler_DisableOverlayCallbacksWithFlags(void);
 void UiWindow_EraseBorderRectFar(s32, s32, s32, s32);
 void Event_ClearInvalidPackedValuesFar(void);
 

@@ -1,3 +1,6 @@
+/* NONMATCHING: shared callee return types audited on 2026-09-26.
+ * 800 of 800 bytes, 239 differing halfwords, 120 aligned edits.
+ * Canonical declarations are retained; the remaining source model is not exact. */
 /* Draft, not exact (2026-09-24): candidate=800 reference=800 differing_halfwords=241. Constants the reference loads from
    the literal pool are spelled as link-time Value_ symbols, which restores
    the reference size; wraps marked FAKEMATCH only move scheduling. */
@@ -55,7 +58,7 @@ void Func_080030f8(s32 frames);
 void Func_080a3cf8(s32 unused, s32 message);
 s32 Func_080a602c(s32 unused);
 void Func_080a9cbc(void);
-s32 Func_080a112c(s32 window, s32 owner, s32 unused0, s32 unused1);
+void Func_080a112c(s32 window, s32 owner, s32 unused0, s32 unused1);
 s32 Func_080a6ccc(s32 unused);
 s32 Func_080a65e4(s32 owner, s32 psynergy, s32 shortcut);
 s32 Func_08015278(s32 window);

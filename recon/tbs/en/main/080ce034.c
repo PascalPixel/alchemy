@@ -1,3 +1,6 @@
+/* NONMATCHING: shared callee return types audited on 2026-09-26.
+ * 1180 of 1204 bytes, 564 differing halfwords, 339 aligned edits.
+ * Canonical declarations are retained; the remaining source model is not exact. */
 #include "types.h"
 #include "BATTLE_EFX.H"
 
@@ -29,7 +32,7 @@ void Func_080cd52c();
 void Func_080cd594();
 void Func_080cdbc0();
 void Func_080d6888();
-s32 Func_080e155c();
+void Func_080e155c();
 void Func_080e3980();
 void Func_080f9010();
 

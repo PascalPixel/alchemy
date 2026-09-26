@@ -1,3 +1,6 @@
+/* NONMATCHING: shared callee return types audited on 2026-09-26.
+ * 1020 of 1056 bytes, 515 differing halfwords, 314 aligned edits.
+ * Canonical declarations are retained; the remaining source model is not exact. */
 #include "TYPES.H"
 #include "SYSTEM.H"
 #include "FIXED_MATH.H"
@@ -111,7 +114,7 @@ void UiWindow_SetTilemapEntryFar(struct RenderInput *window,
     s32 tile, s32 x, s32 y, s32 palette);
 s32 DjinnMenu_DrawStatPreview(struct RenderInput *window,
     s32 x, s32 y, u8 owner, s32 first, s32 second, s32 mode, s32 page, s32 flags);
-void FourObjectMotion_SetSlotPosition(s32 slot, s32 x, s32 y, s32 hidden);
+s32 FourObjectMotion_SetSlotPosition(s32 slot, s32 x, s32 y, s32 hidden);
 s32 Menu_GetModuloOfSum(s32 value, s32 modulus);
 void Menu_UpdateEntryObjectTransforms(void);
 void Audio_PlayCue(s32 cue);

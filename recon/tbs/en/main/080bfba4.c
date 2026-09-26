@@ -1,8 +1,10 @@
 /*
- * Draft, 1,044 of 1,044 bytes, 434 halfword edits. Structure and calls
- * follow the reference; open: the count-clearing loop keeps its counter
- * where the reference compares the element pointer against the array base,
- * and the list, entry and index registers are allocated differently.
+ * NONMATCHING: complete 1,044-byte owner including pools; prior score
+ * 1,044 candidate bytes, 434 halfword edits. Count clearing keeps a counter
+ * where the ROM compares the element pointer against the array base.
+ * The copy call emits _call_via_r3 instead of the ROM's 080072f0 veneer;
+ * the diagnostic frame is 28 bytes instead of 32. List, entry and index
+ * registers also differ. Audit stopped before rewrite; no adoption.
  */
 #include "TYPES.H"
 #include "BATTLE_EVENT.H"

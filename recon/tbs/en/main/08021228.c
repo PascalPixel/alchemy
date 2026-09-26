@@ -1,14 +1,16 @@
-/* Whole 312-byte Djinn join announcement. Candidate 316 bytes, 81 differing
- * halfwords / 31 aligned edits. Initializing the window before the element
- * lookup reproduces its zero-copy chain and r9 lifetime; the 0x980 message
- * base must be a Value_ symbol. Corrected glyph return and six-argument
- * text-queue interfaces from their complete callees.
- * Remaining: zero/element use r8/sl instead of sl/r8; the record's last two
- * stores use r7 instead of sp; the queue emits a sixth-argument zero store
- * absent in the reference (the prior glyph call left that outgoing slot zero).
- * A typed three-word record compiles identically to the word array, so that
- * representation axis is closed. Keep the 32-byte frame and third-arg spill.
- * FAKEMATCH: the initial null window also supplies the shared integer zero. */
+/* DRAFT: whole 312-byte Djinn join announcement, now 312 bytes and six
+ * differing halfwords/aligned edits (2026-09-27). The five-argument old-style
+ * text-queue call preserves the sixth outgoing zero left by the glyph call.
+ * It removes the redundant stack store and fixes the sl/r8 zero/element
+ * allocation as well; all other instructions, calls and pools now match.
+ * Remaining: the display record's position/tile stores use r7+4/r7+8 instead
+ * of sp+24/sp+28, with two nearby scheduling differences. Volatile record
+ * fields compile identically. Separate volatile tail scalars give the desired
+ * stack stores but move the escaped link and zero to different registers
+ * (308 bytes / 54 edits); a one-element link array changes nothing there.
+ * Stop the storage axis before more layout permutations.
+ * FAKEMATCH: the initial null window also supplies the shared integer zero.
+ */
 #include "TYPES.H"
 struct MessageWindow;
 struct SpriteRecord {
@@ -27,7 +29,8 @@ s32 Localization_LookupEntryId(s32);
 void UiGlyph_LoadEntryWithPalette(s32, s32, s32 *, s32 *, s32, s32);
 void UiWork_PushValueSlot(s32, s32);
 s32 UiText_BuildRenderEntriesMode1(s32);
-s32 UiText_QueueRenderEntries(struct MessageWindow *, s32, s32, s32, s32, s32);
+/* FAKEMATCH: preserve the sixth outgoing zero left by the glyph call. */
+s32 UiText_QueueRenderEntries();
 void Audio_PlayCue(s32);
 void Runtime_PushSlotEntry(s32 *, s32);
 void WaitFrames(s32);
@@ -74,7 +77,7 @@ void Djinn_ShowJoinedMessage(s32 p1, s32 p2, s32 p3)
 
         d2 = UiText_BuildRenderEntriesMode1(p2 + (s32)Value_00000980);
 
-        UiText_QueueRenderEntries(obj, d2, 36, 2, zero, zero);
+        UiText_QueueRenderEntries(obj, d2, 36, 2, zero);
 
         Audio_PlayCue(81);
 

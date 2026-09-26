@@ -2,17 +2,20 @@
 #include "BATTLE_EFX.H"
 
 /* Draft, not exact (2026-09-26): candidate=688 reference=684,
-   216 differing halfwords, 105 aligned edits, equal block topology.
+   214 differing halfwords, 99 aligned edits, equal block topology.
    H1: explicit frame/member backedges remove the hoisted work+7828 pointer
    spill: frame 68 -> 64 and work now occupies sl, as in the reference.
    Audited actual callees: projection 080e3944 returns s32; canvas cleanup
    080cdbc0 is void. Corrected both stale declarations. No bytes adopted.
-   Residual: callback A/frame are swapped at sp+32/+24; record/screen are
-   swapped at +52/+40; facing/member and their derived slots are reversed.
+   H1 witness 03377b3d3: 216 differing halfwords, 105 aligned edits.
+   H2: independent declarations in recovered stack order fix callback A/B
+   at sp+24/+28, frame+32, destination+36, record+40, screen+52 and
+   facing/member+16/+20. The frame remains 64; no aggregate is needed.
+   Residual: derived facing/base index slots at +8/+12 remain reversed.
    The live effect load still adds the large offset instead of indexing,
    and the member id similarly adds its base before the fixed +36 offset.
-   Next bounded model: independently declared callbacks/frame/vectors in
-   recovered stack order, not an aggregate or an unconstrained permutation. */
+   Next bounded model: use the shared BattleEffectWork/Argument field types
+   for the indexed live effect and actor-array accesses. */
 
 /*
  * Battle-presentation sub-effect at 0x080dc6bc, transplant-assigned from the
@@ -97,13 +100,13 @@ void Func_080dc6bc(void *object)
     void *draw_destination;
     void *palette;
     s32 status;
-    void *rectangle_a;
+    s32 frame;
     void *rectangle_b;
+    void *rectangle_a;
     Particle *particle;
     s32 i;
-    s32 record[3];
     s32 screen[3];
-    s32 frame;
+    s32 record[3];
 
     heap_cache = (void **)0x03001EEC;
     cursor = heap_cache;
@@ -154,8 +157,8 @@ void Func_080dc6bc(void *object)
     frame = 0;
 frame_loop:
     {
-        s32 facing;
         s32 member;
+        s32 facing;
 
         facing = *(s32 *)0x03001E80;
         member = 0;

@@ -2,8 +2,10 @@
 #define gEventWork Data_03001ebc
 #define gGameState Data_02000240
 
-/* main:08091a58 PartyInventory_GiveItem - hand-written draft, 89 of 226
-   halfwords differ (436 of 452 bytes). Residual: the ROM keeps three
+/* main:08091a58 PartyInventory_GiveItem - draft, 95 of 226
+   halfwords differ (436 of 452 bytes, 2026-09-26). The discard quantity
+   now decrements, matching the operation. Residual: its copy is too early;
+   the ROM keeps three
    separate stores of the saved message position and a separate call in
    the leader branch of the discard path, where this C is cross-jumped; the
    position pointer and loop message share r7 in the ROM.
@@ -58,7 +60,6 @@ s32 PartyInventory_GiveItem(s32 item)
     s32 text;
     s32 result;
     s32 count;
-    s32 i;
     s32 member;
     s32 slot;
 
@@ -94,8 +95,12 @@ s32 PartyInventory_GiveItem(s32 item)
             } else {
                 Owner_GetStateFar(member);
                 count = Func_08077020(member, slot);
-                for (i = 0; i < count; i++)
-                    Func_080772b0(member, slot);
+                if (count > 0) {
+                    do {
+                        count--;
+                        Func_080772b0(member, slot);
+                    } while (count != 0);
+                }
                 owner = Party_FindRoomForItem(item);
                 Audio_PlayCue(83);
                 if (owner == gGameState[125]) {

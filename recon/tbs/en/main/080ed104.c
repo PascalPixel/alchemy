@@ -1,10 +1,41 @@
 #include "TYPES.H"
 #include "BATTLE_EFX.H"
 
+/* Draft, not exact, 2026-09-26 bounded restart, H3: candidate=772 reference=772,
+   265 differing halfwords, 57 aligned edits; equal topology and frame 44.
+   Direct accesses to owned rect_fns storage, using rect_slot only for the
+   resolver, remove the extra indirections. Independent heap callback cell
+   Data_03001f08 ends heap_cache's lifetime at entry: its retained r2 base,
+   cursor copy, callback literal and all spill slots now match. This is the
+   concrete ownership error behind the older heap-cache residual.
+   Remaining: entry work/effect-address scheduling, seed mask extra move,
+   sine/cosine multiply operand order, progress setup r1/r4 choices, and
+   bar callback r3 rather than r4 plus local preheader ordering. The extra
+   seed move shifts most later instructions by two bytes, not new behavior.
+   Caller MODE.C dispatches table[index-1](state); no result is consumed.
+   Three hypotheses exhausted; preserve this draft without setup permutations.
+   H2 witness 53a26a5c6: candidate=776 reference=772,
+   300 differing halfwords, 142 aligned edits. Explicit rect_slot declared
+   beside canvas recovers all scalar spill slots: progress +8, object +12,
+   callbacks pointer +16, canvas +20. Accessing the array through that pointer
+   adds a reload to each indirect-draw path, so this witness is not adopted.
+   H1 witness 04b3f6182: candidate=772 reference=772,
+   275 differing halfwords, 123 aligned edits (baseline 278/143).
+   Separate seed/draw pointer lifetimes and one index shared by all phases
+   recover seed r7, draw r5, bar style r7, bar x r6 and index r8.
+   Frame remains 44: callbacks at +24, projected position at +32, canvas +20.
+   Compiler-created callback pointer spills at +8 instead of +16; progress
+   and object-slot spills remain +12/+16 instead of +8/+12. The entry reloads
+   the heap base rather than retaining it and the bar callback uses base+28.
+   Own-ROM pointer 080ee7b0 is callback-table slot 319 (one-based effect 320).
+   Projection and gravity callees match the three-word position / seven-word
+   EffectStep layouts in FIELD/COMMON/EFFECT/MOTION.C. Corrected cleanup to
+   void and scheduler removal to s32 from their actual definitions/header. */
+
 /*
  * Draft for the battle-presentation sub-effect at 0x080ed104.
  *
- * 2026-09-26: callback provenance corrected. The reference writes the
+ * Earlier 2026-09-26 baseline: callback provenance corrected. The reference writes the
  * heap callback to rect_fns[0] before the bar draw (str to sp+24 at
  * 0x080ed2ce); the old direct call omitted that observable array store.
  * Corrected draft is 772/772 bytes, 278 differing halfwords, 143 aligned
@@ -51,7 +82,7 @@
 void Func_080cd594(s32 mode);
 void Func_080cef64(s32 flag, DrawRectangleFn *out_callbacks);
 s32 Func_080041d8(void *callback, s32 interval);
-void Func_08004278(void *callback);
+s32 Func_08004278(void *callback);
 void Func_080e3980(s32 value, s32 *out);
 u32 Func_08004458(void);
 s32 Func_08002322(s32 angle);
@@ -65,18 +96,20 @@ void Func_080e155c(s32 a, s32 b);
 void Func_080cd52c(void);
 void Func_080030f8(s32 frames);
 void Func_08002dd8(s32 id);
-s32 Func_080cdbc0(void);
+void Func_080cdbc0(void);
 
 extern u8 Value_00000073;
 extern u8 Value_00000051;
 extern u8 Value_000000c0;
 extern const u16 Data_080eef88[];
 extern const u16 Data_080eef96[];
+extern DrawRectangleFn Data_03001f08;
 
 void Func_080ed104(void *object)
 {
     void *work;
     void *draw_destination;
+    DrawRectangleFn *rect_slot;
     void *extra_target;
     void **heap_cache;
     void **cursor;
@@ -102,7 +135,8 @@ void Func_080ed104(void *object)
     Resource_LoadAndDecompress((s32) &Value_000000c0, (u8 *)work + 0x460, 1, 0);
 
     flag = M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 4);
-    Func_080cef64(flag, rect_fns);
+    rect_slot = rect_fns;
+    Func_080cef64(flag, rect_slot);
 
     M2C_FIELD(work, s32 *, 0x7780) = 2;
     M2C_FIELD(work, s32 *, 0x7784) = 75;
@@ -113,21 +147,24 @@ void Func_080ed104(void *object)
         screen);
     *(s32 *)0x04000028 = (0x40 - screen[0]) << 8;
 
-    star = (u8 *)work + 0x7080;
-    for (star_index = 0; star_index != 16; star_index++) {
-        s32 seed_a;
-        s32 seed_b;
-        s32 magnitude;
+    {
+        u8 *seed = (u8 *)work + 0x7080;
 
-        seed_a = 0x1FF & Func_08004458();
-        seed_b = 0xFFFF & Func_08004458();
-        M2C_FIELD(star, s32 *, 0) = 0x400000;
-        M2C_FIELD(star, s32 *, 4) = 0x700000;
-        magnitude = seed_a + 0x80;
-        M2C_FIELD(star, s32 *, 0xC) = (magnitude * Func_08002322(seed_b)) >> 8;
-        M2C_FIELD(star, s32 *, 0x10) = (magnitude * Func_0800231c(seed_b)) >> 9;
-        M2C_FIELD(star, s32 *, 0x18) = 7 & Func_08004458();
-        star += 0x1C;
+        for (star_index = 0; star_index != 16; star_index++) {
+            s32 seed_a;
+            s32 seed_b;
+            s32 magnitude;
+
+            seed_a = 0x1FF & Func_08004458();
+            seed_b = 0xFFFF & Func_08004458();
+            M2C_FIELD(seed, s32 *, 0) = 0x400000;
+            M2C_FIELD(seed, s32 *, 4) = 0x700000;
+            magnitude = seed_a + 0x80;
+            M2C_FIELD(seed, s32 *, 0xC) = (magnitude * Func_08002322(seed_b)) >> 8;
+            M2C_FIELD(seed, s32 *, 0x10) = (magnitude * Func_0800231c(seed_b)) >> 9;
+            M2C_FIELD(seed, s32 *, 0x18) = 7 & Func_08004458();
+            seed += 0x1C;
+        }
     }
 
     M2C_FIELD(work, s32 *, 0x77A8) = 8;
@@ -154,7 +191,6 @@ void Func_080ed104(void *object)
             if (bar_height > 0) {
                 s32 bar_style;
                 s32 bar_x;
-                s32 seg;
 
                 if (bar_height > 80) {
                     bar_height = 80;
@@ -164,13 +200,13 @@ void Func_080ed104(void *object)
                 }
 
                 bar_x = 50;
-                for (seg = 0; seg != 2; seg++) {
-                    if (seg == 0) {
+                for (star_index = 0; star_index != 2; star_index++) {
+                    if (star_index == 0) {
                         BattleEffect_LoadWork(46, 7, 7, 3, bar_style);
                     } else {
                         BattleEffect_LoadWork(46, 7, 7, 7, bar_style);
                     }
-                    rect_fns[0] = (DrawRectangleFn)heap_cache[7];
+                    rect_fns[0] = Data_03001f08;
                     rect_fns[0](
                         draw_destination, work,
                         bar_x, 112 - bar_height, 14, bar_height);
@@ -181,7 +217,7 @@ void Func_080ed104(void *object)
         }
 
         flag = M2C_FIELD(*object_slot, s32 *, 4);
-        Func_080cef64(flag, rect_fns);
+        Func_080cef64(flag, rect_slot);
 
         star = (u8 *)work + 0x7080;
         for (star_index = 0; star_index != 16; star_index++) {
@@ -207,7 +243,7 @@ void Func_080ed104(void *object)
                     raw = Data_080eef96[bucket];
                     half = raw >> 1;
 
-                    ((DrawRectangleFn) rect_fns[0])(
+                    rect_fns[0](
                         draw_destination, src,
                         sy - half, sh - half,
                         raw, raw);

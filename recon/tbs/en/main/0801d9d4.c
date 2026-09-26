@@ -1,41 +1,49 @@
-/* 2026-09-24: hand-written, 137 differing halfwords (420 of 412 bytes).
-   Structure matches; the reference keeps the work pointer in fp, the flag
-   in r9, spills the table offset to sp+8 and keeps y and the message id in
-   callee-saved registers. */
+/* 2026-09-26: complete 412-byte owner; 57 differing halfwords, 33 aligned
+   edits (previous draft: 420 bytes, 137 halfwords, 87 edits). Corrected the
+   RenderOutput_Create call to five arguments and CreateFrame to five, reused
+   WorkspaceWork/RenderInput, and kept pooled message ids in an incremented
+   local. The work, flag, rows and table-offset spill now match fp/r9/sl/sp+8.
+   Residual: early reload-register choices and scheduling, cursor x/y loads,
+   and signed frame-table load (ldrsb versus ldrb plus two shifts). The greg
+   dump chooses r1 for the initial rows reload, not the reference's r0.
+   Narrowing CreateFrame's first argument to s8 and using a packed signed-byte
+   bitfield table both reproduce this same binary; do not repeat those axes.
+   An unpacked one-byte struct has a four-byte stride and is not equivalent. */
 #include "TYPES.H"
+#include "WORKSPACE_OPTIONS.H"
 
-struct UiWindow {
-    u8 unknown_00[12];
-    u16 x;
-    u16 y;
+struct WorkspaceMenu {
+    struct WorkspaceWork options;
+    struct RenderOutput *entries[6];
 };
 
 extern u8 Data_03001f54;
 extern const s8 Data_080367dc[];
+extern u8 Value_00000c23, Value_00000c25, Value_00000c27;
 
 s32 GameFlag_TestFar(s32 flag);
-struct UiWindow *UiWindow_Create(s32 kind, s32 x, s32 y, s32 width, s32 height);
-void UiWindow_DrawDividerLine(struct UiWindow *window, s32 x, s32 y, s32 width, s32 height);
-void UiText_DrawResource(s32 message, struct UiWindow *window, s32 x, s32 y);
+struct RenderInput *UiWindow_Create(s32, s32, s32, s32, s32);
+void UiWindow_DrawDividerLine(struct RenderInput *, s32, s32, s32, s32);
+void UiText_DrawResource(s32, struct RenderInput *, s32, s32);
 s32 Resource_FindFreeEntry(void);
-s32 VramBlock_LoadCached(s32 slot, s32 size, const void *src);
-s32 Func_0801eadc(s32 slot, u32 attr, struct UiWindow *window, s32 flags);
-void Func_080b0038(void *object, s32 x, s32 y);
-s32 Func_08021750(s32 entry, s32 mode, struct UiWindow *window, s32 x, s32 y, s32 *out);
+s32 VramBlock_LoadCached(s32, s32, const void *);
+void Func_080b0038(void *, s32, s32);
+void *RenderOutput_CreateFrame(s32, s32, struct RenderInput *, s32, s32);
 
-struct UiWindow *Menu_CreateWorkspaceWindows(void)
+struct RenderInput *Menu_CreateWorkspaceWindows(void)
 {
-    u8 *work;
+    struct WorkspaceMenu *work;
     s32 rows;
     s32 first;
     s32 has_flag;
     s32 width;
     s32 height;
-    struct UiWindow *window;
+    struct RenderInput *window;
     s32 y;
     s32 slot;
+    s32 msg;
 
-    work = *(u8 **)0x03001ea0;
+    work = (struct WorkspaceMenu *)Data_03001ea0;
     rows = 3;
     has_flag = GameFlag_TestFar(382);
     first = 0;
@@ -55,7 +63,6 @@ struct UiWindow *Menu_CreateWorkspaceWindows(void)
     if (rows > 1) {
         s32 line = 3;
         s32 n = rows - 1;
-
         do {
             UiWindow_DrawDividerLine(window, 0, line, 19, line);
             line += 3;
@@ -63,36 +70,39 @@ struct UiWindow *Menu_CreateWorkspaceWindows(void)
     }
     y = 4;
     if (has_flag == 0) {
-        UiText_DrawResource(0xc23, window, 48, 4);
-        UiText_DrawResource(0xc24, window, 48, 28);
+        msg = (s32)&Value_00000c23;
+        UiText_DrawResource(msg, window, 48, 4);
+        msg++;
+        UiText_DrawResource(msg, window, 48, 28);
         y = 52;
     }
-    UiText_DrawResource(0xc25, window, 48, y);
+    UiText_DrawResource((s32)&Value_00000c25, window, 48, y);
     y += 24;
     if (Data_03001f54 != 0) {
-        UiText_DrawResource(0xc27, window, 48, y);
+        msg = (s32)&Value_00000c27;
+        UiText_DrawResource(msg, window, 48, y);
         y += 24;
-        UiText_DrawResource(0xc28, window, 48, y);
+        UiText_DrawResource(msg + 1, window, 48, y);
         y += 24;
-        UiText_DrawResource(0xc29, window, 48, y);
+        msg += 2;
+        UiText_DrawResource(msg, window, 48, y);
     }
     slot = Resource_FindFreeEntry();
     if (slot <= 95) {
         VramBlock_LoadCached(slot, 128, (void *)0x080310a4);
-        *(s32 *)(work + 0x5a4) = Func_0801eadc(slot, 0x40000000, window, 0);
-        Func_080b0038(work + 0x5a4, window->x * 8, window->y * 8 + 16);
+        work->options.cursor.output = RenderOutput_Create(slot, 0x40000000, window, 0, 0);
+        y = window->y * 8 + 16;
+        Func_080b0038(&work->options.cursor, window->x * 8, y);
     }
     y = -4;
     if (rows > 0) {
-        s32 *out = (s32 *)(work + 0x610);
+        struct RenderOutput **out = work->entries;
         const s8 *entry = Data_080367dc + first;
         s32 n = rows;
-
         do {
-            *out++ = Func_08021750(*entry++, 0, window, 12, y, out);
+            *out++ = RenderOutput_CreateFrame(*entry++, 0, window, 12, y);
             y += 24;
         } while (--n != 0);
     }
     return window;
 }
-

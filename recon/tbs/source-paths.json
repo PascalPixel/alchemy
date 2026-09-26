@@ -1,6 +1,9 @@
 {
   "format": 3,
   "owners": {
+    "resource_382:020017ac": {
+      "name": "KuupuappuMura_SpawnDriftingEffect"
+    },
     "resource_383:020048c8": {
       "name": "KuupuappuHeya_UpdateActorStops"
     },

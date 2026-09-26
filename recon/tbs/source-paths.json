@@ -1,6 +1,13 @@
 {
   "format": 3,
   "owners": {
+    "resource_38b:02000ed8": {
+      "name": "BiribinoMura_UpdateCornerSpawn",
+      "source": "FIELD/BIRIBINO_MURA/CORNER.C"
+    },
+    "resource_373:0200564c": {
+      "name": "HaidiaMura_TestFacing"
+    },
     "resource_3ca:02000194": {
       "name": "BabiFune_UpdateWaves"
     },

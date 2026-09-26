@@ -1,17 +1,19 @@
 /* Draft, not-yet-c. Fresh registered-unit score 2026-09-26: 2816 of 2816
- * bytes, 639 differing halfwords (185 aligned edits). Shared facing
- * constants still occupy different saved registers; the approved allocator
- * chooses r9 for 0x1000 where the reference uses fp. The final transition
- * stores are tested through the maintained EventWork layout below. */
+ * bytes, 639 differing halfwords, 50 wrong instructions (185 aligned edits).
+ * Typed callback inline scopes reproduce the prior baseline bytes exactly;
+ * they restore target-ID reloads and the r5 table but lose the direct-call
+ * trial's shared-constant lifetimes (16 wrong instructions in 671ed82f4).
+ * The compiler's cross-call target pseudo, not pointer qualifiers alone,
+ * changes the saved-register interference. Inline scopes are ruled out. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
 
 /* Site-resolved aliases use this overlay's runtime veneers and local helpers.
  * The scene moves the actor groups before restoring the shared scene work. */
-extern u8 Data_0200ac00[];
-extern u8 Data_0200ac90[];
-extern u8 Data_0200adf0[];
+extern const u8 Data_0200ac00[];
+extern const u8 Data_0200ac90[];
+extern const u8 Data_0200adf0[];
 extern u8 Data_03001ebc[];
 void Func_02003b88();
 void Func_02003b92();
@@ -112,8 +114,8 @@ void Func_020040e8();
 void Func_020040f8();
 void Func_020040fa();
 void Func_02004114();
-void Func_02004128();
-void Func_02004132();
+void Func_02004128(s32 actor, s32 target, const u8 *table);
+void Func_02004132(s32 actor, s32 target, const u8 *table);
 void Func_02004138();
 void Func_02004156();
 void Func_02004156_a();
@@ -144,11 +146,11 @@ void Func_02004270();
 void Func_02004270_a();
 void Func_02004278();
 void Func_02004286();
-void Func_0200428a();
+void Func_0200428a(s32 actor, const u8 *table);
 void Func_0200429a();
 void Func_020042b4();
 void Func_020042bc();
-void Func_020042c2();
+void Func_020042c2(s32 actor, const u8 *table);
 void Func_020042c8();
 void Func_020042e0();
 void Func_020042e2();
@@ -293,9 +295,9 @@ void Func_020048e0();
 void Func_020048e6();
 void Func_020048ea();
 void Func_020048f8();
-void Func_020048fc();
+void Func_020048fc(s32 actor, const u8 *table);
 void Func_02004922();
-void Func_02004932();
+void Func_02004932(s32 actor, const u8 *table);
 void Func_0200493c();
 void Func_0200496c();
 void Func_02004972();
@@ -334,6 +336,12 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
     f(a0, a1, a2);
 }
 
+/* FAKEMATCH: separate inline argument scopes preserve per-call target loads. */
+static __inline__ void Callback3(void (*f)(s32, s32, const u8 *), s32 actor, s32 target, const u8 *table)
+{
+    f(actor, target, table);
+}
+
 static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 {
     f(a0, a1, a2, a3);
@@ -348,11 +356,11 @@ void Scene_RunExtendedActorSequence(void)
 {
     u8 *record;
     struct EventWork *work;
-    s32 base5_200ac00;
+    const u8 *base5_200ac00;
     s32 v5;
-    s32 base5_200ac90;
+    const u8 *base5_200ac90;
     s32 v6;
-    s32 base5_200adf0;
+    const u8 *base5_200adf0;
 
     Func_02003e68(1);
     Func_02003e7c();
@@ -412,9 +420,9 @@ void Scene_RunExtendedActorSequence(void)
     Func_020040ce(30, 3);
     Call2(Func_0200408e, 30, 0x200ac14);
     Func_02004054_a(40);
-    base5_200ac00 = (s32)Data_0200ac00;
-    Call3(Func_02004128, 11, 0x1001e, base5_200ac00);
-    Call3(Func_02004132, 12, 0x1001e, base5_200ac00);
+    base5_200ac00 = Data_0200ac00;
+    Callback3(Func_02004128, 11, 0x1001e, base5_200ac00);
+    Callback3(Func_02004132, 12, 0x1001e, base5_200ac00);
     Func_020040b8_a(30);
     Func_020040c6(11);
     Func_020040cc(12);
@@ -468,7 +476,7 @@ void Scene_RunExtendedActorSequence(void)
     Func_0200432e(31, 2);
     Call3(Func_02004270, 31, 0x39999, 0x1cccc);
     Func_020042c8(31, 2);
-    base5_200ac90 = (s32)Data_0200ac90;
+    base5_200ac90 = Data_0200ac90;
     Func_0200428a(31, base5_200ac90);
     Func_02004250(20);
     Func_020042e0(30, 3);
@@ -645,7 +653,7 @@ void Scene_RunExtendedActorSequence(void)
     Func_020044ea(0, 0x4000, 10);
     Func_020044f4(1, 0x5000, 20);
     Call3(Func_020048ea, 0, 0xcccc, 0x6666);
-    base5_200adf0 = (s32)Data_0200adf0;
+    base5_200adf0 = Data_0200adf0;
     Func_020048fc(0, base5_200adf0);
     Func_020048c2(20);
     Call2(Func_020049e2, 0x6666, 0xccc);

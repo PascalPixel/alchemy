@@ -1,13 +1,14 @@
-/* NONMATCHING: 1172 bytes, candidate 1188, 543 differing halfwords, 188
- * wrong instructions, 257 halfword edits. FieldScene_RunComplexActorSequence
+/* NONMATCHING: 1172 bytes, candidate 1176, 551 differing halfwords, 142
+ * wrong instructions, 216 halfword edits. FieldScene_RunComplexActorSequence
  * targets FIELD/COMMON/HAIDIA_BABI/F_00578.C as a single-overlay unit binding its
  * names at their runtime addresses (an import veneer's listing offset plus
  * 0x8000). Pointer-taking child-flag and palette calls now consume the actor
  * lookup result; the palette call receives 226. The sprite pointer is now
  * captured before calls, matching the reference's read lifetime. A typed
  * pointer bank shares map/event/auxiliary reads and removes the extra middle
- * pool; its retained anchor is +0 rather than +76. Constant sharing and
- * sprite/actor registers still differ; topology is equal.
+ * pool; its retained anchor is +0 rather than +76. Existing typed inline
+ * speed/render services reproduce all their argument constant reloads.
+ * Other call constants and sprite/actor registers differ; topology is equal.
  * WALL: structural-topology: shared workspace lifetimes and actor setup */
 #include "FIELD_EVENT.H"
 
@@ -34,7 +35,6 @@ void Main_08009128();
 void Main_08009188();
 void Main_08009190();
 void Main_080091e0(struct FieldActor *actor, s32 flags);
-void Main_080091f0();
 void Main_08009208();
 void Main_08009210();
 void Main_08009228(struct FieldActor *actor, s32 palette);
@@ -44,7 +44,6 @@ void Main_0808a010();
 void Main_0808a018();
 s32 Main_0808a070();
 struct FieldActor *Main_0808a080(s32 id);
-void Main_0808a090();
 void Main_0808a098();
 void Main_0808a0a0();
 void Main_0808a0c0();
@@ -107,7 +106,7 @@ void FieldScene_RunComplexActorSequence(void)
     base = 3666;
     Main_08015210(base, 1, 0);
     Main_0808a010(40);
-    Main_080091f0(65536, 65536, 65536);
+    MapRender_SetValues(65536, 65536, 65536);
     Main_0808a1d8(8);
     Main_08015210(base + 1, 1, 0);
     Main_08009210();
@@ -142,7 +141,7 @@ void FieldScene_RunComplexActorSequence(void)
     Main_08009190(7);
     Main_0808a010(20);
     Main_08009188(8);
-    Main_0808a090(0, 65536, 32768);
+    Actor_SetSpeed(0, 65536, 32768);
     Main_0808a100(0, 19);
     Main_0808a0c0(0, 557, 679);
     Main_08009190(8);
@@ -183,8 +182,8 @@ void FieldScene_RunComplexActorSequence(void)
     p67 = Main_0808a080(8);
     *(u8 *)((u8 *)p67 + 90) |= 0x1;
     Main_0808a010(20);
-    Main_0808a090(8, 98304, 49152);
-    Main_0808a090(0, 98304, 49152);
+    Actor_SetSpeed(8, 98304, 49152);
+    Actor_SetSpeed(0, 98304, 49152);
     Main_0808a200(8, 1);
     p89 = Main_0808a080(0);
     p89->priority_flags |= 0x1;

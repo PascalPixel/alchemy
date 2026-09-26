@@ -1,6 +1,11 @@
 #include "TYPES.H"
 #include "SHOP.H"
 
+/* NONMATCHING: widening the pooled zero and consuming x in place adds
+ * one instruction. A union word/byte attribute view does not restore
+ * the anchor reload. Retain the 28-instruction baseline; source alias
+ * evidence is still needed before register tuning. */
+
 #define ShopCursor_SetPositionImmediate Func_080b0a20
 
 struct ShopCursorSprite {

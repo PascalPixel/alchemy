@@ -1,10 +1,10 @@
 /* Draft main:0809b698, RunBattleEffect16. Complete extent is 364 bytes:
  * 332 bytes of code plus the 32-byte pool formerly labelled 0809b7e4.
- * Typed hypothesis 1: 356 bytes versus 364, 163 differing halfwords.
- * All calls and branches agree, but union-word accesses fold address adds
- * into register-offset memory operations (8 bytes removed); unsigned child
- * bytes keep loop zero rather than mode 7 in fp. The resource sign extension
- * moves before its store and the saved-angle load is scheduled early.
+ * Hypothesis 2: 368 bytes versus 364, 169 differing halfwords (75 edits).
+ * Signed child bytes do not restore the loop's fp-held mode 7. The unsigned
+ * resource member adds a return-value copy; word/byte views do restore the
+ * work-array address additions. Saved-angle scheduling and loop-zero sharing
+ * remain. Hypothesis 1 (356 / 163 halfwords) is preserved in history.
  * Previous 364-byte / 32-halfword byte-view draft remains in origin/main.
  */
 #include "TYPES.H"
@@ -14,12 +14,12 @@
 
 struct EffectChildEntry {
     u8 unknown_00[5];
-    u8 mode;
+    s8 mode;
 };
 struct EffectRecord {
     u8 unknown_00[37];
-    u8 reload;
-    u8 value;
+    s8 reload;
+    s8 value;
     u8 unknown_27;
     struct EffectChildEntry *entry;
 };
@@ -37,15 +37,10 @@ struct EffectScene {
     u8 unknown_000[16];
     union EffectObject *object;
     u8 unknown_014[0x71a - 20];
-    s16 resource;
-};
-union EffectWorkWord {
-    s32 value;
-    s16 half[2];
-    s8 byte[4];
+    u16 resource;
 };
 extern struct EffectScene *Data_03001f30;
-extern union EffectWorkWord Data_02000240[];
+extern u8 Data_02000240[];
 extern const u8 Data_0809c510[];
 extern const u8 Value_00000145;
 extern const u8 Value_00000922;
@@ -83,9 +78,9 @@ void RunBattleEffect16(void)
         scene->resource = resource;
         VramBlock_LoadCached((s16)resource, 0x100, Data_0809c510);
         index = 145;
-        Data_02000240[index].value = 0x09600000;
+        ((s32 *)Data_02000240)[index] = 0x09600000;
         index = 146;
-        Data_02000240[index].byte[0] = GameFlag_TestFar((s32)&Value_00000145);
+        *(s8 *)&((s32 *)Data_02000240)[index] = GameFlag_TestFar((s32)&Value_00000145);
         Animation_ApplyChildValuesFar(obj, 0);
         obj->effect.callback = BattleFx_UpdatePairedArcSpawner;
         obj->effect.active = zero;
@@ -115,11 +110,11 @@ void RunBattleEffect16(void)
     WaitFrames(55);
     Scheduler_RemoveCallback((u32)BattleFx_UpdateEffect16State);
     index = 147;
-    if (Data_02000240[index].half[0] != 0)
+    if (((s16 *)Data_02000240)[index * 2] != 0)
         ObjectDispatch_SetSingleChildField26Far(obj, 2);
     else
         ObjectDispatch_SetSingleChildField26Far(obj, 1);
     Animation_ApplyChildValuesFar(obj, 0);
-    Resource_ResetEntry(scene->resource);
+    Resource_ResetEntry((s16)scene->resource);
     UiText_ShowPositionedMessageAndWaitFar((s32)&Value_00000922, 1);
 }

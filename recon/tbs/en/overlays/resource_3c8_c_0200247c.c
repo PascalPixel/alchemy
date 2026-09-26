@@ -1,14 +1,17 @@
-/* NONMATCHING: 636/616 bytes, 203 differing halfwords, 121 aligned edits.
- * H0 typed model: 624/616 bytes, 279 HW, 162 aligned edits.
- * H1: explicit loop/swap blocks and post-EventBegin scratch initialization
- * remove the extra flag induction variable and restore the swap position.
+/* NONMATCHING: 628/616 bytes, 205 differing halfwords, 118 aligned edits.
  * 2026-09-26 own-ROM audit: 0200247c..020026e4 includes the sole pool word
  * 020026e0 = callback 0200a2a5. The 132-byte frame has a full 112-byte actor
  * scratch record at sp+20, not the old single s32 local with out-of-bounds
  * coordinate stores. Old header: 676 bytes / 254 differing HW / 147 edits.
- * Copy the exact SETTLE_BLOCKS/LOWER_BLOCKS actor fields and map interface.
- * Correct the camera getter (0808a228), void camera setters, signed search
- * index, and the old duplicate ActorGet calls in height-index updates.
+ * H0 typed reconstruction: 624 bytes / 279 HW / 162 edits. Correct camera
+ * getter (0808a228), void setters, signed search and duplicate actor lookups.
+ * H1 explicit loop/swap blocks, post-EventBegin scratch lifetime:
+ * 636 bytes / 203 HW / 121 edits; no extra flag induction variable.
+ * H2 signed height-index view from exact LOWER_BLOCKS:
+ * 628 bytes / 205 HW / 118 edits; both decrements now use subs, no 0xffff.
+ * Both permitted variants completed. Remaining: actor/flag-result/selected
+ * slot lifetimes, extra zero pool before height-index branch, and branch
+ * reach. Exact SETTLE_BLOCKS rechecked at 780/780 bytes. No adoption.
  */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
@@ -18,6 +21,12 @@ void OverlayObject_WaitUntilIdle(struct FieldActor *object);
 void SceneActor_PickHighestSlotAtSameTileAndRelease(s32 actor);
 s32 SceneActor_SetHeightAboveLinkedRecord(struct FieldActor *object);
 void VinasuHeya_LowerFloatingBlocks(s32 wait);
+
+/* LOWER_BLOCKS consumes this field as a signed height-table index. */
+struct FloatingBlockHeight {
+    u8 unknown_00[0x64];
+    s16 index;
+};
 
 static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2,
                             s32 a3, s32 a4, s32 a5)
@@ -106,7 +115,7 @@ check_height:
         *(s32 *)block->unknown_14 = none;
         block->velocity_y = none;
         block->motion_flags = none;
-        block->unknown_64 = none;
+        ((struct FloatingBlockHeight *)block)->index = none;
         j = 0;
         slot = i;
         if (j < i) {
@@ -123,7 +132,7 @@ apply_height:
         *(s32 *)other->unknown_14 = 0;
         other->velocity_y = 0;
         other->motion_flags = 0;
-        other->unknown_64 = 0;
+        ((struct FloatingBlockHeight *)other)->index = 0;
         Camera_SetSpeed(0x30000, 0x6000);
         Engine_EventGetViewCenter()->motion_flags = 0;
         Camera_MoveTo(0x880000, 0x80000, 0x1580000, 1);
@@ -131,11 +140,11 @@ apply_height:
         SceneActor_PickHighestSlotAtSameTileAndRelease(slot + 10);
         other = Engine_ActorGet(slot + 10);
         if (other->x.fixed >> 20 == 6) {
-            Engine_ActorGet(8)->unknown_64++;
-            Engine_ActorGet(9)->unknown_64--;
+            ((struct FloatingBlockHeight *)Engine_ActorGet(8))->index++;
+            ((struct FloatingBlockHeight *)Engine_ActorGet(9))->index--;
         } else {
-            Engine_ActorGet(8)->unknown_64--;
-            Engine_ActorGet(9)->unknown_64++;
+            ((struct FloatingBlockHeight *)Engine_ActorGet(8))->index--;
+            ((struct FloatingBlockHeight *)Engine_ActorGet(9))->index++;
         }
         other = Engine_ActorGet(slot + 10);
         other->update = (void (*)(union FieldObject *))SceneActor_SetHeightAboveLinkedRecord;

@@ -21291,6 +21291,10 @@
     "main:080aafb8": {
       "name": "DjinnMenu_DrawElementList"
     },
+    "main:080a7850": {
+      "name": "DjinnMenu_ShowCurrentList",
+      "source": "MENU/DJINN/SHOW_CURRENT_LIST.C"
+    },
     "main:080a7a34": {
       "name": "CharacterSelector_RunRearrange",
       "source": "MENU/CHARACTER_SELECTOR_RUN_REARRANGE.C"

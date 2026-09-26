@@ -2,6 +2,42 @@
   "format": 5,
   "units": [
     {
+      "id": "candidate-resource-3b3-02000cc0",
+      "source": "recon/tbs/en/overlays/resource_3b3_c_02000cc0.c",
+      "overlay": "resource_3b3",
+      "absolute_symbols": {
+        "gPillarMapCells": {
+          "address": "0x02010000",
+          "kind": "data"
+        },
+        "gPillarUpperTiles": {
+          "address": "0x02020000",
+          "kind": "data"
+        },
+        "gPillarLowerTiles": {
+          "address": "0x02020004",
+          "kind": "data"
+        },
+        "gPillarUpperScreen": {
+          "address": "0x06002800",
+          "kind": "data"
+        },
+        "gPillarLowerScreen": {
+          "address": "0x06002840",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02000cc0",
+          "extent": 184,
+          "state": "not-yet-c"
+        }
+      ],
+      "game": "tbs",
+      "compiler_route": "canonical-gcc296"
+    },
+    {
       "id": "candidate-resource-3a4-02000d2c",
       "source": "recon/tbs/en/overlays/resource_3a4_c_02000d2c.c",
       "overlay": "resource_3a4",

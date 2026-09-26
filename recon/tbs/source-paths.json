@@ -1,6 +1,9 @@
 {
   "format": 3,
   "owners": {
+    "resource_3b3:02000cc0": {
+      "name": "TakaraHashira_CopyCellBlock"
+    },
     "resource_3a4:02000d2c": {
       "name": "ArutinYama_SwingActorIntoSetPiece"
     },

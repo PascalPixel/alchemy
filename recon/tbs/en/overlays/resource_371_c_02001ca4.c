@@ -14,6 +14,13 @@
  * The value-returning GameFlag_Set interface also allows the two tail flags
  * to stay live across calls, adding four bytes. Control-flow topology stays
  * equal. These API/ownership facts are retained; this is not an adoption.
+ * H2 represents midpoint locals with the shared coordinate union and reads
+ * its signed pixel view at the two walking calls. The complete candidate is
+ * byte-identical to H1: 1492 bytes, 190 halfwords, 81 normalized edits. No
+ * stack storage is introduced, but neither midpoint lifetime nor the r2/r3
+ * reload set changes. Full normalized differences and allocation were read.
+ * Stop this bounded pass after these two ownership hypotheses. Next work
+ * needs evidence for a distinct lifetime/call boundary, not type spellings.
  */
 #include "FIELD_EVENT.H"
 
@@ -148,8 +155,8 @@ void WorldMap_RunVenusDjinniMeeting(void)
 {
     struct FieldActor *rec8;
     struct FieldActor *record;
-    s32 mid_x;
-    s32 mid_y;
+    union FieldCoordinate mid_x;
+    union FieldCoordinate mid_y;
     s32 cnt;
     s32 page;
     s32 text;
@@ -157,8 +164,8 @@ void WorldMap_RunVenusDjinniMeeting(void)
 
     rec8 = Engine_ActorGet(ACTOR);
     record = Engine_ActorGet(LEADER);
-    mid_x = (record->x.fixed - ANCHOR_X) / 2 + ANCHOR_X;
-    mid_y = (record->z.fixed - ANCHOR_Y) / 2 + ANCHOR_Y;
+    mid_x.fixed = (record->x.fixed - ANCHOR_X) / 2 + ANCHOR_X;
+    mid_y.fixed = (record->z.fixed - ANCHOR_Y) / 2 + ANCHOR_Y;
     page = 0;
     if (Value1(Engine_GameFlagIsSet, 0x16e) == 0) {
         /* First visit: claim the flag and play the long presentation. */
@@ -229,7 +236,7 @@ void WorldMap_RunVenusDjinniMeeting(void)
         Call3(Engine_ActorShowEmote, 0, 0x102, 30);
         Engine_EventShowMessage(ACTOR, 0);
         Call3(Engine_ActorShowEmote, 0, 0x101, 30);
-        Engine_ActorWalkToAndWait(ACTOR, mid_x >> 16, mid_y >> 16);
+        Engine_ActorWalkToAndWait(ACTOR, mid_x.part.pixel, mid_y.part.pixel);
         Engine_ActorSetAnimation(0, 22);
         Engine_EventShowMessage(ACTOR, 0);
         Call3(Engine_ActorShowEmote, 0, 0x101, 40);
@@ -244,7 +251,7 @@ void WorldMap_RunVenusDjinniMeeting(void)
         page = 0;
         Engine_EventShowMessage(ACTOR, 0);
         *mode = page;
-        PositionActor(rec8, mid_x, 0x100000, mid_y);
+        PositionActor(rec8, mid_x.fixed, 0x100000, mid_y.fixed);
         for (cnt = 0; cnt < 16; cnt++) {
             rec8->facing += 0x1000;
             Engine_TaskWait(1);
@@ -307,7 +314,7 @@ void WorldMap_RunVenusDjinniMeeting(void)
         Engine_ActorSetPosition(ACTOR, record->x.fixed, record->z.fixed);
     }
     rec8->velocity_y = 0xa0000;
-    Engine_ObjectSetPosition(rec8, mid_x, 0, mid_y);
+    Engine_ObjectSetPosition(rec8, mid_x.fixed, 0, mid_y.fixed);
     Engine_EventWait(30);
     Main_0808a3d8();
     Engine_ActorFaceActor(ACTOR, 0, 0);
@@ -338,7 +345,7 @@ void WorldMap_RunVenusDjinniMeeting(void)
         Value2(Engine_EventOpenMessage, ACTOR, 0);
         if (Value2(Main_0808a070, 0, 0) != 1) {
             Engine_EventShowMessage(ACTOR, 0);
-            Engine_ActorWalkToAndWait(ACTOR, mid_x >> 16, mid_y >> 16);
+            Engine_ActorWalkToAndWait(ACTOR, mid_x.part.pixel, mid_y.part.pixel);
         play:
             FieldScene_RunScene371_02001c08();
             Main_0808a3e0();

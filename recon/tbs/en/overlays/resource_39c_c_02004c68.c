@@ -1,4 +1,8 @@
-/* NONMATCHING: 732 bytes, candidate 732, 45 differing halfwords (2026-09-24).
+/* NONMATCHING: 732 bytes, candidate 728, 234 differing halfwords, 50 halfword
+ * edits (2026-09-26). The explicit lowering loop now has the reference's
+ * topology. CSE reuses its 0x4000000 comparison for the following store,
+ * removing four bytes and shifting the remaining body and pool. The actor
+ * reset also schedules its animation argument before the zero store.
  * Hand-written from the resolved disassembly as a single-overlay unit binding
  * Engine_* at their import veneers. Remaining: the lowering loop. As a for
  * (;;) with a break the sizes agree but loop.c rotates the loop (enters at
@@ -57,19 +61,23 @@ void Func_02004c68(void)
     Engine_EventWait(60);
     Main_080091a0();
     Engine_AudioPlayCue(223);
-    for (;;) {
+lower:
+    {
         layer->y -= speed;
         Engine_ActorGet(0)->z.fixed += speed;
         Engine_ActorGet(0)->target_z = Engine_ActorGet(0)->z.fixed;
         Engine_ActorGet(13)->z.fixed += speed;
         Engine_ActorGet(13)->target_z = Engine_ActorGet(13)->z.fixed;
         if (layer->y <= 0x4000000)
-            break;
+            goto lowered;
         if ((*(u32 *)0x03001e40 & 15) == 0 && speed > 0xccb)
             speed += -0x560;
         Engine_TaskWait(1);
+        goto lower;
     }
-    layer->y = 0x4000000;
+lowered:
+    /* FAKEMATCH: single-pass store keeps the lowering-loop exit layout. */
+    do { layer->y = 0x4000000; } while (0);
     Engine_MapRedraw();
     Engine_TaskWait(2);
     Engine_ActorGet(0)->motion_flags = 3;

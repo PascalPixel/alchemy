@@ -1,4 +1,4 @@
-/* Draft, not exact (2026-09-25): 876 of 868 bytes, 332 differing halfwords.
+/* Draft, not exact (2026-09-26): 880 of 868 bytes, 338 differing halfwords.
    Written from the listing; the entry table at 0x08013784 is the map load
    table in FIELD/COMMON/LOAD_TABLE.JSON (resource ids biased by 0x128, which
    the ROM loads from the pool, hence Value_00000128).
@@ -32,7 +32,19 @@
    H2 result: byte-identical to H1, still 876 bytes / 205 aligned edits.
    The helper does not change the eight-byte frame or the late base-X
    store. Complete normalized difference inspected; this scope axis is
-   closed without further declaration or spelling variants. */
+   closed without further declaration or spelling variants.
+   H3: independent named BG register objects and a typed final display
+   register block own the halfword stores. Predict immediate 0500/0600/0700
+   and 0140 construction, separate BG address loads, and the shared final
+   4c/50/00 address walk. One trial, full normalized difference; then stop
+   this owner regardless of score. No loop-lifetime changes in this trial.
+   H3 result: 880 bytes, 338 differing halfwords, 197 aligned edits;
+   conditional topology equal, full normalized difference inspected.
+   Separate BG address loads appear, but 0500/0600/0700 remain pool words.
+   The final stores build 0140 immediately but add volatile member reads
+   and rematerialize the display base. The frame remains eight bytes.
+   Three hypotheses complete: stop here. Prior 876-byte draft preserved
+   in ed46b755c; no claim of an exact owner or credited bytes. */
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 
@@ -100,6 +112,22 @@ struct SceneWork {
 
 extern u8 Value_00000128;
 extern struct SceneEntry Data_08013784[];
+
+struct SceneRegister {
+    u16 value;
+};
+
+struct SceneDisplay {
+    u16 control;
+    u8 unk_02[0x4a];
+    u16 mosaic;
+    u16 unk_4e;
+    u16 blend;
+};
+
+extern volatile struct SceneRegister Data_0400000e;
+extern volatile struct SceneRegister Data_0400000c;
+extern volatile struct SceneRegister Data_0400000a;
 
 /* FAKEMATCH: per-layer helper bounds the coordinate and base lifetimes. */
 static __inline__ void InitializeLayer(struct SceneLayer *layer,
@@ -209,9 +237,9 @@ s32 Map_LoadLayeredScene(s32 index)
         work->blend_control |= 0x400;
     if (work->priority[2] != 0)
         work->blend_control |= 0x200;
-    *(volatile u16 *)0x0400000e = work->priority[0] | (header->layer_screen[0] << 2) | 0x500;
-    *(volatile u16 *)0x0400000c = work->priority[1] | (header->layer_screen[1] << 2) | 0x600;
-    *(volatile u16 *)0x0400000a = work->priority[2] | (header->layer_screen[2] << 2) | 0x700;
+    Data_0400000e.value = work->priority[0] | (header->layer_screen[0] << 2) | 0x500;
+    Data_0400000c.value = work->priority[1] | (header->layer_screen[1] << 2) | 0x600;
+    Data_0400000a.value = work->priority[2] | (header->layer_screen[2] << 2) | 0x700;
     if (GameFlag_TestFar(0x170) != 0) {
         GameFlag_ClearBitFar(0x170);
     } else {
@@ -231,9 +259,13 @@ s32 Map_LoadLayeredScene(s32 index)
             Runtime_BumpFree(buf);
         }
     }
-    *(volatile u16 *)0x0400004c = 0;
-    *(volatile u16 *)0x04000050 = 0;
-    *(volatile u16 *)0x04000000 = 0x140;
+    {
+        /* FAKEMATCH: typed I/O members keep immediate halfword stores. */
+        volatile struct SceneDisplay *display = (volatile struct SceneDisplay *)0x04000000;
+        display->mosaic = 0;
+        display->blend = 0;
+        display->control = 0x140;
+    }
     Scheduler_AddOrUpdateCallback(Map_UpdateLayerScroll, 0xc85);
     return 2;
 }

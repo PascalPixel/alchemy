@@ -1,61 +1,71 @@
+/* Draft: complete 256-byte owner; candidate 248 bytes, 125 differing
+ * halfwords. Corrects missing mode argument, signed shifts, stack outputs,
+ * poll-before-wait loops and the reversed finalization branches.
+ * Remaining: saved-register set, zero lifetime and cursor-store setup.
+ */
 #include "TYPES.H"
 
-extern u8 *Data_03001e8c;
+struct CenteredTextWork {
+    u8 unknown_000[0xeb0];
+    u16 entries[(0x12f4 - 0xeb0) / 2];
+    u16 cursor;
+    u16 scroll;
+};
+struct CenteredTextWindow {
+    u8 unknown_00[8];
+    u16 width;
+    u16 height;
+};
+extern struct CenteredTextWork *Data_03001e8c;
+s32 UiText_BuildRenderEntries(s32 message, s32 mode);
+void UiText_GetResourceDimensions(s32, s32 *, s32 *, s32 *, s32 *);
+struct CenteredTextWindow *UiWindow_Create(s32, s32, s32, s32, s32);
+s32 Func_080165d8(struct CenteredTextWindow *, s32, s32, s32, s32, s32);
+void UiWork_Finalize(struct CenteredTextWindow *, s32);
+void WaitFrames(s32);
+s32 UiWork_IsComplete(void);
+s32 UiWork_IsIdle(struct CenteredTextWindow *);
 
-s32 Func_08018038(s32);
-void Func_080187ac(s32, s32 *, s32 *, s32 *, s32 *);
-s32 Func_080162d4(s32, s32, s32, s32, s32);
-s32 Func_080165d8(s32, s32, s32, s32, s32, s32);
-void Func_08016418(s32, s32);
-void Func_080030f8(s32);
-s32 Func_08017364(void);
-s32 Func_08017394(s32);
-
-void Func_08019aa0(s32 p1, s32 flag, s32 baseY)
+void Func_08019aa0(s32 message, s32 mode, s32 y_offset)
 {
-    u8 *base = Data_03001e8c;
-    s32 callResult;
-    s32 tableVal;
+    struct CenteredTextWork *work;
+    struct CenteredTextWindow *window;
+    s32 x;
+    s32 y;
+    s32 width;
+    s32 height;
+    s32 entry;
+    s32 zero;
 
-    callResult = Func_08018038(p1);
-    tableVal = *(u16 *)(base + callResult * 2 + 3760);
-
-    if (tableVal != 0) {
-        s32 sp20 = 8, sp16 = 8, sp12, sp8;
-        s32 x, y;
-        s32 obj;
-
-        Func_080187ac(p1, &sp20, &sp16, &sp12, &sp8);
-
-        x = (30 - sp12) / 2;
-        y = (15 - sp8) / 2 + baseY;
-
-        if (flag != 0) {
-            obj = Func_080162d4(x, y, sp12, sp8, 0);
-        } else {
-            obj = Func_080162d4(x, y, 0, 0, 2);
-            *(s16 *)(obj + 8) = (s16)flag;
-            *(s16 *)(obj + 10) = (s16)flag;
+    work = Data_03001e8c;
+    x = 8;
+    y = 8;
+    entry = UiText_BuildRenderEntries(message, 1);
+    zero = 0;
+    if (work->entries[entry] != 0) {
+        UiText_GetResourceDimensions(message, &x, &y, &width, &height);
+        x = (30 - width) >> 1;
+        y = ((15 - height) >> 1) + y_offset;
+        if (mode != 0)
+            window = UiWindow_Create(x, y, width, height, zero);
+        else {
+            window = UiWindow_Create(x, y, 0, 0, 2);
+            window->width = mode;
+            window->height = mode;
         }
-
-        if (Func_080165d8(obj, callResult, 0, 0, 0, 0) == 0) {
-            Func_08016418(obj, 1);
-        } else {
-            do {
-                Func_080030f8(1);
-            } while (Func_08017364() == 0);
-
-            if (flag != 0) {
-                Func_08016418(obj, 1);
-            } else {
-                Func_08016418(obj, 0);
-                do {
-                    Func_080030f8(1);
-                } while (Func_08017394(obj) == 0);
-            }
-
-            *(u16 *)(base + 0x12f4) = 0;
-            *(u16 *)(base + 0x12f6) = 0;
+        if (Func_080165d8(window, entry, 0, 0, 0, 0) == 0)
+            UiWork_Finalize(window, 1);
+        else {
+            while (UiWork_IsComplete() == 0)
+                WaitFrames(1);
+            if (mode != 0) {
+                UiWork_Finalize(window, 0);
+                while (UiWork_IsIdle(window) == 0)
+                    WaitFrames(1);
+            } else
+                UiWork_Finalize(window, 1);
+            work->cursor = 0;
+            work->scroll = 0;
         }
     }
 }

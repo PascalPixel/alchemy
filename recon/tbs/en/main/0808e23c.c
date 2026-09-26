@@ -1,8 +1,8 @@
-/* Draft, not exact (2026-09-26): 636 of 632 bytes, 279 differing halfwords.
-   Normalized edit distance: 128 halfwords. The signed callback union is
-   byte-neutral. Correcting the confirmation copies to +0x240/+0x242 and
-   +0x1c0/+0x1c2 recovers their complete base-plus-offset sequence.
-   Remaining: inventory loop lifetimes, bases, constants and runtime flags. */
+/* Draft, not exact (2026-09-26): 640 of 632 bytes, 263 differing halfwords.
+   Normalized edit distance: 122 halfwords. Typed party/runtime views recover
+   base-plus-offset accesses and shared zero/one lifetimes. Confirmation
+   copies use +0x240/+0x242 and +0x1c0/+0x1c2. Remaining: inventory loop
+   lifetimes, runtime base/flag allocation and constant selection. */
 #include "TYPES.H"
 extern u8 Value_000003ff;
 extern u8 Value_000001f8;
@@ -65,6 +65,19 @@ struct BattleUnitObject {
     u8 unknown_000[0xd8];
     u16 abilities[15]; /* 0xd8: object+216, masked 0x1ff, matches
                            shop/sel/use.c's Ability_GetAvailability scan. */
+};
+
+struct ItemPartyView {
+    u8 unknown_000[0x1f4];
+    s32 object_id;
+    u8 active_owners[8];
+};
+
+struct ItemCommandRuntime {
+    u8 unknown_000[0x170];
+    s16 result_code;
+    u8 unknown_172[0xb54];
+    u8 resolving_action;
 };
 
 typedef s32 (*BattleItemCallback)(s32 item, s32 actor, s32 slot);
@@ -135,9 +148,10 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
             actor = 0;
             i = 0;
             if (actor < count) {
-                u8 *ids = (u8 *)&Data_02000240 + 0x1f8;
+                struct ItemPartyView *work =
+                    (struct ItemPartyView *)&Data_02000240;
                 do {
-                    obj = (struct BattleUnitObject *)Runtime_GetObject(ids[i]);
+                    obj = (struct BattleUnitObject *)Runtime_GetObject(work->active_owners[i]);
                     matches = 0;
                     p = obj->abilities;
                     j = 14;
@@ -149,7 +163,7 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
 
                     if (best < matches) {
                         best = matches;
-                        do { actor = ids[i]; } while (0); /* FAKEMATCH */
+                        actor = work->active_owners[i];
                     }
                     i++;
                 } while (i < count);
@@ -192,12 +206,12 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
         result = 0;
     } else {
         s32 action_id;
-        u8 *rt;
+        struct ItemCommandRuntime *rt;
 
         GameFlag_Clear((s32)&Value_00000143);
         GameFlag_Set(0x142);
         action_id = Item_GetData(item_id)->action_id;
-        rt = (u8 *)Data_03001ebc;
+        rt = (struct ItemCommandRuntime *)Data_03001ebc;
 
         if (action_id != 0) {
             GameFlag_Set(0x145);
@@ -221,17 +235,16 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
                     b = work[289];
                     work[225] = b;
                 }
-                *(s16 *)(rt + (s32)&Value_00000170) = (s32)&Value_000003e7;
+                rt->result_code = (s32)&Value_000003e7;
             }
 
             UiText_DrawQuantity(actor, 1);
             UiText_DrawQuantity(item_id, 2);
             UiText_DrawMessage(0x91c, 1);
             Func_08096fb0(action_id, 0);
-            rt = rt + 0xcc6;
-            *rt = 1;
+            rt->resolving_action = 1;
             Func_08096810();
-            *rt = 0;
+            rt->resolving_action = 0;
             Func_08097194();
 
             if (Item_GetData(item_id)->use_type & 1)

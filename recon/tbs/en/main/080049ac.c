@@ -1,32 +1,35 @@
-/* NONMATCHING: reference 60 bytes, candidate 64; 28 differing halfwords.
- * Hypothesis 1: typed scalar rows emit twelve str stores, not three stmia;
- * adjacent absolute cells merge into one base plus 104. Full pool compared.
+/* NONMATCHING: reference 60 bytes, candidate 92; 42 differing halfwords.
+ * Hypothesis 2: explicit row stores avoid the initializer's unresolved memset;
+ * copies emit ldmia/stmia triples plus fourth-word str, with a 16-byte frame.
+ * Full extent/pool differ; separate globals keep all three address literals.
  */
 #include "TYPES.H"
 
+struct TransformRow {
+    s32 value[4];
+};
+
 struct TransformMatrix {
-    s32 row[3][4];
+    struct TransformRow row[3];
 };
 
 void *Runtime_AllocateBlock(s32 kind, s32 size);
+extern s32 Data_03001cc4;
+extern void *Data_03001d2c;
+extern struct TransformMatrix Data_03000350;
 
 void Render_ResetTransformState(void)
 {
-    struct TransformMatrix *work = (struct TransformMatrix *)0x03000350;
-    void *buf = Runtime_AllocateBlock(2, sizeof(*work));
+    struct TransformRow row;
+    void *buf = Runtime_AllocateBlock(2, sizeof(Data_03000350));
 
-    *(s32 *)0x03001cc4 = 0;
-    *(void **)0x03001d2c = buf;
-    work->row[0][0] = 0x10000;
-    work->row[0][1] = 0;
-    work->row[0][2] = 0;
-    work->row[0][3] = 0;
-    work->row[1][0] = 0x10000;
-    work->row[1][1] = 0;
-    work->row[1][2] = 0;
-    work->row[1][3] = 0;
-    work->row[2][0] = 0x10000;
-    work->row[2][1] = 0;
-    work->row[2][2] = 0;
-    work->row[2][3] = 0;
+    row.value[0] = 0x10000;
+    row.value[1] = 0;
+    row.value[2] = 0;
+    row.value[3] = 0;
+    Data_03001cc4 = 0;
+    Data_03001d2c = buf;
+    Data_03000350.row[0] = row;
+    Data_03000350.row[1] = row;
+    Data_03000350.row[2] = row;
 }

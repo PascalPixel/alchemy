@@ -29234,7 +29234,7 @@
           "address": "0x020098a4",
           "kind": "thumb"
         },
-        "Main_080091f0": {
+        "Engine_MapRenderSetValues": {
           "address": "0x020098ac",
           "kind": "thumb"
         },
@@ -29274,7 +29274,7 @@
           "address": "0x0200992c",
           "kind": "thumb"
         },
-        "Main_0808a090": {
+        "Engine_ActorSetSpeed": {
           "address": "0x02009934",
           "kind": "thumb"
         },

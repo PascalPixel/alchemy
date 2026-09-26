@@ -31,17 +31,6 @@
     },
     {
       "overlay": "resource_36f",
-      "start": "0x02000454",
-      "end": "0x02000538",
-      "kind": "not_yet_decompiled",
-      "retention": "not_yet_c",
-      "confidence": "strong",
-      "evidence": [
-        "Complete not-yet-C owner retained in recon/tbs/raw/overlays/resource_36f_overlay.s; no assembly credit."
-      ]
-    },
-    {
-      "overlay": "resource_36f",
       "start": "0x02000538",
       "end": "0x020005f8",
       "kind": "overlay_trampoline",
@@ -71,17 +60,6 @@
         "proof": "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC",
         "source": "games/THE BROKEN SEAL/SRC/MENU/CLEAR/ENTRY.INC"
       }
-    },
-    {
-      "overlay": "resource_370",
-      "start": "0x02000054",
-      "end": "0x02000154",
-      "kind": "not_yet_decompiled",
-      "retention": "not_yet_c",
-      "confidence": "strong",
-      "evidence": [
-        "Complete not-yet-C owner retained in recon/tbs/raw/overlays/resource_370_overlay.s; no assembly credit."
-      ]
     },
     {
       "overlay": "resource_370",
@@ -3967,17 +3945,6 @@
       "overlay": "resource_3cb",
       "start": "0x02000b94",
       "end": "0x02000d68",
-      "kind": "not_yet_decompiled",
-      "retention": "not_yet_c",
-      "confidence": "strong",
-      "evidence": [
-        "Complete not-yet-C owner retained in recon/tbs/raw/overlays/resource_3cb_overlay.s; no assembly credit."
-      ]
-    },
-    {
-      "overlay": "resource_3cb",
-      "start": "0x020012e0",
-      "end": "0x02001704",
       "kind": "not_yet_decompiled",
       "retention": "not_yet_c",
       "confidence": "strong",

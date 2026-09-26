@@ -1,4 +1,8 @@
-/* NONMATCHING: 636 of 636 bytes, 21 differing halfwords (2026-09-24).
+/* Draft, not-yet-c: 636 of 636 bytes, 21 differing halfwords (2026-09-26).
+ * The shared EffectOptions layout identifies palette and starting scales;
+ * unsigned random shifts preserve the reference's logical shift. Concrete
+ * parameter types do not move the reload residual, while an inline spawn
+ * boundary regresses it to 193 halfwords and is not retained.
  * Readable unit source (evconv Engine_* veneers); both drifts are one STEP()
  * multiply by 0x3333 in the call, and declaring j before p gives the
  * reference spill slots (p at sp+16, j at sp+20). Remaining: in each
@@ -6,31 +10,17 @@
  * reference reuses r3 after the lift store, so sched2 hoists the load and
  * reorders the stack-argument stores (reload register rotation; counter
  * types, register and a split assignment do not move it). */
-#include "TYPES.H"
-
-void Engine_AudioPlayCue(s32 cue);
-void Engine_MapCopyCellsTo(s32 sx, s32 sy, s32 dx, s32 dy, s32 w, s32 h);
-u32 Engine_RandomNext(void);
-void Effect_Spawn(s32 x, s32 y, s32 z, s32 dx, s32 dy, s32 dz, s32 lift, void *params);
-void Engine_EventWait(s32 frames);
-
-struct EffectParams {
-    s32 count;
-    s32 kind;
-    s32 spread;
-    s32 rise;
-    u8 pad10[24];
-};
+#include "FIELD_EFFECT.H"
 
 /* A random drift of about -0.8 to +0.8 in steps of 0.2. */
-#define STEP() ((s32)((Engine_RandomNext() << 3) >> 16) * 0x3333)
+#define STEP() ((s32)(((u32)Engine_RandomNext() << 3) >> 16) * 0x3333)
 
 /* Slide one of three stone doors two cells open, with dust along its edge. */
 void Func_02001db4(s32 side)
 {
-    struct EffectParams params;
+    struct EffectOptions params;
     u32 j;
-    struct EffectParams *p;
+    struct EffectOptions *p;
     u32 i;
     s32 down;
     s32 up;
@@ -47,9 +37,9 @@ void Func_02001db4(s32 side)
         Engine_MapCopyCellsTo(113, 57, 115, 44, 1, 1);
     }
     p = &params;
-    p->kind = 7;
-    p->spread = 0x8000;
-    p->rise = 0x8000;
+    p->palette = 7;
+    p->start_scale_x = 0x8000;
+    p->start_scale_y = 0x8000;
     for (i = 0; i <= 1; i++) {
         j = 0;
         down = 0x32c0000 - (i << 20);

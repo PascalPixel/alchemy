@@ -16,6 +16,14 @@
  * 30-minute source budget ended. No allocation tuning or C credit claimed.
  * Func_080153f0 remains the existing unnamed Ui_GetTableWordZero veneer;
  * other calls use registered names. No new aliases or compiler changes.
+ * Reproduce with the scoring unit retained at d51144bd1; it owns the full
+ * 280-byte extent. Main-image bindings (Thumb addresses without the mode bit):
+ * Func_080153f0=080153f0, veneer of Ui_GetTableWordZero=08021bc8;
+ * UiWork_IsCompleteFar=08015048; WaitFrames=080030f8;
+ * Resource_LoadIntoFreeSlot=080040b4; Resource_GetBuffer=080040d0;
+ * Resource_ResetEntry=08003f3c; Runtime_PushSlotEntry=08003dec;
+ * QueueIoWriteDelay10=080039fc; QueueIoWriteDelay6=0800393c.
+ * Data_03001c94=03001c94; Data_03001e40=03001e40.
  */
 union BattlePromptEntry {
     s32 words[3];

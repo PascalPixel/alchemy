@@ -8,14 +8,33 @@
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a5",
       "absolute_symbols": {
-        "Engine_MathDivide": { "address": "0x02009c84", "kind": "thumb" },
-        "Engine_GameFlagIsSet": { "address": "0x02009d44", "kind": "thumb" },
-        "Engine_GameFlagSet": { "address": "0x02009d4c", "kind": "thumb" },
-        "Engine_GameFlagClear": { "address": "0x02009d54", "kind": "thumb" },
-        "gEventWork": { "address": "0x03001ebc", "kind": "data" }
+        "Engine_MathDivide": {
+          "address": "0x02009c84",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagIsSet": {
+          "address": "0x02009d44",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagSet": {
+          "address": "0x02009d4c",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagClear": {
+          "address": "0x02009d54",
+          "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        }
       },
       "owners": [
-        { "address": "0x02000cd0", "extent": 304, "state": "not-yet-c" }
+        {
+          "address": "0x02000cd0",
+          "extent": 304,
+          "state": "not-yet-c"
+        }
       ]
     },
     {
@@ -12026,7 +12045,7 @@
     },
     {
       "id": "retained-overlay-3cb-020012e0",
-      "source": "recon/tbs/en/overlays/resource_3cb_c_020012e0.c",
+      "source": "games/THE BROKEN SEAL/SRC/MENU/LINK_LOBBY/ROUND.C",
       "overlay": "resource_3cb",
       "absolute_symbols": {
         "Engine_ActorFaceActor": {
@@ -12142,7 +12161,7 @@
         {
           "address": "0x020012e0",
           "extent": 1060,
-          "state": "not-yet-c"
+          "state": "exact-c"
         }
       ],
       "game": "tbs",

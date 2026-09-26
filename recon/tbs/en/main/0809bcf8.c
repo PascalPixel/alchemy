@@ -1,7 +1,8 @@
-/* Draft, not exact (2026-09-26): 1100 of 1088 bytes, 392 differing halfwords.
+/* Draft, not exact (2026-09-26): 1088 of 1088 bytes, 4 differing halfwords.
    Explicit blend-byte access replaces the -13 mask with 243, keeps a
    separate interior pointer, and adds a spill slot. This dump-backed
-   ancestry test regresses from the preserved 1088-byte / 4-halfword draft.
+   ancestry test gave 1100 bytes / 392 halfwords; preserved in history.
+   Restored the four-halfword hardware bitfield model.
    Separate queue-resolution and saved-IME scheduling regions close all
    queue differences. Only the blend-byte load and y-byte store remain one
    scheduling slot apart. A blend-update region merely moves the r8 copy;
@@ -149,16 +150,6 @@ static __inline__ s32 SetMarkerY(struct MapMarker *marker, s32 y, s32 width)
     return width;
 }
 
-/* FAKEMATCH: byte access keeps the sprite layout while testing the
-   scheduler ancestry of the blend read-modify-write. */
-static __inline__ void SetMarkerBlend(struct MapMarker *marker, s32 mode)
-{
-    u8 *attribute;
-
-    attribute = (u8 *)marker + 5;
-    *attribute = (*attribute & ~12) | (mode << 2);
-}
-
 void Map_UpdateWorldMapMarkers(void)
 {
     s32 leader;
@@ -255,7 +246,7 @@ markers:
             continue;
         x = ((object->x - 0x10000000) >> 16) * 240 / 4096;
         y = object->z.part.whole * 160 / 4096;
-        SetMarkerBlend(marker, mode);
+        marker->blend_mode = mode;
         marker->tile = tile_base + tile;
         marker->x = x - 1;
         width = SetMarkerY(marker, y - 1, x - cursor_x);

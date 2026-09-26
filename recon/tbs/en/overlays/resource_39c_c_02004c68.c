@@ -1,4 +1,16 @@
-/* NONMATCHING: 732 bytes, candidate 728, 234 differing halfwords, 50 halfword
+/* NONMATCHING: whole owner [02004c68,02004f44), including ten pool words.
+ * 2026-09-26 bounded H1: a lowering-phase inline routine returns speed;
+ * the caller owns the clamp store. This DOES rebuild 0x04000000 at the
+ * clamp (movs/lsls/str), unlike the old shared compare/store expression.
+ * But return-path block placement moves the lowering wait/deceleration
+ * after the actor sequence, and splits speed ownership across r6/r8.
+ * Candidate 724 / reference 732 bytes, 354 differing halfwords, 123 edits.
+ * Full normalized diff read; rejected for topology and lifetime changes.
+ * Preserve this counterexample: the clamp can rematerialize in ordinary C,
+ * but a phase-return boundary is not the reference's whole-owner structure.
+ * Stop this axis after one structural hypothesis and inspect raw owners.
+ *
+ * Previous baseline: 732 bytes, candidate 728, 234 differing halfwords, 50 halfword
  * edits (2026-09-26). The explicit lowering loop now has the reference's
  * topology. CSE reuses its 0x4000000 comparison for the following store,
  * removing four bytes and shifting the remaining body and pool. The actor
@@ -38,6 +50,23 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
     f(a0, a1, a2, a3, a4, a5);
 }
 
+/* FAKEMATCH: separate the lowering phase from its caller-owned clamp. */
+static __inline__ s32 LowerLayer(struct MapLayer *layer, s32 speed)
+{
+lower:
+    layer->y -= speed;
+    Engine_ActorGet(0)->z.fixed += speed;
+    Engine_ActorGet(0)->target_z = Engine_ActorGet(0)->z.fixed;
+    Engine_ActorGet(13)->z.fixed += speed;
+    Engine_ActorGet(13)->target_z = Engine_ActorGet(13)->z.fixed;
+    if (layer->y <= 0x4000000)
+        return speed;
+    if ((*(u32 *)0x03001e40 & 15) == 0 && speed > 0xccb)
+        speed += -0x560;
+    Engine_TaskWait(1);
+    goto lower;
+}
+
 void Func_02004c68(void)
 {
     struct MapLayer *layer;
@@ -61,21 +90,7 @@ void Func_02004c68(void)
     Engine_EventWait(60);
     Main_080091a0();
     Engine_AudioPlayCue(223);
-lower:
-    {
-        layer->y -= speed;
-        Engine_ActorGet(0)->z.fixed += speed;
-        Engine_ActorGet(0)->target_z = Engine_ActorGet(0)->z.fixed;
-        Engine_ActorGet(13)->z.fixed += speed;
-        Engine_ActorGet(13)->target_z = Engine_ActorGet(13)->z.fixed;
-        if (layer->y <= 0x4000000)
-            goto lowered;
-        if ((*(u32 *)0x03001e40 & 15) == 0 && speed > 0xccb)
-            speed += -0x560;
-        Engine_TaskWait(1);
-        goto lower;
-    }
-lowered:
+    speed = LowerLayer(layer, speed);
     /* FAKEMATCH: single-pass store keeps the lowering-loop exit layout. */
     do { layer->y = 0x4000000; } while (0);
     Engine_MapRedraw();

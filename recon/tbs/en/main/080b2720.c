@@ -16,6 +16,12 @@
    match except the two pool offsets and reversed pool words.  The
    signed-read invariant remains exact; the final zero is still an
    SI link-address value rather than the reference's short-reach value.
+   H3: store an ordinary zero through the halfword destination instead
+   of an SI link-address zero. Exact 68/68 bytes, zero differing halfwords
+   and zero aligned edits, including both literal-pool words. Selective
+   copy volatility and separate sentinel lifetimes remain necessary.
+   Adopted as FIELD/COMMON/EVENT_TABLE_COPY_ROW_HEADER.C; this draft keeps
+   the bounded attempt history, not additional executable credit.
    Earlier bounded work follows; do not repeat its all-volatile axis.
    Draft: a separate signed sentinel value removes the extra saved register,
    but the loop still uses ldrh and a left shift instead of ldrsh; counter
@@ -25,7 +31,6 @@
    Volatile candidate: 68 bytes, 19 differing halfwords; three hypotheses stop. */
 
 extern s16 EventTable_AbilityLoadouts[][33];
-extern u8 Value_00000000;
 
 s32 EventTable_CopyRowHeader(s32 row_no, s16 *output)
 {
@@ -47,6 +52,6 @@ s32 EventTable_CopyRowHeader(s32 row_no, s16 *output)
                 break;
         } while (*src != 0);
     }
-    output[count] = (s32)&Value_00000000;
+    output[count] = 0;
     return count;
 }

@@ -1,4 +1,4 @@
-/* NONMATCHING: 744-byte candidate, 356 differing halfwords, 228 edits.
+/* NONMATCHING: 748-byte candidate, 354 differing halfwords, 232 edits.
  * Whole owner 752 bytes including six owned pool words.
  * Canonical draft for resource_380:0200449c and resource_381:0200301c;
  * own-ROM sibling check proves equivalent flow and per-instance bindings.
@@ -23,6 +23,13 @@
  * is identical to baseline, so helper-call versus division is not the cause.
  * Initializer 380:0200478c confirms ten 40-byte entries, count at +0x190,
  * scale/negative speed at +28/+32, timer=3 at +36, callback priority 0xc80.
+ * H3: per-record snapshot scope, sample temporaries scoped to the active
+ * phase, timer declared before position and loaded before decrement.
+ * Result 748 bytes, 354 differing halfwords, 232 edits, frame still 68.
+ * Snapshot slots move, but scale still owns fp, hold sl, entry r8; the
+ * third sample still spills around division. Scope alone does not recover
+ * the reference's state ownership. Three hypotheses complete: STOP here.
+ * H1 and H2 are preserved in preceding commits; H2 is the 228-edit baseline.
  * Legacy 2026-09-24 pointer/index/loop-test/operand-order sweeps exhausted
  * 226..249 edits; do not repeat those without new ownership evidence. */
 #include "TYPES.H"
@@ -75,27 +82,22 @@ void Effect_UpdateSparkRing(void)
 {
     struct SparkWork *work;
     struct Spark *spark;
-    struct SparkObject *obj;
     s32 i;
-    s32 ax;
-    s32 ay;
-    s32 az;
-    s32 scale;
-    s32 speed;
-    s32 x;
-    s32 y;
-    s32 z;
-    u8 timer;
-    u8 hold;
-    u32 rx;
-    u32 ry;
-    u32 rz;
-    s32 dx;
-    s32 dy;
-    s32 dz;
 
     work = Engine_AllocateBlock(33, 0x194);
     for (i = 0; i != work->count; i++) {
+        struct SparkObject *obj;
+        s32 ax;
+        s32 ay;
+        s32 az;
+        s32 scale;
+        s32 speed;
+        u8 timer;
+        s32 x;
+        s32 y;
+        s32 z;
+        u8 hold;
+
         spark = &work->spark[i];
         obj = spark->obj;
         ax = spark->angle_x;
@@ -107,8 +109,16 @@ void Effect_UpdateSparkRing(void)
         y = spark->y;
         z = spark->z;
         hold = spark->hold;
-        timer = spark->timer - 1;
+        timer = spark->timer;
+        timer--;
         if (timer == 0) {
+            u32 rx;
+            u32 ry;
+            u32 rz;
+            s32 dx;
+            s32 dy;
+            s32 dz;
+
             timer = 3;
             if (hold == 0) {
                 scale += speed;

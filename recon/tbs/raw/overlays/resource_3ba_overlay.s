@@ -1989,7 +1989,7 @@ AlchemyC_02002bac:
 	.space 0x20
 AlchemyC_02002bcc:
 	.space 0x20
-Func_02002bec:
+Korosseo_UpdateMarker:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl

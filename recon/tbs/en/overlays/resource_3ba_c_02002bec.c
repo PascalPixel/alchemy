@@ -2,8 +2,10 @@
 
 /* Unit bindings for scoring (declare as absolute_symbols of a unit on
  * resource_3ba:02002bec):
- *   Local_03000380 = 0x03008380 (thumb)
- *   Main_080001e8 = 0x0200bb90 (thumb)
+ *   Engine_MathDivide = 0x0200bb00 (thumb)
+ *   Engine_OamSubmitRecord = 0x0200bb90 (thumb)
+ *   Korosseo_LinkedZero = 0x00000000 (data)
+ *   gOamTiles = 0x03001b10 (data)
  *   Korosseo_MarkerIndex = 0x0200c6a6 (data)
  *   Korosseo_MarkerSteps = 0x0200c78c (data)
  *   Korosseo_MarkerStep = 0x0200c750 (data)
@@ -18,35 +20,49 @@
  *   Korosseo_MarkerOam = 0x0200c7b0 (data)
  */
 
-s32 Local_03000380();
-void Main_080001e8();
+s32 Engine_MathDivide(s32 dividend, s32 divisor);
+void Engine_OamSubmitRecord(s32 *record, s32 priority);
 
-extern u8 Data_00000000[];
+extern u8 Korosseo_LinkedZero[];
 
 struct OamTile {
     u16 attr;
     u16 tile;
 };
 
+union MarkerCoordinate {
+    s16 signed_value;
+    u16 value;
+};
+
+extern struct OamTile gOamTiles[];
+
 extern s16 Korosseo_MarkerIndex;
 extern s16 Korosseo_MarkerSteps;
 extern s16 Korosseo_MarkerStep;
 extern s16 Korosseo_MarkerY;
-extern s16 Korosseo_MarkerStartY;
+extern union MarkerCoordinate Korosseo_MarkerStartY;
 extern s16 Korosseo_MarkerEndY;
 extern s16 Korosseo_MarkerX;
-extern s16 Korosseo_MarkerStartX;
+extern union MarkerCoordinate Korosseo_MarkerStartX;
 extern s16 Korosseo_MarkerEndX;
 extern s16 Korosseo_MarkerBlink;
 extern s16 Korosseo_MarkerPriority;
 extern s32 Korosseo_MarkerOam[3];
 
-/* NONMATCHING: 316 of 316 bytes, 96 halfword edits (2026-09-24). Colosso
- * marker: interpolates the marker between two points and blinks it through the
- * OAM buffer. Twins: resource_3bb:02002e84 and resource_3bc:0200391c (their own
- * Korosseo_Marker* addresses). Residual: pointer loads and the total/base
- * registers are ordered differently. */
-void Func_02002bec(void)
+/* NONMATCHING: candidate 312, full reference 316 bytes, 126 differing
+ * halfwords / 65 alignment edits (2026-09-26). Owner extent is
+ * resource_3ba:[02002bec,02002d28), including both literal pools.
+ * Interpolates and blinks the Colosso marker through the OAM queue.
+ * Typed table, reused destination pointer, advancing OAM pointer and reused
+ * base reduced the earlier 96-edit draft. Remaining: interpolation multiply
+ * operand and pointer-load order, priority/zero pool placement, four bytes
+ * short. The signed/unsigned union and allocator-guided declaration reorder
+ * did not change bytes; a one-pass setup block worsened the score to 66 edits.
+ * Complete byte comparison proves only call relocations and local pool
+ * addresses differ in resource_3bb:02002e84 and resource_3bc:0200391c.
+ * They are not adopted from this draft. */
+void Korosseo_UpdateMarker(void)
 {
     s32 tile;
     s32 total;
@@ -55,32 +71,56 @@ void Func_02002bec(void)
     s32 *oam;
     s32 diff;
     s32 zero;
+    s16 *steps;
+    s16 *pos;
+    s32 *dst;
+    s32 x;
+    s32 y;
+    s32 word;
+    union MarkerCoordinate *start;
+    s16 *end;
+    s16 *priority;
 
+    tile = gOamTiles[Korosseo_MarkerIndex].tile >> 5;
+    steps = &Korosseo_MarkerSteps;
+    total = *steps;
     oam = Korosseo_MarkerOam;
-    tile = ((struct OamTile *)0x03001b10)[Korosseo_MarkerIndex].tile >> 5;
-    total = Korosseo_MarkerSteps;
     if (total != 0) {
         step = ++Korosseo_MarkerStep;
-        diff = Korosseo_MarkerEndY - Korosseo_MarkerStartY;
-        base = (u16)Korosseo_MarkerStartY;
-        Korosseo_MarkerY = base + Local_03000380(step * diff, total);
-        diff = Korosseo_MarkerEndX - Korosseo_MarkerStartX;
-        base = (u16)Korosseo_MarkerStartX;
-        Korosseo_MarkerX = base + Local_03000380(step * diff, total);
+        pos = &Korosseo_MarkerY;
+        start = &Korosseo_MarkerStartY;
+        end = &Korosseo_MarkerEndY;
+        diff = *end - start->signed_value;
+        base = start->value;
+        base += Engine_MathDivide(step * diff, total);
+        *pos = base;
+        pos = &Korosseo_MarkerX;
+        end = &Korosseo_MarkerEndX;
+        start = &Korosseo_MarkerStartX;
+        diff = *end - start->signed_value;
+        base = start->value;
+        base += Engine_MathDivide(step * diff, total);
+        *pos = base;
         if (step >= total) {
-            zero = (u16)(u32)Data_00000000;
-            Korosseo_MarkerSteps = zero;
+            zero = (u16)(u32)Korosseo_LinkedZero;
+            *steps = zero;
         }
-        zero = (u16)(u32)Data_00000000;
-            Korosseo_MarkerBlink = zero;
+        zero = (u16)(u32)Korosseo_LinkedZero;
+        Korosseo_MarkerBlink = zero;
     }
     if (++Korosseo_MarkerBlink <= 13) {
-        oam[0] = 0;
-        oam[1] = ((Korosseo_MarkerX - 8) | ((Korosseo_MarkerY - 8) << 16)) | 0x40000000 | (Korosseo_MarkerPriority << 28);
-        oam[2] = tile | 0x400;
-        Main_080001e8(oam, 255);
+        y = Korosseo_MarkerY;
+        x = Korosseo_MarkerX;
+        dst = oam;
+        *dst++ = 0;
+        priority = &Korosseo_MarkerPriority;
+        word = (x - 8) | ((y - 8) << 16);
+        word |= 0x40000000;
+        word |= *priority << 28;
+        *dst++ = word;
+        *dst = tile | 0x400;
+        Engine_OamSubmitRecord(oam, 255);
     } else if (Korosseo_MarkerBlink > 19) {
-        zero = (u16)(u32)Data_00000000;
-            Korosseo_MarkerBlink = zero;
+        *(u16 *)&Korosseo_MarkerBlink = 0;
     }
 }

@@ -1,3 +1,6 @@
+/* NONMATCHING: shared callee return types audited on 2026-09-26.
+ * 1124 of 1124 bytes, 490 differing halfwords, 305 aligned edits.
+ * Canonical declarations are retained; the remaining source model is not exact. */
 /* Draft, not exact (2026-09-24): candidate=1124 reference=1124 differing_halfwords=490. Constants the reference loads from
    the literal pool are spelled as link-time Value_ symbols, which restores
    the reference size; wraps marked FAKEMATCH only move scheduling. */
@@ -41,7 +44,7 @@ extern u8 Data_080eeadc[];
 extern u8 Value_000000c4;
 extern u8 Value_00000073;
 
-void Func_080cdb24(s32);
+s32 Func_080cdb24(s32);
 s32 Func_08004458(void);
 s32 Func_08002322(s32);
 s32 Func_0800231c(s32);

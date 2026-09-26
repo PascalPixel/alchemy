@@ -1,3 +1,6 @@
+/* NONMATCHING: shared callee return types audited on 2026-09-26.
+ * 4632 of 4724 bytes, 2259 differing halfwords, 1550 aligned edits.
+ * Canonical declarations are retained; the remaining source model is not exact. */
 /* Draft, not exact (2026-09-25): 4632 of 4724 bytes, 2259 differing
    halfwords; 1810 of the ROM's 2045 instructions line up by opcode.
    One whole function (Lucky Dice, reached from Runtime_BlankDisplayAndRun);
@@ -112,7 +115,7 @@ u32 Resource_DecodeType01(const void *source, void *destination);
 s32 Graphics_ScaleRgb555Buffer(u16 *source, u16 *destination, s32 scale, s32 count);
 void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(void *work, void *transfer);
-void Render_ProjectPoint(void *point, s32 *out);
+s32 Render_ProjectPoint(void *point, s32 *out);
 u32 Math_ModU(u32 numerator, u32 denominator);
 void Func_08015000(void);
 void UiText_DrawNumberInWindowFar(s32 value, s32 digits, s32 window, s32 x, s32 y);

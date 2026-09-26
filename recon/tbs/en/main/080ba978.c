@@ -9,6 +9,13 @@
  * child-copy body are structurally correct. First divergence is the target
  * angle branch; the same-team ternary also omits reference materialized
  * boolean branches. Input/transition and flags/object roles remain swapped.
+ * H2: materialize the same-team predicate as a local on each branch, as the
+ * reference tests a 0/1 result rather than branching directly on both IDs.
+ * H2 result: 604/612 bytes, 269 differing halfwords, 110 aligned edits.
+ * Boolean materialization returned 12 bytes, but the two branch tails still
+ * merge. The target-angle conditional is if-converted; row-offset lifetime
+ * still keeps r8 instead of the reference r6 and spills the wrong loop role.
+ * Stop after the single structural followup: no established closing path.
  * No matching-C credit claimed.
  */
 #include "TYPES.H"
@@ -65,6 +72,7 @@ s32 Func_080ba978(struct PresentationInput *input, s32 flags)
         s32 angle = (u16)ArcTan2(actor->x, actor->z);
         s32 current = angle - 0x1800;
         s32 target;
+        s32 same_team;
         if (input->primary > 7)
             current = angle + 0x1800;
         current = (s16)current;
@@ -73,7 +81,11 @@ s32 Func_080ba978(struct PresentationInput *input, s32 flags)
         else
             target = -0x2000;
         current += (target - current) * 3 / 4;
-        if (input->secondary <= 7 ? input->primary <= 7 : input->primary > 7)
+        if (input->secondary <= 7)
+            same_team = input->primary <= 7;
+        else
+            same_team = input->primary > 7;
+        if (same_team)
             current = input->primary <= 7 ? 0x2400 : -0x2400;
         if (transition->target_yaw != current)
             transition->target_yaw = current;

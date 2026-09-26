@@ -4,7 +4,7 @@
 #include "IO_WRITE_QUEUE.H"
 
 /*
- * DRAFT main:08021e6c (2300 bytes, including pools), structural hypothesis 1.
+ * DRAFT main:08021e6c (2300 bytes, including pools), structural hypothesis 2.
  * Recover the 480-byte work record and natural screen loop before register
  * tuning. Cursor entries share byte/halfword OAM views, not RenderOutput's
  * unrelated 28-byte layout. Trade availability is a word, the party result
@@ -16,6 +16,13 @@
  * 0 pool-placement, 163 other). Typed indexing has not fixed broad lowering.
  * Compiler rounds a standalone halfword union to four bytes: place all four
  * OAM bytes in one word union to keep entries at 28 bytes and work at 480.
+ * Residual H2: 2216/2300 bytes; 1107 differing halfwords; topology differs,
+ * 1034 wrong instructions, aligned distance 737 halfword edits. Frame 40/60.
+ * Runs: 218 (0 register-only, 0 order-only, 9 pool/immediate,
+ * 49 copy/rematerialise, 0 pool-placement, 160 other). Row-cursor traversal
+ * improves alignment but not the frame. The compiler already hoists natural
+ * loop exit stubs between mode-zero and trade setup, as in the reference;
+ * adding gotos there would not address the remaining layout difference.
  */
 struct UiWindowWork;
 
@@ -50,7 +57,7 @@ struct SelectionWork {
 };
 
 struct SelectionRender {
-    u16 tiles[32][32];
+    u16 tiles[1024];
     u8 unused[0x6a3];
     u8 dirty, mode, menu_state, menu_busy;
 };
@@ -108,7 +115,7 @@ s32 Ui_RunSelectionScreen(s32 mode)
     struct SelectionRuntime *runtime;
     struct UiWindowWork *message;
     s32 rebuild, trade_count, scale, result;
-    s32 cnt, panel, row, col;
+    s32 cnt;
     s32 keys, repeat;
     s32 slot;
     u8 *pos;
@@ -186,27 +193,55 @@ s32 Ui_RunSelectionScreen(s32 mode)
             rebuild = 0;
             render->menu_busy = 1;
             if (mode != 0) {
-                for (panel = 0; panel < 6 - work->count; panel++)
-                    for (row = 0; row <= 2; row++)
+                s32 panel;
+                for (panel = 0; panel < 6 - work->count; panel++) {
+                    s32 row;
+                    u16 *tile_row = &render->tiles[panel * 3];
+                    for (row = 0; row <= 2; row++, tile_row += 32) {
+                        s32 col;
                         for (col = 0; col <= 2; col++)
-                            render->tiles[17 + row][4 + panel * 3 + (col & 3)] = 0xf07f;
-                for (panel = 0; panel < work->count; panel++)
-                    for (row = 0; row <= 2; row++)
+                            tile_row[0x224 + (col & 3)] = 0xf07f;
+                    }
+                }
+                for (panel = 0; panel < work->count; panel++) {
+                    s32 row;
+                    s32 count = work->count;
+                    s32 tile_index = panel * 3;
+                    s32 pattern = panel * 16;
+                    u16 *tile_row = &render->tiles[tile_index];
+                    for (row = 0; row <= 2; row++, tile_row += 32, tile_index += 32, pattern += 4) {
+                        s32 col;
                         for (col = 0; col <= 2; col++) {
-                            ((u16 (*)[32])0x0600f800)[21 + row][22 + panel * 3 + (col & 3) - work->count * 3] = 0x100 + panel * 16 + row * 4 + col;
-                            render->tiles[17 + row][22 + panel * 3 + (col & 3) - work->count * 3] = 0;
+                            ((u16 *)0x0600fd6c)[tile_index + (col & 3) - count * 3] = 0x100 + pattern + col;
+                            tile_row[0x236 + (col & 3) - count * 3] = 0;
                         }
+                    }
+                }
             } else {
-                for (panel = 0; panel < 6 - work->count; panel++)
-                    for (row = 0; row <= 2; row++)
+                s32 panel;
+                for (panel = 0; panel < 6 - work->count; panel++) {
+                    s32 row;
+                    u16 *tile_row = &render->tiles[panel * 3];
+                    for (row = 0; row <= 2; row++, tile_row += 32) {
+                        s32 col;
                         for (col = 0; col <= 2; col++)
-                            render->tiles[17 + row][2 + panel * 3 + (col & 3)] = 0xf07f;
-                for (panel = 0; panel < work->count; panel++)
-                    for (row = 0; row <= 2; row++)
+                            tile_row[0x222 + (col & 3)] = 0xf07f;
+                    }
+                }
+                for (panel = 0; panel < work->count; panel++) {
+                    s32 row;
+                    s32 count = work->count;
+                    s32 tile_index = panel * 3;
+                    s32 pattern = panel * 16;
+                    u16 *tile_row = &render->tiles[tile_index];
+                    for (row = 0; row <= 2; row++, tile_row += 32, tile_index += 32, pattern += 4) {
+                        s32 col;
                         for (col = 0; col <= 2; col++) {
-                            ((u16 (*)[32])0x0600f800)[21 + row][20 + panel * 3 + (col & 3) - work->count * 3] = 0x100 + panel * 16 + row * 4 + col;
-                            render->tiles[17 + row][20 + panel * 3 + (col & 3) - work->count * 3] = 0;
+                            ((u16 *)0x0600fd68)[tile_index + (col & 3) - count * 3] = 0x100 + pattern + col;
+                            tile_row[0x234 + (col & 3) - count * 3] = 0;
                         }
+                    }
+                }
             }
         }
         if (work->previous != work->selection) {
@@ -307,10 +342,18 @@ s32 Ui_RunSelectionScreen(s32 mode)
         Resource_ResetEntry(work->entries[cnt].resource);
     render->menu_busy = 1;
     UiWork_Finalize(work->window, 1);
-    for (panel = 0; panel <= 6; panel++)
-        for (row = 0; row <= 2; row++)
-            for (col = 0; col <= 2; col++)
-                render->tiles[17 + row][5 + panel * 3 + (col & 3)] = 0xf07f;
+    {
+        s32 panel;
+        for (panel = 0; panel <= 6; panel++) {
+            s32 row;
+            u16 *tile_row = &render->tiles[panel * 3];
+            for (row = 0; row <= 2; row++, tile_row += 32) {
+                s32 col;
+                for (col = 0; col <= 2; col++)
+                    tile_row[0x225 + (col & 3)] = 0xf07f;
+            }
+        }
+    }
     render->dirty = 1;
     WaitFrames(1);
     Scheduler_RemoveCallback(Graphics_SetBg1Priority3);

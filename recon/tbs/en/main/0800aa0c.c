@@ -1,12 +1,36 @@
+/* Draft whole owner [0800aa0c,0800b074), 1640 bytes including two switch
+   tables and three own pool islands. The following sprite placement owner
+   is now split and exact; it is not part of this experiment.
+   2026-09-26 baseline: 1648 bytes, 523 differing halfwords, 338 aligned
+   edits, 60-byte frame versus reference 56. Complete normalized diff read.
+   Exact caller b388 supplies the sprite-family object and a direction;
+   exact callee Animation_SetWorkEntry confirms script/cursor/timer fields
+   and its void prototype. Direct and call-via sites inspected in the owner.
+   H1: command parsing is a reload/test loop, not a duplicated while test.
+   Carry the opcode/frame local through terminal commands into direction
+   selection; only timer-expiry and hold paths reload frame_base. Predict
+   one timer test and no frame reload for commands 239/255/default. This
+   targets the extra back-edge before any allocation/stack spelling work.
+   One bounded trial before the 23:55 checkpoint; exact 1640 bytes plus
+   compare/coverage/verify required for adoption. Record full-diff result
+   here; no second trial this checkpoint.
+   H1 result: 1644/1640 bytes, 561 differing halfwords / 379 aligned edits;
+   frame still 60/56. All 17 command-table destinations now match, the
+   duplicated timer test is gone, and the terminal frame value reaches r0
+   without the old reload. This local structural repair is retained despite
+   the worse whole-owner alignment score; no whole-CFG equivalence claim.
+   Remaining coherent defects: direction kinds 8/88 add before narrowing
+   rather than after shifting; insertion sort re-reads an already loaded
+   halfword, adds a frame slot and has different exit/store ownership;
+   upload dispatch rematerializes 03001f24 instead of base 03001e50 + 212.
+   Read the complete difference. The next experiment must audit typed sort
+   lifetimes or the existing dispatch-family declaration, not permutations. */
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
 #include "DMA.H"
 #include "video_dma_family.h"
 
 /* Builds and uploads one composite animation frame. */
-
-#define Animation_ComposeObjectFrame Func_0800aa0c
-#define Animation_SetWorkEntry Func_0800b9f4
 
 /* One scripted layer of the composite object. */
 struct AnimationEntry {
@@ -77,12 +101,11 @@ u8 *Resource_DecompressLz(const u8 *source, u8 *destination);
 s32 VramBlock_LoadCached(u32 slot, u32 size, const void *source);
 void Animation_SetWorkEntry(void *work, s32 no);
 
-s32 Animation_ComposeObjectFrame(struct AnimationObject *obj, s16 dir)
+s32 Func_0800aa0c(struct AnimationObject *obj, s16 dir)
 {
     struct AnimationEntry *e;
     struct ComposeContext *ctx;
     void *block;
-    u8 *script;
     u8 *buf;
     u8 *mask;
     u8 *src;
@@ -99,7 +122,6 @@ s32 Animation_ComposeObjectFrame(struct AnimationObject *obj, s16 dir)
     s32 k;
     s32 n;
     u32 key;
-    s32 op;
     s32 arg;
     s32 base;
     u32 attr;
@@ -133,58 +155,62 @@ s32 Animation_ComposeObjectFrame(struct AnimationObject *obj, s16 dir)
         if (e->script == 0) {
             continue;
         }
-        for (;;) {
-            if ((s16)e->timer > 0) {
-                break;
-            }
-            script = e->script;
-            op = script[e->pos++];
-            arg = script[e->pos++];
-            switch (op) {
-            case 254:
-                Animation_SetWorkEntry(e, arg);
-                obj->last_no = (u8)arg;
-                break;
-            case 253:
-                e->pos = (u8)arg;
-                break;
-            case 245:
-                e->timer += arg << 4;
-                break;
-            case 241:
-                e->pos -= 2;
-                goto framed;
-            case 240:
-                e->kind = (u8)arg;
-                break;
-            case 255:
-                e->frame_base = 255;
-                e->timer += arg << 4;
-                goto framed;
-            case 239:
-                e->frame_base = 255;
-                e->script = 0;
-                obj->count--;
-                goto framed;
-            case 242:
-            case 243:
-            case 244:
-            case 246:
-            case 247:
-            case 248:
-            case 249:
-            case 250:
-            case 252:
-                break;
-            default:
-                e->frame_base = (u8)op;
-                e->timer += arg << 4;
-                goto framed;
-            }
+        /* FAKEMATCH: explicit timer-test lifetime keeps command back-edges
+           and the decoded frame value separate from the hold reload. */
+    read_command:
+        if ((s16)e->timer > 0)
+            goto advance_timer;
+        base = e->script[e->pos++];
+        arg = e->script[e->pos++];
+        switch (base) {
+        case 254:
+            Animation_SetWorkEntry(e, arg);
+            obj->last_no = (u8)arg;
+            break;
+        case 253:
+            e->pos = (u8)arg;
+            break;
+        case 245:
+            e->timer += arg << 4;
+            break;
+        case 241:
+            e->pos -= 2;
+            goto framed;
+        case 240:
+            e->kind = (u8)arg;
+            break;
+        case 255:
+            e->frame_base = 255;
+            e->timer += arg << 4;
+            base = 255;
+            goto select_direction;
+        case 239:
+            e->frame_base = 255;
+            e->script = 0;
+            obj->count--;
+            base = 255;
+            goto select_direction;
+        case 242:
+        case 243:
+        case 244:
+        case 246:
+        case 247:
+        case 248:
+        case 249:
+        case 250:
+        case 252:
+            break;
+        default:
+            e->frame_base = (u8)base;
+            e->timer += arg << 4;
+            goto select_direction;
         }
+        goto read_command;
+    advance_timer:
         e->timer = e->timer - e->step;
     framed:
         base = e->frame_base;
+    select_direction:
         switch (e->kind) {
         case 1:
             attr = Data_0801307c[(u16)dir >> 13];

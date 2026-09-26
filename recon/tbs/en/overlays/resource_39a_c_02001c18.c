@@ -1,79 +1,61 @@
-/* NONMATCHING: 352 of 352 bytes, 125 differing halfwords (2026-09-24). Unit
- * source for 39a:02001c18 with absolute symbols: Engine_ObjectCreate 0x0200a2b8,
- * Engine_ObjectSetAnimation 0x0200a2a0, Engine_ObjectSetScript 0x0200a2b0,
- * Engine_ObjectSetPalette 0x0200a390, Imiru_Divide 0x0200a258 (one veneer for
- * all three divides). Remaining: the reference keeps (flags & 15) << 2 in r5 and
- * reloads the script in the 0x40000 block, flags lives in r8 and extra in sl,
- * and the -13 field mask shares fp with a3; writing the table load twice spills
- * the index instead: CSE then derives the -13 mask as the live 15 register
- * minus 28, so 15 keeps r5 (the reference builds -13 fresh with movs; negs).
- * The tail is two full Imiru_Divide calls per branch cross-jumped into one
- * bl. */
-#include "TYPES.H"
+/* Spawn a scripted effect with optional palette, priority and scale rates.
+ * Complete 352-byte owner, including its three-word pool, matches exactly.
+ * FAKEMATCH: retain the local script-table copy and branch-local divide
+ * tails so the compiler reloads the script and prepares both call arguments
+ * in the observed lifetime. Shared FIELD_EFFECT types recover the remaining
+ * object, sprite and options layout without private byte-offset casts. */
+#include "FIELD_EFFECT.H"
 
-u8 *Engine_ObjectCreate(s32 kind, s32 x, s32 y, s32 z);
-void Engine_ObjectSetAnimation(u8 *obj, s32 anim);
-void Engine_ObjectSetScript(u8 *obj, u8 *script);
-void Engine_ObjectSetPalette(u8 *obj, s32 palette);
-/* The same IWRAM divide, reached through one import veneer per call site. */
-s32 Imiru_Divide(s32 num, s32 den);
+void OverlayObject_AdvancePositionByDelta();
 
 struct ScriptTable {
-    u8 *script[3];
+    const s32 *script[3];
 };
 
-struct Sprite39a {
-    u8 pad[9];
-    u8 lo : 2;
-    u8 layer : 2;
-    u8 hi : 4;
-};
-
-void Func_02001c18(s32 x, s32 y, s32 z, s32 a3, s32 a4, s32 a5, s32 flags, u8 *extra)
+void Effect_Spawn(s32 x, s32 y, s32 z, s32 velocity_x, s32 velocity_y, s32 velocity_z, u32 flags,
+                  const struct EffectOptions *extra)
 {
     struct ScriptTable table;
-    u8 *obj;
-    struct Sprite39a *spr;
-    u8 *script;
-    s32 num;
+    struct FieldEffect *obj;
+    struct FieldSprite *spr;
+    const s32 *script;
 
     table = *(struct ScriptTable *)0x0200a418;
-    obj = Engine_ObjectCreate(222, x, y, z);
+    obj = (struct FieldEffect *)Engine_ObjectCreate(222, x, y, z);
     if (obj == 0)
         return;
-    spr = *(struct Sprite39a **)(obj + 80);
-    Engine_ObjectSetAnimation(obj, (flags + 1) & 15);
-    script = table.script[flags & 15];
-    Engine_ObjectSetScript(obj, script);
-    obj[85] = 0;
-    ((u8 *)spr)[38] = 0;
-    *(s32 *)(obj + 108) = 0x2009bdd;
-    *(s32 *)(obj + 68) = a3;
-    *(s32 *)(obj + 72) = a4;
-    *(s32 *)(obj + 76) = a5;
-    *(s32 *)(obj + 48) = 0;
-    *(s32 *)(obj + 52) = 0;
-    spr->layer = 1;
+    spr = obj->sprite;
+    Engine_ObjectSetAnimation((struct FieldActor *)obj, (flags + 1) & EFFECT_SCRIPT_MASK);
+    Engine_ObjectSetScript((struct FieldActor *)obj, table.script[flags & EFFECT_SCRIPT_MASK]);
+    obj->motion_flags = 0;
+    spr->flags = 0;
+    obj->update = OverlayObject_AdvancePositionByDelta;
+    obj->velocity_x = velocity_x;
+    obj->velocity_y = velocity_y;
+    obj->velocity_z = velocity_z;
+    obj->scale_rate_x = 0;
+    obj->scale_rate_y = 0;
+    spr->priority = 1;
     if ((flags & 0xffff0000) == 0 || extra == 0)
         return;
-    if (flags & 0x10000)
-        Engine_ObjectSetPalette(obj, *(s32 *)(extra + 4));
-    if (flags & 0x20000) {
-        obj[35] &= 0xfe;
-        spr->layer = *extra;
+    if (flags & EFFECT_USE_PALETTE)
+        Engine_ObjectSetPalette((struct FieldActor *)obj, extra->palette);
+    if (flags & EFFECT_USE_PRIORITY) {
+        obj->priority_flags &= ~ACTOR_PRIORITY_AUTOMATIC;
+        spr->priority = extra->priority;
     }
-    if (flags & 0x80000) {
-        *(s32 *)(obj + 24) = *(s32 *)(extra + 8);
-        *(s32 *)(obj + 28) = *(s32 *)(extra + 12);
+    if (flags & EFFECT_USE_START_SCALE) {
+        obj->scale_x = extra->start_scale_x;
+        obj->scale_y = extra->start_scale_y;
     }
-    if (flags & 0x40000) {
-        if (flags & 0x80000) {
-            *(s32 *)(obj + 48) = Imiru_Divide(*(s32 *)(extra + 16) - *(s32 *)(obj + 24), *(s32 *)(script + 12));
-            num = *(s32 *)(extra + 20) - *(s32 *)(obj + 28);
+    if (flags & EFFECT_SCALE_TO_TARGET) {
+        script = table.script[flags & EFFECT_SCRIPT_MASK];
+        if (flags & EFFECT_USE_START_SCALE) {
+            obj->scale_rate_x = Engine_MathDivide(extra->target_scale_x - obj->scale_x, script[3]);
+            obj->scale_rate_y = Engine_MathDivide(extra->target_scale_y - obj->scale_y, script[3]);
         } else {
-            *(s32 *)(obj + 48) = Imiru_Divide(*(s32 *)(extra + 16) + -0x10000, *(s32 *)(script + 12));
-            num = *(s32 *)(extra + 20) + -0x10000;
+            obj->scale_rate_x = Engine_MathDivide(extra->target_scale_x - 0x10000, script[3]);
+            obj->scale_rate_y = Engine_MathDivide(extra->target_scale_y - 0x10000, script[3]);
         }
-        *(s32 *)(obj + 52) = Imiru_Divide(num, *(s32 *)(script + 12));
     }
 }

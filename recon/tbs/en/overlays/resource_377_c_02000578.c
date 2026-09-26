@@ -1,5 +1,5 @@
-/* NONMATCHING: 1172 bytes, candidate 1172, 385 differing halfwords, 74
- * wrong instructions, 160 halfword edits. FieldScene_RunComplexActorSequence
+/* NONMATCHING: 1172 bytes, candidate 1176, 344 differing halfwords, 116
+ * wrong instructions, 148 halfword edits. FieldScene_RunComplexActorSequence
  * targets FIELD/COMMON/HAIDIA_BABI/F_00578.C as a single-overlay unit binding its
  * names at their runtime addresses (an import veneer's listing offset plus
  * 0x8000). Pointer-taking child-flag and palette calls now consume the actor
@@ -13,6 +13,24 @@
  * Initial scheduling,
  * sprite/actor registers and byte-pointer copies differ; topology is equal.
  * Typed unknown_5a flag accesses emit the same bytes as offset casts.
+ * 2026-09-26 bounded pass, own-ROM full extent [0x02000578,0x02000a0c).
+ * Read the complete listing and normalized diff. H1: a u16 stopped local
+ * for actor +85, separate from the view actor's word-sized Y zero, emits
+ * exactly the baseline bytes (1172 bytes, 385 differing halfwords, 160
+ * edits). The reference owns a zero at pool 0x0200063c, also holds a wide
+ * zero in sl, and saves a third high register; plain scalar narrowing does
+ * not recreate that ownership. Baseline binary equality checked directly.
+ * H2: one-halfword aggregate recreates a zero pool word but remains four
+ * bytes long, with the sprite in r5 and only two high registers saved.
+ * The zero pool alone is insufficient: the reference materializes the
+ * independent wide Y zero BEFORE the sprite rotation store and actor lookup.
+ * Caller ENTRY_STATE.C dispatches this whole scene for entrance 20 when
+ * flag 0x87a is clear, after setting flag 0x834. No arguments are passed.
+ * H3: explicit wide ground initialization in a tagged setup block moves
+ * that zero before sprite setup and lowers edits to 148, but remains 1176
+ * bytes. Sprite stays r5, control sl, ground r8; reference needs sprite r8,
+ * control r9, ground sl. Four later byte-flag updates retain extra pointer
+ * copies. All three hypotheses preserved in commits; stop this pass here.
  * WALL: structural-topology: shared workspace lifetimes and actor setup */
 #include "FIELD_EVENT.H"
 
@@ -34,6 +52,10 @@ struct ScenePointerBank {
 };
 
 extern struct ScenePointerBank gScenePointers;
+
+struct SceneHalf {
+    u16 value;
+};
 
 /* AUDITED GENERATED CALL SCRIPT for FieldScene_RunComplexActorSequence. */
 
@@ -84,6 +106,8 @@ void FieldScene_RunComplexActorSequence(void)
     u8 *work;
     struct FieldActor *scene_actor;
     struct SceneControlPointers *control;
+    struct SceneHalf stopped;
+    s32 ground;
 
     control = &gScenePointers.control;
     work = gScenePointers.map_work;
@@ -98,9 +122,17 @@ void FieldScene_RunComplexActorSequence(void)
     Main_0808a0f0(16, 0, 0);
     Main_080091e0(Main_0808a080(0), 0);
     Main_0808a100(0, 18);
+    /* FAKEMATCH candidate: delimit the wide position initialization from
+     * the narrow actor flag so its lifetime starts in the setup phase. */
+    do {
+        ground = 0;
+    } while (0);
     *(u16 *)((u8 *)sprite + 30) = 1365;
     p12 = Main_0808a080(17);
-    p12->motion_flags = 0;
+    /* FAKEMATCH candidate: keep the byte flag's halfword zero separate
+     * from the wide scene-position zero, as the two reference loads are. */
+    stopped.value = 0;
+    p12->motion_flags = stopped.value;
     Main_080091e0(Main_0808a080(17), 0);
     Main_0808a0f0(17, 37748736, 42598400);
     Main_08009188(7);
@@ -120,7 +152,7 @@ void FieldScene_RunComplexActorSequence(void)
     *(u32 *)(work + 244) = 0x02700000;
     *(u32 *)(work + 248) = 0x03300000;
     scene_actor->x.fixed = 0x02340000;
-    scene_actor->y.fixed = 0;
+    scene_actor->y.fixed = ground;
     scene_actor->z.fixed = 0x02b30000;
     Main_08009128();
     Main_080000c0(1);

@@ -1,33 +1,35 @@
-/* NONMATCHING: 100 of 100 bytes, 10 differing halfwords (2026-09-24), all
- * pool order: the code is exact, but the reference pool puts the address-zero
- * word first (0, 0x02000240, 0x02009d88). A HImode zero in the else branch
- * alone orders the pool right but keeps a second SImode entry; HImode in both
- * dumps the pool at the then-branch barrier. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
-/* Unit symbols: Data_02000240_t 0x02000240, Data_02009d88 0x02009d88 and
- * Data_00000000 0x00000000 (data). */
-extern s32 Data_02000240_t[];
-extern s16 Data_02009d88[];
-extern u8 Data_00000000[];
 void OverlayObject_SpawnKind24AtActor(struct FieldActor *actor);
 
-/* While the leader stands in the north-west corner, spawn a puff every thirty
- * frames; leaving the corner resets the counter. */
-void Local_02000ed8(void)
-{
-    struct FieldActor *leader;
+/* FAKEMATCH: halfword aggregates retain the short literal-pool reach. */
+struct SpawnCounter {
+    s16 frames;
+};
+extern struct SpawnCounter gCornerSpawnCounter;
 
-    leader = Engine_ActorGet(Data_02000240_t[125]);
-    if (leader->x.fixed < 0x8e0000) {
-        if (leader->y.fixed < 0x80000) {
-            if (Data_02009d88[0] == 0)
-                OverlayObject_SpawnKind24AtActor(leader);
-            if (++Data_02009d88[0] == 30)
-                Data_02009d88[0] = (s32)Data_00000000;
+/* Spawn a kind-24 effect every thirty calls while the selected actor is
+ * below both coordinate limits. Only the y limit resets the counter. */
+void BiribinoMura_UpdateCornerSpawn(void)
+{
+    struct FieldActor *actor;
+
+    actor = Engine_ActorGet(gGameState.selected_actor);
+    if (actor->x.fixed < 0x8e0000) {
+        if (actor->y.fixed < 0x80000) {
+            if (gCornerSpawnCounter.frames == 0)
+                OverlayObject_SpawnKind24AtActor(actor);
+            if (++gCornerSpawnCounter.frames == 30) {
+                struct SpawnCounter zero = { 0 };
+                gCornerSpawnCounter = zero;
+            }
         } else {
-            Data_02009d88[0] = (s32)Data_00000000;
+            struct SpawnCounter *cnt = &gCornerSpawnCounter;
+            struct SpawnCounter zero;
+            /* FAKEMATCH: retain destination setup before the aggregate reset. */
+            do { zero.frames = 0; } while (0);
+            *cnt = zero;
         }
     }
 }

@@ -4,5 +4,5 @@
 /* 上限を指定しない呼出し。 */
 void Ui_AdjustValueWithoutLimit(s32 no, s32 value)
 {
-    UiWindow_AdjustValue(no, value, 0x7fffffff);
+    UiText_DecodeMessage(no, value, 0x7fffffff);
 }

@@ -1,153 +1,236 @@
-#include "types.h"
+/* DRAFT: whole Thumb owner [080191cc,0801964c), 1152 bytes with its
+ * switch table and all literal pools. Split and byte-verified on main.
+ * Baseline: transfer the proven 8-byte Effect bitfields and sprite attributes
+ * from AffineMatrix_BuildForEffect/Ui_ApplyTableScaleToObject, and recover
+ * the 36-byte slot, linked 28-byte item and embedded +16 sprite ownership.
+ * Correct the old lift's case mapping, random unsignedness, frame updates,
+ * paired/signed table indexing, trig calls, and stores to item versus sprite.
+ * Prediction: all 17 switch entries, two loops and call ordering agree;
+ * the reference has a 24-byte frame including an 8-byte effect at sp+16.
+ * Gate: whole owner exact plus compare-all/test/coverage/verify. Diagnose
+ * the complete normalized diff. One model + at most two structural follow-ups;
+ * stop within 25 minutes, record rejected hypotheses here, never sweep RA.
+ * Layout admission rejected a byte/halfword Y union (word aligned here) and
+ * an extra sprite tail halfword (the tile union already occupies four bytes).
+ * Use the proven halfword Y/byte alias and the 12-byte embedded sprite.
+ * Baseline result: 1136/1152 bytes, 398 aligned halfword edits, frame 8/24.
+ * Complete diff: switch entries are semantically mapped but bodies are in
+ * numeric rather than ROM order; mode 2 reloads attributes after Math_ModU
+ * instead of retaining their pre-call values. No exact bytes are adopted.
+ */
+#include "RENDER_INPUT.H"
+#include "FIXED_MATH.H"
 
-#define Function Func_080191cc
+struct UiEffect {
+    unsigned x : 16;
+    unsigned y : 16;
+    unsigned angle : 16;
+    unsigned unused : 16;
+};
 
-s32 Func_08002304();
-void Func_08003dec();
-s32 Func_08003fa4();
-void Func_08003d28();
-s32 Func_08002322();
-s32 Func_0800231c();
-s32 Func_08004458();
-void Func_0801908c();
+union UiTileAttribute {
+    u16 value;
+    struct {
+        u16 tile : 10;
+        u16 rest : 6;
+    } bits;
+};
 
-static u8 *g_state(void)
+struct UiSprite {
+    s32 next;
+    u8 y;
+    u8 affine : 2;
+    u8 mode : 2;
+    u8 mosaic : 1;
+    u8 color : 1;
+    u8 shape : 2;
+    u16 x : 9;
+    u16 affine_index : 5;
+    u16 size : 2;
+    union UiTileAttribute attribute;
+};
+
+struct UiAnimatedItem {
+    struct UiAnimatedItem *next;
+    u8 unknown_04;
+    u8 mode;
+    u16 x;
+    u16 y;
+    u16 unknown_0a;
+    u16 frame;
+    u8 tile;
+    u8 priority;
+    struct UiSprite sprite;
+};
+
+struct UiAnimationSlot {
+    struct UiAnimatedItem *head;
+    u8 unknown_04[14];
+    u16 mode;
+    u16 unknown_14;
+    u16 flags;
+    u8 unknown_18[12];
+};
+
+struct UiAnimationWork {
+    u8 unknown_000[0x500];
+    struct UiAnimationSlot slots[8];
+    u8 unknown_620[0x12b6 - 0x620];
+    u16 resource;
+};
+
+typedef char UiAnimationSlot_size[sizeof(struct UiAnimationSlot) == 36 ? 1 : -1];
+typedef char UiAnimatedItem_size[
+    sizeof(struct UiAnimatedItem) == sizeof(struct RenderOutput) ? 1 : -1];
+typedef char UiAnimatedItem_sprite[
+    (u32)&((struct UiAnimatedItem *)0)->sprite == 16 ? 1 : -1];
+typedef char UiEffect_size[sizeof(struct UiEffect) == 8 ? 1 : -1];
+
+extern struct UiAnimationWork *Data_03001e8c;
+extern u32 Data_03001800;
+extern const u8 Data_080368d4[];
+extern const u8 Data_08033e60[];
+extern const u8 Data_08033eb0[];
+extern const u8 Data_08033ee8[];
+
+u32 Math_ModU(u32 numerator, u32 denominator);
+u32 Random16(void);
+s32 VramBlock_LoadCached(u32 slot, u32 size, const void *source);
+s32 AffineMatrix_BuildForEffect(struct UiEffect *effect);
+void RenderOutput_UpdateScaleAnimation(struct UiAnimatedItem *item);
+void Runtime_PushSlotEntry(s32 *entry, s32 slot);
+
+void UiWork_AnimateSpriteSlots(void)
 {
-    return (u8 *)(*(u32 *)0x03001e8c);
-}
+    struct UiAnimationWork *work = Data_03001e8c;
+    struct UiAnimationSlot *slot = work->slots;
+    s32 no;
+    struct UiEffect effect;
 
-static u32 g_clock(void)
-{
-    return *(u32 *)0x03001800;
-}
+    for (no = 0; no != 8; no++, slot++) {
+        struct UiAnimatedItem *item;
+        u32 phase;
 
-void Function(s32 unused)
-{
-    u8 *state = g_state();
-    u8 *slot = state + 0x500;
-    u32 slot_index;
-
-    for (slot_index = 0; slot_index != 8; ++slot_index, slot += 36) {
-        u8 *item;
-        u8 *entry;
-        u32 kind;
-        u32 clock_slot;
-
-        if ((*(u16 *)(slot + 22) & 1) == 0) {
+        if (!(slot->flags & 1))
             continue;
-        }
-        item = *(u8 **)slot;
-        while (item != 0) {
-            entry = item + 16;
-            if (*(u16 *)(slot + 18) == 4) {
-                *(u16 *)(item + 12) = 2;
-                item[5] = 8;
+        item = slot->head;
+        phase = (Data_03001800 >> 2) & 7;
+        while (item != NULL) {
+            struct UiSprite *sprite = &item->sprite;
+            if (slot->mode == 4) {
+                item->frame = 2;
+                item->mode = 8;
             }
-            kind = (u32)(item[5] - 2);
-            clock_slot = (g_clock() >> 2) & 7;
-            switch (kind) {
-            case 0:
-                if (*(u16 *)(state + 0x12b6) != 0x60) {
-                    u32 loaded = Func_08003fa4(*(u16 *)(state + 0x12b6), 0x80,
-                                               (clock_slot << 7) + 0x080368d4);
-                    entry[8] = (u8)((entry[8] & 0xfc) | (loaded & 0x3ff));
-                    *(u16 *)(entry + 8) = (*(u16 *)(entry + 8) & 0xfc00) | (loaded & 0x3ff);
-                    item[14] = entry[8];
-                    item[21] = (u8)(((item[21] & 0xf3) | 0x20) & 0x3f) | 0x80;
-                    entry[7] &= 0x3f;
-                    entry[4] = (u8)(item[8] + ((const u8 *)0x08033e60)[Func_08002304(*(u32 *)0x03001800, 80)] + 2);
-                    item[21] &= 0xfc;
-                    entry[7] &= 0xc1;
-                }
-                break;
+            switch (item->mode) {
             case 2:
-                if (*(u32 *)0x03001800 & 1) {
-                    s32 a = Func_08004458();
-                    s32 b = Func_08004458();
-                    s32 delta = ((((a * 3) >> 16) + ((b * 3) >> 16)) >> 1);
-                    *(u16 *)(entry + 6) = (*(u16 *)(entry + 6) & 0xfe00) |
-                                           ((*(u16 *)(item + 6) + delta - 1) & 0x1ff);
-                    a = Func_08004458();
-                    b = Func_08004458();
-                    delta = ((((a * 3) >> 16) + ((b * 3) >> 16)) >> 1);
-                    entry[4] = (u8)(item[8] + delta - 1);
+                if (work->resource != 0x60) {
+                    sprite->attribute.bits.tile = VramBlock_LoadCached(
+                        work->resource, 128, &Data_080368d4[phase * 128]);
+                    item->tile = sprite->attribute.value;
+                    sprite->mode = 0;
+                    sprite->mosaic = 0;
+                    sprite->color = 1;
+                    sprite->shape = 2;
+                    sprite->size = 0;
+                    sprite->y = *(u8 *)&item->y +
+                        Data_08033e60[Math_ModU(Data_03001800, 80)] + 2;
+                    sprite->affine = 0;
+                    sprite->affine_index = 0;
                 }
                 break;
-            case 3: {
-                u16 scratch[3];
-                if (*(u16 *)(item + 12) == 0) {
-                    break;
-                }
-                scratch[0] = (u16)(*(u32 *)(state + 0x10) & 0x3fff) | 0x200;
-                scratch[1] = (u16)(*(u32 *)(state + 0x10) & 0xffff);
-                scratch[2] = (u16)(*(u32 *)(state + 0x10) & 0xffff);
-                Func_08003d28(scratch);
-                entry[7] = (u8)((entry[7] & 0xc0) | ((scratch[0] & 31) << 1));
-                item[5] |= 3;
-                *(u16 *)(entry + 6) = (*(u16 *)(entry + 6) & 0xfe00) |
-                                       ((*(u16 *)(item + 6) + 0x1ff) & 0x1ff);
-                entry[4] = (u8)(item[8] - 5);
-                break;
-            }
             case 4:
-                if (*(u16 *)(item + 12) != 0) {
-                    *(u16 *)(item + 12) += 0x80;
-                    entry[7] = (u8)((entry[7] & 0xc0) | ((Func_08002304(*(u16 *)(item + 12), 0x50) & 31) << 1));
-                    item[5] |= 3;
-                    *(u16 *)(entry + 6) = (*(u16 *)(entry + 6) & 0xfe00) |
-                                           ((*(u16 *)(item + 6) + 0x1ff) & 0x1ff);
-                    entry[4] = (u8)(item[8] - 8);
-                }
+                if (Data_03001800 & 1)
+                    item->frame++;
+                sprite->x = item->x +
+                    (s8)Data_08033eb0[(u16)Math_ModU(item->frame, 20) * 2];
+                sprite->y = *(u8 *)&item->y +
+                    Data_08033eb0[(u16)Math_ModU(item->frame, 20) * 2 + 1] - 2;
                 break;
             case 5:
-                *(u16 *)(entry + 6) = (*(u16 *)(entry + 6) & 0xfe00) |
-                                       ((*(u16 *)(item + 6) + 0x100) & 0x1ff);
-                entry[4] = (u8)(item[8] - 8);
+                if (Data_03001800 & 1) {
+                    u32 a, b;
+                    a = Random16();
+                    b = Random16();
+                    sprite->x = item->x + (((a * 3 >> 16) +
+                        (b * 3 >> 16)) >> 1) - 1;
+                    a = Random16();
+                    b = Random16();
+                    sprite->y = *(u8 *)&item->y + (((a * 3 >> 16) +
+                        (b * 3 >> 16)) >> 1) - 1;
+                }
                 break;
             case 6:
-                if (*(u16 *)(item + 12) != 0) {
-                    ++*(u16 *)(item + 12);
-                    entry[7] = (u8)((entry[7] & 0xc0) |
-                                    ((Func_08002304(*(u16 *)(item + 12), 20) & 31) << 1));
-                    *(u16 *)(entry + 6) = (*(u16 *)(entry + 6) & 0xfe00) |
-                                           ((*(u16 *)(item + 6) + 0x1ff) & 0x1ff);
-                    entry[4] = (u8)(item[8] - 2);
-                }
+                if (item->frame == 0)
+                    goto reset;
+                effect.x = 512;
+                effect.y = 512;
+                effect.angle = 0;
+                sprite->affine_index = AffineMatrix_BuildForEffect(&effect);
+                sprite->affine = 3;
+                /* FAKEMATCH: unsigned wrapped offsets retain literal sharing. */
+                sprite->x = item->x + 0xfffb;
+                sprite->y = *(u8 *)&item->y + 251;
+                item->frame += 0xffff;
                 break;
             case 7:
+                effect.x = 256;
+                effect.y = 256;
+                item->frame += 768;
+                effect.angle = item->frame;
+                sprite->affine_index = AffineMatrix_BuildForEffect(&effect);
+                sprite->affine = 1;
+                sprite->x = item->x - (Trig_Sin(effect.angle + 0xe800) >> 14) - 2;
+                sprite->y = *(u8 *)&item->y - (Trig_Cos(effect.angle + 0x6800) >> 14) - 2;
+                break;
             case 8:
+                if (item->frame == 0)
+                    goto reset;
+                effect.x = 320;
+                effect.y = 320;
+                effect.angle = 0;
+                sprite->affine_index = AffineMatrix_BuildForEffect(&effect);
+                sprite->affine = 3;
+                /* FAKEMATCH: unsigned wrapped offsets retain literal sharing. */
+                sprite->x = item->x + 0xfff8;
+                sprite->y = *(u8 *)&item->y + 248;
+                item->frame += 0xffff;
+                break;
+            reset:
+                sprite->affine_index = 0;
+                sprite->affine = 0;
+                sprite->x = item->x;
+                sprite->y = item->y;
+                break;
             case 9:
             case 10:
-                Func_0801908c(item);
-                break;
+            case 11:
             case 12:
-            case 13:
+                RenderOutput_UpdateScaleAnimation(item);
+                break;
             case 14:
-                ++*(u16 *)(item + 12);
-                entry[4] = (u8)(item[8] + (s8)((const s8 *)0x08033eb0)[(*(u16 *)(item + 12)) & 15]);
-                break;
             case 15:
-                if (*(u16 *)(item + 12) != 0) {
-                    ++*(u16 *)(item + 12);
-                    entry[4] = (u8)(item[8] + (s8)((const s8 *)0x08033eb0)[(*(u16 *)(item + 12)) & 15]);
-                }
-                break;
             case 16:
-                if (*(u16 *)(item + 12) != 0) {
-                    ++*(u16 *)(item + 12);
-                    entry[4] = (u8)(item[8] + (s8)((const s8 *)0x08033eb0)[(*(u16 *)(item + 12)) & 15]);
-                }
+                item->frame++;
+                sprite->y = *(u8 *)&item->y + Data_08033ee8[item->frame & 15];
                 break;
-            default:
+            case 17:
+                item->frame++;
+                sprite->y = *(u8 *)&item->y - Data_08033ee8[item->frame & 15];
+                break;
+            case 18:
+                item->frame++;
+                sprite->x = item->x - (s8)Data_08033ee8[item->frame & 15];
+                sprite->y = *(u8 *)&item->y + Data_08033ee8[item->frame & 15];
                 break;
             }
-            if (item[5] == 2) {
-                if (*(u16 *)(state + 0x12b6) != 0x60)
-                    Func_08003dec(entry, item[15]);
-            } else if (item[5] != 13) {
-                Func_08003dec(entry, item[15]);
+            if (item->mode == 2) {
+                if (work->resource != 0x60)
+                    Runtime_PushSlotEntry(&sprite->next, item->priority);
+            } else if (item->mode != 13) {
+                Runtime_PushSlotEntry(&sprite->next, item->priority);
             }
-            item = *(u8 **)item;
+            item = item->next;
+            phase = (Data_03001800 >> 2) & 7;
         }
     }
 }

@@ -1,4 +1,8 @@
-/* Draft, not exact (2026-09-24): candidate=356 reference=356 differing_halfwords=52.
+/* Draft, not exact (2026-09-26): candidate=356 reference=356 differing_halfwords=52,
+   43 aligned edits. H1: unsigned-int rather than u16 bitfield storage is
+   byte-identical; it does not alter mask modes or their pool ordering.
+   Resource_GetBuffer's s32(s32,s32) contract is confirmed by its exact
+   definition in SYSTEM/RESOURCE/INITIALIZE.C. Callers ignore our result.
    Structure, loop layout (goto loop, no entry jump), volatile key reads, the
    s32 return (pop {r1}) and the BLDALPHA store through a two-halfword struct
    (movs, not a pool halfword) all match. Residuals are scheduling only: the
@@ -8,18 +12,18 @@
 #include "TYPES.H"
 
 struct SpriteAttr {
-    u16 y : 8;
-    u16 affine : 2;
-    u16 blend_mode : 2;
-    u16 mosaic : 1;
-    u16 full_color : 1;
-    u16 shape : 2;
-    u16 x : 9;
-    u16 affine_index : 5;
-    u16 size : 2;
-    u16 tile : 10;
-    u16 priority : 2;
-    u16 palette : 4;
+    unsigned y : 8;
+    unsigned affine : 2;
+    unsigned blend_mode : 2;
+    unsigned mosaic : 1;
+    unsigned full_color : 1;
+    unsigned shape : 2;
+    unsigned x : 9;
+    unsigned affine_index : 5;
+    unsigned size : 2;
+    unsigned tile : 10;
+    unsigned priority : 2;
+    unsigned palette : 4;
     u16 pad;
 };
 

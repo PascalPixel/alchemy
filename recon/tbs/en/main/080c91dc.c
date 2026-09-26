@@ -1,3 +1,14 @@
+/* Draft, not exact (2026-09-26): 1340 of 1360 bytes, 406 differing halfwords,
+   179 aligned edits (baseline 1336 / 401 / 206). Frame is the reference's 36 bytes.
+   Reuse the outer particle counter for burst drawing, as the r8 phase reset shows
+   at 080c9614; this restores that high-register counter and avoids a low-register
+   induction. Remaining: initial x/y store scheduling, argument-cell ownership in
+   the frame/particle phases, callback selector formation and burst image reloads.
+   A bounded byte-offset selector trial used sizeof(DrawRectangle), a separate
+   variant test, and an offset load for all three draws. It gave 1340 / 394 / 188:
+   the immediate 4/beq/0 choice appeared, but callback bases and loop scratch
+   registers shifted, and the reference add-to-base form remained absent.
+   That variant is not retained; declaration-order sweeping is not a new idea. */
 #include "BATTLE_TYPES.H"
 #include "TYPES.H"
 #include "BATTLE_EFX.H"
@@ -293,7 +304,7 @@ void Func_080c91dc(struct EffectArgument *argument)
                     != Data_080eded6[runtime->argument->variant * 2]);
             }
 
-            burst_index = 0;
+            particle_index = 0;
             burst = runtime->bursts;
             do {
                 if (burst->frame != -1) {
@@ -323,9 +334,9 @@ void Func_080c91dc(struct EffectArgument *argument)
                     if (burst->frame > -1)
                         burst->frame--;
                 }
-                burst_index++;
+                particle_index++;
                 burst++;
-            } while (burst_index != 32);
+            } while (particle_index != 32);
 
             Func_080cd52c();
             Func_080e155c(4, 4);

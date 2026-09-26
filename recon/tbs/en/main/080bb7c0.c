@@ -3,7 +3,7 @@
 #include "IO_WRITE_QUEUE.H"
 
 /* NONMATCHING: main [080bb7c0,080bb8d8), 280 bytes including both pools.
- * Fresh unit score: 264 bytes, 137 differing halfwords, 109 aligned edits.
+ * Fresh score (2026-09-26): 262 bytes, 137 differing halfwords, 107 aligned edits.
  * Typed word/sprite views emit tile and X halfword updates and the Y byte
  * store, but the reference frame is 20 bytes versus this candidate's 12.
  * X/Y remain registers, rather than sp+0/+4 with the prompt at sp+8;
@@ -12,8 +12,10 @@
  * Two structural tests: byte/halfword sprite fields 256/280 (136 halfwords,
  * 101 edits; its named UI call reached the body rather than the veneer);
  * word-sized fields with the existing veneer 264/280 (137/109, retained).
- * A shared coordinate/sprite aggregate was predicted, not tested: the
- * 30-minute source budget ended. No allocation tuning or C credit claimed.
+ * The shared coordinate/sprite aggregate now recovers the 20-byte frame,
+ * but retains its base in r7: coordinate and sprite access then share that
+ * base, preventing the reference's invariant X load before the draw loop.
+ * This is hypothesis 1 of the resumed lane; no C credit claimed.
  * Func_080153f0 remains the existing unnamed Ui_GetTableWordZero veneer;
  * other calls use registered names. No new aliases or compiler changes.
  * Reproduce with the scoring unit retained at d51144bd1; it owns the full
@@ -63,10 +65,16 @@ void Runtime_PushSlotEntry(s32 *entry, s32 priority);
 
 void Unnamed_080bb7c0(s32 x, s32 y)
 {
-    union BattlePromptEntry prompt;
+    struct {
+        s32 x;
+        s32 y;
+        union BattlePromptEntry prompt;
+    } work;
     s32 sprite;
     s32 tiles = Func_080153f0(0);
 
+    work.x = x;
+    work.y = y;
     while (!UiWork_IsCompleteFar())
         WaitFrames(1);
     sprite = Resource_LoadIntoFreeSlot(0x80);
@@ -74,12 +82,12 @@ void Unnamed_080bb7c0(s32 x, s32 y)
         QueueIoWriteDelay10(0x0400004a, 4);
         QueueIoWriteDelay6(0x0400004a, 16);
         ((struct PromptBlendRegister *)0x04000052)->value = 16;
-        prompt.words[1] = 0x40000000;
-        prompt.words[2] = 0;
-        prompt.sprite.tile = Resource_GetBuffer(sprite, tiles);
-        prompt.sprite.x = ((Data_03001e40 & 4) >> 1) + (u16)x + 0xfffc;
-        prompt.sprite.y = y - ((Data_03001e40 & 4) >> 2) + 248;
-        Runtime_PushSlotEntry(prompt.words, 240);
+        work.prompt.words[1] = 0x40000000;
+        work.prompt.words[2] = 0;
+        work.prompt.sprite.tile = Resource_GetBuffer(sprite, tiles);
+        work.prompt.sprite.x = ((Data_03001e40 & 4) >> 1) + (u16)work.x + 0xfffc;
+        work.prompt.sprite.y = work.y - ((Data_03001e40 & 4) >> 2) + 248;
+        Runtime_PushSlotEntry(work.prompt.words, 240);
         if (Data_03001c94 & 0x303)
             break;
         WaitFrames(1);

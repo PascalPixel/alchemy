@@ -1,10 +1,11 @@
-/* NONMATCHING: 1172 bytes, candidate 1208, 484 differing halfwords, 190
- * wrong instructions, 256 halfword edits. FieldScene_RunComplexActorSequence, meant for
- * FIELD/COMMON/HAIDIA_BABI/F_00578.C as a single-overlay unit binding its
+/* NONMATCHING: 1172 bytes, candidate 1204, 525 differing halfwords, 188
+ * wrong instructions, 269 halfword edits. FieldScene_RunComplexActorSequence
+ * targets FIELD/COMMON/HAIDIA_BABI/F_00578.C as a single-overlay unit binding its
  * names at their runtime addresses (an import veneer's listing offset plus
  * 0x8000). Pointer-taking child-flag and palette calls now consume the actor
- * lookup result; the palette call receives 226. Sprite/workspace lifetime,
- * literal pools and constant sharing still differ; topology is equal.
+ * lookup result; the palette call receives 226. The sprite pointer is now
+ * captured before calls, matching the reference's read lifetime. Workspace
+ * ownership, literal pools and constant sharing differ; topology is equal.
  * WALL: structural-topology: shared workspace lifetimes and actor setup */
 #include "FIELD_EVENT.H"
 
@@ -62,7 +63,7 @@ void Main_080f9010();
 void FieldScene_RunComplexActorSequence(void)
 {
     s32 base;
-    struct FieldActor *p1;
+    struct FieldSprite *sprite;
     struct FieldActor *p12;
     struct FieldActor *p67;
     struct FieldActor *p89;
@@ -71,7 +72,7 @@ void FieldScene_RunComplexActorSequence(void)
 
     work = *(u8 **)Data_03001e70;
     scene_actor = *(u32 **)(*(u8 **)Data_03001ebc + 480);
-    p1 = Main_0808a080(17);
+    sprite = Main_0808a080(17)->sprite;
     Main_0808a018();
     Main_0808a0f0(11, 0, 0);
     Main_0808a0f0(12, 0, 0);
@@ -81,7 +82,7 @@ void FieldScene_RunComplexActorSequence(void)
     Main_0808a0f0(16, 0, 0);
     Main_080091e0(Main_0808a080(0), 0);
     Main_0808a100(0, 18);
-    *(u16 *)((u8 *)p1->sprite + 30) = 1365;
+    *(u16 *)((u8 *)sprite + 30) = 1365;
     p12 = Main_0808a080(17);
     p12->motion_flags = 0;
     Main_080091e0(Main_0808a080(17), 0);

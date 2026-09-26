@@ -1,8 +1,8 @@
-/* NONMATCHING: candidate 468 of 468 bytes, 17 differing halfwords,
- * 11 aligned edits (2026-09-26). The common message and open-message tails
+/* NONMATCHING: candidate 468 of 468 bytes, 15 differing halfwords,
+ * 9 aligned edits (2026-09-26). The common message and open-message tails
  * now agree, including all branch destinations and literal words.
- * Remaining: the success-path halfword store precedes message selection;
- * flag 0x300 is shared in r5 across calls instead of rematerialized in r0.
+ * Remaining: flag 0x300 is shared in r5 across calls instead of
+ * rematerialized in r0. Message selection and the halfword store now agree.
  * Service declarations retain their registered return types. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
@@ -61,8 +61,9 @@ s32 Func_02000b94(void)
                 Engine_GameFlagClear(0x172);
                 Engine_GameFlagClear(0x16c);
                 Engine_GameFlagSet(0x202);
-                Data_02000240_t.halves[341][0] = answer;
+                /* FAKEMATCH: Select the shared-tail message before its answer store. */
                 line = msg + 7;
+                Data_02000240_t.halves[341][0] = answer;
                 goto message;
             } else {
                 Call1(Engine_GameFlagClear, 0x173);

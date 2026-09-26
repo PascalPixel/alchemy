@@ -637,8 +637,11 @@ pub(super) fn run(root: &Path, target: DecompTarget) -> Result<String, String> {
     }
     let recon = target.recon_dir();
     let source_path = format!("{recon}/private-inputs.json");
+    let source = read(root, &source_path)?;
     let hash = sha256::hex(rom.bytes());
-    crate::text_catalog::verify_reference(root, target.id.as_str(), rom.bytes())?;
+    if source["reference_sha256"] != hash {
+        return Err("ROM does not match private-inputs.json checksum".into());
+    }
     let inventory_path = format!("{}/reports/executable.json", target.output_dir);
     let inventory = crate::coverage::pipeline::authoritative_inventory(root, target)?
         .ok_or_else(|| {

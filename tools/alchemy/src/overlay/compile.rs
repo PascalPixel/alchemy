@@ -2144,6 +2144,7 @@ mod source_activation_tests {
             id: "shared".into(),
             game: "tbs".into(),
             source: "games/THE BROKEN SEAL/SRC/overlays/shared.c".into(),
+            compiler_route: "canonical-gcc296".into(),
             overlay: Some("resource_382".into()),
             absolute_symbols: BTreeMap::new(),
             editions: BTreeMap::new(),

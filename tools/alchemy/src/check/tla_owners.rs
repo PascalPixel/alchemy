@@ -5,10 +5,10 @@
 //! a shared file cannot drift from the second game unnoticed.
 //!
 //! A main-image owner's extent is declared by its unit, inside the executable
-//! inventory. An overlay owner's extent is its `AlchemyC_` placeholder in
-//! its retained listing under `recon/tla/raw/overlays`, and the listing
-//! assembled with every placeholder compiled must reproduce the overlay the
-//! ROM loads.
+//! inventory. An overlay owner's extent is its reviewed span in
+//! `recon/tla/semantic/regions.json`; its retained listing must hold
+//! an `AlchemyC_` placeholder of exactly that span, and the listing assembled
+//! with every placeholder compiled must reproduce the overlay the ROM loads.
 //!
 //! The main image's retained listings, maintained SRC assembly and container
 //! runtime are assembled and compared with the ROM as the full build's
@@ -26,7 +26,7 @@ use crate::compiler::source_paths::{SourceOwner, SourcePaths, SHARED_SOURCE_ROOT
 use crate::compiler::translation_units::TranslationUnits;
 use crate::overlay::assembly::OVERLAY_BASE;
 use crate::overlay::compile::assemble_overlay;
-use crate::overlay::owners::{owner_spans, production_target};
+use crate::overlay::owners::{production_target, register_path, reviewed_spans};
 use crate::overlay::rom::CanonicalRom;
 use crate::overlay::source::OverlaySource;
 use crate::targets::DecompTarget;
@@ -106,7 +106,7 @@ fn inventory_ranges(inventory: &Value) -> Result<Vec<(u32, u32)>, String> {
 }
 
 /// Every sourced owner, including named unit members: a main owner's complete
-/// declared extent or an overlay owner's listing span. An owner
+/// declared extent or an overlay owner's reviewed span. An owner
 /// without one, or a shared source no owner compiles, fails. A main extent
 /// must lie inside the audited executable ranges when they are known.
 fn scored_owners(
@@ -150,9 +150,9 @@ fn scored_owners(
         } else {
             *reviewed.get(&owner).ok_or_else(|| {
                 format!(
-                    "{}: no placeholder or owner label bounds it in {}",
+                    "{}: no reviewed span in {}",
                     owner.id(),
-                    production_target(CompilerTarget::Tla).overlay_dir()
+                    register_path(Path::new(""), production_target(CompilerTarget::Tla)).display()
                 )
             })?
         };
@@ -203,7 +203,7 @@ fn differing_halfwords(built: &[u8], reference: &[u8]) -> usize {
 }
 
 /// Each overlay's C owners, checked from the one listing that places them:
-/// every owner needs a placeholder of its listing span, and the assembled
+/// every owner needs a placeholder of its reviewed span, and the assembled
 /// overlay must equal the ROM's inside each owner and as a whole.
 fn overlay_mismatches(
     root: &Path,
@@ -229,7 +229,7 @@ fn overlay_mismatches(
             let placed = placeholder_extent(&text, scored.owner.address());
             if placed != Some(scored.extent) {
                 return Err(format!(
-                    "{} {} has no AlchemyC placeholder of its {}-byte listing span",
+                    "{} {} has no AlchemyC placeholder of its {}-byte reviewed span",
                     scored.owner.id(),
                     scored.source,
                     scored.extent
@@ -276,7 +276,7 @@ fn check(root: &Path, rom: &Path) -> Result<String, String> {
     let units = TranslationUnits::load_game(root, CompilerTarget::Tla)?;
     let main_ranges = audited_main_ranges(root, production_target(CompilerTarget::Tla))?;
     let shared = shared_sources(root)?;
-    let reviewed = owner_spans(root, production_target(CompilerTarget::Tla))?;
+    let reviewed = reviewed_spans(root, production_target(CompilerTarget::Tla))?;
     let unit_extents = register
         .registered_owners()
         .filter(|owner| owner.is_main())
@@ -478,17 +478,22 @@ mod tests {
             std::fs::write(root.path().join(path), bytes).unwrap();
         }
         assert!(ranges(target).unwrap().is_some());
-        let mut ledger = genuine.clone();
         genuine["total_union_bytes"] = serde_json::json!(8);
         std::fs::write(&path, genuine.to_string()).unwrap();
         assert!(ranges(target).unwrap_err().contains("stale"));
 
-        // A hand-kept ledger of the genuine count, beside its real
-        // verification record and a byte-identical full build, is still not
-        // the verified count.
-        ledger["state"] = serde_json::json!("verified");
-        ledger.as_object_mut().unwrap().remove("verification");
-        std::fs::write(&path, ledger.to_string()).unwrap();
+        // The committed ledger beside the real verification record and a
+        // byte-identical full build is still not the verified count.
+        let checkout = crate::compiler::routing::root();
+        for (from, to) in [
+            (
+                "recon/tla/metrics/audit-verification.json",
+                "recon/tla/metrics/audit-verification.json",
+            ),
+            ("recon/tla/metrics/executable.json", INVENTORY),
+        ] {
+            std::fs::copy(checkout.join(from), root.path().join(to)).unwrap();
+        }
         assert_eq!(ranges(target).unwrap(), None);
     }
 
@@ -607,7 +612,7 @@ mod tests {
     }
 
     #[test]
-    fn overlay_owners_take_their_listing_span() {
+    fn overlay_owners_take_their_reviewed_span() {
         let register = r#"{"format":3,"owners":{"resource_650:02000038":{"name":"Scene_GetEntrances","source":"FIELD/IDEJIMA/ISLAND.C"}}}"#;
         let root = fixture(register, &[]);
         let register = SourcePaths::load_for_game(root.path(), "tla").unwrap();
@@ -622,7 +627,7 @@ mod tests {
         )
         .unwrap_err();
         assert!(
-            unreviewed.contains("resource_650:02000038: no placeholder or owner label bounds it"),
+            unreviewed.contains("resource_650:02000038: no reviewed span"),
             "{unreviewed}"
         );
         let owners = scored_owners(

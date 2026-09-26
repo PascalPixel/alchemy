@@ -825,7 +825,9 @@ fn run(args: &[String]) -> Result<(), String> {
 
     let entry = json!({
         "id": unit_id,
+        "game": game,
         "source": source_root.join(&unit_path).strip_prefix(&root).map_err(|e| e.to_string())?,
+        "compiler_route": "canonical-gcc296",
         "overlay": overlay,
         "absolute_symbols": split
             .iter()
@@ -837,7 +839,7 @@ fn run(args: &[String]) -> Result<(), String> {
             })
             .collect::<Map<String, Value>>(),
         "local_symbols": [],
-        "owners": owners.iter().map(|o| json!({"address": format!("0x{:08x}", o.address), "extent": o.extent})).collect::<Vec<_>>(),
+        "owners": owners.iter().map(|o| json!({"address": format!("0x{:08x}", o.address), "extent": o.extent, "state": "exact-c"})).collect::<Vec<_>>(),
     });
     if !apply {
         println!(

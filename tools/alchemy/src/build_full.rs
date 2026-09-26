@@ -92,8 +92,8 @@ pub fn repository_root() -> PathBuf {
     crate::compiler::routing::root().to_path_buf()
 }
 /// The game a full build composes: its owner register is the identity
-/// authority, and its translation units and retained overlay listings live
-/// in its reconstruction scaffolding.
+/// authority, and its translation units, retained overlay listings and
+/// overlay-assembly evidence live in its reconstruction scaffolding.
 #[derive(Clone, Copy)]
 struct Game {
     target: DecompTarget,
@@ -111,6 +111,9 @@ impl Game {
     }
     fn translation_units(self) -> String {
         format!("{}/translation-units.json", self.target.recon_dir())
+    }
+    fn overlay_assembly_evidence(self) -> String {
+        format!("{}/semantic/overlay-assembly.json", self.target.recon_dir())
     }
     fn overlay_listing(self, overlay: &str) -> String {
         self.target.overlay_assembly(overlay)
@@ -746,28 +749,67 @@ fn overlay_placeholders(
     }
     Ok(placeholders)
 }
-/// Each not-yet-C overlay owner its listing labels, with its one span. A
-/// label must spell the owner's registered name, or its address name when
-/// the register names none, so the name has one authority.
-fn listed_overlay_spans(
+fn semantic_overlay_spans(
     root: &Path,
     game: Game,
-    paths: &SourcePaths,
 ) -> Result<BTreeMap<SourceOwner, Vec<(u64, usize)>>, String> {
+    let document = read_json::<Value>(&root.join(game.overlay_assembly_evidence()))?;
+    if document["format"].as_u64() != Some(1) {
+        return Err("overlay assembly evidence format differs".into());
+    }
     let mut spans = BTreeMap::new();
-    for (owner, (label, extent)) in crate::overlay::owners::listed_owners(root, game.target)? {
-        let expected = paths
-            .registered_name(owner)
-            .map_or_else(|| owner.legacy_name(), str::to_string);
-        if label != expected {
-            return Err(format!(
-                "{} is labelled {label} in its listing, but the owner register names it {expected}",
-                owner.id()
-            ));
+    for row in document["regions"]
+        .as_array()
+        .ok_or("overlay assembly regions differ")?
+    {
+        if !matches!(
+            row["retention"].as_str(),
+            Some("keep_structured_asm" | "not_yet_c")
+        ) {
+            continue;
         }
-        spans.insert(owner, vec![(u64::from(owner.address()), extent)]);
+        let overlay = row["overlay"]
+            .as_str()
+            .ok_or("overlay evidence lacks overlay")?;
+        let start = value_u64(&row["start"], "overlay evidence start")?;
+        let end = value_u64(&row["end"], "overlay evidence end")?;
+        let size = end
+            .checked_sub(start)
+            .ok_or("invalid overlay evidence extent")? as usize;
+        if size == 0 {
+            return Err("empty overlay evidence extent".into());
+        }
+        let owner = SourceOwner::parse(&format!("{overlay}:{start:08x}"))?;
+        spans
+            .entry(owner)
+            .or_insert_with(Vec::new)
+            .push((start, size));
     }
     Ok(spans)
+}
+fn reject_overlay_evidence_overlap(
+    placeholders: &BTreeMap<SourceOwner, Vec<(u64, usize)>>,
+    semantic: &BTreeMap<SourceOwner, Vec<(u64, usize)>>,
+) -> Result<(), String> {
+    for (exact, c_spans) in placeholders {
+        for (retained, asm_spans) in semantic
+            .iter()
+            .filter(|(owner, _)| owner.overlay_id() == exact.overlay_id())
+        {
+            if c_spans.iter().any(|(start, size)| {
+                asm_spans.iter().any(|(other, extent)| {
+                    *start < *other + *extent as u64 && *other < *start + *size as u64
+                })
+            }) {
+                return Err(format!(
+                    "{} retained assembly overlaps exact C {}",
+                    retained.id(),
+                    exact.id()
+                ));
+            }
+        }
+    }
+    Ok(())
 }
 fn artifact(region: &Region) -> Value {
     json!({"source":region.source,"start":hex(region.address),"bytes":region.size,"composition":region.composition})
@@ -793,7 +835,8 @@ fn owner_inventory(
     let functions = linked_functions(claimed_document, &claimed_symbols)?;
     let assembly_starts = region_starts(assembly, "assembly")?;
     let placeholders = overlay_placeholders(root, game)?;
-    let semantic = listed_overlay_spans(root, game, &paths)?;
+    let semantic = semantic_overlay_spans(root, game)?;
+    reject_overlay_evidence_overlap(&placeholders, &semantic)?;
     let mut owners = Vec::new();
     let mut groups = BTreeMap::<String, usize>::new();
     let mut states = BTreeMap::<String, usize>::new();
@@ -877,20 +920,15 @@ fn owner_inventory(
             }
             SourceOwner::Overlay { resource, .. } => {
                 let spans = if exact {
-                    if semantic.contains_key(owner) {
-                        return Err(format!(
-                            "{} is exact C but its listing still labels it as not-yet-C",
-                            owner.id()
-                        ));
-                    }
                     placeholders
                         .get(owner)
                         .cloned()
                         .ok_or_else(|| format!("{} has no overlay placeholder", owner.id()))?
                 } else {
-                    semantic.get(owner).cloned().ok_or_else(|| {
-                        format!("{} has no owner label in its listing", owner.id())
-                    })?
+                    semantic
+                        .get(owner)
+                        .cloned()
+                        .ok_or_else(|| format!("{} has no overlay assembly evidence", owner.id()))?
                 };
                 if member.is_some_and(|member| {
                     spans.iter().map(|(_, size)| *size).sum::<usize>() != member.extent
@@ -902,7 +940,7 @@ fn owner_inventory(
                 }
                 let overlay = game.overlay_listing(&format!("resource_{resource:03x}"));
                 let artifact = if exact || declared {
-                    json!({"source":overlay,"composition":if exact{"overlay-placeholder"}else{"structured-overlay-assembly"}})
+                    json!({"source":overlay,"composition":if exact{"overlay-placeholder"}else{"structured-overlay-assembly"},"overlapping_retained_evidence":semantic.get(owner).map(|spans|span_values(spans))})
                 } else {
                     json!({"source":overlay,"composition":"structured-overlay-assembly"})
                 };
@@ -917,7 +955,7 @@ fn owner_inventory(
                     } else if exact {
                         "overlay-placeholder"
                     } else {
-                        "overlay-listing-label"
+                        "overlay-assembly-evidence"
                     },
                     artifact,
                 )
@@ -936,7 +974,7 @@ fn owner_inventory(
             "container":if owner.is_main(){json!({"kind":"main-rom","overlay":Value::Null})}else{json!({"kind":"overlay-image","overlay":owner.overlay_id()})},
             "registration":{"source_path":registered_source,"call_via":paths.registered_call_via(*owner).map(|value| hex(u64::from(value)))},
             "reconstruction_unit":unit,"production":{"state":state,"source":source,"source_group":source_group(game, &source),"extent_bytes":if spans.is_empty(){Value::Null}else{number(extent)},"extent_evidence":extent_evidence,"segments":span_values(&spans),"artifact":artifact_value},
-            "role":role,"alias":alias
+            "original_translation_unit":{"status":"unknown"},"role":role,"alias":alias
         }));
     }
     let units = units.units.iter().filter(|unit| unit.game == game.id()).map(|unit| {
@@ -946,24 +984,26 @@ fn owner_inventory(
             let members = unit.members_in(image).map(|member| json!({"owner":unit.source_owner(image, member.address).unwrap().id(),"role":if member.owner {"owner"} else {"local-symbol"},"alias":member.name,"extent":member.extent})).collect::<Vec<_>>();
             json!({"overlay":image,"members":members})
         }).collect::<Vec<_>>();
-        json!({"id":unit.id,"game":unit.game,"source":unit.source,"container":if unit.overlay.is_none(){json!({"kind":"main-rom","overlay":Value::Null})}else{json!({"kind":"overlay-image","overlay":unit.overlay})},"production_composition_sections":unit.composition_sections(),"absolute_symbols":absolute_symbols,"members":members,"instances":instances})
+        json!({"id":unit.id,"game":unit.game,"source":unit.source,"compiler_route":unit.compiler_route,"container":if unit.overlay.is_none(){json!({"kind":"main-rom","overlay":Value::Null})}else{json!({"kind":"overlay-image","overlay":unit.overlay})},"original_translation_unit":{"status":"unknown"},"production_composition_sections":unit.composition_sections(),"absolute_symbols":absolute_symbols,"members":members,"instances":instances})
     }).collect::<Vec<_>>();
     let auxiliary_regions = assembly.iter().filter(|region| !registered.contains(&SourceOwner::Main(region.address as u32))).map(|region| json!({"role":"non-owner-region","container":{"kind":"main-rom"},"address":hex(region.address),"run_address":region.run_address.map(hex),"extent":region.size,"source":region.source,"kind":region.kind,"origin":region.origin,"retention":region.retention,"confidence":region.confidence,"evidence":region.evidence})).collect::<Vec<_>>();
+    let evidence = game.overlay_assembly_evidence();
     let auxiliary_overlay_regions = semantic
         .iter()
         .filter(|(owner, _)| !registered.contains(owner))
         .flat_map(|(owner, spans)| {
             let source = game.overlay_listing(&owner.overlay_id().unwrap_or_default());
+            let evidence = evidence.clone();
             spans.iter().map(move |(start, size)| {
-                json!({"role":"unregistered-retained-region","container":{"kind":"overlay-image","overlay":owner.overlay_id()},"address":hex(*start),"extent":size,"source":source,"retention":"not_yet_c","evidence":"overlay-listing-label"})
+                json!({"role":"unregistered-retained-region","container":{"kind":"overlay-image","overlay":owner.overlay_id()},"address":hex(*start),"extent":size,"source":source,"retention":"not_yet_c","evidence":evidence})
             })
         })
         .collect::<Vec<_>>();
     let full = defaults(game.target.id);
     Ok(json!({
         "format":1,"kind":format!("{}-production-owner-inventory", game.id()),"scope":"derived production/retention inventory; source-paths is the sole name authority and no original translation-unit boundary is asserted",
-        "target":game.target.id.as_str(),"identity_authority":game.identity_authority()?,"inputs":{"translation_units":game.translation_units(),"claimed_manifest":format!("{}/manifest.json", full.claimed_output),"asm_manifest":format!("{}/manifest.json", full.asm_output),"overlay_sources":game.overlay_listing("resource_*")},
-        "summary":{"registered":registered.len(),"main":registered.iter().filter(|owner| owner.is_main()).count(),"overlay":registered.iter().filter(|owner| !owner.is_main()).count(),"known_production_extents":known_extents,"complete_registered_identity_coverage":true,"states":states,"current_source_groups":groups},
+        "target":game.target.id.as_str(),"identity_authority":game.identity_authority()?,"inputs":{"translation_units":game.translation_units(),"claimed_manifest":format!("{}/manifest.json", full.claimed_output),"asm_manifest":format!("{}/manifest.json", full.asm_output),"overlay_sources":game.overlay_listing("resource_*"),"overlay_assembly_evidence":evidence},
+        "summary":{"registered":registered.len(),"main":registered.iter().filter(|owner| owner.is_main()).count(),"overlay":registered.iter().filter(|owner| !owner.is_main()).count(),"known_production_extents":known_extents,"unknown_original_translation_units":registered.len(),"complete_registered_identity_coverage":true,"states":states,"current_source_groups":groups},
         "reconstruction_units":units,"owners":owners,"auxiliary_main_assembly_regions":auxiliary_regions,"auxiliary_overlay_structured_assembly_regions":auxiliary_overlay_regions
     }))
 }
@@ -1600,6 +1640,10 @@ mod tests {
             assert_eq!(
                 game.translation_units(),
                 format!("{recon}/translation-units.json")
+            );
+            assert_eq!(
+                game.overlay_assembly_evidence(),
+                format!("{recon}/semantic/overlay-assembly.json")
             );
             assert_eq!(
                 game.overlay_listing("resource_649"),

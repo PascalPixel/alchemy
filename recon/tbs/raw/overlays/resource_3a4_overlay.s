@@ -874,7 +874,6 @@ AlchemyC_02000204:
 	.space 0x8
 AlchemyC_0200020c:
 	.space 0xc0
-Func_020002cc:
 	push	{r5, r6, r7, lr}
 	adds	r7, r0, #0
 	movs	r0, #0
@@ -1003,7 +1002,6 @@ AlchemyC_02000c88:
 	.2byte 0x0000
 AlchemyC_02000c9c:
 	.space 0x90
-Func_02000d2c:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -1203,7 +1201,6 @@ AlchemyC_02001770:
 	.space 0xc8
 AlchemyC_02001838:
 	.space 0x4d4
-FieldScene_RunMultiPhasePresentation:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -1581,7 +1578,6 @@ AlchemyC_02003484:
 	.space 0x124
 	.2byte 0x4770
 	.2byte 0x0000
-Func_020035ac:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r9
@@ -1672,7 +1668,6 @@ Func_020035ac:
 	.2byte 0x0000
 	.2byte 0x0000
 	.2byte 0xfff0
-Func_02003668:
 	.2byte 0xb5e0
 	mov	r7, sl
 	mov	r6, r9

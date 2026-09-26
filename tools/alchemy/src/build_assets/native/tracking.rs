@@ -158,13 +158,6 @@ pub(in crate::build_assets) fn check(root: &Path) -> Result<(), String> {
         // A clone without this game's reference ROM cannot restore its private
         // inputs; their registration is still checked, their absent bytes are not.
         let restorable = root.join(game.rom).is_file();
-        // What each input decodes to in the reference ROM, recorded at
-        // extraction; an absent or stale index is rebuilt from the ROM.
-        let mut digests = private_digests(root, &game)?;
-        if digests.is_none() && restorable {
-            super::extract_missing(root, &root.join(game.rom), &game)?;
-            digests = private_digests(root, &game)?;
-        }
         let source = paths.source;
         let colors = paths.colors.as_str();
         validate(index)?;
@@ -209,16 +202,8 @@ pub(in crate::build_assets) fn check(root: &Path) -> Result<(), String> {
             if !restorable && !root_path(root, name)?.exists() {
                 continue;
             }
-            let Some(digests) = &digests else {
-                continue;
-            };
-            let mut located = input.clone();
-            located["decoded_sha256"] = json!(digests
-                .get(&input_key(input))
-                .ok_or_else(|| format!("no ROM digest for private input {name}"))?);
-            let input = &located;
             if kind == "frame-atlas" {
-                frame::check(&ctx, input)?;
+                frame::check(&mut ctx, index, input)?;
                 continue;
             }
             if kind == "palette-table" {
@@ -240,15 +225,15 @@ pub(in crate::build_assets) fn check(root: &Path) -> Result<(), String> {
                 continue;
             }
             if kind == "tile-atlas" {
-                tile::check(&ctx, index, input)?;
+                tile::check(&mut ctx, index, input)?;
                 continue;
             }
             if kind == "still-atlas" {
-                still::check(&ctx, index, input)?;
+                still::check(&mut ctx, index, input)?;
                 continue;
             }
             if kind == "archive-atlas" {
-                graphics::check(&mut ctx, input)?;
+                graphics::check(&mut ctx, index, input)?;
                 continue;
             }
             if matches!(kind, "sprite" | "sprite-atlas") {

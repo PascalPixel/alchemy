@@ -23,10 +23,18 @@ pub(super) fn pixels(input: &Value, rom: &[u8]) -> Result<Vec<u8>, String> {
                     .ok_or("portrait extent overflow")?,
         )
         .ok_or("portrait exceeds ROM")?;
+    if sha256::hex(stream) != json_string(&input["encoded_sha256"], "portrait encoded digest")? {
+        return Err("portrait ROM differs".into());
+    }
     let count = address(&input["width"])?
         .checked_mul(address(&input["height"])?)
         .ok_or("portrait dimension overflow")?;
-    psynergy::assets::compression::decode_mtf4(stream, count).map_err(|e| e.to_string())
+    let pixels =
+        psynergy::assets::compression::decode_mtf4(stream, count).map_err(|e| e.to_string())?;
+    if sha256::hex(&pixels) != json_string(&input["decoded_sha256"], "portrait digest")? {
+        return Err("portrait pixels differ".into());
+    }
+    Ok(pixels)
 }
 pub(super) fn check(ctx: &Context, input: &Value) -> Result<(), String> {
     let (sheet, meta) = metadata(input)?;
@@ -44,6 +52,12 @@ pub(super) fn check(ctx: &Context, input: &Value) -> Result<(), String> {
         || sha256::hex(&pixels) != json_string(&input["decoded_sha256"], "portrait digest")?
     {
         return Err("portrait source pixels differ".into());
+    }
+    let encoded = build_component_cached(ctx, component)?;
+    if sha256::hex(&encoded.data)
+        != json_string(&input["encoded_sha256"], "portrait encoded digest")?
+    {
+        return Err("portrait source bytes differ".into());
     }
     Ok(())
 }

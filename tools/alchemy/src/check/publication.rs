@@ -59,13 +59,12 @@ const PNG_SCANLINES_MAX: usize = 1 << 26;
 const ENCODED_RUN_MIN: usize = 16;
 /// Encoded characters one text may hold; the tracked tree peaks near 32.
 const ENCODED_CHARACTERS_MAX: usize = 128;
-/// Digest-sized hex runs one text may hold; The Broken Seal COMPRESSION.JSON
-/// keys about 1,000 sections by digest.
-const DIGEST_RUNS_MAX: usize = 2_048;
+/// Digest-sized hex runs one text may hold; private-inputs.json carries about 3,400.
+const DIGEST_RUNS_MAX: usize = 16_384;
 /// Consecutive integer literals that form an array rather than an expression.
 const NUMERIC_RUN_MIN: usize = 16;
 /// Array elements a text outside the game data tables may hold; the tree peaks
-/// near 580 in the dashboard map filter.
+/// near 720 in the executable-gap package.
 const NUMERIC_ELEMENTS_MAX: usize = 2_048;
 /// Byte values one flat JSON array may hold before only a named typed table
 /// explains it; the tracked tree peaks at 518 in `action_modes`.
@@ -2672,7 +2671,7 @@ fn text_fixtures() -> Vec<Fixture> {
         ("tools/Cargo.lock", text(checksums), true, None),
         (
             "tools/alchemy/src/hashes.rs",
-            text(digests(2_048)),
+            text(digests(4_096)),
             true,
             None,
         ),
@@ -3303,10 +3302,15 @@ mod tests {
             asset_game("recon/tla/raw/overlays/resource_64a_overlay.s"),
             Some("THE LOST AGE")
         );
+        assert_eq!(asset_game("recon/tla/semantic/regions.json"), None);
         assert_eq!(asset_game("recon/tla/translation-units.json"), None);
         let manifests = manifest_games(["recon/tla/assets.json"]);
-        assert!(manifestless_reason("recon/tla/raw/08007320.json", &manifests).is_none());
-        assert!(manifestless_reason("recon/tbs/raw/08007320.json", &manifests).is_some());
+        assert!(
+            manifestless_reason("recon/tla/raw/executable_gaps/index.json", &manifests).is_none()
+        );
+        assert!(
+            manifestless_reason("recon/tbs/raw/executable_gaps/index.json", &manifests).is_some()
+        );
         assert!(manifestless_reason("recon/tbs/translation-units.json", &[]).is_none());
     }
     #[test]

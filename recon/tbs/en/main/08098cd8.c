@@ -1,13 +1,13 @@
-/* Draft, not exact (2026-09-26): 820 of 832 bytes, 388 differing halfwords.
-   Separate phase counters place the first counter in r7 and shift the
-   scene/position allocation. This fails the listing's shared r8 lifetime;
-   the complete 832-byte / 14-halfword model remains preserved.
+/* Draft, not exact (2026-09-26): 832 of 832 bytes, 14 differing halfwords.
    Scene ownership, slot records and resource lifetime replace raw offsets.
    Explicit stores and the initial/terminal script tests recover all four
    missing bytes. One scale lifetime removes the GCSE carry copy and all
    scale-loop differences. Publishing the call result before assigning
    the working copy recovers r0 for its array store. Remaining: two
    position/counter setup regions and one saved-pointer scheduling tie.
+   A typed inline position helper canonicalizes to the same bytes. An
+   explicit position pointer gave 820 / 379; separate phase counters gave
+   820 / 388. Those failed models remain preserved in earlier commits.
    The original 832-byte model differed in 305 halfwords. */
 #include "TYPES.H"
 #include "EFFECT_0809B11C.H"
@@ -74,6 +74,13 @@ void EffectSlot_Initialize(struct EffectSlot *slot, s32 kind, s32 x, s32 z);
 void BattleFx_UpdateRadialBurst(struct EffectSlot *slot);
 void Audio_PlayCue(s32 cue);
 
+static __inline__ void RaisedPosition(struct BurstObject *object, struct BurstPosition *pos)
+{
+    pos->x = object->pos.x;
+    pos->y = object->pos.y + 0x100000;
+    pos->z = object->pos.z;
+}
+
 /* Twelve screen-space particles precede the main burst and its three
    copies. All copies share one resource entry until their scripts finish. */
 void RunBattleEffect04(void)
@@ -94,9 +101,6 @@ void RunBattleEffect04(void)
     s32 event;
     s32 scale;
     s32 index;
-    s32 slots_left;
-    s32 copies_left;
-    s32 scripts_left;
     u8 resource_id;
     u16 zero;
 
@@ -105,12 +109,10 @@ void RunBattleEffect04(void)
     BattleEffect_InitializeSharedScene();
     Audio_PlayCue(0x82);
     slot = scene->slots;
-    slots_left = 11;
+    index = 11;
     do {
         target = scene->main_object;
-        pos.x = target->pos.x;
-        pos.y = target->pos.y + 0x100000;
-        pos.z = target->pos.z;
+        RaisedPosition(target, &pos);
         Camera_WorldToScreen(&pos);
         EffectSlot_Initialize(slot, 0x11c, pos.x, pos.z);
         EffectSlot_SetCallback(slot, BattleFx_UpdateRadialBurst);
@@ -119,9 +121,9 @@ void RunBattleEffect04(void)
         slot->scale_y = 0xb333;
         slot->scale_x = 0xb333;
         WaitFrames(2);
-        slots_left--;
+        index--;
         slot++;
-    } while (slots_left >= 0);
+    } while (index >= 0);
 
     target = scene->main_object;
     pos.x = target->pos.x;
@@ -155,7 +157,7 @@ void RunBattleEffect04(void)
     WaitFrames(3);
     spawn_start = spawned;
     resource = NULL;
-    copies_left = 2;
+    index = 2;
     write = &spawned[2];
     do {
         copy = *write-- = Object_Spawn(0xd7, object->pos.x, object->pos.y, object->pos.z);
@@ -170,8 +172,8 @@ void RunBattleEffect04(void)
             Animation_ApplyChildValuesFar(copy, 2);
             resource = Object_ReplaceResourceEntry(copy->sprite, resource);
         }
-        copies_left--;
-    } while (copies_left >= 0);
+        index--;
+    } while (index >= 0);
     resource_id = resource->id;
     if (scene->use_main_object_origin != 0) {
         target = scene->main_object;
@@ -187,7 +189,7 @@ void RunBattleEffect04(void)
     Object_SetPosition(object, pos.x, pos.y, pos.z);
     ObjectDispatch_InitializeFar(object, 0x0809f12c);
     read = spawn_start;
-    scripts_left = 2;
+    index = 2;
     do {
         copy = *read++;
         if (copy != NULL) {
@@ -195,8 +197,8 @@ void RunBattleEffect04(void)
             Object_SetPosition(copy, pos.x, pos.y, pos.z);
             ObjectDispatch_InitializeFar(copy, 0x0809f0b4);
         }
-        scripts_left--;
-    } while (scripts_left >= 0);
+        index--;
+    } while (index >= 0);
     index = 0;
     if (object->script != NULL) {
 wait_script:

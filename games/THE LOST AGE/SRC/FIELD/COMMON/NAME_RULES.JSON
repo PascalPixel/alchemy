@@ -125,8 +125,16 @@
         {"key": 94, "selector": [32767, 0], "name": 95},
         {"key": 95, "selector": [32767, 0], "name": 96},
         {"key": 96, "selector": [32767, 0], "name": 97}
-      ]
+      ],
+      "address": "0x080ef4a4"
     },
-    {"name": "terminator", "end": "0x080ef81c", "element": "le-s16", "stride": 8, "values": [-1, -1, -1, -1]}
+    {
+      "name": "terminator",
+      "end": "0x080ef81c",
+      "element": "le-s16",
+      "stride": 8,
+      "values": [-1, -1, -1, -1],
+      "address": "0x080ef814"
+    }
   ]
 }

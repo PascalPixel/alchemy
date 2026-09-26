@@ -15,21 +15,24 @@
             "end": "0x08502038",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 48, 33, 3, 2, 1, 0, 2, 2, 0, 0]
+            "values": [0, 0, 48, 33, 3, 2, 1, 0, 2, 2, 0, 0],
+            "address": "0x0850202c"
           },
           {
             "name": "records",
             "end": "0x08502050",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [30720, 4112, 0, 65535], [120, 4112, 0, 65535]]
+            "values": [[0, 4112, 0, 65535], [30720, 4112, 0, 65535], [120, 4112, 0, 65535]],
+            "address": "0x08502038"
           },
           {
             "name": "component_offsets",
             "end": "0x08502068",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0x640", "0x660", "0xb04", "0xbc0", "0xbd0"]
+            "values": ["0x3c", "0x640", "0x660", "0xb04", "0xbc0", "0xbd0"],
+            "address": "0x08502050"
           }
         ]
       },
@@ -105,7 +108,16 @@
         "address": "0x08502bfc",
         "size": "0x3",
         "record_size": 3,
-        "segments": [{"name": "terminator", "end": "0x08502bff", "stride": 1, "element": "u8", "fill": 255}]
+        "segments": [
+          {
+            "name": "terminator",
+            "end": "0x08502bff",
+            "stride": 1,
+            "element": "u8",
+            "fill": 255,
+            "address": "0x08502bfc"
+          }
+        ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHINDEN_HEYA/SHINDEN_HEYA.BIN",
       "grid_offset": 0,

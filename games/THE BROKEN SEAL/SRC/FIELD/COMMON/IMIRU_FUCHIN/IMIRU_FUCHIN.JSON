@@ -15,21 +15,24 @@
             "end": "0x08610ea8",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 60, 60, 3, 2, 1, 0, 2, 2, 0, 0]
+            "values": [0, 0, 60, 60, 3, 2, 1, 0, 2, 2, 0, 0],
+            "address": "0x08610e9c"
           },
           {
             "name": "records",
             "end": "0x08610ec0",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [15360, 4112, 0, 65535], [70, 4112, 0, 65535]]
+            "values": [[0, 4112, 0, 65535], [15360, 4112, 0, 65535], [70, 4112, 0, 65535]],
+            "address": "0x08610ea8"
           },
           {
             "name": "component_offsets",
             "end": "0x08610ed8",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0x364", "0x36c", "0xcac", "0xdfc", "0xe14"]
+            "values": ["0x3c", "0x364", "0x36c", "0xcac", "0xdfc", "0xe14"],
+            "address": "0x08610ec0"
           }
         ]
       },
@@ -112,7 +115,16 @@
         "address": "0x08611cb0",
         "size": "0x3",
         "record_size": 3,
-        "segments": [{"name": "terminator", "end": "0x08611cb3", "stride": 1, "element": "u8", "fill": 255}]
+        "segments": [
+          {
+            "name": "terminator",
+            "end": "0x08611cb3",
+            "stride": 1,
+            "element": "u8",
+            "fill": 255,
+            "address": "0x08611cb0"
+          }
+        ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/IMIRU_FUCHIN/IMIRU_FUCHIN.BIN",
       "grid_offset": 269304,
@@ -135,21 +147,24 @@
             "end": "0x08634894",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 72, 94, 3, 2, 1, 0, 2, 2, 0, 0]
+            "values": [0, 0, 72, 94, 3, 2, 1, 0, 2, 2, 0, 0],
+            "address": "0x08634888"
           },
           {
             "name": "records",
             "end": "0x086348ac",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [24576, 4112, 0, 65535], [80, 4112, 0, 65535]]
+            "values": [[0, 4112, 0, 65535], [24576, 4112, 0, 65535], [80, 4112, 0, 65535]],
+            "address": "0x08634894"
           },
           {
             "name": "component_offsets",
             "end": "0x086348c4",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0x374", "0x39c", "0xeb4", "0x10b8", "0x10d4"]
+            "values": ["0x3c", "0x374", "0x39c", "0xeb4", "0x10b8", "0x10d4"],
+            "address": "0x086348ac"
           }
         ]
       },
@@ -268,7 +283,16 @@
         "address": "0x0863595c",
         "size": "0x3",
         "record_size": 3,
-        "segments": [{"name": "terminator", "end": "0x0863595f", "stride": 1, "element": "u8", "fill": 255}]
+        "segments": [
+          {
+            "name": "terminator",
+            "end": "0x0863595f",
+            "stride": 1,
+            "element": "u8",
+            "fill": 255,
+            "address": "0x0863595c"
+          }
+        ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/IMIRU_FUCHIN/IMIRU_FUCHIN.BIN",
       "grid_offset": 0,
@@ -291,21 +315,24 @@
             "end": "0x0862fd30",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 72, 94, 3, 2, 1, 0, 2, 2, 0, 0]
+            "values": [0, 0, 72, 94, 3, 2, 1, 0, 2, 2, 0, 0],
+            "address": "0x0862fd24"
           },
           {
             "name": "records",
             "end": "0x0862fd48",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [24576, 4112, 0, 65535], [80, 4112, 0, 65535]]
+            "values": [[0, 4112, 0, 65535], [24576, 4112, 0, 65535], [80, 4112, 0, 65535]],
+            "address": "0x0862fd30"
           },
           {
             "name": "component_offsets",
             "end": "0x0862fd60",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0x360", "0x370", "0xc38", "0xe3c", "0xe58"]
+            "values": ["0x3c", "0x360", "0x370", "0xc38", "0xe3c", "0xe58"],
+            "address": "0x0862fd48"
           }
         ]
       },
@@ -421,8 +448,22 @@
         "size": "0x6",
         "record_size": 3,
         "segments": [
-          {"name": "records", "end": "0x08630b7f", "stride": 3, "element": "u8", "values": [[18, 27, 100]]},
-          {"name": "terminator", "end": "0x08630b82", "stride": 1, "element": "u8", "fill": 255}
+          {
+            "name": "records",
+            "end": "0x08630b7f",
+            "stride": 3,
+            "element": "u8",
+            "values": [[18, 27, 100]],
+            "address": "0x08630b7c"
+          },
+          {
+            "name": "terminator",
+            "end": "0x08630b82",
+            "stride": 1,
+            "element": "u8",
+            "fill": 255,
+            "address": "0x08630b7f"
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/IMIRU_FUCHIN/IMIRU_FUCHIN.BIN",
@@ -446,21 +487,24 @@
             "end": "0x08630ce8",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 72, 94, 3, 2, 1, 0, 2, 2, 0, 0]
+            "values": [0, 0, 72, 94, 3, 2, 1, 0, 2, 2, 0, 0],
+            "address": "0x08630cdc"
           },
           {
             "name": "records",
             "end": "0x08630d00",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [24576, 4112, 0, 65535], [80, 4112, 0, 65535]]
+            "values": [[0, 4112, 0, 65535], [24576, 4112, 0, 65535], [80, 4112, 0, 65535]],
+            "address": "0x08630ce8"
           },
           {
             "name": "component_offsets",
             "end": "0x08630d18",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0x350", "0x364", "0xa40", "0xc44", "0xc60"]
+            "values": ["0x3c", "0x350", "0x364", "0xa40", "0xc44", "0xc60"],
+            "address": "0x08630d00"
           }
         ]
       },
@@ -575,7 +619,16 @@
         "address": "0x0863193c",
         "size": "0x3",
         "record_size": 3,
-        "segments": [{"name": "terminator", "end": "0x0863193f", "stride": 1, "element": "u8", "fill": 255}]
+        "segments": [
+          {
+            "name": "terminator",
+            "end": "0x0863193f",
+            "stride": 1,
+            "element": "u8",
+            "fill": 255,
+            "address": "0x0863193c"
+          }
+        ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/IMIRU_FUCHIN/IMIRU_FUCHIN.BIN",
       "grid_offset": 202360,
@@ -598,21 +651,24 @@
             "end": "0x0863194c",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 72, 94, 3, 2, 1, 0, 2, 2, 0, 0]
+            "values": [0, 0, 72, 94, 3, 2, 1, 0, 2, 2, 0, 0],
+            "address": "0x08631940"
           },
           {
             "name": "records",
             "end": "0x08631964",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [24576, 4112, 0, 65535], [80, 4112, 0, 65535]]
+            "values": [[0, 4112, 0, 65535], [24576, 4112, 0, 65535], [80, 4112, 0, 65535]],
+            "address": "0x0863194c"
           },
           {
             "name": "component_offsets",
             "end": "0x0863197c",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0x394", "0x3a8", "0xbac", "0xdb0", "0xdcc"]
+            "values": ["0x3c", "0x394", "0x3a8", "0xbac", "0xdb0", "0xdcc"],
+            "address": "0x08631964"
           }
         ]
       },
@@ -727,7 +783,16 @@
         "address": "0x0863270c",
         "size": "0x3",
         "record_size": 3,
-        "segments": [{"name": "terminator", "end": "0x0863270f", "stride": 1, "element": "u8", "fill": 255}]
+        "segments": [
+          {
+            "name": "terminator",
+            "end": "0x0863270f",
+            "stride": 1,
+            "element": "u8",
+            "fill": 255,
+            "address": "0x0863270c"
+          }
+        ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/IMIRU_FUCHIN/IMIRU_FUCHIN.BIN",
       "grid_offset": 67272,
@@ -750,21 +815,24 @@
             "end": "0x0863271c",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 72, 106, 3, 2, 1, 0, 2, 2, 0, 0]
+            "values": [0, 0, 72, 106, 3, 2, 1, 0, 2, 2, 0, 0],
+            "address": "0x08632710"
           },
           {
             "name": "records",
             "end": "0x08632734",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [27136, 4112, 0, 65535], [80, 4112, 0, 65535]]
+            "values": [[0, 4112, 0, 65535], [27136, 4112, 0, 65535], [80, 4112, 0, 65535]],
+            "address": "0x0863271c"
           },
           {
             "name": "component_offsets",
             "end": "0x0863274c",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0x59c", "0x5ac", "0x1068", "0x126c", "0x1288"]
+            "values": ["0x3c", "0x59c", "0x5ac", "0x1068", "0x126c", "0x1288"],
+            "address": "0x08632734"
           }
         ]
       },
@@ -880,8 +948,22 @@
         "size": "0x6",
         "record_size": 3,
         "segments": [
-          {"name": "records", "end": "0x0863399b", "stride": 3, "element": "u8", "values": [[11, 8, 100]]},
-          {"name": "terminator", "end": "0x0863399e", "stride": 1, "element": "u8", "fill": 255}
+          {
+            "name": "records",
+            "end": "0x0863399b",
+            "stride": 3,
+            "element": "u8",
+            "values": [[11, 8, 100]],
+            "address": "0x08633998"
+          },
+          {
+            "name": "terminator",
+            "end": "0x0863399e",
+            "stride": 1,
+            "element": "u8",
+            "fill": 255,
+            "address": "0x0863399b"
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/IMIRU_FUCHIN/IMIRU_FUCHIN.BIN",
@@ -905,21 +987,24 @@
             "end": "0x086339ac",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 72, 94, 3, 2, 1, 0, 2, 2, 0, 0]
+            "values": [0, 0, 72, 94, 3, 2, 1, 0, 2, 2, 0, 0],
+            "address": "0x086339a0"
           },
           {
             "name": "records",
             "end": "0x086339c4",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [24576, 4112, 0, 65535], [80, 4112, 0, 65535]]
+            "values": [[0, 4112, 0, 65535], [24576, 4112, 0, 65535], [80, 4112, 0, 65535]],
+            "address": "0x086339ac"
           },
           {
             "name": "component_offsets",
             "end": "0x086339dc",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0x37c", "0x398", "0xcc0", "0xec4", "0xee0"]
+            "values": ["0x3c", "0x37c", "0x398", "0xcc0", "0xec4", "0xee0"],
+            "address": "0x086339c4"
           }
         ]
       },
@@ -1038,8 +1123,22 @@
         "size": "0x6",
         "record_size": 3,
         "segments": [
-          {"name": "records", "end": "0x08634883", "stride": 3, "element": "u8", "values": [[17, 5, 100]]},
-          {"name": "terminator", "end": "0x08634886", "stride": 1, "element": "u8", "fill": 255}
+          {
+            "name": "records",
+            "end": "0x08634883",
+            "stride": 3,
+            "element": "u8",
+            "values": [[17, 5, 100]],
+            "address": "0x08634880"
+          },
+          {
+            "name": "terminator",
+            "end": "0x08634886",
+            "stride": 1,
+            "element": "u8",
+            "fill": 255,
+            "address": "0x08634883"
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/IMIRU_FUCHIN/IMIRU_FUCHIN.BIN",

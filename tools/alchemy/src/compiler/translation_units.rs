@@ -7,8 +7,52 @@ use serde::de::{Error, MapAccess, Visitor};
 use serde::{Deserialize, Deserializer};
 use std::collections::{BTreeMap, BTreeSet};
 use std::path::{Component, Path, PathBuf};
-pub const FORMAT: u32 = 6;
+pub const FORMAT: u32 = 5;
 const EDITIONS: [&str; 6] = ["ja", "en", "de", "es", "fr", "it"];
+
+#[derive(Deserialize)]
+struct ReviewedRegions {
+    manual_regions: Vec<ReviewedRegion>,
+}
+#[derive(Deserialize)]
+struct ReviewedRegion {
+    overlay: String,
+    entry: String,
+    span_bytes: usize,
+}
+pub fn reviewed_overlay_spans(root: &Path) -> Result<BTreeMap<SourceOwner, usize>, String> {
+    reviewed_overlay_spans_for_game(root, CompilerTarget::Tbs.recon())
+}
+
+/// The reviewed owner register under one game's `recon/<game>` directory.
+pub fn reviewed_overlay_spans_for_game(
+    root: &Path,
+    recon_dir: &str,
+) -> Result<BTreeMap<SourceOwner, usize>, String> {
+    let path = root.join(recon_dir).join("semantic/regions.json");
+    let document: ReviewedRegions = crate::compiler::build_io::read_json(path)?;
+    let mut spans = BTreeMap::new();
+    for region in document.manual_regions {
+        let owner = SourceOwner::parse(&format!(
+            "{}:{}",
+            region.overlay,
+            region.entry.trim_start_matches("0x")
+        ))?;
+        if region.span_bytes == 0 {
+            return Err(format!(
+                "{} has no positive reviewed span_bytes",
+                owner.id()
+            ));
+        }
+        if spans.insert(owner, region.span_bytes).is_some() {
+            return Err(format!(
+                "{} has duplicate reviewed owner entries",
+                owner.id()
+            ));
+        }
+    }
+    Ok(spans)
+}
 
 /// A requested span is a constraint, never evidence of a function boundary.
 /// `installed_span` must come from a source-backed production C placeholder.
@@ -75,10 +119,10 @@ pub struct AbsoluteSymbol {
     pub address: u64,
     pub kind: AbsoluteSymbolKind,
 }
-#[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Deserialize, Eq, PartialEq)]
+#[serde(rename_all = "kebab-case")]
 pub enum OwnerState {
     ExactC,
-    #[default]
     NotYetC,
 }
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq)]
@@ -89,8 +133,6 @@ pub struct TranslationOwner {
     #[serde(skip)]
     pub canonical_name: String,
     pub extent: usize,
-    /// Derived from production C mappings and retained listings, never declared.
-    #[serde(skip)]
     pub state: OwnerState,
 }
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq)]
@@ -174,10 +216,9 @@ pub struct UnitData {
 #[serde(deny_unknown_fields)]
 pub struct TranslationUnit {
     pub id: String,
-    /// The game whose manifest declares the unit.
-    #[serde(skip)]
     pub game: String,
     pub source: PathBuf,
+    pub compiler_route: String,
     pub overlay: Option<String>,
     #[serde(default, deserialize_with = "unique_keys")]
     pub absolute_symbols: BTreeMap<String, AbsoluteSymbol>,
@@ -662,11 +703,13 @@ impl TranslationUnit {
 #[serde(deny_unknown_fields)]
 pub struct TranslationUnits {
     format: u32,
+    kind: String,
+    original_translation_units: String,
     pub units: Vec<TranslationUnit>,
 }
 impl TranslationUnits {
-    /// Declared composition with ownership derived from production inputs,
-    /// before checks across units and their placements.
+    /// The manifest as written, before any check across units, registers or
+    /// listings: what an adoption consults while its placeholder is absent.
     pub fn declared(root: &Path) -> Result<Self, String> {
         Self::declared_game(root, CompilerTarget::Tbs)
     }
@@ -674,31 +717,36 @@ impl TranslationUnits {
     /// declaring only that game's units. The Broken Seal must have one; a game
     /// that has not composed a unit yet has none and declares nothing.
     pub fn declared_game(root: &Path, game: CompilerTarget) -> Result<Self, String> {
-        let mut document = Self::read_game(root, game)?;
-        if !document.units.is_empty() {
-            let names = SourcePaths::load_for_game(root, game.as_str())?;
-            for unit in &mut document.units {
-                derive_production_state(root, unit, &names)?;
-            }
-        }
-        Ok(document)
-    }
-    /// Structural declarations only, for the source register's sharing check.
-    /// Ownership must be derived before inspecting state or calling `exact`.
-    pub(super) fn read_game(root: &Path, game: CompilerTarget) -> Result<Self, String> {
         let path = root.join(game.recon()).join("translation-units.json");
         if game != CompilerTarget::Tbs && !path.is_file() {
             return Ok(Self {
                 format: FORMAT,
+                kind: "reconstruction-composition-contracts".into(),
+                original_translation_units: "unknown".into(),
                 units: Vec::new(),
             });
         }
-        let mut document: Self = crate::compiler::build_io::read_json(&path)?;
-        if document.format != FORMAT {
-            return Err(format!("{}: expected format {FORMAT}", path.display()));
+        let document: Self = crate::compiler::build_io::read_json(&path)?;
+        if let Some(unit) = document
+            .units
+            .iter()
+            .find(|unit| unit.game != game.as_str())
+        {
+            return Err(format!(
+                "{}: {} unit declared in the {} manifest",
+                unit.id,
+                unit.game,
+                game.as_str()
+            ));
         }
-        for unit in &mut document.units {
-            unit.game = game.as_str().to_owned();
+        if document.format != FORMAT
+            || document.kind != "reconstruction-composition-contracts"
+            || document.original_translation_units != "unknown"
+        {
+            return Err(format!(
+                "{}: expected reconstruction-composition format {FORMAT}",
+                path.display()
+            ));
         }
         Ok(document)
     }
@@ -732,8 +780,15 @@ impl TranslationUnits {
             }
         }
         for unit in &mut document.units {
-            if !unit_id(&unit.id) || !ids.insert(&unit.id) || unit.owners.is_empty() {
-                return Err(format!("{}: invalid id or empty owner list", unit.id));
+            if !unit_id(&unit.id)
+                || !ids.insert(&unit.id)
+                || unit.compiler_route != "canonical-gcc296"
+                || unit.owners.is_empty()
+            {
+                return Err(format!(
+                    "{}: invalid id, route, or empty owner list",
+                    unit.id
+                ));
             }
             if unit.source.is_absolute()
                 || unit
@@ -975,85 +1030,6 @@ where
     }
     deserializer.deserialize_map(Keys(std::marker::PhantomData))
 }
-fn derive_production_state(
-    root: &Path,
-    unit: &mut TranslationUnit,
-    names: &SourcePaths,
-) -> Result<(), String> {
-    let source = root.join(&unit.source);
-    let grouped = source.starts_with(names.source_root())
-        || source.starts_with(root.join(SHARED_SOURCE_ROOT));
-    let listing = unit
-        .overlay
-        .as_ref()
-        .map(|overlay| overlay_listing(root, &unit.game, overlay))
-        .transpose()?;
-    let placeholders = listing
-        .as_deref()
-        .map(crate::compiler::overlay::placeholder_addresses);
-    let mut retained_owners = None;
-    let states = unit
-        .owners
-        .iter()
-        .map(|member| {
-            let owner = unit.source_owner(unit.image(), member.address)?;
-            let mapped = names.mapped_source_path(owner);
-            let retained = placeholders.as_ref().map_or_else(
-                || {
-                    root.join(crate::compiler::routing::recon_directory(&unit.game))
-                        .join("raw")
-                        .join(format!("{:08x}.s", member.address))
-                        .is_file()
-                },
-                |set| !set.contains(&member.address),
-            );
-            if mapped.is_none() && retained {
-                if let Some(text) = &listing {
-                    if retained_owners.is_none() {
-                        let target = crate::overlay::owners::production_target(unit.target()?);
-                        let layout = crate::overlay::listing::parse(
-                            text,
-                            &target.overlay_macro(),
-                            &mut |include| {
-                                std::fs::read_to_string(root.join(include))
-                                    .map_err(|error| format!("{include}: {error}"))
-                            },
-                        )?;
-                        retained_owners = Some(
-                            layout
-                                .owners()
-                                .map(|(_, address, _)| address)
-                                .collect::<BTreeSet<_>>(),
-                        );
-                    }
-                    if !retained_owners.as_ref().unwrap().contains(&member.address) {
-                        return Err(format!(
-                            "{}: {} has no retained owner label in its overlay listing",
-                            unit.id,
-                            owner.id()
-                        ));
-                    }
-                }
-            }
-            match (mapped, retained) {
-                (Some(path), false) if path.is_file() => Ok(OwnerState::ExactC),
-                (None, true) => Ok(OwnerState::NotYetC),
-                (None, false) if unit.overlay.is_none() && grouped && source.is_file() => {
-                    Ok(OwnerState::ExactC)
-                }
-                _ => Err(format!(
-                    "{}: {} has conflicting or missing production C/listing ownership",
-                    unit.id,
-                    owner.id()
-                )),
-            }
-        })
-        .collect::<Result<Vec<_>, String>>()?;
-    for (member, state) in unit.owners.iter_mut().zip(states) {
-        member.state = state;
-    }
-    Ok(())
-}
 fn validate_production_state(
     root: &Path,
     unit: &TranslationUnit,
@@ -1160,9 +1136,9 @@ fn validate_production_state(
         })
         .transpose()?;
     let reviewed = if retained_overlay_candidate {
-        crate::overlay::owners::owner_spans(
+        reviewed_overlay_spans_for_game(
             root,
-            crate::overlay::owners::production_target(unit.target()?),
+            &crate::compiler::routing::recon_directory(&unit.game),
         )?
     } else {
         BTreeMap::new()
@@ -1345,6 +1321,8 @@ pub(crate) mod fixture {
                 "recon/tbs/translation-units.json",
                 &json!({
                     "format": FORMAT,
+                    "kind": "reconstruction-composition-contracts",
+                    "original_translation_units": "unknown",
                     "units": units
                 })
                 .to_string(),
@@ -1375,12 +1353,14 @@ pub(crate) mod fixture {
     pub fn staged_actor() -> Value {
         json!({
             "id": "staged-actor",
+            "game": "tbs",
             "source": format!("games/THE BROKEN SEAL/SRC/{STAGED_ACTOR}"),
+            "compiler_route": "canonical-gcc296",
             "overlay": "resource_3bf",
             "absolute_symbols": {TABLE: {"address": "0x0200df18", "kind": "data"}},
             "owners": [
-                {"address": "0x0200034c", "extent": 296},
-                {"address": "0x020008c0", "extent": 284}
+                {"address": "0x0200034c", "extent": 296, "state": "exact-c"},
+                {"address": "0x020008c0", "extent": 284, "state": "exact-c"}
             ],
             "instances": {
                 "resource_389": {"owners": {
@@ -1407,130 +1387,6 @@ mod tests {
     use super::fixture::*;
     use super::*;
     use serde_json::json;
-    #[test]
-    fn owner_state_is_derived_before_declared_and_validated_reads() {
-        let repository = Repository::new();
-        let declared = TranslationUnits::declared(repository.0.path()).unwrap();
-        assert!(declared.units[0].exact());
-        assert_eq!(
-            declared.units[0].owners,
-            repository.load().unwrap().units[0]
-                .owners
-                .iter()
-                .map(|owner| {
-                    let mut owner = owner.clone();
-                    owner.canonical_name.clear();
-                    owner
-                })
-                .collect::<Vec<_>>()
-        );
-        let mut legacy = staged_actor();
-        legacy["owners"][0]["state"] = "exact-c".into();
-        repository.units(json!([legacy]));
-        let error = repository.load().unwrap_err();
-        assert!(error.contains("unknown field `state`"), "{error}");
-    }
-
-    #[test]
-    fn ownership_derivation_rejects_missing_sources_and_conflicting_listings() {
-        let repository = Repository::new();
-        let root = repository.0.path();
-        repository.listing("resource_3bf", &[0x0200_034c]);
-        let error = repository.load().unwrap_err();
-        assert!(
-            error.contains("resource_3bf:020008c0 has conflicting or missing"),
-            "{error}"
-        );
-        repository.listing("resource_3bf", &[0x0200_034c, 0x0200_08c0]);
-        repository.record("resource_3bf:020008c0", json!({"name": REDRAW}));
-        let error = repository.load().unwrap_err();
-        assert!(
-            error.contains("resource_3bf:020008c0 has conflicting or missing"),
-            "{error}"
-        );
-        repository.record(
-            "resource_3bf:020008c0",
-            json!({"name": REDRAW, "source": STAGED_ACTOR}),
-        );
-        std::fs::remove_file(root.join(format!("games/THE BROKEN SEAL/SRC/{STAGED_ACTOR}")))
-            .unwrap();
-        let error = repository.load().unwrap_err();
-        assert!(
-            error.contains("conflicting or missing production C/listing ownership"),
-            "{error}"
-        );
-    }
-
-    #[test]
-    fn grouped_main_derives_exact_and_retained_without_claiming_the_retained_body() {
-        let repository = Repository::new();
-        repository.write(
-            "games/THE BROKEN SEAL/SRC/BATTLE/PARTICLE.C",
-            "void Particle_Run(void) {}\n",
-        );
-        repository.record("main:08001000", json!({"name": "Particle_Run"}));
-        repository.record("main:08001010", json!({"name": "Particle_Pending"}));
-        repository.write("recon/tbs/raw/08001010.s", "Particle_Pending:\n\tbx lr\n");
-        let unit = json!({
-            "id": "particles", "source": "games/THE BROKEN SEAL/SRC/BATTLE/PARTICLE.C",
-            "owners": [{"address": "0x08001000", "extent": 16}, {"address": "0x08001010", "extent": 16}]
-        });
-        repository.units(json!([staged_actor(), unit]));
-        let declared = TranslationUnits::declared(repository.0.path()).unwrap();
-        let loaded = repository.load().unwrap();
-        assert!(!declared.units[1].exact());
-        assert_eq!(declared.units[1].exact_owner_count(), 1);
-        let states = |units: &TranslationUnits| {
-            units.units[1]
-                .owners
-                .iter()
-                .map(|owner| owner.state)
-                .collect::<Vec<_>>()
-        };
-        assert_eq!(states(&declared), [OwnerState::ExactC, OwnerState::NotYetC]);
-        assert_eq!(states(&declared), states(&loaded));
-        repository.record(
-            "main:08001010",
-            json!({"name": "Particle_Pending", "source": "BATTLE/PARTICLE.C"}),
-        );
-        let error = repository.load().unwrap_err();
-        assert!(
-            error.contains("main:08001010 has conflicting or missing"),
-            "{error}"
-        );
-    }
-    #[test]
-    fn retained_overlay_state_requires_a_real_owner_label_for_each_game() {
-        for game in [CompilerTarget::Tbs, CompilerTarget::Tla] {
-            let repository = Repository::new();
-            let root = repository.0.path();
-            let source = format!("{}/en/overlays/PENDING.C", game.recon());
-            repository.write(&source, "void Pending(void) {}\n");
-            repository.write(
-                &format!("{}/source-paths.json", game.recon()),
-                &json!({"format": 3, "owners": {"resource_394:02000000": {"name": "Pending"}}})
-                    .to_string(),
-            );
-            repository.write(
-                &format!("{}/translation-units.json", game.recon()),
-                &json!({"format": FORMAT, "units": [{
-                    "id": "pending", "source": source, "overlay": "resource_394",
-                    "owners": [{"address": "0x02000000", "extent": 2}]
-                }]})
-                .to_string(),
-            );
-            let listing = format!("{}/raw/overlays/resource_394_overlay.s", game.recon());
-            repository.write(&listing, "Pending:\n\tbx lr\n");
-            let units = TranslationUnits::declared_game(root, game).unwrap();
-            assert_eq!(units.units[0].owners[0].state, OwnerState::NotYetC);
-            repository.write(&listing, "\tbx lr\n");
-            let error = TranslationUnits::declared_game(root, game).unwrap_err();
-            assert!(error.contains("has no retained owner label"), "{error}");
-            repository.write(&listing, "AlchemyC_02000000:\n\t.space 2\n");
-            let error = TranslationUnits::declared_game(root, game).unwrap_err();
-            assert!(error.contains("conflicting or missing"), "{error}");
-        }
-    }
     #[test]
     fn main_instance_keeps_one_source_and_requires_its_own_imports_and_ownership() {
         let repository = Repository::new();
@@ -1603,11 +1459,25 @@ mod tests {
         .is_err());
     }
     #[test]
-    fn a_game_without_a_manifest_declares_nothing() {
+    fn each_game_manifest_declares_only_its_own_units() {
         let work = tempfile::tempdir().unwrap();
         let empty = TranslationUnits::load_game(work.path(), CompilerTarget::Tla).unwrap();
         assert!(empty.units.is_empty());
         assert!(TranslationUnits::load_game(work.path(), CompilerTarget::Tbs).is_err());
+        let path = work.path().join("recon/tla/translation-units.json");
+        std::fs::create_dir_all(path.parent().unwrap()).unwrap();
+        std::fs::write(
+            &path,
+            format!(
+                r#"{{"format":{FORMAT},"kind":"reconstruction-composition-contracts","original_translation_units":"unknown","units":[{{"id":"wrong-game","game":"tbs","source":"a.c","compiler_route":"canonical-gcc296","overlay":"resource_650","absolute_symbols":{{}},"local_symbols":[],"owners":[{{"address":"0x02000038","extent":8,"state":"exact-c"}}]}}]}}"#
+            ),
+        )
+        .unwrap();
+        let error = TranslationUnits::load_game(work.path(), CompilerTarget::Tla).unwrap_err();
+        assert!(
+            error.contains("tbs unit declared in the tla manifest"),
+            "{error}"
+        );
     }
 
     /// The loaded staged-actor unit after `edit`, checked as `load` checks it.
@@ -1845,28 +1715,16 @@ mod tests {
     fn instance_owner_claimed_by_another_unit_is_rejected() {
         let repository = Repository::new();
         // A second unit whose resource_389 instance repeats the first one's.
-        repository.record(
-            "resource_39c:02000630",
-            json!({"name": FIND, "source": "FIELD/COPY.C"}),
-        );
-        repository.record(
-            "resource_39c:02000ba4",
-            json!({"name": REDRAW, "source": "FIELD/COPY.C"}),
-        );
-        repository.write(
-            "games/THE BROKEN SEAL/SRC/FIELD/COPY.C",
-            "void Copy(void) {}\n",
-        );
-        repository.listing("resource_39c", &[0x0200_0630, 0x0200_0ba4]);
+        repository.record("resource_39c:02000630", json!({"name": FIND}));
+        repository.record("resource_39c:02000ba4", json!({"name": REDRAW}));
         let mut copy = staged_actor();
         copy["id"] = "staged-actor-copy".into();
-        copy["source"] = "games/THE BROKEN SEAL/SRC/FIELD/COPY.C".into();
         copy["overlay"] = "resource_39c".into();
         copy["owners"] = staged_actor()["instances"]["resource_39b"]["owners"]
             .as_object()
             .unwrap()
             .values()
-            .map(|owner| json!({"address": owner["address"], "extent": owner["extent"]}))
+            .map(|owner| json!({"address": owner["address"], "extent": owner["extent"], "state": "exact-c"}))
             .collect();
         copy["instances"]
             .as_object_mut()
@@ -2069,6 +1927,27 @@ mod tests {
             .unwrap()
             .kind = AbsoluteSymbolKind::Thumb;
         assert!(invalid.validate_editions().is_err());
+    }
+    #[test]
+    fn reviewed_owner_duplicates_never_select_the_last_extent() {
+        let root = tempfile::tempdir().unwrap();
+        let path = root.path().join("recon/tbs/semantic/regions.json");
+        std::fs::create_dir_all(path.parent().unwrap()).unwrap();
+        for sizes in [[4, 4], [4, 8]] {
+            let rows = sizes.map(|span| {
+                serde_json::json!({
+                    "overlay": "resource_371", "entry": "0x02000100", "span_bytes": span
+                })
+            });
+            std::fs::write(
+                &path,
+                serde_json::json!({"manual_regions": rows}).to_string(),
+            )
+            .unwrap();
+            assert!(reviewed_overlay_spans(root.path())
+                .unwrap_err()
+                .contains("duplicate"));
+        }
     }
     #[test]
     fn supplied_overlay_spans_cannot_establish_or_resize_owners() {

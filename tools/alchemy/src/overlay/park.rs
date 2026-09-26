@@ -18,6 +18,15 @@ use std::process::Command;
 use std::sync::atomic::{AtomicUsize, Ordering};
 use std::sync::Mutex;
 use tempfile::tempdir;
+fn number(row: &serde_json::Value, key: &str) -> Option<i64> {
+    row.get(key).and_then(|value| {
+        value.as_i64().or_else(|| {
+            value
+                .as_str()
+                .and_then(|text| i64::from_str_radix(text.trim_start_matches("0x"), 16).ok())
+        })
+    })
+}
 fn placeholder_address(line: &str) -> Option<i64> {
     i64::from_str_radix(
         line.trim().strip_prefix("AlchemyC_")?.strip_suffix(':')?,
@@ -267,8 +276,11 @@ fn audit_with_rom(root: &Path, overlay: &str, rom: Option<&CanonicalRom>) -> Aud
 }
 pub fn run_audit(root: &Path, argv: &[String]) -> Result<i32, String> {
     if argv == ["--help"] || argv == ["-h"] {
-        println!("usage: alchemy overlay audit [RESOURCE ... | --all]");
+        println!("usage: alchemy overlay audit [RESOURCE ... | --all | --corpus]");
         return Ok(0);
+    }
+    if argv == ["--corpus"] {
+        return crate::overlay::score::audit_corpus(root);
     }
     let overlays: Vec<String> = if argv.is_empty() || argv[0] == "--all" {
         let mut names = Vec::new();
@@ -387,8 +399,11 @@ pub struct Parked {
     /// Every owner restored: the owner, or each member of its instance.
     pub owners: Vec<SourceOwner>,
 }
-/// A unit containing only the parked owner points to its draft. Multi-owner
-/// units keep their source; ownership follows the restored listing and mapping.
+/// Marks a parked owner retained in every unit that owns it. A unit whose
+/// only owner this is points its source at the parked draft with the owner
+/// state flipped and its absolute symbols kept; the id is not touched, since
+/// nothing keys off it and many units never carried a prefix. A unit with
+/// other owners keeps its source and flips only this owner.s state.
 fn retire_owner_in_units(
     units_path: &Path,
     overlay: &str,
@@ -405,19 +420,23 @@ fn retire_owner_in_units(
         if unit["overlay"].as_str() != Some(overlay) {
             continue;
         }
-        let Some(owners) = unit["owners"].as_array() else {
+        let Some(owners) = unit["owners"].as_array_mut() else {
             continue;
         };
         let count = owners.len();
-        let hit = owners
-            .iter()
-            .any(|owner| owner["address"].as_str() == Some(wanted.as_str()));
+        let mut hit = false;
+        for owner in owners.iter_mut() {
+            if owner["address"].as_str() == Some(wanted.as_str()) {
+                owner["state"] = "not-yet-c".into();
+                hit = true;
+            }
+        }
         if !hit {
             continue;
         }
+        changed = true;
         if count == 1 {
             unit["source"] = parked_relative.into();
-            changed = true;
         }
     }
     if !changed {
@@ -428,15 +447,66 @@ fn retire_owner_in_units(
         .map_err(|e| format!("{}: {e}", units_path.display()))
 }
 
+/// Puts a retained-classification row back over a parked owner's span:
+/// the full build takes the non-exact branch for an overlay owner and
+/// requires one. The row claims no origin and no cause: its kind says it is
+/// unclassified, it opens with the withdrawn standard's disclaimer and
+/// carries the operator's reason. Confidence is fixed at "strong", the
+/// non-crediting bucket (coverage/pipeline.rs treats only "proven" as
+/// credit), so a withdrawal can never be credited back by a later standard. Adoption may have split
+/// rather than removed the original row, so a span that overlaps any
+/// existing row is refused rather than guessed at.
+fn restore_retained_row(
+    evidence_path: &Path,
+    overlay: &str,
+    start: i64,
+    span: i64,
+    reason: &str,
+) -> Result<(), String> {
+    let text = fs::read_to_string(evidence_path)
+        .map_err(|e| format!("{}: {e}", evidence_path.display()))?;
+    let mut document: serde_json::Value =
+        serde_json::from_str(&text).map_err(|e| format!("{}: {e}", evidence_path.display()))?;
+    let end = start + span;
+    let regions = document["regions"]
+        .as_array_mut()
+        .ok_or("overlay-assembly.json: regions must be an array")?;
+    for row in regions.iter() {
+        if row["overlay"].as_str() != Some(overlay) {
+            continue;
+        }
+        let (Some(row_start), Some(row_end)) = (number(row, "start"), number(row, "end")) else {
+            continue;
+        };
+        if row_start < end && row_end > start {
+            return Err(format!(
+                "a retained row 0x{row_start:08x}-0x{row_end:08x} already overlaps 0x{start:08x}-0x{end:08x}; adoption split rather than removed it, restore the row by hand"
+            ));
+        }
+    }
+    regions.push(serde_json::json!({
+        "overlay": overlay,
+        "start": format!("0x{start:08x}"),
+        "end": format!("0x{end:08x}"),
+        "kind": "not_yet_decompiled",
+        "retention": "not_yet_c",
+        "confidence": "strong",
+        "evidence": [
+            "Credit withdrawn under the handwritten/third-party-assembly requirement: the observations below do not establish assembly origin. This remains unverified retained code eligible for ordinary C recovery.",
+            format!("Parked by alchemy overlay park: {reason}"),
+        ],
+    }));
+    let rendered = serde_json::to_string_pretty(&document).map_err(|e| e.to_string())?;
+    fs::write(evidence_path, format!("{rendered}\n"))
+        .map_err(|e| format!("{}: {e}", evidence_path.display()))
+}
+
 /// The listing with one owner's placeholder replaced by the assembly it
-/// retired between the owner's listing label and its `.size` end, which
-/// bound it as not-yet-C to exactly the placeholder's extent:
-/// the text, the owner's span, the restored line count and the reference its
-/// bytes must reproduce, with that reference's origin.
+/// retired: the text, the owner's span, the restored line count and the
+/// reference its bytes must reproduce, with that reference's origin.
 fn splice_restored(
     root: &Path,
     target: SourceOwner,
-    label: &str,
     text: &str,
 ) -> Result<(String, i64, usize, Vec<u8>, &'static str), String> {
     let overlay = target.overlay_id().expect("overlay owner");
@@ -468,12 +538,7 @@ fn splice_restored(
     };
     let mut replaced: Vec<String> = Vec::with_capacity(lines.len() + restored.len());
     replaced.extend(lines[..start].iter().map(|line| line.to_string()));
-    replaced.push(format!("{label}:"));
-    // Assembly recovered from history may carry an earlier owner label.
-    replaced.extend(restored.iter().cloned().filter(|line| {
-        !crate::overlay::listing::is_owner_label(line) && !line.trim().starts_with(".size ")
-    }));
-    replaced.push(format!("\t.size {label}, .-{label}"));
+    replaced.extend(restored.iter().cloned());
     replaced.extend(lines[end..].iter().map(|line| line.to_string()));
     Ok((replaced.join("\n"), span, restored.len(), reference, oracle))
 }
@@ -518,21 +583,21 @@ fn parked_members(
     }
     Ok(vec![(target, None)])
 }
-pub(crate) fn park_one(root: &Path, target: SourceOwner, apply: bool) -> Result<Parked, String> {
+pub(crate) fn park_one(
+    root: &Path,
+    target: SourceOwner,
+    apply: bool,
+    reason: Option<&str>,
+) -> Result<Parked, String> {
     let overlay = target.overlay_id().expect("overlay owner");
     let address = i64::from(target.address());
     let assembly = overlay_assembly(root, &overlay);
     let original = fs::read_to_string(&assembly).map_err(|error| error.to_string())?;
     let members = parked_members(root, target)?;
-    let names = SourcePaths::load(root)?;
     let mut text = original.clone();
     let mut restored = Vec::new();
     for (owner, _) in &members {
-        let label = names
-            .registered_name(*owner)
-            .map_or_else(|| owner.legacy_name(), str::to_string);
-        let (updated, span, lines, reference, oracle) =
-            splice_restored(root, *owner, &label, &text)?;
+        let (updated, span, lines, reference, oracle) = splice_restored(root, *owner, &text)?;
         text = updated;
         restored.push((*owner, span, lines, reference, oracle));
     }
@@ -569,15 +634,16 @@ pub(crate) fn park_one(root: &Path, target: SourceOwner, apply: bool) -> Result<
         .map_or(0, |row| row.1);
     let lines = restored.iter().map(|row| row.2).sum();
     if apply {
+        let reason = reason.unwrap_or("no reason given");
         match members.first().and_then(|member| member.1.as_deref()) {
             Some(unit) => {
                 let spans = restored
                     .iter()
                     .map(|row| (row.0, row.1))
                     .collect::<Vec<_>>();
-                retire_instance(root, unit, &overlay, &spans, &assembly, &text)?;
+                retire_instance(root, unit, &overlay, &spans, &assembly, &text, reason)?;
             }
-            None => retire_owner(root, target, &assembly, &original, &text)?,
+            None => retire_owner(root, target, span, &assembly, &original, &text, reason)?,
         }
     }
     Ok(Parked {
@@ -588,9 +654,10 @@ pub(crate) fn park_one(root: &Path, target: SourceOwner, apply: bool) -> Result<
         owners: restored.iter().map(|row| row.0).collect(),
     })
 }
-/// Retires one instance: its restored, labelled assembly, its owners' source
-/// paths (their names stay registered) and its manifest entry. The shared
-/// source, the canonical unit and every other instance are untouched.
+/// Retires one instance: its restored assembly, its owners' source paths
+/// (their names stay registered) and its manifest entry, with a retained row
+/// for each span. The shared source, the canonical unit and every other
+/// instance are untouched.
 fn retire_instance(
     root: &Path,
     unit: &str,
@@ -598,11 +665,14 @@ fn retire_instance(
     spans: &[(SourceOwner, i64)],
     assembly: &Path,
     text: &str,
+    reason: &str,
 ) -> Result<(), String> {
     let units = root.join("recon/tbs/translation-units.json");
+    let evidence = root.join("recon/tbs/semantic/overlay-assembly.json");
     let register = root.join("recon/tbs/source-paths.json");
     let snapshot = crate::compiler::build_io::Snapshot::take(&[
         units.clone(),
+        evidence.clone(),
         assembly.to_path_buf(),
         register,
     ])?;
@@ -613,6 +683,10 @@ fn retire_instance(
             source_paths.unregister_owner(*owner)?;
         }
         remove_instance_in_units(&units, unit, overlay)?;
+        for (owner, span) in spans {
+            let start = i64::from(owner.address());
+            restore_retained_row(&evidence, overlay, start, *span, reason)?;
+        }
         Ok::<(), String>(())
     })();
     outcome.map_err(|error| {
@@ -652,11 +726,14 @@ fn remove_instance_in_units(units_path: &Path, unit: &str, image: &str) -> Resul
 fn retire_owner(
     root: &Path,
     target: SourceOwner,
+    span: i64,
     assembly: &Path,
     original: &str,
     text: &str,
+    reason: &str,
 ) -> Result<(), String> {
     let overlay = target.overlay_id().expect("overlay owner");
+    let address = i64::from(target.address());
     let owner = target;
     let source_paths = SourcePaths::load(root)?;
     let installed = source_paths.source_path(owner);
@@ -722,8 +799,10 @@ fn retire_owner(
     // losing the unit: a unit pointing at a moved file is unscoreable,
     // and rebuilding it later drops its absolute symbols.
     let units = root.join("recon/tbs/translation-units.json");
+    let evidence = root.join("recon/tbs/semantic/overlay-assembly.json");
     let snapshot = crate::compiler::build_io::Snapshot::take(&[
         units.clone(),
+        evidence.clone(),
         assembly.to_path_buf(),
         installed.clone(),
         parked.clone(),
@@ -733,7 +812,8 @@ fn retire_owner(
         .strip_prefix(root)
         .map(|p| p.to_string_lossy().into_owned())
         .unwrap_or_else(|_| parked.to_string_lossy().into_owned());
-    let outcome = retire_owner_in_units(&units, &overlay, target.address(), &parked_relative);
+    let outcome = retire_owner_in_units(&units, &overlay, target.address(), &parked_relative)
+        .and_then(|()| restore_retained_row(&evidence, &overlay, address, span, reason));
     if let Err(error) = outcome {
         snapshot.restore();
         return Err(format!(
@@ -744,16 +824,22 @@ fn retire_owner(
 }
 pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
     let mut apply = false;
+    let mut reason: Option<String> = None;
     let mut rows: Vec<String> = Vec::new();
-    for argument in argv {
+    let mut arguments = argv.iter();
+    while let Some(argument) = arguments.next() {
         match argument.as_str() {
             "--apply" => apply = true,
+            "--reason" => reason = arguments.next().cloned(),
             "-h" | "--help" => {
-                println!("usage: alchemy overlay park <overlay>:<addressHex> [...] [--apply]");
+                println!("usage: alchemy overlay park <overlay>:<addressHex> [...] [--apply --reason TEXT]");
                 return Ok(0);
             }
             other => rows.push(other.to_string()),
         }
+    }
+    if apply && reason.as_deref().is_none_or(str::is_empty) {
+        return Err("--apply needs --reason TEXT: why the credit is withdrawn, recorded on the retained row".to_string());
     }
     if rows.is_empty() {
         return Err("at least one <overlay>:<addressHex> row is required".to_string());
@@ -761,7 +847,7 @@ pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
     let mut failures = 0;
     for row in rows {
         let target = crate::overlay::score::resolve(root, &row)?;
-        match park_one(root, target, apply) {
+        match park_one(root, target, apply, reason.as_deref()) {
             Ok(parked) => println!(
                 "parked {}:{:08x} span={} lines={}{}{}",
                 parked.overlay,
@@ -792,6 +878,35 @@ pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
 #[cfg(test)]
 mod tests {
     #[test]
+    fn parking_restores_a_neutral_retained_row_and_refuses_overlap() {
+        let root = tempdir().unwrap();
+        let evidence = root.path().join("overlay-assembly.json");
+        fs::write(&evidence, r#"{"format":1,"regions":[{"overlay":"resource_37a","start":"0x02001000","end":"0x02001100","kind":"structured_scene_module","retention":"keep_structured_asm","confidence":"strong","evidence":["x"]}]}"#).unwrap();
+        super::restore_retained_row(
+            &evidence,
+            "resource_37a",
+            0x02001be8,
+            192,
+            "not reproducible",
+        )
+        .unwrap();
+        let after: serde_json::Value =
+            serde_json::from_str(&fs::read_to_string(&evidence).unwrap()).unwrap();
+        let row = &after["regions"][1];
+        assert_eq!(row["start"], "0x02001be8");
+        assert_eq!(row["end"], "0x02001ca8");
+        assert_eq!(row["retention"], "not_yet_c");
+        let text = row["evidence"].to_string();
+        assert!(text.contains("Credit withdrawn") && text.contains("not reproducible"));
+        let overlap =
+            super::restore_retained_row(&evidence, "resource_37a", 0x02001c00, 16, "again");
+        assert!(overlap.unwrap_err().contains("already overlaps"));
+        assert!(
+            super::restore_retained_row(&evidence, "resource_37b", 0x02001c00, 16, "other").is_ok()
+        );
+    }
+
+    #[test]
     fn parking_an_instance_keeps_the_shared_source_and_other_instances() {
         use crate::compiler::source_paths::SourceOwner;
         use crate::compiler::translation_units::fixture::{Repository, STAGED_ACTOR};
@@ -799,6 +914,10 @@ mod tests {
         let root = repository.0.path();
         let game = root.join("games/THE BROKEN SEAL");
         let recon = root.join("recon/tbs");
+        repository.write(
+            "recon/tbs/semantic/overlay-assembly.json",
+            r#"{"format":1,"regions":[]}"#,
+        );
         let owner = |id: &str| SourceOwner::parse(id).unwrap();
         // Parking one member of an instance parks every member it links there.
         let members = super::parked_members(root, owner("resource_39b:02000ba4")).unwrap();
@@ -830,6 +949,7 @@ mod tests {
             "raw/overlays/resource_39b_overlay.s",
             "source-paths.json",
             "translation-units.json",
+            "semantic/overlay-assembly.json",
         ];
         let contents = || files.map(|file| fs::read_to_string(recon.join(file)).unwrap());
         // A failure restores every register it touched.
@@ -841,6 +961,7 @@ mod tests {
             &spans,
             &listing,
             "restored\n",
+            "probe",
         )
         .unwrap_err();
         assert!(
@@ -857,6 +978,7 @@ mod tests {
             &spans,
             &listing,
             "restored\n",
+            "not exact",
         )
         .unwrap();
         assert_eq!(fs::read_to_string(&listing).unwrap(), "restored\n");
@@ -871,6 +993,20 @@ mod tests {
         for id in ["resource_3bf:0200034c", "resource_389:020008c0"] {
             assert_eq!(register["owners"][id]["source"], STAGED_ACTOR, "{id}");
         }
+        let evidence: serde_json::Value = serde_json::from_str(
+            &fs::read_to_string(recon.join("semantic/overlay-assembly.json")).unwrap(),
+        )
+        .unwrap();
+        let rows = evidence["regions"].as_array().unwrap();
+        assert_eq!(rows.len(), 2);
+        assert_eq!(
+            (&rows[0]["start"], &rows[0]["end"]),
+            (&"0x02000630".into(), &"0x02000758".into())
+        );
+        assert_eq!(
+            (&rows[1]["start"], &rows[1]["end"]),
+            (&"0x02000ba4".into(), &"0x02000cc0".into())
+        );
         // The canonical unit and its other instance still load as one unit.
         let units = repository.load().unwrap();
         let unit = &units.units[0];
@@ -892,6 +1028,7 @@ mod tests {
             &spans,
             &listing,
             "restored\n",
+            "not exact",
         )
         .unwrap();
         let manifest = fs::read_to_string(recon.join("translation-units.json")).unwrap();
@@ -903,9 +1040,9 @@ mod tests {
         let root = tempdir().unwrap();
         let units = root.path().join("translation-units.json");
         fs::write(&units, r#"{"units":[
-{"id":"overlay-37a-actor","overlay":"resource_37a","source":"games/THE BROKEN SEAL/SRC/a.c","absolute_symbols":{"Func_02004698_a":{"address":"0x0200aa54","kind":"thumb"}},"owners":[{"address":"0x02001be8","extent":192}]},
-{"id":"shared-37a","overlay":"resource_37a","source":"games/THE BROKEN SEAL/SRC/b.c","absolute_symbols":{},"owners":[{"address":"0x02001be8","extent":192},{"address":"0x02002000","extent":8}]},
-{"id":"other-37b","overlay":"resource_37b","source":"games/THE BROKEN SEAL/SRC/c.c","absolute_symbols":{},"owners":[{"address":"0x02001be8","extent":4}]}
+{"id":"overlay-37a-actor","overlay":"resource_37a","source":"games/THE BROKEN SEAL/SRC/a.c","absolute_symbols":{"Func_02004698_a":{"address":"0x0200aa54","kind":"thumb"}},"owners":[{"address":"0x02001be8","extent":192,"state":"exact-c"}]},
+{"id":"shared-37a","overlay":"resource_37a","source":"games/THE BROKEN SEAL/SRC/b.c","absolute_symbols":{},"owners":[{"address":"0x02001be8","extent":192,"state":"exact-c"},{"address":"0x02002000","extent":8,"state":"exact-c"}]},
+{"id":"other-37b","overlay":"resource_37b","source":"games/THE BROKEN SEAL/SRC/c.c","absolute_symbols":{},"owners":[{"address":"0x02001be8","extent":4,"state":"exact-c"}]}
 ]}"#).unwrap();
         super::retire_owner_in_units(
             &units,
@@ -919,7 +1056,7 @@ mod tests {
         let unit = &after["units"][0];
         assert_eq!(unit["id"], "overlay-37a-actor");
         assert_eq!(unit["source"], "recon/tbs/en/overlays/x.c");
-        assert!(unit["owners"][0].get("state").is_none());
+        assert_eq!(unit["owners"][0]["state"], "not-yet-c");
         assert_eq!(
             unit["absolute_symbols"]["Func_02004698_a"]["address"],
             "0x0200aa54"
@@ -927,12 +1064,9 @@ mod tests {
         let shared = &after["units"][1];
         assert_eq!(shared["id"], "shared-37a");
         assert_eq!(shared["source"], "games/THE BROKEN SEAL/SRC/b.c");
-        assert!(shared["owners"]
-            .as_array()
-            .unwrap()
-            .iter()
-            .all(|owner| owner.get("state").is_none()));
-        assert!(after["units"][2]["owners"][0].get("state").is_none());
+        assert_eq!(shared["owners"][0]["state"], "not-yet-c");
+        assert_eq!(shared["owners"][1]["state"], "exact-c");
+        assert_eq!(after["units"][2]["owners"][0]["state"], "exact-c");
     }
     use super::audit_with_rom;
     use crate::overlay::adopt::audited_span;
@@ -956,11 +1090,11 @@ mod tests {
     #[test]
     fn literal_pool_address_is_not_adoptable() {
         let root = tempdir().unwrap();
-        let listings = root.path().join("recon/tbs/raw/overlays");
-        fs::create_dir_all(&listings).unwrap();
+        let semantic = root.path().join("recon/tbs/semantic");
+        fs::create_dir_all(&semantic).unwrap();
         fs::write(
-            listings.join("resource_371_overlay.s"),
-            "\t.4byte 0x0\n\t.4byte 0x0\n\t.4byte 0x0\n\t.4byte 0x0\nScene_Run:\n\t.space 0x10\n",
+            semantic.join("regions.json"),
+            r#"{"manual_regions":[{"overlay":"resource_371","entry":"0x02000010","span_bytes":16}]}"#,
         )
         .unwrap();
         let accepts = |entry: u32, span| {

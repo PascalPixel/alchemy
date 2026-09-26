@@ -15,21 +15,24 @@
             "end": "0x0875bde4",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 64, 68, 3, 2, 1, 0, 2, 2, 0, 0]
+            "values": [0, 0, 64, 68, 3, 2, 1, 0, 2, 2, 0, 0],
+            "address": "0x0875bdd8"
           },
           {
             "name": "records",
             "end": "0x0875bdfc",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [64, 4112, 0, 65535], [17408, 4112, 0, 65535]]
+            "values": [[0, 4112, 0, 65535], [64, 4112, 0, 65535], [17408, 4112, 0, 65535]],
+            "address": "0x0875bde4"
           },
           {
             "name": "component_offsets",
             "end": "0x0875be14",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0x19cc", "0x19e4", "0x0", "0x0", "0x4600"]
+            "values": ["0x3c", "0x19cc", "0x19e4", "0x0", "0x0", "0x4600"],
+            "address": "0x0875bdfc"
           }
         ]
       },
@@ -63,7 +66,16 @@
         "address": "0x087603d8",
         "size": "0x3",
         "record_size": 3,
-        "segments": [{"name": "terminator", "end": "0x087603db", "stride": 1, "element": "u8", "fill": 255}]
+        "segments": [
+          {
+            "name": "terminator",
+            "end": "0x087603db",
+            "stride": 1,
+            "element": "u8",
+            "fill": 255,
+            "address": "0x087603d8"
+          }
+        ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/VINASU_HEYA/VINASU_HEYA.BIN",
       "grid_offset": 68280,
@@ -86,21 +98,24 @@
             "end": "0x087604f0",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 128, 128, 3, 1, 1, 0, 2, 2, 0, 0]
+            "values": [0, 0, 128, 128, 3, 1, 1, 0, 2, 2, 0, 0],
+            "address": "0x087604e4"
           },
           {
             "name": "records",
             "end": "0x08760508",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [128, 4112, 0, 65535], [32768, 4112, 0, 65535]]
+            "values": [[0, 4112, 0, 65535], [128, 4112, 0, 65535], [32768, 4112, 0, 65535]],
+            "address": "0x087604f0"
           },
           {
             "name": "component_offsets",
             "end": "0x08760520",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0x82c", "0x83c", "0x1918", "0x1ba0", "0x1bc8"]
+            "values": ["0x3c", "0x82c", "0x83c", "0x1918", "0x1ba0", "0x1bc8"],
+            "address": "0x08760508"
           }
         ]
       },
@@ -220,9 +235,17 @@
             "end": "0x087620b2",
             "stride": 3,
             "element": "u8",
-            "values": [[29, 12, 100], [5, 55, 101]]
+            "values": [[29, 12, 100], [5, 55, 101]],
+            "address": "0x087620ac"
           },
-          {"name": "terminator", "end": "0x087620b5", "stride": 1, "element": "u8", "fill": 255}
+          {
+            "name": "terminator",
+            "end": "0x087620b5",
+            "stride": 1,
+            "element": "u8",
+            "fill": 255,
+            "address": "0x087620b2"
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/VINASU_HEYA/VINASU_HEYA.BIN",
@@ -246,21 +269,24 @@
             "end": "0x08762234",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 128, 128, 3, 1, 1, 0, 2, 2, 0, 0]
+            "values": [0, 0, 128, 128, 3, 1, 1, 0, 2, 2, 0, 0],
+            "address": "0x08762228"
           },
           {
             "name": "records",
             "end": "0x0876224c",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [128, 4112, 0, 65535], [32768, 4112, 0, 65535]]
+            "values": [[0, 4112, 0, 65535], [128, 4112, 0, 65535], [32768, 4112, 0, 65535]],
+            "address": "0x08762234"
           },
           {
             "name": "component_offsets",
             "end": "0x08762264",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0x7b8", "0x7d0", "0x16dc", "0x1924", "0x1934"]
+            "values": ["0x3c", "0x7b8", "0x7d0", "0x16dc", "0x1924", "0x1934"],
+            "address": "0x0876224c"
           }
         ]
       },
@@ -374,9 +400,17 @@
             "end": "0x08763b62",
             "stride": 3,
             "element": "u8",
-            "values": [[26, 9, 100], [11, 10, 110]]
+            "values": [[26, 9, 100], [11, 10, 110]],
+            "address": "0x08763b5c"
           },
-          {"name": "terminator", "end": "0x08763b65", "stride": 1, "element": "u8", "fill": 255}
+          {
+            "name": "terminator",
+            "end": "0x08763b65",
+            "stride": 1,
+            "element": "u8",
+            "fill": 255,
+            "address": "0x08763b62"
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/VINASU_HEYA/VINASU_HEYA.BIN",
@@ -400,21 +434,24 @@
             "end": "0x08763cd0",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 128, 128, 3, 1, 1, 0, 2, 2, 0, 0]
+            "values": [0, 0, 128, 128, 3, 1, 1, 0, 2, 2, 0, 0],
+            "address": "0x08763cc4"
           },
           {
             "name": "records",
             "end": "0x08763ce8",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [128, 4112, 0, 65535], [32768, 4112, 0, 65535]]
+            "values": [[0, 4112, 0, 65535], [128, 4112, 0, 65535], [32768, 4112, 0, 65535]],
+            "address": "0x08763cd0"
           },
           {
             "name": "component_offsets",
             "end": "0x08763d00",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0x6b8", "0x6cc", "0x1280", "0x14c8", "0x14d8"]
+            "values": ["0x3c", "0x6b8", "0x6cc", "0x1280", "0x14c8", "0x14d8"],
+            "address": "0x08763ce8"
           }
         ]
       },
@@ -519,7 +556,16 @@
         "address": "0x0876519c",
         "size": "0x3",
         "record_size": 3,
-        "segments": [{"name": "terminator", "end": "0x0876519f", "stride": 1, "element": "u8", "fill": 255}]
+        "segments": [
+          {
+            "name": "terminator",
+            "end": "0x0876519f",
+            "stride": 1,
+            "element": "u8",
+            "fill": 255,
+            "address": "0x0876519c"
+          }
+        ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/VINASU_HEYA/VINASU_HEYA.BIN",
       "grid_offset": 0,
@@ -542,21 +588,24 @@
             "end": "0x087651ac",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 128, 128, 3, 1, 1, 0, 2, 2, 0, 0]
+            "values": [0, 0, 128, 128, 3, 1, 1, 0, 2, 2, 0, 0],
+            "address": "0x087651a0"
           },
           {
             "name": "records",
             "end": "0x087651c4",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [128, 4112, 0, 65535], [32768, 4112, 0, 65535]]
+            "values": [[0, 4112, 0, 65535], [128, 4112, 0, 65535], [32768, 4112, 0, 65535]],
+            "address": "0x087651ac"
           },
           {
             "name": "component_offsets",
             "end": "0x087651dc",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0x580", "0x590", "0x12f0", "0x1538", "0x1548"]
+            "values": ["0x3c", "0x580", "0x590", "0x12f0", "0x1538", "0x1548"],
+            "address": "0x087651c4"
           }
         ]
       },
@@ -662,8 +711,22 @@
         "size": "0x6",
         "record_size": 3,
         "segments": [
-          {"name": "records", "end": "0x087666eb", "stride": 3, "element": "u8", "values": [[8, 22, 100]]},
-          {"name": "terminator", "end": "0x087666ee", "stride": 1, "element": "u8", "fill": 255}
+          {
+            "name": "records",
+            "end": "0x087666eb",
+            "stride": 3,
+            "element": "u8",
+            "values": [[8, 22, 100]],
+            "address": "0x087666e8"
+          },
+          {
+            "name": "terminator",
+            "end": "0x087666ee",
+            "stride": 1,
+            "element": "u8",
+            "fill": 255,
+            "address": "0x087666eb"
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/VINASU_HEYA/VINASU_HEYA.BIN",
@@ -687,21 +750,24 @@
             "end": "0x087666fc",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 128, 128, 3, 1, 1, 0, 2, 2, 0, 0]
+            "values": [0, 0, 128, 128, 3, 1, 1, 0, 2, 2, 0, 0],
+            "address": "0x087666f0"
           },
           {
             "name": "records",
             "end": "0x08766714",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [128, 4112, 0, 65535], [32768, 4112, 0, 65535]]
+            "values": [[0, 4112, 0, 65535], [128, 4112, 0, 65535], [32768, 4112, 0, 65535]],
+            "address": "0x087666fc"
           },
           {
             "name": "component_offsets",
             "end": "0x0876672c",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0x924", "0x93c", "0x1c60", "0x1ea8", "0x1eb8"]
+            "values": ["0x3c", "0x924", "0x93c", "0x1c60", "0x1ea8", "0x1eb8"],
+            "address": "0x08766714"
           }
         ]
       },
@@ -815,9 +881,17 @@
             "end": "0x087685ae",
             "stride": 3,
             "element": "u8",
-            "values": [[27, 47, 110], [57, 49, 100]]
+            "values": [[27, 47, 110], [57, 49, 100]],
+            "address": "0x087685a8"
           },
-          {"name": "terminator", "end": "0x087685b1", "stride": 1, "element": "u8", "fill": 255}
+          {
+            "name": "terminator",
+            "end": "0x087685b1",
+            "stride": 1,
+            "element": "u8",
+            "fill": 255,
+            "address": "0x087685ae"
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/VINASU_HEYA/VINASU_HEYA.BIN",

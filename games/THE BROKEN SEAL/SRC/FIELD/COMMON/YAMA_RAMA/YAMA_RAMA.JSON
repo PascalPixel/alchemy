@@ -15,21 +15,24 @@
             "end": "0x08654a2c",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 72, 66, 3, 2, 1, 0, 2, 2, 0, 0]
+            "values": [0, 0, 72, 66, 3, 2, 1, 0, 2, 2, 0, 0],
+            "address": "0x08654a20"
           },
           {
             "name": "records",
             "end": "0x08654a44",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [72, 4112, 0, 65535], [144, 4112, 0, 65535]]
+            "values": [[0, 4112, 0, 65535], [72, 4112, 0, 65535], [144, 4112, 0, 65535]],
+            "address": "0x08654a2c"
           },
           {
             "name": "component_offsets",
             "end": "0x08654a5c",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0xfd4", "0x1008", "0x1bd0", "0x1d0c", "0x1d14"]
+            "values": ["0x3c", "0xfd4", "0x1008", "0x1bd0", "0x1d0c", "0x1d14"],
+            "address": "0x08654a44"
           }
         ]
       },
@@ -115,8 +118,22 @@
         "size": "0x6",
         "record_size": 3,
         "segments": [
-          {"name": "records", "end": "0x08656737", "stride": 3, "element": "u8", "values": [[27, 24, 100]]},
-          {"name": "terminator", "end": "0x0865673a", "stride": 1, "element": "u8", "fill": 255}
+          {
+            "name": "records",
+            "end": "0x08656737",
+            "stride": 3,
+            "element": "u8",
+            "values": [[27, 24, 100]],
+            "address": "0x08656734"
+          },
+          {
+            "name": "terminator",
+            "end": "0x0865673a",
+            "stride": 1,
+            "element": "u8",
+            "fill": 255,
+            "address": "0x08656737"
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/YAMA_RAMA/YAMA_RAMA.BIN",
@@ -140,21 +157,24 @@
             "end": "0x0867be88",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 55, 68, 3, 1, 2, 0, 2, 2, 0, 0]
+            "values": [0, 0, 55, 68, 3, 1, 2, 0, 2, 2, 0, 0],
+            "address": "0x0867be7c"
           },
           {
             "name": "records",
             "end": "0x0867bea0",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [30720, 4112, 0, 65535], [120, 4112, 0, 65535]]
+            "values": [[0, 4112, 0, 65535], [30720, 4112, 0, 65535], [120, 4112, 0, 65535]],
+            "address": "0x0867be88"
           },
           {
             "name": "component_offsets",
             "end": "0x0867beb8",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0x2108", "0x2144", "0x3344", "0x34b0", "0x34b8"]
+            "values": ["0x3c", "0x2108", "0x2144", "0x3344", "0x34b0", "0x34b8"],
+            "address": "0x0867bea0"
           }
         ]
       },
@@ -244,8 +264,22 @@
         "size": "0x9",
         "record_size": 3,
         "segments": [
-          {"name": "records", "end": "0x0867f33a", "stride": 3, "element": "u8", "values": [[21, 9, 100], [4, 15, 110]]},
-          {"name": "terminator", "end": "0x0867f33d", "stride": 1, "element": "u8", "fill": 255}
+          {
+            "name": "records",
+            "end": "0x0867f33a",
+            "stride": 3,
+            "element": "u8",
+            "values": [[21, 9, 100], [4, 15, 110]],
+            "address": "0x0867f334"
+          },
+          {
+            "name": "terminator",
+            "end": "0x0867f33d",
+            "stride": 1,
+            "element": "u8",
+            "fill": 255,
+            "address": "0x0867f33a"
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/YAMA_RAMA/YAMA_RAMA.BIN",

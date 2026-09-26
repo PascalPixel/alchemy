@@ -387,7 +387,6 @@ AlchemyC_02000398:
 	.space 0x1a4
 AlchemyC_0200053c:
 	.space 0x44
-Func_02000580:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -665,7 +664,6 @@ Func_02000580:
 	.4byte 0x03001388
 	.2byte 0x1f64
 	.2byte 0x0300
-Func_020007b0:
 	push	{r5, r6, lr}
 	movs	r6, #0
 	ldr	r0, [pc, #136]
@@ -743,7 +741,6 @@ Func_020007b0:
 	.4byte 0x020023ac
 	.2byte 0x2238
 	.2byte 0x0200
-Scene_RunScene3cbSequenceB:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r8
@@ -1091,7 +1088,6 @@ Scene_RunScene3cbSequenceB:
 	pop	{r5, r6, r7}
 	pop	{r1}
 	bx	r1
-Func_02000b94:
 	push	{r5, r6, r7, lr}
 	ldr	r6, [pc, #432]
 	bl	sub_020023de
@@ -1322,7 +1318,6 @@ AlchemyC_02001228:
 	.space 0x6c
 AlchemyC_02001294:
 	.space 0x4c
-Scene_RunScene3cbSequenceA:
 	push	{r5, r6, r7, lr}
 	ldr	r3, [pc, #148]
 	movs	r2, #0

@@ -15,21 +15,24 @@
             "end": "0x0858eec0",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 120, 120, 3, 2, 1, 0, 2, 2, 0, 0]
+            "values": [0, 0, 120, 120, 3, 2, 1, 0, 2, 2, 0, 0],
+            "address": "0x0858eeb4"
           },
           {
             "name": "records",
             "end": "0x0858eed8",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [30720, 4112, 0, 65535], [120, 4112, 0, 65535]]
+            "values": [[0, 4112, 0, 65535], [30720, 4112, 0, 65535], [120, 4112, 0, 65535]],
+            "address": "0x0858eec0"
           },
           {
             "name": "component_offsets",
             "end": "0x0858eef0",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0x16c0", "0x1700", "0x2974", "0x2a40", "0x2a50"]
+            "values": ["0x3c", "0x16c0", "0x1700", "0x2974", "0x2a40", "0x2a50"],
+            "address": "0x0858eed8"
           }
         ]
       },
@@ -120,9 +123,17 @@
             "values": [
               [43, 6, 102], [24, 8, 101], [25, 8, 101], [26, 8, 101], [5, 13, 100], [27, 24, 202], [28, 24, 202],
               [27, 25, 202], [4, 45, 201], [5, 45, 200]
-            ]
+            ],
+            "address": "0x08591904"
           },
-          {"name": "terminator", "end": "0x08591925", "stride": 1, "element": "u8", "fill": 255}
+          {
+            "name": "terminator",
+            "end": "0x08591925",
+            "stride": 1,
+            "element": "u8",
+            "fill": 255,
+            "address": "0x08591922"
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_HEYA/BIRIBINO_HEYA.BIN",

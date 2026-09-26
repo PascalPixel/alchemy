@@ -75,12 +75,12 @@ fn validate_registered_main_symbols(root: &Path) -> Result<usize, String> {
 }
 
 fn audited(root: &Path) -> Result<HashSet<String>, String> {
-    let stems: HashSet<String> = crate::overlay::owner_spans(root)?
+    let stems: HashSet<String> = crate::compiler::translation_units::reviewed_overlay_spans(root)?
         .into_keys()
         .map(|owner| owner.legacy_stem())
         .collect();
     if stems.is_empty() {
-        return Err("recon/tbs/raw/overlays bounds no overlay owners".into());
+        return Err("recon/tbs/semantic/regions.json contains no audited owners".into());
     }
     Ok(stems)
 }
@@ -157,7 +157,7 @@ pub(super) fn entry(arguments: &[String]) -> ExitCode {
     }
     match validate() {
         Ok((drafts, audited, names, shared)) => {
-            println!("owner registers ok: {drafts} drafts, {audited} audited, {names} named main not-yet-C owners, {shared} shared sources");
+            println!("owner registers ok: {drafts} drafts, {audited} audited, {names} named main assembly owners, {shared} shared sources");
             ExitCode::SUCCESS
         }
         Err(error) => {

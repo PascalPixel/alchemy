@@ -16,21 +16,24 @@
             "end": "0x086f4af4",
             "stride": 12,
             "element": "u8",
-            "values": [28, 0, 180, 56, 3, 2, 1, 0, 2, 2, 0, 0]
+            "values": [28, 0, 180, 56, 3, 2, 1, 0, 2, 2, 0, 0],
+            "address": "0x086f4ae8"
           },
           {
             "name": "records",
             "end": "0x086f4b0c",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [14336, 4112, 0, 65535], [28672, 4112, 0, 65535]]
+            "values": [[0, 4112, 0, 65535], [14336, 4112, 0, 65535], [28672, 4112, 0, 65535]],
+            "address": "0x086f4af4"
           },
           {
             "name": "component_offsets",
             "end": "0x086f4b24",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0xa08", "0xa30", "0x1800", "0x1af0", "0x1af8"]
+            "values": ["0x3c", "0xa08", "0xa30", "0x1800", "0x1af0", "0x1af8"],
+            "address": "0x086f4b0c"
           }
         ]
       },
@@ -162,9 +165,17 @@
             "end": "0x086f65e9",
             "stride": 3,
             "element": "u8",
-            "values": [[28, 5, 100], [48, 6, 101], [61, 13, 103]]
+            "values": [[28, 5, 100], [48, 6, 101], [61, 13, 103]],
+            "address": "0x086f65e0"
           },
-          {"name": "terminator", "end": "0x086f65ec", "stride": 1, "element": "u8", "fill": 255}
+          {
+            "name": "terminator",
+            "end": "0x086f65ec",
+            "stride": 1,
+            "element": "u8",
+            "fill": 255,
+            "address": "0x086f65e9"
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_KAWA/KOROSSEO_KAWA.BIN",

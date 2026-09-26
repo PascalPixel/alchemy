@@ -818,7 +818,8 @@
         {"header": "0x081c5e30", "player": 0, "player_mirror": 0},
         {"header": "0x081c5e30", "player": 0, "player_mirror": 0},
         {"header": "0x082f900c", "player": 1, "player_mirror": 1}
-      ]
+      ],
+      "address": "0x081c4530"
     }
   ]
 }

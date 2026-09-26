@@ -16,21 +16,24 @@
             "end": "0x0876a018",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 128, 53, 2, 2, 1, 0, 2, 2, 0, 0]
+            "values": [0, 0, 128, 53, 2, 2, 1, 0, 2, 2, 0, 0],
+            "address": "0x0876a00c"
           },
           {
             "name": "records",
             "end": "0x0876a030",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65343], [128, 4112, 0, 65535], [16384, 4112, 0, 65535]]
+            "values": [[0, 4112, 0, 65343], [128, 4112, 0, 65535], [16384, 4112, 0, 65535]],
+            "address": "0x0876a018"
           },
           {
             "name": "component_offsets",
             "end": "0x0876a048",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0x500", "0x53c", "0x9c8", "0xa10", "0xa18"]
+            "values": ["0x3c", "0x500", "0x53c", "0x9c8", "0xa10", "0xa18"],
+            "address": "0x0876a030"
           }
         ]
       },
@@ -94,7 +97,16 @@
         "address": "0x0876aa24",
         "size": "0x3",
         "record_size": 3,
-        "segments": [{"name": "terminator", "end": "0x0876aa27", "stride": 1, "element": "u8", "fill": 255}]
+        "segments": [
+          {
+            "name": "terminator",
+            "end": "0x0876aa27",
+            "stride": 1,
+            "element": "u8",
+            "fill": 255,
+            "address": "0x0876aa24"
+          }
+        ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/BABI_FUNE/BABI_FUNE.BIN",
       "grid_offset": 0,

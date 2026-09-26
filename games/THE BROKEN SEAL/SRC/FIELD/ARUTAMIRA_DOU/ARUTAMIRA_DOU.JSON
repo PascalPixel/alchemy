@@ -15,21 +15,24 @@
             "end": "0x08710878",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 94, 94, 3, 2, 1, 0, 2, 2, 0, 0]
+            "values": [0, 0, 94, 94, 3, 2, 1, 0, 2, 2, 0, 0],
+            "address": "0x0871086c"
           },
           {
             "name": "records",
             "end": "0x08710890",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [24576, 4112, 0, 65535], [100, 4112, 0, 65535]]
+            "values": [[0, 4112, 0, 65535], [24576, 4112, 0, 65535], [100, 4112, 0, 65535]],
+            "address": "0x08710878"
           },
           {
             "name": "component_offsets",
             "end": "0x087108a8",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0x390", "0x3a0", "0x1074", "0x1224", "0x122c"]
+            "values": ["0x3c", "0x390", "0x3a0", "0x1074", "0x1224", "0x122c"],
+            "address": "0x08710890"
           }
         ]
       },
@@ -136,7 +139,16 @@
         "address": "0x08711a98",
         "size": "0x3",
         "record_size": 3,
-        "segments": [{"name": "terminator", "end": "0x08711a9b", "stride": 1, "element": "u8", "fill": 255}]
+        "segments": [
+          {
+            "name": "terminator",
+            "end": "0x08711a9b",
+            "stride": 1,
+            "element": "u8",
+            "fill": 255,
+            "address": "0x08711a98"
+          }
+        ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/ARUTAMIRA_DOU/ARUTAMIRA_DOU.BIN",
       "grid_offset": 272376,
@@ -159,21 +171,24 @@
             "end": "0x08711c04",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 94, 94, 3, 2, 1, 0, 2, 2, 0, 0]
+            "values": [0, 0, 94, 94, 3, 2, 1, 0, 2, 2, 0, 0],
+            "address": "0x08711bf8"
           },
           {
             "name": "records",
             "end": "0x08711c1c",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [24576, 4112, 0, 65535], [100, 4112, 0, 65535]]
+            "values": [[0, 4112, 0, 65535], [24576, 4112, 0, 65535], [100, 4112, 0, 65535]],
+            "address": "0x08711c04"
           },
           {
             "name": "component_offsets",
             "end": "0x08711c34",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0x290", "0x2a0", "0xf30", "0xf98", "0xfa0"]
+            "values": ["0x3c", "0x290", "0x2a0", "0xf30", "0xf98", "0xfa0"],
+            "address": "0x08711c1c"
           }
         ]
       },
@@ -237,8 +252,22 @@
         "size": "0x6",
         "record_size": 3,
         "segments": [
-          {"name": "records", "end": "0x08712b9b", "stride": 3, "element": "u8", "values": [[28, 36, 100]]},
-          {"name": "terminator", "end": "0x08712b9e", "stride": 1, "element": "u8", "fill": 255}
+          {
+            "name": "records",
+            "end": "0x08712b9b",
+            "stride": 3,
+            "element": "u8",
+            "values": [[28, 36, 100]],
+            "address": "0x08712b98"
+          },
+          {
+            "name": "terminator",
+            "end": "0x08712b9e",
+            "stride": 1,
+            "element": "u8",
+            "fill": 255,
+            "address": "0x08712b9b"
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/ARUTAMIRA_DOU/ARUTAMIRA_DOU.BIN",
@@ -262,21 +291,24 @@
             "end": "0x08712bac",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 94, 94, 3, 2, 1, 0, 2, 2, 0, 0]
+            "values": [0, 0, 94, 94, 3, 2, 1, 0, 2, 2, 0, 0],
+            "address": "0x08712ba0"
           },
           {
             "name": "records",
             "end": "0x08712bc4",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [24576, 4112, 0, 65535], [100, 4112, 0, 65535]]
+            "values": [[0, 4112, 0, 65535], [24576, 4112, 0, 65535], [100, 4112, 0, 65535]],
+            "address": "0x08712bac"
           },
           {
             "name": "component_offsets",
             "end": "0x08712bdc",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0x708", "0x718", "0x1604", "0x166c", "0x1674"]
+            "values": ["0x3c", "0x708", "0x718", "0x1604", "0x166c", "0x1674"],
+            "address": "0x08712bc4"
           }
         ]
       },
@@ -340,8 +372,22 @@
         "size": "0x6",
         "record_size": 3,
         "segments": [
-          {"name": "records", "end": "0x08714217", "stride": 3, "element": "u8", "values": [[25, 13, 100]]},
-          {"name": "terminator", "end": "0x0871421a", "stride": 1, "element": "u8", "fill": 255}
+          {
+            "name": "records",
+            "end": "0x08714217",
+            "stride": 3,
+            "element": "u8",
+            "values": [[25, 13, 100]],
+            "address": "0x08714214"
+          },
+          {
+            "name": "terminator",
+            "end": "0x0871421a",
+            "stride": 1,
+            "element": "u8",
+            "fill": 255,
+            "address": "0x08714217"
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/ARUTAMIRA_DOU/ARUTAMIRA_DOU.BIN",
@@ -365,21 +411,24 @@
             "end": "0x08714228",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 94, 94, 3, 2, 1, 0, 2, 2, 0, 0]
+            "values": [0, 0, 94, 94, 3, 2, 1, 0, 2, 2, 0, 0],
+            "address": "0x0871421c"
           },
           {
             "name": "records",
             "end": "0x08714240",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [24576, 4112, 0, 65535], [100, 4112, 0, 65535]]
+            "values": [[0, 4112, 0, 65535], [24576, 4112, 0, 65535], [100, 4112, 0, 65535]],
+            "address": "0x08714228"
           },
           {
             "name": "component_offsets",
             "end": "0x08714258",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0x324", "0x344", "0xe74", "0xeb0", "0xed4"]
+            "values": ["0x3c", "0x324", "0x344", "0xe74", "0xeb0", "0xed4"],
+            "address": "0x08714240"
           }
         ]
       },
@@ -442,7 +491,16 @@
         "address": "0x087150f0",
         "size": "0x3",
         "record_size": 3,
-        "segments": [{"name": "terminator", "end": "0x087150f3", "stride": 1, "element": "u8", "fill": 255}]
+        "segments": [
+          {
+            "name": "terminator",
+            "end": "0x087150f3",
+            "stride": 1,
+            "element": "u8",
+            "fill": 255,
+            "address": "0x087150f0"
+          }
+        ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/ARUTAMIRA_DOU/ARUTAMIRA_DOU.BIN",
       "grid_offset": 205240,
@@ -465,21 +523,24 @@
             "end": "0x0871526c",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 96, 96, 3, 2, 1, 0, 2, 2, 0, 0]
+            "values": [0, 0, 96, 96, 3, 2, 1, 0, 2, 2, 0, 0],
+            "address": "0x08715260"
           },
           {
             "name": "records",
             "end": "0x08715284",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [24576, 4112, 0, 65535], [100, 4112, 0, 65535]]
+            "values": [[0, 4112, 0, 65535], [24576, 4112, 0, 65535], [100, 4112, 0, 65535]],
+            "address": "0x0871526c"
           },
           {
             "name": "component_offsets",
             "end": "0x0871529c",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0x608", "0x618", "0x1750", "0x19a8", "0x19b0"]
+            "values": ["0x3c", "0x608", "0x618", "0x1750", "0x19a8", "0x19b0"],
+            "address": "0x08715284"
           }
         ]
       },
@@ -605,8 +666,22 @@
         "size": "0x6",
         "record_size": 3,
         "segments": [
-          {"name": "records", "end": "0x08716c13", "stride": 3, "element": "u8", "values": [[12, 8, 100]]},
-          {"name": "terminator", "end": "0x08716c16", "stride": 1, "element": "u8", "fill": 255}
+          {
+            "name": "records",
+            "end": "0x08716c13",
+            "stride": 3,
+            "element": "u8",
+            "values": [[12, 8, 100]],
+            "address": "0x08716c10"
+          },
+          {
+            "name": "terminator",
+            "end": "0x08716c16",
+            "stride": 1,
+            "element": "u8",
+            "fill": 255,
+            "address": "0x08716c13"
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/ARUTAMIRA_DOU/ARUTAMIRA_DOU.BIN",
@@ -630,21 +705,24 @@
             "end": "0x08716c24",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 94, 94, 3, 2, 1, 0, 2, 2, 0, 0]
+            "values": [0, 0, 94, 94, 3, 2, 1, 0, 2, 2, 0, 0],
+            "address": "0x08716c18"
           },
           {
             "name": "records",
             "end": "0x08716c3c",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [24576, 4112, 0, 65535], [100, 4112, 0, 65535]]
+            "values": [[0, 4112, 0, 65535], [24576, 4112, 0, 65535], [100, 4112, 0, 65535]],
+            "address": "0x08716c24"
           },
           {
             "name": "component_offsets",
             "end": "0x08716c54",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0x2f4", "0x320", "0xf28", "0xf64", "0xf6c"]
+            "values": ["0x3c", "0x2f4", "0x320", "0xf28", "0xf64", "0xf6c"],
+            "address": "0x08716c3c"
           }
         ]
       },
@@ -707,8 +785,22 @@
         "size": "0x6",
         "record_size": 3,
         "segments": [
-          {"name": "records", "end": "0x08717b87", "stride": 3, "element": "u8", "values": [[11, 7, 100]]},
-          {"name": "terminator", "end": "0x08717b8a", "stride": 1, "element": "u8", "fill": 255}
+          {
+            "name": "records",
+            "end": "0x08717b87",
+            "stride": 3,
+            "element": "u8",
+            "values": [[11, 7, 100]],
+            "address": "0x08717b84"
+          },
+          {
+            "name": "terminator",
+            "end": "0x08717b8a",
+            "stride": 1,
+            "element": "u8",
+            "fill": 255,
+            "address": "0x08717b87"
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/ARUTAMIRA_DOU/ARUTAMIRA_DOU.BIN",

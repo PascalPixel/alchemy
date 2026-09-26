@@ -16,11 +16,10 @@ when it will make the next agent faster.
 **DONE = matching C + proven library, hand-written or veneer assembly**, over
 each game's executable bytes. `make progress` prints it in bytes;
 `make progress-subject` gives the commit prefix. Optimise one thing:
-**☀️ DONE bytes per HOUR**, watched as a trailing 12h timeseries: 12 hourly
-bins of new bytes landed on main, with credit corrections shown separately.
-Report bytes, never rounded percentages. Work that cannot move that number
-(compressor tails, packing, provenance archaeology, tooling nobody asked for)
-is timeboxed and never blocks a landing.
+**☀️ DONE bytes per HOUR**, watched as 12 hourly bins landed on main,
+with credit corrections shown separately. Report bytes, never rounded percentages. Work that cannot move that number (compressor tails, packing,
+provenance archaeology, tooling nobody asked for) is timeboxed and never
+blocks a landing.
 
 ## Our model: pret's pokeemerald
 
@@ -57,8 +56,8 @@ most plausibly had on disk in 2001.
 5. **Everything uncredited is C not yet written.** Camelot wrote the game in
    C; only SDK library code, genuinely hand-written routines and the veneer
    stubs are assembly, and only a credited `.S` module may say so. An owner
-   still built from its disassembly is `not-yet-c` (a plain label in its
-   overlay listing), never "assembly". No registry, gate, draft header or
+   still built from its disassembly is `not-yet-c` (`not_yet_c` in the
+   overlay registry), never "assembly". No registry, gate, draft header or
    report may classify C as assembly because it resisted: not a hard
    instruction (`stmia` comes from `Dma_Set`), not a register wall, not a
    size. Label it by what remains to be done.
@@ -93,10 +92,7 @@ reusing existing headers, structs and registered names. Fix one hypothesis at
 a time. After about 30 minutes, or three attempts without a new idea, commit
 the draft and take the next owner. An owner registered as pieces
 (`Region_`, `Fragment_`, `Continuation_`) or bundled with a neighbour must be
-made whole first: one complete function, one listing, one owner. A not-yet-C
-overlay owner is its label in `recon/<game>/raw/overlays`, running to the
-next label, placeholder or veneer table, or to its `.size Name, .-Name` line;
-move the label to rebound it.
+made whole first: one complete function, one listing, one owner.
 
 **Library code.** SDK objects keep their own compiler family and flags,
 recorded with the reason in `tools/alchemy/src/compiler/routing_data.rs`, as
@@ -147,8 +143,7 @@ Each of these closed real owners. Try them before inventing anything new.
 
 Matching comes first, but names are evidence too. Name things from the game
 itself: messages from `TEXT/EN.PO` (msgid is the zero-padded decimal), items
-from message 0x182 plus the item id, places from the table
-`alchemy build assets --locations tbs-en` writes to `out/tbs-en/locations.tsv`.
+from message 0x182 plus the item id, places from `recon/tbs/locations.tsv`.
 Before naming a value, check which call consumes it: a value passed to
 `GameFlag_*` is a flag, not a message (Lunpa Fortress was once misnamed after
 Vale dialogue this way). A function's name lives once, in
@@ -172,13 +167,8 @@ work than by working alone.
   after `git fetch`, then `make worktree-setup`. A stale local `main` silently
   costs an agent everything landed since.
 - **Commit every adoption immediately** and every draft before moving on. An
-  agent with no adoption in 45 minutes, or under 1 KB landed per 250k tokens,
-  is stopped and its slice rebriefed.
-- **Spend tokens on bytes.** A residual that is only register choice gets one
-  attempt guided by the allocator dump, then its draft header records it and
-  the lane moves on. Send `make verify` and hook output to a log and read the
-  errors. Brief from one ranked target list rebuilt at each landing, and keep
-  one shared set of lane scripts rather than a copy per lane.
+  agent with no commit in 30 minutes is checked; one with none in an hour is
+  stopped and its slice rebriefed.
 - **Land every 30 minutes** from one landing worktree: merge each finished
   branch, merge registries with a structural three-way JSON merge (keep both
   sides' additions), run `make compare-all`, `make test`, `make coverage` and

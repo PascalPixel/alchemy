@@ -345,7 +345,7 @@ impl<'a> Model<'a> {
                 }
             }
         }
-        let reviewed = crate::overlay::owner_spans(root)?
+        let reviewed = crate::compiler::translation_units::reviewed_overlay_spans(root)?
             .into_iter()
             .filter_map(|(owner, extent)| Some((site(owner).ok()?, extent)))
             .collect();
@@ -1733,16 +1733,11 @@ mod tests {
             "#define Old Func_02005678\n",
         );
         let alone = json!({
-            "id": "alone", "source": "games/THE BROKEN SEAL/SRC/FIELD/ALONE.C",
-            "overlay": "resource_394",
-            "owners": [{"address": "0x02000100", "extent": 4}]
+            "id": "alone", "game": "tbs", "source": "games/THE BROKEN SEAL/SRC/FIELD/ALONE.C",
+            "compiler_route": "canonical-gcc296", "overlay": "resource_394",
+            "owners": [{"address": "0x02000100", "extent": 4, "state": "exact-c"}]
         });
         repository.units(json!([staged_actor(), alone]));
-        repository.record(
-            "resource_394:02000100",
-            json!({"name": "Alone", "source": "FIELD/ALONE.C"}),
-        );
-        repository.listing("resource_394", &[0x0200_0100]);
         let units = TranslationUnits::declared(root).unwrap();
         assert_eq!(
             address_names(root, &units).unwrap(),

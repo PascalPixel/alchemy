@@ -15,21 +15,24 @@
             "end": "0x086a83cc",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 120, 120, 3, 1, 2, 0, 2, 2, 0, 0]
+            "values": [0, 0, 120, 120, 3, 1, 2, 0, 2, 2, 0, 0],
+            "address": "0x086a83c0"
           },
           {
             "name": "records",
             "end": "0x086a83e4",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [120, 4112, 0, 65535], [30720, 4112, 0, 65535]]
+            "values": [[0, 4112, 0, 65535], [120, 4112, 0, 65535], [30720, 4112, 0, 65535]],
+            "address": "0x086a83cc"
           },
           {
             "name": "component_offsets",
             "end": "0x086a83fc",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0x1204", "0x1224", "0x24e4", "0x2694", "0x26a4"]
+            "values": ["0x3c", "0x1204", "0x1224", "0x24e4", "0x2694", "0x26a4"],
+            "address": "0x086a83e4"
           }
         ]
       },
@@ -138,9 +141,17 @@
             "end": "0x086aaa76",
             "stride": 3,
             "element": "u8",
-            "values": [[6, 4, 200], [7, 4, 200], [23, 10, 100], [8, 29, 201], [9, 29, 201], [30, 53, 101]]
+            "values": [[6, 4, 200], [7, 4, 200], [23, 10, 100], [8, 29, 201], [9, 29, 201], [30, 53, 101]],
+            "address": "0x086aaa64"
           },
-          {"name": "terminator", "end": "0x086aaa79", "stride": 1, "element": "u8", "fill": 255}
+          {
+            "name": "terminator",
+            "end": "0x086aaa79",
+            "stride": 1,
+            "element": "u8",
+            "fill": 255,
+            "address": "0x086aaa76"
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/RUNPA_SUHARA/RUNPA_SUHARA.BIN",

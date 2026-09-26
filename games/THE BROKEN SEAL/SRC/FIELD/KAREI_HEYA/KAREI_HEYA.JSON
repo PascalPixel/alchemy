@@ -15,21 +15,24 @@
             "end": "0x0869ffbc",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 120, 120, 3, 1, 2, 0, 2, 2, 0, 0]
+            "values": [0, 0, 120, 120, 3, 1, 2, 0, 2, 2, 0, 0],
+            "address": "0x0869ffb0"
           },
           {
             "name": "records",
             "end": "0x0869ffd4",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [120, 4112, 0, 65535], [30720, 4112, 0, 65535]]
+            "values": [[0, 4112, 0, 65535], [120, 4112, 0, 65535], [30720, 4112, 0, 65535]],
+            "address": "0x0869ffbc"
           },
           {
             "name": "component_offsets",
             "end": "0x0869ffec",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0x4c4", "0x4e4", "0xc8c", "0xde8", "0xdf8"]
+            "values": ["0x3c", "0x4c4", "0x4e4", "0xc8c", "0xde8", "0xdf8"],
+            "address": "0x0869ffd4"
           }
         ]
       },
@@ -124,7 +127,16 @@
         "address": "0x086a0da8",
         "size": "0x3",
         "record_size": 3,
-        "segments": [{"name": "terminator", "end": "0x086a0dab", "stride": 1, "element": "u8", "fill": 255}]
+        "segments": [
+          {
+            "name": "terminator",
+            "end": "0x086a0dab",
+            "stride": 1,
+            "element": "u8",
+            "fill": 255,
+            "address": "0x086a0da8"
+          }
+        ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/KAREI_HEYA/KAREI_HEYA.BIN",
       "grid_offset": 75560,
@@ -147,21 +159,24 @@
             "end": "0x08695d28",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 120, 120, 3, 1, 2, 0, 2, 2, 0, 0]
+            "values": [0, 0, 120, 120, 3, 1, 2, 0, 2, 2, 0, 0],
+            "address": "0x08695d1c"
           },
           {
             "name": "records",
             "end": "0x08695d40",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [120, 4112, 0, 65535], [30720, 4112, 0, 65535]]
+            "values": [[0, 4112, 0, 65535], [120, 4112, 0, 65535], [30720, 4112, 0, 65535]],
+            "address": "0x08695d28"
           },
           {
             "name": "component_offsets",
             "end": "0x08695d58",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0x1750", "0x17a4", "0x2c84", "0x2de0", "0x2df0"]
+            "values": ["0x3c", "0x1750", "0x17a4", "0x2c84", "0x2de0", "0x2df0"],
+            "address": "0x08695d40"
           }
         ]
       },
@@ -268,9 +283,17 @@
             "values": [
               [9, 5, 200], [10, 5, 200], [20, 5, 201], [21, 5, 201], [34, 6, 101], [35, 6, 101], [8, 20, 203],
               [9, 20, 203], [46, 25, 204], [47, 25, 204], [12, 27, 100], [13, 27, 100], [24, 40, 102]
-            ]
+            ],
+            "address": "0x08698b0c"
           },
-          {"name": "terminator", "end": "0x08698b36", "stride": 1, "element": "u8", "fill": 255}
+          {
+            "name": "terminator",
+            "end": "0x08698b36",
+            "stride": 1,
+            "element": "u8",
+            "fill": 255,
+            "address": "0x08698b33"
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/KAREI_HEYA/KAREI_HEYA.BIN",

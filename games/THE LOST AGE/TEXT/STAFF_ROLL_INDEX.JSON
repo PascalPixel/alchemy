@@ -17,7 +17,8 @@
       "values": [
         62, 67, 66, 58, 68, 56, 57, 63, 65, 61, 53, 55, 52, 59, 51, 60, 54, 64, 43, 48, 47, 42, 41, 40, 49, 50, 46, 45,
         44, 116, 69
-      ]
+      ],
+      "address": "0x081a1928"
     },
     {
       "id": "preload_resource_table",
@@ -27,7 +28,8 @@
       "min": 1,
       "max": 65535,
       "terminated_capacity": 25,
-      "values": [62, 67, 58, 56, 63, 65, 61, 55, 52, 59, 51, 60, 54, 64, 43, 47, 49, 50, 46, 45, 116]
+      "values": [62, 67, 58, 56, 63, 65, 61, 55, 52, 59, 51, 60, 54, 64, 43, 47, 49, 50, 46, 45, 116],
+      "address": "0x081a19a8"
     },
     {
       "id": "text_pool",
@@ -54,7 +56,8 @@
         "Battle", "Yasuhiro Taguchi", "System ", "Programming", "Masato Kawamura", "Norisumi Osawa", "Kentaro Sakou",
         "Ayumu Shindo", "Shuji Shimizu", "Game Design", "Yusuke Sugimoto", "Assistant Director", "Director", "Scenario",
         "Shugo Takahashi", "Hiroyuki Takahashi", "Game Planning", "STAFF", "GOLDEN SUN: THE LOST AGE"
-      ]
+      ],
+      "address": "0x081a1a0c"
     },
     {
       "id": "glyph_widths",
@@ -68,9 +71,17 @@
         7, 4, 7, 7, 8, 8, 8, 4, 5, 5, 5, 6, 4, 6, 4, 6, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 4, 4, 5, 6, 5, 7, 8, 8, 8, 8, 8,
         8, 8, 8, 8, 5, 6, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 7, 8, 5, 6, 5, 7, 7, 6, 7, 7, 7, 7, 7, 5, 7, 7, 4,
         4, 6, 4, 8, 7, 7, 7, 7, 7, 7, 5, 7, 6, 8, 6, 6, 6, 5, 4, 5, 7, 1
-      ]
+      ],
+      "address": "0x081a2059"
     },
-    {"id": "glyph_width_alignment", "end": "0x081a20bc", "element": "u8", "stride": 1, "fill": 0},
+    {
+      "id": "glyph_width_alignment",
+      "end": "0x081a20bc",
+      "element": "u8",
+      "stride": 1,
+      "fill": 0,
+      "address": "0x081a20b9"
+    },
     {
       "id": "lines",
       "end": "0x081a2400",
@@ -88,7 +99,8 @@
         0, 36, 0, 42, 35, 34, 0, 0, 33, 32, 0, 31, 0, 30, 29, 28, 27, 26, 0, 25, 24, 0, 23, 22, 0, 21, 20, 0, 19, 18, 0,
         0, 17, 16, 15, 14, 13, 12, 0, "section_break", 11, 0, 10, 98, 97, 0, 0, 9, 0, 8, 0, 0, 7, 6, 0, 5, 4, 3, 0, 2,
         1, 0, 5, 0, "section_break"
-      ]
+      ],
+      "address": "0x081a20bc"
     }
   ],
   "font": {

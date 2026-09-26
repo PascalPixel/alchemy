@@ -36,7 +36,7 @@ HISTORICAL_TARGETS := tbs-ja tbs-en tbs-de tbs-es tbs-fr tbs-it \
 	full-rom-check tla-assets-check tla-owners-check overlay-check declared-tu-check owner-inventory-check strict-tu-check siblings-check \
 	source-tracking-check index-sync-check publication-tree-check check-owners progress progress-report progress-check progress-subject \
 	correspondence correspondence-check edition-builds edition-builds-check \
-	coverage coverage-check native-format-check clean clean-preview
+	coverage coverage-check native-format-check review-images-check clean clean-preview
 .PHONY: targets $(HISTORICAL_TARGETS)
 
 help:
@@ -104,10 +104,6 @@ precommit: index-sync-check native-format-check language-check lint-staged tooli
 		END { if (tbs) print "compare"; if (tla) print "compare-tla" }'); \
 	if [ -n "$$goals" ]; then $(MAKE) --no-print-directory $$goals; \
 	else printf 'no game input staged; nothing to compare\n'; fi
-	@set -e; if test -n "$$(git diff --cached --name-only -- \
-		README.md PROGRESS.png PROGRESS_CHART.png recon/tbs/metrics/history.json)"; then \
-		$(MAKE) --no-print-directory coverage-check; \
-	fi
 
 build-claimed:
 	$(BUILD) claimed --target $(TARGET)
@@ -259,8 +255,14 @@ check-owners: source-tracking-check
 	$(CHECK) owners
 
 corpus-check:
+	@test -f "recon/tbs/project.json"
+	@test -f "recon/tla/project.json"
 	@if test -d draft; then \
 		printf 'legacy draft/ directory found; use recon/tbs/<edition>/\n'; \
+		exit 1; \
+	fi
+	@if find "recon/tbs/semantic" -maxdepth 1 -name '*.c' -print | grep -q .; then \
+		printf 'source hypotheses belong in recon/tbs/<edition>/, not recon/tbs/semantic/ metadata\n'; \
 		exit 1; \
 	fi
 	@roots=$$(git ls-files -- games | cut -d/ -f2 | grep -vx COMMON | LC_ALL=C sort -u | tr '\n' '|'); \
@@ -358,7 +360,10 @@ test: toolchain-check
 native-format-check:
 	$(CARGO_RUN) $(TOOLS)/alchemy/Cargo.toml -- format --check
 
-verify: toolchain-check native-format-check index-sync-check publication-tree-check source-tracking-check corpus-check language-check lint-production tooling-index-check \
+review-images-check: source-tracking-check
+	$(ASSETS) --review-images out/tbs-en/graphics-review
+
+verify: toolchain-check native-format-check index-sync-check publication-tree-check source-tracking-check review-images-check corpus-check language-check lint-production tooling-index-check \
 	strict-tu-check check-owners full-rom-check compare-tla coverage-check siblings-check
 
 audit: verify test test-integration targets \

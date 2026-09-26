@@ -15,21 +15,24 @@
             "end": "0x0852593c",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 112, 80, 3, 1, 2, 0, 2, 2, 0, 0]
+            "values": [0, 0, 112, 80, 3, 1, 2, 0, 2, 2, 0, 0],
+            "address": "0x08525930"
           },
           {
             "name": "records",
             "end": "0x08525954",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [20480, 4112, 0, 65535], [112, 4112, 0, 65535]]
+            "values": [[0, 4112, 0, 65535], [20480, 4112, 0, 65535], [112, 4112, 0, 65535]],
+            "address": "0x0852593c"
           },
           {
             "name": "component_offsets",
             "end": "0x0852596c",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0xf38", "0xf40", "0x1fa8", "0x1fe0", "0x2004"]
+            "values": ["0x3c", "0xf38", "0xf40", "0x1fa8", "0x1fe0", "0x2004"],
+            "address": "0x08525954"
           }
         ]
       },
@@ -90,7 +93,16 @@
         "address": "0x08527934",
         "size": "0x3",
         "record_size": 3,
-        "segments": [{"name": "terminator", "end": "0x08527937", "stride": 1, "element": "u8", "fill": 255}]
+        "segments": [
+          {
+            "name": "terminator",
+            "end": "0x08527937",
+            "stride": 1,
+            "element": "u8",
+            "fill": 255,
+            "address": "0x08527934"
+          }
+        ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/SORU_FUNKA/SORU_FUNKA.BIN",
       "grid_offset": 0,

@@ -15,21 +15,24 @@
             "end": "0x086e2f00",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 120, 120, 3, 1, 2, 0, 2, 2, 0, 0]
+            "values": [0, 0, 120, 120, 3, 1, 2, 0, 2, 2, 0, 0],
+            "address": "0x086e2ef4"
           },
           {
             "name": "records",
             "end": "0x086e2f18",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [120, 4112, 0, 65535], [30720, 4112, 0, 65535]]
+            "values": [[0, 4112, 0, 65535], [120, 4112, 0, 65535], [30720, 4112, 0, 65535]],
+            "address": "0x086e2f00"
           },
           {
             "name": "component_offsets",
             "end": "0x086e2f30",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0x18ac", "0x18f4", "0x30f0", "0x324c", "0x325c"]
+            "values": ["0x3c", "0x18ac", "0x18f4", "0x30f0", "0x324c", "0x325c"],
+            "address": "0x086e2f18"
           }
         ]
       },
@@ -136,9 +139,17 @@
             "values": [
               [20, 5, 200], [21, 5, 200], [19, 7, 100], [6, 20, 101], [36, 20, 101], [37, 20, 201], [38, 20, 201],
               [14, 35, 202], [15, 35, 202], [35, 52, 102]
-            ]
+            ],
+            "address": "0x086e6150"
           },
-          {"name": "terminator", "end": "0x086e6171", "stride": 1, "element": "u8", "fill": 255}
+          {
+            "name": "terminator",
+            "end": "0x086e6171",
+            "stride": 1,
+            "element": "u8",
+            "fill": 255,
+            "address": "0x086e616e"
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/TOREBI_HEYA/TOREBI_HEYA.BIN",

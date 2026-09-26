@@ -15,21 +15,24 @@
             "end": "0x0857154c",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 42, 54, 3, 1, 2, 0, 2, 2, 0, 0]
+            "values": [0, 0, 42, 54, 3, 1, 2, 0, 2, 2, 0, 0],
+            "address": "0x08571540"
           },
           {
             "name": "records",
             "end": "0x08571564",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [30720, 4112, 0, 65535], [120, 4112, 0, 65535]]
+            "values": [[0, 4112, 0, 65535], [30720, 4112, 0, 65535], [120, 4112, 0, 65535]],
+            "address": "0x0857154c"
           },
           {
             "name": "component_offsets",
             "end": "0x0857157c",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0xdf4", "0xe1c", "0x1b6c", "0x1cd8", "0x1ce0"]
+            "values": ["0x3c", "0xdf4", "0xe1c", "0x1b6c", "0x1cd8", "0x1ce0"],
+            "address": "0x08571564"
           }
         ]
       },
@@ -116,7 +119,16 @@
         "address": "0x08573220",
         "size": "0x3",
         "record_size": 3,
-        "segments": [{"name": "terminator", "end": "0x08573223", "stride": 1, "element": "u8", "fill": 255}]
+        "segments": [
+          {
+            "name": "terminator",
+            "end": "0x08573223",
+            "stride": 1,
+            "element": "u8",
+            "fill": 255,
+            "address": "0x08573220"
+          }
+        ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_DOU/HAIDIA_DOU.BIN",
       "grid_offset": 67056,
@@ -139,21 +151,24 @@
             "end": "0x0857bd94",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 128, 128, 3, 2, 1, 0, 2, 2, 0, 0]
+            "values": [0, 0, 128, 128, 3, 2, 1, 0, 2, 2, 0, 0],
+            "address": "0x0857bd88"
           },
           {
             "name": "records",
             "end": "0x0857bdac",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [32768, 4112, 0, 65535], [128, 4112, 0, 65535]]
+            "values": [[0, 4112, 0, 65535], [32768, 4112, 0, 65535], [128, 4112, 0, 65535]],
+            "address": "0x0857bd94"
           },
           {
             "name": "component_offsets",
             "end": "0x0857bdc4",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0x420", "0x44c", "0x1638", "0x1790", "0x17a0"]
+            "values": ["0x3c", "0x420", "0x44c", "0x1638", "0x1790", "0x17a0"],
+            "address": "0x0857bdac"
           }
         ]
       },
@@ -256,9 +271,17 @@
             "end": "0x0857d52e",
             "stride": 3,
             "element": "u8",
-            "values": [[51, 6, 100], [46, 10, 101]]
+            "values": [[51, 6, 100], [46, 10, 101]],
+            "address": "0x0857d528"
           },
-          {"name": "terminator", "end": "0x0857d531", "stride": 1, "element": "u8", "fill": 255}
+          {
+            "name": "terminator",
+            "end": "0x0857d531",
+            "stride": 1,
+            "element": "u8",
+            "fill": 255,
+            "address": "0x0857d52e"
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_DOU/HAIDIA_DOU.BIN",
@@ -282,21 +305,24 @@
             "end": "0x0858212c",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 128, 128, 3, 2, 1, 0, 2, 2, 0, 0]
+            "values": [0, 0, 128, 128, 3, 2, 1, 0, 2, 2, 0, 0],
+            "address": "0x08582120"
           },
           {
             "name": "records",
             "end": "0x08582144",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [32768, 4112, 0, 65535], [128, 4112, 0, 65535]]
+            "values": [[0, 4112, 0, 65535], [32768, 4112, 0, 65535], [128, 4112, 0, 65535]],
+            "address": "0x0858212c"
           },
           {
             "name": "component_offsets",
             "end": "0x0858215c",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0x334", "0x358", "0x11a8", "0x0", "0x1300"]
+            "values": ["0x3c", "0x334", "0x358", "0x11a8", "0x0", "0x1300"],
+            "address": "0x08582144"
           }
         ]
       },
@@ -383,7 +409,16 @@
         "address": "0x08583420",
         "size": "0x3",
         "record_size": 3,
-        "segments": [{"name": "terminator", "end": "0x08583423", "stride": 1, "element": "u8", "fill": 255}]
+        "segments": [
+          {
+            "name": "terminator",
+            "end": "0x08583423",
+            "stride": 1,
+            "element": "u8",
+            "fill": 255,
+            "address": "0x08583420"
+          }
+        ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_DOU/HAIDIA_DOU.BIN",
       "grid_offset": 0,

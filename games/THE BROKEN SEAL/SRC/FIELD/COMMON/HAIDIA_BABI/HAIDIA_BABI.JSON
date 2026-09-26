@@ -15,21 +15,24 @@
             "end": "0x084f7c5c",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 120, 120, 3, 2, 1, 0, 2, 2, 0, 0]
+            "values": [0, 0, 120, 120, 3, 2, 1, 0, 2, 2, 0, 0],
+            "address": "0x084f7c50"
           },
           {
             "name": "records",
             "end": "0x084f7c74",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [30720, 4112, 0, 65535], [120, 4112, 0, 65535]]
+            "values": [[0, 4112, 0, 65535], [30720, 4112, 0, 65535], [120, 4112, 0, 65535]],
+            "address": "0x084f7c5c"
           },
           {
             "name": "component_offsets",
             "end": "0x084f7c8c",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0x1990", "0x19d0", "0x31dc", "0x3398", "0x33a8"]
+            "values": ["0x3c", "0x1990", "0x19d0", "0x31dc", "0x3398", "0x33a8"],
+            "address": "0x084f7c74"
           }
         ]
       },
@@ -150,9 +153,17 @@
               [53, 19, 208], [55, 20, 209], [56, 20, 209], [55, 21, 209], [56, 21, 209], [28, 22, 210], [29, 22, 210],
               [30, 22, 210], [3, 23, 212], [4, 23, 212], [54, 24, 103], [9, 40, 102], [9, 41, 102], [31, 41, 211],
               [32, 41, 211]
-            ]
+            ],
+            "address": "0x084faff8"
           },
-          {"name": "terminator", "end": "0x084fb067", "stride": 1, "element": "u8", "fill": 255}
+          {
+            "name": "terminator",
+            "end": "0x084fb067",
+            "stride": 1,
+            "element": "u8",
+            "fill": 255,
+            "address": "0x084fb064"
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/HAIDIA_BABI/HAIDIA_BABI.BIN",

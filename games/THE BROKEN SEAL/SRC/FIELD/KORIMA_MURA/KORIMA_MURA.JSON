@@ -15,21 +15,24 @@
             "end": "0x085af070",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 58, 60, 3, 2, 1, 0, 2, 2, 0, 0]
+            "values": [0, 0, 58, 60, 3, 2, 1, 0, 2, 2, 0, 0],
+            "address": "0x085af064"
           },
           {
             "name": "records",
             "end": "0x085af088",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [64, 4112, 0, 65535], [128, 4112, 0, 65535]]
+            "values": [[0, 4112, 0, 65535], [64, 4112, 0, 65535], [128, 4112, 0, 65535]],
+            "address": "0x085af070"
           },
           {
             "name": "component_offsets",
             "end": "0x085af0a0",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0xc54", "0xc64", "0x1884", "0x188c", "0x1894"]
+            "values": ["0x3c", "0xc54", "0xc64", "0x1884", "0x188c", "0x1894"],
+            "address": "0x085af088"
           }
         ]
       },
@@ -87,9 +90,17 @@
             "end": "0x085b08fe",
             "stride": 3,
             "element": "u8",
-            "values": [[23, 8, 100], [13, 23, 101]]
+            "values": [[23, 8, 100], [13, 23, 101]],
+            "address": "0x085b08f8"
           },
-          {"name": "terminator", "end": "0x085b0901", "stride": 1, "element": "u8", "fill": 255}
+          {
+            "name": "terminator",
+            "end": "0x085b0901",
+            "stride": 1,
+            "element": "u8",
+            "fill": 255,
+            "address": "0x085b08fe"
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/KORIMA_MURA/KORIMA_MURA.BIN",
@@ -114,21 +125,24 @@
             "end": "0x085bb86c",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 64, 64, 2, 2, 1, 0, 2, 2, 0, 0]
+            "values": [0, 0, 64, 64, 2, 2, 1, 0, 2, 2, 0, 0],
+            "address": "0x085bb860"
           },
           {
             "name": "records",
             "end": "0x085bb884",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [64, 4112, 0, 65535], [128, 4112, 0, 65535]]
+            "values": [[0, 4112, 0, 65535], [64, 4112, 0, 65535], [128, 4112, 0, 65535]],
+            "address": "0x085bb86c"
           },
           {
             "name": "component_offsets",
             "end": "0x085bb89c",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0xd74", "0xd88", "0x1760", "0x1818", "0x1828"]
+            "values": ["0x3c", "0xd74", "0xd88", "0x1760", "0x1818", "0x1828"],
+            "address": "0x085bb884"
           }
         ]
       },
@@ -203,7 +217,16 @@
         "address": "0x085bd088",
         "size": "0x3",
         "record_size": 3,
-        "segments": [{"name": "terminator", "end": "0x085bd08b", "stride": 1, "element": "u8", "fill": 255}]
+        "segments": [
+          {
+            "name": "terminator",
+            "end": "0x085bd08b",
+            "stride": 1,
+            "element": "u8",
+            "fill": 255,
+            "address": "0x085bd088"
+          }
+        ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/KORIMA_MURA/KORIMA_MURA.BIN",
       "grid_offset": 139128,
@@ -226,21 +249,24 @@
             "end": "0x085c3974",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 72, 94, 3, 2, 1, 0, 2, 2, 0, 0]
+            "values": [0, 0, 72, 94, 3, 2, 1, 0, 2, 2, 0, 0],
+            "address": "0x085c3968"
           },
           {
             "name": "records",
             "end": "0x085c398c",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [24576, 4112, 0, 65535], [80, 4112, 0, 65535]]
+            "values": [[0, 4112, 0, 65535], [24576, 4112, 0, 65535], [80, 4112, 0, 65535]],
+            "address": "0x085c3974"
           },
           {
             "name": "component_offsets",
             "end": "0x085c39a4",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0x730", "0x748", "0x1124", "0x1328", "0x1340"]
+            "values": ["0x3c", "0x730", "0x748", "0x1124", "0x1328", "0x1340"],
+            "address": "0x085c398c"
           }
         ]
       },
@@ -358,7 +384,16 @@
         "address": "0x085c4ca8",
         "size": "0x3",
         "record_size": 3,
-        "segments": [{"name": "terminator", "end": "0x085c4cab", "stride": 1, "element": "u8", "fill": 255}]
+        "segments": [
+          {
+            "name": "terminator",
+            "end": "0x085c4cab",
+            "stride": 1,
+            "element": "u8",
+            "fill": 255,
+            "address": "0x085c4ca8"
+          }
+        ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/KORIMA_MURA/KORIMA_MURA.BIN",
       "grid_offset": 70392,

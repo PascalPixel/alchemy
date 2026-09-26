@@ -281,7 +281,6 @@ AlchemyC_02000c38:
 	.space 0x34
 AlchemyC_02000c6c:
 	.space 0x64
-Func_02000cd0:
 	push	{r5, r6, lr}
 	ldr	r0, [pc, #268]
 	ldr	r3, [pc, #268]
@@ -412,7 +411,6 @@ Func_02000cd0:
 	.2byte 0x0000
 AlchemyC_02000e00:
 	.space 0x2c
-Func_02000e2c:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -685,7 +683,6 @@ AlchemyC_02001638:
 AlchemyC_02001874:
 	.space 0x2e
 	.2byte 0x0000
-FieldScene_RunScene3a5SequenceA:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl

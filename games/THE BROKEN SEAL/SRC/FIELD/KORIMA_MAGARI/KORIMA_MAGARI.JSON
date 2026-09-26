@@ -15,21 +15,24 @@
             "end": "0x085d2058",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 64, 64, 3, 2, 1, 0, 2, 2, 0, 0]
+            "values": [0, 0, 64, 64, 3, 2, 1, 0, 2, 2, 0, 0],
+            "address": "0x085d204c"
           },
           {
             "name": "records",
             "end": "0x085d2070",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [64, 4112, 0, 65535], [128, 4112, 0, 65535]]
+            "values": [[0, 4112, 0, 65535], [64, 4112, 0, 65535], [128, 4112, 0, 65535]],
+            "address": "0x085d2058"
           },
           {
             "name": "component_offsets",
             "end": "0x085d2088",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0x130c", "0x1330", "0x2678", "0x0", "0x2884"]
+            "values": ["0x3c", "0x130c", "0x1330", "0x2678", "0x0", "0x2884"],
+            "address": "0x085d2070"
           }
         ]
       },
@@ -137,8 +140,22 @@
         "size": "0x9",
         "record_size": 3,
         "segments": [
-          {"name": "records", "end": "0x085d48d6", "stride": 3, "element": "u8", "values": [[25, 7, 100], [57, 7, 100]]},
-          {"name": "terminator", "end": "0x085d48d9", "stride": 1, "element": "u8", "fill": 255}
+          {
+            "name": "records",
+            "end": "0x085d48d6",
+            "stride": 3,
+            "element": "u8",
+            "values": [[25, 7, 100], [57, 7, 100]],
+            "address": "0x085d48d0"
+          },
+          {
+            "name": "terminator",
+            "end": "0x085d48d9",
+            "stride": 1,
+            "element": "u8",
+            "fill": 255,
+            "address": "0x085d48d6"
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/KORIMA_MAGARI/KORIMA_MAGARI.BIN",

@@ -65,7 +65,8 @@
         null, null, null, "BattleFx_RunSeriesIMode0", "BattleFx_RunSeriesIMode2", "BattleFx_RunMode10",
         "BattleFx_RunSeriesIMode6", "BattleFx_RunSeriesIMode3", "BattleFx_RunSeriesIMode5", "BattleFx_RunSeriesIMode7",
         "BattleFx_RunSeriesIMode4"
-      ]
+      ],
+      "address": "0x080ee2b4"
     }
   ]
 }

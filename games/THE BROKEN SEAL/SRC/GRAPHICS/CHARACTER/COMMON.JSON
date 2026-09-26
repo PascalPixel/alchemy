@@ -2091,7 +2091,8 @@
         ]
       },
       "identity": null,
-      "identity_status": "runtime name association not established"
+      "identity_status": "runtime name association not established",
+      "presentation_review": "GRAPHICS/REVIEW.JSON#FIELD_SPRITE_0x08209b80_SHEET.PNG"
     },
     "0820e300": {
       "format": 1,
@@ -2263,7 +2264,8 @@
         ]
       },
       "identity": null,
-      "identity_status": "runtime name association not established"
+      "identity_status": "runtime name association not established",
+      "presentation_review": "GRAPHICS/REVIEW.JSON#FIELD_SPRITE_0x08212f0c_SHEET.PNG"
     },
     "082154ec": {
       "format": 1,
@@ -2376,7 +2378,8 @@
         ]
       },
       "identity": null,
-      "identity_status": "runtime name association not established"
+      "identity_status": "runtime name association not established",
+      "presentation_review": "GRAPHICS/REVIEW.JSON#FIELD_SPRITE_0x08217b34_SHEET.PNG"
     },
     "0821a1c4": {
       "format": 1,
@@ -3500,7 +3503,8 @@
         ]
       },
       "identity": null,
-      "identity_status": "runtime name association not established"
+      "identity_status": "runtime name association not established",
+      "presentation_review": "GRAPHICS/REVIEW.JSON#FIELD_SPRITE_0x08240e8c_SHEET.PNG"
     },
     "08242a4c": {
       "format": 1,
@@ -3556,7 +3560,8 @@
         ]
       },
       "identity": null,
-      "identity_status": "runtime name association not established"
+      "identity_status": "runtime name association not established",
+      "presentation_review": "GRAPHICS/REVIEW.JSON#FIELD_SPRITE_0x08242a4c_SHEET.PNG"
     },
     "08244f38": {
       "format": 1,
@@ -3611,7 +3616,8 @@
         ]
       },
       "identity": null,
-      "identity_status": "runtime name association not established"
+      "identity_status": "runtime name association not established",
+      "presentation_review": "GRAPHICS/REVIEW.JSON#FIELD_SPRITE_0x08244f38_SHEET.PNG"
     },
     "08247618": {
       "format": 1,
@@ -3895,7 +3901,8 @@
         ]
       },
       "identity": null,
-      "identity_status": "runtime name association not established"
+      "identity_status": "runtime name association not established",
+      "presentation_review": "GRAPHICS/REVIEW.JSON#FIELD_SPRITE_0x08251b28_SHEET.PNG"
     },
     "082542e0": {
       "format": 1,
@@ -4064,7 +4071,8 @@
         ]
       },
       "identity": null,
-      "identity_status": "runtime name association not established"
+      "identity_status": "runtime name association not established",
+      "presentation_review": "GRAPHICS/REVIEW.JSON#FIELD_SPRITE_0x08258a10_SHEET.PNG"
     },
     "0825b0c4": {
       "format": 1,
@@ -4505,7 +4513,8 @@
         "slots": ["0x08266764", "0x0826693b", "0x08266ac2", "null"]
       },
       "identity": null,
-      "identity_status": "runtime name association not established"
+      "identity_status": "runtime name association not established",
+      "presentation_review": "GRAPHICS/REVIEW.JSON#FIELD_SPRITE_0x08266c4c_SHEET.PNG"
     },
     "08266f58": {
       "format": 1,
@@ -4555,7 +4564,8 @@
         "slots": ["0x08266c5c", "0x08266d68", "0x08266e55", "null"]
       },
       "identity": null,
-      "identity_status": "runtime name association not established"
+      "identity_status": "runtime name association not established",
+      "presentation_review": "GRAPHICS/REVIEW.JSON#FIELD_SPRITE_0x08266f58_SHEET.PNG"
     },
     "0826950c": {
       "format": 1,
@@ -4835,7 +4845,8 @@
         ]
       },
       "identity": null,
-      "identity_status": "runtime name association not established"
+      "identity_status": "runtime name association not established",
+      "presentation_review": "GRAPHICS/REVIEW.JSON#FIELD_SPRITE_0x08271db4_SHEET.PNG"
     },
     "08273694": {
       "format": 1,
@@ -4946,7 +4957,8 @@
         ]
       },
       "identity": null,
-      "identity_status": "runtime name association not established"
+      "identity_status": "runtime name association not established",
+      "presentation_review": "GRAPHICS/REVIEW.JSON#FIELD_SPRITE_0x08275bb0_SHEET.PNG"
     },
     "08277f14": {
       "format": 1,
@@ -5003,7 +5015,8 @@
         ]
       },
       "identity": null,
-      "identity_status": "runtime name association not established"
+      "identity_status": "runtime name association not established",
+      "presentation_review": "GRAPHICS/REVIEW.JSON#FIELD_SPRITE_0x08277f14_SHEET.PNG"
     },
     "082780d8": {
       "format": 1,
@@ -5278,7 +5291,8 @@
         ]
       },
       "identity": null,
-      "identity_status": "runtime name association not established"
+      "identity_status": "runtime name association not established",
+      "presentation_review": "GRAPHICS/REVIEW.JSON#FIELD_SPRITE_0x08280cf8_SHEET.PNG"
     },
     "08283484": {
       "format": 1,
@@ -5729,7 +5743,8 @@
         ]
       },
       "identity": null,
-      "identity_status": "runtime name association not established"
+      "identity_status": "runtime name association not established",
+      "presentation_review": "GRAPHICS/REVIEW.JSON#FIELD_SPRITE_0x08292e78_SHEET.PNG"
     },
     "08295198": {
       "format": 1,
@@ -15259,7 +15274,8 @@
           "identity": null,
           "identity_status": "runtime name association not established"
         }
-      ]
+      ],
+      "presentation_review": "GRAPHICS/REVIEW.JSON#BATTLE_SPRITE_0x082ddc74_SHEET.PNG"
     },
     "082e7a1c": {
       "kind": "components",
@@ -15292,7 +15308,8 @@
           "identity": null,
           "identity_status": "runtime name association not established"
         }
-      ]
+      ],
+      "presentation_review": "GRAPHICS/REVIEW.JSON#BATTLE_SPRITE_0x082e7a1c_SHEET.PNG"
     },
     "082f1c3c": {
       "kind": "components",
@@ -15325,7 +15342,8 @@
           "identity": null,
           "identity_status": "runtime name association not established"
         }
-      ]
+      ],
+      "presentation_review": "GRAPHICS/REVIEW.JSON#BATTLE_SPRITE_0x082f1c3c_SHEET.PNG"
     },
     "082f813c": {
       "kind": "components",
@@ -15358,7 +15376,8 @@
           "identity": null,
           "identity_status": "runtime name association not established"
         }
-      ]
+      ],
+      "presentation_review": "GRAPHICS/REVIEW.JSON#BATTLE_SPRITE_0x082f813c_SHEET.PNG"
     },
     "083000bc": {
       "kind": "components",
@@ -15391,7 +15410,8 @@
           "identity": null,
           "identity_status": "runtime name association not established"
         }
-      ]
+      ],
+      "presentation_review": "GRAPHICS/REVIEW.JSON#BATTLE_SPRITE_0x083000bc_SHEET.PNG"
     },
     "081f67cc": {
       "kind": "components",
@@ -18955,6 +18975,797 @@
     }
   },
   "archives": {
+    "100": {
+      "archive": {"offsets": [7936, 52, 9331, 1416, 10709, 2780, 12072, 4139, 13470, 5512, 14737, 6736, 0]},
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
+          "pointer": "/archives/100/archive/offsets",
+          "size": 52
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 64,
+          "frame_height": 64,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 0, 2, 4, 6, 8, 10],
+          "palette": {
+            "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+          },
+          "size": 15960,
+          "source_rect": {"x": 0, "y": 31408, "width": 512, "height": 128},
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "101": {
+      "archive": {"offsets": [3013, 36, 3785, 801, 4539, 1571, 5259, 2314, 0]},
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
+          "pointer": "/archives/101/archive/offsets",
+          "size": 36
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 64,
+          "frame_height": 64,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 0, 2, 4, 6],
+          "palette": {
+            "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+          },
+          "size": 5907,
+          "source_rect": {"x": 0, "y": 31536, "width": 512, "height": 64},
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "102": {
+      "archive": {"offsets": [3190, 44, 3833, 718, 4432, 1349, 5031, 1964, 5632, 2583, 0]},
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
+          "pointer": "/archives/102/archive/offsets",
+          "size": 44
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 64,
+          "frame_height": 64,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 0, 2, 4, 6, 8],
+          "palette": {
+            "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+          },
+          "size": 6180,
+          "source_rect": {"x": 0, "y": 31600, "width": 512, "height": 128},
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "103": {
+      "archive": {"offsets": [2878, 36, 3561, 738, 4268, 1456, 4979, 2185, 0]},
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
+          "pointer": "/archives/103/archive/offsets",
+          "size": 36
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 64,
+          "frame_height": 64,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 0, 2, 4, 6],
+          "palette": {
+            "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+          },
+          "size": 5621,
+          "source_rect": {"x": 0, "y": 31728, "width": 512, "height": 64},
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "104": {
+      "archive": {"offsets": [2850, 36, 3590, 796, 4299, 1526, 4990, 2237, 0]},
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
+          "pointer": "/archives/104/archive/offsets",
+          "size": 36
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 64,
+          "frame_height": 64,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 0, 2, 4, 6],
+          "palette": {
+            "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+          },
+          "size": 5614,
+          "source_rect": {"x": 0, "y": 31792, "width": 512, "height": 64},
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "105": {
+      "archive": {"offsets": [9180, 52, 10746, 1674, 12281, 3277, 13735, 4806, 15227, 6325, 16654, 7875, 0]},
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
+          "pointer": "/archives/105/archive/offsets",
+          "size": 52
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 64,
+          "frame_height": 64,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 0, 2, 4, 6, 8, 10],
+          "palette": {
+            "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+          },
+          "size": 17966,
+          "source_rect": {"x": 0, "y": 31856, "width": 512, "height": 128},
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "106": {
+      "archive": {"offsets": [8446, 52, 9913, 1464, 11348, 2854, 12739, 4201, 14365, 5752, 15768, 7109, 0]},
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
+          "pointer": "/archives/106/archive/offsets",
+          "size": 52
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 64,
+          "frame_height": 64,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 0, 2, 4, 6, 8, 10],
+          "palette": {
+            "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+          },
+          "size": 17181,
+          "source_rect": {"x": 0, "y": 31984, "width": 512, "height": 128},
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "107": {
+      "archive": {
+        "offsets": [
+          10015, 76, 11283, 1298, 12482, 2469, 13677, 3636, 14865, 4810, 15959, 5924, 16917, 6915, 17878, 7865, 18855,
+          8829, 0
+        ]
+      },
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
+          "pointer": "/archives/107/archive/offsets",
+          "size": 76
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 64,
+          "frame_height": 64,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 13, 15, 17, 0, 2, 4, 6, 8, 10, 12, 14, 16],
+          "palette": {
+            "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+          },
+          "size": 19877,
+          "source_rect": {"x": 0, "y": 32112, "width": 512, "height": 192},
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "108": {
+      "archive": {"offsets": [3013, 52, 3542, 576, 4075, 1108, 4611, 1651, 5114, 2159, 5542, 2556, 0]},
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
+          "pointer": "/archives/108/archive/offsets",
+          "size": 52
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 32,
+          "frame_height": 32,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 0, 2, 4, 6, 8, 10],
+          "palette": {
+            "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+          },
+          "size": 5942,
+          "source_rect": {"x": 0, "y": 32304, "width": 256, "height": 64},
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "109": {
+      "archive": {"offsets": [2477, 52, 2897, 470, 3326, 892, 3752, 1307, 4165, 1748, 4508, 2069, 0]},
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
+          "pointer": "/archives/109/archive/offsets",
+          "size": 52
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 32,
+          "frame_height": 32,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 0, 2, 4, 6, 8, 10],
+          "palette": {
+            "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+          },
+          "size": 4870,
+          "source_rect": {"x": 0, "y": 32368, "width": 256, "height": 64},
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "110": {
+      "archive": {"offsets": [2436, 52, 2827, 434, 3216, 812, 3602, 1181, 4035, 1642, 4392, 2024, 0]},
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
+          "pointer": "/archives/110/archive/offsets",
+          "size": 52
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 32,
+          "frame_height": 32,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 0, 2, 4, 6, 8, 10],
+          "palette": {
+            "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+          },
+          "size": 4739,
+          "source_rect": {"x": 0, "y": 32816, "width": 256, "height": 64},
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "111": {
+      "archive": {"offsets": [2510, 52, 2956, 497, 3384, 921, 3802, 1343, 4133, 1674, 4561, 2075, 0]},
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
+          "pointer": "/archives/111/archive/offsets",
+          "size": 52
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 32,
+          "frame_height": 32,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 0, 2, 4, 6, 8, 10],
+          "palette": {
+            "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+          },
+          "size": 4919,
+          "source_rect": {"x": 0, "y": 32880, "width": 256, "height": 64},
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "112": {
+      "archive": {"offsets": [1679, 52, 1940, 323, 2215, 590, 2491, 867, 2747, 1081, 3009, 1311, 0]},
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
+          "pointer": "/archives/112/archive/offsets",
+          "size": 52
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 32,
+          "frame_height": 32,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 0, 2, 4, 6, 8, 10],
+          "palette": {
+            "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+          },
+          "size": 3323,
+          "source_rect": {"x": 0, "y": 32944, "width": 256, "height": 64},
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "113": {
+      "archive": {"offsets": [1876, 52, 2195, 338, 2498, 611, 2784, 869, 3144, 1229, 3428, 1507, 0]},
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
+          "pointer": "/archives/113/archive/offsets",
+          "size": 52
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 32,
+          "frame_height": 32,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 0, 2, 4, 6, 8, 10],
+          "palette": {
+            "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+          },
+          "size": 3699,
+          "source_rect": {"x": 0, "y": 33008, "width": 256, "height": 64},
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "114": {
+      "archive": {"offsets": [8442, 52, 9928, 1569, 11313, 2996, 12675, 4378, 14033, 5823, 15327, 7175, 0]},
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
+          "pointer": "/archives/114/archive/offsets",
+          "size": 52
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 64,
+          "frame_height": 64,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 0, 2, 4, 6, 8, 10],
+          "palette": {
+            "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+          },
+          "size": 16566,
+          "source_rect": {"x": 0, "y": 33072, "width": 512, "height": 128},
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "115": {
+      "archive": {"offsets": [7711, 52, 9040, 1419, 10327, 2740, 11558, 3992, 12494, 4948, 13781, 6279, 0]},
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
+          "pointer": "/archives/115/archive/offsets",
+          "size": 52
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 64,
+          "frame_height": 64,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 0, 2, 4, 6, 8, 10],
+          "palette": {
+            "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+          },
+          "size": 15025,
+          "source_rect": {"x": 0, "y": 33200, "width": 512, "height": 128},
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "116": {
+      "archive": {
+        "offsets": [
+          15469, 68, 17480, 2157, 19356, 4043, 21182, 5877, 22635, 7386, 24690, 9586, 26695, 11609, 28497, 13437, 0
+        ]
+      },
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
+          "pointer": "/archives/116/archive/offsets",
+          "size": 68
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 64,
+          "frame_height": 64,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 13, 15, 0, 2, 4, 6, 8, 10, 12, 14],
+          "palette": {
+            "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+          },
+          "size": 30428,
+          "source_rect": {"x": 0, "y": 33328, "width": 512, "height": 128},
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "117": {
+      "archive": {
+        "offsets": [
+          4320, 76, 4788, 551, 5254, 1025, 5722, 1499, 6196, 1958, 6631, 2390, 7157, 2894, 7674, 3388, 8121, 3809, 0
+        ]
+      },
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
+          "pointer": "/archives/117/archive/offsets",
+          "size": 76
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 32,
+          "frame_height": 32,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 13, 15, 17, 0, 2, 4, 6, 8, 10, 12, 14, 16],
+          "palette": {
+            "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+          },
+          "size": 8579,
+          "source_rect": {"x": 0, "y": 33456, "width": 256, "height": 96},
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "118": {
+      "archive": {"offsets": [7473, 52, 8781, 1326, 10092, 2601, 11389, 3864, 12684, 5100, 13867, 6179, 0]},
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
+          "pointer": "/archives/118/archive/offsets",
+          "size": 52
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 64,
+          "frame_height": 64,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 0, 2, 4, 6, 8, 10],
+          "palette": {
+            "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+          },
+          "size": 15113,
+          "source_rect": {"x": 0, "y": 33552, "width": 512, "height": 128},
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "119": {
+      "archive": {"offsets": [3008, 52, 3516, 560, 4039, 1084, 4569, 1614, 4976, 2023, 5442, 2489, 0]},
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
+          "pointer": "/archives/119/archive/offsets",
+          "size": 52
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 32,
+          "frame_height": 32,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 0, 2, 4, 6, 8, 10],
+          "palette": {
+            "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+          },
+          "size": 5909,
+          "source_rect": {"x": 0, "y": 33680, "width": 256, "height": 64},
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "120": {
+      "archive": {
+        "offsets": [
+          14899, 68, 15954, 1925, 16975, 3723, 18034, 5484, 19201, 7279, 20325, 9027, 21349, 10868, 22417, 12784, 0
+        ]
+      },
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
+          "pointer": "/archives/120/archive/offsets",
+          "size": 68
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 64,
+          "frame_height": 64,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 13, 15, 0, 2, 4, 6, 8, 10, 12, 14],
+          "palette": {
+            "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+          },
+          "size": 23470,
+          "source_rect": {"x": 0, "y": 34512, "width": 512, "height": 128},
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "121": {
+      "archive": {
+        "offsets": [
+          11943, 76, 13326, 1476, 14684, 2857, 16036, 4218, 17222, 5464, 18339, 6641, 19572, 7876, 20877, 9207, 22203,
+          10567, 0
+        ]
+      },
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
+          "pointer": "/archives/121/archive/offsets",
+          "size": 76
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 64,
+          "frame_height": 64,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 13, 15, 17, 0, 2, 4, 6, 8, 10, 12, 14, 16],
+          "palette": {
+            "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+          },
+          "size": 23522,
+          "source_rect": {"x": 0, "y": 34640, "width": 512, "height": 192},
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "122": {
+      "archive": {
+        "offsets": [
+          10736, 76, 11911, 1191, 13092, 2299, 14262, 3408, 15480, 4685, 16577, 5765, 17742, 6897, 19007, 8147, 20282,
+          9415, 0
+        ]
+      },
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
+          "pointer": "/archives/122/archive/offsets",
+          "size": 76
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 64,
+          "frame_height": 64,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 13, 15, 17, 0, 2, 4, 6, 8, 10, 12, 14, 16],
+          "palette": {
+            "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+          },
+          "size": 21534,
+          "source_rect": {"x": 0, "y": 34832, "width": 512, "height": 192},
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "123": {
+      "archive": {"offsets": [9131, 52, 10602, 1524, 12112, 3035, 13672, 4597, 15209, 6134, 16668, 7595, 0]},
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
+          "pointer": "/archives/123/archive/offsets",
+          "size": 52
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 64,
+          "frame_height": 64,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 0, 2, 4, 6, 8, 10],
+          "palette": {
+            "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+          },
+          "size": 18148,
+          "source_rect": {"x": 0, "y": 35024, "width": 512, "height": 128},
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "124": {
+      "archive": {
+        "offsets": [
+          15248, 68, 16962, 2015, 18701, 3877, 20629, 5749, 23203, 7324, 25134, 9233, 26691, 11946, 28651, 14024, 0
+        ]
+      },
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
+          "pointer": "/archives/124/archive/offsets",
+          "size": 68
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 64,
+          "frame_height": 64,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 13, 15, 0, 2, 4, 6, 8, 10, 12, 14],
+          "palette": {
+            "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+          },
+          "size": 30701,
+          "source_rect": {"x": 0, "y": 35152, "width": 512, "height": 128},
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "125": {
+      "archive": {
+        "offsets": [
+          16172, 68, 18230, 1907, 20203, 3703, 22181, 5646, 24073, 8182, 26312, 10197, 29070, 11923, 31432, 13956, 0
+        ]
+      },
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
+          "pointer": "/archives/125/archive/offsets",
+          "size": 68
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 64,
+          "frame_height": 64,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 13, 15, 0, 2, 4, 6, 8, 10, 12, 14],
+          "palette": {
+            "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+          },
+          "size": 32681,
+          "source_rect": {"x": 0, "y": 35280, "width": 512, "height": 128},
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "126": {
+      "archive": {"offsets": [7512, 52, 8846, 1353, 10164, 2651, 11470, 3941, 12721, 5162, 13789, 6208, 0]},
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
+          "pointer": "/archives/126/archive/offsets",
+          "size": 52
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 64,
+          "frame_height": 64,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 0, 2, 4, 6, 8, 10],
+          "palette": {
+            "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+          },
+          "size": 15061,
+          "source_rect": {"x": 0, "y": 35408, "width": 512, "height": 128},
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "127": {
+      "archive": {"offsets": [5954, 52, 6951, 1024, 7959, 1999, 8952, 2959, 9937, 3948, 10844, 4870, 0]},
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
+          "pointer": "/archives/127/archive/offsets",
+          "size": 52
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 64,
+          "frame_height": 64,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 0, 2, 4, 6, 8, 10],
+          "palette": {
+            "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+          },
+          "size": 11927,
+          "source_rect": {"x": 0, "y": 35536, "width": 512, "height": 128},
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
     "f4": {
       "archive": {"offsets": [7490, 52, 8823, 1439, 9907, 2555, 11074, 3766, 12344, 5152, 13540, 6319, 0]},
       "components": [
@@ -19292,281 +20103,6 @@
       ],
       "identity_status": "runtime character association not established"
     },
-    "100": {
-      "archive": {"offsets": [7936, 52, 9331, 1416, 10709, 2780, 12072, 4139, 13470, 5512, 14737, 6736, 0]},
-      "components": [
-        {
-          "kind": "le-u32-array",
-          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
-          "pointer": "/archives/100/archive/offsets",
-          "size": 52
-        },
-        {
-          "kind": "zero-skip-bytes",
-          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
-          "frame_width": 64,
-          "frame_height": 64,
-          "columns": 8,
-          "frame_order": [1, 3, 5, 7, 9, 11, 0, 2, 4, 6, 8, 10],
-          "palette": {
-            "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
-            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
-          },
-          "size": 15960,
-          "source_rect": {"x": 0, "y": 31408, "width": 512, "height": 128},
-          "pixel_format": "indices"
-        }
-      ],
-      "identity_status": "runtime character association not established"
-    },
-    "101": {
-      "archive": {"offsets": [3013, 36, 3785, 801, 4539, 1571, 5259, 2314, 0]},
-      "components": [
-        {
-          "kind": "le-u32-array",
-          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
-          "pointer": "/archives/101/archive/offsets",
-          "size": 36
-        },
-        {
-          "kind": "zero-skip-bytes",
-          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
-          "frame_width": 64,
-          "frame_height": 64,
-          "columns": 8,
-          "frame_order": [1, 3, 5, 7, 0, 2, 4, 6],
-          "palette": {
-            "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
-            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
-          },
-          "size": 5907,
-          "source_rect": {"x": 0, "y": 31536, "width": 512, "height": 64},
-          "pixel_format": "indices"
-        }
-      ],
-      "identity_status": "runtime character association not established"
-    },
-    "102": {
-      "archive": {"offsets": [3190, 44, 3833, 718, 4432, 1349, 5031, 1964, 5632, 2583, 0]},
-      "components": [
-        {
-          "kind": "le-u32-array",
-          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
-          "pointer": "/archives/102/archive/offsets",
-          "size": 44
-        },
-        {
-          "kind": "zero-skip-bytes",
-          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
-          "frame_width": 64,
-          "frame_height": 64,
-          "columns": 8,
-          "frame_order": [1, 3, 5, 7, 9, 0, 2, 4, 6, 8],
-          "palette": {
-            "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
-            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
-          },
-          "size": 6180,
-          "source_rect": {"x": 0, "y": 31600, "width": 512, "height": 128},
-          "pixel_format": "indices"
-        }
-      ],
-      "identity_status": "runtime character association not established"
-    },
-    "103": {
-      "archive": {"offsets": [2878, 36, 3561, 738, 4268, 1456, 4979, 2185, 0]},
-      "components": [
-        {
-          "kind": "le-u32-array",
-          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
-          "pointer": "/archives/103/archive/offsets",
-          "size": 36
-        },
-        {
-          "kind": "zero-skip-bytes",
-          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
-          "frame_width": 64,
-          "frame_height": 64,
-          "columns": 8,
-          "frame_order": [1, 3, 5, 7, 0, 2, 4, 6],
-          "palette": {
-            "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
-            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
-          },
-          "size": 5621,
-          "source_rect": {"x": 0, "y": 31728, "width": 512, "height": 64},
-          "pixel_format": "indices"
-        }
-      ],
-      "identity_status": "runtime character association not established"
-    },
-    "104": {
-      "archive": {"offsets": [2850, 36, 3590, 796, 4299, 1526, 4990, 2237, 0]},
-      "components": [
-        {
-          "kind": "le-u32-array",
-          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
-          "pointer": "/archives/104/archive/offsets",
-          "size": 36
-        },
-        {
-          "kind": "zero-skip-bytes",
-          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
-          "frame_width": 64,
-          "frame_height": 64,
-          "columns": 8,
-          "frame_order": [1, 3, 5, 7, 0, 2, 4, 6],
-          "palette": {
-            "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
-            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
-          },
-          "size": 5614,
-          "source_rect": {"x": 0, "y": 31792, "width": 512, "height": 64},
-          "pixel_format": "indices"
-        }
-      ],
-      "identity_status": "runtime character association not established"
-    },
-    "105": {
-      "archive": {"offsets": [9180, 52, 10746, 1674, 12281, 3277, 13735, 4806, 15227, 6325, 16654, 7875, 0]},
-      "components": [
-        {
-          "kind": "le-u32-array",
-          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
-          "pointer": "/archives/105/archive/offsets",
-          "size": 52
-        },
-        {
-          "kind": "zero-skip-bytes",
-          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
-          "frame_width": 64,
-          "frame_height": 64,
-          "columns": 8,
-          "frame_order": [1, 3, 5, 7, 9, 11, 0, 2, 4, 6, 8, 10],
-          "palette": {
-            "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
-            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
-          },
-          "size": 17966,
-          "source_rect": {"x": 0, "y": 31856, "width": 512, "height": 128},
-          "pixel_format": "indices"
-        }
-      ],
-      "identity_status": "runtime character association not established"
-    },
-    "106": {
-      "archive": {"offsets": [8446, 52, 9913, 1464, 11348, 2854, 12739, 4201, 14365, 5752, 15768, 7109, 0]},
-      "components": [
-        {
-          "kind": "le-u32-array",
-          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
-          "pointer": "/archives/106/archive/offsets",
-          "size": 52
-        },
-        {
-          "kind": "zero-skip-bytes",
-          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
-          "frame_width": 64,
-          "frame_height": 64,
-          "columns": 8,
-          "frame_order": [1, 3, 5, 7, 9, 11, 0, 2, 4, 6, 8, 10],
-          "palette": {
-            "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
-            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
-          },
-          "size": 17181,
-          "source_rect": {"x": 0, "y": 31984, "width": 512, "height": 128},
-          "pixel_format": "indices"
-        }
-      ],
-      "identity_status": "runtime character association not established"
-    },
-    "107": {
-      "archive": {
-        "offsets": [
-          10015, 76, 11283, 1298, 12482, 2469, 13677, 3636, 14865, 4810, 15959, 5924, 16917, 6915, 17878, 7865, 18855,
-          8829, 0
-        ]
-      },
-      "components": [
-        {
-          "kind": "le-u32-array",
-          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
-          "pointer": "/archives/107/archive/offsets",
-          "size": 76
-        },
-        {
-          "kind": "zero-skip-bytes",
-          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
-          "frame_width": 64,
-          "frame_height": 64,
-          "columns": 8,
-          "frame_order": [1, 3, 5, 7, 9, 11, 13, 15, 17, 0, 2, 4, 6, 8, 10, 12, 14, 16],
-          "palette": {
-            "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
-            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
-          },
-          "size": 19877,
-          "source_rect": {"x": 0, "y": 32112, "width": 512, "height": 192},
-          "pixel_format": "indices"
-        }
-      ],
-      "identity_status": "runtime character association not established"
-    },
-    "108": {
-      "archive": {"offsets": [3013, 52, 3542, 576, 4075, 1108, 4611, 1651, 5114, 2159, 5542, 2556, 0]},
-      "components": [
-        {
-          "kind": "le-u32-array",
-          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
-          "pointer": "/archives/108/archive/offsets",
-          "size": 52
-        },
-        {
-          "kind": "zero-skip-bytes",
-          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
-          "frame_width": 32,
-          "frame_height": 32,
-          "columns": 8,
-          "frame_order": [1, 3, 5, 7, 9, 11, 0, 2, 4, 6, 8, 10],
-          "palette": {
-            "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
-            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
-          },
-          "size": 5942,
-          "source_rect": {"x": 0, "y": 32304, "width": 256, "height": 64},
-          "pixel_format": "indices"
-        }
-      ],
-      "identity_status": "runtime character association not established"
-    },
-    "109": {
-      "archive": {"offsets": [2477, 52, 2897, 470, 3326, 892, 3752, 1307, 4165, 1748, 4508, 2069, 0]},
-      "components": [
-        {
-          "kind": "le-u32-array",
-          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
-          "pointer": "/archives/109/archive/offsets",
-          "size": 52
-        },
-        {
-          "kind": "zero-skip-bytes",
-          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
-          "frame_width": 32,
-          "frame_height": 32,
-          "columns": 8,
-          "frame_order": [1, 3, 5, 7, 9, 11, 0, 2, 4, 6, 8, 10],
-          "palette": {
-            "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
-            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
-          },
-          "size": 4870,
-          "source_rect": {"x": 0, "y": 32368, "width": 256, "height": 64},
-          "pixel_format": "indices"
-        }
-      ],
-      "identity_status": "runtime character association not established"
-    },
     "10a": {
       "archive": {"offsets": [2448, 60, 2777, 391, 3110, 720, 3444, 1053, 3801, 1432, 4098, 1735, 4382, 2047, 0]},
       "components": [
@@ -19724,284 +20260,6 @@
           },
           "size": 2516,
           "source_rect": {"x": 0, "y": 32752, "width": 256, "height": 64},
-          "pixel_format": "indices"
-        }
-      ],
-      "identity_status": "runtime character association not established"
-    },
-    "110": {
-      "archive": {"offsets": [2436, 52, 2827, 434, 3216, 812, 3602, 1181, 4035, 1642, 4392, 2024, 0]},
-      "components": [
-        {
-          "kind": "le-u32-array",
-          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
-          "pointer": "/archives/110/archive/offsets",
-          "size": 52
-        },
-        {
-          "kind": "zero-skip-bytes",
-          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
-          "frame_width": 32,
-          "frame_height": 32,
-          "columns": 8,
-          "frame_order": [1, 3, 5, 7, 9, 11, 0, 2, 4, 6, 8, 10],
-          "palette": {
-            "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
-            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
-          },
-          "size": 4739,
-          "source_rect": {"x": 0, "y": 32816, "width": 256, "height": 64},
-          "pixel_format": "indices"
-        }
-      ],
-      "identity_status": "runtime character association not established"
-    },
-    "111": {
-      "archive": {"offsets": [2510, 52, 2956, 497, 3384, 921, 3802, 1343, 4133, 1674, 4561, 2075, 0]},
-      "components": [
-        {
-          "kind": "le-u32-array",
-          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
-          "pointer": "/archives/111/archive/offsets",
-          "size": 52
-        },
-        {
-          "kind": "zero-skip-bytes",
-          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
-          "frame_width": 32,
-          "frame_height": 32,
-          "columns": 8,
-          "frame_order": [1, 3, 5, 7, 9, 11, 0, 2, 4, 6, 8, 10],
-          "palette": {
-            "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
-            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
-          },
-          "size": 4919,
-          "source_rect": {"x": 0, "y": 32880, "width": 256, "height": 64},
-          "pixel_format": "indices"
-        }
-      ],
-      "identity_status": "runtime character association not established"
-    },
-    "112": {
-      "archive": {"offsets": [1679, 52, 1940, 323, 2215, 590, 2491, 867, 2747, 1081, 3009, 1311, 0]},
-      "components": [
-        {
-          "kind": "le-u32-array",
-          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
-          "pointer": "/archives/112/archive/offsets",
-          "size": 52
-        },
-        {
-          "kind": "zero-skip-bytes",
-          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
-          "frame_width": 32,
-          "frame_height": 32,
-          "columns": 8,
-          "frame_order": [1, 3, 5, 7, 9, 11, 0, 2, 4, 6, 8, 10],
-          "palette": {
-            "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
-            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
-          },
-          "size": 3323,
-          "source_rect": {"x": 0, "y": 32944, "width": 256, "height": 64},
-          "pixel_format": "indices"
-        }
-      ],
-      "identity_status": "runtime character association not established"
-    },
-    "113": {
-      "archive": {"offsets": [1876, 52, 2195, 338, 2498, 611, 2784, 869, 3144, 1229, 3428, 1507, 0]},
-      "components": [
-        {
-          "kind": "le-u32-array",
-          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
-          "pointer": "/archives/113/archive/offsets",
-          "size": 52
-        },
-        {
-          "kind": "zero-skip-bytes",
-          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
-          "frame_width": 32,
-          "frame_height": 32,
-          "columns": 8,
-          "frame_order": [1, 3, 5, 7, 9, 11, 0, 2, 4, 6, 8, 10],
-          "palette": {
-            "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
-            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
-          },
-          "size": 3699,
-          "source_rect": {"x": 0, "y": 33008, "width": 256, "height": 64},
-          "pixel_format": "indices"
-        }
-      ],
-      "identity_status": "runtime character association not established"
-    },
-    "114": {
-      "archive": {"offsets": [8442, 52, 9928, 1569, 11313, 2996, 12675, 4378, 14033, 5823, 15327, 7175, 0]},
-      "components": [
-        {
-          "kind": "le-u32-array",
-          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
-          "pointer": "/archives/114/archive/offsets",
-          "size": 52
-        },
-        {
-          "kind": "zero-skip-bytes",
-          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
-          "frame_width": 64,
-          "frame_height": 64,
-          "columns": 8,
-          "frame_order": [1, 3, 5, 7, 9, 11, 0, 2, 4, 6, 8, 10],
-          "palette": {
-            "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
-            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
-          },
-          "size": 16566,
-          "source_rect": {"x": 0, "y": 33072, "width": 512, "height": 128},
-          "pixel_format": "indices"
-        }
-      ],
-      "identity_status": "runtime character association not established"
-    },
-    "115": {
-      "archive": {"offsets": [7711, 52, 9040, 1419, 10327, 2740, 11558, 3992, 12494, 4948, 13781, 6279, 0]},
-      "components": [
-        {
-          "kind": "le-u32-array",
-          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
-          "pointer": "/archives/115/archive/offsets",
-          "size": 52
-        },
-        {
-          "kind": "zero-skip-bytes",
-          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
-          "frame_width": 64,
-          "frame_height": 64,
-          "columns": 8,
-          "frame_order": [1, 3, 5, 7, 9, 11, 0, 2, 4, 6, 8, 10],
-          "palette": {
-            "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
-            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
-          },
-          "size": 15025,
-          "source_rect": {"x": 0, "y": 33200, "width": 512, "height": 128},
-          "pixel_format": "indices"
-        }
-      ],
-      "identity_status": "runtime character association not established"
-    },
-    "116": {
-      "archive": {
-        "offsets": [
-          15469, 68, 17480, 2157, 19356, 4043, 21182, 5877, 22635, 7386, 24690, 9586, 26695, 11609, 28497, 13437, 0
-        ]
-      },
-      "components": [
-        {
-          "kind": "le-u32-array",
-          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
-          "pointer": "/archives/116/archive/offsets",
-          "size": 68
-        },
-        {
-          "kind": "zero-skip-bytes",
-          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
-          "frame_width": 64,
-          "frame_height": 64,
-          "columns": 8,
-          "frame_order": [1, 3, 5, 7, 9, 11, 13, 15, 0, 2, 4, 6, 8, 10, 12, 14],
-          "palette": {
-            "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
-            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
-          },
-          "size": 30428,
-          "source_rect": {"x": 0, "y": 33328, "width": 512, "height": 128},
-          "pixel_format": "indices"
-        }
-      ],
-      "identity_status": "runtime character association not established"
-    },
-    "117": {
-      "archive": {
-        "offsets": [
-          4320, 76, 4788, 551, 5254, 1025, 5722, 1499, 6196, 1958, 6631, 2390, 7157, 2894, 7674, 3388, 8121, 3809, 0
-        ]
-      },
-      "components": [
-        {
-          "kind": "le-u32-array",
-          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
-          "pointer": "/archives/117/archive/offsets",
-          "size": 76
-        },
-        {
-          "kind": "zero-skip-bytes",
-          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
-          "frame_width": 32,
-          "frame_height": 32,
-          "columns": 8,
-          "frame_order": [1, 3, 5, 7, 9, 11, 13, 15, 17, 0, 2, 4, 6, 8, 10, 12, 14, 16],
-          "palette": {
-            "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
-            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
-          },
-          "size": 8579,
-          "source_rect": {"x": 0, "y": 33456, "width": 256, "height": 96},
-          "pixel_format": "indices"
-        }
-      ],
-      "identity_status": "runtime character association not established"
-    },
-    "118": {
-      "archive": {"offsets": [7473, 52, 8781, 1326, 10092, 2601, 11389, 3864, 12684, 5100, 13867, 6179, 0]},
-      "components": [
-        {
-          "kind": "le-u32-array",
-          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
-          "pointer": "/archives/118/archive/offsets",
-          "size": 52
-        },
-        {
-          "kind": "zero-skip-bytes",
-          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
-          "frame_width": 64,
-          "frame_height": 64,
-          "columns": 8,
-          "frame_order": [1, 3, 5, 7, 9, 11, 0, 2, 4, 6, 8, 10],
-          "palette": {
-            "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
-            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
-          },
-          "size": 15113,
-          "source_rect": {"x": 0, "y": 33552, "width": 512, "height": 128},
-          "pixel_format": "indices"
-        }
-      ],
-      "identity_status": "runtime character association not established"
-    },
-    "119": {
-      "archive": {"offsets": [3008, 52, 3516, 560, 4039, 1084, 4569, 1614, 4976, 2023, 5442, 2489, 0]},
-      "components": [
-        {
-          "kind": "le-u32-array",
-          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
-          "pointer": "/archives/119/archive/offsets",
-          "size": 52
-        },
-        {
-          "kind": "zero-skip-bytes",
-          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
-          "frame_width": 32,
-          "frame_height": 32,
-          "columns": 8,
-          "frame_order": [1, 3, 5, 7, 9, 11, 0, 2, 4, 6, 8, 10],
-          "palette": {
-            "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
-            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
-          },
-          "size": 5909,
-          "source_rect": {"x": 0, "y": 33680, "width": 256, "height": 64},
           "pixel_format": "indices"
         }
       ],
@@ -20172,244 +20430,6 @@
           },
           "size": 25729,
           "source_rect": {"x": 0, "y": 34384, "width": 512, "height": 128},
-          "pixel_format": "indices"
-        }
-      ],
-      "identity_status": "runtime character association not established"
-    },
-    "120": {
-      "archive": {
-        "offsets": [
-          14899, 68, 15954, 1925, 16975, 3723, 18034, 5484, 19201, 7279, 20325, 9027, 21349, 10868, 22417, 12784, 0
-        ]
-      },
-      "components": [
-        {
-          "kind": "le-u32-array",
-          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
-          "pointer": "/archives/120/archive/offsets",
-          "size": 68
-        },
-        {
-          "kind": "zero-skip-bytes",
-          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
-          "frame_width": 64,
-          "frame_height": 64,
-          "columns": 8,
-          "frame_order": [1, 3, 5, 7, 9, 11, 13, 15, 0, 2, 4, 6, 8, 10, 12, 14],
-          "palette": {
-            "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
-            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
-          },
-          "size": 23470,
-          "source_rect": {"x": 0, "y": 34512, "width": 512, "height": 128},
-          "pixel_format": "indices"
-        }
-      ],
-      "identity_status": "runtime character association not established"
-    },
-    "121": {
-      "archive": {
-        "offsets": [
-          11943, 76, 13326, 1476, 14684, 2857, 16036, 4218, 17222, 5464, 18339, 6641, 19572, 7876, 20877, 9207, 22203,
-          10567, 0
-        ]
-      },
-      "components": [
-        {
-          "kind": "le-u32-array",
-          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
-          "pointer": "/archives/121/archive/offsets",
-          "size": 76
-        },
-        {
-          "kind": "zero-skip-bytes",
-          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
-          "frame_width": 64,
-          "frame_height": 64,
-          "columns": 8,
-          "frame_order": [1, 3, 5, 7, 9, 11, 13, 15, 17, 0, 2, 4, 6, 8, 10, 12, 14, 16],
-          "palette": {
-            "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
-            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
-          },
-          "size": 23522,
-          "source_rect": {"x": 0, "y": 34640, "width": 512, "height": 192},
-          "pixel_format": "indices"
-        }
-      ],
-      "identity_status": "runtime character association not established"
-    },
-    "122": {
-      "archive": {
-        "offsets": [
-          10736, 76, 11911, 1191, 13092, 2299, 14262, 3408, 15480, 4685, 16577, 5765, 17742, 6897, 19007, 8147, 20282,
-          9415, 0
-        ]
-      },
-      "components": [
-        {
-          "kind": "le-u32-array",
-          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
-          "pointer": "/archives/122/archive/offsets",
-          "size": 76
-        },
-        {
-          "kind": "zero-skip-bytes",
-          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
-          "frame_width": 64,
-          "frame_height": 64,
-          "columns": 8,
-          "frame_order": [1, 3, 5, 7, 9, 11, 13, 15, 17, 0, 2, 4, 6, 8, 10, 12, 14, 16],
-          "palette": {
-            "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
-            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
-          },
-          "size": 21534,
-          "source_rect": {"x": 0, "y": 34832, "width": 512, "height": 192},
-          "pixel_format": "indices"
-        }
-      ],
-      "identity_status": "runtime character association not established"
-    },
-    "123": {
-      "archive": {"offsets": [9131, 52, 10602, 1524, 12112, 3035, 13672, 4597, 15209, 6134, 16668, 7595, 0]},
-      "components": [
-        {
-          "kind": "le-u32-array",
-          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
-          "pointer": "/archives/123/archive/offsets",
-          "size": 52
-        },
-        {
-          "kind": "zero-skip-bytes",
-          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
-          "frame_width": 64,
-          "frame_height": 64,
-          "columns": 8,
-          "frame_order": [1, 3, 5, 7, 9, 11, 0, 2, 4, 6, 8, 10],
-          "palette": {
-            "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
-            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
-          },
-          "size": 18148,
-          "source_rect": {"x": 0, "y": 35024, "width": 512, "height": 128},
-          "pixel_format": "indices"
-        }
-      ],
-      "identity_status": "runtime character association not established"
-    },
-    "124": {
-      "archive": {
-        "offsets": [
-          15248, 68, 16962, 2015, 18701, 3877, 20629, 5749, 23203, 7324, 25134, 9233, 26691, 11946, 28651, 14024, 0
-        ]
-      },
-      "components": [
-        {
-          "kind": "le-u32-array",
-          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
-          "pointer": "/archives/124/archive/offsets",
-          "size": 68
-        },
-        {
-          "kind": "zero-skip-bytes",
-          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
-          "frame_width": 64,
-          "frame_height": 64,
-          "columns": 8,
-          "frame_order": [1, 3, 5, 7, 9, 11, 13, 15, 0, 2, 4, 6, 8, 10, 12, 14],
-          "palette": {
-            "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
-            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
-          },
-          "size": 30701,
-          "source_rect": {"x": 0, "y": 35152, "width": 512, "height": 128},
-          "pixel_format": "indices"
-        }
-      ],
-      "identity_status": "runtime character association not established"
-    },
-    "125": {
-      "archive": {
-        "offsets": [
-          16172, 68, 18230, 1907, 20203, 3703, 22181, 5646, 24073, 8182, 26312, 10197, 29070, 11923, 31432, 13956, 0
-        ]
-      },
-      "components": [
-        {
-          "kind": "le-u32-array",
-          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
-          "pointer": "/archives/125/archive/offsets",
-          "size": 68
-        },
-        {
-          "kind": "zero-skip-bytes",
-          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
-          "frame_width": 64,
-          "frame_height": 64,
-          "columns": 8,
-          "frame_order": [1, 3, 5, 7, 9, 11, 13, 15, 0, 2, 4, 6, 8, 10, 12, 14],
-          "palette": {
-            "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
-            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
-          },
-          "size": 32681,
-          "source_rect": {"x": 0, "y": 35280, "width": 512, "height": 128},
-          "pixel_format": "indices"
-        }
-      ],
-      "identity_status": "runtime character association not established"
-    },
-    "126": {
-      "archive": {"offsets": [7512, 52, 8846, 1353, 10164, 2651, 11470, 3941, 12721, 5162, 13789, 6208, 0]},
-      "components": [
-        {
-          "kind": "le-u32-array",
-          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
-          "pointer": "/archives/126/archive/offsets",
-          "size": 52
-        },
-        {
-          "kind": "zero-skip-bytes",
-          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
-          "frame_width": 64,
-          "frame_height": 64,
-          "columns": 8,
-          "frame_order": [1, 3, 5, 7, 9, 11, 0, 2, 4, 6, 8, 10],
-          "palette": {
-            "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
-            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
-          },
-          "size": 15061,
-          "source_rect": {"x": 0, "y": 35408, "width": 512, "height": 128},
-          "pixel_format": "indices"
-        }
-      ],
-      "identity_status": "runtime character association not established"
-    },
-    "127": {
-      "archive": {"offsets": [5954, 52, 6951, 1024, 7959, 1999, 8952, 2959, 9937, 3948, 10844, 4870, 0]},
-      "components": [
-        {
-          "kind": "le-u32-array",
-          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
-          "pointer": "/archives/127/archive/offsets",
-          "size": 52
-        },
-        {
-          "kind": "zero-skip-bytes",
-          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
-          "frame_width": 64,
-          "frame_height": 64,
-          "columns": 8,
-          "frame_order": [1, 3, 5, 7, 9, 11, 0, 2, 4, 6, 8, 10],
-          "palette": {
-            "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
-            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
-          },
-          "size": 11927,
-          "source_rect": {"x": 0, "y": 35536, "width": 512, "height": 128},
           "pixel_format": "indices"
         }
       ],

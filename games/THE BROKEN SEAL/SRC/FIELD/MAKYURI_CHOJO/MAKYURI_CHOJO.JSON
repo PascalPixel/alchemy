@@ -15,21 +15,24 @@
             "end": "0x08622af4",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 128, 128, 3, 2, 1, 0, 2, 2, 0, 0]
+            "values": [0, 0, 128, 128, 3, 2, 1, 0, 2, 2, 0, 0],
+            "address": "0x08622ae8"
           },
           {
             "name": "records",
             "end": "0x08622b0c",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [128, 4112, 0, 65535], [32768, 4112, 0, 65535]]
+            "values": [[0, 4112, 0, 65535], [128, 4112, 0, 65535], [32768, 4112, 0, 65535]],
+            "address": "0x08622af4"
           },
           {
             "name": "component_offsets",
             "end": "0x08622b24",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0x484", "0x4bc", "0xcb8", "0x0", "0xf20"]
+            "values": ["0x3c", "0x484", "0x4bc", "0xcb8", "0x0", "0xf20"],
+            "address": "0x08622b0c"
           }
         ]
       },
@@ -132,8 +135,22 @@
         "size": "0x6",
         "record_size": 3,
         "segments": [
-          {"name": "records", "end": "0x08623a0b", "stride": 3, "element": "u8", "values": [[31, 8, 100]]},
-          {"name": "terminator", "end": "0x08623a0e", "stride": 1, "element": "u8", "fill": 255}
+          {
+            "name": "records",
+            "end": "0x08623a0b",
+            "stride": 3,
+            "element": "u8",
+            "values": [[31, 8, 100]],
+            "address": "0x08623a08"
+          },
+          {
+            "name": "terminator",
+            "end": "0x08623a0e",
+            "stride": 1,
+            "element": "u8",
+            "fill": 255,
+            "address": "0x08623a0b"
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_CHOJO/MAKYURI_CHOJO.BIN",

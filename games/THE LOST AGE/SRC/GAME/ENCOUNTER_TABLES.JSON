@@ -688,7 +688,8 @@
         {"members": [357], "first_counts": [1], "second_counts": [1]},
         {"members": [358], "first_counts": [1], "second_counts": [1]},
         {"members": [359], "first_counts": [1], "second_counts": [1]}
-      ]
+      ],
+      "address": "0x0812ce7c"
     },
     {
       "name": "reset_flag_ids",
@@ -701,9 +702,10 @@
         37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64,
         65, 66, 91, 92, 93, 94, 102, 104, 105, 107, 110, 112, 113, 115, 219, 220, 342, 344, 346, 352, 355, 368, 369,
         370, 371, 372, 373, 374, 375, 376, 377
-      ]
+      ],
+      "address": "0x08130c5c"
     },
-    {"name": "alignment", "end": "0x08130d0c", "element": "u8", "stride": 1, "fill": 0},
+    {"name": "alignment", "end": "0x08130d0c", "element": "u8", "stride": 1, "fill": 0, "address": "0x08130d0a"},
     {
       "name": "metadata",
       "end": "0x08131924",
@@ -1105,7 +1107,8 @@
         {"halfword_0": 640, "flags_2": [0, 0, 5], "flags_3": [0, 2, 1]},
         {"halfword_0": 641, "flags_2": [0, 1, 4], "flags_3": [0, 0, 1]},
         {"halfword_0": 641, "flags_2": [0, 1, 0], "flags_3": [0, 4, 1]}
-      ]
+      ],
+      "address": "0x08130d0c"
     }
   ]
 }

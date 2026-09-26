@@ -1129,7 +1129,6 @@ AlchemyC_02000030:
 AlchemyC_020000b4:
 	.space 0xe
 	.2byte 0x0000
-Func_020000c4:
 	push	{r5, r6, r7, lr}
 	mov	r7, r8
 	push	{r7}
@@ -1330,7 +1329,6 @@ Func_020000c4:
 	.4byte 0x002bfffe
 	.2byte 0x8000
 	.2byte 0xffff
-Func_020002ec:
 	.2byte 0xb5e0
 	mov	r7, r8
 	push	{r7}
@@ -1609,7 +1607,6 @@ AlchemyC_02001db0:
 	.space 0x1e0
 AlchemyC_02001f90:
 	.space 0x330
-FieldScene_RunActorSequence:
 	push	{r5, r6, r7, lr}
 	bl	sub_020065b0
 	movs	r1, #15

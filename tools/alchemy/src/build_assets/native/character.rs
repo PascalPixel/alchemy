@@ -243,6 +243,9 @@ fn pixels(ctx: &Context, input: &Value, rom: &[u8]) -> Result<Vec<u8>, String> {
                 .copy_from_slice(&decoded[y * fw..(y + 1) * fw]);
         }
     }
+    if sha256::hex(&output) != json_string(&input["decoded_sha256"], "sprite digest")? {
+        return Err("character pixels differ from registered input".into());
+    }
     Ok(output)
 }
 /// One descriptor's decoded frames, as rendered into a character sheet.
@@ -298,12 +301,7 @@ pub(super) fn sheets(
     }
     Ok((catalog, descriptors, sheets))
 }
-/// Restore every atlas input and return each input's pixel digest.
-pub(super) fn extract_all(
-    root: &Path,
-    inputs: &Value,
-    rom: &[u8],
-) -> Result<BTreeMap<String, String>, String> {
+pub(super) fn extract_all(root: &Path, inputs: &Value, rom: &[u8]) -> Result<(), String> {
     atlas::extract(root, inputs, rom)
 }
 pub(super) fn check(ctx: &mut Context, input: &Value) -> Result<(), String> {
@@ -326,6 +324,10 @@ pub(super) fn check(ctx: &mut Context, input: &Value) -> Result<(), String> {
     ctx.shared_palette(&sheet, component, &img)?;
     if component.get("source_rect") != input.get("source_rect") {
         return Err("private character rectangle differs from component".into());
+    }
+    let (encoded, _, _) = build_entry(ctx, &bank)?;
+    if sha256::hex(&encoded) != json_string(&input["encoded_sha256"], "character bank hash")? {
+        return Err("character bank encoding differs".into());
     }
     Ok(())
 }
@@ -372,7 +374,8 @@ fn absent_arena_frames_are_bare_splits_with_blank_cells() {
     let expected = (0..4)
         .flat_map(|row| [&frame[row * 4..row * 4 + 4], &[0; 4][..]].concat())
         .collect::<Vec<_>>();
-    let input = json!({"metadata":"BANK.JSON","pointer":"/banks/field","width":8,"height":4});
+    let input = json!({"metadata":"BANK.JSON","pointer":"/banks/field","width":8,"height":4,
+        "decoded_sha256": sha256::hex(&expected)});
     assert_eq!(
         pixels(&Context::new(root.path()), &input, &rom).unwrap(),
         expected
@@ -420,8 +423,11 @@ fn packed_raw_frames_decode_between_directory_slots() {
             .concat()
         })
         .collect::<Vec<_>>();
-    let mut input = json!({"metadata":"PACKED.JSON","pointer":"/banks/field","width":8,"height":4});
+    let mut input = json!({"metadata":"PACKED.JSON","pointer":"/banks/field","width":8,"height":4,
+        "decoded_sha256": sha256::hex(&expected)});
     assert_eq!(pixels(&ctx, &input, &rom).unwrap(), expected);
+    input["decoded_sha256"] = json!(sha256::hex(&[0u8; 32]));
+    assert!(pixels(&ctx, &input, &rom).is_err());
     // A slot count that disagrees with the unterminated slots is refused.
     let mut document = bank(json!([format!("{first:#x}")]));
     document["banks"]["field"]["directory"]["slot_count"] = json!(2);

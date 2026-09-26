@@ -15,21 +15,24 @@
             "end": "0x0850be1c",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 100, 64, 3, 2, 1, 0, 2, 2, 0, 0]
+            "values": [0, 0, 100, 64, 3, 2, 1, 0, 2, 2, 0, 0],
+            "address": "0x0850be10"
           },
           {
             "name": "records",
             "end": "0x0850be34",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [16384, 4112, 0, 65535], [100, 4112, 0, 65535]]
+            "values": [[0, 4112, 0, 65535], [16384, 4112, 0, 65535], [100, 4112, 0, 65535]],
+            "address": "0x0850be1c"
           },
           {
             "name": "component_offsets",
             "end": "0x0850be4c",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0x654", "0x65c", "0xf20", "0x11e8", "0x1214"]
+            "values": ["0x3c", "0x654", "0x65c", "0xf20", "0x11e8", "0x1214"],
+            "address": "0x0850be34"
           }
         ]
       },
@@ -158,8 +161,22 @@
         "size": "0x6",
         "record_size": 3,
         "segments": [
-          {"name": "records", "end": "0x0850d027", "stride": 3, "element": "u8", "values": [[3, 15, 100]]},
-          {"name": "terminator", "end": "0x0850d02a", "stride": 1, "element": "u8", "fill": 255}
+          {
+            "name": "records",
+            "end": "0x0850d027",
+            "stride": 3,
+            "element": "u8",
+            "values": [[3, 15, 100]],
+            "address": "0x0850d024"
+          },
+          {
+            "name": "terminator",
+            "end": "0x0850d02a",
+            "stride": 1,
+            "element": "u8",
+            "fill": 255,
+            "address": "0x0850d027"
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/SORU_NICHIGETSU/SORU_NICHIGETSU.BIN",

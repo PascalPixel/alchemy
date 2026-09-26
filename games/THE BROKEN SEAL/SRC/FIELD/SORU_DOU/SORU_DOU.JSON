@@ -15,21 +15,24 @@
             "end": "0x08517e70",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 64, 32, 3, 2, 2, 0, 2, 2, 0, 0]
+            "values": [0, 0, 64, 32, 3, 2, 2, 0, 2, 2, 0, 0],
+            "address": "0x08517e64"
           },
           {
             "name": "records",
             "end": "0x08517e88",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [8192, 4112, 0, 65535], [16384, 4112, 0, 65535]]
+            "values": [[0, 4112, 0, 65535], [8192, 4112, 0, 65535], [16384, 4112, 0, 65535]],
+            "address": "0x08517e70"
           },
           {
             "name": "component_offsets",
             "end": "0x08517ea0",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0x67c", "0x684", "0xe28", "0xe50", "0xe70"]
+            "values": ["0x3c", "0x67c", "0x684", "0xe28", "0xe50", "0xe70"],
+            "address": "0x08517e88"
           }
         ]
       },
@@ -89,8 +92,22 @@
         "size": "0x6",
         "record_size": 3,
         "segments": [
-          {"name": "records", "end": "0x08518cd7", "stride": 3, "element": "u8", "values": [[4, 5, 100]]},
-          {"name": "terminator", "end": "0x08518cda", "stride": 1, "element": "u8", "fill": 255}
+          {
+            "name": "records",
+            "end": "0x08518cd7",
+            "stride": 3,
+            "element": "u8",
+            "values": [[4, 5, 100]],
+            "address": "0x08518cd4"
+          },
+          {
+            "name": "terminator",
+            "end": "0x08518cda",
+            "stride": 1,
+            "element": "u8",
+            "fill": 255,
+            "address": "0x08518cd7"
+          }
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/SORU_DOU/SORU_DOU.BIN",

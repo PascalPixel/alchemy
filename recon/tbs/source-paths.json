@@ -11927,7 +11927,8 @@
       "source": "FIELD/HAIDIA_IE/GROUP_CHOREOGRAPHY.C"
     },
     "resource_3cb:02000860": {
-      "name": "Scene_RunScene3cbSequenceB"
+      "name": "LinkLobby_RunConnectionSequence",
+      "source": "MENU/LINK_LOBBY/CONNECT.C"
     },
     "resource_373:02000030": {
       "name": "FixedPoint_Distance",

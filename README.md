@@ -34,7 +34,7 @@ the technical details in [AGENTS.md](AGENTS.md).
 
 ## Progress
 
-**☀️ 72.35% · ⚓️ 2.14%**
+**☀️ 72.41% · ⚓️ 2.14%**
 
 <img src="PROGRESS_CHART.png" width="838" alt="DONE by day for The Broken Seal and The Lost Age since 16 July 2026">
 

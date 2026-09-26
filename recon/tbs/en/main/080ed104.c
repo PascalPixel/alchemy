@@ -1,7 +1,12 @@
 #include "TYPES.H"
 #include "BATTLE_EFX.H"
 
-/* 2026-09-26 bounded restart, H1: candidate=772 reference=772,
+/* 2026-09-26 bounded restart, H2: candidate=776 reference=772,
+   300 differing halfwords, 142 aligned edits. Explicit rect_slot declared
+   beside canvas recovers all scalar spill slots: progress +8, object +12,
+   callbacks pointer +16, canvas +20. Accessing the array through that pointer
+   adds a reload to each indirect-draw path, so this witness is not adopted.
+   H1 witness 04b3f6182: candidate=772 reference=772,
    275 differing halfwords, 123 aligned edits (baseline 278/143).
    Separate seed/draw pointer lifetimes and one index shared by all phases
    recover seed r7, draw r5, bar style r7, bar x r6 and index r8.
@@ -90,6 +95,7 @@ void Func_080ed104(void *object)
 {
     void *work;
     void *draw_destination;
+    DrawRectangleFn *rect_slot;
     void *extra_target;
     void **heap_cache;
     void **cursor;
@@ -115,7 +121,8 @@ void Func_080ed104(void *object)
     Resource_LoadAndDecompress((s32) &Value_000000c0, (u8 *)work + 0x460, 1, 0);
 
     flag = M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 4);
-    Func_080cef64(flag, rect_fns);
+    rect_slot = rect_fns;
+    Func_080cef64(flag, rect_slot);
 
     M2C_FIELD(work, s32 *, 0x7780) = 2;
     M2C_FIELD(work, s32 *, 0x7784) = 75;
@@ -185,8 +192,8 @@ void Func_080ed104(void *object)
                     } else {
                         BattleEffect_LoadWork(46, 7, 7, 7, bar_style);
                     }
-                    rect_fns[0] = (DrawRectangleFn)heap_cache[7];
-                    rect_fns[0](
+                    rect_slot[0] = (DrawRectangleFn)heap_cache[7];
+                    rect_slot[0](
                         draw_destination, work,
                         bar_x, 112 - bar_height, 14, bar_height);
                     Func_08002dd8(46);
@@ -196,7 +203,7 @@ void Func_080ed104(void *object)
         }
 
         flag = M2C_FIELD(*object_slot, s32 *, 4);
-        Func_080cef64(flag, rect_fns);
+        Func_080cef64(flag, rect_slot);
 
         star = (u8 *)work + 0x7080;
         for (star_index = 0; star_index != 16; star_index++) {
@@ -222,7 +229,7 @@ void Func_080ed104(void *object)
                     raw = Data_080eef96[bucket];
                     half = raw >> 1;
 
-                    ((DrawRectangleFn) rect_fns[0])(
+                    rect_slot[0](
                         draw_destination, src,
                         sy - half, sh - half,
                         raw, raw);

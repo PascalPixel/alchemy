@@ -1,14 +1,23 @@
+/* Draft: complete 432-byte owner; 2 differing halfwords.
+ * Only mov fp,r0 / mov sl,r8 setup order remains; typed bitfields and
+ * branch-local positions close the prior 207-halfword structural mismatch.
+ * An allocator-guided explicit buffer and scoped counter did not close it.
+ */
 #include "TYPES.H"
 
-#define BattleFx_SpawnBurstParticleField Func_08098698
 
 struct BurstParticleVisual {
     u8 reserved_00[5];
-    u8 flags_a;
+    u8 flags_a_low : 5;
+    u8 flip : 1;
+    u8 flags_a_high : 2;
     u8 reserved_06;
-    u8 flags_b;
-    u16 attributes;
-    u8 reserved_0a[2];
+    u8 flags_b_low : 6;
+    u8 flags_b_high : 2;
+    union {
+        struct { u16 shape : 10; u16 unused : 6; } bits;
+        struct { u8 lo; u8 high_low : 4; u8 palette : 4; } bytes;
+    } attributes;
 };
 
 struct BurstParticleVisualGroup {
@@ -44,19 +53,19 @@ struct BurstParticleState {
 extern struct BurstParticleState *Data_03001f30;
 extern u8 Data_0809f0b4;
 
-void Func_08097384(void);
-void Func_0800447c(s32, u32, s32 *);
-struct BurstParticleObject *Func_08096c80(s32, s32, s32, s32);
+void BattleEffect_InitializeSharedScene(void);
+void Vector_AddPolarOffset(s32, u32, s32 *);
+struct BurstParticleObject *Object_Spawn(s32, s32, s32, s32);
 void Func_08009240(struct BurstParticleObject *, s32);
 void Func_08009080(struct BurstParticleObject *, s32);
 void Func_08009098(struct BurstParticleObject *, void *);
 void Func_080091e0(struct BurstParticleObject *, s32);
-u32 Func_08004458(void);
+u32 Random16(void);
 void Func_08009150(struct BurstParticleObject *, s32, s32, s32);
 void Func_080f9010(s32);
-void Func_080030f8(s32);
+void WaitFrames(s32);
 
-void BattleFx_SpawnBurstParticleField(void)
+void BattleEffect_SpawnBurstParticleField(void)
 {
     struct BurstParticleState *state;
     struct BurstParticleObject *target;
@@ -65,55 +74,44 @@ void BattleFx_SpawnBurstParticleField(void)
 
     state = Data_03001f30;
     target = state->target;
-    Func_08097384();
+    BattleEffect_InitializeSharedScene();
     remaining = 23;
     do {
         struct BurstParticleObject *object;
         struct BurstParticleVisual *visual;
         struct BurstParticleVisual *child;
         s32 random_distance;
-        u32 shape;
-        u32 destination_attributes;
-        u32 merged_attributes;
 
-        position[0] = target->x;
-        position[2] = target->z;
-        if (state->variant == 0x4000)
+        if (state->variant == 0x4000) {
+            position[0] = target->x;
             position[1] = target->y + 0xa0000;
-        else if (state->variant == 0xc000)
+            position[2] = target->z;
+        } else if (state->variant == 0xc000) {
+            position[0] = target->x;
             position[1] = target->y + 0x180000;
-        else {
+            position[2] = target->z;
+        } else {
+            position[0] = target->x;
             position[1] = target->y + 0xa0000;
-            Func_0800447c(0xa0000, state->variant, position);
+            position[2] = target->z;
+            Vector_AddPolarOffset(0xa0000, state->variant, position);
         }
 
-        object = Func_08096c80(
+        object = Object_Spawn(
             0x11c, position[0], position[1], position[2]);
         visual = &object->visuals->primary;
         child = &object->visuals->child;
-        child->flags_a = (child->flags_a & ~0x20) |
-            (visual->flags_a & 0x20);
-        child->flags_a = (child->flags_a & 0x3f) |
-            (visual->flags_a & 0xc0);
-        child->flags_b = (child->flags_b & 0x3f) |
-            (visual->flags_b & 0xc0);
-        shape = visual->attributes;
-        destination_attributes = child->attributes;
-        shape <<= 22;
-        shape >>= 22;
-        merged_attributes = 0xfffffc00;
-        merged_attributes &= destination_attributes;
-        merged_attributes |= shape;
-        child->attributes = merged_attributes;
-        ((u8 *)&child->attributes)[1] =
-            (((u8 *)&child->attributes)[1] & 0x0f) |
-            (((u8 *)&visual->attributes)[1] & 0xf0);
+        child->flip = visual->flip;
+        child->flags_a_high = visual->flags_a_high;
+        child->flags_b_high = visual->flags_b_high;
+        child->attributes.bits.shape = visual->attributes.bits.shape;
+        child->attributes.bytes.palette = visual->attributes.bytes.palette;
 
         if (object != 0) {
-            object->scale_x = 0xb333;
             object->scale_y = 0xb333;
-            object->velocity_x = 0x18000;
+            object->scale_x = 0xb333;
             object->velocity_y = 0x18000;
+            object->velocity_x = 0x18000;
             object->mode = 0;
             Func_08009240(object, 11);
             Func_08009080(object, 7);
@@ -124,15 +122,15 @@ void BattleFx_SpawnBurstParticleField(void)
             position[1] = state->y;
             position[2] = state->z;
             if (state->variant == 0xc000)
-                Func_0800447c(0xe0000, state->variant, position);
-            random_distance = Func_08004458() * 6 + 0x40000;
-            Func_0800447c(random_distance, Func_08004458(), position);
+                Vector_AddPolarOffset(0xe0000, state->variant, position);
+            random_distance = Random16() * 6 + 0x40000;
+            Vector_AddPolarOffset(random_distance, Random16(), position);
             Func_08009150(
                 object, position[0], position[1], position[2]);
         }
         Func_080f9010(0x83);
-        Func_080030f8(2);
+        WaitFrames(2);
         remaining--;
     } while (remaining >= 0);
-    Func_080030f8(8);
+    WaitFrames(8);
 }

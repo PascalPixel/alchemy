@@ -86807,7 +86807,7 @@
     },
     {
       "id": "ovd-3cb-02000b94",
-      "source": "recon/tbs/en/overlays/resource_3cb_c_02000b94.c",
+      "source": "games/THE BROKEN SEAL/SRC/MENU/LINK_LOBBY/APPLY.C",
       "overlay": "resource_3cb",
       "absolute_symbols": {
         "Engine_EventEnd": {
@@ -86826,11 +86826,11 @@
           "address": "0x00002930",
           "kind": "data"
         },
-        "Local_0200008c": {
+        "LinkLobby_PeerSlotMatches": {
           "address": "0x0200808c",
           "kind": "thumb"
         },
-        "Local_02000128": {
+        "LinkLobby_WriteSlotValue": {
           "address": "0x02008128",
           "kind": "thumb"
         },
@@ -86879,7 +86879,7 @@
         {
           "address": "0x02000b94",
           "extent": 468,
-          "state": "not-yet-c"
+          "state": "exact-c"
         }
       ],
       "game": "tbs",

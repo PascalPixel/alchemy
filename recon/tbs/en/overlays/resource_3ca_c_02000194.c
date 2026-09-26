@@ -1,9 +1,10 @@
-/* NONMATCHING: 556 bytes, candidate 556, 124 differing halfwords, 77 aligned
+/* NONMATCHING: 556 bytes, candidate 544, 247 differing halfwords, 88 aligned
  * edits (2026-09-26). Reconstructed both Q16 waves and all four actor-height
  * blocks. The complete topology now agrees. Remaining: halfword scroll
  * reload and stack-slot ownership, saved position pointer, and spawn stores.
- * A 20-byte aggregate restores the halfword load and complete size; its
- * volatile member adds an unwanted read before the scroll store. */
+ * Separate halfword and pointer records remove the aggregate's saved stack
+ * base, but CSE forwards the halfword value and erases its stack slot.
+ * The aggregate attempt is retained in the preceding draft commit. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "IWRAM_CALL.H"
@@ -23,12 +24,12 @@ struct Position {
     s32 x, y, z;
 };
 
-/* FAKEMATCH: the stack aggregate retains the scroll and position views. */
-struct WaveScratch {
+struct PositionWork {
     struct Position *pos;
-    struct Position buf;
-    u16 unused;
-    volatile u16 scroll;
+};
+
+struct Half {
+    u16 v;
 };
 
 extern struct MapWork *Data_03001e70;
@@ -50,7 +51,9 @@ void BabiFune_UpdateDriftingObject(u8 *obj);
 
 void BabiFune_UpdateWaves(void)
 {
-    struct WaveScratch work;
+    struct Half scroll;
+    struct Position buf;
+    struct PositionWork work;
     struct MapWork *map;
     struct FieldActor *actor;
     s32 bob;
@@ -59,8 +62,9 @@ void BabiFune_UpdateWaves(void)
     map = Data_03001e70;
     if (Data_020097e8 != 0) {
         bob = Iwram_MulQ16(Engine_MathSin(Data_020097ec << 9), 3);
-        work.scroll = Data_020097f0 + ((bob + 8) << 8);
-        *(volatile u16 *)0x0400001a = work.scroll;
+        /* FAKEMATCH: the two halfword views retain truncation before I/O. */
+        *(u16 *)&scroll = Data_020097f0 + ((bob + 8) << 8);
+        *(volatile u16 *)0x0400001a = scroll.v;
         Data_020097ec++;
     }
     if (Data_020097fc != 0) {
@@ -97,7 +101,7 @@ void BabiFune_UpdateWaves(void)
         x = map->layers[4].unknown_10[0] & -0x10000;
         z = map->layers[4].unknown_10[1] & -0x10000;
         x += Engine_RandomNext() * 240;
-        work.pos = &work.buf;
+        work.pos = &buf;
         work.pos->y = 0;
         work.pos->x = x;
         z += Engine_RandomNext() * 160;

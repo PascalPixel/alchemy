@@ -13,6 +13,13 @@
  * Initial scheduling,
  * sprite/actor registers and byte-pointer copies differ; topology is equal.
  * Typed unknown_5a flag accesses emit the same bytes as offset casts.
+ * 2026-09-26 bounded pass, own-ROM full extent [0x02000578,0x02000a0c).
+ * Read the complete listing and normalized diff. H1: a u16 stopped local
+ * for actor +85, separate from the view actor's word-sized Y zero, emits
+ * exactly the baseline bytes (1172 bytes, 385 differing halfwords, 160
+ * edits). The reference owns a zero at pool 0x0200063c, also holds a wide
+ * zero in sl, and saves a third high register; plain scalar narrowing does
+ * not recreate that ownership. Baseline binary equality checked directly.
  * WALL: structural-topology: shared workspace lifetimes and actor setup */
 #include "FIELD_EVENT.H"
 
@@ -84,6 +91,7 @@ void FieldScene_RunComplexActorSequence(void)
     u8 *work;
     struct FieldActor *scene_actor;
     struct SceneControlPointers *control;
+    u16 stopped;
 
     control = &gScenePointers.control;
     work = gScenePointers.map_work;
@@ -100,7 +108,10 @@ void FieldScene_RunComplexActorSequence(void)
     Main_0808a100(0, 18);
     *(u16 *)((u8 *)sprite + 30) = 1365;
     p12 = Main_0808a080(17);
-    p12->motion_flags = 0;
+    /* FAKEMATCH candidate: keep the byte flag's halfword zero separate
+     * from the wide scene-position zero, as the two reference loads are. */
+    stopped = 0;
+    p12->motion_flags = stopped;
     Main_080091e0(Main_0808a080(17), 0);
     Main_0808a0f0(17, 37748736, 42598400);
     Main_08009188(7);

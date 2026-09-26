@@ -1,3 +1,10 @@
+/* DRAFT checkpoint 2026-09-26: its complete owner now ends at 0801aeec,
+ * before the separately registered MenuSelection_DrawSideMarker.
+ * Explicit --size 1376: 1376/1376 bytes, 415 differing halfwords and 259
+ * aligned edits; branch topology and 24-byte frame agree. The first broad
+ * divergence keeps cnt on the stack and cursor_entry in fp, where the
+ * reference keeps cnt in fp and cursor_entry at sp+8. No new variant tried.
+ */
 #include "TYPES.H"
 
 /* 選択メニューの毎フレーム描画更新。

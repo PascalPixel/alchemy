@@ -1,7 +1,8 @@
-/* NONMATCHING: resource_370:02000de4; 1016 / 1024 bytes, 406 differing
- * halfwords, 436 wrong instructions, 280 halfword edits. Negative item-record
- * trial: the compiler rounds a one-halfword struct to four bytes, so item
- * strides and values_f8 placement are wrong. Signed-load extension remains. */
+/* NONMATCHING: resource_370:02000de4; 1024 / 1024 bytes, 473 differing
+ * halfwords, 464 wrong instructions, 300 halfword edits. Integer-domain
+ * packing offset restores the reference's branch-free nonzero test and
+ * complete topology. Typed tables remove one spill; frame is 68 / 64 bytes.
+ * Scalar item ABI restored after the four-byte item-record negative trial. */
 #include "TYPES.H"
 
 struct PasswordStats {
@@ -14,16 +15,12 @@ struct PasswordStats {
     u8 level_1e;
 };
 
-struct PasswordItem {
-    u16 code;
-};
-
 struct PasswordOwnerState {
     u8 unknown_00[0x0f];
     u8 rank;
     struct PasswordStats stats;
     u8 unknown_20[0xb8];
-    struct PasswordItem items[15];
+    u16 item_codes[15];
     u8 unknown_f6[2];
     u32 values_f8[4];
 };
@@ -122,7 +119,7 @@ s32 Func_02000de4(s32 unused, s32 mode, u8 *out)
 
         for (j = 0; j != 15; j++) {
             s32 k;
-            u16 item = state->items[j].code & 0x1ff;
+            u16 item = state->item_codes[j] & 0x1ff;
             for (k = 0; k != 8; k++) {
                 if (item == Data_020096dc[k])
                     item_bits |= 1u << k;
@@ -140,8 +137,8 @@ s32 Func_02000de4(s32 unused, s32 mode, u8 *out)
             for (j = 0; j != 15; j++) {
                 s32 item;
 
-                Engine_DebugGetItem(state->items[j].code);
-                item = state->items[j].code & 0x1ff;
+                Engine_DebugGetItem(state->item_codes[j]);
+                item = state->item_codes[j] & 0x1ff;
                 out[p] += item >> (bit + 1);
                 out[p + 1] += item << (7 - bit);
                 p++;
@@ -161,12 +158,10 @@ s32 Func_02000de4(s32 unused, s32 mode, u8 *out)
             s32 j;
             for (j = 0; j != 23; j++) {
                 u16 property = 0;
-                struct PasswordItem *entry = state->items;
+                u16 *code = state->item_codes;
                 s32 k;
                 for (k = 0; k != 15; k++) {
-                    u16 item = entry->code;
-
-                    entry++;
+                    u16 item = *code++;
                     if ((item & 0x1ff) == Data_020096ec[j])
                         property = (item & 0xf800) >> 11;
                 }
@@ -189,7 +184,8 @@ s32 Func_02000de4(s32 unused, s32 mode, u8 *out)
     }
 
     if (mode != 2) {
-        u8 *dst = out + 8 + (mode != 0);
+        s32 offset = 8 + (mode != 0);
+        u8 *dst = out + offset;
 
         row = rows;
         for (i = 0; i != 2; i++) {

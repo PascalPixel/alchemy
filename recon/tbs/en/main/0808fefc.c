@@ -1,4 +1,7 @@
-/* Draft, not exact (2026-09-26): 704 of 708 bytes, 154 differing halfwords.
+/* Draft, not exact (2026-09-26): 780 of 708 bytes, 360 differing halfwords.
+   Explicit callback branches retain both initialization tails and move
+   the display pointer into r8. This regresses the symbolic-carrier
+   model (704 bytes / 154 halfwords); preserved before restoring best.
    Link-symbol halfword carriers move the pool into case 4; restoring the
    queue expression recovers its original roles. The callback ternary
    still merges argument setup, and frames/start exchange r9/sl.
@@ -168,12 +171,21 @@ void DisplayTransition_Start(s32 mode, s32 frames)
         display->split_top = 80;
         display->split_bottom = 80;
         WaitFrames(1);
-        Scheduler_AddOrUpdateCallback(value == 0 ? DisplayTransition_Update : DisplayTransition_UpdateFromCentre, 0xc80);
-        Runtime_SetIrqHandler(1, 0, DisplayTransition_UpdateScanline);
-        state->start = start.value;
-        state->end = zero.value;
-        state->frames = frames;
-        state->phase = zero.value;
+        if (value == 0) {
+            Scheduler_AddOrUpdateCallback(DisplayTransition_Update, 0xc80);
+            Runtime_SetIrqHandler(1, 0, DisplayTransition_UpdateScanline);
+            state->start = start.value;
+            state->end = zero.value;
+            state->frames = frames;
+            state->phase = zero.value;
+        } else {
+            Scheduler_AddOrUpdateCallback(DisplayTransition_UpdateFromCentre, 0xc80);
+            Runtime_SetIrqHandler(1, 0, DisplayTransition_UpdateScanline);
+            state->start = start.value;
+            state->end = zero.value;
+            state->frames = frames;
+            state->phase = zero.value;
+        }
         break;
     }
     }

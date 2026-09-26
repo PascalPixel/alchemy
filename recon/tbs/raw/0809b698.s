@@ -166,3 +166,11 @@ Func_0809b698:
 	pop	{r5, r6, r7}
 	pop	{r0}
 	bx	r0
+	.4byte 0x03001f30
+	.4byte 0x0000071a
+	.4byte 0x0809c510
+	.4byte 0x02000240
+	.4byte 0x00000145
+	.4byte 0x0809b5dd
+	.4byte 0x0809b589
+	.4byte 0x00000922

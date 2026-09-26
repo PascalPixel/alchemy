@@ -10376,9 +10376,6 @@
     "main:0809b208": {
       "name": "BattleFx_RunEffect15"
     },
-    "main:0809b7e4": {
-      "name": "LiteralPool_0809b7e4"
-    },
     "main:08003fa4": {
       "name": "VramBlock_LoadCached",
       "source": "GRAPHICS/DISPLAY/LOAD_CACHED.C"

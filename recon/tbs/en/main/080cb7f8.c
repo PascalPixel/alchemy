@@ -1,9 +1,30 @@
-#include "types.h"
+#include "TYPES.H"
 #include "BATTLE_EFX.H"
 
-#define Func_080cb7f8 Func_080cb7f8
+/* NONMATCHING: complete extent 1044B. The old 393-instruction draft had
+ * uninitialized heap/stack stand-ins, discarded palette-selection values,
+ * and _call_via trampolines treated as services with extra arguments.
+ * Recovered heap base, palette cases and real callback calls: 424 versus
+ * 420 normalized instructions, 76-byte frame. One world/screen/target
+ * aggregate gives 422 instructions and 72 bytes. DrawRectangle blit[2]
+ * restores the reference's 76-byte frame and point arrays at sp+40/+52/+64:
+ * 425 instructions, topology still different, no byte-match claim.
+ * Remaining: the main heap pointer spills instead of living in r9; the
+ * halfword I/O constants use short-range pool loads; loop counters and
+ * callback reloads differ. Do not tune allocation before first-pool
+ * admission. All three structural hypotheses are exhausted. */
 
+typedef void (*PaletteCopy)(void *, const void *, s32);
+
+struct EffectPositions {
+    s32 world[3];
+    s32 screen[3];
+    s32 target[3];
+};
 extern u8 Data_00000057[];
+extern u8 Data_00000046[];
+extern u8 Data_00000047[];
+extern u8 Data_00000048[];
 extern u8 Data_00000070[];
 extern u8 Data_00000076[];
 extern u8 Data_00000100[];
@@ -96,15 +117,14 @@ void Func_080cb7f8(s32 a0)
     s32 slot36;
     s32 slot24;
     s32 slot20;
-    s32 slot28;
     s32 slot8;
     s32 slot12;
     s32 slot16;
-    u8 *p6;
-    u8 slot40[12];
-    u8 slot52[24];
+    DrawRectangle blit[2];
+    struct EffectPositions pos;
 
     rec3 = Value2(Func_080048b0, 39, 0x782c);
+    r9 = rec3;
     record = Value2(Func_080048b0, 40, 0x4000);
     slot36 = record;
     record = Value2(Func_080048b0, 41, 0x60e);
@@ -119,27 +139,14 @@ void Func_080cb7f8(s32 a0)
     *(u16 *)0x04000020 = (s32)Data_00000100;
     Resource_LoadAndDecompress((s32)Data_00000057, rec3, 1, 0);
     Resource_LoadAndDecompress((s32)Data_00000076, slot24, 0, 0);
-    if (*(s32 *)(*(s32 *)((0x7828 + rec3))) != 1) {
-        if (*(s32 *)(*(s32 *)((0x7828 + rec3))) <= 1) {
-            if (*(s32 *)(*(s32 *)((0x7828 + rec3))) == 0) {
-                goto L_080cb8b8;
-            }
-            goto L_080cb8cc;
-        }
-        if (*(s32 *)(*(s32 *)((0x7828 + rec3))) == 2) {
-            goto L_080cb8c0;
-        }
-        goto L_080cb8cc;
-        L_080cb8b8:;
-    } else {
-        goto L_080cb8ce;
-        L_080cb8c0:;
-        goto L_080cb8ce;
-        L_080cb8cc:;
+    switch (*(s32 *)(*(s32 *)((0x7828 + rec3)))) {
+    case 0: record = (s32)Data_00000048; break;
+    case 1: record = v6; break;
+    case 2: record = (s32)Data_00000047; break;
+    default: record = (s32)Data_00000046; break;
     }
-    L_080cb8ce:;
-    record = Value1(Func_08002f40, (s32)Data_00000057);
-    Call4(Func_080072f0, 0x5000000, record, 128, 0x3001388);
+    record = Value1(Func_08002f40, record);
+    ((PaletteCopy)0x03001388)((void *)0x05000000, (void *)record, 128);
     base5_2010000 = 0x2010000;
     none = 0;
     v8 = none;
@@ -158,7 +165,7 @@ void Func_080cb7f8(s32 a0)
     *(s32 *)((0x7784 + r9)) = 75;
     Value2(Func_080041d8, 0x80cd261, 0x480);
     BattleEffect_LoadWork(46, 7, 7, 3, 3);
-    slot28 = *(s32 *)0x03001f08;
+    blit[0] = *(DrawRectangle *)0x03001f08;
     v3 = (*(s32 *)(*(s32 *)((0x7828 + r9)) + 24) + 1);
     *(s32 *)(*(s32 *)((0x7828 + r9)) + 24) += 1;
     if (v3 <= 0) {
@@ -168,7 +175,7 @@ void Func_080cb7f8(s32 a0)
         *(s32 *)(*(s32 *)((0x7828 + r9)) + 24) = 4;
     }
     Func_080f9010(212);
-    slot8 = (r13 + 64);
+    slot8 = (s32)pos.target;
     slot12 = (slot20 + 12);
     slot16 = (0x7828 + r9);
     none = 0;
@@ -183,7 +190,6 @@ void Func_080cb7f8(s32 a0)
     if (p4b == 16) {
         Func_080d6888(*(s16 *)(*(s32 *)(slot16) + 36), 7, -1, 0, 20);
     }
-    v7 = r8;
     if (p4b <= 55) {
         p8 = ((s32)(((u32)(s32)p4b >> 31) + p4b) >> 1);
         v0 = p8;
@@ -192,17 +198,21 @@ void Func_080cb7f8(s32 a0)
         }
         p11 = (v0 >> 2);
         ((void (*)())BattleEffect_LoadWork)(47, 7, 7, 3, 2);
-        p6 = *(s32 *)0x03001f0c;
-        Call7(Func_080072fc, slot36, (((s32)((s32)((s32)((s32)p8 - (s32)((s32)p11 << 2)) << 4) + (s32)((s32)p8 - (s32)((s32)p11 << 2))) << 6) + r9), 47, (*(s32 *)(slot8 + 4) - 64), 17, 64, (s32)p6);
+        blit[1] = *(DrawRectangle *)0x03001f0c;
+        blit[1]((void *)slot36, (void *)(((((p8 - (p11 << 2)) << 4) + (p8 - (p11 << 2))) << 6) + r9),
+                            47, *(s32 *)(slot8 + 4) - 64, 17, 64);
         rec = Value2(Func_080022fc, ((s32)p4b / 4), 3);
-        Call6(Func_080072fc, slot36, (((((rec << 7) + rec) << 3) + r9) + 0x1100), 40, (*(s32 *)(slot8 + 4) - 36), 24, 43);
+        blit[1]((void *)slot36, (void *)(((((rec << 7) + rec) << 3) + r9) + 0x1100),
+                            40, *(s32 *)(slot8 + 4) - 36, 24, 43);
         Func_08002dd8(47);
         ((void (*)())BattleEffect_LoadWork)(47, 7, 7, 7, 2);
-        p6 = *(s32 *)0x03001f0c;
-        v6 = (s32)p6;
+        blit[1] = *(DrawRectangle *)0x03001f0c;
+        v6 = (s32)blit[1];
         v7 = ((s32)p8 - (s32)((s32)p11 << 2));
-        Call7(Func_080072fc, slot36, (((s32)((s32)((s32)((s32)p8 - (s32)((s32)p11 << 2)) << 4) + (s32)((s32)p8 - (s32)((s32)p11 << 2))) << 6) + r9), 64, (*(s32 *)(slot8 + 4) - 64), 17, 64, (s32)p6);
-        Func_080072fc(slot36, (((((rec << 7) + rec) << 3) + r9) + 0x1100), 64, (*(s32 *)(slot8 + 4) - 36), 24, 43);
+        blit[1]((void *)slot36, (void *)(((((p8 - (p11 << 2)) << 4) + (p8 - (p11 << 2))) << 6) + r9),
+                            64, *(s32 *)(slot8 + 4) - 64, 17, 64);
+        blit[1]((void *)slot36, (void *)(((((rec << 7) + rec) << 3) + r9) + 0x1100),
+                            64, *(s32 *)(slot8 + 4) - 36, 24, 43);
         Func_08002dd8(47);
     }
     Func_080b5098(*(s32 *)(*(s32 *)(slot16) + 8));
@@ -214,17 +224,22 @@ void Func_080cb7f8(s32 a0)
     do {
         if (*(s32 *)(base5_2010000 + 24) >= 0) {
             record = Func_08002322(*(s32 *)(base5_2010000));
-            *(s32 *)(slot40) = ((*(s32 *)(base5_2010000 + 8) * record) >> 4);
+            pos.world[0] = ((*(s32 *)(base5_2010000 + 8) * record) >> 4);
             record = Func_0800231c(*(s32 *)(base5_2010000));
-            *(s32 *)(slot40 + 8) = -((*(s32 *)(base5_2010000 + 8) * record) >> 4);
-            *(s32 *)(slot40 + 4) = *(s32 *)(base5_2010000 + 4);
+            pos.world[2] = -((*(s32 *)(base5_2010000 + 8) * record) >> 4);
+            pos.world[1] = *(s32 *)(base5_2010000 + 4);
             *(s32 *)(base5_2010000) += 0x400;
             *(s32 *)(base5_2010000 + 4) += 0x50000;
             *(s32 *)(base5_2010000 + 8) += 64;
-            Value2(Func_080e3944, slot40, slot52);
-            v2 = ((*(s32 *)(slot52) + ((u32)*(s32 *)(slot52) >> 31)) >> 1);
-            *(s32 *)(slot52) = ((*(s32 *)(slot52) + ((u32)*(s32 *)(slot52) >> 31)) >> 1);
-            Call6(Func_080072f4, slot36, (slot24 + *(u16 *)(0x080ede5c + ((((1 & v8) + *(s32 *)(*(s32 *)(slot16) + 24)) << 1) - 2))), (v2 - ((1 & v8) + *(s32 *)(*(s32 *)(slot16) + 24))), (*(s32 *)(slot52 + 4) - ((1 & v8) + *(s32 *)(*(s32 *)(slot16) + 24))), (((1 & v8) + *(s32 *)(*(s32 *)(slot16) + 24)) << 1), (((1 & v8) + *(s32 *)(*(s32 *)(slot16) + 24)) << 1));
+            Value2(Func_080e3944, (s32)pos.world, (s32)pos.screen);
+            v2 = ((pos.screen[0] + ((u32)pos.screen[0] >> 31)) >> 1);
+            pos.screen[0] = ((pos.screen[0] + ((u32)pos.screen[0] >> 31)) >> 1);
+            blit[0]((void *)slot36,
+                (void *)(slot24 + *(u16 *)(0x080ede5c + ((((1 & v8) + *(s32 *)(*(s32 *)(slot16) + 24)) << 1) - 2))),
+                v2 - ((1 & v8) + *(s32 *)(*(s32 *)(slot16) + 24)),
+                pos.screen[1] - ((1 & v8) + *(s32 *)(*(s32 *)(slot16) + 24)),
+                ((1 & v8) + *(s32 *)(*(s32 *)(slot16) + 24)) << 1,
+                ((1 & v8) + *(s32 *)(*(s32 *)(slot16) + 24)) << 1);
         }
         v8 = (v8 + 1);
         *(s32 *)(base5_2010000 + 24) += 1;
@@ -245,7 +260,7 @@ void Func_080cb7f8(s32 a0)
     Func_08002dd8(40);
     Func_08002dd8(39);
     p9 = base5_2010000;
-    p10 = slot52;
+    p10 = (s32)pos.screen;
     v10 = p10;
-    p11b = slot40;
+    p11b = (s32)pos.world;
 }

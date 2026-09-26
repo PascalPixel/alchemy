@@ -1,4 +1,13 @@
+/* NONMATCHING: complete extent is 364 bytes (332-byte body and 32-byte
+ * literal pool, previously split as 0809b7e4). Keep this 364-byte baseline.
+ * The typed scene/object/child and goto-pulse experiment is preserved in
+ * e12527b62: 368 bytes, 151 differing halfwords. It rematerialises loop
+ * constants and does not fix resource sign extension or angle/load order.
+ * Do not repeat that structural spelling without new evidence. Typed motion
+ * record/angle reads and assignment inside the consuming resource call
+ * also leave this baseline identical; the assignment was rejected. */
 #include "TYPES.H"
+#include "MOTION_OBJECT.H"
 
 extern void Func_080030f8(s32);
 extern s32 Func_08003f3c(s32);
@@ -30,8 +39,8 @@ void RunBattleEffect16(void)
 
     scene = Data_03001f30;
     object = *(u8 **)(scene + 16);
-    group = *(u8 **)(object + 80);
-    saved = *(u16 *)(object + 6);
+    group = ((struct MotionObject *)object)->records;
+    saved = ((struct MotionObject *)object)->angle;
     entry = *(u8 **)(group + 40);
     value = Func_08004080();
     {

@@ -4,7 +4,12 @@
  * r1, and rematerialises the second IME pointer for its restore (ldr r3);
  * here CSE turns the second pointer into a copy of the first (pseudo 65, r5),
  * which takes r5 before level and saved. Symbol versus constant spellings of
- * the IME address did not separate them. */
+ * the IME address did not separate them.
+ * 2026-09-27 restore-boundary transfer from exact 371:020039fc: H1 wraps
+ * each final IME restore in one pass. Result 168/168, 34 differing halfwords,
+ * 12 aligned edits, binary-identical to the baseline. Queue body and pools
+ * already match; the late address reload is still replaced by a saved copy.
+ * Hypothesis rejected: restore scheduling alone does not change CSE lifetime. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "IO_WRITE_QUEUE.H"
@@ -15,7 +20,9 @@ extern u16 Data_020096b0;
 void Func_02000154(void);
 
 /* Queue a register write with interrupts masked; the value is evaluated only
- * when the queue has room. */
+ * when the queue has room.
+ * FAKEMATCH: one-pass restoration separates queue publication from the
+ * following callback-removal decision, as in WORLD_MAP/DISPLAY_TRANSITION.C. */
 #define QUEUE_WRITE(address, value)                                         \
     do {                                                                    \
         volatile u16 *ime;                                                  \
@@ -37,7 +44,7 @@ void Func_02000154(void);
             *destination++ = (address);                                     \
             *destination = 0x20000;                                         \
         }                                                                   \
-        *ime = saved;                                                       \
+        do { *ime = saved; } while (0);                                     \
     } while (0)
 
 /* Fade the blend in step by step each frame; remove itself once full. */

@@ -1,120 +1,143 @@
-#include "SHOP.H"
+/* Draft: complete 508-byte owner, including all literal pools. Candidate
+   508 bytes, differing at two halfwords: the initial variant store and
+   flag-constant shift are swapped. Branch-tail stores recovered; scheduling
+   dump inspected and bounded scope/chained-store hypotheses exhausted. */
+#include "TYPES.H"
+#include "SYSTEM.H"
 
-s32 Func_080048b0(s32 a, s32 b);
-void Func_08015408(s32 a, s32 b, s32 c, s32 d);
-void Func_080030f8(s32 frames);
-s32 Func_080a1090(s32 a);
-s32 Func_08004970(s32 a);
-s32 Func_080770c0(s32 message);
-void Func_080a1070(void);
-void Func_080153e0(s32 a);
-s32 Func_08015418(s32 a);
-s32 Func_08077158(s32 a);
-void Func_080ae88c(void);
-void Func_080a3354(s32 a, s32 b, s32 c, s32 d);
-void Func_080aa544(s32 a);
-void Func_080a2144(s32 a);
-s32 Func_08015010(s32 a, s32 b, s32 c, s32 d, s32 e);
-void Func_080ad508(s32 a, s32 b);
-void Func_080aa768(void);
-void Func_080ad658(void);
-void Func_080ae8dc(void);
-void Func_080a34c0(void);
+struct ModalModeState {
+    u8 reserved_000[0x20c];
+    u8 mode;
+};
+
+struct ModalDisplayState {
+    u16 reserved_00[2];
+    u16 busy;
+};
+
+struct ModalSavedGraphics {
+    u8 reserved_000[0xa8];
+    u8 tiles[0x2000];
+    u16 palette[64];
+    u32 reserved_2128;
+    s32 variant;
+};
+
+struct ModalMenu {
+    u8 reserved_000[0x1c];
+    u8 selection;
+    u8 target;
+    u8 reserved_01e[0xee];
+    s32 window;
+    u8 reserved_110[0x64];
+    u16 slot;
+    u16 target_slot;
+    u16 item;
+    u8 reserved_17a[10];
+    struct ModalSavedGraphics *saved;
+    u8 reserved_188[0x80];
+    u16 owners[8];
+    u8 reserved_218;
+    u8 count;
+};
+
+extern struct ModalModeState Data_02000240;
+extern struct ModalDisplayState *Data_03001e68;
+typedef s32 (*WordCopyFn)(void *dst, const void *src, s32 size);
+struct ModalMenu *Runtime_AllocateHeapBlock(s32 slot, s32 size);
+void *Runtime_BumpAllocateAlternatePool(s32 size);
+void Runtime_BumpFree(void *buffer);
+s32 GameFlag_TestFar(s32 flag);
+void UiWindow_DrawFrameFar(s32 x, s32 y, s32 width, s32 height);
+void UiWindow_InitializeWork(s32 mode);
+void Scheduler_EnableOverlayCallbacksWithFlags(void);
+void Scheduler_DisableOverlayCallbacksWithFlags(void);
+void Func_080153e0(s32 value);
 void Func_080152a8(void);
-void Func_080072f8(s32 a, s32 b, s32 c);
-void Func_080a1050(void);
-void Func_08015410(s32 a, s32 b, s32 c, s32 d);
-s32 Func_08002df0(s32 a);
-void Func_08002dd8(s32 a);
-void Func_0808a548(void);
+void Link_DrawShiftedTilePairFar(void *tiles);
+s32 Party_ListActiveOwnersFar(u16 *owners);
+void Func_080ae88c(void);
+void ItemMenu_Init(s32 x, s32 y, s32 mode, s32 columns);
+void Menu_SetFirstObjectRowCoordinates(s32 mode);
+void Palette_LightenBankHighlight(s32 palette);
+s32 UiWindow_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 style);
+void FourObjectMotion_InitializeBottomRow(s32 window, s32 mode);
+void Func_080aa768(void);
+void FourObjectMotion_ClearSlotsAndScheduleAlt(void);
+void Menu_ResetTwoResourceEntries(void);
+void ItemMenu_Close(void);
+void UiWindow_EraseBorderRectFar(s32 x, s32 y, s32 width, s32 height);
+void Event_ClearInvalidPackedValuesFar(void);
 
-#define MODE_BASE 0x03001e68
-#define MODE_OFFSET 0x20c
-
-void Func_080aa56c(void)
+/* Open the modal inventory view, selecting its story variant, then restore
+   the saved graphics and the caller's menu mode. */
+s32 Func_080aa56c(void)
 {
-    u8 old_mode;
-    s32 status;
-    s32 *ptr;
-    s32 ctx;
-    s32 field184;
+    struct ModalMenu *menu;
+    u32 old_mode;
+    s32 state;
+    struct ModalSavedGraphics *saved;
+    s32 zero;
+    WordCopyFn copy;
 
-    ctx = Func_080048b0(55, 0xa70);
-
-    old_mode = *(u8 *)(MODE_BASE + MODE_OFFSET);
-    *(u8 *)(MODE_BASE + MODE_OFFSET) = 2;
-
-    ptr = *(s32 **)0x02000240;
-    status = 1;
-    *(u16 *)((u8 *)ptr + 4) = status;
-
-    Func_08015408(0, 30, 20, 0);
-    Func_080030f8(1);
-    Func_080a1090(0);
-
-    field184 = Func_08004970(0);
-    *(s32 *)(ctx + 388) = field184;
-
-    *(s32 *)((u8 *)field184 + 0) = 0;
-    *(s32 *)((u8 *)field184 + 0x60) = 0;
-
-    if (Func_080770c0(0xb7) != 0) {
-        if (Func_080770c0(0x2130) == 0) {
-            if (Func_080770c0(0x212c) != 0) {
-                status = 14;
-            }
+    menu = Runtime_AllocateHeapBlock(55, 0xa70);
+    old_mode = Data_02000240.mode;
+    Data_02000240.mode = 2;
+    state = Data_03001e68->busy = 1;
+    UiWindow_DrawFrameFar(0, 0, 30, 20);
+    WaitFrames(1);
+    UiWindow_InitializeWork(0);
+    saved = Runtime_BumpAllocateAlternatePool(0x2130);
+    menu->saved = saved;
+    saved->reserved_2128 = 0;
+    saved->variant = 0;
+    if (GameFlag_TestFar(0x16e)) {
+        if (!GameFlag_TestFar(0x16f)) {
+            if (!GameFlag_TestFar(0x171))
+                saved->variant = state;
+            else
+                saved->variant = 14;
         } else {
-            if (Func_080770c0(0x2128) != 0) {
-                status = 28;
-            } else {
-                status = 27;
-            }
+            if (!GameFlag_TestFar(0x171))
+                saved->variant = 27;
+            else
+                saved->variant = 28;
         }
-        *(s32 *)((u8 *)field184 + 0x60) = status;
     }
-
-    Func_080a1070();
+    Scheduler_EnableOverlayCallbacksWithFlags();
     Func_080153e0(1);
-    Func_08015418(0x16f);
-    *(u8 *)((u8 *)ctx + 0x171) = Func_08077158(ctx + 520);
+    Link_DrawShiftedTilePairFar((void *)0x06002500);
+    menu->count = Party_ListActiveOwnersFar(menu->owners);
     Func_080ae88c();
-
-    Func_080a3354(0, 3, 0, 7);
-    Func_080aa544(0);
-    Func_080a2144(14);
-
-    Func_08015010(13, 0, 17, 5, 2);
-
-    *(s32 *)(ctx + 0x148) = 0;
-    *(u16 *)(ctx + 376) = 255;
-    *(u8 *)((u8 *)ctx + 28) = 0;
-    *(u8 *)((u8 *)ctx + 29) = 0;
-    *(u16 *)(ctx + 372) = 0;
-    *(u16 *)(ctx + 374) = 0;
-
-    Func_080ad508(*(s32 *)(ctx + 0x148), 0);
+    ItemMenu_Init(0, 3, 0, 7);
+    Menu_SetFirstObjectRowCoordinates(0);
+    Palette_LightenBankHighlight(14);
+    menu->window = UiWindow_CreateFar(13, 0, 17, 5, 2);
+    menu->item = 255;
+    zero = 0;
+    menu->selection = zero;
+    menu->target = zero;
+    menu->slot = 0;
+    menu->target_slot = 0;
+    FourObjectMotion_InitializeBottomRow(menu->window, 0);
     Func_080aa768();
-    Func_080ad658();
-    Func_080ae8dc();
-    Func_080030f8(1);
-    Func_080a34c0();
-
-    Func_08015408(0, 30, 20, 0);
-    ptr = *(s32 **)0x02000240;
-    *(u16 *)((u8 *)ptr + 4) = 0;
+    FourObjectMotion_ClearSlotsAndScheduleAlt();
+    Menu_ResetTwoResourceEntries();
+    WaitFrames(1);
+    ItemMenu_Close();
+    UiWindow_DrawFrameFar(0, 0, 30, 20);
+    Data_03001e68->busy = 0;
     Func_080152a8();
     Func_080153e0(0);
-
-    Func_080072f8(0x06004000, ctx + 168, 0x2000);
-    Func_080072f8(0x000020a8, ctx, 128);
-
-    Func_080030f8(1);
-    Func_080a1050();
-    Func_08015410(0, 0, 30, 20);
-
-    Func_08002df0(field184);
-    Func_08002dd8(55);
-    Func_0808a548();
-
-    *(u8 *)(MODE_BASE + MODE_OFFSET) = old_mode;
+    copy = (WordCopyFn)0x03001388;
+    copy((void *)0x06004000, saved->tiles, 0x2000);
+    copy((void *)0x05000080, saved->palette, 128);
+    WaitFrames(1);
+    Scheduler_DisableOverlayCallbacksWithFlags();
+    UiWindow_EraseBorderRectFar(0, 0, 30, 20);
+    Runtime_BumpFree(menu->saved);
+    Runtime_ReleaseHeapBlock(55);
+    Event_ClearInvalidPackedValuesFar();
+    Data_02000240.mode = old_mode;
+    return 1;
 }

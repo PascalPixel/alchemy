@@ -1,4 +1,10 @@
-/* Draft, not exact (2026-09-25): 1088 of 1088 bytes, 36 differing halfwords.
+/* Draft, not exact (2026-09-26): 1088 of 1088 bytes, 13 differing halfwords.
+   A link-symbol message base and separate x/y snapshots recover the message
+   accumulation and all window placement. Shared queue/IME pointers leave
+   the residual unchanged; a halfword IME snapshot adds sign extension and
+   gives 1092 bytes. Grouping the first snapshot also gives 1092 bytes and
+   reverses the queue/IME roles. The unused text-service return type did
+   not change the output. Retained the complete word-snapshot draft.
    Map_UpdateWorldMapMarkers, the world-map frame callback Map_ShowWorldMap
    schedules (0x0809bcf9). Written from the listing. What lined up: a work
    pointer to the constant 0x02010000 (spilled, so every use reloads the
@@ -8,9 +14,7 @@
    Remaining: scheduling only. The ROM loads the queue literal before the
    IME literal (pool order) and copies the saved IME value right after the
    read in the first write (a barrier there swaps the queue and IME
-   registers); the window placement computes x before y and loads the window
-   pointer before the x argument; best_message + 0x99b lands in r0; two
-   marker byte accesses in the loop sit one slot apart. */
+   registers); two marker byte accesses in the loop sit one slot apart. */
 #include "TYPES.H"
 #include "IO_WRITE_QUEUE.H"
 #include "PARTY_STATE.H"
@@ -72,6 +76,7 @@ extern u32 Data_03001ae8;
 extern const u8 Data_0809f168[];
 extern const u16 Data_0809f188[];
 extern const s32 Data_080a0138[];
+extern const u8 Value_0000099b;
 extern volatile u16 Data_04000208;
 #define REG_IME Data_04000208
 
@@ -85,13 +90,9 @@ void Func_08015078(s32 message, s32 window, s32 x, s32 y);
 void Func_080153c0(s32 message, s32 *width, s32 *height);
 
 #define QUEUE_IO_WRITE_DELAY2(address, value) {                             \
-        volatile u16 *ime;                                                  \
-        struct IoWriteQueue *q;                                             \
         u32 saved;                                                          \
         s32 count;                                                          \
                                                                             \
-        q = &gIoWriteQueue;                                                 \
-        ime = &REG_IME;                                                     \
         saved = *ime;                                                       \
         *ime = (u16)ime;                                                    \
         count = q->count;                                                   \
@@ -106,14 +107,11 @@ void Func_080153c0(s32 message, s32 *width, s32 *height);
     }
 
 #define QUEUE_IO_WRITE_DELAY2_BARRIER(address, value) {                             \
-        volatile u16 *ime;                                                  \
-        struct IoWriteQueue *q;                                             \
         u32 saved;                                                          \
         s32 count;                                                          \
                                                                             \
-        q = &gIoWriteQueue;                                                 \
+        /* FAKEMATCH: preserve the second interrupt snapshot's scheduling region. */ \
         do {  \
-        ime = &REG_IME;   \
         saved = *ime;    \
         } while (0); \
         *ime = (u16)ime;                                                    \
@@ -155,6 +153,8 @@ void Map_UpdateWorldMapMarkers(void)
     s32 x;
     s32 y;
     s32 angle;
+    struct IoWriteQueue *q;
+    volatile u16 *ime;
 
     work = &Data_02010000;
     leader = PARTY_STATE.current_owner;
@@ -257,10 +257,12 @@ markers:
             if (best == 0)
                 best_message = 0x984;
             else
-                best_message = BattleFx_FindConditionResource(best_message, 1) + 0x99b;
+                best_message = BattleFx_FindConditionResource(best_message, 1) + (s32)&Value_0000099b;
             Func_080153c0(best_message, &width, &height);
-            cursor_x = best_x - 1;
-            cursor_y = best_y - 11;
+            cursor_x = best_x;
+            cursor_y = best_y;
+            cursor_x--;
+            cursor_y -= 11;
             if (cursor_x + width > 240) {
                 cursor_x = 232 - width;
                 cursor_y = best_y - 20;
@@ -270,6 +272,8 @@ markers:
             Func_08015078(best_message, work->window, cursor_x, cursor_y);
         }
     }
+    q = &gIoWriteQueue;
+    ime = &REG_IME;
     QUEUE_IO_WRITE_DELAY2(0x04000050, 0x3f00);
     QUEUE_IO_WRITE_DELAY2_BARRIER(0x04000052, ((16 - blend) << 8) | blend);
 }

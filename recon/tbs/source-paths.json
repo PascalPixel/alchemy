@@ -21446,6 +21446,10 @@
     },
     "main:080165d8": {
       "name": "UiText_QueueRenderEntries"
+    },
+    "main:0801a4fc": {
+      "name": "UiGlyph_LoadEntryWithPalette",
+      "source": "GRAPHICS/GLYPH/LOAD_ENTRY_WITH_PALETTE.C"
     }
   },
   "symbols": {
@@ -21612,7 +21616,6 @@
     "main:08028574": "Menu_RunResourceSelectionLoop",
     "main:08028808": "Menu_CenterResourceEntries",
     "main:08015070": "UiWindow_DrawDividerLineFar",
-    "main:0801a4fc": "UiGlyph_LoadEntryWithPalette",
     "main:0808a5b0": "SaveState_CaptureObjectTableFar",
     "main:0801f200": "UiWindow_DrawPartyStatusContents",
     "main:080a2420": "UiWork_ClearMenuBusy",

@@ -1,9 +1,7 @@
-/* Draft, not exact (2026-09-24): candidate=424 reference=428, 186 differing
-   halfwords. Hand-written from the assembly. Residual: the reference places the
-   confirm cue (175) block between the equip-result test and the menu body
-   (bhi over a b.n to the cancel tail); jump optimisation moves it to the end
-   here whether it is spelled as a while loop or with explicit labels. The
-   first owner/item loads are also scheduled differently. */
+/* NONMATCHING: candidate 424 / reference 428 bytes, 186 differing halfwords,
+ * 47 aligned edits. The ROM's equip-result bhi skips cue 175 to menu setup;
+ * this while model moves confirmation after the input test. Initial
+ * owner/item loads also differ. Recovery stopped after baseline inspection. */
 #include "TYPES.H"
 #include "SYSTEM.H"
 

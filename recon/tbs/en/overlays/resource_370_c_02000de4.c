@@ -1,7 +1,9 @@
-/* NONMATCHING: resource_370:02000de4; 1020 / 1024 bytes, 469 differing
- * halfwords, 482 wrong instructions, 319 halfword edits. Reconstructed
- * clamp reloads, signed item shifts, property bit order and four-word rows;
- * stack frame is 72 / 64 bytes and outer-counter/packing allocation differs. */
+/* NONMATCHING: resource_370:02000de4; 1004 / 1024 bytes, 479 differing
+ * halfwords, 442 wrong instructions, 286 halfword edits. Integer-domain
+ * packing offset restores complete topology. The shared money union gives
+ * the reference's one base and +16/+18 accesses. Frame remains 68 / 64 bytes;
+ * a word item temporary restores unsigned ldrh without extension. Property
+ * key spill, counter allocation and rank reloads remain. */
 #include "TYPES.H"
 
 struct PasswordStats {
@@ -27,6 +29,23 @@ struct PasswordOwnerState {
 s32 Engine_GameFlagIsSet(s32 flag);
 struct PasswordOwnerState *Engine_OwnerGetState(s32 owner);
 void Engine_DebugGetItem(s32 item);
+extern u16 Data_020096d0[6];
+extern s32 Data_020096c0[4];
+extern u16 Data_020096dc[8];
+extern u16 Data_020096ec[23];
+
+struct PasswordMoney {
+    u8 unknown_00[16];
+    union {
+        u32 value;
+        struct {
+            u16 low;
+            u16 high;
+        } half;
+    } amount;
+};
+
+extern struct PasswordMoney Data_02000240;
 
 s32 Func_02000de4(s32 unused, s32 mode, u8 *out)
 {
@@ -40,10 +59,6 @@ s32 Func_02000de4(s32 unused, s32 mode, u8 *out)
     u8 flag_bits;
     u32 rows[8];
     u32 *row;
-    u16 *flags = (u16 *)0x020096d0;
-    s32 *owners = (s32 *)0x020096c0;
-    u16 *item_keys = (u16 *)0x020096dc;
-    u16 *property_keys = (u16 *)0x020096ec;
 
     switch (mode) {
     case 0:
@@ -71,14 +86,14 @@ s32 Func_02000de4(s32 unused, s32 mode, u8 *out)
     }
 
     for (i = 0; i != 6; i++) {
-        if (Engine_GameFlagIsSet(flags[i]))
+        if (Engine_GameFlagIsSet(Data_020096d0[i]))
             flag_bits |= 1u << i;
     }
 
     row = rows;
     for (i = 0; i != 4; i++) {
         struct PasswordOwnerState *state =
-            Engine_OwnerGetState(owners[i]);
+            Engine_OwnerGetState(Data_020096c0[i]);
         struct PasswordStats *stats = &state->stats;
         u32 level;
         s32 j;
@@ -120,7 +135,7 @@ s32 Func_02000de4(s32 unused, s32 mode, u8 *out)
             s32 k;
             u16 item = state->item_codes[j] & 0x1ff;
             for (k = 0; k != 8; k++) {
-                if (item == item_keys[k])
+                if (item == Data_020096dc[k])
                     item_bits |= 1u << k;
             }
         }
@@ -131,7 +146,7 @@ s32 Func_02000de4(s32 unused, s32 mode, u8 *out)
         bit = 0;
         for (i = 0; i != 4; i++) {
             struct PasswordOwnerState *state =
-                (struct PasswordOwnerState *)Engine_OwnerGetState(owners[i]);
+                (struct PasswordOwnerState *)Engine_OwnerGetState(Data_020096c0[i]);
             s32 j;
             for (j = 0; j != 15; j++) {
                 s32 item;
@@ -153,14 +168,15 @@ s32 Func_02000de4(s32 unused, s32 mode, u8 *out)
         bit = -1;
         for (i = 0; i != 4; i++) {
             struct PasswordOwnerState *state =
-                (struct PasswordOwnerState *)Engine_OwnerGetState(owners[i]);
+                (struct PasswordOwnerState *)Engine_OwnerGetState(Data_020096c0[i]);
             s32 j;
             for (j = 0; j != 23; j++) {
                 u16 property = 0;
+                u16 *code = state->item_codes;
                 s32 k;
                 for (k = 0; k != 15; k++) {
-                    u16 item = state->item_codes[k];
-                    if ((item & 0x1ff) == property_keys[j])
+                    u32 item = *code++;
+                    if ((item & 0x1ff) == Data_020096ec[j])
                         property = (item & 0xf800) >> 11;
                 }
                 if (bit < 0) {
@@ -176,13 +192,14 @@ s32 Func_02000de4(s32 unused, s32 mode, u8 *out)
                 }
             }
         }
-        out[165] = *(u16 *)0x02000252;
-        out[166] = *(u32 *)0x02000250 >> 8;
-        out[167] = *(u32 *)0x02000250;
+        out[165] = Data_02000240.amount.half.high;
+        out[166] = Data_02000240.amount.value >> 8;
+        out[167] = Data_02000240.amount.value;
     }
 
     if (mode != 2) {
-        u8 *dst = out + 8 + (mode != 0);
+        s32 offset = 8 + (mode != 0);
+        u8 *dst = out + offset;
 
         row = rows;
         for (i = 0; i != 2; i++) {

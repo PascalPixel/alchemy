@@ -73,7 +73,149 @@
           "extent": 476,
           "state": "exact-c"
         }
-      ]
+      ],
+      "instances": {
+        "resource_3bb": {
+          "owners": {
+            "Korosseo_FadeInCompetitor": {
+              "address": "0x02002ba8",
+              "extent": 476
+            }
+          },
+          "absolute_symbols": {
+            "Engine_ActorGet": {
+              "address": "0x0200bf50",
+              "kind": "thumb"
+            },
+            "Engine_ActorSetSpritePriority": {
+              "address": "0x0200bff8",
+              "kind": "thumb"
+            },
+            "Engine_ActorSetSpriteFlags": {
+              "address": "0x0200bea0",
+              "kind": "thumb"
+            },
+            "Engine_ObjectSetAnimation": {
+              "address": "0x0200be48",
+              "kind": "thumb"
+            },
+            "Engine_ActorSetPosition": {
+              "address": "0x0200bf90",
+              "kind": "thumb"
+            },
+            "Engine_ActorFaceActor": {
+              "address": "0x0200bfb8",
+              "kind": "thumb"
+            },
+            "Engine_AudioPlayCue": {
+              "address": "0x0200c0b0",
+              "kind": "thumb"
+            },
+            "Engine_TaskWait": {
+              "address": "0x0200bda0",
+              "kind": "thumb"
+            },
+            "Engine_EventWait": {
+              "address": "0x0200bf30",
+              "kind": "thumb"
+            },
+            "Engine_ActorSetAnimationAndWait": {
+              "address": "0x0200bfa0",
+              "kind": "thumb"
+            },
+            "Korosseo_CompetitorStartX": {
+              "address": "0x0200cca4",
+              "kind": "data"
+            },
+            "Korosseo_CompetitorStartZ": {
+              "address": "0x0200cbfc",
+              "kind": "data"
+            },
+            "Korosseo_CompetitorStartAngle": {
+              "address": "0x0200cc28",
+              "kind": "data"
+            },
+            "gCompetitorIoQueue": {
+              "address": "0x02002090",
+              "kind": "data"
+            },
+            "gInterruptMasterEnable": {
+              "address": "0x04000208",
+              "kind": "data"
+            }
+          }
+        },
+        "resource_3bc": {
+          "owners": {
+            "Korosseo_FadeInCompetitor": {
+              "address": "0x02003640",
+              "extent": 476
+            }
+          },
+          "absolute_symbols": {
+            "Engine_ActorGet": {
+              "address": "0x0200ca18",
+              "kind": "thumb"
+            },
+            "Engine_ActorSetSpritePriority": {
+              "address": "0x0200cad8",
+              "kind": "thumb"
+            },
+            "Engine_ActorSetSpriteFlags": {
+              "address": "0x0200c958",
+              "kind": "thumb"
+            },
+            "Engine_ObjectSetAnimation": {
+              "address": "0x0200c8e0",
+              "kind": "thumb"
+            },
+            "Engine_ActorSetPosition": {
+              "address": "0x0200ca68",
+              "kind": "thumb"
+            },
+            "Engine_ActorFaceActor": {
+              "address": "0x0200ca98",
+              "kind": "thumb"
+            },
+            "Engine_AudioPlayCue": {
+              "address": "0x0200cba0",
+              "kind": "thumb"
+            },
+            "Engine_TaskWait": {
+              "address": "0x0200c840",
+              "kind": "thumb"
+            },
+            "Engine_EventWait": {
+              "address": "0x0200c9f8",
+              "kind": "thumb"
+            },
+            "Engine_ActorSetAnimationAndWait": {
+              "address": "0x0200ca78",
+              "kind": "thumb"
+            },
+            "Korosseo_CompetitorStartX": {
+              "address": "0x0200dc44",
+              "kind": "data"
+            },
+            "Korosseo_CompetitorStartZ": {
+              "address": "0x0200db9c",
+              "kind": "data"
+            },
+            "Korosseo_CompetitorStartAngle": {
+              "address": "0x0200dbc8",
+              "kind": "data"
+            },
+            "gCompetitorIoQueue": {
+              "address": "0x02002090",
+              "kind": "data"
+            },
+            "gInterruptMasterEnable": {
+              "address": "0x04000208",
+              "kind": "data"
+            }
+          }
+        }
+      }
     },
     {
       "id": "djinn-menu-show-change-preview",

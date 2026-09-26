@@ -1,6 +1,14 @@
 {
   "format": 3,
   "owners": {
+    "resource_3bb:02002ba8": {
+      "name": "Korosseo_FadeInCompetitor",
+      "source": "FIELD/COMMON/KOROSSEO/FADE_IN_COMPETITOR.C"
+    },
+    "resource_3bc:02003640": {
+      "name": "Korosseo_FadeInCompetitor",
+      "source": "FIELD/COMMON/KOROSSEO/FADE_IN_COMPETITOR.C"
+    },
     "resource_3ba:02002910": {
       "name": "Korosseo_FadeInCompetitor",
       "source": "FIELD/COMMON/KOROSSEO/FADE_IN_COMPETITOR.C"

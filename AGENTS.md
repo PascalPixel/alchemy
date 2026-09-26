@@ -244,7 +244,7 @@ tooling must fix a demonstrated recurring blocker and carry a test.
 
 ## Open work
 
-- ☀️ to 75%: about 163,000 bytes. The largest remaining pools are main-image
+- ☀️ to 80%: use `make progress` for the current byte gap. The largest remaining pools are main-image
   owners registered as fragments (make them whole, then hand-write), the
   remaining unadopted overlay owners, and large registered main owners.
 - ⚓️: most TLA functions resemble their TBS counterparts but only about 12 KB

@@ -3777,6 +3777,10 @@
       "name": "ItemMenu_OpenCategory",
       "source": "MENU/ITEM/OPEN_CATEGORY_ITEMS.C"
     },
+    "main:080a38d0": {
+      "name": "ItemMenu_SelectTarget",
+      "source": "MENU/ITEM/SELECT_TARGET.C"
+    },
     "main:080a3c08": {
       "name": "EquipmentMenu_UpdateCompatibilityIndicators",
       "source": "MENU/ITEM/UPDATE_COMPATIBILITY_INDICATORS.C"

@@ -2,7 +2,8 @@
    Normalized edit distance: 100 halfwords. Typed party/runtime views recover
    base-plus-offset accesses and shared zero/one lifetimes. Confirmation
    copies use +0x240/+0x242 and +0x1c0/+0x1c2. The complete literal pool
-   now agrees. Remaining: inventory and runtime base/flag lifetimes. */
+   now agrees. Initializing best after the owner-count call is score-neutral.
+   Remaining: inventory and runtime base/flag lifetimes. */
 #include "TYPES.H"
 extern u8 Value_000003e7;
 #include "ITEM.H"
@@ -122,9 +123,10 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
     actor = (arg >> 10) & 0xf;
     {
         s32 count;
-        s32 best = 0;
+        s32 best;
 
         count = Func_08077148(actor);
+        best = 0;
 
         if (actor == 15) {
             s32 i;

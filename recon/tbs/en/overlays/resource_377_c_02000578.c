@@ -1,5 +1,5 @@
-/* NONMATCHING: 1172 bytes, candidate 1172, 385 differing halfwords, 74
- * wrong instructions, 160 halfword edits. FieldScene_RunComplexActorSequence
+/* NONMATCHING: 1172 bytes, candidate 1176, 522 differing halfwords, 116
+ * wrong instructions, 176 halfword edits. FieldScene_RunComplexActorSequence
  * targets FIELD/COMMON/HAIDIA_BABI/F_00578.C as a single-overlay unit binding its
  * names at their runtime addresses (an import veneer's listing offset plus
  * 0x8000). Pointer-taking child-flag and palette calls now consume the actor
@@ -20,6 +20,12 @@
  * edits). The reference owns a zero at pool 0x0200063c, also holds a wide
  * zero in sl, and saves a third high register; plain scalar narrowing does
  * not recreate that ownership. Baseline binary equality checked directly.
+ * H2: one-halfword aggregate recreates a zero pool word but remains four
+ * bytes long, with the sprite in r5 and only two high registers saved.
+ * The zero pool alone is insufficient: the reference materializes the
+ * independent wide Y zero BEFORE the sprite rotation store and actor lookup.
+ * Caller ENTRY_STATE.C dispatches this whole scene for entrance 20 when
+ * flag 0x87a is clear, after setting flag 0x834. No arguments are passed.
  * WALL: structural-topology: shared workspace lifetimes and actor setup */
 #include "FIELD_EVENT.H"
 
@@ -41,6 +47,10 @@ struct ScenePointerBank {
 };
 
 extern struct ScenePointerBank gScenePointers;
+
+struct SceneHalf {
+    u16 value;
+};
 
 /* AUDITED GENERATED CALL SCRIPT for FieldScene_RunComplexActorSequence. */
 
@@ -91,7 +101,7 @@ void FieldScene_RunComplexActorSequence(void)
     u8 *work;
     struct FieldActor *scene_actor;
     struct SceneControlPointers *control;
-    u16 stopped;
+    struct SceneHalf stopped;
 
     control = &gScenePointers.control;
     work = gScenePointers.map_work;
@@ -110,8 +120,8 @@ void FieldScene_RunComplexActorSequence(void)
     p12 = Main_0808a080(17);
     /* FAKEMATCH candidate: keep the byte flag's halfword zero separate
      * from the wide scene-position zero, as the two reference loads are. */
-    stopped = 0;
-    p12->motion_flags = stopped;
+    stopped.value = 0;
+    p12->motion_flags = stopped.value;
     Main_080091e0(Main_0808a080(17), 0);
     Main_0808a0f0(17, 37748736, 42598400);
     Main_08009188(7);

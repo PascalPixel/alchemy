@@ -32,7 +32,12 @@ static __inline__ s32 Value1(s32 (*f)(), s32 a0)
 
 /* NONMATCHING: 188 of 188 bytes, 2 halfword edits (2026-09-24). sched2 orders the two
  * shifts of ((d >> 14) << 14) + 0x40000 the other way round: the reference
- * shifts d before it finishes building 0x40000. */
+ * shifts d before it finishes building 0x40000.
+ * 2026-09-26: allocator/sched2 dumps show reload insn 255 wins the ready-list
+ * tie over shift insn 102. Quantization in a one-pass block moved the shift
+ * too early (still two edits); a signed mask added an AND and pool word
+ * (192 bytes, 11 edits); wrapping the store left the original two edits.
+ * Retain the original ordinary source; this scheduling sweep is timeboxed. */
 void Func_020002cc(s32 a0)
 {
     u32 i;

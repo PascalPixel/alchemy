@@ -16,16 +16,21 @@
  * and fields after selected IDs shift by four. This disproves the union
  * record boundary; correct the byte-pair representation before allocation.
  * Frame is 4/8 bytes and result occupies r8 instead of r4; not adopted.
+ * H2: use the exact family's u16 arrays with an explicit low-byte view,
+ * not a rounded aggregate per ID. Predict 20-byte rows, counts at +0xa0,
+ * lists at +0x184, owners at +0x208 and flags at +0x220. Also correct the
+ * slot-position prototype against its exact value-returning definition;
+ * this fixes the first call's proven r0-last argument ordering.
+ * H2: 1332/1308 bytes, 592 differing halfwords, 328 aligned edits; full
+ * normalized diff read. Record boundaries and first position-call order
+ * now match. Remaining: result is r8 instead of r4/sp+0, extra saved r9,
+ * and both cursor searches hoist list/count and use pointer induction,
+ * whereas reference reloads the list/count at its test label each time.
  */
 #include "TYPES.H"
 
-union DjinnEntry {
-    u16 word;
-    u8 bytes[2];
-};
-
 struct DjinnListTable {
-    union DjinnEntry ids[8][10];
+    u16 ids[8][10];
     s8 counts[8];
 };
 
@@ -49,7 +54,7 @@ struct DjinnCommandMenu {
     u16 row_y[8];
     u8 unknown_154[0x20];
     u16 cursor[2];
-    union DjinnEntry selected[2];
+    u16 selected[2];
     u8 unknown_17c[8];
     struct DjinnListTable *lists;
     u8 unknown_188[0x80];
@@ -80,7 +85,7 @@ void Menu_SetFirstObjectRowCoordinates(s32);
 s32 Func_080ab314(void);
 s32 Func_080ab5e4(s32);
 s32 Menu_OpenBackdropScreen(void);
-void FourObjectMotion_SetSlotPosition(s32, s32, s32, s32);
+s32 FourObjectMotion_SetSlotPosition(s32, s32, s32, s32);
 s32 Func_080ad6d4(s32);
 s32 Unnamed_080ae2f4(void);
 void DjinnMenu_DrawElementList(struct DjinnListTable *);
@@ -98,9 +103,9 @@ static __inline__ void RestoreDjinnCursor(struct DjinnCommandMenu *menu)
 
     row = Math_ModU(menu->cursor[1], 10);
     found = 0;
-    selected = menu->selected[0].bytes[0];
+    selected = *(u8 *)&menu->selected[0];
     for (i = 0; i < menu->lists->counts[row]; i++) {
-        if (selected == menu->lists->ids[row][i].bytes[0]) {
+        if (selected == *(u8 *)&menu->lists->ids[row][i]) {
             found = i;
             break;
         }

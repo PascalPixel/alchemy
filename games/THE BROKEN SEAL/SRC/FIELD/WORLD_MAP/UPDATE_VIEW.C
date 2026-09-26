@@ -1,13 +1,3 @@
-/* Draft, not exact (2026-09-25): 560 of 560 bytes, 2 differing halfwords.
-   WorldMap_UpdateView: per-frame world map view (see the comment below).
-   What lined up: everything but the last call. The target as an s32 walked
-   with *target++ gives the ROM's ldmia r2!, {r3} and keeps it spilled at
-   sp+12 so &last_x lands in fp.
-   Remaining: in the final renderer call the ROM loads map into r2 before cam
-   into r0 (ldr r2, [sp, #16]; ldr r0, [sp, #20]); here sched2 ties the two
-   loads at priority 66 and takes the earlier insn (r0). Temporaries, an
-   inline wrapper in every parameter order, a local function pointer,
-   an addressable map and argument casts did not reorder them. */
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
 #include "IWRAM_CALL.H"
@@ -68,7 +58,7 @@ void SceneTransform_ApplyPosition(s32 *position);
 void SceneTransform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyPitch(s32 angle);
 void Graphics_PrepareTransferInIwramWork(u8 *source, s32 *destination);
-void Func_080123f4(s32 value, s32 *position, u8 *map);
+void WorldMap_BuildScanlineTable(s32 value, s32 *position, u8 *map);
 
 void WorldMap_UpdateView(void)
 {
@@ -148,9 +138,9 @@ void WorldMap_UpdateView(void)
         s32 c = Trig_Cos(view->pitch);
         s32 s = Trig_Sin(view->pitch);
 
-        Func_080123f4(((s32 (*)(s32, s32))0x0300013c)(c, s), pos, map);
+        WorldMap_BuildScanlineTable(((s32 (*)(s32, s32))0x0300013c)(c, s), pos, map);
         Data_03001f60 = 0;
         Data_03001af4 = view->pitch;
     }
-    ((void (*)(u8 *, s32 *, u8 *, u8 *))Data_03001e50[46])(cam, pos, map, buffer + (Data_03001e40 & 1) * 0x1400);
+    ((s32 (*)(u8 *, s32 *, u8 *, u8 *))Data_03001e50[46])(cam, pos, map, buffer + (Data_03001e40 & 1) * 0x1400);
 }

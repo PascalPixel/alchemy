@@ -1,6 +1,15 @@
 {
   "format": 3,
   "owners": {
+    "resource_396:02001244": {
+      "name": "ToretoPalette_ApplyTint"
+    },
+    "resource_382:020017ac": {
+      "name": "KuupuappuMura_SpawnDriftingEffect"
+    },
+    "resource_383:020048c8": {
+      "name": "KuupuappuHeya_UpdateActorStops"
+    },
     "resource_38b:02000ed8": {
       "name": "BiribinoMura_UpdateCornerSpawn",
       "source": "FIELD/BIRIBINO_MURA/CORNER.C"
@@ -21402,7 +21411,7 @@
       "name": "Func_020002ec"
     },
     "resource_383:02000690": {
-      "name": "Func_02000690"
+      "name": "KuupuappuHeya_RunActor25Response"
     },
     "resource_394:02000098": {
       "name": "Func_02000098"
@@ -21411,7 +21420,8 @@
       "name": "Func_020007d0"
     },
     "resource_39a:02001c18": {
-      "name": "Func_02001c18"
+      "name": "Effect_Spawn",
+      "source": "FIELD/COMMON/IMIRU_FUCHIN/SPAWN.C"
     }
   },
   "symbols": {

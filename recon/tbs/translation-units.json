@@ -2,6 +2,65 @@
   "format": 5,
   "units": [
     {
+      "id": "toreto-palette-tint",
+      "source": "recon/tbs/en/overlays/resource_396_c_02001244.c",
+      "overlay": "resource_396",
+      "absolute_symbols": {
+        "Engine_MathDivide": { "address": "0x02009a10", "kind": "thumb" },
+        "Engine_RandomNext": { "address": "0x02009a38", "kind": "thumb" },
+        "Data_03001ebc": { "address": "0x03001ebc", "kind": "data" },
+        "Data_03001e40": { "address": "0x03001e40", "kind": "data" },
+        "Data_0200adb8": { "address": "0x0200adb8", "kind": "data" },
+        "Data_02009f00": { "address": "0x02009f00", "kind": "data" }
+      },
+      "owners": [
+        { "address": "0x02001244", "extent": 480, "state": "not-yet-c" }
+      ],
+      "game": "tbs",
+      "compiler_route": "canonical-gcc296"
+    },
+    {
+      "id": "kuupuappu-drifting-effect",
+      "source": "recon/tbs/en/overlays/resource_382_c_020017ac.c",
+      "overlay": "resource_382",
+      "absolute_symbols": {
+        "Engine_ActorGet": { "address": "0x020099e0", "kind": "thumb" },
+        "Engine_RandomNext": { "address": "0x02009918", "kind": "thumb" },
+        "Engine_ObjectCreate": { "address": "0x02009938", "kind": "thumb" },
+        "Engine_ObjectSetAnimation": { "address": "0x02009928", "kind": "thumb" },
+        "Engine_ObjectSetScript": { "address": "0x02009930", "kind": "thumb" },
+        "Engine_MathModulo": { "address": "0x02009908", "kind": "thumb" }
+      },
+      "owners": [
+        { "address": "0x020017ac", "extent": 340, "state": "not-yet-c" }
+      ],
+      "game": "tbs",
+      "compiler_route": "canonical-gcc296"
+    },
+    {
+      "id": "kuupuappu-actor-stops",
+      "source": "recon/tbs/en/overlays/resource_383_c_020048c8.c",
+      "overlay": "resource_383",
+      "absolute_symbols": {
+        "Engine_ActorLookup": { "address": "0x0200cec4", "kind": "thumb" },
+        "SceneData_FindEntryAtPosition": { "address": "0x0200c704", "kind": "thumb" },
+        "KuupuappuHeya_SnapToNearestStop": { "address": "0x0200c754", "kind": "thumb" },
+        "SceneActor_CheckTileFreeOfKinds": { "address": "0x0200c840", "kind": "thumb" },
+        "SceneActor_ApplyScaledBytePairPosition": { "address": "0x0200c8a4", "kind": "thumb" },
+        "Math_Atan2": { "address": "0x0200cc8c", "kind": "thumb" },
+        "Engine_RandomNext": { "address": "0x0200cc84", "kind": "thumb" },
+        "Engine_ObjectSetAnimation": { "address": "0x0200ccac", "kind": "thumb" },
+        "Engine_ActorSetAttachedEffect": { "address": "0x0200ce44", "kind": "thumb" },
+        "gStopWork": { "address": "0x03001ebc", "kind": "data" },
+        "gBlockedFrames": { "address": "0x0200e4f8", "kind": "data" }
+      },
+      "owners": [
+        { "address": "0x020048c8", "extent": 612, "state": "not-yet-c" }
+      ],
+      "game": "tbs",
+      "compiler_route": "canonical-gcc296"
+    },
+    {
       "id": "biribino-corner-spawn",
       "source": "games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_MURA/CORNER.C",
       "overlay": "resource_38b",
@@ -87176,6 +87235,22 @@
           "address": "0x0200cd44",
           "kind": "thumb"
         },
+        "Engine_EventEnd": {
+          "address": "0x0200cd4c",
+          "kind": "thumb"
+        },
+        "Data_0200d8bc": {
+          "address": "0x0200d8bc",
+          "kind": "data"
+        },
+        "Data_0200d858": {
+          "address": "0x0200d858",
+          "kind": "data"
+        },
+        "Data_0200e4d8": {
+          "address": "0x0200e4d8",
+          "kind": "data"
+        },
         "Engine_ActorRunRepeatedMotion": {
           "address": "0x0200cdfc",
           "kind": "thumb"
@@ -87276,9 +87351,17 @@
     },
     {
       "id": "ovd-39a-02001c18",
-      "source": "recon/tbs/en/overlays/resource_39a_c_02001c18.c",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/IMIRU_FUCHIN/SPAWN.C",
       "overlay": "resource_39a",
       "absolute_symbols": {
+        "OverlayObject_AdvancePositionByDelta": {
+          "address": "0x02009bdc",
+          "kind": "thumb"
+        },
+        "Engine_MathDivide": {
+          "address": "0x0200a258",
+          "kind": "thumb"
+        },
         "Engine_ObjectCreate": {
           "address": "0x0200a2b8",
           "kind": "thumb"
@@ -87300,7 +87383,7 @@
         {
           "address": "0x02001c18",
           "extent": 352,
-          "state": "not-yet-c"
+          "state": "exact-c"
         }
       ],
       "game": "tbs",

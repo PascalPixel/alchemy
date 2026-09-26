@@ -3,7 +3,7 @@
 @ assembly without credit: it has the shape of GCC 2.96 ARM-mode output
 @ (register subtraction as rsb, calls through mov lr, pc; bx ip, division by
 @ 256 as cmp; addlt #255; asr #8, lr saved with r5-sl while r4 stays free).
-@ The approved routes compile only Thumb.
+@ This complete not-yet-C module uses the approved ARM game-code route.
 .syntax unified
 	.arm
 	.global Transform_UpdateVertices

@@ -280,7 +280,12 @@ pub fn link_candidate_owned_routed_with_object(
             root(),
         )?;
         run(
-            &crate::compiler::routing::compiler_assembly_command(&assembly, &object),
+            &crate::compiler::routing::compiler_assembly_command_for_source(
+                compiler,
+                routing_source,
+                &assembly,
+                &object,
+            ),
             cwd,
         )?;
     }

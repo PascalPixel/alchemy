@@ -1,9 +1,7 @@
-/* NONMATCHING: candidate 468 of 468 bytes, 15 differing halfwords,
- * 9 aligned edits (2026-09-26). The common message and open-message tails
- * now agree, including all branch destinations and literal words.
- * Remaining: flag 0x300 is shared in r5 across calls instead of
- * rematerialized in r0. Message selection and the halfword store now agree.
- * Service declarations retain their registered return types. */
+/* DRAFT: exact 468-byte complete own-ROM extent, zero differing halfwords
+ * and zero aligned edits (2026-09-26). Shared message tails, answer store,
+ * flag rematerialization, all branches and literal words agree.
+ * Production registration and integration verification remain. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
@@ -21,6 +19,7 @@ union GameStateRows {
 extern union GameStateRows Data_02000240_t;
 extern u8 Data_00002930;
 
+/* FAKEMATCH: Inline typed calls keep flag constants local to each call. */
 static __inline__ s32 Value1(s32 (*f)(s32), s32 a0)
 {
     return f(a0);
@@ -36,6 +35,7 @@ static __inline__ void Call1(void (*f)(s32), s32 a0)
     f(a0);
 }
 
+/* FAKEMATCH: The unused callback result keeps the last callee's r0 at return. */
 s32 Func_02000b94(void)
 {
     s32 answer;
@@ -91,7 +91,7 @@ message:
 open_message:
             Call2(Engine_EventOpenMessage, 8, 0);
             goto done;
-        } else if (!Engine_GameFlagIsSet(0x201) && !Engine_GameFlagIsSet(0x300)) {
+        } else if (!Engine_GameFlagIsSet(0x201) && !Value1(Engine_GameFlagIsSet, 0x300)) {
             Engine_EventSetMessage(msg);
             Call2(Engine_EventOpenMessage, 8, 0);
             Engine_GameFlagSet(0x300);

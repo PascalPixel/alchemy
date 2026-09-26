@@ -5804,6 +5804,10 @@
       "name": "BattleFx_CopyLinkedObjectPosition",
       "source": "BATTLE/EFFECT/COPY_LINKED_OBJECT_POSITION.C"
     },
+    "main:08093874": {
+      "name": "BattleFx_ConfigureLinkedObject",
+      "source": "BATTLE/EFFECT/LINK_EFFECT.C"
+    },
     "main:08093964": {
       "name": "Object_ResetAndClearField59",
       "source": "FIELD/COMMON/OBJECT/ACTION.C"

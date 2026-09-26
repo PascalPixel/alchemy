@@ -1,70 +1,60 @@
-#include "TYPES.H"
+/* Draft main:080ad40c, complete extent 252 bytes through 080ad508.
+ * Bindings: gMenuWork=03001f2c; Link_DrawShiftedTilePairFar=08015418;
+ * Math_Div=080022ec; Object_ApplyProjectedPlacementFar=08009008 (s32).
+ * Hypothesis 3: the matched sibling's unsigned projection/scale words and
+ * signed one-byte flag view, retaining the shared typed four-slot state.
+ * Both scale words are set; only a nonnegative phase is written back.
+ * Residual: 252/252 bytes, equal topology, 76 differing halfwords and 48
+ * halfword edits; identical instructions to hypothesis 2. Vertical pseudo
+ * 42 occupies r4 and spills across Math_Div; origin pseudo 131 occupies fp
+ * and motion pseudo 112 occupies r9. Reference keeps vertical in sl, origin
+ * at sp+4 and motion in fp/r4; flag/phase and request stores also reorder.
+ * Stop: three structural hypotheses exhausted; not-yet-c, no adoption.
+ */
+#include "FOUR_OBJECT_MOTION.H"
+#include "FIXED_MATH.H"
 
-extern void *Data_03001f2c;
+struct MenuMotionFlags { s8 flags; };
 
-void Func_08015418(void *);
-s32 Func_080022ec(s32, s32);
-void Func_08009008(void *object, s32 *request, s32 *motion, s32 limit);
+extern struct FourObjectMotionState *gMenuWork;
 
-void Func_080ad40c(void)
+void Link_DrawShiftedTilePairFar(void *);
+s32 Object_ApplyProjectedPlacementFar(u32, u32 *, u32 *, u32);
+
+void FourObjectMotion_UpdateBottomRow(void)
 {
-    void *state = Data_03001f2c;
-    void **object_ptr;
-    s32 index;
-    s32 vertical_offset;
-    s32 position_offset;
-    s32 speed_offset;
-    s32 motion[2];
-    s32 request[4];
+    struct FourObjectMotionState *work = gMenuWork;
+    s32 i;
+    u32 motion[2];
+    u32 request[4];
 
-    Func_08015418((void *)0x06002500);
-
-    index = 0;
-    object_ptr = (void **)((u8 *)state + 548);
-    vertical_offset = 324;
-    position_offset = 564;
-    speed_offset = 580;
-
+    Link_DrawShiftedTilePairFar((void *)0x06002500);
+    i = 0;
     do {
-        void *object = *object_ptr;
-        object_ptr++;
+        u32 obj = (u32)work->objects[i];
 
-        if (object != 0) {
-            s16 y_val = *(s16 *)((u8 *)state + vertical_offset);
-            s32 vertical = (241 << 17) - ((s32)y_val << 16);
-            s32 speed;
-            s32 adjusted;
+        if (obj != 0) {
+            u32 y = (241u << 17) - ((u32)(s32)work->vertical_origins[i] << 16);
+            s32 phase;
             s32 limit;
-            s16 pos_x;
-            s16 pos_y;
 
-            *(u8 *)((u8 *)object + 9) &= -13;
-
-            speed = *(s32 *)((u8 *)state + speed_offset);
-            if (speed < 0) {
-                adjusted = -speed;
+            ((struct MenuMotionFlags *)(obj + 9))->flags &= -13;
+            phase = work->phases[i];
+            if (phase < 0) {
+                motion[0] = -phase;
+                motion[1] = -phase;
             } else {
-                adjusted = speed + Func_080022ec(0x10000 - speed, 3);
+                motion[0] = phase + Math_Div(0x10000 - phase, 3);
+                motion[1] = motion[0];
+                work->phases[i] = motion[0];
             }
-            motion[1] = adjusted;
-            *(s32 *)((u8 *)state + speed_offset) = adjusted;
-
-            pos_x = *(s16 *)((u8 *)state + position_offset);
-            request[0] = (s32)pos_x << 16;
-            request[1] = vertical;
-
-            pos_y = *(s16 *)((u8 *)state + position_offset + 8);
-            request[2] = ((s32)pos_y << 16) + vertical;
+            request[0] = (u32)(s32)work->positions_x[i] << 16;
+            request[1] = y;
+            request[2] = ((u32)(s32)work->positions_y[i] << 16) + y;
             request[3] = 0;
-
-            limit = (pos_y < 0) ? 0x8000 : 0x4000;
-
-            Func_08009008(object, request, motion, limit);
+            limit = work->positions_y[i] < 0 ? 0x8000 : 0x4000;
+            Object_ApplyProjectedPlacementFar(obj, request, motion, limit);
         }
-
-        vertical_offset += 2;
-        position_offset += 2;
-        speed_offset += 4;
-        index += 1;
-    } while (index <= 3);
+        i++;
+    } while (i <= 3);
 }

@@ -1,8 +1,10 @@
 /* Draft: whole 268-byte UiGlyph_ResetWorkState, including 12-byte pool.
- * Candidate 264 bytes, 95 differing halfwords (16 aligned edits).
- * Remaining: initial zero shares the count register, row-pair stores use
- * +374/+426 instead of +372/+424 with offset 2, and two pad bytes absent.
- * Scoped initialization and cursor helper did not close it.
+ * Candidate 268 bytes, three differing halfwords (2026-09-26). A halfword
+ * clear local separates the initial zero from the count register, restoring
+ * the missing initialization and final alignment. Only the two row-pair
+ * stores remain: +374/+426 versus +372/+424 with offset 2. Giving the index
+ * a word-aligned union or two 16-bit fields in a u32 changes no instructions.
+ * Earlier scoped initialization and cursor helper did not close it.
  */
 #include "TYPES.H"
 
@@ -72,16 +74,17 @@ void UiGlyph_ResetWorkState(void)
     struct GlyphVisual *visual;
     const u8 *tbl;
     s32 i;
+    u16 clear = 0;
 
     work = Runtime_AllocateBlock(18, 996);
-    work->field_348 = 0;
-    work->field_34c = 0;
-    work->field_350 = 0;
-    work->field_39a = 0;
-    work->field_39c = 0;
+    work->field_348 = clear;
+    work->field_34c = clear;
+    work->field_350 = clear;
+    work->field_39a = clear;
+    work->field_39c = clear;
     work->field_39e = 128;
     work->field_3a0 = 32;
-    work->field_394 = 0;
+    work->field_394 = clear;
     work->field_3b8 = 999;
     i = 0;
     do {

@@ -1,12 +1,19 @@
-/* NONMATCHING: 238 of 244 bytes, 39 halfword edits (2026-09-24). Hand-written from the
- * resolved jump-table disassembly as a single-overlay unit binding Engine_* at
- * their import veneers. Remaining: 39 halfword edits, 238 of 244 bytes: the sprite-flags zero is now plain 0 and lands from the pool in r8 as in the reference. Left: Engine_ObjectCreate's argument scheduling (0x11c shift), the reference reusing r0 for spark in Engine_ObjectSetScript, the unknown_64/unknown_66 stores computing each address separately, and the pool that follows the flag store. */
+/* NONMATCHING: 238 of 244 bytes, 73 differing halfwords, 16 halfword edits
+ * (2026-09-26). Full-width Value_0ffff000 restores the separate field-store
+ * addresses and mask register. The plain sprite-flags zero retains r8 and
+ * both pool boundaries. Remaining: the object-type shift is early, the
+ * script call lacks the reference's r7-to-r0 copy, and the tail is short.
+ * Three structural hypotheses tested: link constants (retained mask only;
+ * a symbolic zero loses r8 and the first pool), integer object return
+ * (unchanged), Object_Create inline helper (234 bytes, 28 edits). Missing
+ * flag/script bindings restored from the overlay's own import and pool. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
 s32 Engine_MathModulo(s32 dividend, s32 divisor);
 
 extern const s32 VinasuChojo_SparkScript[];
+extern u8 Value_0ffff000;
 
 /* The EWRAM routine at 0x0200b600 (Thumb). */
 #define SPARK_UPDATE ((void (*)(union FieldObject *))0x0200b601)
@@ -28,14 +35,15 @@ void Func_020036d0(void)
         rise = Engine_RandomNext();
         rise <<= 6;
     }
-    spark = Engine_ObjectCreate(0x11c, source->x.fixed, ((u32)rise >> 16 << 16) + source->y.fixed - 0x1c0000,
-                                source->z.fixed);
+    spark = Engine_ObjectCreate(
+        0x11c, source->x.fixed, ((u32)rise >> 16 << 16) + source->y.fixed - 0x1c0000,
+        source->z.fixed);
     if (spark != 0) {
         sprite = spark->sprite;
         Engine_ObjectSetScript(spark, VinasuChojo_SparkScript);
         Engine_ObjectSetPalette(spark, 1);
         spark->motion_flags = 0;
-        spark->unknown_64 = Engine_RandomNext() & 0xffff000;
+        spark->unknown_64 = Engine_RandomNext() & (u32)&Value_0ffff000;
         spark->unknown_66 = 0;
         spark->update = SPARK_UPDATE;
         spark->speed = Engine_MathSin((u32)(Engine_RandomNext() * 0xffff) >> 20) * 24 >> 16;

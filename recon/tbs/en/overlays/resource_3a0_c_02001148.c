@@ -1,17 +1,24 @@
-/* NONMATCHING: 492 of 488 bytes, 94 differing halfwords (2026-09-24).
- * Rewritten on FIELD_EVENT.H: the start transition, the three spout actors'
- * sprite priority and flags, and the callbacks as Value_ link symbols.
- * Remaining: the reference sets a dead zero in r8 before the actor loop (a
- * variable set there, here zero) and sets the loop's own zero (r7, used after
- * the loop) inside the body; here loop.c hoists that set, so r7/r8 and the
- * +35 pointer register differ. */
+/* NONMATCHING: 490 of 488 bytes, 131 differing halfwords / 39 aligned edits
+ * (2026-09-26). Complete owner 02001148..02001330 includes the zero at
+ * 020012f4, eleven pool words 020012f8..02001320, return at 0200132c and pad.
+ * Three bounded structural trials: goto loop gives 488 bytes / 86 edits,
+ * suppressing zero hoisting but also changing unrelated constant selection.
+ * Separate loop/post-loop actor locals give 488 bytes / 47 edits, restoring
+ * the r5 +35 pointer before the palette call and the later actor in r0.
+ * A narrow actor-21 zero gives this retained 490-byte / 39-edit draft, with
+ * the reference's r5 zero load and pool before the epilogue. Baseline was
+ * 492 bytes / 94 differing halfwords / 51 aligned edits.
+ * Remaining: loop.c moves x's insn 211 to preheader insn 647 (global savings
+ * two), leaving loop zero r7 hoisted and post-loop x in r8. Reference keeps
+ * r7's initialization inside the loop, then uses r7 for both post-loop stores;
+ * its preheader r8 zero is dead. Pool is four bytes late. Next work must
+ * explain the two zeros' source lifetime, not re-sweep actor/pool spellings. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
 void Main_0808a5e0(s32 music);
 
 extern s16 Data_02000240_t[][1];
-extern u8 Value_00000000;
 extern u8 Value_02008325;
 extern u8 Value_02008501;
 
@@ -65,6 +72,7 @@ s32 Func_02001148(void)
     }
     zero = 0;
     for (n = 0; n <= 2; n++) {
+        struct FieldActor *actor;
         actor = Engine_ActorGet(n + 23);
         actor->sprite->priority = 1;
         x = 0;
@@ -97,7 +105,12 @@ s32 Func_02001148(void)
     actor->scale_y = 0x6666;
     actor->sprite->rotation = 0x8000;
     Engine_ActorSetSpriteFlags(Engine_ActorGet(21), 0);
-    Engine_ActorGet(21)->motion_flags = (u8)(u32)&Value_00000000;
+    {
+        /* FAKEMATCH: narrow local retains the short-range zero pool load. */
+        u8 shown = 0;
+
+        Engine_ActorGet(21)->motion_flags = shown;
+    }
     Engine_ActorGet(21)->y.fixed = x;
     Engine_ActorGet(21)->target_y = -0x80000000;
     return 0;

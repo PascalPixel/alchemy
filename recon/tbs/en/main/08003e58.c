@@ -11,6 +11,11 @@
  * the compiler holds one lo-register map pointer in r5 and a copy in ip, and
  * id and the block count move up to r7 and r6. Copying the map into a second
  * local is removed by CSE and does not reproduce the r7 copy.
+ * 2026-09-26: a structured outer run loop with an inner free-block scan
+ * emits 116 bytes / 40 aligned edits, versus this 120-byte / 26-edit
+ * baseline. It rotates the range check to the loop tail and still keeps
+ * the map in r5; this does not explain the reference's separate ip/r7
+ * lifetimes. Preserve the original control flow until new evidence does.
  */
 
 struct ResourceTableEntry {

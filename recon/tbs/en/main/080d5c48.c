@@ -1,6 +1,12 @@
-/* Draft, not exact (2026-09-24): candidate=524 reference=524 differing_halfwords=127. Constants the reference loads from
-   the literal pool are spelled as link-time Value_ symbols, which restores
-   the reference size; wraps marked FAKEMATCH only move scheduling. */
+/* Draft, not exact (2026-09-26): 524 of 524 bytes, 16 differing halfwords,
+   13 aligned edits. Complete owner, both literal pools included.
+   The paired callback slot restores the 36-byte frame. Distinct guarded
+   phase and record cursors recover the full drawing loop and its registers.
+   Baseline: 524/127/88; callback pair: 520/140/99; guarded cursors: 524/19/16;
+   explicit phase back edge and callback-load order: 524/16/13 (retained).
+   Remaining: the phase loop rematerializes 63 instead of retaining r6;
+   callback-load/state-clear scheduling differs at +0x7c and +0x88.
+   Three structural hypotheses stopped; no new byte credit. */
 #include "TYPES.H"
 extern u8 Value_00000100;
 extern u8 Value_00007000;
@@ -77,8 +83,9 @@ void Func_080d5c48(struct BattleEffectArgument *efx)
     u32 *entry;
     u8 *work;
     void *dst;
-    DrawRectangle draw;
-    Puff *puff;
+    /* FAKEMATCH: retain the paired blitter slot used by this effect family. */
+    DrawRectangle draw[2];
+    s32 *phase;
     Puff *cur;
     s32 i;
     s32 frame;
@@ -101,32 +108,38 @@ void Func_080d5c48(struct BattleEffectArgument *efx)
     }
     BattleEffect_LoadWork(46, 7, 7, 3, 1);
     *(s32 *)(work + 0x7780) = 1;
+    /* FAKEMATCH: preserve the observed callback load before the state clear. */
+    draw[0] = (DrawRectangle)entry[6];
     *(s32 *)(work + 0x7784) = 0;
-    draw = (DrawRectangle)entry[6];
     Func_080041d8(0x080CD261, 0x480);
-    puff = (Puff *)(work + (s32)&Value_00007080);
-    for (i = 0; i != WORK_EFX->count; i++) {
-        puff->tick = Func_08004458() & 63;
-        puff++;
+    i = 0;
+    if (WORK_EFX->count != 0) {
+        phase = (s32 *)(work + 0x7098);
+next_phase:
+        *phase = Func_08004458() & 63;
+        i++;
+        phase += 7;
+        if (i != WORK_EFX->count)
+            goto next_phase;
     }
     frame = 0;
     while (frame != (WORK_EFX->count << 5) + 32) {
         if (frame == 32) {
             Func_080b50e8(0);
         }
-        cur = (Puff *)(work + (s32)&Value_00007080);
-        for (i = 0; i != WORK_EFX->count; i++) {
+        i = 0;
+        if (WORK_EFX->count != 0) {
+        cur = (Puff *)(work + 0x7080);
+        do {
             base = i << 4;
             if (frame == base) {
                 Func_080f9010(143);
             }
             if (frame < base) {
-                cur++;
-                continue;
+                goto next_actor;
             }
             if (frame >= base + 72) {
-                cur++;
-                continue;
+                goto next_actor;
             }
             Func_080e396c(WORK_EFX->actors[i], pos);
             if (WORK_EFX->side == 1) {
@@ -134,18 +147,20 @@ void Func_080d5c48(struct BattleEffectArgument *efx)
             }
             old_y = pos[1];
             pos[1] = old_y - 16;
-            draw(dst, work + 1728, pos[0] - 8, old_y - 20, 16, 20);
+            draw[0](dst, work + 1728, pos[0] - 8, old_y - 20, 16, 20);
             if (frame < base) {
-                cur++;
-                continue;
+                goto next_actor;
             }
             cel = Func_080022fc(
                 Func_080022ec((frame - base) + cur->tick, 6), 9);
-            draw(dst, work + cel * 192, pos[0] - 8, pos[1] - 16, 16, 12);
+            draw[0](dst, work + cel * 192, pos[0] - 8, pos[1] - 16, 16, 12);
+next_actor:
             cur++;
+            i++;
+        } while (i != WORK_EFX->count);
         }
         *(s32 *)(work + 0x7824) = 1;
-        do { Func_080030f8(1); } while (0); /* FAKEMATCH */
+        Func_080030f8(1);
         frame += 1;
     }
     Func_08004278(0x080CD261);

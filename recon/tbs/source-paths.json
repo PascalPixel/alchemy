@@ -1,6 +1,21 @@
 {
   "format": 3,
   "owners": {
+    "main:08010000": {
+      "name": "Map_UpdateLayerScroll"
+    },
+    "main:08010230": {
+      "name": "Map_SetCameraCenter"
+    },
+    "main:08010424": {
+      "name": "Map_CopyMetatileIndicesRect"
+    },
+    "main:08010560": {
+      "name": "Map_PlayMetatileCopySequence"
+    },
+    "main:080105d4": {
+      "name": "Map_CopyMetatileCellsRect"
+    },
     "resource_3ba:02000540": {
       "name": "KorosseoKawa_MoveActorsAndMap"
     },
@@ -21696,8 +21711,6 @@
     "main:0801a7f4": "MenuSelection_BuildEntries",
     "main:080e2974": "BattlePres_RunBurstScene",
     "main:080118c0": "Map_SetLayerEntryFlag",
-    "main:08010000": "Map_UpdateLayerScroll",
-    "main:08010230": "Map_SetCameraCenter",
     "main:080108e4": "Map_WriteLayerCellTile",
     "main:080ad40c": "FourObjectMotion_UpdateBottomRow",
     "main:0808b3ec": "Event_SpawnObjectTable",

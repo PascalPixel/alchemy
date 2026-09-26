@@ -1,4 +1,10 @@
 /* Whole owner [080b5f0c, 080b606c), 352 bytes including two pool words.
+   2026-09-26 H2: reuse the exact modules' value-returning IWRAM copier
+   behind a void inline wrapper. Candidate 344/352, 164 differing halfwords,
+   73 aligned edits. The unwanted 340-byte size live range disappears;
+   frame 16, r9 table, sl owner array and fp status pointer now agree. The
+   remaining raw byte indexing forms base+index instead of the reference's
+   indexed byte access, and the last loop still shares the sent counter.
    2026-09-26 H1: restore gBattleWork, actual indirect copy calls, transfer
    lengths and continuation of the sent index. Candidate 348/352, 122
    differing halfwords, 75 aligned edits. Control flow is credible but size
@@ -17,7 +23,12 @@
 #include "BATTLE_WORK.H"
 #include "BATTLE_PARTY.H"
 
-typedef void (*CopyWordsFn)(void *, const void *, s32);
+typedef s32 (*CopyWordsFn)(void *, const void *, s32);
+
+static __inline__ void CopyWords(void *dst, const void *src, s32 size)
+{
+    ((CopyWordsFn)0x03001388)(dst, src, size);
+}
 
 s16 *Runtime_BumpAllocateAlternatePool(s32);
 struct BattleUnit *Owner_GetStateFar(s32);
@@ -45,7 +56,7 @@ s32 Func_080b5f0c(void)
     count = BattleParty_ListActiveMembers(sp_names);
     for (i = 0; i < count; i++) {
             struct BattleUnit *object = Owner_GetStateFar(sp_names[i]);
-            ((CopyWordsFn)0x03001388)(buffer, object, 340);
+            CopyWords(buffer, object, 340);
             ((struct BattleUnit *)buffer)->status_12a = 2;
 
             table[sp_names[i] + 72] = (u8)(i - 128);
@@ -73,7 +84,7 @@ s32 Func_080b5f0c(void)
     buffer = (u8 *)Runtime_BumpAllocateAlternatePool(320);
     {
         struct DjinnRecoveryTable *unit = Trade_GetOfferStateFar(0);
-        ((CopyWordsFn)0x03001388)(buffer, unit, 320);
+        CopyWords(buffer, unit, 320);
     }
 
     {

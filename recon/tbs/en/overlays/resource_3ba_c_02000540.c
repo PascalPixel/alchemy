@@ -1,21 +1,37 @@
-/* NONMATCHING: 752 bytes, candidate 772, 305 differing halfwords, 155
- * halfword edits (2026-09-25). KorosseoKawa_Func02000540, meant for
- * FIELD/KOROSSEO_KAWA/F_00540.C as a single-overlay unit binding its names
- * at their runtime addresses (an import veneer's listing offset plus
- * 0x8000). Remaining: Fresh typed actor and map sequence reconstructed from
- * disassembly; dimensions placed beside their first map calls.
- * WALL: Twenty-byte overlength and actor/map-call register lifetimes. */
+/* NONMATCHING: 772 of 752 bytes, 280 differing halfwords, 127 aligned edits
+ * (2026-09-26). Whole owner 02000540..02000830, pool 02000808..02000830;
+ * call targets and pool audited against our own ROM. Retained as
+ * korosseo-river-actor-map-candidate, without byte credit.
+ *
+ * Three structural steps, with complete normalized diffs reviewed:
+ * 1. Corrected missing indirection at allocated block +0x1e0. The reference
+ *    loads the table pointer before ObjectInitFromTableWithArgument; the old
+ *    772/305/155 draft passed the address of that pointer. Corrected draft:
+ *    776 bytes, 329 differing halfwords, 166 aligned edits.
+ * 2. One motion-object local shared across the initial opponent and actors
+ *    13/14: 776/317/147. Selector, object and initial acceleration now use
+ *    the reference's r5/r7/r8; this is semantic lifetime reuse, not a sweep.
+ * 3. Transient allocation expression separated from the later flag-result
+ *    local: 772/280/127. The allocation/load/call block now matches, and
+ *    flag result moves to sl as in the reference. Retained best corrected C.
+ *
+ * Remaining: actor pointer stays in sl instead of sp+8; height 34 lives in
+ * r8 rather than r6, adding moves before each six-argument map call. Flag
+ * 0x301 is shared across calls; later speed/acceleration allocation and pool
+ * order differ. Next structural axis, if rebriefed: call-local geometry
+ * ownership / helper expansion, not declaration permutations. Budget closed.
+ */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
 extern u32 Data_02000240[];
 extern s32 Engine_AllocateBlock(s32 slot, s32 size);
 extern void Engine_ObjectCommitPosition(struct FieldActor *object);
-extern void ObjectDispatch_InitFromTable4WithArgumentFar(s32 *table, struct FieldActor *object);
+extern void Engine_ObjectInitFromTableWithArgument(s32 *table, struct FieldActor *object);
 extern void Engine_MapCopyCellAttributes(s32, s32, s32, s32, s32, s32);
 extern void Engine_MapCopyCells(s32, s32, s32, s32, s32, s32);
 
-void KorosseoKawa_Func02000540(void)
+void KorosseoKawa_MoveActorsAndMap(void)
 {
     s32 selector;
     s32 result;
@@ -23,31 +39,30 @@ void KorosseoKawa_Func02000540(void)
     s32 height;
     s32 x;
     struct FieldActor *actor;
-    struct FieldActor *opponent;
     struct FieldActor *object;
 
     selector = Data_02000240[125];
     actor = Engine_ActorGet(selector);
-    opponent = Engine_ActorGet(12);
+    object = Engine_ActorGet(12);
     Engine_GameFlagSet(0x302);
     Engine_EventBegin();
     Engine_ActorSetAnimation(selector, 8);
     Engine_EventWait(6);
-    opponent->speed = 0x8000;
-    opponent->acceleration = 0x3333;
+    object->speed = 0x8000;
+    object->acceleration = 0x3333;
     Engine_AudioPlayCue(239);
-    Engine_ObjectSetAnimation(opponent, 2);
-    Engine_ObjectSetPosition(opponent, opponent->x.fixed - 0x300000, 0, opponent->z.fixed);
+    Engine_ObjectSetAnimation(object, 2);
+    Engine_ObjectSetPosition(object, object->x.fixed - 0x300000, 0, object->z.fixed);
     Engine_EventWait(6);
     Engine_ActorSetAnimation(selector, 2);
-    result = Engine_AllocateBlock(27, 0xccc);
-    ObjectDispatch_InitFromTable4WithArgumentFar((s32 *)(result + 0x1e0), opponent);
+    Engine_ObjectInitFromTableWithArgument(
+        *(s32 **)(Engine_AllocateBlock(27, 0xccc) + 0x1e0), object);
     Engine_ActorSetSpeed(selector, 0x4ccc, 0x3333);
     Engine_ObjectSetPosition(actor, actor->x.fixed - 0x180000, 0, actor->z.fixed);
     Engine_ActorWaitForMove(selector);
     Engine_ActorSetAnimation(selector, 1);
-    Engine_ObjectCommitPosition(opponent);
-    Engine_ObjectSetAnimation(opponent, 1);
+    Engine_ObjectCommitPosition(object);
+    Engine_ObjectSetAnimation(object, 1);
     Engine_AudioPlayCue(0x120);
     Engine_AudioPlayCue(213);
     Engine_EventWait(15);

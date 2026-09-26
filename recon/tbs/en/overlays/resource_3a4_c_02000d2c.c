@@ -1,52 +1,23 @@
-/* NONMATCHING: 408 of 404 bytes, 141 halfword edits (2026-09-24).
- * Hand-written from the resolved disassembly: three goto loops swing the
- * sprite angle (+30) up past 0x8fff, back below 0x7000 and settle it to
- * 0xc000 while Engine_MathCos/Sin move the actor. The limits and the settle
- * step share one variable (r8 in the reference) and 0x8000 is a variable
- * (fp). Remaining: cse reuses loop 2's 0x80000 increment as loop 3's initial
- * accumulator (a spilled pseudo, sp 8 instead of 4), and gcse carries acc >>
- * 16 around loop 3's back edge; the reference materialises both afresh. */
-#include "TYPES.H"
+/* NONMATCHING: H0 408/404 bytes, 141 differing halfwords / 89 aligned edits (2026-09-26).
+ * Complete own-ROM extent 02000d2c..02000ec0, including four pool words.
+ * FIELD_EVENT.H and exact FieldScene_RunSharedSetPiece establish actor y at
+ * +0x0c and sprite rotation at +0x1e. The old draft called y "z" and declared
+ * ActorGet as an integer-returning unprototyped service.
+ * Baseline 408/404 bytes, 141 halfword edits (2026-09-24).
+ * H0 keeps an 8-byte frame instead of 4: CSE carries the fall increment
+ * into settle, and GCSE carries its whole-angle value around the back edge.
+ * Calls all resolve correctly; typed views alone do not change this shape.
+ * Budget: complete typed model and at most two structural follow-ups. */
+#include "FIELD_EVENT.H"
 
-s32 Engine_ActorGet();
-void Engine_EventBegin();
-void Engine_AudioPlayCue();
-void Engine_WorkSetValuesIfNonNegative();
-void Engine_EventWait();
-s32 Engine_MathCos();
-void Engine_TaskWait();
-s32 Engine_MathSin();
-void FieldScene_RunSharedSetPiece();
-void Engine_EventEnd();
+void FieldScene_RunSharedSetPiece(s32 delay);
 
-
-
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-
-static __inline__ void Call1(void (*f)(), s32 a0)
+void ArutinYama_SwingActorIntoSetPiece(void)
 {
-    f(a0);
-}
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-void Func_02000d2c(void)
-{
-    u8 *actor;
-    u8 *sprite;
+    struct FieldActor *actor;
+    struct FieldSprite *sprite;
     s32 x;
-    s32 z;
+    s32 y;
     u32 acc;
     u32 angle;
     u32 limit;
@@ -54,40 +25,40 @@ void Func_02000d2c(void)
     s32 c;
     s32 s;
 
-    actor = (u8 *)Value1(Engine_ActorGet, 10);
-    sprite = *(u8 **)(actor + 80);
-    x = *(s32 *)(actor + 8);
-    z = *(s32 *)(actor + 12);
-    Engine_EventBegin();
-    Engine_AudioPlayCue(141);
-    Call3(Engine_WorkSetValuesIfNonNegative, 0x20000, 0x10000, 0x10000);
-    Engine_EventWait(10);
-    Call1(Engine_AudioPlayCue, 0x121);
-    Call3(Engine_WorkSetValuesIfNonNegative, -1, -1, 0xe666);
-    Engine_EventWait(20);
+    actor = Actor_Get(10);
+    sprite = actor->sprite;
+    x = actor->x.fixed;
+    y = actor->y.fixed;
+    Event_Begin();
+    Audio_PlayCue(141);
+    Work_SetValuesIfNonNegative(0x20000, 0x10000, 0x10000);
+    Event_Wait(10);
+    Audio_PlayCue(0x121);
+    Work_SetValuesIfNonNegative(-1, -1, 0xe666);
+    Event_Wait(20);
     acc = 0;
     limit = 0x8fff;
 rise:
     acc += 0x80000;
-    *(u16 *)(sprite + 30) += acc >> 16;
-    c = Engine_MathCos(*(u16 *)(sprite + 30) + 0x4000);
-    *(s32 *)(actor + 8) = (c << 4) + x;
-    angle = *(u16 *)(sprite + 30);
+    sprite->rotation += acc >> 16;
+    c = Math_Cos(sprite->rotation + 0x4000);
+    actor->x.fixed = (c << 4) + x;
+    angle = sprite->rotation;
     if (angle <= limit) {
-        Engine_TaskWait(1);
+        Task_Wait(1);
         goto rise;
     }
     acc = 0;
     limit = 0x7000;
 fall:
     acc += 0x80000;
-    *(u16 *)(sprite + 30) = angle - (acc >> 16);
-    c = Engine_MathCos(*(u16 *)(sprite + 30) + 0x4000);
-    *(s32 *)(actor + 8) = (c << 4) + x;
-    angle = *(u16 *)(sprite + 30);
+    sprite->rotation = angle - (acc >> 16);
+    c = Math_Cos(sprite->rotation + 0x4000);
+    actor->x.fixed = (c << 4) + x;
+    angle = sprite->rotation;
     if (angle > limit) {
-        Engine_TaskWait(1);
-        angle = *(u16 *)(sprite + 30);
+        Task_Wait(1);
+        angle = sprite->rotation;
         goto fall;
     }
     half = 0x8000;
@@ -95,29 +66,29 @@ fall:
 settle:
     acc = ((acc >> 16) + (acc >> 19)) << 16;
     limit = acc >> 16;
-    *(u16 *)(sprite + 30) = limit + angle;
-    c = Engine_MathCos(*(u16 *)(sprite + 30) + 0x4000);
-    s = Engine_MathSin(*(u16 *)(sprite + 30) + half);
-    *(s32 *)(actor + 8) = (c << 4) + x;
-    if (*(u16 *)(sprite + 30) > half) {
-        *(s32 *)(actor + 12) = z - (s << 3);
+    sprite->rotation = limit + angle;
+    c = Math_Cos(sprite->rotation + 0x4000);
+    s = Math_Sin(sprite->rotation + half);
+    actor->x.fixed = (c << 4) + x;
+    if (sprite->rotation > half) {
+        actor->y.fixed = y - (s << 3);
     }
-    if ((s32)(*(u16 *)(sprite + 30) + limit) <= 0xbfff) {
-        Engine_TaskWait(1);
-        angle = *(u16 *)(sprite + 30);
+    if ((s32)(sprite->rotation + limit) <= 0xbfff) {
+        Task_Wait(1);
+        angle = sprite->rotation;
         goto settle;
     }
-    Engine_TaskWait(1);
+    Task_Wait(1);
     {
         s32 shown = 0xc000;
 
-        *(u16 *)(sprite + 30) = shown;
+        sprite->rotation = shown;
     }
-    Engine_AudioPlayCue(183);
-    Call3(Engine_WorkSetValuesIfNonNegative, 0x30000, 0x30000, 0x10000);
-    Engine_EventWait(20);
-    Call1(Engine_AudioPlayCue, 0x121);
-    Call3(Engine_WorkSetValuesIfNonNegative, -1, -1, 0xe666);
+    Audio_PlayCue(183);
+    Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
+    Event_Wait(20);
+    Audio_PlayCue(0x121);
+    Work_SetValuesIfNonNegative(-1, -1, 0xe666);
     FieldScene_RunSharedSetPiece(5);
-    Engine_EventEnd();
+    Event_End();
 }

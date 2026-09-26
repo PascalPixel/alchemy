@@ -5,6 +5,10 @@
    The extra saved register is gone and the enemy scan is no longer
    strength-reduced, but the first scan is peeled and its vacant store
    moved after the enemy scan.  Counter/base r0/r1 are also reversed.
+   H2: a phase-local u16 vacant marker changes the party store to an
+   immediate, not the required early pool load.  128/124 bytes,
+   55 differing halfwords, 29 aligned edits; the party scan remains
+   peeled and the enemy branch still has an extra exit jump.
    No source registration or credited bytes.  Earlier baseline follows.
    Draft (2026-09-24): candidate=120 reference=124 differing_halfwords=37.
    Battle: take an actor out of the party and enemy rosters and clear it
@@ -43,13 +47,15 @@ void Func_080bac6c(s32 actor)
     struct BattleRoster *work;
     s32 i;
     u32 j;
+    u16 vacant;
 
     work = gBattleWork;
     Owner_GetStateFar(actor)->in_battle = 0;
+    vacant = 0xfe;
 
     for (i = 0;; i++) {
         if (work->party[i] == actor) {
-            work->party[i] = 0xfe;
+            work->party[i] = vacant;
             goto removed;
         }
         if (work->party[i] == 0xff)

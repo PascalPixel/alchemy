@@ -1,12 +1,16 @@
-/* NONMATCHING: 1060 bytes, candidate 1064, 496 differing halfwords, 289
- * halfword edits (2026-09-25). Scene_RunScene3cbSequenceA, meant for
+/* NONMATCHING: 1060 bytes, candidate 1052, 421 differing halfwords, 165
+ * aligned halfword edits (2026-09-26). Scene_RunScene3cbSequenceA, meant for
  * MENU/LINK_LOBBY/F_012E0.C as a single-overlay unit binding its names at
  * their runtime addresses (an import veneer's listing offset plus 0x8000).
  * Remaining: Bound the inventory prompt to its verified main-ROM service at
  * 0808a070; the previous Engine_UiWorkWaitThenFinalizeCapacity name was
  * unsupported and identified a different service. Name halfword pool
- * placement and state/counter allocation remain nonmatching.
- * WALL: Name halfword pool placement and state/counter allocation. */
+ * placement is recovered by word-sized halfword constants and indexed rows;
+ * separate globals recover the two initial address loads. The own-ROM call
+ * list also proves ShowMessage uses 02009894, not OpenMessage's 0200988c.
+ * Remaining: name pointer/value registers, state/counter allocation, constant
+ * reuse and the final pool differ. Inline wrappers reduce constant lifetimes;
+ * a Half aggregate did not recover the early pool. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 s32 Main_0808a070(s32, s32);
@@ -27,19 +31,26 @@ void Main_080003b8(void (*callback)(void), s32 value);
 void Main_08077260(s32 value);
 void Main_080b5108(void);
 
-union GameStateRows {
-    u8 bytes[512][2];
-    s16 halves[512][1];
-    s32 words[256];
-};
-
-extern union GameStateRows Data_02000240_t;
+extern u16 Data_02000240_t[][1];
+extern u16 Data_02002224[];
 extern u8 Data_00000054;
 extern u8 Data_00000041;
 extern u8 Data_0000004c;
 extern u8 Data_0000004b;
+extern s32 Data_02009f50;
+extern s32 Data_02009f4c;
 
-#define ROW(n) (*(u16 *)Data_02000240_t.halves[n])
+#define ROW(n) Data_02000240_t[n][0]
+
+static __inline__ s32 Value1(s32 (*fn)(), s32 value)
+{
+    return fn(value);
+}
+
+static __inline__ void Call2(void (*fn)(), s32 left, s32 right)
+{
+    fn(left, right);
+}
 
 s32 Scene_RunScene3cbSequenceA(void)
 {
@@ -48,12 +59,12 @@ s32 Scene_RunScene3cbSequenceA(void)
     s32 msg;
     s32 v;
     u16 *row;
-    u16 *name;
-    u8 *ew;
+    s32 letter;
+    struct EventWork *ew;
     void (*callback)(void);
 
-    *(s32 *)0x02009f50 = 0;
-    *(s32 *)0x02009f4c = 0;
+    Data_02009f50 = 0;
+    Data_02009f4c = 0;
     gEventWork->start_transition = 0x201;
     Main_08000378(2);
     Scene_DrawThreeDigitValue(ROW(344));
@@ -64,50 +75,55 @@ s32 Scene_RunScene3cbSequenceA(void)
     Local_02000128(4);
     Engine_TaskWait(1);
     Main_08009190(5);
-    name = (u16 *)0x02002224;
-    name[4] = (u32)&Data_00000054;
-    name[5] = (u32)&Data_00000041;
-    name[6] = (u32)&Data_0000004c;
-    name[7] = (u32)&Data_0000004b;
+    /* FAKEMATCH: word-sized locals retain halfword-mode link constants,
+     * giving the short literal-pool reach used by the original name stores. */
+    letter = (u16)(s32)&Data_00000054;
+    Data_02002224[4] = letter;
+    letter = (u16)(s32)&Data_00000041;
+    Data_02002224[5] = letter;
+    letter = (u16)(s32)&Data_0000004c;
+    Data_02002224[6] = letter;
+    letter = (u16)(s32)&Data_0000004b;
+    Data_02002224[7] = letter;
     for (i = 0; i < 8; i++) {
         Engine_GameFlagClear(0x2f0 + i);
         if (Local_02000f30(i)) {
             Engine_GameFlagSet(0x2f0 + i);
         }
     }
-    if (Data_02000240_t.halves[225][0] == 8) {
+    if ((s16)ROW(225) == 8) {
         Engine_EventBegin();
         Engine_EventOpenScreen();
         Engine_EventWaitForScreen();
         Local_02000128(5);
         ROW(338)++;
         ROW(341)++;
-        wins = (s8)Main_080770e0(0x3f8);
+        wins = (s8)Value1(Main_080770e0, 0x3f8);
         msg = wins * 2 + 2;
         if (msg > 14) {
             msg = 14;
         }
-        v = Main_080770e0(1000);
+        v = Value1(Main_080770e0, 1000);
         if (v == 2) {
-            Main_080770e8(1000, 0);
+            Call2(Main_080770e8, 1000, 0);
             wins++;
             msg++;
         } else {
-            Main_080770e8(1000, v + 1);
+            Call2(Main_080770e8, 1000, v + 1);
         }
-        Engine_ActorFaceActor(8, Data_02000240_t.words[125], 0);
+        Engine_ActorFaceActor(8, *(s32 *)Data_02000240_t[250], 0);
         Engine_EventSetMessage(0x293e + msg);
         Engine_EventOpenMessage(8, 0);
         if (Main_0808a070(0, 0) == 0) {
             if (wins > 90) {
                 wins = 90;
             }
-            Main_080770e8(0x3f8, wins);
+            Call2(Main_080770e8, 0x3f8, wins);
         } else {
             Engine_GameFlagClear(0x173);
-            Main_080770e8(0x3f8, -1);
+            Call2(Main_080770e8, 0x3f8, -1);
             row = &ROW(341);
-            Main_08015120(*row, 5);
+            Call2(Main_08015120, *row, 5);
             if (ROW(340) < *row) {
                 ROW(340) = *row;
                 Engine_EventSetMessage(0x293c);
@@ -120,15 +136,15 @@ s32 Scene_RunScene3cbSequenceA(void)
             Local_02000128(0);
         }
         Engine_EventEnd();
-    } else if (Data_02000240_t.halves[225][0] == 9) {
+    } else if ((s16)ROW(225) == 9) {
         ROW(339)++;
         Engine_EventBegin();
         Engine_EventOpenScreen();
         Engine_EventWaitForScreen();
         Local_02000128(5);
-        Engine_ActorFaceActor(8, Data_02000240_t.words[125], 0);
+        Engine_ActorFaceActor(8, *(s32 *)Data_02000240_t[250], 0);
         row = &ROW(341);
-        Main_08015120(*row, 5);
+        Call2(Main_08015120, *row, 5);
         if (ROW(340) < *row) {
             ROW(340) = *row;
             Engine_EventSetMessage(0x293c);
@@ -140,19 +156,19 @@ s32 Scene_RunScene3cbSequenceA(void)
         }
         ROW(341) = 0;
         Engine_GameFlagClear(0x173);
-        Main_080770e8(0x3f8, -1);
+        Call2(Main_080770e8, 0x3f8, -1);
         Local_02000128(0);
         Engine_EventEnd();
-    } else if (Data_02000240_t.halves[225][0] == 10) {
+    } else if ((s16)ROW(225) == 10) {
         Engine_EventBegin();
         Engine_EventOpenScreen();
         Engine_EventWaitForScreen();
         Local_02000128(0);
         Local_02000128(4);
         if (Engine_GameFlagIsSet(1000)) {
-            ew = (u8 *)gEventWork;
+            ew = gEventWork;
             Engine_GameFlagClear(1000);
-            *(u16 *)(ew + 0x182) = 2;
+            ew->raised_trigger = 2;
             Engine_GameFlagClear(0x304);
             Engine_TaskWait(20);
             State_RunQueryWithInterruptMasterSaved();
@@ -170,7 +186,7 @@ s32 Scene_RunScene3cbSequenceA(void)
             Engine_GameFlagSet(0x305);
         }
         Engine_EventEnd();
-    } else if (Data_02000240_t.halves[225][0] == 11) {
+    } else if ((s16)ROW(225) == 11) {
         Engine_EventBegin();
         Engine_EventOpenScreen();
         Engine_EventWaitForScreen();
@@ -187,17 +203,17 @@ s32 Scene_RunScene3cbSequenceA(void)
     } else {
         Main_08000300();
         Engine_GameFlagClear(0x172);
-        Main_080770e8(0x3f8, -1);
-        if (Data_02000240_t.bytes[277][0] != 0) {
+        Call2(Main_080770e8, 0x3f8, -1);
+        if (*(u8 *)Data_02000240_t[277] != 0) {
             Engine_EventBegin();
             Engine_EventOpenScreen();
             Engine_EventWaitForScreen();
-            Engine_ActorFaceActor(8, Data_02000240_t.words[125], 0);
+            Engine_ActorFaceActor(8, *(s32 *)Data_02000240_t[250], 0);
             Engine_EventSetMessage(0x2929);
             Engine_EventShowMessage(8, 0);
             Engine_EventEnd();
         }
-        Data_02000240_t.bytes[277][0] = 0;
+        *(u8 *)Data_02000240_t[277] = 0;
         *(u8 *)0x03001d08 = 0;
         Local_02000128(0);
         Local_02000128(4);
@@ -205,7 +221,7 @@ s32 Scene_RunScene3cbSequenceA(void)
     callback = (void (*)(void))0x2008149;
     Engine_TaskAddCallback(callback, 0xc80);
     Main_080003b8(callback, 1);
-    if (Data_02000240_t.halves[225][0] != 8 || !Engine_GameFlagIsSet(0x173)) {
+    if ((s16)ROW(225) != 8 || !Engine_GameFlagIsSet(0x173)) {
         Main_08077260(1);
         Main_080b5108();
     }

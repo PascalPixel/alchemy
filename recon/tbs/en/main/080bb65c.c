@@ -1,5 +1,9 @@
-/* Draft, not exact (2026-09-26): candidate=352 reference=356 differing_halfwords=129,
-   57 aligned edits. H2 explicit u16 OAM halfword packing is worse: the clear
+/* Draft, not exact (2026-09-26): candidate=356 reference=356 differing_halfwords=46,
+   44 aligned edits. H3 signed halfword packing restores full negative masks
+   and the 356-byte extent, but places those masks after the I/O pool entries
+   and keeps Sin before the pool. OAM/origin load scheduling still differs.
+   H2 had candidate=352, 129 differing halfwords, 57 aligned edits.
+   H2 explicit u16 OAM halfword packing is worse: the clear
    masks narrow to 0xfc00/0xfe00 and become mov/shift pairs instead of the
    reference's full-width negative literal masks. The pool moves after Sin.
    H1 had candidate=356, 52 differing halfwords, 43 aligned edits.
@@ -7,12 +11,15 @@
    byte-identical; it does not alter mask modes or their pool ordering.
    Resource_GetBuffer's s32(s32,s32) contract is confirmed by its exact
    definition in SYSTEM/RESOURCE/INITIALIZE.C. Callers ignore our result.
+   IO_WRITE_QUEUE.C confirms both queue callees are void; SLOT_PUSH_ENTRY.C
+   confirms the push is void with an s32-pointer payload. No return fix remains.
    Structure, loop layout (goto loop, no entry jump), volatile key reads, the
    s32 return (pop {r1}) and the BLDALPHA store through a two-halfword struct
    (movs, not a pool halfword) all match in H1. Its residuals include scheduling: the
    16 is loaded before the 0x04000052 address, the tile/x bitfield inserts
    load both masks first and interleave the origin loads, the Resource_GetBuffer
-   arguments are set r1 then r0, and the literal pool order differs. */
+   arguments are set r1 then r0, and the literal pool order differs.
+   Three structural hypotheses exhausted; do not re-sweep these mask spellings. */
 #include "TYPES.H"
 
 struct SpriteAttr {
@@ -36,7 +43,7 @@ struct AdvanceSprite {
     union {
         struct SpriteAttr attr;
         u32 raw[2];
-        u16 half[4];
+        s16 half[4];
     } oam;
 };
 

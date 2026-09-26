@@ -1,4 +1,6 @@
-/* Draft, not-yet-c. Typed actor/interface H0 (2026-09-27):
+/* Draft, not-yet-c. H1 direct aggregate fields: 228/224 bytes,
+ * 69 differing halfwords / 40 aligned edits; byte-identical to H0.
+ * Negative result: direct members do not separate the flag-store tail. Typed actor/interface H0 (2026-09-27):
  * 228/224 bytes, 69 differing halfwords / 40 aligned edits; unchanged.
  * Typed coordinates/callees alone do not remove the merged flag-store tail.
  * Complete 224-byte extent includes signed -0x1000 pool at 02005728.
@@ -20,8 +22,6 @@ u16 Main_08000100(s32 z, s32 x);
 s32 HaidiaMura_TestFacing(struct FieldActor *obj, struct FieldActor *target, s32 range, s32 force)
 {
     s32 result;
-    u8 *state;
-    u8 *flag;
     s32 *pos;
     s32 *tpos;
     u32 angle;
@@ -30,15 +30,11 @@ s32 HaidiaMura_TestFacing(struct FieldActor *obj, struct FieldActor *target, s32
     u32 dir;
 
     result = 0;
-    state = &obj->unknown_5b;
-    if (*state == 1) {
-        flag = &obj->rise_counter;
-        if (*flag == 0) {
+    if (obj->unknown_5b == 1) {
+        if (obj->rise_counter == 0) {
             Engine_ObjectSetAnimation(obj, 1);
             return 1;
         }
-    } else {
-        flag = &obj->rise_counter;
     }
     pos = &obj->x.fixed;
     tpos = &target->x.fixed;
@@ -51,15 +47,15 @@ s32 HaidiaMura_TestFacing(struct FieldActor *obj, struct FieldActor *target, s32
     dir = obj->facing & 0xf000;
     if (angle != dir && right != dir && left != dir && force == 0)
         goto miss;
-    *state = 1;
+    obj->unknown_5b = 1;
     Engine_ObjectSetAnimation(obj, 1);
     result = 1;
-    *flag = result;
+    obj->rise_counter = result;
     goto done;
 miss:
-    *state = force;
+    obj->unknown_5b = force;
     Engine_ObjectSetAnimation(obj, 2);
-    *flag = force;
+    obj->rise_counter = force;
 done:
     return result;
 }

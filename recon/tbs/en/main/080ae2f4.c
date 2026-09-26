@@ -1,234 +1,232 @@
-#include "types.h"
+#include "TYPES.H"
+#include "SYSTEM.H"
+#include "FIXED_MATH.H"
+#include "OWNER_STATE.H"
+#include "RENDER_INPUT.H"
+#include "CALLBACK_SCHEDULER.H"
 
-#define Func_080ae2f4 Func_080ae2f4
+/* Draft, main:080ae2f4, complete extent 0x080ae2f4..0x080ae714 (1056 B).
+ * H1: recover registered call contracts, typed menu/render fields and the two
+ * stack pairs. Predict the original 84-byte frame and persistent menu pointer
+ * before allocation tuning. Admission requires every instruction and both
+ * literal pools to match; adoption also requires compare-all/test/coverage/verify.
+ * Baseline: 996 B, 508 differing halfwords; aligned distance 374, 357 wrong
+ * instructions, 57 other differences. Frame 76 rather than 84 bytes.
+ * Lift defects: uninitialized cursor address, lost page-zero fallbacks,
+ * duplicated divide, unconditional selected-page highlight, double decrement,
+ * lost negative exit result. H1 restores these directly from the full listing.
+ * Budget: three independent structural hypotheses / 30 minutes; hard stop
+ * after 45 minutes without adoption. No register permutations.
+ * Reference has a dead Math_Mod(frame, 60)-5 before slot positioning. Its
+ * survival is an unresolved compiler-lowering fact, not a semantic dependency.
+ * H1 result: 976 B / 1056, 520 differing halfwords, aligned distance 319;
+ * 370 wrong instructions, 117 runs (5 pool/immediate, 31 copy/rematerialise,
+ * 81 other, no register-only runs). Frame 72; menu pointer r7 rather than r9.
+ * Both pairs use fixed stack accesses; early row constant pool is absent.
+ * The dead subtract was removed. H1 fails the structural admission predicate.
+ */
 
+struct MenuCursor {
+    u8 unknown00[5];
+    u8 state;
+};
+
+struct MenuActionWork {
+    u8 unknown000[0x10];
+    struct RenderInput *title_window;
+    struct MenuCursor *cursor;
+    u8 unknown018[0x0c];
+    struct RenderInput *left_window;
+    struct RenderInput *saved_window;
+    u8 unknown02c[4];
+    struct RenderInput *list_window;
+    struct RenderInput *right_window;
+    u8 unknown038[0xd4];
+    struct RenderInput *message_window;
+    u8 unknown110[0x34];
+    u16 row_y[4];
+    u8 unknown14c[0xce];
+    u8 owner;
+    u8 unknown21b[0x3d];
+    u8 preview_owner;
+};
+
+struct MenuRenderWork {
+    u8 unknown000[0xea3];
+    u8 dirty_rows;
+    u8 unknownea4[2];
+    u8 menu_busy;
+};
+
+extern struct MenuActionWork *gMenuWork;
+extern struct MenuRenderWork *Data_03001e8c;
+extern volatile u32 Data_03001c94;
+extern volatile u32 Data_03001b04;
 extern u8 Data_000000c8[];
-s32 Func_080022ec();
-s32 Func_080022fc();
-void Func_08002df0();
-void Func_080030f8();
-void Func_0800352c();
-s32 Func_080041d8();
-s32 Func_08004970();
-void Func_080072f0();
-void Func_08015060();
-void Func_08015080();
-void Func_08015270();
-void Func_08015278();
-void Func_08015280();
-s32 Func_08077008();
-void Func_080a10d0();
-s32 Func_080a1114();
-s32 Func_080aa538();
-s32 Func_080aae14();
-void Func_080acab8();
-void Func_080ad5b4();
-void Func_080f9010();
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
+void Runtime_BumpFree(void *block);
+s16 *Runtime_BumpAllocateAlternatePool(s32 bytes);
+void Runtime_SetMainState19(void);
+struct OwnerInventoryState *Owner_GetStateFar(s32 owner);
+s32 OwnerAction_DiffSlots(struct OwnerActionSlot *first,
+    struct OwnerActionSlot *second, u16 *out, s32 *first_count, s32 *second_count);
+s32 UiWindow_UpdateOrCreate(struct RenderInput **window,
+    s32 x, s32 y, s32 width, s32 height, s32 flags);
+/* The callee ignores the second argument, which all three reference calls set. */
+void UiWindow_CloseIfOpen(struct RenderInput **window, s32 release);
+void RenderOutput_ClearListFar(struct RenderInput *window);
+void RenderOutput_RedrawSavedRectFar(struct RenderInput *window);
+void Func_08015060(struct RenderInput *window);
+void UiText_DrawCharacterAtOffsetFar(s32 message,
+    struct RenderInput *window, s32 x, s32 y);
+void UiWindow_SetTilemapEntryFar(struct RenderInput *window,
+    s32 tile, s32 x, s32 y, s32 palette);
+s32 DjinnMenu_DrawStatPreview(struct RenderInput *window,
+    s32 x, s32 y, u8 owner, s32 first, s32 second, s32 mode, s32 page, s32 flags);
+void FourObjectMotion_SetSlotPosition(s32 slot, s32 x, s32 y, s32 hidden);
+s32 Menu_GetModuloOfSum(s32 value, s32 modulus);
+void Menu_UpdateEntryObjectTransforms(void);
+void Audio_PlayCue(s32 cue);
 
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
+s32 Unnamed_080ae2f4(void)
 {
-    return f(a0);
-}
+    s32 cnt;
+    s32 tile;
+    s32 result;
+    u16 *buf;
+    void *owner_buf;
+    struct OwnerActionState *owner;
+    struct MenuActionWork *work;
+    struct RenderInput *window;
+    struct MenuRenderWork *render;
+    u32 keys;
+    u32 repeat;
+    s32 frame;
+    s32 pending;
+    s32 phase;
+    s32 second_count;
+    s32 first_count;
+    s32 pages[2];
+    s32 cursor[2];
+    u16 *pos;
 
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
-static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    f(a0, a1, a2, a3);
-}
-
-static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
-{
-    f(a0, a1, a2, a3, a4, a5);
-}
-
-static __inline__ void Call9(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6, s32 a7, s32 a8)
-{
-    f(a0, a1, a2, a3, a4, a5, a6, a7, a8);
-}
-
-s32 Func_080ae2f4(void)
-{
-    u32 i;
-    s32 p10;
-    s32 p11;
-    s32 p9;
-    s32 rec7;
-    s32 rec8;
-    s32 record;
-    s32 r13;
-    s32 v2;
-    s32 v3;
-    s32 v7;
-    s32 v0;
-    s32 base5_baa;
-    s32 none;
-    s32 base5_0;
-    s32 v1;
-    s32 slot52;
-    s32 slot56;
-    s32 slot48;
-    s32 slot20;
-    s32 slot76;
-    u8 slot68[16];
-    s32 slot44;
-    s32 slot40;
-    u8 *slot24;
-    s32 slot36;
-    s32 slot32;
-    s32 slot28;
-    u8 *p6;
-    u8 slot64[4];
-    u8 slot60[4];
-
-    slot52 = 1;
-    slot56 = 0;
-    slot48 = 0;
-    p9 = *(s32 *)0x03001f2c;
-    *(u8 *)(*(s32 *)(*(s32 *)0x03001f2c + 20) + 5) = 13;
-    slot20 = (r13 + 76);
-    (*(s32 *)((*(s32 *)slot68) + 8)) = 0;
-    *(s32 *)(slot20 + 4) = (*(s32 *)((*(s32 *)slot68) + 8));
-    v2 = 3;
-    v3 = (0x14a + p9);
+    pending = 1;
+    phase = 0;
+    frame = 0;
+    work = gMenuWork;
+    work->cursor->state = 13;
+    cursor[0] = cursor[1] = 0;
+    cnt = 3;
+    pos = &work->row_y[3];
     do {
-        v2 = (v2 - 1);
-        *(u16 *)(v3) = (s32)Data_000000c8;
-        v3 = (v3 - 2);
-    } while (v2 >= 0);
-    Func_08015278(*(s32 *)(p9 + 48), p9, v2, v3);
-    v7 = 1;
-    Func_080030f8(1);
-    (*(s32 *)slot68) = v7;
-    *(s32 *)(slot68 + 4) = (*(s32 *)slot68);
-    p11 = slot68;
-    rec7 = Value1(Func_08004970, 96);
-    rec8 = Value1(Func_08004970, 0x14c);
-    record = Value1(Func_08077008, *(u8 *)((0x21a + p9)));
-    record = Func_080aae14((record + 88), (record + 88), rec7, slot64, slot60);
-    (*(s32 *)slot68) = record;
-    *(s32 *)(p11 + 4) = (*(s32 *)slot68);
-    Func_08002df0(rec8);
-    Func_08002df0(rec7);
-    (*(s32 *)slot68) = (Func_080022ec(((*(s32 *)slot68) - 1), 6) + 1);
-    if ((*(s32 *)slot68) == 0) {
-    }
-    v0 = (Func_080022ec((*(s32 *)(p11 + 4) - 1), 6) + 1);
-    *(s32 *)(p11 + 4) = (Func_080022ec((*(s32 *)(p11 + 4) - 1), 6) + 1);
-    if (v0 == 0) {
-        *(s32 *)(p11 + 4) = (*(s32 *)slot68);
-    }
-    slot44 = (p9 + 36);
-    Call6(Func_080a10d0, slot44, 0, 5, 15, 15, 2);
-    slot40 = (p9 + 52);
-    Call6(Func_080a10d0, slot40, 15, 5, 15, 15, 2);
-    Func_08015270(*(s32 *)((0x10c + p9)));
-    Func_08015270(*(s32 *)(p9 + 16));
-    base5_baa = 0xbaa;
-    Func_08015080(base5_baa, *(s32 *)(p9 + 16), 0, 0);
-    Func_08015080((base5_baa + 2), *(s32 *)(p9 + 16), 0, 16);
-    slot24 = (0x258 + p9);
-    none = 0;
-    p10 = slot20;
-    L_080ae43c:;
-    slot36 = *(s32 *)0x03001e8c;
-    slot32 = *(s32 *)0x03001c94;
-    slot28 = *(s32 *)0x03001b04;
-    if (slot52 != 0) {
-        *(u8 *)((slot36 + 0xea6)) = 1;
-        Func_08015060(*(s32 *)(p9 + 36));
-        Func_08015060(*(s32 *)(p9 + 52));
-        Call9(Func_080acab8, *(s32 *)(p9 + 36), 0, 0, slot24[0], none, none, 3, none, 1);
-        Call9(Func_080acab8, *(s32 *)(p9 + 52), 0, 0, slot24[0], none, none, 3, ((*(s32 *)((*(s32 *)slot68) + 8)) + 1), 1);
-        *(u8 *)((slot36 + 0xea6)) = none;
-    }
-    if (*(s32 *)(0x00000000 + (s32)p11) > 1) {
-            base5_0 = 0;
-        p6 = *(s32 *)(p9 + 52);
-        if (0 < *(s32 *)(0x00000000 + (s32)p11)) {
-            do {
-                v1 = (base5_0 + 0xf031);
-                if (base5_0 > 9) {
-                    v1 = 0xf030;
-                }
-                if (base5_0 == *(s32 *)(0x00000000 + slot20)) {
-                }
-                Func_08015280((s32)p6, (v1 + -0x1000), (((s32)(*(u16 *)((s32)p6 + 8) - *(s32 *)p11) + base5_0) - 2), -1, none);
-                base5_0 = (base5_0 + 1);
-            } while (base5_0 < *(s32 *)p11);
+        cnt--;
+        *pos = (u16)(s32)Data_000000c8;
+        pos--;
+    } while (cnt >= 0);
+    RenderOutput_ClearListFar(work->list_window);
+    WaitFrames(1);
+    pages[0] = pages[1] = 1;
+    buf = (u16 *)Runtime_BumpAllocateAlternatePool(96);
+    owner_buf = Runtime_BumpAllocateAlternatePool(0x14c);
+    owner = (struct OwnerActionState *)Owner_GetStateFar(work->owner);
+    pages[0] = pages[1] = OwnerAction_DiffSlots(owner->action_slots,
+        owner->action_slots, buf, &first_count, &second_count);
+    Runtime_BumpFree(owner_buf);
+    Runtime_BumpFree(buf);
+    pages[0] = Math_Div(pages[0] - 1, 6) + 1;
+    if (pages[0] == 0)
+        pages[0] = 1;
+    pages[1] = Math_Div(pages[1] - 1, 6) + 1;
+    if (pages[1] == 0)
+        pages[1] = 1;
+    UiWindow_UpdateOrCreate(&work->left_window, 0, 5, 15, 15, 2);
+    UiWindow_UpdateOrCreate(&work->right_window, 15, 5, 15, 15, 2);
+    RenderOutput_RedrawSavedRectFar(work->message_window);
+    RenderOutput_RedrawSavedRectFar(work->title_window);
+    UiText_DrawCharacterAtOffsetFar(0xbaa, work->title_window, 0, 0);
+    UiText_DrawCharacterAtOffsetFar(0xbac, work->title_window, 0, 16);
+
+    for (;;) {
+        render = Data_03001e8c;
+        keys = Data_03001c94;
+        repeat = Data_03001b04;
+        if (pending) {
+            render->menu_busy = 1;
+            Func_08015060(work->left_window);
+            Func_08015060(work->right_window);
+            DjinnMenu_DrawStatPreview(work->left_window, 0, 0,
+                work->preview_owner, 0, 0, 3, 0, 1);
+            DjinnMenu_DrawStatPreview(work->right_window, 0, 0,
+                work->preview_owner, 0, 0, 3, cursor[0] + 1, 1);
+            render->menu_busy = 0;
         }
-        Func_08015280((s32)p6, 0xf128, ((*(u16 *)((s32)p6 + 8) - *(s32 *)(0x00000000 + (s32)p11)) - 3), -1, none);
-        Func_08015280((s32)p6, 0xf129, (*(u16 *)((s32)p6 + 8) - 2), -1, none);
-        *(u8 *)((slot36 + 0xea3)) |= (s32)(2 << (s32)((u32)*(u16 *)((s32)p6 + 14) >> 2));
-    }
-    slot48 = (slot48 + 1);
-    record = Func_080022fc((slot48 + 1), 60);
-    Func_080ad5b4(0, 32, 200, 0);
-    if (slot52 != 0) {
-        slot52 = 0;
-        record = Value2(Func_080aa538, slot56, 2);
-        slot56 = record;
-    }
-    if ((slot48 & 3) == 0) {
-        if ((4 & slot48) != 0) {
-            Call4(Func_080072f0, 0x60052c0, 0x80af26c, 32, 0x3001388);
-        } else {
-            Call4(Func_080072f0, 0x60052c0, 32, 0x44444444, 0x3000168);
+        if (pages[0] > 1) {
+            window = work->right_window;
+            for (cnt = 0; cnt < pages[0]; cnt++) {
+                tile = 0xf031 + cnt;
+                if (cnt > 9)
+                    tile = 0xf030;
+                if (cnt == cursor[0])
+                    tile += -0x1000;
+                UiWindow_SetTilemapEntryFar(window, tile,
+                    window->width - pages[0] + cnt - 2, -1, 0);
+            }
+            UiWindow_SetTilemapEntryFar(window, 0xf128,
+                window->width - pages[0] - 3, -1, 0);
+            UiWindow_SetTilemapEntryFar(window, 0xf129, window->width - 2, -1, 0);
+            render->dirty_rows |= 2 << (window->y >> 2);
         }
-    }
-    if ((8 & slot32) != 0) {
-        v7 = 2;
-    } else {
-        if ((0x303 & slot32) == 0) {
-            goto L_080ae5ce;
+        frame++;
+        Math_Mod(frame, 60) - 5;
+        FourObjectMotion_SetSlotPosition(0, 32, 200, 0);
+        if (pending) {
+            pending = 0;
+            phase = Menu_GetModuloOfSum(phase, 2);
         }
-        v7 = 1;
-    }
-    Func_080f9010(113);
-    v7 = -v7;
-    goto L_080ae638;
-    L_080ae5ce:;
-    if ((32 & slot28) != 0) {
-        *(s32 *)p10 = (*(s32 *)p10 - 1);
-        record = Func_080aa538((*(s32 *)p10 - 1), *(s32 *)(none + (s32)p11));
-        *(s32 *)p10 = record;
-        Func_080f9010(111);
-        Func_0800352c();
-        slot52 = 1;
-    } else {
-        if ((16 & slot28) != 0) {
-            *(s32 *)p10 += 1;
-            Func_080f9010(111);
-            Func_0800352c();
-            slot52 = 1;
-            record = Func_080aa538(*(s32 *)p10, *(s32 *)(none + (s32)p11));
-            *(s32 *)p10 = record;
+        if ((frame & 3) == 0) {
+            if (frame & 4)
+                ((void (*)(void *, const void *, s32))0x03001388)(
+                    (void *)0x060052c0, (const void *)0x080af26c, 32);
+            else
+                ((void (*)(void *, s32, u32))0x03000168)(
+                    (void *)0x060052c0, 32, 0x44444444);
         }
+        if (keys & 8)
+            result = 2;
+        else if (keys & 0x303)
+            result = 1;
+        else {
+            if (repeat & 32) {
+                cursor[0]--;
+                cursor[0] = Menu_GetModuloOfSum(cursor[0], pages[0]);
+                Audio_PlayCue(111);
+                Runtime_SetMainState19();
+                pending = 1;
+            } else if (repeat & 16) {
+                cursor[0]++;
+                Audio_PlayCue(111);
+                Runtime_SetMainState19();
+                pending = 1;
+                cursor[0] = Menu_GetModuloOfSum(cursor[0], pages[0]);
+            }
+            WaitFrames(1);
+            continue;
+        }
+        Audio_PlayCue(113);
+        result = -result;
+        break;
     }
-    Func_080030f8(1);
-    goto L_080ae43c;
-    L_080ae638:;
-    v7 = (0 + p11);
-    Value2(Func_080041d8, 0x80a19a1, 0xc80);
-    *(u8 *)(*(s32 *)0x03001e8c + 0xea6) = 1;
-    none = 0;
-    ((void (*)())Func_080a1114)((0x10c + p9), 1);
-    Func_080030f8(1);
-    Call6(Func_080a10d0, (0x10c + p9), 13, 0, 17, 5, 2);
-    Value2(Func_080a1114, slot44, 1);
-    Value2(Func_080a1114, slot40, 1);
-    Func_08015270(*(s32 *)(p9 + 48));
-    Func_08015270(*(s32 *)(p9 + 40));
-    Func_08015270(*(s32 *)(p9 + 16));
-    *(u8 *)((*(s32 *)0x03001e8c + 0xea6)) = none;
-    Func_080030f8(1);
-    return v7;
+    Scheduler_AddOrUpdateCallback((s32)Menu_UpdateEntryObjectTransforms, 0xc80);
+    Data_03001e8c->menu_busy = 1;
+    UiWindow_CloseIfOpen(&work->message_window, 1);
+    WaitFrames(1);
+    UiWindow_UpdateOrCreate(&work->message_window, 13, 0, 17, 5, 2);
+    UiWindow_CloseIfOpen(&work->left_window, 1);
+    UiWindow_CloseIfOpen(&work->right_window, 1);
+    RenderOutput_RedrawSavedRectFar(work->list_window);
+    RenderOutput_RedrawSavedRectFar(work->saved_window);
+    RenderOutput_RedrawSavedRectFar(work->title_window);
+    Data_03001e8c->menu_busy = 0;
+    WaitFrames(1);
+    return result;
 }

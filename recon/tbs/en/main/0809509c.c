@@ -1,16 +1,24 @@
-/* Draft, not exact (2026-09-24): 10 differing halfwords (194 bytes plus
+/* Draft, not exact (2026-09-26): 11 differing halfwords (194 bytes plus
    the 2-byte pad). Writing the timer as (i & 15) + 1 with a literal lets
    GCC pool the halfword 15 in the first slot and reload it per iteration,
    as the reference does; the Value_0000000f local cost 40 halfwords.
    The fill zero passes through a block-local int, which builds the zero
    before the sp copy as the ROM does. Residual: the zero takes r3
    (reference r1), and the particle word pointer and the leader pointer
-   take r2 and r0 (reference r1 and r2). */
+   take r2 and r0 (reference r1 and r2). Typed link/attribute union words
+   alone did not change the output. Moving the leader read after the link
+   store recovers that load/store order but schedules the attr copy earlier.
+   A named inline DMA clear keeps the same zero-register residual. */
 #include "TYPES.H"
 #include "DMA.H"
 
+union DustWord {
+    u32 value;
+    void *link;
+};
+
 struct DustParticle {
-    u32 unknown00;
+    union DustWord link;
     u32 attr01;
     u32 attr2;
     s32 pos_x;
@@ -43,20 +51,24 @@ s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
 s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
 void Func_08094e7c(void);
 
+static __inline__ void ClearDustWork(struct DustWork *work)
+{
+    volatile u32 zero;
+    u32 value = 0;
+
+    zero = value;
+    Dma_Set(&zero, work, 0x85000104, (volatile u32 *)0x040000d4);
+}
+
 void Func_0809509c(void)
 {
     struct DustWork *work = Runtime_AllocateBlock(29, 0x410);
     struct DustParticle *p = work->particles;
-    volatile u32 zero;
     u8 *buf;
     u32 i;
     s32 clear;
 
-    {
-        u32 value = 0;
-        zero = value;
-    }
-    Dma_Set(&zero, work, 0x85000104, (volatile u32 *)0x040000d4);
+    ClearDustWork(work);
     buf = Runtime_AllocateBlock(14, 0x400);
     Resource_DecodeByteLz(Data_080a00b8, buf);
     work->vram_entry = Resource_FindFreeEntry();
@@ -66,14 +78,16 @@ void Func_0809509c(void)
     clear = 0;
 loop:
     {
-        s32 *leader = Data_03001e70->leader;
-        u32 *attr = &p->unknown00;
+        struct FieldView *view = Data_03001e70;
+        s32 *leader;
+        union DustWord *attr = &p->link;
         s32 x;
         s32 z;
 
-        *attr++ = clear;
-        *attr++ = 0x40000400;
-        *attr = 0xd400;
+        (attr++)->link = (void *)clear;
+        leader = view->leader;
+        (attr++)->value = 0x40000400;
+        attr->value = 0xd400;
         x = leader[0];
         z = leader[2];
         p->pos_x = clear;

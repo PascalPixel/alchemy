@@ -1,4 +1,8 @@
-/* Draft, not-yet-c. H1 direct aggregate fields: 228/224 bytes,
+/* Draft, not-yet-c. H2 success-store one-pass boundary:
+ * 224/224 bytes, 59 differing halfwords / 39 aligned edits. The boundary
+ * shortens the merged tail but does not split it; force/position lifetimes
+ * still differ. Signed -0x1000 pool and complete extent are preserved.
+ * STOP: complete typed model plus two structural follow-ups exhausted. H1 direct aggregate fields: 228/224 bytes,
  * 69 differing halfwords / 40 aligned edits; byte-identical to H0.
  * Negative result: direct members do not separate the flag-store tail. Typed actor/interface H0 (2026-09-27):
  * 228/224 bytes, 69 differing halfwords / 40 aligned edits; unchanged.
@@ -50,7 +54,10 @@ s32 HaidiaMura_TestFacing(struct FieldActor *obj, struct FieldActor *target, s32
     obj->unknown_5b = 1;
     Engine_ObjectSetAnimation(obj, 1);
     result = 1;
-    obj->rise_counter = result;
+    /* FAKEMATCH: keep the success flag store inside its own control scope. */
+    do {
+        obj->rise_counter = result;
+    } while (0);
     goto done;
 miss:
     obj->unknown_5b = force;

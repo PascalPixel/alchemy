@@ -87077,7 +87077,7 @@
     },
     {
       "id": "ovd-370-02000154",
-      "source": "recon/tbs/en/overlays/resource_370_c_02000154.c",
+      "source": "games/THE BROKEN SEAL/SRC/MENU/CLEAR/BLEND_FADE.C",
       "overlay": "resource_370",
       "absolute_symbols": {
         "Engine_TaskRemoveCallback": {
@@ -87089,7 +87089,7 @@
         {
           "address": "0x02000154",
           "extent": 168,
-          "state": "not-yet-c"
+          "state": "exact-c"
         }
       ],
       "game": "tbs",

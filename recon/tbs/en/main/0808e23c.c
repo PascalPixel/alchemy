@@ -1,7 +1,8 @@
-/* Draft, not exact (2026-09-26): 632 of 632 bytes, 255 differing halfwords.
-   The signed effect-ID/callback union emits the same call-through-r3 as
-   the previous fourth-argument model. Remaining: inventory loop lifetimes,
-   aggregate bases, constant selection and runtime-flag lifetimes. */
+/* Draft, not exact (2026-09-26): 636 of 632 bytes, 279 differing halfwords.
+   Normalized edit distance: 128 halfwords. The signed callback union is
+   byte-neutral. Correcting the confirmation copies to +0x240/+0x242 and
+   +0x1c0/+0x1c2 recovers their complete base-plus-offset sequence.
+   Remaining: inventory loop lifetimes, bases, constants and runtime flags. */
 #include "TYPES.H"
 extern u8 Value_000003ff;
 extern u8 Value_000001f8;
@@ -39,7 +40,7 @@ extern u8 Value_00000cc6;
  *   u32 effect) is taken from that sibling.
  * - The action_id==149 confirm-prompt block reproduces 0808e680's
  *   actionId==0x95(=149) block instruction-for-instruction: same
- *   Data_02000240+0x400/0x402 <- +0x480/0x482 u16 copy, same
+ *   Data_02000240+0x1c0/0x1c2 <- +0x240/0x242 u16 copy, same
  *   runtime->+0x170 = 999 sentinel, same Func_08091d84(1) prompt call.
  * - Data_02000240 is BattleWork (battle_effect_runtime.h); its object_id
  *   field (0x1f4) and target-id byte array (0x1f8) are already named in
@@ -212,10 +213,14 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
                 if (declined != 0)
                     return 0;
 
-                *(u16 *)((u8 *)&Data_02000240 + 0x400) =
-                    *(u16 *)((u8 *)&Data_02000240 + 0x480);
-                *(u16 *)((u8 *)&Data_02000240 + 0x402) =
-                    *(u16 *)((u8 *)&Data_02000240 + 0x482);
+                {
+                    u16 *work = (u16 *)&Data_02000240;
+                    s32 a, b;
+                    a = work[288];
+                    work[224] = a;
+                    b = work[289];
+                    work[225] = b;
+                }
                 *(s16 *)(rt + (s32)&Value_00000170) = (s32)&Value_000003e7;
             }
 

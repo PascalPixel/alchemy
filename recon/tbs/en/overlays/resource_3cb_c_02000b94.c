@@ -1,4 +1,5 @@
-/* NONMATCHING: 484 of 468 bytes, 78 halfword edits (2026-09-24). Hand-written from the
+/* NONMATCHING: candidate 484 of 468 bytes, 155 differing halfwords,
+ * 78 aligned edits (2026-09-26). Hand-written from the
  * resolved jump-table disassembly as a single-overlay unit binding Engine_* at
  * their import veneers. Remaining: structure and registers match; the message base is a link symbol held in r6. The reference shares one 'EventSetMessage; EventOpenMessage(8, 0); EventEnd' tail entered with r0 already set, while this draft keeps a SetMessage call in each branch and merges only from OpenMessage (about 16 bytes, 78 edits from the shifted branches). */
 #include "TYPES.H"

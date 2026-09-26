@@ -94,7 +94,8 @@ compare-all: compare compare-tla
 
 # The pre-commit gate, split as pret splits a quick local build from CI:
 # compare each game the staged change can reach, with the quick repository
-# checks, then require current README figures against the new build receipts.
+# checks, then require the README progress number and both images to agree
+# with the new build receipts. `make coverage` updates all three together.
 # `make verify` stays the landing gate on main and before a push.
 precommit: index-sync-check native-format-check language-check lint-staged tooling-index-check
 	$(CHECK) publication --staged

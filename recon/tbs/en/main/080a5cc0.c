@@ -1,9 +1,16 @@
-/* NONMATCHING: shared callee return types audited on 2026-09-26.
- * 800 of 800 bytes, 239 differing halfwords, 120 aligned edits.
- * Canonical declarations are retained; the remaining source model is not exact. */
-/* Draft, not exact (2026-09-24): candidate=800 reference=800 differing_halfwords=241. Constants the reference loads from
-   the literal pool are spelled as link-time Value_ symbols, which restores
-   the reference size; wraps marked FAKEMATCH only move scheduling. */
+/* NONMATCHING, 2026-09-26: 794/800 bytes, 323 differing halfwords, 98
+ * aligned edits (previously 800/800, 239/120). Shared return types audited.
+ * ROM corrections: case 0 clears the halfword at 0x174, not selected_action
+ * at 0x178; case 4 calls ApplyTargets before replacing target 9 with the
+ * acting owner; the final flag test uses an immediate 0x150, not a pool
+ * value. Initialising state/done before loading work matches the opening
+ * stores. Reusing self_flag for the case-3 response reproduces the sl
+ * carrier and puts the returned result in fp, as in the reference.
+ * Still missing six bytes, with block scheduling and register differences.
+ * The first body difference is the r2/r3 pair in the 0x174 zero store;
+ * case 0 also copies the known -1 from r0 where the ROM copies r3.
+ * These are separate residuals, not reasons to restore the incorrect
+ * field or call order. Remaining FAKEMATCH wrappers only move scheduling. */
 #include "TYPES.H"
 extern u8 Value_00000150;
 extern u8 Value_00003fff;
@@ -27,7 +34,9 @@ struct MenuActionWork {
     s32 field_024;             /* 0x024 */
     u8 unknown_028[4];
     s32 info_window;           /* 0x02c */
-    u8 unknown_030[0x148];
+    u8 unknown_030[0x144];
+    u16 field_174;             /* 0x174, cleared before party selection */
+    u8 unknown_176[2];
     u16 selected_action;       /* 0x178 */
     u8 unknown_17a[0x9e];
     u8 entry_count;            /* 0x218 */
@@ -100,15 +109,15 @@ s32 Func_080a5cc0(s32 *out_owner, s32 unused, s32 *out_action)
     s32 self_flag;
     struct BattleAction *action;
 
-    work = Data_03001f2c;
     state = 0;
     done = 0;
+    work = Data_03001f2c;
     result = 0;
 
     while (done == 0 && Func_080770c0(0x150) == 0) {
         switch (state) {
         case 0:
-            work->selected_action = 0;
+            work->field_174 = 0;
             ItemMenu_DrawMsg(0, (s32)&Value_00000ae9);
             if (Func_080a602c(0) == -1) {
                 done = 1;
@@ -162,8 +171,9 @@ s32 Func_080a5cc0(s32 *out_owner, s32 unused, s32 *out_action)
 
         case 3:
             do { ItemMenu_DrawMsg(0, (s32)&Value_00000aeb); } while (0); /* FAKEMATCH */
+            self_flag = Func_080a63e4(0);
             state = 4;
-            if (Func_080a63e4(0) == -1) {
+            if (self_flag == -1) {
                 work->flags_220 |= 1;
                 state = 1;
             }
@@ -189,12 +199,12 @@ s32 Func_080a5cc0(s32 *out_owner, s32 unused, s32 *out_action)
         case 4:
             raw = work->selected_action;
             self_flag = 0;
+            result = Func_080a9f10(
+                raw, work->item_owner, work->target_owner, 0);
             if (work->target_owner == 9) {
                 work->target_owner = work->item_owner;
                 self_flag = 9;
             }
-            result = Func_080a9f10(
-                raw, work->item_owner, work->target_owner, 0);
             if (result != -1) {
                 action = Func_08077080(work->selected_action & 0x3fff);
                 Func_08077120(work->item_owner, -action->pp_cost);
@@ -235,7 +245,7 @@ s32 Func_080a5cc0(s32 *out_owner, s32 unused, s32 *out_action)
         }
     }
 
-    if (Func_080770c0((s32)&Value_00000150) != 0) {
+    if (Func_080770c0(0x150) != 0) {
         result = -1;
     }
     return result;

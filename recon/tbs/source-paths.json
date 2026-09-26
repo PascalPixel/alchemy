@@ -2811,6 +2811,10 @@
       "source": "GRAPHICS/DISPLAY/SET_CONTROL.C"
     },
     "main:080c1084": "GRAPHICS/PALETTE/ADVANCE_CYCLE.C",
+    "main:080c11ec": {
+      "name": "BattleFx_UpdateStarField",
+      "source": "BATTLE/EFFECT/UPDATE_STAR_FIELD.C"
+    },
     "main:080c1438": {
       "name": "Display_UploadBlock",
       "source": "GRAPHICS/DISPLAY/UPLOAD_BLOCK.C"
@@ -3011,6 +3015,10 @@
     },
     "main:080b26cc": {
       "name": "EventTable_ApplyRowAbilities"
+    },
+    "main:080b2720": {
+      "name": "EventTable_CopyRowHeader",
+      "source": "FIELD/COMMON/EVENT_TABLE_COPY_ROW_HEADER.C"
     },
     "main:080b2764": {
       "name": "EventTable_GetRowType",
@@ -20138,7 +20146,17 @@
       "name": "UiText_LoadRemappedGlyph"
     },
     "main:0802106c": {
-      "name": "PartyTalkMenu_Choose"
+      "name": "PartyTalkMenu_Choose",
+      "source": "MENU/PARTY/TALK_CHOICE.C"
+    },
+    "main:08020bd8": {
+      "name": "NameEntry_EditOwnerName"
+    },
+    "main:08029554": {
+      "name": "DebugMenu_BrowseIcons"
+    },
+    "main:0802977c": {
+      "name": "DebugMenu_BrowseEntryGlyphs"
     },
     "main:08021228": {
       "name": "Djinn_ShowJoinedMessage"
@@ -21462,6 +21480,9 @@
     "main:0801a4fc": {
       "name": "UiGlyph_LoadEntryWithPalette",
       "source": "GRAPHICS/GLYPH/LOAD_ENTRY_WITH_PALETTE.C"
+    },
+    "resource_371:02001ca4": {
+      "name": "WorldMap_RunVenusDjinniMeeting"
     }
   },
   "symbols": {
@@ -21591,6 +21612,7 @@
     "main:080a1038": "UiIcon_PrepareObjectFar",
     "main:080b0020": "ShopCursor_AdvanceFar",
     "main:080b0028": "ShopCursor_MoveTowardTargetFar",
+    "main:080b0038": "ShopCursor_SetPositionImmediateFar",
     "main:080b0048": "Unnamed_080b0840Far",
     "main:080b0050": "Shop_InitEffectFar",
     "main:080b5038": "BattlePresentation_ConfigurePaletteFadeFar",

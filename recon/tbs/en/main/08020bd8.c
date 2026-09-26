@@ -1,54 +1,73 @@
+/* Complete owner [08020bd8, 0802106c): 1172 bytes including both final
+ * pool words. The default unregistered score incorrectly included the
+ * following menu and Djinn functions (1928 bytes); score this extent only.
+ * Named globals plus shared MenuCursor unions: 1140 bytes, 526 differing
+ * halfwords / 347 aligned edits before correcting the owner lookup argument.
+ * The union only repairs one store-order slot here. Named globals leave a
+ * 92-byte frame instead of 96; the saved text length remains in a high
+ * register instead of its stack slot. The accept-key block rotates before
+ * the loop, and several literal pools differ. Replacing the loop with
+ * explicit next-frame/finished gotos grows to 1192 bytes and 385 edits.
+ * Three bounded structural hypotheses stopped; do not repeat those axes.
+ * FAKEMATCH: shared cursor unions preserve object-pointer store ordering. */
 #include "TYPES.H"
 #include "DMA.H"
 #include "RENDER_INPUT.H"
 #include "SHOP.H"
+#include "WORKSPACE_OPTIONS.H"
 
-u8 *Func_08077008(void);
-void Func_0800479c(void);
-struct RenderInput *Func_080162d4(s32, s32, s32, s32, s32);
-s32 Func_08019d2c(s32);
-s32 Func_08019da8(s32,s32,s32,s32);
-void Func_0801e41c(struct RenderInput *,s32,s32,s32,s32);
-void Func_08020b64(struct RenderInput *,u8 *);
-s32 Func_08004080(void);
-s32 Func_08003fa4(u32,u32,const void *);
-void Func_080b0038(struct ShopCursor *,s32,s32);
-s32 Func_08020b14(u8 *);
-void Func_08016478(struct RenderInput *);
-void Func_080030f8(s32);
-void Func_080b0030(struct ShopCursor *,s32,s32,s32);
-void Func_080b0020(struct ShopCursor *);
-void Func_080b0028(struct ShopCursor *);
-void Func_080f9010(s32);
-void Func_08016418(struct RenderInput *,s32);
-void Func_08019e48(s32);
+extern u8 *Data_03001e8c;
+extern u32 Data_03001800;
+extern u32 Data_03001b04;
+extern u32 Data_03001c94;
+extern s8 Data_080371f6[];
+
+u8 *Owner_GetStateFar(s32 owner);
+void Ui_LoadWindowGraphics(void);
+struct RenderInput *UiWindow_Create(s32, s32, s32, s32, s32);
+s32 Localization_LookupEntryId(s32);
+s32 UiWindow_CreateWithSideObject(s32,s32,s32,s32);
+void UiWindow_DrawDividerLine(struct RenderInput *,s32,s32,s32,s32);
+void UiText_DrawPaddedLabel(struct RenderInput *,u8 *);
+s32 Resource_FindFreeEntry(void);
+s32 VramBlock_LoadCached(u32,u32,const void *);
+void ShopCursor_SetPositionImmediateFar(union MenuCursor *,s32,s32);
+s32 UiText_SetRenderString(u8 *);
+void RenderOutput_PrepareForRedraw(struct RenderInput *);
+void WaitFrames(s32);
+void Shop_SetCursorFar(union MenuCursor *,s32,s32,s32);
+void ShopCursor_AdvanceFar(union MenuCursor *);
+void ShopCursor_MoveTowardTargetFar(union MenuCursor *);
+void Audio_PlayCue(s32);
+void UiWork_Finalize(struct RenderInput *,s32);
+void UiWork_FinalizeEntityMatchingLocalizedId(s32);
 
 /* The five-character name editor uses the same cursor state as shop menus. */
-s32 Func_08020bd8(s32 entry)
+s32 NameEntry_EditOwnerName(s32 entry)
 {
     s32 result = 0;
     s32 original_length = 0;
     s32 length = 0;
     u8 text[16];
     u8 *input = text + 1;
-    u8 *saved = Func_08077008();
-    u8 *work = *(u8 **)0x03001e8c;
+    u8 *saved = Owner_GetStateFar(entry);
+    u8 *work = Data_03001e8c;
     s32 text_dirty = 1;
     s32 cursor_dirty = 1;
     struct RenderInput *window;
     struct RenderInput *label;
-    struct ShopCursor cursor;
-    struct ShopCursor caret;
+    union MenuCursor cursor;
+    union MenuCursor caret;
     s32 column, row, slot;
     u8 *end;
     struct RenderOutput *output;
 
-    Func_0800479c();
-    window = Func_080162d4(3,6,24,9,2);
-    label = Func_080162d4(8,3,8,3,2);
-    Func_08019da8(Func_08019d2c(entry),0,3,1);
+    Ui_LoadWindowGraphics();
+    window = UiWindow_Create(3,6,24,9,2);
+    label = UiWindow_Create(8,3,8,3,2);
+    UiWindow_CreateWithSideObject(Localization_LookupEntryId(entry),0,3,1);
     UiWindow_CopyTilemapRegion(window,(void *)0x08073864);
-    Func_0801e41c(window,18,0,18,7);
+    UiWindow_DrawDividerLine(window,18,0,18,7);
     work[0xea3] = text_dirty;
     text[0] = result;
     {
@@ -61,24 +80,24 @@ s32 Func_08020bd8(s32 entry)
         } while(dst <= text + 14);
     }
     input[14] = 0;
-    Func_08020b64(label,saved);
-    slot = Func_08004080();
+    UiText_DrawPaddedLabel(label,saved);
+    slot = Resource_FindFreeEntry();
     column = 18;
     row = 5;
     if(slot <= 95) {
-        Func_08003fa4(slot,128,(void *)0x080310a4);
+        VramBlock_LoadCached(slot,128,(void *)0x080310a4);
         output = RenderOutput_Create(slot,0x40000000,window,0,0);
-        cursor.anchor = (struct ShopCursorAnchor *)output;
-        Func_080b0038(&cursor,window->x * 8 + 140,window->y * 8 + 52);
+        cursor.output = output;
+        ShopCursor_SetPositionImmediateFar(&cursor,window->x * 8 + 140,window->y * 8 + 52);
     }
-    slot = Func_08004080();
+    slot = Resource_FindFreeEntry();
     if(slot <= 95) {
-        Func_08003fa4(slot,128,(void *)0x080317e4);
+        VramBlock_LoadCached(slot,128,(void *)0x080317e4);
         output = RenderOutput_Create(slot,0x40000000,window,0,0);
-        caret.anchor = (struct ShopCursorAnchor *)output;
+        caret.output = output;
         output->sentinel = 255;
         ((u8 *)output)[25] &= -13;
-        Func_080b0038(&caret,Func_08020b14(input)+70,22);
+        ShopCursor_SetPositionImmediateFar(&caret,UiText_SetRenderString(input)+70,22);
     }
     Dma_Set((void *)0x050001e0,(void *)0x050001c0,0x84000008,(volatile u32 *)0x040000d4);
     *(volatile u16 *)0x050001c8 = 0x6318;
@@ -90,73 +109,73 @@ s32 Func_08020bd8(s32 entry)
             if(row == 5) width = 3;
         }
         UiWindow_SetTileAttributeRect(window,column,row,width,1,14);
-        Func_080030f8(1);
+        WaitFrames(1);
         UiWindow_SetTileAttributeRect(window,column,row,width,1,15);
         if(cursor_dirty) {
             cursor_dirty = 0;
-            Func_080b0030(&cursor,(window->x+column)*8-7,(window->y+row)*8+15,3);
+            Shop_SetCursorFar(&cursor,(window->x+column)*8-7,(window->y+row)*8+15,3);
         }
         if(text_dirty) {
             text_dirty = 0;
-            Func_080b0030(&caret,Func_08020b14(input)+70,22,3);
+            Shop_SetCursorFar(&caret,UiText_SetRenderString(input)+70,22,3);
         }
-        Func_080b0020(&cursor);
-        Func_080b0028(&caret);
+        ShopCursor_AdvanceFar(&cursor);
+        ShopCursor_MoveTowardTargetFar(&caret);
         {
-            u32 frame = (*(u32 *)0x03001800 >> 1) & 7;
-            u8 *sprite = (u8 *)caret.anchor;
-            s8 *wave = (s8 *)0x080371f6;
+            u32 frame = (Data_03001800 >> 1) & 7;
+            u8 *sprite = (u8 *)caret.output;
+            s8 *wave = Data_080371f6;
             u32 x = (*(u16 *)(sprite+6) + wave[frame]) & 511;
             *(u16 *)(sprite+22) = (*(u16 *)(sprite+22) & 0xfffffe00) | x;
             frame = (frame+5)&7;
             sprite[20] = sprite[8] + ((u8 *)wave)[frame];
         }
-        if(*(u32 *)0x03001b04 & 64) {
-            Func_080f9010(111); cursor_dirty = 1; row--;
+        if(Data_03001b04 & 64) {
+            Audio_PlayCue(111); cursor_dirty = 1; row--;
             if(column != 18) { if(row == -1) row = 5; }
             else row = 5 - (row != 3);
         }
-        if(*(u32 *)0x03001b04 & 128) {
-            Func_080f9010(111); cursor_dirty = 1; row++;
+        if(Data_03001b04 & 128) {
+            Audio_PlayCue(111); cursor_dirty = 1; row++;
             if(column != 18) { if(row == 6) row = 0; }
             else row = 4 + (row != 6);
         }
-        if(*(u32 *)0x03001b04 & 32) {
-            Func_080f9010(111); cursor_dirty = 1; column--;
+        if(Data_03001b04 & 32) {
+            Audio_PlayCue(111); cursor_dirty = 1; column--;
             if(column == -1) { column = 18; if((u32)(row-4)>1) column = 16; }
             else if(column==5 || column==11 || column==17) column--;
         }
-        if(*(u32 *)0x03001b04 & 16) {
-            Func_080f9010(111); cursor_dirty = 1; column++;
+        if(Data_03001b04 & 16) {
+            Audio_PlayCue(111); cursor_dirty = 1; column++;
             if(column == 19) column=0;
             else if(column==5 || column==11 || column==17) column++;
             if(column==18 && (u32)(row-4)>1) column=0;
         }
-        if(*(u32 *)0x03001c94 & 8) {
-            Func_080f9010(111); cursor_dirty=1; column=18; row=5;
+        if(Data_03001c94 & 8) {
+            Audio_PlayCue(111); cursor_dirty=1; column=18; row=5;
         }
-        if(*(u32 *)0x03001b04 & 2) {
-            Func_080f9010(113);
+        if(Data_03001b04 & 2) {
+            Audio_PlayCue(113);
 remove_character:
             if(length != 0) {
                 length--; *--end = 0;
-                Func_08016478(label);
-                Func_08020b64(label,input);
+                RenderOutput_PrepareForRedraw(label);
+                UiText_DrawPaddedLabel(label,input);
                 text_dirty=1;
                 continue;
             }
             result=-1;
             break;
         }
-        if(!(*(u32 *)0x03001b04 & 1)) continue;
-        Func_080f9010(112);
+        if(!(Data_03001b04 & 1)) continue;
+        Audio_PlayCue(112);
         if(column==18) {
             if(row==5) {
                 if(length==0) {
-                    caret.anchor->kind=13;
-                    Func_08016478(label);
-                    Func_08020b64(label,saved);
-                    Func_080030f8(10);
+                    ((struct ShopCursorAnchor *)caret.output)->kind=13;
+                    RenderOutput_PrepareForRedraw(label);
+                    UiText_DrawPaddedLabel(label,saved);
+                    WaitFrames(10);
                 } else {
                     s32 i=0; u8 *src=input; u8 *dst=saved;
                     do { *dst++ = *src++; i++; } while(i<=14);
@@ -172,14 +191,14 @@ remove_character:
             if(length==5) continue;
             *end++=character; *end=0; length++;
             if(length==5) { cursor_dirty=1; column=18; row=5; }
-            Func_08016478(label);
-            Func_08020b64(label,input);
+            RenderOutput_PrepareForRedraw(label);
+            UiText_DrawPaddedLabel(label,input);
             text_dirty=1;
         }
     }
-    Func_08016418(window,2);
-    Func_08016418(label,2);
-    Func_08019e48(entry);
-    Func_080030f8(1);
+    UiWork_Finalize(window,2);
+    UiWork_Finalize(label,2);
+    UiWork_FinalizeEntityMatchingLocalizedId(entry);
+    WaitFrames(1);
     return result;
 }

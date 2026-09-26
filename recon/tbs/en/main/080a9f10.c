@@ -1,8 +1,13 @@
 /* NONMATCHING: 1336 of 1336 bytes, 11 differing halfwords (2026-09-25).
  * Restored the closer do-while form; the later range-hoisting rewrite
  * emitted 1328 bytes and differed in 555 halfwords. Remaining: the first
- * range load and unsigned target-count precheck. Wider range locals and
- * an inline getter did not restore the reference register copies.
+ * range load and unsigned target-count precheck. An explicit index precheck
+ * gives 43 differing halfwords; caching the range before it (u8 or u32)
+ * gives 1332 bytes and 105 differences. Both lose the reference's range
+ * copies. A cached unsigned 8-bit bitfield view also gives 1332 bytes/33
+ * aligned edits, unchanged from the byte view: the unsigned precheck is
+ * right, but the first range load still follows the runtime count load.
+ * The 11-halfword baseline is retained.
  */
 #include "TYPES.H"
 #include "BATTLE_EFX.H"

@@ -1,4 +1,7 @@
 /* Draft, not exact (2026-09-24): 61 differing halfwords at equal size (was 4 bytes short); the reference loads the zero it stores into kind and active from the literal pool.
+   Typed sprite fields, widened coordinates, and linked pool masks remove
+   the macro but emit 144 bytes (58–64 edits); shortening the zero pulls the
+   pool ahead of the second division. Retain the closer 160-byte model.
    FAKEMATCH marks below are empty do-while wraps that only move scheduling
    or register choice; they stay tagged until a real spelling replaces them. */
 #include "SHOP.H"

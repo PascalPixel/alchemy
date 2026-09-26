@@ -1,4 +1,8 @@
-/* Draft, not exact (2026-09-24): candidate=832 reference=832 differing_halfwords=385. Constants the reference loads from
+/* Draft, not exact (2026-09-26): candidate=836 reference=832 differing_halfwords=390.
+   Corrected BattleMotion_ApplyVariantMotionFar to take the explicit motion 6
+   that the ROM loads into r1 before the call at 080e0410. The old one-argument
+   prototype omitted that operation; the size increase is not adopted credit.
+   Constants the reference loads from
    the literal pool are spelled as link-time Value_ symbols, which restores
    the reference size; wraps marked FAKEMATCH only move scheduling. */
 #include "TYPES.H"
@@ -48,7 +52,7 @@ void Func_080b50e8(s32 id);
 s32 Func_08002322(s32 angle);
 s32 Func_0800231c(s32 angle);
 void Func_080d6888(s32 member_id, s32 b, s32 c, s32 d, s32 e);
-void Func_080b5088(s32 member_id);
+void Func_080b5088(s32 member_id, s32 motion);
 void Func_080e3908(void *particle, s32 count, s32 flags);
 void Func_080e155c(s32 a, s32 b);
 void Func_080cd52c(void);
@@ -203,7 +207,7 @@ s32 Func_080e01e4(void *object)
                             target = *target_slot;
                             member_id =
                                 M2C_FIELD(target, s16 *, member_id_offset);
-                            Func_080b5088(member_id);
+                            Func_080b5088(member_id, 6);
                             target = *target_slot;
                             count = M2C_FIELD(target, s32 *, 20);
                             idx2++;

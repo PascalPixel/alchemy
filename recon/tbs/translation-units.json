@@ -4265,12 +4265,60 @@
       "source": "recon/tbs/en/overlays/resource_380_c_02004260.c",
       "overlay": "resource_380",
       "absolute_symbols": {
-        "Func_0200c95c": {
+        "Engine_ObjectCreate": {
+          "address": "0x0200c8c4",
+          "kind": "thumb"
+        },
+        "Main_08077040": {
           "address": "0x0200c95c",
           "kind": "thumb"
         },
-        "Func_0200c954": {
+        "Main_08077038": {
           "address": "0x0200c954",
+          "kind": "thumb"
+        },
+        "Engine_ObjectSetScript": {
+          "address": "0x0200c8bc",
+          "kind": "thumb"
+        },
+        "Engine_HeapAllocate": {
+          "address": "0x0200c894",
+          "kind": "thumb"
+        },
+        "Engine_ItemLoadIcon": {
+          "address": "0x0200c934",
+          "kind": "thumb"
+        },
+        "Engine_VramLoad": {
+          "address": "0x0200c8ac",
+          "kind": "thumb"
+        },
+        "Engine_HeapRelease": {
+          "address": "0x0200c8a4",
+          "kind": "thumb"
+        },
+        "Engine_AudioPlayCue": {
+          "address": "0x0200cb14",
+          "kind": "thumb"
+        },
+        "Engine_RunRisingObjectSequence": {
+          "address": "0x0200cafc",
+          "kind": "thumb"
+        },
+        "Main_080772b0": {
+          "address": "0x0200c984",
+          "kind": "thumb"
+        },
+        "Main_08077028": {
+          "address": "0x0200c944",
+          "kind": "thumb"
+        },
+        "Engine_ObjectDispatchRelease": {
+          "address": "0x0200c8cc",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetAnimation": {
+          "address": "0x0200ca0c",
           "kind": "thumb"
         }
       },
@@ -12212,6 +12260,26 @@
         }
       ],
       "absolute_symbols": {
+        "Data_02000240": {
+          "address": "0x02000240",
+          "kind": "data"
+        },
+        "Data_020096c0": {
+          "address": "0x020096c0",
+          "kind": "data"
+        },
+        "Data_020096d0": {
+          "address": "0x020096d0",
+          "kind": "data"
+        },
+        "Data_020096dc": {
+          "address": "0x020096dc",
+          "kind": "data"
+        },
+        "Data_020096ec": {
+          "address": "0x020096ec",
+          "kind": "data"
+        },
         "Engine_DebugGetItem": {
           "address": "0x02009444",
           "kind": "thumb"
@@ -29523,6 +29591,10 @@
       "source": "recon/tbs/en/overlays/resource_377_c_02000a0c.c",
       "overlay": "resource_377",
       "absolute_symbols": {
+        "Data_04000052": {
+          "address": "0x04000052",
+          "kind": "data"
+        },
         "Main_080000c0": {
           "address": "0x02009814",
           "kind": "thumb"
@@ -86303,18 +86375,18 @@
     },
     {
       "id": "ovd-36f-02000454",
-      "source": "recon/tbs/en/overlays/resource_36f_c_02000454.c",
+      "source": "games/THE BROKEN SEAL/SRC/MENU/TITLE/BG_SETUP.C",
       "overlay": "resource_36f",
       "absolute_symbols": {
-        "Main_080002a8": {
+        "Engine_BlendSetDarkenTarget16": {
           "address": "0x02008588",
           "kind": "thumb"
         },
-        "Main_08000290": {
+        "Engine_ResourceGetTableEntry": {
           "address": "0x02008578",
           "kind": "thumb"
         },
-        "Main_080001a8": {
+        "Engine_ResourceDecodeType01": {
           "address": "0x02008558",
           "kind": "thumb"
         }
@@ -86323,7 +86395,7 @@
         {
           "address": "0x02000454",
           "extent": 228,
-          "state": "not-yet-c"
+          "state": "exact-c"
         }
       ],
       "game": "tbs",
@@ -86351,18 +86423,22 @@
     },
     {
       "id": "ovd-370-02000054",
-      "source": "recon/tbs/en/overlays/resource_370_c_02000054.c",
+      "source": "games/THE BROKEN SEAL/SRC/MENU/CLEAR/BG_SETUP.C",
       "overlay": "resource_370",
       "absolute_symbols": {
-        "Main_080002a8": {
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
+        },
+        "Engine_BlendSetDarkenTarget16": {
           "address": "0x02009364",
           "kind": "thumb"
         },
-        "Main_08000290": {
+        "Engine_ResourceGetTableEntry": {
           "address": "0x0200935c",
           "kind": "thumb"
         },
-        "Main_080001a8": {
+        "Engine_ResourceDecodeType01": {
           "address": "0x0200934c",
           "kind": "thumb"
         },
@@ -86375,7 +86451,7 @@
         {
           "address": "0x02000054",
           "extent": 256,
-          "state": "not-yet-c"
+          "state": "exact-c"
         }
       ],
       "game": "tbs",

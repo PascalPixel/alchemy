@@ -21286,7 +21286,8 @@
       "name": "SerialRuntime_StepBlockTransfer"
     },
     "main:080111b4": {
-      "name": "WorldMap_UpdateView"
+      "name": "WorldMap_UpdateView",
+      "source": "FIELD/WORLD_MAP/UPDATE_VIEW.C"
     },
     "resource_3c8:02001f60": {
       "name": "VinasuHeya_SettlePushedBlocks",
@@ -21347,13 +21348,15 @@
       "name": "Func_020002e8"
     },
     "resource_36f:02000454": {
-      "name": "Func_02000454"
+      "name": "Title_LoadBackground",
+      "source": "MENU/TITLE/BG_SETUP.C"
     },
     "resource_370:02000154": {
       "name": "Func_02000154"
     },
     "resource_370:02000054": {
-      "name": "Func_02000054"
+      "name": "Clear_LoadBackground",
+      "source": "MENU/CLEAR/BG_SETUP.C"
     },
     "resource_39c:02004c68": {
       "name": "Func_02004c68"

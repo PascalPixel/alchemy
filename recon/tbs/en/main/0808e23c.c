@@ -1,7 +1,8 @@
-/* Draft, not exact (2026-09-26): 628 of 632 bytes, 283 differing halfwords.
-   Normalized edit distance: 82 halfwords. A shared count/runtime union keeps
-   the count and runtime base high and the inventory index low. They use r9
-   rather than r8; the best count and index still exchange r6/r7.
+/* Draft, not exact (2026-09-26): 628 of 632 bytes, 208 differing halfwords.
+   Normalized edit distance: 106 halfwords. Extending the phase union through
+   the post-call zero regresses from the two-phase model's 82 edits and puts
+   count/runtime values back in low registers. The better two-phase model
+   remains in the preceding commit.
    Typed party/runtime views recover
    base-plus-offset accesses and shared zero/one lifetimes. Confirmation
    copies use +0x240/+0x242 and +0x1c0/+0x1c2. The complete literal pool
@@ -126,7 +127,7 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
     u16 *p;
     s32 j;
     s32 matches;
-    /* FAKEMATCH: reuse one word across the count and runtime phases. */
+    /* FAKEMATCH: reuse one word across the count, runtime and zero phases. */
     union ItemCommandWork work;
 
     result = -1;
@@ -209,6 +210,7 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
         work.runtime = (struct ItemCommandRuntime *)Data_03001ebc;
 
         if (action_id != 0) {
+            u8 *flag;
             GameFlag_Set(0x145);
             GameFlag_Clear(0x142);
 
@@ -237,9 +239,11 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
             UiText_DrawQuantity(item_id, 2);
             UiText_DrawMessage(0x91c, 1);
             Func_08096fb0(action_id, 0);
-            work.runtime->resolving_action = 1;
+            flag = &work.runtime->resolving_action;
+            work.count = 0;
+            *flag = 1;
             Func_08096810();
-            work.runtime->resolving_action = 0;
+            *flag = work.count;
             Func_08097194();
 
             if (Item_GetData(item_id)->use_type & 1)

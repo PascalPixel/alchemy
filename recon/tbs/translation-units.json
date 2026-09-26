@@ -65415,7 +65415,7 @@
     },
     {
       "id": "world-map-display-transition",
-      "source": "recon/tbs/en/overlays/resource_371_c_020039fc.c",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/WORLD_MAP/DISPLAY_TRANSITION.C",
       "overlay": "resource_371",
       "absolute_symbols": {
         "Engine_ActorGet": {
@@ -65523,7 +65523,7 @@
         {
           "address": "0x020039fc",
           "extent": 1300,
-          "state": "not-yet-c"
+          "state": "exact-c"
         }
       ],
       "game": "tbs",

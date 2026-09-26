@@ -1,4 +1,8 @@
-/* NONMATCHING: H0 408/404 bytes, 141 differing halfwords / 89 aligned edits (2026-09-26).
+/* NONMATCHING: H1 404/404 bytes, 125 differing halfwords / 63 aligned edits.
+ * The unsigned whole-angle halfword view restores both shifts inside the
+ * settle loop and x in r9; increment sharing still adds one stack word.
+ * H1 does not match: the fourth pool word and several register lifetimes differ.
+ * H0 408/404 bytes, 141 differing halfwords / 89 aligned edits (2026-09-26).
  * Complete own-ROM extent 02000d2c..02000ec0, including four pool words.
  * FIELD_EVENT.H and exact FieldScene_RunSharedSetPiece establish actor y at
  * +0x0c and sprite rotation at +0x1e. The old draft called y "z" and declared
@@ -18,7 +22,13 @@ void ArutinYama_SwingActorIntoSetPiece(void)
     struct FieldSprite *sprite;
     s32 x;
     s32 y;
-    u32 acc;
+    union {
+        u32 fixed;
+        struct {
+            u16 fraction;
+            u16 whole;
+        } part;
+    } acc;
     u32 angle;
     u32 limit;
     u32 half;
@@ -36,11 +46,11 @@ void ArutinYama_SwingActorIntoSetPiece(void)
     Audio_PlayCue(0x121);
     Work_SetValuesIfNonNegative(-1, -1, 0xe666);
     Event_Wait(20);
-    acc = 0;
+    acc.fixed = 0;
     limit = 0x8fff;
 rise:
-    acc += 0x80000;
-    sprite->rotation += acc >> 16;
+    acc.fixed += 0x80000;
+    sprite->rotation += acc.part.whole;
     c = Math_Cos(sprite->rotation + 0x4000);
     actor->x.fixed = (c << 4) + x;
     angle = sprite->rotation;
@@ -48,11 +58,11 @@ rise:
         Task_Wait(1);
         goto rise;
     }
-    acc = 0;
+    acc.fixed = 0;
     limit = 0x7000;
 fall:
-    acc += 0x80000;
-    sprite->rotation = angle - (acc >> 16);
+    acc.fixed += 0x80000;
+    sprite->rotation = angle - (acc.part.whole);
     c = Math_Cos(sprite->rotation + 0x4000);
     actor->x.fixed = (c << 4) + x;
     angle = sprite->rotation;
@@ -62,10 +72,10 @@ fall:
         goto fall;
     }
     half = 0x8000;
-    acc = 0x80000;
+    acc.fixed = 0x80000;
 settle:
-    acc = ((acc >> 16) + (acc >> 19)) << 16;
-    limit = acc >> 16;
+    acc.fixed = ((acc.part.whole) + (acc.fixed >> 19)) << 16;
+    limit = acc.part.whole;
     sprite->rotation = limit + angle;
     c = Math_Cos(sprite->rotation + 0x4000);
     s = Math_Sin(sprite->rotation + half);

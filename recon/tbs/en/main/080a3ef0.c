@@ -1,36 +1,47 @@
+/* Draft: main:080a3ef0, complete 444-byte extent.
+ * Remaining: 22 halfwords differ solely in swapped r8/sl assignments
+ * for the holder/saved-record and status-style lifetimes. */
 #include "TYPES.H"
-#include "GLOBAL_CELLS.H"
+#include "ITEM.H"
+#include "OWNER_STATE.H"
 
-typedef s32 (*WordCopyFn)(void *dest, const void *src, s32 count);
+struct EquipPreviewMenu {
+    u8 reserved_000[0x24];
+    s32 status_window;
+};
 
-void *Func_08077008(s32 unit_id);
-void *Func_08077018(s32 item_id);
-s32 Func_08077028(s32 unit_id, s32 item_id);
-void Func_080a112c(s32 target, s32 actor, s32 slot, s32 flags);
-s32 Func_080a40ac(s32 unit_id);
-void *Func_08004938(s32 size);
-void Func_08002df0(void *buffer);
-
-void Func_080a3ef0(s32 holder, s32 slot, s32 mode, s32 actor)
+extern u8 Data_03001388[];
+s32 Func_080072f0(void *dst, const void *src, s32 size, void *copy);
+static __inline__ s32 CopyWords(void *dst, const void *src, s32 size)
 {
-    void *state;
-    s32 item_id;
-    s32 flags = 0;
-    u8 type;
+    return Func_080072f0(dst, src, size, Data_03001388);
+}
 
-    state = *(void **)ADDR_03001F2C;
-    item_id = *(u16 *)((u8 *)Func_08077008(holder) + 216 + slot * 2);
-    if (mode == 1) {
-        flags = 0x100;
-    }
+extern struct EquipPreviewMenu *gMenuWork;
+struct OwnerInventoryState *Owner_GetStateFar(s32 owner);
+void *Runtime_BumpAllocate(s32 size);
+void Runtime_BumpFree(void *buffer);
+s32 Inventory_RemoveFirstUnflagged(s32 owner);
+s32 Inventory_AddItemFar(s32 owner, s32 item);
+void Menu_DrawOwnerStatusPanel(s32 window, s32 owner, s32 slot, s32 style);
 
-    type = *((u8 *)Func_08077018(item_id & 0x1ff) + 2);
+/* Temporarily equip the selected item on the target, draw its status, then
+   restore the complete 0x14c-byte owner record. */
+void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target)
+{
+    struct EquipPreviewMenu *menu = gMenuWork;
+    s32 style = 0;
+    struct OwnerInventoryState *state = Owner_GetStateFar(owner);
+    s32 item = state->inventory[slot];
+    void *saved;
+    s32 equipped;
 
-    switch (type) {
+    if (mode == 1)
+        style = 0x100;
+    switch (Item_Get(item & 0x1ff)->type) {
     case 0:
-        Func_080a112c(*(s32 *)((u8 *)state + 36), actor, slot, flags);
+        Menu_DrawOwnerStatusPanel(menu->status_window, target, slot, style);
         break;
-
     case 1:
     case 2:
     case 3:
@@ -39,65 +50,52 @@ void Func_080a3ef0(s32 holder, s32 slot, s32 mode, s32 actor)
     case 7:
     case 8:
     case 9:
-        if (holder == actor) {
-            flags |= 2;
-            Func_080a112c(*(s32 *)((u8 *)state + 36), actor, slot, flags);
+        if (owner == target) {
+            style |= 2;
+            Menu_DrawOwnerStatusPanel(menu->status_window, target, slot, style);
         } else {
-            void *other_window;
-            void *buf;
-            s32 check;
-
-            other_window = Func_08077008(actor);
-            buf = Func_08004938(0x14c);
-            ((WordCopyFn)0x03001388)(buf, other_window, 0x14c);
-            check = Func_080a40ac(actor);
-            if (check == 0) {
-                Func_080a112c(*(s32 *)((u8 *)state + 36), actor, slot, flags);
-            } else {
-                s32 result;
-
-                item_id &= 0xfffffdff;
-                result = Func_08077028(actor, item_id);
-                if (result == -1) {
-                    Func_080a112c(*(s32 *)((u8 *)state + 36), actor, slot, flags);
+            state = Owner_GetStateFar(target);
+            saved = Runtime_BumpAllocate(0x14c);
+            CopyWords(saved, state, 0x14c);
+            equipped = Inventory_RemoveFirstUnflagged(target);
+            if (equipped != 0) {
+                item &= ~0x200;
+                equipped = Inventory_AddItemFar(target, item);
+                if (equipped != -1) {
+                    style |= 2;
+                    Menu_DrawOwnerStatusPanel(menu->status_window, target, equipped, style);
                 } else {
-                    flags |= 2;
-                    Func_080a112c(*(s32 *)((u8 *)state + 36), actor, result, flags);
+                    Menu_DrawOwnerStatusPanel(menu->status_window, target, slot, style);
                 }
+            } else {
+                Menu_DrawOwnerStatusPanel(menu->status_window, target, slot, style);
             }
-            ((WordCopyFn)0x03001388)(other_window, buf, 0x14c);
-            Func_08002df0(buf);
+            CopyWords(state, saved, 0x14c);
+            Runtime_BumpFree(saved);
         }
         break;
-
     case 6:
-        if (actor == holder) {
-            flags |= 4;
-            Func_080a112c(*(s32 *)((u8 *)state + 36), actor, slot, flags);
+        if (target == owner) {
+            style |= 4;
+            Menu_DrawOwnerStatusPanel(menu->status_window, target, slot, style);
         } else {
-            void *other_window;
-            void *buf;
-            s32 check;
-
-            other_window = Func_08077008(actor);
-            buf = Func_08004938(0x14c);
-            ((WordCopyFn)0x03001388)(buf, other_window, 0x14c);
-            check = Func_080a40ac(actor);
-            if (check == 0) {
-                Func_080a112c(*(s32 *)((u8 *)state + 36), actor, slot, flags);
-            } else {
-                s32 result;
-
-                result = Func_08077028(actor, item_id);
-                if (result == -1) {
-                    Func_080a112c(*(s32 *)((u8 *)state + 36), actor, slot, flags);
+            state = Owner_GetStateFar(target);
+            saved = Runtime_BumpAllocate(0x14c);
+            CopyWords(saved, state, 0x14c);
+            equipped = Inventory_RemoveFirstUnflagged(target);
+            if (equipped != 0) {
+                equipped = Inventory_AddItemFar(target, item);
+                if (equipped != -1) {
+                    style |= 4;
+                    Menu_DrawOwnerStatusPanel(menu->status_window, target, equipped, style);
                 } else {
-                    flags |= 4;
-                    Func_080a112c(*(s32 *)((u8 *)state + 36), actor, result, flags);
+                    Menu_DrawOwnerStatusPanel(menu->status_window, target, slot, style);
                 }
+            } else {
+                Menu_DrawOwnerStatusPanel(menu->status_window, target, slot, style);
             }
-            ((WordCopyFn)0x03001388)(other_window, buf, 0x14c);
-            Func_08002df0(buf);
+            CopyWords(state, saved, 0x14c);
+            Runtime_BumpFree(saved);
         }
         break;
     }

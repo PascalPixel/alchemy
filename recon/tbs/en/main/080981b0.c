@@ -1,3 +1,10 @@
+/* Draft, not exact (2026-09-26): 232 of 228 bytes, 66 differing halfwords.
+   Complete rising-burst owner, including padding and its literal pool.
+   Symbol constants recover the scale decrement and animation-id loads.
+   Remaining: GCSE replaces the shared 0x10000 in the scale addition with
+   a constant, rematerializing it instead of using sl; initial scheduling
+   and final loop temporaries also differ. Signed scales and reading the
+   stored base scale do not change that ancestry (allocator dump inspected). */
 #include "FIXED_MATH.H"
 #include "TYPES.H"
 #include "OBJECT_EFX.H"
@@ -25,6 +32,9 @@ struct ParticleInstance {
     u8 mode;
 };
 
+extern const u8 Value_fffff800;
+extern const u8 Value_00000a3d;
+
 void Audio_PlayCue(s32 sound);
 void WaitFrames(s32 frames);
 struct ParticleInstance *Object_Spawn(
@@ -32,19 +42,18 @@ struct ParticleInstance *Object_Spawn(
 void Object_SetCallback(struct ParticleInstance *particle, const void *callback);
 u32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
-#define Rand Random16
 void Motion_SetTargetPositionFromMagnitudeAngle(
     struct ParticleInstance *particle, s32 magnitude, s32 angle);
 void Object_Destroy(struct ParticleBurstEffect *effect);
-void UpdateRisingParticleBurst(struct ParticleBurstEffect *effect)
+void Func_080981b0(struct ParticleBurstEffect *effect)
 {
     s32 count;
     s32 scale_step;
     s32 base_scale;
 
     Audio_PlayCue(0x9a);
-    scale_step = -0x800;
     count = 30;
+    scale_step = (s32)&Value_fffff800;
     do {
         effect->y += 0x10000;
         effect->angle += 0x2000;
@@ -62,22 +71,22 @@ void UpdateRisingParticleBurst(struct ParticleBurstEffect *effect)
         particle = Object_Spawn(
             0x11d, effect->x, effect->y, effect->z);
         if (particle != 0) {
-            u32 scale;
-            u32 random;
+            s32 scale;
+            s32 random;
             s32 speed;
 
             Object_SetCallback(particle, &Data_0809f0d4);
-            scale = Rand();
+            scale = Random16();
             particle->base_scale = base_scale;
-            scale += base_scale;
+            scale += particle->base_scale;
             particle->scale = (s32)scale;
             particle->mode = 2;
-            particle->animation_id = 0xa3d;
-            random = Rand();
-            particle->random_offset = (s32)(random - Rand());
-            speed = Rand() * 24 + 0x80000;
+            particle->animation_id = (s32)&Value_00000a3d;
+            random = Random16();
+            particle->random_offset = (s32)(random - Random16());
+            speed = Random16() * 24 + 0x80000;
             Motion_SetTargetPositionFromMagnitudeAngle(
-                particle, speed, Rand());
+                particle, speed, Random16());
         }
         count--;
     } while (count >= 0);

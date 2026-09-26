@@ -1,9 +1,15 @@
-/* Draft, not exact (2026-09-24): candidate=380 reference=396, 168 differing halfwords.
-   Hand-written from the assembly; control flow, calls and constants follow the
-   reference. Residual: the reference keeps the work pointer on the stack (all of
-   r5-r7, r8-fp are taken), addresses the two projected positions through
-   registers rebuilt before each projection call (r4 spilled to sp+4, r7), and
-   keeps the streak pointer in r8 and the 0xffff mask in r6. */
+/* Draft, not exact (2026-09-26): candidate=400 reference=396,
+   146 differing halfwords, 49 aligned edits; equal block topology, frame 48.
+   Fresh baseline with shared projection header: 412/396 bytes, 188 differing
+   halfwords, 73 aligned edits. H1 splits the first-frame seed cursor from
+   the draw cursor. This recovers seed r5, mask r6, draw cursor r8 and removes
+   twelve extra bytes; the work spill and both projection slots already match.
+   Residual: seed/mask literal order, a second zero for the draw index,
+   projection argument scheduling, and the first line's color calculation.
+   The exact next owner PREPARE_SCENE.C schedules this no-argument callback
+   at 0xc80 after resetting work+778c. Extent is [080cc960,080ccaec).
+   No bytes adopted. Next hypothesis: one zero initializes both the local
+   point's y/z fields and the draw index, as in the reference. */
 #include "TYPES.H"
 #include "EFFECT_STEP.H"
 
@@ -42,16 +48,17 @@ void Func_080cc960(void)
 
     frame = (*(s32 *)(work + 0x778c))++;
     if (frame == 0) {
-        streak = (struct Streak *)0x02010000;
+        struct Streak *seed = (struct Streak *)0x02010000;
+
         for (i = 0; i != 256; i++) {
             s32 r = Random16() & 15;
 
-            streak->head = r + 48;
-            streak->tail = r + 40;
-            streak->pitch = Random16() & 0xffff;
-            streak->yaw = Random16() & 0xffff;
-            streak->roll = Random16() & 0xffff;
-            streak++;
+            seed->head = r + 48;
+            seed->tail = r + 40;
+            seed->pitch = Random16() & 0xffff;
+            seed->yaw = Random16() & 0xffff;
+            seed->roll = Random16() & 0xffff;
+            seed++;
         }
     }
     point.y = 0;
@@ -67,11 +74,11 @@ void Func_080cc960(void)
             SceneTransform_ApplyPitch(streak->pitch);
             SceneTransform_ApplyYaw(streak->yaw);
             point.distance = streak->head;
-            EffectPosition_ApplyBaseAndYOffset((s32)&point, &head);
+            EffectPosition_ApplyBaseAndYOffset((s32 *)&point, &head);
             head.x += 64;
             head.y += 80;
             point.distance = streak->tail;
-            EffectPosition_ApplyBaseAndYOffset((s32)&point, &tail);
+            EffectPosition_ApplyBaseAndYOffset((s32 *)&point, &tail);
             tail.x += 64;
             tail.y += 80;
             streak->tail -= 4;

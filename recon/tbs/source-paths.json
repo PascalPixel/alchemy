@@ -1,6 +1,9 @@
 {
   "format": 3,
   "owners": {
+    "main:080108e4": {
+      "name": "Map_WriteLayerCellTile"
+    },
     "main:0801ef68": {
       "name": "UiWindow_DrawColumnBorders"
     },
@@ -21748,7 +21751,6 @@
     "main:0801a7f4": "MenuSelection_BuildEntries",
     "main:080e2974": "BattlePres_RunBurstScene",
     "main:080118c0": "Map_SetLayerEntryFlag",
-    "main:080108e4": "Map_WriteLayerCellTile",
     "main:080ad40c": "FourObjectMotion_UpdateBottomRow",
     "main:0808b3ec": "Event_SpawnObjectTable",
     "main:08091e9c": "Event_SetValue170",

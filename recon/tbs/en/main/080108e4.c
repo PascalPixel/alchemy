@@ -3,7 +3,15 @@
    (main:080109e8) out of this listing. The bottom-half table goes through a
    pointer local so it reloads per tile as in the ROM. Remaining: that load
    lands in r7 before the top store (ROM: r2 after it), and the column and
-   row masks use r7 and r1 where the ROM uses r1 twice. */
+   row masks use r7 and r1 where the ROM uses r1 twice.
+   2026-09-26 reuse tests: a scoped CopyTile helper fixes both mask roles,
+   but merges the two table constants (260 bytes / 53 halfwords, 22 edits).
+   Separate named table symbols hoist both bases (264 / 58, 30 edits).
+   Baseline remains 260 / 21, 16 aligned edits; the helper axis is stopped.
+   This complete owner was present only under symbols and is now registered.
+   Score with --size 260: region_size prefers the older non-full manifest,
+   which still bundles the following 864-byte scene. Production's rebuilt
+   inventory independently confirms [080108e4, 080109e8), 260 bytes. */
 #include "DMA.H"
 
 struct MapLayerWork {

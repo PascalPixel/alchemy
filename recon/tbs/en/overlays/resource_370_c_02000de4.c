@@ -1,8 +1,9 @@
-/* NONMATCHING: resource_370:02000de4; 1016 / 1024 bytes, 465 differing
- * halfwords, 448 wrong instructions, 290 halfword edits. Integer-domain
+/* NONMATCHING: resource_370:02000de4; 1004 / 1024 bytes, 479 differing
+ * halfwords, 442 wrong instructions, 286 halfword edits. Integer-domain
  * packing offset restores complete topology. The shared money union gives
  * the reference's one base and +16/+18 accesses. Frame remains 68 / 64 bytes;
- * property load width, counter allocation and rank reloads remain. */
+ * a word item temporary restores unsigned ldrh without extension. Property
+ * key spill, counter allocation and rank reloads remain. */
 #include "TYPES.H"
 
 struct PasswordStats {
@@ -174,7 +175,7 @@ s32 Func_02000de4(s32 unused, s32 mode, u8 *out)
                 u16 *code = state->item_codes;
                 s32 k;
                 for (k = 0; k != 15; k++) {
-                    u16 item = *code++;
+                    u32 item = *code++;
                     if ((item & 0x1ff) == Data_020096ec[j])
                         property = (item & 0xf800) >> 11;
                 }

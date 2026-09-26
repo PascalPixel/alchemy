@@ -4,7 +4,10 @@
  * set early in the branch (sched2 sinks it), and 0xa01b is a Value_ link
  * symbol so its r5 load is not hoisted above the message call. Remaining: the
  * ShowMessageAndWait speaker is copied from r5 where the reference reloads it
- * from the same pool entry. */
+ * from the same pool entry. Numeric speaker plus an explicit saved-link
+ * lifetime reproduced the load but added a separate four-byte pool entry;
+ * isolating the call in a one-pass block left four halfwords different.
+ * A halfword-mode speaker introduced an early pool and grew to 908 bytes. */
 #include "TYPES.H"
 
 void Engine_EventBegin();

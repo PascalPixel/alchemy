@@ -1,10 +1,10 @@
-/* Draft, not exact (2026-09-24): 496 of 492 bytes, 34 halfword edits
-   (75 differing halfwords by position). Everything through the heal loop
-   matches. Residual: the return-point tail. The ROM stores return_x once
-   from two paths (x itself, or home_x loaded at one shared block reached
-   from both branches); here the home_x paths do not cross-jump and the
-   tail is 4 bytes longer. Tried: a shared x local stored once, a
-   use_home label, || and && spellings of the else branch. */
+/* Draft, not exact: 480 of 492 bytes, 37 halfword edits, 87 differing
+   halfwords by position. A fallback label inside the entry-point branch
+   shares home_x, but also merges its destination-address setup too early.
+   The return tail is 12 bytes short; the heal loop additionally schedules
+   the PP store after HP sign extension. An out-of-branch fallback label
+   gives 488 bytes and 22 edits, but moves the defeat fallback past entry
+   loads and reloads the state pointer before the both-unset home case. */
 #include "TYPES.H"
 #include "BATTLE_TYPES.H"
 
@@ -103,7 +103,7 @@ void Party_SetReturnPoint(s32 reason)
                 st->return_y = st->sanctum_y;
                 return;
             }
-            st->return_x = st->home_x;
+            goto default_x;
         } else {
             st->return_x = x;
         }
@@ -113,6 +113,7 @@ void Party_SetReturnPoint(s32 reason)
         if (x == -1) {
             if (y == -1)
                 goto home;
+default_x:
             st->return_x = st->home_x;
         } else {
             st->return_x = x;

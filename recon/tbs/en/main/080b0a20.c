@@ -1,10 +1,11 @@
 #include "TYPES.H"
 #include "SHOP.H"
 
-/* NONMATCHING: widening the pooled zero and consuming x in place adds
- * one instruction. A union word/byte attribute view does not restore
- * the anchor reload. Retain the 28-instruction baseline; source alias
- * evidence is still needed before register tuning. */
+/* NONMATCHING: 74 of 76 bytes, 23 aligned edits. A pointer-containing
+ * attribute union restores the anchor reload but changes mask allocation
+ * and pool placement (76 bytes, 27 edits). Consuming x in place gives
+ * 74 bytes, 24 edits; widening the zero then gives 72 bytes, 27 edits.
+ * Retain the closest baseline; aliasing explains the missing reload. */
 
 #define ShopCursor_SetPositionImmediate Func_080b0a20
 

@@ -1,3 +1,6 @@
+/* NONMATCHING: shared callee return types audited on 2026-09-26.
+ * 388 of 388 bytes, 163 differing halfwords, 85 aligned edits.
+ * Canonical declarations are retained; the remaining source model is not exact. */
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
 
@@ -42,7 +45,7 @@ extern void Func_08004858(void);
 extern void Func_080770c8(s32);
 extern void Func_080770d0(s32);
 extern void Func_080b5534(void);
-extern void Func_080b5368(s32);
+extern s32 Func_080b5368(s32);
 extern void Func_080b63c8(s32);
 
 void WaitFrames(s32);

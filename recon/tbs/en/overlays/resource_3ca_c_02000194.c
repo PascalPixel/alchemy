@@ -1,11 +1,12 @@
-/* NONMATCHING: 556 bytes, candidate 554, 44 differing halfwords, 34 aligned
+/* NONMATCHING: 556 bytes, candidate 558, 244 differing halfwords, 43 aligned
  * edits (2026-09-26). Reconstructed both Q16 waves and all four actor-height
  * blocks. The complete topology now agrees. Remaining: halfword scroll
  * reload and stack-slot ownership, saved position pointer, and spawn stores.
- * A halfword zero restores the reference's mid-function literal pool, making
- * the Q16 and four-actor blocks exact. Scroll is a promoted halfword spilled
- * at +6 instead of the reference's addressable slot at +18. The position
- * work still keeps a saved stack base. Earlier trials are committed. */
+ * Corrected BLDALPHA and all six neighbouring base-height addresses from
+ * the raw listing's literal words. An addressable scroll array restores the
+ * +18 slot and its address scheduling. Reusing bob for the reload keeps
+ * an unwanted r6 copy; position-pointer and x lifetimes still differ.
+ * Earlier structural attempts are preserved in draft commits. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "IWRAM_CALL.H"
@@ -40,18 +41,18 @@ extern s32 Data_020097f0;
 extern s32 Data_020097f8;
 extern s32 Data_020097fc;
 extern s32 Data_02009800;
+extern s32 Data_02009804;
+extern s32 Data_02009808;
+extern s32 Data_0200980c;
 extern s32 Data_02009810;
-extern s32 Data_02009820;
-extern s32 Data_02009830;
-extern s32 Data_02009840;
-extern s32 Data_02009850;
-extern s32 Data_02009860;
+extern s32 Data_02009814;
+extern s32 Data_02009818;
 
 void BabiFune_UpdateDriftingObject(u8 *obj);
 
 void BabiFune_UpdateWaves(void)
 {
-    struct Half scroll;
+    volatile u16 scroll[1];
     struct Half zero;
     struct Position buf;
     struct PositionWork work;
@@ -64,36 +65,37 @@ void BabiFune_UpdateWaves(void)
     if (Data_020097e8 != 0) {
         bob = Iwram_MulQ16(Engine_MathSin(Data_020097ec << 9), 3);
         /* FAKEMATCH: explicit halfword accesses retain truncation before I/O. */
-        *(volatile u16 *)&scroll = Data_020097f0 + ((bob + 8) << 8);
-        *(volatile u16 *)0x0400001a = *(volatile u16 *)&scroll;
+        scroll[0] = Data_020097f0 + ((bob + 8) << 8);
+        bob = scroll[0];
+        *(volatile u16 *)0x04000052 = bob;
         Data_020097ec++;
     }
     if (Data_020097fc != 0) {
         bob = Iwram_MulQ16(Engine_MathSin(Data_02009800 << 9), 2) << 16;
-        map->layers[6].y = Data_02009810 + bob;
-        map->layers[7].y = Data_02009820 + bob;
-        if (Data_02009830 != -0x10000) {
+        map->layers[6].y = Data_02009804 + bob;
+        map->layers[7].y = Data_02009808 + bob;
+        if (Data_0200980c != -0x10000) {
             actor = Engine_ActorGet(0);
-            actor->y.fixed = Data_02009830 + bob;
-            *(s32 *)actor->unknown_14 = Data_02009830 + bob;
+            actor->y.fixed = Data_0200980c + bob;
+            *(s32 *)actor->unknown_14 = Data_0200980c + bob;
             actor->motion_flags = 0;
         }
-        if (Data_02009840 != -0x10000) {
+        if (Data_02009810 != -0x10000) {
             actor = Engine_ActorGet(1);
-            actor->y.fixed = Data_02009840 + bob;
-            *(s32 *)actor->unknown_14 = Data_02009830 + bob;
+            actor->y.fixed = Data_02009810 + bob;
+            *(s32 *)actor->unknown_14 = Data_0200980c + bob;
             actor->motion_flags = 0;
         }
-        if (Data_02009850 != -0x10000) {
+        if (Data_02009814 != -0x10000) {
             actor = Engine_ActorGet(3);
-            actor->y.fixed = Data_02009850 + bob;
-            *(s32 *)actor->unknown_14 = Data_02009830 + bob;
+            actor->y.fixed = Data_02009814 + bob;
+            *(s32 *)actor->unknown_14 = Data_0200980c + bob;
             actor->motion_flags = 0;
         }
-        if (Data_02009860 != -0x10000) {
+        if (Data_02009818 != -0x10000) {
             actor = Engine_ActorGet(2);
-            actor->y.fixed = Data_02009860 + bob;
-            *(s32 *)actor->unknown_14 = Data_02009830 + bob;
+            actor->y.fixed = Data_02009818 + bob;
+            *(s32 *)actor->unknown_14 = Data_0200980c + bob;
             actor->motion_flags = 0;
         }
         Data_02009800++;

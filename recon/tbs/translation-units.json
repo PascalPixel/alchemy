@@ -2,6 +2,80 @@
   "format": 6,
   "units": [
     {
+      "id": "korosseo-kawa-competitor-intro",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/KOROSSEO/FADE_IN_COMPETITOR.C",
+      "overlay": "resource_3ba",
+      "absolute_symbols": {
+        "Engine_ActorGet": {
+          "address": "0x0200bcb8",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpritePriority": {
+          "address": "0x0200bd58",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpriteFlags": {
+          "address": "0x0200bc10",
+          "kind": "thumb"
+        },
+        "Engine_ObjectSetAnimation": {
+          "address": "0x0200bba8",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetPosition": {
+          "address": "0x0200bcf8",
+          "kind": "thumb"
+        },
+        "Engine_ActorFaceActor": {
+          "address": "0x0200bd20",
+          "kind": "thumb"
+        },
+        "Engine_AudioPlayCue": {
+          "address": "0x0200bdf8",
+          "kind": "thumb"
+        },
+        "Engine_TaskWait": {
+          "address": "0x0200bb08",
+          "kind": "thumb"
+        },
+        "Engine_EventWait": {
+          "address": "0x0200bc98",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetAnimationAndWait": {
+          "address": "0x0200bd08",
+          "kind": "thumb"
+        },
+        "Korosseo_CompetitorStartX": {
+          "address": "0x0200c804",
+          "kind": "data"
+        },
+        "Korosseo_CompetitorStartZ": {
+          "address": "0x0200c75c",
+          "kind": "data"
+        },
+        "Korosseo_CompetitorStartAngle": {
+          "address": "0x0200c788",
+          "kind": "data"
+        },
+        "gCompetitorIoQueue": {
+          "address": "0x02002090",
+          "kind": "data"
+        },
+        "gInterruptMasterEnable": {
+          "address": "0x04000208",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02002910",
+          "extent": 476,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
       "id": "djinn-menu-show-change-preview",
       "source": "games/THE BROKEN SEAL/SRC/MENU/DJINN_CHANGE_PREVIEW.C",
       "owners": [

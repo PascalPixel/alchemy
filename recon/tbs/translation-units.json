@@ -2,6 +2,21 @@
   "format": 5,
   "units": [
     {
+      "id": "haidia-facing-test",
+      "source": "recon/tbs/en/overlays/resource_373_c_0200564c.c",
+      "overlay": "resource_373",
+      "absolute_symbols": {
+        "Engine_ObjectSetAnimation": { "address": "0x0200def4", "kind": "thumb" },
+        "Runtime_ComputeFixedPointDistance": { "address": "0x0200d610", "kind": "thumb" },
+        "Main_08000100": { "address": "0x0200deac", "kind": "thumb" }
+      },
+      "owners": [
+        { "address": "0x0200564c", "extent": 224, "state": "not-yet-c" }
+      ],
+      "game": "tbs",
+      "compiler_route": "canonical-gcc296"
+    },
+    {
       "id": "retained-overlay-3ca-02000194",
       "game": "tbs",
       "source": "recon/tbs/en/overlays/resource_3ca_c_02000194.c",

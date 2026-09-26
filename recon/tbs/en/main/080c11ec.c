@@ -7,6 +7,10 @@
  * H1 result: candidate 588/588, two differing halfwords, identical to the
  * baseline. The corrected array ownership preserves the complete body;
  * it does not change the loop-preheader scheduling residual.
+ * H2: use the resident multiply link symbol, as in the exact projected
+ * sprite module. Candidate 588/588, the same two differing halfwords and
+ * one shared multiply pool word. Symbol versus numeric constant does not
+ * change the preheader order; do not repeat that representation axis.
  * A count-up source loop is reversed by the compiler and matches the ROMs countdown and register choices.
  * Residual: moving the multiply routine into r9 precedes adding the spark
  * base in the ROM. The loop pass hoists the numeric routine after the base
@@ -51,6 +55,9 @@ extern struct WorkSlots Data_03001e50;
 extern s32 Data_080c3604[];
 extern u8 Data_080c3620[];
 extern s32 Data_080c3628[];
+extern u8 Value_03000118[];
+
+#define Spark_MulQ16(left, right) Iwram_Call2((left), (right), Value_03000118)
 
 #define Iwram_DivQ16 ((s32 (*)(s32, s32))0x0300013c)
 
@@ -107,7 +114,7 @@ s32 Func_080c11ec(void)
                 pos = spark->pos;
                 for (k = 2; k >= 0; k--) {
                     value = *pos;
-                    step = Iwram_MulQ16(Iwram_MulQ16(-value >> 8, scale), 0x13000);
+                    step = Spark_MulQ16(Spark_MulQ16(-value >> 8, scale), 0x13000);
                     pos[3] = pos[3] - (pos[3] >> 7) + step;
                     *pos = value + pos[3];
                     pos++;
@@ -121,8 +128,8 @@ s32 Func_080c11ec(void)
             angle = Random16();
             radius = Random16() + 0x10000;
             half = radius >> 1;
-            spark->pos[0] = Iwram_MulQ16(Trig_Cos(angle), half);
-            spark->pos[1] = Iwram_MulQ16(Trig_Sin(angle), half);
+            spark->pos[0] = Spark_MulQ16(Trig_Cos(angle), half);
+            spark->pos[1] = Spark_MulQ16(Trig_Sin(angle), half);
             if (spark->pos[0] & 1)
                 spark->pos[0] = -spark->pos[0];
             if (spark->pos[1] & 1)

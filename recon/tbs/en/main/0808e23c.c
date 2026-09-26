@@ -1,6 +1,7 @@
-/* Draft, not exact (2026-09-24): candidate=632 reference=632 differing_halfwords=255. Constants the reference loads from
-   the literal pool are spelled as link-time Value_ symbols, which restores
-   the reference size; wraps marked FAKEMATCH only move scheduling. */
+/* Draft, not exact (2026-09-26): 632 of 632 bytes, 255 differing halfwords.
+   The signed effect-ID/callback union emits the same call-through-r3 as
+   the previous fourth-argument model. Remaining: inventory loop lifetimes,
+   aggregate bases, constant selection and runtime-flag lifetimes. */
 #include "TYPES.H"
 extern u8 Value_000003ff;
 extern u8 Value_000001f8;
@@ -65,13 +66,18 @@ struct BattleUnitObject {
                            shop/sel/use.c's Ability_GetAvailability scan. */
 };
 
+typedef s32 (*BattleItemCallback)(s32 item, s32 actor, s32 slot);
+
+union BattleItemEffect {
+    s32 id;
+    BattleItemCallback callback;
+};
+
 struct BattleItemEventRecord {
     s32 flags;
     u16 metadata;
     s16 unknown_06;
-    s32 effect; /* raw effect id when < 0x10000, else a callback pointer
-                   dispatched through the __call_via_r3 veneer below (the
-                   reference compares this signed: bge, not bcs). */
+    union BattleItemEffect effect; /* The ID/pointer threshold is signed. */
 };
 
 /* Declared void *-returning: main:0808e680 (BattleCommand_ExecuteSelectedAction)
@@ -99,27 +105,8 @@ void Func_08091750(void);
 void Func_08096fb0(s32 action_id, s32 mode);
 void Func_08096810(void); /* RunBattleEffect (battle/effects/run/run_effect.c) */
 void Func_08097194(void); /* named BattleFx_CleanupSceneObjects in source-paths.json */
-#define BattleFx_CleanupSceneObjects Func_08097194
 u8 Func_08077058(s32 actor, s32 slot);
 struct ItemDefinition *Item_GetData(s32 item);
-
-/*
- * __call_via_r3 veneer at 0x080072e4+4*3: an indirect call through whatever
- * pointer is in r3 at the call site (here, event->effect once proven
- * >= 0x10000), modeled per project convention as a direct call with the
- * target as a trailing argument. Keep the first-view s32 signature from
- * 0808df1c.c when both retained parents share a TU.
- */
-s32 Func_080072f0(s32 value, s32 unused1, s32 unused2, s32 iwramRoutine);
-
-/*
- * Evidence-backed but unproven name (see the evidence summary above),
- * registered in source-paths.json. The retained recon/tbs/raw/0808e23c.s
- * only exposes the Func_0808e23c label (no dual canonical-name label, unlike
- * its exact-adjacent siblings), so `compiler workbench` needs
- * `--owner 0x0808e23c --size 632` rather than resolving this name.
- */
-#define BattleCommand_ExecuteSelectedItem Func_0808e23c
 
 s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
 {
@@ -184,7 +171,7 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
     }
 
     event = (struct BattleItemEventRecord *)Func_0808e14c(item_id);
-    if (event != 0 && event->effect != 0) {
+    if (event != 0 && event->effect.id != 0) {
         GameFlag_Clear(0x143);
         GameFlag_Clear(0x142);
         if (!(event->metadata & (s32)&Value_00000400)) {
@@ -192,14 +179,14 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
             UiText_DrawQuantity(item_id, 2);
             UiText_DrawMessage((s32)&Value_0000091c, 1);
         }
-        if (event->effect < 0x10000) {
+        if (event->effect.id < 0x10000) {
             s32 objref = Func_0808ddec(Data_02000240.object_id);
             Battle_Reset();
-            Func_08092b94(event->effect);
+            Func_08092b94(event->effect.id);
             Func_08092f84(objref, 0);
             Func_08091750();
         } else {
-            Func_080072f0(item_id, actor, slot, event->effect);
+            event->effect.callback(item_id, actor, slot);
         }
         result = 0;
     } else {
@@ -240,7 +227,7 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
             *rt = 1;
             Func_08096810();
             *rt = 0;
-            BattleFx_CleanupSceneObjects();
+            Func_08097194();
 
             if (Item_GetData(item_id)->use_type & 1)
                 GameFlag_Set(0x143);

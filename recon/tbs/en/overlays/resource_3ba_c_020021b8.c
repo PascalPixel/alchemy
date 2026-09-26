@@ -1,4 +1,4 @@
-/* NONMATCHING: 1264 bytes, candidate 1264, 240 differing halfwords, 122
+/* NONMATCHING: 1264 bytes, candidate 1264, 241 differing halfwords, 127
  * halfword edits (2026-09-26). CommandInterpolationRenderer_Update, meant
  * for FIELD/KOROSSEO_KAWA/F_021B8.C as a single-overlay unit binding its
  * names at their runtime addresses (an import veneer's listing offset plus
@@ -11,9 +11,17 @@
  * preserve the separate per-case shifted affine index. Separate channel
  * locals restore duration/start registers. Computing delta before the step
  * regressed to 1252 bytes and 180 edits. Runtime bindings are registered in
- * korosseo-command-renderer-candidate. */
+ * korosseo-command-renderer-candidate.
+ * 2026-09-27 H1: transfer IO_WRITE_QUEUE.C read boundary and count-store
+ * alias to both tail publications. Baseline 1264/240/122 becomes
+ * 1264/241/127. Both saved copies now precede masking, and the complete
+ * trailing pool order matches, but queue/IME become r4/r0 instead of r0/r1;
+ * the shared entry cursor still forces extra copies. Interpolation and
+ * sprite emission are unchanged. Keep this negative witness in history. */
 #include "TYPES.H"
 #include "IO_WRITE_QUEUE.H"
+
+extern volatile u16 Data_04000208;
 
 struct Sprite { u32 words[3]; };
 struct SpriteTile { u16 pad, base; };
@@ -194,24 +202,29 @@ render:
         break;
     }
     queue = &gIoWriteQueue;
-    ime = (volatile u16 *)0x04000208;
-    saved = *ime;
+    /* FAKEMATCH: the proven queue read boundary saves IME before masking. */
+    do {
+        ime = &Data_04000208;
+        saved = *ime;
+    } while (0);
     *ime = (u16)(u32)ime;
     cnt = queue->count;
     if (cnt < 32) {
-        queue->count = cnt + 1;
-        entry = queue->entries[cnt];
+        entry = (u32 *)((u8 *)queue + cnt * 12 + 4);
+        /* FAKEMATCH: separate the count store alias, as in IO_WRITE_QUEUE.C. */
+        *(u16 *)&queue->count = cnt + 1;
         *entry++ = 0x3f00;
         *entry++ = 0x04000050;
         *entry = 0x20000;
     }
     *ime = saved;
-    saved = *ime;
+    do { saved = *ime; } while (0);
     *ime = (u16)(u32)ime;
     cnt = queue->count;
     if (cnt < 32) {
-        queue->count = cnt + 1;
-        entry = queue->entries[cnt];
+        entry = (u32 *)((u8 *)queue + cnt * 12 + 4);
+        /* FAKEMATCH: separate the count store alias, as in IO_WRITE_QUEUE.C. */
+        *(u16 *)&queue->count = cnt + 1;
         *entry++ = ((16 - blend) << 8) | blend;
         *entry++ = 0x04000052;
         *entry = 0x20000;

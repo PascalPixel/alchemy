@@ -1,9 +1,23 @@
-/* Draft, not exact (2026-09-24): candidate=380 reference=396, 168 differing halfwords.
-   Hand-written from the assembly; control flow, calls and constants follow the
-   reference. Residual: the reference keeps the work pointer on the stack (all of
-   r5-r7, r8-fp are taken), addresses the two projected positions through
-   registers rebuilt before each projection call (r4 spilled to sp+4, r7), and
-   keeps the streak pointer in r8 and the 0xffff mask in r6. */
+/* Draft, not exact (2026-09-26): candidate=396 reference=396,
+   9 differing halfwords, 8 aligned edits; equal block topology, frame 48.
+   Fresh baseline with shared projection header: 412/396 bytes, 188 differing
+   halfwords, 73 aligned edits. H1 splits the first-frame seed cursor from
+   the draw cursor. This recovers seed r5, mask r6, draw cursor r8 and removes
+   twelve extra bytes; the work spill and both projection slots already match.
+   H1 witness 5283d5f32: 400 bytes, 146 differing halfwords, 49 aligned edits.
+   H2 initializes point y/z from the draw index's zero. This removes the
+   duplicate zero instruction and restores the full extent and pool position.
+   H2 witness a1b8a7aa8: 396 bytes, 35 differing halfwords, 31 aligned edits.
+   H3 indexes both arrays by i instead of retaining cursors. Strength
+   reduction now initializes seed after mask, gives the exact seed loop,
+   restores all projection argument/register choices, and fixes pool order.
+   Residual is confined to the draw preheader at 080cc9c8..080cc9d6
+   (point address/zero/index/array-base scheduling) and 080cca7a..080cca7e
+   (color+48 before rather than after the two coordinate decrements).
+   The exact next owner PREPARE_SCENE.C schedules this no-argument callback
+   at 0xc80 after resetting work+778c. Extent is [080cc960,080ccaec).
+   No bytes adopted. Three structural hypotheses used; stop before any
+   further setup-order spelling trials. No complete match is claimed. */
 #include "TYPES.H"
 #include "EFFECT_STEP.H"
 
@@ -42,22 +56,22 @@ void Func_080cc960(void)
 
     frame = (*(s32 *)(work + 0x778c))++;
     if (frame == 0) {
-        streak = (struct Streak *)0x02010000;
         for (i = 0; i != 256; i++) {
+            struct Streak *seed = &((struct Streak *)0x02010000)[i];
             s32 r = Random16() & 15;
 
-            streak->head = r + 48;
-            streak->tail = r + 40;
-            streak->pitch = Random16() & 0xffff;
-            streak->yaw = Random16() & 0xffff;
-            streak->roll = Random16() & 0xffff;
-            streak++;
+            seed->head = r + 48;
+            seed->tail = r + 40;
+            seed->pitch = Random16() & 0xffff;
+            seed->yaw = Random16() & 0xffff;
+            seed->roll = Random16() & 0xffff;
         }
     }
-    point.y = 0;
-    point.z = 0;
-    streak = (struct Streak *)0x02010000;
-    for (i = 0; i != 64; i++) {
+    i = 0;
+    point.y = i;
+    point.z = i;
+    for (; i != 64; i++) {
+        streak = &((struct Streak *)0x02010000)[i];
         if (frame > i / 4 && streak->head > 0) {
             s32 fade;
             s32 color;
@@ -67,11 +81,11 @@ void Func_080cc960(void)
             SceneTransform_ApplyPitch(streak->pitch);
             SceneTransform_ApplyYaw(streak->yaw);
             point.distance = streak->head;
-            EffectPosition_ApplyBaseAndYOffset((s32)&point, &head);
+            EffectPosition_ApplyBaseAndYOffset((s32 *)&point, &head);
             head.x += 64;
             head.y += 80;
             point.distance = streak->tail;
-            EffectPosition_ApplyBaseAndYOffset((s32)&point, &tail);
+            EffectPosition_ApplyBaseAndYOffset((s32 *)&point, &tail);
             tail.x += 64;
             tail.y += 80;
             streak->tail -= 4;
@@ -84,7 +98,6 @@ void Func_080cc960(void)
             Func_080cde90(tail.x, tail.y - 1, head.x, head.y - 1, color);
             Func_080cde90(tail.x, tail.y, head.x, head.y, fade + 56);
         }
-        streak++;
     }
     *(s32 *)(work + 0x7824) = 1;
 }

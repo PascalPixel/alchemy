@@ -113,13 +113,17 @@
       "tbs": {"done": 1000558, "executable": 1375934},
       "tla": {"done": 42332, "executable": 1975640},
       "models": {"Opus 5.5": 330, "Sol 5.6": 53, "Sol 6": 80}
+    },
+    {
+      "date": "2026-09-27",
+      "tbs": {"done": 1000558, "executable": 1375934},
+      "tla": {"done": 42332, "executable": 1975640}
     }
   ],
   "figures": {
-    "date": "2026-09-26",
+    "date": "2026-09-27",
     "tbs": {"done": 1000558, "executable": 1375934},
     "tla": {"done": 42332, "executable": 1975640},
-    "models": {"Opus 5.5": 330, "Sol 5.6": 53, "Sol 6": 80},
-    "files": "a59e3415ebbbddcd"
+    "files": "ef5879a76f4f5392"
   }
 }

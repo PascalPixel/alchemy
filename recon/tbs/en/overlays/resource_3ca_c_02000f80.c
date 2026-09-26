@@ -1,21 +1,19 @@
-/* NONMATCHING: 340 of 340 bytes, 120 differing halfwords, 97 halfword edits
- * (2026-09-26). Loop bodies
- * match. Remaining: global allocation keeps scroll_y in fp and rematerialises
- * the 0xff mask inside each loop, where the reference keeps 0xff in fp and
- * spills scroll_y (as y << 16) to the stack; every register after that shifts
- * by one. A shared mask shortened the owner to 336 bytes; separate loop
- * locals did not move the baseline. Packed scroll arithmetic shortened it
- * to 316 bytes and 64 edits, losing the required signed load and spill. */
+/* NONMATCHING: 332 of 340 bytes, 139 differing halfwords, 52 halfword edits
+ * (2026-09-26). Complete boundary 02000f80..020010d4: return at 020010ac,
+ * alignment at 020010ae, nine pool words through 020010d0. Interleaved
+ * halfword pages reproduce the second axis pointer. Staged phase arithmetic
+ * restores state r6, line r5, accumulator r4 and counter r7. Remaining:
+ * scroll_y stays in fp instead of spilling its shifted value; the first
+ * loop rematerialises 255, multiply operands and second-axis setup differ.
+ * Three structural trials: halfword pages alone 340 bytes/99 edits;
+ * staged accumulator 332/52 (retained); axis-local masks 328/56 and changed
+ * topology. Earlier: shared mask 336; separate loop counters unchanged;
+ * packed scroll 316/64 lost the required signed load. */
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 
-struct WaveLine {
-    u16 x;
-    u16 y;
-};
-
 struct WaveState {
-    struct WaveLine pages[2][480];
+    u16 pages[2][960];
     u8 page;
     u8 unknown_f01;
     u16 phase_x;
@@ -42,7 +40,7 @@ extern s16 Data_020094c8[];
 void Local_02000f80(void)
 {
     struct WaveState *state;
-    struct WaveLine *line;
+    u16 *line;
     u16 scroll_y;
     u16 base;
     s32 acc;
@@ -53,7 +51,8 @@ void Local_02000f80(void)
     scroll_y = Data_03001ad0.y;
     line = state->pages[state->page ^ 1];
     step = state->step_x;
-    acc = state->frequency_x * (state->phase_x + scroll_y);
+    acc = state->phase_x + scroll_y;
+    acc *= state->frequency_x;
     amplitude = state->amplitude_x;
     base = Data_03001ad0.x;
     {
@@ -62,14 +61,15 @@ void Local_02000f80(void)
 
         for (i = 0; i != 160; i++) {
             off = Iwram_MulQ16(Data_020094c8[(acc >> 16) & 0xff], amplitude) / 256;
-            line->x = off + base;
+            *line = off + base;
             acc += step;
-            line++;
+            line += 2;
         }
     }
-    line = state->pages[state->page ^ 1];
+    line = state->pages[state->page ^ 1] + 1;
     step = state->step_y;
-    acc = state->frequency_y * (state->phase_y + scroll_y);
+    acc = state->phase_y + scroll_y;
+    acc *= state->frequency_y;
     amplitude = state->amplitude_y;
     base = scroll_y;
     {
@@ -78,9 +78,9 @@ void Local_02000f80(void)
 
         for (i = 0; i != 160; i++) {
             off = Iwram_MulQ16(Data_020094c8[(acc >> 16) & 0xff], amplitude) / 256;
-            line->y = off + base;
+            *line = off + base;
             acc += step;
-            line++;
+            line += 2;
         }
     }
     state->phase_y++;

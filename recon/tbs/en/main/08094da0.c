@@ -1,6 +1,13 @@
 /* 2026-09-24: hand-written, 16 differing halfwords, same code: the fill
    zero goes to r3 (reference r1) and the position pointer to r0 (reference
-   r2). The BLDCNT block is a tagged do-while wrap of volatile int stores. */
+   r2). The BLDCNT block is a tagged do-while wrap of volatile int stores.
+   2026-09-26: 218 bytes plus a two-byte trailing alignment pad. A named
+   position record changes no instructions. A nonvolatile DMA source changes
+   the reference's pointer store to sp-relative, increasing aligned edits
+   from 13 to 14. Reading the height operands back from mote fields also
+   gives 14 edits: positions still get r0 and the attribute walker r2.
+   Allocator evidence: position lives 11 insns, walker 8; both are low-
+   register pointer pseudos. Neither experiment changes those roles. */
 
 #include "TYPES.H"
 #include "DMA.H"
@@ -71,4 +78,3 @@ void Func_08094da0(void)
     do { s32 v; v = 0x3f00; reg = (volatile u16 *)0x04000050; *reg = v; v = 0x1008; reg++; *reg = v; reg++; *reg = 0; } while (0);
     Scheduler_AddOrUpdateCallback(Func_08094bbc, 0xc80);
 }
-

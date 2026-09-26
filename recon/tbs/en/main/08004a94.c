@@ -1,6 +1,10 @@
 /* NONMATCHING: 28 bytes, candidate 40, 20 differing halfwords, 15 halfword edits.
  * Fresh reconstruction from the complete listing (2026-09-25).
  * WALL: The reference initializes the 12-word identity matrix with three multiple-register stores; scalar C selects separate stores.
+ * A named four-word identity aggregate copied three times does select
+ * multiple-register stores, but spills the value into a 16-byte stack frame
+ * and copies in three-word groups plus one word (72-byte candidate). It
+ * does not recover the reference's register-resident four-word pattern.
  */
 #include "TYPES.H"
 

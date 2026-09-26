@@ -23,7 +23,12 @@ s32 Engine_ActorGet();
 extern u8 Data_000000a4[];
 extern u8 Data_000000a5[];
 extern u8 Data_02000240[];
-extern s16 Data_02000240_t[][1];
+union GameStateRows {
+    u8 bytes[512][2];
+    s16 halves[512][1];
+    s32 words[256];
+};
+extern union GameStateRows Data_02000240_t;
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
@@ -40,14 +45,23 @@ static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
     f(a0, a1);
 }
 
-/* NONMATCHING: 216 of 220 bytes, 30 halfword edits (2026-09-24). The game
- * state base must be shared between the +0x22b store and the later reads; a1
- * and the base swap r5 and r6. */
+/* NONMATCHING: 216 of 220 bytes, 71 differing halfwords / 30 aligned edits
+ * (2026-09-26). Whole owner 02000b24..02000c00: return at 02000bdc,
+ * alignment at 02000bde, eight pool words at 02000be0..02000bfc.
+ * Three bounded shared-state trials: direct union rows produce 220 bytes,
+ * 43 differing halfwords / 22 edits with the exact pool, but lose saved r6
+ * and reload the state for the final word read. A post-store pointer and a
+ * one-member pointer aggregate both reproduce the original 216-byte shape.
+ * Retain the typed pointer: it preserves the frame and shared state lifetime.
+ * Remaining: a1/base use r5/r6 instead of r6/r5, the store lacks the local r1
+ * to saved r5 copy, and the (98, 5) call prepares its arguments in reverse.
+ * Allocator: a1 pseudo 33 crosses five calls; base pseudo 79 crosses four.
+ * No further pointer spelling sweep without evidence changing that lifetime. */
 void Func_02000b24(s32 a0, s32 a1)
 {
     u32 i;
     s32 record;
-    s32 base2_2000240;
+    union GameStateRows *state;
 
     if (*(s16 *)((*(s32 *)0x03001ebc + 0x182)) == 99) {
         {
@@ -58,18 +72,18 @@ void Func_02000b24(s32 a0, s32 a1)
         }
     }
     Call1(Engine_GameFlagClear, 0x20f);
-    if (Data_02000240_t[224][0] == (s32)Data_000000a4) {
+    if (Data_02000240_t.halves[224][0] == (s32)Data_000000a4) {
         Engine_GameFlagSet((a1 + 0x2f9));
     } else {
-        if (Data_02000240_t[224][0] == (s32)Data_000000a5) {
+        if (Data_02000240_t.halves[224][0] == (s32)Data_000000a5) {
             Engine_GameFlagSet((a1 + 0x309));
         }
     }
     Call2(Main_080770e8, 0x210, 0);
     Call2((void (*)())Engine_Import0808a250, 98, 5);
-    base2_2000240 = (s32)Data_02000240_t;
-    *(u8 *)((base2_2000240 + 0x22b)) = 3;
-    if (*(s16 *)(base2_2000240 + 0x1c0) == (s32)Data_000000a5) {
+    Data_02000240_t.bytes[277][1] = 3;
+    state = &Data_02000240_t;
+    if (state->halves[224][0] == (s32)Data_000000a5) {
         if (a1 == 11) {
             Engine_Import0808a250(98, 7);
         } else {
@@ -80,5 +94,5 @@ void Func_02000b24(s32 a0, s32 a1)
             }
         }
     }
-    *(u8 *)(Engine_ActorGet(*(s32 *)(base2_2000240 + 0x1f4)) + 85) = 3;
+    *(u8 *)(Engine_ActorGet(state->words[125]) + 85) = 3;
 }

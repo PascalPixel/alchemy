@@ -1,4 +1,4 @@
-/* DRAFT: 572/572 bytes, 232 differing halfwords, 174 aligned edits. The
+/* DRAFT: 564/572 bytes, 253 differing halfwords, 182 aligned edits. The
  * linked mask now uses ands, but the short-reach message puts the first
  * pool at +0xa0 instead of the reference +0xe8. The index stays in fp
  * instead of sp+44; the window occupies sp+44 instead of sp+32. The ROM
@@ -30,6 +30,18 @@
  * A third model remains untested: carry an explicit u16 row pointer with
  * a ten-element advance, as exact CORE_COMPUTE_ENTRY_VALUES.C and the ROM
  * outer-tail +20 update do. Do not repeat constant spellings or RA sweeps.
+ * H3 (resumed 00:11): carry the row's typed ID pointer explicitly. Predict
+ * the reference sp+4 pointer induction and +20 outer-tail update, removing
+ * the repeated scaled-offset construction. Compare the entire 52-byte
+ * frame, both fill/render loops, calls and pools. Acceptance remains exact
+ * 572-byte owner plus compare/test/coverage/verify; one model plus at most
+ * two evidence-backed follow-ups, stop by 00:30 and record every result.
+ * H3 result: 564/572, 253 differing halfwords, 182 aligned edits. Explicit
+ * +20 row-pointer induction is recovered, but its slot is sp+28 versus
+ * sp+4 and initialized before the empty-row guard. Frame stays 52 bytes.
+ * The index remains in fp and the offer flag spills. Read the complete
+ * diff: repeated ID argument expressions emit two loads for the second
+ * query where the ROM loads one ID; that is a call-input lifetime fact.
  */
 extern u8 Value_00008000;
 extern u8 Value_00000bad;
@@ -75,6 +87,7 @@ void DjinnMenu_DrawElementList(struct DjinnListTable *tbl)
     s32 row;
     s32 element;
     s32 line;
+    u16 *row_ids;
     u16 *id;
     s32 flag;
     u32 v;
@@ -87,11 +100,11 @@ void DjinnMenu_DrawElementList(struct DjinnListTable *tbl)
         tbl->counts[i] = Unnamed_080ac8fc(tbl->ids[i], state->owners[i], -1);
     RenderOutput_RedrawSavedRectFar(state->window);
     UiText_DrawCharacterAtOffsetFar((u16)(u32)&Value_00000bad, state->window, 0, 80);
-    for (row = 0; row < state->owner_count; row++) {
+    for (row = 0, row_ids = tbl->ids[0]; row < state->owner_count; row++, row_ids += 10) {
         line = 0;
         for (element = 0; element < 4; element++) {
             for (i = 0; i < tbl->counts[row]; i++) {
-                id = &tbl->ids[row][i];
+                id = &row_ids[i];
                 mask = 0xe0;
                 v = *id;
                 if (element != (v & mask) >> 5)

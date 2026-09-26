@@ -1,4 +1,6 @@
 /* DRAFT: complete main:080aa768 [080aa768,080aac84), 1308 bytes.
+ * Current: 1324/1308 bytes, 590 differing halfwords, 306 aligned edits.
+ * All attempts remain committed; no exact DONE credit.
  * H1 (2026-09-27): replace the old 840-byte model's four-times-scaled
  * fields, missing transfer/recalculation calls and incorrect state exits.
  * Whole listing, switch table, pools, caller 080aa56c and menu-family
@@ -26,6 +28,17 @@
  * now match. Remaining: result is r8 instead of r4/sp+0, extra saved r9,
  * and both cursor searches hoist list/count and use pointer induction,
  * whereas reference reloads the list/count at its test label each time.
+ * H3: transfer the documented goto-loop recipe to the cursor search, whose
+ * reference enters at a test label before walking the candidates. Predict
+ * the repeated list/count reads and indexed low-byte address, eliminating
+ * the hoisted pointer walk. Final follow-up; no declaration permutations.
+ * H3 result: 1324/1308, 590 differing halfwords, 306 aligned edits; full
+ * diff read. Both searches now reload list/count and use the reference's
+ * indexed low-byte address and ip found-index role. Row conversion and
+ * pointer-cell address lifetimes still differ. Main result remains in r8
+ * instead of r4/sp+0; frame is 4/8 and extra r9 is saved. STOP after the
+ * corrected model and two follow-ups. Preserve the recovered semantics,
+ * record boundaries and goto-loop fact; no blind allocation sweep.
  */
 #include "TYPES.H"
 
@@ -104,11 +117,15 @@ static __inline__ void RestoreDjinnCursor(struct DjinnCommandMenu *menu)
     row = Math_ModU(menu->cursor[1], 10);
     found = 0;
     selected = *(u8 *)&menu->selected[0];
-    for (i = 0; i < menu->lists->counts[row]; i++) {
-        if (selected == *(u8 *)&menu->lists->ids[row][i]) {
-            found = i;
-            break;
-        }
+    i = 0;
+    goto search_test;
+search_next:
+    i++;
+search_test:
+    if (i < menu->lists->counts[row]) {
+        if (selected != *(u8 *)&menu->lists->ids[row][i])
+            goto search_next;
+        found = i;
     }
     menu->cursor[0] = row + found * 10;
     menu->icon->state = 1;

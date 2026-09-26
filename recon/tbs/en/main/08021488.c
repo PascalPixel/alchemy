@@ -1,75 +1,88 @@
+/* Draft: complete 344-byte Party_ShowPairJoinedMessage, 64 differing
+ * halfwords. Corrected value-flow prototypes and stack order close the
+ * prior 304-byte draft. Remaining: zero lifetime, pointer-derived icon
+ * stores instead of stack offsets, and setup scheduling. Pair/union views
+ * did not close the residual; original attempt is retained in history.
+ */
 #include "TYPES.H"
 
-#define M2C_FIELD(expr, type_ptr, offset) (*(type_ptr)((s8 *)(expr) + (offset)))
+struct PartyJoinWork {
+    u8 unknown_0000[0xea3];
+    u8 busy;
+    u8 unknown_0ea4[0x12f4 - 0xea4];
+    u16 cursor;
+    u16 scroll;
+};
 
-extern u8 *Data_03001e8c;
+extern struct PartyJoinWork *Data_03001e8c;
+extern u32 gKeyState;
+extern const u8 Value_0000001d;
 
-s32 Func_080162d4(s32, s32, s32, s32, s32);
-void Func_0801e41c(s32, s32, s32, s32, s32);
-s32 Func_08021360(u32);
-s32 Func_08019d2c(void);
-void Func_0801a4fc(s32, s32, s32 *, s32 *, s32, s32);
-void Func_08019908(u32, u32);
-s32 Func_08019ba0(s32);
-void Func_080165d8(s32, s32, s32, s32, s32);
-void Func_080f9010(s32);
-void Func_08003dec(void *, s32);
-void Func_080030f8(s32);
-s32 Func_080f9048(void);
-void Func_08016418(s32, s32);
-s32 Func_08003f3c(s32);
+void *UiWindow_Create(s32, s32, s32, s32, s32);
+void UiWindow_DrawDividerLine(void *, s32, s32, s32, s32);
+s32 Party_LookupCharacterValueByFlag32(u32);
+s32 Localization_LookupEntryId(s32);
+void UiGlyph_LoadEntryWithPalette(u32, s32, s32 *, s32 *, s32, s32);
+void UiWork_PushValueSlot(s32, s32);
+s32 UiText_BuildRenderEntriesMode1(s32);
+void Func_080165d8(void *, s32, s32, s32, s32);
+void Audio_PlayCue(s32);
+void Runtime_PushSlotEntry(void *, s32);
+void WaitFrames(s32);
+s32 AudioCommand_GetStateByteFar(void);
+void UiWork_Finalize(void *, s32);
+void Resource_ResetEntry(u32);
 
-s32 Func_08021488(s32 msg0, s32 msg1) {
-    s32 spC;
-    s32 sp10;
-    s32 sp14;
-    s32 sp18;
-    s32 sp1C;
-    s32 sp20;
-    s32 sp24;
-    s32 sp28;
-    s32 sp2C;
-    s32 window;
-    u8 *base;
-    void *box1;
-    void *box2;
+union PartyJoinIcon {
+    struct { u32 unused; u32 position; u32 tile; } fields;
+    u32 words[3];
+};
 
-    base = Data_03001e8c;
-    box1 = &sp18;
-    window = Func_080162d4(1, 1, 0x1C, 5, 0);
+void Party_ShowPairJoinedMessage(s32 left, s32 right)
+{
+    struct PartyJoinWork *work;
+    void *window;
+    s32 right_resource;
+    s32 tile;
+    s32 left_resource;
+    union PartyJoinIcon right_icon;
+    union PartyJoinIcon left_icon;
+    u32 *left_entry;
+    u32 *right_entry;
+    s32 zero;
+
+    work = Data_03001e8c;
+    left_entry = left_icon.words;
+    window = UiWindow_Create(1, 1, 28, 5, 0);
+    zero = 0;
     if (window != 0) {
-        Func_0801e41c(window, 8, 0, 4, 4);
-        M2C_FIELD(base, s8 *, 0xEA3) = 1;
-        Func_08021360(msg0);
-        Func_0801a4fc(Func_08019d2c(), 0, &sp14, &sp10, 0xE, 0);
-        sp18 = 0;
-        sp1C = 0x800C000C;
-        sp20 = sp10 | 0xE000;
-        box2 = &sp24;
-        Func_08021360(msg1);
-        Func_0801a4fc(Func_08019d2c(), 0, &spC, &sp10, 0xF, 0);
-        sp24 = 0;
-        sp28 = 0x802C000C;
-        sp2C = sp10 | 0xF000;
-        M2C_FIELD(base, s16 *, 0x12F4) = 0;
-        M2C_FIELD(base, s16 *, 0x12F6) = 0;
-        Func_08019908(msg0, 1);
-        Func_08019908(msg1, 1);
-        Func_080165d8(window, Func_08019ba0(0x1D), 0x44, 2, 0);
-        Func_080f9010(0x51);
-    loop_2:
-        Func_08003dec(box1, 0xFA);
-        Func_08003dec(box2, 0xFA);
-        Func_080030f8(1);
-        if (Func_080f9048() != 0) {
-            if (!(*(s32 *)0x03001C94 & 0x303)) {
-                goto loop_2;
-            }
-        }
-        Func_08016418(window, 2);
-        Func_080030f8(1);
-        Func_08003f3c(sp14);
-        window = Func_08003f3c(spC);
+        UiWindow_DrawDividerLine(window, 8, 0, 4, 4);
+        work->busy = 1;
+        UiGlyph_LoadEntryWithPalette(Localization_LookupEntryId(Party_LookupCharacterValueByFlag32(left)),
+            0, &left_resource, &tile, 14, zero);
+        left_entry[0] = zero;
+        left_icon.fields.position = 0x800c000c;
+        left_icon.fields.tile = tile | 0xe000;
+        right_entry = right_icon.words;
+        UiGlyph_LoadEntryWithPalette(Localization_LookupEntryId(Party_LookupCharacterValueByFlag32(right)),
+            0, &right_resource, &tile, 15, zero);
+        right_entry[0] = zero;
+        right_icon.fields.position = 0x802c000c;
+        right_icon.fields.tile = tile | 0xf000;
+        work->cursor = zero;
+        work->scroll = zero;
+        UiWork_PushValueSlot(left, 1);
+        UiWork_PushValueSlot(right, 1);
+        Func_080165d8(window, UiText_BuildRenderEntriesMode1((s32)&Value_0000001d), 68, 2, zero);
+        Audio_PlayCue(81);
+        do {
+            Runtime_PushSlotEntry(left_entry, 250);
+            Runtime_PushSlotEntry(right_entry, 250);
+            WaitFrames(1);
+        } while (AudioCommand_GetStateByteFar() != 0 && (gKeyState & 0x303) == 0);
+        UiWork_Finalize(window, 2);
+        WaitFrames(1);
+        Resource_ResetEntry(left_resource);
+        Resource_ResetEntry(right_resource);
     }
-    return window;
 }

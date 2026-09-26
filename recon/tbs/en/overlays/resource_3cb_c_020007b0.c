@@ -22,7 +22,7 @@ extern u16 Data_02002008;
 extern s32 Data_020023ac;
 extern u16 Data_02002238;
 
-s32 Local_020007b0(void)
+s32 Func_020007b0(void)
 {
     s32 result;
     s32 first;

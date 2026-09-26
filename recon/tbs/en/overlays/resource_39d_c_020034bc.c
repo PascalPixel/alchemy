@@ -18,7 +18,7 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
     f(a0, a1, a2);
 }
 
-void Local_020034bc(void)
+void Func_020034bc(void)
 {
     struct FieldActor *lamp;
     struct FieldActor *actor;

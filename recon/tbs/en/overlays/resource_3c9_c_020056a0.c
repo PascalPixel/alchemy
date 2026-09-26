@@ -25,7 +25,7 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
     f(a0, a1, a2);
 }
 
-void Local_020056a0(void)
+void Func_020056a0(void)
 {
     struct FieldActor *beam;
     struct FieldActor *spark;

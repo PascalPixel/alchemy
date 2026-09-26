@@ -1,8 +1,8 @@
-/* NONMATCHING: resource_370:02000de4; 1024 / 1024 bytes, 473 differing
- * halfwords, 464 wrong instructions, 300 halfword edits. Integer-domain
- * packing offset restores the reference's branch-free nonzero test and
- * complete topology. Typed tables remove one spill; frame is 68 / 64 bytes.
- * Scalar item ABI restored after the four-byte item-record negative trial. */
+/* NONMATCHING: resource_370:02000de4; 1016 / 1024 bytes, 465 differing
+ * halfwords, 448 wrong instructions, 290 halfword edits. Integer-domain
+ * packing offset restores complete topology. The shared money union gives
+ * the reference's one base and +16/+18 accesses. Frame remains 68 / 64 bytes;
+ * property load width, counter allocation and rank reloads remain. */
 #include "TYPES.H"
 
 struct PasswordStats {
@@ -32,6 +32,19 @@ extern u16 Data_020096d0[6];
 extern s32 Data_020096c0[4];
 extern u16 Data_020096dc[8];
 extern u16 Data_020096ec[23];
+
+struct PasswordMoney {
+    u8 unknown_00[16];
+    union {
+        u32 value;
+        struct {
+            u16 low;
+            u16 high;
+        } half;
+    } amount;
+};
+
+extern struct PasswordMoney Data_02000240;
 
 s32 Func_02000de4(s32 unused, s32 mode, u8 *out)
 {
@@ -178,9 +191,9 @@ s32 Func_02000de4(s32 unused, s32 mode, u8 *out)
                 }
             }
         }
-        out[165] = *(u16 *)0x02000252;
-        out[166] = *(u32 *)0x02000250 >> 8;
-        out[167] = *(u32 *)0x02000250;
+        out[165] = Data_02000240.amount.half.high;
+        out[166] = Data_02000240.amount.value >> 8;
+        out[167] = Data_02000240.amount.value;
     }
 
     if (mode != 2) {

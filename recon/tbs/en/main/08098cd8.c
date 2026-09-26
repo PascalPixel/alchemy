@@ -1,7 +1,8 @@
-/* Draft, not exact (2026-09-26): 828 of 832 bytes, 189 differing halfwords.
+/* Draft, not exact (2026-09-26): 832 of 832 bytes, 65 differing halfwords.
    Scene ownership, slot records and resource lifetime replace raw offsets.
-   The 44-byte frame and early pool now line up. Remaining: chained store
-   order, loop/pointer lifetime, four missing bytes and later pools.
+   Explicit stores and the initial/terminal script tests recover all four
+   missing bytes. Remaining: position/counter setup, scale-loop carry,
+   copy publication/resource lifetime and one saved-pointer scheduling tie.
    The original 832-byte model differed in 305 halfwords. */
 #include "TYPES.H"
 #include "EFFECT_0809B11C.H"
@@ -107,7 +108,8 @@ void RunBattleEffect04(void)
         EffectSlot_SetCallback(slot, BattleFx_UpdateRadialBurst);
         EffectSlot_SetObjectMode(slot, 7);
         ObjectGroup_SetChildValueUnlessFifteenFar((s32)slot->object, 9);
-        slot->scale_y = slot->scale_x = 0xb333;
+        slot->scale_y = 0xb333;
+        slot->scale_x = 0xb333;
         WaitFrames(2);
         index--;
         slot++;
@@ -123,9 +125,11 @@ void RunBattleEffect04(void)
         BattleFx_PrepareBufferInterpolation();
         return;
     }
-    object->scale_y = object->scale_x = 0x4000;
+    object->scale_y = 0x4000;
+    object->scale_x = 0x4000;
     object->heading = scene->angle;
-    object->speed_limit = object->acceleration = 0x40000;
+    object->speed_limit = 0x40000;
+    object->acceleration = 0x40000;
     zero = 0;
     object->mode = zero;
     Object_SetMode(object, 5);
@@ -133,7 +137,8 @@ void RunBattleEffect04(void)
     if (object->scale_x < 0x10000) {
         do {
             scale = object->scale_x + 0x500;
-            object->scale_y = object->scale_x = scale;
+            object->scale_y = scale;
+            object->scale_x = scale;
             WaitFrames(1);
         } while (object->scale_x <= 0xffff);
     }
@@ -146,9 +151,11 @@ void RunBattleEffect04(void)
         copy = Object_Spawn(0xd7, object->pos.x, object->pos.y, object->pos.z);
         *write-- = copy;
         if (copy != NULL) {
-            copy->scale_y = copy->scale_x = 0xf000;
+            copy->scale_y = 0xf000;
+            copy->scale_x = 0xf000;
             copy->heading = scene->angle;
-            copy->speed_limit = copy->acceleration = 0x40000;
+            copy->speed_limit = 0x40000;
+            copy->acceleration = 0x40000;
             copy->mode = 0;
             Object_SetMode(copy, 5);
             Animation_ApplyChildValuesFar(copy, 2);
@@ -182,11 +189,12 @@ void RunBattleEffect04(void)
         index--;
     } while (index >= 0);
     index = 0;
-    while (object->script != NULL) {
+    if (object->script != NULL) {
+wait_script:
         WaitFrames(1);
         index++;
-        if (index > 59)
-            break;
+        if (index <= 59 && object->script != NULL)
+            goto wait_script;
     }
     if (child != NULL && scene->preserve_child_motion == 0) {
         if (scene->enlarge_child != 0)
@@ -196,7 +204,8 @@ void RunBattleEffect04(void)
         pos.z = child->pos.z;
         Vector_AddPolarOffset(0x100000, scene->angle, &pos);
         if (Object_CheckMovementCollision(child, &pos) == 0 && Func_08009250(child, &pos) == 0) {
-            child->acceleration = child->speed_limit = 0x10000;
+            child->acceleration = 0x10000;
+            child->speed_limit = 0x10000;
             Object_SetPosition(child, pos.x, pos.y, pos.z);
         }
     }

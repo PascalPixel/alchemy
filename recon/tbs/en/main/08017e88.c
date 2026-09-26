@@ -24,6 +24,24 @@
  */
 #include "TYPES.H"
 
+/* 2026-09-26 attempt: replacing UiText_PutEntry with the helper below
+ * produced 408 bytes and 176 differing halfwords (reference 432 bytes).
+ * The struct member promotes the constant to a word move and merges the
+ * pools at the end. An explicit u16 cast gave the same result. Preserve
+ * the better 432-byte/38-halfword draft and this measured alternative.
+ */
+struct ArticleHalfwordCode {
+    u16 value;
+};
+
+static __inline__ void UiText_PutEntryHalfwordAttempt(u16 *dst, u8 *code)
+{
+    struct ArticleHalfwordCode c;
+
+    c.value = (u16)(s32)code;
+    *dst = c.value;
+}
+
 struct ArticleTable {
     s8 *text[8];
 };

@@ -22,6 +22,15 @@
  * now 40 and power_x is in fp, but the combined pointer spills at sp+20;
  * mode/owner slots agree while Djinn/row slots differ. The persistent
  * level_x-8 remains. Shared pointer allocation is not a matching witness.
+ * H3: restore distinct typed phase pointers and express element stats and
+ * Djinn counts as indexed owner arrays. Prediction: loop strength reduction
+ * creates the paired four-byte/one-byte walks without a user phase pointer
+ * or a second scalar counter. H3: 784/768 bytes, 123 aligned edits and
+ * equal topology. Both walks are derived, and initial work now uses r8,
+ * but the count/element/Djinn carriers and the retained level_x-8 still
+ * force a power-column spill and 44-byte frame. Preserve this corrected
+ * typed model; three hypotheses exhausted, no adoption. Do not resume the
+ * register/lifetime axes without a new fact beyond the recorded RTL.
  */
 
 extern u8 Value_00000afe[];
@@ -73,7 +82,7 @@ s32 Func_080771f8(s32 unit, s32 element);
 
 void CharacterMenu_DrawStatusAilments(void *window, s32 unit, s32 mode)
 {
-    void *work;
+    struct MenuState *state;
     s32 has_djinn;
     s32 total;
     struct StatusUnit *status;
@@ -84,10 +93,9 @@ void CharacterMenu_DrawStatusAilments(void *window, s32 unit, s32 mode)
     s32 text;
     s32 power_x;
     s32 level_x;
-    u8 *djinn;
     u8 ailments[8];
 
-    work = gMenuWork;
+    state = gMenuWork;
     total = Party_SumDjinnCountsFar(-1);
     /* FAKEMATCH: spell the reference's branchless nonzero encoding. */
     has_djinn = (u32)(-total | total) >> 31;
@@ -95,7 +103,7 @@ void CharacterMenu_DrawStatusAilments(void *window, s32 unit, s32 mode)
     row = 7;
     if ((mode & 0xff) != 1)
         row = 10;
-    ((struct MenuState *)work)->cursor->state = 1;
+    state->cursor->state = 1;
     ItemMenu_DrawOwnerStatus(window, unit, mode);
     CharacterMenu_BuildAvailability(ailments, 1, unit);
     CharacterMenu_UpdateSelectionIcons(ailments);
@@ -127,7 +135,7 @@ void CharacterMenu_DrawStatusAilments(void *window, s32 unit, s32 mode)
         UiText_DrawCharacterAtOffsetFar(0xbd4, window, 0, 40);
     CharacterMenu_UpdateSelectionIcons(ailments);
     ItemMenu_ApplyFlags(ailments);
-    if (((struct MenuState *)work)->mode == 3)
+    if (state->mode == 3)
         return;
     if (keep == 0) {
         WaitFrames(1);
@@ -151,26 +159,21 @@ void CharacterMenu_DrawStatusAilments(void *window, s32 unit, s32 mode)
         UiText_DrawCharacterAtOffsetFar(text, window, 64, y + 24);
         UiText_DrawCharacterAtOffsetFar(text + 1, window, 64, y + 32);
     }
-    /* FAKEMATCH: reuse the menu-phase pointer for the element-stat phase. */
-    work = status->element_stats;
     power_x = 104;
     level_x = 120;
-    djinn = status->djinn_set;
     for (count = 0; count <= 3; count++) {
         if (has_djinn)
-            UiText_DrawNumberInWindowFar(djinn[0], 1, window, level_x, row * 8 + 8);
+            UiText_DrawNumberInWindowFar(status->djinn_set[count], 1, window, level_x, row * 8 + 8);
         if ((mode & 0xff) == 1) {
             if (has_djinn) {
-                UiText_DrawNumberInWindowFar(djinn[4], 1, window, power_x, row * 8 + 8);
+                UiText_DrawNumberInWindowFar(status->djinn_total[count], 1, window, power_x, row * 8 + 8);
                 UiText_DrawStringInWindowFar(Data_080af230, window, level_x - 8, row * 8 + 8);
             }
             UiText_DrawNumberInWindowFar(Func_080771f8(unit, count), 2, window, level_x - 8, row * 8 + 16);
-            UiText_DrawNumberInWindowFar(((struct ElementStat *)work)->power, 3, window, power_x, row * 8 + 24);
-            UiText_DrawNumberInWindowFar(((struct ElementStat *)work)->resistance, 3, window, power_x, row * 8 + 32);
+            UiText_DrawNumberInWindowFar(status->element_stats[count].power, 3, window, power_x, row * 8 + 24);
+            UiText_DrawNumberInWindowFar(status->element_stats[count].resistance, 3, window, power_x, row * 8 + 32);
         }
-        work = (struct ElementStat *)work + 1;
         power_x += 32;
         level_x += 32;
-        djinn++;
     }
 }

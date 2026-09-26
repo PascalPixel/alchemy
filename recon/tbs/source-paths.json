@@ -21267,7 +21267,8 @@
       "name": "SerialRuntime_StepBlockTransfer"
     },
     "main:080111b4": {
-      "name": "WorldMap_UpdateView"
+      "name": "WorldMap_UpdateView",
+      "source": "FIELD/WORLD_MAP/UPDATE_VIEW.C"
     },
     "resource_3c8:02001f60": {
       "name": "VinasuHeya_SettlePushedBlocks",

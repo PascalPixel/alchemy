@@ -11860,6 +11860,10 @@
     "main:08096960": {
       "name": "BattleFx_DispatchRequestKind"
     },
+    "main:0800fec8": {
+      "name": "Map_RenderMetatileRow",
+      "source": "FIELD/COMMON/MAP/RENDER_METATILE_ROW.C"
+    },
     "main:0800ff54": {
       "name": "Map_RenderPaletteMappedBlock",
       "source": "FIELD/COMMON/MAP/RENDER_PALETTE_MAPPED_BLOCK.C"

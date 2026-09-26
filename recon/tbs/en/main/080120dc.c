@@ -1,3 +1,10 @@
+/* Not-yet-C: whole 192-byte terrain-height comparison and literal pool.
+ * Corrected the old call-via pseudo-call to its three-argument callback.
+ * Direct signed /16 division preserves rounding toward zero and improves
+ * the layer/cell address calculation. Candidate 184/192 bytes, 62 differing
+ * halfwords / 32 aligned edits. Callback index/argument setup is eight bytes
+ * shorter; cell-base and mask registers differ. The allocator decoder finds
+ * no unique source repair, so no permutation search was run. */
 #include "TYPES.H"
 #include "MAP.H"
 #include "GLOBAL_CELLS.H"
@@ -33,13 +40,9 @@ struct MapPosition {
    reads whatever it needs from that second table itself. */
 extern u8 Data_0202c000[];
 extern u8 Data_0202c001[];
-extern u32 Data_080134fc[];
+typedef s32 (*TerrainHeightFn)(u8 *, s32, s32);
+extern TerrainHeightFn Data_080134fc[];
 
-/* 0x080072e4 begins the GCC __call_via_rN veneer bank; a bl into it is an
-   indirect call through the named register, not a call to a function at
-   the branch target. This site's bl targets the r3 slot (0x080072f0), so
-   the real callee is the function pointer passed as the trailing arg. */
-s32 Func_080072f0(u32, s32, s32, u32);
 
 s32 Func_080120dc(struct MapObject *object, struct MapPosition *position)
 {
@@ -66,15 +69,8 @@ s32 Func_080120dc(struct MapObject *object, struct MapPosition *position)
     else
         cells = (u8 *)0x02010000;
 
-    tile_x = x;
-    if (tile_x < 0)
-        tile_x += 15;
-    tile_x >>= 4;
-
-    tile_z = z;
-    if (tile_z < 0)
-        tile_z += 15;
-    tile_z >>= 4;
+    tile_x = x / 16;
+    tile_z = z / 16;
 
     cell = cells + ((tile_x + (tile_z << 7)) << 2);
     if (cell[2] == 0xff)
@@ -83,8 +79,7 @@ s32 Func_080120dc(struct MapObject *object, struct MapPosition *position)
     idx = cell[3] << 2;
     kind = Data_0202c000[idx];
 
-    height = Func_080072f0((u32)&Data_0202c001[idx], x & 15, z & 15,
-        Data_080134fc[kind & 15]);
+    height = Data_080134fc[kind & 15](&Data_0202c001[idx], x & 15, z & 15);
 
     delta = height - object->height;
     if (delta > 0x80000)

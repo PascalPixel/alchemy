@@ -1,4 +1,30 @@
-/* Draft, not exact (2026-09-25): 472 of 472 bytes, 34 differing halfwords.
+/* NONMATCHING: 472 / 472 bytes, 33 differing halfwords, 32 aligned edits.
+ * 2026-09-26 H1: capture the displacement for both sign tests and give the
+ * object-facing stores a byte/field union view. This recovers the exact
+ * shared r5-relative position reload at 0800f882, including its incoming
+ * branch, with no extra address, load or stack space. Full normalized diff
+ * confirms that only that branch halfword differs from the prior baseline.
+ * The recovered join is an admission invariant for subsequent experiments.
+ * Whole owner [0800f7f4,0800f9cc) includes eight owned pool words. Callback
+ * pointers occur at 08013688 and 08114db0; all five callees were audited.
+ * gKeysHeld already binds to the named Data_03001ae8 linker symbol, so the
+ * independently successful literal-key-address correction is inapplicable.
+ * H1 is preserved at 6c1ca77f3 (472 bytes, 33 halfwords, 32 edits).
+ * H2 applies explicit mutually exclusive action selection, unchanged case
+ * first, instead of a default followed by conditional replacement. The mask
+ * now precedes the first action assignment, but the initial default-value
+ * lifetimes and reloads move away from the reference. The exact alias join,
+ * frame and all pools survive. Full normalized difference read; this action
+ * selection family does not close the remaining allocation. No adoption.
+ * H2 is preserved at 5048a0132. H3 restores H1's action lifetime and moves
+ * displacement initialization into a typed inline projection helper. Frame,
+ * pools and the exact alias join remain fixed, but argument setup is still
+ * after the zero stores. Only the order of three argument-setup instructions
+ * changes from H1, with the same residual count. Full normalized diff read.
+ * Stop after three hypotheses; the retained result is the store-side alias
+ * invariant, not an exact owner. No further local-order sweep is justified.
+ *
+ * Historical draft (2026-09-25): 472 of 472 bytes, 34 differing halfwords.
    Every call, store and branch is in place and the frame matches (the
    position sits above 68 unused bytes). Remaining: allocation swaps r0-r3
    in the prologue, the zeroed position and both height tests, and the ROM
@@ -14,6 +40,14 @@
    below so this draft scores independently without per-file bindings. */
 #include "OBJECT_RUNTIME.H"
 #include "MAP.H"
+
+/* FAKEMATCH: a byte/field union view makes facing stores conservatively
+ * alias the stack position, as the reference's shared join reload requires.
+ * The two sign tests consume one captured displacement before either store. */
+union KeyMoveObject {
+    struct ObjectRuntime fields;
+    u8 bytes[sizeof(struct ObjectRuntime)];
+};
 
 struct KeyMoveEventWork {
     u8 unknown_000[0x19c];
@@ -37,6 +71,16 @@ void Object_SetMoveTarget(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
 
 #define MAP_CELLS ((struct MapCell *)0x02010000)
 
+/* FAKEMATCH: give displacement initialization the projection-call lifetime
+ * so its argument values can be established before the three zero stores. */
+static __inline__ void MakeKeyStep(u16 angle, struct KeyMovePosition *pos)
+{
+    pos->x = 0;
+    pos->y = 0;
+    pos->z = 0;
+    Vector_AddPolarOffset(0x80000, angle, pos);
+}
+
 /*
  * Walks an object half a tile in the direction the pad is held. The step is
  * refused where the next cell is occupied or changes height; with L or R
@@ -52,6 +96,7 @@ s32 Object_MoveByKeys(struct ObjectRuntime *object)
     u16 angle;
     s32 motion;
     s32 blocked;
+    s32 delta_z;
 
     object->speed_limit = 0x8000;
     object->acceleration = 0x4000;
@@ -66,15 +111,13 @@ s32 Object_MoveByKeys(struct ObjectRuntime *object)
                 motion = 10;
         }
         blocked = 0;
-        pos.x = 0;
-        pos.y = 0;
-        pos.z = 0;
-        Vector_AddPolarOffset(0x80000, angle, &pos);
+        MakeKeyStep(angle, &pos);
         pos.x += object->x;
-        if (pos.z < 0)
-            object->angle = 0xc000;
-        if (pos.z > 0)
-            object->angle = 0x4000;
+        delta_z = pos.z;
+        if (delta_z < 0)
+            ((union KeyMoveObject *)object)->fields.angle = 0xc000;
+        if (delta_z > 0)
+            ((union KeyMoveObject *)object)->fields.angle = 0x4000;
         pos.y = object->y - pos.z;
         pos.z = object->z;
         from = &MAP_CELLS[object->x / 0x100000 + (pos.z / 0x100000) * 128];

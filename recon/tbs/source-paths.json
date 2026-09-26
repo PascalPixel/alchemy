@@ -21328,7 +21328,8 @@
       "name": "Func_020002e8"
     },
     "resource_36f:02000454": {
-      "name": "Func_02000454"
+      "name": "Title_LoadBackground",
+      "source": "MENU/TITLE/BG_SETUP.C"
     },
     "resource_370:02000154": {
       "name": "Func_02000154"

@@ -16,10 +16,11 @@ when it will make the next agent faster.
 **DONE = matching C + proven library, hand-written or veneer assembly**, over
 each game's executable bytes. `make progress` prints it in bytes;
 `make progress-subject` gives the commit prefix. Optimise one thing:
-**new ☀️ bytes landed on main per hour.** Report bytes, never rounded
-percentages. Work that cannot move that number (compressor tails, packing,
-provenance archaeology, tooling nobody asked for) is timeboxed and never
-blocks a landing.
+**☀️ DONE bytes per HOUR**, watched as a trailing 12h timeseries: 12 hourly
+bins of new bytes landed on main, with credit corrections shown separately.
+Report bytes, never rounded percentages. Work that cannot move that number
+(compressor tails, packing, provenance archaeology, tooling nobody asked for)
+is timeboxed and never blocks a landing.
 
 ## Our model: pret's pokeemerald
 

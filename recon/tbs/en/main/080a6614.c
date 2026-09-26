@@ -1,84 +1,67 @@
+/* Draft: main:080a6614, complete 384-byte owner.
+ * Candidate 372 bytes; 74 aligned halfword edits remain.
+ * Control flow agrees; constant sharing adds a stack slot and changes the
+ * two measurement calls and repeated global reads. */
 #include "PSYNERGY_MENU.H"
 
-extern struct PsynergyMenuGlobalState Data_02000240;
+extern char Value_00000ae0;
+void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
+s32 Func_08015108(s32 message, s32 *left, s32 *top, s32 *width, s32 *height);
+void UiWork_PushValueSlotFar(s32 value, s32 slot);
+void UiText_DrawStringAtOffsetFar(void *text, s32 window, s32 x, s32 y);
+void *Owner_GetStateFar(s32 owner);
+void UiWork_SetParamNibbleFar(s32 value);
 
-extern void UiText_DrawAt(s32, s32, s32, s32);
-extern s32 Func_08015108(s32, s32, s32, s32, s32);
-extern void UiText_DrawQuantity(s32, s32);
-extern void Func_08015090(void *, void *, s32, s32);
-extern void *Runtime_GetObject(s32);
-extern void UiPalette_SetColor(s32);
+static __inline__ void MeasureShortcut(u16 shortcut, s32 *left, s32 *top, s32 *width, s32 *height)
+{
+    Func_08015108((shortcut & 0x3ff) + 0x333, left, top, width, height);
+}
 
-#define UiText_GetResourceDimensionsFar Func_08015108
-#define UiText_DrawStringAtOffsetFar Func_08015090
-#define PsynergyMenu_DrawShortcuts Func_080a6614
+static __inline__ void PushShortcut(u16 shortcut)
+{
+    UiWork_PushValueSlotFar(shortcut & 0x3ff, 4);
+}
 
-s32 PsynergyMenu_DrawShortcuts(
-    s32 window,
-    s32 unused,
-    struct MenuResult *result)
+/* Show the L and R shortcuts and, when the Psynergy name fits, its owner. */
+s32 Func_080a6614(s32 window)
 {
     s32 height;
     s32 width;
     s32 top;
     s32 left;
-    s32 second_is_tall;
-    s32 first_is_tall;
+    s32 wide;
 
     if (Data_02000240.psynergy_shortcuts[0] != 0 &&
-        Data_02000240.psynergy_shortcuts[1] != 0) {
-        UiText_DrawAt(0xAE4, window, 0, -8);
-    } else {
-        UiText_DrawAt(0xAE0, window, 0, -8);
-    }
-    UiText_GetResourceDimensionsFar(
-        (Data_02000240.psynergy_shortcuts[0] & 0x3FF) + 0x333,
-        (s32)&left,
-        (s32)&top,
-        (s32)&width,
-        (s32)&height);
-    first_is_tall = 1;
-    if ((u32)width <= 10) {
-        first_is_tall = 0;
-    }
+        Data_02000240.psynergy_shortcuts[1] != 0)
+        UiText_DrawCharacterAtOffsetFar(0xae4, window, 0, -8);
+    else
+        UiText_DrawCharacterAtOffsetFar((s32)&Value_00000ae0, window, 0, -8);
+    MeasureShortcut(Data_02000240.psynergy_shortcuts[0], &left, &top, &width, &height);
+    wide = 1;
+    if ((u32)width <= 10)
+        wide = 0;
     if (Data_02000240.psynergy_shortcuts[0] != 0) {
-        UiText_DrawQuantity(Data_02000240.psynergy_shortcuts[0] & 0x3FF, 4);
-        UiText_DrawAt(0xAE7, window, 0, 0);
-        if (first_is_tall == 0) {
-            UiText_DrawStringAtOffsetFar(
-                Runtime_GetObject(
-                    Data_02000240.psynergy_shortcuts[0] >> 10),
-                (void *)window,
-                0x50,
-                0);
-        }
+        PushShortcut(Data_02000240.psynergy_shortcuts[0]);
+        UiText_DrawCharacterAtOffsetFar(0xae7, window, 0, 0);
+        if (wide == 0)
+            UiText_DrawStringAtOffsetFar(Owner_GetStateFar(Data_02000240.psynergy_shortcuts[0] >> 10),
+                                         window, 80, 0);
     } else {
-        UiText_DrawAt(0xAE5, window, 0, 0);
+        UiText_DrawCharacterAtOffsetFar(0xae5, window, 0, 0);
     }
-    UiText_GetResourceDimensionsFar(
-        (Data_02000240.psynergy_shortcuts[1] & 0x3FF) + 0x333,
-        (s32)&left,
-        (s32)&top,
-        (s32)&width,
-        (s32)&height);
-    second_is_tall = 1;
-    if ((u32)width <= 10) {
-        second_is_tall = 0;
-    }
+    MeasureShortcut(Data_02000240.psynergy_shortcuts[1], &left, &top, &width, &height);
+    wide = 1;
+    if ((u32)width <= 10)
+        wide = 0;
     if (Data_02000240.psynergy_shortcuts[1] != 0) {
-        UiText_DrawQuantity(Data_02000240.psynergy_shortcuts[1] & 0x3FF, 4);
-        UiText_DrawAt(0xAE8, window, 0, 8);
-        if (second_is_tall == 0) {
-            UiText_DrawStringAtOffsetFar(
-                Runtime_GetObject(
-                    Data_02000240.psynergy_shortcuts[1] >> 10),
-                (void *)window,
-                0x50,
-                8);
-        }
-        UiPalette_SetColor(0xF);
+        PushShortcut(Data_02000240.psynergy_shortcuts[1]);
+        UiText_DrawCharacterAtOffsetFar(0xae8, window, 0, 8);
+        if (wide == 0)
+            UiText_DrawStringAtOffsetFar(Owner_GetStateFar(Data_02000240.psynergy_shortcuts[1] >> 10),
+                                         window, 80, 8);
+        UiWork_SetParamNibbleFar(15);
     } else {
-        UiText_DrawAt(0xAE6, window, 0, 8);
+        UiText_DrawCharacterAtOffsetFar(0xae6, window, 0, 8);
     }
     return 1;
 }

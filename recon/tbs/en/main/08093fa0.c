@@ -1,3 +1,12 @@
+/* Not-yet-C: complete 436-byte owner including the pool before its failure
+ * tail. Baseline is 432 bytes, 169 differing halfwords / 72 aligned edits;
+ * the branch bodies and 24-byte frame match except the opening scratch
+ * registers and pool placement. A u8 active link constant moves the pool
+ * too early, splits it twice and gives 444 bytes / 74 edits. A one-halfword
+ * aggregate adds explicit extension and gives 436 bytes / 79 edits, still
+ * with the wrong pool. Retain the full-width active baseline; pool axis
+ * stopped. The raw failure tail uses .2byte directives, so topology reports
+ * reference-branch-target-not-code rather than a proven control-flow gap. */
 #include "OBJECT_RUNTIME.H"
 #include "BATTLE_EFFECT_RUNTIME.H"
 

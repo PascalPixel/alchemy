@@ -17,6 +17,12 @@
  * Complete diff: switch entries are semantically mapped but bodies are in
  * numeric rather than ROM order; mode 2 reloads attributes after Math_ModU
  * instead of retaining their pre-call values. No exact bytes are adopted.
+ * H1: recover the ROM's case-body order (2,5,6,7,4,17,14-16,18,8,9-12).
+ * Prediction: switch destinations and shared reset/push tails align before
+ * interpreting allocation differences. Do not change calculations yet.
+ * H1 result: 1136/1152 bytes, 258 aligned edits (baseline 398). Body order
+ * is repaired; frame remains 8/24 and mode 2's live attribute bytes are not
+ * retained. This is a useful topology repair, not a match or RA solution.
  */
 #include "RENDER_INPUT.H"
 #include "FIXED_MATH.H"
@@ -138,14 +144,6 @@ void UiWork_AnimateSpriteSlots(void)
                     sprite->affine_index = 0;
                 }
                 break;
-            case 4:
-                if (Data_03001800 & 1)
-                    item->frame++;
-                sprite->x = item->x +
-                    (s8)Data_08033eb0[(u16)Math_ModU(item->frame, 20) * 2];
-                sprite->y = *(u8 *)&item->y +
-                    Data_08033eb0[(u16)Math_ModU(item->frame, 20) * 2 + 1] - 2;
-                break;
             case 5:
                 if (Data_03001800 & 1) {
                     u32 a, b;
@@ -182,6 +180,29 @@ void UiWork_AnimateSpriteSlots(void)
                 sprite->x = item->x - (Trig_Sin(effect.angle + 0xe800) >> 14) - 2;
                 sprite->y = *(u8 *)&item->y - (Trig_Cos(effect.angle + 0x6800) >> 14) - 2;
                 break;
+            case 4:
+                if (Data_03001800 & 1)
+                    item->frame++;
+                sprite->x = item->x +
+                    (s8)Data_08033eb0[(u16)Math_ModU(item->frame, 20) * 2];
+                sprite->y = *(u8 *)&item->y +
+                    Data_08033eb0[(u16)Math_ModU(item->frame, 20) * 2 + 1] - 2;
+                break;
+            case 17:
+                item->frame++;
+                sprite->y = *(u8 *)&item->y - Data_08033ee8[item->frame & 15];
+                break;
+            case 14:
+            case 15:
+            case 16:
+                item->frame++;
+                sprite->y = *(u8 *)&item->y + Data_08033ee8[item->frame & 15];
+                break;
+            case 18:
+                item->frame++;
+                sprite->x = item->x - (s8)Data_08033ee8[item->frame & 15];
+                sprite->y = *(u8 *)&item->y + Data_08033ee8[item->frame & 15];
+                break;
             case 8:
                 if (item->frame == 0)
                     goto reset;
@@ -206,21 +227,6 @@ void UiWork_AnimateSpriteSlots(void)
             case 11:
             case 12:
                 RenderOutput_UpdateScaleAnimation(item);
-                break;
-            case 14:
-            case 15:
-            case 16:
-                item->frame++;
-                sprite->y = *(u8 *)&item->y + Data_08033ee8[item->frame & 15];
-                break;
-            case 17:
-                item->frame++;
-                sprite->y = *(u8 *)&item->y - Data_08033ee8[item->frame & 15];
-                break;
-            case 18:
-                item->frame++;
-                sprite->x = item->x - (s8)Data_08033ee8[item->frame & 15];
-                sprite->y = *(u8 *)&item->y + Data_08033ee8[item->frame & 15];
                 break;
             }
             if (item->mode == 2) {

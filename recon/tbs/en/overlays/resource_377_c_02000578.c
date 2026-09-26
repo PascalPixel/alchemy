@@ -1,17 +1,30 @@
-/* NONMATCHING: 1172 bytes, candidate 1204, 525 differing halfwords, 188
- * wrong instructions, 269 halfword edits. FieldScene_RunComplexActorSequence
+/* NONMATCHING: 1172 bytes, candidate 1188, 543 differing halfwords, 188
+ * wrong instructions, 257 halfword edits. FieldScene_RunComplexActorSequence
  * targets FIELD/COMMON/HAIDIA_BABI/F_00578.C as a single-overlay unit binding its
  * names at their runtime addresses (an import veneer's listing offset plus
  * 0x8000). Pointer-taking child-flag and palette calls now consume the actor
  * lookup result; the palette call receives 226. The sprite pointer is now
- * captured before calls, matching the reference's read lifetime. Workspace
- * ownership, literal pools and constant sharing differ; topology is equal.
+ * captured before calls, matching the reference's read lifetime. A typed
+ * pointer bank shares map/event/auxiliary reads and removes the extra middle
+ * pool; its retained anchor is +0 rather than +76. Constant sharing and
+ * sprite/actor registers still differ; topology is equal.
  * WALL: structural-topology: shared workspace lifetimes and actor setup */
 #include "FIELD_EVENT.H"
 
-extern u8 Data_03001e70[];
-extern u8 Data_03001ebc[];
-extern u8 Data_03001ec8[];
+struct SceneMapState {
+    u8 unknown_0000[0x1f84];
+    u16 active;
+};
+
+struct ScenePointerBank {
+    u8 *map_work;
+    u8 unknown_04[0x48];
+    struct EventWork *event_work;
+    u8 unknown_50[8];
+    struct SceneMapState *map_state;
+};
+
+extern struct ScenePointerBank gScenePointers;
 
 /* AUDITED GENERATED CALL SCRIPT for FieldScene_RunComplexActorSequence. */
 
@@ -68,10 +81,10 @@ void FieldScene_RunComplexActorSequence(void)
     struct FieldActor *p67;
     struct FieldActor *p89;
     u8 *work;
-    u32 *scene_actor;
+    struct FieldActor *scene_actor;
 
-    work = *(u8 **)Data_03001e70;
-    scene_actor = *(u32 **)(*(u8 **)Data_03001ebc + 480);
+    work = gScenePointers.map_work;
+    scene_actor = gScenePointers.event_work->view_center;
     sprite = Main_0808a080(17)->sprite;
     Main_0808a018();
     Main_0808a0f0(11, 0, 0);
@@ -103,15 +116,15 @@ void FieldScene_RunComplexActorSequence(void)
     *(u32 *)(work + 240) = 0x02580000;
     *(u32 *)(work + 244) = 0x02700000;
     *(u32 *)(work + 248) = 0x03300000;
-    scene_actor[2] = 0x02340000;
-    scene_actor[3] = 0;
-    scene_actor[4] = 0x02b30000;
+    scene_actor->x.fixed = 0x02340000;
+    scene_actor->y.fixed = 0;
+    scene_actor->z.fixed = 0x02b30000;
     Main_08009128();
     Main_080000c0(1);
-    *(u32 *)(*(u8 **)Data_03001ebc + 448) = 521;
-    *(u32 *)(*(u8 **)Data_03001ebc + 456) = 64;
+    gScenePointers.event_work->start_transition = 521;
+    gScenePointers.event_work->transition_frames = 64;
     Main_0808a2c8();
-    *(u16 *)(*(u8 **)Data_03001ec8 + 0x1f84) = 1;
+    gScenePointers.map_state->active = 1;
     Main_0808a2d8();
     Main_080000c0(30);
     Main_0808a360();
@@ -186,7 +199,7 @@ void FieldScene_RunComplexActorSequence(void)
     Main_0808a1b8(8, 16384, 10);
     Main_0808a178(32776, 0);
     if (Main_0808a070(0, 0) == 0) {
-        (*(u16 *)(*(u8 **)Data_03001ebc + 472))++;
+        gScenePointers.event_work->message++;
     }
     Main_0808a010(20);
     Main_0808a188(32776, 0, 20);
@@ -196,8 +209,8 @@ void FieldScene_RunComplexActorSequence(void)
     Main_0808a098(8, 33594116);
     Main_0808a098(0, 33594164);
     Main_0808a010(20);
-    *(u32 *)(*(u8 **)Data_03001ebc + 448) = 513;
-    *(u32 *)(*(u8 **)Data_03001ebc + 456) = 16;
+    gScenePointers.event_work->start_transition = 513;
+    gScenePointers.event_work->transition_frames = 16;
     Main_0808a368();
     Main_0808a370();
     Main_0808a248(20);

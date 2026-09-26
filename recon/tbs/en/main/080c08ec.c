@@ -1,4 +1,15 @@
-/* 2026-09-24: hand-written, 141 differing halfwords. The reference reaches
+/* Whole owner [080c08ec, 080c0a24), 312 bytes including 22 pool words.
+   2026-09-26 H1: pool-loaded 0x230 decoder size and in-place size >>= 2
+   before Dma_Set. The DMA setup now has the exact size/control instructions,
+   but the pre-existing slot-anchor lifetime retains another saved register:
+   candidate 320/312, 147 differing halfwords, 62 aligned edits, versus the
+   baseline 308/312, 141 halfwords, 48 edits. No new DONE bytes. Stop here at
+   checkpoint rather than permute that old anchor residual. Caller 080b63c8
+   supplies mode 1, work+0x648 resource and level 0; the far-call table also
+   exposes this loader. Audited callees establish ScaleRgb555Clamped returns
+   s32 (this older draft still says void); the copied 560-byte decoder is the
+   maintained DECODE/BIT_DISPATCH/BIT_COMMANDS library block, not game C.
+   2026-09-24: hand-written, 141 differing halfwords. The reference reaches
    0x03001e74 and 0x03001f14 relative to one 0x03001f00 anchor that reload
    rematerialises before each use (ldr =0x03001f00; subs #140); here the
    anchor is kept in a callee-saved register, which shifts every allocation. */
@@ -43,11 +54,12 @@ void Func_080c08ec(s32 mode, s32 resource, s32 level)
     struct BattleBgState *state = Data_03001f00[0];
     u8 *data = GetResource(resource);
     struct BattleScreen *screen = Data_03001f00[-35];
-    u32 size = 0x230;
+    u32 size = (u32)&Value_00000230;
     void *table;
 
     table = Runtime_AllocateHeapBlock(49, size);
-    Dma_Set((void *)0x080b5138, table, 0x84000000 | (size >> 2), (volatile u32 *)0x040000d4);
+    size >>= 2;
+    Dma_Set((void *)0x080b5138, table, 0x84000000 | size, (volatile u32 *)0x040000d4);
     ((DecodeFn)Data_03001f00[5])(data + 0x100, (void *)0x06008000);
     Runtime_ReleaseHeapBlock(49);
     Dma_Set(data, screen->palette, 0x84000040, (volatile u32 *)0x040000d4);
@@ -67,4 +79,3 @@ void Func_080c08ec(s32 mode, s32 resource, s32 level)
     if (mode == 1)
         *(volatile u16 *)0x0400000a = 0x1f83;
 }
-

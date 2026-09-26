@@ -3773,6 +3773,10 @@
       "name": "ItemMenu_PrepOwner",
       "source": "MENU/ITEM/PREPARE_OWNER_ITEMS.C"
     },
+    "main:080a35f8": {
+      "name": "ItemMenu_RunOwnerSelection",
+      "source": "MENU/ITEM/RUN_OWNER_SELECTION.C"
+    },
     "main:080a38a8": {
       "name": "ItemMenu_OpenCategory",
       "source": "MENU/ITEM/OPEN_CATEGORY_ITEMS.C"
@@ -21485,7 +21489,6 @@
     "main:080a8604": "CharacterMenu_DrawStatusAilments",
     "main:080a3ef0": "ItemMenu_DrawEquipPreview",
     "main:080a1ac0": "UiMenu_SlideCursor",
-    "main:080a35f8": "ItemMenu_RunOwnerSelection",
     "main:080a939c": "PsynergyMenu_ReservedNoOp939C",
     "main:0801a7f4": "MenuSelection_BuildEntries",
     "main:080e2974": "BattlePres_RunBurstScene",

@@ -104,6 +104,10 @@ precommit: index-sync-check native-format-check language-check lint-staged tooli
 		END { if (tbs) print "compare"; if (tla) print "compare-tla" }'); \
 	if [ -n "$$goals" ]; then $(MAKE) --no-print-directory $$goals; \
 	else printf 'no game input staged; nothing to compare\n'; fi
+	@set -e; if test -n "$$(git diff --cached --name-only -- \
+		README.md PROGRESS.png PROGRESS_CHART.png recon/tbs/metrics/history.json)"; then \
+		$(MAKE) --no-print-directory coverage-check; \
+	fi
 
 build-claimed:
 	$(BUILD) claimed --target $(TARGET)

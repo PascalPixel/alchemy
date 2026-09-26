@@ -1,7 +1,9 @@
-/* NONMATCHING: 556 bytes, candidate 552, 121 differing halfwords, 83 aligned
+/* NONMATCHING: 556 bytes, candidate 556, 124 differing halfwords, 77 aligned
  * edits (2026-09-26). Reconstructed both Q16 waves and all four actor-height
  * blocks. The complete topology now agrees. Remaining: halfword scroll
- * reload and stack-slot ownership, saved position pointer, and spawn stores. */
+ * reload and stack-slot ownership, saved position pointer, and spawn stores.
+ * A 20-byte aggregate restores the halfword load and complete size; its
+ * volatile member adds an unwanted read before the scroll store. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "IWRAM_CALL.H"
@@ -19,6 +21,14 @@ struct MapWork {
 
 struct Position {
     s32 x, y, z;
+};
+
+/* FAKEMATCH: the stack aggregate retains the scroll and position views. */
+struct WaveScratch {
+    struct Position *pos;
+    struct Position buf;
+    u16 unused;
+    volatile u16 scroll;
 };
 
 extern struct MapWork *Data_03001e70;
@@ -40,9 +50,7 @@ void BabiFune_UpdateDriftingObject(u8 *obj);
 
 void BabiFune_UpdateWaves(void)
 {
-    struct Position buf;
-    volatile u16 scroll;
-    struct Position *pos;
+    struct WaveScratch work;
     struct MapWork *map;
     struct FieldActor *actor;
     s32 bob;
@@ -51,8 +59,8 @@ void BabiFune_UpdateWaves(void)
     map = Data_03001e70;
     if (Data_020097e8 != 0) {
         bob = Iwram_MulQ16(Engine_MathSin(Data_020097ec << 9), 3);
-        scroll = Data_020097f0 + ((bob + 8) << 8);
-        *(volatile u16 *)0x0400001a = scroll;
+        work.scroll = Data_020097f0 + ((bob + 8) << 8);
+        *(volatile u16 *)0x0400001a = work.scroll;
         Data_020097ec++;
     }
     if (Data_020097fc != 0) {
@@ -89,13 +97,13 @@ void BabiFune_UpdateWaves(void)
         x = map->layers[4].unknown_10[0] & -0x10000;
         z = map->layers[4].unknown_10[1] & -0x10000;
         x += Engine_RandomNext() * 240;
-        pos = &buf;
-        pos->y = 0;
-        pos->x = x;
+        work.pos = &work.buf;
+        work.pos->y = 0;
+        work.pos->x = x;
         z += Engine_RandomNext() * 160;
         z += 0x1e0000;
-        pos->z = z;
-        actor = Engine_ObjectCreate(0x1f7, pos->x, pos->y, z);
+        work.pos->z = z;
+        actor = Engine_ObjectCreate(0x1f7, work.pos->x, work.pos->y, z);
         if (actor != 0) {
             actor->update = (void (*)(union FieldObject *))BabiFune_UpdateDriftingObject;
             actor->unknown_64 = 60;

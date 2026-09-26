@@ -3,13 +3,13 @@ use crate::candidate::{
     ROM_BASE,
 };
 use crate::compiler::bundle::compiler_bundle_signature_checked;
-use crate::compiler::routing::CompilerTarget;
+use crate::compiler::routing::{uses_arm_game_code, CompilerTarget};
 use crate::compiler::source_inputs::source_tree_signature;
 use crate::compiler::source_paths::{SourceOwner, SourcePaths};
 use crate::overlay::assembly::OVERLAY_BASE;
 use crate::score::{
     cli::Options,
-    disasm::disassemble,
+    disasm::{disassemble, disassemble_arm},
     patch::apply_unified_diff_in_tree,
     triage::{classify, classify_with_topology},
 };
@@ -297,8 +297,11 @@ pub fn render(root: &Path, options: &Options) -> Result<RenderOutput, String> {
             },
         )
     };
+    let arm = uses_arm_game_code(options.target, &identity.routing.to_string_lossy());
     let topology = if actual == expected {
         Comparison::Equal
+    } else if arm {
+        Comparison::Uncovered("arm-topology-not-supported".into())
     } else {
         topology_for_owner(
             root,
@@ -309,8 +312,14 @@ pub fn render(root: &Path, options: &Options) -> Result<RenderOutput, String> {
             &expected,
         )
     };
-    let mut score = render_bytes(actual, expected, compile, topology, options, &work)?;
-    let allocator = if options.allocator_order {
+    let mut score = render_bytes(actual, expected, compile, topology, options, &work, arm)?;
+    if arm && options.allocator_order {
+        score
+            .output
+            .stdout
+            .push_str("allocator_order=undecoded reason=arm-not-supported\n");
+    }
+    let allocator = if options.allocator_order && !arm {
         let report = crate::score::allocator::decode(
             root,
             options,
@@ -436,12 +445,14 @@ fn render_bytes(
     topology: Comparison,
     options: &Options,
     work: &Path,
+    arm: bool,
 ) -> Result<RenderedScore, String> {
     let candidate_path = work.join("candidate.bin");
     let reference_path = work.join("reference.bin");
     for (path, bytes) in [(&candidate_path, &actual), (&reference_path, &expected)] {
         std::fs::write(path, bytes).map_err(|error| format!("{}: {error}", path.display()))?;
     }
+    let disassemble = if arm { disassemble_arm } else { disassemble };
     let candidate_rows = disassemble(&candidate_path.to_string_lossy(), 0)?;
     let reference_rows = disassemble(&reference_path.to_string_lossy(), 0)?;
     let candidate: Vec<_> = candidate_rows.values().cloned().collect();
@@ -515,7 +526,9 @@ fn render_bytes(
         }
         out.push_str("      offset  candidate                      reference\n");
         for offset in offsets {
-            let mark = if differing.contains(&(*offset as usize)) {
+            let mark = if differing.contains(&(*offset as usize))
+                || (arm && differing.contains(&(*offset as usize + 2)))
+            {
                 "!"
             } else {
                 " "
@@ -968,6 +981,61 @@ mod region_size_tests {
 mod source_identity_tests {
     use super::*;
     use std::fs;
+
+    #[test]
+    fn arm_score_decodes_words_but_requires_every_byte() {
+        let directory = tempfile::tempdir().unwrap();
+        let options = Options::tbs("0800a0f8.c".into());
+        let reference = vec![0x01, 0x00, 0xa0, 0xe3, 0x1e, 0xff, 0x2f, 0xe1];
+        let exact = render_bytes(
+            reference.clone(),
+            reference.clone(),
+            "test",
+            Comparison::Equal,
+            &options,
+            directory.path(),
+            true,
+        )
+        .unwrap();
+        assert_eq!(exact.candidate.len(), 2);
+        assert_eq!(exact.output.differing_halfwords, 0);
+        assert_eq!(
+            exact.output.residual.class,
+            crate::score::triage::ResidualClass::Exact
+        );
+        let mut changed = reference.clone();
+        changed[2] ^= 1;
+        let score = render_bytes(
+            changed,
+            reference.clone(),
+            "test",
+            Comparison::Uncovered("arm-topology-not-supported".into()),
+            &options,
+            directory.path(),
+            true,
+        )
+        .unwrap();
+        assert_eq!(score.output.differing_halfwords, 1);
+        assert_ne!(
+            score.output.residual.class,
+            crate::score::triage::ResidualClass::Exact
+        );
+        assert!(score.output.stdout.contains("! 0000"));
+        let score = render_bytes(
+            reference[..4].to_vec(),
+            reference,
+            "test",
+            Comparison::Uncovered("arm-topology-not-supported".into()),
+            &options,
+            directory.path(),
+            true,
+        )
+        .unwrap();
+        assert_ne!(
+            score.output.residual.class,
+            crate::score::triage::ResidualClass::Exact
+        );
+    }
 
     fn scratch_root() -> tempfile::TempDir {
         let root = tempfile::tempdir().unwrap();

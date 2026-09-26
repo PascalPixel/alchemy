@@ -5,8 +5,8 @@
 @ assembly without credit: it has the shape of GCC 2.96 ARM-mode output
 @ (register subtraction as rsb, calls through mov lr, pc; bx rN, -4096 built
 @ as mov r2, #0x80000000 then asr #19, lr saved with r5-sl while r4 stays
-@ free), followed by ldr r4; bx r4 call stubs. The approved routes compile
-@ only Thumb.
+@ free), followed by ldr r4; bx r4 call stubs. This complete not-yet-C module
+@ uses the approved ARM game-code route.
 .syntax unified
 	.arm
 	.global Object_UpdateAll

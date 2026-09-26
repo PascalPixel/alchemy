@@ -1,6 +1,9 @@
 {
   "format": 3,
   "owners": {
+    "resource_3b7:02000ac8": {
+      "name": "TorebiIzumi_RunSpringGame"
+    },
     "resource_3ba:020013e4": {
       "name": "Korosseo_RunPromptMotionSequence"
     },

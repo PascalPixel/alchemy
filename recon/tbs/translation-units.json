@@ -2,6 +2,146 @@
   "format": 5,
   "units": [
     {
+      "id": "torebi-spring-game-candidate",
+      "game": "tbs",
+      "source": "recon/tbs/en/overlays/resource_3b7_c_02000ac8.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3b7",
+      "absolute_symbols": {
+        "Engine_EventBegin": {
+          "address": "0x0200991c",
+          "kind": "thumb"
+        },
+        "Main_0808a460": {
+          "address": "0x020099ac",
+          "kind": "thumb"
+        },
+        "Main_080772e0": {
+          "address": "0x02009904",
+          "kind": "thumb"
+        },
+        "Engine_EventSetMessage": {
+          "address": "0x02009964",
+          "kind": "thumb"
+        },
+        "Engine_EventOpenMessage": {
+          "address": "0x0200996c",
+          "kind": "thumb"
+        },
+        "Main_08015010": {
+          "address": "0x020098a4",
+          "kind": "thumb"
+        },
+        "Main_08015080": {
+          "address": "0x020098b4",
+          "kind": "thumb"
+        },
+        "Main_080150b0": {
+          "address": "0x020098bc",
+          "kind": "thumb"
+        },
+        "Main_08015398": {
+          "address": "0x020098d4",
+          "kind": "thumb"
+        },
+        "Main_08015018": {
+          "address": "0x020098ac",
+          "kind": "thumb"
+        },
+        "Main_08015140": {
+          "address": "0x020098cc",
+          "kind": "thumb"
+        },
+        "Engine_EventShowMessage": {
+          "address": "0x02009974",
+          "kind": "thumb"
+        },
+        "Engine_TaskWait": {
+          "address": "0x02009864",
+          "kind": "thumb"
+        },
+        "Engine_AudioPlayCue": {
+          "address": "0x020099c4",
+          "kind": "thumb"
+        },
+        "Main_08077308": {
+          "address": "0x0200990c",
+          "kind": "thumb"
+        },
+        "Engine_UiWorkWaitThenFinalizeCapacity": {
+          "address": "0x02009934",
+          "kind": "thumb"
+        },
+        "Main_08077230": {
+          "address": "0x020098f4",
+          "kind": "thumb"
+        },
+        "Main_08077048": {
+          "address": "0x020098dc",
+          "kind": "thumb"
+        },
+        "TorebiIzumi_Func0200173c": {
+          "address": "0x0200973c",
+          "kind": "thumb"
+        },
+        "Main_08015120": {
+          "address": "0x020098c4",
+          "kind": "thumb"
+        },
+        "Engine_EventWait": {
+          "address": "0x02009914",
+          "kind": "thumb"
+        },
+        "Engine_RandomNext": {
+          "address": "0x02009874",
+          "kind": "thumb"
+        },
+        "Func_020004bc": {
+          "address": "0x020084bc",
+          "kind": "thumb"
+        },
+        "Engine_EventEnd": {
+          "address": "0x02009924",
+          "kind": "thumb"
+        },
+        "Data_02000240_t": {
+          "address": "0x02000240",
+          "kind": "data"
+        },
+        "Data_0200a00c": {
+          "address": "0x0200a00c",
+          "kind": "data"
+        },
+        "Data_02009fd0": {
+          "address": "0x02009fd0",
+          "kind": "data"
+        },
+        "Data_03001c94": {
+          "address": "0x03001c94",
+          "kind": "data"
+        },
+        "Value_00000e43": {
+          "address": "0x00000e43",
+          "kind": "data"
+        },
+        "Value_00000e49": {
+          "address": "0x00000e49",
+          "kind": "data"
+        },
+        "Value_00000e4c": {
+          "address": "0x00000e4c",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02000ac8",
+          "extent": 680,
+          "state": "not-yet-c"
+        }
+      ]
+    },
+    {
       "id": "korosseo-prompt-motion-candidate",
       "game": "tbs",
       "source": "recon/tbs/en/overlays/resource_3ba_c_020013e4.c",

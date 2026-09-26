@@ -1,13 +1,27 @@
-/* NONMATCHING: 680 bytes, candidate 680, 212 differing halfwords (2026-09-25).
- * TorebiIzumi_RunSpringRide, meant for FIELD/TOREBI_IZUMI/SPRING_RIDE.C as a
- * single-overlay unit binding Engine_* and Main_* at their import veneers
- * (runtime = listing offset + 0x8000) and Func_020004bc at 0x020084bc.
- * Block layout matches with the goto spelling of the coin/ticket prompt, the
- * Call2 wrappers keep -1 out of a shared register and the Value_ bases give
- * the r9/r5 message and text bases. Remaining: choice and message swap sl
- * and r9; the poll loop hoists both key masks (the reference only the 1);
- * the weight sum loop is reversed into a count-down where the reference
- * keeps i < n in ip and loads each weight with ldrb plus sign extension. */
+/* NONMATCHING: 680 of 680 bytes, 212 differing halfwords, 125 aligned edits
+ * (2026-09-26). Whole owner 02000ac8..02000d70; pool 02000d4c..02000d70.
+ * Own-ROM callees/pool audited. WalkLeaderToSpring calls this controller;
+ * its side argument is passed to the separately matched RunSpringRide.
+ * Registered as torebi-spring-game-candidate, not credited.
+ *
+ * Three bounded structural trials:
+ * 1. Unsigned weight storage with explicit signed consumption: identical
+ *    680/212/125. Signedness alone does not change the sum-loop lowering.
+ * 2. State-owned signed weight array for the sum, deriving the selection
+ *    pointer only after RandomNext: 684 bytes, 241 differing halfwords,
+ *    124 aligned edits. Sum now uses ldrb/lsls/asrs, but remains a countdown;
+ *    selection entry and tail addressing worsen. Original full-size baseline
+ *    retained despite the single-edit alignment improvement.
+ * 3. Explicit wait/read-key labels, one persistent A-key mask and local B
+ *    mask: 668 bytes, 245 differing halfwords, 130 aligned edits. B no longer
+ *    hoists, but the pressed block moves into the poll and keypad base reloads.
+ *    Rejected. Full normalized diff reviewed for every trial.
+ *
+ * Remaining: choice/message exchange sl/r9; shared -1 crosses prompt calls;
+ * poll-loop entry/hoisting; sum needs an upward counter retained in ip's
+ * comparison, and the state+1 selection pointer must not survive RandomNext.
+ * Stop these three axes; do not repeat type or declaration spelling sweeps.
+ */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
@@ -46,7 +60,7 @@ extern u8 Value_00000e43[];
 extern u8 Value_00000e49[];
 extern u8 Value_00000e4c[];
 
-s32 TorebiIzumi_RunSpringRide(void)
+s32 TorebiIzumi_RunSpringGame(void)
 {
     s32 choice = 0;
     s32 message;

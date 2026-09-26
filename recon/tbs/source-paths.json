@@ -1,6 +1,9 @@
 {
   "format": 3,
   "owners": {
+    "resource_3a4:02000d2c": {
+      "name": "ArutinYama_SwingActorIntoSetPiece"
+    },
     "resource_3c8:0200247c": {
       "name": "VinasuHeya_ResolveFloatingBlock"
     },

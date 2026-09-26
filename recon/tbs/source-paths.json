@@ -21437,7 +21437,8 @@
       "source": "GRAPHICS/TEXT/COPY_MESSAGE_STRING.C"
     },
     "main:080196c4": {
-      "name": "UiWindow_AdjustValue"
+      "name": "UiText_DecodeMessage",
+      "source": "GRAPHICS/TEXT/DECODE_MESSAGE.C"
     }
   },
   "symbols": {

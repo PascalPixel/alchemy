@@ -1,6 +1,9 @@
 {
   "format": 3,
   "owners": {
+    "resource_3ba:02000540": {
+      "name": "KorosseoKawa_MoveActorsAndMap"
+    },
     "resource_3b7:02000ac8": {
       "name": "TorebiIzumi_RunSpringGame"
     },

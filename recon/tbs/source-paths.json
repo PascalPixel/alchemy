@@ -20073,6 +20073,9 @@
       "name": "Color_ScaleComponents",
       "source": "GRAPHICS/PALETTE/SCALE_COMPONENTS.C"
     },
+    "main:0801a66c": {
+      "name": "UiGlyph_ResetWorkState"
+    },
     "main:0801a5a4": {
       "name": "UiGlyph_DecodeWithHeapRoutines"
     },
@@ -21451,7 +21454,6 @@
     "main:08015070": "UiWindow_DrawDividerLineFar",
     "main:0801a4fc": "UiGlyph_LoadEntryWithPalette",
     "main:0808a5b0": "SaveState_CaptureObjectTableFar",
-    "main:0801a66c": "UiGlyph_ResetWorkState",
     "main:0801f200": "UiWindow_DrawPartyStatusContents",
     "main:080a2420": "UiWork_ClearMenuBusy",
     "main:080191cc": "UiWork_AnimateSpriteSlots",

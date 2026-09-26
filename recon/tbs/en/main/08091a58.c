@@ -4,7 +4,9 @@
 
 /* main:08091a58 PartyInventory_GiveItem - draft, 95 of 226
    halfwords differ (436 of 452 bytes, 2026-09-26). The discard quantity
-   now decrements, matching the operation. Residual: its copy is too early;
+   now decrements, matching the operation. Branch-local result lifetime
+   and a volatile publication tail do not change the 436-byte result.
+   Residual: its copy is too early;
    the ROM keeps three
    separate stores of the saved message position and a separate call in
    the leader branch of the discard path, where this C is cross-jumped; the
@@ -94,8 +96,9 @@ s32 PartyInventory_GiveItem(s32 item)
                 work->message_position = saved;
             } else {
                 Owner_GetStateFar(member);
-                count = Func_08077020(member, slot);
-                if (count > 0) {
+                result = Func_08077020(member, slot);
+                if (result > 0) {
+                    count = result;
                     do {
                         count--;
                         Func_080772b0(member, slot);
@@ -111,7 +114,9 @@ s32 PartyInventory_GiveItem(s32 item)
                     UiWork_PushValueSlotFar(owner, 1);
                     UiText_ShowPositionedMessageAndWaitFar(MSG_RECEIVED + 1, 3);
                 }
-                work->message_position = saved;
+                /* FAKEMATCH: distinguish this published position restore
+                   from the discard branch's otherwise identical tail. */
+                *(volatile s16 *)&work->message_position = saved;
                 return owner;
             }
         } while (0);

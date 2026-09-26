@@ -12,7 +12,11 @@
  * Remaining: the main heap pointer spills instead of living in r9; the
  * halfword I/O constants use short-range pool loads; loop counters and
  * callback reloads differ. Do not tune allocation before first-pool
- * admission. All three structural hypotheses are exhausted. */
+ * admission. All three structural hypotheses are exhausted.
+ * Pool-width follow-up: a u16 struct member emits the same instructions;
+ * Value_0000100c selects word ldr but removes the early short-range pool.
+ * A u8 resource-76 local becomes movs, not the reference's pooled halfword.
+ * Width-only spellings do not admit the reference's first pool. */
 
 typedef void (*PaletteCopy)(void *, const void *, s32);
 

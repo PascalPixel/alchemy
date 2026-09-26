@@ -1,5 +1,10 @@
 #include "TYPES.H"
 
+/* Draft: scalar fields fold the final reload and emit scalar stores, not the
+   three four-word stmia stores. An aggregate initializer spills 16 bytes,
+   calls memset, and copies three words plus a scalar in the Thumb block path.
+   Retained scalar candidate: 36 bytes, 18 differing halfwords; no pool. */
+
 struct BattleTransitionEntry {
     u32 value;
     u32 sum;
@@ -7,9 +12,7 @@ struct BattleTransitionEntry {
     u32 fieldc;
 };
 
-#define BattlePres_InitializeTransitionEntries Func_080c0eb8
-
-void BattlePres_InitializeTransitionEntries(struct BattleTransitionEntry *entries)
+void BattlePresentation_InitializeTransitionEntries(struct BattleTransitionEntry *entries)
 {
     u32 previous = entries[0].value;
     u32 one = 0x10000;

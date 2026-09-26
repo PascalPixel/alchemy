@@ -1,10 +1,17 @@
+/* Not-yet-C, main:08011f54, complete 132-byte function and pool.
+ * The table is three-argument terrain callbacks, not a four-argument service.
+ * Typed callback recovery keeps 54 instructions but chooses r4 for the call
+ * and omits the reference's r7 base. Shared mask/indexed symbol accesses give
+ * 52 instructions and the correct r3 call but fold two address operations.
+ * Integer addresses share the attribute base with +1, unlike the two pools
+ * in the reference. Three structural hypotheses stopped; no byte credit.
+ */
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
 
 extern u8 Data_0202c001[];
-extern s32 Data_080134fc[];
-
-s32 Func_080072f0(u8 *, s32, s32, s32);
+typedef s32 (*TerrainHeight)(u8 *, s32, s32);
+extern TerrainHeight Data_080134fc[];
 
 s32 Func_08011f54(s32 index, s32 x, s32 y)
 {
@@ -15,10 +22,9 @@ s32 Func_08011f54(s32 index, s32 x, s32 y)
     s32 row;
     u32 entry;
     u8 config;
-    s32 target;
-    y >>= 16;
-
+    TerrainHeight target;
     x >>= 16;
+    y >>= 16;
     map = (u8 *)0x02010000;
     if (table != 0) {
         offset = (index & 3) * 48 + 304;
@@ -32,5 +38,5 @@ s32 Func_08011f54(s32 index, s32 x, s32 y)
     x &= 15;
     y &= 15;
     target = Data_080134fc[config];
-    return Func_080072f0(&Data_0202c001[entry * 4], x, y, target);
+    return target(&Data_0202c001[entry * 4], x, y);
 }

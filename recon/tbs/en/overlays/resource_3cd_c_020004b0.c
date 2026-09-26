@@ -7,7 +7,11 @@
  * BattleAction_Get[4] loops, mask-after-label ands, and B-exit
  * Finalize(details) otherwise match
  * WALL: gcc 2.96 assigns redraw (more refs) to r8 and dir to sl; ROM wants
- * dir in r8 and redraw in sl — 19 halfwords of mov r8/sl only */
+ * dir in r8 and redraw in sl — 19 halfwords of mov r8/sl only.
+ * Bounded lifetime trials: separate next-redraw flag gives 584 bytes / 60
+ * aligned edits, mutually exclusive direction scans 584 / 37, and resetting
+ * direction before input 576 / 99. The first two keep the wrong entry sl;
+ * the last removes the required entry zero. Keep the original 19-edit model. */
 #include "FIELD_EVENT.H"
 #include "DMA.H"
 #include "TEXT_RENDER_RUNTIME.H"

@@ -3,6 +3,11 @@
  * the remap branch reduced 17 halfword edits to 3. The initial slot load
  * still uses r3 instead of r2, reverses its copy, and advances src early.
  * A separate test argument and narrow helper types did not improve it.
+ * 2026-09-26: moving the palette snapshot inside RemapColour removes the
+ * input/result copy and its branch tail (204 bytes / 17 aligned edits).
+ * A separate one-pass snapshot region and a one-word aggregate return
+ * each compile byte-identically to this three-halfword baseline. Those
+ * three interface/lifetime hypotheses are exhausted; keep this draft.
  */
 
 #include "DMA.H"

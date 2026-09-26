@@ -3,7 +3,10 @@
    Recovered from the validated split listing. Remaining: the zero is shared
    across window creation rather than initialized afterward; entry writes
    use the retained pointer instead of stack offsets. An explicit entry
-   pointer moves its lifetime before creation but does not close the gap. */
+   pointer moves its lifetime before creation but does not close the gap.
+   A three-word named display record and a one-word clear-value aggregate
+   each compile identically to this draft; neither changes zero sharing
+   across the creation call or the later retained-pointer stores. */
 #include "TYPES.H"
 
 struct PartyJoinWork {

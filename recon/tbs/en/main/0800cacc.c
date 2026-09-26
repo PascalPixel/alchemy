@@ -93,6 +93,22 @@
  * The exact sibling expresses its coarse deltas as signed division by
  * 65536; this draft still manually expands that operation into branches.
  * That is a separate lowering hypothesis, not a declaration permutation.
+ * H3 restores those signed coarse-coordinate divisions from the exact
+ * movement sibling. Predict short-lived low-register quotient temporaries
+ * followed by r8/fp/r9 delta ownership, rather than holding each manually
+ * expanded conditional accumulator in a low register. Leave all other
+ * arithmetic and flow unchanged. One trial, then stop this owner's batch
+ * at three hypotheses and preserve the complete result by 23:30.
+ * H3 result: 1596 bytes, 795 differing halfwords / 529 aligned edits.
+ * Full normalized difference and the shared clamp tail inspected. Signed
+ * division restores the r0 quotient temporary and X in r8, but Y is r9
+ * instead of fp and Z remains r7. Two clamp stores share the braking tail
+ * again. The topology reader reports uncovered candidate target 0x1ee;
+ * the compiler listing identifies that jump as the shared .L121 tail.
+ * No CFG-equivalence or exactness claim. Remaining first-order questions
+ * are dispatch back-edge ownership, the independent act/motion cursors,
+ * and the 36/48-byte stack model. Three trials complete; stop this batch.
+ * H1 is 4c8a6b29d, H2 is a440a0f1e. No new credited bytes.
  */
 
 #include "TYPES.H"
@@ -206,18 +222,9 @@ void Object_UpdateAllThumb(void)
             if (ctl[0] == 0) {
                 /* Three-axis approach. */
                 if (obj->target_x != TARGET_UNSET) {
-                    dx = obj->target_x - px;
-                    if (dx < 0)
-                        dx += 0xffff;
-                    dx >>= 16;
-                    dy = obj->target_y - py;
-                    if (dy < 0)
-                        dy += 0xffff;
-                    dy >>= 16;
-                    dz = obj->target_z - pz;
-                    if (dz < 0)
-                        dz += 0xffff;
-                    dz >>= 16;
+                    dx = (obj->target_x - px) / 65536;
+                    dy = (obj->target_y - py) / 65536;
+                    dz = (obj->target_z - pz) / 65536;
                     dist = IwramLength(dx * dx + dy * dy + dz * dz);
                     if (dist == 0) {
                         px = obj->target_x;
@@ -263,14 +270,8 @@ void Object_UpdateAllThumb(void)
             } else {
                 /* Planar approach: x and z only. */
                 if (obj->target_x != TARGET_UNSET) {
-                    dx = obj->target_x - px;
-                    if (dx < 0)
-                        dx += 0xffff;
-                    dx >>= 16;
-                    dz = obj->target_z - pz;
-                    if (dz < 0)
-                        dz += 0xffff;
-                    dz >>= 16;
+                    dx = (obj->target_x - px) / 65536;
+                    dz = (obj->target_z - pz) / 65536;
                     /* The coarse cell length is enough while the object is
                      * far away; near the target the full-precision length is
                      * recomputed instead. */

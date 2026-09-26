@@ -5,7 +5,8 @@
    Typed party/runtime views recover
    base-plus-offset accesses and shared zero/one lifetimes. Confirmation
    copies use +0x240/+0x242 and +0x1c0/+0x1c2. The complete literal pool
-   now agrees. Initializing best after the owner-count call is score-neutral.
+   now agrees. Initializing best after the owner-count call and correcting
+   the canonical no-argument count prototype are both score-neutral.
    Remaining: phase-value allocation and runtime flag-pointer scheduling. */
 #include "TYPES.H"
 extern u8 Value_000003e7;
@@ -34,7 +35,7 @@ extern u8 Value_000003e7;
  *   field (0x1f4) and target-id byte array (0x1f8) are already named in
  *   apply_drain.c/apply_health_delta.c/apply_status_damage.c
  *   (games/THE BROKEN SEAL/src/battle/party/). This owner primes the same table via an
- *   unconditional Func_08077148(actor) call before branching on actor==15,
+ *   unconditional Party_CountActiveOwnersFar() call before branching on actor==15,
  *   matching that priming idiom.
  * - Data_03001ebc is BattleRuntime (battle_effect_runtime.h), documented up
  *   to offset 0xcc4. This owner is the first known reader of 0x170 and
@@ -92,7 +93,7 @@ struct BattleItemEventRecord {
  * for the pp field); both callers cast the shared pointer to their own
  * struct locally. */
 void *Runtime_GetObject(s32 actor);
-s32 Func_08077148(s32 actor);
+s32 Party_CountActiveOwnersFar(void);
 /* Declared s32-returning with a u16 parameter to match the prototype in the
  * exact owner runtime_owner_135.c, which calls this symbol without defining
  * it; the result is cast back to struct BattleItemEventRecord * here. */
@@ -134,7 +135,7 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
     {
         s32 best;
 
-        work.count = Func_08077148(actor);
+        work.count = Party_CountActiveOwnersFar();
         best = 0;
 
         if (actor == 15) {

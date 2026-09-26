@@ -50,6 +50,15 @@ extern u8 Value_00000075;
  * H2: unchanged 828/832 bytes, 400 differing halfwords, 76 aligned edits.
  * Six entries and eight entries have the same rounded stack allocation;
  * changing the object extent does not change its address construction.
+ * H3: the reload dump already has the split #8/add-sp address, but shares
+ * r1=0 between index and row; final emission combines the adjacent address
+ * pair. Give the command pointer an explicit lifetime between those scalar
+ * initialization phases. Predict distinct zero reloads and split address.
+ * H3: 832/832 bytes, 275 differing halfwords, 67 aligned edits. The explicit
+ * pointer keeps split address construction, but in r2, and the index/row
+ * zeros still share r1. An alignment halfword precedes the switch table.
+ * STOP: corrected model and two variants exhausted. Preserve the new address
+ * fact; do not extend this into initialization-order/register permutations.
  */
 /*
  * Item command menu reached after selecting an item slot: builds the 3x2
@@ -59,8 +68,9 @@ extern u8 Value_00000075;
  */
 s32 Func_080a414c(void)
 {
-    struct InventoryMenuState *menu = gMenuWork;
-    s8 command_states[6];
+    struct InventoryMenuState *menu;
+    s8 command_storage[6];
+    s8 *command_states;
     u16 *redraw_flag;
     s32 saved;
     s32 col;
@@ -71,6 +81,10 @@ s32 Func_080a414c(void)
     s32 y;
 
     index = 0;
+    /* FAKEMATCH: bind the command buffer between scalar initialization
+     * phases to preserve the reference's stack-address and zero lifetimes. */
+    command_states = command_storage;
+    menu = gMenuWork;
     row = 0;
     need_redraw = 1;
 

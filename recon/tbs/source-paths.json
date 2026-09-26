@@ -6,7 +6,8 @@
       "source": "FIELD/COMMON/MAP/UPDATE_SCROLL.C"
     },
     "main:08010230": {
-      "name": "Map_SetCameraCenter"
+      "name": "Map_SetCameraCenter",
+      "source": "FIELD/COMMON/MAP/SET_CAMERA_CENTER.C"
     },
     "main:08010424": {
       "name": "Map_CopyMetatileIndicesRect"

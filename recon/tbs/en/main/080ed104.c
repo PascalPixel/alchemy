@@ -1,7 +1,20 @@
 #include "TYPES.H"
 #include "BATTLE_EFX.H"
 
-/* 2026-09-26 bounded restart, H2: candidate=776 reference=772,
+/* Draft, not exact, 2026-09-26 bounded restart, H3: candidate=772 reference=772,
+   265 differing halfwords, 57 aligned edits; equal topology and frame 44.
+   Direct accesses to owned rect_fns storage, using rect_slot only for the
+   resolver, remove the extra indirections. Independent heap callback cell
+   Data_03001f08 ends heap_cache's lifetime at entry: its retained r2 base,
+   cursor copy, callback literal and all spill slots now match. This is the
+   concrete ownership error behind the older heap-cache residual.
+   Remaining: entry work/effect-address scheduling, seed mask extra move,
+   sine/cosine multiply operand order, progress setup r1/r4 choices, and
+   bar callback r3 rather than r4 plus local preheader ordering. The extra
+   seed move shifts most later instructions by two bytes, not new behavior.
+   Caller MODE.C dispatches table[index-1](state); no result is consumed.
+   Three hypotheses exhausted; preserve this draft without setup permutations.
+   H2 witness 53a26a5c6: candidate=776 reference=772,
    300 differing halfwords, 142 aligned edits. Explicit rect_slot declared
    beside canvas recovers all scalar spill slots: progress +8, object +12,
    callbacks pointer +16, canvas +20. Accessing the array through that pointer
@@ -22,7 +35,7 @@
 /*
  * Draft for the battle-presentation sub-effect at 0x080ed104.
  *
- * 2026-09-26: callback provenance corrected. The reference writes the
+ * Earlier 2026-09-26 baseline: callback provenance corrected. The reference writes the
  * heap callback to rect_fns[0] before the bar draw (str to sp+24 at
  * 0x080ed2ce); the old direct call omitted that observable array store.
  * Corrected draft is 772/772 bytes, 278 differing halfwords, 143 aligned
@@ -90,6 +103,7 @@ extern u8 Value_00000051;
 extern u8 Value_000000c0;
 extern const u16 Data_080eef88[];
 extern const u16 Data_080eef96[];
+extern DrawRectangleFn Data_03001f08;
 
 void Func_080ed104(void *object)
 {
@@ -192,8 +206,8 @@ void Func_080ed104(void *object)
                     } else {
                         BattleEffect_LoadWork(46, 7, 7, 7, bar_style);
                     }
-                    rect_slot[0] = (DrawRectangleFn)heap_cache[7];
-                    rect_slot[0](
+                    rect_fns[0] = Data_03001f08;
+                    rect_fns[0](
                         draw_destination, work,
                         bar_x, 112 - bar_height, 14, bar_height);
                     Func_08002dd8(46);
@@ -229,7 +243,7 @@ void Func_080ed104(void *object)
                     raw = Data_080eef96[bucket];
                     half = raw >> 1;
 
-                    rect_slot[0](
+                    rect_fns[0](
                         draw_destination, src,
                         sy - half, sh - half,
                         raw, raw);

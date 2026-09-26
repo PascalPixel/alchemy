@@ -13421,6 +13421,42 @@
       "source": "recon/tbs/en/overlays/resource_3ba_c_020033a0.c",
       "overlay": "resource_3ba",
       "absolute_symbols": {
+        "Engine_GameFlagIsSet": {
+          "address": "0x0200bc58",
+          "kind": "thumb"
+        },
+        "Engine_BumpAllocateAlternatePool": {
+          "address": "0x0200bb50",
+          "kind": "thumb"
+        },
+        "Engine_ResourceDecodeType01": {
+          "address": "0x0200bb60",
+          "kind": "thumb"
+        },
+        "Engine_VramLoad": {
+          "address": "0x0200bb78",
+          "kind": "thumb"
+        },
+        "Engine_BumpFree": {
+          "address": "0x0200bb58",
+          "kind": "thumb"
+        },
+        "Engine_VramRelease": {
+          "address": "0x0200bb70",
+          "kind": "thumb"
+        },
+        "Engine_OamSubmitRecord": {
+          "address": "0x0200bb90",
+          "kind": "thumb"
+        },
+        "Engine_ObjectTableGet": {
+          "address": "0x0200bdc8",
+          "kind": "thumb"
+        },
+        "Engine_MathDivide": {
+          "address": "0x0200bb00",
+          "kind": "thumb"
+        },
         "Func_0200714c": {
           "address": "0x200bb90",
           "kind": "thumb"

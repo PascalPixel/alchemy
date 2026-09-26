@@ -1,4 +1,5 @@
 /* main:080ae99c, complete 84-byte owner through 080ae9f0, pools included.
+ * Current: 88/84 bytes, 37 differing halfwords, 15 aligned edits; not exact.
  * Own-ROM caller UiText_DrawStatComparison passes (window, x, y, variant).
  * RenderOutput_CreateFar takes (resource, flags, window, x, y), as its exact
  * implementation and the exact shop drawing family establish.
@@ -26,6 +27,19 @@
  * indexed halfword load replaces the ROM's distinct add/load; r6 disappears.
  * This proves the input selector's lifetime causes the earlier y evacuation,
  * but offset reuse is not the original source boundary.
+ * H3: retain the resource ID in a u16 local, matching its two storage fields,
+ * rather than carrying a selected pointer/offset or a widened u32 ID. This
+ * tests a halfword value boundary before the signed-int renderer argument;
+ * prediction: distinct selector and loaded-ID lifetimes with one joined load.
+ * This is the final model; stop on any nonexact result.
+ * H3 result: 88/84 bytes, 37 differing halfwords, 15 aligned edits. The u16
+ * local becomes ldrsh plus explicit zero-extension shifts rather than the
+ * ROM's ldrh, and y still evacuates r2 at entry. Branch directions agree;
+ * resource conversion, argument carriers and pool locations do not.
+ * STOP: one pointer model plus two structural follow-ups exhausted. No
+ * adoption/registration or DONE gain. H2's recovered y/base/store invariant
+ * is evidence for a future source-boundary audit, not permission to sweep
+ * declarations or repeat these pointer/offset/halfword-local axes.
  */
 #include "TYPES.H"
 #include "RENDER_INPUT.H"
@@ -51,14 +65,14 @@ struct MarkerObject *RenderOutput_CreateFar(s32 resource, s32 flags,
 s32 Func_080ae99c(struct RenderInput *window, s32 x, s32 y, s32 variant)
 {
     struct MarkerObject *object;
+    u16 resource;
     struct ArrowResources *data = Data_03001f2c;
 
     if (variant == 0)
-        variant = (s32)&((struct ArrowResources *)0)->resource[0];
+        resource = data->resource[0];
     else
-        variant = (s32)&((struct ArrowResources *)0)->resource[1];
-    object = RenderOutput_CreateFar(*(u16 *)((u8 *)data + variant),
-        0x40000000, window, x, y);
+        resource = data->resource[1];
+    object = RenderOutput_CreateFar(resource, 0x40000000, window, x, y);
     if (object == 0)
         return -1;
     object->state = 0;

@@ -21308,6 +21308,9 @@
     "resource_3b3:0200274c": {
       "name": "TakaraHashira_SetupArea",
       "source": "FIELD/TAKARA_HASHIRA/SETUP.C"
+    },
+    "resource_3ba:02002bec": {
+      "name": "Korosseo_UpdateMarker"
     }
   },
   "symbols": {

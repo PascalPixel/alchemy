@@ -21471,6 +21471,9 @@
     "main:0801a4fc": {
       "name": "UiGlyph_LoadEntryWithPalette",
       "source": "GRAPHICS/GLYPH/LOAD_ENTRY_WITH_PALETTE.C"
+    },
+    "resource_371:02001ca4": {
+      "name": "WorldMap_RunVenusDjinniMeeting"
     }
   },
   "symbols": {

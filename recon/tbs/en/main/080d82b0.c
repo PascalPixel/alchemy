@@ -21,6 +21,13 @@
  * reference work/destination/callback are +28/+24/+20, candidate
  * +32/+28/+20.  Separate clear, seed and draw counters also disagree
  * with the reference's shared r8 counter.  No new credited bytes.
+ * Hypothesis 2: share the clear/seed/draw counter and express the seed
+ * member backedge explicitly.  Candidate 820/800 bytes, 345 differing
+ * halfwords, 208 aligned edits, equal topology.  The common r8 counter
+ * now matches all three loops and the effect-slot spill is gone, but
+ * hoisting 255 into r9 displaces the member counter onto the stack;
+ * frame remains 60.  World/screen occupy fp/sl instead of r9/sl.
+ * This is an independently preserved intermediate, not an adoption.
  *
  * Assigned from the orbiting_particles/run.c compiler-family cluster
  * (template-main-08099160); like its siblings 080d59b0/080dc1ec/080e01e4
@@ -116,10 +123,10 @@ void Func_080d82b0(void *object)
         sp32_ptr = &screen.x;
         member_id_offset = 36;
         member_offset = 0;
-        do {
+seed_member:
+        {
             void *member_ptr;
             s32 member_id;
-            s32 i;
             s32 *particle;
 
             target = M2C_FIELD(work, void **, 0x7828);
@@ -137,7 +144,7 @@ void Func_080d82b0(void *object)
 
             particle_base = member_offset;
             particle = (s32 *)((u8 *)0x02010000 + particle_base);
-            for (i = 0; i != 128; i++) {
+            for (pool_index = 0; pool_index != 128; pool_index++) {
                 u32 kind;
                 u32 angle;
                 s32 sin_val;
@@ -165,7 +172,9 @@ void Func_080d82b0(void *object)
             member_offset += 0xE00;
             target = M2C_FIELD(work, void **, 0x7828);
             member++;
-        } while (member != M2C_FIELD(target, s32 *, 20));
+        }
+        if (member != M2C_FIELD(target, s32 *, 20))
+            goto seed_member;
     }
 
     M2C_FIELD(work, s32 *, 0x7780) = 2;
@@ -200,11 +209,10 @@ void Func_080d82b0(void *object)
                         Func_080d6888(member_id, 7, -1, member, 20);
                     }
                     if (outer > stagger) {
-                        s32 k;
                         s32 *particle;
 
                         particle = (s32 *)((u8 *)0x02010000 + offset);
-                        for (k = 0; k != 128; k++) {
+                        for (pool_index = 0; pool_index != 128; pool_index++) {
                             if (*(s32 *)((u8 *)particle + 24) >= 0) {
                                 s32 raw;
                                 s32 idx;
@@ -212,7 +220,7 @@ void Func_080d82b0(void *object)
                                 s32 y;
                                 s32 h;
 
-                                raw = Func_080022fc(k, 3);
+                                raw = Func_080022fc(pool_index, 3);
                                 idx = raw + 1;
                                 half = idx / 2;
                                 y = *(s16 *)((u8 *)particle + 2) - half;
@@ -224,7 +232,7 @@ void Func_080d82b0(void *object)
                                     y, h, idx, idx * 2);
                                 Func_080e3908(
                                     particle, 62,
-                                    Data_080ee9f8[k & 3]);
+                                    Data_080ee9f8[pool_index & 3]);
                                 *(s32 *)((u8 *)particle + 24) += 1;
                                 if (*(s32 *)((u8 *)particle + 16) > 0
                                     && *(s16 *)((u8 *)particle + 6) > 112) {

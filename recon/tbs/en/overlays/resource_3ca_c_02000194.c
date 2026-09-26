@@ -1,10 +1,10 @@
-/* NONMATCHING: 556 bytes, candidate 544, 247 differing halfwords, 88 aligned
+/* NONMATCHING: 556 bytes, candidate 552, 106 differing halfwords, 77 aligned
  * edits (2026-09-26). Reconstructed both Q16 waves and all four actor-height
  * blocks. The complete topology now agrees. Remaining: halfword scroll
  * reload and stack-slot ownership, saved position pointer, and spawn stores.
- * Separate halfword and pointer records remove the aggregate's saved stack
- * base, but CSE forwards the halfword value and erases its stack slot.
- * The aggregate attempt is retained in the preceding draft commit. */
+ * Explicit volatile halfword accesses retain the scroll reload without the
+ * aggregate member's extra read. Its slot is +6 instead of +18; the position
+ * work still keeps a saved stack-base register. Earlier trials are committed. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "IWRAM_CALL.H"
@@ -62,9 +62,9 @@ void BabiFune_UpdateWaves(void)
     map = Data_03001e70;
     if (Data_020097e8 != 0) {
         bob = Iwram_MulQ16(Engine_MathSin(Data_020097ec << 9), 3);
-        /* FAKEMATCH: the two halfword views retain truncation before I/O. */
-        *(u16 *)&scroll = Data_020097f0 + ((bob + 8) << 8);
-        *(volatile u16 *)0x0400001a = scroll.v;
+        /* FAKEMATCH: explicit halfword accesses retain truncation before I/O. */
+        *(volatile u16 *)&scroll = Data_020097f0 + ((bob + 8) << 8);
+        *(volatile u16 *)0x0400001a = *(volatile u16 *)&scroll;
         Data_020097ec++;
     }
     if (Data_020097fc != 0) {

@@ -20248,7 +20248,8 @@
       "source": "GRAPHICS/PALETTE/SCALE_COMPONENTS.C"
     },
     "main:0801a66c": {
-      "name": "UiGlyph_ResetWorkState"
+      "name": "UiGlyph_ResetWorkState",
+      "source": "GRAPHICS/GLYPH/RESET_WORK.C"
     },
     "main:0801a5a4": {
       "name": "UiGlyph_DecodeWithHeapRoutines",

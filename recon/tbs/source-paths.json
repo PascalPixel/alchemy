@@ -3958,6 +3958,10 @@
       "name": "PsynergyMenu_ReturnTrue",
       "source": "MENU/ABILITY/RETURN_TRUE.C"
     },
+    "main:080a63e4": {
+      "name": "PsynergyMenu_SelectTarget",
+      "source": "MENU/ABILITY/SELECT_TARGET.C"
+    },
     "main:080a65e4": {
       "name": "PsynergyMenu_SetShortcut",
       "source": "MENU/ABILITY/SET_SHORTCUT.C"

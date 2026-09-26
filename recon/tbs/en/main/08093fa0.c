@@ -1,3 +1,20 @@
+/* DRAFT: complete owner [08093fa0,08094154), 436 bytes including pools
+ * and the final alignment halfword. Caller Battle_DispatchInputEvent handles
+ * event 0xfd/up here, paired with exact FieldEffect_UpdateGridPlacement/down.
+ * Baseline: 432/436 bytes, 169 differing halfwords, 72 aligned edits.
+ * Full listing/diff read: 24-byte frame and all long-lived register roles
+ * agree; signed grid index lowering and the pool-before-failure tail differ.
+ * H1 transfers the exact adjacent GridPlacement's signed /16 indexing and
+ * canonical object/action interfaces. Predict natural signed-bias lowering
+ * and matching index registers without changing the full success/fail paths.
+ * Gate: complete binary exactness, compare/coverage/verify before adoption.
+ * One model plus one follow-up unless a new structural fact appears; stop
+ * by 01:05 Lisbon and preserve every result here. No old sprite/map sweep.
+ * H1 result: 432/436 bytes, 163 differing halfwords, 66 aligned edits.
+ * Signed division now exactly recovers the full bias/index sequence; the
+ * complete diff isolates the remaining pool-before-failure layout, initial
+ * global-load order, and the two tile-plane operand registers. Not adopted.
+ */
 #include "OBJECT_RUNTIME.H"
 #include "BATTLE_EFFECT_RUNTIME.H"
 
@@ -13,16 +30,16 @@ extern struct BattleWork Data_02000240;
 extern u8 Value_00000001;
 
 struct ObjectRuntime *Object_GetById(u32 object_id);
-void Func_080916b0(void);
-s32 Func_08009220(const s32 *position);
-void Func_08092158(s32 object_id, s32 x, s32 z);
-void Func_080091e0(struct ObjectRuntime *object, s32 value);
-void Func_08009080(struct ObjectRuntime *object, s32 command);
+void Battle_Reset(void);
+s32 CheckMapPositionCellOccupiedFar(const s32 *position);
+void ObjectMotion_SetPositionAndCommit(s32 object_id, s32 x, s32 z);
+void ObjectDispatch_SetSingleChildField26Far(struct ObjectRuntime *object, s32 value);
+void Object_SetMode(struct ObjectRuntime *object, s32 command);
 void WaitFrames(s32 frames);
-void Func_08009150(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
-void Func_080923c4(s32 object_id);
-void Func_0809163c(s32 should_wait);
-void Func_08091750(void);
+void Object_SetPosition(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
+void ObjectMotion_CommitCurrentPositionAndActivate(s32 object_id);
+void Battle_WaitMode0(s32 should_wait);
+void BattleFx_FinishAction(void);
 
 s32 Func_08093fa0(void)
 {
@@ -41,27 +58,14 @@ s32 Func_08093fa0(void)
     grid_x = 8 + tile_x;
     grid_z = 8 + tile_z;
 
-    Func_080916b0();
+    Battle_Reset();
 
     if (object->animation_kind == 1) {
         variant = *((u8 *)object->animation + 0x26);
     }
 
     if (work->mode_1f2 == 0) {
-        s32 index_x = grid_x;
-        s32 index_z;
-        s32 index;
-
-        if (index_x < 0)
-            index_x = tile_x + 23;
-        index_x >>= 4;
-
-        index_z = grid_z;
-        if (index_z < 0)
-            index_z = tile_z + 23;
-        index_z >>= 4;
-
-        index = index_x + (index_z << 7);
+        s32 index = grid_x / 16 + (grid_z / 16) * 128;
 
         if (Data_02010000[index].kind == Data_0200fe00[index].kind) {
             s32 position[6];
@@ -69,24 +73,24 @@ s32 Func_08093fa0(void)
             position[0] = object->x;
             position[1] = object->y;
             position[2] = object->z;
-            result = Func_08009220(position);
+            result = CheckMapPositionCellOccupiedFar(position);
             if (result != 0) {
                 goto fail;
             }
 
             object->action_flags = 0;
-            Func_08092158(work->object_id, grid_x, grid_z);
-            Func_08009080(object, 6);
+            ObjectMotion_SetPositionAndCommit(work->object_id, grid_x, grid_z);
+            Object_SetMode(object, 6);
             WaitFrames(4);
-            Func_08009080(object, 7);
+            Object_SetMode(object, 7);
             object->velocity_y = 0x40000;
             WaitFrames(4);
             object->flags = 0;
             variant &= 0xfe;
-            Func_080091e0(object, variant);
+            ObjectDispatch_SetSingleChildField26Far(object, variant);
             object->speed_limit = 0x10000;
             object->velocity_y = 0;
-            Func_08009080(object, 12);
+            Object_SetMode(object, 12);
             WaitFrames(4);
             work->mode_1f2 = 1;
             object->action_flags = 1;
@@ -96,27 +100,27 @@ s32 Func_08093fa0(void)
         }
     } else {
         object->flags = 0;
-        Func_08009080(object, 11);
-        Func_08009150(object, grid_x << 16, object->y + 0x80000,
+        Object_SetMode(object, 11);
+        Object_SetPosition(object, grid_x << 16, object->y + 0x80000,
             (grid_z << 16) + (s32)0xfff00000);
-        Func_080923c4(work->object_id);
+        ObjectMotion_CommitCurrentPositionAndActivate(work->object_id);
         object->flags = 3;
         {
             s32 active = (s32)&Value_00000001;
 
             variant |= active;
             object->terrain_height = object->y;
-            Func_080091e0(object, variant);
-            Func_0809163c(4);
+            ObjectDispatch_SetSingleChildField26Far(object, variant);
+            Battle_WaitMode0(4);
             work->mode_1f2 = 0;
             object->action_flags = active;
         }
     }
 
-    Func_08091750();
+    BattleFx_FinishAction();
     return 0;
 
 fail:
-    Func_08091750();
+    BattleFx_FinishAction();
     return -1;
 }

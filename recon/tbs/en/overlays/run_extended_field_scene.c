@@ -1,6 +1,11 @@
+/* Draft, not-yet-c. Fresh registered-unit score 2026-09-26: 2816 of 2816
+ * bytes, 639 differing halfwords (185 aligned edits). Shared facing
+ * constants still occupy different saved registers; the approved allocator
+ * chooses r9 for 0x1000 where the reference uses fp. The final transition
+ * stores are tested through the maintained EventWork layout below. */
 #include "TYPES.H"
+#include "FIELD_EVENT.H"
 
-#define Scene_RunExtendedActorSequence Func_020017c8
 
 /* Site-resolved aliases use this overlay's runtime veneers and local helpers.
  * The scene moves the actor groups before restoring the shared scene work. */
@@ -342,7 +347,7 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
 void Scene_RunExtendedActorSequence(void)
 {
     u8 *record;
-    u8 *work;
+    struct EventWork *work;
     s32 base5_200ac00;
     s32 v5;
     s32 base5_200ac90;
@@ -649,9 +654,9 @@ void Scene_RunExtendedActorSequence(void)
     Call3(Func_02004922, 1, 0xcccc, 0x6666);
     Func_02004932(1, base5_200adf0);
     Func_020048f8(60);
-    work = *(u8 **)Data_03001ebc;
-    *(s32 *)(((s32)work + 0x1c0)) = 0x100;
-    *(s32 *)(((s32)work + 0x1c8)) = 60;
+    work = *(struct EventWork **)Data_03001ebc;
+    work->start_transition = 0x100;
+    work->transition_frames = 60;
     Func_02004a9a();
     Func_02004aa6();
     Func_0200496c(0);

@@ -1,9 +1,19 @@
-/* NONMATCHING: 596 of 600 bytes, 196 halfword edits (2026-09-24). Same script
- * as the matched bridge events F_0290C.C and F_026F8.C. Remaining: the
- * reference hoists the map-copy height 4 into fp and reloads the 0xcccc scale
- * base from the pool at each use; ours hoists 0xcccc into fp, which shifts
- * the loop registers (layer sl, i r7, x r5). Needs gFrameCount and gEventWork
- * bound as data. */
+/* NONMATCHING: 600/600 bytes, 7 differing halfwords (2026-09-26).
+ * Whole owner 02001af0..02001d48, including pool 02001d14..02001d48;
+ * all 25 calls audited against our listing. Closest exact family members
+ * are VinasuHeya_RetractBridge and VinasuHeya_ExtendBridge. Retraction
+ * rechecks at 532/532 bytes, zero differences. No missing calls found.
+ * H1: transfer their existing Map_CopyCellsTo helper to both loop sites:
+ * 596/600 bytes, 196 differing halfwords / 48 aligned edits -> 600/600,
+ * 7 halfwords. All calls, frame, remaining instructions and pool match.
+ * Residual: fp holds width 3 instead of height 4; two call sites copy the
+ * wrong dimension and the initial countdown/column moves exchange order.
+ * H2: share height with both x +=/-= steps: identical 600/600, 7 halfwords.
+ * H3: first branch u16 width = 3, second branch literal 3, retaining the
+ * shared height: identical 600/600, 7 halfwords. H1 retained below.
+ * Existing allocator decoder reports no unique source repair. Three
+ * structural trials exhausted; no declaration or generic RA sweep. This
+ * remains not-yet-c and earns no DONE bytes. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_EFFECT.H"
@@ -20,7 +30,7 @@ struct MapWork {
 
 extern struct MapWork *Data_03001e70;
 
-void Local_02001af0(void)
+void VinasuHeya_ShiftBridge(void)
 {
     struct EffectOptions options;
     struct ScrollLayer *layer;
@@ -67,10 +77,10 @@ void Local_02001af0(void)
                     countdown = 40;
                     if (i <= 240) {
                         x -= 4;
-                        Engine_MapCopyCellsTo(x, 50, 15, 32, 3, height);
+                        Map_CopyCellsTo(x, 50, 15, 32, 3, height);
                     } else {
                         x += 4;
-                        Engine_MapCopyCellsTo(x, 45, 9, 32, 3, height);
+                        Map_CopyCellsTo(x, 45, 9, 32, 3, height);
                     }
                 }
                 Engine_TaskWait(1);

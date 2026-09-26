@@ -1,7 +1,7 @@
-/* NONMATCHING: resource_377:02000a0c; 1064 / 1064 bytes, 30 differing
- * halfwords, 30 wrong instructions, 25 halfword edits. Complete topology
- * and pool extents match. Four runs remain: two call-scheduling ties and
- * the alpha-port/counter reload lifetimes across the palette ramps. */
+/* NONMATCHING: resource_377:02000a0c; 1064 / 1064 bytes, 24 differing
+ * halfwords, 30 wrong instructions, 24 halfword edits. Explicit alpha-port
+ * ownership removes the first-ramp reload, but allocates r7 instead of r5
+ * and reverses its initial pool pair. Two call-scheduling ties remain. */
 #include "FIELD_EVENT.H"
 
 void Main_080000c0();
@@ -94,6 +94,7 @@ void FieldScene_RunPaletteRampSequence(void)
     struct FieldActor *p1;
     struct FieldSprite *sprite;
     u32 i1;
+    volatile u16 *alpha;
 
     p1 = Main_0808a080(10);
     sprite = p1->sprite;
@@ -127,7 +128,8 @@ void FieldScene_RunPaletteRampSequence(void)
     Main_08009180(65, 53, 88, 24, 2, 2);
     Main_080091a0();
     SetBlendTarget((s32)Value_00003f42);
-    SetBlendAlpha((s32)Value_0000100c);
+    alpha = &Data_04000052;
+    *alpha = (s32)Value_0000100c;
     Main_0808a2c8();
     Data_03001ebc.work->enabled = 1;
     Main_0808a2d8();
@@ -169,7 +171,7 @@ void FieldScene_RunPaletteRampSequence(void)
     i1 = 0;
 ramp:
     /* FAKEMATCH: a word link constant keeps the pool after both ramps. */
-    Data_04000052 = (s32)Value_0000100e + i1;
+    *alpha = (s32)Value_0000100e + i1;
     Call1(Main_080000c0, 1);
     if (++i1 <= 3)
         goto ramp;

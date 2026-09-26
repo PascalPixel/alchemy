@@ -11,7 +11,13 @@
  * and actual scheduler return types fix every difference outside 080a8202-222.
  * The remaining block delays count's s8-to-s32 conversion until after the pane
  * branch; the ROM keeps that promoted limit live across its modulo/branch.
- * H3 will give this promoted selection limit an explicit redraw-local lifetime.
+ * H3: 870/870 bytes, 7 differing halfwords (6 aligned edits). A redraw-local
+ * promoted limit fixes modulo register roles and conversion placement across
+ * the pane branch. Only the 7-halfword prelude at 080a8202-080a820e remains:
+ * reference clears redraw first and loads count into r0, while this source
+ * initializes limit first using r2 and clears redraw afterwards. Everything
+ * outside that prelude is byte-identical. Three-model budget exhausted; park
+ * without statement permutations. H1/H2 remain preserved in earlier commits.
  * Budget: corrected model plus two variants; adoption requires all gates. */
 #include "TYPES.H"
 #include "SYSTEM.H"
@@ -112,10 +118,12 @@ s32 Func_080a8114(void)
 
         while (GameFlag_TestFar(0x150) == 0) {
             if (redraw != 0) {
+                s32 limit = count;
+
                 redraw = 0;
                 pane = (pane + 2) % 2;
                 if (pane == 0) {
-                    selected = Math_Mod(selected + count, count);
+                    selected = Math_Mod(selected + limit, limit);
                     RenderOutput_RedrawSavedRectFar(menu->help_window);
                     if (has_ailments == 0) {
                         UiText_DrawCharacterAtOffsetFar((s32)&Value_00000b06,

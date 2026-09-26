@@ -44,6 +44,12 @@ extern u8 Value_00000075;
  * interfaces do not change the old output. All body register roles agree;
  * the stack array address is add r3,sp,#8 instead of mov r1,#8/add r1,sp,
  * and the two initial zeros merge. The rest is mostly the four-byte shift.
+ * H2: exact BuildCmd/DrawCmd and the switch have six command entries, not
+ * eight. Use the six-byte signed array and test whether its true stack-slot
+ * boundary emits the reference's split address construction and two zeros.
+ * H2: unchanged 828/832 bytes, 400 differing halfwords, 76 aligned edits.
+ * Six entries and eight entries have the same rounded stack allocation;
+ * changing the object extent does not change its address construction.
  */
 /*
  * Item command menu reached after selecting an item slot: builds the 3x2
@@ -54,7 +60,7 @@ extern u8 Value_00000075;
 s32 Func_080a414c(void)
 {
     struct InventoryMenuState *menu = gMenuWork;
-    s8 command_states[8];
+    s8 command_states[6];
     u16 *redraw_flag;
     s32 saved;
     s32 col;

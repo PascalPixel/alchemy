@@ -31,8 +31,8 @@
  * H2 result: 1020 B / 1056, 515 differing halfwords, aligned distance 314;
  * 334 wrong instructions, 111 runs (5 pool/immediate, 45 copy/rematerialise,
  * 61 other, no register-only runs). Frame 76; persistent pair addresses are
- * recovered (cursor r8, pages sl), but menu stays r7 and render/keys occupy
- * fp/sl instead of reference stack slots. Pool remains at the tail.
+ * recovered (cursor r8, pages sl), but menu stays r7 and render occupies fp;
+ * keys/repeat spill at sp+48/+44 instead of reference +32/+28. Pool is at tail.
  * -dL: row symbol starts SI then narrows to HI. Machine minipool dump reports an
  * HImode symbol fixup with range 1020, not short reach: no width/reach claim.
  * H2 does not satisfy the reference frame/pool admission constraint.

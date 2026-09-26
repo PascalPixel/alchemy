@@ -11,6 +11,9 @@
  * Unsigned x/y fields and explicit VramBlock_LoadCached prototype did not
  * change that baseline. Allocator dump: implicit mask pseudo 57 lands in
  * ip; reload uses r3 then later r2. Stop before register-order permutations.
+ * The exact Render_PlaceSpritePartPair family's u16 y:8/attribute bitfields
+ * also emit the identical candidate here; field storage width is not the
+ * remaining cause.
  */
 #include "TYPES.H"
 

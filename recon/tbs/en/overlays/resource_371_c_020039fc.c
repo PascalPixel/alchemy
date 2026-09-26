@@ -1,12 +1,11 @@
-/* NONMATCHING: 1300 bytes, candidate 1300, 3 differing halfwords, 2 halfword
- * edits (2026-09-25). Scene_RunScene371SequenceA, meant for
+/* NONMATCHING: 1300 bytes, candidate 1300, 2 differing halfwords, 2 halfword
+ * edits (2026-09-26). Scene_RunScene371SequenceA, meant for
  * FIELD/WORLD_MAP/F_039FC.C as a single-overlay unit binding its names at
  * their runtime addresses (an import veneer's listing offset plus 0x8000).
  * Remaining: Whole-function queue pointers and one-pass IME reads reproduce
- * every queued transfer; only the first task callback argument order
- * differs.
- * WALL: scheduling: first callback address load follows priority instead of
- * preceding it */
+ * every queued transfer. A void callback wrapper reproduces the argument
+ * order; the callback address load precedes the saved-IME restore instead
+ * of following it. The scheduler dump admits both at the merge block. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
@@ -60,6 +59,14 @@ void WorldMap_UpdateBlend(void);
 
 #define QueueFrame(buffer, offset) QueueTransfer((buffer) + (offset), 0x06002000, 0x84000140)
 
+static __inline__ void StartCallback(void (*callback)(void), s32 priority)
+{
+    /* FAKEMATCH: a single-pass call keeps the callback before its priority. */
+    do {
+        ((void (*)(void (*)(void), s32))Engine_TaskAddCallback)(callback, priority);
+    } while (0);
+}
+
 void Scene_RunScene371SequenceA(s32 palette)
 {
     struct DisplayTransferQueue *q;
@@ -75,7 +82,7 @@ void Scene_RunScene371SequenceA(s32 palette)
     ime = &Value_04000208;
     QueueTransfer(gWorldMapPalettes + palette * 32, (void *)0x050001c0, 0x80000010)
     QueueTransfer(buffer, (void *)0x06001000, 0x84000400)
-    Engine_TaskAddCallback(WorldMap_RestoreBlend, 0xc80);
+    StartCallback(WorldMap_RestoreBlend, 0xc80);
     Engine_EventBegin();
     QueueFrame(buffer, 0x3a80)
     Engine_ActorGet(gGameState.selected_actor)->active = 0;

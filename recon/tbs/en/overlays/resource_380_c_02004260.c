@@ -1,4 +1,8 @@
-/* NONMATCHING: 200 bytes, candidate 200, 2 differing halfwords (2026-09-24).
+/* NONMATCHING: 200 bytes, candidate 200, 2 differing halfwords (2026-09-26).
+ * Registered owner name and all fourteen import-veneer bindings restored.
+ * Fresh score: only the null-buffer reload uses r2 rather than r0 before
+ * its move to r8. An inline initializer, parameter-lifetime reuse and a
+ * separate sprite zero did not close that invariant.
  * Single-overlay unit binding Engine_* at their import veneers. Remaining:
  * the zero for the sprite flag bytes is built in r2 (reload) and moved to r8;
  * the reference builds it in r0 after the item copy to sl. Calls now carry
@@ -23,7 +27,7 @@ void Engine_ObjectDispatchRelease(u8 *);
 void Engine_ActorSetAnimation(s32, s32);
 extern u8 Data_0200cbe4[];
 
-s32 Local_02004260(s32 item)
+s32 Scene_PresentItem(s32 item)
 {
     u8 *buf;
     u8 *obj;

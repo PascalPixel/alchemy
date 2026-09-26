@@ -1,12 +1,31 @@
-/* NONMATCHING: 624 bytes, candidate 620, 253 differing halfwords, 153
- * halfword edits (2026-09-25). Scene_ClosePresentationSequence, meant for
+/* NONMATCHING: 624 bytes, candidate 624, 25 differing halfwords, 23
+ * halfword edits (2026-09-26). Scene_ClosePresentationSequence, meant for
  * FIELD/BABI_FUNE/F_00B34.C as a single-overlay unit binding its names at
  * their runtime addresses (an import veneer's listing offset plus 0x8000).
- * Remaining: Resolved each synthetic call to its real service and used
- * inline wrappers for repeated constants; palette ramp structure and final
- * stores remain nonmatching.
- * WALL: structural-topology: palette ramp and scene handoff */
+ * Complete extent 02000b34..02000da4: pool 0cac..0ce8, return 0d86,
+ * final pool 0d88..0da0. Current pools and complete layout match.
+ * Three structural trials, starting from 620 / 253 / 153:
+ * 1. Reconstructed the actual handoff: BLDALPHA 1010/0810, flag f8 set
+ *    twice, flag f4 cleared, two-argument task callbacks, ramp through
+ *    59ffff, BG3/BG2/BG1 priorities 3/3/2 via volatile stack halfword,
+ *    flag e8 cleared, BLDCNT bf and BLDY ramps. Produced 616 / 242 / 112.
+ * 2. Separate extern globals instead of neighbouring absolute casts restored
+ *    independent loads and the retained f8 pointer: 628 / 182 / 88.
+ * 3. Separate bright/dim loop constants and initialize priority two only at
+ *    its phase: 624 / 25 / 23, with all literal pools matching.
+ * Remaining: first palette shifts reversed, blink-loop counter setup and
+ * decrement scheduled early, priority-three versus stack-address r5/r4
+ * swap, priority-two temporary, and final BLDCNT/BLDY setup scheduling.
+ * Stop at three structural hypotheses. No credit until every byte matches. */
 #include "TYPES.H"
+
+extern u32 Data_020097e8;
+extern u32 Data_020097ec;
+extern u32 Data_020097f4;
+extern u32 Data_020097f8;
+extern u32 Data_020097fc;
+extern u32 Data_02009804;
+extern u32 Data_02009808;
 
 /* AUDITED GENERATED PRESENTATION FINALE for Scene_ClosePresentationSequence:
  * 35 calls, palette ramps, blend-register setup, and runtime handoff. */
@@ -54,6 +73,7 @@ void Scene_ClosePresentationSequence(void)
     s32 i3;
     s32 i4;
     s32 phase;
+    volatile u16 cnt;
 
     runtime = *(u8 **)0x03001e70;
 
@@ -67,55 +87,77 @@ void Scene_ClosePresentationSequence(void)
         *(volatile u16 *)0x05000000 = (i1 << 11) | (i1 << 5);
         Call1((void (*)())Main_0808a010, 10);
     }
-    *(volatile u16 *)0x05000000 = 0x7e00;
+    {
+        s32 color = 0x7e00;
+
+        *(volatile u16 *)0x05000000 = color;
+    }
     for (i2 = 2; i2 >= 0; i2--) {
+        s32 bright = 0x1010;
+        s32 dim = 0x810;
+
         Call1((void (*)())Main_080f9010, 212);
-        *(volatile u16 *)0x04000050 = 3;
+        *(volatile u16 *)0x04000052 = bright;
         Call1((void (*)())Main_0808a010, 3);
-        *(volatile u16 *)0x04000050 = 0x810;
+        *(volatile u16 *)0x04000052 = dim;
         Call1((void (*)())Main_0808a010, 65);
     }
-    *(u32 *)0x020097e8 = 1;
-    *(u32 *)0x020097ec = 0;
-    Call4((void (*)())Main_080000d0, 33587605, 3200, 0, 33593324);
-    *(u32 *)0x02009804 = 1;
+    Data_020097e8 = 1;
+    Data_020097ec = 0;
+    Call2((void (*)())Main_080000d0, 33587605, 3200);
+    Data_020097f8 = 1;
     Call1((void (*)())Main_0808a010, 20);
     Call1((void (*)())Main_080f9010, 163);
     Call3((void (*)())Main_080091f0, 65536, 65536, 65536);
     Call1((void (*)())Main_0808a010, 60);
+    Data_020097f8 = 1;
     Call3((void (*)())Main_080091f0, 131072, 131072, 65536);
     Call1((void (*)())Main_0808a010, 60);
     Call3((void (*)())Main_080091f0, 196608, 196608, 65536);
-    *(u32 *)0x02009808 = 0;
-    Call4((void (*)())Main_080000d0, 33587561, 3200, 0, 33593332);
+    Data_020097f4 = 0;
+    Call2((void (*)())Main_080000d0, 33587561, 3200);
     phase = 0;
     do {
         *(s32 *)(runtime + 320) += 0x3333;
         *(s32 *)(runtime + 368) += 0x3333;
         phase += 0x3333;
         Call1((void (*)())Main_080000c0, 1);
-    } while (phase <= 0xe666);
+    } while (phase <= 0x59ffff);
     Call1((void (*)())Main_080000d8, 33587561);
-    *(u32 *)0x020097f8 = 0;
-    *(volatile u16 *)0x04000052 = (*(volatile u16 *)0x04000052 & 0xfffc) | 0x0a;
-    *(volatile u16 *)0x04000050 = (*(volatile u16 *)0x04000050 & 0xfffc) | 0x0a;
-    *(volatile u16 *)0x0400000e = (*(volatile u16 *)0x0400000e & 0xfffc) | 0x0400;
-    *(u32 *)0x020097f4 = 0;
+    Data_020097f8 = 0;
+    {
+        /* FAKEMATCH: halfword priority locals retain the short pool reach. */
+        struct Half { u16 v; } three, two;
+
+        three.v = 3;
+        cnt = (*(volatile u16 *)0x0400000e & 0xfffc) | three.v;
+        *(volatile u16 *)0x0400000e = cnt;
+        cnt = (*(volatile u16 *)0x0400000c & 0xfffc) | three.v;
+        *(volatile u16 *)0x0400000c = cnt;
+        two.v = 2;
+        cnt = (*(volatile u16 *)0x0400000a & 0xfffc) | two.v;
+        *(volatile u16 *)0x0400000a = cnt;
+    }
+    Data_020097e8 = 0;
     Call1((void (*)())Main_080f9010, 288);
     Call1((void (*)())Main_080000c0, 1);
     Call1((void (*)())Main_080f9010, 145);
-    *(volatile u16 *)0x04000054 = 191;
+    {
+        s32 blend = 191;
+
+        *(volatile u16 *)0x04000050 = blend;
+    }
     for (i3 = 0; i3 <= 16; i3++) {
-        *(volatile u16 *)0x05000000 = i3;
+        *(volatile u16 *)0x04000054 = i3;
         Call1((void (*)())Main_0808a010, 1);
     }
     Call1((void (*)())Main_0808a010, 40);
     Call3((void (*)())Main_080091f0, -1, -1, 58982);
-    *(u32 *)0x02009804 = *(u32 *)(runtime + 320);
-    *(u32 *)0x02009808 = *(u32 *)(runtime + 368);
-    *(u32 *)0x020097fc = 1;
+    Data_02009804 = *(u32 *)(runtime + 320);
+    Data_02009808 = *(u32 *)(runtime + 368);
+    Data_020097fc = 1;
     for (i4 = 16; i4 >= 0; i4--) {
-        *(volatile u16 *)0x05000000 = i4;
+        *(volatile u16 *)0x04000054 = i4;
         Call1((void (*)())Main_0808a010, 8);
     }
     Call2((void (*)())Main_080000d0, 33587377, 3200);

@@ -1,9 +1,15 @@
+/* Draft: complete 260-byte owner, 28 differing halfwords. First 45
+ * instructions exact after correcting the resource callee and byte row
+ * arithmetic. Remaining: X sum and masks, index-store scheduling.
+ * Halfword columns and word/bitfield unions regressed; no allocator sweep.
+ */
 #include "TYPES.H"
 
 extern u8 *Data_03001e8c;
+extern const u8 Value_0000fffe;
 
 void *RenderOutput_AcquireFree(void);
-s32 Resource_FindFreeSlot(void);
+s32 Resource_FindFreeEntry(void);
 void RenderOutput_AppendToList(void *, s8 *);
 
 struct UiWindow {
@@ -37,12 +43,13 @@ struct RenderOutput {
 
 void Func_08018efc(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode)
 {
-    u8 *base = Data_03001e8c;
-    struct RenderOutput *out;
+    struct RenderOutput *out = (struct RenderOutput *)Data_03001e8c;
+    u8 *base = (u8 *)out;
     struct SpriteAttr *attr;
     s32 idx;
     u16 *slot;
     u32 pos;
+    u16 row;
 
     if (y > (u32)(win->height - 2)) return;
     if (x > (u32)(win->width - 2)) return;
@@ -53,9 +60,11 @@ void Func_08018efc(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode)
         out->one5 = 2;
         slot = (u16 *)(base + 0x12b6);
         attr = &out->attr;
-        if (*slot == 99) *slot = Resource_FindFreeSlot();
-        attr->x = ((u16)(win->width - 2) + win->x) * 8 + 4;
-        attr->y = ((u8)(win->height - 2) + win->y) * 8 - 1;
+        if (*slot == 99) *slot = Resource_FindFreeEntry();
+        attr->x = (win->width + (s32)&Value_0000fffe + win->x) * 8 + 4;
+        row = (u8)win->height + 254;
+        row += (u8)win->y;
+        attr->y = row * 8 - 1;
         out->x = attr->x;
         out->y = attr->y;
         out->zero = 0;
@@ -66,6 +75,6 @@ void Func_08018efc(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode)
         x++;
         y++;
         pos = (win->y + y) * 32 + (win->x + x);
-        if (pos < 640) ((u16 *)base)[pos] = tile | 0xf000;
+        if (pos < 640) ((u16 *)out)[pos] = tile | 0xf000;
     }
 }

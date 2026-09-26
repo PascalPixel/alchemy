@@ -1,4 +1,5 @@
-/* NONMATCHING: whole owner [02004c68,02004f44), including ten pool words.
+/* NONMATCHING: current 728 / 732 bytes, 234 differing halfwords, 50 edits.
+ * Whole owner [02004c68,02004f44), including ten pool words.
  * 2026-09-26 bounded H1: a lowering-phase inline routine returns speed;
  * the caller owns the clamp store. This DOES rebuild 0x04000000 at the
  * clamp (movs/lsls/str), unlike the old shared compare/store expression.
@@ -8,7 +9,14 @@
  * Full normalized diff read; rejected for topology and lifetime changes.
  * Preserve this counterexample: the clamp can rematerialize in ordinary C,
  * but a phase-return boundary is not the reference's whole-owner structure.
- * Stop this axis after one structural hypothesis and inspect raw owners.
+ * H1 is preserved at 2403f5f54.
+ * H2, suggested by the independently matched message decoder: restore
+ * whole-function speed ownership and give the clamp a u16 pixel-height
+ * constituent (0x400 << 16), separate from the SImode comparison bound.
+ * Complete output is byte-identical to the old 728-byte baseline. The
+ * constituent folds before it can separate the compare/store expressions;
+ * no extra pool, runtime load or frame slot survives. Full normalized diff
+ * read and binary equality checked. Stop after these two hypotheses.
  *
  * Previous baseline: 732 bytes, candidate 728, 234 differing halfwords, 50 halfword
  * edits (2026-09-26). The explicit lowering loop now has the reference's
@@ -50,27 +58,11 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
     f(a0, a1, a2, a3, a4, a5);
 }
 
-/* FAKEMATCH: separate the lowering phase from its caller-owned clamp. */
-static __inline__ s32 LowerLayer(struct MapLayer *layer, s32 speed)
-{
-lower:
-    layer->y -= speed;
-    Engine_ActorGet(0)->z.fixed += speed;
-    Engine_ActorGet(0)->target_z = Engine_ActorGet(0)->z.fixed;
-    Engine_ActorGet(13)->z.fixed += speed;
-    Engine_ActorGet(13)->target_z = Engine_ActorGet(13)->z.fixed;
-    if (layer->y <= 0x4000000)
-        return speed;
-    if ((*(u32 *)0x03001e40 & 15) == 0 && speed > 0xccb)
-        speed += -0x560;
-    Engine_TaskWait(1);
-    goto lower;
-}
-
 void Func_02004c68(void)
 {
     struct MapLayer *layer;
     s32 speed;
+    u16 lower_height;
 
     layer = &(*(struct MapWork **)0x03001e70)->layers[7];
     speed = 0x9c28;
@@ -90,9 +82,24 @@ void Func_02004c68(void)
     Engine_EventWait(60);
     Main_080091a0();
     Engine_AudioPlayCue(223);
-    speed = LowerLayer(layer, speed);
-    /* FAKEMATCH: single-pass store keeps the lowering-loop exit layout. */
-    do { layer->y = 0x4000000; } while (0);
+    lower_height = 0x400;
+lower:
+    {
+        layer->y -= speed;
+        Engine_ActorGet(0)->z.fixed += speed;
+        Engine_ActorGet(0)->target_z = Engine_ActorGet(0)->z.fixed;
+        Engine_ActorGet(13)->z.fixed += speed;
+        Engine_ActorGet(13)->target_z = Engine_ActorGet(13)->z.fixed;
+        if (layer->y <= 0x4000000)
+            goto lowered;
+        if ((*(u32 *)0x03001e40 & 15) == 0 && speed > 0xccb)
+            speed += -0x560;
+        Engine_TaskWait(1);
+        goto lower;
+    }
+lowered:
+    /* FAKEMATCH: retain the clamp's pixel-height constituent in HImode. */
+    do { layer->y = lower_height << 16; } while (0);
     Engine_MapRedraw();
     Engine_TaskWait(2);
     Engine_ActorGet(0)->motion_flags = 3;

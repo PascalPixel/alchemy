@@ -1,6 +1,9 @@
 {
   "format": 3,
   "owners": {
+    "resource_3b7:020004bc": {
+      "name": "TorebiIzumi_RevealPrize"
+    },
     "resource_3c8:02004520": {
       "name": "VinasuHeya_SpawnRandomParticles"
     },

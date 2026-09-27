@@ -2,6 +2,24 @@
   "format": 5,
   "units": [
     {
+      "id": "torebi-prize-reveal",
+      "source": "recon/tbs/en/overlays/resource_3b7_c_020004bc.c",
+      "overlay": "resource_3b7",
+      "absolute_symbols": {
+        "Engine_EventBegin": {"address": "0x0200991c", "kind": "thumb"},
+        "Engine_EventEnd": {"address": "0x02009924", "kind": "thumb"},
+        "Engine_EventWait": {"address": "0x02009914", "kind": "thumb"},
+        "Engine_AudioPlayCue": {"address": "0x020099c4", "kind": "thumb"},
+        "Engine_MapCopyCellsTo": {"address": "0x0200989c", "kind": "thumb"},
+        "Engine_ObjectMotionArmCallback": {"address": "0x0200997c", "kind": "thumb"},
+        "Engine_ItemShowFound": {"address": "0x020099a4", "kind": "thumb"},
+        "Engine_PartyGiveItem": {"address": "0x0200992c", "kind": "thumb"}
+      },
+      "owners": [{"address": "0x020004bc", "extent": 964, "state": "not-yet-c"}],
+      "game": "tbs",
+      "compiler_route": "canonical-gcc296"
+    },
+    {
       "id": "arutamira-room-visuals",
       "source": "recon/tbs/en/overlays/resource_3bd_c_02000bc8.c",
       "overlay": "resource_3bd",

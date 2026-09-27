@@ -1,4 +1,4 @@
-/* NONMATCHING: 360 bytes, candidate 358, 56 differing halfwords / 50 edits.
+/* NONMATCHING: 360 bytes, candidate 360, 60 differing halfwords / 39 edits.
  * VinasuChojo_SpawnRisingSparks, meant for FIELD/VINASU_CHOJO/RISING_SPARKS.C
  * as a single-overlay unit binding Engine_* and Main_* at their import veneers
  * (runtime = listing offset + 0x8000). Remaining: the null test on the source
@@ -50,7 +50,19 @@
  * Admission failed again. LAMP's exact zero publication is after the angle
  * store, which permits sharing that store's generated HI zero instead of
  * the branch-known SI phase. One final producer-order test is supported by
- * this ancestry difference; no other variant or null-copy sweep is admitted. */
+ * this ancestry difference; no other variant or null-copy sweep is admitted.
+ *
+ * H5 retains H4's actor boundary but publishes zero after the angle store,
+ * matching LAMP's actual producer order. Result 360/360, 60 halfwords /
+ * 39 aligned edits. Both pools and the full normalized diff were checked:
+ * the first pool is exact, second starts at relative 138 rather than 134,
+ * and zero still loads after strh. CSE still forwards phase 45 into the
+ * address-taken Half 90; the hoped-for angle HI producer is not retained.
+ * Diagnostic assembly equals ordinary assembly. Equal size is not a match:
+ * source-null copy, factory arguments, zero lifetime and pool remain wrong.
+ * Three bounded models exhausted; preserve each in Git, then restore the
+ * simpler 358/55/55 baseline. No new source-interface fact admits another
+ * trial. No DONE or alignment credit; exact consumers remain untouched. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
@@ -74,8 +86,8 @@ struct Half {
  * zero producer used by the exact lamp creator's angle initialization. */
 static __inline__ void InitializeAngle(struct FieldActor *destination, u32 angle, struct Half *zero)
 {
-    zero->value = 0;
     destination->unknown_64 = angle;
+    zero->value = 0;
 }
 
 void VinasuChojo_SpawnRisingSparks(void)

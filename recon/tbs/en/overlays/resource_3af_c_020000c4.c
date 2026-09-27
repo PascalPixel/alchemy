@@ -1,5 +1,5 @@
 /* NONMATCHING: complete extent 552 bytes including the trailing pool;
- * candidate 560, 240 differing halfwords, 73 aligned edits (2026-09-27).
+ * H5 candidate 516, 262 differing halfwords, 101 aligned edits (2026-09-27).
  * H1 transfers Call3/Call4 from exact FUNE_KANPAN/FLY_BY_21.C and
  * FLY_BY_22.C. Both callbacks share six callee bindings, actor layout and
  * state machine; only actor IDs and coordinate constants differ.
@@ -54,9 +54,33 @@
  * H4 is preserved in 3f451ae66; restore the canonical H3 source below.
  * The second callback's byte-snapshot follow-up also leaves allocation
  * unchanged. Neither result supplies a tied allocator priority or a new
- * supported phase/helper boundary. Stop this producer axis. */
+ * supported phase/helper boundary. Stop this producer axis.
+ *
+ * H5 (sol-deck): a control record beginning at object+0x62 owns phase,
+ * mode and both signed turn fields. All four fields use that record, so
+ * this changes real pointer consumers rather than the snapshot spelling.
+ * Admission predicted counter pointer r6, saved state r8 and the existing
+ * shared advance tail. Actual complete diff: 516/552 bytes, 262 differing
+ * halfwords, 101 aligned edits. Pointer pseudo 34 has 20 uses across 163
+ * instructions and 15 calls, allocated r7; state pseudo 35 has 4 uses
+ * across 14 instructions and 1 call, allocated r6. The r8 save disappears.
+ * Mode reads become [ctrl,#1], turn accesses [ctrl,#2]/[ctrl,#4]; case 7
+ * hoists its phase load over both turn stores. The shared advance tail
+ * survives, but its pointer and all separate idle field addresses fail
+ * admission. A nested control member also aligned to object+0x64; this
+ * corrected trial takes the control view at the known phase byte +0x62.
+ * STOP the control-record consumer axis; no transfer to the twin or
+ * pointer/declaration variants. Function credit +0, alignment credit +0.
+ * Preserve this rejected trial in Git, then restore canonical H3. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+
+struct DeckControl {
+    u8 phase;
+    u8 mode;
+    s16 turn_x;
+    s16 turn_y;
+};
 
 struct DeckBird {
     u8 unknown_00[0x4c];
@@ -87,9 +111,10 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 s32 Func_020000c4(union DeckObject *work)
 {
     struct FieldActor *obj = &work->actor;
+    struct DeckControl *ctrl = (struct DeckControl *)&work->actor.rise_counter;
     u32 step;
 
-    step = obj->rise_counter;
+    step = ctrl->phase;
     if (step != 0) {
         switch (step) {
         case 1:
@@ -99,9 +124,9 @@ s32 Func_020000c4(union DeckObject *work)
             goto advance;
         case 3:
             if (obj->target_x == ACTOR_NO_TARGET && obj->target_y == obj->target_x && obj->target_z == obj->target_y) {
-                obj->rise_counter++;
+                ctrl->phase++;
                 Engine_AudioPlayCue(146);
-                if (obj->rise_enabled != 0) {
+                if (ctrl->mode != 0) {
                     Call3(Engine_ActorFaceDirection, 21, 0xd000, 0);
                 } else {
                     Call3(Engine_ActorFaceDirection, 21, 0xb000, 0);
@@ -115,7 +140,7 @@ s32 Func_020000c4(union DeckObject *work)
             }
             break;
         case 5:
-            if (obj->rise_enabled != 0) {
+            if (ctrl->mode != 0) {
                 Call4(Engine_ObjectSetPosition, (s32)obj, 0x11a0000, 0, 0x2920000);
             } else {
                 Call4(Engine_ObjectSetPosition, (s32)obj, 0xfe0000, 0, 0x29c0000);
@@ -125,51 +150,51 @@ s32 Func_020000c4(union DeckObject *work)
         case 6:
         advance:
             /* FAKEMATCH: preserve the shared state-transition tail. */
-            obj->rise_counter++;
+            ctrl->phase++;
             break;
         case 7:
             if (obj->target_x == ACTOR_NO_TARGET && obj->target_y == obj->target_x && obj->target_z == obj->target_y) {
                 obj->speed = 0x20000;
                 obj->acceleration = 0x10000;
-                work->bird.turn_x = 0;
-                work->bird.turn_y = 0;
-                obj->rise_counter++;
+                ctrl->turn_x = 0;
+                ctrl->turn_y = 0;
+                ctrl->phase++;
                 work->bird.drift = 0;
             }
             break;
         case 8:
-            obj->rise_counter = 0;
+            ctrl->phase = 0;
             break;
         }
     } else {
-        if (work->bird.turn_x != 0) {
+        if (ctrl->turn_x != 0) {
             work->bird.drift -= ((u32)Engine_RandomNext() << 12) >> 16;
             if (work->bird.drift < -0x4000) {
-                work->bird.turn_x = step;
+                ctrl->turn_x = step;
             }
         } else {
             work->bird.drift += ((u32)Engine_RandomNext() << 12) >> 16;
             if (work->bird.drift > 0x4000) {
-                work->bird.turn_x = 1;
+                ctrl->turn_x = 1;
             }
         }
         if (obj->x.fixed > 0xf80000 && obj->x.fixed < 0x1240000) {
             obj->x.fixed += work->bird.drift;
         }
-        if (work->bird.turn_y != 0) {
+        if (ctrl->turn_y != 0) {
             obj->y.fixed = obj->y.fixed - (((u32)Engine_RandomNext() << 15) >> 16) - 0x8000;
             if (obj->y.fixed < 0) {
-                work->bird.turn_y = 0;
+                ctrl->turn_y = 0;
             }
         } else {
             obj->y.fixed = obj->y.fixed + (((u32)Engine_RandomNext() << 15) >> 16) + 0x8000;
             if (obj->y.fixed > 0x80000) {
-                work->bird.turn_y = 1;
+                ctrl->turn_y = 1;
             }
         }
     }
     if ((((u32)Engine_RandomNext() * 100) >> 16) == 0) {
-        obj->rise_counter = 1;
+        ctrl->phase = 1;
     }
     return 1;
 }

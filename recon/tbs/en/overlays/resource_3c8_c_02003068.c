@@ -1,3 +1,8 @@
+/* 2026-09-27 outer-z lifetime trial: reusing the function-scope z for the
+ * first BLDCNT zero keeps 3964 bytes but raises the complete difference to
+ * nine halfwords. The first three instructions become movs r4; ldr r3;
+ * strh r4, [r3], and later uses move as well. Restore the shadow local;
+ * this lifetime is not the reference's r3-zero/r2-address pair. */
 /* Astra 2026-09-27 paired-store transfer: spelling the first BLDCNT write
  * like the later do/while s16 store, with a volatile halfword destination,
  * emits 3964/3964 but moves an earlier pool and grows the full difference

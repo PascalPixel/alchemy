@@ -1,4 +1,10 @@
-/* NONMATCHING: 236 of 236 bytes, 5 differing halfwords (2026-09-27).
+/* Astra in-place consumer transfer (2026-09-27): use the exact redraw
+ * consumer's probe.position_z += step; probe.position_z >>= 20, rather
+ * than its prior local-z transfer. Complete 236/236 bytes, 8 halfwords /
+ * 7 edits: step/z loads still exchange r2/r3 and the z store remains after
+ * the x shift. Pools, frame and all other blocks match. Reject the field
+ * publication model and restore the original expression; no new credit.
+ * NONMATCHING: 236 of 236 bytes, 5 differing halfwords (2026-09-27).
  * Hand-written: finds the actor's sprite kind in the six-entry table at
  * 0x0200ace0 (7 when absent), then fills the probe with the actor's position
  * moved by that entry's step, the step's extents and the map's scroll cell.

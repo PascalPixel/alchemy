@@ -1,4 +1,11 @@
-/* NONMATCHING: 1264 bytes, candidate 1264, 17 differing halfwords, 17
+/* Astra scale-view test (2026-09-27): a union of signed word and
+ * word-based low/high halfword fields keeps full-width scale arithmetic
+ * while feeding work.x/work.y from the low-halfword view. Complete output
+ * remains 1264/1264 bytes, 17 halfwords / 17 aligned edits: scale is still
+ * r9, duration and affine index fp. All control flow and pools agree, but
+ * the representation supplies no new allocation boundary. Reject this
+ * single trial and restore the scalar; do not propagate to either twin.
+ * NONMATCHING: 1264 bytes, candidate 1264, 17 differing halfwords, 17
  * halfword edits (2026-09-27). CommandInterpolationRenderer_Update, meant
  * for FIELD/KOROSSEO_KAWA/F_021B8.C as a single-overlay unit binding its
  * names at their runtime addresses (an import veneer's listing offset plus

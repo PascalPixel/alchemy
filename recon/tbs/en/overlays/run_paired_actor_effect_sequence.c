@@ -1,4 +1,4 @@
-/* NONMATCHING: 4708-byte owner 02002360..020035c4, candidate 4724.
+/* NONMATCHING: 4708-byte owner 02002360..020035c4, candidate 4704.
  * 2026-09-27 volatile-handle H2, one authorized causal test: make the two
  * pointer slots volatile, leaving pointed-to image bytes ordinary. Feed the
  * derived assignment's value directly to Vram_Load because the complete ROM
@@ -18,8 +18,10 @@
  * this adds reads absent from the complete ROM handle trace. Frame is 132,
  * options/velocity are sp+92/+40/+80, and neither origin-x spill survives.
  * Producer, copy and release arguments retain their values; memory trace
- * and frame admission fail. Preserve this tagged witness, then restore the
- * d449103a6 body; H2 stops here without another compile or spelling change.
+ * and frame admission fail. Commit 5229f1010 preserves this tagged witness;
+ * the d449103a6 body is restored. H2 stops without another trial or spelling
+ * change. Its canonical residual remains 4704/4708 bytes, 1704 differing
+ * halfwords and 610 aligned edits; restoring it changes only this header.
  * No adoption, exact-function credit +0, alignment credit +0.
  *
  * 2026-09-27 two-buffer H1: buffers[0] receives the one slot-17 allocation;
@@ -165,9 +167,7 @@ void Scene_RunPairedActorEffectSequence(void)
     union FieldObject *object;
     struct FieldActor *bird;
     struct FieldSprite *sprite;
-    /* FAKEMATCH: volatile handle slots retain both stores; this is a causal
-     * memory-retention witness, not evidence of original volatile declarations. */
-    u8 *volatile buffers[2];
+    u8 *buffer;
     s32 yes;
     u32 i;
 
@@ -350,10 +350,9 @@ void Scene_RunPairedActorEffectSequence(void)
         object->actor.unknown_5c = 1;
         object->actor.speed = 0x19999;
         object->actor.acceleration = 0xcccc;
-        buffers[0] = Heap_Allocate(17, 0x608);
+        buffer = Heap_Allocate(17, 0x608);
         Item_LoadIcon(220);
-        /* The assignment value feeds the copy without a derived-handle reload. */
-        Vram_Load(sprite->vram_block, 128, buffers[1] = buffers[0] + 0x400);
+        Vram_Load(sprite->vram_block, 128, buffer + 0x400);
         Heap_Release(17);
     }
     Actor_SetSpritePriority(22, 1);

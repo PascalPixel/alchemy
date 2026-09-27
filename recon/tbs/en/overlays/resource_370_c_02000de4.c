@@ -1,5 +1,22 @@
-/* NONMATCHING: resource_370:02000de4; 1008 / 1024 bytes, 479 differing
- * halfwords, 416 wrong instructions, 258 aligned edits (2026-09-27 H2).
+/* NONMATCHING: resource_370:02000de4; 1016 / 1024 bytes, 431 differing
+ * halfwords, 398 wrong instructions, 255 aligned edits (2026-09-27 Sol H3).
+ * Sol H3 clamps through the complete typed owner record. Full normalized
+ * diff read: duplicated byte clamps and direct +15 accesses are recovered;
+ * pointer materialization and shift induction disappear. Frame stays 68/64,
+ * the quantity key still spills at sp+0, and the middle pool remains late.
+ * Three bounded structural attempts are preserved; stop this axis without
+ * exact credit. Sol H2 was 1012 bytes / 261 aligned edits.
+ * Sol H2 restores the quantity helper and clamps rank through a byte
+ * pointer. Full normalized diff read: the duplicated byte clamp ancestry
+ * is recovered, but pointer +15 materialization and a new shift induction
+ * remain. Frame 68/64 and quantity-key spill remain; not an exact witness.
+ * Sol H1 owns the complete quantity scan in the caller instead of an
+ * inline return boundary. Complete normalized diff read: the key still
+ * spills at sp+0, the inventory base still hoists, and the frame stays
+ * 68 instead of 64. Quantity truncation moves after the sign test and
+ * the pool stays late. Rejected; commit preserves this negative witness.
+ * TITLE 020002e8 was already exact at base 6b0d228d3: no new function
+ * bytes or alignment bytes. Both production ROMs compare byte-identical.
  * Complete owner 02000de4..020011e4, including both literal-pool groups.
  * The save-menu caller passes (unused, password mode, output), then adds
  * a checksum and calls exact Clear_EncodePassword. Import 02009444 calls
@@ -87,6 +104,16 @@ static __inline__ u16 Password_FindItemQuantity(
     return quantity;
 }
 
+/* FAKEMATCH: inline boundary recovers the duplicated byte clamp ancestry;
+ * it is not evidence of an original helper. */
+static __inline__ void Password_ClampRank(struct PasswordOwnerState *state)
+{
+    if (state->rank > 99)
+        state->rank = 99;
+    if (state->rank == 0)
+        state->rank = 1;
+}
+
 s32 Func_02000de4(s32 unused, s32 mode, u8 *out)
 {
     s32 length = 11;
@@ -135,7 +162,6 @@ s32 Func_02000de4(s32 unused, s32 mode, u8 *out)
         struct PasswordOwnerState *state =
             Engine_OwnerGetState(Data_020096c0[i]);
         struct PasswordStats *stats = &state->stats;
-        u32 level;
         s32 j;
 
         if (stats->value_10 > 0x7cf)
@@ -160,11 +186,7 @@ s32 Func_02000de4(s32 unused, s32 mode, u8 *out)
         row[1] = ((u32)stats->value_1a << 22) |
                  ((u32)stats->value_1c << 12) | (stats->level_1e << 4);
 
-        level = state->rank;
-        if (level > 99)
-            state->rank = level = 99;
-        if (level == 0)
-            state->rank = 1;
+        Password_ClampRank(state);
         rank_bits |= state->rank << (i * 7);
 
         for (j = 0; j != 4; j++)

@@ -1,4 +1,4 @@
-/* NONMATCHING: 888 bytes, candidate 852, 394 differing halfwords, 235
+/* NONMATCHING: 888 bytes, candidate 852, 411 differing halfwords, 231
  * aligned edits (2026-09-27). FieldScene_RunScene3a5SequenceA, meant for
  * FIELD/RAMAKAN_SABAKU/F_018A4.C as a single-overlay unit binding its names
  * at their runtime addresses (an import veneer's listing offset plus
@@ -49,7 +49,47 @@
  * shifted comparison after the store. Colour-loop mask/counter lifetime,
  * the timer's paired signed/unsigned reads, fill-loop precheck, sprite array
  * cursor and pool positions remain nonmatching. Retain this semantic model;
- * stop after ABI/layout model plus one follow-up. No new DONE bytes. */
+ * stop after ABI/layout model plus one follow-up. No new DONE bytes.
+ * Lamakan phase H1 (2026-09-27): compare the stored signed EFFECT_PHASE,
+ * rather than a narrow local assigned before the store. Prediction: store
+ * the full quotient first, then use the shifted halfword comparison with
+ * no pre-store arithmetic-right-shift. One complete-diff trial; frame,
+ * extent and pools plus production gates remain mandatory for adoption.
+ * H1 result: 852/888, 394 halfwords / 230 aligned edits, 12-byte frame.
+ * Quotient store and shifted signed comparison at reference 01aa2..01aae
+ * now have the exact registers and instruction order, apart from relocated
+ * pool/branch displacements. The phase pointer stays in r5 throughout the
+ * exact scroll-update operations. Retain; no local-phase spelling sweep.
+ * Separate timer evidence: GCSE's mem/s:HI union view forwards the just
+ * stored unsigned timer at the branch join and keeps a u16 increment local;
+ * reference instead compares the signed stored halfword and reloads it.
+ * Lamakan timer H2: one signed timer object replaces the union's unsigned
+ * arithmetic view and the u16 shadow. Compare the stored halfword after
+ * incrementing it. Prediction: pooled initial 2, paired signed/unsigned
+ * loads, shifted comparison after the store and a fresh branch-join read.
+ * One trial, complete normalized diff; retain the phase H1 invariant.
+ * H2 result: 852/888, 411 halfwords / 232 aligned edits, 12-byte frame.
+ * The initial 2 is now pooled, but the two timer views still collapse and
+ * the branch join still forwards its value. Reject this reload prediction;
+ * no signed/unsigned timer declaration sweep. Full diff exposes a new
+ * phase fact: reference 0191e shifts 128 by 9, comparing the incremented
+ * signed timer to 1, whereas this draft compares it to 2 (shift by 10).
+ * One follow-up may correct that phase condition; other timer axes stop.
+ * Lamakan timer H3, final phase trial: the increment from 0 to 1 starts
+ * the palette DMA, rather than the subsequent increment from 1 to 2.
+ * Prediction: the comparison constant shifts 128 by 9, matching reference
+ * 0191e, with unchanged 852-byte extent and 12-byte frame. One condition
+ * change, whole normalized diff, both-ROM compare and full final gate;
+ * no further timer-view or reload spelling experiments.
+ * H3 result: 852/888, 411 halfwords / 231 aligned edits, 12-byte frame.
+ * Only the predicted comparison constant changes from H2. Retain the
+ * reference-proven 0-to-1 palette trigger despite the signed-view model's
+ * explained one-edit regression versus H1's semantically wrong trigger.
+ * The stored EFFECT_PHASE comparison and scroll-update invariants remain.
+ * Bounded timer/phase axes are exhausted; remaining work is paired timer
+ * reads and join reload, shared colour-mask/counter lifetimes, fill-loop
+ * precheck/counter lifetime, sprite array cursor, and resulting pools.
+ * Whole owner remains not-yet-C; no exact-function or alignment credit. */
 #include "DMA.H"
 #include "FIELD_EVENT.H"
 #include "TYPES.H"
@@ -57,11 +97,6 @@
 
 struct Sprite {
     u32 words[3];
-};
-
-union HalfWord {
-    u16 value;
-    s16 signed_value;
 };
 
 struct TravelState {
@@ -96,9 +131,9 @@ static __inline__ s32 Value2(s32 (*fn)(), s32 a0, s32 a1)
 }
 
 /* FAKEMATCH: the word-sized step keeps subtraction out of halfword mode. */
-static __inline__ void Half_Add(union HalfWord *dst, s32 step)
+static __inline__ void Half_Add(s16 *dst, s32 step)
 {
-    dst->value = dst->value + step;
+    *dst = *dst + step;
 }
 
 void FieldScene_RunScene3a5SequenceA(void)
@@ -115,31 +150,29 @@ void FieldScene_RunScene3a5SequenceA(void)
     s32 y;
     u32 i;
     u32 slot;
-    union HalfWord *timerp;
+    s16 *timerp;
     u32 *sprite_words;
     struct Sprite *sprite;
 
     tile_offset = gVramBlockCache[(s16)MAP_LAYER].offset >> 5;
     if (MAP_MODE != 0) {
-        timerp = (union HalfWord *)0x0200a6be;
-        timerp->value = 2;
+        timerp = (s16 *)0x0200a6be;
+        *timerp = 2;
     } else if (Engine_GameFlagIsSet(0x104) != 0) {
-        timerp = (union HalfWord *)0x0200a6be;
-        if (timerp->signed_value > 0)
+        timerp = (s16 *)0x0200a6be;
+        if (*timerp > 0)
             Half_Add(timerp, -1);
     } else {
-        timerp = (union HalfWord *)0x0200a6be;
-        if (timerp->signed_value <= 1) {
-            u16 value = timerp->value + 1;
-
-            timerp->value = value;
-            if (value == 2)
+        timerp = (s16 *)0x0200a6be;
+        if (*timerp <= 1) {
+            Half_Add(timerp, 1);
+            if (*timerp == 1)
                 Dma_Set((const void *)0x02009f80, (void *)0x050003c0,
                     -0x7ffffff0, (volatile u32 *)0x040000d4);
         }
     }
 
-    timer = timerp->signed_value;
+    timer = *timerp;
     if (timer == 0) {
         Main_080001c0(MAP_LAYER);
         return;
@@ -200,12 +233,9 @@ void FieldScene_RunScene3a5SequenceA(void)
     }
 
     {
-        s16 phase;
-
         frame = Data_02000240_t.steps;
-        phase = (((frame << 4) - frame) << 3) / Data_02000240_t.limit;
-        EFFECT_PHASE = phase;
-        if (phase > 118)
+        EFFECT_PHASE = (((frame << 4) - frame) << 3) / Data_02000240_t.limit;
+        if (EFFECT_PHASE > 118)
             EFFECT_SCROLL = 0x77;
     }
     if (EFFECT_SCROLL != 0) {

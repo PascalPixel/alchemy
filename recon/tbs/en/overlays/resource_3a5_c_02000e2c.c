@@ -1,5 +1,5 @@
-/* NONMATCHING: 552 of 552 bytes, 23 differing halfwords / 23 aligned edits
- * (2026-09-26). Whole owner 02000e2c..02001054, return at 02001026 and all
+/* NONMATCHING: 552 of 552 bytes, 17 differing halfwords / 17 aligned edits
+ * (2026-09-27). Whole owner 02000e2c..02001054, return at 02001026 and all
  * eleven literal words at 02001028..02001050. Complete layout/pool exact.
  * Three bounded trials: phase-local actors remove the wait and both burst
  * pointer copies (45 to 26 differing halfwords); choosing an immutable total
@@ -12,10 +12,9 @@
  * frame for 60 frames. Binds the scene unit's calls plus gFrameCount-free
  * data: Value_00000059, Value_0000005a, Data_02000240_t. Remaining: global
  * allocation swaps the spot counter and byte offset (r6/r7); the hold-store
- * and timer-decrement scratch registers swap r2/r3; the second parameter
- * block rematerializes 0x8000 after storing scale_y instead of keeping it
- * separate from the spread literal. Further work needs a new counter or
- * parameter lifetime hypothesis, not actor/coordinate spelling sweeps.
+ * and timer-decrement scratch registers swap r2/r3. The second parameter
+ * block is now exact through H4 below. Further work needs a new structural
+ * counter/hold lifetime fact, not actor/coordinate/parameter spelling sweeps.
  * Family transfer (2026-09-27): exact resource_3a5:0200013c instances
  * FIELD/COMMON/EFFECT/SPAWN.C and consumes FIELD_EFFECT.H EffectOptions.
  * The former speed/spread members at +0x10/+0x14 are target x/y scales,
@@ -26,7 +25,50 @@
  * Whole score remains 552/552, 23 halfwords / 23 edits. This corrects the
  * source interface but unlocks 0 DONE bytes. Stop record/prototype-only
  * variants: the three residual regions are unchanged. Exact SPAWN.C and
- * FIELD_EFFECT.H are reused without editing either shared owner. */
+ * FIELD_EFFECT.H are reused without editing either shared owner.
+ * Lamakan H1 (2026-09-27): reference r7 carries the landing countdown,
+ * then the meter-clamp zero; reuse count in those disjoint phases. The
+ * baseline global allocator chooses countdown pseudo 35 before byte-offset
+ * pseudo 38 and gives them r6/r7; its later zero pseudo 45 already has r7.
+ * Prediction: the shared carrier admits countdown r7 and offset r6 while
+ * retaining the 104-byte frame and all eleven pool words. Result: 552/552,
+ * 108 differing halfwords / 38 aligned edits. Countdown stays r6; the known
+ * zero left by its loop eliminates the later movs-zero, swaps the hold
+ * pointer to r7, and shifts all code after the clamp entry by two bytes.
+ * Reject: a shared source local does not recreate the reference phases.
+ * This commit preserves the rejected witness; restore the 23-edit baseline
+ * before testing a distinct parameter lifetime. No new DONE bytes.
+ * Lamakan H2: baseline restored. CSE pseudos 134/136/140 separately hold
+ * start y, shared x scale and target y; both x stores precede target-y's
+ * definition, allowing all three constants to reuse r3. Extend the shared
+ * x scale across the target-y store. Prediction: scale and target-y become
+ * interfering pseudos, admitting r2/r3 and the reference's interleaved pool
+ * load without disturbing the first burst, frame or layout. Result: 552/552,
+ * 19 halfwords / 19 edits. The predicted r2 shared x scale and early r3
+ * target-y load are exact, with two final option stores still swapped.
+ * Every other block and all pools are unchanged from the 23-edit baseline.
+ * Retain this admitted constant-interference witness. A scalar target-y
+ * temporary before the x stores can now test the reference store order.
+ * Lamakan H3: keep target y in a scalar defined before the x stores;
+ * consume it after both x stores. Prediction: retain H2's interfering
+ * constants while restoring target-x then target-y stores. One follow-up;
+ * exact extent, pools and production gates remain the acceptance contract.
+ * H3 result: 552/552, 23 halfwords / 23 edits. Store order is restored,
+ * but target_y's user pseudo takes r2 while shared scale takes r3, losing
+ * H2's admitted register invariant. This is an explained regression, not
+ * an accepted shape. Preserve the negative witness in this commit, then
+ * restore H2. The one remaining supported boundary is a scale user local,
+ * whose lifetime crosses the start-y store rather than target-y's store.
+ * Lamakan H4, final parameter trial: make the shared x scale the user
+ * local, define it before start-y, and preserve reference store order.
+ * Prediction: the user carrier takes r2 while the two pool constants reuse
+ * r3, matching the reference option region. Result: 552/552, 17 halfwords
+ * and 17 aligned edits. Whole second option region 02000faa..02000fd8 is
+ * exact, and so are the 104-byte frame and all eleven literal pool words.
+ * H4 retained; parameter lifetime axis closed with an admitted witness.
+ * Current residual: eleven countdown/offset register halfwords and six
+ * hold/timer scratch halfwords. H1 falsifies countdown/zero phase merging;
+ * no further loop or parameter spelling sweeps. No new DONE or alignment. */
 #include "TYPES.H"
 #include "FIELD_EFFECT.H"
 
@@ -151,11 +193,14 @@ void Func_02000e2c(void)
     } while (timer != 0);
     {
         struct FieldActor *actor = Engine_ActorGet(0);
+        s32 scale;
 
         second.type = 214;
+        /* FAKEMATCH: share one x-scale local across the start-y store. */
+        scale = 0x8000;
         second.start_scale_y = 0xcccc;
-        second.start_scale_x = 0x8000;
-        second.target_scale_x = 0x8000;
+        second.start_scale_x = scale;
+        second.target_scale_x = scale;
         second.target_scale_y = 0x13333;
         Effect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, 0, timer, timer, 0x1c0000, &second);
     }

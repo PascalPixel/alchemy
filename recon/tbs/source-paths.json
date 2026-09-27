@@ -1,6 +1,12 @@
 {
   "format": 3,
   "owners": {
+    "resource_3c8:02004520": {
+      "name": "VinasuHeya_SpawnRandomParticles"
+    },
+    "resource_3c8:02004bd8": {
+      "name": "VinasuHeya_DispatchPushScript"
+    },
     "resource_3b3:02000ddc": {
       "name": "FieldScene_QueryActorFootprint"
     },

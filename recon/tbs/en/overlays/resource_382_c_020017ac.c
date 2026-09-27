@@ -1,4 +1,18 @@
-/* NONMATCHING: H3 Object_Create boundary transfer (2026-09-27):
+/* NONMATCHING P1 phased coordinate/direction bias (2026-09-27):
+ * 344/340 bytes, 148 differing halfwords, 57 aligned edits; topology equal.
+ * H3 baseline is preserved at 815f4834c. CSE's temporary XOR result was
+ * folded into x/r5 by regmove at insn 199. Giving z the XOR then updating
+ * z with its shift stops fixup_match_1: the destination is set again before
+ * its death, so the pass inserts the flags copy and retains the r5 mask.
+ * However z now spans two basic blocks: SI37 has 18 uses/29 insns/9 sets
+ * and is globally allocated to r4, not locally to r3. The constructor gains
+ * a copy, drift arithmetic schedules around r4, and the pool moves +4.
+ * Case-1 dispatch, six pool values and saved roles remain. The exact r3
+ * admission fails; one causal branch-local bias follow-up is justified.
+ * Keep the two-stage XOR/shift producer, remove only its cross-block owner.
+ * No new function or alignment bytes credited.
+ *
+ * NONMATCHING: H3 Object_Create boundary transfer (2026-09-27):
  * Complete output byte-identical to H2: 340 bytes, 97 differing halfwords,
  * 46 aligned edits. Exact same-area creators and MAKYURI_CHOJO/LAMP.C
  * use this wrapper, but here type 0xac is already a direct r0 constant;
@@ -117,7 +131,9 @@ void KuupuappuMura_SpawnDriftingEffect(s32 flags)
         /* FAKEMATCH: reuse the coordinate local for the direction mask. */
         x = 1;
         flags &= x;
-        cnt += (flags ^ x) << 2;
+        z = flags ^ x;
+        z <<= 2;
+        cnt += z;
         leaf->motion.vertical_rate = (0x3332 * flags - 0x1999) * cnt;
         cnt = Engine_MathModulo(Engine_RandomNext(), 15) - 7;
         leaf->motion.horizontal_rate = 0x1999 * cnt;

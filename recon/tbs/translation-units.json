@@ -87481,6 +87481,8 @@
       "source": "recon/tbs/en/overlays/resource_39d_c_020034bc.c",
       "overlay": "resource_39d",
       "absolute_symbols": {
+        "Data_03001e70": {"address": "0x03001e70", "kind": "data"},
+        "gFrameCount": {"address": "0x03001e40", "kind": "data"},
         "Engine_ActorGet": {
           "address": "0x0200b6f0",
           "kind": "thumb"

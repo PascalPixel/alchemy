@@ -39,7 +39,7 @@
  * aligned edits. The compiler instead adds state base and offset before
  * loading event work, and later event stores change scratch-register order.
  * The eight-word pool retains its extent. This pointer boundary fails;
- * restore the six-halfword body after this witness commit. */
+ * the six-halfword body is restored below. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
@@ -70,10 +70,9 @@ void Local_02000cd0(void)
 
     {
         struct TravelState *state = &Data_02000240_t;
-        s16 *steps = &state->steps;
 
         event = gEventWork;
-        percent = Engine_MathDivide(*steps * 100, state->limit);
+        percent = Engine_MathDivide(state->steps * 100, state->limit);
     }
     if (Engine_GameFlagIsSet(0x201)) {
         return;

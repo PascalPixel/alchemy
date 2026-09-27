@@ -1,4 +1,13 @@
-/* NONMATCHING Astra ship-row pass (2026-09-27): 232/232 bytes, 24
+/* Astra load/shift boundary (2026-09-27): load the raw tile offset,
+ * initialize count, then shift tile. This restores the first three pool
+ * values' order, but tile becomes r6 and the candidate shrinks to 228/232
+ * (106 halfwords / 42 aligned edits). An explicit unsigned shift fixes
+ * asrs to lsrs only; the allocation and score stay unchanged. A distinct
+ * offset input restores the row bodies (228/109/20), but exchanges lr/ip
+ * ownership and omits the reference's count copy. Full differences read.
+ * Reject all three: correct pool order alone does not admit the entry.
+ * Restore the 232-byte canonical; stop this load/shift lifetime axis.
+ * NONMATCHING Astra ship-row pass (2026-09-27): 232/232 bytes, 24
  * differing halfwords / 17 aligned edits. Complete normalized differences
  * read after every step. No exact bytes or alignment credit.
  * Transferred TITLE.C's goto loop and advancing word writes. The counter

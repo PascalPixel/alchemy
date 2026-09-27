@@ -1,4 +1,20 @@
-/* NONMATCHING: 4708-byte owner 02002360..020035c4, candidate 4704.
+/* Astra separate publication/input test (2026-09-27): expr.c store_expr
+ * explicitly rereads a volatile assignment when want_value is set. Two
+ * separate volatile pointer locals plus pixels=buffer+0x400; image=pixels;
+ * Vram_Load(..., pixels) avoid that assignment-result read. Complete output
+ * is 4716/4708, 1677 halfwords / 625 aligned edits, frame 128 not 136.
+ * There are now two stores and one base reload, with no derived reload,
+ * but the base is addressed through a retained r8 pointer at sp+32 and
+ * the derived store is sp+28, not the reference's direct sp+40/+36 pair.
+ * Both origin-x spills remain absent. Every normalized difference was
+ * reviewed; reject the failed frame/addressing contract and restore the
+ * canonical body. This closes the compiler-backed assignment-result test.
+ * A separate particle-publication test moves i++ after velocity construction
+ * but before Effect_Spawn in both loops. Result 4704/4708, 1705 halfwords /
+ * 607 edits; counter is still r8, both origin-x spills are absent, and frame
+ * remains 120. Only the increment scheduling moves. Reject despite three
+ * fewer edits; retain the ordinary for loops and close this ordering axis.
+ * NONMATCHING: 4708-byte owner 02002360..020035c4, candidate 4704.
  * 2026-09-27 volatile-handle H2, one authorized causal test: make the two
  * pointer slots volatile, leaving pointed-to image bytes ordinary. Feed the
  * derived assignment's value directly to Vram_Load because the complete ROM

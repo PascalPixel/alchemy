@@ -1,4 +1,17 @@
-/* Astra in-place consumer transfer (2026-09-27): use the exact redraw
+/* Astra allocator-backed input test (2026-09-27): local-alloc.c ties an
+ * addition's output to the first dying compatible operand. Canonical
+ * step105/z106 both die at sum107, so sum and shift remain with step in r3.
+ * Inline TranslateCell(coordinate,step) reverses the addition operands
+ * while retaining step-first evaluation, but allocation exchanges the input
+ * registers: 236/236, 8 halfwords / 7 edits. It does not admit the target.
+ * Reusing the existing multi-definition extent local a blocks that local
+ * tie, but puts the shifted step in globally allocated r2: 236/7/6. Reusing
+ * b also assigns it r2 and perturbs the earlier extent blocks: 236/24/23.
+ * All complete diffs were read; frame and three pools remain intact. The
+ * earlier user variables do not provide the required step-r3/z-r2 pair.
+ * Reject these three causal trials, restore canonical and stop this axis.
+ * No function or alignment credit; no compiler or allocation rules changed.
+ * Astra in-place consumer transfer (2026-09-27): use the exact redraw
  * consumer's probe.position_z += step; probe.position_z >>= 20, rather
  * than its prior local-z transfer. Complete 236/236 bytes, 8 halfwords /
  * 7 edits: step/z loads still exchange r2/r3 and the z store remains after

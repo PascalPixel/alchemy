@@ -1,3 +1,9 @@
+/* NONMATCHING (2026-09-27): explicit selected-cell byte offset, shared
+ * between the depth test and both CopyCells calls, gives 956/976 bytes,
+ * 431 halfwords / 198 aligned edits. Actor remains r7, offset becomes sl,
+ * frame grows from 16 to 20, flags spill and an extra table+4 pool word
+ * appears. Full normalized diff read; actor-r8/cell-r7 admission fails.
+ * Restore indexed SwitchCell accesses. No credit or compiler changes. */
 /* 2026-09-27 lane stop: H3/H4 carrier trials are preserved in commits
  * 70d14bfc9 and 266293aa5. Both fail actor-r8/cell-r7 admission; restore
  * this typed canonical body rather than retain an unexplained one-edit

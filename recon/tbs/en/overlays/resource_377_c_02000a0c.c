@@ -1,8 +1,27 @@
-/* NONMATCHING: resource_377:02000a0c; 1064 / 1064 bytes, 24 differing
- * halfwords, 30 wrong instructions, 24 halfword edits. Explicit first-ramp
- * alpha ownership removes its reload but allocates r7 instead of r5.
+/* NONMATCHING: resource_377:02000a0c; 1064 / 1064 bytes, 8 differing
+ * halfwords, 16 wrong instructions, 8 aligned edits. Canonical H2 restored.
+ * The old explicit first-ramp alpha ownership removed its reload but
+ * allocated r7 instead of r5.
  * Separate counters emit identical bytes; sharing the port across both
- * ramps wrongly removes the second reload (135 halfwords / 34 instructions). */
+ * ramps wrongly removes the second reload (135 halfwords / 34 instructions).
+ * H1 (2026-09-27): transfer the initial blend-write boundary from exact
+ * TOREBI_IZUMI/OPEN_SCENE.C. A tagged scope for value then alpha address
+ * restores the complete pool order and both earlier call-scheduling ties.
+ * Full diff: 1064 bytes, 24 -> 14 halfwords/edits; 20 bytes change, 19 become
+ * reference bytes, none regress. The 8-byte frame and both ramp reload
+ * boundaries remain intact. Only port/counter register roles remain.
+ * H2: let the existing SetBlendAlpha writer own initialization and claim
+ * alpha only at the first ramp. CSE still retains the initial port, now in
+ * the reference's r5, with counter r6 and no extra reload. Complete score
+ * is 1064/8 halfwords/8 edits. All pools and the 8-byte frame remain exact;
+ * residual is first-ramp constant r3 versus r2 and the second ramp's
+ * counter/port r5/r6 versus r6/r5. The owned writer boundary is effective.
+ * H3: use SetBlendAlpha at both ramp stores as well. This rejects the
+ * admission invariant: an extra port reload appears at the first ramp,
+ * and the required second-ramp reload disappears. Both ramps now share
+ * the wrong port lifetime: 1064 bytes, 26 halfwords, 21 aligned edits.
+ * Full diff read; negative witness committed at 19fd9a714. H2 restored
+ * byte-identically. Do not extend this uniform-writer axis. */
 #include "FIELD_EVENT.H"
 
 void Main_080000c0();
@@ -129,8 +148,12 @@ void FieldScene_RunPaletteRampSequence(void)
     Main_08009180(65, 53, 88, 24, 2, 2);
     Main_080091a0();
     SetBlendTarget((s32)Value_00003f42);
-    alpha = &Data_04000052;
-    *alpha = (s32)Value_0000100c;
+    /* FAKEMATCH: keep the initial value/port publication boundary. */
+    do {
+        s32 value = (s32)Value_0000100c;
+
+        SetBlendAlpha(value);
+    } while (0);
     Main_0808a2c8();
     Data_03001ebc.work->enabled = 1;
     Main_0808a2d8();
@@ -169,6 +192,7 @@ void FieldScene_RunPaletteRampSequence(void)
     Call1(Main_080f9010, 234);
     Call1(Main_0808a010, 20);
     Call2(Main_0808a098, 10, (s32)Data_02009d38);
+    alpha = &Data_04000052;
     i1 = 0;
 ramp:
     /* FAKEMATCH: a word link constant keeps the pool after both ramps. */

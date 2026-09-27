@@ -2,13 +2,20 @@
  * matches; global allocation gives the options pointer r7 and the x parameter
  * r8, the reverse of the reference (x in r7, options in r8 reloaded through
  * r2/r3), which also costs the four missing movs. Needs
- * gFrameCount=0x03001e40 bound as data. */
+ * gFrameCount=0x03001e40 bound as data.
+ * 2026-09-27 complete extent 02004520..020045f0 includes three pool words.
+ * Stable unit baseline: 204/208 bytes, 99 differing halfwords, 35 aligned
+ * edits. Exact DUST_STEP, RISING_SPRAY, PARTICLE_WAVE and Effect_Spawn
+ * confirm the 40-byte options layout and flags 0x880000 (scale and spin).
+ * Both argument pairs are scalar coordinates; the second branch really
+ * uses x for its z expression. No omitted initialization or wrong callee
+ * interface was found. Retain the baseline; no new allocation sweep. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_EFFECT.H"
 
 
-void Local_02004520(s32 x, s32 z)
+void VinasuHeya_SpawnRandomParticles(s32 x, s32 z)
 {
     struct EffectOptions options;
     struct EffectOptions *opts;

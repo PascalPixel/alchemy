@@ -106,4 +106,35 @@ static inline s32 SerialRuntime_AddParentFlag(s32 status)
     return status;
 }
 
+static __inline__ void SerialRuntime_ResetTransferState(void)
+{
+    struct SerialTransferState *state;
+    volatile u16 *ime;
+    u32 saved;
+    u32 zero;
+
+    /* FAKEMATCH: the blocks retain the IME write order; the second state
+     * assignment keeps its allocation priority above the IME pointer. */
+    do {
+        state = &gSerialTransfer;
+        ime = &Data_04000208;
+    } while (0);
+    do {
+        saved = *ime;
+        *ime = (u16)ime;
+    } while (0);
+    do {
+        zero = 0;
+        state = &gSerialTransfer;
+    } while (0);
+    state->status = 0x80;
+    gSerialSendSource = zero;
+    gSerialSendSize = zero;
+    gSerialReceiveDest = zero;
+    state->peer_flags = zero;
+    state->flags = zero;
+    gSerialReceivedSize = zero;
+    *ime = saved;
+}
+
 #endif

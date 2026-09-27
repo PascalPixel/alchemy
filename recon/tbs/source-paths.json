@@ -1,6 +1,12 @@
 {
   "format": 3,
   "owners": {
+    "resource_3c8:02004520": {
+      "name": "VinasuHeya_SpawnRandomParticles"
+    },
+    "resource_3c8:02004bd8": {
+      "name": "VinasuHeya_DispatchPushScript"
+    },
     "resource_3bd:02000bc8": {
       "name": "ArutamiraDou_ApplyRoomVisuals"
     },
@@ -21542,7 +21548,8 @@
       "name": "Func_020036d0"
     },
     "resource_3cb:020007b0": {
-      "name": "Func_020007b0"
+      "name": "LinkLobby_ExchangePartyRecords",
+      "source": "MENU/LINK_LOBBY/EXCHANGE_PARTY.C"
     },
     "resource_3cb:02000b94": {
       "name": "LinkLobby_RunBattleApplication",

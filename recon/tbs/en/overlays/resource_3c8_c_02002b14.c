@@ -1,4 +1,14 @@
-/* NONMATCHING: 976 bytes, candidate 952, 414 differing halfwords, 154
+/* NONMATCHING H3 (2026-09-27): phased actor/priority/completion pointer
+ * union, 952/976 bytes, 414 differing halfwords / 153 aligned edits.
+ * Own listing reuses r8 across these three nonoverlapping pointer phases.
+ * The union reconstructs the in-place priority-byte transition, but GCC
+ * scalarizes actor SI33 (77 refs/242 insns/23 calls) and completion SI281
+ * separately; actor remains r7 and cell offset r8. Full normalized diff
+ * read: frame, calls and pool values retained; required r8 carrier fails.
+ * Preserve this negative witness before the one scalar-carrier follow-up.
+ * No function or alignment credit; all six owners remain not-yet-c.
+ *
+ * Prior NONMATCHING: 976 bytes, candidate 952, 414 differing halfwords, 154
  * halfword edits (2026-09-27). Scene_RunScene3c8SequenceA, meant for
  * FIELD/VINASU_HEYA/F_02B14.C as a single-overlay unit binding its names at
  * their runtime addresses (an import veneer's listing offset plus 0x8000).
@@ -67,7 +77,11 @@ static __inline__ void CopyCells(s32 sx, s32 sy, s32 w, s32 h, s32 x, s32 z)
 void Scene_RunScene3c8SequenceA(void)
 {
     struct FieldActor *effect;
-    struct FieldActor *actor;
+    /* FAKEMATCH: one pointer carries the actor and its later flag phases. */
+    union {
+        struct FieldActor *actor;
+        u8 *flag;
+    } work;
     struct FieldActor *other;
     struct FieldActor *leader;
     struct FieldActor *b;
@@ -86,18 +100,18 @@ void Scene_RunScene3c8SequenceA(void)
     CopyCells(69, 48, 4, 2, 5, 48);
     CopyCells(73, 37, 9, 13, 9, 37);
     for (id = 15; id <= 18; id++) {
-        actor = Engine_ActorGet(id);
-        flags = &actor->priority_flags;
+        work.actor = Engine_ActorGet(id);
+        flags = &work.actor->priority_flags;
         if (*flags != 2)
-            CopyCells(72, 48, 1, 1, actor->x.fixed >> 20, actor->z.fixed >> 20);
+            CopyCells(72, 48, 1, 1, work.actor->x.fixed >> 20, work.actor->z.fixed >> 20);
         else
-            CopyCells(73, 48, 1, 1, actor->x.fixed >> 20, actor->z.fixed >> 20);
+            CopyCells(73, 48, 1, 1, work.actor->x.fixed >> 20, work.actor->z.fixed >> 20);
 
         slot = 8;
         for (i = 0; i < 8; i++) {
-            if ((actor->x.fixed >> 20) == Data_0200d164[i].x
-                && (actor->z.fixed >> 20) == Data_0200d164[i].z
-                && actor->y.fixed >= 0) {
+            if ((work.actor->x.fixed >> 20) == Data_0200d164[i].x
+                && (work.actor->z.fixed >> 20) == Data_0200d164[i].z
+                && work.actor->y.fixed >= 0) {
                 slot = i;
                 break;
             }
@@ -107,8 +121,8 @@ void Scene_RunScene3c8SequenceA(void)
         for (i = 15; i <= 18; i++) {
             other = Engine_ActorGet(i);
             if (id != i
-                && (actor->x.fixed >> 20) == (other->x.fixed >> 20)
-                && (actor->z.fixed >> 20) == (other->z.fixed >> 20)) {
+                && (work.actor->x.fixed >> 20) == (other->x.fixed >> 20)
+                && (work.actor->z.fixed >> 20) == (other->z.fixed >> 20)) {
                 slot = 8;
                 break;
             }
@@ -118,29 +132,29 @@ void Scene_RunScene3c8SequenceA(void)
 
         priority = leader->sprite->priority;
         if ((u32)(leader->z.fixed >> 20) <= Data_0200d164[slot].z) {
-            effect = Local_02000098(actor->x.fixed, actor->y.fixed,
-                                   actor->z.fixed - 0x40000, 20);
+            effect = Local_02000098(work.actor->x.fixed, work.actor->y.fixed,
+                                   work.actor->z.fixed - 0x40000, 20);
             Main_0808a1e0(0, 3);
         }
         for (i = 15; i <= 18; i++) {
             other = Engine_ActorGet(i);
             if (id != i
-                && (actor->x.fixed >> 20) == (other->x.fixed >> 20)
-                && (actor->z.fixed >> 20) - 1 == (other->z.fixed >> 20))
+                && (work.actor->x.fixed >> 20) == (other->x.fixed >> 20)
+                && (work.actor->z.fixed >> 20) - 1 == (other->z.fixed >> 20))
                 Main_0808a1e0(i, 3);
         }
         Engine_ActorSetSpriteFlags(Engine_ActorGet(id), 0);
-        actor->unknown_22 = 0;
-        motion = &actor->motion_flags;
+        work.actor->unknown_22 = 0;
+        motion = &work.actor->motion_flags;
         *motion = 3;
-        ((union FieldObject *)actor)->effect.velocity_y = 0x1999;
-        ((union FieldObject *)actor)->effect.velocity_x = 0;
+        ((union FieldObject *)work.actor)->effect.velocity_y = 0x1999;
+        ((union FieldObject *)work.actor)->effect.velocity_x = 0;
         CopyCells(6, 44, 1, 1, Data_0200d164[slot].x, Data_0200d164[slot].z);
-        Local_0200094c(actor);
+        Local_0200094c(work.actor);
         Engine_AudioPlayCue(188);
-        actor->collision_flags = 0;
+        work.actor->collision_flags = 0;
         *motion = 0;
-        actor->y.fixed = -0x100000;
+        work.actor->y.fixed = -0x100000;
         Main_0808a1e0(id, 3);
         *flags = 2;
         CopyCells(73, 48, 1, 1, Data_0200d164[slot].x, Data_0200d164[slot].z);
@@ -149,8 +163,8 @@ void Scene_RunScene3c8SequenceA(void)
         for (i = 15; i <= 18; i++) {
             other = Engine_ActorGet(i);
             if (id != i
-                && (actor->x.fixed >> 20) == (other->x.fixed >> 20)
-                && (actor->z.fixed >> 20) - 1 == (other->z.fixed >> 20)) {
+                && (work.actor->x.fixed >> 20) == (other->x.fixed >> 20)
+                && (work.actor->z.fixed >> 20) - 1 == (other->z.fixed >> 20)) {
                 Main_0808a1e0(i, 1);
                 Engine_ActorGet(i)->priority_flags |= 1;
             }
@@ -160,14 +174,14 @@ void Scene_RunScene3c8SequenceA(void)
             Engine_EventEnd();
             return;
         }
-        actor = Actor_Get(15);
+        work.actor = Actor_Get(15);
         b = Actor_Get(16);
         c = Actor_Get(17);
         d = Engine_ActorGet(18);
-        if ((actor->priority_flags & b->priority_flags & c->priority_flags & d->priority_flags) & 2) {
+        work.flag = &work.actor->priority_flags;
+        if ((*work.flag & b->priority_flags & c->priority_flags & d->priority_flags) & 2) {
             struct SwitchEffect *first;
             struct SwitchEffect *second;
-            u8 *finished;
 
             Camera_SetSpeed(0x10000, 0x2000);
             Engine_CameraMoveToActor(14, 1);
@@ -179,9 +193,9 @@ void Scene_RunScene3c8SequenceA(void)
             Main_08009148(first);
             Main_08009098(first, Data_0200d7c8);
             second = Local_02000c5c(216, 0x2f8, Data_0200dac8);
-            finished = &first->finished;
+            work.flag = &first->finished;
             while (first->active != 0 || second->active != 0) {
-                if (*finished != 0 || second->finished != 0) {
+                if (*work.flag != 0 || second->finished != 0) {
                     Engine_EventWait(30);
                     Main_08009178(Data_0200dd3c, 77, 35);
                     CopyCells(13, 35, 1, 1, 13, 36);

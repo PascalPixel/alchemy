@@ -1,4 +1,37 @@
-/* NONMATCHING: 628/616 bytes, 205 differing halfwords, 118 aligned edits.
+/* NONMATCHING H5 (2026-09-27): direct signed halfword reset access is
+ * byte-identical to H4: 624/616 bytes, 169 halfwords / 53 aligned edits.
+ * Exact linked-record consumers use direct halfword access at +100. That
+ * transfer removes the initial RTL member read/AND-zero/write, but the
+ * required SI-to-HI conversion (HI157) remains. CSE still turns it into
+ * the camera byte's zero producer; its two-call lifetime and extra pool
+ * survive. Full normalized diff and emitted assembly checked. Admission
+ * fails: direct access is not enough to remove this pool. Trial is retained
+ * at 6ddaa41d4; H4's simpler member view is restored below. This three-model
+ * pass is stopped.
+ * Further work needs a distinct producer/consumer lifetime fact, not more
+ * signedness, loop, or cast spellings. No function or alignment credit.
+ *
+ * NONMATCHING H4 (2026-09-27): 624/616 bytes, 169 differing halfwords,
+ * 53 aligned edits. Give the immediate height-reset flag result its own
+ * block lifetime, separate from the earlier result surviving two calls.
+ * First result SI43 drops from 14 refs/25 insns/two definitions to six
+ * refs/15 insns/one definition; the new result is consumed directly in r0.
+ * Actor r6, first result r7, selected slot r7, swap-coordinate block, and
+ * final flag/loop update now match. H3's selected-reset admission remains.
+ * Full normalized diff read. Extra HI-zero pool still makes the function
+ * eight bytes too long and extends the height-test branch. No credit.
+ *
+ * NONMATCHING H3 (2026-09-27): local reset owner, 628/616 bytes,
+ * 205 differing halfwords / 109 aligned edits. The two block reset sites
+ * share a word-valued inline parameter for target/motion/height state.
+ * Full normalized diff: the selected block's complete reset sequence now
+ * matches, including pointer r3/zero r2. Frame and signed decrements stay
+ * admitted. The primary pool prediction FAILED: inline constant expansion
+ * still creates a dead HI zero which CSE uses for the later camera byte;
+ * the extra zero pool and +12-byte extent remain. Retain the local reset
+ * admission, not a claim of exactness. No function or alignment credit.
+ *
+ * Prior NONMATCHING: 628/616 bytes, 205 differing halfwords, 118 aligned edits.
  * 2026-09-26 own-ROM audit: 0200247c..020026e4 includes the sole pool word
  * 020026e0 = callback 0200a2a5. The 132-byte frame has a full 112-byte actor
  * scratch record at sp+20, not the old single s32 local with out-of-bounds
@@ -32,6 +65,15 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2,
                             s32 a3, s32 a4, s32 a5)
 {
     f(a0, a1, a2, a3, a4, a5);
+}
+
+static __inline__ void FloatingBlock_ResetMotion(struct FieldActor *block, s32 value)
+{
+    block->target_y = ACTOR_NO_TARGET;
+    *(s32 *)block->unknown_14 = value;
+    block->velocity_y = value;
+    block->motion_flags = value;
+    ((struct FloatingBlockHeight *)block)->index = value;
 }
 
 void VinasuHeya_ResolveFloatingBlock(void)
@@ -107,15 +149,14 @@ check_height:
         if (block->z.fixed >> 20 != 19) {
             goto next;
         }
-        none = Engine_GameFlagIsSet(0x200 + i);
-        if (none != 0) {
-            goto next;
+        {
+            s32 clear = Engine_GameFlagIsSet(0x200 + i);
+
+            if (clear != 0) {
+                goto next;
+            }
+            FloatingBlock_ResetMotion(block, clear);
         }
-        block->target_y = ACTOR_NO_TARGET;
-        *(s32 *)block->unknown_14 = none;
-        block->velocity_y = none;
-        block->motion_flags = none;
-        ((struct FloatingBlockHeight *)block)->index = none;
         j = 0;
         slot = i;
         if (j < i) {
@@ -128,11 +169,7 @@ check_height:
         }
 apply_height:
         other = Engine_ActorGet(slot + 10);
-        other->target_y = ACTOR_NO_TARGET;
-        *(s32 *)other->unknown_14 = 0;
-        other->velocity_y = 0;
-        other->motion_flags = 0;
-        ((struct FloatingBlockHeight *)other)->index = 0;
+        FloatingBlock_ResetMotion(other, 0);
         Camera_SetSpeed(0x30000, 0x6000);
         Engine_EventGetViewCenter()->motion_flags = 0;
         Camera_MoveTo(0x880000, 0x80000, 0x1580000, 1);

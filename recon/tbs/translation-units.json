@@ -87180,6 +87180,26 @@
       "source": "recon/tbs/en/overlays/resource_3a4_c_02001d0c.c",
       "overlay": "resource_3a4",
       "absolute_symbols": {
+        "SceneMotion_UpdateTimedActor": {
+          "address": "0x02009770",
+          "kind": "thumb"
+        },
+        "Engine_EventEnd": {
+          "address": "0x0200bb78",
+          "kind": "thumb"
+        },
+        "SceneState_StoreParamsAndInstallTask": {
+          "address": "0x0200abb0",
+          "kind": "thumb"
+        },
+        "Value_02009771": {
+          "address": "0x02009771",
+          "kind": "data"
+        },
+        "Data_03001c94": {
+          "address": "0x03001c94",
+          "kind": "data"
+        },
         "Engine_ActorGet": {
           "address": "0x0200bb98",
           "kind": "thumb"

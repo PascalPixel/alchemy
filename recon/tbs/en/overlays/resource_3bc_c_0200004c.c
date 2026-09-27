@@ -1,4 +1,11 @@
-/* NONMATCHING: 316 bytes, candidate 316, 6 differing halfwords/6 aligned
+/* Astra 2026-09-27 matrix-pointer follow-up: an explicit s8 (*)[6] table
+ * preserves the source's two-dimensional indexing but emits 320/316 bytes,
+ * 128 halfwords / 28 aligned edits, the same failure as the prior pointer
+ * model. Setup gets table-r3/row-r2, but the loop adds the base before ldrsb
+ * and materializes a zero index; argument copies also change. Full diff
+ * rejects whole-loop admission. Row typing does not fix pointer lowering;
+ * restore canonical and close this follow-up. No new DONE credit.
+ * NONMATCHING: 316 bytes, candidate 316, 6 differing halfwords/6 aligned
  * edits (2026-09-27). Unit: korosseo-log-poses.
  * Reused LOG_ROLLING_SETUP.C's explicit map row local. Setting row before
  * the counters fixes the former r8/sl swap: the complete loop and tail now

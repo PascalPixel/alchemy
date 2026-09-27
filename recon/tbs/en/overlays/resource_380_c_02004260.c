@@ -1,4 +1,11 @@
-/* NONMATCHING: 200 bytes, candidate 200, 2 differing halfwords (2026-09-26).
+/* Astra 2026-09-27 interface audit: Engine_VramLoad now uses the canonical
+ * s32(s32, s32, const void *) contract from FIELD_EVENT.H, through this
+ * unit's 0200c8ac veneer. The full candidate is byte-identical (cmp):
+ * 200/200 bytes, two differing halfwords. In particular this later call
+ * does not change the prologue zero's r2 reload to the required r0.
+ * Keep the interface correction, not another zero-spelling experiment.
+ * Full normalized diff read; no new DONE or alignment credit.
+ * NONMATCHING: 200 bytes, candidate 200, 2 differing halfwords (2026-09-26).
  * Registered owner name and all fourteen import-veneer bindings restored.
  * Fresh score: only the null-buffer reload uses r2 rather than r0 before
  * its move to r8. An inline initializer, parameter-lifetime reuse and a
@@ -22,7 +29,7 @@ s32 Main_08077038(s32, s32);
 void Engine_ObjectSetScript(u8 *, void *);
 u8 *Engine_HeapAllocate(s32, s32);
 void Engine_ItemLoadIcon(s32);
-void Engine_VramLoad(s32, s32, u8 *);
+s32 Engine_VramLoad(s32, s32, const void *);
 void Engine_HeapRelease(s32);
 void Engine_AudioPlayCue(s32);
 void Engine_RunRisingObjectSequence(u8 *, s32);

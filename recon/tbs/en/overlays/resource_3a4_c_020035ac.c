@@ -1,4 +1,9 @@
 /* NONMATCHING: 188/188 bytes, 5 differing halfwords / 5 aligned edits.
+ * Astra rounding-order transfer (2026-09-27): calculating snapped z before
+ * snapped x emits 188 bytes, 8 halfwords / 8 edits. The counter remains sl;
+ * z becomes r9 and x r8, with reversed field loads. Frame stays 12. Full
+ * normalized diff rejects the predicted counter/centre allocation; retain
+ * the original order and do not propagate this trial to the twin.
  * H4 negative witness is preserved in a0d14b1cb; canonical body restored.
  * Sol H4 2026-09-27: start + (n + 1) * 0x400 produces each turn angle.
  * Initial u16 facing is masked to 0/0x4000/0x8000/0xc000; start is

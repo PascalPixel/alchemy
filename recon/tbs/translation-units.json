@@ -1893,7 +1893,7 @@
     {
       "id": "babi-heading-probe-candidate",
       "game": "tbs",
-      "source": "recon/tbs/en/overlays/resource_3c5_c_02002660.c",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/BABI_IRIGUCHI/FIND_FWD.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c5",
       "absolute_symbols": {
@@ -1910,7 +1910,7 @@
         {
           "address": "0x02002660",
           "extent": 72,
-          "state": "not-yet-c"
+          "state": "exact-c"
         }
       ]
     },

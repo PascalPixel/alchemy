@@ -1,5 +1,5 @@
-/* NONMATCHING: 4708-byte owner 02002360..020035c4, candidate 4696,
- * 1733 differing halfwords, 582 aligned halfword edits (2026-09-27).
+/* NONMATCHING: 4708-byte owner 02002360..020035c4, candidate 4704,
+ * 1704 differing halfwords, 610 aligned halfword edits (2026-09-27).
  * Complete return 020035a8; final pool 020035ac..020035c4. ROM frame is
  * 136 bytes: second options at sp+44, shared velocity at sp+84, first
  * options at sp+96. Candidate keeps the same record ordering but has a
@@ -29,9 +29,17 @@
  * high (sl), origin remains r8 rather than sl, both origin-x spills and
  * both icon-buffer spills remain absent. Call setup later in the scene
  * also changes; fewer edits do not establish the full ownership model.
- * A narrower vector-construction boundary is the only admitted follow-up:
- * keep loop and shared scratch lifetime in the caller. No counter/aggregate
- * permutations or another halfword-zero trial. DONE +0. */
+ * H1 is preserved at 7364784c3, not accepted from its score alone.
+ * H2 keeps both loops and shared scratch in the caller, extracting only
+ * MakeBurstVelocity's cosine/zero/sine/scaling operations. Its entire 4704-
+ * byte candidate and normalized diff are identical to the Sep-26 baseline:
+ * 1704 differing halfwords, 610 edits; frame 120, both loop and icon-buffer
+ * spill defects unchanged. This falsifies a narrow polar-helper explanation.
+ * Exact entrance-dispatch owner 0200071c calls this no-argument scene in
+ * case 2 (site 020007f8). Scene_RunSetupSequence35c4 is exact; callback
+ * 020036d0 is a separate 238/244-byte draft, not an exact source precedent.
+ * STOP helper-boundary axis after these two complete models. No counter,
+ * aggregate, declaration or halfword-zero permutations. DONE +0. */
 #include "TYPES.H"
 #include "FIELD_EFFECT.H"
 #include "FIELD_EVENT.H"
@@ -87,24 +95,14 @@ static inline void Object_CommitPosition(struct FieldActor *object)
     Engine_ObjectCommitPosition(object);
 }
 
-/* The two actors emit the same ellipse of seventeen particles. The scene
- * owns the velocity scratch and each burst's separate options record. */
-static __inline__ void SpawnRadialBurst(struct FieldActor *origin, s32 velocity[3],
-                                      const struct EffectOptions *options)
+/* Both bursts use one velocity scratch; only its polar construction is
+ * shared, leaving the two option records and loop lifetimes in the scene. */
+static __inline__ void MakeBurstVelocity(s32 velocity[3], s32 angle)
 {
-    u32 i;
-    s32 angle;
-
-    for (i = 0; i <= 16; i++) {
-        angle = i << 12;
-        velocity[0] = Math_Cos(angle);
-        velocity[1] = 0;
-        velocity[2] = Math_Sin(angle) * 2;
-        velocity[0] *= 3;
-        Effect_Spawn(origin->x.fixed, origin->y.fixed, origin->z.fixed, velocity[0], velocity[1],
-                     velocity[2], EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE,
-                     options);
-    }
+    velocity[0] = Math_Cos(angle);
+    velocity[1] = 0;
+    velocity[2] = Math_Sin(angle) * 2;
+    velocity[0] *= 3;
 }
 
 void Scene_RunPairedActorEffectSequence(void)
@@ -119,6 +117,7 @@ void Scene_RunPairedActorEffectSequence(void)
     struct FieldSprite *sprite;
     u8 *buffer;
     s32 yes;
+    u32 i;
 
     Event_Begin();
     Map_CopyCellAttributes(17, 10, 4, 2, 17, 8);
@@ -592,7 +591,12 @@ void Scene_RunPairedActorEffectSequence(void)
     options_a.update = Effect_MoveWithDrag;
     options_a.start_scale_x = 0x10000;
     options_a.start_scale_y = 0x10000;
-    SpawnRadialBurst(origin, velocity, &options_a);
+    for (i = 0; i <= 16; i++) {
+        MakeBurstVelocity(velocity, i << 12);
+        Effect_Spawn(origin->x.fixed, origin->y.fixed, origin->z.fixed, velocity[0], velocity[1],
+                     velocity[2], EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE,
+                     &options_a);
+    }
     Audio_PlayCue(212);
     Task_Wait(6);
     Scene_RunSetupSequence35c4();
@@ -601,7 +605,12 @@ void Scene_RunPairedActorEffectSequence(void)
     options_b.update = Effect_MoveWithDrag;
     options_b.start_scale_x = 0x10000;
     options_b.start_scale_y = 0x10000;
-    SpawnRadialBurst(origin, velocity, &options_b);
+    for (i = 0; i <= 16; i++) {
+        MakeBurstVelocity(velocity, i << 12);
+        Effect_Spawn(origin->x.fixed, origin->y.fixed, origin->z.fixed, velocity[0], velocity[1],
+                     velocity[2], EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE,
+                     &options_b);
+    }
     Audio_PlayCue(212);
     Actor_Launch(2, 6, 20);
     Audio_PlayCue(54);

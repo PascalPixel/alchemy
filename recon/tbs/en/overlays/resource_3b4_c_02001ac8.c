@@ -1,4 +1,18 @@
-/* 2026-09-27 H7 local return-view boundary rejected: the explicitly tagged
+/* 2026-09-27 H8 rectangle producer-depth boundary rejected: initialize
+ * s32 src_row=36 then s32 height=1 before a tagged do/while(0) containing
+ * the same unused s32 return-view call (61,src_row,1,height,column,42).
+ * Expansion emits USER61/USER62 producers before LOOP_BEG153. First CSE
+ * removes both producers and substitutes literals into r1/r3 inside the
+ * loop; regmove and local allocation already see those direct constants.
+ * H3's update_equiv_regs depth mechanism cannot preserve erased producers.
+ * Complete candidate.bin equals H7: 152/152 bytes, 2 halfwords / 2 aligned
+ * edits at +0x6a/+0x6c, still r1,r2,r3,r0 rather than ROM r1,r3,r2,r0.
+ * Full normalized diff read; frame8, sole pool at +0x94, all branches,
+ * initial zero/store sequence and r6 publication remain identical. No extra
+ * operations, but the earlier parameter producers were not admitted.
+ * One authorized causal trial complete. Restore H5 direct-call canonical
+ * (3 halfwords), stop this axis; no function or alignment credit.
+ * 2026-09-27 H7 local return-view boundary rejected: the explicitly tagged
  * unused ((s32 (*)())Engine_MapCopyCellAttributes)(61, 36, 1, 1, column, 42)
  * moves r0 last, but emits r1,r2,r3,r0 rather than ROM r1,r3,r2,r0.
  * Complete extent remains 152/152 bytes, now 2 halfwords / 2 aligned edits

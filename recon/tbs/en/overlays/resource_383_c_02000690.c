@@ -1,5 +1,5 @@
 /* NONMATCHING: complete 316-byte owner including switch table and own pool;
- * candidate 280, 124 differing halfwords, 73 aligned edits (2026-09-27).
+ * candidate 284, 122 differing halfwords, 76 aligned edits (2026-09-27).
  * Actor-25 event-table entries reference this callback; message 0x12ad is
  * the refusal response. Restored EventEnd and all three data bindings.
  * Three bounded hypotheses: volatile aggregate reads gave 332/316 and
@@ -22,7 +22,20 @@
  * merges them. Shared parent next (pseudo 36) is set five times across
  * the cases. A cached HI switch value supplies the later indices, and
  * normalization also loses its required reload. Normal/diagnostic text
- * is identical. No DONE credit; test per-case publication next. */
+ * is identical. H1 is preserved in 0ce80a3c5 with no DONE credit.
+ * H2: publish the forward update inside each callback operation instead
+ * of returning through parent next, as the actor24 sibling does before
+ * its clamp. The local add and store now use r3, but an extra copy feeds
+ * normalization and the two forward arms STILL merge. The shared next
+ * variable is therefore not the cause of their collapse. Result:
+ * 284/316 bytes, 122 differing halfwords, 76 edits, 105 wrong insns.
+ * Keep the explicit signed-index/unsigned-update ownership as this draft;
+ * the lower 73-edit return-value model remains in H1's commit. Neither
+ * model recovers the signed memory producers or normalization reload.
+ * Full normalized diff read; normal/diagnostic text identical. Stop after
+ * the one model and causal follow-up, without volatile/full-tail aggregate
+ * retries. A new trial needs a supported state-read producer that avoids
+ * both cached-HI sharing and the late forward-arm merge. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
@@ -33,10 +46,10 @@ extern const u8 Value_ffffffff;
 
 /* Like the actor24 response, choose the script with a signed state, then
  * reload its halfword after the callback before publishing the next step. */
-static __inline__ s32 Actor25_AdvanceResponse(s16 *side, s32 half)
+static __inline__ void Actor25_AdvanceResponse(s16 *side, s32 half)
 {
     Actor_EnableActionCallback(25, Data_0200e4d8[half][*side]);
-    return *(u16 *)side - half * 2 + 1;
+    *(u16 *)side = *(u16 *)side - half * 2 + 1;
 }
 
 void KuupuappuHeya_RunActor25Response(void)
@@ -69,15 +82,15 @@ void KuupuappuHeya_RunActor25Response(void)
     case 0:
     case 2:
         if (facing > 0x2000 && facing < 0xa000) {
-            next = Actor25_AdvanceResponse(side, half);
-            break;
+            Actor25_AdvanceResponse(side, half);
+            goto normalize;
         }
         goto back;
     case 1:
     case 3:
         if (facing > 0x6000 && facing < 0xe000) {
-            next = Actor25_AdvanceResponse(side, half);
-            break;
+            Actor25_AdvanceResponse(side, half);
+            goto normalize;
         }
     back:
         Actor_EnableActionCallback(25, Data_0200e4d8[half ^ 1][*side]);

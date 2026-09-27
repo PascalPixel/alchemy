@@ -1,4 +1,10 @@
-/* NONMATCHING: candidate 96 of 100 bytes, 49 differing halfwords,
+/* 2026-09-27 babi-land final audit: complete extent and all four pool
+ * words rescored; candidate 96/reference 100, 49 differing halfwords /
+ * 18 normalized edits. The actor call sequence is exact. No new source
+ * fact changes the independent unsigned/signed-read residual; the recorded
+ * snapshot, volatile-read and publication axes remain closed. DONE +0,
+ * alignment +0. Keep this one canonical draft as C not yet written.
+ * NONMATCHING: candidate 96 of 100 bytes, 49 differing halfwords,
  * 18 aligned edits (2026-09-27). Complete extent [02000bc8,02000c2c)
  * includes its four-word pool. The reference loads the scene twice:
  * unsigned into r1 for the second test, then signed for the first. This

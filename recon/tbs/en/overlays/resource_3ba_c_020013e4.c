@@ -102,19 +102,13 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
  * normalized diff is unchanged: 504/508 bytes, 73 halfwords / 32 edits.
  * It emits byte-identical assembly to the scalar baseline; the decision
  * remains r6 and the speed sl. Width separation creates no new lifetime.
- * Reject this model, preserve the witness, then restore the scalar source.
+ * Rejected witness is preserved at 9e5ca58a8; scalar source restored here.
  * No function or alignment credit; stop the result-view axis here.
  */
-/* FAKEMATCH: word/byte result views test a distinct flag-writer lifetime. */
-union PromptResult {
-    s32 decision;
-    u8 motion;
-};
-
 void Korosseo_RunPromptMotionSequence(s32 a0)
 {
     u32 i;
-    union PromptResult result;
+    s32 rec4;
     u8 *rec7;
     u8 *record;
 
@@ -122,8 +116,8 @@ void Korosseo_RunPromptMotionSequence(s32 a0)
         Local_02001b5c();
     } else {
         Engine_EventBegin();
-        result.decision = Value2(SceneDialogue_RunFlagGatedPromptInteraction, a0, 2);
-        if (result.decision != 0) {
+        rec4 = Value2(SceneDialogue_RunFlagGatedPromptInteraction, a0, 2);
+        if (rec4 != 0) {
         } else {
             Call1(Engine_EventSetMessage, 0x2090);
             Call2(Engine_CameraSetSpeed, 0x30000, 0x6000);
@@ -142,24 +136,24 @@ void Korosseo_RunPromptMotionSequence(s32 a0)
             SceneState_ReleaseTableAndResetC6a6();
             Engine_TaskWait(2);
             record = Value1(Engine_ActorGet, 13);
-            record[85] = result.motion;
+            record[85] = rec4;
             *(s32 *)((s32)record + 52) = 0x6666;
             *(s32 *)((s32)record + 48) = 0xcccc;
             Call4(Engine_ObjectSetPosition, (s32)record, *(s32 *)((s32)record + 8), 0x80000, *(s32 *)((s32)record + 16));
             rec7 = Value1(Engine_ActorGet, 14);
-            rec7[85] = result.motion;
+            rec7[85] = rec4;
             *(s32 *)((s32)rec7 + 52) = 0x6666;
             *(s32 *)((s32)rec7 + 48) = 0xcccc;
             Call4(Engine_ObjectSetPosition, (s32)rec7, *(s32 *)((s32)rec7 + 8), 0x200000, *(s32 *)((s32)rec7 + 16));
             Engine_ObjectCommitPosition((s32)rec7);
             Engine_EventWait(45);
             record = Value1(Engine_ActorGet, 13);
-            record[85] = result.motion;
+            record[85] = rec4;
             *(s32 *)((s32)record + 52) = 0x6666;
             *(s32 *)((s32)record + 48) = 0xcccc;
             Call4(Engine_ObjectSetPosition, (s32)record, *(s32 *)((s32)record + 8), 0x180000, *(s32 *)((s32)record + 16));
             rec7 = Value1(Engine_ActorGet, 14);
-            rec7[85] = result.motion;
+            rec7[85] = rec4;
             *(s32 *)((s32)rec7 + 52) = 0x6666;
             *(s32 *)((s32)rec7 + 48) = 0xcccc;
             Engine_ObjectSetPosition((s32)rec7, *(s32 *)((s32)rec7 + 8), 0, *(s32 *)((s32)rec7 + 16));
@@ -179,12 +173,12 @@ void Korosseo_RunPromptMotionSequence(s32 a0)
             SceneState_SendIdBySceneId(a0, 2);
             goto L_020015b0;
         }
-        if (result.decision == 1) {
+        if (rec4 == 1) {
             Call1(Engine_EventSetMessage, 0x208f);
             Engine_EventShowMessage(a0, 0);
         }
         L_020015b0:;
-        Value3(FieldScene_RunMiddleSequence, result.decision, a0, 2);
+        Value3(FieldScene_RunMiddleSequence, rec4, a0, 2);
         Engine_EventEnd();
     }
 }

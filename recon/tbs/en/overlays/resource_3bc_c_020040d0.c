@@ -6,10 +6,12 @@
  * build keeps the cursor in r7 and rematerialises the constants.
  * Complete extent 020040d0..02004494 includes eight final pool words.
  * Equivalent complete ROM twins: resource_3ba:020033a0, resource_3bb:02003638.
- * The canonical typed ordinary-C candidate and three bounded lifetime facts
+ * The canonical typed ordinary-C candidate and four bounded lifetime facts
  * live in resource_3ba_c_020033a0.c. Typed post-increment submission moves
  * entry advancement before calls; counter timing and a typed work OAM array
  * still do not recover the spilled write cursor and independent constants.
+ * Its H4 FieldActor/nullable-scope trial is byte-identical to H3; Haidia's
+ * earlier child-record lifetime does not occur in this triplet.
  * Transfer one instanced source when exact; do not replay closed trials here.
  * This owner remains C not yet written, with zero new exact/alignment bytes. */
 #include "TYPES.H"

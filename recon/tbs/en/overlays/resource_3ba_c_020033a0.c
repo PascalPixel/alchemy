@@ -31,26 +31,23 @@
  * replay these trials on 3bb/3bc. The required unresolved invariant is a
  * write cursor at sp+12, saved state at sp+16, y in r7, entry in r8, and
  * separate shape/palette lifetimes in r9/sl, with a 20-byte frame.
- * Three scene-lane structural attempts checkpointed, zero exact bytes. */
+ * H4: the exact Haidia EXTENDED_SEQUENCE.C witness at 3c4fe6cee prompted
+ * FIELD_EVENT.H's FieldActor return type and separate nullable marker scopes.
+ * The complete emitted extent is byte-identical to H3 (856/465/320): both
+ * actors already allocate to r6. Unlike Haidia, there is no earlier child
+ * record lifetime to separate here. Typed coordinate ownership alone leaves
+ * the cursor/frame/constant disagreement unchanged; this axis is closed.
+ * Four scene-lane structural attempts checkpointed, zero exact function bytes
+ * and zero alignment bytes. All three owners remain C not yet written. */
 #include "TYPES.H"
 #include "DMA.H"
+#include "FIELD_EVENT.H"
 
-s32 Engine_GameFlagIsSet(s32 flag);
 s32 Engine_BumpAllocateAlternatePool(s32 size);
-void Engine_ResourceDecodeType01(const void *source, void *destination);
-s32 Engine_VramLoad(s32 id, s32 size, const void *buffer);
 void Engine_BumpFree(void *buffer);
 void Engine_VramRelease(s32 id);
 void Engine_OamSubmitRecord(void *entry, s32 mode);
-struct KawaActor *Engine_ObjectTableGet(s32 actor);
-s32 Engine_MathDivide(s32 dividend, s32 divisor);
-
-struct KawaActor {
-    u8 unknown_00[8];
-    s32 x;
-    u8 unknown_0c[4];
-    s32 z;
-};
+struct FieldActor *Engine_ObjectTableGet(s32 actor);
 
 struct OamEntry { u32 header, pos, tile; };
 
@@ -90,7 +87,6 @@ void Scene_RunScene3baSequenceA(void)
     u32 shape;
     s32 x;
     u8 *buffer;
-    struct KawaActor *actor;
 
     state = Data_03001f3c;
     entry = state->oam;
@@ -106,7 +102,7 @@ void Scene_RunScene3baSequenceA(void)
     } else if (state->rise <= 1 && ++state->rise == 1) {
         Dma_Set((const void *)0x200bef4, (void *)0x50003c0, 0x80000010, (volatile u32 *)0x040000d4);
         buffer = (u8 *)Engine_BumpAllocateAlternatePool(0x200);
-        Engine_ResourceDecodeType01((const void *)0x200bf14, buffer);
+        Engine_ResourceDecodeType01((const u8 *)0x200bf14, buffer);
         Engine_VramLoad(*id, 0x200, buffer);
         Engine_BumpFree(buffer);
     }
@@ -155,22 +151,26 @@ void Scene_RunScene3baSequenceA(void)
     if ((Data_03001e40 & 15) <= 4)
         return;
     shape = 0x40000000;
-    actor = Engine_ObjectTableGet(state->marker_a);
-    if (actor != 0) {
-        x = Engine_MathDivide(actor->x - state->origin_x, 0xe0000) + 112;
-        y = (Engine_MathDivide(actor->z - state->origin_z, 0xe0000) + state->rise * 6 - 4) & 0xff;
-        *p++ = 0;
-        *p++ = (x << 16) | y | shape;
-        *p++ = (tile + 12) | 0xe400;
-        Engine_OamSubmitRecord(entry++, 255);
+    {
+        struct FieldActor *actor = Engine_ObjectTableGet(state->marker_a);
+        if (actor != 0) {
+            x = Engine_MathDivide(actor->x.fixed - state->origin_x, 0xe0000) + 112;
+            y = (Engine_MathDivide(actor->z.fixed - state->origin_z, 0xe0000) + state->rise * 6 - 4) & 0xff;
+            *p++ = 0;
+            *p++ = (x << 16) | y | shape;
+            *p++ = (tile + 12) | 0xe400;
+            Engine_OamSubmitRecord(entry++, 255);
+        }
     }
-    actor = Engine_ObjectTableGet(state->marker_b);
-    if (actor != 0) {
-        x = Engine_MathDivide(actor->x - state->origin_x, 0xe0000) + 112;
-        y = (Engine_MathDivide(actor->z - state->origin_z, 0xe0000) + state->rise * 6 - 4) & 0xff;
-        *p++ = 0;
-        *p++ = (x << 16) | y | shape;
-        *p = (tile + 8) | 0xe400;
-        Engine_OamSubmitRecord(entry, 255);
+    {
+        struct FieldActor *actor = Engine_ObjectTableGet(state->marker_b);
+        if (actor != 0) {
+            x = Engine_MathDivide(actor->x.fixed - state->origin_x, 0xe0000) + 112;
+            y = (Engine_MathDivide(actor->z.fixed - state->origin_z, 0xe0000) + state->rise * 6 - 4) & 0xff;
+            *p++ = 0;
+            *p++ = (x << 16) | y | shape;
+            *p = (tile + 8) | 0xe400;
+            Engine_OamSubmitRecord(entry, 255);
+        }
     }
 }

@@ -26,7 +26,19 @@
  * Whole score remains 552/552, 23 halfwords / 23 edits. This corrects the
  * source interface but unlocks 0 DONE bytes. Stop record/prototype-only
  * variants: the three residual regions are unchanged. Exact SPAWN.C and
- * FIELD_EFFECT.H are reused without editing either shared owner. */
+ * FIELD_EFFECT.H are reused without editing either shared owner.
+ * Lamakan H1 (2026-09-27): reference r7 carries the landing countdown,
+ * then the meter-clamp zero; reuse count in those disjoint phases. The
+ * baseline global allocator chooses countdown pseudo 35 before byte-offset
+ * pseudo 38 and gives them r6/r7; its later zero pseudo 45 already has r7.
+ * Prediction: the shared carrier admits countdown r7 and offset r6 while
+ * retaining the 104-byte frame and all eleven pool words. Result: 552/552,
+ * 108 differing halfwords / 38 aligned edits. Countdown stays r6; the known
+ * zero left by its loop eliminates the later movs-zero, swaps the hold
+ * pointer to r7, and shifts all code after the clamp entry by two bytes.
+ * Reject: a shared source local does not recreate the reference phases.
+ * This commit preserves the rejected witness; restore the 23-edit baseline
+ * before testing a distinct parameter lifetime. No new DONE bytes. */
 #include "TYPES.H"
 #include "FIELD_EFFECT.H"
 
@@ -76,7 +88,6 @@ void Func_02000e2c(void)
     struct EffectOptions second;
     s16 *meter;
     u16 *hold;
-    s32 zero;
     s32 hold_frames = 600;
 
     event = gEventWork;
@@ -135,14 +146,14 @@ void Func_02000e2c(void)
     Engine_ActorSetAnimation(0, 18);
     hold = (u16 *)((u8 *)event + 0xcba);
     meter = Data_02000240_t.halves[281];
-    zero = 0;
+    count = 0;
     do {
         *hold = hold_frames;
         timer--;
         if (*meter != 0) {
             *meter -= 5;
             if (*meter <= 0) {
-                *meter = zero;
+                *meter = count;
             } else if (timer == 0) {
                 timer = 1;
             }

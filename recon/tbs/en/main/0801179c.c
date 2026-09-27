@@ -1,6 +1,20 @@
-/* Draft, not exact (2026-09-24): 12 differing halfwords, 268 of 268 bytes.
-   Residual: the loop-invariant 0xffff and 0x06004000 swap registers and
-   literal slots (reference: 0x06004000 in r2 then ip, 0xffff in r3 then lr). */
+/* Draft, not exact (2026-09-27): 12 differing halfwords, 11 aligned edits,
+   268 of 268 bytes including the complete pool through 080118a8.
+   The loop body matches. Both versions retain the VRAM base in ip and
+   0xffff in lr; the differing ancestry is the prologue's r2/r3 loads and
+   their pool slots, plus scheduling of the animation pointer setup.
+
+   Bounded named-address experiment: the exact StartChannels neighbour
+   confirms 16 twelve-byte channels and the halfword command stream;
+   Animation_Start confirms the second VRAM character block. Replacing
+   all three numeric 06004000 address expressions with the named array
+   below produced bytes identical to the baseline, not a new match.
+   Fresh loop dumps still hoist sentinel pseudo 47 at insn 443 before
+   VRAM pseudo 84 at 447; the latter now has a symbol_ref REG_EQUAL but
+   unchanged liveness and allocation. The timer decrement shares pseudo
+   47 with the command sentinel. A script wrapper has no demonstrated
+   ownership lever here, so no wrapper or declaration/width sweep was
+   attempted. Retain this address clarification and stop this axis. */
 
 #include "TYPES.H"
 #include "DMA.H"
@@ -13,6 +27,7 @@ struct MapAnimation {
 };
 
 extern u8 *Data_03001e70;
+extern u8 Data_06004000[];
 
 void MapAnimation_Update(void)
 {
@@ -47,9 +62,9 @@ void MapAnimation_Update(void)
             anim->timer = script[1];
             if (work[22] == 0) {
                 if (op >= 0x600)
-                    Dma_Set((void *)(op * 32 + 0x0201c000), (void *)(dst * 32 + 0x06004000), (count * 8) | 0x84000000, (volatile u32 *)0x040000d4);
+                    Dma_Set((void *)(op * 32 + 0x0201c000), &Data_06004000[dst * 32], (count * 8) | 0x84000000, (volatile u32 *)0x040000d4);
                 else
-                    Dma_Set((void *)(op * 32 + 0x06004000), (void *)(dst * 32 + 0x06004000), (count * 8) | 0x84000000, (volatile u32 *)0x040000d4);
+                    Dma_Set(&Data_06004000[op * 32], &Data_06004000[dst * 32], (count * 8) | 0x84000000, (volatile u32 *)0x040000d4);
             } else {
                 if (op >= 0x200)
                     Dma_Set((void *)(op * 64 + 0x02020000), (void *)(dst * 64 + 0x06008000), (count * 16) | 0x84000000, (volatile u32 *)0x040000d4);

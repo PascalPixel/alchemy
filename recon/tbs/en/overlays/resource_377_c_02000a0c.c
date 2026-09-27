@@ -1,5 +1,6 @@
-/* NONMATCHING: resource_377:02000a0c; 1064 / 1064 bytes, 8 differing
- * halfwords, 16 wrong instructions, 8 halfword edits. Explicit first-ramp
+/* NONMATCHING H3 witness: resource_377:02000a0c; 1064 / 1064 bytes,
+ * 26 differing halfwords, 30 wrong instructions, 21 aligned edits.
+ * Best H2 (5b9e12cde): 8 halfwords/edits. Explicit first-ramp
  * alpha ownership removes its reload but allocates r7 instead of r5.
  * Separate counters emit identical bytes; sharing the port across both
  * ramps wrongly removes the second reload (135 halfwords / 34 instructions).
@@ -14,7 +15,12 @@
  * the reference's r5, with counter r6 and no extra reload. Complete score
  * is 1064/8 halfwords/8 edits. All pools and the 8-byte frame remain exact;
  * residual is first-ramp constant r3 versus r2 and the second ramp's
- * counter/port r5/r6 versus r6/r5. The owned writer boundary is effective. */
+ * counter/port r5/r6 versus r6/r5. The owned writer boundary is effective.
+ * H3: use SetBlendAlpha at both ramp stores as well. This rejects the
+ * admission invariant: an extra port reload appears at the first ramp,
+ * and the required second-ramp reload disappears. Both ramps now share
+ * the wrong port lifetime. Full diff read; retain as a negative witness,
+ * then restore H2. Do not extend this uniform-writer axis. */
 #include "FIELD_EVENT.H"
 
 void Main_080000c0();
@@ -107,7 +113,6 @@ void FieldScene_RunPaletteRampSequence(void)
     struct FieldActor *p1;
     struct FieldSprite *sprite;
     u32 i1;
-    volatile u16 *alpha;
 
     p1 = Main_0808a080(10);
     sprite = p1->sprite;
@@ -185,11 +190,10 @@ void FieldScene_RunPaletteRampSequence(void)
     Call1(Main_080f9010, 234);
     Call1(Main_0808a010, 20);
     Call2(Main_0808a098, 10, (s32)Data_02009d38);
-    alpha = &Data_04000052;
     i1 = 0;
 ramp:
     /* FAKEMATCH: a word link constant keeps the pool after both ramps. */
-    *alpha = (s32)Value_0000100e + i1;
+    SetBlendAlpha((s32)Value_0000100e + i1);
     Call1(Main_080000c0, 1);
     if (++i1 <= 3)
         goto ramp;
@@ -200,7 +204,7 @@ ramp:
         u32 cnt;
 
         for (cnt = 0; cnt <= 15; cnt++) {
-            Data_04000052 = base - cnt;
+            SetBlendAlpha(base - cnt);
             Call1(Main_080000c0, 1);
         }
     }

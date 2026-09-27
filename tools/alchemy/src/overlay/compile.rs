@@ -8,7 +8,7 @@ use crate::compiler::sha256;
 use crate::compiler::source_inputs::compiler_source_tree_signature;
 use crate::compiler::source_paths::{SourceOwner, SourcePaths};
 use crate::compiler::translation_units::{
-    AbsoluteSymbol, AbsoluteSymbolKind, TranslationUnit, TranslationUnits,
+    AbsoluteSymbol, AbsoluteSymbolKind, CompilerGap, TranslationUnit, TranslationUnits,
 };
 use crate::overlay::source::OverlaySource;
 use crate::targets::DecompTarget;
@@ -498,6 +498,39 @@ fn compile_overlay_unit(
         .preprocessor_flags
         .extend(["-include".into(), bindings.to_string_lossy().into_owned()]);
     let commands = source_to_assembly_plan(&options)?;
+    // Only this image's production layout can claim separately owned fill.
+    let english = edition.is_none_or(|edition| edition == "en");
+    let mut gaps = match placement {
+        None => unit.compiler_gaps_in(image).to_vec(),
+        Some(_) if instance && english => unit.compiler_gaps_in(image).to_vec(),
+        Some(_) => Vec::new(),
+    };
+    if unit.exact() && (placement.is_none() || instance && english) {
+        let target = crate::overlay::owners::production_target(game);
+        let listing = fs::read_to_string(root().join(target.overlay_assembly(image)))
+            .map_err(|error| error.to_string())?;
+        let registry = crate::compiler::build_io::read_json::<serde_json::Value>(root().join(
+            format!("{}/semantic/overlay-assembly.json", target.recon_dir()),
+        ))?;
+        let boundaries = overlay::alignment_boundaries(
+            &listing,
+            &registry,
+            image,
+            target.source_dir,
+            &target.overlay_macro(),
+        );
+        let owners = unit
+            .owners_in(image)
+            .map(|owner| (owner.address, owner.extent))
+            .collect::<Vec<_>>();
+        gaps.extend(overlay::native_alignment_gaps(
+            &listing,
+            &owners,
+            &boundaries,
+        ));
+    }
+    gaps.sort_by_key(|gap| (gap.start, gap.end));
+    gaps.dedup_by_key(|gap| (gap.start, gap.end));
     // A production link of the installed source is answered from the cache
     // like an owner compile; a selected owner or a candidate always compiles.
     let cache_key = match (selected, candidate) {
@@ -510,6 +543,7 @@ fn compile_overlay_unit(
             &source,
             &commands,
             &binding_text,
+            &gaps,
             work,
         )?),
         _ => None,
@@ -654,13 +688,6 @@ fn compile_overlay_unit(
             )?)
         }
     };
-    // Only the image's own reference can prove separately owned alignment.
-    let english = edition.is_none_or(|edition| edition == "en");
-    let gaps = match placement {
-        None => unit.compiler_gaps_in(image),
-        Some(_) if instance && english => unit.compiler_gaps_in(image),
-        Some(_) => &[],
-    };
     let script = at("ld");
     let mut text = String::from("SECTIONS\n{\n");
     for (address, symbol, extent) in &placed {
@@ -780,7 +807,7 @@ fn compile_overlay_unit(
             work,
         )?;
         let mut data = fs::read(&piece).map_err(|error| format!("{piece}: {error}"))?;
-        for gap in gaps {
+        for gap in &gaps {
             if address.checked_add(*extent as u32) != Some(gap.start) {
                 continue;
             }
@@ -789,6 +816,10 @@ fn compile_overlay_unit(
             let offset = (gap.start - overlay::RESOURCE_BASE) as usize;
             verify_compiler_gap(&data, *extent, &loaded_reference, offset, gap_len)
                 .map_err(|error| format!("{}: {error} at {:08x}", unit.id, gap.start))?;
+            compiled.push(Compiled {
+                address: i64::from(gap.start),
+                data: overlay::encode(&data[*extent..*extent + gap_len], offset)?,
+            });
         }
         // Separately declared alignment belongs to the gap, not the function.
         // It was compared above before extracting the unchanged owner extent.
@@ -855,11 +886,16 @@ fn unit_cache_key(
     source: &Path,
     commands: &[Vec<String>],
     binding_text: &str,
+    gaps: &[CompilerGap],
     work: &Path,
 ) -> Result<String, String> {
     let mut inputs = compiler_source_tree_signature(&root(), source, commands)?;
     append_frame(&mut inputs, registry_digest(game)?.as_bytes());
     append_frame(&mut inputs, binding_text.as_bytes());
+    for gap in gaps {
+        append_frame(&mut inputs, &gap.start.to_le_bytes());
+        append_frame(&mut inputs, &gap.end.to_le_bytes());
+    }
     append_frame(&mut inputs, unit.id.as_bytes());
     append_frame(&mut inputs, image.as_bytes());
     append_frame(&mut inputs, edition.unwrap_or("").as_bytes());

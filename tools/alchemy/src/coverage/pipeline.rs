@@ -570,6 +570,26 @@ fn exact_overlay_for(
             .collect::<Vec<_>>();
         let units_path = format!("{}/translation-units.json", target.recon_dir());
         if let Some(units) = json(tree, &units_path) {
+            let assembly = tree
+                .read(&format!("{overlay_dir}/{name}"))
+                .unwrap_or_default();
+            let registry = json(
+                tree,
+                &format!("{}/semantic/overlay-assembly.json", target.recon_dir()),
+            )
+            .unwrap_or(Value::Null);
+            let mut boundaries = crate::compiler::overlay::alignment_boundaries(
+                &assembly,
+                &registry,
+                id,
+                target.source_dir,
+                &target.overlay_macro(),
+            );
+            let placeholders = crate::compiler::overlay::placeholder_addresses(&assembly);
+            boundaries.retain(|entry| {
+                !placeholders.contains(entry)
+                    || list.iter().any(|owner| owner.entry == i64::from(*entry))
+            });
             // Each placeholder already credits its owner once, in its own
             // overlay; an instance adds only the fill it declares there.
             let linked = array(&units, "units")
@@ -584,16 +604,38 @@ fn exact_overlay_for(
                 })
                 .collect::<Vec<_>>();
             for (unit, layout) in linked {
+                let source = text(unit, "source");
+                let members = list
+                    .iter()
+                    .filter(|owner| owner.source == source)
+                    .filter_map(|owner| {
+                        let entry = u32::try_from(owner.entry).ok()?;
+                        let extent =
+                            crate::compiler::overlay::placeholder_extent(&assembly, entry)?;
+                        Some((entry, extent))
+                    })
+                    .collect::<Vec<_>>();
+                let mut gaps = crate::compiler::overlay::native_alignment_gaps(
+                    &assembly,
+                    &members,
+                    &boundaries,
+                )
+                .into_iter()
+                .map(|gap| (i64::from(gap.start), i64::from(gap.end)))
+                .collect::<Vec<_>>();
                 for gap in array(layout, "compiler_gaps") {
-                    let (Some(start), Some(end)) = (address(gap, "start"), address(gap, "end"))
-                    else {
-                        return Err("compiler alignment gap has invalid bounds".into());
-                    };
-                    let source = text(unit, "source");
+                    gaps.push((
+                        address(gap, "start").ok_or("compiler alignment gap has invalid bounds")?,
+                        address(gap, "end").ok_or("compiler alignment gap has invalid bounds")?,
+                    ));
+                }
+                gaps.sort_unstable();
+                gaps.dedup();
+                for (start, end) in gaps {
                     let preceding = list.iter().any(|owner| {
                         owner.source == source && owner.spans.iter().any(|span| span.end == start)
                     });
-                    let following = list.iter().any(|owner| owner.entry == end);
+                    let following = u32::try_from(end).is_ok_and(|end| boundaries.contains(&end));
                     let span = Span::new(start, end);
                     if end - start != 2
                         || end & 3 != 0
@@ -605,7 +647,7 @@ fn exact_overlay_for(
                     }
                     list.push(Owner {
                         label: format!("{} compiler alignment", text(unit, "id")),
-                        source,
+                        source: source.clone(),
                         entry: start,
                         spans: vec![span],
                     });
@@ -3605,7 +3647,8 @@ mod tests {
             entries("resource_3bf"),
             [
                 ("FieldScene_FindActorRegion", 0x0200_034c, 1394),
-                ("FieldScene_RedrawActorFootprint", 0x0200_08c0, 284)
+                ("FieldScene_RedrawActorFootprint", 0x0200_08c0, 284),
+                ("staged-actor compiler alignment", 0x0200_08be, 2)
             ]
         );
         assert_eq!(
@@ -3616,7 +3659,7 @@ mod tests {
                 ("staged-actor compiler alignment", 0x0200_0ba2, 2)
             ]
         );
-        assert_eq!(bytes(&spans["resource_3bf"]), 1394 + 284);
+        assert_eq!(bytes(&spans["resource_3bf"]), 1394 + 2 + 284);
         assert_eq!(spans["resource_39b"], [Span::new(0x0200_0630, 0x0200_0cc0)]);
         // Fill that no two adjacent exact owners bound is refused.
         write(

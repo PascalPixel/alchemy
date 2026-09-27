@@ -1,4 +1,12 @@
-/* NONMATCHING: 856 of 848 bytes, 367 differing halfwords / 164 aligned edits
+/* NONMATCHING: 856 of 848 bytes, 322 differing halfwords / 154 aligned edits
+ * 2026-09-27 Sol Venus Summit H1: separate the switch's spawn marker from
+ * the nullable spark pointer. Full normalized diff: spark now r7 as in the
+ * reference; marker is r6 and beam sl, while sprite still takes local r6.
+ * Both pools remain +8; the predicted beam r6 / marker r7 shape fails.
+ * Allocator evidence confirms the sprite/beam overlap remains, independent
+ * of the marker's false pointer lifetime. Keep the ordinary scalar marker
+ * for its proved role, not as a match; no declaration or phase-guard sweep.
+ * Exact byte gate not met, DONE and alignment +0.
  * (2026-09-26). Whole owner 020056a0..020059f0, including 49 switch entries,
  * pools 020058b0..020058cc and 02005970..02005984, and final word 020059ec.
  * Baseline: 848 bytes / 203 differing halfwords / 145 aligned edits; its mask
@@ -60,6 +68,7 @@ void Func_020056a0(void)
     struct FieldActor *beam;
     struct FieldActor *spark;
     struct FieldSprite *sprite;
+    s32 spawn;
     u32 step;
     /* FAKEMATCH: preserve the short-range halfword zero load. */
     struct {
@@ -69,7 +78,7 @@ void Func_020056a0(void)
 
     beam = Engine_ActorGet(23);
     frame = (volatile u32 *)&SUMMIT_FRAME;
-    spark = 0;
+    spawn = 0;
     switch (step = *frame) {
     case 0:
         Engine_AudioPlayCue(220);
@@ -121,7 +130,7 @@ void Func_020056a0(void)
             Engine_AudioPlayCue(246);
         }
         beam->y.fixed += 0x24000;
-        spark = (struct FieldActor *)1;
+        spawn = 1;
         break;
     case 27:
     case 28:
@@ -131,7 +140,7 @@ void Func_020056a0(void)
     case 32:
     case 33:
     case 34:
-        spark = (struct FieldActor *)1;
+        spawn = 1;
         break;
     case 36:
         Engine_AudioPlayCue(187);
@@ -143,7 +152,7 @@ void Func_020056a0(void)
         Engine_GameFlagSet(0x237);
         break;
     }
-    if (spark != 0) {
+    if (spawn != 0) {
         spark = Engine_ObjectCreate(0x11c, beam->x.fixed, beam->y.fixed - ((((u32)Engine_RandomNext() * 80) >> 16) << 16) - 0x80000, beam->z.fixed);
         if (spark != 0) {
             sprite = spark->sprite;

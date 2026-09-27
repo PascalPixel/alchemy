@@ -2,6 +2,38 @@
   "format": 5,
   "units": [
     {
+      "id": "takara-actor-footprint-query",
+      "source": "recon/tbs/en/overlays/resource_3b3_c_02000ddc.c",
+      "overlay": "resource_3b3",
+      "absolute_symbols": {
+        "Engine_ActorGet": {
+          "address": "0x0200ab1c",
+          "kind": "thumb"
+        },
+        "Data_03001e70": {
+          "address": "0x03001e70",
+          "kind": "data"
+        },
+        "Data_0200ace0": {
+          "address": "0x0200ace0",
+          "kind": "data"
+        },
+        "Data_0200acf8": {
+          "address": "0x0200acf8",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02000ddc",
+          "extent": 236,
+          "state": "not-yet-c"
+        }
+      ],
+      "game": "tbs",
+      "compiler_route": "canonical-gcc296"
+    },
+    {
       "id": "toreto-flagged-map-patches",
       "source": "recon/tbs/en/overlays/resource_396_c_020017ec.c",
       "overlay": "resource_396",
@@ -53503,11 +53535,7 @@
           "address": "0x0200813c",
           "kind": "thumb"
         },
-        "Func_02001cc4": {
-          "address": "0x02008ddc",
-          "kind": "thumb"
-        },
-        "Func_02001d54": {
+        "FieldScene_QueryActorFootprint": {
           "address": "0x02008ddc",
           "kind": "thumb"
         },

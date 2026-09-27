@@ -67,8 +67,7 @@ extern u8 *Data_03001ee0;
 extern volatile s32 Data_03001e40;
 
 u8 *Func_020051b4(void);
-s32 Func_02001cc4();
-s32 Func_02001d54();
+s32 FieldScene_QueryActorFootprint();
 void Func_02001386();
 void Func_02003d20();
 void Func_02003d5e();
@@ -237,7 +236,7 @@ void *OverlayObject_CreateConfiguredObject(s32 arg0, s32 arg1, s32 arg2, s32 arg
  * assigned first, which fixes the register the mask lands in. */
 
 /*
- * Apply a placement query and tag the object. Func_02001cc4 fills out20 and
+ * Apply a placement query and tag the object. FieldScene_QueryActorFootprint fills out20 and
  * out16, a 24-byte record of which only rec[2] and rec[4] are read back, and
  * two further out-params whose written values are never read -- only the
  * pointers matter. On success the object is tagged at +0x23 and one of two
@@ -249,7 +248,7 @@ void *OverlayObject_CreateConfiguredObject(s32 arg0, s32 arg1, s32 arg2, s32 arg
  * veneer. */
 
 /*
- * Apply a placement query to an actor. Func_02001d54 is an out-param helper:
+ * Apply a placement query to an actor. FieldScene_QueryActorFootprint is an out-param helper:
  * it fills out20 and out16, a 24-byte record of which only rec[2] and rec[4]
  * are read back, and out12 and out8 passed on the stack. Its field semantics
  * are not established. On success the values thread unchanged into the two
@@ -319,7 +318,7 @@ s32 SceneActor_ApplyPlacementQueryAndTag(u8 *no)
     s32 r2, r4;
     u8 mask;
 
-    if (Func_02001cc4(no, &out20, &out16, rec, &out12, &out8) == 0) {
+    if (FieldScene_QueryActorFootprint(no, &out20, &out16, rec, &out12, &out8) == 0) {
         return 0;
     }
 
@@ -346,7 +345,7 @@ s32 SceneActor_ApplyPlacementQuery(u8 *no)
     s32 out20, out16, out12, out8;
     s32 rec[6];
 
-    if (Func_02001d54(no, &out20, &out16, rec, &out12, &out8) == 0) {
+    if (FieldScene_QueryActorFootprint(no, &out20, &out16, rec, &out12, &out8) == 0) {
         return 0;
     }
 

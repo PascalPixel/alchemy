@@ -1,6 +1,9 @@
 {
   "format": 3,
   "owners": {
+    "resource_3b3:02000ddc": {
+      "name": "FieldScene_QueryActorFootprint"
+    },
     "main:0801908c": {
       "name": "RenderOutput_UpdateScaleAnimation"
     },
